@@ -5,6 +5,8 @@
  * \date   27 aoû 2007
  */
 
+#include<cstdlib>
+
 #include"tfel-config.hxx"
 
 static CallBacksContainer callBacksContainer;
@@ -26,6 +28,11 @@ libDir(void)
   static const string prefix(PREFIXDIR);
   static const string execPrefix(EXECPREFIXDIR);
   string lib(LIBDIR);
+
+  const char * const path = getenv("TFELHOME");
+  if(path!=0){
+    return string(path)+"/lib";
+  }
   
   if(lib.substr(0,14)=="${exec_prefix}"){
     if(execPrefix=="${prefix}"){
@@ -43,8 +50,13 @@ includeDir(void)
   using namespace std;
   static const string prefix(PREFIXDIR);
   string inc(INCLUDEDIR);
-  if(inc.substr(0,9)=="${prefix}"){
-    inc = prefix + "/include";
+  const char * const path = getenv("TFELHOME");
+  if(path!=0){
+    inc =  string(path)+"/include";
+  } else {
+    if(inc.substr(0,9)=="${prefix}"){
+      inc = prefix + "/include";
+    }
   }
 #ifdef COMPILER_SPECIFIC_OPTIONS
   inc += ' ';
