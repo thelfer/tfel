@@ -1,0 +1,14 @@
+@Parser IsotropicMisesCreep;
+@Behaviour Norton;
+@Author Helfer Thomas;
+@Date 23/11/06;
+
+@Interface umat;
+
+@Coef real A;
+@Coef real E;
+
+@FlowRule{
+  f       = A*pow(seq,E);
+  df_dseq = E*A*pow(seq,E-1.);
+}

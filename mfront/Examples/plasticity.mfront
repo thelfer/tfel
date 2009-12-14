@@ -1,0 +1,14 @@
+@Parser IsotropicPlasticFlow;
+@Behaviour plasticflow;
+@Author Helfer Thomas;
+@Date 23/11/06;
+
+@Interface umat;
+
+@Coef stress H;
+
+@FlowRule{
+  f       = seq-H*p;
+  df_dseq = 1;
+  df_dp   = -H;
+}

@@ -1,0 +1,109 @@
+/*!
+ * \file   EvaluatorProxy.ixx
+ * \brief  
+ * 
+ * \author Helfer Thomas
+ * \date   15 jan 2009
+ */
+
+#ifndef _LIB_TFEL_MATH_EVALUATORPROXY_IXX_
+#define _LIB_TFEL_MATH_EVALUATORPROXY_IXX_ 
+
+namespace tfel
+{
+
+  namespace math
+  {
+
+    namespace parser
+    {
+
+      template<double (*f)(double)>
+      EvaluatorProxy<f>::EvaluatorProxy(const std::string& name)
+      {
+	using namespace tfel::math;
+	Evaluator::getFunctionGeneratorManager().insert(name,&StandardFctGenerator<f>);
+      }
+    
+      template<double (*f)(double,double)>
+      EvaluatorProxy2V<f>::EvaluatorProxy2V(const std::string& name)
+      {
+	using namespace tfel::math;
+	Evaluator::getFunctionGeneratorManager().insert(name,&StandardBinaryFctGenerator<f>);
+      } // end of struct EvaluatorProxy::EvaluatorProxy2V
+    
+      template<double (*f)(int,double)>
+      EvaluatorProxy1P1V<f>::EvaluatorProxy1P1V(const std::string& name)
+      {
+	using namespace tfel::math;
+	Evaluator::getFunctionGeneratorManager().insert(name,&EvaluatorFunction1P1VGenerator<f>);
+      } // end of EvaluatorProxy1P1V::EvaluatorProxy1P1V
+
+      template<double (*f)(int,int,double)>
+      EvaluatorProxy2P1V<f>::EvaluatorProxy2P1V(const std::string& name)
+      {
+	using namespace tfel::math;
+	Evaluator::getFunctionGeneratorManager().insert(name,&EvaluatorFunction2P1VGenerator<f>);
+      } // end of EvaluatorProxy2P1V::EvaluatorProxy2P1V
+
+      template<double (*f)(int,double,double)>
+      EvaluatorProxy1P2V<f>::EvaluatorProxy1P2V(const std::string& name)
+      {
+	using namespace tfel::math;
+	Evaluator::getFunctionGeneratorManager().insert(name,&EvaluatorFunction1P2VGenerator<f>);
+      } // end of EvaluatorProxy1P2V::EvaluatorProxy1P2V
+
+      template<double (*f)(int,int,double,double)>
+      EvaluatorProxy2P2V<f>::EvaluatorProxy2P2V(const std::string& name)
+      {
+	using namespace tfel::math;
+	Evaluator::getFunctionGeneratorManager().insert(name,&EvaluatorFunction2P2VGenerator<f>);
+      } // end of EvaluatorProxy2P2V::EvaluatorProxy2P2V
+
+      template<unsigned short N,
+	       typename EvaluatorFunctionWrapper<N>::type f>
+      EvaluatorProxyNV<N,f>::EvaluatorProxyNV(const std::string& name)
+      {
+	using namespace tfel::math;
+	Evaluator::getFunctionGeneratorManager().insert(name,&EvaluatorFunctionNVGenerator<N,f>);
+      } // end of EvaluatorProxyNV::EvaluatorProxyNV
+
+      template<unsigned short N,
+	       typename EvaluatorFunctionWrapper<N>::type1P f>
+      EvaluatorProxy1PNV<N,f>::EvaluatorProxy1PNV(const std::string& name)
+      {
+	using namespace tfel::math;
+	Evaluator::getFunctionGeneratorManager().insert(name,&EvaluatorFunction1PNVGenerator<N,f>);
+      } // end of EvaluatorProxy1PNV::EvaluatorProxy1PNV
+
+      template<unsigned short N,
+	       typename EvaluatorFunctionWrapper<N>::type2P f>
+      EvaluatorProxy2PNV<N,f>::EvaluatorProxy2PNV(const std::string& name)
+      {
+	using namespace tfel::math;
+	Evaluator::getFunctionGeneratorManager().insert(name,&EvaluatorFunction2PNVGenerator<N,f>);
+      } // end of EvaluatorProxy2PNV::EvaluatorProxy2PNV
+
+      template<unsigned short N,
+	       typename EvaluatorFunctionWrapper<N>::type1UP f>
+      EvaluatorProxy1UPNV<N,f>::EvaluatorProxy1UPNV(const std::string& name)
+      {
+	using namespace tfel::math;
+	Evaluator::getFunctionGeneratorManager().insert(name,&EvaluatorFunction1UPNVGenerator<N,f>);
+      } // end of EvaluatorProxy1UPNV::EvaluatorProxy1UPNV
+
+      template<unsigned short N,
+	       typename EvaluatorFunctionWrapper<N>::type2UP f>
+      EvaluatorProxy2UPNV<N,f>::EvaluatorProxy2UPNV(const std::string& name)
+      {
+	using namespace tfel::math;
+	Evaluator::getFunctionGeneratorManager().insert(name,&EvaluatorFunction2UPNVGenerator<N,f>);
+      } // end of EvaluatorProxy2UPNV::EvaluatorProxy2UPNV
+
+    } // end of namespace parser
+
+  } // end of namespace math
+
+} // end of namespace tfel
+
+#endif /* _LIB_TFEL_MATH_EVALUATORPROXY_IXX_ */

@@ -1,0 +1,539 @@
+/*!
+ * \file   GenTypeBase.hxx
+ * \brief  This file implements the GenTypeBase class and some 
+ * internal classes used by the GenType class.
+ * \see    TypeList
+ * \author Helfer Thomas
+ * \date   19 Apr. 2007
+ */
+
+#ifndef _LIB_TFEL_GENTYPEBASE_H_
+#define _LIB_TFEL_GENTYPEBASE_H_ 
+
+#include<cmath>
+#include<limits>
+
+#include"Metaprogramming/StaticAssert.hxx"
+#include"Metaprogramming/TypeList.hxx"
+#include"Metaprogramming/GenerateTypeList.hxx"
+#include"Metaprogramming/EnableIf.hxx"
+#include"Utilities/RecursiveUnion.hxx"
+#include"Utilities/GenTypeCastError.hxx"
+
+namespace tfel{
+  
+  namespace utilities{
+    
+    namespace internals{
+      
+      /*
+       * \class  Structify
+       * \brief  A class whose role is obscur.
+       * \param  U, a type.
+       * \see    http://www.ddj.com/dept/cpp/184403828 for details.
+       * \author Helfer Thomas
+       * \date   20 Apr. 2007
+       */
+      template<typename U> 
+      struct Structify
+      { 
+	// a structure
+	U dummy_;
+      };
+
+      //! a simple alias
+      typedef tfel::meta::TypeListEndType TLEnd;
+
+      //! a usefull list of types for computing alignements
+      typedef tfel::meta::GenerateTypeList<char,short int,int,long int,float,double,long double,
+					   char*,short int*,int*,long int*,float*,double*,
+					   long double*,void*,TLEnd (*)(TLEnd),
+					   TLEnd* TLEnd::*,TLEnd (TLEnd::*)(TLEnd),
+					   Structify<char>,Structify<short int>,
+					   Structify<int>,Structify<long int>,
+					   Structify<float>,Structify<double>,
+					   Structify<long double>,Structify<char*>,
+					   Structify<short int*>,Structify<int*>,
+					   Structify<long int*>,Structify<float*>,
+					   Structify<double*>,Structify<long double*>,
+					   Structify<void*>,Structify<TLEnd (*)(TLEnd)>,
+					   Structify<TLEnd* TLEnd::*>,
+					   Structify<TLEnd (TLEnd::*)(TLEnd)> >::type 
+                                           TypesOfAllAlignments;
+      
+      /*
+       * \class  AlignedPOD
+       * \author Helfer Thomas
+       * \date   20 Apr. 2007
+       * \param  TList, a list of types.
+       * \return type, a properly aligned type.
+       * a class which aims to provide the correct alignement for a
+       * memory zone which may contain any of the types in the
+       * typelist given in parameter.
+       * \see    http://www.ddj.com/dept/cpp/184403828 for details.
+       * \author Helfer Thomas.
+       * \date   20 Apr. 2007.
+       */
+      template<typename TList>
+      class AlignedPOD
+      {
+	//! maximum of all the sizes of the list.
+	static const size_t size = tfel::meta::TypeListMaxSize<TList>::value;
+	//! a simple alias.
+	typedef tfel::meta::TypeListComputeAlignBound<TypesOfAllAlignments,size> CABounds;
+	//! a list of types whose size may serve to compute the alignement.
+	typedef typename CABounds::type AlignedTypes;
+      public:
+	//! the result.
+	typedef RecursiveUnion<AlignedTypes> type;
+      };
+
+      //! a simple trait class for some minimalistic optimisation.
+      /*
+       * \see GenTypePODDestroy, for an example of such optimisation.
+       * \author Helfer Thomas.
+       * \date   20 Apr. 2007.
+       */
+      template<typename T>
+      struct GenTypeTraits
+      {
+	/*
+	 * a boolean saying if the type in argument is a plain old
+	 * data type.
+	 */ 
+	static const bool isFundamentalType = false;
+      };
+
+      //! a helper function for destroying a plain old data type.
+      /*
+       * \author Helfer Thomas.
+       * \date   20 Apr. 2007.
+       */
+      template<typename T>
+      struct GenTypePODDestroy
+      {
+	//! the helper function.
+	/*
+	 * \param void *const, a pointer (not used).
+	 */
+	static void
+	exe(void *const)
+	{}
+      };
+
+      //! an helper function to call the destructor of T.
+      /*
+       * \author Helfer Thomas.
+       * \date   20 Apr. 2007.
+       */
+      template<typename T>
+      struct GenTypeGenericDestroy
+      {
+	//! the helper function.
+	/*
+	 * \param void *const, a pointer to a T object.
+	 */
+	static void
+	exe(void *const p)
+	{
+	  T& tmp = *(static_cast<T *const>(p)); 
+	  tmp.~T();
+	}
+      };
+
+      //! an helper function to call the assignement operator of T.
+      /*
+       * \author Helfer Thomas.
+       * \date   20 Apr. 2007.
+       */
+      template<typename T>
+      struct GenTypeAssign
+      {
+	//! the helper function.
+	/*
+	 * \param void *const, a pointer to a T-object.
+	 * \param const void *const, a pointer to a T-object.
+	 * \return const bool, the result of the comparison.
+	 */
+	static
+	void
+	exe(void *const p,const void *const p2)
+	{
+	  T& tmp = *(static_cast<T *const>(p)); 
+	  const T& tmp2 = *(static_cast<const T *const>(p2)); 
+	  tmp = tmp2;
+	}
+      };
+
+      //! an helper function to call the copy constructor of T.
+      /*
+       * \author Helfer Thomas.
+       * \date   20 Apr. 2007.
+       */
+      template<typename T>
+      struct GenTypeCopy
+      {
+	//! the helper function.
+	/*
+	 * \param void *const, a pointer to a T-object.
+	 * \param const void *const, a pointer to a T-object.
+	 * \return const bool, the result of the comparison.
+	 */
+	static void
+	exe(void *const p,const void *const p2)
+	{
+	  const T& tmp2 = *(static_cast<const T *const>(p2)); 
+	  // placement new
+	  new (p) T(tmp2);
+	}
+      };
+      
+      //! An helper class to fill the runtime methods of a GenType.
+      /*
+       * \param unsigned short N, the current index.
+       * \param typename List, a list of types.
+       * \author Helfer Thomas.
+       * \date   20 Apr. 2007.
+       */
+      template<unsigned short N,typename List>
+      struct GenTypeRunTimeMethods
+	: public GenTypeRunTimeMethods<N-1,List>
+      {
+	//! Default constructor
+	/*
+	 * This constructor fills the arrays of function pointers
+	 * associated with the N-1 type in the typelist.
+	 */
+	GenTypeRunTimeMethods()
+	{
+	  using namespace tfel::utilities;
+	  using namespace tfel::meta;
+	  this->destroyMethod[N-1] = &GenTypeDestroy::exe;
+	  this->copyMethod[N-1]    = &GenTypeCopy<Current>::exe;
+	  this->assignMethod[N-1]  = &GenTypeAssign<Current>::exe;
+	}
+      private:
+	//! a simple alias.
+	typedef typename tfel::meta::TypeListFindNthElt<List,N-1>::type Current;
+	//! choose the function used to destroy the N-1 type of the typelist.
+	typedef typename tfel::meta::IF<GenTypeTraits<Current>::isFundamentalType,
+					GenTypePODDestroy<Current>,
+					GenTypeGenericDestroy<Current> >::type GenTypeDestroy; 
+      };
+
+      //! A partial specialisation to end the recursion.
+      /*
+       * \author Helfer Thomas.
+       * \date   20 Apr. 2007.
+       */
+      template<typename List>
+      struct GenTypeRunTimeMethods<0u,List>
+      {
+	//! a simple alias.
+	typedef void (*DestroyMethod)(void *const);
+	//! a simple alias.
+	//! a simple alias.
+	typedef void (*AssignMethod)(void *const,const void* const);
+	//! a simple alias.
+	typedef void (*CopyMethod)(void *const,const void* const);
+	//! array containing function pointers to call a specific destructor.
+	DestroyMethod destroyMethod[tfel::meta::TypeListSize<List>::value];
+	//! array containing function pointers to call a specific assignement operator.
+	AssignMethod  assignMethod[tfel::meta::TypeListSize<List>::value];
+	//! array containing function pointers to call a specific copy constructor.
+	CopyMethod    copyMethod[tfel::meta::TypeListSize<List>::value];
+      };
+
+      //! an helper class to a add methods to a GenType for a specific type.
+      /*
+       * This class is based on the curiously recurring template
+       * pattern for achieving this.
+       * \param typename Child, the Child of this class.
+       * \param typename T, the specific type.
+       * \see GenTypeSpecialisation.ixx for examples.
+       * \see http://en.wikipedia.org/wiki/Curiously_Recurring_Template_Pattern
+       * \author Helfer Thomas.
+       * \date   20 Apr. 2007.
+       */
+      template<typename Child,typename T>
+      class GenTypeSpecializedAccessor
+      {};
+
+      //! an helper class to a add methods to a GenType.
+      /*
+       * This class is based on the curiously recurring template
+       * pattern for achieving this.
+       * \param typename Child, the Child of this class.
+       * \param typename List, the List of types contained in the GenType.
+       * \see GenTypeSpecialisation.ixx for examples.
+       * \see http://en.wikipedia.org/wiki/Curiously_Recurring_Template_Pattern
+       * \author Helfer Thomas.
+       * \date   20 Apr. 2007.
+       */
+      template<typename Child,typename List>
+      class GenTypeSpecializedMethods
+	: public GenTypeSpecializedMethods<Child,typename List::Next>,
+	  public GenTypeSpecializedAccessor<Child,typename List::Current>
+      {
+	//! a simple alias.
+	typedef typename List::Current Current;
+      public:
+	//! cast operator.
+	TFEL_INLINE
+	operator Current&()
+	{
+	  return static_cast<Child *>(this)->template get<Current>();
+	} 
+	//! cast operator (const version).
+	TFEL_INLINE
+	operator const Current&() const
+	{
+	  return static_cast<const Child *>(this)->template get<Current>();
+	}
+      };
+      
+      //! a partial specialisation to end the recursion.
+      /*
+       * \author Helfer Thomas.
+       * \date   20 Apr. 2007.
+       */
+      template<typename Child>
+      class GenTypeSpecializedMethods<Child,tfel::meta::TypeListEndType>
+      {};
+
+    } // end of namespace internals
+
+    //! The base class of GenType.
+    /*
+     * \param  typename List, the list of types contained in the GenType.
+     * \author Helfer Thomas.
+     * \date   20 Apr. 2007.
+     */
+    template<typename List>
+    struct GenTypeBase
+      : public tfel::utilities::internals::GenTypeSpecializedMethods<GenTypeBase<List>,List>
+    {
+      //! Default constructor.
+      TFEL_INLINE
+      GenTypeBase()
+	: index(tfel::meta::TypeListSize<List>::value)
+      {}
+      //! Copy constructor.
+      /*
+       * \param const GenTypeBase&, the source.
+       */
+      TFEL_INLINE
+      GenTypeBase(const GenTypeBase& src)
+	: index(src.index)
+      {
+	using namespace tfel::meta;
+	if(this->index!=TypeListSize<List>::value){
+	  // create a new object by copy
+	  void  * tmp       = reinterpret_cast<void*>(&(this->container.buffer[0]));
+	  const void * tmp2 = reinterpret_cast<const void*>(&(src.container.buffer[0]));
+	  (*(GenTypeBase::methods.copyMethod[this->index]))(tmp,tmp2);
+	}
+      }
+      //! The assignement operator.
+      /*
+       * \param const GenTypeBase&, the right-hand side.
+       */
+      TFEL_INLINE
+      GenTypeBase&
+      operator=(const GenTypeBase& src)
+      {
+	using namespace tfel::meta;
+	// check for self-assignement
+	if(this!=&src){
+	  if(this->index==src.index){
+	    if(src.index!=TypeListSize<List>::value){
+	      // the two GenTypes hold the same objects
+	      // we then use the assignement operator.
+	      void  * tmp       = reinterpret_cast<void*>(&(this->container.buffer[0]));
+	      const void * tmp2 = reinterpret_cast<const void*>(&(src.container.buffer[0]));
+	      (*(GenTypeBase::methods.assignMethod[this->index]))(tmp,tmp2);
+	    } else {
+	      // src is not initialized,
+	      // we then destroy holded object
+	      if(this->index!=TypeListSize<List>::value){
+		void * tmp = reinterpret_cast<void*>(&(this->container.buffer[0]));
+		(*(GenTypeBase::methods.destroyMethod[this->index]))(tmp);
+	      }
+	      this->index = TypeListSize<List>::value;
+	    }
+	  } else {
+	    // the two GenType have two differents objects.
+	    // we first destroy the previous object and create a new
+	    // one by copy.
+	    if(this->index!=TypeListSize<List>::value){
+	      void * tmp = reinterpret_cast<void*>(&(this->container.buffer[0]));
+	      (*(GenTypeBase::methods.destroyMethod[this->index]))(tmp);
+	    }
+	    this->index = src.index;
+	    if(this->index!=TypeListSize<List>::value){
+	      void  * tmp       = reinterpret_cast<void*>(&(this->container.buffer[0]));
+	      const void * tmp2 = reinterpret_cast<const void*>(&(src.container.buffer[0]));
+	      (*(GenTypeBase::methods.copyMethod[this->index]))(tmp,tmp2);
+	    }
+	  }
+	}
+	return *this;
+      }
+      //! copy a GenType (calls the assignement operator).
+      /*
+       * \param const GenTypeBase&, the object to which it is compared.
+       */
+      bool 
+      copy(const GenTypeBase& src)
+      {
+	using namespace tfel::meta;
+	this->operator=(src);
+	return true;
+      }
+      //! set the value of the GenType.
+      /*
+       * \param const T1&, the value affected to the GenType.
+       * \pre   T1 must be a type that the GenType can hold.
+       */
+      template<typename T1>
+      TFEL_INLINE
+      typename tfel::meta::EnableIf<
+	tfel::meta::TypeListCountNbrOfT<T1,List>::value==1, 
+	void >::type 
+      set(const T1& src)
+      {
+	using namespace tfel::meta;
+	using namespace tfel::utilities::internals;
+	if(this->index==TypeListFindEltPos<T1,List>::value){
+	  // The GenType already holds an object of type T1
+	  T1& tmp = *(reinterpret_cast<T1*>(&(this->container.buffer[0])));
+	  tmp = src;
+	} else {
+	  // We create a new object of type T1 by calling the copy constructor
+	  if(this->index!=TypeListSize<List>::value){
+	    // destroy the current object
+	    void * tmp = reinterpret_cast<void*>(&(this->container.buffer[0]));
+	    (*(GenTypeBase::methods.destroyMethod[this->index]))(tmp);
+	  }
+	  this->index=TypeListFindEltPos<T1,List>::value;
+	  void * p = reinterpret_cast<void*>(&(this->container.buffer[0]));
+	  // the magic of placement new...
+	  new (p) T1(src);
+	}
+      }
+      //! assignement operator.
+      /*
+       * \param  const T1&, the value affected to the GenType.
+       * \return GenTypeBase&, a reference to this.
+       * \pre    T1 must be a type that the GenType can hold.
+       */
+      template<typename T1>
+      TFEL_INLINE
+      typename tfel::meta::EnableIf<
+	tfel::meta::TypeListCountNbrOfT<T1,List>::value==1, 
+	GenTypeBase&>::type 
+      operator=(const T1& src)
+      {
+	this->template set<T1>(src);
+	return *this;
+      }
+      template<typename T1>
+      typename tfel::meta::EnableIf<tfel::meta::TypeListCountNbrOfT<T1,List>::value==1,
+				    bool>::type
+      is() const
+      {
+	using namespace tfel::meta;
+	return this->index==TypeListPosition<T1,List>::value;
+      } // end of Value::is
+      //! get the value contained in the GenType (const version).
+      /*
+       * \return const T1&, the value affected to the GenType.
+       * \pre    T1 must be a type that the GenType can hold.
+       * \throw  GenTypeCastError, if the type contained in the GenType doesnot match.
+       */
+      template<typename T1>
+      TFEL_INLINE
+      typename tfel::meta::EnableIf<
+	tfel::meta::TypeListCountNbrOfT<T1,List>::value==1, 
+	const T1& >::type 
+      get(void) const
+      {	
+	using namespace std;
+	using namespace tfel::meta;
+	using namespace tfel::utilities::internals;
+	if(this->index!=TypeListFindEltPos<T1,List>::value){
+	  throw(GenTypeCastError());
+	}
+	return *(reinterpret_cast<const T1*>(&(this->container.buffer[0])));
+      }
+      //! get the value contained in the GenType.
+      /*
+       * \return T1&, the value affected to the GenType.
+       * \pre    T1 must be a type that the GenType can hold.
+       * \throw  GenTypeCastError, if the type contained in the GenType does not match.
+       */
+      template<typename T1>
+      TFEL_INLINE 
+      typename tfel::meta::EnableIf<
+	tfel::meta::TypeListCountNbrOfT<T1,List>::value==1, 
+	T1&>::type 
+      get(void)
+      {
+	using namespace std;
+	using namespace tfel::meta;
+	using namespace tfel::utilities::internals;
+	if(this->index!=TypeListFindEltPos<T1,List>::value){
+	  throw(GenTypeCastError());
+	}
+	return *(reinterpret_cast<T1*>(&(this->container.buffer[0])));
+      }
+      /*
+       * Destructor
+       */
+      ~GenTypeBase()
+      {
+	using namespace tfel::meta;
+	if(this->index!=TypeListSize<List>::value){
+	  //This calls the destructor of the type hold
+	  void * tmp = reinterpret_cast<void*>(&(this->container.buffer[0]));
+	  (*(GenTypeBase::methods.destroyMethod[this->index]))(tmp);
+	}
+      }
+      //! number of object that the GenType can hold
+      static const unsigned short ListSize = tfel::meta::TypeListSize<List>::value;
+      //! a simple alias.
+      typedef tfel::utilities::internals::GenTypeRunTimeMethods<ListSize,List> RunTimeMethods;
+    protected:
+      //! RunTimeMethods used by the GenType.
+      static const RunTimeMethods methods;
+      //! maximum size of the types hold by the GenType.
+      static const size_t size = tfel::meta::TypeListMaxSize<List>::value;
+      //! a type properly aligned.
+      typedef typename tfel::utilities::internals::AlignedPOD<List>::type Align;
+      //! memory where objects are holded
+      union 
+      {
+	//! the buffer where objects are hold.
+	unsigned char buffer[size];
+	//! Align is here to ensure correct alignement of the memory.
+	//  see for http://www.ddj.com/dept/cpp/184403821 and 
+	//  http://www.ddj.com/dept/cpp/184403828 
+	//  for more details...
+	Align dummy;
+      } container;
+      //! index to the current type hold by the GenType.
+      unsigned short index;
+    private:
+      //! a simple assertion
+      TFEL_STATIC_ASSERT((tfel::meta::TypeListElementsAreUnique<List>::cond));
+    };
+
+    // Declaration of GenTypeBase static member RunTimeMethod
+    template<typename List>
+    const typename GenTypeBase<List>::RunTimeMethods GenTypeBase<List>::methods;
+
+  } // end of namespace utilities
+
+} // end of namespace tfel
+
+#endif /* _LIB_TFEL_GENTYPEBASE_H_ */

@@ -1,0 +1,88 @@
+## Makefile.am -- Process this file with automake to produce a Makefile.in file.
+
+INCLUDES = -I$(top_srcdir)/include        \
+	   -I$(top_srcdir)/mfront/include
+
+if HAVE_CASTEM
+INCLUDES += -I$(CASTEM_ROOT)/include $(CASTEM_CPPFLAGS)
+endif
+
+bin_PROGRAMS = mfront
+mfront_SOURCES = main.cxx                                             \
+		 MFront.cxx                                           \
+		 MFrontLock.cxx                                       \
+		 MFrontInitInterfaces.cxx                             \
+		 MFrontInitParsers.cxx                                \
+		 MFrontParserFactory.cxx                              \
+		 BehaviourCharacteristic.cxx                          \
+		 BoundsDescription.cxx                                \
+		 VarHandler.cxx                                       \
+		 StaticVarHandler.cxx                                 \
+		 ComputedVarHandler.cxx                               \
+		 MFrontBehaviourParserCommon.cxx                      \
+		 MFrontBehaviourVirtualParser.cxx                     \
+		 MFrontBehaviourVirtualInterface.cxx                  \
+		 MFrontLawVirtualInterface.cxx                        \
+		 SupportedTypes.cxx                                   \
+		 MFrontHeader.cxx                                     \
+		 ParserBase.cxx                                       \
+		 InterfaceBase.cxx                                    \
+		 ParserUtilities.cxx                                  \
+		 UnaryLoadingDefinition.cxx                           \
+		 MFrontBehaviourInterfaceFactory.cxx                  \
+		 MFrontLawInterfaceFactory.cxx                        \
+		 MFrontDefaultParser.cxx                              \
+		 MFrontMaterialLawParser.cxx                          \
+		 MFrontIsotropicMisesCreepParser.cxx                  \
+		 MFrontIsotropicStrainHardeningMisesCreepParser.cxx   \
+		 MFrontIsotropicMisesPlasticFlowParser.cxx            \
+		 MFrontRungeKuttaParser.cxx                           \
+		 MFrontImplicitParser.cxx                             \
+		 MFrontMultipleIsotropicMisesFlowsParser.cxx          \
+		 MFrontIsotropicBehaviourParserBase.cxx               \
+		 MFrontMFrontLawInterface.cxx                         \
+		 MFrontCLawInterfaceBase.cxx                          \
+		 MFrontCLawInterface.cxx                              \
+		 MFrontFortranLawInterface.cxx                        \
+		 MFrontCppLawInterface.cxx                            \
+		 MFrontCppTestLawInterface.cxx                        \
+		 MFrontExcelLawInterface.cxx                          \
+		 MFrontOctaveLawInterface.cxx
+
+
+if HAVE_GNUPLOT
+mfront_SOURCES += MFrontGnuplotLawInterface.cxx
+endif
+
+if HAVE_PYTHON
+mfront_SOURCES += MFrontPythonLawInterface.cxx
+endif
+
+if SUPPORT_PLEIADES
+mfront_SOURCES += MFrontPleiadesLawInterface.cxx
+mfront_SOURCES += MFrontPleiadesModelParser.cxx
+mfront_SOURCES += MFrontPleiadesModelParserArchitecture1.4.cxx
+endif
+
+if HAVE_CASTEM
+mfront_SOURCES += MFrontUMATInterface.cxx      \
+		  MFrontCastemLawInterface.cxx
+endif
+
+
+mfront_LDFLAGS = -export-dynamic
+mfront_LDADD   = -L$(top_builddir)/src/System    -lTFELSystem         \
+		 -L$(top_builddir)/src/Utilities -lTFELUtilities -ldl \
+		 -lpthread
+
+
+# UMAT Interfaces
+
+if HAVE_CASTEM
+lib_LTLIBRARIES = libUMATInterface.la
+libUMATInterface_la_SOURCES = UMATComputeStiffnessTensor.cxx        \
+			      UMATComputeThermalExpansionTensor.cxx \
+			      UMATRotationMatrix.cxx                \
+		              UMATException.cxx
+libUMATInterface_la_LIBADD  = -L$(top_builddir)/src/Utilities/ -lTFELUtilities
+endif

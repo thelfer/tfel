@@ -1,0 +1,204 @@
+/*!
+ * \file   FunctionScalarExpr.hxx
+ * \brief  
+ * 
+ * \author Helfer Thomas
+ * \date   26 déc 2006
+ */
+
+#include<string>
+
+#include"Metaprogramming/Implements.hxx"
+#include"Metaprogramming/StaticAssert.hxx"
+#include"Metaprogramming/EnableIf.hxx"
+#include"TypeTraits/IsInvalid.hxx"
+#include"TypeTraits/IsScalar.hxx"
+#include"Utilities/Name.hxx"
+#include"Math/General/BasicOperations.hxx"
+#include"Math/Function/FunctionConcept.hxx"
+#include"Math/Function/FunctionNegExpr.hxx"
+#include"Math/General/ComputeUnaryResult.hxx"
+#include"Math/General/ComputeBinaryResult.hxx"
+
+#ifndef _LIB_TFEL_FUNCTIONSCALAREXPR_HXX_
+#define _LIB_TFEL_FUNCTIONSCALAREXPR_HXX_ 
+
+namespace tfel{
+
+  namespace math{
+
+    template<typename Func,typename Scal, typename Op>
+    class FunctionScalarExpr;
+
+    template<typename Func,typename Scal>
+    class FunctionTraits<FunctionExpr<FunctionScalarExpr<Func,Scal,OpPlus> > >
+    {
+      typedef typename FunctionTraits<Func>::DerivateFunc DF;
+    public:
+      typedef DF DerivateFunc;
+    };
+    
+    template<typename Func,typename Scal>
+    class FunctionTraits<FunctionExpr<FunctionScalarExpr<Func,Scal,OpMinus> > >
+    {
+      typedef typename FunctionTraits<Func>::DerivateFunc DF;
+    public:
+      typedef DF DerivateFunc;
+    };
+
+    template<typename Func,typename Scal>
+    class FunctionTraits<FunctionExpr<FunctionScalarExpr<Func,Scal,OpMult> > >
+    {
+      typedef typename FunctionTraits<Func>::DerivateFunc DF;
+      typedef FunctionExpr<FunctionScalarExpr<DF,Scal,OpMult> > Res;
+    public:
+      typedef Res DerivateFunc;
+    };
+
+    template<typename Func,typename Scal>
+    class FunctionTraits<FunctionExpr<FunctionScalarExpr<Func,Scal,OpDiv> > >
+    {
+      typedef typename FunctionTraits<Func>::DerivateFunc DF;
+      typedef typename ComputeBinaryResult<DF,Scal,OpMult>::Handle S_DF;
+      typedef typename ComputeUnaryResult<S_DF,OpNeg>::Handle N_;
+      typedef typename ComputeBinaryResult<Func,Func,OpMult>::Handle D_;
+      typedef typename ComputeBinaryResult<N_,D_,OpDiv>::Handle Res;
+    public:
+      typedef Res DerivateFunc;
+    };
+
+    namespace internals{
+    
+      template<typename Func,typename Scal, typename Op>
+      struct DerivateFunctionScalarExpr;
+
+      template<typename Func,typename Scal>
+      struct DerivateFunctionScalarExpr<Func,Scal,OpPlus>
+      {
+	static const typename 
+	FunctionTraits<FunctionExpr<FunctionScalarExpr<Func,Scal,OpPlus> > >::DerivateFunc
+	exe(const Func f,const Scal)
+	{
+	  return derivate(f);
+	}
+      };
+
+      template<typename Func,typename Scal>
+      struct DerivateFunctionScalarExpr<Func,Scal,OpMinus>
+      {
+	static const typename 
+	FunctionTraits<FunctionExpr<FunctionScalarExpr<Func,Scal,OpMinus> > >::DerivateFunc
+	exe(const Func f,const Scal)
+	{
+	  return derivate(f);
+	}
+      };
+
+      template<typename Func,typename Scal>
+      struct DerivateFunctionScalarExpr<Func,Scal,OpMult>
+      {
+	static const typename 
+	FunctionTraits<FunctionExpr<FunctionScalarExpr<Func,Scal,OpMult> > >::DerivateFunc
+	exe(const Func f,const Scal s)
+	{
+	  return derivate(f)*s;
+	}
+      };
+
+      template<typename Func,typename Scal>
+      struct DerivateFunctionScalarExpr<Func,Scal,OpDiv>
+      {
+	static const typename 
+	FunctionTraits<FunctionExpr<FunctionScalarExpr<Func,Scal,OpDiv> > >::DerivateFunc
+	exe(const Func f,const Scal s)
+	{
+	  return derivate(f)/s;
+	}
+      };
+
+    } // end of namespace internals
+
+    template<typename F,typename S, typename Op>
+    class FunctionScalarExpr
+    {
+      
+      TFEL_STATIC_ASSERT((tfel::meta::Implements<F,FunctionConcept>::cond));
+      TFEL_STATIC_ASSERT((tfel::typetraits::IsScalar<S>::cond));
+
+      const F a;
+      const S b;
+
+      // Assignement operator (disabled)
+      FunctionScalarExpr&
+      operator = (const FunctionScalarExpr&);
+
+      // Default Constructor (disabled)
+      FunctionScalarExpr();
+
+    protected:
+
+      typedef F first_arg;
+      typedef S second_arg;
+
+    public:
+
+      static std::string 
+      getName(void){
+	using namespace std;
+	using namespace tfel::utilities;
+	return string("FunctionScalarExpr<")
+	  +Name<F>::getName()+string(",")
+	  +Name<S>::getName()+string(",")
+	  +Name<Op>::getName()+string(">");
+      }
+
+      FunctionScalarExpr(const F a_, const S b_)
+	: a(a_), b(b_)
+      {}
+
+      // Copy Construtor
+      TFEL_MATH_INLINE
+      FunctionScalarExpr(const FunctionScalarExpr& src)
+	: a(src.a), b(src.b)
+      {}
+
+      template<typename T>
+      TFEL_MATH_INLINE
+      typename tfel::meta::EnableIf<
+	!tfel::typetraits::IsInvalid<typename ComputeBinaryResult<
+	typename ComputeUnaryResult<T,F>::Result,S,Op>::Result>::cond,
+	typename ComputeBinaryResult<
+	typename ComputeUnaryResult<T,F>::Handle,S,Op>::Handle
+      >::type
+      operator()(const T& x) const
+      {
+	return Op::apply(a(x),b);
+      } // end of operator ()
+
+      const F
+      getFunc(void) const
+      {
+	return this->a;
+      }
+
+      const S
+      getScalar(void) const
+      {
+	return this->b;
+      }
+
+    }; // end of FunctionScalarExpr
+
+    template<typename Func,typename Scal,typename Op>
+    const typename 
+    FunctionTraits<FunctionExpr<FunctionScalarExpr<Func,Scal,Op> > >::DerivateFunc
+    derivate(const FunctionExpr<FunctionScalarExpr<Func,Scal,Op> >&);
+
+  } // end of namespace math
+
+} // end of namespace tfel
+  
+#include"Math/Function/FunctionScalarExpr.ixx"
+
+#endif /* _LIB_TFEL_FUNCTIONSCALAREXPR_HXX */
+

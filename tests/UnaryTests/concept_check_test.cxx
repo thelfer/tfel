@@ -1,0 +1,25 @@
+#include<iostream>
+#include<cstdlib>
+#include<cassert>
+
+#include "Metaprogramming/IsSuperClassOf.hxx"
+#include "Metaprogramming/IsSubClassOf.hxx"
+
+struct A{};
+struct B
+  : public A
+{};
+
+int main(void){
+  
+  assert((tfel::meta::IsSuperClassOf<A,B>::cond==1));
+  assert((tfel::meta::IsSuperClassOf<B,A>::cond==0));
+  
+  assert((tfel::meta::IsSubClassOf<A,B>::cond==0));
+  assert((tfel::meta::IsSubClassOf<B,A>::cond==1));
+
+  std::cout << "success" << std::endl;
+
+  return EXIT_SUCCESS;
+  
+}

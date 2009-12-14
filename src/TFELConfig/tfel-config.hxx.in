@@ -1,0 +1,63 @@
+#include<iostream>
+#include<cstdlib>
+#include<map>
+#include<string>
+
+#define PREFIXDIR     "@prefix@"
+#define EXECPREFIXDIR "@exec_prefix@"
+#define INCLUDEDIR    "@includedir@"
+#define LIBDIR        "@libdir@"
+
+#ifdef CASTEM
+#define CASTEMFLAGS "@CASTEM_CPPFLAGS@ -I@CASTEM_ROOT@/include"
+#endif
+
+typedef void (*FuncPtr)(void);
+typedef std::map<std::string,std::pair<FuncPtr,std::string> > CallBacksContainer;
+
+const std::string
+libDir(void);
+
+const std::string
+includeDir(void);
+
+void
+registerCallBack(const std::string&,
+		 const FuncPtr&,
+		 const std::string&);
+
+void
+treatOFlags(void);
+
+void
+treatExceptions(void);
+
+void
+treatMath(void);
+
+void
+treatUtilities(void);
+
+void
+treatFiniteElement(void);
+
+void
+treatMaterialLaw(void);
+
+void
+treatAll(void);
+
+void
+treatIncludes(void);
+
+void
+treatLibs(void);
+
+void
+listOptions(std::ostream&);
+
+void
+treatUnknownOption(const std::string&);
+
+void
+treatHelp(void);

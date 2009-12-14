@@ -1,0 +1,65 @@
+# French translations for plot package
+# Traductions françaises du paquet plot.
+# Copyright (C) 2008 Free Software Foundation, Inc.
+# This file is distributed under the same license as the plot package.
+# Helfer Thomas <helferthomas@free.fr>, 2008.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: plot 0.1\n"
+"Report-Msgid-Bugs-To: thomas.helfer@cea.fr\n"
+"POT-Creation-Date: 2009-12-10 20:37+0100\n"
+"PO-Revision-Date: 2008-03-10 18:39+0100\n"
+"Last-Translator: Helfer Thomas <helferthomas@free.fr>\n"
+"Language-Team: French\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+
+#: tplot/src/PlotWindow.cxx:45
+msgid "_File"
+msgstr "_Fichier"
+
+#: tplot/src/PlotWindow.cxx:46
+msgid "_Edit"
+msgstr "_Édition"
+
+#: tplot/src/PlotWindow.cxx:47
+msgid "_View"
+msgstr "_Affichage"
+
+#: tplot/src/PlotWindow.cxx:48
+msgid "_Theme"
+msgstr "Theme"
+
+#: tplot/src/PlotWindow.cxx:50
+msgid "_Export"
+msgstr "_Export"
+
+#: tplot/src/PlotWindow.cxx:58
+msgid "Add Curve"
+msgstr "Ajout d'une courbe"
+
+#: tplot/src/PlotWindow.cxx:60
+msgid "FullScreen"
+msgstr "Plein écran"
+
+#: tplot/src/PlotWindow.cxx:62
+msgid "View grid"
+msgstr "Affichage de la grille"
+
+#: tplot/src/PlotWindow.cxx:64
+msgid "Choose theme"
+msgstr "Sélection d'un thème"
+
+#: tplot/src/PlotWindow.cxx:222
+msgid "Encapsulated PostScript"
+msgstr "Encapsulated PostScript"
+
+#: tplot/src/PlotWindow.cxx:345
+msgid "about plot"
+msgstr "à propos de plot"
+
+#~ msgid "Load library"
+#~ msgstr "Chargement d'une librairie"

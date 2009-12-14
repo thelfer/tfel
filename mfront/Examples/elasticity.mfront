@@ -1,0 +1,29 @@
+@Behaviour Elasticity;
+@Author Helfer Thomas;
+@Date 23/11/06;
+@Description{
+ A very first test 
+ (the most simple one in fact).
+}
+
+@UseQt true;
+
+@Coef stress young;
+@Coef real   nu;
+
+@LocalVar stress lambda;
+@LocalVar stress mu;
+
+@Includes{
+#include"MaterialLaw/Lame.hxx"
+}
+
+@InitLocalVars{
+  using namespace tfel::materiallaw::lame;
+  lambda = computeLambda(young,nu);
+  mu = computeMu(young,nu);
+}
+
+@Integrator{
+  sig = lambda*trace(eto+deto)*StrainStensor::Id()+2*mu*(eto+deto);
+}
