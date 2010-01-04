@@ -1706,7 +1706,7 @@ namespace mfront{
     this->behaviourFile << "*/\n";
     this->behaviourFile << "void\n";
     this->behaviourFile << "integrate(void){\n";
-    writeMaterialLaws("MFrontBehaviourParserCommon::writeBehaviourConstructors",
+    writeMaterialLaws("MFrontBehaviourParserCommon::writeBehaviourIntegrator",
 		      this->behaviourFile,this->materialLaws);		      
     if(!this->integrator.empty()){
       this->behaviourFile << this->integrator;
@@ -1793,7 +1793,8 @@ namespace mfront{
   }
 
   void MFrontBehaviourParserCommon::writeBehaviourConstructors(const std::string& initStateVarsIncrements,
-							       const std::string& initComputedVars)
+							       const std::string& initComputedVars,
+							       const std::string& predictor)
   {    
     using namespace std;
     VarContainer::const_iterator p;
@@ -1834,7 +1835,10 @@ namespace mfront{
 		      this->behaviourFile,this->materialLaws);
     if(!this->initLocalVars.empty()){
       this->behaviourFile << this->initLocalVars;
-    } 
+    }
+    if(!predictor.empty()){
+      this->behaviourFile << predictor;
+    }
     this->writeBehaviourParserSpecificConstructorPart();
     for(b  = this->boundsDescriptions.begin();
 	b != this->boundsDescriptions.end();++b){
@@ -1871,6 +1875,9 @@ namespace mfront{
     if(!this->initLocalVars.empty()){
       this->behaviourFile << this->initLocalVars;
     } 
+    if(!predictor.empty()){
+      this->behaviourFile << predictor;
+    }
     this->writeBehaviourParserSpecificConstructorPart();
     for(b  = this->boundsDescriptions.begin();
 	b != this->boundsDescriptions.end();++b){
@@ -1902,6 +1909,9 @@ namespace mfront{
 	  b != this->boundsDescriptions.end();++b){
 	b->writeBoundsCheking(this->behaviourFile);
       }      
+      if(!predictor.empty()){
+	this->behaviourFile << predictor;
+      }
       this->behaviourFile << "}\n\n";
     }
   }
