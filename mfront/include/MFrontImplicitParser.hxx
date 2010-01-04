@@ -100,6 +100,8 @@ namespace mfront{
 
     void treatAlgorithm(void);
 
+    void treatPredictor(void);
+
     void treatComputeStress(void);
 
     void treatStateVariables(void);
@@ -111,6 +113,8 @@ namespace mfront{
     std::string computeStress;
 
     std::string computeFinalStress;
+
+    std::string predictor;
 
     long double theta;
 

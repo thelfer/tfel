@@ -50,6 +50,7 @@ namespace mfront{
     this->varNames.insert("computeStress");
     this->varNames.insert("computeFinalStress");
     this->varNames.insert("computeFdF");
+    this->varNames.insert("predicte");
     this->varNames.insert("integrate");
     this->varNames.insert("error");
     this->varNames.insert("iter");
@@ -61,6 +62,7 @@ namespace mfront{
     // CallBacks
     this->registerNewCallBack("@MaterialLaw",&MFrontImplicitParser::treatMaterialLaw);
     this->registerNewCallBack("@ComputeStress",&MFrontImplicitParser::treatComputeStress);
+    this->registerNewCallBack("@Predictor",&MFrontImplicitParser::treatPredictor);
     this->registerNewCallBack("@Theta",&MFrontImplicitParser::treatTheta);
     this->registerNewCallBack("@Epsilon",&MFrontImplicitParser::treatEpsilon);
     this->registerNewCallBack("@IterMax",&MFrontImplicitParser::treatIterMax);
@@ -204,6 +206,19 @@ namespace mfront{
     }
     return var;
   } // end of MFrontImplicitParser::variableModifier2
+
+  void
+  MFrontImplicitParser::treatPredictor(void)
+  {
+    using namespace std;
+    if(!this->predictor.empty()){
+      string msg("MFrontImplicitParser::treatPredictor : ");
+      msg += "@Predictor already called";
+      throw(runtime_error(msg));
+    }
+    this->predictor  = this->readNextBlock(true);
+    this->predictor += "\n";
+  } // end of MFrontImplicitParser::treatPredictor
 
   void
   MFrontImplicitParser::treatComputeStress(void)
@@ -555,7 +570,8 @@ namespace mfront{
       }
     }   
     MFrontBehaviourParserCommon::writeBehaviourConstructors(initStateVars.str(),
-							    initComputedVars.str());
+							    initComputedVars.str(),
+							    this->predictor);
   }
 
   void MFrontImplicitParser::writeBehaviourStateVarsIncrements(void)
