@@ -87,7 +87,7 @@ namespace tfel
 	StensorExpr&
       >::type
       operator+=(const stensor<N,T2,Storage2>& s){
-	VectorUtilities<StensorDimeToSize<N>::value>::PlusEqual(s,*this);
+	VectorUtilities<StensorDimeToSize<N>::value>::PlusEqual(*this,s);
 	return *this;
       }
     
@@ -98,7 +98,7 @@ namespace tfel
 	StensorExpr&
       >::type
       operator+=(const StensorExpr<stensor<N,T2,Storage2>,Expr>& s){
-	VectorUtilities<StensorDimeToSize<N>::value>::PlusEqual(s,*this);
+	VectorUtilities<StensorDimeToSize<N>::value>::PlusEqual(*this,s);
 	return *this;
       }
 
@@ -109,7 +109,7 @@ namespace tfel
 	StensorExpr&
       >::type
       operator-=(const stensor<N,T2,Storage2>& s){
-	VectorUtilities<StensorDimeToSize<N>::value>::MinusEqual(s,*this);
+	VectorUtilities<StensorDimeToSize<N>::value>::MinusEqual(*this,s);
 	return *this;
       }
     
@@ -120,7 +120,7 @@ namespace tfel
 	StensorExpr&
       >::type
       operator-=(const StensorExpr<stensor<N,T2,Storage2>,Expr>& s){
-	VectorUtilities<StensorDimeToSize<N>::value>::MinusEqual(s,*this);
+	VectorUtilities<StensorDimeToSize<N>::value>::MinusEqual(*this,s);
 	return *this;
       }
 
