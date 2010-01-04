@@ -1625,6 +1625,7 @@ namespace mfront{
     this->srcFile << "#include<stdexcept>\n";
     this->srcFile << "#include<cmath>\n\n";
     this->srcFile << "#include\"Pleiades/Global.hxx\"\n";
+    this->srcFile << "#include\"Pleiades/Parser/DataManager.hxx\"\n";
     this->srcFile << "#include\"Pleiades/Glossary/Glossary.hxx\"\n";
     // Functions
     for(p11=this->functions.begin();p11!=this->functions.end();++p11){
@@ -2089,6 +2090,7 @@ namespace mfront{
     this->srcFile << "using namespace std;\n";
     this->srcFile << "using namespace boost;\n";
     this->srcFile << "using namespace pleiades;\n";
+    this->srcFile << "using namespace pleiades::time;\n";
     this->srcFile << "using namespace pleiades::field;\n";
     this->srcFile << "using namespace pleiades::glossary;\n";
     this->srcFile << "vector<string>::const_iterator ptr;\n";
@@ -2097,7 +2099,7 @@ namespace mfront{
     found = false;
     for(p11=this->functions.begin();(p11!=this->functions.end())&&(!found);++p11){
       if(p11->useTimeIncrement){
-	this->srcFile << "const pleiades::field::real dt = this->sclock.getCurrentTimeIncrement();\n";
+	this->srcFile << "const pleiades::field::real dt = convert_to_double(this->sclock.getCurrentTimeIncrement());\n";
 	found = true;
       }
     }
