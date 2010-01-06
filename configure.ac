@@ -9,7 +9,8 @@ AC_CONFIG_AUX_DIR([config])
 AC_CANONICAL_TARGET
 
 # Automake specific stuff
-AM_INIT_AUTOMAKE(foreign dist-bzip2)
+AM_INIT_AUTOMAKE([foreign dist-bzip2])
+m4_ifdef([AM_SILENT_RULES],[AM_SILENT_RULES([yes])])
 
 # licence choice
 gpl_licence=no;
