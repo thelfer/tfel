@@ -1,7 +1,7 @@
 ## Makefile.am -- Process this file with automake to produce a Makefile.in file.
 
 INCLUDES = -I$(top_srcdir)/include       \
-	   -I$(top_srcdir)/TPlot/include \
+	   -I$(top_srcdir)/tplot/include \
 	    $(GTKMM_CFLAGS)
 
 localedir = $(datadir)/locale
