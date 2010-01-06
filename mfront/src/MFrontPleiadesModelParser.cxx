@@ -73,6 +73,10 @@ namespace mfront{
     this->registerNewCallBack("@Function",&MFrontPleiadesModelParser::treatFunction);
     this->registerNewCallBack("@InitializeParameters",
 			      &MFrontPleiadesModelParser::treatInitializeParameters);
+    this->registerNewCallBack("@Bounds",
+			      &MFrontPleiadesModelParser::treatBounds);
+    this->registerNewCallBack("@PhysicalBounds",
+			      &MFrontPleiadesModelParser::treatPhysicalBounds);
     this->varNames.insert("dt");
     this->varNames.insert("std");
     this->varNames.insert("boost");
@@ -113,6 +117,119 @@ namespace mfront{
     this->varNames.insert("getName");
     this->varNames.insert("data");
   } // end of MFrontPleiadesModelParser::MFrontPleiadesModelParser()
+
+  void
+  MFrontPleiadesModelParser::treatBounds(void)
+  {
+    this->registerBounds(this->boundsDescriptions);
+  } // end of MFrontPleiadesModelParser::treatBounds
+
+  void
+  MFrontPleiadesModelParser::treatPhysicalBounds(void)
+  {
+    this->registerBounds(this->physicalBoundsDescriptions);
+  } // end of MFrontPleiadesModelParser::treatPhysicalBounds
+
+  void
+  MFrontPleiadesModelParser::registerBounds(std::vector<VariableBoundsDescription>& container)
+  {
+    using namespace std;
+    VarContainer::const_iterator p;
+    ComputedVarContainer::const_iterator p2;
+    VariableBoundsDescription boundsDescription;
+    unsigned short i;
+    bool found;
+
+    this->checkNotEndOfFile("MFrontPleiadesModelParser::registerBounds");
+
+    boundsDescription.lineNumber = this->current->line;
+    boundsDescription.varName = this->current->value;
+    
+    found = false;
+    for(i=1u,p=this->inputs.begin();
+	(p!=this->inputs.end())&&(!found);++p,++i){
+      if(p->name==boundsDescription.varName){
+	found=true;
+	boundsDescription.varNbr = i;
+      }
+    }
+    if(!found){
+      this->throwRuntimeError("MFrontPleiadesModelParser::registerBounds",
+			      this->current->value+" is not a valid identifier.");
+    }
+    ++(this->current);
+    this->readSpecifiedToken("MFrontPleiadesModelParser::registerBounds","in");
+    this->checkNotEndOfFile("MFrontPleiadesModelParser::registerBounds ",
+			    "Expected ']' or '['.");
+    if(this->current->value=="]"){
+      ++(this->current);
+      this->checkNotEndOfFile("MFrontPleiadesModelParser::registerBounds ",
+			      "Expected '*'.");
+      if(this->current->value!="*"){
+	this->throwRuntimeError("MFrontPleiadesModelParser::registerBounds",
+				"Expected '*' (read '"+this->current->value+"')");
+      }
+      boundsDescription.boundsType = VariableBoundsDescription::Upper;
+    } else if(this->current->value=="["){
+      ++(this->current);
+      this->checkNotEndOfFile("MFrontPleiadesModelParser::registerBounds ",
+			      "Expected lower bound value for variable "+boundsDescription.varName);
+      istringstream converter(this->current->value);
+      converter >> boundsDescription.lowerBound;
+      boundsDescription.boundsType = VariableBoundsDescription::LowerAndUpper;
+      if(!converter&&(!converter.eof())){
+	this->throwRuntimeError("MFrontPleiadesModelParser::registerBounds",
+				"Could not read lower bound value for variable '"+
+				boundsDescription.varName+"' (read '"+this->current->value+"')");
+      }
+    } else {
+      this->throwRuntimeError("MFrontPleiadesModelParser::registerBounds",
+			      "Expected ']' or '[' (read '"+this->current->value+"')");
+    }
+    ++(this->current);
+    this->readSpecifiedToken("MFrontPleiadesModelParser::registerBounds",":");
+    this->checkNotEndOfFile("MFrontPleiadesModelParser::registerBounds",
+			    "Could not read upper bound value for variable "+boundsDescription.varName);
+    if(this->current->value=="*"){
+      if(boundsDescription.boundsType==VariableBoundsDescription::Upper){
+	this->throwRuntimeError("MFrontPleiadesModelParser::registerBounds",
+				"Upper and lower values bounds are both infinity. This is inconsistent.");
+      }
+      boundsDescription.boundsType=VariableBoundsDescription::Lower;
+      ++(this->current);
+      this->checkNotEndOfFile("MFrontPleiadesModelParser::registerBounds",
+			      "Expected '['.");
+      if(this->current->value!="["){
+	this->throwRuntimeError("MFrontPleiadesModelParser::registerBounds",
+				"Expected '[' (read '"+this->current->value+"')");
+      }
+    } else {
+      istringstream converter(this->current->value);
+      converter >> boundsDescription.upperBound;
+      if(!converter&&(!converter.eof())){
+	this->throwRuntimeError("MFrontPleiadesModelParser::registerBounds",
+				"Could not read lower bound value for variable '"+
+				boundsDescription.varName+"' (read '"+this->current->value+"')");
+      }
+      if(boundsDescription.boundsType==VariableBoundsDescription::LowerAndUpper){
+	if(boundsDescription.lowerBound>boundsDescription.upperBound){
+	  this->throwRuntimeError("MFrontPleiadesModelParser::registerBounds",
+				  "Lower bound value is greater than upper bound value for variable '"+
+				  boundsDescription.varName+"'");
+	}
+      }
+      ++(this->current);
+      this->checkNotEndOfFile("MFrontPleiadesModelParser::registerBounds",
+			      "Expected ']'");
+      if(this->current->value!="]"){
+	this->throwRuntimeError("MFrontPleiadesModelParser::registerBounds",
+				"Expected ']' (read '"+this->current->value+"'");
+      }      
+    }
+    ++(this->current);
+    this->readSpecifiedToken("MFrontPleiadesModelParser::registerBounds",";");
+    container.push_back(boundsDescription);
+  } // end of MFrontPleiadesModelParser::registerBounds
 
   void
   MFrontPleiadesModelParser::treatMaterial(void)
@@ -1567,6 +1684,28 @@ namespace mfront{
     return "";
   } // end of MFrontPleiadesModelParser::getGenTypeMethod
 
+  std::string
+  MFrontPleiadesModelParser::isGenTypeMethod(const std::string& type) const
+  {
+    using namespace std;
+    if(type=="real"){
+      return "is<real>";
+    } else if(type=="double"){
+      return "is<double>";
+    } else if(type=="string"){
+      return "is<string>";
+    } else if(type=="StringArray"){
+      return "is<vector<string> >";
+    } else if(type=="DoubleArray"){
+      return "is<vector<double> >";
+    } else {
+      string msg("MFrontPleiadesModelParser::isGenTypeMethod : ");
+      msg += "no method associated with type " + type;
+      throw(runtime_error(msg));
+    }
+    return "";
+  } // end of MFrontPleiadesModelParser::isGenTypeMethod
+
   VarContainer::const_iterator
   MFrontPleiadesModelParser::findVariableDescription(const VarContainer& v,
 						     const std::string& n)
@@ -1602,6 +1741,8 @@ namespace mfront{
     set<string>::const_iterator p16;
     set<unsigned short> applyHeaders;
     set<unsigned short>::const_iterator p18;
+    vector<VariableBoundsDescription>::const_iterator p19;
+    vector<VariableBoundsDescription>::const_iterator p20;
     unsigned short specializedParametersNumber;
     unsigned short i;
     bool first;
@@ -1623,8 +1764,10 @@ namespace mfront{
     this->srcFile << " */\n\n";
     this->srcFile << "#include<iostream>\n";
     this->srcFile << "#include<stdexcept>\n";
+    this->srcFile << "#include<sstream>\n";
     this->srcFile << "#include<cmath>\n\n";
     this->srcFile << "#include\"Pleiades/Global.hxx\"\n";
+    this->srcFile << "#include\"Pleiades/OutOfBoundsPolicy.hxx\"\n";
     this->srcFile << "#include\"Pleiades/Parser/DataManager.hxx\"\n";
     this->srcFile << "#include\"Pleiades/Glossary/Glossary.hxx\"\n";
     // Functions
@@ -1706,6 +1849,100 @@ namespace mfront{
       }
       writeMaterialLaws("MFrontPleiadesModelParser::writeSrcFile",
 			this->srcFile,this->materialLaws);		      
+      for(i=0,p12=p11->usedVariables.begin();p12!=p11->usedVariables.end();++p12,++i){
+	found = false;
+	for(p19=this->physicalBoundsDescriptions.begin();
+	    (p19!=this->physicalBoundsDescriptions.end())&&(!found);){
+	  found = (p19->varName==*p12);
+	  if(!found){
+	    ++p19;
+	  }
+	}
+	found = false;
+	for(p20=this->boundsDescriptions.begin();
+	    (p20!=this->boundsDescriptions.end())&&(!found);){
+	  found = (p20->varName==*p12);
+	  if(!found){
+	    ++p20;
+	  }
+	}
+	if((p19!=this->physicalBoundsDescriptions.end())||
+	   (p20!=this->boundsDescriptions.end())){
+	  this->srcFile << "#ifndef NO_PLEIADES_BOUNDS_CHECK\n";
+	}
+	if(p19!=this->physicalBoundsDescriptions.end()){
+	  this->srcFile << "// checking " << p19->varName<< " physical bounds\n";
+	  if((p19->boundsType==VariableBoundsDescription::Lower)||
+	     (p19->boundsType==VariableBoundsDescription::LowerAndUpper)){
+	    this->srcFile << "if(" << p19->varName<< " < "<< p19->lowerBound << "){\n";
+	    this->srcFile << "ostringstream msg;\n"
+			  << "msg << \"" << this->className << "::" << p11->name << "::operator() : \"\n"
+			  << "<< \"input '" << p19->varName << "' is below its physical lower bound (\" << "
+			  << p19->varName << " << \"<" << p19->lowerBound << ").\\n\";\n";
+	    this->srcFile << "throw(runtime_error(msg.str()));\n";
+	    this->srcFile << "}\n";
+	  }
+	  if((p19->boundsType==VariableBoundsDescription::Upper)||
+	     (p19->boundsType==VariableBoundsDescription::LowerAndUpper)){
+	    this->srcFile << "if(" << p19->varName << " > " << p19->upperBound << "){\n";
+	    this->srcFile << "ostringstream msg;\n"
+			  << "msg << \"" << this->className << "::" << p11->name << "::operator() : \"\n"
+			  << "<< \"input '" << p19->varName << "' is over its physical upper bound (\" << "
+			  << p19->varName << " << \" > " << p19->upperBound << ").\\n\";\n";
+	    this->srcFile << "throw(runtime_error(msg.str()));\n",
+	    this->srcFile << "}\n";
+	  }
+	}
+	if(p20!=this->physicalBoundsDescriptions.end()){
+	  this->srcFile << "// checking " << p20->varName<< " bounds\n";
+	  if((p20->boundsType==VariableBoundsDescription::Lower)||
+	     (p20->boundsType==VariableBoundsDescription::LowerAndUpper)){
+	    this->srcFile << "if(" << p20->varName<< " < "<< p20->lowerBound << "){\n";
+	    this->srcFile << "if(pleiades::getOutOfBoundsPolicy()!= pleiades::NO_OUT_OF_BOUNDS_POLICY){\n";
+	    this->srcFile << "ostringstream msg;\n"
+			  << "msg << \"" << this->className << "::" << p11->name << "::operator() : \"\n"
+			  << "<< \"input '" << p20->varName << "' is below its physical lower bound (\" << "
+			  << p20->varName << " << \"<" << p20->lowerBound << ").\\n\";\n";
+	    this->srcFile << "switch(pleiades::getOutOfBoundsPolicy()){\n";
+	    this->srcFile << "case pleiades::STRICT_OUT_OF_BOUNDS_POLICY :\n";
+	    this->srcFile << "throw(runtime_error(msg.str()));\n";
+	    this->srcFile << "break;\n";
+	    this->srcFile << "case pleiades::WARNING_OUT_OF_BOUNDS_POLICY :\n";
+	    this->srcFile << "pleiades::printWarning(msg.str());\n";
+	    this->srcFile << "break;\n";
+	    this->srcFile << "case pleiades::NO_OUT_OF_BOUNDS_POLICY :\n";
+	    this->srcFile << "break;\n";
+	    this->srcFile << "}\n";
+	    this->srcFile << "}\n";
+	    this->srcFile << "}\n";
+	  }
+	  if((p20->boundsType==VariableBoundsDescription::Upper)||
+	     (p20->boundsType==VariableBoundsDescription::LowerAndUpper)){
+	    this->srcFile << "if(" << p20->varName<< " > "<< p20->upperBound << "){\n";
+	    this->srcFile << "if(pleiades::getOutOfBoundsPolicy()!= pleiades::NO_OUT_OF_BOUNDS_POLICY){\n";
+	    this->srcFile << "ostringstream msg;\n"
+			  << "msg << \"" << this->className << "::" << p11->name << "::operator() : \"\n"
+			  << "<< \"input '" << p20->varName << "' is over its physical lower bound (\" << "
+			  << p20->varName << " << \" > " << p20->upperBound << ").\\n\";\n";
+	    this->srcFile << "switch(pleiades::getOutOfBoundsPolicy()){\n";
+	    this->srcFile << "case pleiades::STRICT_OUT_OF_BOUNDS_POLICY :\n";
+	    this->srcFile << "throw(runtime_error(msg.str()));\n";
+	    this->srcFile << "break;\n";
+	    this->srcFile << "case pleiades::WARNING_OUT_OF_BOUNDS_POLICY :\n";
+	    this->srcFile << "pleiades::printWarning(msg.str());\n";
+	    this->srcFile << "break;\n";
+	    this->srcFile << "case pleiades::NO_OUT_OF_BOUNDS_POLICY :\n";
+	    this->srcFile << "break;\n";
+	    this->srcFile << "}\n";
+	    this->srcFile << "}\n";
+	    this->srcFile << "}\n";
+	  }
+	}
+	if((p19!=this->physicalBoundsDescriptions.end())||
+	   (p20!=this->boundsDescriptions.end())){
+	  this->srcFile << "#endif /* NO_PLEIADES_BOUNDS_CHECK */\n";
+	}
+      }
       this->srcFile << p11->body;
       if((p11->modifiedVariables.size()==1)&&
 	 (p11->usedVariables.size()<TFEL_MFRONTPLEAIDESPARSER_MAXUSEDVARIABLESFORUSINGAPPLY)){
@@ -1861,12 +2098,22 @@ namespace mfront{
 	  this->srcFile << "throw(runtime_error(msg));\n";
 	  this->srcFile << "} else {\n";
 	}
+	this->srcFile << "if(!ptr->second." << this->isGenTypeMethod(p->type) << "()){\n";
+	this->srcFile << "string msg(\"" << className << "::" << className << " : \");\n";
+	this->srcFile << "msg += \"wrong type for parameter '" << p->name << "' (expected a '"+p->type+"')\";\n";
+	this->srcFile << "throw(runtime_error(msg));\n";
+	this->srcFile << "}\n";
 	this->srcFile << "this->" << p->name << " = ptr->second." 
 		      << this->getGenTypeMethod(p->type) << "();\n";
 	this->srcFile << "}\n";
       }
       this->srcFile << "ptr = data.find(\"domains\");\n";
       this->srcFile << "if(ptr!=data.end()){\n";
+      this->srcFile << "if(!ptr->second.is<vector<string> >()){\n";
+      this->srcFile << "string msg(\"" << this->className << "::" << this->className << " : \");\n";
+      this->srcFile << "msg += \"invalid type for parameter 'domains'\";\n";
+      this->srcFile << "throw(runtime_error(msg));\n";
+      this->srcFile << "}\n";
       this->srcFile << "for(ptr3=ptr->second.get<vector<string> >().begin();\n";
       this->srcFile << "ptr3!=ptr->second.get<vector<string> >().end();++ptr3){\n";
       this->srcFile << "this->smanager.getMatchingMaterialsNames(tmp,*ptr3);\n";
@@ -1898,6 +2145,11 @@ namespace mfront{
 	  string functor = "functor"+toString(i);
 	  this->srcFile << "ptr = data.find(\"" << functor << ".domains\");\n";
 	  this->srcFile << "if(ptr!=data.end()){\n";
+	  this->srcFile << "if(!ptr->second.is<vector<string> >()){\n";
+	  this->srcFile << "string msg(\"" << this->className << "::" << this->className << " : \");\n";
+	  this->srcFile << "msg += \"invalid type for parameter '"+functor+".domains'\";\n";
+	  this->srcFile << "throw(runtime_error(msg));\n";
+	  this->srcFile << "}\n";
 	  this->srcFile << "for(ptr3=ptr->second.get<vector<string> >().begin();\n";
 	  this->srcFile << "ptr3!=ptr->second.get<vector<string> >().end();++ptr3){\n";
 	  this->srcFile << "this->smanager.getMatchingMaterialsNames(tmp,*ptr3);\n";
@@ -1965,6 +2217,11 @@ namespace mfront{
 	this->srcFile << "throw(runtime_error(msg));\n";
 	this->srcFile << "} else {\n";
       }
+      this->srcFile << "if(!data." << this->isGenTypeMethod(p->type) << "(" << name << ")){\n";
+      this->srcFile << "string msg(\"" << className << "::" << className << " : \");\n";
+      this->srcFile << "msg += \"wrong type for parameter '" << p->name << "' (expected a '"+p->type+"')\";\n";
+      this->srcFile << "throw(runtime_error(msg));\n";
+      this->srcFile << "}\n";
       this->srcFile << "this->" << p->name << " = data." 
 		    << this->getGenTypeMethod(p->type) << "(" << name << ");\n";
       this->srcFile << "}\n";
@@ -2313,6 +2570,11 @@ namespace mfront{
 	  this->srcFile << "for(ptr=this->domains.begin();ptr!=this->domains.end();++ptr){\n";
 	}
 	// getting material description
+	this->srcFile << "if(!data.hasMaterialDescription(*ptr)){\n";
+	this->srcFile << "string msg(\"" << this->className << "::initializeConstantMaterialProperties : \");\n";
+	this->srcFile << "msg += \"no material description  on material '\"+*ptr+\"'\";\n";
+	this->srcFile << "throw(runtime_error(msg));\n";
+	this->srcFile << "}\n";
 	this->srcFile << "const MaterialDescription& md = *(data.getMaterialDescription(*ptr));\n";
 	this->srcFile << "if(md.containsMaterialProperty(" << this->getPleiadesVariableName(*p2) << ")){\n";
 	this->srcFile << "if(!md.isMaterialPropertyAccesible(" << this->getPleiadesVariableName(*p2) << ")){\n";
@@ -2342,7 +2604,7 @@ namespace mfront{
 	  this->srcFile << "string msg(\"" << this->className << "::initializeConstantMaterialProperties : \");\n";
 	  this->srcFile << "msg += \"material property '\";\n";
 	  this->srcFile << "msg += " <<  this->getPleiadesVariableName(*p2) << ";\n";
-	  this->srcFile << "msg += \"' has no default value on material '\"+*ptr+\"'\";\n";
+	  this->srcFile << "msg += \"' is undefined on material '\"+*ptr+\"'\";\n";
 	  this->srcFile << "throw(runtime_error(msg));\n";
 	}
 	this->srcFile << "}\n";
@@ -2378,8 +2640,9 @@ namespace mfront{
 	  this->srcFile << "for(ptr=this->domains.begin();ptr!=this->domains.end();++ptr){\n";
 	}
 	// getting material description
-	this->srcFile << "const MaterialDescription& md = *(data.getMaterialDescription(*ptr));\n";
 	if(p3!=this->initialValues.end()){
+	  this->srcFile << "if(data.hasMaterialDescription(*ptr)){\n";
+	  this->srcFile << "const MaterialDescription& md = *(data.getMaterialDescription(*ptr));\n";
 	  this->srcFile << "if(md.containsStateVariable(" <<  this->getPleiadesVariableName(*p2) << ")){\n";
 	  this->srcFile << "real tmp = md.getStateVariable("<<  this->getPleiadesVariableName(*p2) << ")->getInitialValue();\n";
 	  this->srcFile << "if(!this->outputsInitialValues[" << this->getPleiadesVariableName(*p2)
@@ -2402,7 +2665,26 @@ namespace mfront{
 	  this->srcFile << "throw(runtime_error(msg));\n";
 	  this->srcFile << "}\n";
 	  this->srcFile << "}\n";
+	  this->srcFile << "} else {\n";
+	  this->srcFile << "if(!this->outputsInitialValues[" << this->getPleiadesVariableName(*p2)
+			<< "].insert(make_pair(*ptr,";
+	  this->srcFile << p3->second;
+	  this->srcFile << ")).second){\n";
+	  this->srcFile << "string msg(\"" << this->className << "::initializeOutputsVariablesInitialValues : \");\n";
+	  this->srcFile << "msg += \"output '\";\n";
+	  this->srcFile << "msg += " <<  this->getPleiadesVariableName(*p2) << ";\n";
+	  this->srcFile << "msg += \"' multiply defined on material '\"+*ptr+\"'\";\n";
+	  this->srcFile << "throw(runtime_error(msg));\n";
+	  this->srcFile << "}\n";
+	  this->srcFile << "}\n";
 	} else {
+	  this->srcFile << "if(!data.hasMaterialDescription(*ptr)){\n";
+	  this->srcFile << "string msg(\"" << this->className << "::initializeOutputsVariablesInitialValues : \");\n";
+	  this->srcFile << "msg += \"no material description  on material '\"+*ptr+\"', \";\n";
+	  this->srcFile << "msg += \"required to initialize output value '"+this->getPleiadesVariableName(*p2)+"'\";\n";
+	  this->srcFile << "throw(runtime_error(msg));\n";
+	  this->srcFile << "}\n";
+	  this->srcFile << "const MaterialDescription& md = *(data.getMaterialDescription(*ptr));\n";
 	  this->srcFile << "if(md.containsStateVariable(" <<  this->getPleiadesVariableName(*p2) << ")){\n";
 	  this->srcFile << "real tmp = md.getStateVariable("<<  this->getPleiadesVariableName(*p2) << ")->getInitialValue();\n";
 	  this->srcFile << "if(!this->outputsInitialValues[" << this->getPleiadesVariableName(*p2)

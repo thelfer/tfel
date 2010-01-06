@@ -15,6 +15,7 @@
 #include<fstream>
 #include"MFrontModelParserBase.hxx"
 #include"MFrontVirtualParser.hxx"
+#include"VariableBoundsDescription.hxx"
 
 namespace mfront{
 
@@ -83,6 +84,12 @@ namespace mfront{
 
     void
     treatMaterial(void);
+
+    void
+    treatBounds(void);
+
+    void
+    treatPhysicalBounds(void);
 
     void
     treatOutput(void);
@@ -157,6 +164,9 @@ namespace mfront{
     getPleiadesVariableName(const std::string&) const;
 
     std::string
+    isGenTypeMethod(const std::string&) const;
+
+    std::string
     getGenTypeMethod(const std::string&) const;
 
     void
@@ -195,6 +205,9 @@ namespace mfront{
     bool
     hasSpecializedConstructor(void) const;
 
+    void
+    registerBounds(std::vector<VariableBoundsDescription>&);
+
     struct Function;
 
     typedef std::vector<Function> FunctionContainer;
@@ -220,6 +233,8 @@ namespace mfront{
     std::string currentVar;
     std::string initializeParameters;
     bool hasDefaultConstructor;
+    std::vector<VariableBoundsDescription> boundsDescriptions;
+    std::vector<VariableBoundsDescription> physicalBoundsDescriptions;
   }; // end of class MFrontPleiadesModelParser
 
 } // end of namespace mfront  
