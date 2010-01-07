@@ -825,7 +825,7 @@ tests/UnaryTests/qt3.cxx -text
 tests/UnaryTests/stensor.cxx -text
 tests/UnaryTests/tmatrix.cxx -text
 tests/UnaryTests/tuple.cxx -text
-tests/UnaryTests/tvector2.cxx -text
+tests/UnaryTests/tvector.cxx -text
 tests/UnaryTests/typelist.cxx -text
 tests/Utilities/Makefile.am -text
 tests/Utilities/gentype.cxx -text

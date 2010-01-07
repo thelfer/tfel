@@ -131,7 +131,5 @@ int main(void)
   generate_coef(a3,a2,a1,a0,M_2_SQRTPI,-M_SQRT2,M_SQRT1_2);
   solve(a3,a2,a1,a0);
 
-  std::cout << "success" << std::endl;
-
   return EXIT_SUCCESS;
 }

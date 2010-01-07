@@ -20,7 +20,6 @@ test_PROGRAMS = CubicRoots          \
 		stensor             \
 		tmatrix             \
 		tvector             \
-		tvector2            \
 		typelist            \
 		tuple               \
 		gentype
@@ -44,7 +43,6 @@ qt3_SOURCES                 = qt3.cxx
 stensor_SOURCES             = stensor.cxx
 tmatrix_SOURCES             = tmatrix.cxx
 tvector_SOURCES             = tvector.cxx
-tvector2_SOURCES            = tvector2.cxx
 typelist_SOURCES            = typelist.cxx
 tuple_SOURCES               = tuple.cxx
 gentype_SOURCES             = gentype.cxx
