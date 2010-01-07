@@ -54,7 +54,5 @@ int main(void)
 
   cout << a   << endl;
 
-  cout << "success" << endl;
-
   return EXIT_SUCCESS;
 }

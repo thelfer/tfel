@@ -38,9 +38,6 @@ int main(void)
 {
   using namespace std;
   using namespace tfel::math;
-//   cout << log(f(600)) << endl;
-//   cout << log(f(700)) << endl;
-//   cout << log(f(800)) << endl;
 
   FSLevenbergMarquardt<1u,2u> levmar(test);
   tvector<1u> x;
@@ -53,8 +50,6 @@ int main(void)
   x(0)=800.;
   levmar.addData(x,log(f(x(0))));
   // initial guess
-//   p(0)=-13.;
-//   p(1)=4.e4;
   p(0)=1.;
   p(1)=1.;
   levmar.setInitialGuess(p);

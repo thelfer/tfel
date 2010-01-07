@@ -50,7 +50,5 @@ int main(void)
     assert(true);
   }   
 
-  cout << "success" << endl;
-
   return EXIT_SUCCESS;
 }

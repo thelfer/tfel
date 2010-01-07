@@ -5,6 +5,10 @@
  * \date   01 jui 2006
  */
 
+#ifdef NDEBUG
+#undef NDEBUG
+#endif /* NDEBUG */
+
 #include<iostream>
 #include<cstdlib>
 #include<cassert>
@@ -25,19 +29,23 @@ int main(void)
   array<1u> b(RT2,4.);
   array<1u> c(RT2,4.);
 
+  bool catched = false;
   try{
     c = a+b;
   }
   catch(MathRunTimeException& e){
-    cout << e.getMsg() << endl;
+    catched = true;
   }
+  assert(catched);
 
+  catched = false;
   try{
     c = 2*a;
   }
   catch(MathRunTimeException& e){
-    cout << e.getMsg() << endl;
+    catched = true;
   }
+  assert(catched);
 
   return EXIT_SUCCESS;
 }

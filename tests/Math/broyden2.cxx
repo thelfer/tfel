@@ -36,8 +36,8 @@ test(void)
   tvector<2,double> x0;
   tvector<2,double> vf;
   tmatrix<2,2,double> A;
-  cout << "********* test\n";
-  cout.precision(15);
+//   cout << "********* test\n";
+//   cout.precision(15);
   x0(0) = 1.5;
   x0(1) = -0.5;
   A(0,0) = 4*(x0(0)-1);
@@ -47,9 +47,9 @@ test(void)
   //  TinyMatrixSolve<2,double>::invert(A);
   res = broyden2<2,double,f>(x0,A,1.e-11,20).second;
   vf = f(res);
-  cout << "x : (" << res(0) << ", " << res(1) << ")" << endl;
-  cout << "f : (" << vf(0)  << ", " << vf(1) << ")" << endl;
-  cout << "A : " << A << endl;
+//   cout << "x : (" << res(0) << ", " << res(1) << ")" << endl;
+//   cout << "f : (" << vf(0)  << ", " << vf(1) << ")" << endl;
+//   cout << "A : " << A << endl;
 }
 
 void
@@ -61,8 +61,8 @@ test2(void)
   tvector<2,double> x0;
   tvector<2,double> vf;
   tmatrix<2,2,double> A;
-  cout << "********* test2\n";
-  cout.precision(15);
+//   cout << "********* test2\n";
+//   cout.precision(15);
   x0(0) = 1.5;
   x0(1) = -0.5;
   A(0,0) = 4*(x0(0)-1);
@@ -72,14 +72,14 @@ test2(void)
   //  TinyMatrixSolve<2,double>::invert(A);
   res = broyden2<2,double,f>(x0,1.e-11,20).second;
   vf = f(res);
-  cout << "x : (" << res(0) << ", " << res(1) << ")" << endl;
-  cout << "f : (" << vf(0)  << ", " << vf(1) << ")" << endl;
-  cout << "A : " << A << endl;
+//   cout << "x : (" << res(0) << ", " << res(1) << ")" << endl;
+//   cout << "f : (" << vf(0)  << ", " << vf(1) << ")" << endl;
+//   cout << "A : " << A << endl;
   A(0,0) = 4*(res(0)-1);
   A(0,1) = -6*res(1)*res(1);
   A(1,0) = 4*res(0)*res(0)*res(0);
   A(1,1) = 4*(4*res(1)*res(1)*res(1)+1);
-  cout << "A : " << A << endl; 
+//   cout << "A : " << A << endl; 
 }
 
 int

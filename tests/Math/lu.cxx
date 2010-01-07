@@ -5,27 +5,17 @@
  * \brief 14 avr 2009
  */
 
+#ifdef NDEBUG
+#undef NDEBUG
+#endif /* NDEBUG */
+
 #include<iostream>
+#include<cassert>
 #include<cstdlib>
 
 #include"Math/vector.hxx"
 #include"Math/matrix.hxx"
 #include"Math/LUSolve.hxx"
-
-void
-print(const tfel::math::matrix<double>& m)
-{
-  using namespace std;
-  using namespace tfel::math;
-  matrix<double>::size_type i,j;
-  cout << "m :"  << endl;
-  for(i=0;i!=m.getNbRows();++i){
-    for(j=0;j!=m.getNbRows();++j){
-      cout << m(i,j) << " ";
-    }
-    cout << endl;
-  }
-}
 
 int main(void)
 {
@@ -49,12 +39,9 @@ int main(void)
   b(1) = -1;
   b(2) = -2;
 
-  cout << "********" << endl;
-  print(m);
   LUSolve::exe(m,b);
-  print(m);
-  cout << "b : " << endl;
-  copy(b.begin(),b.end(),ostream_iterator<double>(cout," "));
-  cout << endl;
+  assert(abs(b(0)+1)<1.e-14);
+  assert(abs(b(1)-2)<1.e-14);
+  assert(abs(b(2)-1)<1.e-14);
 
 } // end of main

@@ -5,6 +5,10 @@
  * \date   03 jui 2006
  */
 
+#ifdef NDEBUG
+#undef NDEBUG
+#endif /* NDEBUG */
+
 #define PARANOIC_CHECK
 
 #include<iostream>
@@ -83,17 +87,13 @@ void test(void)
 template<typename T>
 void test2(void)
 {
-  const unsigned int nb_boucles = 100000000;
+  const unsigned int nb_boucles = 1000000;
   unsigned int i;
   unsigned int failure;
 
   tfel::math::stensor<3,T>         s(0.);
   tfel::math::tmatrix<3u,3u,T> m;
   tfel::math::tvector<3u,T>    vp;
-
-  if(s.computeEigenVectors(vp,m)==false){
-    std::cerr << "Error : " << s << std::endl; 
-  }
 
   failure = 0;
   for(i=0;i<nb_boucles;++i){
@@ -104,28 +104,23 @@ void test2(void)
     s(4)=static_cast<T>((static_cast<T>(std::rand())/static_cast<T>(RAND_MAX)-0.5)*2.f);
     s(5)=static_cast<T>((static_cast<T>(std::rand())/static_cast<T>(RAND_MAX)-0.5)*2.f);
     if(s.computeEigenVectors(vp,m)==false){
-      std::cerr << "Error : " << s << std::endl; 
       failure+=1;
     }
   }
   
-  std::cerr << "Proportion of failures : " << static_cast<double>(failure)/static_cast<double>(nb_boucles) << std::endl; 
+  assert((static_cast<double>(failure)/static_cast<double>(nb_boucles)<0.003));
 }
 
 template<typename T>
 void test3(void)
 {
-  const unsigned int nb_boucles = 100000000;
+  const unsigned int nb_boucles = 1000000;
   unsigned int i;
   unsigned int failure;
 
   tfel::math::stensor<2u,T>        s(0.);
   tfel::math::tmatrix<3u,3u,T> m;
   tfel::math::tvector<3u,T>    vp;
-
-  if(s.computeEigenVectors(vp,m)==false){
-    std::cerr << "Error : " << s << std::endl; 
-  }
 
   failure = 0;
   for(i=0;i<nb_boucles;++i){
@@ -134,12 +129,11 @@ void test3(void)
     s(2)=static_cast<T>((static_cast<T>(std::rand())/static_cast<T>(RAND_MAX)-0.5f)*2.f);
     s(3)=static_cast<T>((static_cast<T>(std::rand())/static_cast<T>(RAND_MAX)-0.5f)*2.f);
     if(s.computeEigenVectors(vp,m)==false){
-      std::cerr << "Error : " << s << std::endl; 
       failure+=1;
     }
   }
-
-  std::cerr << "Proportion of failures : " << static_cast<double>(failure)/static_cast<double>(nb_boucles) << std::endl; 
+  
+  assert((static_cast<double>(failure)/static_cast<double>(nb_boucles)<0.003));
 }
 
 
@@ -148,37 +142,34 @@ int main(void)
 
   tfel::math::init_floating_point_exceptions();
 
-#ifdef VERBOSE
+#ifdef TFEL_VERBOSE
   std::cerr << " Beginning test<float>()" << std::endl;
-#endif
+#endif /* TFEL_VERBOSE */
   test<float>();
-#ifdef VERBOSE
+#ifdef TFEL_VERBOSE
   std::cerr << " Beginning test<double>()" << std::endl;
-#endif
+#endif /* TFEL_VERBOSE */
   test<double>();
 
-#ifdef VERBOSE
+#ifdef TFEL_VERBOSE
   std::cerr << " Beginning test2<float>()" << std::endl;
-#endif
+#endif /* TFEL_VERBOSE */
   test2<float>();
 
-#ifdef VERBOSE
+#ifdef TFEL_VERBOSE
   std::cerr << " Beginning test2<double>()" << std::endl;
-#endif
+#endif /* TFEL_VERBOSE */
   test2<double>();
 
-#ifdef VERBOSE
+#ifdef TFEL_VERBOSE
   std::cerr << " Beginning test3<float>()" << std::endl;
-#endif
+#endif /* TFEL_VERBOSE */
   test3<float>();
 
-#ifdef VERBOSE
+#ifdef TFEL_VERBOSE
   std::cerr << " Beginning test3<double>()" << std::endl;
-#endif
+#endif /* TFEL_VERBOSE */
   test3<double>();
-
-
-  std::cout << "success" << std::endl; 
 
   return EXIT_SUCCESS;
 }

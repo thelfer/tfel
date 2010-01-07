@@ -26,11 +26,6 @@ void function(const tfel::math::ArrayExpr<T,Expr> a,
   assert(std::abs(a(0)-value)<std::numeric_limits<typename tfel::math::ArrayTraits<T>::NumType>::epsilon());
 }
 
-// function(a,2.);
-// function(b,4.);
-// function(a+b,6.);
-// function(2.f*sin(a),2.*std::sin(2.));
-
 int main(void)
 {
   using namespace std;
@@ -42,8 +37,6 @@ int main(void)
 
   cout << a   << endl;
   cout << b   << endl;
-
-  cout << "success" << endl;
 
   return EXIT_SUCCESS;
 }
