@@ -5,7 +5,12 @@
  * \date   05 déc 2006
  */
 
-#include"lambda-header.hxx"
+#include<cassert>
+#include<cstdlib>
+
+#include"Math/tvector.hxx"
+#include"Math/lambda.hxx"
+#include"Math/functions.hxx"
 
 int 
 main(void)
@@ -18,25 +23,20 @@ main(void)
   v(1) += 3.;
   v(2) += 1.2;
 
-  cout << x_(v) << endl; 
-  cout << y_(v) << endl; 
-  cout << z_(v) << endl; 
+  assert(abs(x_(v)-2.34)<1.e-14); 
+  assert(abs(y_(v)-5.34)<1.e-14); 
+  assert(abs(z_(v)-3.54)<1.e-14); 
   
-  cout << (x_+y_)(v) << endl;
-  cout << (x_-y_)(v) << endl;
-  cout << (x_*y_)(v) << endl;
-  cout << (x_/y_)(v) << endl;
+  assert(abs((x_+y_)(v)-7.68)    <1.e-14);
+  assert(abs((x_-y_)(v)+3)       <1.e-14);
+  assert(abs((x_*y_)(v)-12.4956) <1.e-3);
+  assert(abs((x_/y_)(v)-0.438202)<1.e-3);
 
-  cout << (3.2*x_+4.23*y_+2.3*z_)(v) << endl;
-  cout << (3.2*x_-4.23*y_+2.3*z_)(v) << endl;
-  cout << (3.2*x_*4.23*y_+2.3*z_)(v) << endl;
-  cout << (3.2*x_/4.23*y_+2.3*z_)(v) << endl;
-
-  cout << (exp(3.2*sin(x_+x_)))(12.) << "," << 0.17960 << endl;
-
-  printLambdaTraits(exp(3.2*sin(x_+x_)));
-  printLambdaTraits(exp(3.2*sin(x_)+y_*x_));
-  printLambdaTraits(2.*z_*z_*exp(3.2*sin(x_)+y_));
+  assert(abs((3.2*x_+4.23*y_+2.3*z_)(v)-38.2182)<1.e-3);
+  assert(abs((3.2*x_-4.23*y_+2.3*z_)(v)+6.9582)<1.e-3);
+  assert(abs((3.2*x_*4.23*y_+2.3*z_)(v)-177.282)<1.e-3);
+  assert(abs((3.2*x_/4.23*y_+2.3*z_)(v)-17.5949)<1.e-3);
+  assert(abs((exp(3.2*sin(x_+x_)))(12.)-0.055142)<1.e-3);
   
   return EXIT_SUCCESS;
 }

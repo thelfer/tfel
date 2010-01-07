@@ -702,7 +702,6 @@ tests/FSAlgorithms/test_FSalgorithm.cxx -text
 tests/FSAlgorithms/test_FSalgorithm2.cxx -text
 tests/FSAlgorithms/transform.cxx -text
 tests/Lambda/Makefile.am -text
-tests/Lambda/lambda-header.hxx -text
 tests/Lambda/lambda.cxx -text
 tests/Makefile.am -text
 tests/MaterialLaw/Makefile.am -text

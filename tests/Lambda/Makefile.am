@@ -1,10 +1,7 @@
 ## Makefile.am -- Process this file with automake to produce a Makefile.in file.
-INCLUDES = -I$(top_srcdir)/include      \
-           -I$(top_srcdir)/Tests/Lambda
+INCLUDES = -I$(top_srcdir)/include
 
 if WITH_TESTS
-
-noinst_HEADERS=lambda-header.hxx
 
 testdir = $(pkgdatadir)/tests/Lambda
 test_PROGRAMS = lambda
