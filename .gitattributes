@@ -825,6 +825,12 @@ tests/UnaryTests/tvector.cxx -text
 tests/UnaryTests/typelist.cxx -text
 tests/Utilities/Makefile.am -text
 tests/Utilities/gentype.cxx -text
+tfel-check/Makefile.am -text
+tfel-check/include/Makefile.am -text
+tfel-check/include/Utilities/TestLauncher.hxx -text
+tfel-check/src/Makefile.am -text
+tfel-check/src/TestLauncher.cxx -text
+tfel-check/src/tfel-check.cxx -text
 tplot/Makefile.am -text
 tplot/data/Makefile.am -text
 tplot/data/gnu.svg -text
