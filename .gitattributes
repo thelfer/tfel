@@ -701,9 +701,6 @@ tests/FSAlgorithms/iota.cxx -text
 tests/FSAlgorithms/test_FSalgorithm.cxx -text
 tests/FSAlgorithms/test_FSalgorithm2.cxx -text
 tests/FSAlgorithms/transform.cxx -text
-tests/FiniteElement/Makefile.am -text
-tests/FiniteElement/Mesh.cxx -text
-tests/FiniteElement/NodesManager.cxx -text
 tests/Lambda/Makefile.am -text
 tests/Lambda/lambda-header.hxx -text
 tests/Lambda/lambda.cxx -text
