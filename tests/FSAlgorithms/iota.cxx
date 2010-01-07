@@ -5,26 +5,25 @@
  * \date   28 Aug 2006
  */
 
+#ifdef NDEBUG
+#undef NDEBUG
+#endif
+
 #include<iostream>
 #include<cstdlib>
-#include<functional>
-#include<vector>
+#include<cassert>
 
 #include"FSAlgorithm/FSAlgorithm.hxx"
 
 int main()
 {
-  using namespace std;
   using namespace tfel::fsalgo;
-  using tfel::fsalgo::iota;
-  using tfel::fsalgo::copy;
 
-  int A1[] = {1, 2, 3};
-  const int N1 = sizeof(A1) / sizeof(int);
-
-  iota<N1>::exe(A1,12);
-  copy<N1>::exe(A1,ostream_iterator<int>(cout," "));
-  cout << endl;
+  int A1[3];
+  iota<3>::exe(A1,12);
+  assert(A1[0]==12);
+  assert(A1[1]==13);
+  assert(A1[2]==14);
 
   return EXIT_SUCCESS;
 }

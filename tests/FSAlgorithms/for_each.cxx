@@ -5,33 +5,34 @@
  * \date   28 Aug 2006
  */
 
-#include<iostream>
+#ifdef NDEBUG
+#undef NDEBUG
+#endif
+
 #include<cstdlib>
-#include<functional>
+#include<cassert>
 
 #include"FSAlgorithm/FSAlgorithm.hxx"
 
 template<class T> 
-struct print 
+struct count 
   : public std::unary_function<T, void>
 {
-  print(std::ostream& out) : os(out), count(0) {}
-  void operator() (T x) { os << x << ' '; ++count; }
-  std::ostream& os;
-  int count;
+  count()
+    : c(0)
+  {}
+  void operator() (const T&)
+  {
+    ++c;
+  }
+  int c;
 };
 
 int main()
 {
-  using namespace std;
   using namespace tfel::fsalgo;
-  using tfel::fsalgo::for_each;
-
   int A[] = {1, 4, 2, 8, 5, 7};
-  const int N = sizeof(A) / sizeof(int);
-
-  print<int> P = for_each<N>::exe(A, print<int>(cout));
-  cout << endl << P.count << " objects printed." << endl;
-
+  count<int> P = for_each<6>::exe(A,count<int>());
+  assert(P.c==6);
   return EXIT_SUCCESS;
 }

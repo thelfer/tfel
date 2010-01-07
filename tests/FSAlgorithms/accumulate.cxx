@@ -5,8 +5,13 @@
  * \date   28 Aug 2006
  */
 
-#include<iostream>
+
+#ifdef NDEBUG
+#undef NDEBUG
+#endif
+
 #include<cstdlib>
+#include<cassert>
 #include<functional>
 
 #include"FSAlgorithm/FSAlgorithm.hxx"
@@ -14,18 +19,10 @@
 int main()
 {
   using namespace std;
-  using namespace tfel::fsalgo;
-
+  using tfel::fsalgo::accumulate;
   int A[] = {1, 2, 3, 4, 5};
   const int N = sizeof(A) / sizeof(int);
-
-  cout << "The sum of all elements in A is " 
-       << accumulate<N>::exe(A, 0)
-       << endl;
-
-  cout << "The product of all elements in A is "
-       << accumulate<N>::exe(A, 1, multiplies<int>())
-       << endl;
-
+  assert(accumulate<N>::exe(A, 0)==15);
+  assert(accumulate<N>::exe(A, 1, multiplies<int>())==120);
   return EXIT_SUCCESS;
 }

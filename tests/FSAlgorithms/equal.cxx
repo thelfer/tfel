@@ -5,9 +5,12 @@
  * \date   28 Aug 2006
  */
 
-#include<iostream>
+#ifdef NDEBUG
+#undef NDEBUG
+#endif
+
 #include<cstdlib>
-#include<functional>
+#include<cassert>
 #include<limits>
 #include<cmath>
 
@@ -24,9 +27,7 @@ struct AlmostEqual
 
 int main()
 {
-  using namespace std;
   using namespace tfel::fsalgo;
-  using tfel::fsalgo::equal;
 
   int A1[] = { 3, 1, 4, 1, 5, 9, 3 };
   int A2[] = { 3, 1, 4, 2, 8, 5, 7 };
@@ -36,11 +37,10 @@ int main()
   const int N2 = sizeof(B1) / sizeof(double);
   AlmostEqual a;
   
-  cout << "Result of comparison: " << equal<N>::exe(A1,A2) << endl;
-  cout << "Result of comparison: " << equal<3>::exe(A1,A2) << endl;
-
-  cout << "Result of comparison: " << equal<N2>::exe(B1,B2,a) << endl;
-  cout << "Result of comparison: " << equal<3>::exe(B1,B2,a) << endl;
+  assert(!equal<N>::exe(A1,A2));
+  assert(equal<3>::exe(A1,A2));
+  assert(!equal<N2>::exe(B1,B2,a));
+  assert(equal<3>::exe(B1,B2,a));
 
   return EXIT_SUCCESS;
 }

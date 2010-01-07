@@ -1,15 +1,20 @@
 /*!
- * \file   test.cxx
+ * \file   test_FSalgorithm.cxx
  * \brief  
  * 
  * \author Helfer Thomas
  * \date   30 Jun 2006
  */
 
+#ifdef NDEBUG
+#undef NDEBUG
+#endif
+
 #include<iostream>
+#include<iterator>
+#include<cassert>
 #include<cstdlib>
 #include<cmath>
-#include<iterator>
 
 #include"FSAlgorithm/FSAlgorithm.hxx"
 
@@ -56,51 +61,65 @@ int main(void)
   double tab3[3];
   unsigned int tab4[]={15,1,32109};
   unsigned int tab5[3];
+  unsigned int i;
 
-
-  std::cout << "Minimum     :" << *min_element<3>::exe(tab1) << std::endl;
-  std::cout << "Maximum     :" << *max_element<3>::exe(tab1) << std::endl;
-  std::cout << "Maximum abs :" << *max_element<3>::exe(tab1,abs_compare()) << std::endl;
-
+  assert(std::abs(*min_element<3>::exe(tab1)+16.)<1.e-14);
+  assert(std::abs(*max_element<3>::exe(tab1)-9.)<1.e-14);
+  assert(std::abs(*max_element<3>::exe(tab1,abs_compare())+16.)<1.e-14);
 
   copy<3>::exe(tab1,tab2);
-  copy<3>::exe(tab2,std::ostream_iterator<double>(std::cout," "));
-  std::cout << std::endl;
+  for(i=0;i!=3;++i){
+    assert(std::abs(tab1[i]-tab2[i])<1.e-14);
+  }
   fill<3>::exe(tab1,3.);
   fill<3>::exe(tab2,6.);
-  copy<3>::exe(tab1,std::ostream_iterator<double>(std::cout," "));
-  std::cout << std::endl;
-
+  for(i=0;i!=3;++i){
+    assert(std::abs(tab1[i]-3.)<1.e-14);
+    assert(std::abs(tab2[i]-6.)<1.e-14);
+  }
+  
   transform<3>::exe(tab1,tab2,tab3,mult);
-  copy<3>::exe(tab3,std::ostream_iterator<double>(std::cout," "));
-  std::cout << std::endl;
+  for(i=0;i!=3;++i){
+    assert(std::abs(tab3[i]-18.)<1.e-14);
+  }
 
   fill<3>::exe(tab1,3.);
+  for(i=0;i!=3;++i){
+    assert(std::abs(tab1[i]-3.)<1.e-14);
+  }
+
   transform<3>::exe(tab1,tab2,times2);
+  for(i=0;i!=3;++i){
+    assert(std::abs(tab2[i]-6.)<1.e-14);
+  }
+
   fill<3>::exe(tab1,6.);
+  for(i=0;i!=3;++i){
+    assert(std::abs(tab1[i]-6.)<1.e-14);
+  }
 
   copy<3>::exe(tab4,tab5);
-  std::cout << "Equal ? " << (equal<3>::exe(tab4,tab5) ? "Yes" : "no") << std::endl;
+  for(i=0;i!=3;++i){
+    assert(tab4[i]==tab5[i]);
+    assert(equal<3>::exe(tab4,tab5));
+  }
 
-  copy<3>::exe(tab3,std::ostream_iterator<double>(std::cout," "));
-  std::cout << std::endl;
   swap_ranges<3>::exe(tab1,tab3);
-  copy<3>::exe(tab1,std::ostream_iterator<double>(std::cout," "));
-  std::cout << std::endl;
-  copy<3>::exe(tab3,std::ostream_iterator<double>(std::cout," "));
-  std::cout << std::endl;
+  for(i=0;i!=3;++i){
+    assert(std::abs(tab3[i]-6.)<1.e-14);
+    assert(std::abs(tab1[i]-18.)<1.e-14);
+  }
 
   tab1[0]=3.;
   tab1[1]=12.1;
   tab1[2]=2.786;
-  
-  std::cout << "Accumulate : " << accumulate<3>::exe(tab1,1.) << std::endl;
+
+  assert(std::abs(accumulate<3>::exe(tab1,1.)-18.886)<1.e-14);
   
   tab1[0]=3.5;
   tab1[1]=8.;
   tab1[2]=3.14159;
-  std::cout << "Accumulate2          : " << accumulate<3>::exe(tab1,2.,mult) << std::endl;
-  std::cout << "Accumulate2 (result) : " << 56.*3.14159 << std::endl;
+  assert(std::abs(accumulate<3>::exe(tab1,2.,mult)-175.929)<1.e-3);
 
   tab1[0]=2.;
   tab1[1]=3.;
@@ -109,10 +128,10 @@ int main(void)
   tab2[1]=3.6;
   tab2[2]=2.;
 
-  std::cout << "Inner_product  : " << inner_product<3>::exe(tab1,tab2,-16.) << std::endl;
-  std::cout << "Inner_product2 : " << inner_product<3>::exe(tab1,tab2,-16.,add,mult) << std::endl;
-  std::cout << "Inner_product3 : " << inner_product<3>::exe(tab1,tab2,-16.,add,null_mult) << std::endl;
-  std::cout << "Inner_product4 : " << inner_product<3>::exe(tab1,tab2,-16.,add,add) << std::endl;
+  assert(std::abs(inner_product<3>::exe(tab1,tab2,-16.)-2.2)<1.e-3);
+  assert(std::abs(inner_product<3>::exe(tab1,tab2,-16.,add,mult)-2.2)<1.e-3);
+  assert(std::abs(inner_product<3>::exe(tab1,tab2,-16.,add,null_mult)+16)<1.e-3);
+  assert(std::abs(inner_product<3>::exe(tab1,tab2,-16.,add,add)+1.7)<1.e-3);
 
   return EXIT_SUCCESS;
 }
