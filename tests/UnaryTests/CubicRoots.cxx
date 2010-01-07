@@ -1,11 +1,14 @@
 /*!
- * \file   essai.cxx
+ * \file   CubicRoots.cxx
  * \brief  
  * 
  * \author Helfer Thomas
  * \date   01 jui 2006
  */
 
+#ifdef NDEBUG
+#undef NDEBUG
+#endif
 
 #include<iostream>
 #include<cstdlib>
@@ -92,9 +95,6 @@ void solve(const double a3,const double a2,const double a1,const double a0)
 
   assert(cubicRoots::exe(a3,a2,a1,a0,x,y,z));
   if(!((std::abs(cubic(a3,a2,a1,a0,x))<prec)||(std::abs(cubic(a3,a2,a1,a0,y))<prec)||(std::abs(cubic(a3,a2,a1,a0,z))<prec))){
-    std::cout <<  "f(x) = " << cubic(a3,a2,a1,a0,x) << std::endl;
-    std::cout <<  "f(y) = " << cubic(a3,a2,a1,a0,y) << std::endl;
-    std::cout <<  "f(z) = " << cubic(a3,a2,a1,a0,z) << std::endl;
     assert(false);
   }
 #ifdef VERBOSE

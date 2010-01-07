@@ -823,7 +823,6 @@ tests/UnaryTests/qt.cxx -text
 tests/UnaryTests/qt2.cxx -text
 tests/UnaryTests/qt3.cxx -text
 tests/UnaryTests/stensor.cxx -text
-tests/UnaryTests/terminal.cxx -text
 tests/UnaryTests/tmatrix.cxx -text
 tests/UnaryTests/tuple.cxx -text
 tests/UnaryTests/tvector.cxx -text
