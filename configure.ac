@@ -227,6 +227,19 @@ AC_OUTPUT([debug.sh
 	   src/TFELConfig/Makefile
 	   src/TFELConfig/tfel-config.hxx
 	   src/Graphics/Makefile
+	   mfront/Makefile
+	   mfront/include/Makefile
+	   mfront/src/Makefile
+           mfront/src/MFrontHeader.cxx
+           mfront/lisp/Makefile
+	   mfront/Examples/Makefile
+	   tfel-check/Makefile
+	   tfel-check/src/Makefile
+	   tfel-check/include/Makefile
+           tplot/Makefile
+	   tplot/include/Makefile
+	   tplot/src/Makefile
+	   tplot/data/Makefile
 	   tests/Makefile
 	   tests/Math/Makefile
 	   tests/Math/include/Makefile
@@ -244,17 +257,6 @@ AC_OUTPUT([debug.sh
 	   tests/UnaryTests/include/Makefile
 	   tests/MetaProgramming/Makefile
 	   tests/MaterialLaw/Makefile
-	   tests/FiniteElement/Makefile
 	   tests/System/Makefile
-	   mfront/Makefile
-	   mfront/include/Makefile
-	   mfront/src/Makefile
-           mfront/src/MFrontHeader.cxx
-           mfront/lisp/Makefile
-	   mfront/Examples/Makefile
-           tplot/Makefile
-	   tplot/include/Makefile
-	   tplot/src/Makefile
-	   tplot/data/Makefile
 	   ])
 
