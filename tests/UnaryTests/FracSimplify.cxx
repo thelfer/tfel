@@ -6,6 +6,10 @@
  * \date   18 Jul 2006
  */
 
+#ifdef NDEBUG
+#undef NDEBUG
+#endif
+
 #include<iostream>
 #include<cstdlib>
 #include<cassert>
@@ -28,8 +32,6 @@ int main(void)
   assert((FracSimplify<-30,15u>::D==1u)); 
   assert((FracSimplify<11,3u>::N==11));
   assert((FracSimplify<11,3u>::D==3u));   
-
-  std::cout << "success" << std::endl;
 
   return EXIT_SUCCESS;
 }

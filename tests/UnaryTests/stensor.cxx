@@ -1,3 +1,7 @@
+#ifdef NDEBUG
+#undef NDEBUG
+#endif
+
 #include<iostream>
 #include<cstdlib>
 #include<cmath>
@@ -6,14 +10,6 @@
 
 #include "Math/Vector/VectorUtilities.hxx"
 #include "Math/stensor.hxx"
-
-template<class T>
-void function(const tfel::math::StensorConcept<T>& x){
-  std::cout << x(0) << std::endl;
-  std::cout << x(1) << std::endl;
-  std::cout << x(2) << std::endl;
-  std::cout << "-------" << std::endl;
-}
 
 int main(void){
   
@@ -44,8 +40,6 @@ int main(void){
   assert(std::fabs(v3(1)-10.73)<1.e-7);
   assert(std::fabs(v3(2)-21.)<1.e-7);
     
-  std::cout << "success" << std::endl;
-
   return EXIT_SUCCESS;
 
 }

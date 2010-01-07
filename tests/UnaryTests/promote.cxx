@@ -5,6 +5,10 @@
  * \date   03 May 2006
  */
 
+#ifdef NDEBUG
+#undef NDEBUG
+#endif
+
 #include"promote-header.hxx"
 
 #define ASSERT(X)                                                  \
@@ -131,8 +135,6 @@ int main(void){
   ASSERT(Test(p)=="unsigned short");
   ASSERT(Test(p)=="unsigned short");
   ASSERT(Test(q*r)=="int");
-
-  cout << "succes" << endl;
 
   return EXIT_SUCCESS;
 

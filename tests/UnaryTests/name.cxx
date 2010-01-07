@@ -1,13 +1,13 @@
 /*!
  * \file   name.cxx
- * 
  * \brief    
- *
- *
- *	
  * \author Helfer Thomas
  * \date   17 Jul 2006
  */
+
+#ifdef NDEBUG
+#undef NDEBUG
+#endif
 
 #include<iostream>
 #include<cstdlib>
@@ -133,8 +133,6 @@ int main(void)
   TEST_NAME5(tfel::math::Complex<float>);
   TEST_NAME5(tfel::math::Complex<double>);
   TEST_NAME5(tfel::math::Complex<long double>);
-
-  std::cout << "success" << std::endl;
 
   return EXIT_SUCCESS;
 }

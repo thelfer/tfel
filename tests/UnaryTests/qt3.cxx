@@ -6,6 +6,10 @@
  * \date   04 aoû 2006
  */
 
+#ifdef NDEBUG
+#undef NDEBUG
+#endif
+
 #include<iostream>
 #include<cstdlib>
 #include<cassert>
@@ -28,8 +32,6 @@ int main(void){
   assert(b!=a);
   assert(!(b==a));
   assert((abs(a)==qt<Mass,int>(12)));
-
-  cout << "success" << endl;
 
   return EXIT_SUCCESS;
 }

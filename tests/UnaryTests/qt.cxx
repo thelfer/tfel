@@ -6,6 +6,10 @@
  * \date   06 Jun 2006
  */
 
+#ifdef NDEBUG
+#undef NDEBUG
+#endif
+
 #include<iostream>
 #include<cstdlib>
 #include<cmath>
@@ -35,8 +39,6 @@ int main(void){
   assert(std::abs(f.getValue()-200.)<1.e-14);
   
   assert((std::abs(std::cos(qt<NoUnit>(12.))-std::cos(12.))<1.e-14));
-
-  std::cout << "success" << std::endl;
 
   return EXIT_SUCCESS;
 

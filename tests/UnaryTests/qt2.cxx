@@ -6,6 +6,10 @@
  * \date   18 Jul 2006
  */
 
+#ifdef NDEBUG
+#undef NDEBUG
+#endif
+
 #include<iostream>
 #include<cstdlib>
 #include<cmath>
@@ -27,8 +31,6 @@ int main(void){
 
   assert(SquareMass::getName()=="[kg^1/2,m^0,s^0,A^0,K^0,cd^0,mol^0]");
   assert(std::abs(v2.getValue()-2.25)<1.e-14);
-
-  cout << "success" << endl;
 
   return EXIT_SUCCESS;
 

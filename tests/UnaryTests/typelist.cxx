@@ -1,3 +1,7 @@
+#ifdef NDEBUG
+#undef NDEBUG
+#endif
+
 #include<iostream>
 #include<cstdlib>
 #include<cmath>
@@ -103,8 +107,6 @@ int main(void){
   assert(Is_same<double>::test<double>::cond);
   assert(!Is_same<double>::test<int>::cond);
   assert((Mytest<double, Is_same<double> >::cond));
-
-  std::cout << "succes" << std::endl;
 
   return EXIT_SUCCESS;
   

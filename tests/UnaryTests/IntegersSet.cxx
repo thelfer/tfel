@@ -2,9 +2,12 @@
   \file   IntegersSet.cxx
   \author Helfer Thomas
   \date   13 mai 2006
-  
   \brief  
 */
+
+#ifdef NDEBUG
+#undef NDEBUG
+#endif
 
 #include<iostream>
 #include<cstdlib>
@@ -48,8 +51,6 @@ int main(void){
 
   assert(*(test.begin())==11);
   assert(test.position(13)==2);
-
-  std::cout << "success" << std::endl;
 
   return EXIT_SUCCESS;
 

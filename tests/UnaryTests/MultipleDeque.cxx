@@ -1,3 +1,7 @@
+#ifdef NDEBUG
+#undef NDEBUG
+#endif
+
 #include<iostream>
 #include<cstdlib>
 #include<cassert>
@@ -56,8 +60,6 @@ int main(void){
   ++p1;
   assert(p1==mv.rend<double>());
 
-  std::cout << "succes" << std::endl;
- 
   return EXIT_SUCCESS;
 
 }

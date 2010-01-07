@@ -1,3 +1,7 @@
+#ifdef NDEBUG
+#undef NDEBUG
+#endif
+
 #include<iostream>
 #include<cstdlib>
 #include<cmath>
@@ -63,8 +67,6 @@ int main(void){
 //   function(asin(v1),std::asin(0.),std::asin(0.6785),std::asin(0.3234)    ,prec,22);
 //   function(acos(v1),std::acos(0.),std::acos(0.6785),std::acos(0.3234)    ,prec,23);
 //   function(atan(v1),std::atan(0.),std::atan(0.6785),std::atan(0.3234)    ,prec,24);
-
-  std::cout << "success" << std::endl;
 
   return EXIT_SUCCESS;
 

@@ -18,7 +18,6 @@ test_PROGRAMS = CubicRoots          \
 		qt2                 \
 		qt3                 \
 		stensor             \
-		terminal            \
 		tmatrix             \
 		tvector             \
 		tvector2            \
@@ -43,7 +42,6 @@ qt_SOURCES                  = qt.cxx
 qt2_SOURCES                 = qt2.cxx
 qt3_SOURCES                 = qt3.cxx
 stensor_SOURCES             = stensor.cxx
-terminal_SOURCES            = terminal.cxx
 tmatrix_SOURCES             = tmatrix.cxx
 tvector_SOURCES             = tvector.cxx
 tvector2_SOURCES            = tvector2.cxx

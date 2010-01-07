@@ -97,11 +97,11 @@ void solve(const double a3,const double a2,const double a1,const double a0)
   if(!((std::abs(cubic(a3,a2,a1,a0,x))<prec)||(std::abs(cubic(a3,a2,a1,a0,y))<prec)||(std::abs(cubic(a3,a2,a1,a0,z))<prec))){
     assert(false);
   }
-#ifdef VERBOSE
+#ifdef TFEL_VERBOSE
     std::cout <<  "f(x) = " << cubic(a3,a2,a1,a0,x) << std::endl;
     std::cout <<  "f(y) = " << cubic(a3,a2,a1,a0,y) << std::endl;
     std::cout <<  "f(z) = " << cubic(a3,a2,a1,a0,z) << std::endl;
-#endif
+#endif /* TFEL_VERBOSE */
 }
 
 int main(void)

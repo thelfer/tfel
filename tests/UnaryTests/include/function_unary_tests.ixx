@@ -32,7 +32,7 @@ void function(const tfel::math::VectorConcept<T>& x,
 	      const typename tfel::math::VectorTraits<T>::NumType eps,
 	      const unsigned int test_number)
 {
-#ifdef VERBOSE
+#ifdef TFEL_VERBOSE
   std::cout << "Test : " << test_number << std::endl;
 #else
   static_cast<void>(test_number);
@@ -51,7 +51,7 @@ void function(const tfel::math::MatrixConcept<T>& x,
 	      const typename tfel::math::MatrixTraits<T>::NumType eps,
 	      const unsigned int test_number)
 {
-#ifdef VERBOSE
+#ifdef TFEL_VERBOSE
   std::cout << "Test : " << test_number << std::endl;
 #else
   static_cast<void>(test_number);

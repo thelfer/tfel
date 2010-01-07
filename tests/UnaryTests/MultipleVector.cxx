@@ -1,3 +1,7 @@
+#ifdef NDEBUG
+#undef NDEBUG
+#endif
+
 #include<iostream>
 #include<cstdlib>
 #include<cassert>
@@ -5,14 +9,6 @@
 #include<vector>
 
 #include "Utilities/MultipleVector.hxx"
-
-struct print
-{
-
-  template<class T> 
-  void operator() (const T& x) { std::cout << x << std::endl;; }
-
-};
 
 int main(void){
 
@@ -66,11 +62,7 @@ int main(void){
   assert(std::abs(*p1-3.<1.e-14));
   ++p1;
   assert(p1==mv.rend<double>());
-  p-=3;
-  assert(std::abs(*p-3.<1.e-14));
  
-  std::cout << "succes" << std::endl;
-
   return EXIT_SUCCESS;
 
 }

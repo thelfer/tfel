@@ -1,3 +1,7 @@
+#ifdef NDEBUG
+#undef NDEBUG
+#endif
+
 #include<iostream>
 #include<cstdlib>
 #include<cassert>
@@ -17,8 +21,6 @@ int main(void){
   
   assert((tfel::meta::IsSubClassOf<A,B>::cond==0));
   assert((tfel::meta::IsSubClassOf<B,A>::cond==1));
-
-  std::cout << "success" << std::endl;
 
   return EXIT_SUCCESS;
   
