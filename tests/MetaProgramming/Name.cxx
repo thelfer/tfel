@@ -1,12 +1,15 @@
 /*!
- * \file   test.cxx
+ * \file   Name.cxx
  * \brief  
- * 
  * \author Helfer Thomas
  * \date   20 jui 2006
  */
 
-#include<iostream>
+#ifdef NDEBUG
+#undef NDEBUG
+#endif /* NDEBUG */
+
+#include<cassert>
 #include<cstdlib>
 #include<cassert>
 
@@ -21,13 +24,9 @@ int main(void)
   using namespace tfel::typetraits;
   using namespace tfel::math;
   using namespace tfel::utilities;
-
-  cout << Name<Promote<float,long double>::type>::getName() << endl; 
-  cout << Name<Promote<long double,float>::type>::getName() << endl; 
-  cout << Name<ResultType<long double,float,OpMult>::type>::getName() << endl; 
-  cout << Name<ResultType<float,long double,OpMult>::type>::getName() << endl; 
-
-  cout << "success" << endl;
-
+  assert((Name<Promote<float,long double>::type>::getName()=="long double"));
+  assert((Name<Promote<long double,float>::type>::getName()=="long double"));
+  assert((Name<ResultType<long double,float,OpMult>::type>::getName()=="long double"));
+  assert((Name<ResultType<float,long double,OpMult>::type>::getName()=="long double"));
   return EXIT_SUCCESS;
 }

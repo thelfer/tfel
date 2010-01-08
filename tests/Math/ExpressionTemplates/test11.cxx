@@ -1,9 +1,13 @@
 /*!
- * \file   test6.cxx
+ * \file   test11.cxx
  * \brief  
  * \author Helfer Thomas
  * \date   14 oct 2006
  */
+
+#ifdef NDEBUG
+#undef NDEBUG
+#endif /* NDEBUG */
 
 #include<iostream>
 #include<cstdlib>

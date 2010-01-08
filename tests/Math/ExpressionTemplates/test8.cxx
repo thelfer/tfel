@@ -5,7 +5,11 @@
  * \date   17 Oct 2006
  */
 
-#include<iostream>
+#ifdef NDEBUG
+#undef NDEBUG
+#endif /* NDEBUG */
+
+#include<cassert>
 #include<cstdlib>
 #include<algorithm>
 #include<iterator>
@@ -24,6 +28,7 @@ int main(void)
   USING_TFEL_FUNCTIONS;
 
   vector<double> v(4);
+  vector<double>::size_type i;
 
   v(0) = 12.12;
   v(1) = 12.234;
@@ -34,15 +39,11 @@ int main(void)
   FctObjectRandomAccessConstIterator<vector<double>,FctSin> end(v.end(),sin);
   FctObjectRandomAccessConstIterator<vector<double>,FctSin> p;
 
-  cout << name(p) << endl;
+  assert(name(p)=="FctObjectRandomAccessConstIterator<tfel::math::vector<double>,FctSin>");
 
-  for(p=begin;p!=end;++p){
-    cout << *p << " ";
+  for(i=0,p=begin;p!=end;++p,++i){
+    assert(abs(*p-sin(v(i)))<1.e-14);
   }
-  cout << endl;
-  
-  copy(begin,end,ostream_iterator<double>(cout," "));
-  cout << endl;  
 
   return EXIT_SUCCESS;
 }

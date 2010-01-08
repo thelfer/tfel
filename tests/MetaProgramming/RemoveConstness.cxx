@@ -1,11 +1,15 @@
 /*!
- * \file   remove_const.cxx
+ * \file   RemoveConstness.cxx
  * \brief    
  * \author Helfer Thomas
  * \date   18 Oct 2006
  */
 
-#include<iostream>
+#ifdef NDEBUG
+#undef NDEBUG
+#endif /* NDEBUG */
+
+#include<cassert>
 #include<cstdlib>
 
 #include"Metaprogramming/RemoveConstness.hxx"
@@ -13,13 +17,11 @@
 
 int main(void)
 {
+  using namespace std;
   using namespace tfel::utilities;
   using namespace tfel::meta;
-  using namespace std;
-  
-  cout << Name<double>::getName() << endl;
-  cout << Name<const double>::getName() << endl;
-  cout << Name<RemoveConstness<const double>::type>::getName() << endl;
-
+  assert(Name<double>::getName()=="double");
+  assert(Name<const double>::getName()=="const double");
+  assert(Name<RemoveConstness<const double>::type>::getName()=="double");
   return EXIT_SUCCESS;
 }

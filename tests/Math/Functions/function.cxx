@@ -6,7 +6,12 @@
  * \date   04 Jan 2007
  */
 
-#include<iostream>
+#ifdef NDEBUG
+#undef NDEBUG
+#endif /* NDEBUG */
+
+#include<cmath>
+#include<cassert>
 #include<cstdlib>
 
 #include "Math/functions.hxx"
@@ -20,19 +25,16 @@ int main(void)
 
   USING_TFEL_FUNCTIONS;
   
-  cout << name(sin+cos)                      << " " << sizeof(sin+cos)      << endl;
-  cout << name(exp[sin])                     << " " << sizeof(exp[sin])     << endl;
-  cout << name(exp[sin+cos])                 << " " << sizeof(exp[sin+cos]) << endl;
-//   cout << name(3.42*exp[2.5*sin-3.*cos*tan]) << " " 
-//        << sizeof(3.42*exp[2.5*sin-3.*cos*tan]) << endl;
-
+  assert(name(sin+cos)=="FunctionExpr<FunctionFunctionExpr<FctSin,FctCos,+>>");
+  assert(name(exp[sin])==
+	 "FunctionExpr<FunctionsCompositionExpr<FctExp,FctSin>>");
+  assert(name(exp[sin+cos])==
+	 "FunctionExpr<FunctionsCompositionExpr<FctExp,FunctionExpr<FunctionFunctionExpr<FctSin,FctCos,+>>>>");
   // Comparison with Octave results
-  cout << (sin+cos)(3.4312)      << ", " << -1.2439  << endl;
-  cout << (-(sin+cos))(3.4312)   << ", " <<  1.2439  << endl;
-  cout << (exp[sin])(3.4312)     << ", " <<  0.75158 << endl;
-  cout << (exp[sin+cos])(3.4312) << ", " <<  0.28825 << endl;
-//   cout << (3.42*exp[2.5*sin-3.*cos*tan])(3.4312) << ", " << 3.9449 << endl;
-
+  assert(abs((sin+cos)(3.4312)+ 1.2439)<1.e-4);
+  assert(abs((-(sin+cos))(3.4312)-1.2439)<1.e-4);
+  assert(abs((exp[sin])(3.4312)-0.75158)<1.e-4);
+  assert(abs((exp[sin+cos])(3.4312)-0.28825)<1.e-4);
   return EXIT_SUCCESS;
 
 }

@@ -5,14 +5,20 @@
  * \date   17 Oct 2006
  */
 
-#include<iostream>
-#include<cstdlib>
+#ifdef NDEBUG
+#undef NDEBUG
+#endif /* NDEBUG */
+
 #include<algorithm>
+#include<cassert>
+#include<cstdlib>
 #include<iterator>
 
 #include"Utilities/Name.hxx"
 #include"Math/General/ObjectObjectRandomAccessConstIterator.hxx"
 #include"Math/vector.hxx"
+
+#include<iostream>
 
 int main(void)
 {
@@ -23,6 +29,7 @@ int main(void)
 
   vector<double> v1(4);
   vector<double> v2(4);
+  vector<double>::size_type i;
 
   v1(0) = 12.12;
   v1(1) = 12.234;
@@ -37,15 +44,11 @@ int main(void)
   ObjectObjectRandomAccessConstIterator<vector<double>,vector<double>,OpMinus> end(v1.end(),v2.end());
   ObjectObjectRandomAccessConstIterator<vector<double>,vector<double>,OpMinus> p;
 
-  cout << name(p) << endl;
+  assert(name(p)=="ObjectObjectRandomAccessConstIterator<tfel::math::vector<double>,tfel::math::vector<double>,->");
 
-  for(p=begin;p!=end;++p){
-    cout << *p << " ";
+  for(i=0,p=begin;p!=end;++p,++i){
+    assert(abs(*p-(v1(i)-v2(i)))<1.e-14);
   }
-  cout << endl;
-  
-  copy(begin,end,ostream_iterator<double>(cout," "));
-  cout << endl;
 
   return EXIT_SUCCESS;
 }

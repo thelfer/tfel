@@ -6,8 +6,14 @@
  * \date   13 nov 2007
  */
 
-#include<iostream>
+
+#ifdef NDEBUG
+#undef NDEBUG
+#endif /* NDEBUG */
+
+#include<cmath>
 #include<cstdlib>
+#include<cstring>
 
 #include"System/rfstream.hxx"
 
@@ -15,20 +21,22 @@ int
 main(void)
 {
   using namespace std;
-
-  tfel::system::rfstream r("test.bin");
+  using namespace tfel::system;
+  
+  rfstream r("test.bin");
   char c[5];
   double t;
   
   r.read(c,4u);
   c[4]='\0';
-  r >> t;
+  assert(strcmp(c,"toto")==0);
 
-  cout << c << endl;
-  cout << t << endl;
+  r >> t;
+  assert(abs(t-12.)<1.e-14);
+
   r.read(c,4u);
   c[4]='\0';
-  cout << c << endl;
+  assert(strcmp(c,"tutu")==0);
 
   r.close();
   

@@ -5,7 +5,11 @@
  * \date   17 Oct 2006
  */
 
-#include<iostream>
+#ifdef NDEBUG
+#undef NDEBUG
+#endif /* NDEBUG */
+
+#include<cassert>
 #include<cstdlib>
 #include<vector>
 #include<algorithm>
@@ -20,6 +24,7 @@ int main(void)
   using namespace tfel::math;
 
   vector<double> v(4);
+  vector<double>::size_type i;
 
   v[0] = 12.12;
   v[1] = 12.234;
@@ -34,22 +39,13 @@ int main(void)
   ObjectScalarRandomAccessConstIterator<vector<double>,int,OpMult> end2(v.end(),3);
   ObjectScalarRandomAccessConstIterator<vector<double>,int,OpMult> p2;
 
-  for(p=begin;p!=end;++p){
-    cout << *p << " ";
+  for(i=0,p=begin;p!=end;++p,++i){
+    assert(abs(*p-2*v[i])<1.e-14);
   }
-  cout << endl;
-  
-  copy(begin,end,ostream_iterator<double>(cout," "));
-  cout << endl;
 
-  for(p2=begin2;p2!=end2;++p2){
-    cout << *p2 << " ";
+  for(i=0,p2=begin2;p2!=end2;++p2,++i){
+    assert(abs(*p2-3*v[i])<1.e-14);
   }
-  cout << endl;
-  
-  copy(begin2,end2,ostream_iterator<double>(cout," "));
-  cout << endl;
-
 
   return EXIT_SUCCESS;
 }

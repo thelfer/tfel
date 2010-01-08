@@ -5,7 +5,11 @@
  * \date   06 aoû 2006
  */
 
-#include<iostream>
+#ifdef NDEBUG
+#undef NDEBUG
+#endif /* NDEBUG */
+
+#include<cassert>
 #include<cstdlib>
 #include<vector>
 #include<string>
@@ -52,11 +56,16 @@ int main(void)
   typedef GenerateTypeList<float>::type List7;
   typedef TypeListConcatenate<List6,List7>::type List8;
 
-  cout << tfel::utilities::Name<List>::getName()  << endl;
-  cout << tfel::utilities::Name<List2>::getName() << endl;
-  cout << tfel::utilities::Name<List3>::getName() << endl;
-  cout << tfel::utilities::Name<List5>::getName() << endl;
-  cout << tfel::utilities::Name<List8>::getName() << endl;
+  assert(tfel::utilities::Name<List>::getName()==
+	 "TypeListNode<double,TypeListNode<float,TypeListNode<std::string,TypeListEndType>>>");
+  assert(tfel::utilities::Name<List2>::getName()==
+	 "TypeListNode<double,TypeListNode<float,TypeListNode<std::string,TypeListNode<unsigned short,TypeListEndType>>>>");
+  assert(tfel::utilities::Name<List3>::getName()==
+	 "TypeListNode<long int,TypeListNode<double,TypeListNode<float,TypeListNode<std::string,TypeListEndType>>>>");
+  assert(tfel::utilities::Name<List5>::getName()==
+	 "TypeListNode<A,TypeListNode<B,TypeListNode<C,TypeListNode<C,TypeListNode<B,TypeListNode<A,TypeListEndType>>>>>>");
+  assert(tfel::utilities::Name<List8>::getName()==
+	 "TypeListNode<double,TypeListNode<float,TypeListEndType>>");
 
   return EXIT_SUCCESS;
 }

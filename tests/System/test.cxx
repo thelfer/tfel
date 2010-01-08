@@ -12,6 +12,6 @@
 int
 main(void)
 {
-  sleep(10);
+  sleep(1);
   return EXIT_SUCCESS;
 }

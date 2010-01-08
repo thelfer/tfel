@@ -10,8 +10,8 @@ LDADD = -lTFELSystem -lTFELException    \
 
 test_PROGRAMS   = test    \
 		  process \
-		  rstream \
-		  wstream
+		  wstream \
+		  rstream
 
 test_SOURCES    = test.cxx
 process_SOURCES = process.cxx

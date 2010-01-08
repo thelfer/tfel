@@ -5,6 +5,10 @@
  * \date   13 Oct 2006
  */
 
+#ifdef NDEBUG
+#undef NDEBUG
+#endif /* NDEBUG */
+
 #include<iostream>
 #include<cstdlib>
 

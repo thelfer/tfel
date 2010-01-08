@@ -9,6 +9,10 @@
 #ifndef _LIB_TFEL_TEST10_HEADER_HXX_
 #define _LIB_TFEL_TEST10_HEADER_HXX_ 
 
+#ifdef NDEBUG
+#undef NDEBUG
+#endif /* NDEBUG */
+
 #include<iostream>
 #include<cstdlib>
 #include<algorithm>
