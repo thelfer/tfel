@@ -42,7 +42,7 @@ namespace tfel{
       static const std::string getName(void){							    
 	using namespace std;								    
 	using namespace tfel::utilities;						    
-	return string("FctObjectConstIterator<")
+	return string("FctObjectRandomAccessConstIterator<")
 	  +Name<A>::getName()+string(",")
 	  +Name<Fct>::getName()+string(">");             
       }											    
