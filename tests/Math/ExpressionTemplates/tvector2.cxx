@@ -5,9 +5,12 @@
  * \date   16 Oct 2006
  */
 
-#include<iostream>
-#include<cstdlib>
+#ifdef NDEBUG
+#undef NDEBUG
+#endif /* NDEBUG */
+
 #include<cassert>
+#include<cstdlib>
 #include<limits>
 
 #include"Math/tvector.hxx"
@@ -24,7 +27,10 @@ int main(void)
   
   v3 = v1+v2;
 
-  cout << v3 << endl;
+  assert(abs(v3(0)-length(26.))<length(1.e-14));
+  assert(abs(v3(1)-length(26.))<length(1.e-14));
+  assert(abs(v3(2)-length(26.))<length(1.e-14));
+  assert(abs(v3(3)-length(26.))<length(1.e-14));
 
   return EXIT_SUCCESS;
 }

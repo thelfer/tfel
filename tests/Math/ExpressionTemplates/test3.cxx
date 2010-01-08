@@ -9,7 +9,7 @@
 #undef NDEBUG
 #endif /* NDEBUG */
 
-#include<iostream>
+#include<cassert>
 #include<cstdlib>
 
 #include"Utilities/Name.hxx"
@@ -27,10 +27,10 @@ int main(void){
   tvector<3,unsigned short> v1(1);
   tvector<3,tvector<3,unsigned short> > v2(tvector<3,unsigned short>(1));
 
-  cout << Name<ComputeUnaryResult<tvector<3,unsigned short>,OpNeg>::Result>::getName() << endl;
-  cout << Name<ComputeUnaryResult<tvector<3,unsigned short>,OpNeg>::Handle>::getName() << endl;
-
-  cout << name(-v1) << endl;  
-  cout << name(-v2) << endl;  
-
+  assert((Name<ComputeUnaryResult<tvector<3,unsigned short>,OpNeg>::Result>::getName()=="tvector<3,int>"));
+  assert((Name<ComputeUnaryResult<tvector<3,unsigned short>,OpNeg>::Handle>::getName()=="VectorExpr<tvector<3,int>,VectorNegExpr<tvector<3,unsigned short>>>"));
+  assert(name(-v1)=="VectorExpr<tvector<3,int>,VectorNegExpr<tvector<3,unsigned short>>>");
+  assert(name(-v2)=="VectorExpr<tvector<3,tvector<3,int>>,VectorNegExpr<tvector<3,tvector<3,unsigned short>>>>");
+  
+  return EXIT_SUCCESS;
 }

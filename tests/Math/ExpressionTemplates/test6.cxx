@@ -9,7 +9,7 @@
 #undef NDEBUG
 #endif /* NDEBUG */
 
-#include<iostream>
+#include<cassert>
 #include<cstdlib>
 
 #include"Utilities/Name.hxx"
@@ -26,17 +26,40 @@ int main(void)
   tvector<3,tvector<2,double> > v2(tvector<2,double>(3.));
   tvector<3,tvector<2,double> > v3(tvector<2,double>(1.2));
 
-  cout << v1(0)(0) << endl;  
-  cout << v2(0)(0) << endl;  
-  cout << v3(0)(0) << endl;  
-  
-  cout << name((v1+v2)(0)) << endl;
-  cout << ((v1+v2)(0))(1)  << endl;
-  cout << (v1(0)+v2(0))(1) << endl;
+  assert(abs(v1(0)(0)-1.4)<1.e-14);
+  assert(abs(v1(0)(1)-1.4)<1.e-14);
+  assert(abs(v1(1)(0)-1.4)<1.e-14);
+  assert(abs(v1(1)(1)-1.4)<1.e-14);
+  assert(abs(v1(2)(0)-1.4)<1.e-14);
+  assert(abs(v1(2)(1)-1.4)<1.e-14);
 
-  cout << name((v1+v2+v3)(0)) << endl;
-  cout << ((v1+v2+v3)(0))(0)  << endl;
-  cout << (v1(0)+v2(0)+v3(0))(0) << endl;
+  assert(abs(v2(0)(0)-3.)<1.e-14);
+  assert(abs(v2(0)(1)-3.)<1.e-14);
+  assert(abs(v2(1)(0)-3.)<1.e-14);
+  assert(abs(v2(1)(1)-3.)<1.e-14);
+  assert(abs(v2(2)(0)-3.)<1.e-14);
+  assert(abs(v2(2)(1)-3.)<1.e-14);
+
+  assert(abs(v3(0)(0)-1.2)<1.e-14);
+  assert(abs(v3(0)(1)-1.2)<1.e-14);
+  assert(abs(v3(1)(0)-1.2)<1.e-14);
+  assert(abs(v3(1)(1)-1.2)<1.e-14);
+  assert(abs(v3(2)(0)-1.2)<1.e-14);
+  assert(abs(v3(2)(1)-1.2)<1.e-14);
+
+  assert(abs((v1+v2)(0)(0)-4.4)<1.e-14);
+  assert(abs((v1+v2)(0)(1)-4.4)<1.e-14);
+  assert(abs((v1+v2)(1)(0)-4.4)<1.e-14);
+  assert(abs((v1+v2)(1)(1)-4.4)<1.e-14);
+  assert(abs((v1+v2)(2)(0)-4.4)<1.e-14);
+  assert(abs((v1+v2)(2)(1)-4.4)<1.e-14);
+
+  assert(abs((v1+v2+v3)(0)(0)-5.6)<1.e-14);
+  assert(abs((v1+v2+v3)(0)(1)-5.6)<1.e-14);
+  assert(abs((v1+v2+v3)(1)(0)-5.6)<1.e-14);
+  assert(abs((v1+v2+v3)(1)(1)-5.6)<1.e-14);
+  assert(abs((v1+v2+v3)(2)(0)-5.6)<1.e-14);
+  assert(abs((v1+v2+v3)(2)(1)-5.6)<1.e-14);
 
   return EXIT_SUCCESS;
 }

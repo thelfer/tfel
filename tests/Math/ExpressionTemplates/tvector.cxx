@@ -5,6 +5,10 @@
  * \date   16 Oct 2006
  */
 
+#ifdef NDEBUG
+#undef NDEBUG
+#endif /* NDEBUG */
+
 #include"tvector-header.hxx"
 
 void test2(void)
@@ -12,7 +16,6 @@ void test2(void)
   using namespace std;
   using namespace tfel::math;
   USING_TFEL_FUNCTIONS;
-  cout << "test2()" << endl;
 
   tvector<2,tvector<3,unsigned short> >    v;
   tvector<2,tvector<3,float> >  v2;
@@ -34,13 +37,12 @@ void test2(void)
 
   v3 = 2.*v+v2;
 
-  cout << v3(0) << endl;
-  cout << v3(1) << endl;
-   
-  //  v3 = exp(sin(2.f*v+3.5f*cos(v2))); 
-
-//   cout << v3(0) << endl;
-//   cout << v3(1) << endl;
+  assert(abs(v3(0)(0)-(2.*v(0)(0)+v2(0)(0)))<1.e-10);
+  assert(abs(v3(0)(1)-(2.*v(0)(1)+v2(0)(1)))<1.e-10);
+  assert(abs(v3(0)(2)-(2.*v(0)(2)+v2(0)(2)))<1.e-10);
+  assert(abs(v3(1)(0)-(2.*v(1)(0)+v2(1)(0)))<1.e-10);
+  assert(abs(v3(1)(1)-(2.*v(1)(1)+v2(1)(1)))<1.e-10);
+  assert(abs(v3(1)(2)-(2.*v(1)(2)+v2(1)(2)))<1.e-10);
 }
 
 void test3(void)
@@ -48,9 +50,7 @@ void test3(void)
   using namespace std;
   using namespace tfel::math;
 
-  cout << "test3()" << endl;
-
-  tvector<2,tvector<3,float> >    v;
+  tvector<2,tvector<3,float> >  v;
   tvector<2,tvector<3,float> >  v2;
   tvector<2,tvector<3,double> > v3;
   tvector<2,tvector<3,double> > v4;
@@ -77,8 +77,13 @@ void test3(void)
   v3(1)(2) = 412.232f;
 
   v4 = v+v2+v3;
-  cout << v4(0) << endl;
-  cout << v4(1) << endl;
+
+  assert(abs(v4(0)(0)-(v(0)(0)+v2(0)(0)+v3(0)(0)))<1.e-14);
+  assert(abs(v4(0)(1)-(v(0)(1)+v2(0)(1)+v3(0)(1)))<1.e-14);
+  assert(abs(v4(0)(2)-(v(0)(2)+v2(0)(2)+v3(0)(2)))<1.e-14);
+  assert(abs(v4(1)(0)-(v(1)(0)+v2(1)(0)+v3(1)(0)))<1.e-14);
+  assert(abs(v4(1)(1)-(v(1)(1)+v2(1)(1)+v3(1)(1)))<1.e-14);
+  assert(abs(v4(1)(2)-(v(1)(2)+v2(1)(2)+v3(1)(2)))<1.e-14);
 
 }
 

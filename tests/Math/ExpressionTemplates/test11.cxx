@@ -9,7 +9,8 @@
 #undef NDEBUG
 #endif /* NDEBUG */
 
-#include<iostream>
+#include<cassert>
+#include<cmath>
 #include<cstdlib>
 
 #include"Utilities/Name.hxx"
@@ -18,36 +19,51 @@
 
 int main(void)
 {
+  using namespace std;
   using namespace tfel::math;
   using namespace tfel::utilities;
-  using std::cout;
-  using std::endl;
   USING_TFEL_FUNCTIONS;
 
   tvector<3,double> v1(1);
   tvector<3,tvector<3,double> > v2(tvector<3,double>(1));
 
-  cout << name(v1+sin(v1)) << endl;
-  cout << (v1+sin(v1))(0) << endl;
-  cout << sin(1.) << endl;
+  assert(name(v1+sin(v1))==
+	 "VectorExpr<tvector<3,double>,VectorVectorExpr<tvector<3,double>,VectorExpr<tvector<3,double>,FctVectorExpr<tvector<3,double>,FctSin>>,+>>");
+  assert(abs((v1+sin(v1))(0)-(1.+sin(1.)))<1.e-14);
 
-  cout << "v2(0) : " << &v2(0) << endl;
+  assert(name(sin(v2))=="VectorExpr<tvector<3,tvector<3,double>>,FctVectorExpr<tvector<3,tvector<3,double>>,FctSin>>");
+  assert(abs(sin(v2)(0)(0)-sin(1.))<1.e-14);
+  assert(abs(sin(v2)(0)(1)-sin(1.))<1.e-14);
+  assert(abs(sin(v2)(0)(2)-sin(1.))<1.e-14);
+  assert(abs(sin(v2)(1)(0)-sin(1.))<1.e-14);
+  assert(abs(sin(v2)(1)(1)-sin(1.))<1.e-14);
+  assert(abs(sin(v2)(1)(2)-sin(1.))<1.e-14);
+  assert(abs(sin(v2)(2)(0)-sin(1.))<1.e-14);
+  assert(abs(sin(v2)(2)(1)-sin(1.))<1.e-14);
+  assert(abs(sin(v2)(2)(2)-sin(1.))<1.e-14);
 
-  cout << name(sin(v2)) << endl;
-  cout << sin(v2)(0)(0) << endl;
-  cout << sin(1.) << endl;
+  assert(name(v2+sin(v2))=="VectorExpr<tvector<3,tvector<3,double>>,VectorVectorExpr<tvector<3,tvector<3,double>>,VectorExpr<tvector<3,tvector<3,double>>,FctVectorExpr<tvector<3,tvector<3,double>>,FctSin>>,+>>");
+  assert(abs((v2+sin(v2))(0)(0)-(1.+sin(1.)))<1.e-14);
+  assert(abs((v2+sin(v2))(0)(1)-(1.+sin(1.)))<1.e-14);
+  assert(abs((v2+sin(v2))(0)(2)-(1.+sin(1.)))<1.e-14);
+  assert(abs((v2+sin(v2))(1)(0)-(1.+sin(1.)))<1.e-14);
+  assert(abs((v2+sin(v2))(1)(1)-(1.+sin(1.)))<1.e-14);
+  assert(abs((v2+sin(v2))(1)(2)-(1.+sin(1.)))<1.e-14);
+  assert(abs((v2+sin(v2))(2)(0)-(1.+sin(1.)))<1.e-14);
+  assert(abs((v2+sin(v2))(2)(1)-(1.+sin(1.)))<1.e-14);
+  assert(abs((v2+sin(v2))(2)(2)-(1.+sin(1.)))<1.e-14);
+  
+  assert(name(sin(v2)+v2)=="VectorExpr<tvector<3,tvector<3,double>>,VectorVectorExpr<VectorExpr<tvector<3,tvector<3,double>>,FctVectorExpr<tvector<3,tvector<3,double>>,FctSin>>,tvector<3,tvector<3,double>>,+>>");
 
-  cout << "*****************************************************" << &v2(0) << endl;
-
-  cout << "v2(0) : " << &v2(0) << endl;
-
-  cout << name(v2+sin(v2)) << endl;
-  cout << (v2+sin(v2))(0)(0) << endl;
-  cout << 1.+sin(1.) << endl;
-
-  cout << name(sin(v2)+v2) << endl;
-  cout << (v2+sin(v2))(0)(0) << endl;
-  cout << 1.+sin(1.) << endl;
+  assert(abs((sin(v2)+v2)(0)(0)-(1.+sin(1.)))<1.e-14);
+  assert(abs((sin(v2)+v2)(0)(1)-(1.+sin(1.)))<1.e-14);
+  assert(abs((sin(v2)+v2)(0)(2)-(1.+sin(1.)))<1.e-14);
+  assert(abs((sin(v2)+v2)(1)(0)-(1.+sin(1.)))<1.e-14);
+  assert(abs((sin(v2)+v2)(1)(1)-(1.+sin(1.)))<1.e-14);
+  assert(abs((sin(v2)+v2)(1)(2)-(1.+sin(1.)))<1.e-14);
+  assert(abs((sin(v2)+v2)(2)(0)-(1.+sin(1.)))<1.e-14);
+  assert(abs((sin(v2)+v2)(2)(1)-(1.+sin(1.)))<1.e-14);
+  assert(abs((sin(v2)+v2)(2)(2)-(1.+sin(1.)))<1.e-14);
 
   return EXIT_SUCCESS;
 }

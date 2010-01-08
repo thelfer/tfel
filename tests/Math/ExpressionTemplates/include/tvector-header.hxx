@@ -9,9 +9,9 @@
 #ifndef _LIB_TFEL_TVECTOR_HEADER_HXX_
 #define _LIB_TFEL_TVECTOR_HEADER_HXX_ 
 
-#include<iostream>
 #include<cstdlib>
 #include<cassert>
+#include<cmath>
 #include<limits>
 #include"Math/functions.hxx"
 #include"Math/tvector.hxx"
@@ -25,8 +25,6 @@ void test1(void)
   using namespace std;
   using namespace tfel::math;
   USING_TFEL_FUNCTIONS;
-
-  cout << "test1<T>()" << endl;
 
   tvector<3,float>    v;
   tvector<3,float>  v2;
@@ -42,10 +40,12 @@ void test1(void)
 
   v3 = v+v2;
 
-  cout << v3 << endl;
-
   v3 = exp(sin(2.f*v+3.5f*cos(v2))); 
-  cout << v3 << endl;
+
+  assert(abs(v3(0)-exp(sin(2.f*v(0)+3.5f*cos(v2(0)))))<1.e-14);
+  assert(abs(v3(1)-exp(sin(2.f*v(1)+3.5f*cos(v2(1)))))<1.e-14);
+  assert(abs(v3(2)-exp(sin(2.f*v(2)+3.5f*cos(v2(2)))))<1.e-14);
+
 }
 
 void test2(void);

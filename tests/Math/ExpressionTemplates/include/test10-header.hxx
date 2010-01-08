@@ -13,7 +13,7 @@
 #undef NDEBUG
 #endif /* NDEBUG */
 
-#include<iostream>
+#include<cassert>
 #include<cstdlib>
 #include<algorithm>
 #include<iterator>
@@ -23,35 +23,15 @@
 #include"Math/functions.hxx"
 
 template<typename T>
-void function(const T src);
+void function(const T&);
 
 template<typename T>
-void function2(const T src);
-
-template<typename T>
-void function(const T src)
+void function(const T&)
 {
   using namespace std;
+  using namespace tfel::meta;
   using namespace tfel::utilities;
-
-  cout << "Treating : " << T::getName() << endl;
-  if(tfel::meta::HasRandomAccessConstIterator<T>::cond){
-    cout << T::getName() << " has a random access const iterator" << endl;
-  } else {
-    cout << T::getName() << " don't have a random access const iterator" << endl;
-  }
-  cout << "Iterator name : " << name(src.begin()) << endl;
-  copy(src.begin(),src.end(),ostream_iterator<double>(cout," "));
-  cout << endl;
-}
-
-template<typename T>
-void function2(const T src)
-{
-  using namespace std;
-  using namespace tfel::utilities;
-  cout << name(src) << endl;
-  cout << Name<typename std::iterator_traits<T>::value_type>::getName() << endl;
+  assert(HasRandomAccessConstIterator<T>::cond);
 }
 
 #endif /* _LIB_TFEL_TEST10_HEADER_HXX */

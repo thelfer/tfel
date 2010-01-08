@@ -32,17 +32,25 @@ int main(void)
   v2(1) = 4.;
   v2(2) = 5.;
   v2(3) = 6.;
-  
-  //  function(v1);
+
   function(1.25*v1);
   function(cos(v2));
   function(v2*v1);
-  //  function(cos(v2)*v1);
-  
-  //  function(Exp(Sin(1.25*v1-cos(v2)*v1))/3.);
 
-  cout << "Octave result : " <<  0.88321 << "," << 0.12724 << "," <<  0.45399 <<  "," << 0.60610 << endl;
+  assert(abs((1.25*v1)(0)-1.25*12.12)<1.e-14);
+  assert(abs((1.25*v1)(1)-1.25*12.234)<1.e-14);
+  assert(abs((1.25*v1)(2)-1.25*22.4322)<1.e-14);
+  assert(abs((1.25*v1)(3)-1.25*2.2112)<1.e-14);
 
+  assert(abs((cos(v2))(0)-cos(v2(0)))<1.e-14);
+  assert(abs((cos(v2))(1)-cos(v2(1)))<1.e-14);
+  assert(abs((cos(v2))(2)-cos(v2(2)))<1.e-14);
+  assert(abs((cos(v2))(3)-cos(v2(3)))<1.e-14);
+
+  assert(abs((v1*v2)(0)-(v1(0)*v2(0)))<1.e-14);
+  assert(abs((v1*v2)(1)-(v1(1)*v2(1)))<1.e-14);
+  assert(abs((v1*v2)(2)-(v1(2)*v2(2)))<1.e-14);
+  assert(abs((v1*v2)(3)-(v1(3)*v2(3)))<1.e-14);
 
   return EXIT_SUCCESS;
 

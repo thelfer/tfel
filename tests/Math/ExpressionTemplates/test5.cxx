@@ -11,6 +11,7 @@
 #endif /* NDEBUG */
 
 #include<iostream>
+#include<cassert>
 #include<cstdlib>
 
 #include"Utilities/Name.hxx"
@@ -30,30 +31,25 @@ int main(void)
   tvector<3,tvector<3,float> > v3(tvector<3,float>(1));
   tvector<3,tvector<3,float> > v4(tvector<3,float>(1));
 
-  cout << name(2.*v1) << endl;
-  cout << (2.*v1)(2) << endl;
-  cout << name(2.*(v1+v2)) << endl;
-  cout << (2.*(v1+v2))(2) << endl;
-  cout << name(v1+2.*v2) << endl;
-  cout << (v1+2.*v2)(2) << endl;
-  cout << name(v1+v2*2.) << endl;
-  cout << (v1+v2*2.)(2) << endl;
-  cout << name(v2*2.+v1) << endl;
-  cout << (v2*2.+v1)(2) << endl;
-  cout << name(v2*2.+sin(v1)) << endl;
-  cout << (v2*2.+sin(v1))(2) << endl;
+  assert(name(2.*v1)=="VectorExpr<tvector<3,double>,ScalarVectorExpr<double,tvector<3,float>,*>>");
+  assert(abs((2.*v1)(0)-2.)<1.e-14);
+  assert(abs((2.*v1)(1)-2.)<1.e-14);
+  assert(abs((2.*v1)(2)-2.)<1.e-14);
 
-  cout << name(2.*v3) << endl;
-  cout << (2.*v3)(2)(0) << endl;
-  cout << name(2.*(v3+v4)) << endl;
-  cout << (2.*(v3+v4))(2)(0) << endl;
-  cout << name(v3+2.*v4) << endl;
-  cout << (v3+2.*v4)(2)(0) << endl;
-  cout << name(v3+v4*2.) << endl;
-  cout << (v3+v4*2.)(2)(0) << endl;
-  cout << name(v4*2.+v3) << endl;
-  cout << (v4*2.+v3)(2)(0) << endl;
-  cout << name(v4*2.+sin(v3)) << endl;
-  cout << (v4*2.+sin(v3))(2)(0) << endl;
+  assert(name(2.*(v1+v2))=="VectorExpr<tvector<3,double>,ScalarVectorExpr<double,VectorExpr<tvector<3,float>,VectorVectorExpr<tvector<3,float>,tvector<3,float>,+>>,*>>");
+  assert(abs((2.*(v1+v2))(0)-6.)<1.e-14);
+  assert(abs((2.*(v1+v2))(1)-6.)<1.e-14);
+  assert(abs((2.*(v1+v2))(2)-6.)<1.e-14);
+  
+  assert(name(v1+2.*v2)=="VectorExpr<tvector<3,double>,VectorVectorExpr<tvector<3,float>,VectorExpr<tvector<3,double>,ScalarVectorExpr<double,tvector<3,float>,*>>,+>>");
+  assert(abs((v1+2.*v2)(0)-5.)<1.e-14);
+  assert(abs((v1+2.*v2)(1)-5.)<1.e-14);
+  assert(abs((v1+2.*v2)(2)-5.)<1.e-14);
 
+  assert(name(v1+v2*2.)=="VectorExpr<tvector<3,double>,VectorVectorExpr<tvector<3,float>,VectorExpr<tvector<3,double>,VectorScalarExpr<tvector<3,float>,double,*>>,+>>");
+  assert(abs((v1+v2*2.)(0)-5.)<1.e-14);
+  assert(abs((v1+v2*2.)(1)-5.)<1.e-14);
+  assert(abs((v1+v2*2.)(2)-5.)<1.e-14);
+
+  return EXIT_SUCCESS;
 }

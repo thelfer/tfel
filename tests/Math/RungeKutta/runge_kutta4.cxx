@@ -16,7 +16,5 @@ int main(void)
   test<double>();
   test<long double>();
 
-  cout << "success" << endl;
-
   return EXIT_SUCCESS;
 }

@@ -9,7 +9,7 @@
 #undef NDEBUG
 #endif /* NDEBUG */
 
-#include<iostream>
+#include<cmath>
 #include<cstdlib>
 
 #include"Utilities/Name.hxx"
@@ -26,7 +26,9 @@ int main(void)
   tvector<3,double> v2(1.5);
   tvector<3,double> v3(1.76);
 
-  std::cout << (v1+v2+v3)(0) << std::endl;
+  assert(abs((v1+v2+v3)(0)-4.26)<1.e-14);
+  assert(abs((v1+v2+v3)(1)-4.26)<1.e-14);
+  assert(abs((v1+v2+v3)(2)-4.26)<1.e-14);
 
   return EXIT_SUCCESS;
 }

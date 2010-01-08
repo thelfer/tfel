@@ -9,7 +9,6 @@
 #ifndef _LIB_TFEL_RUNGE_KUTTA4_HEADER_HXX_
 #define _LIB_TFEL_RUNGE_KUTTA4_HEADER_HXX_ 
 
-#include<iostream>
 #include<cstdlib>
 #include<fstream>
 #include<string>
