@@ -5,9 +5,9 @@ INCLUDES = -I$(top_srcdir)/include
 testdir = $(pkgdatadir)/tests/Material
 test_PROGRAMS = boundsCheck
 
-LDADD = -lTFELMaterialLaw -lTFELMath -lTFELException  \
-	-L$(top_builddir)/src/Material                \
-	-L$(top_builddir)/src/Math                    \
+LDADD = -lTFELMaterial -lTFELMath -lTFELException \
+	-L$(top_builddir)/src/Material            \
+	-L$(top_builddir)/src/Math                \
 	-L$(top_builddir)/src/Exception
 
 boundsCheck_SOURCES = boundsCheck.cxx               
