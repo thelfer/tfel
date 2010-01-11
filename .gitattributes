@@ -628,8 +628,8 @@ src/Graphics/Makefile.am -text
 src/Graphics/StandardGraphTheme.cxx -text
 src/Graphics/ThemeManager.cxx -text
 src/Makefile.am -text
-src/MaterialLaw/Makefile.am -text
-src/MaterialLaw/MaterialLawException.cxx -text
+src/Material/Makefile.am -text
+src/Material/MaterialLawException.cxx -text
 src/Math/ArrayTag.cxx -text
 src/Math/BasicOperations.cxx -text
 src/Math/BinaryFunction.cxx -text
@@ -707,8 +707,8 @@ tests/FSAlgorithms/transform.cxx -text
 tests/Lambda/Makefile.am -text
 tests/Lambda/lambda.cxx -text
 tests/Makefile.am -text
-tests/MaterialLaw/Makefile.am -text
-tests/MaterialLaw/boundsCheck.cxx -text
+tests/Material/Makefile.am -text
+tests/Material/boundsCheck.cxx -text
 tests/Math/Composite/Makefile.am -text
 tests/Math/Composite/composite.cxx -text
 tests/Math/ExpressionTemplates/Makefile.am -text

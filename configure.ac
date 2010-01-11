@@ -222,7 +222,7 @@ AC_OUTPUT([debug.sh
 	   src/Exception/Makefile
 	   src/Utilities/Makefile
 	   src/Math/Makefile
-	   src/MaterialLaw/Makefile
+	   src/Material/Makefile
 	   src/System/Makefile
 	   src/TFELConfig/Makefile
 	   src/TFELConfig/tfel-config.hxx
@@ -256,7 +256,7 @@ AC_OUTPUT([debug.sh
 	   tests/UnaryTests/Makefile
 	   tests/UnaryTests/include/Makefile
 	   tests/MetaProgramming/Makefile
-	   tests/MaterialLaw/Makefile
+	   tests/Material/Makefile
 	   tests/System/Makefile
 	   ])
 
