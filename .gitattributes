@@ -536,6 +536,7 @@ mfront/include/UMAT/UMATComputeThermalExpansionTensor.hxx -text
 mfront/include/UMAT/UMATException.hxx -text
 mfront/include/UMAT/UMATInterface.hxx -text
 mfront/include/UMAT/UMATOrthotropicBehaviour.hxx -text
+mfront/include/UMAT/UMATOutOfBoundsPolicy.hxx -text
 mfront/include/UMAT/UMATRotationMatrix.hxx -text
 mfront/include/UMAT/UMATTraits.hxx -text
 mfront/include/UnaryLoadingDefinition.hxx -text
@@ -592,6 +593,7 @@ mfront/src/SupportedTypes.cxx -text
 mfront/src/UMATComputeStiffnessTensor.cxx -text
 mfront/src/UMATComputeThermalExpansionTensor.cxx -text
 mfront/src/UMATException.cxx -text
+mfront/src/UMATOutOfBoundsPolicy.cxx -text
 mfront/src/UMATRotationMatrix.cxx -text
 mfront/src/UnaryLoadingDefinition.cxx -text
 mfront/src/VarHandler.cxx -text
