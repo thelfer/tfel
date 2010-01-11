@@ -629,7 +629,7 @@ src/Graphics/StandardGraphTheme.cxx -text
 src/Graphics/ThemeManager.cxx -text
 src/Makefile.am -text
 src/Material/Makefile.am -text
-src/Material/MaterialLawException.cxx -text
+src/Material/MaterialException.cxx -text
 src/Math/ArrayTag.cxx -text
 src/Math/BasicOperations.cxx -text
 src/Math/BinaryFunction.cxx -text

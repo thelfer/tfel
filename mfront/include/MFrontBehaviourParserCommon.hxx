@@ -236,9 +236,9 @@ namespace mfront{
 
     virtual void writeBehaviourConstructors(void);
 
-    virtual void writeBehaviourConstructors(const std::string&,
-					    const std::string&,
-					    const std::string& = "");
+    void writeBehaviourConstructors(const std::string&,
+				    const std::string&,
+				    const std::string& = "");
 
     virtual void writeBehaviourStateVarsIncrements(void);
 

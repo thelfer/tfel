@@ -13,13 +13,13 @@
 #include<cassert>
 #include<cstdlib>
 
-#include"MaterialLaw/BoundsCheck.hxx"
+#include"Material/BoundsCheck.hxx"
 
 int main(void)
 {
   using namespace std;
   using namespace tfel::math;
-  using namespace tfel::materiallaw;
+  using namespace tfel::material;
   
   stensor<3,mass> s(mass(12.));
   stensor<3,float> s2(12.f);

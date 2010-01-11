@@ -8,7 +8,7 @@
 #ifndef _LIB_TFEL_MFRONT_UMATOUTOFBOUNDSPOLICY_H_
 #define _LIB_TFEL_MFRONT_UMATOUTOFBOUNDSPOLICY_H_ 
 
-#include"MaterialLaw/OutOfBoundsPolicy.hxx"
+#include"Material/OutOfBoundsPolicy.hxx"
 
 namespace umat
 {
@@ -17,14 +17,14 @@ namespace umat
   {
     static const UMATOutOfBoundsPolicy&
     getUMATOutOfBoundsPolicy();
-    tfel::materiallaw::OutOfBoundsPolicy
+    tfel::material::OutOfBoundsPolicy
     getOutOfBoundsPolicy() const;
   private:
     UMATOutOfBoundsPolicy();
     UMATOutOfBoundsPolicy(const UMATOutOfBoundsPolicy&);
     UMATOutOfBoundsPolicy&
     operator=(const UMATOutOfBoundsPolicy&);
-    tfel::materiallaw::OutOfBoundsPolicy policy;
+    tfel::material::OutOfBoundsPolicy policy;
   }; // end of struct UMATOutOfBounds
 
 } // end of namespace umat

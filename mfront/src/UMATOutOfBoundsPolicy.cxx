@@ -20,9 +20,9 @@ namespace umat
   } // end of getUMATOutOfBoundsPolicy
 
   UMATOutOfBoundsPolicy::UMATOutOfBoundsPolicy()
-    : policy(tfel::materiallaw::None)
+    : policy(tfel::material::None)
   {
-    using namespace tfel::materiallaw;
+    using namespace tfel::material;
     const char * const p = ::getenv("CASTEM_OUT_OF_BOUND_POLICY");
     if(p!=0){
       if(strcmp(p,"STRICT")==0){
@@ -33,7 +33,7 @@ namespace umat
     }
   } // end of UMATOutOfBoundsPolicy::UMATOutOfBoundsPolicy
 
-  tfel::materiallaw::OutOfBoundsPolicy
+  tfel::material::OutOfBoundsPolicy
   UMATOutOfBoundsPolicy::getOutOfBoundsPolicy() const
   {
     return this->policy;

@@ -17,8 +17,8 @@ static bool exceptions    = false;
 static bool math          = false;
 static bool utilities     = false;
 static bool finiteElement = false;
-static bool materialLaw   = false;
-static bool lsystem        = false;
+static bool material      = false;
+static bool lsystem       = false;
 static bool graphics      = false;
 
 const std::string
@@ -120,12 +120,12 @@ treatLsystem(void)
 } // end of treatFiniteElement
 
 void
-treatMaterialLaw(void)
+treatMaterial(void)
 {
   exceptions  = true;
   math        = true;
-  materialLaw = true;
-} // end of treatMaterialLaw
+  material = true;
+} // end of treatMaterial
 
 void
 treatGraphics(void)
@@ -134,14 +134,14 @@ treatGraphics(void)
   math        = true;
   utilities   = true;
   lsystem      = true;
-} // end of treatMaterialLaw
+} // end of treatMaterial
 
 void
 treatAll(void)
 {
   exceptions  = true;
   math        = true;
-  materialLaw = true;
+  material = true;
   utilities   = true;
 } // end of treatAll
 
@@ -208,7 +208,7 @@ main(const int argc,
   registerCallBack("--graphics",&treatGraphics,"request flags for libTFELGraphics.");
   registerCallBack("--system",&treatLsystem,"request flags for libTFELSystem.");
   registerCallBack("--utilities",&treatUtilities,"request flags for libTFELUtilities.");
-  registerCallBack("--materiallaw",&treatMaterialLaw,"request flags for libTFELMaterialLaw.");
+  registerCallBack("--material",&treatMaterial,"request flags for libTFELMaterial.");
   registerCallBack("--finiteElement",&treatFiniteElement,"request flags for libTFELFiniteElement.");
   registerCallBack("--all",&treatAll,"request flags for all librairies.");
 
@@ -241,8 +241,8 @@ main(const int argc,
     if(graphics){
       cout << "-lTFELGraphics ";
     }
-    if(materialLaw){
-      cout << "-lTFELMaterialLaw ";
+    if(material){
+      cout << "-lTFELMaterial ";
     }
     if(finiteElement){
       cout << "-lTFELFiniteElement ";
