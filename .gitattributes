@@ -68,7 +68,7 @@ include/Material/Hill.ixx -text
 include/Material/IsotropicLinearFourierHookLaw.hxx -text
 include/Material/IsotropicLinearFourierLaw.hxx -text
 include/Material/Lame.hxx -text
-include/Material/MaterialLawException.hxx -text
+include/Material/MaterialException.hxx -text
 include/Material/MechanicalBehaviour.hxx -text
 include/Material/MechanicalBehaviourData.hxx -text
 include/Material/MechanicalBehaviourTraits.hxx -text
