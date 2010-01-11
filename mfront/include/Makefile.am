@@ -65,6 +65,7 @@ noinst_HEADERS += MFrontCastemLawInterface.hxx   \
 		  MFrontUMATInterface.hxx
 
 nobase_include_HEADERS = UMAT/UMATException.hxx                     \
+			 UMAT/UMATOutOfBoundsPolicy.hxx             \
 			 UMAT/UMATInterface.hxx                     \
 			 UMAT/UMATRotationMatrix.hxx                \
 			 UMAT/UMATOrthotropicBehaviour.hxx          \

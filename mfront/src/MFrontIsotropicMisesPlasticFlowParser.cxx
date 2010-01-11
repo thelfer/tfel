@@ -153,9 +153,9 @@ namespace mfront{
     this->behaviourFile << "this->updateStateVars();\n";
     this->behaviourFile << "this->sig  = (this->lambda)*trace(this->eel)*StrainStensor::Id()+2*(this->mu)*(this->eel);\n";
     for(p  = this->boundsDescriptions.begin();
-	p != this->boundsDescriptions.begin();++p){
+	p != this->boundsDescriptions.end();++p){
       if(p->varCategory==BoundsDescription::StateVar){
-	p->writeBoundsCheking(this->behaviourFile);
+	p->writeBoundsChecks(this->behaviourFile);
       }
     }
     this->behaviourFile << "}\n\n";

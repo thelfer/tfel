@@ -32,6 +32,7 @@
 #include"UMAT/UMAT.hxx"
 #include"UMAT/UMATTraits.hxx"
 #include"UMAT/UMATException.hxx"
+#include"UMAT/UMATOutOfBoundsPolicy.hxx"
 #include"UMAT/UMATOrthotropicBehaviour.hxx"
 #include"UMAT/UMATComputeStiffnessTensor.hxx"
 #include"UMAT/UMATComputeThermalExpansionTensor.hxx"
@@ -310,6 +311,7 @@ namespace umat{
 	void exe(UMATReal *const STRESS,
 		 UMATReal *const STATEV)
 	{
+	  const UMATOutOfBoundsPolicy& up = UMATOutOfBoundsPolicy::getUMATOutOfBoundsPolicy();
 	  UMATReal dtMin = (this->dt)/(1 << UMATTraits<BV>::maximumSubStepping);
 	  UMATReal tCurrent = 0.;
 	  UMATReal dt_ = this->dt;
@@ -326,6 +328,7 @@ namespace umat{
 	  while((tCurrent<dt_-dtMin*0.25)&&(dt_>dtMin)){
 	    convergence = true;
 	    BV behaviour(this->bData,this->iData);
+	    behaviour.setOutOfBoundsPolicy(up.getOutOfBoundsPolicy());
 	    try{
 	      behaviour.integrate();
 	    }
@@ -397,6 +400,8 @@ namespace umat{
 	{
 	  SInitializer::exe(this->behaviour,PROPS);
 	  AInitializer::exe(this->behaviour,PROPS);
+	  const UMATOutOfBoundsPolicy& up = UMATOutOfBoundsPolicy::getUMATOutOfBoundsPolicy();
+	  this->behaviour.setOutOfBoundsPolicy(up.getOutOfBoundsPolicy());
 	} // end of Integrator::Integrator
 
 	void exe(UMATReal *const STRESS,

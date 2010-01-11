@@ -425,9 +425,9 @@ namespace mfront{
     this->behaviourFile << "this->updateStateVars();\n";
     this->behaviourFile << "this->computeFinalStress();\n";
     for(p3  = this->boundsDescriptions.begin();
-	p3 != this->boundsDescriptions.begin();++p3){
+	p3 != this->boundsDescriptions.end();++p3){
       if(p3->varCategory==BoundsDescription::StateVar){
-	p3->writeBoundsCheking(this->behaviourFile);
+	p3->writeBoundsChecks(this->behaviourFile);
       }
     }
     this->behaviourFile << "} // end of " << this->className << "::integrate\n\n";

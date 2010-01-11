@@ -732,9 +732,9 @@ namespace mfront{
     this->behaviourFile << "}\n";
     this->behaviourFile << "}\n";
     for(p2  = this->boundsDescriptions.begin();
-	p2 != this->boundsDescriptions.begin();++p2){
+	p2 != this->boundsDescriptions.end();++p2){
       if(p2->varCategory==BoundsDescription::StateVar){
-	p2->writeBoundsCheking(this->behaviourFile);
+	p2->writeBoundsChecks(this->behaviourFile);
       }
     }
   } // end of MFrontRungeKuttaParser::writeBehaviourRK54Integrator
@@ -901,9 +901,9 @@ namespace mfront{
     this->behaviourFile << "}\n";
     this->behaviourFile << "}\n";
     for(p2  = this->boundsDescriptions.begin();
-	p2 != this->boundsDescriptions.begin();++p2){
+	p2 != this->boundsDescriptions.end();++p2){
       if(p2->varCategory==BoundsDescription::StateVar){
-	p2->writeBoundsCheking(this->behaviourFile);
+	p2->writeBoundsChecks(this->behaviourFile);
       }
     }
   } // end of MFrontRungeKuttaParser::writeBehaviourRK42Integrator
@@ -1004,9 +1004,9 @@ namespace mfront{
     this->behaviourFile << "// Update stress field\n";
     this->behaviourFile << "this->computeFinalStress();\n\n";
     for(p2  = this->boundsDescriptions.begin();
-	p2 != this->boundsDescriptions.begin();++p2){
+	p2 != this->boundsDescriptions.end();++p2){
       if(p2->varCategory==BoundsDescription::StateVar){
-	p2->writeBoundsCheking(this->behaviourFile);
+	p2->writeBoundsChecks(this->behaviourFile);
       }
     }
   }  // end of MFrontRungeKuttaParser::writeBehaviourRK4Integrator

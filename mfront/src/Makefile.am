@@ -83,6 +83,7 @@ lib_LTLIBRARIES = libUMATInterface.la
 libUMATInterface_la_SOURCES = UMATComputeStiffnessTensor.cxx        \
 			      UMATComputeThermalExpansionTensor.cxx \
 			      UMATRotationMatrix.cxx                \
+		              UMATOutOfBoundsPolicy.cxx             \
 		              UMATException.cxx
 libUMATInterface_la_LIBADD  = -L$(top_builddir)/src/Utilities/ -lTFELUtilities
 endif

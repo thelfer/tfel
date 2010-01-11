@@ -112,6 +112,10 @@ namespace mfront{
 
     void treatBounds(void);
 
+    void treatPhysicalBounds(void);
+
+    void treatBounds(BoundsDescription&);
+
     void addThisPtrToVarNames(void);
 
     virtual void writeIncludes(std::ofstream&);
@@ -224,13 +228,17 @@ namespace mfront{
 
     virtual void writeBehaviourGetName(void);
 
+    virtual void writeBehaviourPolicyVariable(void);
+    
+    virtual void writeBehaviourSetOutOfBoundsPolicy(void);
+
     virtual void writeBehaviourDisabledConstructors(void);
 
     virtual void writeBehaviourConstructors(void);
 
-    void writeBehaviourConstructors(const std::string&,
-				    const std::string&,
-				    const std::string& = "");
+    virtual void writeBehaviourConstructors(const std::string&,
+					    const std::string&,
+					    const std::string& = "");
 
     virtual void writeBehaviourStateVarsIncrements(void);
 
@@ -310,6 +318,7 @@ namespace mfront{
     StringContainer interfaces;
     std::vector<UnaryLoadingDefinition> unaryLoadingDefinitions;
     std::vector<BoundsDescription>      boundsDescriptions;
+    std::vector<BoundsDescription>      physicalBoundsDescriptions;
 
     std::string integrator;
 

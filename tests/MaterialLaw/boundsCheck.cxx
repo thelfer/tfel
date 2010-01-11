@@ -30,7 +30,7 @@ int main(void)
   try{
     BoundsCheck<3>::upperBoundCheck("s",s,13.);
     BoundsCheck<3>::lowerBoundCheck("s",s,11.);
-    BoundsCheck<3>::lowerAndUpperBoundCheck("s",s,11.,13.);
+    BoundsCheck<3>::lowerAndUpperBoundsChecks("s",s,11.,13.);
   } 
   catch(const OutOfBoundsException& e){
     catched=true;
@@ -57,7 +57,7 @@ int main(void)
 
   catched = false;
   try{
-    BoundsCheck<3>::lowerAndUpperBoundCheck("s",s,24.,13.);
+    BoundsCheck<3>::lowerAndUpperBoundsChecks("s",s,24.,13.);
   } 
   catch(const OutOfBoundsException& e){
     catched=true;
@@ -84,7 +84,7 @@ int main(void)
 
   catched = false;
   try{
-    BoundsCheck<3>::lowerAndUpperBoundCheck("s2",s2,24.f,13.f);
+    BoundsCheck<3>::lowerAndUpperBoundsChecks("s2",s2,24.f,13.f);
   } 
   catch(const OutOfBoundsException& e){
     catched=true;
@@ -111,7 +111,7 @@ int main(void)
 
   catched = false;
   try{
-    BoundsCheck<3>::lowerAndUpperBoundCheck("d",d,24.L,13.L);
+    BoundsCheck<3>::lowerAndUpperBoundsChecks("d",d,24.L,13.L);
   } 
   catch(const OutOfBoundsException& e){
     catched=true;

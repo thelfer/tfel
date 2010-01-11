@@ -634,12 +634,29 @@ namespace mfront{
     unaryLoadingDefinitions.push_back(definition);
   } // end of MFrontBehaviourParserCommon::treatUnaryLoadingTest
 
-  void MFrontBehaviourParserCommon::treatBounds(void)
+  void
+  MFrontBehaviourParserCommon::treatBounds(void)
+  {
+    BoundsDescription boundsDescription;
+    this->boundsDescriptions.push_back(boundsDescription);
+    this->boundsDescriptions.back().category = BoundsDescription::Standard;
+    this->treatBounds(this->boundsDescriptions.back());
+  } // end of MFrontBehaviourParserCommon::treatBounds
+
+  void
+  MFrontBehaviourParserCommon::treatPhysicalBounds(void)
+  {
+    BoundsDescription boundsDescription;
+    this->boundsDescriptions.push_back(BoundsDescription());
+    this->boundsDescriptions.back().category = BoundsDescription::Physical;
+    this->treatBounds(this->boundsDescriptions.back());
+  } // end of MFrontBehaviourParserCommon::treatPhysicalBounds
+
+  void MFrontBehaviourParserCommon::treatBounds(BoundsDescription& boundsDescription)
   {
     using namespace std;
     VarContainer::const_iterator p;
     ComputedVarContainer::const_iterator p2;
-    BoundsDescription boundsDescription;
     bool found;
     this->checkNotEndOfFile("MFrontBehaviourParserCommon::treatBounds");
 
@@ -711,7 +728,6 @@ namespace mfront{
     if (boundsDescription.varType==Stensor){
       ++(this->current);
       this->readSpecifiedToken("MFrontBehaviourParserCommon::treatBounds : ","(");
-      ++(this->current);
       this->checkNotEndOfFile("MFrontBehaviourParserCommon::treatBounds : ");
       if(this->current->value!="*"){
 	unsigned short component;
@@ -719,7 +735,7 @@ namespace mfront{
 	converter >> component;
 	if(!converter&&(!converter.eof())){
 	  this->throwRuntimeError("MFrontBehaviourParserCommon::treatBounds",
-				  "Could not read component number for variable '"+boundsDescription.varName+"'");
+				  "could not read component number for variable '"+boundsDescription.varName+"'");
 	}
 	boundsDescription.varType=Scalar;
 	boundsDescription.varName+="(";
@@ -747,13 +763,13 @@ namespace mfront{
     } else if(this->current->value=="["){
       ++(this->current);
       this->checkNotEndOfFile("MFrontBehaviourParserCommon::treatBounds",
-			      "Expected lower bound value for variable "+boundsDescription.varName);
+			      "expected to read lower bound value for variable "+boundsDescription.varName);
       istringstream converter(this->current->value);
       converter >> boundsDescription.lowerBound;
       boundsDescription.boundsType = BoundsDescription::LowerAndUpper;
       if(!converter&&(!converter.eof())){
 	this->throwRuntimeError("MFrontBehaviourParserCommon::treatBounds",
-				"Could not read lower bound value for variable '"+boundsDescription.varName+"'");
+				"could not read lower bound value for variable '"+boundsDescription.varName+"'");
       }
     } else {
       this->throwRuntimeError("MFrontBehaviourParserCommon::treatBounds : ",
@@ -761,13 +777,12 @@ namespace mfront{
     }
     ++(this->current);
     this->readSpecifiedToken("MFrontBehaviourParserCommon::treatBounds",":");
-    ++(this->current);
     this->checkNotEndOfFile("MFrontBehaviourParserCommon::treatBounds",
-			    "Could not read upper bound value for variable "+boundsDescription.varName);
+			    "expected to read upper bound value for variable "+boundsDescription.varName);
     if(this->current->value=="*"){
       if(boundsDescription.boundsType==BoundsDescription::Upper){
 	this->throwRuntimeError("MFrontBehaviourParserCommon::treatBounds",
-				"Upper and lower values bounds are both infinity. This is inconsistent.");
+				"upper and lower values bounds are both infinity. This is inconsistent.");
       }
       boundsDescription.boundsType=BoundsDescription::Lower;
       ++(this->current);
@@ -782,12 +797,12 @@ namespace mfront{
       converter >> boundsDescription.upperBound;
       if(!converter&&(!converter.eof())){
 	this->throwRuntimeError("MFrontBehaviourParserCommon::treatBounds",
-				"Could not read lower bound value for variable '"+boundsDescription.varName+"'");
+				"could not read upper bound value for variable '"+boundsDescription.varName+"'");
       }
       if(boundsDescription.boundsType==BoundsDescription::LowerAndUpper){
 	if(boundsDescription.lowerBound>boundsDescription.upperBound){
 	  this->throwRuntimeError("MFrontBehaviourParserCommon::treatBounds",
-				  "Lower bound value is greater than upper bound value for variable '"+
+				  "lower bound value is greater than upper bound value for variable '"+
 				  boundsDescription.varName+"'");
 	}
       }
@@ -801,8 +816,6 @@ namespace mfront{
     }
     ++(this->current);
     this->readSpecifiedToken("MFrontBehaviourParserCommon::treatBounds",";");
-    ++(this->current);
-    this->boundsDescriptions.push_back(boundsDescription);
   } // end of MFrontBehaviourParserCommon::treatBounds
 
   void
@@ -815,6 +828,7 @@ namespace mfront{
     this->varNames.insert("T");
     this->varNames.insert("dT");
     this->varNames.insert("dt");
+    this->varNames.insert("policy");
   } // end of MFrontBehaviourParserCommon::registerDefaultVarNames
 
   MFrontBehaviourParserCommon::MFrontBehaviourParserCommon()
@@ -1714,9 +1728,9 @@ namespace mfront{
     }
     this->behaviourFile << "this->updateStateVars();\n";
     for(p  = this->boundsDescriptions.begin();
-	p != this->boundsDescriptions.begin();++p){
+	p != this->boundsDescriptions.end();++p){
       if(p->varCategory==BoundsDescription::StateVar){
-	p->writeBoundsCheking(this->behaviourFile);
+	p->writeBoundsChecks(this->behaviourFile);
       }
     }
     this->behaviourFile << "}\n\n";
@@ -1741,6 +1755,18 @@ namespace mfront{
     this->behaviourFile << this->className << "& operator = (const ";
     this->behaviourFile << this->className<< "&);\n\n";
   }
+
+  void MFrontBehaviourParserCommon::writeBehaviourSetOutOfBoundsPolicy(void)
+  {
+    using namespace std;
+    this->checkBehaviourFile();
+    this->behaviourFile << "/*!\n";
+    this->behaviourFile << "* \\brief set the policy for \"out of bounds\" conditions\n";
+    this->behaviourFile << "*/\n";
+    this->behaviourFile << "void\nsetOutOfBoundsPolicy(const OutOfBoundsPolicy p){\n";
+    this->behaviourFile << "this->policy = p;\n";
+    this->behaviourFile << "}; // end of setOutOfBoundsPolicy\n\n";
+  } // end of MFrontBehaviourParserCommon::writeBehaviourOutOfBoundsEnumeration(void)
 
   void MFrontBehaviourParserCommon::writeBehaviourConstructors(void)
   {    
@@ -1842,7 +1868,7 @@ namespace mfront{
     this->writeBehaviourParserSpecificConstructorPart();
     for(b  = this->boundsDescriptions.begin();
 	b != this->boundsDescriptions.end();++b){
-      b->writeBoundsCheking(this->behaviourFile);
+      b->writeBoundsChecks(this->behaviourFile);
     }          
     this->behaviourFile << "}\n\n";
     this->behaviourFile << "/*!\n";
@@ -1881,7 +1907,7 @@ namespace mfront{
     this->writeBehaviourParserSpecificConstructorPart();
     for(b  = this->boundsDescriptions.begin();
 	b != this->boundsDescriptions.end();++b){
-      b->writeBoundsCheking(this->behaviourFile);
+      b->writeBoundsChecks(this->behaviourFile);
     }      
     this->behaviourFile << "}\n\n";
     // Creating constructor for external interfaces
@@ -1907,7 +1933,7 @@ namespace mfront{
       this->writeBehaviourParserSpecificConstructorPart();
       for(b  = this->boundsDescriptions.begin();
 	  b != this->boundsDescriptions.end();++b){
-	b->writeBoundsCheking(this->behaviourFile);
+	b->writeBoundsChecks(this->behaviourFile);
       }      
       if(!predictor.empty()){
 	this->behaviourFile << predictor;
@@ -1932,6 +1958,14 @@ namespace mfront{
     }
     this->behaviourFile << endl;
   }
+  
+  void MFrontBehaviourParserCommon::writeBehaviourPolicyVariable(void)
+  {    
+    using namespace std;
+    this->checkBehaviourFile();
+    this->behaviourFile << "//! policy for treating out of bounds conditions\n";
+    this->behaviourFile << "OutOfBoundsPolicy policy;\n";  
+  } // end of MFrontBehaviourParserCommon::writeBehaviourPolicyVariable
 
   void MFrontBehaviourParserCommon::writeBehaviourComputedVars(void)
   {    
@@ -2082,6 +2116,8 @@ namespace mfront{
     this->behaviourFile << "#include\"TypeTraits/IsReal.hxx\"" << endl;
     this->behaviourFile << "#include\"MaterialLaw/MechanicalBehaviour.hxx\"\n";
     this->behaviourFile << "#include\"MaterialLaw/MechanicalBehaviourTraits.hxx\"\n";
+    this->behaviourFile << "#include\"MaterialLaw/OutOfBoundsPolicy.hxx\"" << endl;
+    this->behaviourFile << "#include\"MaterialLaw/BoundsCheck.hxx\"" << endl;
     this->behaviourFile << "#include\"MaterialLaw/";
     this->behaviourFile << this->behaviourDataFileName << "\"\n";
     this->behaviourFile << "#include\"MaterialLaw/";
@@ -2250,9 +2286,13 @@ namespace mfront{
     // from this point, all is public
     this->writeBehaviourGetName();
     this->writeBehaviourConstructors();
+    this->writeBehaviourSetOutOfBoundsPolicy();
     this->writeBehaviourIntegrator();
     this->writeBehaviourUpdateExternalStateVariables();
     this->writeBehaviourDestructor();
+    this->checkBehaviourFile();
+    this->behaviourFile << "private:" << endl << endl;
+    this->writeBehaviourPolicyVariable();
     this->writeBehaviourClassEnd();
     this->writeBehaviourOutputOperator();
     this->writeBehaviourTraits();

@@ -23,6 +23,7 @@ nobase_include_HEADERS= FiniteElement/Element/ElementsManager.ixx               
 			FSAlgorithm/fill.hxx			                                 \
 			FSAlgorithm/for_each.hxx		                                 \
 			FSAlgorithm/equal.hxx			                                 \
+			MaterialLaw/OutOfBoundsPolicy.hxx	                                 \
 			MaterialLaw/MechanicalBehaviour.hxx	                                 \
 			MaterialLaw/Lame.hxx			                                 \
 			MaterialLaw/Hill.hxx			                                 \

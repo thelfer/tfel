@@ -50,6 +50,7 @@ namespace mfront{
     this->registerNewCallBack("@Description",&Child::treatDescription);
     this->registerNewCallBack("@UnaryLoadingTest",&Child::treatUnaryLoadingTest);
     this->registerNewCallBack("@Bounds",&Child::treatBounds);
+    this->registerNewCallBack("@PhysicalBounds",&Child::treatBounds);
     this->registerNewCallBack("@RequireStiffnessTensor",&Child::treatRequireStiffnessTensor);
     this->registerNewCallBack("@RequireThermalExpansionTensor",&Child::treatRequireThermalExpansionTensor);
     this->registerNewCallBack("@OrthotropicBehaviour",&Child::treatOrthotropicBehaviour);

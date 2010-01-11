@@ -16,23 +16,37 @@ namespace mfront{
 
   struct BoundsDescription
   {
-    enum BoundsType{Lower,Upper,LowerAndUpper};
-    enum VarCategory{Coef,LocalVar,StateVar,ExternalStateVar,ComputedVar};
-
-    SupportedTypes::TypeFlag varType;
-    VarCategory    varCategory;
-    BoundsType     boundsType;
-    std::string    varName;
-    unsigned short lineNumber;
-
-    long double lowerBound;
-
-    long double upperBound;
+    enum Category{
+      Physical,
+      Standard
+    };
+    enum BoundsType{
+      Lower,
+      Upper,
+      LowerAndUpper
+    };
+    enum VarCategory{
+      Coef,
+      LocalVar,
+      StateVar,
+      ExternalStateVar,
+      ComputedVar
+    };
 
     BoundsDescription();
 
     void
-    writeBoundsCheking(std::ofstream&) const;
+    writeBoundsChecks(std::ofstream&) const;
+
+    std::string    varName;
+    SupportedTypes::TypeFlag varType;
+    Category       category;
+    VarCategory    varCategory;
+    BoundsType     boundsType;
+    long double lowerBound;
+    long double upperBound;
+
+    unsigned short lineNumber;
 
   }; // end of class BoundsDescription
 

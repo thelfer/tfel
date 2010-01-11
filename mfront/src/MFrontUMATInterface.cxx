@@ -1545,46 +1545,38 @@ namespace mfront{
     out << " * \\date   "  << date       << endl;
     out << " */\n\n";
 
+    out << "Material 'SOLID0'\n";
     if(behaviourCharacteristic.getBehaviourType()==mfront::ORTHOTROPIC){
-      out << "MechanicalBehaviour IsotropicUMATBehaviour umat"
+      out << "MechanicalBehaviour OrthotropicUMATBehaviour umat"
 	  << MFrontUMATInterface::makeLowerCase(name)
 	  << " " << MFrontUMATInterface::getLibraryName(library,material)
-	  << ".so SOLID0" << endl;
-      if(!found){
-	out << "MaterialProperty uniform YOUN 150.e9\n";
-	out << "MaterialProperty uniform NU   0.3\n";
-	out << "MaterialProperty uniform ALPH 0.\n";
-	out << "MaterialProperty uniform RHO  0.\n";
-      } 
+	  << ".so" << endl;
     } else {
-      out << "MechanicalBehaviour IsotropicUMATBehaviour umat"
+      out << "MechanicalBehaviour IsotropicUMATBehaviour 'umat"
 	  << MFrontUMATInterface::makeLowerCase(name)
-	  << " " << MFrontUMATInterface::getLibraryName(library,material)
-	  << ".so SOLID0" << endl;
+	  << "' '" << MFrontUMATInterface::getLibraryName(library,material)
+	  << ".so'" << endl;
+      if(!found){
+	out << "MaterialProperty<constant> 'YoungModulus'    150.e9\n";
+	out << "MaterialProperty<constant> 'PoissonRatio'      0.3\n";
+	out << "MaterialProperty<constant> 'ThermalExpansion'  0.\n";
+	out << "MaterialProperty<constant> 'MassDensity'       0.\n";
+      } 
     }
     for(p=coefsHolder.begin();p!=coefsHolder.end();++p){
-      if(p->name.size()<=4){
-	out << "MaterialProperty uniform " << p->name << "\n";
-      } else {
-	out << "MaterialProperty uniform " << p->name.substr(0,4) << "\n";
-      }
+      out << "MaterialProperty<constant> '"
+	  << MFrontUMATInterfaceGetName(glossaryNames,entryNames,p->name) << "' 0.\n";
     }
     for(p=stateVarsHolder.begin();p!=stateVarsHolder.end();++p){
       SupportedTypes::TypeFlag flag = this->getTypeFlag(p->type);
       switch(flag){
       case SupportedTypes::Scalar : 
-	if(p->name.size()<=4){
-	  out << "IntVar " << p->name << "\n";
-	} else {
-	  out << "IntVar " << p->name.substr(0,4) << "\n";
-	}
+	out << "InternalStateVariable<Scalar>  '"
+	    << MFrontUMATInterfaceGetName(glossaryNames,entryNames,p->name) << "'\n";
 	break;
       case SupportedTypes::Stensor :
-	if(p->name.size()<=2){
-	  out << "SIntVar " << p->name << "\n";
-	} else {
-	  out << "SIntVar " << p->name.substr(0,2) << "\n";
-	}
+	out << "InternalStateVariable<Stensor> '"
+	    << MFrontUMATInterfaceGetName(glossaryNames,entryNames,p->name) << "'\n";
 	break;
       default :
 	string msg("MFrontUMATInterface::endTreatement : ");
@@ -1596,11 +1588,8 @@ namespace mfront{
       SupportedTypes::TypeFlag flag = this->getTypeFlag(p->type);
       switch(flag){
       case SupportedTypes::Scalar : 
-	if(p->name.size()<=4){
-	  out << "ExtVar " << p->name << "\n";
-	} else {
-	  out << "ExtVar " << p->name.substr(0,4) << "\n";
-	}
+	out << "ExternalStateVariable '" 
+	    << MFrontUMATInterfaceGetName(glossaryNames,entryNames,p->name) << "'\n";
 	break;
       default :
 	string msg("MFrontUMATInterface::endTreatement : ");
@@ -1608,339 +1597,8 @@ namespace mfront{
 	throw(runtime_error(msg));
       }
     }
-    out << "Cons M\n";
-    out << "EndBehaviour \n";
-    out.close();
-
-    // pleiades tests
-    systemCall::mkdir("pleiades/"+name);
-
-    // test-U
-    fileName  = "pleiades/";
-    fileName += name;
-    fileName += "/test-U.ple";
-    out.open(fileName.c_str());
-    if(!out){
-      string msg("MFrontUMATInterface::endTreatement : ");
-      msg += "could not open file ";
-      msg += fileName;
-      throw(runtime_error(msg));
-    }
-    out << "/*\n";
-    out << " * \\file   "  << fileName << endl;
-    out << " * \\brief  imposed displacement test case\n";
-    out << " * celaeno --scheme=BehaviourTesting test-U.ple\n";
-    out << " * \\author "  << authorName << endl;
-    out << " * \\date   "  << date       << endl;
-    out << " */\n\n";
-    out << "Loadings  {'Ux','Uy','Uz'}\n";
-    out << "Import '" << name << ".ple'\n";
-    out << "LoadingVariable ExternalTemperature" << endl;
-    for(p=externalStateVarsHolder.begin();p!=externalStateVarsHolder.end();++p){
-      SupportedTypes::TypeFlag flag = this->getTypeFlag(p->type);
-      switch(flag){
-      case SupportedTypes::Scalar : 
-	out << "LoadingVariable   " << p->name << endl;
-	out << "MechanicalLoading " << p->name << " SOLID0" << endl;
-	break;
-      default :
-	string msg("MFrontUMATInterface::endTreatement : ");
-	msg += "internal error, tag unsupported";
-	throw(runtime_error(msg));
-      }
-    }
-    out << "LoadingDescription Table\n";
-    out << "Time={0.,3600. in 100}\n";
-    out << "/* Name of the different loading variables */\n";
-    out << "Time   U ExternalTemperature";
-    for(p=externalStateVarsHolder.begin();p!=externalStateVarsHolder.end();++p){
-      SupportedTypes::TypeFlag flag = this->getTypeFlag(p->type);
-      switch(flag){
-      case SupportedTypes::Scalar : 
-	out << " " << p->name;
-	break;
-      default :
-	string msg("MFrontUMATInterface::endTreatement : ");
-	msg += "internal error, tag unsupported";
-	throw(runtime_error(msg));
-      }
-    }
-    out << "\n";
-    out << "0.      0. 293.15";
-    for(p=externalStateVarsHolder.begin();p!=externalStateVarsHolder.end();++p){
-      SupportedTypes::TypeFlag flag = this->getTypeFlag(p->type);
-      switch(flag){
-      case SupportedTypes::Scalar : 
-	out << " 0.";
-	break;
-      default :
-	string msg("MFrontUMATInterface::endTreatement : ");
-	msg += "internal error, tag unsupported";
-	throw(runtime_error(msg));
-      }
-    }
-    out << "\n";
-    out << "3600.  1.e-3 293.15";
-    for(p=externalStateVarsHolder.begin();p!=externalStateVarsHolder.end();++p){
-      SupportedTypes::TypeFlag flag = this->getTypeFlag(p->type);
-      switch(flag){
-      case SupportedTypes::Scalar : 
-	out << " 0.";
-	break;
-      default :
-	string msg("MFrontUMATInterface::endTreatement : ");
-	msg += "internal error, tag unsupported";
-	throw(runtime_error(msg));
-      }
-    }
-    out << "\n";
-    out << "EndOfLoadingDescription\n";
-    out.close();
-
-    // test-T
-    fileName  = "pleiades/";
-    fileName += name;
-    fileName += "/test-T.ple";
-    out.open(fileName.c_str());
-    if(!out){
-      string msg("MFrontUMATInterface::endTreatement : ");
-      msg += "could not open file ";
-      msg += fileName;
-      throw(runtime_error(msg));
-    }
-    out << "/*\n";
-    out << " * \\file   "  << fileName << endl;
-    out << " * \\brief  imposed displacement test case\n";
-    out << " * celaeno --scheme=BehaviourTesting test-T.ple\n";
-    out << " * \\author "  << authorName << endl;
-    out << " * \\date   "  << date       << endl;
-    out << " */\n\n";
-    out << "Loadings {'Tx','Ty','Tz'}\n";
-    out << "Import '" << name << ".ple'\n";
-    out << "LoadingVariable ExternalTemperature" << endl;
-    for(p=externalStateVarsHolder.begin();p!=externalStateVarsHolder.end();++p){
-      SupportedTypes::TypeFlag flag = this->getTypeFlag(p->type);
-      switch(flag){
-      case SupportedTypes::Scalar : 
-	out << "LoadingVariable   " << p->name << endl;
-	out << "MechanicalLoading " << p->name << " SOLID0" << endl;
-	break;
-      default :
-	string msg("MFrontUMATInterface::endTreatement : ");
-	msg += "internal error, tag unsupported";
-	throw(runtime_error(msg));
-      }
-    }
-    out << "LoadingDescription Table\n";
-    out << "Time={0.,3600. in 100}\n";
-    out << "/* Name of the different loading variables */\n";
-    out << "Time   T ExternalTemperature";
-    for(p=externalStateVarsHolder.begin();p!=externalStateVarsHolder.end();++p){
-      SupportedTypes::TypeFlag flag = this->getTypeFlag(p->type);
-      switch(flag){
-      case SupportedTypes::Scalar : 
-	out << " " << p->name;
-	break;
-      default :
-	string msg("MFrontUMATInterface::endTreatement : ");
-	msg += "internal error, tag unsupported";
-	throw(runtime_error(msg));
-      }
-    }
-    out << "\n";
-    out << "0      -100.e6 293.15";
-    for(p=externalStateVarsHolder.begin();p!=externalStateVarsHolder.end();++p){
-      SupportedTypes::TypeFlag flag = this->getTypeFlag(p->type);
-      switch(flag){
-      case SupportedTypes::Scalar : 
-	out << " 0.";
-	break;
-      default :
-	string msg("MFrontUMATInterface::endTreatement : ");
-	msg += "internal error, tag unsupported";
-	throw(runtime_error(msg));
-      }
-    }
-    out << "\n";
-    out << "3600.  -100.e6 293.15";
-    for(p=externalStateVarsHolder.begin();p!=externalStateVarsHolder.end();++p){
-      SupportedTypes::TypeFlag flag = this->getTypeFlag(p->type);
-      switch(flag){
-      case SupportedTypes::Scalar : 
-	out << " 0.";
-	break;
-      default :
-	string msg("MFrontUMATInterface::endTreatement : ");
-	msg += "internal error, tag unsupported";
-	throw(runtime_error(msg));
-      }
-    }
-    out << "\n";
-    out << "EndOfLoadingDescription\n";
-    out.close();
-
-    // test-P
-    fileName  = "pleiades/";
-    fileName += name;
-    fileName += "/test-P.ple";
-    out.open(fileName.c_str());
-    if(!out){
-      string msg("MFrontUMATInterface::endTreatement : ");
-      msg += "could not open file ";
-      msg += fileName;
-      throw(runtime_error(msg));
-    }
-    out << "/*\n";
-    out << " * \\file   "  << fileName << endl;
-    out << " * \\brief  imposed displacement test case\n";
-    out << " * celaeno --scheme=BehaviourTesting test-T.ple\n";
-    out << " * \\author "  << authorName << endl;
-    out << " * \\date   "  << date       << endl;
-    out << " */\n\n";
-    out << "Loading 'P'\n";
-    out << "Import '" << name << ".ple'\n";
-    out << "LoadingVariable ExternalTemperature" << endl;
-    for(p=externalStateVarsHolder.begin();p!=externalStateVarsHolder.end();++p){
-      SupportedTypes::TypeFlag flag = this->getTypeFlag(p->type);
-      switch(flag){
-      case SupportedTypes::Scalar : 
-	out << "LoadingVariable   " << p->name << endl;
-	out << "MechanicalLoading " << p->name << " SOLID0" << endl;
-	break;
-      default :
-	string msg("MFrontUMATInterface::endTreatement : ");
-	msg += "internal error, tag unsupported";
-	throw(runtime_error(msg));
-      }
-    }
-    out << "LoadingDescription Table\n";
-    out << "Time={0.,3600. in 100}\n";
-    out << "/* Name of the different loading variables */\n";
-    out << "Time   P ExternalTemperature";
-    for(p=externalStateVarsHolder.begin();p!=externalStateVarsHolder.end();++p){
-      SupportedTypes::TypeFlag flag = this->getTypeFlag(p->type);
-      switch(flag){
-      case SupportedTypes::Scalar : 
-	out << " " << p->name;
-	break;
-      default :
-	string msg("MFrontUMATInterface::endTreatement : ");
-	msg += "internal error, tag unsupported";
-	throw(runtime_error(msg));
-      }
-    }
-    out << "\n";
-    out << "0      100.e6 293.15";
-    for(p=externalStateVarsHolder.begin();p!=externalStateVarsHolder.end();++p){
-      SupportedTypes::TypeFlag flag = this->getTypeFlag(p->type);
-      switch(flag){
-      case SupportedTypes::Scalar : 
-	out << " 0.";
-	break;
-      default :
-	string msg("MFrontUMATInterface::endTreatement : ");
-	msg += "internal error, tag unsupported";
-	throw(runtime_error(msg));
-      }
-    }
-    out << "\n";
-    out << "3600.  100.e6 293.15";
-    for(p=externalStateVarsHolder.begin();p!=externalStateVarsHolder.end();++p){
-      SupportedTypes::TypeFlag flag = this->getTypeFlag(p->type);
-      switch(flag){
-      case SupportedTypes::Scalar : 
-	out << " 0.";
-	break;
-      default :
-	string msg("MFrontUMATInterface::endTreatement : ");
-	msg += "internal error, tag unsupported";
-	throw(runtime_error(msg));
-      }
-    }
-    out << "\n";
-    out << "EndOfLoadingDescription\n";
-    out.close();
-
-    // test-E
-    fileName  = "pleiades/";
-    fileName += name;
-    fileName += "/test-E.ple";
-    out.open(fileName.c_str());
-    if(!out){
-      string msg("MFrontUMATInterface::endTreatement : ");
-      msg += "could not open file ";
-      msg += fileName;
-      throw(runtime_error(msg));
-    }
-    out << "/*\n";
-    out << " * \\file   "  << fileName << endl;
-    out << " * \\brief  imposed deformation test case\n";
-    out << " * celaeno --scheme=BehaviourTesting test-E.ple\n";
-    out << " * \\author "  << authorName << endl;
-    out << " * \\date   "  << date       << endl;
-    out << " */\n\n";
-    out << "Loadings  {'Exx','Eyy','Ezz','Exy','Exz','Eyz'}\n";
-    out << "Import '" << name << ".ple'\n";
-    out << "LoadingVariable ExternalTemperature" << endl;
-    for(p=externalStateVarsHolder.begin();p!=externalStateVarsHolder.end();++p){
-      SupportedTypes::TypeFlag flag = this->getTypeFlag(p->type);
-      switch(flag){
-      case SupportedTypes::Scalar : 
-	out << "LoadingVariable   " << p->name << endl;
-	out << "MechanicalLoading " << p->name << " SOLID0" << endl;
-	break;
-      default :
-	string msg("MFrontUMATInterface::endTreatement : ");
-	msg += "internal error, tag unsupported";
-	throw(runtime_error(msg));
-      }
-    }
-    out << "LoadingDescription Table\n";
-    out << "Time={0.,3600. in 100}\n";
-    out << "/* Name of the different loading variables */\n";
-    out << "Time   E ExternalTemperature";
-    for(p=externalStateVarsHolder.begin();p!=externalStateVarsHolder.end();++p){
-      SupportedTypes::TypeFlag flag = this->getTypeFlag(p->type);
-      switch(flag){
-      case SupportedTypes::Scalar : 
-	out << " " << p->name;
-	break;
-      default :
-	string msg("MFrontUMATInterface::endTreatement : ");
-	msg += "internal error, tag unsupported";
-	throw(runtime_error(msg));
-      }
-    }
-    out << "\n";
-    out << "0      0. 293.15";
-    for(p=externalStateVarsHolder.begin();p!=externalStateVarsHolder.end();++p){
-      SupportedTypes::TypeFlag flag = this->getTypeFlag(p->type);
-      switch(flag){
-      case SupportedTypes::Scalar : 
-	out << " 0.";
-	break;
-      default :
-	string msg("MFrontUMATInterface::endTreatement : ");
-	msg += "internal error, tag unsupported";
-	throw(runtime_error(msg));
-      }
-    }
-    out << "\n";
-    out << "3600.  1.e-3 293.15";
-    for(p=externalStateVarsHolder.begin();p!=externalStateVarsHolder.end();++p){
-      SupportedTypes::TypeFlag flag = this->getTypeFlag(p->type);
-      switch(flag){
-      case SupportedTypes::Scalar : 
-	out << " 0.";
-	break;
-      default :
-	string msg("MFrontUMATInterface::endTreatement : ");
-	msg += "internal error, tag unsupported";
-	throw(runtime_error(msg));
-      }
-    }
-    out << "\n";
-    out << "EndOfLoadingDescription\n";
+    out << "EndOfMechanicalBehaviour \n";
+    out << "EndOfMaterial\n";
     out.close();
 
 #endif /* HAVE_PLEIADES */

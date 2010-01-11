@@ -73,6 +73,7 @@ include/MaterialLaw/MechanicalBehaviour.hxx -text
 include/MaterialLaw/MechanicalBehaviourData.hxx -text
 include/MaterialLaw/MechanicalBehaviourTraits.hxx -text
 include/MaterialLaw/MechanicalIntegrationData.hxx -text
+include/MaterialLaw/OutOfBoundsPolicy.hxx -text
 include/MaterialLaw/ThermalBehaviour.hxx -text
 include/MaterialLaw/ThermalBehaviourData.hxx -text
 include/MaterialLaw/ThermoMechanicalBehaviour.hxx -text
