@@ -8,11 +8,11 @@
 #ifndef _LIB_TFEL_MECHANICALBEHAVIOUR_H_
 #define _LIB_TFEL_MECHANICALBEHAVIOUR_H_ 
 
-#include"MaterialLaw/MechanicalBehaviourData.hxx"
+#include"Material/MechanicalBehaviourData.hxx"
 
 namespace tfel{
 
-  namespace materiallaw{
+  namespace material{
 
     /*!
      * \class MechanicalBehaviour
@@ -43,7 +43,7 @@ namespace tfel{
 
     };
 
-  } // end of namespace materiallaw 
+  } // end of namespace material 
 
 } // end of namespace tfel
 

@@ -4,13 +4,13 @@
  * \date   26 March 2009
  */
 
-#ifndef _LIB_TFEL_MATERIALLAW_HILL_IXX_
-#define _LIB_TFEL_MATERIALLAW_HILL_IXX_ 
+#ifndef _LIB_TFEL_MATERIAL_HILL_IXX_
+#define _LIB_TFEL_MATERIAL_HILL_IXX_ 
 
 namespace tfel
 {
 
-  namespace materiallaw
+  namespace material
   {
 
     namespace internals
@@ -112,12 +112,12 @@ namespace tfel
 	       const T M,
 	       const T N)
     {
-      using namespace tfel::materiallaw::internals;
+      using namespace tfel::material::internals;
       return HillTensor<D,T>::hillTensor(F,G,H,L,M,N);
     }
 
-  } // end of namespace materiallaw
+  } // end of namespace material
 
 } // end of namespace tfel
 
-#endif /* _LIB_TFEL_MATERIALLAW_HILL_IXX_ */
+#endif /* _LIB_TFEL_MATERIAL_HILL_IXX_ */

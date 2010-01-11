@@ -10,7 +10,7 @@
 
 namespace tfel{
   
-  namespace materiallaw {
+  namespace material {
 
     /*!
      * \class MechanicalBehaviourTraits
@@ -39,13 +39,13 @@ namespace tfel{
        */
       static const unsigned short internal_variables_nb  = 0;
       /*!
-       * Says if the law uses quantities
+       * Says if the  uses quantities
        * \see qt.hxx
        */
       static const bool use_quantities = false;
     };
 
-  } // end of namespace materiallaw
+  } // end of namespace material
 
 } // end of namespace tfel
 

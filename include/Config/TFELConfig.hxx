@@ -30,10 +30,10 @@
 #endif /* TFEL_FSALGORITHM_INLINE */
 
 //! a usefull macro for defining levels of inlining. This is
-//  mainly used in the materiallaw namespace.
-#ifndef TFEL_MATERIAL_LAW_INLINE
-#define TFEL_MATERIAL_LAW_INLINE   inline  
-#endif /* TFEL_MATERIAL_LAW_INLINE */
+//  mainly used in the material namespace.
+#ifndef TFEL_MATERIAL_INLINE
+#define TFEL_MATERIAL_INLINE   inline  
+#endif /* TFEL_MATERIAL_INLINE */
 
 //! a usefull macro for defining levels of inlining. This is
 //  mainly used in the materiallaw namespace.

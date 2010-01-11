@@ -13,12 +13,12 @@
 #include"Math/qt.hxx"
 #include"Math/stensor.hxx"
 #include"TypeTraits/BaseType.hxx"
-#include"MaterialLaw/MaterialLawException.hxx"
-#include"MaterialLaw/OutOfBoundsPolicy.hxx"
+#include"Material/MaterialException.hxx"
+#include"Material/OutOfBoundsPolicy.hxx"
 
 namespace tfel{
   
-  namespace materiallaw{
+  namespace material{
     
     template<unsigned short N>
     struct BoundsCheck;
@@ -787,7 +787,7 @@ namespace tfel{
       }
     }; // end of struct BoundsCheck<3u>;
 
-  } // end of namespace materiallaw
+  } // end of namespace material
     
 } // end of namespace tfel
 

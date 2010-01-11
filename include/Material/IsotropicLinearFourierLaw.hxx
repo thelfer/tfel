@@ -8,16 +8,16 @@
 #ifndef _LIB_TFEL_ISOTROPICLINEARFOURIERLAW_H_
 #define _LIB_TFEL_ISOTROPICLINEARFOURIERLAW_H_ 
 
-#include"MaterialLaw/ThermalBehaviour.hxx"
-#include"MaterialLaw/ThermalBehaviourData.hxx"
+#include"Material/ThermalBehaviour.hxx"
+#include"Material/ThermalBehaviourData.hxx"
 
 namespace tfel{
 
-  namespace materiallaw{
+  namespace material{
 
     /*!
      * \class IsotropicLinearFourierLaw
-     * \brief This class implements the lorentz damage law.
+     * \brief This class implements the fourier thermal behaviour.
      * \param N, space dimension.
      * \param T, numerical type.
      * \author Helfer Thomas
@@ -56,16 +56,12 @@ namespace tfel{
        * Law integration
        */
       void doThermalIntegration(ThermalBehaviourData<N,T,use_qt>& data){
-
 	CheckThermalDataValidity<IsotropicLinearFourierLaw>::exe(data);
-
-	
-	
       }
 
     };
 
-  } // end of namespace materiallaw
+  } // end of namespace material
 
 } // end of namespace  tfel
 

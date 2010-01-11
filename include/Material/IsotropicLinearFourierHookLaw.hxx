@@ -8,16 +8,16 @@
 #ifndef _LIB_TFEL_ISOTROPICLINEARFOURIERHOOKLAW_H_
 #define _LIB_TFEL_ISOTROPICLINEARFOURIERHOOKLAW_H_ 
 
-#include"MaterialLaw/IsotropicLinearFourierLaw.hxx"
-#include"MaterialLaw/IsotropicLinearHookLaw.hxx"
+#include"Material/IsotropicLinearFourierLaw.hxx"
+#include"Material/IsotropicLinearHookLaw.hxx"
 
 namespace tfel{
 
-  namespace materiallaw{
+  namespace material{
 
     /*!
      * \class IsotropicLinearFourierHookLaw
-     * \brief This class implements the lorentz damage law.
+     * \brief This class implements the hook law.
      * \param N, space dimension.
      * \param T, numerical type.
      * \author Helfer Thomas
@@ -29,7 +29,7 @@ namespace tfel{
 	public IsotropicLinearHookLaw<N,T,use_qt>
     {};
 
-  } // end of namespace materiallaw
+  } // end of namespace material
 
 } // end of namespace  tfel
 

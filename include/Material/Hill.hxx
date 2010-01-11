@@ -6,13 +6,13 @@
 
 #include"Math/st2tost2.hxx"
 
-#ifndef _LIB_TFEL_MATERIALLAW_HILL_H_
-#define _LIB_TFEL_MATERIALLAW_HILL_H_ 
+#ifndef _LIB_TFEL_MATERIAL_HILL_H_
+#define _LIB_TFEL_MATERIAL_HILL_H_ 
 
 namespace tfel
 {
 
-  namespace materiallaw
+  namespace material
   {
 
     /*!
@@ -51,10 +51,10 @@ namespace tfel
 	       const T,
 	       const T);
 
-  } // end of namespace materiallaw
+  } // end of namespace material
 
 } // end of namespace tfel
 
-#include"MaterialLaw/Hill.ixx"
+#include"Material/Hill.ixx"
 
-#endif /* _LIB_TFEL_MATERIALLAW_HILL_H_ */
+#endif /* _LIB_TFEL_MATERIAL_HILL_H_ */

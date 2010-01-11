@@ -14,13 +14,13 @@
 
 #include "Config/TFELTypes.hxx"
 #include "Metaprogramming/StaticAssert.hxx"
-#include "MaterialLaw/MechanicalBehaviourTraits.hxx"
-#include "MaterialLaw/MaterialLawException.hxx"
+#include "Material/MechanicalBehaviourTraits.hxx"
+#include "Material/MaterialException.hxx"
 
 namespace tfel
 {
   
-  namespace materiallaw
+  namespace material
   {
 
     /*!
@@ -91,28 +91,28 @@ namespace tfel
 	if(data.material_properties.size()!=mat_size){
 	  string msg ("Datas' material properties size");
 	  msg += " does not match the behaviour's size";
-	  throw(MaterialLawException(msg));
+	  throw(MaterialException(msg));
 	}
 	if(data.external_variables.size()!=ext_size){
 	  string msg("Datas' external variables size");
 	  msg +=" does not match the behaviour's size";
-	  throw(MaterialLawException(msg));
+	  throw(MaterialException(msg));
 	}
 	if(data.dexternal_variables.size()!=ext_size){
 	  string msg("Datas' dexternal variables size");
 	  msg+=" does not match the behaviour's size";
-	  throw(MaterialLawException(msg));
+	  throw(MaterialException(msg));
 	}
 	if(data.internal_variables.size()!=int_size){
 	  string msg("Datas' internal variables size");
 	  msg+=" does not match the behaviour's size";
-	  throw(MaterialLawException(msg));
+	  throw(MaterialException(msg));
 	}
       }
 
     }; // end of struct CheckMechanicalDataValidity
 
-  } // end of namespace materiallaw
+  } // end of namespace material
 
 } // end of namespace tfel
 

@@ -14,11 +14,11 @@
 
 #include "Config/TFELTypes.hxx"
 #include "Metaprogramming/StaticAssert.hxx"
-#include "MaterialLaw/MaterialLawException.hxx"
+#include "Material/MaterialException.hxx"
 
 namespace tfel{
   
-  namespace materiallaw {
+  namespace material {
 
     /*!
      * \class ThermalBehaviourData
@@ -50,7 +50,7 @@ namespace tfel{
     {};
 
 
-  } // end of namespace materiallaw
+  } // end of namespace material
 
 } // end of namespace tfel
 

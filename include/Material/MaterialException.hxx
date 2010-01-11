@@ -1,12 +1,12 @@
 /*!
- * \file   MaterialLawException.hxx
+ * \file   MaterialException.hxx
  * \brief    
  * \author Helfer Thomas
  * \date   10 Aug 2006
  */
 
-#ifndef _LIB_TFEL_MATERIALLAWEXCEPTION_H_
-#define _LIB_TFEL_MATERIALLAWEXCEPTION_H_ 
+#ifndef _LIB_TFEL_MATERIALEXCEPTION_H_
+#define _LIB_TFEL_MATERIALEXCEPTION_H_ 
 
 #include<string>
 
@@ -14,19 +14,19 @@
 
 namespace tfel{
   
-  namespace materiallaw {
+  namespace material {
     
-    struct MaterialLawException
+    struct MaterialException
       : public tfel::exception::TFELException 
     {
       static const std::string 
       getName(void);
       
-      MaterialLawException(const std::string& s);
+      MaterialException(const std::string& s);
     };
 
     struct DivergenceException
-      : public tfel::materiallaw::MaterialLawException
+      : public tfel::material::MaterialException
     {
       static const std::string 
       getName(void);
@@ -35,7 +35,7 @@ namespace tfel{
     };
 
     struct OutOfBoundsException
-      : public tfel::materiallaw::MaterialLawException
+      : public tfel::material::MaterialException
     {
       static const std::string 
       getName(void);
@@ -44,10 +44,10 @@ namespace tfel{
     };
 
     
-  } // end of namespace materiallaw
+  } // end of namespace material
 
 } // end of namespace tfel
 
 
-#endif /* _LIB_TFEL_MATERIALLAWEXCEPTION_H */
+#endif /* _LIB_TFEL_MATERIALEXCEPTION_H */
 

@@ -14,12 +14,12 @@
 
 #include "Config/TFELTypes.hxx"
 #include "Metaprogramming/StaticAssert.hxx"
-#include "MaterialLaw/MechanicalBehaviourTraits.hxx"
-#include "MaterialLaw/MaterialLawException.hxx"
+#include "Material/MechanicalBehaviourTraits.hxx"
+#include "Material/MaterialException.hxx"
 
 namespace tfel{
   
-  namespace materiallaw {
+  namespace material {
 
     /*!
      * \class MechanicalIntegrationData
@@ -64,7 +64,7 @@ namespace tfel{
 
     };
 
-  } // end of namespace materiallaw
+  } // end of namespace material
 
 } // end of namespace tfel
 

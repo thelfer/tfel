@@ -8,12 +8,12 @@
 #ifndef _LIB_TFEL_THERMOMECHANICALBEHAVIOUR_H_
 #define _LIB_TFEL_THERMOMECHANICALBEHAVIOUR_H_ 
 
-#include"MaterialLaw/ThermalBehaviour.hxx"
-#include"MaterialLaw/MechanicalBehaviour.hxx"
+#include"Material/ThermalBehaviour.hxx"
+#include"Material/MechanicalBehaviour.hxx"
 
 namespace tfel{
 
-  namespace materiallaw{
+  namespace material{
 
     /*!
      * \class ThermoMechanicalBehaviour
@@ -31,7 +31,7 @@ namespace tfel{
     {};
 
 
-  } // end of namespace materiallaw
+  } // end of namespace material
 
 } // end of namespace tfel
 

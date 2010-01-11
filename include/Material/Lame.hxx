@@ -15,7 +15,7 @@
 
 namespace tfel{
   
-  namespace materiallaw {
+  namespace material {
 
     namespace lame {
 
@@ -23,7 +23,7 @@ namespace tfel{
        * \brief compute the first Lame's coefficient
        */
       template<typename T>
-      TFEL_MATERIAL_LAW_INLINE 
+      TFEL_MATERIAL_INLINE 
       const T 
       computeLambda(const T young, const T nu)
       {
@@ -34,7 +34,7 @@ namespace tfel{
        * \brief compute the first Lame's coefficient
        */
       template<typename T>
-      TFEL_MATERIAL_LAW_INLINE 
+      TFEL_MATERIAL_INLINE 
       const tfel::math::qt<tfel::math::Stress,T> 
       computeLambda(const tfel::math::qt<tfel::math::Stress,T> young, const tfel::math::qt<tfel::math::NoUnit,T> nu)
       {
@@ -45,7 +45,7 @@ namespace tfel{
        * \brief compute the second Lame's coefficient
        */
       template<typename T>
-      TFEL_MATERIAL_LAW_INLINE const T 
+      TFEL_MATERIAL_INLINE const T 
       computeMu(const T young, const T nu)
       {
 	return young/(2.f*(1.f+nu));
@@ -55,7 +55,7 @@ namespace tfel{
        * \brief compute the second Lame's coefficient
        */
       template<typename T>
-      TFEL_MATERIAL_LAW_INLINE 
+      TFEL_MATERIAL_INLINE 
       const tfel::math::qt<tfel::math::Stress,T> 
       computeMu(const tfel::math::qt<tfel::math::Stress,T> young, 
 		const tfel::math::qt<tfel::math::NoUnit,T> nu)
@@ -206,7 +206,7 @@ namespace tfel{
 
     } // end of namespace lame
 
-  } // end of namespace materiallaw
+  } // end of namespace material
   
 } // end of namespace tfel
 
