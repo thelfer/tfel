@@ -379,7 +379,7 @@ namespace mfront{
     using namespace std;
     using namespace tfel::system;
     systemCall::mkdir("include");
-    systemCall::mkdir("include/MaterialLaw/");
+    systemCall::mkdir("include/Material/");
     systemCall::mkdir("src");
     if(this->className.empty()){
       string msg("MFrontRungeKuttaParser::writeOutputFiles : ");
@@ -388,7 +388,7 @@ namespace mfront{
     }
     this->behaviourFileName  = this->className;
     this->behaviourFileName += ".hxx";
-    this->behaviourFile.open(("include/MaterialLaw/"+this->behaviourFileName).c_str());
+    this->behaviourFile.open(("include/Material/"+this->behaviourFileName).c_str());
     if(!this->behaviourFile){
       string msg("MFrontRungeKuttaParser::writeOutputFiles : ");
       msg += "unable to open ";
@@ -398,7 +398,7 @@ namespace mfront{
     }
     this->behaviourDataFileName  = this->className;
     this->behaviourDataFileName += "BehaviourData.hxx";
-    this->behaviourDataFile.open(("include/MaterialLaw/"+this->behaviourDataFileName).c_str());
+    this->behaviourDataFile.open(("include/Material/"+this->behaviourDataFileName).c_str());
     if(!this->behaviourDataFile){
       string msg("MFrontRungeKuttaParser::writeOutputFiles : ");
       msg += "unable to open ";
@@ -408,7 +408,7 @@ namespace mfront{
     }
     this->integrationDataFileName  = this->className;
     this->integrationDataFileName += "IntegrationData.hxx";
-    this->integrationDataFile.open(("include/MaterialLaw/"+this->integrationDataFileName).c_str());
+    this->integrationDataFile.open(("include/Material/"+this->integrationDataFileName).c_str());
     if(!this->integrationDataFile){
       string msg("MFrontRungeKuttaParser::writeOutputFiles : ");
       msg += "unable to open ";
@@ -728,7 +728,7 @@ namespace mfront{
     this->behaviourFile << "if(dt_<(this->dt)*real(0.000001f)){\n";
     this->behaviourFile << "string msg(\"" << this->className << "::integrate : \");\n";
     this->behaviourFile << "msg += \"time step reduction has gone too far.\";\n";
-    this->behaviourFile << "throw(tfel::materiallaw::DivergenceException(msg));\n";
+    this->behaviourFile << "throw(tfel::material::DivergenceException(msg));\n";
     this->behaviourFile << "}\n";
     this->behaviourFile << "}\n";
     for(p2  = this->boundsDescriptions.begin();
@@ -897,7 +897,7 @@ namespace mfront{
     this->behaviourFile << "if(dt_<(this->dt)*real(0.000001f)){\n";
     this->behaviourFile << "string msg(\"" << this->className << "::integrate : \");\n";
     this->behaviourFile << "msg += \"time step reduction has gone too far.\";\n";
-    this->behaviourFile << "throw(tfel::materiallaw::DivergenceException(msg));\n";
+    this->behaviourFile << "throw(tfel::material::DivergenceException(msg));\n";
     this->behaviourFile << "}\n";
     this->behaviourFile << "}\n";
     for(p2  = this->boundsDescriptions.begin();
@@ -999,7 +999,7 @@ namespace mfront{
     this->behaviourFile << "std::ostringstream msg;\n";
     this->behaviourFile << "msg << \"no convergence : \";\n";
     this->behaviourFile << "msg << rk4_error;\n";
-    this->behaviourFile << "throw(tfel::materiallaw::DivergenceException(msg.str()));\n";
+    this->behaviourFile << "throw(tfel::material::DivergenceException(msg.str()));\n";
     this->behaviourFile << "}\n\n";
     this->behaviourFile << "// Update stress field\n";
     this->behaviourFile << "this->computeFinalStress();\n\n";

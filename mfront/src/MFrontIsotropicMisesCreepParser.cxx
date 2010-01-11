@@ -73,7 +73,7 @@ namespace mfront{
     this->behaviourFile << "void computeFlow(void){\n";
     this->behaviourFile << "using namespace std;\n";
     this->behaviourFile << "using namespace tfel::math;\n";
-    this->behaviourFile << "using namespace tfel::materiallaw;\n";
+    this->behaviourFile << "using namespace tfel::material;\n";
     writeMaterialLaws("MFrontIsotropicMisesCreepParser::writeBehaviourParserSpecificMembers",
 		      this->behaviourFile,this->materialLaws);
     this->behaviourFile << this->flowRule << endl;
@@ -109,11 +109,11 @@ namespace mfront{
     this->behaviourFile << "}\n";
     this->behaviourFile << "}\n\n";
     this->behaviourFile << "if(inversible==false){\n";
-    this->behaviourFile << "throw(MaterialLawException(\"Newton-Raphson: null derivative\"));\n";
+    this->behaviourFile << "throw(MaterialException(\"Newton-Raphson: null derivative\"));\n";
     this->behaviourFile << "}\n\n";
     
     this->behaviourFile << "if(iter==" << this->className << "::iterMax){\n";
-    this->behaviourFile << "throw(MaterialLawException(\"Newton-Raphson: no convergence\"));\n";
+    this->behaviourFile << "throw(MaterialException(\"Newton-Raphson: no convergence\"));\n";
     this->behaviourFile << "}\n\n";
     this->behaviourFile << "}\n\n";
   } // end of writeBehaviourParserSpecificMembers

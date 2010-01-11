@@ -68,7 +68,7 @@ namespace mfront{
     this->checkBehaviourFile();
     this->behaviourFile << "#include\"Math/General/BaseCast.hxx\"\n";
     this->behaviourFile << "#include\"Math/TinyMatrixSolve.hxx\"\n";
-    this->behaviourFile << "#include\"MaterialLaw/Lame.hxx\"\n\n";
+    this->behaviourFile << "#include\"Material/Lame.hxx\"\n\n";
   }
 
   void
@@ -105,7 +105,7 @@ namespace mfront{
       }
       this->behaviourFile << "using namespace std;\n";
       this->behaviourFile << "using namespace tfel::math;\n";
-      this->behaviourFile << "using namespace tfel::materiallaw;\n";
+      this->behaviourFile << "using namespace tfel::material;\n";
       writeMaterialLaws("MFrontMultipleIsotropicMisesFlowsParser::writeBehaviourParserSpecificMembers",
 			this->behaviourFile,this->materialLaws);
       this->behaviourFile << p->flowRule << endl;
@@ -282,7 +282,7 @@ namespace mfront{
     this->behaviourFile << "}\n\n";
     
     this->behaviourFile << "if(iter==" << this->className << "::iterMax){\n";
-    this->behaviourFile << "throw(MaterialLawException(\"Newton-Raphson: no convergence\"));\n";
+    this->behaviourFile << "throw(MaterialException(\"Newton-Raphson: no convergence\"));\n";
     this->behaviourFile << "}\n\n";
     for(p=this->flows.begin(),n=0;p!=this->flows.end();++p,++n){
       this->behaviourFile << "this->dp"<< n << " = " << "vdp(" << n<< ");\n";

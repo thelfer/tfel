@@ -99,7 +99,7 @@ namespace mfront{
     using namespace tfel::system;
     systemCall::mkdir("src");
     systemCall::mkdir("include");
-    systemCall::mkdir("include/MaterialLaw");
+    systemCall::mkdir("include/Material");
     if(this->className.empty()){
       string msg("MFrontDefaultParser::writeOutputFiles : ");
       msg += "no behaviour name defined.";
@@ -107,7 +107,7 @@ namespace mfront{
     }
     this->behaviourFileName  = this->className;
     this->behaviourFileName += ".hxx";
-    this->behaviourFile.open(("include/MaterialLaw/"+this->behaviourFileName).c_str());
+    this->behaviourFile.open(("include/Material/"+this->behaviourFileName).c_str());
     if(!this->behaviourFile){
       string msg("MFrontDefaultParser::writeOutputFiles : ");
       msg += "unable to open ";
@@ -118,7 +118,7 @@ namespace mfront{
 
     this->behaviourDataFileName  = this->className;
     this->behaviourDataFileName += "BehaviourData.hxx";
-    this->behaviourDataFile.open(("include/MaterialLaw/"+this->behaviourDataFileName).c_str());
+    this->behaviourDataFile.open(("include/Material/"+this->behaviourDataFileName).c_str());
 
     if(!this->behaviourDataFile){
       string msg("MFrontDefaultParser::writeOutputFiles : ");
@@ -130,7 +130,7 @@ namespace mfront{
 
     this->integrationDataFileName  = this->className;
     this->integrationDataFileName += "IntegrationData.hxx";
-    this->integrationDataFile.open(("include/MaterialLaw/"+this->integrationDataFileName).c_str());
+    this->integrationDataFile.open(("include/Material/"+this->integrationDataFileName).c_str());
 
     if(!this->integrationDataFile){
       string msg("MFrontDefaultParser::writeOutputFiles : ");

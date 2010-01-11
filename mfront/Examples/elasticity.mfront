@@ -15,11 +15,11 @@
 @LocalVar stress mu;
 
 @Includes{
-#include"MaterialLaw/Lame.hxx"
+#include"Material/Lame.hxx"
 }
 
 @InitLocalVars{
-  using namespace tfel::materiallaw::lame;
+  using namespace tfel::material::lame;
   lambda = computeLambda(young,nu);
   mu = computeMu(young,nu);
 }

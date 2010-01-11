@@ -409,7 +409,7 @@ namespace mfront{
       this->behaviourFile << "jacobian2 = this->jacobian;\n";
       this->behaviourFile << "broyden_inv = Dzeros|jacobian2*Dfzeros;\n";
       this->behaviourFile << "if(broyden_inv<100*std::numeric_limits<real>::epsilon()){\n";
-      this->behaviourFile << "throw(MaterialLawException(\"Broyden null denominator\"));\n";
+      this->behaviourFile << "throw(MaterialException(\"Broyden null denominator\"));\n";
       this->behaviourFile << "}\n";
       this->behaviourFile << "this->jacobian += "
 			  << "((Dzeros-jacobian2*Dfzeros)^(Dzeros*jacobian2))/(broyden_inv);\n";
@@ -420,7 +420,7 @@ namespace mfront{
     this->behaviourFile << "(" << this->className << "::epsilon));\n";
     this->behaviourFile << "}\n";
     this->behaviourFile << "if(this->iter==" << this->className << "::iterMax){\n";
-    this->behaviourFile << "throw(MaterialLawException(\"Newton-Raphson: no convergence\"));\n";
+    this->behaviourFile << "throw(MaterialException(\"Newton-Raphson: no convergence\"));\n";
     this->behaviourFile << "}\n";
     this->behaviourFile << "this->updateStateVars();\n";
     this->behaviourFile << "this->computeFinalStress();\n";
@@ -673,7 +673,7 @@ namespace mfront{
     using namespace std;
     using namespace tfel::system;
     systemCall::mkdir("include");
-    systemCall::mkdir("include/MaterialLaw/");
+    systemCall::mkdir("include/Material/");
     systemCall::mkdir("src");
     if(this->className.empty()){
       string msg("MFrontImplicitParser::writeOutputFiles : ");
@@ -682,7 +682,7 @@ namespace mfront{
     }
     this->behaviourFileName  = this->className;
     this->behaviourFileName += ".hxx";
-    this->behaviourFile.open(("include/MaterialLaw/"+this->behaviourFileName).c_str());
+    this->behaviourFile.open(("include/Material/"+this->behaviourFileName).c_str());
     if(!this->behaviourFile){
       string msg("MFrontImplicitParser::writeOutputFiles : ");
       msg += "unable to open ";
@@ -692,7 +692,7 @@ namespace mfront{
     }
     this->behaviourDataFileName  = this->className;
     this->behaviourDataFileName += "BehaviourData.hxx";
-    this->behaviourDataFile.open(("include/MaterialLaw/"+this->behaviourDataFileName).c_str());
+    this->behaviourDataFile.open(("include/Material/"+this->behaviourDataFileName).c_str());
     if(!this->behaviourDataFile){
       string msg("MFrontImplicitParser::writeOutputFiles : ");
       msg += "unable to open ";
@@ -702,7 +702,7 @@ namespace mfront{
     }
     this->integrationDataFileName  = this->className;
     this->integrationDataFileName += "IntegrationData.hxx";
-    this->integrationDataFile.open(("include/MaterialLaw/"+this->integrationDataFileName).c_str());
+    this->integrationDataFile.open(("include/Material/"+this->integrationDataFileName).c_str());
     if(!this->integrationDataFile){
       string msg("MFrontImplicitParser::writeOutputFiles : ");
       msg += "unable to open ";

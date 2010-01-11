@@ -25,9 +25,9 @@
 #include"Utilities/Name.hxx"
 #include"Utilities/ToString.hxx"
 
-#include"MaterialLaw/MechanicalBehaviourTraits.hxx"
-#include"MaterialLaw/MechanicalBehaviourData.hxx"
-#include"MaterialLaw/MaterialLawException.hxx"
+#include"Material/MechanicalBehaviourTraits.hxx"
+#include"Material/MechanicalBehaviourData.hxx"
+#include"Material/MaterialException.hxx"
 
 #include"UMAT/UMAT.hxx"
 #include"UMAT/UMATTraits.hxx"
@@ -44,7 +44,7 @@ namespace umat{
 
   /*!
    * \class  UMATInterface
-   * \brief  This class create an interface between BehaviourLaw and UMAT
+   * \brief  This class create an interface between Behaviour and UMAT
    * \author Helfer Thomas
    * \date   28 Jul 2006
    */
@@ -106,7 +106,7 @@ namespace umat{
 	} else if(*NTENS==6){
 	  cout << tfel::utilities::Name<Behaviour<3u,UMATReal,false> >::getName();
 	}
-	cout << " MaterialLaw has caused an " ;
+	cout << " Behaviour has caused an " ;
 	cout << "UMAT exception : " << e.getMsg() << endl;
 	cout.write(TerminalColors::White,sizeof(TerminalColors::White));
 	cout << "The ";
@@ -117,7 +117,7 @@ namespace umat{
 	} else if(*NTENS==6){
 	  cout << tfel::utilities::Name<Behaviour<3u,UMATReal,false> >::getName();
 	}
-	cout << " MaterialLaw has caused an " ;
+	cout << " Behaviour has caused an " ;
 	cout << "UMAT exception : " << e.getMsg() << endl;
 	cout.write(TerminalColors::Red,sizeof(TerminalColors::Red));
 	cout << "The ";
@@ -128,12 +128,12 @@ namespace umat{
 	} else if(*NTENS==6){
 	  cout << tfel::utilities::Name<Behaviour<3u,UMATReal,false> >::getName();
 	}
-	cout << " MaterialLaw has caused an " ;
+	cout << " Behaviour has caused an " ;
 	cout << "UMAT exception : " << e.getMsg() << endl;
 	cout.write(TerminalColors::Reset, sizeof(TerminalColors::Reset));
 	*KINC = -2;
       }
-      catch(const tfel::materiallaw::MaterialLawException& e){
+      catch(const tfel::material::MaterialException& e){
 	cout.write(TerminalColors::Blue,sizeof(TerminalColors::Blue));
 	cout << "The ";
 	if(*NTENS==3){
@@ -143,8 +143,8 @@ namespace umat{
 	} else if(*NTENS==6){
 	  cout << tfel::utilities::Name<Behaviour<3u,UMATReal,false> >::getName();
 	}
-	cout << " MaterialLaw has caused a " ;
-	cout << "MaterialLaw exception : " << e.getMsg() << endl;
+	cout << " Behaviour has caused a " ;
+	cout << "Material exception : " << e.getMsg() << endl;
 	cout.write(TerminalColors::White,sizeof(TerminalColors::White));
 	cout << "The ";
 	if(*NTENS==3){
@@ -154,8 +154,8 @@ namespace umat{
 	} else if(*NTENS==6){
 	  cout << tfel::utilities::Name<Behaviour<3u,UMATReal,false> >::getName();
 	}
-	cout << " MaterialLaw has caused a " ;
-	cout << "MaterialLaw exception : " << e.getMsg() << endl;
+	cout << " Behaviour has caused a " ;
+	cout << "Material exception : " << e.getMsg() << endl;
 	cout.write(TerminalColors::Red,sizeof(TerminalColors::Red));
 	cout << "The ";
 	if(*NTENS==3){
@@ -165,8 +165,8 @@ namespace umat{
 	} else if(*NTENS==6){
 	  cout << tfel::utilities::Name<Behaviour<3u,UMATReal,false> >::getName();
 	}
-	cout << " MaterialLaw has caused a " ;
-	cout << "MaterialLaw exception : " << e.getMsg() << endl;
+	cout << " Behaviour has caused a " ;
+	cout << "Material exception : " << e.getMsg() << endl;
 	cout.write(TerminalColors::Reset, sizeof(TerminalColors::Reset));
 	*KINC = -3;
       }
@@ -180,7 +180,7 @@ namespace umat{
 	} else if(*NTENS==6){
 	  cout << tfel::utilities::Name<Behaviour<3u,UMATReal,false> >::getName();
 	}
-	cout << " MaterialLaw has caused a " ;
+	cout << " Behaviour has caused a " ;
 	cout << "TFEL exception : " << e.getMsg() << endl;
 	cout.write(TerminalColors::White,sizeof(TerminalColors::White));
 	cout << "The ";
@@ -191,7 +191,7 @@ namespace umat{
 	} else if(*NTENS==6){
 	  cout << tfel::utilities::Name<Behaviour<3u,UMATReal,false> >::getName();
 	}
-	cout << " MaterialLaw has caused a " ;
+	cout << " Behaviour has caused a " ;
 	cout << "TFEL exception : " << e.getMsg() << endl;
 	cout.write(TerminalColors::Red,sizeof(TerminalColors::Red));
 	cout << "The ";
@@ -202,7 +202,7 @@ namespace umat{
 	} else if(*NTENS==6){
 	  cout << tfel::utilities::Name<Behaviour<3u,UMATReal,false> >::getName();
 	}
-	cout << " MaterialLaw has caused a " ;
+	cout << " Behaviour has caused a " ;
 	cout << "TFEL exception : " << e.getMsg() << endl;
 	cout.write(TerminalColors::Reset, sizeof(TerminalColors::Reset));
 	*KINC = -4;
@@ -332,7 +332,7 @@ namespace umat{
 	    try{
 	      behaviour.integrate();
 	    }
-	    catch(const tfel::materiallaw::DivergenceException& e){
+	    catch(const tfel::material::DivergenceException& e){
 #ifdef MFRONT_UMAT_VERBOSE
 	      std::cerr << "no convergence : " << e.what() << std::endl;
 #endif
@@ -428,7 +428,7 @@ namespace umat{
       {
 	using namespace std;
 	using namespace tfel::utilities;
-	using namespace tfel::materiallaw;
+	using namespace tfel::material;
 	typedef Behaviour<N,UMATReal,false> BV;
 	typedef MechanicalBehaviourTraits<BV> Traits;
 	static const unsigned short offset  = UMATTraits<BV>::propertiesOffset;
@@ -452,7 +452,7 @@ namespace umat{
 	throw(UMATException)
       {
 	typedef Behaviour<N,UMATReal,false> BV;
-	typedef tfel::materiallaw::MechanicalBehaviourTraits<BV> Traits;
+	typedef tfel::material::MechanicalBehaviourTraits<BV> Traits;
 	static const unsigned short nstatv  = Traits::internal_variables_nb;
 	static const unsigned short NSTATV_ = nstatv == 0 ? 1u : nstatv;
 	static const bool is_defined_       = Traits::is_defined;
@@ -490,7 +490,7 @@ namespace umat{
 	       UMATReal *const STRESS) 
       {
 	using namespace tfel::meta;
-	using namespace tfel::materiallaw;
+	using namespace tfel::material;
 	using namespace tfel::math;
 	typedef MechanicalBehaviourTraits<Behaviour<1u,UMATReal,false> > MTraits;
 	typedef UMATTraits<Behaviour<1u,UMATReal,false> > Traits;
@@ -535,7 +535,7 @@ namespace umat{
 	       UMATReal *const STRESS) 
       {
 	using namespace tfel::meta;
-	using namespace tfel::materiallaw;
+	using namespace tfel::material;
 	using namespace tfel::math;
 	typedef MechanicalBehaviourTraits<Behaviour<2u,UMATReal,false> > MTraits;
 	typedef UMATTraits<Behaviour<2u,UMATReal,false> > Traits;
@@ -588,7 +588,7 @@ namespace umat{
 	       UMATReal *const STRESS) 
       {
 	using namespace tfel::meta;
-	using namespace tfel::materiallaw;
+	using namespace tfel::material;
 	using namespace tfel::math;
 	typedef MechanicalBehaviourTraits<Behaviour<3u,UMATReal,false> > MTraits;
 	typedef UMATTraits<Behaviour<3u,UMATReal,false> > Traits;
@@ -645,7 +645,7 @@ namespace umat{
 	       UMATReal *const STRESS) 
       {
 	using namespace tfel::meta;
-	using namespace tfel::materiallaw;
+	using namespace tfel::material;
 	typedef MechanicalBehaviourTraits<Behaviour<N,UMATReal,false> > MTraits;
 	typedef UMATTraits<Behaviour<N,UMATReal,false> > Traits;
 	typedef TreatBehaviour<N> TreatBehaviour;

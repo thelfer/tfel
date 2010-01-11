@@ -685,7 +685,7 @@ namespace mfront{
     if (behaviourCharacteristic.getBehaviourType()==mfront::ORTHOTROPIC){
       out << "#include\"UMAT/UMATOrthotropicBehaviour.hxx\"\n";
     }
-    out << "#include\"MaterialLaw/" << className << ".hxx\"\n";
+    out << "#include\"Material/" << className << ".hxx\"\n";
     out << "#endif /* __cplusplus */\n\n";
 
     out << "#ifdef WIN32\n";
@@ -723,7 +723,7 @@ namespace mfront{
     } else {
       out << "template<unsigned short N,typename Type>\n";
     } 
-    out << "struct UMATTraits<tfel::materiallaw::" << className << "<N,Type,";
+    out << "struct UMATTraits<tfel::material::" << className << "<N,Type,";
     if(behaviourCharacteristic.useQt()){
       out << "use_qt";
     } else {
@@ -837,7 +837,7 @@ namespace mfront{
     out << "* \\date   "  << date       << endl;
     out << "*/\n\n";
 
-    out << "#include\"MaterialLaw/" << className << ".hxx\"\n";
+    out << "#include\"Material/" << className << ".hxx\"\n";
     out << "#include\"UMAT/UMATInterface.hxx\"\n\n";
     out << "#include\"UMAT/umat" << name << ".hxx\"\n\n";
 
@@ -965,7 +965,7 @@ namespace mfront{
 	<< "umat::UMATReal *const STRESS,const umat::UMATInt    *const NDI,\n"
 	<< "umat::UMATInt    *const KINC)\n";
     out << "{\n";
-    out << "umat::UMATInterface<tfel::materiallaw::" << className 
+    out << "umat::UMATInterface<tfel::material::" << className 
 	<< ">::exe(NTENS,DTIME,DROT,DDSOE,STRAN,DSTRAN,TEMP,DTEMP,PROPS,NPROPS,"
 	<< "PREDEF,DPRED,STATEV,NSTATV,STRESS,NDI,KINC);\n";
     out << "}\n\n";
@@ -1675,7 +1675,7 @@ namespace mfront{
     map<string,vector<string> > deps;
     string lib = MFrontUMATInterface::getLibraryName(library,material);
     deps[lib].push_back("-lUMATInterface");
-    deps[lib].push_back("`tfel-config --libs --materiallaw`");
+    deps[lib].push_back("`tfel-config --libs --material`");
     return deps;
   } // end of MFrontUMATInterface::getLibrariesDependencies()
 
