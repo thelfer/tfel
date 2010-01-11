@@ -23,21 +23,21 @@ nobase_include_HEADERS= FiniteElement/Element/ElementsManager.ixx               
 			FSAlgorithm/fill.hxx			                                 \
 			FSAlgorithm/for_each.hxx		                                 \
 			FSAlgorithm/equal.hxx			                                 \
-			MaterialLaw/OutOfBoundsPolicy.hxx	                                 \
-			MaterialLaw/MechanicalBehaviour.hxx	                                 \
-			MaterialLaw/Lame.hxx			                                 \
-			MaterialLaw/Hill.hxx			                                 \
-			MaterialLaw/Hill.ixx			                                 \
-			MaterialLaw/ThermalBehaviourData.hxx	                                 \
-			MaterialLaw/MaterialLawException.hxx	                                 \
-			MaterialLaw/IsotropicLinearFourierHookLaw.hxx                            \
-			MaterialLaw/MechanicalBehaviourTraits.hxx                                \
-			MaterialLaw/ThermalBehaviour.hxx	                                 \
-			MaterialLaw/MechanicalBehaviourData.hxx	                                 \
-			MaterialLaw/MechanicalIntegrationData.hxx                                \
-			MaterialLaw/IsotropicLinearFourierLaw.hxx                                \
-			MaterialLaw/ThermoMechanicalBehaviour.hxx                                \
-			MaterialLaw/BoundsCheck.hxx                                              \
+			Material/OutOfBoundsPolicy.hxx	                                         \
+			Material/MechanicalBehaviour.hxx	                                 \
+			Material/Lame.hxx			                                 \
+			Material/Hill.hxx			                                 \
+			Material/Hill.ixx			                                 \
+			Material/ThermalBehaviourData.hxx	                                 \
+			Material/MaterialException.hxx	                                         \
+			Material/IsotropicLinearFourierHookLaw.hxx                               \
+			Material/MechanicalBehaviourTraits.hxx                                   \
+			Material/ThermalBehaviour.hxx	                                         \
+			Material/MechanicalBehaviourData.hxx	                                 \
+			Material/MechanicalIntegrationData.hxx                                   \
+			Material/IsotropicLinearFourierLaw.hxx                                   \
+			Material/ThermoMechanicalBehaviour.hxx                                   \
+			Material/BoundsCheck.hxx                                                 \
 			Config/Internals/TFELTypesInternals.hxx	                                 \
 			Config/Internals/SpatialGradType.hxx	                                 \
 			Config/Internals/HeatFluxVectorType.hxx	                                 \
