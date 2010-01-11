@@ -1,0 +1,78 @@
+/*!
+ * \file   test4.mfront
+ * \brief  
+ * 
+ * \author Helfer Thomas
+ * \date   21 sep 2008
+ */
+
+@Parser Implicit;
+@Behaviour Norton;
+
+@Includes{
+#include"Material/Lame.hxx"
+}
+
+@Coef real young; /* mandatory for castem */
+young.setGlossaryName("YoungModulus");
+@Coef real nu;    /* mandatory for castem */
+nu.setGlossaryName("PoissonRatio");
+@Coef real rho;   /* mandatory for castem */
+rho.setGlossaryName("MassDensity");
+@Coef real alpha; /* mandatory for castem */
+alpha.setGlossaryName("ThermalExpansion");
+
+@LocalVar real lambda;
+@LocalVar real mu;
+
+@StateVar real    p;
+
+@Bounds eel(*) in [0:*[;
+@Bounds p in [0.:*[;
+
+/* Initialize Lame coefficients */
+@InitLocalVars{
+  using namespace tfel::material::lame;
+  lambda = computeLambda(young,nu);
+  mu = computeMu(young,nu);
+} // end of @InitLocalVars
+
+// @Predictor{
+//   const real A = 8.e-67;
+//   const real E = 8.2;
+//   computeStress();
+//   const real sigeq = sigmaeq(sig);
+//   Stensor  n(0.);
+//   real inv_sigeq = 0;
+//   if(sigeq > 1.){
+//     inv_sigeq = 1/sigeq;
+//   }
+//   n     = 1.5f*deviator(sig)*inv_sigeq;
+//   dp   = A*pow(sigeq,E)*dt;
+//   deel = deto - dp *n;
+  
+// }
+
+@ComputeStress{
+  sig = lambda*trace(eel)*Stensor::Id()+2*mu*eel;
+} // end of @ComputeStresss
+
+@Integrator{
+  const real A = 8.e-67;
+  const real E = 8.2;
+  const real sigeq = sigmaeq(sig);
+  const real tmp = A*pow(sigeq,E-1.);
+  real inv_sigeq(0);
+  Stensor  n(0.);
+  if(sigeq > 1.){
+    inv_sigeq = 1/sigeq;
+  }
+  n     = 1.5f*deviator(sig)*inv_sigeq;
+  feel += dp*n-deto;
+  fp   -= tmp*sigeq*dt;
+  // jacobian
+  dfeel_ddeel -= mu*theta*dp*inv_sigeq*Stensor4::Id();
+  dfeel_ddp    = n;
+  dfp_ddeel    = -2*mu*theta*tmp*E*dt*n;
+} // end of @Integrator
+
