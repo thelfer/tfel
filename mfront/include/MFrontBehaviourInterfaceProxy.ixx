@@ -14,7 +14,9 @@ namespace mfront{
   template<typename Interface>
   MFrontBehaviourInterfaceProxy<Interface>::MFrontBehaviourInterfaceProxy()
   {
-    behaviourInterfaceFactory.registerInterfaceCreator(Interface::getName(),&createInterface);
+    typedef MFrontBehaviourInterfaceFactory MBIF;
+    MBIF& mbif = MBIF::getMFrontBehaviourInterfaceFactory();
+    mbif.registerInterfaceCreator(Interface::getName(),&createInterface);
   }
   
   template<typename Interface>

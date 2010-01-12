@@ -14,15 +14,19 @@ namespace mfront{
   template<typename Interface>
   MFrontLawInterfaceProxy<Interface>::MFrontLawInterfaceProxy()
   {
-    lawInterfaceFactory.registerInterfaceCreator(Interface::getName(),&createInterface);
-    lawInterfaceFactory.registerInterfaceAlias(Interface::getName(),Interface::getName());
+    typedef MFrontLawInterfaceFactory MLIF;
+    MLIF& mlif = MLIF::getMFrontLawInterfaceFactory();
+    mlif.registerInterfaceCreator(Interface::getName(),&createInterface);
+    mlif.registerInterfaceAlias(Interface::getName(),Interface::getName());
   }
 
   template<typename Interface>
   MFrontLawInterfaceProxy<Interface>::MFrontLawInterfaceProxy(const std::string& name)
   {
-    lawInterfaceFactory.registerInterfaceCreator(Interface::getName(),&createInterface);
-    lawInterfaceFactory.registerInterfaceAlias(Interface::getName(),name);
+    typedef MFrontLawInterfaceFactory MLIF;
+    MLIF& mlif = MLIF::getMFrontLawInterfaceFactory();
+    mlif.registerInterfaceCreator(Interface::getName(),&createInterface);
+    mlif.registerInterfaceAlias(Interface::getName(),name);
   }
 
   template<typename Interface>
@@ -31,11 +35,13 @@ namespace mfront{
 							      const InputIterator b,
 							      const InputIterator e)
   {
+    typedef MFrontLawInterfaceFactory MLIF;
+    MLIF& mlif = MLIF::getMFrontLawInterfaceFactory();
     InputIterator p;
-    lawInterfaceFactory.registerInterfaceCreator(Interface::getName(),&createInterface);
-    lawInterfaceFactory.registerInterfaceAlias(Interface::getName(),name);
+    mlif.registerInterfaceCreator(Interface::getName(),&createInterface);
+    mlif.registerInterfaceAlias(Interface::getName(),name);
     for(p=b;p!=e;++p){
-      lawInterfaceFactory.registerInterfaceDependency(Interface::getName(),*p);
+      mlif.registerInterfaceDependency(Interface::getName(),*p);
     }
   } // end of MFrontLawInterfaceProxy<Interface>::MFrontLawInterfaceProxy
 
@@ -45,10 +51,12 @@ namespace mfront{
   MFrontLawInterfaceProxy<Interface>::MFrontLawInterfaceProxy(const InputIterator b,
 							      const InputIterator e)
   {
+    typedef MFrontLawInterfaceFactory MLIF;
+    MLIF& mlif = MLIF::getMFrontLawInterfaceFactory();
     InputIterator p;
-    lawInterfaceFactory.registerInterfaceCreator(Interface::getName(),&createInterface);
+    mlif.registerInterfaceCreator(Interface::getName(),&createInterface);
     for(p=b;p!=e;++p){
-      lawInterfaceFactory.registerInterfaceAlias(Interface::getName(),*p);
+      mlif.registerInterfaceAlias(Interface::getName(),*p);
     }
   } // end of MFrontLawInterfaceProxy<Interface>::MFrontLawInterfaceProxy
 
@@ -56,9 +64,11 @@ namespace mfront{
   MFrontLawInterfaceProxy<Interface>::MFrontLawInterfaceProxy(const std::string& name,
 							      const std::string& dep)
   {
-    lawInterfaceFactory.registerInterfaceCreator(Interface::getName(),&createInterface);
-    lawInterfaceFactory.registerInterfaceAlias(Interface::getName(),name);
-    lawInterfaceFactory.registerInterfaceDependency(Interface::getName(),dep);
+    typedef MFrontLawInterfaceFactory MLIF;
+    MLIF& mlif = MLIF::getMFrontLawInterfaceFactory();
+    mlif.registerInterfaceCreator(Interface::getName(),&createInterface);
+    mlif.registerInterfaceAlias(Interface::getName(),name);
+    mlif.registerInterfaceDependency(Interface::getName(),dep);
   } // end of MFrontLawInterfaceProxy<Interface>::MFrontLawInterfaceProxy
 
   template<typename Interface>
@@ -67,12 +77,14 @@ namespace mfront{
 							      const InputIterator e,
 							      const std::string& dep)
   {
+    typedef MFrontLawInterfaceFactory MLIF;
+    MLIF& mlif = MLIF::getMFrontLawInterfaceFactory();
     InputIterator p;
-    lawInterfaceFactory.registerInterfaceCreator(Interface::getName(),&createInterface);
+    mlif.registerInterfaceCreator(Interface::getName(),&createInterface);
     for(p=b;p!=e;++p){
-      lawInterfaceFactory.registerInterfaceAlias(Interface::getName(),*p);
+      mlif.registerInterfaceAlias(Interface::getName(),*p);
     }
-    lawInterfaceFactory.registerInterfaceDependency(Interface::getName(),dep);
+    mlif.registerInterfaceDependency(Interface::getName(),dep);
   } // end of MFrontLawInterfaceProxy<Interface>::MFrontLawInterfaceProxy
 
   template<typename Interface>
@@ -83,14 +95,16 @@ namespace mfront{
 							      const InputIterator2 b2,
 							      const InputIterator2 e2)
   {
+    typedef MFrontLawInterfaceFactory MLIF;
+    MLIF& mlif = MLIF::getMFrontLawInterfaceFactory();
     InputIterator  p;
     InputIterator2 p2;
-    lawInterfaceFactory.registerInterfaceCreator(Interface::getName(),&createInterface);
+    mlif.registerInterfaceCreator(Interface::getName(),&createInterface);
     for(p=b;p!=e;++p){
-      lawInterfaceFactory.registerInterfaceAlias(Interface::getName(),*p);
+      mlif.registerInterfaceAlias(Interface::getName(),*p);
     }
     for(p2=b2;p2!=e2;++p2){
-      lawInterfaceFactory.registerInterfaceDependency(Interface::getName(),*p2);
+      mlif.registerInterfaceDependency(Interface::getName(),*p2);
     }
   } // end of MFrontLawInterfaceProxy<Interface>::MFrontLawInterfaceProxy
 

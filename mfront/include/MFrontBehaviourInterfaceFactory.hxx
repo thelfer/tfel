@@ -19,7 +19,8 @@ namespace mfront{
   {
     typedef MFrontBehaviourVirtualInterface* (*InterfaceCreator)(void);
     
-    MFrontBehaviourInterfaceFactory();
+    static MFrontBehaviourInterfaceFactory&
+    getMFrontBehaviourInterfaceFactory();
 
     void setVerboseMode(void);
 
@@ -49,6 +50,8 @@ namespace mfront{
     typedef std::map<std::string,InterfaceCreator> InterfaceCreatorsContainer;
     typedef std::map<std::string,MFrontBehaviourVirtualInterface *> InterfaceContainer;
 
+    MFrontBehaviourInterfaceFactory();
+
     InterfaceCreatorsContainer&
     getInterfaceCreatorsMap(void);
 
@@ -60,8 +63,6 @@ namespace mfront{
     bool warningMode;
 
   };
-
-  extern MFrontBehaviourInterfaceFactory behaviourInterfaceFactory;
 
 } // end of namespace mfront  
 

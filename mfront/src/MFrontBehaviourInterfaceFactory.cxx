@@ -15,6 +15,13 @@
 
 namespace mfront{
 
+  MFrontBehaviourInterfaceFactory&
+  MFrontBehaviourInterfaceFactory::getMFrontBehaviourInterfaceFactory()
+  {
+    static MFrontBehaviourInterfaceFactory f;
+    return f;
+  } // end of MFrontBehaviourInterfaceFactory::getMFrontBehaviourInterfaceFactory
+
   MFrontBehaviourInterfaceFactory::InterfaceCreatorsContainer&
   MFrontBehaviourInterfaceFactory::getInterfaceCreatorsMap(void)
   {
@@ -130,7 +137,5 @@ namespace mfront{
       m->second->reset();
     }
   } // end of MFrontBehaviourInterfaceFactory::reset
-
-  MFrontBehaviourInterfaceFactory behaviourInterfaceFactory;
 
 } // end of namespace mfront

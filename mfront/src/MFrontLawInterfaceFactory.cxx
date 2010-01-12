@@ -16,6 +16,13 @@
 
 namespace mfront{
 
+  MFrontLawInterfaceFactory&
+  MFrontLawInterfaceFactory::getMFrontLawInterfaceFactory()
+  {
+    static MFrontLawInterfaceFactory f;
+    return f;
+  } // end of MFrontLawInterfaceFactory::getMFrontLawInterfaceFactory
+
   MFrontLawInterfaceFactory::InterfaceDependencyContainer&
   MFrontLawInterfaceFactory::getDependenciesMap(void)
   {
@@ -193,7 +200,5 @@ namespace mfront{
       m->second->reset();
     }
   } // end of MFrontLawInterfaceFactory::reset
-
-  MFrontLawInterfaceFactory lawInterfaceFactory;
 
 } // end of namespace mfront
