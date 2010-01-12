@@ -37,22 +37,6 @@ alpha.setGlossaryName("ThermalExpansion");
   mu = computeMu(young,nu);
 } // end of @InitLocalVars
 
-// @Predictor{
-//   const real A = 8.e-67;
-//   const real E = 8.2;
-//   computeStress();
-//   const real sigeq = sigmaeq(sig);
-//   Stensor  n(0.);
-//   real inv_sigeq = 0;
-//   if(sigeq > 1.){
-//     inv_sigeq = 1/sigeq;
-//   }
-//   n     = 1.5f*deviator(sig)*inv_sigeq;
-//   dp   = A*pow(sigeq,E)*dt;
-//   deel = deto - dp *n;
-  
-// }
-
 @ComputeStress{
   sig = lambda*trace(eel)*Stensor::Id()+2*mu*eel;
 } // end of @ComputeStresss

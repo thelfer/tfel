@@ -3,8 +3,6 @@
 @Author Helfer Thomas;
 @Date 23/11/06;
 
-@Interface umat;
-
 @Coef stress H;
 
 @FlowRule{
