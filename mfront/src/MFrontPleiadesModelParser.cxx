@@ -77,45 +77,43 @@ namespace mfront{
 			      &MFrontPleiadesModelParser::treatBounds);
     this->registerNewCallBack("@PhysicalBounds",
 			      &MFrontPleiadesModelParser::treatPhysicalBounds);
-    this->varNames.insert("dt");
-    this->varNames.insert("std");
-    this->varNames.insert("boost");
-    this->varNames.insert("field");
-    this->varNames.insert("real");
-    this->varNames.insert("support");
-    this->varNames.insert("values");
-    this->varNames.insert("results");
-    this->varNames.insert("domains");
-    this->varNames.insert("requirement");
-    this->varNames.insert("requirementManager");
-    this->varNames.insert("md");
-    this->varNames.insert("ptr");
-    this->varNames.insert("ptr2");
-    this->varNames.insert("ptr3");
-    this->varNames.insert("tmp");
-    this->varNames.insert("outputsDepths");
-    this->varNames.insert("outputsInitialValues");
-    this->varNames.insert("inputsDepths");
-    this->varNames.insert("ValidParametersNames");
-    this->varNames.insert("computeMaterialProperties");
-    this->varNames.insert("apply");
-    this->varNames.insert("FieldHolder");
-    this->varNames.insert("MTFieldManager");
-    this->varNames.insert("mm");
-    this->varNames.insert("initialize");
-    this->varNames.insert("initializeOutput");
-    this->varNames.insert("initializeOutputsVariablesDepths");
-    this->varNames.insert("initializeOutputsVariablesInitialValues");
-    this->varNames.insert("initializeInputsVariablesDepths");
-    this->varNames.insert("initializeConstantMaterialProperties");
-    this->varNames.insert("constantMaterialProperties");
-    this->varNames.insert("declareRequirements");
-    this->varNames.insert("resolveDependencies");
-    this->varNames.insert("execute");
-    this->varNames.insert("executeInitialPostProcessingTasks");
-    this->varNames.insert("executePostProcessingTasks");
-    this->varNames.insert("getName");
-    this->varNames.insert("data");
+    this->reserveName("dt");
+    this->reserveName("boost");
+    this->reserveName("field");
+    this->reserveName("support");
+    this->reserveName("values");
+    this->reserveName("results");
+    this->reserveName("domains");
+    this->reserveName("requirement");
+    this->reserveName("requirementManager");
+    this->reserveName("md");
+    this->reserveName("ptr");
+    this->reserveName("ptr2");
+    this->reserveName("ptr3");
+    this->reserveName("tmp");
+    this->reserveName("outputsDepths");
+    this->reserveName("outputsInitialValues");
+    this->reserveName("inputsDepths");
+    this->reserveName("ValidParametersNames");
+    this->reserveName("computeMaterialProperties");
+    this->reserveName("apply");
+    this->reserveName("FieldHolder");
+    this->reserveName("MTFieldManager");
+    this->reserveName("mm");
+    this->reserveName("initialize");
+    this->reserveName("initializeOutput");
+    this->reserveName("initializeOutputsVariablesDepths");
+    this->reserveName("initializeOutputsVariablesInitialValues");
+    this->reserveName("initializeInputsVariablesDepths");
+    this->reserveName("initializeConstantMaterialProperties");
+    this->reserveName("constantMaterialProperties");
+    this->reserveName("declareRequirements");
+    this->reserveName("resolveDependencies");
+    this->reserveName("execute");
+    this->reserveName("executeInitialPostProcessingTasks");
+    this->reserveName("executePostProcessingTasks");
+    this->reserveName("getName");
+    this->reserveName("data");
   } // end of MFrontPleiadesModelParser::MFrontPleiadesModelParser()
 
   void
@@ -319,11 +317,7 @@ namespace mfront{
     bool found = false;
     bool treated;
     f.useTimeIncrement = false;
-    if(!this->varNames.insert("functor"+toString(this->functions.size())).second){
-      string msg("MFrontPleiadesModelParser::treatFunction : ");
-      msg += "'functor"+toString(this->functions.size())+"' is a reserved variable name";
-      throw(runtime_error(msg));
-    }
+    this->registerVariable("functor"+toString(this->functions.size()));
     this->checkNotEndOfFile("MFrontPleiadesModelParser::treatFunction");
     f.name = this->current->value;
     if(!this->isValidIdentifier(f.name)){
@@ -331,21 +325,9 @@ namespace mfront{
       msg += "function name '"+f.name+"' is not valid";
       throw(runtime_error(msg));
     }
-    if(!this->varNames.insert(f.name).second){
-      string msg("MFrontPleiadesModelParser::treatFunction : ");
-      msg += "name '"+f.name+"' is already used";
-      throw(runtime_error(msg));
-    }
-    if(!this->varNames.insert(f.name+".Domains").second){
-      string msg("MFrontPleiadesModelParser::treatFunction : ");
-      msg += "name '"+f.name+".Domains' is reseved";
-      throw(runtime_error(msg));
-    }
-    if(!this->varNames.insert(f.name+".Domain").second){
-      string msg("MFrontPleiadesModelParser::treatFunction : ");
-      msg += "name '"+f.name+".Domain' is reseved";
-      throw(runtime_error(msg));
-    }
+    this->registerVariable(f.name);
+    this->reserveName(f.name+".Domain");
+    this->reserveName(f.name+".Domains");
     f.line = this->current->line;
     ++(this->current);
     this->readSpecifiedToken("MFrontPleiadesModelParser::treatFunction","{");
@@ -538,18 +520,16 @@ namespace mfront{
 		  f.depth[dv.first] = dv.second;
 		}
 		f.body  += this->current->value;
-	      } else {
-		if(this->current->value=="dt"){
-		  f.useTimeIncrement = true;
-		  f.body  += "(this->dt)";
-		} else {
-		  f.body  += this->current->value;
-		}
 	      }
 	    }
 	  }
 	} else {
-	  f.body  += this->current->value;
+	  if(this->current->value=="dt"){
+	    f.useTimeIncrement = true;
+	    f.body  += "(this->dt)";
+	  } else {
+	    f.body  += this->current->value;
+	  }
 	}
 	newInstruction = false;
       }
@@ -918,18 +898,9 @@ namespace mfront{
 				"depth value for field '"+this->currentVar+"' already defined.");
       }
       for(i=1;i<=value;++i){
-	if(!this->varNames.insert(this->currentVar+"_"+toString(i)).second){
-	  this->throwRuntimeError("MFrontPleiadesModelParser::treatOutputMethod",
-				  this->currentVar+"_"+toString(i)+" has already been declared.");
-	}
-	if(!this->varNames.insert("f_"+this->currentVar+"_"+toString(i)).second){
-	  this->throwRuntimeError("MFrontPleiadesModelParser::treatOutputMethod",
-				  "f_"+this->currentVar+"_"+toString(i)+" is reserved.");
-	}
-	if(!this->varNames.insert("ff_"+this->currentVar+"_"+toString(i)).second){
-	  this->throwRuntimeError("MFrontPleiadesModelParser::treatOutputMethod",
-				  "ff_"+this->currentVar+"_"+toString(i)+" is reserved.");
-	}
+	this->registerVariable(this->currentVar+"_"+toString(i));
+	this->registerVariable("f_"+this->currentVar+"_"+toString(i));
+	this->registerVariable("ff_"+this->currentVar+"_"+toString(i));
 	if(!this->fieldNames.insert(this->currentVar+"_"+toString(i)).second){
 	  this->throwRuntimeError("MFrontPleiadesModelParser::treatOutputMethod",
 				  "Field '"+this->currentVar+"_"+toString(i)+"' has already been declared "
@@ -1032,18 +1003,9 @@ namespace mfront{
 				"Initial value for field '"+this->currentVar+"' already defined.");
       }
       for(i=1;i<=value;++i){
-	if(!this->varNames.insert(this->currentVar+"_"+toString(i)).second){
-	  this->throwRuntimeError("MFrontPleiadesModelParser::treatInputMethod",
-				  this->currentVar+"_"+toString(i)+" has already been declared.");
-	}
-	if(!this->varNames.insert("f_"+this->currentVar+"_"+toString(i)).second){
-	  this->throwRuntimeError("MFrontPleiadesModelParser::treatOutputMethod",
-				  "f_"+this->currentVar+"_"+toString(i)+" has already been declared.");
-	}
-	if(!this->varNames.insert("ff_"+this->currentVar+"_"+toString(i)).second){
-	  this->throwRuntimeError("MFrontPleiadesModelParser::treatOutputMethod",
-				  "ff_"+this->currentVar+"_"+toString(i)+" has already been declared.");
-	}
+	this->registerVariable(this->currentVar+"_"+toString(i));
+	this->registerVariable("f_"+this->currentVar+"_"+toString(i));
+	this->registerVariable("ff_"+this->currentVar+"_"+toString(i));
 	if(!this->fieldNames.insert(this->currentVar+"_"+toString(i)).second){
 	  this->throwRuntimeError("MFrontPleiadesModelParser::treatInputMethod",
 				  "Field '"+this->currentVar+"_"+toString(i)+"' has already been declared "
@@ -1521,7 +1483,7 @@ namespace mfront{
 	for(i=1,p4=p3->usedVariables.begin();p4!=p3->usedVariables.end();++i,++p4){
 	  this->headerFile << "typedef pleiades::field::real Arg" << i << ";\n";
 	}
-	this->headerFile << "\nconst Result\n";
+	this->headerFile << "\nResult\n";
 	this->headerFile << "operator()(";
 	if(p3->usedVariables.size()==0){
 	  this->headerFile << "void";
@@ -1807,7 +1769,7 @@ namespace mfront{
       }
       if((p11->modifiedVariables.size()==1)&&
 	 (p11->usedVariables.size()<TFEL_MFRONTPLEAIDESPARSER_MAXUSEDVARIABLESFORUSINGAPPLY)){
-	this->srcFile << "const pleiades::field::real\n";
+	this->srcFile << "pleiades::field::real\n";
 	this->srcFile << this->className << "::" << p11->name << "::operator()(";
 	if(p11->usedVariables.size()==0){
 	  if(p11->modifiedVariables.size()==1){

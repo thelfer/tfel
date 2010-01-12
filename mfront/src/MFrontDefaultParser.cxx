@@ -64,6 +64,8 @@ namespace mfront{
   void 
   MFrontDefaultParser::generateOutputFiles(void){
     using namespace std;
+    typedef MFrontBehaviourInterfaceFactory MBIF;
+    MBIF& mbif = MBIF::getMFrontBehaviourInterfaceFactory();
     // Generating BehaviourData's outputFile
     this->writeBehaviourDataFile();
     // Generating IntegrationData's outputFile
@@ -78,7 +80,7 @@ namespace mfront{
     StringContainer::const_iterator i;
     for(i  = this->interfaces.begin();
 	i != this->interfaces.end();++i){
-      MFrontBehaviourVirtualInterface *interface = behaviourInterfaceFactory.getInterfacePtr(*i);
+      MFrontBehaviourVirtualInterface *interface = mbif.getInterfacePtr(*i);
       interface->endTreatement(this->library,
 			       this->material,
 			       this->className,
@@ -97,6 +99,8 @@ namespace mfront{
   MFrontDefaultParser::writeOutputFiles(){
     using namespace std;
     using namespace tfel::system;
+    typedef MFrontBehaviourInterfaceFactory MBIF;
+    MBIF& mbif = MBIF::getMFrontBehaviourInterfaceFactory();
     systemCall::mkdir("src");
     systemCall::mkdir("include");
     systemCall::mkdir("include/Material");
@@ -157,7 +161,7 @@ namespace mfront{
     StringContainer::const_iterator i;
     for(i  = this->interfaces.begin();
 	i != this->interfaces.end();++i){
-      MFrontBehaviourVirtualInterface *interface = behaviourInterfaceFactory.getInterfacePtr(*i);
+      MFrontBehaviourVirtualInterface *interface = mbif.getInterfacePtr(*i);
       interface->endTreatement(this->library,
 			       this->material,
 			       this->className,

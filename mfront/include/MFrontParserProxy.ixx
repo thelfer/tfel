@@ -14,6 +14,7 @@ namespace mfront{
   template<typename ParserName>
   MFrontParserProxy<ParserName>::MFrontParserProxy()
   {
+    MFrontParserFactory& parserFactory = MFrontParserFactory::getMFrontParserFactory();
     parserFactory.registerParserCreator(ParserName::getName(),
 					&MFrontParserProxy<ParserName>::createParser,
 					&ParserName::getDescription);

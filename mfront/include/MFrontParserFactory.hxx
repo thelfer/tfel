@@ -21,7 +21,8 @@ namespace mfront{
     typedef MFrontVirtualParser* (*ParserCreator)(void);
     typedef std::string (*DescriptionPtr)(void);
     
-    MFrontParserFactory();
+    static MFrontParserFactory&
+    getMFrontParserFactory();
 
     std::vector<std::string>
     getRegistredParsers(void);
@@ -43,6 +44,8 @@ namespace mfront{
     typedef std::map<std::string,ParserCreator>  ParserCreatorsContainer;
     typedef std::map<std::string,DescriptionPtr> DescriptionPtrContainer;
 
+    MFrontParserFactory();
+
     DescriptionPtrContainer&
     getDescriptionMap(void);
 
@@ -50,8 +53,6 @@ namespace mfront{
     getMap(void);
 
   }; // end of struct MFrontParserFactory
-
-  extern MFrontParserFactory parserFactory;
 
 } // end of namespace mfront  
 

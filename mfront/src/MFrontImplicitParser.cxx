@@ -25,38 +25,36 @@ namespace mfront{
     using namespace std;
     typedef map<string,string>::value_type MVType;
     // static variable
-    this->staticVarNames.insert("theta");
-    this->staticVarNames.insert("epsilon");
-    this->staticVarNames.insert("iterMax");
+    this->registerStaticVariable("theta");
+    this->registerStaticVariable("epsilon");
+    this->registerStaticVariable("iterMax");
     // Default state vars
-    this->varNames.insert("eel");
-    this->varNames.insert("deel");
-    this->varNames.insert("deto");
-    this->varNames.insert("zeros");
-    this->varNames.insert("fzeros");
-    this->varNames.insert("zeros2");
-    this->varNames.insert("fzeros2");
-    this->varNames.insert("Dzeros");
-    this->varNames.insert("Dfzeros");
-    this->varNames.insert("jacobian");
-    this->varNames.insert("jacobian2");
-    this->varNames.insert("deto");
-    this->varNames.insert("t");
-    this->varNames.insert("dt_");
-    this->varNames.insert("error");
-    this->varNames.insert("idx");
-    this->varNames.insert("Type");
-    this->varNames.insert("use_qt");
-    this->varNames.insert("computeStress");
-    this->varNames.insert("computeFinalStress");
-    this->varNames.insert("computeFdF");
-    this->varNames.insert("predicte");
-    this->varNames.insert("integrate");
-    this->varNames.insert("error");
-    this->varNames.insert("iter");
-    this->varNames.insert("iterMax");
-    this->varNames.insert("converge");
-    this->varNames.insert("broyden_inv");
+    this->registerVariable("eel");
+    this->registerVariable("deel");
+    this->registerVariable("deto");
+    this->registerVariable("zeros");
+    this->registerVariable("fzeros");
+    this->registerVariable("zeros2");
+    this->registerVariable("fzeros2");
+    this->registerVariable("Dzeros");
+    this->registerVariable("Dfzeros");
+    this->registerVariable("jacobian");
+    this->registerVariable("jacobian2");
+    this->registerVariable("deto");
+    this->registerVariable("t");
+    this->registerVariable("dt_");
+    this->registerVariable("error");
+    this->registerVariable("idx");
+    this->reserveName("computeStress");
+    this->reserveName("computeFinalStress");
+    this->reserveName("computeFdF");
+    this->reserveName("predicte");
+    this->reserveName("integrate");
+    this->reserveName("error");
+    this->reserveName("iter");
+    this->reserveName("iterMax");
+    this->reserveName("converge");
+    this->reserveName("broyden_inv");
     this->stateVarsHolder.push_back(VarHandler("StrainStensor","eel",0u));
     this->glossaryNames.insert(MVType("eel","ElasticStrain"));
     // CallBacks
@@ -627,6 +625,8 @@ namespace mfront{
   void 
   MFrontImplicitParser::generateOutputFiles(void){
     using namespace std;
+    typedef MFrontBehaviourInterfaceFactory MBIF;
+    MBIF& mbif = MBIF::getMFrontBehaviourInterfaceFactory();
     if(this->integrator.empty()){
       string msg("MFrontImplicitParser::generateOutputFiles : ");
       msg += "definining the @Integrator block is required";
@@ -652,7 +652,7 @@ namespace mfront{
 
     StringContainer::const_iterator i;
     for(i  = this->interfaces.begin(); i != this->interfaces.end();++i){
-      MFrontBehaviourVirtualInterface *interface = behaviourInterfaceFactory.getInterfacePtr(*i);
+      MFrontBehaviourVirtualInterface *interface = mbif.getInterfacePtr(*i);
       interface->endTreatement(this->library,
 			       this->material,
 			       this->className,

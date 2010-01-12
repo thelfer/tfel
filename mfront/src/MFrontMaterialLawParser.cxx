@@ -59,9 +59,7 @@ namespace mfront{
 			      &MFrontMaterialLawParser::treatPhysicalBounds);
     this->registerNewCallBack("@UseTemplate",
 			      &MFrontMaterialLawParser::treatUseTemplate);
-    this->varNames.insert("real");
-    this->varNames.insert("params");
-    this->varNames.insert("policy");
+    this->reserveName("params");
   } // end of MFrontMaterialLawParser::MFrontMaterialLawParser()
 
   void
@@ -77,7 +75,9 @@ namespace mfront{
   MFrontMaterialLawParser::getDescription()
   {
     using namespace std;
-    const std::vector<std::string>& ai = lawInterfaceFactory.getRegistredInterfaces();
+    typedef MFrontLawInterfaceFactory MLIF;
+    MLIF& mlif = MLIF::getMFrontLawInterfaceFactory();
+    const std::vector<std::string>& ai = mlif.getRegistredInterfaces();
     vector<string>::const_iterator p2  = ai.begin();
     vector<string>::const_iterator p2e = ai.end();
     string msg ("this parser is used to define material properties. ");
@@ -151,18 +151,6 @@ namespace mfront{
     this->checkNotEndOfFile("MFrontMaterialLawParser::treatConstant",
 			    "Cannot read variable name.");
     name = this->current->value;
-    if(!isValidIdentifier(name)){
-      this->throwRuntimeError("MFrontMaterialLawParser::treatConstant",
-			      "Variable name '"+name+"' is not valid.");
-    }
-    if(!(this->varNames.insert(name)).second){
-      this->throwRuntimeError("MFrontMaterialLawParser::treatConstant",
-			      name+" already declared.");
-    }
-    if(!(this->staticVarNames.insert(name)).second){
-      this->throwRuntimeError("MFrontMaterialLawParser::treatConstant",
-			      name+" already declared.\n");
-    }
     line = this->current->line;
     ++(this->current);
     this->readSpecifiedToken("MFrontMaterialLawParser::treatConstant","=");
@@ -176,8 +164,8 @@ namespace mfront{
     }
     ++(this->current);
     this->readSpecifiedToken("MFrontMaterialLawParser::treatConstant",";");
+    this->registerStaticVariable(name);
     this->staticVars.push_back(StaticVarHandler("real",name,line,value));
-    this->staticVarNames.insert(name);
   } // end of MFrontMaterialLawParser::treatConstant
 
   void
@@ -189,14 +177,6 @@ namespace mfront{
     this->checkNotEndOfFile("MFrontMaterialLawParser::treatParameter",
 			    "Expected parameter name.");
     parameter = this->current->value;
-    if(!isValidIdentifier(parameter)){
-      this->throwRuntimeError("MFrontMaterialLawParser::treatParameter",
-			      "variable name '"+parameter+"' is not valid.");
-    }
-    if(!this->varNames.insert(parameter).second){
-      this->throwRuntimeError("MFrontMaterialLawParser::treatParamete",
-			      "variable '"+parameter+"' already used.");
-    }
     ++(this->current);
     this->readSpecifiedToken("MFrontMaterialLawParser::treatParameter","=");
     this->checkNotEndOfFile("MFrontMaterialLawParser::treatParameter",
@@ -210,6 +190,7 @@ namespace mfront{
     }
     ++(this->current);
     this->readSpecifiedToken("MFrontMaterialLawParser::treatParameter",";");
+    this->registerVariable(parameter);
     this->parameters.push_back(parameter);
     this->parametersValues.insert(make_pair(parameter,value));
   } // MFrontMaterialLawParser::treatParameter
@@ -252,10 +233,12 @@ namespace mfront{
   MFrontMaterialLawParser::addInterface(const std::string& i)
   {
     using namespace std;
+    typedef MFrontLawInterfaceFactory MLIF;
+    MLIF& mlif = MLIF::getMFrontLawInterfaceFactory();
     vector<string>::const_iterator p2;
     vector<string>::const_iterator p2b;
     vector<string>::const_iterator p2e;
-    const std::vector<std::string>& ai = lawInterfaceFactory.getRegistredInterfaces();
+    const std::vector<std::string>& ai = mlif.getRegistredInterfaces();
     if(this->interfaces.find(i)!=this->interfaces.end()){
       string msg("MFrontMaterialLawParser::addInterface : ");
       msg += "interface '"+i+"' already declared";
@@ -291,12 +274,14 @@ namespace mfront{
   MFrontMaterialLawParser::setInterfaces(const std::set<std::string>& i) 
   {
     using namespace std;
+    typedef MFrontLawInterfaceFactory MLIF;
+    MLIF& mlif = MLIF::getMFrontLawInterfaceFactory();
     set<string>::const_iterator p;
     vector<string>::const_iterator p2;
     set<string> i2(i);
     // searching i2 depedencies
     for(p=i.begin();p!=i.end();++p){
-      const vector<string>& dependencies = lawInterfaceFactory.getInterfaceDependencies(*p);
+      const vector<string>& dependencies = mlif.getInterfaceDependencies(*p);
       for(p2=dependencies.begin();p2!=dependencies.end();++p2){
 	i2.insert(*p2);
       }
@@ -342,12 +327,7 @@ namespace mfront{
       throw(runtime_error(msg));
     }
     if(this->output.empty()){
-      if(!this->varNames.insert("res").second){
-	this->throwRuntimeError("MFrontMaterialLawParser::treatFunction",
-				"'res' is already being used "
-				"(mfront tried to use this name as the default name for the output as "
-				"you have not defined one).");
-      }
+      this->registerVariable("res");
       this->output = "res";
     }
     this->f.modified = false;
@@ -568,6 +548,8 @@ namespace mfront{
   MFrontMaterialLawParser::treatFile(const std::string& fileName_) 
   {
     using namespace std;
+    typedef MFrontLawInterfaceFactory MLIF;
+    MLIF& mlif = MLIF::getMFrontLawInterfaceFactory();
     string key;
     CallBackContainer::const_iterator p;
     MemberFuncPtr handler = 0;
@@ -616,7 +598,7 @@ namespace mfront{
 	}
 	for(i  = this->interfaces.begin();
 	    i != this->interfaces.end();++i){
-	  MFrontLawVirtualInterface *interface = lawInterfaceFactory.getInterfacePtr(*i);
+	  MFrontLawVirtualInterface *interface = mlif.getInterfacePtr(*i);
 	  try{
 	    p2 = interface->treatKeyword(key,b,
 					 this->fileTokens.end());
@@ -647,6 +629,8 @@ namespace mfront{
   {
     using namespace std;
     using namespace tfel::system;
+    typedef MFrontLawInterfaceFactory MLIF;
+    MLIF& mlif = MLIF::getMFrontLawInterfaceFactory();
     set<string>::const_iterator p;
     if(this->className.empty()){
       string msg("MFrontMaterialLawParser::writeOutputFiles : ");
@@ -673,7 +657,7 @@ namespace mfront{
 	cout << "calling interface " << *p << endl;
       }
 
-      MFrontLawVirtualInterface *interface = lawInterfaceFactory.getInterfacePtr(*p);
+      MFrontLawVirtualInterface *interface = mlif.getInterfacePtr(*p);
 
       if(this->verboseMode){
 	interface->setVerboseMode();
@@ -720,11 +704,7 @@ namespace mfront{
 			      "Output already defined.");
     }
     this->output = this->readOnlyOneToken();
-    if(!this->varNames.insert(this->output).second){
-      --(this->current);
-      this->throwRuntimeError("MFrontMaterialLawParser::treatOutput",
-			      "Variable '"+this->output+"' already used.");
-    }
+    this->registerVariable(this->output);
   } // end of MFrontMaterialLawParser::treatOutput
 
   std::map<std::string,std::vector<std::string> >
@@ -732,13 +712,15 @@ namespace mfront{
   {
     using namespace std;
     typedef map<string,vector<string> > Map;
+    typedef MFrontLawInterfaceFactory MLIF;
+    MLIF& mlif = MLIF::getMFrontLawInterfaceFactory();
     Map osources;
     set<string>::const_iterator i;
     map<string,vector<string> >::const_iterator p;
     vector<string>::const_iterator p2;
     for(i  = this->interfaces.begin();
 	i != this->interfaces.end();++i){
-      MFrontLawVirtualInterface *interface = lawInterfaceFactory.getInterfacePtr(*i);
+      MFrontLawVirtualInterface *interface = mlif.getInterfacePtr(*i);
       const Map& isources = interface->getGeneratedSources(this->library,
 							   this->material,
 							   this->className);
@@ -761,11 +743,13 @@ namespace mfront{
   MFrontMaterialLawParser::getGeneratedIncludes(void)
   {
     using namespace std;
+    typedef MFrontLawInterfaceFactory MLIF;
+    MLIF& mlif = MLIF::getMFrontLawInterfaceFactory();
     vector<string> incs;
     set<string>::const_iterator i;
     for(i  = this->interfaces.begin();
 	i != this->interfaces.end();++i){
-      MFrontLawVirtualInterface *interface = lawInterfaceFactory.getInterfacePtr(*i);
+      MFrontLawVirtualInterface *interface = mlif.getInterfacePtr(*i);
       const vector<string>& iincs = interface->getGeneratedIncludes(this->library,
 								    this->material,
 								    this->className);
@@ -779,12 +763,14 @@ namespace mfront{
   {
     using namespace std;
     typedef map<string,vector<string> > Map;
+    typedef MFrontLawInterfaceFactory MLIF;
+    MLIF& mlif = MLIF::getMFrontLawInterfaceFactory();
     Map incs;
     set<string>::const_iterator i;
     map<string,vector<string> >::const_iterator p;
     for(i  = this->interfaces.begin();
 	i != this->interfaces.end();++i){
-      MFrontLawVirtualInterface *interface = lawInterfaceFactory.getInterfacePtr(*i);
+      MFrontLawVirtualInterface *interface = mlif.getInterfacePtr(*i);
       const Map& iincs = interface->getGlobalIncludes(this->library,
 						      this->material,
 						      this->className);
@@ -800,12 +786,14 @@ namespace mfront{
   {
     using namespace std;
     typedef map<string,vector<string> > Map;
+    typedef MFrontLawInterfaceFactory MLIF;
+    MLIF& mlif = MLIF::getMFrontLawInterfaceFactory();
     Map deps;
     set<string>::const_iterator i;
     map<string,vector<string> >::const_iterator p;
     for(i  = this->interfaces.begin();
 	i != this->interfaces.end();++i){
-      MFrontLawVirtualInterface *interface = lawInterfaceFactory.getInterfacePtr(*i);
+      MFrontLawVirtualInterface *interface = mlif.getInterfacePtr(*i);
       const Map& ideps = interface->getGlobalDependencies(this->library,
 							  this->material,
 							  this->className);
@@ -821,6 +809,8 @@ namespace mfront{
   {
     using namespace std;
     typedef map<string,vector<string> > Map;
+    typedef MFrontLawInterfaceFactory MLIF;
+    MLIF& mlif = MLIF::getMFrontLawInterfaceFactory();
     Map deps;
     set<string>::const_iterator i;
     map<string,vector<string> >::const_iterator p;
@@ -828,7 +818,7 @@ namespace mfront{
     vector<string>::const_iterator p3;
     for(i  = this->interfaces.begin();
 	i != this->interfaces.end();++i){
-      MFrontLawVirtualInterface *interface = lawInterfaceFactory.getInterfacePtr(*i);
+      MFrontLawVirtualInterface *interface = mlif.getInterfacePtr(*i);
       const Map& ideps = interface->getLibrariesDependencies(this->library,
 							     this->material,
 							     this->className);
@@ -972,12 +962,14 @@ namespace mfront{
   MFrontMaterialLawParser::getSpecificTargets(void)
   {
     using namespace std;
+    typedef MFrontLawInterfaceFactory MLIF;
+    MLIF& mlif = MLIF::getMFrontLawInterfaceFactory();
     typedef map<string,pair<vector<string>,vector<string> > > Target;
     Target res;
     set<string>::const_iterator p;
     Target::const_iterator p2;
     for(p=this->interfaces.begin();p!=this->interfaces.end();++p){
-      MFrontLawVirtualInterface *i = lawInterfaceFactory.getInterfacePtr(*p);
+      MFrontLawVirtualInterface *i = mlif.getInterfacePtr(*p);
       const Target& targets = i->getSpecificTargets(this->library,
 						    this->material,
 						    this->className,
@@ -999,6 +991,8 @@ namespace mfront{
   {
     using namespace std;
     using namespace tfel::utilities;
+    typedef MFrontLawInterfaceFactory MLIF;
+    MLIF& mlif = MLIF::getMFrontLawInterfaceFactory();
     pair<bool,CxxTokenizer::TokensContainer::const_iterator> p;
     TokensContainer::const_iterator p2;
     set<string>::const_iterator i;
@@ -1033,7 +1027,7 @@ namespace mfront{
 	this->ignoreKeyWord(key);
       } else {
 	for(i  = s.begin();i != s.end();++i){
-	  MFrontLawVirtualInterface *interface = lawInterfaceFactory.getInterfacePtr(*i);
+	  MFrontLawVirtualInterface *interface = mlif.getInterfacePtr(*i);
 	  p = interface->treatKeyword(key,this->current,
 				      this->fileTokens.end());
 	  if(!p.first){
@@ -1059,7 +1053,7 @@ namespace mfront{
     } else {
       for(i  = this->interfaces.begin();
 	  i != this->interfaces.end();++i){
-	MFrontLawVirtualInterface *interface = lawInterfaceFactory.getInterfacePtr(*i);
+	MFrontLawVirtualInterface *interface = mlif.getInterfacePtr(*i);
 	p = interface->treatKeyword(key,this->current,
 				    this->fileTokens.end());
 	if(p.first){

@@ -96,22 +96,37 @@ namespace mfront{
   void
   MFront::treatVerbose(void)
   {
+    typedef MFrontBehaviourInterfaceFactory MBIF;
+    typedef MFrontLawInterfaceFactory MLIF;
+    MBIF& mbif = MBIF::getMFrontBehaviourInterfaceFactory();
+    MLIF& mlif = MLIF::getMFrontLawInterfaceFactory();
     this->verboseMode = true;
-    behaviourInterfaceFactory.setVerboseMode();
+    mbif.setVerboseMode();
+    mlif.setVerboseMode();
   }
 
   void
   MFront::treatDebug(void)
   {
+    typedef MFrontBehaviourInterfaceFactory MBIF;
+    typedef MFrontLawInterfaceFactory MLIF;
+    MBIF& mbif = MBIF::getMFrontBehaviourInterfaceFactory();
+    MLIF& mlif = MLIF::getMFrontLawInterfaceFactory();
     this->debugMode = true;
-    behaviourInterfaceFactory.setDebugMode();
+    mbif.setDebugMode();
+    mlif.setDebugMode();
   }
 
   void
   MFront::treatWarning(void)
   {
+    typedef MFrontBehaviourInterfaceFactory MBIF;
+    typedef MFrontLawInterfaceFactory MLIF;
+    MBIF& mbif = MBIF::getMFrontBehaviourInterfaceFactory();
+    MLIF& mlif = MLIF::getMFrontLawInterfaceFactory();
     this->warningMode = true;
-    behaviourInterfaceFactory.setWarningMode();
+    mbif.setWarningMode();
+    mlif.setWarningMode();
   }
 
   void
@@ -198,6 +213,7 @@ namespace mfront{
   {
     using namespace std;
     cout << "available parsers : " << endl;
+    MFrontParserFactory& parserFactory = MFrontParserFactory::getMFrontParserFactory();
     const vector<string>& parsers = parserFactory.getRegistredParsers();
     vector<string>::const_iterator p = parsers.begin();
     while(p!=parsers.end()){
@@ -322,7 +338,12 @@ namespace mfront{
     using namespace std;
     using namespace tfel::utilities;
     using namespace tfel::system;
+    typedef MFrontBehaviourInterfaceFactory MBIF;
+    typedef MFrontLawInterfaceFactory MLIF;
     typedef map<string,pair<vector<string>,vector<string> > > Target;
+    MFrontParserFactory& parserFactory = MFrontParserFactory::getMFrontParserFactory();
+    MBIF& mbif = MBIF::getMFrontBehaviourInterfaceFactory();
+    MLIF& mlif = MLIF::getMFrontLawInterfaceFactory();
     CxxTokenizer file;
     string library;
     string parserName;
@@ -501,7 +522,8 @@ namespace mfront{
 	     insert_iterator<set<string> >(this->globalIncludes,this->globalIncludes.begin()));
       }
       // Some clean-up
-      behaviourInterfaceFactory.reset();
+      mbif.reset();
+      mlif.reset();
       delete this->parser;
     }
     catch(runtime_error& e){
@@ -1698,8 +1720,12 @@ namespace mfront{
 
   MFront::~MFront()
   {
-    behaviourInterfaceFactory.clear();
-    lawInterfaceFactory.clear();
+    typedef MFrontBehaviourInterfaceFactory MBIF;
+    typedef MFrontLawInterfaceFactory MLIF;
+    MBIF& mbif = MBIF::getMFrontBehaviourInterfaceFactory();
+    MLIF& mlif = MLIF::getMFrontLawInterfaceFactory();
+    mbif.clear();
+    mlif.clear();
   } // end of MFront::~MFront
 
 } // end of namespace mfront

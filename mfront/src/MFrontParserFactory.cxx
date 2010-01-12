@@ -16,6 +16,13 @@
 
 namespace mfront{
 
+  MFrontParserFactory&
+  MFrontParserFactory::getMFrontParserFactory()
+  {
+    static MFrontParserFactory f;
+    return f;
+  }
+
   MFrontParserFactory::DescriptionPtrContainer&
   MFrontParserFactory::getDescriptionMap(void)
   {
@@ -86,8 +93,8 @@ namespace mfront{
     ParserCreatorsContainer::iterator p;
     p = this->getMap().find(parserName);
     if(p==this->getMap().end()){
-      string msg = "MFrontParserFactory::createNewParser : no parser named ";
-      msg += parserName;
+      string msg = "MFrontParserFactory::createNewParser : no parser named '";
+      msg += parserName+"'";
       throw(runtime_error(msg));
     }
     ParserCreator c = p->second;
@@ -96,7 +103,5 @@ namespace mfront{
 
   MFrontParserFactory::~MFrontParserFactory()
   {} // end of MFrontParserFactory::~MFrontParserFactory
-
-  MFrontParserFactory parserFactory;
 
 } // end of namespace mfront

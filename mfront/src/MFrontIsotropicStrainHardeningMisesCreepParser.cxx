@@ -20,25 +20,25 @@ namespace mfront{
     using namespace std;
     typedef map<string,string>::value_type MVType;
     // Default state vars
-    this->varNames.insert("p");
-    this->varNames.insert("dp");
-    this->varNames.insert("eel");
-    this->varNames.insert("deel");
+    this->registerVariable("p");
+    this->registerVariable("dp");
+    this->registerVariable("eel");
+    this->registerVariable("deel");
     this->stateVarsHolder.push_back(VarHandler("StrainStensor","eel",0u));
     this->stateVarsHolder.push_back(VarHandler("strain","p",0u));
     this->glossaryNames.insert(MVType("eel","ElasticStrain"));
     this->glossaryNames.insert(MVType("p","EquivalentViscoplasticStrain"));
     
     // default local vars
-    this->varNames.insert("f");
-    this->varNames.insert("df_dseq");
-    this->varNames.insert("df_dp");
-    this->varNames.insert("se");
-    this->varNames.insert("seq");
-    this->varNames.insert("seq_e");
-    this->varNames.insert("n");
-    this->varNames.insert("mu_3");
-    this->varNames.insert("p_");
+    this->registerVariable("f");
+    this->registerVariable("df_dseq");
+    this->registerVariable("df_dp");
+    this->registerVariable("se");
+    this->registerVariable("seq");
+    this->registerVariable("seq_e");
+    this->registerVariable("n");
+    this->registerVariable("mu_3");
+    this->registerVariable("p_");
     this->localVarsHolder.push_back(VarHandler("DstrainDt","f",0u));
     this->localVarsHolder.push_back(VarHandler("DF_DSEQ_TYPE","df_dseq",0u));
     this->localVarsHolder.push_back(VarHandler("DstrainDt","df_dp",0u));

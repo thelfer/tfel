@@ -21,23 +21,23 @@ namespace mfront{
     using namespace std;
     typedef map<string,string>::value_type MVType;
     // Default state vars
-    this->varNames.insert("eel");
-    this->varNames.insert("deel");
-    this->varNames.insert("p");
+    this->registerVariable("eel");
+    this->registerVariable("deel");
+    this->registerVariable("p");
     this->stateVarsHolder.push_back(VarHandler("StrainStensor","eel",0u));
     this->stateVarsHolder.push_back(VarHandler("strain","p",0u));
     this->glossaryNames.insert(MVType("eel","ElasticStrain"));
     this->glossaryNames.insert(MVType("p","EquivalentStrain"));
     // default local vars
-    this->varNames.insert("se");
-    this->varNames.insert("seq");
-    this->varNames.insert("seq_e");
-    this->varNames.insert("n");
-    this->varNames.insert("mu_3_theta");
-    this->varNames.insert("surf");
-    this->varNames.insert("error");
-    this->varNames.insert("iter");
-    this->varNames.insert("p_");
+    this->registerVariable("se");
+    this->registerVariable("seq");
+    this->registerVariable("seq_e");
+    this->registerVariable("n");
+    this->registerVariable("mu_3_theta");
+    this->registerVariable("surf");
+    this->registerVariable("error");
+    this->registerVariable("iter");
+    this->registerVariable("p_");
     this->localVarsHolder.push_back(VarHandler("StressStensor","se",0u));
     this->localVarsHolder.push_back(VarHandler("stress","seq",0u));
     this->localVarsHolder.push_back(VarHandler("stress","seq_e",0u));
@@ -343,30 +343,15 @@ namespace mfront{
       f       << "f"       << this->flows.size();
       df_dseq << "df_dseq" << this->flows.size();
       df_dp   << "df_dp"   << this->flows.size();
-      if(!this->varNames.insert(p.str()).second){
-	this->throwRuntimeError("MFrontMultipleIsotropicMisesFlowsParser::treatFlowRule",
-				"Variable name "+p.str()+" is reserved by mfront.");
-      }
-      if(!this->varNames.insert("d"+p.str()).second){
-	this->throwRuntimeError("MFrontMultipleIsotropicMisesFlowsParser::treatFlowRule",
-				"Variable name d"+p.str()+" is reserved by mfront.");
-      }
+      this->registerVariable(p.str());
+      this->registerVariable("d"+p.str());
+      this->registerVariable(f.str());
+      this->registerVariable(df_dseq.str());
+      this->registerVariable(df_dp.str());
       this->stateVarsHolder.push_back(VarHandler("strain",p.str(),0u));
       this->localVarsHolder.push_back(VarHandler("stress",f.str(),0u));
       this->localVarsHolder.push_back(VarHandler("real",df_dseq.str(),0u));
       this->localVarsHolder.push_back(VarHandler("stress",df_dp.str(),0u));
-      if(!this->varNames.insert(f.str()).second){
-	this->throwRuntimeError("MFrontMultipleIsotropicMisesFlowsParser::treatFlowRule",
-				"Variable name "+f.str()+" is reserved by mfront.");
-      }
-      if(!this->varNames.insert(df_dseq.str()).second){
-	this->throwRuntimeError("MFrontMultipleIsotropicMisesFlowsParser::treatFlowRule",
-				"Variable name "+df_dseq.str()+" is reserved by mfront.");
-      }
-      if(!this->varNames.insert(df_dp.str()).second){
-	this->throwRuntimeError("MFrontMultipleIsotropicMisesFlowsParser::treatFlowRule",
-				"Variable name "+df_dp.str()+" is reserved by mfront.");
-      }
       flow.flow = FlowHandler::PlasticFlow;
     } else if(this->current->value=="Creep"){
       ostringstream p;
@@ -378,14 +363,9 @@ namespace mfront{
       this->stateVarsHolder.push_back(VarHandler("strain",p.str(),0u));
       this->localVarsHolder.push_back(VarHandler("DstrainDt",f.str(),0u));
       this->localVarsHolder.push_back(VarHandler("DF_DSEQ_TYPE",df_dseq.str(),0u));
-      if(!this->varNames.insert(f.str()).second){
-	this->throwRuntimeError("MFrontMultipleIsotropicMisesFlowsParser::treatFlowRule",
-				"Variable name "+f.str()+" is reserved by mfront.");
-      }
-      if(!this->varNames.insert(df_dseq.str()).second){
-	this->throwRuntimeError("MFrontMultipleIsotropicMisesFlowsParser::treatFlowRule",
-				"Variable name "+df_dseq.str()+" is reserved by mfront.");
-      }
+      this->registerVariable(p.str());
+      this->registerVariable(f.str());
+      this->registerVariable(df_dseq.str());
       flow.flow = FlowHandler::CreepFlow;
     } else if(this->current->value=="StrainHardeningCreep"){
       ostringstream p;
@@ -400,18 +380,10 @@ namespace mfront{
       this->localVarsHolder.push_back(VarHandler("DstrainDt",f.str(),0u));
       this->localVarsHolder.push_back(VarHandler("DF_DSEQ_TYPE",df_dseq.str(),0u));
       this->localVarsHolder.push_back(VarHandler("DstrainDt",df_dp.str(),0u));
-      if(!this->varNames.insert(f.str()).second){
-	this->throwRuntimeError("MFrontMultipleIsotropicMisesFlowsParser::treatFlowRule",
-				"Variable name "+f.str()+" is reserved by mfront.");
-      }
-      if(!this->varNames.insert(df_dseq.str()).second){
-	this->throwRuntimeError("MFrontMultipleIsotropicMisesFlowsParser::treatFlowRule",
-				"Variable name "+df_dseq.str()+" is reserved by mfront.");
-      }
-      if(!this->varNames.insert(df_dp.str()).second){
-	this->throwRuntimeError("MFrontMultipleIsotropicMisesFlowsParser::treatFlowRule",
-			       "Variable name "+df_dp.str()+" is reserved by mfront.");
-      }
+      this->registerVariable(p.str());
+      this->registerVariable(f.str());
+      this->registerVariable(df_dseq.str());
+      this->registerVariable(df_dp.str());
       flow.flow = FlowHandler::StrainHardeningCreepFlow;
     } else {
       this->throwRuntimeError("MFrontMultipleIsotropicMisesFlowsParser::treatFlowRule",
@@ -431,10 +403,7 @@ namespace mfront{
 				"Could not read theta value (read '"+this->current->value+"').");
       }
       otheta << "mu_3_theta" << this->flows.size();
-      if(!this->varNames.insert(otheta.str()).second){
-	this->throwRuntimeError("MFrontMultipleIsotropicMisesFlowsParser::treatFlowRule",
-				"Variable name '"+otheta.str()+"' is reserved by mfront.");
-      }
+      this->registerVariable(otheta.str());
       ++(this->current);
     } else {
       flow.hasSpecificTheta = false;

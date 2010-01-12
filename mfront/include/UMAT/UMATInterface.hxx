@@ -329,6 +329,7 @@ namespace umat{
 	    convergence = true;
 	    BV behaviour(this->bData,this->iData);
 	    behaviour.setOutOfBoundsPolicy(up.getOutOfBoundsPolicy());
+	    behaviour.checkBounds();
 	    try{
 	      behaviour.integrate();
 	    }
@@ -402,6 +403,7 @@ namespace umat{
 	  AInitializer::exe(this->behaviour,PROPS);
 	  const UMATOutOfBoundsPolicy& up = UMATOutOfBoundsPolicy::getUMATOutOfBoundsPolicy();
 	  this->behaviour.setOutOfBoundsPolicy(up.getOutOfBoundsPolicy());
+	  this->behaviour.checkBounds();
 	} // end of Integrator::Integrator
 
 	void exe(UMATReal *const STRESS,

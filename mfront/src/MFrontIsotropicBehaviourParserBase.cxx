@@ -20,15 +20,15 @@ namespace mfront{
   {
     using namespace std;
     typedef map<string,string>::value_type MVType;
-    this->staticVarNames.insert("theta");
-    this->staticVarNames.insert("epsilon");
-    this->staticVarNames.insert("iterMax");
-    this->varNames.insert("young");
-    this->varNames.insert("nu");
-    this->varNames.insert("rho");
-    this->varNames.insert("alpha");
-    this->varNames.insert("lambda");
-    this->varNames.insert("mu");
+    this->registerStaticVariable("theta");
+    this->registerStaticVariable("epsilon");
+    this->registerStaticVariable("iterMax");
+    this->registerVariable("young");
+    this->registerVariable("nu");
+    this->registerVariable("rho");
+    this->registerVariable("alpha");
+    this->registerVariable("lambda");
+    this->registerVariable("mu");
     this->coefsHolder.push_back(VarHandler("stress","young",0u));
     this->glossaryNames.insert(MVType("young","YoungModulus"));
     this->coefsHolder.push_back(VarHandler("real","nu",0u));
@@ -204,34 +204,14 @@ namespace mfront{
       msg += "@FlowRule was not defined.";
       throw(runtime_error(msg));
     }
-
-    if(!(this->varNames.insert("T_")).second){
-      string msg("MFrontIsotropicBehaviourParserBase::endsInputFileProcessing : ");
-      msg += "T_";
-      msg += " is already registred as a variable name.\n";
-      msg += "MFrontIsotropicBehaviourParserBase internally constructs this variable ";
-      msg += "from the variable ";
-      msg += "T.\n Please remove any reference to T_ from your input file.";
-      throw(runtime_error(msg));
-    }
+    this->registerVariable("T_");
     this->localVarsHolder.push_back(VarHandler("temperature","T_",0u));
     this->initLocalVars = "this->T_ = this->T+(" + this->className + "::theta)*(this->dT);\n" + this->initLocalVars;
 
     for(p =this->externalStateVarsHolder.begin();
 	p!=this->externalStateVarsHolder.end();++p){
       currentVarName = p->name + "_";
-      if(!(this->varNames.insert(currentVarName)).second){
-	string msg("MFrontIsotropicBehaviourParserBase::endsInputFileProcessing : ");
-	msg += currentVarName;
-	msg += " is already registred as a variable name.\n";
-	msg += "MFrontIsotropicBehaviourParserBase internally constructs this variable ";
-	msg += "from the variable ";
-	msg += p->name;
-	msg += ".\n Please remove any reference to ";
-	msg += currentVarName;
-	msg += " from your input file.";
-	throw(runtime_error(msg));
-      }
+      this->registerVariable(currentVarName);
       this->localVarsHolder.push_back(VarHandler(p->type,currentVarName,0u));
       this->initLocalVars = "this->" + currentVarName + " = this->" + p->name +
 	"+(" + this->className + "::theta)*(this->d" + p->name + ");\n" + this->initLocalVars;
@@ -241,6 +221,8 @@ namespace mfront{
   void 
   MFrontIsotropicBehaviourParserBase::generateOutputFiles(void){
     using namespace std;
+    typedef MFrontBehaviourInterfaceFactory MBIF;
+    MBIF& mbif = MBIF::getMFrontBehaviourInterfaceFactory();
     // Adds some stuff
     this->endsInputFileProcessing();
     // Generating BehaviourData's outputFile
@@ -257,7 +239,7 @@ namespace mfront{
     StringContainer::const_iterator i;
     for(i  = this->interfaces.begin();
 	i != this->interfaces.end();++i){
-      MFrontBehaviourVirtualInterface *interface = behaviourInterfaceFactory.getInterfacePtr(*i);
+      MFrontBehaviourVirtualInterface *interface = mbif.getInterfacePtr(*i);
       interface->endTreatement(this->library,
 			       this->material,
 			       this->className,

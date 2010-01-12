@@ -232,6 +232,8 @@ namespace mfront{
     
     virtual void writeBehaviourSetOutOfBoundsPolicy(void);
 
+    virtual void writeBehaviourCheckBounds(void);
+
     virtual void writeBehaviourDisabledConstructors(void);
 
     virtual void writeBehaviourConstructors(void);

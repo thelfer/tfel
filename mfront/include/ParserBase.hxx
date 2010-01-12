@@ -187,14 +187,20 @@ namespace mfront
     treatLibrary(void);
     void
     ignoreKeyWord(const std::string&);
+    void
+    registerVariable(const std::string&);
+    void
+    registerStaticVariable(const std::string&);
+    void
+    reserveName(const std::string&);
     double
     readDouble(void);
     VarContainer localVarsHolder;
     StaticVarContainer staticVars;
     std::vector<std::string> librariesDependencies;
     std::vector<std::string> materialLaws;
+    std::set<std::string> reservedNames;
     std::set<std::string> varNames;
-    std::set<std::string> typeNames;
     std::set<std::string> staticVarNames;
     std::string initLocalVars;
     std::string fileName;    

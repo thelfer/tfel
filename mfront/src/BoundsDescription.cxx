@@ -27,40 +27,34 @@ namespace mfront{
       if(this->boundsType==Lower){
 	file << "BoundsCheck<N>::lowerBoundCheck(\""
 	     << this->varName << "\",this->" << this->varName << ","
-	     << "static_cast<real>(" << this->lowerBound << "),"
-	     << endl << "this->policy);\n";
+	     << "static_cast<real>(" << this->lowerBound << "),this->policy);\n";
 	if(this->varCategory==ExternalStateVar){
 	  file << "BoundsCheck<N>::lowerBoundCheck(\""
-	       << this->varName << "+d" << this->varName << "\"," 
-	       << this->varName << "+d" << this->varName << ","
-	       << "static_cast<real>(" << this->lowerBound << "),"
-	       << endl << "this->policy);\n";
+	       << this->varName << "+d" << this->varName << "\",this->" 
+	       << this->varName << "+this->d" << this->varName << ","
+	       << "static_cast<real>(" << this->lowerBound << "),this->policy);\n";
 	}
       } else if(this->boundsType==Upper){
 	file << "BoundsCheck<N>::upperBoundCheck(\""
 	     << this->varName << "\",this->" << this->varName << ","
-	     << "static_cast<real>(" << this->upperBound << "),"
-	     << endl << "this->policy);\n";
+	     << "static_cast<real>(" << this->upperBound << "),this->policy);\n";
 	if(this->varCategory==ExternalStateVar){
 	  file << "BoundsCheck<N>::upperBoundCheck(\""
-	       << this->varName << "+d" << this->varName << "\"," 
-	       << this->varName << "+d" << this->varName << ","
-	       << "static_cast<real>(" << this->upperBound << "),"
-	       << endl << "this->policy);\n";
+	       << this->varName << "+d" << this->varName << "\",this->" 
+	       << this->varName << "+this->d" << this->varName << ","
+	       << "static_cast<real>(" << this->upperBound << "),this->policy);\n";
 	}
       } else if(this->boundsType==LowerAndUpper){
 	file << "BoundsCheck<N>::lowerAndUpperBoundsChecks(\""
 	     << this->varName << "\",this->" << this->varName    << ","
 	     << "static_cast<real>("   << this->lowerBound << "),"
-	     << "static_cast<real>("   << this->upperBound << "),"
-	     << endl << "this->policy);\n";
+	     << "static_cast<real>("   << this->upperBound << "),this->policy);\n";
 	if(this->varCategory==ExternalStateVar){
 	  file << "BoundsCheck<N>::lowerAndUpperBoundsChecks(\""
-	       << this->varName << "+d" << this->varName << "\"," 
-	       << this->varName << "+d" << this->varName << ","
+	       << this->varName << "+d" << this->varName << "\",this->" 
+	       << this->varName << "+this->d" << this->varName << ","
 	       << "static_cast<real>("   << this->lowerBound << "),"
-	       << "static_cast<real>("   << this->upperBound << "),"
-	       << endl << "this->policy);\n";
+	       << "static_cast<real>("   << this->upperBound << "),this->policy);\n";
 	}
       }
     } else if(this->category==Physical){
@@ -70,8 +64,8 @@ namespace mfront{
 	     << "static_cast<real>(" << this->lowerBound << "));\n";
 	if(this->varCategory==ExternalStateVar){
 	  file << "BoundsCheck<N>::lowerBoundCheck(\""
-	       << this->varName << "+d" << this->varName << "\"," 
-	       << this->varName << "+d" << this->varName << ","
+	       << this->varName << "+d" << this->varName << "\",this->" 
+	       << this->varName << "+this->d" << this->varName << ","
 	       << "static_cast<real>(" << this->lowerBound << "));\n";
 	}
       } else if(this->boundsType==Upper){
@@ -80,8 +74,8 @@ namespace mfront{
 	     << "static_cast<real>(" << this->upperBound << "));\n";
 	if(this->varCategory==ExternalStateVar){
 	  file << "BoundsCheck<N>::upperBoundCheck(\""
-	       << this->varName << "+d" << this->varName << "\"," 
-	       << this->varName << "+d" << this->varName << ","
+	       << this->varName << "+d" << this->varName << "\",this->" 
+	       << this->varName << "+this->d" << this->varName << ","
 	       << "static_cast<real>(" << this->upperBound << "));\n";
 	}
       } else if(this->boundsType==LowerAndUpper){
@@ -91,8 +85,8 @@ namespace mfront{
 	     << "static_cast<real>("   << this->upperBound << "));\n";
 	if(this->varCategory==ExternalStateVar){
 	  file << "BoundsCheck<N>::lowerAndUpperBoundsChecks(\""
-	       << this->varName << "+d" << this->varName << "\"," 
-	       << this->varName << "+d" << this->varName << ","
+	       << this->varName << "+d" << this->varName << "\",this->" 
+	       << this->varName << "+this->d" << this->varName << ","
 	       << "static_cast<real>("   << this->lowerBound << "),"
 	       << "static_cast<real>("   << this->upperBound << "));\n";
 	}

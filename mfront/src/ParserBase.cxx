@@ -85,7 +85,11 @@ namespace mfront
     : debugMode(false),
       verboseMode(false),
       warningMode(false)
-  {}
+  {
+    this->reserveName("std");
+    this->reserveName("real");
+    this->reserveName("policy");
+  }
 
   ParserBase::~ParserBase()
   {} // end of ParserBase::~ParserBase
@@ -368,18 +372,12 @@ namespace mfront
 	this->throwRuntimeError("ParserBase::readVarList",
 				", or ; expected afer '"+varName+"'");
       }
-      if(!(this->varNames.insert(varName)).second){
-	this->throwRuntimeError("ParserBase::readVarList",
-				varName+" already declared.");
-      }
+      this->registerVariable(varName);
       cont.push_back(VarHandler(type,varName,lineNumber));
       if(addIncrementVar){
 	string incrVarName("d");
 	incrVarName += varName;	
-	if(!(this->varNames.insert(incrVarName)).second){
-	  this->throwRuntimeError("ParserBase::readVarList",
-				  incrVarName+" already declared.");
-	}
+	this->registerVariable(incrVarName);
       }
     }
     if(!endOfTreatement){
@@ -403,7 +401,6 @@ namespace mfront
       this->throwRuntimeError("ParserBase::readVarList",
 			      "Type given is not valid.");
     }
-    this->typeNames.insert(type);
     ++(this->current);
     this->readVarList(type,cont,addIncrementVar);
   } // end of ParserBase::readVarList
@@ -595,6 +592,51 @@ namespace mfront
   } // end of ParserBase::readSpecifiedValues
 
   void
+  ParserBase::registerVariable(const std::string& v)
+  {
+    using namespace std;
+    if(!CxxTokenizer::isValidIdentifier(v)){
+      string msg("ParserBase::registerVariable : ");
+      msg += "variable name '"+v+"' is invalid";
+      throw(runtime_error(msg));
+    }
+    if(!this->varNames.insert(v).second){
+      string msg("ParserBase::registerVariable : ");
+      msg += "variable '"+v+"' already registred";
+      throw(runtime_error(msg));
+    }
+    this->reserveName(v);
+  } // end of ParserBase::registerVariable
+
+  void
+  ParserBase::registerStaticVariable(const std::string& v)
+  {
+    using namespace std;
+    if(!CxxTokenizer::isValidIdentifier(v)){
+      string msg("ParserBase::registerStaticVariable : ");
+      msg += "variable name '"+v+"' is invalid";
+      throw(runtime_error(msg));
+    }
+    if(!this->staticVarNames.insert(v).second){
+      string msg("ParserBase::registerStaticVariable : ");
+      msg += "static variable '"+v+"' already registred";
+      throw(runtime_error(msg));
+    }
+    this->reserveName(v);
+  } // end of ParserBase::registerStaticVariable
+
+  void
+  ParserBase::reserveName(const std::string& w)
+  {
+    using namespace std;
+    if(!this->reservedNames.insert(w).second){
+      string msg("ParserBase::reserveName : ");
+      msg += "name '"+w+"' already reserved";
+      throw(runtime_error(msg));
+    }
+  } // end of ParserBase::reserveName
+
+  void
   ParserBase::treatMaterialLaw(void){
     using namespace std;
     using namespace tfel::system;
@@ -745,7 +787,6 @@ namespace mfront
       this->throwRuntimeError("ParserBase::treatStaticVar",
 			      "type given is not valid.");
     }
-    this->typeNames.insert(type);
     ++(this->current);
     this->checkNotEndOfFile("ParserBase::treatStaticVar",
 			    "Cannot read variable name.");
@@ -753,14 +794,6 @@ namespace mfront
     if(!isValidIdentifier(name)){
       this->throwRuntimeError("ParserBase::treatStaticVar",
 			      "Variable name '"+name+"' is not valid.");
-    }
-    if(!(this->varNames.insert(name)).second){
-      this->throwRuntimeError("ParserBase::treatStaticVar",
-			      name+" already declared.");
-    }
-    if(!(this->staticVarNames.insert(name)).second){
-      this->throwRuntimeError("ParserBase::treatStaticVar",
-			      name+" already declared.");
     }
     line = this->current->line;
     ++(this->current);
@@ -775,8 +808,8 @@ namespace mfront
     }
     ++(this->current);
     this->readSpecifiedToken("ParserBase::treatStaticVar",";");
+    this->registerStaticVariable(name);
     this->staticVars.push_back(StaticVarHandler(type,name,line,value));
-    this->staticVarNames.insert(name);
   } // end of ParserBase::treatStaticVar
 
   void

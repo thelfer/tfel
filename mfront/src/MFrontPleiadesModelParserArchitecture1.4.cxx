@@ -99,14 +99,14 @@ namespace mfront{
     this->registerNewCallBack("@BindDomainsToParameters",
 			      &MFrontPleiadesModelParserArchitecture1_4::treatBindDomainsToParameters);
     this->localVarsHolder.push_back(VarHandler("unsigned short","period",1u));
-    this->varNames.insert("period");
-    this->varNames.insert("dt");
-    this->varNames.insert("ptr");
-    this->varNames.insert("ptr2");
-    this->varNames.insert("index");
-    this->varNames.insert("nbr");
-    this->varNames.insert("nodes");
-    this->varNames.insert("nbrOfPeriods");
+    this->reserveName("period");
+    this->reserveName("dt");
+    this->reserveName("ptr");
+    this->reserveName("ptr2");
+    this->reserveName("index");
+    this->reserveName("nbr");
+    this->reserveName("nodes");
+    this->reserveName("nbrOfPeriods");
   } // end of MFrontPleiadesModelParserArchitecture1_4::MFrontPleiadesModelParserArchitecture1_4()
 
   void
@@ -140,18 +140,11 @@ namespace mfront{
 	this->throwRuntimeError("MFrontPleiadesModelParserArchitecture1_4::treatLoadingVariable",
 				"',' or ';' expected after '"+var.name+"'");
       }
-      if(!(this->varNames.insert(var.name)).second){
-	this->throwRuntimeError("MFrontPleiadesModelParserArchitecture1_4::treatLoadingVariable",
-				var.name+" already declared.");
-      }
+      this->registerVariable(var.name);
       var.tabName = var.name;
       var.tabName[0] = static_cast<char>(toupper(var.tabName[0]));
       var.tabName = "tab"+var.tabName;
-      if(!(this->varNames.insert(tabName)).second){
-	this->throwRuntimeError("MFrontPleiadesModelParserArchitecture1_4::treatLoadingVariable",
-				tabName+" already declared (mfront needs to use it for defining the '"+
-				var.name + "' loading variable).");
-      }
+      this->registerVariable(tabName);
       this->loadingVariables.push_back(var);
     }
     if(!endOfTreatement){
@@ -1143,10 +1136,7 @@ namespace mfront{
 				"Initial value for field '"+this->currentVar+"' already defined.");
       }
       for(i=1;i<=value;++i){
-	if(!this->varNames.insert(this->currentVar+"_"+toString(i)).second){
-	  this->throwRuntimeError("MFrontPleiadesModelParserArchitecture1_4::treatOutputMethod",
-				  this->currentVar+"_"+toString(i)+" has already been declared.");
-	}
+	this->registerVariable(this->currentVar+"_"+toString(i));
 	if(!this->fieldNames.insert(this->currentVar+"_"+toString(i)).second){
 	  this->throwRuntimeError("MFrontPleiadesModelParserArchitecture1_4::treatOutputMethod",
 				  "Field '"+this->currentVar+"_"+toString(i)+"' has already been declared "
@@ -1169,10 +1159,7 @@ namespace mfront{
       property.name     = this->current->value.substr(1,this->current->value.size()-2);
       property.varName  = this->currentVar + "_";
       property.varName += this->current->value.substr(1,this->current->value.size()-2);
-      if(!this->varNames.insert(property.varName).second){
-	this->throwRuntimeError("MFrontPleiadesModelParserArchitecture1_4::treatOutputMethod",
-				"Variable name '"+property.varName+"' already exist.");
-      }
+      this->registerVariable(property.varName);
       ++(this->current);
       this->checkNotEndOfFile("MFrontPleiadesModelParserArchitecture1_4::treatOutputMethod",
 			      "Expected ',' or ')'.");
@@ -1218,10 +1205,7 @@ namespace mfront{
       property.name  = this->current->value.substr(1,this->current->value.size()-2);
       property.varName  = this->currentVar + "_";
       property.varName += this->current->value.substr(1,this->current->value.size()-2);
-      if(!this->varNames.insert(property.varName).second){
-	this->throwRuntimeError("MFrontPleiadesModelParserArchitecture1_4::treatOutputMethod",
-				"Variable name '"+property.varName+"' already exist.");
-      }
+      this->registerVariable(property.varName);
       ++(this->current);
       this->checkNotEndOfFile("MFrontPleiadesModelParserArchitecture1_4::treatOutputMethod",
 			      "Expected ',' or ')'.");
@@ -1349,10 +1333,7 @@ namespace mfront{
 				"Initial value for field '"+this->currentVar+"' already defined.");
       }
       for(i=1;i<=value;++i){
-	if(!this->varNames.insert(this->currentVar+"_"+toString(i)).second){
-	  this->throwRuntimeError("MFrontPleiadesModelParserArchitecture1_4::treatInputMethod",
-				  this->currentVar+"_"+toString(i)+" has already been declared.");
-	}
+	this->registerVariable(this->currentVar+"_"+toString(i));
 	if(!this->fieldNames.insert(this->currentVar+"_"+toString(i)).second){
 	  this->throwRuntimeError("MFrontPleiadesModelParserArchitecture1_4::treatInputMethod",
 				  "Field '"+this->currentVar+"_"+toString(i)+"' has already been declared "
@@ -1375,10 +1356,7 @@ namespace mfront{
       property.name  = this->current->value.substr(1,this->current->value.size()-2);
       property.varName  = this->currentVar + "_";
       property.varName += this->current->value.substr(1,this->current->value.size()-2);
-      if(!this->varNames.insert(property.varName).second){
-	this->throwRuntimeError("MFrontPleiadesModelParserArchitecture1_4::treatInputMethod",
-				"Variable name '"+property.varName+"' already exist.");
-      }
+      this->registerVariable(property.varName);
       ++(this->current);
       this->checkNotEndOfFile("MFrontPleiadesModelParserArchitecture1_4::treatInputMethod",
 			      "Expected ',' or ')'.");
@@ -1422,10 +1400,7 @@ namespace mfront{
       property.name  = this->current->value.substr(1,this->current->value.size()-2);
       property.varName  = this->currentVar + "_";
       property.varName += this->current->value.substr(1,this->current->value.size()-2);
-      if(!this->varNames.insert(property.varName).second){
-	this->throwRuntimeError("MFrontPleiadesModelParserArchitecture1_4::treatInputMethod",
-				"Variable name '" + property.varName + "' already exist.");
-      }
+      this->registerVariable(property.varName);
       ++(this->current);
       this->checkNotEndOfFile("MFrontPleiadesModelParserArchitecture1_4::treatInputMethod",
 			      "Expected ',' or ')'.");
@@ -1592,10 +1567,7 @@ namespace mfront{
       }
       p->depth = value;
       for(i=1;i<=value;++i){
-	if(!this->varNames.insert(this->currentVar+"_"+toString(i)).second){
-	  this->throwRuntimeError("MFrontPleiadesModelParserArchitecture1_4::treatLoadingVariableMethod",
-				  this->currentVar+"_"+toString(i)+" has already been declared.");
-	}
+	this->registerVariable(this->currentVar+"_"+toString(i));
       }
     } else {
       assert(false);

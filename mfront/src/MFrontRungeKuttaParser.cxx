@@ -26,14 +26,18 @@ namespace mfront{
     typedef map<string,string>::value_type MVType;
     this->useStateVarTimeDerivative=true;
     // static variable
-    this->staticVarNames.insert("epsilon");
+    this->registerStaticVariable("epsilon");
     // Default state vars
-    this->varNames.insert("eel");
-    this->varNames.insert("deel");
-    this->varNames.insert("t");
-    this->varNames.insert("dt_");
-    this->varNames.insert("error");
-    this->varNames.insert("failed");
+    this->registerVariable("eel");
+    this->registerVariable("deel");
+    this->registerVariable("t");
+    this->registerVariable("dt_");
+    this->registerVariable("T_");
+    this->registerVariable("deto_");
+    this->reserveName("error");
+    this->reserveName("failed");
+    this->localVarsHolder.push_back(VarHandler("StrainRateStensor","deto_",0u));
+    this->localVarsHolder.push_back(VarHandler("temperature","T_",0u));
     this->stateVarsHolder.push_back(VarHandler("StrainStensor","eel",0u));
     this->glossaryNames.insert(MVType("eel","ElasticStrain"));
     // CallBacks
@@ -236,37 +240,15 @@ namespace mfront{
       msg += "@ComputeStress was not defined.";
       throw(runtime_error(msg));
     }
-
     if(this->derivative.empty()){
       string msg("MFrontRungeKuttaParser::endsInputFileProcessing : ");
       msg += "@Derivative was not defined.";
       throw(runtime_error(msg));
     }
-
-    if(!(this->varNames.insert("deto_")).second){
-      string msg("MFrontRungeKuttaParser::endsInputFileProcessing : ");
-      msg += "deto_ is already registred as a variable name.\n";
-      msg += "MFrontRungeKuttaParser internally constructs this variable from the variable ";
-      msg += ".\n Please remove any reference to deto_";
-      msg += " from your input file.";
-      throw(runtime_error(msg));
-    }
-
-    this->localVarsHolder.push_back(VarHandler("StrainRateStensor","deto_",0u));
     parserInitLocalVars += "this->deto_ = (this->deto)/(this->dt);\n";
     for(p =this->stateVarsHolder.begin();p!=this->stateVarsHolder.end();++p){
       currentVarName = p->name + "_";
-      if(!(this->varNames.insert(currentVarName)).second){
-	string msg("MFrontRungeKuttaParser::endsInputFileProcessing : ");
-	msg += currentVarName;
-	msg += " is already registred as a variable name.\n";
-	msg += "MFrontRungeKuttaParser internally constructs this variable from the variable ";
-	msg += p->name;
-	msg += ".\n Please remove any reference to ";
-	msg += currentVarName;
-	msg += " from your input file.";
-	throw(runtime_error(msg));
-      }
+      this->registerVariable(currentVarName);
       this->localVarsHolder.push_back(VarHandler(p->type,currentVarName,0u));
       if((this->algorithm!="RungeKutta4/2")&&
 	 (this->algorithm!="RungeKutta5/4")){
@@ -274,59 +256,21 @@ namespace mfront{
       }
       for(unsigned short i=0u;i!=this->nbrOfEvaluation;++i){
 	currentVarName = "d" + p->name + "_K"+toString(static_cast<unsigned short>(i+1u));
-	if(!(this->varNames.insert(currentVarName)).second){
-	  string msg("MFrontRungeKuttaParser::endsInputFileProcessing : ");
-	  msg += currentVarName;
-	  msg += " is already registred as a variable name.\n";
-	  msg += "MFrontRungeKuttaParser internally constructs this variable from the variable ";
-	  msg += p->name;
-	  msg += ".\n Please remove any reference to ";
-	  msg += currentVarName;
-	  msg += " from your input file.";
-	  throw(runtime_error(msg));
-	}
+	this->registerVariable(currentVarName);
 	this->localVarsHolder.push_back(VarHandler(p->type,currentVarName,0u));
       }
     }
-    if(!(this->varNames.insert("eto_")).second){
-      string msg("MFrontRungeKuttaParser::endsInputFileProcessing : ");
-      msg += "eto_";
-      msg += " is already registred as a variable name.\n";
-      msg += "MFrontRungeKuttaParser internally constructs this variable from the variable ";
-      msg += "eto.\n Please remove any reference to eto_ from your input file.";
-      throw(runtime_error(msg));
-    }
-    this->localVarsHolder.push_back(VarHandler("StrainStensor","eto_",0u));
     if((this->algorithm!="RungeKutta4/2")&&
        (this->algorithm!="RungeKutta5/4")){
       parserInitLocalVars += "this->eto_ = this->eto;\n";
     }
-    if(!(this->varNames.insert("T_")).second){
-      string msg("MFrontRungeKuttaParser::endsInputFileProcessing : ");
-      msg += "T_";
-      msg += " is already registred as a variable name.\n";
-      msg += "MFrontRungeKuttaParser internally constructs this variable from the variable ";
-      msg += "T.\n Please remove any reference to T_ from your input file.";
-      throw(runtime_error(msg));
-    }
-    this->localVarsHolder.push_back(VarHandler("temperature","T_",0u));
     if((this->algorithm!="RungeKutta4/2")&&
        (this->algorithm!="RungeKutta5/4")){
       parserInitLocalVars += "this->T_ = this->T;\n";
     }
     for(p =this->externalStateVarsHolder.begin();p!=this->externalStateVarsHolder.end();++p){
       currentVarName = p->name + "_";
-      if(!(this->varNames.insert(currentVarName)).second){
-	string msg("MFrontRungeKuttaParser::endsInputFileProcessing : ");
-	msg += currentVarName;
-	msg += " is already registred as a variable name.\n";
-	msg += "MFrontRungeKuttaParser internally constructs this variable from the variable ";
-	msg += p->name;
-	msg += ".\n Please remove any reference to ";
-	msg += currentVarName;
-	msg += " from your input file.";
-	throw(runtime_error(msg));
-      }
+      this->registerVariable(currentVarName);
       this->localVarsHolder.push_back(VarHandler(p->type,currentVarName,0u));
       if((this->algorithm!="RungeKutta4/2")&&
 	 (this->algorithm!="RungeKutta5/4")){
@@ -343,6 +287,8 @@ namespace mfront{
   void 
   MFrontRungeKuttaParser::generateOutputFiles(void){
     using namespace std;
+    typedef MFrontBehaviourInterfaceFactory MBIF;
+    MBIF& mbif = MBIF::getMFrontBehaviourInterfaceFactory();
     // Adds some stuff
     this->endsInputFileProcessing();
     // Generating BehaviourData's outputFile
@@ -358,7 +304,7 @@ namespace mfront{
 
     StringContainer::const_iterator i;
     for(i  = this->interfaces.begin(); i != this->interfaces.end();++i){
-      MFrontBehaviourVirtualInterface *interface = behaviourInterfaceFactory.getInterfacePtr(*i);
+      MFrontBehaviourVirtualInterface *interface = mbif.getInterfacePtr(*i);
       interface->endTreatement(this->library,
 			       this->material,
 			       this->className,

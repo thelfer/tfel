@@ -28,33 +28,39 @@ namespace mfront{
 
   void MFrontBehaviourParserCommon::setVerboseMode(void)
   {
+    typedef MFrontBehaviourInterfaceFactory MBIF;
+    MBIF& mbif = MBIF::getMFrontBehaviourInterfaceFactory();
     this->verboseMode = true;
     StringContainer::const_iterator i;
     for(i  = this->interfaces.begin();
 	i != this->interfaces.end();++i){
-      MFrontBehaviourVirtualInterface *interface = behaviourInterfaceFactory.getInterfacePtr(*i);
+      MFrontBehaviourVirtualInterface *interface = mbif.getInterfacePtr(*i);
       interface->setVerboseMode();
     }
   }
 
   void MFrontBehaviourParserCommon::setDebugMode(void)
   {
+    typedef MFrontBehaviourInterfaceFactory MBIF;
+    MBIF& mbif = MBIF::getMFrontBehaviourInterfaceFactory();
     this->debugMode = true;
     StringContainer::const_iterator i;
     for(i  = this->interfaces.begin();
 	i != this->interfaces.end();++i){
-      MFrontBehaviourVirtualInterface *interface = behaviourInterfaceFactory.getInterfacePtr(*i);
+      MFrontBehaviourVirtualInterface *interface = mbif.getInterfacePtr(*i);
       interface->setDebugMode();
     }
   }
 
   void MFrontBehaviourParserCommon::setWarningMode(void)
   {
+    typedef MFrontBehaviourInterfaceFactory MBIF;
+    MBIF& mbif = MBIF::getMFrontBehaviourInterfaceFactory();
     this->warningMode = true;
     StringContainer::const_iterator i;
     for(i  = this->interfaces.begin();
 	i != this->interfaces.end();++i){
-      MFrontBehaviourVirtualInterface *interface = behaviourInterfaceFactory.getInterfacePtr(*i);
+      MFrontBehaviourVirtualInterface *interface = mbif.getInterfacePtr(*i);
       interface->setWarningMode();
     }
   }
@@ -162,6 +168,8 @@ namespace mfront{
   {
     using namespace std;
     using namespace tfel::utilities;
+    typedef MFrontBehaviourInterfaceFactory MBIF;
+    MBIF& mbif = MBIF::getMFrontBehaviourInterfaceFactory();
     pair<bool,CxxTokenizer::TokensContainer::const_iterator> p;
     TokensContainer::const_iterator p2;
     StringContainer::const_iterator i;
@@ -196,7 +204,7 @@ namespace mfront{
 	this->ignoreKeyWord(key);
       } else {
 	for(set<string>::const_iterator pi  = s.begin();pi != s.end();++pi){
-	  MFrontBehaviourVirtualInterface *interface = behaviourInterfaceFactory.getInterfacePtr(*pi);
+	  MFrontBehaviourVirtualInterface *interface = mbif.getInterfacePtr(*pi);
 	  p = interface->treatKeyword(key,this->current,
 				      this->fileTokens.end());
 	  if(!p.first){
@@ -222,7 +230,7 @@ namespace mfront{
     } else {
       for(i  = this->interfaces.begin();
 	  i != this->interfaces.end();++i){
-	MFrontBehaviourVirtualInterface *interface = behaviourInterfaceFactory.getInterfacePtr(*i);
+	MFrontBehaviourVirtualInterface *interface = mbif.getInterfacePtr(*i);
 	p = interface->treatKeyword(key,this->current,
 				    this->fileTokens.end());
 	if(p.first){
@@ -410,7 +418,6 @@ namespace mfront{
       this->throwRuntimeError("MFrontBehaviourParserCommon::treatComputedVar",
 			      "type given is not valid.");
     }
-    this->typeNames.insert(type);
     ++(this->current);
     this->checkNotEndOfFile("MFrontBehaviourParserCommon::treatComputedVar",
 			    "Cannot read var name.");
@@ -821,14 +828,20 @@ namespace mfront{
   void
   MFrontBehaviourParserCommon::registerDefaultVarNames(void)
   {
-    this->varNames.insert("D");
-    this->varNames.insert("sig");
-    this->varNames.insert("eto");
-    this->varNames.insert("deto");
-    this->varNames.insert("T");
-    this->varNames.insert("dT");
-    this->varNames.insert("dt");
-    this->varNames.insert("policy");
+    using namespace std;
+    this->registerVariable("D");
+    this->registerVariable("sig");
+    this->registerVariable("eto");
+    this->registerVariable("deto");
+    this->registerVariable("T");
+    this->registerVariable("dT");
+    this->registerVariable("dt");
+    this->reserveName("N");
+    this->reserveName("Type");
+    this->reserveName("use_qt");
+    this->reserveName("src1");
+    this->reserveName("src2");
+    this->reserveName("policy_value");
   } // end of MFrontBehaviourParserCommon::registerDefaultVarNames
 
   MFrontBehaviourParserCommon::MFrontBehaviourParserCommon()
@@ -1053,6 +1066,8 @@ namespace mfront{
   void MFrontBehaviourParserCommon::writeBehaviourDataConstructors(void)
   {
     using namespace std;
+    typedef MFrontBehaviourInterfaceFactory MBIF;
+    MBIF& mbif = MBIF::getMFrontBehaviourInterfaceFactory();
     VarContainer::const_iterator p;
     this->checkBehaviourDataFile();
     this->behaviourDataFile << "/*!\n";
@@ -1171,7 +1186,7 @@ namespace mfront{
     // Creating constructor for external interfaces
     StringContainer::const_iterator i;
     for(i  = this->interfaces.begin(); i != this->interfaces.end();++i){
-      MFrontBehaviourVirtualInterface *interface = behaviourInterfaceFactory.getInterfacePtr(*i);
+      MFrontBehaviourVirtualInterface *interface = mbif.getInterfacePtr(*i);
       interface->writeBehaviourDataConstructor(this->behaviourDataFile,
 					       this->className,
 					       this->coefsHolder,this->stateVarsHolder,
@@ -1216,6 +1231,8 @@ namespace mfront{
   void MFrontBehaviourParserCommon::writeBehaviourDataExport(void)
   {
     using namespace std;
+    typedef MFrontBehaviourInterfaceFactory MBIF;
+    MBIF& mbif = MBIF::getMFrontBehaviourInterfaceFactory();
     VarContainer::const_iterator p;
     this->checkBehaviourDataFile();
     this->behaviourDataFile << "void\n"
@@ -1348,7 +1365,7 @@ namespace mfront{
     StringContainer::const_iterator i;
     for(i  = this->interfaces.begin();
 	i != this->interfaces.end();++i){
-      MFrontBehaviourVirtualInterface *interface = behaviourInterfaceFactory.getInterfacePtr(*i);
+      MFrontBehaviourVirtualInterface *interface = mbif.getInterfacePtr(*i);
       interface->exportMechanicalData(this->behaviourDataFile,this->className,
 				      this->coefsHolder,this->stateVarsHolder,
 				      this->externalStateVarsHolder,
@@ -1763,10 +1780,26 @@ namespace mfront{
     this->behaviourFile << "/*!\n";
     this->behaviourFile << "* \\brief set the policy for \"out of bounds\" conditions\n";
     this->behaviourFile << "*/\n";
-    this->behaviourFile << "void\nsetOutOfBoundsPolicy(const OutOfBoundsPolicy p){\n";
-    this->behaviourFile << "this->policy = p;\n";
+    this->behaviourFile << "void\nsetOutOfBoundsPolicy(const OutOfBoundsPolicy policy_value){\n";
+    this->behaviourFile << "this->policy = policy_value;\n";
     this->behaviourFile << "}; // end of setOutOfBoundsPolicy\n\n";
   } // end of MFrontBehaviourParserCommon::writeBehaviourOutOfBoundsEnumeration(void)
+
+  void MFrontBehaviourParserCommon::writeBehaviourCheckBounds(void)
+  {
+    using namespace std;
+    this->checkBehaviourFile();
+    this->behaviourFile << "/*!\n";
+    this->behaviourFile << "* \\brief check bounds\n";
+    this->behaviourFile << "*/\n";
+    this->behaviourFile << "void\ncheckBounds(void) const{\n";
+    vector<BoundsDescription>::const_iterator b;
+    for(b  = this->boundsDescriptions.begin();
+	b != this->boundsDescriptions.end();++b){
+      b->writeBoundsChecks(this->behaviourFile);
+    }      
+    this->behaviourFile << "}; // end of checkBounds\n\n";
+  } // end of MFrontBehaviourParserCommon::writeBehaviourCheckBounds(void)
 
   void MFrontBehaviourParserCommon::writeBehaviourConstructors(void)
   {    
@@ -1823,8 +1856,9 @@ namespace mfront{
 							       const std::string& predictor)
   {    
     using namespace std;
+    typedef MFrontBehaviourInterfaceFactory MBIF;
+    MBIF& mbif = MBIF::getMFrontBehaviourInterfaceFactory();
     VarContainer::const_iterator p;
-    vector<BoundsDescription>::const_iterator b;
     this->checkBehaviourFile();
     this->behaviourFile << "/*!\n";
     this->behaviourFile << "* \\brief Constructor\n";
@@ -1866,10 +1900,6 @@ namespace mfront{
       this->behaviourFile << predictor;
     }
     this->writeBehaviourParserSpecificConstructorPart();
-    for(b  = this->boundsDescriptions.begin();
-	b != this->boundsDescriptions.end();++b){
-      b->writeBoundsChecks(this->behaviourFile);
-    }          
     this->behaviourFile << "}\n\n";
     this->behaviourFile << "/*!\n";
     this->behaviourFile << "* \\brief Constructor\n";
@@ -1905,16 +1935,12 @@ namespace mfront{
       this->behaviourFile << predictor;
     }
     this->writeBehaviourParserSpecificConstructorPart();
-    for(b  = this->boundsDescriptions.begin();
-	b != this->boundsDescriptions.end();++b){
-      b->writeBoundsChecks(this->behaviourFile);
-    }      
     this->behaviourFile << "}\n\n";
     // Creating constructor for external interfaces
     StringContainer::const_iterator i;
     for(i  = this->interfaces.begin();
 	i != this->interfaces.end();++i){
-      MFrontBehaviourVirtualInterface *interface = behaviourInterfaceFactory.getInterfacePtr(*i);
+      MFrontBehaviourVirtualInterface *interface = mbif.getInterfacePtr(*i);
       interface->writeBehaviourConstructor(this->behaviourFile,
 					   this->className,
 					   this->coefsHolder,
@@ -1931,10 +1957,6 @@ namespace mfront{
 	this->behaviourFile << this->initLocalVars;
       }
       this->writeBehaviourParserSpecificConstructorPart();
-      for(b  = this->boundsDescriptions.begin();
-	  b != this->boundsDescriptions.end();++b){
-	b->writeBoundsChecks(this->behaviourFile);
-      }      
       if(!predictor.empty()){
 	this->behaviourFile << predictor;
       }
@@ -2287,6 +2309,7 @@ namespace mfront{
     this->writeBehaviourGetName();
     this->writeBehaviourConstructors();
     this->writeBehaviourSetOutOfBoundsPolicy();
+    this->writeBehaviourCheckBounds();
     this->writeBehaviourIntegrator();
     this->writeBehaviourUpdateExternalStateVariables();
     this->writeBehaviourDestructor();
@@ -2435,6 +2458,8 @@ namespace mfront{
   void MFrontBehaviourParserCommon::writeIntegrationDataConstructors(void)
   {
     using namespace std;
+    typedef MFrontBehaviourInterfaceFactory MBIF;
+    MBIF& mbif = MBIF::getMFrontBehaviourInterfaceFactory();
     VarContainer::const_iterator p;
     this->checkIntegrationDataFile();
     this->integrationDataFile << "/*!\n";
@@ -2496,7 +2521,7 @@ namespace mfront{
     // Creating constructor for external interfaces
     StringContainer::const_iterator i;
     for(i  = this->interfaces.begin(); i != this->interfaces.end();++i){
-      MFrontBehaviourVirtualInterface *interface = behaviourInterfaceFactory.getInterfacePtr(*i);
+      MFrontBehaviourVirtualInterface *interface = mbif.getInterfacePtr(*i);
       interface->writeIntegrationDataConstructor(this->integrationDataFile,
 						 this->className,
 						 this->coefsHolder,this->stateVarsHolder,
@@ -3155,13 +3180,15 @@ namespace mfront{
   MFrontBehaviourParserCommon::getGlobalIncludes(void)
   {
     using namespace std;
+    typedef MFrontBehaviourInterfaceFactory MBIF;
+    MBIF& mbif = MBIF::getMFrontBehaviourInterfaceFactory();
     typedef map<string,vector<string> > Map;
     Map incs;
     StringContainer::const_iterator i;
     map<string,vector<string> >::const_iterator p;
     for(i  = this->interfaces.begin();
 	i != this->interfaces.end();++i){
-      MFrontBehaviourVirtualInterface *interface = behaviourInterfaceFactory.getInterfacePtr(*i);
+      MFrontBehaviourVirtualInterface *interface = mbif.getInterfacePtr(*i);
       const Map& iincs = interface->getGlobalIncludes(this->library,
 						      this->material,
 						      this->className);
@@ -3177,12 +3204,14 @@ namespace mfront{
   {
     using namespace std;
     typedef map<string,vector<string> > Map;
+    typedef MFrontBehaviourInterfaceFactory MBIF;
+    MBIF& mbif = MBIF::getMFrontBehaviourInterfaceFactory();
     Map deps;
     StringContainer::const_iterator i;
     map<string,vector<string> >::const_iterator p;
     for(i  = this->interfaces.begin();
 	i != this->interfaces.end();++i){
-      MFrontBehaviourVirtualInterface *interface = behaviourInterfaceFactory.getInterfacePtr(*i);
+      MFrontBehaviourVirtualInterface *interface = mbif.getInterfacePtr(*i);
       const Map& ideps = interface->getGlobalDependencies(this->library,
 							  this->material,
 							  this->className);
@@ -3198,13 +3227,15 @@ namespace mfront{
   {
     using namespace std;
     typedef map<string,vector<string> > Map;
+    typedef MFrontBehaviourInterfaceFactory MBIF;
+    MBIF& mbif = MBIF::getMFrontBehaviourInterfaceFactory();
     Map osources;
     StringContainer::const_iterator i;
     map<string,vector<string> >::const_iterator p;
     vector<string>::const_iterator p2;
     for(i  = this->interfaces.begin();
 	i != this->interfaces.end();++i){
-      MFrontBehaviourVirtualInterface *interface = behaviourInterfaceFactory.getInterfacePtr(*i);
+      MFrontBehaviourVirtualInterface *interface = mbif.getInterfacePtr(*i);
       const Map& isources = interface->getGeneratedSources(this->library,
 							   this->material,
 							   this->className);
@@ -3228,11 +3259,13 @@ namespace mfront{
   MFrontBehaviourParserCommon::getGeneratedIncludes(void)
   {
     using namespace std;
+    typedef MFrontBehaviourInterfaceFactory MBIF;
+    MBIF& mbif = MBIF::getMFrontBehaviourInterfaceFactory();
     vector<string> incs;
     StringContainer::const_iterator i;
     for(i  = this->interfaces.begin();
 	i != this->interfaces.end();++i){
-      MFrontBehaviourVirtualInterface *interface = behaviourInterfaceFactory.getInterfacePtr(*i);
+      MFrontBehaviourVirtualInterface *interface = mbif.getInterfacePtr(*i);
       const vector<string>& iincs = interface->getGeneratedIncludes(this->library,
 								    this->material,
 								    this->className);
@@ -3249,13 +3282,15 @@ namespace mfront{
   {
     using namespace std;
     typedef map<string,vector<string> > Map;
+    typedef MFrontBehaviourInterfaceFactory MBIF;
+    MBIF& mbif = MBIF::getMFrontBehaviourInterfaceFactory();
     StringContainer::const_iterator i;
     map<string,vector<string> >::const_iterator p;
     vector<string>::const_iterator p2;
     vector<string>::const_iterator p3;
     for(i  = this->interfaces.begin();
 	i != this->interfaces.end();++i){
-      MFrontBehaviourVirtualInterface *interface = behaviourInterfaceFactory.getInterfacePtr(*i);
+      MFrontBehaviourVirtualInterface *interface = mbif.getInterfacePtr(*i);
       const Map& ideps = interface->getLibrariesDependencies(this->library,
 							     this->material,
 							     this->className);
