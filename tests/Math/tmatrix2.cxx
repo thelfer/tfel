@@ -6,7 +6,10 @@
  * \date   12 avr 2008
  */
 
-#include<iostream>
+#ifdef NDEBUG
+#undef NDEBUG
+#endif /* NDEBUG */
+
 #include<cstdlib>
 
 #include "Math/tvector.hxx"
@@ -31,8 +34,6 @@ main(void){
   v(1) = 0.25;
 
   v2 = v*m;
-
-  cout << v2  << endl;
 
   return EXIT_SUCCESS;
 

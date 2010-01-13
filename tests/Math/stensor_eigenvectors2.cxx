@@ -6,7 +6,10 @@
  * \date   03 jui 2006
  */
 
-#include<iostream>
+#ifdef NDEBUG
+#undef NDEBUG
+#endif /* NDEBUG */
+
 #include<cstdlib>
 #include<cmath>
 #include<cassert>
@@ -95,7 +98,7 @@ int main(void)
 #endif
   test<double>();
 
-  std::cout << "success" << std::endl; 
+//   std::cout << "success" << std::endl; 
 
   return EXIT_SUCCESS;
 }

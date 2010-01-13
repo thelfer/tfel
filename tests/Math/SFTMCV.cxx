@@ -6,7 +6,10 @@
  * \date   16 oct 2008
  */
 
-#include<iostream>
+#ifdef NDEBUG
+#undef NDEBUG
+#endif /* NDEBUG */
+
 #include<cstdlib>
 
 #include"Math/Stensor/SFTMCV.hxx"
@@ -25,9 +28,6 @@ main(void)
   ms(0) = 1.;
   ms(1) = 2.;
   ms(2) = 3.;
-  cout << m << endl;
   s += ms;
-  cout << s << endl;
   ms2 = ms + 2. * s;
-  cout << m << endl;
 } // end of main

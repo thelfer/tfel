@@ -11,7 +11,6 @@
 
 #define PARANOIC_CHECK
 
-#include<iostream>
 #include<cstdlib>
 #include<cmath>
 #include<cassert>

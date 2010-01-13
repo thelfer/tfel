@@ -1,5 +1,7 @@
+#ifdef NDEBUG
+#undef NDEBUG
+#endif /* NDEBUG */
 
-#include<iostream>
 #include<cstdlib>
 
 #include "Math/stensor.hxx"
@@ -23,21 +25,21 @@ int main(void){
   v1(1)=1.;
   v1(2)=25.;
 
-  std::cout << stensor<1>::getName() << std::endl;
-  std::cout << stensor<1,unsigned short>::getName() << std::endl;
+//   std::cout << stensor<1>::getName() << std::endl;
+//   std::cout << stensor<1,unsigned short>::getName() << std::endl;
 
-  function(v1);
-  function(2*v1);
-  function(v1*2);
-  function(v2);
-  function(v1+v2);
-  function(v1-v2);
-  function(v1+v2+v1);
-  function(v1+v2-v1);
-  function(2.*v1+v2);
-  function(v1+2.*(v1+v2));
+//   function(v1);
+//   function(2*v1);
+//   function(v1*2);
+//   function(v2);
+//   function(v1+v2);
+//   function(v1-v2);
+//   function(v1+v2+v1);
+//   function(v1+v2-v1);
+//   function(2.*v1+v2);
+//   function(v1+2.*(v1+v2));
   
-  std::cout << "success" << std::endl;
+//   std::cout << "success" << std::endl;
 
   return EXIT_SUCCESS;
 

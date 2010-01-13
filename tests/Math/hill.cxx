@@ -1,4 +1,7 @@
-#include<iostream>
+#ifdef NDEBUG
+#undef NDEBUG
+#endif /* NDEBUG */
+
 #include<cstdlib>
 
 #include"Math/stensor.hxx"
@@ -13,8 +16,8 @@ int main(void)
   
   st2tost2<3u,double> H(hillTensor<3u>(2.,3.,4.,5.,6.,7.));
   stensor<3u,double> s(1.);
-  cout << "H : " << endl;
-  cout << (s|H*s) << endl;
+  //   cout << "H : " << endl;
+  //   cout << (s|H*s) << endl;
 
   return EXIT_SUCCESS;
 }

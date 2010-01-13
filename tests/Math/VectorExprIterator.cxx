@@ -5,7 +5,10 @@
  * \date   23 oct 2006
  */
 
-#include<iostream>
+#ifdef NDEBUG
+#undef NDEBUG
+#endif /* NDEBUG */
+
 #include<cstdlib>
 #include<algorithm>
 #include<iterator>
@@ -13,12 +16,12 @@
 #include"Math/tvector.hxx"
 #include"Math/qt.hxx"
 
-template<typename T>
-void f(const T p){
-  using namespace std;
-  copy(p.begin(),p.end(),ostream_iterator<typename T::value_type>(cout," "));
-  cout << endl;
-}
+// template<typename T>
+// void f(const T p){
+//   using namespace std;
+//   copy(p.begin(),p.end(),ostream_iterator<typename T::value_type>(cout," "));
+//   cout << endl;
+// }
 
 int main(void){
   
@@ -31,8 +34,8 @@ int main(void){
   v(1)=4.865;
   v(2)=0.5;
 
-  f(2.*v);
-  f(3.*v2);
+//   f(2.*v);
+//   f(3.*v2);
   
   return EXIT_SUCCESS;
 }

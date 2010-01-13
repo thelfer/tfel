@@ -6,7 +6,6 @@
  * \date   27 sep 2007
  */
 
-#include<iostream>
 #include<cstdlib>
 #include<cmath>
 #include<fstream>

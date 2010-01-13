@@ -6,11 +6,12 @@
  * \date   07 Aug 2006
  */
 
-#include <iostream>
+#ifdef NDEBUG
+#undef NDEBUG
+#endif /* NDEBUG */
+
 #include <cstdlib>
 #include <cmath>
-#include <ostream>
-#include <iterator>
 
 #include"Math/stensor.hxx"
 #include"Math/Stensor/StensorExternalTabStorage.hxx"
@@ -24,30 +25,30 @@ int main(void){
   double  a[] ={0.,0.,0.,1.};
   double  b[] ={0.,0.,0.,std::sqrt(2.)};
 
-  cout << "Test ExternalTab" << endl;
+//   cout << "Test ExternalTab" << endl;
   
-  copy(a,a+4,ostream_iterator<double>(cout," "));
-  cout << endl;
+//   copy(a,a+4,ostream_iterator<double>(cout," "));
+//   cout << endl;
   {
     stensor<2,double,StensorExternalTab> sig(a);
-    cout << sig << endl;
+//     cout << sig << endl;
     sig*=2u;
-    cout << sig << endl;
+//     cout << sig << endl;
   }
-  copy(a,a+4,ostream_iterator<double>(cout," "));
-  cout << endl;
+//   copy(a,a+4,ostream_iterator<double>(cout," "));
+//   cout << endl;
 
-  cout << "Test ExternalVoigt" << endl;
-  copy(b,b+4,ostream_iterator<double>(cout," "));
-  cout << endl;
+//   cout << "Test ExternalVoigt" << endl;
+//   copy(b,b+4,ostream_iterator<double>(cout," "));
+//   cout << endl;
   {
     stensor<2,double,StensorExternalVoigt> sig(b);
-    cout << sig << endl;
+//     cout << sig << endl;
     sig*=2u;
-    cout << sig << endl;
+//     cout << sig << endl;
   }
-  copy(b,b+4,ostream_iterator<double>(cout," "));
-  cout << endl;
+//   copy(b,b+4,ostream_iterator<double>(cout," "));
+//   cout << endl;
 
 
   return EXIT_SUCCESS;

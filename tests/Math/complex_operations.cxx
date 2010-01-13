@@ -5,7 +5,10 @@
  * \date   05 jui 2006
  */
 
-#include <iostream>
+#ifdef NDEBUG
+#undef NDEBUG
+#endif /* NDEBUG */
+
 #include <cstdlib>
 
 #include "Math/General/Complex.hxx"
@@ -22,8 +25,6 @@ int main(void)
   Complex<double> d(0.);
   
   c += b;
-
-  cout << c << endl;
 
   return EXIT_SUCCESS;
 }

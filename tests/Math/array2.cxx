@@ -5,7 +5,10 @@
  * \date   01 jui 2006
  */
 
-#include<iostream>
+#ifdef NDEBUG
+#undef NDEBUG
+#endif /* NDEBUG */
+
 #include<cstdlib>
 #include<cassert>
 #include<limits>
@@ -34,9 +37,6 @@ int main(void)
   array<2>::RunTimeProperties RT(4,3);
   array<2> a(RT,2.);
   array<2> b(RT,4.);
-
-  cout << a   << endl;
-  cout << b   << endl;
 
   return EXIT_SUCCESS;
 }

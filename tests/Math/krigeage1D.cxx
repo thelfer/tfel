@@ -5,6 +5,10 @@
  * \brief 09 avr 2009
  */
 
+#ifdef NDEBUG
+#undef NDEBUG
+#endif /* NDEBUG */
+
 #include<fstream>
 #include<cstdlib>
 

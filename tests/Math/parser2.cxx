@@ -6,7 +6,10 @@
  * \date   21 sep 2007
  */
 
-#include<iostream>
+#ifdef NDEBUG
+#undef NDEBUG
+#endif /* NDEBUG */
+
 #include<cstdlib>
 
 #include"Math/Evaluator.hxx"
@@ -22,32 +25,28 @@ main(void)
   Evaluator f(var,"exp(cos(x))");
   SmartPtr<ExternalFunction> df = f.differentiate(0);
   df->setVariableValue(0,2.);
-  cout << df->getValue() << endl;
-  //   SmartPtr<EvaluatorManager> manager(new EvaluatorManager());
+  assert(abs(df->getValue()+sin(2)*exp(cos(2)))<1.e-14);
+  
+  SmartPtr<ExternalFunctionManager> manager(new ExternalFunctionManager());
+  manager->operator[]("a") = SmartPtr<ExternalFunction>(new Evaluator("12",manager));
+  manager->operator[]("f") = SmartPtr<ExternalFunction>(new Evaluator(var,"2*exp(a*x)",manager));
+  var.push_back("y");
+  manager->operator[]("g") = SmartPtr<ExternalFunction>(new Evaluator(var,"y*f(x)",manager));
 
-//   cout << "****** defining a" << endl;
-//   manager->operator[]("a") = SmartPtr<Evaluator>(new Evaluator("12",manager));
-//   cout << "****** defining f" << endl;
-//   manager->operator[]("f") = SmartPtr<Evaluator>(new Evaluator(var,"2*exp(a*x)",manager));
-//   cout << "****** defining g" << endl;
-//   var.push_back("y");
-//   manager->operator[]("g") = SmartPtr<Evaluator>(new Evaluator(var,"y*f(x)",manager));
-//   cout << "****** getting a value" << endl;
-//   cout << manager->operator[]("a")->getValue() << endl;
-//   cout << "****** setting f variable value" << endl;
-//   manager->operator[]("f")->setVariableValue(0,0.4);
-//   cout << "****** getting f value" << endl;
-//   cout << manager->operator[]("f")->getValue() << endl;
-//   cout << "****** setting g variable value" << endl;
-//   manager->operator[]("g")->setVariableValue(0,0.4);
-//   manager->operator[]("g")->setVariableValue(1,3);
-//   cout << "****** getting g value" << endl;
-//   cout << manager->operator[]("g")->getValue() << endl;
-//   manager->operator[]("a") = SmartPtr<Evaluator>(new Evaluator("24",manager));
-//   cout << "****** getting g value" << endl;
-//   cout << manager->operator[]("g")->getValue() << endl;
-// //   manager->operator[]("f") = SmartPtr<Evaluator>(new Evaluator("2*cos(x)",manager));
-// //   manager->operator[]("g")->setVariableValue(0,12.);
-// //   cout << manager->operator[]("g")->getValue() << endl;
+  assert(abs(manager->operator[]("a")->getValue()-12.)<1.e-14);
+  manager->operator[]("f")->setVariableValue(0,0.4);
+  assert(abs(manager->operator[]("f")->getValue()-2*exp(12*0.4))<1.e-14);
+  manager->operator[]("g")->setVariableValue(0,0.4);
+  manager->operator[]("g")->setVariableValue(1,3);
+  assert(abs(manager->operator[]("g")->getValue()-3*2*exp(12*0.4))<1.e-14);
+  // Changing a function
+  manager->operator[]("a") = SmartPtr<ExternalFunction>(new Evaluator("24",manager));
+  assert(abs(manager->operator[]("a")->getValue()-24.)<1.e-14);
+  assert(abs(manager->operator[]("g")->getValue()-3*2*exp(24*0.4))<1.e-14);
+  // Changing f function
+  manager->operator[]("f") = SmartPtr<ExternalFunction>(new Evaluator("2*cos(x)",manager));
+  manager->operator[]("g")->setVariableValue(0,12.);
+  assert(abs(manager->operator[]("g")->getValue()-3*2*cos(12.))<1.e-14);
+
   return EXIT_SUCCESS;
 }

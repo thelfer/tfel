@@ -5,8 +5,13 @@
  * \date   30 jan 2007
  */
 
-#include<iostream>
+#ifdef NDEBUG
+#undef NDEBUG
+#endif /* NDEBUG */
+
+#include<cmath>
 #include<cstdlib>
+#include<cassert>
 
 #include"Math/st2tost2.hxx"
 
@@ -21,9 +26,25 @@ int main(void)
   st2tost2<3> s3;
   s3 = s1+0.5*s2;
 
-  cout << s1 << endl;
-  cout << s2 << endl;
-  cout << s3 << endl;
+  assert(abs(s3(0,0)-3.5)<1.e-14);
+  assert(abs(s3(0,1)-3.5)<1.e-14);
+  assert(abs(s3(0,2)-3.5)<1.e-14);
+  assert(abs(s3(0,3)-3.5)<1.e-14);
+
+  assert(abs(s3(1,0)-3.5)<1.e-14);
+  assert(abs(s3(1,1)-3.5)<1.e-14);
+  assert(abs(s3(1,2)-3.5)<1.e-14);
+  assert(abs(s3(1,3)-3.5)<1.e-14);
+
+  assert(abs(s3(2,0)-3.5)<1.e-14);
+  assert(abs(s3(2,1)-3.5)<1.e-14);
+  assert(abs(s3(2,2)-3.5)<1.e-14);
+  assert(abs(s3(2,3)-3.5)<1.e-14);
+
+  assert(abs(s3(3,0)-3.5)<1.e-14);
+  assert(abs(s3(3,1)-3.5)<1.e-14);
+  assert(abs(s3(3,2)-3.5)<1.e-14);
+  assert(abs(s3(3,3)-3.5)<1.e-14);
 
   return EXIT_SUCCESS;
 }

@@ -1,4 +1,7 @@
-#include<iostream>
+#ifdef NDEBUG
+#undef NDEBUG
+#endif /* NDEBUG */
+
 #include<cstdlib>
 
 #include "Math/tvector.hxx"
@@ -20,8 +23,6 @@ int main(void){
   m(1,1) = 1.;
 
   v2 = m*v;
-
-  cout << v2 << endl;
 
   return EXIT_SUCCESS;
 

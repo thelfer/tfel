@@ -6,7 +6,10 @@
  * \date   21 sep 2007
  */
 
-#include<iostream>
+#ifdef NDEBUG
+#undef NDEBUG
+#endif /* NDEBUG */
+
 #include<cstdlib>
 
 #include"Math/Evaluator.hxx"
@@ -21,7 +24,6 @@ main(const int,
   Evaluator ev("min(x,y)*x");
   ev.setVariableValue("x",1.5);
   ev.setVariableValue("y",2.54);
-  cout << ev.getValue() << endl;
 
   return EXIT_SUCCESS;
 }

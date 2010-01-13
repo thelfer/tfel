@@ -6,7 +6,10 @@
  * \date   19 nov 2008
  */
 
-#include<iostream>
+#ifdef NDEBUG
+#undef NDEBUG
+#endif /* NDEBUG */
+
 #include<cstdlib>
 #include<cmath>
 
@@ -55,7 +58,7 @@ int main(void)
   levmar.setInitialGuess(p);
   // execute
   p  = levmar.execute();
-  cout << p(0) << endl;
-  cout << p(1) << endl;
+//   cout << p(0) << endl;
+//   cout << p(1) << endl;
   return EXIT_SUCCESS;
 } // end of main

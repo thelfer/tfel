@@ -5,7 +5,10 @@
  * \date   09 Jun 2006
  */
 
-#include <iostream>
+#ifdef NDEBUG
+#undef NDEBUG
+#endif /* NDEBUG */
+
 #include <cstdlib>
 
 #include "Math/General/Complex.hxx"
@@ -25,7 +28,7 @@ int main(void){
 
   s2 = 0.5f*s;
 
-  cout << s2 << endl;
+//   cout << s2 << endl;
 
   s(0) = Complex<float>(12.f);
   s(1) = Complex<float>(-3.);
@@ -34,9 +37,9 @@ int main(void){
   s2(1) = Complex<float>(1.f);
   s2(2) = Complex<float>(4.f);
 
-  cout << trace(s+0.5f*s2) << endl;
+//   cout << trace(s+0.5f*s2) << endl;
 
-  cout << 2.f*Complex<float>(4.f) << endl;
+//   cout << 2.f*Complex<float>(4.f) << endl;
 
   return EXIT_SUCCESS;
 }

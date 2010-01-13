@@ -5,7 +5,10 @@
  * \date   23 oct 2006
  */
 
-#include<iostream>
+#ifdef NDEBUG
+#undef NDEBUG
+#endif /* NDEBUG */
+
 #include<cstdlib>
 #include<algorithm>
 #include<iterator>
@@ -13,14 +16,14 @@
 #include"Math/tvector.hxx"
 #include"Math/functions.hxx"
 
-template<typename T>
-void f(const T o){
-  using namespace std;
-  typename T::const_iterator p;
-  for(p=o.begin();p!=o.end();++p){
-    cout << *p << endl;
-  }
-}
+// template<typename T>
+// void f(const T o){
+//   using namespace std;
+//   typename T::const_iterator p;
+//   for(p=o.begin();p!=o.end();++p){
+//     cout << *p << endl;
+//   }
+// }
 
 int main(void){
   
@@ -33,10 +36,10 @@ int main(void){
   v(1)=4.865;
   v(2)=0.5;
 
-  f(v);
-  f(cos(v));
-  f(exp(cos(v)));
-  f(exp(v+2*cos(v)));
+//   f(v);
+//   f(cos(v));
+//   f(exp(cos(v)));
+//   f(exp(v+2*cos(v)));
 
   return EXIT_SUCCESS;
 }

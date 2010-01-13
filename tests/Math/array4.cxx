@@ -5,7 +5,10 @@
  * \date   01 jui 2006
  */
 
-#include<iostream>
+#ifdef NDEBUG
+#undef NDEBUG
+#endif /* NDEBUG */
+
 #include<cstdlib>
 #include<cassert>
 #include<algorithm>
@@ -15,12 +18,6 @@
 #include"Math/Array/ArrayRunTimeProperties.hxx"
 #include"Math/array.hxx"
 #include"Math/qt.hxx"
-
-template<typename T>
-void fonction(const T&)
-{
-  std::cout << tfel::utilities::Name<T>::getName() << std::endl;
-}
 
 int main(void)
 {
@@ -40,13 +37,8 @@ int main(void)
     a(3) = mass(5.231);
     
     c += a;
-    
-    cout << c << endl;
-    
     c += a/b;
-    
-    cout << c << endl;
-    
+
   }
 
   {
@@ -60,12 +52,7 @@ int main(void)
     a(0,1) = mass(2.5);
     
     c += a;
-    
-    cout << c << endl;
-    
     c += a/b;
-    
-    cout << c << endl;
     
   }
 
@@ -81,13 +68,7 @@ int main(void)
     a(0,0,2) = mass(3.1234);
     
     c += a;
-    
-    cout << c << endl;
-    
     c += a/b;
-    
-    cout << c << endl;
-    
   }
 
   return EXIT_SUCCESS;

@@ -6,9 +6,9 @@
  * \date   09 avr 2008
  */
 
-#ifndef TFEL_BROYDEN_VERBOSE_MODE
-#define TFEL_BROYDEN_VERBOSE_MODE
-#endif
+#ifdef NDEBUG
+#undef NDEBUG
+#endif /* NDEBUG */
 
 #include<cstdlib>
 #include<cmath>
@@ -34,7 +34,6 @@ test(void)
   tvector<2,double> x0;
   tvector<2,double> vf;
   tmatrix<2,2,double> A;
-//   cout << "********* test\n";
   x0(0) = 1.5;
   x0(1) = -0.5;
   A(0,0) = 4*(x0(0)-1);
@@ -43,13 +42,10 @@ test(void)
   A(1,1) = 4*(4*x0(1)*x0(1)*x0(1)+1);
   res = broyden<2,double,f>(x0,A,1.e-11,20).second;
   vf = f(res);
-//   cout << "x : (" << res(0) << ", " << res(1) << ")" << endl;
-//   cout << "f : (" << vf(0)  << ", " << vf(1) << ")" << endl;
   A(0,0) = 4*(res(0)-1);
   A(0,1) = -6*res(1)*res(1);
   A(1,0) = 4*res(0)*res(0)*res(0);
   A(1,1) = 4*(4*res(1)*res(1)*res(1)+1);
-//   cout << "A : " << A << endl; 
 }
 
 void
@@ -60,13 +56,10 @@ test2(void)
   tvector<2,double> res;
   tvector<2,double> x0;
   tvector<2,double> vf;
-//   cout << "********* test2\n";
   x0(0) = 1.5;
   x0(1) = -0.5;
   res = broyden<2,double,f>(x0,1.e-11,20).second;
   vf = f(res);
-//   cout << "x : (" << res(0) << ", " << res(1) << ")" << endl;
-//   cout << "f : (" << vf(0)  << ", " << vf(1) << ")" << endl;
 }
 
 int

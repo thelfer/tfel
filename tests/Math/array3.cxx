@@ -9,7 +9,6 @@
 #undef NDEBUG
 #endif /* NDEBUG */
 
-#include<iostream>
 #include<cstdlib>
 #include<cassert>
 #include<algorithm>

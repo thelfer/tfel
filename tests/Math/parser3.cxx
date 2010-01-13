@@ -6,7 +6,10 @@
  * \date   20 déc 2008
  */
 
-#include<iostream>
+#ifdef NDEBUG
+#undef NDEBUG
+#endif /* NDEBUG */
+
 #include<cstdlib>
 
 #include"Math/Evaluator.hxx"
@@ -22,6 +25,6 @@ main(void)
   Evaluator f(var,"diff(cos(x),x)");
   SmartPtr<ExternalFunction> df = f.differentiate(0);
   df->setVariableValue(0,2.);
-  cout << df->getValue() << endl;
+//   cout << df->getValue() << endl;
   return EXIT_SUCCESS;
 }

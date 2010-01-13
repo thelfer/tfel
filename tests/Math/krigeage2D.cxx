@@ -5,6 +5,10 @@
  * \brief 09 avr 2009
  */
 
+#ifdef NDEBUG
+#undef NDEBUG
+#endif /* NDEBUG */
+
 #include<fstream>
 #include<cstdlib>
 
@@ -51,12 +55,5 @@ int main () {
     }
   }
   
-//   k.addValue(3.,2.);
-//   k.addValue(5.,2.);
-//   k.addValue(9.,-4.);
-//   k.buildInterpolation();
-//   for(double x=0.;x<10.;x+=0.5){
-//     cout << x << " " << k(x) << endl;
-//   }
   return EXIT_SUCCESS;
 }

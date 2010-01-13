@@ -6,7 +6,10 @@
  * \date   03 jui 2006
  */
 
-#include<iostream>
+#ifdef NDEBUG
+#undef NDEBUG
+#endif /* NDEBUG */
+
 #include<cstdlib>
 
 #include "Math/stensor.hxx"
@@ -25,7 +28,7 @@ int main(void)
 
   s.computeEigenValues(vp1,vp2,vp3);
 
-  std::cout << "Valeurs propres : " << vp1 << " " << vp2 << " " << vp3 << std::endl;
+//   std::cout << "Valeurs propres : " << vp1 << " " << vp2 << " " << vp3 << std::endl;
 
   return EXIT_SUCCESS;
 }

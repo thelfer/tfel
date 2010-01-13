@@ -6,7 +6,10 @@
  * \date   12 avr 2008
  */
 
-#include<iostream>
+#ifdef NDEBUG
+#undef NDEBUG
+#endif /* NDEBUG */
+
 #include<cstdlib>
 
 #include "Math/tmatrix.hxx"
@@ -27,8 +30,8 @@ int main(void){
   
   m2 = m;
 
-  cout << m  << endl;
-  cout << m2 << endl;
+//   cout << m  << endl;
+//   cout << m2 << endl;
 
 
   return EXIT_SUCCESS;

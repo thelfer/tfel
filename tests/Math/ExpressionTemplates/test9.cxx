@@ -18,8 +18,6 @@
 #include"Math/General/ObjectObjectRandomAccessConstIterator.hxx"
 #include"Math/vector.hxx"
 
-#include<iostream>
-
 int main(void)
 {
   using namespace std;

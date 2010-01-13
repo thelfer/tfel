@@ -6,7 +6,10 @@
  * \date   01 jui 2006
  */
 
-#include<iostream>
+#ifdef NDEBUG
+#undef NDEBUG
+#endif /* NDEBUG */
+
 #include<cstdlib>
 #include<cassert>
 #include<algorithm>
@@ -29,30 +32,11 @@ int main(void)
 
   c = d;
   std::fill(d.begin(),d.end(),12);
-
-  cout << a   << endl;
-  cout << b   << endl;
-  cout << c   << endl;
-
   c = sin(2*a + b);
-
-  cout << d   << endl;
-
   c*=2;
-
-  cout << d   << endl;
-
   c/=3;
-
-  cout << d   << endl;
-
   c*=(b+a);
-
-  cout << d   << endl;
-
   a=-c;
-
-  cout << a   << endl;
 
   return EXIT_SUCCESS;
 }

@@ -5,7 +5,10 @@
  * \brief 14 avr 2009
  */
 
-#include<iostream>
+#ifdef NDEBUG
+#undef NDEBUG
+#endif /* NDEBUG */
+
 #include<cstdlib>
 
 #include"Math/tvector.hxx"
@@ -33,10 +36,10 @@ int main(void)
   b(1) = -1;
   b(2) = -2;
 
-  cout << "********" << endl;
-  cout << m << endl;
+//   cout << "********" << endl;
+//   cout << m << endl;
   TinyMatrixSolve<3,double>::exe(m,b);
-  cout << m << endl;
-  cout << "b : " << b << endl;
-  cout << endl;
+//   cout << m << endl;
+//   cout << "b : " << b << endl;
+//   cout << endl;
 } // end of main

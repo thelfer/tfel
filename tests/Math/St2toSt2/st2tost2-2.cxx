@@ -6,8 +6,13 @@
  * \date   19 mar 2008
  */
 
-#include<iostream>
+#ifdef NDEBUG
+#undef NDEBUG
+#endif /* NDEBUG */
+
+#include<cmath>
 #include<cstdlib>
+#include<cassert>
 
 #include"Math/st2tost2.hxx"
 #include"Math/stensor.hxx"
@@ -19,7 +24,7 @@ main(void)
   using namespace std;
 
   st2tost2<2> D(1.);
-  stensor<2>  s(4.);
+  stensor<2>  s;
   stensor<2>  s1;
 
   s(0) = 1.;
@@ -29,7 +34,10 @@ main(void)
 
   s1 = D*s;
 
-  cout << s1 << endl;
+  assert(abs(s1(0)-10.)<1.e-14);
+  assert(abs(s1(1)-10.)<1.e-14);
+  assert(abs(s1(2)-10.)<1.e-14);
+  assert(abs(s1(3)-10.)<1.e-14);
 
   return EXIT_SUCCESS;
 }

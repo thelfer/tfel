@@ -1,4 +1,7 @@
-#include<iostream>
+#ifdef NDEBUG
+#undef NDEBUG
+#endif /* NDEBUG */
+
 #include<cstdlib>
 
 #include "Math/qt.hxx"
@@ -19,8 +22,6 @@ int main(void){
   vector2 v2;
   vector3 v3;
 
-  cout << tvector<5,qt<Acceleration> >::getName() << endl;
-
   v2(0)=qt<Acceleration,int>(2);
   v2(1)=qt<Acceleration,int>(1);
   v2(2)=qt<Acceleration,int>(4);
@@ -30,15 +31,15 @@ int main(void){
   v1=2.*(v2+v2);
   v3 = m*v1;
 
-  cout << v2 << endl;
-  cout << v1 << endl;
-  cout << v3 << endl;
+//   cout << v2 << endl;
+//   cout << v1 << endl;
+//   cout << v3 << endl;
     
-  //  cout << norm(v3) << endl;
-  cout << (v3|v1) << endl;
-  cout << name(v3) << endl;
-  cout << name(v1) << endl;
-  cout << name((v3|v1)) << endl;
+//   //  cout << norm(v3) << endl;
+//   cout << (v3|v1) << endl;
+//   cout << name(v3) << endl;
+//   cout << name(v1) << endl;
+//   cout << name((v3|v1)) << endl;
 
   return EXIT_SUCCESS;
 

@@ -6,8 +6,13 @@
  * \date   09 Oct 2006
  */
 
-#include<iostream>
+#ifdef NDEBUG
+#undef NDEBUG
+#endif /* NDEBUG */
+
+#include<cmath>
 #include<cstdlib>
+#include<cassert>
 
 #include"Utilities/Name.hxx"
 #include"Math/vector.hxx"
@@ -23,7 +28,20 @@ int main(void)
   vector<tvector<3> > v(3,tvector<3>(4.));
   vector<tvector<3> > v2(3,tvector<3>(2.));
 
-  cout << name((v+v2)(2)) << endl;
+  assert(name((v+v2)(2))=="VectorExpr<tvector<3,double>,VectorVectorExpr<tvector<3,double>,tvector<3,double>,+>>");
+
+  assert(abs((v+v2)(0)(0)-6.)<1.e-14);
+  assert(abs((v+v2)(0)(1)-6.)<1.e-14);
+  assert(abs((v+v2)(0)(2)-6.)<1.e-14);
+
+  assert(abs((v+v2)(1)(0)-6.)<1.e-14);
+  assert(abs((v+v2)(1)(1)-6.)<1.e-14);
+  assert(abs((v+v2)(1)(2)-6.)<1.e-14);
+
+  assert(abs((v+v2)(2)(0)-6.)<1.e-14);
+  assert(abs((v+v2)(2)(1)-6.)<1.e-14);
+  assert(abs((v+v2)(2)(2)-6.)<1.e-14);
+
 
   return EXIT_SUCCESS;
 }

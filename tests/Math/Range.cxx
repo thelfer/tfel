@@ -6,7 +6,10 @@
  * \date   23 oct 2006
  */
 
-#include<iostream>
+#ifdef NDEBUG
+#undef NDEBUG
+#endif /* NDEBUG */
+
 #include<cstdlib>
 
 #include"Math/Vector/Range.hxx"

@@ -5,8 +5,13 @@
  * \date   05 nov 2006
  */
 
-#include<iostream>
+#ifdef NDEBUG
+#undef NDEBUG
+#endif /* NDEBUG */
+
+#include<cmath>
 #include<cstdlib>
+#include<cassert>
 
 #include"Math/functions.hxx"
 
@@ -15,14 +20,12 @@ int main(void){
   using namespace std;
   USING_TFEL_FUNCTIONS;
 
-  cout << cos(12.) << endl;
-  cout << sin(12.) << endl;
-
-  cout << (cos+sin)(12.) << endl;
-  cout << (exp[sin])(12.) << endl;
-  cout << (exp[sin])(12.) << endl;
-  cout << (2.321*sin)(12.) << endl;
-  cout << (sin*3.421)(12.) << endl;
+  assert(abs(cos(12.)-std::cos(12.))<1.e-14);
+  assert(abs(sin(12.)-std::sin(12.))<1.e-14);
+  assert(abs((cos+sin)(12.)-std::cos(12.)-std::sin(12.))<1.e-14);
+  assert(abs((exp[sin])(12.)-std::exp(std::sin(12.)))<1.e-14);
+  assert(abs((2.321*sin)(12.)-2.321*std::sin(12.))<1.e-14);
+  assert(abs((sin*3.421)(12.)-3.421*std::sin(12.))<1.e-14);
 
   return EXIT_SUCCESS;
 }

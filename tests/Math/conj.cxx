@@ -6,19 +6,28 @@
  * \date   01 Sep 2006
  */
 
-#include <iostream>
+#ifdef NDEBUG
+#undef NDEBUG
+#endif /* NDEBUG */
+
+#include <cmath>
 #include <cstdlib>
+#include <cassert>
 
 #include "Math/General/Complex.hxx"
 #include "Math/General/BasicOperations.hxx"
+
+#include<iostream>
 
 int main(void)
 {
   using namespace std;
   using namespace tfel::math;
 
-  cout << conj(12) << endl;
-  cout << conj(Complex<int>(12,13)) << endl;
+  assert(real(conj(12)-Complex<int>(12,0))==0);
+  assert(imag(conj(12)-Complex<int>(12,0))==0);
+  assert(real(conj(Complex<int>(0,12))-Complex<int>(0,-12))==0);
+  assert(imag(conj(Complex<int>(0,12))-Complex<int>(0,-12))==0);
 
   return EXIT_SUCCESS;
 }
