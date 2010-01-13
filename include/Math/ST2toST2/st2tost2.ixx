@@ -8,6 +8,10 @@
 #ifndef _LIB_TFEL_ST2TOST2_IXX_
 #define _LIB_TFEL_ST2TOST2_IXX_ 
 
+#ifdef NDEBUG
+#undef NDEBUG
+#endif /* NDEBUG */
+
 #include <cmath>
 #include <iterator>
 #include <algorithm>
@@ -29,6 +33,12 @@ namespace tfel{
     TFEL_MATH_INLINE st2tost2<N,T>::st2tost2(const T init)
     {
       tfel::fsalgo::fill<St2tost2Size>::exe(this->v,init);
+    }
+
+    template<unsigned short N, typename T>
+    TFEL_MATH_INLINE st2tost2<N,T>::st2tost2(const st2tost2<N,T>& src)
+    {
+      matrix_utilities<StensorSize,StensorSize,StensorSize>::copy(src,*this);
     }
 
     template<unsigned short N, typename T>
@@ -63,7 +73,7 @@ namespace tfel{
     template<typename T2,typename Expr>
     TFEL_MATH_INLINE 
     st2tost2<N,T>::st2tost2(const ST2toST2Expr<st2tost2<N,T2>,Expr>& src){
-      matrix_utilities<N,N,N>::copy(src,*this);
+      matrix_utilities<StensorSize,StensorSize,StensorSize>::copy(src,*this);
     }
 
     template<unsigned short N,typename T>
