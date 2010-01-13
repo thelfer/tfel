@@ -32,7 +32,8 @@ namespace tfel{
     {
 
       static void 
-      exe(tmatrix<N,N,T>& m, tvector<N,T>&);
+      exe(tmatrix<N,N,T>&, tvector<N,T>&,
+	  const T = 100*std::numeric_limits<T>::min());
 
     };      
 

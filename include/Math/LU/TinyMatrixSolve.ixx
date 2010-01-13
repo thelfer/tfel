@@ -20,7 +20,8 @@ namespace tfel{
     template<unsigned short N,typename T>
     TFEL_MATH_INLINE2
     void
-    TinyMatrixSolve<N,T>::exe(tmatrix<N,N,T>& m, tvector<N,T>& b)
+    TinyMatrixSolve<N,T>::exe(tmatrix<N,N,T>& m, tvector<N,T>& b,
+			      const T eps)
     {
       typedef typename MatrixTraits<tmatrix<N,N,T> >::IndexType IndexType;
       TinyPermutation<N> p;
@@ -34,6 +35,9 @@ namespace tfel{
 	pi = p(i);
 	for(j=0;j!=i;++j){
 	  x(pi) -= m(pi,j)*x(p(j));
+	}
+	if(std::abs(m(pi,i))<eps){
+	  throw(LUException("TinyMatrixSolve<N,T>::exe : null pivot"));
 	}
 	x(pi) /= m(pi,i);
       }
