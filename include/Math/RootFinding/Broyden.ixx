@@ -6,8 +6,8 @@
  * \date   05 avr 2008
  */
 
-#ifndef _LIB_TFEL_BROYDEN_IXX_
-#define _LIB_TFEL_BROYDEN_IXX_ 
+#ifndef _LIB_TFEL_MATH_BROYDEN_IXX_
+#define _LIB_TFEL_MATH_BROYDEN_IXX_ 
 
 #ifdef TFEL_BROYDEN_VERBOSE_MODE
 #include<iostream>
@@ -85,5 +85,5 @@ namespace tfel
 
 } // end of namespace tfel
 
-#endif /* _LIB_TFEL_BROYDEN_IXX */
+#endif /* _LIB_TFEL_MATH_BROYDEN_IXX */
 

@@ -6,8 +6,8 @@
  * \date   05 avr 2008
  */
 
-#ifndef _LIB_TFEL_BROYDEN_HXX_
-#define _LIB_TFEL_BROYDEN_HXX_ 
+#ifndef _LIB_TFEL_MATH_BROYDEN_HXX_
+#define _LIB_TFEL_MATH_BROYDEN_HXX_ 
 
 #include<utility>
 
@@ -42,5 +42,5 @@ namespace tfel
 
 #include"Math/RootFinding/Broyden.ixx"
 
-#endif /* _LIB_TFEL_BROYDEN_HXX */
+#endif /* _LIB_TFEL_MATH_BROYDEN_HXX */
 
