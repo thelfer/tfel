@@ -51,7 +51,8 @@ namespace tfel{
       static TFEL_FSALGORITHM_INLINE
       T exe(InputIterator1 p, InputIterator2 q, T init)
       {
-	return inner_product<N-1>::exe(++p,++q,init+(*p)*(*q));
+	T r = init+(*p)*(*q);
+	return inner_product<N-1>::exe(++p,++q,r);
       }
 
       /*! 
@@ -83,7 +84,8 @@ namespace tfel{
       T exe(InputIterator1 p,InputIterator2 q, T init,
 	    BinaryFunction1 binary_op1,BinaryFunction2 binary_op2)
       {
-	return inner_product<N-1>::exe(++p,++q,binary_op1(init,binary_op2(*p,*q)),binary_op1,binary_op2);
+	T r = binary_op1(init,binary_op2(*p,*q));
+	return inner_product<N-1>::exe(++p,++q,r,binary_op1,binary_op2);
       }
 
       /*! 
@@ -108,7 +110,8 @@ namespace tfel{
       static TFEL_FSALGORITHM_INLINE
       T exe(InputIterator1 p, InputIterator2 q)
       {
-	return inner_product<N-1>::exe(++p,++q,(*p)*(*q));
+	T r = (*p)*(*q);
+	return inner_product<N-1>::exe(++p,++q,r);
       }
 
     };
