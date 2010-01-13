@@ -38,6 +38,7 @@ recursiveFind(const regex_t& re,
   map<string,vector<string> > res;
   DIR* dir;
   struct dirent* p;
+  struct stat buf;
   if(depth>100){
     string msg("recursiveFind : ");
     msg += "maximal directory depth reached";
@@ -48,17 +49,26 @@ recursiveFind(const regex_t& re,
     systemCall::throwSystemError("can't open directory "+name,errno);
   }
   while((p=readdir(dir))!=0){
-    if(p->d_type==DT_DIR){
+    string file = name+"/";
+    file += p->d_name;
+    if(stat(file.c_str(),&buf)!=0){
+      string msg("MFront::analyseSourceDirectory : ");
+      msg += "can't stat file ";
+      msg += file;
+      cerr << msg << endl;
+      systemCall::throwSystemError(msg,errno);
+    }
+    if(S_ISREG(buf.st_mode)){
+      if(regexec(&re,p->d_name,0,0,0)==0){
+	res[name].push_back(p->d_name);
+      }
+    } else if(S_ISDIR(buf.st_mode)){
       if((strcmp(p->d_name,".")!=0)&&
 	 strcmp(p->d_name,"..")!=0){
 	const map<string,vector<string> > & r = recursiveFind(re,
 							      name+'/'+p->d_name,
 							      depth+1);
 	res.insert(r.begin(),r.end());
-      }
-    } else if(p->d_type==DT_REG){
-      if(regexec(&re,p->d_name,0,0,0)==0){
-	res[name].push_back(p->d_name);
       }
     }
   }

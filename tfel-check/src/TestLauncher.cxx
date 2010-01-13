@@ -16,8 +16,6 @@
 
 #include <unistd.h> // sysconf
 
-#include<boost/lexical_cast.hpp>
-
 #include"Utilities/TerminalColors.hxx"
 #include"System/ProcessManager.hxx"
 
@@ -464,7 +462,6 @@ namespace tfel
     TestLauncher::execute(void)
     {
       using namespace std;
-      using namespace boost;
       using namespace tfel::system;
       using namespace tfel::utilities;
       using std::exception;
@@ -479,7 +476,7 @@ namespace tfel
       double max_error;
       bool gsuccess = true;
       bool success  = true;
-      vector<string>::size_type i;
+      vector<string>::size_type i=0;
 
       // Mesh
       if(!this->meshCommands.empty()){
@@ -487,9 +484,10 @@ namespace tfel
 	  success = true;
 	  try{
 	    this->ClockAction(START);
-	    manager.execute(*p4,"",
-			    this->file.substr(0,this->file.rfind("."))+"-mesh"+
-			    lexical_cast<string>(i)+".out");
+	    ostringstream out;
+	    out << this->file.substr(0,this->file.rfind(".")) << "-mesh"
+		<< i << ".out";
+	    manager.execute(*p4,"",out.str());
 	    this->ClockAction(STOP);
 	    this->addTestcaseXML("Mesh",*p4, this->ClockAction(GET), true);
 	  }
@@ -508,8 +506,10 @@ namespace tfel
 	  success = true;
 	  try{
 	    this->ClockAction(START);
-	    manager.execute(*p4,"",this->file.substr(0,this->file.rfind("."))+
-			    lexical_cast<string>(i)+".out");
+	    ostringstream out;
+	    out << this->file.substr(0,this->file.rfind("."))
+		<< i << ".out";
+	    manager.execute(*p4,"",out.str());
 	    this->ClockAction(STOP);
 	    this->addTestcaseXML("Exec",*p4, this->ClockAction(GET), true);
 	  }
