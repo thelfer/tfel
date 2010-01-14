@@ -61,12 +61,24 @@ namespace tfel{
 	typedef typename tfel::meta::IF<isTemporary,const NthElt,const NthElt&>::type type;
       };
 
+#ifdef __GNUG__
       template<unsigned short N>
       typename tfel::meta::EnableIf<
 	(N<tfel::meta::TypeListSize<Items>::value),
 	  typename ConstValueType<N>::type
       >::type
       getComponent(void) const;
+#else /* __GNUG__ */
+      template<unsigned short N>
+      typename tfel::meta::EnableIf<
+	(N<tfel::meta::TypeListSize<Items>::value),
+	  typename ConstValueType<N>::type
+      >::type
+      getComponent(void) const
+      {
+	return static_cast<const C&>(*this)->template getComponent<N>();
+      }
+#endif /* __GNUG__ */
 
     };
 

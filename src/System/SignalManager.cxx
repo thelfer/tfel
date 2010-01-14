@@ -252,7 +252,7 @@ namespace tfel
 
     
     void
-    SignalManager::treatAction(const int sig)
+    SignalManager::treatAction(int sig)
     {
       using namespace std;
       SignalManager& signalManager = SignalManager::getSignalManager();

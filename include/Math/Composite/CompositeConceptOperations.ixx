@@ -37,7 +37,6 @@ namespace tfel{
 				      DummyHandle,
 				      CompositeExpr<Result,Expr> >::type Handle;
     };
-
     
     /*
      * Partial Specialisation of ComputeBinaryResult_ for scalar-vector operations

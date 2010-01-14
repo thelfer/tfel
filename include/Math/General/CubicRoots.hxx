@@ -11,6 +11,7 @@
 
 #include <cmath>
 #include <limits>
+#include <algorithm>
 
 #include "Config/TFELConfig.hxx"
 

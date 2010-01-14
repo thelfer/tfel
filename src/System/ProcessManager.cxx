@@ -550,15 +550,15 @@ namespace tfel
       ::sigprocmask(SIG_SETMASK,&oSigSet,0);
     } // end of ProcessManager::~ProcessManager
 
-    const ProcessManager::wstream
+    ProcessManager::wstream
     ProcessManager::getInputStream(const ProcessManager::ProcessId id)
     {
       using namespace std;
       vector<Process>::const_reverse_iterator p;
       vector<Process>::const_reverse_iterator pe;
       map<ProcessId,StreamId>::iterator p2;
-      p  = this->findProcess(id);
-      pe = this->processes.rend();
+      p  = static_cast<const ProcessManager&>(*this).findProcess(id);
+      pe = static_cast<const vector<Process>&>(this->processes).rend();
       if(p==pe){
 	ostringstream msg;
 	msg << "ProcessManager::getInputStream : "
@@ -581,15 +581,15 @@ namespace tfel
       return wstreamView<true>(p2->second);
     } // end of ProcessManager::getInputStream
 
-    const ProcessManager::rstream
+    ProcessManager::rstream
     ProcessManager::getOutputStream(const ProcessManager::ProcessId id)
     {
       using namespace std;
       vector<Process>::const_reverse_iterator p;
       vector<Process>::const_reverse_iterator pe;
       map<ProcessId,StreamId>::iterator p2;
-      p  = this->findProcess(id);
-      pe = this->processes.rend();
+      p  = static_cast<const ProcessManager&>(*this).findProcess(id);
+      pe = static_cast<const vector<Process>&>(this->processes).rend();
       if(p==pe){
 	ostringstream msg;
 	msg << "ProcessManager::getInputStream : "
@@ -623,8 +623,8 @@ namespace tfel
       vector<Process>::const_reverse_iterator pe;
       bool cond;
       pid = this->createProcess(cmd,in,out);
-      p  = this->findProcess(pid);
-      pe = this->processes.rend();
+      p  = static_cast<const ProcessManager&>(*this).findProcess(pid);
+      pe = static_cast<const vector<Process>&>(this->processes).rend();
       assert(p!=pe);
       cond = p->isRunning;
       while(cond){
@@ -646,7 +646,7 @@ namespace tfel
       }
     } // end of ProcessManager::execute
 
-    const std::vector<ProcessManager::Process>::reverse_iterator
+    std::vector<ProcessManager::Process>::reverse_iterator
     ProcessManager::findProcess(const ProcessId pid)
     {
       using namespace std;
@@ -663,7 +663,7 @@ namespace tfel
       return p;
     } // end of ProcessManager::findProcess
 
-    const std::vector<ProcessManager::Process>::const_reverse_iterator
+    std::vector<ProcessManager::Process>::const_reverse_iterator
     ProcessManager::findProcess(const ProcessId pid) const
     {
       using namespace std;

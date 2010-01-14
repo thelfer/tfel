@@ -451,6 +451,7 @@ namespace tfel
     Evaluator::FunctionGeneratorManager::FunctionGeneratorManager(void)
     {
       using namespace std;
+      typedef map<string,ExternalFunctionGenerator>::value_type MVType;
       this->fctGenerators.insert(make_pair(string("exp"),
 					   &StandardFctGenerator<std::exp>));
       this->fctGenerators.insert(make_pair(string("sin"),
@@ -485,7 +486,7 @@ namespace tfel
 					    &StandardBinaryFctGenerator<Evaluator::max>));
       this->bFctGenerators.insert(make_pair(string("min"),
 					    &StandardBinaryFctGenerator<Evaluator::min>));
-      this->extOpGenerators.insert(make_pair(string("power"),EvaluatorTreatPower));
+      this->extOpGenerators.insert(MVType("power",EvaluatorTreatPower));
     } // end of Evaluator::FunctionGeneratorManager::FunctionGeneratorManager
 
     Evaluator::FunctionGeneratorManager&

@@ -7,6 +7,7 @@
  */
 
 #include<cstdlib>
+#include<sstream>
 
 #include"System/System.hxx"
 #include"ParserUtilities.hxx"

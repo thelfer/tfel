@@ -13,6 +13,7 @@ namespace tfel{
 
   namespace math{
 
+#ifdef __GNUG__
     template<typename C>
     template<unsigned short N>
     typename tfel::meta::EnableIf<
@@ -23,20 +24,7 @@ namespace tfel{
     {
       return static_cast<const C&>(*this)->template getComponent<N>();
     }
-
-
-//     template<typename C>
-//     template<unsigned short N>
-//     typename tfel::meta::EnableIf<
-//       (N<tfel::meta::TypeListSize<typename CompositeTraits<C>::Items>::value),
-// 	typename tfel::meta::IF<CompositeConcept<C>::isTemporary,
-// 				const typename tfel::meta::TypeListFindNthElt<typename CompositeTraits<C>::Items,N>::type,
-// 				const typename tfel::meta::TypeListFindNthElt<typename CompositeTraits<C>::Items,N>::type&>::type
-//     >::type
-//     CompositeConcept<C>::getComponent(void) const
-//     {
-//       return static_cast<const C&>(*this)->template getComponent<N>();
-//     }
+#endif /* __GNUG__ */
 
   } // end of namespace math
 

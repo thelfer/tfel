@@ -74,21 +74,22 @@ namespace mfront{
   SupportedTypes::registerTypes(void)
   {
     using namespace std;
-    this->flags.insert(make_pair("real",Scalar));
-    this->flags.insert(make_pair("frequency",Scalar));
-    this->flags.insert(make_pair("stress",Scalar));
-    this->flags.insert(make_pair("stress_rate",Scalar));
-    this->flags.insert(make_pair("strain",Scalar));
-    this->flags.insert(make_pair("strain_rate",Scalar));
-    this->flags.insert(make_pair("temperature",Scalar));
-    this->flags.insert(make_pair("energy_density",Scalar));
-    this->flags.insert(make_pair("thermalexpansion",Scalar));
-    this->flags.insert(make_pair("density",Scalar));
-    this->flags.insert(make_pair("Stensor",Stensor));
-    this->flags.insert(make_pair("StressStensor",Stensor));
-    this->flags.insert(make_pair("StressRateStensor",Stensor));
-    this->flags.insert(make_pair("StrainStensor",Stensor));
-    this->flags.insert(make_pair("StrainRateStensor",Stensor));
+    typedef map<string,TypeFlag>::value_type MVType;
+    this->flags.insert(MVType("real",Scalar));
+    this->flags.insert(MVType("frequency",Scalar));
+    this->flags.insert(MVType("stress",Scalar));
+    this->flags.insert(MVType("stress_rate",Scalar));
+    this->flags.insert(MVType("strain",Scalar));
+    this->flags.insert(MVType("strain_rate",Scalar));
+    this->flags.insert(MVType("temperature",Scalar));
+    this->flags.insert(MVType("energy_density",Scalar));
+    this->flags.insert(MVType("thermalexpansion",Scalar));
+    this->flags.insert(MVType("density",Scalar));
+    this->flags.insert(MVType("Stensor",Stensor));
+    this->flags.insert(MVType("StressStensor",Stensor));
+    this->flags.insert(MVType("StressRateStensor",Stensor));
+    this->flags.insert(MVType("StrainStensor",Stensor));
+    this->flags.insert(MVType("StrainRateStensor",Stensor));
   }
 
   SupportedTypes::SupportedTypes()

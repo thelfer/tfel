@@ -26,7 +26,7 @@ namespace tfel
 	virtual ~Function();
       };
 
-      template<double (*f)(const double)>
+      template<double (*f)(double)>
       struct StandardFunction
 	: public Function
       {

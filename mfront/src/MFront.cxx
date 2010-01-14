@@ -8,6 +8,7 @@
 #include<iostream>
 #include<cstdlib>
 #include<fstream>
+#include<sstream>
 #include<string>
 #include<iterator>
 #include<stdexcept>
@@ -1162,8 +1163,8 @@ namespace mfront{
     vector<string>::const_reverse_iterator pe;
     copy(istream_iterator<string>(tokenizer),
 	 istream_iterator<string>(),back_inserter(libs));
-    p  = libs.rbegin();
-    pe = libs.rend();
+    p  = static_cast<const vector<string>&>(libs).rbegin();
+    pe = static_cast<const vector<string>&>(libs).rend();
     while(p!=pe){
       if(find(vres.begin(),vres.end(),*p)==vres.end()){
 	vres.push_back(*p);

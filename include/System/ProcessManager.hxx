@@ -93,10 +93,10 @@ namespace tfel
       void
       stopOnSignals(const bool);
 
-      const wstream
+      wstream
       getInputStream(const ProcessId);
       
-      const rstream
+      rstream
       getOutputStream(const ProcessId);
       
       /*!
@@ -144,10 +144,10 @@ namespace tfel
 
       std::vector<Process> processes;
 
-      const std::vector<Process>::reverse_iterator
+      std::vector<Process>::reverse_iterator
       findProcess(const ProcessId);
 
-      const std::vector<Process>::const_reverse_iterator
+      std::vector<Process>::const_reverse_iterator
       findProcess(const ProcessId) const;
 
       StreamMap inputs;

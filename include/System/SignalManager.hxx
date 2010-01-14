@@ -43,7 +43,7 @@ namespace tfel
       SignalManager&
       operator = (const SignalManager &);
       void eraseHandlers(void);
-      static void treatAction(const int);
+      static void treatAction(int);
       std::map<int,std::map<unsigned short,SignalHandler *> > callBacks;
       std::map<int,SignalHandler *> sHandlers;
       unsigned short handlerNbr;

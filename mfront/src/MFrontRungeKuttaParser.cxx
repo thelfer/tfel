@@ -6,6 +6,7 @@
  */
 
 #include<string>
+#include<sstream>
 #include<stdexcept>
 
 #include"System/System.hxx"

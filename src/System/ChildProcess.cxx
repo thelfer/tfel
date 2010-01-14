@@ -32,7 +32,7 @@ namespace tfel
       ::close(this->outputStream);
     } // end of ChildProcess::~ChildProcess
 
-    int
+    pid_t
     ChildProcess::getPid(void) const
     {
       return this->pid;

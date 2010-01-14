@@ -239,7 +239,8 @@ namespace mfront
     }
     if(p2==interfaces.end()){
       interfaces.resize(interfaces.size()+1);
-      p2 = --(interfaces.end());
+      p2 = interfaces.end();
+      --p2;
     }
     p2->function = name;
     p2->library  = lib;

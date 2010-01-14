@@ -6,6 +6,8 @@
  * \date   01 jui 2007
  */
 
+#include<sstream>
+
 #include"System/System.hxx"
 #include"MFrontIsotropicBehaviourParserBase.hxx"
 

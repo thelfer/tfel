@@ -27,20 +27,20 @@
         return std::Y(x);                                                                 \
       }                                                                                   \
       qt<NoUnit,float> Fct##X::operator()(const qt<NoUnit,float> x) const {               \
-        return std::Y(x);                                                                 \
+        return qt<NoUnit,float>(std::Y(x.getValue()));			                  \
       }                                                                                   \
       double Fct##X::operator()(const double x) const {			                  \
         return ::Y(x);                                                                    \
       }                                                                                   \
       qt<NoUnit,double> Fct##X::operator()(const qt<NoUnit,double> x) const {             \
-        return ::Y(x);                                                                    \
+        return qt<NoUnit,double>(::Y(x.getValue()));			                  \
       }                                                                                   \
       long double Fct##X::operator()(const long double x) const {	                  \
         return std::Y(x);                                                                 \
       }                                                                                   \
       qt<NoUnit,long double>						                  \
       Fct##X::operator()(const qt<NoUnit,long double> x) const {                          \
-        return std::Y(x);                                                                 \
+        return qt<NoUnit,long double>(std::Y(x.getValue()));	 	                  \
       }                                                                                   \
 							                                  \
       Complex<float>							                  \
@@ -51,7 +51,7 @@
       qt<NoUnit,Complex<float> >					                  \
       Fct##X::operator()(const qt<NoUnit,Complex<float> > x) const {                      \
         typedef Complex<float> Comp;                                                      \
-        return Comp(std::Y(static_cast<Complex<float> >(x)));                             \
+        return qt<NoUnit,Complex<float> >(Comp(std::Y(static_cast<Complex<float> >(x.getValue())))); \
       }                                                                                   \
                                                                                           \
       Complex<double>							                  \
@@ -62,7 +62,7 @@
       qt<NoUnit,Complex<double> >					                  \
       Fct##X::operator()(const qt<NoUnit,Complex<double> > x) const {                     \
         typedef Complex<double> Comp;                                                     \
-        return Comp(std::Y(static_cast<Complex<double> >(x)));                            \
+        return qt<NoUnit,Complex<double> >(Comp(std::Y(static_cast<Complex<double> >(x.getValue())))); \
       }                                                                                   \
 							                                  \
       Complex<long double>						                  \
@@ -73,7 +73,7 @@
       qt<NoUnit,Complex<long double> >					                  \
       Fct##X::operator()(const qt<NoUnit,Complex<long double> > x) const {                \
         typedef Complex<long double> Comp;                                                \
-        return Comp(std::Y(static_cast<Complex<long double> >(x)));                       \
+        return qt<NoUnit,Complex<long double> >(Comp(std::Y(static_cast<Complex<long double> >(x.getValue())))); \
       }
 
 #define TFEL_MATH_STANDARD_FUNCTION_MEMBER_II(X,Y)                                        \
@@ -84,20 +84,20 @@
         return std::Y(x);                                                                 \
       }                                                                                   \
       qt<NoUnit,float> Fct##X::operator()(const qt<NoUnit,float> x) const {               \
-        return std::Y(x);                                                                 \
+        return qt<NoUnit,float>(std::Y(x.getValue()));			\
       }                                                                                   \
       double Fct##X::operator()(const double x) const {			                  \
         return ::Y(x);                                                                    \
       }                                                                                   \
       qt<NoUnit,double> Fct##X::operator()(const qt<NoUnit,double> x) const {             \
-        return ::Y(x);                                                                    \
+        return qt<NoUnit,double>(::Y(x.getValue()));			\
       }                                                                                   \
       long double Fct##X::operator()(const long double x) const {	                  \
         return std::Y(x);                                                                 \
       }                                                                                   \
       qt<NoUnit,long double>						                  \
       Fct##X::operator()(const qt<NoUnit,long double> x) const {                          \
-        return std::Y(x);                                                                 \
+        return qt<NoUnit,long double>(std::Y(x.getValue()));		\
       }
 
 

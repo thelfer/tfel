@@ -252,7 +252,8 @@ namespace mfront{
       } else if(ai.size()!=0){
 	msg += " (available interface are : ";
 	p2   = ai.begin();
-	p2b  = ++(ai.begin());
+	p2b  = ai.begin();
+	++p2b;
 	p2e  = ai.end();
 	while(p2b!=p2e){
 	  msg += "'"+*p2+"'";

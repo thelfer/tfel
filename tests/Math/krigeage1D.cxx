@@ -12,10 +12,7 @@
 #include<fstream>
 #include<cstdlib>
 
-#ifdef HAVE_FENV
-#include <fenv.h>
-#endif /* HAVE_FENV */
-
+#include"Math/General/floating_point_exceptions.hxx"
 #include"Math/Kriging.hxx"
 
 double
@@ -34,14 +31,8 @@ int main () {
   unsigned int i;
   ofstream data("data.txt");
   ofstream out("out.txt");
-
-
-#ifdef HAVE_FENV
-  feenableexcept(FE_DIVBYZERO); //	division by zero
-  feenableexcept(FE_UNDERFLOW); //	result not representable due to underflow
-  feenableexcept(FE_OVERFLOW);  //	result not representable due to overflow
-  feenableexcept(FE_INVALID);   //	invalid operation
-#endif /* HAVE_FENV */
+  
+  init_floating_point_exceptions();
 
   for(i=0;i!=10;++i){
     x = rand(0.,1.);
