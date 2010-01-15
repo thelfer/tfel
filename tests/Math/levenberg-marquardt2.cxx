@@ -58,7 +58,5 @@ int main(void)
   levmar.setInitialGuess(p);
   // execute
   p  = levmar.execute();
-//   cout << p(0) << endl;
-//   cout << p(1) << endl;
   return EXIT_SUCCESS;
 } // end of main
