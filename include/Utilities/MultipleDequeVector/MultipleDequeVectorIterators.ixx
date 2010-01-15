@@ -25,6 +25,8 @@ namespace tfel{
       typedef typename Transform<T1>::value_type value_type;
       typedef typename Transform<T1>::pointer    pointer;
       typedef typename Transform<T1>::reference  reference;
+
+      typedef MultipleDequeVectorContainer<T,Transform,container,Allocator> Container;
       
       // Constructor with an iterator
       inline iterator(typename container<typename Transform<T1>::type,
@@ -38,15 +40,15 @@ namespace tfel{
 
       // Copy constructor
       inline iterator(const typename
-		      MultipleDequeVectorContainer<T,Transform,container,Allocator>::template iterator<T1>& src)
-	: p_(src.p_)
+		      Container::template iterator<T1>& src)
+	: p_(src.getIterator())
       {}
 
       // Assignement operator
       inline iterator& operator= (const typename 
-				  MultipleDequeVectorContainer<T,Transform,container,Allocator>::template iterator<T1>&
+				  Container::template iterator<T1>&
 				  src){
-	this->p_ = src.p_;
+	this->p_ = src.getIterator();
 	return *this;
       }
       
@@ -86,14 +88,14 @@ namespace tfel{
 
       inline bool
       operator==(const typename
-		 MultipleDequeVectorContainer<T,Transform,container,Allocator>::template iterator<T1>& src) const {
-	return this->p_==src.p_;
+		 Container::template iterator<T1>& src) const {
+	return this->p_==src.getIterator();
       }
       
       inline bool
       operator!=(const typename
-		 MultipleDequeVectorContainer<T,Transform,container,Allocator>::template iterator<T1>& src) const {
-	return this->p_!=src.p_;
+		 Container::template iterator<T1>& src) const {
+	return this->p_!=src.getIterator();
       }
       
       inline pointer operator->(void){
@@ -104,16 +106,21 @@ namespace tfel{
 	return Transform<T1>::reverse_transform(*(this->p_));
       }
 
-    private:
+      typename container<typename Transform<T1>::type,
+			 typename Allocator::template rebind<T1>::other>::iterator
+      getIterator()
+      {
+	return this->p_;
+      }
 
-      friend
-      class MultipleDequeVectorContainer<T,Transform,container,Allocator>::const_iterator<T1>;
-      
-      friend
-      class MultipleDequeVectorContainer<T,Transform,container,Allocator>::reverse_iterator<T1>;
-      
-      friend
-      class MultipleDequeVectorContainer<T,Transform,container,Allocator>::const_reverse_iterator<T1>;
+      typename container<typename Transform<T1>::type,
+                         typename Allocator::template rebind<T1>::other>::iterator
+      getIterator() const
+      {
+	return this->p_;
+      }
+
+    private:
 
       typename container<typename Transform<T1>::type,
                          typename Allocator::template rebind<T1>::other>::iterator p_;
@@ -137,9 +144,11 @@ typename Allocator::template rebind<T1>::other>::const_iterator::iterator_catego
       typedef typename Transform<T1>::const_pointer   const_pointer;
       typedef typename Transform<T1>::const_reference const_reference;
       
+      typedef MultipleDequeVectorContainer<T,Transform,container,Allocator> Container;
+
       // Constructor with an const_iterator
       inline const_iterator(typename container<typename Transform<T1>::type,
-typename Allocator::template rebind<T1>::other>::const_iterator p)
+			    typename Allocator::template rebind<T1>::other>::const_iterator p)
 	: p_(p)
       {}
 
@@ -147,21 +156,21 @@ typename Allocator::template rebind<T1>::other>::const_iterator p)
       inline const_iterator(){}
 
       // Copy constructor
-      inline const_iterator(const MultipleDequeVectorContainer<T,Transform,container,Allocator>::const_iterator<T1>& src)
-	: p_(src.p_)
+      inline const_iterator(const Container::const_iterator<T1>& src)
+	: p_(src.getIterator())
       {}
 
       // Assignement operator
       inline const_iterator&
-      operator= (const MultipleDequeVectorContainer<T,Transform,container,Allocator>::const_iterator<T1>& src){
-	this->p_ = src.p_;
+      operator= (const Container::const_iterator<T1>& src){
+	this->p_ = src.getIterator();
 	return *this;
       }
       
       // Assignement operator
       inline const_iterator&
-      operator = (const MultipleDequeVectorContainer<T,Transform,container,Allocator>::iterator<T1>& src){
-	this->p_ = src.p_;
+      operator = (const Container::iterator<T1>& src){
+	this->p_ = src.getIterator();
 	return *this;
       }
 
@@ -199,20 +208,20 @@ typename Allocator::template rebind<T1>::other>::const_iterator p)
 	(this->p_)--;
       }
 
-      inline bool operator==(const MultipleDequeVectorContainer<T,Transform,container,Allocator>::const_iterator<T1>& src) const {
-	return this->p_==src.p_;
+      inline bool operator==(const Container::const_iterator<T1>& src) const {
+	return this->p_==src.getIterator();
       }
       
-      inline bool operator!=(const MultipleDequeVectorContainer<T,Transform,container,Allocator>::const_iterator<T1>& src) const{
-	return p_!=src.p_;
+      inline bool operator!=(const Container::const_iterator<T1>& src) const{
+	return p_!=src.getIterator();
       }
       
-      inline bool operator==(const MultipleDequeVectorContainer<T,Transform,container,Allocator>::iterator<T1>& src) const {
-	return this->p_==src.p_;
+      inline bool operator==(const Container::iterator<T1>& src) const {
+	return this->p_==src.getIterator();
       }
       
-      inline bool operator!=(const MultipleDequeVectorContainer<T,Transform,container,Allocator>::iterator<T1>& src) const{
-	return this->p_!=src.p_;
+      inline bool operator!=(const Container::iterator<T1>& src) const{
+	return this->p_!=src.getIterator();
       }
 
       inline const_pointer operator->(void) const{
@@ -223,16 +232,21 @@ typename Allocator::template rebind<T1>::other>::const_iterator p)
 	return Transform<T1>::reverse_transform(*(this->p_));
       }
 
-    private:
+      inline typename container<typename Transform<T1>::type,
+				typename Allocator::template rebind<T1>::other>::const_iterator
+      getIterator() const
+      {
+	return this->p_;
+      }
 
-      friend
-      class MultipleDequeVectorContainer<T,Transform,container,Allocator>::iterator<T1>;
-      
-      friend
-      class MultipleDequeVectorContainer<T,Transform,container,Allocator>::reverse_iterator<T1>;
-      
-      friend
-      class MultipleDequeVectorContainer<T,Transform,container,Allocator>::const_reverse_iterator<T1>;
+      inline typename container<typename Transform<T1>::type,
+				typename Allocator::template rebind<T1>::other>::const_iterator
+      getIterator()
+      {
+	return this->p_;
+      }
+
+    private:
 
       typename container<typename Transform<T1>::type,
 			 typename Allocator::template rebind<T1>::other>::const_iterator p_;
@@ -254,7 +268,8 @@ typename Allocator::template rebind<T1>::other>::const_iterator p)
       typedef typename Transform<T1>::value_type value_type;
       typedef typename Transform<T1>::pointer    pointer;
       typedef typename Transform<T1>::reference  reference;
-      
+      typedef MultipleDequeVectorContainer<T,Transform,container,Allocator> Container;
+
       // Constructor with an reverse_iterator
       inline reverse_iterator(typename container<typename Transform<T1>::type,
 			      typename Allocator::template rebind<T1>::other>::reverse_iterator p)
@@ -265,13 +280,13 @@ typename Allocator::template rebind<T1>::other>::const_iterator p)
       inline reverse_iterator(){}
 
       // Copy constructor
-      inline reverse_iterator(const MultipleDequeVectorContainer<T,Transform,container,Allocator>::reverse_iterator<T1>& src)
-	: p_(src.p_)
+      inline reverse_iterator(const Container::reverse_iterator<T1>& src)
+	: p_(src.getIterator())
       {}
 
       // Assignement operator
-      inline reverse_iterator& operator= (const MultipleDequeVectorContainer<T,Transform,container,Allocator>::reverse_iterator<T1>& src){
-	this->p_ = src.p_;
+      inline reverse_iterator& operator= (const Container::reverse_iterator<T1>& src){
+	this->p_ = src.getIterator();
 	return *this;
       }
       
@@ -309,12 +324,12 @@ typename Allocator::template rebind<T1>::other>::const_iterator p)
 	(this->p_)--;
       }
 
-      inline bool operator==(const MultipleDequeVectorContainer<T,Transform,container,Allocator>::reverse_iterator<T1>& src) const {
-	return this->p_==src.p_;
+      inline bool operator==(const Container::reverse_iterator<T1>& src) const {
+	return this->p_==src.getIterator();
       }
       
-      inline bool operator!=(const MultipleDequeVectorContainer<T,Transform,container,Allocator>::reverse_iterator<T1>& src) const {
-	return this->p_!=src.p_;
+      inline bool operator!=(const Container::reverse_iterator<T1>& src) const {
+	return this->p_!=src.getIterator();
       }
       
       inline pointer operator->(void){
@@ -325,16 +340,21 @@ typename Allocator::template rebind<T1>::other>::const_iterator p)
 	return Transform<T1>::reverse_transform(*(this->p_));
       }
 
-    private:
+      typename container<typename Transform<T1>::type,
+			 typename Allocator::template rebind<T1>::other>::reverse_iterator
+      getIterator() const
+      {
+	return this->p_;
+      }
 
-      friend
-      class MultipleDequeVectorContainer<T,Transform,container,Allocator>::iterator<T1>;
+      typename container<typename Transform<T1>::type,
+			 typename Allocator::template rebind<T1>::other>::reverse_iterator
+      getIterator()
+      {
+	return this->p_;
+      }
       
-      friend
-      class MultipleDequeVectorContainer<T,Transform,container,Allocator>::const_iterator<T1>;
-      
-      friend
-      class MultipleDequeVectorContainer<T,Transform,container,Allocator>::const_reverse_iterator<T1>;
+    private:
 
       typename container<typename Transform<T1>::type,
 			 typename Allocator::template rebind<T1>::other>::reverse_iterator p_;
@@ -343,20 +363,21 @@ typename Allocator::template rebind<T1>::other>::const_iterator p)
 
     };
 
-      template<typename T,
-	       template<class> class Transform,
-	       template<class,class> class container,
-	       typename Allocator>
+    template<typename T,
+	     template<class> class Transform,
+	     template<class,class> class container,
+	     typename Allocator>
     template<typename T1>
     struct MultipleDequeVectorContainer<T,Transform,container,Allocator>::const_reverse_iterator
     {
 
       typedef typename container<typename Transform<T1>::type,
-typename Allocator::template rebind<T1>::other>::const_reverse_iterator::iterator_category iterator_category;
+				 typename Allocator::template rebind<T1>::other>::const_reverse_iterator::iterator_category iterator_category;
       typedef typename Transform<T1>::value_type value_type;
       typedef typename Transform<T1>::const_pointer    const_pointer;
       typedef typename Transform<T1>::const_reference  const_reference;
-      
+      typedef MultipleDequeVectorContainer<T,Transform,container,Allocator> Container;
+
       // Constructor with an const_reverse_iterator
       inline const_reverse_iterator(typename container<typename Transform<T1>::type,
 				    typename Allocator::template rebind<T1>::other>::const_reverse_iterator p)
@@ -367,19 +388,19 @@ typename Allocator::template rebind<T1>::other>::const_reverse_iterator::iterato
       inline const_reverse_iterator(){}
 
       // Copy constructor
-      inline const_reverse_iterator(const MultipleDequeVectorContainer<T,Transform,container,Allocator>::const_reverse_iterator<T1>& src)
-	: p_(src.p_)
+      inline const_reverse_iterator(const Container::const_reverse_iterator<T1>& src)
+	: p_(src.getIterator())
       {}
 
       // Assignement operator
-      inline const_reverse_iterator& operator= (const MultipleDequeVectorContainer<T,Transform,container,Allocator>::const_reverse_iterator<T1>& src){
-	p_ = src.p_;
+      inline const_reverse_iterator& operator= (const Container::const_reverse_iterator<T1>& src){
+	p_ = src.getIterator();
 	return *this;
       }
 
       // Assignement operator
-      inline const_reverse_iterator& operator= (const MultipleDequeVectorContainer<T,Transform,container,Allocator>::reverse_iterator<T1>& src){
-	this->p_ = src.p_;
+      inline const_reverse_iterator& operator= (const Container::reverse_iterator<T1>& src){
+	this->p_ = src.getIterator();
 	return *this;
       }
 
@@ -418,20 +439,20 @@ typename Allocator::template rebind<T1>::other>::const_reverse_iterator::iterato
 	(this->p_)--;
       }
       
-      inline bool operator==(const MultipleDequeVectorContainer<T,Transform,container,Allocator>::const_reverse_iterator<T1>& src) const {
-	return this->p_==src.p_;
+      inline bool operator==(const Container::const_reverse_iterator<T1>& src) const {
+	return this->p_==src.getIterator();
       }
       
-      inline bool operator!=(const MultipleDequeVectorContainer<T,Transform,container,Allocator>::const_reverse_iterator<T1>& src) const{
-	return this->p_!=src.p_;
+      inline bool operator!=(const Container::const_reverse_iterator<T1>& src) const{
+	return this->p_!=src.getIterator();
       }
 
-      inline bool operator==(const MultipleDequeVectorContainer<T,Transform,container,Allocator>::reverse_iterator<T1>& src) const {
-	return this->p_==src.p_;
+      inline bool operator==(const Container::reverse_iterator<T1>& src) const {
+	return this->p_==src.getIterator();
       }
       
-      inline bool operator!=(const MultipleDequeVectorContainer<T,Transform,container,Allocator>::reverse_iterator<T1>& src) const{
-	return p_!=src.p_;
+      inline bool operator!=(const Container::reverse_iterator<T1>& src) const{
+	return p_!=src.getIterator();
       }
       
       inline const_pointer operator->(void) const{
@@ -442,16 +463,21 @@ typename Allocator::template rebind<T1>::other>::const_reverse_iterator::iterato
 	return Transform<T1>::reverse_transform(*(this->p_));
       }
 
-    private:
+      typename container<typename Transform<T1>::type,
+			 typename Allocator::template rebind<T1>::other>::const_reverse_iterator
+      getIterator()
+      {
+	return this->p_;
+      }
 
-      friend
-      class MultipleDequeVectorContainer<T,Transform,container,Allocator>::iterator<T1>;
-      
-      friend
-      class MultipleDequeVectorContainer<T,Transform,container,Allocator>::const_iterator<T1>;
-      
-      friend
-      class MultipleDequeVectorContainer<T,Transform,container,Allocator>::reverse_iterator<T1>;
+      typename container<typename Transform<T1>::type,
+			 typename Allocator::template rebind<T1>::other>::const_reverse_iterator
+      getIterator() const
+      {
+	return this->p_;
+      }
+
+    private:
 
       typename container<typename Transform<T1>::type,
 			 typename Allocator::template rebind<T1>::other>::const_reverse_iterator p_;
