@@ -2,6 +2,8 @@
 #undef NDEBUG
 #endif /* NDEBUG */
 
+#include<cmath>
+#include<cassert>
 #include<cstdlib>
 
 #include "Math/stensor.hxx"
@@ -9,6 +11,7 @@
 
 int main(void){
 
+  using namespace std;  
   using namespace tfel::math;  
 
   typedef stensor<1> stensor1;
@@ -16,6 +19,7 @@ int main(void){
 
   stensor1 v1;
   stensor2 v2;
+  stensor1 v3;
 
   v2(0)=2;
   v2(1)=1;
@@ -25,21 +29,11 @@ int main(void){
   v1(1)=1.;
   v1(2)=25.;
 
-//   std::cout << stensor<1>::getName() << std::endl;
-//   std::cout << stensor<1,unsigned short>::getName() << std::endl;
+  v3 = v1 + v2;
 
-//   function(v1);
-//   function(2*v1);
-//   function(v1*2);
-//   function(v2);
-//   function(v1+v2);
-//   function(v1-v2);
-//   function(v1+v2+v1);
-//   function(v1+v2-v1);
-//   function(2.*v1+v2);
-//   function(v1+2.*(v1+v2));
-  
-//   std::cout << "success" << std::endl;
+  assert(abs(v3(0)-6)<1.e-14);
+  assert(abs(v3(1)-2)<1.e-14);
+  assert(abs(v3(2)-30)<1.e-14);
 
   return EXIT_SUCCESS;
 

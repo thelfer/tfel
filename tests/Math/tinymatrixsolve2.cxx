@@ -9,6 +9,8 @@
 #undef NDEBUG
 #endif /* NDEBUG */
 
+#include<cmath>
+#include<cassert>
 #include<cstdlib>
 
 #include"Math/tvector.hxx"
@@ -35,11 +37,11 @@ int main(void)
   b(0) = 12;
   b(1) = 11;
   b(2) = 2;
-
-//   cout << "********" << endl;
-//   cout << m << endl;
   TinyMatrixSolve<3,double>::exe(m,b);
-//   cout << m << endl;
-//   cout << "b : " << b << endl;
-//   cout << endl;
+
+  assert(abs(b(0)-3)<1.e-14);
+  assert(abs(b(1)-1)<1.e-14);
+  assert(abs(b(2)-2)<1.e-14);
+
+  return EXIT_SUCCESS;
 } // end of main

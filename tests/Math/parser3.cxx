@@ -10,6 +10,8 @@
 #undef NDEBUG
 #endif /* NDEBUG */
 
+#include<cmath>
+#include<cassert>
 #include<cstdlib>
 
 #include"Math/Evaluator.hxx"
@@ -25,6 +27,6 @@ main(void)
   Evaluator f(var,"diff(cos(x),x)");
   SmartPtr<ExternalFunction> df = f.differentiate(0);
   df->setVariableValue(0,2.);
-//   cout << df->getValue() << endl;
+  assert(abs(df->getValue()+cos(2.))<1.e-14);
   return EXIT_SUCCESS;
 }

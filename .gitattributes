@@ -752,8 +752,6 @@ tests/Math/St2toSt2/ST2toST2FTMV.cxx -text
 tests/Math/St2toSt2/st2tost2-2.cxx -text
 tests/Math/St2toSt2/st2tost2-3.cxx -text
 tests/Math/St2toSt2/st2tost2.cxx -text
-tests/Math/VectorExprIterator.cxx -text
-tests/Math/VectorExprIterator2.cxx -text
 tests/Math/VectorResultType.cxx -text
 tests/Math/array.cxx -text
 tests/Math/array2.cxx -text

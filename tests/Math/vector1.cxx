@@ -9,9 +9,9 @@
 #undef NDEBUG
 #endif /* NDEBUG */
 
+#include<cmath>
+#include<cassert>
 #include<cstdlib>
-#include<iterator>
-#include<algorithm>
 
 #include"Math/vector.hxx"
 #include"Math/functions.hxx"
@@ -30,18 +30,30 @@ int main(void)
   vector<double> v3(5);
 
   v3 = v+2.5*v2;
-  
-//   copy(v3.begin(),v3.end(),ostream_iterator<double>(cout," "));
-//   cout << endl;
 
-//   cout << "Size : " << v3.size() << endl; 
-  v3.resize(8);
-//   cout << "Size : " << v3.size() << endl; 
+  assert(abs(v(0))<1.e-14);
+  assert(abs(v(1)-1.)<1.e-14);
+  assert(abs(v(2)-2.)<1.e-14);
+  assert(abs(v(3)-3.)<1.e-14);
+  assert(abs(v(4)-4.)<1.e-14);
+  assert(abs(v2(0)-3.)<1.e-14);
+  assert(abs(v2(1)-3.)<1.e-14);
+  assert(abs(v2(2)-3.)<1.e-14);
+  assert(abs(v2(3)-3.)<1.e-14);
+  assert(abs(v2(4)-3.)<1.e-14);
 
-//   copy(v3.begin(),v3.end(),ostream_iterator<double>(cout," "));
-//   cout << endl;
+   assert(abs(v3(0)-7.5)<1.e-14);
+  assert(abs(v3(1)-8.5)<1.e-14);
+  assert(abs(v3(2)-9.5)<1.e-14);
+  assert(abs(v3(3)-10.5)<1.e-14);
+  assert(abs(v3(4)-11.5)<1.e-14);
 
-//   cout << "sin : " << sin(v3)(3) << endl;
+  v3 = sin(v);
+  assert(abs(v3(0)-0.)<1.e-14);
+  assert(abs(v3(1)-sin(1.))<1.e-14);
+  assert(abs(v3(2)-sin(2.))<1.e-14);
+  assert(abs(v3(3)-sin(3.))<1.e-14);
+  assert(abs(v3(4)-sin(4.))<1.e-14);
 
   return EXIT_SUCCESS;
 }

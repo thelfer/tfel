@@ -10,46 +10,45 @@
 #undef NDEBUG
 #endif /* NDEBUG */
 
-#include <cstdlib>
 #include <cmath>
+#include <cassert>
+#include <cstdlib>
 
 #include"Math/stensor.hxx"
 #include"Math/Stensor/StensorExternalTabStorage.hxx"
 #include"Math/Stensor/StensorExternalVoigtStorage.hxx"
 
+#include<iostream>
+
 int main(void){
 
-  using namespace tfel::math;
   using namespace std;
+  using namespace tfel::math;
 
-  double  a[] ={0.,0.,0.,1.};
-  double  b[] ={0.,0.,0.,std::sqrt(2.)};
+  double  a[] ={1.,1.3,0.5,1.};
+  double  b[] ={0.2,0.3,-0.4,3.4*std::sqrt(2.)};
 
-//   cout << "Test ExternalTab" << endl;
+  stensor<2,double,StensorExternalVoigt> sig(b);
+  assert(abs(sig(0)-0.2)<1.e-14);
+  assert(abs(sig(1)-0.3)<1.e-14);
+  assert(abs(sig(2)+0.4)<1.e-14);
+  assert(abs(sig(3)-3.4)<1.e-14);
+  sig*=2u;
+  assert(abs(sig(0)-0.4)<1.e-14);
+  assert(abs(sig(1)-0.6)<1.e-14);
+  assert(abs(sig(2)+0.8)<1.e-14);
+  assert(abs(sig(3)-6.8)<1.e-14);
   
-//   copy(a,a+4,ostream_iterator<double>(cout," "));
-//   cout << endl;
-  {
-    stensor<2,double,StensorExternalTab> sig(a);
-//     cout << sig << endl;
-    sig*=2u;
-//     cout << sig << endl;
-  }
-//   copy(a,a+4,ostream_iterator<double>(cout," "));
-//   cout << endl;
-
-//   cout << "Test ExternalVoigt" << endl;
-//   copy(b,b+4,ostream_iterator<double>(cout," "));
-//   cout << endl;
-  {
-    stensor<2,double,StensorExternalVoigt> sig(b);
-//     cout << sig << endl;
-    sig*=2u;
-//     cout << sig << endl;
-  }
-//   copy(b,b+4,ostream_iterator<double>(cout," "));
-//   cout << endl;
-
+  stensor<2,double,StensorExternalTab> sig2(a);
+  assert(abs(sig2(0)-1.)<1.e-13);
+  assert(abs(sig2(1)-1.3)<1.e-14);
+  assert(abs(sig2(2)-0.5)<1.e-14);
+  assert(abs(sig2(3)-sqrt(2))<1.e-14);
+  sig2 *= 2u;
+  assert(abs(sig2(0)-2.)<1.e-14);
+  assert(abs(sig2(1)-2.6)<1.e-14);
+  assert(abs(sig2(2)-1.)<1.e-14);
+  assert(abs(sig2(3)-2*sqrt(2))<1.e-14);
 
   return EXIT_SUCCESS;
 }

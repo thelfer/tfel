@@ -10,12 +10,15 @@
 #undef NDEBUG
 #endif /* NDEBUG */
 
+#include<cmath>
+#include<cassert>
 #include<cstdlib>
 
 #include "Math/stensor.hxx"
 
 int main(void)
 {
+  using namespace std;
   using namespace tfel::math;
 
   double vp1;
@@ -28,7 +31,9 @@ int main(void)
 
   s.computeEigenValues(vp1,vp2,vp3);
 
-//   std::cout << "Valeurs propres : " << vp1 << " " << vp2 << " " << vp3 << std::endl;
+  assert(abs(vp1-1.)<1.e-14);
+  assert(abs(vp2-2.5)<1.e-14);
+  assert(abs(vp3-0.234)<1.e-14);
 
   return EXIT_SUCCESS;
 }

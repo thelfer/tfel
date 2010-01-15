@@ -9,6 +9,8 @@
 #undef NDEBUG
 #endif /* NDEBUG */
 
+#include <cmath>
+#include <cassert>
 #include <cstdlib>
 
 #include "Math/General/Complex.hxx"
@@ -28,18 +30,14 @@ int main(void){
 
   s2 = 0.5f*s;
 
-//   cout << s2 << endl;
+  assert((abs(real(s2(0)-Complex<float>(1.f)))<1.e-3));
+  assert(abs(imag(s2(0)))<1.e-3);
 
-  s(0) = Complex<float>(12.f);
-  s(1) = Complex<float>(-3.);
-  s(2) = Complex<float>(-1.);
-  s2(0) = Complex<float>(2.f);
-  s2(1) = Complex<float>(1.f);
-  s2(2) = Complex<float>(4.f);
+  assert((abs(real(s2(1)-Complex<float>(1.5708f)))<1.e-3));
+  assert(abs(imag(s2(1)))<1.e-3);
 
-//   cout << trace(s+0.5f*s2) << endl;
-
-//   cout << 2.f*Complex<float>(4.f) << endl;
+  assert((abs(real(s2(2)-Complex<float>(2115.7)))<1.));
+  assert(abs(imag(s2(2)))<1.e-3);
 
   return EXIT_SUCCESS;
 }

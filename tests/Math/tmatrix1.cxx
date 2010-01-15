@@ -10,7 +10,9 @@
 #undef NDEBUG
 #endif /* NDEBUG */
 
+#include<cmath>
 #include<cstdlib>
+#include<cassert>
 
 #include "Math/tmatrix.hxx"
 #include "Math/TinyMatrixSolve.hxx"
@@ -30,9 +32,25 @@ int main(void){
   
   m2 = m;
 
-//   cout << m  << endl;
-//   cout << m2 << endl;
+  assert(abs(m(0,0)-0.)<1.e-14);
+  assert(abs(m(0,1)-1.)<1.e-14);
+  assert(abs(m(1,0)-2.)<1.e-14);
+  assert(abs(m(1,1)-3.)<1.e-14);
+  assert(abs(m2(0,0)-0.)<1.e-14);
+  assert(abs(m2(0,1)-1.)<1.e-14);
+  assert(abs(m2(1,0)-2.)<1.e-14);
+  assert(abs(m2(1,1)-3.)<1.e-14);
 
+  m2 = 2.*m;
+
+  assert(abs(m(0,0)-0.)<1.e-14);
+  assert(abs(m(0,1)-1.)<1.e-14);
+  assert(abs(m(1,0)-2.)<1.e-14);
+  assert(abs(m(1,1)-3.)<1.e-14);
+  assert(abs(m2(0,0)-0.)<1.e-14);
+  assert(abs(m2(0,1)-2.)<1.e-14);
+  assert(abs(m2(1,0)-4.)<1.e-14);
+  assert(abs(m2(1,1)-6.)<1.e-14);
 
   return EXIT_SUCCESS;
 

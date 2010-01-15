@@ -98,7 +98,5 @@ int main(void)
 #endif
   test<double>();
 
-//   std::cout << "success" << std::endl; 
-
   return EXIT_SUCCESS;
 }

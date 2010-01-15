@@ -2,7 +2,9 @@
 #undef NDEBUG
 #endif /* NDEBUG */
 
+#include<cmath>
 #include<cstdlib>
+#include<cassert>
 
 #include "Math/qt.hxx"
 #include "Math/tvector.hxx"
@@ -13,33 +15,38 @@ int main(void){
   using namespace tfel::math;
   using namespace tfel::utilities;
 
-  typedef tvector<5,qt<Acceleration> > vector1;
-  typedef tvector<5,qt<Acceleration,int> > vector2;
-  typedef tvector<5,qt<Force> > vector3;
+  typedef qt<Acceleration,int> acceleration;
+  typedef qt<Mass,int>  mass;
+  typedef qt<Force>     force;
 
-  qt<Mass,int> m = qt<Mass,int>(2);
-  vector1 v1;
-  vector2 v2;
-  vector3 v3;
+  typedef tvector<5,acceleration> avector;
+  typedef tvector<5,acceleration> avector;
+  typedef tvector<5,force>        fvector;
 
-  v2(0)=qt<Acceleration,int>(2);
-  v2(1)=qt<Acceleration,int>(1);
-  v2(2)=qt<Acceleration,int>(4);
-  v2(3)=qt<Acceleration,int>(2);
-  v2(4)=qt<Acceleration,int>(3);
+  mass m = mass(2);
+  avector a1;
+  avector a2;
+  fvector f;
 
-  v1=2.*(v2+v2);
-  v3 = m*v1;
+  a2(0)=acceleration(2);
+  a2(1)=acceleration(1);
+  a2(2)=acceleration(4);
+  a2(3)=acceleration(2);
+  a2(4)=acceleration(3);
 
-//   cout << v2 << endl;
-//   cout << v1 << endl;
-//   cout << v3 << endl;
-    
-//   //  cout << norm(v3) << endl;
-//   cout << (v3|v1) << endl;
-//   cout << name(v3) << endl;
-//   cout << name(v1) << endl;
-//   cout << name((v3|v1)) << endl;
+  a1=2*(a2+a2);
+  assert(abs(a1(0).getValue()-8)==0);
+  assert(abs(a1(1).getValue()-4)==0);
+  assert(abs(a1(2).getValue()-16)==0);
+  assert(abs(a1(3).getValue()-8)==0);
+  assert(abs(a1(4).getValue()-12)==0);
+
+  f = m*a1;
+  assert(abs(f(0).getValue()-16)<1.e-14);
+  assert(abs(f(1).getValue()-8)<1.e-14);
+  assert(abs(f(2).getValue()-32)<1.e-14);
+  assert(abs(f(3).getValue()-16)<1.e-14);
+  assert(abs(f(4).getValue()-24)<1.e-14);
 
   return EXIT_SUCCESS;
 

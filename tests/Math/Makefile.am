@@ -34,8 +34,6 @@ test_PROGRAMS = hill                  \
 		tvector               \
 		tvector2              \
 		tvector3              \
-		VectorExprIterator    \
-		VectorExprIterator2   \
 		VectorResultType      \
 		vector1               \
 		parser                \
@@ -82,8 +80,6 @@ tmatrix2_SOURCES              = tmatrix2.cxx
 tvector_SOURCES               = tvector.cxx
 tvector2_SOURCES              = tvector2.cxx
 tvector3_SOURCES              = tvector3.cxx
-VectorExprIterator_SOURCES    = VectorExprIterator.cxx   
-VectorExprIterator2_SOURCES   = VectorExprIterator2.cxx   
 vector1_SOURCES               = vector1.cxx   
 VectorResultType_SOURCES      = VectorResultType.cxx
 Range_SOURCES                 = Range.cxx
