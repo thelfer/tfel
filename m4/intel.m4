@@ -7,7 +7,7 @@ AC_DEFUN([AC_CHECK_INTEL],
     [
 	if test "x$INTEL" = "xyes"; then
 	    dnl icpc default warning options
-	    CXXFLAGS="-Wall  -wd 981,383,444,858,191,68,810,1418 $CXXFLAGS"
+	    CXXFLAGS="-Wall  -diag-disable 981,383,444,858,191,68,810,1418 $CXXFLAGS"
 	    dnl 444 : destructor for base class ... is not virtual
 	    dnl 383 : value copied to temporary, reference to temporary used
 	    dnl 981 : operands are evaluated in unspecified order
