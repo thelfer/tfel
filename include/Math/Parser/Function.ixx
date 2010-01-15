@@ -25,16 +25,16 @@ namespace tfel
     namespace parser
     {
 
-      template<double (*f)(double)>
+      template<StandardFunctionPtr f>
       StandardFunction<f>::StandardFunction(const tfel::utilities::SmartPtr<Expr> e)
 	: expr(e)
       {} // end of StandardFunction::StandardFunction
 
-      template<double (*f)(double)>
+      template<StandardFunctionPtr f>
       StandardFunction<f>::~StandardFunction()
       {} // end of StandardFunction::StandardFunction
 
-      template<double (*f)(double)>
+      template<StandardFunctionPtr f>
       double
       StandardFunction<f>::getValue(void) const
       {
@@ -54,7 +54,7 @@ namespace tfel
 	return res;
       } // end of StandardFunction::StandardFunction
 
-      template<double (*f)(double)>
+      template<StandardFunctionPtr f>
       void
       StandardFunction<f>::checkCyclicDependency(const std::vector<std::string>& names) const
 	throw(std::runtime_error)
@@ -62,7 +62,7 @@ namespace tfel
 	this->expr->checkCyclicDependency(names);
       } // end of StandardFunction<f>::checkCyclicDependency
 
-      template<double (*f)(double)>
+      template<StandardFunctionPtr f>
       tfel::utilities::SmartPtr<Expr>
       StandardFunction<f>::resolveDependencies(void) const
       {
@@ -70,7 +70,7 @@ namespace tfel
 	return SmartPtr<Expr>(new StandardFunction<f>(this->expr->resolveDependencies()));
       } // end of StandardFunction<f>::resolveDependencies(void)
       
-      template<double (*f)(double)>
+      template<StandardFunctionPtr f>
       tfel::utilities::SmartPtr<Expr>
       StandardFunction<f>::clone(const std::vector<double>& v) const
       {
@@ -78,7 +78,7 @@ namespace tfel
 	return SmartPtr<Expr>(new StandardFunction<f>(this->expr->clone(v)));
       } // end of StandardFunction<f>::clone
 
-      template<double (*f)(double)>
+      template<StandardFunctionPtr f>
       tfel::utilities::SmartPtr<Expr>
       differentiateFunction(const tfel::utilities::SmartPtr<Expr>,
 			    const std::vector<double>::size_type,
@@ -92,7 +92,7 @@ namespace tfel
 	return SmartPtr<Expr>(0);
       }
       
-      template<double (*f)(double)>
+      template<StandardFunctionPtr f>
       tfel::utilities::SmartPtr<Expr>
       StandardFunction<f>::differentiate(const std::vector<double>::size_type pos,
 					 const std::vector<double>& v) const

@@ -26,7 +26,13 @@ namespace tfel
 	virtual ~Function();
       };
 
-      template<double (*f)(double)>
+#ifndef __SUNPRO_CC
+      typedef double (*StandardFunctionPtr)(double);
+#else /* __SUNPRO_CC */
+      extern "C" {typedef double (*StandardFunctionPtr)(double);}
+#endif /* __SUNPRO_CC */
+
+      template<StandardFunctionPtr f>
       struct StandardFunction
 	: public Function
       {
