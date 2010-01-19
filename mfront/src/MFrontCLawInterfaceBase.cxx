@@ -373,7 +373,7 @@ namespace mfront
 	  }
 	}
       }
-      this->srcFile << "return 0;\n} /* end of " << className << "_checkBounds\n */\n";
+      this->srcFile << "return 0;\n} /* end of " << className << "_checkBounds */\n";
     }
     this->writeEndSrcNamespace();
     this->srcFile.close();
