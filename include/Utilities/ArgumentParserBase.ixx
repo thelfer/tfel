@@ -174,7 +174,6 @@ namespace tfel
       this->currentArgument=this->args.begin();
       typename CallBacksContainer::iterator pf;
       typename ArgsContainer::iterator pa;
-      MemberFuncPtr f;
 
       if((pa=find(args.begin(),args.end(),"--help"))!=args.end()){
 	static_cast<Child *>(this)->treatHelp();
@@ -189,7 +188,6 @@ namespace tfel
       while(this->currentArgument!=this->args.end()){
 	pf = this->callBacksContainer.find(*(this->currentArgument));
 	if(pf!=this->callBacksContainer.end()){
-	  f = pf->second.first;
 	  (static_cast<Child *>(this)->*(pf->second.first))();
 	} else {
 	  static_cast<Child *>(this)->treatUnknownArgument();
