@@ -46,7 +46,7 @@ namespace tfel
       ssize_t readChar;
       pid_t pid;
       int status;
-      buf[3]='\0';
+      buf[2]='\0';
       // creating pipe
       if(pipe(in)==-1){
 	cerr << "callGdb : pipe creation failed (" << strerror(errno) << ")\n";
@@ -159,6 +159,7 @@ namespace tfel
       }
       close(res[0]);  
       assert(readChar>0);
+      static_cast<void>(readChar); // disable a warning in icpc when NDEBUG is defined
       waitpid(pid,&status,0);
       return;
     } // end of SignalManager::printBackTrace
