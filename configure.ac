@@ -16,14 +16,33 @@ m4_ifdef([AM_SILENT_RULES],[AM_SILENT_RULES([yes])])
 gpl_licence=no;
 AC_ARG_ENABLE(gpl,
    AC_HELP_STRING([--enable-gpl],
-                  [Allow linking to gpl libraries. Resulting librairies or executables will be covered by the gpl licence]),
+                  [Allow linking to gpl libraries.
+		   Resulting librairies or executables
+		   will be covered by the gpl licence]),
    AC_DEFINE(GPL_LICENCE)
    gpl_licence=yes,[])
 
 #disable static library generation by default
 AC_ENABLE_STATIC(no)
 
-# Checks for programs.
+# Checks for compilers
+# disable automatic declaration of
+# FFLAGS by AC_PROG_F77
+if test "x$FFLAGS" = "x";
+    then
+    FFLAGS=""
+fi
+
+AC_PROG_F77
+AC_F77_WRAPPERS
+
+# disable automatic declaration of
+# CXXFLAGS by AC_PROG_CXX
+if test "x$CXXFLAGS" = "x";
+    then
+    CXXFLAGS=""
+fi
+
 AC_PROG_CXX
 
 # Macro for lisp
@@ -63,7 +82,6 @@ AC_ARG_ENABLE([debug],
 	AC_HELP_STRING([--enable-debug], [Compile with debug options]))
 
 #disable default flags
-CXXFLAGS="";
 CFLAGS="";
 
 #choose between intel icpc and g++
@@ -231,6 +249,9 @@ AC_OUTPUT([debug.sh
 	   mfront/include/Makefile
 	   mfront/src/Makefile
            mfront/src/MFrontHeader.cxx
+           mfront/tests/Makefile
+           mfront/tests/properties/Makefile
+           mfront/tests/behaviours/Makefile
            mfront/lisp/Makefile
 	   mfront/Examples/Makefile
 	   tfel-check/Makefile

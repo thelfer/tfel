@@ -1,1 +1,1 @@
-SUBDIRS = src include lisp Examples
+SUBDIRS = src include tests lisp Examples
