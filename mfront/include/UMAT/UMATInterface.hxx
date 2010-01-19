@@ -38,8 +38,6 @@
 #include"UMAT/UMATComputeThermalExpansionTensor.hxx"
 #include"UMAT/UMATRotationMatrix.hxx"
 
-#include"Utilities/TerminalColors.hxx"
-
 namespace umat{
 
   /*!
@@ -52,7 +50,7 @@ namespace umat{
   struct UMATInterface
   {
     
-    static
+    TFEL_UMAT_INLINE2 static
     void exe(const UMATInt  *const NTENS, const UMATReal *const DTIME,
 	     const UMATReal *const DROT,  const UMATReal *const DDSOE,
 	     const UMATReal *const STRAN, const UMATReal *const DSTRAN,
@@ -89,122 +87,45 @@ namespace umat{
 	  Treat::exe(DTIME,DROT,DDSOE,STRAN,DSTRAN,TEMP,DTEMP,
 		     PROPS,NPROPS,PREDEF,DPRED,STATEV,NSTATV,STRESS);
 	} else{
-	  string msg = "The number of components of tensors (NTENS) does not have ";
-	  msg += "a valid value (";
-	  msg += ToString(*NTENS);
-	  msg += string(" given)");
-	  throw(UMATException(msg));
+	  throw(UMATInvalidNTENSValue(*NTENS));
 	}
       }
       catch(const UMATException& e){
-	cout.write(TerminalColors::Blue,sizeof(TerminalColors::Blue));
 	cout << "The ";
 	if(*NTENS==3){
-	  cout << tfel::utilities::Name<Behaviour<1u,UMATReal,false> >::getName();
+	  cout << Name<Behaviour<1u,UMATReal,false> >::getName();
 	} else if(*NTENS==4){
-	  cout << tfel::utilities::Name<Behaviour<2u,UMATReal,false> >::getName();
+	  cout << Name<Behaviour<2u,UMATReal,false> >::getName();
 	} else if(*NTENS==6){
-	  cout << tfel::utilities::Name<Behaviour<3u,UMATReal,false> >::getName();
+	  cout << Name<Behaviour<3u,UMATReal,false> >::getName();
 	}
 	cout << " Behaviour has caused an " ;
 	cout << "UMAT exception : " << e.getMsg() << endl;
-	cout.write(TerminalColors::White,sizeof(TerminalColors::White));
-	cout << "The ";
-	if(*NTENS==3){
-	  cout << tfel::utilities::Name<Behaviour<1u,UMATReal,false> >::getName();
-	} else if(*NTENS==4){
-	  cout << tfel::utilities::Name<Behaviour<2u,UMATReal,false> >::getName();
-	} else if(*NTENS==6){
-	  cout << tfel::utilities::Name<Behaviour<3u,UMATReal,false> >::getName();
-	}
-	cout << " Behaviour has caused an " ;
-	cout << "UMAT exception : " << e.getMsg() << endl;
-	cout.write(TerminalColors::Red,sizeof(TerminalColors::Red));
-	cout << "The ";
-	if(*NTENS==3){
-	  cout << tfel::utilities::Name<Behaviour<1u,UMATReal,false> >::getName();
-	} else if(*NTENS==4){
-	  cout << tfel::utilities::Name<Behaviour<2u,UMATReal,false> >::getName();
-	} else if(*NTENS==6){
-	  cout << tfel::utilities::Name<Behaviour<3u,UMATReal,false> >::getName();
-	}
-	cout << " Behaviour has caused an " ;
-	cout << "UMAT exception : " << e.getMsg() << endl;
-	cout.write(TerminalColors::Reset, sizeof(TerminalColors::Reset));
 	*KINC = -2;
       }
       catch(const tfel::material::MaterialException& e){
-	cout.write(TerminalColors::Blue,sizeof(TerminalColors::Blue));
 	cout << "The ";
 	if(*NTENS==3){
-	  cout << tfel::utilities::Name<Behaviour<1u,UMATReal,false> >::getName();
+	  cout << Name<Behaviour<1u,UMATReal,false> >::getName();
 	} else if(*NTENS==4){
-	  cout << tfel::utilities::Name<Behaviour<2u,UMATReal,false> >::getName();
+	  cout << Name<Behaviour<2u,UMATReal,false> >::getName();
 	} else if(*NTENS==6){
-	  cout << tfel::utilities::Name<Behaviour<3u,UMATReal,false> >::getName();
+	  cout << Name<Behaviour<3u,UMATReal,false> >::getName();
 	}
 	cout << " Behaviour has caused a " ;
 	cout << "Material exception : " << e.getMsg() << endl;
-	cout.write(TerminalColors::White,sizeof(TerminalColors::White));
-	cout << "The ";
-	if(*NTENS==3){
-	  cout << tfel::utilities::Name<Behaviour<1u,UMATReal,false> >::getName();
-	} else if(*NTENS==4){
-	  cout << tfel::utilities::Name<Behaviour<2u,UMATReal,false> >::getName();
-	} else if(*NTENS==6){
-	  cout << tfel::utilities::Name<Behaviour<3u,UMATReal,false> >::getName();
-	}
-	cout << " Behaviour has caused a " ;
-	cout << "Material exception : " << e.getMsg() << endl;
-	cout.write(TerminalColors::Red,sizeof(TerminalColors::Red));
-	cout << "The ";
-	if(*NTENS==3){
-	  cout << tfel::utilities::Name<Behaviour<1u,UMATReal,false> >::getName();
-	} else if(*NTENS==4){
-	  cout << tfel::utilities::Name<Behaviour<2u,UMATReal,false> >::getName();
-	} else if(*NTENS==6){
-	  cout << tfel::utilities::Name<Behaviour<3u,UMATReal,false> >::getName();
-	}
-	cout << " Behaviour has caused a " ;
-	cout << "Material exception : " << e.getMsg() << endl;
-	cout.write(TerminalColors::Reset, sizeof(TerminalColors::Reset));
 	*KINC = -3;
       }
       catch(const tfel::exception::TFELException& e){
-	cout.write(TerminalColors::Blue,sizeof(TerminalColors::Blue));
 	cout << "The ";
 	if(*NTENS==3){
-	  cout << tfel::utilities::Name<Behaviour<1u,UMATReal,false> >::getName();
+	  cout << Name<Behaviour<1u,UMATReal,false> >::getName();
 	} else if(*NTENS==4){
-	  cout << tfel::utilities::Name<Behaviour<2u,UMATReal,false> >::getName();
+	  cout << Name<Behaviour<2u,UMATReal,false> >::getName();
 	} else if(*NTENS==6){
-	  cout << tfel::utilities::Name<Behaviour<3u,UMATReal,false> >::getName();
+	  cout << Name<Behaviour<3u,UMATReal,false> >::getName();
 	}
 	cout << " Behaviour has caused a " ;
-	cout << "TFEL exception : " << e.getMsg() << endl;
-	cout.write(TerminalColors::White,sizeof(TerminalColors::White));
-	cout << "The ";
-	if(*NTENS==3){
-	  cout << tfel::utilities::Name<Behaviour<1u,UMATReal,false> >::getName();
-	} else if(*NTENS==4){
-	  cout << tfel::utilities::Name<Behaviour<2u,UMATReal,false> >::getName();
-	} else if(*NTENS==6){
-	  cout << tfel::utilities::Name<Behaviour<3u,UMATReal,false> >::getName();
-	}
-	cout << " Behaviour has caused a " ;
-	cout << "TFEL exception : " << e.getMsg() << endl;
-	cout.write(TerminalColors::Red,sizeof(TerminalColors::Red));
-	cout << "The ";
-	if(*NTENS==3){
-	  cout << tfel::utilities::Name<Behaviour<1u,UMATReal,false> >::getName();
-	} else if(*NTENS==4){
-	  cout << tfel::utilities::Name<Behaviour<2u,UMATReal,false> >::getName();
-	} else if(*NTENS==6){
-	  cout << tfel::utilities::Name<Behaviour<3u,UMATReal,false> >::getName();
-	}
-	cout << " Behaviour has caused a " ;
-	cout << "TFEL exception : " << e.getMsg() << endl;
-	cout.write(TerminalColors::Reset, sizeof(TerminalColors::Reset));
 	*KINC = -4;
       }
     
@@ -220,7 +141,7 @@ namespace umat{
       {
 	typedef Behaviour<N,UMATReal,false> BV;
 	typedef typename BV::BehaviourData  BData;
-	static void
+	TFEL_UMAT_INLINE static void
 	exe(BData& data,const UMATReal * const props){
 	  UMATComputeStiffnessTensor<N,UMATTraits<BV>::type>::exe(props,
 								  data.getStiffnessTensor());
@@ -231,7 +152,7 @@ namespace umat{
       {
 	typedef Behaviour<N,UMATReal,false> BV;
 	typedef typename BV::BehaviourData  BData;
-	static void
+	TFEL_UMAT_INLINE static void
 	exe(BData& data,const UMATReal * const props){
 	  UMATComputeThermalExpansionTensor<N,UMATTraits<BV>::type>::exe(props,
 									 data.getThermalExpansionTensor());
@@ -242,7 +163,7 @@ namespace umat{
       {
 	typedef Behaviour<N,UMATReal,false> BV;
 	typedef typename BV::BehaviourData  BData;
-	static void
+	TFEL_UMAT_INLINE static void
 	exe(BData&,const UMATReal * const)
 	{}
       }; // end of struct DoNothingInitializer
@@ -250,27 +171,27 @@ namespace umat{
       struct Error
       {
 	
-	Error(const UMATReal *const,
-	      const UMATReal *const,
-	      const UMATReal *const,
-	      const UMATReal *const,
-	      const UMATReal *const,
-	      const UMATReal *const,
-	      const UMATReal *const,
-	      const UMATReal *const,
-	      const UMATReal *const,
-	      const UMATReal *const,
-	      const UMATReal *const,
-	      const UMATReal *const)
+	TFEL_UMAT_INLINE Error(const UMATReal *const,
+			       const UMATReal *const,
+			       const UMATReal *const,
+			       const UMATReal *const,
+			       const UMATReal *const,
+			       const UMATReal *const,
+			       const UMATReal *const,
+			       const UMATReal *const,
+			       const UMATReal *const,
+			       const UMATReal *const,
+			       const UMATReal *const,
+			       const UMATReal *const)
 	{} // end of Error
 	
-	void exe(UMATReal *const,
-		 UMATReal *const)
+	TFEL_UMAT_INLINE void exe(UMATReal *const,
+				  UMATReal *const)
 	  throw(UMATException)
 	{
-	  std::string msg = tfel::utilities::Name<Behaviour<N,UMATReal,false> >::getName();
-	  msg += " can't be used in " + tfel::utilities::ToString(N) + "D";
-	  throw(UMATException(msg));
+	  using namespace std;
+	  using namespace tfel::utilities;
+	  throw(UMATInvalidDimension(Name<Behaviour<N,UMATReal,false> >::getName()));
 	  return;
 	} // end of Error::exe
 	
@@ -288,17 +209,17 @@ namespace umat{
 					ThermalExpansionTensorInitializer,
 					DoNothingInitializer>::type AInitializer;
 
-	IntegratorWithTimeStepping(const UMATReal *const DTIME ,
-				   const UMATReal *const       ,
-				   const UMATReal *const STRAN ,
-				   const UMATReal *const DSTRAN,
-				   const UMATReal *const TEMP  ,
-				   const UMATReal *const DTEMP,
-				   const UMATReal *const PROPS ,
-				   const UMATReal *const PREDEF,
-				   const UMATReal *const DPRED,
-				   UMATReal *const STATEV,
-				   UMATReal *const STRESS)
+	TFEL_UMAT_INLINE IntegratorWithTimeStepping(const UMATReal *const DTIME ,
+						    const UMATReal *const       ,
+						    const UMATReal *const STRAN ,
+						    const UMATReal *const DSTRAN,
+						    const UMATReal *const TEMP  ,
+						    const UMATReal *const DTEMP,
+						    const UMATReal *const PROPS ,
+						    const UMATReal *const PREDEF,
+						    const UMATReal *const DPRED,
+						    UMATReal *const STATEV,
+						    UMATReal *const STRESS)
 	  : bData(STRESS,STRAN,TEMP,PROPS+UMATTraits<BV>::propertiesOffset,
 		  STATEV,PREDEF),
 	    iData(DTIME,DSTRAN,DTEMP,DPRED),
@@ -308,8 +229,8 @@ namespace umat{
 	  AInitializer::exe(this->bData,PROPS);
 	} // end of IntegratorWithTimeStepping
 
-	void exe(UMATReal *const STRESS,
-		 UMATReal *const STATEV)
+	TFEL_UMAT_INLINE2 void exe(UMATReal *const STRESS,
+				   UMATReal *const STATEV)
 	{
 	  const UMATOutOfBoundsPolicy& up = UMATOutOfBoundsPolicy::getUMATOutOfBoundsPolicy();
 	  UMATReal dtMin = (this->dt)/(1 << UMATTraits<BV>::maximumSubStepping);
@@ -383,17 +304,17 @@ namespace umat{
 					ThermalExpansionTensorInitializer,
 					DoNothingInitializer>::type AInitializer;
 
-	Integrator(const UMATReal *const DTIME ,
-		   const UMATReal *const,
-		   const UMATReal *const STRAN ,
-		   const UMATReal *const DSTRAN,
-		   const UMATReal *const TEMP,
-		   const UMATReal *const DTEMP,
-		   const UMATReal *const PROPS ,
-		   const UMATReal *const PREDEF,
-		   const UMATReal *const DPRED,
-		   const UMATReal *const STATEV,
-		   const UMATReal *const STRESS)
+	TFEL_UMAT_INLINE Integrator(const UMATReal *const DTIME ,
+				    const UMATReal *const,
+				    const UMATReal *const STRAN ,
+				    const UMATReal *const DSTRAN,
+				    const UMATReal *const TEMP,
+				    const UMATReal *const DTEMP,
+				    const UMATReal *const PROPS ,
+				    const UMATReal *const PREDEF,
+				    const UMATReal *const DPRED,
+				    const UMATReal *const STATEV,
+				    const UMATReal *const STRESS)
 	  : behaviour(DTIME,STRESS,STRAN,DSTRAN,TEMP,DTEMP,
 		      PROPS+UMATTraits<BV>::propertiesOffset,
 		      STATEV,PREDEF,DPRED),
@@ -406,6 +327,7 @@ namespace umat{
 	  this->behaviour.checkBounds();
 	} // end of Integrator::Integrator
 
+	TFEL_UMAT_INLINE2
 	void exe(UMATReal *const STRESS,
 		 UMATReal *const STATEV)
 	{
@@ -418,13 +340,14 @@ namespace umat{
 	  this->behaviour.integrate();
 	  this->behaviour.UMATexportStateData(STRESS,STATEV);
 	} // end of Integrator::exe
+
       private:
 	typedef Behaviour<N,UMATReal,false> BV;
 	BV behaviour;
 	UMATReal dt;
       }; // end of struct Integrator
 
-      static void
+      TFEL_UMAT_INLINE2 static void
       checkNPROPS(const UMATInt NPROPS)
 	throw(UMATException)
       {
@@ -449,7 +372,7 @@ namespace umat{
 	}
       } // end of checkNPROPS
       
-      static void
+      TFEL_UMAT_INLINE2 static void
       checkNSTATV(const UMATInt NSTATV)
 	throw(UMATException)
       {
@@ -475,7 +398,7 @@ namespace umat{
     struct TreatOrthotropicBehaviour1D
       : private TreatBehaviour<1u>
     {
-      static 
+      TFEL_UMAT_INLINE2 static 
       void exe(const UMATReal *const DTIME,
 	       const UMATReal *const,
 	       const UMATReal *const DDSOE,
@@ -502,11 +425,11 @@ namespace umat{
 	static const bool ba = Traits::requiresThermalExpansionTensor;
 	typedef typename IF<
 	  is_defined_,
-	    typename IF<
-	Traits::useTimeSubStepping,
+	  typename IF<
+	  Traits::useTimeSubStepping,
 	  typename TreatBehaviour::template IntegratorWithTimeStepping<bs,ba>,
-	    typename TreatBehaviour::template Integrator<bs,ba>
-	    >::type,
+	  typename TreatBehaviour::template Integrator<bs,ba>
+	  >::type,
 	  typename TreatBehaviour::Error>::type Handler;
 	TreatBehaviour::checkNPROPS(*NPROPS);
 	TreatBehaviour::checkNSTATV(*NSTATV);
@@ -520,7 +443,7 @@ namespace umat{
     struct TreatOrthotropicBehaviour2D
       : private TreatBehaviour<2u>
     {
-      static 
+      TFEL_UMAT_INLINE2 static 
       void exe(const UMATReal *const DTIME ,
 	       const UMATReal *const DROT  ,
 	       const UMATReal *const DDSOE,
@@ -547,11 +470,11 @@ namespace umat{
 	static const bool ba = Traits::requiresThermalExpansionTensor;
 	typedef typename IF<
 	  is_defined_,
-	    typename IF<
-	Traits::useTimeSubStepping,
+	  typename IF<
+	  Traits::useTimeSubStepping,
 	  typename TreatBehaviour::template IntegratorWithTimeStepping<bs,ba>,
-	    typename TreatBehaviour::template Integrator<bs,ba>
-	    >::type,
+	  typename TreatBehaviour::template Integrator<bs,ba>
+	  >::type,
 	  typename TreatBehaviour::Error>::type Handler;
 	UMATReal s[4];
 	UMATReal e[4];
@@ -573,7 +496,7 @@ namespace umat{
     struct TreatOrthotropicBehaviour3D
       : private TreatBehaviour<3u>
     {
-      static 
+      TFEL_UMAT_INLINE2 static 
       void exe(const UMATReal *const DTIME,
 	       const UMATReal *const DROT,
 	       const UMATReal *const DDSOE,
@@ -600,11 +523,11 @@ namespace umat{
 	static const bool ba = Traits::requiresThermalExpansionTensor;
 	typedef typename IF<
 	  is_defined_,
-	    typename IF<
-	Traits::useTimeSubStepping,
+	  typename IF<
+	  Traits::useTimeSubStepping,
 	  typename TreatBehaviour::template IntegratorWithTimeStepping<bs,ba>,
-	    typename TreatBehaviour::template Integrator<bs,ba>
-	    >::type,
+	  typename TreatBehaviour::template Integrator<bs,ba>
+	  >::type,
 	  typename TreatBehaviour::Error>::type Handler;
 	UMATReal  s[6];
 	UMATReal  e[6];
@@ -630,7 +553,7 @@ namespace umat{
     struct TreatIsotropicBehaviour
       : public TreatBehaviour<N>
     {
-      static
+      TFEL_UMAT_INLINE static
       void exe(const UMATReal *const DTIME ,
 	       const UMATReal *const,
 	       const UMATReal *const DDSOE,
@@ -656,11 +579,11 @@ namespace umat{
 	static const bool ba = Traits::requiresThermalExpansionTensor;
 	typedef typename IF<
 	  is_defined_,
-	    typename IF<
-	Traits::useTimeSubStepping,
+	  typename IF<
+	  Traits::useTimeSubStepping,
 	  typename TreatBehaviour::template IntegratorWithTimeStepping<bs,ba>,
-	    typename TreatBehaviour::template Integrator<bs,ba>
-	    >::type,
+	  typename TreatBehaviour::template Integrator<bs,ba>
+	  >::type,
 	  typename TreatBehaviour::Error>::type Handler;
 	TreatBehaviour::checkNPROPS(*NPROPS);
 	TreatBehaviour::checkNSTATV(*NSTATV);

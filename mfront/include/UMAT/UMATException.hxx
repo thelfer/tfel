@@ -18,24 +18,46 @@ namespace umat {
     : public std::exception
   {
 
-    static const std::string
-    getName(void);
-    
     UMATException(const std::string&);
 
     const char* 
     what (void) const throw();
 
-    const std::string 
+    std::string 
     getMsg(void) const throw();
     
-    ~UMATException() throw();
+    virtual ~UMATException() throw();
 
   private:
     
     std::string msg;
     
   }; // end of struct UMATException
+
+  struct UMATInvalidNTENSValue
+    : public UMATException
+  {
+    UMATInvalidNTENSValue(const unsigned short);
+    virtual ~UMATInvalidNTENSValue() throw();
+  private:
+    UMATInvalidNTENSValue();
+    UMATInvalidNTENSValue(const UMATInvalidNTENSValue&);
+    UMATInvalidNTENSValue&
+    operator=(const UMATInvalidNTENSValue&);
+  }; // end of struct UMATInvalidNTENSValue
+
+  struct UMATInvalidDimension
+    : public UMATException
+  {
+    UMATInvalidDimension(const std::string&,
+			 const unsigned short);
+    virtual ~UMATInvalidDimension() throw();
+  private:
+    UMATInvalidDimension();
+    UMATInvalidDimension(const UMATInvalidDimension&);
+    UMATInvalidDimension&
+    operator=(const UMATInvalidDimension&);
+  }; // end of struct UMATInvalidDimension
   
 } // end of namespace umat
 
