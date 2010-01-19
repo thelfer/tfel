@@ -32,7 +32,7 @@ int main(void)
   try{
     c = a+b;
   }
-  catch(MathRunTimeException& e){
+  catch(MathRunTimeException&){
     catched = true;
   }
   assert(catched);
@@ -41,7 +41,7 @@ int main(void)
   try{
     c = 2*a;
   }
-  catch(MathRunTimeException& e){
+  catch(MathRunTimeException&){
     catched = true;
   }
   assert(catched);
