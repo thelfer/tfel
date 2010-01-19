@@ -141,39 +141,35 @@ namespace mfront
   MFrontFortranLawInterface::writeSrcPreprocessorDirectives(const std::string& material,
 							    const std::string& className)
   {
+    using namespace std;
+    string name;
+    string f77_func;
     if(!material.empty()){
-    this->srcFile << "#define " 
-		  << MFrontCLawInterfaceBase::makeUpperCase(material+"_"+className)
-		  << "_F77 \\\n"
-		  << "        F77_FUNC("
-		  << MFrontCLawInterfaceBase::makeLowerCase(material+"_"+className) << ","
-		  << MFrontCLawInterfaceBase::makeUpperCase(material+"_"+className) << ")\n\n";
-    this->srcFile << "#define " 
-		  << MFrontCLawInterfaceBase::makeUpperCase(material+"_"+className)
-		  << "_CHECKBOUNDS_F77 \\\n"
-		  << "        F77_FUNC("
-		  << MFrontCLawInterfaceBase::makeLowerCase(material+"_"+className) 
-		  << "_checkbounds,\\\n        "
-		  << MFrontCLawInterfaceBase::makeUpperCase(material+"_"+className) 
-		  << "_CHECKBOUNDS)\n\n";
+      name = material+"_"+className;
     } else {
-    this->srcFile << "#define " 
-		  << MFrontCLawInterfaceBase::makeUpperCase(className)
-		  << "_F77 \\\n"
-		  << "        F77_FUNC("
-		  << MFrontCLawInterfaceBase::makeLowerCase(className) << ","
-		  << MFrontCLawInterfaceBase::makeUpperCase(className) << ")\n\n";
-    this->srcFile << "#define " 
-		  << MFrontCLawInterfaceBase::makeUpperCase(className)
-		  << "_CHECKBOUNDS_F77 \\\n"
-		  << "        F77_FUNC("
-		  << MFrontCLawInterfaceBase::makeLowerCase(className) 
-		  << "_checkbounds,\\\n        "
-		  << MFrontCLawInterfaceBase::makeUpperCase(className) 
-		  << "_CHECKBOUNDS)\n\n";
+      name = className;
     }
-    this->srcFile << "typedef double mfront_fortran_real8;\n";
-    this->srcFile << "typedef int    mfront_fortran_integer4;\n";
+    if(name.find('_')!=string::npos){
+      f77_func = "F77_FUNC_";
+    } else {
+      f77_func = "F77_FUNC";
+    }
+    this->srcFile << "#define " 
+		  << MFrontCLawInterfaceBase::makeUpperCase(name)
+		  << "_F77 \\\n"
+		  << "        "<< f77_func << "("
+		  << MFrontCLawInterfaceBase::makeLowerCase(name) << ","
+		  << MFrontCLawInterfaceBase::makeUpperCase(name) << ")\n\n";
+    this->srcFile << "#define " 
+		  << MFrontCLawInterfaceBase::makeUpperCase(name)
+		  << "_CHECKBOUNDS_F77 \\\n"
+		  << "        "<< f77_func << "("
+		  << MFrontCLawInterfaceBase::makeLowerCase(name) 
+		  << "_checkbounds,\\\n        "
+		  << MFrontCLawInterfaceBase::makeUpperCase(name) 
+		  << "_CHECKBOUNDS)\n\n";
+    this->srcFile << "typedef double mfront_fortran_real8;" << endl;
+    this->srcFile << "typedef int    mfront_fortran_integer4;" << endl << endl;
   } // end of MFrontFortranLawInterface::writeSrcPreprocessorDirectives
 
   void
