@@ -32,7 +32,6 @@ namespace mfront{
     // Default state vars
     this->registerVariable("eel");
     this->registerVariable("deel");
-    this->registerVariable("deto");
     this->registerVariable("zeros");
     this->registerVariable("fzeros");
     this->registerVariable("zeros2");
@@ -41,7 +40,6 @@ namespace mfront{
     this->registerVariable("Dfzeros");
     this->registerVariable("jacobian");
     this->registerVariable("jacobian2");
-    this->registerVariable("deto");
     this->registerVariable("t");
     this->registerVariable("dt_");
     this->registerVariable("error");
@@ -51,9 +49,7 @@ namespace mfront{
     this->reserveName("computeFdF");
     this->reserveName("predicte");
     this->reserveName("integrate");
-    this->reserveName("error");
     this->reserveName("iter");
-    this->reserveName("iterMax");
     this->reserveName("converge");
     this->reserveName("broyden_inv");
     this->stateVarsHolder.push_back(VarHandler("StrainStensor","eel",0u));
