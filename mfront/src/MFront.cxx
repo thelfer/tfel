@@ -1214,7 +1214,7 @@ namespace mfront{
 #else
     cxx = "$(CXX)";
     cc  = "$(CC)";
-#endif __CYGWIN__
+#endif /* __CYGWIN__ */
     if(this->verboseMode){
       cout << "generating Makefile\n";
     }
