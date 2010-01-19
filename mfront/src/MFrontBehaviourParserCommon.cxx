@@ -347,7 +347,6 @@ namespace mfront{
     using namespace std;
     string type;
     string s;
-    unsigned short lineNumber;
     bool endOfTreatement;
     StringContainer::iterator p;
     this->checkNotEndOfFile("MFrontBehaviourParserCommon::readStringList",
@@ -361,7 +360,6 @@ namespace mfront{
 	this->throwRuntimeError("MFrontBehaviourParserCommon::readStringList",
 				"interface name is not valid (read '"+s+"')");
       }
-      lineNumber = this->current->line;
       ++(this->current);
       this->checkNotEndOfFile("MFrontBehaviourParserCommon::readStringList");
       if(this->current->value==","){
