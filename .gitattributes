@@ -599,6 +599,17 @@ mfront/src/UMATRotationMatrix.cxx -text
 mfront/src/UnaryLoadingDefinition.cxx -text
 mfront/src/VarHandler.cxx -text
 mfront/src/main.cxx -text
+mfront/tests/Makefile.am -text
+mfront/tests/behaviours/Makefile.am -text
+mfront/tests/properties/Makefile.am -text
+mfront/tests/properties/VanadiumAlloy_PoissonRatio_SRMA.mfront -text
+mfront/tests/properties/VanadiumAlloy_SpecificHeat_SRMA.mfront -text
+mfront/tests/properties/VanadiumAlloy_ThermalConductivity_SRMA.mfront -text
+mfront/tests/properties/VanadiumAlloy_ThermalExpansion_SRMA.mfront -text
+mfront/tests/properties/VanadiumAlloy_YoungModulus_SRMA.mfront -text
+mfront/tests/properties/compute.f -text
+mfront/tests/properties/test-c.c -text
+mfront/tests/properties/test-f.c -text
 po/ChangeLog -text
 po/LINGUAS -text
 po/Makefile.in.in -text
