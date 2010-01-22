@@ -158,12 +158,14 @@ namespace mfront{
 	this->behaviourFile << this->className << "::theta";
       }
       this->behaviourFile << ")*(vdp(" << n << "));\n";
-      this->behaviourFile << "this->seq = std::max(this->seq_e-";
       if(p->hasSpecificTheta){
 	ostringstream otheta;
+	this->behaviourFile << "this->seq = std::max(this->seq_e" << n << "-";
 	otheta << "mu_3_theta" << n << "*(";
 	this->behaviourFile << otheta.str();
       } else {
+	ostringstream otheta;
+	this->behaviourFile << "this->seq = std::max(this->seq_e-";
 	this->behaviourFile << "mu_3_theta*(";
       }
       p2=this->flows.begin();
@@ -396,6 +398,8 @@ namespace mfront{
     if(this->current->value!="{"){
       istringstream converter(this->current->value);
       ostringstream otheta;
+      ostringstream ose;
+      ostringstream oseq_e;
       flow.hasSpecificTheta = true;
       converter >> flow.theta;
       if(!converter&&(!converter.eof())){
@@ -403,7 +407,12 @@ namespace mfront{
 				"Could not read theta value (read '"+this->current->value+"').");
       }
       otheta << "mu_3_theta" << this->flows.size();
+      ose    << "se"         << this->flows.size();
+      oseq_e << "seq_e"      << this->flows.size();
+      this->reserveName(ose.str());
       this->registerVariable(otheta.str());
+      this->registerVariable(oseq_e.str());
+      this->localVarsHolder.push_back(VarHandler("stress",oseq_e.str(),0u));
       ++(this->current);
     } else {
       flow.hasSpecificTheta = false;
@@ -417,6 +426,8 @@ namespace mfront{
   {
     using namespace std;
     this->checkBehaviourFile();
+    vector<FlowHandler>::const_iterator p;
+    unsigned short n;
     if(this->varNames.find("young")==this->varNames.end()){
       string msg("MFrontMultipleIsotropicMisesFlowsParser");
       msg+="::writeBehaviourParserSpecificConstructorPart : ";
@@ -433,6 +444,13 @@ namespace mfront{
     this->behaviourFile << this->className;
     this->behaviourFile << "::theta)*(this->deto)));\n";
     this->behaviourFile << "this->seq_e = sigmaeq(this->se);\n";
+    for(p=this->flows.begin(),n=0;p!=this->flows.end();++p,++n){
+      if(p->hasSpecificTheta){
+	this->behaviourFile << "StressStensor se" << n << "=2*(this->mu)*(tfel::math::deviator(this->eel+(";
+	this->behaviourFile << p->theta << ")*(this->deto)));\n";
+	this->behaviourFile << "this->seq_e" << n << " = sigmaeq(se" << n << ");\n";
+      }
+    }
     this->behaviourFile << "if(this->seq_e>100*std::numeric_limits<stress>::epsilon()){\n";
     this->behaviourFile << "this->n = 1.5f*(this->se)/(this->seq_e);\n";
     this->behaviourFile << "} else {\n";
