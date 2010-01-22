@@ -266,7 +266,7 @@ namespace mfront
       }
       for(p5=p4->second.begin();p5!=p4->second.end();++p5){
 	file << "Declare Function " << p5->function 
-	     << " Lib \"" << libName << "\" (";
+	     << " Lib \"" << libName << ".dll\" (";
 	for(p6=p5->variables.begin();
 	    p6!=p5->variables.end();){
 	  file << "ByVal " << *p6 << " As Double";
