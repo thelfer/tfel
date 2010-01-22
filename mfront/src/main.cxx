@@ -5,6 +5,10 @@
  * \date   09 nov 2006
  */
 
+#ifdef __CYGWIN__
+#include<windows.h>
+#endif /* __CYGWIN__ */
+
 #include"MFront.hxx"
 #include"MFrontInitParsers.hxx"
 #include"MFrontInitInterfaces.hxx"
@@ -14,25 +18,26 @@ int main(const int argc, const char *const *const argv)
   using namespace std;
   using namespace mfront;
   
-#ifdef __CYGWIN
+#ifdef __CYGWIN__
   try{
-#endif /* __CYGWIN */
+#endif /* __CYGWIN__ */
 
   initParsers();
   initInterfaces();
   MFront mfront(argc,argv);
   mfront.exe();
 
-#ifdef __CYGWIN
+#ifdef __CYGWIN__
   }
   catch(exception& e){
-    cerr << e.what() << endl;
+    MessageBox(0,e.what(),
+	       "mfront",0);
     return EXIT_FAILURE;
   }
   catch(...){
     return EXIT_FAILURE;
   }
-#endif /* __CYGWIN */
+#endif /* __CYGWIN__ */
 
   return EXIT_SUCCESS;
 }

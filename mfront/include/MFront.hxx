@@ -73,7 +73,7 @@ namespace mfront{
 
     void treatOTarget(void);
 
-    bool treatFile(void);
+    void treatFile(void);
 
     void treatListParsers(void);
 
@@ -167,8 +167,6 @@ namespace mfront{
     bool nodeps;
 
     bool melt;
-
-    MFrontVirtualParser * parser;
 
   }; // end of class MFront
 

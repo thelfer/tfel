@@ -65,7 +65,7 @@ namespace mfront{
   {
     using namespace std;
     return MFrontHeader::getHeader();
- }
+  }
 
   std::string 
   MFront::getUsageDescription(void) const
@@ -333,7 +333,7 @@ namespace mfront{
     this->melt = false;
   } // end of MFront::treatNoMelt
 
-  bool
+  void
   MFront::treatFile(void)
   {
     using namespace std;
@@ -348,6 +348,7 @@ namespace mfront{
     CxxTokenizer file;
     string library;
     string parserName;
+    auto_ptr<MFrontVirtualParser> parser;
     map<string,vector<string> >::const_iterator p;
     vector<string>::const_iterator p2;
     CxxTokenizer::TokensContainer::const_iterator pt;
@@ -356,184 +357,164 @@ namespace mfront{
     vector<string>::const_iterator p4;
     bool found;
 
-    try{
-      if(this->verboseMode){
-	cout << "Treating file : " << this->fileName << endl;
-      }
-      file.openFile(this->fileName);
-      file.stripComments();
-      pt  = file.begin();
-      pte = file.end();
-      found=false;
-      while((pt!=pte)&&(!found)){
-	if(pt->value=="@Parser"){
-	  if(pt!=file.begin()){
-	    CxxTokenizer::TokensContainer::const_iterator ptp = pt;
-	    --ptp;
-	    if(ptp->value!=";"){
-	      string msg("MFront::treatFile : ");
-	      msg += "the keyword @Parser does not begin a new instruction.";
-	      throw(runtime_error(msg));
-	    }
+    if(this->verboseMode){
+      cout << "Treating file : " << this->fileName << endl;
+    }
+    file.openFile(this->fileName);
+    file.stripComments();
+    pt  = file.begin();
+    pte = file.end();
+    found=false;
+    while((pt!=pte)&&(!found)){
+      if(pt->value=="@Parser"){
+	if(pt!=file.begin()){
+	  CxxTokenizer::TokensContainer::const_iterator ptp = pt;
+	  --ptp;
+	  if(ptp->value!=";"){
+	    string msg("MFront::treatFile : ");
+	    msg += "the keyword @Parser does not begin a new instruction.";
+	    throw(runtime_error(msg));
 	  }
+	}
+	++pt;
+	if(pt==pte){
+	  ostringstream msg;
+	  msg << "MFront::treatFile : ";
+	  msg << "unexepected end of file (exepected parser name).\n";
+	  msg << "Error at line " << pt->line << ".";
+	  throw(runtime_error(msg.str()));
+	}
+	if(pt->value==";"){
+	  ostringstream msg;
+	  msg << "MFront::treatFile : ";
+	  msg << "unexepected end of file (exepected parser name).\n";
+	  msg << "Error at line " << pt->line << ".";
+	  throw(runtime_error(msg.str()));
+	}
+	parserName = pt->value;
+	++pt;
+	if(pt==pte){
+	  ostringstream msg;
+	  msg << "MFront::treatFile : ";
+	  msg << "unexepected end of file (exepected library name or ';').\n";
+	  msg << "Error at line " << pt->line << ".";
+	  throw(runtime_error(msg.str()));
+	}
+	if(pt->value!=";"){
+	  library = pt->value;
 	  ++pt;
 	  if(pt==pte){
 	    ostringstream msg;
 	    msg << "MFront::treatFile : ";
-	    msg << "unexepected end of file (exepected parser name).\n";
-	    msg << "Error at line " << pt->line << ".";
-	    throw(runtime_error(msg.str()));
-	  }
-	  if(pt->value==";"){
-	    ostringstream msg;
-	    msg << "MFront::treatFile : ";
-	    msg << "unexepected end of file (exepected parser name).\n";
-	    msg << "Error at line " << pt->line << ".";
-	    throw(runtime_error(msg.str()));
-	  }
-	  parserName = pt->value;
-	  ++pt;
-	  if(pt==pte){
-	    ostringstream msg;
-	    msg << "MFront::treatFile : ";
-	    msg << "unexepected end of file (exepected library name or ';').\n";
+	    msg << "unexepected end of file (exepected ';').\n";
 	    msg << "Error at line " << pt->line << ".";
 	    throw(runtime_error(msg.str()));
 	  }
 	  if(pt->value!=";"){
-	    library = pt->value;
-	    ++pt;
-	    if(pt==pte){
-	      ostringstream msg;
-	      msg << "MFront::treatFile : ";
-	      msg << "unexepected end of file (exepected ';').\n";
-	      msg << "Error at line " << pt->line << ".";
-	      throw(runtime_error(msg.str()));
-	    }
-	    if(pt->value!=";"){
-	      ostringstream msg;
-	      msg << "MFront::treatFile : ";
-	      msg << "unexepected token '" << pt->value << "' (exepected ';').\n";
-	      msg << "Error at line " << pt->line << ".";
-	      throw(runtime_error(msg.str()));
-	    }
+	    ostringstream msg;
+	    msg << "MFront::treatFile : ";
+	    msg << "unexepected token '" << pt->value << "' (exepected ';').\n";
+	    msg << "Error at line " << pt->line << ".";
+	    throw(runtime_error(msg.str()));
 	  }
-	  found = true;
 	}
-	++pt;
+	found = true;
       }
-      if(found){
-	try{
-	  if(!library.empty()){
-	    ExternalLibraryManager& lm = ExternalLibraryManager::getExternalLibraryManager();
-	    lm.loadLibrary(library);
-	  }
-	  this->parser = parserFactory.createNewParser(parserName);
-	} 
-	catch(runtime_error& r){
-	  ostringstream msg;
-	  msg << "MFront::treatFile : error while loading parser "
-	      << parserName << " (" << r.what() << ")\n";
-	  msg << "Available parsers : " << endl;
-	  const vector<string>& parsers = parserFactory.getRegistredParsers();
-	  copy(parsers.begin(),parsers.end(),ostream_iterator<string>(msg," "));
-	  msg << endl;
-	  throw(runtime_error(msg.str()));
+      ++pt;
+    }
+    if(found){
+      try{
+	if(!library.empty()){
+	  ExternalLibraryManager& lm = ExternalLibraryManager::getExternalLibraryManager();
+	  lm.loadLibrary(library);
 	}
-      } else {
-	if(this->verboseMode){
-	  cout << "No parser specified, using default" << endl;
-	}
-	this->parser = parserFactory.createNewParser();
+	parser = auto_ptr<MFrontVirtualParser>(parserFactory.createNewParser(parserName));
+      } 
+      catch(runtime_error& r){
+	ostringstream msg;
+	msg << "MFront::treatFile : error while loading parser "
+	    << parserName << " (" << r.what() << ")\n";
+	msg << "Available parsers : " << endl;
+	const vector<string>& parsers = parserFactory.getRegistredParsers();
+	copy(parsers.begin(),parsers.end(),ostream_iterator<string>(msg," "));
+	throw(runtime_error(msg.str()));
       }
-
+    } else {
       if(this->verboseMode){
-	this->parser->setVerboseMode();
+	cout << "MFront::treatFile : no parser specified, using default" << endl;
       }
-      if(this->debugMode){
-	this->parser->setDebugMode();
-      }
-      if(this->warningMode){
-	this->parser->setWarningMode();
-      }
-      if(!this->interfaces.empty()){
-	this->parser->setInterfaces(this->interfaces);
-      }
-      file.clear();
+      parser = auto_ptr<MFrontVirtualParser>(parserFactory.createNewParser());
+    }
 
-      try{
-	this->parser->treatFile(this->fileName);
-      } 
-      catch(const runtime_error& e){
-	cerr << "MFront::treatFile : error while treating file " 
-	     << fileName << ".\n" ;
-	cerr << e.what() << endl;
-	delete this->parser;
-	return false;
-      }
+    if(this->verboseMode){
+      parser->setVerboseMode();
+    }
+    if(this->debugMode){
+      parser->setDebugMode();
+    }
+    if(this->warningMode){
+      parser->setWarningMode();
+    }
+    if(!this->interfaces.empty()){
+      parser->setInterfaces(this->interfaces);
+    }
+    file.clear();
 
-      try{
-	this->parser->writeOutputFiles();
-      } 
-      catch(const runtime_error& e){
-	cerr << "MFront::treatFile : "
-	     << "error while writing ouput file.\n";
-	cerr << e.what() << endl;
-	delete this->parser;
-	return false;
-      }
+    parser->treatFile(this->fileName);
+    parser->writeOutputFiles();
 
-      // getting generated sources
-      const map<string,vector<string> >& src = this->parser->getGeneratedSources();
-      for(p=src.begin();p!=src.end();++p){
-	set<string>& tmp  = this->sources[p->first];
-	copy(p->second.begin(),p->second.end(),insert_iterator<set<string> >(tmp,tmp.begin()));
-      }
-      // getting generated dependencies
-      const map<string,vector<string> >& deps = this->parser->getLibrariesDependencies();
-      for(p=deps.begin();p!=deps.end();++p){
-	vector<string>& tmp = this->dependencies[p->first];
-	for(p2=p->second.begin();p2!=p->second.end();++p2){
-	  if(find(tmp.begin(),tmp.end(),*p2)==tmp.end()){
+    // getting generated sources
+    const map<string,vector<string> >& src = parser->getGeneratedSources();
+    for(p=src.begin();p!=src.end();++p){
+      set<string>& tmp  = this->sources[p->first];
+      copy(p->second.begin(),p->second.end(),insert_iterator<set<string> >(tmp,tmp.begin()));
+    }
+    // getting generated dependencies
+    const map<string,vector<string> >& deps = parser->getLibrariesDependencies();
+    for(p=deps.begin();p!=deps.end();++p){
+      vector<string>& tmp = this->dependencies[p->first];
+      for(p2=p->second.begin();p2!=p->second.end();++p2){
+	if(find(tmp.begin(),tmp.end(),*p2)==tmp.end()){
+	  // treat a very special case where a library can be declared
+	  // as depending on itself (this may arise for material properties)
+	  if(p2->substr(0,2)=="-l"){
+	    string lib = "lib"+p2->substr(2);
+	    if(lib!=p->first){
+	      tmp.push_back(*p2);
+	    }
+	  } else {
 	    tmp.push_back(*p2);
 	  }
 	}
       }
-      // getting specific targets
-      const Target& t = this->parser->getSpecificTargets();
-      for(p3=t.begin();p3!=t.end();++p3){
-	for(p4=p3->second.first.begin();p4!=p3->second.first.end();++p4){
-	  if(find(this->targets[p3->first].first.begin(),
-		  this->targets[p3->first].first.end(),*p4)==this->targets[p3->first].first.end()){
-	    this->targets[p3->first].first.push_back(*p4);
-	  }
-	}
-	for(p4=p3->second.second.begin();p4!=p3->second.second.end();++p4){
-	  if(find(this->targets[p3->first].second.begin(),
-		  this->targets[p3->first].second.end(),*p4)==this->targets[p3->first].second.end()){
-	    this->targets[p3->first].second.push_back(*p4);
-	  }
+    }
+    // getting specific targets
+    const Target& t = parser->getSpecificTargets();
+    for(p3=t.begin();p3!=t.end();++p3){
+      for(p4=p3->second.first.begin();p4!=p3->second.first.end();++p4){
+	if(find(this->targets[p3->first].first.begin(),
+		this->targets[p3->first].first.end(),*p4)==this->targets[p3->first].first.end()){
+	  this->targets[p3->first].first.push_back(*p4);
 	}
       }
-      // getting includes
-      const map<string,vector<string> >& incs = this->parser->getGlobalIncludes();
-      for(p=incs.begin();p!=incs.end();++p){
-	copy(p->second.begin(),
-	     p->second.end(),
-	     insert_iterator<set<string> >(this->globalIncludes,this->globalIncludes.begin()));
+      for(p4=p3->second.second.begin();p4!=p3->second.second.end();++p4){
+	if(find(this->targets[p3->first].second.begin(),
+		this->targets[p3->first].second.end(),*p4)==this->targets[p3->first].second.end()){
+	  this->targets[p3->first].second.push_back(*p4);
+	}
       }
-      // Some clean-up
-      mbif.reset();
-      mlif.reset();
-      delete this->parser;
     }
-    catch(runtime_error& e){
-      string msg("MFront::treatFile : ");
-      msg += "error while treating file " + this->fileName + "\n";
-      msg += e.what();
-      throw(runtime_error(msg));
+    // getting includes
+    const map<string,vector<string> >& incs = parser->getGlobalIncludes();
+    for(p=incs.begin();p!=incs.end();++p){
+      copy(p->second.begin(),
+	   p->second.end(),
+	   insert_iterator<set<string> >(this->globalIncludes,this->globalIncludes.begin()));
     }
-    return true;
+    // Some clean-up
+    mbif.reset();
+    mlif.reset();
+
   } // end of MFront::treatFile(void)
 
   void
@@ -601,12 +582,12 @@ namespace mfront{
 	msg += "\nError while analysing "+fName;
 	throw(runtime_error(msg));
       }
-//       if(!this->objects[name.substr(3,name.size()-7)].insert(object).second){
-// 	string msg("MFront::analyseSources : ");
-// 	msg += "two sources leads to the same object '"+object+"'.";
-// 	msg += "\nError while analysing "+fName;
-// 	throw(runtime_error(msg));
-//       }
+      //       if(!this->objects[name.substr(3,name.size()-7)].insert(object).second){
+      // 	string msg("MFront::analyseSources : ");
+      // 	msg += "two sources leads to the same object '"+object+"'.";
+      // 	msg += "\nError while analysing "+fName;
+      // 	throw(runtime_error(msg));
+      //       }
     }
     p=files.begin();
     while(p!=files.end()){
@@ -1613,14 +1594,15 @@ namespace mfront{
     using namespace std;
     using namespace tfel::system;
     typedef map<string,pair<vector<string>,vector<string> > > Target;
+    vector<pair<string,string> > errors;
     vector<string> tmp;
     set<string>::const_iterator p;
     vector<string>::iterator p2;
     Target::iterator p3;
     set<string>::const_iterator p5;
+    vector<pair<string,string> >::const_iterator p6;
     systemCall::mkdir("src");
     systemCall::mkdir("include");
-    bool ok = true;
     if(this->specifiedTargets.empty()){
       this->specifiedTargets.insert("all");
     }
@@ -1636,13 +1618,9 @@ namespace mfront{
       for(p=this->inputs.begin();p!=this->inputs.end();++p){
 	this->fileName = *p;
 	try{
-	  if(!this->treatFile()){
-	    ok = false;
-	  }
-	} catch(runtime_error& e){
-	  cout << "Error while treating file : " << this->fileName << endl;
-	  cout << e.what() << endl;
-	  ok = false;
+	  this->treatFile();
+	} catch(exception& e){
+	  errors.push_back(pair<string,string>(*p,e.what()));
 	}
       }
       for(p3=this->targets.begin();p3!=this->targets.end();++p3){
@@ -1671,48 +1649,59 @@ namespace mfront{
       this->writeSpecificTargets();
       this->writeGlobalIncludes();
     }
-    if(ok){
-      if((this->genMake)&&(!this->sources.empty())){
-	this->generateMakeFile();
-      }
-      if(this->cleanLibs){
-	this->cleanLibraries();
-      }
-      if((this->buildLibs)&&(!this->sources.empty())){
-	map<string,set<string> >::const_iterator pt;
-	map<string,pair<vector<string>,vector<string> > >::const_iterator pt2;
-	vector<string>::const_iterator pt3;
-	for(p5  = this->specifiedTargets.begin();
-	    p5 != this->specifiedTargets.end(); ++p5){
-	  cout << "Treating target : " << *p5 << endl;
-	  this->buildLibraries(*p5);
+    if(!errors.empty()){
+      string msg;
+      p6=errors.begin();
+      while(p6!=errors.end()){
+	msg += "Error while treating file '"+p6->first+"' : ";
+	msg += p6->second;
+	if(++p6!=errors.end()){
+	  msg += "\n\n";
 	}
-	if(!this->sources.empty()){
-	  if(this->sources.size()==1){
-	    cout << "The following library has been build :\n";
+      }
+      throw(runtime_error(msg));
+    }
+    
+    if((this->genMake)&&(!this->sources.empty())){
+      this->generateMakeFile();
+    }
+    if(this->cleanLibs){
+      this->cleanLibraries();
+    }
+    if((this->buildLibs)&&(!this->sources.empty())){
+      map<string,set<string> >::const_iterator pt;
+      map<string,pair<vector<string>,vector<string> > >::const_iterator pt2;
+      vector<string>::const_iterator pt3;
+      for(p5  = this->specifiedTargets.begin();
+	  p5 != this->specifiedTargets.end(); ++p5){
+	cout << "Treating target : " << *p5 << endl;
+	this->buildLibraries(*p5);
+      }
+      if(!this->sources.empty()){
+	if(this->sources.size()==1){
+	  cout << "The following library has been build :\n";
+	} else {
+	  cout << "The following libraries have been build :\n";
+	}
+	for(pt=this->sources.begin();pt!=this->sources.end();++pt){
+	  if(this->sys=="win32"){
+	    cout << "- " << pt->first << ".dll\n";
 	  } else {
-	    cout << "The following libraries have been build :\n";
-	  }
-	  for(pt=this->sources.begin();pt!=this->sources.end();++pt){
-	    if(this->sys=="win32"){
-	      cout << "- " << pt->first << ".dll\n";
-	    } else {
-	      cout << "- " << pt->first << ".so\n";
-	    }
+	    cout << "- " << pt->first << ".so\n";
 	  }
 	}
-	if(!this->targets.empty()){
-	  pt2=this->targets.find("all");
-	  if(pt2!=this->targets.end()){	      
-	    if(pt2->second.first.size()==1){
-	      cout << "The following main target has been build :\n";
-	    } else {
-	      cout << "The following main targets have been build :\n";
-	    }
-	    for(pt3=pt2->second.first.begin();
-		pt3!=pt2->second.first.end();++pt3){
-	      cout << "- " << *pt3 << endl;
-	    }
+      }
+      if(!this->targets.empty()){
+	pt2=this->targets.find("all");
+	if(pt2!=this->targets.end()){	      
+	  if(pt2->second.first.size()==1){
+	    cout << "The following main target has been build :\n";
+	  } else {
+	    cout << "The following main targets have been build :\n";
+	  }
+	  for(pt3=pt2->second.first.begin();
+	      pt3!=pt2->second.first.end();++pt3){
+	    cout << "- " << *pt3 << endl;
 	  }
 	}
       }
