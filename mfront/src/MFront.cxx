@@ -13,6 +13,7 @@
 #include<iterator>
 #include<stdexcept>
 #include<cerrno>
+#include<memory>
 #include<cassert>
 
 #include<dlfcn.h> 
