@@ -20,6 +20,8 @@ namespace umat {
 
     UMATException(const std::string&);
 
+    UMATException(const UMATException&);
+
     const char* 
     what (void) const throw();
 
@@ -30,7 +32,12 @@ namespace umat {
 
   private:
     
-    std::string msg;
+    UMATException();
+
+    UMATException&
+    operator=(const UMATException&);
+
+    const std::string msg;
     
   }; // end of struct UMATException
 
@@ -38,10 +45,10 @@ namespace umat {
     : public UMATException
   {
     UMATInvalidNTENSValue(const unsigned short);
+    UMATInvalidNTENSValue(const UMATInvalidNTENSValue&);
     virtual ~UMATInvalidNTENSValue() throw();
   private:
     UMATInvalidNTENSValue();
-    UMATInvalidNTENSValue(const UMATInvalidNTENSValue&);
     UMATInvalidNTENSValue&
     operator=(const UMATInvalidNTENSValue&);
   }; // end of struct UMATInvalidNTENSValue
@@ -51,10 +58,10 @@ namespace umat {
   {
     UMATInvalidDimension(const std::string&,
 			 const unsigned short);
+    UMATInvalidDimension(const UMATInvalidDimension&);
     virtual ~UMATInvalidDimension() throw();
   private:
     UMATInvalidDimension();
-    UMATInvalidDimension(const UMATInvalidDimension&);
     UMATInvalidDimension&
     operator=(const UMATInvalidDimension&);
   }; // end of struct UMATInvalidDimension

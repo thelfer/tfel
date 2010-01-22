@@ -16,6 +16,11 @@ namespace umat
     : msg(s)
   {} // end of UMATException::UMATException
     
+  UMATException::UMATException(const UMATException& e)
+    : std::exception(),
+      msg(e.msg)
+  {} // end of UMATException::UMATException
+
   const char* 
   UMATException::what (void) const throw()
   { 
@@ -35,12 +40,20 @@ namespace umat
     : UMATException("Invalid tensor size declared '"+tfel::utilities::ToString(N)+"'")
   {} // end of UMATInvalidNTENSValue::UMATInvalidNTENSValue
 
+  UMATInvalidNTENSValue::UMATInvalidNTENSValue(const UMATInvalidNTENSValue& e)
+    : UMATException(e)
+  {} // end of UMATInvalidNTENSValue::UMATInvalidNTENSValue
+
   UMATInvalidNTENSValue::~UMATInvalidNTENSValue() throw()
   {} // end of UMATInvalidNTENSValue::~UMATInvalidNTENSValue()
 
   UMATInvalidDimension::UMATInvalidDimension(const std::string& b,
 					     const unsigned short N)
     : UMATException("''"+b+"' can't be used in "+tfel::utilities::ToString(N)+"D")
+  {} // end of UMATInvalidDimension::UMATInvalidDimension
+
+  UMATInvalidDimension::UMATInvalidDimension(const UMATInvalidDimension& e)
+    : UMATException(e)
   {} // end of UMATInvalidDimension::UMATInvalidDimension
 
   UMATInvalidDimension::~UMATInvalidDimension() throw()
