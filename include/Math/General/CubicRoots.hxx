@@ -44,7 +44,7 @@ namespace tfel{
 	const unsigned short iter_max = 50;
 	unsigned short iter;
 	
-	if(std::abs(df)<10*std::numeric_limits<T>::min()){
+	if(std::abs(df)<100*std::numeric_limits<T>::min()){
 	  return false;
 	}
 	x1   = x-f/df;
@@ -53,7 +53,7 @@ namespace tfel{
 	  x  = x1;
 	  df = 3*a3*x*x+2*a2*x+a1;
 	  f  = a3*x*x*x+a2*x*x+a1*x+a0;
-	  if(std::abs(df)<10*std::numeric_limits<T>::min()){
+	  if(std::abs(df)<100*std::numeric_limits<T>::min()){
 	    return false;
 	  }
 	  x1 = x-f/df;
@@ -99,7 +99,8 @@ namespace tfel{
 	T uy;
       
 	if(delta<0){
-	  if(delta<-100*std::numeric_limits<T>::epsilon()){
+	  if((std::abs(delta)<-100*std::abs(27.f*q*q)*std::numeric_limits<T>::epsilon())&&
+	     (std::abs(delta)<-100*std::abs(4.f*p*p*p)*std::numeric_limits<T>::epsilon())){
 	    TFEL_UTILITIES_INFO("determinant is negative : " << delta);
 	    return false;
 	  } else {
