@@ -1,7 +1,7 @@
 
 
-#ifndef _MATRIX_CONCEPT_IMPL_
-#define _MATRIX_CONCEPT_IMPL_ 1
+#ifndef _TFEL_MATH_MATRIX_CONCEPT_IMPL_
+#define _TFEL_MATH_MATRIX_CONCEPT_IMPL_ 1
 
 namespace tfel{
 
@@ -35,4 +35,4 @@ namespace tfel{
 
 } // end of namespace tfel
 
-#endif /* _MATRIX_CONCEPT_IMPL_ */
+#endif /* _TFEL_MATH_MATRIX_CONCEPT_IMPL_ */

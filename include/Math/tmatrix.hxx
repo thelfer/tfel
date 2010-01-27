@@ -4,8 +4,8 @@
  * \author Helfer Thomas
  */
 
-#ifndef _TINY_MATRIX_LIB_
-#define _TINY_MATRIX_LIB_ 1
+#ifndef _TFEL_MATH_TINY_MATRIX_LIB_
+#define _TFEL_MATH_TINY_MATRIX_LIB_ 1
 
 #include <string>
 #include <ostream>
@@ -96,12 +96,24 @@ namespace tfel{
        * type of the tmatrix's reverse iterator.
        * (provided for stl compatibility).
        */
-      typedef std::reverse_iterator<const_iterator> const_reverse_iterator;
+#ifdef __GNUG__
+      typedef std::reverse_iterator<iterator> reverse_iterator; 
+#else
+      typedef std::reverse_iterator<iterator,T,
+      				    reference,
+      				    difference_type> reverse_iterator;
+#endif
       /*!
        * type of the tmatrix's const reverse iterator.
        * (provided for stl compatibility).
        */
-      typedef std::reverse_iterator<iterator> reverse_iterator;
+#ifdef __GNUG__
+      typedef std::reverse_iterator<const_iterator> const_reverse_iterator; 
+#else
+      typedef std::reverse_iterator<const_iterator,T,
+      				    const_reference,
+      				    difference_type> const_reverse_iterator;
+#endif
       /*!
        * type of a reference to the value contained.
        * (this is a stl requirement).
@@ -398,4 +410,4 @@ namespace tfel{
 #include "Math/Matrix/tmatrix.ixx"
 #include "Math/Matrix/tmatrixResultType.hxx"
 
-#endif /* _TINY_MATRIX_LIB_ */
+#endif /* _TFEL_MATH_TINY_MATRIX_LIB_ */

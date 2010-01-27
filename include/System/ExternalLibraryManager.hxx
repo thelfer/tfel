@@ -12,6 +12,8 @@
 #include<vector>
 #include<string>
 
+#include"System/ExternalFunctionsPrototypes.hxx"
+
 namespace tfel
 {
 
@@ -60,169 +62,335 @@ namespace tfel
 				 const std::string&,
 				 const std::string&);
   
-      double (*getCastemFunction(const std::string&,const std::string&))(const double*const);
+      /*!
+       * load a function from a library
+       * \param l : library  name
+       * \param f : function name
+       * \return the function pointer
+       */
+      CastemFunctionPtr
+      getCastemFunction(const std::string&,
+			const std::string&);
 
-      double (*getCFunction0(const std::string&,const std::string&))(void);
+      /*!
+       * load a function from a library
+       * \param l : library  name
+       * \param f : function name
+       * \return the function pointer
+       */
+      CFunction0Ptr
+      getCFunction0(const std::string&,
+		    const std::string&);
 
-      double (*getCFunction1(const std::string&,const std::string&))(double);
+      /*!
+       * load a function from a library
+       * \param l : library  name
+       * \param f : function name
+       * \return the function pointer
+       */
+      CFunction1Ptr
+      getCFunction1(const std::string&,
+		    const std::string&);
 
-      double (*getCFunction2(const std::string&,const std::string&))(double,double);
+      /*!
+       * load a function from a library
+       * \param l : library  name
+       * \param f : function name
+       * \return the function pointer
+       */
+      CFunction2Ptr
+      getCFunction2(const std::string&,
+		    const std::string&);
 
-      double (*getCFunction3(const std::string&,const std::string&))(double,double,
-								     double);
+      /*!
+       * load a function from a library
+       * \param l : library  name
+       * \param f : function name
+       * \return the function pointer
+       */
+      CFunction3Ptr
+      getCFunction3(const std::string&,
+		    const std::string&);
 
-      double (*getCFunction4(const std::string&,const std::string&))(double,double,
-								     double,double);
+      /*!
+       * load a function from a library
+       * \param l : library  name
+       * \param f : function name
+       * \return the function pointer
+       */
+      CFunction4Ptr
+      getCFunction4(const std::string&,
+		    const std::string&);
 
-      double (*getCFunction5(const std::string&,const std::string&))(double,double,
-								     double,double,
-								     double);
+      /*!
+       * load a function from a library
+       * \param l : library  name
+       * \param f : function name
+       * \return the function pointer
+       */
+      CFunction5Ptr
+      getCFunction5(const std::string&,
+		    const std::string&);
 
-      double (*getCFunction6(const std::string&,const std::string&))(double,double,
-								     double,double,
-								     double,double);
+      /*!
+       * load a function from a library
+       * \param l : library  name
+       * \param f : function name
+       * \return the function pointer
+       */
+      CFunction6Ptr
+      getCFunction6(const std::string&,
+		    const std::string&);
 
-      double (*getCFunction7(const std::string&,const std::string&))(double,double,
-								     double,double,
-								     double,double,
-								     double);
+      /*!
+       * load a function from a library
+       * \param l : library  name
+       * \param f : function name
+       * \return the function pointer
+       */
+      CFunction7Ptr
+      getCFunction7(const std::string&,
+		    const std::string&);
 
-      double (*getCFunction8(const std::string&,const std::string&))(double,double,
-								     double,double,
-								     double,double,
-								     double,double);
+      /*!
+       * load a function from a library
+       * \param l : library  name
+       * \param f : function name
+       * \return the function pointer
+       */
+      CFunction8Ptr
+      getCFunction8(const std::string&,
+		    const std::string&);
 
-      double (*getCFunction9(const std::string&,const std::string&))(double,double,
-								     double,double,
-								     double,double,
-								     double,double,
-								     double);
+      /*!
+       * load a function from a library
+       * \param l : library  name
+       * \param f : function name
+       * \return the function pointer
+       */
+      CFunction9Ptr
+      getCFunction9(const std::string&,
+		    const std::string&);
 
-      double (*getCFunction10(const std::string&,const std::string&))(double,double,
-								      double,double,
-								      double,double,
-								      double,double,
-								      double,double);
+      /*!
+       * load a function from a library
+       * \param l : library  name
+       * \param f : function name
+       * \return the function pointer
+       */
+      CFunction10Ptr
+      getCFunction10(const std::string&,
+		     const std::string&);
+      
+      /*!
+       * load a function from a library
+       * \param l : library  name
+       * \param f : function name
+       * \return the function pointer
+       */
+      CFunction11Ptr
+      getCFunction11(const std::string&,
+		     const std::string&);
 
-      double (*getCFunction11(const std::string&,const std::string&))(double,double,
-								      double,double,
-								      double,double,
-								      double,double,
-								      double,double,
-								      double);
+      /*!
+       * load a function from a library
+       * \param l : library  name
+       * \param f : function name
+       * \return the function pointer
+       */
+      CFunction12Ptr
+      getCFunction12(const std::string&,
+		     const std::string&);
 
-      double (*getCFunction12(const std::string&,const std::string&))(double,double,
-								      double,double,
-								      double,double,
-								      double,double,
-								      double,double,
-								      double,double);
+      /*!
+       * load a function from a library
+       * \param l : library  name
+       * \param f : function name
+       * \return the function pointer
+       */
+      CFunction13Ptr
+      getCFunction13(const std::string&,
+		     const std::string&);
 
-      double (*getCFunction13(const std::string&,const std::string&))(double,double,
-								      double,double,
-								      double,double,
-								      double,double,
-								      double,double,
-								      double,double,
-								      double);
+      /*!
+       * load a function from a library
+       * \param l : library  name
+       * \param f : function name
+       * \return the function pointer
+       */
+      CFunction14Ptr
+      getCFunction14(const std::string&,
+		     const std::string&);
 
-      double (*getCFunction14(const std::string&,const std::string&))(double,double,
-								      double,double,
-								      double,double,
-								      double,double,
-								      double,double,
-								      double,double,
-								      double,double);
+      /*!
+       * load a function from a library
+       * \param l : library  name
+       * \param f : function name
+       * \return the function pointer
+       */
+      CFunction15Ptr
+      getCFunction15(const std::string&,
+		     const std::string&);
 
-      double (*getCFunction15(const std::string&,const std::string&))(double,double,
-								      double,double,
-								      double,double,
-								      double,double,
-								      double,double,
-								      double,double,
-								      double,double,
-								      double);
+      /*!
+       * load a function from a library
+       * \param l : library  name
+       * \param f : function name
+       * \return the function pointer
+       */
+      FortranFunction0Ptr
+      getFortranFunction0(const std::string&,
+			  const std::string&);
 
-      double (*getFortranFunction0(const std::string&,const std::string&))(void);
+      /*!
+       * load a function from a library
+       * \param l : library  name
+       * \param f : function name
+       * \return the function pointer
+       */
+      FortranFunction1Ptr
+      getFortranFunction1(const std::string&,
+			  const std::string&);
 
-      double (*getFortranFunction1(const std::string&,const std::string&))(const double*);
+      /*!
+       * load a function from a library
+       * \param l : library  name
+       * \param f : function name
+       * \return the function pointer
+       */
+      FortranFunction2Ptr
+      getFortranFunction2(const std::string&,
+			  const std::string&);
 
-      double (*getFortranFunction2(const std::string&,const std::string&))(const double*,const double*);
+      /*!
+       * load a function from a library
+       * \param l : library  name
+       * \param f : function name
+       * \return the function pointer
+       */
+      FortranFunction3Ptr
+      getFortranFunction3(const std::string&,
+			  const std::string&);
 
-      double (*getFortranFunction3(const std::string&,const std::string&))(const double*,const double*,
-									   const double*);
+      /*!
+       * load a function from a library
+       * \param l : library  name
+       * \param f : function name
+       * \return the function pointer
+       */
+      FortranFunction4Ptr
+      getFortranFunction4(const std::string&,
+			  const std::string&);
 
-      double (*getFortranFunction4(const std::string&,const std::string&))(const double*,const double*,
-									   const double*,const double*);
+      /*!
+       * load a function from a library
+       * \param l : library  name
+       * \param f : function name
+       * \return the function pointer
+       */
+      FortranFunction5Ptr
+      getFortranFunction5(const std::string&,
+			  const std::string&);
 
-      double (*getFortranFunction5(const std::string&,const std::string&))(const double*,const double*,
-									   const double*,const double*,
-									   const double*);
+      /*!
+       * load a function from a library
+       * \param l : library  name
+       * \param f : function name
+       * \return the function pointer
+       */
+      FortranFunction6Ptr
+      getFortranFunction6(const std::string&,
+			  const std::string&);
 
-      double (*getFortranFunction6(const std::string&,const std::string&))(const double*,const double*,
-									   const double*,const double*,
-									   const double*,const double*);
+      /*!
+       * load a function from a library
+       * \param l : library  name
+       * \param f : function name
+       * \return the function pointer
+       */
+      FortranFunction7Ptr
+      getFortranFunction7(const std::string&,
+			  const std::string&);
 
-      double (*getFortranFunction7(const std::string&,const std::string&))(const double*,const double*,
-									   const double*,const double*,
-									   const double*,const double*,
-									   const double*);
+      /*!
+       * load a function from a library
+       * \param l : library  name
+       * \param f : function name
+       * \return the function pointer
+       */
+      FortranFunction8Ptr
+      getFortranFunction8(const std::string&,
+			  const std::string&);
 
-      double (*getFortranFunction8(const std::string&,const std::string&))(const double*,const double*,
-									   const double*,const double*,
-									   const double*,const double*,
-									   const double*,const double*);
+      /*!
+       * load a function from a library
+       * \param l : library  name
+       * \param f : function name
+       * \return the function pointer
+       */
+      FortranFunction9Ptr
+      getFortranFunction9(const std::string&,
+			  const std::string&);
 
-      double (*getFortranFunction9(const std::string&,const std::string&))(const double*,const double*,
-									   const double*,const double*,
-									   const double*,const double*,
-									   const double*,const double*,
-									   const double*);
+      /*!
+       * load a function from a library
+       * \param l : library  name
+       * \param f : function name
+       * \return the function pointer
+       */
+      FortranFunction10Ptr
+      getFortranFunction10(const std::string&,
+			   const std::string&);
+      
+      /*!
+       * load a function from a library
+       * \param l : library  name
+       * \param f : function name
+       * \return the function pointer
+       */
+      FortranFunction11Ptr
+      getFortranFunction11(const std::string&,
+			   const std::string&);
 
-      double (*getFortranFunction10(const std::string&,const std::string&))(const double*,const double*,
-									    const double*,const double*,
-									    const double*,const double*,
-									    const double*,const double*,
-									    const double*,const double*);
+      /*!
+       * load a function from a library
+       * \param l : library  name
+       * \param f : function name
+       * \return the function pointer
+       */
+      FortranFunction12Ptr
+      getFortranFunction12(const std::string&,
+			   const std::string&);
 
-      double (*getFortranFunction11(const std::string&,const std::string&))(const double*,const double*,
-									    const double*,const double*,
-									    const double*,const double*,
-									    const double*,const double*,
-									    const double*,const double*,
-									    const double*);
+      /*!
+       * load a function from a library
+       * \param l : library  name
+       * \param f : function name
+       * \return the function pointer
+       */
+      FortranFunction13Ptr
+      getFortranFunction13(const std::string&,
+			   const std::string&);
 
-      double (*getFortranFunction12(const std::string&,const std::string&))(const double*,const double*,
-									    const double*,const double*,
-									    const double*,const double*,
-									    const double*,const double*,
-									    const double*,const double*,
-									    const double*,const double*);
+      /*!
+       * load a function from a library
+       * \param l : library  name
+       * \param f : function name
+       * \return the function pointer
+       */
+      FortranFunction14Ptr
+      getFortranFunction14(const std::string&,
+			   const std::string&);
 
-      double (*getFortranFunction13(const std::string&,const std::string&))(const double*,const double*,
-									    const double*,const double*,
-									    const double*,const double*,
-									    const double*,const double*,
-									    const double*,const double*,
-									    const double*,const double*,
-									    const double*);
-
-      double (*getFortranFunction14(const std::string&,const std::string&))(const double*,const double*,
-									    const double*,const double*,
-									    const double*,const double*,
-									    const double*,const double*,
-									    const double*,const double*,
-									    const double*,const double*,
-									    const double*,const double*);
-
-      double (*getFortranFunction15(const std::string&,const std::string&))(const double*,const double*,
-									    const double*,const double*,
-									    const double*,const double*,
-									    const double*,const double*,
-									    const double*,const double*,
-									    const double*,const double*,
-									    const double*,const double*,
-									    const double*);
+      /*!
+       * load a function from a library
+       * \param l : library  name
+       * \param f : function name
+       * \return the function pointer
+       */
+      FortranFunction15Ptr
+      getFortranFunction15(const std::string&,
+			   const std::string&);
 
       ~ExternalLibraryManager();
 

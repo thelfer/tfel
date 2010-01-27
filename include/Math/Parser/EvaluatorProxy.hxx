@@ -44,43 +44,42 @@ namespace tfel
     namespace parser
     {
     
-
       tfel::utilities::SmartPtr<tfel::math::parser::Expr>
-      EvaluatorFunction1P1VGenerator(double (*)(int,double),
+      EvaluatorFunction1P1VGenerator(EvaluatorProxyFunctionPtr1P1V,
 				     const std::vector<std::string>&,
 				     std::vector<tfel::utilities::SmartPtr<tfel::math::parser::Expr> >&);
 
-      template<double (*f)(double)>
+      template<EvaluatorProxyFunctionPtr1V>
       struct EvaluatorProxy
       {
 	EvaluatorProxy(const std::string&);
       }; // end of struct EvaluatorProxy
 
-      template<double (*f)(double,double)>
+      template<EvaluatorProxyFunctionPtr2V>
       struct EvaluatorProxy2V
       {
 	EvaluatorProxy2V(const std::string&);
       }; // end of struct EvaluatorProxy2V
 
-      template<double (*)(int,double)>			   
+      template<EvaluatorProxyFunctionPtr1P1V>			   
       struct EvaluatorProxy1P1V
       {
 	EvaluatorProxy1P1V(const std::string&);
       }; // end of struct EvaluatorProxy1P1V
 
-      template<double (*)(int,int,double)>			   
+      template<EvaluatorProxyFunctionPtr2P1V>			   
       struct EvaluatorProxy2P1V
       {
 	EvaluatorProxy2P1V(const std::string&);
       }; // end of struct EvaluatorProxy2P1V
 
-      template<double (*f)(int,double,double)>			   
+      template<EvaluatorProxyFunctionPtr1P2V>			   
       struct EvaluatorProxy1P2V
       {
 	EvaluatorProxy1P2V(const std::string&);
       }; // end of struct EvaluatorProxy1P2V
 
-      template<double (*f)(int,int,double,double)>
+      template<EvaluatorProxyFunctionPtr2P2V>
       struct EvaluatorProxy2P2V
       {
 	EvaluatorProxy2P2V(const std::string&);

@@ -63,6 +63,7 @@ nobase_include_HEADERS= FiniteElement/Element/ElementsManager.ixx               
 			TypeTraits/IsTemporary.hxx		                                 \
 			TypeTraits/IsRandomAccessIterator.hxx	                                 \
 			Math/Bindings/atlas.hxx                                                  \
+			Math/Interpreter/InterpreterCommon.hxx                                   \
 			Math/Parser/BinaryFunction.hxx						 \
 			Math/Parser/EvaluatorBase.hxx 						 \
 			Math/Parser/Negation.hxx						 \
@@ -363,6 +364,7 @@ nobase_include_HEADERS= FiniteElement/Element/ElementsManager.ixx               
 			Metaprogramming/HasRandomAccessConstIterator.hxx	                 \
 			Metaprogramming/EmptyClass.hxx    	                                 \
 			Metaprogramming/HasRandomAccessIterator.hxx                              \
+			System/ExternalFunctionsPrototypes.hxx                                   \
 			System/ExternalLibraryManager.hxx                                        \
 			System/ProcessManager.h                                                  \
 			System/ProcessManager.hxx                                                \

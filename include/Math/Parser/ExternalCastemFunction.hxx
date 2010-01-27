@@ -13,6 +13,7 @@
 #include<vector>
 #include<stdexcept>
 
+#include"System/ExternalFunctionsPrototypes.hxx"
 #include"Math/Parser/ExternalFunction.hxx"
 
 namespace tfel
@@ -27,8 +28,7 @@ namespace tfel
       struct ExternalCastemFunction
 	: public ExternalFunction
       {
-	typedef double (*FunctionPtr)(const double*const);
-	ExternalCastemFunction(FunctionPtr,
+	ExternalCastemFunction(const tfel::system::CastemFunctionPtr,
 			       const unsigned short);
 	void
 	setVariableValue(const std::vector<double>::size_type,
@@ -50,7 +50,7 @@ namespace tfel
 	resolveDependencies(void) const;
       private:
 	std::vector<double> variables;
-	FunctionPtr f;
+	tfel::system::CastemFunctionPtr f;
       };// end of struct ExternalCastemFunction
  
     } // end of namespace parser

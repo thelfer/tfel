@@ -1,5 +1,5 @@
-#ifndef _MATH_MATRIX_EXPR_LIB_
-#define _MATH_MATRIX_EXPR_LIB_ 1
+#ifndef _TFEL_MATH_MATRIX_EXPR_LIB_
+#define _TFEL_MATH_MATRIX_EXPR_LIB_ 1
 
 #include <string>
 
@@ -87,4 +87,4 @@ namespace tfel{
 
 } // end of TFEL namespace
 
-#endif /* _MATH_MATRIX_EXPR_LIB_ */
+#endif /* _TFEL_MATH_MATRIX_EXPR_LIB_ */

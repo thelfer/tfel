@@ -55,9 +55,16 @@ namespace tfel
 	apply(const double,const double);
       }; // end of struct OpPower
 
+      struct BinaryOperationBase
+      {
+	static void
+	throwUnimplementedDifferentiateFunctionException();
+      }; // end of struct BinaryOperationBase
+
       template<typename Op>
       struct BinaryOperation
-	: public Expr
+	: public Expr,
+	  protected BinaryOperationBase
       {
 	BinaryOperation(const tfel::utilities::SmartPtr<Expr>,
 			const tfel::utilities::SmartPtr<Expr>);

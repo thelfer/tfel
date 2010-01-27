@@ -6,8 +6,8 @@
  * \date   03 jui 2006
  */
 
-#ifndef _LIB_TFEL_CUBICROOTS_HXX_
-#define _LIB_TFEL_CUBICROOTS_HXX_ 
+#ifndef _LIB_TFEL_MATH_CUBICROOTS_HXX_
+#define _LIB_TFEL_MATH_CUBICROOTS_HXX_ 
 
 #include <cmath>
 #include <limits>
@@ -83,7 +83,7 @@ namespace tfel{
 	const T prec = 100*std::numeric_limits<T>::min();
       
 	if(std::abs(a3)<=prec){
-	  INFO("coefficient a3 is too small");
+	  TFEL_UTILITIES_INFO("coefficient a3 is too small");
 	  return false;
 	}
       
@@ -100,7 +100,7 @@ namespace tfel{
       
 	if(delta<0){
 	  if(delta<-100*std::numeric_limits<T>::epsilon()){
-	    INFO("determinant is negative : " << delta);
+	    TFEL_UTILITIES_INFO("determinant is negative : " << delta);
 	    return false;
 	  } else {
 	    delta = static_cast<T>(0.);
@@ -153,5 +153,5 @@ namespace tfel{
 
 } // end of namespace tfel
 
-#endif /* _LIB_TFEL_CUBICROOTS_HXX */
+#endif /* _LIB_TFEL_MATH_CUBICROOTS_HXX */
 

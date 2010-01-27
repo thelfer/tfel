@@ -13,6 +13,7 @@
 #include<cstring>
 #include<climits>
 
+#include<unistd.h>
 #include<dirent.h>
 
 #include"System/SystemError.hxx"
@@ -449,7 +450,7 @@ namespace tfel
     std::string
     systemCall::getUserName(void)
     {
-      return ::cuserid(0);
+      return ::getlogin();
     } // end of systemCall::getUserName
 
     void

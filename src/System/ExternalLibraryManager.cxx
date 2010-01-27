@@ -197,12 +197,13 @@ namespace tfel
       return vars;
     } // end of ExternalLibraryManager::getUMATMaterialPropertiesNames
   
-    double (*ExternalLibraryManager::getCastemFunction(const std::string& l,
-						       const std::string& f))(const double* const)
+    CastemFunctionPtr
+    ExternalLibraryManager::getCastemFunction(const std::string& l,
+					      const std::string& f)
     {
       using namespace std;
       void * lib = this->loadLibrary(l);
-      double (*fct)(const double* const) = ::tfel_getCastemFunction(lib,f.c_str());
+      CastemFunctionPtr fct = ::tfel_getCastemFunction(lib,f.c_str());
       if(fct==0){
 	string msg("ExternalLibraryManager::getCastemFunction : ");
 	msg += " could not load castem function '"+f+"' (";
@@ -213,12 +214,13 @@ namespace tfel
       return fct;
     }
 
-    double (*ExternalLibraryManager::getCFunction0(const std::string& l,
-						   const std::string& f))(void)
+    CFunction0Ptr
+    ExternalLibraryManager::getCFunction0(const std::string& l,
+					  const std::string& f)
     {
       using namespace std;
       void * lib = this->loadLibrary(l);
-      double (*fct)(void) = ::tfel_getCFunction0(lib,f.c_str());
+      CFunction0Ptr fct = ::tfel_getCFunction0(lib,f.c_str());
       if(fct==0){
 	string msg("ExternalLibraryManager::getCFunction0 : ");
 	msg += " could not load function '"+f+"' (";
@@ -229,12 +231,13 @@ namespace tfel
       return fct;
     }
 
-    double (*ExternalLibraryManager::getCFunction1(const std::string& l,
-						   const std::string& f))(double)
+    CFunction1Ptr
+    ExternalLibraryManager::getCFunction1(const std::string& l,
+					  const std::string& f)
     {
       using namespace std;
       void * lib = this->loadLibrary(l);
-      double (*fct)(double) = ::tfel_getCFunction1(lib,f.c_str());
+      CFunction1Ptr fct = ::tfel_getCFunction1(lib,f.c_str());
       if(fct==0){
 	string msg("ExternalLibraryManager::getCFunction1 : ");
 	msg += " could not load function '"+f+"' (";
@@ -245,12 +248,13 @@ namespace tfel
       return fct;
     }
 
-    double (*ExternalLibraryManager::getCFunction2(const std::string& l,
-						   const std::string& f))(double,double)
+    CFunction2Ptr
+    ExternalLibraryManager::getCFunction2(const std::string& l,
+					  const std::string& f)
     {
       using namespace std;
       void * lib = this->loadLibrary(l);
-      double (*fct)(double,double) = ::tfel_getCFunction2(lib,f.c_str());
+      CFunction2Ptr fct = ::tfel_getCFunction2(lib,f.c_str());
       if(fct==0){
 	string msg("ExternalLibraryManager::getCFunction2 : ");
 	msg += " could not load function '"+f+"' (";
@@ -261,13 +265,13 @@ namespace tfel
       return fct;
     }
 
-    double (*ExternalLibraryManager::getCFunction3(const std::string& l,
-						   const std::string& f))(double,double,
-									  double)
+    CFunction3Ptr
+    ExternalLibraryManager::getCFunction3(const std::string& l,
+					  const std::string& f)
     {
       using namespace std;
       void * lib = this->loadLibrary(l);
-      double (*fct)(double,double,double) = ::tfel_getCFunction3(lib,f.c_str());
+      CFunction3Ptr fct = ::tfel_getCFunction3(lib,f.c_str());
       if(fct==0){
 	string msg("ExternalLibraryManager::getCFunction3 : ");
 	msg += " could not load function '"+f+"' (";
@@ -278,14 +282,13 @@ namespace tfel
       return fct;
     }
 
-    double (*ExternalLibraryManager::getCFunction4(const std::string& l,
-						   const std::string& f))(double,double,
-									  double,double)
+    CFunction4Ptr
+    ExternalLibraryManager::getCFunction4(const std::string& l,
+					  const std::string& f)
     {
       using namespace std;
       void * lib = this->loadLibrary(l);
-      double (*fct)(double,double,
-		    double,double) = ::tfel_getCFunction4(lib,f.c_str());
+      CFunction4Ptr fct  = ::tfel_getCFunction4(lib,f.c_str());
       if(fct==0){
 	string msg("ExternalLibraryManager::getCFunction4 : ");
 	msg += " could not load function '"+f+"' (";
@@ -296,16 +299,13 @@ namespace tfel
       return fct;
     }
 
-    double (*ExternalLibraryManager::getCFunction5(const std::string& l,
-						   const std::string& f))(double,double,
-									  double,double,
-									  double)
+    CFunction5Ptr
+    ExternalLibraryManager::getCFunction5(const std::string& l,
+					  const std::string& f)
     {
       using namespace std;
       void * lib = this->loadLibrary(l);
-      double (*fct)(double,double,
-		    double,double,
-		    double) = ::tfel_getCFunction5(lib,f.c_str());
+      CFunction5Ptr fct = ::tfel_getCFunction5(lib,f.c_str());
       if(fct==0){
 	string msg("ExternalLibraryManager::getCFunction5 : ");
 	msg += " could not load function '"+f+"' (";
@@ -316,16 +316,13 @@ namespace tfel
       return fct;
     }
 
-    double (*ExternalLibraryManager::getCFunction6(const std::string& l,
-						   const std::string& f))(double,double,
-									  double,double,
-									  double,double)
+    CFunction6Ptr
+    ExternalLibraryManager::getCFunction6(const std::string& l,
+					  const std::string& f)
     {
       using namespace std;
       void * lib = this->loadLibrary(l);
-      double (*fct)(double,double,
-		    double,double,
-		    double,double) = ::tfel_getCFunction6(lib,f.c_str());
+      CFunction6Ptr fct = ::tfel_getCFunction6(lib,f.c_str());
       if(fct==0){
 	string msg("ExternalLibraryManager::getCFunction6 : ");
 	msg += " could not load function '"+f+"' (";
@@ -336,18 +333,13 @@ namespace tfel
       return fct;
     }
 
-    double (*ExternalLibraryManager::getCFunction7(const std::string& l,
-						   const std::string& f))(double,double,
-									  double,double,
-									  double,double,
-									  double)
+    CFunction7Ptr
+    ExternalLibraryManager::getCFunction7(const std::string& l,
+					  const std::string& f)
     {
       using namespace std;
       void * lib = this->loadLibrary(l);
-      double (*fct)(double,double,
-		    double,double,
-		    double,double,
-		    double) = ::tfel_getCFunction7(lib,f.c_str());
+      CFunction7Ptr fct = ::tfel_getCFunction7(lib,f.c_str());
       if(fct==0){
 	string msg("ExternalLibraryManager::getCFunction7 : ");
 	msg += " could not load function '"+f+"' (";
@@ -358,18 +350,13 @@ namespace tfel
       return fct;
     }
 
-    double (*ExternalLibraryManager::getCFunction8(const std::string& l,
-						   const std::string& f))(double,double,
-									  double,double,
-									  double,double,
-									  double,double)
+    CFunction8Ptr
+    ExternalLibraryManager::getCFunction8(const std::string& l,
+					  const std::string& f)
     {
       using namespace std;
       void * lib = this->loadLibrary(l);
-      double (*fct)(double,double,
-		    double,double,
-		    double,double,
-		    double,double) = ::tfel_getCFunction8(lib,f.c_str());
+      CFunction8Ptr fct = ::tfel_getCFunction8(lib,f.c_str());
       if(fct==0){
 	string msg("ExternalLibraryManager::getCFunction8 : ");
 	msg += " could not load function '"+f+"' (";
@@ -380,18 +367,13 @@ namespace tfel
       return fct;
     }
 
-    double (*ExternalLibraryManager::getCFunction9(const std::string& l,
-						   const std::string& f))(double,double,
-									  double,double,
-									  double,double,
-									  double,double,
-									  double)
+    CFunction9Ptr
+    ExternalLibraryManager::getCFunction9(const std::string& l,
+					  const std::string& f)
     {
       using namespace std;
       void * lib = this->loadLibrary(l);
-      double (*fct)(double,double,double,double,
-		    double,double,double,double,
-		    double) = ::tfel_getCFunction9(lib,f.c_str());
+      CFunction9Ptr fct = ::tfel_getCFunction9(lib,f.c_str());
       if(fct==0){
 	string msg("ExternalLibraryManager::getCFunction9 : ");
 	msg += " could not load function '"+f+"' (";
@@ -402,18 +384,13 @@ namespace tfel
       return fct;
     }
 
-    double (*ExternalLibraryManager::getCFunction10(const std::string& l,
-						    const std::string& f))(double,double,
-									   double,double,
-									   double,double,
-									   double,double,
-									   double,double)
+    CFunction10Ptr
+    ExternalLibraryManager::getCFunction10(const std::string& l,
+					   const std::string& f)
     {
       using namespace std;
       void * lib = this->loadLibrary(l);
-      double (*fct)(double,double,double,double,
-		    double,double,double,double,
-		    double,double) = ::tfel_getCFunction10(lib,f.c_str());
+      CFunction10Ptr fct = ::tfel_getCFunction10(lib,f.c_str());
       if(fct==0){
 	string msg("ExternalLibraryManager::getCFunction10 : ");
 	msg += " could not load function '"+f+"' (";
@@ -424,19 +401,13 @@ namespace tfel
       return fct;
     }
 
-    double (*ExternalLibraryManager::getCFunction11(const std::string& l,
-						    const std::string& f))(double,double,
-									   double,double,
-									   double,double,
-									   double,double,
-									   double,double,
-									   double)
+    CFunction11Ptr
+    ExternalLibraryManager::getCFunction11(const std::string& l,
+					   const std::string& f)
     {
       using namespace std;
       void * lib = this->loadLibrary(l);
-      double (*fct)(double,double,double,double,
-		    double,double,double,double,
-		    double,double,double) = ::tfel_getCFunction11(lib,f.c_str());
+      CFunction11Ptr fct = ::tfel_getCFunction11(lib,f.c_str());
       if(fct==0){
 	string msg("ExternalLibraryManager::getCFunction11 : ");
 	msg += " could not load function '"+f+"' (";
@@ -447,19 +418,13 @@ namespace tfel
       return fct;
     }
 
-    double (*ExternalLibraryManager::getCFunction12(const std::string& l,
-						    const std::string& f))(double,double,
-									   double,double,
-									   double,double,
-									   double,double,
-									   double,double,
-									   double,double)
+    CFunction12Ptr
+    ExternalLibraryManager::getCFunction12(const std::string& l,
+					   const std::string& f)
     {
       using namespace std;
       void * lib = this->loadLibrary(l);
-      double (*fct)(double,double,double,double,
-		    double,double,double,double,
-		    double,double,double,double) = ::tfel_getCFunction12(lib,f.c_str());
+      CFunction12Ptr fct = ::tfel_getCFunction12(lib,f.c_str());
       if(fct==0){
 	string msg("ExternalLibraryManager::getCFunction12 : ");
 	msg += " could not load function '"+f+"' (";
@@ -470,21 +435,13 @@ namespace tfel
       return fct;
     }
 
-    double (*ExternalLibraryManager::getCFunction13(const std::string& l,
-						    const std::string& f))(double,double,
-									   double,double,
-									   double,double,
-									   double,double,
-									   double,double,
-									   double,double,
-									   double)
+    CFunction13Ptr
+    ExternalLibraryManager::getCFunction13(const std::string& l,
+					   const std::string& f)
     {
       using namespace std;
       void * lib = this->loadLibrary(l);
-      double (*fct)(double,double,double,double,
-		    double,double,double,double,
-		    double,double,double,double,
-		    double) = ::tfel_getCFunction13(lib,f.c_str());
+      CFunction13Ptr fct = ::tfel_getCFunction13(lib,f.c_str());
       if(fct==0){
 	string msg("ExternalLibraryManager::getCFunction13 : ");
 	msg += " could not load function '"+f+"' (";
@@ -495,21 +452,13 @@ namespace tfel
       return fct;
     }
 
-    double (*ExternalLibraryManager::getCFunction14(const std::string& l,
-						    const std::string& f))(double,double,
-									   double,double,
-									   double,double,
-									   double,double,
-									   double,double,
-									   double,double,
-									   double,double)
+    CFunction14Ptr
+    ExternalLibraryManager::getCFunction14(const std::string& l,
+					   const std::string& f)
     {
       using namespace std;
       void * lib = this->loadLibrary(l);
-      double (*fct)(double,double,double,double,
-		    double,double,double,double,
-		    double,double,double,double,
-		    double,double) = ::tfel_getCFunction14(lib,f.c_str());
+      CFunction14Ptr fct = ::tfel_getCFunction14(lib,f.c_str());
       if(fct==0){
 	string msg("ExternalLibraryManager::getCFunction14 : ");
 	msg += " could not load function '"+f+"' (";
@@ -520,22 +469,13 @@ namespace tfel
       return fct;
     }
 
-    double (*ExternalLibraryManager::getCFunction15(const std::string& l,
-						    const std::string& f))(double,double,
-									   double,double,
-									   double,double,
-									   double,double,
-									   double,double,
-									   double,double,
-									   double,double,
-									   double)
+    CFunction15Ptr
+    ExternalLibraryManager::getCFunction15(const std::string& l,
+					   const std::string& f)
     {
       using namespace std;
       void * lib = this->loadLibrary(l);
-      double (*fct)(double,double,double,double,
-		    double,double,double,double,
-		    double,double,double,double,
-		    double,double,double) = ::tfel_getCFunction15(lib,f.c_str());
+      CFunction15Ptr fct = ::tfel_getCFunction15(lib,f.c_str());
       if(fct==0){
 	string msg("ExternalLibraryManager::getCFunction15 : ");
 	msg += " could not load function '"+f+"' (";
@@ -546,12 +486,13 @@ namespace tfel
       return fct;
     }
 
-    double (*ExternalLibraryManager::getFortranFunction0(const std::string& l,
-							 const std::string& f))(void)
+    FortranFunction0Ptr
+    ExternalLibraryManager::getFortranFunction0(const std::string& l,
+					  const std::string& f)
     {
       using namespace std;
       void * lib = this->loadLibrary(l);
-      double (*fct)(void) = ::tfel_getFortranFunction0(lib,f.c_str());
+      FortranFunction0Ptr fct = ::tfel_getFortranFunction0(lib,f.c_str());
       if(fct==0){
 	string msg("ExternalLibraryManager::getFortranFunction0 : ");
 	msg += " could not load function '"+f+"' (";
@@ -562,12 +503,13 @@ namespace tfel
       return fct;
     }
 
-    double (*ExternalLibraryManager::getFortranFunction1(const std::string& l,
-							 const std::string& f))(const double* const)
+    FortranFunction1Ptr
+    ExternalLibraryManager::getFortranFunction1(const std::string& l,
+					  const std::string& f)
     {
       using namespace std;
       void * lib = this->loadLibrary(l);
-      double (*fct)(const double* const) = ::tfel_getFortranFunction1(lib,f.c_str());
+      FortranFunction1Ptr fct = ::tfel_getFortranFunction1(lib,f.c_str());
       if(fct==0){
 	string msg("ExternalLibraryManager::getFortranFunction1 : ");
 	msg += " could not load function '"+f+"' (";
@@ -578,12 +520,13 @@ namespace tfel
       return fct;
     }
 
-    double (*ExternalLibraryManager::getFortranFunction2(const std::string& l,
-							 const std::string& f))(const double* const,const double* const)
+    FortranFunction2Ptr
+    ExternalLibraryManager::getFortranFunction2(const std::string& l,
+					  const std::string& f)
     {
       using namespace std;
       void * lib = this->loadLibrary(l);
-      double (*fct)(const double* const,const double* const) = ::tfel_getFortranFunction2(lib,f.c_str());
+      FortranFunction2Ptr fct = ::tfel_getFortranFunction2(lib,f.c_str());
       if(fct==0){
 	string msg("ExternalLibraryManager::getFortranFunction2 : ");
 	msg += " could not load function '"+f+"' (";
@@ -594,13 +537,13 @@ namespace tfel
       return fct;
     }
 
-    double (*ExternalLibraryManager::getFortranFunction3(const std::string& l,
-							 const std::string& f))(const double* const,const double* const,
-										const double* const)
+    FortranFunction3Ptr
+    ExternalLibraryManager::getFortranFunction3(const std::string& l,
+					  const std::string& f)
     {
       using namespace std;
       void * lib = this->loadLibrary(l);
-      double (*fct)(const double* const,const double* const,const double* const) = ::tfel_getFortranFunction3(lib,f.c_str());
+      FortranFunction3Ptr fct = ::tfel_getFortranFunction3(lib,f.c_str());
       if(fct==0){
 	string msg("ExternalLibraryManager::getFortranFunction3 : ");
 	msg += " could not load function '"+f+"' (";
@@ -611,14 +554,13 @@ namespace tfel
       return fct;
     }
 
-    double (*ExternalLibraryManager::getFortranFunction4(const std::string& l,
-							 const std::string& f))(const double* const,const double* const,
-										const double* const,const double* const)
+    FortranFunction4Ptr
+    ExternalLibraryManager::getFortranFunction4(const std::string& l,
+					  const std::string& f)
     {
       using namespace std;
       void * lib = this->loadLibrary(l);
-      double (*fct)(const double* const,const double* const,
-		    const double* const,const double* const) = ::tfel_getFortranFunction4(lib,f.c_str());
+      FortranFunction4Ptr fct  = ::tfel_getFortranFunction4(lib,f.c_str());
       if(fct==0){
 	string msg("ExternalLibraryManager::getFortranFunction4 : ");
 	msg += " could not load function '"+f+"' (";
@@ -629,16 +571,13 @@ namespace tfel
       return fct;
     }
 
-    double (*ExternalLibraryManager::getFortranFunction5(const std::string& l,
-							 const std::string& f))(const double* const,const double* const,
-										const double* const,const double* const,
-										const double* const)
+    FortranFunction5Ptr
+    ExternalLibraryManager::getFortranFunction5(const std::string& l,
+					  const std::string& f)
     {
       using namespace std;
       void * lib = this->loadLibrary(l);
-      double (*fct)(const double* const,const double* const,
-		    const double* const,const double* const,
-		    const double* const) = ::tfel_getFortranFunction5(lib,f.c_str());
+      FortranFunction5Ptr fct = ::tfel_getFortranFunction5(lib,f.c_str());
       if(fct==0){
 	string msg("ExternalLibraryManager::getFortranFunction5 : ");
 	msg += " could not load function '"+f+"' (";
@@ -649,17 +588,13 @@ namespace tfel
       return fct;
     }
 
-
-    double (*ExternalLibraryManager::getFortranFunction6(const std::string& l,
-							 const std::string& f))(const double* const,const double* const,
-										const double* const,const double* const,
-										const double* const,const double* const)
+    FortranFunction6Ptr
+    ExternalLibraryManager::getFortranFunction6(const std::string& l,
+					  const std::string& f)
     {
       using namespace std;
       void * lib = this->loadLibrary(l);
-      double (*fct)(const double* const,const double* const,
-		    const double* const,const double* const,
-		    const double* const,const double* const) = ::tfel_getFortranFunction6(lib,f.c_str());
+      FortranFunction6Ptr fct = ::tfel_getFortranFunction6(lib,f.c_str());
       if(fct==0){
 	string msg("ExternalLibraryManager::getFortranFunction6 : ");
 	msg += " could not load function '"+f+"' (";
@@ -670,18 +605,13 @@ namespace tfel
       return fct;
     }
 
-    double (*ExternalLibraryManager::getFortranFunction7(const std::string& l,
-							 const std::string& f))(const double* const,const double* const,
-										const double* const,const double* const,
-										const double* const,const double* const,
-										const double* const)
+    FortranFunction7Ptr
+    ExternalLibraryManager::getFortranFunction7(const std::string& l,
+					  const std::string& f)
     {
       using namespace std;
       void * lib = this->loadLibrary(l);
-      double (*fct)(const double* const,const double* const,
-		    const double* const,const double* const,
-		    const double* const,const double* const,
-		    const double* const) = ::tfel_getFortranFunction7(lib,f.c_str());
+      FortranFunction7Ptr fct = ::tfel_getFortranFunction7(lib,f.c_str());
       if(fct==0){
 	string msg("ExternalLibraryManager::getFortranFunction7 : ");
 	msg += " could not load function '"+f+"' (";
@@ -692,18 +622,13 @@ namespace tfel
       return fct;
     }
 
-    double (*ExternalLibraryManager::getFortranFunction8(const std::string& l,
-							 const std::string& f))(const double* const,const double* const,
-										const double* const,const double* const,
-										const double* const,const double* const,
-										const double* const,const double* const)
+    FortranFunction8Ptr
+    ExternalLibraryManager::getFortranFunction8(const std::string& l,
+					  const std::string& f)
     {
       using namespace std;
       void * lib = this->loadLibrary(l);
-      double (*fct)(const double* const,const double* const,
-		    const double* const,const double* const,
-		    const double* const,const double* const,
-		    const double* const,const double* const) = ::tfel_getFortranFunction8(lib,f.c_str());
+      FortranFunction8Ptr fct = ::tfel_getFortranFunction8(lib,f.c_str());
       if(fct==0){
 	string msg("ExternalLibraryManager::getFortranFunction8 : ");
 	msg += " could not load function '"+f+"' (";
@@ -714,18 +639,13 @@ namespace tfel
       return fct;
     }
 
-    double (*ExternalLibraryManager::getFortranFunction9(const std::string& l,
-							 const std::string& f))(const double* const,const double* const,
-										const double* const,const double* const,
-										const double* const,const double* const,
-										const double* const,const double* const,
-										const double* const)
+    FortranFunction9Ptr
+    ExternalLibraryManager::getFortranFunction9(const std::string& l,
+					  const std::string& f)
     {
       using namespace std;
       void * lib = this->loadLibrary(l);
-      double (*fct)(const double* const,const double* const,const double* const,const double* const,
-		    const double* const,const double* const,const double* const,const double* const,
-		    const double* const) = ::tfel_getFortranFunction9(lib,f.c_str());
+      FortranFunction9Ptr fct = ::tfel_getFortranFunction9(lib,f.c_str());
       if(fct==0){
 	string msg("ExternalLibraryManager::getFortranFunction9 : ");
 	msg += " could not load function '"+f+"' (";
@@ -736,18 +656,13 @@ namespace tfel
       return fct;
     }
 
-    double (*ExternalLibraryManager::getFortranFunction10(const std::string& l,
-							  const std::string& f))(const double* const,const double* const,
-										 const double* const,const double* const,
-										 const double* const,const double* const,
-										 const double* const,const double* const,
-										 const double* const,const double* const)
+    FortranFunction10Ptr
+    ExternalLibraryManager::getFortranFunction10(const std::string& l,
+					   const std::string& f)
     {
       using namespace std;
       void * lib = this->loadLibrary(l);
-      double (*fct)(const double* const,const double* const,const double* const,const double* const,
-		    const double* const,const double* const,const double* const,const double* const,
-		    const double* const,const double* const) = ::tfel_getFortranFunction10(lib,f.c_str());
+      FortranFunction10Ptr fct = ::tfel_getFortranFunction10(lib,f.c_str());
       if(fct==0){
 	string msg("ExternalLibraryManager::getFortranFunction10 : ");
 	msg += " could not load function '"+f+"' (";
@@ -758,19 +673,13 @@ namespace tfel
       return fct;
     }
 
-    double (*ExternalLibraryManager::getFortranFunction11(const std::string& l,
-							  const std::string& f))(const double* const,const double* const,
-										 const double* const,const double* const,
-										 const double* const,const double* const,
-										 const double* const,const double* const,
-										 const double* const,const double* const,
-										 const double* const)
+    FortranFunction11Ptr
+    ExternalLibraryManager::getFortranFunction11(const std::string& l,
+					   const std::string& f)
     {
       using namespace std;
       void * lib = this->loadLibrary(l);
-      double (*fct)(const double* const,const double* const,const double* const,const double* const,
-		    const double* const,const double* const,const double* const,const double* const,
-		    const double* const,const double* const,const double* const) = ::tfel_getFortranFunction11(lib,f.c_str());
+      FortranFunction11Ptr fct = ::tfel_getFortranFunction11(lib,f.c_str());
       if(fct==0){
 	string msg("ExternalLibraryManager::getFortranFunction11 : ");
 	msg += " could not load function '"+f+"' (";
@@ -781,19 +690,13 @@ namespace tfel
       return fct;
     }
 
-    double (*ExternalLibraryManager::getFortranFunction12(const std::string& l,
-							  const std::string& f))(const double* const,const double* const,
-										 const double* const,const double* const,
-										 const double* const,const double* const,
-										 const double* const,const double* const,
-										 const double* const,const double* const,
-										 const double* const,const double* const)
+    FortranFunction12Ptr
+    ExternalLibraryManager::getFortranFunction12(const std::string& l,
+					   const std::string& f)
     {
       using namespace std;
       void * lib = this->loadLibrary(l);
-      double (*fct)(const double* const,const double* const,const double* const,const double* const,
-		    const double* const,const double* const,const double* const,const double* const,
-		    const double* const,const double* const,const double* const,const double* const) = ::tfel_getFortranFunction12(lib,f.c_str());
+      FortranFunction12Ptr fct = ::tfel_getFortranFunction12(lib,f.c_str());
       if(fct==0){
 	string msg("ExternalLibraryManager::getFortranFunction12 : ");
 	msg += " could not load function '"+f+"' (";
@@ -804,21 +707,13 @@ namespace tfel
       return fct;
     }
 
-    double (*ExternalLibraryManager::getFortranFunction13(const std::string& l,
-							  const std::string& f))(const double* const,const double* const,
-										 const double* const,const double* const,
-										 const double* const,const double* const,
-										 const double* const,const double* const,
-										 const double* const,const double* const,
-										 const double* const,const double* const,
-										 const double* const)
+    FortranFunction13Ptr
+    ExternalLibraryManager::getFortranFunction13(const std::string& l,
+					   const std::string& f)
     {
       using namespace std;
       void * lib = this->loadLibrary(l);
-      double (*fct)(const double* const,const double* const,const double* const,const double* const,
-		    const double* const,const double* const,const double* const,const double* const,
-		    const double* const,const double* const,const double* const,const double* const,
-		    const double* const) = ::tfel_getFortranFunction13(lib,f.c_str());
+      FortranFunction13Ptr fct = ::tfel_getFortranFunction13(lib,f.c_str());
       if(fct==0){
 	string msg("ExternalLibraryManager::getFortranFunction13 : ");
 	msg += " could not load function '"+f+"' (";
@@ -829,21 +724,13 @@ namespace tfel
       return fct;
     }
 
-    double (*ExternalLibraryManager::getFortranFunction14(const std::string& l,
-							  const std::string& f))(const double* const,const double* const,
-										 const double* const,const double* const,
-										 const double* const,const double* const,
-										 const double* const,const double* const,
-										 const double* const,const double* const,
-										 const double* const,const double* const,
-										 const double* const,const double* const)
+    FortranFunction14Ptr
+    ExternalLibraryManager::getFortranFunction14(const std::string& l,
+					   const std::string& f)
     {
       using namespace std;
       void * lib = this->loadLibrary(l);
-      double (*fct)(const double* const,const double* const,const double* const,const double* const,
-		    const double* const,const double* const,const double* const,const double* const,
-		    const double* const,const double* const,const double* const,const double* const,
-		    const double* const,const double* const) = ::tfel_getFortranFunction14(lib,f.c_str());
+      FortranFunction14Ptr fct = ::tfel_getFortranFunction14(lib,f.c_str());
       if(fct==0){
 	string msg("ExternalLibraryManager::getFortranFunction14 : ");
 	msg += " could not load function '"+f+"' (";
@@ -854,22 +741,13 @@ namespace tfel
       return fct;
     }
 
-    double (*ExternalLibraryManager::getFortranFunction15(const std::string& l,
-							  const std::string& f))(const double* const,const double* const,
-										 const double* const,const double* const,
-										 const double* const,const double* const,
-										 const double* const,const double* const,
-										 const double* const,const double* const,
-										 const double* const,const double* const,
-										 const double* const,const double* const,
-										 const double* const)
+    FortranFunction15Ptr
+    ExternalLibraryManager::getFortranFunction15(const std::string& l,
+					   const std::string& f)
     {
       using namespace std;
       void * lib = this->loadLibrary(l);
-      double (*fct)(const double* const,const double* const,const double* const,const double* const,
-		    const double* const,const double* const,const double* const,const double* const,
-		    const double* const,const double* const,const double* const,const double* const,
-		    const double* const,const double* const,const double* const) = ::tfel_getFortranFunction15(lib,f.c_str());
+      FortranFunction15Ptr fct = ::tfel_getFortranFunction15(lib,f.c_str());
       if(fct==0){
 	string msg("ExternalLibraryManager::getFortranFunction15 : ");
 	msg += " could not load function '"+f+"' (";

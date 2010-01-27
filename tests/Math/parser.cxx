@@ -16,7 +16,7 @@
 
 int
 main(const int,
-     const char * const * const argv)
+     const char * const * const)
 {
   using namespace std;
   using namespace tfel::math;

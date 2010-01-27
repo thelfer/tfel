@@ -18,6 +18,7 @@
 #include"Utilities/TextData.hxx"
 #include"Utilities/ArgumentParserBase.hxx"
 #include"Math/Evaluator.hxx"
+
 #include"Graphics/PlotWindow.hxx"
 
 namespace tfel
@@ -61,7 +62,6 @@ namespace tfel
       std::map<std::string,MemFuncPtr2> plotCallBacks;
       tfel::utilities::SmartPtr<tfel::math::parser::ExternalFunctionManager> functions;
       std::map<std::string,tfel::utilities::SmartPtr<tfel::utilities::TextData> > dataSources;
-      std::map<std::string,void*> libraries;
       std::set<std::string> locks;
       std::string terminal;
       std::string output;
@@ -100,8 +100,6 @@ namespace tfel
       getUsageDescription(void) const;
       void
       reset(void);
-      void*
-      openLibrary(const std::string&);
       bool
       isValidIdentifier(const std::string&);
       std::string
@@ -149,17 +147,20 @@ namespace tfel
       void
       treatSetGrid(TokensContainer::const_iterator&, 
 		   const TokensContainer::const_iterator);
-#ifdef HAVE_GSL
-      void
-      treatSetGSL(TokensContainer::const_iterator&, 
-		  const TokensContainer::const_iterator);
-#endif
       CurveOptions
       treatPlotOptions(TokensContainer::const_iterator&, 
 		       const TokensContainer::const_iterator);
       void
       applyCurveOptions(tfel::utilities::SmartPtr<Curve>,
 			const CurveOptions&);
+
+
+#ifdef HAVE_GSL
+      void
+      treatSetGSL(TokensContainer::const_iterator&, 
+		  const TokensContainer::const_iterator);
+#endif
+
       void
       analyseFunctionDefinition(TokensContainer::const_iterator&,
 				const TokensContainer::const_iterator,
@@ -186,13 +187,11 @@ namespace tfel
       importCFunction(const std::string&,
 		      const std::string&,
 		      const unsigned short,
-		      void * const,
 		      const bool);
       void
       importCastemFunction(const std::string&,
 			   const std::string&,
 			   const unsigned short,
-			   void * const,
 			   const bool);
 #ifdef HAVE_OCTAVE
       void

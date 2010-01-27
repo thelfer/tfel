@@ -1,5 +1,5 @@
-#ifndef _MATH_BASICOPERATIONS_LIB_
-#define _MATH_BASICOPERATIONS_LIB_ 1
+#ifndef _TFEL_MATH_BASICOPERATIONS_LIB_
+#define _TFEL_MATH_BASICOPERATIONS_LIB_ 1
 
 #include <string>
 #include "Metaprogramming/EnableIf.hxx"
@@ -465,5 +465,4 @@ namespace tfel{
 
 } // end of namespace tfel
 
-
-#endif /* _MATH_BASICOPERATIONS_LIB_ */
+#endif /* _TFEL_MATH_BASICOPERATIONS_LIB_ */

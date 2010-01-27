@@ -89,11 +89,11 @@ int main(void)
 
   init_floating_point_exceptions();
 
-#ifdef VERBOSE
+#ifdef TFEL_VERBOSE
   std::cerr << " Beginning test<float>()" << std::endl;
 #endif
   test<float>();
-#ifdef VERBOSE
+#ifdef TFEL_VERBOSE
   std::cerr << " Beginning test<double>()" << std::endl;
 #endif
   test<double>();

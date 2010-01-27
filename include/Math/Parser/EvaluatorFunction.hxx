@@ -19,7 +19,20 @@ namespace tfel
 
     namespace parser
     {
-    
+
+#ifdef __SUNPRO_CC
+      extern "C" {
+#endif /* __SUNPRO_CC */
+	typedef double (*EvaluatorProxyFunctionPtr1V)(double); 
+	typedef double (*EvaluatorProxyFunctionPtr2V)(double,double); 
+	typedef double (*EvaluatorProxyFunctionPtr1P1V)(int,double); 
+	typedef double (*EvaluatorProxyFunctionPtr1P2V)(int,double,double);
+	typedef double (*EvaluatorProxyFunctionPtr2P1V)(int,int,double);
+	typedef double (*EvaluatorProxyFunctionPtr2P2V)(int,int,double,double);
+#ifdef __SUNPRO_CC
+     }
+#endif /* __SUNPRO_CC */
+
       struct EvaluatorFunctionBase
 	: public Function
       {
@@ -59,7 +72,7 @@ namespace tfel
       struct EvaluatorFunction1P1V
 	: public EvaluatorFunction1VBase
       {
-	EvaluatorFunction1P1V(double (*f)(int,double),
+	EvaluatorFunction1P1V(const EvaluatorProxyFunctionPtr1P1V,
 			      const int,
 			      const tfel::utilities::SmartPtr<Expr>);
 	double getValue(void) const;
@@ -69,14 +82,14 @@ namespace tfel
 	clone(const std::vector<double>&) const;
 	~EvaluatorFunction1P1V();
       private:
-	double (*f)(int,double);
+	EvaluatorProxyFunctionPtr1P1V f;
 	const int n;
       }; // end of struct EvaluatorFunction1P1V
 
       struct EvaluatorFunction2P1V
 	: public EvaluatorFunction1VBase
       {
-	EvaluatorFunction2P1V(double (*)(int,int,double),
+	EvaluatorFunction2P1V(const EvaluatorProxyFunctionPtr2P1V,
 			      const int,
 			      const int,
 			      const tfel::utilities::SmartPtr<Expr>);
@@ -87,7 +100,7 @@ namespace tfel
 	clone(const std::vector<double>&) const;
 	~EvaluatorFunction2P1V();
       private:
-	double (*f)(int,int,double);			      
+	EvaluatorProxyFunctionPtr2P1V f;
 	const int n;
 	const int m;
       }; // end of struct EvaluatorFunction2P1V
@@ -95,7 +108,7 @@ namespace tfel
       struct EvaluatorFunction1P2V
 	: public EvaluatorFunction2VBase
       {
-	EvaluatorFunction1P2V(double (*)(int,double,double),
+	EvaluatorFunction1P2V(const EvaluatorProxyFunctionPtr1P2V,
 			      const int,
 			      const tfel::utilities::SmartPtr<Expr>,
 			      const tfel::utilities::SmartPtr<Expr>);
@@ -106,14 +119,14 @@ namespace tfel
 	clone(const std::vector<double>&) const;
 	~EvaluatorFunction1P2V();
       private:
-	double (*f)(int,double,double);
+	EvaluatorProxyFunctionPtr1P2V f;
 	const int n;
       }; // end of struct EvaluatorFunction1P2V
 
       struct EvaluatorFunction2P2V
 	: public EvaluatorFunction2VBase
       {
-	EvaluatorFunction2P2V(double (*)(int,int,double,double),
+	EvaluatorFunction2P2V(const EvaluatorProxyFunctionPtr2P2V,
 			      const int,
 			      const int,
 			      const tfel::utilities::SmartPtr<Expr>,
@@ -125,7 +138,7 @@ namespace tfel
 	clone(const std::vector<double>&) const;
 	~EvaluatorFunction2P2V();
       private:
-	double (*f)(int,int,double,double);
+	EvaluatorProxyFunctionPtr2P2V f;
 	const int n;
 	const int m;
       }; // end of struct EvaluatorFunction2P2V

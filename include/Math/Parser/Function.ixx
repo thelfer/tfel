@@ -17,8 +17,25 @@
 #include<cmath>
 #include<iostream>
 
+#ifndef __SUNPRO_CC
+#define TFEL_MATH_DIFFERENTIATEFUNCTION_PARTIALSPECIALISATION_DECLARATION(X) \
+      template<>                                                             \
+      tfel::utilities::SmartPtr<Expr>                                        \
+      differentiateFunction<std::X>(const tfel::utilities::SmartPtr<Expr>,   \
+				    const std::vector<double>::size_type,    \
+				    const std::vector<double>&)
+#else  /* __SUNPRO_CC */
+#define TFEL_MATH_DIFFERENTIATEFUNCTION_PARTIALSPECIALISATION_DECLARATION(X) \
+      template<>                                                             \
+      tfel::utilities::SmartPtr<Expr>                                        \
+      differentiateFunction<X>(const tfel::utilities::SmartPtr<Expr>,        \
+			       const std::vector<double>::size_type,         \
+			       const std::vector<double>&)
+#endif /* __SUNPRO_CC */
+
 namespace tfel
 {
+
   namespace math
   {
 
@@ -45,10 +62,9 @@ namespace tfel
 	errno = 0;
 	res = f(arg);
 	if(errno!=0){
-	  string msg("StandardFunction<f>::getValue : call to function failed (");
-	  msg += strerror(errno);
-	  msg += ")";
-	  throw(runtime_error(msg));
+	  int e = errno;
+	  errno = old;
+	  StandardFunctionBase::throwInvalidCallException(e);
 	}
 	errno = old;
 	return res;
@@ -86,9 +102,7 @@ namespace tfel
       {
 	using namespace std;
 	using namespace tfel::utilities;
-	string msg("StandardBinaryFunction<f>::differentiate : ");
-	msg += "unimplemented feature";
-	throw(runtime_error(msg));
+	StandardFunctionBase::throwUnimplementedDifferentiateFunctionException();
 	return SmartPtr<Expr>(0);
       }
       
@@ -100,82 +114,19 @@ namespace tfel
 	return differentiateFunction<f>(this->expr,pos,v);
       } // end of StandardFunction<f>::differentiate
 
-      template<>
-      tfel::utilities::SmartPtr<Expr>
-      differentiateFunction<std::exp>(const tfel::utilities::SmartPtr<Expr>,
-				      const std::vector<double>::size_type,
-				      const std::vector<double>&);
-
-      template<>
-      tfel::utilities::SmartPtr<Expr>
-      differentiateFunction<std::sin>(const tfel::utilities::SmartPtr<Expr>,
-				      const std::vector<double>::size_type,
-				      const std::vector<double>&);
-
-      template<>
-      tfel::utilities::SmartPtr<Expr>
-      differentiateFunction<std::cos>(const tfel::utilities::SmartPtr<Expr>,
-				      const std::vector<double>::size_type,
-				      const std::vector<double>&);
-
-      template<>
-      tfel::utilities::SmartPtr<Expr>
-      differentiateFunction<std::tan>(const tfel::utilities::SmartPtr<Expr>,
-				      const std::vector<double>::size_type,
-				      const std::vector<double>&);
-
-      template<>
-      tfel::utilities::SmartPtr<Expr>
-      differentiateFunction<std::sqrt>(const tfel::utilities::SmartPtr<Expr>,
-				       const std::vector<double>::size_type,
-				       const std::vector<double>&);
-
-      template<>
-      tfel::utilities::SmartPtr<Expr>
-      differentiateFunction<std::log>(const tfel::utilities::SmartPtr<Expr>,
-				      const std::vector<double>::size_type,
-				      const std::vector<double>&);
-
-      template<>
-      tfel::utilities::SmartPtr<Expr>
-      differentiateFunction<std::log10>(const tfel::utilities::SmartPtr<Expr>,
-					const std::vector<double>::size_type,
-					const std::vector<double>&);
-
-      template<>
-      tfel::utilities::SmartPtr<Expr>
-      differentiateFunction<std::asin>(const tfel::utilities::SmartPtr<Expr>,
-				       const std::vector<double>::size_type,
-				       const std::vector<double>&);
-      template<>
-      tfel::utilities::SmartPtr<Expr>
-      differentiateFunction<std::acos>(const tfel::utilities::SmartPtr<Expr>,
-				       const std::vector<double>::size_type,
-				       const std::vector<double>&);
-
-      template<>
-      tfel::utilities::SmartPtr<Expr>
-      differentiateFunction<std::atan>(const tfel::utilities::SmartPtr<Expr>,
-				       const std::vector<double>::size_type,
-				       const std::vector<double>&);
-
-      template<>
-      tfel::utilities::SmartPtr<Expr>
-      differentiateFunction<std::sinh>(const tfel::utilities::SmartPtr<Expr>,
-				       const std::vector<double>::size_type,
-				       const std::vector<double>&);
-
-      template<>
-      tfel::utilities::SmartPtr<Expr>
-      differentiateFunction<std::cosh>(const tfel::utilities::SmartPtr<Expr>,
-				       const std::vector<double>::size_type,
-				       const std::vector<double>&);
-
-      template<>
-      tfel::utilities::SmartPtr<Expr>
-      differentiateFunction<std::tanh>(const tfel::utilities::SmartPtr<Expr>,
-				       const std::vector<double>::size_type,
-				       const std::vector<double>&);
+      TFEL_MATH_DIFFERENTIATEFUNCTION_PARTIALSPECIALISATION_DECLARATION(exp);
+      TFEL_MATH_DIFFERENTIATEFUNCTION_PARTIALSPECIALISATION_DECLARATION(sin);
+      TFEL_MATH_DIFFERENTIATEFUNCTION_PARTIALSPECIALISATION_DECLARATION(cos);
+      TFEL_MATH_DIFFERENTIATEFUNCTION_PARTIALSPECIALISATION_DECLARATION(tan);
+      TFEL_MATH_DIFFERENTIATEFUNCTION_PARTIALSPECIALISATION_DECLARATION(sqrt);
+      TFEL_MATH_DIFFERENTIATEFUNCTION_PARTIALSPECIALISATION_DECLARATION(log);
+      TFEL_MATH_DIFFERENTIATEFUNCTION_PARTIALSPECIALISATION_DECLARATION(log10);
+      TFEL_MATH_DIFFERENTIATEFUNCTION_PARTIALSPECIALISATION_DECLARATION(asin);
+      TFEL_MATH_DIFFERENTIATEFUNCTION_PARTIALSPECIALISATION_DECLARATION(acos);
+      TFEL_MATH_DIFFERENTIATEFUNCTION_PARTIALSPECIALISATION_DECLARATION(atan);
+      TFEL_MATH_DIFFERENTIATEFUNCTION_PARTIALSPECIALISATION_DECLARATION(sinh);
+      TFEL_MATH_DIFFERENTIATEFUNCTION_PARTIALSPECIALISATION_DECLARATION(cosh);
+      TFEL_MATH_DIFFERENTIATEFUNCTION_PARTIALSPECIALISATION_DECLARATION(tanh);
       
     } // end of namespace parser
 

@@ -121,12 +121,24 @@ namespace tfel{
        * type of the stensor's reverse iterator.
        * (provided for stl compatibility).
        */
-      typedef std::reverse_iterator<const_iterator> const_reverse_iterator;
+#ifdef __GNUG__
+      typedef std::reverse_iterator<iterator> reverse_iterator; 
+#else
+      typedef std::reverse_iterator<iterator,T,
+      				    reference,
+      				    difference_type> reverse_iterator;
+#endif
       /*!
        * type of the stensor's const reverse iterator.
        * (provided for stl compatibility).
        */
-      typedef std::reverse_iterator<iterator> reverse_iterator;
+#ifdef __GNUG__
+      typedef std::reverse_iterator<const_iterator> const_reverse_iterator; 
+#else
+      typedef std::reverse_iterator<const_iterator,T,
+      				    const_reference,
+      				    difference_type> const_reverse_iterator;
+#endif
       /*!
        * type of a reference to the value contained.
        * (this is a stl requirement).

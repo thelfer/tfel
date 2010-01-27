@@ -5,8 +5,8 @@
  * \date   04 May 2006
  */
 
-#ifndef _MATRIX_CONCEPT_LIB_
-#define _MATRIX_CONCEPT_LIB_ 1
+#ifndef _TFEL_MATH_MATRIX_CONCEPT_LIB_
+#define _TFEL_MATH_MATRIX_CONCEPT_LIB_ 1
 
 #include <string>
 
@@ -155,4 +155,4 @@ namespace tfel{
 
 #include "Math/Matrix/MatrixConcept.ixx"
 
-#endif /* _MATRIX_CONCEPT_LIB_ */
+#endif /* _TFEL_MATH_MATRIX_CONCEPT_LIB_ */

@@ -64,7 +64,7 @@ namespace tfel
       EvaluatorFunction2VBase::~EvaluatorFunction2VBase()
       {} // end of EvaluatorFunction2VBase::~EvaluatorFunction2VBase()
 
-      EvaluatorFunction1P1V::EvaluatorFunction1P1V(double (*f_)(int,double),
+      EvaluatorFunction1P1V::EvaluatorFunction1P1V(const EvaluatorProxyFunctionPtr1P1V f_,
 						   const int n_,
 						   const tfel::utilities::SmartPtr<Expr> e)
 	: EvaluatorFunction1VBase(e),
@@ -99,7 +99,7 @@ namespace tfel
       EvaluatorFunction1P1V::~EvaluatorFunction1P1V()
       {} // end of EvaluatorFunction2P1V::~EvaluatorFunction2P1V()
 
-      EvaluatorFunction2P1V::EvaluatorFunction2P1V(double (*f_)(int,int,double),
+      EvaluatorFunction2P1V::EvaluatorFunction2P1V(const EvaluatorProxyFunctionPtr2P1V f_,
 						   const int n_,
 						   const int m_,
 						   const tfel::utilities::SmartPtr<Expr> e)
@@ -138,7 +138,7 @@ namespace tfel
       EvaluatorFunction2P1V::~EvaluatorFunction2P1V()
       {} // end of EvaluatorFunction2P1V::~EvaluatorFunction2P1V()
 
-      EvaluatorFunction1P2V::EvaluatorFunction1P2V(double (*f_)(int,double,double),
+      EvaluatorFunction1P2V::EvaluatorFunction1P2V(const EvaluatorProxyFunctionPtr1P2V f_,
 						   const int n_,
 						   const tfel::utilities::SmartPtr<Expr> e1_,
 						   const tfel::utilities::SmartPtr<Expr> e2_)
@@ -176,7 +176,7 @@ namespace tfel
       EvaluatorFunction1P2V::~EvaluatorFunction1P2V()
       {} // end of EvaluatorFunction2P2V::~EvaluatorFunction2P2V()
 
-      EvaluatorFunction2P2V::EvaluatorFunction2P2V(double (*f_)(int,int,double,double),
+      EvaluatorFunction2P2V::EvaluatorFunction2P2V(const EvaluatorProxyFunctionPtr2P2V f_,
 						   const int n_,
 						   const int m_,
 						   const tfel::utilities::SmartPtr<Expr> e1_,

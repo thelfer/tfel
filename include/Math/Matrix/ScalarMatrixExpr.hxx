@@ -5,8 +5,8 @@
  * \date   05 May 2006  
  */
 
-#ifndef _MATH_SCALAR_MATRIX_EXPR_LIB_
-#define _MATH_SCALAR_MATRIX_EXPR_LIB_ 1
+#ifndef _TFEL_MATH_SCALAR_MATRIX_EXPR_LIB_
+#define _TFEL_MATH_SCALAR_MATRIX_EXPR_LIB_ 1
 
 #include <string>
 
@@ -212,4 +212,4 @@ namespace tfel{
 #include"Math/Matrix/ScalarMatrixExprSpecialisation.ixx"
 #endif  /* NO_EXPRESSION_TEMPLATE_SPECIALISATION */
 
-#endif /* _MATH_SCALAR_MATRIX_EXPR_LIB_ */
+#endif /* _TFEL_MATH_SCALAR_MATRIX_EXPR_LIB_ */

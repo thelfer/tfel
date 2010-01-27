@@ -71,13 +71,13 @@ namespace tfel{
 
 	  tmp = std::sqrt(y0*y0+y1*y1);
 	  if(tmp>100*std::numeric_limits<T>::epsilon()){
-	    INFO("first eigenvalue false : " << tmp);
-	    INFO("s = " );
-	    INFO(s);
-	    INFO("vp = " );
-	    INFO(vp);
-	    INFO("m = " );
-	    INFO(m);
+	    TFEL_UTILITIES_INFO("first eigenvalue false : " << tmp);
+	    TFEL_UTILITIES_INFO("s = " );
+	    TFEL_UTILITIES_INFO(s);
+	    TFEL_UTILITIES_INFO("vp = " );
+	    TFEL_UTILITIES_INFO(vp);
+	    TFEL_UTILITIES_INFO("m = " );
+	    TFEL_UTILITIES_INFO(m);
 	    return false;
 	  }
   
@@ -87,13 +87,13 @@ namespace tfel{
 
 	  tmp = std::sqrt(y0*y0+y1*y1);
 	  if(tmp>100*std::numeric_limits<T>::epsilon()){
-	    INFO("second eigenvalue false : " << tmp);
-	    INFO("s = " );
-	    INFO(s);
-	    INFO("vp = " );
-	    INFO(vp);
-	    INFO("m = " );
-	    INFO(m);
+	    TFEL_UTILITIES_INFO("second eigenvalue false : " << tmp);
+	    TFEL_UTILITIES_INFO("s = " );
+	    TFEL_UTILITIES_INFO(s);
+	    TFEL_UTILITIES_INFO("vp = " );
+	    TFEL_UTILITIES_INFO(vp);
+	    TFEL_UTILITIES_INFO("m = " );
+	    TFEL_UTILITIES_INFO(m);
 	    return false;
 	  }
 
@@ -125,14 +125,14 @@ namespace tfel{
 	  T s1 = s_1 - vp;
 	  if(std::abs(s0)>std::abs(s1)){
 	    if(std::abs(s0)<100*std::numeric_limits<T>::min()){
-	      INFO("s0 is too small");
+	      TFEL_UTILITIES_INFO("s0 is too small");
 	      return false;
 	    }
 	    y=static_cast<T>(1.);
 	    x=-s3/(M_sqrt2*s0);
 	  } else {
 	    if(std::abs(s1)<100*std::numeric_limits<T>::min()){
-	      INFO("s1 is too small");
+	      TFEL_UTILITIES_INFO("s1 is too small");
 	      return false;
 	    }
 	    x=static_cast<T>(1.);
@@ -140,7 +140,7 @@ namespace tfel{
 	  }
 	  s0 = std::sqrt(x*x+y*y);
 	  if(s0<100*std::numeric_limits<T>::min()){
-	    INFO("std::sqrt(x*x+y*y) is too small");
+	    TFEL_UTILITIES_INFO("std::sqrt(x*x+y*y) is too small");
 	    return false;
 	  }
 	  x/=s0;
@@ -332,13 +332,13 @@ namespace tfel{
 
 	  tmp = norm(y0,y1,y2);
 	  if(tmp>100*std::numeric_limits<T>::epsilon()){
-	    INFO("first eigenvalue false : " << tmp);
-	    INFO("s = " );
-	    INFO(s);
-	    INFO("vp = " );
-	    INFO(vp);
-	    INFO("m = " );
-	    INFO(m);
+	    TFEL_UTILITIES_INFO("first eigenvalue false : " << tmp);
+	    TFEL_UTILITIES_INFO("s = " );
+	    TFEL_UTILITIES_INFO(s);
+	    TFEL_UTILITIES_INFO("vp = " );
+	    TFEL_UTILITIES_INFO(vp);
+	    TFEL_UTILITIES_INFO("m = " );
+	    TFEL_UTILITIES_INFO(m);
 	    return false;
 	  }
   
@@ -349,13 +349,13 @@ namespace tfel{
 
 	  tmp = norm(y0,y1,y2);
 	  if(tmp>100*std::numeric_limits<T>::epsilon()){
-	    INFO("second eigenvalue false : " << tmp);
-	    INFO("s = " );
-	    INFO(s);
-	    INFO("vp = " );
-	    INFO(vp);
-	    INFO("m = " );
-	    INFO(m);
+	    TFEL_UTILITIES_INFO("second eigenvalue false : " << tmp);
+	    TFEL_UTILITIES_INFO("s = " );
+	    TFEL_UTILITIES_INFO(s);
+	    TFEL_UTILITIES_INFO("vp = " );
+	    TFEL_UTILITIES_INFO(vp);
+	    TFEL_UTILITIES_INFO("m = " );
+	    TFEL_UTILITIES_INFO(m);
 	    return false;
 	  }
 
@@ -366,13 +366,13 @@ namespace tfel{
 
 	  tmp = norm(y0,y1,y2);
 	  if(tmp>1000*std::numeric_limits<T>::epsilon()){
-	    INFO("third eigenvalue false : " << tmp);
-	    INFO("s = " );
-	    INFO(s);
-	    INFO("vp = " );
-	    INFO(vp);
-	    INFO("m = " );
-	    INFO(m);
+	    TFEL_UTILITIES_INFO("third eigenvalue false : " << tmp);
+	    TFEL_UTILITIES_INFO("s = " );
+	    TFEL_UTILITIES_INFO(s);
+	    TFEL_UTILITIES_INFO("vp = " );
+	    TFEL_UTILITIES_INFO(vp);
+	    TFEL_UTILITIES_INFO("m = " );
+	    TFEL_UTILITIES_INFO(m);
 	    return false;
 	  }
  

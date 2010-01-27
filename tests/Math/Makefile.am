@@ -83,14 +83,41 @@ tvector3_SOURCES              = tvector3.cxx
 vector1_SOURCES               = vector1.cxx   
 VectorResultType_SOURCES      = VectorResultType.cxx
 Range_SOURCES                 = Range.cxx
-parser_SOURCES                = parser.cxx
-parser2_SOURCES               = parser2.cxx
-parser3_SOURCES               = parser3.cxx
 broyden_SOURCES               = broyden.cxx
 broyden2_SOURCES              = broyden2.cxx
 SFTMCV_SOURCES                = SFTMCV.cxx
 levenberg_marquardt2_SOURCES  = levenberg-marquardt2.cxx
 levenberg_marquardt3_SOURCES  = levenberg-marquardt3.cxx
+
+parser_SOURCES                = parser.cxx
+parser_LDADD = -L$(top_builddir)/src/Math      \
+	       -L$(top_builddir)/src/Utilities \
+	       -L$(top_builddir)/src/Exception \
+	       -lTFELMathParser -lTFELMath     \
+	       -lTFELUtilities -lTFELException
+if HAVE_OCTAVE
+parser_LDADD += @OCTAVELIBS@
+endif
+
+parser2_SOURCES               = parser2.cxx
+parser2_LDADD = -L$(top_builddir)/src/Math      \
+	        -L$(top_builddir)/src/Utilities \
+	        -L$(top_builddir)/src/Exception \
+	        -lTFELMathParser -lTFELMath     \
+	        -lTFELUtilities -lTFELException
+if HAVE_OCTAVE
+parser2_LDADD += @OCTAVELIBS@
+endif
+
+parser3_SOURCES               = parser3.cxx
+parser3_LDADD = -L$(top_builddir)/src/Math      \
+	        -L$(top_builddir)/src/Utilities \
+	        -L$(top_builddir)/src/Exception \
+	        -lTFELMathParser -lTFELMath     \
+	        -lTFELUtilities -lTFELException
+if HAVE_OCTAVE
+parser3_LDADD += @OCTAVELIBS@
+endif
 
 TESTS=$(test_PROGRAMS)
 

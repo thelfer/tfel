@@ -10,6 +10,7 @@
 #define _LIB_TFEL_FUNCTION_HXX_ 
 
 #include"Utilities/SmartPtr.hxx"
+#include"System/ExternalFunctionsPrototypes.hxx"
 #include"Math/Parser/Expr.hxx"
 
 namespace tfel
@@ -25,12 +26,16 @@ namespace tfel
       {
 	virtual ~Function();
       };
+      
+      typedef tfel::system::CFunction1Ptr StandardFunctionPtr; 
 
-#ifndef __SUNPRO_CC
-      typedef double (*StandardFunctionPtr)(double);
-#else /* __SUNPRO_CC */
-      extern "C" {typedef double (*StandardFunctionPtr)(double);}
-#endif /* __SUNPRO_CC */
+      struct StandardFunctionBase
+      {
+	static void
+	throwUnimplementedDifferentiateFunctionException(void);
+	static void
+	throwInvalidCallException(const int);
+      }; // end of struct StandardFunctionBase
 
       template<StandardFunctionPtr f>
       struct StandardFunction

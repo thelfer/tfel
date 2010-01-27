@@ -17,6 +17,23 @@ libTFELPlot_la_SOURCES = AddCurveDialog.cxx       \
 			 PlotWindow.cxx		 \
 			 ThemeSelectionDialog.cxx
 
+libTFELPlot_la_LIBADD = -L@top_builddir@/src/Exception/ \
+			-L@top_builddir@/src/Math/      \
+			-L@top_builddir@/src/Graphics   \
+			-lTFELGraphics                  \
+			-lTFELMathParser                \
+			-lTFELMath -lTFELException      \
+			$(GTKMM_LIBS)                   \
+		 	@LTLIBINTL@
+
+if HAVE_GSL
+libTFELPlot_la_LIBADD += @GSLLIBS@
+endif
+
+if HAVE_OCTAVE
+libTFELPlot_la_LIBADD += @OCTAVELIBS@
+endif
+
 bin_PROGRAMS  = tplot
 tplot_SOURCES = plot.cxx 
 tplot_LDFLAGS = -export-dynamic
@@ -29,16 +46,25 @@ tplot_LDADD   = -L.                             \
 		-lTFELPlot                      \
 		-lTFELGraphics   	        \
 		-lTFELSystem    	        \
+		-lTFELMathParser	        \
 		-lTFELMath		        \
 		-lTFELUtilities                 \
 		-lTFELException                 \
 		$(GTKMM_LIBS)                   \
 		@LTLIBINTL@                     \
 		-ldl
+tplot_DEPENDENCIES = libTFELPlot.la
 
 if HAVE_READLINE
+tplot_LDADD  += @READLINE_LIBS@
+endif
+
+if HAVE_OCTAVE
+tplot_LDADD  += @OCTAVELIBS@
+endif
+
 bin_PROGRAMS  += tgplot
-tgplot_SOURCES = Analyser.cxx GetFunction.c
+tgplot_SOURCES = Analyser.cxx
 tgplot_LDFLAGS = -export-dynamic
 tgplot_LDADD   = -L.                             \
 		 -L$(top_builddir)/src/Graphics  \
@@ -53,11 +79,17 @@ tgplot_LDADD   = -L.                             \
 		 -lTFELUtilities                 \
 		 -lTFELException                 \
 		 $(GTKMM_LIBS)                   \
-		 @LTLIBINTL@                     \
-		 @READLINE_LIBS@ -ldl
-if HAVE_OCTAVE
-tgplot_LDADD  += @OCTAVERLIBS@
+		 @LTLIBINTL@
+tgplot_DEPENDENCIES = libTFELPlot.la
+
+if HAVE_READLINE
+tgplot_LDADD  += @READLINE_LIBS@
 endif
 
+if HAVE_OCTAVE
+tgplot_LDADD  += @OCTAVELIBS@
 endif
+
+tgplot_LDADD  += -ldl
+
 

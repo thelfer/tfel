@@ -18,42 +18,42 @@ namespace tfel
     namespace parser
     {
 
-      template<double (*f)(double)>
+      template<EvaluatorProxyFunctionPtr1V f>
       EvaluatorProxy<f>::EvaluatorProxy(const std::string& name)
       {
 	using namespace tfel::math;
 	Evaluator::getFunctionGeneratorManager().insert(name,&StandardFctGenerator<f>);
       }
     
-      template<double (*f)(double,double)>
+      template<EvaluatorProxyFunctionPtr2V f>
       EvaluatorProxy2V<f>::EvaluatorProxy2V(const std::string& name)
       {
 	using namespace tfel::math;
 	Evaluator::getFunctionGeneratorManager().insert(name,&StandardBinaryFctGenerator<f>);
       } // end of struct EvaluatorProxy::EvaluatorProxy2V
     
-      template<double (*f)(int,double)>
+      template<EvaluatorProxyFunctionPtr1P1V f>
       EvaluatorProxy1P1V<f>::EvaluatorProxy1P1V(const std::string& name)
       {
 	using namespace tfel::math;
 	Evaluator::getFunctionGeneratorManager().insert(name,&EvaluatorFunction1P1VGenerator<f>);
       } // end of EvaluatorProxy1P1V::EvaluatorProxy1P1V
 
-      template<double (*f)(int,int,double)>
+      template<EvaluatorProxyFunctionPtr2P1V f>
       EvaluatorProxy2P1V<f>::EvaluatorProxy2P1V(const std::string& name)
       {
 	using namespace tfel::math;
 	Evaluator::getFunctionGeneratorManager().insert(name,&EvaluatorFunction2P1VGenerator<f>);
       } // end of EvaluatorProxy2P1V::EvaluatorProxy2P1V
 
-      template<double (*f)(int,double,double)>
+      template<EvaluatorProxyFunctionPtr1P2V f>
       EvaluatorProxy1P2V<f>::EvaluatorProxy1P2V(const std::string& name)
       {
 	using namespace tfel::math;
 	Evaluator::getFunctionGeneratorManager().insert(name,&EvaluatorFunction1P2VGenerator<f>);
       } // end of EvaluatorProxy1P2V::EvaluatorProxy1P2V
 
-      template<double (*f)(int,int,double,double)>
+      template<EvaluatorProxyFunctionPtr2P2V f>
       EvaluatorProxy2P2V<f>::EvaluatorProxy2P2V(const std::string& name)
       {
 	using namespace tfel::math;

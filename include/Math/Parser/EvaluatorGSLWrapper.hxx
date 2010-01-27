@@ -39,17 +39,23 @@ namespace tfel
       void
       registerGSLFunctions(void);
 
-      template<double (*f)(double,gsl_mode_t)>
+      extern "C" {
+	typedef double (*GSLFunctionPtr)(double,gsl_mode_t);
+	typedef double (*GSLFunction2Ptr)(double,double,gsl_mode_t);
+	typedef double (*GSLFunction3Ptr)(double,double,double,gsl_mode_t);
+	typedef double (*GSLFunction4Ptr)(double,double,double,double,gsl_mode_t);
+      }
+
+      template<GSLFunctionPtr f>
       double gsl_wrapper(double);
 
-      template<double (*f)(double,double,gsl_mode_t)>
+      template<GSLFunction2Ptr f>
       double gsl_wrapper2(double,double);
 
-      template<double (*f)(double,double,double,gsl_mode_t)>
+      template<GSLFunction3Ptr f>
       double gsl_wrapper3(double,double,double);
 
-      template<double (*f)(double,double,double,
-			   double,gsl_mode_t)>
+      template<GSLFunction4Ptr f>
       double gsl_wrapper4(double,double,double,double);
 
     } // end of namespace math

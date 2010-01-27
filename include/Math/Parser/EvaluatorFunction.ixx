@@ -18,7 +18,7 @@ namespace tfel
     namespace parser
     {
 
-      template<double (*f)(int,double)>
+      template<EvaluatorProxyFunctionPtr1P1V f>
       tfel::utilities::SmartPtr<tfel::math::parser::Expr>
       EvaluatorFunction1P1VGenerator(const std::vector<std::string>& params,
 				     std::vector<tfel::utilities::SmartPtr<tfel::math::parser::Expr> >& args)
@@ -34,7 +34,7 @@ namespace tfel
 	return SmartPtr<Expr>(new EvaluatorFunction1P1V(f,nbr,args[0]));
       } // end of EvaluatorFunction1P1VGenerator
 
-      template<double (*f)(int,int,double)>
+      template<EvaluatorProxyFunctionPtr2P1V f>
       tfel::utilities::SmartPtr<tfel::math::parser::Expr>
       EvaluatorFunction2P1VGenerator(const std::vector<std::string>& params,
 				     std::vector<tfel::utilities::SmartPtr<tfel::math::parser::Expr> >& args)
@@ -52,7 +52,7 @@ namespace tfel
 	return SmartPtr<Expr>(new EvaluatorFunction2P1V(f,nbr,nbr2,args[0]));
       } // end of EvaluatorFunction2P1VGenerator
 
-      template<double (*f)(int,double,double)>
+      template<EvaluatorProxyFunctionPtr1P2V f>
       tfel::utilities::SmartPtr<tfel::math::parser::Expr>
       EvaluatorFunction1P2VGenerator(const std::vector<std::string>& params,
 				     std::vector<tfel::utilities::SmartPtr<tfel::math::parser::Expr> >& args)
@@ -68,7 +68,7 @@ namespace tfel
 	return SmartPtr<Expr>(new EvaluatorFunction1P2V(f,nbr,args[0],args[1]));
       } // end of EvaluatorFunction1P2VGenerator
 
-      template<double (*f)(int,int,double,double)>
+      template<EvaluatorProxyFunctionPtr2P2V f>
       tfel::utilities::SmartPtr<tfel::math::parser::Expr>
       EvaluatorFunction2P2VGenerator(const std::vector<std::string>& params,
 				     std::vector<tfel::utilities::SmartPtr<tfel::math::parser::Expr> >& args)
@@ -86,15 +86,150 @@ namespace tfel
 	return SmartPtr<Expr>(new EvaluatorFunction2P2V(f,nbr,nbr2,args[0],args[1]));
       } // end of EvaluatorFunction2P2VGenerator
 
+#ifdef __SUNPRO_CC
+	extern "C" {
+#endif /* __SUNPRO_CC */
+	typedef double (* EvaluatorFunctionWrapper0_type)();
+	typedef double (* EvaluatorFunctionWrapper0_type1P)(int);
+	typedef double (* EvaluatorFunctionWrapper0_type2P)(int,int);
+	typedef double (* EvaluatorFunctionWrapper0_type1UP)(unsigned int);
+	typedef double (* EvaluatorFunctionWrapper0_type2UP)(unsigned int,
+							     unsigned int);
+
+	typedef double (* EvaluatorFunctionWrapper1_type)(double);
+	typedef double (* EvaluatorFunctionWrapper1_type1P)(int,double);
+	typedef double (* EvaluatorFunctionWrapper1_type2P)(int,int,double);
+	typedef double (* EvaluatorFunctionWrapper1_type1UP)(unsigned int,double);
+	typedef double (* EvaluatorFunctionWrapper1_type2UP)(unsigned int,
+							     unsigned int,
+							     double);
+
+	typedef double (* EvaluatorFunctionWrapper2_type)(double,double);
+	typedef double (* EvaluatorFunctionWrapper2_type1P)(int,double,double);
+	typedef double (* EvaluatorFunctionWrapper2_type2P)(int,int,double,double);
+	typedef double (* EvaluatorFunctionWrapper2_type1UP)(unsigned int,double,double);
+	typedef double (* EvaluatorFunctionWrapper2_type2UP)(unsigned int,
+							     unsigned int,
+							     double,double);
+
+	typedef double (* EvaluatorFunctionWrapper3_type)(double,double,double);
+	typedef double (* EvaluatorFunctionWrapper3_type1P)(int,double,double,double);
+	typedef double (* EvaluatorFunctionWrapper3_type2P)(int,int,double,double,double);
+	typedef double (* EvaluatorFunctionWrapper3_type1UP)(unsigned int,double,double,double);
+	typedef double (* EvaluatorFunctionWrapper3_type2UP)(unsigned int,
+							     unsigned int,
+							     double,double,double);
+
+	typedef double (* EvaluatorFunctionWrapper4_type)(double,double,double,double);
+	typedef double (* EvaluatorFunctionWrapper4_type1P)(int,double,double,double,double);
+	typedef double (* EvaluatorFunctionWrapper4_type2P)(int,int,double,double,double,double);
+	typedef double (* EvaluatorFunctionWrapper4_type1UP)(unsigned int,double,double,double,double);
+	typedef double (* EvaluatorFunctionWrapper4_type2UP)(unsigned int,
+							     unsigned int,
+							     double,double,double,double);
+
+	typedef double (* EvaluatorFunctionWrapper5_type)(double,double,double,
+							  double,double);
+	typedef double (* EvaluatorFunctionWrapper5_type1P)(int,double,double,double,
+							    double,double);
+	typedef double (* EvaluatorFunctionWrapper5_type2P)(int,int,double,double,double,
+							    double,double);
+	typedef double (* EvaluatorFunctionWrapper5_type1UP)(unsigned int,double,double,double,
+							     double,double);
+	typedef double (* EvaluatorFunctionWrapper5_type2UP)(unsigned int,
+							     unsigned int,
+							     double,double,double,
+							     double,double);
+
+	typedef double (* EvaluatorFunctionWrapper6_type)(double,double,double,
+							  double,double,double);
+	typedef double (* EvaluatorFunctionWrapper6_type1P)(int,double,double,double,
+							    double,double,double);
+	typedef double (* EvaluatorFunctionWrapper6_type2P)(int,int,double,double,double,
+							    double,double,double);
+	typedef double (* EvaluatorFunctionWrapper6_type1UP)(unsigned int,double,double,double,
+							     double,double,double);
+	typedef double (* EvaluatorFunctionWrapper6_type2UP)(unsigned int,
+							     unsigned int,
+							     double,double,double,
+							     double,double,double);
+
+	typedef double (* EvaluatorFunctionWrapper7_type)(double,double,double,
+							  double,double,double,double);
+	typedef double (* EvaluatorFunctionWrapper7_type1P)(int,double,double,double,
+							    double,double,double,double);
+	typedef double (* EvaluatorFunctionWrapper7_type2P)(int,int,double,double,double,
+							    double,double,double,double);
+	typedef double (* EvaluatorFunctionWrapper7_type1UP)(unsigned int,double,double,double,
+							     double,double,double,double);
+	typedef double (* EvaluatorFunctionWrapper7_type2UP)(unsigned int,
+							     unsigned int,
+							     double,double,double,
+							     double,double,double,double);
+
+	typedef double (* EvaluatorFunctionWrapper8_type)(double,double,double,
+							  double,double,double,double,double);
+	typedef double (* EvaluatorFunctionWrapper8_type1P)(int,double,double,double,
+							    double,double,double,double,double);
+	typedef double (* EvaluatorFunctionWrapper8_type2P)(int,int,double,double,double,
+							    double,double,double,double,double);
+	typedef double (* EvaluatorFunctionWrapper8_type1UP)(unsigned int,double,double,double,
+							     double,double,double,double,double);
+	typedef double (* EvaluatorFunctionWrapper8_type2UP)(unsigned int,
+							     unsigned int,
+							     double,double,double,
+							     double,double,double,double,double);
+
+	typedef double (* EvaluatorFunctionWrapper9_type)(double,double,double,
+							  double,double,double,double,
+							  double,double);
+	typedef double (* EvaluatorFunctionWrapper9_type1P)(int,double,double,double,
+							    double,double,double,double,
+							    double,double);
+	typedef double (* EvaluatorFunctionWrapper9_type2P)(int,int,double,double,double,
+							    double,double,double,double,
+							    double,double);
+	typedef double (* EvaluatorFunctionWrapper9_type1UP)(unsigned int,double,double,double,
+							     double,double,double,double,
+							     double,double);
+	typedef double (* EvaluatorFunctionWrapper9_type2UP)(unsigned int,
+							     unsigned int,
+							     double,double,double,
+							     double,double,double,double,
+							     double,double);
+
+	typedef double (* EvaluatorFunctionWrapper10_type)(double,double,double,
+							   double,double,double,double,
+							   double,double,double);
+	typedef double (* EvaluatorFunctionWrapper10_type1P)(int,double,double,double,
+							     double,double,double,double,
+							     double,double,double);
+	typedef double (* EvaluatorFunctionWrapper10_type2P)(int,int,double,double,double,
+							     double,double,double,double,
+							     double,double,double);
+	typedef double (* EvaluatorFunctionWrapper10_type1UP)(unsigned int,double,double,double,
+							      double,double,double,double,
+							      double,double,double);
+	typedef double (* EvaluatorFunctionWrapper10_type2UP)(unsigned int,
+							      unsigned int,
+							      double,double,double,
+							      double,double,double,double,
+							      double,double,double);
+
+#ifdef __SUNPRO_CC
+     }
+#endif /* __SUNPRO_CC */
+
       template<>
       struct EvaluatorFunctionWrapper<0u>
       {
-	typedef double (* type)();
-	typedef double (* type1P)(int);
-	typedef double (* type2P)(int,int);
-	typedef double (* type1UP)(unsigned int);
-	typedef double (* type2UP)(unsigned int,
-				   unsigned int);
+
+	typedef EvaluatorFunctionWrapper0_type    type;
+	typedef EvaluatorFunctionWrapper0_type1P  type1P;
+	typedef EvaluatorFunctionWrapper0_type2P  type2P;
+	typedef EvaluatorFunctionWrapper0_type1UP type1UP; 
+	typedef EvaluatorFunctionWrapper0_type2UP type2UP;
+
 	static double
 	apply(const type,
 	      const std::vector<tfel::utilities::SmartPtr<Expr> >&);
@@ -115,14 +250,12 @@ namespace tfel
       template<>
       struct EvaluatorFunctionWrapper<1u>
       {
-	typedef double (* type)(double);
-	typedef double (* type1P)(int,double);
-	typedef double (* type2P)(int,int,double);
-	typedef double (* type1UP)(unsigned int,
-				   double);
-	typedef double (* type2UP)(unsigned int,
-				   unsigned int,
-				   double);
+	typedef EvaluatorFunctionWrapper1_type    type;
+	typedef EvaluatorFunctionWrapper1_type1P  type1P;
+	typedef EvaluatorFunctionWrapper1_type2P  type2P;
+	typedef EvaluatorFunctionWrapper1_type1UP type1UP; 
+	typedef EvaluatorFunctionWrapper1_type2UP type2UP;
+
 	static double
 	apply(const type,
 	      const std::vector<tfel::utilities::SmartPtr<Expr> >&);
@@ -143,14 +276,12 @@ namespace tfel
       template<>
       struct EvaluatorFunctionWrapper<2u>
       {
-	typedef double (* type)(double,double);
-	typedef double (* type1P)(int,double,double);
-	typedef double (* type2P)(int,int,double,double);
-	typedef double (* type1UP)(unsigned int,
-				   double,double);
-	typedef double (* type2UP)(unsigned int,
-				   unsigned int,
-				   double,double);
+	typedef EvaluatorFunctionWrapper2_type    type;
+	typedef EvaluatorFunctionWrapper2_type1P  type1P;
+	typedef EvaluatorFunctionWrapper2_type2P  type2P;
+	typedef EvaluatorFunctionWrapper2_type1UP type1UP; 
+	typedef EvaluatorFunctionWrapper2_type2UP type2UP;
+
 	static double
 	apply(const type,
 	      const std::vector<tfel::utilities::SmartPtr<Expr> >&);
@@ -171,14 +302,12 @@ namespace tfel
       template<>
       struct EvaluatorFunctionWrapper<3u>
       {
-	typedef double (* type)(double,double,double);
-	typedef double (* type1P)(int,double,double,double);
-	typedef double (* type2P)(int,int,double,double,double);
-	typedef double (* type1UP)(unsigned int,
-				   double,double,double);
-	typedef double (* type2UP)(unsigned int,
-				   unsigned int,
-				   double,double,double);
+	typedef EvaluatorFunctionWrapper3_type    type;
+	typedef EvaluatorFunctionWrapper3_type1P  type1P;
+	typedef EvaluatorFunctionWrapper3_type2P  type2P;
+	typedef EvaluatorFunctionWrapper3_type1UP type1UP; 
+	typedef EvaluatorFunctionWrapper3_type2UP type2UP;
+
 	static double
 	apply(const type,
 	      const std::vector<tfel::utilities::SmartPtr<Expr> >&);
@@ -199,19 +328,12 @@ namespace tfel
       template<>
       struct EvaluatorFunctionWrapper<4u>
       {
-	typedef double (* type)(double,double,
-				double,double);
-	typedef double (* type1P)(int,double,double,
-				  double,double);
-	typedef double (* type2P)(int,int,double,double,
-				  double,double);
-	typedef double (* type1UP)(unsigned int,
-				   double,double,
-				   double,double);
-	typedef double (* type2UP)(unsigned int,
-				   unsigned int,
-				   double,double,
-				   double,double);
+	typedef EvaluatorFunctionWrapper4_type    type;
+	typedef EvaluatorFunctionWrapper4_type1P  type1P;
+	typedef EvaluatorFunctionWrapper4_type2P  type2P;
+	typedef EvaluatorFunctionWrapper4_type1UP type1UP; 
+	typedef EvaluatorFunctionWrapper4_type2UP type2UP;
+
 	static double
 	apply(const type,
 	      const std::vector<tfel::utilities::SmartPtr<Expr> >&);
@@ -232,19 +354,12 @@ namespace tfel
       template<>
       struct EvaluatorFunctionWrapper<5u>
       {
-	typedef double (* type)(double,double,double,
-				double,double);
-	typedef double (* type1P)(int,double,double,double,
-				  double,double);
-	typedef double (* type2P)(int,int,double,double,double,
-				  double,double);
-	typedef double (* type1UP)(unsigned int,
-				   double,double,double,
-				   double,double);
-	typedef double (* type2UP)(unsigned int,
-				   unsigned int,
-				   double,double,double,
-				   double,double);
+	typedef EvaluatorFunctionWrapper5_type    type;
+	typedef EvaluatorFunctionWrapper5_type1P  type1P;
+	typedef EvaluatorFunctionWrapper5_type2P  type2P;
+	typedef EvaluatorFunctionWrapper5_type1UP type1UP; 
+	typedef EvaluatorFunctionWrapper5_type2UP type2UP;
+
 	static double
 	apply(const type,
 	      const std::vector<tfel::utilities::SmartPtr<Expr> >&);
@@ -265,19 +380,12 @@ namespace tfel
       template<>
       struct EvaluatorFunctionWrapper<6u>
       {
-	typedef double (* type)(double,double,double,
-				double,double,double);
-	typedef double (* type1P)(int,double,double,double,
-				  double,double,double);
-	typedef double (* type2P)(int,int,double,double,double,
-				  double,double,double);
-	typedef double (* type1UP)(unsigned int,
-				   double,double,double,
-				   double,double,double);
-	typedef double (* type2UP)(unsigned int,
-				   unsigned int,
-				   double,double,double,
-				   double,double,double);
+	typedef EvaluatorFunctionWrapper6_type    type;
+	typedef EvaluatorFunctionWrapper6_type1P  type1P;
+	typedef EvaluatorFunctionWrapper6_type2P  type2P;
+	typedef EvaluatorFunctionWrapper6_type1UP type1UP; 
+	typedef EvaluatorFunctionWrapper6_type2UP type2UP;
+
 	static double
 	apply(const type,
 	      const std::vector<tfel::utilities::SmartPtr<Expr> >&);
@@ -298,24 +406,12 @@ namespace tfel
       template<>
       struct EvaluatorFunctionWrapper<7u>
       {
-	typedef double (* type)(double,double,double,
-				double,double,double,
-				double);
-	typedef double (* type1P)(int,double,double,double,
-				  double,double,double,
-				  double);
-	typedef double (* type2P)(int,int,double,double,double,
-				  double,double,double,
-				  double);
-	typedef double (* type1UP)(unsigned int,
-				   double,double,double,
-				   double,double,double,
-				   double);
-	typedef double (* type2UP)(unsigned int,
-				   unsigned int,
-				   double,double,double,
-				   double,double,double,
-				   double);
+	typedef EvaluatorFunctionWrapper7_type    type;
+	typedef EvaluatorFunctionWrapper7_type1P  type1P;
+	typedef EvaluatorFunctionWrapper7_type2P  type2P;
+	typedef EvaluatorFunctionWrapper7_type1UP type1UP; 
+	typedef EvaluatorFunctionWrapper7_type2UP type2UP;
+
 	static double
 	apply(const type,
 	      const std::vector<tfel::utilities::SmartPtr<Expr> >&);
@@ -336,24 +432,11 @@ namespace tfel
       template<>
       struct EvaluatorFunctionWrapper<8u>
       {
-	typedef double (* type)(double,double,double,
-				double,double,double,
-				double,double);
-	typedef double (* type1P)(int,double,double,double,
-				  double,double,double,
-				  double,double);
-	typedef double (* type2P)(int,int,double,double,double,
-				  double,double,double,
-				  double,double);
-	typedef double (* type1UP)(unsigned int,
-				   double,double,double,
-				   double,double,double,
-				   double,double);
-	typedef double (* type2UP)(unsigned int,
-				   unsigned int,
-				   double,double,double,
-				   double,double,double,
-				   double,double);
+	typedef EvaluatorFunctionWrapper8_type    type;
+	typedef EvaluatorFunctionWrapper8_type1P  type1P;
+	typedef EvaluatorFunctionWrapper8_type2P  type2P;
+	typedef EvaluatorFunctionWrapper8_type1UP type1UP; 
+	typedef EvaluatorFunctionWrapper8_type2UP type2UP;
 	static double
 	apply(const type,
 	      const std::vector<tfel::utilities::SmartPtr<Expr> >&);
@@ -374,23 +457,11 @@ namespace tfel
       template<>
       struct EvaluatorFunctionWrapper<9u>
       {
-	typedef double (* type)(double,double,double,
-				double,double,double,
-				double,double,double);
-	typedef double (* type1P)(int,double,double,double,
-				  double,double,double,
-				  double,double,double);
-	typedef double (* type2P)(int,int,double,double,double,
-				  double,double,double,
-				  double,double,double);
-	typedef double (* type1UP)(unsigned int,double,
-				   double,double,double,
-				   double,double,double,
-				   double,double);
-	typedef double (* type2UP)(unsigned int,unsigned int,
-				   double,double,double,
-				   double,double,double,
-				   double,double,double);
+	typedef EvaluatorFunctionWrapper9_type    type;
+	typedef EvaluatorFunctionWrapper9_type1P  type1P;
+	typedef EvaluatorFunctionWrapper9_type2P  type2P;
+	typedef EvaluatorFunctionWrapper9_type1UP type1UP; 
+	typedef EvaluatorFunctionWrapper9_type2UP type2UP;
 	static double
 	apply(const type,
 	      const std::vector<tfel::utilities::SmartPtr<Expr> >&);
@@ -411,27 +482,11 @@ namespace tfel
       template<>
       struct EvaluatorFunctionWrapper<10u>
       {
-	typedef double (* type)(double,double,double,
-				double,double,double,
-				double,double,double,
-				double);
-	typedef double (* type1P)(int,double,double,double,
-				  double,double,double,
-				  double,double,double,
-				  double);
-	typedef double (* type2P)(int,int,double,double,double,
-				  double,double,double,
-				  double,double,double,
-				  double);
-	typedef double (* type1UP)(unsigned int,double,
-				   double,double,double,
-				   double,double,double,
-				   double,double,double);
-	typedef double (* type2UP)(unsigned int,unsigned int,
-				   double,double,double,
-				   double,double,double,
-				   double,double,double,
-				   double);
+	typedef EvaluatorFunctionWrapper10_type    type;
+	typedef EvaluatorFunctionWrapper10_type1P  type1P;
+	typedef EvaluatorFunctionWrapper10_type2P  type2P;
+	typedef EvaluatorFunctionWrapper10_type1UP type1UP; 
+	typedef EvaluatorFunctionWrapper10_type2UP type2UP;
 	static double
 	apply(const type,
 	      const std::vector<tfel::utilities::SmartPtr<Expr> >&);

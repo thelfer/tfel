@@ -9,23 +9,24 @@
 #ifndef _LIB_TFEL_INFO_H_
 #define _LIB_TFEL_INFO_H_ 
 
-#ifdef VERBOSE
+#ifdef TFEL_VERBOSE
 #include<iostream>
 #endif
 
 /*! 
- * \def   INFO
+ * \def   TFEL_UTILITIES_INFO
  * \brief write debugging information to std::cerr
  *
- * \note  The INFO macro may be enabled only if the VERBOSE compilation flag is set.
+ * \note The TFEL_UTILITIES_INFO macro may be enabled only if the
+ * TFEL_VERBOSE compilation flag is set.
  *
  * \author Helfer Thomas
- * \date   13 Jul 2006k
+ * \date   13 Jul 2006
  */
-#ifdef VERBOSE
-#define INFO(X) std::cerr << __FILE__ << " [" << __LINE__ << "] : " << X << std::endl; 
+#ifdef TFEL_UTILITIES_VERBOSE
+#define TFEL_UTILITIES_INFO(X) std::cerr << __FILE__ << " [" << __LINE__ << "] : " << X << std::endl; 
 #else 
-#define INFO(X) 
+#define TFEL_UTILITIES_INFO(X) 
 #endif
 
 #endif /* _LIB_TFEL_INFO_H */

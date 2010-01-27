@@ -12,6 +12,28 @@ namespace tfel
     {
 
       void
+      ExternalCFunctionException::throwUnimplementedDifferentiateFunctionException(void)
+      {
+	using namespace std;
+	string msg("ExternalCFunctionException::");
+	msg += "throwUnimplementedDifferentiateFunctionException : ";
+	msg += "unimplemented feature";
+	throw(runtime_error(msg));
+      } // end of ExternalCFunctionException::throwUnimplementedDifferentiateFunctionException(void)
+
+      void
+      ExternalCFunctionException::throwInvalidVariableIndex(const unsigned short pos,
+							    const unsigned short N)
+      {
+	using namespace std;
+	ostringstream msg;
+	msg << "ExternalCFunctionBase::setVariableValue : "
+	    << "invalid index " << pos 
+	    << " (function has only " << N << " variables).";
+	throw(runtime_error(msg.str()));
+      } // end of ExternalCFunctionException::throwInvalidVariableIndex
+
+      void
       ExternalCFunctionBase<0u>::setVariableValue(const std::vector<double>::size_type pos,
 						  const double)
       {

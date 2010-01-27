@@ -453,33 +453,33 @@ namespace tfel
       using namespace std;
       typedef map<string,ExternalFunctionGenerator>::value_type MVType;
       this->fctGenerators.insert(make_pair(string("exp"),
-					   &StandardFctGenerator<std::exp>));
+					   &StandardFctGenerator<exp>));
       this->fctGenerators.insert(make_pair(string("sin"),
-					   &StandardFctGenerator<std::sin>));
+					   &StandardFctGenerator<sin>));
       this->fctGenerators.insert(make_pair(string("cos"),
-					   &StandardFctGenerator<std::cos>));
+					   &StandardFctGenerator<cos>));
       this->fctGenerators.insert(make_pair(string("tan"),
-					   &StandardFctGenerator<std::tan>));
+					   &StandardFctGenerator<tan>));
       this->fctGenerators.insert(make_pair(string("sqrt"),
-					   &StandardFctGenerator<std::sqrt>));
+					   &StandardFctGenerator<sqrt>));
       this->fctGenerators.insert(make_pair(string("log"),
-					   &StandardFctGenerator<std::log>));
+					   &StandardFctGenerator<log>));
       this->fctGenerators.insert(make_pair(string("ln"),
-					   &StandardFctGenerator<std::log>));
+					   &StandardFctGenerator<log>));
       this->fctGenerators.insert(make_pair(string("log10"),
-					   &StandardFctGenerator<std::log10>));
+					   &StandardFctGenerator<log10>));
       this->fctGenerators.insert(make_pair(string("asin"),
-					   &StandardFctGenerator<std::asin>));
+					   &StandardFctGenerator<asin>));
       this->fctGenerators.insert(make_pair(string("acos"),
-					   &StandardFctGenerator<std::acos>));
+					   &StandardFctGenerator<acos>));
       this->fctGenerators.insert(make_pair(string("atan"),
-					   &StandardFctGenerator<std::atan>));
+					   &StandardFctGenerator<atan>));
       this->fctGenerators.insert(make_pair(string("sinh"),
-					   &StandardFctGenerator<std::sinh>));
+					   &StandardFctGenerator<sinh>));
       this->fctGenerators.insert(make_pair(string("cosh"),
-					   &StandardFctGenerator<std::cosh>));
+					   &StandardFctGenerator<cosh>));
       this->fctGenerators.insert(make_pair(string("tanh"),
-					   &StandardFctGenerator<std::tanh>));
+					   &StandardFctGenerator<tanh>));
       this->fctGenerators.insert(make_pair(string("H"),
 					   &StandardFctGenerator<Evaluator::Heavyside>));
       this->bFctGenerators.insert(make_pair(string("max"),

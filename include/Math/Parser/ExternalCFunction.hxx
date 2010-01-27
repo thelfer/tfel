@@ -13,6 +13,7 @@
 #include<vector>
 #include<stdexcept>
 
+#include"System/ExternalFunctionsPrototypes.hxx"
 #include"Math/Parser/ExternalFunction.hxx"
 
 namespace tfel
@@ -24,9 +25,19 @@ namespace tfel
     namespace parser
     {
 
+      struct ExternalCFunctionException
+      {
+	static void
+	throwUnimplementedDifferentiateFunctionException(void);
+	static void
+	throwInvalidVariableIndex(const unsigned short,
+				  const unsigned short);
+      }; // end of struct ExternalCFunctionException
+
       template<unsigned short N>
       struct ExternalCFunctionBase
-	: public ExternalFunction
+	: public ExternalFunction,
+	  protected ExternalCFunctionException
       {
 	void
 	setVariableValue(const std::vector<double>::size_type,
@@ -63,20 +74,18 @@ namespace tfel
       tfel::utilities::SmartPtr<ExternalFunction>
       ExternalCFunctionBase<N>::differentiate(const std::vector<double>::size_type) const
       {
-	using namespace std;
-	string msg("ExternalCFunctionBase<N>::differentiate : ");
-	msg += "can't differentiate external function";
-	throw(runtime_error(msg));
+	using namespace tfel::utilities;
+	ExternalCFunctionBase::throwUnimplementedDifferentiateFunctionException();
+	return SmartPtr<ExternalFunction>(0);
       } // end of ExternalCFunctionBase<N>::differentiate
 
       template<unsigned short N>
       tfel::utilities::SmartPtr<ExternalFunction>
       ExternalCFunctionBase<N>::differentiate(const std::string&) const
       {
-	using namespace std;
-	string msg("ExternalCFunctionBase<N>::differentiate : ");
-	msg += "can't differentiate external function";
-	throw(runtime_error(msg));
+	using namespace tfel::utilities;
+	ExternalCFunctionBase::throwUnimplementedDifferentiateFunctionException();
+	return SmartPtr<ExternalFunction>(0);
       } // end of ExternalCFunctionBase<N>::differentiate
 
       template<unsigned short N>
@@ -86,11 +95,7 @@ namespace tfel
       {
 	using namespace std;
 	if(pos>=N){
-	  ostringstream msg;
-	  msg << "ExternalCFunctionBase::setVariableValue : "
-	      << "invalid index " << pos 
-	      << " (function has only " << N << " variables).";
-	  throw(runtime_error(msg.str()));
+	  ExternalCFunctionException::throwInvalidVariableIndex(pos,N);
 	}
 	this->variables[pos] = value;
       } // end of ExternalCFunctionBase::setVariableValue;
@@ -131,7 +136,7 @@ namespace tfel
       struct ExternalCFunction<0u>
 	: public ExternalCFunctionBase<0u>
       {
-	typedef double (* FunctionPtr)(void);
+	typedef tfel::system::CFunction0Ptr FunctionPtr;
 	ExternalCFunction(FunctionPtr);
 	double getValue(void) const;
 	tfel::utilities::SmartPtr<ExternalFunction>
@@ -144,7 +149,7 @@ namespace tfel
       struct ExternalCFunction<1u>
 	: public ExternalCFunctionBase<1u>
       {
-	typedef double (*FunctionPtr)(double);
+	typedef tfel::system::CFunction1Ptr FunctionPtr;
 	ExternalCFunction(FunctionPtr);
 	double getValue(void) const;
 	tfel::utilities::SmartPtr<ExternalFunction>
@@ -157,7 +162,7 @@ namespace tfel
       struct ExternalCFunction<2u>
 	: public ExternalCFunctionBase<2u>
       {
-	typedef double (*FunctionPtr)(double,double);
+	typedef tfel::system::CFunction2Ptr FunctionPtr;
 	ExternalCFunction(FunctionPtr);
 	double getValue(void) const;
 	tfel::utilities::SmartPtr<ExternalFunction>
@@ -170,7 +175,7 @@ namespace tfel
       struct ExternalCFunction<3u>
 	: public ExternalCFunctionBase<3u>
       {
-	typedef double (*FunctionPtr)(double,double,double);
+	typedef tfel::system::CFunction3Ptr FunctionPtr;
 	ExternalCFunction(FunctionPtr);
 	double getValue(void) const;
 	tfel::utilities::SmartPtr<ExternalFunction>
@@ -183,8 +188,7 @@ namespace tfel
       struct ExternalCFunction<4u>
 	: public ExternalCFunctionBase<4u>
       {
-	typedef double (*FunctionPtr)(double,double,
-				      double,double);
+	typedef tfel::system::CFunction4Ptr FunctionPtr;
 	ExternalCFunction(FunctionPtr);
 	double getValue(void) const;
 	tfel::utilities::SmartPtr<ExternalFunction>
@@ -197,9 +201,7 @@ namespace tfel
       struct ExternalCFunction<5u>
 	: public ExternalCFunctionBase<5u>
       {
-	typedef double (*FunctionPtr)(double,double,
-				      double,double,
-				      double);
+	typedef tfel::system::CFunction5Ptr FunctionPtr;
 	ExternalCFunction(FunctionPtr);
 	double getValue(void) const;
 	tfel::utilities::SmartPtr<ExternalFunction>
@@ -212,9 +214,7 @@ namespace tfel
       struct ExternalCFunction<6u>
 	: public ExternalCFunctionBase<6u>
       {
-	typedef double (*FunctionPtr)(double,double,
-				      double,double,
-				      double,double);
+	typedef tfel::system::CFunction6Ptr FunctionPtr;
 	ExternalCFunction(FunctionPtr);
 	double getValue(void) const;
 	tfel::utilities::SmartPtr<ExternalFunction>
@@ -227,10 +227,7 @@ namespace tfel
       struct ExternalCFunction<7u>
 	: public ExternalCFunctionBase<7u>
       {
-	typedef double (*FunctionPtr)(double,double,
-				      double,double,
-				      double,double,
-				      double);
+	typedef tfel::system::CFunction7Ptr FunctionPtr;
 	ExternalCFunction(FunctionPtr);
 	double getValue(void) const;
 	tfel::utilities::SmartPtr<ExternalFunction>
@@ -243,10 +240,7 @@ namespace tfel
       struct ExternalCFunction<8u>
 	: public ExternalCFunctionBase<8u>
       {
-	typedef double (*FunctionPtr)(double,double,
-				      double,double,
-				      double,double,
-				      double,double);
+	typedef tfel::system::CFunction8Ptr FunctionPtr;
 	ExternalCFunction(FunctionPtr);
 	double getValue(void) const;
 	tfel::utilities::SmartPtr<ExternalFunction>
@@ -259,11 +253,7 @@ namespace tfel
       struct ExternalCFunction<9u>
 	: public ExternalCFunctionBase<9u>
       {
-	typedef double (*FunctionPtr)(double,double,
-				      double,double,
-				      double,double,
-				      double,double,
-				      double);
+	typedef tfel::system::CFunction9Ptr FunctionPtr;
 	ExternalCFunction(FunctionPtr);
 	double getValue(void) const;
 	tfel::utilities::SmartPtr<ExternalFunction>
@@ -276,11 +266,7 @@ namespace tfel
       struct ExternalCFunction<10u>
 	: public ExternalCFunctionBase<10u>
       {
-	typedef double (*FunctionPtr)(double,double,
-				      double,double,
-				      double,double,
-				      double,double,
-				      double,double);
+	typedef tfel::system::CFunction10Ptr FunctionPtr;
 	ExternalCFunction(FunctionPtr);
 	double getValue(void) const;
 	tfel::utilities::SmartPtr<ExternalFunction>
@@ -293,12 +279,7 @@ namespace tfel
       struct ExternalCFunction<11u>
 	: public ExternalCFunctionBase<11u>
       {
-	typedef double (*FunctionPtr)(double,double,
-				      double,double,
-				      double,double,
-				      double,double,
-				      double,double,
-				      double);
+	typedef tfel::system::CFunction11Ptr FunctionPtr;
 	ExternalCFunction(FunctionPtr);
 	double getValue(void) const;
 	tfel::utilities::SmartPtr<ExternalFunction>
@@ -311,12 +292,7 @@ namespace tfel
       struct ExternalCFunction<12u>
 	: public ExternalCFunctionBase<12u>
       {
-	typedef double (*FunctionPtr)(double,double,
-				      double,double,
-				      double,double,
-				      double,double,
-				      double,double,
-				      double,double);
+	typedef tfel::system::CFunction12Ptr FunctionPtr;
 	ExternalCFunction(FunctionPtr);
 	double getValue(void) const;
 	tfel::utilities::SmartPtr<ExternalFunction>
@@ -329,13 +305,7 @@ namespace tfel
       struct ExternalCFunction<13u>
 	: public ExternalCFunctionBase<13u>
       {
-	typedef double (*FunctionPtr)(double,double,
-				      double,double,
-				      double,double,
-				      double,double,
-				      double,double,
-				      double,double,
-				      double);
+	typedef tfel::system::CFunction13Ptr FunctionPtr;
 	ExternalCFunction(FunctionPtr);
 	double getValue(void) const;
 	tfel::utilities::SmartPtr<ExternalFunction>
@@ -348,13 +318,7 @@ namespace tfel
       struct ExternalCFunction<14u>
 	: public ExternalCFunctionBase<14u>
       {
-	typedef double (*FunctionPtr)(double,double,
-				      double,double,
-				      double,double,
-				      double,double,
-				      double,double,
-				      double,double,
-				      double,double);
+	typedef tfel::system::CFunction14Ptr FunctionPtr;
 	ExternalCFunction(FunctionPtr);
 	double getValue(void) const;
 	tfel::utilities::SmartPtr<ExternalFunction>
@@ -367,14 +331,7 @@ namespace tfel
       struct ExternalCFunction<15u>
 	: public ExternalCFunctionBase<15u>
       {
-	typedef double (*FunctionPtr)(double,double,
-				      double,double,
-				      double,double,
-				      double,double,
-				      double,double,
-				      double,double,
-				      double,double,
-				      double);
+	typedef tfel::system::CFunction15Ptr FunctionPtr;
 	ExternalCFunction(FunctionPtr);
 	double getValue(void) const;
 	tfel::utilities::SmartPtr<ExternalFunction>

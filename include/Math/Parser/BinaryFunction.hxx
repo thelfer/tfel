@@ -26,9 +26,18 @@ namespace tfel
 	virtual ~BinaryFunction();
       };
 
+      struct StandardBinaryFunctionBase
+      {
+	static void
+	throwUnimplementedDifferentiateFunctionException(void);
+	static void
+	throwInvalidCallException(const int);
+      }; // end of struct StandardBinaryFunctionBase
+
       template<double (*f)(const double,const double)>
       struct StandardBinaryFunction
-	: public BinaryFunction
+	: public BinaryFunction,
+	  protected StandardBinaryFunctionBase
       {
 	StandardBinaryFunction(const tfel::utilities::SmartPtr<Expr>,
 			       const tfel::utilities::SmartPtr<Expr>);

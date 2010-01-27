@@ -45,7 +45,7 @@ namespace tfel
       OpDiv::apply(const double a,const double b)
       {
 	using namespace std;
-	if(std::abs(b)<std::numeric_limits<double>::min()){
+	if(fabs(b)<std::numeric_limits<double>::min()){
 	  ostringstream value;
 	  value << b;
 	  string msg("OpDiv::apply : second argument is too small (");
@@ -59,8 +59,18 @@ namespace tfel
       OpPower::apply(const double a,const double b)
       {
 	using namespace std;
-	return std::pow(a,b);
+	return pow(a,b);
       } // end of OpDiv::apply
+
+      void
+      BinaryOperationBase::throwUnimplementedDifferentiateFunctionException(void)
+      {
+	using namespace std;
+	string msg("BinaryOperationBase::");
+	msg += "throwUnimplementedDifferentiateFunctionException : ";
+	msg += "unimplemented feature";
+	throw(runtime_error(msg));
+      }  // end of BinaryOperationBase::throwUnimplementedDifferentiateFunctionException()
 
       template<>
       tfel::utilities::SmartPtr<Expr>

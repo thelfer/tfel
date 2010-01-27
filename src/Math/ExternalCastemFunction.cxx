@@ -11,11 +11,11 @@ namespace tfel
     namespace parser
     {
 
-      ExternalCastemFunction::ExternalCastemFunction(FunctionPtr f_,
+      ExternalCastemFunction::ExternalCastemFunction(const tfel::system::CastemFunctionPtr f_,
 						     const unsigned short n)
 	: variables(n),
 	  f(f_)
-      {} // end of ExternalCastemFunction(FunctionPtr f_)
+      {} // end of ExternalCastemFunction
 
       double
       ExternalCastemFunction::getValue(void) const

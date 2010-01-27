@@ -70,9 +70,7 @@ namespace tfel
       {
 	using namespace std;
 	using namespace tfel::utilities;
-	string msg("BinaryOperation<Op>::differentiate : ");
-	msg += "unimplemented feature";
-	throw(runtime_error(msg));
+	BinaryOperationBase::throwUnimplementedDifferentiateFunctionException();
 	return SmartPtr<Expr>(0);
       } // end of differentiateBinaryOperation
 

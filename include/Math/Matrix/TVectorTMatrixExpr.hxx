@@ -6,8 +6,8 @@
  * \date   06 avr 2008
  */
 
-#ifndef _LIB_TVECTORTMATRIXEXPR_HXX_
-#define _LIB_TVECTORTMATRIXEXPR_HXX_ 
+#ifndef _LIB_TFEL_MATH_TVECTORTMATRIXEXPR_HXX_
+#define _LIB_TFEL_MATH_TVECTORTMATRIXEXPR_HXX_ 
 
 #include<string>
 #include<iterator>
@@ -157,5 +157,5 @@ namespace tfel{
 
 } // end of namespace tfel
 
-#endif /* _LIB_TVECTORTMATRIXEXPR_HXX */
+#endif /* _LIB_TFEL_MATH_TVECTORTMATRIXEXPR_HXX */
 

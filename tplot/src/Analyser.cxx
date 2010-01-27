@@ -21,37 +21,39 @@
 #include<gtkmm.h>
 
 #if defined(HAVE_READLINE_READLINE_H)
-#  include <readline/readline.h>
+#include <readline/readline.h>
 #elif defined(HAVE_READLINE_H)
-#  include <readline.h>
-#else /* !defined(HAVE_READLINE_H) */
-#  error "readline is not available"
+#include <readline.h>
 #endif /* !defined(HAVE_READLINE_H) */
 
 #ifdef HAVE_READLINE_HISTORY
-#  if defined(HAVE_READLINE_HISTORY_H)
-#    include <readline/history.h>
-#  elif defined(HAVE_HISTORY_H)
-#    include <history.h>
-#  endif /* defined(HAVE_READLINE_HISTORY_H) */
+#if defined(HAVE_READLINE_HISTORY_H)
+#include <readline/history.h>
+#elif defined(HAVE_HISTORY_H)
+#include <history.h>
+#endif /* defined(HAVE_READLINE_HISTORY_H) */
 #endif /* HAVE_READLINE_HISTORY */
 
 #include"System/System.hxx"
 #include"System/SignalManager.hxx"
 #include"System/ProcessManager.hxx"
+#include"System/ExternalLibraryManager.hxx"
+
 #include"Math/Parser/ExternalFunctionManager.hxx"
 #include"Math/Parser/ExternalCFunction.hxx"
 #include"Math/Parser/ExternalCastemFunction.hxx"
+
 #ifdef HAVE_OCTAVE
 #include"Math/Parser/ExternalOctaveFunction.hxx"
 #endif /* HAVE_OCTAVE */
-#include"Graphics/GetFunction.h"
+
 #include"Graphics/Curve.hxx"
 #include"Graphics/EvaluatedCurve.hxx"
 #include"Graphics/DataCurve.hxx"
 #include"Graphics/ThemeManager.hxx"
-#include"Graphics/Analyser.hxx"
 #include"Graphics/Grid.hxx"
+
+#include"Graphics/Analyser.hxx"
 
 #ifdef HAVE_GSL
 #include"Math/Parser/EvaluatorGSLWrapper.hxx"
@@ -290,6 +292,30 @@ namespace tfel
       this->registerCallBack2(this->plotCallBacks,"axes",&Analyser::treatPlotAxes);
       this->registerCallBack2(this->plotCallBacks,"axis",&Analyser::treatPlotAxes);
     } // end of Analyser::registerCallBacks()
+
+#ifdef HAVE_GSL
+    void
+    Analyser::treatSetGSL(TokensContainer::const_iterator& p, 
+			  const TokensContainer::const_iterator pe)
+    {
+      using namespace std;
+      using namespace tfel::math::parser;
+      this->readSpecifiedToken("Analyser::treatSetGSL","mode",p,pe);
+      this->checkNotEndOfLine("Analyser::treatSetGSL","",p,pe);
+      if(p->value=="GSL_PREC_DOUBLE"){
+	getGSLMode()=GSL_PREC_DOUBLE;
+      } else if (p->value=="GSL_PREC_SINGLE"){
+	getGSLMode()=GSL_PREC_SINGLE;
+      } else if (p->value=="GSL_PREC_APPROX"){
+	getGSLMode()=GSL_PREC_APPROX;
+      } else {
+	string msg("Analyser::treatSetGSL : ");
+	msg += "unknown gsl mode '"+p->value+"'";
+	throw(runtime_error(msg));
+      }
+      ++p;
+    } // end of Analyser::treatSetGSL
+#endif
     
     void
     Analyser::treatSetWidth(TokensContainer::const_iterator& p, 
@@ -630,30 +656,6 @@ namespace tfel
 	this->area.addArrow(name,x0,y0,x1,y1,style);
       }
     } // end of Analyser::treatSetArrow
-
-#ifdef HAVE_GSL
-    void
-    Analyser::treatSetGSL(TokensContainer::const_iterator& p, 
-			  const TokensContainer::const_iterator pe)
-    {
-      using namespace std;
-      using namespace tfel::math::parser;
-      this->readSpecifiedToken("Analyser::treatSetGSL","mode",p,pe);
-      this->checkNotEndOfLine("Analyser::treatSetGSL","",p,pe);
-      if(p->value=="GSL_PREC_DOUBLE"){
-	getGSLMode()=GSL_PREC_DOUBLE;
-      } else if (p->value=="GSL_PREC_SINGLE"){
-	getGSLMode()=GSL_PREC_SINGLE;
-      } else if (p->value=="GSL_PREC_APPROX"){
-	getGSLMode()=GSL_PREC_APPROX;
-      } else {
-	string msg("Analyser::treatSetGSL : ");
-	msg += "unknown gsl mode '"+p->value+"'";
-	throw(runtime_error(msg));
-      }
-      ++p;
-    } // end of Analyser::treatSetGSL
-#endif
 
     void
     Analyser::treatSetGrid(TokensContainer::const_iterator& p, 
@@ -1930,39 +1932,23 @@ namespace tfel
     Analyser::importCastemFunction(const std::string& function,
 				   const std::string& library,
 				   const unsigned short varNumber,
-				   void * const lib,
 				   const bool b)
     {
       using namespace std;
       using namespace tfel::utilities;
+      using namespace tfel::system;
       using namespace tfel::math::parser;
       typedef SmartPtr<ExternalFunction> EFunctionPtr;
-      double (*func)(const double* const);
-      int status = ::checkCastemFunction(lib,function.c_str(),
-					 varNumber);
-      if(status==-2){
-	string msg("Analyser::importCastemFunction : ");
-	msg += "call to checkCastemFunction failed.";
-	throw(runtime_error(msg));
-      }
-      if(status==-1){
-	string msg("Analyser::importCastemFunction : ");
-	msg += "the symbol '"+function+"_nargs' is not available in library "+library;
-	throw(runtime_error(msg));
-      }
-      if(status!=0){
+      ExternalLibraryManager& elm = ExternalLibraryManager::getExternalLibraryManager();
+      unsigned short nb = elm.getCastemFunctionNumberOfVariables(library,function.c_str());
+      if(nb!=varNumber){
 	ostringstream msg;
-	msg << "Analyser::importCastemFunction : "
+	msg << "InterpreterCommon::importCastemFunction : "
 	    << "the function '" << function << "' declares "
-	    << status << " variables, not " << varNumber;
+	    << nb << " variables, not " << varNumber << " as requested";
 	throw(runtime_error(msg.str()));
       }
-      func = ::getCastemFunction(lib,function.c_str());
-      if(func==0){
-	string msg("Analyser::importCastemFunction : ");
-	msg += "unable to load function '"+function+"' from library '"+library+"'";
-	throw(runtime_error(msg));
-      }
+      CastemFunctionPtr func = elm.getCastemFunction(library,function.c_str());
       this->addFunction(function,EFunctionPtr(new ExternalCastemFunction(func,varNumber)),b,false);
     } // end of Analyser::importCastemFunction
 
@@ -1970,254 +1956,99 @@ namespace tfel
     Analyser::importCFunction(const std::string& function,
 			      const std::string& library,
 			      const unsigned short varNumber,
-			      void * const lib,
 			      const bool b)
     {
-      using namespace std;
-      using namespace tfel::utilities;
-      using namespace tfel::math::parser;
-      typedef SmartPtr<ExternalFunction> EFunctionPtr;
-      switch (varNumber){
-	double (*func0)(void);
-	double (*func1)(double);
-	double (*func2)(double,double);
-	double (*func3)(double,double,double);
-	double (*func4)(double,double,double,double);
-	double (*func5)(double,double,double,double,double);
-	double (*func6)(double,double,double,
-			double,double,double);
-	double (*func7)(double,double,double,
-			double,double,double,
-			double);
-	double (*func8)(double,double,double,
-			double,double,double,
-			double,double);
-	double (*func9)(double,double,double,
-			double,double,double,
-			double,double,double);
-	double (*func10)(double,double,double,
-			 double,double,double,
-			 double,double,double,
-			 double);
-	double (*func11)(double,double,double,
-			 double,double,double,
-			 double,double,double,
-			 double,double);
-	double (*func12)(double,double,double,
-			 double,double,double,
-			 double,double,double,
-			 double,double,double);
-	double (*func13)(double,double,double,
-			 double,double,double,
-			 double,double,double,
-			 double,double,double,
-			 double);
-	double (*func14)(double,double,double,
-			 double,double,double,
-			 double,double,double,
-			 double,double,double,
-			 double,double);
-	double (*func15)(double,double,double,
-			 double,double,double,
-			 double,double,double,
-			 double,double,double,
-			 double,double,double);
-      case 0:
-	func0= ::getCFunction0(lib,function.c_str());
-	if(func0==0){
-	  string msg("Analyser::importCFunction : ");
-	  msg += "unable to load function '"+function+"' from library '"+library+"'";
-	  msg += " (";
-	  msg += ::dlerror();
-	  msg += ")";
+	using namespace std;
+	using namespace tfel::utilities;
+	using namespace tfel::system;
+	using namespace tfel::math::parser;
+	typedef SmartPtr<ExternalFunction> EFunctionPtr;
+	ExternalLibraryManager& elm = ExternalLibraryManager::getExternalLibraryManager();
+	switch (varNumber){
+	  CFunction0Ptr  func0;
+	  CFunction1Ptr  func1;
+	  CFunction2Ptr  func2;
+	  CFunction3Ptr  func3;
+	  CFunction4Ptr  func4;
+	  CFunction5Ptr  func5;
+	  CFunction6Ptr  func6;
+	  CFunction7Ptr  func7;
+	  CFunction8Ptr  func8;
+	  CFunction9Ptr  func9;
+	  CFunction10Ptr func10;
+	  CFunction11Ptr func11;
+	  CFunction12Ptr func12;
+	  CFunction13Ptr func13;
+	  CFunction14Ptr func14;
+	  CFunction15Ptr func15;
+	case 0:
+	  func0= elm.getCFunction0(library,function.c_str());
+	  this->addFunction(function,EFunctionPtr(new ExternalCFunction<0>(func0)),b,false);
+	  break;
+	case 1:
+	  func1 = elm.getCFunction1(library,function.c_str());
+	  this->addFunction(function,EFunctionPtr(new ExternalCFunction<1>(func1)),b,false);
+	  break;
+	case 2:
+	  func2 = elm.getCFunction2(library,function.c_str());
+	  this->addFunction(function,EFunctionPtr(new ExternalCFunction<2>(func2)),b,false);
+	  break;
+	case 3:
+	  func3 = elm.getCFunction3(library,function.c_str());
+	  this->addFunction(function,EFunctionPtr(new ExternalCFunction<3>(func3)),b,false);
+	  break;
+	case 4:
+	  func4 = elm.getCFunction4(library,function.c_str());
+	  this->addFunction(function,EFunctionPtr(new ExternalCFunction<4>(func4)),b,false);
+	  break;
+	case 5:
+	  func5 = elm.getCFunction5(library,function.c_str());
+	  this->addFunction(function,EFunctionPtr(new ExternalCFunction<5>(func5)),b,false);
+	  break;
+	case 6:
+	  func6 = elm.getCFunction6(library,function.c_str());
+	  this->addFunction(function,EFunctionPtr(new ExternalCFunction<6>(func6)),b,false);
+	  break;
+	case 7:
+	  func7 = elm.getCFunction7(library,function.c_str());
+	  this->addFunction(function,EFunctionPtr(new ExternalCFunction<7>(func7)),b,false);
+	  break;
+	case 8:
+	  func8 = elm.getCFunction8(library,function.c_str());
+	  this->addFunction(function,EFunctionPtr(new ExternalCFunction<8>(func8)),b,false);
+	  break;
+	case 9:
+	  func9 = elm.getCFunction9(library,function.c_str());
+	  this->addFunction(function,EFunctionPtr(new ExternalCFunction<9>(func9)),b,false);
+	  break;
+	case 10:
+	  func10 = elm.getCFunction10(library,function.c_str());
+	  this->addFunction(function,EFunctionPtr(new ExternalCFunction<10>(func10)),b,false);
+	  break;
+	case 11:
+	  func11 = elm.getCFunction11(library,function.c_str());
+	  this->addFunction(function,EFunctionPtr(new ExternalCFunction<11>(func11)),b,false);
+	  break;
+	case 12:
+	  func12 = elm.getCFunction12(library,function.c_str());
+	  this->addFunction(function,EFunctionPtr(new ExternalCFunction<12>(func12)),b,false);
+	  break;
+	case 13:
+	  func13 = elm.getCFunction13(library,function.c_str());
+	  this->addFunction(function,EFunctionPtr(new ExternalCFunction<13>(func13)),b,false);
+	  break;
+	case 14:
+	  func14 = elm.getCFunction14(library,function.c_str());
+	  this->addFunction(function,EFunctionPtr(new ExternalCFunction<14>(func14)),b,false);
+	  break;
+	case 15:
+	  func15 = elm.getCFunction15(library,function.c_str());
+	  this->addFunction(function,EFunctionPtr(new ExternalCFunction<15>(func15)),b,false);
+	  break;
+	default:
+	  string msg("InterpreterCommon::importCFunction : function with more than 15 variables are not allowed.");
 	  throw(runtime_error(msg));
 	}
-	this->addFunction(function,EFunctionPtr(new ExternalCFunction<0>(func0)),b,false);
-	break;
-      case 1:
-	func1 = ::getCFunction1(lib,function.c_str());
-	if(func1==0){
-	  string msg("Analyser::importCFunction : ");
-	  msg += "unable to load function '"+function+"' from library '"+library+"'";
-	  msg += " (";
-	  msg += ::dlerror();
-	  msg += ")";
-	  throw(runtime_error(msg));
-	}
-	this->addFunction(function,EFunctionPtr(new ExternalCFunction<1>(func1)),b,false);
-	break;
-      case 2:
-	func2 = ::getCFunction2(lib,function.c_str());
-	if(func2==0){
-	  string msg("Analyser::importCFunction : ");
-	  msg += "unable to load function '"+function+"' from library '"+library+"'";
-	  msg += " (";
-	  msg += ::dlerror();
-	  msg += ")";
-	  throw(runtime_error(msg));
-	}
-	this->addFunction(function,EFunctionPtr(new ExternalCFunction<2>(func2)),b,false);
-	break;
-      case 3:
-	func3 = ::getCFunction3(lib,function.c_str());
-	if(func3==0){
-	  string msg("Analyser::importCFunction : ");
-	  msg += "unable to load function '"+function+"' from library '"+library+"'";
-	  msg += " (";
-	  msg += ::dlerror();
-	  msg += ")";
-	  throw(runtime_error(msg));
-	}
-	this->addFunction(function,EFunctionPtr(new ExternalCFunction<3>(func3)),b,false);
-	break;
-      case 4:
-	func4 = ::getCFunction4(lib,function.c_str());
-	if(func4==0){
-	  string msg("Analyser::importCFunction : ");
-	  msg += "unable to load function '"+function+"' from library '"+library+"'";
-	  msg += " (";
-	  msg += ::dlerror();
-	  msg += ")";
-	  throw(runtime_error(msg));
-	}
-	this->addFunction(function,EFunctionPtr(new ExternalCFunction<4>(func4)),b,false);
-	break;
-      case 5:
-	func5 = ::getCFunction5(lib,function.c_str());
-	if(func5==0){
-	  string msg("Analyser::importCFunction : ");
-	  msg += "unable to load function '"+function+"' from library '"+library+"'";
-	  msg += " (";
-	  msg += ::dlerror();
-	  msg += ")";
-	  throw(runtime_error(msg));
-	}
-	this->addFunction(function,EFunctionPtr(new ExternalCFunction<5>(func5)),b,false);
-	break;
-      case 6:
-	func6 = ::getCFunction6(lib,function.c_str());
-	if(func6==0){
-	  string msg("Analyser::importCFunction : ");
-	  msg += "unable to load function '"+function+"' from library '"+library+"'";
-	  msg += " (";
-	  msg += ::dlerror();
-	  msg += ")";
-	  throw(runtime_error(msg));
-	}
-	this->addFunction(function,EFunctionPtr(new ExternalCFunction<6>(func6)),b,false);
-	break;
-      case 7:
-	func7 = ::getCFunction7(lib,function.c_str());
-	if(func7==0){
-	  string msg("Analyser::importCFunction : ");
-	  msg += "unable to load function '"+function+"' from library '"+library+"'";
-	  msg += " (";
-	  msg += ::dlerror();
-	  msg += ")";
-	  throw(runtime_error(msg));
-	}
-	this->addFunction(function,EFunctionPtr(new ExternalCFunction<7>(func7)),b,false);
-	break;
-      case 8:
-	func8 = ::getCFunction8(lib,function.c_str());
-	if(func8==0){
-	  string msg("Analyser::importCFunction : ");
-	  msg += "unable to load function '"+function+"' from library '"+library+"'";
-	  msg += " (";
-	  msg += ::dlerror();
-	  msg += ")";
-	  throw(runtime_error(msg));
-	}
-	this->addFunction(function,EFunctionPtr(new ExternalCFunction<8>(func8)),b,false);
-	break;
-      case 9:
-	func9 = ::getCFunction9(lib,function.c_str());
-	if(func9==0){
-	  string msg("Analyser::importCFunction : ");
-	  msg += "unable to load function '"+function+"' from library '"+library+"'";
-	  msg += " (";
-	  msg += ::dlerror();
-	  msg += ")";
-	  throw(runtime_error(msg));
-	}
-	this->addFunction(function,EFunctionPtr(new ExternalCFunction<9>(func9)),b,false);
-	break;
-      case 10:
-	func10 = ::getCFunction10(lib,function.c_str());
-	if(func10==0){
-	  string msg("Analyser::importCFunction : ");
-	  msg += "unable to load function '"+function+"' from library '"+library+"'";
-	  msg += " (";
-	  msg += ::dlerror();
-	  msg += ")";
-	  throw(runtime_error(msg));
-	}
-	this->addFunction(function,EFunctionPtr(new ExternalCFunction<10>(func10)),b,false);
-	break;
-      case 11:
-	func11 = ::getCFunction11(lib,function.c_str());
-	if(func11==0){
-	  string msg("Analyser::importCFunction : ");
-	  msg += "unable to load function '"+function+"' from library '"+library+"'";
-	  msg += " (";
-	  msg += ::dlerror();
-	  msg += ")";
-	  throw(runtime_error(msg));
-	}
-	this->addFunction(function,EFunctionPtr(new ExternalCFunction<11>(func11)),b,false);
-	break;
-      case 12:
-	func12 = ::getCFunction12(lib,function.c_str());
-	if(func12==0){
-	  string msg("Analyser::importCFunction : ");
-	  msg += "unable to load function '"+function+"' from library '"+library+"'";
-	  msg += " (";
-	  msg += ::dlerror();
-	  msg += ")";
-	  throw(runtime_error(msg));
-	}
-	this->addFunction(function,EFunctionPtr(new ExternalCFunction<12>(func12)),b,false);
-	break;
-      case 13:
-	func13 = ::getCFunction13(lib,function.c_str());
-	if(func13==0){
-	  string msg("Analyser::importCFunction : ");
-	  msg += "unable to load function '"+function+"' from library '"+library+"'";
-	  msg += " (";
-	  msg += ::dlerror();
-	  msg += ")";
-	  throw(runtime_error(msg));
-	}
-	this->addFunction(function,EFunctionPtr(new ExternalCFunction<13>(func13)),b,false);
-	break;
-      case 14:
-	func14 = ::getCFunction14(lib,function.c_str());
-	if(func14==0){
-	  string msg("Analyser::importCFunction : ");
-	  msg += "unable to load function '"+function+"' from library '"+library+"'";
-	  msg += " (";
-	  msg += ::dlerror();
-	  msg += ")";
-	  throw(runtime_error(msg));
-	}
-	this->addFunction(function,EFunctionPtr(new ExternalCFunction<14>(func14)),b,false);
-	break;
-      case 15:
-	func15 = ::getCFunction15(lib,function.c_str());
-	if(func15==0){
-	  string msg("Analyser::importCFunction : ");
-	  msg += "unable to load function '"+function+"' from library '"+library+"'";
-	  msg += " (";
-	  msg += ::dlerror();
-	  msg += ")";
-	  throw(runtime_error(msg));
-	}
-	this->addFunction(function,EFunctionPtr(new ExternalCFunction<15>(func15)),b,false);
-	break;
-      default:
-	string msg("Analyser::importCFunction : function with more than 15 variables are not allowed.");
-	throw(runtime_error(msg));
-      }
     } // end of Analyser::importCFunction
 
     void
@@ -2226,78 +2057,58 @@ namespace tfel
 			     const Analyser::ImportOptions options,
 			     const bool b)
     {
-      using namespace std;
-      this->checkNotEndOfLine("Analyser::importFunction : ",
-			      "expected function name",p,pe);
-      string function = p->value;
-      ++p;
-      unsigned short varNumber = 0;
-      if(options.numberOfVariables==-1){
-	this->checkNotEndOfLine("Analyser::importFunction : ",
-				"expected variable list",p,pe);
-	if(p->value=="("){
-	  const std::vector<std::string>& vars = this->readVariableList(p,pe);
-	  varNumber = static_cast<unsigned short>(vars.size());
-	} else {
-	  varNumber = 0u;
-	}
-      } else {
-	if(p!=pe){
+	using namespace std;
+	this->checkNotEndOfLine("InterpreterCommon::importFunction : ",
+				"expected function name",p,pe);
+	string function = p->value;
+	++p;
+	unsigned short varNumber = 0;
+	if(options.numberOfVariables==-1){
+	  this->checkNotEndOfLine("InterpreterCommon::importFunction : ",
+				  "expected variable list",p,pe);
 	  if(p->value=="("){
 	    const std::vector<std::string>& vars = this->readVariableList(p,pe);
-	    if(vars.size()!=static_cast<unsigned short>(options.numberOfVariables)){
-	      string msg("Analyser::importFunction : ");
-	      msg += "the number variables of function '"+function+"'";
-	      msg += "is not the same as that specified in the options";
-	      throw(runtime_error(msg));
+	    varNumber = static_cast<unsigned short>(vars.size());
+	  } else {
+	    varNumber = 0u;
+	  }
+	} else {
+	  if(p!=pe){
+	    if(p->value=="("){
+	      const std::vector<std::string>& vars = this->readVariableList(p,pe);
+	      if(vars.size()!=static_cast<unsigned short>(options.numberOfVariables)){
+		string msg("InterpreterCommon::importFunction : ");
+		msg += "the number variables of function '"+function+"'";
+		msg += "is not the same as that specified in the options";
+		throw(runtime_error(msg));
+	      }
 	    }
 	  }
+	  varNumber = static_cast<unsigned short>(options.numberOfVariables);
 	}
-	varNumber = static_cast<unsigned short>(options.numberOfVariables);
-      }
 #ifdef HAVE_OCTAVE 
-      if(options.functionType==ImportOptions::Octave){
-	this->importOctaveFunction(p,pe,function,varNumber,b);
-      } else {
-#endif /* HAVE_OCTAVE */
-	this->checkNotEndOfLine("Analyser::importFunction : ",
-				"expected library name",p,pe);
-	string library = this->readString(p,pe);
-	// adding the new function
-	void * lib = this->openLibrary(library);
-	if((options.functionType==ImportOptions::FDefault)||
-	   (options.functionType==ImportOptions::C)){
-	  this->importCFunction(function,library,varNumber,lib,b);
-	} else if (options.functionType==ImportOptions::Castem){
-	  this->importCastemFunction(function,library,varNumber,lib,b);
+	if(options.functionType==ImportOptions::Octave){
+	  this->importOctaveFunction(p,pe,function,varNumber,b);
 	} else {
-	  string msg("Analyser::importFunction : ");
-	  msg += "unknown function type";
-	  throw(runtime_error(msg));
-	}
+#endif /* HAVE_OCTAVE */
+	  this->checkNotEndOfLine("InterpreterCommon::importFunction : ",
+				  "expected library name",p,pe);
+	  string library = this->readString(p,pe);
+	  // adding the new function
+	  if((options.functionType==ImportOptions::FDefault)||
+	     (options.functionType==ImportOptions::C)){
+	    this->importCFunction(function,library,varNumber,b);
+	  } else if (options.functionType==ImportOptions::Castem){
+	    this->importCastemFunction(function,library,varNumber,b);
+	  } else {
+	    string msg("InterpreterCommon::importFunction : ");
+	    msg += "unknown function type";
+	    throw(runtime_error(msg));
+	  }
 #ifdef HAVE_OCTAVE 
-      }
+	}
 #endif /* HAVE_OCTAVE */
     } // end of Analyser::importFunction()
-      
-    void*
-    Analyser::openLibrary(const std::string& library)
-    {
-      using namespace std;
-      if(this->libraries.find(library)==this->libraries.end()){
-	void *lib = dlopen(library.c_str(),RTLD_NOW);
-	if(lib==0){
-	  string msg("Analyser::openLibrary : library ");
-	  msg += library;
-	  msg += " could not be loaded, (";
-	  msg += dlerror();
-	  msg += ")";
-	  throw(runtime_error(msg));
-	}
-	this->libraries[library] = lib;
-      }
-      return this->libraries[library];
-    } // end of Analyser::openLibrary
 
     std::string
     Analyser::readUntil(TokensContainer::const_iterator& p,
@@ -2749,24 +2560,18 @@ namespace tfel
     } // end of Analyser::clearCurrentLine(void)
 
     Analyser::~Analyser()
-    {
-      using namespace std;
-      std::map<string,void*>::iterator p;
-      for(p=this->libraries.begin();p!=this->libraries.end();++p){
-	::dlclose(p->second);
-      }
-    } // end of Analyser::~Analyser()
+    {} // end of Analyser::~Analyser()
 
   } // end of  namespace graphics
 
 } // end of namespace tfel
 
-int in[2];  //< pipe to the child standard output
-int cfd[2]; //< pipe to the child
-int ffd[2]; //< pipe to the father
-int gargc;
-char **gargv;
-pid_t pid;
+static int in[2];  //< pipe to the child standard output
+static int cfd[2]; //< pipe to the child
+static int ffd[2]; //< pipe to the father
+static int gargc;
+static char **gargv;
+static pid_t pid;
 
 bool
 tgplot_io_handler(Glib::IOCondition)
@@ -2775,13 +2580,10 @@ tgplot_io_handler(Glib::IOCondition)
   using namespace Gtk;
   using namespace tfel::graphics;
   static Analyser a(gargc,gargv);
-  //  unsigned short n;
   string line;
   cout.precision(15);
-  //  cin.read,n);
   getline(cin,line);
   try{
-    //    a.analyseLine(line,n);
     a.analyseLine(line,0);
   }
   catch(runtime_error& e){
@@ -2839,8 +2641,9 @@ tgplot_father_tokenize(const std::string& s,
     {
       using namespace std;
       this->splitLine(line,nb);
+      this->treatCharAsString(true);
       if(this->cStyleCommentOpened){
-	string msg("Analyser::analyseLine : ");
+	string msg("tgplot_father_tokenize : ");
 	msg += "unfinished c-style comment";
 	throw(runtime_error(msg));
       }
@@ -2892,7 +2695,6 @@ tgplot_father_send(const char* const line,
     if(*p=="pause"){
       getchar();
     } else {
-      //  write(in[1],&n,sizeof(unsigned short));
       write(in[1],p->c_str(),strlen(p->c_str()));
       write(in[1],"\n",1u);
       errno=0;
@@ -2939,7 +2741,12 @@ tgplot_father(void)
   // user inputs
   char *line;
   n=1;
+#ifdef HAVE_READLINE
   line = ::readline("tgplot> ");
+#else
+  cout << "tgplot> ";
+  cin  >> line;
+#endif /* HAVE_READLINE */
   while(line){
     ++n;
     if(*line){
@@ -2948,7 +2755,12 @@ tgplot_father(void)
       }
     }
     ::free(line);
-    line = ::readline("tgplot> ");
+#ifdef HAVE_READLINE
+  line = ::readline("tgplot> ");
+#else
+  cout << "tgplot> ";
+  cin  >> line;
+#endif /* HAVE_READLINE */
   }
   ::kill(pid,SIGKILL);
   ::close(in[1]);

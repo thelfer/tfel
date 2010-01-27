@@ -5,8 +5,8 @@
  * \brief 11 avr 2009
  */
 
-#ifndef _LIB_KRIGINGDEFAULTNUGGETMODEL_H_
-#define _LIB_KRIGINGDEFAULTNUGGETMODEL_H_ 
+#ifndef _LIB_TFEL_MATH_KRIGINGDEFAULTNUGGETMODEL_H_
+#define _LIB_TFEL_MATH_KRIGINGDEFAULTNUGGETMODEL_H_ 
 
 #include"Math/Kriging/KrigingVariable.hxx"
 
@@ -49,5 +49,5 @@ namespace tfel
 
 } // end of namespace tfel
 
-#endif /* _LIB_KRIGINGDEFAULTNUGGETMODEL_H */
+#endif /* _LIB_TFEL_MATH_KRIGINGDEFAULTNUGGETMODEL_H */
 

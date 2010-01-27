@@ -13,3 +13,19 @@ libTFELGraphics_la_SOURCES = ArrowStyle.cxx         \
 			     GraphTheme.cxx	    \
 			     StandardGraphTheme.cxx \
 			     ThemeManager.cxx
+
+libTFELGraphics_la_LIBADD = -L@top_builddir@/src/Exception/ \
+			    -L@top_builddir@/src/Math/      \
+			    -lTFELMathParser                \
+			    -lTFELMath -lTFELException      \
+			    $(GTKMM_LIBS)                   \
+		 	    @LTLIBINTL@
+
+if HAVE_GSL
+libTFELGraphics_la_LIBADD += @GSLLIBS@
+endif
+
+if HAVE_OCTAVE
+libTFELGraphics_la_LIBADD += @OCTAVELIBS@
+endif
+

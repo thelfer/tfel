@@ -21,26 +21,25 @@ namespace tfel
       namespace parser
       {
 
-	template<double (*f)(double,gsl_mode_t)>
+	template<GSLFunctionPtr f>
 	double gsl_wrapper(double x)
 	{
 	  return f(x,getGSLMode());
 	} // end of gsl_wrapper
 
-	template<double (*f)(double,double,gsl_mode_t)>
+	template<GSLFunction2Ptr f>
 	double gsl_wrapper2(double x,double y)
 	{
 	  return f(x,y,getGSLMode());
 	} // end of gsl_wrapper2
 	
-	template<double (*f)(double,double,double,gsl_mode_t)>
+	template<GSLFunction3Ptr f>
 	double gsl_wrapper3(double x,double y,double z)
 	{
 	  return f(x,y,z,getGSLMode());
 	} // end of gsl_wrapper3
 	
-	template<double (*f)(double,double,double,
-			     double,gsl_mode_t)>
+	template<GSLFunction4Ptr f>
 	double gsl_wrapper4(double x,double y,double z,double u)
 	{
 	  return f(x,y,z,u,getGSLMode());

@@ -5,8 +5,8 @@
  * \brief 11 avr 2009
  */
 
-#ifndef _LIB_KRIGINGVARIABLES_H_
-#define _LIB_KRIGINGVARIABLES_H_ 
+#ifndef _LIB_TFEL_MATH_KRIGINGVARIABLES_H_
+#define _LIB_TFEL_MATH_KRIGINGVARIABLES_H_ 
 
 #include"Math/tvector.hxx"
 
@@ -33,5 +33,5 @@ namespace tfel
   
 }// end of namespace tfel
 
-#endif /* _LIB_KRIGINGVARIABLES_H */
+#endif /* _LIB_TFEL_MATH_KRIGINGVARIABLES_H */
 

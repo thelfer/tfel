@@ -6,8 +6,8 @@
  * \date   21 nov 2008
  */
 
-#ifndef _LIB_FSLEVENBERGMARQUARDT_IXX_
-#define _LIB_FSLEVENBERGMARQUARDT_IXX_ 
+#ifndef _LIB_TFEL_MATH_FSLEVENBERGMARQUARDT_IXX_
+#define _LIB_TFEL_MATH_FSLEVENBERGMARQUARDT_IXX_ 
 
 #include<iostream>
 #include<algorithm>
@@ -180,5 +180,5 @@ namespace tfel
 
 } // end of namespace tfel
 
-#endif /* _LIB_FSLEVENBERGMARQUARDT_IXX */
+#endif /* _LIB_TFEL_MATH_FSLEVENBERGMARQUARDT_IXX */
 

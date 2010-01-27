@@ -5,8 +5,8 @@
  * \brief 15 avr 2009
  */
 
-#ifndef _LIB_LUDECOMP_H_
-#define _LIB_LUDECOMP_H_ 
+#ifndef _LIB_TFEL_MATH_LUDECOMP_H_
+#define _LIB_TFEL_MATH_LUDECOMP_H_ 
 
 #include<algorithm>
 #include<limits>
@@ -101,5 +101,5 @@ namespace tfel{
 
 }// end of namespace tfel
 
-#endif /* _LIB_LUDECOMP_H */
+#endif /* _LIB_TFEL_MATH_LUDECOMP_H */
 

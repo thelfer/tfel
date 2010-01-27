@@ -38,13 +38,13 @@ namespace tfel
       {
 	using namespace std;
 	double res;
+	int old = errno;
 	errno = 0;
 	res = f(this->expr1->getValue(),this->expr2->getValue());
 	if(errno!=0){
-	  string msg("StandardBinaryFunction<f>::getValue : call to function failed (");
-	  msg += strerror(errno);
-	  msg += ")";
-	  throw(runtime_error(msg));
+	  int e = errno;
+	  errno = old;
+	  StandardBinaryFunctionBase::throwInvalidCallException(e);
 	}
 	return res;
       } // end of StandardBinaryFunction::StandardBinaryFunction
@@ -74,9 +74,7 @@ namespace tfel
       {
 	using namespace std;
 	using namespace tfel::utilities;
-	string msg("StandardBinaryFunction<f>::differentiate : ");
-	msg += "unimplemented feature";
-	throw(runtime_error(msg));
+	StandardBinaryFunctionBase::throwUnimplementedDifferentiateFunctionException();
 	return SmartPtr<Expr>(0);
       } // end of StandardBinaryFunction<f>::differentiate
 

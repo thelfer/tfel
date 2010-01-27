@@ -24,82 +24,100 @@
         return "Fct"#X;                                                                   \
       }                                                                                   \
       float Fct##X::operator()(const float x) const {			                  \
-        return std::Y(x);                                                                 \
+        using namespace std;                                                              \
+        return Y(x);                                                                      \
       }                                                                                   \
       qt<NoUnit,float> Fct##X::operator()(const qt<NoUnit,float> x) const {               \
-        return qt<NoUnit,float>(std::Y(x.getValue()));			                  \
+        using namespace std;                                                              \
+        return qt<NoUnit,float>(Y(x.getValue()));			                  \
       }                                                                                   \
       double Fct##X::operator()(const double x) const {			                  \
+        using namespace std;                                                              \
         return ::Y(x);                                                                    \
       }                                                                                   \
       qt<NoUnit,double> Fct##X::operator()(const qt<NoUnit,double> x) const {             \
+        using namespace std;                                                              \
         return qt<NoUnit,double>(::Y(x.getValue()));			                  \
       }                                                                                   \
       long double Fct##X::operator()(const long double x) const {	                  \
-        return std::Y(x);                                                                 \
+        using namespace std;                                                              \
+        return Y(x);                                                                      \
       }                                                                                   \
       qt<NoUnit,long double>						                  \
       Fct##X::operator()(const qt<NoUnit,long double> x) const {                          \
-        return qt<NoUnit,long double>(std::Y(x.getValue()));	 	                  \
+        using namespace std;                                                              \
+        return qt<NoUnit,long double>(Y(x.getValue()));	 	                          \
       }                                                                                   \
 							                                  \
       Complex<float>							                  \
       Fct##X::operator()(const Complex<float> x) const {                                  \
-        return std::Y(x);                                                                 \
+        using namespace std;                                                              \
+        return Y(x);                                                                      \
       }                                                                                   \
 							                                  \
       qt<NoUnit,Complex<float> >					                  \
       Fct##X::operator()(const qt<NoUnit,Complex<float> > x) const {                      \
         typedef Complex<float> Comp;                                                      \
-        return qt<NoUnit,Complex<float> >(Comp(std::Y(static_cast<Complex<float> >(x.getValue())))); \
+        using namespace std;                                                              \
+	return qt<NoUnit,Complex<float> >(Comp(Y(static_cast<Complex<float> >(x.getValue())))); \
       }                                                                                   \
                                                                                           \
       Complex<double>							                  \
       Fct##X::operator()(const Complex<double> x) const {                                 \
-        return std::Y(x);                                                                 \
+        using namespace std;                                                              \
+        return Y(x);                                                                      \
       }                                                                                   \
 							                                  \
       qt<NoUnit,Complex<double> >					                  \
       Fct##X::operator()(const qt<NoUnit,Complex<double> > x) const {                     \
         typedef Complex<double> Comp;                                                     \
-        return qt<NoUnit,Complex<double> >(Comp(std::Y(static_cast<Complex<double> >(x.getValue())))); \
+        using namespace std;                                                              \
+        return qt<NoUnit,Complex<double> >(Comp(Y(static_cast<Complex<double> >(x.getValue())))); \
       }                                                                                   \
 							                                  \
       Complex<long double>						                  \
       Fct##X::operator()(const Complex<long double> x) const {                            \
-        return std::Y(x);                                                                 \
+	using namespace std;						                  \
+	return Y(x);							                  \
       }                                                                                   \
                                                                                           \
       qt<NoUnit,Complex<long double> >					                  \
       Fct##X::operator()(const qt<NoUnit,Complex<long double> > x) const {                \
         typedef Complex<long double> Comp;                                                \
-        return qt<NoUnit,Complex<long double> >(Comp(std::Y(static_cast<Complex<long double> >(x.getValue())))); \
+        using namespace std;                                                              \
+	return qt<NoUnit,Complex<long double> >(Comp(Y(static_cast<Complex<long double> >(x.getValue())))); \
       }
 
 #define TFEL_MATH_STANDARD_FUNCTION_MEMBER_II(X,Y)                                        \
       std::string Fct##X::getName(void){					          \
-        return "Fct"#X;                                                                   \
+        using namespace std;                                                              \
+	return "Fct"#X;							                  \
       }                                                                                   \
       float Fct##X::operator()(const float x) const {			                  \
-        return std::Y(x);                                                                 \
+	using namespace std;						                  \
+	return Y(x);							                  \
       }                                                                                   \
       qt<NoUnit,float> Fct##X::operator()(const qt<NoUnit,float> x) const {               \
-        return qt<NoUnit,float>(std::Y(x.getValue()));			\
+        using namespace std;                                                              \
+	return qt<NoUnit,float>(Y(x.getValue()));			                  \
       }                                                                                   \
       double Fct##X::operator()(const double x) const {			                  \
-        return ::Y(x);                                                                    \
+        using namespace std;                                                              \
+	return ::Y(x);							                  \
       }                                                                                   \
       qt<NoUnit,double> Fct##X::operator()(const qt<NoUnit,double> x) const {             \
-        return qt<NoUnit,double>(::Y(x.getValue()));			\
+        using namespace std;						                  \
+	return qt<NoUnit,double>(::Y(x.getValue()));			                  \
       }                                                                                   \
       long double Fct##X::operator()(const long double x) const {	                  \
-        return std::Y(x);                                                                 \
+        using namespace std;						                  \
+	return Y(x);							                  \
       }                                                                                   \
       qt<NoUnit,long double>						                  \
       Fct##X::operator()(const qt<NoUnit,long double> x) const {                          \
-        return qt<NoUnit,long double>(std::Y(x.getValue()));		\
+        using namespace std;                                                              \
+	return qt<NoUnit,long double>(Y(x.getValue()));	                                  \
       }
-
 
 namespace tfel{
 

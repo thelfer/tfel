@@ -20,7 +20,8 @@ namespace tfel{
       float 
       pow(const float a,const float b)
       {
-	return std::pow(a,b);
+	using namespace std;
+	return pow(a,b);
       }
       
       double
@@ -32,7 +33,8 @@ namespace tfel{
       long double 
       pow(const long double a,const long double b)
       {
-	return std::pow(a,b);
+	using namespace std;
+	return pow(a,b);
       }
 
     } // end of namespace stdfunctions

@@ -5,8 +5,8 @@
  * \brief 12 avr 2009
  */
 
-#ifndef _LIB_LUEXCEPTION_H_
-#define _LIB_LUEXCEPTION_H_ 
+#ifndef _LIB_TFEL_MATH_LUEXCEPTION_H_
+#define _LIB_TFEL_MATH_LUEXCEPTION_H_ 
 
 #include"Exception/TFELException.hxx"
 
@@ -29,5 +29,5 @@ namespace tfel
 
 } // end of namespace tfelx
 
-#endif /* _LIB_LUEXCEPTION_H */
+#endif /* _LIB_TFEL_MATH_LUEXCEPTION_H */
 

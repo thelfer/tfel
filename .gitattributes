@@ -166,6 +166,7 @@ include/Math/General/ScalarObjectRandomAccessConstIteratorSpecialisation.hxx -te
 include/Math/General/StorageTraits.hxx -text
 include/Math/General/UnaryResultType.hxx -text
 include/Math/General/floating_point_exceptions.hxx -text
+include/Math/Interpreter/InterpreterCommon.hxx -text
 include/Math/Kriging.hxx -text
 include/Math/Kriging/FactorizedKriging.ixx -text
 include/Math/Kriging/Kriging.ixx -text
@@ -381,6 +382,7 @@ include/Metaprogramming/TypeList.ixx -text
 include/System/BinaryRead.hxx -text
 include/System/BinaryWrite.hxx -text
 include/System/ChildProcess.hxx -text
+include/System/ExternalFunctionsPrototypes.hxx -text
 include/System/ExternalLibraryManager.hxx -text
 include/System/ProcessManager.h -text
 include/System/ProcessManager.hxx -text
@@ -664,6 +666,7 @@ src/Math/ExternalOctaveFunction.cxx -text
 src/Math/Function.cxx -text
 src/Math/FunctionTag.cxx -text
 src/Math/Id.cxx -text
+src/Math/InterpreterCommon.cxx -text
 src/Math/KrigingErrors.cxx -text
 src/Math/LUException.cxx -text
 src/Math/Lambda.cxx -text
@@ -853,7 +856,6 @@ tplot/include/Graphics/CEAGraphTheme.hxx -text
 tplot/include/Graphics/ElegantGraphTheme.hxx -text
 tplot/include/Graphics/ElegantGraphTheme2.hxx -text
 tplot/include/Graphics/GNUGraphTheme.hxx -text
-tplot/include/Graphics/GetFunction.h -text
 tplot/include/Graphics/PlotPrintOperation.hxx -text
 tplot/include/Graphics/PlotWindow.hxx -text
 tplot/include/Graphics/ThemeSelectionDialog.hxx -text
@@ -864,7 +866,6 @@ tplot/src/CEAGraphTheme.cxx -text
 tplot/src/ElegantGraphTheme.cxx -text
 tplot/src/ElegantGraphTheme2.cxx -text
 tplot/src/GNUGraphTheme.cxx -text
-tplot/src/GetFunction.c -text
 tplot/src/Makefile.am -text
 tplot/src/PlotPrintOperation.cxx -text
 tplot/src/PlotWindow.cxx -text
