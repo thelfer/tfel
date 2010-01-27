@@ -25,17 +25,6 @@ AC_ARG_ENABLE(gpl,
 #disable static library generation by default
 AC_ENABLE_STATIC(no)
 
-# Checks for compilers
-# disable automatic declaration of
-# FFLAGS by AC_PROG_F77
-if test "x$FFLAGS" = "x";
-    then
-    FFLAGS=""
-fi
-
-AC_PROG_F77
-AC_F77_WRAPPERS
-
 # disable automatic declaration of
 # CXXFLAGS by AC_PROG_CXX
 if test "x$CXXFLAGS" = "x";
@@ -114,11 +103,41 @@ fi
 
 AC_DEFINE_UNQUOTED(OPTIMISATION_FLAGS,"$OPTIMISATION_FLAGS")
 
+# Checks for compilers
+# disable automatic declaration of
+# FFLAGS by AC_PROG_F77
+use_fortran=no;
+AC_ARG_ENABLE(fortran,
+   AC_HELP_STRING([--enable-fortran],
+                  [enable fortran support.]),
+   use_fortran=yes,[])
+
+if test "x$use_fortran" != "xno";
+    then
+    if test "x$FFLAGS" = "x";
+	then
+	FFLAGS=""
+    fi
+    AC_PROG_F77
+    AC_F77_WRAPPERS
+    AM_CONDITIONAL([HAVE_FORTRAN],true)
+else
+    AM_CONDITIONAL([HAVE_FORTRAN],false)
+fi
+
 # checks for python
-AM_PATH_PYTHON([2.2],,[:])
-AM_CONDITIONAL([HAVE_PYTHON], [test "$PYTHON" != :])
-if test  "$PYTHON" != :
-then
+use_python=no;
+AC_ARG_ENABLE(python,
+   AC_HELP_STRING([--enable-python],
+                  [enable python support.]),
+   use_python=yes,[])
+
+if test "x$use_python" != "xno";
+    then
+    AM_PATH_PYTHON([2.2],,[:])
+    AM_CONDITIONAL([HAVE_PYTHON], [test "$PYTHON" != :])
+    if test  "$PYTHON" != : ;
+	then
 	AC_DEFINE(HAVE_PYTHON)
 	file=$(mktemp)
 	cat > $file << EOF
@@ -129,9 +148,14 @@ if sysconfig.get_python_inc() != sysconfig.get_python_inc(plat_specific=True) :
 else :
     print '-I' + sysconfig.get_python_inc()
 EOF
-   PYTHON_INCLUDES=$($PYTHON $file)
-   rm $file
-   AC_DEFINE_UNQUOTED(TFEL_PYTHON_INCLUDES,"$PYTHON_INCLUDES")
+	PYTHON_INCLUDES=$($PYTHON $file)
+	rm $file
+	AC_DEFINE_UNQUOTED(TFEL_PYTHON_INCLUDES,"$PYTHON_INCLUDES")
+    else
+	AC_MSG_ERROR("'python' not found")
+    fi
+else
+    AM_CONDITIONAL([HAVE_PYTHON],false)
 fi
 
 #gnuplot
@@ -147,70 +171,130 @@ fi
 AM_GNU_GETTEXT([external])
 
 # readline
-if test "x$gpl_licence" != "xno"
-then
-	VL_LIB_READLINE
-	AM_CONDITIONAL(HAVE_READLINE,test x"$vl_cv_lib_readline_history" = "xyes")
+use_readline=no;
+AC_ARG_ENABLE(readline,
+   AC_HELP_STRING([--enable-readline],
+                  [allow linking to readline.
+		   The '--enable-gpl' option is required]),
+   use_readline=yes,[])
+if test "x$use_readline" != "xno"
+    then
+    if test "x$gpl_licence" != "xyes"
+	then
+	AC_MSG_ERROR("use of readline requires gpl licence (see '--enable-gpl')");
+    fi
+    VL_LIB_READLINE
+    if test "x$vl_cv_lib_readline_history" != "xyes"
+	then
+	AC_MSG_ERROR("'readline' not found")
+    fi
+    AC_DEFINE(HAVE_READLINE)
+    AM_CONDITIONAL(HAVE_READLINE,true)
 else
-	AM_CONDITIONAL(HAVE_READLINE,false)
+    AM_CONDITIONAL(HAVE_READLINE,false)
 fi
 
 #gsl
-if test "x$gpl_licence" != "xno"
-then
-	AC_CHECK_PROGS(GSLCONFIG,gsl-config,[:])
-	AM_CONDITIONAL([HAVE_GSL], [test "$GSLCONFIG" != :])
-	if test "$GSLCONFIG" != :
+use_gsl=no;
+AC_ARG_ENABLE(gsl,
+   AC_HELP_STRING([--enable-gsl],
+                  [allow linking to GSL (Gnu Scientific Library).
+		   The '--enable-gpl' option is required]),
+   AC_DEFINE(USE_GSL)
+   use_gsl=yes,[])
+
+if test "x$use_gsl" != "xno"
+    then
+    if test "x$gpl_licence" != "xyes"
 	then
-		GSLINCLUDES=$($GSLCONFIG --cflags)
-		GSLLIBS=$($GSLCONFIG --libs)
-		AC_SUBST(GSLINCLUDES)
-		AC_SUBST(GSLLIBS)
-		AC_DEFINE(HAVE_GSL)
-	fi
+	AC_MSG_ERROR("use of GSL (Gnu Scientific Library) requires gpl licence (see '--enable-gpl')");
+    fi
+    AC_CHECK_PROGS(GSLCONFIG,gsl-config,[:])
+    AM_CONDITIONAL([HAVE_GSL], [test "$GSLCONFIG" != :])
+    if test "$GSLCONFIG" != :
+	then
+	GSLINCLUDES=$($GSLCONFIG --cflags)
+	GSLLIBS=$($GSLCONFIG --libs)
+	AC_SUBST(GSLINCLUDES)
+	AC_SUBST(GSLLIBS)
+	AC_DEFINE(HAVE_GSL)
+    else
+	AC_MSG_ERROR("'gsl-config' not found");
+    fi
 else
-	AM_CONDITIONAL([HAVE_GSL],false)
+    AM_CONDITIONAL([HAVE_GSL],false)
 fi
 
 #octave
-if test "x$gpl_licence" != "xno"
-then
-	AC_CHECK_PROGS(MKOCTFILE,mkoctfile,[:])
-	AM_CONDITIONAL([HAVE_OCTAVE], [test "$MKOCTFILE" != :])
-	if test "$MKOCTFILE" != :
+use_octave=no;
+AC_ARG_ENABLE(octave,
+   AC_HELP_STRING([--enable-octave],
+                  [allow linking to Octave.
+		   The '--enable-gpl' option is required]),
+   AC_DEFINE(USE_OCTAVE)
+   use_octave=yes,[])
+
+if test "x$use_octave" != "xno"
+    then
+    if test "x$gpl_licence" != "xyes"
 	then
-		OCTAVEINCLUDES=$($MKOCTFILE -p INCFLAGS)
-		OCTAVELIBS="$($MKOCTFILE -p OCTAVE_LIBS)"
-		OCTAVELIBS="$OCTAVELIBS $($MKOCTFILE -p LIBS)"
-		OCTAVELIBS="$OCTAVELIBS $($MKOCTFILE -p LFLAGS)"
-		OCTAVERLIBS="$($MKOCTFILE -p RLD_FLAG)"
-		AC_SUBST(OCTAVEINCLUDES)
-		AC_SUBST(OCTAVELIBS)
-		AC_SUBST(OCTAVERLIBS)
-		AC_DEFINE(HAVE_OCTAVE)
-	fi
+	AC_MSG_ERROR("use of Octave requires gpl licence (see '--enable-gpl')");
+    fi
+    AC_CHECK_PROGS(MKOCTFILE,mkoctfile,[:])
+    AM_CONDITIONAL([HAVE_OCTAVE], [test "$MKOCTFILE" != :])
+    if test "$MKOCTFILE" != :
+	then
+	OCTAVEINCLUDES=$($MKOCTFILE -p INCFLAGS)
+	OCTAVELIBS="$($MKOCTFILE -p OCTAVE_LIBS)"
+	OCTAVELIBS="$OCTAVELIBS $($MKOCTFILE -p LIBS)"
+	OCTAVELIBS="$OCTAVELIBS $($MKOCTFILE -p LFLAGS)"
+	OCTAVERLIBS="$($MKOCTFILE -p RLD_FLAG)"
+	AC_SUBST(OCTAVEINCLUDES)
+	AC_SUBST(OCTAVELIBS)
+	AC_SUBST(OCTAVERLIBS)
+	AC_DEFINE(HAVE_OCTAVE)
+    else
+	AC_MSG_ERROR("'mkoctfile' not found");
+    fi
 else
-	AM_CONDITIONAL([HAVE_OCTAVE],false)
+    AM_CONDITIONAL([HAVE_OCTAVE],false)
 fi
 
 # gtkmm
-PKG_CHECK_MODULES([GTKMM],
-		  [gtkmm-2.4 >= 2.12.0 librsvg-2.0 >= 2.18.2],
-		  [enable_graphics=true],
-	          [enable_graphics=false])
+use_graphics=no;
+AC_ARG_ENABLE(graphics,
+   AC_HELP_STRING([--enable-graphics],
+                  [allow graphics to be compiled.
+		   The 'gtkmm' library is required]),
+   AC_DEFINE(USE_GRAPHICS)
+   use_graphics=yes,[])
 
-AM_CONDITIONAL(WITH_GRAPHICS,test x"$enable_graphics" = "xtrue")
+if test "x$use_graphics" != "xno"
+    then
+    PKG_CHECK_MODULES([GTKMM],
+	[gtkmm-2.4 >= 2.12.0 librsvg-2.0 >= 2.18.2],
+	[enable_graphics=true],
+	[enable_graphics=false])
+    if test x"$enable_graphics" != "xtrue"
+	then
+	AC_MSG_ERROR("'gtkmm' not found");
+    fi
+    AM_CONDITIONAL(WITH_GRAPHICS,true)
+else
+    AM_CONDITIONAL(WITH_GRAPHICS,false)
+fi
 
 # check for castem
 CHECK_CASTEM
 
 AC_ARG_ENABLE([pleiades],
-               AC_HELP_STRING([--enable-pleiades], [compile mfront pleiades specific parsers]),
-[case "${enableval}" in
-  yes) enable_pleiades=true ;;
-  no)  enable_pleiades=false ;;
-  *) AC_MSG_ERROR(bad value ${enableval} for --enable-enable_pleiades) ;;
-esac],[enable_pleiades=false])
+               AC_HELP_STRING([--enable-pleiades],
+		   [compile mfront pleiades specific parsers]),
+	       [case "${enableval}" in
+		   yes) enable_pleiades=true ;;
+		   no)  enable_pleiades=false ;;
+		   *) AC_MSG_ERROR(bad value ${enableval} for --enable-enable_pleiades) ;;
+		       esac],[enable_pleiades=false])
 AM_CONDITIONAL(SUPPORT_PLEIADES, test x"$enable_pleiades" = "xtrue")
 if test x"$enable_pleiades" = "xtrue";
 then
