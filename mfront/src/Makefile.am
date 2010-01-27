@@ -43,7 +43,6 @@ mfront_SOURCES = main.cxx                                             \
 		 MFrontMFrontLawInterface.cxx                         \
 		 MFrontCLawInterfaceBase.cxx                          \
 		 MFrontCLawInterface.cxx                              \
-		 MFrontFortranLawInterface.cxx                        \
 		 MFrontCppLawInterface.cxx                            \
 		 MFrontCppTestLawInterface.cxx                        \
 		 MFrontExcelLawInterface.cxx                          \
@@ -52,6 +51,10 @@ mfront_SOURCES = main.cxx                                             \
 
 if HAVE_GNUPLOT
 mfront_SOURCES += MFrontGnuplotLawInterface.cxx
+endif
+
+if HAVE_FORTRAN
+mfront_SOURCES += MFrontFortranLawInterface.cxx
 endif
 
 if HAVE_PYTHON
