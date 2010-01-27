@@ -287,6 +287,30 @@ namespace tfel{
 	>::type
       operator-=(const tvector<N,T2>&);
     
+      /*!
+       * operator*=
+       */
+      template<typename T2>
+      TFEL_MATH_INLINE 
+      typename tfel::meta::EnableIf<
+	tfel::typetraits::IsScalar<T2>::cond&&
+      tfel::meta::IsSameType<typename ResultType<T,T2,OpMult>::type,T>::cond,
+	tvector<N,T>&
+      >::type
+      operator*=(const T2);
+
+      /*!
+       * operator/=
+       */
+      template<typename T2>
+      TFEL_MATH_INLINE 
+      typename tfel::meta::EnableIf<
+	tfel::typetraits::IsScalar<T2>::cond&&
+        tfel::meta::IsSameType<typename ResultType<T,T2,OpMult>::type,T>::cond,
+	tvector<N,T>&
+      >::type
+      operator/=(const T2);
+
       /*
        * Return the RunTimeProperties of the tvector
        * \return tvector::RunTimeProperties

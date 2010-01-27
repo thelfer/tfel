@@ -129,6 +129,40 @@ namespace tfel{
       return *this;
     }
 
+    // *= operator
+    template<unsigned short N,
+	     unsigned short M,
+	     typename T>
+    template<typename T2>
+    TFEL_MATH_INLINE 
+    typename tfel::meta::EnableIf<
+      tfel::typetraits::IsScalar<T2>::cond&&
+      tfel::meta::IsSameType<typename ResultType<T,T2,OpMult>::type,T>::cond,
+      tmatrix<N,M,T>&
+    >::type
+    tmatrix<N,M,T>::operator*=(const T2 s)
+    {
+      matrix_utilities<N,M,M>::multByScalar(*this,s);
+      return *this;
+    }
+
+    // /= operator
+    template<unsigned short N,
+	     unsigned short M,
+	     typename T>
+    template<typename T2>
+    TFEL_MATH_INLINE 
+    typename tfel::meta::EnableIf<
+      tfel::typetraits::IsScalar<T2>::cond&&
+      tfel::meta::IsSameType<typename ResultType<T,T2,OpMult>::type,T>::cond,
+      tmatrix<N,M,T>&
+    >::type
+    tmatrix<N,M,T>::operator/=(const T2 s)
+    {
+      matrix_utilities<N,M,M>::multByScalar(*this,(static_cast<typename tfel::typetraits::BaseType<T2>::type>(1u))/s);
+      return *this;
+    }
+
     template<unsigned short N,unsigned short M, typename T>
     TFEL_MATH_INLINE2 unsigned short tmatrix<N,M,T>::getNbCols(void) const
     {

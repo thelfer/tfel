@@ -262,6 +262,30 @@ namespace tfel{
       >::type
       operator-=(const tmatrix<N,M,T2>&);
 
+      /*!
+       * operator*=
+       */
+      template<typename T2>
+      TFEL_MATH_INLINE 
+      typename tfel::meta::EnableIf<
+	tfel::typetraits::IsScalar<T2>::cond&&
+      tfel::meta::IsSameType<typename ResultType<T,T2,OpMult>::type,T>::cond,
+	tmatrix<N,M,T>&
+      >::type
+      operator*=(const T2);
+
+      /*!
+       * operator/=
+       */
+      template<typename T2>
+      TFEL_MATH_INLINE 
+      typename tfel::meta::EnableIf<
+	tfel::typetraits::IsScalar<T2>::cond&&
+        tfel::meta::IsSameType<typename ResultType<T,T2,OpMult>::type,T>::cond,
+	tmatrix<N,M,T>&
+      >::type
+      operator/=(const T2);
+
       //! Return the RunTimeProperties of the tmatrix.
       /*
        * This is a MatrixConcept requirement.
