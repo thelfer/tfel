@@ -34,9 +34,11 @@ namespace mfront{
     this->registerVariable("t");
     this->registerVariable("dt_");
     this->registerVariable("T_");
+    this->registerVariable("eto_");
     this->registerVariable("deto_");
     this->reserveName("error");
     this->reserveName("failed");
+    this->localVarsHolder.push_back(VarHandler("StrainStensor","eto_",0u));
     this->localVarsHolder.push_back(VarHandler("StrainRateStensor","deto_",0u));
     this->localVarsHolder.push_back(VarHandler("temperature","T_",0u));
     this->stateVarsHolder.push_back(VarHandler("StrainStensor","eel",0u));
