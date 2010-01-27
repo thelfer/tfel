@@ -12,11 +12,18 @@
 #include"MFrontMFrontLawInterface.hxx"
 #include"MFrontCLawInterface.hxx"
 #include"MFrontExcelLawInterface.hxx"
+
+#ifdef HAVE_FORTRAN
 #include"MFrontFortranLawInterface.hxx"
+#endif /* HAVE_FORTRAN */
+
 #include"MFrontCppLawInterface.hxx"
 #include"MFrontOctaveLawInterface.hxx"
 #include"MFrontCppTestLawInterface.hxx"
+
+#ifdef HAVE_PYTHON
 #include"MFrontPythonLawInterface.hxx"
+#endif /* HAVE_PYTHON */
 
 #ifdef HAVE_GNUPLOT
 #include"MFrontGnuplotLawInterface.hxx"
@@ -40,7 +47,9 @@ namespace mfront
 
     MFrontLawInterfaceProxy<MFrontCLawInterface> cLawProxy;
 
+#ifdef HAVE_FORTRAN
     MFrontLawInterfaceProxy<MFrontFortranLawInterface> fLawProxy;
+#endif /* HAVE_FORTRAN */
 
     MFrontLawInterfaceProxy<MFrontMFrontLawInterface>  mLawProxy;
 
