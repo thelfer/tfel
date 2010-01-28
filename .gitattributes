@@ -166,6 +166,8 @@ include/TFEL/Math/General/ScalarObjectRandomAccessConstIteratorSpecialisation.hx
 include/TFEL/Math/General/StorageTraits.hxx -text
 include/TFEL/Math/General/UnaryResultType.hxx -text
 include/TFEL/Math/General/floating_point_exceptions.hxx -text
+include/TFEL/Math/Interpreter/InterpreterBase.hxx -text
+include/TFEL/Math/Interpreter/InterpreterBase.ixx -text
 include/TFEL/Math/Interpreter/InterpreterCommon.hxx -text
 include/TFEL/Math/Kriging.hxx -text
 include/TFEL/Math/Kriging/FactorizedKriging.ixx -text
