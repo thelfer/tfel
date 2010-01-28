@@ -11,7 +11,7 @@
 
 #include <cairomm/context.h>
 
-#include"Graphics/StandardGraphTheme.hxx"
+#include"TFEL/Graphics/StandardGraphTheme.hxx"
 
 namespace tfel{
 

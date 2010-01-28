@@ -13,13 +13,13 @@
 #include<map>
 #include<string>
 
-#include"Utilities/SmartPtr.hxx"
-#include"Utilities/CxxTokenizer.hxx"
-#include"Utilities/TextData.hxx"
-#include"Utilities/ArgumentParserBase.hxx"
-#include"Math/Evaluator.hxx"
+#include"TFEL/Utilities/SmartPtr.hxx"
+#include"TFEL/Utilities/CxxTokenizer.hxx"
+#include"TFEL/Utilities/TextData.hxx"
+#include"TFEL/Utilities/ArgumentParserBase.hxx"
+#include"TFEL/Math/Evaluator.hxx"
 
-#include"Graphics/PlotWindow.hxx"
+#include"TFEL/Graphics/PlotWindow.hxx"
 
 namespace tfel
 {  

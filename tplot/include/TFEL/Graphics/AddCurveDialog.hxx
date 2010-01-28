@@ -13,10 +13,10 @@
 #include<vector>
 #include<gtkmm.h>
 
-#include"Utilities/TextData.hxx"
+#include"TFEL/Utilities/TextData.hxx"
 
-#include"Graphics/Curve.hxx"
-#include"Graphics/Graph.hxx"
+#include"TFEL/Graphics/Curve.hxx"
+#include"TFEL/Graphics/Graph.hxx"
 
 namespace tfel
 {

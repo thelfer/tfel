@@ -12,7 +12,7 @@
 #include <gtkmm.h>
 #include <vector>
 
-#include"Graphics/Graph.hxx"
+#include"TFEL/Graphics/Graph.hxx"
 
 namespace tfel
 {

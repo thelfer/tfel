@@ -11,7 +11,7 @@
 
 #include <cairomm/context.h>
 
-#include"Graphics/ElegantGraphTheme.hxx"
+#include"TFEL/Graphics/ElegantGraphTheme.hxx"
 
 namespace tfel{
 

@@ -10,8 +10,8 @@
 #define _LIB_TPLOT_PLOTWINDOW_HXX_ 
 
 #include<gtkmm.h>
-#include"Graphics/Graph.hxx"
-#include"Graphics/PlotPrintOperation.hxx"
+#include"TFEL/Graphics/Graph.hxx"
+#include"TFEL/Graphics/PlotPrintOperation.hxx"
 
 namespace tfel
 {
