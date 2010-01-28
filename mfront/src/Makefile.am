@@ -74,10 +74,10 @@ endif
 
 
 mfront_LDFLAGS = -export-dynamic
-mfront_LDADD   = -L$(top_builddir)/src/System    -lTFELSystem         \
-		 -L$(top_builddir)/src/Utilities -lTFELUtilities -ldl \
-		 -lpthread
-
+mfront_LDADD   = -L$(top_builddir)/src/System    -lTFELSystem    \
+		 -L$(top_builddir)/src/Utilities -lTFELUtilities \
+		 -L$(top_builddir)/src/Exception -lTFELException \
+		 -ldl -lpthread
 
 # UMAT Interfaces
 
