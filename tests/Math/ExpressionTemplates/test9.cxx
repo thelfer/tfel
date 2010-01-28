@@ -14,9 +14,9 @@
 #include<cstdlib>
 #include<iterator>
 
-#include"Utilities/Name.hxx"
-#include"Math/General/ObjectObjectRandomAccessConstIterator.hxx"
-#include"Math/vector.hxx"
+#include"TFEL/Utilities/Name.hxx"
+#include"TFEL/Math/General/ObjectObjectRandomAccessConstIterator.hxx"
+#include"TFEL/Math/vector.hxx"
 
 int main(void)
 {

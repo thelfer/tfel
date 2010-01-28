@@ -8,7 +8,8 @@
 
 #include<sstream>
 #include<stdexcept>
-#include"InterfaceBase.hxx"
+
+#include"MFront/InterfaceBase.hxx"
 
 namespace mfront{
 

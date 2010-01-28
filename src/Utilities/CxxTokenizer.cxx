@@ -11,8 +11,8 @@
 #include<sstream>
 #include<cctype>
 
-#include"Utilities/CxxKeywords.hxx"
-#include"Utilities/CxxTokenizer.hxx"
+#include"TFEL/Utilities/CxxKeywords.hxx"
+#include"TFEL/Utilities/CxxTokenizer.hxx"
 
 namespace tfel{
 

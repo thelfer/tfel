@@ -6,7 +6,7 @@
 #include<cassert>
 #include<cstdlib>
 
-#include "Math/stensor.hxx"
+#include"TFEL/Math/stensor.hxx"
 #include "function_tests.hxx"
 
 int main(void){

@@ -5,7 +5,7 @@
  * \date   08 nov 2007
  */
 
-#include"System/SignalHandler.hxx"
+#include"TFEL/System/SignalHandler.hxx"
 
 namespace tfel
 {

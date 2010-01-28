@@ -13,8 +13,8 @@
 #include<cassert>
 #include<cstdlib>
 
-#include"Utilities/Name.hxx"
-#include"Math/functions.hxx"
+#include"TFEL/Utilities/Name.hxx"
+#include"TFEL/Math/functions.hxx"
 
 
 int main(void)

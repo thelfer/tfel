@@ -6,7 +6,7 @@
  * \date   19 Jan 2007
  */
 
-#include"ComputedVarHandler.hxx"
+#include"MFront/ComputedVarHandler.hxx"
 
 namespace mfront{
 

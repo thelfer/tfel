@@ -11,10 +11,11 @@
 #include<algorithm>
 #include<iterator>
 
-#include"System/ProcessManager.hxx"
-#include"MFrontMFrontLawInterface.hxx"
-#include"ParserBase.hxx"
-#include"MFront.hxx"
+#include"TFEL/System/ProcessManager.hxx"
+
+#include"MFront/MFront.hxx"
+#include"MFront/ParserBase.hxx"
+#include"MFront/MFrontMFrontLawInterface.hxx"
 
 namespace mfront
 {

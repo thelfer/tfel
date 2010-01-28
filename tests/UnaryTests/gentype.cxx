@@ -15,7 +15,7 @@
 
 #include<cassert>
 
-#include"Utilities/GenType.hxx"
+#include"TFEL/Utilities/GenType.hxx"
 
 int main(void)
 {

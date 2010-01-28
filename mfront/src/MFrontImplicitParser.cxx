@@ -9,9 +9,9 @@
 #include<cstdlib>
 #include<sstream>
 
-#include"System/System.hxx"
-#include"ParserUtilities.hxx"
-#include"MFrontImplicitParser.hxx"
+#include"TFEL/System/System.hxx"
+#include"MFront/ParserUtilities.hxx"
+#include"MFront/MFrontImplicitParser.hxx"
 
 namespace mfront{
 
@@ -273,14 +273,14 @@ namespace mfront{
     this->checkBehaviourFile();
     this->behaviourFile << "#include<limits>\n";
     this->behaviourFile << "#include<algorithm>\n\n";
-    this->behaviourFile << "#include\"Math/st2tost2.hxx\"\n";
-    this->behaviourFile << "#include\"Math/tmatrix.hxx\"\n";
-    this->behaviourFile << "#include\"Math/tvector.hxx\"\n";
-    this->behaviourFile << "#include\"Math/TinyMatrixSolve.hxx\"\n";
-    this->behaviourFile << "#include\"Math/Stensor/SFTMCV.hxx\"\n";
-    this->behaviourFile << "#include\"Math/Stensor/SFTMRV.hxx\"\n";
-    this->behaviourFile << "#include\"Math/Stensor/SFTVV.hxx\"\n";
-    this->behaviourFile << "#include\"Math/ST2toST2/ST2toST2FTMV.hxx\"\n\n";
+    this->behaviourFile << "#include\"TFEL/Math/st2tost2.hxx\"\n";
+    this->behaviourFile << "#include\"TFEL/Math/tmatrix.hxx\"\n";
+    this->behaviourFile << "#include\"TFEL/Math/tvector.hxx\"\n";
+    this->behaviourFile << "#include\"TFEL/Math/TinyMatrixSolve.hxx\"\n";
+    this->behaviourFile << "#include\"TFEL/Math/Stensor/SFTMCV.hxx\"\n";
+    this->behaviourFile << "#include\"TFEL/Math/Stensor/SFTMRV.hxx\"\n";
+    this->behaviourFile << "#include\"TFEL/Math/Stensor/SFTVV.hxx\"\n";
+    this->behaviourFile << "#include\"TFEL/Math/ST2toST2/ST2toST2FTMV.hxx\"\n\n";
   } // end of MFrontImplicitParser::writeBehaviourParserSpecificIncludes(void)
 
   void MFrontImplicitParser::writeBehaviourParserSpecificTypedefs(void)
@@ -670,7 +670,8 @@ namespace mfront{
     using namespace std;
     using namespace tfel::system;
     systemCall::mkdir("include");
-    systemCall::mkdir("include/Material/");
+    systemCall::mkdir("include/TFEL/");
+    systemCall::mkdir("include/TFEL/Material/");
     systemCall::mkdir("src");
     if(this->className.empty()){
       string msg("MFrontImplicitParser::writeOutputFiles : ");
@@ -679,7 +680,7 @@ namespace mfront{
     }
     this->behaviourFileName  = this->className;
     this->behaviourFileName += ".hxx";
-    this->behaviourFile.open(("include/Material/"+this->behaviourFileName).c_str());
+    this->behaviourFile.open(("include/TFEL/Material/"+this->behaviourFileName).c_str());
     if(!this->behaviourFile){
       string msg("MFrontImplicitParser::writeOutputFiles : ");
       msg += "unable to open ";
@@ -689,7 +690,7 @@ namespace mfront{
     }
     this->behaviourDataFileName  = this->className;
     this->behaviourDataFileName += "BehaviourData.hxx";
-    this->behaviourDataFile.open(("include/Material/"+this->behaviourDataFileName).c_str());
+    this->behaviourDataFile.open(("include/TFEL/Material/"+this->behaviourDataFileName).c_str());
     if(!this->behaviourDataFile){
       string msg("MFrontImplicitParser::writeOutputFiles : ");
       msg += "unable to open ";
@@ -699,7 +700,7 @@ namespace mfront{
     }
     this->integrationDataFileName  = this->className;
     this->integrationDataFileName += "IntegrationData.hxx";
-    this->integrationDataFile.open(("include/Material/"+this->integrationDataFileName).c_str());
+    this->integrationDataFile.open(("include/TFEL/Material/"+this->integrationDataFileName).c_str());
     if(!this->integrationDataFile){
       string msg("MFrontImplicitParser::writeOutputFiles : ");
       msg += "unable to open ";

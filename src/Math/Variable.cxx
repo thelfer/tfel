@@ -8,8 +8,8 @@
 
 #include<iostream>
 
-#include"Math/Parser/Number.hxx"
-#include"Math/Parser/Variable.hxx"
+#include"TFEL/Math/Parser/Number.hxx"
+#include"TFEL/Math/Parser/Variable.hxx"
 
 namespace tfel
 {

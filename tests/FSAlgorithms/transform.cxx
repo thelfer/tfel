@@ -16,7 +16,7 @@
 #include<cassert>
 #include<iterator>
 
-#include"FSAlgorithm/FSAlgorithm.hxx"
+#include"TFEL/FSAlgorithm/FSAlgorithm.hxx"
 
 int main(void)
 {

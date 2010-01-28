@@ -11,8 +11,8 @@
 
 #include<dlfcn.h>
 
-#include"MFrontParserFactory.hxx"
-#include"MFrontParserProxy.hxx"
+#include"MFront/MFrontParserFactory.hxx"
+#include"MFront/MFrontParserProxy.hxx"
 
 namespace mfront{
 

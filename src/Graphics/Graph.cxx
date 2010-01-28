@@ -13,10 +13,10 @@
 #include<limits>
 #include<cmath>
 
-#include"Graphics/Grid.hxx"
-#include"Graphics/Graph.hxx"
-#include"Graphics/GraphSize.hxx"
-#include"Graphics/ThemeManager.hxx"
+#include"TFEL/Graphics/Grid.hxx"
+#include"TFEL/Graphics/Graph.hxx"
+#include"TFEL/Graphics/GraphSize.hxx"
+#include"TFEL/Graphics/ThemeManager.hxx"
 
 namespace tfel
 {

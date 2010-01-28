@@ -16,7 +16,7 @@
 #include<cstdlib>
 #include<cmath>
 
-#include"FSAlgorithm/FSAlgorithm.hxx"
+#include"TFEL/FSAlgorithm/FSAlgorithm.hxx"
 
 double add(double a,double b)
 {

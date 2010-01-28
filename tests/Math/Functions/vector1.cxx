@@ -13,8 +13,8 @@
 #include<algorithm>
 #include<iterator>
 
-#include"Math/functions.hxx"
-#include"Math/vector.hxx"
+#include"TFEL/Math/functions.hxx"
+#include"TFEL/Math/vector.hxx"
 
 int main(void)
 {

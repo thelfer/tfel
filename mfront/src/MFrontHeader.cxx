@@ -7,7 +7,7 @@
  */
 
 #include<string>
-#include"MFrontHeader.hxx"
+#include"MFront/MFrontHeader.hxx"
 
 namespace mfront{
   

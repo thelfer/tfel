@@ -16,8 +16,8 @@
 #include<unistd.h>
 #include<dirent.h>
 
-#include"System/SystemError.hxx"
-#include"System/System.hxx"
+#include"TFEL/System/SystemError.hxx"
+#include"TFEL/System/System.hxx"
 
 namespace tfel
 {

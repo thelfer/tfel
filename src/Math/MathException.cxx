@@ -6,7 +6,7 @@
  * \date   14 fév 2007
  */
 
-#include"Math/MathException.hxx"
+#include"TFEL/Math/MathException.hxx"
 
 namespace tfel{
 

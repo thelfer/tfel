@@ -8,8 +8,8 @@
 
 #include<iostream>
 #include<cstdlib>
-#include"System/wfstream.hxx"
-#include"System/rfstream.hxx"
+#include"TFEL/System/wfstream.hxx"
+#include"TFEL/System/rfstream.hxx"
 
 int
 main(void)

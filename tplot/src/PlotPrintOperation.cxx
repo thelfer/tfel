@@ -6,7 +6,7 @@
  * \date   16 fév 2008
  */
 
-#include"Graphics/PlotPrintOperation.hxx"
+#include"TFEL/Graphics/PlotPrintOperation.hxx"
 
 namespace tfel
 {

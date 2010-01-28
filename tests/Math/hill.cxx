@@ -4,9 +4,9 @@
 
 #include<cstdlib>
 
-#include"Math/stensor.hxx"
-#include"Math/st2tost2.hxx"
-#include"Material/Hill.hxx"
+#include"TFEL/Math/stensor.hxx"
+#include"TFEL/Math/st2tost2.hxx"
+#include"TFEL/Material/Hill.hxx"
 
 int main(void)
 {

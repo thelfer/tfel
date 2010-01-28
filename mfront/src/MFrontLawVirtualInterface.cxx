@@ -6,7 +6,7 @@
  * \date   06 mai 2008
  */
 
-#include"MFrontLawVirtualInterface.hxx"
+#include"MFront/MFrontLawVirtualInterface.hxx"
 
 namespace mfront{
 

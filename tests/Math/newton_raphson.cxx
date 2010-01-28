@@ -12,9 +12,9 @@
 
 #include<cstdlib>
 
-#include"Math/tvector.hxx"
-#include"Math/tmatrix.hxx"
-#include"Math/TinyNewtonRaphson.hxx"
+#include"TFEL/Math/tvector.hxx"
+#include"TFEL/Math/tmatrix.hxx"
+#include"TFEL/Math/TinyNewtonRaphson.hxx"
 
 struct Func
   : public tfel::math::TinyNewtonRaphson<2u,double,Func>

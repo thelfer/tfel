@@ -12,7 +12,7 @@
 #include<cstdlib>
 #include<cassert>
 
-#include"FSAlgorithm/FSAlgorithm.hxx"
+#include"TFEL/FSAlgorithm/FSAlgorithm.hxx"
 
 template<class T> 
 struct count 

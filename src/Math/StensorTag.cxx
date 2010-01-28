@@ -7,7 +7,7 @@
  */
 
 #include<string>
-#include"Math/Stensor/StensorConcept.hxx"
+#include"TFEL/Math/Stensor/StensorConcept.hxx"
 
 namespace tfel{
 

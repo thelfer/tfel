@@ -13,7 +13,7 @@
 #include<cstdlib>
 #include<cassert>
 
-#include"Math/st2tost2.hxx"
+#include"TFEL/Math/st2tost2.hxx"
 
 int main(void)
 {

@@ -8,9 +8,9 @@
 #include<string>
 #include<stdexcept>
 
-#include"ParserUtilities.hxx"
-#include"MFrontParserFactory.hxx"
-#include"MFrontIsotropicMisesPlasticFlowParser.hxx"
+#include"MFront/ParserUtilities.hxx"
+#include"MFront/MFrontParserFactory.hxx"
+#include"MFront/MFrontIsotropicMisesPlasticFlowParser.hxx"
 
 namespace mfront{
 

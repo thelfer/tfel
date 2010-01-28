@@ -9,9 +9,9 @@
 #include<string>
 #include<stdexcept>
 
-#include"ParserUtilities.hxx"
-#include"MFrontParserFactory.hxx"
-#include"MFrontIsotropicStrainHardeningMisesCreepParser.hxx"
+#include"MFront/ParserUtilities.hxx"
+#include"MFront/MFrontParserFactory.hxx"
+#include"MFront/MFrontIsotropicStrainHardeningMisesCreepParser.hxx"
 
 namespace mfront{
 

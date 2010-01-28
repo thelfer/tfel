@@ -11,7 +11,7 @@
 #include<fstream>
 #include<cassert>
 
-#include"Math/RungeKutta42.hxx"
+#include"TFEL/Math/RungeKutta42.hxx"
 
 struct VanDerPol
   : public tfel::math::RungeKutta42<2,VanDerPol>

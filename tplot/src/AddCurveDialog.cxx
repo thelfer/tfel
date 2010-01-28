@@ -12,11 +12,11 @@
 #include<stdexcept>
 #include<glibmm/i18n.h>
 
-#include"Utilities/SmartPtr.hxx"
-#include"Utilities/TextData.hxx"
-#include"Graphics/EvaluatedCurve.hxx"
-#include"Graphics/DataCurve.hxx"
-#include"Graphics/AddCurveDialog.hxx"
+#include"TFEL/Utilities/SmartPtr.hxx"
+#include"TFEL/Utilities/TextData.hxx"
+#include"TFEL/Graphics/EvaluatedCurve.hxx"
+#include"TFEL/Graphics/DataCurve.hxx"
+#include"TFEL/Graphics/AddCurveDialog.hxx"
 
 namespace tfel
 {

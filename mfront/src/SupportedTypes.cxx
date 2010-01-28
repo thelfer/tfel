@@ -8,7 +8,8 @@
 
 #include<utility>
 #include<stdexcept>
-#include"SupportedTypes.hxx"
+
+#include"MFront/SupportedTypes.hxx"
 
 namespace mfront{
 

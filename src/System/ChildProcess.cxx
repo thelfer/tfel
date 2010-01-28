@@ -8,7 +8,7 @@
 #include<sys/types.h>
 #include<signal.h>
 
-#include"System/ChildProcess.hxx"
+#include"TFEL/System/ChildProcess.hxx"
 
 namespace tfel
 {

@@ -12,7 +12,7 @@
 #include<fstream>
 #include<algorithm>
 #include<iterator>
-#include"Utilities/TextData.hxx"
+#include"TFEL/Utilities/TextData.hxx"
 
 namespace tfel
 {

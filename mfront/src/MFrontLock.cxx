@@ -16,8 +16,8 @@
 #include<semaphore.h>
 #include<unistd.h>
 
-#include"System/System.hxx"
-#include"MFrontLock.hxx"
+#include"TFEL/System/System.hxx"
+#include"MFront/MFrontLock.hxx"
 
 namespace mfront{
 

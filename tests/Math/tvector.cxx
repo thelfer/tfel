@@ -6,8 +6,8 @@
 #include<cstdlib>
 #include<cassert>
 
-#include "Math/qt.hxx"
-#include "Math/tvector.hxx"
+#include"TFEL/Math/qt.hxx"
+#include"TFEL/Math/tvector.hxx"
 
 int main(void){
   

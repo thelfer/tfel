@@ -6,7 +6,7 @@
  */
 
 #include<string>
-#include"Math/General/BasicOperations.hxx"
+#include"TFEL/Math/General/BasicOperations.hxx"
 
 namespace tfel{
 

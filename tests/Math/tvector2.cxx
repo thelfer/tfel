@@ -4,8 +4,8 @@
 
 #include<cstdlib>
 
-#include "Math/tvector.hxx"
-#include "Math/tmatrix.hxx"
+#include"TFEL/Math/tvector.hxx"
+#include"TFEL/Math/tmatrix.hxx"
 
 int main(void){
   

@@ -9,11 +9,11 @@
 #include<glibmm/i18n.h>
 #include<gtkmm.h>
 
-#include"Utilities/TextData.hxx"
-#include"Utilities/ArgumentParserBase.hxx"
-#include"Graphics/DataCurve.hxx"
-#include"Graphics/ThemeManager.hxx"
-#include"Graphics/PlotWindow.hxx"
+#include"TFEL/Utilities/TextData.hxx"
+#include"TFEL/Utilities/ArgumentParserBase.hxx"
+#include"TFEL/Graphics/DataCurve.hxx"
+#include"TFEL/Graphics/ThemeManager.hxx"
+#include"TFEL/Graphics/PlotWindow.hxx"
 
 namespace tfel
 {

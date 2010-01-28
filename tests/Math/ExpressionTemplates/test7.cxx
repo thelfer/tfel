@@ -15,8 +15,8 @@
 #include<algorithm>
 #include<iterator>
 
-#include"Math/General/ScalarObjectRandomAccessConstIterator.hxx"
-#include"Math/General/BasicOperations.hxx"
+#include"TFEL/Math/General/ScalarObjectRandomAccessConstIterator.hxx"
+#include"TFEL/Math/General/BasicOperations.hxx"
 
 int main(void)
 {

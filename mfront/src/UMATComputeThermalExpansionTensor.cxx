@@ -7,7 +7,7 @@
 
 #include<algorithm>
 
-#include"UMAT/UMATComputeThermalExpansionTensor.hxx"
+#include"MFront/UMAT/UMATComputeThermalExpansionTensor.hxx"
 
 namespace umat
 {

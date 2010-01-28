@@ -5,7 +5,7 @@
 #include <octave/octave.h>
 #include <octave/parse.h>
 
-#include"Math/Parser/ExternalOctaveFunction.hxx"
+#include"TFEL/Math/Parser/ExternalOctaveFunction.hxx"
 
 namespace tfel
 {

@@ -12,8 +12,8 @@
 #include <librsvg/rsvg.h>
 #include <librsvg/rsvg-cairo.h>
 
-#include"Graphics/ThemeManager.hxx"
-#include"Graphics/GNUGraphTheme.hxx"
+#include"TFEL/Graphics/ThemeManager.hxx"
+#include"TFEL/Graphics/GNUGraphTheme.hxx"
 
 namespace tfel
 {

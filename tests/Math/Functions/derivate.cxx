@@ -14,7 +14,7 @@
 #include<cassert>
 #include<cstdlib>
 
-#include"Math/functions.hxx"
+#include"TFEL/Math/functions.hxx"
 
 #ifndef M_PI_2
 #define M_PI_2		1.57079632679489661923	/* pi/2 */

@@ -15,9 +15,9 @@
 #include<limits>
 #include<string>
 
-#include"Utilities/Name.hxx"
-#include"TypeTraits/Promote.hxx"
-#include"Math/General/Complex.hxx"
+#include"TFEL/Utilities/Name.hxx"
+#include"TFEL/TypeTraits/Promote.hxx"
+#include"TFEL/Math/General/Complex.hxx"
 
 std::string Test(const float&);
 

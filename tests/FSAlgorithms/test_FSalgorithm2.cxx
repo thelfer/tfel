@@ -16,7 +16,7 @@
 #include<cstdlib>
 #include<vector>
 
-#include"FSAlgorithm/FSAlgorithm.hxx"
+#include"TFEL/FSAlgorithm/FSAlgorithm.hxx"
 
 int main(void)
 {

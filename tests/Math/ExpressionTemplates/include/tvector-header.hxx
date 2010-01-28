@@ -13,8 +13,8 @@
 #include<cassert>
 #include<cmath>
 #include<limits>
-#include"Math/functions.hxx"
-#include"Math/tvector.hxx"
+#include"TFEL/Math/functions.hxx"
+#include"TFEL/Math/tvector.hxx"
 
 template<typename T>
 void test1(void);

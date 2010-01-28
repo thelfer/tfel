@@ -6,20 +6,20 @@
  * \date   13 sep 2008
  */
 
-#include"MFrontParserProxy.hxx"
+#include"MFront/MFrontParserProxy.hxx"
 
-#include"MFrontDefaultParser.hxx"
-#include"MFrontIsotropicMisesCreepParser.hxx"
-#include"MFrontIsotropicMisesPlasticFlowParser.hxx"
-#include"MFrontIsotropicStrainHardeningMisesCreepParser.hxx"
-#include"MFrontMaterialLawParser.hxx"
-#include"MFrontMultipleIsotropicMisesFlowsParser.hxx"
-#include"MFrontRungeKuttaParser.hxx"
-#include"MFrontImplicitParser.hxx"
+#include"MFront/MFrontDefaultParser.hxx"
+#include"MFront/MFrontIsotropicMisesCreepParser.hxx"
+#include"MFront/MFrontIsotropicMisesPlasticFlowParser.hxx"
+#include"MFront/MFrontIsotropicStrainHardeningMisesCreepParser.hxx"
+#include"MFront/MFrontMaterialLawParser.hxx"
+#include"MFront/MFrontMultipleIsotropicMisesFlowsParser.hxx"
+#include"MFront/MFrontRungeKuttaParser.hxx"
+#include"MFront/MFrontImplicitParser.hxx"
 
 #ifdef HAVE_PLEIADES
-#include"MFrontPleiadesModelParser.hxx"
-#include"MFrontPleiadesModelParserArchitecture1.4.hxx"
+#include"MFront/MFrontPleiadesModelParser.hxx"
+#include"MFront/MFrontPleiadesModelParserArchitecture1.4.hxx"
 #endif /* HAVE_PLEIADES */
 
 namespace mfront

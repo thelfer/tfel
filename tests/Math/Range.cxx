@@ -12,8 +12,8 @@
 
 #include<cstdlib>
 
-#include"Math/Vector/Range.hxx"
-#include"Math/vector.hxx"
+#include"TFEL/Math/Vector/Range.hxx"
+#include"TFEL/Math/vector.hxx"
 
 int main(void){
 

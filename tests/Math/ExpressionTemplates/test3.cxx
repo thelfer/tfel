@@ -12,11 +12,11 @@
 #include<cassert>
 #include<cstdlib>
 
-#include"Utilities/Name.hxx"
+#include"TFEL/Utilities/Name.hxx"
 
-#include"Math/General/UnaryResultType.hxx"
-#include"Math/General/BasicOperations.hxx"
-#include"Math/tvector.hxx"
+#include"TFEL/Math/General/UnaryResultType.hxx"
+#include"TFEL/Math/General/BasicOperations.hxx"
+#include"TFEL/Math/tvector.hxx"
 
 int main(void){
   

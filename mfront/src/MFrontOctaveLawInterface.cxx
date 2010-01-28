@@ -13,10 +13,10 @@
 #include<algorithm>
 #include<cstdlib>
 
-#include"System/System.hxx"
-#include"MFrontHeader.hxx"
-#include"MFrontOctaveLawInterface.hxx"
-#include"ParserUtilities.hxx"
+#include"TFEL/System/System.hxx"
+#include"MFront/ParserUtilities.hxx"
+#include"MFront/MFrontHeader.hxx"
+#include"MFront/MFrontOctaveLawInterface.hxx"
 
 namespace mfront
 {

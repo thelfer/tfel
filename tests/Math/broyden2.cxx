@@ -13,8 +13,8 @@
 #include<cstdlib>
 #include<cmath>
 
-#include<Math/Broyden2.hxx>
-#include"Math/TinyMatrixSolve.hxx"
+#include"TFEL/Math/Broyden2.hxx"
+#include"TFEL/Math/TinyMatrixSolve.hxx"
 
 const tfel::math::tvector<2,double>
 f(const tfel::math::tvector<2,double>& x)

@@ -14,8 +14,8 @@
 #include<string>
 #include<cassert>
 
-#include "Utilities/Name.hxx"
-#include "Math/General/Complex.hxx"
+#include"TFEL/Utilities/Name.hxx"
+#include"TFEL/Math/General/Complex.hxx"
 
 #define TEST_NAME(X)                                                                \
   assert(tfel::utilities::Name<X >::getName()==#X)

@@ -6,7 +6,7 @@
  * \date   17 Jan 2007
  */
 
-#include"MFrontBehaviourVirtualInterface.hxx"
+#include"MFront/MFrontBehaviourVirtualInterface.hxx"
 
 namespace mfront{
 

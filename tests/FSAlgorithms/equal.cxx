@@ -14,7 +14,7 @@
 #include<limits>
 #include<cmath>
 
-#include"FSAlgorithm/FSAlgorithm.hxx"
+#include"TFEL/FSAlgorithm/FSAlgorithm.hxx"
 
 struct AlmostEqual
 {

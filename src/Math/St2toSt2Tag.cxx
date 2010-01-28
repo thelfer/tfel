@@ -7,7 +7,7 @@
  */
 
 #include<string>
-#include"Math/ST2toST2/ST2toST2Concept.hxx"
+#include"TFEL/Math/ST2toST2/ST2toST2Concept.hxx"
 
 namespace tfel{
 

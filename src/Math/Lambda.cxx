@@ -5,7 +5,7 @@
  * \date   12 déc 2006
  */
 
-#include"Math/lambda.hxx"
+#include"TFEL/Math/lambda.hxx"
 
 namespace tfel{
 

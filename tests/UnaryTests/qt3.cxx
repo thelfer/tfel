@@ -15,7 +15,7 @@
 #include<cassert>
 #include<cmath>
 
-#include"Math/qt.hxx"
+#include"TFEL/Math/qt.hxx"
 
 int main(void){
 

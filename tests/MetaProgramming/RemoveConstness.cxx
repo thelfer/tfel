@@ -12,8 +12,8 @@
 #include<cassert>
 #include<cstdlib>
 
-#include"Metaprogramming/RemoveConstness.hxx"
-#include"Utilities/Name.hxx"
+#include"TFEL/Metaprogramming/RemoveConstness.hxx"
+#include"TFEL/Utilities/Name.hxx"
 
 int main(void)
 {

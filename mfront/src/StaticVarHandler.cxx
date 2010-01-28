@@ -6,7 +6,7 @@
  * \date   19 Jan 2007
  */
 
-#include"StaticVarHandler.hxx"
+#include"MFront/StaticVarHandler.hxx"
 
 namespace mfront{
 

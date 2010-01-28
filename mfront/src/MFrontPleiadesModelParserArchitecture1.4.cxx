@@ -13,11 +13,12 @@
 #include<cctype>
 #include<cassert>
 
-#include"ParserUtilities.hxx"
-#include"MFrontHeader.hxx"
-#include"MFrontParserFactory.hxx"
-#include"MFrontPleiadesModelParserArchitecture1.4.hxx"
-#include"System/System.hxx"
+#include"TFEL/System/System.hxx"
+
+#include"MFront/ParserUtilities.hxx"
+#include"MFront/MFrontHeader.hxx"
+#include"MFront/MFrontParserFactory.hxx"
+#include"MFront/MFrontPleiadesModelParserArchitecture1.4.hxx"
 
 namespace mfront{
 

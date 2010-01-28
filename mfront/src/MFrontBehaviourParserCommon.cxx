@@ -17,12 +17,12 @@
 #include<cctype>
 #include<cmath>
 
-#include"ParserUtilities.hxx"
-#include"MFrontHeader.hxx"
-#include"MFrontBehaviourVirtualInterface.hxx"
-#include"MFrontBehaviourInterfaceFactory.hxx"
+#include"MFront/ParserUtilities.hxx"
+#include"MFront/MFrontHeader.hxx"
+#include"MFront/MFrontBehaviourVirtualInterface.hxx"
+#include"MFront/MFrontBehaviourInterfaceFactory.hxx"
 
-#include"MFrontBehaviourParserCommon.hxx"
+#include"MFront/MFrontBehaviourParserCommon.hxx"
 
 namespace mfront{
 
@@ -996,15 +996,15 @@ namespace mfront{
 
     this->behaviourDataFile << "#include<iostream>\n";
     this->behaviourDataFile << "#include<string>\n\n";
-    this->behaviourDataFile << "#include\"Config/TFELConfig.hxx\"" << endl;
-    this->behaviourDataFile << "#include\"Config/TFELTypes.hxx\""  << endl;
-    this->behaviourDataFile << "#include\"Metaprogramming/StaticAssert.hxx\"" << endl;
-    this->behaviourDataFile << "#include\"TypeTraits/IsFundamentalNumericType.hxx\"" << endl;
-    this->behaviourDataFile << "#include\"TypeTraits/IsReal.hxx\"" << endl;
+    this->behaviourDataFile << "#include\"TFEL/Config/TFELConfig.hxx\"" << endl;
+    this->behaviourDataFile << "#include\"TFEL/Config/TFELTypes.hxx\""  << endl;
+    this->behaviourDataFile << "#include\"TFEL/Metaprogramming/StaticAssert.hxx\"" << endl;
+    this->behaviourDataFile << "#include\"TFEL/TypeTraits/IsFundamentalNumericType.hxx\"" << endl;
+    this->behaviourDataFile << "#include\"TFEL/TypeTraits/IsReal.hxx\"" << endl;
     if(this->behaviourCharacteristic.useQt()){
-      this->behaviourDataFile << "#include\"Math/General/CommonCast.hxx\"" << endl;
+      this->behaviourDataFile << "#include\"TFEL/Math/General/CommonCast.hxx\"" << endl;
     }
-    this->behaviourDataFile << "#include\"Material/MechanicalBehaviourData.hxx\"" << endl;
+    this->behaviourDataFile << "#include\"TFEL/Material/MechanicalBehaviourData.hxx\"" << endl;
     this->behaviourDataFile << endl;
   }
 
@@ -2129,18 +2129,18 @@ namespace mfront{
     this->checkBehaviourFile();
     this->behaviourFile << "#include<iostream>\n";
     this->behaviourFile << "#include<string>\n\n";
-    this->behaviourFile << "#include\"Config/TFELConfig.hxx\"" << endl;
-    this->behaviourFile << "#include\"Config/TFELTypes.hxx\""  << endl;
-    this->behaviourFile << "#include\"Metaprogramming/StaticAssert.hxx\"" << endl;
-    this->behaviourFile << "#include\"TypeTraits/IsFundamentalNumericType.hxx\"" << endl;
-    this->behaviourFile << "#include\"TypeTraits/IsReal.hxx\"" << endl;
-    this->behaviourFile << "#include\"Material/MechanicalBehaviour.hxx\"\n";
-    this->behaviourFile << "#include\"Material/MechanicalBehaviourTraits.hxx\"\n";
-    this->behaviourFile << "#include\"Material/OutOfBoundsPolicy.hxx\"" << endl;
-    this->behaviourFile << "#include\"Material/BoundsCheck.hxx\"" << endl;
-    this->behaviourFile << "#include\"Material/";
+    this->behaviourFile << "#include\"TFEL/Config/TFELConfig.hxx\"" << endl;
+    this->behaviourFile << "#include\"TFEL/Config/TFELTypes.hxx\""  << endl;
+    this->behaviourFile << "#include\"TFEL/Metaprogramming/StaticAssert.hxx\"" << endl;
+    this->behaviourFile << "#include\"TFEL/TypeTraits/IsFundamentalNumericType.hxx\"" << endl;
+    this->behaviourFile << "#include\"TFEL/TypeTraits/IsReal.hxx\"" << endl;
+    this->behaviourFile << "#include\"TFEL/Material/MechanicalBehaviour.hxx\"\n";
+    this->behaviourFile << "#include\"TFEL/Material/MechanicalBehaviourTraits.hxx\"\n";
+    this->behaviourFile << "#include\"TFEL/Material/OutOfBoundsPolicy.hxx\"" << endl;
+    this->behaviourFile << "#include\"TFEL/Material/BoundsCheck.hxx\"" << endl;
+    this->behaviourFile << "#include\"TFEL/Material/";
     this->behaviourFile << this->behaviourDataFileName << "\"\n";
-    this->behaviourFile << "#include\"Material/";
+    this->behaviourFile << "#include\"TFEL/Material/";
     this->behaviourFile << this->integrationDataFileName << "\"\n";
     this->behaviourFile << endl;
   }
@@ -2385,16 +2385,16 @@ namespace mfront{
     this->checkIntegrationDataFile();
     this->integrationDataFile << "#include<iostream>\n";
     this->integrationDataFile << "#include<string>\n\n";
-    this->integrationDataFile << "#include\"Config/TFELConfig.hxx\"\n";
-    this->integrationDataFile << "#include\"Config/TFELTypes.hxx\"\n";
-    this->integrationDataFile << "#include\"Metaprogramming/StaticAssert.hxx\"\n";
-    this->integrationDataFile << "#include\"Metaprogramming/IsSameType.hxx\"\n";
-    this->integrationDataFile << "#include\"Metaprogramming/EnableIf.hxx\"\n";
-    this->integrationDataFile << "#include\"TypeTraits/IsFundamentalNumericType.hxx\"\n";
-    this->integrationDataFile << "#include\"TypeTraits/IsScalar.hxx\"\n";
-    this->integrationDataFile << "#include\"TypeTraits/IsReal.hxx\"\n";
-    this->integrationDataFile << "#include\"TypeTraits/Promote.hxx\"\n";
-    this->integrationDataFile << "#include\"Material/MechanicalIntegrationData.hxx\"\n\n";
+    this->integrationDataFile << "#include\"TFEL/Config/TFELConfig.hxx\"\n";
+    this->integrationDataFile << "#include\"TFEL/Config/TFELTypes.hxx\"\n";
+    this->integrationDataFile << "#include\"TFEL/Metaprogramming/StaticAssert.hxx\"\n";
+    this->integrationDataFile << "#include\"TFEL/Metaprogramming/IsSameType.hxx\"\n";
+    this->integrationDataFile << "#include\"TFEL/Metaprogramming/EnableIf.hxx\"\n";
+    this->integrationDataFile << "#include\"TFEL/TypeTraits/IsFundamentalNumericType.hxx\"\n";
+    this->integrationDataFile << "#include\"TFEL/TypeTraits/IsScalar.hxx\"\n";
+    this->integrationDataFile << "#include\"TFEL/TypeTraits/IsReal.hxx\"\n";
+    this->integrationDataFile << "#include\"TFEL/TypeTraits/Promote.hxx\"\n";
+    this->integrationDataFile << "#include\"TFEL/Material/MechanicalIntegrationData.hxx\"\n\n";
   }
 
   void MFrontBehaviourParserCommon::writeIntegrationDataDefaultMembers(void)
@@ -2754,9 +2754,9 @@ namespace mfront{
     }
     this->srcFile << " */" << endl;
     this->srcFile << endl;
-    this->srcFile << "#include\"Material/" << this->behaviourDataFileName   << "\"\n";
-    this->srcFile << "#include\"Material/" << this->integrationDataFileName << "\"\n";
-    this->srcFile << "#include\"Material/" << this->behaviourFileName       << "\"\n";
+    this->srcFile << "#include\"TFEL/Material/" << this->behaviourDataFileName   << "\"\n";
+    this->srcFile << "#include\"TFEL/Material/" << this->integrationDataFileName << "\"\n";
+    this->srcFile << "#include\"TFEL/Material/" << this->behaviourFileName       << "\"\n";
     this->srcFile << endl;
   } // end of MFrontBehaviourParserCommon::writeSrcFileHeader()
 
@@ -2903,10 +2903,10 @@ namespace mfront{
       testFile << " */" << endl;
       testFile << endl;
       testFile << "#include<utility>\n\n";
-      testFile << "#include\"Config/TFELConfig.hxx\"\n";
-      testFile << "#include\"Config/TFELTypes.hxx\"\n";
-      testFile << "#include\"Material/MechanicalBehaviourData.hxx\"\n";
-      testFile << "#include\"Material/";
+      testFile << "#include\"TFEL/Config/TFELConfig.hxx\"\n";
+      testFile << "#include\"TFEL/Config/TFELTypes.hxx\"\n";
+      testFile << "#include\"TFEL/Material/MechanicalBehaviourData.hxx\"\n";
+      testFile << "#include\"TFEL/Material/";
       testFile << this->behaviourFileName << "\"\n\n";
       testFile << "int\nmain(void)\n{\n\n";
       testFile << "using namespace std;\n";

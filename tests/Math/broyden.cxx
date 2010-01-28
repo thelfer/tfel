@@ -13,7 +13,7 @@
 #include<cstdlib>
 #include<cmath>
 
-#include<Math/Broyden.hxx>
+#include"TFEL/Math/Broyden.hxx"
 
 const tfel::math::tvector<2,double>
 f(const tfel::math::tvector<2,double>& x)

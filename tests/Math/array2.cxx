@@ -13,8 +13,8 @@
 #include<cassert>
 #include<limits>
 
-#include"Math/Array/ArrayRunTimeProperties.hxx"
-#include"Math/array.hxx"
+#include"TFEL/Math/Array/ArrayRunTimeProperties.hxx"
+#include"TFEL/Math/array.hxx"
 
 template<typename T>
 void function(const tfel::math::array<1u,T>& a,const T value)

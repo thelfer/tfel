@@ -12,7 +12,7 @@
 
 #include<dlfcn.h>
 
-#include"MFrontLawInterfaceFactory.hxx"
+#include"MFront/MFrontLawInterfaceFactory.hxx"
 
 namespace mfront{
 

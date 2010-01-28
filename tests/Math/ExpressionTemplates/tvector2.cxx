@@ -13,8 +13,8 @@
 #include<cstdlib>
 #include<limits>
 
-#include"Math/tvector.hxx"
-#include"Math/qt.hxx"
+#include"TFEL/Math/tvector.hxx"
+#include"TFEL/Math/qt.hxx"
 
 int main(void)
 {

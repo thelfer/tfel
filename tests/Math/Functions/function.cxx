@@ -14,8 +14,8 @@
 #include<cassert>
 #include<cstdlib>
 
-#include "Math/functions.hxx"
-#include "Utilities/Name.hxx"
+#include"TFEL/Math/functions.hxx"
+#include"TFEL/Utilities/Name.hxx"
 
 int main(void)
 {

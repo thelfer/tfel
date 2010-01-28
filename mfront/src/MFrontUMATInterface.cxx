@@ -8,8 +8,9 @@
 #include<stdexcept>
 #include<sstream>
 
-#include"MFrontUMATInterface.hxx"
-#include"System/System.hxx"
+#include"TFEL/System/System.hxx"
+
+#include"MFront/MFrontUMATInterface.hxx"
 
 namespace mfront{
 
@@ -576,7 +577,8 @@ namespace mfront{
     unsigned short i;
     bool found;
 
-    systemCall::mkdir("include/UMAT");
+    systemCall::mkdir("include/MFront");
+    systemCall::mkdir("include/MFront/UMAT");
 
     if(!library.empty()){
       header += "_";
@@ -598,7 +600,7 @@ namespace mfront{
     fileName += name;
     fileName += ".hxx";
 
-    ofstream out(("include/UMAT/"+fileName).c_str());
+    ofstream out(("include/MFront/UMAT/"+fileName).c_str());
 
     if(!out){
       string msg("MFrontUMATInterface::endTreatement : ");
@@ -678,14 +680,14 @@ namespace mfront{
     out << "#define _LIB_"+header+"_HXX_\n\n";
     
     out << "#include\"castem.h\"\n";
-    out << "#include\"UMAT/UMAT.hxx\"\n\n";
+    out << "#include\"MFront/UMAT/UMAT.hxx\"\n\n";
 
     out << "#ifdef __cplusplus\n";
-    out << "#include\"UMAT/UMATTraits.hxx\"\n";
+    out << "#include\"MFront/UMAT/UMATTraits.hxx\"\n";
     if (behaviourCharacteristic.getBehaviourType()==mfront::ORTHOTROPIC){
-      out << "#include\"UMAT/UMATOrthotropicBehaviour.hxx\"\n";
+      out << "#include\"MFront/UMAT/UMATOrthotropicBehaviour.hxx\"\n";
     }
-    out << "#include\"Material/" << className << ".hxx\"\n";
+    out << "#include\"TFEL/Material/" << className << ".hxx\"\n";
     out << "#endif /* __cplusplus */\n\n";
 
     out << "#ifdef WIN32\n";
@@ -837,9 +839,9 @@ namespace mfront{
     out << "* \\date   "  << date       << endl;
     out << "*/\n\n";
 
-    out << "#include\"Material/" << className << ".hxx\"\n";
-    out << "#include\"UMAT/UMATInterface.hxx\"\n\n";
-    out << "#include\"UMAT/umat" << name << ".hxx\"\n\n";
+    out << "#include\"TFEL/Material/" << className << ".hxx\"\n";
+    out << "#include\"MFront/UMAT/UMATInterface.hxx\"\n\n";
+    out << "#include\"MFront/UMAT/umat" << name << ".hxx\"\n\n";
 
     out << "extern \"C\"{\n\n";
 
@@ -1659,9 +1661,9 @@ namespace mfront{
     using namespace std;
     vector<string> incs;
     if(!library.empty()){
-      incs.push_back("UMAT/umat"+library+className+".hxx");
+      incs.push_back("MFront/UMAT/umat"+library+className+".hxx");
     } else {
-      incs.push_back("UMAT/umat"+className+".hxx");
+      incs.push_back("MFront/UMAT/umat"+className+".hxx");
     }
     return incs;
   } // end of MFrontUMATInterface::getGeneratedIncludes

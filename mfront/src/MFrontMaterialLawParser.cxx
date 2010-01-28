@@ -13,13 +13,13 @@
 #include<iterator>
 #include<cstdlib>
 
-#include"Utilities/Token.hxx"
+#include"TFEL/Utilities/Token.hxx"
+#include"TFEL/System/System.hxx"
 
-#include"MFrontHeader.hxx"
-#include"MFrontParserFactory.hxx"
-#include"MFrontMaterialLawParser.hxx"
-#include"MFrontLawInterfaceFactory.hxx"
-#include"System/System.hxx"
+#include"MFront/MFrontHeader.hxx"
+#include"MFront/MFrontParserFactory.hxx"
+#include"MFront/MFrontMaterialLawParser.hxx"
+#include"MFront/MFrontLawInterfaceFactory.hxx"
 
 namespace mfront{
 

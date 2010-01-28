@@ -10,9 +10,9 @@
 #include<stdexcept>
 #include<sstream>
 
-#include"ParserUtilities.hxx"
-#include"MFrontParserFactory.hxx"
-#include"MFrontMultipleIsotropicMisesFlowsParser.hxx"
+#include"MFront/ParserUtilities.hxx"
+#include"MFront/MFrontParserFactory.hxx"
+#include"MFront/MFrontMultipleIsotropicMisesFlowsParser.hxx"
 
 namespace mfront{
 
@@ -66,9 +66,9 @@ namespace mfront{
   MFrontMultipleIsotropicMisesFlowsParser::writeBehaviourParserSpecificIncludes(void)
   {
     this->checkBehaviourFile();
-    this->behaviourFile << "#include\"Math/General/BaseCast.hxx\"\n";
-    this->behaviourFile << "#include\"Math/TinyMatrixSolve.hxx\"\n";
-    this->behaviourFile << "#include\"Material/Lame.hxx\"\n\n";
+    this->behaviourFile << "#include\"TFEL/Math/General/BaseCast.hxx\"\n";
+    this->behaviourFile << "#include\"TFEL/Math/TinyMatrixSolve.hxx\"\n";
+    this->behaviourFile << "#include\"TFEL/Material/Lame.hxx\"\n\n";
   }
 
   void

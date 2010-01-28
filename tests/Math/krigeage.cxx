@@ -12,8 +12,8 @@
 #include<fstream>
 #include<cstdlib>
 
-#include"Math/General/floating_point_exceptions.hxx"
-#include"Math/FactorizedKriging.hxx"
+#include"TFEL/Math/General/floating_point_exceptions.hxx"
+#include"TFEL/Math/FactorizedKriging.hxx"
 
 double
 rand(const double min,

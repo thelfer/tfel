@@ -13,10 +13,10 @@
 #include<cmath>
 #include<cstdlib>
 
-#include"Utilities/Name.hxx"
-#include"Math/functions.hxx"
-#include"Math/tvector.hxx"
-#include"Math/composite.hxx"
+#include"TFEL/Utilities/Name.hxx"
+#include"TFEL/Math/functions.hxx"
+#include"TFEL/Math/tvector.hxx"
+#include"TFEL/Math/composite.hxx"
 
 int main(void)
 {

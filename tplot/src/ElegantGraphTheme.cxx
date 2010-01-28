@@ -9,8 +9,8 @@
 #include<iostream>
 #include<cstdlib>
 
-#include"Graphics/ThemeManager.hxx"
-#include"Graphics/ElegantGraphTheme.hxx"
+#include"TFEL/Graphics/ThemeManager.hxx"
+#include"TFEL/Graphics/ElegantGraphTheme.hxx"
 
 namespace tfel
 {

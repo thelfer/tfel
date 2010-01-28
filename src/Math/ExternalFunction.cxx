@@ -6,7 +6,7 @@
  * \date   11 déc 2008
  */
 
-#include"Math/Parser/ExternalFunction.hxx"
+#include"TFEL/Math/Parser/ExternalFunction.hxx"
 
 namespace tfel
 {

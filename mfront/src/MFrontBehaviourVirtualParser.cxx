@@ -6,7 +6,7 @@
  * \date   17 Jan 2007
  */
 
-#include"MFrontVirtualParser.hxx"
+#include"MFront/MFrontVirtualParser.hxx"
 
 namespace mfront{
 

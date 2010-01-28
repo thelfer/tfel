@@ -14,9 +14,9 @@
 #include<cstdlib>
 #include<cassert>
 
-#include"Utilities/Name.hxx"
-#include"Math/vector.hxx"
-#include"Math/tvector.hxx"
+#include"TFEL/Utilities/Name.hxx"
+#include"TFEL/Math/vector.hxx"
+#include"TFEL/Math/tvector.hxx"
 
 int main(void)
 {

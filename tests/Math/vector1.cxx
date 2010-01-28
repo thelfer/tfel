@@ -13,8 +13,8 @@
 #include<cassert>
 #include<cstdlib>
 
-#include"Math/vector.hxx"
-#include"Math/functions.hxx"
+#include"TFEL/Math/vector.hxx"
+#include"TFEL/Math/functions.hxx"
 
 int main(void)
 {

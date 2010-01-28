@@ -14,7 +14,7 @@
 #include<vector>
 #include<string>
 
-#include"Metaprogramming/TypeList.hxx"
+#include"TFEL/Metaprogramming/TypeList.hxx"
 
 struct A{
   static const std::string getName(void)

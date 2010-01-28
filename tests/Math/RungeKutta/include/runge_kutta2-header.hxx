@@ -13,9 +13,9 @@
 #include<fstream>
 #include<string>
 
-#include"Utilities/Name.hxx"
-#include"Math/tvector.hxx"
-#include"Math/RungeKutta2.hxx"
+#include"TFEL/Utilities/Name.hxx"
+#include"TFEL/Math/tvector.hxx"
+#include"TFEL/Math/RungeKutta2.hxx"
 
 template<typename T>
 class VanDerPol

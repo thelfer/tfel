@@ -7,8 +7,8 @@
  */
 
 #include<sstream>
-#include"Graphics/ThemeManager.hxx"
-#include"Graphics/ThemeSelectionDialog.hxx"
+#include"TFEL/Graphics/ThemeManager.hxx"
+#include"TFEL/Graphics/ThemeSelectionDialog.hxx"
 
 namespace tfel
 {

@@ -21,10 +21,10 @@
 #include<sys/wait.h>
 #include<fcntl.h>
 
-#include"System/System.hxx"
-#include"System/SignalManager.hxx"
-#include"System/ProcessManager.h"
-#include"System/ProcessManager.hxx"
+#include"TFEL/System/System.hxx"
+#include"TFEL/System/SignalManager.hxx"
+#include"TFEL/System/ProcessManager.h"
+#include"TFEL/System/ProcessManager.hxx"
 
 namespace tfel
 {

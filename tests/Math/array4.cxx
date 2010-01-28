@@ -13,11 +13,11 @@
 #include<cassert>
 #include<algorithm>
 
-#include"Utilities/Name.hxx"
+#include"TFEL/Utilities/Name.hxx"
 
-#include"Math/Array/ArrayRunTimeProperties.hxx"
-#include"Math/array.hxx"
-#include"Math/qt.hxx"
+#include"TFEL/Math/Array/ArrayRunTimeProperties.hxx"
+#include"TFEL/Math/array.hxx"
+#include"TFEL/Math/qt.hxx"
 
 int main(void)
 {

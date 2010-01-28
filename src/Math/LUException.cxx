@@ -5,7 +5,7 @@
  * \brief 12 avr 2009
  */
 
-#include"Math/LU/LUException.hxx"
+#include"TFEL/Math/LU/LUException.hxx"
 
 namespace tfel
 {

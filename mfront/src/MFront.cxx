@@ -23,17 +23,17 @@
 #include<dirent.h>
 #include<unistd.h>
 
-#include"Utilities/CxxTokenizer.hxx"
-#include"System/ExternalLibraryManager.hxx"
-#include"System/System.hxx"
+#include"TFEL/Utilities/CxxTokenizer.hxx"
+#include"TFEL/System/ExternalLibraryManager.hxx"
+#include"TFEL/System/System.hxx"
 
-#include"SupportedTypes.hxx"
-#include"MFront.hxx"
-#include"MFrontHeader.hxx"
-#include"MFrontParserFactory.hxx"
-#include"MFrontBehaviourInterfaceFactory.hxx"
-#include"MFrontLawInterfaceFactory.hxx"
-#include"MFrontLock.hxx"
+#include"MFront/SupportedTypes.hxx"
+#include"MFront/MFront.hxx"
+#include"MFront/MFrontHeader.hxx"
+#include"MFront/MFrontParserFactory.hxx"
+#include"MFront/MFrontBehaviourInterfaceFactory.hxx"
+#include"MFront/MFrontLawInterfaceFactory.hxx"
+#include"MFront/MFrontLock.hxx"
 
 namespace mfront{
 

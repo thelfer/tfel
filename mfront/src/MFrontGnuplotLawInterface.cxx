@@ -8,9 +8,9 @@
 #include<sstream>
 #include<stdexcept>
 
-#include"MFrontHeader.hxx"
-#include"MFrontCppTestLawInterface.hxx"
-#include"MFrontGnuplotLawInterface.hxx"
+#include"MFront/MFrontHeader.hxx"
+#include"MFront/MFrontCppTestLawInterface.hxx"
+#include"MFront/MFrontGnuplotLawInterface.hxx"
 
 namespace mfront
 {
@@ -201,8 +201,8 @@ namespace mfront
 					   const tfel::utilities::CxxTokenizer::TokensContainer::const_iterator endTokens)
   {
     using namespace std;
+    typedef multimap<string,dataFile>::value_type MVType;
     string msg("MFrontGnuplotLawInterface::registerGraph : ");
-    
     current=nextToken(--current,endTokens,msg);
     if(current->value!="{"){
       msg+="expected '{'.\n";
@@ -243,7 +243,7 @@ namespace mfront
 	mydataFile.name = eraseQuote(current->value) ;
 	current=nextToken(current,endTokens,msg);
 	mydataFile.legend = eraseQuote(current->value) ;
-	experimentalData.insert(make_pair(input,mydataFile)) ;
+	experimentalData.insert(MVType(input,mydataFile)) ;
 	current=nextToken(current,endTokens,msg);
 	if (current->value != ";") {
 	  msg+="ExperimentalData : you provide more than three arguments.\n";

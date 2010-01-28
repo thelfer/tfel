@@ -13,7 +13,7 @@
 #include<cstdlib>
 #include<cassert>
 
-#include"Math/functions.hxx"
+#include"TFEL/Math/functions.hxx"
 
 int main(void){
 

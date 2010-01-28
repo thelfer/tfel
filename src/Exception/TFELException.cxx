@@ -6,7 +6,7 @@
  * \date   14 fév 2007
  */
 
-#include"Exception/TFELException.hxx"
+#include"TFEL/Exception/TFELException.hxx"
 
 namespace tfel{
 

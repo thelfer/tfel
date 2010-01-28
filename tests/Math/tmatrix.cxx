@@ -12,7 +12,7 @@
 
 #include<cstdlib>
 
-#include "Math/tmatrix.hxx"
+#include"TFEL/Math/tmatrix.hxx"
 
 int main(void){
   

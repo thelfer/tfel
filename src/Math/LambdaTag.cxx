@@ -7,7 +7,7 @@
  */
 
 #include<string>
-#include"Math/LambdaExpression/LambdaConcept.hxx"
+#include"TFEL/Math/LambdaExpression/LambdaConcept.hxx"
 
 namespace tfel{
 

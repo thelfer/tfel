@@ -16,11 +16,12 @@
 #include<sys/stat.h>
 #include<unistd.h>
 
-#include"System/System.hxx"
-#include"ParserUtilities.hxx"
-#include"MFrontHeader.hxx"
-#include"MFrontCLawInterface.hxx"
-#include"MFrontPythonLawInterface.hxx"
+#include"TFEL/System/System.hxx"
+
+#include"MFront/ParserUtilities.hxx"
+#include"MFront/MFrontHeader.hxx"
+#include"MFront/MFrontCLawInterface.hxx"
+#include"MFront/MFrontPythonLawInterface.hxx"
 
 namespace mfront
 {

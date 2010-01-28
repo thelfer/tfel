@@ -9,10 +9,11 @@
 #include<sstream>
 #include<stdexcept>
 
-#include"System/System.hxx"
-#include"ParserUtilities.hxx"
-#include"MFrontParserFactory.hxx"
-#include"MFrontRungeKuttaParser.hxx"
+#include"TFEL/System/System.hxx"
+
+#include"MFront/ParserUtilities.hxx"
+#include"MFront/MFrontParserFactory.hxx"
+#include"MFront/MFrontRungeKuttaParser.hxx"
 
 namespace mfront{
 
@@ -63,7 +64,7 @@ namespace mfront{
   {
     this->checkBehaviourFile();
     this->behaviourFile << "#include<limits>\n\n";
-    this->behaviourFile << "#include\"Math/General/Abs.hxx\"\n\n";
+    this->behaviourFile << "#include\"TFEL/Math/General/Abs.hxx\"\n\n";
   }
 
   void MFrontRungeKuttaParser::treatStateVariables(void)
@@ -328,7 +329,8 @@ namespace mfront{
     using namespace std;
     using namespace tfel::system;
     systemCall::mkdir("include");
-    systemCall::mkdir("include/Material/");
+    systemCall::mkdir("include/TFEL/");
+    systemCall::mkdir("include/TFEL/Material/");
     systemCall::mkdir("src");
     if(this->className.empty()){
       string msg("MFrontRungeKuttaParser::writeOutputFiles : ");
@@ -337,7 +339,7 @@ namespace mfront{
     }
     this->behaviourFileName  = this->className;
     this->behaviourFileName += ".hxx";
-    this->behaviourFile.open(("include/Material/"+this->behaviourFileName).c_str());
+    this->behaviourFile.open(("include/TFEL/Material/"+this->behaviourFileName).c_str());
     if(!this->behaviourFile){
       string msg("MFrontRungeKuttaParser::writeOutputFiles : ");
       msg += "unable to open ";
@@ -347,7 +349,7 @@ namespace mfront{
     }
     this->behaviourDataFileName  = this->className;
     this->behaviourDataFileName += "BehaviourData.hxx";
-    this->behaviourDataFile.open(("include/Material/"+this->behaviourDataFileName).c_str());
+    this->behaviourDataFile.open(("include/TFEL/Material/"+this->behaviourDataFileName).c_str());
     if(!this->behaviourDataFile){
       string msg("MFrontRungeKuttaParser::writeOutputFiles : ");
       msg += "unable to open ";
@@ -357,7 +359,7 @@ namespace mfront{
     }
     this->integrationDataFileName  = this->className;
     this->integrationDataFileName += "IntegrationData.hxx";
-    this->integrationDataFile.open(("include/Material/"+this->integrationDataFileName).c_str());
+    this->integrationDataFile.open(("include/TFEL/Material/"+this->integrationDataFileName).c_str());
     if(!this->integrationDataFile){
       string msg("MFrontRungeKuttaParser::writeOutputFiles : ");
       msg += "unable to open ";

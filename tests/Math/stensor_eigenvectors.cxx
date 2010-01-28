@@ -17,12 +17,12 @@
 
 #include<limits>
 
-#include"Utilities/Info.hxx"
+#include"TFEL/Utilities/Info.hxx"
 
-#include"Math/General/floating_point_exceptions.hxx"
-#include"Math/tvector.hxx"
-#include"Math/tmatrix.hxx"
-#include"Math/stensor.hxx"
+#include"TFEL/Math/General/floating_point_exceptions.hxx"
+#include"TFEL/Math/tvector.hxx"
+#include"TFEL/Math/tmatrix.hxx"
+#include"TFEL/Math/stensor.hxx"
 
 template<typename T>
 void test(void)

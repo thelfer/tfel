@@ -6,7 +6,7 @@
  * \date   17 Jan 2007
  */
 
-#include"VarHandler.hxx"
+#include"MFront/VarHandler.hxx"
 
 namespace mfront{
 

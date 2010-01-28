@@ -9,11 +9,11 @@
 #include<cmath>
 #include<string>
 
-#include"Math/qt.hxx"
-#include"Math/Function/Id.hxx"
-#include"Math/Function/Cst.hxx"
-#include"Math/Function/StandardFunctions.hxx"
-#include"Math/functions.hxx"
+#include"TFEL/Math/qt.hxx"
+#include"TFEL/Math/Function/Id.hxx"
+#include"TFEL/Math/Function/Cst.hxx"
+#include"TFEL/Math/Function/StandardFunctions.hxx"
+#include"TFEL/Math/functions.hxx"
 
 #ifndef M_LN10
 #define M_LN10      2.30258509299404568402

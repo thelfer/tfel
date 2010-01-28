@@ -9,7 +9,7 @@
 #include<cerrno>
 #include<stdexcept>
 
-#include"Math/Parser/BinaryFunction.hxx"
+#include"TFEL/Math/Parser/BinaryFunction.hxx"
 
 namespace tfel
 {

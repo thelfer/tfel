@@ -12,8 +12,8 @@
 
 #include<unistd.h>
 
-#include"System/basic_rstream.hxx"
-#include"System/System.hxx"
+#include"TFEL/System/basic_rstream.hxx"
+#include"TFEL/System/System.hxx"
 
 namespace tfel
 {

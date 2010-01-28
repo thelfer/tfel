@@ -5,7 +5,7 @@
  * \date   17 mar 2008
  */
 
-#include"UMAT/UMATRotationMatrix.hxx"
+#include"MFront/UMAT/UMATRotationMatrix.hxx"
 
 namespace umat
 {

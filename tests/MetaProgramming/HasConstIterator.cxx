@@ -10,9 +10,9 @@
 #include<cstdlib>
 #include<vector>
 
-#include"Metaprogramming/HasConstIterator.hxx"
-#include"Metaprogramming/HasIterator.hxx"
-#include"Metaprogramming/IF.hxx"
+#include"TFEL/Metaprogramming/HasConstIterator.hxx"
+#include"TFEL/Metaprogramming/HasIterator.hxx"
+#include"TFEL/Metaprogramming/IF.hxx"
 
 template<typename T>
 struct ConstIteratorHolder

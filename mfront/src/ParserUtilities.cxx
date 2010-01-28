@@ -9,7 +9,8 @@
 #include<iostream>
 #include<stdexcept>
 #include<sstream>
-#include"ParserUtilities.hxx"
+
+#include"MFront/ParserUtilities.hxx"
 
 namespace mfront
 {

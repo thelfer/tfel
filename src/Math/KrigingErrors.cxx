@@ -5,7 +5,7 @@
  * \brief 10 avr 2009
  */
 
-#include"Math/Kriging/KrigingErrors.hxx"
+#include"TFEL/Math/Kriging/KrigingErrors.hxx"
 
 namespace tfel
 {

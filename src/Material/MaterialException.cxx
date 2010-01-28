@@ -6,7 +6,7 @@
  * \date   14 fév 2007
  */
 
-#include "Material/MaterialException.hxx"
+#include"TFEL/Material/MaterialException.hxx"
 
 namespace tfel{
   

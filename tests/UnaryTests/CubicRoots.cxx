@@ -15,7 +15,7 @@
 #include<cmath>
 #include<cassert>
 
-#include"Math/General/CubicRoots.hxx"
+#include"TFEL/Math/General/CubicRoots.hxx"
 
 #include"CubicRoots-header.hxx"
 

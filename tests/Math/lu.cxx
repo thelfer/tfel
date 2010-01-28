@@ -12,9 +12,9 @@
 #include<cassert>
 #include<cstdlib>
 
-#include"Math/vector.hxx"
-#include"Math/matrix.hxx"
-#include"Math/LUSolve.hxx"
+#include"TFEL/Math/vector.hxx"
+#include"TFEL/Math/matrix.hxx"
+#include"TFEL/Math/LUSolve.hxx"
 
 int main(void)
 {

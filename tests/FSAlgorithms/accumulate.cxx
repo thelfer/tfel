@@ -14,7 +14,7 @@
 #include<cassert>
 #include<functional>
 
-#include"FSAlgorithm/FSAlgorithm.hxx"
+#include"TFEL/FSAlgorithm/FSAlgorithm.hxx"
 
 int main()
 {

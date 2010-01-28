@@ -6,36 +6,36 @@
  * \date   12 sep 2008
  */
 
-#include"MFrontBehaviourInterfaceProxy.hxx"
-#include"MFrontLawInterfaceProxy.hxx"
+#include"MFront/MFrontBehaviourInterfaceProxy.hxx"
+#include"MFront/MFrontLawInterfaceProxy.hxx"
 
-#include"MFrontMFrontLawInterface.hxx"
-#include"MFrontCLawInterface.hxx"
-#include"MFrontExcelLawInterface.hxx"
+#include"MFront/MFrontMFrontLawInterface.hxx"
+#include"MFront/MFrontCLawInterface.hxx"
+#include"MFront/MFrontExcelLawInterface.hxx"
 
 #ifdef HAVE_FORTRAN
-#include"MFrontFortranLawInterface.hxx"
+#include"MFront/MFrontFortranLawInterface.hxx"
 #endif /* HAVE_FORTRAN */
 
-#include"MFrontCppLawInterface.hxx"
-#include"MFrontOctaveLawInterface.hxx"
-#include"MFrontCppTestLawInterface.hxx"
+#include"MFront/MFrontCppLawInterface.hxx"
+#include"MFront/MFrontOctaveLawInterface.hxx"
+#include"MFront/MFrontCppTestLawInterface.hxx"
 
 #ifdef HAVE_PYTHON
-#include"MFrontPythonLawInterface.hxx"
+#include"MFront/MFrontPythonLawInterface.hxx"
 #endif /* HAVE_PYTHON */
 
 #ifdef HAVE_GNUPLOT
-#include"MFrontGnuplotLawInterface.hxx"
+#include"MFront/MFrontGnuplotLawInterface.hxx"
 #endif
 
 #ifdef HAVE_PLEIADES
-#include"MFrontPleiadesLawInterface.hxx"
+#include"MFront/MFrontPleiadesLawInterface.hxx"
 #endif /* HAVE_PLEIADES */
 
 #ifdef HAVE_CASTEM
-#include"MFrontCastemLawInterface.hxx"
-#include"MFrontUMATInterface.hxx"
+#include"MFront/MFrontCastemLawInterface.hxx"
+#include"MFront/MFrontUMATInterface.hxx"
 #endif
 
 namespace mfront

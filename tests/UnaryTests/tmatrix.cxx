@@ -6,9 +6,9 @@
 #include<cstdlib>
 #include<cmath>
 
-#include "Math/qt.hxx"
-#include "Math/functions.hxx"
-#include "Math/tmatrix.hxx"
+#include"TFEL/Math/qt.hxx"
+#include"TFEL/Math/functions.hxx"
+#include"TFEL/Math/tmatrix.hxx"
 
 #include "function_unary_tests.hxx"
 

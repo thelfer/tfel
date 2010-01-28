@@ -6,7 +6,7 @@
  * \date   03 fév 2007
  */
 #include<string>
-#include"Math/Function/FunctionConcept.hxx"
+#include"TFEL/Math/Function/FunctionConcept.hxx"
 
 namespace tfel{
 

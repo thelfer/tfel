@@ -6,7 +6,7 @@
  * \date   20 Nov 2006
  */
 
-#include"Utilities/Token.hxx"
+#include"TFEL/Utilities/Token.hxx"
 
 namespace tfel{
 

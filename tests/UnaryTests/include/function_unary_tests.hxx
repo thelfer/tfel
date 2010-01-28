@@ -8,9 +8,9 @@
 #ifndef _LIB_TFEL_FUNCTION_HXX_
 #define _LIB_TFEL_FUNCTION_HXX_ 
 
-#include "Math/Vector/VectorConcept.hxx"
-#include "Math/Matrix/MatrixConcept.hxx"
-#include "Math/Stensor/StensorConcept.hxx"
+#include"TFEL/Math/Vector/VectorConcept.hxx"
+#include"TFEL/Math/Matrix/MatrixConcept.hxx"
+#include"TFEL/Math/Stensor/StensorConcept.hxx"
 
 template<class T>
 void function(const tfel::math::VectorConcept<T>&);

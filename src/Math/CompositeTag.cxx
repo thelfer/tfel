@@ -7,7 +7,7 @@
  */
 
 #include<string>
-#include"Math/Composite/CompositeConcept.hxx"
+#include"TFEL/Math/Composite/CompositeConcept.hxx"
 
 namespace tfel{
 

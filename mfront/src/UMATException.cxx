@@ -6,8 +6,8 @@
  * \date   09 nov 2007
  */
 
-#include"Utilities/ToString.hxx"
-#include"UMAT/UMATException.hxx"
+#include"TFEL/Utilities/ToString.hxx"
+#include"MFront/UMAT/UMATException.hxx"
 
 namespace umat 
 {

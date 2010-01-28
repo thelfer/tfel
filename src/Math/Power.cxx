@@ -7,7 +7,7 @@
  */
 
 #include<cmath>
-#include"Math/Function/Power.hxx"
+#include"TFEL/Math/Function/Power.hxx"
 
 namespace tfel{
 

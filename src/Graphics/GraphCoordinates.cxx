@@ -6,7 +6,7 @@
  * \date   07 jan 2009
  */
 
-#include"Graphics/GraphCoordinates.hxx"
+#include"TFEL/Graphics/GraphCoordinates.hxx"
 
 namespace tfel
 {

@@ -13,7 +13,7 @@
 #include<cassert>
 #include<cstdlib>
 
-#include"Math/ST2toST2/ST2toST2FTMV.hxx"
+#include"TFEL/Math/ST2toST2/ST2toST2FTMV.hxx"
 
 int
 main(void)

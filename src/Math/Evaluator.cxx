@@ -13,11 +13,11 @@
 #include<sstream>
 #include<cctype>
 
-#include"Math/Function/Power.hxx"
-#include"Math/Evaluator.hxx"
+#include"TFEL/Math/Function/Power.hxx"
+#include"TFEL/Math/Evaluator.hxx"
 
 #ifdef HAVE_GSL
-#include"Math/Parser/EvaluatorGSLWrapper.hxx"
+#include"TFEL/Math/Parser/EvaluatorGSLWrapper.hxx"
 #endif
 
 namespace tfel

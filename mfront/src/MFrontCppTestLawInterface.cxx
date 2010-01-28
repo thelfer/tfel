@@ -8,10 +8,10 @@
 #include<sstream>
 #include<stdexcept>
 
-#include"ParserUtilities.hxx"
-#include"MFrontHeader.hxx"
-#include"MFrontCppLawInterface.hxx"
-#include"MFrontCppTestLawInterface.hxx"
+#include"MFront/ParserUtilities.hxx"
+#include"MFront/MFrontHeader.hxx"
+#include"MFront/MFrontCppLawInterface.hxx"
+#include"MFront/MFrontCppTestLawInterface.hxx"
 
 namespace mfront
 {

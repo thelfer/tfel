@@ -12,7 +12,7 @@
 #include<set>
 #include<cassert>
 
-#include"Graphics/DataCurve.hxx"
+#include"TFEL/Graphics/DataCurve.hxx"
 
 namespace tfel{
 

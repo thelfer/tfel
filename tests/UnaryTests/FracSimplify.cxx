@@ -14,7 +14,7 @@
 #include<cstdlib>
 #include<cassert>
 
-#include"Math/Quantity/FracSimplify.hxx"
+#include"TFEL/Math/Quantity/FracSimplify.hxx"
 
 int main(void)
 {

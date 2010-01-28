@@ -13,7 +13,7 @@
 #include<cstdlib>
 #include<cassert>
 
-#include "Utilities/IntegersSet.hxx"
+#include"TFEL/Utilities/IntegersSet.hxx"
 
 int main(void){
 

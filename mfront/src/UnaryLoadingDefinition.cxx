@@ -15,7 +15,7 @@
 #include<iterator>
 #include<algorithm>
 
-#include"UnaryLoadingDefinition.hxx"
+#include"MFront/UnaryLoadingDefinition.hxx"
 
 namespace mfront{
 

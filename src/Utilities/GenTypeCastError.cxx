@@ -6,7 +6,7 @@
  * \date   29 Jan. 2009
  */
 
-#include"Utilities/GenTypeCastError.hxx"
+#include"TFEL/Utilities/GenTypeCastError.hxx"
 
 namespace tfel
 {

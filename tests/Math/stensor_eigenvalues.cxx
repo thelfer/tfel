@@ -14,7 +14,7 @@
 #include<cassert>
 #include<cstdlib>
 
-#include "Math/stensor.hxx"
+#include"TFEL/Math/stensor.hxx"
 
 int main(void)
 {

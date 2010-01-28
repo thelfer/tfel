@@ -6,7 +6,7 @@
  * \date   18 Jan 2007
  */
 
-#include"BehaviourCharacteristic.hxx"
+#include"MFront/BehaviourCharacteristic.hxx"
 
 namespace mfront{
 

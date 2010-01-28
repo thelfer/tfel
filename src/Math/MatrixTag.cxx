@@ -7,7 +7,7 @@
  */
 
 #include<string>
-#include"Math/Matrix/MatrixConcept.hxx"
+#include"TFEL/Math/Matrix/MatrixConcept.hxx"
 
 namespace tfel{
 

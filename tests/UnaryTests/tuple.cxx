@@ -17,7 +17,7 @@
 
 #include<cassert>
 
-#include"Utilities/Tuple.hxx"
+#include"TFEL/Utilities/Tuple.hxx"
 
 int main(void)
 {

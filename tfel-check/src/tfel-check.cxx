@@ -22,10 +22,10 @@
 #include<unistd.h>
 #include<regex.h>
 
-#include"System/System.hxx"
-#include"Utilities/TerminalColors.hxx"
+#include"TFEL/System/System.hxx"
+#include"TFEL/Utilities/TerminalColors.hxx"
 
-#include"Utilities/TestLauncher.hxx"
+#include"TFEL/Utilities/TestLauncher.hxx"
 
 static
 const std::map<std::string,std::vector<std::string> >

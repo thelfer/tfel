@@ -6,7 +6,7 @@
  * \date   04 oct 2007
  */
 
-#include"Math/Parser/Negation.hxx"
+#include"TFEL/Math/Parser/Negation.hxx"
 
 namespace tfel
 {

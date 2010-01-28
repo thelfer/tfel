@@ -10,11 +10,11 @@
 #include<gsl/gsl_errno.h>
 #include<gsl/gsl_sf.h>
 
-#include"Math/Parser/Function.hxx"
-#include"Math/Parser/EvaluatorProxy.hxx"
-#include"Math/Evaluator.hxx"
-#include"Math/Parser/EvaluatorFunction.hxx"
-#include"Math/Parser/EvaluatorGSLWrapper.hxx"
+#include"TFEL/Math/Parser/Function.hxx"
+#include"TFEL/Math/Parser/EvaluatorProxy.hxx"
+#include"TFEL/Math/Evaluator.hxx"
+#include"TFEL/Math/Parser/EvaluatorFunction.hxx"
+#include"TFEL/Math/Parser/EvaluatorGSLWrapper.hxx"
 
 #define TFEL_MATH_PARSER_REGISTERGSLFUNCTION(X)				\
   Evaluator::getFunctionGeneratorManager().insert(#X,&EvaluatorFunctionNVGenerator<1,X>)

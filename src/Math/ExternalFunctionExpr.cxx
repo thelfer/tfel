@@ -9,10 +9,10 @@
 #include<sstream>
 #include<algorithm>
 
-#include"Math/Parser/Number.hxx"
-#include"Math/Parser/BinaryOperator.hxx"
-#include"Math/Parser/ExternalFunctionExpr.hxx"
-#include"Math/Parser/ExternalFunctionExpr2.hxx"
+#include"TFEL/Math/Parser/Number.hxx"
+#include"TFEL/Math/Parser/BinaryOperator.hxx"
+#include"TFEL/Math/Parser/ExternalFunctionExpr.hxx"
+#include"TFEL/Math/Parser/ExternalFunctionExpr2.hxx"
 
 namespace tfel
 {

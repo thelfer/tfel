@@ -8,8 +8,8 @@
 
 #include<iostream>
 
-#include"System/System.hxx"
-#include"System/rfstream.hxx"
+#include"TFEL/System/System.hxx"
+#include"TFEL/System/rfstream.hxx"
 
 namespace tfel
 {

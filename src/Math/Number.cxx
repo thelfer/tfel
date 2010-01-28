@@ -8,7 +8,7 @@
 
 #include<iostream>
 
-#include"Math/Parser/Number.hxx"
+#include"TFEL/Math/Parser/Number.hxx"
 
 namespace tfel
 {

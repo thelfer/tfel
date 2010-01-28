@@ -14,9 +14,9 @@
 #include<cassert>
 #include<algorithm>
 
-#include"Math/Array/ArrayRunTimeProperties.hxx"
-#include"Math/array.hxx"
-#include"Math/functions.hxx"
+#include"TFEL/Math/Array/ArrayRunTimeProperties.hxx"
+#include"TFEL/Math/array.hxx"
+#include"TFEL/Math/functions.hxx"
 
 int main(void)
 {

@@ -16,10 +16,10 @@
 
 #include <unistd.h> // sysconf
 
-#include"Utilities/TerminalColors.hxx"
-#include"System/ProcessManager.hxx"
+#include"TFEL/Utilities/TerminalColors.hxx"
+#include"TFEL/System/ProcessManager.hxx"
 
-#include"Utilities/TestLauncher.hxx"
+#include"TFEL/Utilities/TestLauncher.hxx"
 
 namespace tfel
 {

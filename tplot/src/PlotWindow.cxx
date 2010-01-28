@@ -15,13 +15,13 @@
 
 #include<glibmm/i18n.h>
 
-#include"Graphics/Graph.hxx"
-#include"Graphics/AddCurveDialog.hxx"
-#include"Graphics/ThemeSelectionDialog.hxx"
-#include"Graphics/EvaluatedCurve.hxx"
-#include"Graphics/DataCurve.hxx"
-#include"Graphics/ThemeManager.hxx"
-#include"Graphics/PlotWindow.hxx"
+#include"TFEL/Graphics/Graph.hxx"
+#include"TFEL/Graphics/AddCurveDialog.hxx"
+#include"TFEL/Graphics/ThemeSelectionDialog.hxx"
+#include"TFEL/Graphics/EvaluatedCurve.hxx"
+#include"TFEL/Graphics/DataCurve.hxx"
+#include"TFEL/Graphics/ThemeManager.hxx"
+#include"TFEL/Graphics/PlotWindow.hxx"
 
 namespace tfel
 {

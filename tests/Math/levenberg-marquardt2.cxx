@@ -16,7 +16,7 @@
 #include<utility>
 #include<vector>
 
-#include"Math/FSLevenbergMarquardt.hxx"
+#include"TFEL/Math/FSLevenbergMarquardt.hxx"
 
 std::pair<double,tfel::math::tvector<2u,double> >
 test(const tfel::math::tvector<1u,double>& x,

@@ -11,8 +11,8 @@
 #include<cmath>
 #include<limits>
 
-#include"Graphics/ThemeManager.hxx"
-#include"Graphics/StandardGraphTheme.hxx"
+#include"TFEL/Graphics/ThemeManager.hxx"
+#include"TFEL/Graphics/StandardGraphTheme.hxx"
 
 namespace tfel
 {

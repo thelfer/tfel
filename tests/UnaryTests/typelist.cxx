@@ -10,10 +10,10 @@
 #include<string>
 #include<vector>
 
-#include "Metaprogramming/StaticAssert.hxx"
-#include "Metaprogramming/EnableIf.hxx"
-#include "Metaprogramming/TypeList.hxx"
-#include "Math/General/LogicalOperations.hxx"
+#include"TFEL/Metaprogramming/StaticAssert.hxx"
+#include"TFEL/Metaprogramming/EnableIf.hxx"
+#include"TFEL/Metaprogramming/TypeList.hxx"
+#include"TFEL/Math/General/LogicalOperations.hxx"
 
 template<typename T, template<class> class U>
 class generic_container_;

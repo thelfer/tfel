@@ -8,7 +8,7 @@
 
 #include<cstdlib>
 
-#include"System/ProcessManager.hxx"
+#include"TFEL/System/ProcessManager.hxx"
 
 int
 main(void)

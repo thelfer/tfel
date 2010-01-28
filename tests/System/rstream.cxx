@@ -15,7 +15,7 @@
 #include<cstdlib>
 #include<cstring>
 
-#include"System/rfstream.hxx"
+#include"TFEL/System/rfstream.hxx"
 
 int
 main(void)

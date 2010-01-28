@@ -7,7 +7,7 @@
 
 #include<algorithm>
 
-#include"UMAT/UMATComputeStiffnessTensor.hxx"
+#include"MFront/UMAT/UMATComputeStiffnessTensor.hxx"
 
 namespace umat
 {

@@ -13,8 +13,8 @@
 #include <cassert>
 #include <cstdlib>
 
-#include "Math/General/Complex.hxx"
-#include "Math/stensor.hxx"
+#include"TFEL/Math/General/Complex.hxx"
+#include"TFEL/Math/stensor.hxx"
 
 int main(void){
 

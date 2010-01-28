@@ -6,8 +6,8 @@
 #include<cstdlib>
 #include<cmath>
 
-#include "Math/qt.hxx"
-#include "Math/tvector.hxx"
+#include"TFEL/Math/qt.hxx"
+#include"TFEL/Math/tvector.hxx"
 
 #include "function_unary_tests.hxx"
 

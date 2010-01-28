@@ -18,8 +18,8 @@
 #include<unistd.h>
 #include<fcntl.h>
 
-#include"System/SystemError.hxx"
-#include"System/SignalManager.hxx"
+#include"TFEL/System/SystemError.hxx"
+#include"TFEL/System/SignalManager.hxx"
 
 namespace tfel
 {

@@ -6,7 +6,7 @@
  * \date   22 jan 2009
  */
 
-#include"Graphics/ArrowStyle.hxx"
+#include"TFEL/Graphics/ArrowStyle.hxx"
 
 namespace tfel
 {

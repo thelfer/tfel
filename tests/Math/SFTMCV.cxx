@@ -12,9 +12,9 @@
 
 #include<cstdlib>
 
-#include"Math/Stensor/SFTMCV.hxx"
-#include"Math/Stensor/SFTMRV.hxx"
-#include"Math/Stensor/SFTVV.hxx"
+#include"TFEL/Math/Stensor/SFTMCV.hxx"
+#include"TFEL/Math/Stensor/SFTMRV.hxx"
+#include"TFEL/Math/Stensor/SFTVV.hxx"
 
 int
 main(void)

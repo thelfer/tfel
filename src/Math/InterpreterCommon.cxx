@@ -13,25 +13,24 @@
 #include<iterator>
 #include<sstream>
 
-#include"System/System.hxx"
-#include"System/SignalManager.hxx"
-#include"System/ProcessManager.hxx"
-#include"System/ExternalLibraryManager.hxx"
+#include"TFEL/System/System.hxx"
+#include"TFEL/System/SignalManager.hxx"
+#include"TFEL/System/ProcessManager.hxx"
+#include"TFEL/System/ExternalLibraryManager.hxx"
 
-#include"Math/Parser/ExternalFunctionManager.hxx"
-#include"Math/Parser/ExternalCFunction.hxx"
-#include"Math/Parser/ExternalCastemFunction.hxx"
+#include"TFEL/Math/Parser/ExternalFunctionManager.hxx"
+#include"TFEL/Math/Parser/ExternalCFunction.hxx"
+#include"TFEL/Math/Parser/ExternalCastemFunction.hxx"
 
 #ifdef HAVE_OCTAVE
-#include"Math/Parser/ExternalOctaveFunction.hxx"
+#include"TFEL/Math/Parser/ExternalOctaveFunction.hxx"
 #endif /* HAVE_OCTAVE */
 
 #ifdef HAVE_GSL
-#include"Math/Parser/EvaluatorGSLWrapper.hxx"
+#include"TFEL/Math/Parser/EvaluatorGSLWrapper.hxx"
 #endif
 
-#include"Math/Interpreter/InterpreterCommon.hxx"
-
+#include"TFEL/Math/Interpreter/InterpreterCommon.hxx"
 
 namespace tfel
 {  
@@ -71,79 +70,8 @@ namespace tfel
       InterpreterCommon::InterpreterCommon()
 	: functions(new tfel::math::parser::ExternalFunctionManager())
       {
-	using namespace std;
-	using namespace tfel::math;
-	using namespace tfel::utilities;
-	using namespace tfel::math::parser;
-	typedef ExternalFunctionManager::value_type MVType;
-	this->registerCallBacks();
 	this->treatCharAsString(true);
-	this->functions->insert(MVType("pi",
-				       SmartPtr<ExternalFunction>(new Evaluator("3.14159265358979323846"))));
-	this->locks.insert("pi");
       } // end of InterpreterCommon::InterpreterCommon()
-
-      void
-      InterpreterCommon::registerCallBack(std::map<std::string,InterpreterCommon::MemFuncPtr>& m,
-					  const std::string& name,
-					  const InterpreterCommon::MemFuncPtr f)
-      {
-	using namespace std;
-	typedef std::map<string,MemFuncPtr>::value_type MVType;
-	m.insert(MVType(name,f));      
-      } // end of InterpreterCommon::registerCallBack
-
-      void
-      InterpreterCommon::registerCallBacks()
-      {
-	this->registerCallBack(this->callBacks,"q",&InterpreterCommon::treatQuit);
-	this->registerCallBack(this->callBacks,"quit",&InterpreterCommon::treatQuit);
-	this->registerCallBack(this->callBacks,"import",&InterpreterCommon::treatImport);
-	this->registerCallBack(this->callBacks,"const",&InterpreterCommon::treatConst);
-	this->registerCallBack(this->callBacks,"lock",&InterpreterCommon::treatLock);
-	this->registerCallBack(this->callBacks,"nodeps",&InterpreterCommon::treatNoDeps);
-	this->registerCallBack(this->callBacks,"include",&InterpreterCommon::treatInclude);
-	this->registerCallBack(this->callBacks,"se",&InterpreterCommon::treatSet);
-	this->registerCallBack(this->callBacks,"set",&InterpreterCommon::treatSet);
-	this->registerCallBack(this->callBacks,"unset",&InterpreterCommon::treatUnset);
-#ifdef HAVE_GSL
-	this->registerCallBack(this->setCallBacks,"gsl",&InterpreterCommon::treatSetGSL);
-#endif
-      } // end of InterpreterCommon::registerCallBacks()
-
-      void
-      InterpreterCommon::treatSet(TokensContainer::const_iterator& p,
-				  const TokensContainer::const_iterator pe)
-      {
-	using namespace std;
-	this->checkNotEndOfLine("InterpreterCommon::treatSet","",p,pe);
-	std::map<string,MemFuncPtr>::const_iterator ps;
-	ps = this->setCallBacks.find(p->value);
-	if(ps == this->setCallBacks.end()){
-	  string msg("InterpreterCommon::treatSet : ");
-	  msg += "unknown option '"+p->value+"'";
-	  throw(runtime_error(msg));
-	}
-	++p;
-	(this->*(ps->second))(p,pe);
-      } // end of InterpreterCommon::treatSet
-
-      void
-      InterpreterCommon::treatUnset(TokensContainer::const_iterator& p,
-				    const TokensContainer::const_iterator pe)
-      {
-	using namespace std;
-	this->checkNotEndOfLine("InterpreterCommon::treatUnset","",p,pe);
-	std::map<string,MemFuncPtr>::const_iterator ps;
-	ps = this->unsetCallBacks.find(p->value);
-	if(ps == this->unsetCallBacks.end()){
-	  string msg("InterpreterCommon::treatUnset : ");
-	  msg += "unknown option '"+p->value+"'";
-	  throw(runtime_error(msg));
-	}
-	++p;
-	(this->*(ps->second))(p,pe);
-      } // end of InterpreterCommon::treatUnset
 
 #ifdef HAVE_GSL
       void
@@ -234,33 +162,6 @@ namespace tfel
       {
 	::exit(EXIT_SUCCESS);
       } // end of InterpreterCommon::treatQuit
-
-      void
-      InterpreterCommon::treatInclude(TokensContainer::const_iterator& p, 
-				      const TokensContainer::const_iterator pe)
-      {
-	using namespace std;
-	TokensContainer::const_iterator p2;
-	TokensContainer::difference_type pos;
-	this->checkNotEndOfLine("InterpreterCommon::treatInclude",
-				"expected file name",p,pe);
-	if(p->flag!=tfel::utilities::Token::String){
-	  string msg("InterpreterCommon::include : ");
-	  msg += "expected to read a string (read '"+p->value+"').\n";
-	  throw(runtime_error(msg));
-	}
-	p2 = this->fileTokens.begin();
-	pos = 0;
-	while(p2!=p){
-	  ++p2;
-	  ++pos;
-	}
-	TokensContainer tmp(fileTokens);
-	this->analyseFile(p->value.substr(1,p->value.size()-2));
-	this->fileTokens = tmp;
-	p=this->fileTokens.begin();
-	advance(p,pos+1);
-      } // end of InterpreterCommon::treatInclude
 
       bool
       InterpreterCommon::isUnsignedInteger(const std::string& s)
@@ -962,63 +863,6 @@ namespace tfel
       {
 	this->analyseFunctionDefinition(p,pe,false,true);
       } // end of InterpreterCommon::treatNoDeps
-
-      void
-      InterpreterCommon::analyse(TokensContainer::const_iterator p,
-				 const TokensContainer::const_iterator pe)
-      {
-	using namespace std;
-	using namespace tfel::utilities;
-	using namespace tfel::math;
-	std::map<string,MemFuncPtr>::const_iterator pf;
-	while(p!=pe){
-	  pf = this->callBacks.find(p->value);
-	  if(pf==this->callBacks.end()){
-	    this->analyseFunctionDefinition(p,pe,false,false);
-	  } else {
-	    ++p;
-	    (this->*(pf->second))(p,pe);
-	  }
-	  if(p!=pe){
-	    string msg("InterpreterCommon::analyse : ");
-	    msg += "unexpected token '"+p->value+"'";
-	    throw(runtime_error(msg));
-	  }
-	}
-      } // end of Analyse::analyse()
-
-      void
-      InterpreterCommon::analyseFile(const std::string& name)
-      {
-	using namespace std;
-	ifstream file(name.c_str());
-	if(!file){
-	  string msg("InterpreterCommon::analyseFile : ");
-	  msg += "can't open file '"+name+"'";
-	  throw(runtime_error(msg));
-	}
-	unsigned short nbr=1;
-	while(!file.eof()){
-	  string line;
-	  getline(file,line);
-	  try{
-	    this->analyseLine(line,nbr);
-	  }
-	  catch(runtime_error &e){
-	    ostringstream msg;
-	    msg << "InterpreterCommon::analyseFile : error at line "
-		<< nbr << " of file " << name  << endl
-		<< e.what();
-	    throw(runtime_error(msg.str()));
-	  }
-	  ++nbr;
-	}
-	if(!this->currentLine.empty()){
-	  string msg("InterpreterCommon::analyseFile : ");
-	  msg += "unfinished line at end of file";
-	  throw(runtime_error(msg));
-	}
-      } // end of InterpreterCommon::analyseFile
     
       std::vector<std::string>
       InterpreterCommon::tokenize(const std::string& s,
@@ -1044,70 +888,6 @@ namespace tfel
 	const vector<string>& res = this->tokenize(line,'#');
 	return res[0];
       } // end of InterpreterCommon::stripComments
-
-      void
-      InterpreterCommon::analyseLine(const std::string& line,
-				     const unsigned short nbr)
-      {
-	using namespace std;
-	this->currentLineNbr = nbr;
-	string nline = this->stripComments(line);
-	bool treatLine = false;
-	if(nline.empty()){
-	  treatLine = true;
-	} else {
-	  string::size_type pos = nline.find_last_not_of(' ');
-	  if(pos!=string::npos){
-	    // line is not empty
-	    if(nline[pos]=='\\'){
-	      nline[pos] = ' ';
-	      this->currentLine += nline;
-	    } else {
-	      this->currentLine += nline;
-	      treatLine = true;
-	    }
-	  }
-	}
-	if(treatLine){
-	  if(!this->currentLine.empty()){
-	    if(this->currentLine[0]=='!'){
-	      using namespace tfel::system;
-	      ProcessManager m;
-	      string::iterator p = this->currentLine.begin();
-	      ++p;
-	      string cmd(p,this->currentLine.end());
-	      m.execute(cmd);
-	      this->currentLine.clear();
-	    } else {
-	      this->clear();
-	      this->splitLine(this->currentLine,this->currentLineNbr);
-	      if(this->cStyleCommentOpened){
-		string msg("InterpreterCommon::analyseLine : ");
-		msg += "unfinished c-style comment";
-		throw(runtime_error(msg));
-	      }
-	      this->treatPreprocessorDirectives();
-	      this->splitTokens();
-	      CxxTokenizer::stripComments();
-	      this->analyse(this->begin(),
-			    this->end());
-	      this->currentLine.clear();
-	    }
-	  }
-	}
-      } // end of InterpreterCommon::analyseFile
-
-      const std::string&
-      InterpreterCommon::getCurrentLine(void) const
-      {
-	return this->currentLine;
-      } // end of InterpreterCommon::getCurrentLine(void) const
-      
-      void
-      InterpreterCommon::clearCurrentLine(void)
-      {
-	this->currentLine.clear();
-      } // end of InterpreterCommon::clearCurrentLine(void)
 
       InterpreterCommon::~InterpreterCommon()
       {} // end of InterpreterCommon::~InterpreterCommon()

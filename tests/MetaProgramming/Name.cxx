@@ -13,10 +13,10 @@
 #include<cstdlib>
 #include<cassert>
 
-#include"Utilities/Name.hxx"
+#include"TFEL/Utilities/Name.hxx"
 
-#include"TypeTraits/Promote.hxx"
-#include"Math/General/BasicOperations.hxx"
+#include"TFEL/TypeTraits/Promote.hxx"
+#include"TFEL/Math/General/BasicOperations.hxx"
 
 int main(void)
 {

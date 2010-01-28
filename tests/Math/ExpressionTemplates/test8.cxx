@@ -14,10 +14,10 @@
 #include<algorithm>
 #include<iterator>
 
-#include"Utilities/Name.hxx"
-#include"Math/General/FctObjectRandomAccessConstIterator.hxx"
-#include"Math/vector.hxx"
-#include"Math/functions.hxx"
+#include"TFEL/Utilities/Name.hxx"
+#include"TFEL/Math/General/FctObjectRandomAccessConstIterator.hxx"
+#include"TFEL/Math/vector.hxx"
+#include"TFEL/Math/functions.hxx"
 
 int main(void)
 {

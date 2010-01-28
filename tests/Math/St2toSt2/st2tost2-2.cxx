@@ -14,8 +14,8 @@
 #include<cstdlib>
 #include<cassert>
 
-#include"Math/st2tost2.hxx"
-#include"Math/stensor.hxx"
+#include"TFEL/Math/st2tost2.hxx"
+#include"TFEL/Math/stensor.hxx"
 
 int
 main(void)

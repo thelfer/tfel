@@ -6,8 +6,8 @@
  * \date   13 jan 2008
  */
 
-#include"Graphics/ThemeManager.hxx"
-#include"Graphics/CEAGraphTheme.hxx"
+#include"TFEL/Graphics/ThemeManager.hxx"
+#include"TFEL/Graphics/CEAGraphTheme.hxx"
 
 namespace tfel
 {

@@ -13,9 +13,9 @@
 #include<cassert>
 #include<cstdlib>
 
-#include"Math/tvector.hxx"
-#include"Math/tmatrix.hxx"
-#include"Math/TinyMatrixSolve.hxx"
+#include"TFEL/Math/tvector.hxx"
+#include"TFEL/Math/tmatrix.hxx"
+#include"TFEL/Math/TinyMatrixSolve.hxx"
 
 int main(void)
 {

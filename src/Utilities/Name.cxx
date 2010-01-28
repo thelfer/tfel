@@ -5,7 +5,7 @@
  * \date   17 avr 2008
  */
 
-#include"Utilities/Name.hxx"
+#include"TFEL/Utilities/Name.hxx"
 
 /*!
  * \def    TFEL_UTILITIES_NAME

@@ -14,9 +14,9 @@
 #include <cassert>
 #include <cstdlib>
 
-#include"Math/stensor.hxx"
-#include"Math/Stensor/StensorExternalTabStorage.hxx"
-#include"Math/Stensor/StensorExternalVoigtStorage.hxx"
+#include"TFEL/Math/stensor.hxx"
+#include"TFEL/Math/Stensor/StensorExternalTabStorage.hxx"
+#include"TFEL/Math/Stensor/StensorExternalVoigtStorage.hxx"
 
 #include<iostream>
 

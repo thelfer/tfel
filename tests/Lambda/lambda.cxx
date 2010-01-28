@@ -8,9 +8,9 @@
 #include<cassert>
 #include<cstdlib>
 
-#include"Math/tvector.hxx"
-#include"Math/lambda.hxx"
-#include"Math/functions.hxx"
+#include"TFEL/Math/tvector.hxx"
+#include"TFEL/Math/lambda.hxx"
+#include"TFEL/Math/functions.hxx"
 
 int 
 main(void)

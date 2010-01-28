@@ -8,10 +8,10 @@
 
 #include<iostream>
 
-#include"Math/Parser/Negation.hxx"
-#include"Math/Parser/Number.hxx"
-#include"Math/Parser/BinaryOperator.hxx"
-#include"Math/Parser/Function.hxx"
+#include"TFEL/Math/Parser/Negation.hxx"
+#include"TFEL/Math/Parser/Number.hxx"
+#include"TFEL/Math/Parser/BinaryOperator.hxx"
+#include"TFEL/Math/Parser/Function.hxx"
 
 #ifndef __SUNPRO_CC
 #define TFEL_MATH_DIFFERENTIATEFUNCTION_PARTIALSPECIALISATION_DEFINITION(X)     \

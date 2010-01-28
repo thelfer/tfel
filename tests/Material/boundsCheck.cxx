@@ -13,7 +13,7 @@
 #include<cassert>
 #include<cstdlib>
 
-#include"Material/BoundsCheck.hxx"
+#include"TFEL/Material/BoundsCheck.hxx"
 
 int main(void)
 {

@@ -10,8 +10,8 @@
 #include<limits>
 #include<unistd.h>
 
-#include"System/basic_wstream.hxx"
-#include"System/System.hxx"
+#include"TFEL/System/basic_wstream.hxx"
+#include"TFEL/System/System.hxx"
 
 namespace tfel
 {

@@ -10,7 +10,7 @@
 #include<string.h>
 #include<dlfcn.h>
 
-#include"System/getFunction.h"
+#include"TFEL/System/getFunction.h"
 
 int tfel_getCastemFunctionNumberOfVariables(void *lib,
 					    const char * const name){

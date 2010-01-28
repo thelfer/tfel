@@ -12,9 +12,9 @@
 #include<cmath>
 #include<cstdlib>
 
-#include"Utilities/Name.hxx"
+#include"TFEL/Utilities/Name.hxx"
 
-#include"Math/tvector.hxx"
+#include"TFEL/Math/tvector.hxx"
 
 int main(void)
 {

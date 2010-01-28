@@ -8,9 +8,9 @@
 #include<sstream>
 #include<stdexcept>
 
-#include"ParserUtilities.hxx"
-#include"MFrontHeader.hxx"
-#include"MFrontCLawInterface.hxx"
+#include"MFront/ParserUtilities.hxx"
+#include"MFront/MFrontHeader.hxx"
+#include"MFront/MFrontCLawInterface.hxx"
 
 namespace mfront
 {

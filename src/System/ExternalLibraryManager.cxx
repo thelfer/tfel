@@ -8,8 +8,8 @@
 #include<stdexcept>
 #include<dlfcn.h>
 
-#include"System/getFunction.h"
-#include"System/ExternalLibraryManager.hxx"
+#include"TFEL/System/getFunction.h"
+#include"TFEL/System/ExternalLibraryManager.hxx"
 
 namespace tfel
 {

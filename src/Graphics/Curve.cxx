@@ -6,7 +6,7 @@
  * \date   04 jan 2008
  */
 
-#include"Graphics/Curve.hxx"
+#include"TFEL/Graphics/Curve.hxx"
 
 namespace tfel{
 

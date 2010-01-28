@@ -18,9 +18,9 @@
 #include<algorithm>
 #include<iterator>
 
-#include"Utilities/Name.hxx"
-#include"Math/vector.hxx"
-#include"Math/functions.hxx"
+#include"TFEL/Utilities/Name.hxx"
+#include"TFEL/Math/vector.hxx"
+#include"TFEL/Math/functions.hxx"
 
 template<typename T>
 void function(const T&);

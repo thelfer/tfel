@@ -6,8 +6,8 @@
  * \date   14 nov 2007
  */
 
-#include"System/System.hxx"
-#include"System/wfstream.hxx"
+#include"TFEL/System/System.hxx"
+#include"TFEL/System/wfstream.hxx"
 
 namespace tfel
 {

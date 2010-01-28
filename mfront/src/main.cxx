@@ -9,9 +9,9 @@
 #include<windows.h>
 #endif /* __CYGWIN__ */
 
-#include"MFront.hxx"
-#include"MFrontInitParsers.hxx"
-#include"MFrontInitInterfaces.hxx"
+#include"MFront/MFront.hxx"
+#include"MFront/MFrontInitParsers.hxx"
+#include"MFront/MFrontInitInterfaces.hxx"
 
 int main(const int argc, const char *const *const argv)
 {

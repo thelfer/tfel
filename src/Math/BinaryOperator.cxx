@@ -12,8 +12,8 @@
 #include<cmath>
 #include<sstream>
 
-#include"Math/Parser/Function.hxx"
-#include"Math/Parser/BinaryOperator.hxx"
+#include"TFEL/Math/Parser/Function.hxx"
+#include"TFEL/Math/Parser/BinaryOperator.hxx"
 
 namespace tfel
 {

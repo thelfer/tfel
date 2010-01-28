@@ -11,7 +11,7 @@
 
 #include<dlfcn.h>
 
-#include"MFrontBehaviourInterfaceFactory.hxx"
+#include"MFront/MFrontBehaviourInterfaceFactory.hxx"
 
 namespace mfront{
 

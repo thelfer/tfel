@@ -2,7 +2,7 @@
 # Process this file with automake to produce Makefile.in files.
 
 AC_INIT(tfel,1.0,thomas.helfer@cea.fr)
-AC_CONFIG_SRCDIR([include/Config/TFELConfig.hxx])
+AC_CONFIG_SRCDIR([include/TFEL/Config/TFELConfig.hxx])
 AC_CONFIG_COMMANDS
 AC_CONFIG_MACRO_DIR([m4])
 AC_CONFIG_AUX_DIR([config])

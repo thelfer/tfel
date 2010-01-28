@@ -9,10 +9,11 @@
 #include<fstream>
 #include<stdexcept>
 
-#include"System/System.hxx"
-#include"MFrontBehaviourVirtualInterface.hxx"
-#include"MFrontBehaviourInterfaceFactory.hxx"
-#include"MFrontDefaultParser.hxx"
+#include"TFEL/System/System.hxx"
+
+#include"MFront/MFrontBehaviourVirtualInterface.hxx"
+#include"MFront/MFrontBehaviourInterfaceFactory.hxx"
+#include"MFront/MFrontDefaultParser.hxx"
 
 namespace mfront{
 
@@ -103,7 +104,8 @@ namespace mfront{
     MBIF& mbif = MBIF::getMFrontBehaviourInterfaceFactory();
     systemCall::mkdir("src");
     systemCall::mkdir("include");
-    systemCall::mkdir("include/Material");
+    systemCall::mkdir("include/TFEL/");
+    systemCall::mkdir("include/TFEL/Material");
     if(this->className.empty()){
       string msg("MFrontDefaultParser::writeOutputFiles : ");
       msg += "no behaviour name defined.";
@@ -111,7 +113,7 @@ namespace mfront{
     }
     this->behaviourFileName  = this->className;
     this->behaviourFileName += ".hxx";
-    this->behaviourFile.open(("include/Material/"+this->behaviourFileName).c_str());
+    this->behaviourFile.open(("include/TFEL/Material/"+this->behaviourFileName).c_str());
     if(!this->behaviourFile){
       string msg("MFrontDefaultParser::writeOutputFiles : ");
       msg += "unable to open ";
@@ -122,7 +124,7 @@ namespace mfront{
 
     this->behaviourDataFileName  = this->className;
     this->behaviourDataFileName += "BehaviourData.hxx";
-    this->behaviourDataFile.open(("include/Material/"+this->behaviourDataFileName).c_str());
+    this->behaviourDataFile.open(("include/TFEL/Material/"+this->behaviourDataFileName).c_str());
 
     if(!this->behaviourDataFile){
       string msg("MFrontDefaultParser::writeOutputFiles : ");
@@ -134,7 +136,7 @@ namespace mfront{
 
     this->integrationDataFileName  = this->className;
     this->integrationDataFileName += "IntegrationData.hxx";
-    this->integrationDataFile.open(("include/Material/"+this->integrationDataFileName).c_str());
+    this->integrationDataFile.open(("include/TFEL/Material/"+this->integrationDataFileName).c_str());
 
     if(!this->integrationDataFile){
       string msg("MFrontDefaultParser::writeOutputFiles : ");

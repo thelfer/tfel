@@ -6,8 +6,8 @@
 #include<cstdlib>
 #include<cassert>
 
-#include "Metaprogramming/IsSuperClassOf.hxx"
-#include "Metaprogramming/IsSubClassOf.hxx"
+#include"TFEL/Metaprogramming/IsSuperClassOf.hxx"
+#include"TFEL/Metaprogramming/IsSubClassOf.hxx"
 
 struct A{};
 struct B

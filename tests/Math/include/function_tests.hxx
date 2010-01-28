@@ -9,7 +9,7 @@
 #ifndef _LIB_TFEL_FUNCTION_HXX_
 #define _LIB_TFEL_FUNCTION_HXX_ 
 
-#include "Math/Vector/VectorConcept.hxx"
+#include"TFEL/Math/Vector/VectorConcept.hxx"
 
 template<class T>
 void function(const tfel::math::VectorConcept<T>&,

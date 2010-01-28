@@ -7,7 +7,7 @@
  */
 
 #include<string>
-#include"Math/Array/ArrayConcept.hxx"
+#include"TFEL/Math/Array/ArrayConcept.hxx"
 
 namespace tfel{
 

@@ -6,7 +6,7 @@
  * \date   13 jan 2008
  */
 
-#include"Graphics/GraphTheme.hxx"
+#include"TFEL/Graphics/GraphTheme.hxx"
 
 namespace tfel
 {

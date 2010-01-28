@@ -34,29 +34,29 @@
 #endif /* defined(HAVE_READLINE_HISTORY_H) */
 #endif /* HAVE_READLINE_HISTORY */
 
-#include"System/System.hxx"
-#include"System/SignalManager.hxx"
-#include"System/ProcessManager.hxx"
-#include"System/ExternalLibraryManager.hxx"
+#include"TFEL/System/System.hxx"
+#include"TFEL/System/SignalManager.hxx"
+#include"TFEL/System/ProcessManager.hxx"
+#include"TFEL/System/ExternalLibraryManager.hxx"
 
-#include"Math/Parser/ExternalFunctionManager.hxx"
-#include"Math/Parser/ExternalCFunction.hxx"
-#include"Math/Parser/ExternalCastemFunction.hxx"
+#include"TFEL/Math/Parser/ExternalFunctionManager.hxx"
+#include"TFEL/Math/Parser/ExternalCFunction.hxx"
+#include"TFEL/Math/Parser/ExternalCastemFunction.hxx"
 
 #ifdef HAVE_OCTAVE
-#include"Math/Parser/ExternalOctaveFunction.hxx"
+#include"TFEL/Math/Parser/ExternalOctaveFunction.hxx"
 #endif /* HAVE_OCTAVE */
 
-#include"Graphics/Curve.hxx"
-#include"Graphics/EvaluatedCurve.hxx"
-#include"Graphics/DataCurve.hxx"
-#include"Graphics/ThemeManager.hxx"
-#include"Graphics/Grid.hxx"
+#include"TFEL/Graphics/Curve.hxx"
+#include"TFEL/Graphics/EvaluatedCurve.hxx"
+#include"TFEL/Graphics/DataCurve.hxx"
+#include"TFEL/Graphics/ThemeManager.hxx"
+#include"TFEL/Graphics/Grid.hxx"
 
-#include"Graphics/Analyser.hxx"
+#include"TFEL/Graphics/Analyser.hxx"
 
 #ifdef HAVE_GSL
-#include"Math/Parser/EvaluatorGSLWrapper.hxx"
+#include"TFEL/Math/Parser/EvaluatorGSLWrapper.hxx"
 #endif
 
 namespace tfel

@@ -13,11 +13,11 @@
 #include<cctype>
 #include<cassert>
 
-#include"ParserUtilities.hxx"
-#include"MFrontHeader.hxx"
-#include"MFrontParserFactory.hxx"
-#include"MFrontPleiadesModelParser.hxx"
-#include"System/System.hxx"
+#include"MFront/ParserUtilities.hxx"
+#include"MFront/MFrontHeader.hxx"
+#include"MFront/MFrontParserFactory.hxx"
+#include"MFront/MFrontPleiadesModelParser.hxx"
+#include"TFEL/System/System.hxx"
 
 static const unsigned short TFEL_MFRONTPLEAIDESPARSER_MAXUSEDVARIABLESFORUSINGAPPLY = 8;
 
@@ -2742,7 +2742,7 @@ namespace mfront{
     unsigned short i;
     for(p=this->inputs.begin();p!=this->inputs.end();++p){
       if(v==p->name){
-	return make_pair(v,0);
+	return pair<string,unsigned short>(v,0u);
       }
       p2 = this->depth.find(p->name);
       if(p2!=this->depth.end()){
@@ -2752,13 +2752,13 @@ namespace mfront{
       }
       for(i=1;i!=d+1;++i){
 	if(v==p->name+"_"+toString(i)){
-	  return make_pair(p->name,i);
+	  return pair<string,unsigned short>(p->name,i);
 	}
       }
     }
     for(p=this->outputs.begin();p!=this->outputs.end();++p){
       if(v==p->name){
-	return make_pair(v,0);
+	return pair<string,unsigned short>(v,0);
       }
       p2 = this->depth.find(p->name);
       if(p2!=this->depth.end()){
@@ -2768,14 +2768,14 @@ namespace mfront{
       }
       for(i=1;i!=d+1;++i){
 	if(v==p->name+"_"+toString(i)){
-	  return make_pair(p->name,i);
+	  return pair<string,unsigned short>(p->name,i);
 	}
       }
     }
     string msg("MFrontPleiadesModelParser::decomposeVariableName : ");
     msg += "no decomposition found  for variable '"+v+"'";
     throw(runtime_error(msg));
-    return make_pair("",0);
+    return pair<string,unsigned short>("",0u);
   } // end of MFrontPleiadesModelParser::getPleiadesVariableName(const std::string& v)
 
 

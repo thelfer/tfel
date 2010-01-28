@@ -7,7 +7,7 @@
  */
 
 #include<iostream>
-#include"Graphics/EvaluatedCurve.hxx"
+#include"TFEL/Graphics/EvaluatedCurve.hxx"
 
 namespace tfel{
 

@@ -8,8 +8,8 @@
 
 #include<cassert>
 
-#include "Math/Vector/VectorUtilities.hxx"
-#include "Math/stensor.hxx"
+#include"TFEL/Math/Vector/VectorUtilities.hxx"
+#include"TFEL/Math/stensor.hxx"
 
 int main(void){
   

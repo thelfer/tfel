@@ -8,7 +8,7 @@
 #include<cmath>
 #include<limits>
 
-#include"Math/Parser/LogicalExpr.hxx"
+#include"TFEL/Math/Parser/LogicalExpr.hxx"
 
 namespace tfel
 {

@@ -5,7 +5,7 @@
  * \date   04 sep 2006
  */
 
-#include"Utilities/TerminalColors.hxx"
+#include"TFEL/Utilities/TerminalColors.hxx"
 
 namespace tfel{
 

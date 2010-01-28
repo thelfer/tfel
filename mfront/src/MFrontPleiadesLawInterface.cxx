@@ -8,10 +8,11 @@
 #include<sstream>
 #include<stdexcept>
 
-#include"System/System.hxx"
-#include"ParserUtilities.hxx"
-#include"MFrontHeader.hxx"
-#include"MFrontPleiadesLawInterface.hxx"
+#include"TFEL/System/System.hxx"
+
+#include"MFront/ParserUtilities.hxx"
+#include"MFront/MFrontHeader.hxx"
+#include"MFront/MFrontPleiadesLawInterface.hxx"
 
 namespace mfront
 {
@@ -354,9 +355,10 @@ namespace mfront
 		     << "operator=(const " 
 		     << names.back() << "&);\n\n";
     this->headerFile << "}; // end of class " << names.back() << endl << endl;
-
-    p5  = names.rbegin();
-    p5e = --(names.rend());
+    
+    p5  = static_cast<const vector<string>&>(names).rbegin();
+    p5e = static_cast<const vector<string>&>(names).rend();
+    --p5e;
     while(p5!=p5e){
       this->headerFile << "} // end of namespace " << *p5 << "\n\n";
       ++p5;
@@ -647,8 +649,9 @@ namespace mfront
     this->srcFile << "return " << output << ";\n";
     this->srcFile << "} // end of " << names.back() << "::law\n\n";
     
-    p5  = names.rbegin();
-    p5e = --(names.rend());
+    p5  = static_cast<const vector<string>&>(names).rbegin();
+    p5e = static_cast<const vector<string>&>(names).rend();
+    --p5e;
     while(p5 != p5e){
       this->srcFile << "} // end of namespace " << *p5 << "\n\n";
       ++p5;

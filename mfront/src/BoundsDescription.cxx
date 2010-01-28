@@ -9,7 +9,7 @@
 #include<string>
 #include<stdexcept>
 #include<limits>
-#include"BoundsDescription.hxx"
+#include"MFront/BoundsDescription.hxx"
 
 namespace mfront{
 
