@@ -533,15 +533,6 @@ mfront/include/ParserBase.hxx -text
 mfront/include/ParserUtilities.hxx -text
 mfront/include/StaticVarHandler.hxx -text
 mfront/include/SupportedTypes.hxx -text
-mfront/include/UMAT/UMAT.hxx -text
-mfront/include/UMAT/UMATComputeStiffnessTensor.hxx -text
-mfront/include/UMAT/UMATComputeThermalExpansionTensor.hxx -text
-mfront/include/UMAT/UMATException.hxx -text
-mfront/include/UMAT/UMATInterface.hxx -text
-mfront/include/UMAT/UMATOrthotropicBehaviour.hxx -text
-mfront/include/UMAT/UMATOutOfBoundsPolicy.hxx -text
-mfront/include/UMAT/UMATRotationMatrix.hxx -text
-mfront/include/UMAT/UMATTraits.hxx -text
 mfront/include/UnaryLoadingDefinition.hxx -text
 mfront/include/VarHandler.hxx -text
 mfront/include/VariableBoundsDescription.hxx -text
