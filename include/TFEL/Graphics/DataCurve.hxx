@@ -46,6 +46,8 @@ namespace tfel{
       void setLegend(const std::string&);
       void setColor(const Color&);
       void setStyle(const Style&);
+      unsigned short getWidth() const;
+      void setWidth(const unsigned short);
       void setNumberOfSamples(const unsigned short);
       ~DataCurve();
     public:
@@ -54,6 +56,7 @@ namespace tfel{
       std::string  legend;
       Curve::Color color;
       Curve::Style style;
+      unsigned short width;
       bool hasColor;
     }; // end of DataCurve
     

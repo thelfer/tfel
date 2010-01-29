@@ -1016,7 +1016,7 @@ namespace tfel{
 
     std::string
     CxxTokenizer::readString(TokensContainer::const_iterator& p, 
-			 const TokensContainer::const_iterator pe)
+			     const TokensContainer::const_iterator pe)
     {
       using namespace std;
       using namespace tfel::utilities;
@@ -1024,6 +1024,11 @@ namespace tfel{
       if(p->flag!=Token::String){
 	string msg("CxxTokenizer::readString : ");
 	msg += "expected to read a string (read '"+p->value+"').\n";
+	throw(runtime_error(msg));
+      }
+      if(p->value.size()<2){
+	string msg("CxxTokenizer::readString : ");
+	msg += "internal error (invalid string size)";
 	throw(runtime_error(msg));
       }
       string value = p->value.substr(1,p->value.size()-2);

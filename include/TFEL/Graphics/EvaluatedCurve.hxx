@@ -39,6 +39,8 @@ namespace tfel
       void setLegend(const std::string&);
       void setColor(const Color&);
       void setStyle(const Style&);
+      unsigned short getWidth() const;
+      void setWidth(const unsigned short);
       void setNumberOfSamples(const unsigned short);
       ~EvaluatedCurve();
     private:
@@ -47,6 +49,7 @@ namespace tfel
       Curve::Color color;
       Curve::Style style;
       unsigned short samples;
+      unsigned short width;
       bool hasSamples;
       bool hasColor;
       bool isConstant;

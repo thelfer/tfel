@@ -27,11 +27,11 @@ namespace tfel{
       virtual unsigned short getYTicsWidth(Cairo::RefPtr<Cairo::Context>&,
 					   const std::map<double,std::string>&) const;
       virtual unsigned short getY2TicsWidth(Cairo::RefPtr<Cairo::Context>&,
-	      				  const std::map<double,std::string>&) const;
+					    const std::map<double,std::string>&) const;
       virtual unsigned short getXTicsHeight(Cairo::RefPtr<Cairo::Context>&,
-	      				  const std::map<double,std::string>&) const;
+					    const std::map<double,std::string>&) const;
       virtual unsigned short getX2TicsHeight(Cairo::RefPtr<Cairo::Context>&,
-	      				   const std::map<double,std::string>&) const;
+					     const std::map<double,std::string>&) const;
       virtual unsigned short getLeftMargin(void) const;
       virtual unsigned short getRightMargin(void) const;
       virtual unsigned short getUpperMargin(void) const;
@@ -47,7 +47,7 @@ namespace tfel{
       virtual void printRightTitle(Cairo::RefPtr<Cairo::Context>&,
 				   const GraphLayout&,
 				   const GraphSize&,
-				  const std::string&) const;
+				   const std::string&) const;
       virtual void printLeftTitle(Cairo::RefPtr<Cairo::Context>&,
 				  const GraphLayout&,
 				  const GraphSize&,
@@ -130,6 +130,7 @@ namespace tfel{
 		     const GraphSize&,
 		     const std::vector<Point>&,
 		     const Curve::Style,
+		     const unsigned short,
 		     const unsigned short) const;
       void drawCurve(Cairo::RefPtr<Cairo::Context>&,
 		     const double,
@@ -140,6 +141,7 @@ namespace tfel{
 		     const std::vector<Point>&,
 		     const Curve::Style,
 		     const Curve::Color,
+		     const unsigned short,
 		     const unsigned short) const;
       virtual void printLabel(Cairo::RefPtr<Cairo::Context>&,
 			      const double,
@@ -165,7 +167,7 @@ namespace tfel{
 			       const Curve::Color,
 			       const unsigned short) const;
       virtual unsigned short getXLabelHeight(Cairo::RefPtr<Cairo::Context>&,
-	      				   const std::string&) const;
+					     const std::string&) const;
       virtual unsigned short getX2LabelHeight(Cairo::RefPtr<Cairo::Context>&,
 					      const std::string&) const;
       virtual unsigned short getYLabelWidth(Cairo::RefPtr<Cairo::Context>&,
@@ -213,43 +215,50 @@ namespace tfel{
 			      const double,
 			      const double,
 			      const double,
-			      const std::vector<Point>&) const;
+			      const std::vector<Point>&,
+			      const unsigned short) const;
       void drawCurveWithDots(Cairo::RefPtr<Cairo::Context>&,
 			     const double,
 			     const double,
 			     const double,
 			     const double,
-			     const std::vector<Point>&) const;
+			     const std::vector<Point>&,
+			     const unsigned short) const;
       void drawCurveWithSquares(Cairo::RefPtr<Cairo::Context>&,
 				const double,
 				const double,
 				const double,
 				const double,
-				const std::vector<Point>&) const;
+				const std::vector<Point>&,
+				const unsigned short) const;
       void drawCurveWithTriangles(Cairo::RefPtr<Cairo::Context>&,
 				  const double,
 				  const double,
 				  const double,
 				  const double,
-				  const std::vector<Point>&) const;
+				  const std::vector<Point>&,
+				  const unsigned short) const;
       void drawCurveWithCrosses(Cairo::RefPtr<Cairo::Context>&,
 				const double,
 				const double,
 				const double,
 				const double,
-				const std::vector<Point>&) const;
+				const std::vector<Point>&,
+				const unsigned short) const;
       void drawCurveWithPoints(Cairo::RefPtr<Cairo::Context>&,
 			       const double,
 			       const double,
 			       const double,
 			       const double,
-			       const std::vector<Point>&) const;
+			       const std::vector<Point>&,
+			       const unsigned short) const;
       void drawCurveWithDiamonds(Cairo::RefPtr<Cairo::Context>&,
 				 const double,
 				 const double,
 				 const double,
 				 const double,
-				 const std::vector<Point>&) const;
+				 const std::vector<Point>&,
+				 const unsigned short) const;
     protected:
       virtual void
       drawCurveLegend(Cairo::RefPtr<Cairo::Context>&,

@@ -146,6 +146,7 @@ namespace tfel{
 			     const GraphSize&,
 			     const std::vector<Point>&,
 			     const Curve::Style,
+			     const unsigned short,
 			     const unsigned short) const = 0;
       virtual void drawCurve(Cairo::RefPtr<Cairo::Context>&,
 			     const double,
@@ -156,6 +157,7 @@ namespace tfel{
 			     const std::vector<Point>&,
 			     const Curve::Style,
 			     const Curve::Color,
+			     const unsigned short,
 			     const unsigned short) const = 0;
       virtual void printLegend(Cairo::RefPtr<Cairo::Context>&,
 			       const GraphLayout&,

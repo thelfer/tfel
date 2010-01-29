@@ -17,6 +17,7 @@ namespace tfel{
 				   const std::string& var)
       : ev(f),
 	style(Curve::LINE),
+	width(1),
 	hasSamples(false),
 	hasColor(false),
 	isConstant(false)
@@ -171,6 +172,18 @@ namespace tfel{
     {
       return this->samples;
     } // end of EvaluatedCurve::getNumberOfSamples
+    
+    unsigned short
+    EvaluatedCurve::getWidth() const
+    {
+      return this->width;
+    }
+    
+    void 
+    EvaluatedCurve::setWidth(const unsigned short w)
+    {
+      this->width = w;
+    }
 
   } // end of namespace graphics
 

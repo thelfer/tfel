@@ -75,6 +75,8 @@ tgplot_LDADD   = -L.                             \
 		 -lTFELPlot                      \
 		 -lTFELGraphics   	         \
 		 -lTFELSystem    	         \
+		 -lTFELMathInterpreter	         \
+		 -lTFELMathParser	         \
 		 -lTFELMath		         \
 		 -lTFELUtilities                 \
 		 -lTFELException                 \

@@ -54,7 +54,7 @@ public:
   template<unsigned int N>
   typename tfel::meta::EnableIf< 
     (N < tfel::meta::TypeListSize<T>::value),  
-      const typename tfel::meta::TypeListFindNthElt<T,N>::type >::type
+      typename tfel::meta::TypeListFindNthElt<T,N>::type >::type
   get(void) const {
     return static_cast<const holder<typename tfel::meta::TypeListFindNthElt<T,N>::type> *>(this)->value;
   }

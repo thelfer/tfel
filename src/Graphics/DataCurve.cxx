@@ -20,6 +20,7 @@ namespace tfel{
 
     DataCurve::DataCurve()
       : style(Curve::LINE),
+	width(1),
 	hasColor(false)
     {} // end of DataCurve::DataCurve
 
@@ -187,6 +188,18 @@ namespace tfel{
     {
       return this->yvalues;
     } // end of DataCurve::getValues
+
+    unsigned short
+    DataCurve::getWidth() const
+    {
+      return this->width;
+    }
+    
+    void 
+    DataCurve::setWidth(const unsigned short w)
+    {
+      this->width = w;
+    }
 
   } // end of namespace graphics
 

@@ -16,6 +16,7 @@
 #include<cerrno>
 #include<csignal>
 #include<algorithm>
+#include<cctype>
 #include<dlfcn.h>
 
 #include<gtkmm.h>
@@ -94,20 +95,31 @@ namespace tfel
     {
       CurveOptions()
 	: style(Curve::LINE),
-	  axis(Graph::XY)
+	  axis(Graph::XY),
+	  hasSpecifiedColor(false),
+	  hasSpecifiedWidth(false)
       {} // end of CurveOptions()
+      void setColor(const Curve::Color c_)
+      {
+	this->color.r = c_.r;
+	this->color.g = c_.g;
+	this->color.b = c_.b;
+      }
       std::string title;
       std::string using_decl_x;
       std::string using_decl_y;
       Curve::Style style;
       Graph::GraphAxis axis;
+      Curve::Color color;
+      unsigned short width;
+      bool hasSpecifiedColor;
+      bool hasSpecifiedWidth;
     }; // end of struct Analyser::CurveOptions
 
     Analyser::Analyser(int argc,
 		       char **argv)
       : tfel::utilities::ArgumentParserBase<Analyser>(argc,argv),
 	PlotWindow(),
-	functions(new tfel::math::parser::ExternalFunctionManager()),
 	terminal("x11"),
 	dummyVariable("x")
     {
@@ -118,12 +130,63 @@ namespace tfel
       typedef ExternalFunctionManager::value_type MVType;
       this->reset();
       this->registerCallBacks();
+      this->declareDefaultColors();
       this->parseArguments();    
       this->treatCharAsString(true);
-      this->functions->insert(MVType("pi",
-				     SmartPtr<ExternalFunction>(new Evaluator("3.14159265358979323846"))));
-      this->locks.insert("pi");
     } // end of Analyser::Analyser()
+
+    void
+    Analyser::declareDefaultColors(void)
+    {
+      this->declareColor("red",1,0,0);
+      this->declareColor("green",0,1,0);
+      this->declareColor("blue",0,0,1);
+      this->declareColor("orange",1,.5,0);
+      this->declareColor("violet",.5,0,.5);
+      this->declareColor("purple",.75,0,.25);
+      this->declareColor("brown",.75,.5,.25);
+      this->declareColor("pink",1,.75,.75);
+      this->declareColor("cyan",0,1,1);
+      this->declareColor("magenta",1,0,1);
+      this->declareColor("yellow",1,1,0);
+      this->declareColor("olive",.5,.5,0);
+      this->declareColor("black",0,0,0);
+      this->declareColor("darkgray",.25,.25,.25);
+      this->declareColor("gray",.5,.5,.5);
+      this->declareColor("lightgray",.75,.75,.75);
+      this->declareColor("white",1,1,1);
+    } // end of Analyser::declareDefaultColors
+
+    void
+    Analyser::declareColor(const std::string& n,
+			   const double r,
+			   const double g,
+			   const double b)
+    {
+      using namespace std;
+      typedef std::map<string,Curve::Color>::value_type MVType;
+      Curve::Color c;
+      if((r<0)||(r>1)){
+	string msg("Analyser::declareColor : invalid red value");
+	throw(runtime_error(msg));
+      }
+      if((g<0)||(g>1)){
+	string msg("Analyser::declareColor : invalid green value");
+	throw(runtime_error(msg));
+      }
+      if((b<0)||(b>1)){
+	string msg("Analyser::declareColor : invalid blue value");
+	throw(runtime_error(msg));
+      }
+      c.r = r;
+      c.g = g;
+      c.b = b;
+      if(!this->colors.insert(MVType(n,c)).second){
+	string msg("Analyser::declareColor : ");
+	msg += "color '"+n+"' already declared";
+	throw(runtime_error(msg));
+      }
+    } // end of Analyser::declareColor
 
     void
     Analyser::reset(void)
@@ -155,6 +218,36 @@ namespace tfel
       usage += " [options] [files]";
       return usage;
     } // end of Analyser::getUsageDescription(void) const
+
+    void
+    Analyser::treatLine()
+    {
+      using namespace std;
+      using namespace tfel::utilities;
+      using namespace tfel::system;
+      if(this->currentLine[0]=='!'){
+	ProcessManager m;
+	string::iterator p = this->currentLine.begin();
+	++p;
+	string cmd(p,this->currentLine.end());
+	m.execute(cmd);
+      } else {
+	if(!this->currentLine.empty()){
+	  this->clear();
+	  this->splitLine(this->currentLine,this->currentLineNbr);
+	  if(this->cStyleCommentOpened){
+	    string msg("Analyser<Child>::treatLine : ");
+	    msg += "unfinished c-style comment";
+	    throw(runtime_error(msg));
+	  }
+	  this->splitTokens();
+	  CxxTokenizer::stripComments();
+	  this->analyse(this->begin(),
+			this->end());
+	}
+      }
+      this->currentLine.clear();
+    } // end of treatLine
 
     void
     Analyser::treatUnknownArgument(void)
@@ -193,7 +286,11 @@ namespace tfel
     {
       using namespace std;
       typedef std::map<string,MemFuncPtr>::value_type MVType;
-      m.insert(MVType(name,f));      
+      if(!m.insert(MVType(name,f)).second){
+	string msg("Analyser::registerCallBack : ");
+	msg += "key '"+name+"' already declared";
+	throw(runtime_error(msg));
+      }      
     } // end of Analyser::registerCallBack
 
     void
@@ -203,29 +300,19 @@ namespace tfel
     {
       using namespace std;
       typedef std::map<string,MemFuncPtr2>::value_type MVType;
-      m.insert(MVType(name,f));      
+      if(!m.insert(MVType(name,f)).second){
+	string msg("Analyser::registerCallBack : ");
+	msg += "key '"+name+"' already declared";
+	throw(runtime_error(msg));
+      }      
     } // end of Analyser::registerCallBack
 
     void
     Analyser::registerCallBacks()
     {
-      this->registerCallBack(this->callBacks,"q",&Analyser::treatQuit);
-      this->registerCallBack(this->callBacks,"quit",&Analyser::treatQuit);
       this->registerCallBack(this->callBacks,"reset",&Analyser::treatReset);
-      this->registerCallBack(this->callBacks,"se",&Analyser::treatSet);
-      this->registerCallBack(this->callBacks,"set",&Analyser::treatSet);
-      this->registerCallBack(this->callBacks,"unset",&Analyser::treatUnset);
-      this->registerCallBack(this->callBacks,"import",&Analyser::treatImport);
       this->registerCallBack(this->callBacks,"plot",&Analyser::treatPlot);
-      this->registerCallBack(this->callBacks,"print",&Analyser::treatPrint);
-      this->registerCallBack(this->callBacks,"const",&Analyser::treatConst);
-      this->registerCallBack(this->callBacks,"lock",&Analyser::treatLock);
-      this->registerCallBack(this->callBacks,"nodeps",&Analyser::treatNoDeps);
-      this->registerCallBack(this->callBacks,"include",&Analyser::treatInclude);
       this->registerCallBack(this->callBacks,"replot",&Analyser::treatRePlot);
-#ifdef HAVE_GSL
-      this->registerCallBack(this->setCallBacks,"gsl",&Analyser::treatSetGSL);
-#endif
       this->registerCallBack(this->setCallBacks,"width",&Analyser::treatSetWidth);
       this->registerCallBack(this->setCallBacks,"height",&Analyser::treatSetHeight);
       this->registerCallBack(this->setCallBacks,"logscale",&Analyser::treatSetLogScale);
@@ -278,10 +365,6 @@ namespace tfel
       this->registerCallBack(this->unsetCallBacks,"x2label",&Analyser::treatUnsetX2Label);
       this->registerCallBack(this->unsetCallBacks,"ylabel",&Analyser::treatUnsetYLabel);
       this->registerCallBack(this->unsetCallBacks,"y2label",&Analyser::treatUnsetY2Label);
-      this->registerCallBack(this->unsetCallBacks,"xtics",&Analyser::treatUnsetXTics);
-      this->registerCallBack(this->unsetCallBacks,"x2tics",&Analyser::treatUnsetX2Tics);
-      this->registerCallBack(this->unsetCallBacks,"ytics",&Analyser::treatUnsetYTics);
-      this->registerCallBack(this->unsetCallBacks,"y2tics",&Analyser::treatUnsetY2Tics);
       this->registerCallBack(this->unsetCallBacks,"grid",&Analyser::treatUnsetGrid);
       this->registerCallBack2(this->plotCallBacks,"t",&Analyser::treatPlotTitle);
       this->registerCallBack2(this->plotCallBacks,"title",&Analyser::treatPlotTitle);
@@ -291,6 +374,10 @@ namespace tfel
       this->registerCallBack2(this->plotCallBacks,"u",&Analyser::treatPlotUsing);
       this->registerCallBack2(this->plotCallBacks,"axes",&Analyser::treatPlotAxes);
       this->registerCallBack2(this->plotCallBacks,"axis",&Analyser::treatPlotAxes);
+      this->registerCallBack2(this->plotCallBacks,"lt",&Analyser::treatPlotLineType);
+      this->registerCallBack2(this->plotCallBacks,"linetype",&Analyser::treatPlotLineType);
+      this->registerCallBack2(this->plotCallBacks,"lw",&Analyser::treatPlotLineWidth);
+      this->registerCallBack2(this->plotCallBacks,"linewidth",&Analyser::treatPlotLineWidth);
     } // end of Analyser::registerCallBacks()
 
 #ifdef HAVE_GSL
@@ -733,65 +820,6 @@ namespace tfel
       }
       ++p;
     } // end of Analyser::treatSetOutput
-    
-    tfel::utilities::SmartPtr<tfel::math::Evaluator>
-    Analyser::readFunction(TokensContainer::const_iterator& p, 
-			   const TokensContainer::const_iterator pe)
-    {
-      using namespace std;
-      using namespace tfel::math;
-      using namespace tfel::utilities;
-      vector<string> vars;
-      string f;
-      unsigned short openedParenthesis = 0;
-      bool cont=true;
-      TokensContainer::const_iterator prev = p;
-      TokensContainer::const_iterator pb   = p;
-      while((p!=pe)&&(cont)){
-	if((p->value==",")&&(openedParenthesis==0)){
-	  cont = false;
-	} else if(p->value=="("){
-	  ++openedParenthesis;
-	  f += p->value;
-	  prev=p;
-	  ++p;
-	} else if(p->value==")"){
-	  if(openedParenthesis==0){
-	    string msg("Analyser::treatFunctionPlot : ");
-	    msg += "unbalanced parenthesis";
-	    throw(runtime_error(msg));
-	  }
-	  --openedParenthesis;
-	  f += p->value;
-	  prev=p;
-	  ++p;
-	} else {
-	  if((openedParenthesis==0)&&(prev!=pb)){
-	    if((prev->value=="+")||
-	       (prev->value=="-")||
-	       (prev->value=="*")||
-	       (prev->value=="/")||
-	       (prev->value=="**")){
-	      f += p->value;
-	      prev=p;
-	      ++p;
-	    } else {
-	      cont = false;
-	    }
-	  } else {
-	    f += p->value;
-	    prev=p;
-	    ++p;
-	  }
-	}
-      }
-      if(openedParenthesis!=0){
-	string msg("Analyser::readFunction : ");
-	msg += "unmatched parenthesis";
-	throw(runtime_error(msg));
-      }
-      return SmartPtr<Evaluator>(new Evaluator(vars,f,this->functions));
-    } // end of Analyser::readFunction
 
     GraphCoordinates
     Analyser::readCoordinates(TokensContainer::const_iterator& p, 
@@ -953,6 +981,103 @@ namespace tfel
 	++p;
       }
     } // ned of Analyser::readRange
+
+    static double
+    convertFromHexadecimal(const char c1,
+			   const char c2)
+    {
+      using namespace std;
+      static const char hexc [] = {'0','1','2','3','4','5','6','7','8','9',
+				 'a','b','c','d','e','f'};
+      unsigned short i1 = static_cast<unsigned short>(find(hexc,hexc+16,tolower(c1)) - hexc);
+      unsigned short i2 = static_cast<unsigned short>(find(hexc,hexc+16,tolower(c2)) - hexc);
+      if((i1>15)||(i2>15)){
+	string msg("convertFromHexadecimal : invalid input");
+	throw(runtime_error(msg));
+      }
+      return static_cast<double>((i1<<4)+i2)/255.;
+    } // end of convertFromHexadecimal
+
+    void
+    Analyser::treatPlotLineType(CurveOptions& options,
+				TokensContainer::const_iterator& p, 
+				const TokensContainer::const_iterator pe)
+    {
+      using namespace std;
+      std::map<string,Curve::Color>::const_iterator pc;
+      this->checkNotEndOfLine("Analyser::treatPlotType",
+			      "expected line type",p,pe);
+      if(options.hasSpecifiedColor){
+	string msg("Analyser::treatPlotLineType : ");
+	msg += "line type already specified";
+	throw(runtime_error(msg));
+      }
+      if(p->value=="rgb"){
+	++p;
+	this->checkNotEndOfLine("Analyser::treatPlotType",
+				"expected line type",p,pe);
+	string type = this->readString(p,pe);
+	if(type.empty()){
+	  string msg("Analyser::treatPlotLineType : ");
+	  msg += "empty line type specified";
+	  throw(runtime_error(msg));
+	}
+	if(type[0]=='#'){
+	  // rgb
+	  if(type.size()!=7){
+	    string msg("Analyser::treatPlotLineType : ");
+	    msg += "invalid hexadecimal number";
+	    throw(runtime_error(msg));
+	  }
+	  options.color.r=convertFromHexadecimal(type[1],type[2]);
+	  options.color.g=convertFromHexadecimal(type[3],type[4]);
+	  options.color.b=convertFromHexadecimal(type[5],type[6]);
+	} else {
+	  pc=this->colors.find(type);
+	  if(pc==this->colors.end()){
+	    string msg("Analyser::treatPlotLineType : ");
+	    msg += "no color '"+type+"' defined";
+	    throw(runtime_error(msg));
+	  }
+	  options.color.r = pc->second.r;
+	  options.color.g = pc->second.g;
+	  options.color.b = pc->second.b;
+	}
+      } else {
+	if(!Analyser::isUnsignedInteger(p->value)){
+	  string msg("Analyser::treatPlotUsing : ");
+	  msg += "unexpected token 'rgb' or a number";
+	  throw(runtime_error(msg));
+	}
+	this->area.getTheme()->getDefaultColor(options.color,this->convertToUnsignedShort(p->value));
+	++p;
+      }
+	options.hasSpecifiedColor=true;
+    } // end of Analyser::treatPlotLineType
+
+    void
+    Analyser::treatPlotLineWidth(CurveOptions& options,
+				TokensContainer::const_iterator& p, 
+				const TokensContainer::const_iterator pe)
+    {
+      using namespace std;
+      std::map<string,Curve::Color>::const_iterator pc;
+      this->checkNotEndOfLine("Analyser::treatPlotWidth",
+			      "expected line type",p,pe);
+      if(options.hasSpecifiedWidth){
+	string msg("Analyser::treatPlotLineWidth : ");
+	msg += "line width already specified";
+	throw(runtime_error(msg));
+      }
+      if(!Analyser::isUnsignedInteger(p->value)){
+	string msg("Analyser::treatPlotUsing : ");
+	msg += "unexpected a number";
+	throw(runtime_error(msg));
+      }
+      options.width = this->convertToUnsignedShort(p->value);
+      options.hasSpecifiedWidth=true;
+      ++p;
+    } // end of Analyser::treatPlotLineWidth
 
     void
     Analyser::treatPlotAxes(CurveOptions& options,
@@ -1146,13 +1271,6 @@ namespace tfel
     } // end of Analyser::treatQuit
 
     void
-    Analyser::treatQuit(TokensContainer::const_iterator&, 
-			const TokensContainer::const_iterator)
-    {
-      ::exit(EXIT_SUCCESS);
-    } // end of Analyser::treatQuit
-
-    void
     Analyser::treatInclude(TokensContainer::const_iterator& p, 
 			   const TokensContainer::const_iterator pe)
     {
@@ -1286,39 +1404,14 @@ namespace tfel
       if(!options.title.empty()){
 	c->setLegend(options.title);
       }
+      if(options.hasSpecifiedColor){
+	c->setColor(options.color);
+      }
+      if(options.hasSpecifiedWidth){
+	c->setWidth(options.width);
+      }
       c->setStyle(options.style);
     } // end of Analyser::applyCurveOptions
-
-    bool
-    Analyser::isUnsignedInteger(const std::string& s)
-    {
-      using namespace std;
-      string::const_iterator p;
-      for(p=s.begin();p!=s.end();++p){
-	if(!isdigit(*p)){
-	  return false;
-	}
-      }
-      return true;
-    } // end of Analyser::isUnsignedInteger
-
-    double
-    Analyser::readDouble(const std::string& s,
-			 const unsigned short l)
-    {
-      using namespace std;
-      double res;
-      istringstream is(s);
-      is >> res;
-      if(!is&&(!is.eof())){
-	ostringstream msg;
-	msg << "Analyser::readDouble : ";
-	msg << "could not read value from token '"+s+"'.\n";
-	msg << "Error at line : " << l;
-	throw(runtime_error(msg.str()));
-      }
-      return res;
-    } // end of Analyser::readDouble
 
     std::string
     Analyser::getData(std::vector<double>& v,
@@ -1536,17 +1629,8 @@ namespace tfel
     Analyser::treatSet(TokensContainer::const_iterator& p,
 		       const TokensContainer::const_iterator pe)
     {
-      using namespace std;
-      this->checkNotEndOfLine("Analyser::treatSet","",p,pe);
-      std::map<string,MemFuncPtr>::const_iterator ps;
-      ps = this->setCallBacks.find(p->value);
-      if(ps == this->setCallBacks.end()){
-	string msg("Analyser::treatSet : ");
-	msg += "unknown option '"+p->value+"'";
-	throw(runtime_error(msg));
-      }
-      ++p;
-      (this->*(ps->second))(p,pe);
+      using namespace tfel::math::interpreter;
+      InterpreterBase<Analyser>::treatSet(p,pe);
       this->area.queue_draw();
     } // end of Analyser::treatSet
 
@@ -1554,17 +1638,8 @@ namespace tfel
     Analyser::treatUnset(TokensContainer::const_iterator& p,
 			 const TokensContainer::const_iterator pe)
     {
-      using namespace std;
-      this->checkNotEndOfLine("Analyser::treatUnset","",p,pe);
-      std::map<string,MemFuncPtr>::const_iterator ps;
-      ps = this->unsetCallBacks.find(p->value);
-      if(ps == this->unsetCallBacks.end()){
-	string msg("Analyser::treatUnset : ");
-	msg += "unknown option '"+p->value+"'";
-	throw(runtime_error(msg));
-      }
-      ++p;
-      (this->*(ps->second))(p,pe);
+      using namespace tfel::math::interpreter;
+      InterpreterBase<Analyser>::treatUnset(p,pe);
       this->area.queue_draw();
     } // end of Analyser::treatUnset
 
@@ -1689,496 +1764,6 @@ namespace tfel
       this->area.setY2Label(this->readString(p,pe));
     } // end of Analyser::treatY2Label
 
-    std::vector<std::string>
-    Analyser::readVariableList(TokensContainer::const_iterator& p,
-			       const TokensContainer::const_iterator pe)
-    {
-      using namespace std;
-      vector<string> vars;
-      if(p==pe){
-	string msg("Analyser::readVariableList : ");
-	msg += "unexpected end of line (expected ')').";
-	throw(runtime_error(msg));
-      }
-      if(p->value!="("){
-	string msg("Analyser::readVariableList : ");
-	msg += "unexpected token (read '"+p->value+", 'expected ')').";
-	throw(runtime_error(msg));
-      }
-      ++p;
-      if(p==pe){
-	string msg("Analyser::readVariableList : ");
-	msg += "unexpected end of line";
-	throw(runtime_error(msg));
-      }
-      if(!this->isValidIdentifier(p->value)){
-	string msg("Analyser::readVariableList : ");
-	msg += p->value+" is not a valid identifer.";
-	throw(runtime_error(msg));
-      }
-      vars.push_back(p->value);
-      ++p;
-      if(p==pe){
-	string msg("Analyser::readVariableList : ");
-	msg += "unexpected end of line";
-	throw(runtime_error(msg));
-      }
-      while(p->value==","){
-	++p;
-	if(p==pe){
-	  string msg("Analyser::readVariableList : ");
-	  msg += "unexpected end of line";
-	  throw(runtime_error(msg));
-	}
-	if(!this->isValidIdentifier(p->value)){
-	  string msg("Analyser::readVariableList : ");
-	  msg += p->value+" is not a valid variable name.";
-	  throw(runtime_error(msg));
-	}
-	vars.push_back(p->value);
-	++p;
-	if(p==pe){
-	  string msg("Analyser::readVariableList : ");
-	  msg += "unexpected end of line";
-	  throw(runtime_error(msg));
-	}
-      }
-      if(p->value!=")"){
-	string msg("Analyser::readVariableList : ");
-	msg += "unexpected token '"+p->value+"' (expected ')')";
-	throw(runtime_error(msg));
-      }
-      ++p;
-      return vars;
-    } // end of Analyser::readVariableList
-
-    void
-    Analyser::treatImport(TokensContainer::const_iterator& p,
-			  const TokensContainer::const_iterator pe,
-			  const bool b)
-    {
-      using namespace std;
-      ImportOptions options;
-      if(p==pe){
-	string msg("Analyser::treatImport : ");
-	msg += "unexpected end of line";
-	throw(runtime_error(msg));
-      }
-      if(p->value=="<"){
-	++p;
-	if(p==pe){
-	  string msg("Analyser::treatImport : ");
-	  msg += "unexpected end of line";
-	  throw(runtime_error(msg));
-	}
-	// import options
-	while(p->value!=">"){
-	  if(p->value=="function"){
-	    if(options.type!=ImportOptions::Default){
-	      string msg("Analyser::treatImport : ");
-	      msg += "import type has already been specified";
-	      throw(runtime_error(msg));
-	    }
-	    options.type=ImportOptions::Function;
-	  } else if (p->value=="c"){
-	    if(!((options.type==ImportOptions::Default)||
-		 (options.type==ImportOptions::Function))){
-	      string msg("Analyser::treatImport : ");
-	      msg += "import type is neither 'Default' nor 'Function', ";
-	      msg += "which is required for the 'c' option";
-	      throw(runtime_error(msg));
-	    }
-	    if(options.functionType!=ImportOptions::FDefault){
-	      string msg("Analyser::treatImport : ");
-	      msg += "a function type has already been specified.";
-	      throw(runtime_error(msg));
-	    }
-	    options.type=ImportOptions::Function;
-	    options.functionType=ImportOptions::C;
-	  } else if (p->value=="castem"){
-	    if(!((options.type==ImportOptions::Default)||
-		 (options.type==ImportOptions::Function))){
-	      string msg("Analyser::treatImport : ");
-	      msg += "import type is neither 'Default' nor 'Function', ";
-	      msg += "which is required for the 'castem' option";
-	      throw(runtime_error(msg));
-	    }
-	    if(options.functionType!=ImportOptions::FDefault){
-	      string msg("Analyser::treatImport : ");
-	      msg += "a function type has already been specified.";
-	      throw(runtime_error(msg));
-	    }
-	    options.type=ImportOptions::Function;
-	    options.functionType=ImportOptions::Castem;
-#ifdef HAVE_OCTAVE 
-	  } else if (p->value=="octave"){
-	    if(!((options.type==ImportOptions::Default)||
-		 (options.type==ImportOptions::Function))){
-	      string msg("Analyser::treatImport : ");
-	      msg += "import type is neither 'Default' nor 'Function', ";
-	      msg += "which is required for the 'octave' option";
-	      throw(runtime_error(msg));
-	    }
-	    if(options.functionType!=ImportOptions::FDefault){
-	      string msg("Analyser::treatImport : ");
-	      msg += "a function type has already been specified.";
-	      throw(runtime_error(msg));
-	    }
-	    options.type=ImportOptions::Function;
-	    options.functionType=ImportOptions::Octave;
-#endif /* HAVE_OCTAVE */
-	  } else if(p->value=="data"){
-	    if(options.functionType!=ImportOptions::FDefault){
-	      string msg("Analyser::treatImport : ");
-	      msg += "a function type has been specified, which is inconsistent with 'data' options";
-	      throw(runtime_error(msg));
-	    }
-	    if(options.type!=ImportOptions::Default){
-	      string msg("Analyser::treatImport : ");
-	      msg += "import type has already been specified";
-	      throw(runtime_error(msg));
-	    }
-	    options.type=ImportOptions::Data;
-	  } else {
-	    // must be the number of variables
-	    unsigned short nbr;
-	    try{
-	      nbr = this->convertToUnsignedShort(p->value);
-	    } catch(runtime_error& e){
-	      string msg("Analyser::treatImport : ");
-	      msg += "unknown option '"+p->value+"'";
-	      throw(runtime_error(msg));
-	    }
-	    if(options.numberOfVariables!=-1){
-	      string msg("Analyser::treatImport : ");
-	      msg += "the number of variables has alread been specified";
-	      throw(runtime_error(msg));
-	    }
-	    options.numberOfVariables = static_cast<int>(nbr);
-	  }
-	  ++p;
-	  if(p==pe){
-	    string msg("Analyser::treatImport : ");
-	    msg += "unexpected end of line";
-	    throw(runtime_error(msg));
-	  }
-	  if((p->value!=">")&&
-	     (p->value!=",")){
-	    string msg("Analyser::treatImport : ");
-	    msg += "unexpected token '"+p->value+"', expected ',' or '>'";
-	    throw(runtime_error(msg));
-	  }
-	  if(p->value==","){
-	    ++p;
-	  }
-	}
-	++p;	
-      }
-      if((options.type==ImportOptions::Default)||
-	 (options.type==ImportOptions::Function)){
-	this->importFunction(p,pe,options,b);
-      } else {
-	string msg("Analyser::treatImport : ");
-	msg += "only function import is supported";
-	throw(runtime_error(msg));
-      }
-    } // end of Analyser::importFunction
-
-#ifdef HAVE_OCTAVE
-    void
-    Analyser::importOctaveFunction(TokensContainer::const_iterator&, 
-				   const TokensContainer::const_iterator,
-				   const std::string& f,
-				   const unsigned short nbr,
-				   const bool b)
-    {
-      using namespace std;
-      using namespace tfel::utilities;
-      using namespace tfel::math::parser;
-      typedef SmartPtr<ExternalFunction> EFunctionPtr;
-      this->addFunction(f,EFunctionPtr(new ExternalOctaveFunction(f,nbr)),b,false);
-    } // end of Graph::importOctaveFunction
-#endif /* HAVE_OCTAVE*/
-    
-    void
-    Analyser::treatImport(TokensContainer::const_iterator& p,
-			  const TokensContainer::const_iterator pe)
-    {
-      this->treatImport(p,pe,false);
-    } // end of Analyser::treatImport
-
-    unsigned short
-    Analyser::convertToUnsignedShort(const std::string& value)
-    {
-      using namespace std;
-      string::const_iterator p;
-      istringstream converter(value);
-      for(p=value.begin();p!=value.end();++p){
-	if(!isdigit(*p)){
-	  throw(runtime_error("Analyser::convertToUnsignedShort : invalid entry"));
-	}
-      }
-      unsigned short u;
-      converter >> u;
-      if(!converter&&(!converter.eof())){
-	string msg("Analyser::convertToUnsignedShort : ");
-	msg += "not read value from token '"+value+"'.\n";
-	throw(runtime_error(msg));
-      }
-      return u;
-    } // end of Analyser::convertToUnsignedShort
-
-    void
-    Analyser::importCastemFunction(const std::string& function,
-				   const std::string& library,
-				   const unsigned short varNumber,
-				   const bool b)
-    {
-      using namespace std;
-      using namespace tfel::utilities;
-      using namespace tfel::system;
-      using namespace tfel::math::parser;
-      typedef SmartPtr<ExternalFunction> EFunctionPtr;
-      ExternalLibraryManager& elm = ExternalLibraryManager::getExternalLibraryManager();
-      unsigned short nb = elm.getCastemFunctionNumberOfVariables(library,function.c_str());
-      if(nb!=varNumber){
-	ostringstream msg;
-	msg << "InterpreterCommon::importCastemFunction : "
-	    << "the function '" << function << "' declares "
-	    << nb << " variables, not " << varNumber << " as requested";
-	throw(runtime_error(msg.str()));
-      }
-      CastemFunctionPtr func = elm.getCastemFunction(library,function.c_str());
-      this->addFunction(function,EFunctionPtr(new ExternalCastemFunction(func,varNumber)),b,false);
-    } // end of Analyser::importCastemFunction
-
-    void
-    Analyser::importCFunction(const std::string& function,
-			      const std::string& library,
-			      const unsigned short varNumber,
-			      const bool b)
-    {
-	using namespace std;
-	using namespace tfel::utilities;
-	using namespace tfel::system;
-	using namespace tfel::math::parser;
-	typedef SmartPtr<ExternalFunction> EFunctionPtr;
-	ExternalLibraryManager& elm = ExternalLibraryManager::getExternalLibraryManager();
-	switch (varNumber){
-	  CFunction0Ptr  func0;
-	  CFunction1Ptr  func1;
-	  CFunction2Ptr  func2;
-	  CFunction3Ptr  func3;
-	  CFunction4Ptr  func4;
-	  CFunction5Ptr  func5;
-	  CFunction6Ptr  func6;
-	  CFunction7Ptr  func7;
-	  CFunction8Ptr  func8;
-	  CFunction9Ptr  func9;
-	  CFunction10Ptr func10;
-	  CFunction11Ptr func11;
-	  CFunction12Ptr func12;
-	  CFunction13Ptr func13;
-	  CFunction14Ptr func14;
-	  CFunction15Ptr func15;
-	case 0:
-	  func0= elm.getCFunction0(library,function.c_str());
-	  this->addFunction(function,EFunctionPtr(new ExternalCFunction<0>(func0)),b,false);
-	  break;
-	case 1:
-	  func1 = elm.getCFunction1(library,function.c_str());
-	  this->addFunction(function,EFunctionPtr(new ExternalCFunction<1>(func1)),b,false);
-	  break;
-	case 2:
-	  func2 = elm.getCFunction2(library,function.c_str());
-	  this->addFunction(function,EFunctionPtr(new ExternalCFunction<2>(func2)),b,false);
-	  break;
-	case 3:
-	  func3 = elm.getCFunction3(library,function.c_str());
-	  this->addFunction(function,EFunctionPtr(new ExternalCFunction<3>(func3)),b,false);
-	  break;
-	case 4:
-	  func4 = elm.getCFunction4(library,function.c_str());
-	  this->addFunction(function,EFunctionPtr(new ExternalCFunction<4>(func4)),b,false);
-	  break;
-	case 5:
-	  func5 = elm.getCFunction5(library,function.c_str());
-	  this->addFunction(function,EFunctionPtr(new ExternalCFunction<5>(func5)),b,false);
-	  break;
-	case 6:
-	  func6 = elm.getCFunction6(library,function.c_str());
-	  this->addFunction(function,EFunctionPtr(new ExternalCFunction<6>(func6)),b,false);
-	  break;
-	case 7:
-	  func7 = elm.getCFunction7(library,function.c_str());
-	  this->addFunction(function,EFunctionPtr(new ExternalCFunction<7>(func7)),b,false);
-	  break;
-	case 8:
-	  func8 = elm.getCFunction8(library,function.c_str());
-	  this->addFunction(function,EFunctionPtr(new ExternalCFunction<8>(func8)),b,false);
-	  break;
-	case 9:
-	  func9 = elm.getCFunction9(library,function.c_str());
-	  this->addFunction(function,EFunctionPtr(new ExternalCFunction<9>(func9)),b,false);
-	  break;
-	case 10:
-	  func10 = elm.getCFunction10(library,function.c_str());
-	  this->addFunction(function,EFunctionPtr(new ExternalCFunction<10>(func10)),b,false);
-	  break;
-	case 11:
-	  func11 = elm.getCFunction11(library,function.c_str());
-	  this->addFunction(function,EFunctionPtr(new ExternalCFunction<11>(func11)),b,false);
-	  break;
-	case 12:
-	  func12 = elm.getCFunction12(library,function.c_str());
-	  this->addFunction(function,EFunctionPtr(new ExternalCFunction<12>(func12)),b,false);
-	  break;
-	case 13:
-	  func13 = elm.getCFunction13(library,function.c_str());
-	  this->addFunction(function,EFunctionPtr(new ExternalCFunction<13>(func13)),b,false);
-	  break;
-	case 14:
-	  func14 = elm.getCFunction14(library,function.c_str());
-	  this->addFunction(function,EFunctionPtr(new ExternalCFunction<14>(func14)),b,false);
-	  break;
-	case 15:
-	  func15 = elm.getCFunction15(library,function.c_str());
-	  this->addFunction(function,EFunctionPtr(new ExternalCFunction<15>(func15)),b,false);
-	  break;
-	default:
-	  string msg("InterpreterCommon::importCFunction : function with more than 15 variables are not allowed.");
-	  throw(runtime_error(msg));
-	}
-    } // end of Analyser::importCFunction
-
-    void
-    Analyser::importFunction(TokensContainer::const_iterator& p,
-			     const TokensContainer::const_iterator pe,
-			     const Analyser::ImportOptions options,
-			     const bool b)
-    {
-	using namespace std;
-	this->checkNotEndOfLine("InterpreterCommon::importFunction : ",
-				"expected function name",p,pe);
-	string function = p->value;
-	++p;
-	unsigned short varNumber = 0;
-	if(options.numberOfVariables==-1){
-	  this->checkNotEndOfLine("InterpreterCommon::importFunction : ",
-				  "expected variable list",p,pe);
-	  if(p->value=="("){
-	    const std::vector<std::string>& vars = this->readVariableList(p,pe);
-	    varNumber = static_cast<unsigned short>(vars.size());
-	  } else {
-	    varNumber = 0u;
-	  }
-	} else {
-	  if(p!=pe){
-	    if(p->value=="("){
-	      const std::vector<std::string>& vars = this->readVariableList(p,pe);
-	      if(vars.size()!=static_cast<unsigned short>(options.numberOfVariables)){
-		string msg("InterpreterCommon::importFunction : ");
-		msg += "the number variables of function '"+function+"'";
-		msg += "is not the same as that specified in the options";
-		throw(runtime_error(msg));
-	      }
-	    }
-	  }
-	  varNumber = static_cast<unsigned short>(options.numberOfVariables);
-	}
-#ifdef HAVE_OCTAVE 
-	if(options.functionType==ImportOptions::Octave){
-	  this->importOctaveFunction(p,pe,function,varNumber,b);
-	} else {
-#endif /* HAVE_OCTAVE */
-	  this->checkNotEndOfLine("InterpreterCommon::importFunction : ",
-				  "expected library name",p,pe);
-	  string library = this->readString(p,pe);
-	  // adding the new function
-	  if((options.functionType==ImportOptions::FDefault)||
-	     (options.functionType==ImportOptions::C)){
-	    this->importCFunction(function,library,varNumber,b);
-	  } else if (options.functionType==ImportOptions::Castem){
-	    this->importCastemFunction(function,library,varNumber,b);
-	  } else {
-	    string msg("InterpreterCommon::importFunction : ");
-	    msg += "unknown function type";
-	    throw(runtime_error(msg));
-	  }
-#ifdef HAVE_OCTAVE 
-	}
-#endif /* HAVE_OCTAVE */
-    } // end of Analyser::importFunction()
-
-    std::string
-    Analyser::readUntil(TokensContainer::const_iterator& p,
-			const TokensContainer::const_iterator pe,
-			const std::string& delim)
-    {
-      using namespace std;
-      string res;
-      unsigned short openedParenthesis=0;
-      this->checkNotEndOfLine("Analyser::readUntil","",p,pe);
-      while((p!=pe)&&(p->value!=delim)){
-	if(p->value=="("){
-	  ++openedParenthesis;
-	}
-	if(p->value==")"){
-	  if(openedParenthesis==0){
-	    string msg("Analyser::readUntil : ");
-	    msg += "unbalanced parenthesis";
-	    throw(runtime_error(msg));
-	  }
-	  --openedParenthesis;
-	}
-	res += p->value;
-	++p;
-      }
-      if(p->value!=delim){
-	string msg("Analyser::readUntil : ");
-	msg += "did not find token '"+delim+"'";
-	throw(runtime_error(msg));
-      }
-      if(openedParenthesis!=0){
-	string msg("Analyser::readUntil : ");
-	msg += "unclosed parenthesis";
-	throw(runtime_error(msg));
-      }
-      ++p;
-      return res;
-    } // end of Analyser::readUntil
-
-    std::string
-    Analyser::readNextGroup(TokensContainer::const_iterator& p,
-			    const TokensContainer::const_iterator pe)
-    {
-      using namespace std;
-      string res;
-      unsigned short openedParenthesis=0;
-      this->checkNotEndOfLine("Analyser::readNextGroup","",p,pe);
-      while((p!=pe)&&(!((p->value==",")&&(openedParenthesis==0)))){
-	if(p->value=="("){
-	  ++openedParenthesis;
-	}
-	if(p->value==")"){
-	  if(openedParenthesis==0){
-	    string msg("Analyser::readNextGroup : ");
-	    msg += "unbalanced parenthesis";
-	    throw(runtime_error(msg));
-	  }
-	  --openedParenthesis;
-	}
-	res += p->value;
-	++p;
-      }
-      if(openedParenthesis!=0){
-	string msg("Analyser::readNextGroup : ");
-	msg += "unclosed parenthesis";
-	throw(runtime_error(msg));
-      }
-      return res;
-    } // end of Analyser::readNextGroup
-
     void
     Analyser::treatPrint(TokensContainer::const_iterator& p,
 			 const TokensContainer::const_iterator pe)
@@ -2235,329 +1820,6 @@ namespace tfel
       }
       cout << res.str() << endl;
     } // end of Analyser::treatPrint
-
-    const std::string
-    Analyser::gatherTokenGroup(TokensContainer::const_iterator& p,
-			       const TokensContainer::const_iterator pe)
-    {
-      using namespace std;
-      string g;
-      while(p!=pe){
-	g += p->value;
-	++p;
-      }
-      return g;
-    } // end of Analyser::gatherTokenGroup
-
-    bool
-    Analyser::isValidIdentifier(const std::string& name)
-    {
-      using namespace tfel::math;
-      if(!Evaluator::isValidIdentifier(name)){
-	return false;
-      }
-      return CxxTokenizer::isValidIdentifier(name);
-    } // end of Analyser::isValidIdentifier
-
-    void
-    Analyser::addFunction(const std::string& name,
-			  tfel::utilities::SmartPtr<tfel::math::parser::ExternalFunction> pev,
-			  const bool b1,
-			  const bool b2)
-    {
-      using namespace std;
-      if(!this->isValidIdentifier(name)){
-	string msg("Analyser::addFunction : ");
-	msg += "name '"+name+"' is not valid.";
-	throw(runtime_error(msg));
-      }
-      if(this->locks.find(name)!=this->locks.end()){
-	if((*(this->functions)).find(name)==(*(this->functions)).end()){
-	  string msg("Analyser::addFunction : ");
-	  msg += "internal error, a lock has been posed for a variable called '";
-	  msg += name;
-	  msg += "' that apparently don't exist";
-	  throw(runtime_error(msg));
-	}
-	string msg("Analyser::addFunction : ");
-	msg += "a variable '"+name+"' has already been declared, with const attribute";
-	throw(runtime_error(msg));
-      }
-      if(b1){
-	this->locks.insert(name);
-      }
-      if(b2){
-	(*(this->functions))[name]=pev->resolveDependencies();
-      } else {
-	(*(this->functions))[name]=pev;
-      }
-    } // end of Analyser::addFunction
-
-    void
-    Analyser::analyseFunctionDefinition(TokensContainer::const_iterator& p,
-					const TokensContainer::const_iterator pe,
-					const bool b1,
-					const bool b2)
-    {
-      using namespace std;
-      using namespace tfel::utilities;
-      using namespace tfel::math;
-      this->checkNotEndOfLine("Analyser::analyseFunctionDefinition","",p,pe);
-      string var = p->value;
-      // variable or function definition
-      if(!this->isValidIdentifier(var)){
-	string msg("Analyser::analyseFunctionDefinition : ");
-	msg += p->value+" is not a valid identifer.";
-	throw(runtime_error(msg));
-      }
-      ++p;
-      if(p==pe){
-	string msg("Analyser::analyseFunctionDefinition : ");
-	msg += "unexpected end of line";
-	throw(runtime_error(msg));
-      }
-      if(p->value=="="){
-	vector<string> vars;
-	// adding a variable
-	++p;
-	if(p==pe){
-	  string msg("Analyser::analyseFunctionDefinition : ");
-	  msg += "unexpected end of line";
-	  throw(runtime_error(msg));
-	}
-	string group = this->gatherTokenGroup(p,pe);
-	if(group.empty()){
-	  string msg("Analyser::analyseFunctionDefinition : ");
-	  msg += "invalid declaraction of variable "+var;
-	  throw(runtime_error(msg));
-	}
-	SmartPtr<tfel::math::parser::ExternalFunction> pev(new Evaluator(vars,group,functions));
-	Evaluator* ev = static_cast<Evaluator *>(pev.getPtr());
-	if(ev->getNumberOfVariables()!=0u){
-	  string msg("Analyser::analyseFunctionDefinition : ");
-	  msg += "error while declaring variable "+var;
-	  if(ev->getNumberOfVariables()==1u){
-	    msg += ", unknown variable "+ev->getVariablesNames()[0];
-	  } else {
-	    const std::vector<string>& evars = ev->getVariablesNames();		
-	    std::vector<string>::const_iterator pv;
-	    msg += ", unknown variables ";
-	    for(pv=evars.begin();pv!=evars.end();){
-	      msg+=*pv;
-	      ++pv;
-	      if(pv!=evars.end()){
-		msg+=",";
-	      }
-	    }
-	  }
-	  throw(runtime_error(msg));
-	}
-	this->addFunction(var,pev,b1,b2);
-      } else if (p->value=="("){
-	SmartPtr<tfel::math::parser::ExternalFunction> ev;
-	vector<string>::const_iterator p2;
-	// adding a new function
-	vector<string> vars = this->readVariableList(p,pe);
-	if(vars.empty()){
-	  string msg("Analyser::analyseFunctionDefinition : ");
-	  msg += "no variable defined";
-	  throw(runtime_error(msg));
-	}
-	if(p==pe){
-	  string msg("Analyser::analyseFunctionDefinition : ");
-	  msg += "unexpected end of line";
-	  throw(runtime_error(msg));
-	}
-	if(p->value!="="){
-	  string msg("Analyser::analyseFunctionDefinition : ");
-	  msg += "unexpected token '"+p->value+"' (expected '=')";
-	  throw(runtime_error(msg));
-	}
-	++p;
-	if(p==pe){
-	  string msg("Analyser::analyseFunctionDefinition : ");
-	  msg += "unexpected end of line";
-	  throw(runtime_error(msg));
-	}
-	string group = this->gatherTokenGroup(p,pe);
-	if(group.empty()){
-	  string msg("Analyser::analyseFunctionDefinition : ");
-	  msg += "invalid declaraction of function "+var;
-	  throw(runtime_error(msg));
-	}
-	ev = SmartPtr<tfel::math::parser::ExternalFunction> (new Evaluator(vars,group,functions));
-	this->addFunction(var,ev,b1,b2);
-      } else {
-	string msg("Analyser::analyseFunctionDefinition : ");
-	msg += "unexpected token ('"+p->value+"')";
-	throw(runtime_error(msg));
-      }
-    } // end of Analyser::analyseFunctionDefinition
-
-    void
-    Analyser::treatConst(TokensContainer::const_iterator& p,
-			 const TokensContainer::const_iterator pe)
-    {
-      this->analyseFunctionDefinition(p,pe,true,true);
-    } // end of Analyser::treatConst
-
-    void
-    Analyser::treatLock(TokensContainer::const_iterator& p,
-			const TokensContainer::const_iterator pe)
-    {
-      this->analyseFunctionDefinition(p,pe,true,false);
-    } // end of Analyser::treatLock
-
-    void
-    Analyser::treatNoDeps(TokensContainer::const_iterator& p,
-			  const TokensContainer::const_iterator pe)
-    {
-      this->analyseFunctionDefinition(p,pe,false,true);
-    } // end of Analyser::treatNoDeps
-
-    void
-    Analyser::analyse(TokensContainer::const_iterator p,
-		      const TokensContainer::const_iterator pe)
-    {
-      using namespace std;
-      using namespace tfel::utilities;
-      using namespace tfel::math;
-      std::map<string,MemFuncPtr>::const_iterator pf;
-      while(p!=pe){
-	pf = this->callBacks.find(p->value);
-	if(pf==this->callBacks.end()){
-	  this->analyseFunctionDefinition(p,pe,false,false);
-	} else {
-	  ++p;
-	  (this->*(pf->second))(p,pe);
-	}
-	if(p!=pe){
-	  string msg("Analyser::analyse : ");
-	  msg += "unexpected token '"+p->value+"'";
-	  throw(runtime_error(msg));
-	}
-      }
-    } // end of Analyse::analyse()
-
-    void
-    Analyser::analyseFile(const std::string& name)
-    {
-      using namespace std;
-      ifstream file(name.c_str());
-      if(!file){
-	string msg("Analyser::analyseFile : ");
-	msg += "can't open file '"+name+"'";
-	throw(runtime_error(msg));
-      }
-      unsigned short nbr=1;
-      while(!file.eof()){
-	string line;
-	getline(file,line);
-	try{
-	  this->analyseLine(line,nbr);
-	}
-	catch(runtime_error &e){
-	  ostringstream msg;
-	  msg << "Analyser::analyseFile : error at line "
-	      << nbr << " of file " << name  << endl
-	      << e.what();
-	  throw(runtime_error(msg.str()));
-	}
-	++nbr;
-      }
-      if(!this->currentLine.empty()){
-	string msg("Analyser::analyseFile : ");
-	msg += "unfinished line at end of file";
-	throw(runtime_error(msg));
-      }
-    } // end of Analyser::analyseFile
-    
-    std::vector<std::string>
-    Analyser::tokenize(const std::string& s,
-		       const char c)
-    {
-      using namespace std;
-      vector<string> res;
-      string::size_type b = 0u;
-      string::size_type e = s.find_first_of(c, b);
-      while (string::npos != e || string::npos != b){
-	// Found a token, add it to the vector.
-	res.push_back(s.substr(b, e - b));
-	b = s.find_first_not_of(c, e);
-	e = s.find_first_of(c, b);
-      }
-      return res;
-    } // end of Analyser::tokenize
-
-    std::string
-    Analyser::stripComments(const std::string& line)
-    {
-      using namespace std;
-      const vector<string>& res = this->tokenize(line,'#');
-      return res[0];
-    } // end of Analyser::stripComments
-
-    void
-    Analyser::analyseLine(const std::string& line,
-			  const unsigned short nbr)
-    {
-      using namespace std;
-      this->currentLineNbr = nbr;
-      string nline = this->stripComments(line);
-      bool treatLine = false;
-      if(nline.empty()){
-	treatLine = true;
-      } else {
-	string::size_type pos = nline.find_last_not_of(' ');
-	if(pos!=string::npos){
-	  // line is not empty
-	  if(nline[pos]=='\\'){
-	    nline[pos] = ' ';
-	    this->currentLine += nline;
-	  } else {
-	    this->currentLine += nline;
-	    treatLine = true;
-	  }
-	}
-      }
-      if(treatLine){
-	if(!this->currentLine.empty()){
-	  if(this->currentLine[0]=='!'){
-	    using namespace tfel::system;
-	    ProcessManager m;
-	    string cmd(++(this->currentLine.begin()),this->currentLine.end());
-	    m.execute(cmd);
-	    this->currentLine.clear();
-	  } else {
-	    this->clear();
-	    this->splitLine(this->currentLine,this->currentLineNbr);
-	    if(this->cStyleCommentOpened){
-	      string msg("Analyser::analyseLine : ");
-	      msg += "unfinished c-style comment";
-	      throw(runtime_error(msg));
-	    }
-	    this->treatPreprocessorDirectives();
-	    this->splitTokens();
-	    CxxTokenizer::stripComments();
-	    this->analyse(this->begin(),
-			  this->end());
-	    this->currentLine.clear();
-	  }
-	}
-      }
-    } // end of Analyser::analyseFile
-
-    const std::string&
-    Analyser::getCurrentLine(void) const
-    {
-      return this->currentLine;
-    } // end of Analyser::getCurrentLine(void) const
-      
-    void
-    Analyser::clearCurrentLine(void)
-    {
-      this->currentLine.clear();
-    } // end of Analyser::clearCurrentLine(void)
 
     Analyser::~Analyser()
     {} // end of Analyser::~Analyser()
@@ -2616,14 +1878,13 @@ tgplot_father_addString(std::vector<std::string>& res,
 {
   using namespace std;
   if(ps!=pe){
-    string t;
+    res.push_back(string());
     while(ps!=pe){
-      t += ps->value;
+      res.back() += ps->value;
       if(++ps!=pe){
-	t += ' ';
+	res.back() += ' ';
       }
     }
-    res.push_back(t);
   }
 } // end of tgplot_father_addString
 
@@ -2640,14 +1901,13 @@ tgplot_father_tokenize(const std::string& s,
 		const unsigned short nb)
     {
       using namespace std;
-      this->splitLine(line,nb);
       this->treatCharAsString(true);
+      this->splitLine(line,nb);
       if(this->cStyleCommentOpened){
 	string msg("tgplot_father_tokenize : ");
 	msg += "unfinished c-style comment";
 	throw(runtime_error(msg));
       }
-      this->treatPreprocessorDirectives();
       this->splitTokens();
       CxxTokenizer::stripComments();
     }
@@ -2670,10 +1930,10 @@ tgplot_father_tokenize(const std::string& s,
   }
   tgplot_father_addString(res,ps,pe);
   return res;
-} // end of Analyser::tokenize
+} // end of tgplot_father_tokenize
 
 static void
-tgplot_father_send(const char* const line,
+tgplot_father_send(const std::string& line,
 		   const unsigned short n)
 {
   using namespace std;
@@ -2689,7 +1949,7 @@ tgplot_father_send(const char* const line,
 	 << line << "'\n Error at line " << n << endl;
   }
 #ifdef HAVE_READLINE_HISTORY
-  ::add_history(line);
+  ::add_history(line.c_str());
 #endif /* HAVE_READLINE_HISTORY */
   for(p=res.begin();p!=res.end();++p){
     if(*p=="pause"){
@@ -2728,7 +1988,7 @@ tgplot_father(void)
   tgplot_father_send("",0);
   n=1;
   // treating input Files
-  for(p2=inputFiles.begin();p2!=inputFiles.end();++p2,++n){
+  for(p2=inputFiles.begin();p2!=inputFiles.end();++p2){
     ifstream file(p2->c_str());
     while(!file.eof()){
       string fline;
@@ -2736,17 +1996,13 @@ tgplot_father(void)
       if(!fline.empty()){
 	tgplot_father_send(fline.c_str(),n);
       }
+      ++n;
     }
   }
   // user inputs
-  char *line;
-  n=1;
 #ifdef HAVE_READLINE
+  char *line;
   line = ::readline("tgplot> ");
-#else
-  cout << "tgplot> ";
-  cin  >> line;
-#endif /* HAVE_READLINE */
   while(line){
     ++n;
     if(*line){
@@ -2755,13 +2011,22 @@ tgplot_father(void)
       }
     }
     ::free(line);
-#ifdef HAVE_READLINE
-  line = ::readline("tgplot> ");
-#else
-  cout << "tgplot> ";
-  cin  >> line;
-#endif /* HAVE_READLINE */
+    line = ::readline("tgplot> ");
   }
+#else
+  string line;
+  cout << "tgplot> ";
+  if(!cin.eof()){
+    getline(cin,line);
+  }
+  while(!cin.eof()){
+    ++n;
+    tgplot_father_send(line,n);
+    line.clear();
+    cout << "tgplot> ";
+    getline(cin,line);
+  }
+#endif /* HAVE_READLINE */
   ::kill(pid,SIGKILL);
   ::close(in[1]);
   ::close(ffd[0]);

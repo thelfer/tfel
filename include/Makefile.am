@@ -64,7 +64,7 @@ nobase_include_HEADERS= TFEL/FiniteElement/Element/ElementsManager.ixx          
 			TFEL/TypeTraits/IsRandomAccessIterator.hxx	                              \
 			TFEL/Math/Bindings/atlas.hxx                                                  \
 			TFEL/Math/Interpreter/InterpreterCommon.hxx                                   \
-			TFEL/Math/Interpreter/InterpreterBase.ixx                                     \
+			TFEL/Math/Interpreter/InterpreterBase.hxx                                     \
 			TFEL/Math/Interpreter/InterpreterBase.ixx                                     \
 			TFEL/Math/Parser/BinaryFunction.hxx					      \
 			TFEL/Math/Parser/EvaluatorBase.hxx 					      \

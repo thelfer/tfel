@@ -581,11 +581,12 @@ namespace tfel
 				  const GraphSize& s,
 				  const std::vector<Point>& points,
 				  const Curve::Style style,
+				  const unsigned short w,
 				  const unsigned short nbr) const
     {
       Curve::Color cdefault;
       this->getDefaultColor(cdefault,nbr);
-      this->drawCurve(cr,ax,bx,ay,by,s,points,style,cdefault,nbr);
+      this->drawCurve(cr,ax,bx,ay,by,s,points,style,cdefault,w,nbr);
     }
 
     void
@@ -594,15 +595,16 @@ namespace tfel
 					   const double bx,
 					   const double ay,
 					   const double by,
-					   const std::vector<Point>& points) const
+					   const std::vector<Point>& points,
+					   const unsigned short w) const
     {
       using namespace std;
       vector<Point>::const_iterator p;
       vector<Point>::const_iterator pe;
       bool found;
       bool previous;
-      const double radius = 2u;
-      cr->set_line_width(2);
+      const double radius = 2*w;
+      cr->set_line_width(2*w);
       if(points.empty()){
 	return;
       }
@@ -646,15 +648,16 @@ namespace tfel
 
     void
     StandardGraphTheme::drawCurveWithDots(Cairo::RefPtr<Cairo::Context>& cr,
-					     const double ax,
-					     const double bx,
-					     const double ay,
-					     const double by,
-					     const std::vector<Point>& points) const
+					  const double ax,
+					  const double bx,
+					  const double ay,
+					  const double by,
+					  const std::vector<Point>& points,
+					  const unsigned short w) const
     {
       using namespace std;
       vector<Point>::const_iterator p;
-      const double radius = 2u;
+      const double radius = 2u*w;
       if(points.empty()){
 	return;
       }
@@ -673,11 +676,12 @@ namespace tfel
 					     const double bx,
 					     const double ay,
 					     const double by,
-					     const std::vector<Point>& points) const
+					     const std::vector<Point>& points,
+					     const unsigned short w) const
     {
       using namespace std;
       vector<Point>::const_iterator p;
-      const double extent = 3u;
+      const double extent = 3u*w;
       if(points.empty()){
 	return;
       }
@@ -694,15 +698,16 @@ namespace tfel
 
     void
     StandardGraphTheme::drawCurveWithTriangles(Cairo::RefPtr<Cairo::Context>& cr,
-					     const double ax,
-					     const double bx,
-					     const double ay,
-					     const double by,
-					     const std::vector<Point>& points) const
+					       const double ax,
+					       const double bx,
+					       const double ay,
+					       const double by,
+					       const std::vector<Point>& points,
+					       const unsigned short w) const
     {
       using namespace std;
       vector<Point>::const_iterator p;
-      const double extent = 3u;
+      const double extent = 3u*w;
       if(points.empty()){
 	return;
       }
@@ -722,15 +727,16 @@ namespace tfel
 
     void
     StandardGraphTheme::drawCurveWithDiamonds(Cairo::RefPtr<Cairo::Context>& cr,
-					     const double ax,
-					     const double bx,
-					     const double ay,
-					     const double by,
-					     const std::vector<Point>& points) const
+					      const double ax,
+					      const double bx,
+					      const double ay,
+					      const double by,
+					      const std::vector<Point>& points,
+					      const unsigned short w) const
     {
       using namespace std;
       vector<Point>::const_iterator p;
-      const double extent = 3;
+      const double extent = 3u*w;
       if(points.empty()){
 	return;
       }
@@ -755,11 +761,13 @@ namespace tfel
 					     const double bx,
 					     const double ay,
 					     const double by,
-					     const std::vector<Point>& points) const
+					     const std::vector<Point>& points,
+					     const unsigned short w) const
     {
       using namespace std;
       vector<Point>::const_iterator p;
-      const double extent = 3;
+      const double extent = 3u*w;
+      cr->set_line_width(w);
       if(points.empty()){
 	return;
       }
@@ -779,15 +787,17 @@ namespace tfel
 
     void
     StandardGraphTheme::drawCurveWithPoints(Cairo::RefPtr<Cairo::Context>& cr,
-					     const double ax,
-					     const double bx,
-					     const double ay,
-					     const double by,
-					     const std::vector<Point>& points) const
+					    const double ax,
+					    const double bx,
+					    const double ay,
+					    const double by,
+					    const std::vector<Point>& points,
+					    const unsigned short w) const
     {
       using namespace std;
       vector<Point>::const_iterator p;
-      const double extent = 3;
+      const double extent = 3u*w;
+      cr->set_line_width(w);
       if(points.empty()){
 	return;
       }
@@ -815,7 +825,8 @@ namespace tfel
 				  const std::vector<Point>& points,
 				  const Curve::Style style,
 				  const Curve::Color color,
-				  const unsigned short) const
+				  const unsigned short w,
+				  const unsigned short nbr) const
     {
       using namespace std;
       cr->save();
@@ -824,22 +835,22 @@ namespace tfel
       cr->clip();
       cr->set_source_rgb(color.r,color.g,color.b);
       if(style==Curve::LINE){
-	this->drawCurveWithLines(cr,ax,bx,ay,by,points);
+	this->drawCurveWithLines(cr,ax,bx,ay,by,points,w);
       } else if(style==Curve::LINEPOINT){
-	this->drawCurveWithLines(cr,ax,bx,ay,by,points);
-	this->drawCurveWithPoints(cr,ax,bx,ay,by,points);
+	this->drawCurveWithLines(cr,ax,bx,ay,by,points,w);
+	this->drawCurveWithPoints(cr,ax,bx,ay,by,points,w);
       } else if(style==Curve::DOT){
-	this->drawCurveWithDots(cr,ax,bx,ay,by,points);
+	this->drawCurveWithDots(cr,ax,bx,ay,by,points,w);
       } else if(style==Curve::POINT){
-	this->drawCurveWithPoints(cr,ax,bx,ay,by,points);
+	this->drawCurveWithPoints(cr,ax,bx,ay,by,points,w);
       } else if(style==Curve::DIAMOND){
-	this->drawCurveWithDiamonds(cr,ax,bx,ay,by,points);
+	this->drawCurveWithDiamonds(cr,ax,bx,ay,by,points,w);
       } else if(style==Curve::SQUARE){
-	this->drawCurveWithSquares(cr,ax,bx,ay,by,points);
+	this->drawCurveWithSquares(cr,ax,bx,ay,by,points,w);
       } else if(style==Curve::TRIANGLE){
-	this->drawCurveWithTriangles(cr,ax,bx,ay,by,points);
+	this->drawCurveWithTriangles(cr,ax,bx,ay,by,points,w);
       } else {
-	this->drawCurveWithCrosses(cr,ax,bx,ay,by,points);
+	this->drawCurveWithCrosses(cr,ax,bx,ay,by,points,w);
       }
       cr->restore();
     } // end of StandardGraphTheme::drawCurves

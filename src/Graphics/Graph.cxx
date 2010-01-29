@@ -1033,47 +1033,47 @@ namespace tfel
 				   s,p->points,
 				   p->curve->getStyle(),
 				   p->curve->getColor(),
-				   nbr);
+				   p->curve->getWidth(),nbr);
 	  } else if(p->axis==Graph::X2Y){
 	    this->theme->drawCurve(cr,l.ax2,l.bx2,l.ay,l.by,
 				   s,p->points,
 				   p->curve->getStyle(),
 				   p->curve->getColor(),
-				   nbr);
+				   p->curve->getWidth(),nbr);
 	  } else if(p->axis==Graph::XY2){
 	    this->theme->drawCurve(cr,l.ax,l.bx,l.ay2,l.by2,
 				   s,p->points,
 				   p->curve->getStyle(),
 				   p->curve->getColor(),
-				   nbr);
+				   p->curve->getWidth(),nbr);
 	  } else {
 	    this->theme->drawCurve(cr,l.ax2,l.bx2,l.ay2,l.by2,
 				   s,p->points,
 				   p->curve->getStyle(),
 				   p->curve->getColor(),
-				   nbr);
+				   p->curve->getWidth(),nbr);
 	  }
 	} else {
 	  if(p->axis==Graph::XY){
 	    this->theme->drawCurve(cr,l.ax,l.bx,l.ay,l.by,
 				   s,p->points,
 				   p->curve->getStyle(),
-				   nbr);
+				   p->curve->getWidth(),nbr);
 	  } else if(p->axis==Graph::X2Y){
 	    this->theme->drawCurve(cr,l.ax2,l.bx2,l.ay,l.by,
 				   s,p->points,
 				   p->curve->getStyle(),
-				   nbr);
+				   p->curve->getWidth(),nbr);
 	  } else if(p->axis==Graph::XY2){
 	    this->theme->drawCurve(cr,l.ax,l.bx,l.ay2,l.by2,
 				   s,p->points,
 				   p->curve->getStyle(),
-				   nbr);
+				   p->curve->getWidth(),nbr);
 	  } else {
 	    this->theme->drawCurve(cr,l.ax2,l.bx2,l.ay2,l.by2,
 				   s,p->points,
 				   p->curve->getStyle(),
-				   nbr);
+				   p->curve->getWidth(),nbr);
 	  }
 	}
       }

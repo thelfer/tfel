@@ -55,6 +55,8 @@ namespace tfel{
       virtual void setColor(const Color&) = 0;
       virtual void setStyle(const Style&) = 0;
       virtual void setNumberOfSamples(const unsigned short) = 0;
+      virtual unsigned short getWidth() const = 0;
+      virtual void setWidth(const unsigned short) = 0;
       virtual ~Curve();
     }; // end of struct Curve
 
