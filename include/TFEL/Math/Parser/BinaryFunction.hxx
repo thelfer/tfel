@@ -42,8 +42,7 @@ namespace tfel
 	StandardBinaryFunction(const tfel::utilities::SmartPtr<Expr>,
 			       const tfel::utilities::SmartPtr<Expr>);
 	void
-	checkCyclicDependency(const std::vector<std::string>&) const
-	  throw(std::runtime_error);
+	checkCyclicDependency(std::vector<std::string>&) const;
 	double getValue(void) const;
 	tfel::utilities::SmartPtr<Expr>
 	resolveDependencies(void) const;

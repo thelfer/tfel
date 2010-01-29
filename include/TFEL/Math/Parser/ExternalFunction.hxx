@@ -34,11 +34,9 @@ namespace tfel
 	virtual std::vector<double>::size_type
 	getNumberOfVariables(void) const = 0;
 	virtual void
-	checkCyclicDependency(const std::string&) const
-	  throw(std::runtime_error) = 0;
+	checkCyclicDependency(const std::string&) const = 0;
 	virtual void
-	checkCyclicDependency(const std::vector<std::string>&) const
-	  throw(std::runtime_error) = 0;
+	checkCyclicDependency(std::vector<std::string>&) const = 0;
 	virtual tfel::utilities::SmartPtr<ExternalFunction>
 	differentiate(const std::vector<double>::size_type) const = 0;
 	virtual	tfel::utilities::SmartPtr<ExternalFunction>

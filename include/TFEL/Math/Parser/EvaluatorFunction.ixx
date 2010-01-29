@@ -550,15 +550,16 @@ namespace tfel
 
       template<unsigned short N>
       void
-      EvaluatorFunctionNV<N>::checkCyclicDependency(const std::vector<std::string>& names) const
-	throw(std::runtime_error)
+      EvaluatorFunctionNV<N>::checkCyclicDependency(std::vector<std::string>& names) const
       {
 	using namespace std;
 	using namespace tfel::utilities;
         vector<SmartPtr<Expr> >::const_iterator p;
         for(p=this->args.begin();p!=this->args.end();++p){
-	  (*p)->checkCyclicDependency(names);
-        }
+	  vector<string> n;
+	  (*p)->checkCyclicDependency(n);
+	  mergeVariablesNames(names,n);
+	}
       } // end of EvaluatorFunctionNV<N>::checkCyclicDependency
 
       template<unsigned short N>
@@ -613,14 +614,15 @@ namespace tfel
 
       template<unsigned short N>
       void
-      EvaluatorFunction1PNV<N>::checkCyclicDependency(const std::vector<std::string>& names) const
-	throw(std::runtime_error)
+      EvaluatorFunction1PNV<N>::checkCyclicDependency(std::vector<std::string>& names) const
       {
 	using namespace std;
 	using namespace tfel::utilities;
         vector<SmartPtr<Expr> >::const_iterator p;
         for(p=this->args.begin();p!=this->args.end();++p){
-	  (*p)->checkCyclicDependency(names);
+	  vector<string> vn;
+	  (*p)->checkCyclicDependency(vn);
+	  mergeVariablesNames(names,vn);
         }
       } // end of EvaluatorFunction1PNV<N>::checkCyclicDependency
 
@@ -678,14 +680,15 @@ namespace tfel
 
       template<unsigned short N>
       void
-      EvaluatorFunction2PNV<N>::checkCyclicDependency(const std::vector<std::string>& names) const
-	throw(std::runtime_error)
+      EvaluatorFunction2PNV<N>::checkCyclicDependency(std::vector<std::string>& names) const
       {
 	using namespace std;
 	using namespace tfel::utilities;
         vector<SmartPtr<Expr> >::const_iterator p;
         for(p=this->args.begin();p!=this->args.end();++p){
-	  (*p)->checkCyclicDependency(names);
+	  vector<string> vn;
+	  (*p)->checkCyclicDependency(vn);
+	  mergeVariablesNames(names,vn);
         }
       } // end of EvaluatorFunction2PNV<N>::checkCyclicDependency
 
@@ -741,14 +744,15 @@ namespace tfel
 
       template<unsigned short N>
       void
-      EvaluatorFunction1UPNV<N>::checkCyclicDependency(const std::vector<std::string>& names) const
-	throw(std::runtime_error)
+      EvaluatorFunction1UPNV<N>::checkCyclicDependency(std::vector<std::string>& names) const
       {
 	using namespace std;
 	using namespace tfel::utilities;
         vector<SmartPtr<Expr> >::const_iterator p;
         for(p=this->args.begin();p!=this->args.end();++p){
-	  (*p)->checkCyclicDependency(names);
+	  vector<string> vn;
+	  (*p)->checkCyclicDependency(vn);
+	  mergeVariablesNames(names,vn);
         }
       } // end of EvaluatorFunction1UPNV<N>::checkCyclicDependency
 
@@ -806,14 +810,15 @@ namespace tfel
 
       template<unsigned short N>
       void
-      EvaluatorFunction2UPNV<N>::checkCyclicDependency(const std::vector<std::string>& names) const
-	throw(std::runtime_error)
+      EvaluatorFunction2UPNV<N>::checkCyclicDependency(std::vector<std::string>& names) const
       {
 	using namespace std;
 	using namespace tfel::utilities;
         vector<SmartPtr<Expr> >::const_iterator p;
         for(p=this->args.begin();p!=this->args.end();++p){
-	  (*p)->checkCyclicDependency(names);
+	  vector<string> vn;
+	  (*p)->checkCyclicDependency(vn);
+	  mergeVariablesNames(names,vn);
         }
       } // end of EvaluatorFunction2UPNV<N>::checkCyclicDependency
 

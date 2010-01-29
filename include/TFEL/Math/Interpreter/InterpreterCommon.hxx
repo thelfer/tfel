@@ -52,18 +52,18 @@ namespace tfel
 	bool
 	isValidIdentifier(const std::string&);
 
-	std::string
-	stripComments(const std::string&);
-
 	std::vector<std::string>
 	tokenize(const std::string&,
 		 const char);
 
 	void
-	analyse(TokensContainer::const_iterator,
-		const TokensContainer::const_iterator);
+	treatImport(TokensContainer::const_iterator&, 
+		    const TokensContainer::const_iterator);
 
-	void setRanges(void);
+	void
+	treatImport(TokensContainer::const_iterator&, 
+		    const TokensContainer::const_iterator,
+		    const bool);
 
 	tfel::utilities::SmartPtr<tfel::math::Evaluator>
 	readFunction(TokensContainer::const_iterator&, 
@@ -74,14 +74,6 @@ namespace tfel
 	treatSetGSL(TokensContainer::const_iterator&, 
 		    const TokensContainer::const_iterator);
 #endif
-
-	void
-	treatSet(TokensContainer::const_iterator&, 
-		 const TokensContainer::const_iterator);
-	
-	void
-	treatUnset(TokensContainer::const_iterator&, 
-		   const TokensContainer::const_iterator);
 	
 	void
 	analyseFunctionDefinition(TokensContainer::const_iterator&,
@@ -137,6 +129,10 @@ namespace tfel
 	std::vector<std::string>
 	readVariableList(TokensContainer::const_iterator&, 
 			 const TokensContainer::const_iterator);
+	
+	void
+	treatPrint(TokensContainer::const_iterator&, 
+		   const TokensContainer::const_iterator);
 
 	void
 	treatQuit(TokensContainer::const_iterator&, 
@@ -153,19 +149,6 @@ namespace tfel
 	void
 	treatNoDeps(TokensContainer::const_iterator&, 
 		    const TokensContainer::const_iterator);
-
-	void
-	treatInclude(TokensContainer::const_iterator&, 
-		     const TokensContainer::const_iterator);
-
-	void
-	treatImport(TokensContainer::const_iterator&, 
-		    const TokensContainer::const_iterator);
-
-	void
-	treatImport(TokensContainer::const_iterator&, 
-		    const TokensContainer::const_iterator,
-		    const bool);
 
 	const std::string
 	gatherTokenGroup(TokensContainer::const_iterator&, 

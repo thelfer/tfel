@@ -72,8 +72,7 @@ namespace tfel
 
       template<StandardFunctionPtr f>
       void
-      StandardFunction<f>::checkCyclicDependency(const std::vector<std::string>& names) const
-	throw(std::runtime_error)
+      StandardFunction<f>::checkCyclicDependency(std::vector<std::string>& names) const
       {
 	this->expr->checkCyclicDependency(names);
       } // end of StandardFunction<f>::checkCyclicDependency

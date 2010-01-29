@@ -51,11 +51,15 @@ namespace tfel
 
       template<double (*f)(const double,const double)>
       void
-      StandardBinaryFunction<f>::checkCyclicDependency(const std::vector<std::string>& names) const
-	throw(std::runtime_error)
+      StandardBinaryFunction<f>::checkCyclicDependency(std::vector<std::string>& names) const
       {
-	this->expr1->checkCyclicDependency(names);
-	this->expr2->checkCyclicDependency(names);
+	using namespace std;
+	vector<string> a_names;
+	vector<string> b_names;
+	this->expr1->checkCyclicDependency(a_names);
+	this->expr2->checkCyclicDependency(b_names);
+	mergeVariablesNames(names,a_names);
+	mergeVariablesNames(names,b_names);
       } // end of StandardBinaryFunction<f>::checkCyclicDependency
 
       template<double (*f)(const double,const double)>

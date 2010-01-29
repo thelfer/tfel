@@ -168,11 +168,9 @@ namespace tfel
       checkCyclicDependency(void) const
 	throw(std::runtime_error);
       void
-      checkCyclicDependency(const std::string&) const
-	throw(std::runtime_error);
+      checkCyclicDependency(const std::string&) const;
       void
-      checkCyclicDependency(const std::vector<std::string>&) const
-	throw(std::runtime_error);
+      checkCyclicDependency(std::vector<std::string>&) const;
       tfel::utilities::SmartPtr<tfel::math::parser::ExternalFunction>
       differentiate(const std::vector<double>::size_type) const;
       tfel::utilities::SmartPtr<tfel::math::parser::ExternalFunction>

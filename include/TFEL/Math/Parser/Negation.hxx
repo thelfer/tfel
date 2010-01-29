@@ -26,8 +26,7 @@ namespace tfel
 	Negation(const tfel::utilities::SmartPtr<Expr>);
 	double getValue(void) const;
 	void
-	checkCyclicDependency(const std::vector<std::string>&) const
-	  throw(std::runtime_error);
+	checkCyclicDependency(std::vector<std::string>&) const;
 	tfel::utilities::SmartPtr<Expr>
 	differentiate(const std::vector<double>::size_type,
 		      const std::vector<double>&) const;

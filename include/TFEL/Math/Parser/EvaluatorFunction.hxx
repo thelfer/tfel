@@ -48,8 +48,7 @@ namespace tfel
       {
 	EvaluatorFunction1VBase(const tfel::utilities::SmartPtr<Expr>);
 	void
-	checkCyclicDependency(const std::vector<std::string>&) const
-	  throw(std::runtime_error);
+	checkCyclicDependency(std::vector<std::string>&) const;
 	virtual ~EvaluatorFunction1VBase();
       protected:
 	const tfel::utilities::SmartPtr<Expr> expr;
@@ -61,8 +60,7 @@ namespace tfel
 	EvaluatorFunction2VBase(const tfel::utilities::SmartPtr<Expr>,
 				const tfel::utilities::SmartPtr<Expr>);
 	void
-	checkCyclicDependency(const std::vector<std::string>&) const
-	  throw(std::runtime_error);
+	checkCyclicDependency(std::vector<std::string>&) const;
 	virtual ~EvaluatorFunction2VBase();
       protected:
 	const tfel::utilities::SmartPtr<Expr> e1;
@@ -158,8 +156,7 @@ namespace tfel
 	tfel::utilities::SmartPtr<Expr>
 	clone(const std::vector<double>&) const;
 	void
-	checkCyclicDependency(const std::vector<std::string>&) const
-	  throw(std::runtime_error);
+	checkCyclicDependency(std::vector<std::string>&) const;
 	virtual ~EvaluatorFunctionNV();
       protected:
 	typename EvaluatorFunctionWrapper<N>::type f;
@@ -179,8 +176,7 @@ namespace tfel
 	tfel::utilities::SmartPtr<Expr>
 	clone(const std::vector<double>&) const;
 	void
-	checkCyclicDependency(const std::vector<std::string>&) const
-	  throw(std::runtime_error);
+	checkCyclicDependency(std::vector<std::string>&) const;
 	virtual ~EvaluatorFunction1PNV();
       protected:
 	typename EvaluatorFunctionWrapper<N>::type1P f;
@@ -201,8 +197,7 @@ namespace tfel
 	tfel::utilities::SmartPtr<Expr>
 	clone(const std::vector<double>&) const;
 	void
-	checkCyclicDependency(const std::vector<std::string>&) const
-	  throw(std::runtime_error);
+	checkCyclicDependency(std::vector<std::string>&) const;
 	virtual ~EvaluatorFunction2PNV();
       protected:
 	typename EvaluatorFunctionWrapper<N>::type2P f;
@@ -224,8 +219,7 @@ namespace tfel
 	tfel::utilities::SmartPtr<Expr>
 	clone(const std::vector<double>&) const;
 	void
-	checkCyclicDependency(const std::vector<std::string>&) const
-	  throw(std::runtime_error);
+	checkCyclicDependency(std::vector<std::string>&) const;
 	virtual ~EvaluatorFunction1UPNV();
       protected:
 	typename EvaluatorFunctionWrapper<N>::type1UP f;
@@ -247,8 +241,7 @@ namespace tfel
 	tfel::utilities::SmartPtr<Expr>
 	clone(const std::vector<double>&) const;
 	void
-	checkCyclicDependency(const std::vector<std::string>&) const
-	  throw(std::runtime_error);
+	checkCyclicDependency(std::vector<std::string>&) const;
 	virtual ~EvaluatorFunction2UPNV();
       protected:
 	typename EvaluatorFunctionWrapper<N>::type2UP f;

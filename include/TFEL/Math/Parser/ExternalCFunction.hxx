@@ -45,11 +45,9 @@ namespace tfel
 	std::vector<double>::size_type
 	getNumberOfVariables(void) const;
 	void
-	checkCyclicDependency(const std::string&) const
-	  throw(std::runtime_error);
+	checkCyclicDependency(const std::string&) const;
 	void
-	checkCyclicDependency(const std::vector<std::string>&) const
-	  throw(std::runtime_error);
+	checkCyclicDependency(std::vector<std::string>&) const;
 	tfel::utilities::SmartPtr<ExternalFunction>
 	differentiate(const std::vector<double>::size_type) const;
 	tfel::utilities::SmartPtr<ExternalFunction>
@@ -61,13 +59,11 @@ namespace tfel
       template<unsigned short N>
       void
       ExternalCFunctionBase<N>::checkCyclicDependency(const std::string&) const
-	throw(std::runtime_error)
       {} // end of ExternalCFunctionBase::checkCyclicDependency
 
       template<unsigned short N>
       void
-      ExternalCFunctionBase<N>::checkCyclicDependency(const std::vector<std::string>&) const
-	throw(std::runtime_error)
+      ExternalCFunctionBase<N>::checkCyclicDependency(std::vector<std::string>&) const
       {} // end of ExternalCFunctionBase::checkCyclicDependency
 
       template<unsigned short N>
@@ -117,11 +113,9 @@ namespace tfel
 	std::vector<double>::size_type
 	getNumberOfVariables(void) const;
 	void
-	checkCyclicDependency(const std::string&) const
-	  throw(std::runtime_error);
+	checkCyclicDependency(const std::string&) const;
 	void
-	checkCyclicDependency(const std::vector<std::string>&) const
-	  throw(std::runtime_error);
+	checkCyclicDependency(std::vector<std::string>&) const;
 	tfel::utilities::SmartPtr<ExternalFunction>
 	differentiate(const std::vector<double>::size_type) const;
 	tfel::utilities::SmartPtr<ExternalFunction>

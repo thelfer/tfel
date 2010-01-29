@@ -71,7 +71,7 @@ namespace tfel
 	double
 	getValue(void) const;
 	void
-	checkCyclicDependency(const std::vector<std::string>&) const
+	checkCyclicDependency(std::vector<std::string>&) const
 	  throw(std::runtime_error);
 	tfel::utilities::SmartPtr<Expr>
 	resolveDependencies(void) const;

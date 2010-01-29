@@ -16,6 +16,24 @@ namespace tfel
 
     namespace interpreter
     {
+      
+      template<typename Child>
+      InterpreterBase<Child>::InterpreterBase()
+      {
+	using namespace std;
+	using namespace tfel::math;
+	using namespace tfel::utilities;
+	using namespace tfel::math::parser;
+	typedef ExternalFunctionManager::value_type MVType;
+	typedef SmartPtr<ExternalFunction> ExternalFunctionPtr;
+	stringstream pi;
+	pi.precision(15);
+	pi << M_PI;
+	ExternalFunctionPtr p(new Evaluator(pi.str()));
+	this->functions->insert(MVType("pi",p));
+	this->locks.insert("pi");
+	this->registerCallBacks();
+      } // end of InterpreterBase<Child>::InterpreterBase
 
       template<typename Child>
       void
@@ -25,8 +43,12 @@ namespace tfel
 					       const InterpreterBase<Child>::MemFuncPtr f)
       {
 	using namespace std;
-	typedef std::map<string,MemFuncPtr>::value_type MVType;
-	m.insert(MVType(name,f));      
+	typedef typename map<string,MemFuncPtr>::value_type MVType;
+	if(!m.insert(MVType(name,f)).second){
+	  string msg("InterpreterBase<Child>::registerCallBack : ");
+	  msg += "keyword '"+name+"' already declared";
+	  throw(runtime_error(msg));
+	}
       } // end of InterpreterBase<Child>::registerCallBack
 	
       template<typename Child>
@@ -43,6 +65,7 @@ namespace tfel
 	this->registerCallBack(this->callBacks,"se",&Child::treatSet);
 	this->registerCallBack(this->callBacks,"set",&Child::treatSet);
 	this->registerCallBack(this->callBacks,"unset",&Child::treatUnset);
+	this->registerCallBack(this->callBacks,"print",&Child::treatPrint);
 #ifdef HAVE_GSL
 	this->registerCallBack(this->setCallBacks,"gsl",&Child::treatSetGSL);
 #endif
@@ -51,7 +74,7 @@ namespace tfel
       template<typename Child>
       void
       InterpreterBase<Child>::treatSet(TokensContainer::const_iterator& p,
-				  const TokensContainer::const_iterator pe)
+				       const TokensContainer::const_iterator pe)
       {
 	using namespace std;
 	this->checkNotEndOfLine("InterpreterBase<Child>::treatSet","",p,pe);
@@ -63,13 +86,13 @@ namespace tfel
 	  throw(runtime_error(msg));
 	}
 	++p;
-	(this->*(ps->second))(p,pe);
+	(static_cast<Child *>(this)->*(ps->second))(p,pe);
       } // end of InterpreterBase<Child>::treatSet
 
       template<typename Child>
       void
       InterpreterBase<Child>::treatUnset(TokensContainer::const_iterator& p,
-				    const TokensContainer::const_iterator pe)
+					 const TokensContainer::const_iterator pe)
       {
 	using namespace std;
 	this->checkNotEndOfLine("InterpreterBase<Child>::treatUnset","",p,pe);
@@ -81,13 +104,13 @@ namespace tfel
 	  throw(runtime_error(msg));
 	}
 	++p;
-	(this->*(ps->second))(p,pe);
+	(static_cast<Child*>(this)->*(ps->second))(p,pe);
       } // end of InterpreterBase<Child>::treatUnset
 
       template<typename Child>
       void
       InterpreterBase<Child>::treatInclude(TokensContainer::const_iterator& p, 
-				      const TokensContainer::const_iterator pe)
+					   const TokensContainer::const_iterator pe)
       {
 	using namespace std;
 	TokensContainer::const_iterator p2;
@@ -115,19 +138,19 @@ namespace tfel
       template<typename Child>
       void
       InterpreterBase<Child>::analyse(TokensContainer::const_iterator p,
-				 const TokensContainer::const_iterator pe)
+				      const TokensContainer::const_iterator pe)
       {
 	using namespace std;
 	using namespace tfel::utilities;
 	using namespace tfel::math;
-	std::map<string,MemFuncPtr>::const_iterator pf;
+	typename map<string,MemFuncPtr>::const_iterator pf;
 	while(p!=pe){
 	  pf = this->callBacks.find(p->value);
 	  if(pf==this->callBacks.end()){
 	    this->analyseFunctionDefinition(p,pe,false,false);
 	  } else {
 	    ++p;
-	    (this->*(pf->second))(p,pe);
+	    (static_cast<Child*>(this)->*(pf->second))(p,pe);
 	  }
 	  if(p!=pe){
 	    string msg("InterpreterBase<Child>::analyse : ");
@@ -153,7 +176,7 @@ namespace tfel
 	  string line;
 	  getline(file,line);
 	  try{
-	    this->analyseLine(line,nbr);
+	    static_cast<Child *>(this)->analyseLine(line,nbr);
 	  }
 	  catch(runtime_error &e){
 	    ostringstream msg;
@@ -174,16 +197,16 @@ namespace tfel
       template<typename Child>
       void
       InterpreterBase<Child>::analyseLine(const std::string& line,
-				     const unsigned short nbr)
+					  const unsigned short nbr)
       {
 	using namespace std;
+	string nline(line);
 	this->currentLineNbr = nbr;
-	string nline = this->stripComments(line);
-	bool treatLine = false;
+	bool treat = false;
 	if(nline.empty()){
-	  treatLine = true;
+	  treat = true;
 	} else {
-	  string::size_type pos = nline.find_last_not_of(' ');
+	  string::size_type pos = nline.find_last_not_of(" \t");
 	  if(pos!=string::npos){
 	    // line is not empty
 	    if(nline[pos]=='\\'){
@@ -191,38 +214,37 @@ namespace tfel
 	      this->currentLine += nline;
 	    } else {
 	      this->currentLine += nline;
-	      treatLine = true;
+	      treat = true;
 	    }
 	  }
 	}
-	if(treatLine){
-	  if(!this->currentLine.empty()){
-	    if(this->currentLine[0]=='!'){
-	      using namespace tfel::system;
-	      ProcessManager m;
-	      string::iterator p = this->currentLine.begin();
-	      ++p;
-	      string cmd(p,this->currentLine.end());
-	      m.execute(cmd);
-	      this->currentLine.clear();
-	    } else {
-	      this->clear();
-	      this->splitLine(this->currentLine,this->currentLineNbr);
-	      if(this->cStyleCommentOpened){
-		string msg("InterpreterBase<Child>::analyseLine : ");
-		msg += "unfinished c-style comment";
-		throw(runtime_error(msg));
-	      }
-	      this->treatPreprocessorDirectives();
-	      this->splitTokens();
-	      CxxTokenizer::stripComments();
-	      this->analyse(this->begin(),
-			    this->end());
-	      this->currentLine.clear();
-	    }
-	  }
+	if(treat){
+	  static_cast<Child*>(this)->treatLine();
 	}
       } // end of InterpreterBase<Child>::analyseFile
+
+      template<typename Child>
+      void
+      InterpreterBase<Child>::treatLine()
+      {
+	using namespace std;
+	using namespace tfel::utilities;
+        if(!this->currentLine.empty()){
+	  this->clear();
+	  this->splitLine(this->currentLine,this->currentLineNbr);
+	  if(this->cStyleCommentOpened){
+	    string msg("InterpreterBase<Child>::analyseLine : ");
+	    msg += "unfinished c-style comment";
+	    throw(runtime_error(msg));
+	  }
+	  this->treatPreprocessorDirectives();
+	  this->splitTokens();
+	  CxxTokenizer::stripComments();
+	  this->analyse(this->begin(),
+			this->end());
+	  this->currentLine.clear();
+	}
+      } // end of InterpreterBase<Child>::treatLine
 
       template<typename Child>
       const std::string&

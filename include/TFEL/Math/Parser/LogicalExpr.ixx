@@ -40,11 +40,15 @@ namespace tfel
 
       template<typename Op>
       void
-      LogicalOperation<Op>::checkCyclicDependency(const std::vector<std::string>& vars) const
-	throw(std::runtime_error)
+      LogicalOperation<Op>::checkCyclicDependency(std::vector<std::string>& vars) const
       {
-	this->a->checkCyclicDependency(vars);
-	this->b->checkCyclicDependency(vars);
+	using namespace std;
+	vector<string> a_vars;
+	vector<string> b_vars;
+	this->a->checkCyclicDependency(a_vars);
+	this->b->checkCyclicDependency(b_vars);
+	mergeVariablesNames(vars,a_vars);
+	mergeVariablesNames(vars,b_vars);
       } // end of LogicalOperation::checkCyclicDependency
 
       template<typename Op>
@@ -85,11 +89,15 @@ namespace tfel
 
       template<typename Op>
       void
-      LogicalBinaryOperation<Op>::checkCyclicDependency(const std::vector<std::string>& vars) const
-	throw(std::runtime_error)
+      LogicalBinaryOperation<Op>::checkCyclicDependency(std::vector<std::string>& vars) const
       {
-	this->a->checkCyclicDependency(vars);
-	this->b->checkCyclicDependency(vars);
+	using namespace std;
+	vector<string> a_vars;
+	vector<string> b_vars;
+	this->a->checkCyclicDependency(a_vars);
+	this->b->checkCyclicDependency(b_vars);
+	mergeVariablesNames(vars,a_vars);
+	mergeVariablesNames(vars,b_vars);
       } // end of LogicalBinaryOperation::checkCyclicDependency
 
       template<typename Op>

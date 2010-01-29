@@ -36,11 +36,16 @@ namespace tfel
 
       template<typename Op>
       void
-      BinaryOperation<Op>::checkCyclicDependency(const std::vector<std::string>& names) const
+      BinaryOperation<Op>::checkCyclicDependency(std::vector<std::string>& names) const
 	throw(std::runtime_error)
       {
-	this->a->checkCyclicDependency(names);
-	this->b->checkCyclicDependency(names);
+	using namespace std;
+	vector<string> a_names;
+	vector<string> b_names;
+	this->a->checkCyclicDependency(a_names);
+	this->b->checkCyclicDependency(b_names);
+	mergeVariablesNames(names,a_names);
+	mergeVariablesNames(names,b_names);
       } // end of BinaryOperation<Op>::checkCyclicDependency
 
       template<typename Op>

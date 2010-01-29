@@ -71,8 +71,7 @@ namespace tfel
       {
       	virtual bool getValue(void) const = 0;
 	virtual void
-	checkCyclicDependency(const std::vector<std::string>&) const
-	  throw(std::runtime_error) = 0;
+	checkCyclicDependency(std::vector<std::string>&) const = 0;
 	virtual tfel::utilities::SmartPtr<LogicalExpr>
 	resolveDependencies(void) const = 0;
 	virtual tfel::utilities::SmartPtr<LogicalExpr>
@@ -89,8 +88,7 @@ namespace tfel
 	bool
 	getValue(void) const;
 	void
-	checkCyclicDependency(const std::vector<std::string>&) const
-	  throw(std::runtime_error);
+	checkCyclicDependency(std::vector<std::string>&) const;
 	tfel::utilities::SmartPtr<LogicalExpr>
 	resolveDependencies(void) const;
 	tfel::utilities::SmartPtr<LogicalExpr>
@@ -110,8 +108,7 @@ namespace tfel
 	bool
 	getValue(void) const;
 	void
-	checkCyclicDependency(const std::vector<std::string>&) const
-	  throw(std::runtime_error);
+	checkCyclicDependency(std::vector<std::string>&) const;
 	tfel::utilities::SmartPtr<LogicalExpr>
 	resolveDependencies(void) const;
 	tfel::utilities::SmartPtr<LogicalExpr>
@@ -129,8 +126,7 @@ namespace tfel
 	bool
 	getValue(void) const;
 	void
-	checkCyclicDependency(const std::vector<std::string>&) const
-	  throw(std::runtime_error);
+	checkCyclicDependency(std::vector<std::string>&) const;
 	tfel::utilities::SmartPtr<LogicalExpr>
 	resolveDependencies(void) const;
 	tfel::utilities::SmartPtr<LogicalExpr>

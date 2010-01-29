@@ -27,8 +27,7 @@ namespace tfel
       {
 	virtual double getValue(void) const = 0;
 	virtual void
-	checkCyclicDependency(const std::vector<std::string>&) const
-	  throw(std::runtime_error) = 0;
+	checkCyclicDependency(std::vector<std::string>&) const = 0;
 	virtual tfel::utilities::SmartPtr<Expr>
 	resolveDependencies(void) const = 0;
 	virtual tfel::utilities::SmartPtr<Expr>
@@ -38,6 +37,13 @@ namespace tfel
 		      const std::vector<double>&) const = 0;
 	virtual ~Expr();
       }; // end of struct Expr
+
+      /*!
+       * a simple helper function for checkCyclicDependency
+       */
+      void
+      mergeVariablesNames(std::vector<std::string>&,
+			  const std::vector<std::string>&);
 
     } // end of namespace parser
 
