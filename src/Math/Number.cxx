@@ -29,8 +29,7 @@ namespace tfel
       } // end of Number::getValue
 
       void
-      Number::checkCyclicDependency(const std::vector<std::string>&) const
-	throw(std::runtime_error)
+      Number::checkCyclicDependency(std::vector<std::string>&) const
       {} // end of Number::checkCyclicDependency
 
       tfel::utilities::SmartPtr<Expr>

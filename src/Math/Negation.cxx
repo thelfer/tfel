@@ -27,8 +27,7 @@ namespace tfel
       } // end of Negation::getValue(void)
 
       void
-      Negation::checkCyclicDependency(const std::vector<std::string>& names) const
-	throw(std::runtime_error)
+      Negation::checkCyclicDependency(std::vector<std::string>& names) const
       {
 	this->expr->checkCyclicDependency(names);
       } // end of Negation::checkCyclicDependency

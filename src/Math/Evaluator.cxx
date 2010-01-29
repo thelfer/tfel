@@ -534,8 +534,7 @@ namespace tfel
     } // end of Evaluator::min
 
     void
-    Evaluator::checkCyclicDependency(const std::vector<std::string>& names) const
-      throw(std::runtime_error)
+    Evaluator::checkCyclicDependency(std::vector<std::string>& names) const
     {
       using namespace std;
       this->expr->checkCyclicDependency(names);
@@ -543,7 +542,6 @@ namespace tfel
 
     void
     Evaluator::checkCyclicDependency(const std::string& name) const
-      throw(std::runtime_error)
     {
       using namespace std;
       vector<string> names(1,name);

@@ -53,12 +53,10 @@ namespace tfel
 
       void
       ExternalCFunctionBase<0u>::checkCyclicDependency(const std::string&) const
-	throw(std::runtime_error)
       {} // end of ExternalCFunctionBase::checkCyclicDependency
 
       void
-      ExternalCFunctionBase<0u>::checkCyclicDependency(const std::vector<std::string>&) const
-	throw(std::runtime_error)
+      ExternalCFunctionBase<0u>::checkCyclicDependency(std::vector<std::string>&) const
       {} // end of ExternalCFunctionBase::checkCyclicDependency
 
       tfel::utilities::SmartPtr<ExternalFunction>

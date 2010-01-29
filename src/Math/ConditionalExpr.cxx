@@ -35,12 +35,18 @@ namespace tfel
       } // end of ConditionalExpr::getValue(void) const
 
       void
-      ConditionalExpr::checkCyclicDependency(const std::vector<std::string>& vars) const
-	throw(std::runtime_error)
+      ConditionalExpr::checkCyclicDependency(std::vector<std::string>& vars) const
       {
-	this->c->checkCyclicDependency(vars);
-	this->a->checkCyclicDependency(vars);
-	this->b->checkCyclicDependency(vars);
+	using namespace std;
+	vector<string> a_vars;
+	vector<string> b_vars;
+	vector<string> c_vars;
+	this->c->checkCyclicDependency(c_vars);
+	this->a->checkCyclicDependency(a_vars);
+	this->b->checkCyclicDependency(b_vars);
+	mergeVariablesNames(vars,a_vars);
+	mergeVariablesNames(vars,b_vars);
+	mergeVariablesNames(vars,c_vars);
       } // end of ConditionalExpr::checkCyclicDependency(const std::vector<std::string>& vars) const
 
       tfel::utilities::SmartPtr<Expr>

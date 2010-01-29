@@ -31,6 +31,7 @@
 #endif
 
 #include"TFEL/Math/Interpreter/InterpreterCommon.hxx"
+#include"TFEL/Math/Interpreter/InterpreterBase.hxx"
 
 namespace tfel
 {  
@@ -881,13 +882,57 @@ namespace tfel
 	return res;
       } // end of InterpreterCommon::tokenize
 
-      std::string
-      InterpreterCommon::stripComments(const std::string& line)
+      void
+      InterpreterCommon::treatPrint(TokensContainer::const_iterator& p,
+				    const TokensContainer::const_iterator pe)
       {
 	using namespace std;
-	const vector<string>& res = this->tokenize(line,'#');
-	return res[0];
-      } // end of InterpreterCommon::stripComments
+	using namespace tfel::utilities;
+	using namespace tfel::math;
+	vector<string> vars;
+	bool cont = true;
+	ostringstream res;
+	if(p==pe){
+	  string msg("InterpreterCommon::treatPrint : ");
+	  msg += "unexpected end of line";
+	  throw(runtime_error(msg));
+	}
+	while((p!=pe)&&(cont)){
+	  if(p->flag==Token::String){
+	    res << p->value.substr(1,p->value.size()-2);
+	    ++p;
+	  } else {
+	    string group = this->readNextGroup(p,pe);
+	    if(group.empty()){
+	      string msg("InterpreterCommon::treatPrint : ");
+	      msg += "invalid expression";
+	      throw(runtime_error(msg));
+	    }
+	    SmartPtr<Evaluator> ev(new Evaluator(vars,group,functions));
+	    ev->removeDependencies();
+	    if(ev->getNumberOfVariables()!=0u){
+	      const vector<string>& ev_vars = ev->getVariablesNames();
+	      ostringstream msg;
+	      if(ev_vars.size()!=1u){
+		msg << "InterpreterCommon::treatPrint : invalid print declaration (unknown variables ";
+		copy(ev_vars.begin(),ev_vars.end(),ostream_iterator<string>(msg," "));
+		msg << ")";
+	      } else {
+		msg << "InterpreterCommon::treatPrint : invalid print declaration (unknown variable "
+		    << ev_vars[0] << ")";
+	      }
+	      throw(runtime_error(msg.str()));
+	    }
+	    res << ev->getValue();
+	  }
+	  if(p!=pe){
+	    this->readSpecifiedToken("InterpreterCommon::treatPrint : ",
+				     ",",p,pe);
+	    this->checkNotEndOfLine("InterpreterCommon::treatPrint : ","",p,pe);
+	  }
+	}
+	cout << res.str() << endl;
+      } // end of InterpreterCommon::treatPrint
 
       InterpreterCommon::~InterpreterCommon()
       {} // end of InterpreterCommon::~InterpreterCommon()

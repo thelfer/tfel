@@ -38,8 +38,7 @@ namespace tfel
       {} // end of EvaluatorFunction1VBase::EvaluatorFunction1VBase
 
       void
-      EvaluatorFunction1VBase::checkCyclicDependency(const std::vector<std::string>& names) const
-	throw(std::runtime_error)
+      EvaluatorFunction1VBase::checkCyclicDependency(std::vector<std::string>& names) const
       {
 	this->expr->checkCyclicDependency(names);
       } // end of EvaluatorFunction1VBase::checkCyclicDependency
@@ -54,11 +53,15 @@ namespace tfel
       {} // end of EvaluatorFunction2VBase::EvaluatorFunction2VBase
 
       void
-      EvaluatorFunction2VBase::checkCyclicDependency(const std::vector<std::string>& names) const
-	throw(std::runtime_error)
+      EvaluatorFunction2VBase::checkCyclicDependency(std::vector<std::string>& names) const
       {
-	this->e1->checkCyclicDependency(names);
-	this->e2->checkCyclicDependency(names);
+	using namespace std;
+	vector<string> e1_vars;
+	vector<string> e2_vars;
+	this->e1->checkCyclicDependency(e1_vars);
+	this->e2->checkCyclicDependency(e2_vars);
+	mergeVariablesNames(names,e1_vars);
+	mergeVariablesNames(names,e1_vars);
       } // end of EvaluatorFunction2VBase::checkCyclicDependency
 
       EvaluatorFunction2VBase::~EvaluatorFunction2VBase()

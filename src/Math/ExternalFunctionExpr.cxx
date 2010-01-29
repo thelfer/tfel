@@ -6,6 +6,7 @@
  * \date   02 oct 2007
  */
 
+#include<iostream>
 #include<sstream>
 #include<algorithm>
 
@@ -63,30 +64,40 @@ namespace tfel
       } // end of ExternalFunctionExpr::getValue
 
       void
-      ExternalFunctionExpr::checkCyclicDependency(const std::vector<std::string>& names) const
-	throw(std::runtime_error)
+      ExternalFunctionExpr::checkCyclicDependency(std::vector<std::string>& names) const
       {
 	using namespace std;
 	using namespace tfel::utilities;
+	vector<string> fnames;
 	vector<SmartPtr<Expr> >::const_iterator p;
 	ExternalFunctionManager::const_iterator p2;
+	vector<string>::const_iterator p3;
 	if(find(names.begin(),names.end(),this->name)!=names.end()){
 	  string msg("ExternalFunctionExpr::checkCyclicDependency : ");
 	  msg += "cyclic dependency found on function '"+this->name+"'";
 	  throw(runtime_error(msg));
 	}
-	vector<string> fnames(names);
-	fnames.push_back(this->name);
 	p2=this->manager->find(this->name);
 	if(p2==this->manager->end()){
 	  string msg("ExternalFunctionExpr::checkDependency : ");
 	  msg += "unknown function '"+this->name+"'";
 	  throw(runtime_error(msg));
 	}
-	p2->second->checkCyclicDependency(fnames);
 	for(p=this->args.begin();p!=this->args.end();++p){
-	  (*p)->checkCyclicDependency(fnames);
+	  vector<string> n;
+	  (*p)->checkCyclicDependency(n);
+	  for(p3=names.begin();p3!=names.end();++p3){
+	    if(find(n.begin(),n.end(),*p3)!=n.end()){
+	      string msg("ExternalFunctionExpr::checkCyclicDependency : ");
+	      msg += "cyclic dependency found on function '"+*p3+"'";
+	      throw(runtime_error(msg));
+	    }
+	  }
+	  mergeVariablesNames(names,n);
 	}
+	fnames.push_back(this->name);
+	p2->second->checkCyclicDependency(fnames);
+	mergeVariablesNames(names,fnames);
       } // end of ExternalFunctionExpr::checkCyclicDependency
 
       tfel::utilities::SmartPtr<Expr>

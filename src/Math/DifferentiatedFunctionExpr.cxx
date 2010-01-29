@@ -73,15 +73,16 @@ namespace tfel
       } // end of DifferentiatedFunctionExpr::getValue
 
       void
-      DifferentiatedFunctionExpr::checkCyclicDependency(const std::vector<std::string>& names) const
-	throw(std::runtime_error)
+      DifferentiatedFunctionExpr::checkCyclicDependency(std::vector<std::string>& names) const
       {
 	using namespace std;
 	using namespace tfel::utilities;
 	vector<SmartPtr<Expr> >::const_iterator p;
 	this->f->checkCyclicDependency(names);
 	for(p=this->args.begin();p!=this->args.end();++p){
-	  (*p)->checkCyclicDependency(names);
+	  vector<string> n;
+	  (*p)->checkCyclicDependency(n);
+	  mergeVariablesNames(names,n);
 	}
       } // end of DifferentiatedFunctionExpr::checkCyclicDependency
 

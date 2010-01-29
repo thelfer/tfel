@@ -31,8 +31,7 @@ namespace tfel
       } // end of Variable::getValue
 
       void
-      Variable::checkCyclicDependency(const std::vector<std::string>&) const
-	throw(std::runtime_error)
+      Variable::checkCyclicDependency(std::vector<std::string>&) const
       {} // end of Variable::checkCyclicDependency
       
       tfel::utilities::SmartPtr<Expr>

@@ -83,8 +83,7 @@ namespace tfel
       } // end of NegLogicalExpression::getValue(void) const
       
       void
-      NegLogicalExpression::checkCyclicDependency(const std::vector<std::string>& names) const
-	throw(std::runtime_error)
+      NegLogicalExpression::checkCyclicDependency(std::vector<std::string>& names) const
       {
 	this->a->checkCyclicDependency(names);
       } // end of NegLogicalExpression::checkCyclicDependency

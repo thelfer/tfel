@@ -86,3 +86,31 @@ libTFELMathInterpreter_la_LIBADD = -L@top_builddir@/src/Exception/  \
 				   -lTFELMathParser -lTFELMath      \
 				   -lTFELSystem     -lTFELUtilities \
 				   -lTFELException
+
+bin_PROGRAMS = tfel_eval
+tfel_eval_SOURCES = tfel-eval.cxx
+
+tfel_eval_DEPENDENCIES = libTFELMathInterpreter.la \
+			 libTFELMathParser.la      \
+			 libTFELMath.la
+
+tfel_eval_LDADD = -L@top_builddir@/src/Exception/  \
+		  -L@top_builddir@/src/Utilities/  \
+		  -L@top_builddir@/src/System/     \
+		  -L@top_builddir@/src/Math/       \
+		  -lTFELMathInterpreter \
+		  -lTFELMathParser -lTFELMath      \
+		  -lTFELSystem     -lTFELUtilities \
+		  -lTFELException
+
+if HAVE_GSL
+tfel_eval_LDADD += @GSLLIBS@
+endif
+
+if HAVE_OCTAVE
+tfel_eval_LDADD += @OCTAVELIBS@
+endif
+
+if HAVE_READLINE
+tfel_eval_LDADD += @READLINE_LIBS@
+endif

@@ -686,6 +686,7 @@ src/Math/StandardFunctions.cxx -text
 src/Math/StensorTag.cxx -text
 src/Math/Variable.cxx -text
 src/Math/VectorTag.cxx -text
+src/Math/tfel-eval.cxx -text
 src/System/ChildProcess.cxx -text
 src/System/ExternalLibraryManager.cxx -text
 src/System/Makefile.am -text

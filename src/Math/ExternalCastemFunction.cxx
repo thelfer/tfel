@@ -46,12 +46,10 @@ namespace tfel
 
       void
       ExternalCastemFunction::checkCyclicDependency(const std::string&) const
-	  throw(std::runtime_error)
       {} // end of ExternalCastemFunction::checkCyclicDependency
 
       void
-      ExternalCastemFunction::checkCyclicDependency(const std::vector<std::string>&) const
-	  throw(std::runtime_error)
+      ExternalCastemFunction::checkCyclicDependency(std::vector<std::string>&) const
       {} // end of ExternalCastemFunction::checkCyclicDependency
  
       tfel::utilities::SmartPtr<ExternalFunction>

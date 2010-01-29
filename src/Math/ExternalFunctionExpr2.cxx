@@ -54,14 +54,15 @@ namespace tfel
       } // end of ExternalFunctionExpr2::getValue
 
       void
-      ExternalFunctionExpr2::checkCyclicDependency(const std::vector<std::string>& names) const
-	throw(std::runtime_error)
+      ExternalFunctionExpr2::checkCyclicDependency(std::vector<std::string>& names) const
       {
 	using namespace std;
 	using namespace tfel::utilities;
 	vector<SmartPtr<Expr> >::const_iterator p;
 	for(p=this->args.begin();p!=this->args.end();++p){
-	  (*p)->checkCyclicDependency(names);
+	  vector<string> n;
+	  (*p)->checkCyclicDependency(n);
+	  mergeVariablesNames(names,n);
 	}
       } // end of ExternalFunctionExpr2::checkCyclicDependency
 
