@@ -21,7 +21,4 @@ rm -f  configure aclocal.m4
 rm -f  $(find . -name "*~")
 rm -f  $(find . -name "Makefile.in")
 rm -f  $(find . -name "Makefile")
-rm -f  Kernel/docs/Doxyfile
-rm -fr Kernel/docs/html
-rm -f  Mesh/src/pleiadesMesh.cxx
 rm -fr ABOUT-NLS
