@@ -231,6 +231,27 @@ namespace mfront{
   } // end of MFront::treatListParsers
 
   void
+  MFront::treatSilentBuild(void)
+  {
+    using namespace std;
+    const string& o = this->currentArgument->getOption();
+    if(o.empty()){
+      string msg("MFront::treatSilentBuild : ");
+      msg += "no argument given to the --silentBuild option";
+      throw(runtime_error(msg));
+    }
+    if(o=="on"){
+      this->silentBuild=true;
+    } else if(o=="off"){
+      this->silentBuild=false;
+    } else {
+      string msg("MFront::treatSilentBuild : ");
+      msg += "unsupported argument '"+o+"' given to the --silentBuild option";
+      throw(runtime_error(msg));
+    }
+  } // end of MFront::treatSilentBuild
+
+  void
   MFront::treatTarget(void)
   {
     using namespace std;
@@ -290,8 +311,12 @@ namespace mfront{
 			      "generate MakeFile and clean libraries");
     this->registerNewCallBack("--interface","-i",&MFront::treatInterface,
 			      "specify witch interface to use",true);
+    this->registerNewCallBack("--silent-build",&MFront::treatSilentBuild,
+			      "active or desactivate silent build",true);
+#ifndef __CYGWIN__
     this->registerNewCallBack("--nodeps",&MFront::treatNoDeps,
 			      "don't generate compilation dependencies");
+#endif /* __CYGWIN__ */
     this->registerNewCallBack("--nomelt",&MFront::treatNoMelt,
 			      "don't melt librairies sources");
 #ifndef __CYGWIN__
@@ -314,7 +339,12 @@ namespace mfront{
       genMake(false),
       buildLibs(false),
       cleanLibs(false),
+      silentBuild(true),
+#ifndef __CYGWIN__
       nodeps(false),
+#else /* __CYGWIN__ */
+      nodeps(true),
+#endif /* __CYGWIN__ */
       melt(true)
   {
     this->registerArgumentCallBacks();
@@ -1171,6 +1201,7 @@ namespace mfront{
     vector<string>::const_iterator p6;
     set<string>::const_iterator p7;
     set<string>::const_iterator p8;
+    string sb;
     string cc;
     string cxx;
     const char * const env_cc  = ::getenv("CC");
@@ -1182,23 +1213,21 @@ namespace mfront{
     const char * ranlib  = ::getenv("RANLIB");
     const char * dlltool = ::getenv("DLLTOOL");
     const char * ar      = ::getenv("AR");
-#ifdef __CYGWIN__
+    if(this->silentBuild){
+      sb = "@"; 
+    }
+    if(this->verboseMode){
+      cout << "generating Makefile\n";
+    }
     if(env_cxx==0){
-      cxx = "$(CXX) -mno-cygwin";
+      cxx = "$(CXX)";
     } else {
       cxx = "$(CXX)";
     }
     if(env_cc==0){
-      cc = "$(CC) -mno-cygwin";
+      cc = "$(CC)";
     } else {
       cc = "$(CC)";
-    }
-#else
-    cxx = "$(CXX)";
-    cc  = "$(CC)";
-#endif /* __CYGWIN__ */
-    if(this->verboseMode){
-      cout << "generating Makefile\n";
     }
     if(sys=="win32"){
 #ifndef __CYGWIN__
@@ -1293,7 +1322,10 @@ namespace mfront{
       }
       // CXXFLAGS
       if(!cppSources.empty()){
-	this->makeFile << "CXXFLAGS := -Wall -ansi ";
+	this->makeFile << "CXXFLAGS := -Wall ";
+#ifndef __CYGWIN__
+	this->makeFile << "-ansi ";
+#endif /* __CYGWIN__ */
 	if(cxxflags!=0){
 	  this->makeFile << cxxflags << " ";
 	} else if(this->oflags){
@@ -1309,7 +1341,10 @@ namespace mfront{
       }
       // CFLAGS
       if(!cSources.empty()){
-	this->makeFile << "CFLAGS := -W -Wall -ansi -std=c99 ";
+	this->makeFile << "CFLAGS := -W -Wall ";
+#ifndef __CYGWIN__
+	this->makeFile << "-ansi -std=c99 ";
+#endif /* __CYGWIN__ */
 	if(cflags!=0){
 	  this->makeFile << cflags << " ";
 	} else if(this->oflags){
@@ -1430,32 +1465,32 @@ namespace mfront{
 	}
 	this->makeFile << "\n\t";
 	if(this->sys=="win32"){
-	  this->makeFile << "@$(AR) cr $@ $^\n\t";
-	  this->makeFile << "@$(RANLIB) $@\n\n";
+	  this->makeFile << sb+"$(AR) cr $@ $^\n\t";
+	  this->makeFile << sb+"$(RANLIB) $@\n\n";
 	  this->makeFile << p2->first << ".dll : ";
 	  this->makeFile << p2->first << ".a\n\t";
 	  if(hasCxxSources){
-	    this->makeFile << "@" << cxx << " ";
+	    this->makeFile << sb << cxx << " ";
 	  } else {
-	    this->makeFile << "@" << cc  << " ";
+	    this->makeFile << sb << cc  << " ";
 	  }
 	  this->makeFile << " -mdll -o junk.tmp -Wl,--base-file,base.tmp $^\n\t";
-	  this->makeFile << "@$(DLLTOOL) $^ --output-def def.tmp --no-export-all-symbols --add-stdcall-alias \n\t";
-	  this->makeFile << "@$(DLLTOOL) --dllname $@ --base-file base.tmp --output-exp exp.tmp --def def.tmp\n\t";
+	  this->makeFile << sb+"$(DLLTOOL) $^ --output-def def.tmp --no-export-all-symbols --add-stdcall-alias \n\t";
+	  this->makeFile << sb+"$(DLLTOOL) --dllname $@ --base-file base.tmp --output-exp exp.tmp --def def.tmp\n\t";
 	  if(hasCxxSources){
-	    this->makeFile << "@" << cxx << " ";
+	    this->makeFile << sb << cxx << " ";
 	  } else {
-	    this->makeFile << "@" << cc  << " ";
+	    this->makeFile << sb << cc  << " ";
 	  }
 	  this->makeFile << " -mdll -o $@ -Wl,exp.tmp $^ "
 			 << this->getLibraryLinkDependencies(p2->first)
 			 << "\n\t";
-	  this->makeFile << "@$(RM) junk.tmp base.tmp exp.tmp def.tmp\n\n";
+	  this->makeFile << sb+"$(RM) junk.tmp base.tmp exp.tmp def.tmp\n\n";
 	} else {
 	  if(hasCxxSources){
-	    this->makeFile << "@" << cxx << " ";
+	    this->makeFile << sb << cxx << " ";
 	  } else {
-	    this->makeFile << "@" << cc  << " ";
+	    this->makeFile << sb << cc  << " ";
 	  }
 	  if(ldflags!=0){
 	    cout << "$(LDFLAGS) ";
@@ -1473,9 +1508,9 @@ namespace mfront{
       }
       this->makeFile << "\n";
       if(this->sys=="win32"){
-	this->makeFile << "\t@rm -f *.o *.dll *.d\n";
+	this->makeFile << "\t"+sb+"rm -f *.o *.dll *.d\n";
       } else {
-	this->makeFile << "\t@rm -f *.o *.so *.d\n";
+	this->makeFile << "\t"+sb+"rm -f *.o *.so *.d\n";
       }
       if(p5!=this->targets.end()){
 	for(p6=p5->second.second.begin();p6!=p5->second.second.end();++p6){
@@ -1489,13 +1524,13 @@ namespace mfront{
       // generic rules for objects file generation
       if(!cppSources.empty()){
 	this->makeFile << "%.o:%.cxx\n";
-	this->makeFile << "\t@" << cxx << " $(CXXFLAGS) $< -o $@ -c\n\n";
+	this->makeFile << "\t" << sb << cxx << " $(CXXFLAGS) $< -o $@ -c\n\n";
 	this->makeFile << "%.o:%.cpp\n";
-	this->makeFile << "\t@" << cxx << " $(CXXFLAGS) $< -o $@ -c\n\n";
+	this->makeFile << "\t" << sb << cxx << " $(CXXFLAGS) $< -o $@ -c\n\n";
       }
       if(!cSources.empty()){
 	this->makeFile << "%.o:%.c\n";
-	this->makeFile << "\t@" << cc << " $(CFLAGS) $< -o $@ -c\n\n";
+	this->makeFile << "\t" << sb << cc << " $(CFLAGS) $< -o $@ -c\n\n";
       }
       if(!this->nodeps){
 	if(!cppSources.empty()){

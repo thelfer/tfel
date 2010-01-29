@@ -55,6 +55,8 @@ namespace mfront{
 
     void treatInterface(void);
 
+    void treatSilentBuild(void);
+
     void treatNoDeps(void);
 
     void treatNoMelt(void);
@@ -163,6 +165,8 @@ namespace mfront{
     bool buildLibs;
 
     bool cleanLibs;
+
+    bool silentBuild;
 
     bool nodeps;
 
