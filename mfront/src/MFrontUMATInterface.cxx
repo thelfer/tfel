@@ -5,8 +5,9 @@
  * \date   17 Jan 2007
  */
 
-#include<stdexcept>
 #include<sstream>
+#include<cstdlib>
+#include<stdexcept>
 
 #include"TFEL/System/System.hxx"
 
