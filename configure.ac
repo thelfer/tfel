@@ -120,6 +120,7 @@ if test "x$use_fortran" != "xno";
     fi
     AC_PROG_F77
     AC_F77_WRAPPERS
+    AC_DEFINE(HAVE_FORTRAN)
     AM_CONDITIONAL([HAVE_FORTRAN],true)
 else
     AM_CONDITIONAL([HAVE_FORTRAN],false)
