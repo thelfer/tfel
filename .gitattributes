@@ -250,6 +250,8 @@ include/TFEL/Math/Parser/ExternalFunctionManager.hxx -text
 include/TFEL/Math/Parser/ExternalOctaveFunction.hxx -text
 include/TFEL/Math/Parser/Function.hxx -text
 include/TFEL/Math/Parser/Function.ixx -text
+include/TFEL/Math/Parser/KrigedFunction.hxx -text
+include/TFEL/Math/Parser/KrigedFunction.ixx -text
 include/TFEL/Math/Parser/LogicalExpr.hxx -text
 include/TFEL/Math/Parser/LogicalExpr.ixx -text
 include/TFEL/Math/Parser/Negation.hxx -text
