@@ -800,6 +800,7 @@ tests/Math/solve.cxx -text
 tests/Math/stensor.cxx -text
 tests/Math/stensor2.cxx -text
 tests/Math/stensor3.cxx -text
+tests/Math/stensor4.cxx -text
 tests/Math/stensor_eigenvalues.cxx -text
 tests/Math/stensor_eigenvectors.cxx -text
 tests/Math/stensor_eigenvectors2.cxx -text

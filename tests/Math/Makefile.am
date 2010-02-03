@@ -24,6 +24,7 @@ test_PROGRAMS = hill                  \
 		solve                 \
 		stensor2              \
 		stensor3              \
+		stensor4              \
 		stensor               \
 		stensor_eigenvalues   \
 		stensor_eigenvectors2 \
@@ -68,8 +69,9 @@ krigeage1D_SOURCES            = krigeage1D.cxx
 krigeage2D_SOURCES            = krigeage2D.cxx
 newton_raphson_SOURCES        = newton_raphson.cxx       
 solve_SOURCES                 = solve.cxx                
-stensor2_SOURCES              = stensor2.cxx             
-stensor3_SOURCES              = stensor3.cxx             
+stensor2_SOURCES              = stensor2.cxx
+stensor3_SOURCES              = stensor3.cxx
+stensor4_SOURCES              = stensor4.cxx
 stensor_SOURCES               = stensor.cxx              
 stensor_eigenvalues_SOURCES   = stensor_eigenvalues.cxx  
 stensor_eigenvectors2_SOURCES = stensor_eigenvectors2.cxx
