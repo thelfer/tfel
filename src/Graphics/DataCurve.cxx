@@ -6,7 +6,6 @@
  * \date   20 jan 2008
  */
 
-#include<iostream>
 #include<iterator>
 #include<algorithm>
 #include<set>
@@ -29,9 +28,15 @@ namespace tfel{
       : xvalues(x),
 	yvalues(y),
 	style(Curve::LINE),
+	width(1),
 	hasColor(false)
     {
-      assert(xvalues.size()==yvalues.size());
+      using namespace std;
+      if(xvalues.size()!=yvalues.size()){
+	string msg("DataCurve::DataCurve : ");
+	msg += "x-data and y-data sizes do not match";
+	throw(runtime_error(msg));
+      }
     } // end of DataCurve::DataCurve
 
     bool
@@ -161,9 +166,6 @@ namespace tfel{
 
     DataCurve::~DataCurve()
     {} // end of DataCurve::~DataCurve
-
-      std::vector<double> xvalues;
-      std::vector<double> yvalues;
 
     std::vector<double>&
     DataCurve::getAbscissa(void)

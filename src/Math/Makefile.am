@@ -34,6 +34,7 @@ libTFELMathParser_la_SOURCES = ExternalCFunction.cxx          \
 			       ExternalCastemFunction.cxx     \
 			       ExternalFunctionExpr.cxx       \
 			       ExternalFunctionExpr2.cxx      \
+			       KrigedFunction.cxx             \
 			       DifferentiatedFunctionExpr.cxx \
 			       Expr.cxx	                      \
 			       BinaryFunction.cxx             \

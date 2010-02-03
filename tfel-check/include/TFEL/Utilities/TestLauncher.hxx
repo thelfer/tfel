@@ -37,6 +37,7 @@ namespace tfel
       typedef void (TestLauncher::*  CallBack)(void);
       enum TestType {
 	Absolute,
+	AbsoluteAndRelative,
 	Relative
       }; // end of enum TestType
       struct Test

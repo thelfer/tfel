@@ -78,6 +78,12 @@ namespace tfel
     template<unsigned short N,
 	     typename T,
 	     typename Model>
+    Kriging<N,T,Model>::Kriging()
+    {} // end of Kriging<N,T,Model>::Kriging()
+
+    template<unsigned short N,
+	     typename T,
+	     typename Model>
     T
     Kriging<N,T,Model>::operator()(const typename KrigingVariable<N,T>::type& xv) const
     {
@@ -86,7 +92,7 @@ namespace tfel
       typename vector<T>::size_type i;
       typename vector<T>::const_iterator p = a.begin()+this->x.size();
       T r(0);
-      for(i=0;i!=x.size();++i){
+      for(i=0;i!=this->x.size();++i){
 	r+=a[i]*Model::covariance(xv-this->x[i]);
       }
       ApplySpecificationDrifts<0,Model::nb,N,T,Model>::apply(r,p,xv);

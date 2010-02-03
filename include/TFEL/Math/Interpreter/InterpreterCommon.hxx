@@ -14,6 +14,7 @@
 #include<string>
 
 #include"TFEL/Utilities/SmartPtr.hxx"
+#include"TFEL/Utilities/TextData.hxx"
 #include"TFEL/Utilities/CxxTokenizer.hxx"
 #include"TFEL/Math/Evaluator.hxx"
 
@@ -112,6 +113,17 @@ namespace tfel
 #endif /* HAVE_OCTAVE*/
 
 	void
+	getData(std::vector<double>&,
+		const tfel::utilities::TextData&,
+		TokensContainer::const_iterator&, 
+		const TokensContainer::const_iterator);
+
+	std::string
+	getData(std::vector<double>&,
+		const tfel::utilities::TextData&,
+		const std::string&);
+
+	void
 	importFunction(TokensContainer::const_iterator&, 
 		       const TokensContainer::const_iterator,
 		       const ImportOptions,
@@ -130,6 +142,10 @@ namespace tfel
 	readVariableList(TokensContainer::const_iterator&, 
 			 const TokensContainer::const_iterator);
 	
+	void
+	treatKriging(TokensContainer::const_iterator&, 
+		     const TokensContainer::const_iterator);
+
 	void
 	treatPrint(TokensContainer::const_iterator&, 
 		   const TokensContainer::const_iterator);

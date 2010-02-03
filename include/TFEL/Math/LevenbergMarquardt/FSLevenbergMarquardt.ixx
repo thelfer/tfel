@@ -9,7 +9,6 @@
 #ifndef _LIB_TFEL_MATH_FSLEVENBERGMARQUARDT_IXX_
 #define _LIB_TFEL_MATH_FSLEVENBERGMARQUARDT_IXX_ 
 
-#include<iostream>
 #include<algorithm>
 
 #include"TFEL/FSAlgorithm/FSAlgorithm.hxx"

@@ -731,7 +731,7 @@ namespace tfel{
     } // end of CxxTokenizer::treatPreprocessorDirectives
 
     void 
-    CxxTokenizer::printFileTokens(void) const
+    CxxTokenizer::printFileTokens(std::ostream& out) const
     {
       using namespace std;
       TokensContainer::const_iterator p;
@@ -739,12 +739,12 @@ namespace tfel{
       unsigned short line = p->line;
       for(p=this->fileTokens.begin();p!=this->fileTokens.end();++p){
 	if(p->line!=line){
-	  cout << endl;
+	  out << endl;
 	  line = p->line;
 	}
-	cout << p->value << " ";
+	out << p->value << " ";
       }
-      cout << endl;
+      out << endl;
     }
 
     bool

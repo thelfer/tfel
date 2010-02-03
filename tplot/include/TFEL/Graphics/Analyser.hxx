@@ -55,11 +55,6 @@ namespace tfel
       void
       treatLine();
 
-      std::string
-      getData(std::vector<double>&,
-	      const tfel::utilities::TextData&,
-	      const std::string&);
-
       void
       treatSet(TokensContainer::const_iterator&,
 	       const TokensContainer::const_iterator);

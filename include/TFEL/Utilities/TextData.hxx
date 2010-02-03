@@ -28,8 +28,8 @@ namespace tfel
 	std::vector<double>
 	getColumn(const unsigned short) const;
 	void
-	getColumn(const unsigned short,
-		  std::vector<double>&) const;
+	getColumn(std::vector<double>&,
+		  const unsigned short) const;
 	unsigned short
 	findColumn(const std::string&) const;
 	std::string

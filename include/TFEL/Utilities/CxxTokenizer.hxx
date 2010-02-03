@@ -9,10 +9,10 @@
 #ifndef _LIB_TFEL_CPPTOKENIZER_HXX_
 #define _LIB_TFEL_CPPTOKENIZER_HXX_ 
 
-#include<iostream>
 #include<string>
 #include<vector>
 #include<list>
+#include<ostream>
 #include<fstream>
 
 #include"Token.hxx"
@@ -34,7 +34,7 @@ namespace tfel{
     
       void openFile(const std::string&);
 
-      void printFileTokens(void) const;
+      void printFileTokens(std::ostream&) const;
 
       void beautifyCode(void);
 

@@ -85,6 +85,8 @@ nobase_include_HEADERS= TFEL/FiniteElement/Element/ElementsManager.ixx          
 			TFEL/Math/Parser/ExternalFunctionExpr.hxx                                     \
 			TFEL/Math/Parser/ExternalFunctionExpr2.hxx                                    \
 			TFEL/Math/Parser/DifferentiatedFunctionExpr.hxx                               \
+			TFEL/Math/Parser/KrigedFunction.hxx                                           \
+			TFEL/Math/Parser/KrigedFunction.ixx                                           \
 			TFEL/Math/Parser/EvaluatorTExpr.hxx 					      \
 			TFEL/Math/Parser/EvaluatorTExpr.ixx 					      \
 			TFEL/Math/Parser/EvaluatorProxy.hxx                                           \
@@ -129,6 +131,7 @@ nobase_include_HEADERS= TFEL/FiniteElement/Element/ElementsManager.ixx          
 			TFEL/Math/Stensor/Internals/StensorComputeEigenVectors.hxx                    \
 			TFEL/Math/Stensor/Internals/StensorImport.hxx                                 \
 			TFEL/Math/Stensor/StensorStensorExpr.hxx	                              \
+			TFEL/Math/Stensor/StensorStensorDiadicProductExpr.hxx                         \
 			TFEL/Math/Stensor/StensorConcept.hxx		                              \
 			TFEL/Math/Stensor/StensorNullStorage.hxx	                              \
 			TFEL/Math/Stensor/StensorConcept.ixx		                              \

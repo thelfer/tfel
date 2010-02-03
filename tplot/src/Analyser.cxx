@@ -1045,7 +1045,7 @@ namespace tfel
 	}
       } else {
 	if(!Analyser::isUnsignedInteger(p->value)){
-	  string msg("Analyser::treatPlotUsing : ");
+	  string msg("Analyser::treatPlotLineType : ");
 	  msg += "unexpected token 'rgb' or a number";
 	  throw(runtime_error(msg));
 	}
@@ -1070,7 +1070,7 @@ namespace tfel
 	throw(runtime_error(msg));
       }
       if(!Analyser::isUnsignedInteger(p->value)){
-	string msg("Analyser::treatPlotUsing : ");
+	string msg("Analyser::treatPlotWidth : ");
 	msg += "unexpected a number";
 	throw(runtime_error(msg));
       }
@@ -1412,82 +1412,6 @@ namespace tfel
       }
       c->setStyle(options.style);
     } // end of Analyser::applyCurveOptions
-
-    std::string
-    Analyser::getData(std::vector<double>& v,
-		      const tfel::utilities::TextData& fdata,
-		      const std::string& s)
-    {
-      using namespace std;
-      using namespace tfel::math;
-      using namespace tfel::utilities;
-      if(Analyser::isUnsignedInteger(s)){
-	unsigned short c = this->convertToUnsignedShort(s);
-	fdata.getColumn(c,v);
-	return fdata.getLegend(c);
-      } else {
-	// assuming a function
-	vector<pair<string,unsigned short> > vars;
-	Evaluator e(s,this->functions);
-	const vector<string>& vnames = e.getVariablesNames();
-	if(vnames.empty()){
-	  string msg("Analyser::getData : ");
-	  msg += "function '"+s+"' does not declare any variable";
-	  throw(runtime_error(msg));
-	}
-	vector<string>::const_iterator p;
-	vector<TextData::Line>::const_iterator p2;
-	vector<pair<string,unsigned short> >::const_iterator p3;
-	for(p=vnames.begin();p!=vnames.end();++p){
-	  if(((*p)[0]!='$')){
-	    parser::ExternalFunctionManager::const_iterator p4;
-	    p4 = this->functions->find(*p);
-	    if(p4==this->functions->end()){
-	      string msg("Analyser::getData : ");
-	      msg += "invalid variable '"+*p+"'";
-	      throw(runtime_error(msg));
-	    }
-	    if(p4->second->getNumberOfVariables()!=0){
-	      string msg("Analyser::getData : ");
-	      msg += "invalid variable '"+*p+"'";
-	      throw(runtime_error(msg));
-	    }
-	    e.setVariableValue(*p,p4->second->getValue());
-	  } else {
-	    if(!Analyser::isUnsignedInteger(p->substr(1))){
-	      string msg("Analyser::getData : ");
-	      msg += "invalid variable name '"+*p;
-	      msg += "' in function '"+s+"'";
-	      throw(runtime_error(msg));
-	    }
-	    const unsigned short vc = this->convertToUnsignedShort(p->substr(1));
-	    if(vc==0){
-	      string msg("Analyser::getData : ");
-	      msg += "invalid variable name "+*p;
-	      msg += " in function '"+s+"'.";
-	      throw(runtime_error(msg));
-	    }
-	    vars.push_back(make_pair(*p,vc));
-	  }
-	}
-	for(p2=fdata.begin();p2!=fdata.end();++p2){
-	  for(p3=vars.begin();p3!=vars.end();++p3){
-	    if(p2->tokens.size()<p3->second){
-	      ostringstream msg;
-	      msg << "TextData::getColumn : line '" 
-		  << p2->nbr << "' "
-		  << "does not have '" << p3->second << "' columns.";
-	      throw(runtime_error(msg.str()));
-	    }
-	    e.setVariableValue(p3->first,
-			       Analyser::readDouble(p2->tokens[p3->second-1],
-						    p2->nbr));
-	  }
-	  v.push_back(e.getValue());
-	}
-      }
-      return "";
-    } // end of Analyser::getData
 
     void
     Analyser::treatDataPlot(TokensContainer::const_iterator& p, 

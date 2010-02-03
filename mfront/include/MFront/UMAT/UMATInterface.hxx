@@ -99,7 +99,7 @@ namespace umat{
 	} else if(*NTENS==6){
 	  cout << Name<Behaviour<3u,UMATReal,false> >::getName();
 	}
-	cout << " Behaviour has caused an " ;
+	cout << " Behaviour has thrown an " ;
 	cout << "UMAT exception : " << e.getMsg() << endl;
 	*KINC = -2;
       }
@@ -112,7 +112,7 @@ namespace umat{
 	} else if(*NTENS==6){
 	  cout << Name<Behaviour<3u,UMATReal,false> >::getName();
 	}
-	cout << " Behaviour has caused a " ;
+	cout << " Behaviour has thrown a " ;
 	cout << "Material exception : " << e.getMsg() << endl;
 	*KINC = -3;
       }
@@ -125,10 +125,37 @@ namespace umat{
 	} else if(*NTENS==6){
 	  cout << Name<Behaviour<3u,UMATReal,false> >::getName();
 	}
-	cout << " Behaviour has caused a " ;
+	cout << " Behaviour has thrown a " ;
+	cout << " TFEL exception : " << e.getMsg() << endl;
 	*KINC = -4;
       }
-    
+      catch(const std::exception& e){
+	cout << "The ";
+	if(*NTENS==3){
+	  cout << Name<Behaviour<1u,UMATReal,false> >::getName();
+	} else if(*NTENS==4){
+	  cout << Name<Behaviour<2u,UMATReal,false> >::getName();
+	} else if(*NTENS==6){
+	  cout << Name<Behaviour<3u,UMATReal,false> >::getName();
+	}
+	cout << " Behaviour has thrown a " ;
+	cout << " standard exception : " << e.what() << endl;
+	*KINC = -5;
+      }
+      catch(...){
+	cout << "The ";
+	if(*NTENS==3){
+	  cout << Name<Behaviour<1u,UMATReal,false> >::getName();
+	} else if(*NTENS==4){
+	  cout << Name<Behaviour<2u,UMATReal,false> >::getName();
+	} else if(*NTENS==6){
+	  cout << Name<Behaviour<3u,UMATReal,false> >::getName();
+	}
+	cout << " Behaviour has thrown an " ;
+	cout << " unknown exception (sorry, we can't give you any details) "
+	     << endl;
+	*KINC = -6;
+      }
     } // end of UMATInterface::exe
 
   private:

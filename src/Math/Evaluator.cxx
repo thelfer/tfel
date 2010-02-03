@@ -454,6 +454,8 @@ namespace tfel
       typedef map<string,ExternalFunctionGenerator>::value_type MVType;
       this->fctGenerators.insert(make_pair(string("exp"),
 					   &StandardFctGenerator<exp>));
+      this->fctGenerators.insert(make_pair(string("abs"),
+					   &StandardFctGenerator<fabs>));
       this->fctGenerators.insert(make_pair(string("sin"),
 					   &StandardFctGenerator<sin>));
       this->fctGenerators.insert(make_pair(string("cos"),

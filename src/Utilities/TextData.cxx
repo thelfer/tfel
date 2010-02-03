@@ -95,13 +95,13 @@ namespace tfel
     {
       using namespace std;
       vector<double> tab;
-      this->getColumn(i,tab);
+      this->getColumn(tab,i);
       return tab;
     } // end of TextData::getColumn
 
     void
-    TextData::getColumn(const unsigned short i,
-			std::vector<double>& tab) const
+    TextData::getColumn(std::vector<double>& tab,
+			const unsigned short i) const
     {
       using namespace std;
       tab.reserve(this->lines.size());

@@ -9,13 +9,11 @@
 #ifndef _LIB_TFEL_FUNCTION_IXX_
 #define _LIB_TFEL_FUNCTION_IXX_ 
 
-#include<iostream>
 #include<string>
 #include<stdexcept>
 #include<cerrno>
 #include<cstring>
 #include<cmath>
-#include<iostream>
 
 #ifndef __SUNPRO_CC
 #define TFEL_MATH_DIFFERENTIATEFUNCTION_PARTIALSPECIALISATION_DECLARATION(X) \

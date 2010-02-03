@@ -6,12 +6,15 @@
  * \date   08 mar 2008
  */
 
+#include<iostream>
 #include<cstdlib>
 #include<cstdio>
 #include<stdexcept>
 #include<algorithm>
 #include<iterator>
 #include<sstream>
+
+#include"TFEL/Utilities/TextData.hxx"
 
 #include"TFEL/System/System.hxx"
 #include"TFEL/System/SignalManager.hxx"
@@ -21,6 +24,7 @@
 #include"TFEL/Math/Parser/ExternalFunctionManager.hxx"
 #include"TFEL/Math/Parser/ExternalCFunction.hxx"
 #include"TFEL/Math/Parser/ExternalCastemFunction.hxx"
+#include"TFEL/Math/Parser/KrigedFunction.hxx"
 
 #ifdef HAVE_OCTAVE
 #include"TFEL/Math/Parser/ExternalOctaveFunction.hxx"
@@ -105,6 +109,7 @@ namespace tfel
 	using namespace std;
 	using namespace tfel::math;
 	using namespace tfel::utilities;
+	using std::vector;
 	vector<string> vars;
 	string f;
 	unsigned short openedParenthesis = 0;
@@ -200,6 +205,7 @@ namespace tfel
 					  const TokensContainer::const_iterator pe)
       {
 	using namespace std;
+	using std::vector;
 	vector<string> vars;
 	if(p==pe){
 	  string msg("InterpreterCommon::readVariableList : ");
@@ -265,11 +271,8 @@ namespace tfel
       {
 	using namespace std;
 	ImportOptions options;
-	if(p==pe){
-	  string msg("InterpreterCommon::treatImport : ");
-	  msg += "unexpected end of line";
-	  throw(runtime_error(msg));
-	}
+	this->checkNotEndOfLine("InterpreterCommon::treatImport : ",
+				"expected function name",p,pe);
 	if(p->value=="<"){
 	  ++p;
 	  if(p==pe){
@@ -433,6 +436,101 @@ namespace tfel
 	}
 	return u;
       } // end of InterpreterCommon::convertToUnsignedShort
+
+      void
+      InterpreterCommon::getData(std::vector<double>& v,
+				 const tfel::utilities::TextData& data,
+				 TokensContainer::const_iterator& p,
+				 const TokensContainer::const_iterator pe)
+      {
+	using namespace std;
+	using std::vector;
+	this->checkNotEndOfLine("InterpreterCommon::getData : ",
+				"expected column number",p,pe);
+	if(p->value=="("){
+	  this->getData(v,data,this->readNextGroup(p,pe));
+	} else {
+	  data.getColumn(v,this->convertToUnsignedShort(p->value));
+	  ++p;
+	}
+      } // end of InterpreterCommon::getData
+
+      std::string
+      InterpreterCommon::getData(std::vector<double>& v,
+				 const tfel::utilities::TextData& fdata,
+				 const std::string& s)
+      {
+	using namespace std;
+	using namespace tfel::math;
+	using namespace tfel::utilities;
+	using std::vector;
+	if(InterpreterCommon::isUnsignedInteger(s)){
+	  unsigned short c = this->convertToUnsignedShort(s);
+	  fdata.getColumn(v,c);
+	  return fdata.getLegend(c);
+	} else {
+	  // assuming a function
+	  vector<pair<string,unsigned short> > vars;
+	  Evaluator e(s,this->functions);
+	  const vector<string>& vnames = e.getVariablesNames();
+	  if(vnames.empty()){
+	    string msg("InterpreterCommon::getData : ");
+	    msg += "function '"+s+"' does not declare any variable";
+	    throw(runtime_error(msg));
+	  }
+	  vector<string>::const_iterator p;
+	  vector<TextData::Line>::const_iterator p2;
+	  vector<pair<string,unsigned short> >::const_iterator p3;
+	  for(p=vnames.begin();p!=vnames.end();++p){
+	    if(((*p)[0]!='$')){
+	      parser::ExternalFunctionManager::const_iterator p4;
+	      p4 = this->functions->find(*p);
+	      if(p4==this->functions->end()){
+		string msg("InterpreterCommon::getData : ");
+		msg += "invalid variable '"+*p+"'";
+		throw(runtime_error(msg));
+	      }
+	      if(p4->second->getNumberOfVariables()!=0){
+		string msg("InterpreterCommon::getData : ");
+		msg += "invalid variable '"+*p+"'";
+		throw(runtime_error(msg));
+	      }
+	      e.setVariableValue(*p,p4->second->getValue());
+	    } else {
+	      if(!InterpreterCommon::isUnsignedInteger(p->substr(1))){
+		string msg("InterpreterCommon::getData : ");
+		msg += "invalid variable name '"+*p;
+		msg += "' in function '"+s+"'";
+		throw(runtime_error(msg));
+	      }
+	      const unsigned short vc = this->convertToUnsignedShort(p->substr(1));
+	      if(vc==0){
+		string msg("InterpreterCommon::getData : ");
+		msg += "invalid variable name "+*p;
+		msg += " in function '"+s+"'.";
+		throw(runtime_error(msg));
+	      }
+	      vars.push_back(make_pair(*p,vc));
+	    }
+	  }
+	  for(p2=fdata.begin();p2!=fdata.end();++p2){
+	    for(p3=vars.begin();p3!=vars.end();++p3){
+	      if(p2->tokens.size()<p3->second){
+		ostringstream msg;
+		msg << "TextData::getColumn : line '" 
+		    << p2->nbr << "' "
+		    << "does not have '" << p3->second << "' columns.";
+		throw(runtime_error(msg.str()));
+	      }
+	      e.setVariableValue(p3->first,
+				 InterpreterCommon::readDouble(p2->tokens[p3->second-1],
+							       p2->nbr));
+	    }
+	    v.push_back(e.getValue());
+	  }
+	}
+	return "";
+      } // end of InterpreterCommon::getData
 
       void
       InterpreterCommon::importCastemFunction(const std::string& function,
@@ -752,6 +850,7 @@ namespace tfel
 	using namespace std;
 	using namespace tfel::utilities;
 	using namespace tfel::math;
+	using std::vector;
 	this->checkNotEndOfLine("InterpreterCommon::analyseFunctionDefinition","",p,pe);
 	string var = p->value;
 	// variable or function definition
@@ -870,6 +969,7 @@ namespace tfel
 				  const char c)
       {
 	using namespace std;
+	using std::vector;
 	vector<string> res;
 	string::size_type b = 0u;
 	string::size_type e = s.find_first_of(c, b);
@@ -883,20 +983,186 @@ namespace tfel
       } // end of InterpreterCommon::tokenize
 
       void
+      InterpreterCommon::treatKriging(TokensContainer::const_iterator& p,
+				      const TokensContainer::const_iterator pe)
+      {
+	using namespace std;
+	using namespace tfel::utilities;
+	using namespace tfel::math;
+	using namespace tfel::math::parser;
+	using std::vector;
+	typedef SmartPtr<ExternalFunction> EFunctionPtr;
+	vector<double> vx1;
+	vector<double> vx2;
+	vector<double> vx3;
+	vector<double> vx4;
+	vector<double> vy;
+	vector<double>::const_iterator pt;
+	vector<double>::const_iterator pt2;
+	vector<double>::const_iterator pt3;
+	vector<double>::const_iterator pt4;
+	int numberOfVariables = -1;
+	this->checkNotEndOfLine("InterpreterCommon::treatKriging : ",
+				"expected function name",p,pe);
+	string function = p->value;
+	string file;
+	++p;
+	unsigned short varNumber = 0;
+	if(numberOfVariables==-1){
+	  this->checkNotEndOfLine("InterpreterCommon::treatKriging : ",
+				  "expected variable list",p,pe);
+	  if(p->value=="("){
+	    const std::vector<std::string>& vars = this->readVariableList(p,pe);
+	    varNumber = static_cast<unsigned short>(vars.size());
+	  } else {
+	    varNumber = 0u;
+	  }
+	} else {
+	  if(p!=pe){
+	    if(p->value=="("){
+	      const std::vector<std::string>& vars = this->readVariableList(p,pe);
+	      if(vars.size()!=static_cast<unsigned short>(numberOfVariables)){
+		string msg("InterpreterCommon::treatKriging : ");
+		msg += "the number variables of function '"+function+"'";
+		msg += "is not the same as that specified in the options";
+		throw(runtime_error(msg));
+	      }
+	    }
+	  }
+	  varNumber = static_cast<unsigned short>(numberOfVariables);
+	}
+	if(varNumber==0){
+	  string msg("InterpreterCommon::treatKriging : ");
+	  msg += "the number variables is 0";
+	  throw(runtime_error(msg));
+	}
+	this->checkNotEndOfLine("InterpreterCommon::treatKriging : ",
+				"expected file name",p,pe);
+	TextData data(this->readString(p,pe));
+	if(p==pe){
+	  if(varNumber==1){
+	    data.getColumn(vx1,1);
+	    data.getColumn(vy,2);
+	    if(vx1.size()!=vy.size()){
+	      string msg("InterpreterCommon::treatKriging : ");
+	      msg += "columns don't have the same size";
+	      throw(runtime_error(msg));
+	    }
+	  } else if(varNumber==2){
+	    data.getColumn(vx1,1);
+	    data.getColumn(vx2,2);
+	    data.getColumn(vy,3);
+	  } else if(varNumber==3){
+	    data.getColumn(vx1,1);
+	    data.getColumn(vx2,2);
+	    data.getColumn(vx3,3);
+	    data.getColumn(vy,4);
+	  } else {
+	    string msg("InterpreterCommon::treatKriging : ");
+	    msg += "unsupported number of variables";
+	    throw(runtime_error(msg));
+	  }
+	} else {
+	  // using 
+	  this->readSpecifiedToken("InterpreterCommon::treatKriging : ",
+				   "using",p,pe);
+	  this->checkNotEndOfLine("InterpreterCommon::treatKriging","",p,pe);
+	  if(varNumber==1){
+	    this->getData(vx1,data,p,pe);
+	    this->readSpecifiedToken("InterpreterCommon::treatKriging : ",
+				     ":",p,pe);
+	    this->getData(vy,data,p,pe);
+	  } else if(varNumber==2){
+	    this->getData(vx1,data,p,pe);
+	    this->readSpecifiedToken("InterpreterCommon::treatKriging : ",
+				     ":",p,pe);
+	    this->getData(vx2,data,p,pe);
+	    this->readSpecifiedToken("InterpreterCommon::treatKriging : ",
+				     ":",p,pe);
+	    this->getData(vy,data,p,pe);
+	  } else if(varNumber==3){
+	    this->getData(vx1,data,p,pe);
+	    this->readSpecifiedToken("InterpreterCommon::treatKriging : ",
+				     ":",p,pe);
+	    this->getData(vx2,data,p,pe);
+	    this->readSpecifiedToken("InterpreterCommon::treatKriging : ",
+				     ":",p,pe);
+	    this->getData(vx3,data,p,pe);
+	    this->readSpecifiedToken("InterpreterCommon::treatKriging : ",
+				     ":",p,pe);
+	    this->getData(vy,data,p,pe);
+	  } else {
+	    string msg("InterpreterCommon::treatKriging : ");
+	    msg += "unsupported number of variables";
+	    throw(runtime_error(msg));
+	  }
+	}
+	if(varNumber==1){
+	  vector<pair<double,double> > points(vx1.size());
+	  vector<pair<double,double> >::size_type i;
+	  for(pt=vx1.begin(),pt2=vy.begin(),i=0;pt!=vx1.end();
+	      ++pt,++pt2,++i){
+	    points[i] = pair<double,double>(*pt,*pt2);
+	  }
+	  this->addFunction(function,EFunctionPtr(new KrigedFunction<1>(points)),
+			    false,false);
+	} else if(varNumber==2){
+	  if((vx1.size()!=vx2.size())||
+	     (vx1.size()!=vy.size())){
+	    string msg("InterpreterCommon::treatKriging : ");
+	    msg += "columns don't have the same size";
+	    throw(runtime_error(msg));
+	  }
+	  vector<pair<tvector<2>,double> > points(vx1.size());
+	  vector<pair<tvector<2>,double> >::size_type i;
+	  for(pt=vx1.begin(),pt2=vx2.begin(),pt3=vy.begin(),i=0;
+	      pt!=vx1.end();++pt,++pt2,++pt3,++i){
+	    tvector<2> v;
+	    v(0) = *pt;
+	    v(1) = *pt2;
+	    points[i] = pair<tvector<2>,double>(v,*pt3);
+	  }
+	  this->addFunction(function,EFunctionPtr(new KrigedFunction<2>(points)),
+			    false,false);
+	} else if(varNumber==3){
+	  if((vx1.size()!=vx2.size())||
+	     (vx1.size()!=vx3.size())||
+	     (vx1.size()!=vy.size())){
+	    string msg("InterpreterCommon::treatKriging : ");
+	    msg += "columns don't have the same size";
+	    throw(runtime_error(msg));
+	  }
+	  vector<pair<tvector<3>,double> > points(vx1.size());
+	  vector<pair<tvector<3>,double> >::size_type i;
+	  for(pt=vx1.begin(),pt2=vx2.begin(),pt3=vx3.begin(),pt4=vy.begin(),i=0;
+	      pt!=vx1.end();++pt,++pt2,++pt3,++pt4,++i){
+	    tvector<3> v;
+	    v(0) = *pt;
+	    v(1) = *pt2;
+	    v(2) = *pt3;
+	    points[i] = pair<tvector<3>,double>(v,*pt4);
+	  }
+	  this->addFunction(function,EFunctionPtr(new KrigedFunction<3>(points)),
+			    false,false);
+	} else {
+	  string msg("InterpreterCommon::treatKriging : ");
+	  msg += "unsupported number of variables";
+	  throw(runtime_error(msg));
+	}
+      } // end of InterpreterCommon::treatKriging
+
+      void
       InterpreterCommon::treatPrint(TokensContainer::const_iterator& p,
 				    const TokensContainer::const_iterator pe)
       {
 	using namespace std;
 	using namespace tfel::utilities;
 	using namespace tfel::math;
+	using std::vector;
 	vector<string> vars;
 	bool cont = true;
 	ostringstream res;
-	if(p==pe){
-	  string msg("InterpreterCommon::treatPrint : ");
-	  msg += "unexpected end of line";
-	  throw(runtime_error(msg));
-	}
+	this->checkNotEndOfLine("InterpreterCommon::treatPrint","",p,pe);
 	while((p!=pe)&&(cont)){
 	  if(p->flag==Token::String){
 	    res << p->value.substr(1,p->value.size()-2);
@@ -908,7 +1174,7 @@ namespace tfel
 	      msg += "invalid expression";
 	      throw(runtime_error(msg));
 	    }
-	    SmartPtr<Evaluator> ev(new Evaluator(vars,group,functions));
+	    SmartPtr<Evaluator> ev(new Evaluator(vars,group,this->functions));
 	    ev->removeDependencies();
 	    if(ev->getNumberOfVariables()!=0u){
 	      const vector<string>& ev_vars = ev->getVariablesNames();

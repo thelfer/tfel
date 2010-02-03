@@ -88,6 +88,7 @@ namespace tfel
       getTheme(void);
       tfel::utilities::SmartPtr<GraphTheme>
       getTheme(void) const;
+      void exportToTable(const std::string&) const;
       void exportToPDF(const std::string&) const;
       void exportToSVG(const std::string&) const;
       void exportToPostScript(const std::string&) const;
@@ -168,6 +169,7 @@ namespace tfel
       static const double defaultLogScaleMaxValue;
       static const unsigned short defaultWidth;
       static const unsigned short defaultHeight;
+      static const double defaultFontSize;
       static double log10(const double);
       std::vector<Graph::Label>::iterator
       findLabel(const std::string&);
@@ -270,6 +272,7 @@ namespace tfel
       unsigned short samples; // default number of sample for curve
       Cairo::FontWeight weight;
       Cairo::FontSlant  slant;
+      gdouble fontSize;
       unsigned short grid;
       bool userDefinedFont;
       bool showGraphGrid;

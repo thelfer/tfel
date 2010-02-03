@@ -345,6 +345,7 @@ AC_OUTPUT([debug.sh
            tplot/Makefile
 	   tplot/include/Makefile
 	   tplot/src/Makefile
+	   tplot/src/GNUGraphTheme.cxx
 	   tplot/data/Makefile
 	   tests/Makefile
 	   tests/Math/Makefile

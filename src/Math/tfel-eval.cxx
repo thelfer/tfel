@@ -1,5 +1,6 @@
 #include<iostream>
 #include<cstdlib>
+#include<iterator>
 
 #if defined(HAVE_READLINE_READLINE_H)
 #include <readline/readline.h>
@@ -35,6 +36,10 @@ namespace tfel
 
       private:
 
+	void
+	treatAssert(TokensContainer::const_iterator&,
+		    const TokensContainer::const_iterator);
+
 	Interpreter();
 
 	Interpreter(const Interpreter&);
@@ -51,8 +56,64 @@ namespace tfel
 	return i;
       } // end of Interpreter
 
+      void
+      Interpreter::treatAssert(TokensContainer::const_iterator& p,
+			       const TokensContainer::const_iterator pe)
+      {
+	using namespace std;
+	using namespace tfel::utilities;
+	using namespace tfel::math;
+	vector<string> vars;
+	string group;
+	this->checkNotEndOfLine("InterpreterCommon::treatAssert","",p,pe);
+	group = this->readNextGroup(p,pe);
+	if(group.size()<2){
+	  string msg("Interpreter::treatAssert : ");
+	  msg += "invalid group";
+	  throw(runtime_error(msg));
+	}
+	if(group[0]!='('){
+	  string msg("Interpreter::treatAssert : ");
+	  msg += "invalid group (shall begin with a parenthesis)";
+	  throw(runtime_error(msg));
+	}
+	if(group[group.size()-1]!=')'){
+	  string msg("Interpreter::treatAssert : ");
+	  msg += "invalid group (shall end with a parenthesis)";
+	  throw(runtime_error(msg));
+	}
+	if(group.size()==2){
+	  string msg("Interpreter::treatAssert : ");
+	  msg += "empty group";
+	  throw(runtime_error(msg));
+	}
+	SmartPtr<Evaluator> ev(new Evaluator(vars,group+"?1.:-1.",this->functions));
+	ev->removeDependencies();
+	if(ev->getNumberOfVariables()!=0u){
+	  const vector<string>& ev_vars = ev->getVariablesNames();
+	  ostringstream msg;
+	  if(ev_vars.size()!=1u){
+	    msg << "Interpreter::treatAssert : invalid print declaration (unknown variables ";
+	    copy(ev_vars.begin(),ev_vars.end(),ostream_iterator<string>(msg," "));
+	    msg << ")";
+	  } else {
+	    msg << "Interpreter::treatAssert : invalid print declaration (unknown variable "
+		<< ev_vars[0] << ")";
+	  }
+	  throw(runtime_error(msg.str()));
+	}
+	if(ev->getValue()<0.){
+	  cerr << "Interpreter::treatAssert : "
+	       << "assertion '"+group.substr(1,group.size()-2)+"' failed"
+	       << endl;
+	  exit(-1);
+	}
+      } // end of Interpreter::treatAssert
+      
       Interpreter::Interpreter()
-      {} // end of Interpreter::Interpreter
+      {
+	this->registerCallBack(this->callBacks,"assert",&Interpreter::treatAssert);
+      } // end of Interpreter::Interpreter
 
     } // end of namespace interpreter
 

@@ -9,7 +9,7 @@
 #ifndef _LIB_TFEL_INFO_H_
 #define _LIB_TFEL_INFO_H_ 
 
-#ifdef TFEL_VERBOSE
+#ifdef TFEL_UTILITIES_VERBOSE
 #include<iostream>
 #endif
 

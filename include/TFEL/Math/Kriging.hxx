@@ -10,6 +10,8 @@
 
 #include"TFEL/Math/tvector.hxx"
 #include"TFEL/Math/vector.hxx"
+
+#include"TFEL/Math/Kriging/KrigingVariable.hxx"
 #include"TFEL/Math/Kriging/KrigingDefaultModels.hxx"
 
 namespace tfel
@@ -25,6 +27,8 @@ namespace tfel
       : public Model
     {
 
+      Kriging();
+
       void
       addValue(const typename KrigingVariable<N,T>::type&,
 	       const T&);
@@ -36,6 +40,11 @@ namespace tfel
       operator()(const typename KrigingVariable<N,T>::type&) const;
 
     private:
+
+      Kriging(const Kriging&);
+
+      Kriging&
+      operator=(const Kriging&);
 
       tfel::math::vector<typename KrigingVariable<N,T>::type> x;
       tfel::math::vector<T> f;

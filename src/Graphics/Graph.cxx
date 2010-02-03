@@ -10,6 +10,7 @@
 #include<algorithm>
 #include<iterator>
 #include<sstream>
+#include<fstream>
 #include<limits>
 #include<cmath>
 
@@ -29,8 +30,10 @@ namespace tfel
     const double Graph::defaultLogScaleMinValue = 1.;
     const double Graph::defaultLogScaleMaxValue = 2.;
 
-    const unsigned short Graph::defaultWidth  = 600;
-    const unsigned short Graph::defaultHeight = 400;
+    const double Graph::defaultFontSize = 24;
+
+    const unsigned short Graph::defaultWidth  = 1024;
+    const unsigned short Graph::defaultHeight = 768;
 
     double
     Graph::log10(const double d){
@@ -123,6 +126,7 @@ namespace tfel
 	yAxis(Graph::yaxis),
 	x2Axis(Graph::x2axis),
 	y2Axis(Graph::y2axis),
+	fontSize(Graph::defaultFontSize),
 	drawZoomRectangle(false),
 	debugMode(false)
     {
@@ -139,9 +143,10 @@ namespace tfel
       this->width  = Graph::defaultWidth;
       this->height = Graph::defaultHeight;
       this->samples = 100;
-      this->weight = Cairo::FONT_WEIGHT_NORMAL;
-      this->slant = Cairo::FONT_SLANT_NORMAL;
-      this->grid = Grid::X|Grid::Y;
+      this->weight   = Cairo::FONT_WEIGHT_NORMAL;
+      this->slant    = Cairo::FONT_SLANT_NORMAL;
+      this->fontSize = Graph::defaultFontSize;
+      this->grid     = Grid::X|Grid::Y;
       this->userDefinedFont = false;
       this->showGraphGrid = false;
       this->showXAxis = false;
@@ -802,6 +807,7 @@ namespace tfel
       if(userDefinedFont){
 	cr->select_font_face(font,this->slant,this->weight);
       }
+      cr->set_font_size(this->fontSize);
       // margins
       l.ml = this->theme->getLeftMargin();
       l.mr = this->theme->getRightMargin();
@@ -898,33 +904,9 @@ namespace tfel
       if(userDefinedFont){
 	cr->select_font_face(this->font,this->slant,this->weight);
       }
+      cr->set_font_size(this->fontSize);
 
       this->computeGraphLayout(cr,pwidth,pheight,l);
-      
-      // cout << "l.ml  : " << l.ml  << endl;
-      // cout << "l.mr  : " << l.mr  << endl;
-      // cout << "l.mu  : " << l.mu  << endl;
-      // cout << "l.md  : " << l.md  << endl;
-      
-      // cout << "l.ttl : " << l.ttl << endl;
-      // cout << "l.ttr : " << l.ttr << endl;
-      // cout << "l.ttu : " << l.ttu << endl;
-      // cout << "l.ttd : " << l.ttd << endl;
-      
-      // cout << "l.ll  : " << l.ll  << endl;
-      // cout << "l.lr  : " << l.lr  << endl;
-      // cout << "l.ld  : " << l.ld  << endl;
-      // cout << "l.lu  : " << l.lu  << endl;
-      
-      // cout << "l.tl  : " << l.tl  << endl;
-      // cout << "l.tr  : " << l.tr  << endl;
-      // cout << "l.td  : " << l.td  << endl;
-      // cout << "l.tu  : " << l.tu  << endl;
-      
-      // cout << "l.gl  : " << l.gl  << endl;
-      // cout << "l.gr  : " << l.gr  << endl;
-      // cout << "l.gd  : " << l.gd  << endl;
-      // cout << "l.gu  : " << l.gu  << endl;
 
       s.width  = pwidth;
       s.height = pheight;
@@ -1159,6 +1141,24 @@ namespace tfel
       cr->restore();
 
     } // end of Graph::plot
+
+    void
+    Graph::exportToTable(const std::string& file) const
+    {
+      using namespace std;
+      vector<CurveHandler>::const_iterator p;
+      vector<string>::const_iterator p2;
+      vector<Point>::const_iterator pt;
+      fstream f(file.c_str());
+      for(p=this->curves.begin(),p2=this->legends.begin();
+	  p!=this->curves.end();++p,++p2){
+	f << "#" << *p2 << endl;
+	for(pt=p->points.begin();pt!=p->points.end();++pt){
+	  f << pt->x << " " << pt->y << endl;
+	}
+	f << endl;
+      }
+    } // end of Graph::exportToTable
 
     void
     Graph::exportToSVG(const std::string& file) const

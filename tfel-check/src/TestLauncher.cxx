@@ -6,6 +6,7 @@
  * \date   26 jan 2008
  */
 
+#include<iostream>
 #include<iterator>
 #include<algorithm>
 #include<fstream>
@@ -282,6 +283,8 @@ namespace tfel
       }
       if(this->current->value=="Absolute"){
 	this->testType = TestLauncher::Absolute;
+      } else if(this->current->value=="AbsoluteAndRelative"){
+	this->testType = TestLauncher::AbsoluteAndRelative;
       } else if(this->current->value=="Relative"){
 	this->testType = TestLauncher::Relative;
       } else {
@@ -565,8 +568,10 @@ namespace tfel
 		ostringstream msg;
 		max_error = 0.;
 		bool s = true;
+		string type;
 		// Absolute comparison 
 		if(p3->type==TestLauncher::Absolute){
+		  type = "absolute";
 		  for(index=0;index!=ca.size();++index){
 		    error = abs(ca[index]-cb[index]);
 		    if(max_error<error){
@@ -576,32 +581,20 @@ namespace tfel
 		      s = false;
 		    }
 		  }
-		  if(!s){
-		    msg << "comparison of files " << p->first << " and "
-			<< p2->first << " using column ";
-		    if(p3->byName){
-		      msg << p3->name; 
-		    } else {
-		      msg << p3->column;
+		} else if(p3->type==TestLauncher::AbsoluteAndRelative){
+		  type = "absolute and relative";
+		  for(index=0;index!=ca.size();++index){
+		    error = min(abs(ca[index]-cb[index]),
+				abs(ca[index]-cb[index])/(min(abs(ca[index]),abs(cb[index]))+eps));
+		    if(max_error<error){
+		      max_error = error;
 		    }
-		    msg << " failed with an maximun absolute error of " 
-			<< max_error << endl;
-		    log << msg.str() << endl;
-		    success = false;
-		  } else {
-		    msg << "comparison of files " << p->first << " and "
-			<< p2->first << " using column ";
-		    if(p3->byName){
-		      msg << p3->name; 
-		    } else {
-		      msg << p3->column;
+		    if(error>p3->prec){
+		      s = false;
 		    }
-		    msg << " succeed with an maximun absolute error of " 
-			<< max_error << endl;
-		    log << msg.str() << endl;
 		  }
-		  
 		} else { 
+		  type = "relative";
 		  //Relative Comparison
 		  for(index=0;index!=ca.size();++index){
 		    error = abs(ca[index]-cb[index])/(min(abs(ca[index]),abs(cb[index]))+eps);
@@ -612,30 +605,30 @@ namespace tfel
 		      s = false;
 		    }
 		  }
-		  if(!s){
-		    msg << "comparison of files " << p->first << " and "
-			<< p2->first << " using column ";
-		    if(p3->byName){
-		      msg << p3->name; 
-		    } else {
-		      msg << p3->column;
-		    }
-		    msg << " failed with an maximun relative error of " 
-			<< max_error << endl;
-		    log << msg.str() << endl;
-		    success = false;
+		}
+		if(!s){
+		  msg << "comparison of files " << p->first << " and "
+		      << p2->first << " using column ";
+		  if(p3->byName){
+		    msg << p3->name; 
 		  } else {
-		    msg << "comparison of files " << p->first << " and "
-			<< p2->first << " using column ";
-		    if(p3->byName){
-		      msg << p3->name; 
-		    } else {
-		      msg << p3->column;
-		    }
-		    msg << " succeed with an maximun relative error of " 
-			<< max_error << endl;
-		    log << msg.str() << endl;
+		    msg << p3->column;
 		  }
+		  msg << " failed with an maximun "+type+" error of " 
+		      << max_error << endl;
+		  log << msg.str() << endl;
+		  success = false;
+		} else {
+		  msg << "comparison of files " << p->first << " and "
+		      << p2->first << " using column ";
+		  if(p3->byName){
+		    msg << p3->name; 
+		  } else {
+		    msg << p3->column;
+		  }
+		  msg << " succeed with an maximun "+type+" error of " 
+		      << max_error << endl;
+		  log << msg.str() << endl;
 		}
 	      }
 	    }

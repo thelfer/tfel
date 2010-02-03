@@ -10,7 +10,6 @@
 
 #include<vector>
 #include<algorithm>
-#include<iostream>
 
 #include"TFEL/Config/TFELTypes.hxx"
 #include"TFEL/Metaprogramming/StaticAssert.hxx"
