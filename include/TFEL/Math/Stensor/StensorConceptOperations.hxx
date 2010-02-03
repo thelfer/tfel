@@ -27,9 +27,11 @@
 #include"TFEL/Math/Stensor/ScalarStensorExpr.hxx"
 #include"TFEL/Math/Stensor/StensorStensorExpr.hxx"
 #include"TFEL/Math/Stensor/StensorNegExpr.hxx"
+#include"TFEL/Math/Stensor/StensorStensorDiadicProductExpr.hxx"
 #include"TFEL/Math/Stensor/ScalarStensorExprWithoutConstIterator.hxx"
 #include"TFEL/Math/Stensor/StensorStensorExprWithoutConstIterator.hxx"
 #include"TFEL/Math/Stensor/StensorNegExprWithoutConstIterator.hxx"
+#include"TFEL/Math/ST2toST2/ST2toST2Expr.hxx"
 
 namespace tfel{
 
@@ -63,6 +65,23 @@ namespace tfel{
       typedef typename tfel::meta::IF<tfel::typetraits::IsInvalid<Result>::cond,
 				      DummyHandle,
 				      StensorExpr<Result,Expr> >::type Handle;
+    };
+
+    /*
+     * Partial Specialisation of ComputeBinaryResult_ for stensor's operation
+     */
+    template<typename A, typename B>
+    class ComputeBinaryResult_<StensorTag,StensorTag,A,B,OpDiadicProduct>
+    {
+      struct DummyHandle{};
+      typedef typename StensorType<A>::type StensA;
+      typedef typename StensorType<B>::type StensB;
+      typedef StensorStensorDiadicProductExpr<A,B> Expr;
+    public:
+      typedef typename ResultType<StensA,StensB,OpDiadicProduct>::type Result;
+      typedef typename tfel::meta::IF<tfel::typetraits::IsInvalid<Result>::cond,
+				      DummyHandle,
+				      ST2toST2Expr<Result,Expr> >::type Handle;
     };
     
     /*
@@ -154,6 +173,16 @@ namespace tfel{
       typename ComputeBinaryResult<T1,T2,OpMinus>::Handle
     >::type
     operator - (const T1&,const T2&);
+
+    template<typename T1,typename T2>
+    TFEL_MATH_INLINE 
+    typename tfel::meta::EnableIf<
+      tfel::meta::Implements<T1,StensorConcept>::cond&&
+      tfel::meta::Implements<T2,StensorConcept>::cond&&
+      !tfel::typetraits::IsInvalid<typename ComputeBinaryResult<T1,T2,OpDiadicProduct>::Result>::cond,
+      typename ComputeBinaryResult<T1,T2,OpDiadicProduct>::Handle
+    >::type
+    operator ^ (const T1&,const T2&);
 
     template<typename T1,typename T2>
     TFEL_MATH_INLINE 

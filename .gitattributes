@@ -320,6 +320,7 @@ include/TFEL/Math/Stensor/StensorNegExprWithoutConstIterator.hxx -text
 include/TFEL/Math/Stensor/StensorNullStorage.hxx -text
 include/TFEL/Math/Stensor/StensorSizeToDime.hxx -text
 include/TFEL/Math/Stensor/StensorStaticStorage.hxx -text
+include/TFEL/Math/Stensor/StensorStensorDiadicProductExpr.hxx -text
 include/TFEL/Math/Stensor/StensorStensorExpr.hxx -text
 include/TFEL/Math/Stensor/StensorStensorExprSpecialisation.ixx -text
 include/TFEL/Math/Stensor/StensorStensorExprWithoutConstIterator.hxx -text
