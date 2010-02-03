@@ -23,17 +23,17 @@ namespace tfel
     
     void
     GNUGraphTheme::drawGraphBackGround(Cairo::RefPtr<Cairo::Context>& cr,
-					  const GraphLayout&,
-					  const GraphSize& s) const
+				       const GraphLayout&,
+				       const GraphSize& s) const
     {
       using namespace std;
       RsvgHandle* handle;
       GError *error;
       RsvgDimensionData dimension;
       double scaleFactor;
-      handle =  rsvg_handle_new_from_file("gnu.svg", &error);
+      handle =  rsvg_handle_new_from_file("@pkgdatadir@/gnu.svg", &error);
       if(handle==0){
-	cerr << "load failed" << endl;
+	cerr << "GNUGraphTheme::drawGraphBackGround : background image loading failed" << endl;
 	exit(-1);
       }
       cr->save();

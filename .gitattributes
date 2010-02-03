@@ -872,7 +872,7 @@ tplot/src/Analyser.cxx -text
 tplot/src/CEAGraphTheme.cxx -text
 tplot/src/ElegantGraphTheme.cxx -text
 tplot/src/ElegantGraphTheme2.cxx -text
-tplot/src/GNUGraphTheme.cxx -text
+tplot/src/GNUGraphTheme.cxx.in -text
 tplot/src/Makefile.am -text
 tplot/src/PlotPrintOperation.cxx -text
 tplot/src/PlotWindow.cxx -text
