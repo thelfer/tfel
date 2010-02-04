@@ -672,6 +672,7 @@ src/Math/Function.cxx -text
 src/Math/FunctionTag.cxx -text
 src/Math/Id.cxx -text
 src/Math/InterpreterCommon.cxx -text
+src/Math/KrigedFunction.cxx -text
 src/Math/KrigingErrors.cxx -text
 src/Math/LUException.cxx -text
 src/Math/Lambda.cxx -text
