@@ -1460,6 +1460,47 @@ namespace tfel
       return p->second;
     } // end of Evaluator::getVariablePosition(const std::string&)
 
+    tfel::utilities::SmartPtr<Evaluator>
+    Evaluator::createFunctionByChangingParametersIntoVariables(const std::vector<std::string>& params) const
+    {
+      using namespace std;
+      using namespace tfel::utilities;
+      typedef map<string,vector<double>::size_type>::value_type MVType;
+      map<string,vector<double>::size_type>::const_iterator pv;
+      vector<string>::const_iterator pp;
+      vector<double>::size_type i;
+      assert(this->variables.size()==this->positions.size());
+      for(pp=params.begin();pp!=params.end();++pp){
+	if(this->positions.find(*pp)!=this->positions.end()){
+	  string msg("Evaluator::createFunctionByChangingParametersIntoVariables : ");
+	  msg += "'"+*pp+"' is alredy a variable of this function";
+	  throw(runtime_error(msg));
+	}
+      }
+      SmartPtr<Evaluator> ev = SmartPtr<Evaluator>(new Evaluator());
+      ev->variables.resize(this->variables.size()+params.size());
+      ev->positions = this->positions;
+      for(pp=params.begin(),i=this->variables.size();pp!=params.end();++pp,++i){
+	if(!(ev->positions.insert(MVType(*pp,i)).second)){
+	  string msg("Evaluator::createFunctionByChangingParametersIntoVariables : ");
+	  msg += "internal error ('"+*pp+"' alredy declared)";
+	  throw(runtime_error(msg));
+	}
+      }
+      ev->manager = this->manager;
+#warning "stupid"
+//       ev->expr = this->expr->createFunctionByChangingParametersIntoVariables(ev->variables,
+// 									     params,positions);      
+      exit(-1);
+      return ev;
+    } // end of Evaluator::createFunctionByChangingParametersIntoVariables
+
+    void
+    Evaluator::getParametersNames(std::set<std::string>&) const
+    {
+#warning "stupid"
+    } // end of Evaluator::getParametersNames
+
   } // end of namespace math
 
 } // end of namespace tfel

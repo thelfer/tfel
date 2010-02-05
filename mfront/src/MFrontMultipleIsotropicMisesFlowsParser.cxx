@@ -250,7 +250,7 @@ namespace mfront{
 	if(p->hasSpecificTheta){
 	  this->behaviourFile <<  "(real(" << p->theta << "))";
 	} else {
-	  this->behaviourFile <<  "(this->className" << "::theta)";
+	  this->behaviourFile <<  "(" << this->className << "::theta)";
 	}
 	this->behaviourFile << "*(this->df_dp" << n << ")-";
 	if(p->hasSpecificTheta){

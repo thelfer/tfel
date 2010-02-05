@@ -23,6 +23,7 @@
 #include"TFEL/Math/General/BasicOperations.hxx"
 #include"TFEL/Math/General/RunTimeCheck.hxx"
 #include"TFEL/Math/Vector/VectorConcept.hxx"
+#include"TFEL/Math/Matrix/MatrixConcept.hxx"
 
 namespace tfel{
 
@@ -42,22 +43,19 @@ namespace tfel{
 
       typedef typename VectorTraits<A>::NumType NumTypeA;
       typedef typename VectorTraits<B>::NumType NumTypeB;
-  
+
       static const bool IsATemporary = tfel::typetraits::IsTemporary<A>::cond;
       static const bool IsBTemporary = tfel::typetraits::IsTemporary<B>::cond;
-
-      typename tfel::meta::IF<IsATemporary,const A,const A&>::type a;
-      typename tfel::meta::IF<IsBTemporary,const B,const B&>::type b;
-
-      const typename A::RunTimeProperties RTP;
 
       VectorVectorDiadicProductExpr();
 
     public:
 
+      typedef typename MatrixTraits<Result>::RunTimeProperties RunTimeProperties; 
+  
       typedef typename ComputeBinaryResult<NumTypeA,NumTypeB,OpMult>::Handle NumType;
       
-      static const std::string getName(void){
+      static std::string getName(void){
 	using namespace std;
 	using namespace tfel::utilities;
 	return string("VectorVectorDiadicProductExpr<")+
@@ -71,7 +69,6 @@ namespace tfel{
       typedef A first_arg;
       typedef B second_arg;
 
-      typedef typename A::RunTimeProperties RunTimeProperties;
       typedef NumType        value_type;                                                
       typedef NumType*       pointer;	    						
       typedef const NumType* const_pointer; 						
@@ -80,10 +77,14 @@ namespace tfel{
       typedef AIndexType     size_type;	    						
       typedef ptrdiff_t      difference_type;                                          	
 
+      typename tfel::meta::IF<IsATemporary,const A,const A&>::type a;
+      typename tfel::meta::IF<IsBTemporary,const B,const B&>::type b;
+      const RunTimeProperties RTP;
+
 #ifndef NO_RUNTIME_CHECK_BOUNDS
       TFEL_MATH_INLINE VectorVectorDiadicProductExpr(const A& l, const B& r)
 	: a(l), b(r),
-	  RTP(RunTimeCheck<RunTimeProperties>::exe(l.getRunTimeProperties(),r.getRunTimeProperties()))
+	  RTP(l.getRunTimeProperties(),r.getRunTimeProperties())
       {}
 #else
       TFEL_MATH_INLINE VectorVectorDiadicProductExpr(const A& l, const B& r)
@@ -95,7 +96,7 @@ namespace tfel{
 	: a(src.a), b(src.b), RTP(src.RTP)
       {}
 
-      TFEL_MATH_INLINE const NumType 
+      TFEL_MATH_INLINE NumType 
       operator()(const AIndexType i,
 		 const BIndexType j) const 
       {
@@ -104,10 +105,10 @@ namespace tfel{
 
     public:
       
-      TFEL_MATH_INLINE const RunTimeProperties
+      TFEL_MATH_INLINE RunTimeProperties
       getRunTimeProperties(void) const
       {
-	return RTP;
+	return this->RTP;
       }
 
     };

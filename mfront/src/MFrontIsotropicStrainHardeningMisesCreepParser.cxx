@@ -28,7 +28,6 @@ namespace mfront{
     this->stateVarsHolder.push_back(VarHandler("strain","p",0u));
     this->glossaryNames.insert(MVType("eel","ElasticStrain"));
     this->glossaryNames.insert(MVType("p","EquivalentViscoplasticStrain"));
-    
     // default local vars
     this->registerVariable("f");
     this->registerVariable("df_dseq");

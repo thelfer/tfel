@@ -50,6 +50,13 @@ namespace tfel
       {} // end of StandardFunction::StandardFunction
 
       template<StandardFunctionPtr f>
+      void
+      StandardFunction<f>::getParametersNames(std::set<std::string>& p) const
+      {
+	this->expr->getParametersNames(p);
+      } // end of StandardFunction<f>::getParametersNames
+      
+      template<StandardFunctionPtr f>
       double
       StandardFunction<f>::getValue(void) const
       {
@@ -90,6 +97,18 @@ namespace tfel
 	using namespace tfel::utilities;
 	return SmartPtr<Expr>(new StandardFunction<f>(this->expr->clone(v)));
       } // end of StandardFunction<f>::clone
+
+      template<StandardFunctionPtr f>
+      tfel::utilities::SmartPtr<Expr>
+      StandardFunction<f>::createFunctionByChangingParametersIntoVariables(const std::vector<double>& v,
+									   const std::vector<std::string>& p,
+									   const std::map<std::string,
+									   std::vector<double>::size_type>& pos) const
+      {
+	using namespace tfel::utilities;
+	SmartPtr<Expr> nexpr = this->expr->createFunctionByChangingParametersIntoVariables(v,p,pos);
+	return SmartPtr<Expr>(new StandardFunction<f>(nexpr));
+      } // end of StandardFunction<f>::createFunctionByChangingParametersIntoVariables
 
       template<StandardFunctionPtr f>
       tfel::utilities::SmartPtr<Expr>

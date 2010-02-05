@@ -49,11 +49,30 @@ namespace tfel
       }
 
       tfel::utilities::SmartPtr<Expr>
+      Negation::createFunctionByChangingParametersIntoVariables(const std::vector<double>& v,
+								const std::vector<std::string>& params,
+								const std::map<std::string,
+								std::vector<double>::size_type>& pos) const
+      {
+	using namespace tfel::utilities;
+#warning "stupid"
+// 	SmartPtr<Expr> nexpr = this->expr->createFunctionByChangingParametersIntoVariables(v,params,pos);
+// 	return SmartPtr<Expr>(new Negation(nexpr));
+ 	return SmartPtr<Expr>(0);
+      } // end of Negation::createFunctionByChangingParametersIntoVariables
+
+      tfel::utilities::SmartPtr<Expr>
       Negation::resolveDependencies(void) const
       {
 	using namespace tfel::utilities;
 	return SmartPtr<Expr>(new Negation(this->expr->resolveDependencies()));
       } // end of Negation::resolveDependencies
+
+      void
+      Negation::getParametersNames(std::set<std::string>& p) const
+      {
+	this->expr->getParametersNames(p);
+      } // end of Negation::getParametersNames
 
       Negation::~Negation()
       {} // end of Negation::~Negation()

@@ -9,6 +9,8 @@
 #ifndef _LIB_TFEL_EXPR_HXX_
 #define _LIB_TFEL_EXPR_HXX_ 
 
+#include<map>
+#include<set>
 #include<vector>
 #include<string>
 #include<stdexcept>
@@ -35,6 +37,13 @@ namespace tfel
 	virtual tfel::utilities::SmartPtr<Expr>
 	differentiate(const std::vector<double>::size_type,
 		      const std::vector<double>&) const = 0;
+	virtual void
+	getParametersNames(std::set<std::string>&) const = 0;
+// 	virtual tfel::utilities::SmartPtr<Expr>
+// 	createFunctionByChangingParametersIntoVariables(const std::vector<double>&,
+// 							const std::vector<std::string>&,
+// 							const std::map<std::string,
+// 							               std::vector<double>::size_type>&) const = 0;
 	virtual ~Expr();
       }; // end of struct Expr
 
@@ -52,4 +61,3 @@ namespace tfel
 } // end of namespace tfel
 
 #endif /* _LIB_TFEL_EXPR_HXX */
-

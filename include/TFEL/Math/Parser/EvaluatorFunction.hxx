@@ -78,6 +78,8 @@ namespace tfel
 	resolveDependencies(void) const;
 	tfel::utilities::SmartPtr<Expr>
 	clone(const std::vector<double>&) const;
+	void
+	getParametersNames(std::set<std::string>&) const;
 	~EvaluatorFunction1P1V();
       private:
 	EvaluatorProxyFunctionPtr1P1V f;
@@ -96,6 +98,8 @@ namespace tfel
 	resolveDependencies(void) const;
 	tfel::utilities::SmartPtr<Expr>
 	clone(const std::vector<double>&) const;
+	void
+	getParametersNames(std::set<std::string>&) const;
 	~EvaluatorFunction2P1V();
       private:
 	EvaluatorProxyFunctionPtr2P1V f;
@@ -115,6 +119,8 @@ namespace tfel
 	resolveDependencies(void) const;
 	tfel::utilities::SmartPtr<Expr>
 	clone(const std::vector<double>&) const;
+	void
+	getParametersNames(std::set<std::string>&) const;
 	~EvaluatorFunction1P2V();
       private:
 	EvaluatorProxyFunctionPtr1P2V f;
@@ -134,6 +140,8 @@ namespace tfel
 	resolveDependencies(void) const;
 	tfel::utilities::SmartPtr<Expr>
 	clone(const std::vector<double>&) const;
+	void
+	getParametersNames(std::set<std::string>&) const;
 	~EvaluatorFunction2P2V();
       private:
 	EvaluatorProxyFunctionPtr2P2V f;
@@ -157,7 +165,9 @@ namespace tfel
 	clone(const std::vector<double>&) const;
 	void
 	checkCyclicDependency(std::vector<std::string>&) const;
-	virtual ~EvaluatorFunctionNV();
+	void
+	getParametersNames(std::set<std::string>&) const;
+	~EvaluatorFunctionNV();
       protected:
 	typename EvaluatorFunctionWrapper<N>::type f;
 	const std::vector<tfel::utilities::SmartPtr<Expr> > args;
@@ -177,6 +187,8 @@ namespace tfel
 	clone(const std::vector<double>&) const;
 	void
 	checkCyclicDependency(std::vector<std::string>&) const;
+	void
+	getParametersNames(std::set<std::string>&) const;
 	virtual ~EvaluatorFunction1PNV();
       protected:
 	typename EvaluatorFunctionWrapper<N>::type1P f;
@@ -220,7 +232,9 @@ namespace tfel
 	clone(const std::vector<double>&) const;
 	void
 	checkCyclicDependency(std::vector<std::string>&) const;
-	virtual ~EvaluatorFunction1UPNV();
+	void
+	getParametersNames(std::set<std::string>&) const;
+	~EvaluatorFunction1UPNV();
       protected:
 	typename EvaluatorFunctionWrapper<N>::type1UP f;
 	const unsigned int n;
@@ -242,7 +256,9 @@ namespace tfel
 	clone(const std::vector<double>&) const;
 	void
 	checkCyclicDependency(std::vector<std::string>&) const;
-	virtual ~EvaluatorFunction2UPNV();
+	void
+	getParametersNames(std::set<std::string>&) const;
+	 ~EvaluatorFunction2UPNV();
       protected:
 	typename EvaluatorFunctionWrapper<N>::type2UP f;
 	const unsigned int n;

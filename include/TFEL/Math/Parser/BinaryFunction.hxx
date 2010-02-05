@@ -51,6 +51,8 @@ namespace tfel
 		      const std::vector<double>&) const;
 	tfel::utilities::SmartPtr<Expr>
 	clone(const std::vector<double>&) const;
+	void
+	getParametersNames(std::set<std::string>&) const;
 	~StandardBinaryFunction();
       private:
 	const tfel::utilities::SmartPtr<Expr> expr1;

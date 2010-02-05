@@ -9,6 +9,8 @@
 #define _LIB_TFEL_VECTOR_IXX_ 
 
 #include"cassert"
+#include"TFEL/Math/Function/Power.hxx"
+
 
 namespace tfel{
 
@@ -44,7 +46,38 @@ namespace tfel{
     vector<ValueType>&
     vector<ValueType>::operator=(const vector<ValueType>& src)
     {
+#ifndef NO_RUNTIME_CHECK_BOUNDS
+      RunTimeCheck<RunTimeProperties>::exe(this->size(),src.size());
+#endif
       std::vector<ValueType>::operator=(src);
+      return *this;
+    }
+
+    template<typename ValueType>
+    vector<ValueType>&
+    vector<ValueType>::operator+=(const vector<ValueType>& src)
+    {
+      size_type i;
+#ifndef NO_RUNTIME_CHECK_BOUNDS
+      RunTimeCheck<RunTimeProperties>::exe(this->size(),src.size());
+#endif
+      for(i=0;i<this->size();++i){
+	std::vector<ValueType>::operator[](i) += src(i);
+      }
+      return *this;
+    }
+
+    template<typename ValueType>
+    vector<ValueType>&
+    vector<ValueType>::operator-=(const vector<ValueType>& src)
+    {
+      size_type i;
+#ifndef NO_RUNTIME_CHECK_BOUNDS
+      RunTimeCheck<RunTimeProperties>::exe(this->size(),src.size());
+#endif
+      for(i=0;i<this->size();++i){
+	std::vector<ValueType>::operator[](i) -= src(i);
+      }
       return *this;
     }
 
@@ -83,12 +116,48 @@ namespace tfel{
     >::type
     vector<ValueType>::operator=(const VectorExpr<vector<ValueType2>,Expr>& expr)
     {
-      unsigned int i;
+      size_type i;
 #ifndef NO_RUNTIME_CHECK_BOUNDS
       RunTimeCheck<RunTimeProperties>::exe(this->getRunTimeProperties(),expr.getRunTimeProperties());
 #endif
       for(i=0;i<this->size();++i){
 	std::vector<ValueType>::operator[](i) = expr(i);
+      }
+      return *this;
+    }
+
+    template<typename ValueType>
+    template<typename ValueType2,typename Expr>
+    TFEL_MATH_INLINE2 typename tfel::meta::EnableIf<
+      tfel::typetraits::IsAssignableTo<ValueType2,ValueType>::cond,
+      vector<ValueType>&
+    >::type
+    vector<ValueType>::operator+=(const VectorExpr<vector<ValueType2>,Expr>& expr)
+    {
+      size_type i;
+#ifndef NO_RUNTIME_CHECK_BOUNDS
+      RunTimeCheck<RunTimeProperties>::exe(this->getRunTimeProperties(),expr.getRunTimeProperties());
+#endif
+      for(i=0;i<this->size();++i){
+	std::vector<ValueType>::operator[](i) += expr(i);
+      }
+      return *this;
+    }
+
+    template<typename ValueType>
+    template<typename ValueType2,typename Expr>
+    TFEL_MATH_INLINE2 typename tfel::meta::EnableIf<
+      tfel::typetraits::IsAssignableTo<ValueType2,ValueType>::cond,
+      vector<ValueType>&
+    >::type
+    vector<ValueType>::operator-=(const VectorExpr<vector<ValueType2>,Expr>& expr)
+    {
+      size_type i;
+#ifndef NO_RUNTIME_CHECK_BOUNDS
+      RunTimeCheck<RunTimeProperties>::exe(this->getRunTimeProperties(),expr.getRunTimeProperties());
+#endif
+      for(i=0;i<this->size();++i){
+	std::vector<ValueType>::operator[](i) -= expr(i);
       }
       return *this;
     }
@@ -103,7 +172,27 @@ namespace tfel{
     template<typename ValueType>
     void vector<ValueType>::swap(vector<ValueType>& a)
     {
+#ifndef NO_RUNTIME_CHECK_BOUNDS
+      RunTimeCheck<RunTimeProperties>::exe(this->size(),a.size());
+#endif
       std::vector<ValueType>::swap(a);
+    }
+
+    template<typename T>
+    TFEL_MATH_INLINE2
+    typename tfel::meta::EnableIf<
+      tfel::typetraits::IsScalar<T>::cond,
+      typename tfel::typetraits::RealPartType<T>::type
+    >::type
+    norm(const vector<T>& vec)
+    {
+      using tfel::math::stdfunctions::power;
+      T n(0);
+      typename vector<T>::size_type i;
+      for(i=0;i!=vec.size();++i){
+	n += power<2>(vec(i));
+      }
+      return sqrt(real(n));
     }
 
   } // end of namespace math

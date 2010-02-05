@@ -184,6 +184,10 @@ namespace tfel
 		       const double);
       void
       setVariableValue(const std::string&,const double);
+      tfel::utilities::SmartPtr<Evaluator>
+      createFunctionByChangingParametersIntoVariables(const std::vector<std::string>&) const;
+      void
+      getParametersNames(std::set<std::string>&) const;
       ~Evaluator();
     private:
       static ExternalFunctionRegister externalFunctionRegister;

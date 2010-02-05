@@ -138,6 +138,11 @@ namespace tfel
 		  const TokensContainer::const_iterator,
 		  const std::string&);
 
+	void
+	readVariableList(std::vector<std::string>&,
+			 TokensContainer::const_iterator&, 
+			 const TokensContainer::const_iterator);
+
 	std::vector<std::string>
 	readVariableList(TokensContainer::const_iterator&, 
 			 const TokensContainer::const_iterator);
@@ -145,6 +150,10 @@ namespace tfel
 	void
 	treatKriging(TokensContainer::const_iterator&, 
 		     const TokensContainer::const_iterator);
+
+	void
+	treatFit(TokensContainer::const_iterator&, 
+		 const TokensContainer::const_iterator);
 
 	void
 	treatPrint(TokensContainer::const_iterator&, 

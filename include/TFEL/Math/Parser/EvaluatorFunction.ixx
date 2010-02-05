@@ -519,6 +519,18 @@ namespace tfel
       } // end of EvaluatorFunctionNV<N>::getValue(void) const
 
       template<unsigned short N>
+      void
+      EvaluatorFunctionNV<N>::getParametersNames(std::set<std::string>& p) const
+      {
+	using namespace std;
+	using namespace tfel::utilities;
+        vector<SmartPtr<Expr> >::const_iterator pa;
+        for(pa=this->args.begin();pa!=this->args.end();++pa){
+	  (*pa)->getParametersNames(p);
+	}
+      } // end of EvaluatorFunctionNV<N>::getParametersNames
+
+      template<unsigned short N>
       tfel::utilities::SmartPtr<Expr>
       EvaluatorFunctionNV<N>::resolveDependencies(void) const
       {
@@ -596,6 +608,18 @@ namespace tfel
         }
         return SmartPtr<Expr>(new EvaluatorFunction1PNV<N>(this->f,this->n,nargs));
       } // end of EvaluatorFunction1PNV<N>::resolveDependencies const
+
+      template<unsigned short N>
+      void
+      EvaluatorFunction1PNV<N>::getParametersNames(std::set<std::string>& p) const
+      {
+	using namespace std;
+	using namespace tfel::utilities;
+        typename vector<SmartPtr<Expr> >::const_iterator pa;
+        for(pa=this->args.begin();pa!=this->args.end();++pa){
+	  (*pa)->getParametersNames(p);
+        }
+      } // end of EvaluatorFunction1PNV<N>::getParametersNames
 
       template<unsigned short N>
       tfel::utilities::SmartPtr<Expr>
@@ -728,6 +752,18 @@ namespace tfel
       } // end of EvaluatorFunction1UPNV<N>::resolveDependencies const
 
       template<unsigned short N>
+      void
+      EvaluatorFunction1UPNV<N>::getParametersNames(std::set<std::string>& p) const
+      {
+	using namespace std;
+	using namespace tfel::utilities;
+        typename vector<SmartPtr<Expr> >::const_iterator pa;
+        for(pa=this->args.begin();pa!=this->args.end();++pa){
+	  (*pa)->getParametersNames(p);
+        }
+      } // end of EvaluatorFunction1UPNV<N>::getParametersNames
+
+      template<unsigned short N>
       tfel::utilities::SmartPtr<Expr>
       EvaluatorFunction1UPNV<N>::clone(const std::vector<double>& v) const
       {
@@ -807,6 +843,18 @@ namespace tfel
         }
         return SmartPtr<Expr>(new EvaluatorFunction2UPNV<N>(this->f,this->n,this->m,nargs));
       } // end of EvaluatorFunction2UPNV<N>::resolveDependencies const
+
+      template<unsigned short N>
+      void
+      EvaluatorFunction2UPNV<N>::getParametersNames(std::set<std::string>& p) const
+      {
+	using namespace std;
+	using namespace tfel::utilities;
+        typename vector<SmartPtr<Expr> >::const_iterator pa;
+        for(pa=this->args.begin();pa!=this->args.end();++pa){
+	  (*pa)->getParametersNames(p);
+        }
+      } // end of EvaluatorFunction2UPNV<N>::getParametersNames
 
       template<unsigned short N>
       void

@@ -23,10 +23,17 @@ namespace tfel{
     struct EmptyRunTimeProperties
     {
 
-      TFEL_MATH_INLINE EmptyRunTimeProperties()
+      TFEL_MATH_INLINE
+      EmptyRunTimeProperties()
       {}
 
-      TFEL_MATH_INLINE EmptyRunTimeProperties(const EmptyRunTimeProperties&)
+      TFEL_MATH_INLINE
+      EmptyRunTimeProperties(const EmptyRunTimeProperties&)
+      {}
+
+      TFEL_MATH_INLINE
+      EmptyRunTimeProperties(const EmptyRunTimeProperties&,
+			     const EmptyRunTimeProperties&)
       {}
 
       TFEL_MATH_INLINE EmptyRunTimeProperties&

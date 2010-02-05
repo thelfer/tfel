@@ -45,6 +45,10 @@ namespace tfel
 	throw(runtime_error(msg.str()));
       } // end of ExternalCFunctionBase<0u>::setVariableValue
 
+      void
+      ExternalCFunctionBase<0u>::getParametersNames(std::set<std::string>&) const
+      {} // endo of ExternalCFunction<0u>::getParametersNames
+
       std::vector<double>::size_type
       ExternalCFunctionBase<0u>::getNumberOfVariables(void) const
       {

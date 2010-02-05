@@ -9,7 +9,7 @@ endif
 doc:
 	cd @top_srcdir@ && doxygen @abs_top_builddir@/Doxyfile && cd -
 
-EXTRA_DIST = config/config.rpath  config/config.rpath  config/config.rpath  config/config.rpath  config/config.rpath  config/config.rpath  config/config.rpath  bootstrap.sh        \
+EXTRA_DIST = config/config.rpath  config/config.rpath  config/config.rpath  config/config.rpath  config/config.rpath  config/config.rpath  config/config.rpath  config/config.rpath  bootstrap.sh        \
 	     config/config.rpath \
 	     GPL.txt             \
 	     LGPL.txt            \

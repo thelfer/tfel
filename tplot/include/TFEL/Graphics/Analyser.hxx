@@ -343,8 +343,6 @@ namespace tfel
       std::map<std::string,MemFuncPtr>  showCallBacks;
       std::map<std::string,MemFuncPtr2> plotCallBacks;
 
-      std::map<std::string,tfel::utilities::SmartPtr<tfel::utilities::TextData> > dataSources;
-
       std::map<std::string,Curve::Color> colors;
 
       std::string terminal;

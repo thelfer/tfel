@@ -9,6 +9,7 @@
 #ifndef _LIB_TFEL_MATH_PARSER_EXTERNALFUNCTION_HXX_
 #define _LIB_TFEL_MATH_PARSER_EXTERNALFUNCTION_HXX_ 
 
+#include<set>
 #include<vector>
 #include<string>
 #include<stdexcept>
@@ -43,6 +44,8 @@ namespace tfel
 	differentiate(const std::string&) const = 0;
 	virtual	tfel::utilities::SmartPtr<ExternalFunction>
 	resolveDependencies(void) const = 0;
+	virtual void
+	getParametersNames(std::set<std::string>&) const = 0;
 	virtual ~ExternalFunction();
       }; // end of struct ExternalFunction
       

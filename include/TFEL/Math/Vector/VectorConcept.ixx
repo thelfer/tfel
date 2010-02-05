@@ -27,13 +27,6 @@ namespace tfel{
     {
       return static_cast<const T&>(*this).operator()(i);
     } // end of VectorConcept<T>::operator()
-
-    template<class T>
-    typename VectorTraits<T>::IndexType
-    VectorConcept<T>::size(void) const
-    {
-      return static_cast<const T&>(*this).size();
-    } // end of VectorConcept<T>::operator()
     
   } // end of namespace math
 

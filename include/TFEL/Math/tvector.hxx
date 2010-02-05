@@ -58,6 +58,8 @@ namespace tfel{
       typedef T NumType;
       //! the type of the index used by the tvector.
       typedef unsigned short IndexType;
+      //! a simple alias to the tvector runtime properties
+      typedef EmptyRunTimeProperties RunTimeProperties;
     };
     
     template<unsigned short N, typename T = double>

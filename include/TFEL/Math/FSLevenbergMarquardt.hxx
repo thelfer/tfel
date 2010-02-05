@@ -1,7 +1,12 @@
 /*!
  * \file   FSLevenbergMarquardt.hxx
  * \brief  
- * 
+ *
+ * "Methods for non-linear least
+ * squares problems"
+ * 2nd Edition, April 2004
+ * K. Madsen, H.B. Nielsen, O. Tingleff
+ *
  * \author Helfer Thomas
  * \date   21 nov 2008
  */
@@ -20,21 +25,38 @@ namespace tfel
   {
 
     template<unsigned short N, // number of variables
+	     typename T>
+    struct FSLevenbergMarquardtVariable
+    {
+      typedef tvector<N,T> type;
+    }; // end of struct Variable
+
+    template<typename T>
+    struct FSLevenbergMarquardtVariable<1u,T>
+    {
+      typedef T type;
+    }; // end of struct Variable
+
+    template<unsigned short N, // number of variables
 	     unsigned short M, // number of parameters
 	     typename T = double>
     struct FSLevenbergMarquardt
     {
 
-      typedef std::pair<T,tvector<M,T> > (* PtrFun)(const tvector<N,T>&,
-						    const tvector<M,T>&);
+      typedef  typename FSLevenbergMarquardtVariable<N,T>::type Variable;
+      typedef  typename FSLevenbergMarquardtVariable<M,T>::type Parameter;
+      
+      typedef std::pair<T,Parameter> (* PtrFun)(const Variable&,
+						const Parameter&);
 
       FSLevenbergMarquardt(const PtrFun);
 
       void
-      addData(const tvector<N,T>&,const T);
+      addData(const Variable&,
+	      const T);
 
       void
-      setInitialGuess(const tvector<M,T>&);
+      setInitialGuess(const Parameter&);
 
       void
       setInitialDampingParameter(const T);
@@ -51,13 +73,13 @@ namespace tfel
       void
       setMaximumIteration(const T);
 
-      const tvector<M,T>&
+      const Parameter&
       execute(void);
       
     private:
       
-      std::vector<std::pair<tvector<N,T>,double> > data;
-      tvector<M,T> p;
+      std::vector<std::pair<Variable,double> > data;
+      Parameter p;
       T lambda0;
       T factor;
       T eps1;

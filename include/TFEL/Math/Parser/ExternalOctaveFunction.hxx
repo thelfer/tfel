@@ -47,6 +47,8 @@ namespace tfel
 	differentiate(const std::string&) const;
 	tfel::utilities::SmartPtr<ExternalFunction>
 	resolveDependencies(void) const;
+	void
+	getParametersNames(std::set<std::string>&) const = 0;
       private:
 	struct OctaveInitializer;
 	std::string f;

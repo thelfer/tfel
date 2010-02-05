@@ -47,6 +47,10 @@ namespace tfel{
        * The index type
        */
       typedef typename std::vector<ValueType>::size_type IndexType;
+      /*
+       * RunTime Properties
+       */
+      typedef IndexType RunTimeProperties;
     };
     
     
@@ -185,6 +189,22 @@ namespace tfel{
       operator=(const vector&);
 
       /*
+       * Assignement operator.
+       * \param  const vector&, the vector to be copied.
+       * \return vector&, a reference to itself.
+       */
+      vector& 
+      operator+=(const vector&);
+
+      /*
+       * Assignement operator.
+       * \param  const vector&, the vector to be copied.
+       * \return vector&, a reference to itself.
+       */
+      vector& 
+      operator-=(const vector&);
+
+      /*
        * Assignement operator
        * \param const VectorExpr<vector<ValueType2>,Expr>&, a vector
        * expression based on vector
@@ -197,6 +217,34 @@ namespace tfel{
 	vector<ValueType>&
       >::type
       operator=(const VectorExpr<vector<ValueType2>,Expr>&);
+
+      /*
+       * Assignement operator
+       * \param const VectorExpr<vector<ValueType2>,Expr>&, a vector
+       * expression based on vector
+       * \return vector&, a reference to itself.
+       */
+      template<typename ValueType2,typename Expr>
+      TFEL_MATH_INLINE2
+      typename tfel::meta::EnableIf<
+	tfel::typetraits::IsAssignableTo<ValueType2,ValueType>::cond,
+	vector<ValueType>&
+      >::type
+      operator+=(const VectorExpr<vector<ValueType2>,Expr>&);
+
+      /*
+       * Assignement operator
+       * \param const VectorExpr<vector<ValueType2>,Expr>&, a vector
+       * expression based on vector
+       * \return vector&, a reference to itself.
+       */
+      template<typename ValueType2,typename Expr>
+      TFEL_MATH_INLINE2
+      typename tfel::meta::EnableIf<
+	tfel::typetraits::IsAssignableTo<ValueType2,ValueType>::cond,
+	vector<ValueType>&
+      >::type
+      operator-=(const VectorExpr<vector<ValueType2>,Expr>&);
 
       /*
        * index operator
@@ -285,6 +333,18 @@ namespace tfel{
       copy(const InputIterator,const InputIterator);
 
     };
+
+    /*!
+     * \brief return the euclidian norm of a vector
+     * \param const vector<T>&, the vector.
+     * \return const typename tfel::typetraits::RealPartType<T>::type, the result
+     */
+    template<typename T>
+    typename tfel::meta::EnableIf<
+      tfel::typetraits::IsScalar<T>::cond,
+      typename tfel::typetraits::RealPartType<T>::type
+      >::type
+    norm(const vector<T>&);
 
   } // end of namespace math
 

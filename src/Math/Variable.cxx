@@ -34,6 +34,10 @@ namespace tfel
       Variable::checkCyclicDependency(std::vector<std::string>&) const
       {} // end of Variable::checkCyclicDependency
       
+      void
+      Variable::getParametersNames(std::set<std::string>&) const
+      {} // end of Variable::getParametersNames
+
       tfel::utilities::SmartPtr<Expr>
       Variable::differentiate(const std::vector<double>::size_type dpos,
 			      const std::vector<double>&) const
@@ -51,6 +55,16 @@ namespace tfel
 	using namespace tfel::utilities;
 	return SmartPtr<Expr>(new Variable(v_,this->pos));
       } // end of Variable::clone
+
+      tfel::utilities::SmartPtr<Expr>
+      Variable::createFunctionByChangingParametersIntoVariables(const std::vector<double>& v_,
+								const std::vector<std::string>&,
+								const std::map<std::string,
+								std::vector<double>::size_type>&) const
+      {
+	using namespace tfel::utilities;
+	return SmartPtr<Expr>(new Variable(v_,this->pos));
+      } // end of Variable::createFunctionByChangingParametersIntoVariables
 
       tfel::utilities::SmartPtr<Expr>
       Variable::resolveDependencies(void) const

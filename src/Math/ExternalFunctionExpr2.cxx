@@ -66,6 +66,17 @@ namespace tfel
 	}
       } // end of ExternalFunctionExpr2::checkCyclicDependency
 
+      void
+      ExternalFunctionExpr2::getParametersNames(std::set<std::string>& p) const
+      {
+	using namespace std;
+	using namespace tfel::utilities;
+	vector<SmartPtr<Expr> >::const_iterator pa;
+	for(pa=this->args.begin();pa!=this->args.end();++pa){
+	  (*pa)->getParametersNames(p);
+	}
+      } // end of ExternalFunctionExpr2::getParametersNames(std::set<std::string>&) const;
+
       tfel::utilities::SmartPtr<Expr>
       ExternalFunctionExpr2::differentiate(const std::vector<double>::size_type pos,
 					   const std::vector<double>& v) const
@@ -102,6 +113,24 @@ namespace tfel
         }
 	return df;
       } // end of ExternalFunctionExpr2::differentiate
+
+      tfel::utilities::SmartPtr<Expr>
+      ExternalFunctionExpr2::createFunctionByChangingParametersIntoVariables(const std::vector<double>& v,
+									     const std::vector<std::string>& params,
+									     const std::map<std::string,
+									     std::vector<double>::size_type>& pos) const
+      {
+	using namespace std;
+	using namespace tfel::utilities;
+	vector<SmartPtr<Expr> > nargs(this->args.size());
+        vector<SmartPtr<Expr> >::const_iterator p;
+        vector<SmartPtr<Expr> >::iterator p2;
+        for(p=this->args.begin(),p2=nargs.begin();p!=this->args.end();++p,++p2){
+#warning "stupid"
+	  //	  *p2 = (*p)->createFunctionByChangingParametersIntoVariables(v,params,pos);
+	}
+        return SmartPtr<Expr>(new ExternalFunctionExpr2(this->f,nargs));
+      } // end of ExternalFunctionExpr2::createFunctionByChangingParametersIntoVariables
 
       tfel::utilities::SmartPtr<Expr>
       ExternalFunctionExpr2::clone(const std::vector<double>& v) const

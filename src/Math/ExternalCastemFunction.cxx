@@ -52,6 +52,10 @@ namespace tfel
       ExternalCastemFunction::checkCyclicDependency(std::vector<std::string>&) const
       {} // end of ExternalCastemFunction::checkCyclicDependency
  
+      void
+      ExternalCastemFunction::getParametersNames(std::set<std::string>&) const
+      {} // endo of ExternalCastemFunction::getParametersNames
+
       tfel::utilities::SmartPtr<ExternalFunction>
       ExternalCastemFunction::resolveDependencies(void) const
       {

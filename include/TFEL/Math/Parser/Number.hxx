@@ -32,6 +32,13 @@ namespace tfel
 	clone(const std::vector<double>&) const;
 	tfel::utilities::SmartPtr<Expr>
 	resolveDependencies(void) const;
+	void
+	getParametersNames(std::set<std::string>&) const;
+	tfel::utilities::SmartPtr<Expr>
+	createFunctionByChangingParametersIntoVariables(const std::vector<double>&,
+							const std::vector<std::string>&,
+							const std::map<std::string,
+							std::vector<double>::size_type>&) const;
 	double
 	getValue(void) const;
       private:

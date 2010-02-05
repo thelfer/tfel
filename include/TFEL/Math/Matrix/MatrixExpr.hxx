@@ -24,6 +24,7 @@ namespace tfel{
     struct MatrixTraits<MatrixExpr<T_type,Expr> >{
       typedef typename Expr::NumType NumType;
       typedef typename MatrixTraits<T_type>::IndexType IndexType;
+      typedef typename MatrixTraits<T_type>::RunTimeProperties RunTimeProperties;
     };
 
     template<typename T_type, typename Expr>
@@ -33,13 +34,13 @@ namespace tfel{
     {
 
       typedef typename Expr::RunTimeProperties RunTimeProperties;
-      typedef typename Expr::value_type      value_type;      
-      typedef typename Expr::pointer	     pointer;	    
-      typedef typename Expr::const_pointer   const_pointer; 
-      typedef typename Expr::reference	     reference;	    
-      typedef typename Expr::const_reference const_reference;
-      typedef typename Expr::size_type 	     size_type;	    
-      typedef typename Expr::difference_type difference_type;
+      typedef typename Expr::value_type        value_type;      
+      typedef typename Expr::pointer	       pointer;	    
+      typedef typename Expr::const_pointer     const_pointer; 
+      typedef typename Expr::reference	       reference;	    
+      typedef typename Expr::const_reference   const_reference;
+      typedef typename Expr::size_type 	       size_type;	    
+      typedef typename Expr::difference_type   difference_type;
 
       static 
       const std::string 

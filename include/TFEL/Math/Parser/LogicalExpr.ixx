@@ -70,6 +70,29 @@ namespace tfel
       } // end of LogicalOperation<Op>::clone
 
       template<typename Op>
+      tfel::utilities::SmartPtr<LogicalExpr>
+      LogicalOperation<Op>::createFunctionByChangingParametersIntoVariables(const std::vector<double>& v,
+									    const std::vector<std::string>& p,
+									    const std::map<std::string,
+									    std::vector<double>::size_type>& pos) const
+      {
+	using namespace tfel::utilities;
+#warning "stupid"
+// 	SmartPtr<LogicalExpr> na = this->a->createFunctionByChangingParametersIntoVariables(v,p,pos);
+// 	SmartPtr<LogicalExpr> nb = this->b->createFunctionByChangingParametersIntoVariables(v,p,pos);
+// 	return SmartPtr<LogicalExpr>(new LogicalOperation<Op>(na,nb));
+	return SmartPtr<LogicalExpr>(0);
+      } // end of LogicalOperation<Op>::createFunctionByChangingParametersIntoVariables
+
+      template<typename Op>
+      void
+      LogicalOperation<Op>::getParametersNames(std::set<std::string>& p) const
+      {
+	this->a->getParametersNames(p);
+	this->b->getParametersNames(p);
+      } // end of LogicalOperation<Op>::getParametersNames
+      
+      template<typename Op>
       LogicalOperation<Op>::~LogicalOperation()
       {} // end of LogicalOperation<Op>::~LogicalOperation()
 
@@ -101,6 +124,14 @@ namespace tfel
       } // end of LogicalBinaryOperation::checkCyclicDependency
 
       template<typename Op>
+      void
+      LogicalBinaryOperation<Op>::getParametersNames(std::set<std::string>& p) const
+      {
+	this->a->getParametersNames(p);
+	this->b->getParametersNames(p);
+      } // end of LogicalBinaryOperation<Op>::getParametersNames
+
+      template<typename Op>
       tfel::utilities::SmartPtr<LogicalExpr>
       LogicalBinaryOperation<Op>::resolveDependencies(void) const
       {
@@ -117,6 +148,21 @@ namespace tfel
 	return SmartPtr<LogicalExpr>(new LogicalBinaryOperation<Op>(this->a->clone(v),
 								    this->b->clone(v)));
       } // end of LogicalBinaryOperation<Op>::clone
+
+      template<typename Op>
+      tfel::utilities::SmartPtr<LogicalExpr>
+      LogicalBinaryOperation<Op>::createFunctionByChangingParametersIntoVariables(const std::vector<double>& v,
+										  const std::vector<std::string>& p,
+										  const std::map<std::string,
+										  std::vector<double>::size_type>& pos) const
+      {
+ 	using namespace tfel::utilities;
+// 	SmartPtr<LogicalExpr> na = this->a->createFunctionByChangingParametersIntoVariables(v,p,pos);
+// 	SmartPtr<LogicalExpr> nb = this->b->createFunctionByChangingParametersIntoVariables(v,p,pos);
+// 	return SmartPtr<LogicalExpr>(new LogicalBinaryOperation<Op>(na,nb));
+#warning "stupid"
+	return SmartPtr<LogicalExpr>(0);
+      } // end of LogicalBinaryOperation<Op>::createFunctionByChangingParametersIntoVariables
 
       template<typename Op>
       LogicalBinaryOperation<Op>::~LogicalBinaryOperation()

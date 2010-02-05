@@ -72,6 +72,14 @@ namespace tfel
       } // end of StandardBinaryFunction<f>::resolveDependencies
 
       template<double (*f)(const double,const double)>
+      void
+      StandardBinaryFunction<f>::getParametersNames(std::set<std::string>& p) const
+      {
+	this->expr1->getParametersNames(p);
+	this->expr2->getParametersNames(p);
+      } // end of StandardBinaryFunction<f>::getParametersNames
+
+      template<double (*f)(const double,const double)>
       tfel::utilities::SmartPtr<Expr>
       StandardBinaryFunction<f>::differentiate(const std::vector<double>::size_type,
 					       const std::vector<double>&) const

@@ -29,6 +29,10 @@ namespace tfel
       } // end of Number::getValue
 
       void
+      Number::getParametersNames(std::set<std::string>&) const
+      {} // end of Number::getParametersNames
+
+      void
       Number::checkCyclicDependency(std::vector<std::string>&) const
       {} // end of Number::checkCyclicDependency
 
@@ -46,6 +50,15 @@ namespace tfel
 	using namespace tfel::utilities;
 	return SmartPtr<Expr>(new Number(this->value));
       } // end of Number::clone
+
+      tfel::utilities::SmartPtr<Expr>
+      Number::createFunctionByChangingParametersIntoVariables(const std::vector<double>& v,
+							      const std::vector<std::string>&,
+							      const std::map<std::string,
+							      std::vector<double>::size_type>&) const
+      {
+	return this->clone(v);
+      } // end of Number::createFunctionByChangingParametersIntoVariables
 
       tfel::utilities::SmartPtr<Expr>
       Number::resolveDependencies() const

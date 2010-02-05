@@ -14,22 +14,6 @@ namespace tfel{
 				 const typename MatrixTraits<T>::IndexType j) const {
       return static_cast<const T&>(*this).operator()(i,j);
     }
-
-    template<class T>
-    TFEL_MATH_INLINE2
-    typename MatrixTraits<T>::IndexType 
-    MatrixConcept<T>::getNbCols(void) const 
-    {
-      return static_cast<const T&>(*this).nb_cols();
-    }
-    
-    template<class T>
-    TFEL_MATH_INLINE2
-    typename MatrixTraits<T>::IndexType 
-    MatrixConcept<T>::getNbRows(void) const 
-    {
-      return static_cast<const T&>(*this).nb_rows();
-    }
     
   } // end of namespace math
 

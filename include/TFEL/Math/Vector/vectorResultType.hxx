@@ -12,7 +12,7 @@
 #include"TFEL/Metaprogramming/InvalidType.hxx"
 #include"TFEL/Math/General/ResultType.hxx"
 #include"TFEL/Math/Vector/VectorConcept.hxx"
-#include"TFEL/Math/vector.hxx"
+#include"TFEL/Math/matrix.hxx"
 
 namespace tfel{
 
@@ -64,21 +64,6 @@ namespace tfel{
      * scalars operations
      * \see   ResultType_
      */
-    template<typename T, typename Scal>
-    class ResultType_<VectorTag,ScalarTag,vector<T>,Scal,OpDiv>
-    {
-      typedef typename ResultType<T,Scal,OpDiv>::type ResBase_;
-    public:
-      typedef typename tfel::meta::IF<tfel::typetraits::IsInvalid<ResBase_>::cond,
-				      tfel::meta::InvalidType,
-				      vector<ResBase_> >::type type;
-    };
-
-    /*!
-     * \brief Partial specialisation for tvector and 
-     * scalars operations
-     * \see   ResultType_
-     */
     template<typename Scal, typename T>
     class ResultType_<ScalarTag,VectorTag,Scal,vector<T>,OpMult>
     {
@@ -90,7 +75,51 @@ namespace tfel{
     };
 
     /*!
-     * \brief Partial specialisation for tvector
+     * \brief Partial specialisation for vector
+     * \see   ResultType
+     */
+    template<typename T,typename T2>
+    class ResultType<vector<T>,vector<T2>,OpDotProduct>
+    {
+      typedef typename ResultType<T,T2,OpMult>::type ResBase_;
+      static const bool isValid = tfel::typetraits::IsInvalid<ResBase_>::cond;
+    public:
+	typedef typename tfel::meta::IF<isValid,
+					tfel::meta::InvalidType,
+					ResBase_>::type type;
+    }; // end of class ResultType<vector<T>,vector<T2>,OpDotProduct>
+
+    /*!
+     * \brief Partial specialisation for vector and 
+     * scalars operations
+     * \see   ResultType_
+     */
+    template<typename T, typename Scal>
+    class ResultType_<VectorTag,ScalarTag,vector<T>,Scal,OpDiv>
+    {
+      typedef typename ResultType<T,Scal,OpDiv>::type ResBase_;
+    public:
+      typedef typename tfel::meta::IF<tfel::typetraits::IsInvalid<ResBase_>::cond,
+				      tfel::meta::InvalidType,
+				      vector<ResBase_> >::type type;
+    };
+
+    /*!
+     * \brief Partial specialisation for vector
+     * \see   ResultType
+     */
+    template<typename T,typename T2>
+    class ResultType<vector<T>,vector<T2>,OpDiadicProduct>
+    {
+      typedef typename ResultType<T,T2,OpMult>::type ResBase_;
+    public:
+      typedef typename tfel::meta::IF<tfel::typetraits::IsInvalid<ResBase_>::cond,
+				      tfel::meta::InvalidType,
+				      matrix<ResBase_> >::type type;
+    };
+
+    /*!
+     * \brief Partial specialisation for vector
      * \see   ResultType
      */
     template<typename T, typename T2>
@@ -104,7 +133,7 @@ namespace tfel{
     };
 
     /*!
-     * \brief Partial specialisation for tvector
+     * \brief Partial specialisation for vector
      * \see   ResultType
      */
     template<typename T, typename T2>
@@ -118,7 +147,7 @@ namespace tfel{
     };
 
     /*!
-     * \brief Partial specialisation for tvector
+     * \brief Partial specialisation for vector
      * \see   ResultType
      */
     template<typename T, typename T2>

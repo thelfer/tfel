@@ -8,6 +8,7 @@
 #ifndef _LIB_TFEL_MATH_KRIGINGDEFAULTMODEL1D_H_
 #define _LIB_TFEL_MATH_KRIGINGDEFAULTMODEL1D_H_ 
 
+#include"TFEL/Config/TFELConfig.hxx"
 #include"TFEL/Math/Kriging/KrigingVariable.hxx"
 #include"TFEL/Math/Kriging/KrigingDefaultNuggetModel.hxx"
 
@@ -22,19 +23,19 @@ namespace tfel
       : public KrigingDefaultNuggetModel<1u,T>
     {
 
-      static T
+      static TFEL_MATH_INLINE T
       one(const typename KrigingVariable<1u,T>::type&)
       {
 	return T(1);
       }
 
-      static T
+      static TFEL_MATH_INLINE T
       x(const typename KrigingVariable<1u,T>::type& v)
       {
 	return v;
       }
 
-      T
+      TFEL_MATH_INLINE T
       covariance(const typename KrigingVariable<1u,T>::type& v) const
       {
 	using namespace std;

@@ -26,6 +26,7 @@ namespace tfel{
     struct VectorTraits<VectorExpr<T_type,Expr> >{
       typedef typename Expr::NumType NumType;
       typedef typename VectorTraits<T_type>::IndexType IndexType;
+      typedef typename VectorTraits<T_type>::RunTimeProperties RunTimeProperties;
     };
 
     template<typename T_type, typename Expr>
@@ -53,8 +54,7 @@ namespace tfel{
        * \return std::string, the name of the class.
        * \see    Name.
        */
-      static 
-      const std::string
+      static std::string
       getName(void){
 	using namespace std;
 	using namespace tfel::utilities;

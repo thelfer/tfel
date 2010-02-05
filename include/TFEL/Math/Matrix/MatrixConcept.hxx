@@ -50,6 +50,11 @@ namespace tfel{
        * \see InvalidType
        */
       typedef tfel::meta::InvalidType IndexType;
+      /*!
+       * Gives access to the runtime properties used by the matrix.
+       * \see InvalidType
+       */
+      typedef tfel::meta::InvalidType RunTimeProperties;
     };
 
     /*!
@@ -124,22 +129,6 @@ namespace tfel{
       ValueType
       operator()(const typename traits::IndexType,
 		 const typename traits::IndexType) const ;
-      
-      /*!
-       * \brief  Gives access to the number of columns of the matrix.
-       * \param  void
-       * \return traits::IndexType
-       */
-      typename traits::IndexType
-      getNbCols(void) const;
-
-      /*!
-       * \brief  Gives access to the number of rows of the matrix.
-       * \param  void
-       * \return traits::IndexType
-       */
-      typename traits::IndexType
-      getNbRows(void) const;
 
     };
 

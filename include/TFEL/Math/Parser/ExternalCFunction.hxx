@@ -52,9 +52,17 @@ namespace tfel
 	differentiate(const std::vector<double>::size_type) const;
 	tfel::utilities::SmartPtr<ExternalFunction>
 	differentiate(const std::string&) const;
+	void
+	getParametersNames(std::set<std::string>&) const;
       protected:
 	double variables[N];
       }; // end of struct ExternalCFunction
+
+      template<unsigned short N>
+      void
+      ExternalCFunctionBase<N>::getParametersNames(std::set<std::string>&) const
+      {} // end of ExternalCFunctionBase<N>::getParametersNames
+
 
       template<unsigned short N>
       void
@@ -120,6 +128,8 @@ namespace tfel
 	differentiate(const std::vector<double>::size_type) const;
 	tfel::utilities::SmartPtr<ExternalFunction>
 	differentiate(const std::string&) const;
+	void
+	getParametersNames(std::set<std::string>&) const;
       }; // end of struct ExternalCFunction
 
       template<unsigned short N>

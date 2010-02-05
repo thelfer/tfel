@@ -156,9 +156,7 @@ namespace tfel{
 		     tvector<N,T2>,OpDotProduct>
     {
       typedef typename ResultType<T,T2,OpMult>::type ResBase_;
-      static const bool isValid = tfel::typetraits::IsScalar<T>::cond  &&
-	                          tfel::typetraits::IsScalar<T2>::cond &&
-	                          tfel::typetraits::IsInvalid<ResBase_>::cond;
+      static const bool isValid = tfel::typetraits::IsInvalid<ResBase_>::cond;
     public:
 	typedef typename tfel::meta::IF<isValid,
 					tfel::meta::InvalidType,

@@ -8,6 +8,9 @@
 #ifndef _LIB_TFEL_MATH_KRIGINGDEFAULTMODEL2D_H_
 #define _LIB_TFEL_MATH_KRIGINGDEFAULTMODEL2D_H_ 
 
+#include<cmath>
+
+#include"TFEL/Config/TFELConfig.hxx"
 #include"TFEL/Math/Kriging/KrigingVariable.hxx"
 #include"TFEL/Math/Kriging/KrigingDefaultNuggetModel.hxx"
 
@@ -21,25 +24,25 @@ namespace tfel
     struct KrigingDefaultModel<2u,T>
       : public KrigingDefaultNuggetModel<2u,T>
     {
-      static T
+      static TFEL_MATH_INLINE T
       one(const typename KrigingVariable<2u,T>::type&)
       {
 	return T(1);
       }
 
-      static T
+      static TFEL_MATH_INLINE T
       x(const typename KrigingVariable<2u,T>::type& v)
       {
 	return v(0);
       }
 
-      static T
+      static TFEL_MATH_INLINE  T
       y(const typename KrigingVariable<2u,T>::type& v)
       {
 	return v(1);
       }
 
-      static T
+      static TFEL_MATH_INLINE T
       covariance(const typename KrigingVariable<2u,T>::type& v)
       {
 	using namespace std;

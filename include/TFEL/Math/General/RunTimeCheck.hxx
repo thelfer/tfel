@@ -41,8 +41,9 @@ namespace tfel{
        * \throw MathRunTimeExpection, if test fails.
        */
       TFEL_MATH_INLINE
-      static const RunTimeProperties 
-      exe(const RunTimeProperties a,const RunTimeProperties b)
+      static RunTimeProperties 
+      exe(const RunTimeProperties& a,
+	  const RunTimeProperties& b)
       {
 	if(a!=b){
 	  throw(MathRunTimeException("RunTimeProperties exception : RunTimeProperties does not match"));

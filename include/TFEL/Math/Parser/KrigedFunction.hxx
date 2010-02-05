@@ -74,6 +74,9 @@ namespace tfel
 	virtual	tfel::utilities::SmartPtr<ExternalFunction>
 	resolveDependencies(void) const;
 
+	virtual void
+	getParametersNames(std::set<std::string>&) const;
+
 	virtual ~KrigedFunction();
 
       private:

@@ -285,7 +285,7 @@ namespace tfel
       using namespace tfel::utilities;
       if(AddCurveDialog::isInteger(s)){
 	unsigned short c = AddCurveDialog::convertToUnsignedShort(s);
-	data.getColumn(c,v);
+	data.getColumn(v,c);
 	return data.getLegend(c);
       } else {
 	// assuming a function

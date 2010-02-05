@@ -22,6 +22,7 @@ namespace tfel{
     struct VectorTraits{
       typedef tfel::meta::InvalidType NumType;
       typedef tfel::meta::InvalidType IndexType;
+      typedef tfel::meta::InvalidType RunTimeProperties;
     };
 
     /*!
@@ -71,10 +72,6 @@ namespace tfel{
       ValueType
       operator[](const typename traits::IndexType) const ;
       
-      TFEL_MATH_INLINE
-      typename traits::IndexType
-      size(void) const;
-
     };
 
     template<typename T>

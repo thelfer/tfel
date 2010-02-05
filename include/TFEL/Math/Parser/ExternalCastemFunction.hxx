@@ -46,6 +46,8 @@ namespace tfel
 	differentiate(const std::string&) const;
 	tfel::utilities::SmartPtr<ExternalFunction>
 	resolveDependencies(void) const;
+	void
+	getParametersNames(std::set<std::string>&) const;
       private:
 	std::vector<double> variables;
 	tfel::system::CastemFunctionPtr f;

@@ -46,6 +46,8 @@ namespace tfel{
       typedef T NumType;
       //! the type of the index used by the tmatrix.
       typedef unsigned short IndexType;
+      //! a simple typedef to the tmatrix runtime properties
+      typedef EmptyRunTimeProperties RunTimeProperties;
     };
     
     template<unsigned short N,unsigned short M, typename T = double>

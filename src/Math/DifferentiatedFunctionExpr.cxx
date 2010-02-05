@@ -140,6 +140,36 @@ namespace tfel
       } // end of DifferentiatedFunctionExpr::clone
 
       tfel::utilities::SmartPtr<Expr>
+      DifferentiatedFunctionExpr::createFunctionByChangingParametersIntoVariables(const std::vector<double>& v,
+										  const std::vector<std::string>& params,
+										  const std::map<std::string,
+										  std::vector<double>::size_type>& pos) const
+      {
+	using namespace std;
+	using namespace tfel::utilities;
+	vector<SmartPtr<Expr> > nargs(this->args.size());
+        vector<SmartPtr<Expr> >::const_iterator p;
+        vector<SmartPtr<Expr> >::iterator p2;
+        for(p=this->args.begin(),p2=nargs.begin();p!=this->args.end();++p,++p2){
+#warning "stupid"
+	  //	  *p2 = (*p)->createFunctionByChangingParametersIntoVariables(v,params,pos);
+	}
+        return SmartPtr<Expr>(new DifferentiatedFunctionExpr(this->f,nargs,this->pvar));	
+      } // end of DifferentiatedFunctionExpr::createFunctionByChangingParametersIntoVariables
+
+      void
+      DifferentiatedFunctionExpr::getParametersNames(std::set<std::string>& p) const
+      {
+	using namespace std;
+	using namespace tfel::utilities;
+        vector<SmartPtr<Expr> >::const_iterator pt;
+	this->f->getParametersNames(p);
+        for(pt=this->args.begin();pt!=this->args.end();++pt){
+	  (*pt)->getParametersNames(p);
+	}
+      } // end of DifferentiatedFunctionExpr::getParametersNames
+
+      tfel::utilities::SmartPtr<Expr>
       DifferentiatedFunctionExpr::resolveDependencies() const
       {
 	using namespace std;

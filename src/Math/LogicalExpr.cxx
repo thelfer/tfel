@@ -101,6 +101,23 @@ namespace tfel
 	using namespace tfel::utilities;
 	return SmartPtr<LogicalExpr>(new NegLogicalExpression(this->a->clone(v)));
       }
+
+      tfel::utilities::SmartPtr<LogicalExpr>
+      NegLogicalExpression::createFunctionByChangingParametersIntoVariables(const std::vector<double>& v,
+										  const std::vector<std::string>& p,
+										  const std::map<std::string,
+										  std::vector<double>::size_type>& pos) const
+      {
+	using namespace tfel::utilities;
+	SmartPtr<LogicalExpr> na = this->a->createFunctionByChangingParametersIntoVariables(v,p,pos);
+	return SmartPtr<LogicalExpr>(new NegLogicalExpression(na));
+      }
+
+      void
+      NegLogicalExpression::getParametersNames(std::set<std::string>& p) const
+      {
+	this->a->getParametersNames(p);
+      } // end of NegLogicalExpression::getParametersNames
       
       NegLogicalExpression::~NegLogicalExpression()
       {}

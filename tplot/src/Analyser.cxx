@@ -1419,19 +1419,13 @@ namespace tfel
     {
       using namespace std;
       using namespace tfel::utilities;
-      typedef std::map<string,SmartPtr<TextData> >::value_type MVType;
-      std::map<string,SmartPtr<TextData> >::const_iterator p2;
       vector<double> vx;
       vector<double> vy;
       string file = this->readString(p,pe);
       string x;
       string y;
       const CurveOptions& options = this->treatPlotOptions(p,pe);
-      if(this->dataSources.find(file)==this->dataSources.end()){
-	this->dataSources.insert(MVType(file,
-					SmartPtr<TextData>(new TextData(file))));
-      }
-      p2 = this->dataSources.find(file);
+      Data data(file);
       if(options.using_decl_x.empty()){
 	x = "1";
       } else {
@@ -1442,8 +1436,8 @@ namespace tfel
       } else {
 	y = options.using_decl_y;
       }
-      this->getData(vx,*(p2->second),x);
-      const std::string& ty = this->getData(vy,*(p2->second),y);
+      this->getData(vx,data,x);
+      const std::string& ty = this->getData(vy,data,y);
       SmartPtr<Curve> c(new DataCurve(vx,vy));
       this->applyCurveOptions(c,options);
       if(options.title.empty()){

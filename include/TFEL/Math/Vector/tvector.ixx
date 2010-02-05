@@ -282,20 +282,6 @@ namespace tfel{
       return sqrt(real(dotProduct<N>::exe(vec.begin(),vec.begin(),squareT(0u))));
     }
 
-    // inner_product
-    template<unsigned short N,typename T,typename T2>
-    TFEL_MATH_INLINE2 
-    typename tfel::meta::EnableIf<
-      tfel::typetraits::IsScalar<T>::cond&&
-    tfel::typetraits::IsScalar<T2>::cond,
-      typename ResultType<T,T2,OpMult>::type
-    >::type
-    operator | (const tvector<N,T>& vec, const tvector<N,T2>& vec2)
-    {
-      typedef typename ResultType<T,T2,OpMult>::type MultRes;
-      return dotProduct<N>::exe(vec.begin(),vec2.begin(),MultRes(0u));
-    }
-
     template<unsigned short N,typename T>
     std::ostream &
     operator << (std::ostream & os, const tvector<N,T>& s)

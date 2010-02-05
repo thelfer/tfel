@@ -102,28 +102,37 @@ namespace tfel{
       typedef ObjectObjectRandomAccessConstIterator<A,B,Op> const_iterator;
       typedef std::reverse_iterator<const_iterator> const_reverse_iterator;
 
-      TFEL_MATH_INLINE const RunTimeProperties
+      TFEL_MATH_INLINE
+      const RunTimeProperties
       getRunTimeProperties(void) const
       {
 	return RTP;
       }
 
-      TFEL_MATH_INLINE const_iterator begin(void) const
+      TFEL_MATH_INLINE
+      const_iterator
+      begin(void) const
       {
 	return const_iterator(a.begin(),b);
       }
 
-      TFEL_MATH_INLINE const_iterator end(void) const
+      TFEL_MATH_INLINE
+      const_iterator
+      end(void) const
       {
 	return const_iterator(a.end(),b);
       }
 
-      TFEL_MATH_INLINE const_reverse_iterator rbegin(void) const
+      TFEL_MATH_INLINE
+      const_reverse_iterator
+      rbegin(void) const
       {
 	return const_reverse_iterator(end());
       }
 
-      TFEL_MATH_INLINE const_reverse_iterator rend(void) const
+      TFEL_MATH_INLINE
+      const_reverse_iterator
+      rend(void) const
       {
 	return const_reverse_iterator(begin());
       }

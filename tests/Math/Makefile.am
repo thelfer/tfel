@@ -44,6 +44,7 @@ test_PROGRAMS = hill                  \
 		broyden2              \
 		Range                 \
 		SFTMCV                \
+		levenberg-marquardt   \
 		levenberg-marquardt2  \
 		levenberg-marquardt3
 
@@ -88,6 +89,7 @@ Range_SOURCES                 = Range.cxx
 broyden_SOURCES               = broyden.cxx
 broyden2_SOURCES              = broyden2.cxx
 SFTMCV_SOURCES                = SFTMCV.cxx
+levenberg_marquardt_SOURCES   = levenberg-marquardt.cxx
 levenberg_marquardt2_SOURCES  = levenberg-marquardt2.cxx
 levenberg_marquardt3_SOURCES  = levenberg-marquardt3.cxx
 

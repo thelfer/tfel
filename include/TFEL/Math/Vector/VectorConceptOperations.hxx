@@ -29,6 +29,7 @@
 #include"TFEL/Math/Vector/FctVectorExpr.hxx"
 #include"TFEL/Math/Vector/ScalarVectorExpr.hxx"
 #include"TFEL/Math/Vector/VectorVectorExpr.hxx"
+#include"TFEL/Math/Vector/VectorVectorDotProduct.hxx"
 #include"TFEL/Math/Vector/VectorVectorDiadicProductExpr.hxx"
 #include"TFEL/Math/Vector/VectorNegExpr.hxx"
 #include"TFEL/Math/Vector/VectorExpr.hxx"
@@ -36,6 +37,7 @@
 #include"TFEL/Math/Vector/ScalarVectorExprWithoutConstIterator.hxx"
 #include"TFEL/Math/Vector/VectorVectorExprWithoutConstIterator.hxx"
 #include"TFEL/Math/Vector/VectorNegExprWithoutConstIterator.hxx"
+#include"TFEL/Math/Vector/VectorVectorDotProduct.hxx"
 #include"TFEL/Math/Matrix/MatrixExpr.hxx"
 
 namespace tfel{
@@ -43,12 +45,9 @@ namespace tfel{
   namespace math{
 
     template<typename T1,typename T2>
-    class VectorDotProductHandle
+    struct VectorDotProductHandle
     {
-      struct DummyHandle
-      {};
-    public:
-      typedef DummyHandle type;
+      typedef VectorVectorDotProduct type;
     };
 
     /*									                
@@ -264,7 +263,7 @@ namespace tfel{
     operator - (const T1&);
 
     /*!
-     * \return the inner product of a tvector
+     * \return the inner product of a vector
      * \param const T1&, the left  vector.
      * \param const T2&, the right vector.
      * \return const typename ResultType<T,T2,OpMult>::type, the

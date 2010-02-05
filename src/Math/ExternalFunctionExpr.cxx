@@ -11,6 +11,7 @@
 #include<algorithm>
 
 #include"TFEL/Math/Parser/Number.hxx"
+#include"TFEL/Math/Parser/Variable.hxx"
 #include"TFEL/Math/Parser/BinaryOperator.hxx"
 #include"TFEL/Math/Parser/ExternalFunctionExpr.hxx"
 #include"TFEL/Math/Parser/ExternalFunctionExpr2.hxx"
@@ -166,6 +167,59 @@ namespace tfel
 	}
         return SmartPtr<Expr>(new ExternalFunctionExpr(this->name,nargs,this->manager));	
       } // end of ExternalFunctionExpr::clone
+
+      tfel::utilities::SmartPtr<Expr>
+      ExternalFunctionExpr::createFunctionByChangingParametersIntoVariables(const std::vector<double>& v,
+									    const std::vector<std::string>& params,
+									    const std::map<std::string,
+									    std::vector<double>::size_type>& pos) const
+      {
+	using namespace std;
+	using namespace tfel::utilities;
+        vector<SmartPtr<Expr> >::const_iterator p;
+        vector<SmartPtr<Expr> >::iterator p2;
+	map<string,vector<double>::size_type>::const_iterator p3;
+	vector<SmartPtr<Expr> > nargs(this->args.size());
+	if(this->args.size()==0){
+	  if(find(params.begin(),params.end(),this->name)!=params.end()){
+	    p3 = pos.find(this->name);
+	    if(p3==pos.end()){
+	      string msg("ExternalFunctionExpr::createFunctionByChangingParametersIntoVariables : ");
+	      msg += "internal error (no position found for parameter '"+this->name+"')";
+	      throw(runtime_error(msg));
+	    }
+	    return SmartPtr<Expr>(new Variable(v,p3->second));
+	  }
+	}
+	for(p=this->args.begin(),p2=nargs.begin();p!=this->args.end();++p,++p2){
+#warning "stupid"
+	  //	  *p2 = (*p)->createFunctionByChangingParametersIntoVariables(v,params,pos);
+	}
+        return SmartPtr<Expr>(new ExternalFunctionExpr(this->name,nargs,this->manager));
+      } // end of ExternalFunctionExpr::createFunctionByChangingParametersIntoVariables
+
+      void
+      ExternalFunctionExpr::getParametersNames(std::set<std::string>& p) const
+      {
+	using namespace std;
+	using namespace tfel::utilities;
+	vector<SmartPtr<Expr> >::const_iterator pa;
+	ExternalFunctionManager::iterator pf;
+	if(this->args.size()==0){
+	  p.insert(this->name);
+	} else {
+	  pf = this->manager->find(this->name);
+	  if(pf==this->manager->end()){
+	    string msg("ExternalFunctionExpr::getParametersNames : ");
+	    msg += "no function '"+this->name+"' declared";
+	    throw(runtime_error(msg));
+	  }
+	  pf->second->getParametersNames(p);
+	  for(pa=this->args.begin();pa!=this->args.end();++pa){
+	    (*pa)->getParametersNames(p);
+	  }
+	}
+      } // end of ExternalFunctionExpr::getParametersNames(std::set<std::string>&) const;
 
       tfel::utilities::SmartPtr<Expr>
       ExternalFunctionExpr::resolveDependencies() const

@@ -49,6 +49,14 @@ namespace tfel
       } // end of BinaryOperation<Op>::checkCyclicDependency
 
       template<typename Op>
+      void
+      BinaryOperation<Op>::getParametersNames(std::set<std::string>& p) const
+      {
+	this->a->getParametersNames(p);
+	this->b->getParametersNames(p);
+      } // end of BinaryOperation<Op>::getParametersNames
+
+      template<typename Op>
       tfel::utilities::SmartPtr<Expr>
       BinaryOperation<Op>::resolveDependencies(void) const
       {
@@ -65,6 +73,19 @@ namespace tfel
 	return SmartPtr<Expr>(new BinaryOperation<Op>(this->a->clone(v),
 						      this->b->clone(v)));
       } // end of BinaryOperation<Op>::clone
+
+      template<typename Op>
+      tfel::utilities::SmartPtr<Expr>
+      BinaryOperation<Op>::createFunctionByChangingParametersIntoVariables(const std::vector<double>& v,
+									   const std::vector<std::string>& params,
+									   const std::map<std::string,
+									   std::vector<double>::size_type>& pos) const
+      {
+	using namespace tfel::utilities;
+	SmartPtr<Expr> na(this->a->createFunctionByChangingParametersIntoVariables(v,params,pos));
+	SmartPtr<Expr> nb(this->b->createFunctionByChangingParametersIntoVariables(v,params,pos));
+	return SmartPtr<Expr>(new BinaryOperation<Op>(na,nb));
+      } // end of BinaryOperation<Op>::createFunctionByChangingParametersIntoVariables
 
       template<typename BinaryOperation>
       tfel::utilities::SmartPtr<Expr>

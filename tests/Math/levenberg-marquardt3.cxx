@@ -10,6 +10,7 @@
 #undef NDEBUG
 #endif /* NDEBUG */
 
+#include<iostream>
 #include<cstdlib>
 #include<cmath>
 
@@ -19,23 +20,23 @@
 #include"TFEL/Math/FSLevenbergMarquardt.hxx"
 
 std::pair<double,tfel::math::tvector<2u,double> >
-test(const tfel::math::tvector<1u,double>& x,
+test(const double& x,
      const tfel::math::tvector<2u,double>& p)
 {
   using namespace std;
   using namespace tfel::math;
   pair<double,tvector<2u,double> > res;
-  double tmp = exp(-p(1)/x(0));
+  double tmp = exp(-p(1)/x);
   res.first = p(0)*tmp;
   res.second(0) = tmp;
-  res.second(1) = -p(0)/x(0)*tmp;
+  res.second(1) = -p(0)/x*tmp;
   return res;
 } // end of test
 
 double
 f(const double x)
 {
-  return 2.1033e-06*exp(-4.0302e+04/x);
+  return 2.1033*exp(-403.02/x);
 }
 
 int main(void)
@@ -44,20 +45,21 @@ int main(void)
   using namespace tfel::math;
 
   FSLevenbergMarquardt<1u,2u> levmar(test);
-  tvector<1u> x;
+  double x;
   tvector<2u> p;
   // data
-  x(0)=600.;
-  levmar.addData(x,f(x(0)));
-  x(0)=700.;
-  levmar.addData(x,f(x(0)));
-  x(0)=800.;
-  levmar.addData(x,f(x(0)));
+  x=600.;
+  levmar.addData(x,f(x));
+  x=700.;
+  levmar.addData(x,f(x));
+  x=800.;
+  levmar.addData(x,f(x));
   // initial guess
   p(0)=1.;
-  p(1)=4.e4;
+  p(1)=1.e2;
   levmar.setInitialGuess(p);
   // execute
   p  = levmar.execute();
+  cout << p << endl;
   return EXIT_SUCCESS;
 } // end of main

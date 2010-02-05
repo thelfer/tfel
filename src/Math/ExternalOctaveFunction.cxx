@@ -98,6 +98,10 @@ namespace tfel
 								     static_cast<unsigned short>(this->variables.size())));
       } // end of ExternalOctaveFunction::resolveDependencies(void) const
 
+      void
+      ExternalOctaveFunction::getParametersNames(std::set<std::string>&) const
+      {} // end of ExternalOctaveFunction::getParametersNames
+
       tfel::utilities::SmartPtr<ExternalFunction>
       ExternalOctaveFunction::differentiate(const std::vector<double>::size_type) const
       {

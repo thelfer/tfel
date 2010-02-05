@@ -90,6 +90,12 @@ namespace tfel
 							this->expr->resolveDependencies()));
       } // end of EvaluatorFunction1P1V::resolveDependencies(void) const
 
+      void
+      EvaluatorFunction1P1V::getParametersNames(std::set<std::string>& p) const
+      {
+	this->expr->getParametersNames(p);
+      } // end of EvaluatorFunction1P1V::getParametersNames
+
       tfel::utilities::SmartPtr<Expr>
       EvaluatorFunction1P1V::clone(const std::vector<double>& v) const
       {
@@ -128,6 +134,12 @@ namespace tfel
 							this->expr->resolveDependencies()));
       } // end of EvaluatorFunction2P1V::resolveDependencies(void) const
 
+      void
+      EvaluatorFunction2P1V::getParametersNames(std::set<std::string>& p) const
+      {
+	this->expr->getParametersNames(p);
+      } // end of EvaluatorFunction2P1V::getParametersNames
+
       tfel::utilities::SmartPtr<Expr>
       EvaluatorFunction2P1V::clone(const std::vector<double>& v) const
       {
@@ -165,6 +177,13 @@ namespace tfel
 							this->e1->resolveDependencies(),
 							this->e2->resolveDependencies()));
       } // end of EvaluatorFunction1P2V::resolveDependencies(void) const
+
+      void
+      EvaluatorFunction1P2V::getParametersNames(std::set<std::string>& p) const
+      {
+	this->e1->getParametersNames(p);
+	this->e2->getParametersNames(p);
+      } // end of EvaluatorFunction1P2V::getParametersNames
 
       tfel::utilities::SmartPtr<Expr>
       EvaluatorFunction1P2V::clone(const std::vector<double>& v) const
@@ -207,6 +226,13 @@ namespace tfel
 							this->e1->resolveDependencies(),
 							this->e2->resolveDependencies()));
       } // end of EvaluatorFunction2P2V::resolveDependencies(void) const
+
+      void
+      EvaluatorFunction2P2V::getParametersNames(std::set<std::string>& p) const
+      {
+	this->e1->getParametersNames(p);
+	this->e2->getParametersNames(p);
+      } // end of EvaluatorFunction2P2V::getParametersNames
 
       tfel::utilities::SmartPtr<Expr>
       EvaluatorFunction2P2V::clone(const std::vector<double>& v) const

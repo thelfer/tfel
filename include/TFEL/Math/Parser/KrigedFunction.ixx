@@ -71,6 +71,11 @@ namespace tfel
 
       template<unsigned short N>
       void
+      KrigedFunction<N>::getParametersNames(std::set<std::string>&) const
+      {} // end of KrigedFunction<N>::getParametersNames
+
+      template<unsigned short N>
+      void
       KrigedFunction<N>::checkCyclicDependency(const std::string&) const
       {} // end of KrigedFunction<N>::checkCyclicDependency
 

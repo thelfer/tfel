@@ -20,6 +20,9 @@ namespace tfel
     template<typename T>
     struct matrix;
 
+    template<typename T>
+    struct MatrixProperties;
+
     //! Partial specialisation for matrixs.
     /*
      * This is a MatrixConcept requirement.
@@ -31,12 +34,47 @@ namespace tfel
       typedef typename tfel::math::vector<T>::value_type NumType;
       //! the type of the index used by the tmatrix.
       typedef typename tfel::math::vector<T>::size_type IndexType;
+      /*!
+       * RunTime Properties
+       */
+      typedef MatrixProperties<T> RunTimeProperties;
     };
 
     template<typename T>
-    struct matrix
-      : protected tfel::math::vector<T>
+    struct MatrixProperties
     {
+      //! a simple alias
+      typedef typename MatrixTraits<matrix<T> >::IndexType IndexType;
+
+      MatrixProperties(const IndexType,
+		       const IndexType);
+
+      MatrixProperties(const MatrixProperties&);
+
+      MatrixProperties&
+      operator=(const MatrixProperties&);
+
+      bool
+      operator == (const MatrixProperties&) const;
+
+      bool
+      operator != (const MatrixProperties&) const;
+
+    protected:
+
+      const typename MatrixTraits<matrix<T> >::IndexType nb_rows;
+
+      const typename MatrixTraits<matrix<T> >::IndexType nb_cols;
+
+    }; // end of MatrixProperties
+
+    template<typename T>
+    struct matrix
+      : protected tfel::math::vector<T>,
+	protected MatrixProperties<T>
+    {
+      //! a simple alias
+      typedef MatrixProperties<T> RunTimeProperties;
       /*!
        * type of the matrix's values.
        * (this i<s a stl requirement).
@@ -93,26 +131,28 @@ namespace tfel
        */
       using std::vector<T>::difference_type;
 
-      matrix(size_type r,
-	     size_type c, const T& v = T())
-	: tfel::math::vector<T>(r*c,v),
-	  nb_rows(r),
-	  nb_cols(c)
-      {}
+      TFEL_MATH_INLINE2
+      matrix(const size_type,
+	     const size_type);
 
-      T&
-      operator()(size_type i,
-		 size_type j)
-      {
-	return std::vector<T>::operator[](i*(this->nb_cols)+j);
-      }
+      TFEL_MATH_INLINE2
+      matrix(const size_type,
+	     const size_type,
+	     const T&);
 
-      const T&
-      operator()(size_type i,
-		 size_type j) const
-      {
-	return std::vector<T>::operator[](i*(this->nb_cols)+j);
-      }
+      TFEL_MATH_INLINE2
+      matrix(const matrix&);
+
+      TFEL_MATH_INLINE T&
+      operator()(const size_type,
+		 const size_type);
+
+      TFEL_MATH_INLINE const T&
+      operator()(size_type,
+		 size_type) const;
+
+      TFEL_MATH_INLINE const RunTimeProperties&
+      getRunTimeProperties(void) const;
 
       /*
        * return an iterator to the first element of the matrix
@@ -142,28 +182,87 @@ namespace tfel
        */
       using std::vector<T>::rend;
 
-      size_type
-      getNbRows() const
-      {
-	return nb_rows;
-      }
+      /*
+       * Assignement operator.
+       * \param  const matrix&, the matrix to be copied.
+       * \return matrix&, a reference to itself.
+       */
+      matrix& 
+      operator=(const matrix&);
 
-      size_type
-      getNbCols() const
-      {
-	return nb_cols;
-      }
+      /*
+       * Assignement operator.
+       * \param  const matrix&, the matrix to be copied.
+       * \return matrix&, a reference to itself.
+       */
+      matrix& 
+      operator+=(const matrix&);
 
-    private:
-      
-      size_type nb_rows;
-      size_type nb_cols;
+      /*
+       * Assignement operator.
+       * \param  const matrix&, the matrix to be copied.
+       * \return matrix&, a reference to itself.
+       */
+      matrix& 
+      operator-=(const matrix&);
+
+      /*
+       * Assignement operator
+       * \param const MatrixExpr<matrix<ValueType2>,Expr>&, a matrix
+       * expression based on matrix
+       * \return matrix&, a reference to itself.
+       */
+      template<typename T2,typename Expr>
+      TFEL_MATH_INLINE2
+      typename tfel::meta::EnableIf<
+	tfel::typetraits::IsAssignableTo<T2,T>::cond,
+	matrix<T>&
+      >::type
+      operator=(const MatrixExpr<matrix<T2>,Expr>&);
+
+      /*
+       * Assignement operator
+       * \param const MatrixExpr<matrix<T2>,Expr>&, a matrix
+       * expression based on matrix
+       * \return matrix&, a reference to itself.
+       */
+      template<typename T2,typename Expr>
+      TFEL_MATH_INLINE2
+      typename tfel::meta::EnableIf<
+	tfel::typetraits::IsAssignableTo<T2,T>::cond,
+	matrix<T>&
+      >::type
+      operator+=(const MatrixExpr<matrix<T2>,Expr>&);
+
+      /*
+       * Assignement operator
+       * \param const MatrixExpr<matrix<T2>,Expr>&, a matrix
+       * expression based on matrix
+       * \return matrix&, a reference to itself.
+       */
+      template<typename T2,typename Expr>
+      TFEL_MATH_INLINE2
+      typename tfel::meta::EnableIf<
+	tfel::typetraits::IsAssignableTo<T2,T>::cond,
+	matrix<T>&
+      >::type
+      operator-=(const MatrixExpr<matrix<T2>,Expr>&);
+
+      void swap(matrix&);
+
+      TFEL_MATH_INLINE size_type
+      getNbRows() const;
+
+      TFEL_MATH_INLINE size_type
+      getNbCols() const;
 
     };
 
   } // end of namespace math
 
 } // end of namespace tfel
+
+#include"TFEL/Math/Matrix/matrix.ixx"
 
 #endif /* _LIB_TFEL_MATH_MATRIX_H */
 

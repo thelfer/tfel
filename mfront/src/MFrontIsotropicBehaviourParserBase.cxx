@@ -181,7 +181,13 @@ namespace mfront{
   void
   MFrontIsotropicBehaviourParserBase::treatFlowRule(void)
   {
+    using namespace std;
     this->checkBehaviourFile();
+    if(!this->flowRule.empty()){
+      string msg("MFrontIsotropicBehaviourParserBase::treatFlowRule : ");
+      msg += "flow already defined";
+      throw(runtime_error(msg));
+    }
     MFrontIsotropicBehaviourParserBase::treatFlowRuleBase(this->flowRule);
   } // end of MFrontIsotropicBehaviourParserBase::treatFlowRule
 

@@ -8,6 +8,10 @@
 #ifndef _LIB_TFEL_MATH_KRIGINGDEFAULTMODEL3D_H_
 #define _LIB_TFEL_MATH_KRIGINGDEFAULTMODEL3D_H_ 
 
+#include<cmath>
+
+#include"TFEL/Config/TFELConfig.hxx"
+#include"TFEL/Math/Kriging/KrigingVariable.hxx"
 #include"TFEL/Math/Kriging/KrigingDefaultNuggetModel.hxx"
 
 namespace tfel
@@ -20,67 +24,67 @@ namespace tfel
     struct KrigingDefaultModel<3u,T>
       : public KrigingDefaultNuggetModel<3u,T>
     {
-      static T
+      static TFEL_MATH_INLINE T
       one(const typename KrigingVariable<3u,T>::type&)
       {
 	return T(1);
       }
 
-      static T
+      static TFEL_MATH_INLINE T
       x(const typename KrigingVariable<3u,T>::type& v)
       {
 	return v(0);
       }
 
-      static T
+      static TFEL_MATH_INLINE T
       y(const typename KrigingVariable<3u,T>::type& v)
       {
 	return v(1);
       }
 
-      static T
+      static TFEL_MATH_INLINE T
       z(const typename KrigingVariable<3u,T>::type& v)
       {
 	return v(2);
       }
 
-      static T
+      static TFEL_MATH_INLINE T
       xx(const typename KrigingVariable<3u,T>::type& v)
       {
 	return v(0)*v(0);
       }
 
-      static T
+      static TFEL_MATH_INLINE T
       xy(const typename KrigingVariable<3u,T>::type& v)
       {
 	return v(0)*v(1);
       }
 
-      static T
+      static TFEL_MATH_INLINE T
       xz(const typename KrigingVariable<3u,T>::type& v)
       {
 	return v(0)*v(2);
       }
 
-      static T
+      static TFEL_MATH_INLINE T
       yy(const typename KrigingVariable<3u,T>::type& v)
       {
 	return v(1)*v(1);
       }
 
-      static T
+      static TFEL_MATH_INLINE T
       yz(const typename KrigingVariable<3u,T>::type& v)
       {
 	return v(1)*v(2);
       }
 
-      static T
+      static TFEL_MATH_INLINE T
       zz(const typename KrigingVariable<3u,T>::type& v)
       {
 	return v(2)*v(2);
       }
 
-      static T
+      static TFEL_MATH_INLINE T
       covariance(const typename KrigingVariable<3u,T>::type& v)
       {
 	using namespace std;

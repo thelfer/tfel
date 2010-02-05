@@ -9,6 +9,7 @@
 #ifndef _LIB_TFEL_LOGICALEXPR_HXX_
 #define _LIB_TFEL_LOGICALEXPR_HXX_ 
 
+#include<set>
 #include<vector>
 #include<string>
 #include<stdexcept>
@@ -76,6 +77,13 @@ namespace tfel
 	resolveDependencies(void) const = 0;
 	virtual tfel::utilities::SmartPtr<LogicalExpr>
 	clone(const std::vector<double>&) const = 0;
+	virtual void
+	getParametersNames(std::set<std::string>&) const = 0;
+	virtual tfel::utilities::SmartPtr<LogicalExpr>
+	createFunctionByChangingParametersIntoVariables(const std::vector<double>&,
+							const std::vector<std::string>&,
+							const std::map<std::string,
+							std::vector<double>::size_type>&) const = 0;
 	virtual ~LogicalExpr();
       }; // end of struct LogicalExpr
 
@@ -93,6 +101,13 @@ namespace tfel
 	resolveDependencies(void) const;
 	tfel::utilities::SmartPtr<LogicalExpr>
 	clone(const std::vector<double>&) const;
+	void
+	getParametersNames(std::set<std::string>&) const;
+	tfel::utilities::SmartPtr<LogicalExpr>
+	createFunctionByChangingParametersIntoVariables(const std::vector<double>&,
+							const std::vector<std::string>&,
+							const std::map<std::string,
+							std::vector<double>::size_type>&) const;
 	~LogicalOperation();
       private:
 	const tfel::utilities::SmartPtr<Expr> a;
@@ -113,6 +128,13 @@ namespace tfel
 	resolveDependencies(void) const;
 	tfel::utilities::SmartPtr<LogicalExpr>
 	clone(const std::vector<double>&) const;
+	void
+	getParametersNames(std::set<std::string>&) const;
+	tfel::utilities::SmartPtr<LogicalExpr>
+	createFunctionByChangingParametersIntoVariables(const std::vector<double>&,
+							const std::vector<std::string>&,
+							const std::map<std::string,
+							std::vector<double>::size_type>&) const;
 	~LogicalBinaryOperation();
       private:
 	const tfel::utilities::SmartPtr<LogicalExpr> a;
@@ -131,6 +153,13 @@ namespace tfel
 	resolveDependencies(void) const;
 	tfel::utilities::SmartPtr<LogicalExpr>
 	clone(const std::vector<double>&) const;
+	void
+	getParametersNames(std::set<std::string>&) const;
+	tfel::utilities::SmartPtr<LogicalExpr>
+	createFunctionByChangingParametersIntoVariables(const std::vector<double>&,
+							const std::vector<std::string>&,
+							const std::map<std::string,
+							std::vector<double>::size_type>&) const;
 	~NegLogicalExpression();
       private:
 	const tfel::utilities::SmartPtr<LogicalExpr> a;
