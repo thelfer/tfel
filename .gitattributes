@@ -200,7 +200,9 @@ include/TFEL/Math/LambdaExpression/LambdaScalarExpr.ixx -text
 include/TFEL/Math/LambdaExpression/ScalarLambdaExpr.hxx -text
 include/TFEL/Math/LambdaExpression/ScalarLambdaExpr.ixx -text
 include/TFEL/Math/LambdaExpression/lambda.ixx -text
+include/TFEL/Math/LevenbergMarquardt.hxx -text
 include/TFEL/Math/LevenbergMarquardt/FSLevenbergMarquardt.ixx -text
+include/TFEL/Math/LevenbergMarquardt/LevenbergMarquardt.ixx -text
 include/TFEL/Math/MathException.hxx -text
 include/TFEL/Math/Matrix/FctMatrixExpr.hxx -text
 include/TFEL/Math/Matrix/FctMatrixExprWithoutConstIterator.hxx -text
@@ -222,6 +224,7 @@ include/TFEL/Math/Matrix/ScalarMatrixExprWithoutConstIterator.hxx -text
 include/TFEL/Math/Matrix/ScalarMatrixExprWithoutConstIteratorSpecialisation.ixx -text
 include/TFEL/Math/Matrix/TMatrixTVectorExpr.hxx -text
 include/TFEL/Math/Matrix/TVectorTMatrixExpr.hxx -text
+include/TFEL/Math/Matrix/matrix.ixx -text
 include/TFEL/Math/Matrix/tmatrix.ixx -text
 include/TFEL/Math/Matrix/tmatrixResultType.hxx -text
 include/TFEL/Math/Newton-Raphson/TinyNewtonRaphson.ixx -text
@@ -345,6 +348,7 @@ include/TFEL/Math/Vector/VectorNegExpr.hxx -text
 include/TFEL/Math/Vector/VectorNegExprWithoutConstIterator.hxx -text
 include/TFEL/Math/Vector/VectorUtilities.hxx -text
 include/TFEL/Math/Vector/VectorVectorDiadicProductExpr.hxx -text
+include/TFEL/Math/Vector/VectorVectorDotProduct.hxx -text
 include/TFEL/Math/Vector/VectorVectorExpr.hxx -text
 include/TFEL/Math/Vector/VectorVectorExprSpecialisation.ixx -text
 include/TFEL/Math/Vector/VectorVectorExprWithoutConstIterator.hxx -text
@@ -789,6 +793,7 @@ tests/Math/include/function_tests.ixx -text
 tests/Math/krigeage.cxx -text
 tests/Math/krigeage1D.cxx -text
 tests/Math/krigeage2D.cxx -text
+tests/Math/levenberg-marquardt.cxx -text
 tests/Math/levenberg-marquardt2.cxx -text
 tests/Math/levenberg-marquardt3.cxx -text
 tests/Math/lu.cxx -text
