@@ -203,6 +203,10 @@ include/TFEL/Math/LambdaExpression/lambda.ixx -text
 include/TFEL/Math/LevenbergMarquardt.hxx -text
 include/TFEL/Math/LevenbergMarquardt/FSLevenbergMarquardt.ixx -text
 include/TFEL/Math/LevenbergMarquardt/LevenbergMarquardt.ixx -text
+include/TFEL/Math/LevenbergMarquardt/LevenbergMarquardtEvaluatorWrapper.hxx -text
+include/TFEL/Math/LevenbergMarquardt/LevenbergMarquardtExternalFunctionWrapper.hxx -text
+include/TFEL/Math/LevenbergMarquardt/LevenbergMarquardtFunctionWrapper.hxx -text
+include/TFEL/Math/LevenbergMarquardt/LevenbergMarquardtFunctionWrapper.ixx -text
 include/TFEL/Math/MathException.hxx -text
 include/TFEL/Math/Matrix/FctMatrixExpr.hxx -text
 include/TFEL/Math/Matrix/FctMatrixExprWithoutConstIterator.hxx -text
@@ -681,6 +685,8 @@ src/Math/KrigingErrors.cxx -text
 src/Math/LUException.cxx -text
 src/Math/Lambda.cxx -text
 src/Math/LambdaTag.cxx -text
+src/Math/LevenbergMarquardtEvaluatorWrapper.cxx -text
+src/Math/LevenbergMarquardtExternalFunctionWrapper.cxx -text
 src/Math/LogicalExpr.cxx -text
 src/Math/Makefile.am -text
 src/Math/MathException.cxx -text
