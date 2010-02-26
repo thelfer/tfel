@@ -30,6 +30,16 @@ namespace tfel
       } // end of KrigedFunctionBase::throwUnimplementedDifferentiateFunctionException
 
       void
+      KrigedFunctionBase::throwInvalidCreateFunctionByChangingParametersIntoVariables(void)
+      {
+	using namespace std;
+	string msg("KrigedFunctionException::");
+	msg += "throwInvalidCreateFunctionByChangingParametersIntoVariables : ";
+	msg += "invalid call";
+	throw(runtime_error(msg));
+      } // end of KrigedFunctionBase::throwInvalidCreateFunctionByChangingParametersIntoVariables(void)
+
+      void
       KrigedFunctionBase::throwInvalidIndexException(const unsigned short i,
 						     const unsigned short N)
       {

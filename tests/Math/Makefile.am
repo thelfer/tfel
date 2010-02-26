@@ -40,13 +40,17 @@ test_PROGRAMS = hill                  \
 		parser                \
 		parser2               \
 		parser3               \
+		parser4               \
+		parser5               \
+		parser6               \
 		broyden               \
 		broyden2              \
 		Range                 \
 		SFTMCV                \
 		levenberg-marquardt   \
 		levenberg-marquardt2  \
-		levenberg-marquardt3
+		levenberg-marquardt3  \
+		levenberg-marquardt4
 
 LDADD = -L$(top_builddir)/src/Math                 \
 	-L$(top_builddir)/src/Utilities            \
@@ -93,6 +97,17 @@ levenberg_marquardt_SOURCES   = levenberg-marquardt.cxx
 levenberg_marquardt2_SOURCES  = levenberg-marquardt2.cxx
 levenberg_marquardt3_SOURCES  = levenberg-marquardt3.cxx
 
+levenberg_marquardt4_SOURCES  = levenberg-marquardt4.cxx
+levenberg_marquardt4_LDADD = -L$(top_builddir)/src/Math      \
+	       -L$(top_builddir)/src/Utilities \
+	       -L$(top_builddir)/src/Exception \
+	       -lTFELMathParser -lTFELMath     \
+	       -lTFELUtilities -lTFELException
+if HAVE_OCTAVE
+levenberg_marquardt4_LDADD += @OCTAVELIBS@
+endif
+
+
 parser_SOURCES                = parser.cxx
 parser_LDADD = -L$(top_builddir)/src/Math      \
 	       -L$(top_builddir)/src/Utilities \
@@ -121,6 +136,36 @@ parser3_LDADD = -L$(top_builddir)/src/Math      \
 	        -lTFELUtilities -lTFELException
 if HAVE_OCTAVE
 parser3_LDADD += @OCTAVELIBS@
+endif
+
+parser4_SOURCES               = parser4.cxx
+parser4_LDADD = -L$(top_builddir)/src/Math      \
+	        -L$(top_builddir)/src/Utilities \
+	        -L$(top_builddir)/src/Exception \
+	        -lTFELMathParser -lTFELMath     \
+	        -lTFELUtilities -lTFELException
+if HAVE_OCTAVE
+parser4_LDADD += @OCTAVELIBS@
+endif
+
+parser5_SOURCES               = parser5.cxx
+parser5_LDADD = -L$(top_builddir)/src/Math      \
+	        -L$(top_builddir)/src/Utilities \
+	        -L$(top_builddir)/src/Exception \
+	        -lTFELMathParser -lTFELMath     \
+	        -lTFELUtilities -lTFELException
+if HAVE_OCTAVE
+parser5_LDADD += @OCTAVELIBS@
+endif
+
+parser6_SOURCES               = parser6.cxx
+parser6_LDADD = -L$(top_builddir)/src/Math      \
+	        -L$(top_builddir)/src/Utilities \
+	        -L$(top_builddir)/src/Exception \
+	        -lTFELMathParser -lTFELMath     \
+	        -lTFELUtilities -lTFELException
+if HAVE_OCTAVE
+parser6_LDADD += @OCTAVELIBS@
 endif
 
 TESTS=$(test_PROGRAMS)

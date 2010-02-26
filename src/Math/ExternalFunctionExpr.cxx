@@ -6,7 +6,6 @@
  * \date   02 oct 2007
  */
 
-#include<iostream>
 #include<sstream>
 #include<algorithm>
 
@@ -80,7 +79,7 @@ namespace tfel
 	}
 	p2=this->manager->find(this->name);
 	if(p2==this->manager->end()){
-	  string msg("ExternalFunctionExpr::checkDependency : ");
+	  string msg("ExternalFunctionExpr::checkCyclicDependency : ");
 	  msg += "unknown function '"+this->name+"'";
 	  throw(runtime_error(msg));
 	}
@@ -118,7 +117,7 @@ namespace tfel
 	}
 	p2=this->manager->find(this->name);
 	if(p2==this->manager->end()){
-	  string msg("ExternalFunctionExpr::checkDependency : ");
+	  string msg("ExternalFunctionExpr::differentiate : ");
 	  msg += "unknown function '"+this->name+"'";
 	  throw(runtime_error(msg));
 	}
@@ -179,7 +178,11 @@ namespace tfel
         vector<SmartPtr<Expr> >::const_iterator p;
         vector<SmartPtr<Expr> >::iterator p2;
 	map<string,vector<double>::size_type>::const_iterator p3;
-	vector<SmartPtr<Expr> > nargs(this->args.size());
+	vector<SmartPtr<Expr> > nargs;
+	vector<string> vnames;
+	vector<string>::size_type i;
+	tfel::utilities::SmartPtr<ExternalFunction> nf;
+	ExternalFunctionManager::iterator pf;
 	if(this->args.size()==0){
 	  if(find(params.begin(),params.end(),this->name)!=params.end()){
 	    p3 = pos.find(this->name);
@@ -188,14 +191,47 @@ namespace tfel
 	      msg += "internal error (no position found for parameter '"+this->name+"')";
 	      throw(runtime_error(msg));
 	    }
-	    return SmartPtr<Expr>(new Variable(v,p3->second));
+	    SmartPtr<Expr> nv = SmartPtr<Expr>(new Variable(v,p3->second));
+	    return nv;
 	  }
 	}
-	for(p=this->args.begin(),p2=nargs.begin();p!=this->args.end();++p,++p2){
-#warning "stupid"
-	  //	  *p2 = (*p)->createFunctionByChangingParametersIntoVariables(v,params,pos);
+	pf = this->manager->find(this->name);
+	if(pf==this->manager->end()){
+	  string msg("ExternalFunctionExpr::createFunctionByChangingParametersIntoVariables : ");
+	  msg += "no function '"+this->name+"' declared";
+	  throw(runtime_error(msg));
 	}
-        return SmartPtr<Expr>(new ExternalFunctionExpr(this->name,nargs,this->manager));
+	if(pf->second->getNumberOfVariables()!=this->args.size()){
+	  ostringstream msg;
+	  msg << "ExternalFunctionExpr::getValue : "
+	      << "invalid number of arguments for function '"
+	      << this->name << "' (" 
+	      << this->args.size() << " given, "
+	      << pf->second->getNumberOfVariables() << " required)";
+	  throw(runtime_error(msg.str()));
+	}
+	nf = pf->second->createFunctionByChangingParametersIntoVariables(vnames,v,params,pos);
+	if(nf->getNumberOfVariables()<this->args.size()){
+	  string msg;
+	  msg += "ExternalFunctionExpr::getValue : "
+	    "internal error (function as less variable after "
+	    "'createFunctionByChangingParametersIntoVariables' than before";
+	  throw(runtime_error(msg));
+	}
+	nargs.resize(nf->getNumberOfVariables());
+	for(p=this->args.begin(),p2=nargs.begin();p!=this->args.end();++p,++p2){
+	  *p2 = (*p)->createFunctionByChangingParametersIntoVariables(v,params,pos);
+	}
+	for(i=0;i!=vnames.size();++i){
+	  p3 = pos.find(vnames[i]);
+	  if(p3==pos.end()){
+	    string msg("ExternalFunctionExpr::createFunctionByChangingParametersIntoVariables : ");
+	    msg += "internal error (no position found for parameter '"+vnames[i]+"')";
+	    throw(runtime_error(msg));
+	  }
+	  nargs[args.size()+i] = SmartPtr<Expr>(new Variable(v,p3->second));
+	}
+        return SmartPtr<Expr>(new ExternalFunctionExpr2(nf,nargs));
       } // end of ExternalFunctionExpr::createFunctionByChangingParametersIntoVariables
 
       void
@@ -222,7 +258,7 @@ namespace tfel
       } // end of ExternalFunctionExpr::getParametersNames(std::set<std::string>&) const;
 
       tfel::utilities::SmartPtr<Expr>
-      ExternalFunctionExpr::resolveDependencies() const
+      ExternalFunctionExpr::resolveDependencies(const std::vector<double>& v) const
       {
 	using namespace std;
 	using namespace tfel::utilities;
@@ -231,7 +267,7 @@ namespace tfel
         vector<SmartPtr<Expr> >::iterator p2;
 	ExternalFunctionManager::iterator p3;
         for(p=this->args.begin(),p2=nargs.begin();p!=this->args.end();++p,++p2){
-	  *p2 = (*p)->resolveDependencies();
+	  *p2 = (*p)->resolveDependencies(v);
 	}
 	p3=this->manager->find(this->name);
 	if(p3==this->manager->end()){

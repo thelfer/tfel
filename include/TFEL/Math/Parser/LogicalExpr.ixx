@@ -53,11 +53,11 @@ namespace tfel
 
       template<typename Op>
       tfel::utilities::SmartPtr<LogicalExpr>
-      LogicalOperation<Op>::resolveDependencies(void) const
+      LogicalOperation<Op>::resolveDependencies(const std::vector<double>& v) const
       {
 	using namespace tfel::utilities;
-	return SmartPtr<LogicalExpr>(new LogicalOperation<Op>(this->a->resolveDependencies(),
-							      this->b->resolveDependencies()));
+	return SmartPtr<LogicalExpr>(new LogicalOperation<Op>(this->a->resolveDependencies(v),
+							      this->b->resolveDependencies(v)));
       } // end of LogicalOperation<Op>::resolveDependencies(void) const
 
       template<typename Op>
@@ -77,11 +77,9 @@ namespace tfel
 									    std::vector<double>::size_type>& pos) const
       {
 	using namespace tfel::utilities;
-#warning "stupid"
-// 	SmartPtr<LogicalExpr> na = this->a->createFunctionByChangingParametersIntoVariables(v,p,pos);
-// 	SmartPtr<LogicalExpr> nb = this->b->createFunctionByChangingParametersIntoVariables(v,p,pos);
-// 	return SmartPtr<LogicalExpr>(new LogicalOperation<Op>(na,nb));
-	return SmartPtr<LogicalExpr>(0);
+	SmartPtr<Expr> na = this->a->createFunctionByChangingParametersIntoVariables(v,p,pos);
+	SmartPtr<Expr> nb = this->b->createFunctionByChangingParametersIntoVariables(v,p,pos);
+	return SmartPtr<LogicalExpr>(new LogicalOperation<Op>(na,nb));
       } // end of LogicalOperation<Op>::createFunctionByChangingParametersIntoVariables
 
       template<typename Op>
@@ -133,11 +131,11 @@ namespace tfel
 
       template<typename Op>
       tfel::utilities::SmartPtr<LogicalExpr>
-      LogicalBinaryOperation<Op>::resolveDependencies(void) const
+      LogicalBinaryOperation<Op>::resolveDependencies(const std::vector<double>& v) const
       {
 	using namespace tfel::utilities;
-	return SmartPtr<LogicalExpr>(new LogicalBinaryOperation<Op>(this->a->resolveDependencies(),
-								    this->b->resolveDependencies()));
+	return SmartPtr<LogicalExpr>(new LogicalBinaryOperation<Op>(this->a->resolveDependencies(v),
+								    this->b->resolveDependencies(v)));
       } // end of LogicalBinaryOperation<Op>::resolveDependencies(void) const
 
       template<typename Op>
@@ -157,11 +155,9 @@ namespace tfel
 										  std::vector<double>::size_type>& pos) const
       {
  	using namespace tfel::utilities;
-// 	SmartPtr<LogicalExpr> na = this->a->createFunctionByChangingParametersIntoVariables(v,p,pos);
-// 	SmartPtr<LogicalExpr> nb = this->b->createFunctionByChangingParametersIntoVariables(v,p,pos);
-// 	return SmartPtr<LogicalExpr>(new LogicalBinaryOperation<Op>(na,nb));
-#warning "stupid"
-	return SmartPtr<LogicalExpr>(0);
+	SmartPtr<LogicalExpr> na = this->a->createFunctionByChangingParametersIntoVariables(v,p,pos);
+	SmartPtr<LogicalExpr> nb = this->b->createFunctionByChangingParametersIntoVariables(v,p,pos);
+	return SmartPtr<LogicalExpr>(new LogicalBinaryOperation<Op>(na,nb));
       } // end of LogicalBinaryOperation<Op>::createFunctionByChangingParametersIntoVariables
 
       template<typename Op>

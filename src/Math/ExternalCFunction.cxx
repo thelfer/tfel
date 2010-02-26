@@ -22,6 +22,16 @@ namespace tfel
       } // end of ExternalCFunctionException::throwUnimplementedDifferentiateFunctionException(void)
 
       void
+      ExternalCFunctionException::throwInvalidCreateFunctionByChangingParametersIntoVariables(void)
+      {
+	using namespace std;
+	string msg("ExternalCFunctionException::");
+	msg += "throwInvalidCreateFunctionByChangingParametersIntoVariables : ";
+	msg += "invalid call";
+	throw(runtime_error(msg));
+      } // end of ExternalCFunctionException::throwInvalidCreateFunctionByChangingParametersIntoVariables(void)
+
+      void
       ExternalCFunctionException::throwInvalidVariableIndex(const unsigned short pos,
 							    const unsigned short N)
       {
@@ -32,6 +42,25 @@ namespace tfel
 	    << " (function has only " << N << " variables).";
 	throw(runtime_error(msg.str()));
       } // end of ExternalCFunctionException::throwInvalidVariableIndex
+
+      tfel::utilities::SmartPtr<ExternalFunction>
+      ExternalCFunctionBase<0u>::createFunctionByChangingParametersIntoVariables(std::vector<std::string>& v,
+										 const std::vector<double>&,
+										 const std::vector<std::string>&,
+										 const std::map<std::string,
+										 std::vector<double>::size_type>&) const
+      {
+	v.clear();
+	return this->resolveDependencies();
+      } // end of ExternalCFunctionBase<0u>::createFunctionByChangingParametersIntoVariables
+
+      tfel::utilities::SmartPtr<ExternalFunction>
+      ExternalCFunctionBase<0u>::createFunctionByChangingParametersIntoVariables(const std::vector<std::string>&) const
+      {
+	using namespace tfel::utilities;
+	ExternalCFunctionException::throwInvalidCreateFunctionByChangingParametersIntoVariables();
+	return SmartPtr<ExternalFunction>(0);
+      } // end of ExternalCFunctionBase<0u>::createFunctionByChangingParametersIntoVariables
 
       void
       ExternalCFunctionBase<0u>::setVariableValue(const std::vector<double>::size_type pos,

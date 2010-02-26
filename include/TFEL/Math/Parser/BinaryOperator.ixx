@@ -58,11 +58,11 @@ namespace tfel
 
       template<typename Op>
       tfel::utilities::SmartPtr<Expr>
-      BinaryOperation<Op>::resolveDependencies(void) const
+      BinaryOperation<Op>::resolveDependencies(const std::vector<double>& v) const
       {
 	using namespace tfel::utilities;
-	return SmartPtr<Expr>(new BinaryOperation<Op>(this->a->resolveDependencies(),
-						      this->b->resolveDependencies()));
+	return SmartPtr<Expr>(new BinaryOperation<Op>(this->a->resolveDependencies(v),
+						      this->b->resolveDependencies(v)));
       } // end of BinaryOperation<Op>::resolveDependencies
 
       template<typename Op>

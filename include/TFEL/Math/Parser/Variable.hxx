@@ -43,7 +43,7 @@ namespace tfel
 							const std::map<std::string,
 							std::vector<double>::size_type>&) const;
 	tfel::utilities::SmartPtr<Expr>
-	resolveDependencies(void) const;
+	resolveDependencies(const std::vector<double>&) const;
       private:
 	const std::vector<double>& v;
 	const std::vector<double>::size_type pos;

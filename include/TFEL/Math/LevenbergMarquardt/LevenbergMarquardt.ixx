@@ -20,87 +20,84 @@ namespace tfel
   namespace math
   {
 
-    template<typename T>
-    LevenbergMarquardt<T>::LevenbergMarquardt(const LevenbergMarquardt::size_type nv,
-					      const LevenbergMarquardt::size_type np,
-					      const LevenbergMarquardt::PtrFun f_)
-      : p(np),
+    template<typename F>
+    LevenbergMarquardt<F>::LevenbergMarquardt(const F f_)
+      : f(f_),
+	p(f_.getNumberOfParameters()),
 	lambda0(T(1.e-3)),
 	factor(T(2)),
 	eps1(1.e-10),
 	eps2(1.e-10),
-	iterMax(100),
-	f(f_),
-	n(nv),
-	m(np)
+	iterMax(100)
     {} // end of LevenbergMarquardt::LevenbergMarquardt
 
-    template<typename T>
+    template<typename F>
     void
-    LevenbergMarquardt<T>::setInitialDampingParameter(const T value)
+    LevenbergMarquardt<F>::setInitialDampingParameter(const T value)
     {
       this->lambda0 = value;
-    } // end of LevenbergMarquardt<T>::setInitialDampingParameter
+    } // end of LevenbergMarquardt<F>::setInitialDampingParameter
 
-    template<typename T>
+    template<typename F>
     void
-    LevenbergMarquardt<T>::setFirstCriterium(const T value)
+    LevenbergMarquardt<F>::setFirstCriterium(const T value)
     {
       this->eps1 = value;
-    } // end of LevenbergMarquardt<T>::setFirstCriterium
+    } // end of LevenbergMarquardt<F>::setFirstCriterium
 
-    template<typename T>
+    template<typename F>
     void
-    LevenbergMarquardt<T>::setSecondCriterium(const T value)
+    LevenbergMarquardt<F>::setSecondCriterium(const T value)
     {
       this->eps2 = value;
-    } // end of LevenbergMarquardt<T>::setSecondCriterium
+    } // end of LevenbergMarquardt<F>::setSecondCriterium
 
-    template<typename T>
+    template<typename F>
     void
-    LevenbergMarquardt<T>::setMultiplicationFactor(const T value)
+    LevenbergMarquardt<F>::setMultiplicationFactor(const T value)
     {
       this->factor = value;
-    } // end of LevenbergMarquardt<T>::setMultiplicationFactor
+    } // end of LevenbergMarquardt<F>::setMultiplicationFactor
 
-    template<typename T>
+    template<typename F>
     void
-    LevenbergMarquardt<T>::addData(const LevenbergMarquardt<T>::Variable& x,
+    LevenbergMarquardt<F>::addData(const LevenbergMarquardt<F>::Variable& x,
 				   const T y)
     {
       using namespace std;
       this->data.push_back(pair<Variable,T>(x,y));
     } // end of LevenbergMarquardt::addData
 
-    template<typename T>
+    template<typename F>
     void
-    LevenbergMarquardt<T>::setInitialGuess(const LevenbergMarquardt<T>::Parameter& p_)
+    LevenbergMarquardt<F>::setInitialGuess(const LevenbergMarquardt<F>::Parameter& p_)
     {
       this->p = p_;
     } // end of LevenbergMarquardt::setInitialGuess
 
-    template<typename T>
+    template<typename F>
     void
-    LevenbergMarquardt<T>::setMaximumIteration(const T nb)
+    LevenbergMarquardt<F>::setMaximumIteration(const T nb)
     {
       this->iterMax = nb;
     } // end of LevenbergMarquardt::setInitialGuess
 
-    template<typename T>
-    const typename LevenbergMarquardt<T>::Parameter&
-    LevenbergMarquardt<T>::execute(void)
+    template<typename F>
+    const typename LevenbergMarquardt<F>::Parameter&
+    LevenbergMarquardt<F>::execute(void)
     {
       using namespace std;
       using tfel::math::stdfunctions::power;
       typename vector<pair<Variable,T> >::const_iterator it;
+      size_type m = this->f.getNumberOfParameters();
       // grad is the opposite of the gradient
-      matrix<T> J(this->m,this->m,T(0));
-      matrix<T> Jn(this->m,this->m,T(0));
-      Parameter g(this->m,T(0));
-      Parameter gn(this->m,T(0));
-      Parameter gradient(this->m,T(0));
-      Parameter h(this->m);
-      Parameter p_(this->m);
+      matrix<T> J(m,m,T(0));
+      matrix<T> Jn(m,m,T(0));
+      Parameter g(m,T(0));
+      Parameter gn(m,T(0));
+      Parameter gradient(m,T(0));
+      Parameter h(m);
+      Parameter p_(m);
       T s(T(0));
       T v(0);
       T lambda = this->lambda0;
@@ -110,13 +107,13 @@ namespace tfel
       s = T(0);
       for(it=this->data.begin();it!=this->data.end();++it){
 	p_ = this->p+h;
-	(*f)(v,gradient,it->first,p_);
+	(this->f)(v,gradient,it->first,p_);
 	g += (v-it->second)*gradient;
 	J += gradient^gradient;
 	s += power<2>(v-it->second);
       }
       lambda *= *(max_element(J.begin(),J.end()));
-      for(i=0;i!=this->m;++i){
+      for(i=0;i!=m;++i){
 	J(i,i) += lambda;
       }
       this->factor=2;
@@ -130,7 +127,7 @@ namespace tfel
 	fill(Jn.begin(),Jn.end(),T(0));
 	for(it=this->data.begin();it!=this->data.end();++it){
 	  p_ = this->p+h;
-	  (*f)(v,gradient,it->first,p_);
+	  (this->f)(v,gradient,it->first,p_);
 	  gn += (v-it->second)*gradient;
 	  Jn += gradient^gradient;
 	  sn += power<2>(v-it->second);
@@ -143,7 +140,7 @@ namespace tfel
 	  lambda *= this->factor;
 	  this->factor *= 2;
 	}
-	for(i=0;i!=this->m;++i){
+	for(i=0;i!=m;++i){
 	  Jn(i,i) += lambda;
 	}
 	this->p += h;
@@ -162,7 +159,7 @@ namespace tfel
 	}
       }
       if(!success){
-	string msg("LevenbergMarquardt<T>::execute : ");
+	string msg("LevenbergMarquardt<F>::execute : ");
 	msg += "maximum number of iterations reached";
 	throw(MathDivergenceException(msg));
       }

@@ -1123,70 +1123,10 @@ namespace tfel
       }
       this->checkNotEndOfLine("Analyser::treatPlotUsing",
 			      "expected using declaration",p,pe);
-      if(p->value=="("){
-	++p;
-	this->checkNotEndOfLine("Analyser::treatPlotUsing","",p,pe);
-	openedParenthesis = 0;
-	while(!((p->value==")")&&(openedParenthesis==0))){
-	  if(p->value=="("){
-	    ++openedParenthesis;
-	  }
-	  if(p->value==")"){
-	    if(openedParenthesis==0){
-	      string msg("Analyser::treatPlotUsing : ");
-	      msg += "unbalanced parenthesis";
-	      throw(runtime_error(msg));
-	    }
-	    --openedParenthesis;
-	  }
-	  options.using_decl_x += p->value;
-	  ++p;
-	  this->checkNotEndOfLine("Analyser::treatPlotUsing","",p,pe);
-	}
-	++p;
-      } else {
-	// this shall be a column number
-	if(!Analyser::isUnsignedInteger(p->value)){
-	  string msg("Analyser::treatPlotUsing : ");
-	  msg += "unexpected token '"+p->value+"', expected column number";
-	  throw(runtime_error(msg));
-	}
-	options.using_decl_x = p->value;
-	++p;
-      }
+      this->readDataFunctionInUsingDeclaration(options.using_decl_x,p,pe);
       this->readSpecifiedToken("Analyser::treatPlotUsing",":",p,pe);
       this->checkNotEndOfLine("Analyser::treatPlotUsing","",p,pe);
-      if(p->value=="("){
-	++p;
-	this->checkNotEndOfLine("Analyser::treatPlotUsing","",p,pe);
-	openedParenthesis = 0;
-	while(!((p->value==")")&&(openedParenthesis==0))){
-	  if(p->value=="("){
-	    ++openedParenthesis;
-	  }
-	  if(p->value==")"){
-	    if(openedParenthesis==0){
-	      string msg("Analyser::treatPlotUsing : ");
-	      msg += "unbalanced parenthesis";
-	      throw(runtime_error(msg));
-	    }
-	    --openedParenthesis;
-	  }
-	  options.using_decl_y += p->value;
-	  ++p;
-	  this->checkNotEndOfLine("Analyser::treatPlotUsing","",p,pe);
-	}
-	++p;
-      } else {
-	// this shall be a column number
-	if(!Analyser::isUnsignedInteger(p->value)){
-	  string msg("Analyser::treatPlotUsing : ");
-	  msg += "unexpected token '"+p->value+"', expected column number";
-	  throw(runtime_error(msg));
-	}
-	options.using_decl_y = p->value;
-	++p;
-      }
+      this->readDataFunctionInUsingDeclaration(options.using_decl_y,p,pe);
     } // end of Analyser::treatPlotUsing
 
     void

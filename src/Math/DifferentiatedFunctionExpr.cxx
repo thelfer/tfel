@@ -6,11 +6,11 @@
  * \date   02 oct 2007
  */
 
-#include<iostream>
 #include<sstream>
 #include<stdexcept>
 
 #include"TFEL/Math/Parser/Number.hxx"
+#include"TFEL/Math/Parser/Variable.hxx"
 #include"TFEL/Math/Parser/BinaryOperator.hxx"
 #include"TFEL/Math/Parser/ExternalFunctionExpr2.hxx"
 #include"TFEL/Math/Parser/DifferentiatedFunctionExpr.hxx"
@@ -147,14 +147,35 @@ namespace tfel
       {
 	using namespace std;
 	using namespace tfel::utilities;
-	vector<SmartPtr<Expr> > nargs(this->args.size());
+	vector<SmartPtr<Expr> > nargs;
+	vector<string> vnames;
+	SmartPtr<ExternalFunction> nf;
         vector<SmartPtr<Expr> >::const_iterator p;
         vector<SmartPtr<Expr> >::iterator p2;
-        for(p=this->args.begin(),p2=nargs.begin();p!=this->args.end();++p,++p2){
-#warning "stupid"
-	  //	  *p2 = (*p)->createFunctionByChangingParametersIntoVariables(v,params,pos);
+	map<string,vector<double>::size_type>::const_iterator p3;
+	vector<string>::size_type i;
+	nf = this->f->createFunctionByChangingParametersIntoVariables(vnames,v,params,pos);
+	if(nf->getNumberOfVariables()<=this->args.size()){
+	  string msg;
+	  msg += "ExternalFunctionExpr::getValue : "
+	    "internal error (function as less variable after "
+	    "'createFunctionByChangingParametersIntoVariables' than before";
+	  throw(runtime_error(msg));
 	}
-        return SmartPtr<Expr>(new DifferentiatedFunctionExpr(this->f,nargs,this->pvar));	
+	nargs.resize(nf->getNumberOfVariables());
+        for(p=this->args.begin(),p2=nargs.begin();p!=this->args.end();++p,++p2){
+	  *p2 = (*p)->createFunctionByChangingParametersIntoVariables(v,params,pos);
+	}
+	for(i=0;i!=vnames.size();++i){
+	  p3 = pos.find(vnames[i]);
+	  if(p3==pos.end()){
+	    string msg("ExternalFunctionExpr::createFunctionByChangingParametersIntoVariables : ");
+	    msg += "internal error (no position found for parameter '"+vnames[i]+"')";
+	    throw(runtime_error(msg));
+	  }
+	  nargs[args.size()+i] = SmartPtr<Expr>(new Variable(v,p3->second));
+	}
+        return SmartPtr<Expr>(new DifferentiatedFunctionExpr(nf,nargs,this->pvar));
       } // end of DifferentiatedFunctionExpr::createFunctionByChangingParametersIntoVariables
 
       void
@@ -170,7 +191,7 @@ namespace tfel
       } // end of DifferentiatedFunctionExpr::getParametersNames
 
       tfel::utilities::SmartPtr<Expr>
-      DifferentiatedFunctionExpr::resolveDependencies() const
+      DifferentiatedFunctionExpr::resolveDependencies(const std::vector<double>& v) const
       {
 	using namespace std;
 	using namespace tfel::utilities;
@@ -178,7 +199,7 @@ namespace tfel
         vector<SmartPtr<Expr> >::const_iterator p;
         vector<SmartPtr<Expr> >::iterator p2;
         for(p=this->args.begin(),p2=nargs.begin();p!=this->args.end();++p,++p2){
-	  *p2 = (*p)->resolveDependencies();
+	  *p2 = (*p)->resolveDependencies(v);
 	}
         return SmartPtr<Expr>(new ExternalFunctionExpr2(this->getDerivative(),nargs));	
       } // end of DifferentiatedFunctionExpr::resolveDependencies

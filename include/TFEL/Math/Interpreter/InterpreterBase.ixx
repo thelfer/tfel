@@ -66,8 +66,7 @@ namespace tfel
 	this->registerCallBack(this->callBacks,"set",&Child::treatSet);
 	this->registerCallBack(this->callBacks,"unset",&Child::treatUnset);
 	this->registerCallBack(this->callBacks,"kriging",&Child::treatKriging);
-#warning "stupid"
-	//	this->registerCallBack(this->callBacks,"fit",&Child::treatFit);
+	this->registerCallBack(this->callBacks,"fit",&Child::treatFit);
 	this->registerCallBack(this->callBacks,"print",&Child::treatPrint);
 #ifdef HAVE_GSL
 	this->registerCallBack(this->setCallBacks,"gsl",&Child::treatSetGSL);

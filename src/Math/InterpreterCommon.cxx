@@ -25,6 +25,8 @@
 #include"TFEL/Math/Parser/ExternalCFunction.hxx"
 #include"TFEL/Math/Parser/ExternalCastemFunction.hxx"
 #include"TFEL/Math/Parser/KrigedFunction.hxx"
+#include"TFEL/Math/LevenbergMarquardt.hxx"
+#include"TFEL/Math/LevenbergMarquardt/LevenbergMarquardtExternalFunctionWrapper.hxx"
 
 #ifdef HAVE_OCTAVE
 #include"TFEL/Math/Parser/ExternalOctaveFunction.hxx"
@@ -200,24 +202,18 @@ namespace tfel
 	return res;
       } // end of InterpreterCommon::readDouble
 
-      std::vector<std::string>
-      InterpreterCommon::readVariableList(TokensContainer::const_iterator& p,
-					  const TokensContainer::const_iterator pe)
+      void
+      InterpreterCommon::readVariableList(std::vector<std::string>& vars,
+					  TokensContainer::const_iterator& p,
+					  const TokensContainer::const_iterator pe,
+					  const bool b)
       {
 	using namespace std;
 	using std::vector;
-	vector<string> vars;
-	if(p==pe){
-	  string msg("InterpreterCommon::readVariableList : ");
-	  msg += "unexpected end of line (expected ')').";
-	  throw(runtime_error(msg));
+	vars.clear();
+	if(b){
+	  this->readSpecifiedToken("InterpreterCommon::readVariableList","(",p,pe);
 	}
-	if(p->value!="("){
-	  string msg("InterpreterCommon::readVariableList : ");
-	  msg += "unexpected token (read '"+p->value+", 'expected ')').";
-	  throw(runtime_error(msg));
-	}
-	++p;
 	if(p==pe){
 	  string msg("InterpreterCommon::readVariableList : ");
 	  msg += "unexpected end of line";
@@ -230,13 +226,17 @@ namespace tfel
 	}
 	vars.push_back(p->value);
 	++p;
-	if(p==pe){
-	  string msg("InterpreterCommon::readVariableList : ");
-	  msg += "unexpected end of line";
-	  throw(runtime_error(msg));
+	if(b){
+	  if(p==pe){
+	    string msg("InterpreterCommon::readVariableList : ");
+	    msg += "unexpected end of line";
+	    throw(runtime_error(msg));
+	  }
 	}
-	while(p->value==","){
+	while(((p!=pe))&&(p->value==",")){
 	  ++p;
+	  this->checkNotEndOfLine("InterpreterCommon::readVariableList",
+				  "expected variable name",p,pe);
 	  if(p==pe){
 	    string msg("InterpreterCommon::readVariableList : ");
 	    msg += "unexpected end of line";
@@ -249,18 +249,28 @@ namespace tfel
 	  }
 	  vars.push_back(p->value);
 	  ++p;
-	  if(p==pe){
-	    string msg("InterpreterCommon::readVariableList : ");
-	    msg += "unexpected end of line";
-	    throw(runtime_error(msg));
+	  if(b){
+	    if(p==pe){
+	      string msg("InterpreterCommon::readVariableList : ");
+	      msg += "unexpected end of line";
+	      throw(runtime_error(msg));
+	    }
 	  }
+	} // p!=pe
+	if(b){
+	  this->readSpecifiedToken("InterpreterCommon::readVariableList",")",p,pe);
 	}
-	if(p->value!=")"){
-	  string msg("InterpreterCommon::readVariableList : ");
-	  msg += "unexpected token '"+p->value+"' (expected ')')";
-	  throw(runtime_error(msg));
-	}
-	++p;
+      } // end of InterpreterCommon::readVariableList
+
+      std::vector<std::string>
+      InterpreterCommon::readVariableList(TokensContainer::const_iterator& p,
+					  const TokensContainer::const_iterator pe,
+					  const bool b)
+      {
+	using namespace std;
+	using std::vector;
+	vector<string> vars;
+	this->readVariableList(vars,p,pe,b);
 	return vars;
       } // end of InterpreterCommon::readVariableList
 
@@ -1158,6 +1168,7 @@ namespace tfel
 	using namespace std;
 	using namespace tfel::utilities;
 	using namespace tfel::math;
+	using namespace tfel::math::parser;
 	using std::vector;
 	vector<string> vars;
 	bool cont = true;
@@ -1199,6 +1210,187 @@ namespace tfel
 	}
 	cout << res.str() << endl;
       } // end of InterpreterCommon::treatPrint
+
+      void
+      InterpreterCommon::readDataFunctionInUsingDeclaration(std::string& d,
+							    TokensContainer::const_iterator& p,
+							    const TokensContainer::const_iterator pe)
+      {
+	using namespace std;
+	unsigned short openedParenthesis;
+	this->checkNotEndOfLine("readDataFunctionInUsingDeclaration",
+				"expected using declaration",p,pe);
+	if(p->value=="("){
+	++p;
+	this->checkNotEndOfLine("readDataFunctionInUsingDeclaration","",p,pe);
+	openedParenthesis = 0;
+	while(!((p->value==")")&&(openedParenthesis==0))){
+	  if(p->value=="("){
+	    ++openedParenthesis;
+	  }
+	  if(p->value==")"){
+	    if(openedParenthesis==0){
+	      string msg("readDataFunctionInUsingDeclaration : ");
+	      msg += "unbalanced parenthesis";
+	      throw(runtime_error(msg));
+	    }
+	    --openedParenthesis;
+	  }
+	  d += p->value;
+	  ++p;
+	  this->checkNotEndOfLine("readDataFunctionInUsingDeclaration","",p,pe);
+	}
+	++p;
+	} else {
+	  // this shall be a column number
+	  if(!InterpreterCommon::isUnsignedInteger(p->value)){
+	    string msg("readDataFunctionInUsingDeclaration : ");
+	    msg += "unexpected token '"+p->value+"', expected column number";
+	    throw(runtime_error(msg));
+	  }
+	  d = p->value;
+	  ++p;
+	}
+      } // end of InterpreterCommon::readDataFunctionInUsingDeclaration
+
+      void
+      InterpreterCommon::treatFit(TokensContainer::const_iterator& p,
+				  const TokensContainer::const_iterator pe)
+      {
+	using namespace std;
+	using namespace tfel::math;
+	using namespace tfel::math::parser;
+	using namespace tfel::utilities;
+	using std::vector;
+	typedef LevenbergMarquardtExternalFunctionWrapper ExternalFunctionWrapper;
+	this->checkNotEndOfLine("InterpreterCommon::treatFit","",p,pe);
+	SmartPtr<Evaluator> ev;
+	vector<vector<double> > values;
+	vector<string> params;
+	set<string> ev_params;
+	tfel::math::vector<double> v_values;
+	tfel::math::vector<double> p_values;
+	vector<string> columns;
+	vector<string> vars;
+	string f = p->value;
+	string function;
+	string file;
+	vector<string>::const_iterator ps;
+	ExternalFunctionManager::const_iterator pf;
+	vector<string>::size_type i;
+	vector<string>::size_type j;
+	vector<double>::size_type size;
+	if(!this->isValidIdentifier(f)){
+	  string msg("InterpreterCommon::treatFit : '");
+	  msg += f+"' is not a valid function name.";
+	  throw(runtime_error(msg));
+	}
+	++p;
+	this->readVariableList(vars,p,pe);
+	if(vars.empty()){
+	  string msg("InterpreterCommon::treatFit : ");
+	  msg += "no variable defined for function '"+f+"'";
+	  throw(runtime_error(msg));
+	}
+	function=f+'(';
+	for(ps=vars.begin();ps!=vars.end();){
+	  function+=*ps;
+	  if(++ps!=vars.end()){
+	    function+=',';
+	  }
+	}
+	function+=')';
+	ev = SmartPtr<Evaluator>(new Evaluator(vars,function,this->functions));
+	vars = ev->getVariablesNames();
+	this->checkNotEndOfLine("InterpreterCommon::treatFit","",p,pe);
+	file = this->readString(p,pe);
+	columns.resize(vars.size()+1);
+	if((p->value=="using")||
+	   (p->value=="u")){
+	  ++p;
+	this->checkNotEndOfLine("InterpreterCommon::treatFit",
+				"expected using declaration",p,pe);
+	  for(i=0;i!=vars.size();++i){
+	    this->readDataFunctionInUsingDeclaration(columns[i],p,pe);
+	    this->readSpecifiedToken("InterpreterCommon::treatFit",":",p,pe);
+	  }
+	  this->readDataFunctionInUsingDeclaration(columns[i],p,pe);
+	} else {
+	  for(i=0;i!=vars.size()+1;++i){
+	    ostringstream converter;
+	    converter << i+1;
+	    columns[i] = converter.str();
+	  }
+	}
+	this->readSpecifiedToken("InterpreterCommon::treatFit","via",p,pe);
+	this->readVariableList(params,p,pe,false);
+	if(params.empty()){
+	  string msg("InterpreterCommon::treatFit : ");
+	  msg += "no parameter defined for function '"+f+"'";
+	  throw(runtime_error(msg));
+	}
+	for(ps=vars.begin();ps!=vars.end();++ps){
+	  if(find(params.begin(),params.end(),*ps)!=params.end()){
+	    string msg("InterpreterCommon::treatFit : ");
+	    msg += "'"+*ps+"' is both a variable and a parameter";
+	    throw(runtime_error(msg));
+	  }
+	}
+	// preparing the evaluator
+	SmartPtr<ExternalFunction> nev = ev->createFunctionByChangingParametersIntoVariables(params);
+	//	nev = nev->resolveDependencies();
+	// 	nev->setVariableValue(0,1.3);
+	// 	nev->setVariableValue(1,2.3);
+	//	exit(-1);
+	// reading data
+	values.resize(vars.size()+1);
+	TextData data(file);
+	for(i=0;i!=vars.size()+1;++i){
+	  this->getData(values[i],data,columns[i]);
+	}
+	size = values[0].size();
+	for(i=1;i!=vars.size()+1;++i){
+	  if(values[i].size()!=size){
+	    string msg("InterpreterCommon::treatFit : ");
+	    msg += "data columns does not have the same size";
+	    throw(runtime_error(msg));
+	  }
+	}
+	v_values.resize(vars.size());
+	vector<string> v;
+	LevenbergMarquardt<ExternalFunctionWrapper> levmar(ExternalFunctionWrapper(nev,vars.size(),params.size()));
+	for(i=0;i!=size;++i){
+	  for(j=0;j!=vars.size();++j){
+	    v_values[j] = values[j][i];
+	  }
+	  levmar.addData(v_values,values[vars.size()][i]);
+	}
+	// clean-up
+	values.clear();
+	// initial guess
+	p_values.resize(params.size());
+	for(i=0,ps=params.begin();ps!=params.end();++ps,++i){
+	  pf = this->functions->find(*ps);
+	  if(pf==this->functions->end()){
+	    string msg("InterpreterCommon::treatFit : ");
+	    msg += "no initial value for parameter '"+*ps+"'";
+	    throw(runtime_error(msg));
+	  }
+	  if(pf->second->getNumberOfVariables()!=0){
+	    string msg("InterpreterCommon::treatFit : '");
+	    msg += *ps+"' is not a parameter";
+	    throw(runtime_error(msg));
+	  }
+	  p_values[i] = pf->second->getValue();
+	}
+	levmar.setInitialGuess(p_values);
+	// execute
+	p_values = levmar.execute();
+	cout << "p_values : " << endl;
+	copy(p_values.begin(),p_values.end(),
+	     ostream_iterator<double>(cout," "));
+	cout << endl;
+      } // end of InterpreterCommon::treatFit
 
       InterpreterCommon::~InterpreterCommon()
       {} // end of InterpreterCommon::~InterpreterCommon()

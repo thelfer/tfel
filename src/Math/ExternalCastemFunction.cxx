@@ -57,6 +57,28 @@ namespace tfel
       {} // endo of ExternalCastemFunction::getParametersNames
 
       tfel::utilities::SmartPtr<ExternalFunction>
+      ExternalCastemFunction::createFunctionByChangingParametersIntoVariables(const std::vector<std::string>&) const
+      {
+	using namespace std;
+	using namespace tfel::utilities;
+	string msg("ExternalCastemFunction::createFunctionByChangingParametersIntoVariables : ");
+	msg += "invalid call";
+	throw(runtime_error(msg));
+	return SmartPtr<ExternalFunction>(0);
+      } // end of ExternalCastemFunction::createFunctionByChangingParametersIntoVariables
+
+      tfel::utilities::SmartPtr<ExternalFunction>
+      ExternalCastemFunction::createFunctionByChangingParametersIntoVariables(std::vector<std::string>& v,
+									      const std::vector<double>&,
+									      const std::vector<std::string>&,
+									      const std::map<std::string,
+									      std::vector<double>::size_type>&) const
+      {
+	v.clear();
+	return this->resolveDependencies();
+      } // end of ExternalCastemFunction::createFunctionByChangingParametersIntoVariables
+
+      tfel::utilities::SmartPtr<ExternalFunction>
       ExternalCastemFunction::resolveDependencies(void) const
       {
 	using namespace tfel::utilities;

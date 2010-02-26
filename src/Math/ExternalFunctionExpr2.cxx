@@ -126,8 +126,7 @@ namespace tfel
         vector<SmartPtr<Expr> >::const_iterator p;
         vector<SmartPtr<Expr> >::iterator p2;
         for(p=this->args.begin(),p2=nargs.begin();p!=this->args.end();++p,++p2){
-#warning "stupid"
-	  //	  *p2 = (*p)->createFunctionByChangingParametersIntoVariables(v,params,pos);
+	  *p2 = (*p)->createFunctionByChangingParametersIntoVariables(v,params,pos);
 	}
         return SmartPtr<Expr>(new ExternalFunctionExpr2(this->f,nargs));
       } // end of ExternalFunctionExpr2::createFunctionByChangingParametersIntoVariables
@@ -147,7 +146,7 @@ namespace tfel
       } // end of ExternalFunctionExpr2::clone
 
       tfel::utilities::SmartPtr<Expr>
-      ExternalFunctionExpr2::resolveDependencies() const
+      ExternalFunctionExpr2::resolveDependencies(const std::vector<double>& v) const
       {
 	using namespace std;
 	using namespace tfel::utilities;
@@ -155,9 +154,9 @@ namespace tfel
         vector<SmartPtr<Expr> >::const_iterator p;
         vector<SmartPtr<Expr> >::iterator p2;
         for(p=this->args.begin(),p2=nargs.begin();p!=this->args.end();++p,++p2){
-	  *p2 = (*p)->resolveDependencies();
+	  *p2 = (*p)->resolveDependencies(v);
 	}
-        return SmartPtr<Expr>(new ExternalFunctionExpr2(this->f,nargs));	
+        return SmartPtr<Expr>(new ExternalFunctionExpr2(this->f->resolveDependencies(),nargs));	
       } // end of ExternalFunctionExpr2::resolveDependencies
 
     } // end of namespace parser

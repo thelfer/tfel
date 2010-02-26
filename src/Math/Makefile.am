@@ -30,25 +30,27 @@ libTFELMath_la_SOURCES = MathException.cxx              \
 			 StandardFunctions.cxx          \
 			 KrigingErrors.cxx
 
-libTFELMathParser_la_SOURCES = ExternalCFunction.cxx          \
-			       ExternalCastemFunction.cxx     \
-			       ExternalFunctionExpr.cxx       \
-			       ExternalFunctionExpr2.cxx      \
-			       KrigedFunction.cxx             \
-			       DifferentiatedFunctionExpr.cxx \
-			       Expr.cxx	                      \
-			       BinaryFunction.cxx             \
-			       BinaryOperator.cxx             \
-			       LogicalExpr.cxx                \
-			       ConditionalExpr.cxx            \
-			       ExternalFunction.cxx           \
-			       EvaluatorBase.cxx              \
-			       EvaluatorTExpr.cxx	      \
-			       EvaluatorFunction.cxx	      \
-			       Evaluator.cxx	              \
-			       Function.cxx	              \
-			       Negation.cxx	              \
-			       Number.cxx                     \
+libTFELMathParser_la_SOURCES = ExternalCFunction.cxx                         \
+			       ExternalCastemFunction.cxx                    \
+			       ExternalFunctionExpr.cxx                      \
+			       ExternalFunctionExpr2.cxx                     \
+			       KrigedFunction.cxx                            \
+			       DifferentiatedFunctionExpr.cxx                \
+			       Expr.cxx	                                     \
+			       BinaryFunction.cxx                            \
+			       BinaryOperator.cxx                            \
+			       LogicalExpr.cxx                               \
+			       ConditionalExpr.cxx                           \
+			       ExternalFunction.cxx                          \
+			       EvaluatorBase.cxx                             \
+			       EvaluatorTExpr.cxx	                     \
+			       EvaluatorFunction.cxx	                     \
+			       Evaluator.cxx	                             \
+			       Function.cxx	                             \
+			       Negation.cxx	                             \
+			       Number.cxx                                    \
+			       LevenbergMarquardtEvaluatorWrapper.cxx        \
+			       LevenbergMarquardtExternalFunctionWrapper.cxx \
 			       Variable.cxx
 
 libTFELMathParser_la_DEPENDENCIES = libTFELMath.la

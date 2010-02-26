@@ -89,10 +89,10 @@ namespace tfel
       } // end of NegLogicalExpression::checkCyclicDependency
       
       tfel::utilities::SmartPtr<LogicalExpr>
-      NegLogicalExpression::resolveDependencies(void) const
+      NegLogicalExpression::resolveDependencies(const std::vector<double>& v) const
       {
 	using namespace tfel::utilities;
-	return SmartPtr<LogicalExpr>(new NegLogicalExpression(this->a->resolveDependencies()));
+	return SmartPtr<LogicalExpr>(new NegLogicalExpression(this->a->resolveDependencies(v)));
       } // end of NegLogicalExpression::resolveDependencies(void) const
       
       tfel::utilities::SmartPtr<LogicalExpr>

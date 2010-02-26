@@ -6,8 +6,6 @@
  * \date   02 oct 2007
  */
 
-#include<iostream>
-
 #include"TFEL/Math/Parser/Number.hxx"
 
 namespace tfel
@@ -61,7 +59,7 @@ namespace tfel
       } // end of Number::createFunctionByChangingParametersIntoVariables
 
       tfel::utilities::SmartPtr<Expr>
-      Number::resolveDependencies() const
+      Number::resolveDependencies(const std::vector<double>&) const
       {
 	using namespace tfel::utilities;
 	return SmartPtr<Expr>(new Number(this->value));

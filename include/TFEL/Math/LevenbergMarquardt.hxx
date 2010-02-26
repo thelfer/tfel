@@ -14,9 +14,11 @@
 #ifndef _LIB_LEVENBERGMARQUARDT_HXX_
 #define _LIB_LEVENBERGMARQUARDT_HXX_ 
 
+#include"TFEL/Config/TFELConfig.hxx"
 #include"TFEL/Math/vector.hxx"
 #include"TFEL/Math/matrix.hxx"
 #include"TFEL/Math/LUSolve.hxx"
+#include"TFEL/Math/LevenbergMarquardt/LevenbergMarquardtFunctionWrapper.hxx"
 
 namespace tfel
 {
@@ -24,23 +26,18 @@ namespace tfel
   namespace math
   {
 
-    template<typename T = double>
+    template<typename F = LevenbergMarquardtFunctionWrapper<double> >
     struct LevenbergMarquardt
     {
+
+      typedef typename F::NumericType T;
 
       typedef tfel::math::vector<T> Variable;
       typedef tfel::math::vector<T> Parameter;
       typedef tfel::math::vector<T> Gradient;
       typedef typename Variable::size_type size_type;
 
-      typedef void (* PtrFun)(T&,
-			      Gradient&,
-			      const Variable&,
-			      const Parameter&);
-
-      LevenbergMarquardt(const size_type, // number of variables
-			 const size_type, // number of parameters
-			 const PtrFun);
+      LevenbergMarquardt(const F);
 
       void
       addData(const Variable&,
@@ -68,7 +65,8 @@ namespace tfel
       execute(void);
       
     private:
-      
+
+      F f;
       std::vector<std::pair<Variable,double> > data;
       Parameter p;
       T lambda0;
@@ -76,9 +74,6 @@ namespace tfel
       T eps1;
       T eps2;
       unsigned short iterMax;
-      PtrFun f;
-      size_type n;
-      size_type m;
 
     }; // end of struct LevenbergMarquardt
 

@@ -6,8 +6,6 @@
  * \date   02 oct 2007
  */
 
-#include<iostream>
-
 #include"TFEL/Math/Parser/Negation.hxx"
 #include"TFEL/Math/Parser/Number.hxx"
 #include"TFEL/Math/Parser/BinaryOperator.hxx"
@@ -51,15 +49,17 @@ namespace tfel
       } // end of StandardFunctionBase::throwUnimplementedDifferentiateFunctionException()
 
       void
-      StandardFunctionBase::throwInvalidCallException(const int e)
+      StandardFunctionBase::throwInvalidCallException(const double v,
+						      const int e)
       {
 
 	using namespace std;
-	string msg("StandardFunctionBase::throwInvalidCallException : ");
-	msg += "call to function failed (";
-	msg += strerror(e);
-	msg += ")";
-	throw(runtime_error(msg));
+	ostringstream msg;
+	msg << "StandardFunctionBase::throwInvalidCallException : "
+	    << "call to function failed for value " << v << "("
+	    <<  strerror(e)
+	    << ")";
+	throw(runtime_error(msg.str()));
       } // end of struct StandardFunctionBase::throwInvalidCallException()
 
       TFEL_MATH_DIFFERENTIATEFUNCTION_PARTIALSPECIALISATION_DEFINITION(exp)

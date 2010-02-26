@@ -82,12 +82,12 @@ namespace tfel
       } // end of EvaluatorFunction1P1V::getValue(void) const
 
       tfel::utilities::SmartPtr<Expr>
-      EvaluatorFunction1P1V::resolveDependencies(void) const
+      EvaluatorFunction1P1V::resolveDependencies(const std::vector<double>& v) const
       {
 	using namespace tfel::utilities;
 	return SmartPtr<Expr>(new EvaluatorFunction1P1V(this->f,
 							this->n,
-							this->expr->resolveDependencies()));
+							this->expr->resolveDependencies(v)));
       } // end of EvaluatorFunction1P1V::resolveDependencies(void) const
 
       void
@@ -104,6 +104,18 @@ namespace tfel
 							this->n,
 							this->expr->clone(v)));
       } // end of EvaluatorFunction1P1V::clone(const std::vector<double>&) const
+
+      tfel::utilities::SmartPtr<Expr>
+      EvaluatorFunction1P1V::createFunctionByChangingParametersIntoVariables(const std::vector<double>& v,
+									     const std::vector<std::string>& params,
+									     const std::map<std::string,
+									     std::vector<double>::size_type>& pos) const
+      {
+	using namespace tfel::utilities;
+	return SmartPtr<Expr>(new EvaluatorFunction1P1V(this->f,
+							this->n,
+							this->expr->createFunctionByChangingParametersIntoVariables(v,params,pos)));
+      } // end of EvaluatorFunction1P1V::createFunctionByChangingParametersIntoVariables
 
       EvaluatorFunction1P1V::~EvaluatorFunction1P1V()
       {} // end of EvaluatorFunction2P1V::~EvaluatorFunction2P1V()
@@ -125,13 +137,13 @@ namespace tfel
       } // end of EvaluatorFunction2P1V::getValue(void) const
 
       tfel::utilities::SmartPtr<Expr>
-      EvaluatorFunction2P1V::resolveDependencies(void) const
+      EvaluatorFunction2P1V::resolveDependencies(const std::vector<double>& v) const
       {
 	using namespace tfel::utilities;
 	return SmartPtr<Expr>(new EvaluatorFunction2P1V(this->f,
 							this->n,
 							this->m,
-							this->expr->resolveDependencies()));
+							this->expr->resolveDependencies(v)));
       } // end of EvaluatorFunction2P1V::resolveDependencies(void) const
 
       void
@@ -149,6 +161,19 @@ namespace tfel
 							this->m,
 							this->expr->clone(v)));
       } // end of EvaluatorFunction2P1V::clone(const std::vector<double>&) const
+
+      tfel::utilities::SmartPtr<Expr>
+      EvaluatorFunction2P1V::createFunctionByChangingParametersIntoVariables(const std::vector<double>& v,
+									     const std::vector<std::string>& params,
+									     const std::map<std::string,
+									     std::vector<double>::size_type>& pos) const
+      {
+	using namespace tfel::utilities;
+	return SmartPtr<Expr>(new EvaluatorFunction2P1V(this->f,
+							this->n,
+							this->m,
+							this->expr->createFunctionByChangingParametersIntoVariables(v,params,pos)));
+      } // end of EvaluatorFunction2P1V::createFunctionByChangingParametersIntoVariables
 
       EvaluatorFunction2P1V::~EvaluatorFunction2P1V()
       {} // end of EvaluatorFunction2P1V::~EvaluatorFunction2P1V()
@@ -169,13 +194,13 @@ namespace tfel
       } // end of EvaluatorFunction1P2V::getValue(void) const
 
       tfel::utilities::SmartPtr<Expr>
-      EvaluatorFunction1P2V::resolveDependencies(void) const
+      EvaluatorFunction1P2V::resolveDependencies(const std::vector<double>& v) const
       {
 	using namespace tfel::utilities;
 	return SmartPtr<Expr>(new EvaluatorFunction1P2V(this->f,
 							this->n,
-							this->e1->resolveDependencies(),
-							this->e2->resolveDependencies()));
+							this->e1->resolveDependencies(v),
+							this->e2->resolveDependencies(v)));
       } // end of EvaluatorFunction1P2V::resolveDependencies(void) const
 
       void
@@ -194,6 +219,19 @@ namespace tfel
 							this->e1->clone(v),
 							this->e2->clone(v)));
       } // end of EvaluatorFunction1P2V::clone(const std::vector<double>&) const
+
+      tfel::utilities::SmartPtr<Expr>
+      EvaluatorFunction1P2V::createFunctionByChangingParametersIntoVariables(const std::vector<double>& v,
+									     const std::vector<std::string>& params,
+									     const std::map<std::string,
+									     std::vector<double>::size_type>& pos) const
+      {
+	using namespace tfel::utilities;
+	return SmartPtr<Expr>(new EvaluatorFunction1P2V(this->f,
+							this->n,
+							this->e1->createFunctionByChangingParametersIntoVariables(v,params,pos),
+							this->e2->createFunctionByChangingParametersIntoVariables(v,params,pos)));
+      } // end of EvaluatorFunction1P2V::createFunctionByChangingParametersIntoVariables
 
       EvaluatorFunction1P2V::~EvaluatorFunction1P2V()
       {} // end of EvaluatorFunction2P2V::~EvaluatorFunction2P2V()
@@ -218,13 +256,13 @@ namespace tfel
       } // end of EvaluatorFunction2P2V::getValue(void) const
 
       tfel::utilities::SmartPtr<Expr>
-      EvaluatorFunction2P2V::resolveDependencies(void) const
+      EvaluatorFunction2P2V::resolveDependencies(const std::vector<double>& v) const
       {
 	using namespace tfel::utilities;
 	return SmartPtr<Expr>(new EvaluatorFunction2P2V(this->f,
 							this->n,this->m,
-							this->e1->resolveDependencies(),
-							this->e2->resolveDependencies()));
+							this->e1->resolveDependencies(v),
+							this->e2->resolveDependencies(v)));
       } // end of EvaluatorFunction2P2V::resolveDependencies(void) const
 
       void
@@ -243,6 +281,20 @@ namespace tfel
 							this->e1->clone(v),
 							this->e2->clone(v)));
       } // end of EvaluatorFunction2P2V::clone(const std::vector<double>&) const
+
+      tfel::utilities::SmartPtr<Expr>
+      EvaluatorFunction2P2V::createFunctionByChangingParametersIntoVariables(const std::vector<double>& v,
+									     const std::vector<std::string>& params,
+									     const std::map<std::string,
+									     std::vector<double>::size_type>& pos) const
+      {
+	using namespace tfel::utilities;
+	return SmartPtr<Expr>(new EvaluatorFunction2P2V(this->f,
+							this->n,
+							this->m,
+							this->e1->createFunctionByChangingParametersIntoVariables(v,params,pos),
+							this->e2->createFunctionByChangingParametersIntoVariables(v,params,pos)));
+      } // end of EvaluatorFunction2P2V::createFunctionByChangingParametersIntoVariables
 
       EvaluatorFunction2P2V::~EvaluatorFunction2P2V()
       {} // end of EvaluatorFunction2P2V::~EvaluatorFunction2P2V()

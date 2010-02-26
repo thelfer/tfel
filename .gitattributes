@@ -796,12 +796,16 @@ tests/Math/krigeage2D.cxx -text
 tests/Math/levenberg-marquardt.cxx -text
 tests/Math/levenberg-marquardt2.cxx -text
 tests/Math/levenberg-marquardt3.cxx -text
+tests/Math/levenberg-marquardt4.cxx -text
 tests/Math/lu.cxx -text
 tests/Math/lu2.cxx -text
 tests/Math/newton_raphson.cxx -text
 tests/Math/parser.cxx -text
 tests/Math/parser2.cxx -text
 tests/Math/parser3.cxx -text
+tests/Math/parser4.cxx -text
+tests/Math/parser5.cxx -text
+tests/Math/parser6.cxx -text
 tests/Math/solve.cxx -text
 tests/Math/stensor.cxx -text
 tests/Math/stensor2.cxx -text

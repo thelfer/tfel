@@ -1,5 +1,5 @@
 /*!
- * \file   levenberg-marquardt.cxx
+ * \file   levenberg-marquardt4.cxx
  * \brief  
  * 
  * \author Helfer Thomas
@@ -21,28 +21,18 @@
 #include<utility>
 #include<vector>
 
+#include"TFEL/Utilities/SmartPtr.hxx"
+#include"TFEL/Math/Evaluator.hxx"
 #include"TFEL/Math/LevenbergMarquardt.hxx"
-
-void
-test(double & v,
-     tfel::math::vector<double>& g,
-     const tfel::math::vector<double>& x,
-     const tfel::math::vector<double>& p)
-{
-  using namespace std;
-  using namespace tfel::math;
-  double v0 = cos(x(0)*x(0));
-  double v1 = exp(p(0)*v0);
-  v    = p(1)*v1;
-  g(0) = p(1)*v0*v1;
-  g(1) = v1;
-} // end of test
+#include"TFEL/Math/LevenbergMarquardt/LevenbergMarquardtEvaluatorWrapper.hxx"
 
 int main(void)
 {
   using namespace std;
+  using namespace tfel::utilities;
   using namespace tfel::math;
   using tfel::math::vector;
+  typedef LevenbergMarquardtEvaluatorWrapper EvaluatorWrapper;
   const double x_data[] = {0.840188,
 			   0.783099,
 			   0.911647,
@@ -64,8 +54,12 @@ int main(void)
 			  1.89371,
 			  2.52963,
 			  2.72843};
-
-  LevenbergMarquardt<> levmar(LevenbergMarquardtFunctionWrapper<double>(1u,2u,test));
+  std::vector<string> v;
+  v.push_back("x");
+  v.push_back("p0");
+  v.push_back("p1");
+  SmartPtr<Evaluator> test(new Evaluator(v,"p1*exp(p0*cos(x*x))"));
+  LevenbergMarquardt<EvaluatorWrapper> levmar(EvaluatorWrapper(test,1u,2u));
   vector<double> x(1u);
   vector<double> p(2u);
   unsigned short i;

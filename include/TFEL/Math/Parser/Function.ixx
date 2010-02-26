@@ -69,7 +69,7 @@ namespace tfel
 	if(errno!=0){
 	  int e = errno;
 	  errno = old;
-	  StandardFunctionBase::throwInvalidCallException(e);
+	  StandardFunctionBase::throwInvalidCallException(arg,e);
 	}
 	errno = old;
 	return res;
@@ -84,10 +84,10 @@ namespace tfel
 
       template<StandardFunctionPtr f>
       tfel::utilities::SmartPtr<Expr>
-      StandardFunction<f>::resolveDependencies(void) const
+      StandardFunction<f>::resolveDependencies(const std::vector<double>& v) const
       {
 	using namespace tfel::utilities;
-	return SmartPtr<Expr>(new StandardFunction<f>(this->expr->resolveDependencies()));
+	return SmartPtr<Expr>(new StandardFunction<f>(this->expr->resolveDependencies(v)));
       } // end of StandardFunction<f>::resolveDependencies(void)
       
       template<StandardFunctionPtr f>

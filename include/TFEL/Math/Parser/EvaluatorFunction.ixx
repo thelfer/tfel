@@ -532,7 +532,7 @@ namespace tfel
 
       template<unsigned short N>
       tfel::utilities::SmartPtr<Expr>
-      EvaluatorFunctionNV<N>::resolveDependencies(void) const
+      EvaluatorFunctionNV<N>::resolveDependencies(const std::vector<double>& v) const
       {
 	using namespace std;
 	using namespace tfel::utilities;
@@ -540,7 +540,7 @@ namespace tfel
         vector<SmartPtr<Expr> >::const_iterator p;
         vector<SmartPtr<Expr> >::size_type i;
         for(p=this->args.begin(),i=0;p!=this->args.end();++p,++i){
-	  nargs[i]=(*p)->resolveDependencies();
+	  nargs[i]=(*p)->resolveDependencies(v);
         }
         return SmartPtr<Expr>(new EvaluatorFunctionNV<N>(this->f,nargs));
       } // end of EvaluatorFunctionNV<N>::resolveDependencies const
@@ -559,6 +559,24 @@ namespace tfel
         }
         return SmartPtr<Expr>(new EvaluatorFunctionNV<N>(this->f,nargs));
       } // end of EvaluatorFunctionNV<N>::resolveDependencies const
+
+      template<unsigned short N>
+      tfel::utilities::SmartPtr<Expr>
+      EvaluatorFunctionNV<N>::createFunctionByChangingParametersIntoVariables(const std::vector<double>& v,
+									      const std::vector<std::string>& params,
+									      const std::map<std::string,
+									      std::vector<double>::size_type>& pos) const
+      {
+	using namespace std;
+	using namespace tfel::utilities;
+	vector<SmartPtr<Expr> > nargs(this->args.size());
+        vector<SmartPtr<Expr> >::const_iterator p;
+        vector<SmartPtr<Expr> >::size_type i;
+        for(p=this->args.begin(),i=0;p!=this->args.end();++p,++i){
+	  nargs[i]=(*p)->createFunctionByChangingParametersIntoVariables(v,params,pos);
+        }
+        return SmartPtr<Expr>(new EvaluatorFunctionNV<N>(this->f,nargs));
+      } // end of EvaluatorFunctionNV<N>::createFunctionByChangingParametersIntoVariables
 
       template<unsigned short N>
       void
@@ -596,7 +614,7 @@ namespace tfel
 
       template<unsigned short N>
       tfel::utilities::SmartPtr<Expr>
-      EvaluatorFunction1PNV<N>::resolveDependencies(void) const
+      EvaluatorFunction1PNV<N>::resolveDependencies(const std::vector<double>& v) const
       {
 	using namespace std;
 	using namespace tfel::utilities;
@@ -604,7 +622,7 @@ namespace tfel
         vector<SmartPtr<Expr> >::const_iterator p;
         vector<SmartPtr<Expr> >::size_type i;
         for(p=this->args.begin(),i=0;p!=this->args.end();++p,++i){
-	  nargs[i]=(*p)->resolveDependencies();
+	  nargs[i]=(*p)->resolveDependencies(v);
         }
         return SmartPtr<Expr>(new EvaluatorFunction1PNV<N>(this->f,this->n,nargs));
       } // end of EvaluatorFunction1PNV<N>::resolveDependencies const
@@ -632,6 +650,24 @@ namespace tfel
         vector<SmartPtr<Expr> >::size_type i;
         for(p=this->args.begin(),i=0;p!=this->args.end();++p,++i){
 	  nargs[i]=(*p)->clone(v);
+        }
+        return SmartPtr<Expr>(new EvaluatorFunction1PNV<N>(this->f,this->n,nargs));
+      } // end of EvaluatorFunction1PNV<N>::clone
+
+      template<unsigned short N>
+      tfel::utilities::SmartPtr<Expr>
+      EvaluatorFunction1PNV<N>::createFunctionByChangingParametersIntoVariables(const std::vector<double>& v,
+										const std::vector<std::string>& params,
+										const std::map<std::string,
+										std::vector<double>::size_type>& pos) const
+      {
+	using namespace std;
+	using namespace tfel::utilities;
+	vector<SmartPtr<Expr> > nargs(this->args.size());
+        vector<SmartPtr<Expr> >::const_iterator p;
+        vector<SmartPtr<Expr> >::size_type i;
+        for(p=this->args.begin(),i=0;p!=this->args.end();++p,++i){
+	  nargs[i]=(*p)->createFunctionByChangingParametersIntoVariables(v,params,pos);
         }
         return SmartPtr<Expr>(new EvaluatorFunction1PNV<N>(this->f,this->n,nargs));
       } // end of EvaluatorFunction1PNV<N>::resolveDependencies const
@@ -674,7 +710,7 @@ namespace tfel
 
       template<unsigned short N>
       tfel::utilities::SmartPtr<Expr>
-      EvaluatorFunction2PNV<N>::resolveDependencies(void) const
+      EvaluatorFunction2PNV<N>::resolveDependencies(const std::vector<double>& v) const
       {
 	using namespace std;
 	using namespace tfel::utilities;
@@ -682,7 +718,7 @@ namespace tfel
         vector<SmartPtr<Expr> >::const_iterator p;
         vector<SmartPtr<Expr> >::size_type i;
         for(p=this->args.begin(),i=0;p!=this->args.end();++p,++i){
-	  nargs[i]=(*p)->resolveDependencies();
+	  nargs[i]=(*p)->resolveDependencies(v);
         }
         return SmartPtr<Expr>(new EvaluatorFunction2PNV<N>(this->f,this->n,this->m,nargs));
       } // end of EvaluatorFunction2PNV<N>::resolveDependencies const
@@ -700,7 +736,25 @@ namespace tfel
 	  nargs[i]=(*p)->clone(v);
         }
         return SmartPtr<Expr>(new EvaluatorFunction2PNV<N>(this->f,this->n,this->m,nargs));
-      } // end of EvaluatorFunction2PNV<N>::resolveDependencies const
+      } // end of EvaluatorFunction2PNV<N>::clone
+
+      template<unsigned short N>
+      tfel::utilities::SmartPtr<Expr>
+      EvaluatorFunction2PNV<N>::createFunctionByChangingParametersIntoVariables(const std::vector<double>& v,
+										const std::vector<std::string>& params,
+										const std::map<std::string,
+										std::vector<double>::size_type>& pos) const
+      {
+	using namespace std;
+	using namespace tfel::utilities;
+	vector<SmartPtr<Expr> > nargs(this->args.size());
+        vector<SmartPtr<Expr> >::const_iterator p;
+        vector<SmartPtr<Expr> >::size_type i;
+        for(p=this->args.begin(),i=0;p!=this->args.end();++p,++i){
+	  nargs[i]=(*p)->createFunctionByChangingParametersIntoVariables(v,params,pos);
+        }
+        return SmartPtr<Expr>(new EvaluatorFunction2PNV<N>(this->f,this->n,this->m,nargs));
+      } // end of EvaluatorFunction2PNV<N>::createFunctionByChangingParametersIntoVariables
 
       template<unsigned short N>
       void
@@ -738,7 +792,7 @@ namespace tfel
 
       template<unsigned short N>
       tfel::utilities::SmartPtr<Expr>
-      EvaluatorFunction1UPNV<N>::resolveDependencies(void) const
+      EvaluatorFunction1UPNV<N>::resolveDependencies(const std::vector<double>& v) const
       {
 	using namespace std;
 	using namespace tfel::utilities;
@@ -746,7 +800,7 @@ namespace tfel
         vector<SmartPtr<Expr> >::const_iterator p;
         vector<SmartPtr<Expr> >::size_type i;
         for(p=this->args.begin(),i=0;p!=this->args.end();++p,++i){
-	  nargs[i]=(*p)->resolveDependencies();
+	  nargs[i]=(*p)->resolveDependencies(v);
         }
         return SmartPtr<Expr>(new EvaluatorFunction1UPNV<N>(this->f,this->n,nargs));
       } // end of EvaluatorFunction1UPNV<N>::resolveDependencies const
@@ -776,7 +830,25 @@ namespace tfel
 	  nargs[i]=(*p)->clone(v);
         }
         return SmartPtr<Expr>(new EvaluatorFunction1UPNV<N>(this->f,this->n,nargs));
-      } // end of EvaluatorFunction1UPNV<N>::resolveDependencies const
+      } // end of EvaluatorFunction1UPNV<N>::clone
+
+      template<unsigned short N>
+      tfel::utilities::SmartPtr<Expr>
+      EvaluatorFunction1UPNV<N>::createFunctionByChangingParametersIntoVariables(const std::vector<double>& v,
+										 const std::vector<std::string>& params,
+										 const std::map<std::string,
+										 std::vector<double>::size_type>& pos) const
+      {
+	using namespace std;
+	using namespace tfel::utilities;
+	vector<SmartPtr<Expr> > nargs(this->args.size());
+        vector<SmartPtr<Expr> >::const_iterator p;
+        vector<SmartPtr<Expr> >::size_type i;
+        for(p=this->args.begin(),i=0;p!=this->args.end();++p,++i){
+	  nargs[i]=(*p)->createFunctionByChangingParametersIntoVariables(v,params,pos);
+        }
+        return SmartPtr<Expr>(new EvaluatorFunction1UPNV<N>(this->f,this->n,nargs));
+      } // end of EvaluatorFunction1UPNV<N>::clone
 
       template<unsigned short N>
       void
@@ -816,7 +888,7 @@ namespace tfel
 
       template<unsigned short N>
       tfel::utilities::SmartPtr<Expr>
-      EvaluatorFunction2UPNV<N>::resolveDependencies(void) const
+      EvaluatorFunction2UPNV<N>::resolveDependencies(const std::vector<double>& v) const
       {
 	using namespace std;
 	using namespace tfel::utilities;
@@ -824,7 +896,7 @@ namespace tfel
         vector<SmartPtr<Expr> >::const_iterator p;
         vector<SmartPtr<Expr> >::size_type i;
         for(p=this->args.begin(),i=0;p!=this->args.end();++p,++i){
-	  nargs[i]=(*p)->resolveDependencies();
+	  nargs[i]=(*p)->resolveDependencies(v);
         }
         return SmartPtr<Expr>(new EvaluatorFunction2UPNV<N>(this->f,this->n,this->m,nargs));
       } // end of EvaluatorFunction2UPNV<N>::resolveDependencies const
@@ -842,7 +914,25 @@ namespace tfel
 	  nargs[i]=(*p)->clone(v);
         }
         return SmartPtr<Expr>(new EvaluatorFunction2UPNV<N>(this->f,this->n,this->m,nargs));
-      } // end of EvaluatorFunction2UPNV<N>::resolveDependencies const
+      } // end of EvaluatorFunction2UPNV<N>::clone
+
+      template<unsigned short N>
+      tfel::utilities::SmartPtr<Expr>
+      EvaluatorFunction2UPNV<N>::createFunctionByChangingParametersIntoVariables(const std::vector<double>& v,
+										 const std::vector<std::string>& params,
+										 const std::map<std::string,
+										 std::vector<double>::size_type>& pos) const
+      {
+	using namespace std;
+	using namespace tfel::utilities;
+	vector<SmartPtr<Expr> > nargs(this->args.size());
+        vector<SmartPtr<Expr> >::const_iterator p;
+        vector<SmartPtr<Expr> >::size_type i;
+        for(p=this->args.begin(),i=0;p!=this->args.end();++p,++i){
+	  nargs[i]=(*p)->createFunctionByChangingParametersIntoVariables(v,params,pos);
+        }
+        return SmartPtr<Expr>(new EvaluatorFunction2UPNV<N>(this->f,this->n,this->m,nargs));
+      } // end of EvaluatorFunction2UPNV<N>::clone
 
       template<unsigned short N>
       void

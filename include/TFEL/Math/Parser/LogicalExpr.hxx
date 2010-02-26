@@ -74,7 +74,7 @@ namespace tfel
 	virtual void
 	checkCyclicDependency(std::vector<std::string>&) const = 0;
 	virtual tfel::utilities::SmartPtr<LogicalExpr>
-	resolveDependencies(void) const = 0;
+	resolveDependencies(const std::vector<double>&) const = 0;
 	virtual tfel::utilities::SmartPtr<LogicalExpr>
 	clone(const std::vector<double>&) const = 0;
 	virtual void
@@ -98,7 +98,7 @@ namespace tfel
 	void
 	checkCyclicDependency(std::vector<std::string>&) const;
 	tfel::utilities::SmartPtr<LogicalExpr>
-	resolveDependencies(void) const;
+	resolveDependencies(const std::vector<double>&) const;
 	tfel::utilities::SmartPtr<LogicalExpr>
 	clone(const std::vector<double>&) const;
 	void
@@ -125,7 +125,7 @@ namespace tfel
 	void
 	checkCyclicDependency(std::vector<std::string>&) const;
 	tfel::utilities::SmartPtr<LogicalExpr>
-	resolveDependencies(void) const;
+	resolveDependencies(const std::vector<double>&) const;
 	tfel::utilities::SmartPtr<LogicalExpr>
 	clone(const std::vector<double>&) const;
 	void
@@ -150,7 +150,7 @@ namespace tfel
 	void
 	checkCyclicDependency(std::vector<std::string>&) const;
 	tfel::utilities::SmartPtr<LogicalExpr>
-	resolveDependencies(void) const;
+	resolveDependencies(const std::vector<double>&) const;
 	tfel::utilities::SmartPtr<LogicalExpr>
 	clone(const std::vector<double>&) const;
 	void

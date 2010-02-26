@@ -74,7 +74,7 @@ namespace tfel
 	checkCyclicDependency(std::vector<std::string>&) const
 	  throw(std::runtime_error);
 	tfel::utilities::SmartPtr<Expr>
-	resolveDependencies(void) const;
+	resolveDependencies(const std::vector<double>&) const;
  	tfel::utilities::SmartPtr<Expr>
 	differentiate(const std::vector<double>::size_type,
 		      const std::vector<double>&) const;

@@ -31,7 +31,7 @@ namespace tfel
 	virtual void
 	checkCyclicDependency(std::vector<std::string>&) const = 0;
 	virtual tfel::utilities::SmartPtr<Expr>
-	resolveDependencies(void) const = 0;
+	resolveDependencies(const std::vector<double>&) const = 0;
 	virtual tfel::utilities::SmartPtr<Expr>
 	clone(const std::vector<double>&) const = 0;
 	virtual tfel::utilities::SmartPtr<Expr>
@@ -39,11 +39,11 @@ namespace tfel
 		      const std::vector<double>&) const = 0;
 	virtual void
 	getParametersNames(std::set<std::string>&) const = 0;
-// 	virtual tfel::utilities::SmartPtr<Expr>
-// 	createFunctionByChangingParametersIntoVariables(const std::vector<double>&,
-// 							const std::vector<std::string>&,
-// 							const std::map<std::string,
-// 							               std::vector<double>::size_type>&) const = 0;
+	virtual tfel::utilities::SmartPtr<Expr>
+	createFunctionByChangingParametersIntoVariables(const std::vector<double>&,
+							const std::vector<std::string>&,
+							const std::map<std::string,
+							std::vector<double>::size_type>&) const = 0;
 	virtual ~Expr();
       }; // end of struct Expr
 

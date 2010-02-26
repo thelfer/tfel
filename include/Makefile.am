@@ -347,6 +347,12 @@ nobase_include_HEADERS= TFEL/FiniteElement/Element/ElementsManager.ixx          
 			TFEL/Math/Broyden2.hxx                                                        \
 			TFEL/Math/RootFinding/Broyden.ixx                                             \
 			TFEL/Math/RootFinding/Broyden2.ixx                                            \
+			TFEL/Math/LevenbergMarquardt.hxx                                              \
+			TFEL/Math/LevenbergMarquardt/LevenbergMarquardt.ixx                           \
+			TFEL/Math/LevenbergMarquardt/LevenbergMarquardtFunctionWrapper.hxx            \
+			TFEL/Math/LevenbergMarquardt/LevenbergMarquardtFunctionWrapper.ixx            \
+			TFEL/Math/LevenbergMarquardt/LevenbergMarquardtEvaluatorWrapper.hxx           \
+			TFEL/Math/LevenbergMarquardt/LevenbergMarquardtExternalFunctionWrapper.hxx    \
 			TFEL/Math/FSLevenbergMarquardt.hxx                                            \
 			TFEL/Math/LevenbergMarquardt/FSLevenbergMarquardt.ixx                         \
 			TFEL/Metaprogramming/GenerateTypeList.ixx                                     \

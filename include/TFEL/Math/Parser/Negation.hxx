@@ -33,7 +33,7 @@ namespace tfel
 	tfel::utilities::SmartPtr<Expr>
 	clone(const std::vector<double>&) const;
 	tfel::utilities::SmartPtr<Expr>
-	resolveDependencies(void) const;
+	resolveDependencies(const std::vector<double>&) const;
 	tfel::utilities::SmartPtr<Expr>
 	createFunctionByChangingParametersIntoVariables(const std::vector<double>&,
 							const std::vector<std::string>&,

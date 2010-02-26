@@ -139,13 +139,20 @@ namespace tfel
 		  const std::string&);
 
 	void
+	readDataFunctionInUsingDeclaration(std::string&,
+					   TokensContainer::const_iterator&,
+					   const TokensContainer::const_iterator);
+
+	void
 	readVariableList(std::vector<std::string>&,
 			 TokensContainer::const_iterator&, 
-			 const TokensContainer::const_iterator);
+			 const TokensContainer::const_iterator,
+			 const bool = true);
 
 	std::vector<std::string>
 	readVariableList(TokensContainer::const_iterator&, 
-			 const TokensContainer::const_iterator);
+			 const TokensContainer::const_iterator,
+			 const bool = true);
 	
 	void
 	treatKriging(TokensContainer::const_iterator&, 

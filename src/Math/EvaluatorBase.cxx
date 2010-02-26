@@ -6,7 +6,6 @@
  * \date   02 oct 2007
  */
 
-#include<iostream>
 #include<sstream>
 #include<stdexcept>
 #include<iterator>

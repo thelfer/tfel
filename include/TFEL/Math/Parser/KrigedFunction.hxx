@@ -31,6 +31,9 @@ namespace tfel
       struct KrigedFunctionBase
       {
 	static void
+	throwInvalidCreateFunctionByChangingParametersIntoVariables(void);
+
+	static void
 	throwInvalidIndexException(const unsigned short i,
 				   const unsigned short N);
 	static void
@@ -73,6 +76,16 @@ namespace tfel
 
 	virtual	tfel::utilities::SmartPtr<ExternalFunction>
 	resolveDependencies(void) const;
+
+	virtual tfel::utilities::SmartPtr<ExternalFunction>
+	createFunctionByChangingParametersIntoVariables(const std::vector<std::string>&) const;
+
+	virtual tfel::utilities::SmartPtr<ExternalFunction>
+	createFunctionByChangingParametersIntoVariables(std::vector<std::string>&,
+							const std::vector<double>&,
+							const std::vector<std::string>&,
+							const std::map<std::string,
+							std::vector<double>::size_type>&) const;
 
 	virtual void
 	getParametersNames(std::set<std::string>&) const;

@@ -111,6 +111,27 @@ namespace tfel
       } // end of KrigedFunction<N>::resolveDependencies
 
       template<unsigned short N>
+      tfel::utilities::SmartPtr<ExternalFunction>
+      KrigedFunction<N>::createFunctionByChangingParametersIntoVariables(const std::vector<std::string>&) const
+      {
+	using namespace tfel::utilities;
+	KrigedFunctionBase::throwInvalidCreateFunctionByChangingParametersIntoVariables();
+	return SmartPtr<ExternalFunction>(0);
+      } // end of KrigedFunction<N>::createFunctionByChangingParametersIntoVariables
+
+      template<unsigned short N>
+      tfel::utilities::SmartPtr<ExternalFunction>
+      KrigedFunction<N>::createFunctionByChangingParametersIntoVariables(std::vector<std::string>& vnames,
+									 const std::vector<double>&,
+									 const std::vector<std::string>&,
+									 const std::map<std::string,
+									 std::vector<double>::size_type>&) const
+      {
+	vnames.clear();
+	return this->resolveDependencies();
+      } // end of KrigedFunction<N>::createFunctionByChangingParametersIntoVariables
+
+      template<unsigned short N>
       KrigedFunction<N>::~KrigedFunction()
       {} // end of KrigedFunction<N>::~KrigedFunction()
 

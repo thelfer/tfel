@@ -55,17 +55,15 @@ namespace tfel
 								std::vector<double>::size_type>& pos) const
       {
 	using namespace tfel::utilities;
-#warning "stupid"
-// 	SmartPtr<Expr> nexpr = this->expr->createFunctionByChangingParametersIntoVariables(v,params,pos);
-// 	return SmartPtr<Expr>(new Negation(nexpr));
- 	return SmartPtr<Expr>(0);
+	SmartPtr<Expr> nexpr = this->expr->createFunctionByChangingParametersIntoVariables(v,params,pos);
+	return SmartPtr<Expr>(new Negation(nexpr));
       } // end of Negation::createFunctionByChangingParametersIntoVariables
 
       tfel::utilities::SmartPtr<Expr>
-      Negation::resolveDependencies(void) const
+      Negation::resolveDependencies(const std::vector<double>& v) const
       {
 	using namespace tfel::utilities;
-	return SmartPtr<Expr>(new Negation(this->expr->resolveDependencies()));
+	return SmartPtr<Expr>(new Negation(this->expr->resolveDependencies(v)));
       } // end of Negation::resolveDependencies
 
       void

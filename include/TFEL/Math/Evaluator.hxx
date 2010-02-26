@@ -175,7 +175,7 @@ namespace tfel
       differentiate(const std::vector<double>::size_type) const;
       tfel::utilities::SmartPtr<tfel::math::parser::ExternalFunction>
       differentiate(const std::string&) const;
-      tfel::utilities::SmartPtr<ExternalFunction>
+      tfel::utilities::SmartPtr<tfel::math::parser::ExternalFunction>
       resolveDependencies(void) const;
       void
       removeDependencies(void);
@@ -184,8 +184,14 @@ namespace tfel
 		       const double);
       void
       setVariableValue(const std::string&,const double);
-      tfel::utilities::SmartPtr<Evaluator>
+      tfel::utilities::SmartPtr<ExternalFunction>
       createFunctionByChangingParametersIntoVariables(const std::vector<std::string>&) const;
+      tfel::utilities::SmartPtr<ExternalFunction>
+      createFunctionByChangingParametersIntoVariables(std::vector<std::string>&,
+						      const std::vector<double>&,
+						      const std::vector<std::string>&,
+						      const std::map<std::string,
+						      std::vector<double>::size_type>&) const;
       void
       getParametersNames(std::set<std::string>&) const;
       ~Evaluator();

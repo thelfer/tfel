@@ -75,9 +75,14 @@ namespace tfel
 			      const tfel::utilities::SmartPtr<Expr>);
 	double getValue(void) const;
 	tfel::utilities::SmartPtr<Expr>
-	resolveDependencies(void) const;
+	resolveDependencies(const std::vector<double>&) const;
 	tfel::utilities::SmartPtr<Expr>
 	clone(const std::vector<double>&) const;
+	tfel::utilities::SmartPtr<Expr>
+	createFunctionByChangingParametersIntoVariables(const std::vector<double>&,
+							const std::vector<std::string>&,
+							const std::map<std::string,
+							std::vector<double>::size_type>&) const;	
 	void
 	getParametersNames(std::set<std::string>&) const;
 	~EvaluatorFunction1P1V();
@@ -95,9 +100,14 @@ namespace tfel
 			      const tfel::utilities::SmartPtr<Expr>);
 	double getValue(void) const;
 	tfel::utilities::SmartPtr<Expr>
-	resolveDependencies(void) const;
+	resolveDependencies(const std::vector<double>&) const;
 	tfel::utilities::SmartPtr<Expr>
 	clone(const std::vector<double>&) const;
+	tfel::utilities::SmartPtr<Expr>
+	createFunctionByChangingParametersIntoVariables(const std::vector<double>&,
+							const std::vector<std::string>&,
+							const std::map<std::string,
+							std::vector<double>::size_type>&) const;
 	void
 	getParametersNames(std::set<std::string>&) const;
 	~EvaluatorFunction2P1V();
@@ -116,9 +126,14 @@ namespace tfel
 			      const tfel::utilities::SmartPtr<Expr>);
 	double getValue(void) const;
 	tfel::utilities::SmartPtr<Expr>
-	resolveDependencies(void) const;
+	resolveDependencies(const std::vector<double>&) const;
 	tfel::utilities::SmartPtr<Expr>
 	clone(const std::vector<double>&) const;
+	tfel::utilities::SmartPtr<Expr>
+	createFunctionByChangingParametersIntoVariables(const std::vector<double>&,
+							const std::vector<std::string>&,
+							const std::map<std::string,
+							std::vector<double>::size_type>&) const;	
 	void
 	getParametersNames(std::set<std::string>&) const;
 	~EvaluatorFunction1P2V();
@@ -137,9 +152,14 @@ namespace tfel
 			      const tfel::utilities::SmartPtr<Expr>);
 	double getValue(void) const;
 	tfel::utilities::SmartPtr<Expr>
-	resolveDependencies(void) const;
+	resolveDependencies(const std::vector<double>&) const;
 	tfel::utilities::SmartPtr<Expr>
 	clone(const std::vector<double>&) const;
+	tfel::utilities::SmartPtr<Expr>
+	createFunctionByChangingParametersIntoVariables(const std::vector<double>&,
+							const std::vector<std::string>&,
+							const std::map<std::string,
+							std::vector<double>::size_type>&) const;	
 	void
 	getParametersNames(std::set<std::string>&) const;
 	~EvaluatorFunction2P2V();
@@ -160,9 +180,14 @@ namespace tfel
 			    const std::vector<tfel::utilities::SmartPtr<Expr> >&);
 	double getValue(void) const;
 	tfel::utilities::SmartPtr<Expr>
-	resolveDependencies(void) const;
+	resolveDependencies(const std::vector<double>&) const;
 	tfel::utilities::SmartPtr<Expr>
 	clone(const std::vector<double>&) const;
+	tfel::utilities::SmartPtr<Expr>
+	createFunctionByChangingParametersIntoVariables(const std::vector<double>&,
+							const std::vector<std::string>&,
+							const std::map<std::string,
+							std::vector<double>::size_type>&) const;	
 	void
 	checkCyclicDependency(std::vector<std::string>&) const;
 	void
@@ -182,9 +207,14 @@ namespace tfel
 			      const std::vector<tfel::utilities::SmartPtr<Expr> >&);
 	double getValue(void) const;
 	tfel::utilities::SmartPtr<Expr>
-	resolveDependencies(void) const;
+	resolveDependencies(const std::vector<double>&) const;
 	tfel::utilities::SmartPtr<Expr>
 	clone(const std::vector<double>&) const;
+	tfel::utilities::SmartPtr<Expr>
+	createFunctionByChangingParametersIntoVariables(const std::vector<double>&,
+							const std::vector<std::string>&,
+							const std::map<std::string,
+							std::vector<double>::size_type>&) const;	
 	void
 	checkCyclicDependency(std::vector<std::string>&) const;
 	void
@@ -205,9 +235,14 @@ namespace tfel
 			      const std::vector<tfel::utilities::SmartPtr<Expr> >&);
 	double getValue(void) const;
 	tfel::utilities::SmartPtr<Expr>
-	resolveDependencies(void) const;
+	resolveDependencies(const std::vector<double>&) const;
 	tfel::utilities::SmartPtr<Expr>
 	clone(const std::vector<double>&) const;
+	tfel::utilities::SmartPtr<Expr>
+	createFunctionByChangingParametersIntoVariables(const std::vector<double>&,
+							const std::vector<std::string>&,
+							const std::map<std::string,
+							std::vector<double>::size_type>&) const;
 	void
 	checkCyclicDependency(std::vector<std::string>&) const;
 	virtual ~EvaluatorFunction2PNV();
@@ -227,9 +262,14 @@ namespace tfel
 			       const std::vector<tfel::utilities::SmartPtr<Expr> >&);
 	double getValue(void) const;
 	tfel::utilities::SmartPtr<Expr>
-	resolveDependencies(void) const;
+	resolveDependencies(const std::vector<double>&) const;
 	tfel::utilities::SmartPtr<Expr>
 	clone(const std::vector<double>&) const;
+	tfel::utilities::SmartPtr<Expr>
+	createFunctionByChangingParametersIntoVariables(const std::vector<double>&,
+							const std::vector<std::string>&,
+							const std::map<std::string,
+							std::vector<double>::size_type>&) const;	
 	void
 	checkCyclicDependency(std::vector<std::string>&) const;
 	void
@@ -251,9 +291,14 @@ namespace tfel
 			       const std::vector<tfel::utilities::SmartPtr<Expr> >&);
 	double getValue(void) const;
 	tfel::utilities::SmartPtr<Expr>
-	resolveDependencies(void) const;
+	resolveDependencies(const std::vector<double>&) const;
 	tfel::utilities::SmartPtr<Expr>
 	clone(const std::vector<double>&) const;
+	tfel::utilities::SmartPtr<Expr>
+	createFunctionByChangingParametersIntoVariables(const std::vector<double>&,
+							const std::vector<std::string>&,
+							const std::map<std::string,
+							std::vector<double>::size_type>&) const;	
 	void
 	checkCyclicDependency(std::vector<std::string>&) const;
 	void

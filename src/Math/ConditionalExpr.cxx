@@ -50,12 +50,12 @@ namespace tfel
       } // end of ConditionalExpr::checkCyclicDependency(const std::vector<std::string>& vars) const
 
       tfel::utilities::SmartPtr<Expr>
-      ConditionalExpr::resolveDependencies(void) const
+      ConditionalExpr::resolveDependencies(const std::vector<double>&v) const
       {
 	using namespace tfel::utilities;
-	return SmartPtr<Expr>(new ConditionalExpr(this->c->resolveDependencies(),
-						  this->a->resolveDependencies(),
-						  this->b->resolveDependencies()));
+	return SmartPtr<Expr>(new ConditionalExpr(this->c->resolveDependencies(v),
+						  this->a->resolveDependencies(v),
+						  this->b->resolveDependencies(v)));
       }// end of ConditionalExpr::resolveDependencies
 
       void
@@ -94,11 +94,9 @@ namespace tfel
       {
 	using namespace tfel::utilities;
 	SmartPtr<LogicalExpr> nc = this->c->createFunctionByChangingParametersIntoVariables(v,p,pos);
-#warning "stupid"
-	//	SmartPtr<Expr> na = this->a->createFunctionByChangingParametersIntoVariables(v,p,pos);
-	//	SmartPtr<Expr> nb = this->b->createFunctionByChangingParametersIntoVariables(v,p,pos);
-	//	return SmartPtr<Expr>(new ConditionalExpr(nc,na,nb));
-	return SmartPtr<Expr>(0);
+	SmartPtr<Expr> na = this->a->createFunctionByChangingParametersIntoVariables(v,p,pos);
+	SmartPtr<Expr> nb = this->b->createFunctionByChangingParametersIntoVariables(v,p,pos);
+	return SmartPtr<Expr>(new ConditionalExpr(nc,na,nb));
       } // end of ConditionalExpr::createFunctionByChangingParametersIntoVariables
 
       ConditionalExpr::~ConditionalExpr()

@@ -153,8 +153,8 @@ tfel_eval_tokenize(std::vector<std::string>& res,
 		const unsigned int nb)
     {
       using namespace std;
-      this->splitLine(line,static_cast<unsigned short>(nb));
       this->treatCharAsString(true);
+      this->splitLine(line,static_cast<unsigned short>(nb));
       if(this->cStyleCommentOpened){
 	string msg("tfel_eval_tokenize : ");
 	msg += "unfinished c-style comment";
@@ -196,7 +196,9 @@ tfel_eval(const std::string& line,
     tfel_eval_tokenize(res,line,n);
   } catch(runtime_error& e){
     cerr << "tfel_eval : error while parsing line '" 
-	 << line << "'\n Error at line " << n << endl;
+	 << line << "'\n("
+	 << e.what() << ")\nError at line " << n << endl;
+    return;
   }
 #ifdef HAVE_READLINE_HISTORY
   ::add_history(line.c_str());

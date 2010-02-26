@@ -64,11 +64,11 @@ namespace tfel
 
       template<double (*f)(const double,const double)>
       tfel::utilities::SmartPtr<Expr>
-      StandardBinaryFunction<f>::resolveDependencies(void) const
+      StandardBinaryFunction<f>::resolveDependencies(const std::vector<double>& v) const
       {
 	using namespace tfel::utilities;
-	return SmartPtr<Expr>(new StandardBinaryFunction<f>(this->expr1->resolveDependencies(),
-							    this->expr2->resolveDependencies()));
+	return SmartPtr<Expr>(new StandardBinaryFunction<f>(this->expr1->resolveDependencies(v),
+							    this->expr2->resolveDependencies(v)));
       } // end of StandardBinaryFunction<f>::resolveDependencies
 
       template<double (*f)(const double,const double)>
@@ -98,6 +98,18 @@ namespace tfel
 	return SmartPtr<Expr>(new StandardBinaryFunction<f>(this->expr1->clone(v),
 							    this->expr2->clone(v)));
       } // end of StandardBinaryFunction<f>::clone
+
+      template<double (*f)(const double,const double)>
+      tfel::utilities::SmartPtr<Expr>
+      StandardBinaryFunction<f>::createFunctionByChangingParametersIntoVariables(const std::vector<double>& v,
+										 const std::vector<std::string>& params,
+										 const std::map<std::string,
+										 std::vector<double>::size_type>& pos) const
+      {
+	using namespace tfel::utilities;
+	return SmartPtr<Expr>(new StandardBinaryFunction<f>(this->expr1->createFunctionByChangingParametersIntoVariables(v,params,pos),
+							    this->expr2->createFunctionByChangingParametersIntoVariables(v,params,pos)));
+      }
 
     } // end of namespace parser
 

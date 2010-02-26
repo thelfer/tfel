@@ -34,7 +34,8 @@ namespace tfel
 	static void
 	throwUnimplementedDifferentiateFunctionException(void);
 	static void
-	throwInvalidCallException(const int);
+	throwInvalidCallException(const double,
+				  const int);
       }; // end of struct StandardFunctionBase
 
       template<StandardFunctionPtr f>
@@ -46,7 +47,7 @@ namespace tfel
 	void
 	checkCyclicDependency(std::vector<std::string>&) const;
 	tfel::utilities::SmartPtr<Expr>
-	resolveDependencies(void) const;
+	resolveDependencies(const std::vector<double>&) const;
 	tfel::utilities::SmartPtr<Expr>
 	differentiate(const std::vector<double>::size_type,
 		      const std::vector<double>&) const;

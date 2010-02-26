@@ -20,6 +20,8 @@
 #include"TFEL/Math/Parser/EvaluatorGSLWrapper.hxx"
 #endif
 
+#include<iostream>
+
 namespace tfel
 {
 
@@ -1072,7 +1074,7 @@ namespace tfel
 	    if(this->manager.getPtr()!=0){
 	      this->addExternalFunctionToGroup(g,p,pe,b);
 	    } else {
-	      string msg("Evaluator::treatGroup2 : unknown function "+*p);
+	      string msg("Evaluator::treatGroup2 : unknown function '"+*p+"'");
 	      throw(runtime_error(msg));
 	    }
 	  } else {
@@ -1080,6 +1082,11 @@ namespace tfel
 	      // variable name is fixed
 	      if(this->positions.find(*p)==this->positions.end()){
 		vector<SmartPtr<Evaluator::TExpr> > args;
+		if(this->manager.getPtr()==0){
+		  string msg("Evaluator::treatGroup2 : ");
+		  msg += "unknown variable '"+*p+"'";
+		  throw(runtime_error(msg));
+		}
 		g->add(SmartPtr<Evaluator::TExpr>(new TExternalFunctionExpr(*p,
 									    args,
 									    this->manager)));
@@ -1172,17 +1179,24 @@ namespace tfel
 	msg += "uninitialized expression.";
 	throw(runtime_error(msg));
       }
-      return this->expr->getValue();
+      double v = this->expr->getValue();
+      return v;
     }//end of Evaluator::getValue
 
     std::vector<std::string>
     Evaluator::getVariablesNames(void) const
     {
       using namespace std;
+      typedef map<vector<double>::size_type,string>::value_type MVType;
       vector<string> res;
       map<string,vector<double>::size_type>::const_iterator p;
+      map<vector<double>::size_type,string>::const_iterator p2;
+      map<vector<double>::size_type,string> vnames;
       for(p=this->positions.begin();p!=this->positions.end();++p){
-	res.push_back(p->first);
+	vnames.insert(MVType(p->second,p->first));
+      }
+      for(p2=vnames.begin();p2!=vnames.end();++p2){
+	res.push_back(p2->second);
       }
       return res;
     } // end of Evaluator::getVariablesNames
@@ -1428,7 +1442,7 @@ namespace tfel
       this->checkCyclicDependency();
       SmartPtr<ExternalFunction> f(new Evaluator(*this));
       Evaluator *pf = static_cast<Evaluator *>(f.getPtr());
-      pf->expr = pf->expr->resolveDependencies();
+      pf->expr = pf->expr->resolveDependencies(pf->variables);
       return f;
     } // end of Evaluator::resolveDependencies() const
 
@@ -1437,7 +1451,7 @@ namespace tfel
     {
       using namespace tfel::utilities;
       this->checkCyclicDependency();
-      this->expr = this->expr->resolveDependencies();
+      this->expr = this->expr->resolveDependencies(this->variables);
     } // end of Evaluator::removeDependencies() const
 
     tfel::utilities::SmartPtr<tfel::math::parser::ExternalFunctionManager>
@@ -1460,16 +1474,70 @@ namespace tfel
       return p->second;
     } // end of Evaluator::getVariablePosition(const std::string&)
 
-    tfel::utilities::SmartPtr<Evaluator>
+
+    tfel::utilities::SmartPtr<tfel::math::parser::ExternalFunction>
+    Evaluator::createFunctionByChangingParametersIntoVariables(std::vector<std::string>& nparams,
+							       const std::vector<double>&,
+							       const std::vector<std::string>& params,
+							       const std::map<std::string,
+							       std::vector<double>::size_type>&) const
+    {
+      using namespace std;
+      using namespace tfel::utilities;
+      set<string> ev_params;
+      vector<string>::const_iterator p;
+      nparams.clear();
+      this->getParametersNames(ev_params);
+      for(p=params.begin();p!=params.end();++p){
+	if(ev_params.find(*p)!=ev_params.end()){
+	  if(find(nparams.begin(),nparams.end(),*p)==nparams.end()){
+	    nparams.push_back(*p);
+	  }
+	}
+      }
+//       SmartPtr<ExternalFunction> f(new Evaluator(*this));
+//       Evaluator *pf = static_cast<Evaluator *>(f.getPtr());
+//       pf->expr = pf->expr->createFunctionByChangingParametersIntoVariables(v,params,pos);
+      return this->createFunctionByChangingParametersIntoVariables(nparams);
+    } // end of Evaluator::createFunctionByChangingParametersIntoVariables
+
+    tfel::utilities::SmartPtr<tfel::math::parser::ExternalFunction>
     Evaluator::createFunctionByChangingParametersIntoVariables(const std::vector<std::string>& params) const
     {
       using namespace std;
       using namespace tfel::utilities;
+      using namespace tfel::math::parser;
       typedef map<string,vector<double>::size_type>::value_type MVType;
+      set<string> ev_params;
       map<string,vector<double>::size_type>::const_iterator pv;
       vector<string>::const_iterator pp;
       vector<double>::size_type i;
       assert(this->variables.size()==this->positions.size());
+      this->getParametersNames(ev_params);
+
+      cout << "Evaluator::createFunctionByChangingParametersIntoVariables, this->variables : ";
+      for(pv=this->positions.begin();pv!=this->positions.end();++pv){
+	cout << pv->first << " ";
+      }
+      cout << endl;
+
+      cout << "Evaluator::createFunctionByChangingParametersIntoVariables, params : ";
+      copy(ev_params.begin(),ev_params.end(),
+	   ostream_iterator<string>(cout," "));
+      cout << endl;
+
+      cout << "Evaluator::createFunctionByChangingParametersIntoVariables, nparams : ";
+      copy(params.begin(),params.end(),
+	   ostream_iterator<string>(cout," "));
+      cout << endl;
+
+      for(pp=params.begin();pp!=params.end();++pp){
+	if(ev_params.find(*pp)==ev_params.end()){
+	  string msg("Evaluator::createFunctionByChangingParametersIntoVariables : ");
+	  msg += "no parameter '"+*pp+"'";
+	  throw(runtime_error(msg));
+	}
+      }
       for(pp=params.begin();pp!=params.end();++pp){
 	if(this->positions.find(*pp)!=this->positions.end()){
 	  string msg("Evaluator::createFunctionByChangingParametersIntoVariables : ");
@@ -1477,30 +1545,29 @@ namespace tfel
 	  throw(runtime_error(msg));
 	}
       }
-      SmartPtr<Evaluator> ev = SmartPtr<Evaluator>(new Evaluator());
+      Evaluator* ev = new Evaluator();
+      SmartPtr<ExternalFunction> pev = SmartPtr<ExternalFunction>(ev);
       ev->variables.resize(this->variables.size()+params.size());
       ev->positions = this->positions;
       for(pp=params.begin(),i=this->variables.size();pp!=params.end();++pp,++i){
 	if(!(ev->positions.insert(MVType(*pp,i)).second)){
 	  string msg("Evaluator::createFunctionByChangingParametersIntoVariables : ");
-	  msg += "internal error ('"+*pp+"' alredy declared)";
+	  msg += "internal error (variable '"+*pp+"' alredy declared)";
 	  throw(runtime_error(msg));
 	}
       }
       ev->manager = this->manager;
-#warning "stupid"
-//       ev->expr = this->expr->createFunctionByChangingParametersIntoVariables(ev->variables,
-// 									     params,positions);      
-      exit(-1);
-      return ev;
+      ev->expr = this->expr->createFunctionByChangingParametersIntoVariables(ev->variables,
+									     params,ev->positions);      
+      return pev;
     } // end of Evaluator::createFunctionByChangingParametersIntoVariables
 
     void
-    Evaluator::getParametersNames(std::set<std::string>&) const
+    Evaluator::getParametersNames(std::set<std::string>& n) const
     {
-#warning "stupid"
+      return this->expr->getParametersNames(n);
     } // end of Evaluator::getParametersNames
 
   } // end of namespace math
-
+  
 } // end of namespace tfel

@@ -6,7 +6,7 @@
  * \date   02 oct 2007
  */
 
-#include<iostream>
+#include<stdexcept>
 
 #include"TFEL/Math/Parser/Number.hxx"
 #include"TFEL/Math/Parser/Variable.hxx"
@@ -62,15 +62,21 @@ namespace tfel
 								const std::map<std::string,
 								std::vector<double>::size_type>&) const
       {
+	using namespace std;
 	using namespace tfel::utilities;
+	if(v_.size()<this->pos){
+	  string msg("Variable::createFunctionByChangingParametersIntoVariables : ");
+	  msg += "invalid vector size";
+	  throw(runtime_error(msg));
+	}
 	return SmartPtr<Expr>(new Variable(v_,this->pos));
       } // end of Variable::createFunctionByChangingParametersIntoVariables
 
       tfel::utilities::SmartPtr<Expr>
-      Variable::resolveDependencies(void) const
+      Variable::resolveDependencies(const std::vector<double>& nv) const
       {
 	using namespace tfel::utilities;
-	return SmartPtr<Expr>(new Variable(this->v,this->pos));
+	return SmartPtr<Expr>(new Variable(nv,this->pos));
       } // end of Variable::resolveDependencies
 
     } // end of namespace parser
