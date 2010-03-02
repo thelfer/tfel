@@ -126,7 +126,7 @@ namespace tfel
       friend class
       tfel::utilities::ArgumentParserBase<TPlot>;
 
-      std::map<std::string,tfel::utilities::SmartPtr<tfel::utilities::TextData> > dataSources;
+      std::map<std::string,tfel::utilities::shared_ptr<tfel::utilities::TextData> > dataSources;
       std::vector<Data> data;
       std::string output;
       std::string upperTitle;
@@ -711,7 +711,7 @@ namespace tfel
     {
       using namespace std;
       using namespace tfel::utilities;
-      typedef std::map<string,SmartPtr<TextData> >::value_type MVType;
+      typedef std::map<string,shared_ptr<TextData> >::value_type MVType;
       if((*(this->currentArgument))[0]=='-'){
 	string msg("TPlot::treatUnknownArgument : ");
 	msg += "unknown argument " + *(this->currentArgument);
@@ -726,7 +726,7 @@ namespace tfel
       d.yvalues.push_back(2);
       if(this->dataSources.find(d.fileName)==this->dataSources.end()){
 	this->dataSources.insert(MVType(d.fileName,
-					SmartPtr<TextData>(new TextData(d.fileName))));
+					shared_ptr<TextData>(new TextData(d.fileName))));
       }
       this->data.push_back(d);
       ++(this->currentArgument);
@@ -760,7 +760,7 @@ namespace tfel
       using std::map;
       
       vector<Data>::const_iterator p;
-      map<string,SmartPtr<TextData> >::const_iterator p2;
+      map<string,shared_ptr<TextData> >::const_iterator p2;
       vector<unsigned short>::const_iterator p3;
       string extension;
 
@@ -861,7 +861,7 @@ namespace tfel
 	      curve->setLegend(legend.str());
 	    }
 	  }
-	  this->area.addCurve(SmartPtr<Curve>(curve),p->axis);
+	  this->area.addCurve(shared_ptr<Curve>(curve),p->axis);
 	}
       }
       this->setRanges();

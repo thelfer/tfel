@@ -398,7 +398,7 @@ namespace tfel
     } // end of Graph::convertVerticalGraphCoordinatesToAbsolutePosition
 
     void
-    Graph::setTheme(const tfel::utilities::SmartPtr<GraphTheme>& t)
+    Graph::setTheme(const tfel::utilities::shared_ptr<GraphTheme>& t)
     {
       this->theme = t;
     } // end of Graph::setTheme
@@ -1364,7 +1364,7 @@ namespace tfel
     } // end of Graph::addCurve
     
     void
-    Graph::addCurve(tfel::utilities::SmartPtr<Curve> c,
+    Graph::addCurve(tfel::utilities::shared_ptr<Curve> c,
 		    const GraphAxis axis)
     {
       using namespace std;
@@ -1936,13 +1936,13 @@ namespace tfel
       return this->y2Axis.max;
     } // end of Graph::getY2Max
 
-    tfel::utilities::SmartPtr<GraphTheme>
+    tfel::utilities::shared_ptr<GraphTheme>
     Graph::getTheme(void)
     {
       return this->theme;
     } // end of Graph::getTheme
 
-    tfel::utilities::SmartPtr<GraphTheme>
+    tfel::utilities::shared_ptr<GraphTheme>
     Graph::getTheme(void) const
     {
       return this->theme;

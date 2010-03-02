@@ -104,7 +104,7 @@ namespace tfel
       } // end of InterpreterCommon::treatSetGSL
 #endif
         
-      tfel::utilities::SmartPtr<tfel::math::Evaluator>
+      tfel::utilities::shared_ptr<tfel::math::Evaluator>
       InterpreterCommon::readFunction(TokensContainer::const_iterator& p, 
 				      const TokensContainer::const_iterator pe)
       {
@@ -161,7 +161,7 @@ namespace tfel
 	  msg += "unmatched parenthesis";
 	  throw(runtime_error(msg));
 	}
-	return SmartPtr<Evaluator>(new Evaluator(vars,f,this->functions));
+	return shared_ptr<Evaluator>(new Evaluator(vars,f,this->functions));
       } // end of InterpreterCommon::readFunction
 
       void
@@ -414,7 +414,7 @@ namespace tfel
 	using namespace std;
 	using namespace tfel::utilities;
 	using namespace tfel::math::parser;
-	typedef SmartPtr<ExternalFunction> EFunctionPtr;
+	typedef shared_ptr<ExternalFunction> EFunctionPtr;
 	this->addFunction(f,EFunctionPtr(new ExternalOctaveFunction(f,nbr)),b,false);
       } // end of Graph::importOctaveFunction
 #endif /* HAVE_OCTAVE*/
@@ -552,7 +552,7 @@ namespace tfel
 	using namespace tfel::utilities;
 	using namespace tfel::system;
 	using namespace tfel::math::parser;
-	typedef SmartPtr<ExternalFunction> EFunctionPtr;
+	typedef shared_ptr<ExternalFunction> EFunctionPtr;
 	CastemFunctionPtr func;
 	ExternalLibraryManager& elm = ExternalLibraryManager::getExternalLibraryManager();
 	unsigned short nb = elm.getCastemFunctionNumberOfVariables(library,function.c_str());
@@ -577,7 +577,7 @@ namespace tfel
 	using namespace tfel::utilities;
 	using namespace tfel::system;
 	using namespace tfel::math::parser;
-	typedef SmartPtr<ExternalFunction> EFunctionPtr;
+	typedef shared_ptr<ExternalFunction> EFunctionPtr;
 	ExternalLibraryManager& elm = ExternalLibraryManager::getExternalLibraryManager();
 	switch (varNumber){
 	  CFunction0Ptr  func0;
@@ -819,7 +819,7 @@ namespace tfel
 
       void
       InterpreterCommon::addFunction(const std::string& name,
-				     tfel::utilities::SmartPtr<tfel::math::parser::ExternalFunction> pev,
+				     tfel::utilities::shared_ptr<tfel::math::parser::ExternalFunction> pev,
 				     const bool b1,
 				     const bool b2)
       {
@@ -890,8 +890,8 @@ namespace tfel
 	    msg += "invalid declaraction of variable "+var;
 	    throw(runtime_error(msg));
 	  }
-	  SmartPtr<tfel::math::parser::ExternalFunction> pev(new Evaluator(vars,group,functions));
-	  Evaluator* ev = static_cast<Evaluator *>(pev.getPtr());
+	  shared_ptr<tfel::math::parser::ExternalFunction> pev(new Evaluator(vars,group,functions));
+	  Evaluator* ev = static_cast<Evaluator *>(pev.get());
 	  if(ev->getNumberOfVariables()!=0u){
 	    string msg("InterpreterCommon::analyseFunctionDefinition : ");
 	    msg += "error while declaring variable "+var;
@@ -913,7 +913,7 @@ namespace tfel
 	  }
 	  this->addFunction(var,pev,b1,b2);
 	} else if (p->value=="("){
-	  SmartPtr<tfel::math::parser::ExternalFunction> ev;
+	  shared_ptr<tfel::math::parser::ExternalFunction> ev;
 	  vector<string>::const_iterator p2;
 	  // adding a new function
 	  vector<string> vars = this->readVariableList(p,pe);
@@ -944,7 +944,7 @@ namespace tfel
 	    msg += "invalid declaraction of function "+var;
 	    throw(runtime_error(msg));
 	  }
-	  ev = SmartPtr<tfel::math::parser::ExternalFunction> (new Evaluator(vars,group,functions));
+	  ev = shared_ptr<tfel::math::parser::ExternalFunction> (new Evaluator(vars,group,functions));
 	  this->addFunction(var,ev,b1,b2);
 	} else {
 	  string msg("InterpreterCommon::analyseFunctionDefinition : ");
@@ -1001,7 +1001,7 @@ namespace tfel
 	using namespace tfel::math;
 	using namespace tfel::math::parser;
 	using std::vector;
-	typedef SmartPtr<ExternalFunction> EFunctionPtr;
+	typedef shared_ptr<ExternalFunction> EFunctionPtr;
 	vector<double> vx1;
 	vector<double> vx2;
 	vector<double> vx3;
@@ -1173,6 +1173,7 @@ namespace tfel
 	vector<string> vars;
 	bool cont = true;
 	ostringstream res;
+	res.precision(15);
 	this->checkNotEndOfLine("InterpreterCommon::treatPrint","",p,pe);
 	while((p!=pe)&&(cont)){
 	  if(p->flag==Token::String){
@@ -1185,7 +1186,7 @@ namespace tfel
 	      msg += "invalid expression";
 	      throw(runtime_error(msg));
 	    }
-	    SmartPtr<Evaluator> ev(new Evaluator(vars,group,this->functions));
+	    shared_ptr<Evaluator> ev(new Evaluator(vars,group,this->functions));
 	    ev->removeDependencies();
 	    if(ev->getNumberOfVariables()!=0u){
 	      const vector<string>& ev_vars = ev->getVariablesNames();
@@ -1264,7 +1265,7 @@ namespace tfel
 	using std::vector;
 	typedef LevenbergMarquardtExternalFunctionWrapper ExternalFunctionWrapper;
 	this->checkNotEndOfLine("InterpreterCommon::treatFit","",p,pe);
-	SmartPtr<Evaluator> ev;
+	shared_ptr<Evaluator> ev;
 	vector<vector<double> > values;
 	vector<string> params;
 	set<string> ev_params;
@@ -1277,6 +1278,7 @@ namespace tfel
 	string file;
 	vector<string>::const_iterator ps;
 	ExternalFunctionManager::const_iterator pf;
+	ExternalFunctionManager::iterator pf2;
 	vector<string>::size_type i;
 	vector<string>::size_type j;
 	vector<double>::size_type size;
@@ -1300,7 +1302,7 @@ namespace tfel
 	  }
 	}
 	function+=')';
-	ev = SmartPtr<Evaluator>(new Evaluator(vars,function,this->functions));
+	ev = shared_ptr<Evaluator>(new Evaluator(vars,function,this->functions));
 	vars = ev->getVariablesNames();
 	this->checkNotEndOfLine("InterpreterCommon::treatFit","",p,pe);
 	file = this->readString(p,pe);
@@ -1337,11 +1339,7 @@ namespace tfel
 	  }
 	}
 	// preparing the evaluator
-	SmartPtr<ExternalFunction> nev = ev->createFunctionByChangingParametersIntoVariables(params);
-	//	nev = nev->resolveDependencies();
-	// 	nev->setVariableValue(0,1.3);
-	// 	nev->setVariableValue(1,2.3);
-	//	exit(-1);
+	shared_ptr<ExternalFunction> nev = ev->createFunctionByChangingParametersIntoVariables(params);
 	// reading data
 	values.resize(vars.size()+1);
 	TextData data(file);
@@ -1386,10 +1384,27 @@ namespace tfel
 	levmar.setInitialGuess(p_values);
 	// execute
 	p_values = levmar.execute();
-	cout << "p_values : " << endl;
-	copy(p_values.begin(),p_values.end(),
-	     ostream_iterator<double>(cout," "));
-	cout << endl;
+	streamsize prec = cout.precision();
+	cout.precision(15);
+	cout << "levenberg-marquart converged in "
+	     << levmar.getNumberOfIterations() << " iterations" << endl;
+	cout << "Fit results : " << endl;
+	for(i=0,ps=params.begin();ps!=params.end();++ps,++i){
+	  pf2 = this->functions->find(*ps);
+	  if(pf2==this->functions->end()){
+	    string msg("InterpreterCommon::treatFit : ");
+	    msg += "internal error (no parameter '"+*ps+"')";
+	    throw(runtime_error(msg));
+	  }
+	  if(pf2->second->getNumberOfVariables()!=0){
+	    string msg("InterpreterCommon::treatFit : '");
+	    msg += *ps+"' is not a parameter";
+	    throw(runtime_error(msg));
+	  }
+	  pf2->second = shared_ptr<ExternalFunction>(new Evaluator(p_values[i]));
+	  cout << " - " << *ps << " = " << p_values[i] << endl;
+	}
+	cout.precision(prec);
       } // end of InterpreterCommon::treatFit
 
       InterpreterCommon::~InterpreterCommon()

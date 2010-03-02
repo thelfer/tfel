@@ -83,10 +83,10 @@ namespace tfel
       getGrid(void) const;
       bool
       hasGrid(void) const;
-      void setTheme(const tfel::utilities::SmartPtr<GraphTheme>&);
-      tfel::utilities::SmartPtr<GraphTheme>
+      void setTheme(const tfel::utilities::shared_ptr<GraphTheme>&);
+      tfel::utilities::shared_ptr<GraphTheme>
       getTheme(void);
-      tfel::utilities::SmartPtr<GraphTheme>
+      tfel::utilities::shared_ptr<GraphTheme>
       getTheme(void) const;
       void exportToTable(const std::string&) const;
       void exportToPDF(const std::string&) const;
@@ -115,7 +115,7 @@ namespace tfel
 		    const ArrowStyle = ArrowStyle());
       void clearArrow(const std::string&);
       void clearArrows(void);
-      void addCurve(tfel::utilities::SmartPtr<Curve>,const GraphAxis = XY);
+      void addCurve(tfel::utilities::shared_ptr<Curve>,const GraphAxis = XY);
       void clearCurves();
       void setXLabel(const std::string&);
       void setYLabel(const std::string&);
@@ -154,7 +154,7 @@ namespace tfel
     protected:
       struct CurveHandler
       {
-	tfel::utilities::SmartPtr<Curve> curve;
+	tfel::utilities::shared_ptr<Curve> curve;
 	std::vector<Point> points;
 	GraphAxis axis;
       };
@@ -248,7 +248,7 @@ namespace tfel
 			 const unsigned short,
 			 GraphLayout&) const;
       std::vector<CurveHandler> curves;
-      tfel::utilities::SmartPtr<GraphTheme> theme;
+      tfel::utilities::shared_ptr<GraphTheme> theme;
       std::vector<std::string> legends;
       std::vector<Label> labels;
       std::vector<Arrow> arrows;

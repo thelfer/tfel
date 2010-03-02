@@ -29,29 +29,29 @@ namespace tfel
       struct ExternalFunctionExpr2
 	: public Expr
       {
-	ExternalFunctionExpr2(tfel::utilities::SmartPtr<ExternalFunction>,
-			      std::vector<tfel::utilities::SmartPtr<Expr> >&);
+	ExternalFunctionExpr2(tfel::utilities::shared_ptr<ExternalFunction>,
+			      std::vector<tfel::utilities::shared_ptr<Expr> >&);
 	double
 	getValue(void) const;
 	void
 	checkCyclicDependency(std::vector<std::string>&) const;
-	tfel::utilities::SmartPtr<Expr>
+	tfel::utilities::shared_ptr<Expr>
 	differentiate(const std::vector<double>::size_type,
 		      const std::vector<double>&) const;
-	tfel::utilities::SmartPtr<Expr>
+	tfel::utilities::shared_ptr<Expr>
 	resolveDependencies(const std::vector<double>&) const;
 	void
 	getParametersNames(std::set<std::string>&) const;
-	tfel::utilities::SmartPtr<Expr>
+	tfel::utilities::shared_ptr<Expr>
 	createFunctionByChangingParametersIntoVariables(const std::vector<double>&,
 							const std::vector<std::string>&,
 							const std::map<std::string,
 							std::vector<double>::size_type>&) const;
-	tfel::utilities::SmartPtr<Expr>
+	tfel::utilities::shared_ptr<Expr>
 	clone(const std::vector<double>&) const;
       private:
-	mutable tfel::utilities::SmartPtr<ExternalFunction> f;
-	std::vector<tfel::utilities::SmartPtr<Expr> > args;
+	mutable tfel::utilities::shared_ptr<ExternalFunction> f;
+	std::vector<tfel::utilities::shared_ptr<Expr> > args;
       }; // end of struct ExternalFunctionExpr2
 
     } // end of namespace parser

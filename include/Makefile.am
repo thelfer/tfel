@@ -180,10 +180,12 @@ nobase_include_HEADERS= TFEL/FiniteElement/Element/ElementsManager.ixx          
 			TFEL/Math/Vector/FctVectorExprWithoutConstIterator.hxx                        \
 			TFEL/Math/Vector/VectorVectorExprWithoutConstIteratorSpecialisation.ixx       \
 			TFEL/Math/Vector/VectorVectorDiadicProductExpr.hxx                            \
+			TFEL/Math/Vector/VectorVectorDotProduct.hxx                                   \
 			TFEL/Math/matrix.hxx                 	                                      \
 			TFEL/Math/Matrix/tmatrixResultType.hxx	                                      \
 			TFEL/Math/Matrix/ScalarMatrixExpr.hxx	                                      \
 			TFEL/Math/Matrix/tmatrix.ixx			                              \
+			TFEL/Math/Matrix/matrix.ixx			                              \
 			TFEL/Math/Matrix/MatrixNegExpr.hxx		                              \
 			TFEL/Math/Matrix/FctMatrixExpr.hxx		                              \
 			TFEL/Math/Matrix/MatrixConcept.hxx		                              \

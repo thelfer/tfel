@@ -23,8 +23,8 @@ namespace tfel
     {
 
       template<double (*f)(const double,const double)>
-      StandardBinaryFunction<f>::StandardBinaryFunction(const tfel::utilities::SmartPtr<Expr> e1,
-							const tfel::utilities::SmartPtr<Expr> e2)
+      StandardBinaryFunction<f>::StandardBinaryFunction(const tfel::utilities::shared_ptr<Expr> e1,
+							const tfel::utilities::shared_ptr<Expr> e2)
 	: expr1(e1),expr2(e2)
       {} // end of StandardBinaryFunction::StandardBinaryFunction
 
@@ -63,11 +63,11 @@ namespace tfel
       } // end of StandardBinaryFunction<f>::checkCyclicDependency
 
       template<double (*f)(const double,const double)>
-      tfel::utilities::SmartPtr<Expr>
+      tfel::utilities::shared_ptr<Expr>
       StandardBinaryFunction<f>::resolveDependencies(const std::vector<double>& v) const
       {
 	using namespace tfel::utilities;
-	return SmartPtr<Expr>(new StandardBinaryFunction<f>(this->expr1->resolveDependencies(v),
+	return shared_ptr<Expr>(new StandardBinaryFunction<f>(this->expr1->resolveDependencies(v),
 							    this->expr2->resolveDependencies(v)));
       } // end of StandardBinaryFunction<f>::resolveDependencies
 
@@ -80,34 +80,34 @@ namespace tfel
       } // end of StandardBinaryFunction<f>::getParametersNames
 
       template<double (*f)(const double,const double)>
-      tfel::utilities::SmartPtr<Expr>
+      tfel::utilities::shared_ptr<Expr>
       StandardBinaryFunction<f>::differentiate(const std::vector<double>::size_type,
 					       const std::vector<double>&) const
       {
 	using namespace std;
 	using namespace tfel::utilities;
 	StandardBinaryFunctionBase::throwUnimplementedDifferentiateFunctionException();
-	return SmartPtr<Expr>(0);
+	return shared_ptr<Expr>(static_cast<Expr*>(0));
       } // end of StandardBinaryFunction<f>::differentiate
 
       template<double (*f)(const double,const double)>
-      tfel::utilities::SmartPtr<Expr>
+      tfel::utilities::shared_ptr<Expr>
       StandardBinaryFunction<f>::clone(const std::vector<double>& v) const
       {
 	using namespace tfel::utilities;
-	return SmartPtr<Expr>(new StandardBinaryFunction<f>(this->expr1->clone(v),
+	return shared_ptr<Expr>(new StandardBinaryFunction<f>(this->expr1->clone(v),
 							    this->expr2->clone(v)));
       } // end of StandardBinaryFunction<f>::clone
 
       template<double (*f)(const double,const double)>
-      tfel::utilities::SmartPtr<Expr>
+      tfel::utilities::shared_ptr<Expr>
       StandardBinaryFunction<f>::createFunctionByChangingParametersIntoVariables(const std::vector<double>& v,
 										 const std::vector<std::string>& params,
 										 const std::map<std::string,
 										 std::vector<double>::size_type>& pos) const
       {
 	using namespace tfel::utilities;
-	return SmartPtr<Expr>(new StandardBinaryFunction<f>(this->expr1->createFunctionByChangingParametersIntoVariables(v,params,pos),
+	return shared_ptr<Expr>(new StandardBinaryFunction<f>(this->expr1->createFunctionByChangingParametersIntoVariables(v,params,pos),
 							    this->expr2->createFunctionByChangingParametersIntoVariables(v,params,pos)));
       }
 

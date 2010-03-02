@@ -9,6 +9,7 @@
 #ifndef _LIB_TFEL_BINARYFUNCTION_HXX_
 #define _LIB_TFEL_BINARYFUNCTION_HXX_ 
 
+#include"TFEL/Config/TFELConfig.hxx"
 #include"TFEL/Utilities/SmartPtr.hxx"
 #include"TFEL/Math/Parser/Expr.hxx"
 
@@ -35,23 +36,23 @@ namespace tfel
       }; // end of struct StandardBinaryFunctionBase
 
       template<double (*f)(const double,const double)>
-      struct StandardBinaryFunction
+      struct TFEL_VISIBILITY_LOCAL StandardBinaryFunction
 	: public BinaryFunction,
 	  protected StandardBinaryFunctionBase
       {
-	StandardBinaryFunction(const tfel::utilities::SmartPtr<Expr>,
-			       const tfel::utilities::SmartPtr<Expr>);
+	StandardBinaryFunction(const tfel::utilities::shared_ptr<Expr>,
+			       const tfel::utilities::shared_ptr<Expr>);
 	void
 	checkCyclicDependency(std::vector<std::string>&) const;
 	double getValue(void) const;
-	tfel::utilities::SmartPtr<Expr>
+	tfel::utilities::shared_ptr<Expr>
 	resolveDependencies(const std::vector<double>&) const;
-	tfel::utilities::SmartPtr<Expr>
+	tfel::utilities::shared_ptr<Expr>
 	differentiate(const std::vector<double>::size_type,
 		      const std::vector<double>&) const;
-	tfel::utilities::SmartPtr<Expr>
+	tfel::utilities::shared_ptr<Expr>
 	clone(const std::vector<double>&) const;
-	tfel::utilities::SmartPtr<Expr>
+	tfel::utilities::shared_ptr<Expr>
 	createFunctionByChangingParametersIntoVariables(const std::vector<double>&,
 							const std::vector<std::string>&,
 							const std::map<std::string,
@@ -60,8 +61,8 @@ namespace tfel
 	getParametersNames(std::set<std::string>&) const;
 	~StandardBinaryFunction();
       private:
-	const tfel::utilities::SmartPtr<Expr> expr1;
-	const tfel::utilities::SmartPtr<Expr> expr2;
+	const tfel::utilities::shared_ptr<Expr> expr1;
+	const tfel::utilities::shared_ptr<Expr> expr2;
       }; // end of struct StandardBinaryFunction
 
     } // end of namespace parser

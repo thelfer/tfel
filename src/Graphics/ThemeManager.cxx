@@ -33,7 +33,7 @@ namespace tfel
     {
       using namespace std;
       using namespace tfel::utilities;
-      map<string,SmartPtr<const ThemeProxy> >::const_iterator p;
+      map<string,shared_ptr<const ThemeProxy> >::const_iterator p;
       p = this->proxies.find(name);
       if(p==this->proxies.end()){
 	string msg("ThemeManager::getTheme : ");
@@ -49,14 +49,14 @@ namespace tfel
       using namespace std;
       using namespace tfel::utilities;
       const string& name = proxy->getName();
-      map<string,SmartPtr<const ThemeProxy> >::const_iterator p;
+      map<string,shared_ptr<const ThemeProxy> >::const_iterator p;
       p = this->proxies.find(name);
       if(p!=this->proxies.end()){
 	string msg("ThemeManager::getTheme : ");
 	msg += "a theme named "+name+" has already been registred.";
 	throw(runtime_error(msg));
       }
-      this->proxies.insert(make_pair(name,SmartPtr<const ThemeProxy>(proxy)));
+      this->proxies.insert(make_pair(name,shared_ptr<const ThemeProxy>(proxy)));
     } // end of ThemeManager::getTheme
 
     const std::vector<std::string>
@@ -66,7 +66,7 @@ namespace tfel
       using namespace tfel::utilities;
       vector<string> res;
       res.reserve(this->proxies.size());
-      map<string,SmartPtr<const ThemeProxy> >::const_iterator p;
+      map<string,shared_ptr<const ThemeProxy> >::const_iterator p;
       for(p=this->proxies.begin();p!=this->proxies.end();++p){
 	res.push_back(p->first);
       }

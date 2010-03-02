@@ -15,7 +15,7 @@ namespace tfel
   {
 
     GraphCoordinates::GraphCoordinates(const CoordinateType ct_,
-				       const tfel::utilities::SmartPtr<tfel::math::Evaluator> c_)
+				       const tfel::utilities::shared_ptr<tfel::math::Evaluator> c_)
       : coordinateType(ct_),
 	c(c_)
     {} // end of GraphCoordinates::GraphCoordinates

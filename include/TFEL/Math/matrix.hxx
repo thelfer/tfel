@@ -29,7 +29,7 @@ namespace tfel
      * \see MatrixTraits.
      */
     template<typename T>
-    struct MatrixTraits<matrix<T> >{
+    struct TFEL_VISIBILITY_LOCAL MatrixTraits<matrix<T> >{
       //! the type holded by the tmatrix.
       typedef typename tfel::math::vector<T>::value_type NumType;
       //! the type of the index used by the tmatrix.
@@ -41,7 +41,7 @@ namespace tfel
     };
 
     template<typename T>
-    struct MatrixProperties
+    struct TFEL_VISIBILITY_LOCAL MatrixProperties
     {
       //! a simple alias
       typedef typename MatrixTraits<matrix<T> >::IndexType IndexType;
@@ -69,7 +69,7 @@ namespace tfel
     }; // end of MatrixProperties
 
     template<typename T>
-    struct matrix
+    struct TFEL_VISIBILITY_LOCAL matrix
       : protected tfel::math::vector<T>,
 	protected MatrixProperties<T>
     {

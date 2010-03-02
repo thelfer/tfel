@@ -28,9 +28,9 @@ namespace tfel
 	CHARACTER
       }; // end of enum CoordinateType
       GraphCoordinates(CoordinateType,
-		       const tfel::utilities::SmartPtr<tfel::math::Evaluator>);
+		       const tfel::utilities::shared_ptr<tfel::math::Evaluator>);
       CoordinateType coordinateType;
-      tfel::utilities::SmartPtr<tfel::math::Evaluator> c;
+      tfel::utilities::shared_ptr<tfel::math::Evaluator> c;
     }; // end of GraphCoordinates
 
   } // end of namespace graphics

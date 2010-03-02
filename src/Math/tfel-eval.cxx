@@ -87,7 +87,7 @@ namespace tfel
 	  msg += "empty group";
 	  throw(runtime_error(msg));
 	}
-	SmartPtr<Evaluator> ev(new Evaluator(vars,group+"?1.:-1.",this->functions));
+	shared_ptr<Evaluator> ev(new Evaluator(vars,group+"?1.:-1.",this->functions));
 	ev->removeDependencies();
 	if(ev->getNumberOfVariables()!=0u){
 	  const vector<string>& ev_vars = ev->getVariablesNames();

@@ -254,7 +254,7 @@ namespace tfel
     {
       using namespace std;
       using namespace tfel::utilities;
-      typedef std::map<string,SmartPtr<TextData> >::value_type MVType;
+      typedef std::map<string,shared_ptr<TextData> >::value_type MVType;
       if((*(this->currentArgument))[0]=='-'){
 	string msg("Analyser::treatUnknownArgument : ");
 	msg += "unknown argument " + *(this->currentArgument);
@@ -1299,7 +1299,7 @@ namespace tfel
 	msg += "no function given";
 	throw(runtime_error(msg));
       }
-      SmartPtr<Evaluator> ev(new Evaluator(vars,f,this->functions));
+      shared_ptr<Evaluator> ev(new Evaluator(vars,f,this->functions));
       ev->removeDependencies();
       const CurveOptions& options = this->treatPlotOptions(p,pe);
       if((!options.using_decl_x.empty())||
@@ -1308,7 +1308,7 @@ namespace tfel
 	msg += "the 'using' keyword is invalid for functions";
 	throw(runtime_error(msg));
       }
-      SmartPtr<Curve> c(new EvaluatedCurve(ev,this->dummyVariable));
+      shared_ptr<Curve> c(new EvaluatedCurve(ev,this->dummyVariable));
       this->applyCurveOptions(c,options);
       if(options.title.empty()){
 	c->setLegend(f);
@@ -1338,7 +1338,7 @@ namespace tfel
     } // end of Analyser::treatPlotOptions
 
     void
-    Analyser::applyCurveOptions(tfel::utilities::SmartPtr<Curve> c,
+    Analyser::applyCurveOptions(tfel::utilities::shared_ptr<Curve> c,
 				const Analyser::CurveOptions& options)
     {
       if(!options.title.empty()){
@@ -1365,7 +1365,7 @@ namespace tfel
       string x;
       string y;
       const CurveOptions& options = this->treatPlotOptions(p,pe);
-      Data data(file);
+      TextData data(file);
       if(options.using_decl_x.empty()){
 	x = "1";
       } else {
@@ -1378,7 +1378,7 @@ namespace tfel
       }
       this->getData(vx,data,x);
       const std::string& ty = this->getData(vy,data,y);
-      SmartPtr<Curve> c(new DataCurve(vx,vy));
+      shared_ptr<Curve> c(new DataCurve(vx,vy));
       this->applyCurveOptions(c,options);
       if(options.title.empty()){
 	if(ty.empty()){
@@ -1653,7 +1653,7 @@ namespace tfel
 	    msg += "invalid expression";
 	    throw(runtime_error(msg));
 	  }
-	  SmartPtr<Evaluator> ev(new Evaluator(vars,group,functions));
+	  shared_ptr<Evaluator> ev(new Evaluator(vars,group,functions));
 	  ev->removeDependencies();
 	  if(ev->getNumberOfVariables()!=0u){
 	    const vector<string>& ev_vars = ev->getVariablesNames();

@@ -24,7 +24,7 @@ namespace tfel
 
     struct ThemeProxy
     {
-      typedef tfel::utilities::SmartPtr<GraphTheme> ThemePtr;
+      typedef tfel::utilities::shared_ptr<GraphTheme> ThemePtr;
       virtual const std::string
       getName(void) const = 0;
       virtual const ThemePtr
@@ -49,7 +49,7 @@ namespace tfel
 
     struct ThemeManager
     {
-      typedef tfel::utilities::SmartPtr<GraphTheme> ThemePtr;
+      typedef tfel::utilities::shared_ptr<GraphTheme> ThemePtr;
 
       static ThemeManager&
       getThemeManager();
@@ -77,7 +77,7 @@ namespace tfel
 
       ~ThemeManager();
 
-      std::map<std::string,tfel::utilities::SmartPtr<const ThemeProxy> > proxies;
+      std::map<std::string,tfel::utilities::shared_ptr<const ThemeProxy> > proxies;
 
     }; // end of struct ThemeManager
 

@@ -39,15 +39,15 @@ namespace tfel
 	checkCyclicDependency(const std::string&) const = 0;
 	virtual void
 	checkCyclicDependency(std::vector<std::string>&) const = 0;
-	virtual tfel::utilities::SmartPtr<ExternalFunction>
+	virtual tfel::utilities::shared_ptr<ExternalFunction>
 	differentiate(const std::vector<double>::size_type) const = 0;
-	virtual	tfel::utilities::SmartPtr<ExternalFunction>
+	virtual	tfel::utilities::shared_ptr<ExternalFunction>
 	differentiate(const std::string&) const = 0;
-	virtual	tfel::utilities::SmartPtr<ExternalFunction>
+	virtual	tfel::utilities::shared_ptr<ExternalFunction>
 	resolveDependencies(void) const = 0;
-	virtual tfel::utilities::SmartPtr<ExternalFunction>
+	virtual tfel::utilities::shared_ptr<ExternalFunction>
 	createFunctionByChangingParametersIntoVariables(const std::vector<std::string>&) const = 0;
-	virtual tfel::utilities::SmartPtr<ExternalFunction>
+	virtual tfel::utilities::shared_ptr<ExternalFunction>
 	createFunctionByChangingParametersIntoVariables(std::vector<std::string>&,
 							const std::vector<double>&,
 							const std::vector<std::string>&,

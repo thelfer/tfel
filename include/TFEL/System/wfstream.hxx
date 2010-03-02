@@ -33,7 +33,7 @@ namespace tfel
     
     struct wfstream
       : public basic_wstream<wfstream,stream_traits<wfstream> >,
-	protected tfel::utilities::SmartPtr<int>
+	protected tfel::utilities::shared_ptr<int>
     {
 
       // default constructor

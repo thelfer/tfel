@@ -73,79 +73,79 @@ namespace tfel
       }  // end of BinaryOperationBase::throwUnimplementedDifferentiateFunctionException()
 
       template<>
-      tfel::utilities::SmartPtr<Expr>
-      differentiateBinaryOperation<OpPlus>(const tfel::utilities::SmartPtr<Expr> a,
-					   const tfel::utilities::SmartPtr<Expr> b,
+      tfel::utilities::shared_ptr<Expr>
+      differentiateBinaryOperation<OpPlus>(const tfel::utilities::shared_ptr<Expr> a,
+					   const tfel::utilities::shared_ptr<Expr> b,
 					   const std::vector<double>::size_type pos,
 					   const std::vector<double>& v)
       {
 	using namespace tfel::utilities;
-	SmartPtr<Expr> da = a->differentiate(pos,v);
-	SmartPtr<Expr> db = b->differentiate(pos,v);
-	return SmartPtr<Expr>(new BinaryOperation<OpPlus>(da,db));
+	shared_ptr<Expr> da = a->differentiate(pos,v);
+	shared_ptr<Expr> db = b->differentiate(pos,v);
+	return shared_ptr<Expr>(new BinaryOperation<OpPlus>(da,db));
       } // end of differentiateBinaryOperation<OpPlus>
 
       template<>
-      tfel::utilities::SmartPtr<Expr>
-      differentiateBinaryOperation<OpMinus>(const tfel::utilities::SmartPtr<Expr> a,
-					    const tfel::utilities::SmartPtr<Expr> b,
+      tfel::utilities::shared_ptr<Expr>
+      differentiateBinaryOperation<OpMinus>(const tfel::utilities::shared_ptr<Expr> a,
+					    const tfel::utilities::shared_ptr<Expr> b,
 					    const std::vector<double>::size_type pos,
 					    const std::vector<double>& v)
       {
 	using namespace tfel::utilities;
-	return SmartPtr<Expr>(new BinaryOperation<OpMinus>(a->differentiate(pos,v),
+	return shared_ptr<Expr>(new BinaryOperation<OpMinus>(a->differentiate(pos,v),
 							   b->differentiate(pos,v)));
       } // end of differentiateBinaryOperation<OpMinus>
 
       template<>
-      tfel::utilities::SmartPtr<Expr>
-      differentiateBinaryOperation<OpMult>(const tfel::utilities::SmartPtr<Expr> a,
-					   const tfel::utilities::SmartPtr<Expr> b,
+      tfel::utilities::shared_ptr<Expr>
+      differentiateBinaryOperation<OpMult>(const tfel::utilities::shared_ptr<Expr> a,
+					   const tfel::utilities::shared_ptr<Expr> b,
 					   const std::vector<double>::size_type pos,
 					   const std::vector<double>& v)
       {
 	using namespace tfel::utilities;
-	SmartPtr<Expr> d1(new BinaryOperation<OpMult>(a->differentiate(pos,v),b->clone(v)));
-	SmartPtr<Expr> d2(new BinaryOperation<OpMult>(a->clone(v),b->differentiate(pos,v)));
-	return SmartPtr<Expr>(new BinaryOperation<OpPlus>(d1,d2));
+	shared_ptr<Expr> d1(new BinaryOperation<OpMult>(a->differentiate(pos,v),b->clone(v)));
+	shared_ptr<Expr> d2(new BinaryOperation<OpMult>(a->clone(v),b->differentiate(pos,v)));
+	return shared_ptr<Expr>(new BinaryOperation<OpPlus>(d1,d2));
       } // end of differentiateBinaryOperation<OpMult>
 
       template<>
-      tfel::utilities::SmartPtr<Expr>
-      differentiateBinaryOperation<OpDiv>(const tfel::utilities::SmartPtr<Expr> a,
-					  const tfel::utilities::SmartPtr<Expr> b,
+      tfel::utilities::shared_ptr<Expr>
+      differentiateBinaryOperation<OpDiv>(const tfel::utilities::shared_ptr<Expr> a,
+					  const tfel::utilities::shared_ptr<Expr> b,
 					  const std::vector<double>::size_type pos,
 					  const std::vector<double>& v)
       {
 	using namespace std;
 	using namespace tfel::utilities;
-	SmartPtr<Expr> d1(new BinaryOperation<OpDiv>(a->differentiate(pos,v),b->clone(v)));
-	SmartPtr<Expr> d2num(new BinaryOperation<OpMult>(a->clone(v),b->differentiate(pos,v)));
-	SmartPtr<Expr> d2den(new BinaryOperation<OpMult>(b->clone(v),b->clone(v)));
-	SmartPtr<Expr> d2(new BinaryOperation<OpDiv>(d2num,d2den));
-	return SmartPtr<Expr>(new BinaryOperation<OpMinus>(d1,d2));
+	shared_ptr<Expr> d1(new BinaryOperation<OpDiv>(a->differentiate(pos,v),b->clone(v)));
+	shared_ptr<Expr> d2num(new BinaryOperation<OpMult>(a->clone(v),b->differentiate(pos,v)));
+	shared_ptr<Expr> d2den(new BinaryOperation<OpMult>(b->clone(v),b->clone(v)));
+	shared_ptr<Expr> d2(new BinaryOperation<OpDiv>(d2num,d2den));
+	return shared_ptr<Expr>(new BinaryOperation<OpMinus>(d1,d2));
       } // end of differentiateBinaryOperation<OpDiv>
 
       template<>
-      tfel::utilities::SmartPtr<Expr>
-      differentiateBinaryOperation<OpPower>(const tfel::utilities::SmartPtr<Expr> a,
-					    const tfel::utilities::SmartPtr<Expr> b,
+      tfel::utilities::shared_ptr<Expr>
+      differentiateBinaryOperation<OpPower>(const tfel::utilities::shared_ptr<Expr> a,
+					    const tfel::utilities::shared_ptr<Expr> b,
 					    const std::vector<double>::size_type  pos,
 					    const std::vector<double>& v)
       {
 	using namespace std;
 	using namespace tfel::utilities;
-	SmartPtr<Expr> ca = a->clone(v);
-	SmartPtr<Expr> cb = b->clone(v);
-	SmartPtr<Expr> l(new BinaryOperation<OpPower>(ca,cb));
-	SmartPtr<Expr> da(a->differentiate(pos,v));
-	SmartPtr<Expr> db(b->differentiate(pos,v));
-	SmartPtr<Expr> lna(new StandardFunction<log>(ca));
-	SmartPtr<Expr> r1(new BinaryOperation<OpMult>(db,lna));
-	SmartPtr<Expr> r21(new BinaryOperation<OpDiv>(da,ca));
-	SmartPtr<Expr> r2(new BinaryOperation<OpMult>(cb,r21));
-	SmartPtr<Expr> r(new BinaryOperation<OpPlus>(r1,r2));
-	return SmartPtr<Expr>(new BinaryOperation<OpMult>(l,r));
+	shared_ptr<Expr> ca = a->clone(v);
+	shared_ptr<Expr> cb = b->clone(v);
+	shared_ptr<Expr> l(new BinaryOperation<OpPower>(ca,cb));
+	shared_ptr<Expr> da(a->differentiate(pos,v));
+	shared_ptr<Expr> db(b->differentiate(pos,v));
+	shared_ptr<Expr> lna(new StandardFunction<log>(ca));
+	shared_ptr<Expr> r1(new BinaryOperation<OpMult>(db,lna));
+	shared_ptr<Expr> r21(new BinaryOperation<OpDiv>(da,ca));
+	shared_ptr<Expr> r2(new BinaryOperation<OpMult>(cb,r21));
+	shared_ptr<Expr> r(new BinaryOperation<OpPlus>(r1,r2));
+	return shared_ptr<Expr>(new BinaryOperation<OpMult>(l,r));
       } // end of differentiateBinaryOperation<OpPower>
 
     } // end of namespace parser

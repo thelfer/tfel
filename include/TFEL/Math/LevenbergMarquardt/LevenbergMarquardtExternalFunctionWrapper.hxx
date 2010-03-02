@@ -24,7 +24,7 @@ namespace tfel
       typedef tfel::math::vector<double>::size_type size_type;
       typedef double NumericType;
       
-      LevenbergMarquardtExternalFunctionWrapper(tfel::utilities::SmartPtr<tfel::math::parser::ExternalFunction>,
+      LevenbergMarquardtExternalFunctionWrapper(tfel::utilities::shared_ptr<tfel::math::parser::ExternalFunction>,
 						const size_type,
 						const size_type);
       
@@ -41,8 +41,8 @@ namespace tfel
       
     private:
       
-      tfel::utilities::SmartPtr<tfel::math::parser::ExternalFunction> ev;
-      tfel::math::vector<tfel::utilities::SmartPtr<tfel::math::parser::ExternalFunction> > dev;
+      tfel::utilities::shared_ptr<tfel::math::parser::ExternalFunction> ev;
+      tfel::math::vector<tfel::utilities::shared_ptr<tfel::math::parser::ExternalFunction> > dev;
       size_type nv;
       size_type np;
     };

@@ -19,12 +19,12 @@ namespace tfel
     
     rfstream::rfstream()
       : basic_rstream<rfstream,stream_traits<rfstream> >(),
-	tfel::utilities::SmartPtr<int>(-1)
+	tfel::utilities::shared_ptr<int>(new int(-1))
     {} // end of rfstream::rfstream
 
     rfstream::rfstream(const rfstream& src)
       : basic_rstream<rfstream,stream_traits<rfstream> >(src),
-	tfel::utilities::SmartPtr<int>(src)
+	tfel::utilities::shared_ptr<int>(src)
     {} // end of rfstream::rfstream
 
     rfstream &
@@ -36,13 +36,13 @@ namespace tfel
       }
       this->close();
       basic_rstream<rfstream,stream_traits<rfstream> >::operator=(src);
-      SmartPtr<int>::operator=(src);
+      shared_ptr<int>::operator=(src);
       return *this;
     } // end of rfstream::operator
 
     rfstream::rfstream(const std::string& name, const int flags)
       : basic_rstream<rfstream,stream_traits<rfstream> >(),
-	tfel::utilities::SmartPtr<int>(-1)
+	tfel::utilities::shared_ptr<int>(new int(-1))
     {
       this->open(name,flags);
     } // end of rfstream::rfstream
@@ -54,7 +54,7 @@ namespace tfel
       using namespace std;
       using namespace tfel::utilities;
       int fd;
-      if(*(this->p)!=-1){
+      if(*(this->get())!=-1){
 	// closing the previous file
 	this->close();
       }
@@ -64,7 +64,7 @@ namespace tfel
 	msg += "failed to open file "+name+".";
 	systemCall::throwSystemError(msg,errno);
       }
-      SmartPtr<int>::operator=(SmartPtr<int>(fd));
+      shared_ptr<int>::operator=(shared_ptr<int>(new int(fd)));
     } // end of rfstream::open
 
     void
@@ -72,23 +72,23 @@ namespace tfel
     {
       using namespace std;
       using namespace tfel::utilities;
-      if(*(this->p)==-1){
+      if(*(this->get())==-1){
 	return;
       }
-      if(this->count()==1){
-	if(::close(*(this->p))==-1){
+      if(this->unique()){
+	if(::close(*(this->get()))==-1){
 	  string msg("rfstream::close : ");
 	  msg += "failed to close file.";
 	  systemCall::throwSystemError(msg,errno);
 	}
       }
-      SmartPtr<int>::operator=(SmartPtr<int>(-1));
+      shared_ptr<int>::operator=(shared_ptr<int>(new int(-1)));
     } // end of rfstream::close
 
     int
     rfstream::getFileDescriptor(void) const
     {
-      return *(this->p);
+      return *(this->get());
     } // end of rfstream::getFileDescriptor
 
     rfstream::~rfstream()

@@ -38,7 +38,7 @@ namespace tfel{
      * \see VectorTraits
      */
     template<typename ValueType>
-    struct VectorTraits<vector<ValueType> >{
+    struct TFEL_VISIBILITY_LOCAL VectorTraits<vector<ValueType> >{
       /*
        * The underlying numerical type.
        */
@@ -55,7 +55,7 @@ namespace tfel{
     
     
     template<typename ValueType>
-    class vector
+    class TFEL_VISIBILITY_LOCAL vector
       : public VectorConcept<vector<ValueType> >,
 	protected std::vector<ValueType>
     {

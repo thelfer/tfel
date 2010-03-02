@@ -54,7 +54,7 @@ namespace tfel{
 
     template<unsigned short N, typename T,
 	     template<unsigned short,typename> class Storage>
-    struct StensorTraits<stensor<N,T,Storage> >
+    struct TFEL_VISIBILITY_LOCAL StensorTraits<stensor<N,T,Storage> >
     {
       typedef T NumType;
       static const unsigned short dime = N;
@@ -62,7 +62,7 @@ namespace tfel{
 
     template<unsigned short N,typename T,
 	     template<unsigned short,typename> class Storage>
-    class stensor
+    class TFEL_VISIBILITY_LOCAL stensor
       : public StensorConcept<stensor<N,T,Storage> >,
 	public Storage<StensorDimeToSize<N>::value,T>
     {

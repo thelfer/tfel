@@ -25,13 +25,13 @@ namespace tfel{
     struct IdTransform;
     
     /*!
-     * \class  SmartPtrTransform;
+     * \class  shared_ptrTransform;
      * \brief  Transform a type to a tfel::Ptr to it.
      * \author Helfer Thomas
      * \date   01 jun 2006
      */
     template<typename T>
-    struct SmartPtrTransform;
+    struct shared_ptrTransform;
   
   }
 

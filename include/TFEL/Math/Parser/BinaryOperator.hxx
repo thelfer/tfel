@@ -9,6 +9,7 @@
 #ifndef _LIB_TFEL_BINARYOPERATOR_HXX_
 #define _LIB_TFEL_BINARYOPERATOR_HXX_ 
 
+#include"TFEL/Config/TFELConfig.hxx"
 #include"TFEL/Utilities/SmartPtr.hxx"
 #include"TFEL/Math/Parser/Expr.hxx"
 
@@ -22,75 +23,70 @@ namespace tfel
 
       struct OpPlus
       {
-	static
-	double
+	static double TFEL_VISIBILITY_LOCAL
 	apply(const double,const double);
       }; // end of struct OpPlus
 
       struct OpMinus
       {
-	static
-	double
+	static double TFEL_VISIBILITY_LOCAL
 	apply(const double,const double);
       }; // end of struct OpMinus
 
       struct OpMult
       {
-	static
-	double
+	static double TFEL_VISIBILITY_LOCAL
 	apply(const double,const double);
       }; // end of struct OpMult
 
       struct OpDiv
       {
-	static
-	double
+	static double TFEL_VISIBILITY_LOCAL
 	apply(const double,const double);
       }; // end of struct OpDiv
 
       struct OpPower
       {
-	static
-	double
+	static double TFEL_VISIBILITY_LOCAL
 	apply(const double,const double);
       }; // end of struct OpPower
 
       struct BinaryOperationBase
       {
-	static void
+	static void TFEL_VISIBILITY_LOCAL
 	throwUnimplementedDifferentiateFunctionException();
       }; // end of struct BinaryOperationBase
 
       template<typename Op>
-      struct BinaryOperation
+      struct TFEL_VISIBILITY_LOCAL BinaryOperation
 	: public Expr,
 	  protected BinaryOperationBase
       {
-	BinaryOperation(const tfel::utilities::SmartPtr<Expr>,
-			const tfel::utilities::SmartPtr<Expr>);
+	BinaryOperation(const tfel::utilities::shared_ptr<Expr>,
+			const tfel::utilities::shared_ptr<Expr>);
 	double
 	getValue(void) const;
 	void
 	checkCyclicDependency(std::vector<std::string>&) const
 	  throw(std::runtime_error);
-	tfel::utilities::SmartPtr<Expr>
+	tfel::utilities::shared_ptr<Expr>
 	resolveDependencies(const std::vector<double>&) const;
- 	tfel::utilities::SmartPtr<Expr>
+ 	tfel::utilities::shared_ptr<Expr>
 	differentiate(const std::vector<double>::size_type,
 		      const std::vector<double>&) const;
-	tfel::utilities::SmartPtr<Expr>
+	tfel::utilities::shared_ptr<Expr>
 	clone(const std::vector<double>&) const;
 	void
 	getParametersNames(std::set<std::string>&) const;
-	tfel::utilities::SmartPtr<Expr>
+	tfel::utilities::shared_ptr<Expr>
 	createFunctionByChangingParametersIntoVariables(const std::vector<double>&,
 							const std::vector<std::string>&,
 							const std::map<std::string,
 							std::vector<double>::size_type>&) const;
 	~BinaryOperation();
       private:
-	const tfel::utilities::SmartPtr<Expr> a;
-	const tfel::utilities::SmartPtr<Expr> b;
+	const tfel::utilities::shared_ptr<Expr> a;
+	const tfel::utilities::shared_ptr<Expr> b;
       }; // end of struct BinaryOperation
 
     } // end of namespace parser

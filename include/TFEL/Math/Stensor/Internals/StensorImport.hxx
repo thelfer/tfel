@@ -11,6 +11,7 @@
 
 #include<cmath>
 
+#include"TFEL/Config/TFELConfig.hxx"
 #include"TFEL/Metaprogramming/EnableIf.hxx"
 #include"TFEL/TypeTraits/BaseType.hxx"
 #include"TFEL/TypeTraits/IsAssignableTo.hxx"
@@ -28,7 +29,7 @@ namespace tfel{
       struct ImportFromTab;
 
       template<>
-      struct ImportFromVoigt<1u>{
+      struct TFEL_VISIBILITY_LOCAL ImportFromVoigt<1u>{
 	template<typename T,typename T2>
 	static TFEL_MATH_INLINE typename tfel::meta::EnableIf<tfel::typetraits::IsAssignableTo<T2,T>::cond,void>::type
 	exe(T* const target, const T2* const src)
@@ -40,7 +41,7 @@ namespace tfel{
       };
 
       template<>
-      struct ImportFromVoigt<2u>{
+      struct TFEL_VISIBILITY_LOCAL ImportFromVoigt<2u>{
 	template<typename T,typename T2>
 	static TFEL_MATH_INLINE typename tfel::meta::EnableIf<tfel::typetraits::IsAssignableTo<T2,T>::cond,void>::type
 	exe(T* const target, const T2* const src){
@@ -53,7 +54,7 @@ namespace tfel{
       };
 
       template<>
-      struct ImportFromVoigt<3u>{
+      struct TFEL_VISIBILITY_LOCAL ImportFromVoigt<3u>{
 	template<typename T,typename T2>
 	static TFEL_MATH_INLINE typename tfel::meta::EnableIf<tfel::typetraits::IsAssignableTo<T2,T>::cond,void>::type
 	exe(T* const target, const T2 * const src){
@@ -68,7 +69,7 @@ namespace tfel{
       };
 
       template<>
-      struct ImportFromTab<1u>{
+      struct TFEL_VISIBILITY_LOCAL ImportFromTab<1u>{
 	template<typename T,typename T2>
 	static TFEL_MATH_INLINE typename tfel::meta::EnableIf<
 	  tfel::typetraits::IsAssignableTo<T2,T>::cond,
@@ -82,7 +83,7 @@ namespace tfel{
       };
 
       template<>
-      struct ImportFromTab<2u>{
+      struct TFEL_VISIBILITY_LOCAL ImportFromTab<2u>{
 	template<typename T,typename T2>
 	static TFEL_MATH_INLINE typename tfel::meta::EnableIf<tfel::typetraits::IsAssignableTo<T2,T>::cond,void>::type
 	exe(T* const target, const T2* const src){
@@ -95,7 +96,7 @@ namespace tfel{
       };
 
       template<>
-      struct ImportFromTab<3u>{
+      struct TFEL_VISIBILITY_LOCAL ImportFromTab<3u>{
 	template<typename T,typename T2>
 	static TFEL_MATH_INLINE typename tfel::meta::EnableIf<tfel::typetraits::IsAssignableTo<T2,T>::cond,void>::type
 	exe(T* const target, const T2* const src){

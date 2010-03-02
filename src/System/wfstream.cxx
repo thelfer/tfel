@@ -17,12 +17,12 @@ namespace tfel
     
     wfstream::wfstream()
       : basic_wstream<wfstream,stream_traits<wfstream> >(),
-	tfel::utilities::SmartPtr<int>(-1)
+	tfel::utilities::shared_ptr<int>(new int(-1))
     {} // end of wfstream::wfstream
 
     wfstream::wfstream(const wfstream& src)
       : basic_wstream<wfstream,stream_traits<wfstream> >(src),
-	tfel::utilities::SmartPtr<int>(src)
+	tfel::utilities::shared_ptr<int>(src)
     {} // end of wfstream::wfstream
 
     wfstream &
@@ -34,13 +34,13 @@ namespace tfel
       }
       this->close();
       basic_wstream<wfstream,stream_traits<wfstream> >::operator=(src);
-      SmartPtr<int>::operator=(src);
+      shared_ptr<int>::operator=(src);
       return *this;
     } // end of wfstream::operator
 
     wfstream::wfstream(const std::string& name, const int flags,const mode_t mode)
       : basic_wstream<wfstream,stream_traits<wfstream> >(),
-	tfel::utilities::SmartPtr<int>(-1)
+	tfel::utilities::shared_ptr<int>(new int(-1))
     {
       this->open(name,flags,mode);
     } // end of wfstream::wfstream
@@ -53,7 +53,7 @@ namespace tfel
       using namespace std;
       using namespace tfel::utilities;
       int fd;
-      if(*(this->p)!=-1){
+      if(*(this->get())!=-1){
 	// closing the previous file
 	this->close();
       }
@@ -63,7 +63,7 @@ namespace tfel
 	msg += "failed to open file "+name+".";
 	systemCall::throwSystemError(msg,errno);
       }
-      SmartPtr<int>::operator=(SmartPtr<int>(fd));
+      shared_ptr<int>::operator=(shared_ptr<int>(new int(fd)));
     } // end of wfstream::open
 
     void
@@ -71,23 +71,23 @@ namespace tfel
     {
       using namespace std;
       using namespace tfel::utilities;
-      if(*(this->p)==-1){
+      if(*(this->get())==-1){
 	return;
       }
-      if(this->count()==1){
-	if(::close(*(this->p))==-1){
+      if(this->unique()){
+	if(::close(*(this->get()))==-1){
 	  string msg("wfstream::close : ");
 	  msg += "failed to close file.";
 	  systemCall::throwSystemError(msg,errno);
 	}
       }
-      SmartPtr<int>::operator=(SmartPtr<int>(-1));
+      shared_ptr<int>::operator=(shared_ptr<int>(new int(-1)));
     } // end of wfstream::close
 
     int
     wfstream::getFileDescriptor(void) const
     {
-      return *(this->p);
+      return *(this->get());
     } // end of wfstream::getFileDescriptor
 
     wfstream::~wfstream()

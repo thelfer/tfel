@@ -85,42 +85,42 @@ namespace tfel
       {} // end of KrigedFunction<N>::checkCyclicDependency
 
       template<unsigned short N>
-      tfel::utilities::SmartPtr<ExternalFunction>
+      tfel::utilities::shared_ptr<ExternalFunction>
       KrigedFunction<N>::differentiate(const std::vector<double>::size_type) const
       {
 	using namespace tfel::utilities;
 	KrigedFunctionBase::throwUnimplementedDifferentiateFunctionException();
-	return SmartPtr<ExternalFunction>(0);
+	return shared_ptr<ExternalFunction>(static_cast<ExternalFunction*>(0));
       } // end of KrigedFunction<N>::differentiate
 
       template<unsigned short N>
-      tfel::utilities::SmartPtr<ExternalFunction>
+      tfel::utilities::shared_ptr<ExternalFunction>
       KrigedFunction<N>::differentiate(const std::string&) const
       {
 	using namespace tfel::utilities;
 	KrigedFunctionBase::throwUnimplementedDifferentiateFunctionException();
-	return SmartPtr<ExternalFunction>(0);
+	return shared_ptr<ExternalFunction>(static_cast<ExternalFunction*>(0));
       } // end of KrigedFunction<N>::differentiate
 
       template<unsigned short N>
-      tfel::utilities::SmartPtr<ExternalFunction>
+      tfel::utilities::shared_ptr<ExternalFunction>
       KrigedFunction<N>::resolveDependencies(void) const
       {
 	using namespace tfel::utilities;
-	return SmartPtr<ExternalFunction>(new KrigedFunction<N>(*this));
+	return shared_ptr<ExternalFunction>(new KrigedFunction<N>(*this));
       } // end of KrigedFunction<N>::resolveDependencies
 
       template<unsigned short N>
-      tfel::utilities::SmartPtr<ExternalFunction>
+      tfel::utilities::shared_ptr<ExternalFunction>
       KrigedFunction<N>::createFunctionByChangingParametersIntoVariables(const std::vector<std::string>&) const
       {
 	using namespace tfel::utilities;
 	KrigedFunctionBase::throwInvalidCreateFunctionByChangingParametersIntoVariables();
-	return SmartPtr<ExternalFunction>(0);
+	return shared_ptr<ExternalFunction>(static_cast<ExternalFunction*>(0));
       } // end of KrigedFunction<N>::createFunctionByChangingParametersIntoVariables
 
       template<unsigned short N>
-      tfel::utilities::SmartPtr<ExternalFunction>
+      tfel::utilities::shared_ptr<ExternalFunction>
       KrigedFunction<N>::createFunctionByChangingParametersIntoVariables(std::vector<std::string>& vnames,
 									 const std::vector<double>&,
 									 const std::vector<std::string>&,

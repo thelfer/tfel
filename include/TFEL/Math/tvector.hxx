@@ -53,7 +53,7 @@ namespace tfel{
      * \see VectorTraits.
      */
     template<unsigned short N, typename T>
-    struct VectorTraits<tvector<N,T> >{
+    struct TFEL_VISIBILITY_LOCAL VectorTraits<tvector<N,T> >{
       //! the type holded by the tvector.
       typedef T NumType;
       //! the type of the index used by the tvector.
@@ -63,7 +63,7 @@ namespace tfel{
     };
     
     template<unsigned short N, typename T = double>
-    class tvector
+    class TFEL_VISIBILITY_LOCAL tvector
       : public VectorConcept<tvector<N,T> >
     {
 

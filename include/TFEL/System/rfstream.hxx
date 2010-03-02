@@ -33,7 +33,7 @@ namespace tfel
     
     struct rfstream
       : public basic_rstream<rfstream,stream_traits<rfstream> >,
-	protected tfel::utilities::SmartPtr<int>
+	protected tfel::utilities::shared_ptr<int>
     {
 
       // default constructor

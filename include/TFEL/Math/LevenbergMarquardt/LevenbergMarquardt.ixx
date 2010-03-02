@@ -28,6 +28,7 @@ namespace tfel
 	factor(T(2)),
 	eps1(1.e-10),
 	eps2(1.e-10),
+	iter(0),
 	iterMax(100)
     {} // end of LevenbergMarquardt::LevenbergMarquardt
 
@@ -80,7 +81,14 @@ namespace tfel
     LevenbergMarquardt<F>::setMaximumIteration(const T nb)
     {
       this->iterMax = nb;
-    } // end of LevenbergMarquardt::setInitialGuess
+    } // end of LevenbergMarquardt::setMaximumIteration
+
+    template<typename F>
+    unsigned short
+    LevenbergMarquardt<F>::getNumberOfIterations(void) const
+    {
+      return this->iter;
+    } // end of LevenbergMarquardt::getNumberOfIterations
 
     template<typename F>
     const typename LevenbergMarquardt<F>::Parameter&
@@ -102,7 +110,6 @@ namespace tfel
       T v(0);
       T lambda = this->lambda0;
       unsigned short i;
-      unsigned short iter;
       bool success;
       s = T(0);
       for(it=this->data.begin();it!=this->data.end();++it){
@@ -118,7 +125,7 @@ namespace tfel
       }
       this->factor=2;
       success = false;
-      for(iter=0;(iter!=this->iterMax)&&(!success);++iter){
+      for(this->iter=0;(this->iter!=this->iterMax)&&(!success);++(this->iter)){
 	Jn=J;
 	fill(gn.begin(),gn.end(),T(0));
 	h = -g;

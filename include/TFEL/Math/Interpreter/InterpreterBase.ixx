@@ -25,7 +25,7 @@ namespace tfel
 	using namespace tfel::utilities;
 	using namespace tfel::math::parser;
 	typedef ExternalFunctionManager::value_type MVType;
-	typedef SmartPtr<ExternalFunction> ExternalFunctionPtr;
+	typedef shared_ptr<ExternalFunction> ExternalFunctionPtr;
 	stringstream pi;
 	pi.precision(15);
 	pi << M_PI;

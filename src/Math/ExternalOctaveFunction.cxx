@@ -5,6 +5,7 @@
 #include <octave/octave.h>
 #include <octave/parse.h>
 
+#include"TFEL/Config/TFELConfig.hxx"
 #include"TFEL/Math/Parser/ExternalOctaveFunction.hxx"
 
 namespace tfel
@@ -16,7 +17,7 @@ namespace tfel
     namespace parser
     {
 
-      struct ExternalOctaveFunction::OctaveInitializer
+      struct TFEL_VISIBILITY_LOCAL ExternalOctaveFunction::OctaveInitializer
       {
 	OctaveInitializer();
       }; // end of struct ExternalOctaveFunction::OctaveInitializer
@@ -90,11 +91,11 @@ namespace tfel
 	  throw(std::runtime_error)
       {} // end of ExternalOctaveFunction::checkCyclicDependency
  
-      tfel::utilities::SmartPtr<ExternalFunction>
+      tfel::utilities::shared_ptr<ExternalFunction>
       ExternalOctaveFunction::resolveDependencies(void) const
       {
 	using namespace tfel::utilities;
-	return SmartPtr<ExternalFunction>(new ExternalOctaveFunction(this->f,
+	return shared_ptr<ExternalFunction>(new ExternalOctaveFunction(this->f,
 								     static_cast<unsigned short>(this->variables.size())));
       } // end of ExternalOctaveFunction::resolveDependencies(void) const
 
@@ -102,7 +103,7 @@ namespace tfel
       ExternalOctaveFunction::getParametersNames(std::set<std::string>&) const
       {} // end of ExternalOctaveFunction::getParametersNames
 
-      tfel::utilities::SmartPtr<ExternalFunction>
+      tfel::utilities::shared_ptr<ExternalFunction>
       ExternalOctaveFunction::differentiate(const std::vector<double>::size_type) const
       {
 	using namespace std;
@@ -111,7 +112,7 @@ namespace tfel
 	throw(runtime_error(msg));
       } // end of ExternalOctaveFunction::differentiate
 
-      tfel::utilities::SmartPtr<ExternalFunction>
+      tfel::utilities::shared_ptr<ExternalFunction>
       ExternalOctaveFunction::differentiate(const std::string&) const
       {
 	using namespace std;

@@ -100,7 +100,7 @@ namespace tfel
       treatPlotOptions(TokensContainer::const_iterator&, 
 		       const TokensContainer::const_iterator);
       void
-      applyCurveOptions(tfel::utilities::SmartPtr<Curve>,
+      applyCurveOptions(tfel::utilities::shared_ptr<Curve>,
 			const CurveOptions&);
 
 #ifdef HAVE_GSL

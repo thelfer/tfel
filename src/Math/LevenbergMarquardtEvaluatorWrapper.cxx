@@ -16,7 +16,7 @@ namespace tfel
   namespace math
   {
     
-    LevenbergMarquardtEvaluatorWrapper::LevenbergMarquardtEvaluatorWrapper(tfel::utilities::SmartPtr<tfel::math::Evaluator> ev_,
+    LevenbergMarquardtEvaluatorWrapper::LevenbergMarquardtEvaluatorWrapper(tfel::utilities::shared_ptr<tfel::math::Evaluator> ev_,
 									   const LevenbergMarquardtEvaluatorWrapper::size_type nv_,
 									   const LevenbergMarquardtEvaluatorWrapper::size_type np_)
       : ev(ev_),
@@ -74,7 +74,7 @@ namespace tfel
       using namespace tfel::math::parser;
       using tfel::math::vector;
       vector<double>::const_iterator p;
-      vector<SmartPtr<ExternalFunction> >::iterator pdev;
+      vector<shared_ptr<ExternalFunction> >::iterator pdev;
       vector<double>::size_type i;
       if(variables.size()!=this->getNumberOfVariables()){
 	string msg("LevenbergMarquardtEvaluatorWrapper::operator() : ");

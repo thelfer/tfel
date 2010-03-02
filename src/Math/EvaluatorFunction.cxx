@@ -20,7 +20,7 @@ namespace tfel
       EvaluatorFunctionBase::EvaluatorFunctionBase()
       {} // end of EvaluatorFunctionBase::EvaluatorFunctionBase
 
-      tfel::utilities::SmartPtr<Expr>
+      tfel::utilities::shared_ptr<Expr>
       EvaluatorFunctionBase::differentiate(const std::vector<double>::size_type,
 					   const std::vector<double>&) const
       {
@@ -33,7 +33,7 @@ namespace tfel
       EvaluatorFunctionBase::~EvaluatorFunctionBase()
       {} // end of EvaluatorFunctionBase::~EvaluatorFunctionBase
 
-      EvaluatorFunction1VBase::EvaluatorFunction1VBase(const tfel::utilities::SmartPtr<Expr> e)
+      EvaluatorFunction1VBase::EvaluatorFunction1VBase(const tfel::utilities::shared_ptr<Expr> e)
 	: expr(e)
       {} // end of EvaluatorFunction1VBase::EvaluatorFunction1VBase
 
@@ -46,8 +46,8 @@ namespace tfel
       EvaluatorFunction1VBase::~EvaluatorFunction1VBase()
       {} // end of EvaluatorFunction1VBase::~EvaluatorFunction1VBase()
 
-      EvaluatorFunction2VBase::EvaluatorFunction2VBase(const tfel::utilities::SmartPtr<Expr> e1_,
-						       const tfel::utilities::SmartPtr<Expr> e2_)
+      EvaluatorFunction2VBase::EvaluatorFunction2VBase(const tfel::utilities::shared_ptr<Expr> e1_,
+						       const tfel::utilities::shared_ptr<Expr> e2_)
 	: e1(e1_),
 	  e2(e2_)
       {} // end of EvaluatorFunction2VBase::EvaluatorFunction2VBase
@@ -69,7 +69,7 @@ namespace tfel
 
       EvaluatorFunction1P1V::EvaluatorFunction1P1V(const EvaluatorProxyFunctionPtr1P1V f_,
 						   const int n_,
-						   const tfel::utilities::SmartPtr<Expr> e)
+						   const tfel::utilities::shared_ptr<Expr> e)
 	: EvaluatorFunction1VBase(e),
 	  f(f_),
 	  n(n_)
@@ -81,11 +81,11 @@ namespace tfel
 	return (*(this->f))(this->n,this->expr->getValue());
       } // end of EvaluatorFunction1P1V::getValue(void) const
 
-      tfel::utilities::SmartPtr<Expr>
+      tfel::utilities::shared_ptr<Expr>
       EvaluatorFunction1P1V::resolveDependencies(const std::vector<double>& v) const
       {
 	using namespace tfel::utilities;
-	return SmartPtr<Expr>(new EvaluatorFunction1P1V(this->f,
+	return shared_ptr<Expr>(new EvaluatorFunction1P1V(this->f,
 							this->n,
 							this->expr->resolveDependencies(v)));
       } // end of EvaluatorFunction1P1V::resolveDependencies(void) const
@@ -96,23 +96,23 @@ namespace tfel
 	this->expr->getParametersNames(p);
       } // end of EvaluatorFunction1P1V::getParametersNames
 
-      tfel::utilities::SmartPtr<Expr>
+      tfel::utilities::shared_ptr<Expr>
       EvaluatorFunction1P1V::clone(const std::vector<double>& v) const
       {
 	using namespace tfel::utilities;
-	return SmartPtr<Expr>(new EvaluatorFunction1P1V(this->f,
+	return shared_ptr<Expr>(new EvaluatorFunction1P1V(this->f,
 							this->n,
 							this->expr->clone(v)));
       } // end of EvaluatorFunction1P1V::clone(const std::vector<double>&) const
 
-      tfel::utilities::SmartPtr<Expr>
+      tfel::utilities::shared_ptr<Expr>
       EvaluatorFunction1P1V::createFunctionByChangingParametersIntoVariables(const std::vector<double>& v,
 									     const std::vector<std::string>& params,
 									     const std::map<std::string,
 									     std::vector<double>::size_type>& pos) const
       {
 	using namespace tfel::utilities;
-	return SmartPtr<Expr>(new EvaluatorFunction1P1V(this->f,
+	return shared_ptr<Expr>(new EvaluatorFunction1P1V(this->f,
 							this->n,
 							this->expr->createFunctionByChangingParametersIntoVariables(v,params,pos)));
       } // end of EvaluatorFunction1P1V::createFunctionByChangingParametersIntoVariables
@@ -123,7 +123,7 @@ namespace tfel
       EvaluatorFunction2P1V::EvaluatorFunction2P1V(const EvaluatorProxyFunctionPtr2P1V f_,
 						   const int n_,
 						   const int m_,
-						   const tfel::utilities::SmartPtr<Expr> e)
+						   const tfel::utilities::shared_ptr<Expr> e)
 	: EvaluatorFunction1VBase(e),
 	  f(f_),
 	  n(n_),
@@ -136,11 +136,11 @@ namespace tfel
 	return (*(this->f))(this->n,this->m,this->expr->getValue());
       } // end of EvaluatorFunction2P1V::getValue(void) const
 
-      tfel::utilities::SmartPtr<Expr>
+      tfel::utilities::shared_ptr<Expr>
       EvaluatorFunction2P1V::resolveDependencies(const std::vector<double>& v) const
       {
 	using namespace tfel::utilities;
-	return SmartPtr<Expr>(new EvaluatorFunction2P1V(this->f,
+	return shared_ptr<Expr>(new EvaluatorFunction2P1V(this->f,
 							this->n,
 							this->m,
 							this->expr->resolveDependencies(v)));
@@ -152,24 +152,24 @@ namespace tfel
 	this->expr->getParametersNames(p);
       } // end of EvaluatorFunction2P1V::getParametersNames
 
-      tfel::utilities::SmartPtr<Expr>
+      tfel::utilities::shared_ptr<Expr>
       EvaluatorFunction2P1V::clone(const std::vector<double>& v) const
       {
 	using namespace tfel::utilities;
-	return SmartPtr<Expr>(new EvaluatorFunction2P1V(this->f,
+	return shared_ptr<Expr>(new EvaluatorFunction2P1V(this->f,
 							this->n,
 							this->m,
 							this->expr->clone(v)));
       } // end of EvaluatorFunction2P1V::clone(const std::vector<double>&) const
 
-      tfel::utilities::SmartPtr<Expr>
+      tfel::utilities::shared_ptr<Expr>
       EvaluatorFunction2P1V::createFunctionByChangingParametersIntoVariables(const std::vector<double>& v,
 									     const std::vector<std::string>& params,
 									     const std::map<std::string,
 									     std::vector<double>::size_type>& pos) const
       {
 	using namespace tfel::utilities;
-	return SmartPtr<Expr>(new EvaluatorFunction2P1V(this->f,
+	return shared_ptr<Expr>(new EvaluatorFunction2P1V(this->f,
 							this->n,
 							this->m,
 							this->expr->createFunctionByChangingParametersIntoVariables(v,params,pos)));
@@ -180,8 +180,8 @@ namespace tfel
 
       EvaluatorFunction1P2V::EvaluatorFunction1P2V(const EvaluatorProxyFunctionPtr1P2V f_,
 						   const int n_,
-						   const tfel::utilities::SmartPtr<Expr> e1_,
-						   const tfel::utilities::SmartPtr<Expr> e2_)
+						   const tfel::utilities::shared_ptr<Expr> e1_,
+						   const tfel::utilities::shared_ptr<Expr> e2_)
 	: EvaluatorFunction2VBase(e1_,e2_),
 	  f(f_),
 	  n(n_)
@@ -193,11 +193,11 @@ namespace tfel
 	return (*(this->f))(this->n,this->e1->getValue(),this->e2->getValue());
       } // end of EvaluatorFunction1P2V::getValue(void) const
 
-      tfel::utilities::SmartPtr<Expr>
+      tfel::utilities::shared_ptr<Expr>
       EvaluatorFunction1P2V::resolveDependencies(const std::vector<double>& v) const
       {
 	using namespace tfel::utilities;
-	return SmartPtr<Expr>(new EvaluatorFunction1P2V(this->f,
+	return shared_ptr<Expr>(new EvaluatorFunction1P2V(this->f,
 							this->n,
 							this->e1->resolveDependencies(v),
 							this->e2->resolveDependencies(v)));
@@ -210,24 +210,24 @@ namespace tfel
 	this->e2->getParametersNames(p);
       } // end of EvaluatorFunction1P2V::getParametersNames
 
-      tfel::utilities::SmartPtr<Expr>
+      tfel::utilities::shared_ptr<Expr>
       EvaluatorFunction1P2V::clone(const std::vector<double>& v) const
       {
 	using namespace tfel::utilities;
-	return SmartPtr<Expr>(new EvaluatorFunction1P2V(this->f,
+	return shared_ptr<Expr>(new EvaluatorFunction1P2V(this->f,
 							this->n,
 							this->e1->clone(v),
 							this->e2->clone(v)));
       } // end of EvaluatorFunction1P2V::clone(const std::vector<double>&) const
 
-      tfel::utilities::SmartPtr<Expr>
+      tfel::utilities::shared_ptr<Expr>
       EvaluatorFunction1P2V::createFunctionByChangingParametersIntoVariables(const std::vector<double>& v,
 									     const std::vector<std::string>& params,
 									     const std::map<std::string,
 									     std::vector<double>::size_type>& pos) const
       {
 	using namespace tfel::utilities;
-	return SmartPtr<Expr>(new EvaluatorFunction1P2V(this->f,
+	return shared_ptr<Expr>(new EvaluatorFunction1P2V(this->f,
 							this->n,
 							this->e1->createFunctionByChangingParametersIntoVariables(v,params,pos),
 							this->e2->createFunctionByChangingParametersIntoVariables(v,params,pos)));
@@ -239,8 +239,8 @@ namespace tfel
       EvaluatorFunction2P2V::EvaluatorFunction2P2V(const EvaluatorProxyFunctionPtr2P2V f_,
 						   const int n_,
 						   const int m_,
-						   const tfel::utilities::SmartPtr<Expr> e1_,
-						   const tfel::utilities::SmartPtr<Expr> e2_)
+						   const tfel::utilities::shared_ptr<Expr> e1_,
+						   const tfel::utilities::shared_ptr<Expr> e2_)
 	: EvaluatorFunction2VBase(e1_,e2_),
 	  f(f_),
 	  n(n_),
@@ -255,11 +255,11 @@ namespace tfel
 			    this->e2->getValue());
       } // end of EvaluatorFunction2P2V::getValue(void) const
 
-      tfel::utilities::SmartPtr<Expr>
+      tfel::utilities::shared_ptr<Expr>
       EvaluatorFunction2P2V::resolveDependencies(const std::vector<double>& v) const
       {
 	using namespace tfel::utilities;
-	return SmartPtr<Expr>(new EvaluatorFunction2P2V(this->f,
+	return shared_ptr<Expr>(new EvaluatorFunction2P2V(this->f,
 							this->n,this->m,
 							this->e1->resolveDependencies(v),
 							this->e2->resolveDependencies(v)));
@@ -272,24 +272,24 @@ namespace tfel
 	this->e2->getParametersNames(p);
       } // end of EvaluatorFunction2P2V::getParametersNames
 
-      tfel::utilities::SmartPtr<Expr>
+      tfel::utilities::shared_ptr<Expr>
       EvaluatorFunction2P2V::clone(const std::vector<double>& v) const
       {
 	using namespace tfel::utilities;
-	return SmartPtr<Expr>(new EvaluatorFunction2P2V(this->f,
+	return shared_ptr<Expr>(new EvaluatorFunction2P2V(this->f,
 							this->n,this->m,
 							this->e1->clone(v),
 							this->e2->clone(v)));
       } // end of EvaluatorFunction2P2V::clone(const std::vector<double>&) const
 
-      tfel::utilities::SmartPtr<Expr>
+      tfel::utilities::shared_ptr<Expr>
       EvaluatorFunction2P2V::createFunctionByChangingParametersIntoVariables(const std::vector<double>& v,
 									     const std::vector<std::string>& params,
 									     const std::map<std::string,
 									     std::vector<double>::size_type>& pos) const
       {
 	using namespace tfel::utilities;
-	return SmartPtr<Expr>(new EvaluatorFunction2P2V(this->f,
+	return shared_ptr<Expr>(new EvaluatorFunction2P2V(this->f,
 							this->n,
 							this->m,
 							this->e1->createFunctionByChangingParametersIntoVariables(v,params,pos),
@@ -301,7 +301,7 @@ namespace tfel
 
       double
       EvaluatorFunctionWrapper<0u>::apply(const EvaluatorFunctionWrapper<0u>::type f,
-					  const std::vector<tfel::utilities::SmartPtr<Expr> >&)
+					  const std::vector<tfel::utilities::shared_ptr<Expr> >&)
       {
 	return (*f)();
       } // end of EvaluatorFunctionWrapper<0u>::apply
@@ -309,7 +309,7 @@ namespace tfel
       double
       EvaluatorFunctionWrapper<0u>::apply(const EvaluatorFunctionWrapper<0u>::type1P f,
 					  const int n,
-					  const std::vector<tfel::utilities::SmartPtr<Expr> >&)
+					  const std::vector<tfel::utilities::shared_ptr<Expr> >&)
       {
 	return (*f)(n);
       } // end of EvaluatorFunctionWrapper<0u>::apply
@@ -317,7 +317,7 @@ namespace tfel
       double
       EvaluatorFunctionWrapper<0u>::apply(const EvaluatorFunctionWrapper<0u>::type2P f,
 					  const int n, const int m,
-					  const std::vector<tfel::utilities::SmartPtr<Expr> >&)
+					  const std::vector<tfel::utilities::shared_ptr<Expr> >&)
       {
 	return (*f)(n,m);
       } // end of EvaluatorFunctionWrapper<0u>::apply
@@ -325,7 +325,7 @@ namespace tfel
       double
       EvaluatorFunctionWrapper<0u>::apply(const EvaluatorFunctionWrapper<0u>::type1UP f,
 					  const unsigned int n,
-					  const std::vector<tfel::utilities::SmartPtr<Expr> >&)
+					  const std::vector<tfel::utilities::shared_ptr<Expr> >&)
       {
 	return (*f)(n);
       } // end of EvaluatorFunctionWrapper<0u>::apply
@@ -333,14 +333,14 @@ namespace tfel
       double
       EvaluatorFunctionWrapper<0u>::apply(const EvaluatorFunctionWrapper<0u>::type2UP f,
 					  const unsigned int n, const unsigned int m,
-					  const std::vector<tfel::utilities::SmartPtr<Expr> >&)
+					  const std::vector<tfel::utilities::shared_ptr<Expr> >&)
       {
 	return (*f)(n,m);
       } // end of EvaluatorFunctionWrapper<0u>::apply
 
       double
       EvaluatorFunctionWrapper<1u>::apply(const EvaluatorFunctionWrapper<1u>::type f,
-					  const std::vector<tfel::utilities::SmartPtr<Expr> >& expr)
+					  const std::vector<tfel::utilities::shared_ptr<Expr> >& expr)
       {
 	return (*f)(expr[0]->getValue());
       } // end of EvaluatorFunctionWrapper<1u>::apply
@@ -348,7 +348,7 @@ namespace tfel
       double
       EvaluatorFunctionWrapper<1u>::apply(const EvaluatorFunctionWrapper<1u>::type1P f,
 					  const int n,
-					  const std::vector<tfel::utilities::SmartPtr<Expr> >& expr)
+					  const std::vector<tfel::utilities::shared_ptr<Expr> >& expr)
       {
 	return (*f)(n,expr[0]->getValue());
       } // end of EvaluatorFunctionWrapper<1u>::apply
@@ -356,7 +356,7 @@ namespace tfel
       double
       EvaluatorFunctionWrapper<1u>::apply(const EvaluatorFunctionWrapper<1u>::type2P f,
 					  const int n, const int m,
-					  const std::vector<tfel::utilities::SmartPtr<Expr> >& expr)
+					  const std::vector<tfel::utilities::shared_ptr<Expr> >& expr)
       {
 	return (*f)(n,m,expr[0]->getValue());
       } // end of EvaluatorFunctionWrapper<1u>::apply
@@ -364,7 +364,7 @@ namespace tfel
       double
       EvaluatorFunctionWrapper<1u>::apply(const EvaluatorFunctionWrapper<1u>::type1UP f,
 					  const unsigned int n,
-					  const std::vector<tfel::utilities::SmartPtr<Expr> >& expr)
+					  const std::vector<tfel::utilities::shared_ptr<Expr> >& expr)
       {
 	return (*f)(n,expr[0]->getValue());
       } // end of EvaluatorFunctionWrapper<1u>::apply
@@ -372,14 +372,14 @@ namespace tfel
       double
       EvaluatorFunctionWrapper<1u>::apply(const EvaluatorFunctionWrapper<1u>::type2UP f,
 					  const unsigned int n, const unsigned int m,
-					  const std::vector<tfel::utilities::SmartPtr<Expr> >& expr)
+					  const std::vector<tfel::utilities::shared_ptr<Expr> >& expr)
       {
 	return (*f)(n,m,expr[0]->getValue());
       } // end of EvaluatorFunctionWrapper<1u>::apply
 
       double
       EvaluatorFunctionWrapper<2u>::apply(const EvaluatorFunctionWrapper<2u>::type f,
-					  const std::vector<tfel::utilities::SmartPtr<Expr> >& expr)
+					  const std::vector<tfel::utilities::shared_ptr<Expr> >& expr)
       {
 	return (*f)(expr[0]->getValue(),expr[1]->getValue());
       } // end of EvaluatorFunctionWrapper<2u>::apply
@@ -387,7 +387,7 @@ namespace tfel
       double
       EvaluatorFunctionWrapper<2u>::apply(const EvaluatorFunctionWrapper<2u>::type1P f,
 					  const int n,
-					  const std::vector<tfel::utilities::SmartPtr<Expr> >& expr)
+					  const std::vector<tfel::utilities::shared_ptr<Expr> >& expr)
       {
 	return (*f)(n,expr[0]->getValue(),expr[1]->getValue());
       } // end of EvaluatorFunctionWrapper<2u>::apply
@@ -395,7 +395,7 @@ namespace tfel
       double
       EvaluatorFunctionWrapper<2u>::apply(const EvaluatorFunctionWrapper<2u>::type2P f,
 					  const int n, const int m,
-					  const std::vector<tfel::utilities::SmartPtr<Expr> >& expr)
+					  const std::vector<tfel::utilities::shared_ptr<Expr> >& expr)
       {
 	return (*f)(n,m,expr[0]->getValue(),expr[1]->getValue());
       } // end of EvaluatorFunctionWrapper<2u>::apply
@@ -403,7 +403,7 @@ namespace tfel
       double
       EvaluatorFunctionWrapper<2u>::apply(const EvaluatorFunctionWrapper<2u>::type1UP f,
 					  const unsigned int n,
-					  const std::vector<tfel::utilities::SmartPtr<Expr> >& expr)
+					  const std::vector<tfel::utilities::shared_ptr<Expr> >& expr)
       {
 	return (*f)(n,expr[0]->getValue(),expr[1]->getValue());
       } // end of EvaluatorFunctionWrapper<2u>::apply
@@ -411,14 +411,14 @@ namespace tfel
       double
       EvaluatorFunctionWrapper<2u>::apply(const EvaluatorFunctionWrapper<2u>::type2UP f,
 					  const unsigned int n, const unsigned int m,
-					  const std::vector<tfel::utilities::SmartPtr<Expr> >& expr)
+					  const std::vector<tfel::utilities::shared_ptr<Expr> >& expr)
       {
 	return (*f)(n,m,expr[0]->getValue(),expr[1]->getValue());
       } // end of EvaluatorFunctionWrapper<2u>::apply
 
       double
       EvaluatorFunctionWrapper<3u>::apply(const EvaluatorFunctionWrapper<3u>::type f,
-					  const std::vector<tfel::utilities::SmartPtr<Expr> >& expr)
+					  const std::vector<tfel::utilities::shared_ptr<Expr> >& expr)
       {
 	return (*f)(expr[0]->getValue(),expr[1]->getValue(),
 	            expr[2]->getValue());
@@ -427,7 +427,7 @@ namespace tfel
       double
       EvaluatorFunctionWrapper<3u>::apply(const EvaluatorFunctionWrapper<3u>::type1P f,
 					  const int n,
-					  const std::vector<tfel::utilities::SmartPtr<Expr> >& expr)
+					  const std::vector<tfel::utilities::shared_ptr<Expr> >& expr)
       {
 	return (*f)(n,expr[0]->getValue(),expr[1]->getValue(),
 	            expr[2]->getValue());
@@ -436,7 +436,7 @@ namespace tfel
       double
       EvaluatorFunctionWrapper<3u>::apply(const EvaluatorFunctionWrapper<3u>::type2P f,
 					  const int n, const int m,
-					  const std::vector<tfel::utilities::SmartPtr<Expr> >& expr)
+					  const std::vector<tfel::utilities::shared_ptr<Expr> >& expr)
       {
 	return (*f)(n,m,expr[0]->getValue(),expr[1]->getValue(),
                     expr[2]->getValue());
@@ -445,7 +445,7 @@ namespace tfel
       double
       EvaluatorFunctionWrapper<3u>::apply(const EvaluatorFunctionWrapper<3u>::type1UP f,
 					  const unsigned int n,
-					  const std::vector<tfel::utilities::SmartPtr<Expr> >& expr)
+					  const std::vector<tfel::utilities::shared_ptr<Expr> >& expr)
       {
 	return (*f)(n,expr[0]->getValue(),expr[1]->getValue(),expr[2]->getValue());
       } // end of EvaluatorFunctionWrapper<3u>::apply
@@ -453,14 +453,14 @@ namespace tfel
       double
       EvaluatorFunctionWrapper<3u>::apply(const EvaluatorFunctionWrapper<3u>::type2UP f,
 					  const unsigned int n, const unsigned int m,
-					  const std::vector<tfel::utilities::SmartPtr<Expr> >& expr)
+					  const std::vector<tfel::utilities::shared_ptr<Expr> >& expr)
       {
 	return (*f)(n,m,expr[0]->getValue(),expr[1]->getValue(),expr[2]->getValue());
       } // end of EvaluatorFunctionWrapper<3u>::apply
 
       double
       EvaluatorFunctionWrapper<4u>::apply(const EvaluatorFunctionWrapper<4u>::type f,
-					  const std::vector<tfel::utilities::SmartPtr<Expr> >& expr)
+					  const std::vector<tfel::utilities::shared_ptr<Expr> >& expr)
       {
 	return (*f)(expr[0]->getValue(),expr[1]->getValue(),
 	            expr[2]->getValue(),expr[3]->getValue());
@@ -469,7 +469,7 @@ namespace tfel
       double
       EvaluatorFunctionWrapper<4u>::apply(const EvaluatorFunctionWrapper<4u>::type1P f,
 					  const int n,
-					  const std::vector<tfel::utilities::SmartPtr<Expr> >& expr)
+					  const std::vector<tfel::utilities::shared_ptr<Expr> >& expr)
       {
 	return (*f)(n,expr[0]->getValue(),expr[1]->getValue(),
 	            expr[2]->getValue(),expr[3]->getValue());
@@ -478,7 +478,7 @@ namespace tfel
       double
       EvaluatorFunctionWrapper<4u>::apply(const EvaluatorFunctionWrapper<4u>::type2P f,
 					  const int n, const int m,
-					  const std::vector<tfel::utilities::SmartPtr<Expr> >& expr)
+					  const std::vector<tfel::utilities::shared_ptr<Expr> >& expr)
       {
 	return (*f)(n,m,expr[0]->getValue(),expr[1]->getValue(),
                     expr[2]->getValue(),expr[3]->getValue());
@@ -487,7 +487,7 @@ namespace tfel
       double
       EvaluatorFunctionWrapper<4u>::apply(const EvaluatorFunctionWrapper<4u>::type1UP f,
 					  const unsigned int n,
-					  const std::vector<tfel::utilities::SmartPtr<Expr> >& expr)
+					  const std::vector<tfel::utilities::shared_ptr<Expr> >& expr)
       {
 	return (*f)(n,expr[0]->getValue(),expr[1]->getValue(),
 		    expr[2]->getValue(),expr[3]->getValue());
@@ -496,7 +496,7 @@ namespace tfel
       double
       EvaluatorFunctionWrapper<4u>::apply(const EvaluatorFunctionWrapper<4u>::type2UP f,
 					  const unsigned int n, const unsigned int m,
-					  const std::vector<tfel::utilities::SmartPtr<Expr> >& expr)
+					  const std::vector<tfel::utilities::shared_ptr<Expr> >& expr)
       {
 	return (*f)(n,m,expr[0]->getValue(),expr[1]->getValue(),
 		    expr[2]->getValue(),expr[3]->getValue());
@@ -504,7 +504,7 @@ namespace tfel
 
       double
       EvaluatorFunctionWrapper<5u>::apply(const EvaluatorFunctionWrapper<5u>::type f,
-					  const std::vector<tfel::utilities::SmartPtr<Expr> >& expr)
+					  const std::vector<tfel::utilities::shared_ptr<Expr> >& expr)
       {
 	return (*f)(expr[0]->getValue(),expr[1]->getValue(),
 	            expr[2]->getValue(),expr[3]->getValue(),
@@ -514,7 +514,7 @@ namespace tfel
       double
       EvaluatorFunctionWrapper<5u>::apply(const EvaluatorFunctionWrapper<5u>::type1P f,
 					  const int n,
-					  const std::vector<tfel::utilities::SmartPtr<Expr> >& expr)
+					  const std::vector<tfel::utilities::shared_ptr<Expr> >& expr)
       {
 	return (*f)(n,expr[0]->getValue(),expr[1]->getValue(),
 	            expr[2]->getValue(),expr[3]->getValue(),
@@ -524,7 +524,7 @@ namespace tfel
       double
       EvaluatorFunctionWrapper<5u>::apply(const EvaluatorFunctionWrapper<5u>::type2P f,
 					   const int n, const int m,
-					   const std::vector<tfel::utilities::SmartPtr<Expr> >& expr)
+					   const std::vector<tfel::utilities::shared_ptr<Expr> >& expr)
       {
 	return (*f)(n,m,expr[0]->getValue(),expr[1]->getValue(),
 	            expr[2]->getValue(),expr[3]->getValue(),
@@ -534,7 +534,7 @@ namespace tfel
       double
       EvaluatorFunctionWrapper<5u>::apply(const EvaluatorFunctionWrapper<5u>::type1UP f,
 					  const unsigned int n,
-					  const std::vector<tfel::utilities::SmartPtr<Expr> >& expr)
+					  const std::vector<tfel::utilities::shared_ptr<Expr> >& expr)
       {
 	return (*f)(n,expr[0]->getValue(),expr[1]->getValue(),
 		    expr[2]->getValue(),expr[3]->getValue(),
@@ -544,7 +544,7 @@ namespace tfel
       double
       EvaluatorFunctionWrapper<5u>::apply(const EvaluatorFunctionWrapper<5u>::type2UP f,
 					  const unsigned int n, const unsigned int m,
-					  const std::vector<tfel::utilities::SmartPtr<Expr> >& expr)
+					  const std::vector<tfel::utilities::shared_ptr<Expr> >& expr)
       {
 	return (*f)(n,m,expr[0]->getValue(),expr[1]->getValue(),
 		    expr[2]->getValue(),expr[3]->getValue(),
@@ -553,7 +553,7 @@ namespace tfel
 
       double
       EvaluatorFunctionWrapper<6u>::apply(const EvaluatorFunctionWrapper<6u>::type f,
-					  const std::vector<tfel::utilities::SmartPtr<Expr> >& expr)
+					  const std::vector<tfel::utilities::shared_ptr<Expr> >& expr)
       {
 	return (*f)(expr[0]->getValue(),expr[1]->getValue(),
 	            expr[2]->getValue(),expr[3]->getValue(),
@@ -563,7 +563,7 @@ namespace tfel
       double
       EvaluatorFunctionWrapper<6u>::apply(const EvaluatorFunctionWrapper<6u>::type1P f,
 					  const int n,
-					  const std::vector<tfel::utilities::SmartPtr<Expr> >& expr)
+					  const std::vector<tfel::utilities::shared_ptr<Expr> >& expr)
       {
 	return (*f)(n,expr[0]->getValue(),expr[1]->getValue(),
 	            expr[2]->getValue(),expr[3]->getValue(),
@@ -573,7 +573,7 @@ namespace tfel
       double
       EvaluatorFunctionWrapper<6u>::apply(const EvaluatorFunctionWrapper<6u>::type2P f,
 					   const int n, const int m,
-					   const std::vector<tfel::utilities::SmartPtr<Expr> >& expr)
+					   const std::vector<tfel::utilities::shared_ptr<Expr> >& expr)
       {
 	return (*f)(n,m,expr[0]->getValue(),expr[1]->getValue(),
 	            expr[2]->getValue(),expr[3]->getValue(),
@@ -583,7 +583,7 @@ namespace tfel
       double
       EvaluatorFunctionWrapper<6u>::apply(const EvaluatorFunctionWrapper<6u>::type1UP f,
 					  const unsigned int n,
-					  const std::vector<tfel::utilities::SmartPtr<Expr> >& expr)
+					  const std::vector<tfel::utilities::shared_ptr<Expr> >& expr)
       {
 	return (*f)(n,expr[0]->getValue(),expr[1]->getValue(),
 		    expr[2]->getValue(),expr[3]->getValue(),
@@ -593,7 +593,7 @@ namespace tfel
       double
       EvaluatorFunctionWrapper<6u>::apply(const EvaluatorFunctionWrapper<6u>::type2UP f,
 					  const unsigned int n, const unsigned int m,
-					  const std::vector<tfel::utilities::SmartPtr<Expr> >& expr)
+					  const std::vector<tfel::utilities::shared_ptr<Expr> >& expr)
       {
 	return (*f)(n,m,expr[0]->getValue(),expr[1]->getValue(),
 		    expr[2]->getValue(),expr[3]->getValue(),
@@ -602,7 +602,7 @@ namespace tfel
 
       double
       EvaluatorFunctionWrapper<7u>::apply(const EvaluatorFunctionWrapper<7u>::type f,
-					  const std::vector<tfel::utilities::SmartPtr<Expr> >& expr)
+					  const std::vector<tfel::utilities::shared_ptr<Expr> >& expr)
       {
 	return (*f)(expr[0]->getValue(),expr[1]->getValue(),
 	            expr[2]->getValue(),expr[3]->getValue(),
@@ -613,7 +613,7 @@ namespace tfel
       double
       EvaluatorFunctionWrapper<7u>::apply(const EvaluatorFunctionWrapper<7u>::type1P f,
 					  const int n,
-					  const std::vector<tfel::utilities::SmartPtr<Expr> >& expr)
+					  const std::vector<tfel::utilities::shared_ptr<Expr> >& expr)
       {
 	return (*f)(n,expr[0]->getValue(),expr[1]->getValue(),
 	            expr[2]->getValue(),expr[3]->getValue(),
@@ -624,7 +624,7 @@ namespace tfel
       double
       EvaluatorFunctionWrapper<7u>::apply(const EvaluatorFunctionWrapper<7u>::type2P f,
 					   const int n, const int m,
-					   const std::vector<tfel::utilities::SmartPtr<Expr> >& expr)
+					   const std::vector<tfel::utilities::shared_ptr<Expr> >& expr)
       {
 	return (*f)(n,m,expr[0]->getValue(),expr[1]->getValue(),
 	            expr[2]->getValue(),expr[3]->getValue(),
@@ -635,7 +635,7 @@ namespace tfel
       double
       EvaluatorFunctionWrapper<7u>::apply(const EvaluatorFunctionWrapper<7u>::type1UP f,
 					  const unsigned int n,
-					  const std::vector<tfel::utilities::SmartPtr<Expr> >& expr)
+					  const std::vector<tfel::utilities::shared_ptr<Expr> >& expr)
       {
 	return (*f)(n,expr[0]->getValue(),expr[1]->getValue(),
 		    expr[2]->getValue(),expr[3]->getValue(),
@@ -646,7 +646,7 @@ namespace tfel
       double
       EvaluatorFunctionWrapper<7u>::apply(const EvaluatorFunctionWrapper<7u>::type2UP f,
 					  const unsigned int n, const unsigned int m,
-					  const std::vector<tfel::utilities::SmartPtr<Expr> >& expr)
+					  const std::vector<tfel::utilities::shared_ptr<Expr> >& expr)
       {
 	return (*f)(n,m,expr[0]->getValue(),expr[1]->getValue(),
 		    expr[2]->getValue(),expr[3]->getValue(),
@@ -656,7 +656,7 @@ namespace tfel
 
       double
       EvaluatorFunctionWrapper<8u>::apply(const EvaluatorFunctionWrapper<8u>::type f,
-					   const std::vector<tfel::utilities::SmartPtr<Expr> >& expr)
+					   const std::vector<tfel::utilities::shared_ptr<Expr> >& expr)
       {
 	return (*f)(expr[0]->getValue(),expr[1]->getValue(),
 	            expr[2]->getValue(),expr[3]->getValue(),
@@ -667,7 +667,7 @@ namespace tfel
       double
       EvaluatorFunctionWrapper<8u>::apply(const EvaluatorFunctionWrapper<8u>::type1P f,
 					   const int n,
-					   const std::vector<tfel::utilities::SmartPtr<Expr> >& expr)
+					   const std::vector<tfel::utilities::shared_ptr<Expr> >& expr)
       {
 	return (*f)(n,expr[0]->getValue(),expr[1]->getValue(),
 	            expr[2]->getValue(),expr[3]->getValue(),
@@ -678,7 +678,7 @@ namespace tfel
       double
       EvaluatorFunctionWrapper<8u>::apply(const EvaluatorFunctionWrapper<8u>::type2P f,
 					   const int n, const int m,
-					   const std::vector<tfel::utilities::SmartPtr<Expr> >& expr)
+					   const std::vector<tfel::utilities::shared_ptr<Expr> >& expr)
       {
 	return (*f)(n,m,expr[0]->getValue(),expr[1]->getValue(),
 	            expr[2]->getValue(),expr[3]->getValue(),
@@ -689,7 +689,7 @@ namespace tfel
       double
       EvaluatorFunctionWrapper<8u>::apply(const EvaluatorFunctionWrapper<8u>::type1UP f,
 					  const unsigned int n,
-					  const std::vector<tfel::utilities::SmartPtr<Expr> >& expr)
+					  const std::vector<tfel::utilities::shared_ptr<Expr> >& expr)
       {
 	return (*f)(n,expr[0]->getValue(),expr[1]->getValue(),
 		    expr[2]->getValue(),expr[3]->getValue(),
@@ -700,7 +700,7 @@ namespace tfel
       double
       EvaluatorFunctionWrapper<8u>::apply(const EvaluatorFunctionWrapper<8u>::type2UP f,
 					  const unsigned int n, const unsigned int m,
-					  const std::vector<tfel::utilities::SmartPtr<Expr> >& expr)
+					  const std::vector<tfel::utilities::shared_ptr<Expr> >& expr)
       {
 	return (*f)(n,m,expr[0]->getValue(),expr[1]->getValue(),
 		    expr[2]->getValue(),expr[3]->getValue(),
@@ -710,7 +710,7 @@ namespace tfel
 
       double
       EvaluatorFunctionWrapper<9u>::apply(const EvaluatorFunctionWrapper<9u>::type f,
-					   const std::vector<tfel::utilities::SmartPtr<Expr> >& expr)
+					   const std::vector<tfel::utilities::shared_ptr<Expr> >& expr)
       {
 	return (*f)(expr[0]->getValue(),expr[1]->getValue(),
 	            expr[2]->getValue(),expr[3]->getValue(),
@@ -722,7 +722,7 @@ namespace tfel
       double
       EvaluatorFunctionWrapper<9u>::apply(const EvaluatorFunctionWrapper<9u>::type1P f,
 					   const int n,
-					   const std::vector<tfel::utilities::SmartPtr<Expr> >& expr)
+					   const std::vector<tfel::utilities::shared_ptr<Expr> >& expr)
       {
 	return (*f)(n,expr[0]->getValue(),expr[1]->getValue(),
 	            expr[2]->getValue(),expr[3]->getValue(),
@@ -734,7 +734,7 @@ namespace tfel
       double
       EvaluatorFunctionWrapper<9u>::apply(const EvaluatorFunctionWrapper<9u>::type2P f,
 					   const int n, const int m,
-					   const std::vector<tfel::utilities::SmartPtr<Expr> >& expr)
+					   const std::vector<tfel::utilities::shared_ptr<Expr> >& expr)
       {
 	return (*f)(n,m,expr[0]->getValue(),expr[1]->getValue(),
 	            expr[2]->getValue(),expr[3]->getValue(),
@@ -746,7 +746,7 @@ namespace tfel
       double
       EvaluatorFunctionWrapper<9u>::apply(const EvaluatorFunctionWrapper<9u>::type1UP f,
 					  const unsigned int n,
-					  const std::vector<tfel::utilities::SmartPtr<Expr> >& expr)
+					  const std::vector<tfel::utilities::shared_ptr<Expr> >& expr)
       {
 	return (*f)(n,expr[0]->getValue(),expr[1]->getValue(),
 		    expr[2]->getValue(),expr[3]->getValue(),
@@ -758,7 +758,7 @@ namespace tfel
       double
       EvaluatorFunctionWrapper<9u>::apply(const EvaluatorFunctionWrapper<9u>::type2UP f,
 					  const unsigned int n, const unsigned int m,
-					  const std::vector<tfel::utilities::SmartPtr<Expr> >& expr)
+					  const std::vector<tfel::utilities::shared_ptr<Expr> >& expr)
       {
 	return (*f)(n,m,expr[0]->getValue(),expr[1]->getValue(),
 		    expr[2]->getValue(),expr[3]->getValue(),
@@ -769,7 +769,7 @@ namespace tfel
 
       double
       EvaluatorFunctionWrapper<10u>::apply(const EvaluatorFunctionWrapper<10u>::type f,
-					   const std::vector<tfel::utilities::SmartPtr<Expr> >& expr)
+					   const std::vector<tfel::utilities::shared_ptr<Expr> >& expr)
       {
 	return (*f)(expr[0]->getValue(),expr[1]->getValue(),
 	            expr[2]->getValue(),expr[3]->getValue(),
@@ -781,7 +781,7 @@ namespace tfel
       double
       EvaluatorFunctionWrapper<10u>::apply(const EvaluatorFunctionWrapper<10u>::type1P f,
 					   const int n,
-					   const std::vector<tfel::utilities::SmartPtr<Expr> >& expr)
+					   const std::vector<tfel::utilities::shared_ptr<Expr> >& expr)
       {
 	return (*f)(n,expr[0]->getValue(),expr[1]->getValue(),
 	            expr[2]->getValue(),expr[3]->getValue(),
@@ -793,7 +793,7 @@ namespace tfel
       double
       EvaluatorFunctionWrapper<10u>::apply(const EvaluatorFunctionWrapper<10u>::type2P f,
 					   const int n, const int m,
-					   const std::vector<tfel::utilities::SmartPtr<Expr> >& expr)
+					   const std::vector<tfel::utilities::shared_ptr<Expr> >& expr)
       {
 	return (*f)(n,m,expr[0]->getValue(),expr[1]->getValue(),
 	            expr[2]->getValue(),expr[3]->getValue(),
@@ -805,7 +805,7 @@ namespace tfel
       double
       EvaluatorFunctionWrapper<10u>::apply(const EvaluatorFunctionWrapper<10u>::type1UP f,
 					  const unsigned int n,
-					  const std::vector<tfel::utilities::SmartPtr<Expr> >& expr)
+					  const std::vector<tfel::utilities::shared_ptr<Expr> >& expr)
       {
 	return (*f)(n,expr[0]->getValue(),expr[1]->getValue(),
 		    expr[2]->getValue(),expr[3]->getValue(),
@@ -817,7 +817,7 @@ namespace tfel
       double
       EvaluatorFunctionWrapper<10u>::apply(const EvaluatorFunctionWrapper<10u>::type2UP f,
 					  const unsigned int n, const unsigned int m,
-					  const std::vector<tfel::utilities::SmartPtr<Expr> >& expr)
+					  const std::vector<tfel::utilities::shared_ptr<Expr> >& expr)
       {
 	return (*f)(n,m,expr[0]->getValue(),expr[1]->getValue(),
 		    expr[2]->getValue(),expr[3]->getValue(),

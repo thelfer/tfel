@@ -26,7 +26,7 @@ namespace tfel
     
       struct ExternalFunctionManager
 	: public std::map<std::string,
-			  tfel::utilities::SmartPtr<ExternalFunction> >
+			  tfel::utilities::shared_ptr<ExternalFunction> >
       {}; // end of struct ExternalFunctionManager
       
     } // end of namespace parser

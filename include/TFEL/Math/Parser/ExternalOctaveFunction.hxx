@@ -41,11 +41,11 @@ namespace tfel
 	void
 	checkCyclicDependency(const std::vector<std::string>&) const
 	  throw(std::runtime_error);
-	tfel::utilities::SmartPtr<ExternalFunction>
+	tfel::utilities::shared_ptr<ExternalFunction>
 	differentiate(const std::vector<double>::size_type) const;
-	tfel::utilities::SmartPtr<ExternalFunction>
+	tfel::utilities::shared_ptr<ExternalFunction>
 	differentiate(const std::string&) const;
-	tfel::utilities::SmartPtr<ExternalFunction>
+	tfel::utilities::shared_ptr<ExternalFunction>
 	resolveDependencies(void) const;
 	void
 	getParametersNames(std::set<std::string>&) const = 0;

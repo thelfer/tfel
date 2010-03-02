@@ -20,8 +20,6 @@
 #include"TFEL/Math/Parser/EvaluatorGSLWrapper.hxx"
 #endif
 
-#include<iostream>
-
 namespace tfel
 {
 
@@ -179,7 +177,7 @@ namespace tfel
       }
     } // end of Evaluator::checkVariableNubmer
 
-    struct Evaluator::ExternalFunctionRegister
+    struct TFEL_VISIBILITY_LOCAL Evaluator::ExternalFunctionRegister
     {
       ExternalFunctionRegister()
       {
@@ -193,18 +191,18 @@ namespace tfel
     Evaluator::ExternalFunctionRegister Evaluator::externalFunctionRegister;
 
     template<unsigned short N>
-    static tfel::utilities::SmartPtr<tfel::math::parser::Expr>
-    EvaluatorPowerFunctionGenerator(const tfel::utilities::SmartPtr<tfel::math::parser::Expr> e)
+    static tfel::utilities::shared_ptr<tfel::math::parser::Expr>
+    EvaluatorPowerFunctionGenerator(const tfel::utilities::shared_ptr<tfel::math::parser::Expr> e)
     {
       using namespace tfel::utilities;
       using namespace tfel::math::parser;
       using namespace tfel::math::stdfunctions;
-      return SmartPtr<Expr>(new StandardFunction<power<N> >(e));
+      return shared_ptr<Expr>(new StandardFunction<power<N> >(e));
     } // end of EvaluatorPowerFunctionGenerator
 
-    static tfel::utilities::SmartPtr<tfel::math::parser::Expr>
+    static tfel::utilities::shared_ptr<tfel::math::parser::Expr>
     EvaluatorTreatPower(const std::vector<std::string>& params,
-			std::vector<tfel::utilities::SmartPtr<tfel::math::parser::Expr> >& args)
+			std::vector<tfel::utilities::shared_ptr<tfel::math::parser::Expr> >& args)
     {
       using namespace std;
       using namespace tfel::utilities;
@@ -216,7 +214,7 @@ namespace tfel
       nbr = Evaluator::convertToUnsignedShort("EvaluatorTreatPower",params[0]);
       switch (nbr){
       case 0:
-	return SmartPtr<Expr>(new Number(1.));
+	return shared_ptr<Expr>(new Number(1.));
 	break;
       case 1:
 	return EvaluatorPowerFunctionGenerator<1>(args[0]);
@@ -282,7 +280,7 @@ namespace tfel
       using namespace tfel::utilities;
       using namespace tfel::math::parser;
       vector<string>::const_iterator pv;
-      vector<SmartPtr<Evaluator::TExpr> > args;
+      vector<shared_ptr<Evaluator::TExpr> > args;
       string f;
       vector<string> var;
       vector<std::vector<double>::size_type> pvar;
@@ -365,23 +363,23 @@ namespace tfel
 	msg += "only one variable name allowed when degree of differentiation specified";
 	throw(runtime_error(msg));
       }
-      SmartPtr<Evaluator::ExternalFunction> pev;
-      if(this->manager.getPtr()==0){
+      shared_ptr<Evaluator::ExternalFunction> pev;
+      if(this->manager.get()==0){
 	if(b){
 	  // variable names are fixed
-	  pev= SmartPtr<Evaluator::ExternalFunction>(new Evaluator(this->getVariablesNames(),f));
+	  pev= shared_ptr<Evaluator::ExternalFunction>(new Evaluator(this->getVariablesNames(),f));
 	} else {
-	  pev= SmartPtr<Evaluator::ExternalFunction>(new Evaluator(f));
+	  pev= shared_ptr<Evaluator::ExternalFunction>(new Evaluator(f));
 	}
       } else {
 	if(b){
 	  // variable names are fixed
-	  pev= SmartPtr<Evaluator::ExternalFunction>(new Evaluator(this->getVariablesNames(),f,this->manager));
+	  pev= shared_ptr<Evaluator::ExternalFunction>(new Evaluator(this->getVariablesNames(),f,this->manager));
 	} else {
-	  pev= SmartPtr<Evaluator::ExternalFunction>(new Evaluator(f,this->manager));
+	  pev= shared_ptr<Evaluator::ExternalFunction>(new Evaluator(f,this->manager));
 	}
       }
-      const vector<string>& fvars = static_cast<Evaluator *>(pev.getPtr())->getVariablesNames();
+      const vector<string>& fvars = static_cast<Evaluator *>(pev.get())->getVariablesNames();
       for(pv=var.begin();pv!=var.end();++pv){
 	if(find(fvars.begin(),fvars.end(),*pv)==fvars.end()){
 	  string msg("Evaluator::treatDiff : ");
@@ -397,12 +395,12 @@ namespace tfel
 	  this->registerVariable(*pv);
 	}
 	const std::vector<double>::size_type pos = this->getVariablePosition(*pv);
-	args.push_back(SmartPtr<Evaluator::TExpr>(new Evaluator::TVariable(pos,this->variables)));
+	args.push_back(shared_ptr<Evaluator::TExpr>(new Evaluator::TVariable(pos,this->variables)));
       }
       for(pv=var.begin();pv!=var.end();++pv){
 	pvar.push_back(find(fvars.begin(),fvars.end(),*pv)-fvars.begin());
       }
-      g->add(SmartPtr<Evaluator::TExpr>(new Evaluator::TDifferentiatedFunctionExpr(pev,args,pvar)));
+      g->add(shared_ptr<Evaluator::TExpr>(new Evaluator::TDifferentiatedFunctionExpr(pev,args,pvar)));
     } // end of Evaluator::treatDiff
 
     void
@@ -620,7 +618,7 @@ namespace tfel
       return params;
     } // end of Evaluator::analyseParameters
 
-    std::vector<tfel::utilities::SmartPtr<Evaluator::TExpr> >
+    std::vector<tfel::utilities::shared_ptr<Evaluator::TExpr> >
     Evaluator::analyseArguments(const unsigned short nbr,
 				std::vector<std::string>::const_iterator& p,
 				const std::vector<std::string>::const_iterator  pe,
@@ -628,7 +626,7 @@ namespace tfel
     {
       using namespace std;
       using namespace tfel::utilities;
-      vector<SmartPtr<Evaluator::TExpr> > res;
+      vector<shared_ptr<Evaluator::TExpr> > res;
       if(nbr>0){
 	unsigned short i;
 	for(i=0;i!=nbr-1u;++i){
@@ -640,14 +638,14 @@ namespace tfel
       return res;
     } // end of Evaluator::analyseArguments
 
-    std::vector<tfel::utilities::SmartPtr<Evaluator::TExpr> >
+    std::vector<tfel::utilities::shared_ptr<Evaluator::TExpr> >
     Evaluator::analyseArguments(std::vector<std::string>::const_iterator& p,
 				const std::vector<std::string>::const_iterator  pe,
 				const bool b)
     {
       using namespace std;
       using namespace tfel::utilities;
-      vector<SmartPtr<Evaluator::TExpr> > res;
+      vector<shared_ptr<Evaluator::TExpr> > res;
       unsigned short nbr = this->countNumberOfArguments(p,pe);
       unsigned short i;
       if(nbr>0){
@@ -737,7 +735,7 @@ namespace tfel
       return make_pair(false,p);
     } // end of Evaluator::search
 
-    tfel::utilities::SmartPtr<Evaluator::TLogicalExpr>
+    tfel::utilities::shared_ptr<Evaluator::TLogicalExpr>
     Evaluator::treatLogicalExpression(const std::vector<std::string>::const_iterator p,
 				      const std::vector<std::string>::const_iterator pe,
 				      const bool b)
@@ -762,12 +760,12 @@ namespace tfel
 	  msg += "no right logical expression";
 	  throw(runtime_error(msg));
 	}
-	SmartPtr<Evaluator::TLogicalExpr> lo = this->treatLogicalExpression(pb,pt,b);
-	SmartPtr<Evaluator::TLogicalExpr> ro = this->treatLogicalExpression(pt+1,pbe,b);
+	shared_ptr<Evaluator::TLogicalExpr> lo = this->treatLogicalExpression(pb,pt,b);
+	shared_ptr<Evaluator::TLogicalExpr> ro = this->treatLogicalExpression(pt+1,pbe,b);
 	if(*pt=="&&"){
-	  return SmartPtr<Evaluator::TLogicalExpr>(new TLogicalBinaryOperation<OpAnd>(lo,ro));
+	  return shared_ptr<Evaluator::TLogicalExpr>(new TLogicalBinaryOperation<OpAnd>(lo,ro));
 	} else if (*pt=="||"){
-	  return SmartPtr<Evaluator::TLogicalExpr>(new TLogicalBinaryOperation<OpOr>(lo,ro));
+	  return shared_ptr<Evaluator::TLogicalExpr>(new TLogicalBinaryOperation<OpOr>(lo,ro));
 	} else {
 	  string msg("Evaluator::treatLogicalExpression : ");
 	  msg += "unkwown operator '"+*pt+"'";
@@ -787,7 +785,7 @@ namespace tfel
       }
       if(*pb=="!"){
 	++pb;
-	return SmartPtr<Evaluator::TLogicalExpr>(new TNegLogicalExpr(this->treatLogicalExpression(pb,pbe,b)));
+	return shared_ptr<Evaluator::TLogicalExpr>(new TNegLogicalExpr(this->treatLogicalExpression(pb,pbe,b)));
       }
       return this->treatLogicalExpression2(pb,pbe,b);
     } // end of Evaluator::treatLogicalExpression
@@ -902,7 +900,7 @@ namespace tfel
       return po;
     } // end of Evaluator::searchComparisonOperator
 
-    tfel::utilities::SmartPtr<Evaluator::TLogicalExpr>
+    tfel::utilities::shared_ptr<Evaluator::TLogicalExpr>
     Evaluator::treatLogicalExpression2(const std::vector<std::string>::const_iterator p,
 				       const std::vector<std::string>::const_iterator pe,
 				       const bool b)
@@ -912,28 +910,28 @@ namespace tfel
       using namespace tfel::math::parser;
       vector<string>::const_iterator plo = this->searchComparisonOperator(p,pe);
       vector<string>::const_iterator tmp2 = p;
-      SmartPtr<Evaluator::TExpr> loexpr = this->treatGroup(tmp2,plo,b,"");
+      shared_ptr<Evaluator::TExpr> loexpr = this->treatGroup(tmp2,plo,b,"");
       vector<string>::const_iterator tmp3 = plo+1;
-      SmartPtr<Evaluator::TExpr> roexpr = this->treatGroup(tmp3,pe,b,"");
+      shared_ptr<Evaluator::TExpr> roexpr = this->treatGroup(tmp3,pe,b,"");
       if(*plo=="=="){
-	return SmartPtr<Evaluator::TLogicalExpr>(new TLogicalOperation<OpEqual>(loexpr,roexpr));
+	return shared_ptr<Evaluator::TLogicalExpr>(new TLogicalOperation<OpEqual>(loexpr,roexpr));
       } else if(*plo==">"){
-	return SmartPtr<Evaluator::TLogicalExpr>(new TLogicalOperation<OpGreater>(loexpr,roexpr));
+	return shared_ptr<Evaluator::TLogicalExpr>(new TLogicalOperation<OpGreater>(loexpr,roexpr));
       } else if(*plo==">="){
-	return SmartPtr<Evaluator::TLogicalExpr>(new TLogicalOperation<OpGreaterOrEqual>(loexpr,roexpr));
+	return shared_ptr<Evaluator::TLogicalExpr>(new TLogicalOperation<OpGreaterOrEqual>(loexpr,roexpr));
       } else if(*plo=="<"){
-	return SmartPtr<Evaluator::TLogicalExpr>(new TLogicalOperation<OpLesser>(loexpr,roexpr));
+	return shared_ptr<Evaluator::TLogicalExpr>(new TLogicalOperation<OpLesser>(loexpr,roexpr));
       } else if(*plo=="<="){
-	return SmartPtr<Evaluator::TLogicalExpr>(new TLogicalOperation<OpLesserOrEqual>(loexpr,roexpr));
+	return shared_ptr<Evaluator::TLogicalExpr>(new TLogicalOperation<OpLesserOrEqual>(loexpr,roexpr));
       } else {
 	string msg("Evaluator::treatGroup : ");
 	msg += "unsupported logical operator '"+*plo+"'";
 	throw(runtime_error(msg));
       }
-      SmartPtr<Evaluator::TLogicalExpr>(0);
+      shared_ptr<Evaluator::TLogicalExpr>(static_cast<Evaluator::TLogicalExpr*>(0));
     } // end of Evaluator::treatLogicalExpression2
 
-    tfel::utilities::SmartPtr<Evaluator::TExpr>
+    tfel::utilities::shared_ptr<Evaluator::TExpr>
     Evaluator::treatGroup(std::vector<std::string>::const_iterator& p,
 			  const std::vector<std::string>::const_iterator  pe,
 			  const bool b,
@@ -982,17 +980,17 @@ namespace tfel
 	  msg += "empty right conditional expression";
 	  throw(runtime_error(msg));
 	}
-	SmartPtr<Evaluator::TLogicalExpr> l = this->treatLogicalExpression(p,res.second,b);
+	shared_ptr<Evaluator::TLogicalExpr> l = this->treatLogicalExpression(p,res.second,b);
 	vector<string>::const_iterator tmp2 = res.second+1;
-	SmartPtr<Evaluator::TExpr> lexpr = this->treatGroup(tmp2,res2.second,b,"");
+	shared_ptr<Evaluator::TExpr> lexpr = this->treatGroup(tmp2,res2.second,b,"");
 	p = res2.second+1;
-	SmartPtr<Evaluator::TExpr> rexpr = this->treatGroup(p,pe,b,s);
-	return SmartPtr<TExpr>(new TConditionalExpr(l,lexpr,rexpr));
+	shared_ptr<Evaluator::TExpr> rexpr = this->treatGroup(p,pe,b,s);
+	return shared_ptr<TExpr>(new TConditionalExpr(l,lexpr,rexpr));
       }
       return this->treatGroup2(p,pe,b,s);
     } // end of Evaluator::treatGroup
 
-    tfel::utilities::SmartPtr<Evaluator::TExpr>
+    tfel::utilities::shared_ptr<Evaluator::TExpr>
     Evaluator::treatGroup2(std::vector<std::string>::const_iterator& p,
 			   std::vector<std::string>::const_iterator  pe,
 			   const bool b,
@@ -1004,8 +1002,8 @@ namespace tfel
       map<string,Evaluator::BinaryFunctionGenerator>::const_iterator p3;
       map<string,Evaluator::ExternalFunctionGenerator>::const_iterator p4;
       assert(p!=pe);
-      SmartPtr<Evaluator::TExpr> pg = SmartPtr<Evaluator::TExpr>(new TGroup());
-      TGroup * g = static_cast<TGroup *>(pg.getPtr());
+      shared_ptr<Evaluator::TExpr> pg = shared_ptr<Evaluator::TExpr>(new TGroup());
+      TGroup * g = static_cast<TGroup *>(pg.get());
       bool test;
       if(s.empty()){
 	test = (p!=pe);
@@ -1024,14 +1022,14 @@ namespace tfel
 	    ++p;
 	    const vector<string>& params = this->analyseParameters(p,pe);
 	    Evaluator::readSpecifiedToken("Evaluator::treatGroup2","(",p,pe);
-	    vector<SmartPtr<Evaluator::TExpr> > args   = this->analyseArguments(p,pe,b);
-	    g->add(SmartPtr<Evaluator::TExpr>(new TExternalOperator(p4->second,
+	    vector<shared_ptr<Evaluator::TExpr> > args   = this->analyseArguments(p,pe,b);
+	    g->add(shared_ptr<Evaluator::TExpr>(new TExternalOperator(p4->second,
 								    params,args)));
 	  } else {
 	    Evaluator::readSpecifiedToken("Evaluator::treatGroup2","(",p,pe);
 	    vector<string> params;
-	    vector<SmartPtr<Evaluator::TExpr> > args   = this->analyseArguments(p,pe,b);
-	    g->add(SmartPtr<Evaluator::TExpr>(new TExternalOperator(p4->second,
+	    vector<shared_ptr<Evaluator::TExpr> > args   = this->analyseArguments(p,pe,b);
+	    g->add(shared_ptr<Evaluator::TExpr>(new TExternalOperator(p4->second,
 								    params,args)));
 	  }
 	} else if((p3=Evaluator::getFunctionGeneratorManager().bFctGenerators.find(*p))!=
@@ -1039,39 +1037,39 @@ namespace tfel
 	  // call to binary function
 	  ++p;
 	  Evaluator::readSpecifiedToken("Evaluator::treatGroup2","(",p,pe);
-	  vector<SmartPtr<Evaluator::TExpr> > args = this->analyseArguments(2,p,pe,b);
-	  g->add(SmartPtr<Evaluator::TExpr>(new TBinaryFunction(p3->second,args[0],args[1])));
+	  vector<shared_ptr<Evaluator::TExpr> > args = this->analyseArguments(2,p,pe,b);
+	  g->add(shared_ptr<Evaluator::TExpr>(new TBinaryFunction(p3->second,args[0],args[1])));
 	} else if((p2=Evaluator::getFunctionGeneratorManager().fctGenerators.find(*p))!=
 		  Evaluator::getFunctionGeneratorManager().fctGenerators.end()){
 	  // call to function
 	  ++p;
 	  Evaluator::readSpecifiedToken("Evaluator::treatGroup2","(",p,pe);
-	  g->add(SmartPtr<TExpr>(new TFunction(p2->second,this->treatGroup(p,pe,b))));
+	  g->add(shared_ptr<TExpr>(new TFunction(p2->second,this->treatGroup(p,pe,b))));
 	} else if(isNumber(*p)){
 	  // number
 	  istringstream converter(*p);
 	  double value;
 	  converter >> value;
-	  g->add(SmartPtr<TExpr>(new TNumber(value)));
+	  g->add(shared_ptr<TExpr>(new TNumber(value)));
 	} else if(*p=="("){
 	  ++p;
 	  // begin group
-	  g->add(SmartPtr<TExpr>(this->treatGroup(p,pe,b)));
+	  g->add(shared_ptr<TExpr>(this->treatGroup(p,pe,b)));
 	} else if(*p=="+"){
-	  g->add(SmartPtr<TExpr>(new TOperator("+")));
+	  g->add(shared_ptr<TExpr>(new TOperator("+")));
 	} else if(*p=="-"){
-	  g->add(SmartPtr<TExpr>(new TOperator("-")));
+	  g->add(shared_ptr<TExpr>(new TOperator("-")));
 	} else if(*p=="*"){
-	  g->add(SmartPtr<TExpr>(new TOperator("*")));
+	  g->add(shared_ptr<TExpr>(new TOperator("*")));
 	} else if(*p=="/"){
-	  g->add(SmartPtr<TExpr>(new TOperator("/")));
+	  g->add(shared_ptr<TExpr>(new TOperator("/")));
 	} else if(*p=="**"){
-	  g->add(SmartPtr<TExpr>(new TOperator("**")));
+	  g->add(shared_ptr<TExpr>(new TOperator("**")));
 	} else {
 	  vector<string>::const_iterator pt = p;
 	  ++pt;
 	  if((pt!=pe)&&(*pt=="(")){
-	    if(this->manager.getPtr()!=0){
+	    if(this->manager.get()!=0){
 	      this->addExternalFunctionToGroup(g,p,pe,b);
 	    } else {
 	      string msg("Evaluator::treatGroup2 : unknown function '"+*p+"'");
@@ -1081,21 +1079,21 @@ namespace tfel
 	    if(b){
 	      // variable name is fixed
 	      if(this->positions.find(*p)==this->positions.end()){
-		vector<SmartPtr<Evaluator::TExpr> > args;
-		if(this->manager.getPtr()==0){
+		vector<shared_ptr<Evaluator::TExpr> > args;
+		if(this->manager.get()==0){
 		  string msg("Evaluator::treatGroup2 : ");
 		  msg += "unknown variable '"+*p+"'";
 		  throw(runtime_error(msg));
 		}
-		g->add(SmartPtr<Evaluator::TExpr>(new TExternalFunctionExpr(*p,
+		g->add(shared_ptr<Evaluator::TExpr>(new TExternalFunctionExpr(*p,
 									    args,
 									    this->manager)));
 
 	      } else {
-		g->add(SmartPtr<TExpr>(new TVariable(*p,*this)));
+		g->add(shared_ptr<TExpr>(new TVariable(*p,*this)));
 	      }
 	    } else {
-	      g->add(SmartPtr<TExpr>(new TVariable(*p,*this)));
+	      g->add(shared_ptr<TExpr>(new TVariable(*p,*this)));
 	    }
 	  }
 	}
@@ -1174,7 +1172,7 @@ namespace tfel
     Evaluator::getValue(void) const
     {
       using namespace std;
-      if(this->expr.getPtr()==0){
+      if(this->expr.get()==0){
 	string msg("Evaluator::getValue : ");
 	msg += "uninitialized expression.";
 	throw(runtime_error(msg));
@@ -1219,9 +1217,9 @@ namespace tfel
       EvaluatorBase::analyse(f);
       p  = this->tokens.begin(); 
       pe = this->tokens.end();
-      SmartPtr<TExpr> g = this->treatGroup(p,pe,b,"");
+      shared_ptr<TExpr> g = this->treatGroup(p,pe,b,"");
       g->reduce();
-      this->expr = SmartPtr<Expr>(g->analyse());
+      this->expr = shared_ptr<Expr>(g->analyse());
     }
 
     void
@@ -1235,15 +1233,15 @@ namespace tfel
       string fname = *p;
       ++p;
       Evaluator::readSpecifiedToken("Evaluator::addExternalFunctionToGroup","(",p,pe);
-      vector<SmartPtr<Evaluator::TExpr> > args = this->analyseArguments(p,pe,b);
-      g->add(SmartPtr<Evaluator::TExpr>(new TExternalFunctionExpr(fname,
+      vector<shared_ptr<Evaluator::TExpr> > args = this->analyseArguments(p,pe,b);
+      g->add(shared_ptr<Evaluator::TExpr>(new TExternalFunctionExpr(fname,
 								  args,
 								  this->manager)));
     } // end of Evaluator::addExternalFunctionToGroup
 
     Evaluator::Evaluator()
-      : expr(0),
-	manager(0)
+      : expr(static_cast<tfel::math::parser::Expr*>(0)),
+	manager(static_cast<tfel::math::parser::ExternalFunctionManager*>(0))
     {} // end of Evaluator::Evaluator
 
     Evaluator::Evaluator(const Evaluator& src)
@@ -1251,8 +1249,8 @@ namespace tfel
 	ExternalFunction(src),
 	variables(src.variables),
 	positions(src.positions),
-	expr(0),
-	manager(0)
+	expr(static_cast<tfel::math::parser::Expr*>(0)),
+	manager(static_cast<tfel::math::parser::ExternalFunctionManager*>(0))
     {
       this->manager = src.manager;
       this->expr = src.expr->clone(this->variables);
@@ -1283,16 +1281,23 @@ namespace tfel
     } // end of Evaluator::Evaluator
 
     Evaluator::Evaluator(const std::string& f,
-			 tfel::utilities::SmartPtr<tfel::math::parser::ExternalFunctionManager>& m)
+			 tfel::utilities::shared_ptr<tfel::math::parser::ExternalFunctionManager>& m)
     {
       this->setFunction(f,m);
     } // end of Evaluator::Evaluator
 
     Evaluator::Evaluator(const std::vector<std::string>& vars,
 			 const std::string& f,
-			 tfel::utilities::SmartPtr<tfel::math::parser::ExternalFunctionManager>& m)
+			 tfel::utilities::shared_ptr<tfel::math::parser::ExternalFunctionManager>& m)
     {
       this->setFunction(vars,f,m);
+    } // end of Evaluator::Evaluator
+
+    Evaluator::Evaluator(const double v)
+    {
+      using namespace tfel::utilities;
+      using namespace tfel::math::parser;
+      this->expr = shared_ptr<Expr>(new Number(v));
     } // end of Evaluator::Evaluator
 
     void
@@ -1303,8 +1308,8 @@ namespace tfel
       using namespace tfel::math::parser;
       this->variables.clear();
       this->positions.clear();
-      this->expr    = SmartPtr<Expr>(0);
-      this->manager = SmartPtr<ExternalFunctionManager>(0);
+      this->expr    = shared_ptr<Expr>(static_cast<Expr*>(0));
+      this->manager = shared_ptr<ExternalFunctionManager>(static_cast<ExternalFunctionManager*>(0));
       this->analyse(f,false);
     } // end of Evaluator::setFunction
 
@@ -1319,8 +1324,8 @@ namespace tfel
       vector<double>::size_type pos;
       this->variables.clear();
       this->positions.clear();
-      this->expr    = SmartPtr<Expr>(0);
-      this->manager = SmartPtr<ExternalFunctionManager>(0);
+      this->expr    = shared_ptr<Expr>(static_cast<Expr*>(0));
+      this->manager = shared_ptr<ExternalFunctionManager>(static_cast<ExternalFunctionManager*>(0));
       this->variables.resize(vars.size());
       for(p=vars.begin(),pos=0u;p!=vars.end();++p,++pos){
 	if(this->positions.find(*p)!=this->positions.end()){
@@ -1340,22 +1345,22 @@ namespace tfel
 
     void
     Evaluator::setFunction(const std::string& f,
-			   tfel::utilities::SmartPtr<tfel::math::parser::ExternalFunctionManager>& m)
+			   tfel::utilities::shared_ptr<tfel::math::parser::ExternalFunctionManager>& m)
     {
       using namespace std;
       using namespace tfel::utilities;
       using namespace tfel::math::parser;
       this->variables.clear();
       this->positions.clear();
-      this->expr    = SmartPtr<Expr>(0);
-      this->manager = SmartPtr<ExternalFunctionManager>(m);
+      this->expr    = shared_ptr<Expr>(static_cast<Expr*>(0));
+      this->manager = m;
       this->analyse(f,false);
     } // end of Evaluator::setFunction
 
     void
     Evaluator::setFunction(const std::vector<std::string>& vars,
 			   const std::string& f,
-			   tfel::utilities::SmartPtr<tfel::math::parser::ExternalFunctionManager>& m)
+			   tfel::utilities::shared_ptr<tfel::math::parser::ExternalFunctionManager>& m)
     {
       using namespace std;
       using namespace tfel::utilities;
@@ -1364,8 +1369,8 @@ namespace tfel
       vector<double>::size_type pos;
       this->variables.clear();
       this->positions.clear();
-      this->expr    = SmartPtr<Expr>(0);
-      this->manager = SmartPtr<ExternalFunctionManager>(m);
+      this->expr    = shared_ptr<Expr>(static_cast<Expr*>(0));
+      this->manager = m;
       this->variables.resize(vars.size());
       for(p=vars.begin(),pos=0u;p!=vars.end();++p,++pos){
 	if(this->positions.find(*p)!=this->positions.end()){
@@ -1383,15 +1388,15 @@ namespace tfel
       this->analyse(f,true);
     } // end of Evaluator::setFunction
     
-    tfel::utilities::SmartPtr<tfel::math::parser::ExternalFunction>
+    tfel::utilities::shared_ptr<tfel::math::parser::ExternalFunction>
     Evaluator::differentiate(const std::vector<double>::size_type pos) const
     {
       using namespace std;
       using namespace tfel::utilities;
       using namespace tfel::math::parser;
-      SmartPtr<ExternalFunction> pev(new Evaluator());
-      Evaluator& ev = static_cast<Evaluator&>(*(pev.getPtr()));
-      if(this->expr.getPtr()==0){
+      shared_ptr<ExternalFunction> pev(new Evaluator());
+      Evaluator& ev = static_cast<Evaluator&>(*(pev.get()));
+      if(this->expr.get()==0){
 	string msg("Evaluator::differentiate : ");
 	msg += "uninitialized expression.";
 	throw(runtime_error(msg));
@@ -1400,7 +1405,7 @@ namespace tfel
       ev.positions = this->positions;
       if(this->variables.size()==0){
 	// no variable
-	ev.expr = SmartPtr<Expr>(new Number(0.));
+	ev.expr = shared_ptr<Expr>(new Number(0.));
       } else {
 	if(pos>=this->variables.size()){
 	  ostringstream msg;
@@ -1419,7 +1424,7 @@ namespace tfel
       return pev;
     } // end of Evaluator::differentiate
 
-    tfel::utilities::SmartPtr<tfel::math::parser::ExternalFunction>
+    tfel::utilities::shared_ptr<tfel::math::parser::ExternalFunction>
     Evaluator::differentiate(const std::string&) const
     {
       using namespace std;
@@ -1427,21 +1432,21 @@ namespace tfel
       using namespace tfel::math::parser;
       string msg("Evaluator::differentiate : unimplemented feature");
       throw(runtime_error(msg));
-      if(this->expr.getPtr()==0){
+      if(this->expr.get()==0){
 	string emsg("Evaluator::differentiate : ");
 	emsg += "uninitialized expression.";
 	throw(runtime_error(emsg));
       }
-      return SmartPtr<ExternalFunction>(0);
-    } // end of tfel::utilities::SmartPtr<ExternalFunction>
+      return shared_ptr<ExternalFunction>(static_cast<ExternalFunction*>(0));
+    } // end of tfel::utilities::shared_ptr<ExternalFunction>
 
-    tfel::utilities::SmartPtr<tfel::math::parser::ExternalFunction>
+    tfel::utilities::shared_ptr<tfel::math::parser::ExternalFunction>
     Evaluator::resolveDependencies() const
     {
       using namespace tfel::utilities;
       this->checkCyclicDependency();
-      SmartPtr<ExternalFunction> f(new Evaluator(*this));
-      Evaluator *pf = static_cast<Evaluator *>(f.getPtr());
+      shared_ptr<ExternalFunction> f(new Evaluator(*this));
+      Evaluator *pf = static_cast<Evaluator *>(f.get());
       pf->expr = pf->expr->resolveDependencies(pf->variables);
       return f;
     } // end of Evaluator::resolveDependencies() const
@@ -1454,7 +1459,7 @@ namespace tfel
       this->expr = this->expr->resolveDependencies(this->variables);
     } // end of Evaluator::removeDependencies() const
 
-    tfel::utilities::SmartPtr<tfel::math::parser::ExternalFunctionManager>
+    tfel::utilities::shared_ptr<tfel::math::parser::ExternalFunctionManager>
     Evaluator::getExternalFunctionManager(void)
     {
       return this->manager;
@@ -1475,7 +1480,7 @@ namespace tfel
     } // end of Evaluator::getVariablePosition(const std::string&)
 
 
-    tfel::utilities::SmartPtr<tfel::math::parser::ExternalFunction>
+    tfel::utilities::shared_ptr<tfel::math::parser::ExternalFunction>
     Evaluator::createFunctionByChangingParametersIntoVariables(std::vector<std::string>& nparams,
 							       const std::vector<double>&,
 							       const std::vector<std::string>& params,
@@ -1495,13 +1500,10 @@ namespace tfel
 	  }
 	}
       }
-//       SmartPtr<ExternalFunction> f(new Evaluator(*this));
-//       Evaluator *pf = static_cast<Evaluator *>(f.getPtr());
-//       pf->expr = pf->expr->createFunctionByChangingParametersIntoVariables(v,params,pos);
       return this->createFunctionByChangingParametersIntoVariables(nparams);
     } // end of Evaluator::createFunctionByChangingParametersIntoVariables
 
-    tfel::utilities::SmartPtr<tfel::math::parser::ExternalFunction>
+    tfel::utilities::shared_ptr<tfel::math::parser::ExternalFunction>
     Evaluator::createFunctionByChangingParametersIntoVariables(const std::vector<std::string>& params) const
     {
       using namespace std;
@@ -1514,23 +1516,6 @@ namespace tfel
       vector<double>::size_type i;
       assert(this->variables.size()==this->positions.size());
       this->getParametersNames(ev_params);
-
-      cout << "Evaluator::createFunctionByChangingParametersIntoVariables, this->variables : ";
-      for(pv=this->positions.begin();pv!=this->positions.end();++pv){
-	cout << pv->first << " ";
-      }
-      cout << endl;
-
-      cout << "Evaluator::createFunctionByChangingParametersIntoVariables, params : ";
-      copy(ev_params.begin(),ev_params.end(),
-	   ostream_iterator<string>(cout," "));
-      cout << endl;
-
-      cout << "Evaluator::createFunctionByChangingParametersIntoVariables, nparams : ";
-      copy(params.begin(),params.end(),
-	   ostream_iterator<string>(cout," "));
-      cout << endl;
-
       for(pp=params.begin();pp!=params.end();++pp){
 	if(ev_params.find(*pp)==ev_params.end()){
 	  string msg("Evaluator::createFunctionByChangingParametersIntoVariables : ");
@@ -1546,7 +1531,7 @@ namespace tfel
 	}
       }
       Evaluator* ev = new Evaluator();
-      SmartPtr<ExternalFunction> pev = SmartPtr<ExternalFunction>(ev);
+      shared_ptr<ExternalFunction> pev = shared_ptr<ExternalFunction>(ev);
       ev->variables.resize(this->variables.size()+params.size());
       ev->positions = this->positions;
       for(pp=params.begin(),i=this->variables.size();pp!=params.end();++pp,++i){

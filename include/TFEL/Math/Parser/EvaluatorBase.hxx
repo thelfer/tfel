@@ -12,6 +12,8 @@
 #include<vector>
 #include<string>
 
+#include"TFEL/Config/TFELConfig.hxx"
+
 namespace tfel
 {
   namespace math
@@ -27,10 +29,10 @@ namespace tfel
 	analyse(const std::string&);
 	std::vector<std::string> tokens;
       private:
-	static void
+	static TFEL_VISIBILITY_LOCAL void
 	splitAtTokenSeperator(std::vector<std::string>&);
-	static
-	const std::string
+	static TFEL_VISIBILITY_LOCAL
+	std::string
 	readNumber(std::string::iterator&,const std::string::iterator);
       }; // end of struct EvaluatorBase
 

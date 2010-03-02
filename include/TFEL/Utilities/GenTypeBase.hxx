@@ -13,6 +13,7 @@
 #include<cmath>
 #include<limits>
 
+#include"TFEL/Config/TFELConfig.hxx"
 #include"TFEL/Metaprogramming/StaticAssert.hxx"
 #include"TFEL/Metaprogramming/TypeList.hxx"
 #include"TFEL/Metaprogramming/GenerateTypeList.hxx"
@@ -35,7 +36,7 @@ namespace tfel{
        * \date   20 Apr. 2007
        */
       template<typename U> 
-      struct Structify
+      struct TFEL_VISIBILITY_LOCAL Structify
       { 
 	// a structure
 	U dummy_;
@@ -95,7 +96,7 @@ namespace tfel{
        * \date   20 Apr. 2007.
        */
       template<typename T>
-      struct GenTypeTraits
+      struct TFEL_VISIBILITY_LOCAL GenTypeTraits
       {
 	/*
 	 * a boolean saying if the type in argument is a plain old
@@ -110,7 +111,7 @@ namespace tfel{
        * \date   20 Apr. 2007.
        */
       template<typename T>
-      struct GenTypePODDestroy
+      struct TFEL_VISIBILITY_LOCAL GenTypePODDestroy
       {
 	//! the helper function.
 	/*
@@ -127,7 +128,7 @@ namespace tfel{
        * \date   20 Apr. 2007.
        */
       template<typename T>
-      struct GenTypeGenericDestroy
+      struct TFEL_VISIBILITY_LOCAL GenTypeGenericDestroy
       {
 	//! the helper function.
 	/*
@@ -147,7 +148,7 @@ namespace tfel{
        * \date   20 Apr. 2007.
        */
       template<typename T>
-      struct GenTypeAssign
+      struct TFEL_VISIBILITY_LOCAL GenTypeAssign
       {
 	//! the helper function.
 	/*
@@ -171,7 +172,7 @@ namespace tfel{
        * \date   20 Apr. 2007.
        */
       template<typename T>
-      struct GenTypeCopy
+      struct TFEL_VISIBILITY_LOCAL GenTypeCopy
       {
 	//! the helper function.
 	/*
@@ -196,7 +197,7 @@ namespace tfel{
        * \date   20 Apr. 2007.
        */
       template<unsigned short N,typename List>
-      struct GenTypeRunTimeMethods
+      struct TFEL_VISIBILITY_LOCAL GenTypeRunTimeMethods
 	: public GenTypeRunTimeMethods<N-1,List>
       {
 	//! Default constructor
@@ -227,7 +228,7 @@ namespace tfel{
        * \date   20 Apr. 2007.
        */
       template<typename List>
-      struct GenTypeRunTimeMethods<0u,List>
+      struct TFEL_VISIBILITY_LOCAL GenTypeRunTimeMethods<0u,List>
       {
 	//! a simple alias.
 	typedef void (*DestroyMethod)(void *const);
@@ -310,7 +311,7 @@ namespace tfel{
      * \date   20 Apr. 2007.
      */
     template<typename List>
-    struct GenTypeBase
+    struct TFEL_VISIBILITY_LOCAL GenTypeBase
       : public tfel::utilities::internals::GenTypeSpecializedMethods<GenTypeBase<List>,List>
     {
       //! Default constructor.

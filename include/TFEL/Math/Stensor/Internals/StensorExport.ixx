@@ -21,7 +21,7 @@ namespace tfel{
     namespace internals{
 
       template<>
-      struct ExportToTab<1u>{
+      struct TFEL_VISIBILITY_LOCAL ExportToTab<1u>{
 	template<typename T>
 	TFEL_MATH_INLINE static void exe(const T* const src,T * const target)
 	{
@@ -32,7 +32,7 @@ namespace tfel{
       };
 
       template<>
-      struct ExportToTab<2u>{
+      struct TFEL_VISIBILITY_LOCAL ExportToTab<2u>{
 	template<typename T>
 	TFEL_MATH_INLINE static void exe(const T* const src,T * const target)
 	{
@@ -45,7 +45,7 @@ namespace tfel{
       };
 
       template<>
-      struct ExportToTab<3u>{
+      struct TFEL_VISIBILITY_LOCAL ExportToTab<3u>{
 	template<typename T>
 	TFEL_MATH_INLINE static void exe(const T* const src,T * const target)
 	{
@@ -60,7 +60,7 @@ namespace tfel{
       };
 
       template<>
-      struct ExportToVoigt<1u>{
+      struct TFEL_VISIBILITY_LOCAL ExportToVoigt<1u>{
 	template<typename T>
 	TFEL_MATH_INLINE static void exe(const T* const src,T * const target)
 	{
@@ -71,7 +71,7 @@ namespace tfel{
       };
 
       template<>
-      struct ExportToVoigt<2u>{
+      struct TFEL_VISIBILITY_LOCAL ExportToVoigt<2u>{
 	template<typename T>
 	TFEL_MATH_INLINE static void exe(const T* const src,T * const target)
 	{
@@ -84,7 +84,7 @@ namespace tfel{
       };
 
       template<>
-      struct ExportToVoigt<3u>{
+      struct TFEL_VISIBILITY_LOCAL ExportToVoigt<3u>{
 	template<typename T>
 	TFEL_MATH_INLINE static void exe(const T* const src,T * const target)
 	{

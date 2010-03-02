@@ -16,7 +16,7 @@ namespace tfel
     namespace parser
     {
 
-      Negation::Negation(const tfel::utilities::SmartPtr<Expr> e)
+      Negation::Negation(const tfel::utilities::shared_ptr<Expr> e)
 	: expr(e)
       {} // end of Negation::Negation
       
@@ -32,38 +32,38 @@ namespace tfel
 	this->expr->checkCyclicDependency(names);
       } // end of Negation::checkCyclicDependency
 
-      tfel::utilities::SmartPtr<Expr>
+      tfel::utilities::shared_ptr<Expr>
       Negation::differentiate(const std::vector<double>::size_type pos,
 			      const std::vector<double>& variable) const
       {
 	using namespace tfel::utilities;
-	SmartPtr<Expr> e = this->expr->differentiate(pos,variable);
-	return SmartPtr<Expr>(new Negation(e));
+	shared_ptr<Expr> e = this->expr->differentiate(pos,variable);
+	return shared_ptr<Expr>(new Negation(e));
       } // end of Negation::differentiate
       
-      tfel::utilities::SmartPtr<Expr>
+      tfel::utilities::shared_ptr<Expr>
       Negation::clone(const std::vector<double>& v) const
       {
 	using namespace tfel::utilities;
-	return SmartPtr<Expr>(new Negation(this->expr->clone(v)));
+	return shared_ptr<Expr>(new Negation(this->expr->clone(v)));
       }
 
-      tfel::utilities::SmartPtr<Expr>
+      tfel::utilities::shared_ptr<Expr>
       Negation::createFunctionByChangingParametersIntoVariables(const std::vector<double>& v,
 								const std::vector<std::string>& params,
 								const std::map<std::string,
 								std::vector<double>::size_type>& pos) const
       {
 	using namespace tfel::utilities;
-	SmartPtr<Expr> nexpr = this->expr->createFunctionByChangingParametersIntoVariables(v,params,pos);
-	return SmartPtr<Expr>(new Negation(nexpr));
+	shared_ptr<Expr> nexpr = this->expr->createFunctionByChangingParametersIntoVariables(v,params,pos);
+	return shared_ptr<Expr>(new Negation(nexpr));
       } // end of Negation::createFunctionByChangingParametersIntoVariables
 
-      tfel::utilities::SmartPtr<Expr>
+      tfel::utilities::shared_ptr<Expr>
       Negation::resolveDependencies(const std::vector<double>& v) const
       {
 	using namespace tfel::utilities;
-	return SmartPtr<Expr>(new Negation(this->expr->resolveDependencies(v)));
+	return shared_ptr<Expr>(new Negation(this->expr->resolveDependencies(v)));
       } // end of Negation::resolveDependencies
 
       void

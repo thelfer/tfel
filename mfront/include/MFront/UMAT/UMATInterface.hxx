@@ -47,7 +47,7 @@ namespace umat{
    * \date   28 Jul 2006
    */
   template<template<unsigned short,typename,bool> class Behaviour>
-  struct UMATInterface
+  struct TFEL_VISIBILITY_LOCAL UMATInterface
   {
     
     TFEL_UMAT_INLINE2 static
@@ -161,10 +161,10 @@ namespace umat{
   private:
 
     template<unsigned short N>
-    struct TreatBehaviour
+    struct TFEL_VISIBILITY_LOCAL TreatBehaviour
     {
 
-      struct StiffnessTensorInitializer
+      struct TFEL_VISIBILITY_LOCAL StiffnessTensorInitializer
       {
 	typedef Behaviour<N,UMATReal,false> BV;
 	typedef typename BV::BehaviourData  BData;
@@ -175,7 +175,7 @@ namespace umat{
 	} // end of exe
       }; // end of struct StiffnessTensorInitializer
 
-      struct ThermalExpansionTensorInitializer
+      struct TFEL_VISIBILITY_LOCAL ThermalExpansionTensorInitializer
       {
 	typedef Behaviour<N,UMATReal,false> BV;
 	typedef typename BV::BehaviourData  BData;
@@ -186,7 +186,7 @@ namespace umat{
 	} // end of exe
       }; // end of struct ThermalExpansionTensorInitializer
 
-      struct DoNothingInitializer
+      struct TFEL_VISIBILITY_LOCAL DoNothingInitializer
       {
 	typedef Behaviour<N,UMATReal,false> BV;
 	typedef typename BV::BehaviourData  BData;
@@ -195,7 +195,7 @@ namespace umat{
 	{}
       }; // end of struct DoNothingInitializer
 
-      struct Error
+      struct TFEL_VISIBILITY_LOCAL Error
       {
 	
 	TFEL_UMAT_INLINE Error(const UMATReal *const,
@@ -226,7 +226,7 @@ namespace umat{
       
       template<const bool bs,     // requires StiffnessTensor
 	       const bool ba>     // requires ThermalExpansionTensor
-      struct IntegratorWithTimeStepping
+      struct TFEL_VISIBILITY_LOCAL IntegratorWithTimeStepping
       {
 	typedef typename tfel::meta::IF<bs,
 					StiffnessTensorInitializer,
@@ -321,7 +321,7 @@ namespace umat{
 
       template<const bool bs,     // requires StiffnessTensor
 	       const bool ba>     // requires ThermalExpansionTensor
-      struct Integrator
+      struct TFEL_VISIBILITY_LOCAL Integrator
       {
 	typedef typename tfel::meta::IF<bs,
 					StiffnessTensorInitializer,
@@ -383,10 +383,10 @@ namespace umat{
 	using namespace tfel::material;
 	typedef Behaviour<N,UMATReal,false> BV;
 	typedef MechanicalBehaviourTraits<BV> Traits;
-	static const unsigned short offset  = UMATTraits<BV>::propertiesOffset;
-	static const unsigned short nprops  = Traits::material_properties_nb;
-	static const unsigned short NPROPS_ = offset+nprops == 0 ? 1u : offset+nprops; 
-	static const bool is_defined_       = Traits::is_defined;
+	const unsigned short offset  = UMATTraits<BV>::propertiesOffset;
+	const unsigned short nprops  = Traits::material_properties_nb;
+	const unsigned short NPROPS_ = offset+nprops == 0 ? 1u : offset+nprops; 
+	const bool is_defined_       = Traits::is_defined;
 	//Test if the nb of properties matches Behaviour requirements
 	if((NPROPS!=NPROPS_)&&is_defined_){
 	  string msg = Name<Behaviour<N,UMATReal,false> >::getName();
@@ -405,9 +405,9 @@ namespace umat{
       {
 	typedef Behaviour<N,UMATReal,false> BV;
 	typedef tfel::material::MechanicalBehaviourTraits<BV> Traits;
-	static const unsigned short nstatv  = Traits::internal_variables_nb;
-	static const unsigned short NSTATV_ = nstatv == 0 ? 1u : nstatv;
-	static const bool is_defined_       = Traits::is_defined;
+	const unsigned short nstatv  = Traits::internal_variables_nb;
+	const unsigned short NSTATV_ = nstatv == 0 ? 1u : nstatv;
+	const bool is_defined_       = Traits::is_defined;
 	//Test if the nb of state variables matches Behaviour requirements
 	if((NSTATV_!=NSTATV)&&is_defined_){
 	  std::string msg = tfel::utilities::Name<Behaviour<N,UMATReal,false> >::getName();
@@ -422,7 +422,7 @@ namespace umat{
 
     }; // end of struct TreatBehaviour
 
-    struct TreatOrthotropicBehaviour1D
+    struct TFEL_VISIBILITY_LOCAL TreatOrthotropicBehaviour1D
       : private TreatBehaviour<1u>
     {
       TFEL_UMAT_INLINE2 static 
@@ -447,9 +447,9 @@ namespace umat{
 	typedef MechanicalBehaviourTraits<Behaviour<1u,UMATReal,false> > MTraits;
 	typedef UMATTraits<Behaviour<1u,UMATReal,false> > Traits;
 	typedef TreatBehaviour<1u> TreatBehaviour;
-	static const bool is_defined_ = MTraits::is_defined;
-	static const bool bs = Traits::requiresStiffnessTensor;
-	static const bool ba = Traits::requiresThermalExpansionTensor;
+	const bool is_defined_ = MTraits::is_defined;
+	const bool bs = Traits::requiresStiffnessTensor;
+	const bool ba = Traits::requiresThermalExpansionTensor;
 	typedef typename IF<
 	  is_defined_,
 	  typename IF<
@@ -467,7 +467,7 @@ namespace umat{
       } // end of TreatOrthotropicBehaviour1D::exe
     }; // end of struct TreatOrthotropicBehaviour1D
 
-    struct TreatOrthotropicBehaviour2D
+    struct TFEL_VISIBILITY_LOCAL TreatOrthotropicBehaviour2D
       : private TreatBehaviour<2u>
     {
       TFEL_UMAT_INLINE2 static 
@@ -492,9 +492,9 @@ namespace umat{
 	typedef MechanicalBehaviourTraits<Behaviour<2u,UMATReal,false> > MTraits;
 	typedef UMATTraits<Behaviour<2u,UMATReal,false> > Traits;
 	typedef TreatBehaviour<2u> TreatBehaviour;
-	static const bool is_defined_ = MTraits::is_defined;
-	static const bool bs = Traits::requiresStiffnessTensor;
-	static const bool ba = Traits::requiresThermalExpansionTensor;
+	const bool is_defined_ = MTraits::is_defined;
+	const bool bs = Traits::requiresStiffnessTensor;
+	const bool ba = Traits::requiresThermalExpansionTensor;
 	typedef typename IF<
 	  is_defined_,
 	  typename IF<
@@ -520,7 +520,7 @@ namespace umat{
       } // end of TreatOrthotropicBehaviour2D::exe
     }; // end of TreatOrthotropicBehaviour2D
 
-    struct TreatOrthotropicBehaviour3D
+    struct TFEL_VISIBILITY_LOCAL TreatOrthotropicBehaviour3D
       : private TreatBehaviour<3u>
     {
       TFEL_UMAT_INLINE2 static 
@@ -545,9 +545,9 @@ namespace umat{
 	typedef MechanicalBehaviourTraits<Behaviour<3u,UMATReal,false> > MTraits;
 	typedef UMATTraits<Behaviour<3u,UMATReal,false> > Traits;
 	typedef TreatBehaviour<3u> TreatBehaviour;
-	static const bool is_defined_ = MTraits::is_defined;
-	static const bool bs = Traits::requiresStiffnessTensor;
-	static const bool ba = Traits::requiresThermalExpansionTensor;
+	const bool is_defined_ = MTraits::is_defined;
+	const bool bs = Traits::requiresStiffnessTensor;
+	const bool ba = Traits::requiresThermalExpansionTensor;
 	typedef typename IF<
 	  is_defined_,
 	  typename IF<
@@ -577,7 +577,7 @@ namespace umat{
     }; // end of struct TreatOrthotropicBehaviour3D
 
     template<unsigned short N>
-    struct TreatIsotropicBehaviour
+    struct TFEL_VISIBILITY_LOCAL TreatIsotropicBehaviour
       : public TreatBehaviour<N>
     {
       TFEL_UMAT_INLINE static
@@ -601,9 +601,9 @@ namespace umat{
 	typedef MechanicalBehaviourTraits<Behaviour<N,UMATReal,false> > MTraits;
 	typedef UMATTraits<Behaviour<N,UMATReal,false> > Traits;
 	typedef TreatBehaviour<N> TreatBehaviour;
-	static const bool is_defined_ = MTraits::is_defined;
-	static const bool bs = Traits::requiresStiffnessTensor;
-	static const bool ba = Traits::requiresThermalExpansionTensor;
+	const bool is_defined_ = MTraits::is_defined;
+	const bool bs = Traits::requiresStiffnessTensor;
+	const bool ba = Traits::requiresThermalExpansionTensor;
 	typedef typename IF<
 	  is_defined_,
 	  typename IF<

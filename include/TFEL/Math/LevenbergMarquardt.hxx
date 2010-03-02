@@ -61,6 +61,9 @@ namespace tfel
       void
       setMaximumIteration(const T);
 
+      unsigned short
+      getNumberOfIterations() const;
+
       const Parameter&
       execute(void);
       
@@ -73,6 +76,7 @@ namespace tfel
       T factor;
       T eps1;
       T eps2;
+      unsigned short iter;
       unsigned short iterMax;
 
     }; // end of struct LevenbergMarquardt

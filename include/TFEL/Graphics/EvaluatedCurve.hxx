@@ -22,7 +22,7 @@ namespace tfel
     struct EvaluatedCurve
       : public Curve
     {
-      EvaluatedCurve(tfel::utilities::SmartPtr<tfel::math::Evaluator>&,
+      EvaluatedCurve(tfel::utilities::shared_ptr<tfel::math::Evaluator>&,
 		     const std::string& = "x");
       bool hasRange(void) const;
       double minRange(void) const;
@@ -44,7 +44,7 @@ namespace tfel
       void setNumberOfSamples(const unsigned short);
       ~EvaluatedCurve();
     private:
-      tfel::utilities::SmartPtr<tfel::math::Evaluator> ev;
+      tfel::utilities::shared_ptr<tfel::math::Evaluator> ev;
       std::string  legend;
       Curve::Color color;
       Curve::Style style;

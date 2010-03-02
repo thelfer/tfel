@@ -1,6 +1,6 @@
 /*!
  * \file   TypeTransform.ixx
- * \brief  This file implements IdTransform and SmartPtrTransform.
+ * \brief  This file implements IdTransform and shared_ptrTransform.
  * \author Helfer Thomas
  * \date   01 jun 2006
  */
@@ -51,9 +51,9 @@ namespace tfel{
     };
     
     template<typename T>
-    struct SmartPtrTransform{
+    struct shared_ptrTransform{
 
-      typedef tfel::utilities::SmartPtr<T> type;
+      typedef tfel::utilities::shared_ptr<T> type;
       typedef T  value_type;
       typedef T* pointer;
       typedef const T* const_pointer;
@@ -63,7 +63,7 @@ namespace tfel{
       static
       const std::string
       getName(void){
-	return std::string("SmartPtrTransform<")+Name<T>::getName()+std::string(">");
+	return std::string("shared_ptrTransform<")+Name<T>::getName()+std::string(">");
       }
 
       static inline value_type& reverse_transform(type& src){

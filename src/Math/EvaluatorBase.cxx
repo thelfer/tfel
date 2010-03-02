@@ -21,7 +21,7 @@ namespace tfel
     namespace parser
     {
 
-      const std::string
+      std::string
       EvaluatorBase::readNumber(std::string::iterator& p,
 				std::string::iterator  pe)
       {

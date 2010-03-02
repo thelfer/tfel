@@ -39,7 +39,7 @@ namespace tfel
 
 	struct ImportOptions;
 
-	tfel::utilities::SmartPtr<tfel::math::parser::ExternalFunctionManager> functions;
+	tfel::utilities::shared_ptr<tfel::math::parser::ExternalFunctionManager> functions;
 
 	std::set<std::string> locks;
       
@@ -66,7 +66,7 @@ namespace tfel
 		    const TokensContainer::const_iterator,
 		    const bool);
 
-	tfel::utilities::SmartPtr<tfel::math::Evaluator>
+	tfel::utilities::shared_ptr<tfel::math::Evaluator>
 	readFunction(TokensContainer::const_iterator&, 
 		     const TokensContainer::const_iterator);
 
@@ -87,7 +87,7 @@ namespace tfel
 
 	void
 	addFunction(const std::string&,
-		    tfel::utilities::SmartPtr<tfel::math::parser::ExternalFunction>,
+		    tfel::utilities::shared_ptr<tfel::math::parser::ExternalFunction>,
 		    const bool,
 		    const bool);
 

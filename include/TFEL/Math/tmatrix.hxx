@@ -41,7 +41,7 @@ namespace tfel{
      * \see MatrixTraits.
      */
     template<unsigned short N,unsigned short M, typename T>
-    struct MatrixTraits<tmatrix<N,M,T> >{
+    struct TFEL_VISIBILITY_LOCAL MatrixTraits<tmatrix<N,M,T> >{
       //! the type holded by the tmatrix.
       typedef T NumType;
       //! the type of the index used by the tmatrix.
@@ -50,8 +50,10 @@ namespace tfel{
       typedef EmptyRunTimeProperties RunTimeProperties;
     };
     
-    template<unsigned short N,unsigned short M, typename T = double>
-    class tmatrix
+    template<unsigned short N,
+	     unsigned short M,
+	     typename T = double>
+    class  TFEL_VISIBILITY_LOCAL tmatrix
       : public MatrixConcept<tmatrix<N,M,T> >
     {
       //! a simple assertion stating that the number of row is valid.

@@ -29,7 +29,7 @@ namespace tfel
     {
       AddCurveDialog();
       void setDefaultColor(const Curve::Color&);
-      std::vector<tfel::utilities::SmartPtr<Curve> >
+      std::vector<tfel::utilities::shared_ptr<Curve> >
       getCurve(void);
       Graph::GraphAxis
       getAxis(void);
@@ -50,15 +50,15 @@ namespace tfel
       response(int);
       void
       applyCurveSettings(Curve *const);
-      std::vector<tfel::utilities::SmartPtr<Curve> >
+      std::vector<tfel::utilities::shared_ptr<Curve> >
       getEvaluatedCurve(void);
       std::string
       getData(std::vector<double>&,
 	      const tfel::utilities::TextData&,
 	      const std::string&);
-      std::vector<tfel::utilities::SmartPtr<Curve> >
+      std::vector<tfel::utilities::shared_ptr<Curve> >
       getDataCurve(void);
-      tfel::utilities::SmartPtr<Curve>
+      tfel::utilities::shared_ptr<Curve>
       getDataCurve(const tfel::utilities::TextData&,
 		   const std::string&,
 		   const std::string&);

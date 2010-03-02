@@ -315,18 +315,18 @@ namespace tfel
 	int result = dialog.run();
 	//Handle the response:
 	if(result==RESPONSE_OK){
-	  const vector<tfel::utilities::SmartPtr<Curve> >& curves = dialog.getCurve();
+	  const vector<tfel::utilities::shared_ptr<Curve> >& curves = dialog.getCurve();
 	  const Graph::GraphAxis axis = dialog.getAxis(); 
-	  vector<tfel::utilities::SmartPtr<Curve> >::const_iterator p;
+	  vector<tfel::utilities::shared_ptr<Curve> >::const_iterator p;
 	  for(p=curves.begin();p!=curves.end();++p){
 	    this->area.addCurve(*p,axis);	    
 	  }
 	  this->queue_draw();
 	  run = false;
 	} else if (result==RESPONSE_APPLY){
-	  const vector<tfel::utilities::SmartPtr<Curve> >& curves = dialog.getCurve();
+	  const vector<tfel::utilities::shared_ptr<Curve> >& curves = dialog.getCurve();
 	  const Graph::GraphAxis axis = dialog.getAxis(); 
-	  vector<tfel::utilities::SmartPtr<Curve> >::const_iterator p;
+	  vector<tfel::utilities::shared_ptr<Curve> >::const_iterator p;
 	  for(p=curves.begin();p!=curves.end();++p){
 	    this->area.addCurve(*p,axis);	    
 	  }

@@ -216,7 +216,7 @@ namespace tfel
       }
     } // end of AddCurveDialog::applyCurveSettings
 
-    std::vector<tfel::utilities::SmartPtr<Curve> >
+    std::vector<tfel::utilities::shared_ptr<Curve> >
     AddCurveDialog::getEvaluatedCurve(void)
     {
       using namespace std;
@@ -225,14 +225,14 @@ namespace tfel
       using namespace tfel::utilities;
       using namespace tfel::math;
       using namespace Gtk;
-      vector<tfel::utilities::SmartPtr<Curve> > res;
+      vector<tfel::utilities::shared_ptr<Curve> > res;
       if(this->entry.get_text().empty()){
-	res.push_back(SmartPtr<Curve>(0));
+	res.push_back(shared_ptr<Curve>(0));
 	return res;
       }
       EvaluatedCurve *pc;
       try{
-	SmartPtr<Evaluator> ev(new Evaluator(this->entry.get_text()));
+	shared_ptr<Evaluator> ev(new Evaluator(this->entry.get_text()));
 	pc = new EvaluatedCurve(ev,"x");
       }
       catch(runtime_error& e){
@@ -245,7 +245,7 @@ namespace tfel
 	dialog.set_secondary_text(e.what());
 	clog << msg << endl;
 	dialog.run();
-	res.push_back(SmartPtr<Curve>(0));
+	res.push_back(shared_ptr<Curve>(0));
 	return res;
       }
       this->applyCurveSettings(pc);
@@ -270,7 +270,7 @@ namespace tfel
       } else {
 	pc->setLegend(this->cName.get_text());
       }
-      res.push_back(SmartPtr<Curve>(pc));
+      res.push_back(shared_ptr<Curve>(pc));
       return res;
     } // end of AddCurveDialog::getEvaluatedCurve
 
@@ -336,7 +336,7 @@ namespace tfel
       return "";
     } // end of AddCurveDialog::getData
 
-    tfel::utilities::SmartPtr<Curve>
+    tfel::utilities::shared_ptr<Curve>
     AddCurveDialog::getDataCurve(const tfel::utilities::TextData& data,
 				 const std::string& sa,
 				 const std::string& sc)
@@ -365,7 +365,7 @@ namespace tfel
 	clog << msg << endl;
 	dialog.run();
 	delete pc;
-	return SmartPtr<Curve>(0);
+	return shared_ptr<Curve>(0);
       }
       if(this->cName.get_text().empty()){
 	if(legend.empty()){
@@ -379,24 +379,24 @@ namespace tfel
 	pc->setLegend(this->cName.get_text());
       }
       this->applyCurveSettings(pc);
-      return SmartPtr<Curve>(pc);
+      return shared_ptr<Curve>(pc);
     } // end of AddCurveDialog::getSimpleDataCurve(void)
 
-    std::vector<tfel::utilities::SmartPtr<Curve> >
+    std::vector<tfel::utilities::shared_ptr<Curve> >
     AddCurveDialog::getDataCurve(void)
     {
       using namespace std;
       using namespace Glib;
       using namespace Gtk;
       using namespace tfel::utilities;
-      vector<tfel::utilities::SmartPtr<Curve> > res;
-      vector<tfel::utilities::SmartPtr<Curve> >::const_iterator p2;
+      vector<tfel::utilities::shared_ptr<Curve> > res;
+      vector<tfel::utilities::shared_ptr<Curve> >::const_iterator p2;
       ustring a = this->abscissa.get_text();
       ustring c = this->column.get_text();
       ustring f = this->fButton.get_filename();
       vector<string>::const_iterator p;
       if(f.empty()){
-	res.push_back(SmartPtr<Curve>(0));
+	res.push_back(shared_ptr<Curve>(0));
 	return res;
       }
       if(a.empty()){
@@ -405,7 +405,7 @@ namespace tfel
 	MessageDialog dialog(*this,msg,false,MESSAGE_WARNING);
 	clog << msg << endl;
 	dialog.run();
-	res.push_back(SmartPtr<Curve>(0));
+	res.push_back(shared_ptr<Curve>(0));
 	return res;
       }
       if(c.empty()){
@@ -414,7 +414,7 @@ namespace tfel
 	MessageDialog dialog(*this,msg,false,MESSAGE_WARNING);
 	clog << msg << endl;
 	dialog.run();
-	res.push_back(SmartPtr<Curve>(0));
+	res.push_back(shared_ptr<Curve>(0));
 	return res;
       }
       const vector<string>& tc = AddCurveDialog::tokenize(c);
@@ -435,7 +435,7 @@ namespace tfel
 	dialog.set_secondary_text(e.what());
 	clog << msg << endl;
 	dialog.run();
-	res.push_back(SmartPtr<Curve>(0));
+	res.push_back(shared_ptr<Curve>(0));
 	return res;
       }
       return res;
@@ -451,7 +451,7 @@ namespace tfel
       this->colorButton.set_color(this->color);
     } // end of AddCurveDialog::setDefaultColor
 
-    std::vector<tfel::utilities::SmartPtr<Curve> >
+    std::vector<tfel::utilities::shared_ptr<Curve> >
     AddCurveDialog::getCurve(void)
     {
       if(this->pages.get_current_page()==1){

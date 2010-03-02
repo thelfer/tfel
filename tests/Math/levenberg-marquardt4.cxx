@@ -58,7 +58,7 @@ int main(void)
   v.push_back("x");
   v.push_back("p0");
   v.push_back("p1");
-  SmartPtr<Evaluator> test(new Evaluator(v,"p1*exp(p0*cos(x*x))"));
+  shared_ptr<Evaluator> test(new Evaluator(v,"p1*exp(p0*cos(x*x))"));
   LevenbergMarquardt<EvaluatorWrapper> levmar(EvaluatorWrapper(test,1u,2u));
   vector<double> x(1u);
   vector<double> p(2u);

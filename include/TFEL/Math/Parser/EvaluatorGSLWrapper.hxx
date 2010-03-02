@@ -47,16 +47,16 @@ namespace tfel
       }
 
       template<GSLFunctionPtr f>
-      double gsl_wrapper(double);
+      double TFEL_VISIBILITY_LOCAL gsl_wrapper(double);
 
       template<GSLFunction2Ptr f>
-      double gsl_wrapper2(double,double);
+      double TFEL_VISIBILITY_LOCAL gsl_wrapper2(double,double);
 
       template<GSLFunction3Ptr f>
-      double gsl_wrapper3(double,double,double);
+      double TFEL_VISIBILITY_LOCAL gsl_wrapper3(double,double,double);
 
       template<GSLFunction4Ptr f>
-      double gsl_wrapper4(double,double,double,double);
+      double TFEL_VISIBILITY_LOCAL gsl_wrapper4(double,double,double,double);
 
     } // end of namespace math
     

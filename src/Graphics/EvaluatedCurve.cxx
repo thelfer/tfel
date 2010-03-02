@@ -13,7 +13,7 @@ namespace tfel{
 
   namespace graphics{
 
-    EvaluatedCurve::EvaluatedCurve(tfel::utilities::SmartPtr<tfel::math::Evaluator>& f,
+    EvaluatedCurve::EvaluatedCurve(tfel::utilities::shared_ptr<tfel::math::Evaluator>& f,
 				   const std::string& var)
       : ev(f),
 	style(Curve::LINE),

@@ -43,7 +43,7 @@ namespace tfel
 	throw(runtime_error(msg.str()));
       } // end of ExternalCFunctionException::throwInvalidVariableIndex
 
-      tfel::utilities::SmartPtr<ExternalFunction>
+      tfel::utilities::shared_ptr<ExternalFunction>
       ExternalCFunctionBase<0u>::createFunctionByChangingParametersIntoVariables(std::vector<std::string>& v,
 										 const std::vector<double>&,
 										 const std::vector<std::string>&,
@@ -54,12 +54,12 @@ namespace tfel
 	return this->resolveDependencies();
       } // end of ExternalCFunctionBase<0u>::createFunctionByChangingParametersIntoVariables
 
-      tfel::utilities::SmartPtr<ExternalFunction>
+      tfel::utilities::shared_ptr<ExternalFunction>
       ExternalCFunctionBase<0u>::createFunctionByChangingParametersIntoVariables(const std::vector<std::string>&) const
       {
 	using namespace tfel::utilities;
 	ExternalCFunctionException::throwInvalidCreateFunctionByChangingParametersIntoVariables();
-	return SmartPtr<ExternalFunction>(0);
+	return shared_ptr<ExternalFunction>(static_cast<ExternalFunction *>(0));
       } // end of ExternalCFunctionBase<0u>::createFunctionByChangingParametersIntoVariables
 
       void
@@ -92,7 +92,7 @@ namespace tfel
       ExternalCFunctionBase<0u>::checkCyclicDependency(std::vector<std::string>&) const
       {} // end of ExternalCFunctionBase::checkCyclicDependency
 
-      tfel::utilities::SmartPtr<ExternalFunction>
+      tfel::utilities::shared_ptr<ExternalFunction>
       ExternalCFunctionBase<0>::differentiate(const std::vector<double>::size_type) const
       {
 	using namespace std;
@@ -101,7 +101,7 @@ namespace tfel
 	throw(runtime_error(msg));
       } // end of ExternalCFunctionBase<0>::differentiate
 
-      tfel::utilities::SmartPtr<ExternalFunction>
+      tfel::utilities::shared_ptr<ExternalFunction>
       ExternalCFunctionBase<0>::differentiate(const std::string&) const
       {
 	using namespace std;
@@ -320,116 +320,116 @@ namespace tfel
 			    this->variables[14]);
       } // end of getValue(void) const
       
-      tfel::utilities::SmartPtr<ExternalFunction>
+      tfel::utilities::shared_ptr<ExternalFunction>
       ExternalCFunction<0u>::resolveDependencies(void) const
       {
 	using namespace tfel::utilities;
-	return SmartPtr<ExternalFunction>(new ExternalCFunction<0u>(this->f));
+	return shared_ptr<ExternalFunction>(new ExternalCFunction<0u>(this->f));
       } // end of ExternalCFunction<0u>::resolveDependencies(void) const
 
-      tfel::utilities::SmartPtr<ExternalFunction>
+      tfel::utilities::shared_ptr<ExternalFunction>
       ExternalCFunction<1u>::resolveDependencies(void) const
       {
 	using namespace tfel::utilities;
-	return SmartPtr<ExternalFunction>(new ExternalCFunction<1u>(this->f));
+	return shared_ptr<ExternalFunction>(new ExternalCFunction<1u>(this->f));
       } // end of ExternalCFunction<1u>::resolveDependencies(void) const
 
-      tfel::utilities::SmartPtr<ExternalFunction>
+      tfel::utilities::shared_ptr<ExternalFunction>
       ExternalCFunction<2u>::resolveDependencies(void) const
       {
 	using namespace tfel::utilities;
-	return SmartPtr<ExternalFunction>(new ExternalCFunction<2u>(this->f));
+	return shared_ptr<ExternalFunction>(new ExternalCFunction<2u>(this->f));
       } // end of ExternalCFunction<2u>::resolveDependencies(void) const
 
-      tfel::utilities::SmartPtr<ExternalFunction>
+      tfel::utilities::shared_ptr<ExternalFunction>
       ExternalCFunction<3u>::resolveDependencies(void) const
       {
 	using namespace tfel::utilities;
-	return SmartPtr<ExternalFunction>(new ExternalCFunction<3u>(this->f));
+	return shared_ptr<ExternalFunction>(new ExternalCFunction<3u>(this->f));
       } // end of ExternalCFunction<3u>::resolveDependencies(void) const
 
-      tfel::utilities::SmartPtr<ExternalFunction>
+      tfel::utilities::shared_ptr<ExternalFunction>
       ExternalCFunction<4u>::resolveDependencies(void) const
       {
 	using namespace tfel::utilities;
-	return SmartPtr<ExternalFunction>(new ExternalCFunction<4u>(this->f));
+	return shared_ptr<ExternalFunction>(new ExternalCFunction<4u>(this->f));
       } // end of ExternalCFunction<4u>::resolveDependencies(void) const
 
-      tfel::utilities::SmartPtr<ExternalFunction>
+      tfel::utilities::shared_ptr<ExternalFunction>
       ExternalCFunction<5u>::resolveDependencies(void) const
       {
 	using namespace tfel::utilities;
-	return SmartPtr<ExternalFunction>(new ExternalCFunction<5u>(this->f));
+	return shared_ptr<ExternalFunction>(new ExternalCFunction<5u>(this->f));
       } // end of ExternalCFunction<5u>::resolveDependencies(void) const
 
-      tfel::utilities::SmartPtr<ExternalFunction>
+      tfel::utilities::shared_ptr<ExternalFunction>
       ExternalCFunction<6u>::resolveDependencies(void) const
       {
 	using namespace tfel::utilities;
-	return SmartPtr<ExternalFunction>(new ExternalCFunction<6u>(this->f));
+	return shared_ptr<ExternalFunction>(new ExternalCFunction<6u>(this->f));
       } // end of ExternalCFunction<6u>::resolveDependencies(void) const
 
-      tfel::utilities::SmartPtr<ExternalFunction>
+      tfel::utilities::shared_ptr<ExternalFunction>
       ExternalCFunction<7u>::resolveDependencies(void) const
       {
 	using namespace tfel::utilities;
-	return SmartPtr<ExternalFunction>(new ExternalCFunction<7u>(this->f));
+	return shared_ptr<ExternalFunction>(new ExternalCFunction<7u>(this->f));
       } // end of ExternalCFunction<7u>::resolveDependencies(void) const
 
-      tfel::utilities::SmartPtr<ExternalFunction>
+      tfel::utilities::shared_ptr<ExternalFunction>
       ExternalCFunction<8u>::resolveDependencies(void) const
       {
 	using namespace tfel::utilities;
-	return SmartPtr<ExternalFunction>(new ExternalCFunction<8u>(this->f));
+	return shared_ptr<ExternalFunction>(new ExternalCFunction<8u>(this->f));
       } // end of ExternalCFunction<8u>::resolveDependencies(void) const
 
-      tfel::utilities::SmartPtr<ExternalFunction>
+      tfel::utilities::shared_ptr<ExternalFunction>
       ExternalCFunction<9u>::resolveDependencies(void) const
       {
 	using namespace tfel::utilities;
-	return SmartPtr<ExternalFunction>(new ExternalCFunction<9u>(this->f));
+	return shared_ptr<ExternalFunction>(new ExternalCFunction<9u>(this->f));
       } // end of ExternalCFunction<9u>::resolveDependencies(void) const
 
-      tfel::utilities::SmartPtr<ExternalFunction>
+      tfel::utilities::shared_ptr<ExternalFunction>
       ExternalCFunction<10u>::resolveDependencies(void) const
       {
 	using namespace tfel::utilities;
-	return SmartPtr<ExternalFunction>(new ExternalCFunction<10u>(this->f));
+	return shared_ptr<ExternalFunction>(new ExternalCFunction<10u>(this->f));
       } // end of ExternalCFunction<10u>::resolveDependencies(void) const
 
-      tfel::utilities::SmartPtr<ExternalFunction>
+      tfel::utilities::shared_ptr<ExternalFunction>
       ExternalCFunction<11u>::resolveDependencies(void) const
       {
 	using namespace tfel::utilities;
-	return SmartPtr<ExternalFunction>(new ExternalCFunction<11u>(this->f));
+	return shared_ptr<ExternalFunction>(new ExternalCFunction<11u>(this->f));
       } // end of ExternalCFunction<11u>::resolveDependencies(void) const
 
-      tfel::utilities::SmartPtr<ExternalFunction>
+      tfel::utilities::shared_ptr<ExternalFunction>
       ExternalCFunction<12u>::resolveDependencies(void) const
       {
 	using namespace tfel::utilities;
-	return SmartPtr<ExternalFunction>(new ExternalCFunction<12u>(this->f));
+	return shared_ptr<ExternalFunction>(new ExternalCFunction<12u>(this->f));
       } // end of ExternalCFunction<12u>::resolveDependencies(void) const
 
-      tfel::utilities::SmartPtr<ExternalFunction>
+      tfel::utilities::shared_ptr<ExternalFunction>
       ExternalCFunction<13u>::resolveDependencies(void) const
       {
 	using namespace tfel::utilities;
-	return SmartPtr<ExternalFunction>(new ExternalCFunction<13u>(this->f));
+	return shared_ptr<ExternalFunction>(new ExternalCFunction<13u>(this->f));
       } // end of ExternalCFunction<13u>::resolveDependencies(void) const
 
-      tfel::utilities::SmartPtr<ExternalFunction>
+      tfel::utilities::shared_ptr<ExternalFunction>
       ExternalCFunction<14u>::resolveDependencies(void) const
       {
 	using namespace tfel::utilities;
-	return SmartPtr<ExternalFunction>(new ExternalCFunction<14u>(this->f));
+	return shared_ptr<ExternalFunction>(new ExternalCFunction<14u>(this->f));
       } // end of ExternalCFunction<14u>::resolveDependencies(void) const
 
-      tfel::utilities::SmartPtr<ExternalFunction>
+      tfel::utilities::shared_ptr<ExternalFunction>
       ExternalCFunction<15u>::resolveDependencies(void) const
       {
 	using namespace tfel::utilities;
-	return SmartPtr<ExternalFunction>(new ExternalCFunction<15u>(this->f));
+	return shared_ptr<ExternalFunction>(new ExternalCFunction<15u>(this->f));
       } // end of ExternalCFunction<15u>::resolveDependencies(void) const
 
     } // end of namespace parser

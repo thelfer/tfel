@@ -47,4 +47,35 @@
 #define TFEL_FE_INLINE             inline  
 #endif /* TFEL_FE_INLINE */
 
+/*!
+ * Macro extracted from :
+ * "Why is the new C++ visibility support so useful?"
+ * from http://gcc.gnu.org/wiki/Visibility
+ */
+#if defined _WIN32 || defined __CYGWIN__
+#define TFEL_VISIBILITY_IMPORT __declspec(dllimport)
+#define TFEL_VISIBILITY_EXPORT __declspec(dllexport)
+#define TFEL_VISIBILITY_LOCAL
+#else /* defined _WIN32 || defined __CYGWIN__ */
+#if (defined __GNUC__) && (! defined __INTEL_COMPILER)
+#if __GNUC__ >= 4
+#define TFEL_VISIBILITY_IMPORT __attribute__((visibility("default")))
+#define TFEL_VISIBILITY_EXPORT __attribute__((visibility("default")))
+#define TFEL_VISIBILITY_LOCAL  __attribute__((visibility("hidden")))
+#else /*__GNUC__ >= 4 */
+#define TFEL_VISIBILITY_IMPORT
+#define TFEL_VISIBILITY_EXPORT
+#define TFEL_VISIBILITY_LOCAL
+#endif /* __GNUC__ >= 4 */
+#elif defined __INTEL_COMPILER
+#define TFEL_VISIBILITY_IMPORT __attribute__((visibility("default")))
+#define TFEL_VISIBILITY_EXPORT __attribute__((visibility("default")))
+#define TFEL_VISIBILITY_LOCAL  __attribute__((visibility("hidden")))
+#else 
+#define TFEL_VISIBILITY_IMPORT
+#define TFEL_VISIBILITY_EXPORT
+#define TFEL_VISIBILITY_LOCAL
+#endif 
+#endif /* defined _WIN32 || defined __CYGWIN__ */
+
 #endif /* _LIB_TFEL_CONFIG_HXX */

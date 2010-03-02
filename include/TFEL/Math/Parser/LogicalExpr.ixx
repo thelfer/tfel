@@ -25,8 +25,8 @@ namespace tfel
     {
 
       template<typename Op>
-      LogicalOperation<Op>::LogicalOperation(const tfel::utilities::SmartPtr<Expr> a_,
-					     const tfel::utilities::SmartPtr<Expr> b_)
+      LogicalOperation<Op>::LogicalOperation(const tfel::utilities::shared_ptr<Expr> a_,
+					     const tfel::utilities::shared_ptr<Expr> b_)
 	: a(a_),b(b_)
       {} // end of LogicalOperation::LogicalOperation
 
@@ -52,34 +52,34 @@ namespace tfel
       } // end of LogicalOperation::checkCyclicDependency
 
       template<typename Op>
-      tfel::utilities::SmartPtr<LogicalExpr>
+      tfel::utilities::shared_ptr<LogicalExpr>
       LogicalOperation<Op>::resolveDependencies(const std::vector<double>& v) const
       {
 	using namespace tfel::utilities;
-	return SmartPtr<LogicalExpr>(new LogicalOperation<Op>(this->a->resolveDependencies(v),
+	return shared_ptr<LogicalExpr>(new LogicalOperation<Op>(this->a->resolveDependencies(v),
 							      this->b->resolveDependencies(v)));
       } // end of LogicalOperation<Op>::resolveDependencies(void) const
 
       template<typename Op>
-      tfel::utilities::SmartPtr<LogicalExpr>
+      tfel::utilities::shared_ptr<LogicalExpr>
       LogicalOperation<Op>::clone(const std::vector<double>& v) const
       {
 	using namespace tfel::utilities;
-	return SmartPtr<LogicalExpr>(new LogicalOperation<Op>(this->a->clone(v),
+	return shared_ptr<LogicalExpr>(new LogicalOperation<Op>(this->a->clone(v),
 							      this->b->clone(v)));
       } // end of LogicalOperation<Op>::clone
 
       template<typename Op>
-      tfel::utilities::SmartPtr<LogicalExpr>
+      tfel::utilities::shared_ptr<LogicalExpr>
       LogicalOperation<Op>::createFunctionByChangingParametersIntoVariables(const std::vector<double>& v,
 									    const std::vector<std::string>& p,
 									    const std::map<std::string,
 									    std::vector<double>::size_type>& pos) const
       {
 	using namespace tfel::utilities;
-	SmartPtr<Expr> na = this->a->createFunctionByChangingParametersIntoVariables(v,p,pos);
-	SmartPtr<Expr> nb = this->b->createFunctionByChangingParametersIntoVariables(v,p,pos);
-	return SmartPtr<LogicalExpr>(new LogicalOperation<Op>(na,nb));
+	shared_ptr<Expr> na = this->a->createFunctionByChangingParametersIntoVariables(v,p,pos);
+	shared_ptr<Expr> nb = this->b->createFunctionByChangingParametersIntoVariables(v,p,pos);
+	return shared_ptr<LogicalExpr>(new LogicalOperation<Op>(na,nb));
       } // end of LogicalOperation<Op>::createFunctionByChangingParametersIntoVariables
 
       template<typename Op>
@@ -95,8 +95,8 @@ namespace tfel
       {} // end of LogicalOperation<Op>::~LogicalOperation()
 
       template<typename Op>
-      LogicalBinaryOperation<Op>::LogicalBinaryOperation(const tfel::utilities::SmartPtr<LogicalExpr> a_,
-							 const tfel::utilities::SmartPtr<LogicalExpr> b_)
+      LogicalBinaryOperation<Op>::LogicalBinaryOperation(const tfel::utilities::shared_ptr<LogicalExpr> a_,
+							 const tfel::utilities::shared_ptr<LogicalExpr> b_)
 	: a(a_),b(b_)
       {} // end of LogicalBinaryOperation::LogicalBinaryOperation
 
@@ -130,34 +130,34 @@ namespace tfel
       } // end of LogicalBinaryOperation<Op>::getParametersNames
 
       template<typename Op>
-      tfel::utilities::SmartPtr<LogicalExpr>
+      tfel::utilities::shared_ptr<LogicalExpr>
       LogicalBinaryOperation<Op>::resolveDependencies(const std::vector<double>& v) const
       {
 	using namespace tfel::utilities;
-	return SmartPtr<LogicalExpr>(new LogicalBinaryOperation<Op>(this->a->resolveDependencies(v),
+	return shared_ptr<LogicalExpr>(new LogicalBinaryOperation<Op>(this->a->resolveDependencies(v),
 								    this->b->resolveDependencies(v)));
       } // end of LogicalBinaryOperation<Op>::resolveDependencies(void) const
 
       template<typename Op>
-      tfel::utilities::SmartPtr<LogicalExpr>
+      tfel::utilities::shared_ptr<LogicalExpr>
       LogicalBinaryOperation<Op>::clone(const std::vector<double>& v) const
       {
 	using namespace tfel::utilities;
-	return SmartPtr<LogicalExpr>(new LogicalBinaryOperation<Op>(this->a->clone(v),
+	return shared_ptr<LogicalExpr>(new LogicalBinaryOperation<Op>(this->a->clone(v),
 								    this->b->clone(v)));
       } // end of LogicalBinaryOperation<Op>::clone
 
       template<typename Op>
-      tfel::utilities::SmartPtr<LogicalExpr>
+      tfel::utilities::shared_ptr<LogicalExpr>
       LogicalBinaryOperation<Op>::createFunctionByChangingParametersIntoVariables(const std::vector<double>& v,
 										  const std::vector<std::string>& p,
 										  const std::map<std::string,
 										  std::vector<double>::size_type>& pos) const
       {
  	using namespace tfel::utilities;
-	SmartPtr<LogicalExpr> na = this->a->createFunctionByChangingParametersIntoVariables(v,p,pos);
-	SmartPtr<LogicalExpr> nb = this->b->createFunctionByChangingParametersIntoVariables(v,p,pos);
-	return SmartPtr<LogicalExpr>(new LogicalBinaryOperation<Op>(na,nb));
+	shared_ptr<LogicalExpr> na = this->a->createFunctionByChangingParametersIntoVariables(v,p,pos);
+	shared_ptr<LogicalExpr> nb = this->b->createFunctionByChangingParametersIntoVariables(v,p,pos);
+	return shared_ptr<LogicalExpr>(new LogicalBinaryOperation<Op>(na,nb));
       } // end of LogicalBinaryOperation<Op>::createFunctionByChangingParametersIntoVariables
 
       template<typename Op>

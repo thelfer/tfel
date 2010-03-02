@@ -1,6 +1,6 @@
 /*
- * \file   SmartPtr.hxx
- * \brief  this file describes the implementation of SmartPtr.
+ * \file   shared_ptr.hxx
+ * \brief  this file describes the implementation of shared_ptr.
  * \author Thomas Helfer
  * \date   december 2005
  */
@@ -10,107 +10,81 @@
 
 #include<string>
 #include<cassert>
-#include"TFEL/Utilities/Name.hxx"
 
-#define TFEL_INLINE inline
+#ifdef TFEL_HAVE_BOOST
+#include<boost/shared_ptr.hpp>
+#endif /* TFEL_HAVE_BOOST */
+
+#include"TFEL/Config/TFELConfig.hxx"
+#include"TFEL/Utilities/Name.hxx"
 
 namespace tfel{
   
   namespace utilities{
 
-    /*! \class SmartPtr
-     *  \brief La classe \c SmartPtr se substitue aux pointeurs
+#ifdef TFEL_HAVE_BOOST
+
+    using boost::shared_ptr;
+
+#else /* TFEL_HAVE_BOOST */
+
+    /*    ! \class shared_ptr
+     *  \brief La classe \c shared_ptr se substitue aux pointeurs
      *  traditionnels auxquels elle ajoute la désallocation
      *  automatique de la mémoire.
      *  \author  Helfer Thomas
      *  \date    20 Février 2006
      *  \warning Cette classe ne doit pas être utilisée sur un tableau
      *
-     *  La classe \c SmartPtr propose une implantation d'un pointeur
+     *  La classe \c shared_ptr propose une implantation d'un pointeur
      *  intelligent basé sur un compteur de référence. Cette classe
      *  est adaptée à son utilisation avec les conteneurs de la STL.
-     */  
+     */
     template<typename T>
-    struct SmartPtr{
+    struct TFEL_VISIBILITY_LOCAL shared_ptr{
 
       typedef T type;
 
-      /*!
-       * \brief  Return the name of the class.
-       * \param  void.
-       * \return const std::string, the name of the class.
-       * \see    Name.
-       */
-      static
-      std::string 
-      getName(void){
-	using namespace std;
-	using namespace tfel::utilities;
-	return string("tfel::utilities::SmartPtr<")+Name<T>::getName()+string(">");
-      }
-
-      /*! \fn SmartPtr::SmartPtr() 
+      /*! \fn shared_ptr::shared_ptr() 
        *  \brief Constructeur par défaut
        *  
        *  Par défaut, les membres \c p et \c i sont initialisés au
        *  pointeur \c 0
        *
        */
-      TFEL_INLINE SmartPtr() throw()
+      TFEL_INLINE shared_ptr() throw()
 	: p(0), i(0) {}
   
-      /*! \fn SmartPtr::SmartPtr(T *src) 
+      /*! \fn shared_ptr::shared_ptr(T *src) 
        *  \brief Constructeur à partir d'un pointeur
        *  \warning Cette classe ne doit pas être utilisée sur un tableau
        *
-       *  La classe \c SmartPtr se charge de désallouer la mémoire sur
+       *  La classe \c shared_ptr se charge de désallouer la mémoire sur
        *  laquelle pointe le pointeur en argument.
        *
        *  \latexonly
        *  Une utilisation typique de cette méthode est~:
        *  \begin{center}
-       *  SmartPtr<double> p(new double);
+       *  shared_ptr<double> p(new double);
        *  \end{center}
        *  \endlatexonly
        *
        *  \param src : pointeur servant à initialiser la classe 
        */
-      TFEL_INLINE explicit SmartPtr(T *src)
+      TFEL_INLINE explicit shared_ptr(T *src)
 	: p(src), i(0) {
 	if(p!=0){
 	  this->i = new unsigned int(1);
 	}
       }
 
-      /*! \fn SmartPtr::SmartPtr(const T& src) 
-       *  \brief Constructeur à partir d'un objet
-       *  \warning Cette classe ne doit pas être utilisée sur un tableau
-       *  \warning La classe T doit posséder un constructeur par copie
-       *  La classe \c SmartPtr se charge de désallouer la mémoire sur
-       *  laquelle pointe le pointeur en argument.
-       *
-       *  \latexonly
-       *  Une utilisation typique de cette méthode est~:
-       *  \begin{center}
-       *  SmartPtr<double> p(12.);
-       *  \end{center}
-       *  \endlatexonly
-       *
-       *  \param src : pointeur servant à initialiser la classe 
-       */
-      TFEL_INLINE explicit SmartPtr(const T& src)
-	: i(0) {
-	this->p = new T(src);
-	this->i = new unsigned int(1);
-      }
-
-      /*! \fn SmartPtr::SmartPtr(const SmartPtr<T>& src) 
+      /*! \fn shared_ptr::shared_ptr(const shared_ptr<T>& src) 
        *  \brief  Constructeur par copie
        *  
-       *  \param[in] src \c SmartPtr source utilisé pour initialiser la
+       *  \param[in] src \c shared_ptr source utilisé pour initialiser la
        *  classe. 
        */
-      TFEL_INLINE SmartPtr(const SmartPtr<T>& src) throw()
+      TFEL_INLINE shared_ptr(const shared_ptr<T>& src) throw()
 	: p(src.p), i(src.i) 
       {
 	if(i!=0){
@@ -118,24 +92,24 @@ namespace tfel{
 	}
       }
 
-      /*! \fn    SmartPtr::~SmartPtr() 
+      /*! \fn    shared_ptr::~shared_ptr() 
        *  \brief Destructeur
        *  
        */
       TFEL_INLINE
-      ~SmartPtr()  throw()
+      ~shared_ptr()  throw()
       {
 	this->decreaseCounter();
       }
 
-      /*! \fn      const SmartPtr<T>& operator=(const SmartPtr<T>& src)
+      /*! \fn      const shared_ptr<T>& operator=(const shared_ptr<T>& src)
        *  \brief  Opérateur d'affectation
-       *  \param[in] src \c SmartPtr source auquel la classe
+       *  \param[in] src \c shared_ptr source auquel la classe
        *  est affecté.        
        */
       TFEL_INLINE
-      SmartPtr<T>&
-      operator=(const SmartPtr<T>& src)
+      shared_ptr<T>&
+      operator=(const shared_ptr<T>& src)
 	throw()
       {
 	// Traitement d'une affectation à soi-même
@@ -233,23 +207,23 @@ namespace tfel{
 	return 0;
       }
 
-      /*! \fn    void makeUniq(void)
-       *  \brief Réalise un copie de l'objet référencé et pointe dessus 
+      /*! \fn      bool unique(void)
+       *  \brief   permet de savoir si un seul objet est référencé
+       *  \return  true ou false suivant le cas
        */
       TFEL_INLINE
-      void makeUniq(void){
-	if(this->i!=0){
-	  if(*(this->i)!=1){
-	    --(*(this->i));
-	    this->p = new T(*(this->p));
-	    this->i = new unsigned int(1);
-	  }
+      bool
+      unique(void) const throw()
+      {
+	if(i!=0){
+	  return (*(this->i)==1);
 	}
+	return false;
       }
 
       /*! \fn T* getPtr(void)
        */
-      TFEL_INLINE T * getPtr(void){
+      TFEL_INLINE T * get(void){
 	return this->p;
       }
       
@@ -257,7 +231,7 @@ namespace tfel{
        */
       TFEL_INLINE
       const T *
-      getPtr(void) const{
+      get(void) const{
 	return this->p;
       }
 
@@ -269,7 +243,7 @@ namespace tfel{
 
       mutable unsigned int *i; 
      
-      /*! \fn SmartPtr::decreaseCounter() 
+      /*! \fn shared_ptr::decreaseCounter() 
        *  \brief   méthode chargée de décrémenter le compteur de référence
        *  
        *  Cette méthode est chargée de décrémenter le compteur de
@@ -288,10 +262,12 @@ namespace tfel{
 
     };
 
+#endif /* TFEL_HAVE_BOOST */
+
     template<typename T>
     struct PtrType
     {
-      typedef SmartPtr<T> type;
+      typedef shared_ptr<T> type;
     }; // end of struct PtrType
 
   } // end of namespace utilities

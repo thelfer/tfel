@@ -23,18 +23,18 @@ namespace tfel
       struct Negation
 	: public Expr
       {
-	Negation(const tfel::utilities::SmartPtr<Expr>);
+	Negation(const tfel::utilities::shared_ptr<Expr>);
 	double getValue(void) const;
 	void
 	checkCyclicDependency(std::vector<std::string>&) const;
-	tfel::utilities::SmartPtr<Expr>
+	tfel::utilities::shared_ptr<Expr>
 	differentiate(const std::vector<double>::size_type,
 		      const std::vector<double>&) const;
-	tfel::utilities::SmartPtr<Expr>
+	tfel::utilities::shared_ptr<Expr>
 	clone(const std::vector<double>&) const;
-	tfel::utilities::SmartPtr<Expr>
+	tfel::utilities::shared_ptr<Expr>
 	resolveDependencies(const std::vector<double>&) const;
-	tfel::utilities::SmartPtr<Expr>
+	tfel::utilities::shared_ptr<Expr>
 	createFunctionByChangingParametersIntoVariables(const std::vector<double>&,
 							const std::vector<std::string>&,
 							const std::map<std::string,
@@ -43,7 +43,7 @@ namespace tfel
 	getParametersNames(std::set<std::string>&) const;
 	~Negation();
       private:
-	const tfel::utilities::SmartPtr<Expr> expr;
+	const tfel::utilities::shared_ptr<Expr> expr;
       };
 
     } // end of namespace parser

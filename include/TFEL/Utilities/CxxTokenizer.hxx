@@ -15,7 +15,10 @@
 #include<ostream>
 #include<fstream>
 
-#include"Token.hxx"
+#include"TFEL/Config/TFELConfig.hxx"
+#include"TFEL/Utilities/Token.hxx"
+
+
 
 namespace tfel{
 
@@ -83,38 +86,38 @@ namespace tfel{
 
     private:
 
-      static const char Separator[20];
+      static const char Separator[20] TFEL_VISIBILITY_LOCAL;
 
-      static const std::string
+      static const std::string TFEL_VISIBILITY_LOCAL
       readNumber(std::string::const_iterator&,
 		 const std::string::const_iterator);
 
-      static void
+      static void TFEL_VISIBILITY_LOCAL
       extractNumbers(std::vector<std::string>&,
 		     const std::string&);
 
-      static void 
+      static void TFEL_VISIBILITY_LOCAL
       joinIncludes(std::vector<std::string>&);
 
-      static void 
+      static void TFEL_VISIBILITY_LOCAL
       join(std::vector<std::string>&,const std::string&,const std::string&);
 
-      static std::vector<std::string>
+      static std::vector<std::string> TFEL_VISIBILITY_LOCAL
       splitStringAtSpaces(const std::string&);
 
-      void
+      void TFEL_VISIBILITY_LOCAL
       splitAtCxxTokenSperator(std::vector<std::string>&);
     
-      static void
+      static void TFEL_VISIBILITY_LOCAL
       splitString(std::vector<std::string>&,std::string,const std::string);
 
-      static void
+      static void TFEL_VISIBILITY_LOCAL
       splitString2(std::vector<std::string>&,std::string);
 
-      static void
+      static void TFEL_VISIBILITY_LOCAL
       splitString3(std::vector<std::string>&,std::string);
 
-      static TokensContainer::iterator
+      static TokensContainer::iterator TFEL_VISIBILITY_LOCAL
       joinPreviousCurrentNext(TokensContainer&,TokensContainer&,
 			      TokensContainer::iterator);
 

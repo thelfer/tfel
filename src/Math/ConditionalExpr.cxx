@@ -19,9 +19,9 @@ namespace tfel
     namespace parser
     {
 
-      ConditionalExpr::ConditionalExpr(const tfel::utilities::SmartPtr<LogicalExpr> c_,
-				       const tfel::utilities::SmartPtr<Expr> a_,
-				       const tfel::utilities::SmartPtr<Expr> b_)
+      ConditionalExpr::ConditionalExpr(const tfel::utilities::shared_ptr<LogicalExpr> c_,
+				       const tfel::utilities::shared_ptr<Expr> a_,
+				       const tfel::utilities::shared_ptr<Expr> b_)
 	: c(c_),a(a_),b(b_)
       {} // end of ConditionalExpr::ConditionalExpr
       
@@ -49,11 +49,11 @@ namespace tfel
 	mergeVariablesNames(vars,c_vars);
       } // end of ConditionalExpr::checkCyclicDependency(const std::vector<std::string>& vars) const
 
-      tfel::utilities::SmartPtr<Expr>
+      tfel::utilities::shared_ptr<Expr>
       ConditionalExpr::resolveDependencies(const std::vector<double>&v) const
       {
 	using namespace tfel::utilities;
-	return SmartPtr<Expr>(new ConditionalExpr(this->c->resolveDependencies(v),
+	return shared_ptr<Expr>(new ConditionalExpr(this->c->resolveDependencies(v),
 						  this->a->resolveDependencies(v),
 						  this->b->resolveDependencies(v)));
       }// end of ConditionalExpr::resolveDependencies
@@ -66,37 +66,37 @@ namespace tfel
 	this->b->getParametersNames(p);
       } // end of ConditionalExpr::getParametersNames(std::set<std::string>&)
 
-      tfel::utilities::SmartPtr<Expr>
+      tfel::utilities::shared_ptr<Expr>
       ConditionalExpr::differentiate(const std::vector<double>::size_type pos,
 				     const std::vector<double>& v) const
       {
 	using namespace tfel::utilities;
-	return SmartPtr<Expr>(new ConditionalExpr(this->c->clone(v),
+	return shared_ptr<Expr>(new ConditionalExpr(this->c->clone(v),
 						  this->a->differentiate(pos,v),
 						  this->b->differentiate(pos,v)));
       } // end of ConditionalExpr::differentiate
 
-      tfel::utilities::SmartPtr<Expr>
+      tfel::utilities::shared_ptr<Expr>
       ConditionalExpr::clone(const std::vector<double>& v) const
       {
 	using namespace tfel::utilities;
-	return SmartPtr<Expr>(new ConditionalExpr(this->c->clone(v),
+	return shared_ptr<Expr>(new ConditionalExpr(this->c->clone(v),
 						  this->a->clone(v),
 						  this->b->clone(v)));
       } // end of ConditionalExpr::clone
 
       
-      tfel::utilities::SmartPtr<Expr>
+      tfel::utilities::shared_ptr<Expr>
       ConditionalExpr::createFunctionByChangingParametersIntoVariables(const std::vector<double>& v,
 								       const std::vector<std::string>& p,
 								       const std::map<std::string,
 								       std::vector<double>::size_type>& pos) const
       {
 	using namespace tfel::utilities;
-	SmartPtr<LogicalExpr> nc = this->c->createFunctionByChangingParametersIntoVariables(v,p,pos);
-	SmartPtr<Expr> na = this->a->createFunctionByChangingParametersIntoVariables(v,p,pos);
-	SmartPtr<Expr> nb = this->b->createFunctionByChangingParametersIntoVariables(v,p,pos);
-	return SmartPtr<Expr>(new ConditionalExpr(nc,na,nb));
+	shared_ptr<LogicalExpr> nc = this->c->createFunctionByChangingParametersIntoVariables(v,p,pos);
+	shared_ptr<Expr> na = this->a->createFunctionByChangingParametersIntoVariables(v,p,pos);
+	shared_ptr<Expr> nb = this->b->createFunctionByChangingParametersIntoVariables(v,p,pos);
+	return shared_ptr<Expr>(new ConditionalExpr(nc,na,nb));
       } // end of ConditionalExpr::createFunctionByChangingParametersIntoVariables
 
       ConditionalExpr::~ConditionalExpr()
