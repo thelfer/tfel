@@ -8,9 +8,11 @@
 #ifndef _LIB_TFEL_POWER_I_
 #define _LIB_TFEL_POWER_I_ 
 
-#include <string>
+// #include <string>
+
+#include"TFEL/Config/TFELConfig.hxx"
 #include"TFEL/Metaprogramming/IF.hxx"
-#include"TFEL/Utilities/ToString.hxx"
+// #include"TFEL/Utilities/ToString.hxx"
 #include"TFEL/Math/Function/FunctionConcept.hxx"
 #include"TFEL/Math/Function/Cst.hxx"
 
@@ -19,7 +21,7 @@ namespace tfel{
   namespace math{
 
     template<int N,unsigned int D>
-    struct PowerGene
+    struct TFEL_VISIBILITY_LOCAL PowerGenerator
     {
       static TFEL_MATH_INLINE
       float
@@ -71,13 +73,13 @@ namespace tfel{
     class PowerPosImpl;
 
     template<unsigned int N>
-    class PowerPos
+    class TFEL_VISIBILITY_LOCAL PowerPos
       : public PowerPosImpl<N/4,N%4>
     {};
 
     template<unsigned int N,
 	     unsigned int M>
-    struct PowerPosImpl
+    struct TFEL_VISIBILITY_LOCAL PowerPosImpl
     {  
       static TFEL_MATH_INLINE
       float
@@ -136,7 +138,7 @@ namespace tfel{
     };
 
     template<unsigned int N>
-    struct PowerPosImpl<N,0u>
+    struct TFEL_VISIBILITY_LOCAL PowerPosImpl<N,0u>
     {  
       static TFEL_MATH_INLINE
       float
@@ -189,7 +191,7 @@ namespace tfel{
     };
 
     template<unsigned int M>
-    struct PowerPosImpl<0u,M>
+    struct TFEL_VISIBILITY_LOCAL PowerPosImpl<0u,M>
     {  
       static TFEL_MATH_INLINE
       float
@@ -236,7 +238,7 @@ namespace tfel{
     };
 
     template<>
-    struct PowerPosImpl<0u,0u>
+    struct TFEL_VISIBILITY_LOCAL PowerPosImpl<0u,0u>
     {  
       static TFEL_MATH_INLINE
       float
@@ -283,7 +285,7 @@ namespace tfel{
     };
 
     template<>
-    struct PowerPos<0u>
+    struct TFEL_VISIBILITY_LOCAL PowerPos<0u>
     {
       static TFEL_MATH_INLINE
       float
@@ -330,7 +332,7 @@ namespace tfel{
     };
 
     template<>
-    struct PowerPos<1u>
+    struct TFEL_VISIBILITY_LOCAL PowerPos<1u>
     {
       static TFEL_MATH_INLINE
       float
@@ -377,7 +379,7 @@ namespace tfel{
     };
 
     template<>
-    struct PowerPos<2u>
+    struct TFEL_VISIBILITY_LOCAL PowerPos<2u>
     {
       static TFEL_MATH_INLINE
       float
@@ -424,7 +426,7 @@ namespace tfel{
     };
   
     template<>
-    struct PowerPos<3u>
+    struct TFEL_VISIBILITY_LOCAL PowerPos<3u>
     {
       static TFEL_MATH_INLINE
       float
@@ -471,7 +473,7 @@ namespace tfel{
     };
 
     template<int N>
-    struct PowerNeg
+    struct TFEL_VISIBILITY_LOCAL PowerNeg
     {
       static TFEL_MATH_INLINE
       float
@@ -518,7 +520,7 @@ namespace tfel{
     };
 
     template<int N>
-    struct PowerSqrtNeg
+    struct TFEL_VISIBILITY_LOCAL PowerSqrtNeg
     {
       static TFEL_MATH_INLINE
       float
@@ -565,7 +567,7 @@ namespace tfel{
     };
 
     template<int N>
-    class PowerSqrtPos
+    class TFEL_VISIBILITY_LOCAL PowerSqrtPos
     {
 
       TFEL_STATIC_ASSERT(N>=0);
@@ -620,7 +622,7 @@ namespace tfel{
     class PowerImplSelector;
 
     template<int N>
-    class PowerImplSelector<N,1u>
+    class TFEL_VISIBILITY_LOCAL PowerImplSelector<N,1u>
     {
       static const unsigned short AbsN = (N<0) ? -N : N;
 
@@ -629,13 +631,13 @@ namespace tfel{
 
     public:
 
-      typedef typename tfel::meta::IF<(AbsN>100),PowerGene<N,1u>,
+      typedef typename tfel::meta::IF<(AbsN>100),PowerGenerator<N,1u>,
 				      PowerImplSpe>::type type;
 
     };
 
     template<int N>
-    class PowerImplSelector<N,2u>
+    class TFEL_VISIBILITY_LOCAL PowerImplSelector<N,2u>
     {
       static const unsigned short AbsN = (N<0) ? -N : N;
 
@@ -644,12 +646,12 @@ namespace tfel{
 
     public:
 
-      typedef typename tfel::meta::IF<(AbsN>100),PowerGene<N,2u>,
+      typedef typename tfel::meta::IF<(AbsN>100),PowerGenerator<N,2u>,
 				      PowerImplSpe>::type type;
     };
 
     template<int N,unsigned int D>
-    class PowerImplSelector
+    class TFEL_VISIBILITY_LOCAL PowerImplSelector
     {
       TFEL_STATIC_ASSERT(D!=0);
 
@@ -664,7 +666,7 @@ namespace tfel{
 		     typename PowerImplSelector<N_,1u>::type,
 		     typename tfel::meta::IF<D_==2u,
 					     typename PowerImplSelector<N_,2u>::type,
-					     PowerGene<N_,D_>
+					     PowerGenerator<N_,D_>
       >::type
       >::type type;
 
@@ -674,7 +676,7 @@ namespace tfel{
      * Partial specialisaton for Power
      */
     template<int N,unsigned int D>
-    class FunctionTraits<Power<N,D> >
+    class TFEL_VISIBILITY_LOCAL FunctionTraits<Power<N,D> >
     {
       static const int N_ = FracSimplify<N-1,D>::N;
       static const int D_ = FracSimplify<N-1,D>::D;
@@ -688,7 +690,7 @@ namespace tfel{
      * Partial specialisaton for Power
      */
     template<unsigned int D>
-    class FunctionTraits<Power<0,D> >
+    class TFEL_VISIBILITY_LOCAL FunctionTraits<Power<0,D> >
     {
     public:
       typedef Cst<0> DerivateFunc;
@@ -698,14 +700,14 @@ namespace tfel{
      * Partial specialisaton for Power
      */
     template<>
-    class FunctionTraits<Power<1u,1u> >
+    class TFEL_VISIBILITY_LOCAL FunctionTraits<Power<1u,1u> >
     {
     public:
       typedef Cst<1u> DerivateFunc;
     }; // end of FunctionTraits<Power<N,D> >
 
     template<int N,unsigned int D>
-    class Power
+    class TFEL_VISIBILITY_LOCAL Power
       : public FunctionConcept<Power<N,D> >
     {
 
@@ -714,19 +716,19 @@ namespace tfel{
 
     public:
 
-      /*!						                                  
-       * \brief  Return the name of the class.		                                  
-       * \param  void.					                                  
-       * \return std::string, the name of the class.	                                  
-       * \see    Name.					                                  
-       */						                                  
-      static
-      std::string getName(void)
-      {
-	using namespace std;
-	using namespace tfel::utilities;
-	return string("Power<")+ToString(N)+string(">");
-      }                                             
+//       /*!						                                  
+//        * \brief  Return the name of the class.		                                  
+//        * \param  void.					                                  
+//        * \return std::string, the name of the class.	                                  
+//        * \see    Name.					                                  
+//        */						                                  
+//       static
+//       std::string getName(void)
+//       {
+// 	using namespace std;
+// 	using namespace tfel::utilities;
+// 	return string("Power<")+ToString(N)+string(">");
+//       }                                             
 
       static TFEL_MATH_INLINE
       float
@@ -947,7 +949,7 @@ namespace tfel{
     namespace internals{
 
       template<int N,unsigned int D>
-      class DerivatePower
+      class TFEL_VISIBILITY_LOCAL DerivatePower
       {
 	static const int N_ = FracSimplify<N-1,D>::N;
 	static const int D_ = FracSimplify<N-1,D>::D;
@@ -968,7 +970,7 @@ namespace tfel{
       }; // end of DerivatePower
 
       template<unsigned int D>
-      struct DerivatePower<0,D>
+      struct TFEL_VISIBILITY_LOCAL DerivatePower<0,D>
       {
 	TFEL_MATH_INLINE2 static Cst<0>
 	exe(void)
@@ -978,7 +980,7 @@ namespace tfel{
       }; // end of DerivatePower
       
       template<>
-      struct DerivatePower<1u,1u>
+      struct TFEL_VISIBILITY_LOCAL DerivatePower<1u,1u>
       {
 	TFEL_MATH_INLINE2 static Cst<1>
 	exe(void)
@@ -1274,73 +1276,73 @@ namespace tfel{
     } // end of namespace stdfunctions
     
     template<int N,unsigned int D>
-    struct UnaryResultType<float,Power<N,D> >
+    struct TFEL_VISIBILITY_LOCAL UnaryResultType<float,Power<N,D> >
     {
       typedef float type;
     };
 
     template<int N,unsigned int D>
-    struct UnaryResultType<double,Power<N,D> >
+    struct TFEL_VISIBILITY_LOCAL UnaryResultType<double,Power<N,D> >
     {
       typedef double type;
     };
 
     template<int N,unsigned int D>
-    struct UnaryResultType<long double,Power<N,D> >
+    struct TFEL_VISIBILITY_LOCAL UnaryResultType<long double,Power<N,D> >
     {
       typedef long double type;
     };
 
     template<int N,unsigned int D>
-    struct UnaryResultType<Complex<float>,Power<N,D> >
+    struct TFEL_VISIBILITY_LOCAL UnaryResultType<Complex<float>,Power<N,D> >
     {
       typedef Complex<float> type;
     };
 
     template<int N,unsigned int D>
-    struct UnaryResultType<Complex<double>,Power<N,D> >
+    struct TFEL_VISIBILITY_LOCAL UnaryResultType<Complex<double>,Power<N,D> >
     {
       typedef Complex<double> type;
     };
 
     template<int N,unsigned int D>
-    struct UnaryResultType<Complex<long double>,Power<N,D> >
+    struct TFEL_VISIBILITY_LOCAL UnaryResultType<Complex<long double>,Power<N,D> >
     {
       typedef Complex<long double> type;
     };
 
     template<typename Unit,int N,unsigned int D>
-    struct UnaryResultType<qt<Unit,float>,Power<N,D> >
+    struct TFEL_VISIBILITY_LOCAL UnaryResultType<qt<Unit,float>,Power<N,D> >
     {
       typedef qt<typename PowUnit_<N,D,Unit>::type,float> type;
     };
 
     template<typename Unit,int N,unsigned int D>
-    struct UnaryResultType<qt<Unit,double>,Power<N,D> >
+    struct TFEL_VISIBILITY_LOCAL UnaryResultType<qt<Unit,double>,Power<N,D> >
     {
       typedef qt<typename PowUnit_<N,D,Unit>::type,double> type;
     };
 
     template<typename Unit,int N,unsigned int D>
-    struct UnaryResultType<qt<Unit,long double>,Power<N,D> >
+    struct TFEL_VISIBILITY_LOCAL UnaryResultType<qt<Unit,long double>,Power<N,D> >
     {
       typedef qt<typename PowUnit_<N,D,Unit>::type,long double> type;
     };
 
     template<typename Unit,int N,unsigned int D>
-    struct UnaryResultType<qt<Unit,Complex<float> >,Power<N,D> >
+    struct TFEL_VISIBILITY_LOCAL UnaryResultType<qt<Unit,Complex<float> >,Power<N,D> >
     {
       typedef qt<typename PowUnit_<N,D,Unit>::type,Complex<float> > type;
     };
 
     template<typename Unit,int N,unsigned int D>
-    struct UnaryResultType<qt<Unit,Complex<double> >,Power<N,D> >
+    struct TFEL_VISIBILITY_LOCAL UnaryResultType<qt<Unit,Complex<double> >,Power<N,D> >
     {
       typedef qt<typename PowUnit_<N,D,Unit>::type,Complex<double> > type;
     };
 
     template<typename Unit,int N,unsigned int D>
-    struct UnaryResultType<qt<Unit,Complex<long double> >,Power<N,D> >
+    struct TFEL_VISIBILITY_LOCAL UnaryResultType<qt<Unit,Complex<long double> >,Power<N,D> >
     {
       typedef qt<typename PowUnit_<N,D,Unit>::type,Complex<long double> > type;
     };
