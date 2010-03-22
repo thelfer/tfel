@@ -63,7 +63,7 @@ namespace tfel{
     };
     
     template<unsigned short N, typename T = double>
-    class TFEL_VISIBILITY_LOCAL tvector
+    class tvector
       : public VectorConcept<tvector<N,T> >
     {
 
@@ -111,7 +111,7 @@ namespace tfel{
        * type of the size of the container.
        * (this is a stl requirement).
        */
-      typedef size_t size_type;
+      typedef unsigned short size_type;
       /*!
        * type of the difference between two iterators.
        * (this is a stl requirement).

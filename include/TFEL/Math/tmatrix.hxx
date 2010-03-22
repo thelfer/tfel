@@ -53,7 +53,7 @@ namespace tfel{
     template<unsigned short N,
 	     unsigned short M,
 	     typename T = double>
-    class  TFEL_VISIBILITY_LOCAL tmatrix
+    class tmatrix
       : public MatrixConcept<tmatrix<N,M,T> >
     {
       //! a simple assertion stating that the number of row is valid.

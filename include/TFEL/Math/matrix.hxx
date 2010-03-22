@@ -41,7 +41,7 @@ namespace tfel
     };
 
     template<typename T>
-    struct TFEL_VISIBILITY_LOCAL MatrixProperties
+    struct MatrixProperties
     {
       //! a simple alias
       typedef typename MatrixTraits<matrix<T> >::IndexType IndexType;
@@ -69,7 +69,7 @@ namespace tfel
     }; // end of MatrixProperties
 
     template<typename T>
-    struct TFEL_VISIBILITY_LOCAL matrix
+    struct matrix
       : protected tfel::math::vector<T>,
 	protected MatrixProperties<T>
     {

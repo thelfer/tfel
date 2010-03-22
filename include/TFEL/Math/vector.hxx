@@ -55,7 +55,7 @@ namespace tfel{
     
     
     template<typename ValueType>
-    class TFEL_VISIBILITY_LOCAL vector
+    class vector
       : public VectorConcept<vector<ValueType> >,
 	protected std::vector<ValueType>
     {

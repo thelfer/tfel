@@ -32,7 +32,7 @@ namespace tfel
       } // end of ExternalCFunctionException::throwInvalidCreateFunctionByChangingParametersIntoVariables(void)
 
       void
-      ExternalCFunctionException::throwInvalidVariableIndex(const unsigned short pos,
+      ExternalCFunctionException::throwInvalidVariableIndex(const std::vector<double>::size_type pos,
 							    const unsigned short N)
       {
 	using namespace std;

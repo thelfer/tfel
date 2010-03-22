@@ -32,12 +32,12 @@ namespace tfel
 	static void
 	throwInvalidCreateFunctionByChangingParametersIntoVariables(void);
 	static void
-	throwInvalidVariableIndex(const unsigned short,
+	throwInvalidVariableIndex(const std::vector<double>::size_type,
 				  const unsigned short);
       }; // end of struct ExternalCFunctionException
 
       template<unsigned short N>
-      struct TFEL_VISIBILITY_LOCAL ExternalCFunctionBase
+      struct ExternalCFunctionBase
 	: public ExternalFunction,
 	  protected ExternalCFunctionException
       {

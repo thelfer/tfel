@@ -1370,7 +1370,7 @@ namespace tfel
       using namespace std;
       vector<CurveHandler>::const_iterator p;
       CurveHandler h;
-      if(c.getPtr()==0){
+      if(c.get()==0){
 	return;
       }
       h.curve = c;

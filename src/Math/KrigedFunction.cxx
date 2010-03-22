@@ -40,7 +40,7 @@ namespace tfel
       } // end of KrigedFunctionBase::throwInvalidCreateFunctionByChangingParametersIntoVariables(void)
 
       void
-      KrigedFunctionBase::throwInvalidIndexException(const unsigned short i,
+      KrigedFunctionBase::throwInvalidIndexException(const std::vector<double>::size_type i,
 						     const unsigned short N)
       {
 	using namespace std;

@@ -62,7 +62,7 @@ namespace tfel{
 
     template<unsigned short N,typename T,
 	     template<unsigned short,typename> class Storage>
-    class TFEL_VISIBILITY_LOCAL stensor
+    class stensor
       : public StensorConcept<stensor<N,T,Storage> >,
 	public Storage<StensorDimeToSize<N>::value,T>
     {

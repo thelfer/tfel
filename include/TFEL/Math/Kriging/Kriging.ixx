@@ -36,8 +36,8 @@ namespace tfel
       {
 	static void
 	apply(matrix<T>& m,
-	      const unsigned short n0,
-	      const tfel::math::vector<typename KrigingVariable<N,T>::type >& x)
+	      const typename tfel::math::vector<typename KrigingVariable<N,T>::type>::size_type n0,
+	      const tfel::math::vector<typename KrigingVariable<N,T>::type>& x)
 	{
 	  typename matrix<T>::size_type i;
 	  for(i=0;i!=x.size();++i){
@@ -63,7 +63,7 @@ namespace tfel
       {
 	static void
 	apply(matrix<T>&,
-	      const unsigned short,
+	      const typename tfel::math::vector<typename KrigingVariable<N,T>::type>::size_type,
 	      const tfel::math::vector<typename KrigingVariable<N,T>::type >&)
 	{}
 	static void

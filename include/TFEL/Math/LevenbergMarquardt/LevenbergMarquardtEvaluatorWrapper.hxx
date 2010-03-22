@@ -32,7 +32,7 @@ namespace tfel
       getNumberOfVariables(void) const;
       
       size_type
-  getNumberOfParameters(void) const;
+      getNumberOfParameters(void) const;
       
       void
       operator()(double&,tfel::math::vector<double>&,

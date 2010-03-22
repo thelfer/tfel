@@ -27,7 +27,7 @@ namespace tfel
   namespace math
   {
     
-    struct TFEL_VISIBILITY_LOCAL Evaluator::TExpr
+    struct Evaluator::TExpr
     {
       virtual tfel::utilities::shared_ptr<tfel::math::parser::Expr>
       analyse(void) = 0;
@@ -40,7 +40,7 @@ namespace tfel
       virtual ~TExpr(){};
     }; // end of Evaluator::TExpr
   
-    struct TFEL_VISIBILITY_LOCAL Evaluator::TNegation
+    struct Evaluator::TNegation
       : public Evaluator::TExpr
     {
       TNegation(tfel::utilities::shared_ptr<Evaluator::TExpr>);
@@ -57,7 +57,7 @@ namespace tfel
       tfel::utilities::shared_ptr<Evaluator::TExpr> expr;
     }; // end of struct Evaluator::TNegation
 
-    struct TFEL_VISIBILITY_LOCAL Evaluator::TOperator
+    struct Evaluator::TOperator
       : public Evaluator::TExpr
     {
       TOperator(const std::string&);
@@ -75,7 +75,7 @@ namespace tfel
       const std::string type;
     }; // end of struct Evaluator::TOperator
 
-    struct TFEL_VISIBILITY_LOCAL Evaluator::TBinaryOperation
+    struct Evaluator::TBinaryOperation
       : public Evaluator::TExpr
     {
       TBinaryOperation(tfel::utilities::shared_ptr<Evaluator::TExpr>,
@@ -96,7 +96,7 @@ namespace tfel
       tfel::utilities::shared_ptr<Evaluator::TExpr> b;
     }; // end of struct Evaluator::TBinaryOperation
 
-    struct TFEL_VISIBILITY_LOCAL Evaluator::TLogicalExpr
+    struct Evaluator::TLogicalExpr
     {
       virtual void
       reduce(void) = 0;
@@ -106,7 +106,7 @@ namespace tfel
       virtual ~TLogicalExpr();
     }; // end of struct Evaluator::TLogicalExpr 
 
-    struct TFEL_VISIBILITY_LOCAL Evaluator::TNegLogicalExpr
+    struct Evaluator::TNegLogicalExpr
       : public Evaluator::TLogicalExpr
     {
       TNegLogicalExpr(const tfel::utilities::shared_ptr<Evaluator::TLogicalExpr >);
@@ -120,7 +120,7 @@ namespace tfel
     }; // end of struct Evaluator::TNegLogicalExpr 
 
     template<typename LogicalOperator>
-    struct TFEL_VISIBILITY_LOCAL TFEL_VISIBILITY_LOCAL Evaluator::TLogicalOperation
+    struct Evaluator::TLogicalOperation
       : public Evaluator::TLogicalExpr
     {
       TLogicalOperation(tfel::utilities::shared_ptr<Evaluator::TExpr>,
@@ -135,7 +135,7 @@ namespace tfel
     };
 
     template<typename LogicalOperator>
-    struct TFEL_VISIBILITY_LOCAL Evaluator::TLogicalBinaryOperation
+    struct Evaluator::TLogicalBinaryOperation
       : public Evaluator::TLogicalExpr
     {
       TLogicalBinaryOperation(tfel::utilities::shared_ptr<Evaluator::TLogicalExpr>,
@@ -149,7 +149,7 @@ namespace tfel
       tfel::utilities::shared_ptr<Evaluator::TLogicalExpr> b;
     }; // end of struct Evaluator::TLogicalBinaryOperation
 
-    struct TFEL_VISIBILITY_LOCAL Evaluator::TConditionalExpr
+    struct Evaluator::TConditionalExpr
       : public Evaluator::TExpr
     {
       TConditionalExpr(tfel::utilities::shared_ptr<Evaluator::TLogicalExpr>,
@@ -170,7 +170,7 @@ namespace tfel
       tfel::utilities::shared_ptr<Evaluator::TExpr> b;
     }; // end of struct Evaluator::TLogicalOperation
 
-    struct TFEL_VISIBILITY_LOCAL Evaluator::TVariable
+    struct Evaluator::TVariable
       : public Evaluator::TExpr
     {
       TVariable(const std::string&,
@@ -189,7 +189,7 @@ namespace tfel
       std::vector<double>::size_type pos;
     };
 
-    struct TFEL_VISIBILITY_LOCAL Evaluator::TGroup
+    struct Evaluator::TGroup
       : public Evaluator::TExpr
     {
       bool
@@ -209,7 +209,7 @@ namespace tfel
     }; // end of struct Evaluator::TGroup
 
 
-    struct TFEL_VISIBILITY_LOCAL Evaluator::TFunction
+    struct Evaluator::TFunction
       : public Evaluator::TExpr
     {
       TFunction(Evaluator::FunctionGenerator,
@@ -228,7 +228,7 @@ namespace tfel
       tfel::utilities::shared_ptr<Evaluator::TExpr>arg;
     }; // end of struct Evaluator::TFunction
 
-    struct TFEL_VISIBILITY_LOCAL Evaluator::TBinaryFunction
+    struct Evaluator::TBinaryFunction
       : public Evaluator::TExpr
     {
       TBinaryFunction(Evaluator::BinaryFunctionGenerator,
@@ -249,7 +249,7 @@ namespace tfel
       tfel::utilities::shared_ptr<Evaluator::TExpr> arg2;
     }; // end of struct Evaluator::TBinaryFunction
 
-    struct TFEL_VISIBILITY_LOCAL Evaluator::TExternalOperator
+    struct Evaluator::TExternalOperator
       : public Evaluator::TExpr
     {
       TExternalOperator(const Evaluator::ExternalFunctionGenerator,
@@ -270,7 +270,7 @@ namespace tfel
       std::vector<tfel::utilities::shared_ptr<Evaluator::TExpr> > args;
     }; // end of struct Evaluator::TExternalOperator
 
-    struct TFEL_VISIBILITY_LOCAL Evaluator::TNumber
+    struct Evaluator::TNumber
       : public Evaluator::TExpr
     {
       TNumber(const double v);
@@ -286,7 +286,7 @@ namespace tfel
       const double value;
     }; // end of struct Evaluator::TNumber
 
-    struct TFEL_VISIBILITY_LOCAL Evaluator::TExternalFunctionExpr
+    struct Evaluator::TExternalFunctionExpr
       : public Evaluator::TExpr
     {
       TExternalFunctionExpr(const std::string&,
@@ -306,7 +306,7 @@ namespace tfel
       tfel::utilities::shared_ptr<tfel::math::parser::ExternalFunctionManager> manager;
     }; // end of struct Evaluator::TExternalFunctionExpr
 
-    struct TFEL_VISIBILITY_LOCAL Evaluator::TDifferentiatedFunctionExpr
+    struct Evaluator::TDifferentiatedFunctionExpr
       : public Evaluator::TExpr
     {
       TDifferentiatedFunctionExpr(tfel::utilities::shared_ptr<ExternalFunction>,

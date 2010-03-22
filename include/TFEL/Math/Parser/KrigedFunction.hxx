@@ -34,7 +34,7 @@ namespace tfel
 	throwInvalidCreateFunctionByChangingParametersIntoVariables(void);
 
 	static void
-	throwInvalidIndexException(const unsigned short i,
+	throwInvalidIndexException(const std::vector<double>::size_type i,
 				   const unsigned short N);
 	static void
 	throwUnimplementedDifferentiateFunctionException();

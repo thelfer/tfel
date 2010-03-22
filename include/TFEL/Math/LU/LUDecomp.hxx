@@ -26,7 +26,7 @@ namespace tfel{
 
       template<typename MatrixType,typename PermutationType>
       static TFEL_MATH_INLINE2
-      short
+      int
       exe(MatrixType& m,PermutationType& p)
       {
 	using namespace std;
@@ -46,7 +46,7 @@ namespace tfel{
 	IndexType pj;
 	IndexType n = m.getNbRows();
 	NumType mabs = abs(m(0,0));
-	short d = 1;
+	int d = 1;
 	for(i=0;i!=n;++i){
 	  for(j=0;j!=n;++j){
 	    if(abs(m(i,j))>mabs){
