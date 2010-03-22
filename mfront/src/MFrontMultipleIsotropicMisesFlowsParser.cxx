@@ -284,7 +284,7 @@ namespace mfront{
     this->behaviourFile << "}\n\n";
     
     this->behaviourFile << "if(iter==" << this->className << "::iterMax){\n";
-    this->behaviourFile << "throw(MaterialException(\"Newton-Raphson: no convergence\"));\n";
+    this->behaviourFile << "throw(DivergenceException(\"Newton-Raphson: no convergence\"));\n";
     this->behaviourFile << "}\n\n";
     for(p=this->flows.begin(),n=0;p!=this->flows.end();++p,++n){
       this->behaviourFile << "this->dp"<< n << " = " << "vdp(" << n<< ");\n";

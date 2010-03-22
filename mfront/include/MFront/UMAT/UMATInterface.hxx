@@ -260,20 +260,14 @@ namespace umat{
 				   UMATReal *const STATEV)
 	{
 	  const UMATOutOfBoundsPolicy& up = UMATOutOfBoundsPolicy::getUMATOutOfBoundsPolicy();
-	  UMATReal dtMin = (this->dt)/(1 << UMATTraits<BV>::maximumSubStepping);
-	  UMATReal tCurrent = 0.;
-	  UMATReal dt_ = this->dt;
+	  unsigned short subSteps   = 0u;
+	  unsigned short iterations = 1u;
 	  bool convergence;
-	  if(dt_<0.){
+	  if(this->dt<0.){
 	    throw(UMATException("negative time step"));
 	  }
-	  if(dt_<100.*std::numeric_limits<UMATReal>::min()){
-	    throw(UMATException("time step too small"));
-	  }
-	  if(dtMin<100.*std::numeric_limits<UMATReal>::min()){
-	    throw(UMATException("Minimum time step too small"));
-	  }
-	  while((tCurrent<dt_-dtMin*0.25)&&(dt_>dtMin)){
+	  while((iterations!=0)&&
+		(subSteps!=UMATTraits<BV>::maximumSubStepping)){
 	    convergence = true;
 	    BV behaviour(this->bData,this->iData);
 	    behaviour.setOutOfBoundsPolicy(up.getOutOfBoundsPolicy());
@@ -288,11 +282,13 @@ namespace umat{
 	      convergence = false;
 	    }
 	    if(convergence){
-	      tCurrent += dt_;
+	      --(iterations);
+	      behaviour.checkBounds();
 	      behaviour.updateExternalStateVariables();
 	      this->bData = static_cast<const BData&>(behaviour);
 	    } else {
-	      dt_ *= 0.5;
+	      subSteps    += 1;
+	      iterations  *= 2;
 	      this->iData *= 0.5;
 	    }
 	  }
@@ -301,8 +297,7 @@ namespace umat{
 		    << static_cast<unsigned long>((this->dt)/dt_)
 		    << std::endl;
 #endif
-
-	  if(dt_<dtMin){
+	  if((subSteps==UMATTraits<BV>::maximumSubStepping)&&(iterations!=0)){
 	    throw(UMATException("Maximum number of substepping reached"));
 	  }
 	  this->bData.UMATexportStateData(STRESS,STATEV);
@@ -351,7 +346,6 @@ namespace umat{
 	  AInitializer::exe(this->behaviour,PROPS);
 	  const UMATOutOfBoundsPolicy& up = UMATOutOfBoundsPolicy::getUMATOutOfBoundsPolicy();
 	  this->behaviour.setOutOfBoundsPolicy(up.getOutOfBoundsPolicy());
-	  this->behaviour.checkBounds();
 	} // end of Integrator::Integrator
 
 	TFEL_UMAT_INLINE2
@@ -361,10 +355,9 @@ namespace umat{
 	  if(this->dt<0.){
 	    throw(UMATException("negative time step"));
 	  }
-	  if(this->dt<100.*std::numeric_limits<UMATReal>::min()){
-	    throw(UMATException("time step too small"));
-	  }
+	  behaviour.checkBounds();
 	  this->behaviour.integrate();
+	  behaviour.checkBounds();
 	  this->behaviour.UMATexportStateData(STRESS,STATEV);
 	} // end of Integrator::exe
 

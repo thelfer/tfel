@@ -117,11 +117,11 @@ namespace mfront{
     this->behaviourFile << "}\n";
     this->behaviourFile << "}\n\n";
     this->behaviourFile << "if(inversible==false){\n";
-    this->behaviourFile << "throw(MaterialException(\"Newton-Raphson: null derivative\"));\n";
+    this->behaviourFile << "throw(DivergenceException(\"Newton-Raphson: null derivative\"));\n";
     this->behaviourFile << "}\n\n";
     
     this->behaviourFile << "if(iter==" << this->className << "::iterMax){\n";
-    this->behaviourFile << "throw(MaterialException(\"Newton-Raphson: no convergence\"));\n";
+    this->behaviourFile << "throw(DivergenceException(\"Newton-Raphson: no convergence\"));\n";
     this->behaviourFile << "}\n\n";
     this->behaviourFile << "}\n\n";
   } // end of writeBehaviourParserSpecificMembers

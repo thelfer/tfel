@@ -61,6 +61,7 @@ namespace mfront{
     this->registerNewCallBack("@Theta",&MFrontImplicitParser::treatTheta);
     this->registerNewCallBack("@Epsilon",&MFrontImplicitParser::treatEpsilon);
     this->registerNewCallBack("@IterMax",&MFrontImplicitParser::treatIterMax);
+    this->registerNewCallBack("@MaximumNumberOfIterations",&MFrontImplicitParser::treatIterMax);
     this->registerNewCallBack("@Algorithm",&MFrontImplicitParser::treatAlgorithm);
     //    this->disableCallBack("@Integrator");
     this->disableCallBack("@ComputedVar");
@@ -368,6 +369,10 @@ namespace mfront{
       this->behaviourFile << "this->computeFdF();\n";
     }
     this->behaviourFile << "this->iter=0;\n";
+    if(this->debugMode){
+      this->behaviourFile << "cout << endl << \"" << this->className
+			  << "::integrate() : beginning of resolution\" << endl;\n";
+    }
     this->behaviourFile << "while((converge==false)&&\n";
     this->behaviourFile << "(this->iter<(" << this->className << "::iterMax))){\n";
     if(this->algorithm==MFrontImplicitParser::NEWTONRAPHSON){
@@ -389,7 +394,7 @@ namespace mfront{
       this->behaviourFile << "this->computeFdF();\n";
       this->behaviourFile << "broyden_inv = (Dzeros|Dzeros);\n";
       this->behaviourFile << "if(broyden_inv<100*std::numeric_limits<real>::epsilon()){\n";
-      this->behaviourFile << "throw(MaterialLawException(\"Broyden null increment\"));\n";
+      this->behaviourFile << "throw(DivergenceException(\"Broyden null increment\"));\n";
       this->behaviourFile << "}\n";
       this->behaviourFile << "this->jacobian += "
 			  << "(((this->fzeros-fzeros2)-(jacobian2)*(Dzeros))^Dzeros)/broyden_inv;\n";
@@ -404,7 +409,7 @@ namespace mfront{
       this->behaviourFile << "jacobian2 = this->jacobian;\n";
       this->behaviourFile << "broyden_inv = Dzeros|jacobian2*Dfzeros;\n";
       this->behaviourFile << "if(broyden_inv<100*std::numeric_limits<real>::epsilon()){\n";
-      this->behaviourFile << "throw(MaterialException(\"Broyden null denominator\"));\n";
+      this->behaviourFile << "throw(DivergenceException(\"Broyden null denominator\"));\n";
       this->behaviourFile << "}\n";
       this->behaviourFile << "this->jacobian += "
 			  << "((Dzeros-jacobian2*Dfzeros)^(Dzeros*jacobian2))/(broyden_inv);\n";
@@ -413,10 +418,26 @@ namespace mfront{
     this->behaviourFile << "this->iter+=1;\n";
     this->behaviourFile << "converge = ((error)/(real(" << n2 << "))<";
     this->behaviourFile << "(" << this->className << "::epsilon));\n";
+    if(this->debugMode){
+      this->behaviourFile << "cout << \"" << this->className
+			  << "::integrate() : iteration \" "
+			  << "<< this->iter << \" : \" << (error)/(real(" << n2 << ")) << endl;\n";
+    }
     this->behaviourFile << "}\n";
     this->behaviourFile << "if(this->iter==" << this->className << "::iterMax){\n";
-    this->behaviourFile << "throw(MaterialException(\"Newton-Raphson: no convergence\"));\n";
+    if(this->debugMode){
+      this->behaviourFile << "cout << \"" << this->className
+			  << "::integrate() : no convergence after \" "
+			  << "<< this->iter << \" iterations\"<< endl << endl;\n";
+    }
+    this->behaviourFile << "cout << *this << endl;\n";
+    this->behaviourFile << "throw(DivergenceException(\"Newton-Raphson: no convergence\"));\n";
     this->behaviourFile << "}\n";
+    if(this->debugMode){
+      this->behaviourFile << "cout << \"" << this->className
+			  << "::integrate() : convergence after \" "
+			  << "<< this->iter << \" iterations\"<< endl << endl;\n";
+    }
     this->behaviourFile << "this->updateStateVars();\n";
     this->behaviourFile << "this->computeFinalStress();\n";
     for(p3  = this->boundsDescriptions.begin();
