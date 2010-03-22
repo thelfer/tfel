@@ -41,7 +41,7 @@ namespace tfel{
      *  est adaptée à son utilisation avec les conteneurs de la STL.
      */
     template<typename T>
-    struct TFEL_VISIBILITY_LOCAL shared_ptr{
+    struct shared_ptr{
 
       typedef T type;
 

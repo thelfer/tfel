@@ -311,7 +311,7 @@ namespace tfel{
      * \date   20 Apr. 2007.
      */
     template<typename List>
-    struct TFEL_VISIBILITY_LOCAL GenTypeBase
+    struct GenTypeBase
       : public tfel::utilities::internals::GenTypeSpecializedMethods<GenTypeBase<List>,List>
     {
       //! Default constructor.
