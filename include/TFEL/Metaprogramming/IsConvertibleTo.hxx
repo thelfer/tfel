@@ -8,6 +8,8 @@
 #ifndef _LIB_TFEL_ISCONVERTIBLETO_H_
 #define _LIB_TFEL_ISCONVERTIBLETO_H_ 
 
+#include"TFEL/Config/TFELConfig.hxx"
+
 namespace tfel{
 
   namespace meta{
@@ -30,7 +32,7 @@ namespace tfel{
      * \date   28 Aug 2006
      */
     template<typename T, typename U>
-    class IsConvertibleTo{
+    class TFEL_VISIBILITY_LOCAL IsConvertibleTo{
       /*!
        * \brief A first type.
        */
@@ -38,7 +40,7 @@ namespace tfel{
       /*!
        * \brief A Second type which size is higher than Small
        */
-      class Big{Small dummy[2];};
+      class TFEL_VISIBILITY_LOCAL Big{Small dummy[2];};
       /*!
        * \brief Declaration of function Test for every class 
        * convertible to U. Returns a Small.

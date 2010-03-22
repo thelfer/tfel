@@ -10,6 +10,8 @@
 #define _LIB_TFEL_HASRANDOMACCESSITERATOR_HXX_ 
 
 #include<iterator>
+
+#include"TFEL/Config/TFELConfig.hxx"
 #include"TFEL/Metaprogramming/EnableIf.hxx"
 #include"TFEL/Metaprogramming/IsSameType.hxx"
 
@@ -23,7 +25,7 @@ namespace tfel{
      * \return bool cond, true if the type defines a iterator.
      */
     template<typename A>
-    class HasRandomAccessIterator
+    class TFEL_VISIBILITY_LOCAL HasRandomAccessIterator
     {
       /*!
        * \brief A first type.
@@ -32,7 +34,7 @@ namespace tfel{
       /*!
        * \brief A Second type which size is higher than Small
        */
-      class Big{Small dummy[2];};
+      class TFEL_VISIBILITY_LOCAL Big{Small dummy[2];};
       /*
        * \brief a substitute for classes that have only protected constructors
        */

@@ -8,6 +8,8 @@
 #ifndef _LIB_TFEL_ISSAMETYPE_H_
 #define _LIB_TFEL_ISSAMETYPE_H_ 
 
+#include"TFEL/Config/TFELConfig.hxx"
+
 namespace tfel{
 
   namespace meta{
@@ -24,7 +26,7 @@ namespace tfel{
       * \date   28 Aug 2006
       */
     template <typename A, typename B>
-    struct IsSameType{
+    struct TFEL_VISIBILITY_LOCAL IsSameType{
       /*
        * \brief The result of the metafunction.
        * This is false in the general case.
@@ -36,7 +38,7 @@ namespace tfel{
      * Partial specialisation when the two parameters are the same.
      */
     template <typename A>
-    struct IsSameType<A,A>{
+    struct TFEL_VISIBILITY_LOCAL IsSameType<A,A>{
       /*
        * \brief The result of the metafunction.
        * Here, it is set to true.

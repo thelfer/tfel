@@ -9,6 +9,7 @@
 #ifndef _LIB_TFEL_HASITERATOR_HXX_
 #define _LIB_TFEL_HASITERATOR_HXX_ 
 
+#include"TFEL/Config/TFELConfig.hxx"
 #include"TFEL/Metaprogramming/EnableIf.hxx"
 
 namespace tfel{
@@ -21,7 +22,7 @@ namespace tfel{
      * \return bool cond, true if the type defines a iterator.
      */
     template<typename A>
-    class HasIterator
+    class TFEL_VISIBILITY_LOCAL HasIterator
     {
       /*!
        * \brief A first type.
@@ -30,7 +31,7 @@ namespace tfel{
       /*!
        * \brief A Second type which size is higher than Small
        */
-      class Big{Small dummy[2];};
+      class TFEL_VISIBILITY_LOCAL Big{Small dummy[2];};
       /*
        * \brief a substitute for classes that have only protected constructors
        */

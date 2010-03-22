@@ -8,6 +8,8 @@
 #ifndef _LIB_TFEL_STATICASSERT_H_
 #define _LIB_TFEL_STATICASSERT_H_ 
 
+#include"TFEL/Config/TFELConfig.hxx"
+
 namespace tfel{
 
   namespace meta{
@@ -29,7 +31,7 @@ namespace tfel{
        * \date   28 Aug 2006
        */
       template<>
-      struct StaticTest<true>{};
+      struct TFEL_VISIBILITY_LOCAL StaticTest<true>{};
       
       /*!
        * A do nothing class
@@ -37,7 +39,7 @@ namespace tfel{
        * \date   28 Aug 2006
        */
       template<unsigned int N>
-      struct Dummy{};
+      struct TFEL_VISIBILITY_LOCAL Dummy{};
 
     }// end of namespace internals    
 

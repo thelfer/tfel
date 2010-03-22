@@ -8,6 +8,7 @@
 #ifndef _LIB_TFEL_ISSUBCLASSOF_H_
 #define _LIB_TFEL_ISSUBCLASSOF_H_ 
 
+#include"TFEL/Config/TFELConfig.hxx"
 #include"TFEL/Metaprogramming/IsConvertibleTo.hxx"
 #include"TFEL/Metaprogramming/IsSuperClassOf.hxx"
 
@@ -31,7 +32,7 @@ namespace tfel{
      * \date   28 Aug 2006
      */
     template<typename T, typename U>
-    struct IsSubClassOf{
+    struct TFEL_VISIBILITY_LOCAL IsSubClassOf{
       /*!
        * \brief the result of the metafunction. 
        * True if T is publically inherits from U, false otherwise.

@@ -9,6 +9,7 @@
 #define _LIB_TFEL_INVALIDTYPE_H_ 
 
 #include<string>
+#include"TFEL/Config/TFELConfig.hxx"
 #include"TFEL/Utilities/Name.hxx"
 
 namespace tfel{
@@ -34,10 +35,9 @@ namespace tfel{
      * Partial specialisation for 
      */
     template<>
-    struct Name<tfel::meta::InvalidType>
+    struct TFEL_VISIBILITY_LOCAL Name<tfel::meta::InvalidType>
     {
-      static 
-      const std::string
+      static std::string
       getName(void)
       {
 	return "InvalidType";

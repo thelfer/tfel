@@ -8,6 +8,7 @@
 #ifndef _LIB_TFEL_ISSUPERCLASSOF_H_
 #define _LIB_TFEL_ISSUPERCLASSOF_H_ 
 
+#include"TFEL/Config/TFELConfig.hxx"
 #include"TFEL/Metaprogramming/IsSameType.hxx"
 #include"TFEL/Metaprogramming/IsConvertibleTo.hxx"
 
@@ -30,7 +31,7 @@ namespace tfel{
      * \date   28 Aug 2006
      */
     template<typename T, typename U>
-    struct IsSuperClassOf{
+    struct TFEL_VISIBILITY_LOCAL IsSuperClassOf{
       /*!
        * \brief the result of the metafunction. 
        * True if U inherits from T, false otherwise.

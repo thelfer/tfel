@@ -8,6 +8,8 @@
 #ifndef _LIB_TFEL_EMPTYCLASS_HXX_
 #define _LIB_TFEL_EMPTYCLASS_HXX_ 
 
+#include"TFEL/Config/TFELConfig.hxx"
+
 namespace tfel{
   
   namespace meta{
@@ -17,7 +19,7 @@ namespace tfel{
      * \author Helfer Thomas
      * \date   01 Mar 06
      */
-    struct EmptyClass
+    struct TFEL_VISIBILITY_LOCAL EmptyClass
     {};
 
     /*!
@@ -25,7 +27,7 @@ namespace tfel{
      * \author Helfer Thomas
      * \date   01 Mar 06
      */
-    struct EmptyClassA
+    struct TFEL_VISIBILITY_LOCAL EmptyClassA
     {};
 
 
@@ -34,7 +36,7 @@ namespace tfel{
      * \author Helfer Thomas
      * \date   01 Mar 06
      */
-    struct EmptyClassB
+    struct TFEL_VISIBILITY_LOCAL EmptyClassB
     {};
 
   } // end of namespace meta

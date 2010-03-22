@@ -8,6 +8,8 @@
 #ifndef _LIB_TFEL_REMOVECONSTNESS_H_
 #define _LIB_TFEL_REMOVECONSTNESS_H_ 
 
+#include"TFEL/Config/TFELConfig.hxx"
+
 namespace tfel{
 
   namespace meta{
@@ -22,7 +24,7 @@ namespace tfel{
      * \date   02 Mar 2007
      */
     template<typename T>
-    struct RemoveConstness
+    struct TFEL_VISIBILITY_LOCAL RemoveConstness
     {
       //! the result
       typedef T type;
@@ -32,7 +34,7 @@ namespace tfel{
      * Partial specialisation for const T
      */
     template<typename T>
-    struct RemoveConstness<const T>
+    struct TFEL_VISIBILITY_LOCAL RemoveConstness<const T>
     {
       //! the result
       typedef T type;

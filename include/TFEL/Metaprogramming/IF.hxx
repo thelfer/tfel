@@ -8,6 +8,8 @@
 #ifndef _LIB_TFEL_IF_HXX_
 #define _LIB_TFEL_IF_HXX_ 
 
+#include"TFEL/Config/TFELConfig.hxx"
+
 namespace tfel{
 
   namespace meta{
@@ -31,7 +33,7 @@ namespace tfel{
      * \date   19 aoû 2006
      */
     template<bool c, typename ThenType, typename ElseType>
-    struct IF{
+    struct TFEL_VISIBILITY_LOCAL IF{
       /*!
        * Returned type
        */
@@ -45,7 +47,7 @@ namespace tfel{
      * \date   19 aoû 2006
      */
     template<typename ThenType, typename ElseType>
-    struct IF<false,ThenType,ElseType>{
+    struct TFEL_VISIBILITY_LOCAL IF<false,ThenType,ElseType>{
       /*!
        * Returned type
        */

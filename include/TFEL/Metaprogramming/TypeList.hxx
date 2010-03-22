@@ -10,6 +10,7 @@
 
 #include <string>
 
+#include"TFEL/Config/TFELConfig.hxx"
 #include"TFEL/Utilities/Name.hxx"
 
 namespace tfel{
@@ -30,7 +31,7 @@ namespace tfel{
      * \author Helfer Thomas
      * \date   30 August 2006
      */
-    struct TypeList{};
+    struct TFEL_VISIBILITY_LOCAL TypeList{};
 
     /*!
      * \class TypeListNode

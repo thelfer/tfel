@@ -8,6 +8,7 @@
 #ifndef _LIB_TFEL_GENERATETYPELIST_H_
 #define _LIB_TFEL_GENERATETYPELIST_H_ 
 
+#include"TFEL/Config/TFELConfig.hxx"
 #include"TFEL/Metaprogramming/TypeList.hxx"
 
 namespace tfel{

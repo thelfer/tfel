@@ -8,6 +8,7 @@
 #ifndef _LIB_TFEL_IMPLEMENTS_H_
 #define _LIB_TFEL_IMPLEMENTS_H_ 
 
+#include"TFEL/Config/TFELConfig.hxx"
 #include"TFEL/Metaprogramming/IsSuperClassOf.hxx"
 
 namespace tfel{
@@ -29,7 +30,7 @@ namespace tfel{
      * \date   28 Aug 2006
      */
     template<typename T, template<typename> class concept>
-    struct Implements
+    struct TFEL_VISIBILITY_LOCAL Implements
     {
       /*
        * The result of the metafunction.

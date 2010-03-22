@@ -9,6 +9,8 @@
 #ifndef _LIB_TFEL_ENABLE_IF_HXX_
 #define _LIB_TFEL_ENABLE_IF_HXX_ 
 
+#include"TFEL/Config/TFELConfig.hxx"
+
 namespace tfel{
 
   namespace meta{
@@ -67,7 +69,7 @@ namespace tfel{
      * Partial specialisation of cond is true.
      */    
     template<typename T>
-    struct EnableIf<true,T>{
+    struct TFEL_VISIBILITY_LOCAL EnableIf<true,T>{
       /*!
        * Returned type
        */

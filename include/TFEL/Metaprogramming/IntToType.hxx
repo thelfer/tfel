@@ -10,6 +10,8 @@
 #define _LIB_TFEL_INTTOTYPE_H_ 
 
 #include <string>
+
+#include"TFEL/Config/TFELConfig.hxx"
 #include"TFEL/Utilities/ToString.hxx"
 
 namespace tfel{
@@ -31,12 +33,11 @@ namespace tfel{
      * \date   06 Jun 2006
      */
     template<int N>
-    struct Int2Type{
+    struct TFEL_VISIBILITY_LOCAL Int2Type{
       /*!
        * Return the Name of this class 
        */
-      static
-      const std::string 
+      static std::string 
       getName(void){
 	using namespace std;
 	using namespace tfel::utilities;
@@ -63,12 +64,11 @@ namespace tfel{
      * \date   06 Jun 2006
      */
     template<unsigned int N>
-    struct UInt2Type{
+    struct TFEL_VISIBILITY_LOCAL UInt2Type{
       /*!
        * Return the Name of this class 
        */
-      static
-      const std::string 
+      static std::string 
       getName(void){
 	using namespace std;
 	using namespace tfel::utilities;
