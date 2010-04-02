@@ -127,11 +127,26 @@ namespace tfel{
     class ResultType<stensor<N,T2,Storage>,
 		     st2tost2<N,T>,OpMult>
     {
-      typedef typename ResultType<T,T2,OpMult>::type ResBase_;
+      typedef typename ResultType<T2,T,OpMult>::type ResBase_;
     public:
       typedef typename tfel::meta::IF<tfel::typetraits::IsInvalid<ResBase_>::cond,
 				      tfel::meta::InvalidType,
 				      stensor<N,ResBase_,StensorStatic> >::type type;
+    };
+
+    /*!
+     * \brief Partial specialisation for st2tost2 and st2tost2 multiplication
+     * \see   ResultType
+     */
+    template<unsigned short N,typename T,typename T2>
+    class ResultType<st2tost2<N,T>,
+		     st2tost2<N,T2>,OpMult>
+    {
+      typedef typename ResultType<T,T2,OpMult>::type ResBase_;
+    public:
+      typedef typename tfel::meta::IF<tfel::typetraits::IsInvalid<ResBase_>::cond,
+				      tfel::meta::InvalidType,
+				      st2tost2<N,ResBase_> >::type type;
     };
 
   } // end of namespace math

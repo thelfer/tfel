@@ -133,16 +133,12 @@ namespace tfel{
     {
       size_type i;
       size_type j;
-      //      std::cout << "matrix<ValueType>::operator+=" << std::endl;
 #ifndef NO_RUNTIME_CHECK_BOUNDS
       RunTimeCheck<RunTimeProperties>::exe(this->getRunTimeProperties(),
 					   expr.getRunTimeProperties());
 #endif
-      //      std::cout << "matrix<ValueType>::operator+= 2" << std::endl;
       for(i=0;i<this->nb_rows;++i){
-	//	std::cout << "i : " << i << std::endl;
 	for(j=0;j<this->nb_cols;++j){
-	  //	  std::cout << "j : " << j << std::endl;
 	  this->operator()(i,j) += expr(i,j);
 	}
       }

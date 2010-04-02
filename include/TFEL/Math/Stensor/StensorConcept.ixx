@@ -19,7 +19,7 @@ namespace tfel{
     TFEL_MATH_INLINE 
     typename StensorConcept<T>::ValueType
     StensorConcept<T>::operator[](const unsigned short i) const {
-      return static_cast<const T&>(*this).operator[](i);
+      return static_cast<const T&>(*this).operator()(i);
     }
     
     template<class T>

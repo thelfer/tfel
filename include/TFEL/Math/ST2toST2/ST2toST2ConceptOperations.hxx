@@ -42,6 +42,30 @@ namespace tfel
     namespace internals
     {
 
+
+      template<unsigned short N,
+	       typename T1,
+	       typename T2,
+	       typename Result>
+      struct ST2toST2byST2toST2Multiplication
+      {
+	static TFEL_MATH_INLINE void 
+	exe(const T1& a,const T2& b,Result &r)
+	{
+	  typename T1::size_type i;
+	  typename T1::size_type j;
+	  typename T1::size_type k;
+	  for(i=0;i!=StensorDimeToSize<N>::value;++i){
+	    for(j=0;j!=StensorDimeToSize<N>::value;++j){
+	      r(i,j)=0.;
+	      for(k=0;k!=StensorDimeToSize<N>::value;++k){
+		r(i,j)+=a(i,k)*b(k,j);
+	      }
+	    }
+	  }
+	} // end of exe
+      }; // end of struct ST2toST2byST2toST2Multiplication
+
       template<unsigned short N,
 	       typename T1,
 	       typename T2,
@@ -210,6 +234,21 @@ namespace tfel
     };
 
     /*
+     * Partial Specialisation of ComputeBinaryResult_ for st2tost2-st2tost2 operations
+     */
+    template<typename A, typename B>
+    class ComputeBinaryResult_<St2toSt2Tag,St2toSt2Tag,A,B,OpMult>
+    {
+      struct DummyHandle{};
+      typedef typename ST2toST2Type<A>::type StensA;
+      typedef typename ST2toST2Type<B>::type StensB;
+
+    public:
+      typedef typename ResultType<StensA,StensB,OpMult>::type Result;
+      typedef Result Handle;
+    };
+
+    /*
      * Partial Specialisation of ComputeBinaryResult_ for st2tost2-stensor operations
      */
     template<typename A, typename B>
@@ -287,6 +326,23 @@ namespace tfel
     {
       typedef typename ComputeBinaryResult<T1,T2,OpMinus>::Handle Handle;
       return  Handle(a,b);
+    }
+
+    template<typename T1,typename T2>
+    TFEL_MATH_INLINE 
+    typename tfel::meta::EnableIf<
+      tfel::meta::Implements<T1,ST2toST2Concept>::cond&&
+    tfel::meta::Implements<T2,ST2toST2Concept>::cond&&
+    !tfel::typetraits::IsInvalid<typename ComputeBinaryResult<T1,T2,OpMult>::Result>::cond,
+      typename ComputeBinaryResult<T1,T2,OpMult>::Handle
+    >::type
+    operator * (const T1& a,const T2& b)
+    {
+      using namespace tfel::math::internals;
+      typedef typename ComputeBinaryResult<T1,T2,OpMult>::Result Res;
+      Res res;
+      ST2toST2byST2toST2Multiplication<ST2toST2Traits<Res>::dime,T1,T2,Res>::exe(a,b,res);
+      return  res;
     }
 
     template<typename T1,typename T2>
