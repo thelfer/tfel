@@ -466,9 +466,6 @@ include/TFEL/Utilities/ToString.ixx -text
 include/TFEL/Utilities/Token.hxx -text
 include/TFEL/Utilities/Tuple.hxx -text
 include/TFEL/Utilities/Tuple.ixx -text
-m4/arch-default.m4 -text
-m4/arch-linux.m4 -text
-m4/arch.m4 -text
 m4/castem.m4 -text
 m4/gettext.m4 -text
 m4/gxx.m4 -text
@@ -578,7 +575,6 @@ mfront/src/MFrontDefaultParser.cxx -text
 mfront/src/MFrontExcelLawInterface.cxx -text
 mfront/src/MFrontFortranLawInterface.cxx -text
 mfront/src/MFrontGnuplotLawInterface.cxx -text
-mfront/src/MFrontHeader.cxx -text
 mfront/src/MFrontHeader.cxx.in -text
 mfront/src/MFrontImplicitParser.cxx -text
 mfront/src/MFrontInitInterfaces.cxx -text

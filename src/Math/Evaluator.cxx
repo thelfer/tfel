@@ -928,7 +928,7 @@ namespace tfel
 	msg += "unsupported logical operator '"+*plo+"'";
 	throw(runtime_error(msg));
       }
-      shared_ptr<Evaluator::TLogicalExpr>(static_cast<Evaluator::TLogicalExpr*>(0));
+      return shared_ptr<Evaluator::TLogicalExpr>(static_cast<Evaluator::TLogicalExpr*>(0));
     } // end of Evaluator::treatLogicalExpression2
 
     tfel::utilities::shared_ptr<Evaluator::TExpr>

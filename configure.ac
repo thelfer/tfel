@@ -58,9 +58,6 @@ AC_TYPE_SIZE_T
 # Checks for library functions.
 AC_CHECK_FUNCS([isascii])
 
-# Find what kind of architecture we are in
-AC_CHECK_ARCH
-
 # Compiler specific stuff
 AC_ARG_ENABLE([optimizations],
 	       AC_HELP_STRING([--disable-optimizations],
@@ -322,6 +319,7 @@ AC_OUTPUT([debug.sh
 	   include/Makefile
 	   po/Makefile.in
 	   src/Makefile
+	   src/Tests/Makefile
 	   src/Exception/Makefile
 	   src/Utilities/Makefile
 	   src/Math/Makefile
@@ -348,6 +346,7 @@ AC_OUTPUT([debug.sh
 	   tplot/src/GNUGraphTheme.cxx
 	   tplot/data/Makefile
 	   tests/Makefile
+	   tests/Tests/Makefile
 	   tests/Math/Makefile
 	   tests/Math/include/Makefile
 	   tests/Math/ExpressionTemplates/Makefile

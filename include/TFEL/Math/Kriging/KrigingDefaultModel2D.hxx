@@ -9,6 +9,7 @@
 #define _LIB_TFEL_MATH_KRIGINGDEFAULTMODEL2D_H_ 
 
 #include<cmath>
+#include<limits>
 
 #include"TFEL/Config/TFELConfig.hxx"
 #include"TFEL/Math/Kriging/KrigingVariable.hxx"
@@ -46,8 +47,11 @@ namespace tfel
       covariance(const typename KrigingVariable<2u,T>::type& v)
       {
 	using namespace std;
-	T h = sqrt(v(0)*v(0)+v(1)*v(1));
-	return h*h*log(h);
+	T h2 = v(0)*v(0)+v(1)*v(1);
+	if(h2<10*numeric_limits<T>::epsilon()){
+	  return T(0);
+	}
+	return 0.5*h2*log(h2);
       } // end of covariance
 
       typedef T (*Drifts)(const typename KrigingVariable<2u,T>::type&);

@@ -3,7 +3,6 @@
 nobase_include_HEADERS= TFEL/FiniteElement/Element/ElementsManager.ixx                                \
 			TFEL/FiniteElement/ElementManager.hxx					      \
 			TFEL/FiniteElement/ElementsManager.hxx					      \
-			TFEL/FiniteElement/FiniteElement_dir.doc				      \
 			TFEL/FiniteElement/Mesh/Mesh.ixx					      \
 			TFEL/FiniteElement/Mesh.hxx						      \
 			TFEL/FiniteElement/Node/Node.ixx					      \

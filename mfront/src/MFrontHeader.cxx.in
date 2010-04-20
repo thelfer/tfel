@@ -14,19 +14,19 @@ namespace mfront{
   std::string
   MFrontHeader::getVersionName(void)
   {
-    return PACKAGE_NAME;
+    return "@PACKAGE_NAME@";
   }
 
   std::string
   MFrontHeader::getVersionNumber(void)
   {
-    return VERSION;
+    return "@VERSION@";
   }
 
   std::string
   MFrontHeader::getBugReportAdress(void)
   {
-    return PACKAGE_BUGREPORT;
+    return "@PACKAGE_BUGREPORT@";
   }
 
   std::string

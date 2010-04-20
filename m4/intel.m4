@@ -29,6 +29,5 @@ AC_DEFUN([AC_CHECK_INTEL],
 		dnl icpc debug options
 		CXXFLAGS="-g $CXXFLAGS"
 	    fi
-
 	fi
     ]) dnl end of AC_CHECK_INTEL
