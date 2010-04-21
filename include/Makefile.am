@@ -436,6 +436,19 @@ nobase_include_HEADERS= TFEL/FiniteElement/Element/ElementsManager.ixx          
 			TFEL/Utilities/Tuple.hxx   	                                              \
 			TFEL/Utilities/Tuple.ixx                                                      \
 			TFEL/Utilities/TextData.hxx                                                   \
+			TFEL/Tests/MultipleTestOutputs.hxx					      \
+			TFEL/Tests/StdStreamTestOutput.hxx					      \
+			TFEL/Tests/Test.hxx							      \
+			TFEL/Tests/TestCase.hxx							      \
+			TFEL/Tests/TestFunctionWrapper.hxx					      \
+			TFEL/Tests/TestFunctionWrapper.ixx					      \
+			TFEL/Tests/TestManager.hxx						      \
+			TFEL/Tests/TestOutput.hxx						      \
+			TFEL/Tests/TestProxy.hxx						      \
+			TFEL/Tests/TestProxy.ixx						      \
+			TFEL/Tests/TestResult.hxx						      \
+			TFEL/Tests/TestSuite.hxx						      \
+			TFEL/Utilities/Tuple.ixx                                                      \
 			TFEL/Exception/TFELException.hxx 
 
 if WITH_GRAPHICS
