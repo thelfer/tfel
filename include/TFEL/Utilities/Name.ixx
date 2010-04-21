@@ -10,6 +10,8 @@
 #define _LIB_TFEL_NAME_I_ 
 
 #include <string>
+
+#include"TFEL/Config/TFELConfig.hxx"
 #include"TFEL/Math/General/Complex.hxx"
 
 /*!
@@ -23,7 +25,7 @@
      * Partial specialisation for X                          \
      */                                                      \
     template<>                                               \
-    struct Name< X >                                         \
+    struct TFEL_VISIBILITY_EXPORT Name< X >                  \
     {                                                        \
       /*!                                                    \
        * \brief returns the Name of X.                       \
@@ -38,7 +40,7 @@
      * Partial specialisation for X*                         \
      */                                                      \
     template<>                                               \
-    struct Name<X*>                                          \
+    struct TFEL_VISIBILITY_EXPORT Name<X*>                   \
     {                                                        \
       /*!                                                    \
        * \brief returns the Name of X.                       \
@@ -53,7 +55,7 @@
      * Partial specialisation for const X * const            \
      */                                                      \
     template<>                                               \
-    struct Name<const X * const>                             \
+    struct TFEL_VISIBILITY_EXPORT Name<const X * const>      \
     {                                                        \
       /*!                                                    \
        * \brief returns the Name of X.                       \
@@ -68,7 +70,7 @@
      * Partial specialisation for const X*                   \
      */                                                      \
     template<>                                               \
-    struct Name<const X *>                                   \
+    struct TFEL_VISIBILITY_EXPORT Name<const X *>            \
     {                                                        \
       /*!                                                    \
        * \brief returns the Name of X.                       \
@@ -83,7 +85,7 @@
      * Partial specialisation for  X&                        \
      */                                                      \
     template<>                                               \
-    struct Name<X &>                                         \
+    struct TFEL_VISIBILITY_EXPORT Name<X &>                  \
     {                                                        \
       /*!                                                    \
        * \brief returns the Name of X.                       \
@@ -98,7 +100,7 @@
      * Partial specialisation for const X&                   \
      */                                                      \
     template<>                                               \
-    struct Name<const X &>                                   \
+    struct TFEL_VISIBILITY_EXPORT Name<const X &>            \
     {                                                        \
       /*!                                                    \
        * \brief returns the Name of X.                       \
@@ -115,7 +117,7 @@
      * Partial specialisation for void                          \
      */                                                         \
     template<>                                                  \
-    struct Name<void>                                           \
+    struct TFEL_VISIBILITY_EXPORT Name<void>                    \
     {                                                           \
       /*!                                                       \
        * \brief returns the Name of X.                          \
@@ -130,7 +132,7 @@
      * Partial specialisation for void*                         \
      */                                                         \
     template<>                                                  \
-    struct Name<void*>                                          \
+    struct TFEL_VISIBILITY_EXPORT Name<void*>                   \
     {                                                           \
       /*!                                                       \
        * \brief returns the Name of X.                          \
@@ -145,7 +147,7 @@
      * Partial specialisation for const void* const             \
      */                                                         \
     template<>                                                  \
-    struct Name<const void* const>                              \
+    struct TFEL_VISIBILITY_EXPORT Name<const void* const>       \
     {                                                           \
       /*!                                                       \
        * \brief returns the Name of X.                          \
@@ -160,7 +162,7 @@
      * Partial specialisation for const void*                   \
      */                                                         \
     template<>                                                  \
-    struct Name<const void *>                                   \
+    struct TFEL_VISIBILITY_EXPORT Name<const void *>            \
     {                                                           \
       /*!                                                       \
        * \brief returns the Name of X.                          \

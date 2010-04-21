@@ -13,8 +13,7 @@ AC_DEFUN([AC_GCC_CHECK_MACHINE_TYPE],[
   x86_64*)  GCC_MACHINE_TYPE="64" ;; dnl opteron 64 bits
   i[[3456]]86*linux*) GCC_MACHINE_TYPE="32" ;; dnl intel et compatible 32 bits
   *)        GCC_MACHINE_TYPE="32" ;; dnl defaut 32 bits
-  esac
-])
+  esac])
 
 dnl
 dnl @synopsis AC_CHECK_FLAG(-flag,variable where we add flag if ok, optional flag)
@@ -324,6 +323,37 @@ AC_DEFUN([AC_CHECK_GXX],
 	if test "x$enable_debug" == "xyes"; then
 	    dnl g++ debug options
 	    CXXFLAGS="-g $CXXFLAGS"
+	else
+	    dnl symbol visibility
+	    GCC_SYMBOL_VISIBILITY=""
+	    AC_GCC_CHECK_FLAG(-fvisibility-inlines-hidden,GCC_SYMBOL_VISIBILITY)
+	    if test "x$GCC_SYMBOL_VISIBILITY" != "x"; then
+		dnl a small test because this compilation flag may cause problems
+		dnl on some systems
+		cat > test-fvisibility-inlines-hidden.cxx <<EOF
+#include<string>
+#include<sstream>
+std::string
+function(const double a)
+{
+  using namespace std;
+  ostringstream c;
+  c << a;
+  return c.str();
+}
+EOF
+    $CXX -fvisibility-inlines-hidden --shared -DPIC -fPIC test.cxx -o libtest-fvisibility-inlines-hidden.so &> /dev/null
+	    if test "$?" = "0" ; then
+		    CXXFLAGS="$CXXFLAGS $GCC_SYMBOL_VISIBILITY"
+		    rm libtest-fvisibility-inlines-hidden.so
+		fi
+		rm test-fvisibility-inlines-hidden.cxx
+	    fi
+	    dnl hide all symbols by default
+	    GCC_SYMBOL_VISIBILITY=""
+	    AC_GCC_CHECK_FLAG(-fvisibility=hidden,GCC_SYMBOL_VISIBILITY)
+	    CXXFLAGS="$CXXFLAGS $GCC_SYMBOL_VISIBILITY"
+	    CFLAGS="$CFLAGS $GCC_SYMBOL_VISIBILITY"
 	fi
 	
 	]) dnl end of AC_CHECK GXX

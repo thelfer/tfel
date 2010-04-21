@@ -19,7 +19,7 @@ namespace tfel
   namespace math
   {
 
-    struct LevenbergMarquardtExternalFunctionWrapper
+    struct TFEL_VISIBILITY_EXPORT LevenbergMarquardtExternalFunctionWrapper
     {
       typedef tfel::math::vector<double>::size_type size_type;
       typedef double NumericType;

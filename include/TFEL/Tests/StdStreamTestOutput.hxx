@@ -11,6 +11,7 @@
 #include<string>
 #include<ostream>
 
+#include"TFEL/Config/TFELConfig.hxx"
 #include"TFEL/Utilities/SmartPtr.hxx"
 
 #include"TFEL/Tests/TestOutput.hxx"
@@ -25,7 +26,7 @@ namespace tfel
     /*!
      *  Test Output using a standard stream
      */
-    struct StdStreamTestOutput
+    struct TFEL_VISIBILITY_EXPORT StdStreamTestOutput
       : public TestOutput
     {
       /*!
@@ -76,20 +77,20 @@ namespace tfel
        * \param r : result to be treated
        * \param s : string to be added at beginning of line
        */
-      void
+      TFEL_VISIBILITY_LOCAL void
       treatTest(const TestResult&,
 		const std::string&);
       /*!
        * copy constructor (disabled)
        * \param src : object to be copied
        */
-      StdStreamTestOutput(const StdStreamTestOutput&);
+      TFEL_VISIBILITY_LOCAL StdStreamTestOutput(const StdStreamTestOutput&);
       /*!
        * assignement operator (disabled)
        * \param src : object to be assigned
        * \return a reference to this object
        */
-      StdStreamTestOutput&
+      TFEL_VISIBILITY_LOCAL StdStreamTestOutput&
       operator=(const StdStreamTestOutput&);
       /*!
        * pointer used to close stream, if the class has to handle it

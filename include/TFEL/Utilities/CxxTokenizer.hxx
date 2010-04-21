@@ -18,13 +18,12 @@
 #include"TFEL/Config/TFELConfig.hxx"
 #include"TFEL/Utilities/Token.hxx"
 
-
-
 namespace tfel{
 
   namespace utilities{
 
-    struct CxxTokenizer{
+    struct TFEL_VISIBILITY_EXPORT CxxTokenizer
+    {
     
       typedef std::list<Token> TokensContainer;
 
@@ -117,6 +116,7 @@ namespace tfel{
       static void TFEL_VISIBILITY_LOCAL
       splitString3(std::vector<std::string>&,std::string);
 
+      TFEL_VISIBILITY_LOCAL 
       static TokensContainer::iterator TFEL_VISIBILITY_LOCAL
       joinPreviousCurrentNext(TokensContainer&,TokensContainer&,
 			      TokensContainer::iterator);

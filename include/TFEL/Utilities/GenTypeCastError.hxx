@@ -10,6 +10,7 @@
 #define _LIB_TFEL_GENTYPECASTERROR_H_ 
 
 #include<stdexcept>
+#include"TFEL/Config/TFELConfig.hxx"
 
 namespace tfel
 {
@@ -17,7 +18,7 @@ namespace tfel
   namespace utilities
   {
 
-    struct GenTypeCastError
+    struct TFEL_VISIBILITY_EXPORT GenTypeCastError
       : public std::runtime_error
     {
       GenTypeCastError();

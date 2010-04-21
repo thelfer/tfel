@@ -10,6 +10,8 @@
 #define _LIB_TPLOT_PLOTWINDOW_HXX_ 
 
 #include<gtkmm.h>
+
+#include"TFEL/Config/TFELConfig.hxx"
 #include"TFEL/Graphics/Graph.hxx"
 #include"TFEL/Graphics/PlotPrintOperation.hxx"
 
@@ -19,7 +21,7 @@ namespace tfel
   namespace graphics
   {
 
-    struct PlotWindow
+    struct TFEL_VISIBILITY_EXPORT PlotWindow
       : public Gtk::Window
     {
       PlotWindow();

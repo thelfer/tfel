@@ -10,13 +10,15 @@
 #define _LIB_TFEL_MATHEXCEPTION_H_ 
 
 #include<string>
+
+#include"TFEL/Config/TFELConfig.hxx"
 #include"TFEL/Exception/TFELException.hxx"
 
 namespace tfel{
 
   namespace math{
 
-    struct MathException
+    struct TFEL_VISIBILITY_EXPORT MathException
       : public tfel::exception::TFELException 
     {
       /*!
@@ -32,7 +34,7 @@ namespace tfel{
       MathException(const std::string& s);
     }; // end of struct MathException
 
-    struct MathRunTimeException
+    struct TFEL_VISIBILITY_EXPORT MathRunTimeException
       : public MathException
     {
       /*!
@@ -48,7 +50,7 @@ namespace tfel{
       MathRunTimeException(const std::string& s);
     }; // end of struct MathRunTimeException
 
-    struct MathDivergenceException
+    struct TFEL_VISIBILITY_EXPORT MathDivergenceException
       : public MathException
     {
       /*!

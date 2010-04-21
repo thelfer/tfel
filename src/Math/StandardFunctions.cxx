@@ -9,6 +9,7 @@
 #include<cmath>
 #include<string>
 
+#include"TFEL/Config/TFELConfig.hxx"
 #include"TFEL/Math/qt.hxx"
 #include"TFEL/Math/Function/Id.hxx"
 #include"TFEL/Math/Function/Cst.hxx"
@@ -138,19 +139,19 @@ namespace tfel{
     TFEL_MATH_STANDARD_FUNCTION_MEMBER_II(Atan,atan) 
          
     namespace stdfunctions{
-      tfel::math::FctId   id;
-      tfel::math::FctSin  sin;
-      tfel::math::FctCos  cos;
-      tfel::math::FctSinh sinh;
-      tfel::math::FctCosh cosh;
-      tfel::math::FctExp  exp;
-      tfel::math::FctLog  log;
-      tfel::math::FctTan   tan;
-      tfel::math::FctTanh  tanh;
-      tfel::math::FctLog10 log10;
-      tfel::math::FctAsin  asin;
-      tfel::math::FctAcos  acos;
-      tfel::math::FctAtan  atan;
+      TFEL_VISIBILITY_EXPORT tfel::math::FctId   id;
+      TFEL_VISIBILITY_EXPORT tfel::math::FctSin  sin;
+      TFEL_VISIBILITY_EXPORT tfel::math::FctCos  cos;
+      TFEL_VISIBILITY_EXPORT tfel::math::FctSinh sinh;
+      TFEL_VISIBILITY_EXPORT tfel::math::FctCosh cosh;
+      TFEL_VISIBILITY_EXPORT tfel::math::FctExp  exp;
+      TFEL_VISIBILITY_EXPORT tfel::math::FctLog  log;
+      TFEL_VISIBILITY_EXPORT tfel::math::FctTan   tan;
+      TFEL_VISIBILITY_EXPORT tfel::math::FctTanh  tanh;
+      TFEL_VISIBILITY_EXPORT tfel::math::FctLog10 log10;
+      TFEL_VISIBILITY_EXPORT tfel::math::FctAsin  asin;
+      TFEL_VISIBILITY_EXPORT tfel::math::FctAcos  acos;
+      TFEL_VISIBILITY_EXPORT tfel::math::FctAtan  atan;
     } // end of namespace stdfunctions
 
     const FctCos derivate(const FctSin)

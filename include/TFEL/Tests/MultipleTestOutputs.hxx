@@ -10,6 +10,7 @@
 
 #include<vector>
 
+#include"TFEL/Config/TFELConfig.hxx"
 #include"TFEL/Utilities/SmartPtr.hxx"
 
 #include"TFEL/Tests/TestOutput.hxx"
@@ -24,7 +25,7 @@ namespace tfel
     /*!
      * Helper class for gathering multiple outputs
      */
-    struct MultipleTestOutputs
+    struct TFEL_VISIBILITY_EXPORT MultipleTestOutputs
       : public TestOutput
     {
       //! a simple alias
@@ -68,13 +69,13 @@ namespace tfel
        * copy constructor (disabled)
        * \param src : object to be copied
        */
-      MultipleTestOutputs(const MultipleTestOutputs&);
+      TFEL_VISIBILITY_LOCAL MultipleTestOutputs(const MultipleTestOutputs&);
       /*!
        * assignement operator (disabled)
        * \param src : object to be assigned
        * \return a reference to this object
        */
-      MultipleTestOutputs&
+      TFEL_VISIBILITY_LOCAL MultipleTestOutputs&
       operator=(const MultipleTestOutputs&);
       //! registred outputs
       std::vector<TestOutputPtr> outputs;

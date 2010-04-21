@@ -10,6 +10,7 @@
 
 #include<string>
 
+#include"TFEL/Config/TFELConfig.hxx"
 #include"TFEL/Tests/Test.hxx"
 #include"TFEL/Tests/TestResult.hxx"
 
@@ -118,7 +119,7 @@ namespace tfel
     /*!
      * Base class for all TestCase
      */
-    struct TestCase
+    struct TFEL_VISIBILITY_EXPORT TestCase
       : public Test
     {
       /*! 
@@ -149,13 +150,13 @@ namespace tfel
        * copy constructor (disabled)
        * \param src : object to be copied
        */
-      TestCase(const TestCase&);
+      TFEL_VISIBILITY_LOCAL TestCase(const TestCase&);
       /*!
        * assignement operator (disabled)
        * \param src : object to be assigned
        * \return a reference to this object
        */
-      TestCase&
+      TFEL_VISIBILITY_LOCAL TestCase&
       operator=(const TestCase&);
     protected:
       //! result of the test

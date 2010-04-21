@@ -15,6 +15,7 @@
 #include<sys/stat.h>
 #include<unistd.h>
 
+#include"TFEL/Config/TFELConfig.hxx"
 #include"TFEL/System/SystemError.hxx"
 
 namespace tfel
@@ -27,7 +28,7 @@ namespace tfel
      * This structure contains C++ wrapping over many
      * posix system call.
      */
-    struct systemCall
+    struct TFEL_VISIBILITY_EXPORT systemCall
     {
 
       /*
@@ -89,25 +90,30 @@ namespace tfel
     private:
 
       // copy a directory
+      TFEL_VISIBILITY_LOCAL
       static void
       copyDirectory(const std::string&,
 		    const std::string&,
 		    const bool);
 
       // copy a file to a file
+      TFEL_VISIBILITY_LOCAL
       static void
       copyFile(const std::string&,const std::string&);
 
       // return the type of a file
       // the mode_t shall be given by a call to stat
+      TFEL_VISIBILITY_LOCAL 
       static std::string
       fileType(const mode_t);
 
       // an helper function
+      TFEL_VISIBILITY_LOCAL 
       static std::vector<std::string>
       tokenize(const std::string&,const char);
 
       // an helper function
+      TFEL_VISIBILITY_LOCAL 
       static std::vector<std::string>
       tokenize(const std::string&,const std::string&);
 

@@ -13,6 +13,8 @@
 #include<map>
 #include<string>
 
+#include"TFEL/Config/TFELConfig.hxx"
+
 #include"TFEL/Utilities/SmartPtr.hxx"
 #include"TFEL/Utilities/TextData.hxx"
 #include"TFEL/Utilities/CxxTokenizer.hxx"
@@ -27,7 +29,7 @@ namespace tfel
     namespace interpreter
     {
 
-      struct InterpreterCommon
+      struct TFEL_VISIBILITY_EXPORT InterpreterCommon
 	: protected tfel::utilities::CxxTokenizer
       {
 

@@ -12,6 +12,8 @@ namespace tfel{
 
   namespace math{
 
+    TFEL_VISIBILITY_EXPORT FctId id;
+    
     std::string FctId::getName(void){
       return "FctId";
     }

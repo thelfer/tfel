@@ -10,6 +10,8 @@
 
 #include<cmath>
 
+#include"TFEL/Config/TFELConfig.hxx"
+
 #include"TFEL/Metaprogramming/EnableIf.hxx"
 #include"TFEL/TypeTraits/IsInvalid.hxx"
 #include"TFEL/Math/General/ComputeUnaryResult.hxx"
@@ -27,7 +29,7 @@
       typedef Z DerivateFunc;                                                             \
     };                                                                                    \
                                                                                           \
-    struct Fct##X                                                                         \
+    struct TFEL_VISIBILITY_EXPORT Fct##X                                                  \
       : public FunctionConcept<Fct##X>                                                    \
     {					                                                  \
 							                                  \
@@ -80,6 +82,7 @@
      * \param void                                                                        \
      * \return const Z, the derivate                                                      \
      */                                                                                   \
+    TFEL_VISIBILITY_EXPORT                                                                \
     const Z derivate(const Fct##X);                                                       \
                                                                                           \
     namespace stdfunctions{                                                               \
@@ -94,7 +97,7 @@
       typedef Z DerivateFunc;                                                             \
     };                                                                                    \
                                                                                           \
-    struct Fct##X                                                                         \
+    struct TFEL_VISIBILITY_EXPORT Fct##X                                                  \
       : public FunctionConcept<Fct##X>                                                    \
     {            					                                  \
 							                                  \

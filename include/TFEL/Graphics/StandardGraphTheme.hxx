@@ -11,6 +11,7 @@
 
 #include <cairomm/context.h>
 
+#include"TFEL/Config/TFELConfig.hxx"
 #include"TFEL/Graphics/Curve.hxx"
 #include"TFEL/Graphics/GraphLayout.hxx"
 #include"TFEL/Graphics/GraphTheme.hxx"
@@ -20,7 +21,7 @@ namespace tfel{
   namespace graphics
   {
 
-    struct StandardGraphTheme
+    struct TFEL_VISIBILITY_EXPORT StandardGraphTheme
       : public GraphTheme
     {
 

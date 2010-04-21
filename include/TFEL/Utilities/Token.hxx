@@ -10,11 +10,15 @@
 
 #include<string>
 
+#include"TFEL/Config/TFELConfig.hxx"
+
+
 namespace tfel{
 
   namespace utilities{
 
-    struct Token{
+    struct TFEL_VISIBILITY_EXPORT Token
+    {
 
       enum TokenFlag{Standard,Comment,String,Char,Preprocessor};
 

@@ -9,6 +9,7 @@
 #ifndef _LIB_TFEL_EVALUATEDCURVE_HXX_
 #define _LIB_TFEL_EVALUATEDCURVE_HXX_ 
 
+#include"TFEL/Config/TFELConfig.hxx"
 #include"TFEL/Utilities/SmartPtr.hxx"
 #include"TFEL/Math/Evaluator.hxx"
 #include"TFEL/Graphics/Curve.hxx"
@@ -19,7 +20,7 @@ namespace tfel
   namespace graphics
   {
     
-    struct EvaluatedCurve
+    struct TFEL_VISIBILITY_EXPORT EvaluatedCurve
       : public Curve
     {
       EvaluatedCurve(tfel::utilities::shared_ptr<tfel::math::Evaluator>&,

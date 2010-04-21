@@ -8,6 +8,7 @@
 #ifndef _LIB_TFEL_MATH_LUEXCEPTION_H_
 #define _LIB_TFEL_MATH_LUEXCEPTION_H_ 
 
+#include"TFEL/Config/TFELConfig.hxx"
 #include"TFEL/Exception/TFELException.hxx"
 
 #include<string>
@@ -18,7 +19,7 @@ namespace tfel
   namespace math
   {
     
-    struct LUException
+    struct TFEL_VISIBILITY_EXPORT LUException
       : public tfel::exception::TFELException
     {
       LUException(const char* const);
@@ -27,7 +28,7 @@ namespace tfel
     
   } // end of namespace math
 
-} // end of namespace tfelx
+} // end of namespace tfel
 
 #endif /* _LIB_TFEL_MATH_LUEXCEPTION_H */
 

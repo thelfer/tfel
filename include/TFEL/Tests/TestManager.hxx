@@ -12,6 +12,7 @@
 #include<ostream>
 #include<iostream>
 
+#include"TFEL/Config/TFELConfig.hxx"
 #include"TFEL/Utilities/SmartPtr.hxx"
 
 #include"TFEL/Tests/Test.hxx"
@@ -47,7 +48,7 @@ namespace tfel
     /*!
      * class in charge of managing a collection of tests.
      */
-    struct TestManager
+    struct TFEL_VISIBILITY_EXPORT TestManager
     {
       //! a simple alias
       typedef tfel::utilities::shared_ptr<TestOutput> TestOutputPtr;
@@ -126,18 +127,18 @@ namespace tfel
        * default constructor declared private to implement the
        * Singleton pattern.
        */
-      TestManager();
+      TFEL_VISIBILITY_LOCAL TestManager();
       /*!
        * copy constructor (disabled)
        * \param src : object to be copied
        */
-      TestManager(const TestManager&);
+      TFEL_VISIBILITY_LOCAL TestManager(const TestManager&);
       /*!
        * assignement operator (disabled)
        * \param src : object to be assigned
        * \return a reference to this object
        */
-      TestManager&
+      TFEL_VISIBILITY_LOCAL TestManager&
       operator=(const TestManager&);
       //! outputs used by default
       MultipleTestOutputsPtr default_outputs;

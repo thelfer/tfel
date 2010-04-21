@@ -1114,7 +1114,6 @@ namespace tfel
 			     const TokensContainer::const_iterator pe)
     {
       using namespace std;
-      unsigned short openedParenthesis;
       if((!options.using_decl_x.empty())||
 	 (!options.using_decl_y.empty())){
 	string msg("Analyser::treatPlotUsing : ");

@@ -9,13 +9,15 @@
 #ifndef _LIB_TFEL_ARROWSTYLE_HXX_
 #define _LIB_TFEL_ARROWSTYLE_HXX_ 
 
+#include"TFEL/Config/TFELConfig.hxx"
+
 namespace tfel
 {
 
   namespace graphics
   {
 
-    struct ArrowStyle
+    struct TFEL_VISIBILITY_EXPORT ArrowStyle
     {
       enum Style{
 	NOHEAD,

@@ -10,6 +10,7 @@
 
 #include<cerrno>
 
+#include"TFEL/Config/TFELConfig.hxx"
 #include"TFEL/Exception/TFELException.hxx"
 
 namespace tfel
@@ -18,7 +19,7 @@ namespace tfel
   namespace system
   {
 
-    struct SystemError
+    struct TFEL_VISIBILITY_EXPORT SystemError
       : public tfel::exception::TFELException
     {
       SystemError(const std::string&);

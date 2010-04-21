@@ -8,6 +8,8 @@
 #ifndef _LIB_TFEL_TERMINAL_COLORS_H_
 #define _LIB_TFEL_TERMINAL_COLORS_H_ 
 
+#include"TFEL/Config/TFELConfig.hxx"
+
 namespace tfel{
 
   namespace utilities{
@@ -19,7 +21,8 @@ namespace tfel{
      * \author Helfer Thomas
      * \date   26 Jul 2006
      */
-    struct TerminalColors{
+    struct TFEL_VISIBILITY_EXPORT TerminalColors
+    {
       /*!
        * \brief char sequence correponding to black.
        * \code

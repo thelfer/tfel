@@ -19,7 +19,7 @@ namespace tfel
   namespace math
   {
 
-    struct LevenbergMarquardtEvaluatorWrapper
+    struct TFEL_VISIBILITY_EXPORT LevenbergMarquardtEvaluatorWrapper
     {
       typedef tfel::math::vector<double>::size_type size_type;
       typedef double NumericType;

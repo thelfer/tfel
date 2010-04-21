@@ -2,8 +2,10 @@
 #define _TFEL_MATH_BASICOPERATIONS_LIB_ 1
 
 #include <string>
-#include"TFEL/Metaprogramming/EnableIf.hxx"
+
+
 #include"TFEL/Config/TFELConfig.hxx"
+#include"TFEL/Metaprogramming/EnableIf.hxx"
 #include"TFEL/Utilities/Name.hxx"
 #include"TFEL/TypeTraits/IsScalar.hxx"
 #include"TFEL/TypeTraits/IsComplex.hxx"
@@ -76,7 +78,7 @@ namespace tfel{
   
   namespace math {
 
-    struct OpPlus {
+    struct TFEL_VISIBILITY_EXPORT OpPlus {
 
       /*!
        * \brief  Return the name of the class.
@@ -99,7 +101,7 @@ namespace tfel{
 
     };
     
-    struct OpMinus {
+    struct TFEL_VISIBILITY_EXPORT OpMinus {
 
       /*!
        * \brief  Return the name of the class.
@@ -122,7 +124,7 @@ namespace tfel{
 
     }; // end of OpMinus
 
-    struct OpMult {
+    struct TFEL_VISIBILITY_EXPORT OpMult {
 
       /*!
        * \brief  Return the name of the class.
@@ -145,7 +147,7 @@ namespace tfel{
 
     }; // end of OpMult
 
-    struct OpDiv {
+    struct TFEL_VISIBILITY_EXPORT OpDiv {
 
       /*!
        * \brief  Return the name of the class.
@@ -168,7 +170,7 @@ namespace tfel{
 
     }; // end of OpDiv
 
-    struct OpNeg {
+    struct TFEL_VISIBILITY_EXPORT OpNeg {
 	
       /*!
        * \brief  Return the name of the class.
@@ -187,7 +189,7 @@ namespace tfel{
 
     };
 
-    struct OpDotProduct
+    struct TFEL_VISIBILITY_EXPORT OpDotProduct
     {
       /*!
        * \brief  Return the name of the class.
@@ -198,7 +200,7 @@ namespace tfel{
       static std::string getName(void);
     }; // end of struct OpDotProduct
 
-    struct OpDiadicProduct
+    struct TFEL_VISIBILITY_EXPORT OpDiadicProduct
     {
       /*!
        * \brief  Return the name of the class.

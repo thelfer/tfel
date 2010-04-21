@@ -13,6 +13,7 @@
 #include<vector>
 #include<stdexcept>
 
+#include"TFEL/Config/TFELConfig.hxx"
 #include"TFEL/System/ExternalFunctionsPrototypes.hxx"
 #include"TFEL/Math/Parser/ExternalFunction.hxx"
 
@@ -176,7 +177,7 @@ namespace tfel
       {}; // end of struct ExternalCFunction
 
       template<>
-      struct ExternalCFunction<0u>
+      struct TFEL_VISIBILITY_EXPORT ExternalCFunction<0u>
 	: public ExternalCFunctionBase<0u>
       {
 	typedef tfel::system::CFunction0Ptr FunctionPtr;
@@ -189,7 +190,7 @@ namespace tfel
       }; // end of struct ExternalCFunction
 
       template<>
-      struct ExternalCFunction<1u>
+      struct TFEL_VISIBILITY_EXPORT ExternalCFunction<1u>
 	: public ExternalCFunctionBase<1u>
       {
 	typedef tfel::system::CFunction1Ptr FunctionPtr;
@@ -202,7 +203,7 @@ namespace tfel
       }; // end of struct ExternalCFunction
 
       template<>
-      struct ExternalCFunction<2u>
+      struct TFEL_VISIBILITY_EXPORT ExternalCFunction<2u>
 	: public ExternalCFunctionBase<2u>
       {
 	typedef tfel::system::CFunction2Ptr FunctionPtr;
@@ -215,7 +216,7 @@ namespace tfel
       }; // end of struct ExternalCFunction
 
       template<>
-      struct ExternalCFunction<3u>
+      struct TFEL_VISIBILITY_EXPORT ExternalCFunction<3u>
 	: public ExternalCFunctionBase<3u>
       {
 	typedef tfel::system::CFunction3Ptr FunctionPtr;
@@ -228,7 +229,7 @@ namespace tfel
       }; // end of struct ExternalCFunction
 
       template<>
-      struct ExternalCFunction<4u>
+      struct TFEL_VISIBILITY_EXPORT ExternalCFunction<4u>
 	: public ExternalCFunctionBase<4u>
       {
 	typedef tfel::system::CFunction4Ptr FunctionPtr;
@@ -241,7 +242,7 @@ namespace tfel
       }; // end of struct ExternalCFunction
 
       template<>
-      struct ExternalCFunction<5u>
+      struct TFEL_VISIBILITY_EXPORT ExternalCFunction<5u>
 	: public ExternalCFunctionBase<5u>
       {
 	typedef tfel::system::CFunction5Ptr FunctionPtr;
@@ -254,7 +255,7 @@ namespace tfel
       };// end of struct ExternalCFunction
 
       template<>
-      struct ExternalCFunction<6u>
+      struct TFEL_VISIBILITY_EXPORT ExternalCFunction<6u>
 	: public ExternalCFunctionBase<6u>
       {
 	typedef tfel::system::CFunction6Ptr FunctionPtr;
@@ -267,7 +268,7 @@ namespace tfel
       };// end of struct ExternalCFunction
 
       template<>
-      struct ExternalCFunction<7u>
+      struct TFEL_VISIBILITY_EXPORT ExternalCFunction<7u>
 	: public ExternalCFunctionBase<7u>
       {
 	typedef tfel::system::CFunction7Ptr FunctionPtr;
@@ -280,7 +281,7 @@ namespace tfel
       };// end of struct ExternalCFunction
 
       template<>
-      struct ExternalCFunction<8u>
+      struct TFEL_VISIBILITY_EXPORT ExternalCFunction<8u>
 	: public ExternalCFunctionBase<8u>
       {
 	typedef tfel::system::CFunction8Ptr FunctionPtr;
@@ -293,7 +294,7 @@ namespace tfel
       };// end of struct ExternalCFunction
 
       template<>
-      struct ExternalCFunction<9u>
+      struct TFEL_VISIBILITY_EXPORT ExternalCFunction<9u>
 	: public ExternalCFunctionBase<9u>
       {
 	typedef tfel::system::CFunction9Ptr FunctionPtr;
@@ -306,7 +307,7 @@ namespace tfel
       };// end of struct ExternalCFunction
 
       template<>
-      struct ExternalCFunction<10u>
+      struct TFEL_VISIBILITY_EXPORT ExternalCFunction<10u>
 	: public ExternalCFunctionBase<10u>
       {
 	typedef tfel::system::CFunction10Ptr FunctionPtr;
@@ -319,7 +320,7 @@ namespace tfel
       };// end of struct ExternalCFunction
 
       template<>
-      struct ExternalCFunction<11u>
+      struct TFEL_VISIBILITY_EXPORT ExternalCFunction<11u>
 	: public ExternalCFunctionBase<11u>
       {
 	typedef tfel::system::CFunction11Ptr FunctionPtr;
@@ -332,7 +333,7 @@ namespace tfel
       };// end of struct ExternalCFunction
 
       template<>
-      struct ExternalCFunction<12u>
+      struct TFEL_VISIBILITY_EXPORT ExternalCFunction<12u>
 	: public ExternalCFunctionBase<12u>
       {
 	typedef tfel::system::CFunction12Ptr FunctionPtr;
@@ -345,7 +346,7 @@ namespace tfel
       };// end of struct ExternalCFunction
 
       template<>
-      struct ExternalCFunction<13u>
+      struct TFEL_VISIBILITY_EXPORT ExternalCFunction<13u>
 	: public ExternalCFunctionBase<13u>
       {
 	typedef tfel::system::CFunction13Ptr FunctionPtr;
@@ -358,7 +359,7 @@ namespace tfel
       };// end of struct ExternalCFunction
 
       template<>
-      struct ExternalCFunction<14u>
+      struct TFEL_VISIBILITY_EXPORT ExternalCFunction<14u>
 	: public ExternalCFunctionBase<14u>
       {
 	typedef tfel::system::CFunction14Ptr FunctionPtr;
@@ -371,7 +372,7 @@ namespace tfel
       };// end of struct ExternalCFunction
 
       template<>
-      struct ExternalCFunction<15u>
+      struct TFEL_VISIBILITY_EXPORT ExternalCFunction<15u>
 	: public ExternalCFunctionBase<15u>
       {
 	typedef tfel::system::CFunction15Ptr FunctionPtr;

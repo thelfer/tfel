@@ -14,6 +14,7 @@
 #include<sys/stat.h>
 #include<fcntl.h>
 
+#include"TFEL/Config/TFELConfig.hxx"
 #include"TFEL/Utilities/SmartPtr.hxx"
 #include"TFEL/System/stream_traits.hxx"
 #include"TFEL/System/basic_rstream.hxx"
@@ -31,7 +32,7 @@ namespace tfel
       static const bool isBlocking = false;
     }; // end of stream_traits<rfstream>
     
-    struct rfstream
+    struct TFEL_VISIBILITY_EXPORT rfstream
       : public basic_rstream<rfstream,stream_traits<rfstream> >,
 	protected tfel::utilities::shared_ptr<int>
     {

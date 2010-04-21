@@ -15,6 +15,7 @@
 #include<string>
 #include<stdexcept>
 
+#include"TFEL/Config/TFELConfig.hxx"
 #include"TFEL/Utilities/SmartPtr.hxx"
 
 namespace tfel
@@ -26,7 +27,7 @@ namespace tfel
     namespace parser
     {
 
-      struct ExternalFunction
+      struct TFEL_VISIBILITY_EXPORT ExternalFunction
       {
 	virtual double
 	getValue(void) const = 0;

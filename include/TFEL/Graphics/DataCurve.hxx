@@ -11,13 +11,14 @@
 
 #include<vector>
 
+#include"TFEL/Config/TFELConfig.hxx"
 #include"TFEL/Graphics/Curve.hxx"
 
 namespace tfel{
 
   namespace graphics{
 
-    struct DataCurve
+    struct TFEL_VISIBILITY_EXPORT DataCurve
       : public Curve
     {
       DataCurve();

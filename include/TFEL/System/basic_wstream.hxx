@@ -12,6 +12,8 @@
 #include<string>
 #include<cctype>
 
+#include"TFEL/Config/TFELConfig.hxx"
+
 namespace tfel
 {
 
@@ -114,12 +116,12 @@ namespace tfel
 
     }; // end of struct basic_rstream
 
-    struct BlockingStreamWriter
+    struct TFEL_VISIBILITY_EXPORT BlockingStreamWriter
     {
       static void write(int,const void *const,const size_t);
     }; // end of BlockingStreamWriter
 
-    struct NonBlockingStreamWriter
+    struct TFEL_VISIBILITY_EXPORT NonBlockingStreamWriter
     {
       static void write(int,const void *const,const size_t);
     }; // end of NonBlockingStreamWriter

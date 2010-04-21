@@ -8,6 +8,7 @@
 #ifndef _LIB_TFEL_ID_H_
 #define _LIB_TFEL_ID_H_ 
 
+#include"TFEL/Config/TFELConfig.hxx"
 #include"TFEL/Metaprogramming/EnableIf.hxx"
 #include"TFEL/TypeTraits/IsScalar.hxx"
 #include"TFEL/Math/General/UnaryResultType.hxx"
@@ -27,7 +28,7 @@ namespace tfel{
       typedef Cst<1> DerivateFunc;
     };
 
-    struct FctId
+    struct TFEL_VISIBILITY_EXPORT FctId
       : public FunctionConcept<FctId>
     {
     
@@ -72,6 +73,7 @@ namespace tfel{
       typedef T type;
     };
 
+    TFEL_VISIBILITY_EXPORT
     Cst<1>
     derivate(const FctId);
 

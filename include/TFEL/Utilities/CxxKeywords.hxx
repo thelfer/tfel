@@ -10,13 +10,17 @@
 
 #include<string>
 
+#include"TFEL/Config/TFELConfig.hxx"
+
 namespace tfel{
 
   namespace utilities{
 
+    TFEL_VISIBILITY_EXPORT 
     unsigned short
     getNumberOfCxxKeywords(void);
 
+    TFEL_VISIBILITY_EXPORT 
     bool
     isReservedCxxKeywords(const std::string&);
 

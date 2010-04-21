@@ -12,6 +12,7 @@
 #include<string>
 #include<map>
 
+#include"TFEL/Config/TFELConfig.hxx"
 #include"TFEL/Utilities/SmartPtr.hxx"
 #include"TFEL/System/ExternalLibraryManager.hxx"
 #include"TFEL/Graphics/GraphTheme.hxx"
@@ -22,7 +23,7 @@ namespace tfel
   namespace graphics
   {
 
-    struct ThemeProxy
+    struct TFEL_VISIBILITY_EXPORT ThemeProxy
     {
       typedef tfel::utilities::shared_ptr<GraphTheme> ThemePtr;
       virtual const std::string
@@ -47,7 +48,7 @@ namespace tfel
       const std::string name;
     }; // end of struct StandardThemeProxy
 
-    struct ThemeManager
+    struct TFEL_VISIBILITY_EXPORT ThemeManager
     {
       typedef tfel::utilities::shared_ptr<GraphTheme> ThemePtr;
 
@@ -68,13 +69,17 @@ namespace tfel
 
     private:
 
+      TFEL_VISIBILITY_LOCAL 
       ThemeManager();
 
+      TFEL_VISIBILITY_LOCAL 
       ThemeManager(const ThemeManager&);
 
+      TFEL_VISIBILITY_LOCAL 
       ThemeManager&
       operator=(const ThemeManager&);
 
+      TFEL_VISIBILITY_LOCAL 
       ~ThemeManager();
 
       std::map<std::string,tfel::utilities::shared_ptr<const ThemeProxy> > proxies;

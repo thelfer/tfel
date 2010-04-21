@@ -10,25 +10,27 @@
 
 #include<stdexcept>
 
+#include"TFEL/Config/TFELConfig.hxx"
+
 namespace tfel
 {
 
   namespace math
   {
 
-    struct KrigingErrorInvalidLength
+    struct TFEL_VISIBILITY_EXPORT KrigingErrorInvalidLength
       : public std::runtime_error
     {
       KrigingErrorInvalidLength();
     }; // end of struct KrigingErrorInvalidLength
 
-    struct KrigingErrorNoDataSpecified
+    struct TFEL_VISIBILITY_EXPORT KrigingErrorNoDataSpecified
       : public std::runtime_error
     {
       KrigingErrorNoDataSpecified();
     }; // end of struct KrigingErrorNoDataSpecified
 
-    struct KrigingErrorInsufficientData
+    struct TFEL_VISIBILITY_EXPORT KrigingErrorInsufficientData
       : public std::runtime_error
     {
       KrigingErrorInsufficientData();

@@ -12,6 +12,7 @@
 #include<vector>
 #include<string>
 
+#include"TFEL/Config/TFELConfig.hxx"
 #include"TFEL/System/ExternalFunctionsPrototypes.hxx"
 
 namespace tfel
@@ -20,7 +21,7 @@ namespace tfel
   namespace system
   {
 
-    struct ExternalLibraryManager
+    struct TFEL_VISIBILITY_EXPORT ExternalLibraryManager
     {
 
       static ExternalLibraryManager&
@@ -396,14 +397,14 @@ namespace tfel
 
     private:
 
-      ExternalLibraryManager();
+      TFEL_VISIBILITY_LOCAL ExternalLibraryManager();
 
-      ExternalLibraryManager(const ExternalLibraryManager&);
+      TFEL_VISIBILITY_LOCAL ExternalLibraryManager(const ExternalLibraryManager&);
 
-      ExternalLibraryManager&
+      TFEL_VISIBILITY_LOCAL ExternalLibraryManager&
       operator=(const ExternalLibraryManager&);
 
-      void
+      TFEL_VISIBILITY_LOCAL void
       getUMATNames(std::vector<std::string>&,
 		   const std::string&,
 		   const std::string&,

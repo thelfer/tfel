@@ -9,6 +9,7 @@
 #ifndef _LIB_TFEL_GRAPHCOORDINATES_HXX_
 #define _LIB_TFEL_GRAPHCOORDINATES_HXX_ 
 
+#include"TFEL/Config/TFELConfig.hxx"
 #include"TFEL/Utilities/SmartPtr.hxx"
 #include"TFEL/Math/Evaluator.hxx"
 
@@ -18,7 +19,7 @@ namespace tfel
   namespace graphics
   {
 
-    struct GraphCoordinates
+    struct TFEL_VISIBILITY_EXPORT GraphCoordinates
     {
       enum CoordinateType{
 	FIRST,

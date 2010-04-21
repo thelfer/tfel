@@ -448,7 +448,6 @@ nobase_include_HEADERS= TFEL/FiniteElement/Element/ElementsManager.ixx          
 			TFEL/Tests/TestProxy.ixx						      \
 			TFEL/Tests/TestResult.hxx						      \
 			TFEL/Tests/TestSuite.hxx						      \
-			TFEL/Utilities/Tuple.ixx                                                      \
 			TFEL/Exception/TFELException.hxx 
 
 if WITH_GRAPHICS

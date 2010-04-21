@@ -13,6 +13,7 @@
 #include<string>
 #include<map>
 
+#include"TFEL/Config/TFELConfig.hxx"
 #include"TFEL/Utilities/SmartPtr.hxx"
 #include"TFEL/Math/Parser/Expr.hxx"  
 #include"TFEL/Math/Parser/EvaluatorBase.hxx"  
@@ -25,7 +26,7 @@ namespace tfel
   namespace math
   {
 
-    struct Evaluator
+    struct TFEL_VISIBILITY_EXPORT Evaluator
       : public tfel::math::parser::EvaluatorBase,
 	public tfel::math::parser::ExternalFunction
     {
@@ -214,7 +215,7 @@ namespace tfel
       convert(const std::string&);
       static bool TFEL_VISIBILITY_LOCAL
       isNumber(const std::string&);
-      void  TFEL_VISIBILITY_LOCAL
+      void TFEL_VISIBILITY_LOCAL
       treatDiff(std::vector<std::string>::const_iterator&,
 		const std::vector<std::string>::const_iterator,
 		Evaluator::TGroup * const,
@@ -304,7 +305,7 @@ namespace tfel
     private:
       friend class Evaluator;
       FunctionGeneratorManager();
-      void
+      TFEL_VISIBILITY_LOCAL void
       checkName(const std::string&) const;
       std::map<std::string,Evaluator::FunctionGenerator> fctGenerators;
       std::map<std::string,Evaluator::BinaryFunctionGenerator> bFctGenerators;

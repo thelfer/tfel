@@ -13,6 +13,7 @@
 #include<vector>
 #include<stdexcept>
 
+#include"TFEL/Config/TFELConfig.hxx"
 #include"TFEL/System/ExternalFunctionsPrototypes.hxx"
 #include"TFEL/Math/Parser/ExternalFunction.hxx"
 
@@ -25,7 +26,7 @@ namespace tfel
     namespace parser
     {
 
-      struct ExternalCastemFunction
+      struct TFEL_VISIBILITY_EXPORT ExternalCastemFunction
 	: public ExternalFunction
       {
 	ExternalCastemFunction(const tfel::system::CastemFunctionPtr,

@@ -13,6 +13,7 @@
 #include<string>
 #include<gtkmm/drawingarea.h>
 
+#include"TFEL/Config/TFELConfig.hxx"
 #include"TFEL/Utilities/SmartPtr.hxx"
 #include"TFEL/Graphics/ArrowStyle.hxx"
 #include"TFEL/Graphics/Point.hxx"
@@ -26,7 +27,7 @@ namespace tfel
   namespace graphics
   {
 
-    struct Graph
+    struct TFEL_VISIBILITY_EXPORT Graph
       : public Gtk::DrawingArea
     {
       typedef Cairo::RefPtr<Cairo::Context> CairoContext;

@@ -12,6 +12,7 @@
 #include<sys/types.h>
 #include<signal.h>
 
+#include"TFEL/Config/TFELConfig.hxx"
 #include"TFEL/System/SystemError.hxx"
 #include"TFEL/System/rstreamView.hxx"
 #include"TFEL/System/wstreamView.hxx"
@@ -22,7 +23,7 @@ namespace tfel
   namespace system
   {
 
-    struct ProcessManager
+    struct TFEL_VISIBILITY_EXPORT ProcessManager
     {
       // a simple alias
       typedef pid_t ProcessId;
@@ -120,18 +121,20 @@ namespace tfel
        * registred (if any)
        * \return const ProcessId, the pid of the new process
        */
-      ProcessId
+      TFEL_VISIBILITY_LOCAL ProcessId
       createProcess(const std::string&,
 		    const StreamId *const,
 		    const StreamId *const,
 		    StreamMap&,StreamMap&);
 
 
+      TFEL_VISIBILITY_LOCAL
       void sigChildHandler(const int);
 
+      TFEL_VISIBILITY_LOCAL
       void terminateHandler(const int);
 
-      void
+      TFEL_VISIBILITY_LOCAL void
       closeProcessFiles(const ProcessId);
       
       struct Process
@@ -144,9 +147,11 @@ namespace tfel
 
       std::vector<Process> processes;
 
+      TFEL_VISIBILITY_LOCAL 
       std::vector<Process>::reverse_iterator
       findProcess(const ProcessId);
 
+      TFEL_VISIBILITY_LOCAL 
       std::vector<Process>::const_reverse_iterator
       findProcess(const ProcessId) const;
 

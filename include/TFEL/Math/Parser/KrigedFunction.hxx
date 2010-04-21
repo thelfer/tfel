@@ -15,6 +15,7 @@
 #include<utility>
 #include<stdexcept>
 
+#include"TFEL/Config/TFELConfig.hxx"
 #include"TFEL/Utilities/SmartPtr.hxx"
 #include"TFEL/Math/Kriging.hxx"
 #include"TFEL/Math/Parser/ExternalFunction.hxx"
@@ -28,7 +29,7 @@ namespace tfel
     namespace parser
     {
 
-      struct KrigedFunctionBase
+      struct TFEL_VISIBILITY_EXPORT KrigedFunctionBase
       {
 	static void
 	throwInvalidCreateFunctionByChangingParametersIntoVariables(void);
@@ -41,7 +42,7 @@ namespace tfel
       }; // end of KrigedFunctionBase
 
       template<unsigned short N>
-      struct KrigedFunction
+      struct TFEL_VISIBILITY_EXPORT KrigedFunction
 	: public ExternalFunction
       {
 	typedef typename KrigingVariable<N,double>::type Variable;
@@ -94,9 +95,9 @@ namespace tfel
 
       private:
 
-	KrigedFunction();
+	TFEL_VISIBILITY_LOCAL KrigedFunction();
 	
-	KrigedFunction&
+	TFEL_VISIBILITY_LOCAL KrigedFunction&
 	operator = (const KrigedFunction&);
 
 	tfel::utilities::shared_ptr<tfel::math::Kriging<N> > k;

@@ -11,6 +11,7 @@
 #include<string>
 #include<stdexcept>
 
+#include"TFEL/Config/TFELConfig.hxx"
 #include"TFEL/Utilities/Name.hxx"
 
 namespace tfel
@@ -25,7 +26,7 @@ namespace tfel
      * \author Helfer Thomas
      * \date   02 Aug 2006
      */
-    struct TFELException
+    struct TFEL_VISIBILITY_EXPORT TFELException
       : public std::exception
     {
 

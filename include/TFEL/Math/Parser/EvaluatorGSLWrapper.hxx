@@ -10,8 +10,11 @@
 #define _LIB_TFEL_MATH_EVALUATORWRAPPER_HXX_ 
 
 #include<stdexcept>
+
 #include<gsl/gsl_sf.h>
 #include<gsl/gsl_errno.h>
+
+#include"TFEL/Config/TFELConfig.hxx"
 
 namespace tfel
 {
@@ -22,7 +25,7 @@ namespace tfel
     namespace parser
     {
 	
-      struct GSLException
+      struct TFEL_VISIBILITY_EXPORT  GSLException
 	: public std::runtime_error
       {
 	GSLException(const std::string&);
@@ -33,6 +36,7 @@ namespace tfel
 		      const char *,
 		      int, int);
 
+      TFEL_VISIBILITY_EXPORT
       gsl_mode_t&
       getGSLMode(void);
       

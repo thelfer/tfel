@@ -11,13 +11,15 @@
 #include<vector>
 #include<string>
 
+#include"TFEL/Config/TFELConfig.hxx"
+
 namespace tfel
 {
 
   namespace utilities
   {
 
-      struct TextData
+      struct TFEL_VISIBILITY_EXPORT TextData
       {
 	struct Line
 	{
@@ -40,13 +42,16 @@ namespace tfel
 	end() const;
       private:
 	// Default constructor (disabled)
+	TFEL_VISIBILITY_LOCAL 
 	TextData();
 	// Copy constructor (disabled)
 	TextData(const TextData&);
 	// assignement operator (disabled)
+	TFEL_VISIBILITY_LOCAL 
 	TextData&
 	operator = (const TextData&);
 	//! extract a double from a token
+	TFEL_VISIBILITY_LOCAL 
 	double
 	readDouble(const std::vector<std::string>::const_iterator,
 		   const unsigned short) const;

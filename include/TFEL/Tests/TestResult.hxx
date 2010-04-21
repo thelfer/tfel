@@ -12,6 +12,8 @@
 #include<string>
 #include<vector>
 
+#include"TFEL/Config/TFELConfig.hxx"
+
 namespace tfel
 {
 
@@ -21,7 +23,7 @@ namespace tfel
    /*! 
      * result of test
      */
-    struct TestResult
+    struct TFEL_VISIBILITY_EXPORT TestResult
       : protected std::vector<TestResult>
     {
       using std::vector<TestResult>::const_iterator;

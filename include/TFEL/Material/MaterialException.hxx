@@ -10,13 +10,14 @@
 
 #include<string>
 
+#include"TFEL/Config/TFELConfig.hxx"
 #include"TFEL/Exception/TFELException.hxx"
 
 namespace tfel{
   
   namespace material {
     
-    struct MaterialException
+    struct TFEL_VISIBILITY_EXPORT MaterialException
       : public tfel::exception::TFELException 
     {
       static const std::string 
@@ -25,7 +26,7 @@ namespace tfel{
       MaterialException(const std::string& s);
     };
 
-    struct DivergenceException
+    struct TFEL_VISIBILITY_EXPORT DivergenceException
       : public tfel::material::MaterialException
     {
       static const std::string 
@@ -33,8 +34,8 @@ namespace tfel{
       
       DivergenceException(const std::string& s);
     };
-
-    struct OutOfBoundsException
+    
+    struct TFEL_VISIBILITY_EXPORT OutOfBoundsException
       : public tfel::material::MaterialException
     {
       static const std::string 
@@ -42,7 +43,6 @@ namespace tfel{
       
       OutOfBoundsException(const std::string& s);
     };
-
     
   } // end of namespace material
 

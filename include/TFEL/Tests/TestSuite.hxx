@@ -11,6 +11,7 @@
 #include<string>
 #include<vector>
 
+#include"TFEL/Config/TFELConfig.hxx"
 #include"TFEL/Utilities/SmartPtr.hxx"
 
 #include"TFEL/Tests/Test.hxx"
@@ -25,7 +26,7 @@ namespace tfel
     /*!
      * Test Suites
      */
-    struct TestSuite
+    struct TFEL_VISIBILITY_EXPORT TestSuite
     {
       //! a simple alias
       typedef tfel::utilities::shared_ptr<Test> TestPtr;
@@ -77,13 +78,14 @@ namespace tfel
        * copy constructor (disabled)
        * \param src : object to be copied
        */
+      TFEL_VISIBILITY_LOCAL
       TestSuite(const TestSuite&);
       /*!
        * assignement operator (disabled)
        * \param src : object to be assigned
        * \return a reference to this object
        */
-      TestSuite&
+      TFEL_VISIBILITY_LOCAL TestSuite&
       operator=(const TestSuite&);
       //! list of all tests
       std::vector<TestPtr> tests;

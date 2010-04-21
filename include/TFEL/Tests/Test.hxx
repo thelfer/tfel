@@ -10,6 +10,7 @@
 
 #include<string>
 
+#include"TFEL/Config/TFELConfig.hxx"
 #include"TFEL/Tests/TestResult.hxx"
 
 namespace tfel
@@ -21,7 +22,7 @@ namespace tfel
     /*!
      * Base class for all tests
      */
-    struct Test
+    struct TFEL_VISIBILITY_EXPORT  Test
     {
       /*! 
        * return the name of the test
