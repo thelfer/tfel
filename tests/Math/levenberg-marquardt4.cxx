@@ -28,6 +28,7 @@
 
 int main(void)
 {
+#if  __GNUC__ != 3
   using namespace std;
   using namespace tfel::utilities;
   using namespace tfel::math;
@@ -76,5 +77,6 @@ int main(void)
   cout << "res : ";
   copy(p.begin(),p.end(),ostream_iterator<double>(cout," "));
   cout << endl;
+#endif
   return EXIT_SUCCESS;
 } // end of main

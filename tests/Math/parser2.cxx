@@ -25,9 +25,12 @@ main(void)
   using namespace tfel::math::parser;
   vector<string> var(1,"x");
   Evaluator f(var,"exp(cos(x))");
+
+#if __GNUC__ != 3
   shared_ptr<ExternalFunction> df = f.differentiate(0);
   df->setVariableValue(0,2.);
   assert(abs(df->getValue()+sin(2)*exp(cos(2)))<1.e-12);
+#endif
   
   shared_ptr<ExternalFunctionManager> manager(new ExternalFunctionManager());
   manager->operator[]("a") = shared_ptr<ExternalFunction>(new Evaluator("12",manager));
