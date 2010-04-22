@@ -90,3 +90,5 @@ libUMATInterface_la_SOURCES = UMATComputeStiffnessTensor.cxx        \
 		              UMATException.cxx
 libUMATInterface_la_LIBADD  = -L$(top_builddir)/src/Utilities/ -lTFELUtilities
 endif
+
+EXTRA_DIST = CMakeLists.txt

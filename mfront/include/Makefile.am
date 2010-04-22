@@ -75,3 +75,4 @@ nobase_include_HEADERS += MFront/UMAT/UMATException.hxx                     \
 			  MFront/UMAT/UMAT.hxx
 endif
 
+EXTRA_DIST = CMakeLists.txt

@@ -12,6 +12,11 @@ macro(install_header dir file)
           DESTINATION "include/${dir}")
 endmacro(install_header)
 
+macro(install_data dir file)
+  install(FILES ${dir}/${file}
+          DESTINATION "share/tfel/${dir}")
+endmacro(install_data)
+
 macro(tfel_library name)
 if(${ARGC} LESS 2)
    message(FATAL_ERROR "tfel_library : no source specified")

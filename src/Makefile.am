@@ -4,3 +4,5 @@ SUBDIRS = Tests Exception Utilities System Math Material TFELConfig
 if WITH_GRAPHICS
 SUBDIRS += Graphics
 endif
+
+EXTRA_DIST = CMakeLists.txt

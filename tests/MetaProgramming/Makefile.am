@@ -21,3 +21,5 @@ LDADD = -L$(top_builddir)/src/Utilities \
 TESTS=$(test_PROGRAMS)
 
 endif
+
+EXTRA_DIST=CMakeLists.txt

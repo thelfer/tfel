@@ -12,6 +12,8 @@
 #include<string>
 
 #include<signal.h>
+
+#include"TFEL/Config/TFELConfig.hxx"
 #include"TFEL/System/SignalHandler.hxx"
 
 namespace tfel
@@ -20,7 +22,7 @@ namespace tfel
   namespace system
   {
     
-    struct SignalManager
+    struct TFEL_VISIBILITY_EXPORT SignalManager
     {
       static void
       printBackTrace(const int);
@@ -36,13 +38,19 @@ namespace tfel
       removeHandler(const unsigned short);
       ~SignalManager();
     private:
+      TFEL_VISIBILITY_LOCAL
       static void
       callGdb(const int,const char* const);
+      TFEL_VISIBILITY_LOCAL
       SignalManager();
+      TFEL_VISIBILITY_LOCAL
       SignalManager(const SignalManager &);
+      TFEL_VISIBILITY_LOCAL
       SignalManager&
       operator = (const SignalManager &);
+      TFEL_VISIBILITY_LOCAL
       void eraseHandlers(void);
+      TFEL_VISIBILITY_LOCAL
       static void treatAction(int);
       std::map<int,std::map<unsigned short,SignalHandler *> > callBacks;
       std::map<int,SignalHandler *> sHandlers;

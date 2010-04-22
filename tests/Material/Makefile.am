@@ -15,3 +15,5 @@ boundsCheck_SOURCES = boundsCheck.cxx
 TESTS=$(test_PROGRAMS)
 
 endif
+
+EXTRA_DIST=CMakeLists.txt

@@ -18,3 +18,4 @@ libTFELSystem_la_SOURCES = ExternalLibraryManager.cxx \
 			   getFunction.c
 
 libTFELSystem_la_LIBADD = -L$(top_builddir)/src/Exception/ -lTFELException -ldl
+EXTRA_DIST = CMakeLists.txt

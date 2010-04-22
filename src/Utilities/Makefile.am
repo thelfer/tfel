@@ -10,3 +10,4 @@ libTFELUtilities_la_SOURCES = TextData.cxx         \
 			      CxxKeywords.cxx      \
 			      Name.cxx             \
 			      CxxTokenizer.cxx
+EXTRA_DIST = CMakeLists.txt

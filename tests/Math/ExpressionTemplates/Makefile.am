@@ -23,6 +23,7 @@ test_PROGRAMS = test    \
 		tvector \
 		tvector2
 
+
 LDADD = -L$(top_builddir)/src/Math                 \
 	-L$(top_builddir)/src/Utilities            \
 	-L$(top_builddir)/src/Exception            \
@@ -46,3 +47,5 @@ tvector2_SOURCES= tvector2.cxx
 TESTS=$(test_PROGRAMS)
 
 endif
+
+EXTRA_DIST=CMakeLists.txt

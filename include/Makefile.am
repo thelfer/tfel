@@ -466,3 +466,5 @@ nobase_include_HEADERS += TFEL/Graphics/ArrowStyle.hxx	          \
 			  TFEL/Graphics/Curve.hxx                 \
 			  TFEL/Graphics/Grid.hxx
 endif
+
+EXTRA_DIST = CMakeLists.txt

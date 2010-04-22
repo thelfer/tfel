@@ -50,3 +50,5 @@ gentype_SOURCES             = gentype.cxx
 TESTS=$(test_PROGRAMS)
 
 endif
+
+EXTRA_DIST=CMakeLists.txt

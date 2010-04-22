@@ -4,3 +4,4 @@ INCLUDES = -I$(top_srcdir)/include
 
 lib_LTLIBRARIES = libTFELException.la 
 libTFELException_la_SOURCES = TFELException.cxx
+EXTRA_DIST = CMakeLists.txt

@@ -345,6 +345,7 @@ EOF
     $CXX -fvisibility-inlines-hidden --shared -DPIC -fPIC test.cxx -o libtest-fvisibility-inlines-hidden.so &> /dev/null
 	    if test "$?" = "0" ; then
 		    CXXFLAGS="$CXXFLAGS $GCC_SYMBOL_VISIBILITY"
+		    OPTIMISATION_FLAGS="$GCC_SYMBOL_VISIBILITY $OPTIMISATION_FLAGS"
 		    rm libtest-fvisibility-inlines-hidden.so
 		fi
 		rm test-fvisibility-inlines-hidden.cxx
@@ -354,6 +355,7 @@ EOF
 	    AC_GCC_CHECK_FLAG(-fvisibility=hidden,GCC_SYMBOL_VISIBILITY)
 	    CXXFLAGS="$CXXFLAGS $GCC_SYMBOL_VISIBILITY"
 	    CFLAGS="$CFLAGS $GCC_SYMBOL_VISIBILITY"
+	    OPTIMISATION_FLAGS="$GCC_SYMBOL_VISIBILITY $OPTIMISATION_FLAGS"
 	fi
 	
 	]) dnl end of AC_CHECK GXX

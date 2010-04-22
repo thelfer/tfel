@@ -44,5 +44,5 @@ install_headers(MFront/UMAT/UMATOrthotropicBehaviour.hxx)
 install_headers(MFront/UMAT/UMATComputeStiffnessTensor.hxx)
 install_headers(MFront/UMAT/UMATComputeThermalExpansionTensor.hxx)
 install_headers(MFront/UMAT/UMATTraits.hxx)
-install_headers(MFront/UMAT/UMAT.hxx
+install_headers(MFront/UMAT/UMAT.hxx)
 endif(HAVE_CASTEM)

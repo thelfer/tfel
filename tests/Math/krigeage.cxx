@@ -35,7 +35,7 @@ int main () {
 
   init_floating_point_exceptions();
 
-  for(i=0;i!=500;++i){
+  for(i=0;i!=100;++i){
     x = rand(0.,1.);
     t = rand(0.,1.);
     f = cos(x+t)*exp(x);

@@ -15,6 +15,6 @@ main(void)
 {
   using namespace tfel::system;
   ProcessManager m;
-  m.createProcess("./test");
+  m.createProcess("./process_test_target");
   return EXIT_SUCCESS;
 }

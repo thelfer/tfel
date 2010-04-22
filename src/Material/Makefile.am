@@ -7,3 +7,5 @@ libTFELMaterial_la_SOURCES = MaterialException.cxx
 libTFELMaterial_la_LIBADD = -L$(top_builddir)/src/Math      -lTFELMath      \
 		            -L$(top_builddir)/src/Exception -lTFELException \
 			    -L$(top_builddir)/src/Utilities -lTFELUtilities
+
+EXTRA_DIST = CMakeLists.txt

@@ -52,7 +52,8 @@ namespace tfel{
       static TFEL_MATH_INLINE
       T exe(InputIterator1 p, InputIterator2 q, T init)
       {
-	return dotProduct<N-1>::exe(++p,++q,init+(conj(*p))*(*q));
+	const T value = init+(conj(*p))*(*q);
+	return dotProduct<N-1>::exe(++p,++q,value);
       }
 
     }; // end of struct dotProduct<N>

@@ -7,7 +7,8 @@ examples_DATA = elasticity.mfront   \
 		norton.mfront       \
 		win32.txt
 
-EXTRA_DIST = elasticity.mfront   \
+EXTRA_DIST = CMakeLists.txt      \
+	     elasticity.mfront   \
 	     plasticity.mfront   \
 	     implicit.mfront     \
 	     rungekutta54.mfront \

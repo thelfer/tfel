@@ -15,6 +15,8 @@
 #include<sys/types.h>
 #include<unistd.h>
 
+
+#include"TFEL/Config.hxx"
 #include"TFEL/System/SystemError.hxx"
 
 namespace tfel
@@ -23,7 +25,7 @@ namespace tfel
   namespace system
   {
 
-    struct ChildProcess
+    struct TFEL_VISIBILITY_EXPORT ChildProcess
     {
       /*!
        * \param in  : input stream
@@ -51,7 +53,7 @@ namespace tfel
       int outputStream;
     }; // end of struct ChildProcess
 
-    struct ChildProcessCreationFailedException
+    struct TFEL_VISIBILITY_EXPORT ChildProcessCreationFailedException
       : public SystemError
     {
       ChildProcessCreationFailedException();

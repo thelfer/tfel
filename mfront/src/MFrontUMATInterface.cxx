@@ -681,6 +681,7 @@ namespace mfront{
     out << "#define _LIB_"+header+"_HXX_\n\n";
     
     out << "#include\"castem.h\"\n";
+    out << "#include\"TFEL/Config/TFELConfig.hxx\"\n\n";
     out << "#include\"MFront/UMAT/UMAT.hxx\"\n\n";
 
     out << "#ifdef __cplusplus\n";
@@ -693,20 +694,17 @@ namespace mfront{
 
     out << "#ifdef WIN32\n";
     out << "#include <windows.h>\n";
-    out << "#ifndef MFRONT_SHAREDOBJ\n";
-    out << "#define MFRONT_SHAREDOBJ __declspec(dllexport)\n"; 
-    out << "#endif /* MFRONT_SHAREDOBJ */\n"; 
     out << "#ifndef MFRONT_STDCALL\n";
     out << "#define MFRONT_STDCALL __stdcall\n"; 
     out << "#endif /* MFRONT_STDCALL */\n"; 
     out << "#else\n";
-    out << "#ifndef MFRONT_SHAREDOBJ\n";
-    out << "#define MFRONT_SHAREDOBJ\n"; 
-    out << "#endif /* MFRONT_SHAREDOBJ */\n"; 
     out << "#ifndef MFRONT_STDCALL\n";
     out << "#define MFRONT_STDCALL\n"; 
     out << "#endif /* MFRONT_STDCALL */\n"; 
     out << "#endif /* WIN32 */\n\n";
+    out << "#ifndef MFRONT_SHAREDOBJ\n";
+    out << "#define MFRONT_SHAREDOBJ TFEL_VISIBILITY_EXPORT\n"; 
+    out << "#endif /* MFRONT_SHAREDOBJ */\n\n"; 
 
     out << "#define umat" 
 	<< MFrontUMATInterface::makeUpperCase(name)

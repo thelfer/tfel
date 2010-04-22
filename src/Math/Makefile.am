@@ -117,3 +117,5 @@ endif
 if HAVE_READLINE
 tfel_eval_LDADD += @READLINE_LIBS@
 endif
+
+EXTRA_DIST = CMakeLists.txt

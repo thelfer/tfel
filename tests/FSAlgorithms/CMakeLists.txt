@@ -1,0 +1,21 @@
+include_directories("${PROJECT_SOURCE_DIR}/include")
+link_directories("${PROJECT_BINARY_DIR}/src/Utilities")
+
+add_custom_target(check COMMAND ${CMAKE_CTEST_COMMAND})
+
+# a simple macro
+macro(tests_fsalgorithm test_arg)
+  add_executable(${test_arg} EXCLUDE_FROM_ALL ${test_arg}.cxx)
+  add_test(${test_arg} ${EXECUTABLE_OUTPUT_PATH}/${test_arg})
+  add_dependencies(check ${test_arg})
+endmacro(tests_fsalgorithm)
+
+tests_fsalgorithm(accumulate)
+tests_fsalgorithm(equal)
+tests_fsalgorithm(for_each)
+tests_fsalgorithm(generate)
+tests_fsalgorithm(inner_product)
+tests_fsalgorithm(iota)
+tests_fsalgorithm(test_FSalgorithm)
+tests_fsalgorithm(test_FSalgorithm2)
+tests_fsalgorithm(transform)

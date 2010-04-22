@@ -171,3 +171,5 @@ endif
 TESTS=$(test_PROGRAMS)
 
 endif
+
+EXTRA_DIST=CMakeLists.txt

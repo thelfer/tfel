@@ -8,19 +8,21 @@
 #ifndef _LIB_TFEL_SIGNALHANDLER_HXX_
 #define _LIB_TFEL_SIGNALHANDLER_HXX_ 
 
+#include"TFEL/Config/TFELConfig.hxx"
+
 namespace tfel
 {
 
   namespace system
   {
     
-    struct SignalHandler
+    struct TFEL_VISIBILITY_EXPORT SignalHandler
     {
       virtual void execute(const int) = 0;
       virtual ~SignalHandler();
     }; // end of struct SignalHandler
     
-    struct FctSignalHandler
+    struct TFEL_VISIBILITY_EXPORT FctSignalHandler
       : public SignalHandler
     {
       typedef void (*Fct)(const int);
@@ -44,6 +46,7 @@ namespace tfel
       const Fct f;
     }; // end of struct MemberSignalHandler
     
+    TFEL_VISIBILITY_EXPORT
     FctSignalHandler *
     sigPtrFun(const FctSignalHandler::Fct);
 

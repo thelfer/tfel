@@ -18,8 +18,11 @@ static bool math          = false;
 static bool utilities     = false;
 static bool finiteElement = false;
 static bool material      = false;
+static bool tests         = false;
 static bool lsystem       = false;
+#ifdef USE_GRAPHICS
 static bool graphics      = false;
+#endif /* USE_GRAPHICS */
 
 const std::string
 libDir(void)
@@ -113,7 +116,7 @@ treatFiniteElement(void)
 } // end of treatFiniteElement
 
 void
-treatLsystem(void)
+treatSystem(void)
 {
   exceptions    = true;
   lsystem        = true;
@@ -127,6 +130,7 @@ treatMaterial(void)
   material = true;
 } // end of treatMaterial
 
+#ifdef USE_GRAPHICS
 void
 treatGraphics(void)
 {
@@ -134,15 +138,27 @@ treatGraphics(void)
   math        = true;
   utilities   = true;
   lsystem      = true;
-} // end of treatMaterial
+} // end of treatGraphics
+#endif /* USE_GRAPHICS */
+
+void
+treatTests(void)
+{
+  tests  = true;
+} // end of treatTests
 
 void
 treatAll(void)
 {
   exceptions  = true;
   math        = true;
-  material = true;
+  material    = true;
   utilities   = true;
+  lsystem      = true;
+  tests       = true;
+#ifdef USE_GRAPHICS
+  graphics    = true;
+#endif /* USE_GRAPHICS */
 } // end of treatAll
 
 void
@@ -205,13 +221,15 @@ main(const int argc,
   registerCallBack("--help",&treatHelp,"print this help message.");
   registerCallBack("--exceptions",&treatExceptions,"request flags for libTFELException.");
   registerCallBack("--math",&treatMath,"request flags for libTFELMath.");
-  registerCallBack("--graphics",&treatGraphics,"request flags for libTFELGraphics.");
-  registerCallBack("--system",&treatLsystem,"request flags for libTFELSystem.");
+  registerCallBack("--tests",&treatTests,"request flags for libTFELTests.");
+  registerCallBack("--system",&treatSystem,"request flags for libTFELSystem.");
   registerCallBack("--utilities",&treatUtilities,"request flags for libTFELUtilities.");
   registerCallBack("--material",&treatMaterial,"request flags for libTFELMaterial.");
   registerCallBack("--finiteElement",&treatFiniteElement,"request flags for libTFELFiniteElement.");
   registerCallBack("--all",&treatAll,"request flags for all librairies.");
-
+#ifdef USE_GRAPHICS
+  registerCallBack("--graphics",&treatGraphics,"request flags for libTFELGraphics.");
+#endif /* USE_GRAPHICS */
   for(p2=argv+1;p2!=argv+argc;++p2){
     p = callBacksContainer.find(*p2);
     if(p==callBacksContainer.end()){
@@ -238,8 +256,13 @@ main(const int argc,
     if(lsystem){
       cout << "-lTFELSystem ";
     }
+#ifdef USE_GRAPHICS
     if(graphics){
       cout << "-lTFELGraphics ";
+    }
+#endif /* USE_GRAPHICS */
+    if(tests){
+      cout << "-lTFELTests ";
     }
     if(material){
       cout << "-lTFELMaterial ";

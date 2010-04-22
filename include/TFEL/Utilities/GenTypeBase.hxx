@@ -407,7 +407,8 @@ namespace tfel{
 	using namespace tfel::utilities::internals;
 	if(this->index==TypeListFindEltPos<T1,List>::value){
 	  // The GenType already holds an object of type T1
-	  T1& tmp = *(reinterpret_cast<T1*>(&(this->container.buffer[0])));
+	  unsigned char *c = this->container.buffer;
+	  T1& tmp  = *(reinterpret_cast<T1*>(c));
 	  tmp = src;
 	} else {
 	  // We create a new object of type T1 by calling the copy constructor
@@ -465,7 +466,8 @@ namespace tfel{
 	if(this->index!=TypeListFindEltPos<T1,List>::value){
 	  throw(GenTypeCastError());
 	}
-	return *(reinterpret_cast<const T1*>(&(this->container.buffer[0])));
+	const unsigned char *c = this->container.buffer;
+	return *(reinterpret_cast<const T1*>(c));
       }
       //! get the value contained in the GenType.
       /*
@@ -486,7 +488,8 @@ namespace tfel{
 	if(this->index!=TypeListFindEltPos<T1,List>::value){
 	  throw(GenTypeCastError());
 	}
-	return *(reinterpret_cast<T1*>(&(this->container.buffer[0])));
+	unsigned char *c = this->container.buffer;
+	return *(reinterpret_cast<T1*>(c));
       }
       /*
        * Destructor

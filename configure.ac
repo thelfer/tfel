@@ -316,6 +316,8 @@ fi
 AC_OUTPUT([debug.sh
 	   Makefile
 	   Doxyfile
+	   cmake/Makefile
+	   cmake/modules/Makefile
 	   include/Makefile
 	   po/Makefile.in
 	   src/Makefile

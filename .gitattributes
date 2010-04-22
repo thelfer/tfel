@@ -12,6 +12,8 @@
 /README -text
 /bootstrap.sh -text
 /clean.sh -text
+cmake/Makefile.am -text
+cmake/modules/Makefile.am -text
 cmake/modules/autotools.cmake -text
 cmake/modules/gcc.cmake -text
 cmake/modules/tfel.cmake -text
@@ -497,6 +499,7 @@ m4/po.m4 -text
 m4/progtest.m4 -text
 m4/vl_lib_readline.m4 -text
 mfront/CMakeLists.txt -text
+mfront/Examples/CMakeLists.txt -text
 mfront/Examples/Makefile.am -text
 mfront/Examples/elasticity.mfront -text
 mfront/Examples/implicit.mfront -text
@@ -574,6 +577,7 @@ mfront/include/MFront/UnaryLoadingDefinition.hxx -text
 mfront/include/MFront/VarHandler.hxx -text
 mfront/include/MFront/VariableBoundsDescription.hxx -text
 mfront/include/Makefile.am -text
+mfront/lisp/CMakeLists.txt -text
 mfront/lisp/Makefile.am -text
 mfront/lisp/mfront.el -text
 mfront/src/BehaviourCharacteristic.cxx -text
@@ -760,6 +764,7 @@ src/Utilities/TerminalColors.cxx -text
 src/Utilities/TextData.cxx -text
 src/Utilities/Token.cxx -text
 tests/CMakeLists.txt -text
+tests/FSAlgorithms/CMakeLists.txt -text
 tests/FSAlgorithms/Makefile.am -text
 tests/FSAlgorithms/accumulate.cxx -text
 tests/FSAlgorithms/equal.cxx -text
@@ -770,13 +775,17 @@ tests/FSAlgorithms/iota.cxx -text
 tests/FSAlgorithms/test_FSalgorithm.cxx -text
 tests/FSAlgorithms/test_FSalgorithm2.cxx -text
 tests/FSAlgorithms/transform.cxx -text
+tests/Lambda/CMakeLists.txt -text
 tests/Lambda/Makefile.am -text
 tests/Lambda/lambda.cxx -text
 tests/Makefile.am -text
+tests/Material/CMakeLists.txt -text
 tests/Material/Makefile.am -text
 tests/Material/boundsCheck.cxx -text
+tests/Math/CMakeLists.txt -text
 tests/Math/Composite/Makefile.am -text
 tests/Math/Composite/composite.cxx -text
+tests/Math/ExpressionTemplates/CMakeLists.txt -text
 tests/Math/ExpressionTemplates/Makefile.am -text
 tests/Math/ExpressionTemplates/include/Makefile.am -text
 tests/Math/ExpressionTemplates/include/test10-header.hxx -text
@@ -803,6 +812,7 @@ tests/Math/Functions/power.cxx -text
 tests/Math/Functions/vector1.cxx -text
 tests/Math/Makefile.am -text
 tests/Math/Range.cxx -text
+tests/Math/RungeKutta/CMakeLists.txt -text
 tests/Math/RungeKutta/Makefile.am -text
 tests/Math/RungeKutta/include/Makefile.am -text
 tests/Math/RungeKutta/include/runge_kutta2-header.hxx -text
@@ -863,15 +873,17 @@ tests/Math/tvector.cxx -text
 tests/Math/tvector2.cxx -text
 tests/Math/tvector3.cxx -text
 tests/Math/vector1.cxx -text
+tests/MetaProgramming/CMakeLists.txt -text
 tests/MetaProgramming/HasConstIterator.cxx -text
 tests/MetaProgramming/Makefile.am -text
 tests/MetaProgramming/Name.cxx -text
 tests/MetaProgramming/RemoveConstness.cxx -text
 tests/MetaProgramming/typelist.cxx -text
+tests/System/CMakeLists.txt -text
 tests/System/Makefile.am -text
 tests/System/process.cxx -text
+tests/System/process_test_target.cxx -text
 tests/System/rstream.cxx -text
-tests/System/test.cxx -text
 tests/System/wstream.cxx -text
 tests/Tests/CMakeLists.txt -text
 tests/Tests/Makefile.am -text
@@ -883,6 +895,7 @@ tests/Tests/testmanager.cxx -text
 tests/Tests/testproxy.cxx -text
 tests/Tests/testproxy2.cxx -text
 tests/Tests/testsuite.cxx -text
+tests/UnaryTests/CMakeLists.txt -text
 tests/UnaryTests/CubicRoots.cxx -text
 tests/UnaryTests/FracSimplify.cxx -text
 tests/UnaryTests/IntegersSet.cxx -text
@@ -906,6 +919,7 @@ tests/UnaryTests/tmatrix.cxx -text
 tests/UnaryTests/tuple.cxx -text
 tests/UnaryTests/tvector.cxx -text
 tests/UnaryTests/typelist.cxx -text
+tests/Utilities/CMakeLists.txt -text
 tests/Utilities/Makefile.am -text
 tests/Utilities/gentype.cxx -text
 tfel-check/Makefile.am -text

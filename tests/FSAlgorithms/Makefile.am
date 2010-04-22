@@ -27,3 +27,5 @@ transform_SOURCES         = transform.cxx
 TESTS=$(test_PROGRAMS)
 
 endif
+
+EXTRA_DIST = CMakeLists.txt
