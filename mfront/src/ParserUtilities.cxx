@@ -10,7 +10,10 @@
 #include<stdexcept>
 #include<sstream>
 
+#include"TFEL/Config/TFELConfig.hxx"
 #include"MFront/ParserUtilities.hxx"
+
+#define MFRONT_MACRO_STR(X) #X
 
 namespace mfront
 {
@@ -98,5 +101,30 @@ namespace mfront
     }
     return library;
   } // end of getLibraryNameBase
+
+  void
+  writeExportDirectives(std::ofstream& file)
+  {
+    file << "#ifdef WIN32\n";
+    file << "#include <windows.h>\n";
+    file << "#ifndef MFRONT_SHAREDOBJ\n";
+    file << "#define MFRONT_SHAREDOBJ __declspec(dllexport)\n"; 
+    file << "#endif /* MFRONT_SHAREDOBJ */\n"; 
+    file << "#ifndef MFRONT_STDCALL\n";
+    file << "#define MFRONT_STDCALL __stdcall\n"; 
+    file << "#endif /* MFRONT_STDCALL */\n"; 
+    file << "#else\n";
+    file << "#ifndef MFRONT_SHAREDOBJ\n";
+    file << "#ifdef __GNUC__\n";
+    file << "#define MFRONT_SHAREDOBJ __attribute__((visibility(\"default\")))\n";
+    file << "#else\n";
+    file << "#define MFRONT_SHAREDOBJ\n";
+    file << "#endif /* __GNUC__ */\n";
+    file << "#endif /* MFRONT_SHAREDOBJ */\n"; 
+    file << "#ifndef MFRONT_STDCALL\n";
+    file << "#define MFRONT_STDCALL\n"; 
+    file << "#endif /* MFRONT_STDCALL */\n"; 
+    file << "#endif /* WIN32 */\n\n";
+  } // end of writeExportDirectives
 
 } // end of namespace mfront

@@ -1,5 +1,5 @@
 include_directories("${PROJECT_SOURCE_DIR}/include")
-include_directories("${PROJECT_SOURCE_DIR}/tests/Math/Rungekutta/include")
+include_directories("${PROJECT_SOURCE_DIR}/tests/Math/RungeKutta/include")
 link_directories("${PROJECT_BINARY_DIR}/src/Math"
                  "${PROJECT_BINARY_DIR}/src/Utilities"
                  "${PROJECT_BINARY_DIR}/src/Exception")

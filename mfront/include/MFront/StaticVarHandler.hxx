@@ -11,11 +11,12 @@
 #include<string>
 #include<vector>
 
-#include"VarHandler.hxx"
+#include"TFEL/Config/TFELConfig.hxx"
+#include"MFront/VarHandler.hxx"
 
 namespace mfront{
 
-  struct StaticVarHandler
+  struct TFEL_VISIBILITY_EXPORT StaticVarHandler
     : public VarHandler
   {
     long double value;

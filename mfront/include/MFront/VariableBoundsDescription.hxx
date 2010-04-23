@@ -8,10 +8,12 @@
 #ifndef _LIB_VARIABLEBOUNDSDESCRIPTION_H_
 #define _LIB_VARIABLEBOUNDSDESCRIPTION_H_ 
 
+#include"TFEL/Config/TFELConfig.hxx"
+
 namespace mfront
 {
 
-  struct VariableBoundsDescription
+  struct TFEL_VISIBILITY_EXPORT VariableBoundsDescription
   {
     enum BoundsType{Lower,Upper,LowerAndUpper};
     BoundsType     boundsType;

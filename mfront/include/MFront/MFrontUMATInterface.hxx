@@ -12,10 +12,10 @@
 #include<fstream>
 
 #include"TFEL/Utilities/CxxTokenizer.hxx"
-#include"SupportedTypes.hxx"
-#include"VarHandler.hxx"
-#include"ComputedVarHandler.hxx"
-#include"BehaviourCharacteristic.hxx"
+#include"MFront/SupportedTypes.hxx"
+#include"MFront/VarHandler.hxx"
+#include"MFront/ComputedVarHandler.hxx"
+#include"MFront/BehaviourCharacteristic.hxx"
 #include"MFront/MFrontBehaviourVirtualInterface.hxx"
 
 namespace mfront{

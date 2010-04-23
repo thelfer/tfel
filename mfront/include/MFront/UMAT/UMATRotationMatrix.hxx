@@ -8,12 +8,13 @@
 #ifndef _LIB_MFRONT_UMATROTATIONMATRIX_H_
 #define _LIB_MFRONT_UMATROTATIONMATRIX_H_ 
 
+#include"TFEL/Config/TFELConfig.hxx"
 #include"MFront/UMAT/UMAT.hxx"
 
 namespace umat
 {
 
-  struct UMATRotationMatrix2D
+  struct TFEL_VISIBILITY_EXPORT UMATRotationMatrix2D
   {
     UMATRotationMatrix2D(const UMATReal *const,
 			 const UMATReal *const);
@@ -38,7 +39,7 @@ namespace umat
   
   }; // end of struct UMATRotationMatrix2D
   
-  struct UMATRotationMatrix3D
+  struct TFEL_VISIBILITY_EXPORT UMATRotationMatrix3D
   {
     
     UMATRotationMatrix3D(const UMATReal *const,

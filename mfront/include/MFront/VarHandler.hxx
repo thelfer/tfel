@@ -11,9 +11,11 @@
 #include<string>
 #include<vector>
 
+#include"TFEL/Config/TFELConfig.hxx"
+
 namespace mfront{
 
-  struct VarHandler
+  struct TFEL_VISIBILITY_EXPORT VarHandler
   {
     std::string    type;
     std::string    name;

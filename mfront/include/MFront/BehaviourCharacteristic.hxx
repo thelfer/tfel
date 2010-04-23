@@ -8,6 +8,8 @@
 #ifndef _LIB_MFRONT_BEHAVIOURCHARACTERISTIC_H_
 #define _LIB_MFRONT_BEHAVIOURCHARACTERISTIC_H_ 
 
+#include"TFEL/Config/TFELConfig.hxx"
+
 namespace mfront{
 
   enum BehaviourType{
@@ -15,7 +17,7 @@ namespace mfront{
     ORTHOTROPIC
   }; // end of enum BehaviourType
 
-  struct BehaviourCharacteristic
+  struct TFEL_VISIBILITY_EXPORT BehaviourCharacteristic
   {
 
     BehaviourCharacteristic();

@@ -12,7 +12,7 @@
 #include<string>
 #include<map>
 
-#include"ParserBase.hxx"
+#include"MFront/ParserBase.hxx"
 
 namespace mfront{
 

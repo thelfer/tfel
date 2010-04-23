@@ -13,10 +13,10 @@
 
 #include"TFEL/Utilities/CxxTokenizer.hxx"
 
-#include"VarHandler.hxx"
-#include"StaticVarHandler.hxx"
-#include"LawFunction.hxx"
-#include"VariableBoundsDescription.hxx"
+#include"MFront/VarHandler.hxx"
+#include"MFront/StaticVarHandler.hxx"
+#include"MFront/LawFunction.hxx"
+#include"MFront/VariableBoundsDescription.hxx"
 #include"MFront/MFrontLawVirtualInterface.hxx"
 
 namespace mfront{

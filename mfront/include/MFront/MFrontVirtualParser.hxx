@@ -14,9 +14,11 @@
 #include<set>
 #include<vector>
 
+#include"TFEL/Config/TFELConfig.hxx"
+
 namespace mfront{
 
-  struct MFrontVirtualParser
+  struct TFEL_VISIBILITY_EXPORT MFrontVirtualParser
   {
     virtual void setVerboseMode() = 0;
 

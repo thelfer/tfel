@@ -12,10 +12,12 @@
 #include<ostream>
 #include<map>
 
+#include"TFEL/Config/TFELConfig.hxx"
+
 namespace mfront
 {
 
-  struct SupportedTypes
+  struct TFEL_VISIBILITY_EXPORT SupportedTypes
   {
 
     enum TypeFlag{Scalar,Stensor};
@@ -24,6 +26,7 @@ namespace mfront
     
     std::map<std::string,TypeFlag> flags;
     
+    TFEL_VISIBILITY_LOCAL
     void registerTypes(void);
 
   public:
@@ -43,7 +46,7 @@ namespace mfront
 
   }; // end of class SupportedTypes
 
-  class SupportedTypes::TypeSize
+  class TFEL_VISIBILITY_EXPORT SupportedTypes::TypeSize
   {
     friend std::ostream& 
     operator<< (std::ostream&, const TypeSize&);
@@ -51,6 +54,7 @@ namespace mfront
     typedef unsigned short ushort;
     ushort scalarSize;
     ushort stensorSize;
+
   public:
 
     TypeSize();

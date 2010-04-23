@@ -12,9 +12,11 @@
 #include<string>
 #include<exception>
 
+#include"TFEL/Config/TFELConfig.hxx"
+
 namespace umat {
 
-  struct UMATException
+  struct TFEL_VISIBILITY_EXPORT UMATException
     : public std::exception
   {
 
@@ -41,7 +43,7 @@ namespace umat {
     
   }; // end of struct UMATException
 
-  struct UMATInvalidNTENSValue
+  struct TFEL_VISIBILITY_EXPORT UMATInvalidNTENSValue
     : public UMATException
   {
     UMATInvalidNTENSValue(const unsigned short);
@@ -53,7 +55,7 @@ namespace umat {
     operator=(const UMATInvalidNTENSValue&);
   }; // end of struct UMATInvalidNTENSValue
 
-  struct UMATInvalidDimension
+  struct TFEL_VISIBILITY_EXPORT UMATInvalidDimension
     : public UMATException
   {
     UMATInvalidDimension(const std::string&,

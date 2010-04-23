@@ -15,14 +15,16 @@
 #include<string>
 #include<fstream>
 
-#include"SupportedTypes.hxx"
-#include"VarHandler.hxx"
-#include"StaticVarHandler.hxx"
-#include"ComputedVarHandler.hxx"
-#include"BehaviourCharacteristic.hxx"
-#include"UnaryLoadingDefinition.hxx"
-#include"BoundsDescription.hxx"
-#include"ParserBase.hxx"
+#include"TFEL/Config/TFELConfig.hxx"
+
+#include"MFront/SupportedTypes.hxx"
+#include"MFront/VarHandler.hxx"
+#include"MFront/StaticVarHandler.hxx"
+#include"MFront/ComputedVarHandler.hxx"
+#include"MFront/BehaviourCharacteristic.hxx"
+#include"MFront/UnaryLoadingDefinition.hxx"
+#include"MFront/BoundsDescription.hxx"
+#include"MFront/ParserBase.hxx"
 
 #include"MFront/MFrontBehaviourVirtualInterface.hxx"
 #include"MFront/MFrontBehaviourInterfaceFactory.hxx"
@@ -31,7 +33,7 @@ namespace mfront{
 
   typedef std::vector<std::string> StringContainer;
 
-  struct MFrontBehaviourParserCommon
+  struct TFEL_VISIBILITY_EXPORT MFrontBehaviourParserCommon
     : public ParserBase,
       public SupportedTypes
   {

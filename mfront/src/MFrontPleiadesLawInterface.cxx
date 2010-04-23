@@ -305,8 +305,8 @@ namespace mfront
       this->headerFile << "namespace " << *p3 << "\n{\n";
       ++p3;
     }
-
-    this->headerFile << "\nstruct " << names.back() << endl;
+    writeExportDirectives(this->headerFile);
+    this->headerFile << "\nstruct MFRONT_SHAREDOBJ " << names.back() << endl;
     this->headerFile << ": public Pleiades::PMetier::PFunctions::IFunction\n";
     this->headerFile << "{\n\n";
     this->headerFile << "//! Default constructor\n";

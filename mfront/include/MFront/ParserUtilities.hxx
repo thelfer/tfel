@@ -10,25 +10,30 @@
 #define _LIB_PARSERUTILITIES_HXX_ 
 
 #include<fstream>
-#include"StaticVarHandler.hxx"
+
+#include"TFEL/Config/TFELConfig.hxx"
+#include"MFront/StaticVarHandler.hxx"
 
 namespace mfront{
 
-  void
+  TFEL_VISIBILITY_EXPORT void
   writeMaterialLaws(const std::string&,
 		    std::ofstream&,
 		    const std::vector<std::string>&);
 
-  void
+  TFEL_VISIBILITY_EXPORT void
   writeStaticVariables(const std::string&,
 		       std::ofstream&,
 		       const StaticVarContainer&,
 		       const std::string&,
 		       const bool);
   
-  std::string
+  TFEL_VISIBILITY_EXPORT std::string
   getMaterialLawLibraryNameBase(const std::string&,
 				const std::string&);
+
+  TFEL_VISIBILITY_EXPORT void
+  writeExportDirectives(std::ofstream&);
 
 } // end of namespace mfront  
 

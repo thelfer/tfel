@@ -10,11 +10,13 @@
 #define _LIB_MFRONT_BOUNDSDESCRIPTION_HXX_ 
 
 #include<fstream>
-#include"SupportedTypes.hxx"
+
+#include"TFEL/Config/TFELConfig.hxx"
+#include"MFront/SupportedTypes.hxx"
 
 namespace mfront{
 
-  struct BoundsDescription
+  struct TFEL_VISIBILITY_EXPORT BoundsDescription
   {
     enum Category{
       Physical,

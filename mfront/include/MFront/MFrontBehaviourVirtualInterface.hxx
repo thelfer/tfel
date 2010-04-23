@@ -14,14 +14,16 @@
 #include<map>
 #include<vector>
 
+#include"TFEL/Config/TFELConfig.hxx"
 #include"TFEL/Utilities/CxxTokenizer.hxx"
-#include"VarHandler.hxx"
-#include"ComputedVarHandler.hxx"
-#include"BehaviourCharacteristic.hxx"
+
+#include"MFront/VarHandler.hxx"
+#include"MFront/ComputedVarHandler.hxx"
+#include"MFront/BehaviourCharacteristic.hxx"
 
 namespace mfront{
   
-  struct MFrontBehaviourVirtualInterface
+  struct TFEL_VISIBILITY_EXPORT MFrontBehaviourVirtualInterface
   {
 
     virtual void 

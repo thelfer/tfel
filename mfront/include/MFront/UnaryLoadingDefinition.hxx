@@ -13,12 +13,13 @@
 #include<map>
 #include<string>
 
+#include"TFEL/Config/TFELConfig.hxx"
 #include"TFEL/Utilities/CxxTokenizer.hxx"
-#include"SupportedTypes.hxx"
+#include"MFront/SupportedTypes.hxx"
 
 namespace mfront{
 
-  struct UnaryLoadingDefinition
+  struct TFEL_VISIBILITY_EXPORT UnaryLoadingDefinition
   {
 
     typedef tfel::utilities::CxxTokenizer::TokensContainer::const_iterator TokensIterator;

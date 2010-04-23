@@ -274,22 +274,7 @@ namespace mfront
     this->headerFile << "#define _"
 		     << MFrontCastemLawInterface::makeUpperCase(name)
 		     << "_CASTEM_HH\n\n";
-    this->headerFile << "#ifdef WIN32\n";
-    this->headerFile << "#include <windows.h>\n";
-    this->headerFile << "#ifndef MFRONT_SHAREDOBJ\n";
-    this->headerFile << "#define MFRONT_SHAREDOBJ __declspec(dllexport)\n"; 
-    this->headerFile << "#endif /* MFRONT_SHAREDOBJ */\n"; 
-    this->headerFile << "#ifndef MFRONT_STDCALL\n";
-    this->headerFile << "#define MFRONT_STDCALL __stdcall\n"; 
-    this->headerFile << "#endif /* MFRONT_STDCALL */\n"; 
-    this->headerFile << "#else\n";
-    this->headerFile << "#ifndef MFRONT_SHAREDOBJ\n";
-    this->headerFile << "#define MFRONT_SHAREDOBJ\n"; 
-    this->headerFile << "#endif /* MFRONT_SHAREDOBJ */\n"; 
-    this->headerFile << "#ifndef MFRONT_STDCALL\n";
-    this->headerFile << "#define MFRONT_STDCALL\n"; 
-    this->headerFile << "#endif /* MFRONT_STDCALL */\n"; 
-    this->headerFile << "#endif /* WIN32 */\n\n";
+    writeExportDirectives(this->headerFile);
     this->headerFile << "#ifdef __cplusplus\n";
     this->headerFile << "extern \"C\"{\n";
     this->headerFile << "#endif /* __cplusplus */\n\n";

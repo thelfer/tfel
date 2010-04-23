@@ -12,11 +12,12 @@
 #include<string>
 #include<map>
 
+#include"TFEL/Config/TFELConfig.hxx"
 #include"MFront/MFrontLawVirtualInterface.hxx"
 
 namespace mfront{
 
-  struct MFrontLawInterfaceFactory
+  struct TFEL_VISIBILITY_EXPORT MFrontLawInterfaceFactory
   {
 
     typedef MFrontLawVirtualInterface* (*InterfaceCreator)(void);
@@ -66,17 +67,22 @@ namespace mfront{
     typedef std::map<std::string,MFrontLawVirtualInterface *> InterfaceContainer;
     typedef std::map<std::string,std::vector<std::string> > InterfaceDependencyContainer;
 
+    TFEL_VISIBILITY_LOCAL
     MFrontLawInterfaceFactory();
 
+    TFEL_VISIBILITY_LOCAL
     InterfaceDependencyContainer&
     getDependenciesMap(void);
 
+    TFEL_VISIBILITY_LOCAL
     InterfaceCreatorsContainer&
     getInterfaceCreatorsMap(void);
 
+    TFEL_VISIBILITY_LOCAL
     InterfaceContainer&
     getInterfacesMap(void);
 
+    TFEL_VISIBILITY_LOCAL
     AliasContainer&
     getAliasesMap(void);
 

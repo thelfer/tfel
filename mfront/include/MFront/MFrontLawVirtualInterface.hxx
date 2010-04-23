@@ -14,16 +14,17 @@
 #include<map>
 #include<vector>
 
+#include"TFEL/Config/TFELConfig.hxx"
 #include"TFEL/Utilities/CxxTokenizer.hxx"
 
-#include"VarHandler.hxx"
-#include"StaticVarHandler.hxx"
-#include"LawFunction.hxx"
-#include"VariableBoundsDescription.hxx"
+#include"MFront/VarHandler.hxx"
+#include"MFront/StaticVarHandler.hxx"
+#include"MFront/LawFunction.hxx"
+#include"MFront/VariableBoundsDescription.hxx"
 
 namespace mfront{
   
-  struct MFrontLawVirtualInterface
+  struct TFEL_VISIBILITY_EXPORT MFrontLawVirtualInterface
   {
 
     virtual void 

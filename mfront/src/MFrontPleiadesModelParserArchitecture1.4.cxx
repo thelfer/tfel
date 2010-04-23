@@ -2047,10 +2047,11 @@ namespace mfront{
     if(!this->includes.empty()){
       this->headerFile << this->includes << endl << endl;
     }
+    writeExportDirectives(this->headerFile);
     this->headerFile << "namespace Pleiades\n{\n";
     this->headerFile << "namespace PMetier\n{\n";
     this->headerFile << "namespace PModels\n{\n\n";
-    this->headerFile << "struct " << this->className << endl;
+    this->headerFile << "struct MFRONT_SHAREDOBJ " << this->className << endl;
     this->headerFile << ": public IModel,\n";
     this->headerFile << "public MEDModel\n";
     this->headerFile << "{\n\n";

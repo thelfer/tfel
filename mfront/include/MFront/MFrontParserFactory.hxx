@@ -11,12 +11,15 @@
 #include<vector>
 #include<string>
 #include<map>
+
+#include"TFEL/Config/TFELConfig.hxx"
+
 #include"MFront/MFrontVirtualParser.hxx"
 #include"MFront/MFrontDefaultParser.hxx"
 
 namespace mfront{
 
-  struct MFrontParserFactory
+  struct TFEL_VISIBILITY_EXPORT MFrontParserFactory
   {
     typedef MFrontVirtualParser* (*ParserCreator)(void);
     typedef std::string (*DescriptionPtr)(void);
@@ -44,11 +47,14 @@ namespace mfront{
     typedef std::map<std::string,ParserCreator>  ParserCreatorsContainer;
     typedef std::map<std::string,DescriptionPtr> DescriptionPtrContainer;
 
+    TFEL_VISIBILITY_LOCAL
     MFrontParserFactory();
 
+    TFEL_VISIBILITY_LOCAL
     DescriptionPtrContainer&
     getDescriptionMap(void);
 
+    TFEL_VISIBILITY_LOCAL
     ParserCreatorsContainer&
     getMap(void);
 

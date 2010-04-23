@@ -10,12 +10,14 @@
 #define _LIB_MFRONTISOTROPICBEHAVIOURPARSERBASE_HXX_ 
 
 #include<string>
+
+#include"TFEL/Config/TFELConfig.hxx"
 #include"MFront/MFrontVirtualParser.hxx"
 #include"MFront/MFrontBehaviourParserBase.hxx"
 
 namespace mfront{
 
-  struct MFrontIsotropicBehaviourParserBase
+  struct TFEL_VISIBILITY_EXPORT MFrontIsotropicBehaviourParserBase
     : public MFrontVirtualParser,
       public MFrontBehaviourParserBase<MFrontIsotropicBehaviourParserBase>
   {

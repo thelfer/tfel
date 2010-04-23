@@ -21,7 +21,7 @@ namespace umat
   struct UMATComputeThermalExpansionTensor;
 
   template<>
-  struct UMATComputeThermalExpansionTensor<1u,ISOTROPIC>
+  struct TFEL_VISIBILITY_EXPORT UMATComputeThermalExpansionTensor<1u,ISOTROPIC>
   {
     static void
     exe(const UMATReal* const,
@@ -29,7 +29,7 @@ namespace umat
   }; // end of struct UMATComputeThermalExpansionTensor
 
   template<>
-  struct UMATComputeThermalExpansionTensor<2u,ISOTROPIC>
+  struct TFEL_VISIBILITY_EXPORT UMATComputeThermalExpansionTensor<2u,ISOTROPIC>
   {
     static void
     exe(const UMATReal* const,
@@ -37,7 +37,7 @@ namespace umat
   }; // end of struct UMATComputeThermalExpansionTensor
 
   template<>
-  struct UMATComputeThermalExpansionTensor<3u,ISOTROPIC>
+  struct TFEL_VISIBILITY_EXPORT UMATComputeThermalExpansionTensor<3u,ISOTROPIC>
   {
     static void
     exe(const UMATReal* const,
@@ -45,7 +45,7 @@ namespace umat
   }; // end of struct UMATComputeThermalExpansionTensor
 
   template<>
-  struct UMATComputeThermalExpansionTensor<1u,ORTHOTROPIC>
+  struct TFEL_VISIBILITY_EXPORT UMATComputeThermalExpansionTensor<1u,ORTHOTROPIC>
   {
     static void
     exe(const UMATReal* const,
@@ -53,7 +53,7 @@ namespace umat
   }; // end of struct UMATComputeThermalExpansionTensor
 
   template<>
-  struct UMATComputeThermalExpansionTensor<2u,ORTHOTROPIC>
+  struct TFEL_VISIBILITY_EXPORT UMATComputeThermalExpansionTensor<2u,ORTHOTROPIC>
   {
     static void
     exe(const UMATReal* const,
@@ -61,7 +61,7 @@ namespace umat
   }; // end of struct UMATComputeThermalExpansionTensor
 
   template<>
-  struct UMATComputeThermalExpansionTensor<3u,ORTHOTROPIC>
+  struct TFEL_VISIBILITY_EXPORT UMATComputeThermalExpansionTensor<3u,ORTHOTROPIC>
   {
     static void
     exe(const UMATReal* const,

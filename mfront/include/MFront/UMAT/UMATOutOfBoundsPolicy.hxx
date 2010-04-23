@@ -8,12 +8,13 @@
 #ifndef _LIB_TFEL_MFRONT_UMATOUTOFBOUNDSPOLICY_H_
 #define _LIB_TFEL_MFRONT_UMATOUTOFBOUNDSPOLICY_H_ 
 
+#include"TFEL/Config/TFELConfig.hxx"
 #include"TFEL/Material/OutOfBoundsPolicy.hxx"
 
 namespace umat
 {
 
-  struct UMATOutOfBoundsPolicy
+  struct TFEL_VISIBILITY_EXPORT UMATOutOfBoundsPolicy
   {
     static const UMATOutOfBoundsPolicy&
     getUMATOutOfBoundsPolicy();

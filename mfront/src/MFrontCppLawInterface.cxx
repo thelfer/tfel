@@ -314,6 +314,7 @@ namespace mfront
     if(!includes.empty()){
       this->headerFile << includes << endl;
     }
+    writeExportDirectives(this->headerFile);    
     if(namespaces.empty()){
       this->headerFile << "namespace mfront\n{\n\n";
     } else {
@@ -325,7 +326,7 @@ namespace mfront
     if(useTemplate){
       this->headerFile << "template<typename real>\n";
     }
-    this->headerFile << "struct " << name << endl;
+    this->headerFile << "struct MFRONT_SHAREDOBJ " << name << endl;
     if(!inputs.empty()){
       if(inputs.size()==1){
 	if(useTemplate){

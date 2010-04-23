@@ -13,9 +13,10 @@
 #include<set>
 #include<string>
 #include<fstream>
+
 #include"MFront/MFrontModelParserBase.hxx"
 #include"MFront/MFrontVirtualParser.hxx"
-#include"VariableBoundsDescription.hxx"
+#include"MFront/VariableBoundsDescription.hxx"
 
 namespace mfront{
 

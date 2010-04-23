@@ -8,10 +8,12 @@
 #ifndef _LIB_LAWFUNCTION_H_
 #define _LIB_LAWFUNCTION_H_ 
 
+#include"TFEL/Config/TFELConfig.hxx"
+
 namespace mfront
 {
 
-  struct LawFunction
+  struct TFEL_VISIBILITY_EXPORT LawFunction
   {
     std::string body;
     std::string cbody;

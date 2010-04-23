@@ -118,22 +118,7 @@ namespace mfront
   MFrontCLawInterface::writeHeaderPreprocessorDirectives(const std::string&,
 							 const std::string&)
   {
-    this->headerFile << "#ifdef WIN32\n";
-    this->headerFile << "#include <windows.h>\n";
-    this->headerFile << "#ifndef MFRONT_SHAREDOBJ\n";
-    this->headerFile << "#define MFRONT_SHAREDOBJ __declspec(dllexport)\n"; 
-    this->headerFile << "#endif /* MFRONT_SHAREDOBJ */\n"; 
-    this->headerFile << "#ifndef MFRONT_STDCALL\n";
-    this->headerFile << "#define MFRONT_STDCALL __stdcall\n"; 
-    this->headerFile << "#endif /* MFRONT_STDCALL */\n"; 
-    this->headerFile << "#else\n";
-    this->headerFile << "#ifndef MFRONT_SHAREDOBJ\n";
-    this->headerFile << "#define MFRONT_SHAREDOBJ\n"; 
-    this->headerFile << "#endif /* MFRONT_SHAREDOBJ */\n"; 
-    this->headerFile << "#ifndef MFRONT_STDCALL\n";
-    this->headerFile << "#define MFRONT_STDCALL\n"; 
-    this->headerFile << "#endif /* MFRONT_STDCALL */\n"; 
-    this->headerFile << "#endif /* WIN32 */\n\n";
+    writeExportDirectives(this->headerFile);
   } // end of MFrontCLawInterface::writePreprocessorDirectives
 
   void

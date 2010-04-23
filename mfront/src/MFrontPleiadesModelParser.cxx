@@ -1425,9 +1425,10 @@ namespace mfront{
     if(!this->includes.empty()){
       this->headerFile << this->includes << endl << endl;
     }
+    writeExportDirectives(this->headerFile);
     this->headerFile << "namespace pleiades\n{\n\n";
     this->headerFile << "namespace model\n{\n\n";
-    this->headerFile << "struct " << this->className << endl;
+    this->headerFile << "struct MFRONT_SHAREDOBJ " << this->className << endl;
     this->headerFile << ": public ModelBase\n";
     this->headerFile << "{\n\n";
     this->headerFile << "//! Default constructor\n";

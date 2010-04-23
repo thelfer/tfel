@@ -12,14 +12,16 @@
 #include<string>
 #include<set>
 
+#include"TFEL/Config/TFELConfig.hxx"
 #include"TFEL/Utilities/CxxTokenizer.hxx"
-#include"VarHandler.hxx"
-#include"StaticVarHandler.hxx"
+
+#include"MFront/VarHandler.hxx"
+#include"MFront/StaticVarHandler.hxx"
 
 namespace mfront
 {
 
-  struct ParserBase
+  struct TFEL_VISIBILITY_EXPORT ParserBase
     : public tfel::utilities::CxxTokenizer
   {
     virtual std::string variableModifier1(const std::string&,const bool);

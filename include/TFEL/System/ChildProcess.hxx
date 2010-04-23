@@ -16,7 +16,7 @@
 #include<unistd.h>
 
 
-#include"TFEL/Config.hxx"
+#include"TFEL/Config/TFELConfig.hxx"
 #include"TFEL/System/SystemError.hxx"
 
 namespace tfel

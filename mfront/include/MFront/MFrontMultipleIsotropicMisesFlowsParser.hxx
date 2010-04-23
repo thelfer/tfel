@@ -11,6 +11,7 @@
 
 #include<vector>
 #include<string>
+
 #include"MFront/MFrontIsotropicBehaviourParserBase.hxx"
 
 namespace mfront{

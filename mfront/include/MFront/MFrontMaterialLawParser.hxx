@@ -12,9 +12,9 @@
 #include<string>
 #include<set>
 
-#include"ParserBase.hxx"
-#include"LawFunction.hxx"
-#include"VariableBoundsDescription.hxx"
+#include"MFront/ParserBase.hxx"
+#include"MFront/LawFunction.hxx"
+#include"MFront/VariableBoundsDescription.hxx"
 
 namespace mfront{
 

@@ -11,12 +11,13 @@
 
 #include<string>
 
+#include"TFEL/Config/TFELConfig.hxx"
 #include"TFEL/Utilities/CxxTokenizer.hxx"
 
 namespace mfront
 {
 
-  struct InterfaceBase
+  struct TFEL_VISIBILITY_EXPORT InterfaceBase
   {
 
   protected :
