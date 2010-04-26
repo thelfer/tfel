@@ -17,4 +17,4 @@ TESTS=$(test_PROGRAMS)
 
 endif
 
-EXTRA_DIST=Makefile.am
+EXTRA_DIST=CMakeLists.txt
