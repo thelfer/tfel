@@ -895,9 +895,6 @@ tests/Tests/testmanager.cxx -text
 tests/Tests/testproxy.cxx -text
 tests/Tests/testproxy2.cxx -text
 tests/Tests/testsuite.cxx -text
-tests/UnaryTests/CMakeLists.txt -text
-tests/UnaryTests/Makefile.am -text
-tests/UnaryTests/include/Makefile.am -text
 tests/Utilities/CMakeLists.txt -text
 tests/Utilities/Makefile.am -text
 tests/Utilities/gentype.cxx -text
