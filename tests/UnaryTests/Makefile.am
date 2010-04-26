@@ -6,44 +6,25 @@ INCLUDES = -I$(top_srcdir)/include \
 if WITH_TESTS
 
 testdir = $(pkgdatadir)/tests/UnaryTests
-test_PROGRAMS = CubicRoots          \
-		FracSimplify        \
-		IntegersSet         \
-		MultipleDeque       \
-		MultipleVector      \
-		concept_check_test  \
+test_PROGRAMS = FracSimplify        \
 		name                \
 		promote             \
-		qt                  \
-		qt2                 \
-		qt3                 \
 		stensor             \
 		tmatrix             \
 		tvector             \
-		typelist            \
-		tuple               \
-		gentype
+		tuple
 
 LDADD = -lTFELMath -lTFELUtilities -lTFELException \
 	-L$(top_builddir)/src/Math                 \
 	-L$(top_builddir)/src/Utilities            \
 	-L$(top_builddir)/src/Exception
 
-CubicRoots_SOURCES          = CubicRoots.cxx
 FracSimplify_SOURCES        = FracSimplify.cxx
-IntegersSet_SOURCES         = IntegersSet.cxx
-MultipleDeque_SOURCES       = MultipleDeque.cxx
-MultipleVector_SOURCES      = MultipleVector.cxx
-concept_check_test_SOURCES  = concept_check_test.cxx
 name_SOURCES                = name.cxx
 promote_SOURCES             = promote.cxx
-qt_SOURCES                  = qt.cxx
-qt2_SOURCES                 = qt2.cxx
-qt3_SOURCES                 = qt3.cxx
 stensor_SOURCES             = stensor.cxx
 tmatrix_SOURCES             = tmatrix.cxx
 tvector_SOURCES             = tvector.cxx
-typelist_SOURCES            = typelist.cxx
 tuple_SOURCES               = tuple.cxx
 gentype_SOURCES             = gentype.cxx
 

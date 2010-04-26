@@ -14,21 +14,17 @@ macro(tests_unary_test test_arg)
   add_dependencies(check ${test_arg})
 endmacro(tests_unary_test)
 
-tests_unary_test(CubicRoots)
-tests_unary_test(FracSimplify)
+
 tests_unary_test(IntegersSet)
-tests_unary_test(MultipleDeque)
-tests_unary_test(MultipleVector)
-tests_unary_test(concept_check_test)
-tests_unary_test(name)
 tests_unary_test(promote)
+
+tests_unary_test(FracSimplify)
 tests_unary_test(qt)
 tests_unary_test(qt2)
 tests_unary_test(qt3)
+
 tests_unary_test(stensor)
 tests_unary_test(tmatrix)
 tests_unary_test(tvector)
-tests_unary_test(typelist)
-tests_unary_test(tuple)
-tests_unary_test(gentype)
+
 
