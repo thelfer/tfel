@@ -874,11 +874,11 @@ tests/Math/tvector2.cxx -text
 tests/Math/tvector3.cxx -text
 tests/Math/vector1.cxx -text
 tests/MetaProgramming/CMakeLists.txt -text
+tests/MetaProgramming/ConceptCheck.cxx -text
 tests/MetaProgramming/HasConstIterator.cxx -text
 tests/MetaProgramming/Makefile.am -text
 tests/MetaProgramming/Name.cxx -text
 tests/MetaProgramming/RemoveConstness.cxx -text
-tests/MetaProgramming/concept_check_test.cxx -text
 tests/MetaProgramming/typelist.cxx -text
 tests/System/CMakeLists.txt -text
 tests/System/Makefile.am -text
