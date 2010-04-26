@@ -783,6 +783,7 @@ tests/Material/CMakeLists.txt -text
 tests/Material/Makefile.am -text
 tests/Material/boundsCheck.cxx -text
 tests/Math/CMakeLists.txt -text
+tests/Math/Composite/CMakeLists.txt -text
 tests/Math/Composite/Makefile.am -text
 tests/Math/Composite/composite.cxx -text
 tests/Math/CubicRoots.cxx -text
@@ -807,6 +808,7 @@ tests/Math/ExpressionTemplates/tvector.cxx -text
 tests/Math/ExpressionTemplates/tvector2.cxx -text
 tests/Math/FracSimplify.cxx -text
 tests/Math/Function.cxx -text
+tests/Math/Functions/CMakeLists.txt -text
 tests/Math/Functions/Makefile.am -text
 tests/Math/Functions/derivate.cxx -text
 tests/Math/Functions/function.cxx -text
@@ -824,6 +826,7 @@ tests/Math/RungeKutta/rk54.cxx -text
 tests/Math/RungeKutta/runge_kutta2.cxx -text
 tests/Math/RungeKutta/runge_kutta4.cxx -text
 tests/Math/SFTMCV.cxx -text
+tests/Math/St2toSt2/CMakeLists.txt -text
 tests/Math/St2toSt2/Makefile.am -text
 tests/Math/St2toSt2/ST2toST2FTMV.cxx -text
 tests/Math/St2toSt2/st2tost2-2.cxx -text
