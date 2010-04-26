@@ -12,4 +12,10 @@ macro(tests_utilities test_arg)
 endmacro(tests_utilities)
 
 tests_utilities(gentype)
+tests_utilities(tuple)
+tests_utilities(Name)
+tests_utilities(Name2)
+tests_utilities(IntegerSet)
+tests_utilities(MultipleDeque)
+tests_utilities(MultipleVector)
 

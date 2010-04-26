@@ -1,5 +1,4 @@
 add_subdirectory(Tests)
-add_subdirectory(UnaryTests)
 add_subdirectory(MetaProgramming)
 add_subdirectory(FSAlgorithms)
 add_subdirectory(Utilities)

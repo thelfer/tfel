@@ -8,7 +8,7 @@ INCLUDES = -I$(top_srcdir)/include \
 if WITH_TESTS
 
 testdir = $(pkgdatadir)/tests/Math/ExpressionTemplates
-test_PROGRAMS = test    \
+test_PROGRAMS = test1   \
 		test2   \
 		test3   \
 		test4   \
@@ -29,7 +29,7 @@ LDADD = -L$(top_builddir)/src/Math                 \
 	-L$(top_builddir)/src/Exception            \
 	-lTFELMath -lTFELUtilities -lTFELException
 
-test_SOURCES    = test.cxx    
+test1_SOURCES   = test1.cxx    
 test2_SOURCES   = test2.cxx   
 test3_SOURCES   = test3.cxx   
 test4_SOURCES   = test4.cxx   

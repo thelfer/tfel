@@ -6,10 +6,17 @@ if WITH_TESTS
 
 testdir = $(pkgdatadir)/tests/Math
 test_PROGRAMS = hill                  \
+		promote               \
+		FracSimplify          \
+		qt                    \
+		qt2                   \
+		qt3                   \
+		CubicRoots            \
+		array                 \
+		array2                \
 		array2                \
 		array3                \
 		array4                \
-		array                 \
 		complex_operations    \
 		conj                  \
 		Function              \
@@ -25,6 +32,7 @@ test_PROGRAMS = hill                  \
 		stensor2              \
 		stensor3              \
 		stensor4              \
+		stensor5              \
 		stensor               \
 		stensor_eigenvalues   \
 		stensor_eigenvectors2 \
@@ -32,9 +40,11 @@ test_PROGRAMS = hill                  \
 		tmatrix               \
 		tmatrix1              \
 		tmatrix2              \
+		tmatrix3              \
 		tvector               \
 		tvector2              \
 		tvector3              \
+		tvector4              \
 		VectorResultType      \
 		vector1               \
 		parser                \
@@ -57,7 +67,11 @@ LDADD = -L$(top_builddir)/src/Math                 \
 	-L$(top_builddir)/src/Exception            \
 	-lTFELMath -lTFELUtilities -lTFELException
 
-hill_SOURCES                  = hill.cxx               
+qt_SOURCES                    = qt.cxx
+qt2_SOURCES                   = qt2.cxx
+qt3_SOURCES                   = qt3.cxx
+hill_SOURCES                  = hill.cxx
+CubicRoots_SOURCES            = CubicRoots.cxx
 array2_SOURCES                = array2.cxx               
 array3_SOURCES                = array3.cxx               
 array4_SOURCES                = array4.cxx               
@@ -77,6 +91,7 @@ solve_SOURCES                 = solve.cxx
 stensor2_SOURCES              = stensor2.cxx
 stensor3_SOURCES              = stensor3.cxx
 stensor4_SOURCES              = stensor4.cxx
+stensor5_SOURCES              = stensor5.cxx
 stensor_SOURCES               = stensor.cxx              
 stensor_eigenvalues_SOURCES   = stensor_eigenvalues.cxx  
 stensor_eigenvectors2_SOURCES = stensor_eigenvectors2.cxx
@@ -84,9 +99,11 @@ stensor_eigenvectors_SOURCES  = stensor_eigenvectors.cxx
 tmatrix_SOURCES               = tmatrix.cxx
 tmatrix1_SOURCES              = tmatrix1.cxx
 tmatrix2_SOURCES              = tmatrix2.cxx
+tmatrix3_SOURCES              = tmatrix3.cxx
 tvector_SOURCES               = tvector.cxx
 tvector2_SOURCES              = tvector2.cxx
 tvector3_SOURCES              = tvector3.cxx
+tvector4_SOURCES              = tvector4.cxx
 vector1_SOURCES               = vector1.cxx   
 VectorResultType_SOURCES      = VectorResultType.cxx
 Range_SOURCES                 = Range.cxx

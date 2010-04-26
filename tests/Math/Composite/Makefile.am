@@ -16,3 +16,5 @@ composite_SOURCES  = composite.cxx
 TESTS=$(test_PROGRAMS)
 
 endif
+
+EXTRA_DIST=Makefile.am

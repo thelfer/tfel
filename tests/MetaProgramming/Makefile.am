@@ -7,12 +7,14 @@ testdir = $(pkgdatadir)/tests/Metaprogramming
 test_PROGRAMS = ConceptCheck     \
 		HasConstIterator \
 		RemoveConstness  \
-		typelist
+		typelist         \
+		typelist2
 
 ConceptCheck_SOURCES     = ConcepCheck.cxx 
 HasConstIterator_SOURCES = HasConstIterator.cxx 
 RemoveConstness_SOURCES  = RemoveConstness.cxx  
 typelist_SOURCES         = typelist.cxx         
+typelist2_SOURCES        = typelist2.cxx         
 
 LDADD = -L$(top_builddir)/src/Utilities \
         -lTFELUtilities

@@ -22,3 +22,5 @@ ST2toST2FTMV_SOURCES = ST2toST2FTMV.cxx
 TESTS=$(test_PROGRAMS)
 
 endif
+
+EXTRA_DIST=CMakeLists.txt
