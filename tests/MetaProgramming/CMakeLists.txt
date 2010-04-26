@@ -13,6 +13,5 @@ endmacro(tests_metaprogramming)
 
 tests_metaprogramming(ConceptCheck)
 tests_metaprogramming(HasConstIterator)
-tests_metaprogramming(Name)
 tests_metaprogramming(RemoveConstness)
 tests_metaprogramming(typelist)

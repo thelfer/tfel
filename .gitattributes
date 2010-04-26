@@ -877,7 +877,6 @@ tests/MetaProgramming/CMakeLists.txt -text
 tests/MetaProgramming/ConceptCheck.cxx -text
 tests/MetaProgramming/HasConstIterator.cxx -text
 tests/MetaProgramming/Makefile.am -text
-tests/MetaProgramming/Name.cxx -text
 tests/MetaProgramming/RemoveConstness.cxx -text
 tests/MetaProgramming/typelist.cxx -text
 tests/System/CMakeLists.txt -text
