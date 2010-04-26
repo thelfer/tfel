@@ -4,11 +4,13 @@ INCLUDES = -I$(top_srcdir)/include
 if WITH_TESTS
 
 testdir = $(pkgdatadir)/tests/Metaprogramming
-test_PROGRAMS = HasConstIterator \
+test_PROGRAMS = ConceptCheck     \
+		HasConstIterator \
 		Name             \
 		RemoveConstness  \
 		typelist
 
+ConceptCheck_SOURCES     = ConcepCheck.cxx 
 HasConstIterator_SOURCES = HasConstIterator.cxx 
 Name_SOURCES	         = Name.cxx	     
 RemoveConstness_SOURCES  = RemoveConstness.cxx  

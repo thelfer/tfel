@@ -11,6 +11,7 @@ macro(tests_metaprogramming test_arg)
   add_dependencies(check ${test_arg})
 endmacro(tests_metaprogramming)
 
+tests_metaprogramming(ConceptCheck)
 tests_metaprogramming(HasConstIterator)
 tests_metaprogramming(Name)
 tests_metaprogramming(RemoveConstness)
