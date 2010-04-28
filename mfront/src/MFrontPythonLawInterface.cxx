@@ -548,6 +548,7 @@ namespace mfront
     for(p7=interfaces.begin();p7!=interfaces.end();++p7){
       wrapper << "#include\"" << *p7 << "-python.hxx\"\n";
     }
+    writeExportDirectives(wrapper);
     wrapper << endl;
     if(!material.empty()){
       wrapper << "static PyMethodDef " << material << "LawMethods[] = {\n";
@@ -559,7 +560,7 @@ namespace mfront
 	      << "\"compute the " << *p7 <<  " law.\"},\n";
     }
     wrapper << "{NULL, NULL, 0, NULL} /* Sentinel */\n};\n\n";
-    wrapper << "PyMODINIT_FUNC\ninit"
+    wrapper << "PyMODINIT_FUNC MFRONT_SHAREDOBJ\ninit"
 	    << MFrontPythonLawInterface::makeLowerCase(getMaterialLawLibraryNameBase(lib,material))
 	    << "(void)\n";
     wrapper << "{\n";
