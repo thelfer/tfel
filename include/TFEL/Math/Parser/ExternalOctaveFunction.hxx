@@ -13,6 +13,7 @@
 #include<vector>
 #include<stdexcept>
 
+#include"TFEL/Config/TFELConfig.hxx"
 #include"TFEL/Math/Parser/ExternalFunction.hxx"
 
 namespace tfel
@@ -24,7 +25,7 @@ namespace tfel
     namespace parser
     {
 
-      struct ExternalOctaveFunction
+      struct TFEL_VISIBILITY_EXPORT ExternalOctaveFunction
 	: public ExternalFunction
       {
 	ExternalOctaveFunction(const std::string&,
@@ -36,11 +37,17 @@ namespace tfel
 	getNumberOfVariables(void) const;
 	double getValue(void) const;
 	void
-	checkCyclicDependency(const std::string&) const
-	  throw(std::runtime_error);
+	checkCyclicDependency(const std::string&) const;
 	void
-	checkCyclicDependency(const std::vector<std::string>&) const
-	  throw(std::runtime_error);
+	checkCyclicDependency(std::vector<std::string>&) const;
+	tfel::utilities::shared_ptr<ExternalFunction>
+	createFunctionByChangingParametersIntoVariables(const std::vector<std::string>&) const;
+	virtual tfel::utilities::shared_ptr<ExternalFunction>
+	createFunctionByChangingParametersIntoVariables(std::vector<std::string>&,
+							const std::vector<double>&,
+							const std::vector<std::string>&,
+							const std::map<std::string,
+							std::vector<double>::size_type>&) const;
 	tfel::utilities::shared_ptr<ExternalFunction>
 	differentiate(const std::vector<double>::size_type) const;
 	tfel::utilities::shared_ptr<ExternalFunction>
@@ -48,7 +55,7 @@ namespace tfel
 	tfel::utilities::shared_ptr<ExternalFunction>
 	resolveDependencies(void) const;
 	void
-	getParametersNames(std::set<std::string>&) const = 0;
+	getParametersNames(std::set<std::string>&) const;
       private:
 	struct OctaveInitializer;
 	std::string f;

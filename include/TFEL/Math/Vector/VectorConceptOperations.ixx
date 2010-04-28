@@ -151,6 +151,18 @@ namespace tfel{
       return Handle::template exe<Result,T1,T2>(a,b);
     }
 
+    template<typename T1>
+    typename tfel::meta::EnableIf<
+      tfel::meta::Implements<T1,VectorConcept>::cond&&
+      !tfel::typetraits::IsInvalid<typename tfel::typetraits::RealPartType<typename ComputeBinaryResult<T1,T1,OpDotProduct>::Result>::type>::cond,
+      typename tfel::typetraits::RealPartType<typename ComputeBinaryResult<T1,T1,OpDotProduct>::Result>::type
+    >::type
+    norm(const T1& v)
+    {
+      using namespace std;
+      return sqrt(real(v|v));
+    }
+
   } // end of namespace math
 
 } // end of namespace tfel

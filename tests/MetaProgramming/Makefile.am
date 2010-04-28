@@ -10,7 +10,7 @@ test_PROGRAMS = ConceptCheck     \
 		typelist         \
 		typelist2
 
-ConceptCheck_SOURCES     = ConcepCheck.cxx 
+ConceptCheck_SOURCES     = ConceptCheck.cxx 
 HasConstIterator_SOURCES = HasConstIterator.cxx 
 RemoveConstness_SOURCES  = RemoveConstness.cxx  
 typelist_SOURCES         = typelist.cxx         

@@ -20,8 +20,14 @@ namespace mfront{
       MFrontBehaviourParserBase<MFrontImplicitParser>(),
       theta(0.5f),
       epsilon(1.e-8),
+      relaxationCoefficient(0.5),
       iterMax(100),
-      algorithm(MFrontImplicitParser::DEFAULT)
+      relaxationTrigger(10),
+      accelerationTrigger(10),
+      accelerationPeriod(3),
+      algorithm(MFrontImplicitParser::DEFAULT),
+      useRelaxation(false),
+      useAcceleration(false)
   {
     using namespace std;
     typedef map<string,string>::value_type MVType;
@@ -29,10 +35,14 @@ namespace mfront{
     this->registerStaticVariable("theta");
     this->registerStaticVariable("epsilon");
     this->registerStaticVariable("iterMax");
+    this->registerStaticVariable("relaxationCoefficient");
+    this->registerStaticVariable("relaxationTrigger");
     // Default state vars
     this->registerVariable("eel");
     this->registerVariable("deel");
+    this->registerVariable("previous_zeros");
     this->registerVariable("zeros");
+    this->registerVariable("zeros_1");
     this->registerVariable("fzeros");
     this->registerVariable("zeros2");
     this->registerVariable("fzeros2");
@@ -44,6 +54,18 @@ namespace mfront{
     this->registerVariable("dt_");
     this->registerVariable("error");
     this->registerVariable("idx");
+    this->reserveName("schmidt");
+    this->reserveName("accelerate");
+    this->reserveName("accelerate_k0");
+    this->reserveName("accelerate_k1");
+    this->reserveName("accelerate_k2");
+    this->reserveName("accelerate_c0");
+    this->reserveName("accelerate_c1");
+    this->reserveName("accelerate_re0");
+    this->reserveName("accelerate_re1");
+    this->reserveName("accelerate_r0");
+    this->reserveName("accelerate_r1");
+    this->reserveName("accelerate_r2");
     this->reserveName("computeStress");
     this->reserveName("computeFinalStress");
     this->reserveName("computeFdF");
@@ -63,12 +85,158 @@ namespace mfront{
     this->registerNewCallBack("@IterMax",&MFrontImplicitParser::treatIterMax);
     this->registerNewCallBack("@MaximumNumberOfIterations",&MFrontImplicitParser::treatIterMax);
     this->registerNewCallBack("@Algorithm",&MFrontImplicitParser::treatAlgorithm);
+    this->registerNewCallBack("@UseAcceleration",&MFrontImplicitParser::treatUseAcceleration);
+    this->registerNewCallBack("@AccelerationTrigger",&MFrontImplicitParser::treatAccelerationTrigger);
+    this->registerNewCallBack("@AccelerationPeriod",&MFrontImplicitParser::treatAccelerationPeriod);
+    this->registerNewCallBack("@UseRelaxation",&MFrontImplicitParser::treatUseRelaxation);
+    this->registerNewCallBack("@RelaxationTrigger",&MFrontImplicitParser::treatRelaxationTrigger);
+    this->registerNewCallBack("@RelaxationCoefficient",&MFrontImplicitParser::treatRelaxationCoefficient);
     //    this->disableCallBack("@Integrator");
     this->disableCallBack("@ComputedVar");
     this->disableCallBack("@UseQt");
   } // end of MFrontImplicitParser::MFrontImplicitParser
 
-    void MFrontImplicitParser::treatAlgorithm(void)
+  void
+  MFrontImplicitParser::treatUseAcceleration(void)
+  {
+    using namespace std;
+    this->checkNotEndOfFile("MFrontBehaviourParserCommon::treatUseAcceleration : ",
+			    "Expected 'true' or 'false'.");
+    if(this->useAcceleration){
+      this->throwRuntimeError("MFrontBehaviourParserCommon::treatUseAcceleration",
+			      "@UseAcceleration already specified");
+    }
+    if(this->current->value=="true"){
+      this->useAcceleration = true;
+    } else if(this->current->value=="false"){
+      this->useAcceleration = false;
+    } else {
+      this->throwRuntimeError("MFrontBehaviourParserCommon::treatUseAcceleration",
+			      "Expected to read 'true' or 'false' instead of '"+this->current->value+".");
+    }
+    ++(this->current);
+    this->readSpecifiedToken("MFrontBehaviourParserCommon::treatUseAcceleration",";");
+  } // end of MFrontImplicitParser::treatUseAcceleration
+
+  void
+  MFrontImplicitParser::treatAccelerationTrigger(void)
+  {
+    using namespace std;
+    this->checkNotEndOfFile("MFrontImplicitParser::treatIterMax",
+			    "Cannot read accelerationTrigger value.");
+    if(!this->useAcceleration){
+      this->throwRuntimeError("MFrontBehaviourParserCommon::treatAccelerationTrigger",
+			      "acceleration unused");
+    }
+    istringstream flux(current->value);
+    flux >> this->accelerationTrigger;
+    if((flux.fail())||(!flux.eof())){
+      this->throwRuntimeError("MFrontImplicitParser::treatAccelerationTrigger",
+			      "Failed to read accelerationTrigger value.");
+    }
+    if(this->accelerationTrigger<3){
+      this->throwRuntimeError("MFrontImplicitParser::treatAccelerationTrigger",
+			      "invalid acceleration trigger value.");
+    }
+    ++(this->current);
+    this->readSpecifiedToken("MFrontImplicitParser::treatAccelerationTrigger",";");
+  } // end of MFrontImplicitParser::treatAccelerationTrigger
+
+  void
+  MFrontImplicitParser::treatAccelerationPeriod(void)
+  {
+    using namespace std;
+    this->checkNotEndOfFile("MFrontImplicitParser::treatIterMax",
+			    "Cannot read accelerationPeriod value.");
+    if(!this->useAcceleration){
+      this->throwRuntimeError("MFrontBehaviourParserCommon::treatAccelerationPeriod",
+			      "acceleration unused");
+    }
+    istringstream flux(current->value);
+    flux >> this->accelerationPeriod;
+    if((flux.fail())||(!flux.eof())){
+      this->throwRuntimeError("MFrontImplicitParser::treatAccelerationPeriod",
+			      "Failed to read accelerationPeriod value.");
+    }
+    if(this->accelerationPeriod<1){
+      this->throwRuntimeError("MFrontImplicitParser::treatAccelerationPeriod",
+			      "invalid acceleration period value.");
+    }
+    ++(this->current);
+    this->readSpecifiedToken("MFrontImplicitParser::treatAccelerationPeriod",";");
+  } // end of MFrontImplicitParser::treatAccelerationPeriod
+
+  void
+  MFrontImplicitParser::treatUseRelaxation(void)
+  {
+    using namespace std;
+    this->checkNotEndOfFile("MFrontBehaviourParserCommon::treatUseRelaxation : ",
+			    "Expected 'true' or 'false'.");
+    if(this->useRelaxation){
+      this->throwRuntimeError("MFrontBehaviourParserCommon::treatUseRelaxation",
+			      "@UseRelaxation already specified");
+    }
+    if(this->current->value=="true"){
+      this->useRelaxation = true;
+    } else if(this->current->value=="false"){
+      this->useRelaxation = false;
+    } else {
+      this->throwRuntimeError("MFrontBehaviourParserCommon::treatUseRelaxation",
+			      "Expected to read 'true' or 'false' instead of '"+this->current->value+".");
+    }
+    ++(this->current);
+    this->readSpecifiedToken("MFrontBehaviourParserCommon::treatUseRelaxation",";");
+  } // end of MFrontImplicitParser::treatUseRelaxation
+  
+  void
+  MFrontImplicitParser::treatRelaxationTrigger(void)
+  {
+    using namespace std;
+    this->checkNotEndOfFile("MFrontImplicitParser::treatIterMax",
+			    "Cannot read relaxationTrigger value.");
+    if(!this->useRelaxation){
+      this->throwRuntimeError("MFrontBehaviourParserCommon::treatRelaxationTrigger",
+			      "relaxation unused");
+    }
+    istringstream flux(current->value);
+    flux >> this->relaxationTrigger;
+    if((flux.fail())||(!flux.eof())){
+      this->throwRuntimeError("MFrontImplicitParser::treatRelaxationTrigger",
+			      "Failed to read relaxationTrigger value.");
+    }
+    if(this->relaxationTrigger<3){
+      this->throwRuntimeError("MFrontImplicitParser::treatRelaxationTrigger",
+			      "invalid relaxation trigger value.");
+    }
+    ++(this->current);
+    this->readSpecifiedToken("MFrontImplicitParser::treatRelaxationTrigger",";");
+  } // end of MFrontImplicitParser::treatRelaxationTrigger
+  
+  void
+  MFrontImplicitParser::treatRelaxationCoefficient(void)
+  {
+    using namespace std;
+    this->checkNotEndOfFile("MFrontImplicitParser::treatRelaxationCoefficient",
+			    "Cannot read epsilon value.");
+    if(!this->useRelaxation){
+      this->throwRuntimeError("MFrontBehaviourParserCommon::treatRelaxationCoefficient",
+			      "relaxation unused");
+    }
+    istringstream flux(current->value);
+    flux >> this->relaxationCoefficient;
+    if((flux.fail())||(!flux.eof())){
+      this->throwRuntimeError("MFrontImplicitParser::treatRelaxationCoefficient",
+			      "Failed to read epsilon value.");
+    }
+    if(this->relaxationCoefficient<0){
+      this->throwRuntimeError("MFrontImplicitParser::treatRelaxationCoefficient",
+			      "relaxation coefficient value must be positive.");
+    }
+    ++(this->current);
+    this->readSpecifiedToken("MFrontImplicitParser::treatRelaxationCoefficient",";");    
+  } // end of MFrontImplicitParser::treatRelaxationCoefficient
+
+  void MFrontImplicitParser::treatAlgorithm(void)
   {
     using namespace std;
     this->checkNotEndOfFile("MFrontImplicitParser::treatAlgorithm",
@@ -100,7 +268,7 @@ namespace mfront{
 			    "Cannot read theta value.");
     istringstream flux(current->value);
     flux >> this->theta;
-    if(flux.fail()){
+    if((flux.fail())||(!flux.eof())){
       this->throwRuntimeError("MFrontImplicitParser::treatTheta",
 			      "Failed to read theta value.");
     }
@@ -120,7 +288,7 @@ namespace mfront{
 			    "Cannot read epsilon value.");
     istringstream flux(current->value);
     flux >> this->epsilon;
-    if(flux.fail()){
+    if((flux.fail())||(!flux.eof())){
       this->throwRuntimeError("MFrontImplicitParser::treatEpsilon",
 			      "Failed to read epsilon value.");
     }
@@ -140,7 +308,7 @@ namespace mfront{
 			    "Cannot read iterMax value.");
     istringstream flux(current->value);
     flux >> this->iterMax;
-    if(flux.fail()){
+    if((flux.fail())||(!flux.eof())){
       this->throwRuntimeError("MFrontImplicitParser::treatIterMax",
 			      "Failed to read iterMax value.");
     }
@@ -300,13 +468,90 @@ namespace mfront{
       n += this->getTypeSize(p->type);
     }
     this->behaviourFile << "\n// Jacobian\n";
-    this->behaviourFile << "tfel::math::tmatrix<" << n << "," << n << "> jacobian;\n";
+    this->behaviourFile << "tfel::math::tmatrix<" << n << "," << n << ",Type> jacobian;\n";
     this->behaviourFile << "// zeros\n";
-    this->behaviourFile << "tfel::math::tvector<" << n << "> zeros;\n\n";
+    this->behaviourFile << "tfel::math::tvector<" << n << ",Type> zeros;\n\n";
+    this->behaviourFile << "// previous zeros\n";
+    this->behaviourFile << "tfel::math::tvector<" << n << ",Type> zeros_1;\n\n";
     this->behaviourFile << "// function\n";
-    this->behaviourFile << "tfel::math::tvector<" << n << "> fzeros;\n\n";
+    this->behaviourFile << "tfel::math::tvector<" << n << ",Type> fzeros;\n\n";
+    if(this->useAcceleration){
+      this->behaviourFile << "// previous results (used for acceleration)\n";
+      this->behaviourFile << "tfel::math::tvector<" << n << ",Type> previous_fzeros[3];\n\n";
+      this->behaviourFile << "// previous zeros (used for acceleration)\n";
+      this->behaviourFile << "tfel::math::tvector<" << n << ",Type> previous_zeros[3];\n\n";
+    }
     this->behaviourFile << "// number of iterations\n";
     this->behaviourFile << "unsigned int iter;\n\n";
+    // castem acceleration
+    if(this->useAcceleration){
+      this->behaviourFile << "static bool\n";
+      this->behaviourFile << "schmidt(";
+      this->behaviourFile << "Type& k0,\n";
+      this->behaviourFile << "Type& k1,\n";
+      this->behaviourFile << "Type& k2,\n";
+      this->behaviourFile << "tfel::math::tvector<" << n << ",Type>& e0,\n";
+      this->behaviourFile << "tfel::math::tvector<" << n << ",Type>& e1,\n";
+      this->behaviourFile << "const tfel::math::tvector<" << n << ",Type>& v0,\n";
+      this->behaviourFile << "const tfel::math::tvector<" << n << ",Type>& v1,\n";
+      this->behaviourFile << "const tfel::math::tvector<" << n << ",Type>& v2)\n";
+      this->behaviourFile << "{\n";
+      this->behaviourFile << "using namespace std;\n";
+      this->behaviourFile << "using namespace tfel::math;\n";
+      this->behaviourFile << "Type n; // temporary used for norm computation\n";
+      this->behaviourFile << "Type m; // temporary\n";
+      this->behaviourFile << "typename tvector<" << n << ",Type>::size_type i;\n";
+      this->behaviourFile << "for(i=0;i!=N;++i){\n";
+      this->behaviourFile << "m = abs(v0(i))+abs(v1(i))+abs(v2(i));\n";
+      this->behaviourFile << "}\n";
+      this->behaviourFile << "// base du plan\n";
+      this->behaviourFile << "e0 = v1-v0;\n";
+      this->behaviourFile << "n = norm(e0);\n";
+      this->behaviourFile << "if((n<m*numeric_limits<Type>::epsilon())||\n";
+      this->behaviourFile << "(n<10*numeric_limits<Type>::min())){\n";
+      this->behaviourFile << "return false;\n";
+      this->behaviourFile << "}\n";
+      this->behaviourFile << "k0  = Type(1)/n;\n";
+      this->behaviourFile << "e0 *= k0;\n";
+      this->behaviourFile << "k1  = (v2-v0)|e0;\n";
+      this->behaviourFile << "e1  = (v2-v0)-k1*e0;\n";
+      this->behaviourFile << "n = norm(e1);\n";
+      this->behaviourFile << "if((n<m*numeric_limits<Type>::epsilon())||\n";
+      this->behaviourFile << "(n<10*numeric_limits<Type>::min())){\n";
+      this->behaviourFile << "return false;\n";
+      this->behaviourFile << "}\n";
+      this->behaviourFile << "k2  = Type(1)/n;\n";
+      this->behaviourFile << "e1 *= k2;\n";
+      this->behaviourFile << "k1 *= -k2*k0;\n";
+      this->behaviourFile << "return true;\n";
+      this->behaviourFile << "} // end of schmidt\n\n";
+    
+      this->behaviourFile << "void\n";
+      this->behaviourFile << "accelerate(tfel::math::tvector<" << n << ",Type>& r)";
+      this->behaviourFile << "{\n";
+      this->behaviourFile << "using namespace std;\n";
+      this->behaviourFile << "using namespace tfel::math;\n";
+      this->behaviourFile << "tfel::math::tvector<" << n << ",Type> accelearate_re0;\n";
+      this->behaviourFile << "tfel::math::tvector<" << n << ",Type> accelearate_re1;\n";
+      this->behaviourFile << "Type accelearate_k0;\n";
+      this->behaviourFile << "Type accelearate_k1;\n";
+      this->behaviourFile << "Type accelearate_k2;\n";
+      this->behaviourFile << "if(!schmidt(accelearate_k0,\n"
+			  << "accelearate_k1,\n" 
+			  << "accelearate_k2,\n"
+			  << "accelearate_re0,accelearate_re1,previous_fzeros[0],\n"
+			  << "previous_fzeros[1],previous_fzeros[2])){\n";
+      this->behaviourFile << "return;\n"; 
+      this->behaviourFile << "}\n";
+      this->behaviourFile << "const Type accelearate_c0 = -(previous_fzeros[0]|accelearate_re0);\n";
+      this->behaviourFile << "const Type accelearate_c1 = -(previous_fzeros[0]|accelearate_re1);\n";
+      this->behaviourFile << "const Type accelearate_r1 = (accelearate_c0*accelearate_k0+accelearate_c1*accelearate_k1);\n";
+      this->behaviourFile << "const Type accelearate_r2 = accelearate_c1*accelearate_k2;\n";
+      this->behaviourFile << "const Type accelearate_r0 = (1-accelearate_r1-accelearate_r2)\n;";
+      this->behaviourFile << "r = accelearate_r0*previous_zeros[0]+accelearate_r1*previous_zeros[1]+accelearate_r2*previous_zeros[2];\n";
+      this->behaviourFile << "} // end of accelate\n\n";
+    }
+    // compute stress
     this->behaviourFile << "void\ncomputeStress(void){\n";
     this->behaviourFile << "using namespace std;\n";
     this->behaviourFile << "using namespace tfel::math;\n";
@@ -374,13 +619,12 @@ namespace mfront{
 			  << "::integrate() : beginning of resolution\" << endl;\n";
     }
     this->behaviourFile << "while((converge==false)&&\n";
-    this->behaviourFile << "(this->iter<(" << this->className << "::iterMax))){\n";
+    this->behaviourFile << "(this->iter<" << this->className << "::iterMax)){\n";
+    this->behaviourFile << "++(this->iter);\n";
+    this->behaviourFile << "this->zeros_1  = this->zeros;\n";
     if(this->algorithm==MFrontImplicitParser::NEWTONRAPHSON){
-    this->behaviourFile << "this->computeStress();\n";
-    this->behaviourFile << "this->computeFdF();\n";
-      this->behaviourFile << "TinyMatrixSolve<" << n2
-			  << "," << "real>::exe(this->jacobian,this->fzeros);\n";
-      this->behaviourFile << "this->zeros -= this->fzeros;\n";
+      this->behaviourFile << "this->computeStress();\n";
+      this->behaviourFile << "this->computeFdF();\n";
     }
     if(this->algorithm==MFrontImplicitParser::BROYDEN){
       this->behaviourFile << "Dzeros = -this->fzeros;\n";
@@ -388,10 +632,24 @@ namespace mfront{
       this->behaviourFile << "TinyMatrixSolve<" << n2
 			  << "," << "real>::exe(jacobian2,Dzeros);\n";
       this->behaviourFile << "jacobian2 = this->jacobian;\n";
-      this->behaviourFile << "this->zeros  += Dzeros;\n";
+      this->behaviourFile << "this->zeros  += this->Dzeros;\n";
       this->behaviourFile << "fzeros2 = this->fzeros;\n";
       this->behaviourFile << "this->computeStress();\n";
       this->behaviourFile << "this->computeFdF();\n";
+    }
+    if(this->algorithm==MFrontImplicitParser::BROYDEN2){
+      this->behaviourFile << "Dzeros   = -(this->jacobian)*(this->fzeros);\n";
+      this->behaviourFile << "this->zeros  += this->Dzeros;\n";
+      this->behaviourFile << "fzeros2 = this->fzeros;\n";
+      this->behaviourFile << "this->computeStress();\n";
+      this->behaviourFile << "this->computeFdF();\n";
+    }
+    if(this->algorithm==MFrontImplicitParser::NEWTONRAPHSON){
+      this->behaviourFile << "TinyMatrixSolve<" << n2
+			  << "," << "real>::exe(this->jacobian,this->fzeros);\n";
+      this->behaviourFile << "this->zeros -= this->fzeros;\n";
+    }
+    if(this->algorithm==MFrontImplicitParser::BROYDEN){
       this->behaviourFile << "broyden_inv = (Dzeros|Dzeros);\n";
       this->behaviourFile << "if(broyden_inv<100*std::numeric_limits<real>::epsilon()){\n";
       this->behaviourFile << "throw(DivergenceException(\"Broyden null increment\"));\n";
@@ -400,11 +658,6 @@ namespace mfront{
 			  << "(((this->fzeros-fzeros2)-(jacobian2)*(Dzeros))^Dzeros)/broyden_inv;\n";
     }
     if(this->algorithm==MFrontImplicitParser::BROYDEN2){
-      this->behaviourFile << "Dzeros   = -(this->jacobian)*(this->fzeros);\n";
-      this->behaviourFile << "this->zeros += Dzeros;\n";
-      this->behaviourFile << "fzeros2 = this->fzeros;\n";
-      this->behaviourFile << "this->computeStress();\n";
-      this->behaviourFile << "this->computeFdF();\n";
       this->behaviourFile << "Dfzeros   = (this->fzeros)-fzeros2;\n";
       this->behaviourFile << "jacobian2 = this->jacobian;\n";
       this->behaviourFile << "broyden_inv = Dzeros|jacobian2*Dfzeros;\n";
@@ -414,8 +667,21 @@ namespace mfront{
       this->behaviourFile << "this->jacobian += "
 			  << "((Dzeros-jacobian2*Dfzeros)^(Dzeros*jacobian2))/(broyden_inv);\n";
     }
-    this->behaviourFile << "error=norm(this->fzeros);\n";
-    this->behaviourFile << "this->iter+=1;\n";
+    if(this->useAcceleration){
+      this->behaviourFile << "this->previous_fzeros[this->iter%3] = this->fzeros;\n";
+      this->behaviourFile << "this->previous_zeros[this->iter%3]  = this->zeros;\n";
+      this->behaviourFile << "if((this->iter>=" << this->className << "::accelerationTrigger" << ")&&\n"
+			  <<  "((this->iter-" << this->className << "::accelerationTrigger)%"
+			  << this->className << "::accelerationPeriod==0)){\n";
+      this->behaviourFile << "this->accelerate(this->zeros);\n";
+      this->behaviourFile << "}\n";
+    }
+    if(this->useRelaxation){
+      this->behaviourFile << "if(this->iter>=" << this->className << "::relaxationTrigger" << "){\n";
+      this->behaviourFile << "this->zeros   -= (1-" << this->className << "::relaxationCoefficient) * (this->zeros-this->zeros_1);\n";
+      this->behaviourFile << "}\n";
+    }
+    this->behaviourFile << "error=norm(this->zeros-this->zeros_1);\n";
     this->behaviourFile << "converge = ((error)/(real(" << n2 << "))<";
     this->behaviourFile << "(" << this->className << "::epsilon));\n";
     if(this->debugMode){
@@ -624,8 +890,25 @@ namespace mfront{
   void
   MFrontImplicitParser::endsInputFileProcessing(void)
   {
+    using namespace std;
     this->staticVars.push_back(StaticVarHandler("real","theta",0u,this->theta));
     this->staticVars.push_back(StaticVarHandler("real","epsilon",0u,this->epsilon));
+    if(this->useRelaxation){
+      this->staticVars.push_back(StaticVarHandler("real","relaxationCoefficient",
+						  0u,this->relaxationCoefficient));
+      if(this->relaxationTrigger+1>=this->iterMax){
+	string msg("MFrontImplicitParser::endsInputFileProcessing :");
+	msg += "relaxation can never take place (relaxationTrigger>=iterMax-1)'";
+	throw(runtime_error(msg));
+      }
+    }
+    if(this->useAcceleration){
+      if(this->accelerationTrigger+1>=this->iterMax){
+	string msg("MFrontImplicitParser::endsInputFileProcessing :");
+	msg += "acceleration can never take place (accelerationTrigger>=iterMax-1)'";
+	throw(runtime_error(msg));
+      }
+    }
     if(this->algorithm==MFrontImplicitParser::DEFAULT){
       this->algorithm=MFrontImplicitParser::NEWTONRAPHSON;
     }
@@ -637,6 +920,16 @@ namespace mfront{
     this->checkBehaviourFile();
     this->behaviourFile << "static const unsigned short iterMax = ";
     this->behaviourFile << this->iterMax << ";\n";
+    if(this->useRelaxation){
+      this->behaviourFile << "static const unsigned short relaxationTrigger = ";
+      this->behaviourFile << this->relaxationTrigger << ";\n";
+    }
+    if(this->useAcceleration){
+      this->behaviourFile << "static const unsigned short accelerationTrigger = ";
+      this->behaviourFile << this->accelerationTrigger << ";\n";
+      this->behaviourFile << "static const unsigned short accelerationPeriod = ";
+      this->behaviourFile << this->accelerationPeriod << ";\n";
+    }
     MFrontBehaviourParserBase<MFrontImplicitParser>::writeBehaviourStaticVars();
   } // end of MFrontImplicitParser::writeBehaviourStaticVars
 

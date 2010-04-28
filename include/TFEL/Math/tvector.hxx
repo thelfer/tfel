@@ -416,18 +416,6 @@ namespace tfel{
     std::ostream&
     operator << (std::ostream &, const tvector<N,T>&);
 
-    /*!
-     * \brief return the euclidian norm of a tvector
-     * \param const tvector<N,T>&, the vector.
-     * \return const typename tfel::typetraits::RealPartType<T>::type, the result
-     */
-    template<unsigned short N,typename T>
-    typename tfel::meta::EnableIf<
-      tfel::typetraits::IsScalar<T>::cond,
-      typename tfel::typetraits::RealPartType<T>::type
-      >::type
-    norm(const tvector<N,T>&);
-
   } // end of namespace math
 
   namespace typetraits{

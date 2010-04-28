@@ -361,8 +361,6 @@ AC_OUTPUT([debug.sh
 	   tests/Lambda/Makefile
 	   tests/FSAlgorithms/Makefile
 	   tests/Utilities/Makefile
-	   tests/UnaryTests/Makefile
-	   tests/UnaryTests/include/Makefile
 	   tests/MetaProgramming/Makefile
 	   tests/Material/Makefile
 	   tests/System/Makefile

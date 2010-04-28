@@ -17,6 +17,7 @@
 #include"TFEL/Metaprogramming/HasRandomAccessConstIterator.hxx"
 
 #include"TFEL/TypeTraits/IsScalar.hxx"
+#include"TFEL/TypeTraits/RealPartType.hxx"
 
 #include"TFEL/Math/General/ResultType.hxx"
 #include"TFEL/Math/General/BasicOperations.hxx"
@@ -279,6 +280,19 @@ namespace tfel{
       typename ComputeBinaryResult<T1,T2,OpDotProduct>::Result
     >::type
     operator | (const T1&, const T2&);
+
+    /*!
+     * \brief  return the euclidian norm of a tvector
+     * \param  v : the vector.
+     * \return const typename tfel::typetraits::RealPartType<T>::type, the result
+     */
+    template<typename T1>
+    typename tfel::meta::EnableIf<
+      tfel::meta::Implements<T1,VectorConcept>::cond&&
+      !tfel::typetraits::IsInvalid<typename tfel::typetraits::RealPartType<typename ComputeBinaryResult<T1,T1,OpDotProduct>::Result>::type>::cond,
+      typename tfel::typetraits::RealPartType<typename ComputeBinaryResult<T1,T1,OpDotProduct>::Result>::type
+    >::type
+    norm(const T1&);
 
   } // end of namespace math
 

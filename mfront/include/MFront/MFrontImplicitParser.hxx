@@ -108,6 +108,18 @@ namespace mfront{
 
     void generateOutputFiles(void);
 
+    void treatUseAcceleration(void);
+
+    void treatAccelerationTrigger(void);
+
+    void treatAccelerationPeriod(void);
+
+    void treatUseRelaxation(void);
+
+    void treatRelaxationTrigger(void);
+    
+    void treatRelaxationCoefficient(void);
+
     friend class MFrontBehaviourParserBase<MFrontImplicitParser>;
 
     std::string computeStress;
@@ -120,9 +132,21 @@ namespace mfront{
 
     long double epsilon;
 
+    long double relaxationCoefficient;
+
     unsigned short iterMax;
 
+    unsigned short relaxationTrigger;
+
+    unsigned short accelerationTrigger;
+
+    unsigned short accelerationPeriod;
+
     Algorithm algorithm;
+
+    bool useRelaxation;
+
+    bool useAcceleration;
 
   }; // end of struct MFrontImplicitParser
 

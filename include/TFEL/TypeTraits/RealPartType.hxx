@@ -9,6 +9,7 @@
 #ifndef _LIB_TFEL_REALPARTTYPE_H_
 #define _LIB_TFEL_REALPARTTYPE_H_ 
 
+#include"TFEL/Metaprogramming/InvalidType.hxx"
 #include"TFEL/Math/General/Complex.hxx"
 
 /*!
@@ -66,7 +67,10 @@ namespace tfel{
      * \date   23 Aug 2006
      */
     template<typename T>
-    struct RealPartType;
+    struct RealPartType
+    {
+      typedef tfel::meta::InvalidType type;
+    }; // end of struct RealPartType
 
     TFEL_TYPETRAITS_REALPARTTYPE(unsigned short);
     TFEL_TYPETRAITS_REALPARTTYPE(unsigned int);

@@ -1,6 +1,6 @@
 ## Makefile.am -- Process this file with automake to produce a Makefile.in file.
 
-SUBDIRS = Tests UnaryTests MetaProgramming   \
+SUBDIRS = Tests MetaProgramming         \
 	  FSAlgorithms Utilities Lambda \
 	  Material System  Math
 

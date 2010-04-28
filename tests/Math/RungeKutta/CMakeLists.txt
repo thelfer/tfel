@@ -4,8 +4,6 @@ link_directories("${PROJECT_BINARY_DIR}/src/Math"
                  "${PROJECT_BINARY_DIR}/src/Utilities"
                  "${PROJECT_BINARY_DIR}/src/Exception")
 
-add_custom_target(check COMMAND ${CMAKE_CTEST_COMMAND})
-
 # a simple macro
 macro(tests_rungekutta test_arg)
   add_executable(${test_arg} EXCLUDE_FROM_ALL ${test_arg}.cxx)

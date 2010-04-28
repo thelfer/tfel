@@ -8,20 +8,20 @@ INCLUDES = -I$(top_srcdir)/include \
 if WITH_TESTS
 
 testdir = $(pkgdatadir)/tests/Math/ExpressionTemplates
-test_PROGRAMS = test1   \
-		test2   \
-		test3   \
-		test4   \
-		test5   \
-		test6   \
-		test7   \
-		test8   \
-		test9   \
-		test10  \
-		test11  \
-		test12  \
-		tvector \
-		tvector2
+test_PROGRAMS = test_expr1   \
+		test_expr2   \
+		test_expr3   \
+		test_expr4   \
+		test_expr5   \
+		test_expr6   \
+		test_expr7   \
+		test_expr8   \
+		test_expr9   \
+		test_expr10  \
+		test_expr11  \
+		test_expr12  \
+		test_expr_tvector \
+		test_expr_tvector2
 
 
 LDADD = -L$(top_builddir)/src/Math                 \
@@ -29,20 +29,20 @@ LDADD = -L$(top_builddir)/src/Math                 \
 	-L$(top_builddir)/src/Exception            \
 	-lTFELMath -lTFELUtilities -lTFELException
 
-test1_SOURCES   = test1.cxx    
-test2_SOURCES   = test2.cxx   
-test3_SOURCES   = test3.cxx   
-test4_SOURCES   = test4.cxx   
-test5_SOURCES   = test5.cxx   
-test6_SOURCES   = test6.cxx   
-test7_SOURCES   = test7.cxx   
-test8_SOURCES   = test8.cxx   
-test9_SOURCES   = test9.cxx   
-test10_SOURCES  = test10.cxx
-test11_SOURCES  = test11.cxx  
-test12_SOURCES  = test12.cxx  
-tvector_SOURCES = tvector.cxx 
-tvector2_SOURCES= tvector2.cxx
+test_expr1_SOURCES   = test_expr1.cxx    
+test_expr2_SOURCES   = test_expr2.cxx   
+test_expr3_SOURCES   = test_expr3.cxx   
+test_expr4_SOURCES   = test_expr4.cxx   
+test_expr5_SOURCES   = test_expr5.cxx   
+test_expr6_SOURCES   = test_expr6.cxx   
+test_expr7_SOURCES   = test_expr7.cxx   
+test_expr8_SOURCES   = test_expr8.cxx   
+test_expr9_SOURCES   = test_expr9.cxx   
+test_expr10_SOURCES  = test_expr10.cxx
+test_expr11_SOURCES  = test_expr11.cxx  
+test_expr12_SOURCES  = test_expr12.cxx  
+test_expr_tvector_SOURCES = test_expr_tvector.cxx 
+test_expr_tvector2_SOURCES= test_expr_tvector2.cxx
 
 TESTS=$(test_PROGRAMS)
 

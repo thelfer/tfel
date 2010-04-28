@@ -83,12 +83,10 @@ namespace tfel
 
       void
       ExternalOctaveFunction::checkCyclicDependency(const std::string&) const
-	  throw(std::runtime_error)
       {} // end of ExternalOctaveFunction::checkCyclicDependency
 
       void
-      ExternalOctaveFunction::checkCyclicDependency(const std::vector<std::string>&) const
-	  throw(std::runtime_error)
+      ExternalOctaveFunction::checkCyclicDependency(std::vector<std::string>&) const
       {} // end of ExternalOctaveFunction::checkCyclicDependency
  
       tfel::utilities::shared_ptr<ExternalFunction>
@@ -96,8 +94,30 @@ namespace tfel
       {
 	using namespace tfel::utilities;
 	return shared_ptr<ExternalFunction>(new ExternalOctaveFunction(this->f,
-								     static_cast<unsigned short>(this->variables.size())));
+								       static_cast<unsigned short>(this->variables.size())));
       } // end of ExternalOctaveFunction::resolveDependencies(void) const
+
+      tfel::utilities::shared_ptr<ExternalFunction>
+      ExternalOctaveFunction::createFunctionByChangingParametersIntoVariables(const std::vector<std::string>&) const
+      {
+	using namespace std;
+	using namespace tfel::utilities;
+	string msg("ExternalOctaveFunction::createFunctionByChangingParametersIntoVariables : ");
+	msg += "invalid call";
+	throw(runtime_error(msg));
+	return shared_ptr<ExternalFunction>(static_cast<ExternalFunction*>(0));
+      } // end of ExternalOctaveFunction::createFunctionByChangingParametersIntoVariables
+
+      tfel::utilities::shared_ptr<ExternalFunction>
+      ExternalOctaveFunction::createFunctionByChangingParametersIntoVariables(std::vector<std::string>& v,
+									      const std::vector<double>&,
+									      const std::vector<std::string>&,
+									      const std::map<std::string,
+									      std::vector<double>::size_type>&) const
+      {
+	v.clear();
+	return this->resolveDependencies();
+      } // end of ExternalOctaveFunction::createFunctionByChangingParametersIntoVariables
 
       void
       ExternalOctaveFunction::getParametersNames(std::set<std::string>&) const
