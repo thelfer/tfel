@@ -68,6 +68,7 @@ LDADD = -L$(top_builddir)/src/Math                 \
 	-lTFELMath -lTFELUtilities -lTFELException
 
 FracSimplify_SOURCES          = FracSimplify.cxx
+promote_SOURCES               = promote.cxx
 qt_SOURCES                    = qt.cxx
 qt2_SOURCES                   = qt2.cxx
 qt3_SOURCES                   = qt3.cxx
