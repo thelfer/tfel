@@ -178,7 +178,6 @@ namespace tfel{
 	/*
 	 * \param void *const, a pointer to a T-object.
 	 * \param const void *const, a pointer to a T-object.
-	 * \return const bool, the result of the comparison.
 	 */
 	static void
 	exe(void *const p,const void *const p2)
@@ -233,7 +232,6 @@ namespace tfel{
 	//! a simple alias.
 	typedef void (*DestroyMethod)(void *const);
 	//! a simple alias.
-	//! a simple alias.
 	typedef void (*AssignMethod)(void *const,const void* const);
 	//! a simple alias.
 	typedef void (*CopyMethod)(void *const,const void* const);
@@ -242,7 +240,7 @@ namespace tfel{
 	//! array containing function pointers to call a specific assignement operator.
 	AssignMethod  assignMethod[tfel::meta::TypeListSize<List>::value];
 	//! array containing function pointers to call a specific copy constructor.
-	CopyMethod    copyMethod[tfel::meta::TypeListSize<List>::value];
+	CopyMethod copyMethod[tfel::meta::TypeListSize<List>::value];
       };
 
       //! an helper class to a add methods to a GenType for a specific type.
@@ -536,8 +534,34 @@ namespace tfel{
     template<typename List>
     const typename GenTypeBase<List>::RunTimeMethods GenTypeBase<List>::methods;
 
+    template<typename T,
+	     typename List>
+    typename T::return_type
+    apply(const GenTypeBase<List>&);
+
+    template<typename T,
+	     typename List>
+    typename T::return_type
+    apply(const T&,
+	  const GenTypeBase<List>&);
+
+    template<typename T,
+	     typename List>
+    typename T::return_type
+    apply(const GenTypeBase<List>&,
+	  const GenTypeBase<List>&);
+
+    template<typename T,
+	     typename List>
+    typename T::return_type
+    apply(const T&,
+	  const GenTypeBase<List>&,
+	  const GenTypeBase<List>&);
+
   } // end of namespace utilities
 
 } // end of namespace tfel
+
+#include"TFEL/Utilities/GenTypeBase.ixx"
 
 #endif /* _LIB_TFEL_GENTYPEBASE_H_ */
