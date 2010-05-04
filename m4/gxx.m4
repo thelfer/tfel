@@ -342,14 +342,17 @@ function(const double a)
   return c.str();
 }
 EOF
-    $CXX -fvisibility-inlines-hidden --shared -DPIC -fPIC test.cxx -o libtest-fvisibility-inlines-hidden.so &> /dev/null
-	    if test "$?" = "0" ; then
+    $CXX -fvisibility-inlines-hidden --shared -DPIC -fPIC test-fvisibility-inlines-hidden.cxx -o libtest-fvisibility-inlines-hidden.so &> /dev/null
+	    if test x"$?" == "x0" ; then
 		    CXXFLAGS="$CXXFLAGS $GCC_SYMBOL_VISIBILITY"
 		    OPTIMISATION_FLAGS="$GCC_SYMBOL_VISIBILITY $OPTIMISATION_FLAGS"
 		    rm libtest-fvisibility-inlines-hidden.so
-		fi
-		rm test-fvisibility-inlines-hidden.cxx
+		    AC_MSG_NOTICE([-fvisibility-inlines-hidden enabled])
+		else
+		    AC_MSG_NOTICE([-fvisibility-inlines-hidden disabled])
 	    fi
+	    rm test-fvisibility-inlines-hidden.cxx
+	fi
 	    dnl hide all symbols by default
 	    GCC_SYMBOL_VISIBILITY=""
 	    AC_GCC_CHECK_FLAG(-fvisibility=hidden,GCC_SYMBOL_VISIBILITY)
