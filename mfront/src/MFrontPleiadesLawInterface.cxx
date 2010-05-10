@@ -203,7 +203,7 @@ namespace mfront
     if(material.empty()){
       name = className;
     } else {
-      name = material+" "+className;
+      name = material+"_"+className;
     }    
     this->headerFileName  = "include/Pleiades/PMetier/PFunctions/"+name;
     this->headerFileName += "-pleiades.hh";
