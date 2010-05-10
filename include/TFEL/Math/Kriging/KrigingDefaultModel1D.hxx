@@ -45,14 +45,13 @@ namespace tfel
       typedef T (*Drifts)(const typename KrigingVariable<1u,T>::type&);
 
       static const unsigned short nb = 2u; /* number of drifts */
-      static const Drifts drifts[nb];
+      static const Drifts drifts[2u];
 
     };
 
     template<typename T>
-    const typename KrigingDefaultModel<1u,T>::Drifts
-    KrigingDefaultModel<1u,T>::drifts[KrigingDefaultModel<1u,T>::nb] = {KrigingDefaultModel<1u,T>::one,
-									KrigingDefaultModel<1u,T>::x};
+    const typename KrigingDefaultModel<1u,T>::Drifts KrigingDefaultModel<1u,T>::drifts[2u] = {KrigingDefaultModel<1u,T>::one,
+											      KrigingDefaultModel<1u,T>::x};
 
   } // end of namespace math
 

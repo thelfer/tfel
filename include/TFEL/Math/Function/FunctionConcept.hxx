@@ -25,7 +25,7 @@ namespace tfel{
     struct FunctionsCompositionExpr;
 
     template<typename Func>
-    struct FunctionTraits;
+    class FunctionTraits;
     
     /*!
      * \class FunctionTag

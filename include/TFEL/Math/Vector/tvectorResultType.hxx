@@ -152,9 +152,10 @@ namespace tfel{
      * \see   ResultType
      */
     template<unsigned short N,typename T,typename T2>
-    class ResultType<tvector<N,T>,
+    struct ResultType<tvector<N,T>,
 		     tvector<N,T2>,OpDotProduct>
     {
+    private:
       typedef typename ResultType<T,T2,OpMult>::type ResBase_;
       static const bool isValid = tfel::typetraits::IsInvalid<ResBase_>::cond;
     public:

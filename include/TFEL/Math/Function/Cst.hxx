@@ -258,74 +258,86 @@ namespace tfel{
     Cst<0> derivate(const Cst<N,D>);
     
     template<short N,unsigned short D>
-    struct UnaryResultType<float,Cst<N,D> >
+    class UnaryResultType<float,Cst<N,D> >
     {
+    public:
       typedef float type;
     };
 
     template<short N,unsigned short D>
-    struct UnaryResultType<double,Cst<N,D> >
+    class UnaryResultType<double,Cst<N,D> >
     {
+    public:
       typedef double type;
     };
 
     template<short N,unsigned short D>
-    struct UnaryResultType<long double,Cst<N,D> >
+    class UnaryResultType<long double,Cst<N,D> >
     {
+    public:
       typedef long double type;
     };
 
     template<typename Unit,short N,unsigned short D>
-    struct UnaryResultType<qt<Unit,float>,Cst<N,D> >
+    class UnaryResultType<qt<Unit,float>,Cst<N,D> >
     {
+    public:
       typedef qt<Unit,float> type;
     };
 
     template<typename Unit,short N,unsigned short D>
-    struct UnaryResultType<qt<Unit,double>,Cst<N,D> >
+    class UnaryResultType<qt<Unit,double>,Cst<N,D> >
     {
+    public:
       typedef qt<Unit,double> type;
     };
 
     template<typename Unit,short N,unsigned short D>
-    struct UnaryResultType<qt<Unit,long double>,Cst<N,D> >
+    class UnaryResultType<qt<Unit,long double>,Cst<N,D> >
     {
+    public:
       typedef qt<Unit,long double> type;
     };
 
     template<short N,unsigned short D>
-    struct UnaryResultType<Complex<float>,Cst<N,D> >
+    class UnaryResultType<Complex<float>,Cst<N,D> >
     {
+    public:
       typedef Complex<float> type;
     };
 
     template<short N,unsigned short D>
-    struct UnaryResultType<Complex<double>,Cst<N,D> >
+    class UnaryResultType<Complex<double>,Cst<N,D> >
     {
+    public:
       typedef Complex<double> type;
     };
 
     template<short N,unsigned short D>
-    struct UnaryResultType<Complex<long double>,Cst<N,D> >
+    class UnaryResultType<Complex<long double>,Cst<N,D> >
     {
+    public:
       typedef Complex<long double> type;
     };
 
     template<typename Unit,short N,unsigned short D>
-    struct UnaryResultType<qt<Unit,Complex<float> >,Cst<N,D> >
+    class UnaryResultType<qt<Unit,Complex<float> >,Cst<N,D> >
     {
+    public:
       typedef qt<Unit,Complex<float> > type;
     };
 
     template<typename Unit,short N,unsigned short D>
-    struct UnaryResultType<qt<Unit,Complex<double> >,Cst<N,D> >
+    class UnaryResultType<qt<Unit,Complex<double> >,Cst<N,D> >
     {
+    public:
       typedef qt<Unit,Complex<double> > type;
     };
 
     template<typename Unit,short N,unsigned short D>
-    struct UnaryResultType<qt<Unit,Complex<long double> >,Cst<N,D> >
+    class UnaryResultType<qt<Unit,Complex<long double> >,Cst<N,D> >
     {
+    public:
       typedef qt<Unit,Complex<long double> > type;
     };
 

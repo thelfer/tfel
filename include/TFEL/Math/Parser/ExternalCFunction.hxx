@@ -65,9 +65,14 @@ namespace tfel
 							std::vector<double>::size_type>&) const;
 	void
 	getParametersNames(std::set<std::string>&) const;
+	virtual ~ExternalCFunctionBase();
       protected:
 	double variables[N];
       }; // end of struct ExternalCFunction
+
+      template<unsigned short N>
+      ExternalCFunctionBase<N>::~ExternalCFunctionBase()
+      {} // end of ExternalCFunctionBase<N>::~ExternalCFunctionBase
 
       template<unsigned short N>
       void

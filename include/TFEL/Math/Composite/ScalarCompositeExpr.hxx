@@ -81,7 +81,7 @@ namespace tfel{
       >::type
       getComponent(void) const
       {
-	return Op::apply(a,b.getComponent<N>());
+	return Op::apply(a,b.template getComponent<N>());
       }
 
     }; // end of ScalarCompositeExpr

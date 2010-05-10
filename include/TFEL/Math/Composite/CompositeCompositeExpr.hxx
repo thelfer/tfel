@@ -86,7 +86,8 @@ namespace tfel{
       >::type
       getComponent(void) const
       {
-	return Op::apply(a.getComponent<N>(),b.getComponent<N>());
+	return Op::apply(a.template getComponent<N>(),
+			 b.template getComponent<N>());
       }
 
     };

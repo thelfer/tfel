@@ -70,47 +70,47 @@ namespace tfel{
        * type of the vector's values.
        * (this i<s a stl requirement).
        */
-      using Container::value_type;
+      using typename Container::value_type;
       /*!
        * type of a pointer to the value contained.
        * (this is a stl requirement).
        */
-      using Container::pointer;
+      using typename Container::pointer;
       /*!
        * type of a const pointer to the value contained.
        * (this is a stl requirement).
        */
-      using Container::const_pointer;
+      using typename Container::const_pointer;
       /*!
        * type of the vector's iterator.
        * (provided for stl compatibility).
        */
-      using Container::iterator;
+      using typename Container::iterator;
       /*!
        * type of the vector's const iterator.
        * (provided for stl compatibility).
        */
-      using Container::const_iterator;
+      using typename Container::const_iterator;
       /*!
        * type of the vector's reverse iterator.
        * (provided for stl compatibility).
        */
-      using Container::const_reverse_iterator;
+      using typename Container::const_reverse_iterator;
       /*!
        * type of the vector's const reverse iterator.
        * (provided for stl compatibility).
        */
-      using Container::reverse_iterator;
+      using typename Container::reverse_iterator;
       /*!
        * type of a reference to the value contained.
        * (this is a stl requirement).
        */
-      using Container::reference;
+      using typename Container::reference;
       /*!
        * type of a const reference to the value contained.
        * (this is a stl requirement).
        */
-      using Container::const_reference;
+      using typename Container::const_reference;
       /*!
        * type of the size of the container.
        * (this is a stl requirement).
@@ -120,7 +120,7 @@ namespace tfel{
        * type of the difference between two iterators.
        * (this is a stl requirement).
        */
-      using Container::difference_type;
+      using typename Container::difference_type;
       /*!
        * type of the runtime properties of the vector.
        * (this is a vector concept requirement).

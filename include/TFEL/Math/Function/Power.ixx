@@ -1276,74 +1276,86 @@ namespace tfel{
     } // end of namespace stdfunctions
     
     template<int N,unsigned int D>
-    struct TFEL_VISIBILITY_LOCAL UnaryResultType<float,Power<N,D> >
+    class TFEL_VISIBILITY_LOCAL UnaryResultType<float,Power<N,D> >
     {
+    public:
       typedef float type;
     };
 
     template<int N,unsigned int D>
-    struct TFEL_VISIBILITY_LOCAL UnaryResultType<double,Power<N,D> >
+    class TFEL_VISIBILITY_LOCAL UnaryResultType<double,Power<N,D> >
     {
+    public:
       typedef double type;
     };
 
     template<int N,unsigned int D>
-    struct TFEL_VISIBILITY_LOCAL UnaryResultType<long double,Power<N,D> >
+    class TFEL_VISIBILITY_LOCAL UnaryResultType<long double,Power<N,D> >
     {
+    public:
       typedef long double type;
     };
 
     template<int N,unsigned int D>
-    struct TFEL_VISIBILITY_LOCAL UnaryResultType<Complex<float>,Power<N,D> >
+    class TFEL_VISIBILITY_LOCAL UnaryResultType<Complex<float>,Power<N,D> >
     {
+    public:
       typedef Complex<float> type;
     };
 
     template<int N,unsigned int D>
-    struct TFEL_VISIBILITY_LOCAL UnaryResultType<Complex<double>,Power<N,D> >
+    class TFEL_VISIBILITY_LOCAL UnaryResultType<Complex<double>,Power<N,D> >
     {
+    public:
       typedef Complex<double> type;
     };
 
     template<int N,unsigned int D>
-    struct TFEL_VISIBILITY_LOCAL UnaryResultType<Complex<long double>,Power<N,D> >
+    class TFEL_VISIBILITY_LOCAL UnaryResultType<Complex<long double>,Power<N,D> >
     {
+    public:
       typedef Complex<long double> type;
     };
 
     template<typename Unit,int N,unsigned int D>
-    struct TFEL_VISIBILITY_LOCAL UnaryResultType<qt<Unit,float>,Power<N,D> >
+    class TFEL_VISIBILITY_LOCAL UnaryResultType<qt<Unit,float>,Power<N,D> >
     {
+    public:
       typedef qt<typename PowUnit_<N,D,Unit>::type,float> type;
     };
 
     template<typename Unit,int N,unsigned int D>
-    struct TFEL_VISIBILITY_LOCAL UnaryResultType<qt<Unit,double>,Power<N,D> >
+    class TFEL_VISIBILITY_LOCAL UnaryResultType<qt<Unit,double>,Power<N,D> >
     {
+    public:
       typedef qt<typename PowUnit_<N,D,Unit>::type,double> type;
     };
 
     template<typename Unit,int N,unsigned int D>
-    struct TFEL_VISIBILITY_LOCAL UnaryResultType<qt<Unit,long double>,Power<N,D> >
+    class TFEL_VISIBILITY_LOCAL UnaryResultType<qt<Unit,long double>,Power<N,D> >
     {
+    public:
       typedef qt<typename PowUnit_<N,D,Unit>::type,long double> type;
     };
 
     template<typename Unit,int N,unsigned int D>
-    struct TFEL_VISIBILITY_LOCAL UnaryResultType<qt<Unit,Complex<float> >,Power<N,D> >
+    class TFEL_VISIBILITY_LOCAL UnaryResultType<qt<Unit,Complex<float> >,Power<N,D> >
     {
+    public:
       typedef qt<typename PowUnit_<N,D,Unit>::type,Complex<float> > type;
     };
 
     template<typename Unit,int N,unsigned int D>
-    struct TFEL_VISIBILITY_LOCAL UnaryResultType<qt<Unit,Complex<double> >,Power<N,D> >
+    class TFEL_VISIBILITY_LOCAL UnaryResultType<qt<Unit,Complex<double> >,Power<N,D> >
     {
+    public:
       typedef qt<typename PowUnit_<N,D,Unit>::type,Complex<double> > type;
     };
 
     template<typename Unit,int N,unsigned int D>
-    struct TFEL_VISIBILITY_LOCAL UnaryResultType<qt<Unit,Complex<long double> >,Power<N,D> >
+    class TFEL_VISIBILITY_LOCAL UnaryResultType<qt<Unit,Complex<long double> >,Power<N,D> >
     {
+    public:
       typedef qt<typename PowUnit_<N,D,Unit>::type,Complex<long double> > type;
     };
 

@@ -82,7 +82,7 @@ namespace tfel{
       >::type
       getComponent(void) const
       {
-	return -a.getComponent<N>();
+	return -a.template getComponent<N>();
       }
 
     };

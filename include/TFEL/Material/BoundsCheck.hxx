@@ -434,13 +434,8 @@ namespace tfel{
 				const OutOfBoundsPolicy p = Strict)
       {
 	using namespace std;
-	if((value.getValue()<lBound)||(value.getValue()>uBound)){
-	  ostringstream msg;
-	  msg << name << " is out of bound ((";
-	  msg << value << " < " << lBound << ")||(";
-	  msg << value << " > " << uBound << "))";
-	  throw(OutOfBoundsException(msg.str()));
-	}
+	BoundsCheck::lowerBoundCheck(name,value.getValue(),lBound,p);
+	BoundsCheck::upperBoundCheck(name,value.getValue(),uBound,p);
       }
       template<typename T>
       static void

@@ -44,22 +44,22 @@ int main(void){
   assert(mv.empty<std::string>()==true);
 
   p=mv.begin<double>();
-  assert(std::abs(*p-3.<1.e-14));
+  assert(std::abs(*p-3.)<1.e-14);
   ++p;
-  assert(std::abs(*p-5.68273<1.e-14));
+  assert(std::abs(*p-5.68273)<1.e-14);
   ++p;
-  assert(std::abs(*p-1.2<1.e-14));
+  assert(std::abs(*p-1.2)<1.e-14);
   ++p;
   assert(p==mv.end<double>());
   p-=3;
-  assert(std::abs(*p-3.<1.e-14));
+  assert(std::abs(*p-3.)<1.e-14);
 
   p1=mv.rbegin<double>();
-  assert(std::abs(*p1-1.2<1.e-14));
+  assert(std::abs(*p1-1.2)<1.e-14);
   ++p1;
-  assert(std::abs(*p1-5.68273<1.e-14));
+  assert(std::abs(*p1-5.68273)<1.e-14);
   ++p1;
-  assert(std::abs(*p1-3.<1.e-14));
+  assert(std::abs(*p1-3.)<1.e-14);
   ++p1;
   assert(p1==mv.rend<double>());
  

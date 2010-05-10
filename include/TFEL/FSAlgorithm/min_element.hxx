@@ -128,7 +128,7 @@ namespace tfel{
       ForwardIterator exe(ForwardIterator p,BinaryPredicate comp)
       {
 	ForwardIterator  result = p;
-	return min_element<N-1>::exe_(++p,result);
+	return min_element<N-1>::exe_(++p,result,comp);
       }
 
 

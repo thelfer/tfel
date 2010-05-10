@@ -30,8 +30,9 @@ namespace tfel{
      * \see ComputeObjectTag.
      */
     template<typename TagA,typename TagOp,typename A,typename Op>
-    struct UnaryResultType_
+    class UnaryResultType_
     {
+    public:
       /*
        * Result of the binary operation.
        */

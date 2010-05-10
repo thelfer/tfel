@@ -94,21 +94,22 @@ namespace tfel
       typedef T (*Drifts)(const typename KrigingVariable<3u,T>::type&);
 
       static const unsigned short nb = 10u; /* number of drifts */
-      static const Drifts drifts[nb];
+      static const Drifts drifts[10u];
     };
 
     template<typename T>
     const typename KrigingDefaultModel<3u,T>::Drifts
-    KrigingDefaultModel<3u,T>::drifts[KrigingDefaultModel<3u,T>::nb] = {KrigingDefaultModel<3u,T>::one,
-									KrigingDefaultModel<3u,T>::x,
-									KrigingDefaultModel<3u,T>::y,
-									KrigingDefaultModel<3u,T>::y,
-									KrigingDefaultModel<3u,T>::xx,
-									KrigingDefaultModel<3u,T>::xy,
-									KrigingDefaultModel<3u,T>::xz,
-									KrigingDefaultModel<3u,T>::yy,
-									KrigingDefaultModel<3u,T>::yz,
-									KrigingDefaultModel<3u,T>::zz};
+    KrigingDefaultModel<3u,T>::drifts[10u] = {KrigingDefaultModel<3u,T>::one,
+					      KrigingDefaultModel<3u,T>::x,
+					      KrigingDefaultModel<3u,T>::y,
+					      KrigingDefaultModel<3u,T>::y,
+					      KrigingDefaultModel<3u,T>::xx,
+					      KrigingDefaultModel<3u,T>::xy,
+					      KrigingDefaultModel<3u,T>::xz,
+					      KrigingDefaultModel<3u,T>::yy,
+					      KrigingDefaultModel<3u,T>::yz,
+					      KrigingDefaultModel<3u,T>::zz};
+
   } // end of namespace math
 
 } // end of namespace tfel

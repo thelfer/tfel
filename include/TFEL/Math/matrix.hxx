@@ -79,47 +79,47 @@ namespace tfel
        * type of the matrix's values.
        * (this i<s a stl requirement).
        */
-      using std::vector<T>::value_type;
+      using typename std::vector<T>::value_type;
       /*!
        * type of a pointer to the value contained.
        * (this is a stl requirement).
        */
-      using std::vector<T>::pointer;
+      using typename std::vector<T>::pointer;
       /*!
        * type of a const pointer to the value contained.
        * (this is a stl requirement).
        */
-      using std::vector<T>::const_pointer;
+      using typename std::vector<T>::const_pointer;
       /*!
        * type of the matrix's iterator.
        * (provided for stl compatibility).
        */
-      using std::vector<T>::iterator;
+      using typename std::vector<T>::iterator;
       /*!
        * type of the matrix's const iterator.
        * (provided for stl compatibility).
        */
-      using std::vector<T>::const_iterator;
+      using typename std::vector<T>::const_iterator;
       /*!
        * type of the matrix's reverse iterator.
        * (provided for stl compatibility).
        */
-      using std::vector<T>::const_reverse_iterator;
+      using typename std::vector<T>::const_reverse_iterator;
       /*!
        * type of the matrix's const reverse iterator.
        * (provided for stl compatibility).
        */
-      using std::vector<T>::reverse_iterator;
+      using typename std::vector<T>::reverse_iterator;
       /*!
        * type of a reference to the value contained.
        * (this is a stl requirement).
        */
-      using std::vector<T>::reference;
+      using typename std::vector<T>::reference;
       /*!
        * type of a const reference to the value contained.
        * (this is a stl requirement).
        */
-      using std::vector<T>::const_reference;
+      using typename std::vector<T>::const_reference;
       /*!
        * type of the size of the container.
        * (this is a stl requirement).
@@ -129,7 +129,7 @@ namespace tfel
        * type of the difference between two iterators.
        * (this is a stl requirement).
        */
-      using std::vector<T>::difference_type;
+      using typename std::vector<T>::difference_type;
 
       TFEL_MATH_INLINE2
       matrix(const size_type,

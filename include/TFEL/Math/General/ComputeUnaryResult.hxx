@@ -19,16 +19,16 @@ namespace tfel{
 
     template<typename TagA,typename TagOp,
 	     typename A,typename Op>
-    struct ComputeUnaryResult_
+    class ComputeUnaryResult_
     {
+    public:
       typedef tfel::meta::InvalidType Result;
       typedef tfel::meta::InvalidType Handle;
     };
 
     template<typename A,typename Op>
-    struct ComputeUnaryResult
+    class ComputeUnaryResult
     {
-    private:
       typedef typename ComputeObjectTag<A>::type TagA;
       typedef typename ComputeObjectTag<Op>::type TagOp;
     public:
@@ -40,8 +40,9 @@ namespace tfel{
      * Partial Specialisation of ComputeUnaryResult_ for scalars
      */
     template<typename A,typename TagOp,typename Op>
-    struct ComputeUnaryResult_<ScalarTag,TagOp,A,Op>
+    class ComputeUnaryResult_<ScalarTag,TagOp,A,Op>
     {
+    public:
       typedef typename tfel::meta::RemoveConstness<A>::type A_;
       typedef typename UnaryResultType<A_,Op>::type Result;
       typedef typename UnaryResultType<A_,Op>::type Handle;

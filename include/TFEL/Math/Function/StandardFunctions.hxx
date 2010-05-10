@@ -24,8 +24,9 @@
 
 #define TFEL_MATH_UNARY_FUNCTION_I(X,Y,Z)                                                 \
     template<>                                                                            \
-    struct FunctionTraits<Fct##X>                                                         \
+    class FunctionTraits<Fct##X>                                                          \
     {                                                                                     \
+    public:                                                                               \
       typedef Z DerivateFunc;                                                             \
     };                                                                                    \
                                                                                           \
@@ -92,8 +93,9 @@
 
 #define TFEL_MATH_UNARY_FUNCTION_II(X,Y,Z)                                                \
     template<>                                                                            \
-    struct FunctionTraits<Fct##X>                                                         \
+    class FunctionTraits<Fct##X>                                                          \
     {                                                                                     \
+    public:                                                                               \
       typedef Z DerivateFunc;                                                             \
     };                                                                                    \
                                                                                           \
@@ -145,7 +147,8 @@
      * \see   UnaryResultType                                    \
      */                                                          \
     template<>                                                   \
-    struct UnaryResultType<X,Fct##Y>{                            \
+    class UnaryResultType<X,Fct##Y>{                             \
+    public:                                                      \
       typedef X type;                                            \
     };                                                           \
     /*!                                                          \
@@ -153,7 +156,8 @@
      * \see   UnaryResultType                                    \
      */                                                          \
     template<>                                                   \
-    struct UnaryResultType<qt<NoUnit,X>,Fct##Y>{                 \
+    class UnaryResultType<qt<NoUnit,X>,Fct##Y>{                  \
+    public:                                                      \
       typedef qt<NoUnit,X> type;                                 \
     }                                                           
 
@@ -163,7 +167,8 @@
      * \see   UnaryResultType                                    \
      */                                                          \
     template<>                                                   \
-    struct UnaryResultType<X,Fct##Y>{                            \
+    class UnaryResultType<X,Fct##Y>{                             \
+    public:                                                      \
       typedef X type;                                            \
     };                                                           \
     /*!                                                          \
@@ -171,7 +176,8 @@
      * \see   UnaryResultType                                    \
      */                                                          \
     template<>                                                   \
-    struct UnaryResultType<qt<NoUnit,X>,Fct##Y>{                 \
+    class UnaryResultType<qt<NoUnit,X>,Fct##Y>{                  \
+    public:                                                      \
       typedef qt<NoUnit,X> type;                                 \
     };                                                           \
     /*!                                                          \
@@ -179,7 +185,8 @@
      * \see   UnaryResultType                                    \
      */                                                          \
     template<>                                                   \
-    struct UnaryResultType<Complex<X>,Fct##Y>{                   \
+    class UnaryResultType<Complex<X>,Fct##Y>{                    \
+    public:                                                      \
       typedef Complex<X> type;                                   \
     };                                                           \
     /*!                                                          \
@@ -187,7 +194,8 @@
      * \see   UnaryResultType                                    \
      */                                                          \
     template<>                                                   \
-    struct UnaryResultType<qt<NoUnit,Complex<X> >,Fct##Y>{       \
+    class UnaryResultType<qt<NoUnit,Complex<X> >,Fct##Y>{        \
+    public:                                                      \
       typedef qt<NoUnit,Complex<X> > type;                       \
     }
 

@@ -256,6 +256,45 @@ AC_DEFUN([AC_GCC_ARCH_OPTIMISATIONS],[
 	    case "$sys" in
 		linux*)
 		    AC_GCC_LINUX_OPTIMISATIONS
+		    if test "x$enable_debug" != "xyes"; then
+	    dnl symbol visibility
+		GCC_SYMBOL_VISIBILITY=""
+		AC_GCC_CHECK_FLAG(-fvisibility-inlines-hidden,GCC_SYMBOL_VISIBILITY)
+		if test "x$GCC_SYMBOL_VISIBILITY" != "x"; then
+		    dnl a small test because this compilation flag may cause problems
+		    dnl on some systems
+		    cat > test-fvisibility-inlines-hidden.cxx <<EOF
+#include<string>
+#include<sstream>
+void
+function(const double a)
+{
+  using namespace std;
+  ostringstream c;
+  c << a;}
+EOF
+ 
+    $CXX -fvisibility-inlines-hidden --shared -DPIC -fPIC test-fvisibility-inlines-hidden.cxx -o libtest-fvisibility-inlines-hidden.so &> /dev/null
+	    if test x"$?" == "x0" ; then
+		    CXXFLAGS="$CXXFLAGS $GCC_SYMBOL_VISIBILITY"
+		    OPTIMISATION_FLAGS="$GCC_SYMBOL_VISIBILITY $OPTIMISATION_FLAGS"
+		    rm libtest-fvisibility-inlines-hidden.so
+		    AC_MSG_NOTICE([-fvisibility-inlines-hidden enabled])
+		else
+		    AC_MSG_NOTICE([-fvisibility-inlines-hidden disabled])
+	    fi
+	    rm test-fvisibility-inlines-hidden.cxx
+	fi
+fi
+	    dnl clang failed with this option, but this may be system dependant
+	    if test "${CXX}" != "clang++"; then
+	    dnl hide all symbols by default
+	    GCC_SYMBOL_VISIBILITY=""
+	    AC_GCC_CHECK_FLAG(-fvisibility=hidden,GCC_SYMBOL_VISIBILITY)
+	    CXXFLAGS="$CXXFLAGS $GCC_SYMBOL_VISIBILITY"
+	    CFLAGS="$CFLAGS $GCC_SYMBOL_VISIBILITY"
+	    OPTIMISATION_FLAGS="$GCC_SYMBOL_VISIBILITY $OPTIMISATION_FLAGS"
+		    fi
 		    ;;
 		*)
 		    AC_GCC_DEFAULT_OPTIMISATIONS
@@ -265,8 +304,7 @@ AC_DEFUN([AC_GCC_ARCH_OPTIMISATIONS],[
     AC_GCC_DEFAULT_OPTIMISATIONS
     fi
     ])
-
-
+ 
 AC_DEFUN([AC_CHECK_GXX],
     [
 	if test "x$GXX" = "xyes"; then
@@ -283,35 +321,42 @@ AC_DEFUN([AC_CHECK_GXX],
 	    CXXFLAGS="$CXXFLAGS -Wno-multichar -Wno-deprecated-declarations -Wpacked"
 	    CXXFLAGS="$CXXFLAGS -Wredundant-decls -Wlong-long -Wdisabled-optimization"
 	    CXXFLAGS="$CXXFLAGS -Wunknown-pragmas -Wundef  -Wreorder"
-	    
-	    dnl gxx versions prior to 3.3 are known to be buggy 
-	    dnl when two much metaprogramming is involved
-	    AC_MSG_CHECKING(for gxx 3.4.0 or later)
-	    GXXVERSION="`"$CXX" -dumpversion`"
-	    AC_MSG_RESULT($GXXVERSION)
-	    GXXVERSION="`"$CXX" -dumpversion |
+
+	    if test "${CXX}" = "clang++"; then
+               CXXFLAGS="$CXXFLAGS -ftemplate-depth-250"
+	       CXXFLAGS="$CXXFLAGS -Wno-mismatched-tags"
+	       COMPILER_SPECIFIC_OPTIONS="-ftemplate-depth-250 -Wno-mismatched-tags $COMPILER_SPECIFIC_OPTIONS"
+            fi
+
+	    if test "${CXX}" != "clang++"; then
+		dnl gxx versions prior to 3.3 are known to be buggy 
+		dnl when two much metaprogramming is involved
+		AC_MSG_CHECKING(for gxx 3.4.0 or later)
+		GXXVERSION="`"$CXX" -dumpversion`"
+		AC_MSG_RESULT($GXXVERSION)
+		GXXVERSION="`"$CXX" -dumpversion |
                 awk 'BEGIN { FS = "." };
                       1 { if ((@S|@1 * 10000 + @S|@2 * 100 + @S|@3) >= 30400) { print "yes" } }'
                 `"
-	    if test "x$GXXVERSION" = "x$no"; then
-		echo "Found $GXXVERSION"
-		AC_MSG_ERROR("g++ version prior to 3.3 are not supported. Please use at least g++3.4")
-	    fi
-	    GXXVERSION="`"$CXX" -dumpversion |
+		if test "x$GXXVERSION" = "x$no"; then
+		    echo "Found $GXXVERSION"
+		    AC_MSG_ERROR("g++ version prior to 3.3 are not supported. Please use at least g++3.4")
+		fi
+		GXXVERSION="`"$CXX" -dumpversion |
                 awk 'BEGIN { FS = "." };
                       1 { if ((@S|@1 * 10000 + @S|@2 * 100 + @S|@3) >= 40000) { print "yes" } }'
                 `"
-	    if test "x$GXXVERSION" = "x$no"; then
-		AC_MSG_WARN("g++3.4 does not work with FSAlgorithm specialisation nicely")
-		AC_MSG_WARN("Using the -DNO_FSALGORITHM_SPECIALISATION flag")
-		CPPFLAGS="-DNO_FSALGORITHM_SPECIALISATION -fno-builtin-abs $CPPFLAGS"
-		COMPILER_SPECIFIC_OPTIONS="-DNO_FSALGORITHM_SPECIALISATION -fno-builtin-abs $COMPILER_SPECIFIC_OPTIONS"
-	    else
-		CPPFLAGS=" $CPPFLAGS"
-		CXXFLAGS="$CXXFLAGS"
+		if test "x$GXXVERSION" = "x$no"; then
+		    AC_MSG_WARN("g++3.4 does not work with FSAlgorithm specialisation nicely")
+		    AC_MSG_WARN("Using the -DNO_FSALGORITHM_SPECIALISATION flag")
+		    CPPFLAGS="-DNO_FSALGORITHM_SPECIALISATION -fno-builtin-abs $CPPFLAGS"
+		    COMPILER_SPECIFIC_OPTIONS="-DNO_FSALGORITHM_SPECIALISATION -fno-builtin-abs $COMPILER_SPECIFIC_OPTIONS"
+		else
+		    CPPFLAGS=" $CPPFLAGS"
+		    CXXFLAGS="$CXXFLAGS"
+		fi
 	    fi
 	fi
-	
 	if test "x$enable_optimizations" != "xno"; then   	    
 	    if test "x$enable_debug" != "xyes"; then
 		dnl g++ debug options
@@ -323,42 +368,6 @@ AC_DEFUN([AC_CHECK_GXX],
 	if test "x$enable_debug" == "xyes"; then
 	    dnl g++ debug options
 	    CXXFLAGS="-g $CXXFLAGS"
-	else
-	    dnl symbol visibility
-	    GCC_SYMBOL_VISIBILITY=""
-	    AC_GCC_CHECK_FLAG(-fvisibility-inlines-hidden,GCC_SYMBOL_VISIBILITY)
-	    if test "x$GCC_SYMBOL_VISIBILITY" != "x"; then
-		dnl a small test because this compilation flag may cause problems
-		dnl on some systems
-		cat > test-fvisibility-inlines-hidden.cxx <<EOF
-#include<string>
-#include<sstream>
-std::string
-function(const double a)
-{
-  using namespace std;
-  ostringstream c;
-  c << a;
-  return c.str();
-}
-EOF
-    $CXX -fvisibility-inlines-hidden --shared -DPIC -fPIC test-fvisibility-inlines-hidden.cxx -o libtest-fvisibility-inlines-hidden.so &> /dev/null
-	    if test x"$?" == "x0" ; then
-		    CXXFLAGS="$CXXFLAGS $GCC_SYMBOL_VISIBILITY"
-		    OPTIMISATION_FLAGS="$GCC_SYMBOL_VISIBILITY $OPTIMISATION_FLAGS"
-		    rm libtest-fvisibility-inlines-hidden.so
-		    AC_MSG_NOTICE([-fvisibility-inlines-hidden enabled])
-		else
-		    AC_MSG_NOTICE([-fvisibility-inlines-hidden disabled])
-	    fi
-	    rm test-fvisibility-inlines-hidden.cxx
-	fi
-	    dnl hide all symbols by default
-	    GCC_SYMBOL_VISIBILITY=""
-	    AC_GCC_CHECK_FLAG(-fvisibility=hidden,GCC_SYMBOL_VISIBILITY)
-	    CXXFLAGS="$CXXFLAGS $GCC_SYMBOL_VISIBILITY"
-	    CFLAGS="$CFLAGS $GCC_SYMBOL_VISIBILITY"
-	    OPTIMISATION_FLAGS="$GCC_SYMBOL_VISIBILITY $OPTIMISATION_FLAGS"
 	fi
 	
 	]) dnl end of AC_CHECK GXX

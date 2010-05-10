@@ -60,8 +60,9 @@ namespace tfel{
      * \return type, type of the result.
      */
     template<typename A, typename B, typename Op>
-    class ResultType
+    struct ResultType
     {
+    private:
       /*
        * Tag of the object A
        */
