@@ -55,3 +55,4 @@ target_link_libraries(mfront
 		      TFELUtilities
 		      TFELException
 		      -ldl -pthread)
+install(TARGET mfront DESTINATION bin)

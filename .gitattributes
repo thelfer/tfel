@@ -813,7 +813,7 @@ tests/Math/Functions/Makefile.am -text
 tests/Math/Functions/derivate.cxx -text
 tests/Math/Functions/function.cxx -text
 tests/Math/Functions/power.cxx -text
-tests/Math/Functions/vector1.cxx -text
+tests/Math/Functions/vector-function.cxx -text
 tests/Math/Makefile.am -text
 tests/Math/Range.cxx -text
 tests/Math/RungeKutta/CMakeLists.txt -text

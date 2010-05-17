@@ -4,19 +4,19 @@ INCLUDES = -I$(top_srcdir)/include -I$(srcdir)/include
 if WITH_TESTS
 
 testdir = $(pkgdatadir)/tests/Math/Functions
-test_PROGRAMS = function \
-		power    \
-		vector1  \
+test_PROGRAMS = function        \
+		power           \
+		vector_function \
 		derivate 
 
 LDADD = -lTFELMath -lTFELException       \
 	-L$(top_builddir)/src/Math       \
 	-L$(top_builddir)/src/Exception
 
-function_SOURCES  = function.cxx
-power_SOURCES     = power.cxx
-vector1_SOURCES   = vector1.cxx
-derivate_SOURCES  = derivate.cxx
+function_SOURCES        = function.cxx
+power_SOURCES           = power.cxx
+vector_function_SOURCES = vector-function.cxx
+derivate_SOURCES        = derivate.cxx
 
 TESTS=$(test_PROGRAMS)
 

@@ -21,6 +21,10 @@ add_definitions("-DOPTIMISATION_FLAGS=\\\"\"${OPTIMISATION_FLAGS}\"\\\"")
 # testing
 enable_testing()
 
+if (${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION} GREATER 2.6)
+add_custom_target(check COMMAND ${CMAKE_CTEST_COMMAND})
+endif (${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION} GREATER 2.6)
+
 # packaging
 include(CPack)
 

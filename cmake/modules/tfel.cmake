@@ -13,7 +13,7 @@ macro(install_header dir file)
 endmacro(install_header)
 
 macro(install_data dir file)
-  install(FILES ${dir}/${file}
+  install(FILES ${file}
           DESTINATION "share/tfel/${dir}")
 endmacro(install_data)
 
@@ -22,6 +22,7 @@ if(${ARGC} LESS 2)
    message(FATAL_ERROR "tfel_library : no source specified")
 endif(${ARGC} LESS 2)
 add_library(${name} SHARED ${ARGN})
+install(TARGETS ${name} DESTINATION lib)
 if(ENABLE_STATIC)
  add_library(${name}-static STATIC ${ARGN})
  set_target_properties(${name}-static PROPERTIES OUTPUT_NAME "${name}")
@@ -36,5 +37,6 @@ if(ENABLE_STATIC)
  # doesn't hurt):
  set_target_properties(${name}        PROPERTIES CLEAN_DIRECT_OUTPUT 1)
  set_target_properties(${name}-static PROPERTIES CLEAN_DIRECT_OUTPUT 1)
+ install(TARGETS ${name}-static DESTINATION lib)
 endif(ENABLE_STATIC)
 endmacro(tfel_library)
