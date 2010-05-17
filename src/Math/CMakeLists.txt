@@ -104,7 +104,7 @@ target_link_libraries(tfel_eval
 		      TFELException
 		      -ldl)
 
-install(TARGET tfel_eval DESTINATION bin)
+install(TARGETS tfel_eval DESTINATION bin)
 
 # if HAVE_GSL
 # tfel_eval_LDADD += @GSLLIBS@

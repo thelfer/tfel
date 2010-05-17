@@ -18,6 +18,12 @@ if(UNIX)
 endif(UNIX)
 add_definitions("-DOPTIMISATION_FLAGS=\\\"\"${OPTIMISATION_FLAGS}\"\\\"")
 
+# sub directories
+add_subdirectory(include) 
+add_subdirectory(src)
+add_subdirectory(mfront)
+add_subdirectory(tests)
+
 # testing
 enable_testing()
 
@@ -28,8 +34,16 @@ endif (${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION} GREATER 2.6)
 # packaging
 include(CPack)
 
-# sub directories
-add_subdirectory(include) 
-add_subdirectory(src)
-add_subdirectory(mfront)
-add_subdirectory(tests)
+set (CPACK_PACKAGE_EXECUTABLES         "mfront;mfront")
+set (CPACK_PACKAGE_INSTALL_DIRECTORY   "${PACKAGE_NAME}-${VERSION}")
+set (CPACK_PACKAGE_NAME                "${PACKAGE_NAME}")
+set (CPACK_PACKAGE_VERSION_MAJOR       "${TFEL_VERSION_MAJOR}")
+set (CPACK_PACKAGE_VERSION_MINOR       "${TFEL_VERSION_MINOR}")
+set (CPACK_PACKAGE_VENDOR              "CEA")
+set (CPACK_SOURCE_IGNORE_FILES         "\\.svn/")
+set (CPACK_PACKAGE_DESCRIPTION_SUMMARY "tfel is a mathematical library")
+set (CPACK_PACKAGE_DESCRIPTION 	       "tfel is a mathematical library")
+
+# debian  packaging
+set (CPACK_DEBIAN_PACKAGE_MAINTAINER   "Helfer Thomas thomas.helfer@cea.fr ${PACKAGE_BUGREPORT}")
+set (CPACK_DEBIAN_PACKAGE_SECTION      "Science")
