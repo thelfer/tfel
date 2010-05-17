@@ -335,6 +335,19 @@ namespace mfront{
     this->readVarList(this->stateVarsHolder,true);
   } // end of MFrontImplicitParser::treatStateVariables
 
+  void
+  MFrontImplicitParser::treatAuxiliaryStateVariables(void)
+  {
+    using namespace std;
+    if((!this->integrator.empty())||
+       (!this->computeStress.empty())){
+      string msg("MFrontImplicitParser::treatStateVariables : ");
+      msg += "state variables shall be defined before the @Integrator and @ComputeStress blocks";
+      throw(runtime_error(msg));
+    }
+    this->readVarList(this->auxiliaryStateVarsHolder,true);
+  } // end of MFrontImplicitParser::treatAuxiliaryStateVariables
+
   std::string
   MFrontImplicitParser::variableModifier1(const std::string& var,
 					  const bool addThisPtr)
@@ -629,8 +642,13 @@ namespace mfront{
     if(this->algorithm==MFrontImplicitParser::BROYDEN){
       this->behaviourFile << "Dzeros = -this->fzeros;\n";
       this->behaviourFile << "jacobian2 = this->jacobian;\n";
+      this->behaviourFile << "try{" << endl;
       this->behaviourFile << "TinyMatrixSolve<" << n2
 			  << "," << "real>::exe(jacobian2,Dzeros);\n";
+      this->behaviourFile << "}" << endl;
+      this->behaviourFile << "catch(LUException&){" << endl;
+      this->behaviourFile << "throw(DivergenceException(\"LUException\"));\n";
+      this->behaviourFile << "}" << endl;
       this->behaviourFile << "jacobian2 = this->jacobian;\n";
       this->behaviourFile << "this->zeros  += this->Dzeros;\n";
       this->behaviourFile << "fzeros2 = this->fzeros;\n";
@@ -645,8 +663,13 @@ namespace mfront{
       this->behaviourFile << "this->computeFdF();\n";
     }
     if(this->algorithm==MFrontImplicitParser::NEWTONRAPHSON){
+      this->behaviourFile << "try{" << endl;
       this->behaviourFile << "TinyMatrixSolve<" << n2
 			  << "," << "real>::exe(this->jacobian,this->fzeros);\n";
+      this->behaviourFile << "}" << endl;
+      this->behaviourFile << "catch(LUException&){" << endl;
+      this->behaviourFile << "throw(DivergenceException(\"LUException\"));\n";
+      this->behaviourFile << "}" << endl;
       this->behaviourFile << "this->zeros -= this->fzeros;\n";
     }
     if(this->algorithm==MFrontImplicitParser::BROYDEN){
@@ -971,6 +994,7 @@ namespace mfront{
     			       this->date,
     			       this->coefsHolder,
     			       this->stateVarsHolder,
+    			       this->auxiliaryStateVarsHolder,
     			       this->externalStateVarsHolder,
 			       this->glossaryNames,
 			       this->entryNames,

@@ -84,6 +84,9 @@ namespace mfront{
 
     void treatUnknownKeyword(void);
 
+    void
+    treatUpdateAuxiliaryStateVars(void);
+
     void treatMaterial(void);
 
     void treatOrthotropicBehaviour(void);
@@ -101,6 +104,8 @@ namespace mfront{
     void treatInterface(void);
 
     void treatStateVariables(void);
+
+    void treatAuxiliaryStateVariables(void);  
 
     void treatComputedVar(void);
 
@@ -299,6 +304,9 @@ namespace mfront{
     isInternalStateVariableName(const std::string&) const;
 
     bool
+    isAuxiliaryInternalStateVariableName(const std::string&) const;
+
+    bool
     isExternalStateVariableName(const std::string&) const;
 
     bool
@@ -316,6 +324,7 @@ namespace mfront{
 
     VarContainer coefsHolder;
     VarContainer stateVarsHolder;
+    VarContainer auxiliaryStateVarsHolder;
     VarContainer externalStateVarsHolder;
     ComputedVarContainer computedVars;
 
@@ -325,6 +334,7 @@ namespace mfront{
     std::vector<BoundsDescription>      physicalBoundsDescriptions;
 
     std::string integrator;
+    std::string updateAuxiliaryStateVars;
 
     std::string behaviour;
     std::string behaviourFileName;

@@ -164,6 +164,7 @@ namespace mfront{
 					    const std::string&,
 					    const VarContainer&,
 					    const VarContainer& stateVarsHolder,
+					    const VarContainer& auxiliaryStateVarsHolder,
 					    const VarContainer&,
 					    const BehaviourCharacteristic behaviourCharacteristic)
   {
@@ -175,9 +176,36 @@ namespace mfront{
     behaviourDataFile << "{\n";
     behaviourDataFile << "using namespace tfel::math;\n";
     behaviourDataFile << "this->sig.exportTab(UMATstress_);\n";
-    if(!stateVarsHolder.empty()){
+    if((!stateVarsHolder.empty())||
+       (!auxiliaryStateVarsHolder.empty())){
       SupportedTypes::TypeSize currentOffset;
       for(p =stateVarsHolder.begin();p!=stateVarsHolder.end();++p){
+	SupportedTypes::TypeFlag flag = this->getTypeFlag(p->type);
+	switch(flag){
+	case SupportedTypes::Scalar :
+	  if(behaviourCharacteristic.useQt()){
+	    behaviourDataFile << "UMATstatev[" 
+			      << currentOffset << "] = base_cast(this->"
+			      << p->name << ");\n";
+	  } else {
+	    behaviourDataFile << "UMATstatev[" 
+			      << currentOffset << "] = this->"
+			      << p->name << ";\n";
+	  }
+	  break;
+	case SupportedTypes::Stensor :
+	  behaviourDataFile << "this->" << p->name 
+			    << ".write(&UMATstatev[" 
+			    << currentOffset << "]);\n";  
+	  break;
+	default :
+	  string msg("MFrontUMATInterface::exportMechanicalData : ");
+	  msg += "internal error, tag unsupported";
+	  throw(runtime_error(msg));
+	}
+	currentOffset+=this->getTypeSize(p->type);
+      }
+      for(p =auxiliaryStateVarsHolder.begin();p!=auxiliaryStateVarsHolder.end();++p){
 	SupportedTypes::TypeFlag flag = this->getTypeFlag(p->type);
 	switch(flag){
 	case SupportedTypes::Scalar :
@@ -211,6 +239,8 @@ namespace mfront{
   void
   MFrontUMATInterface::writeBehaviourConstructor(std::ofstream& behaviourFile,
 						 const std::string& className,
+						 const VarContainer&,
+						 const VarContainer&,
 						 const VarContainer&,
 						 const VarContainer&,
 						 const BehaviourCharacteristic characteristic,
@@ -262,6 +292,7 @@ namespace mfront{
 						     const std::string& className,
 						     const VarContainer& coefsHolder,
 						     const VarContainer& stateVarsHolder,
+ 						     const VarContainer& auxiliaryStateVarsHolder,
 						     const VarContainer& externalStateVarsHolder,
 						     const BehaviourCharacteristic)
   {
@@ -287,7 +318,8 @@ namespace mfront{
       behaviourDataFile << ",\n";
     }
     behaviourDataFile <<  "const Type* const";
-    if(!stateVarsHolder.empty()){
+    if((!stateVarsHolder.empty())||
+       (!auxiliaryStateVarsHolder.empty())){
       behaviourDataFile << " UMATint_vars,\n";
     } else {
       behaviourDataFile << ",\n";
@@ -318,9 +350,27 @@ namespace mfront{
 	currentOffset+=this->getTypeSize(p->type);
       }
     }
-    if(!stateVarsHolder.empty()){
+    if((!stateVarsHolder.empty())||
+       (!auxiliaryStateVarsHolder.empty())){
       SupportedTypes::TypeSize currentOffset;
       for(p=stateVarsHolder.begin();p!=stateVarsHolder.end();++p){
+	SupportedTypes::TypeFlag flag = getTypeFlag(p->type);
+	switch(flag){
+	case SupportedTypes::Scalar : 
+	  behaviourDataFile << ",\n";
+	  behaviourDataFile << p->name << "(UMATint_vars["<< currentOffset << "])";
+	  break;
+	case SupportedTypes::Stensor :
+	  body << "this->" << p->name << ".import(&UMATint_vars["<< currentOffset << "]);\n";
+	  break;
+	default :
+	  string msg("MFrontUMATInterface::writeBehaviourDataConstructor : ");
+	  msg += "internal error, tag unsupported";
+	  throw(runtime_error(msg));
+	}
+	currentOffset+=this->getTypeSize(p->type);
+      }
+      for(p=auxiliaryStateVarsHolder.begin();p!=auxiliaryStateVarsHolder.end();++p){
 	SupportedTypes::TypeFlag flag = getTypeFlag(p->type);
 	switch(flag){
 	case SupportedTypes::Scalar : 
@@ -370,6 +420,7 @@ namespace mfront{
   void 
   MFrontUMATInterface::writeIntegrationDataConstructor(std::ofstream& behaviourIntegrationFile,
 						       const std::string& className,
+						       const VarContainer&,
 						       const VarContainer&,
 						       const VarContainer&,
 						       const VarContainer& externalStateVarsHolder,
@@ -561,6 +612,7 @@ namespace mfront{
 				     const std::string& date,
 				     const VarContainer& coefsHolder,
 				     const VarContainer& stateVarsHolder,
+				     const VarContainer& auxiliaryStateVarsHolder,
 				     const VarContainer& externalStateVarsHolder,
 				     const std::map<std::string,std::string>& glossaryNames,
 				     const std::map<std::string,std::string>& entryNames,
@@ -886,14 +938,25 @@ namespace mfront{
 
     out << "MFRONT_SHAREDOBJ unsigned short umat"
       	<< MFrontUMATInterface::makeLowerCase(name)
-	<< "_nInternalStateVariables = " << stateVarsHolder.size() << ";\n";
-    if(stateVarsHolder.size()!=0){
+	<< "_nInternalStateVariables = " << stateVarsHolder.size() + auxiliaryStateVarsHolder.size()
+	<< ";\n";
+    if((stateVarsHolder.size()!=0)||
+       (auxiliaryStateVarsHolder.size()!=0)){
       out << "MFRONT_SHAREDOBJ const char * umat"
 	  << MFrontUMATInterface::makeLowerCase(name)
 	  << "_InternalStateVariables [] = {";
       for(p=stateVarsHolder.begin();p!=stateVarsHolder.end();){
 	out << '"' << MFrontUMATInterfaceGetName(glossaryNames,entryNames,p->name) << '"';
 	if(++p!=stateVarsHolder.end()){
+	  out << ",\n";
+	}
+      }
+      if(stateVarsHolder.size()!=0){
+	out << ",\n";
+      }
+      for(p=auxiliaryStateVarsHolder.begin();p!=auxiliaryStateVarsHolder.end();){
+	out << '"' << MFrontUMATInterfaceGetName(glossaryNames,entryNames,p->name) << '"';
+	if(++p!=auxiliaryStateVarsHolder.end()){
 	  out << ",\n";
 	}
       }
@@ -904,7 +967,8 @@ namespace mfront{
 	  << "_InternalStateVariables = 0;\n\n";
     }
 
-    if(stateVarsHolder.size()!=0){
+    if((stateVarsHolder.size()!=0)||
+       (auxiliaryStateVarsHolder.size()!=0)){
       out << "MFRONT_SHAREDOBJ int umat"
 	  << MFrontUMATInterface::makeLowerCase(name)
 	  << "_InternalStateVariablesTypes [] = {";
@@ -923,6 +987,27 @@ namespace mfront{
 	  throw(runtime_error(msg));
 	}
 	if(++p!=stateVarsHolder.end()){
+	  out << ",";
+	}
+      }
+      if(stateVarsHolder.size()!=0){
+	out << ",";
+      }
+      for(p=auxiliaryStateVarsHolder.begin();p!=auxiliaryStateVarsHolder.end();){
+	SupportedTypes::TypeFlag flag = this->getTypeFlag(p->type);
+	switch(flag){
+	case SupportedTypes::Scalar : 
+	  out << 0;
+	  break;
+	case SupportedTypes::Stensor :
+	  out << 1;
+	  break;
+	default :
+	  string msg("MFrontUMATInterface::endTreatement : ");
+	  msg += "internal error, tag unsupported";
+	  throw(runtime_error(msg));
+	}
+	if(++p!=auxiliaryStateVarsHolder.end()){
 	  out << ",";
 	}
       }
@@ -1078,6 +1163,33 @@ namespace mfront{
       }
       out << tmp;
     }
+    if(stateVarsHolder.size()!=0){
+      out << " ";
+    }
+    for(p=auxiliaryStateVarsHolder.begin();p!=auxiliaryStateVarsHolder.end();++p){
+      SupportedTypes::TypeFlag flag = this->getTypeFlag(p->type);
+      switch(flag){
+      case SupportedTypes::Scalar : 
+	tmp = treatScalar(p->name);
+	i=static_cast<unsigned short>(i+1u);
+	break;
+      case SupportedTypes::Stensor :
+	tmp = treatStensor(p->name,1);
+	i=static_cast<unsigned short>(i+3u);
+	break;
+      default :
+	string msg("MFrontUMATInterface::endTreatement : ");
+	msg += "internal error, tag unsupported";
+	throw(runtime_error(msg));
+      }
+      if(i>9){
+	out << "\n";
+	i=0;
+      } else {
+	out << " ";
+      }
+      out << tmp;
+    }
     out << ";\n";
     
     out << "para1D = 'MOTS' 'T'";
@@ -1151,34 +1263,6 @@ namespace mfront{
       out << tmp;
     }
     out << ";\n\n";
-
-    out << "VAR1D = 'MANUEL' 'CHML' MODL1D";  
-    i=6;
-    for(p=stateVarsHolder.begin();p!=stateVarsHolder.end();++p){
-      SupportedTypes::TypeFlag flag = this->getTypeFlag(p->type);
-      switch(flag){
-      case SupportedTypes::Scalar : 
-	tmp = treatStateVarScalar(p->name);
-	i=static_cast<unsigned short>(i+1u);
-	break;
-      case SupportedTypes::Stensor :
-	tmp = treatStateVarStensor(p->name,1);
-	i=static_cast<unsigned short>(i+3u);
-	break;
-      default :
-	string msg("MFrontUMATInterface::endTreatement : ");
-	msg += "internal error, tag unsupported";
-	throw(runtime_error(msg));
-      }
-      if(i>5){
-	out << "\n";
-	i=0;
-      } else {
-	out << " ";
-      }
-      out << tmp;
-    }
-    out << "\nTYPE 'VARIABLES_INTERNES';\n\n";
     
     out << "** 2D Example\n\n";
     out << "coel2D = 'MOTS'";
@@ -1222,6 +1306,31 @@ namespace mfront{
     out << "stav2D = 'MOTS'";
     i=0;
     for(p=stateVarsHolder.begin();p!=stateVarsHolder.end();++p){
+      SupportedTypes::TypeFlag flag = this->getTypeFlag(p->type);
+      switch(flag){
+      case SupportedTypes::Scalar : 
+	tmp = treatScalar(p->name);
+	i=static_cast<unsigned short>(i+1u);
+	break;
+      case SupportedTypes::Stensor :
+	tmp = treatStensor(p->name,2);
+	i=static_cast<unsigned short>(i+4u);
+	break;
+      default :
+	string msg("MFrontUMATInterface::endTreatement : ");
+	msg += "internal error, tag unsupported";
+	throw(runtime_error(msg));
+      }
+      if(i>9){
+	out << "\n";
+	i=0;
+      } else {
+	out << " ";
+      }
+      out << tmp;
+    }
+    for(p=auxiliaryStateVarsHolder.begin();
+	p!=auxiliaryStateVarsHolder.end();++p){
       SupportedTypes::TypeFlag flag = this->getTypeFlag(p->type);
       switch(flag){
       case SupportedTypes::Scalar : 
@@ -1322,34 +1431,6 @@ namespace mfront{
     }
     out << ";\n\n";
 
-    out << "VAR2D = 'MANUEL' 'CHML' MODL2D";  
-    i=6;
-    for(p=stateVarsHolder.begin();p!=stateVarsHolder.end();++p){
-      SupportedTypes::TypeFlag flag = this->getTypeFlag(p->type);
-      switch(flag){
-      case SupportedTypes::Scalar : 
-	tmp = treatStateVarScalar(p->name);
-	i=static_cast<unsigned short>(i+1u);
-	break;
-      case SupportedTypes::Stensor :
-	tmp = treatStateVarStensor(p->name,2);
-	i=static_cast<unsigned short>(i+3u);
-	break;
-      default :
-	string msg("MFrontUMATInterface::endTreatement : ");
-	msg += "internal error, tag unsupported";
-	throw(runtime_error(msg));
-      }
-      if(i>5){
-	out << "\n";
-	i=0;
-      } else {
-	out << " ";
-      }
-      out << tmp;
-    }
-    out << "\nTYPE 'VARIABLES_INTERNES';\n\n";
-
     out << "** 3D Example\n\n";
     out << "coel3D = 'MOTS'";
     i=0;
@@ -1416,11 +1497,37 @@ namespace mfront{
       }
       out << tmp;
     }
+    for(p=auxiliaryStateVarsHolder.begin();
+	p!=auxiliaryStateVarsHolder.end();++p){
+      SupportedTypes::TypeFlag flag = this->getTypeFlag(p->type);
+      switch(flag){
+      case SupportedTypes::Scalar : 
+	tmp = treatScalar(p->name);
+	i=static_cast<unsigned short>(i+1u);
+	break;
+      case SupportedTypes::Stensor :
+	tmp = treatStensor(p->name,3);
+	i=static_cast<unsigned short>(i+3u);
+	break;
+      default :
+	string msg("MFrontUMATInterface::endTreatement : ");
+	msg += "internal error, tag unsupported";
+	throw(runtime_error(msg));
+      }
+      if(i>9){
+	out << "\n";
+	i=0;
+      } else {
+	out << " ";
+      }
+      out << tmp;
+    }
     out << ";\n";
     
     out << "para3D = 'MOTS' 'T'";
     i=0;
-    for(p=externalStateVarsHolder.begin();p!=externalStateVarsHolder.end();++p){
+    for(p=externalStateVarsHolder.begin();
+	p!=externalStateVarsHolder.end();++p){
       SupportedTypes::TypeFlag flag = this->getTypeFlag(p->type);
       switch(flag){
       case SupportedTypes::Scalar : 
@@ -1493,34 +1600,6 @@ namespace mfront{
     }
     out << ";\n\n";
 
-    out << "VAR3D = 'MANUEL' 'CHML' MODL3D";  
-    i=6;
-    for(p=stateVarsHolder.begin();p!=stateVarsHolder.end();++p){
-      SupportedTypes::TypeFlag flag = this->getTypeFlag(p->type);
-      switch(flag){
-      case SupportedTypes::Scalar : 
-	tmp = treatStateVarScalar(p->name);
-	i=static_cast<unsigned short>(i+1u);
-	break;
-      case SupportedTypes::Stensor :
-	tmp = treatStateVarStensor(p->name,3);
-	i=static_cast<unsigned short>(i+3u);
-	break;
-      default :
-	string msg("MFrontUMATInterface::endTreatement : ");
-	msg += "internal error, tag unsupported";
-	throw(runtime_error(msg));
-      }
-      if(i>5){
-	out << "\n";
-	i=0;
-      } else {
-	out << " ";
-      }
-      out << tmp;
-    }
-    out << "\nTYPE 'VARIABLES_INTERNES';\n\n";
-
     out.close();
 
 #ifdef HAVE_PLEIADES
@@ -1569,6 +1648,23 @@ namespace mfront{
 	  << MFrontUMATInterfaceGetName(glossaryNames,entryNames,p->name) << "' 0.\n";
     }
     for(p=stateVarsHolder.begin();p!=stateVarsHolder.end();++p){
+      SupportedTypes::TypeFlag flag = this->getTypeFlag(p->type);
+      switch(flag){
+      case SupportedTypes::Scalar : 
+	out << "InternalStateVariable<Scalar>  '"
+	    << MFrontUMATInterfaceGetName(glossaryNames,entryNames,p->name) << "'\n";
+	break;
+      case SupportedTypes::Stensor :
+	out << "InternalStateVariable<Stensor> '"
+	    << MFrontUMATInterfaceGetName(glossaryNames,entryNames,p->name) << "'\n";
+	break;
+      default :
+	string msg("MFrontUMATInterface::endTreatement : ");
+	msg += "internal error, tag unsupported";
+	throw(runtime_error(msg));
+      }
+    }
+    for(p=auxiliaryStateVarsHolder.begin();p!=auxiliaryStateVarsHolder.end();++p){
       SupportedTypes::TypeFlag flag = this->getTypeFlag(p->type);
       switch(flag){
       case SupportedTypes::Scalar : 

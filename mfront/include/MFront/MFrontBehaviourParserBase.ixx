@@ -40,6 +40,8 @@ namespace mfront{
     this->registerNewCallBack("@Coef",&Child::treatCoef);
     this->registerNewCallBack("@LocalVar",&Child::treatLocalVar);
     this->registerNewCallBack("@StateVar",&Child::treatStateVariables);
+    this->registerNewCallBack("@AuxiliaryStateVar",
+			      &Child::treatAuxiliaryStateVariables);
     this->registerNewCallBack("@ExternalStateVar",&Child::treatExternalStateVariables);
     this->registerNewCallBack("@InitLocalVars",&Child::treatInitLocalVars);
     this->registerNewCallBack("@Integrator",&Child::treatIntegrator);
@@ -57,6 +59,8 @@ namespace mfront{
     this->registerNewCallBack("@IsotropicBehaviour",&Child::treatIsotropicBehaviour);
     this->registerNewCallBack("@Private",&Child::treatPrivate);
     this->registerNewCallBack("@Sources",&Child::treatSources);
+    this->registerNewCallBack("@UpdateAuxiliaryStateVars",
+			      &Child::treatUpdateAuxiliaryStateVars);
   } // end of MFrontBehaviourParserBase<Child>::registerDefaultCallBacks
 
   template<typename Child>

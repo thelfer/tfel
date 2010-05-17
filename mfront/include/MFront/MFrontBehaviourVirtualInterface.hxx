@@ -46,11 +46,14 @@ namespace mfront{
 			 const VarContainer&,
 			 const VarContainer&,
 			 const VarContainer&,
+			 const VarContainer&,
 			 const BehaviourCharacteristic) = 0;
     
     virtual void 
     writeBehaviourConstructor(std::ofstream&,
 			      const std::string&,
+			      const VarContainer&,
+			      const VarContainer&,
 			      const VarContainer&,
 			      const VarContainer&,
 			      const BehaviourCharacteristic,
@@ -63,11 +66,13 @@ namespace mfront{
 				  const VarContainer&,
 				  const VarContainer&,
 				  const VarContainer&,
+				  const VarContainer&,
 				  const BehaviourCharacteristic) = 0;
     
     virtual void 
     writeIntegrationDataConstructor(std::ofstream&,
 				    const std::string&,
+				    const VarContainer&,
 				    const VarContainer&,
 				    const VarContainer&,
 				    const VarContainer&,
@@ -79,6 +84,7 @@ namespace mfront{
 		  const std::string&,
 		  const std::string&,
 		  const std::string&,
+		  const VarContainer&,
 		  const VarContainer&,
 		  const VarContainer&,
 		  const VarContainer&,

@@ -89,6 +89,12 @@ namespace mfront{
   {
     return this->contains(this->stateVarsHolder,n);
   } // end of MFrontBehaviourParserCommon::isInternalStateVariableName
+
+  bool
+  MFrontBehaviourParserCommon::isAuxiliaryInternalStateVariableName(const std::string& n) const
+  {
+    return this->contains(this->auxiliaryStateVarsHolder,n);
+  } // end of MFrontBehaviourParserCommon::isInternalStateVariableName
   
   bool
   MFrontBehaviourParserCommon::isExternalStateVariableName(const std::string& n) const
@@ -460,6 +466,11 @@ namespace mfront{
     this->readVarList(this->stateVarsHolder);
   }
 
+  void MFrontBehaviourParserCommon::treatAuxiliaryStateVariables(void)
+  {
+    this->readVarList(this->auxiliaryStateVarsHolder);
+  }
+
   void MFrontBehaviourParserCommon::treatExternalStateVariables(void)
   {
     this->readVarList(this->externalStateVarsHolder,true);
@@ -616,6 +627,18 @@ namespace mfront{
 	  found = true;
 	}
       }
+      for(p =this->auxiliaryStateVarsHolder.begin();
+	  (!found)&&(p!=this->auxiliaryStateVarsHolder.end());
+	  ++p){
+	if(p->name==this->current->value){
+	  ++(this->current);
+	  this->current = definition.treatStateVar(p->name,
+						   this->getTypeFlag(p->type),
+						   this->current,
+						   this->fileTokens.end());
+	  found = true;
+	}
+      }
       for(p =this->externalStateVarsHolder.begin();
 	  (!found)&&(p!=this->externalStateVarsHolder.end());
 	  ++p){
@@ -702,6 +725,14 @@ namespace mfront{
     }
     for(p   = this->stateVarsHolder.begin();
 	(p != this->stateVarsHolder.end())&&(!found);++p){
+      if(p->name==boundsDescription.varName){
+	found=true;
+	boundsDescription.varCategory = BoundsDescription::StateVar;
+	boundsDescription.varType     = this->getTypeFlag(p->type);
+      }
+    }
+    for(p   = this->auxiliaryStateVarsHolder.begin();
+	(p != this->auxiliaryStateVarsHolder.end())&&(!found);++p){
       if(p->name==boundsDescription.varName){
 	found=true;
 	boundsDescription.varCategory = BoundsDescription::StateVar;
@@ -995,6 +1026,7 @@ namespace mfront{
     this->checkBehaviourDataFile();
 
     this->behaviourDataFile << "#include<iostream>\n";
+    this->behaviourDataFile << "#include<algorithm>\n";
     this->behaviourDataFile << "#include<string>\n\n";
     this->behaviourDataFile << "#include\"TFEL/Config/TFELConfig.hxx\"" << endl;
     this->behaviourDataFile << "#include\"TFEL/Config/TFELTypes.hxx\""  << endl;
@@ -1092,6 +1124,12 @@ namespace mfront{
 	this->behaviourDataFile << p->name << "(src." << p->name << ")";  
       }
     }
+    if(!this->auxiliaryStateVarsHolder.empty()){
+      for(p=this->auxiliaryStateVarsHolder.begin();p!=this->auxiliaryStateVarsHolder.end();++p){
+	this->behaviourDataFile << ",\n";
+	this->behaviourDataFile << p->name << "(src." << p->name << ")";  
+      }
+    }
     if(!this->externalStateVarsHolder.empty()){
       for(p =this->externalStateVarsHolder.begin();
 	  p!=this->externalStateVarsHolder.end();++p){
@@ -1135,9 +1173,30 @@ namespace mfront{
 	currentOffset+=this->getTypeSize(p->type);
       }
     }
-    if(!this->stateVarsHolder.empty()){
+    if((!this->stateVarsHolder.empty())||
+       (!this->auxiliaryStateVarsHolder.empty())){
       SupportedTypes::TypeSize currentOffset;
       for(p=this->stateVarsHolder.begin();p!=this->stateVarsHolder.end();++p){
+	this->behaviourDataFile << ",\n";
+	SupportedTypes::TypeFlag flag = this->getTypeFlag(p->type);
+	switch(flag){
+	case SupportedTypes::Scalar : 
+	  this->behaviourDataFile << p->name << "(src.internal_variables[" 
+				  << currentOffset << "])";  
+	  break;
+	case SupportedTypes::Stensor :
+	  this->behaviourDataFile << p->name << "(&src.internal_variables[" 
+				  << currentOffset << "])";  
+	  break;
+	default : 
+	  string msg("MFrontBehaviourParserCommon::writeBehaviourDataConstructors : ");
+	  msg += "internal error, tag unsupported";
+	  throw(runtime_error(msg));
+	}
+	currentOffset+=this->getTypeSize(p->type);
+      }
+      for(p=this->auxiliaryStateVarsHolder.begin();
+	  p!=this->auxiliaryStateVarsHolder.end();++p){
 	this->behaviourDataFile << ",\n";
 	SupportedTypes::TypeFlag flag = this->getTypeFlag(p->type);
 	switch(flag){
@@ -1187,7 +1246,9 @@ namespace mfront{
       MFrontBehaviourVirtualInterface *interface = mbif.getInterfacePtr(*i);
       interface->writeBehaviourDataConstructor(this->behaviourDataFile,
 					       this->className,
-					       this->coefsHolder,this->stateVarsHolder,
+					       this->coefsHolder,
+					       this->stateVarsHolder,
+					       this->auxiliaryStateVarsHolder,
 					       this->externalStateVarsHolder,
 					       this->behaviourCharacteristic);
     }
@@ -1213,6 +1274,11 @@ namespace mfront{
     }
     if(!this->stateVarsHolder.empty()){
       for(p=this->stateVarsHolder.begin();p!=this->stateVarsHolder.end();++p){
+	this->behaviourDataFile << "this->" << p->name << " = src." << p->name << ";\n";  
+      }
+    }
+    if(!this->auxiliaryStateVarsHolder.empty()){
+      for(p=this->auxiliaryStateVarsHolder.begin();p!=this->auxiliaryStateVarsHolder.end();++p){
 	this->behaviourDataFile << "this->" << p->name << " = src." << p->name << ";\n";  
       }
     }
@@ -1281,18 +1347,50 @@ namespace mfront{
 	currentOffset+=this->getTypeSize(p->type);
       }
     }
-    if(!this->stateVarsHolder.empty()){
+    if((!this->stateVarsHolder.empty())||
+       (!this->auxiliaryStateVarsHolder.empty())){
       SupportedTypes::TypeSize totalSize;
+      SupportedTypes::TypeSize currentOffset;
       for(p =this->stateVarsHolder.begin();
 	  p!=this->stateVarsHolder.end();++p){
+      	totalSize+=this->getTypeSize(p->type);
+      }
+      for(p =this->auxiliaryStateVarsHolder.begin();
+	  p!=this->auxiliaryStateVarsHolder.end();++p){
       	totalSize+=this->getTypeSize(p->type);
       }
       this->behaviourDataFile << "if(res.internal_variables!="<<totalSize<< "){\n";
       this->behaviourDataFile << "res.internal_variables.resize("<<totalSize<<");\n";
       this->behaviourDataFile << "}\n"; 
-      SupportedTypes::TypeSize currentOffset;
       for(p =this->stateVarsHolder.begin();
 	  p!=this->stateVarsHolder.end();++p){
+	SupportedTypes::TypeFlag flag = this->getTypeFlag(p->type);
+	switch(flag){
+	case SupportedTypes::Scalar : 
+	  if(this->behaviourCharacteristic.useQt()){
+	    this->behaviourDataFile << "res.internal_variables[" 
+				    << currentOffset << "] = common_cast(this->"
+				    << p->name << ");\n";
+	  } else {
+	    this->behaviourDataFile << "res.internal_variables[" 
+				    << currentOffset << "] = this->"
+				    << p->name << ";\n";
+	  } 
+	  break;
+	case SupportedTypes::Stensor :
+	  this->behaviourDataFile << "this->" << p->name 
+				  << ".write(&res.internal_variables[" 
+				  << currentOffset << "]);\n";  
+	  break;
+	default :
+	  string msg("MFrontBehaviourParserCommon::writeBehaviourDataConstructors : ");
+	  msg += "internal error, tag unsupported";
+	  throw(runtime_error(msg));
+	}
+	currentOffset+=this->getTypeSize(p->type);
+      }
+      for(p =this->auxiliaryStateVarsHolder.begin();
+	  p!=this->auxiliaryStateVarsHolder.end();++p){
 	SupportedTypes::TypeFlag flag = this->getTypeFlag(p->type);
 	switch(flag){
 	case SupportedTypes::Scalar : 
@@ -1364,8 +1462,11 @@ namespace mfront{
     for(i  = this->interfaces.begin();
 	i != this->interfaces.end();++i){
       MFrontBehaviourVirtualInterface *interface = mbif.getInterfacePtr(*i);
-      interface->exportMechanicalData(this->behaviourDataFile,this->className,
-				      this->coefsHolder,this->stateVarsHolder,
+      interface->exportMechanicalData(this->behaviourDataFile,
+				      this->className,
+				      this->coefsHolder,
+				      this->stateVarsHolder,
+				      this->auxiliaryStateVarsHolder,
 				      this->externalStateVarsHolder,
 				      this->behaviourCharacteristic);
     }
@@ -1489,6 +1590,14 @@ namespace mfront{
       }
       this->behaviourDataFile << p->type << " "  << p->name << ";\n";  
     }
+    for(p=this->auxiliaryStateVarsHolder.begin();
+	p!=this->auxiliaryStateVarsHolder.end();++p){
+      if((!this->debugMode)&&(p->lineNumber!=0u)){
+	this->behaviourDataFile << "#line " << p->lineNumber << " \"" 
+				<< this->fileName << "\"\n";
+      }
+      this->behaviourDataFile << p->type << " "  << p->name << ";\n";  
+    }
     for(p =this->externalStateVarsHolder.begin();
 	p!=this->externalStateVarsHolder.end();++p){
       if((!this->debugMode)&&(p->lineNumber!=0u)){
@@ -1538,7 +1647,13 @@ namespace mfront{
       this->behaviourDataFile << "os << \"" << p->name << " : \" << b." 
 			  << p->name <<  " << endl;\n";  
     }    
-    for(p=this->externalStateVarsHolder.begin();p!=this->externalStateVarsHolder.end();++p){
+    for(p=this->auxiliaryStateVarsHolder.begin();
+	p!=this->auxiliaryStateVarsHolder.end();++p){
+      this->behaviourDataFile << "os << \"" << p->name << " : \" << b." 
+			  << p->name <<  " << endl;\n";  
+    }    
+    for(p=this->externalStateVarsHolder.begin();
+	p!=this->externalStateVarsHolder.end();++p){
       this->behaviourDataFile << "os << \"" << p->name << " : \" << b." 
 			  << p->name << " << endl;\n";
     }
@@ -1704,8 +1819,15 @@ namespace mfront{
 			<< " class" << endl;
     this->behaviourFile << endl;
   }
+  
+  void
+  MFrontBehaviourParserCommon::treatUpdateAuxiliaryStateVars(void)
+  {
+    this->updateAuxiliaryStateVars = this->readNextBlock(true);
+  } // end of MFrontBehaviourParserCommon::treatUpdateAuxiliaryStateVarBase
 
-  void MFrontBehaviourParserCommon::writeBehaviourUpdateStateVars() {
+  void MFrontBehaviourParserCommon::writeBehaviourUpdateStateVars() 
+  {
     using namespace std;
     VarContainer::const_iterator p;
     this->checkBehaviourFile();
@@ -1714,8 +1836,13 @@ namespace mfront{
     this->behaviourFile << "*/\n";
     this->behaviourFile << "void\n";
     this->behaviourFile << "updateStateVars(void)";
-    if(!this->stateVarsHolder.empty()){
+    if((!this->stateVarsHolder.empty())||
+       (!this->updateAuxiliaryStateVars.empty())){
       this->behaviourFile << "{\n";
+      if(!this->updateAuxiliaryStateVars.empty()){
+	this->behaviourFile << "using namespace std;" << endl;
+	this->behaviourFile << this->updateAuxiliaryStateVars << endl;
+      }
       for(p=this->stateVarsHolder.begin();p!=this->stateVarsHolder.end();++p){
 	this->behaviourFile << "this->"  << p->name << " += ";
 	this->behaviourFile << "this->d" << p->name << ";\n";
@@ -1815,7 +1942,7 @@ namespace mfront{
 	    initStateVarsIncrements << "d" << p->name << "(" << p->type <<"(0))";
 	  } else {
 	    initStateVarsIncrements << "d" << p->name << "(" 
-			  << this->getTimeDerivativeType(p->type) <<"(0))";
+				    << this->getTimeDerivativeType(p->type) <<"(0))";
 	  }
 	  break;
 	case SupportedTypes::Stensor :
@@ -1942,6 +2069,8 @@ namespace mfront{
       interface->writeBehaviourConstructor(this->behaviourFile,
 					   this->className,
 					   this->coefsHolder,
+					   this->stateVarsHolder,
+					   this->auxiliaryStateVarsHolder,
 					   this->externalStateVarsHolder,
 					   this->behaviourCharacteristic,
 					   initStateVarsIncrements,
@@ -2075,13 +2204,20 @@ namespace mfront{
     for(p=this->coefsHolder.begin();p!=this->coefsHolder.end();++p){
       this->behaviourFile <<  "os << \"" << p->name << " : \" << b." << p->name <<  " << endl;\n";  
     }
-    for(p=this->stateVarsHolder.begin();p!=this->stateVarsHolder.end();++p){
+    for(p=this->stateVarsHolder.begin();
+	p!=this->stateVarsHolder.end();++p){
       this->behaviourFile << "os << \"" << p->name << " : \" << b." 
 			  << p->name <<  " << endl;\n";  
       this->behaviourFile << "os << \"d" << p->name << " : \" << b.d" 
 			  << p->name <<  " << endl;\n";  
     }    
-    for(p=this->externalStateVarsHolder.begin();p!=this->externalStateVarsHolder.end();++p){
+    for(p=this->auxiliaryStateVarsHolder.begin();
+	p!=this->auxiliaryStateVarsHolder.end();++p){
+      this->behaviourFile << "os << \"" << p->name << " : \" << b." 
+			  << p->name <<  " << endl;\n";  
+    }
+    for(p=this->externalStateVarsHolder.begin();
+	p!=this->externalStateVarsHolder.end();++p){
       this->behaviourFile << "os << \"" << p->name << " : \" << b." 
 			  << p->name << " << endl;\n";
       this->behaviourFile << "os << \"d" << p->name << " : \" << b.d" 
@@ -2128,6 +2264,7 @@ namespace mfront{
     using namespace std;
     this->checkBehaviourFile();
     this->behaviourFile << "#include<iostream>\n";
+    this->behaviourFile << "#include<algorithm>\n";
     this->behaviourFile << "#include<string>\n\n";
     this->behaviourFile << "#include\"TFEL/Config/TFELConfig.hxx\"" << endl;
     this->behaviourFile << "#include\"TFEL/Config/TFELTypes.hxx\""  << endl;
@@ -2212,6 +2349,10 @@ namespace mfront{
       coefSize+=this->getTypeSize(p->type);
     }
     for(p=this->stateVarsHolder.begin();p!=this->stateVarsHolder.end();++p){
+      stateVarsSize+=this->getTypeSize(p->type);
+    }
+    for(p=this->auxiliaryStateVarsHolder.begin();
+	p!=this->auxiliaryStateVarsHolder.end();++p){
       stateVarsSize+=this->getTypeSize(p->type);
     }
     for(p  = this->externalStateVarsHolder.begin();
@@ -2384,6 +2525,7 @@ namespace mfront{
 
     this->checkIntegrationDataFile();
     this->integrationDataFile << "#include<iostream>\n";
+    this->integrationDataFile << "#include<algorithm>\n";
     this->integrationDataFile << "#include<string>\n\n";
     this->integrationDataFile << "#include\"TFEL/Config/TFELConfig.hxx\"\n";
     this->integrationDataFile << "#include\"TFEL/Config/TFELTypes.hxx\"\n";
@@ -2522,7 +2664,9 @@ namespace mfront{
       MFrontBehaviourVirtualInterface *interface = mbif.getInterfacePtr(*i);
       interface->writeIntegrationDataConstructor(this->integrationDataFile,
 						 this->className,
-						 this->coefsHolder,this->stateVarsHolder,
+						 this->coefsHolder,
+						 this->stateVarsHolder,
+						 this->auxiliaryStateVarsHolder,
 						 this->externalStateVarsHolder,
 						 this->behaviourCharacteristic);
     }
@@ -3053,11 +3197,77 @@ namespace mfront{
 	  statevNbr = static_cast<unsigned short>(statevNbr+1u);
 	}
       }
+      for(p3 =this->auxiliaryStateVarsHolder.begin();
+	  p3!=this->auxiliaryStateVarsHolder.end();++p3){
+	if(this->getTypeFlag(p3->type)==SupportedTypes::Stensor){
+	  statevNbr = static_cast<unsigned short>(statevNbr+stensorSize);
+	} else {
+	  statevNbr = static_cast<unsigned short>(statevNbr+1u);
+	}
+      }
       testFile << "vector<real> internalStateVariables("
 	       << statevNbr << "u);\n";
       pos = 0u;
       for(p3 =this->stateVarsHolder.begin();
 	  p3!=this->stateVarsHolder.end();++p3){
+	testFile << "// treating internal variable " << p3->name << endl;
+	if(this->getTypeFlag(p3->type)==SupportedTypes::Stensor){
+	  for(i=0;i!=stensorSize;++i,++pos){
+	    if((p4=stateVar.find(p3->name+"("+toString(i)+")"))==stateVar.end()){
+	      testFile << "internalStateVariables[" << pos << "] = 0;\n";
+	    } else {
+	      testFile << "internalStateVariables[" << pos << "] = real(";
+	      if(numType=="float"){
+		if(abs(p4->second)>numeric_limits<float>::max()){
+		  string msg("MFrontBehaviourParserCommon::writeUnaryLoadingTestFiles : ");
+		  msg += "cannot convert coefficient " + p4->first + " value to float";
+		  msg += "(out of range)";
+		  throw(runtime_error(msg));
+		}
+		testFile << static_cast<float>(p4->second) << ");\n";
+	      } else if(numType=="double"){
+		if(abs(p4->second)>numeric_limits<double>::max()){
+		  string msg("MFrontBehaviourParserCommon::writeUnaryLoadingTestFiles : ");
+		  msg += "cannot convert coefficient " + p4->first + " value to double";
+		  msg += "(out of range)";
+		  throw(runtime_error(msg));
+		}
+		testFile << static_cast<double>(p4->second) << ");\n";
+	      } else {
+		testFile << p4->second << ");\n";
+	      }
+	    }
+	  }
+	} else {
+	  if((p4=stateVar.find(p3->name+"("+toString(i)+")"))==stateVar.end()){
+	    testFile << "internalStateVariables[" << pos << "] = 0;\n";
+	  } else {
+	    testFile << "internalStateVariables[" << pos << "] = real(";
+	    if(numType=="float"){
+	      if(abs(p4->second)>numeric_limits<float>::max()){
+		string msg("MFrontBehaviourParserCommon::writeUnaryLoadingTestFiles : ");
+		msg += "cannot convert coefficient " + p4->first + " value to float";
+		msg += "(out of range)";
+		throw(runtime_error(msg));
+	      }
+	      testFile << static_cast<float>(p4->second) << ");\n";
+	    } else if(numType=="double"){
+	      if(abs(p4->second)>numeric_limits<double>::max()){
+		string msg("MFrontBehaviourParserCommon::writeUnaryLoadingTestFiles : ");
+		msg += "cannot convert coefficient " + p4->first + " value to double";
+		msg += "(out of range)";
+		throw(runtime_error(msg));
+	      }
+	      testFile << static_cast<double>(p4->second) << ");\n";
+	    } else {
+	      testFile << p4->second << ");\n";
+	    }
+	  }
+	  ++pos;
+	}
+      }
+      for(p3 =this->auxiliaryStateVarsHolder.begin();
+	  p3!=this->auxiliaryStateVarsHolder.end();++p3){
 	testFile << "// treating internal variable " << p3->name << endl;
 	if(this->getTypeFlag(p3->type)==SupportedTypes::Stensor){
 	  for(i=0;i!=stensorSize;++i,++pos){

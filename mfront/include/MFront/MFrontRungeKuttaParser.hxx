@@ -79,6 +79,9 @@ namespace mfront{
 
     void treatComputeStress(void);
 
+    void
+    treatUpdateAuxiliaryStateVars(void);
+
     void treatDerivative(void);
 
     void writeBehaviourParserSpecificIncludes(void);

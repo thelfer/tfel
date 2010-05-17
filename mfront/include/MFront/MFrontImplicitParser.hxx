@@ -106,6 +106,8 @@ namespace mfront{
 
     void treatStateVariables(void);
 
+    void treatAuxiliaryStateVariables(void);
+
     void generateOutputFiles(void);
 
     void treatUseAcceleration(void);

@@ -106,18 +106,10 @@ namespace mfront{
     treatIterMax(void);
 
     void
-    treatUpdateStateVars(void);
-
-    void
     endsInputFileProcessing(void);
 
     void
     writeBehaviourStaticVars(void);
-
-    void
-    writeBehaviourUpdateStateVars(void);
-
-    std::string updateStateVars;
 
     std::string flowRule;
 

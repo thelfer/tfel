@@ -133,6 +133,12 @@ namespace mfront{
   } // end of MFrontRungeKuttaParser::treatDerivative
 
   void
+  MFrontRungeKuttaParser::treatUpdateAuxiliaryStateVars(void)
+  {
+    this->updateAuxiliaryStateVars = this->readNextBlock(&ParserBase::variableModifier2,true);
+  } // end of MFrontRungeKuttaParser::treatUpdateAuxiliaryStateVarBase
+
+  void
   MFrontRungeKuttaParser::treatEpsilon(void)
   {
     using namespace std;
@@ -316,6 +322,7 @@ namespace mfront{
 			       this->date,
 			       this->coefsHolder,
 			       this->stateVarsHolder,
+			       this->auxiliaryStateVarsHolder,
 			       this->externalStateVarsHolder,
 			       this->glossaryNames,
 			       this->entryNames,

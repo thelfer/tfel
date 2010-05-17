@@ -47,11 +47,10 @@ namespace mfront{
     // Call Back
     this->registerNewCallBack("@MaterialLaw",&MFrontIsotropicBehaviourParserBase::treatMaterialLaw);
     this->registerNewCallBack("@FlowRule",&MFrontIsotropicBehaviourParserBase::treatFlowRule);
-    this->registerNewCallBack("@UpdateStateVars",
-			      &MFrontIsotropicBehaviourParserBase::treatUpdateStateVars);
     this->registerNewCallBack("@Theta",&MFrontIsotropicBehaviourParserBase::treatTheta);
     this->registerNewCallBack("@Epsilon",&MFrontIsotropicBehaviourParserBase::treatEpsilon);
     this->registerNewCallBack("@IterMax",&MFrontIsotropicBehaviourParserBase::treatIterMax);
+    this->disableCallBack("@StateVar");
     this->disableCallBack("@Integrator");
     this->disableCallBack("@OrthotropicBehaviour");
     this->disableCallBack("@IsotropicBehaviour");
@@ -192,12 +191,6 @@ namespace mfront{
   } // end of MFrontIsotropicBehaviourParserBase::treatFlowRule
 
   void
-  MFrontIsotropicBehaviourParserBase::treatUpdateStateVars(void)
-  {
-    this->updateStateVars = this->readNextBlock(&ParserBase::variableModifier2);
-  } // end of MFrontIsotropicBehaviourParserBase::treatUpdateStateVarBase
-
-  void
   MFrontIsotropicBehaviourParserBase::endsInputFileProcessing(void)
   {
     using namespace std;
@@ -255,6 +248,7 @@ namespace mfront{
 			       this->date,
 			       this->coefsHolder,
 			       this->stateVarsHolder,
+    			       this->auxiliaryStateVarsHolder,
 			       this->externalStateVarsHolder,
 			       this->glossaryNames,
 			       this->entryNames,
@@ -362,32 +356,6 @@ namespace mfront{
     this->behaviourFile << this->iterMax << ";\n";
     MFrontBehaviourParserBase<MFrontIsotropicBehaviourParserBase>::writeBehaviourStaticVars();
   } // end of MFrontIsotropicBehaviourParserBase::writeBehaviourStaticVars
-
-  void
-  MFrontIsotropicBehaviourParserBase::writeBehaviourUpdateStateVars(void)
-  {
-    using namespace std;
-    VarContainer::const_iterator p;
-    this->checkBehaviourFile();
-    this->behaviourFile << "/*!\n";
-    this->behaviourFile << "* \\brief Update internal variables at end of integration\n";
-    this->behaviourFile << "*/\n";
-    this->behaviourFile << "void\n";
-    this->behaviourFile << "updateStateVars(void)";
-    if(!this->stateVarsHolder.empty()){
-      this->behaviourFile << "\n{\n";
-      if(!this->updateStateVars.empty()){
-	this->behaviourFile << this->updateStateVars << endl << endl;
-      }
-      for(p=this->stateVarsHolder.begin();p!=this->stateVarsHolder.end();++p){
-	this->behaviourFile << "this->"  << p->name << " += ";
-	this->behaviourFile << "this->d" << p->name << ";\n";
-      }
-      this->behaviourFile << "}\n\n";
-    } else {
-      this->behaviourFile << "\n{}\n\n";
-    }
-  } // end of MFrontIsotropicBehaviourParserBase::writeBehaviourUpdateStateVars
 
   std::map<std::string,std::vector<std::string> >
   MFrontIsotropicBehaviourParserBase::getGlobalIncludes(void)
