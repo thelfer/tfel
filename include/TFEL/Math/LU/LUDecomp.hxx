@@ -33,13 +33,13 @@ namespace tfel{
 	typedef typename MatrixTraits<MatrixType>::IndexType IndexType;
 	typedef typename MatrixTraits<MatrixType>::NumType NumType;
 	if(m.getNbRows()!=m.getNbCols()){
-	  throw(LUException("matrix is not square"));
+	  throw(LUException("LUDecomp::exe : matrix is not square"));
 	}
 	if(m.getNbRows()!=p.size()){
-	  throw(LUException("matrix size and permutation size does not match"));
+	  throw(LUException("LUDecomp::exe : matrix size and permutation size does not match"));
 	}
 	if(m.getNbRows()==0){
-	  throw(LUException("invalid matrix size"));
+	  throw(LUException("LUDecomp::exe : invalid matrix size"));
 	}
 	IndexType i,j,k;
 	IndexType pi;
@@ -58,7 +58,7 @@ namespace tfel{
 	NumType prec = mabs*numeric_limits<NumType>::epsilon();
 	
 	if(prec<=100*numeric_limits<NumType>::min()){
-	  throw(LUException("absolute value is too small"));
+	  throw(LUException("LUDecomp::exe : maximum absolute value is too small"));
 	}
 
 	for(i=0;i!=n;++i){
@@ -80,8 +80,14 @@ namespace tfel{
 	    }
 	  }
 	  if(k!=i){
-	    d *= -1;
-	    swap(p(k),p(i));
+	    if(!((abs(m(p(i),i))>0.1*cmax)&&
+		 (abs(m(p(i),i))>10*prec ))){
+	      d *= -1;
+	      swap(p(k),p(i));
+	    }
+	  }
+	  if(abs(m(p(i),i))<10*prec){
+	    throw(LUException("LUDecomp::exe : null pivot"));
 	  }
 	  pi = p(i);
 	  // U update
