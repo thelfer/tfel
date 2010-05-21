@@ -21,43 +21,52 @@ libDir(void);
 const std::string
 includeDir(void);
 
-void
+static void
 registerCallBack(const std::string&,
 		 const FuncPtr&,
 		 const std::string&);
 
-void
+static void
 treatOFlags(void);
 
-void
+static void
 treatExceptions(void);
 
-void
+static void
 treatMath(void);
 
-void
+static void
+treatMathKriging(void);
+
+static void
+treatMathParser(void);
+
+static void
+treatMathInterpreter(void);
+
+static void
 treatUtilities(void);
 
-void
+static void
 treatFiniteElement(void);
 
-void
+static void
 treatMaterialLaw(void);
 
-void
+static void
 treatAll(void);
 
-void
+static void
 treatIncludes(void);
 
-void
+static void
 treatLibs(void);
 
-void
+static void
 listOptions(std::ostream&);
 
-void
+static void
 treatUnknownOption(const std::string&);
 
-void
+static void
 treatHelp(void);

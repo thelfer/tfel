@@ -28,8 +28,16 @@ set(TFELMath_SOURCES
     FunctionTag.cxx
     MatrixTag.cxx
     StensorTag.cxx
-    StandardFunctions.cxx
-    KrigingErrors.cxx)
+    StandardFunctions.cxx)
+
+set(TFELMathKriging_SOURCES
+    KrigingErrors.cxx
+    Kriging1D.cxx
+    Kriging2D.cxx
+    Kriging3D.cxx
+    FactorizedKriging1D1D.cxx
+    FactorizedKriging1D2D.cxx
+    FactorizedKriging1D3D.cxx)
 
 set(TFELMathParser_SOURCES
     ExternalCFunction.cxx
@@ -78,26 +86,39 @@ tfel_library(TFELMath ${TFELMath_SOURCES})
 target_link_libraries(TFELMath
                       TFELException)
 
+tfel_library(TFELMathKriging ${TFELMathKriging_SOURCES})
+target_link_libraries(TFELMathKriging
+		      TFELMath
+                      TFELException)
+
 tfel_library(TFELMathParser ${TFELMathParser_SOURCES})
 add_dependencies(TFELMathParser TFELMath)
 target_link_libraries(TFELMathParser
-                      TFELMath TFELException)
+		      TFELMathKriging
+                      TFELMath
+		      TFELException)
 
 tfel_library(TFELMathInterpreter ${TFELMathInterpreter_SOURCES})
 add_dependencies(TFELMathInterpreter
-                 TFELMathParser TFELMath)
+                 TFELMathParser
+                 TFELMathKriging
+		 TFELMath)
 target_link_libraries(TFELMathInterpreter
-                      TFELMathParser TFELMath TFELException)
+                      TFELMathParser TFELMathKriging
+		      TFELMath TFELException)
 
 add_executable(tfel_eval tfel-eval.cxx)
 set_target_properties(tfel_eval PROPERTIES LINK_FLAGS " -rdynamic -Wl,--export-dynamic")
 add_dependencies(tfel_eval
                  TFELMathInterpreter
 		 TFELMathParser
+		 TFELMathKriging
 		 TFELMath)
+
 target_link_libraries(tfel_eval
                       TFELMathInterpreter
                       TFELMathParser
+                      TFELMathKriging
 		      TFELMath
                       TFELSystem
 		      TFELUtilities

@@ -10,18 +10,21 @@
 #include"tfel-config.hxx"
 
 static CallBacksContainer callBacksContainer;
-static bool oflags        = false;
-static bool incs          = false;
-static bool libs          = false;
-static bool exceptions    = false;
-static bool math          = false;
-static bool utilities     = false;
-static bool finiteElement = false;
-static bool material      = false;
-static bool tests         = false;
-static bool lsystem       = false;
+static bool oflags          = false;
+static bool incs            = false;
+static bool libs            = false;
+static bool exceptions      = false;
+static bool math            = false;
+static bool mathKriging     = false;
+static bool mathParser      = false;
+static bool mathInterpreter = false;
+static bool utilities       = false;
+static bool finiteElement   = false;
+static bool material        = false;
+static bool tests           = false;
+static bool lsystem         = false;
 #ifdef USE_GRAPHICS
-static bool graphics      = false;
+static bool graphics        = false;
 #endif /* USE_GRAPHICS */
 
 const std::string
@@ -72,7 +75,7 @@ includeDir(void)
   return inc;
 } // end of libDir
 
-void
+static void
 registerCallBack(const std::string& key,
 		 const FuncPtr& f,
 		 const std::string& description)
@@ -81,33 +84,60 @@ registerCallBack(const std::string& key,
   callBacksContainer.insert(make_pair(key,make_pair(f,description)));
 } // end of registerNewCallBack
 
-void
+static void
 treatOFlags(void)
 {
   oflags = true;
 } // end of treatExceptions
 
 
-void
+static void
 treatExceptions(void)
 {
   exceptions = true;
 } // end of treatExceptions
 
-void
+static void
 treatMath(void)
 {
   exceptions = true;
   math      = true;
 } // end of treatMath
 
-void
+static void
+treatMathKriging(void)
+{
+  exceptions = true;
+  math       = true;
+  mathKriging = true;
+} // end of treatMathKriging
+
+static void
+treatMathParser(void)
+{
+  exceptions  = true;
+  math        = true;
+  mathKriging = true;
+  mathParser  = true;
+} // end of treatMathParser
+
+static void
+treatMathInterpreter(void)
+{
+  exceptions      = true;
+  math            = true;
+  mathKriging     = true;
+  mathParser      = true;
+  mathInterpreter = true;
+} // end of treatMathInterpreter
+
+static void
 treatUtilities(void)
 {
   utilities = true;
 } // end of treatException
 
-void
+static void
 treatFiniteElement(void)
 {
   exceptions    = true;
@@ -115,39 +145,39 @@ treatFiniteElement(void)
   finiteElement = true;
 } // end of treatFiniteElement
 
-void
+static void
 treatSystem(void)
 {
   exceptions    = true;
   lsystem        = true;
 } // end of treatFiniteElement
 
-void
+static void
 treatMaterial(void)
 {
   exceptions  = true;
   math        = true;
-  material = true;
+  material    = true;
 } // end of treatMaterial
 
 #ifdef USE_GRAPHICS
-void
+static void
 treatGraphics(void)
 {
   exceptions  = true;
   math        = true;
   utilities   = true;
-  lsystem      = true;
+  lsystem     = true;
 } // end of treatGraphics
 #endif /* USE_GRAPHICS */
 
-void
+static void
 treatTests(void)
 {
   tests  = true;
 } // end of treatTests
 
-void
+static void
 treatAll(void)
 {
   exceptions  = true;
@@ -161,19 +191,19 @@ treatAll(void)
 #endif /* USE_GRAPHICS */
 } // end of treatAll
 
-void
+static void
 treatIncludes(void)
 {
   incs = true;
 } // end of treatIncludes
 
-void
+static void
 treatLibs(void)
 {
   libs = true;
 } // end of treatLibs
 
-void
+static void
 listOptions(std::ostream& os)
 {
   using namespace std;
@@ -182,14 +212,14 @@ listOptions(std::ostream& os)
   for(p  = callBacksContainer.begin();
       p != callBacksContainer.end(); ++p){ 
     string options(p->first);
-    if(options.size()<=16){
-      options.insert(options.size(),16-options.size(),' ');
+    if(options.size()<=18){
+      options.insert(options.size(),18-options.size(),' ');
     }
     os << options << " : " <<  p->second.second << endl;
   }
 } // end of listOptions
 
-void
+static void
 treatHelp(void)
 {
   using namespace std;
@@ -198,7 +228,7 @@ treatHelp(void)
   exit(EXIT_SUCCESS);
 } // end of treatHelp
 
-void
+static void
 treatUnknownOption(const std::string& o)
 {
   using namespace std;
@@ -220,7 +250,10 @@ main(const int argc,
   registerCallBack("--libs",&treatLibs,"return linking flags.");
   registerCallBack("--help",&treatHelp,"print this help message.");
   registerCallBack("--exceptions",&treatExceptions,"request flags for libTFELException.");
+  registerCallBack("--math-kriging",&treatMathKriging,"request flags for libTFELMathKriging.");
   registerCallBack("--math",&treatMath,"request flags for libTFELMath.");
+  registerCallBack("--math-parser",&treatMathParser,"request flags for libTFELMathParser.");
+  registerCallBack("--math-interpreter",&treatMathInterpreter,"request flags for libTFELMathInterpreter.");
   registerCallBack("--tests",&treatTests,"request flags for libTFELTests.");
   registerCallBack("--system",&treatSystem,"request flags for libTFELSystem.");
   registerCallBack("--utilities",&treatUtilities,"request flags for libTFELUtilities.");
@@ -244,11 +277,25 @@ main(const int argc,
 
   if(libs){
     cout << "-L" << libDir() << " ";
-    if(exceptions){
-      cout << "-lTFELException ";
+#ifdef USE_GRAPHICS
+    if(graphics){
+      cout << "-lTFELGraphics ";
     }
-    if(utilities){
-      cout << "-lTFELUtilities ";
+#endif /* USE_GRAPHICS */
+    if(material){
+      cout << "-lTFELMaterial ";
+    }
+    if(finiteElement){
+      cout << "-lTFELFiniteElement ";
+    }
+    if(mathInterpreter){
+      cout << "-lTFELMathInterpreter ";
+    }
+    if(mathParser){
+      cout << "-lTFELMathParser ";
+    }
+    if(mathKriging){
+      cout << "-lTFELMathKriging ";
     }
     if(math){
       cout << "-lTFELMath ";
@@ -256,19 +303,14 @@ main(const int argc,
     if(lsystem){
       cout << "-lTFELSystem ";
     }
-#ifdef USE_GRAPHICS
-    if(graphics){
-      cout << "-lTFELGraphics ";
+    if(utilities){
+      cout << "-lTFELUtilities ";
     }
-#endif /* USE_GRAPHICS */
+    if(exceptions){
+      cout << "-lTFELException ";
+    }
     if(tests){
       cout << "-lTFELTests ";
-    }
-    if(material){
-      cout << "-lTFELMaterial ";
-    }
-    if(finiteElement){
-      cout << "-lTFELFiniteElement ";
     }
   }
 

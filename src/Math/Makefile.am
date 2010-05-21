@@ -9,6 +9,7 @@ INCLUDES += @OCTAVEINCLUDES@
 endif
 
 lib_LTLIBRARIES  = libTFELMath.la 
+lib_LTLIBRARIES += libTFELMathKriging.la
 lib_LTLIBRARIES += libTFELMathParser.la
 lib_LTLIBRARIES += libTFELMathInterpreter.la
 
@@ -27,8 +28,15 @@ libTFELMath_la_SOURCES = MathException.cxx              \
 		         FunctionTag.cxx                \
 		         MatrixTag.cxx                  \
 		         StensorTag.cxx                 \
-			 StandardFunctions.cxx          \
-			 KrigingErrors.cxx
+			 StandardFunctions.cxx
+
+libTFELMathKriging_la_SOURCES = KrigingErrors.cxx         \
+				Kriging1D.cxx             \
+				Kriging2D.cxx             \
+				Kriging3D.cxx             \
+				FactorizedKriging1D1D.cxx \
+				FactorizedKriging1D2D.cxx \
+				FactorizedKriging1D3D.cxx
 
 libTFELMathParser_la_SOURCES = ExternalCFunction.cxx                         \
 			       ExternalCastemFunction.cxx                    \
@@ -53,10 +61,13 @@ libTFELMathParser_la_SOURCES = ExternalCFunction.cxx                         \
 			       LevenbergMarquardtExternalFunctionWrapper.cxx \
 			       Variable.cxx
 
-libTFELMathParser_la_DEPENDENCIES = libTFELMath.la
+libTFELMathKriging_la_DEPENDENCIES = libTFELMath.la
+libTFELMathParser_la_DEPENDENCIES  = libTFELMath.la \
+				     libTFELMathKriging.la
 
 libTFELMathInterpreter_la_SOURCES      = InterpreterCommon.cxx
-libTFELMathInterpreter_la_DEPENDENCIES = libTFELMathParser.la \
+libTFELMathInterpreter_la_DEPENDENCIES = libTFELMathParser.la  \
+				       	 libTFELMathKriging.la \
 				       	 libTFELMath.la
 
 if HAVE_GSL
@@ -82,29 +93,30 @@ if HAVE_OCTAVE
 libTFELMathParser_la_LIBADD += @OCTAVELIBS@
 endif
 
-libTFELMathInterpreter_la_LIBADD = -L@top_builddir@/src/Exception/  \
-				   -L@top_builddir@/src/Utilities/  \
-				   -L@top_builddir@/src/System/     \
-				   -L@top_builddir@/src/Math/       \
-				   -lTFELMathParser -lTFELMath      \
-				   -lTFELSystem     -lTFELUtilities \
-				   -lTFELException
+libTFELMathInterpreter_la_LIBADD = -L@top_builddir@/src/Exception/    \
+				   -L@top_builddir@/src/Utilities/    \
+				   -L@top_builddir@/src/System/       \
+				   -L@top_builddir@/src/Math/         \
+				   -lTFELMathParser -lTFELMathKriging \
+				   -lTFELMath -lTFELSystem            \
+				   -lTFELUtilities -lTFELException
 
 bin_PROGRAMS = tfel_eval
 tfel_eval_SOURCES = tfel-eval.cxx
 
 tfel_eval_DEPENDENCIES = libTFELMathInterpreter.la \
 			 libTFELMathParser.la      \
+			 libTFELMathKriging.la     \
 			 libTFELMath.la
 
-tfel_eval_LDADD = -L@top_builddir@/src/Exception/  \
-		  -L@top_builddir@/src/Utilities/  \
-		  -L@top_builddir@/src/System/     \
-		  -L@top_builddir@/src/Math/       \
-		  -lTFELMathInterpreter \
-		  -lTFELMathParser -lTFELMath      \
-		  -lTFELSystem     -lTFELUtilities \
-		  -lTFELException
+tfel_eval_LDADD = -L@top_builddir@/src/Exception/    \
+		  -L@top_builddir@/src/Utilities/    \
+		  -L@top_builddir@/src/System/       \
+		  -L@top_builddir@/src/Math/         \
+		  -lTFELMathInterpreter              \
+		  -lTFELMathParser -lTFELMathKriging \
+		  -lTFELMath -lTFELSystem            \
+		  -lTFELUtilities -lTFELException
 
 if HAVE_GSL
 tfel_eval_LDADD += @GSLLIBS@
