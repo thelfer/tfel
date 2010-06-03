@@ -485,8 +485,8 @@ namespace mfront
       }
       this->srcFile << "if(!this->initializeIFieldDouble(this->"
 		    << p3->name << "," << iname << ",arg)){\n";
-      this->srcFile << "string msg(\"" << iname << "::initialize : \");\n";
-      this->srcFile << "msg += \"can't initialize input field " << p3->name << ".\";\n";
+      this->srcFile << "string msg(\"" << names.back() << "::initialize : \");\n";
+      this->srcFile << "msg += \"can't initialize input field " << iname << ".\";\n";
       this->srcFile << "throw(PleiadesError(msg));\n";
       this->srcFile << "}\n";
     }
