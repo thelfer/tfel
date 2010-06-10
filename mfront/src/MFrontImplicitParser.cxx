@@ -718,8 +718,8 @@ namespace mfront{
       this->behaviourFile << "cout << \"" << this->className
 			  << "::integrate() : no convergence after \" "
 			  << "<< this->iter << \" iterations\"<< endl << endl;\n";
+      this->behaviourFile << "cout << *this << endl;\n";
     }
-    this->behaviourFile << "cout << *this << endl;\n";
     this->behaviourFile << "throw(DivergenceException(\"Newton-Raphson: no convergence\"));\n";
     this->behaviourFile << "}\n";
     if(this->debugMode){
