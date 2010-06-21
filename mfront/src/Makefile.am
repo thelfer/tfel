@@ -71,8 +71,6 @@ mfront_SOURCES += MFrontCelaenoModelInterface.cxx
 mfront_SOURCES += MFrontGerminalModelInterface.cxx
 mfront_SOURCES += MFrontCelaenoModelInterface_v1.3.cxx
 mfront_SOURCES += MFrontPleiadesModelInterfaceBase.cxx
-mfront_SOURCES += MFrontPleiadesModelParser.cxx
-mfront_SOURCES += MFrontPleiadesModelParserArchitecture1.4.cxx
 endif
 
 if HAVE_CASTEM

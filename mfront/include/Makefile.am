@@ -50,8 +50,6 @@ nobase_noinst_HEADERS = MFront/MFrontIsotropicBehaviourParserBase.hxx           
 			MFront/MFrontIsotropicStrainHardeningMisesCreepParser.hxx   \
 			MFront/MFrontIsotropicMisesPlasticFlowParser.hxx            \
 			MFront/MFrontMultipleIsotropicMisesFlowsParser.hxx          \
-			MFront/MFrontPleiadesModelParser.hxx                        \
-			MFront/MFrontPleiadesModelParserArchitecture1.4.hxx         \
 			MFront/MFrontRungeKuttaParser.hxx                           \
 			MFront/MFrontImplicitParser.hxx
 
@@ -71,8 +69,6 @@ nobase_noinst_HEADERS += MFront/MFrontCLawInterfaceBase.hxx          \
 			 MFront/MFrontCelaenoModelInterface_v1.3.hxx \
 			 MFront/MFrontPythonLawInterface.hxx
 
-if HAVE_CASTEM
-
 nobase_noinst_HEADERS += MFront/MFrontCastemLawInterface.hxx   \
 	 	         MFront/MFrontUMATInterface.hxx
 
@@ -85,6 +81,5 @@ nobase_include_HEADERS += MFront/UMAT/UMATException.hxx                     \
 			  MFront/UMAT/UMATComputeThermalExpansionTensor.hxx \
 			  MFront/UMAT/UMATTraits.hxx                        \
 			  MFront/UMAT/UMAT.hxx
-endif
 
 EXTRA_DIST = CMakeLists.txt
