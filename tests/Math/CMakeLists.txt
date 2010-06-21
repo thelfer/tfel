@@ -8,7 +8,8 @@ include_directories("${PROJECT_SOURCE_DIR}/include")
 include_directories("${PROJECT_SOURCE_DIR}/tests/Math/include")
 link_directories("${PROJECT_BINARY_DIR}/src/Math"
                  "${PROJECT_BINARY_DIR}/src/Utilities"
-                 "${PROJECT_BINARY_DIR}/src/Exception")
+                 "${PROJECT_BINARY_DIR}/src/Exception"
+		 "${PROJECT_BINARY_DIR}/src/Tests")
 
 # a simple macro
 macro(tests_math test_arg)
@@ -44,7 +45,7 @@ macro(tests_math3 test_arg)
     add_executable(${test_arg} ${test_arg}.cxx)
     add_test(${test_arg} ${EXECUTABLE_OUTPUT_PATH}/${test_arg})
   endif (${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION} GREATER 2.6)
-  target_link_libraries(${test_arg} TFELMathParser TFELMathKriging TFELMath TFELUtilities TFELException)
+  target_link_libraries(${test_arg} TFELMathParser TFELMathKriging TFELMath TFELUtilities TFELException TFELTests)
 endmacro(tests_math3)
 
 tests_math(CubicRoots)
@@ -103,5 +104,6 @@ tests_math3(parser3)
 tests_math3(parser4)
 tests_math3(parser5)
 tests_math3(parser6)
+tests_math3(parser7)
 tests_math3(levenberg-marquardt4)
 

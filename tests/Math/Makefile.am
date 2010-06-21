@@ -53,6 +53,7 @@ test_PROGRAMS = hill                  \
 		parser4               \
 		parser5               \
 		parser6               \
+		parser7               \
 		broyden               \
 		broyden2              \
 		Range                 \
@@ -208,6 +209,16 @@ parser6_LDADD = -L$(top_builddir)/src/Math         \
 	        -lTFELMathParser -lTFELMathKriging \
 		-lTFELMath -lTFELUtilities         \
 		-lTFELException
+
+parser7_SOURCES               = parser7.cxx
+parser7_LDADD = -L$(top_builddir)/src/Tests        \
+		-L$(top_builddir)/src/Math         \
+	        -L$(top_builddir)/src/Utilities    \
+	        -L$(top_builddir)/src/Exception    \
+	        -lTFELMathParser -lTFELMathKriging \
+		-lTFELMath  -lTFELUtilities        \
+		-lTFELException	-lTFELTests
+
 
 if HAVE_OCTAVE
 parser6_LDADD += @OCTAVELIBS@
