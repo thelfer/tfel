@@ -15,17 +15,11 @@
 
 #include"MFront/MFront.hxx"
 #include"MFront/ParserBase.hxx"
+#include"MFront/ParserUtilities.hxx"
 #include"MFront/MFrontMFrontLawInterface.hxx"
 
 namespace mfront
 {
-  std::string
-  ParserBase::toString(const unsigned short src)
-  {
-    std::ostringstream os;
-    os << src;
-    return os.str();
-  } // end of ParserBase::toString
 
   std::string
   ParserBase::variableModifier1(const std::string& var,const bool)
@@ -56,31 +50,6 @@ namespace mfront
   {
     return var;
   } // end of ParserBase::variableModifier5
-
-  std::string
-  ParserBase::makeUpperCase(const std::string& s)
-  {
-    using namespace std;
-    string res(s);
-    string::iterator p;
-    for(p=res.begin();p!=res.end();++p){
-      *p = static_cast<char>(toupper(*p));
-    }
-    return res;
-  } // end of ParserBase::makeUpperCase
-
-  std::string 
-  ParserBase::makeLowerCase(const std::string& n)
-  {
-    using namespace std;
-    string s(n);
-    string::const_iterator p;
-    string::iterator p2;
-    for(p=n.begin(),p2=s.begin();p!=n.end();++p,++p2){
-      *p2 = static_cast<char>(tolower(*p));
-    }
-    return s;
-  } // end of ParserBase::makeLowerCase
 
   ParserBase::ParserBase()
     : debugMode(false),
@@ -746,19 +715,6 @@ namespace mfront
   {
     this->readUntilEndOfInstruction();
   } // end of ParserBase::treatParser
-
-  void
-  ParserBase::treatLocalVar(void)
-  {
-    this->readVarList(this->localVarsHolder);
-  } // end of ParserBase::treatLocalVar
-
-  void
-  ParserBase::treatInitLocalVars(void)
-  {
-    this->initLocalVars += this->readNextBlock(true);
-    this->initLocalVars += "\n";
-  } // end of ParserBase::treatInitLocalVars
 
   void
   ParserBase::treatSources(void)

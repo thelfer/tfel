@@ -154,9 +154,6 @@ namespace mfront{
     
   private:
 
-    static std::string 
-    toString(const unsigned short);
-
     std::string
     eraseQuote(const std::string&);
 

@@ -17,15 +17,6 @@
 namespace mfront
 {
 
-  template<typename T>
-  std::string 
-  MFrontPleiadesLawInterface::toString(const T& src)
-  {
-    std::ostringstream os;
-    os << src;
-    return os.str();
-  }
-
   std::string
   MFrontPleiadesLawInterface::getName(void)
   {
@@ -68,30 +59,6 @@ namespace mfront
     using namespace std;
     return make_pair(false,current);
   } // end of treatKeyword
-
-  std::string
-  MFrontPleiadesLawInterface::makeUpperCase(const std::string& s)
-  {
-    using namespace std;
-    string res(s);
-    string::iterator p;
-    for(p=res.begin();p!=res.end();++p){
-      *p = static_cast<char>(toupper(*p));
-    }
-    return res;
-  }
-
-  std::string
-  MFrontPleiadesLawInterface::makeLowerCase(const std::string& s)
-  {
-    using namespace std;
-    string res(s);
-    string::iterator p;
-    for(p=res.begin();p!=res.end();++p){
-      *p = static_cast<char>(tolower(*p));
-    }
-    return res;
-  }
 
   MFrontPleiadesLawInterface::~MFrontPleiadesLawInterface()
   {}
@@ -283,10 +250,10 @@ namespace mfront
     this->headerFile << " */\n\n";
 
     this->headerFile << "#ifndef _PLEIADES_" 
-		     << MFrontPleiadesLawInterface::makeUpperCase(name)
+		     << makeUpperCase(name)
 		     << "_HH\n";
     this->headerFile << "#define _PLEIADES_"
-		     << MFrontPleiadesLawInterface::makeUpperCase(name)
+		     << makeUpperCase(name)
 		     << "_HH\n\n";
 
     this->headerFile << "#include<cmath>\n";
@@ -368,7 +335,7 @@ namespace mfront
     this->headerFile << "} // end of namespace PMetier\n\n";
     this->headerFile << "} // end of namespace Pleiades\n\n";
     this->headerFile << "#endif /* _PLEIADES_"
-		     << MFrontPleiadesLawInterface::makeUpperCase(name)
+		     << makeUpperCase(name)
 		     << "_HH */\n";
     this->headerFile.close();
   } // end of MFrontPleiadesLawInterface::writeHeaderFile(void)
@@ -447,8 +414,8 @@ namespace mfront
     // Constructors
     this->srcFile << names.back() << "::" 
 		  << names.back() << "()\n";
+    this->srcFile << ": ";
     if(!inputs.empty()){
-      this->srcFile << ": ";
       for(p3=inputs.begin();p3!=inputs.end();++p3){
 	this->srcFile << p3->name << "(0),\n";
       }

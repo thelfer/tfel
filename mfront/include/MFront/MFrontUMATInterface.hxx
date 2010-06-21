@@ -150,12 +150,6 @@ namespace mfront{
 		   const std::string&);
 
     static std::string
-    makeUpperCase(const std::string& s);
-
-    static std::string
-    makeLowerCase(const std::string& s);
-
-    static std::string
     treatScalar(const std::string& s);
 
     static std::string
@@ -173,9 +167,6 @@ namespace mfront{
     static std::string
     treatStateVarStensor(const std::string& s,const unsigned short);
 
-    static std::string 
-    toString(const unsigned short);
-    
     bool verboseMode;
 
     bool debugMode;

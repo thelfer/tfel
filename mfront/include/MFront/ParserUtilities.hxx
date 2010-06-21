@@ -35,6 +35,15 @@ namespace mfront{
   TFEL_VISIBILITY_EXPORT void
   writeExportDirectives(std::ofstream&);
 
+  TFEL_VISIBILITY_EXPORT std::string
+  toString(const unsigned short);
+
+  TFEL_VISIBILITY_EXPORT std::string
+  makeUpperCase(const std::string&);
+
+  TFEL_VISIBILITY_EXPORT std::string 
+  makeLowerCase(const std::string&);
+
 } // end of namespace mfront  
 
 #endif /* _LIB_PARSERUTILITIES_HXX */

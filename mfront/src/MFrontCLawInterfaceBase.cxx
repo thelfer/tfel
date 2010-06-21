@@ -15,14 +15,6 @@
 namespace mfront
 {
 
-  std::string 
-  MFrontCLawInterfaceBase::toString(const unsigned short src)
-  {
-    std::ostringstream os;
-    os << src;
-    return os.str();
-  }
-
   MFrontCLawInterfaceBase::MFrontCLawInterfaceBase()
     : verboseMode(false),
       debugMode(false),
@@ -59,30 +51,6 @@ namespace mfront
     using namespace std;
     return make_pair(false,current);
   } // end of treatKeyword
-
-  std::string
-  MFrontCLawInterfaceBase::makeUpperCase(const std::string& s)
-  {
-    using namespace std;
-    string res(s);
-    string::iterator p;
-    for(p=res.begin();p!=res.end();++p){
-      *p = static_cast<char>(toupper(*p));
-    }
-    return res;
-  }
-
-  std::string
-  MFrontCLawInterfaceBase::makeLowerCase(const std::string& s)
-  {
-    using namespace std;
-    string res(s);
-    string::iterator p;
-    for(p=res.begin();p!=res.end();++p){
-      *p = static_cast<char>(tolower(*p));
-    }
-    return res;
-  }
 
   MFrontCLawInterfaceBase::~MFrontCLawInterfaceBase()
   {}
@@ -162,7 +130,7 @@ namespace mfront
   {
     using namespace std;
     string header;
-    header = MFrontCLawInterfaceBase::makeUpperCase(this->getHeaderFileName(material,className));
+    header = makeUpperCase(this->getHeaderFileName(material,className));
     MFrontCLawInterfaceBase::replace(header,'.','_');
     MFrontCLawInterfaceBase::replace(header,'-','_');
     MFrontCLawInterfaceBase::replace(header,'/','_');

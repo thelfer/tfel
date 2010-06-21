@@ -159,9 +159,6 @@ namespace mfront{
     
   private:
 
-    static std::string 
-    toString(const unsigned short);
-
     static void
     replace(std::string&,
 	    const std::string::value_type,

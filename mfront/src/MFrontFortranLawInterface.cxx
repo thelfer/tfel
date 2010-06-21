@@ -155,18 +155,18 @@ namespace mfront
       f77_func = "F77_FUNC";
     }
     this->srcFile << "#define " 
-		  << MFrontCLawInterfaceBase::makeUpperCase(name)
+		  << makeUpperCase(name)
 		  << "_F77 \\\n"
 		  << "        "<< f77_func << "("
-		  << MFrontCLawInterfaceBase::makeLowerCase(name) << ","
-		  << MFrontCLawInterfaceBase::makeUpperCase(name) << ")\n\n";
+		  << makeLowerCase(name) << ","
+		  << makeUpperCase(name) << ")\n\n";
     this->srcFile << "#define " 
-		  << MFrontCLawInterfaceBase::makeUpperCase(name)
+		  << makeUpperCase(name)
 		  << "_CHECKBOUNDS_F77 \\\n"
 		  << "        "<< f77_func << "("
-		  << MFrontCLawInterfaceBase::makeLowerCase(name) 
+		  << makeLowerCase(name) 
 		  << "_checkbounds,\\\n        "
-		  << MFrontCLawInterfaceBase::makeUpperCase(name) 
+		  << makeUpperCase(name) 
 		  << "_CHECKBOUNDS)\n\n";
     writeExportDirectives(this->srcFile);
     this->srcFile << "typedef double mfront_fortran_real8;" << endl;
@@ -202,9 +202,9 @@ namespace mfront
 						    const std::string& className)
   {
     if(material.empty()){
-      return "MFRONT_SHAREDOBJ mfront_fortran_real8\n"+ MFrontCLawInterfaceBase::makeUpperCase(className) + "_F77";
+      return "MFRONT_SHAREDOBJ mfront_fortran_real8\n"+ makeUpperCase(className) + "_F77";
     }
-    return "MFRONT_SHAREDOBJ mfront_fortran_real8\n"+ MFrontCLawInterfaceBase::makeUpperCase(material+"_"+className) + "_F77";
+    return "MFRONT_SHAREDOBJ mfront_fortran_real8\n"+ makeUpperCase(material+"_"+className) + "_F77";
   } // end of MFrontFortranLawInterface::getFunctionDeclaration
   
   std::string
@@ -212,9 +212,9 @@ namespace mfront
 							       const std::string& className)
   {
     if(material.empty()){
-      return "MFRONT_SHAREDOBJ mfront_fortran_integer4\n" + MFrontCLawInterfaceBase::makeUpperCase(className) + "_CHECKBOUNDS_F77";
+      return "MFRONT_SHAREDOBJ mfront_fortran_integer4\n" + makeUpperCase(className) + "_CHECKBOUNDS_F77";
     }
-    return "MFRONT_SHAREDOBJ mfront_fortran_integer4\n" + MFrontCLawInterfaceBase::makeUpperCase(material+"_"+className) + "_CHECKBOUNDS_F77";
+    return "MFRONT_SHAREDOBJ mfront_fortran_integer4\n" + makeUpperCase(material+"_"+className) + "_CHECKBOUNDS_F77";
   } // end of MFrontFortranLawInterface::getCheckBoundsFunctionDeclaration
   
   MFrontFortranLawInterface::~MFrontFortranLawInterface()

@@ -17,14 +17,6 @@
 namespace mfront
 {
 
-  std::string 
-  MFrontCppLawInterface::toString(const unsigned short src)
-  {
-    std::ostringstream os;
-    os << src;
-    return os.str();
-  }
-
   std::string
   MFrontCppLawInterface::getName(void)
   {
@@ -67,30 +59,6 @@ namespace mfront
     using namespace std;
     return make_pair(false,current);
   } // end of treatKeyword
-
-  std::string
-  MFrontCppLawInterface::makeUpperCase(const std::string& s)
-  {
-    using namespace std;
-    string res(s);
-    string::iterator p;
-    for(p=res.begin();p!=res.end();++p){
-      *p = static_cast<char>(toupper(*p));
-    }
-    return res;
-  }
-
-  std::string
-  MFrontCppLawInterface::makeLowerCase(const std::string& s)
-  {
-    using namespace std;
-    string res(s);
-    string::iterator p;
-    for(p=res.begin();p!=res.end();++p){
-      *p = static_cast<char>(tolower(*p));
-    }
-    return res;
-  }
 
   MFrontCppLawInterface::~MFrontCppLawInterface()
   {}
@@ -290,20 +258,20 @@ namespace mfront
     if(!namespaces.empty()){
       this->headerFile << "#ifndef _LIB_";
       for(p3=namespaces.begin();p3!=namespaces.end();++p3){
-	this->headerFile << MFrontCppLawInterface::makeUpperCase(*p3) << "_";
+	this->headerFile << makeUpperCase(*p3) << "_";
       }
-      this->headerFile << MFrontCppLawInterface::makeUpperCase(name) << "_HXX\n";
+      this->headerFile << makeUpperCase(name) << "_HXX\n";
       this->headerFile << "#define _LIB_";
       for(p3=namespaces.begin();p3!=namespaces.end();++p3){
-	this->headerFile << MFrontCppLawInterface::makeUpperCase(*p3) << "_";
+	this->headerFile << makeUpperCase(*p3) << "_";
       }
-      this->headerFile << MFrontCppLawInterface::makeUpperCase(name) << "_HXX\n";
+      this->headerFile << makeUpperCase(name) << "_HXX\n";
     } else {
       this->headerFile << "#ifndef _LIB_MFRONT_" 
-		       << MFrontCppLawInterface::makeUpperCase(name)
+		       << makeUpperCase(name)
 		       << "_HXX\n";
       this->headerFile << "#define _LIB_MFRONT_"
-		       << MFrontCppLawInterface::makeUpperCase(name)
+		       << makeUpperCase(name)
 		       << "_HXX\n\n";
     }
 
@@ -491,12 +459,12 @@ namespace mfront
     if(!namespaces.empty()){
       this->headerFile << "#endif /* _LIB_";
       for(p3=namespaces.begin();p3!=namespaces.end();++p3){
-	this->headerFile << MFrontCppLawInterface::makeUpperCase(*p3) << "_";
+	this->headerFile << makeUpperCase(*p3) << "_";
       }
-      this->headerFile << MFrontCppLawInterface::makeUpperCase(name) << "_HXX */\n";
+      this->headerFile << makeUpperCase(name) << "_HXX */\n";
     } else {
       this->headerFile << "#endif /* _LIB_MFRONT_"
-		       << MFrontCppLawInterface::makeUpperCase(name)
+		       << makeUpperCase(name)
 		       << "_HXX */\n";
     }
 

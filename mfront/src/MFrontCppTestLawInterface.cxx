@@ -16,14 +16,6 @@
 namespace mfront
 {
 
-  std::string 
-  MFrontCppTestLawInterface::toString(const unsigned short src)
-  {
-    std::ostringstream os;
-    os << src;
-    return os.str();
-  }
-
   tfel::utilities::CxxTokenizer::TokensContainer::const_iterator
   MFrontCppTestLawInterface::nextToken(tfel::utilities::CxxTokenizer::TokensContainer::const_iterator current,
 				       const tfel::utilities::CxxTokenizer::TokensContainer::const_iterator endTokens,

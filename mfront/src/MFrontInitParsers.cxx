@@ -17,6 +17,8 @@
 #include"MFront/MFrontRungeKuttaParser.hxx"
 #include"MFront/MFrontImplicitParser.hxx"
 
+#include"MFront/MFrontModelParser.hxx"
+
 #ifdef HAVE_PLEIADES
 #include"MFront/MFrontPleiadesModelParser.hxx"
 #include"MFront/MFrontPleiadesModelParserArchitecture1.4.hxx"
@@ -36,9 +38,10 @@ namespace mfront
     MFrontParserProxy<MFrontMultipleIsotropicMisesFlowsParser>  proxy6;
     MFrontParserProxy<MFrontRungeKuttaParser>  proxy7;
     MFrontParserProxy<MFrontImplicitParser>  proxy8;
+    MFrontParserProxy<MFrontModelParser>  proxy9;
 #ifdef HAVE_PLEIADES
-    MFrontParserProxy<MFrontPleiadesModelParserArchitecture1_4> proxy9;
-    MFrontParserProxy<MFrontPleiadesModelParser> proxy10;
+    MFrontParserProxy<MFrontPleiadesModelParserArchitecture1_4> proxy10;
+    MFrontParserProxy<MFrontPleiadesModelParser> proxy11;
 #endif /* HAVE_PLEIADES */
   } // end of initParsers 
 

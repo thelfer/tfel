@@ -21,9 +21,12 @@ set(mfront_SOURCES
     StaticVarHandler.cxx
     ComputedVarHandler.cxx
     MFrontBehaviourParserCommon.cxx
+    MFrontModelParserCommon.cxx
+    MFrontModelParser.cxx
     MFrontBehaviourVirtualParser.cxx
     MFrontBehaviourVirtualInterface.cxx
     MFrontLawVirtualInterface.cxx
+    MFrontModelVirtualInterface.cxx
     SupportedTypes.cxx
     ParserBase.cxx
     InterfaceBase.cxx
@@ -31,6 +34,8 @@ set(mfront_SOURCES
     UnaryLoadingDefinition.cxx
     MFrontBehaviourInterfaceFactory.cxx
     MFrontLawInterfaceFactory.cxx
+    MFrontBehaviourInterfaceFactory.cxx
+    MFrontModelInterfaceFactory.cxx
     MFrontDefaultParser.cxx
     MFrontMaterialLawParser.cxx
     MFrontIsotropicMisesCreepParser.cxx

@@ -17,12 +17,14 @@
 
 #include"MFront/VarHandler.hxx"
 #include"MFront/StaticVarHandler.hxx"
+#include"MFront/MFrontGenericData.hxx"
 
 namespace mfront
 {
 
   struct TFEL_VISIBILITY_EXPORT ParserBase
-    : public tfel::utilities::CxxTokenizer
+    : public tfel::utilities::CxxTokenizer,
+      protected MFrontGenericData
   {
     virtual std::string variableModifier1(const std::string&,const bool);
 
@@ -35,18 +37,6 @@ namespace mfront
     virtual std::string variableModifier5(const std::string&,const bool);
     
   protected:
-
-    static
-    std::string
-    toString(const unsigned short);
-
-    static
-    std::string
-    makeUpperCase(const std::string&);
-
-    static
-    std::string 
-    makeLowerCase(const std::string&);
 
     ParserBase();
 
@@ -180,10 +170,6 @@ namespace mfront
     void
     treatDescription(void);
     void
-    treatLocalVar(void);
-    void
-    treatInitLocalVars(void);
-    void
     treatMaterial(void);
     void
     treatLibrary(void);
@@ -197,25 +183,10 @@ namespace mfront
     reserveName(const std::string&);
     double
     readDouble(void);
-    VarContainer localVarsHolder;
-    StaticVarContainer staticVars;
     std::vector<std::string> librariesDependencies;
-    std::vector<std::string> materialLaws;
-    std::set<std::string> reservedNames;
-    std::set<std::string> varNames;
-    std::set<std::string> staticVarNames;
-    std::string initLocalVars;
-    std::string fileName;    
-    std::string authorName;
-    std::string date;
-    std::string includes;
     std::string sources;
     std::string privateCode;
     std::string members;
-    std::string className;
-    std::string material;
-    std::string library;
-    std::string description;
     TokensContainer::const_iterator current;
     bool debugMode;
     bool verboseMode;

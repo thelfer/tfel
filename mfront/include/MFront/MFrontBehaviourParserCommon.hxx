@@ -89,6 +89,10 @@ namespace mfront{
 
     void treatMaterial(void);
 
+    void treatLocalVar(void);
+
+    void treatInitLocalVars(void);
+
     void treatOrthotropicBehaviour(void);
 
     void treatIsotropicBehaviour(void);
@@ -326,6 +330,7 @@ namespace mfront{
     VarContainer stateVarsHolder;
     VarContainer auxiliaryStateVarsHolder;
     VarContainer externalStateVarsHolder;
+    VarContainer localVarsHolder;
     ComputedVarContainer computedVars;
 
     StringContainer interfaces;
@@ -333,6 +338,7 @@ namespace mfront{
     std::vector<BoundsDescription>      boundsDescriptions;
     std::vector<BoundsDescription>      physicalBoundsDescriptions;
 
+    std::string initLocalVars;
     std::string integrator;
     std::string updateAuxiliaryStateVars;
 

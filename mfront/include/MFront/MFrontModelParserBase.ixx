@@ -10,49 +10,13 @@
 #define _LIB_MFRONTMODELPARSERBASE_IXX_ 
 
 #include<sstream>
+#include<stdexcept>
 
 namespace mfront{
 
   template<typename Child>
-  void MFrontModelParserBase<Child>::treatFile(const std::string& fileName_)
-  {
-    using namespace std;
-    this->openFile(fileName_);
-    this->fileName = fileName_;
-    typename CallBackContainer::const_iterator p;
-    MemberFuncPtr handler;
-    // strip comments from file
-    this->stripComments();
-    // begin treatement
-    this->current = this->fileTokens.begin();
-    while(this->current != this->fileTokens.end()){
-      p = this->callBacks.find(this->current->value);
-      if(p==this->callBacks.end()){
-	handler = &Child::treatUnknownKeyword;
-      } else {
-	handler = p->second;
-      }
-      ++(this->current);
-      ((static_cast<Child *>(this))->*handler)();
-    }
-  } // end of class MFrontModelParserBase<Child>::treatFile(const std::string& fileName_)
-
-  template<typename Child>
-  void MFrontModelParserBase<Child>::treatModel(void)
-  {
-    using namespace std;
-    this->className = this->readOnlyOneToken();
-    if(!isValidIdentifier(this->className)){
-      ostringstream msg;
-      msg << "Given model name is not valid : "
-	  <<  this->current->value
-	  <<  "\nError at line : " << this->current->line << "\n";
-      throw(runtime_error(msg.str()));
-    }
-  } // end of MFrontModelParserBase<Child>::treatModel
-
-  template<typename Child>
-  void MFrontModelParserBase<Child>::registerDefaultCallBacks(void)
+  void
+  MFrontModelParserBase<Child>::registerDefaultCallBacks(void)
   {
     this->registerNewCallBack("Unknown keyword handler",&Child::treatUnknownKeyword);
     this->registerNewCallBack("@Parser",&Child::treatParser);
@@ -64,9 +28,110 @@ namespace mfront{
     this->registerNewCallBack("@MembersFunc",&Child::treatMembers);
     this->registerNewCallBack("@StaticVar",&Child::treatStaticVar);
     this->registerNewCallBack("@Description",&Child::treatDescription);
-    this->registerNewCallBack("@LocalVar",&Child::treatLocalVar);
-    this->registerNewCallBack("@InitLocalVars",&Child::treatInitLocalVars);
+    this->registerNewCallBack("@Bounds",
+			      &Child::treatBounds);
+    this->registerNewCallBack("@PhysicalBounds",
+			      &Child::treatPhysicalBounds);
+    this->registerNewCallBack("@ConstantMaterialProperty",
+			      &Child::treatConstantMaterialProperty);
+    this->registerNewCallBack("@GlobalParameter",
+			      &Child::treatGlobalParameter);
+    this->registerNewCallBack("@LocalParameter",
+			      &Child::treatLocalParameter);
+    this->registerNewCallBack("@ConstantMaterialProperty",
+			      &Child::treatConstantMaterialProperty);
+    this->registerNewCallBack("@Domain",&Child::treatDomain);
+    this->registerNewCallBack("@Domains",&Child::treatDomains);
+    this->registerNewCallBack("@Material",&Child::treatMaterial);
+    this->registerNewCallBack("@Output",&Child::treatOutput);
+    this->registerNewCallBack("@Input",&Child::treatInput);
+    this->registerNewCallBack("@Function",&Child::treatFunction);
+    this->registerNewCallBack("@MaterialLaw",&Child::treatMaterialLaw);
   } // end of MFrontModelParserBase<Child>::registerDefaultCallBacks()
+
+  template<typename Child>
+  void
+  MFrontModelParserBase<Child>::treatFile(const std::string& fileName_) 
+  {
+    using namespace std;
+    this->fileName = fileName_;
+    this->openFile(fileName_);
+    typename CallBackContainer::const_iterator p;
+    typename VarContainer::const_iterator p2;
+    typename FunctionContainer::const_iterator p3;
+    MemberFuncPtr handler = 0;
+    // strip comments from file
+    this->stripComments();
+    // begin treatement
+    this->current = this->fileTokens.begin();
+    while(this->current != this->fileTokens.end()){
+      p = this->callBacks.find(this->current->value);
+      if(p==this->callBacks.end()){
+	bool found = false;
+	for(p3=this->functions.begin();(p3!=this->functions.end())&&(!found);){
+	  if(p3->name==this->current->value){
+	    found = true;
+	    this->currentVar = this->current->value;
+	    handler = &Child::treatFunctionMethod;
+	  } else {
+	    ++p3;
+	  }
+	}
+	for(p2=this->outputs.begin();(p2!=this->outputs.end())&&(!found);){
+	  if(p2->name==this->current->value){
+	    found = true;
+	    this->currentVar = this->current->value;
+	    handler = &Child::treatOutputMethod;
+	  } else {
+	    ++p2;
+	  }
+	}
+	for(p2=this->inputs.begin();(p2!=this->inputs.end())&&(!found);){
+	  if(p2->name==this->current->value){
+	    found = true;
+	    this->currentVar = this->current->value;
+	    handler = &Child::treatInputMethod;
+	  } else {
+	    ++p2;
+	  }
+	}
+	for(p2=this->globalParameters.begin();(p2!=this->globalParameters.end())&&(!found);){
+	  if(p2->name==this->current->value){
+	    found = true;
+	    this->currentVar = this->current->value;
+	    handler = &Child::treatGlobalParameterMethod;
+	  } else {
+	    ++p2;
+	  }
+	}
+	for(p2=this->localParameters.begin();(p2!=this->localParameters.end())&&(!found);){
+	  if(p2->name==this->current->value){
+	    found = true;
+	    this->currentVar = this->current->value;
+	    handler = &Child::treatLocalParameterMethod;
+	  } else {
+	    ++p2;
+	  }
+	}
+	for(p2=this->constantMaterialProperties.begin();(p2!=this->constantMaterialProperties.end())&&(!found);){
+	  if(p2->name==this->current->value){
+	    found = true;
+	    this->currentVar = this->current->value;
+	    handler = &Child::treatConstantMaterialPropertyMethod;
+	  } else {
+	    ++p2;
+	  }
+	}
+	if(!found){
+	  handler = &Child::treatUnknownKeyword;
+	}
+      } else {
+	handler = p->second;
+      }
+      ++(this->current);
+      (static_cast<Child*>(this)->*handler)();
+    }
+  } // end of Child::treatFile
 
   template<typename Child>
   void MFrontModelParserBase<Child>::registerNewCallBack(const std::string& keyword,

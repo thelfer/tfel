@@ -18,6 +18,15 @@ namespace tfel{
 
   namespace utilities{
 
+    template<typename T>
+    static std::string 
+    toString(const T& src)
+    {
+      std::ostringstream os;
+      os << src;
+      return os.str();
+    }
+
     // '.' deserves a special treatement.
     // '<' and '>' deserve special treatements.
     const char
@@ -25,15 +34,6 @@ namespace tfel{
 				   '|','{','}','[',']','(',
 				   ')','%','=','^',',',':',
 				   '<','>'};
-
-    template<typename T>
-    std::string 
-    CxxTokenizer::toString(const T& src)
-    {
-      std::ostringstream os;
-      os << src;
-      return os.str();
-    }
 
     std::vector<std::string>
     CxxTokenizer::splitStringAtSpaces(const std::string& str)

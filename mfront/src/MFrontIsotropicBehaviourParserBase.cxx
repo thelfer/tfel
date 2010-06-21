@@ -236,7 +236,6 @@ namespace mfront{
     this->writeSrcFile();
     // Generating Behaviour's unary loading tests
     this->writeUnaryLoadingTestFiles();
-
     StringContainer::const_iterator i;
     for(i  = this->interfaces.begin();
 	i != this->interfaces.end();++i){

@@ -9,19 +9,12 @@
 #include<stdexcept>
 
 #include"MFront/MFrontHeader.hxx"
+#include"MFront/ParserUtilities.hxx"
 #include"MFront/MFrontCppTestLawInterface.hxx"
 #include"MFront/MFrontGnuplotLawInterface.hxx"
 
 namespace mfront
 {
-
-  std::string 
-  MFrontGnuplotLawInterface::toString(const unsigned short src)
-  {
-    std::ostringstream os;
-    os << src;
-    return os.str();
-  }
 
   tfel::utilities::CxxTokenizer::TokensContainer::const_iterator
   MFrontGnuplotLawInterface::nextToken(tfel::utilities::CxxTokenizer::TokensContainer::const_iterator current,

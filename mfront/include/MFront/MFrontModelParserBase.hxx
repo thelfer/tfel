@@ -13,19 +13,17 @@
 #include<map>
 
 #include"MFront/ParserBase.hxx"
+#include"MFront/MFrontModelParserCommon.hxx"
 
 namespace mfront{
 
   template<typename Child>
   class MFrontModelParserBase
-    : public ParserBase
+    : public MFrontModelParserCommon
   {
   protected:
     typedef void (Child::* MemberFuncPtr)(void);
     typedef std::map<std::string,MemberFuncPtr> CallBackContainer;
-    
-    void
-    treatModel(void);
 
     void
     registerDefaultCallBacks(void);
@@ -33,17 +31,17 @@ namespace mfront{
     void
     registerNewCallBack(const std::string&,const MemberFuncPtr);
 
-    void
+    virtual void
     treatFile(const std::string&);
     
     std::set<std::string> registredKeyWords;
 
     CallBackContainer callBacks;
     
+    MFrontModelParserBase();
+
     bool verboseMode;
 
-    MFrontModelParserBase();
-    
   };
 
 } // end of namespace mfront

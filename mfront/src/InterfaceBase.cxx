@@ -9,17 +9,11 @@
 #include<sstream>
 #include<stdexcept>
 
+#include"MFront/ParserUtilities.hxx"
 #include"MFront/InterfaceBase.hxx"
 
-namespace mfront{
 
-  std::string
-  InterfaceBase::toString(const unsigned short src)
-  {
-    std::ostringstream os;
-    os << src;
-    return os.str();
-  } // end of InterfaceBase::toString
+namespace mfront{
 
   void
   InterfaceBase::checkNotEndOfFile(InterfaceBase::TokensContainer::const_iterator& current,
@@ -35,7 +29,7 @@ namespace mfront{
       if(!error.empty()){
 	msg += "\n"+error;
       }
-      msg += "\nError at line " + InterfaceBase::toString(current->line);
+      msg += "\nError at line " + toString(current->line);
       throw(runtime_error(msg));
     }
   } // end of InterfaceBase::checkNotEndOfFile
@@ -55,7 +49,7 @@ namespace mfront{
       msg += current->value;
       msg += ".\n";
       msg += "Error at line : ";
-      msg += InterfaceBase::toString(current->line);
+      msg += toString(current->line);
       throw(runtime_error(msg));
     }
     ++(current);
@@ -75,7 +69,7 @@ namespace mfront{
     if(!m.empty()){
       msg +=" : " + m;
     }
-    msg += "\nError at line " + InterfaceBase::toString(current->line);
+    msg += "\nError at line " + toString(current->line);
     throw(runtime_error(msg));
   } // end of InterfaceBase::throwRuntimeError
   

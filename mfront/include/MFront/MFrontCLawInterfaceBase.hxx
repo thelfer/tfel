@@ -89,15 +89,6 @@ namespace mfront{
     
   protected:
 
-    static std::string
-    makeUpperCase(const std::string&);
-
-    static std::string
-    makeLowerCase(const std::string&);
-
-    static std::string 
-    toString(const unsigned short);
-
     static void
     replace(std::string&,
 	    const std::string::value_type,

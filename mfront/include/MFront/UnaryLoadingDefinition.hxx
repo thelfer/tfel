@@ -87,9 +87,6 @@ namespace mfront{
     read(TokensIterator&,
 	 const TokensIterator);
 
-    static std::string
-    toString(const unsigned short src);
-
     enum InterpolationFlag{ConstantPerInterval,LinearPerInterval};
 
     static const long double Cst_1_Sqrt2;

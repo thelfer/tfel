@@ -11,6 +11,7 @@
 
 #include"TFEL/System/System.hxx"
 
+#include"MFront/ParserUtilities.hxx"
 #include"MFront/MFrontUMATInterface.hxx"
 
 namespace mfront{
@@ -30,14 +31,6 @@ namespace mfront{
     }
     return v;
   } // end of MFrontUMATInterfaceGetName
-
-  std::string 
-  MFrontUMATInterface::toString(const unsigned short src)
-  {
-    std::ostringstream os;
-    os << src;
-    return os.str();
-  }
 
   std::string
   MFrontUMATInterface::getName(void)
@@ -476,30 +469,6 @@ namespace mfront{
   }
 
   std::string
-  MFrontUMATInterface::makeUpperCase(const std::string& s)
-  {
-    using namespace std;
-    string res(s);
-    string::iterator p;
-    for(p=res.begin();p!=res.end();++p){
-      *p = static_cast<char>(toupper(*p));
-    }
-    return res;
-  }
-
-  std::string
-  MFrontUMATInterface::makeLowerCase(const std::string& s)
-  {
-    using namespace std;
-    string res(s);
-    string::iterator p;
-    for(p=res.begin();p!=res.end();++p){
-      *p = static_cast<char>(tolower(*p));
-    }
-    return res;
-  }
-
-  std::string
   MFrontUMATInterface::treatScalar(const std::string& s)
   {
     using namespace std;
@@ -681,7 +650,7 @@ namespace mfront{
 	  string msg("MFrontUMATInterface::endTreatement : the umat interface requires the ");
 	  msg += "following three coefficients to be defined (in the right order) ";
 	  msg += "(currently only ";
-	  msg += MFrontUMATInterface::toString(static_cast<unsigned short>(coefsHolder.size()));
+	  msg += toString(static_cast<unsigned short>(coefsHolder.size()));
 	  msg += " defined):\n";
 	  msg += "- the young modulus     (use @Coef stress           young)\n";
 	  msg += "- the poisson ratio     (use @Coef real             nu)\n";
@@ -759,13 +728,13 @@ namespace mfront{
     out << "#endif /* MFRONT_SHAREDOBJ */\n\n"; 
 
     out << "#define umat" 
-	<< MFrontUMATInterface::makeUpperCase(name)
+	<< makeUpperCase(name)
 	<< "_F77 \\\n"
 	<< "        F77_FUNC(umat"
-	<< MFrontUMATInterface::makeLowerCase(name) << ",UMAT"
-	<< MFrontUMATInterface::makeUpperCase(name) << ")\n\n";
+	<< makeLowerCase(name) << ",UMAT"
+	<< makeUpperCase(name) << ")\n\n";
 
-    umatFctName = "umat"+MFrontUMATInterface::makeUpperCase(name)+"_F77";
+    umatFctName = "umat"+makeUpperCase(name)+"_F77";
 
     out << "#ifdef __cplusplus\n\n";
 
@@ -840,7 +809,7 @@ namespace mfront{
     out << "#endif /* __cplusplus */\n\n";
 
     out << "MFRONT_SHAREDOBJ void MFRONT_STDCALL\numat"
-	<< MFrontUMATInterface::makeLowerCase(name)
+	<< makeLowerCase(name)
 	<< "(const umat::UMATInt *const,const umat::UMATReal *const,\n"
 	<< "const umat::UMATReal *const,      umat::UMATReal *const,\n"
 	<< "const umat::UMATReal *const,const umat::UMATReal *const,\n"
@@ -897,7 +866,7 @@ namespace mfront{
     out << "extern \"C\"{\n\n";
 
     out << "MFRONT_SHAREDOBJ unsigned short umat"
-      	<< MFrontUMATInterface::makeLowerCase(name);
+      	<< makeLowerCase(name);
     if(behaviourCharacteristic.getBehaviourType()==mfront::ISOTROPIC){
       // skipping the fourth first coefficients
       if(found){
@@ -914,7 +883,7 @@ namespace mfront{
 
     if(nb!=0){
       out << "MFRONT_SHAREDOBJ const char * umat"
-	  << MFrontUMATInterface::makeLowerCase(name)
+	  << makeLowerCase(name)
 	  << "_MaterialProperties [] = {";
       p=coefsHolder.begin();
       if(behaviourCharacteristic.getBehaviourType()==mfront::ISOTROPIC){
@@ -932,18 +901,18 @@ namespace mfront{
       out << "};\n\n";
     } else {
       out << "MFRONT_SHAREDOBJ const char * const * umat"
-	  << MFrontUMATInterface::makeLowerCase(name)
+	  << makeLowerCase(name)
 	  << "_MaterialProperties = 0;\n\n";
     }      
 
     out << "MFRONT_SHAREDOBJ unsigned short umat"
-      	<< MFrontUMATInterface::makeLowerCase(name)
+      	<< makeLowerCase(name)
 	<< "_nInternalStateVariables = " << stateVarsHolder.size() + auxiliaryStateVarsHolder.size()
 	<< ";\n";
     if((stateVarsHolder.size()!=0)||
        (auxiliaryStateVarsHolder.size()!=0)){
       out << "MFRONT_SHAREDOBJ const char * umat"
-	  << MFrontUMATInterface::makeLowerCase(name)
+	  << makeLowerCase(name)
 	  << "_InternalStateVariables [] = {";
       for(p=stateVarsHolder.begin();p!=stateVarsHolder.end();){
 	out << '"' << MFrontUMATInterfaceGetName(glossaryNames,entryNames,p->name) << '"';
@@ -963,14 +932,14 @@ namespace mfront{
       out << "};\n\n";
     } else {
       out << "MFRONT_SHAREDOBJ const char * const * umat"
-	  << MFrontUMATInterface::makeLowerCase(name)
+	  << makeLowerCase(name)
 	  << "_InternalStateVariables = 0;\n\n";
     }
 
     if((stateVarsHolder.size()!=0)||
        (auxiliaryStateVarsHolder.size()!=0)){
       out << "MFRONT_SHAREDOBJ int umat"
-	  << MFrontUMATInterface::makeLowerCase(name)
+	  << makeLowerCase(name)
 	  << "_InternalStateVariablesTypes [] = {";
       for(p=stateVarsHolder.begin();p!=stateVarsHolder.end();){
 	SupportedTypes::TypeFlag flag = this->getTypeFlag(p->type);
@@ -1014,17 +983,17 @@ namespace mfront{
       out << "};\n\n";
     } else {
       out << "MFRONT_SHAREDOBJ const int * umat"
-	  << MFrontUMATInterface::makeLowerCase(name)
+	  << makeLowerCase(name)
 	  << "_InternalStateVariablesTypes = 0;\n\n";
     }
 
     out << "MFRONT_SHAREDOBJ unsigned short umat"
-      	<< MFrontUMATInterface::makeLowerCase(name)
+      	<< makeLowerCase(name)
 	<< "_nExternalStateVariables = " << externalStateVarsHolder.size() << ";\n";
 
     if(externalStateVarsHolder.size()!=0){
       out << "MFRONT_SHAREDOBJ const char * umat"
-	  << MFrontUMATInterface::makeLowerCase(name)
+	  << makeLowerCase(name)
 	  << "_ExternalStateVariables [] = {";
       for(p=externalStateVarsHolder.begin();p!=externalStateVarsHolder.end();){
 	out << '"' << MFrontUMATInterfaceGetName(glossaryNames,entryNames,p->name) << '"';
@@ -1035,12 +1004,12 @@ namespace mfront{
       out << "};\n\n";
     } else {
       out << "MFRONT_SHAREDOBJ const char * const * umat"
-	  << MFrontUMATInterface::makeLowerCase(name)
+	  << makeLowerCase(name)
 	  << "_ExternalStateVariables = 0;\n\n";
     }
     
     out << "MFRONT_SHAREDOBJ void MFRONT_STDCALL\numat"
-	<< MFrontUMATInterface::makeLowerCase(name)
+	<< makeLowerCase(name)
 	<< "(const umat::UMATInt *const NTENS, const umat::UMATReal *const DTIME,\n"
 	<< "const umat::UMATReal *const DROT,  umat::UMATReal *const DDSOE,\n"
 	<< "const umat::UMATReal *const STRAN, const umat::UMATReal *const DSTRAN,\n"
@@ -1067,7 +1036,7 @@ namespace mfront{
 	<< "umat::UMATReal *const STRESS,const umat::UMATInt    *const NDI,\n"
 	<< "umat::UMATInt    *const KINC)\n";
     out << "{\n";
-    out << "umat" << MFrontUMATInterface::makeLowerCase(name)
+    out << "umat" << makeLowerCase(name)
 	<< "(NTENS, DTIME,DROT,DDSOE,STRAN,DSTRAN,TEMP,DTEMP,\n"
 	<< "PROPS,NPROPS,PREDEF,DPRED,STATEV,NSTATV,\n"
 	<< "STRESS,NDI,KINC);\n";
@@ -1628,12 +1597,12 @@ namespace mfront{
     out << "Material 'SOLID0'\n";
     if(behaviourCharacteristic.getBehaviourType()==mfront::ORTHOTROPIC){
       out << "MechanicalBehaviour OrthotropicUMATBehaviour umat"
-	  << MFrontUMATInterface::makeLowerCase(name)
+	  << makeLowerCase(name)
 	  << " " << MFrontUMATInterface::getLibraryName(library,material)
 	  << ".so" << endl;
     } else {
       out << "MechanicalBehaviour IsotropicUMATBehaviour 'umat"
-	  << MFrontUMATInterface::makeLowerCase(name)
+	  << makeLowerCase(name)
 	  << "' '" << MFrontUMATInterface::getLibraryName(library,material)
 	  << ".so'" << endl;
       if(!found){

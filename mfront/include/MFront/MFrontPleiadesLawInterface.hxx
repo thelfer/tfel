@@ -156,15 +156,9 @@ namespace mfront{
     
   private:
 
-    static std::string
-    makeUpperCase(const std::string&);
-
-    static std::string
-    makeLowerCase(const std::string&);
-
-    template<typename T>
-    static std::string 
-    toString(const T&);
+//     template<typename T>
+//     static std::string 
+//     toString(const T&);
 
     /*
      * \param const std::string&, name of the original file

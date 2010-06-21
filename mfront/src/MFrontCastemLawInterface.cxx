@@ -17,14 +17,6 @@
 namespace mfront
 {
 
-  std::string 
-  MFrontCastemLawInterface::toString(const unsigned short src)
-  {
-    std::ostringstream os;
-    os << src;
-    return os.str();
-  }
-
   std::string
   MFrontCastemLawInterface::getName(void)
   {
@@ -67,30 +59,6 @@ namespace mfront
     using namespace std;
     return make_pair(false,current);
   } // end of treatKeyword
-
-  std::string
-  MFrontCastemLawInterface::makeUpperCase(const std::string& s)
-  {
-    using namespace std;
-    string res(s);
-    string::iterator p;
-    for(p=res.begin();p!=res.end();++p){
-      *p = static_cast<char>(toupper(*p));
-    }
-    return res;
-  }
-
-  std::string
-  MFrontCastemLawInterface::makeLowerCase(const std::string& s)
-  {
-    using namespace std;
-    string res(s);
-    string::iterator p;
-    for(p=res.begin();p!=res.end();++p){
-      *p = static_cast<char>(tolower(*p));
-    }
-    return res;
-  }
 
   MFrontCastemLawInterface::~MFrontCastemLawInterface()
   {}
@@ -269,10 +237,10 @@ namespace mfront
     this->headerFile << " */\n\n";
 
     this->headerFile << "#ifndef _" 
-			   << MFrontCastemLawInterface::makeUpperCase(name)
+		     << makeUpperCase(name)
 		     << "_CASTEM_HH\n";
     this->headerFile << "#define _"
-		     << MFrontCastemLawInterface::makeUpperCase(name)
+		     << makeUpperCase(name)
 		     << "_CASTEM_HH\n\n";
     writeExportDirectives(this->headerFile);
     this->headerFile << "#ifdef __cplusplus\n";
@@ -286,7 +254,7 @@ namespace mfront
     this->headerFile << "} // end of extern \"C\"\n";
     this->headerFile << "#endif /* __cplusplus */\n\n";
     this->headerFile << "#endif /* _"
-		     << MFrontCastemLawInterface::makeUpperCase(name)
+		     << makeUpperCase(name)
 		     << "_CASTEM_HH */\n";
 
     this->headerFile.close();

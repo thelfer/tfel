@@ -126,9 +126,6 @@ namespace tfel{
       static bool
       isValidFunctionIdentifier(const std::string&,const bool=true);
 
-      template<typename T>
-      static std::string toString(const T&);
-
       void
       splitLine(std::string,const unsigned short);
 

@@ -15,20 +15,13 @@
 #include<iterator>
 #include<algorithm>
 
+#include"MFront/ParserUtilities.hxx"
 #include"MFront/UnaryLoadingDefinition.hxx"
 
 namespace mfront{
 
   const long double UnaryLoadingDefinition::Cst_1_Sqrt2 = std::sqrt(2.L);
 
-  std::string
-  UnaryLoadingDefinition::toString(const unsigned short src)
-  {
-    std::ostringstream os;
-    os << src;
-    return os.str();
-  } // end of UnaryLoadingDefinition::toString
-  
   UnaryLoadingDefinition::UnaryLoadingDefinition(const std::string&   testType_,
 						 const unsigned short dimension_,
 						 const std::string&   numericType_,

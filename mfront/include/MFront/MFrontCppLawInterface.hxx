@@ -156,15 +156,6 @@ namespace mfront{
     
   private:
 
-    static std::string
-    makeUpperCase(const std::string&);
-
-    static std::string
-    makeLowerCase(const std::string&);
-
-    static std::string 
-    toString(const unsigned short);
-
     /*
      * \param const std::string&, className
      * \param const std::string&, author

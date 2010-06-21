@@ -24,9 +24,6 @@ namespace mfront
 
     typedef tfel::utilities::CxxTokenizer::TokensContainer TokensContainer;
 
-    static std::string
-    toString(const unsigned short);
-
     static void
     checkNotEndOfFile(TokensContainer::const_iterator&,
 		      const TokensContainer::const_iterator,

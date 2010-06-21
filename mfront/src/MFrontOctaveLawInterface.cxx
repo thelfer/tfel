@@ -38,14 +38,6 @@ namespace mfront
     return res;
   } // end of tokenize
   
-  std::string 
-  MFrontOctaveLawInterface::toString(const unsigned short src)
-  {
-    std::ostringstream os;
-    os << src;
-    return os.str();
-  }
-
   std::string
   MFrontOctaveLawInterface::getName(void)
   {

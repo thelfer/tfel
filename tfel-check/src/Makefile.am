@@ -6,13 +6,9 @@ bin_PROGRAMS =  tfel-check
 tfel_check_SOURCES  = tfel-check.cxx   \
 		      TestLauncher.cxx
 
-tfel_check_LDADD = -L@top_builddir@/src/Math      \
-		   -L@top_builddir@/src/System    \
+tfel_check_LDADD = -L@top_builddir@/src/System    \
 		   -L@top_builddir@/src/Utilities \
 		   -L@top_builddir@/src/Exception \
-		   -lTFELMathInterpreter          \
-		   -lTFELMathParser               \
-		   -lTFELMath                     \
 		   -lTFELSystem                   \
 		   -lTFELUtilities                \
 		   -lTFELException

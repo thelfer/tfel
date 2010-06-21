@@ -20,18 +20,22 @@ mfront_SOURCES = main.cxx                                             \
 		 StaticVarHandler.cxx                                 \
 		 ComputedVarHandler.cxx                               \
 		 MFrontBehaviourParserCommon.cxx                      \
+		 MFrontModelParserCommon.cxx                          \
 		 MFrontBehaviourVirtualParser.cxx                     \
 		 MFrontBehaviourVirtualInterface.cxx                  \
 		 MFrontLawVirtualInterface.cxx                        \
+		 MFrontModelVirtualInterface.cxx                      \
 		 SupportedTypes.cxx                                   \
 		 MFrontHeader.cxx                                     \
 		 ParserBase.cxx                                       \
 		 InterfaceBase.cxx                                    \
 		 ParserUtilities.cxx                                  \
 		 UnaryLoadingDefinition.cxx                           \
-		 MFrontBehaviourInterfaceFactory.cxx                  \
 		 MFrontLawInterfaceFactory.cxx                        \
+		 MFrontBehaviourInterfaceFactory.cxx                  \
+		 MFrontModelInterfaceFactory.cxx                      \
 		 MFrontDefaultParser.cxx                              \
+		 MFrontModelParser.cxx                                \
 		 MFrontMaterialLawParser.cxx                          \
 		 MFrontIsotropicMisesCreepParser.cxx                  \
 		 MFrontIsotropicStrainHardeningMisesCreepParser.cxx   \
@@ -63,6 +67,10 @@ endif
 
 if SUPPORT_PLEIADES
 mfront_SOURCES += MFrontPleiadesLawInterface.cxx
+mfront_SOURCES += MFrontCelaenoModelInterface.cxx
+mfront_SOURCES += MFrontGerminalModelInterface.cxx
+mfront_SOURCES += MFrontCelaenoModelInterface_v1.3.cxx
+mfront_SOURCES += MFrontPleiadesModelInterfaceBase.cxx
 mfront_SOURCES += MFrontPleiadesModelParser.cxx
 mfront_SOURCES += MFrontPleiadesModelParserArchitecture1.4.cxx
 endif

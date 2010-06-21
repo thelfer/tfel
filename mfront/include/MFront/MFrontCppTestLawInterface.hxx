@@ -160,9 +160,6 @@ namespace mfront{
     registerTestBounds(tfel::utilities::CxxTokenizer::TokensContainer::const_iterator,
 			const tfel::utilities::CxxTokenizer::TokensContainer::const_iterator);
 
-    static std::string 
-    toString(const unsigned short);
-
     tfel::utilities::CxxTokenizer::TokensContainer::const_iterator
     nextToken(tfel::utilities::CxxTokenizer::TokensContainer::const_iterator,
 	      tfel::utilities::CxxTokenizer::TokensContainer::const_iterator,

@@ -8,6 +8,7 @@
 
 #include"MFront/MFrontBehaviourInterfaceProxy.hxx"
 #include"MFront/MFrontLawInterfaceProxy.hxx"
+#include"MFront/MFrontModelInterfaceProxy.hxx"
 
 #include"MFront/MFrontMFrontLawInterface.hxx"
 #include"MFront/MFrontCLawInterface.hxx"
@@ -31,6 +32,9 @@
 
 #ifdef HAVE_PLEIADES
 #include"MFront/MFrontPleiadesLawInterface.hxx"
+#include"MFront/MFrontCelaenoModelInterface.hxx"
+#include"MFront/MFrontGerminalModelInterface.hxx"
+#include"MFront/MFrontCelaenoModelInterface_v1.3.hxx"
 #endif /* HAVE_PLEIADES */
 
 #ifdef HAVE_CASTEM
@@ -72,8 +76,11 @@ namespace mfront
 #endif /* HAVE_GNUPLOT */
 
 #ifdef HAVE_PLEIADES
-    MFrontLawInterfaceProxy<MFrontPleiadesLawInterface> pleiadesLawProxy;
-    MFrontLawInterfaceProxy<MFrontPleiadesLawInterface> pleiadesLawProxy2("Pleiades");
+    MFrontLawInterfaceProxy<MFrontPleiadesLawInterface>         pleiadesLawProxy;
+    MFrontLawInterfaceProxy<MFrontPleiadesLawInterface>         pleiadesLawProxy2("Pleiades");
+    MFrontModelInterfaceProxy<MFrontCelaenoModelInterface>      celaenoModelProxy;
+    MFrontModelInterfaceProxy<MFrontGerminalModelInterface>      germinalModelProxy;
+    MFrontModelInterfaceProxy<MFrontCelaenoModelInterface_v1_3> celaenoModelProxy_v13;
 #endif /* HAVE_PLEIADES */
 
 #ifdef HAVE_PYTHON

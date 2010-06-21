@@ -17,6 +17,7 @@
 #include"TFEL/System/System.hxx"
 
 #include"MFront/MFrontHeader.hxx"
+#include"MFront/ParserUtilities.hxx"
 #include"MFront/MFrontParserFactory.hxx"
 #include"MFront/MFrontMaterialLawParser.hxx"
 #include"MFront/MFrontLawInterfaceFactory.hxx"

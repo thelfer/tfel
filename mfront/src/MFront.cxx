@@ -31,8 +31,9 @@
 #include"MFront/MFront.hxx"
 #include"MFront/MFrontHeader.hxx"
 #include"MFront/MFrontParserFactory.hxx"
-#include"MFront/MFrontBehaviourInterfaceFactory.hxx"
 #include"MFront/MFrontLawInterfaceFactory.hxx"
+#include"MFront/MFrontBehaviourInterfaceFactory.hxx"
+#include"MFront/MFrontModelInterfaceFactory.hxx"
 #include"MFront/MFrontLock.hxx"
 
 namespace mfront{
@@ -98,37 +99,46 @@ namespace mfront{
   void
   MFront::treatVerbose(void)
   {
+    typedef MFrontLawInterfaceFactory       MLIF;
     typedef MFrontBehaviourInterfaceFactory MBIF;
-    typedef MFrontLawInterfaceFactory MLIF;
-    MBIF& mbif = MBIF::getMFrontBehaviourInterfaceFactory();
+    typedef MFrontModelInterfaceFactory     MMIF;
     MLIF& mlif = MLIF::getMFrontLawInterfaceFactory();
+    MBIF& mbif = MBIF::getMFrontBehaviourInterfaceFactory();
+    MMIF& mmif = MMIF::getMFrontModelInterfaceFactory();
     this->verboseMode = true;
-    mbif.setVerboseMode();
     mlif.setVerboseMode();
+    mbif.setVerboseMode();
+    mmif.setVerboseMode();
   }
 
   void
   MFront::treatDebug(void)
   {
+    typedef MFrontLawInterfaceFactory       MLIF;
     typedef MFrontBehaviourInterfaceFactory MBIF;
-    typedef MFrontLawInterfaceFactory MLIF;
-    MBIF& mbif = MBIF::getMFrontBehaviourInterfaceFactory();
+    typedef MFrontModelInterfaceFactory     MMIF;
     MLIF& mlif = MLIF::getMFrontLawInterfaceFactory();
+    MBIF& mbif = MBIF::getMFrontBehaviourInterfaceFactory();
+    MMIF& mmif = MMIF::getMFrontModelInterfaceFactory();
     this->debugMode = true;
-    mbif.setDebugMode();
     mlif.setDebugMode();
+    mbif.setDebugMode();
+    mmif.setDebugMode();
   }
 
   void
   MFront::treatWarning(void)
   {
+    typedef MFrontLawInterfaceFactory       MLIF;
     typedef MFrontBehaviourInterfaceFactory MBIF;
-    typedef MFrontLawInterfaceFactory MLIF;
-    MBIF& mbif = MBIF::getMFrontBehaviourInterfaceFactory();
+    typedef MFrontModelInterfaceFactory     MMIF;
     MLIF& mlif = MLIF::getMFrontLawInterfaceFactory();
+    MBIF& mbif = MBIF::getMFrontBehaviourInterfaceFactory();
+    MMIF& mmif = MMIF::getMFrontModelInterfaceFactory();
     this->warningMode = true;
-    mbif.setWarningMode();
     mlif.setWarningMode();
+    mbif.setWarningMode();
+    mmif.setWarningMode();
   }
 
   void
@@ -370,12 +380,14 @@ namespace mfront{
     using namespace std;
     using namespace tfel::utilities;
     using namespace tfel::system;
-    typedef MFrontBehaviourInterfaceFactory MBIF;
     typedef MFrontLawInterfaceFactory MLIF;
+    typedef MFrontBehaviourInterfaceFactory MBIF;
+    typedef MFrontModelInterfaceFactory MMIF;
     typedef map<string,pair<vector<string>,vector<string> > > Target;
     MFrontParserFactory& parserFactory = MFrontParserFactory::getMFrontParserFactory();
-    MBIF& mbif = MBIF::getMFrontBehaviourInterfaceFactory();
     MLIF& mlif = MLIF::getMFrontLawInterfaceFactory();
+    MBIF& mbif = MBIF::getMFrontBehaviourInterfaceFactory();
+    MMIF& mmif = MMIF::getMFrontModelInterfaceFactory();
     CxxTokenizer file;
     string library;
     string parserName;
@@ -387,7 +399,6 @@ namespace mfront{
     Target::const_iterator p3;
     vector<string>::const_iterator p4;
     bool found;
-
     if(this->verboseMode){
       cout << "Treating file : " << this->fileName << endl;
     }
@@ -543,9 +554,9 @@ namespace mfront{
 	   insert_iterator<set<string> >(this->globalIncludes,this->globalIncludes.begin()));
     }
     // Some clean-up
-    mbif.reset();
     mlif.reset();
-
+    mbif.reset();
+    mmif.reset();
   } // end of MFront::treatFile(void)
 
   void
@@ -1689,7 +1700,7 @@ namespace mfront{
       string msg;
       p6=errors.begin();
       while(p6!=errors.end()){
-	msg += "Error while treating file '"+p6->first+"' : ";
+	msg += "Error while treating file '"+p6->first+"'\n";
 	msg += p6->second;
 	if(++p6!=errors.end()){
 	  msg += "\n\n";
@@ -1746,12 +1757,15 @@ namespace mfront{
 
   MFront::~MFront()
   {
+    typedef MFrontLawInterfaceFactory       MLIF;
     typedef MFrontBehaviourInterfaceFactory MBIF;
-    typedef MFrontLawInterfaceFactory MLIF;
-    MBIF& mbif = MBIF::getMFrontBehaviourInterfaceFactory();
+    typedef MFrontModelInterfaceFactory     MMIF;
     MLIF& mlif = MLIF::getMFrontLawInterfaceFactory();
-    mbif.clear();
+    MBIF& mbif = MBIF::getMFrontBehaviourInterfaceFactory();
+    MMIF& mmif = MMIF::getMFrontModelInterfaceFactory();
     mlif.clear();
+    mbif.clear();
+    mmif.clear();
   } // end of MFront::~MFront
 
 } // end of namespace mfront

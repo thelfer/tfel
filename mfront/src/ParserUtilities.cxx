@@ -127,4 +127,38 @@ namespace mfront
     file << "#endif /* WIN32 */\n\n";
   } // end of writeExportDirectives
 
+  std::string 
+  makeUpperCase(const std::string& n)
+  {
+    using namespace std;
+    string s(n);
+    string::const_iterator p;
+    string::iterator p2;
+    for(p=n.begin(),p2=s.begin();p!=n.end();++p,++p2){
+      *p2 = static_cast<char>(toupper(*p));
+    }
+    return s;
+  } // end of makeUpperCase
+
+  std::string 
+  makeLowerCase(const std::string& n)
+  {
+    using namespace std;
+    string s(n);
+    string::const_iterator p;
+    string::iterator p2;
+    for(p=n.begin(),p2=s.begin();p!=n.end();++p,++p2){
+      *p2 = static_cast<char>(tolower(*p));
+    }
+    return s;
+  } // end of makeLowerCase
+
+  std::string
+  toString(const unsigned short src)
+  {
+    std::ostringstream os;
+    os << src;
+    return os.str();
+  } // end of toString
+
 } // end of namespace mfront

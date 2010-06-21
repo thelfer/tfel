@@ -775,7 +775,7 @@ namespace mfront{
 	}
 	boundsDescription.varType=Scalar;
 	boundsDescription.varName+="(";
-	boundsDescription.varName+=MFrontBehaviourParserCommon::toString(component);
+	boundsDescription.varName+=toString(component);
 	boundsDescription.varName+=")";
       }
       ++(this->current);
@@ -3515,10 +3515,23 @@ namespace mfront{
     return this->sourcesLibrairiesDependencies;
   } // end of MFrontBehaviourParserCommon::getLibrariesDependencies
 
+  void
+  MFrontBehaviourParserCommon::treatLocalVar(void)
+  {
+    this->readVarList(this->localVarsHolder);
+  } // end of MFrontBehaviourParserCommon::treatLocalVar
+
+  void
+  MFrontBehaviourParserCommon::treatInitLocalVars(void)
+  {
+    this->initLocalVars += this->readNextBlock(true);
+    this->initLocalVars += "\n";
+  } // end of MFrontBehaviourParserCommon::treatInitLocalVars
+
   std::map<std::string,
 	   std::pair<std::vector<std::string>,
 		     std::vector<std::string> > >
-    MFrontBehaviourParserCommon::getSpecificTargets(void)
+  MFrontBehaviourParserCommon::getSpecificTargets(void)
   {
     using namespace std;
     return map<string,pair<vector<string>,vector<string> > >();
