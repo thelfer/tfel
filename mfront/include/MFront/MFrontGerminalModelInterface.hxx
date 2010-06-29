@@ -30,6 +30,27 @@ namespace mfront{
 				     const MFrontGenericData&,
 				     const MFrontModelData&);
 
+    virtual std::string
+    getApplicationName(void) const;
+
+    virtual void
+    writeInitializeMethod(const MFrontGenericData&,
+			  const MFrontModelData&);
+
+    virtual void
+    writeSpecificPrivateMethodDeclaration(const MFrontGenericData&,
+					  const MFrontModelData&);
+
+    virtual void
+    generateDomainsList(const MFrontModelData&);
+
+    virtual bool
+    initializeDefaultDomainListInConstrutor(const MFrontModelData&) const;
+
+    void
+    writeInitializeParametersMethod(const MFrontGenericData&,
+				    const MFrontModelData&);
+
   }; // end of class MFrontGerminalModelInterface
 
 } // end of namespace mfront  

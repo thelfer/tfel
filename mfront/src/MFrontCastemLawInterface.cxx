@@ -31,7 +31,14 @@ namespace mfront
 
   void
   MFrontCastemLawInterface::reset(void)
-  {} // end of MFrontCastemLawInterface::reset(void)
+  {
+    if(this->headerFile.is_open()){
+      this->headerFile.close();
+    }
+    if(this->srcFile.is_open()){
+      this->srcFile.close();
+    }
+  } // end of MFrontCastemLawInterface::reset(void)
   
   void 
   MFrontCastemLawInterface::setVerboseMode(void)

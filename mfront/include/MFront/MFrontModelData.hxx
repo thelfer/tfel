@@ -27,7 +27,6 @@ namespace mfront
     {
       std::set<std::string> usedVariables;
       std::set<std::string> modifiedVariables;
-      std::set<std::string> domains;
       std::set<std::string> constantMaterialProperties;
       std::set<std::string> localParameters;
       std::set<std::string> globalParameters;

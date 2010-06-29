@@ -80,10 +80,7 @@ namespace mfront{
 
   MFrontCelaenoModelInterface::MFrontCelaenoModelInterface(void)
   {
-    this->hasDefaultConstructor     = false;
-    this->verboseMode = false;
-    this->debugMode   = false;
-    this->warningMode = false;
+    this->reset();
   } // end of MFrontCelaenoModelInterface::MFrontCelaenoModelInterface
 
   void
@@ -132,16 +129,14 @@ namespace mfront{
   MFrontCelaenoModelInterface::hasSpecializedConstructor(const MFrontModelData& data) const
   {
     MFrontModelData::FunctionContainer::const_iterator p;
+    if(data.domains.empty()){
+      return true;
+    }
     if(!data.localParameters.empty()){
       return true;
     }
     if(!data.domains.empty()){
       return true;
-    }
-    for(p=data.functions.begin();p!=data.functions.end();++p){
-      if(!p->domains.empty()){
-	return true;
-      }
     }
     return false;
   } // end of MFrontCelaenoModelInterface::hasSpecializedConstructor
@@ -179,8 +174,12 @@ namespace mfront{
   void
   MFrontCelaenoModelInterface::closeOutputFiles(void)
   {
-    this->headerFile.close();
-    this->srcFile.close();
+    if(this->headerFile.is_open()){
+      this->headerFile.close();
+    }
+    if(this->srcFile.is_open()){
+      this->srcFile.close();
+    }
   } // end of MFrontCelaenoModelInterface::closeOutputFiles()
   
   void
@@ -192,6 +191,9 @@ namespace mfront{
     MFrontModelData::FunctionContainer::const_iterator p2;
     bool found;
     this->hasDefaultConstructor=true;
+    if(data.domains.empty()){
+      this->hasDefaultConstructor=false;
+    }
     if(!data.localParameters.empty()){
       for(p=data.localParameters.begin();
 	  (p!=data.localParameters.end())&&(this->hasDefaultConstructor);++p){
@@ -352,9 +354,6 @@ namespace mfront{
       this->headerFile << ") const;\n\n";
       this->headerFile << "private:\n\n";
       this->headerFile << "friend class " << pdata.className <<";\n\n";
-      if(!p3->domains.empty()){
-	this->headerFile << "std::vector<std::string> domains;" << endl;
-      }
       for(p4=p3->globalParameters.begin();p4!=p3->globalParameters.end();++p4){
 	p = MFrontCelaenoModelInterface::findVariableDescription(data.globalParameters,*p4);
 	if(this->debugMode){
@@ -394,9 +393,7 @@ namespace mfront{
       }
       this->headerFile << endl;
     }
-    if(!data.domains.empty()){
-      this->headerFile << "std::vector<std::string> domains;\n";
-    }
+    this->headerFile << "std::vector<std::string> domains;\n";
     for(p=data.globalParameters.begin();p!=data.globalParameters.end();++p){
       if(this->debugMode){
 	this->headerFile << "#line " << p->lineNumber << " \"" 
@@ -756,37 +753,21 @@ namespace mfront{
 	assert(p4!=data.defaultValues.end());
 	this->writeAssignDefaultValue(pdata,p,p4);
       }
-      if(!data.domains.empty()){
-	for(p15=data.domains.begin();p15!=data.domains.end();++p15){
-	  this->srcFile << "this->smanager.getMatchingMaterialsNames(tmp,\"" << *p15 << "\");\n";
-	  this->srcFile << "for(ptr=tmp.begin();ptr!=tmp.end();++ptr){\n";
-	  this->srcFile << "if(find(this->domains.begin(),this->domains.end(),*ptr)!=this->domains.end()){\n";
-	  this->srcFile << "string msg(\"" << pdata.className << "::" << pdata.className << " : \");\n";
-	  this->srcFile << "msg += \"domain '\"+*ptr+\"' multiply defined\";\n";
-	  this->srcFile << "throw(runtime_error(msg));\n";
-	  this->srcFile << "}\n";
-	  this->srcFile << "this->domains.push_back(*ptr);\n";
-	  this->srcFile << "}\n";
-	}
+      if(data.domains.empty()){
+	string msg("MFrontCelaenoModelInterface::writeSrcFile : ");
+	msg += "no domain defined (internal error, we shall not reach this point)";
+	throw(runtime_error(msg));
       }
-      for(i=0,p11=data.functions.begin();p11!=data.functions.end();++p11,++i){
-	if(!p11->domains.empty()){
-	  string functor = "functor"+toString(i);
-	  for(p15=p11->domains.begin();p15!=p11->domains.end();++p15){
-	    this->srcFile << "this->smanager.getMatchingMaterialsNames(tmp,\"" << *p15 << "\");\n";
-	    this->srcFile << "for(ptr2=tmp.begin();ptr2!=tmp.end();++ptr2){\n";
-	    this->srcFile << "if(find(this->" << functor << ".domains.begin(),"
-			  << "this->" << functor << ".domains.end(),*ptr2)!=" 
-			  << "this->" << functor << ".domains.end()){\n";
-	    this->srcFile << "string msg(\"" << pdata.className << "::" 
-			  << pdata.className << " : \");\n";
-	    this->srcFile << "msg += \"domain '\"+*ptr2+\"' multiply defined\";\n";
-	    this->srcFile << "throw(runtime_error(msg));\n";
-	    this->srcFile << "}\n";
-	    this->srcFile << "this->" << functor << ".domains.push_back(*ptr2);\n";
-	    this->srcFile << "}\n";
-	  }
-	}
+      for(p15=data.domains.begin();p15!=data.domains.end();++p15){
+	this->srcFile << "this->smanager.getMatchingMaterialsNames(tmp,\"" << *p15 << "\");\n";
+	this->srcFile << "for(ptr=tmp.begin();ptr!=tmp.end();++ptr){\n";
+	this->srcFile << "if(find(this->domains.begin(),this->domains.end(),*ptr)!=this->domains.end()){\n";
+	this->srcFile << "string msg(\"" << pdata.className << "::" << pdata.className << " : \");\n";
+	this->srcFile << "msg += \"domain '\"+*ptr+\"' multiply defined\";\n";
+	this->srcFile << "throw(runtime_error(msg));\n";
+	this->srcFile << "}\n";
+	this->srcFile << "this->domains.push_back(*ptr);\n";
+	this->srcFile << "}\n";
       }
       this->srcFile << "this->initializeOutputsVariablesDepths();\n";
       this->srcFile << "this->initializeInputsVariablesDepths();\n";
@@ -822,26 +803,15 @@ namespace mfront{
 	}
 	++(specializedParametersNumber);
       }
-      if(!data.domains.empty()){
-	if(first){
-	  this->srcFile << "\"domains\"";
-	  first = false;
-	} else {
-	  this->srcFile << ",\n\"domains\"";
-	}
-	++(specializedParametersNumber);
+      // domain specialisation
+      if(first){
+	this->srcFile << "\"domain,domains\"";
+	first = false;
+      } else {
+	this->srcFile << ",\n\"domain,domains\"";
       }
-      for(p11=data.functions.begin();p11!=data.functions.end();++p11){
-	if(!p11->domains.empty()){
-	  if(first){
-	    this->srcFile << "\"" << p11->name << ".domains\"";
-	    first = false;
-	  } else {
-	    this->srcFile << ",\n\"" << p11->name << ".domains\"";
-	  }
-	  ++(specializedParametersNumber);
-	}
-      }
+      ++(specializedParametersNumber);
+      ++(specializedParametersNumber);
       this->srcFile << "};\n";
       this->srcFile << "vector<string> tmp;\n";
       this->srcFile << "map<string,Data>::const_iterator ptr;\n";
@@ -849,7 +819,7 @@ namespace mfront{
       this->srcFile << "vector<string>::const_iterator ptr3;\n";
       this->srcFile << "for(ptr=data.begin();ptr!=data.end();++ptr){\n";
       this->srcFile << "if(find(ValidParametersNames,ValidParametersNames+" 
-		    << data.localParameters.size()
+		    << specializedParametersNumber
 		    << ",ptr->first)==ValidParametersNames+"
 		    << specializedParametersNumber << "){\n";
       this->srcFile << "string msg(\"" << pdata.className << "::" << pdata.className << " : \");\n";
@@ -880,6 +850,20 @@ namespace mfront{
 		      << this->getGenTypeGetMethod(p->type) << "();\n";
 	this->srcFile << "}\n";
       }
+      this->srcFile << "if((data.find(\"domain\")!=data.end())||(data.find(\"domains\")!=data.end())){\n";
+      this->srcFile << "if(data.find(\"domain\")!=data.end()){\n";
+      this->srcFile << "ptr = data.find(\"domain\");\n";
+      this->srcFile << "this->smanager.getMatchingMaterialsNames(tmp,ptr->second.get<string>());\n";
+      this->srcFile << "for(ptr2=tmp.begin();ptr2!=tmp.end();++ptr2){\n";
+      this->srcFile << "if(find(this->domains.begin(),this->domains.end(),*ptr2)!=this->domains.end()){\n";
+      this->srcFile << "string msg(\"" << pdata.className << "::" << pdata.className << ": \");\n";
+      this->srcFile << "msg += \"domain '\"+*ptr2+\"' multiply defined\";\n";
+      this->srcFile << "throw(runtime_error(msg));\n";
+      this->srcFile << "}\n";
+      this->srcFile << "this->domains.push_back(*ptr2);\n";
+      this->srcFile << "}\n";
+      this->srcFile << "}\n";
+      this->srcFile << "if(data.find(\"domains\")!=data.end()){\n";
       this->srcFile << "ptr = data.find(\"domains\");\n";
       this->srcFile << "if(ptr!=data.end()){\n";
       this->srcFile << "if(!ptr->second.is<vector<string> >()){\n";
@@ -899,60 +883,28 @@ namespace mfront{
       this->srcFile << "this->domains.push_back(*ptr2);\n";
       this->srcFile << "}\n";
       this->srcFile << "}\n";
-      this->srcFile << "} else {\n";
-      for(p15=data.domains.begin();p15!=data.domains.end();++p15){
-	this->srcFile << "this->smanager.getMatchingMaterialsNames(tmp,\"" << *p15 << "\");\n";
-	this->srcFile << "for(ptr2=tmp.begin();ptr2!=tmp.end();++ptr2){\n";
-	this->srcFile << "if(find(this->domains.begin(),this->domains.end(),*ptr2)!=this->domains.end()){\n";
-	this->srcFile << "string msg(\"" << pdata.className << "::" 
-		      << pdata.className << " : \");\n";
-	this->srcFile << "msg += \"domain '\"+*ptr2+\"' multiply defined\";\n";
-	this->srcFile << "throw(runtime_error(msg));\n";
-	this->srcFile << "}\n";
-	this->srcFile << "this->domains.push_back(*ptr2);\n";
-	this->srcFile << "}\n";
-      }
       this->srcFile << "}\n";
-      for(i=0,p11=data.functions.begin();p11!=data.functions.end();++p11,++i){
-	if(!p11->domains.empty()){
-	  string functor = "functor"+toString(i);
-	  this->srcFile << "ptr = data.find(\"" << functor << ".domains\");\n";
-	  this->srcFile << "if(ptr!=data.end()){\n";
-	  this->srcFile << "if(!ptr->second.is<vector<string> >()){\n";
-	  this->srcFile << "string msg(\"" << pdata.className << "::" << pdata.className << " : \");\n";
-	  this->srcFile << "msg += \"invalid type for parameter '"+functor+".domains'\";\n";
-	  this->srcFile << "throw(runtime_error(msg));\n";
-	  this->srcFile << "}\n";
-	  this->srcFile << "for(ptr3=ptr->second.get<vector<string> >().begin();\n";
-	  this->srcFile << "ptr3!=ptr->second.get<vector<string> >().end();++ptr3){\n";
-	  this->srcFile << "this->smanager.getMatchingMaterialsNames(tmp,*ptr3);\n";
+      this->srcFile << "}\n";
+      this->srcFile << "} else {\n";
+      if(data.domains.empty()){
+	this->srcFile << "string msg(\"" << pdata.className << "::" << pdata.className << ": \");\n";
+	this->srcFile << "msg += \"no domain defined\";\n";
+	this->srcFile << "throw(runtime_error(msg));\n";
+      } else {
+	for(p15=data.domains.begin();p15!=data.domains.end();++p15){
+	  this->srcFile << "this->smanager.getMatchingMaterialsNames(tmp,\"" << *p15 << "\");\n";
 	  this->srcFile << "for(ptr2=tmp.begin();ptr2!=tmp.end();++ptr2){\n";
 	  this->srcFile << "if(find(this->domains.begin(),this->domains.end(),*ptr2)!=this->domains.end()){\n";
-	  this->srcFile << "string msg(\"" << pdata.className << "::" << pdata.className << ": \");\n";
+	  this->srcFile << "string msg(\"" << pdata.className << "::" 
+			<< pdata.className << " : \");\n";
 	  this->srcFile << "msg += \"domain '\"+*ptr2+\"' multiply defined\";\n";
 	  this->srcFile << "throw(runtime_error(msg));\n";
 	  this->srcFile << "}\n";
 	  this->srcFile << "this->domains.push_back(*ptr2);\n";
 	  this->srcFile << "}\n";
-	  this->srcFile << "}\n";
-	  this->srcFile << "} else {\n";
-	  for(p15=p11->domains.begin();p15!=p11->domains.end();++p15){
-	    this->srcFile << "this->smanager.getMatchingMaterialsNames(tmp,\"" << *p15 << "\");\n";
-	    this->srcFile << "for(ptr2=tmp.begin();ptr2!=tmp.end();++ptr2){\n";
-	    this->srcFile << "if(find(this->" << functor << ".domains.begin(),"
-			  << "this->" << functor << ".domains.end(),*ptr2)!=" 
-			  << "this->" << functor << ".domains.end()){\n";
-	    this->srcFile << "string msg(\"" << pdata.className << "::" 
-			  << pdata.className << " : \");\n";
-	    this->srcFile << "msg += \"domain '\"+*ptr2+\"' multiply defined\";\n";
-	    this->srcFile << "throw(runtime_error(msg));\n";
-	    this->srcFile << "}\n";
-	    this->srcFile << "this->" << functor << ".domains.push_back(*ptr2);\n";
-	    this->srcFile << "}\n";
-	  }
-	  this->srcFile << "}\n";
 	}
       }
+      this->srcFile << "}\n";
       this->srcFile << "this->initializeOutputsVariablesDepths();\n";
       this->srcFile << "this->initializeInputsVariablesDepths();\n";
       this->srcFile <<"} // end of "
@@ -976,8 +928,6 @@ namespace mfront{
     this->srcFile << "using namespace std;\n";
     this->srcFile << "using namespace pleiades::field;\n";
     this->srcFile << "using namespace pleiades::glossary;\n";
-    this->srcFile << "vector<string> tmp;\n";
-    this->srcFile << "vector<string>::const_iterator ptr;\n";
     for(p=data.globalParameters.begin();p!=data.globalParameters.end();++p){
       string name = this->getCelaenoVariableName(p->name,data);
       this->srcFile << "if(!data.contains(" << name << ")){\n";
@@ -999,11 +949,6 @@ namespace mfront{
 		    << this->getGenTypeGetMethod(p->type) << "(" << name << ");\n";
       this->srcFile << "}\n";
     }
-//     if(!data.initializeParameters.empty()){
-//       this->srcFile << "// initialize parameters\n";
-//       this->srcFile << data.initializeParameters;
-//       this->srcFile << endl;
-//     }
     this->srcFile << "this->initializeOutputsVariablesInitialValues(data);\n";
     if(!data.constantMaterialProperties.empty()){
       this->srcFile << "this->initializeConstantMaterialProperties(data);\n";
@@ -1020,8 +965,6 @@ namespace mfront{
       }
     }
     this->srcFile << "} // end of " << pdata.className << "::initialize\n\n";
-
-
     this->writeInitializeOutputsVariablesInitialValues(pdata,data);
     if(!data.constantMaterialProperties.empty()){
       this->writeInitializeConstantMaterialProperties(pdata,data);
@@ -1133,16 +1076,7 @@ namespace mfront{
       if(p11->useTimeIncrement){
 	this->srcFile << "this->" << functor << ".dt=dt;\n";
       }
-      if(!(p11->domains.empty())){
-	this->srcFile << "for(ptr=this->" << functor <<".domains.begin();ptr!=this->" << functor <<".domains.end();++ptr){\n";
-      } else {
-	if(data.domains.empty()){
-	  string msg("MFrontCelaenoModelInterface::writeSrcFile : ");
-	  msg += "no domain specified for function '"+p11->name+"'";
-	  throw(runtime_error(msg));
-	}
-	this->srcFile << "for(ptr=this->domains.begin();ptr!=this->domains.end();++ptr){\n";
-      }
+      this->srcFile << "for(ptr=this->domains.begin();ptr!=this->domains.end();++ptr){\n";
       this->srcFile << "MTFieldManager& mm = this->smanager.getMTFieldManager(*ptr);\n";
       for(p15=p11->usedVariables.begin();p15!=p11->usedVariables.end();++p15){
 	pair<string,unsigned short> dv = decomposeVariableName(data,*p15);
@@ -1246,8 +1180,8 @@ namespace mfront{
 	  throw(runtime_error(msg));
 	}
       }
+      this->srcFile << "}\n";
     }
-    this->srcFile << "}\n";
     this->srcFile << "} // end of " << pdata.className << "::execute\n\n";
     this->srcFile << "void\n" << pdata.className 
 		  << "::executeInitialPostProcessingTasks(const bool)\n{} // end of " << pdata.className 
@@ -1291,12 +1225,7 @@ namespace mfront{
 	  msg += "internal error, no depth found for variable '"+*p2+"' in function '"+p->name+"'";
 	  throw(runtime_error(msg));
 	}
-	if(!p->domains.empty()){
-	  this->srcFile << "for(ptr=this->" << functor << ".domains.begin();"
-			<< "ptr!=this->" << functor << ".domains.end();++ptr){\n";
-	} else {
-	  this->srcFile << "for(ptr=this->domains.begin();ptr!=this->domains.end();++ptr){\n";
-	}
+	this->srcFile << "for(ptr=this->domains.begin();ptr!=this->domains.end();++ptr){\n";
 	this->srcFile << "if(!this->outputsDepths[" << this->getCelaenoVariableName(*p2,data)
 		      << "].insert(make_pair(*ptr,";
 	this->srcFile << p3->second;
@@ -1333,12 +1262,7 @@ namespace mfront{
     for(i=0,p=data.functions.begin();p!=data.functions.end();++p,++i){
       for(p2=p->constantMaterialProperties.begin();p2!=p->constantMaterialProperties.end();++p2){
 	string functor = "functor"+toString(i);
-	if(!p->domains.empty()){
-	  this->srcFile << "for(ptr=this->" << functor << ".domains.begin();"
-			<< "ptr!=this->" << functor << ".domains.end();++ptr){\n";
-	} else {
-	  this->srcFile << "for(ptr=this->domains.begin();ptr!=this->domains.end();++ptr){\n";
-	}
+	this->srcFile << "for(ptr=this->domains.begin();ptr!=this->domains.end();++ptr){\n";
 	// getting material description
 	this->srcFile << "if(!data.hasMaterialDescription(*ptr)){\n";
 	this->srcFile << "string msg(\"" << pdata.className << "::initializeConstantMaterialProperties : \");\n";
@@ -1404,12 +1328,7 @@ namespace mfront{
       for(p2=p->modifiedVariables.begin();p2!=p->modifiedVariables.end();++p2){
 	string functor = "functor"+toString(i);
 	p3=data.initialValues.find(*p2);
-	if(!p->domains.empty()){
-	  this->srcFile << "for(ptr=this->" << functor << ".domains.begin();"
-			<< "ptr!=this->" << functor << ".domains.end();++ptr){\n";
-	} else {
-	  this->srcFile << "for(ptr=this->domains.begin();ptr!=this->domains.end();++ptr){\n";
-	}
+	this->srcFile << "for(ptr=this->domains.begin();ptr!=this->domains.end();++ptr){\n";
 	// getting material description
 	if(p3!=data.initialValues.end()){
 	  this->srcFile << "if(data.hasMaterialDescription(*ptr)){\n";
@@ -1487,43 +1406,47 @@ namespace mfront{
     map<string,unsigned short>::const_iterator p3;
     unsigned short i;
     this->srcFile << "void\n" << pdata.className << "::initializeInputsVariablesDepths(void)\n{\n";
-    this->srcFile << "using namespace std;\n";
-    this->srcFile << "using namespace pleiades::glossary;\n";
-    this->srcFile << "vector<string>::const_iterator ptr;\n";
-    for(i=0,p=data.functions.begin();p!=data.functions.end();++p,++i){
+    for(i=0,p=data.functions.begin();p!=data.functions.end();++p){
       for(p2=p->usedVariables.begin();p2!=p->usedVariables.end();++p2){
 	if(isInputVariable(data,*p2)){
-	  const string& v = decomposeVariableName(data,*p2).first;
-	  if(treatedVars.find(v)==treatedVars.end()){
-	    string functor = "functor"+toString(i);
-	    p3 = p->depths.find(v);
-	    if(p3==p->depths.end()){
-	      string msg("MFrontCelaenoModelInterface::writeInitializeInputsVariablesDepths : ");
-	      msg += "internal error, no depth found for variable '"+v+"' in function '"+p->name+"'";
-	      throw(runtime_error(msg));
-	    }
-	    if(!p->domains.empty()){
-	      this->srcFile << "for(ptr=this->" << functor << ".domains.begin();"
-			    << "ptr!=this->" << functor << ".domains.end();++ptr){\n";
-	    } else {
+	  ++i;
+	}
+      }
+    }
+    if(i!=0){
+      this->srcFile << "using namespace std;\n";
+      this->srcFile << "using namespace pleiades::glossary;\n";
+      this->srcFile << "vector<string>::const_iterator ptr;\n";
+      for(i=0,p=data.functions.begin();p!=data.functions.end();++p,++i){
+	for(p2=p->usedVariables.begin();p2!=p->usedVariables.end();++p2){
+	  if(isInputVariable(data,*p2)){
+	    const string& v = decomposeVariableName(data,*p2).first;
+	    if(treatedVars.find(v)==treatedVars.end()){
+	      string functor = "functor"+toString(i);
+	      p3 = p->depths.find(v);
+	      if(p3==p->depths.end()){
+		string msg("MFrontCelaenoModelInterface::writeInitializeInputsVariablesDepths : ");
+		msg += "internal error, no depth found for variable '"+v+"' in function '"+p->name+"'";
+		throw(runtime_error(msg));
+	      }
 	      this->srcFile << "for(ptr=this->domains.begin();ptr!=this->domains.end();++ptr){\n";
+	      this->srcFile << "map<string,unsigned short>& tmp = this->inputsDepths[" << this->getCelaenoVariableName(v,data) << "];\n";
+	      if(p3->second==0){
+		this->srcFile << "if(tmp.find(*ptr)==tmp.end()){\n";
+		this->srcFile << "tmp[*ptr]=0;\n";
+		this->srcFile << "}\n";
+	      } else {
+		this->srcFile << "if(tmp.find(*ptr)!=tmp.end()){\n";
+		this->srcFile << "if(tmp[*ptr]<" << p3->second << "){\n";
+		this->srcFile << "tmp[*ptr]=" << p3->second << ";\n";
+		this->srcFile << "}\n";
+		this->srcFile << "} else {\n";
+		this->srcFile << "tmp[*ptr]=" << p3->second << ";\n";
+		this->srcFile << "}\n";
+	      }
+	      this->srcFile << "}\n";
+	      treatedVars.insert(v);
 	    }
-	    this->srcFile << "map<string,unsigned short>& tmp = this->inputsDepths[" << this->getCelaenoVariableName(v,data) << "];\n";
-	    if(p3->second==0){
-	      this->srcFile << "if(tmp.find(*ptr)==tmp.end()){\n";
-	      this->srcFile << "tmp[*ptr]=0;\n";
-	      this->srcFile << "}\n";
-	    } else {
-	      this->srcFile << "if(tmp.find(*ptr)!=tmp.end()){\n";
-	      this->srcFile << "if(tmp[*ptr]<" << p3->second << "){\n";
-	      this->srcFile << "tmp[*ptr]=" << p3->second << ";\n";
-	      this->srcFile << "}\n";
-	      this->srcFile << "} else {\n";
-	      this->srcFile << "tmp[*ptr]=" << p3->second << ";\n";
-	      this->srcFile << "}\n";
-	    }
-	    this->srcFile << "}\n";
-	    treatedVars.insert(v);
 	  }
 	}
       }
@@ -1682,10 +1605,16 @@ namespace mfront{
   {
     this->headerFileName.clear();
     this->srcFileName.clear();
-    this->hasDefaultConstructor     = false;
+    this->hasDefaultConstructor = false;
     this->verboseMode = false;
     this->debugMode   = false;
     this->warningMode = false;
+    if(this->headerFile.is_open()){
+      this->headerFile.close();
+    }
+    if(this->srcFile.is_open()){
+      this->srcFile.close();
+    }
   } // end of MFrontCelaenoModelInterface::reset
 
   std::string

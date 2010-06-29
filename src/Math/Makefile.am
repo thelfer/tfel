@@ -85,6 +85,10 @@ libTFELMathParser_la_LIBADD = -L@top_builddir@/src/Exception/ \
 			      -L@top_builddir@/src/Math/      \
 			      -lTFELMath -lTFELException
 
+libTFELMathKriging_la_LIBADD = -L@top_builddir@/src/Exception/ \
+			       -L@top_builddir@/src/Math/      \
+			       -lTFELMath -lTFELException
+
 if HAVE_GSL
 libTFELMathParser_la_LIBADD += @GSLLIBS@
 endif

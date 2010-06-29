@@ -100,9 +100,6 @@ namespace mfront{
     treatConstantMaterialPropertyMethod(void);
 
     void
-    treatFunctionMethod(void);
-
-    void
     treatFunction(void);
 
     void

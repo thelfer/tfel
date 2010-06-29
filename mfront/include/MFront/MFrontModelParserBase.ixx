@@ -68,15 +68,6 @@ namespace mfront{
       p = this->callBacks.find(this->current->value);
       if(p==this->callBacks.end()){
 	bool found = false;
-	for(p3=this->functions.begin();(p3!=this->functions.end())&&(!found);){
-	  if(p3->name==this->current->value){
-	    found = true;
-	    this->currentVar = this->current->value;
-	    handler = &Child::treatFunctionMethod;
-	  } else {
-	    ++p3;
-	  }
-	}
 	for(p2=this->outputs.begin();(p2!=this->outputs.end())&&(!found);){
 	  if(p2->name==this->current->value){
 	    found = true;

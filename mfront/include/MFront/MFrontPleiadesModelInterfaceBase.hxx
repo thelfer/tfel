@@ -88,6 +88,10 @@ namespace mfront{
     virtual void
     writeHeaderFile(const MFrontGenericData&,
 		    const MFrontModelData&);
+
+    virtual void
+    writeSpecificPrivateMethodDeclaration(const MFrontGenericData&,
+					  const MFrontModelData&);
     
     virtual void
     writeSrcFile(const MFrontGenericData&,
@@ -103,7 +107,7 @@ namespace mfront{
 
     virtual void
     setOutputFileNames(const MFrontGenericData&) = 0;
-    
+
     virtual void
     writeGetGlobalParameter(const VarHandler&,
 			    const MFrontGenericData&,
@@ -114,12 +118,44 @@ namespace mfront{
 				     const MFrontGenericData&,
 				     const MFrontModelData&);
 
+    virtual std::string
+    getApplicationName(void) const = 0;
+
+    virtual void
+    generateDomainsList(const MFrontModelData&);
+
+    virtual void
+    writeFunctionCall(const MFrontModelData&,
+		      const std::vector<MFrontModelData::Function>&);
+
+    virtual void
+    writeInitializeOutputMethod(const MFrontGenericData&,
+				const MFrontModelData&);
+
+    virtual void
+    writeInitializeInputMethod(const MFrontGenericData&,
+			       const MFrontModelData&);
+
+    virtual void
+    writeInitializeParametersMethod(const MFrontGenericData&,
+				    const MFrontModelData&);
+
+    virtual void
+    writeInitializeMethod(const MFrontGenericData&,
+			  const MFrontModelData&);
+
+    virtual bool
+    initializeDefaultDomainListInConstrutor(const MFrontModelData&) const;
+
+    std::set<std::string> domains;
+
     std::ofstream headerFile;
     std::ofstream srcFile;
     std::string headerFileName;
     std::string srcFileName;
 
     bool hasDefaultConstructor;
+    bool hasSpecializedDomain;
     bool verboseMode;
     bool debugMode;
     bool warningMode;

@@ -7,6 +7,7 @@
 
 #include<sstream>
 #include<stdexcept>
+#include<algorithm>
 
 #include"MFront/ParserUtilities.hxx"
 #include"MFront/MFrontModelParserCommon.hxx"
@@ -238,7 +239,7 @@ namespace mfront{
       this->throwRuntimeError("MFrontModelParserCommon::treatDomain",
 			      "Expected to read a string (read '"+this->current->value+"').");
     }
-    if(this->current->value.size()<3){
+    if(this->current->value.size()<2){
       this->throwRuntimeError("MFrontModelParserCommon::treatDomain : ",
 			      "domain name too short.");
     }
@@ -604,112 +605,6 @@ namespace mfront{
     }
     this->functions.push_back(f);
   } // end of MFrontModelParserCommon::treatFunction(void)
-
-  void
-  MFrontModelParserCommon::treatFunctionMethod(void) 
-  {
-    using namespace std;
-    using namespace tfel::utilities;
-    string methodName;
-    string var;
-    FunctionContainer::iterator p;
-    vector<string>::const_iterator p2;
-    set<string>::const_iterator p3;
-    VarContainer::const_iterator p4;
-    string param;
-    bool found;
-    bool bend;
-    found=false;
-    for(p=this->functions.begin();(p!=this->functions.end())&&(!found);){
-      if(p->name==this->currentVar){
-	found = true;
-      } else {
-	++p;
-      }
-    }
-    if(!found){
-      this->throwRuntimeError("MFrontModelParserCommon::treatFunctionMethod",
-			      "Internal error, no function named '"+this->currentVar+"'");
-    }
-    this->readSpecifiedToken("MFrontModelParserCommon::treatFunctionMethod",".");
-    this->checkNotEndOfFile("MFrontModelParserCommon::treatFunctionMethod");
-    methodName = this->current->value;
-    ++(this->current);
-    this->checkNotEndOfFile("MFrontModelParserCommon::treatFunctionMethod");
-    if(this->current->value!="("){
-      this->throwRuntimeError("MFrontModelParserCommon::treatFunctionMethod",
-			      "Unexpected token (expected '(', read '"+this->current->value+"').");
-    }
-    if(methodName=="setDomain"){
-      if(!p->domains.empty()){
-	this->throwRuntimeError("MFrontModelParserCommon::treatFunctionMethod",
-				"The domain of the function '"+this->currentVar+
-				"' has already been defined.");
-      }
-      ++(this->current);
-      this->checkNotEndOfFile("MFrontModelParserCommon::treatFunctionMethod",
-			      "Expected domain name.");
-      if(this->current->flag!=Token::String){
-	this->throwRuntimeError("MFrontModelParserCommon::treatFunctionMethod",
-				"Expected to read a string");
-      }
-      if(this->current->value.size()<3){
-	this->throwRuntimeError("MFrontModelParserCommon::treatFunctionMethod",
-				"Domain name too short.");
-      }
-      p->domains.insert(this->current->value.substr(1,this->current->value.size()-2));
-      ++(this->current);
-      this->checkNotEndOfFile("MFrontModelParserCommon::treatFunctionMethod",
-			      "Expected ')'.");
-      if(this->current->value!=")"){
-	this->throwRuntimeError("MFrontModelParserCommon::treatFunctionMethod",
-				"Unexpected token (expected ')', read '"+this->current->value+"').");
-      }
-    } else if(methodName=="setDomains"){
-      if(!p->domains.empty()){
-	this->throwRuntimeError("MFrontModelParserCommon::treatFunctionMethod",
-				"The domain of the function '"+this->currentVar+"' has already been defined.");
-      }
-      ++(this->current);
-      bend = false;
-      while((this->current!=this->fileTokens.end())&&(!bend)){
-	if(this->current->flag!=Token::String){
-	  this->throwRuntimeError("MFrontModelParserCommon::treatFunctionMethod",
-				  "Expected to read a string (read '"+this->current->value+"').");
-	}
-	if(this->current->value.size()<3){
-	  this->throwRuntimeError("MFrontModelParserCommon::treatFunctionMethod",
-				  "Domain name too short.");
-	}
-	if(!p->domains.insert(this->current->value.substr(1,this->current->value.size()-2)).second){
-	  this->throwRuntimeError("MFrontModelParserCommon::treatFunctionMethod",
-				  "Domain "+this->current->value.substr(1,this->current->value.size()-2)+
-				  " already defined.");
-	}
-	++(this->current);
-	this->checkNotEndOfFile("MFrontModelParserCommon::treatFunctionMethod");
-	if(this->current->value==","){
-	  ++this->current;
-	} else if(this->current->value==")"){
-	  bend = true;
-	} else {
-	  this->throwRuntimeError("MFrontModelParserCommon::treatFunctionMethod",
-				  "Expected ',' or ')' (read '"+this->current->value+"').");
-	}
-      }
-      this->checkNotEndOfFile("MFrontModelParserCommon::treatFunctionMethod");
-      if(p->domains.empty()){
-	this->throwRuntimeError("MFrontModelParserCommon::treatFunctionMethod",
-				"setDomains does not set any domain for function '"+this->currentVar+"'");
-      }
-    } else {
-      this->throwRuntimeError("MFrontModelParserCommon::treatFunctionMethod",
-			      "Unknown function method (read '"+methodName+"')."
-			      "Valid methods are setDomain, setDomains and setVariablesOrder.");
-    }
-    ++(this->current);
-    this->readSpecifiedToken("MFrontModelParserCommon::treatFunctionMethod",";");
-  } // end of MFrontModelParserCommon::treatFunctionMethod(void) 
 
   void
   MFrontModelParserCommon::treatOutput(void)

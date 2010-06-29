@@ -22,12 +22,18 @@ namespace mfront{
     return "celaeno1.3";
   } // end of MFrontPleiadesModelInterfaceBase::getName(void)
 
+  std::string
+  MFrontCelaenoModelInterface_v1_3::getApplicationName(void) const
+  {
+    return "Celaeno-1_3";
+  } // end of MFrontCelaenoModelInterface_v1_3::getLibraryBaseName
+
   void
   MFrontCelaenoModelInterface_v1_3::setOutputFileNames(const MFrontGenericData& pdata)
   {
-    this->headerFileName  = "include/Pleiades/PMetier/PModels/"+pdata.className;
+    this->headerFileName  = "Pleiades/PMetier/PModels/"+pdata.className;
     this->headerFileName += "-celaeno_v1.3.hh";
-    this->srcFileName  = "src/"+pdata.className;
+    this->srcFileName  = pdata.className;
     this->srcFileName += "-celaeno_v1.3.cpp";
   } // end of MFrontCelaenoModelInterface_v1_3::setOutputFileNames(void)
   

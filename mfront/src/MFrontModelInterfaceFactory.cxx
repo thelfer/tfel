@@ -70,7 +70,7 @@ namespace mfront{
 
   void 
   MFrontModelInterfaceFactory::registerInterfaceCreator(const std::string& interfaceName,
-							    const MFrontModelInterfaceFactory::InterfaceCreator f)
+							const MFrontModelInterfaceFactory::InterfaceCreator f)
   {
     using namespace std;
     this->getInterfaceCreatorsMap().insert(make_pair(interfaceName,f));

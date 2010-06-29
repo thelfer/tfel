@@ -1333,7 +1333,7 @@ namespace mfront{
       }
       // CXXFLAGS
       if(!cppSources.empty()){
-	this->makeFile << "CXXFLAGS := -Wall ";
+	this->makeFile << "CXXFLAGS := -Wall -Wfatal-errors ";
 #ifndef __CYGWIN__
 	this->makeFile << "-ansi ";
 #endif /* __CYGWIN__ */
@@ -1352,7 +1352,7 @@ namespace mfront{
       }
       // CFLAGS
       if(!cSources.empty()){
-	this->makeFile << "CFLAGS := -W -Wall ";
+	this->makeFile << "CFLAGS := -W -Wall -Wfatal-errors ";
 #ifndef __CYGWIN__
 	this->makeFile << "-ansi -std=c99 ";
 #endif /* __CYGWIN__ */
@@ -1641,6 +1641,9 @@ namespace mfront{
     using namespace std;
     using namespace tfel::system;
     typedef map<string,pair<vector<string>,vector<string> > > Target;
+    typedef MFrontLawInterfaceFactory       MLIF;
+    typedef MFrontBehaviourInterfaceFactory MBIF;
+    typedef MFrontModelInterfaceFactory     MMIF;
     vector<pair<string,string> > errors;
     vector<string> tmp;
     set<string>::const_iterator p;
@@ -1648,6 +1651,9 @@ namespace mfront{
     Target::iterator p3;
     set<string>::const_iterator p5;
     vector<pair<string,string> >::const_iterator p6;
+    MLIF& mlif = MLIF::getMFrontLawInterfaceFactory();
+    MBIF& mbif = MBIF::getMFrontBehaviourInterfaceFactory();
+    MMIF& mmif = MMIF::getMFrontModelInterfaceFactory();
     systemCall::mkdir("src");
     systemCall::mkdir("include");
     if(this->specifiedTargets.empty()){
@@ -1667,6 +1673,10 @@ namespace mfront{
 	try{
 	  this->treatFile();
 	} catch(exception& e){
+	  // Some clean-up
+	  mlif.reset();
+	  mbif.reset();
+	  mmif.reset();
 	  errors.push_back(pair<string,string>(*p,e.what()));
 	}
       }

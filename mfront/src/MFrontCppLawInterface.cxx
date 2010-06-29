@@ -31,7 +31,14 @@ namespace mfront
 
   void
   MFrontCppLawInterface::reset(void)
-  {} // end of MFrontCppLawInterface::reset(void)
+  {
+    if(this->headerFile.is_open()){
+      this->headerFile.close();
+    }
+    if(this->srcFile.is_open()){
+      this->srcFile.close();
+    }
+  } // end of MFrontCppLawInterface::reset(void)
   
   void 
   MFrontCppLawInterface::setVerboseMode(void)

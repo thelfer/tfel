@@ -47,7 +47,11 @@ namespace mfront
 
   void
   MFrontGnuplotLawInterface::reset(void)
-  {} // end of MFrontGnuplotLawInterface::reset
+  {
+    if(this->srcFile){
+      this->srcFile.close();
+    }
+  } // end of MFrontGnuplotLawInterface::reset
   
   void 
   MFrontGnuplotLawInterface::setVerboseMode(void)

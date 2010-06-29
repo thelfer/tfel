@@ -23,7 +23,14 @@ namespace mfront
 
   void
   MFrontCLawInterfaceBase::reset(void)
-  {} // end of MFrontCLawInterfaceBase::reset(void)
+  {
+    if(this->headerFile.is_open()){
+      this->headerFile.close();
+    }
+    if(this->srcFile.is_open()){
+      this->srcFile.close();
+    }
+  } // end of MFrontCLawInterfaceBase::reset(void)
   
   void 
   MFrontCLawInterfaceBase::setVerboseMode(void)
