@@ -805,10 +805,10 @@ namespace mfront{
       }
       // domain specialisation
       if(first){
-	this->srcFile << "\"domain,domains\"";
+	this->srcFile << "\"domain\",\"domains\"";
 	first = false;
       } else {
-	this->srcFile << ",\n\"domain,domains\"";
+	this->srcFile << ",\n\"domain\",\"domains\"";
       }
       ++(specializedParametersNumber);
       ++(specializedParametersNumber);
