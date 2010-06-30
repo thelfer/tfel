@@ -25,6 +25,7 @@ namespace tfel
 
     struct TFEL_VISIBILITY_EXPORT ProcessManager
     {
+
       // a simple alias
       typedef pid_t ProcessId;
       // a simple alias
@@ -35,6 +36,13 @@ namespace tfel
       typedef rstreamView<true> rstream;
       // a simple alias
       typedef wstreamView<true> wstream;
+
+      struct TFEL_VISIBILITY_EXPORT Command
+      {
+	virtual bool execute(const StreamId,
+			     const StreamId) = 0;
+	virtual ~Command();
+      }; // end of struct Command
 
       enum RedirectionType{None,StdIn,StdOut,StdInAndOut};
       
@@ -76,7 +84,7 @@ namespace tfel
 		    const std::string&);
 
       /*
-       * execute the command and wait until is end
+       * execute the command and wait until its end
        * \param const std::string&, command to be executed. The first word
        * is the program name, the others options
        * \param const std::string&, name of a file to which the
@@ -99,6 +107,9 @@ namespace tfel
       
       rstream
       getOutputStream(const ProcessId);
+
+      ProcessManager::ProcessId
+      createProcess(ProcessManager::Command&);
       
       /*!
        * destructor.
@@ -107,6 +118,9 @@ namespace tfel
       ~ProcessManager();
       
     private:
+ 
+      TFEL_VISIBILITY_LOCAL void cleanUp(void);
+
       /*
        * create a new process
        * \param const std::string&, command to be executed. The first word
@@ -127,7 +141,6 @@ namespace tfel
 		    const StreamId *const,
 		    StreamMap&,StreamMap&);
 
-
       TFEL_VISIBILITY_LOCAL
       void sigChildHandler(const int);
 
@@ -137,7 +150,7 @@ namespace tfel
       TFEL_VISIBILITY_LOCAL void
       closeProcessFiles(const ProcessId);
       
-      struct Process
+      struct TFEL_VISIBILITY_LOCAL  Process
       {
 	ProcessId id;
 	bool isRunning;

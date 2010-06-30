@@ -224,6 +224,7 @@ namespace tfel
       using namespace std;
       map<int,map<unsigned short,SignalHandler *> >::iterator p;
       map<unsigned short,SignalHandler *>::iterator p2;
+      map<unsigned short,SignalHandler *>::iterator p3;
       bool found = false;
       sigset_t nSigSet;
       sigset_t oSigSet;
@@ -237,10 +238,13 @@ namespace tfel
 	while((p2!=p->second.end())&&(!found)){
 	  if(p2->first==id){
 	    delete p2->second;
-	    p->second.erase(p2);
+	    p3 = p2;
+	    ++p2;
+	    p->second.erase(p3);
 	    found = true;
+	  } else {
+	    ++p2;
 	  }
-	  ++p2;
 	}
       }
       // restoring the previous signal mask

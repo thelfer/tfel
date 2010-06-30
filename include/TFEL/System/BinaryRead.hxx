@@ -21,7 +21,7 @@ namespace tfel
     {
       static void exe(const int f,T& res)
       {
-	if(::read(f,static_cast<void*>(&res),sizeof(T))==1){
+	if(::read(f,static_cast<void*>(&res),sizeof(T))==-1){
 	  systemCall::throwSystemError("BinaryReader<T>::exe",errno);
 	}
       }

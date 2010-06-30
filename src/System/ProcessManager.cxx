@@ -32,6 +32,9 @@ namespace tfel
   namespace system
   {
 
+    ProcessManager::Command::~Command()
+    {} // end of ProcessManager::Command::~Command
+    
     ProcessManager::ProcessManager()
       : shallStopOnSignals(false)
     {
@@ -91,38 +94,42 @@ namespace tfel
       if((p=this->inputs.find(id))!=this->inputs.end()){
 	if(::close(p->second)==-1){
 	  ostringstream msg;
-	  msg << "ProcessManager::sigChildHandler : "
+	  msg << "ProcessManager::closeProcessFiles : "
 	      << "can't close file descriptor " << p->second
 		      << " associated with process " << id;
 	  systemCall::throwSystemError(msg.str(),errno);
 	}
+	this->inputs.erase(p);
       }
       if((p=this->outputs.find(id))!=this->outputs.end()){
 	if(::close(p->second)==-1){
 	  ostringstream msg;
-	  msg << "ProcessManager::sigChildHandler : "
+	  msg << "ProcessManager::closeProcessFiles : "
 	      << "can't close file descriptor " << p->second
 	      << " associated with process " << id;
 	  systemCall::throwSystemError(msg.str(),errno);
 	}
+	this->outputs.erase(p);
       }
       if((p=this->inputFiles.find(id))!=this->inputFiles.end()){
 	if(::close(p->second)==-1){
 	  ostringstream msg;
-	  msg << "ProcessManager::sigChildHandler : "
+	  msg << "ProcessManager::closeProcessFiles : "
 	      << "can't close file descriptor " << p->second
 	      << " associated with process " << id;
 	  systemCall::throwSystemError(msg.str(),errno);
 	}
+	this->inputFiles.erase(p);
       }
       if((p=this->outputFiles.find(id))!=this->outputFiles.end()){
 	if(::close(p->second)==-1){
 	  ostringstream msg;
-	  msg << "ProcessManager::sigChildHandler : "
+	  msg << "ProcessManager::closeProcessFiles : "
 	      << "can't close file descriptor " << p->second
 	      << " associated with process " << id;
 	  systemCall::throwSystemError(msg.str(),errno);
 	}
+	this->outputFiles.erase(p);
       }
     } // end of ProcessManager::closeProcessFiles
 
@@ -182,6 +189,85 @@ namespace tfel
 	}
       }
     } // end of ProcessManager::sigChildHandler
+
+    ProcessManager::ProcessId
+    ProcessManager::createProcess(ProcessManager::Command& cmd)
+    {
+      using namespace std;
+      typedef StreamMap::value_type MVType;
+      vector<string> tmp;
+      map<ProcessId,StreamId>::iterator p2;
+      char buf[3];
+      int  cfd[2]; //< pipe to the child
+      int  ffd[2]; //< pipe to the father
+      pid_t pid;
+      sigset_t nSigSet;
+      sigset_t oSigSet;
+      // creating pipes
+      if(pipe(ffd)==-1){
+	string msg("ProcessManager::createProcess : pipe creation failed");
+	systemCall::throwSystemError(msg,errno);
+      }
+      if(pipe(cfd)==-1){
+	string msg("ProcessManager::createProcess : pipe creation failed");
+	systemCall::throwSystemError(msg,errno);
+      }
+      // entering a critical section, dont want to be disturbed by signals
+      ::sigfillset(&nSigSet);
+      ::sigprocmask(SIG_BLOCK,&nSigSet,&oSigSet);
+      // forking
+      pid=fork();
+      if(pid==-1){
+	// fork failed
+	// closing the pipes
+	close(cfd[0]);
+	close(cfd[1]);
+	close(ffd[0]);
+	close(ffd[1]);
+	string msg("ProcessManager::createProcess : fork failed");
+	systemCall::throwSystemError(msg,errno);
+      }
+      if(pid==0){
+	ssize_t readChar;
+	// the child 
+	close(ffd[0]);
+	close(cfd[1]);
+	// we are in the child
+	// clean up
+	this->processes.clear();
+	this->inputs.clear();
+	this->outputs.clear();
+	this->inputFiles.clear();
+	this->outputFiles.clear();
+	// restoring the previous signal mask
+	::sigprocmask(SIG_SETMASK,&oSigSet,0);
+	// wait that the father has made its administrative job
+	while((readChar=read(cfd[0],buf,2u))==-1){
+	  if(errno!=EINTR)
+	    break;
+	}
+	assert(readChar==2);
+	if(!cmd.execute(cfd[0],ffd[1])){
+	  exit(EXIT_FAILURE);
+	}
+	exit(EXIT_SUCCESS);
+      }
+      // here we are in the father
+      close(ffd[1]);
+      close(cfd[0]);
+      // registering
+      this->inputs.insert(MVType(pid,cfd[1]));
+      this->outputs.insert(MVType(pid,ffd[0]));
+      Process proc;
+      proc.id = pid;
+      proc.isRunning = true;
+      this->processes.push_back(proc);
+      // registering is made, tell the child
+      write(cfd[1],"OK",2u);
+      // the pipe was broken, which means that exec succeed
+      ::sigprocmask(SIG_SETMASK,&oSigSet,0);
+      return pid;
+    } // end of ProcessManager::createProcess
 
     ProcessManager::ProcessId
     ProcessManager::createProcess(const std::string& cmd,
@@ -270,7 +356,7 @@ namespace tfel
 	close(cfd[0]);
 	// restoring the previous signal mask
 	::sigprocmask(SIG_SETMASK,&oSigSet,0);
-	// calling the external process
+	// calling the command
 	execvp(argv[0],argv);
 	// called failed, tells the father, free memory and quit
 	write(ffd[1],"NO",2u);
