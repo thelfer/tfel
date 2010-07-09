@@ -734,7 +734,7 @@ namespace tfel{
     CxxTokenizer::printFileTokens(std::ostream& out) const
     {
       using namespace std;
-      TokensContainer::const_iterator p;
+      const_iterator p;
       p=this->fileTokens.begin();
       unsigned short line = p->line;
       for(p=this->fileTokens.begin();p!=this->fileTokens.end();++p){
@@ -949,13 +949,13 @@ namespace tfel{
 
     } // end of CxxTokenizer::beautifyCode
 
-    CxxTokenizer::TokensContainer::const_iterator
+    CxxTokenizer::const_iterator
     CxxTokenizer::begin(void) const
     {
       return this->fileTokens.begin();
     } // end of CxxTokenizer::begin
 
-    CxxTokenizer::TokensContainer::const_iterator
+    CxxTokenizer::const_iterator
     CxxTokenizer::end(void) const
     {
       return this->fileTokens.end();
@@ -964,13 +964,14 @@ namespace tfel{
     void
     CxxTokenizer::clear(void)
     {
+      this->cStyleCommentOpened = false;
       this->fileTokens.clear();
     } // end of CxxTokenizer::end
 
     void
     CxxTokenizer::checkNotEndOfLine(const std::string& method,
-				    TokensContainer::const_iterator& p, 
-				    const TokensContainer::const_iterator pe)
+				    CxxTokenizer::const_iterator& p, 
+				    const CxxTokenizer::const_iterator pe)
     {
       using namespace std;
       if(p==pe){
@@ -983,8 +984,8 @@ namespace tfel{
     void
     CxxTokenizer::checkNotEndOfLine(const std::string& method,
 				    const std::string& error,
-				    TokensContainer::const_iterator& p, 
-				    const TokensContainer::const_iterator pe)
+				    CxxTokenizer::const_iterator& p, 
+				    const CxxTokenizer::const_iterator pe)
     {
       using namespace std;
       if(p==pe){
@@ -1000,11 +1001,11 @@ namespace tfel{
     void
     CxxTokenizer::readSpecifiedToken(const std::string& method,
 				     const std::string& value,
-				     TokensContainer::const_iterator& p, 
-				     const TokensContainer::const_iterator pe)
+				     CxxTokenizer::const_iterator& p, 
+				     const CxxTokenizer::const_iterator pe)
     {
       using namespace std;
-      this->checkNotEndOfLine(method,"expected '"+value+"'",p,pe);
+      CxxTokenizer::checkNotEndOfLine(method,"expected '"+value+"'",p,pe);
       if(p->value!=value){
 	string msg(method);
 	msg += " : unexpected token '"+p->value+"'";
@@ -1015,12 +1016,12 @@ namespace tfel{
     } // end of CxxTokenizer::readSpecifiedToken
 
     std::string
-    CxxTokenizer::readString(TokensContainer::const_iterator& p, 
-			     const TokensContainer::const_iterator pe)
+    CxxTokenizer::readString(CxxTokenizer::const_iterator& p, 
+			     const CxxTokenizer::const_iterator pe)
     {
       using namespace std;
       using namespace tfel::utilities;
-      this->checkNotEndOfLine("CxxTokenizer::readString","",p,pe);
+      CxxTokenizer::checkNotEndOfLine("CxxTokenizer::readString","",p,pe);
       if(p->flag!=Token::String){
 	string msg("CxxTokenizer::readString : ");
 	msg += "expected to read a string (read '"+p->value+"').\n";
@@ -1037,13 +1038,13 @@ namespace tfel{
     } // end of CxxTokenizer::readString
 
     double
-    CxxTokenizer::readDouble(TokensContainer::const_iterator& p, 
-			     const TokensContainer::const_iterator pe)
+    CxxTokenizer::readDouble(CxxTokenizer::const_iterator& p, 
+			     const CxxTokenizer::const_iterator pe)
       
     {
       using namespace std;
       double res;
-      this->checkNotEndOfLine("CxxTokenizer::readDouble","expected number",p,pe);
+      CxxTokenizer::checkNotEndOfLine("CxxTokenizer::readDouble","expected number",p,pe);
       istringstream is(p->value);
       is >> res;
       if(!is&&(!is.eof())){
@@ -1057,12 +1058,12 @@ namespace tfel{
     } // end of CxxTokenizer::readDouble
 
     unsigned int
-    CxxTokenizer::readUnsignedInt(TokensContainer::const_iterator& p, 
-				  const TokensContainer::const_iterator pe)
+    CxxTokenizer::readUnsignedInt(CxxTokenizer::const_iterator& p, 
+				  const CxxTokenizer::const_iterator pe)
     {
       using namespace std;
       unsigned int res;
-      this->checkNotEndOfLine("CxxTokenizer::readUnsignedInt","expected number",p,pe);
+      CxxTokenizer::checkNotEndOfLine("CxxTokenizer::readUnsignedInt","expected number",p,pe);
       istringstream is(p->value);
       is >> res;
       if(!is&&(!is.eof())){
@@ -1074,6 +1075,12 @@ namespace tfel{
       ++p;
       return res;
     } // end of CxxTokenizer::readUnsignedInt
+
+    CxxTokenizer::size_type
+    CxxTokenizer::size() const
+    {
+      return this->fileTokens.size();
+    } // end of CxxTokenizer::size
 
   } // end of namespace utilities
 

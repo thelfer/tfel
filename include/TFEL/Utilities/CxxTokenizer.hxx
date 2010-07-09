@@ -6,8 +6,8 @@
  * \date   12 nov 2006
  */
 
-#ifndef _LIB_TFEL_CPPTOKENIZER_HXX_
-#define _LIB_TFEL_CPPTOKENIZER_HXX_ 
+#ifndef _LIB_TFEL_CXXTOKENIZER_HXX_
+#define _LIB_TFEL_CXXTOKENIZER_HXX_ 
 
 #include<string>
 #include<vector>
@@ -26,6 +26,8 @@ namespace tfel{
     {
     
       typedef std::list<Token> TokensContainer;
+      typedef TokensContainer::const_iterator const_iterator;
+      typedef TokensContainer::size_type size_type;
 
       static bool
       isValidIdentifier(const std::string&,const bool=true);
@@ -33,6 +35,10 @@ namespace tfel{
       CxxTokenizer();
 
       CxxTokenizer(const std::string&);
+
+      template<typename InputIterator>
+      void import(const InputIterator,
+		  const InputIterator);
     
       void openFile(const std::string&);
 
@@ -48,40 +54,43 @@ namespace tfel{
 
       void extractNumbers(const bool);
 
-      void
+      static void
       checkNotEndOfLine(const std::string&,
-			TokensContainer::const_iterator&, 
-			const TokensContainer::const_iterator);
+			const_iterator&, 
+			const const_iterator);
 
-      void
+      static void
       checkNotEndOfLine(const std::string&,
 			const std::string&,
-			TokensContainer::const_iterator&, 
-			const TokensContainer::const_iterator);
+			const_iterator&, 
+			const const_iterator);
 
-      void
+      static void
       readSpecifiedToken(const std::string&,
 			 const std::string&,
-			 TokensContainer::const_iterator&, 
-			 const TokensContainer::const_iterator);
+			 const_iterator&, 
+			 const const_iterator);
 
-      unsigned int
-      readUnsignedInt(TokensContainer::const_iterator&, 
-		      const TokensContainer::const_iterator);
+      static unsigned int
+      readUnsignedInt(const_iterator&, 
+		      const const_iterator);
 
-      std::string
-      readString(TokensContainer::const_iterator&, 
-		 const TokensContainer::const_iterator);
+      static std::string
+      readString(const_iterator&, 
+		 const const_iterator);
       
-      double
-      readDouble(TokensContainer::const_iterator&, 
-		 const TokensContainer::const_iterator);	
+      static double
+      readDouble(const_iterator&, 
+		 const const_iterator);	
 
-      TokensContainer::const_iterator
+      const_iterator
       begin(void) const;
 
-      TokensContainer::const_iterator
+      const_iterator
       end(void) const;
+
+      size_type
+      size() const;
 
     private:
 
@@ -149,5 +158,6 @@ namespace tfel{
 
 } // end of namespace tfel
 
-#endif /* _LIB_TFEL_CPPTOKENIZER_HXX */
+#include"TFEL/Utilities/CxxTokenizer.ixx"
 
+#endif /* _LIB_TFEL_CXXTOKENIZER_HXX */

@@ -414,6 +414,7 @@ nobase_include_HEADERS= TFEL/FiniteElement/Element/ElementsManager.ixx          
 			TFEL/Utilities/ArgumentParserBase.ixx                                         \
 			TFEL/Utilities/CxxKeywords.hxx                                                \
 			TFEL/Utilities/CxxTokenizer.hxx                                               \
+			TFEL/Utilities/CxxTokenizer.ixx                                               \
 		 	TFEL/Utilities/Token.hxx                                                      \
 			TFEL/Utilities/ContainerRebind.hxx                                            \
 			TFEL/Utilities/MultipleDequeVector/MultipleDequeVector.hxx	              \

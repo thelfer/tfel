@@ -149,6 +149,31 @@ namespace tfel
     } // end of ProcessManager::terminateHandler
 
     void
+    ProcessManager::setProcessExitStatus(ProcessManager::Process& p,
+					 const int status)
+    {
+      using namespace std;
+      if((::processManager_wifexited(status))||(::processManager_wifsignaled(status))){
+	if((::processManager_wifexited(status))){
+	  // process died normally
+	  p.exitStatus=true;
+	  p.exitValue=::processManager_wexitstatus(status);
+	} else {
+	  // process died du to to a signal
+	  p.exitStatus=false;
+	  p.exitValue=-1;
+	}
+	this->closeProcessFiles(p.id);
+	p.isRunning = false;
+      } else if(!::processManager_wifstopped(status)){
+	ostringstream msg;
+	msg << "ProcessManager::sigChildHandler : "
+	    << "unknown status for child " << p.id;
+	systemCall::throwSystemError(msg.str(),errno);
+      }
+    } // end of ProcessManager::setProcessExitStatus
+
+    void
     ProcessManager::sigChildHandler(const int)
     {
       using namespace std;
@@ -162,29 +187,7 @@ namespace tfel
 	if(p->isRunning){
 	  ret = waitpid(p->id,&status,WNOHANG);
 	  if(ret==p->id){
-	    if((::processManager_wifexited(status))||(::processManager_wifsignaled(status))){
-	      if((::processManager_wifexited(status))){
-		// process died normally
-		p->exitStatus=true;
-		p->exitValue=::processManager_wexitstatus(status);
-	      } else {
-		// process died du to to a signal
-		p->exitStatus=false;
-		p->exitValue=-1;
-	      }
-	      this->closeProcessFiles(p->id);
-	      p->isRunning = false;
-	    } else if(!::processManager_wifstopped(status)){
-	      ostringstream msg;
-	      msg << "ProcessManager::sigChildHandler : "
-		  << "unknown status for child " << p->id;
-	      systemCall::throwSystemError(msg.str(),errno);
-	    }
-	  } else if(ret==-1){
-	    ostringstream msg;
-	    msg << "ProcessManager::sigChildHandler : "
-		<< "waitpid failed for child " << p->id;
-	    systemCall::throwSystemError(msg.str(),errno);
+	    this->setProcessExitStatus(*p,status);
 	  }
 	}
       }
@@ -532,6 +535,24 @@ namespace tfel
 	this->sendSignal(pid,SIGKILL);
       }
     }  // end of ProcessManager::killProcess
+
+    void
+    ProcessManager::wait(const ProcessId pid)
+    {
+      using namespace std;
+      int status;
+      vector<Process>::reverse_iterator p = this->findProcess(pid);
+      if(p==this->processes.rend()){
+	ostringstream msg;
+	msg << "ProcessManager::sendSignal : process " << pid << " is not registred";
+	throw(SystemError(msg.str()));
+      }
+      if(!p->isRunning){
+	return;
+      }
+      ::waitpid(pid,&status,0);
+      this->setProcessExitStatus(*p,status);
+    } // end of ProcessManager::wait
 
     void
     ProcessManager::sendSignal(const ProcessId pid,const int signal)

@@ -662,6 +662,15 @@ namespace mfront{
       this->behaviourFile << "this->computeStress();\n";
       this->behaviourFile << "this->computeFdF();\n";
     }
+    this->behaviourFile << "error=norm(this->fzeros);\n";
+    this->behaviourFile << "converge = ((error)/(real(" << n2 << "))<";
+    this->behaviourFile << "(" << this->className << "::epsilon));\n";
+    if(this->debugMode){
+      this->behaviourFile << "cout << \"" << this->className
+			  << "::integrate() : iteration \" "
+			  << "<< this->iter << \" : \" << (error)/(real(" << n2 << ")) << endl;\n";
+    }
+    this->behaviourFile << "if(!converge){\n";
     if(this->algorithm==MFrontImplicitParser::NEWTONRAPHSON){
       this->behaviourFile << "try{" << endl;
       this->behaviourFile << "TinyMatrixSolve<" << n2
@@ -704,14 +713,7 @@ namespace mfront{
       this->behaviourFile << "this->zeros   -= (1-" << this->className << "::relaxationCoefficient) * (this->zeros-this->zeros_1);\n";
       this->behaviourFile << "}\n";
     }
-    this->behaviourFile << "error=norm(this->zeros-this->zeros_1);\n";
-    this->behaviourFile << "converge = ((error)/(real(" << n2 << "))<";
-    this->behaviourFile << "(" << this->className << "::epsilon));\n";
-    if(this->debugMode){
-      this->behaviourFile << "cout << \"" << this->className
-			  << "::integrate() : iteration \" "
-			  << "<< this->iter << \" : \" << (error)/(real(" << n2 << ")) << endl;\n";
-    }
+    this->behaviourFile << "}\n";
     this->behaviourFile << "}\n";
     this->behaviourFile << "if(this->iter==" << this->className << "::iterMax){\n";
     if(this->debugMode){

@@ -5,6 +5,9 @@
  * \date   09 Nov 2007
  */
 
+#ifndef _LIB_TFEL_SYSTEM_PROCESSMANAGER_H_
+#define _LIB_TFEL_SYSTEM_PROCESSMANAGER_H_ 
+
 #include<string>
 #include<vector>
 #include<map>
@@ -108,9 +111,12 @@ namespace tfel
       rstream
       getOutputStream(const ProcessId);
 
-      ProcessManager::ProcessId
+      ProcessId
       createProcess(ProcessManager::Command&);
       
+      void
+      wait(const ProcessId);
+
       /*!
        * destructor.
        * kills all registred process and close all input/output file descriptors.
@@ -119,6 +125,14 @@ namespace tfel
       
     private:
  
+      struct TFEL_VISIBILITY_LOCAL  Process
+      {
+	ProcessId id;
+	bool isRunning;
+	bool exitStatus;
+	int exitValue;
+      }; // end of struct Process
+
       TFEL_VISIBILITY_LOCAL void cleanUp(void);
 
       /*
@@ -148,18 +162,12 @@ namespace tfel
       void terminateHandler(const int);
 
       TFEL_VISIBILITY_LOCAL void
+      setProcessExitStatus(Process&,
+			   const int);
+      
+      TFEL_VISIBILITY_LOCAL void
       closeProcessFiles(const ProcessId);
       
-      struct TFEL_VISIBILITY_LOCAL  Process
-      {
-	ProcessId id;
-	bool isRunning;
-	bool exitStatus;
-	int exitValue;
-      }; // end of struct Process
-
-      std::vector<Process> processes;
-
       TFEL_VISIBILITY_LOCAL 
       std::vector<Process>::reverse_iterator
       findProcess(const ProcessId);
@@ -167,6 +175,8 @@ namespace tfel
       TFEL_VISIBILITY_LOCAL 
       std::vector<Process>::const_reverse_iterator
       findProcess(const ProcessId) const;
+
+      std::vector<Process> processes;
 
       StreamMap inputs;
       StreamMap outputs;
@@ -189,3 +199,5 @@ namespace tfel
   } // end of namespace system
 
 } // end of namespace tfel
+
+#endif /* _LIB_TFEL_SYSTEM_PROCESSMANAGER_H_ */
