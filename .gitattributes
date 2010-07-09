@@ -494,16 +494,12 @@ include/TFEL/Utilities/Token.hxx -text
 include/TFEL/Utilities/Tuple.hxx -text
 include/TFEL/Utilities/Tuple.ixx -text
 m4/castem.m4 -text
-m4/gettext.m4 -text
 m4/gxx.m4 -text
-m4/iconv.m4 -text
 m4/intel.m4 -text
 m4/lib-ld.m4 -text
-m4/lib-link.m4 -text
 m4/lib-prefix.m4 -text
 m4/mp_with_curses.m4 -text
 m4/nls.m4 -text
-m4/po.m4 -text
 m4/progtest.m4 -text
 m4/vl_lib_readline.m4 -text
 mfront/CMakeLists.txt -text
@@ -671,7 +667,6 @@ mfront/tests/properties/test-c.c -text
 mfront/tests/properties/test-f.c -text
 po/ChangeLog -text
 po/LINGUAS -text
-po/Makefile.in.in -text
 po/Makevars -text
 po/Makevars.template -text
 po/POTFILES.in -text

@@ -26,15 +26,6 @@
 namespace mfront
 {
 
-  template<typename T>
-  std::string 
-  MFrontPythonLawInterface::toString(const T& src)
-  {
-    std::ostringstream os;
-    os << src;
-    return os.str();
-  }
-
   std::string
   MFrontPythonLawInterface::getName(void)
   {
@@ -78,30 +69,6 @@ namespace mfront
     return make_pair(false,current);
   } // end of treatKeyword
 
-  std::string
-  MFrontPythonLawInterface::makeUpperCase(const std::string& s)
-  {
-    using namespace std;
-    string res(s);
-    string::iterator p;
-    for(p=res.begin();p!=res.end();++p){
-      *p = static_cast<char>(toupper(*p));
-    }
-    return res;
-  }
-
-  std::string
-  MFrontPythonLawInterface::makeLowerCase(const std::string& s)
-  {
-    using namespace std;
-    string res(s);
-    string::iterator p;
-    for(p=res.begin();p!=res.end();++p){
-      *p = static_cast<char>(tolower(*p));
-    }
-    return res;
-  }
-
   MFrontPythonLawInterface::~MFrontPythonLawInterface()
   {}
 
@@ -113,7 +80,7 @@ namespace mfront
     using namespace std;
     map<string,vector<string> > libs;
     string pylib;
-    pylib = MFrontPythonLawInterface::makeLowerCase(getMaterialLawLibraryNameBase(lib,mat));
+    pylib = makeLowerCase(getMaterialLawLibraryNameBase(lib,mat));
     libs[pylib].push_back("-lm");
     return libs;
   } // end of MFrontPythonLawInterface::getGeneratedSources
@@ -126,7 +93,7 @@ namespace mfront
     using namespace std;
     map<string,vector<string> > inc;
     string pylib;
-    pylib = MFrontPythonLawInterface::makeLowerCase(getMaterialLawLibraryNameBase(lib,mat));
+    pylib = makeLowerCase(getMaterialLawLibraryNameBase(lib,mat));
     inc[pylib].push_back(TFEL_PYTHON_INCLUDES);
     return inc;
   } // end of MFrontPythonLawInterface::getGeneratedSources
@@ -140,7 +107,7 @@ namespace mfront
     map<string,vector<string> > src;
     string pylib;
     string pysrc;
-    pylib = MFrontPythonLawInterface::makeLowerCase(getMaterialLawLibraryNameBase(lib,mat));
+    pylib = makeLowerCase(getMaterialLawLibraryNameBase(lib,mat));
     if(lib.empty()){
       if(!mat.empty()){
 	pysrc = mat+"lawwrapper.cxx";
@@ -273,10 +240,10 @@ namespace mfront
     this->headerFile << " */\n\n";
 
     this->headerFile << "#ifndef _" 
-		     << MFrontPythonLawInterface::makeUpperCase(name)
+		     << makeUpperCase(name)
 		     << "_PYTHON_HH\n";
     this->headerFile << "#define _"
-		     << MFrontPythonLawInterface::makeUpperCase(name)
+		     << makeUpperCase(name)
 		     << "_PYTHON_HH\n\n";
     this->headerFile << "#include <Python.h>\n\n";
     this->headerFile << "#ifdef __cplusplus\n";
@@ -289,7 +256,7 @@ namespace mfront
     this->headerFile << "} // end of extern \"C\"\n";
     this->headerFile << "#endif /* __cplusplus */\n\n";
     this->headerFile << "#endif /* _"
-		     << MFrontPythonLawInterface::makeUpperCase(name)
+		     << makeUpperCase(name)
 		     << "_PYTHON_HH */\n";
 
     this->headerFile.close();
@@ -561,12 +528,12 @@ namespace mfront
     }
     wrapper << "{NULL, NULL, 0, NULL} /* Sentinel */\n};\n\n";
     wrapper << "PyMODINIT_FUNC MFRONT_SHAREDOBJ\ninit"
-	    << MFrontPythonLawInterface::makeLowerCase(getMaterialLawLibraryNameBase(lib,material))
+	    << makeLowerCase(getMaterialLawLibraryNameBase(lib,material))
 	    << "(void)\n";
     wrapper << "{\n";
     if(!material.empty()){
       wrapper << "(void) Py_InitModule(\""
-	      << MFrontPythonLawInterface::makeLowerCase(getMaterialLawLibraryNameBase(lib,material))
+	      << makeLowerCase(getMaterialLawLibraryNameBase(lib,material))
 	      << "\"," << material << "LawMethods);\n";
     } else {
       wrapper << "(void) Py_InitModule(\"materiallaw\",MaterialLawMethods);\n";
