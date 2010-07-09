@@ -18,7 +18,10 @@ namespace tfel{
 
   namespace math{
 
-        /*
+    template<typename T>
+    struct matrix;
+
+    /*!
      * Partial specialisation for functions.
      */
     template<typename T, typename Op>
