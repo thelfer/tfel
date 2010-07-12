@@ -667,6 +667,7 @@ mfront/tests/properties/test-c.c -text
 mfront/tests/properties/test-f.c -text
 po/ChangeLog -text
 po/LINGUAS -text
+po/Makefile.in.in -text
 po/Makevars -text
 po/Makevars.template -text
 po/POTFILES.in -text

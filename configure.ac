@@ -313,13 +313,12 @@ then
   AC_DEFINE(HAVE_PLEIADES)
 fi
 
-AC_OUTPUT([debug.sh
+AC_OUTPUT([debug.sh po/Makefile.in
 	   Makefile
 	   Doxyfile
 	   cmake/Makefile
 	   cmake/modules/Makefile
 	   include/Makefile
-	   po/Makefile.in
 	   src/Makefile
 	   src/Tests/Makefile
 	   src/Exception/Makefile
