@@ -51,10 +51,10 @@ namespace tfel
       
       ProcessManager();
 
-      void
+      virtual void
       killProcess(const ProcessId);
       
-      void
+      virtual void
       sendSignal(const ProcessId,const int = SIGTERM);
 
       /*
@@ -65,7 +65,7 @@ namespace tfel
        * redirected.
        * \return const ProcessId, the pid of the new process
        */
-      ProcessId
+      virtual ProcessId
       createProcess(const std::string&,
 		    const RedirectionType = None);
       
@@ -81,7 +81,7 @@ namespace tfel
        * if this name is void.
        * \return const ProcessId, the pid of the new process
        */
-      ProcessId
+      virtual ProcessId
       createProcess(const std::string&,
 		    const std::string&,
 		    const std::string&);
@@ -97,31 +97,35 @@ namespace tfel
        * new process standard output is redirected. This option is ignored
        * if this name is void.
        */
-      void
+      virtual void
       execute(const std::string&,
 	      const std::string& = "",
 	      const std::string& = "");
       
-      void
+      virtual void
       stopOnSignals(const bool);
 
-      wstream
+      virtual wstream
       getInputStream(const ProcessId);
       
-      rstream
+      virtual rstream
       getOutputStream(const ProcessId);
 
-      ProcessId
+      virtual ProcessId
       createProcess(ProcessManager::Command&);
       
-      void
+      virtual void
       wait(const ProcessId);
 
       /*!
        * destructor.
        * kills all registred process and close all input/output file descriptors.
        */
-      ~ProcessManager();
+      virtual ~ProcessManager();
+
+    protected:
+      
+      virtual void cleanUp(void);
       
     private:
  
@@ -132,8 +136,6 @@ namespace tfel
 	bool exitStatus;
 	int exitValue;
       }; // end of struct Process
-
-      TFEL_VISIBILITY_LOCAL void cleanUp(void);
 
       /*
        * create a new process

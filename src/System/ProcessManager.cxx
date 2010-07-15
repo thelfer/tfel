@@ -236,12 +236,7 @@ namespace tfel
 	close(ffd[0]);
 	close(cfd[1]);
 	// we are in the child
-	// clean up
-	this->processes.clear();
-	this->inputs.clear();
-	this->outputs.clear();
-	this->inputFiles.clear();
-	this->outputFiles.clear();
+	this->cleanUp();
 	// restoring the previous signal mask
 	::sigprocmask(SIG_SETMASK,&oSigSet,0);
 	// wait that the father has made its administrative job
@@ -786,6 +781,17 @@ namespace tfel
       }
       return p;
     } // end of ProcessManager::findProcess
+
+    void
+    ProcessManager::cleanUp(void)
+    {
+      // clean up
+      this->processes.clear();
+      this->inputs.clear();
+      this->outputs.clear();
+      this->inputFiles.clear();
+      this->outputFiles.clear();
+    } // end of ProcessManager::cleanUp
 
   } // end of namespace system
 
