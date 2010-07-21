@@ -1504,7 +1504,7 @@ namespace mfront{
 	    this->makeFile << sb << cc  << " ";
 	  }
 	  if(ldflags!=0){
-	    cout << "$(LDFLAGS) ";
+	    this->makeFile << "$(LDFLAGS) ";
 	  }
 	  this->makeFile << "-shared $^ -o $@ ";
 	  this->makeFile << this->getLibraryLinkDependencies(p2->first);
