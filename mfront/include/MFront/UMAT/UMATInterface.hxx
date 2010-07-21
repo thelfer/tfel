@@ -292,11 +292,6 @@ namespace umat{
 	      this->iData *= 0.5;
 	    }
 	  }
-#ifdef MFRONT_UMAT_VERBOSE
-	  std::cerr << "convergence : " 
-		    << static_cast<unsigned long>((this->dt)/dt_)
-		    << std::endl;
-#endif
 	  if((subSteps==UMATTraits<BV>::maximumSubStepping)&&(iterations!=0)){
 	    throw(UMATException("Maximum number of substepping reached"));
 	  }
