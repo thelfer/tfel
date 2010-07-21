@@ -22,6 +22,7 @@ namespace mfront{
       MFrontBehaviourParserBase<MFrontRungeKuttaParser>(),
       algorithm("RungeKutta4"),
       epsilon(1.e-8),
+      dtmin(0.),
       nbrOfEvaluation(4)
   {
     using namespace std;
@@ -29,6 +30,7 @@ namespace mfront{
     this->useStateVarTimeDerivative=true;
     // static variable
     this->registerStaticVariable("epsilon");
+    this->registerStaticVariable("dtmin");
     // Default state vars
     this->registerVariable("eel");
     this->registerVariable("deel");
@@ -50,6 +52,8 @@ namespace mfront{
     this->registerNewCallBack("@Derivative",&MFrontRungeKuttaParser::treatDerivative);
     this->registerNewCallBack("@ComputeStress",&MFrontRungeKuttaParser::treatComputeStress);
     this->registerNewCallBack("@Epsilon",&MFrontRungeKuttaParser::treatEpsilon);
+    this->registerNewCallBack("@MinimalTimeStep",
+			      &MFrontRungeKuttaParser::treatMinimalTimeStep);
     this->disableCallBack("@Integrator");
     this->disableCallBack("@ComputedVar");
   }
@@ -158,6 +162,26 @@ namespace mfront{
     this->readSpecifiedToken("MFrontRungeKuttaParser::treatEpsilon : ",";");
   } // end of MFrontRungeKuttaParser::treatEpsilon
 
+  void
+  MFrontRungeKuttaParser::treatMinimalTimeStep(void)
+  {
+    using namespace std;
+    this->checkNotEndOfFile("MFrontRungeKuttaParser::treatMinimalTimeStep",
+			    "Cannot read minimal time step value.");
+    istringstream flux(this->current->value);
+    flux >> this->dtmin;
+    if(flux.fail()){
+      this->throwRuntimeError("MFrontRungeKuttaParser::treatMinimalTimeStep",
+			      "Failed to read minimal time step value.");
+    }
+    if(this->dtmin<0.){
+      this->throwRuntimeError("MFrontRungeKuttaParser::treatMinimalTimeStep",
+			      "minimal time step value can't be negative.");
+    }
+    ++(this->current);
+    this->readSpecifiedToken("MFrontRungeKuttaParser::treatMinimalTimeStep : ",";");
+  } // end of MFrontRungeKuttaParser::treatEpsilon
+
   void MFrontRungeKuttaParser::treatAlgorithm(void)
   {
     using namespace std;
@@ -244,6 +268,7 @@ namespace mfront{
     string parserInitLocalVars;
 
     this->staticVars.push_back(StaticVarHandler("real","epsilon",0u,this->epsilon));
+    this->staticVars.push_back(StaticVarHandler("real","dtmin",0u,this->dtmin));
 
     if(this->computeStress.empty()){
       string msg("MFrontRungeKuttaParser::endsInputFileProcessing : ");
@@ -254,6 +279,11 @@ namespace mfront{
       string msg("MFrontRungeKuttaParser::endsInputFileProcessing : ");
       msg += "@Derivative was not defined.";
       throw(runtime_error(msg));
+    }
+    if(this->dtmin>0.){
+      parserInitLocalVars += "if(this->dt<" + this->className + "::dtmin){\n";
+      parserInitLocalVars += "this->dt=" + this->className + "::dtmin;\n";
+      parserInitLocalVars += "}\n";
     }
     parserInitLocalVars += "this->deto_ = (this->deto)/(this->dt);\n";
     for(p =this->stateVarsHolder.begin();p!=this->stateVarsHolder.end();++p){
@@ -646,7 +676,7 @@ namespace mfront{
     }
     this->behaviourFile << "error/=" << stateVarsSize << ";\n";
     this->behaviourFile << "// test for convergence\n";
-    this->behaviourFile << "if(error<this->epsilon){\n";
+    this->behaviourFile << "if(error<" << this->className << "::epsilon){\n";
     this->behaviourFile << "// Final Step\n";
     for(p =this->stateVarsHolder.begin();p!=this->stateVarsHolder.end();++p){
       this->behaviourFile << "this->" << p->name 
@@ -666,7 +696,7 @@ namespace mfront{
     this->behaviourFile << "if(error<100*std::numeric_limits<real>::min()){\n";
     this->behaviourFile << "corrector=real(0.01);\n";
     this->behaviourFile << "} else {\n";
-    this->behaviourFile << "corrector = pow(this->epsilon/error,0.2);\n";
+    this->behaviourFile << "corrector = pow(" << this->className << "::epsilon/error,0.2);\n";
     this->behaviourFile << "}\n";
     this->behaviourFile << "if(corrector<real(0.01f)){\n";
     this->behaviourFile << "dt_ *= real(0.01f);\n";
@@ -818,7 +848,7 @@ namespace mfront{
     }
     this->behaviourFile << "error/=" << stateVarsSize << ";\n";
     this->behaviourFile << "// test for convergence\n";
-    this->behaviourFile << "if(error<this->epsilon){\n";
+    this->behaviourFile << "if(error<" << this->className << "::epsilon){\n";
     this->behaviourFile << "// Final Step\n";
     for(p =this->stateVarsHolder.begin();p!=this->stateVarsHolder.end();++p){
       this->behaviourFile << "this->" << p->name 
@@ -835,7 +865,7 @@ namespace mfront{
     this->behaviourFile << "if(error<100*std::numeric_limits<real>::min()){\n";
     this->behaviourFile << "corrector=real(0.01);\n";
     this->behaviourFile << "} else {\n";
-    this->behaviourFile << "corrector = pow(this->epsilon/error,0.2);\n";
+    this->behaviourFile << "corrector = pow((" << this->className << "::epsilon)/error,0.2);\n";
     this->behaviourFile << "}\n";
     this->behaviourFile << "if(corrector<=real(0.01f)){\n";
     this->behaviourFile << "dt_ *= real(0.01f);\n";

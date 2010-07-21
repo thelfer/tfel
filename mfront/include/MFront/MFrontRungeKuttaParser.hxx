@@ -75,6 +75,8 @@ namespace mfront{
 
     void treatEpsilon(void);
 
+    void treatMinimalTimeStep(void);
+
     void treatAlgorithm(void);
 
     void treatComputeStress(void);
@@ -117,6 +119,7 @@ namespace mfront{
     std::string computeStress;
     std::string derivative;
     double epsilon;
+    double dtmin;
     unsigned short nbrOfEvaluation;
   };
 
