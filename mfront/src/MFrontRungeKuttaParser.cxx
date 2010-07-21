@@ -68,6 +68,7 @@ namespace mfront{
   {
     this->checkBehaviourFile();
     this->behaviourFile << "#include<limits>\n\n";
+    this->behaviourFile << "#include<stdexcept>\n\n";
     this->behaviourFile << "#include\"TFEL/Math/General/Abs.hxx\"\n\n";
   }
 
@@ -285,6 +286,11 @@ namespace mfront{
       parserInitLocalVars += "this->dt=" + this->className + "::dtmin;\n";
       parserInitLocalVars += "}\n";
     }
+    parserInitLocalVars += "if(this->dt<100*numeric_limits<real>::min()){\n";
+    parserInitLocalVars += "string msg(\"" + this->className + "::" + this->className +"\");\n";
+    parserInitLocalVars += "msg += \"time step too small.\";\n";
+    parserInitLocalVars += "throw(runtime_error(msg));\n";
+    parserInitLocalVars += "}\n";
     parserInitLocalVars += "this->deto_ = (this->deto)/(this->dt);\n";
     for(p =this->stateVarsHolder.begin();p!=this->stateVarsHolder.end();++p){
       currentVarName = p->name + "_";
