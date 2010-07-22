@@ -8,7 +8,7 @@
 #define INCLUDEDIR    "@includedir@"
 #define LIBDIR        "@libdir@"
 
-#ifdef CASTEM
+#ifdef HAVE_CASTEM
 #define CASTEMFLAGS "@CASTEM_CPPFLAGS@ -I@CASTEM_ROOT@/include"
 #endif
 
@@ -28,6 +28,11 @@ registerCallBack(const std::string&,
 
 static void
 treatOFlags(void);
+
+#ifdef HAVE_CASTEM
+static void
+treatCastem(void);
+#endif /* HAVE_CASTEM */
 
 static void
 treatExceptions(void);
@@ -49,9 +54,6 @@ treatUtilities(void);
 
 static void
 treatFiniteElement(void);
-
-static void
-treatMaterialLaw(void);
 
 static void
 treatAll(void);

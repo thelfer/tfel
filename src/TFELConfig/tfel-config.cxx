@@ -22,6 +22,9 @@ static bool utilities       = false;
 static bool finiteElement   = false;
 static bool material        = false;
 static bool tests           = false;
+#ifdef HAVE_CASTEM
+static bool castem          = false;
+#endif /* HAVE_CASTEM */
 static bool lsystem         = false;
 #ifdef USE_GRAPHICS
 static bool graphics        = false;
@@ -68,10 +71,6 @@ includeDir(void)
   inc += ' ';
   inc += COMPILER_SPECIFIC_OPTIONS;
 #endif
-#ifdef CASTEM
-  inc += ' ';
-  inc += CASTEMFLAGS;
-#endif
   return inc;
 } // end of libDir
 
@@ -88,8 +87,15 @@ static void
 treatOFlags(void)
 {
   oflags = true;
-} // end of treatExceptions
+} // end of treatOFlags
 
+#ifdef HAVE_CASTEM
+static void
+treatCastem(void)
+{
+  castem = true;
+} // end of treatCastem
+#endif /* HAVE_CASTEM */
 
 static void
 treatExceptions(void)
@@ -101,7 +107,7 @@ static void
 treatMath(void)
 {
   exceptions = true;
-  math      = true;
+  math       = true;
 } // end of treatMath
 
 static void
@@ -249,6 +255,9 @@ main(const int argc,
   registerCallBack("--includes",&treatIncludes,"return preprocessor flags.");
   registerCallBack("--libs",&treatLibs,"return linking flags.");
   registerCallBack("--help",&treatHelp,"print this help message.");
+#ifdef HAVE_CASTEM
+  registerCallBack("--castem",&treatCastem,"request flags for castem.");
+#endif /* HAVE_CASTEM */
   registerCallBack("--exceptions",&treatExceptions,"request flags for libTFELException.");
   registerCallBack("--math-kriging",&treatMathKriging,"request flags for libTFELMathKriging.");
   registerCallBack("--math",&treatMath,"request flags for libTFELMath.");
@@ -270,6 +279,12 @@ main(const int argc,
     }
     (*(p->second.first))();
   }
+
+#ifdef HAVE_CASTEM
+  if(castem){
+    cout << CASTEMFLAGS << " " << endl;
+  }
+#endif /* HAVE_CASTEM */
 
   if(incs){
     cout << "-I" << includeDir() << " ";
