@@ -456,6 +456,17 @@ namespace mfront{
     this->behaviourFile << this->derivative << endl; 
     this->behaviourFile << "return true;\n"; 
     this->behaviourFile << "} // end of " << this->className << "::computeDerivative\n\n";
+    if(!this->updateAuxiliaryStateVars.empty()){
+      this->behaviourFile << "/*!\n";
+      this->behaviourFile << "* \\brief Update internal variables at end of integration\n";
+      this->behaviourFile << "*/\n";
+      this->behaviourFile << "void\n";
+      this->behaviourFile << "updateAuxiliaryStateVars(void)";
+      this->behaviourFile << "{\n";
+      this->behaviourFile << "using namespace std;" << endl;
+      this->behaviourFile << this->updateAuxiliaryStateVars << endl;
+      this->behaviourFile << "} // end of " << this->className << "::updateAuxiliaryStateVars\n\n";
+    }
   } // end of writeBehaviourParserSpecificMembers
 
   void MFrontRungeKuttaParser::writeBehaviourUpdateStateVars(void)
@@ -1029,6 +1040,9 @@ namespace mfront{
       msg += " is not a known algorithm. This shall not happen at this stage.";
       msg += " Please contact MFront developper to help them debug this.";
       throw(runtime_error(msg));
+    }
+    if(!this->updateAuxiliaryStateVars.empty()){
+      this->behaviourFile << "this->updateAuxiliaryStateVars();\n";
     }
     this->behaviourFile << "} // end of " << this->className << "::integrate\n\n";
   } // end of void MFrontRungeKuttaParser::writeBehaviourIntegrator(void)
