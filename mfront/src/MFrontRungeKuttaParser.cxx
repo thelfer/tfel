@@ -140,7 +140,7 @@ namespace mfront{
   void
   MFrontRungeKuttaParser::treatUpdateAuxiliaryStateVars(void)
   {
-    this->updateAuxiliaryStateVars = this->readNextBlock(&ParserBase::variableModifier2,true);
+    this->updateAuxiliaryStateVars = this->readNextBlock(0,true);
   } // end of MFrontRungeKuttaParser::treatUpdateAuxiliaryStateVarBase
 
   void
