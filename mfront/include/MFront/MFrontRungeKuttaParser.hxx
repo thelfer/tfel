@@ -94,6 +94,8 @@ namespace mfront{
 
     void writeBehaviourParserSpecificConstructorPart(void);
 
+    void writeBehaviourEulerIntegrator(void);
+
     void writeBehaviourRK2Integrator(void);
 
     void writeBehaviourRK4Integrator(void);

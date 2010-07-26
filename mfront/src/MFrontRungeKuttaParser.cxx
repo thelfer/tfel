@@ -20,10 +20,10 @@ namespace mfront{
   MFrontRungeKuttaParser::MFrontRungeKuttaParser()
     : MFrontVirtualParser(), 
       MFrontBehaviourParserBase<MFrontRungeKuttaParser>(),
-      algorithm("RungeKutta4"),
+      algorithm("RungeKutta5/4"),
       epsilon(1.e-8),
       dtmin(0.),
-      nbrOfEvaluation(4)
+      nbrOfEvaluation(6)
   {
     using namespace std;
     typedef map<string,string>::value_type MVType;
@@ -96,6 +96,24 @@ namespace mfront{
     return var;
   } // end of MFrontRungeKuttaParser::variableModifier1
 
+  std::string
+  MFrontRungeKuttaParser::variableModifier2(const std::string& var,
+					    const bool addThisPtr)
+  {
+    if((var=="eto")||(var=="T")||(var=="deto")||
+       (this->isExternalStateVariable(var))){
+      if(addThisPtr){
+	return "this->"+var+"+this->d"+var;
+      } else {
+	return var+"+d"+var;
+      }
+    }
+    if(addThisPtr){
+      return "this->"+var;
+    }
+    return var;
+  } // end of MFrontRungeKuttaParser::variableModifier2
+
   void
   MFrontRungeKuttaParser::treatComputeStress(void)
   {
@@ -106,27 +124,9 @@ namespace mfront{
     }
     this->readNextBlock(this->computeStress,
 			this->computeFinalStress,
-			&ParserBase::variableModifier1,0,true);
+			&ParserBase::variableModifier1,
+			&ParserBase::variableModifier2,true);
   } // end of MFrontRungeKuttaParser::treatComputeStress
-
-  std::string
-  MFrontRungeKuttaParser::variableModifier2(const std::string& var,
-					    const bool addThisPtr)
-  {
-    if((var=="eto")||(var=="T")||(var=="deto")||
-       (this->isInternalStateVariable(var))||
-       (this->isExternalStateVariable(var))){
-      if(addThisPtr){
-	return "this->"+var+"_";
-      } else {
-	return var+"_";
-      }
-    }
-    if(addThisPtr){
-      return "this->"+var;
-    }
-    return var;
-  } // end of MFrontRungeKuttaParser::variableModifier2
 
   void MFrontRungeKuttaParser::treatDerivative(void)
   {
@@ -134,7 +134,7 @@ namespace mfront{
       this->throwRuntimeError("MFrontRungeKuttaParser::treatDerivative",
 			      "@Derivative has already been called");
     }
-    this->derivative = this->readNextBlock(&ParserBase::variableModifier2,true);
+    this->derivative = this->readNextBlock(&ParserBase::variableModifier1,true);
   } // end of MFrontRungeKuttaParser::treatDerivative
 
   void
@@ -188,9 +188,12 @@ namespace mfront{
     using namespace std;
     this->checkNotEndOfFile("MFrontRungeKuttaParser::treatAlgorithm",
 			    "Cannot read algorithm name.");
-    if(this->current->value=="rk2"){
+    if(this->current->value=="euler"){
+      this->algorithm = "Euler";
+      this->nbrOfEvaluation = 0u;
+    } else if(this->current->value=="rk2"){
       this->algorithm = "RungeKutta2";
-      this->nbrOfEvaluation = 2u;
+      this->nbrOfEvaluation = 1u;
     } else if(this->current->value=="rk4"){
       this->algorithm = "RungeKutta4";
       this->nbrOfEvaluation = 4u;
@@ -203,14 +206,15 @@ namespace mfront{
     } else {
       this->throwRuntimeError("MFrontRungeKuttaParser::treatAlgorithm",
 			      this->current->value+" is not a valid algorithm name"
-			      "Supported algorithms are : rk2, rk4, rk42 and rk54");
+			      "Supported algorithms are : 'euler', 'rk2',"
+			      " 'rk4', 'rk42' and 'rk54'");
     }
     ++this->current;
     this->readSpecifiedToken("MFrontRungeKuttaParser::treatAlgorithm",";");
   }
 
   void MFrontRungeKuttaParser::writeBehaviourParserSpecificConstructorPart(void)
-  {
+    {
     this->checkBehaviourFile();
   }
 
@@ -224,7 +228,7 @@ namespace mfront{
   MFrontRungeKuttaParser::getDescription(void)
   {
     return "this parser provides a generic integrator based on one of the many "
-           "Runge-Kutta algorithm. Avalailable algorithms are 'rk2', 'rk4' "
+           "Runge-Kutta algorithm. Avalailable algorithms are 'euleur', 'rk2', 'rk4' "
            "'r42' and 'rk54'";
   } // end of MFrontRungeKuttaParser::getDescription
 
@@ -474,22 +478,55 @@ namespace mfront{
     // Disabled (makes no sense for this parser)
   } // end of writeBehaviourUpdateStateVars
 
+  void MFrontRungeKuttaParser::writeBehaviourEulerIntegrator(void)
+  {
+    using namespace std;
+    using namespace std;
+    VarContainer::iterator p;
+    this->behaviourFile << "this->computeDerivative();\n";
+    for(p =this->stateVarsHolder.begin();p!=this->stateVarsHolder.end();++p){
+      this->behaviourFile << "this->" << p->name << " += " 
+			  << "this->dt*(this->d" << p->name << ");\n";
+    }
+    this->behaviourFile << "// Update stress field\n";
+    this->behaviourFile << "this->computeFinalStress();\n\n";
+  } // end of writeBehaviourEulerIntegrator
+
   void MFrontRungeKuttaParser::writeBehaviourRK2Integrator(void)
   {
     using namespace std;
-    string msg("MFrontRungeKuttaParser::writeBehaviourIntegrator : ");
-    msg += "internal error\n";
-    msg += this->algorithm;
-    msg += " has not been implemented yet.\n";
-    msg += " Please contact MFront developper to improve this.";
-    throw(runtime_error(msg));
+    using namespace std;
+    VarContainer::iterator p;
+    this->behaviourFile << "// Compute K1's values\n";
+    this->behaviourFile << "this->computeDerivative();\n";
+    for(p =this->stateVarsHolder.begin();p!=this->stateVarsHolder.end();++p){
+      this->behaviourFile << "this->d" << p->name 
+			  << "_K1 = (this->dt)*(this->d" << p->name << ");\n";
+    }
+    for(p =this->stateVarsHolder.begin();p!=this->stateVarsHolder.end();++p){
+      this->behaviourFile << "this->" << p->name << "_ += 0.5f*(this->d" << p->name << "_K1);\n";
+    }
+    this->behaviourFile << "this->eto_ += 0.5f*(this->deto);\n";
+    this->behaviourFile << "this->T_   += 0.5f*(this->dT);\n";
+    for(p =this->externalStateVarsHolder.begin();p!=this->externalStateVarsHolder.end();++p){
+      this->behaviourFile << "this->" << p->name << "_ += 0.5f*(this->d" << p->name << ");\n";
+    }
+    this->behaviourFile << "// Update stress field\n";
+    this->behaviourFile << "this->computeStress();\n\n";
+    this->behaviourFile << "this->computeDerivative();\n";
+    this->behaviourFile << "// Final Step\n";
+    for(p =this->stateVarsHolder.begin();p!=this->stateVarsHolder.end();++p){
+      this->behaviourFile << "this->" << p->name << " += " 
+			  << "this->dt*(this->d" << p->name << ");\n";
+    }
+    this->behaviourFile << "// Update stress field\n";
+    this->behaviourFile << "this->computeFinalStress();\n\n";
   } // end of writeBehaviourRK2Integrator
 
   void MFrontRungeKuttaParser::writeBehaviourRK54Integrator(void)
   {
     using namespace std;
     VarContainer::iterator p;
-    std::vector<BoundsDescription>::const_iterator p2;
     SupportedTypes::TypeSize stateVarsSize;
 
     for(p=this->stateVarsHolder.begin();p!=this->stateVarsHolder.end();++p){
@@ -736,19 +773,12 @@ namespace mfront{
     this->behaviourFile << "throw(tfel::material::DivergenceException(msg));\n";
     this->behaviourFile << "}\n";
     this->behaviourFile << "}\n";
-    for(p2  = this->boundsDescriptions.begin();
-	p2 != this->boundsDescriptions.end();++p2){
-      if(p2->varCategory==BoundsDescription::StateVar){
-	p2->writeBoundsChecks(this->behaviourFile);
-      }
-    }
   } // end of MFrontRungeKuttaParser::writeBehaviourRK54Integrator
 
   void MFrontRungeKuttaParser::writeBehaviourRK42Integrator(void)
   {
     using namespace std;
     VarContainer::iterator p;
-    std::vector<BoundsDescription>::const_iterator p2;
     SupportedTypes::TypeSize stateVarsSize;
     for(p=this->stateVarsHolder.begin();p!=this->stateVarsHolder.end();++p){
       stateVarsSize+=this->getTypeSize(p->type);
@@ -905,20 +935,12 @@ namespace mfront{
     this->behaviourFile << "throw(tfel::material::DivergenceException(msg));\n";
     this->behaviourFile << "}\n";
     this->behaviourFile << "}\n";
-    for(p2  = this->boundsDescriptions.begin();
-	p2 != this->boundsDescriptions.end();++p2){
-      if(p2->varCategory==BoundsDescription::StateVar){
-	p2->writeBoundsChecks(this->behaviourFile);
-      }
-    }
   } // end of MFrontRungeKuttaParser::writeBehaviourRK42Integrator
 
   void MFrontRungeKuttaParser::writeBehaviourRK4Integrator(void)
   {
     using namespace std;
     VarContainer::iterator p;
-    std::vector<BoundsDescription>::const_iterator p2;
-    SupportedTypes::TypeSize totalSize;
     this->behaviourFile << "// Compute K1's values\n";
     this->behaviourFile << "this->computeDerivative();\n";
     for(p =this->stateVarsHolder.begin();p!=this->stateVarsHolder.end();++p){
@@ -978,54 +1000,23 @@ namespace mfront{
       this->behaviourFile << "1.f/3.f*(this->d" << p->name 
 			  << "_K2+this->d" << p->name << "_K3);\n";
     }
-    this->behaviourFile << "// Compute the error" << endl;
-    this->behaviourFile << "Type rk4_error = 0;\n";
-    for(p =this->stateVarsHolder.begin();p!=this->stateVarsHolder.end();++p){
-      totalSize+=this->getTypeSize(p->type);
-      if(this->behaviourCharacteristic.useQt()){
-	this->behaviourFile << "rk4_error += base_cast(tfel::math::abs("
-			    << "this->d" << p->name << "_K1+"
-			    << "this->d" << p->name << "_K4-"
-			    << "this->d" << p->name << "_K2-"
-			    << "this->d" << p->name << "_K3"
-			    << "));\n";
-      } else {
-	this->behaviourFile << "rk4_error += tfel::math::abs("
-			    << "this->d" << p->name << "_K1+"
-			    << "this->d" << p->name << "_K4-"
-			    << "this->d" << p->name << "_K2-"
-			    << "this->d" << p->name << "_K3"
-			    << ");\n";
-      }
-    }
-    this->behaviourFile << "// Normalising the error\n";
-    this->behaviourFile << "rk4_error /= " << totalSize << ";\n\n";
-    this->behaviourFile << "if(rk4_error > " << this->className << "::epsilon"<< "){" << endl;
-    this->behaviourFile << "std::ostringstream msg;\n";
-    this->behaviourFile << "msg << \"no convergence : \";\n";
-    this->behaviourFile << "msg << rk4_error;\n";
-    this->behaviourFile << "throw(tfel::material::DivergenceException(msg.str()));\n";
-    this->behaviourFile << "}\n\n";
     this->behaviourFile << "// Update stress field\n";
     this->behaviourFile << "this->computeFinalStress();\n\n";
-    for(p2  = this->boundsDescriptions.begin();
-	p2 != this->boundsDescriptions.end();++p2){
-      if(p2->varCategory==BoundsDescription::StateVar){
-	p2->writeBoundsChecks(this->behaviourFile);
-      }
-    }
   }  // end of MFrontRungeKuttaParser::writeBehaviourRK4Integrator
 
   void MFrontRungeKuttaParser::writeBehaviourIntegrator(void)
   {
     using namespace std;
+    std::vector<BoundsDescription>::const_iterator p2;
     this->checkBehaviourFile();
     this->behaviourFile << "/*!\n";
     this->behaviourFile << "* \\brief Integrate behaviour law over the time step\n";
     this->behaviourFile << "*/\n";
     this->behaviourFile << "void\n";
     this->behaviourFile << "integrate(void){\n";
-    if(this->algorithm == "RungeKutta2"){
+    if(this->algorithm == "Euler"){
+      this->writeBehaviourEulerIntegrator();
+    } else if(this->algorithm == "RungeKutta2"){
       this->writeBehaviourRK2Integrator();
     } else if(this->algorithm == "RungeKutta4/2"){
       this->writeBehaviourRK42Integrator();
@@ -1044,10 +1035,16 @@ namespace mfront{
     if(!this->updateAuxiliaryStateVars.empty()){
       this->behaviourFile << "this->updateAuxiliaryStateVars();\n";
     }
+    for(p2  = this->boundsDescriptions.begin();
+	p2 != this->boundsDescriptions.end();++p2){
+      if(p2->varCategory==BoundsDescription::StateVar){
+	p2->writeBoundsChecks(this->behaviourFile);
+      }
+    }
     this->behaviourFile << "} // end of " << this->className << "::integrate\n\n";
   } // end of void MFrontRungeKuttaParser::writeBehaviourIntegrator(void)
-
-  MFrontRungeKuttaParser::~MFrontRungeKuttaParser()
+  
+    MFrontRungeKuttaParser::~MFrontRungeKuttaParser()
   {
     this->behaviourFile.close();
     this->behaviourDataFile.close();
