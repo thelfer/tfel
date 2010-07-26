@@ -15,6 +15,7 @@
 
 @Coef real young; /* mandatory for castem */
 @Coef real nu;    /* mandatory for castem */
+@Coef real rho;   /* mandatory for castem */
 @Coef real alpha; /* mandatory for castem */
 @Coef real A;     /* Norton coefficient   */
 @Coef real E;     /* Norton exponant      */
