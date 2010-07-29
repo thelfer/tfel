@@ -38,17 +38,27 @@ namespace mfront{
     this->registerNewCallBack("@Includes",&Child::treatIncludes);
     this->registerNewCallBack("@Members",&Child::treatMembers);
     this->registerNewCallBack("@Coef",&Child::treatCoef);
+    this->registerNewCallBack("@MaterialProperty",&Child::treatCoef);
     this->registerNewCallBack("@LocalVar",&Child::treatLocalVar);
+    this->registerNewCallBack("@LocalVariable",&Child::treatLocalVar);
     this->registerNewCallBack("@StateVar",&Child::treatStateVariables);
+    this->registerNewCallBack("@StateVariable",&Child::treatStateVariables);
     this->registerNewCallBack("@AuxiliaryStateVar",
 			      &Child::treatAuxiliaryStateVariables);
+    this->registerNewCallBack("@AuxiliaryStateVariable",
+			      &Child::treatAuxiliaryStateVariables);
     this->registerNewCallBack("@ExternalStateVar",&Child::treatExternalStateVariables);
+    this->registerNewCallBack("@ExternalStateVariable",
+			      &Child::treatExternalStateVariables);
     this->registerNewCallBack("@InitLocalVars",&Child::treatInitLocalVars);
+    this->registerNewCallBack("@InitLocalVariables",&Child::treatInitLocalVars);
     this->registerNewCallBack("@Integrator",&Child::treatIntegrator);
     this->registerNewCallBack("@Interface",&Child::treatInterface);
     this->registerNewCallBack("@StaticVar",&Child::treatStaticVar);
+    this->registerNewCallBack("@StaticVariable",&Child::treatStaticVar);
     this->registerNewCallBack("@UseQt",&Child::treatUseQt);
     this->registerNewCallBack("@ComputedVar",&Child::treatComputedVar);
+    this->registerNewCallBack("@ComputedVariable",&Child::treatComputedVar);
     this->registerNewCallBack("@Description",&Child::treatDescription);
     this->registerNewCallBack("@UnaryLoadingTest",&Child::treatUnaryLoadingTest);
     this->registerNewCallBack("@Bounds",&Child::treatBounds);
@@ -60,6 +70,8 @@ namespace mfront{
     this->registerNewCallBack("@Private",&Child::treatPrivate);
     this->registerNewCallBack("@Sources",&Child::treatSources);
     this->registerNewCallBack("@UpdateAuxiliaryStateVars",
+			      &Child::treatUpdateAuxiliaryStateVars);
+    this->registerNewCallBack("@UpdateAuxiliaryStateVariabless",
 			      &Child::treatUpdateAuxiliaryStateVars);
   } // end of MFrontBehaviourParserBase<Child>::registerDefaultCallBacks
 
