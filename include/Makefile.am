@@ -373,11 +373,14 @@ nobase_include_HEADERS= TFEL/FiniteElement/Element/ElementsManager.ixx          
 			TFEL/Metaprogramming/IntToType.hxx                                            \
 			TFEL/Metaprogramming/IsSubClassOf.hxx	                                      \
 			TFEL/Metaprogramming/IsSameType.hxx                                           \
+			TFEL/Metaprogramming/IsReference.hxx                                          \
+			TFEL/Metaprogramming/IsPointer.hxx                                            \
 			TFEL/Metaprogramming/EnableIf.hxx	                                      \
 			TFEL/Metaprogramming/IsSuperClassOf.hxx                                       \
 			TFEL/Metaprogramming/GenerateTypeList.hxx                                     \
 			TFEL/Metaprogramming/InvalidType.hxx	                                      \
 			TFEL/Metaprogramming/RemoveConstness.hxx                                      \
+			TFEL/Metaprogramming/RemoveReference.hxx                                      \
 			TFEL/Metaprogramming/HasIterator.hxx	                                      \
 			TFEL/Metaprogramming/HasConstIterator.hxx                                     \
 			TFEL/Metaprogramming/HasRandomAccessConstIterator.hxx	                      \

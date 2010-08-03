@@ -399,10 +399,13 @@ include/TFEL/Metaprogramming/Implements.hxx -text
 include/TFEL/Metaprogramming/IntToType.hxx -text
 include/TFEL/Metaprogramming/InvalidType.hxx -text
 include/TFEL/Metaprogramming/IsConvertibleTo.hxx -text
+include/TFEL/Metaprogramming/IsPointer.hxx -text
+include/TFEL/Metaprogramming/IsReference.hxx -text
 include/TFEL/Metaprogramming/IsSameType.hxx -text
 include/TFEL/Metaprogramming/IsSubClassOf.hxx -text
 include/TFEL/Metaprogramming/IsSuperClassOf.hxx -text
 include/TFEL/Metaprogramming/RemoveConstness.hxx -text
+include/TFEL/Metaprogramming/RemoveReference.hxx -text
 include/TFEL/Metaprogramming/StaticAssert.hxx -text
 include/TFEL/Metaprogramming/TypeList.hxx -text
 include/TFEL/Metaprogramming/TypeList.ixx -text
