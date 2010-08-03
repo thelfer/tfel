@@ -653,14 +653,14 @@ namespace tfel
     } // end of ProcessManager::~ProcessManager
 
     ProcessManager::wstream
-    ProcessManager::getInputStream(const ProcessManager::ProcessId id)
+    ProcessManager::getInputStream(const ProcessManager::ProcessId id) const
     {
       using namespace std;
       vector<Process>::const_reverse_iterator p;
       vector<Process>::const_reverse_iterator pe;
-      map<ProcessId,StreamId>::iterator p2;
-      p  = static_cast<const ProcessManager&>(*this).findProcess(id);
-      pe = static_cast<const vector<Process>&>(this->processes).rend();
+      map<ProcessId,StreamId>::const_iterator p2;
+      p  = this->findProcess(id);
+      pe = this->processes.rend();
       if(p==pe){
 	ostringstream msg;
 	msg << "ProcessManager::getInputStream : "
@@ -684,14 +684,14 @@ namespace tfel
     } // end of ProcessManager::getInputStream
 
     ProcessManager::rstream
-    ProcessManager::getOutputStream(const ProcessManager::ProcessId id)
+    ProcessManager::getOutputStream(const ProcessManager::ProcessId id) const
     {
       using namespace std;
       vector<Process>::const_reverse_iterator p;
       vector<Process>::const_reverse_iterator pe;
-      map<ProcessId,StreamId>::iterator p2;
-      p  = static_cast<const ProcessManager&>(*this).findProcess(id);
-      pe = static_cast<const vector<Process>&>(this->processes).rend();
+      map<ProcessId,StreamId>::const_iterator p2;
+      p  = this->findProcess(id);
+      pe = this->processes.rend();
       if(p==pe){
 	ostringstream msg;
 	msg << "ProcessManager::getInputStream : "

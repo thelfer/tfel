@@ -106,10 +106,10 @@ namespace tfel
       stopOnSignals(const bool);
 
       virtual wstream
-      getInputStream(const ProcessId);
+      getInputStream(const ProcessId) const;
       
       virtual rstream
-      getOutputStream(const ProcessId);
+      getOutputStream(const ProcessId) const;
 
       virtual ProcessId
       createProcess(ProcessManager::Command&);
