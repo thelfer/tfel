@@ -729,8 +729,8 @@ namespace mfront{
 			  << "::integrate() : convergence after \" "
 			  << "<< this->iter << \" iterations\"<< endl << endl;\n";
     }
-    this->behaviourFile << "this->updateStateVars();\n";
     this->behaviourFile << "this->computeFinalStress();\n";
+    this->behaviourFile << "this->updateStateVars();\n";
     for(p3  = this->boundsDescriptions.begin();
 	p3 != this->boundsDescriptions.end();++p3){
       if(p3->varCategory==BoundsDescription::StateVar){
