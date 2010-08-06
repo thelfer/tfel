@@ -152,6 +152,7 @@ namespace mfront{
     this->behaviourFile << "this->deel = this->deto-(this->dp)*(this->n);\n";
     this->behaviourFile << "this->updateStateVars();\n";
     this->behaviourFile << "this->sig  = (this->lambda)*trace(this->eel)*StrainStensor::Id()+2*(this->mu)*(this->eel);\n";
+    this->behaviourFile << "this->updateAuxiliaryStateVars();\n";
     for(p  = this->boundsDescriptions.begin();
 	p != this->boundsDescriptions.end();++p){
       if(p->varCategory==BoundsDescription::StateVar){

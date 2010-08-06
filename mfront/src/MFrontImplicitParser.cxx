@@ -66,11 +66,6 @@ namespace mfront{
     this->reserveName("accelerate_r0");
     this->reserveName("accelerate_r1");
     this->reserveName("accelerate_r2");
-    this->reserveName("computeStress");
-    this->reserveName("computeFinalStress");
-    this->reserveName("computeFdF");
-    this->reserveName("predicte");
-    this->reserveName("integrate");
     this->reserveName("iter");
     this->reserveName("converge");
     this->reserveName("broyden_inv");
@@ -729,8 +724,9 @@ namespace mfront{
 			  << "::integrate() : convergence after \" "
 			  << "<< this->iter << \" iterations\"<< endl << endl;\n";
     }
-    this->behaviourFile << "this->computeFinalStress();\n";
     this->behaviourFile << "this->updateStateVars();\n";
+    this->behaviourFile << "this->computeFinalStress();\n";
+    this->behaviourFile << "this->updateAuxiliaryStateVars();\n";
     for(p3  = this->boundsDescriptions.begin();
 	p3 != this->boundsDescriptions.end();++p3){
       if(p3->varCategory==BoundsDescription::StateVar){

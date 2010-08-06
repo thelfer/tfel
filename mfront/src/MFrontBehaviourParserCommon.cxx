@@ -871,6 +871,13 @@ namespace mfront{
     this->reserveName("src1");
     this->reserveName("src2");
     this->reserveName("policy_value");
+    this->reserveName("integrate");
+    this->reserveName("computeStress");
+    this->reserveName("computeFinalStress");
+    this->reserveName("computeFdF");
+    this->reserveName("predicte");
+    this->reserveName("updateStateVars");
+    this->reserveName("updateAuxiliaryStateVars");
   } // end of MFrontBehaviourParserCommon::registerDefaultVarNames
 
   MFrontBehaviourParserCommon::MFrontBehaviourParserCommon()
@@ -1826,7 +1833,8 @@ namespace mfront{
     this->updateAuxiliaryStateVars = this->readNextBlock(true);
   } // end of MFrontBehaviourParserCommon::treatUpdateAuxiliaryStateVarBase
 
-  void MFrontBehaviourParserCommon::writeBehaviourUpdateStateVars() 
+  void
+  MFrontBehaviourParserCommon::writeBehaviourUpdateStateVars(void)
   {
     using namespace std;
     VarContainer::const_iterator p;
@@ -1836,13 +1844,8 @@ namespace mfront{
     this->behaviourFile << "*/\n";
     this->behaviourFile << "void\n";
     this->behaviourFile << "updateStateVars(void)";
-    if((!this->stateVarsHolder.empty())||
-       (!this->updateAuxiliaryStateVars.empty())){
+    if(!this->stateVarsHolder.empty()){
       this->behaviourFile << "{\n";
-      if(!this->updateAuxiliaryStateVars.empty()){
-	this->behaviourFile << "using namespace std;" << endl;
-	this->behaviourFile << this->updateAuxiliaryStateVars << endl;
-      }
       for(p=this->stateVarsHolder.begin();p!=this->stateVarsHolder.end();++p){
 	this->behaviourFile << "this->"  << p->name << " += ";
 	this->behaviourFile << "this->d" << p->name << ";\n";
@@ -1851,7 +1854,28 @@ namespace mfront{
     } else {
       this->behaviourFile << "\n{}\n\n";
     }
-  }
+  } // end of MFrontBehaviourParserCommon::writeBehaviourUpdateStateVars
+
+  void
+  MFrontBehaviourParserCommon::writeBehaviourUpdateAuxiliaryStateVars() 
+  {
+    using namespace std;
+    this->behaviourFile << "/*!\n";
+    this->behaviourFile << "* \\brief Update auxiliary state variables at end of integration\n";
+    this->behaviourFile << "*/\n";
+    this->behaviourFile << "void\n";
+    this->behaviourFile << "updateAuxiliaryStateVars(void)";
+    if(!this->updateAuxiliaryStateVars.empty()){
+      this->behaviourFile << "{\n";
+      this->behaviourFile << "using namespace std;" << endl;
+      writeMaterialLaws("MFrontBehaviourParserCommon::writeBehaviourUpdateAuxiliaryStateVars",
+			this->behaviourFile,this->materialLaws);		      
+      this->behaviourFile << this->updateAuxiliaryStateVars << endl;
+      this->behaviourFile << "}\n\n";
+    } else {
+      this->behaviourFile << "\n{}\n\n";
+    }
+  } // end of  MFrontBehaviourParserCommon::writeBehaviourUpdateAuxiliaryStateVars
 
   void MFrontBehaviourParserCommon::writeBehaviourIntegrator() {
     using namespace std;
@@ -1869,6 +1893,7 @@ namespace mfront{
       this->behaviourFile << "\n";
     }
     this->behaviourFile << "this->updateStateVars();\n";
+    this->behaviourFile << "this->updateAuxiliaryStateVars();\n";
     for(p  = this->boundsDescriptions.begin();
 	p != this->boundsDescriptions.end();++p){
       if(p->varCategory==BoundsDescription::StateVar){
@@ -2441,6 +2466,7 @@ namespace mfront{
     this->writeBehaviourLocalVars();
     this->writeBehaviourParserSpecificMembers();
     this->writeBehaviourUpdateStateVars();
+    this->writeBehaviourUpdateAuxiliaryStateVars();
     this->writeBehaviourMembersFunc();
     this->writeBehaviourPrivate();
     this->writeBehaviourDisabledConstructors();
