@@ -37,6 +37,8 @@ nobase_include_HEADERS= TFEL/FiniteElement/Element/ElementsManager.ixx          
 			TFEL/Material/IsotropicLinearFourierLaw.hxx                                   \
 			TFEL/Material/ThermoMechanicalBehaviour.hxx                                   \
 			TFEL/Material/BoundsCheck.hxx                                                 \
+			TFEL/Material/DDIF2Base.hxx                                                   \
+			TFEL/Material/DDIF2Base.ixx                                                   \
 			TFEL/Config/Internals/TFELTypesInternals.hxx	                              \
 			TFEL/Config/Internals/SpatialGradType.hxx	                              \
 			TFEL/Config/Internals/HeatFluxVectorType.hxx	                              \

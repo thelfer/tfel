@@ -444,6 +444,8 @@ install_header(TFEL/Material MechanicalIntegrationData.hxx)
 install_header(TFEL/Material IsotropicLinearFourierLaw.hxx)
 install_header(TFEL/Material ThermoMechanicalBehaviour.hxx)
 install_header(TFEL/Material BoundsCheck.hxx)
+install_header(TFEL/Material DDIF2Base.hxx)
+install_header(TFEL/Material DDIF2Base.ixx)
 
 install_header(TFEL/FiniteElement/Element ElementsManager.ixx)
 install_header(TFEL/FiniteElement/Mesh Mesh.ixx)

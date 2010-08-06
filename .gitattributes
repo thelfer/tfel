@@ -70,6 +70,8 @@ include/TFEL/Graphics/StandardGraphTheme.hxx -text
 include/TFEL/Graphics/ThemeManager.hxx -text
 include/TFEL/Graphics/ThemeManager.ixx -text
 include/TFEL/Material/BoundsCheck.hxx -text
+include/TFEL/Material/DDIF2Base.hxx -text
+include/TFEL/Material/DDIF2Base.ixx -text
 include/TFEL/Material/Hill.hxx -text
 include/TFEL/Material/Hill.ixx -text
 include/TFEL/Material/IsotropicLinearFourierHookLaw.hxx -text
@@ -508,6 +510,8 @@ m4/vl_lib_readline.m4 -text
 mfront/CMakeLists.txt -text
 mfront/Examples/CMakeLists.txt -text
 mfront/Examples/Makefile.am -text
+mfront/Examples/ddif2-rk.mfront -text
+mfront/Examples/ddif2.mfront -text
 mfront/Examples/elasticity.mfront -text
 mfront/Examples/implicit.mfront -text
 mfront/Examples/norton.mfront -text
