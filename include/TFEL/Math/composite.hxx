@@ -16,7 +16,7 @@ namespace tfel{
 
   namespace math{
 
-    typedef tfel::meta::TypeListEndType CompositeEndType;
+    typedef tfel::meta::TLE CompositeEndType;
 
     /*!
      * \class composite

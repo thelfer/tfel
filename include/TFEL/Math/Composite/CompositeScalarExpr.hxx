@@ -23,9 +23,9 @@ namespace tfel{
       struct CompositeScalarItems;
 
       template<typename B,typename Op>
-      struct CompositeScalarItems<tfel::meta::TypeListEndType,B,Op>
+      struct CompositeScalarItems<tfel::meta::TLE,B,Op>
       {
-	typedef tfel::meta::TypeListEndType type;
+	typedef tfel::meta::TLE type;
       };
 
       template<typename ItemsA,typename B,typename Op>
@@ -38,7 +38,7 @@ namespace tfel{
 					      B,
 					      Op>::type Next;
       public:
-	typedef tfel::meta::TypeListNode<Handle,Next> type;
+	typedef tfel::meta::TLNode<Handle,Next> type;
       };
 
     } // end of namespace internals
@@ -50,7 +50,7 @@ namespace tfel{
       TFEL_STATIC_ASSERT((tfel::typetraits::IsScalar<B>::cond));
 
       typedef typename A::Items ItemsA;
-      static const unsigned int ItemsASize = tfel::meta::TypeListSize<ItemsA>::value;
+      static const unsigned int ItemsASize = tfel::meta::TLSize<ItemsA>::value;
       
       static const bool IsATemporary = tfel::typetraits::IsTemporary<A>::cond;
 
@@ -77,8 +77,8 @@ namespace tfel{
       template<unsigned short N>
       TFEL_MATH_INLINE2
       const typename tfel::meta::EnableIf<
-	(N<tfel::meta::TypeListSize<Items>::value),
-	  typename tfel::meta::TypeListFindNthElt<Items,N>::type
+	(N<tfel::meta::TLSize<Items>::value),
+	  typename tfel::meta::TLFindNthElt<Items,N>::type
       >::type
       getComponent(void) const
       {

@@ -313,14 +313,17 @@ AC_DEFUN([AC_CHECK_GXX],
 	    CFLAGS="$CFLAGS -W -Wall"
 	    
 	    dnl g++ default warning options
-	    CXXFLAGS="$CXXFLAGS -W -Wall -Wconversion -Wshadow"
-	    CXXFLAGS="$CXXFLAGS -Wpointer-arith -Wcast-qual -Wcast-align"
-	    CXXFLAGS="$CXXFLAGS -Wwrite-strings -Wctor-dtor-privacy -Wnon-virtual-dtor"
-	    CXXFLAGS="$CXXFLAGS -Woverloaded-virtual -Wimplicit -Wreturn-type -Wfloat-equal"
-	    CXXFLAGS="$CXXFLAGS -Wno-endif-labels  -Wsign-compare -Wmissing-format-attribute"
-	    CXXFLAGS="$CXXFLAGS -Wno-multichar -Wno-deprecated-declarations -Wpacked"
-	    CXXFLAGS="$CXXFLAGS -Wredundant-decls -Wlong-long -Wdisabled-optimization"
-	    CXXFLAGS="$CXXFLAGS -Wunknown-pragmas -Wundef  -Wreorder"
+
+	    COMPILER_WARNINGS="-W -Wall -Wconversion -Wshadow"
+	    COMPILER_WARNINGS="$COMPILER_WARNINGS -Wpointer-arith -Wcast-qual -Wcast-align"
+	    COMPILER_WARNINGS="$COMPILER_WARNINGS -Wwrite-strings -Wctor-dtor-privacy -Wnon-virtual-dtor"
+	    COMPILER_WARNINGS="$COMPILER_WARNINGS -Woverloaded-virtual -Wimplicit -Wreturn-type -Wfloat-equal"
+	    COMPILER_WARNINGS="$COMPILER_WARNINGS -Wno-endif-labels  -Wsign-compare -Wmissing-format-attribute"
+	    COMPILER_WARNINGS="$COMPILER_WARNINGS -Wno-multichar -Wno-deprecated-declarations -Wpacked"
+	    COMPILER_WARNINGS="$COMPILER_WARNINGS -Wredundant-decls -Wlong-long -Wdisabled-optimization"
+	    COMPILER_WARNINGS="$COMPILER_WARNINGS -Wunknown-pragmas -Wundef  -Wreorder"
+
+            CXXFLAGS="$CXXFLAGS $COMPILER_WARNINGS"
 
 	    if test "${CXX}" = "clang++"; then
                CXXFLAGS="$CXXFLAGS -ftemplate-depth-250"

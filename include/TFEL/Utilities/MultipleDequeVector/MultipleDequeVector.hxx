@@ -34,8 +34,8 @@ namespace tfel{
 
     private:
   
-      TFEL_STATIC_ASSERT((tfel::meta::IsSubClassOf<T,tfel::meta::TypeList>::cond));
-      TFEL_STATIC_ASSERT((tfel::meta::TypeListElementsAreUnique<T>::cond));
+      TFEL_STATIC_ASSERT((tfel::meta::IsSubClassOf<T,tfel::meta::TL>::cond));
+      TFEL_STATIC_ASSERT((tfel::meta::TLElementsAreUnique<T>::cond));
 
     public:
 
@@ -53,20 +53,20 @@ namespace tfel{
     
       template<typename T1>
       TFEL_INLINE typename tfel::meta::EnableIf<
-	tfel::meta::TypeListCountNbrOfT<T1,T>::value==1, 
+	tfel::meta::TLCountNbrOfT<T1,T>::value==1, 
 	void >::type 
       clear(void);
 
       template<typename T1>
       TFEL_INLINE typename tfel::meta::EnableIf<
-	tfel::meta::TypeListCountNbrOfT<T1,T>::value==1, 
+	tfel::meta::TLCountNbrOfT<T1,T>::value==1, 
 	bool >::type 
       empty(void) const;
     
       template<typename T1>
       TFEL_INLINE typename 
       tfel::meta::EnableIf<
-	tfel::meta::TypeListCountNbrOfT<T1,T>::value==1, 
+	tfel::meta::TLCountNbrOfT<T1,T>::value==1, 
 	typename container<typename Transform<T1>::type,
 			   typename Allocator::template rebind<T1>::other>::size_type 
       >::type size(void) const
@@ -78,7 +78,7 @@ namespace tfel{
       template<typename T1>
       TFEL_INLINE typename 
       tfel::meta::EnableIf<
-	tfel::meta::TypeListCountNbrOfT<T1,T>::value==1, 
+	tfel::meta::TLCountNbrOfT<T1,T>::value==1, 
 	typename container<typename Transform<T1>::type,
 typename Allocator::template rebind<T1>::other>::size_type 
       >::type max_size(void) const
@@ -90,7 +90,7 @@ typename Allocator::template rebind<T1>::other>::size_type
       template<typename T1>
       TFEL_INLINE typename 
       tfel::meta::EnableIf<
-	tfel::meta::TypeListCountNbrOfT<T1,T>::value==1, 
+	tfel::meta::TLCountNbrOfT<T1,T>::value==1, 
 	typename container<typename Transform<T1>::type,
 typename Allocator::template rebind<T1>::other>::size_type 
       >::type capacity(void) const
@@ -101,7 +101,7 @@ typename Allocator::template rebind<T1>::other>::size_type
 
       template<typename T1>
       TFEL_INLINE typename tfel::meta::EnableIf<
-	tfel::meta::TypeListCountNbrOfT<T1,T>::value==1, 
+	tfel::meta::TLCountNbrOfT<T1,T>::value==1, 
 	void >::type 
       reserve(typename container<typename Transform<T1>::type,
 	      typename Allocator::template rebind<T1>::other>::size_type s)
@@ -112,7 +112,7 @@ typename Allocator::template rebind<T1>::other>::size_type
 
       template<typename T1>
       TFEL_INLINE typename tfel::meta::EnableIf<
-	tfel::meta::TypeListCountNbrOfT<T1,T>::value==1, 
+	tfel::meta::TLCountNbrOfT<T1,T>::value==1, 
 	void >::type 
       resize(typename container<typename Transform<T1>::type,
 	     typename Allocator::template rebind<T1>::other>::size_type s)
@@ -123,7 +123,7 @@ typename Allocator::template rebind<T1>::other>::size_type
       
       template<typename T1>
       TFEL_INLINE typename tfel::meta::EnableIf<
-	tfel::meta::TypeListCountNbrOfT<T1,T>::value==1, 
+	tfel::meta::TLCountNbrOfT<T1,T>::value==1, 
 	void >::type 
       resize(typename container<typename Transform<T1>::type,
 	     typename Allocator::template rebind<T1>::other>::size_type s, const T1 src)
@@ -135,7 +135,7 @@ typename Allocator::template rebind<T1>::other>::size_type
       template<typename T1>
       TFEL_INLINE typename 
       tfel::meta::EnableIf<
-	tfel::meta::TypeListCountNbrOfT<T1,T>::value==1, 
+	tfel::meta::TLCountNbrOfT<T1,T>::value==1, 
 	void >::type 
       push_back(const typename Transform<T1>::type& src)
       {
@@ -145,7 +145,7 @@ typename Allocator::template rebind<T1>::other>::size_type
 
       template<typename T1>
       TFEL_INLINE typename tfel::meta::EnableIf<
-	tfel::meta::TypeListCountNbrOfT<T1,T>::value==1, 
+	tfel::meta::TLCountNbrOfT<T1,T>::value==1, 
 	void >::type 
       pop_back(void)
       {
@@ -155,7 +155,7 @@ typename Allocator::template rebind<T1>::other>::size_type
         
       template<typename T1>
       TFEL_INLINE typename tfel::meta::EnableIf<
-	tfel::meta::TypeListCountNbrOfT<T1,T>::value==1, 
+	tfel::meta::TLCountNbrOfT<T1,T>::value==1, 
 	typename container<typename Transform<T1>::type,
 typename Allocator::template rebind<T1>::other>::reference >::type 
       front(void)
@@ -166,7 +166,7 @@ typename Allocator::template rebind<T1>::other>::reference >::type
 
       template<typename T1>
       TFEL_INLINE typename tfel::meta::EnableIf<
-	tfel::meta::TypeListCountNbrOfT<T1,T>::value==1, 
+	tfel::meta::TLCountNbrOfT<T1,T>::value==1, 
 	typename container<typename Transform<T1>::type,
 			   typename Allocator::template rebind<T1>::other>::const_reference >::type 
       front(void) const
@@ -177,7 +177,7 @@ typename Allocator::template rebind<T1>::other>::reference >::type
 
       template<typename T1>
       TFEL_INLINE typename tfel::meta::EnableIf<
-	tfel::meta::TypeListCountNbrOfT<T1,T>::value==1, 
+	tfel::meta::TLCountNbrOfT<T1,T>::value==1, 
 	typename container<typename Transform<T1>::type,
 			   typename Allocator::template rebind<T1>::other>::reference 
       >::type back(void)
@@ -188,7 +188,7 @@ typename Allocator::template rebind<T1>::other>::reference >::type
 
       template<typename T1>
       TFEL_INLINE typename tfel::meta::EnableIf<
-	tfel::meta::TypeListCountNbrOfT<T1,T>::value==1, 
+	tfel::meta::TLCountNbrOfT<T1,T>::value==1, 
 	typename container<typename Transform<T1>::type,
 			   typename Allocator::template rebind<T1>::other>::const_reference >::type 
       back(void) const
@@ -199,7 +199,7 @@ typename Allocator::template rebind<T1>::other>::reference >::type
     
       template<typename T1>
       TFEL_INLINE typename tfel::meta::EnableIf<
-	tfel::meta::TypeListCountNbrOfT<T1,T>::value==1, 
+	tfel::meta::TLCountNbrOfT<T1,T>::value==1, 
 	void >::type 
       swap(container<typename Transform<T1>::type,
 	             typename Allocator::template rebind<T1>::other>& src)
@@ -210,7 +210,7 @@ typename Allocator::template rebind<T1>::other>::reference >::type
     
       template<typename T1>
       TFEL_INLINE typename tfel::meta::EnableIf<
-	tfel::meta::TypeListCountNbrOfT<T1,T>::value==1, 
+	tfel::meta::TLCountNbrOfT<T1,T>::value==1, 
 	iterator<T1> >::type 
       insert(iterator<T1> pos,const T1& src)
       {
@@ -220,7 +220,7 @@ typename Allocator::template rebind<T1>::other>::reference >::type
 
       template <typename T1,class InputIterator>
       TFEL_INLINE typename tfel::meta::EnableIf<
-	tfel::meta::TypeListCountNbrOfT<T1,T>::value==1, 
+	tfel::meta::TLCountNbrOfT<T1,T>::value==1, 
 	void >::type 
       insert(iterator<T1> pos,InputIterator f,InputIterator l)
       {
@@ -230,7 +230,7 @@ typename Allocator::template rebind<T1>::other>::reference >::type
     
       template<typename T1>
       TFEL_INLINE typename tfel::meta::EnableIf<
-	tfel::meta::TypeListCountNbrOfT<T1,T>::value==1, 
+	tfel::meta::TLCountNbrOfT<T1,T>::value==1, 
 	void >::type 
       insert(iterator<T1> pos,
 	     typename container<typename Transform<T1>::type,
@@ -243,49 +243,49 @@ typename Allocator::template rebind<T1>::other>::reference >::type
 
       template<typename T1>
       TFEL_INLINE typename tfel::meta::EnableIf<
-	tfel::meta::TypeListCountNbrOfT<T1,T>::value==1, 
+	tfel::meta::TLCountNbrOfT<T1,T>::value==1, 
 	iterator<T1> >::type 
       begin(void);
 
       template<typename T1>
       TFEL_INLINE typename tfel::meta::EnableIf<
-	tfel::meta::TypeListCountNbrOfT<T1,T>::value==1, 
+	tfel::meta::TLCountNbrOfT<T1,T>::value==1, 
 	iterator<T1> >::type 
       end(void);
 
       template<typename T1>
       TFEL_INLINE typename tfel::meta::EnableIf<
-	tfel::meta::TypeListCountNbrOfT<T1,T>::value==1, 
+	tfel::meta::TLCountNbrOfT<T1,T>::value==1, 
 	const_iterator<T1> >::type 
       begin(void) const;
 
       template<typename T1>
       TFEL_INLINE typename tfel::meta::EnableIf<
-	tfel::meta::TypeListCountNbrOfT<T1,T>::value==1, 
+	tfel::meta::TLCountNbrOfT<T1,T>::value==1, 
 	const_iterator<T1> >::type 
       end(void) const;
         
       template<typename T1>
       TFEL_INLINE typename tfel::meta::EnableIf<
-	tfel::meta::TypeListCountNbrOfT<T1,T>::value==1, 
+	tfel::meta::TLCountNbrOfT<T1,T>::value==1, 
 	reverse_iterator<T1> >::type 
       rbegin(void);
 
       template<typename T1>
       TFEL_INLINE typename tfel::meta::EnableIf<
-	tfel::meta::TypeListCountNbrOfT<T1,T>::value==1, 
+	tfel::meta::TLCountNbrOfT<T1,T>::value==1, 
 	reverse_iterator<T1> >::type 
       rend(void);
 
       template<typename T1>
       TFEL_INLINE typename tfel::meta::EnableIf<
-	tfel::meta::TypeListCountNbrOfT<T1,T>::value==1, 
+	tfel::meta::TLCountNbrOfT<T1,T>::value==1, 
 	const_reverse_iterator<T1> >::type 
       rbegin(void) const;
 
       template<typename T1>
       TFEL_INLINE typename tfel::meta::EnableIf<
-	tfel::meta::TypeListCountNbrOfT<T1,T>::value==1, 
+	tfel::meta::TLCountNbrOfT<T1,T>::value==1, 
 	const_reverse_iterator<T1> >::type 
       rend(void) const;
 

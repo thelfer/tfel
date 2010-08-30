@@ -31,6 +31,7 @@ libTFELMath_la_SOURCES = MathException.cxx              \
 			 StandardFunctions.cxx
 
 libTFELMathKriging_la_SOURCES = KrigingErrors.cxx         \
+				KrigingUtilities.cxx      \
 				Kriging1D.cxx             \
 				Kriging2D.cxx             \
 				Kriging3D.cxx             \

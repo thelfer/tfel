@@ -19,7 +19,7 @@ template<typename T, template<class> class U>
 class generic_container_;
 
 template<template<class> class U>
-class generic_container_< tfel::meta::TypeListEndType,U>{};
+class generic_container_< tfel::meta::TLE,U>{};
 
 template<typename T, template<class> class U>
 class generic_container_
@@ -47,24 +47,24 @@ class generic_container
 
 private:
   
-  TFEL_STATIC_ASSERT((tfel::meta::TypeListElementsAreUnique<T>::cond));
+  TFEL_STATIC_ASSERT((tfel::meta::TLElementsAreUnique<T>::cond));
 
 public:
   
   template<unsigned int N>
   typename tfel::meta::EnableIf< 
-    (N < tfel::meta::TypeListSize<T>::value),  
-      typename tfel::meta::TypeListFindNthElt<T,N>::type >::type
+    (N < tfel::meta::TLSize<T>::value),  
+      typename tfel::meta::TLFindNthElt<T,N>::type >::type
   get(void) const {
-    return static_cast<const holder<typename tfel::meta::TypeListFindNthElt<T,N>::type> *>(this)->value;
+    return static_cast<const holder<typename tfel::meta::TLFindNthElt<T,N>::type> *>(this)->value;
   }
   
   template<unsigned int N>
   typename tfel::meta::EnableIf< 
-    (N < tfel::meta::TypeListSize<T>::value), 
+    (N < tfel::meta::TLSize<T>::value), 
       void >::type
-  set(const typename tfel::meta::TypeListFindNthElt<T,N>::type& src){
-    static_cast<holder<typename tfel::meta::TypeListFindNthElt<T,N>::type> *>(this)->set(src);
+  set(const typename tfel::meta::TLFindNthElt<T,N>::type& src){
+    static_cast<holder<typename tfel::meta::TLFindNthElt<T,N>::type> *>(this)->set(src);
   }
 
 };
@@ -95,9 +95,9 @@ int main(void){
   using namespace tfel::meta;
 
   typedef GenerateTypeList<std::string,double,int>::type my_list;
-  assert(TypeListElementsAreUnique<my_list>::cond);
+  assert(TLElementsAreUnique<my_list>::cond);
 
-  generic_container<TypeListNode<double, TypeListNode<std::string, TypeListEndType> > > test;
+  generic_container<TLNode<double,TLNode<std::string, TLE> > > test;
   
   test.set<0>(13.254);
   test.set<1>("Coucou");

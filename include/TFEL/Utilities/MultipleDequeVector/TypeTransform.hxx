@@ -1,7 +1,7 @@
 /*!
  * \file   TypeTransform.hxx
  * \info   This file defines two transformations of types which are intended to be used with the multiple_vector and multiple_deque containers
- * \see    TypeListTransform, multiple_vector, multiple_deque
+ * \see    TLTransform, multiple_vector, multiple_deque
  * \author Helfer Thomas
  * \date   01 jun 2006
  */

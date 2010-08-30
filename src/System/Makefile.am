@@ -15,6 +15,8 @@ libTFELSystem_la_SOURCES = ExternalLibraryManager.cxx \
 			   basic_wstream.cxx          \
 			   rfstream.cxx               \
 			   wfstream.cxx               \
+			   BinaryRead.cxx             \
+			   BinaryWrite.cxx            \
 			   getFunction.c
 
 libTFELSystem_la_LIBADD = -L$(top_builddir)/src/Exception/ -lTFELException -ldl

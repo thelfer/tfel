@@ -125,7 +125,7 @@ namespace tfel{
       typename container<typename Transform<T1>::type,
                          typename Allocator::template rebind<T1>::other>::iterator p_;
 
-      TFEL_STATIC_ASSERT((tfel::meta::TypeListCountNbrOfT<T1,T>::value==1));
+      TFEL_STATIC_ASSERT((tfel::meta::TLCountNbrOfT<T1,T>::value==1));
 
     };
 
@@ -251,7 +251,7 @@ typename Allocator::template rebind<T1>::other>::const_iterator::iterator_catego
       typename container<typename Transform<T1>::type,
 			 typename Allocator::template rebind<T1>::other>::const_iterator p_;
 
-      TFEL_STATIC_ASSERT((tfel::meta::TypeListCountNbrOfT<T1,T>::value==1));
+      TFEL_STATIC_ASSERT((tfel::meta::TLCountNbrOfT<T1,T>::value==1));
 
     };
 
@@ -359,7 +359,7 @@ typename Allocator::template rebind<T1>::other>::const_iterator::iterator_catego
       typename container<typename Transform<T1>::type,
 			 typename Allocator::template rebind<T1>::other>::reverse_iterator p_;
 
-      TFEL_STATIC_ASSERT((tfel::meta::TypeListCountNbrOfT<T1,T>::value==1));
+      TFEL_STATIC_ASSERT((tfel::meta::TLCountNbrOfT<T1,T>::value==1));
 
     };
 
@@ -482,7 +482,7 @@ typename Allocator::template rebind<T1>::other>::const_iterator::iterator_catego
       typename container<typename Transform<T1>::type,
 			 typename Allocator::template rebind<T1>::other>::const_reverse_iterator p_;
 
-      TFEL_STATIC_ASSERT((tfel::meta::TypeListCountNbrOfT<T1,T>::value==1));
+      TFEL_STATIC_ASSERT((tfel::meta::TLCountNbrOfT<T1,T>::value==1));
 
     };
 

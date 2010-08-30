@@ -794,7 +794,9 @@ namespace mfront{
       specializedParametersNumber=0u;
       first = true;
       for(p=data.localParameters.begin();p!=data.localParameters.end();){
-	this->srcFile << '"' << p->name << "\"";
+	string name;
+	name = this->getCelaenoVariableName(p->name,data);
+	this->srcFile << name;
 	if(++p!=data.localParameters.end()){
 	  this->srcFile << ",\n";
 	}

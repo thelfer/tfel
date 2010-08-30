@@ -15,7 +15,7 @@ namespace tfel{
 
   namespace utilities{
 
-    typedef tfel::meta::TypeListEndType TupleEndType;
+    typedef tfel::meta::TLE TupleEndType;
 
     /*!
      * \class tuple

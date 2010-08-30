@@ -11,6 +11,7 @@
 #include"TFEL/Config/TFELConfig.hxx"
 #include"TFEL/Math/vector.hxx"
 #include"TFEL/Math/Kriging.hxx"
+#include"TFEL/Math/Kriging/KrigingUtilities.hxx"
 
 namespace tfel
 {
@@ -19,7 +20,8 @@ namespace tfel
   {
 
     struct TFEL_VISIBILITY_EXPORT Kriging3D
-      : private Kriging<3u,double>
+      : private Kriging<3u,double>,
+	private KrigingUtilities
     {
       
       Kriging3D(const std::vector<double>&,
@@ -38,6 +40,21 @@ namespace tfel
 		 const double) const;
       
       ~Kriging3D();
+
+    private:
+
+      //! normalisation coefficient
+      double a1;
+      //! normalisation coefficient
+      double b1;
+      //! normalisation coefficient
+      double a2;
+      //! normalisation coefficient
+      double b2;
+      //! normalisation coefficient
+      double a3;
+      //! normalisation coefficient
+      double b3;
 
     }; // end of struct Kriging3D
 

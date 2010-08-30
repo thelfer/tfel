@@ -18,37 +18,37 @@ namespace tfel{
     /*!
      * \class GenerateTypeList
      *
-     * GenerateTypeList is an helper class which can generate TypeList containing up to 50 elements. The idea of this class was taken from Andrei Alexandrescu works\latexonly\cite{alexandrescu01:_c_desig,alexandrescu02}\endlatexonly\htmlonly(http://www.ddj.com/dept/cpp/184403813)\endhtmlonly.
+     * GenerateTypeList is an helper class which can generate TL containing up to 50 elements. The idea of this class was taken from Andrei Alexandrescu works\latexonly\cite{alexandrescu01:_c_desig,alexandrescu02}\endlatexonly\htmlonly(http://www.ddj.com/dept/cpp/184403813)\endhtmlonly.
      *
-     * All template parameters takes the default value TypeListEndType.
+     * All template parameters takes the default value TLE.
      *
      * \author Helfer Thomas
      */
-    template<typename T0=TypeListEndType,typename T1=TypeListEndType,
-             typename T2=TypeListEndType,typename T3=TypeListEndType,
-             typename T4=TypeListEndType,typename T5=TypeListEndType,
-             typename T6=TypeListEndType,typename T7=TypeListEndType,
-             typename T8=TypeListEndType,typename T9=TypeListEndType,
-             typename T10=TypeListEndType,typename T11=TypeListEndType,
-             typename T12=TypeListEndType,typename T13=TypeListEndType,
-             typename T14=TypeListEndType,typename T15=TypeListEndType,
-             typename T16=TypeListEndType,typename T17=TypeListEndType,
-             typename T18=TypeListEndType,typename T19=TypeListEndType,
-             typename T20=TypeListEndType,typename T21=TypeListEndType,
-             typename T22=TypeListEndType,typename T23=TypeListEndType,
-             typename T24=TypeListEndType,typename T25=TypeListEndType,
-             typename T26=TypeListEndType,typename T27=TypeListEndType,
-             typename T28=TypeListEndType,typename T29=TypeListEndType,
-             typename T30=TypeListEndType,typename T31=TypeListEndType,
-             typename T32=TypeListEndType,typename T33=TypeListEndType,
-             typename T34=TypeListEndType,typename T35=TypeListEndType,
-             typename T36=TypeListEndType,typename T37=TypeListEndType,
-             typename T38=TypeListEndType,typename T39=TypeListEndType,
-             typename T40=TypeListEndType,typename T41=TypeListEndType,
-             typename T42=TypeListEndType,typename T43=TypeListEndType,
-             typename T44=TypeListEndType,typename T45=TypeListEndType,
-             typename T46=TypeListEndType,typename T47=TypeListEndType,
-             typename T48=TypeListEndType,typename T49=TypeListEndType>
+    template<typename T0=TLE,typename T1=TLE,
+             typename T2=TLE,typename T3=TLE,
+             typename T4=TLE,typename T5=TLE,
+             typename T6=TLE,typename T7=TLE,
+             typename T8=TLE,typename T9=TLE,
+             typename T10=TLE,typename T11=TLE,
+             typename T12=TLE,typename T13=TLE,
+             typename T14=TLE,typename T15=TLE,
+             typename T16=TLE,typename T17=TLE,
+             typename T18=TLE,typename T19=TLE,
+             typename T20=TLE,typename T21=TLE,
+             typename T22=TLE,typename T23=TLE,
+             typename T24=TLE,typename T25=TLE,
+             typename T26=TLE,typename T27=TLE,
+             typename T28=TLE,typename T29=TLE,
+             typename T30=TLE,typename T31=TLE,
+             typename T32=TLE,typename T33=TLE,
+             typename T34=TLE,typename T35=TLE,
+             typename T36=TLE,typename T37=TLE,
+             typename T38=TLE,typename T39=TLE,
+             typename T40=TLE,typename T41=TLE,
+             typename T42=TLE,typename T43=TLE,
+             typename T44=TLE,typename T45=TLE,
+             typename T46=TLE,typename T47=TLE,
+             typename T48=TLE,typename T49=TLE>
     struct GenerateTypeList;
 
   } // end of namespace meta

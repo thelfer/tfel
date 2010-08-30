@@ -27,10 +27,16 @@ namespace tfel
 	 (vx.size()!=vz.size())){
 	throw(KrigingErrorInvalidLength());
       }
+      pair<double,double> n1 = KrigingUtilities::normalize(vx);
+      this->a1 = n1.first;
+      this->b1 = n1.second;
+      pair<double,double> n2 = KrigingUtilities::normalize(vy);
+      this->a2 = n2.first;
+      this->b2 = n2.second;
       for(px=vx.begin(),py=vy.begin(),pz=vz.begin();
 	  px!=vx.end();++px,++py,++pz){
-	v(0)=*px;
-	v(1)=*py;
+	v(0)=this->a1*(*px)+this->b1;
+	v(1)=this->a2*(*py)+this->b2;
 	Kriging<2u,double>::addValue(v,*pz);
       }
       Kriging<2u,double>::buildInterpolation();
@@ -40,7 +46,9 @@ namespace tfel
 			 const tfel::math::vector<double>& vy,
 			 const tfel::math::vector<double>& vz)
     {
+      using namespace std;
       using namespace tfel::math;
+      using tfel::math::vector;
       vector<double>::const_iterator px;
       vector<double>::const_iterator py;
       vector<double>::const_iterator pz;
@@ -49,10 +57,16 @@ namespace tfel
 	 (vx.size()!=vz.size())){
 	throw(KrigingErrorInvalidLength());
       }
+      pair<double,double> n1 = KrigingUtilities::normalize(vx);
+      this->a1 = n1.first;
+      this->b1 = n1.second;
+      pair<double,double> n2 = KrigingUtilities::normalize(vy);
+      this->a2 = n2.first;
+      this->b2 = n2.second;
       for(px=vx.begin(),py=vy.begin(),pz=vz.begin();
 	  px!=vx.end();++px,++py,++pz){
-	v(0)=*px;
-	v(1)=*py;
+	v(0)=this->a1*(*px)+this->b1;
+	v(1)=this->a2*(*py)+this->b2;
 	Kriging<2u,double>::addValue(v,*pz);
       }
       Kriging<2u,double>::buildInterpolation();
@@ -64,8 +78,8 @@ namespace tfel
     {
       using namespace tfel::math;
       tvector<2u,double> v;
-      v(0)=vx;
-      v(1)=vy;
+      v(0)=this->a1*vx+this->b1;
+      v(1)=this->a2*vy+this->b2;
       return Kriging<2u,double>::operator()(v);
     } // end of Kriging2D::operator()
       

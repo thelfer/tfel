@@ -11,6 +11,7 @@
 
 static CallBacksContainer callBacksContainer;
 static bool oflags          = false;
+static bool warning         = false;
 static bool incs            = false;
 static bool libs            = false;
 static bool exceptions      = false;
@@ -88,6 +89,12 @@ treatOFlags(void)
 {
   oflags = true;
 } // end of treatOFlags
+
+static void
+treatWarning(void)
+{
+  warning = true;
+} // end of treatWarning
 
 #ifdef HAVE_CASTEM
 static void
@@ -252,6 +259,7 @@ main(const int argc,
   const char * const * p2;
 
   registerCallBack("--oflags",&treatOFlags,"return tfel recommended optimisation flags.");
+  registerCallBack("--warning",&treatWarning,"return tfel recommended warnings.");
   registerCallBack("--includes",&treatIncludes,"return preprocessor flags.");
   registerCallBack("--libs",&treatLibs,"return linking flags.");
   registerCallBack("--help",&treatHelp,"print this help message.");
@@ -331,6 +339,10 @@ main(const int argc,
 
   if(oflags){
     cout << OPTIMISATION_FLAGS << " ";
+  }
+
+  if(warning){
+    cout << COMPILER_WARNINGS << " ";
   }
 
   if(incs||libs||oflags){

@@ -23,17 +23,17 @@ namespace tfel{
       struct CompositeCompositeItems;
 
       template<typename Op>
-      struct CompositeCompositeItems<tfel::meta::TypeListEndType,
-				     tfel::meta::TypeListEndType,
+      struct CompositeCompositeItems<tfel::meta::TLE,
+				     tfel::meta::TLE,
 				     Op>
       {
-	typedef tfel::meta::TypeListEndType type;
+	typedef tfel::meta::TLE type;
       };
 
       template<typename ItemsA,typename ItemsB,typename Op>
       struct CompositeCompositeItems
       {
-	typedef tfel::meta::TypeListNode<typename ComputeBinaryResult<typename ItemsA::Current,
+	typedef tfel::meta::TLNode<typename ComputeBinaryResult<typename ItemsA::Current,
 								      typename ItemsB::Current,
 								      Op>::Handle,
 					 typename CompositeCompositeItems<typename ItemsA::Next,
@@ -52,8 +52,8 @@ namespace tfel{
 
       typedef typename A::Items ItemsA;
       typedef typename B::Items ItemsB;
-      static const unsigned int ItemsASize = tfel::meta::TypeListSize<ItemsA>::value;
-      static const unsigned int ItemsBSize = tfel::meta::TypeListSize<ItemsB>::value;
+      static const unsigned int ItemsASize = tfel::meta::TLSize<ItemsA>::value;
+      static const unsigned int ItemsBSize = tfel::meta::TLSize<ItemsB>::value;
       TFEL_STATIC_ASSERT(ItemsASize==ItemsBSize);
       
       static const bool IsATemporary = tfel::typetraits::IsTemporary<A>::cond;
@@ -81,8 +81,8 @@ namespace tfel{
       template<unsigned short N>
       TFEL_MATH_INLINE2
       const typename tfel::meta::EnableIf<
-	(N<tfel::meta::TypeListSize<Items>::value),
-	  typename tfel::meta::TypeListFindNthElt<Items,N>::type
+	(N<tfel::meta::TLSize<Items>::value),
+	  typename tfel::meta::TLFindNthElt<Items,N>::type
       >::type
       getComponent(void) const
       {

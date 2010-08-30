@@ -9,7 +9,7 @@ endif
 doc:
 	cd @top_srcdir@ && doxygen @abs_top_builddir@/Doxyfile && cd -
 
-EXTRA_DIST = config/config.rpath  config/config.rpath  config/config.rpath  config/config.rpath  config/config.rpath  config/config.rpath  config/config.rpath  config/config.rpath  config/config.rpath  config/config.rpath \
+EXTRA_DIST = config/config.rpath  config/config.rpath  config/config.rpath  config/config.rpath  config/config.rpath  config/config.rpath  config/config.rpath  config/config.rpath  config/config.rpath  config/config.rpath  config/config.rpath  config/config.rpath  config/config.rpath  config/config.rpath \
 	     bootstrap.sh        \
 	     CMakeLists.txt      \
 	     GPL.txt             \

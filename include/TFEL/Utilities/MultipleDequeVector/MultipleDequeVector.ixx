@@ -21,7 +21,7 @@ namespace tfel{
     template<template<class> class Transform,
 	     template<class,class> class container,
 	     typename Allocator>
-    class MultipleDequeVectorContainer_<tfel::meta::TypeListEndType,
+    class MultipleDequeVectorContainer_<tfel::meta::TLE,
 					Transform,
 					container,
 					Allocator>
@@ -41,7 +41,7 @@ namespace tfel{
 		* A simple check
 		* \see TFEL_STATIC_ASSERT
 		*/
-	       TFEL_STATIC_ASSERT((tfel::meta::IsSubClassOf<T,tfel::meta::TypeList>::cond));
+	       TFEL_STATIC_ASSERT((tfel::meta::IsSubClassOf<T,tfel::meta::TL>::cond));
 	     };
     
     template<typename T,
@@ -50,7 +50,7 @@ namespace tfel{
 	     typename Allocator>
     template<typename T1>
     TFEL_INLINE typename tfel::meta::EnableIf<
-      tfel::meta::TypeListCountNbrOfT<T1,T>::value==1,
+      tfel::meta::TLCountNbrOfT<T1,T>::value==1,
       void >::type
     MultipleDequeVectorContainer<T,Transform,container,Allocator>::clear(void){
       container<typename Transform<T1>::type,
@@ -63,7 +63,7 @@ namespace tfel{
 	     typename Allocator>
     template<typename T1>
     TFEL_INLINE typename tfel::meta::EnableIf<
-      tfel::meta::TypeListCountNbrOfT<T1,T>::value==1,
+      tfel::meta::TLCountNbrOfT<T1,T>::value==1,
       bool >::type
     MultipleDequeVectorContainer<T,Transform,container,Allocator>::empty(void) const{
       return container<typename Transform<T1>::type,
@@ -77,7 +77,7 @@ namespace tfel{
     template<typename T1>
     TFEL_INLINE typename 
     tfel::meta::EnableIf<
-      tfel::meta::TypeListCountNbrOfT<T1,T>::value==1,
+      tfel::meta::TLCountNbrOfT<T1,T>::value==1,
       typename MultipleDequeVectorContainer<T,Transform,container,Allocator>::template iterator<T1> >::type
     MultipleDequeVectorContainer<T,Transform,container,Allocator>::begin(void){
       return iterator<T1>(container<typename Transform<T1>::type,
@@ -91,7 +91,7 @@ namespace tfel{
     template<typename T1>
     TFEL_INLINE typename 
     tfel::meta::EnableIf<
-      tfel::meta::TypeListCountNbrOfT<T1,T>::value==1,
+      tfel::meta::TLCountNbrOfT<T1,T>::value==1,
       typename MultipleDequeVectorContainer<T,Transform,container,Allocator>::template iterator<T1> >::type
     MultipleDequeVectorContainer<T,Transform,container,Allocator>::end(void){
       return container<typename Transform<T1>::type,
@@ -105,7 +105,7 @@ namespace tfel{
     template<typename T1>
     TFEL_INLINE typename 
     tfel::meta::EnableIf<
-      tfel::meta::TypeListCountNbrOfT<T1,T>::value==1,
+      tfel::meta::TLCountNbrOfT<T1,T>::value==1,
       typename MultipleDequeVectorContainer<T,Transform,container,Allocator>::template const_iterator<T1> >::type
     MultipleDequeVectorContainer<T,Transform,container,Allocator>::begin(void) const {
       return container<typename Transform<T1>::type,
@@ -119,7 +119,7 @@ namespace tfel{
     template<typename T1>
     TFEL_INLINE typename 
     tfel::meta::EnableIf<
-      tfel::meta::TypeListCountNbrOfT<T1,T>::value==1,
+      tfel::meta::TLCountNbrOfT<T1,T>::value==1,
       typename MultipleDequeVectorContainer<T,Transform,container,Allocator>::template const_iterator<T1> >::type
     MultipleDequeVectorContainer<T,Transform,container,Allocator>::end(void) const {
       return container<typename Transform<T1>::type,
@@ -133,7 +133,7 @@ namespace tfel{
     template<typename T1>
     TFEL_INLINE typename 
     tfel::meta::EnableIf<
-      tfel::meta::TypeListCountNbrOfT<T1,T>::value==1,
+      tfel::meta::TLCountNbrOfT<T1,T>::value==1,
       typename MultipleDequeVectorContainer<T,Transform,container,Allocator>::template reverse_iterator<T1> >::type
     MultipleDequeVectorContainer<T,Transform,container,Allocator>::rbegin(void)
     {
@@ -147,7 +147,7 @@ namespace tfel{
 	     typename Allocator>
     template<typename T1>
     TFEL_INLINE typename tfel::meta::EnableIf<
-      tfel::meta::TypeListCountNbrOfT<T1,T>::value==1,
+      tfel::meta::TLCountNbrOfT<T1,T>::value==1,
       typename MultipleDequeVectorContainer<T,Transform,container,Allocator>::template reverse_iterator<T1> >::type
     MultipleDequeVectorContainer<T,Transform,container,Allocator>::rend(void){
       return container<typename Transform<T1>::type,
@@ -160,7 +160,7 @@ namespace tfel{
 	     typename Allocator>
     template<typename T1>
     TFEL_INLINE typename tfel::meta::EnableIf<
-      tfel::meta::TypeListCountNbrOfT<T1,T>::value==1,
+      tfel::meta::TLCountNbrOfT<T1,T>::value==1,
       typename MultipleDequeVectorContainer<T,Transform,container,Allocator>::template const_reverse_iterator<T1> >::type
     MultipleDequeVectorContainer<T,Transform,container,Allocator>::rbegin(void) const {
       return container<typename Transform<T1>::type,
@@ -174,7 +174,7 @@ namespace tfel{
     template<typename T1>
     TFEL_INLINE typename 
     tfel::meta::EnableIf<
-      tfel::meta::TypeListCountNbrOfT<T1,T>::value==1,
+      tfel::meta::TLCountNbrOfT<T1,T>::value==1,
       typename MultipleDequeVectorContainer<T,Transform,container,Allocator>::template const_reverse_iterator<T1> >::type
     MultipleDequeVectorContainer<T,Transform,container,Allocator>::rend(void) const {
       return container<typename Transform<T1>::type,

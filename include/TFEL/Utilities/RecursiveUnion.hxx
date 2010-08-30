@@ -1,7 +1,7 @@
 /*!
  * \file   RecursiveUnion.hxx
  * \brief  This file implements the RecursiveUnion class and some function to manipulate them.
- * \see    TypeList
+ * \see    TL
  * \author Helfer Thomas
  * \date   31 Jul 2006
  */
@@ -19,11 +19,11 @@ namespace tfel{
 
     /*!
      * \class RecursiveUnion 
-     * \brief union that may contains each type of a given TypeList.
+     * \brief union that may contains each type of a given TL.
      * 
-     * \param T, a TypeList
+     * \param T, a TL
      *
-     * \see    TypeList
+     * \see    TL
      * \author Helfer Thomas
      * \date   31 Jul 2006
      */
@@ -31,7 +31,7 @@ namespace tfel{
     union RecursiveUnion
     {
       // Concept check
-      TFEL_STATIC_ASSERT((tfel::meta::IsSubClassOf<T,tfel::meta::TypeList>::cond));
+      TFEL_STATIC_ASSERT((tfel::meta::IsSubClassOf<T,tfel::meta::TL>::cond));
       typename T::Current current;
       RecursiveUnion<typename T::Next> next;
     };
@@ -43,7 +43,7 @@ namespace tfel{
      * \date   31 Jul 2006
      */     
     template<>
-    union RecursiveUnion<tfel::meta::TypeListEndType>{};
+    union RecursiveUnion<tfel::meta::TLE>{};
 
     /*!
      * \class  RecursiveRetrieve
@@ -57,26 +57,26 @@ namespace tfel{
     {
 
       /*!
-       *\brief Returns a reference to the Nth type of the TypeList used to create a RecursiveUnion
+       *\brief Returns a reference to the Nth type of the TL used to create a RecursiveUnion
        */
       template<typename List>
-      static inline typename tfel::meta::TypeListFindNthElt<List,N>::type& exe(RecursiveUnion<List>& src)
+      static inline typename tfel::meta::TLFindNthElt<List,N>::type& exe(RecursiveUnion<List>& src)
       {
-	TFEL_STATIC_ASSERT((tfel::meta::IsSubClassOf<List,tfel::meta::TypeList>::cond));
-	TFEL_STATIC_ASSERT((!tfel::meta::IsSameType<typename tfel::meta::TypeListFindNthElt<List,N>::type,tfel::meta::TypeListEndType>::cond));
+	TFEL_STATIC_ASSERT((tfel::meta::IsSubClassOf<List,tfel::meta::TL>::cond));
+	TFEL_STATIC_ASSERT((!tfel::meta::IsSameType<typename tfel::meta::TLFindNthElt<List,N>::type,tfel::meta::TLE>::cond));
 	return RecursiveRetrieve<N-1>::exe(src.next);
       }
 
       /*!
-       * \brief Returns a const reference to the Nth type of the TypeList used to 
+       * \brief Returns a const reference to the Nth type of the TL used to 
        *  create a RecursiveUnion
        */
       template<typename List>
-      static inline const typename tfel::meta::TypeListFindNthElt<List,N>::type& 
+      static inline const typename tfel::meta::TLFindNthElt<List,N>::type& 
       exe(const RecursiveUnion<List>& src)
       {
-	TFEL_STATIC_ASSERT((tfel::meta::IsSubClassOf<List,tfel::meta::TypeList>::cond));
-	TFEL_STATIC_ASSERT((!tfel::meta::IsSameType<typename tfel::meta::TypeListFindNthElt<List,N>::type,tfel::meta::TypeListEndType>::cond));
+	TFEL_STATIC_ASSERT((tfel::meta::IsSubClassOf<List,tfel::meta::TL>::cond));
+	TFEL_STATIC_ASSERT((!tfel::meta::IsSameType<typename tfel::meta::TLFindNthElt<List,N>::type,tfel::meta::TLE>::cond));
 	return RecursiveRetrieve<N-1>::exe(src.next);
       }
 

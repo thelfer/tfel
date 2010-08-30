@@ -19,112 +19,112 @@ namespace math{
 namespace internals{
 
 template<unsigned short N,typename List>
-struct GenerateCompositeFromTypeList;
+struct GenerateCompositeFromTL;
 
 template<typename List>
-class GenerateCompositeFromTypeList<1,List>
+class GenerateCompositeFromTL<1,List>
 {
-typedef typename tfel::meta::TypeListFindNthElt<List,0>::type Type0;
+typedef typename tfel::meta::TLFindNthElt<List,0>::type Type0;
 public :
 typedef tfel::math::composite<Type0> type;
 };
 
 template<typename List>
-class GenerateCompositeFromTypeList<2,List>
+class GenerateCompositeFromTL<2,List>
 {
-typedef typename tfel::meta::TypeListFindNthElt<List,0>::type Type0;
-typedef typename tfel::meta::TypeListFindNthElt<List,1>::type Type1;
+typedef typename tfel::meta::TLFindNthElt<List,0>::type Type0;
+typedef typename tfel::meta::TLFindNthElt<List,1>::type Type1;
 public :
 typedef tfel::math::composite<Type0,Type1> type;
 };
 
 template<typename List>
-class GenerateCompositeFromTypeList<3,List>
+class GenerateCompositeFromTL<3,List>
 {
-typedef typename tfel::meta::TypeListFindNthElt<List,0>::type Type0;
-typedef typename tfel::meta::TypeListFindNthElt<List,1>::type Type1;
-typedef typename tfel::meta::TypeListFindNthElt<List,2>::type Type2;
+typedef typename tfel::meta::TLFindNthElt<List,0>::type Type0;
+typedef typename tfel::meta::TLFindNthElt<List,1>::type Type1;
+typedef typename tfel::meta::TLFindNthElt<List,2>::type Type2;
 public :
 typedef tfel::math::composite<Type0,Type1,Type2> type;
 };
 
 template<typename List>
-class GenerateCompositeFromTypeList<4,List>
+class GenerateCompositeFromTL<4,List>
 {
-typedef typename tfel::meta::TypeListFindNthElt<List,0>::type Type0;
-typedef typename tfel::meta::TypeListFindNthElt<List,1>::type Type1;
-typedef typename tfel::meta::TypeListFindNthElt<List,2>::type Type2;
-typedef typename tfel::meta::TypeListFindNthElt<List,3>::type Type3;
+typedef typename tfel::meta::TLFindNthElt<List,0>::type Type0;
+typedef typename tfel::meta::TLFindNthElt<List,1>::type Type1;
+typedef typename tfel::meta::TLFindNthElt<List,2>::type Type2;
+typedef typename tfel::meta::TLFindNthElt<List,3>::type Type3;
 public :
 typedef tfel::math::composite<Type0,Type1,Type2,Type3> type;
 };
 
 template<typename List>
-class GenerateCompositeFromTypeList<5,List>
+class GenerateCompositeFromTL<5,List>
 {
-typedef typename tfel::meta::TypeListFindNthElt<List,0>::type Type0;
-typedef typename tfel::meta::TypeListFindNthElt<List,1>::type Type1;
-typedef typename tfel::meta::TypeListFindNthElt<List,2>::type Type2;
-typedef typename tfel::meta::TypeListFindNthElt<List,3>::type Type3;
-typedef typename tfel::meta::TypeListFindNthElt<List,4>::type Type4;
+typedef typename tfel::meta::TLFindNthElt<List,0>::type Type0;
+typedef typename tfel::meta::TLFindNthElt<List,1>::type Type1;
+typedef typename tfel::meta::TLFindNthElt<List,2>::type Type2;
+typedef typename tfel::meta::TLFindNthElt<List,3>::type Type3;
+typedef typename tfel::meta::TLFindNthElt<List,4>::type Type4;
 public :
 typedef tfel::math::composite<Type0,Type1,Type2,Type3,Type4> type;
 };
 
 template<typename List>
-class GenerateCompositeFromTypeList<6,List>
+class GenerateCompositeFromTL<6,List>
 {
-typedef typename tfel::meta::TypeListFindNthElt<List,0>::type Type0;
-typedef typename tfel::meta::TypeListFindNthElt<List,1>::type Type1;
-typedef typename tfel::meta::TypeListFindNthElt<List,2>::type Type2;
-typedef typename tfel::meta::TypeListFindNthElt<List,3>::type Type3;
-typedef typename tfel::meta::TypeListFindNthElt<List,4>::type Type4;
-typedef typename tfel::meta::TypeListFindNthElt<List,5>::type Type5;
+typedef typename tfel::meta::TLFindNthElt<List,0>::type Type0;
+typedef typename tfel::meta::TLFindNthElt<List,1>::type Type1;
+typedef typename tfel::meta::TLFindNthElt<List,2>::type Type2;
+typedef typename tfel::meta::TLFindNthElt<List,3>::type Type3;
+typedef typename tfel::meta::TLFindNthElt<List,4>::type Type4;
+typedef typename tfel::meta::TLFindNthElt<List,5>::type Type5;
 public :
 typedef tfel::math::composite<Type0,Type1,Type2,Type3,Type4,Type5> type;
 };
 
 template<typename List>
-class GenerateCompositeFromTypeList<7,List>
+class GenerateCompositeFromTL<7,List>
 {
-typedef typename tfel::meta::TypeListFindNthElt<List,0>::type Type0;
-typedef typename tfel::meta::TypeListFindNthElt<List,1>::type Type1;
-typedef typename tfel::meta::TypeListFindNthElt<List,2>::type Type2;
-typedef typename tfel::meta::TypeListFindNthElt<List,3>::type Type3;
-typedef typename tfel::meta::TypeListFindNthElt<List,4>::type Type4;
-typedef typename tfel::meta::TypeListFindNthElt<List,5>::type Type5;
-typedef typename tfel::meta::TypeListFindNthElt<List,6>::type Type6;
+typedef typename tfel::meta::TLFindNthElt<List,0>::type Type0;
+typedef typename tfel::meta::TLFindNthElt<List,1>::type Type1;
+typedef typename tfel::meta::TLFindNthElt<List,2>::type Type2;
+typedef typename tfel::meta::TLFindNthElt<List,3>::type Type3;
+typedef typename tfel::meta::TLFindNthElt<List,4>::type Type4;
+typedef typename tfel::meta::TLFindNthElt<List,5>::type Type5;
+typedef typename tfel::meta::TLFindNthElt<List,6>::type Type6;
 public :
 typedef tfel::math::composite<Type0,Type1,Type2,Type3,Type4,Type5,Type6> type;
 };
 
 template<typename List>
-class GenerateCompositeFromTypeList<8,List>
+class GenerateCompositeFromTL<8,List>
 {
-typedef typename tfel::meta::TypeListFindNthElt<List,0>::type Type0;
-typedef typename tfel::meta::TypeListFindNthElt<List,1>::type Type1;
-typedef typename tfel::meta::TypeListFindNthElt<List,2>::type Type2;
-typedef typename tfel::meta::TypeListFindNthElt<List,3>::type Type3;
-typedef typename tfel::meta::TypeListFindNthElt<List,4>::type Type4;
-typedef typename tfel::meta::TypeListFindNthElt<List,5>::type Type5;
-typedef typename tfel::meta::TypeListFindNthElt<List,6>::type Type6;
-typedef typename tfel::meta::TypeListFindNthElt<List,7>::type Type7;
+typedef typename tfel::meta::TLFindNthElt<List,0>::type Type0;
+typedef typename tfel::meta::TLFindNthElt<List,1>::type Type1;
+typedef typename tfel::meta::TLFindNthElt<List,2>::type Type2;
+typedef typename tfel::meta::TLFindNthElt<List,3>::type Type3;
+typedef typename tfel::meta::TLFindNthElt<List,4>::type Type4;
+typedef typename tfel::meta::TLFindNthElt<List,5>::type Type5;
+typedef typename tfel::meta::TLFindNthElt<List,6>::type Type6;
+typedef typename tfel::meta::TLFindNthElt<List,7>::type Type7;
 public :
 typedef tfel::math::composite<Type0,Type1,Type2,Type3,Type4,Type5,Type6,Type7> type;
 };
 
 template<typename List>
-class GenerateCompositeFromTypeList<9,List>
+class GenerateCompositeFromTL<9,List>
 {
-typedef typename tfel::meta::TypeListFindNthElt<List,0>::type Type0;
-typedef typename tfel::meta::TypeListFindNthElt<List,1>::type Type1;
-typedef typename tfel::meta::TypeListFindNthElt<List,2>::type Type2;
-typedef typename tfel::meta::TypeListFindNthElt<List,3>::type Type3;
-typedef typename tfel::meta::TypeListFindNthElt<List,4>::type Type4;
-typedef typename tfel::meta::TypeListFindNthElt<List,5>::type Type5;
-typedef typename tfel::meta::TypeListFindNthElt<List,6>::type Type6;
-typedef typename tfel::meta::TypeListFindNthElt<List,7>::type Type7;
-typedef typename tfel::meta::TypeListFindNthElt<List,8>::type Type8;
+typedef typename tfel::meta::TLFindNthElt<List,0>::type Type0;
+typedef typename tfel::meta::TLFindNthElt<List,1>::type Type1;
+typedef typename tfel::meta::TLFindNthElt<List,2>::type Type2;
+typedef typename tfel::meta::TLFindNthElt<List,3>::type Type3;
+typedef typename tfel::meta::TLFindNthElt<List,4>::type Type4;
+typedef typename tfel::meta::TLFindNthElt<List,5>::type Type5;
+typedef typename tfel::meta::TLFindNthElt<List,6>::type Type6;
+typedef typename tfel::meta::TLFindNthElt<List,7>::type Type7;
+typedef typename tfel::meta::TLFindNthElt<List,8>::type Type8;
 public :
 typedef tfel::math::composite<Type0,Type1,Type2,Type3,Type4,Type5,Type6,Type7,Type8> type;
 };
@@ -138,11 +138,11 @@ template<typename TList,typename UList,typename Op>
 struct CompositeComputeResultList;
 
 template<typename Op>
-struct CompositeComputeResultList<tfel::meta::TypeListEndType,
-tfel::meta::TypeListEndType,
+struct CompositeComputeResultList<tfel::meta::TLE,
+tfel::meta::TLE,
 Op>
 {
-typedef tfel::meta::TypeListEndType type;
+typedef tfel::meta::TLE type;
 };
 
 template<typename TList,typename UList,typename Op>
@@ -155,18 +155,18 @@ typedef typename CompositeComputeResultList<typename TList::Next,
 typename UList::Next,
 Op>::type Next;
 public:
-typedef tfel::meta::TypeListNode<Result,Next> type;
+typedef tfel::meta::TLNode<Result,Next> type;
 };
 
 template<typename TList,typename UList,typename Op>
 class CompositeComputeResult_
 {
 typedef typename CompositeComputeResultList<TList,UList,Op>::type ResList;
-typedef typename GenerateCompositeFromTypeList<tfel::meta::TypeListSize<ResList>::value,
+typedef typename GenerateCompositeFromTL<tfel::meta::TLSize<ResList>::value,
 ResList>::type CompositeResult;
 public:
 typedef typename tfel::meta::IF<
-tfel::meta::TypeListContainsInvalidType<ResList>::cond,
+tfel::meta::TLContainsInvalidType<ResList>::cond,
 tfel::meta::InvalidType,
 CompositeResult
 >::type type;
@@ -176,9 +176,9 @@ template<typename S,typename TList,typename Op>
 struct ScalarCompositeComputeResultList;
 
 template<typename S,typename Op>
-struct ScalarCompositeComputeResultList<S,tfel::meta::TypeListEndType,Op>
+struct ScalarCompositeComputeResultList<S,tfel::meta::TLE,Op>
 {
-typedef tfel::meta::TypeListEndType type;
+typedef tfel::meta::TLE type;
 };
 
 template<typename S,typename TList,typename Op>
@@ -188,15 +188,15 @@ typedef typename tfel::math::ResultType<S,typename TList::Current,
 Op>::type Result;
 typedef typename ScalarCompositeComputeResultList<S,typename TList::Next,Op>::type Next;
 public:
-typedef tfel::meta::TypeListNode<Result,Next> type;
+typedef tfel::meta::TLNode<Result,Next> type;
 };
 template<typename TList,typename S,typename Op>
 struct CompositeScalarComputeResultList;
 
 template<typename S,typename Op>
-struct CompositeScalarComputeResultList<tfel::meta::TypeListEndType,S,Op>
+struct CompositeScalarComputeResultList<tfel::meta::TLE,S,Op>
 {
-typedef tfel::meta::TypeListEndType type;
+typedef tfel::meta::TLE type;
 };
 
 template<typename TList,typename S,typename Op>
@@ -206,15 +206,15 @@ typedef typename tfel::math::ResultType<typename TList::Current,S,
 Op>::type Result;
 typedef typename CompositeScalarComputeResultList<typename TList::Next,S,Op>::type Next;
 public:
-typedef tfel::meta::TypeListNode<Result,Next> type;
+typedef tfel::meta::TLNode<Result,Next> type;
 };
 template<typename TList,typename Op>
 struct CompositeComputeUnaryResultList;
 
 template<typename Op>
-struct CompositeComputeUnaryResultList<tfel::meta::TypeListEndType,Op>
+struct CompositeComputeUnaryResultList<tfel::meta::TLE,Op>
 {
-typedef tfel::meta::TypeListEndType type;
+typedef tfel::meta::TLE type;
 };
 
 template<typename TList,typename Op>
@@ -224,12 +224,12 @@ typedef typename tfel::math::UnaryResultType<typename TList::Current,
 Op>::type Result;
 typedef typename CompositeComputeUnaryResultList<typename TList::Next,Op>::type Next;
 public:
-typedef tfel::meta::TypeListNode<Result,Next> type;
+typedef tfel::meta::TLNode<Result,Next> type;
 };
 template<typename TList,typename UList,typename Op>
 class CompositeComputeResult
-: public tfel::meta::IF<tfel::meta::TypeListSize<TList>::value!=
-tfel::meta::TypeListSize<UList>::value,
+: public tfel::meta::IF<tfel::meta::TLSize<TList>::value!=
+tfel::meta::TLSize<UList>::value,
 CompositeInvalidSize,
 CompositeComputeResult_<TList,UList,Op> >::type
 {};
@@ -238,11 +238,11 @@ template<typename TList,typename Op>
 class CompositeComputeUnaryResult
 {
 typedef typename CompositeComputeUnaryResultList<TList,Op>::type ResList;
-typedef typename GenerateCompositeFromTypeList<tfel::meta::TypeListSize<ResList>::value,
+typedef typename GenerateCompositeFromTL<tfel::meta::TLSize<ResList>::value,
 ResList>::type CompositeResult;
 public:
 typedef typename tfel::meta::IF<
-tfel::meta::TypeListContainsInvalidType<ResList>::cond,
+tfel::meta::TLContainsInvalidType<ResList>::cond,
 tfel::meta::InvalidType,
 CompositeResult
 >::type type;
@@ -252,11 +252,11 @@ template<typename S,typename TList,typename Op>
 class ScalarCompositeComputeResult
 {
 typedef typename ScalarCompositeComputeResultList<S,TList,Op>::type ResList;
-typedef typename GenerateCompositeFromTypeList<tfel::meta::TypeListSize<ResList>::value,
+typedef typename GenerateCompositeFromTL<tfel::meta::TLSize<ResList>::value,
 ResList>::type CompositeResult;
 public:
 typedef typename tfel::meta::IF<
-tfel::meta::TypeListContainsInvalidType<ResList>::cond,
+tfel::meta::TLContainsInvalidType<ResList>::cond,
 tfel::meta::InvalidType,
 CompositeResult
 >::type type;
@@ -266,11 +266,11 @@ template<typename TList,typename S,typename Op>
 class CompositeScalarComputeResult
 {
 typedef typename CompositeScalarComputeResultList<TList,S,Op>::type ResList;
-typedef typename GenerateCompositeFromTypeList<tfel::meta::TypeListSize<ResList>::value,
+typedef typename GenerateCompositeFromTL<tfel::meta::TLSize<ResList>::value,
 ResList>::type CompositeResult;
 public:
 typedef typename tfel::meta::IF<
-tfel::meta::TypeListContainsInvalidType<ResList>::cond,
+tfel::meta::TLContainsInvalidType<ResList>::cond,
 tfel::meta::InvalidType,
 CompositeResult
 >::type type;

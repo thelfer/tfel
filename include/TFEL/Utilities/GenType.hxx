@@ -20,7 +20,7 @@ namespace tfel{
   namespace utilities{
 
     //! a simple typedef for reducing the GenType.ixx file size (!).
-    typedef tfel::meta::TypeListEndType GTEnd;
+    typedef tfel::meta::TLE GTEnd;
 
     /*!
      * \class GenType

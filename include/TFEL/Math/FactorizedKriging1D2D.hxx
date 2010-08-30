@@ -10,6 +10,7 @@
 
 #include"TFEL/Config/TFELConfig.hxx"
 #include"TFEL/Math/vector.hxx"
+#include"TFEL/Math/Kriging/KrigingUtilities.hxx"
 #include"TFEL/Math/FactorizedKriging.hxx"
 #include"TFEL/Math/Kriging/KrigingPieceWiseLinearModel1D.hxx"
 
@@ -22,7 +23,8 @@ namespace tfel
     struct TFEL_VISIBILITY_EXPORT FactorizedKriging1D2D
       : private FactorizedKriging<1u,2u,double,
 				  KrigingPieceWiseLinearModel1D<double>,
-				  KrigingModelAdaptator<KrigingDefaultModel<2u,double> > >
+				  KrigingModelAdaptator<KrigingDefaultModel<2u,double> > >,
+      	private KrigingUtilities
     {
       
       FactorizedKriging1D2D(const std::vector<double>&,
@@ -41,6 +43,21 @@ namespace tfel
 		 const double) const;
       
       ~FactorizedKriging1D2D();
+
+    private:
+
+      //! normalisation coefficient
+      double a0;
+      //! normalisation coefficient
+      double b0;
+      //! normalisation coefficient
+      double a1;
+      //! normalisation coefficient
+      double b1;
+      //! normalisation coefficient
+      double a2;
+      //! normalisation coefficient
+      double b2;
 
     }; // end of struct FactorizedKriging1D2D
 

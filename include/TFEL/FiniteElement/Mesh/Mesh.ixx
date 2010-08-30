@@ -35,7 +35,7 @@ namespace tfel
 	typedef typename NodesManagerType::template iterator<T1>::type    NodeIterator;
 	typedef typename ElementsManagerType::template iterator<T1>::type ElementsIterator;
       public:
-	typedef typename tfel::meta::IF<tfel::meta::TypeListCountNbrOfT<T1,NodeList>::value==1u,
+	typedef typename tfel::meta::IF<tfel::meta::TLCountNbrOfT<T1,NodeList>::value==1u,
 					NodeIterator,ElementsIterator>::type type;
       };
 
@@ -45,7 +45,7 @@ namespace tfel
 	typedef typename NodesManagerType::template reverse_iterator<T1>::type    NodeIterator;
 	typedef typename ElementsManagerType::template reverse_iterator<T1>::type ElementsIterator;
       public:
-	typedef typename tfel::meta::IF<tfel::meta::TypeListCountNbrOfT<T1,NodeList>::value==1u,
+	typedef typename tfel::meta::IF<tfel::meta::TLCountNbrOfT<T1,NodeList>::value==1u,
 					NodeIterator,ElementsIterator>::type type;
       };
       
@@ -55,7 +55,7 @@ namespace tfel
 	typedef typename NodesManagerType::template const_iterator<T1>::type    NodeIterator;
 	typedef typename ElementsManagerType::template const_iterator<T1>::type ElementsIterator;
       public:
-	typedef typename tfel::meta::IF<tfel::meta::TypeListCountNbrOfT<T1,NodeList>::value==1u,
+	typedef typename tfel::meta::IF<tfel::meta::TLCountNbrOfT<T1,NodeList>::value==1u,
 					NodeIterator,ElementsIterator>::type type;
       };
 
@@ -65,7 +65,7 @@ namespace tfel
 	typedef typename NodesManagerType::template const_reverse_iterator<T1>::type NodeIterator;
 	typedef typename ElementsManagerType::template const_reverse_iterator<T1>::type ElementsIterator;
       public:
-	typedef typename tfel::meta::IF<tfel::meta::TypeListCountNbrOfT<T1,NodeList>::value==1u,
+	typedef typename tfel::meta::IF<tfel::meta::TLCountNbrOfT<T1,NodeList>::value==1u,
 					NodeIterator,ElementsIterator>::type type;
       };
 

@@ -15,8 +15,8 @@ namespace tfel{
 
     /*!
      * \class  MultipleVector
-     * \brief  The MultipleVector enables storage of every elements in a TypeList.
-     * \param  T, TypeList.
+     * \brief  The MultipleVector enables storage of every elements in a TL.
+     * \param  T, TL.
      * \param  Transform, tells how elements are handled.
      * \see    TypeTransform.hxx
      * \author Helfer Thomas

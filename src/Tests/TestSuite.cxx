@@ -16,15 +16,18 @@ namespace tfel
   {
     
     TestSuite::TestSuite()
-      : sname()
+      : tests(),
+	sname()
     {} // end of TestSuite::TestSuite
 
     TestSuite::TestSuite(const std::string& n)
-      : sname(n)
+      : tests(),
+	sname(n)
     {} // end of TestSuite::TestSuite
 
     TestSuite::TestSuite(const char * const n)
-      : sname(n)
+      : tests(),
+	sname(n)
     {} // end of TestSuite::TestSuite
 
     std::string

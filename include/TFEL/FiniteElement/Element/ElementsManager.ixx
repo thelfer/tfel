@@ -26,14 +26,14 @@ namespace tfel
 
       template<typename CurrentElement,typename NextElement,
 	       typename ContainerRebind>
-      struct ElementsContainer<tfel::meta::TypeListNode<CurrentElement,NextElement>,
+      struct ElementsContainer<tfel::meta::TLNode<CurrentElement,NextElement>,
 			       ContainerRebind>
 	: protected ElementsContainer<CurrentElement,ContainerRebind>,
 	  protected ElementsContainer<NextElement,ContainerRebind>
       {};
       
       template<typename ContainerRebind>
-      struct ElementsContainer<tfel::meta::TypeListEndType,ContainerRebind>
+      struct ElementsContainer<tfel::meta::TLE,ContainerRebind>
       {};
       
     } // end of namspace internals
@@ -46,7 +46,7 @@ namespace tfel
     protected:
 
       typedef typename tfel::meta::GenerateTypeList<Element>::type NList;
-      typedef typename tfel::meta::IF<tfel::meta::IsSubClassOf<Element,tfel::meta::TypeList>::cond,
+      typedef typename tfel::meta::IF<tfel::meta::IsSubClassOf<Element,tfel::meta::TL>::cond,
 				      Element,NList>::type ElementList;
 
     public:
@@ -78,7 +78,7 @@ namespace tfel
       template<typename T1>
       TFEL_INLINE
       typename tfel::meta::EnableIf<
-	tfel::meta::TypeListCountNbrOfT<T1,ElementList>::value==1, 
+	tfel::meta::TLCountNbrOfT<T1,ElementList>::value==1, 
 	const T1&>::type 
       get(const typename std::vector<T1>::size_type i) const
       {
@@ -88,7 +88,7 @@ namespace tfel
       template<typename T1>
       TFEL_INLINE
       typename tfel::meta::EnableIf<
-	tfel::meta::TypeListCountNbrOfT<T1,ElementList>::value==1, 
+	tfel::meta::TLCountNbrOfT<T1,ElementList>::value==1, 
 	T1&>::type 
       get(const typename std::vector<T1>::size_type i)
       {
@@ -98,7 +98,7 @@ namespace tfel
       template<typename T1>
       TFEL_INLINE
       typename tfel::meta::EnableIf<
-	tfel::meta::TypeListCountNbrOfT<T1,ElementList>::value==1, 
+	tfel::meta::TLCountNbrOfT<T1,ElementList>::value==1, 
 	void >::type 
       clear(void)
       {
@@ -107,7 +107,7 @@ namespace tfel
 
       template<typename T1>
       TFEL_INLINE typename tfel::meta::EnableIf<
-	tfel::meta::TypeListCountNbrOfT<T1,ElementList>::value==1, 
+	tfel::meta::TLCountNbrOfT<T1,ElementList>::value==1, 
 	const bool >::type 
       empty(void) const
       {
@@ -117,7 +117,7 @@ namespace tfel
       template<typename T1>
       TFEL_INLINE
       typename tfel::meta::EnableIf<
-	tfel::meta::TypeListCountNbrOfT<T1,ElementList>::value==1, 
+	tfel::meta::TLCountNbrOfT<T1,ElementList>::value==1, 
 	typename std::vector<T1>::size_type 
       >::type size(void) const
       {
@@ -127,7 +127,7 @@ namespace tfel
       template<typename T1>
       TFEL_INLINE
       typename tfel::meta::EnableIf<
-	tfel::meta::TypeListCountNbrOfT<T1,ElementList>::value==1, 
+	tfel::meta::TLCountNbrOfT<T1,ElementList>::value==1, 
 	typename std::vector<T1>::size_type 
       >::type max_size(void) const
       {
@@ -137,7 +137,7 @@ namespace tfel
       template<typename T1>
       TFEL_INLINE
       typename tfel::meta::EnableIf<
-	tfel::meta::TypeListCountNbrOfT<T1,ElementList>::value==1, 
+	tfel::meta::TLCountNbrOfT<T1,ElementList>::value==1, 
 	typename std::vector<T1>::size_type 
       >::type capacity(void) const
       {
@@ -147,7 +147,7 @@ namespace tfel
       template<typename T1>
       TFEL_INLINE
       typename tfel::meta::EnableIf<
-	tfel::meta::TypeListCountNbrOfT<T1,ElementList>::value==1, 
+	tfel::meta::TLCountNbrOfT<T1,ElementList>::value==1, 
 	void >::type 
       reserve(const typename std::vector<T1>::size_type s)
       {
@@ -157,7 +157,7 @@ namespace tfel
       template<typename T1>
       TFEL_INLINE
       typename tfel::meta::EnableIf<
-	tfel::meta::TypeListCountNbrOfT<T1,ElementList>::value==1, 
+	tfel::meta::TLCountNbrOfT<T1,ElementList>::value==1, 
 	void >::type 
       resize(const typename std::vector<T1>::size_type s)
       {
@@ -167,7 +167,7 @@ namespace tfel
       template<typename T1>
       TFEL_INLINE
       typename tfel::meta::EnableIf<
-	tfel::meta::TypeListCountNbrOfT<T1,ElementList>::value==1, 
+	tfel::meta::TLCountNbrOfT<T1,ElementList>::value==1, 
 	void >::type 
       resize(const typename std::vector<T1>::size_type s, const T1& src)
       {
@@ -177,7 +177,7 @@ namespace tfel
       template<typename T1>
       TFEL_INLINE
       typename tfel::meta::EnableIf<
-	tfel::meta::TypeListCountNbrOfT<T1,ElementList>::value==1, 
+	tfel::meta::TLCountNbrOfT<T1,ElementList>::value==1, 
 	void >::type 
       push_back(const T1& src)
       {
@@ -186,7 +186,7 @@ namespace tfel
 
       template<typename T1>
       TFEL_INLINE typename tfel::meta::EnableIf<
-	tfel::meta::TypeListCountNbrOfT<T1,ElementList>::value==1, 
+	tfel::meta::TLCountNbrOfT<T1,ElementList>::value==1, 
 	void >::type 
       pop_back(void)
       {
@@ -195,7 +195,7 @@ namespace tfel
         
       template<typename T1>
       TFEL_INLINE typename tfel::meta::EnableIf<
-	tfel::meta::TypeListCountNbrOfT<T1,ElementList>::value==1, 
+	tfel::meta::TLCountNbrOfT<T1,ElementList>::value==1, 
 	typename std::vector<T1>::reference >::type 
       front(void)
       {
@@ -204,7 +204,7 @@ namespace tfel
 
       template<typename T1>
       TFEL_INLINE typename tfel::meta::EnableIf<
-	tfel::meta::TypeListCountNbrOfT<T1,ElementList>::value==1, 
+	tfel::meta::TLCountNbrOfT<T1,ElementList>::value==1, 
 	typename std::vector<T1>::const_reference >::type 
       front(void) const
       {
@@ -213,7 +213,7 @@ namespace tfel
 
       template<typename T1>
       TFEL_INLINE typename tfel::meta::EnableIf<
-	tfel::meta::TypeListCountNbrOfT<T1,ElementList>::value==1, 
+	tfel::meta::TLCountNbrOfT<T1,ElementList>::value==1, 
 	typename std::vector<T1>::reference 
       >::type back(void)
       {
@@ -223,7 +223,7 @@ namespace tfel
       template<typename T1>
       TFEL_INLINE
       typename tfel::meta::EnableIf<
-	tfel::meta::TypeListCountNbrOfT<T1,ElementList>::value==1, 
+	tfel::meta::TLCountNbrOfT<T1,ElementList>::value==1, 
 	typename std::vector<T1>::const_reference >::type 
       back(void) const
       {
@@ -233,7 +233,7 @@ namespace tfel
       template<typename T1>
       TFEL_INLINE
       typename tfel::meta::EnableIf<
-	tfel::meta::TypeListCountNbrOfT<T1,ElementList>::value==1, 
+	tfel::meta::TLCountNbrOfT<T1,ElementList>::value==1, 
 	void >::type 
       swap(std::vector<T1>& src)
       {
@@ -243,7 +243,7 @@ namespace tfel
       template<typename T1>
       TFEL_INLINE
       typename tfel::meta::EnableIf<
-	tfel::meta::TypeListCountNbrOfT<T1,ElementList>::value==1, 
+	tfel::meta::TLCountNbrOfT<T1,ElementList>::value==1, 
 	iterator<T1> >::type 
       insert(const iterator<T1> pos, const T1& src)
       {
@@ -253,7 +253,7 @@ namespace tfel
       template <typename T1,class InputIterator>
       TFEL_INLINE
       typename tfel::meta::EnableIf<
-	tfel::meta::TypeListCountNbrOfT<T1,ElementList>::value==1, 
+	tfel::meta::TLCountNbrOfT<T1,ElementList>::value==1, 
 	void >::type 
       insert(const iterator<T1> pos,const InputIterator f,const InputIterator l)
       {
@@ -262,7 +262,7 @@ namespace tfel
     
       template<typename T1>
       TFEL_INLINE typename tfel::meta::EnableIf<
-	tfel::meta::TypeListCountNbrOfT<T1,ElementList>::value==1, 
+	tfel::meta::TLCountNbrOfT<T1,ElementList>::value==1, 
 	void >::type 
       insert(const iterator<T1> pos,
 	     const typename std::vector<T1>::size_type n,
@@ -274,7 +274,7 @@ namespace tfel
       template<typename T1>
       TFEL_INLINE
       typename tfel::meta::EnableIf<
-	tfel::meta::TypeListCountNbrOfT<T1,ElementList>::value==1, 
+	tfel::meta::TLCountNbrOfT<T1,ElementList>::value==1, 
 	typename iterator<T1>::type
       >::type 
       begin(void)
@@ -285,7 +285,7 @@ namespace tfel
       template<typename T1>
       TFEL_INLINE
       typename tfel::meta::EnableIf<
-	tfel::meta::TypeListCountNbrOfT<T1,ElementList>::value==1, 
+	tfel::meta::TLCountNbrOfT<T1,ElementList>::value==1, 
 	typename iterator<T1>::type
       >::type 
       end(void)
@@ -296,7 +296,7 @@ namespace tfel
       template<typename T1>
       TFEL_INLINE
       typename tfel::meta::EnableIf<
-	tfel::meta::TypeListCountNbrOfT<T1,ElementList>::value==1, 
+	tfel::meta::TLCountNbrOfT<T1,ElementList>::value==1, 
 	typename const_iterator<T1>::type
       >::type 
       begin(void) const
@@ -307,7 +307,7 @@ namespace tfel
       template<typename T1>
       TFEL_INLINE
       typename tfel::meta::EnableIf<
-	tfel::meta::TypeListCountNbrOfT<T1,ElementList>::value==1, 
+	tfel::meta::TLCountNbrOfT<T1,ElementList>::value==1, 
 	typename const_iterator<T1>::type
       >::type 
       end(void) const
@@ -318,7 +318,7 @@ namespace tfel
       template<typename T1>
       TFEL_INLINE
       typename tfel::meta::EnableIf<
-	tfel::meta::TypeListCountNbrOfT<T1,ElementList>::value==1, 
+	tfel::meta::TLCountNbrOfT<T1,ElementList>::value==1, 
 	typename reverse_iterator<T1>::type
       >::type 
       rbegin(void)
@@ -328,7 +328,7 @@ namespace tfel
 
       template<typename T1>
       TFEL_INLINE typename tfel::meta::EnableIf<
-	tfel::meta::TypeListCountNbrOfT<T1,ElementList>::value==1, 
+	tfel::meta::TLCountNbrOfT<T1,ElementList>::value==1, 
 	typename reverse_iterator<T1>::type
       >::type 
       rend(void)
@@ -338,7 +338,7 @@ namespace tfel
 
       template<typename T1>
       TFEL_INLINE typename tfel::meta::EnableIf<
-	tfel::meta::TypeListCountNbrOfT<T1,ElementList>::value==1, 
+	tfel::meta::TLCountNbrOfT<T1,ElementList>::value==1, 
 	typename const_reverse_iterator<T1>::type
       >::type 
       rbegin(void) const
@@ -349,7 +349,7 @@ namespace tfel
       template<typename T1>
       TFEL_INLINE
       typename tfel::meta::EnableIf<
-	tfel::meta::TypeListCountNbrOfT<T1,ElementList>::value==1, 
+	tfel::meta::TLCountNbrOfT<T1,ElementList>::value==1, 
 	typename const_reverse_iterator<T1>::type
       >::type 
       rend(void) const

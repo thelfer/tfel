@@ -39,7 +39,7 @@ int main(void)
 	 composite<float,tvector<3,float> >,OpPlus>::type>::getName()==
 	 "composite<double,tvector<3,float>>")); 
 
-  assert(tfel::meta::TypeListContainsInvalidType<Res>::cond);
+  assert(tfel::meta::TLContainsInvalidType<Res>::cond);
 
   assert((Name<ResultType<double,composite<float,tvector<3,short> >,OpMult>::type>::getName()==
 	  "composite<double,tvector<3,double>>"));

@@ -1,6 +1,6 @@
 /*!
  * \file   TypeList.hxx
- * \brief  This file declares some tools to work with TypeList.
+ * \brief  This file declares some tools to work with TL.
  * \author Helfer Thomas
  * \date   30 August 2006
  */
@@ -31,244 +31,244 @@ namespace tfel{
      * \author Helfer Thomas
      * \date   30 August 2006
      */
-    struct TFEL_VISIBILITY_LOCAL TypeList{};
+    struct TFEL_VISIBILITY_LOCAL TL{};
 
     /*!
-     * \class TypeListNode
-     * \brief Nodes of TypeList.
-     * TypeLists are simply linked list of types. This class describe its nodes.
+     * \class TLNode
+     * \brief Nodes of TL.
+     * TLs are simply linked list of types. This class describe its nodes.
      * \author Helfer Thomas
      * \date   30 August 2006
      */
     template<typename T, typename U>
-    struct TypeListNode;
+    struct TLNode;
 
     /*!
-     * \class  TypeListEndType
-     * \brief  Type used to end a TypeList.
+     * \class  TLE
+     * \brief  Type used to end a TL.
      * \author Helfer Thomas
      * \date   30 August 2006
      */
-    struct TypeListEndType;
+    struct TLE;
 
     /*!
-     * \class TypeListTransform
-     * \brief Metafunction which transform a TypeList
+     * \class TLTransform
+     * \brief Metafunction which transform a TL
      * into another by applying the Transform metafunction 
-     * to each type in the TypeList.
+     * to each type in the TL.
      * 
-     * \param Tlist, a TypeList.
+     * \param Tlist, a TL.
      * \param Transform, a metafunction taking a type and returning a type.
      *
-     * \return type, the TypeList resulting from the transformation.
+     * \return type, the TL resulting from the transformation.
      *
      * \author Helfer Thomas
      * \date   30 August 2006
      */
     template<typename Tlist, template<typename> class Transform>
-    struct TypeListTransform;
+    struct TLTransform;
 
     /*!
-     * \class TypeListSize
-     * \brief A metafunction which counts the number of elements in a TypeList. 
+     * \class TLSize
+     * \brief A metafunction which counts the number of elements in a TL. 
      * 
-     * \param T, a TypeList
+     * \param T, a TL
      * \return value, the number of elements in T.
      *
      * \author Helfer Thomas
      * \date   30 August 2006
      */
     template<typename T>
-    struct TypeListSize;
+    struct TLSize;
 
     /*!
-     * \class TypeListCountNbrOfT
+     * \class TLCountNbrOfT
      * \brief A metafunction which counts the number of 
-     * times T appears in a TypeList. 
+     * times T appears in a TL. 
      * 
      * \param T, a type.
-     * \param U, a TypeList.
+     * \param U, a TL.
      * \return value, the number of times T appears in U.
      *
      * \author Helfer Thomas
      * \date   30 August 2006
      */
     template<typename T, typename U>
-    struct TypeListCountNbrOfT;
+    struct TLCountNbrOfT;
     
     /*!
-     * \class TypeListFindEltPos
+     * \class TLFindEltPos
      * \brief A metafunction which returns the position of the 
-     * first appearance of a type in a TypeList. 
+     * first appearance of a type in a TL. 
      * 
      * \param T, a type.
-     * \param List, a TypeList.
+     * \param List, a TL.
      * \return value, the position of T in List.
      *
      * \author Helfer Thomas
      * \date   30 August 2006
      */
     template<typename T, typename List>
-    struct TypeListFindEltPos;
+    struct TLFindEltPos;
 
     /*!
-     * \class TypeListPrepend
+     * \class TLPrepend
      * \brief A metafunction which returns a new typelist by adding 
      * an element at the beginnig of a typelist. 
-     * \param List, a TypeList.
+     * \param List, a TL.
      * \param T, a type.
      * \return type, a new typelist.
      * \author Helfer Thomas
      * \date   09 September 2006
      */
     template<typename List,typename T>
-    struct TypeListPrepend;
+    struct TLPrepend;
 
     /*!
-     * \class TypeListAppend
+     * \class TLAppend
      * \brief A metafunction which returns a new typelist by adding
      * an element at the end of a typelist. 
-     * \param List, a TypeList.
+     * \param List, a TL.
      * \param T, a type.
      * \return type, a new typelist.
      * \author Helfer Thomas
      * \date   09 September 2006
      */
     template<typename List,typename T>
-    struct TypeListAppend;
+    struct TLAppend;
 
     /*!
-     * \class TypeListConcatenate
-     * \brief A metafunction which returns the concatenation of two TypeLists
+     * \class TLConcatenate
+     * \brief A metafunction which returns the concatenation of two TLs
      * 
-     * \param  typename First,  a TypeList. 
-     * \param  typename Second, a TypeList. 
-     * \return type, the resulting TypeList.
+     * \param  typename First,  a TL. 
+     * \param  typename Second, a TL. 
+     * \return type, the resulting TL.
      *
      * \author Helfer Thomas
      * \date   15 Sept. 2006
      */
     template<typename First,typename Second>
-    struct TypeListConcatenate;    
+    struct TLConcatenate;    
 
     /*!
-     * \class TypeListFindNthElt
+     * \class TLFindNthElt
      * \brief A metafunction which returns the Nth
-     * element of the TypeList.
+     * element of the TL.
      * 
-     * \param T, a TypeList.
+     * \param T, a TL.
      * \param N, a positive integer. 
-     * \return type, the Nth element of T or TypeListEndType 
+     * \return type, the Nth element of T or TLE 
      * if T contains less than N elements.
      *
      * \author Helfer Thomas
      * \date   30 August 2006
      */
     template<typename T, unsigned int N>
-    struct TypeListFindNthElt;
+    struct TLFindNthElt;
     
     /*!
-     * \class TypeListRemoveNthFirstElt
+     * \class TLRemoveNthFirstElt
      * \brief A metafunction which remove the first Nth
-     * elements of the TypeList.
+     * elements of the TL.
      * 
-     * \param T, a TypeList.
+     * \param T, a TL.
      * \param N, a positive integer. 
-     * \return type, a TypeList or TypeListEndType 
+     * \return type, a TL or TLE 
      * if T contains less than N elements.
      *
      * \author Helfer Thomas
      * \date   30 August 2006
      */
     template<typename T, unsigned int N>
-    struct TypeListRemoveNthFirstElt;
+    struct TLRemoveNthFirstElt;
 
     /*!
-     * \class TypeListElementIsUnique
+     * \class TLElementIsUnique
      * \brief A metafunction which returns true if a 
-     * type appears one and only one time in a TypeList.
+     * type appears one and only one time in a TL.
      * 
      * \param T, a type.
-     * \param U, a TypeList. 
+     * \param U, a TL. 
      * \return cond, true if T  appears one and only one time in U.
      *
      * \author Helfer Thomas
      * \date   30 August 2006
      */
     template<typename T,typename U>
-    struct TypeListElementIsUnique;
+    struct TLElementIsUnique;
 
     /*!
-     * \class TypeListElementsAreUnique
+     * \class TLElementsAreUnique
      * \brief A metafunction which returns true if all elements 
-     * in a TypeList are unique.
+     * in a TL are unique.
      * 
-     * \param T, a TypeList. 
+     * \param T, a TL. 
      * \return cond, true if all elements in T are unique
      *
      * \author Helfer Thomas
      * \date   30 August 2006
      */
     template<typename T>
-    struct TypeListElementsAreUnique;    
+    struct TLElementsAreUnique;    
 
     /*!
-     * \class TypeListExtractSubClassesOf
+     * \class TLExtractSubClassesOf
      * \brief A metafunction which returns a new typelist from a
      * typelist.  All types in the new typelist inherit from the 
      * type given in argument.
-     * \param List, a TypeList.
+     * \param List, a TL.
      * \param BaseType, a type.
      * \return type, a new typelist.
      * \author Helfer Thomas
      * \date   09 September 2006
      */
     template<typename List,typename BaseType>
-    struct TypeListExtractSubClassesOf;
+    struct TLExtractSubClassesOf;
     
     /*!
-     * \class TypeListUnique
+     * \class TLUnique
      * \brief A metafunction which returns a new typelist from a
      * typelist where all elements are unique.
      *
-     * \param List, a TypeList.
+     * \param List, a TL.
      * \return type, a new typelist.
      * \author Helfer Thomas
      * \date   08 Januar 2006
      */
     template<typename List>
-    struct TypeListUnique;
+    struct TLUnique;
 
     /*!
-     * \class TypeListGetNames
+     * \class TLGetNames
      * \brief A metafunction which returns the name of each element.
      *
-     * \param typename List, a TypeList.
+     * \param typename List, a TL.
      * 
      * \return std::string, the name of each element.
      * \author Helfer Thomas
      * \date   08 Januar 2006
      */
     template<typename List>
-    class TypeListGetNames;
+    class TLGetNames;
 
     /*!
-     * \class TypeListContainsInvalidType
+     * \class TLContainsInvalidType
      * \brief A metafunction which returns true if the list
      * contains InvalidType.
      *
-     * \param typename List, a TypeList.
+     * \param typename List, a TL.
      * 
      * \return const bool.
      * \author Helfer Thomas
      * \date   10 March 2007
      */
     template<typename List>
-    class TypeListContainsInvalidType;
+    class TLContainsInvalidType;
 
-    //! Computes the maximum size of all types in a TypeList.
+    //! Computes the maximum size of all types in a TL.
     /*
-     * \class TypeListMaxSize.
+     * \class TLMaxSize.
      * \param  List, the list of types evaluated.
      * \return cons size_t value, the result.
      * The size is given by the sizeof operator.
@@ -277,20 +277,20 @@ namespace tfel{
      * \date   22 Apr. 2007.
      */
     template<typename List> 
-    class TypeListMaxSize;
+    class TLMaxSize;
 
     /*
-     * \class TypeListComputeAlignBound.
+     * \class TLComputeAlignBound.
      * Extracts from a type list all the types which have a size
      * inferior than a given value.
-     * \param List, a TypeList.
+     * \param List, a TL.
      * \param size_t, the thresold value.
-     * \return type, a result under the form of a TypeList.
+     * \return type, a result under the form of a TL.
      * \author Helfer Thomas.
      * \date   22 Apr. 2007.
      */
     template<typename List,size_t size>
-    class TypeListComputeAlignBound;
+    class TLComputeAlignBound;
 
   } // end of namespace meta
 

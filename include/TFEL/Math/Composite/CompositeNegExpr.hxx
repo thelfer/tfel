@@ -29,9 +29,9 @@ namespace tfel{
       struct CompositeNegItems;
 
       template<>
-      struct CompositeNegItems<tfel::meta::TypeListEndType>
+      struct CompositeNegItems<tfel::meta::TLE>
       {
-	typedef tfel::meta::TypeListEndType type;
+	typedef tfel::meta::TLE type;
       };
 
       template<typename Items>
@@ -40,7 +40,7 @@ namespace tfel{
 	typedef typename ComputeUnaryResult<typename Items::Current,OpNeg>::Handle Handle;
 	typedef typename CompositeNegItems<typename Items::Next>::type Next;
       public:
-	typedef tfel::meta::TypeListNode<Handle,Next> type;
+	typedef tfel::meta::TLNode<Handle,Next> type;
       };
 
     } // end of namespace internals
@@ -77,8 +77,8 @@ namespace tfel{
       template<unsigned short N>
       TFEL_MATH_INLINE2
       const typename tfel::meta::EnableIf<
-	(N<tfel::meta::TypeListSize<Items>::value),
-	  typename tfel::meta::TypeListFindNthElt<Items,N>::type
+	(N<tfel::meta::TLSize<Items>::value),
+	  typename tfel::meta::TLFindNthElt<Items,N>::type
       >::type
       getComponent(void) const
       {

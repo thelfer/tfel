@@ -48,24 +48,24 @@ int main(void)
   using namespace tfel::meta;
 
   typedef GenerateTypeList<double,float,string>::type List;
-  typedef TypeListAppend<List,unsigned short>::type List2;
-  typedef TypeListPrepend<List,long>::type List3;
+  typedef TLAppend<List,unsigned short>::type List2;
+  typedef TLPrepend<List,long>::type List3;
   typedef GenerateTypeList<double,A,B,C,float,C,B,A>::type List4;
-  typedef TypeListExtractSubClassesOf<List4,A>::type List5;
+  typedef TLExtractSubClassesOf<List4,A>::type List5;
   typedef GenerateTypeList<double>::type List6;
   typedef GenerateTypeList<float>::type List7;
-  typedef TypeListConcatenate<List6,List7>::type List8;
+  typedef TLConcatenate<List6,List7>::type List8;
 
   assert(tfel::utilities::Name<List>::getName()==
-	 "TypeListNode<double,TypeListNode<float,TypeListNode<std::string,TypeListEndType>>>");
+	 "TLNode<double,TLNode<float,TLNode<std::string,TLE>>>");
   assert(tfel::utilities::Name<List2>::getName()==
-	 "TypeListNode<double,TypeListNode<float,TypeListNode<std::string,TypeListNode<unsigned short,TypeListEndType>>>>");
+	 "TLNode<double,TLNode<float,TLNode<std::string,TLNode<unsigned short,TLE>>>>");
   assert(tfel::utilities::Name<List3>::getName()==
-	 "TypeListNode<long int,TypeListNode<double,TypeListNode<float,TypeListNode<std::string,TypeListEndType>>>>");
+	 "TLNode<long int,TLNode<double,TLNode<float,TLNode<std::string,TLE>>>>");
   assert(tfel::utilities::Name<List5>::getName()==
-	 "TypeListNode<A,TypeListNode<B,TypeListNode<C,TypeListNode<C,TypeListNode<B,TypeListNode<A,TypeListEndType>>>>>>");
+	 "TLNode<A,TLNode<B,TLNode<C,TLNode<C,TLNode<B,TLNode<A,TLE>>>>>>");
   assert(tfel::utilities::Name<List8>::getName()==
-	 "TypeListNode<double,TypeListNode<float,TypeListEndType>>");
+	 "TLNode<double,TLNode<float,TLE>>");
 
   return EXIT_SUCCESS;
 }

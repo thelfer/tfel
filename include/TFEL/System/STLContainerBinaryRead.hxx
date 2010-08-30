@@ -5,12 +5,14 @@
  * \brief 27 avr 2009
  */
 
-#ifndef _LIB_STLCONTAINERBINARYREADE_H_
-#define _LIB_STLCONTAINERBINARYREADE_H_ 
+#ifndef _LIB_TFEL_SYSTEM_STLCONTAINERBINARYREADE_H_
+#define _LIB_TFEL_SYSTEM_STLCONTAINERBINARYREADE_H_ 
 
+#include<map>
+#include<set>
+#include<list>
 #include<vector>
 #include<string>
-#include<list>
 
 #include"TFEL/System/BinaryRead.hxx"
 
@@ -19,6 +21,18 @@ namespace tfel
 
   namespace system
   {
+
+    template<typename T1,
+	     typename T2>
+    struct BinaryReader<std::pair<T1,T2> >
+    {
+      static void exe(const int f,std::pair<T1,T2>& res)
+      {
+	using namespace std;
+	binary_read(f,res.first);
+	binary_read(f,res.second);
+      }
+    };
     
     template<typename T,
 	 typename Allocator>
@@ -46,6 +60,23 @@ namespace tfel
 	using namespace std;
 	typename list<T,Allocator>::iterator p;
 	typename list<T,Allocator>::size_type s = binary_read<typename list<T,Allocator>::size_type>(f);
+	res.clear();
+	res.resize(s);
+	for(p=res.begin();p!=res.end();++p){
+	  binary_read(f,*p);
+	}
+      }
+    };
+
+    template<typename T,
+	     typename Allocator>
+    struct BinaryReader<std::set<T,Allocator> >
+    {
+      static void exe(const int f,std::set<T,Allocator>& res)
+      {
+	using namespace std;
+	typename set<T,Allocator>::iterator p;
+	typename set<T,Allocator>::size_type s = binary_read<typename set<T,Allocator>::size_type>(f);
 	res.clear();
 	res.resize(s);
 	for(p=res.begin();p!=res.end();++p){
@@ -100,5 +131,5 @@ namespace tfel
 
 } // end of namespace tfel
 
-#endif /* _LIB_STLCONTAINERBINARYREADER_H */
+#endif /* _LIB_TFEL_SYSTEM_STLCONTAINERBINARYREADER_H */
 

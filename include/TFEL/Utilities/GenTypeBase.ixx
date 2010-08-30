@@ -61,7 +61,7 @@ namespace tfel{
 
       public:
       
-	typedef typename tfel::meta::IF<N+1==tfel::meta::TypeListSize<List>::value,
+	typedef typename tfel::meta::IF<N+1==tfel::meta::TLSize<List>::value,
 					typename tfel::meta::IF<tfel::meta::IsSameType<return_type,void>::cond,
 								EndRecursionII,
 								EndRecursion>::type,
@@ -70,7 +70,7 @@ namespace tfel{
 	static return_type
 	apply(const GenTypeBase<List>& v)
 	{
-	  typedef typename tfel::meta::TypeListFindNthElt<List,N>::type current_value;
+	  typedef typename tfel::meta::TLFindNthElt<List,N>::type current_value;
 	  if(v.template is<current_value>()){
 	    return T::apply(v.template get<current_value>());
 	  } else {
@@ -82,7 +82,7 @@ namespace tfel{
 	apply(const T& f,
 	      const GenTypeBase<List>& v)
 	{
-	  typedef typename tfel::meta::TypeListFindNthElt<List,N>::type current_value;
+	  typedef typename tfel::meta::TLFindNthElt<List,N>::type current_value;
 	  if(v.template is<current_value>()){
 	    return f(v.template get<current_value>());
 	  } else {
@@ -143,20 +143,20 @@ namespace tfel{
 
       public:
       
-	typedef typename tfel::meta::IF<((N+1==tfel::meta::TypeListSize<List>::value)||
-					 (M+1==tfel::meta::TypeListSize<List>::value)),
+	typedef typename tfel::meta::IF<((N+1==tfel::meta::TLSize<List>::value)||
+					 (M+1==tfel::meta::TLSize<List>::value)),
 					typename tfel::meta::IF<tfel::meta::IsSameType<return_type,void>::cond,
 								EndRecursionII,
 								EndRecursion>::type,
 					GenTypeBaseApplyII<T,List,N+1,M+1> >::type Next;
-	typedef typename tfel::meta::IF<((N+1==tfel::meta::TypeListSize<List>::value)||
-					 (M+1==tfel::meta::TypeListSize<List>::value)),
+	typedef typename tfel::meta::IF<((N+1==tfel::meta::TLSize<List>::value)||
+					 (M+1==tfel::meta::TLSize<List>::value)),
 					typename tfel::meta::IF<tfel::meta::IsSameType<return_type,void>::cond,
 								EndRecursionII,
 								EndRecursion>::type,
 					GenTypeBaseApplyII<T,List,N+1,M> >::type NextI;
-	typedef typename tfel::meta::IF<((N+1==tfel::meta::TypeListSize<List>::value)||
-					 (M+1==tfel::meta::TypeListSize<List>::value)),
+	typedef typename tfel::meta::IF<((N+1==tfel::meta::TLSize<List>::value)||
+					 (M+1==tfel::meta::TLSize<List>::value)),
 					typename tfel::meta::IF<tfel::meta::IsSameType<return_type,void>::cond,
 								EndRecursionII,
 								EndRecursion>::type,
@@ -166,8 +166,8 @@ namespace tfel{
 	apply(const GenTypeBase<List>& v1,
 	      const GenTypeBase<List>& v2)
 	{
-	  typedef typename tfel::meta::TypeListFindNthElt<List,N>::type current_value1;
-	  typedef typename tfel::meta::TypeListFindNthElt<List,M>::type current_value2;
+	  typedef typename tfel::meta::TLFindNthElt<List,N>::type current_value1;
+	  typedef typename tfel::meta::TLFindNthElt<List,M>::type current_value2;
 	  const bool b1 = v1.template is<current_value1>();
 	  const bool b2 = v2.template is<current_value2>();
 	  if(b1&&b2){
@@ -186,8 +186,8 @@ namespace tfel{
 	      const GenTypeBase<List>& v1,
 	      const GenTypeBase<List>& v2)
 	{
-	  typedef typename tfel::meta::TypeListFindNthElt<List,N>::type current_value1;
-	  typedef typename tfel::meta::TypeListFindNthElt<List,M>::type current_value2;
+	  typedef typename tfel::meta::TLFindNthElt<List,N>::type current_value1;
+	  typedef typename tfel::meta::TLFindNthElt<List,M>::type current_value2;
 	  const bool b1 = v1.template is<current_value1>();
 	  const bool b2 = v2.template is<current_value2>();
 	  if(b1&&b2){

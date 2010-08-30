@@ -109,6 +109,7 @@ nobase_include_HEADERS= TFEL/FiniteElement/Element/ElementsManager.ixx          
 			TFEL/Math/FactorizedKriging1D1D.hxx			        	      \
 			TFEL/Math/FactorizedKriging1D2D.hxx			        	      \
 			TFEL/Math/FactorizedKriging1D3D.hxx			                      \
+			TFEL/Math/Kriging/KrigingUtilities.hxx				              \
 			TFEL/Math/Kriging/KrigingPieceWiseLinearModel1D.hxx                           \
 			TFEL/Math/Kriging/KrigingDefaultModel1D.hxx				      \
 			TFEL/Math/Kriging/Kriging.ixx				          	      \

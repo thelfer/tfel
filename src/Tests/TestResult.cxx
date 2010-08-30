@@ -14,11 +14,13 @@ namespace tfel
   {
 
     TestResult::TestResult()
-      : s(true)
+      : d(),
+	s(true)
     {} // end of TestResult::TestResult
 
     TestResult::TestResult(const bool b)
-      : s(b)
+      : d(),
+	s(b)
     {} // end of TestResult::TestResult
 
     TestResult::TestResult(const bool b,

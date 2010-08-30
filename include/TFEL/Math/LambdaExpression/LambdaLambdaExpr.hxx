@@ -24,10 +24,10 @@ namespace tfel{
       static const unsigned short dime2 = LambdaTraits<Lambda2>::dimension;
       typedef typename LambdaTraits<Lambda1>::Variables Vars1;
       typedef typename LambdaTraits<Lambda2>::Variables Vars2;
-      typedef typename tfel::meta::TypeListConcatenate<Vars1,Vars2>::type Cons;
+      typedef typename tfel::meta::TLConcatenate<Vars1,Vars2>::type Cons;
     public:
       static const unsigned short dimension = (dime1>dime2) ? dime1 : dime2;
-      typedef typename tfel::meta::TypeListUnique<Cons>::type  Variables;
+      typedef typename tfel::meta::TLUnique<Cons>::type  Variables;
     };
 
     template<unsigned short N,typename Lambda1,typename Lambda2,typename Op>

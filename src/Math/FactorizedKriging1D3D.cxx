@@ -36,13 +36,25 @@ namespace tfel
 	 (vt.size()!=vv.size())){
 	throw(KrigingErrorInvalidLength());
       }
+      pair<double,double> n0 = KrigingUtilities::normalize(vt);
+      this->a0 = n0.first;
+      this->b0 = n0.second;
+      pair<double,double> n1 = KrigingUtilities::normalize(vx);
+      this->a1 = n1.first;
+      this->b1 = n1.second;
+      pair<double,double> n2 = KrigingUtilities::normalize(vy);
+      this->a2 = n2.first;
+      this->b2 = n2.second;
+      pair<double,double> n3 = KrigingUtilities::normalize(vz);
+      this->a3 = n3.first;
+      this->b3 = n3.second;
       for(pt=vt.begin(),px=vx.begin(),py=vy.begin(),pz=vz.begin(),pv=vv.begin();
 	  pt!=vt.end();++pt,++px,++py,++pz,++pv){
 	tvector<3u> v;
-	v(0) = *px;
-	v(1) = *py;
-	v(2) = *pz;
-	FactorizedKriging::addValue(*pt,v,*pv);
+	v(0) = this->a1*(*px)+b1;
+	v(1) = this->a2*(*py)+b2;
+	v(2) = this->a3*(*pz)+b3;
+	FactorizedKriging::addValue(this->a0*(*pt)+b0,v,*pv);
       }
       FactorizedKriging::buildInterpolation();
     }
@@ -53,7 +65,9 @@ namespace tfel
 						 const tfel::math::vector<double>& vz,
 						 const tfel::math::vector<double>& vv)
     {
+      using namespace std;
       using namespace tfel::math;
+      using tfel::math::vector;
       typedef FactorizedKriging<1u,3u,double,
 	KrigingPieceWiseLinearModel1D<double>,
 	KrigingModelAdaptator<KrigingDefaultModel<3u,double> > > FactorizedKriging;
@@ -68,13 +82,25 @@ namespace tfel
 	 (vt.size()!=vv.size())){
 	throw(KrigingErrorInvalidLength());
       }
+      pair<double,double> n0 = KrigingUtilities::normalize(vt);
+      this->a0 = n0.first;
+      this->b0 = n0.second;
+      pair<double,double> n1 = KrigingUtilities::normalize(vx);
+      this->a1 = n1.first;
+      this->b1 = n1.second;
+      pair<double,double> n2 = KrigingUtilities::normalize(vy);
+      this->a2 = n2.first;
+      this->b2 = n2.second;
+      pair<double,double> n3 = KrigingUtilities::normalize(vz);
+      this->a3 = n3.first;
+      this->b3 = n3.second;
       for(pt=vt.begin(),px=vx.begin(),py=vy.begin(),pz=vz.begin(),pv=vv.begin();
 	  pt!=vt.end();++pt,++px,++py,++pz,++pv){
 	tvector<3u> v;
-	v(0) = *px;
-	v(1) = *py;
-	v(2) = *pz;
-	FactorizedKriging::addValue(*pt,v,*pv);
+	v(0) = this->a1*(*px)+b1;
+	v(1) = this->a2*(*py)+b2;
+	v(2) = this->a3*(*pz)+b3;
+	FactorizedKriging::addValue(this->a0*(*pt)+b0,v,*pv);
       }
       FactorizedKriging::buildInterpolation();
     }
@@ -90,10 +116,10 @@ namespace tfel
 	KrigingPieceWiseLinearModel1D<double>,
 	KrigingModelAdaptator<KrigingDefaultModel<3u,double> > > FactorizedKriging;
       tvector<3u> v;
-      v(0) = vx;
-      v(1) = vy;
-      v(2) = vz;
-      return FactorizedKriging::operator()(vt,v);
+      v(0) = this->a1*(vx)+b1;
+      v(1) = this->a2*(vy)+b2;
+      v(2) = this->a3*(vz)+b3;
+      return FactorizedKriging::operator()(this->a0*vt+this->b0,v);
     } // end of FactorizedKriging1D3D::operator()
 
     FactorizedKriging1D3D::~FactorizedKriging1D3D()

@@ -191,6 +191,7 @@ include/TFEL/Math/Kriging/KrigingDefaultModels.hxx -text
 include/TFEL/Math/Kriging/KrigingDefaultNuggetModel.hxx -text
 include/TFEL/Math/Kriging/KrigingErrors.hxx -text
 include/TFEL/Math/Kriging/KrigingPieceWiseLinearModel1D.hxx -text
+include/TFEL/Math/Kriging/KrigingUtilities.hxx -text
 include/TFEL/Math/Kriging/KrigingVariable.hxx -text
 include/TFEL/Math/Kriging1D.hxx -text
 include/TFEL/Math/Kriging2D.hxx -text
@@ -739,6 +740,7 @@ src/Math/Kriging1D.cxx -text
 src/Math/Kriging2D.cxx -text
 src/Math/Kriging3D.cxx -text
 src/Math/KrigingErrors.cxx -text
+src/Math/KrigingUtilities.cxx -text
 src/Math/LUException.cxx -text
 src/Math/Lambda.cxx -text
 src/Math/LambdaTag.cxx -text
@@ -758,6 +760,8 @@ src/Math/StensorTag.cxx -text
 src/Math/Variable.cxx -text
 src/Math/VectorTag.cxx -text
 src/Math/tfel-eval.cxx -text
+src/System/BinaryRead.cxx -text
+src/System/BinaryWrite.cxx -text
 src/System/CMakeLists.txt -text
 src/System/ChildProcess.cxx -text
 src/System/ExternalLibraryManager.cxx -text

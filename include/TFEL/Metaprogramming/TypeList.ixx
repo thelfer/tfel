@@ -22,21 +22,21 @@ namespace tfel{
   namespace meta{
 
     template<typename T, typename U>
-    struct TFEL_VISIBILITY_LOCAL TypeListNode
-      : public TypeList
+    struct TFEL_VISIBILITY_LOCAL TLNode
+      : public TL
     {
-      TFEL_STATIC_ASSERT((IsSubClassOf<U,TypeList>::cond));
+      TFEL_STATIC_ASSERT((IsSubClassOf<U,TL>::cond));
       /*!
-       * Return the Name of the TypeList beginning with this Node.
+       * Return the Name of the TL beginning with this Node.
        * \param void.
-       * \return std::string, the Name of the TypeList.
+       * \return std::string, the Name of the TL.
        */
       static
       const std::string
       getName(void){
 	using namespace std;
 	using namespace tfel::utilities;
-	return string("TypeListNode<")
+	return string("TLNode<")
 	  +Name<T>::getName()+string(",")
 	  +Name<U>::getName()+string(">");
       }
@@ -50,8 +50,8 @@ namespace tfel{
       typedef U Next;
     };
     
-    struct TFEL_VISIBILITY_LOCAL TypeListEndType
-      : public TypeList
+    struct TFEL_VISIBILITY_LOCAL TLE
+      : public TL
     {
       /*
        * Return the Name of this class.
@@ -61,14 +61,14 @@ namespace tfel{
       static
       const std::string
       getName(void){
-	return std::string("TypeListEndType");
+	return std::string("TLE");
       }
     };
 
     namespace internals {
 
       template<typename List>
-      class TFEL_VISIBILITY_LOCAL TypeListGetNames_
+      class TFEL_VISIBILITY_LOCAL TLGetNames_
       {
 	typedef typename List::Current Current;
 	typedef typename List::Next Next;
@@ -78,12 +78,12 @@ namespace tfel{
 	  using namespace std;
 	  using namespace tfel::utilities;
 	  return string(",")+Name<Current>::getName()
-	    +tfel::meta::internals::TypeListGetNames_<Next>::exe();
+	    +tfel::meta::internals::TLGetNames_<Next>::exe();
 	}
       };
 
       template<>
-      struct TFEL_VISIBILITY_LOCAL TypeListGetNames_<TypeListEndType>
+      struct TFEL_VISIBILITY_LOCAL TLGetNames_<TLE>
       {
 	static const std::string exe()
 	{
@@ -94,7 +94,7 @@ namespace tfel{
     } // end of namespace internals
 
     template<typename List>
-    class TFEL_VISIBILITY_LOCAL TypeListGetNames
+    class TFEL_VISIBILITY_LOCAL TLGetNames
     {
       typedef typename List::Current Current;
       typedef typename List::Next Next;
@@ -106,12 +106,12 @@ namespace tfel{
 	using namespace std;
 	using namespace tfel::utilities;
 	return string("{")+Name<Current>::getName()
-	  +tfel::meta::internals::TypeListGetNames_<Next>::exe();
+	  +tfel::meta::internals::TLGetNames_<Next>::exe();
       }
     };
 
     template<>
-    struct TFEL_VISIBILITY_LOCAL TypeListGetNames<TypeListEndType>
+    struct TFEL_VISIBILITY_LOCAL TLGetNames<TLE>
     {
       static
       const std::string
@@ -122,11 +122,11 @@ namespace tfel{
     };
 
     template<typename Tlist, template<typename> class Transform>
-    struct TFEL_VISIBILITY_LOCAL TypeListTransform
+    struct TFEL_VISIBILITY_LOCAL TLTransform
     {
-      TFEL_STATIC_ASSERT((IsSubClassOf<Tlist,TypeList>::cond));
-      typedef TypeListNode<typename Transform<typename Tlist::Current>::type,
-			   typename TypeListTransform<typename Tlist::Next,Transform>::type> type;
+      TFEL_STATIC_ASSERT((IsSubClassOf<Tlist,TL>::cond));
+      typedef TLNode<typename Transform<typename Tlist::Current>::type,
+			   typename TLTransform<typename Tlist::Next,Transform>::type> type;
     };
     
     /*!
@@ -135,14 +135,14 @@ namespace tfel{
      * \date   30 August 2006
      */
     template<template<typename> class Transform>
-    struct TFEL_VISIBILITY_LOCAL TypeListTransform<TypeListEndType,Transform>
+    struct TFEL_VISIBILITY_LOCAL TLTransform<TLE,Transform>
     {
-      typedef TypeListEndType type;
+      typedef TLE type;
     };
     
     template<typename T>
-    struct TFEL_VISIBILITY_LOCAL TypeListSize{
-      static const unsigned int value = 1+TypeListSize<typename T::Next>::value;
+    struct TFEL_VISIBILITY_LOCAL TLSize{
+      static const unsigned int value = 1+TLSize<typename T::Next>::value;
     };
 
     /*!
@@ -151,7 +151,7 @@ namespace tfel{
      * \date   30 August 2006
      */
     template<>
-    struct TFEL_VISIBILITY_LOCAL TypeListSize<TypeListEndType>{
+    struct TFEL_VISIBILITY_LOCAL TLSize<TLE>{
       static const unsigned int value = 0;
     };
     
@@ -161,28 +161,28 @@ namespace tfel{
      * \date   30 August 2006
      */
     template<typename T>
-    struct TFEL_VISIBILITY_LOCAL TypeListCountNbrOfT<T,TypeListEndType>
+    struct TFEL_VISIBILITY_LOCAL TLCountNbrOfT<T,TLE>
     {
       static const unsigned int value  = 0;
     };
     
     template<typename T, typename U>
-    struct TFEL_VISIBILITY_LOCAL TypeListCountNbrOfT
+    struct TFEL_VISIBILITY_LOCAL TLCountNbrOfT
     {
-      static const unsigned int value  = (IsSameType<T,typename U::Current>::cond ? 1 : 0) +  TypeListCountNbrOfT<T,typename U::Next>::value;
+      static const unsigned int value  = (IsSameType<T,typename U::Current>::cond ? 1 : 0) +  TLCountNbrOfT<T,typename U::Next>::value;
     };
 
     namespace internals{
 
       /*!
-       * \brief  An helper class for the TypeListFindEltPos metafunction.
+       * \brief  An helper class for the TLFindEltPos metafunction.
        * \author Helfer Thomas
        * \date   30 August 2006
        */
       template<typename T, typename List>
-      struct TFEL_VISIBILITY_LOCAL TypeListFindEltPos_
+      struct TFEL_VISIBILITY_LOCAL TLFindEltPos_
       {
-	static const unsigned int value = (TypeListCountNbrOfT<T,typename List::Next>::value==1) ? 1+ TypeListFindEltPos_<T,typename List::Next>::value : 0u; 
+	static const unsigned int value = (TLCountNbrOfT<T,typename List::Next>::value==1) ? 1+ TLFindEltPos_<T,typename List::Next>::value : 0u; 
       };
       
       /*!
@@ -191,7 +191,7 @@ namespace tfel{
        * \date   30 August 2006
        */
       template<typename T>
-      struct TFEL_VISIBILITY_LOCAL TypeListFindEltPos_<T,TypeListEndType>
+      struct TFEL_VISIBILITY_LOCAL TLFindEltPos_<T,TLE>
       {
 	static const unsigned int value = 0u;
       };
@@ -199,60 +199,60 @@ namespace tfel{
     } // end of namespace internals
 
     template<typename T, typename List>
-    struct TFEL_VISIBILITY_LOCAL TypeListFindEltPos
+    struct TFEL_VISIBILITY_LOCAL TLFindEltPos
     {    
-      TFEL_STATIC_ASSERT((IsSubClassOf<List,TypeList>::cond));
-      TFEL_STATIC_ASSERT((TypeListCountNbrOfT<T,List>::value==1));
+      TFEL_STATIC_ASSERT((IsSubClassOf<List,TL>::cond));
+      TFEL_STATIC_ASSERT((TLCountNbrOfT<T,List>::value==1));
       /*!
        * The result of the metafunction. 
        */
-      static const unsigned int value = tfel::meta::internals::TypeListFindEltPos_<T,List>::value;
+      static const unsigned int value = tfel::meta::internals::TLFindEltPos_<T,List>::value;
     };
 
     template<unsigned int N>
-    struct TFEL_VISIBILITY_LOCAL TypeListRemoveNthFirstElt<TypeListEndType,N>
+    struct TFEL_VISIBILITY_LOCAL TLRemoveNthFirstElt<TLE,N>
     {
-      typedef TypeListEndType type;
+      typedef TLE type;
     };
 
     template<typename List>
-    struct TFEL_VISIBILITY_LOCAL TypeListRemoveNthFirstElt<List,0u>
+    struct TFEL_VISIBILITY_LOCAL TLRemoveNthFirstElt<List,0u>
     {
-      TFEL_STATIC_ASSERT((IsSubClassOf<List,TypeList>::cond));
+      TFEL_STATIC_ASSERT((IsSubClassOf<List,TL>::cond));
       typedef List type;
     };
 
     template<>
-    struct TFEL_VISIBILITY_LOCAL TypeListRemoveNthFirstElt<TypeListEndType,0u>
+    struct TFEL_VISIBILITY_LOCAL TLRemoveNthFirstElt<TLE,0u>
     {
-      typedef TypeListEndType type;
+      typedef TLE type;
     };
 
     template<typename List,unsigned int N>
-    struct TFEL_VISIBILITY_LOCAL TypeListRemoveNthFirstElt
+    struct TFEL_VISIBILITY_LOCAL TLRemoveNthFirstElt
     {
-      TFEL_STATIC_ASSERT((IsSubClassOf<List,TypeList>::cond));
+      TFEL_STATIC_ASSERT((IsSubClassOf<List,TL>::cond));
       typedef typename 
-      TypeListRemoveNthFirstElt<typename List::Next,N-1>::type type;
+      TLRemoveNthFirstElt<typename List::Next,N-1>::type type;
     };
 
     /*!
-     * Partial specialisation of TypeListFindNthElt to end the recursion
+     * Partial specialisation of TLFindNthElt to end the recursion
      */
     template<unsigned int N>
-    struct TFEL_VISIBILITY_LOCAL TypeListFindNthElt<TypeListEndType,N>{
+    struct TFEL_VISIBILITY_LOCAL TLFindNthElt<TLE,N>{
       /*!
        * The result of the metafunction.
        */
-      typedef TypeListEndType type;
+      typedef TLE type;
     };
 
     /*!
-     * Partial specialisation of TypeListFindNthElt to end the recursion
+     * Partial specialisation of TLFindNthElt to end the recursion
      */
     template<typename T>
-    struct TFEL_VISIBILITY_LOCAL TypeListFindNthElt<T,0u>{
-      TFEL_STATIC_ASSERT((IsSubClassOf<T,TypeList>::cond));
+    struct TFEL_VISIBILITY_LOCAL TLFindNthElt<T,0u>{
+      TFEL_STATIC_ASSERT((IsSubClassOf<T,TL>::cond));
       /*!
        * The result of the metafunction.
        */
@@ -260,99 +260,99 @@ namespace tfel{
     };
 
     /*!
-     * Partial specialisation of TypeListFindNthElt to end the recursion
+     * Partial specialisation of TLFindNthElt to end the recursion
      */
     template<>
-    struct TFEL_VISIBILITY_LOCAL TypeListFindNthElt<TypeListEndType,0u>{
+    struct TFEL_VISIBILITY_LOCAL TLFindNthElt<TLE,0u>{
       /*!
        * The result of the metafunction.
        */
-      typedef TypeListEndType type;
+      typedef TLE type;
     };
     
     template<typename T,unsigned int N>
-    struct TFEL_VISIBILITY_LOCAL TypeListFindNthElt{
-      TFEL_STATIC_ASSERT((IsSubClassOf<T,TypeList>::cond));
+    struct TFEL_VISIBILITY_LOCAL TLFindNthElt{
+      TFEL_STATIC_ASSERT((IsSubClassOf<T,TL>::cond));
       /*!
-       * The result of the metafunction. Return the Nth element of the T or TypeListEndType if T contains less than N elements.
+       * The result of the metafunction. Return the Nth element of the T or TLE if T contains less than N elements.
        */
-      typedef typename TypeListFindNthElt<typename T::Next,N-1>::type type;
+      typedef typename TLFindNthElt<typename T::Next,N-1>::type type;
     };
     
     template<typename T,typename U>
-    struct TFEL_VISIBILITY_LOCAL TypeListElementIsUnique {
+    struct TFEL_VISIBILITY_LOCAL TLElementIsUnique {
       /*!
        * The result of the metafunction. True if T is unique in U.
        */
-      static const bool cond = TypeListCountNbrOfT<T,U>::value==1;
+      static const bool cond = TLCountNbrOfT<T,U>::value==1;
     };
     
     namespace internals{
 
       /*!
-       * \brief  An helper class for the TypeListElementsAreUnique metafunction.
+       * \brief  An helper class for the TLElementsAreUnique metafunction.
        * \author Helfer Thomas
        * \date   30 August 2006
        */
       template<typename T,typename U>
-      struct TFEL_VISIBILITY_LOCAL TypeListElementsAreUniqueImpl{
-	static const bool c1 = tfel::meta::TypeListElementIsUnique<typename T::Current,U>::cond;
-	static const bool c2 = TypeListElementsAreUniqueImpl<typename T::Next,U>::cond;
+      struct TFEL_VISIBILITY_LOCAL TLElementsAreUniqueImpl{
+	static const bool c1 = tfel::meta::TLElementIsUnique<typename T::Current,U>::cond;
+	static const bool c2 = TLElementsAreUniqueImpl<typename T::Next,U>::cond;
 	static const bool cond = c1 && c2;
       };
       
       /*!
-       * \brief Partial specialisation of TypeListElementsAreUniqueImpl
+       * \brief Partial specialisation of TLElementsAreUniqueImpl
        */
       template<typename U>
-      struct TFEL_VISIBILITY_LOCAL TypeListElementsAreUniqueImpl<TypeListEndType,U>{
+      struct TFEL_VISIBILITY_LOCAL TLElementsAreUniqueImpl<TLE,U>{
 	static const bool cond = true;
       };
       
     } // end of namespace internals
 
     template<typename T>
-    struct TFEL_VISIBILITY_LOCAL TypeListElementsAreUnique {
+    struct TFEL_VISIBILITY_LOCAL TLElementsAreUnique {
       /*!
        * The result of the metafunction. True if all elements in T are unique.
        */
-      static const bool cond = tfel::meta::internals::TypeListElementsAreUniqueImpl<T,T>::cond;
+      static const bool cond = tfel::meta::internals::TLElementsAreUniqueImpl<T,T>::cond;
     };
 
     template<typename List,typename T>
-    struct TFEL_VISIBILITY_LOCAL TypeListPrepend
+    struct TFEL_VISIBILITY_LOCAL TLPrepend
     {
-      TFEL_STATIC_ASSERT((IsSubClassOf<List,TypeList>::cond));
+      TFEL_STATIC_ASSERT((IsSubClassOf<List,TL>::cond));
       /*!
        * The result of the metafunction. 
        */
-      typedef TypeListNode<T,List> type;
+      typedef TLNode<T,List> type;
     };
 
     template<typename T>
-    struct TFEL_VISIBILITY_LOCAL TypeListAppend<TypeListEndType,T>
+    struct TFEL_VISIBILITY_LOCAL TLAppend<TLE,T>
     {
       /*!
        * The result of the metafunction. 
        */
-      typedef TypeListNode<T,TypeListEndType> type;
+      typedef TLNode<T,TLE> type;
     };
 
     template<typename List,typename T>
-    struct TFEL_VISIBILITY_LOCAL TypeListAppend
+    struct TFEL_VISIBILITY_LOCAL TLAppend
     {
-      TFEL_STATIC_ASSERT((IsSubClassOf<List,TypeList>::cond));
+      TFEL_STATIC_ASSERT((IsSubClassOf<List,TL>::cond));
       /*!
        * The result of the metafunction. 
        */
-      typedef TypeListNode<typename List::Current,
-			   typename TypeListAppend<typename List::Next,T>::type> type;
+      typedef TLNode<typename List::Current,
+			   typename TLAppend<typename List::Next,T>::type> type;
     };
 
     template<typename Second>
-    struct TFEL_VISIBILITY_LOCAL TypeListConcatenate<TypeListEndType,Second>
+    struct TFEL_VISIBILITY_LOCAL TLConcatenate<TLE,Second>
     {
-      TFEL_STATIC_ASSERT((IsSubClassOf<Second,TypeList>::cond));
+      TFEL_STATIC_ASSERT((IsSubClassOf<Second,TL>::cond));
       /*!
        * The result of the metafunction. 
        */
@@ -360,54 +360,54 @@ namespace tfel{
     };    
 
     template<typename First,typename Second>
-    class TypeListConcatenate
+    class TLConcatenate
     {
-      typedef typename TypeListConcatenate<typename First::Next,Second>::type N_;
+      typedef typename TLConcatenate<typename First::Next,Second>::type N_;
     public:
-      TFEL_STATIC_ASSERT((IsSubClassOf<First,TypeList>::cond));
-      TFEL_STATIC_ASSERT((IsSubClassOf<Second,TypeList>::cond));
+      TFEL_STATIC_ASSERT((IsSubClassOf<First,TL>::cond));
+      TFEL_STATIC_ASSERT((IsSubClassOf<Second,TL>::cond));
       /*!
        * The result of the metafunction. 
        */
-      typedef TypeListNode<typename First::Current,N_> type;
+      typedef TLNode<typename First::Current,N_> type;
     };    
 
     template<typename BaseType>
-    struct TFEL_VISIBILITY_LOCAL TypeListExtractSubClassesOf<TypeListEndType,BaseType>
+    struct TFEL_VISIBILITY_LOCAL TLExtractSubClassesOf<TLE,BaseType>
     {
       /*!
        * The result of the metafunction. 
        */
-      typedef TypeListEndType type;
+      typedef TLE type;
     };
 
     template<typename List,typename BaseType>
-    struct TFEL_VISIBILITY_LOCAL TypeListExtractSubClassesOf
+    struct TFEL_VISIBILITY_LOCAL TLExtractSubClassesOf
     {
-      TFEL_STATIC_ASSERT((IsSubClassOf<List,TypeList>::cond));
+      TFEL_STATIC_ASSERT((IsSubClassOf<List,TL>::cond));
       /*!
        * The result of the metafunction. 
        */
-      typedef typename IF<IsSubClassOf<typename List::Current,BaseType>::cond,TypeListNode<typename List::Current,typename TypeListExtractSubClassesOf<typename List::Next,BaseType>::type>,typename TypeListExtractSubClassesOf<typename List::Next,BaseType>::type>::type type;
+      typedef typename IF<IsSubClassOf<typename List::Current,BaseType>::cond,TLNode<typename List::Current,typename TLExtractSubClassesOf<typename List::Next,BaseType>::type>,typename TLExtractSubClassesOf<typename List::Next,BaseType>::type>::type type;
     };
 
     template<>
-    struct TFEL_VISIBILITY_LOCAL TypeListUnique<TypeListEndType>
+    struct TFEL_VISIBILITY_LOCAL TLUnique<TLE>
     {
       /*!
        * The result of the metafunction. 
        */
-      typedef TypeListEndType type;
+      typedef TLE type;
     };
 
     template<typename List>
-    class TypeListUnique
+    class TLUnique
     {
       typedef typename List::Next    Next;
       typedef typename List::Current Current;
-      typedef typename TypeListUnique<Next>::type UniqueNext;
-      typedef typename TypeListPrepend<UniqueNext,Current>::type Choice;
-      static const bool unique = TypeListElementIsUnique<Current,List>::cond;
+      typedef typename TLUnique<Next>::type UniqueNext;
+      typedef typename TLPrepend<UniqueNext,Current>::type Choice;
+      static const bool unique = TLElementIsUnique<Current,List>::cond;
     public:
       /*!
        * The result of the metafunction. 
@@ -416,7 +416,7 @@ namespace tfel{
     };
 
     template<>
-    struct TFEL_VISIBILITY_LOCAL TypeListContainsInvalidType<TypeListEndType>
+    struct TFEL_VISIBILITY_LOCAL TLContainsInvalidType<TLE>
     {
       /*!
        * The result of the metafunction. 
@@ -425,7 +425,7 @@ namespace tfel{
     };
     
     template<typename TList>
-    class TypeListContainsInvalidType
+    class TLContainsInvalidType
     {
       //! a simple alias.
       typedef typename TList::Current Current;
@@ -434,50 +434,50 @@ namespace tfel{
       //! check if the current type is invalid.
       static const bool cond1 = tfel::typetraits::IsInvalid<Current>::cond;
       //! check if all the next types in the TypeLis are invalid.
-      static const bool cond2 = TypeListContainsInvalidType<Next>::cond;
+      static const bool cond2 = TLContainsInvalidType<Next>::cond;
     public:
       //! the result.
       static const bool cond  = cond1 || cond2 ;
     };
     
     template<typename List> 
-    class TypeListMaxSize
+    class TLMaxSize
     {
       //! a simple alias
       typedef typename List::Current Current;
       //! a simple alias
       typedef typename List::Next Next;
-      //! the result of the algorithm for the next types of the TypeList.
-      static const size_t nextValue = TypeListMaxSize<Next>::value;
+      //! the result of the algorithm for the next types of the TL.
+      static const size_t nextValue = TLMaxSize<Next>::value;
     public:
       //! the result of the algorithm.
       static const size_t value = sizeof(Current) > nextValue ? sizeof(Current) : nextValue;
-    }; // end of struct TypeListMaxSize
+    }; // end of struct TLMaxSize
     
     //! Partial specialisation to end the recursion.
     /*
      * \return cons size_t value, the result.
      */
     template<> 
-    struct TFEL_VISIBILITY_LOCAL TypeListMaxSize<TypeListEndType>
+    struct TFEL_VISIBILITY_LOCAL TLMaxSize<TLE>
     {
       //! the result
       static const size_t value =  1;
-    }; // end of struct TypeListMaxSize
+    }; // end of struct TLMaxSize
     
     template<typename List,size_t size>
-    class TypeListComputeAlignBound
+    class TLComputeAlignBound
     {
       //! a simple alias
       typedef typename List::Current Current;
       //! a simple alias
       typedef typename List::Next Next;
-      //! the result of the algorithm for next types of the TypeList.
-      typedef typename TypeListComputeAlignBound<Next,size>::type TailResult;
+      //! the result of the algorithm for next types of the TL.
+      typedef typename TLComputeAlignBound<Next,size>::type TailResult;
     public:
       //! the result.
       typedef typename IF<(sizeof(Current) <= size),
-	TypeListNode<Current, TailResult>,
+	TLNode<Current, TailResult>,
 	TailResult>::type type;
     };
     
@@ -486,10 +486,10 @@ namespace tfel{
      * \return type, the result.
      */
     template<size_t size>
-    struct TFEL_VISIBILITY_LOCAL TypeListComputeAlignBound<TypeListEndType, size>
+    struct TFEL_VISIBILITY_LOCAL TLComputeAlignBound<TLE, size>
     {
       //! the result.
-      typedef TypeListEndType type;
+      typedef TLE type;
     };
 
     namespace internals{
@@ -503,33 +503,33 @@ namespace tfel{
       template<unsigned short N,
 	       typename T,
 	       typename List>
-      struct TFEL_VISIBILITY_LOCAL TypeListPosition
+      struct TFEL_VISIBILITY_LOCAL TLPosition
       {
 	typedef typename tfel::meta::IF<tfel::meta::IsSameType<T,typename List::Current>::cond,
 					IntegerValue<N>,
-					TypeListPosition<N+1,T,typename List::Next> >::type Select;
+					TLPosition<N+1,T,typename List::Next> >::type Select;
       static const unsigned short value = Select::value;
       private:
-	TFEL_STATIC_ASSERT((IsSubClassOf<List,TypeList>::cond));
-      }; // end of TypeListPosition
+	TFEL_STATIC_ASSERT((IsSubClassOf<List,TL>::cond));
+      }; // end of TLPosition
 
       template<unsigned short N,
 	       typename T>
-      struct TypeListPosition<N,T,TypeListEndType>
+      struct TLPosition<N,T,TLE>
       {
 	static const unsigned short value = N;
-      }; // end of TypeListPosition
+      }; // end of TLPosition
 
 
     } // end of namespace internals
 
     template<typename T,
 	     typename List>
-    struct TFEL_VISIBILITY_LOCAL TypeListPosition
+    struct TFEL_VISIBILITY_LOCAL TLPosition
     {
-      static const unsigned short value = tfel::meta::internals::TypeListPosition<0u,T,List>::value;
+      static const unsigned short value = tfel::meta::internals::TLPosition<0u,T,List>::value;
     private:
-      TFEL_STATIC_ASSERT((IsSubClassOf<List,TypeList>::cond));
+      TFEL_STATIC_ASSERT((IsSubClassOf<List,TL>::cond));
     };
     
   } // end of namespace meta

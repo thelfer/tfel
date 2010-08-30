@@ -5,13 +5,14 @@
  * \brief 27 avr 2009
  */
 
-#ifndef _LIB_STLCONTAINERBINARYWRITE_H_
-#define _LIB_STLCONTAINERBINARYWRITE_H_ 
+#ifndef _LIB_TFEL_SYSTEM_STLCONTAINERBINARYWRITE_H_
+#define _LIB_TFEL_SYSTEM_STLCONTAINERBINARYWRITE_H_ 
 
+#include<map>
+#include<set>
+#include<list>
 #include<vector>
 #include<string>
-#include<map>
-#include<list>
 
 #include"TFEL/System/BinaryWrite.hxx"
 
@@ -20,6 +21,19 @@ namespace tfel
 
   namespace system
   {
+
+    template<typename T1,
+	     typename T2>
+    struct BinaryWriter<std::pair<T1,T2> >
+    {
+      static void exe(const int f,
+		      const std::pair<T1,T2>& v)
+      {
+	using namespace std;
+	binary_write(f,v.first);
+	binary_write(f,v.second);
+      }
+    }; // end of BinaryWriter<std::vector..>
 
     template<typename T,
 	     typename Allocator>
@@ -70,6 +84,23 @@ namespace tfel
       }
     }; // end of BinaryWriter
 
+    template<typename T,
+	     typename Allocator>
+    struct BinaryWriter<std::set<T,Allocator> >
+    {
+      static void exe(const int f,
+		      const std::set<T,Allocator>& v)
+      {
+	using namespace std;
+	typename set<T,Allocator>::const_iterator p;
+	typename set<T,Allocator>::size_type s = v.size();
+	binary_write(f,s);
+	for(p=v.begin();p!=v.end();++p){
+	  binary_write(f,*p);
+	}
+      }
+    }; // end of BinaryWriter
+
     template<typename Key,
 	     typename Data,
 	     typename Compare,
@@ -94,5 +125,5 @@ namespace tfel
 
 } // end of namespace tfel
 
-#endif /* _LIB_STLCONTAINERBINARYWRITE_H */
+#endif /* _LIB_TFEL_SYSTEM_STLCONTAINERBINARYWRITE_H */
 

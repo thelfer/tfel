@@ -22,7 +22,7 @@ namespace tfel{
     template<typename C>
     struct CompositeTraits
     {
-      typedef tfel::meta::TypeListEndType Items;
+      typedef tfel::meta::TLE Items;
     };
 
     /*!
@@ -50,13 +50,13 @@ namespace tfel{
       static const bool isTemporary = tfel::typetraits::IsTemporary<C>::cond;
       typedef CompositeTag ConceptTag;
       typedef typename CompositeTraits<C>::Items Items;
-      TFEL_STATIC_ASSERT((tfel::meta::IsSubClassOf<Items,tfel::meta::TypeList>::cond));
+      TFEL_STATIC_ASSERT((tfel::meta::IsSubClassOf<Items,tfel::meta::TL>::cond));
 
       template<unsigned short N>
       class ConstValueType
       {
 	typedef typename CompositeTraits<C>::Items Items;
-	typedef typename tfel::meta::TypeListFindNthElt<Items,N>::type NthElt;
+	typedef typename tfel::meta::TLFindNthElt<Items,N>::type NthElt;
       public:
 	typedef typename tfel::meta::IF<isTemporary,const NthElt,const NthElt&>::type type;
       };
@@ -64,14 +64,14 @@ namespace tfel{
 #ifdef __GNUG__
       template<unsigned short N>
       typename tfel::meta::EnableIf<
-	(N<tfel::meta::TypeListSize<Items>::value),
+	(N<tfel::meta::TLSize<Items>::value),
 	  typename ConstValueType<N>::type
       >::type
       getComponent(void) const;
 #else /* __GNUG__ */
       template<unsigned short N>
       typename tfel::meta::EnableIf<
-	(N<tfel::meta::TypeListSize<Items>::value),
+	(N<tfel::meta::TLSize<Items>::value),
 	  typename ConstValueType<N>::type
       >::type
       getComponent(void) const

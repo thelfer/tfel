@@ -1,7 +1,7 @@
 /*!
  * \file   GenTypeSpecialisation.hxx
  * \brief  This file implements some special support for specific classes.
- * \see    TypeList
+ * \see    TL
  * \author Helfer Thomas
  * \date   19 Apr. 2007
  */

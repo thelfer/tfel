@@ -17,7 +17,7 @@ namespace tfel{
     template<typename C>
     template<unsigned short N>
     typename tfel::meta::EnableIf<
-      (N<tfel::meta::TypeListSize<typename CompositeTraits<C>::Items>::value),
+      (N<tfel::meta::TLSize<typename CompositeTraits<C>::Items>::value),
 	typename CompositeConcept<C>::template ConstValueType<N>::type
     >::type
     CompositeConcept<C>::getComponent(void) const

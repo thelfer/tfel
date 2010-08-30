@@ -81,6 +81,7 @@ fi
 
 # check for compiler
 COMPILER_SPECIFIC_OPTIONS="";
+COMPILER_WARNINGS="";
 OPTIMISATION_FLAGS="-DNO_RUNTIME_CHECK_BOUNDS -DNDEBUG"
 
 # g++ specific treatement
@@ -99,6 +100,7 @@ then
 fi
 
 AC_DEFINE_UNQUOTED(OPTIMISATION_FLAGS,"$OPTIMISATION_FLAGS")
+AC_DEFINE_UNQUOTED(COMPILER_WARNINGS,"$COMPILER_WARNINGS")
 
 # Checks for compilers
 # disable automatic declaration of

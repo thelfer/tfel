@@ -2,7 +2,7 @@
  * \file   GenTypeBase.hxx
  * \brief  This file implements the GenTypeBase class and some 
  * internal classes used by the GenType class.
- * \see    TypeList
+ * \see    TL
  * \author Helfer Thomas
  * \date   19 Apr. 2007
  */
@@ -43,7 +43,7 @@ namespace tfel{
       };
 
       //! a simple alias
-      typedef tfel::meta::TypeListEndType TLEnd;
+      typedef tfel::meta::TLE TLEnd;
 
       //! a usefull list of types for computing alignements
       typedef tfel::meta::GenerateTypeList<char,short int,int,long int,float,double,long double,
@@ -79,9 +79,9 @@ namespace tfel{
       class AlignedPOD
       {
 	//! maximum of all the sizes of the list.
-	static const size_t size = tfel::meta::TypeListMaxSize<TList>::value;
+	static const size_t size = tfel::meta::TLMaxSize<TList>::value;
 	//! a simple alias.
-	typedef tfel::meta::TypeListComputeAlignBound<TypesOfAllAlignments,size> CABounds;
+	typedef tfel::meta::TLComputeAlignBound<TypesOfAllAlignments,size> CABounds;
 	//! a list of types whose size may serve to compute the alignement.
 	typedef typename CABounds::type AlignedTypes;
       public:
@@ -214,7 +214,7 @@ namespace tfel{
 	}
       private:
 	//! a simple alias.
-	typedef typename tfel::meta::TypeListFindNthElt<List,N-1>::type Current;
+	typedef typename tfel::meta::TLFindNthElt<List,N-1>::type Current;
 	//! choose the function used to destroy the N-1 type of the typelist.
 	typedef typename tfel::meta::IF<GenTypeTraits<Current>::isFundamentalType,
 					GenTypePODDestroy<Current>,
@@ -236,11 +236,11 @@ namespace tfel{
 	//! a simple alias.
 	typedef void (*CopyMethod)(void *const,const void* const);
 	//! array containing function pointers to call a specific destructor.
-	DestroyMethod destroyMethod[tfel::meta::TypeListSize<List>::value];
+	DestroyMethod destroyMethod[tfel::meta::TLSize<List>::value];
 	//! array containing function pointers to call a specific assignement operator.
-	AssignMethod  assignMethod[tfel::meta::TypeListSize<List>::value];
+	AssignMethod  assignMethod[tfel::meta::TLSize<List>::value];
 	//! array containing function pointers to call a specific copy constructor.
-	CopyMethod copyMethod[tfel::meta::TypeListSize<List>::value];
+	CopyMethod copyMethod[tfel::meta::TLSize<List>::value];
       };
 
       //! an helper class to a add methods to a GenType for a specific type.
@@ -297,7 +297,7 @@ namespace tfel{
        * \date   20 Apr. 2007.
        */
       template<typename Child>
-      class GenTypeSpecializedMethods<Child,tfel::meta::TypeListEndType>
+      class GenTypeSpecializedMethods<Child,tfel::meta::TLE>
       {};
 
     } // end of namespace internals
@@ -315,7 +315,7 @@ namespace tfel{
       //! Default constructor.
       TFEL_INLINE
       GenTypeBase()
-	: index(tfel::meta::TypeListSize<List>::value)
+	: index(tfel::meta::TLSize<List>::value)
       {}
       //! Copy constructor.
       /*
@@ -326,7 +326,7 @@ namespace tfel{
 	: index(src.index)
       {
 	using namespace tfel::meta;
-	if(this->index!=TypeListSize<List>::value){
+	if(this->index!=TLSize<List>::value){
 	  // create a new object by copy
 	  void  * tmp       = reinterpret_cast<void*>(&(this->container.buffer[0]));
 	  const void * tmp2 = reinterpret_cast<const void*>(&(src.container.buffer[0]));
@@ -345,7 +345,7 @@ namespace tfel{
 	// check for self-assignement
 	if(this!=&src){
 	  if(this->index==src.index){
-	    if(src.index!=TypeListSize<List>::value){
+	    if(src.index!=TLSize<List>::value){
 	      // the two GenTypes hold the same objects
 	      // we then use the assignement operator.
 	      void  * tmp       = reinterpret_cast<void*>(&(this->container.buffer[0]));
@@ -354,22 +354,22 @@ namespace tfel{
 	    } else {
 	      // src is not initialized,
 	      // we then destroy holded object
-	      if(this->index!=TypeListSize<List>::value){
+	      if(this->index!=TLSize<List>::value){
 		void * tmp = reinterpret_cast<void*>(&(this->container.buffer[0]));
 		(*(GenTypeBase::methods.destroyMethod[this->index]))(tmp);
 	      }
-	      this->index = TypeListSize<List>::value;
+	      this->index = TLSize<List>::value;
 	    }
 	  } else {
 	    // the two GenType have two differents objects.
 	    // we first destroy the previous object and create a new
 	    // one by copy.
-	    if(this->index!=TypeListSize<List>::value){
+	    if(this->index!=TLSize<List>::value){
 	      void * tmp = reinterpret_cast<void*>(&(this->container.buffer[0]));
 	      (*(GenTypeBase::methods.destroyMethod[this->index]))(tmp);
 	    }
 	    this->index = src.index;
-	    if(this->index!=TypeListSize<List>::value){
+	    if(this->index!=TLSize<List>::value){
 	      void  * tmp       = reinterpret_cast<void*>(&(this->container.buffer[0]));
 	      const void * tmp2 = reinterpret_cast<const void*>(&(src.container.buffer[0]));
 	      (*(GenTypeBase::methods.copyMethod[this->index]))(tmp,tmp2);
@@ -397,25 +397,25 @@ namespace tfel{
       template<typename T1>
       TFEL_INLINE
       typename tfel::meta::EnableIf<
-	tfel::meta::TypeListCountNbrOfT<T1,List>::value==1, 
+	tfel::meta::TLCountNbrOfT<T1,List>::value==1, 
 	void >::type 
       set(const T1& src)
       {
 	using namespace tfel::meta;
 	using namespace tfel::utilities::internals;
-	if(this->index==TypeListFindEltPos<T1,List>::value){
+	if(this->index==TLFindEltPos<T1,List>::value){
 	  // The GenType already holds an object of type T1
 	  unsigned char *c = this->container.buffer;
 	  T1& tmp  = *(reinterpret_cast<T1*>(c));
 	  tmp = src;
 	} else {
 	  // We create a new object of type T1 by calling the copy constructor
-	  if(this->index!=TypeListSize<List>::value){
+	  if(this->index!=TLSize<List>::value){
 	    // destroy the current object
 	    void * tmp = reinterpret_cast<void*>(&(this->container.buffer[0]));
 	    (*(GenTypeBase::methods.destroyMethod[this->index]))(tmp);
 	  }
-	  this->index=TypeListFindEltPos<T1,List>::value;
+	  this->index=TLFindEltPos<T1,List>::value;
 	  void * p = reinterpret_cast<void*>(&(this->container.buffer[0]));
 	  // the magic of placement new...
 	  new (p) T1(src);
@@ -430,7 +430,7 @@ namespace tfel{
       template<typename T1>
       TFEL_INLINE
       typename tfel::meta::EnableIf<
-	tfel::meta::TypeListCountNbrOfT<T1,List>::value==1, 
+	tfel::meta::TLCountNbrOfT<T1,List>::value==1, 
 	GenTypeBase&>::type 
       operator=(const T1& src)
       {
@@ -438,12 +438,12 @@ namespace tfel{
 	return *this;
       }
       template<typename T1>
-      typename tfel::meta::EnableIf<tfel::meta::TypeListCountNbrOfT<T1,List>::value==1,
+      typename tfel::meta::EnableIf<tfel::meta::TLCountNbrOfT<T1,List>::value==1,
 				    bool>::type
       is() const
       {
 	using namespace tfel::meta;
-	return this->index==TypeListPosition<T1,List>::value;
+	return this->index==TLPosition<T1,List>::value;
       } // end of Value::is
       //! get the value contained in the GenType (const version).
       /*
@@ -454,14 +454,14 @@ namespace tfel{
       template<typename T1>
       TFEL_INLINE
       typename tfel::meta::EnableIf<
-	tfel::meta::TypeListCountNbrOfT<T1,List>::value==1, 
+	tfel::meta::TLCountNbrOfT<T1,List>::value==1, 
 	const T1& >::type 
       get(void) const
       {	
 	using namespace std;
 	using namespace tfel::meta;
 	using namespace tfel::utilities::internals;
-	if(this->index!=TypeListFindEltPos<T1,List>::value){
+	if(this->index!=TLFindEltPos<T1,List>::value){
 	  throw(GenTypeCastError());
 	}
 	const unsigned char *c = this->container.buffer;
@@ -476,14 +476,14 @@ namespace tfel{
       template<typename T1>
       TFEL_INLINE 
       typename tfel::meta::EnableIf<
-	tfel::meta::TypeListCountNbrOfT<T1,List>::value==1, 
+	tfel::meta::TLCountNbrOfT<T1,List>::value==1, 
 	T1&>::type 
       get(void)
       {
 	using namespace std;
 	using namespace tfel::meta;
 	using namespace tfel::utilities::internals;
-	if(this->index!=TypeListFindEltPos<T1,List>::value){
+	if(this->index!=TLFindEltPos<T1,List>::value){
 	  throw(GenTypeCastError());
 	}
 	unsigned char *c = this->container.buffer;
@@ -495,21 +495,21 @@ namespace tfel{
       ~GenTypeBase()
       {
 	using namespace tfel::meta;
-	if(this->index!=TypeListSize<List>::value){
+	if(this->index!=TLSize<List>::value){
 	  //This calls the destructor of the type hold
 	  void * tmp = reinterpret_cast<void*>(&(this->container.buffer[0]));
 	  (*(GenTypeBase::methods.destroyMethod[this->index]))(tmp);
 	}
       }
       //! number of object that the GenType can hold
-      static const unsigned short ListSize = tfel::meta::TypeListSize<List>::value;
+      static const unsigned short ListSize = tfel::meta::TLSize<List>::value;
       //! a simple alias.
       typedef tfel::utilities::internals::GenTypeRunTimeMethods<ListSize,List> RunTimeMethods;
     protected:
       //! RunTimeMethods used by the GenType.
       static const RunTimeMethods methods;
       //! maximum size of the types hold by the GenType.
-      static const size_t size = tfel::meta::TypeListMaxSize<List>::value;
+      static const size_t size = tfel::meta::TLMaxSize<List>::value;
       //! a type properly aligned.
       typedef typename tfel::utilities::internals::AlignedPOD<List>::type Align;
       //! memory where objects are holded
@@ -527,7 +527,7 @@ namespace tfel{
       unsigned short index;
     private:
       //! a simple assertion
-      TFEL_STATIC_ASSERT((tfel::meta::TypeListElementsAreUnique<List>::cond));
+      TFEL_STATIC_ASSERT((tfel::meta::TLElementsAreUnique<List>::cond));
     };
 
     // Declaration of GenTypeBase static member RunTimeMethod
