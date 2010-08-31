@@ -32,6 +32,7 @@ set(TFELMath_SOURCES
 
 set(TFELMathKriging_SOURCES
     KrigingErrors.cxx
+    KrigingUtilities.cxx
     Kriging1D.cxx
     Kriging2D.cxx
     Kriging3D.cxx
