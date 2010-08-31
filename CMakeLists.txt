@@ -10,6 +10,7 @@ set(PACKAGE_BUGREPORT "thomas.helfer@cea.fr")
 
 #compiler specific options
 set(OPTIMISATION_FLAGS "")
+set(COMPILER_WARNINGS "")
 if(UNIX)
   if(CMAKE_COMPILER_IS_GNUCC)
     # gcc specific configuration
@@ -17,6 +18,7 @@ if(UNIX)
   endif(CMAKE_COMPILER_IS_GNUCC)
 endif(UNIX)
 add_definitions("-DOPTIMISATION_FLAGS=\\\"\"${OPTIMISATION_FLAGS}\"\\\"")
+add_definitions("-DCOMPILER_WARNINGS=\\\"\"${COMPILER_WARNINGS}\"\\\"")
 
 # sub directories
 add_subdirectory(include) 
