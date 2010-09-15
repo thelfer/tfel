@@ -123,6 +123,7 @@ namespace mfront{
     while(this->current != this->fileTokens.end()){
       if((this->isCoefficientName(this->current->value))||
 	 (this->isInternalStateVariableName(this->current->value))||
+	 (this->isAuxiliaryInternalStateVariableName(this->current->value))||
 	 (this->isExternalStateVariableName(this->current->value))){
 	this->treatVariableMethod();
       } else {
