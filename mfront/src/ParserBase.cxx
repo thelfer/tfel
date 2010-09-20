@@ -270,26 +270,37 @@ namespace mfront
 	throw(runtime_error(msg));
       }
       if(this->staticVarNames.find(this->current->value)!=this->staticVarNames.end()){
-	res += this->className;
-	res += "::";
-	res += this->current->value;
-      } else if(this->varNames.find(this->current->value)!=this->varNames.end()){
-	string currentValue;
-	if(modifier!=0){
-	  currentValue = (this->*modifier)(this->current->value,addThisPtr);
+	if(previous->value=="::"){
+	  res += this->current->value;
 	} else {
-	  if(addThisPtr){
-	    currentValue = "this->"+this->current->value;
-	  } else {
-	    currentValue = this->current->value;
-	  }
+	  res += this->className;
+	  res += "::";
+	  res += this->current->value;
 	}
+      } else if(this->varNames.find(this->current->value)!=this->varNames.end()){
 	previous = this->current;
 	--previous;
-	if(previous->value=="*"){
-	  res += "("+currentValue+")";
+	if((previous->value=="::")||
+	   (previous->value=="->")||
+	   (previous->value==".")){
+	  // qualified variables are not modified
+	  res += this->current->value;
 	} else {
-	  res += currentValue;
+	  string currentValue;
+	  if(modifier!=0){
+	    currentValue = (this->*modifier)(this->current->value,addThisPtr);
+	  } else {
+	    if(addThisPtr){
+	      currentValue = "this->"+this->current->value;
+	    } else {
+	      currentValue = this->current->value;
+	    }
+	  }
+	  if(previous->value=="*"){
+	    res += "("+currentValue+")";
+	  } else {
+	    res += currentValue;
+	  }
 	}
       } else {
 	res += this->current->value;
