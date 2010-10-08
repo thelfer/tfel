@@ -75,12 +75,12 @@ namespace tfel
       static void exe(const int f,std::set<T,Allocator>& res)
       {
 	using namespace std;
-	typename set<T,Allocator>::iterator p;
 	typename set<T,Allocator>::size_type s = binary_read<typename set<T,Allocator>::size_type>(f);
-	res.clear();
-	res.resize(s);
-	for(p=res.begin();p!=res.end();++p){
-	  binary_read(f,*p);
+	typename set<T,Allocator>::size_type i;
+	for(i=0;i!=s;++i){
+	  T value;
+	  binary_read(f,value);
+	  res.insert(value);
 	}
       }
     };

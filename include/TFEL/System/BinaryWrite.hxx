@@ -20,7 +20,6 @@
     TFEL_VISIBILITY_EXPORT                      \
     void binary_write(const int,const X&);
 
-
 namespace tfel
 {
 
