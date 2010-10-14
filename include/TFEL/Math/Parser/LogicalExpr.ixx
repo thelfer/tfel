@@ -43,6 +43,7 @@ namespace tfel
       LogicalOperation<Op>::checkCyclicDependency(std::vector<std::string>& vars) const
       {
 	using namespace std;
+	using std::vector;
 	vector<string> a_vars;
 	vector<string> b_vars;
 	this->a->checkCyclicDependency(a_vars);
@@ -113,6 +114,7 @@ namespace tfel
       LogicalBinaryOperation<Op>::checkCyclicDependency(std::vector<std::string>& vars) const
       {
 	using namespace std;
+	using std::vector;
 	vector<string> a_vars;
 	vector<string> b_vars;
 	this->a->checkCyclicDependency(a_vars);

@@ -40,6 +40,7 @@ namespace tfel
 	throw(std::runtime_error)
       {
 	using namespace std;
+	using std::vector;
 	vector<string> a_names;
 	vector<string> b_names;
 	this->a->checkCyclicDependency(a_names);

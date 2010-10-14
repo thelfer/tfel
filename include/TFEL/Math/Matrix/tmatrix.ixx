@@ -202,12 +202,12 @@ namespace tfel{
     {
       TFEL_STATIC_ASSERT(N==M);
 
-      tmatrix<N,N,T> m(static_cast<T>(0.));
+      tmatrix<N,N,T> m2(static_cast<T>(0.));
       unsigned short i;
       for(i=0;i<N;++i){
-	m(i,i)=static_cast<T>(1.);
+	m2(i,i)=static_cast<T>(1.);
       }
-      return m;
+      return m2;
     }
 
     template<unsigned short N,unsigned short M, typename T>

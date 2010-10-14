@@ -93,7 +93,7 @@ namespace tfel
       }
 
       void
-      EvaluatorBase::splitAtTokenSeperator(std::vector<std::string>& tokens)
+      EvaluatorBase::splitAtTokenSeperator(std::vector<std::string>& t)
       {
 	using namespace std;
     
@@ -103,7 +103,7 @@ namespace tfel
 	string::iterator p2e;
 	string::iterator b;
 
-	for(p=tokens.begin();p!=tokens.end();++p){
+	for(p=t.begin();p!=t.end();++p){
 	  b   = p->begin();
 	  p2  = p->begin();
 	  p2e = p->end();
@@ -252,7 +252,7 @@ namespace tfel
 	  }
 	}
 
-	tokens.swap(res);
+	t.swap(res);
       }
 
       void

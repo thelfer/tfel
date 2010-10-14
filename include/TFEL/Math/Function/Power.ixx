@@ -130,8 +130,8 @@ namespace tfel{
       Complex<long double>
       exe(const Complex<long double> x)
       {
-	Complex<double> tmp  = PowerPos<N>::exe(x);
-	Complex<double> tmp2 = PowerPos<M>::exe(x); 
+	Complex<long double> tmp  = PowerPos<N>::exe(x);
+	Complex<long double> tmp2 = PowerPos<M>::exe(x); 
 	return tmp*tmp*tmp*tmp*tmp2;
       }
 

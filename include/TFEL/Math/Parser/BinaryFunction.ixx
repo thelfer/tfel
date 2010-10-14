@@ -54,6 +54,7 @@ namespace tfel
       StandardBinaryFunction<f>::checkCyclicDependency(std::vector<std::string>& names) const
       {
 	using namespace std;
+	using std::vector;
 	vector<string> a_names;
 	vector<string> b_names;
 	this->expr1->checkCyclicDependency(a_names);
