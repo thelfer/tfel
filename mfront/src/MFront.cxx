@@ -1345,9 +1345,9 @@ namespace mfront{
 	  this->makeFile << "-O2 ";
 	}
 	if(this->sys=="win32"){
-	  this->makeFile << "-D'F77_FUNC(X,Y)=X\\#\\#_' -DWIN32 $(INCLUDES) \n\n";
+	  this->makeFile << "-D'F77_FUNC(X,Y)=X\\#\\#_' -D'F77_FUNC_(X,Y)=X\\#\\#__' -DWIN32 $(INCLUDES) \n\n";
 	} else {
-	  this->makeFile << "-D'F77_FUNC(X,Y)=X\\#\\#_' -fPIC $(INCLUDES) \n\n";
+	  this->makeFile << "-D'F77_FUNC(X,Y)=X\\#\\#_' -D'F77_FUNC_(X,Y)=X\\#\\#_' -fPIC $(INCLUDES) \n\n";
 	}
       }
       // CFLAGS
