@@ -51,7 +51,7 @@ namespace tfel
       KrigedFunction<N>::setVariableValue(const std::vector<double>::size_type i_,
 					  const double v_)
       {
-	typename Variable::size_type i(i_);
+	typename Variable::size_type i(static_cast<typename Variable::size_type>(i_));
 	if(i>=N){
 	  KrigedFunctionBase::throwInvalidIndexException(i,N);
 	}

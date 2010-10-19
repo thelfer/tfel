@@ -279,11 +279,12 @@ namespace tfel
       using namespace std;
       using namespace tfel::utilities;
       using namespace tfel::math::parser;
+      using std::vector;
       vector<string>::const_iterator pv;
       vector<shared_ptr<Evaluator::TExpr> > args;
       string f;
       vector<string> var;
-      vector<std::vector<double>::size_type> pvar;
+      vector<vector<double>::size_type> pvar;
       unsigned short openedParenthesis=0u;
       int diffNumber = -1;
       Evaluator::checkNotEndOfExpression("Evaluator::treatDiff","(",p,pe);
@@ -388,7 +389,7 @@ namespace tfel
 	}
       }
       if(diffNumber!=-1){
-	var.resize(diffNumber,var[0]);
+	var.resize(static_cast<vector<string>::size_type >(diffNumber),var[0]);
       }
       for(pv=fvars.begin();pv!=fvars.end();++pv){
 	if(!b){
@@ -398,7 +399,7 @@ namespace tfel
 	args.push_back(shared_ptr<Evaluator::TExpr>(new Evaluator::TVariable(pos,this->variables)));
       }
       for(pv=var.begin();pv!=var.end();++pv){
-	pvar.push_back(find(fvars.begin(),fvars.end(),*pv)-fvars.begin());
+	pvar.push_back(static_cast<vector<double>::size_type>(find(fvars.begin(),fvars.end(),*pv)-fvars.begin()));
       }
       g->add(shared_ptr<Evaluator::TExpr>(new Evaluator::TDifferentiatedFunctionExpr(pev,args,pvar)));
     } // end of Evaluator::treatDiff

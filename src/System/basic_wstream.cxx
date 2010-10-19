@@ -38,7 +38,7 @@ namespace tfel
 	    systemCall::throwSystemError("BlockingStreamWriter::write : write failed",errno);
 	  sleep(1);
 	}
-	r     -= w;
+	r      = static_cast<size_t>(r-w);
 	start += w;
       }
 

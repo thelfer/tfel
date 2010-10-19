@@ -243,7 +243,7 @@ namespace mfront{
       this->throwRuntimeError("MFrontModelParserCommon::treatDomain : ",
 			      "domain name too short.");
     }
-    this->domains.insert(this->current->value.substr(1,this->current->value.size()-2)).second;
+    this->domains.insert(this->current->value.substr(1,this->current->value.size()-2));
     ++(this->current);
     this->readSpecifiedToken("MFrontModelParserCommon::treatDomain",";");
   } // end of MFrontModelParserCommon::treatDomain(void)
@@ -378,7 +378,7 @@ namespace mfront{
     bool found = false;
     bool treated;
     f.useTimeIncrement = false;
-    this->registerVariable("functor"+toString(this->functions.size()));
+    this->registerVariable("functor"+toString(static_cast<unsigned short>(this->functions.size())));
     this->checkNotEndOfFile("MFrontModelParserCommon::treatFunction");
     f.name = this->current->value;
     if(!this->isValidIdentifier(f.name)){

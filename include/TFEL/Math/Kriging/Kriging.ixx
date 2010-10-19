@@ -89,8 +89,9 @@ namespace tfel
     {
       using namespace tfel::math;
       using namespace tfel::math::internals;
+      typedef typename vector<T>::difference_type diff;
       typename vector<T>::size_type i;
-      typename vector<T>::const_iterator p = a.begin()+this->x.size();
+      typename vector<T>::const_iterator p = a.begin()+static_cast<diff>(this->x.size());
       T r(0);
       for(i=0;i!=this->x.size();++i){
 	r+=a[i]*Model::covariance(xv-this->x[i]);

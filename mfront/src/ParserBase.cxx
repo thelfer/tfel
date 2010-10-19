@@ -566,7 +566,7 @@ namespace mfront
 	  msg << "Error at line " << pt->line << ".";
 	  throw(runtime_error(msg.str()));
 	}
-	res[p-values.begin()]=value;
+	res[static_cast<vector<string>::size_type>(p-values.begin())]=value;
       }
       ++pt;
     }

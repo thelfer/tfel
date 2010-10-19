@@ -324,7 +324,7 @@ namespace tfel
 	  }
 	  ::sleep(1);
 	}
-	r -= w;
+	r  = static_cast<size_t>(r-w);
 	b += w;
       }
     } // end of systemCall::write
