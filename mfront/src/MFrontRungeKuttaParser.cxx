@@ -747,7 +747,7 @@ namespace mfront{
     this->behaviourFile << "if((this->dt)-t>Type(0.25)*dt_){\n";
     this->behaviourFile << "real corrector;\n";
     this->behaviourFile << "if(error<100*std::numeric_limits<real>::min()){\n";
-    this->behaviourFile << "corrector=real(1);\n";
+    this->behaviourFile << "corrector=real(10);\n";
     this->behaviourFile << "} else {\n";
     this->behaviourFile << "corrector = 0.8*pow(" << this->className << "::epsilon/error,0.2);\n";
     this->behaviourFile << "}\n";
@@ -915,7 +915,7 @@ namespace mfront{
     this->behaviourFile << "if(this->dt-t>Type(0.25)*dt_){\n";
     this->behaviourFile << "real corrector;\n";
     this->behaviourFile << "if(error<100*std::numeric_limits<real>::min()){\n";
-    this->behaviourFile << "corrector=real(1.);\n";
+    this->behaviourFile << "corrector=real(10.);\n";
     this->behaviourFile << "} else {\n";
     this->behaviourFile << "corrector = 0.8*pow((" << this->className << "::epsilon)/error,1./3.);\n";
     this->behaviourFile << "}\n";
