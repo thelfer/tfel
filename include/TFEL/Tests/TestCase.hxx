@@ -16,7 +16,7 @@
 
 /*!
  * \def TFEL_TESTS_ASSERT
- * \brief an helper macro to ease the use of TestCase::help
+ * \brief an helper macro to ease the use of TestCase::registerResult
  * \param X : code to be evaluated
  */
 #define TFEL_TESTS_ASSERT(X)				\
@@ -26,7 +26,7 @@
 
 /*!
  * \def TFEL_TESTS_CHECK_THROW
- * \brief an helper macro to ease the use of TestCase::help
+ * \brief an helper macro to ease the use of TestCase::registerResult
  * \param X : code to be evaluated
  * \param Y : exeception execpted to be thrown
  */
@@ -45,7 +45,7 @@
 
 /*!
  * \def TFEL_TESTS_CALLMETHOD
- * \brief an helper macro to ease the use of TestCase::help
+ * \brief an helper macro to ease the use of TestCase::registerResult
  * \param X : method to be called
  */
 #define TFEL_TESTS_CALLMETHOD(X)                                \
@@ -55,7 +55,7 @@
 
 /*!
  * \def TFEL_TESTS_CHECK_EQUAL
- * \brief an helper macro to ease the use of TestCase::help
+ * \brief an helper macro to ease the use of TestCase::registerResult
  * \param X : value to be tested
  * \param Y : expected value
  */
@@ -66,46 +66,46 @@
 
 /*!
  * \def TFEL_TESTS_CHECK_GT
- * \brief an helper macro to ease the use of TestCase::help
+ * \brief an helper macro to ease the use of TestCase::registerResult
  * \param X : value to be tested
  * \param Y : expected value
  */
 #define TFEL_TESTS_CHECK_GT(X,Y)				\
   {                                                             \
-    TestCase::registerResult("egal : '"#X"=="#Y"'",X>Y);        \
+    TestCase::registerResult("greater : '"#X">"#Y"'",X>Y);     \
   }
 
 /*!
  * \def TFEL_TESTS_CHECK_GE
- * \brief an helper macro to ease the use of TestCase::help
+ * \brief an helper macro to ease the use of TestCase::registerResult
  * \param X : value to be tested
  * \param Y : expected value
  */
-#define TFEL_TESTS_CHECK_GE(X,Y)				\
-  {                                                             \
-    TestCase::registerResult("egal : '"#X"=="#Y"'",X>=Y);       \
+#define TFEL_TESTS_CHECK_GE(X,Y)				      \
+  {                                                                   \
+    TestCase::registerResult("greater or equal : '"#X">="#Y"'",X>=Y); \
   }
 
 /*!
  * \def TFEL_TESTS_CHECK_LT
- * \brief an helper macro to ease the use of TestCase::help
+ * \brief an helper macro to ease the use of TestCase::registerResult
  * \param X : value to be tested
  * \param Y : expected value
  */
 #define TFEL_TESTS_CHECK_LT(X,Y)				\
   {                                                             \
-    TestCase::registerResult("egal : '"#X"=="#Y"'",X<Y);        \
+    TestCase::registerResult("lesser : '"#X"<"#Y"'",X<Y);      \
   }
 
 /*!
  * \def TFEL_TESTS_CHECK_LE
- * \brief an helper macro to ease the use of TestCase::help
+ * \brief an helper macro to ease the use of TestCase::registerResult
  * \param X : value to be tested
  * \param Y : expected value
  */
-#define TFEL_TESTS_CHECK_LE(X,Y)				\
-  {                                                             \
-    TestCase::registerResult("egal : '"#X"=="#Y"'",X<=Y);       \
+#define TFEL_TESTS_CHECK_LE(X,Y)				        \
+  {                                                                     \
+    TestCase::registerResult("lesser or equal : '"#X"<="#Y"'",X<=Y);    \
   }
 
 
