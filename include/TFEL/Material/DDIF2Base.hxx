@@ -39,7 +39,7 @@ namespace tfel
 		    const unsigned short i);
 
       template<typename real>
-      static TFEL_VISIBILITY_LOCAL TFEL_MATERIAL_INLINE void
+      static TFEL_VISIBILITY_LOCAL void
       cart2cyl(tfel::math::stensor<1u,real>&,
 	       const real);
 
@@ -54,7 +54,7 @@ namespace tfel
 	       const real);
 
       template<typename real>
-      static TFEL_VISIBILITY_LOCAL TFEL_MATERIAL_INLINE void
+      static TFEL_VISIBILITY_LOCAL void
       cyl2cart(tfel::math::stensor<1u,real>&,
 	       const real);
 
@@ -77,6 +77,23 @@ namespace tfel
 	 const real,
 	 const real,
 	 const real,
+	 const real,
+	 const real,
+	 const real,
+	 const real,
+	 const unsigned short,
+	 const unsigned short,
+	 const unsigned short);
+
+      template<typename real>
+      static TFEL_VISIBILITY_LOCAL void
+      rkbm(tfel::math::tmatrix<3,3,real>&,
+	 tfel::math::tvector<3,real>&,
+	 const real,
+	 const real,
+	 const real,
+	 real&,
+	 real,
 	 const real,
 	 const real,
 	 const real,

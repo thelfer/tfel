@@ -184,11 +184,14 @@ namespace tfel
       const real emin1 = 1.e-8;    /* small parameter which guarantees
 				      that Ef (defined below) is finite */
       const real sigm = max(sigr+Rp*young*max(em,e),0.); 
+      real Rp1   = 0.;
+      if(sigm>0.) 
+      	Rp1 = Rp;
       const real r    = max(s-sigm,0.)/young;
       if(r>0){
 	// loading
 	m(i,i1) = m(i,i2) = lambda;
-	m(i,i)  = lambda+2*mu+Rp;
+	m(i,i)  = lambda+2*mu+Rp1;
 	v(i)    = dse;
       } else {
 	if(((s>=0)||(e>0))&&(em>emin1)){
@@ -197,6 +200,50 @@ namespace tfel
 	  m(i,i)  = lambda+2*mu+Ef;
 	  v(i)    = dse;
 	} else {
+	  m(i,i1) = m(i,i2) = 0.;
+	  m(i,i)  = 1.;
+	  v(i)    = 0.;
+	}
+      }
+    }
+
+    template<typename real>
+    void
+    DDIF2Base::rkbm(tfel::math::tmatrix<3,3,real>& m,
+		  tfel::math::tvector<3,real>& v,
+		  const real s,
+		  const real dse, // elastic stress
+		  const real e,
+		  real& Hr,
+		  real X,
+		  const real Hf,
+		  const real young,
+		  const real lambda,
+		  const real mu,
+		  const unsigned short i,
+ 		  const unsigned short i1,
+		  const unsigned short i2)
+    {
+      using namespace std;
+      const real emin1 = 1.e-8;    /* small parameter which guarantees
+				      that Ef (defined below) is finite */
+      real r = (s/young-X);
+      if (X<0)
+	 Hr=0.;
+//      cout<<" r*yg "<<r*young<<" e "<<e<<endl;
+      if((r>0)&&(e>=-emin1)){
+	// loading
+	m(i,i1) = m(i,i2) = lambda;
+	m(i,i)  = lambda+2*mu+Hr;
+	v(i)    = dse;
+      } else {
+      if(e>emin1){
+	Hr=0.;
+	const real Ef  = (s/young)/e;
+	m(i,i1) = m(i,i2) = lambda;
+	m(i,i)  = lambda+2*mu+Ef;
+	v(i)	= dse;
+      } else {
 	  m(i,i1) = m(i,i2) = 0.;
 	  m(i,i)  = 1.;
 	  v(i)    = 0.;
