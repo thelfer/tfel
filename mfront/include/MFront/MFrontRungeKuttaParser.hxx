@@ -104,6 +104,8 @@ namespace mfront{
 
     void writeBehaviourRK54Integrator(void);
 
+    void writeBehaviourRKCastemIntegrator(void);
+
     void writeBehaviourUpdateStateVars(void);
 
     void writeBehaviourStaticVars(void);
