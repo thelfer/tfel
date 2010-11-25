@@ -9,6 +9,9 @@
 #define   _LIB_TFEL_MATERIAL_DDIF2BASE_H_ 
 
 #include"TFEL/Config/TFELConfig.hxx"
+#include"TFEL/Math/tvector.hxx"
+#include"TFEL/Math/tmatrix.hxx"
+#include"TFEL/Math/stensor.hxx"
 
 namespace tfel
 {
@@ -16,7 +19,7 @@ namespace tfel
   namespace material
   {
     
-    struct DDIF2Base
+    struct TFEL_VISIBILITY_EXPORT DDIF2Base
     {
 
       template<typename Stensor2Type1,
@@ -72,28 +75,10 @@ namespace tfel
       static TFEL_VISIBILITY_LOCAL void
       rk(tfel::math::tmatrix<3,3,real>&,
 	 tfel::math::tvector<3,real>&,
-	 const real,
-	 const real,
-	 const real,
-	 const real,
-	 const real,
-	 const real,
-	 const real,
-	 const real,
-	 const real,
-	 const unsigned short,
-	 const unsigned short,
-	 const unsigned short);
-
-      template<typename real>
-      static TFEL_VISIBILITY_LOCAL void
-      rkbm(tfel::math::tmatrix<3,3,real>&,
-	 tfel::math::tvector<3,real>&,
-	 const real,
-	 const real,
-	 const real,
 	 real&,
-	 real,
+	 const real,
+	 const real,
+	 const real,
 	 const real,
 	 const real,
 	 const real,
@@ -104,17 +89,14 @@ namespace tfel
 
       template<typename real>
       static TFEL_VISIBILITY_LOCAL void
-      rk2(real&,
-	  const real,
-	  const real,
-	  const real,
-	  const real,
-	  const real,
-	  const real,
-	  const real,
-	  const real,
-	  const real,
-	  const real);
+      invmat(tfel::math::tmatrix<3,3,real>&,
+             tfel::math::tmatrix<3,3,real>&,
+	     tfel::math::tvector<3,real>&);
+
+      //! small parameter which guarantees that Ef is finite
+      static const double emin1;
+      //! small numerical parameter
+      static const double eps;
 
     }; // end of struct DDIF2Base
     

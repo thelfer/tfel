@@ -207,6 +207,20 @@ namespace mfront{
     } else if(this->current->value=="rkCastem"){
       this->algorithm = "RungeKuttaCastem";
       this->nbrOfEvaluation = 5u;
+      this->registerStaticVariable("rkcastem_div");
+      this->registerStaticVariable("rkcastem_rmin");
+      this->registerStaticVariable("rkcastem_rmax");
+      this->registerStaticVariable("rkcastem_fac");
+      this->registerStaticVariable("rkcastem_borne");
+      this->reserveName("ra");
+      this->reserveName("sqra");
+      this->reserveName("errabs");
+      this->reserveName("asig");
+      this->staticVars.push_back(StaticVarHandler("real","rkcastem_div",0u,7.));
+      this->staticVars.push_back(StaticVarHandler("real","rkcastem_rmin",0u,0.7));
+      this->staticVars.push_back(StaticVarHandler("real","rkcastem_rmax",0u,1.3));
+      this->staticVars.push_back(StaticVarHandler("real","rkcastem_fac",0u,3.));
+      this->staticVars.push_back(StaticVarHandler("real","rkcastem_borne",0u,2.));
     } else {
       this->throwRuntimeError("MFrontRungeKuttaParser::treatAlgorithm",
 			      this->current->value+" is not a valid algorithm name"
@@ -557,6 +571,11 @@ namespace mfront{
     this->behaviourFile << "time dt_ = this->dt;" << endl;
     this->behaviourFile << "Type error;" << endl;
     this->behaviourFile << "while((this->dt)-t>Type(0.25)*dt_){" << endl;
+    this->behaviourFile << "if(dt_<(this->dt)*real(0.0000001f)){" << endl;
+    this->behaviourFile << "string msg(\"" << this->className << "::integrate : \");" << endl;
+    this->behaviourFile << "msg += \"time step reduction has gone too far.\";" << endl;
+    this->behaviourFile << "throw(tfel::material::DivergenceException(msg));" << endl;
+    this->behaviourFile << "}" << endl;
     this->behaviourFile << "bool failed = false;" << endl;
     this->behaviourFile << "// Compute K1's values" << endl;
     this->behaviourFile << "this->eto_ = this->eto+(this->deto)*(t/this->dt);" << endl;
@@ -767,11 +786,6 @@ namespace mfront{
     this->behaviourFile << "// failed is true" << endl;
     this->behaviourFile << "dt_ *= real(0.1f);" << endl;
     this->behaviourFile << "}" << endl;
-    this->behaviourFile << "if(dt_<(this->dt)*real(0.0000001f)){" << endl;
-    this->behaviourFile << "string msg(\"" << this->className << "::integrate : \");" << endl;
-    this->behaviourFile << "msg += \"time step reduction has gone too far.\";" << endl;
-    this->behaviourFile << "throw(tfel::material::DivergenceException(msg));" << endl;
-    this->behaviourFile << "}" << endl;
     this->behaviourFile << "}" << endl;
   } // end of MFrontRungeKuttaParser::writeBehaviourRK54Integrator
 
@@ -809,6 +823,11 @@ namespace mfront{
     this->behaviourFile << "}else{" << endl;
     this->behaviourFile << "  errabs = Type(1.e-5)*asig;\n}\n" << endl;
     this->behaviourFile << "while((this->dt)-t>Type(0.25)*dt_){" << endl;
+    this->behaviourFile << "if(dt_<(this->dt)*real(0.0000001f)){" << endl;
+    this->behaviourFile << "string msg(\"" << this->className << "::integrate : \");" << endl;
+    this->behaviourFile << "msg += \"time step reduction has gone too far.\";" << endl;
+    this->behaviourFile << "throw(tfel::material::DivergenceException(msg));" << endl;
+    this->behaviourFile << "}" << endl;
     this->behaviourFile << "// Compute K1's values => y in castem " << endl;
     this->behaviourFile << "this->eto_  = this->eto+t*(this->deto);" << endl;
     this->behaviourFile << "this->T_    = this->T+t*(this->dT);" << endl;
@@ -937,11 +956,6 @@ namespace mfront{
     this->behaviourFile << "failed = !this->computeStress();" << endl;
     this->behaviourFile << "}" << endl << endl;
     this->behaviourFile << "if(!failed){" << endl;
-    this->behaviourFile << "real div=7.;       // in castem, div = 7." << endl;
-    this->behaviourFile << "real rmin=0.7;     // in castem, rmin = .7" << endl;
-    this->behaviourFile << "real rmax=1.3;     // in castem, rmax = 1.3" << endl;
-    this->behaviourFile << "real fac=3.;       // in castem, fac = 3." << endl;
-    this->behaviourFile << "real borne = 2.;   // in castem, borne = 2." << endl;
     this->behaviourFile << "real ra;" << endl;
     this->behaviourFile << "real sqra;" << endl;
     this->behaviourFile << "// Computing the error" << endl;
@@ -949,9 +963,9 @@ namespace mfront{
     this->behaviourFile << "ra = sqrt(((sigf)-(this->sig))|((sigf)-(this->sig)))/errabs;" << endl;
     this->behaviourFile << "sqra = sqrt(ra);" << endl;
     this->behaviourFile << "// test for convergence" << endl;
-    this->behaviourFile << "if (sqra>div){" << endl;
-    this->behaviourFile << "dt_ /= div;" << endl;
-    this->behaviourFile << "}else if (ra>borne){" << endl;
+    this->behaviourFile << "if (sqra>"  << this->className << "::rkcastem_div){" << endl;
+    this->behaviourFile << "dt_ /= "  << this->className << "::rkcastem_div;" << endl;
+    this->behaviourFile << "} else if (ra> " << this->className << "::rkcastem_borne){" << endl;
     this->behaviourFile << "dt_ /= sqra;" << endl;
     this->behaviourFile << "}else{" << endl;
     for(p =this->stateVarsHolder.begin();p!=this->stateVarsHolder.end();++p){
@@ -962,26 +976,18 @@ namespace mfront{
     this->behaviourFile << "this->computeFinalStress();" << endl;
     this->behaviourFile << "this->updateAuxiliaryStateVars();" << endl;
     this->behaviourFile << "t += dt_;" << endl;
-    this->behaviourFile << "// time multiplier" << endl;
-    this->behaviourFile << "if((this->dt)-t>Type(0.25)*dt_){" << endl;
-    this->behaviourFile << "if (fac*sqra<1.){" << endl;
-    this->behaviourFile << "dt_ *= fac;" << endl;
-    this->behaviourFile << "}else if ((sqra<rmin)||(sqra>rmax)){" << endl;
+    this->behaviourFile << "if (("  << this->className << "::rkcastem_fac)*sqra<1.){" << endl;
+    this->behaviourFile << "dt_ *= " << this->className << "::rkcastem_fac;" << endl;
+    this->behaviourFile << "}else if ((sqra< "<< this->className << "::rkcastem_rmin)||" <<
+      "(sqra>" << this->className << "::rkcastem_rmax)){" << endl;
     this->behaviourFile << "dt_ /= sqra;" << endl;
+    this->behaviourFile << "}" << endl;
+    this->behaviourFile << "}" << endl;
+    this->behaviourFile << "} else { " << endl;
+    this->behaviourFile << "dt_ /=  " << this->className << "::rkcastem_div;" << endl;
     this->behaviourFile << "}" << endl;
     this->behaviourFile << "if (dt_>(this->dt)-t){" << endl;
     this->behaviourFile << "dt_ = (this->dt)-t;" << endl;
-    this->behaviourFile << "}" << endl;
-    this->behaviourFile << "}" << endl;
-    this->behaviourFile << "}" << endl;
-    this->behaviourFile << "}" << endl;
-
-
-
-    this->behaviourFile << "if(dt_<(this->dt)*real(0.0000001f)){" << endl;
-    this->behaviourFile << "string msg(\"" << this->className << "::integrate : \");" << endl;
-    this->behaviourFile << "msg += \"time step reduction has gone too far.\";" << endl;
-    this->behaviourFile << "throw(tfel::material::DivergenceException(msg));" << endl;
     this->behaviourFile << "}" << endl;
     this->behaviourFile << "}" << endl;
   } // end of MFrontRungeKuttaParser::writeBehaviourRKCastemIntegrator
@@ -1002,6 +1008,11 @@ namespace mfront{
     this->behaviourFile << "time dt_ = this->dt;" << endl;
     this->behaviourFile << "Type error;" << endl;
     this->behaviourFile << "while((this->dt)-t>Type(0.25)*dt_){" << endl;
+    this->behaviourFile << "if(dt_<(this->dt)*real(0.0000001f)){" << endl;
+    this->behaviourFile << "string msg(\"" << this->className << "::integrate : \");" << endl;
+    this->behaviourFile << "msg += \"time step reduction has gone too far.\";" << endl;
+    this->behaviourFile << "throw(tfel::material::DivergenceException(msg));" << endl;
+    this->behaviourFile << "}" << endl;
     this->behaviourFile << "bool failed = false;" << endl;
     this->behaviourFile << "// Compute K1's values" << endl;
     this->behaviourFile << "this->eto_  = this->eto+t*(this->deto);" << endl;
@@ -1142,11 +1153,6 @@ namespace mfront{
     this->behaviourFile << "} else {" << endl;
     this->behaviourFile << "// failed is true" << endl;
     this->behaviourFile << "dt_ *= real(0.1f);" << endl;
-    this->behaviourFile << "}" << endl;
-    this->behaviourFile << "if(dt_<(this->dt)*real(0.0000001f)){" << endl;
-    this->behaviourFile << "string msg(\"" << this->className << "::integrate : \");" << endl;
-    this->behaviourFile << "msg += \"time step reduction has gone too far.\";" << endl;
-    this->behaviourFile << "throw(tfel::material::DivergenceException(msg));" << endl;
     this->behaviourFile << "}" << endl;
     this->behaviourFile << "}" << endl;
   } // end of MFrontRungeKuttaParser::writeBehaviourRK42Integrator

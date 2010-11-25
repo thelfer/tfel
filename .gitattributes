@@ -706,6 +706,7 @@ src/Graphics/StandardGraphTheme.cxx -text
 src/Graphics/ThemeManager.cxx -text
 src/Makefile.am -text
 src/Material/CMakeLists.txt -text
+src/Material/DDIF2Base.cxx -text
 src/Material/Makefile.am -text
 src/Material/MaterialException.cxx -text
 src/Math/ArrayTag.cxx -text

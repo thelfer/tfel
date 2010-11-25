@@ -256,6 +256,8 @@ namespace mfront
 		     << makeUpperCase(name)
 		     << "_HH\n\n";
 
+    writeExportDirectives(this->headerFile);
+
     this->headerFile << "#include<cmath>\n";
     if(!includes.empty()){
       this->headerFile << includes << endl;
@@ -272,7 +274,6 @@ namespace mfront
       this->headerFile << "namespace " << *p3 << "\n{\n";
       ++p3;
     }
-    writeExportDirectives(this->headerFile);
     this->headerFile << "\nstruct MFRONT_SHAREDOBJ " << names.back() << endl;
     this->headerFile << ": public Pleiades::PMetier::PFunctions::IFunction\n";
     this->headerFile << "{\n\n";
