@@ -1597,12 +1597,12 @@ namespace mfront{
     out << "Material 'SOLID0'\n";
     if(behaviourCharacteristic.getBehaviourType()==mfront::ORTHOTROPIC){
       out << "MechanicalBehaviour 'OrthotropicUmatBehaviour' "
-	  << " " << MFrontUMATInterface::getLibraryName(library,material)
-	  << ".so umat" << makeLowerCase(name) << endl;
+	  << "'" << MFrontUMATInterface::getLibraryName(library,material)
+	  << ".so' 'umat" << makeLowerCase(name) << "'" << endl;
     } else {
-      out << "MechanicalBehaviour 'IsotropicUmatBehaviour' 'umat"
-	  << " " << MFrontUMATInterface::getLibraryName(library,material)
-	  << ".so umat" << makeLowerCase(name) << endl;
+      out << "MechanicalBehaviour 'IsotropicUmatBehaviour' "
+	  << "'" << MFrontUMATInterface::getLibraryName(library,material)
+	  << ".so' 'umat" << makeLowerCase(name) << "'" << endl;
       if(!found){
 	out << "MaterialProperty<constant> 'YoungModulus'    150.e9\n";
 	out << "MaterialProperty<constant> 'PoissonRatio'      0.3\n";

@@ -818,12 +818,12 @@ namespace mfront{
     this->behaviourFile << "bool failed;" << endl;
     this->behaviourFile << "failed = !this->computeStress();" << endl;
     this->behaviourFile << "asig = sqrt((this->sig)|(this->sig));" << endl;
-    this->behaviourFile << "if ((this->young)*Type(0.001)>asig){" << endl;
-    this->behaviourFile << "  errabs = (this->young)*Type(1.e-8);" << endl;
+    this->behaviourFile << "if ((this->young)*Type(1.e-3)>asig){" << endl;
+    this->behaviourFile << "  errabs = (this->young)*Type(1.e-3)*(" << this->className << "::epsilon);" << endl;
     this->behaviourFile << "}else{" << endl;
-    this->behaviourFile << "  errabs = Type(1.e-5)*asig;\n}\n" << endl;
+    this->behaviourFile << "  errabs = (" << this->className << "::epsilon)*asig;\n}\n" << endl;
     this->behaviourFile << "while((this->dt)-t>Type(0.25)*dt_){" << endl;
-    this->behaviourFile << "if(dt_<(this->dt)*real(0.0000001f)){" << endl;
+    this->behaviourFile << "if(dt_<(this->dt)*10*numeric_limits<real>::epsilon()){" << endl;
     this->behaviourFile << "string msg(\"" << this->className << "::integrate : \");" << endl;
     this->behaviourFile << "msg += \"time step reduction has gone too far.\";" << endl;
     this->behaviourFile << "throw(tfel::material::DivergenceException(msg));" << endl;
