@@ -571,7 +571,7 @@ namespace mfront{
     this->behaviourFile << "time dt_ = this->dt;" << endl;
     this->behaviourFile << "Type error;" << endl;
     this->behaviourFile << "while((this->dt)-t>Type(0.25)*dt_){" << endl;
-    this->behaviourFile << "if(dt_<(this->dt)*real(0.0000001f)){" << endl;
+    this->behaviourFile << "if(dt_<(this->dt)*100*numeric_limits<real>::epsilon()){" << endl;
     this->behaviourFile << "string msg(\"" << this->className << "::integrate : \");" << endl;
     this->behaviourFile << "msg += \"time step reduction has gone too far.\";" << endl;
     this->behaviourFile << "throw(tfel::material::DivergenceException(msg));" << endl;
@@ -823,7 +823,7 @@ namespace mfront{
     this->behaviourFile << "}else{" << endl;
     this->behaviourFile << "  errabs = (" << this->className << "::epsilon)*asig;\n}\n" << endl;
     this->behaviourFile << "while((this->dt)-t>Type(0.25)*dt_){" << endl;
-    this->behaviourFile << "if(dt_<(this->dt)*10*numeric_limits<real>::epsilon()){" << endl;
+    this->behaviourFile << "if(dt_<(this->dt)*100*numeric_limits<real>::epsilon()){" << endl;
     this->behaviourFile << "string msg(\"" << this->className << "::integrate : \");" << endl;
     this->behaviourFile << "msg += \"time step reduction has gone too far.\";" << endl;
     this->behaviourFile << "throw(tfel::material::DivergenceException(msg));" << endl;
@@ -1008,7 +1008,7 @@ namespace mfront{
     this->behaviourFile << "time dt_ = this->dt;" << endl;
     this->behaviourFile << "Type error;" << endl;
     this->behaviourFile << "while((this->dt)-t>Type(0.25)*dt_){" << endl;
-    this->behaviourFile << "if(dt_<(this->dt)*real(0.0000001f)){" << endl;
+    this->behaviourFile << "if(dt_<(this->dt)*100*numeric_limits<real>::epsilon()){" << endl;
     this->behaviourFile << "string msg(\"" << this->className << "::integrate : \");" << endl;
     this->behaviourFile << "msg += \"time step reduction has gone too far.\";" << endl;
     this->behaviourFile << "throw(tfel::material::DivergenceException(msg));" << endl;
