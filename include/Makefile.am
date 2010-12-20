@@ -64,9 +64,6 @@ nobase_include_HEADERS= TFEL/FiniteElement/Element/ElementsManager.ixx          
 			TFEL/TypeTraits/IsTemporary.hxx		                                      \
 			TFEL/TypeTraits/IsRandomAccessIterator.hxx	                              \
 			TFEL/Math/Bindings/atlas.hxx                                                  \
-			TFEL/Math/Interpreter/InterpreterCommon.hxx                                   \
-			TFEL/Math/Interpreter/InterpreterBase.hxx                                     \
-			TFEL/Math/Interpreter/InterpreterBase.ixx                                     \
 			TFEL/Math/Parser/BinaryFunction.hxx					      \
 			TFEL/Math/Parser/EvaluatorBase.hxx 					      \
 			TFEL/Math/Parser/Negation.hxx					              \
@@ -79,7 +76,6 @@ nobase_include_HEADERS= TFEL/FiniteElement/Element/ElementsManager.ixx          
 			TFEL/Math/Parser/Function.ixx      					      \
 			TFEL/Math/Parser/Variable.hxx				        	      \
 			TFEL/Math/Parser/ExternalCFunction.hxx                                        \
-			TFEL/Math/Parser/ExternalOctaveFunction.hxx                                   \
 			TFEL/Math/Parser/ExternalCastemFunction.hxx                                   \
 			TFEL/Math/Parser/ExternalFunction.hxx                                         \
 			TFEL/Math/Parser/ExternalFunctionManager.hxx                                  \
@@ -97,8 +93,6 @@ nobase_include_HEADERS= TFEL/FiniteElement/Element/ElementsManager.ixx          
 			TFEL/Math/Parser/ConditionalExpr.hxx                                          \
 			TFEL/Math/Parser/EvaluatorFunction.hxx                                        \
 			TFEL/Math/Parser/EvaluatorFunction.ixx                                        \
-			TFEL/Math/Parser/EvaluatorGSLWrapper.hxx                                      \
-			TFEL/Math/Parser/EvaluatorGSLWrapper.ixx                                      \
 			TFEL/Math/Evaluator.hxx 						      \
 			TFEL/Math/Evaluator.ixx 						      \
 			TFEL/Math/Kriging.hxx						              \
@@ -463,22 +457,5 @@ nobase_include_HEADERS= TFEL/FiniteElement/Element/ElementsManager.ixx          
 			TFEL/Tests/TestResult.hxx						      \
 			TFEL/Tests/TestSuite.hxx						      \
 			TFEL/Exception/TFELException.hxx 
-
-if WITH_GRAPHICS
-nobase_include_HEADERS += TFEL/Graphics/ArrowStyle.hxx	          \
-			  TFEL/Graphics/GraphSize.hxx	          \
-			  TFEL/Graphics/GraphCoordinates.hxx	  \
-			  TFEL/Graphics/Point.hxx		  \
-			  TFEL/Graphics/GraphLayout.hxx	          \
-			  TFEL/Graphics/GraphTheme.hxx	          \
-			  TFEL/Graphics/StandardGraphTheme.hxx    \
-			  TFEL/Graphics/EvaluatedCurve.hxx	  \
-			  TFEL/Graphics/DataCurve.hxx	          \
-			  TFEL/Graphics/Graph.hxx		  \
-			  TFEL/Graphics/ThemeManager.ixx	  \
-			  TFEL/Graphics/ThemeManager.hxx	  \
-			  TFEL/Graphics/Curve.hxx                 \
-			  TFEL/Graphics/Grid.hxx
-endif
 
 EXTRA_DIST = CMakeLists.txt

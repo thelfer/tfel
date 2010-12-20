@@ -13,7 +13,9 @@
 
 /*!
  * \def    TFEL_META_IS_SCALAR
- * \brief  An helper macro to specialise IsScalar for each standard "real" numeric types.
+ * \brief An helper macro to specialise IsScalar for each standard
+ * "real" numeric types.
+ *
  * \author Helfer Thomas
  * \date   28 jun 2006 
  */

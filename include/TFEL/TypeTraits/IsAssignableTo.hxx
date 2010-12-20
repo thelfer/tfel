@@ -16,7 +16,8 @@
 
 /*!
  * \def TFEL_MATH_IS_ASSIGNABLE_
- * \brief  An helper macro to specialise IsAssignableTo for each standard numeric types.
+ * \brief An helper macro to specialise IsAssignableTo for each
+ * standard numeric types.
  * \author Helfer Thomas
  * \date   28 jun 2006 
  */
@@ -36,7 +37,8 @@
 
 /*!
  * \def TFEL_MATH_IS_ASSIGNABLE
- * \brief  An helper macro to specialise IsAssignableTo for each standard numeric types.
+ * \brief An helper macro to specialise IsAssignableTo for each
+ * standard numeric types.
  * \author Helfer Thomas
  * \date   28 jun 2006 
  */
@@ -66,7 +68,8 @@ namespace tfel{
 
     /*!
      * \class IsAssignableTo
-     * \brief Traits class which says if an object a of type A is assignable to an object b of type B, ie if b = a is valid.
+     * \brief Traits class which says if an object a of type A is
+     * assignable to an object b of type B, ie if b = a is valid.
      *
      * \param  A, first type
      * \param  B, second type

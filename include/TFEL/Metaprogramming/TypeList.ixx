@@ -21,6 +21,11 @@ namespace tfel{
   
   namespace meta{
 
+    /*!
+     * Node of TypeList
+     * \param T : current type
+     * \param U : next type
+     */
     template<typename T, typename U>
     struct TFEL_VISIBILITY_LOCAL TLNode
       : public TL
@@ -31,8 +36,7 @@ namespace tfel{
        * \param void.
        * \return std::string, the Name of the TL.
        */
-      static
-      const std::string
+      static std::string
       getName(void){
 	using namespace std;
 	using namespace tfel::utilities;
@@ -50,6 +54,11 @@ namespace tfel{
       typedef U Next;
     };
     
+    /*!
+     * A special type to represent the end of a typelist
+     * \param T : current type
+     * \param U : next type
+     */
     struct TFEL_VISIBILITY_LOCAL TLE
       : public TL
     {
@@ -58,8 +67,7 @@ namespace tfel{
        * \param void.
        * \return std::string, the Name.
        */
-      static
-      const std::string
+      static std::string
       getName(void){
 	return std::string("TLE");
       }
@@ -73,7 +81,7 @@ namespace tfel{
 	typedef typename List::Current Current;
 	typedef typename List::Next Next;
       public:
-	static const std::string exe(void)
+	static std::string exe(void)
 	{
 	  using namespace std;
 	  using namespace tfel::utilities;
@@ -85,7 +93,7 @@ namespace tfel{
       template<>
       struct TFEL_VISIBILITY_LOCAL TLGetNames_<TLE>
       {
-	static const std::string exe()
+	static std::string exe(void)
 	{
 	  return "}";
 	}
@@ -99,9 +107,7 @@ namespace tfel{
       typedef typename List::Current Current;
       typedef typename List::Next Next;
     public:
-      static
-      const std::string
-      exe(void)
+      static std::string exe(void)
       {
 	using namespace std;
 	using namespace tfel::utilities;
@@ -113,8 +119,7 @@ namespace tfel{
     template<>
     struct TFEL_VISIBILITY_LOCAL TLGetNames<TLE>
     {
-      static
-      const std::string
+      static std::string
       exe(void)
       {
 	return "{}";

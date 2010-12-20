@@ -19,11 +19,13 @@ namespace tfel{
      *  - reinterpret_cast<B*>(p)
      *  - reinterpret_cast<const B&>(a)
      *  - reinterpret_cast<const B* const>(p)
-     * shall be considered valid for all object a of type A and for all object of type A*.
+     * shall be considered valid for all object a of type A and for
+     * all object of type A*.
      *  
      * \param  A, first type
      * \param  B, second type
-     * \return bool cond, true if the above expressions are valid, false otherwise.
+     * \return bool cond, true if the above expressions are valid,
+     * false otherwise.
      *
      * \author Helfer Thomas
      * \date   28 jun 2006     
@@ -37,11 +39,11 @@ namespace tfel{
     template<typename T>
     struct IsSafelyReinterpretCastableTo<T,T>
     {
-      /*!									   \
-       *  Result								   \
-       */									   \
+      /*!
+       *  Result
+       */
       static const bool cond = true; 
-    };
+    }; // end of struct IsSafelyReinterpretCastableTo
 
   } //end of namespace typetraits
 

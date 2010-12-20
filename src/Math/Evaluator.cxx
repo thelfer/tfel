@@ -16,10 +16,6 @@
 #include"TFEL/Math/Function/Power.hxx"
 #include"TFEL/Math/Evaluator.hxx"
 
-#ifdef HAVE_GSL
-#include"TFEL/Math/Parser/EvaluatorGSLWrapper.hxx"
-#endif
-
 namespace tfel
 {
 
@@ -180,12 +176,7 @@ namespace tfel
     struct TFEL_VISIBILITY_LOCAL Evaluator::ExternalFunctionRegister
     {
       ExternalFunctionRegister()
-      {
-#ifdef HAVE_GSL
-	gsl_set_error_handler(&tfel::math::parser::gslErrorHandler);
-	tfel::math::parser::registerGSLFunctions();
-#endif
-      } // end of Evaluator::ExternalFunctionRegister()
+      {} // end of Evaluator::ExternalFunctionRegister()
     }; // end of struct Evaluator::ExternalFunctionRegister
 
     Evaluator::ExternalFunctionRegister Evaluator::externalFunctionRegister;

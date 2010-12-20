@@ -61,7 +61,6 @@ nobase_noinst_HEADERS += MFront/MFrontCLawInterfaceBase.hxx          \
 			 MFront/MFrontCppTestLawInterface.hxx        \
 			 MFront/MFrontGnuplotLawInterface.hxx        \
 			 MFront/MFrontExcelLawInterface.hxx          \
-			 MFront/MFrontOctaveLawInterface.hxx         \
 			 MFront/MFrontPleiadesLawInterface.hxx       \
 			 MFront/MFrontCelaenoModelInterface.hxx      \
 			 MFront/MFrontGerminalModelInterface.hxx     \

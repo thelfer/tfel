@@ -13,7 +13,8 @@
 
 /*!
  * \def    TFEL_META_IS_FUNDAMENTAL_NUMERIC_TYPE
- * \brief  An helper macro to specialise IsFundamentalNumericType for each standard numeric types.
+ * \brief An helper macro to specialise IsFundamentalNumericType for
+ * each standard numeric types.
  * \author Helfer Thomas
  * \date   28 jun 2006 
  */
@@ -47,10 +48,12 @@ namespace tfel{
   namespace typetraits{
 
     /*!
-     * \brief  Traits class which says if its argument is one of the standard numerical types
+     * \brief Traits class which says if its argument is one of the
+     * standard numerical types
      *
      * \param  T, type to be tested.
-     * \return bool cond, true if T is one of the standard numerical types, false otherwise.
+     * \return bool cond, true if T is one of the standard numerical
+     * types, false otherwise.
      *
      * \see IsReal, IsComplex
      *

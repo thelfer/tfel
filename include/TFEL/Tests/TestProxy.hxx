@@ -10,6 +10,7 @@
 
 #include<string>
 
+#include"TFEL/Config/TFELConfig.hxx"
 #include"TFEL/Tests/TestFunctionWrapper.hxx"
 
 /*!
@@ -105,7 +106,7 @@
  * \date   11 Apr 2010
  */
 #define TFEL_TESTS_FUNCTION(X,Y)				    \
-  bool __attribute__ ((visibility("hidden"))) X(void);	            \
+  bool TFEL_VISIBILITY_LOCAL X(void);	                            \
   TFEL_TESTS_GENERATE_PROXY3(tfel::tests::TestFunctionWrapper<X>,   \
                              TFEL_PP_JOIN(X,FunctionWrapper),Y,#X); \
   bool X(void)
@@ -120,7 +121,7 @@ namespace tfel
      * proxy class for automatic registration of tests
      */
     template<typename T>
-    struct __attribute__ ((visibility("hidden"))) TestProxy
+    struct TFEL_VISIBILITY_LOCAL TestProxy
     {
       /*!
        * Default constructor

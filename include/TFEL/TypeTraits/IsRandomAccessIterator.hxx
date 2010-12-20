@@ -17,10 +17,12 @@ namespace tfel{
   namespace typetraits{
 
     /*!
-     * \brief  Traits class which says if its argument is a random access iterator
+     * \brief Traits class which says if its argument is a random
+     * access iterator
      *
      * \param  T, type to be tested.
-     * \return bool cond, true if T stands for a random access iterator, false otherwise.
+     * \return bool cond, true if T stands for a random access
+     * iterator, false otherwise.
      *
      * \author Helfer Thomas
      * \date   04 Jul 2006

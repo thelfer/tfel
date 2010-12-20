@@ -19,6 +19,20 @@ namespace tfel
   namespace math
   {
 
+    /*!
+     * Find the root of a function using the first Broyden algorithm
+     *
+     * \param N  : size of the unknown
+     * \param T  : numerical type
+     * \param f  : function which root is sought after
+     * \param x0 : initial guess
+     * \param A  : initial approximation of the jacobian
+     * \param e  : convergence criterium
+     * \param n  : maximum number of iterations
+     *
+     * \return a pair whose first member is true is the algorithm
+     * converged and whose second member contains the solution
+     */
     template<unsigned short N,
 	     typename T,
 	     const tvector<N,T> (*f)(const tvector<N,T>&)>
@@ -28,6 +42,20 @@ namespace tfel
 	    const T,
 	    const unsigned short);
     
+    /*!
+     * Find the root of a function using the first Broyden algorithm.
+     * The jacobian is initially approximated by the identity matrix.
+     *
+     * \param N  : size of the unknown
+     * \param T  : numerical type
+     * \param f  : function which root is sought after
+     * \param x0 : initial guess
+     * \param e  : convergence criterium
+     * \param n  : maximum number of iterations
+     *
+     * \return a pair whose first member is true is the algorithm
+     * converged and whose second member contains the solution
+     */
     template<unsigned short N,
 	     typename T,
 	     const tvector<N,T> (*f)(const tvector<N,T>&)>

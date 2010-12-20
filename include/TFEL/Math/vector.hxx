@@ -314,10 +314,25 @@ namespace tfel{
        * (provided for stl compatibility)
        * \return reverse_iterator, a reverse iterator before the first element
        */
-    using Container::rend;
-
-    using Container::push_back;
-    using Container::empty;
+      using Container::rend;
+      
+      /*!
+       *  \brief  add data to the end of the %vector.
+       *  \param  x : data to be added.
+       *
+       *  This is a typical stack operation.  The function creates an
+       *  element at the end of the %vector and assigns the given data
+       *  to it.  Due to the nature of a %vector this operation can be
+       *  done in constant time if the %vector has preallocated space
+       *  available.
+       */
+      using Container::push_back;
+      
+      /*!
+       *  returns true if the %vector is empty.  (Thus begin() would
+       *  equal end().)
+       */
+      using Container::empty;
       
       /*
        * copy all the elements between two iterators at the beginning

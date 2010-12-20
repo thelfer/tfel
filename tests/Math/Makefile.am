@@ -82,8 +82,6 @@ array_SOURCES                 = array.cxx
 complex_operations_SOURCES    = complex_operations.cxx   
 conj_SOURCES                  = conj.cxx                 
 Function_SOURCES              = Function.cxx             
-lu_SOURCES                    = lu.cxx
-lu2_SOURCES                   = lu2.cxx
 tinymatrixsolve_SOURCES       = tinymatrixsolve.cxx
 tinymatrixsolve2_SOURCES      = tinymatrixsolve2.cxx
 newton_raphson_SOURCES        = newton_raphson.cxx       
@@ -143,10 +141,6 @@ levenberg_marquardt4_LDADD = -L$(top_builddir)/src/Math      \
 	       -lTFELMath -lTFELUtilities         \
 	       -lTFELException
 
-if HAVE_OCTAVE
-levenberg_marquardt4_LDADD += @OCTAVELIBS@
-endif
-
 parser_SOURCES                = parser.cxx
 parser_LDADD = -L$(top_builddir)/src/Math         \
 	       -L$(top_builddir)/src/Utilities    \
@@ -154,9 +148,6 @@ parser_LDADD = -L$(top_builddir)/src/Math         \
 	       -lTFELMathParser -lTFELMathKriging \
 	       -lTFELMath -lTFELUtilities         \
 	       -lTFELException
-if HAVE_OCTAVE
-parser_LDADD += @OCTAVELIBS@
-endif
 
 parser2_SOURCES               = parser2.cxx
 parser2_LDADD = -L$(top_builddir)/src/Math         \
@@ -165,9 +156,6 @@ parser2_LDADD = -L$(top_builddir)/src/Math         \
 	        -lTFELMathParser -lTFELMathKriging \
 		-lTFELMath -lTFELUtilities         \
 		-lTFELException
-if HAVE_OCTAVE
-parser2_LDADD += @OCTAVELIBS@
-endif
 
 parser3_SOURCES               = parser3.cxx
 parser3_LDADD = -L$(top_builddir)/src/Math         \
@@ -176,9 +164,6 @@ parser3_LDADD = -L$(top_builddir)/src/Math         \
 	        -lTFELMathParser -lTFELMathKriging \
 		-lTFELMath -lTFELUtilities         \
 		-lTFELException
-if HAVE_OCTAVE
-parser3_LDADD += @OCTAVELIBS@
-endif
 
 parser4_SOURCES               = parser4.cxx
 parser4_LDADD = -L$(top_builddir)/src/Math         \
@@ -187,9 +172,6 @@ parser4_LDADD = -L$(top_builddir)/src/Math         \
 	        -lTFELMathParser -lTFELMathKriging \
 		-lTFELMath -lTFELUtilities         \
 		-lTFELException
-if HAVE_OCTAVE
-parser4_LDADD += @OCTAVELIBS@
-endif
 
 parser5_SOURCES               = parser5.cxx
 parser5_LDADD = -L$(top_builddir)/src/Math         \
@@ -198,9 +180,6 @@ parser5_LDADD = -L$(top_builddir)/src/Math         \
 	        -lTFELMathParser -lTFELMathKriging \
 		-lTFELMath -lTFELUtilities         \
 		-lTFELException
-if HAVE_OCTAVE
-parser5_LDADD += @OCTAVELIBS@
-endif
 
 parser6_SOURCES               = parser6.cxx
 parser6_LDADD = -L$(top_builddir)/src/Math         \
@@ -210,6 +189,24 @@ parser6_LDADD = -L$(top_builddir)/src/Math         \
 		-lTFELMath -lTFELUtilities         \
 		-lTFELException
 
+lu_SOURCES    = lu.cxx
+lu_LDADD      = -L$(top_builddir)/src/Tests        \
+		-L$(top_builddir)/src/Math         \
+	        -L$(top_builddir)/src/Utilities    \
+	        -L$(top_builddir)/src/Exception    \
+	        -lTFELMathParser -lTFELMathKriging \
+		-lTFELMath  -lTFELUtilities        \
+		-lTFELException	-lTFELTests
+
+lu2_SOURCES   = lu2.cxx
+lu2_LDADD     = -L$(top_builddir)/src/Tests        \
+		-L$(top_builddir)/src/Math         \
+	        -L$(top_builddir)/src/Utilities    \
+	        -L$(top_builddir)/src/Exception    \
+	        -lTFELMathParser -lTFELMathKriging \
+		-lTFELMath  -lTFELUtilities        \
+		-lTFELException	-lTFELTests
+
 parser7_SOURCES               = parser7.cxx
 parser7_LDADD = -L$(top_builddir)/src/Tests        \
 		-L$(top_builddir)/src/Math         \
@@ -218,11 +215,6 @@ parser7_LDADD = -L$(top_builddir)/src/Tests        \
 	        -lTFELMathParser -lTFELMathKriging \
 		-lTFELMath  -lTFELUtilities        \
 		-lTFELException	-lTFELTests
-
-
-if HAVE_OCTAVE
-parser6_LDADD += @OCTAVELIBS@
-endif
 
 TESTS=$(test_PROGRAMS)
 

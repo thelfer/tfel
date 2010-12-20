@@ -8,9 +8,9 @@
 #ifndef _LIB_TFEL_MATH_LUDECOMP_H_
 #define _LIB_TFEL_MATH_LUDECOMP_H_ 
 
-#include<algorithm>
-#include<limits>
 #include<cmath>
+#include<limits>
+#include<algorithm>
 
 #include"TFEL/Config/TFELConfig.hxx"
 #include"TFEL/Math/Matrix/MatrixConcept.hxx"
@@ -21,13 +21,31 @@ namespace tfel{
 
   namespace math{
 
+    /*!
+     * structure in charge of computing the LU decomposition of a
+     * matrix. Line permutation is performed.
+     */ 
     struct LUDecomp
     {
 
+      /*!
+       * Compute the LU decomposition of a matrix. Line permutation is
+       * performed.
+       *
+       * \param m   : the matrix to be decomposed
+       * \param p   : the permutation vector
+       * \param eps : numerical parameter used to detect null pivot
+       * \return the number of permutation made
+       * 
+       * \note The decomposition is done in-place
+       */ 
       template<typename MatrixType,typename PermutationType>
       static TFEL_MATH_INLINE2
       int
-      exe(MatrixType& m,PermutationType& p)
+      exe(MatrixType& m,
+	  PermutationType& p,
+	  const typename MatrixTraits<MatrixType>::NumType eps =
+	  100*std::numeric_limits<typename MatrixTraits<MatrixType>::NumType>::min())
       {
 	using namespace std;
 	typedef typename MatrixTraits<MatrixType>::IndexType IndexType;
@@ -45,21 +63,7 @@ namespace tfel{
 	IndexType pi;
 	IndexType pj;
 	IndexType n = m.getNbRows();
-	NumType mabs = abs(m(0,0));
 	int d = 1;
-	for(i=0;i!=n;++i){
-	  for(j=0;j!=n;++j){
-	    if(abs(m(i,j))>mabs){
-	      mabs = abs(m(i,j));
-	    }
-	  }
-	}
-
-	NumType prec = mabs*numeric_limits<NumType>::epsilon();
-	
-	if(prec<=100*numeric_limits<NumType>::min()){
-	  throw(LUException("LUDecomp::exe : maximum absolute value is too small"));
-	}
 
 	for(i=0;i!=n;++i){
 	  // L update (column)
@@ -81,12 +85,12 @@ namespace tfel{
 	  }
 	  if(k!=i){
 	    if(!((abs(m(p(i),i))>0.1*cmax)&&
-		 (abs(m(p(i),i))>10*prec ))){
+		 (abs(m(p(i),i))>eps))){
 	      d *= -1;
 	      swap(p(k),p(i));
 	    }
 	  }
-	  if(abs(m(p(i),i))<10*prec){
+	  if(abs(m(p(i),i))<eps){
 	    throw(LUException("LUDecomp::exe : null pivot"));
 	  }
 	  pi = p(i);

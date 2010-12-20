@@ -13,7 +13,8 @@
 
 /*!
  * \def    TFEL_META_IS_COMPLEX
- * \brief  An helper macro to specialise IsComplex for each standard numeric types.
+ * \brief An helper macro to specialise IsComplex for each standard
+ * numeric types.
  * \author Helfer Thomas
  * \date   28 jun 2006 
  */
@@ -46,10 +47,12 @@ namespace tfel{
   namespace typetraits{
 
     /*!
-     * \brief  Traits class which says it a given type stands for a complex numerical type.
+     * \brief Traits class which says it a given type stands for a
+     * complex numerical type.
      *
      * \param  T, type to be tested.
-     * \return bool cond, true if T stands for a complex numerical type, false otherwise.
+     * \return bool cond, true if T stands for a complex numerical
+     * type, false otherwise.
      *
      * \see IsScalar, IsReal
      *

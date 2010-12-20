@@ -1,6 +1,0 @@
-# List of source files which contain translatable strings.
-
-# Package source files
-tplot/src/plot.cxx
-tplot/src/PlotWindow.cxx
-

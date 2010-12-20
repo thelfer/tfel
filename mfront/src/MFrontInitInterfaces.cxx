@@ -19,7 +19,6 @@
 #endif /* HAVE_FORTRAN */
 
 #include"MFront/MFrontCppLawInterface.hxx"
-#include"MFront/MFrontOctaveLawInterface.hxx"
 #include"MFront/MFrontCppTestLawInterface.hxx"
 
 #ifdef HAVE_PYTHON
@@ -56,8 +55,6 @@ namespace mfront
 #endif /* HAVE_FORTRAN */
 
     MFrontLawInterfaceProxy<MFrontMFrontLawInterface>  mLawProxy;
-
-    MFrontLawInterfaceProxy<MFrontOctaveLawInterface> octaveLawProxy;
 
     MFrontLawInterfaceProxy<MFrontExcelLawInterface> excelLawProxy(MFrontExcelLawInterface::getName(),
 								   MFrontCLawInterface::getName());

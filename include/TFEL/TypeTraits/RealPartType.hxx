@@ -14,7 +14,8 @@
 
 /*!
  * \def    TFEL_TYPETRAITS_REALPARTTYPE
- * \brief  An helper macro to specialise RealPartType for each standard "real" numeric types.
+ * \brief An helper macro to specialise RealPartType for each standard
+ * "real" numeric types.
  * \author Helfer Thomas
  * \date   23 Aug 2006
  */

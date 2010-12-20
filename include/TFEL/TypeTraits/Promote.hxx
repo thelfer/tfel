@@ -19,7 +19,8 @@ namespace tfel{
 
     /*!
      * \class Promote
-     * \brief  Returns the greater type able to contain the type A and B.
+     * \brief Returns the greater type able to contain the type A and
+     * B.
      *
      * \param  A, the first  type  
      * \param  B, the second type  

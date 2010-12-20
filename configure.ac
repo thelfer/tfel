@@ -12,16 +12,6 @@ AC_CANONICAL_TARGET
 AM_INIT_AUTOMAKE([foreign dist-bzip2])
 m4_ifdef([AM_SILENT_RULES],[AM_SILENT_RULES([yes])])
 
-# licence choice
-gpl_licence=no;
-AC_ARG_ENABLE(gpl,
-   AC_HELP_STRING([--enable-gpl],
-                  [Allow linking to gpl libraries.
-		   Resulting librairies or executables
-		   will be covered by the gpl licence]),
-   AC_DEFINE(GPL_LICENCE)
-   gpl_licence=yes,[])
-
 #disable static library generation by default
 AC_ENABLE_STATIC(no)
 
@@ -167,123 +157,6 @@ then
 	AC_DEFINE(HAVE_GNUPLOT)
 fi
 
-# gettext
-AM_GNU_GETTEXT([external])
-
-# readline
-use_readline=no;
-AC_ARG_ENABLE(readline,
-   AC_HELP_STRING([--enable-readline],
-                  [allow linking to readline.
-		   The '--enable-gpl' option is required]),
-   use_readline=yes,[])
-if test "x$use_readline" != "xno"
-    then
-    if test "x$gpl_licence" != "xyes"
-	then
-	AC_MSG_ERROR("use of readline requires gpl licence (see '--enable-gpl')");
-    fi
-    VL_LIB_READLINE
-    if test "x$vl_cv_lib_readline_history" != "xyes"
-	then
-	AC_MSG_ERROR("'readline' not found")
-    fi
-    AC_DEFINE(HAVE_READLINE)
-    AM_CONDITIONAL(HAVE_READLINE,true)
-else
-    AM_CONDITIONAL(HAVE_READLINE,false)
-fi
-
-#gsl
-use_gsl=no;
-AC_ARG_ENABLE(gsl,
-   AC_HELP_STRING([--enable-gsl],
-                  [allow linking to GSL (Gnu Scientific Library).
-		   The '--enable-gpl' option is required]),
-   AC_DEFINE(USE_GSL)
-   use_gsl=yes,[])
-
-if test "x$use_gsl" != "xno"
-    then
-    if test "x$gpl_licence" != "xyes"
-	then
-	AC_MSG_ERROR("use of GSL (Gnu Scientific Library) requires gpl licence (see '--enable-gpl')");
-    fi
-    AC_CHECK_PROGS(GSLCONFIG,gsl-config,[:])
-    AM_CONDITIONAL([HAVE_GSL], [test "$GSLCONFIG" != :])
-    if test "$GSLCONFIG" != :
-	then
-	GSLINCLUDES=$($GSLCONFIG --cflags)
-	GSLLIBS=$($GSLCONFIG --libs)
-	AC_SUBST(GSLINCLUDES)
-	AC_SUBST(GSLLIBS)
-	AC_DEFINE(HAVE_GSL)
-    else
-	AC_MSG_ERROR("'gsl-config' not found");
-    fi
-else
-    AM_CONDITIONAL([HAVE_GSL],false)
-fi
-
-#octave
-use_octave=no;
-AC_ARG_ENABLE(octave,
-   AC_HELP_STRING([--enable-octave],
-                  [allow linking to Octave.
-		   The '--enable-gpl' option is required]),
-   AC_DEFINE(USE_OCTAVE)
-   use_octave=yes,[])
-
-if test "x$use_octave" != "xno"
-    then
-    if test "x$gpl_licence" != "xyes"
-	then
-	AC_MSG_ERROR("use of Octave requires gpl licence (see '--enable-gpl')");
-    fi
-    AC_CHECK_PROGS(MKOCTFILE,mkoctfile,[:])
-    AM_CONDITIONAL([HAVE_OCTAVE], [test "$MKOCTFILE" != :])
-    if test "$MKOCTFILE" != :
-	then
-	OCTAVEINCLUDES=$($MKOCTFILE -p INCFLAGS)
-	OCTAVELIBS="$($MKOCTFILE -p OCTAVE_LIBS)"
-	OCTAVELIBS="$OCTAVELIBS $($MKOCTFILE -p LIBS)"
-	OCTAVELIBS="$OCTAVELIBS $($MKOCTFILE -p LFLAGS)"
-	OCTAVERLIBS="$($MKOCTFILE -p RLD_FLAG)"
-	AC_SUBST(OCTAVEINCLUDES)
-	AC_SUBST(OCTAVELIBS)
-	AC_SUBST(OCTAVERLIBS)
-	AC_DEFINE(HAVE_OCTAVE)
-    else
-	AC_MSG_ERROR("'mkoctfile' not found");
-    fi
-else
-    AM_CONDITIONAL([HAVE_OCTAVE],false)
-fi
-
-# gtkmm
-use_graphics=no;
-AC_ARG_ENABLE(graphics,
-   AC_HELP_STRING([--enable-graphics],
-                  [allow graphics to be compiled.
-		   The 'gtkmm' library is required]),
-   AC_DEFINE(USE_GRAPHICS)
-   use_graphics=yes,[])
-
-if test "x$use_graphics" != "xno"
-    then
-    PKG_CHECK_MODULES([GTKMM],
-	[gtkmm-2.4 >= 2.12.0 librsvg-2.0 >= 2.18.2],
-	[enable_graphics=true],
-	[enable_graphics=false])
-    if test x"$enable_graphics" != "xtrue"
-	then
-	AC_MSG_ERROR("'gtkmm' not found");
-    fi
-    AM_CONDITIONAL(WITH_GRAPHICS,true)
-else
-    AM_CONDITIONAL(WITH_GRAPHICS,false)
-fi
-
 # check for castem
 CHECK_CASTEM
 
@@ -315,7 +188,7 @@ then
   AC_DEFINE(HAVE_PLEIADES)
 fi
 
-AC_OUTPUT([debug.sh po/Makefile.in
+AC_OUTPUT([debug.sh
 	   Makefile
 	   Doxyfile
 	   cmake/Makefile
@@ -330,7 +203,6 @@ AC_OUTPUT([debug.sh po/Makefile.in
 	   src/System/Makefile
 	   src/TFELConfig/Makefile
 	   src/TFELConfig/tfel-config.hxx
-	   src/Graphics/Makefile
 	   mfront/Makefile
 	   mfront/include/Makefile
 	   mfront/src/Makefile
@@ -343,11 +215,6 @@ AC_OUTPUT([debug.sh po/Makefile.in
 	   tfel-check/Makefile
 	   tfel-check/src/Makefile
 	   tfel-check/include/Makefile
-           tplot/Makefile
-	   tplot/include/Makefile
-	   tplot/src/Makefile
-	   tplot/src/GNUGraphTheme.cxx
-	   tplot/data/Makefile
 	   tests/Makefile
 	   tests/Tests/Makefile
 	   tests/Math/Makefile

@@ -2,17 +2,11 @@
 ACLOCAL_AMFLAGS = -I m4
 SUBDIRS = include src mfront tests tfel-check cmake
 
-if WITH_GRAPHICS
-SUBDIRS +=  po tplot
-endif
-
 doc:
 	cd @top_srcdir@ && doxygen @abs_top_builddir@/Doxyfile && cd -
 
-EXTRA_DIST = config/config.rpath \
-	     bootstrap.sh        \
+EXTRA_DIST = bootstrap.sh        \
 	     CMakeLists.txt      \
-	     GPL.txt             \
 	     LGPL.txt            \
 	     CeCILL-B.txt        \
 	     INSTALL

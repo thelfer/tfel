@@ -11,7 +11,8 @@
 
 /*!
  * \def    TFEL_META_IS_REAL
- * \brief  An helper macro to specialise IsReal for each standard "real" numeric types.
+ * \brief An helper macro to specialise IsReal for each standard
+ * "real" numeric types.
  * \author Helfer Thomas
  * \date   28 jun 2006 
  */
@@ -44,10 +45,12 @@ namespace tfel{
   namespace typetraits{
     
     /*!
-     * \brief  Traits class which says it a given type stands for a real numerical type.
+     * \brief Traits class which says it a given type stands for a
+     * real numerical type.
      *
      * \param  T, type to be tested.
-     * \return bool cond, true if T stands for a real numerical type, false otherwise.
+     * \return bool cond, true if T stands for a real numerical type,
+     * false otherwise.
      *
      * \see IsScalar, IsComplex
      *

@@ -49,8 +49,7 @@ mfront_SOURCES = main.cxx                                             \
 		 MFrontCLawInterface.cxx                              \
 		 MFrontCppLawInterface.cxx                            \
 		 MFrontCppTestLawInterface.cxx                        \
-		 MFrontExcelLawInterface.cxx                          \
-		 MFrontOctaveLawInterface.cxx
+		 MFrontExcelLawInterface.cxx
 
 
 if HAVE_GNUPLOT

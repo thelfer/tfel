@@ -25,6 +25,9 @@ namespace tfel
   namespace system
   {
 
+    /*!
+     * base structure for child processes
+     */
     struct TFEL_VISIBILITY_EXPORT ChildProcess
     {
       /*!
@@ -40,6 +43,7 @@ namespace tfel
       virtual
       void execute(const int,
 		   const int) = 0;
+      
       void setPid(const pid_t);
       pid_t getPid(void) const;
       int

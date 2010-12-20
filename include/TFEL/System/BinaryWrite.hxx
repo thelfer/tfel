@@ -58,6 +58,10 @@ namespace tfel
       BinaryWriter<T>::exe(f,v);
     } // end of binary_write
 
+    /*!
+     * partial specialisation for c-style string
+     * \param N : number of characters
+     */
     template<unsigned short N>
     struct BinaryWriter<char [N]>
     {

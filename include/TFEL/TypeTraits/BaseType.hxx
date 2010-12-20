@@ -12,7 +12,8 @@
 
 /*!
  * \def TFEL_MATH_BASETYPE
- * \brief  An helper macro used to define BaseType for the standard types.
+ * \brief An helper macro used to define BaseType for the standard
+ * types.
  * \author Helfer Thomas
  * \date   26 Jul 2006
  */
@@ -36,7 +37,8 @@ namespace tfel{
 
     /*!
      * \class BaseType
-     * \brief Most mathematical objects are build upon a fundamental numeric type. This traits gives access to this type.
+     * \brief Most mathematical objects are build upon a fundamental
+     * numeric type. This traits gives access to this type.
      * 
      * \param  T, type for which we want to know the base type.
      * \return type, the fundamental numeric type upon which T is build.

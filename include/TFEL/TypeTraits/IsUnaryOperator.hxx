@@ -13,10 +13,12 @@ namespace tfel{
   namespace typetraits{
 
     /*!
-     * \brief  Traits class which says if its argument stands for a unary operator
+     * \brief Traits class which says if its argument stands for a
+     * unary operator
      *
      * \param  T, type to be tested.
-     * \return bool cond, true if T stands for a unary operator, false otherwise.
+     * \return bool cond, true if T stands for a unary operator, false
+     * otherwise.
      *
      * \author Helfer Thomas
      * \date   08/01/07

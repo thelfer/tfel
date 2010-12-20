@@ -4,14 +4,6 @@ link_directories("${PROJECT_BINARY_DIR}/src/Math"
                  "${PROJECT_BINARY_DIR}/src/Utilities"
                  "${PROJECT_BINARY_DIR}/src/Exception")
 
-if(HAVE_GSL)
-include_directories(${GSL_INCLUDES})
-endif(HAVE_GSL)
-
-if(HAVE_OCTAVE)
-include_directories(${OCTAVE_INCLUDES})
-endif(HAVE_OCTAVE)
-
 set(TFELMath_SOURCES
     MathException.cxx
     LUException.cxx
@@ -64,25 +56,6 @@ set(TFELMathParser_SOURCES
     LevenbergMarquardtExternalFunctionWrapper.cxx
     Variable.cxx)
 
-# if HAVE_GSL
-# libTFELMathParser_la_SOURCES += EvaluatorGSLWrapper.cxx
-# endif
-# 
-# if HAVE_OCTAVE
-# libTFELMathParser_la_SOURCES += ExternalOctaveFunction.cxx
-# endif 
-
-# if HAVE_GSL
-# libTFELMathParser_la_LIBADD += @GSLLIBS@
-# endif
-
-# if HAVE_OCTAVE
-# libTFELMathParser_la_LIBADD += @OCTAVELIBS@
-# endif
-
-set(TFELMathInterpreter_SOURCES
-    InterpreterCommon.cxx)
-
 tfel_library(TFELMath ${TFELMath_SOURCES})
 target_link_libraries(TFELMath
                       TFELException)
@@ -98,44 +71,3 @@ target_link_libraries(TFELMathParser
 		      TFELMathKriging
                       TFELMath
 		      TFELException)
-
-tfel_library(TFELMathInterpreter ${TFELMathInterpreter_SOURCES})
-add_dependencies(TFELMathInterpreter
-                 TFELMathParser
-                 TFELMathKriging
-		 TFELMath)
-target_link_libraries(TFELMathInterpreter
-                      TFELMathParser TFELMathKriging
-		      TFELMath TFELException)
-
-add_executable(tfel_eval tfel-eval.cxx)
-set_target_properties(tfel_eval PROPERTIES LINK_FLAGS " -rdynamic -Wl,--export-dynamic")
-add_dependencies(tfel_eval
-                 TFELMathInterpreter
-		 TFELMathParser
-		 TFELMathKriging
-		 TFELMath)
-
-target_link_libraries(tfel_eval
-                      TFELMathInterpreter
-                      TFELMathParser
-                      TFELMathKriging
-		      TFELMath
-                      TFELSystem
-		      TFELUtilities
-		      TFELException
-		      -ldl)
-
-install(TARGETS tfel_eval DESTINATION bin)
-
-# if HAVE_GSL
-# tfel_eval_LDADD += @GSLLIBS@
-# endif
-
-# if HAVE_OCTAVE
-# tfel_eval_LDADD += @OCTAVELIBS@
-# endif
-
-# if HAVE_READLINE
-# tfel_eval_LDADD += @READLINE_LIBS@
-# endif

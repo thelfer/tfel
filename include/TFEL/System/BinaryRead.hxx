@@ -29,12 +29,13 @@ namespace tfel
     
     /*!
      * an helper class to read value in a stream
+     * \param T : type to be read
      */
     template<typename T>
     struct BinaryReader
     {
       /*!
-       * read a value in a stream
+       * read a value in a stream using basic binary read
        * \param [in]  f : input stream
        * \param [out] v : value read
        */
