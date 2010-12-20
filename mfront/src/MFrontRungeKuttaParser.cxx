@@ -39,6 +39,9 @@ namespace mfront{
     this->registerVariable("T_");
     this->registerVariable("eto_");
     this->registerVariable("deto_");
+    this->reserveName("corrector");
+    this->reserveName("dtprec");
+    this->reserveName("converged");
     this->reserveName("error");
     this->reserveName("failed");
     this->localVarsHolder.push_back(VarHandler("StrainStensor","eto_",0u));
@@ -205,22 +208,23 @@ namespace mfront{
       this->algorithm = "RungeKutta5/4";
       this->nbrOfEvaluation = 6u;
     } else if(this->current->value=="rkCastem"){
-      this->algorithm = "RungeKuttaCastem";
-      this->nbrOfEvaluation = 5u;
+      this->reserveName("ra");
+      this->reserveName("sqra");
+      this->reserveName("errabs");
+      this->reserveName("asig");
+      this->reserveName("sigf");
       this->registerStaticVariable("rkcastem_div");
       this->registerStaticVariable("rkcastem_rmin");
       this->registerStaticVariable("rkcastem_rmax");
       this->registerStaticVariable("rkcastem_fac");
       this->registerStaticVariable("rkcastem_borne");
-      this->reserveName("ra");
-      this->reserveName("sqra");
-      this->reserveName("errabs");
-      this->reserveName("asig");
       this->staticVars.push_back(StaticVarHandler("real","rkcastem_div",0u,7.));
       this->staticVars.push_back(StaticVarHandler("real","rkcastem_rmin",0u,0.7));
       this->staticVars.push_back(StaticVarHandler("real","rkcastem_rmax",0u,1.3));
       this->staticVars.push_back(StaticVarHandler("real","rkcastem_fac",0u,3.));
       this->staticVars.push_back(StaticVarHandler("real","rkcastem_borne",0u,2.));
+      this->nbrOfEvaluation = 5u;
+      this->algorithm = "RungeKuttaCastem";
     } else {
       this->throwRuntimeError("MFrontRungeKuttaParser::treatAlgorithm",
 			      this->current->value+" is not a valid algorithm name"
@@ -308,7 +312,7 @@ namespace mfront{
       parserInitLocalVars += "this->dt=" + this->className + "::dtmin;\n";
       parserInitLocalVars += "}\n";
     }
-    parserInitLocalVars += "if(this->dt<100*numeric_limits<real>::min()){\n";
+    parserInitLocalVars += "if(this->dt<100*numeric_limits<time>::min()){\n";
     parserInitLocalVars += "string msg(\"" + this->className + "::" + this->className +"\");\n";
     parserInitLocalVars += "msg += \"time step too small.\";\n";
     parserInitLocalVars += "throw(runtime_error(msg));\n";
@@ -567,15 +571,20 @@ namespace mfront{
     this->behaviourFile << "static const Type cste2197_75240  = Type(2197)/Type(75240);" << endl;
     this->behaviourFile << "static const Type cste1_50        = Type(1)/Type(50);" << endl;
 
-    this->behaviourFile << "time t   = time(0);" << endl;
-    this->behaviourFile << "time dt_ = this->dt;" << endl;
+    this->behaviourFile << "time t      = time(0);" << endl;
+    this->behaviourFile << "time dt_    = this->dt;" << endl;
+    this->behaviourFile << "time dtprec = 100*this->dt*numeric_limits<time>::epsilon();" << endl;
     this->behaviourFile << "Type error;" << endl;
-    this->behaviourFile << "while((this->dt)-t>Type(0.25)*dt_){" << endl;
-    this->behaviourFile << "if(dt_<(this->dt)*100*numeric_limits<real>::epsilon()){" << endl;
-    this->behaviourFile << "string msg(\"" << this->className << "::integrate : \");" << endl;
-    this->behaviourFile << "msg += \"time step reduction has gone too far.\";" << endl;
-    this->behaviourFile << "throw(tfel::material::DivergenceException(msg));" << endl;
-    this->behaviourFile << "}" << endl;
+    this->behaviourFile << "bool converged = false;" << endl;
+    if(this->debugMode){
+      this->behaviourFile << "cout << endl << \"" << this->className
+			  << "::integrate() : beginning of resolution\" << endl;\n";
+    }
+    this->behaviourFile << "while(!converged){" << endl;
+    if(this->debugMode){
+      this->behaviourFile << "cout << \"" << this->className
+			  << "::integrate() : from \" << t <<  \" to \" << t+dt_ << \" with time step \" << dt_ << endl;\n";
+    }
     this->behaviourFile << "bool failed = false;" << endl;
     this->behaviourFile << "// Compute K1's values" << endl;
     this->behaviourFile << "this->eto_ = this->eto+(this->deto)*(t/this->dt);" << endl;
@@ -587,8 +596,20 @@ namespace mfront{
       this->behaviourFile << "this->" << p->name << "_ = this->" << p->name << ";" << endl;
     }
     this->behaviourFile << "failed = !this->computeStress();" << endl;
+    if(this->debugMode){
+      this->behaviourFile << "if(failed){" << endl;
+      this->behaviourFile << "cout << \"" << this->className
+			  << "::integrate() : failed while computing K1's stress\" << endl;"  << endl;
+      this->behaviourFile << "}" << endl;
+    }
     this->behaviourFile << "if(!failed){" << endl;
     this->behaviourFile << "failed = !this->computeDerivative();" << endl;
+    if(this->debugMode){
+      this->behaviourFile << "if(failed){" << endl;
+      this->behaviourFile << "cout << \"" << this->className
+			  << "::integrate() : failed while computing K1's derivative\" << endl;"  << endl;
+      this->behaviourFile << "}" << endl;
+    }
     this->behaviourFile << "if(!failed){" << endl;
     for(p =this->stateVarsHolder.begin();p!=this->stateVarsHolder.end();++p){
       this->behaviourFile << "this->d" << p->name 
@@ -609,8 +630,20 @@ namespace mfront{
     }
     this->behaviourFile << "// Update stress field" << endl;
     this->behaviourFile << "failed = !this->computeStress();" << endl;
+    if(this->debugMode){
+      this->behaviourFile << "if(failed){" << endl;
+      this->behaviourFile << "cout << \"" << this->className
+			  << "::integrate() : failed while computing K2's stress\" << endl;"  << endl;
+      this->behaviourFile << "}" << endl;
+    }
     this->behaviourFile << "if(!failed){" << endl;
     this->behaviourFile << "failed = !this->computeDerivative();" << endl;
+    if(this->debugMode){
+      this->behaviourFile << "if(failed){" << endl;
+      this->behaviourFile << "cout << \"" << this->className
+			  << "::integrate() : failed while computing K2's derivative\" << endl;"  << endl;
+      this->behaviourFile << "}" << endl;
+    }
     this->behaviourFile << "if(!failed){" << endl;
     for(p =this->stateVarsHolder.begin();p!=this->stateVarsHolder.end();++p){
       this->behaviourFile << "this->d" << p->name 
@@ -635,8 +668,20 @@ namespace mfront{
     }
     this->behaviourFile << "// Update stress field" << endl;
     this->behaviourFile << "failed = !this->computeStress();" << endl;
+    if(this->debugMode){
+      this->behaviourFile << "if(failed){" << endl;
+      this->behaviourFile << "cout << \"" << this->className
+			  << "::integrate() : failed while computing K3's stress\" << endl;"  << endl;
+      this->behaviourFile << "}" << endl;
+    }
     this->behaviourFile << "if(!failed){" << endl;
     this->behaviourFile << "failed = !this->computeDerivative();" << endl;
+    if(this->debugMode){
+      this->behaviourFile << "if(failed){" << endl;
+      this->behaviourFile << "cout << \"" << this->className
+			  << "::integrate() : failed while computing K3's derivative\" << endl;"  << endl;
+      this->behaviourFile << "}" << endl;
+    }
     this->behaviourFile << "if(!failed){" << endl;
     for(p =this->stateVarsHolder.begin();p!=this->stateVarsHolder.end();++p){
       this->behaviourFile << "this->d" << p->name 
@@ -663,8 +708,20 @@ namespace mfront{
     }
     this->behaviourFile << "// Update stress field" << endl;
     this->behaviourFile << "failed = !this->computeStress();" << endl;
+    if(this->debugMode){
+      this->behaviourFile << "if(failed){" << endl;
+      this->behaviourFile << "cout << \"" << this->className
+			  << "::integrate() : failed while computing K4's stress\" << endl;"  << endl;
+      this->behaviourFile << "}" << endl;
+    }
     this->behaviourFile << "if(!failed){" << endl;
     this->behaviourFile << "failed = !this->computeDerivative();" << endl;
+    if(this->debugMode){
+      this->behaviourFile << "if(failed){" << endl;
+      this->behaviourFile << "cout << \"" << this->className
+			  << "::integrate() : failed while computing K4's derivatives\" << endl;"  << endl;
+      this->behaviourFile << "}" << endl;
+    }
     this->behaviourFile << "if(!failed){" << endl;
     for(p =this->stateVarsHolder.begin();p!=this->stateVarsHolder.end();++p){
       this->behaviourFile << "this->d" << p->name 
@@ -691,8 +748,20 @@ namespace mfront{
     }
     this->behaviourFile << "// Update stress field" << endl;
     this->behaviourFile << "failed = !this->computeStress();" << endl;
+    if(this->debugMode){
+      this->behaviourFile << "if(failed){" << endl;
+      this->behaviourFile << "cout << \"" << this->className
+			  << "::integrate() : failed while computing K5's stress\" << endl;"  << endl;
+      this->behaviourFile << "}" << endl;
+    }
     this->behaviourFile << "if(!failed){" << endl;
     this->behaviourFile << "failed = !this->computeDerivative();" << endl;
+    if(this->debugMode){
+      this->behaviourFile << "if(failed){" << endl;
+      this->behaviourFile << "cout << \"" << this->className
+			  << "::integrate() : failed while computing K5's derivatives\" << endl;"  << endl;
+      this->behaviourFile << "}" << endl;
+    }
     this->behaviourFile << "if(!failed){" << endl;
     for(p =this->stateVarsHolder.begin();p!=this->stateVarsHolder.end();++p){
       this->behaviourFile << "this->d" << p->name 
@@ -720,8 +789,20 @@ namespace mfront{
     }
     this->behaviourFile << "// Update stress field" << endl;
     this->behaviourFile << "failed = !this->computeStress();" << endl;
+    if(this->debugMode){
+      this->behaviourFile << "if(failed){" << endl;
+      this->behaviourFile << "cout << \"" << this->className
+			  << "::integrate() : failed while computing K6's stress\" << endl;"  << endl;
+      this->behaviourFile << "}" << endl;
+    }
     this->behaviourFile << "if(!failed){" << endl;
     this->behaviourFile << "failed = !this->computeDerivative();" << endl;
+    if(this->debugMode){
+      this->behaviourFile << "if(failed){" << endl;
+      this->behaviourFile << "cout << \"" << this->className
+			  << "::integrate() : failed while computing K6's derivatives\" << endl;"  << endl;
+      this->behaviourFile << "}" << endl;
+    }
     this->behaviourFile << "if(!failed){" << endl;
     for(p =this->stateVarsHolder.begin();p!=this->stateVarsHolder.end();++p){
       this->behaviourFile << "this->d" << p->name 
@@ -745,6 +826,10 @@ namespace mfront{
 			  << "+cste2_55*(this->d" << p->name << "_K6));" << endl;
     }
     this->behaviourFile << "error/=" << stateVarsSize << ";" << endl;
+    if(this->debugMode){
+      this->behaviourFile << "cout << \"" << this->className
+			  << "::integrate() : error \" << error << endl;"  << endl;
+    }
     this->behaviourFile << "// test for convergence" << endl;
     this->behaviourFile << "if(error<" << this->className << "::epsilon){" << endl;
     this->behaviourFile << "// Final Step" << endl;
@@ -762,9 +847,12 @@ namespace mfront{
       this->behaviourFile << "this->updateAuxiliaryStateVars();" << endl;
     }
     this->behaviourFile << "t += dt_;" << endl;
+    this->behaviourFile << "if(abs(this->dt-t)<dtprec){" << endl;
+    this->behaviourFile << "converged=true;" << endl;
     this->behaviourFile << "}" << endl;
+    this->behaviourFile << "}" << endl;
+    this->behaviourFile << "if(!converged){" << endl;
     this->behaviourFile << "// time multiplier" << endl;
-    this->behaviourFile << "if((this->dt)-t>Type(0.25)*dt_){" << endl;
     this->behaviourFile << "real corrector;" << endl;
     this->behaviourFile << "if(error<100*std::numeric_limits<real>::min()){" << endl;
     this->behaviourFile << "corrector=real(10);" << endl;
@@ -772,17 +860,43 @@ namespace mfront{
     this->behaviourFile << "corrector = 0.8*pow(" << this->className << "::epsilon/error,0.2);" << endl;
     this->behaviourFile << "}" << endl;
     this->behaviourFile << "if(corrector<real(0.1f)){" << endl;
+    if(this->debugMode){
+      this->behaviourFile << "cout << \"" << this->className
+			  << "::integrate() : reducing time step by a factor 10\" << endl;" << endl;
+    }
     this->behaviourFile << "dt_ *= real(0.1f);" << endl;
     this->behaviourFile << "} else if(corrector>real(10)){" << endl;
+    if(this->debugMode){
+      this->behaviourFile << "cout << \"" << this->className
+			  << "::integrate() : increasing time step by a factor 10\" << endl;" << endl;
+    }
     this->behaviourFile << "dt_ *= real(10);" << endl;
     this->behaviourFile << "} else {" << endl;
+    if(this->debugMode){
+      this->behaviourFile << "if(corrector<1){" << endl;
+      this->behaviourFile << "cout << \"" << this->className
+			  << "::integrate() : reducing time step by a factor \"   << corrector << endl;" << endl;
+      this->behaviourFile << "} else {" << endl;
+      this->behaviourFile << "cout << \"" << this->className
+			  << "::integrate() : increasing time step by a factor \" << corrector << endl;" << endl;
+      this->behaviourFile << "}" << endl;
+    }
     this->behaviourFile << "dt_ *= corrector;" << endl;
     this->behaviourFile << "}" << endl;
-    this->behaviourFile << "if(dt_>this->dt-t){" << endl;
+    this->behaviourFile << "if(dt_<dtprec){" << endl;
+    this->behaviourFile << "string msg(\"" << this->className << "::integrate : \");" << endl;
+    this->behaviourFile << "msg += \"time step reduction has gone too far.\";" << endl;
+    this->behaviourFile << "throw(tfel::material::DivergenceException(msg));" << endl;
+    this->behaviourFile << "}" << endl;
+    this->behaviourFile << "if((abs(this->dt-t-dt_)<2*dtprec)||(t+dt_>this->dt)){" << endl;
     this->behaviourFile << "dt_=this->dt-t;" << endl;
     this->behaviourFile << "}" << endl;
     this->behaviourFile << "}" << endl;
     this->behaviourFile << "} else {" << endl;
+    if(this->debugMode){
+      this->behaviourFile << "cout << \"" << this->className
+			  << "::integrate() : failure detected, reducing time step by a factor 10\" << endl;";
+    }
     this->behaviourFile << "// failed is true" << endl;
     this->behaviourFile << "dt_ *= real(0.1f);" << endl;
     this->behaviourFile << "}" << endl;
@@ -808,26 +922,41 @@ namespace mfront{
     this->behaviourFile << "this->eto_  = this->eto+t*(this->deto);" << endl;
     this->behaviourFile << "this->T_    = this->T+t*(this->dT);" << endl;
     this->behaviourFile << "this->eel_ = this->eel;" << endl;
-    this->behaviourFile << "this->e0_ = this->e0;" << endl;
-    this->behaviourFile << "this->e1_ = this->e1;" << endl;
-    this->behaviourFile << "this->e2_ = this->e2;" << endl;
-    this->behaviourFile << "this->p_ = this->p;" << endl;
-    this->behaviourFile << "this->X0_ = this->X0;" << endl;
-    this->behaviourFile << "this->X1_ = this->X1;" << endl;
-    this->behaviourFile << "this->X2_ = this->X2;" << endl;
+    for(p =this->externalStateVarsHolder.begin();p!=this->externalStateVarsHolder.end();++p){
+      this->behaviourFile << "this->" << p->name << "_ = this->" << p->name << ";" << endl;
+    }
+    for(p =this->stateVarsHolder.begin();p!=this->stateVarsHolder.end();++p){
+      this->behaviourFile << "this->" << p->name << "_ = this->" << p->name << ";" << endl;
+    }
     this->behaviourFile << "bool failed;" << endl;
     this->behaviourFile << "failed = !this->computeStress();" << endl;
+    if(this->debugMode){
+      this->behaviourFile << "if(failed){" << endl;
+      this->behaviourFile << "cout << \"" << this->className
+			  << "::integrate() : failed while computing initial stress\" << endl;" << endl;
+      this->behaviourFile << "}" << endl;
+    }
+    this->behaviourFile << "if(failed){" << endl;
+    this->behaviourFile << "string msg(\"" << this->className << "::integrate : \");" << endl;
+    this->behaviourFile << "msg += \"initial stress computations failed.\";" << endl;
+    this->behaviourFile << "throw(tfel::material::DivergenceException(msg));" << endl;
+    this->behaviourFile << "}" << endl;
     this->behaviourFile << "asig = sqrt((this->sig)|(this->sig));" << endl;
     this->behaviourFile << "if ((this->young)*Type(1.e-3)>asig){" << endl;
     this->behaviourFile << "  errabs = (this->young)*Type(1.e-3)*(" << this->className << "::epsilon);" << endl;
     this->behaviourFile << "}else{" << endl;
     this->behaviourFile << "  errabs = (" << this->className << "::epsilon)*asig;\n}\n" << endl;
-    this->behaviourFile << "while((this->dt)-t>Type(0.25)*dt_){" << endl;
-    this->behaviourFile << "if(dt_<(this->dt)*100*numeric_limits<real>::epsilon()){" << endl;
-    this->behaviourFile << "string msg(\"" << this->className << "::integrate : \");" << endl;
-    this->behaviourFile << "msg += \"time step reduction has gone too far.\";" << endl;
-    this->behaviourFile << "throw(tfel::material::DivergenceException(msg));" << endl;
-    this->behaviourFile << "}" << endl;
+    this->behaviourFile << "time dtprec = 100*this->dt*numeric_limits<time>::epsilon();" << endl;
+    this->behaviourFile << "bool converged = false;" << endl;
+    if(this->debugMode){
+      this->behaviourFile << "cout << endl << \"" << this->className
+			  << "::integrate() : beginning of resolution\" << endl;\n";
+    }
+    this->behaviourFile << "while(!converged){" << endl;
+    if(this->debugMode){
+      this->behaviourFile << "cout << \"" << this->className
+			  << "::integrate() : from \" << t <<  \" to \" << t+dt_ << \" with time step \" << dt_ << endl;\n";
+    }
     this->behaviourFile << "// Compute K1's values => y in castem " << endl;
     this->behaviourFile << "this->eto_  = this->eto+t*(this->deto);" << endl;
     this->behaviourFile << "this->T_    = this->T+t*(this->dT);" << endl;
@@ -839,8 +968,20 @@ namespace mfront{
       this->behaviourFile << "this->" << p->name << "_ = this->" << p->name << ";" << endl;
     }
     this->behaviourFile << "failed = !this->computeStress();" << endl;
+    if(this->debugMode){
+      this->behaviourFile << "if(failed){" << endl;
+      this->behaviourFile << "cout << \"" << this->className
+			  << "::integrate() : failed while computing K1's stress\" << endl;" << endl;
+      this->behaviourFile << "}" << endl;
+    }
     this->behaviourFile << "if(!failed){" << endl;
     this->behaviourFile << "failed = !this->computeDerivative();" << endl;
+    if(this->debugMode){
+      this->behaviourFile << "if(failed){" << endl;
+      this->behaviourFile << "cout << \"" << this->className
+			  << "::integrate() : failed while computing K1's derivatives\" << endl;" << endl;
+      this->behaviourFile << "}" << endl;
+    }
     this->behaviourFile << "if(!failed){" << endl;
     this->behaviourFile << "// Compute y'1*dt=f(y)*dt in castem" << endl;
     for(p =this->stateVarsHolder.begin();p!=this->stateVarsHolder.end();++p){
@@ -863,8 +1004,20 @@ namespace mfront{
     }
     this->behaviourFile << "// Update stress field" << endl;
     this->behaviourFile << "failed = !this->computeStress();" << endl;
+    if(this->debugMode){
+      this->behaviourFile << "if(failed){" << endl;
+      this->behaviourFile << "cout << \"" << this->className
+			  << "::integrate() : failed while computing K2's stress\" << endl;"  << endl;
+      this->behaviourFile << "}" << endl;
+    }
     this->behaviourFile << "if(!failed){" << endl;
     this->behaviourFile << "failed = !this->computeDerivative();" << endl;
+    if(this->debugMode){
+      this->behaviourFile << "if(failed){" << endl;
+      this->behaviourFile << "cout << \"" << this->className
+			  << "::integrate() : failed while computing K2's derivatives\" << endl;"  << endl;
+      this->behaviourFile << "}" << endl;
+    }
     this->behaviourFile << "if(!failed){" << endl;
     this->behaviourFile << "// Compute y'2*dt=f(y1)*dt in castem" << endl;
     for(p =this->stateVarsHolder.begin();p!=this->stateVarsHolder.end();++p){
@@ -883,8 +1036,20 @@ namespace mfront{
     }
     this->behaviourFile << "// Update stress field" << endl;
     this->behaviourFile << "failed = !this->computeStress();" << endl;
+    if(this->debugMode){
+      this->behaviourFile << "if(failed){" << endl;
+      this->behaviourFile << "cout << \"" << this->className
+			  << "::integrate() : failed while computing K3's stress\" << endl;"  << endl;
+      this->behaviourFile << "}" << endl;
+    }
     this->behaviourFile << "if(!failed){" << endl;
     this->behaviourFile << "failed = !this->computeDerivative();" << endl;
+    if(this->debugMode){
+      this->behaviourFile << "if(failed){" << endl;
+      this->behaviourFile << "cout << \"" << this->className
+			  << "::integrate() : failed while computing K3's derivatives\" << endl;"  << endl;
+      this->behaviourFile << "}" << endl;
+    }
     this->behaviourFile << "if(!failed){" << endl;
     this->behaviourFile << "// Compute y'3*dt=f(y12)*dt in castem" << endl;
     for(p =this->stateVarsHolder.begin();p!=this->stateVarsHolder.end();++p){
@@ -909,8 +1074,20 @@ namespace mfront{
     }
     this->behaviourFile << "// Update stress field" << endl;
     this->behaviourFile << "failed = !this->computeStress();" << endl;
+    if(this->debugMode){
+      this->behaviourFile << "if(failed){" << endl;
+      this->behaviourFile << "cout << \"" << this->className
+			  << "::integrate() : failed while computing K4's stress\" << endl;"  << endl;
+      this->behaviourFile << "}" << endl;
+    }
     this->behaviourFile << "if(!failed){" << endl;
     this->behaviourFile << "failed = !this->computeDerivative();" << endl;
+    if(this->debugMode){
+      this->behaviourFile << "if(failed){" << endl;
+      this->behaviourFile << "cout << \"" << this->className
+			  << "::integrate() : failed while computing K4's derivatives\" << endl;"  << endl;
+      this->behaviourFile << "}" << endl;
+    }
     this->behaviourFile << "if(!failed){" << endl;
     this->behaviourFile << "// Compute y'4*dt=f(y13)*dt in castem" << endl;
     for(p =this->stateVarsHolder.begin();p!=this->stateVarsHolder.end();++p){
@@ -931,10 +1108,22 @@ namespace mfront{
     }
     this->behaviourFile << "// Update stress field" << endl;
     this->behaviourFile << "failed = !this->computeStress();" << endl;
+    if(this->debugMode){
+      this->behaviourFile << "if(failed){" << endl;
+      this->behaviourFile << "cout << \"" << this->className
+			  << "::integrate() : failed while computing K5's stress\" << endl;"  << endl;
+      this->behaviourFile << "}" << endl;
+    }
     this->behaviourFile << "// Saving stresses obtained with yf" << endl;
     this->behaviourFile << "sigf=this->sig;" << endl;
     this->behaviourFile << "if(!failed){" << endl;
     this->behaviourFile << "failed = !this->computeDerivative();" << endl;
+    if(this->debugMode){
+      this->behaviourFile << "if(failed){" << endl;
+      this->behaviourFile << "cout << \"" << this->className
+			  << "::integrate() : failed while computing K5's derivatives\" << endl;"  << endl;
+      this->behaviourFile << "}" << endl;
+    }
     this->behaviourFile << "if(!failed){" << endl;
     this->behaviourFile << "// Compute y'5*dt=f(yf)*dt in castem" << endl;
     for(p =this->stateVarsHolder.begin();p!=this->stateVarsHolder.end();++p){
@@ -954,6 +1143,12 @@ namespace mfront{
     }
     this->behaviourFile << "// Update stress field" << endl;
     this->behaviourFile << "failed = !this->computeStress();" << endl;
+    if(this->debugMode){
+      this->behaviourFile << "if(failed){" << endl;
+      this->behaviourFile << "cout << \"" << this->className
+			  << "::integrate() : failed while computing criterium stress\" << endl;"  << endl;
+      this->behaviourFile << "}" << endl;
+    }
     this->behaviourFile << "}" << endl << endl;
     this->behaviourFile << "if(!failed){" << endl;
     this->behaviourFile << "real ra;" << endl;
@@ -965,8 +1160,17 @@ namespace mfront{
     this->behaviourFile << "// test for convergence" << endl;
     this->behaviourFile << "if (sqra>"  << this->className << "::rkcastem_div){" << endl;
     this->behaviourFile << "dt_ /= "  << this->className << "::rkcastem_div;" << endl;
+    if(this->debugMode){
+      this->behaviourFile << "cout << \"" << this->className
+			  << "::integrate() : multiplying time step by a factor \" << 1/("
+			  << this->className << "::rkcastem_div) << endl;" << endl;
+    }
     this->behaviourFile << "} else if (ra> " << this->className << "::rkcastem_borne){" << endl;
     this->behaviourFile << "dt_ /= sqra;" << endl;
+    if(this->debugMode){
+      this->behaviourFile << "cout << \"" << this->className
+			  << "::integrate() : multiplying time step by a factor \" << 1/sqra << endl;" << endl;
+    }
     this->behaviourFile << "}else{" << endl;
     for(p =this->stateVarsHolder.begin();p!=this->stateVarsHolder.end();++p){
       this->behaviourFile << "this->" << p->name 
@@ -976,18 +1180,44 @@ namespace mfront{
     this->behaviourFile << "this->computeFinalStress();" << endl;
     this->behaviourFile << "this->updateAuxiliaryStateVars();" << endl;
     this->behaviourFile << "t += dt_;" << endl;
+    this->behaviourFile << "if(abs(this->dt-t)<dtprec){" << endl;
+    this->behaviourFile << "converged=true;" << endl;
+    this->behaviourFile << "}" << endl;
+    this->behaviourFile << "if(!converged){" << endl;
     this->behaviourFile << "if (("  << this->className << "::rkcastem_fac)*sqra<1.){" << endl;
     this->behaviourFile << "dt_ *= " << this->className << "::rkcastem_fac;" << endl;
+    if(this->debugMode){
+      this->behaviourFile << "cout << \"" << this->className
+			  << "::integrate() : multiplying time step by a factor \" << "
+			  << this->className << "::rkcastem_fac << endl;" << endl;
+    }
     this->behaviourFile << "}else if ((sqra< "<< this->className << "::rkcastem_rmin)||" <<
       "(sqra>" << this->className << "::rkcastem_rmax)){" << endl;
     this->behaviourFile << "dt_ /= sqra;" << endl;
+    if(this->debugMode){
+      this->behaviourFile << "cout << \"" << this->className
+			  << "::integrate() : multiplying time step by a factor \" << 1/sqra << endl;" << endl;
+    }
+    this->behaviourFile << "}" << endl;
     this->behaviourFile << "}" << endl;
     this->behaviourFile << "}" << endl;
     this->behaviourFile << "} else { " << endl;
     this->behaviourFile << "dt_ /=  " << this->className << "::rkcastem_div;" << endl;
+    if(this->debugMode){
+      this->behaviourFile << "cout << \"" << this->className
+			  << "::integrate() : multiplying time step by a factor \" << 1/("
+			  << this->className << "::rkcastem_fac) << endl;" << endl;
+    }
     this->behaviourFile << "}" << endl;
-    this->behaviourFile << "if (dt_>(this->dt)-t){" << endl;
-    this->behaviourFile << "dt_ = (this->dt)-t;" << endl;
+    this->behaviourFile << "if(!converged){" << endl;
+    this->behaviourFile << "if(dt_<dtprec){" << endl;
+    this->behaviourFile << "string msg(\"" << this->className << "::integrate : \");" << endl;
+    this->behaviourFile << "msg += \"time step reduction has gone too far.\";" << endl;
+    this->behaviourFile << "throw(tfel::material::DivergenceException(msg));" << endl;
+    this->behaviourFile << "}" << endl;
+    this->behaviourFile << "if((abs(this->dt-t-dt_)<2*dtprec)||(t+dt_>this->dt)){" << endl;
+    this->behaviourFile << "dt_=this->dt-t;" << endl;
+    this->behaviourFile << "}" << endl;
     this->behaviourFile << "}" << endl;
     this->behaviourFile << "}" << endl;
   } // end of MFrontRungeKuttaParser::writeBehaviourRKCastemIntegrator
@@ -1006,13 +1236,18 @@ namespace mfront{
 
     this->behaviourFile << "time t   = time(0);" << endl;
     this->behaviourFile << "time dt_ = this->dt;" << endl;
+    this->behaviourFile << "time dtprec = 100*this->dt*numeric_limits<time>::epsilon();" << endl;
     this->behaviourFile << "Type error;" << endl;
-    this->behaviourFile << "while((this->dt)-t>Type(0.25)*dt_){" << endl;
-    this->behaviourFile << "if(dt_<(this->dt)*100*numeric_limits<real>::epsilon()){" << endl;
-    this->behaviourFile << "string msg(\"" << this->className << "::integrate : \");" << endl;
-    this->behaviourFile << "msg += \"time step reduction has gone too far.\";" << endl;
-    this->behaviourFile << "throw(tfel::material::DivergenceException(msg));" << endl;
-    this->behaviourFile << "}" << endl;
+    this->behaviourFile << "bool converged = false;" << endl;
+    if(this->debugMode){
+      this->behaviourFile << "cout << endl << \"" << this->className
+			  << "::integrate() : beginning of resolution\" << endl;\n";
+    }
+    this->behaviourFile << "while(!converged){" << endl;
+    if(this->debugMode){
+      this->behaviourFile << "cout << \"" << this->className
+			  << "::integrate() : from \" << t <<  \" to \" << t+dt_ << \" with time step \" << dt_ << endl;\n";
+    }
     this->behaviourFile << "bool failed = false;" << endl;
     this->behaviourFile << "// Compute K1's values" << endl;
     this->behaviourFile << "this->eto_  = this->eto+t*(this->deto);" << endl;
@@ -1025,8 +1260,20 @@ namespace mfront{
       this->behaviourFile << "this->" << p->name << "_ = this->" << p->name << ";" << endl;
     }
     this->behaviourFile << "failed = !this->computeStress();" << endl;
+    if(this->debugMode){
+      this->behaviourFile << "if(failed){" << endl;
+      this->behaviourFile << "cout << \"" << this->className
+			  << "::integrate() : failed while computing K1's stress\" << endl;"  << endl;
+      this->behaviourFile << "}" << endl;
+    }
     this->behaviourFile << "if(!failed){" << endl;
     this->behaviourFile << "failed = !this->computeDerivative();" << endl;
+    if(this->debugMode){
+      this->behaviourFile << "if(failed){" << endl;
+      this->behaviourFile << "cout << \"" << this->className
+			  << "::integrate() : failed while computing K1's derivatives\" << endl;"  << endl;
+      this->behaviourFile << "}" << endl;
+    }
     this->behaviourFile << "if(!failed){" << endl;
     for(p =this->stateVarsHolder.begin();p!=this->stateVarsHolder.end();++p){
       this->behaviourFile << "this->d" << p->name 
@@ -1048,8 +1295,20 @@ namespace mfront{
     }
     this->behaviourFile << "// Update stress field" << endl;
     this->behaviourFile << "failed = !this->computeStress();" << endl;
+    if(this->debugMode){
+      this->behaviourFile << "if(failed){" << endl;
+      this->behaviourFile << "cout << \"" << this->className
+			  << "::integrate() : failed while computing K2's stress\" << endl;"  << endl;
+      this->behaviourFile << "}" << endl;
+    }
     this->behaviourFile << "if(!failed){" << endl;
     this->behaviourFile << "failed = !this->computeDerivative();" << endl;
+    if(this->debugMode){
+      this->behaviourFile << "if(failed){" << endl;
+      this->behaviourFile << "cout << \"" << this->className
+			  << "::integrate() : failed while computing K2's derivatives\" << endl;"  << endl;
+      this->behaviourFile << "}" << endl;
+    }
     this->behaviourFile << "if(!failed){" << endl;
     for(p =this->stateVarsHolder.begin();p!=this->stateVarsHolder.end();++p){
       this->behaviourFile << "this->d" << p->name 
@@ -1067,8 +1326,20 @@ namespace mfront{
     }
     this->behaviourFile << "// Update stress field" << endl;
     this->behaviourFile << "failed = !this->computeStress();" << endl;
+    if(this->debugMode){
+      this->behaviourFile << "if(failed){" << endl;
+      this->behaviourFile << "cout << \"" << this->className
+			  << "::integrate() : failed while computing K3's stress\" << endl;"  << endl;
+      this->behaviourFile << "}" << endl;
+    }
     this->behaviourFile << "if(!failed){" << endl;
     this->behaviourFile << "failed = !this->computeDerivative();" << endl;
+    if(this->debugMode){
+      this->behaviourFile << "if(failed){" << endl;
+      this->behaviourFile << "cout << \"" << this->className
+			  << "::integrate() : failed while computing K3's derivatives\" << endl;"  << endl;
+      this->behaviourFile << "}" << endl;
+    }
     this->behaviourFile << "if(!failed){" << endl;
     for(p =this->stateVarsHolder.begin();p!=this->stateVarsHolder.end();++p){
       this->behaviourFile << "this->d" << p->name 
@@ -1093,8 +1364,20 @@ namespace mfront{
     }
     this->behaviourFile << "// Update stress field" << endl;
     this->behaviourFile << "failed = !this->computeStress();" << endl;
+    if(this->debugMode){
+      this->behaviourFile << "if(failed){" << endl;
+      this->behaviourFile << "cout << \"" << this->className
+			  << "::integrate() : failed while computing K4's stress\" << endl;"  << endl;
+      this->behaviourFile << "}" << endl;
+    }
     this->behaviourFile << "if(!failed){" << endl;
     this->behaviourFile << "failed = !this->computeDerivative();" << endl;
+    if(this->debugMode){
+      this->behaviourFile << "if(failed){" << endl;
+      this->behaviourFile << "cout << \"" << this->className
+			  << "::integrate() : failed while computing K4's derivatives\" << endl;"  << endl;
+      this->behaviourFile << "}" << endl;
+    }
     this->behaviourFile << "if(!failed){" << endl;
     for(p =this->stateVarsHolder.begin();p!=this->stateVarsHolder.end();++p){
       this->behaviourFile << "this->d" << p->name 
@@ -1117,6 +1400,10 @@ namespace mfront{
 			  << "this->d" << p->name << "_K3));" << endl;
     }
     this->behaviourFile << "error/=" << stateVarsSize << ";" << endl;
+    if(this->debugMode){
+      this->behaviourFile << "cout << \"" << this->className
+			  << "::integrate() : error \" << error << endl;"  << endl;
+    }
     this->behaviourFile << "// test for convergence" << endl;
     this->behaviourFile << "if(error<" << this->className << "::epsilon){" << endl;
     this->behaviourFile << "// Final Step" << endl;
@@ -1130,9 +1417,12 @@ namespace mfront{
       this->behaviourFile << "this->updateAuxiliaryStateVars();" << endl;
     }
     this->behaviourFile << "t += dt_;" << endl;
+    this->behaviourFile << "if(abs(this->dt-t)<dtprec){" << endl;
+    this->behaviourFile << "converged=true;" << endl;
     this->behaviourFile << "}" << endl;
+    this->behaviourFile << "}" << endl;
+    this->behaviourFile << "if(!converged){";
     this->behaviourFile << "// time multiplier" << endl;
-    this->behaviourFile << "if(this->dt-t>Type(0.25)*dt_){" << endl;
     this->behaviourFile << "real corrector;" << endl;
     this->behaviourFile << "if(error<100*std::numeric_limits<real>::min()){" << endl;
     this->behaviourFile << "corrector=real(10.);" << endl;
@@ -1141,12 +1431,34 @@ namespace mfront{
     this->behaviourFile << "}" << endl;
     this->behaviourFile << "if(corrector<=real(0.1f)){" << endl;
     this->behaviourFile << "dt_ *= real(0.1f);" << endl;
+    if(this->debugMode){
+      this->behaviourFile << "cout << \"" << this->className
+			  << "::integrate() : reducing time step by a factor 10\" << endl;" << endl;
+    }
     this->behaviourFile << "} else if(corrector>real(10)){" << endl;
     this->behaviourFile << "dt_ *= real(10);" << endl;
+    if(this->debugMode){
+      this->behaviourFile << "cout << \"" << this->className
+			  << "::integrate() : multiplying time step by a factor 10\" << endl;" << endl;
+    }
     this->behaviourFile << "} else {" << endl;
     this->behaviourFile << "dt_ *= corrector;" << endl;
+    if(this->debugMode){
+      this->behaviourFile << "if(corrector<1){" << endl;
+      this->behaviourFile << "cout << \"" << this->className
+			  << "::integrate() : reducing time step by a factor \"   << corrector << endl;" << endl;
+      this->behaviourFile << "} else {" << endl;
+      this->behaviourFile << "cout << \"" << this->className
+			  << "::integrate() : increasing time step by a factor \" << corrector << endl;" << endl;
+      this->behaviourFile << "}" << endl;
+    }
     this->behaviourFile << "}" << endl;
-    this->behaviourFile << "if(dt_>this->dt-t){" << endl;
+    this->behaviourFile << "if(dt_<dtprec){" << endl;
+    this->behaviourFile << "string msg(\"" << this->className << "::integrate : \");" << endl;
+    this->behaviourFile << "msg += \"time step reduction has gone too far.\";" << endl;
+    this->behaviourFile << "throw(tfel::material::DivergenceException(msg));" << endl;
+    this->behaviourFile << "}" << endl;
+    this->behaviourFile << "if((abs(this->dt-t-dt_)<2*dtprec)||(t+dt_>this->dt)){" << endl;
     this->behaviourFile << "dt_=this->dt-t;" << endl;
     this->behaviourFile << "}" << endl;
     this->behaviourFile << "}" << endl;
