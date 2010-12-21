@@ -32,7 +32,6 @@ set(mfront_SOURCES
     InterfaceBase.cxx
     ParserUtilities.cxx
     UnaryLoadingDefinition.cxx
-    MFrontBehaviourInterfaceFactory.cxx
     MFrontLawInterfaceFactory.cxx
     MFrontBehaviourInterfaceFactory.cxx
     MFrontModelInterfaceFactory.cxx
