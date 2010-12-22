@@ -450,8 +450,6 @@ include/TFEL/Utilities/ContainerRebind.hxx -text
 include/TFEL/Utilities/CxxKeywords.hxx -text
 include/TFEL/Utilities/CxxTokenizer.hxx -text
 include/TFEL/Utilities/CxxTokenizer.ixx -text
-include/TFEL/Utilities/GenType.hxx -text
-include/TFEL/Utilities/GenType.ixx -text
 include/TFEL/Utilities/GenTypeBase.hxx -text
 include/TFEL/Utilities/GenTypeBase.ixx -text
 include/TFEL/Utilities/GenTypeCastError.hxx -text

@@ -15,17 +15,19 @@
 
 #include<cassert>
 
-#include"TFEL/Utilities/GenType.hxx"
+#include"TFEL/Utilities/GenTypeBase.hxx"
 
 int main(void)
 {
   using namespace std;
+  using namespace tfel::meta;
   using namespace tfel::utilities;
   
-  typedef GenType<int,string> MyGenType;
+  typedef GenerateTypeList<int,string>::type HoldedTypes;
+  typedef GenTypeBase<HoldedTypes> MyGenType;
 
   MyGenType test;
-  MyGenType test2("toto");
+  MyGenType test2(string("toto"));
   MyGenType test3(test2);
 
   test = string("tata");

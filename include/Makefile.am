@@ -433,8 +433,6 @@ nobase_include_HEADERS= TFEL/FiniteElement/Element/ElementsManager.ixx          
 			TFEL/Utilities/MultipleDeque.hxx	                                      \
 			TFEL/Utilities/Name.hxx		                                              \
 			TFEL/Utilities/Name.ixx			                                      \
-			TFEL/Utilities/GenType.hxx		                                      \
-			TFEL/Utilities/GenType.ixx		                                      \
 			TFEL/Utilities/GenTypeCastError.hxx	                                      \
 			TFEL/Utilities/GenTypeBase.hxx	                                              \
 			TFEL/Utilities/GenTypeBase.ixx	                                              \

@@ -317,6 +317,15 @@ namespace tfel{
       GenTypeBase()
 	: index(tfel::meta::TLSize<List>::value)
       {}
+      template<typename T1>
+      TFEL_INLINE
+      GenTypeBase(const T1& v,
+		  typename tfel::meta::EnableIf<
+		  tfel::meta::TLCountNbrOfT<T1,List>::value==1, 
+		  bool>::type = true)
+      {
+	this->template set<T1>(v);
+      }
       //! Copy constructor.
       /*
        * \param const GenTypeBase&, the source.
@@ -563,5 +572,6 @@ namespace tfel{
 } // end of namespace tfel
 
 #include"TFEL/Utilities/GenTypeBase.ixx"
+#include"TFEL/Utilities/GenTypeSpecialisation.ixx"
 
 #endif /* _LIB_TFEL_GENTYPEBASE_H_ */

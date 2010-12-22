@@ -15,7 +15,7 @@
 
 #include<cassert>
 
-#include"TFEL/Utilities/GenType.hxx"
+#include"TFEL/Utilities/GenTypeBase.hxx"
 
 struct my_function
 {
@@ -54,12 +54,16 @@ struct my_function2
 int main(void)
 {
   using namespace std;
+  using namespace tfel::meta;
   using namespace tfel::utilities;
+
+  typedef GenerateTypeList<int,string>::type HoldedTypes;
+  typedef GenTypeBase<HoldedTypes> MyGenType;
   
-  GenType<int,string> g;
-  GenType<int,string> g2;
-  GenType<int,string> g3;
-  GenType<int,string> g4;
+  MyGenType g;
+  MyGenType g2;
+  MyGenType g3;
+  MyGenType g4;
   g = 21;
   g2 = string("toto");
   g3 = 3;
@@ -68,8 +72,6 @@ int main(void)
   assert(apply<my_function>(g2)==0);
   assert(apply<my_function2>(g,g2)==0);
   assert(apply<my_function2>(g,g3)==63);
-  //   assert(apply<my_function2>(g4,g3)==);
-
 
   return EXIT_SUCCESS;
 }

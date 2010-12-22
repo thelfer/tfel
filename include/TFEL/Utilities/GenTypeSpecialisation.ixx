@@ -40,7 +40,8 @@
 	void                                                        \
 	set##Y(const X& src)                                        \
 	{                                                           \
-	  static_cast<Child *>(this)->template set<X>(src);         \
+          void (Child:: * s)(const X&) = &Child::template set<X>;   \
+	  static_cast<Child *>(this)->*s(src);                      \
 	}                                                           \
         /*                                                          \
 	 * get an object of type X.                                 \
@@ -109,7 +110,8 @@ namespace tfel{
 	Child&
 	operator=(const char* const  c)
 	{
-	  static_cast<Child *>(this)->template set<std::string>(c);
+          void (Child:: * s)(const std::string&) = &Child::template set<std::string>;
+	  static_cast<Child *>(this)->*s(c);
 	  return static_cast<Child &>(*this);
 	}
         /*
@@ -120,7 +122,8 @@ namespace tfel{
 	void
 	setString(const std::string& src)
 	{
-	  static_cast<Child *>(this)->template set<std::string>(src);
+	  void (Child:: * s)(const std::string&) = &Child::template set<std::string>;
+	  static_cast<Child *>(this)->*s(src);
 	}
         /*
 	 * get an object of type std::string.
