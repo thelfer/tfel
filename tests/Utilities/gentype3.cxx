@@ -21,7 +21,7 @@ typedef tfel::meta::GenerateTypeList<int,std::string>::type HoldedTypes;
 struct TFEL_VISIBILITY_EXPORT GenType
   : tfel::utilities::GenTypeBase<HoldedTypes>
 {
-  using GenTypeBase<HoldedTypes>::operator =;
+  using tfel::utilities::GenTypeBase<HoldedTypes>::operator =;
 
   std::string getType() const;
   
