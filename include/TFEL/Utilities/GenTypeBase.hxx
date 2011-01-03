@@ -323,6 +323,7 @@ namespace tfel{
 		  typename tfel::meta::EnableIf<
 		  tfel::meta::TLCountNbrOfT<T1,List>::value==1, 
 		  bool>::type = true)
+	: index(tfel::meta::TLSize<List>::value)
       {
 	this->template set<T1>(v);
       }
