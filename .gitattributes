@@ -905,6 +905,7 @@ tests/Utilities/Name.cxx -text
 tests/Utilities/Name2.cxx -text
 tests/Utilities/gentype.cxx -text
 tests/Utilities/gentype2.cxx -text
+tests/Utilities/gentype3.cxx -text
 tests/Utilities/tuple.cxx -text
 tfel-check/Makefile.am -text
 tfel-check/include/Makefile.am -text

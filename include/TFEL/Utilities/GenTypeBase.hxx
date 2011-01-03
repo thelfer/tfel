@@ -552,8 +552,7 @@ namespace tfel{
     template<typename T,
 	     typename List>
     typename T::return_type
-    apply(const T&,
-	  const GenTypeBase<List>&);
+    apply(T&,const GenTypeBase<List>&);
 
     template<typename T,
 	     typename List>
@@ -564,9 +563,30 @@ namespace tfel{
     template<typename T,
 	     typename List>
     typename T::return_type
-    apply(const T&,
-	  const GenTypeBase<List>&,
+    apply(T&,const GenTypeBase<List>&,
 	  const GenTypeBase<List>&);
+
+    template<typename T,
+	     typename List>
+    typename T::return_type
+    apply(const GenTypeBase<List>&);
+
+    template<typename T,
+	     typename List>
+    typename T::return_type
+    apply(T&,GenTypeBase<List>&);
+
+    template<typename T,
+	     typename List>
+    typename T::return_type
+    apply(GenTypeBase<List>&,
+	  GenTypeBase<List>&);
+
+    template<typename T,
+	     typename List>
+    typename T::return_type
+    apply(T&,GenTypeBase<List>&,
+	  GenTypeBase<List>&);
 
   } // end of namespace utilities
 

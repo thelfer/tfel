@@ -6,6 +6,7 @@ if WITH_TESTS
 testdir = $(pkgdatadir)/tests/Utilities
 test_PROGRAMS = gentype        \
 		gentype2       \
+		gentype3       \
 		tuple          \
 		Name           \
 		Name2          \
@@ -14,7 +15,9 @@ test_PROGRAMS = gentype        \
 		MultipleVector
 
 LDADD = -lTFELUtilities -lTFELException  \
+	-lTFELTests                      \
 	-L$(top_builddir)/src/Utilities  \
+	-L$(top_builddir)/src/Tests      \
 	-L$(top_builddir)/src/Exception
 
 gentype_SOURCES        = gentype.cxx

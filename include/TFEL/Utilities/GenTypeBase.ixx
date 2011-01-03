@@ -36,8 +36,21 @@ namespace tfel{
 	    return return_type();
 	  }
 	  static return_type
-	  apply(const T&,
+	  apply(T&,
 		const GenTypeBase<List>&)
+	  {
+	    throw(GenTypeCastError());
+	    return return_type();
+	  }
+
+	  static return_type
+	  apply(GenTypeBase<List>&)
+	  {
+	    throw(GenTypeCastError());
+	    return return_type();
+	  }
+	  static return_type
+	  apply(T&,GenTypeBase<List>&)
 	  {
 	    throw(GenTypeCastError());
 	    return return_type();
@@ -52,8 +65,18 @@ namespace tfel{
 	    throw(GenTypeCastError());
 	  }
 	  static void
-	  apply(const T&,
+	  apply(T&,
 		const GenTypeBase<List>&)
+	  {
+	    throw(GenTypeCastError());
+	  }
+	  static void
+	  apply(GenTypeBase<List>&)
+	  {
+	    throw(GenTypeCastError());
+	  }
+	  static void
+	  apply(T&,GenTypeBase<List>&)
 	  {
 	    throw(GenTypeCastError());
 	  }
@@ -79,8 +102,30 @@ namespace tfel{
 	}
 
 	static return_type
-	apply(const T& f,
+	apply(T& f,
 	      const GenTypeBase<List>& v)
+	{
+	  typedef typename tfel::meta::TLFindNthElt<List,N>::type current_value;
+	  if(v.template is<current_value>()){
+	    return f(v.template get<current_value>());
+	  } else {
+	    return Next::apply(f,v);
+	  }
+	}
+
+	static return_type
+	apply(GenTypeBase<List>& v)
+	{
+	  typedef typename tfel::meta::TLFindNthElt<List,N>::type current_value;
+	  if(v.template is<current_value>()){
+	    return T::apply(v.template get<current_value>());
+	  } else {
+	    return Next::apply(v);
+	  }
+	}
+
+	static return_type
+	apply(T& f, GenTypeBase<List>& v)
 	{
 	  typedef typename tfel::meta::TLFindNthElt<List,N>::type current_value;
 	  if(v.template is<current_value>()){
@@ -115,9 +160,23 @@ namespace tfel{
 	    return return_type();
 	  }
 	  static return_type
-	  apply(const T&,
+	  apply(T&,
 		const GenTypeBase<List>&,
 		const GenTypeBase<List>&)
+	  {
+	    throw(GenTypeCastError());
+	    return return_type();
+	  }
+	  static return_type
+	  apply(GenTypeBase<List>&,
+		GenTypeBase<List>&)
+	  {
+	    throw(GenTypeCastError());
+	    return return_type();
+	  }
+	  static return_type
+	  apply(T&,GenTypeBase<List>&,
+		GenTypeBase<List>&)
 	  {
 	    throw(GenTypeCastError());
 	    return return_type();
@@ -133,9 +192,21 @@ namespace tfel{
 	    throw(GenTypeCastError());
 	  }
 	  static void
-	  apply(const T&,
+	  apply(T&,
 		const GenTypeBase<List>&,
 		const GenTypeBase<List>&)
+	  {
+	    throw(GenTypeCastError());
+	  }
+	  static void
+	  apply(GenTypeBase<List>&,
+		GenTypeBase<List>&)
+	  {
+	    throw(GenTypeCastError());
+	  }
+	  static void
+	  apply(T&,GenTypeBase<List>&,
+		GenTypeBase<List>&)
 	  {
 	    throw(GenTypeCastError());
 	  }
@@ -182,7 +253,7 @@ namespace tfel{
 	}
 
 	static return_type
-	apply(const T& f,
+	apply(T& f,
 	      const GenTypeBase<List>& v1,
 	      const GenTypeBase<List>& v2)
 	{
@@ -190,6 +261,45 @@ namespace tfel{
 	  typedef typename tfel::meta::TLFindNthElt<List,M>::type current_value2;
 	  const bool b1 = v1.template is<current_value1>();
 	  const bool b2 = v2.template is<current_value2>();
+	  if(b1&&b2){
+	    return f(v1.template get<current_value1>(),
+		     v2.template get<current_value2>());
+	  } else if((b1)&&(!b2)){
+	    return NextII::apply(f,v1,v2);
+	  } else if((b2)&&(!b1)){
+	    return NextI::apply(f,v1,v2);
+	  }
+	  return Next::apply(f,v1,v2);
+	}
+
+	static return_type
+	apply(GenTypeBase<List>& v1,
+	      GenTypeBase<List>& v2)
+	{
+	  typedef typename tfel::meta::TLFindNthElt<List,N>::type current_value1;
+	  typedef typename tfel::meta::TLFindNthElt<List,M>::type current_value2;
+	  bool b1 = v1.template is<current_value1>();
+	  bool b2 = v2.template is<current_value2>();
+	  if(b1&&b2){
+	    return T::apply(v1.template get<current_value1>(),
+			    v2.template get<current_value2>());
+	  } else if((b1)&&(!b2)){
+	    return NextII::apply(v1,v2);
+	  } else if((b2)&&(!b1)){
+	    return NextI::apply(v1,v2);
+	  }
+	  return Next::apply(v1,v2);
+	}
+
+	static return_type
+	apply(T& f,
+	      GenTypeBase<List>& v1,
+	      GenTypeBase<List>& v2)
+	{
+	  typedef typename tfel::meta::TLFindNthElt<List,N>::type current_value1;
+	  typedef typename tfel::meta::TLFindNthElt<List,M>::type current_value2;
+	  bool b1 = v1.template is<current_value1>();
+	  bool b2 = v2.template is<current_value2>();
 	  if(b1&&b2){
 	    return f(v1.template get<current_value1>(),
 		     v2.template get<current_value2>());
@@ -217,7 +327,7 @@ namespace tfel{
     template<typename T,
 	     typename List>
     typename T::return_type
-    apply(const T& f,
+    apply(T& f,
 	  const GenTypeBase<List>& v)
     {
       using namespace tfel::utilities::internals;
@@ -237,9 +347,48 @@ namespace tfel{
     template<typename T,
 	     typename List>
     typename T::return_type
-    apply(const T& f,
+    apply(T& f,
 	  const GenTypeBase<List>& v1,
 	  const GenTypeBase<List>& v2)
+    {
+      using namespace tfel::utilities::internals;
+      return GenTypeBaseApplyII<T,List>::apply(f,v1,v2);
+    }
+
+    template<typename T,
+	     typename List>
+    typename T::return_type
+    apply(GenTypeBase<List>& v)
+    {
+      using namespace tfel::utilities::internals;
+      return GenTypeBaseApply<T,List>::apply(v);
+    }
+
+    template<typename T,
+	     typename List>
+    typename T::return_type
+    apply(T& f,
+	  GenTypeBase<List>& v)
+    {
+      using namespace tfel::utilities::internals;
+      return GenTypeBaseApply<T,List>::apply(f,v);
+    }
+
+    template<typename T,
+	     typename List>
+    typename T::return_type
+    apply(GenTypeBase<List>& v1,
+	  GenTypeBase<List>& v2)
+    {
+      using namespace tfel::utilities::internals;
+      return GenTypeBaseApplyII<T,List>::apply(v1,v2);
+    }
+
+    template<typename T,
+	     typename List>
+    typename T::return_type
+    apply(T& f,GenTypeBase<List>& v1,
+	  GenTypeBase<List>& v2)
     {
       using namespace tfel::utilities::internals;
       return GenTypeBaseApplyII<T,List>::apply(f,v1,v2);

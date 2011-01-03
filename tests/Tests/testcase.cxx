@@ -64,4 +64,5 @@ int main(void)
   manager.addTestOutput(f,false);
   TestResult r = manager.execute();
   assert(r.success());
+  return EXIT_SUCCESS;
 } // end of main
