@@ -18,9 +18,16 @@ namespace tfel
   namespace utilities
   {
 
+    /*!
+     * exception thrown when requesting a bad type out of a
+     * GenTypeBase class
+     */
     struct TFEL_VISIBILITY_EXPORT GenTypeCastError
       : public std::runtime_error
     {
+      /*!
+       * Default consutructor
+       */
       GenTypeCastError();
     }; // end of struct GenTypeCastErrro
 

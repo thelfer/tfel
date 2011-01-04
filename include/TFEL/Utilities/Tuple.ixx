@@ -10,33 +10,49 @@
 
 #include"TFEL/Metaprogramming/EnableIf.hxx"
 
-#include"TFEL/Utilities/Name.hxx"
-
 namespace tfel{
 
   namespace utilities{
 
     namespace internals{
 
+      /*!
+       * base class for tuples
+       * \param N    : index
+       * \param Type : holded type
+       */ 
       template<unsigned short N,typename Type>
-      class TupleContainer
+      struct TupleContainer
       {
-	Type value;
-      protected:
+	/*!
+	 * \brief constructor
+	 * \param val : value holded 
+	 */
 	TupleContainer(const Type& val)
 	  : value(val)
 	{}
+	/*!
+	 * \return holded value
+	 */
 	inline const Type&
 	getValue(void) const
 	{
-	  return value;
+	  return this->value;
 	}
+	/*!
+	 * set value
+	 * \param : val : value to be set
+	 */
 	inline void
 	setValue(const Type& val)
 	{
-	  value=val;
+	  this->value=val;
 	}
-  
+      protected:
+	/*!
+	 * value holded
+	 */
+	Type value;
       };
   
     } // end of namespace internals
@@ -75,40 +91,6 @@ namespace tfel{
 	  tfel::utilities::internals::TupleContainer<8,T8>(v8),
 	  tfel::utilities::internals::TupleContainer<9,T9>(v9)
       {}
-
-      /*!
-       * \brief  Return the name of the class.
-       * \param  void.
-       * \return std::string, the name of the class.
-       * \see    Name.
-       */
-      static
-      const std::string 
-      getName(void){
-	using namespace tfel::utilities;
-	std::string name("tuple<");
-	name+=Name<T0>::getName();
-	name+=",";
-	name+=Name<T1>::getName();
-	name+=",";
-	name+=Name<T2>::getName();
-	name+=",";
-	name+=Name<T3>::getName();
-	name+=",";
-	name+=Name<T4>::getName();
-	name+=",";
-	name+=Name<T5>::getName();
-	name+=",";
-	name+=Name<T6>::getName();
-	name+=",";
-	name+=Name<T7>::getName();
-	name+=",";
-	name+=Name<T8>::getName();
-	name+=",";
-	name+=Name<T9>::getName();
-	name+=">";
-	return name;
-      }
 
       template<unsigned short N>
       const typename tfel::meta::EnableIf<
@@ -166,22 +148,6 @@ namespace tfel{
 	: tfel::utilities::internals::TupleContainer<0,T0>(v0)
       {}
 
-      /*!
-       * \brief  Return the name of the class.
-       * \param  void.
-       * \return std::string, the name of the class.
-       * \see    Name.
-       */
-      static
-      std::string 
-      getName(void){
-	using namespace tfel::utilities;
-	std::string name("tuple<");
-	name+=Name<T0>::getName();
-	name+=">";
-	return name;
-      }
-
       template<unsigned short N>
       const typename tfel::meta::EnableIf<
 	N<1,
@@ -232,24 +198,6 @@ namespace tfel{
 	: tfel::utilities::internals::TupleContainer<0,T0>(v0),
 	  tfel::utilities::internals::TupleContainer<1,T1>(v1)
       {}
-
-      /*!
-       * \brief  Return the name of the class.
-       * \param  void.
-       * \return std::string, the name of the class.
-       * \see    Name.
-       */
-      static
-      const std::string 
-      getName(void){
-	using namespace tfel::utilities;
-	std::string name("tuple<");
-	name+=Name<T0>::getName();
-	name+=",";
-	name+=Name<T1>::getName();
-	name+=">";
-	return name;
-      }
 
       template<unsigned short N>
       const typename tfel::meta::EnableIf<
@@ -303,26 +251,6 @@ namespace tfel{
 	  tfel::utilities::internals::TupleContainer<1,T1>(v1),
 	  tfel::utilities::internals::TupleContainer<2,T2>(v2)
       {}
-
-      /*!
-       * \brief  Return the name of the class.
-       * \param  void.
-       * \return std::string, the name of the class.
-       * \see    Name.
-       */
-      static
-      const std::string 
-      getName(void){
-	using namespace tfel::utilities;
-	std::string name("tuple<");
-	name+=Name<T0>::getName();
-	name+=",";
-	name+=Name<T1>::getName();
-	name+=",";
-	name+=Name<T2>::getName();
-	name+=">";
-	return name;
-      }
 
       template<unsigned short N>
       const typename tfel::meta::EnableIf<
@@ -381,28 +309,6 @@ namespace tfel{
 	  tfel::utilities::internals::TupleContainer<3,T3>(v3)
       {}
 
-      /*!
-       * \brief  Return the name of the class.
-       * \param  void.
-       * \return std::string, the name of the class.
-       * \see    Name.
-       */
-      static
-      const std::string 
-      getName(void){
-	using namespace tfel::utilities;
-	std::string name("tuple<");
-	name+=Name<T0>::getName();
-	name+=",";
-	name+=Name<T1>::getName();
-	name+=",";
-	name+=Name<T2>::getName();
-	name+=",";
-	name+=Name<T3>::getName();
-	name+=">";
-	return name;
-      }
-
       template<unsigned short N>
       const typename tfel::meta::EnableIf<
 	N<4,
@@ -460,30 +366,6 @@ namespace tfel{
 	  tfel::utilities::internals::TupleContainer<3,T3>(v3),
 	  tfel::utilities::internals::TupleContainer<4,T4>(v4)
       {}
-
-      /*!
-       * \brief  Return the name of the class.
-       * \param  void.
-       * \return std::string, the name of the class.
-       * \see    Name.
-       */
-      static
-      const std::string 
-      getName(void){
-	using namespace tfel::utilities;
-	std::string name("tuple<");
-	name+=Name<T0>::getName();
-	name+=",";
-	name+=Name<T1>::getName();
-	name+=",";
-	name+=Name<T2>::getName();
-	name+=",";
-	name+=Name<T3>::getName();
-	name+=",";
-	name+=Name<T4>::getName();
-	name+=">";
-	return name;
-      }
 
       template<unsigned short N>
       const typename tfel::meta::EnableIf<
@@ -545,32 +427,6 @@ namespace tfel{
 	  tfel::utilities::internals::TupleContainer<4,T4>(v4),
 	  tfel::utilities::internals::TupleContainer<5,T5>(v5)
       {}
-
-      /*!
-       * \brief  Return the name of the class.
-       * \param  void.
-       * \return std::string, the name of the class.
-       * \see    Name.
-       */
-      static
-      const std::string 
-      getName(void){
-	using namespace tfel::utilities;
-	std::string name("tuple<");
-	name+=Name<T0>::getName();
-	name+=",";
-	name+=Name<T1>::getName();
-	name+=",";
-	name+=Name<T2>::getName();
-	name+=",";
-	name+=Name<T3>::getName();
-	name+=",";
-	name+=Name<T4>::getName();
-	name+=",";
-	name+=Name<T5>::getName();
-	name+=">";
-	return name;
-      }
 
       template<unsigned short N>
       const typename tfel::meta::EnableIf<
@@ -635,34 +491,6 @@ namespace tfel{
 	  tfel::utilities::internals::TupleContainer<6,T6>(v6)
       {}
 
-      /*!
-       * \brief  Return the name of the class.
-       * \param  void.
-       * \return std::string, the name of the class.
-       * \see    Name.
-       */
-      static
-      const std::string 
-      getName(void){
-	using namespace tfel::utilities;
-	std::string name("tuple<");
-	name+=Name<T0>::getName();
-	name+=",";
-	name+=Name<T1>::getName();
-	name+=",";
-	name+=Name<T2>::getName();
-	name+=",";
-	name+=Name<T3>::getName();
-	name+=",";
-	name+=Name<T4>::getName();
-	name+=",";
-	name+=Name<T5>::getName();
-	name+=",";
-	name+=Name<T6>::getName();
-	name+=">";
-	return name;
-      }
-
       template<unsigned short N>
       const typename tfel::meta::EnableIf<
 	N<7,
@@ -726,36 +554,6 @@ namespace tfel{
 	  tfel::utilities::internals::TupleContainer<6,T6>(v6),
 	  tfel::utilities::internals::TupleContainer<7,T7>(v7)
       {}
-
-      /*!
-       * \brief  Return the name of the class.
-       * \param  void.
-       * \return std::string, the name of the class.
-       * \see    Name.
-       */
-      static
-      const std::string 
-      getName(void){
-	using namespace tfel::utilities;
-	std::string name("tuple<");
-	name+=Name<T0>::getName();
-	name+=",";
-	name+=Name<T1>::getName();
-	name+=",";
-	name+=Name<T2>::getName();
-	name+=",";
-	name+=Name<T3>::getName();
-	name+=",";
-	name+=Name<T4>::getName();
-	name+=",";
-	name+=Name<T5>::getName();
-	name+=",";
-	name+=Name<T6>::getName();
-	name+=",";
-	name+=Name<T7>::getName();
-	name+=">";
-	return name;
-      }
 
       template<unsigned short N>
       const typename tfel::meta::EnableIf<
@@ -822,38 +620,6 @@ namespace tfel{
 	  tfel::utilities::internals::TupleContainer<7,T7>(v7),
 	  tfel::utilities::internals::TupleContainer<8,T8>(v8)
       {}
-
-      /*!
-       * \brief  Return the name of the class.
-       * \param  void.
-       * \return std::string, the name of the class.
-       * \see    Name.
-       */
-      static
-      const std::string 
-      getName(void){
-	using namespace tfel::utilities;
-	std::string name("tuple<");
-	name+=Name<T0>::getName();
-	name+=",";
-	name+=Name<T1>::getName();
-	name+=",";
-	name+=Name<T2>::getName();
-	name+=",";
-	name+=Name<T3>::getName();
-	name+=",";
-	name+=Name<T4>::getName();
-	name+=",";
-	name+=Name<T5>::getName();
-	name+=",";
-	name+=Name<T6>::getName();
-	name+=",";
-	name+=Name<T7>::getName();
-	name+=",";
-	name+=Name<T8>::getName();
-	name+=">";
-	return name;
-      }
 
       template<unsigned short N>
       const typename tfel::meta::EnableIf<

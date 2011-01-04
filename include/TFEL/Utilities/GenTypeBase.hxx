@@ -540,48 +540,174 @@ namespace tfel{
       TFEL_STATIC_ASSERT((tfel::meta::TLElementsAreUnique<List>::cond));
     };
 
-    // Declaration of GenTypeBase static member RunTimeMethod
+    //! Declaration of GenTypeBase static member RunTimeMethod
     template<typename List>
     const typename GenTypeBase<List>::RunTimeMethods GenTypeBase<List>::methods;
 
+    /*!
+     * Apply function T::apply to a GenTypeBase for the type holded by the
+     * GenTypeBase.
+     *
+     * \param T    : class containing the function to be applied.
+     * \param List : list of types contained in the GenTypeBase class.
+     * \param v    : GenTypeBase class argument.
+     *
+     * \pre class T must contain a static function name 'apply' for
+     * each type in List.
+     * \pre class T must define 'return_type' as a class or a typedef.
+     *
+     * \throw a GenTypeCastError if the GenTypeBase does not hold any
+     * object.
+     */
     template<typename T,
 	     typename List>
     typename T::return_type
     apply(const GenTypeBase<List>&);
 
+    /*!
+     * Apply functor T to a GenTypeBase for the type holded by the
+     * GenTypeBase.
+     *
+     * \param T    : class containing the function to be applied.
+     * \param List : list of types contained in the GenTypeBase class.
+     * \param f    : functor.
+     * \param v    : GenTypeBase class argument.
+     *
+     * \pre class T must contain the opertor () for each type in List.
+     * \pre class T must define 'return_type' as a class or a typedef.
+     *
+     * \throw a GenTypeCastError if the GenTypeBase does not hold any
+     * object.
+     */
     template<typename T,
 	     typename List>
     typename T::return_type
     apply(T&,const GenTypeBase<List>&);
 
+    /*!
+     * Apply function T::apply to a GenTypeBase for the types holded
+     * by the two GenTypeBase.
+     *
+     * \param T    : class containing the function to be applied.
+     * \param List : list of types contained in the GenTypeBase class.
+     * \param v1   : GenTypeBase class argument.
+     * \param v2   : GenTypeBase class argument.
+     *
+     * \pre class T must contain a static function name 'apply' for
+     * each pair of types in List.
+     * \pre class T must define 'return_type' as a class or a typedef.
+     *
+     * \throw a GenTypeCastError if one of the GenTypeBase does not
+     * hold any object.
+     */
     template<typename T,
 	     typename List>
     typename T::return_type
     apply(const GenTypeBase<List>&,
 	  const GenTypeBase<List>&);
 
+    /*!
+     * Apply functor T to a GenTypeBase for the types holded by the
+     * two GenTypeBase.
+     *
+     * \param T    : class containing the function to be applied.
+     * \param List : list of types contained in the GenTypeBase class.
+     * \param f    : functor.
+     * \param v1   : GenTypeBase class argument.
+     * \param v2   : GenTypeBase class argument.
+     *
+     * \pre class T must contain the opertor () for each pair of types
+     * in List.
+     * \pre class T must define 'return_type' as a class or a typedef.
+     *
+     * \throw a GenTypeCastError if the GenTypeBase does not hold any
+     * object.
+     */
     template<typename T,
 	     typename List>
     typename T::return_type
     apply(T&,const GenTypeBase<List>&,
 	  const GenTypeBase<List>&);
 
+    /*!
+     * Apply function T::apply to a GenTypeBase for the type holded by the
+     * GenTypeBase.
+     *
+     * \param T    : class containing the function to be applied.
+     * \param List : list of types contained in the GenTypeBase class.
+     * \param v    : GenTypeBase class argument.
+     *
+     * \pre class T must contain a static function name 'apply' for
+     * each type in List.
+     * \pre class T must define 'return_type' as a class or a typedef.
+     *
+     * \throw a GenTypeCastError if the GenTypeBase does not hold any
+     * object.
+     */
     template<typename T,
 	     typename List>
     typename T::return_type
-    apply(const GenTypeBase<List>&);
+    apply(GenTypeBase<List>&);
 
+    /*!
+     * Apply functor T to a GenTypeBase for the type holded by the
+     * GenTypeBase.
+     *
+     * \param T    : class containing the function to be applied.
+     * \param List : list of types contained in the GenTypeBase class.
+     * \param f    : functor.
+     * \param v    : GenTypeBase class argument.
+     *
+     * \pre class T must contain the opertor () for each type in List.
+     * \pre class T must define 'return_type' as a class or a typedef.
+     *
+     * \throw a GenTypeCastError if the GenTypeBase does not hold any
+     * object.
+     */
     template<typename T,
 	     typename List>
     typename T::return_type
     apply(T&,GenTypeBase<List>&);
 
+    /*!
+     * Apply function T::apply to a GenTypeBase for the types holded
+     * by the two GenTypeBase.
+     *
+     * \param T    : class containing the function to be applied.
+     * \param List : list of types contained in the GenTypeBase class.
+     * \param v1   : GenTypeBase class argument.
+     * \param v2   : GenTypeBase class argument.
+     *
+     * \pre class T must contain a static function name 'apply' for
+     * each pair of types in List.
+     * \pre class T must define 'return_type' as a class or a typedef.
+     *
+     * \throw a GenTypeCastError if one of the GenTypeBase does not
+     * hold any object.
+     */
     template<typename T,
 	     typename List>
     typename T::return_type
     apply(GenTypeBase<List>&,
 	  GenTypeBase<List>&);
 
+    /*!
+     * Apply functor T to a GenTypeBase for the types holded by the
+     * two GenTypeBase.
+     *
+     * \param T    : class containing the function to be applied.
+     * \param List : list of types contained in the GenTypeBase class.
+     * \param f    : functor.
+     * \param v1   : GenTypeBase class argument.
+     * \param v2   : GenTypeBase class argument.
+     *
+     * \pre class T must contain the opertor () for each pair of types
+     * in List.
+     * \pre class T must define 'return_type' as a class or a typedef.
+     *
+     * \throw a GenTypeCastError if the GenTypeBase does not hold any
+     * object.
+     */
     template<typename T,
 	     typename List>
     typename T::return_type

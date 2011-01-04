@@ -19,27 +19,57 @@
 
 #include"TFEL/Utilities/Tuple.hxx"
 
-int main(void)
+#include"TFEL/Tests/TestCase.hxx"
+#include"TFEL/Tests/TestProxy.hxx"
+#include"TFEL/Tests/TestManager.hxx"
+
+struct TupleTest
+  : public tfel::tests::TestCase
 {
+  TupleTest()
+     : tfel::tests::TestCase("TupleTest")
+  {} // end of MyTest
+  tfel::tests::TestResult
+  execute()
+  {
   using namespace std;
   using namespace tfel::utilities;
 
   tuple<double,string> t(12.,"toto");
   tuple<double,string> t2;
 
-  assert(abs(t.get<0>()-12.)<1.e-14);
-  assert(t.get<1>()=="toto");
+  TFEL_TESTS_ASSERT(abs(t.get<0>()-12.)<1.e-14);
+  TFEL_TESTS_CHECK_EQUAL(t.get<1>(),"toto");
   
   t.set<0>(13.);
   t.set<1>("tata");
 
-  assert(abs(t.get<0>()-13.)<1.e-14);
-  assert(t.get<1>()=="tata");
+  TFEL_TESTS_ASSERT(abs(t.get<0>()-13.)<1.e-14);
+  TFEL_TESTS_CHECK_EQUAL(t.get<1>(),"tata");
 
   t2=makeTuple(123.,std::string("titi"));
-  assert(abs(t2.get<0>()-123.)<1.e-14);
-  assert(t2.get<1>()=="titi");
-  assert((tuple<double,string>::getName()=="tuple<double,std::string>"));
+  TFEL_TESTS_ASSERT(abs(t2.get<0>()-123.)<1.e-14);
+  TFEL_TESTS_CHECK_EQUAL(t2.get<1>(),"titi");
+  
+  return this->result;
+  } // end of execute()
+};
 
+TFEL_TESTS_GENERATE_PROXY(TupleTest,"Tuple");
+
+int main(void)
+{
+  using namespace std;
+  using namespace std;
+
+  using namespace tfel::tests;
+  using namespace tfel::utilities;
+  TestManager& manager = TestManager::getTestManager();
+  manager.addTestOutput(cout);
+  TestResult r = manager.execute();
+  if(!r.success()){
+    return EXIT_FAILURE;
+  }
   return EXIT_SUCCESS;
+
 }

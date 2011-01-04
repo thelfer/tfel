@@ -17,6 +17,10 @@
 
 #include"TFEL/Utilities/GenTypeBase.hxx"
 
+#include"TFEL/Tests/TestCase.hxx"
+#include"TFEL/Tests/TestProxy.hxx"
+#include"TFEL/Tests/TestManager.hxx"
+
 struct my_function
 {
   typedef int return_type;
@@ -51,27 +55,56 @@ struct my_function2
   }
 };
 
+
+struct GenTypeTest2
+  : public tfel::tests::TestCase
+{
+  GenTypeTest2()
+    : tfel::tests::TestCase("GenTypeTest2")
+  {} // end of GenTypeTest2
+  tfel::tests::TestResult
+  execute()
+  {
+    using namespace std;
+    using namespace tfel::meta;
+    using namespace tfel::utilities;
+    
+    typedef GenerateTypeList<int,string>::type HoldedTypes;
+    typedef GenTypeBase<HoldedTypes> MyGenType;
+    
+    MyGenType g;
+    MyGenType g2;
+    MyGenType g3;
+    MyGenType g4;
+    g = 21;
+    g2 = string("s1");
+    g3 = 3;
+    
+    TFEL_TESTS_CHECK_EQUAL(apply<my_function>(g),42);
+    TFEL_TESTS_CHECK_EQUAL(apply<my_function>(g2),0);
+    TFEL_TESTS_CHECK_EQUAL(apply<my_function2>(g,g2),0);
+    TFEL_TESTS_CHECK_EQUAL(apply<my_function2>(g,g3),63);
+    
+    return this->result;
+  } // end of execute()
+};
+
+TFEL_TESTS_GENERATE_PROXY(GenTypeTest2,"GenType");
+
 int main(void)
 {
   using namespace std;
-  using namespace tfel::meta;
+  using namespace std;
+
+  using namespace tfel::tests;
   using namespace tfel::utilities;
-
-  typedef GenerateTypeList<int,string>::type HoldedTypes;
-  typedef GenTypeBase<HoldedTypes> MyGenType;
-  
-  MyGenType g;
-  MyGenType g2;
-  MyGenType g3;
-  MyGenType g4;
-  g = 21;
-  g2 = string("toto");
-  g3 = 3;
-
-  assert(apply<my_function>(g)==42);
-  assert(apply<my_function>(g2)==0);
-  assert(apply<my_function2>(g,g2)==0);
-  assert(apply<my_function2>(g,g3)==63);
-
+  TestManager& manager = TestManager::getTestManager();
+  manager.addTestOutput(cout);
+  TestResult r = manager.execute();
+  if(!r.success()){
+    return EXIT_FAILURE;
+  }
   return EXIT_SUCCESS;
+
 }
+

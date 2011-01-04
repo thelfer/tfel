@@ -1,5 +1,5 @@
 /*!
- * \file   gentype.cxx
+ * \File   gentype.cxx
  * \brief  This file tests some functionalities of the GenType class.
  * \author Helfer Thomas
  * \date   23 Apr 2007
@@ -17,55 +17,79 @@
 
 #include"TFEL/Utilities/GenTypeBase.hxx"
 
+#include"TFEL/Tests/TestCase.hxx"
+#include"TFEL/Tests/TestProxy.hxx"
+#include"TFEL/Tests/TestManager.hxx"
+
+struct GenTypeTest
+  : public tfel::tests::TestCase
+{
+  GenTypeTest()
+    : tfel::tests::TestCase("GenTypeTest")
+  {} // end of MyTest
+  tfel::tests::TestResult
+  execute()
+  {
+    using namespace std;
+    using namespace tfel::meta;
+    using namespace tfel::utilities;
+  
+    typedef GenerateTypeList<int,string>::type HoldedTypes;
+    typedef GenTypeBase<HoldedTypes> MyGenType;
+
+    MyGenType test;
+    MyGenType test2(string("string1"));
+    MyGenType test3(test2);
+
+    test = string("string2");
+    TFEL_TESTS_ASSERT(test.is<string>());
+    TFEL_TESTS_CHECK_EQUAL(test.get<string>(),"string2");
+    TFEL_TESTS_CHECK_EQUAL(static_cast<const string&>(test),"string2");
+    TFEL_TESTS_CHECK_EQUAL(test.getString(),"string2");
+
+    test2 = string("string1");
+    TFEL_TESTS_ASSERT(test2.is<string>());
+    TFEL_TESTS_CHECK_EQUAL(test2.get<string>(),"string1");
+    TFEL_TESTS_CHECK_EQUAL(static_cast<const string&>(test2),"string1");
+    TFEL_TESTS_CHECK_EQUAL(test2.getString(),"string1");
+
+    test3 = string("string1");
+    TFEL_TESTS_ASSERT(test3.is<string>());
+    TFEL_TESTS_CHECK_EQUAL(test3.get<string>(),"string1");
+    TFEL_TESTS_CHECK_EQUAL(static_cast<const string&>(test3),"string1");
+    TFEL_TESTS_CHECK_EQUAL(test3.getString(),"string1");
+
+    test.set(12);
+    TFEL_TESTS_ASSERT(test.is<int>());
+    TFEL_TESTS_CHECK_EQUAL(test.get<int>(),12);
+    TFEL_TESTS_CHECK_EQUAL(static_cast<const int&>(test.get<int>()),12);
+    TFEL_TESTS_CHECK_EQUAL(test.getInt(),12);
+
+    test2 = test;
+    TFEL_TESTS_ASSERT(test2.is<int>());
+    TFEL_TESTS_CHECK_EQUAL(test2.get<int>(),12);
+    TFEL_TESTS_CHECK_EQUAL(static_cast<const int&>(test2.get<int>()),12);
+    TFEL_TESTS_CHECK_EQUAL(test2.getInt(),12);
+
+    return this->result;
+  } // end of execute()
+};
+
+TFEL_TESTS_GENERATE_PROXY(GenTypeTest,"GenType");
+
 int main(void)
 {
   using namespace std;
-  using namespace tfel::meta;
+  using namespace std;
+
+  using namespace tfel::tests;
   using namespace tfel::utilities;
-  
-  typedef GenerateTypeList<int,string>::type HoldedTypes;
-  typedef GenTypeBase<HoldedTypes> MyGenType;
-
-  MyGenType test;
-  MyGenType test2(string("toto"));
-  MyGenType test3(test2);
-
-  test = string("tata");
-  assert(test.is<string>());
-  assert(test.get<string>()=="tata");
-  assert(static_cast<const string&>(test)=="tata");
-  assert(test.getString()=="tata");
-
-  test2 = string("toto");
-  assert(test2.is<string>());
-  assert(test2.get<string>()=="toto");
-  assert(static_cast<const string&>(test2)=="toto");
-  assert(test2.getString()=="toto");
-
-  test3 = string("toto");
-  assert(test3.is<string>());
-  assert(test3.get<string>()=="toto");
-  assert(static_cast<const string&>(test3)=="toto");
-  assert(test3.getString()=="toto");
-
-  test.set(12);
-  assert(test.is<int>());
-  assert(test.get<int>()==12);
-  assert(static_cast<const int&>(test.get<int>())==12);
-  assert(test.getInt()==12);
-
-  test2 = test;
-  assert(test2.is<int>());
-  assert(test2.get<int>()==12);
-  assert(static_cast<const int&>(test2.get<int>())==12);
-  assert(test2.getInt()==12);
-
-#ifdef TFEL_VERBOSE
-  cout << "sizeof(GenType)         : " << sizeof(MyGenType) << endl;
-  cout << "sizeof(int)             : " << sizeof(int) << endl;
-  cout << "sizeof(string)          : " << sizeof(string) << endl;
-  cout << "sizeof(unsigned short)  : " << sizeof(unsigned short) << endl;
-#endif /* TFEL_VERBOSE */
-
+  TestManager& manager = TestManager::getTestManager();
+  manager.addTestOutput(cout);
+  TestResult r = manager.execute();
+  if(!r.success()){
+    return EXIT_FAILURE;
+  }
   return EXIT_SUCCESS;
+
 }

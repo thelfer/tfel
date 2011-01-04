@@ -77,8 +77,10 @@ namespace tfel
       out += "Result of test '";
       out += n;
       out += "' ";
-      if(out.size()<60){
-	out.resize(60,' ');
+      if(out.size()<65){
+	out.resize(65,' ');
+      } else {
+	out = out.substr(0,65);
       }
       if(r.success()){
 	this->os << out << ": SUCCESS" << endl;
@@ -107,8 +109,10 @@ namespace tfel
       TestResult::const_iterator p;
       string out(s);
       out += r.details();
-      if(out.size()<60){
-	out.resize(60,' ');
+      if(out.size()<65){
+	out.resize(65,' ');
+      } else {
+	out = out.substr(0,65);
       }
       if(r.success()){
 	this->os << out << ": SUCCESS" << endl;
@@ -135,8 +139,10 @@ namespace tfel
       const char red[5]   = {033,'[','3','1','m'};
       const char reset[4] = {033,'[','0','m'};
       string out("End of Test Suite ");
-      if(out.size()<60){
-	out.resize(60,' ');
+      if(out.size()<65){
+	out.resize(65,' ');
+      } else {
+	out = out.substr(0,65);
       }
       this->os << out << ": ";
       if(r.success()){
