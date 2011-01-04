@@ -15,7 +15,6 @@
 
 #include"TFEL/Utilities/IntegersSet.hxx"
 
-
 #include"TFEL/Tests/TestCase.hxx"
 #include"TFEL/Tests/TestProxy.hxx"
 #include"TFEL/Tests/TestManager.hxx"

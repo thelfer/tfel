@@ -22,6 +22,7 @@ LDADD = -lTFELUtilities -lTFELException  \
 
 gentype_SOURCES        = gentype.cxx
 gentype2_SOURCES       = gentype2.cxx
+gentype3_SOURCES       = gentype3.cxx
 tuple_SOURCES          = tuple.cxx
 Name_SOURCES	       = Name.cxx
 Name2_SOURCES	       = Name2.cxx
