@@ -5,8 +5,8 @@
  * \date   december 2005
  */
 
-#ifndef _LIB_TFEL_SMARTPTR_HPP_
-#define _LIB_TFEL_SMARTPTR_HPP_
+#ifndef _LIB_TFEL_UTILITIES_SMARTPTR_HPP_
+#define _LIB_TFEL_UTILITIES_SMARTPTR_HPP_
 
 #include<string>
 #include<cassert>
@@ -247,7 +247,7 @@ namespace tfel{
        *  \brief   méthode chargée de décrémenter le compteur de référence
        *  
        *  Cette méthode est chargée de décrémenter le compteur de
-       *  référence \c i et de désallouer la mémoire si celui-ci est nul.
+       *  référence i et de désallouer la mémoire si celui-ci est nul.
        */
       TFEL_INLINE void decreaseCounter(void) throw() {
 	if(this->i!=0){
@@ -264,9 +264,15 @@ namespace tfel{
 
 #endif /* TFEL_HAVE_BOOST */
 
+    /*!
+     * A small metafunction which returns the shared_ptr class
+     * associated with the given type
+     * \param T : type to be transformed
+     */
     template<typename T>
     struct PtrType
     {
+      //! the result
       typedef shared_ptr<T> type;
     }; // end of struct PtrType
 
@@ -274,4 +280,4 @@ namespace tfel{
 
 } // end of namespace tfel
 
-#endif	    /* !SMARTPTR_HPP_ */
+#endif /* _LIB_TFEL_UTILITIES_SMARTPTR_HPP_ */

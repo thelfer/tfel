@@ -84,10 +84,10 @@ namespace tfel{
        * \return const std::string.
        * \see Name
        */
-      static
-      const std::string 
+      static std::string 
       getName(void){
-	return std::string("IntegerSet<")+Name<IntegerType>::getName()+std::string(">");
+	using namespace std;
+	return string("IntegerSet<")+Name<IntegerType>::getName()+string(">");
       }
 
       /*!

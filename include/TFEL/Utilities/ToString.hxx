@@ -21,12 +21,12 @@ namespace tfel{
      *
      * \param  T, type of the objects to be converted.
      * \param  src, object to be converted.
-     * \return const std::string.
+     * \return the string representation of the object.
      *
      * \pre T.operator<<() must be defined.
      */
     template<typename T>
-    const std::string
+    std::string
     ToString(const T&);
 
   } // end of namespace utilities

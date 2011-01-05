@@ -398,7 +398,11 @@ namespace tfel
     TFEL_UTILITIES_NAME(tfel::math::Complex<double>);
     TFEL_UTILITIES_NAME(tfel::math::Complex<long double>);
     TFEL_UTILITIES_NAME(std::string);
-    
+
+    /*!
+     * return the class name of an object
+     * \param T : object class
+     */
     template<typename T>
     std::string
     name(const T&)

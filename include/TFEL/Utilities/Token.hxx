@@ -5,8 +5,8 @@
  * \date   20 Nov 2006
  */
 
-#ifndef _LIB_TFEL_TOKEN_H_
-#define _LIB_TFEL_TOKEN_H_ 
+#ifndef _LIB_TFEL_UTILITIES_TOKEN_H_
+#define _LIB_TFEL_UTILITIES_TOKEN_H_ 
 
 #include<string>
 
@@ -17,22 +17,50 @@ namespace tfel{
 
   namespace utilities{
 
+    /*!
+     * \brief class representing a token in a C++-like file
+     */
     struct TFEL_VISIBILITY_EXPORT Token
     {
 
+      //! possible type of the token
       enum TokenFlag{Standard,Comment,String,Char,Preprocessor};
 
+      //! line number
       unsigned short line;
+      //! string holded by the token
       std::string value;
+      //! type of the token
       TokenFlag flag;
 
+      /*!
+       * \brief default constructor
+       */
       Token();
 
-      Token(const unsigned short,const std::string&,const TokenFlag = Standard);
+      /*!
+       * \brief constructor
+       * \param line_  : line number
+       * \param token_ : token value
+       * \param flag_  : token type
+       */
+      Token(const unsigned short,
+	    const std::string&,
+	    const TokenFlag = Standard);
 
+      /*!
+       * \brief copy constructor
+       * \param src : token to be copied
+       */
       Token(const Token&);
 
-      Token& operator=(const Token&);
+      /*!
+       * \brief assignement operator
+       * \param src : token to be assigned
+       * \return this token
+       */
+      Token&
+      operator=(const Token&);
 
     }; // end of struct Token
 
@@ -40,5 +68,5 @@ namespace tfel{
 
 } // end of namespace tfel
 
-#endif /* _LIB_TFEL_TOKEN_H */
+#endif /* _LIB_TFEL_UTILITIES_TOKEN_H */
 

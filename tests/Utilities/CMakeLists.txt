@@ -1,5 +1,6 @@
 include_directories("${PROJECT_SOURCE_DIR}/include")
 link_directories("${PROJECT_BINARY_DIR}/src/Utilities")
+link_directories("${PROJECT_BINARY_DIR}/src/Tests")
 
 # a simple macro
 macro(tests_utilities test_arg)
@@ -12,6 +13,7 @@ macro(tests_utilities test_arg)
     add_test(${test_arg} ${EXECUTABLE_OUTPUT_PATH}/${test_arg})
   endif (${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION} GREATER 2.6)
   target_link_libraries(${test_arg} TFELUtilities)
+  target_link_libraries(${test_arg} TFELTests)
 endmacro(tests_utilities)
 
 tests_utilities(gentype)

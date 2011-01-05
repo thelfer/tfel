@@ -14,7 +14,7 @@ namespace tfel{
   namespace utilities{
 
     template<typename T>
-    const std::string
+    std::string
     ToString(const T& src)
     {
       std::ostringstream os;
