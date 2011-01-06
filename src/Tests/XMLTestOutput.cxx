@@ -49,12 +49,14 @@ namespace tfel
       } else {
 	this->os << "<failure>" << endl;
       }
+      this->os << "<![CDATA[" << endl;
       if(!r.details().empty()){
 	this->os << r.details() << endl;
       }
       for(p=r.begin();p!=r.end();++p){
 	this->treatTest(*p,"* ");
       }
+      this->os << "]]>" << endl;
       if(r.success()){
 	this->os << "</success>" << endl;
       } else {
