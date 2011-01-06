@@ -43,11 +43,7 @@ namespace tfel
     {
       using namespace std;
       TestResult::const_iterator p;
-      if(!g.empty()){
-	this->os << "<testcase className=\"" << g << "\" name=\""+n+"\">" << endl;
-      } else {
-	this->os << "<testcase name=\""+n+"\">" << endl;
-      }
+      this->os << "<testcase classname=\"" << g << "\" name=\""+n+"\">" << endl;
       if(r.success()){
 	this->os << "<success>" << endl;
       } else {
