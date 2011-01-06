@@ -6,6 +6,7 @@ tfel_library(TFELTests
              TestSuite.cxx
              TestOutput.cxx
              StdStreamTestOutput.cxx
+             XMLTestOutput.cxx
              MultipleTestOutputs.cxx
              TestManager.cxx
              TestCase.cxx)

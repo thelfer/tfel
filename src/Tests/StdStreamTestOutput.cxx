@@ -66,7 +66,8 @@ namespace tfel
     } // end of StdStreamTestOutput::beginTestSuite
 
     void
-    StdStreamTestOutput::addTest(const std::string& n,
+    StdStreamTestOutput::addTest(const std::string& g,
+				 const std::string& n,
 				 const TestResult& r)
     {
       using namespace std;
@@ -77,6 +78,9 @@ namespace tfel
       out += "Result of test '";
       out += n;
       out += "' ";
+      if(!g.empty()){
+	out += "of group '"+g+"' ";
+      }
       if(out.size()<65){
 	out.resize(65,' ');
       } else {

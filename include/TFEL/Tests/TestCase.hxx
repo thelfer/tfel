@@ -128,12 +128,20 @@ namespace tfel
        */
       virtual std::string
       name(void) const;
+      /*! 
+       * return the group of the test
+       * \return the group of the test
+       */
+      virtual std::string
+      classname(void) const;
     protected:
       /*!
        * Constructor
-       * \param n : name of the test
+       * \param g : group of the test
+       * \param n : name  of the test
        */
-      TestCase(const std::string&);
+      TestCase(const std::string&,
+	       const std::string&);
       /*!
        * Destructor
        */
@@ -162,7 +170,9 @@ namespace tfel
       //! result of the test
       TestResult result;
     private:
-      //! name of test
+      //! group of the test
+      const std::string gname;
+      //! name of the test
       const std::string tname;
     }; // end of struct TestCase
     

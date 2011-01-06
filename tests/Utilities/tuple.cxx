@@ -27,7 +27,7 @@ struct TupleTest
   : public tfel::tests::TestCase
 {
   TupleTest()
-     : tfel::tests::TestCase("TupleTest")
+     : tfel::tests::TestCase("TFEL/Utilities","TupleTest")
   {} // end of MyTest
   tfel::tests::TestResult
   execute()
@@ -66,6 +66,7 @@ int main(void)
   using namespace tfel::utilities;
   TestManager& manager = TestManager::getTestManager();
   manager.addTestOutput(cout);
+  manager.addXMLTestOutput("tuple.xml");
   TestResult r = manager.execute();
   if(!r.success()){
     return EXIT_FAILURE;

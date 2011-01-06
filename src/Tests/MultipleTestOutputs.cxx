@@ -36,13 +36,14 @@ namespace tfel
     } // end of MultipleTestOutputs::beginTestSuite
 
     void
-    MultipleTestOutputs::addTest(const std::string& n,
+    MultipleTestOutputs::addTest(const std::string& g,
+				 const std::string& n,
 				 const TestResult& r)
     {
       using namespace std;
       vector<TestOutputPtr>::iterator p;
       for(p=this->outputs.begin();p!=this->outputs.end();++p){
-	(*p)->addTest(n,r);
+	(*p)->addTest(g,n,r);
       }
     } // end of MultipleTestOutputs::addTest
      

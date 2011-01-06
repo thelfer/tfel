@@ -95,6 +95,7 @@ int main(void)
   //  typedef TestFunctionWrapper<test2> Wrapper2;
   TestManager& manager = TestManager::getTestManager();
   manager.addTestOutput(cout);
+  manager.addXMLTestOutput("lu.xml");
   manager.addTest("LUSolve",shared_ptr<Test>(new Wrapper1("LUSolveTest<long double>")));
   manager.addTest("LUSolve",shared_ptr<Test>(new Wrapper2("LUSolveTest<double>")));
   manager.addTest("LUSolve",shared_ptr<Test>(new Wrapper3("LUSolveTest<float>")));

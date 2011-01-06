@@ -7,6 +7,7 @@ libTFELTests_la_SOURCES =   Test.cxx                 \
 			    TestSuite.cxx	     \
 			    TestOutput.cxx	     \
 			    StdStreamTestOutput.cxx  \
+			    XMLTestOutput.cxx        \
 			    MultipleTestOutputs.cxx  \
 			    TestManager.cxx	     \
 			    TestCase.cxx

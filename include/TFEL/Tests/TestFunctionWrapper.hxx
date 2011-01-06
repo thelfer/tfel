@@ -28,25 +28,29 @@ namespace tfel
      : public Test
    {
      /*!
-      * Default constructor
-      */
-     TestFunctionWrapper();
-     /*!
       * Constructor
-      * \param n : name of the function
+      * \param g : group of the test
+      * \param n : name  of the function
       */
-     TestFunctionWrapper(const std::string&);
+     TestFunctionWrapper(const std::string&,
+			 const std::string&);
      /*!
       * Constructor
       * \param n : name of the function
       */
      TestFunctionWrapper(const char* const);
      /*! 
-      * return the name of the test function (if specified)
+      * return the name of the test function
       * \return the name of the test function
       */
      std::string
      name() const;
+     /*! 
+      * return the name of the test function
+      * \return the name of the test function
+      */
+     std::string
+     classname() const;
      /*! 
       * execute test
       * \return the results of the test
@@ -70,7 +74,9 @@ namespace tfel
       */
      TestFunctionWrapper&
      operator=(const TestFunctionWrapper&);
-     //! name of function (may be empty)
+     //! name of test group
+     const std::string gname;
+     //! name of function
      const std::string fname;
    }; // end of struct TestFunctionWrapper
     

@@ -9,6 +9,7 @@
 #include<stdexcept>
 
 #include"TFEL/Tests/TestManager.hxx"
+#include"TFEL/Tests/XMLTestOutput.hxx"
 #include"TFEL/Tests/StdStreamTestOutput.hxx"
 
 namespace tfel
@@ -72,6 +73,14 @@ namespace tfel
     {
       using namespace std;
       TestOutputPtr o(new StdStreamTestOutput(f));
+      this->addTestOutput(o);
+    } // end of TestManager::addTestOutput
+
+    void
+    TestManager::addXMLTestOutput(const std::string& f)
+    {
+      using namespace std;
+      TestOutputPtr o(new XMLTestOutput(f));
       this->addTestOutput(o);
     } // end of TestManager::addTestOutput
 

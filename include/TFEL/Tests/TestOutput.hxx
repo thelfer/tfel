@@ -28,21 +28,23 @@ namespace tfel
        * \param n : name of the test suite
        */
       virtual void
-      beginTestSuite(const std::string& n) = 0;
+      beginTestSuite(const std::string&) = 0;
       /*!
        *  Add a new test
+       * \param n : group  of the test
        * \param n : name   of the test
        * \param r : result of the test
        */
       virtual void
-      addTest(const std::string& n,
-	      const TestResult&  r) = 0;
+      addTest(const std::string&,
+	      const std::string&,
+	      const TestResult&) = 0;
       /*!
        * End a test suite
        * \param r : (global) result of the test suite
        */
       virtual void
-      endTestSuite(const TestResult& r) = 0;
+      endTestSuite(const TestResult&) = 0;
       /*!
        * Destructor
        */

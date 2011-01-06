@@ -13,9 +13,17 @@ namespace tfel
   namespace tests
   {
     
-    TestCase::TestCase(const std::string& n)
-      : tname(n)
+    TestCase::TestCase(const std::string& g,
+		       const std::string& n)
+      : gname(g),
+	tname(n)
     {} // end of TestCase::~TestCase
+
+    std::string
+    TestCase::classname(void) const
+    {
+      return this->gname;
+    } // end of TestCase::classname
 
     std::string
     TestCase::name(void) const

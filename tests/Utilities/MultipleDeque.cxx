@@ -18,7 +18,7 @@ struct MultipleDequeTest
   : public tfel::tests::TestCase
 {
   MultipleDequeTest()
-    : tfel::tests::TestCase("MultipleDequeTest")
+    : tfel::tests::TestCase("TFEL/Utilities","MultipleDequeTest")
   {} // end of MultipleDequeTest
   tfel::tests::TestResult
   execute()
@@ -86,6 +86,7 @@ int main(void)
   using namespace tfel::utilities;
   TestManager& manager = TestManager::getTestManager();
   manager.addTestOutput(cout);
+  manager.addXMLTestOutput("MultipleDeque.xml");
   TestResult r = manager.execute();
   if(!r.success()){
     return EXIT_FAILURE;

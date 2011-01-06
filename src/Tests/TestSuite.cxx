@@ -90,7 +90,7 @@ namespace tfel
 	    success = false;
 	  }
   	  r.append(r1);
-	  o.addTest((*p)->name(),r1);
+	  o.addTest((*p)->classname(),(*p)->name(),r1);
 	} catch(exception& e){
 	  string msg("test '"+(*p)->name());
 	  msg += "' has thrown an exception (";
@@ -98,14 +98,14 @@ namespace tfel
 	  msg += ")";
 	  const TestResult res(false,msg);
 	  r.append(res);
-	  o.addTest((*p)->name(),res);
+	  o.addTest((*p)->classname(),(*p)->name(),res);
 	  success = false;
 	} catch(...){
 	  string msg("test '"+(*p)->name());
 	  msg += "' has thrown an unknown exception";
 	  const TestResult res(false,msg);
 	  r.append(res);
-	  o.addTest((*p)->name(),res);
+	  o.addTest((*p)->classname(),(*p)->name(),res);
 	  success = false;
 	}
       }	

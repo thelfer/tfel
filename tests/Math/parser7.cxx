@@ -50,6 +50,12 @@ struct TestFunction
     return f;
   }
 
+  std::string
+  classname(void) const
+  {
+    return "TFEL/Math";
+  }
+
   tfel::tests::TestResult
   execute(void)
   {
@@ -87,6 +93,7 @@ int main(void)
   using namespace tfel::utilities;
   TestManager& manager = TestManager::getTestManager();
   manager.addTestOutput(cout);
+  manager.addXMLTestOutput("parser7.xml");
   TFEL_MATH_PARSER7_TESTFUNCTION(sin,-1.,1.,0.1);
   TFEL_MATH_PARSER7_TESTFUNCTION(cos,-1.,1.,0.1);
   TFEL_MATH_PARSER7_TESTFUNCTION(tan,-1.,1.,0.1);

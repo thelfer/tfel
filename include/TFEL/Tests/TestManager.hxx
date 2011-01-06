@@ -80,6 +80,12 @@ namespace tfel
       void
       addTestOutput(const std::string&);
       /*!
+       * add a test output to the specified file 
+       * \param f : file name
+       */
+      void
+      addXMLTestOutput(const std::string&);
+      /*!
        * add a test output to the specified test suite
        * \param n : name of the test suite
        * \param o : output to be added
@@ -107,6 +113,7 @@ namespace tfel
 		    const std::string&);
       /*!
        * add a test to the specified test suite
+       * \param g : group of the test
        * \param n : name of the test suite
        * \param t : test to be added
        */

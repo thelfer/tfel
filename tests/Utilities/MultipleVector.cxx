@@ -18,7 +18,7 @@ struct MultipleVectorTest
   : public tfel::tests::TestCase
 {
   MultipleVectorTest()
-    : tfel::tests::TestCase("MultipleVectorTest")
+    : tfel::tests::TestCase("TFEL/Utilities","MultipleVectorTest")
   {} // end of MultipleVectorTest
   tfel::tests::TestResult
   execute()
@@ -89,6 +89,7 @@ int main(void)
   using namespace tfel::utilities;
   TestManager& manager = TestManager::getTestManager();
   manager.addTestOutput(cout);
+  manager.addXMLTestOutput("MultipleVector.xml");
   TestResult r = manager.execute();
   if(!r.success()){
     return EXIT_FAILURE;

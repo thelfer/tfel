@@ -444,6 +444,7 @@ nobase_include_HEADERS= TFEL/FiniteElement/Element/ElementsManager.ixx          
 			TFEL/Utilities/TextData.hxx                                                   \
 			TFEL/Tests/MultipleTestOutputs.hxx					      \
 			TFEL/Tests/StdStreamTestOutput.hxx					      \
+			TFEL/Tests/XMLTestOutput.hxx					              \
 			TFEL/Tests/Test.hxx							      \
 			TFEL/Tests/TestCase.hxx							      \
 			TFEL/Tests/TestFunctionWrapper.hxx					      \

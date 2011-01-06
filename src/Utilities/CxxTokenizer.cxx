@@ -626,27 +626,27 @@ namespace tfel{
     } // end of CxxTokenizer::splitStandardTokens
   
     void
-    CxxTokenizer::openFile(const std::string& fileName)
+    CxxTokenizer::openFile(const std::string& f)
     {
       using namespace std;
 
       this->fileTokens.clear();
 
       string line;
-      fstream file(fileName.c_str());
+      fstream file(f.c_str());
       unsigned short lineNumber;
 
       if(!file){
-	string msg("CxxTokenizer::openFile : unable to open file ");
-	msg+=fileName;
+	string msg("CxxTokenizer::openFile : ");
+	msg += "unable to open file '"+f+"'";
 	throw(runtime_error(msg));
       }
 
       lineNumber=0;
       while(!file.eof()){
 	if(!file.good()){
-	  string msg("CxxTokenizer::openFile : error while reading file ");
-	  msg+=fileName;
+	  string msg("CxxTokenizer::openFile : ");
+	  msg+="error while reading file '"+f+"'";
 	  throw(runtime_error(msg));
 	}
 	getline(file,line);
@@ -667,12 +667,12 @@ namespace tfel{
 	charAsString(false)
     {}
   
-    CxxTokenizer::CxxTokenizer(const std::string& fileName)
+    CxxTokenizer::CxxTokenizer(const std::string& f)
       : cStyleCommentOpened(false),
 	bExtractNumbers(true),
 	charAsString(false)
     {
-      this->openFile(fileName);
+      this->openFile(f);
     }
 
     void
@@ -749,7 +749,7 @@ namespace tfel{
 
     bool
     CxxTokenizer::isValidIdentifier(const std::string& s, 
-				    const bool checkCxxKeywords)
+				    const bool b)
     {
       using namespace std;
       if(s.empty()){
@@ -770,7 +770,7 @@ namespace tfel{
 	}
       }
 
-      if(checkCxxKeywords){
+      if(b){
 	if(isReservedCxxKeywords(s)){
 	  return false;
 	}

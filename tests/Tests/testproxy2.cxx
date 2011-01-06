@@ -19,7 +19,7 @@
 #include"TFEL/Tests/TestManager.hxx"
 #include"TFEL/Tests/TestFunctionWrapper.hxx"
 
-TFEL_TESTS_FUNCTION(test1,"suite1")
+TFEL_TESTS_FUNCTION(test1,"TFEL/Tests","suite1")
 {
   return true;
 }

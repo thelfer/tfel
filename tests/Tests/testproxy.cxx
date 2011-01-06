@@ -25,8 +25,8 @@ test1(void)
   return true;
 }
 
-TFEL_TESTS_GENERATE_PROXY2(tfel::tests::TestFunctionWrapper<test1>,
-			   Test1FunctionWrapper,"suite1");
+TFEL_TESTS_GENERATE_PROXY3(tfel::tests::TestFunctionWrapper<test1>,
+			   Test1FunctionWrapper,"TFEL/Tests","suite1");
 
 int main(void)
 {

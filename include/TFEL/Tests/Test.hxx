@@ -31,6 +31,12 @@ namespace tfel
       virtual std::string
       name(void) const = 0;
       /*! 
+       * return the group of the test
+       * \return the group of the test
+       */
+      virtual std::string
+      classname(void) const = 0;
+      /*! 
        * execute test
        * \return the results of the test
        */

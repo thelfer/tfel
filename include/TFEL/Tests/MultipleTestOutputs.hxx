@@ -48,11 +48,13 @@ namespace tfel
       beginTestSuite(const std::string&);
       /*!
        *  Add a new test
+       * \param g : group  of the test
        * \param n : name   of the test
        * \param r : result of the test
        */
       virtual void
       addTest(const std::string&,
+	      const std::string&,
 	      const TestResult&);
       /*!
        * End a test suite

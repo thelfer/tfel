@@ -60,7 +60,8 @@ struct GenTypeTest2
   : public tfel::tests::TestCase
 {
   GenTypeTest2()
-    : tfel::tests::TestCase("GenTypeTest2")
+    : tfel::tests::TestCase("TFEL/Utilities",
+			    "GenTypeTest2")
   {} // end of GenTypeTest2
   tfel::tests::TestResult
   execute()
@@ -100,6 +101,7 @@ int main(void)
   using namespace tfel::utilities;
   TestManager& manager = TestManager::getTestManager();
   manager.addTestOutput(cout);
+  manager.addXMLTestOutput("gentype2.xml");
   TestResult r = manager.execute();
   if(!r.success()){
     return EXIT_FAILURE;

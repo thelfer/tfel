@@ -86,29 +86,18 @@
   TFEL_TESTS_GENERATE_PROXY2(X,X,Y)
 
 /*!
- * \def TFEL_TESTS_GENERATE_PROXY
- * \brief generate a proxy for class X
- * \param X : class for which the proxy is generated
- * \param Y2 : parameter passed to the class constructor
- * \param Y : test suite to which the test is associated
- * \author Helfer Thomas
- * \date   11 Apr 2010
- */
-#define TFEL_TESTS_GENERATE_PROXY4(X,Y,Y2)	          \
-  TFEL_TESTS_GENERATE_PROXY2(X,X,Y,Y2)
-
-/*!
  * \def TFEL_TESTS_FUNCTION
- * \brief generate a proxy for class X
+ * \brief generate a proxy for function X
  * \param X : test function to be generated
+ * \param G : test group
  * \param Y : test suite to which the test is associated
  * \author Helfer Thomas
  * \date   11 Apr 2010
  */
-#define TFEL_TESTS_FUNCTION(X,Y)				    \
-  bool TFEL_VISIBILITY_LOCAL X(void);	                            \
-  TFEL_TESTS_GENERATE_PROXY3(tfel::tests::TestFunctionWrapper<X>,   \
-                             TFEL_PP_JOIN(X,FunctionWrapper),Y,#X); \
+#define TFEL_TESTS_FUNCTION(X,G,Y)				   \
+  bool TFEL_VISIBILITY_LOCAL X(void);	                           \
+  TFEL_TESTS_GENERATE_PROXY3(tfel::tests::TestFunctionWrapper<X>,  \
+                             TFEL_PP_JOIN(X,FunctionWrapper),G,Y); \
   bool X(void)
 
 namespace tfel

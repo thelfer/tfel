@@ -23,7 +23,7 @@ struct MyTest
   : public tfel::tests::TestCase
 {
   MyTest()
-    : TestCase("MyTest")
+    : TestCase("TFEL/Tests","MyTest")
   {} // end of MyTest
   tfel::tests::TestResult
   execute()

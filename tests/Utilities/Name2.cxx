@@ -36,7 +36,7 @@ struct NameTest2
   : public tfel::tests::TestCase
 {
   NameTest2()
-    : tfel::tests::TestCase("NameTest2")
+    : tfel::tests::TestCase("TFEL/Utilities","NameTest2")
   {} // end of NameTest2
   tfel::tests::TestResult
   execute()
@@ -160,6 +160,7 @@ int main(void)
   using namespace tfel::utilities;
   TestManager& manager = TestManager::getTestManager();
   manager.addTestOutput(cout);
+  manager.addXMLTestOutput("Name2.xml");
   TestResult r = manager.execute();
   if(!r.success()){
     return EXIT_FAILURE;

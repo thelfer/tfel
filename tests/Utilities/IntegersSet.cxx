@@ -23,7 +23,7 @@ struct IntegerSetTest
   : public tfel::tests::TestCase
 {
   IntegerSetTest()
-    : tfel::tests::TestCase("IntegerSetTest")
+    : tfel::tests::TestCase("TFEL/Utilities","IntegerSetTest")
   {} // end of IntegerSetTest
   tfel::tests::TestResult
   execute()
@@ -71,6 +71,7 @@ int main(void)
   using namespace tfel::utilities;
   TestManager& manager = TestManager::getTestManager();
   manager.addTestOutput(cout);
+  manager.addXMLTestOutput("IntegerSet.xml");
   TestResult r = manager.execute();
   if(!r.success()){
     return EXIT_FAILURE;

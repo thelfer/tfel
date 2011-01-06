@@ -20,12 +20,14 @@
 #include"TFEL/Tests/TestCase.hxx"
 #include"TFEL/Tests/TestProxy.hxx"
 #include"TFEL/Tests/TestManager.hxx"
+#include"TFEL/Tests/XMLTestOutput.hxx"
 
 struct GenTypeTest
   : public tfel::tests::TestCase
 {
   GenTypeTest()
-    : tfel::tests::TestCase("GenTypeTest")
+    : tfel::tests::TestCase("TFEL/Utilities",
+			    "GenTypeTest")
   {} // end of MyTest
   tfel::tests::TestResult
   execute()
@@ -86,6 +88,7 @@ int main(void)
   using namespace tfel::utilities;
   TestManager& manager = TestManager::getTestManager();
   manager.addTestOutput(cout);
+  manager.addXMLTestOutput("gentype.xml");
   TestResult r = manager.execute();
   if(!r.success()){
     return EXIT_FAILURE;
