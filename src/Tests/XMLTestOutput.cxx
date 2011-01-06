@@ -26,7 +26,7 @@ namespace tfel
 	msg += "can't open file '"+o+"'";
 	throw(runtime_error(msg));
       }
-      this->os << "<?xml verion=\"1.0\" ?>" << endl;
+      this->os << "<?xml version=\"1.0\" ?>" << endl;
     } // end of XMLTestOutput::XMLTestOutput
     
     void
