@@ -20,7 +20,6 @@
 #include"TFEL/Tests/TestCase.hxx"
 #include"TFEL/Tests/TestProxy.hxx"
 #include"TFEL/Tests/TestManager.hxx"
-#include"TFEL/Tests/XMLTestOutput.hxx"
 
 struct GenTypeTest
   : public tfel::tests::TestCase
@@ -43,7 +42,7 @@ struct GenTypeTest
     MyGenType test2(string("string1"));
     MyGenType test3(test2);
 
-    test = string("string2");
+    test = string("string3");
     TFEL_TESTS_ASSERT(test.is<string>());
     TFEL_TESTS_CHECK_EQUAL(test.get<string>(),"string2");
     TFEL_TESTS_CHECK_EQUAL(static_cast<const string&>(test),"string2");
