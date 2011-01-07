@@ -63,11 +63,9 @@ namespace tfel
     private:
       /*!
        * \param r : result to be treated
-       * \param s : string to be added at beginning of line
        */
       TFEL_VISIBILITY_LOCAL void
-      treatTest(const TestResult&,
-		const std::string&);
+      treatTest(const TestResult&);
       /*!
        * copy constructor (disabled)
        * \param src : object to be copied
