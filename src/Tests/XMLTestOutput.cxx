@@ -111,11 +111,12 @@ namespace tfel
       out += r.details();
       convert_to_xml(out);
       if(r.success()){
-	this->os << out << ": SUCCESS" << endl;
+	this->os << "<test status=\"" << "SUCCESS\">" << endl;
       } else {
-	this->os << out << ": ";
-	this->os << "FAILED" << endl;
+	this->os << "<test status=\"" << "FAILURE\">" << endl;
       }
+      this->os << out << endl;
+      this->os << "</test>" << endl;
       for(p=r.begin();p!=r.end();++p){
 	this->treatTest(*p,s+'*');
       }
