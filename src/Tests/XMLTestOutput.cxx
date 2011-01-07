@@ -110,11 +110,6 @@ namespace tfel
       string out(s);
       out += r.details();
       convert_to_xml(out);
-      if(out.size()<65){
-	out.resize(65,' ');
-      } else {
-	out = out.substr(0,65);
-      }
       if(r.success()){
 	this->os << out << ": SUCCESS" << endl;
       } else {
