@@ -100,9 +100,9 @@ int main(void)
   manager.addTest("TinyMatrixSolve",shared_ptr<Test>(new Wrapper1("TinyMatrixSolveTest<long double>")));
   manager.addTest("TinyMatrixSolve",shared_ptr<Test>(new Wrapper2("TinyMatrixSolveTest<double>")));
   manager.addTest("TinyMatrixSolve",shared_ptr<Test>(new Wrapper3("TinyMatrixSolveTest<float>")));
-  manager.addTest("TinyMatrixSolve - 2",shared_ptr<Test>(new Wrapper4("TinyMatrixSolveTest2<long double>")));
-  manager.addTest("TinyMatrixSolve - 2",shared_ptr<Test>(new Wrapper5("TinyMatrixSolveTest2<double>")));
-  manager.addTest("TinyMatrixSolve - 2",shared_ptr<Test>(new Wrapper6("TinyMatrixSolveTest2<float>")));
+  manager.addTest("TinyMatrixSolve",shared_ptr<Test>(new Wrapper4("TinyMatrixSolveTest2<long double>")));
+  manager.addTest("TinyMatrixSolve",shared_ptr<Test>(new Wrapper5("TinyMatrixSolveTest2<double>")));
+  manager.addTest("TinyMatrixSolve",shared_ptr<Test>(new Wrapper6("TinyMatrixSolveTest2<float>")));
   TestResult r = manager.execute();
   if(!r.success()){
     return EXIT_FAILURE;
