@@ -11,4 +11,7 @@ libTFELTests_la_SOURCES =   Test.cxx                 \
 			    MultipleTestOutputs.cxx  \
 			    TestManager.cxx	     \
 			    TestCase.cxx
+
+libTFELTests_la_LIBADD       = -lrt
+
 EXTRA_DIST = CMakeLists.txt

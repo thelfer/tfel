@@ -10,3 +10,5 @@ tfel_library(TFELTests
              MultipleTestOutputs.cxx
              TestManager.cxx
              TestCase.cxx)
+
+target_link_libraries(TFELTests rt)

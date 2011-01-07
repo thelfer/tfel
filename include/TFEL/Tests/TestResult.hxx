@@ -94,9 +94,20 @@ namespace tfel
        */
       void
       append(const TestResult&);
+      /*!
+       * \brief set test duration
+       * \param d test duration
+       */
+      void setTestDuration(const double);
+      /*!
+       * \return test duration
+       */
+      double duration(void) const;
     private:
       //! detail
       std::string d;
+      //! test duration
+      double test_duration;
       //! success of the test
       bool s;
     }; // end of struct 

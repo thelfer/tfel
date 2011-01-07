@@ -137,6 +137,11 @@ namespace tfel
     protected:
       /*!
        * Constructor
+       * \param n : name  of the test
+       */
+      TestCase(const std::string&);
+      /*!
+       * Constructor
        * \param g : group of the test
        * \param n : name  of the test
        */

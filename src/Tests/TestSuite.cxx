@@ -5,7 +5,7 @@
  * \brief  
  */
 
-#include<iostream>
+#include<stdexcept>
 
 #include"TFEL/Tests/TestSuite.hxx"
 
@@ -50,8 +50,19 @@ namespace tfel
       TestResult r;
       bool success =true;
       for(p=this->tests.begin();p!=tests.end();++p){
+	TestResult r1;
+#ifdef _POSIX_TIMERS
+#if _POSIX_TIMERS != 0
+	timespec start;
+	timespec stop;
+	if (clock_gettime(CLOCK_MONOTONIC,&start) == -1){
+	  throw(runtime_error("TestManager::execute : "
+			      "invalid call to 'clock_gettime'"));
+	}
+#endif
+#endif
 	try{
-	  const TestResult& r1 = (*p)->execute();
+	  r1 = (*p)->execute();
 	  if(!r1.success()){
 	    success = false;
 	  }
@@ -61,16 +72,25 @@ namespace tfel
 	  msg += "' has thrown an exception (";
 	  msg += e.what();
 	  msg += ")";
-	  const TestResult res(false,msg);
-	  r.append(res);
+	  r1 = TestResult(false,msg);
 	  success = false;
 	} catch(...){
 	  string msg("test '"+(*p)->name());
 	  msg += "' has thrown an unknown exception";
-	  const TestResult res(false,msg);
-	  r.append(res);
+	  r1 = TestResult(false,msg);
 	  success = false;
 	}
+#ifdef _POSIX_TIMERS
+#if _POSIX_TIMERS != 0
+	if (clock_gettime(CLOCK_MONOTONIC,&stop) == -1){
+	  throw(runtime_error("TestManager::execute : "
+			      "invalid call to 'clock_gettime'"));
+	}
+	r1.setTestDuration((stop.tv_sec+1.e-9*stop.tv_nsec)-
+			   (start.tv_sec+1.e-9*start.tv_nsec));
+#endif
+#endif
+	r.append(r1);
       }	
       return r;
     } // end of TestSuite::execute
@@ -84,31 +104,48 @@ namespace tfel
       TestResult r;
       bool success =true;
       for(p=this->tests.begin();p!=tests.end();++p){
+	TestResult r1;
+#ifdef _POSIX_TIMERS
+#if _POSIX_TIMERS != 0
+	timespec start;
+	timespec stop;
+	if (clock_gettime(CLOCK_MONOTONIC,&start) == -1){
+	  throw(runtime_error("TestManager::execute : "
+			      "invalid call to 'clock_gettime'"));
+	}
+#endif
+#endif
 	try{
-	  const TestResult& r1 = (*p)->execute();
+	  r1 = (*p)->execute();
 	  if(!r1.success()){
 	    success = false;
 	  }
-  	  r.append(r1);
-	  o.addTest((*p)->classname(),(*p)->name(),r1);
 	} catch(exception& e){
 	  string msg("test '"+(*p)->name());
 	  msg += "' has thrown an exception (";
 	  msg += e.what();
 	  msg += ")";
-	  const TestResult res(false,msg);
-	  r.append(res);
-	  o.addTest((*p)->classname(),(*p)->name(),res);
+	  r1 = TestResult(false,msg);
 	  success = false;
 	} catch(...){
 	  string msg("test '"+(*p)->name());
 	  msg += "' has thrown an unknown exception";
-	  const TestResult res(false,msg);
-	  r.append(res);
-	  o.addTest((*p)->classname(),(*p)->name(),res);
+	  r1 = TestResult(false,msg);
 	  success = false;
 	}
-      }	
+#ifdef _POSIX_TIMERS
+#if _POSIX_TIMERS != 0
+	if (clock_gettime(CLOCK_MONOTONIC,&stop) == -1){
+	  throw(runtime_error("TestManager::execute : "
+			      "invalid call to 'clock_gettime'"));
+	}
+	r1.setTestDuration((stop.tv_sec+1.e-9*stop.tv_nsec)-
+			   (start.tv_sec+1.e-9*start.tv_nsec));
+#endif
+#endif
+	o.addTest((*p)->classname(),(*p)->name(),r1);
+	r.append(r1);
+      }
       o.endTestSuite(TestResult(success));
       return r;
     } // end of TestSuite::execute

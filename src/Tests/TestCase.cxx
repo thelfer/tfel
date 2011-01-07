@@ -13,6 +13,11 @@ namespace tfel
   namespace tests
   {
     
+    TestCase::TestCase(const std::string& n)
+      : gname("UnitTest"),
+	tname(n)
+    {} // end of TestCase::~TestCase
+
     TestCase::TestCase(const std::string& g,
 		       const std::string& n)
       : gname(g),

@@ -8,6 +8,10 @@
 #include<iostream>
 #include<stdexcept>
 
+#include <sys/time.h> 
+#include <unistd.h> 
+#include <time.h>
+
 #include"TFEL/Tests/TestManager.hxx"
 #include"TFEL/Tests/XMLTestOutput.hxx"
 #include"TFEL/Tests/StdStreamTestOutput.hxx"
@@ -129,7 +133,27 @@ namespace tfel
 	  }
 	  output = this->default_outputs;
 	}
+#ifdef _POSIX_TIMERS
+#if _POSIX_TIMERS != 0
+	timespec start;
+	timespec stop;
+	if (clock_gettime(CLOCK_MONOTONIC,&start) == -1){
+	  throw(runtime_error("TestManager::execute : "
+			      "invalid call to 'clock_gettime'"));
+	}
+#endif
+#endif
 	r.append(p->second->execute(*output));
+#ifdef _POSIX_TIMERS
+#if _POSIX_TIMERS != 0
+	if (clock_gettime(CLOCK_MONOTONIC,&stop) == -1){
+	  throw(runtime_error("TestManager::execute : "
+			      "invalid call to 'clock_gettime'"));
+	}
+	r.setTestDuration((stop.tv_sec+1.e-9*stop.tv_nsec)-
+			  (start.tv_sec+1.e-9*start.tv_nsec));
+#endif
+#endif
       }
       return r;
     } // end of TestManager::execute()

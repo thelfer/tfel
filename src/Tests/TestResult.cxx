@@ -15,29 +15,34 @@ namespace tfel
 
     TestResult::TestResult()
       : d(),
+	test_duration(0.),
 	s(true)
     {} // end of TestResult::TestResult
 
     TestResult::TestResult(const bool b)
       : d(),
+	test_duration(0.),
 	s(b)
     {} // end of TestResult::TestResult
 
     TestResult::TestResult(const bool b,
 			   const char * const c)
       : d(c),
+	test_duration(0.),
 	s(b)
     {} // end of TestResult::TestResult
     
     TestResult::TestResult(const bool b,
 			   const std::string& c)
       : d(c),
+	test_duration(0.),
 	s(b)
     {} // end of TestResult::TestResult
     
     TestResult::TestResult(const TestResult& src)
       : std::vector<TestResult>(src),
 	d(src.d),
+	test_duration(src.test_duration),
 	s(src.s)
     {} // end of TestResult::TestResult
 
@@ -48,6 +53,7 @@ namespace tfel
       if(&src!=this){
 	this->d = src.d;
 	this->s = src.s;
+	this->test_duration = src.test_duration;
 	vector<TestResult>::operator=(src);
       }
       return *this;
@@ -88,6 +94,24 @@ namespace tfel
       }
       vector<TestResult>::push_back(r);
     } // end of TestResult::end()
+
+    void
+    TestResult::setTestDuration(const double td)
+    {
+      using namespace std;
+      this->test_duration = td;
+    }
+
+    double
+    TestResult::duration(void) const
+    {
+      double r(this->test_duration);
+      const_iterator p;
+      for(p=this->begin();p!=this->end();++p){
+	r += p->duration();
+      }
+      return r;
+    }
 
     std::ostream&
     operator << (std::ostream& os,const TestResult& r)
