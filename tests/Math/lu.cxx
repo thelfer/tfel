@@ -99,8 +99,8 @@ int main(void)
   manager.addTest("LUSolve",shared_ptr<Test>(new Wrapper1("LUSolveTest<long double>")));
   manager.addTest("LUSolve",shared_ptr<Test>(new Wrapper2("LUSolveTest<double>")));
   manager.addTest("LUSolve",shared_ptr<Test>(new Wrapper3("LUSolveTest<float>")));
-  manager.addTest("LUSolve",shared_ptr<Test>(new Wrapper4("LUSolveTest2<double>")));
-  manager.addTest("LUSolve",shared_ptr<Test>(new Wrapper5("LUSolveTest2<float>")));
+  manager.addTest("LUSolve - 2",shared_ptr<Test>(new Wrapper4("LUSolveTest2<double>")));
+  manager.addTest("LUSolve - 2",shared_ptr<Test>(new Wrapper5("LUSolveTest2<float>")));
   TestResult r = manager.execute();
   if(!r.success()){
     return EXIT_FAILURE;

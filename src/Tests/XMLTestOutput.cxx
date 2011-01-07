@@ -6,8 +6,10 @@
  */
 
 #include<fstream>
-#include<iomanip>
+#include<sstream>
 #include<stdexcept>
+
+#include<iostream>
 
 #include"TFEL/Tests/XMLTestOutput.hxx"
 
@@ -45,24 +47,41 @@ namespace tfel
     }
 
     XMLTestOutput::XMLTestOutput(const std::string& o)
-      : pos(new std::ofstream(o.c_str())),
-	os(*(pos.get()))
+      : file(o),
+	testsuite(0u)
     {
-      using namespace std;
-      if(!(*pos)){
-	string msg("XMLTestOutput::XMLTestOutput : ");
-	msg += "can't open file '"+o+"'";
-	throw(runtime_error(msg));
+      if(this->file.size()>=4){
+	if(this->file.substr(this->file.size()-4)==".xml"){
+	  this->file = this->file.substr(0u,this->file.size()-4);
+	}
       }
-      this->os << "<?xml version=\"1.0\" ?>" << endl;
     } // end of XMLTestOutput::XMLTestOutput
     
     void
     XMLTestOutput::beginTestSuite(const std::string& n)
     {
       using namespace std;
+      if(this->os.is_open()){
+	string msg("XMLTestOutput::XMLTestOutput : ");
+	msg += "output file is not closed";
+	throw(runtime_error(msg));
+      }
+      ostringstream f;
+      f << this->file;
+      if(this->testsuite!=0u){
+	f << '-' << this->testsuite;
+      }
+      f << ".xml";
+      ++(this->testsuite);
+      this->os.open(f.str().c_str());
+      if(!(this->os)){
+	string msg("XMLTestOutput::XMLTestOutput : ");
+	msg += "can't open file '"+f.str()+"'";
+	throw(runtime_error(msg));
+      }
       string out(n);
       convert_to_xml(out);
+      this->os << "<?xml version=\"1.0\" ?>" << endl;
       this->os << "<testsuite name=\""+out+"\">" << endl;
     } // end of XMLTestOutput::beginTestSuite
 
@@ -125,6 +144,7 @@ namespace tfel
     {
       using namespace std;
       this->os << "</testsuite>" << endl;
+      this->os.close();
     } // end of XMLTestOutput::endTestSuite
   
     XMLTestOutput::~XMLTestOutput()

@@ -9,10 +9,9 @@
 #define _LIB_TFEL_TESTS_XMLTESTOUTPUT_HXX 1
 
 #include<string>
-#include<ostream>
+#include<fstream>
 
 #include"TFEL/Config/TFELConfig.hxx"
-#include"TFEL/Utilities/SmartPtr.hxx"
 
 #include"TFEL/Tests/TestOutput.hxx"
 #include"TFEL/Tests/TestResult.hxx"
@@ -78,12 +77,12 @@ namespace tfel
        */
       TFEL_VISIBILITY_LOCAL XMLTestOutput&
       operator=(const XMLTestOutput&);
-      /*!
-       * pointer used to close stream, if the class has to handle it
-       */
-      tfel::utilities::shared_ptr<std::ostream> pos;
       //! output stream
-      std::ostream& os;
+      std::ofstream os;
+      //! output file name
+      std::string file;
+      //! number of test suite treated
+      unsigned short testsuite;
     }; // end of struct XMLTestOutput
     
   } // end of namespace test

@@ -33,7 +33,8 @@ struct TestFunction
 	       const double xb_,
 	       const double dx_,
 	       const double e_ = std::numeric_limits<double>::epsilon())
-    : f(f_),
+    : fn("Evaluator : "+f_),
+      f(f_),
       xa(xa_),
       xb(xb_),
       dx(dx_),
@@ -47,7 +48,7 @@ struct TestFunction
   std::string
   name(void) const
   {
-    return f;
+    return fn;
   }
 
   std::string
@@ -74,6 +75,7 @@ struct TestFunction
 
 private:
 
+  const std::string fn;
   const std::string f;
   const double xa;
   const double xb;
