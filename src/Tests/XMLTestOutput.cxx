@@ -91,7 +91,7 @@ namespace tfel
 	this->os << out << endl;
       }
       for(p=r.begin();p!=r.end();++p){
-	this->treatTest(*p,"* ");
+	this->treatTest(*p);
       }
       if(r.success()){
 	this->os << "</success>" << endl;
@@ -102,13 +102,11 @@ namespace tfel
     } // end of XMLTestOutput::addTest
 
     void
-    XMLTestOutput::treatTest(const TestResult& r,
-			     const std::string& s)
+    XMLTestOutput::treatTest(const TestResult& r)
     {
       using namespace std;
       TestResult::const_iterator p;
-      string out(s);
-      out += r.details();
+      string out(r.details());
       convert_to_xml(out);
       if(r.success()){
 	this->os << "<test status=\"" << "SUCCESS\">" << endl;
@@ -118,7 +116,7 @@ namespace tfel
       this->os << out << endl;
       this->os << "</test>" << endl;
       for(p=r.begin();p!=r.end();++p){
-	this->treatTest(*p,s+'*');
+	this->treatTest(*p);
       }
     } // end of XMLTestOutput::treatTest
 
