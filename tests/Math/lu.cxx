@@ -46,7 +46,7 @@ bool LUSolveTest()
   b(2) = -2;
 
   LUSolve::exe(m,b);
-  return ((abs(b(0)-1)<10*numeric_limits<T>::epsilon())&&
+  return ((abs(b(0)+1)<10*numeric_limits<T>::epsilon())&&
 	  (abs(b(1)-2)<10*numeric_limits<T>::epsilon())&&
 	  (abs(b(2)-1)<10*numeric_limits<T>::epsilon()));
 
