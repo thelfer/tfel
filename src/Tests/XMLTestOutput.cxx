@@ -106,15 +106,15 @@ namespace tfel
     {
       using namespace std;
       TestResult::const_iterator p;
-      string out(r.details());
-      convert_to_xml(out);
+      string out;
       if(r.success()){
-	this->os << "<test status=\"" << "SUCCESS\">" << endl;
+	out = "SUCCESS : ";
       } else {
-	this->os << "<test status=\"" << "FAILURE\">" << endl;
+	out = "FAILURE : ";
       }
+      out += r.details();
+      convert_to_xml(out);
       this->os << out << endl;
-      this->os << "</test>" << endl;
       for(p=r.begin();p!=r.end();++p){
 	this->treatTest(*p);
       }
