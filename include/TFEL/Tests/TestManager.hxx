@@ -21,6 +21,8 @@
 #include"TFEL/Tests/TestOutput.hxx"
 #include"TFEL/Tests/MultipleTestOutputs.hxx"
 
+#define TFEL_TESTS_HAS_XML_OUTPUT 1
+
 /*!
  * \def TFEL_TESTS_DEFAULTMAIN
  * \author Helfer Thomas

@@ -54,6 +54,7 @@ test_PROGRAMS = hill                  \
 		parser5               \
 		parser6               \
 		parser7               \
+		parser8               \
 		broyden               \
 		broyden2              \
 		Range                 \
@@ -215,6 +216,16 @@ parser7_LDADD = -L$(top_builddir)/src/Tests        \
 	        -lTFELMathParser -lTFELMathKriging \
 		-lTFELMath  -lTFELUtilities        \
 		-lTFELException	-lTFELTests
+
+parser8_SOURCES               = parser8.cxx
+parser8_LDADD = -L$(top_builddir)/src/Tests        \
+		-L$(top_builddir)/src/Math         \
+	        -L$(top_builddir)/src/Utilities    \
+	        -L$(top_builddir)/src/Exception    \
+	        -lTFELMathParser -lTFELMathKriging \
+		-lTFELMath  -lTFELUtilities        \
+		-lTFELException	-lTFELTests
+
 
 TESTS=$(test_PROGRAMS)
 

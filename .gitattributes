@@ -847,6 +847,7 @@ tests/Math/parser4.cxx -text
 tests/Math/parser5.cxx -text
 tests/Math/parser6.cxx -text
 tests/Math/parser7.cxx -text
+tests/Math/parser8.cxx -text
 tests/Math/promote.cxx -text
 tests/Math/qt.cxx -text
 tests/Math/qt2.cxx -text

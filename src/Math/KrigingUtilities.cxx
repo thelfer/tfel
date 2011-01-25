@@ -7,6 +7,7 @@
 
 #include<algorithm>
 #include<stdexcept>
+#include<sstream>
 
 #include"TFEL/Math/Kriging/KrigingUtilities.hxx"
 
@@ -41,9 +42,11 @@ namespace tfel
       double max = *(max_element(v.begin(),v.end()));
       double min = *(min_element(v.begin(),v.end()));
       if(compareFloatingPointValues(max-min,0.)){
-	string msg("KrigingUtilities::normalize : ");
-	msg += "values are almost identical";
-	throw(runtime_error(msg));
+	ostringstream msg;
+	msg << "KrigingUtilities::normalize : "
+	    <<  "values '" << min << "' and '" << max
+	    << "' are almost identical";
+	throw(runtime_error(msg.str()));
       }
       r.first  = 1./(max-min);
       r.second = -min/r.first;
@@ -58,9 +61,11 @@ namespace tfel
       double max = *(max_element(v.begin(),v.end()));
       double min = *(min_element(v.begin(),v.end()));
       if(compareFloatingPointValues(max-min,0.)){
-	string msg("KrigingUtilities::normalize : ");
-	msg += "values are almost identical";
-	throw(runtime_error(msg));
+	ostringstream msg;
+	msg << "KrigingUtilities::normalize : "
+	    <<  "values '" << min << "' and '" << max
+	    << "' are almost identical";
+	throw(runtime_error(msg.str()));
       }
       r.first  = 1./(max-min);
       r.second = -min/r.first;

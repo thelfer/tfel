@@ -105,5 +105,6 @@ tests_math3(parser4)
 tests_math3(parser5)
 tests_math3(parser6)
 tests_math3(parser7)
+tests_math3(parser8)
 tests_math3(levenberg-marquardt4)
 
