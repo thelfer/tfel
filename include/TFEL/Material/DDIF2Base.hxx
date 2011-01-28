@@ -95,6 +95,8 @@ namespace tfel
 
       //! small parameter which guarantees that Ef is finite
       static const double emin1;
+      //! small parameter which guarantees that Ef is finite
+      static const double emin_rk1;
       //! small numerical parameter
       static const double eps;
 

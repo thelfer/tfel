@@ -921,7 +921,6 @@ namespace mfront{
     this->behaviourFile << "real asig;" << endl;
     this->behaviourFile << "this->eto_  = this->eto+t*(this->deto);" << endl;
     this->behaviourFile << "this->T_    = this->T+t*(this->dT);" << endl;
-    this->behaviourFile << "this->eel_ = this->eel;" << endl;
     for(p =this->externalStateVarsHolder.begin();p!=this->externalStateVarsHolder.end();++p){
       this->behaviourFile << "this->" << p->name << "_ = this->" << p->name << ";" << endl;
     }
@@ -953,6 +952,12 @@ namespace mfront{
 			  << "::integrate() : beginning of resolution\" << endl;\n";
     }
     this->behaviourFile << "while(!converged){" << endl;
+    this->behaviourFile << "if(dt_< dtprec){" << endl; 
+    this->behaviourFile << "cout<<\" dt \"<<this->dt<<\" t \"<<t<<\" dt_ \"<<dt_<<endl;" << endl;
+    this->behaviourFile << "string msg(\"DDIF2::DDIF2\");" << endl;
+    this->behaviourFile << "msg += \" time step too small \"; " << endl;
+    this->behaviourFile << "throw(runtime_error(msg)); " << endl;
+    this->behaviourFile << "} " << endl;
     if(this->debugMode){
       this->behaviourFile << "cout << \"" << this->className
 			  << "::integrate() : from \" << t <<  \" to \" << t+dt_ << \" with time step \" << dt_ << endl;\n";
@@ -1158,7 +1163,7 @@ namespace mfront{
     this->behaviourFile << "ra = sqrt(((sigf)-(this->sig))|((sigf)-(this->sig)))/errabs;" << endl;
     this->behaviourFile << "sqra = sqrt(ra);" << endl;
     this->behaviourFile << "// test for convergence" << endl;
-    this->behaviourFile << "if (sqra>"  << this->className << "::rkcastem_div){" << endl;
+    this->behaviourFile << "if ((sqra>"  << this->className << "::rkcastem_div)||(isnan(ra))){" << endl;
     this->behaviourFile << "dt_ /= "  << this->className << "::rkcastem_div;" << endl;
     if(this->debugMode){
       this->behaviourFile << "cout << \"" << this->className
@@ -1210,11 +1215,6 @@ namespace mfront{
     }
     this->behaviourFile << "}" << endl;
     this->behaviourFile << "if(!converged){" << endl;
-    this->behaviourFile << "if(dt_<dtprec){" << endl;
-    this->behaviourFile << "string msg(\"" << this->className << "::integrate : \");" << endl;
-    this->behaviourFile << "msg += \"time step reduction has gone too far.\";" << endl;
-    this->behaviourFile << "throw(tfel::material::DivergenceException(msg));" << endl;
-    this->behaviourFile << "}" << endl;
     this->behaviourFile << "if((abs(this->dt-t-dt_)<2*dtprec)||(t+dt_>this->dt)){" << endl;
     this->behaviourFile << "dt_=this->dt-t;" << endl;
     this->behaviourFile << "}" << endl;

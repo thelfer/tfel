@@ -180,7 +180,7 @@ namespace tfel
       m(i,i)  = 1.;
       v(i)    = 0.;
       real r = (s-X);
-      if((r>0)&&(e>-DDIF2Base::emin1)){
+      if((r>0)&&(e>-DDIF2Base::emin_rk1)){
         if (X<0){
 	   Hr=0.;
 	}
@@ -188,7 +188,7 @@ namespace tfel
 	m(i,i)  = lambda+2*mu+Hr;
 	v(i)    = dse;
       } 
-      if((r<0)&&(e>DDIF2Base::emin1)){
+      if((r<0)&&(e>DDIF2Base::emin_rk1)){
 	Hr=0.;
   	real Ef  = s/e;
 	m(i,i1) = m(i,i2) = lambda;

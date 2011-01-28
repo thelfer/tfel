@@ -13,9 +13,11 @@ namespace tfel
   namespace material
   {
     
-    const double DDIF2Base::emin1 = 1.e-7;
+    const double DDIF2Base::emin1    = 1.e-7;
+
+    const double DDIF2Base::emin_rk1 = 1.e-5;
     
-    const double DDIF2Base::eps   = 1.e-10;
+    const double DDIF2Base::eps      = 1.e-10;
     
   } // end of namespace material
 
