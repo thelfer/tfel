@@ -1,0 +1,73 @@
+include_directories("${PROJECT_SOURCE_DIR}/include")
+link_directories("${PROJECT_BINARY_DIR}/src/Math"
+                 "${PROJECT_BINARY_DIR}/src/System"
+                 "${PROJECT_BINARY_DIR}/src/Utilities"
+                 "${PROJECT_BINARY_DIR}/src/Exception")
+
+set(TFELMath_SOURCES
+    MathException.cxx
+    LUException.cxx
+    BasicOperations.cxx
+    Id.cxx
+    Lambda.cxx
+    Power.cxx
+    OpDiff.cxx
+    CompositeTag.cxx
+    ArrayTag.cxx
+    LambdaTag.cxx
+    St2toSt2Tag.cxx
+    VectorTag.cxx
+    FunctionTag.cxx
+    MatrixTag.cxx
+    StensorTag.cxx
+    StandardFunctions.cxx)
+
+set(TFELMathKriging_SOURCES
+    KrigingErrors.cxx
+    KrigingUtilities.cxx
+    Kriging1D.cxx
+    Kriging2D.cxx
+    Kriging3D.cxx
+    FactorizedKriging1D1D.cxx
+    FactorizedKriging1D2D.cxx
+    FactorizedKriging1D3D.cxx)
+
+set(TFELMathParser_SOURCES
+    ExternalCFunction.cxx
+    ExternalCastemFunction.cxx
+    ExternalFunctionExpr.cxx
+    ExternalFunctionExpr2.cxx
+    KrigedFunction.cxx
+    DifferentiatedFunctionExpr.cxx
+    Expr.cxx
+    BinaryFunction.cxx
+    BinaryOperator.cxx
+    LogicalExpr.cxx
+    ConditionalExpr.cxx
+    ExternalFunction.cxx
+    EvaluatorBase.cxx
+    EvaluatorTExpr.cxx
+    EvaluatorFunction.cxx
+    Evaluator.cxx
+    Function.cxx
+    Negation.cxx
+    Number.cxx
+    LevenbergMarquardtEvaluatorWrapper.cxx
+    LevenbergMarquardtExternalFunctionWrapper.cxx
+    Variable.cxx)
+
+tfel_library(TFELMath ${TFELMath_SOURCES})
+target_link_libraries(TFELMath
+                      TFELException)
+
+tfel_library(TFELMathKriging ${TFELMathKriging_SOURCES})
+target_link_libraries(TFELMathKriging
+		      TFELMath
+                      TFELException)
+
+tfel_library(TFELMathParser ${TFELMathParser_SOURCES})
+add_dependencies(TFELMathParser TFELMath)
+target_link_libraries(TFELMathParser
+		      TFELMathKriging
+                      TFELMath
+		      TFELException)

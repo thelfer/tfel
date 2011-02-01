@@ -1,0 +1,16 @@
+### README ---
+##  Author : Helfer Thomas
+
+NSTATICDEBUG : TFEL_STATIC_ASSERT est rendu inopérant.
+
+CXX         := g++
+CXXWARNINGS := -Wall -pedantic -Wconversion -Wshadow -Wpointer-arith -Wcast-qual -Wcast-align -Wwrite-strings -Werror -ansi  -Wctor-dtor-privacy -Wnon-virtual-dtor -Wreorder -Wno-deprecated -Wold-style-cast  -Woverloaded-virtual -Wimplicit -Wreturn-type  -W -Werror 
+CXXOPTI     := -O3 -funroll-loops -fno-strict-aliasing -fshort-enums -fno-common -finline-functions  -malign-double -march=pentium4 -msse2 -fstrength-reduce -frerun-loop-opt -fexpensive-optimizations -fschedule-insns2  -falign-loops=2 -falign-functions=2 -ffast-math -fomit-frame-pointer
+
+
+
+
+
+
+
+
