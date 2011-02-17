@@ -633,7 +633,7 @@ namespace tfel{
       this->fileTokens.clear();
 
       string line;
-      fstream file(f.c_str());
+      ifstream file(f.c_str());
       unsigned short lineNumber;
 
       if(!file){
