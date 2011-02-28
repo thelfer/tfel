@@ -118,6 +118,7 @@ namespace tfel{
 	    msg += "found no matching \" to close string\n";
 	    msg += "Error at line : ";
 	    msg += toString(lineNumber);
+	    throw(runtime_error(msg));
 	  }
 	  this->fileTokens.push_back(Token(lineNumber,string(line.begin(),ps),Token::String));
 	  line.erase(line.begin(),ps);
@@ -173,6 +174,7 @@ namespace tfel{
 	      msg += "found no matching \' to close string\n";
 	      msg += "Error at line : ";
 	      msg += toString(lineNumber);
+	      throw(runtime_error(msg));
 	    }
 	    this->fileTokens.push_back(Token(lineNumber,string(line.begin(),ps),Token::String));
 	    line.erase(line.begin(),ps);

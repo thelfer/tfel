@@ -378,6 +378,7 @@ namespace tfel
     };
 
     TFEL_UTILITIES_NAME_VOID;
+    TFEL_UTILITIES_NAME(bool);
     TFEL_UTILITIES_NAME(char);
     TFEL_UTILITIES_NAME(unsigned short);
     TFEL_UTILITIES_NAME(unsigned int);

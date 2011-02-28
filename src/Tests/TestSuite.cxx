@@ -66,7 +66,6 @@ namespace tfel
 	  if(!r1.success()){
 	    success = false;
 	  }
-  	  r.append(r1);
 	} catch(exception& e){
 	  string msg("test '"+(*p)->name());
 	  msg += "' has thrown an exception (";

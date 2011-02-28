@@ -126,6 +126,7 @@ namespace tfel
 	  this->os.write(red,sizeof(red));
 	}
 	this->os << "FAILED" << endl;
+	this->os << r.details() << endl;
 	if(this->colorOutput){
 	  this->os.write(reset,sizeof(reset));
 	}
