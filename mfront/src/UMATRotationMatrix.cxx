@@ -22,9 +22,9 @@ namespace umat
 
     // Premier vecteur
     // a[1,1]
-    a[0]=drot[0]*V[0]+drot[2]*V[1];
+    a[0]=drot[0]*V[0]+drot[3]*V[1];
     // a[2,1]
-    a[1]=drot[1]*V[0]+drot[3]*V[1];
+    a[1]=drot[1]*V[0]+drot[4]*V[1];
     // Deuxième vecteur :
     //   Produit vectoriel
     // a[1,2]
