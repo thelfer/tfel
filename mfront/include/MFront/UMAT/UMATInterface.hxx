@@ -503,7 +503,7 @@ namespace umat{
 	Handler handler(DTIME,DDSOE,
 			e,de,TEMP,DTEMP,PROPS,
 			PREDEF,DPRED,STATEV,s);
-	handler.exe(STRESS,STATEV);
+	handler.exe(s,STATEV);
 	m.rotateStressesBackward(s,STRESS);
       } // end of TreatOrthotropicBehaviour2D::exe
     }; // end of TreatOrthotropicBehaviour2D

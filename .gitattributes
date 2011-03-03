@@ -529,6 +529,7 @@ mfront/include/MFront/MFrontIsotropicBehaviourParserBase.hxx -text
 mfront/include/MFront/MFrontIsotropicMisesCreepParser.hxx -text
 mfront/include/MFront/MFrontIsotropicMisesPlasticFlowParser.hxx -text
 mfront/include/MFront/MFrontIsotropicStrainHardeningMisesCreepParser.hxx -text
+mfront/include/MFront/MFrontLaTeXLawInterface.hxx -text
 mfront/include/MFront/MFrontLawInterfaceFactory.hxx -text
 mfront/include/MFront/MFrontLawInterfaceProxy.hxx -text
 mfront/include/MFront/MFrontLawInterfaceProxy.ixx -text
@@ -605,6 +606,7 @@ mfront/src/MFrontIsotropicBehaviourParserBase.cxx -text
 mfront/src/MFrontIsotropicMisesCreepParser.cxx -text
 mfront/src/MFrontIsotropicMisesPlasticFlowParser.cxx -text
 mfront/src/MFrontIsotropicStrainHardeningMisesCreepParser.cxx -text
+mfront/src/MFrontLaTeXLawInterface.cxx -text
 mfront/src/MFrontLawInterfaceFactory.cxx -text
 mfront/src/MFrontLawVirtualInterface.cxx -text
 mfront/src/MFrontLock.cxx -text
