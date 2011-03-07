@@ -17,6 +17,7 @@
 #include<sys/stat.h>
 #include<unistd.h>
 
+#include"TFEL/Utilities/StringAlgorithms.hxx"
 #include"TFEL/System/System.hxx"
 
 #include"MFront/ParserUtilities.hxx"
@@ -26,6 +27,16 @@
 
 namespace mfront
 {
+
+  static std::string
+  toLaTeX(const std::string& s){
+    using namespace std;
+    using namespace tfel::utilities;
+    string r;
+    r = replace_all(r,"\\","\\\\");
+    r = replace_all(s,"_","\\textunderscore{}");
+    return r;
+  }
     
   std::string
   MFrontLaTeXLawInterface::getName(void)
@@ -130,36 +141,138 @@ namespace mfront
     return map<string,pair<vector<string>,vector<string> > >();
   } // end of MFrontLaTeXLawInterface::getSpecificTargets
 
+  static void
+  describeVariableBounds(std::ofstream& out,
+			 const std::string& name,
+			 const std::string& boundsType,
+			 const std::vector<VariableBoundsDescription>& bounds)
+  {
+    using namespace std;
+    vector<VariableBoundsDescription>::const_iterator p;
+    for(p=bounds.begin();p!=bounds.end();++p){
+      if(p->varName==name){
+	out << " Les " << boundsType << " de cette variables sont ";
+	if(p->boundsType==VariableBoundsDescription::Lower){
+	  out << "\\(\\left["  << p->lowerBound << ":+\\infty\\right[\\)";
+	} else if(p->boundsType==VariableBoundsDescription::Upper){
+	  out << "\\(\\left]-\\infty:" << p->upperBound << "\\right]\\)";
+	} else if(p->boundsType==VariableBoundsDescription::LowerAndUpper){
+	  out << "\\(\\left["  << p->lowerBound << ":" << p->upperBound << "\right]\\)";
+	}
+	out << "." << endl;
+	return;
+      }
+    }
+  } // end of describeVariableBounds
+
   void
-  MFrontLaTeXLawInterface::writeOutputFiles(const std::string&,
+  MFrontLaTeXLawInterface::writeOutputFiles(const std::string& file,
 					    const std::string& library,
 					    const std::string& material,
 					    const std::string& className,
-					    const std::string&,
-					    const std::string&,
-					    const std::string&,
+					    const std::string& author,
+					    const std::string& date,
+					    const std::string& description,
 					    const std::string&,
 					    const std::string&,
 					    const VarContainer& vars,
 					    const std::vector<std::string>&,
-					    const std::map<std::string,std::string>&,
-					    const std::map<std::string,std::string>&,
+					    const std::map<std::string,std::string>& glossaryNames,
+					    const std::map<std::string,std::string>& entryNames,
 					    const StaticVarContainer&,
 					    const std::vector<std::string>&,
 					    const std::map<std::string,double>&,
 					    const LawFunction&,
-					    const std::vector<VariableBoundsDescription>&,
-					    const std::vector<VariableBoundsDescription>&,
+					    const std::vector<VariableBoundsDescription>& bounds,
+					    const std::vector<VariableBoundsDescription>& physicalBounds,
 					    const bool,
 					    const std::vector<std::string>&)
   {
     using namespace std;
+    using namespace tfel::utilities;
     string name;
+    VarContainer::const_iterator p;
+    std::map<std::string,std::string>::const_iterator p2;
     if(material.empty()){
       name = className;
     } else {
       name = material+"_"+className;
     }
-  } // end of MFrontLaTeXLawInterface::writeSrcFile(void)
+    ofstream out(("src/"+name+".tex").c_str());
+    if(!out){
+      string msg("MFrontLaTeXLawInterface::writeOutputFiles : ");
+      msg += "can't open file '"+name+".tex'";
+      throw(runtime_error(msg));
+    }
+    if(!material.empty()){
+      out << "\\subsection{Description de la propriété matériau '"+material+"\\_"+className+"'}" << endl;
+    } else {
+      out << "\\subsection{Description de la propriété matériau '"+className+"'}" << endl;
+    }
+    out << "Cette documentation a été générée à partir du fichier {\\tt " << toLaTeX(file)  << "}" << endl;
+    out << "\\begin{itemize}" << endl;
+    if(!material.empty()){
+      out << "\\item Matériau~: " << toLaTeX(material) << endl;
+    }
+    if(!author.empty()){
+      out << "\\item Auteur~: " << toLaTeX(author) << endl;
+    }
+    if(!date.empty()){
+      out << "\\item Date~: " << toLaTeX(date) << endl;
+    }
+    out << "\\end{itemize}" << endl;
+    if(!description.empty()){
+      out << "\\subsubsection{Description}" << endl << endl;
+      string d(description);
+      if(d.size()>2){
+	if((d[0]=='*')&&
+	   (d[1]==' ')){
+	  d = d.substr(2);
+	}
+      }
+      d = replace_all(d,"\n* ","\n");
+      d = replace_all(d,"\\'","'");
+      d = replace_all(d,"\\\"","\"");
+      d = replace_all(d,"{ ","{");
+      d = replace_all(d," {","{");
+      d = replace_all(d,"} ","}");
+      d = replace_all(d," }","}");
+      d = replace_all(d,"[ ","[");
+      d = replace_all(d," [","[");
+      d = replace_all(d,"] ","]");
+      d = replace_all(d," ]","]");
+      d = replace_all(d,"\\ ","\\");
+      d = replace_all(d,"~ :","~:");
+      out << d << endl;
+    }
+    if(!vars.empty()){
+      if(vars.size()==1u){
+	out << "\\subsubsection{Variable d'entrée}" << endl << endl;
+	out << "Cette propriété dépend de la variable {\\tt " << toLaTeX(vars.front().name) << "}";
+	if((p2=glossaryNames.find(vars.front().name))!=glossaryNames.end()){
+	  out << " dont le nom de glossaire est {\\tt " 
+	      << toLaTeX(p2->second) << "}" << endl;
+	} else if((p2=entryNames.find(vars.front().name))!=entryNames.end()){
+	  out << " qui sera désignée dans le fichier d'entrée par {\\tt " 
+	      << toLaTeX(p2->second) << "}" << endl;
+	}
+	out << "." << endl;
+	describeVariableBounds(out,vars.front().name,"bornes physiques",physicalBounds);
+	describeVariableBounds(out,vars.front().name,"bornes",bounds);
+      } else {
+	out << "\\subsubsection{Variables d'entrée}" << endl << endl;
+	out << "Cette propriété dépend des variables~:" << endl;
+	out << "\\begin{itemize}" << endl;
+	for(p=vars.begin();p!=vars.end();++p){
+	  out << "\\item {\\tt " << toLaTeX(p->name) << "}." << endl;
+	  describeVariableBounds(out,p->name,"bornes physiques",physicalBounds);
+	  describeVariableBounds(out,p->name,"bornes",bounds);
+	}
+	out << "\\end{itemize}" << endl;
+      }
 
+    }
+    
+  } // end of MFrontLaTeXLawInterface::writeOutputFiles
+  
 } // end of namespace mfront

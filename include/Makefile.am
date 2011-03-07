@@ -442,6 +442,7 @@ nobase_include_HEADERS= TFEL/FiniteElement/Element/ElementsManager.ixx          
 			TFEL/Utilities/Tuple.hxx   	                                              \
 			TFEL/Utilities/Tuple.ixx                                                      \
 			TFEL/Utilities/TextData.hxx                                                   \
+			TFEL/Utilities/StringAlgorithms.hxx                                           \
 			TFEL/Tests/MultipleTestOutputs.hxx					      \
 			TFEL/Tests/StdStreamTestOutput.hxx					      \
 			TFEL/Tests/XMLTestOutput.hxx					              \

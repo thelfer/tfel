@@ -659,6 +659,7 @@ namespace mfront
   {
     using namespace std;
     unsigned short currentLine;
+    unsigned short openedBrackets;
     if(!this->description.empty()){
       string msg("ParserBase::treatDescription : ");
       msg += "@Description shall only be called once.";
@@ -668,11 +669,25 @@ namespace mfront
     this->checkNotEndOfFile("ParserBase::treatDescription");
     currentLine = this->current->line;
     this->description = "* ";
-    while((this->current->value!="}")&&
+    openedBrackets = 1u;
+    while((!((this->current->value=="}")&&
+	     (openedBrackets==1u)))&&
 	  (this->current!=this->fileTokens.end())){
       if(this->current->value=="{"){
-	this->throwRuntimeError("ParserBase::treatDescription",
-				"'{' is not allowed in description.");
+	TokensContainer::const_iterator previous = this->current;
+	--previous;
+	if((previous->value.size()>0)&&
+	   (previous->value[previous->value.size()-1]!='\\')){
+	  ++openedBrackets;
+	}
+      }
+      if(this->current->value=="}"){
+	TokensContainer::const_iterator previous = this->current;
+	--previous;
+	if((previous->value.size()>0)&&
+	   (previous->value[previous->value.size()-1]!='\\')){
+	  --openedBrackets;
+	}
       }
       if(currentLine!=this->current->line){
 	this->description+="\n* ";

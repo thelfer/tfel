@@ -9,5 +9,7 @@ libTFELUtilities_la_SOURCES = TextData.cxx         \
 			      Token.cxx            \
 			      CxxKeywords.cxx      \
 			      Name.cxx             \
-			      CxxTokenizer.cxx
+			      CxxTokenizer.cxx     \
+			      StringAlgorithms.cxx
+
 EXTRA_DIST = CMakeLists.txt

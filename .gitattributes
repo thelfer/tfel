@@ -470,6 +470,7 @@ include/TFEL/Utilities/Name.ixx -text
 include/TFEL/Utilities/NewAllocator.hxx -text
 include/TFEL/Utilities/RecursiveUnion.hxx -text
 include/TFEL/Utilities/SmartPtr.hxx -text
+include/TFEL/Utilities/StringAlgorithms.hxx -text
 include/TFEL/Utilities/TerminalColors.hxx -text
 include/TFEL/Utilities/TextData.hxx -text
 include/TFEL/Utilities/ToString.hxx -text
@@ -743,6 +744,7 @@ src/Utilities/CxxTokenizer.cxx -text
 src/Utilities/GenTypeCastError.cxx -text
 src/Utilities/Makefile.am -text
 src/Utilities/Name.cxx -text
+src/Utilities/StringAlgorithms.cxx -text
 src/Utilities/TerminalColors.cxx -text
 src/Utilities/TextData.cxx -text
 src/Utilities/Token.cxx -text
@@ -904,6 +906,7 @@ tests/Utilities/MultipleDeque.cxx -text
 tests/Utilities/MultipleVector.cxx -text
 tests/Utilities/Name.cxx -text
 tests/Utilities/Name2.cxx -text
+tests/Utilities/StringAlgorithms.cxx -text
 tests/Utilities/gentype.cxx -text
 tests/Utilities/gentype2.cxx -text
 tests/Utilities/gentype3.cxx -text

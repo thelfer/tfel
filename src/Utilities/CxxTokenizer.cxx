@@ -46,6 +46,28 @@ namespace tfel{
       return res;
     }  
 
+    static std::string::size_type
+    findStringBeginning(const std::string& s,
+			const char b)
+    {
+      using namespace std;
+      string::size_type p;
+      if(s.empty()){
+	return string::npos;
+      }
+      if(s[0]==b){
+	return 0u;
+      }
+      p = s.find(b);
+      while(p!=string::npos){
+	if(s[p-1]!='\\'){
+	  return p;
+	}
+	p = s.find(b,p+1);
+      }
+      return string::npos;
+    } // end of findStringBeginning
+
     void
     CxxTokenizer::splitLine(std::string line, const unsigned short lineNumber)
     {
@@ -73,10 +95,10 @@ namespace tfel{
 	string::size_type pos[4];
 	const string::size_type * min_pos;
 
-	pos[0] = line.find("\"");
+	pos[0] = findStringBeginning(line,'"');
 	pos[1] = line.find("//");
 	pos[2] = line.find("/*");
-	pos[3] = line.find("'");
+	pos[3] = findStringBeginning(line,'\'');
       
 	min_pos=min_element(pos,pos+4);
 
@@ -189,7 +211,7 @@ namespace tfel{
 	    line.erase(0,pos[3]);
 	    if(line.length()<3){
 	      string msg("CxxTokenizer::splitString : ");
-	      msg += "error while reading char\n";
+	      msg += "error while reading char (1)\n";
 	      msg += "Error at line : ";
 	      msg += toString(lineNumber);
 	      throw(runtime_error(msg));
@@ -197,27 +219,29 @@ namespace tfel{
 	    if(line[1]=='\\'){
 	      if(line.length()<4){
 		string msg("CxxTokenizer::splitString : ");
-		msg += "error while reading char\n";
+		msg += "error while reading char (2)\n";
 		msg += "Error at line : ";
 		msg += toString(lineNumber);
 		throw(runtime_error(msg));
 	      }
 	      if(line[3]!='\''){
-	      string msg("CxxTokenizer::splitString : ");
-	      msg += "error while reading char\n";
-	      msg += "Error at line : ";
-	      msg += toString(lineNumber);
-	      throw(runtime_error(msg));	      
+		string msg("CxxTokenizer::splitString : ");
+		msg += "error while reading char (3)\n";
+		msg += "Error at line : ";
+		msg += toString(lineNumber);
+		throw(runtime_error(msg));	      
 	      }
 	      this->fileTokens.push_back(Token(lineNumber,line.substr(0,4),Token::Char));
 	      line.erase(0,4);
 	    } else {
 	      if(line[2]!='\''){
 		string msg("CxxTokenizer::splitString : ");
-		msg += "error while reading char\n";
+		msg += "error while reading char (expected to read ', read '";
+		msg += line[2];
+		msg += "')\n";
 		msg += "Error at line : ";
 		msg += toString(lineNumber);
-		throw(runtime_error(msg));    
+		throw(runtime_error(msg));
 	      }
 	      this->fileTokens.push_back(Token(lineNumber,line.substr(0,3),Token::Char));
 	      line.erase(0,3);
