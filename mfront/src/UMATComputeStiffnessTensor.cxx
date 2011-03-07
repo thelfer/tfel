@@ -157,6 +157,7 @@ namespace umat
     // props[3] :'NU12'
     // props[4] :'NU23'
     // props[5] :'NU13'
+    // props[6] :'G12'
     using namespace std;
     // S11 = 1/E1
     const UMATReal S11=1/props[0];
@@ -221,8 +222,8 @@ namespace umat
     C(0,2)=C(2,0)=(S12*S23-S13*S22)/detS;
     C(1,2)=C(2,1)=(S12*S13-S11*S23)/detS;
     C(3,3)=2.*props[6];
-    C(4,4)=2.*props[7];
-    C(5,5)=2.*props[8];
+    C(4,4)=2.*props[8];
+    C(5,5)=2.*props[7];
   } // end of struct UMATComputeStiffnessTensor
 
 } // end of namespace umat
