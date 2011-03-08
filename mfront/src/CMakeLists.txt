@@ -50,6 +50,7 @@ set(mfront_SOURCES
     MFrontCppLawInterface.cxx
     MFrontCppTestLawInterface.cxx
     MFrontExcelLawInterface.cxx
+    MFrontLaTeXLawInterface.cxx
     ${PROJECT_BINARY_DIR}/mfront/src/MFrontHeader.cxx)
 
 add_executable(mfront ${mfront_SOURCES})
