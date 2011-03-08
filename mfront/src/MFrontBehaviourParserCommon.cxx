@@ -1868,6 +1868,7 @@ namespace mfront{
     if(!this->updateAuxiliaryStateVars.empty()){
       this->behaviourFile << "{\n";
       this->behaviourFile << "using namespace std;" << endl;
+      this->behaviourFile << "using namespace tfel::math;" << endl;
       writeMaterialLaws("MFrontBehaviourParserCommon::writeBehaviourUpdateAuxiliaryStateVars",
 			this->behaviourFile,this->materialLaws);		      
       this->behaviourFile << this->updateAuxiliaryStateVars << endl;
@@ -1886,6 +1887,8 @@ namespace mfront{
     this->behaviourFile << "*/\n";
     this->behaviourFile << "void\n";
     this->behaviourFile << "integrate(void){\n";
+    this->behaviourFile << "using namespace std;" << endl;
+    this->behaviourFile << "using namespace tfel::math;" << endl;
     writeMaterialLaws("MFrontBehaviourParserCommon::writeBehaviourIntegrator",
 		      this->behaviourFile,this->materialLaws);		      
     if(!this->integrator.empty()){

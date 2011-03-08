@@ -71,7 +71,7 @@ namespace mfront{
     this->registerNewCallBack("@Sources",&Child::treatSources);
     this->registerNewCallBack("@UpdateAuxiliaryStateVars",
 			      &Child::treatUpdateAuxiliaryStateVars);
-    this->registerNewCallBack("@UpdateAuxiliaryStateVariabless",
+    this->registerNewCallBack("@UpdateAuxiliaryStateVariables",
 			      &Child::treatUpdateAuxiliaryStateVars);
   } // end of MFrontBehaviourParserBase<Child>::registerDefaultCallBacks
 
