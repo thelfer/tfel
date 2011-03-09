@@ -1,6 +1,7 @@
 include_directories("${PROJECT_SOURCE_DIR}/include")
 
 set(TFELUtilities_SOURCES
+    StringAlgorithms.cxx
     TextData.cxx
     TerminalColors.cxx
     GenTypeCastError.cxx
