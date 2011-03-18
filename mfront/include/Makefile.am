@@ -73,6 +73,7 @@ nobase_noinst_HEADERS += MFront/MFrontCastemLawInterface.hxx   \
 	 	         MFront/MFrontUMATInterface.hxx
 
 nobase_include_HEADERS += MFront/UMAT/UMATException.hxx                     \
+			  MFront/UMAT/UMATGetModellingHypothesis.hxx        \
 			  MFront/UMAT/UMATOutOfBoundsPolicy.hxx             \
 			  MFront/UMAT/UMATInterface.hxx                     \
 			  MFront/UMAT/UMATRotationMatrix.hxx                \

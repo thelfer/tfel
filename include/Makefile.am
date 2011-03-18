@@ -32,6 +32,7 @@ nobase_include_HEADERS= TFEL/FiniteElement/Element/ElementsManager.ixx          
 			TFEL/Material/IsotropicLinearFourierHookLaw.hxx                               \
 			TFEL/Material/MechanicalBehaviourTraits.hxx                                   \
 			TFEL/Material/ThermalBehaviour.hxx	                                      \
+			TFEL/Material/ModellingHypothesis.hxx                                         \
 			TFEL/Material/MechanicalBehaviourData.hxx	                              \
 			TFEL/Material/MechanicalIntegrationData.hxx                                   \
 			TFEL/Material/IsotropicLinearFourierLaw.hxx                                   \

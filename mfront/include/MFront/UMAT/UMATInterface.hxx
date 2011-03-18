@@ -37,6 +37,7 @@
 #include"MFront/UMAT/UMATComputeStiffnessTensor.hxx"
 #include"MFront/UMAT/UMATComputeThermalExpansionTensor.hxx"
 #include"MFront/UMAT/UMATRotationMatrix.hxx"
+#include"MFront/UMAT/UMATGetModellingHypothesis.hxx"
 
 namespace umat{
 
@@ -58,7 +59,7 @@ namespace umat{
 	     const UMATReal *const PROPS, const UMATInt  *const NPROPS,
 	     const UMATReal *const PREDEF,const UMATReal *const DPRED,
 	     UMATReal *const STATEV,const UMATInt  *const NSTATV,
-	     UMATReal *const STRESS,const UMATInt  *const,
+	     UMATReal *const STRESS,const UMATInt  *const NDI,
 	     UMATInt  *const KINC)
     {
       using namespace std;
@@ -71,21 +72,24 @@ namespace umat{
 	    TreatIsotropicBehaviour<1u>,
 	    TreatOrthotropicBehaviour1D>::type Treat;
 	  Treat::exe(DTIME,DROT,DDSOE,STRAN,DSTRAN,TEMP,DTEMP,
-		     PROPS,NPROPS,PREDEF,DPRED,STATEV,NSTATV,STRESS);
+		     PROPS,NPROPS,PREDEF,DPRED,STATEV,NSTATV,
+		     STRESS,NDI);
 	} else if(*NTENS==4){
 	  typedef UMATTraits<Behaviour<2u,UMATReal,false> > Traits;
 	  typedef typename IF<Traits::type==umat::ISOTROPIC,
 	    TreatIsotropicBehaviour<2u>,
 	    TreatOrthotropicBehaviour2D>::type Treat;
 	  Treat::exe(DTIME,DROT,DDSOE,STRAN,DSTRAN,TEMP,DTEMP,
-		     PROPS,NPROPS,PREDEF,DPRED,STATEV,NSTATV,STRESS);
+		     PROPS,NPROPS,PREDEF,DPRED,STATEV,NSTATV,
+		     STRESS,NDI);
 	} else if(*NTENS==6){
 	  typedef UMATTraits<Behaviour<3u,UMATReal,false> > Traits;
 	  typedef typename IF<Traits::type==umat::ISOTROPIC,
 	    TreatIsotropicBehaviour<3u>,
 	    TreatOrthotropicBehaviour3D>::type Treat;
 	  Treat::exe(DTIME,DROT,DDSOE,STRAN,DSTRAN,TEMP,DTEMP,
-		     PROPS,NPROPS,PREDEF,DPRED,STATEV,NSTATV,STRESS);
+		     PROPS,NPROPS,PREDEF,DPRED,STATEV,NSTATV,STRESS,
+		     NDI);
 	} else{
 	  throw(UMATInvalidNTENSValue(*NTENS));
 	}
@@ -246,11 +250,13 @@ namespace umat{
 						    const UMATReal *const PREDEF,
 						    const UMATReal *const DPRED,
 						    UMATReal *const STATEV,
-						    UMATReal *const STRESS)
+						    UMATReal *const STRESS,
+						    const UMATInt *const NDI)
 	  : bData(STRESS,STRAN,TEMP,PROPS+UMATTraits<BV>::propertiesOffset,
 		  STATEV,PREDEF),
 	    iData(DTIME,DSTRAN,DTEMP,DPRED),
-	    dt(*DTIME)
+	    dt(*DTIME),
+	    hypothesis(getModellingHypothesis(*NDI))
 	{
 	  SInitializer::exe(this->bData,PROPS);
 	  AInitializer::exe(this->bData,PROPS);
@@ -269,7 +275,8 @@ namespace umat{
 	  while((iterations!=0)&&
 		(subSteps!=UMATTraits<BV>::maximumSubStepping)){
 	    convergence = true;
-	    BV behaviour(this->bData,this->iData);
+	    BV behaviour(this->bData,this->iData,
+			 this->hypothesis);
 	    behaviour.setOutOfBoundsPolicy(up.getOutOfBoundsPolicy());
 	    behaviour.checkBounds();
 	    try{
@@ -306,7 +313,8 @@ namespace umat{
 	BData bData;
 	IData iData;
 	UMATReal dt;
-
+	tfel::material::ModellingHypothesis::Hypothesis hypothesis;
+	
       }; // end of struct IntegratorWithTimeStepping
 
       template<const bool bs,     // requires StiffnessTensor
@@ -331,10 +339,11 @@ namespace umat{
 				    const UMATReal *const PREDEF,
 				    const UMATReal *const DPRED,
 				    const UMATReal *const STATEV,
-				    const UMATReal *const STRESS)
+				    const UMATReal *const STRESS,
+				    const UMATInt  *const NDI)
 	  : behaviour(DTIME,STRESS,STRAN,DSTRAN,TEMP,DTEMP,
 		      PROPS+UMATTraits<BV>::propertiesOffset,
-		      STATEV,PREDEF,DPRED),
+		      STATEV,PREDEF,DPRED,getModellingHypothesis(*NDI)),
 	    dt(*DTIME)
 	{
 	  SInitializer::exe(this->behaviour,PROPS);
@@ -427,7 +436,8 @@ namespace umat{
 	       const UMATReal *const DPRED,
 	       UMATReal *const STATEV,
 	       const UMATInt  *const NSTATV,
-	       UMATReal *const STRESS) 
+	       UMATReal *const STRESS,
+	       const UMATInt  *const NDI)
       {
 	using namespace tfel::meta;
 	using namespace tfel::material;
@@ -450,7 +460,8 @@ namespace umat{
 	TreatBehaviour::checkNSTATV(*NSTATV);
 	Handler handler(DTIME,DDSOE,STRAN,
 			DSTRAN,TEMP,DTEMP,PROPS,
-			PREDEF,DPRED,STATEV,STRESS);
+			PREDEF,DPRED,STATEV,
+			STRESS,NDI);
 	handler.exe(STRESS,STATEV);
       } // end of TreatOrthotropicBehaviour1D::exe
     }; // end of struct TreatOrthotropicBehaviour1D
@@ -472,7 +483,8 @@ namespace umat{
 	       const UMATReal *const DPRED,
 	       UMATReal *const STATEV,
 	       const UMATInt  *const NSTATV,
-	       UMATReal *const STRESS) 
+	       UMATReal *const STRESS,
+	       const UMATInt  *const NDI) 
       {
 	using namespace tfel::meta;
 	using namespace tfel::material;
@@ -502,7 +514,7 @@ namespace umat{
 	TreatBehaviour::checkNSTATV(*NSTATV);
 	Handler handler(DTIME,DDSOE,
 			e,de,TEMP,DTEMP,PROPS,
-			PREDEF,DPRED,STATEV,s);
+			PREDEF,DPRED,STATEV,s,NDI);
 	handler.exe(s,STATEV);
 	m.rotateStressesBackward(s,STRESS);
       } // end of TreatOrthotropicBehaviour2D::exe
@@ -525,7 +537,8 @@ namespace umat{
 	       const UMATReal *const DPRED,
 	       UMATReal *const STATEV,
 	       const UMATInt  *const NSTATV,
-	       UMATReal *const STRESS) 
+	       UMATReal *const STRESS,
+	       const UMATInt  *const NDI) 
       {
 	using namespace tfel::meta;
 	using namespace tfel::material;
@@ -557,7 +570,7 @@ namespace umat{
 	TreatBehaviour::checkNSTATV(*NSTATV);
 	Handler handler(DTIME,DDSOE,e,
 			de,TEMP,DTEMP,PROPS,
-			PREDEF,DPRED,STATEV,s);
+			PREDEF,DPRED,STATEV,s,NDI);
 	handler.exe(s,STATEV);
 	m.rotateStressesBackward(s,STRESS);
       } // end of TreatOrthotropicBehaviour3D::exe
@@ -582,7 +595,8 @@ namespace umat{
 	       const UMATReal *const DPRED,
 	       UMATReal *const STATEV,
 	       const UMATInt  *const NSTATV,
-	       UMATReal *const STRESS) 
+	       UMATReal *const STRESS,
+	       const UMATInt  *const NDI) 
       {
 	using namespace tfel::meta;
 	using namespace tfel::material;
@@ -604,7 +618,8 @@ namespace umat{
 	TreatBehaviour::checkNSTATV(*NSTATV);
 	Handler handler(DTIME,DDSOE,STRAN,
 			DSTRAN,TEMP,DTEMP,PROPS,
-			PREDEF,DPRED,STATEV,STRESS);
+			PREDEF,DPRED,STATEV,STRESS,
+			NDI);
 	handler.exe(STRESS,STATEV);
       } // end of TreatIsotropicBehaviour::exe
 

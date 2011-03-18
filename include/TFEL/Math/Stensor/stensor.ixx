@@ -87,7 +87,7 @@ namespace tfel{
     template<template<unsigned short,typename> class Storage2>
     stensor<N,T,Storage>&
     stensor<N,T,Storage>::operator=(const stensor<N,T,Storage2>& src){
-      tfel::fsalgo::copy<StensorDimeToSize<N>::value>::exe(src,*this);
+      tfel::fsalgo::copy<StensorDimeToSize<N>::value>::exe(src.v,this->v);
       return *this;
     }
 

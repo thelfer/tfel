@@ -878,6 +878,9 @@ namespace mfront{
     this->reserveName("predicte");
     this->reserveName("updateStateVars");
     this->reserveName("updateAuxiliaryStateVars");
+    this->reserveName("getModellingHypothesis");
+    this->reserveName("hypothesis");
+    this->reserveName("hypothesis_");
   } // end of MFrontBehaviourParserCommon::registerDefaultVarNames
 
   MFrontBehaviourParserCommon::MFrontBehaviourParserCommon()
@@ -1044,6 +1047,7 @@ namespace mfront{
       this->behaviourDataFile << "#include\"TFEL/Math/General/CommonCast.hxx\"" << endl;
     }
     this->behaviourDataFile << "#include\"TFEL/Material/MechanicalBehaviourData.hxx\"" << endl;
+    this->behaviourDataFile << "#include\"TFEL/Material/ModellingHypothesis.hxx\"" << endl;
     this->behaviourDataFile << endl;
   }
 
@@ -1938,6 +1942,18 @@ namespace mfront{
     this->behaviourFile << "}; // end of setOutOfBoundsPolicy\n\n";
   } // end of MFrontBehaviourParserCommon::writeBehaviourOutOfBoundsEnumeration(void)
 
+  void MFrontBehaviourParserCommon::writeBehaviourGetModellingHypothesis()
+  {
+    using namespace std;
+    this->checkBehaviourFile();
+    this->behaviourFile << "/*!\n";
+    this->behaviourFile << "* \\brief set the policy for \"out of bounds\" conditions\n";
+    this->behaviourFile << "*/\n";
+    this->behaviourFile << "tfel::material::ModellingHypothesis::Hypothesis\ngetModellingHypothesis(void) const{\n";
+    this->behaviourFile << "return this->hypothesis;\n";
+    this->behaviourFile << "}; // end of getModellingHypothesis\n\n";
+  } // end of MFrontBehaviourParserCommon::writeBehaviourGetModellingHypothesis();
+
   void MFrontBehaviourParserCommon::writeBehaviourCheckBounds(void)
   {
     using namespace std;
@@ -2021,8 +2037,9 @@ namespace mfront{
 			  << "const " << this->className 
 			  << "BehaviourData<N,Type,use_qt>& src1,\n"
 			  << "const " << this->className 
-			  << "IntegrationData<N,Type,use_qt>& src2)"
-			  << "\n"; 
+			  << "IntegrationData<N,Type,use_qt>& src2,\n"
+			  << "const ModellingHypothesis::Hypothesis hypothesis_)"
+			  << "\n";
       this->behaviourFile << ": " << this->className 
 			  << "BehaviourData<N,Type,use_qt>(src1),\n";
       this->behaviourFile << this->className 
@@ -2032,7 +2049,8 @@ namespace mfront{
 			  << "const " << this->className 
 			  << "BehaviourData<N,Type,false>& src1,\n"
 			  << "const " << this->className 
-			  << "IntegrationData<N,Type,false>& src2)"
+			  << "IntegrationData<N,Type,false>& src2,\n"
+			  << "const ModellingHypothesis::Hypothesis hypothesis_)"
 			  << "\n"; 
       this->behaviourFile << ": " << this->className 
 			  << "BehaviourData<N,Type,false>(src1),\n";
@@ -2041,6 +2059,7 @@ namespace mfront{
     }
     this->behaviourFile << initStateVarsIncrements;
     this->behaviourFile << initComputedVars;
+    this->behaviourFile << ",\nhypothesis(hypothesis_)\n";
     this->behaviourFile << "\n{\n";
     this->behaviourFile << "using namespace std;\n";
     this->behaviourFile << "using namespace tfel::math;\n";
@@ -2143,6 +2162,14 @@ namespace mfront{
     this->behaviourFile << "//! policy for treating out of bounds conditions\n";
     this->behaviourFile << "OutOfBoundsPolicy policy;\n";  
   } // end of MFrontBehaviourParserCommon::writeBehaviourPolicyVariable
+
+  void MFrontBehaviourParserCommon::writeBehaviourHypothesisVariable(void)
+  {    
+    using namespace std;
+    this->checkBehaviourFile();
+    this->behaviourFile << "//! modelling hypothesis\n";
+    this->behaviourFile << "tfel::material::ModellingHypothesis::Hypothesis hypothesis;\n";  
+  } // end of MFrontBehaviourParserCommon::writeBehaviourHypothesisVariable
 
   void MFrontBehaviourParserCommon::writeBehaviourComputedVars(void)
   {    
@@ -2477,6 +2504,7 @@ namespace mfront{
     this->writeBehaviourGetName();
     this->writeBehaviourConstructors();
     this->writeBehaviourSetOutOfBoundsPolicy();
+    this->writeBehaviourGetModellingHypothesis();
     this->writeBehaviourCheckBounds();
     this->writeBehaviourIntegrator();
     this->writeBehaviourUpdateExternalStateVariables();
@@ -2484,6 +2512,7 @@ namespace mfront{
     this->checkBehaviourFile();
     this->behaviourFile << "private:" << endl << endl;
     this->writeBehaviourPolicyVariable();
+    this->writeBehaviourHypothesisVariable();
     this->writeBehaviourClassEnd();
     this->writeBehaviourOutputOperator();
     this->writeBehaviourTraits();

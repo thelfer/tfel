@@ -33,7 +33,7 @@ namespace tfel{
        * \return std::string, the name of the class.
        * \see    Name.
        */
-      static const std::string getName(void){
+      static std::string getName(void){
 	return std::string("MechanicalBehaviour");
       }
 

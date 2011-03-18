@@ -871,7 +871,7 @@ namespace mfront{
 	initComputedVars << ",\n";
 	initComputedVars << p2->name << "(" << p2->description << ")" ;
       }
-    }   
+    }
     MFrontBehaviourParserCommon::writeBehaviourConstructors(initStateVars.str(),
 							    initComputedVars.str(),
 							    this->predictor);

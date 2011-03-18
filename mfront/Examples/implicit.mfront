@@ -59,4 +59,3 @@ alpha.setGlossaryName("ThermalExpansion");
   dfeel_ddp    = n;
   dfp_ddeel    = -2*mu*theta*tmp*E*dt*n;
 } // end of @Integrator
-

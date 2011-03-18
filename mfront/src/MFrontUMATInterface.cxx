@@ -262,7 +262,8 @@ namespace mfront{
 		  <<  "const Type* const UMATstran, const Type* const UMATdstran,\n" 
 		  <<  "const Type* const UMATT_,const Type* const UMATdT_,\n"
 		  <<  "const Type* const UMATmat,const Type* const UMATint_vars,\n"
-		  <<  "const Type* const UMAText_vars,const Type* const UMATdext_vars)\n";
+		  <<  "const Type* const UMAText_vars,const Type* const UMATdext_vars,"
+		  <<  "const ModellingHypothesis::Hypothesis hypothesis_)\n";
     if(characteristic.useQt()){
       behaviourFile << ": " << className 
 		    << "BehaviourData<N,Type,use_qt>(UMATstress_,UMATstran,UMATT_,UMATmat,\n"
@@ -278,6 +279,7 @@ namespace mfront{
     }
     behaviourFile << initStateVarsIncrements;
     behaviourFile << initComputedVars;
+    behaviourFile << ",\nhypothesis(hypothesis_)";
   }
   
   void 

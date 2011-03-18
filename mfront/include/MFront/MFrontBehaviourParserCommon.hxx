@@ -240,8 +240,12 @@ namespace mfront{
     virtual void writeBehaviourGetName(void);
 
     virtual void writeBehaviourPolicyVariable(void);
+
+    virtual void writeBehaviourHypothesisVariable(void);
     
     virtual void writeBehaviourSetOutOfBoundsPolicy(void);
+
+    virtual void writeBehaviourGetModellingHypothesis(void);
 
     virtual void writeBehaviourCheckBounds(void);
 

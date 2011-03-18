@@ -143,7 +143,7 @@ namespace tfel{
     template<unsigned short N,typename T>
     st2tost2<N,T>&
     st2tost2<N,T>::operator=(const st2tost2<N,T>& src){
-      tfel::fsalgo::copy<St2tost2Size>::exe(src,*this);
+      tfel::fsalgo::copy<St2tost2Size>::exe(src.v,this->v);
       return *this;
     }
 

@@ -67,6 +67,7 @@ include/TFEL/Material/MechanicalBehaviour.hxx -text
 include/TFEL/Material/MechanicalBehaviourData.hxx -text
 include/TFEL/Material/MechanicalBehaviourTraits.hxx -text
 include/TFEL/Material/MechanicalIntegrationData.hxx -text
+include/TFEL/Material/ModellingHypothesis.hxx -text
 include/TFEL/Material/OutOfBoundsPolicy.hxx -text
 include/TFEL/Material/ThermalBehaviour.hxx -text
 include/TFEL/Material/ThermalBehaviourData.hxx -text
@@ -565,6 +566,7 @@ mfront/include/MFront/UMAT/UMAT.hxx -text
 mfront/include/MFront/UMAT/UMATComputeStiffnessTensor.hxx -text
 mfront/include/MFront/UMAT/UMATComputeThermalExpansionTensor.hxx -text
 mfront/include/MFront/UMAT/UMATException.hxx -text
+mfront/include/MFront/UMAT/UMATGetModellingHypothesis.hxx -text
 mfront/include/MFront/UMAT/UMATInterface.hxx -text
 mfront/include/MFront/UMAT/UMATOrthotropicBehaviour.hxx -text
 mfront/include/MFront/UMAT/UMATOutOfBoundsPolicy.hxx -text
@@ -632,6 +634,7 @@ mfront/src/SupportedTypes.cxx -text
 mfront/src/UMATComputeStiffnessTensor.cxx -text
 mfront/src/UMATComputeThermalExpansionTensor.cxx -text
 mfront/src/UMATException.cxx -text
+mfront/src/UMATGetModellingHypothesis.cxx -text
 mfront/src/UMATOutOfBoundsPolicy.cxx -text
 mfront/src/UMATRotationMatrix.cxx -text
 mfront/src/UnaryLoadingDefinition.cxx -text
