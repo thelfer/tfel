@@ -623,7 +623,7 @@ namespace mfront{
     this->behaviourFile << "this->T_   = this->T+(this->dT)*(t+0.25f*dt_)/(this->dt);" << endl;
     for(p =this->externalStateVarsHolder.begin();p!=this->externalStateVarsHolder.end();++p){
       this->behaviourFile << "this->" << p->name << "_ = this->" << p->name 
-			  << "+(this->" << p->name << ")*(t+0.25f*dt_)/(this->dt);" << endl;
+			  << "+(this->d" << p->name << ")*(t+0.25f*dt_)/(this->dt);" << endl;
     }
     for(p =this->stateVarsHolder.begin();p!=this->stateVarsHolder.end();++p){
       this->behaviourFile << "this->" << p->name << "_ += 0.25f*(this->d" << p->name << "_K1);" << endl;
@@ -658,7 +658,7 @@ namespace mfront{
     this->behaviourFile << "this->T_   = this->T+(this->dT)*(t+0.375f*dt_)/(this->dt);" << endl;
     for(p =this->externalStateVarsHolder.begin();p!=this->externalStateVarsHolder.end();++p){
       this->behaviourFile << "this->" << p->name << "_ = this->" << p->name 
-			  << "+(this->" << p->name << ")*(t+0.375f*dt_)/(this->dt);" << endl;
+			  << "+(this->d" << p->name << ")*(t+0.375f*dt_)/(this->dt);" << endl;
     }
     for(p =this->stateVarsHolder.begin();p!=this->stateVarsHolder.end();++p){
       this->behaviourFile << "this->" << p->name 
@@ -697,7 +697,7 @@ namespace mfront{
     this->behaviourFile << "this->T_   = this->T+(this->dT)*(t+cste12_13*dt_)/(this->dt);" << endl;
     for(p =this->externalStateVarsHolder.begin();p!=this->externalStateVarsHolder.end();++p){
       this->behaviourFile << "this->" << p->name << "_ = this->" << p->name 
-			  << "+(this->" << p->name << ")*(t+cste12_13*dt_)/(this->dt);" << endl;
+			  << "+(this->d" << p->name << ")*(t+cste12_13*dt_)/(this->dt);" << endl;
     }
     for(p =this->stateVarsHolder.begin();p!=this->stateVarsHolder.end();++p){
       this->behaviourFile << "this->" << p->name 
@@ -736,7 +736,7 @@ namespace mfront{
     this->behaviourFile << "this->T_   = this->T+(this->dT)*(t+dt_)/(this->dt);" << endl;
     for(p =this->externalStateVarsHolder.begin();p!=this->externalStateVarsHolder.end();++p){
       this->behaviourFile << "this->" << p->name << "_ = this->" << p->name 
-			  << "+(this->" << p->name << ")*(t+dt_)/(this->dt);" << endl;
+			  << "+(this->d" << p->name << ")*(t+dt_)/(this->dt);" << endl;
     }
     for(p =this->stateVarsHolder.begin();p!=this->stateVarsHolder.end();++p){
       this->behaviourFile << "this->" << p->name 
@@ -776,7 +776,7 @@ namespace mfront{
     this->behaviourFile << "this->T_   = this->T+(this->dT)*(t+0.5f*dt_)/(this->dt);" << endl;
     for(p =this->externalStateVarsHolder.begin();p!=this->externalStateVarsHolder.end();++p){
       this->behaviourFile << "this->" << p->name << "_ = this->" << p->name 
-			  << "+(this->" << p->name << ")*(t+0.5f*dt_)/(this->dt);" << endl;
+			  << "+(this->d" << p->name << ")*(t+0.5f*dt_)/(this->dt);" << endl;
     }
     for(p =this->stateVarsHolder.begin();p!=this->stateVarsHolder.end();++p){
       this->behaviourFile << "this->" << p->name 
@@ -919,8 +919,8 @@ namespace mfront{
     this->behaviourFile << "StressStensor sigf;" << endl;
     this->behaviourFile << "real errabs;" << endl;
     this->behaviourFile << "real asig;" << endl;
-    this->behaviourFile << "this->eto_  = this->eto+t*(this->deto);" << endl;
-    this->behaviourFile << "this->T_    = this->T+t*(this->dT);" << endl;
+    this->behaviourFile << "this->eto_  = this->eto;" << endl;
+    this->behaviourFile << "this->T_    = this->T;" << endl;
     for(p =this->externalStateVarsHolder.begin();p!=this->externalStateVarsHolder.end();++p){
       this->behaviourFile << "this->" << p->name << "_ = this->" << p->name << ";" << endl;
     }
@@ -963,11 +963,11 @@ namespace mfront{
 			  << "::integrate() : from \" << t <<  \" to \" << t+dt_ << \" with time step \" << dt_ << endl;\n";
     }
     this->behaviourFile << "// Compute K1's values => y in castem " << endl;
-    this->behaviourFile << "this->eto_  = this->eto+t*(this->deto);" << endl;
-    this->behaviourFile << "this->T_    = this->T+t*(this->dT);" << endl;
+    this->behaviourFile << "this->eto_  = this->eto+(t/(this->dt))*(this->deto);" << endl;
+    this->behaviourFile << "this->T_    = this->T+(t/(this->dt))*(this->dT);" << endl;
     for(p =this->externalStateVarsHolder.begin();p!=this->externalStateVarsHolder.end();++p){
       this->behaviourFile << "this->" << p->name << "_ = this->" << p->name
-			  << "+ t*(this->d" << p->name << ");" << endl;
+			  << "+ (t/(this->dt))*(this->d" << p->name << ");" << endl;
     }
     for(p =this->stateVarsHolder.begin();p!=this->stateVarsHolder.end();++p){
       this->behaviourFile << "this->" << p->name << "_ = this->" << p->name << ";" << endl;
@@ -1000,9 +1000,8 @@ namespace mfront{
     this->behaviourFile << "this->eto_ = this->eto+(this->deto)*(t+0.5f*dt_)/(this->dt);" << endl;
     this->behaviourFile << "this->T_   = this->T+(this->dT)*(t+0.5f*dt_)/(this->dt);" << endl;
     for(p =this->externalStateVarsHolder.begin();p!=this->externalStateVarsHolder.end();++p){
-      this->behaviourFile << "this->" << p->name << "_ = this->" << p->name 
-			  <<"+(this->d" << p->name 
-			  << ")*(t+0.5f*dt_)*(this->d" << p->name << ");" << endl;
+      this->behaviourFile << "this->" << p->name   << "_ = this->" << p->name 
+			  <<"+(this->d" << p->name << ")*(t+0.5f*dt_)/(this->dt);" << endl;
     }
     for(p =this->stateVarsHolder.begin();p!=this->stateVarsHolder.end();++p){
       this->behaviourFile << "this->" << p->name << "_ += 0.5f*(this->d" << p->name << "_K1);" << endl;
@@ -1071,7 +1070,7 @@ namespace mfront{
     for(p =this->externalStateVarsHolder.begin();p!=this->externalStateVarsHolder.end();++p){
       this->behaviourFile << "this->" << p->name << "_ = this->" << p->name 
 			  <<"+(this->d" << p->name 
-			  << ")*(t+dt_)*(this->d" << p->name << ");" << endl;
+			  << ")*(t+dt_)/(this->dt);" << endl;
     }
     for(p =this->stateVarsHolder.begin();p!=this->stateVarsHolder.end();++p){
       this->behaviourFile << "this->" << p->name 
@@ -1250,11 +1249,11 @@ namespace mfront{
     }
     this->behaviourFile << "bool failed = false;" << endl;
     this->behaviourFile << "// Compute K1's values" << endl;
-    this->behaviourFile << "this->eto_  = this->eto+t*(this->deto);" << endl;
-    this->behaviourFile << "this->T_    = this->T+t*(this->dT);" << endl;
+    this->behaviourFile << "this->eto_  = this->eto+(t/(this->dt))*(this->deto);" << endl;
+    this->behaviourFile << "this->T_    = this->T+(t/(this->dt))*(this->dT);" << endl;
     for(p =this->externalStateVarsHolder.begin();p!=this->externalStateVarsHolder.end();++p){
       this->behaviourFile << "this->" << p->name << "_ = this->" << p->name
-			  << "+ t*(this->d" << p->name << ");" << endl;
+			  << "+ (t/(this->dt))*(this->d" << p->name << ");" << endl;
     }
     for(p =this->stateVarsHolder.begin();p!=this->stateVarsHolder.end();++p){
       this->behaviourFile << "this->" << p->name << "_ = this->" << p->name << ";" << endl;
@@ -1288,7 +1287,7 @@ namespace mfront{
     for(p =this->externalStateVarsHolder.begin();p!=this->externalStateVarsHolder.end();++p){
       this->behaviourFile << "this->" << p->name << "_ = this->" << p->name 
 			  <<"+(this->d" << p->name 
-			  << ")*(t+0.5f*dt_)*(this->d" << p->name << ");" << endl;
+			  << ")*(t+0.5f*dt_)/(this->dt);" << endl;
     }
     for(p =this->stateVarsHolder.begin();p!=this->stateVarsHolder.end();++p){
       this->behaviourFile << "this->" << p->name << "_ += 0.5f*(this->d" << p->name << "_K1);" << endl;
@@ -1355,7 +1354,7 @@ namespace mfront{
     for(p =this->externalStateVarsHolder.begin();p!=this->externalStateVarsHolder.end();++p){
       this->behaviourFile << "this->" << p->name << "_ = this->" << p->name 
 			  <<"+(this->d" << p->name 
-			  << ")*(t+dt_)*(this->d" << p->name << ");" << endl;
+			  << ")*(t+dt_)/(this->dt);" << endl;
     }
     for(p =this->stateVarsHolder.begin();p!=this->stateVarsHolder.end();++p){
       this->behaviourFile << "this->" << p->name 
