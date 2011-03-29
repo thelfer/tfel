@@ -1122,7 +1122,8 @@ namespace mfront{
     this->behaviourDataFile << this->className << "BehaviourData(const ";
     this->behaviourDataFile << this->className << "BehaviourData& src)\n";
     this->behaviourDataFile << ": sig(src.sig),\n";
-    this->behaviourDataFile << "eto(src.eto)";
+    this->behaviourDataFile << "eto(src.eto),\n";
+    this->behaviourDataFile << "T(src.T)";
     if(!this->coefsHolder.empty()){
       for(p=this->coefsHolder.begin();p!=this->coefsHolder.end();++p){
 	this->behaviourDataFile << ",\n";
@@ -1161,7 +1162,8 @@ namespace mfront{
       this->behaviourDataFile << "MechanicalBehaviourData<N,Type,false>& src)\n";
     }
     this->behaviourDataFile << ": sig(src.sig),\n";
-    this->behaviourDataFile << "eto(src.eto)";
+    this->behaviourDataFile << "eto(src.eto),\n";
+    this->behaviourDataFile << "T(src.T)";
     if(!this->coefsHolder.empty()){
       SupportedTypes::TypeSize currentOffset;
       for(p=this->coefsHolder.begin();p!=this->coefsHolder.end();++p){
