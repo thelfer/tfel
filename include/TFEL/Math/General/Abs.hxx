@@ -24,7 +24,7 @@ namespace tfel{
     TFEL_MATH_INLINE
     typename tfel::meta::EnableIf<
       tfel::typetraits::IsFundamentalNumericType<Scal>::cond,
-      const Scal
+      Scal
       >::type
     abs(const Scal& s)
     {
@@ -33,7 +33,7 @@ namespace tfel{
 
     template<typename Unit,typename Scal>
     TFEL_MATH_INLINE
-    const Scal
+    Scal
     abs(const qt<Unit,Scal>& s)
     {
       return std::abs(s.getValue());
@@ -49,7 +49,7 @@ namespace tfel{
       {
 	template<typename StensorType>
 	TFEL_MATH_INLINE
-	static const typename tfel::math::StensorTraits<StensorType>::NumType
+	static typename tfel::math::StensorTraits<StensorType>::NumType
 	exe(const StensorType& s)
 	{
 	  return tfel::math::abs(s(0))+tfel::math::abs(s(1))+tfel::math::abs(s(2));
@@ -61,7 +61,7 @@ namespace tfel{
       {
 	template<typename StensorType>
 	TFEL_MATH_INLINE
-	static const typename tfel::math::StensorTraits<StensorType>::NumType
+	static typename tfel::math::StensorTraits<StensorType>::NumType
 	exe(const StensorType& s)
 	{
 	  return tfel::math::abs(s(0))+tfel::math::abs(s(1))+tfel::math::abs(s(2))
@@ -74,7 +74,7 @@ namespace tfel{
       {
 	template<typename StensorType>
 	TFEL_MATH_INLINE
-	static const typename StensorTraits<StensorType>::NumType
+	static typename StensorTraits<StensorType>::NumType
 	exe(const StensorType& s)
 	{
 	  return tfel::math::abs(s(0))+tfel::math::abs(s(1))+tfel::math::abs(s(2))
@@ -88,7 +88,7 @@ namespace tfel{
     TFEL_MATH_INLINE
     typename tfel::meta::EnableIf<
       tfel::meta::Implements<StensorType,StensorConcept>::cond,
-      const typename StensorTraits<StensorType>::NumType
+      typename StensorTraits<StensorType>::NumType
     >::type
     abs(const StensorType& s)
     {
