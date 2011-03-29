@@ -381,9 +381,61 @@ namespace mfront
     if(!isValidIdentifier(type,false)){
       --(this->current);
       this->throwRuntimeError("ParserBase::readVarList",
-			      "Type given is not valid.");
+			      "type given is not valid.");
     }
     ++(this->current);
+    this->checkNotEndOfFile("ParserBase::readVarList");
+    while(this->current->value=="::"){
+      ++(this->current);
+      this->checkNotEndOfFile("ParserBase::readVarList");
+      string t = this->current->value;
+      if(!isValidIdentifier(t,false)){
+	--(this->current);
+	this->throwRuntimeError("ParserBase::readVarList",
+				"type given is not valid.");
+      }
+      type += "::"+t;
+      ++(this->current);
+      this->checkNotEndOfFile("ParserBase::readVarList");
+    }
+    if(this->current->value=="<"){
+      unsigned short openBrackets = 1u;
+      ++(this->current);
+      this->checkNotEndOfFile("ParserBase::readVarList");
+      type += "<";      
+      while(openBrackets!=0){
+	string t = this->current->value;
+	if(!isValidIdentifier(t,false)){
+	  --(this->current);
+	  this->throwRuntimeError("ParserBase::readVarList",
+				  "type given is not valid.");
+	}
+	++(this->current);
+	this->checkNotEndOfFile("ParserBase::readVarList");
+	type += t;
+	if(this->current->value==","){
+	  ++(this->current);
+	  this->checkNotEndOfFile("ParserBase::readVarList");
+	  string t2 = this->current->value;
+	  if(!isValidIdentifier(t,false)){
+	    --(this->current);
+	    this->throwRuntimeError("ParserBase::readVarList",
+				    "type given is not valid.");
+	  }
+	  type+=",";
+	} else if(this->current->value=="<"){
+	  ++openBrackets;
+	  ++(this->current);
+	  this->checkNotEndOfFile("ParserBase::readVarList");
+	  type += "<";      
+	} else if(this->current->value==">"){
+	  --openBrackets;
+	  ++(this->current);
+	  this->checkNotEndOfFile("ParserBase::readVarList");
+	  type += ">";      
+	}
+      }
+    }
     this->readVarList(type,cont,addIncrementVar);
   } // end of ParserBase::readVarList
 
