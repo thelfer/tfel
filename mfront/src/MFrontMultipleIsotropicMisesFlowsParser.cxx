@@ -276,7 +276,11 @@ namespace mfront{
     for(p=this->flows.begin(),n=0;p!=this->flows.end();++p,++n){
       this->behaviourFile << "error+=std::abs(tfel::math::base_cast(newton_f(" << n << ")));\n";
     }
+    this->behaviourFile << "try{" << endl;
     this->behaviourFile << "TinyMatrixSolve<" << this->flows.size() << "," << "real>::exe(newton_df,newton_f);\n";
+    this->behaviourFile << "catch(LUException&){" << endl;
+    this->behaviourFile << "throw(DivergenceException(\"LUException\"));\n";
+    this->behaviourFile << "}" << endl;
     this->behaviourFile << "vdp -= newton_f;\n";
     this->behaviourFile << "iter+=1;\n";
     this->behaviourFile << "converge = ((error)/(real(" << this->flows.size() << "))<";
