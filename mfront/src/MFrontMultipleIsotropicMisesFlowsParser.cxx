@@ -278,7 +278,7 @@ namespace mfront{
     }
     this->behaviourFile << "try{" << endl;
     this->behaviourFile << "TinyMatrixSolve<" << this->flows.size() << "," << "real>::exe(newton_df,newton_f);\n";
-    this->behaviourFile << "catch(LUException&){" << endl;
+    this->behaviourFile << "} catch(LUException&){" << endl;
     this->behaviourFile << "throw(DivergenceException(\"LUException\"));\n";
     this->behaviourFile << "}" << endl;
     this->behaviourFile << "vdp -= newton_f;\n";
