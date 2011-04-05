@@ -37,7 +37,7 @@ namespace tfel{
 	return std::string("MechanicalBehaviour");
       }
 
-      virtual void integrate() = 0;
+      virtual bool integrate() = 0;
 
       virtual ~MechanicalBehaviour(){};
 

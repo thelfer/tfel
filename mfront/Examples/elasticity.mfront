@@ -8,14 +8,16 @@
 
 @UseQt true;
 
-@Coef stress young;
-@Coef real   nu;
+@MaterialProperty stress young;
+@MaterialProperty real   nu;
+@MaterialProperty real   rho;
+@MaterialProperty real   alpha;
 
-@LocalVar stress lambda;
-@LocalVar stress mu;
+@LocalVariable stress lambda;
+@LocalVariable stress mu;
 
 @Includes{
-#include"Material/Lame.hxx"
+#include"TFEL/Material/Lame.hxx"
 }
 
 @InitLocalVars{

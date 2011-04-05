@@ -111,7 +111,7 @@ namespace mfront{
       this->behaviourFile << p->flowRule << endl;
       this->behaviourFile << "}\n\n";
     }
-    this->behaviourFile << "void NewtonIntegration(void){\n";
+    this->behaviourFile << "bool NewtonIntegration(void){\n";
     this->behaviourFile << "using namespace tfel::math;\n";
     this->behaviourFile << "real error;\n";
     this->behaviourFile << "unsigned int iter;\n";
@@ -279,7 +279,7 @@ namespace mfront{
     this->behaviourFile << "try{" << endl;
     this->behaviourFile << "TinyMatrixSolve<" << this->flows.size() << "," << "real>::exe(newton_df,newton_f);\n";
     this->behaviourFile << "} catch(LUException&){" << endl;
-    this->behaviourFile << "throw(DivergenceException(\"LUException\"));\n";
+    this->behaviourFile << "return false;" << endl;
     this->behaviourFile << "}" << endl;
     this->behaviourFile << "vdp -= newton_f;\n";
     this->behaviourFile << "iter+=1;\n";
@@ -288,11 +288,12 @@ namespace mfront{
     this->behaviourFile << "}\n\n";
     
     this->behaviourFile << "if(iter==" << this->className << "::iterMax){\n";
-    this->behaviourFile << "throw(DivergenceException(\"Newton-Raphson: no convergence\"));\n";
+    this->behaviourFile << "return false;" << endl;
     this->behaviourFile << "}\n\n";
     for(p=this->flows.begin(),n=0;p!=this->flows.end();++p,++n){
       this->behaviourFile << "this->dp"<< n << " = " << "vdp(" << n<< ");\n";
     }
+    this->behaviourFile << "return true;" << endl;
     this->behaviourFile << "\n}\n\n";
   } // end of writeBehaviourParserSpecificMembers
 
@@ -306,9 +307,11 @@ namespace mfront{
     this->behaviourFile << "/*!\n";
     this->behaviourFile << "* \\brief Integrate behaviour law over the time step\n";
     this->behaviourFile << "*/\n";
-    this->behaviourFile << "void\n";
+    this->behaviourFile << "bool\n";
     this->behaviourFile << "integrate(void){\n";
-    this->behaviourFile << "this->NewtonIntegration();\n";
+    this->behaviourFile << "if(!this->NewtonIntegration()){\n";
+    this->behaviourFile << "return false;\n";
+    this->behaviourFile << "}\n";
     this->behaviourFile << "this->dp = ";
     p2=this->flows.begin();
     n=0;
@@ -331,6 +334,7 @@ namespace mfront{
 	p->writeBoundsChecks(this->behaviourFile);
       }
     }
+    this->behaviourFile << "return true;\n";
     this->behaviourFile << "}\n\n";
   }
 

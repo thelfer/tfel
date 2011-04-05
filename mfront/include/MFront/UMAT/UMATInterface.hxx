@@ -543,7 +543,7 @@ namespace umat{
 	    behaviour.setOutOfBoundsPolicy(up.getOutOfBoundsPolicy());
 	    behaviour.checkBounds();
 	    try{
-	      behaviour.integrate();
+	      convergence = behaviour.integrate();
 	    }
 	    catch(const tfel::material::DivergenceException& e){
 #ifdef MFRONT_UMAT_VERBOSE
@@ -623,7 +623,9 @@ namespace umat{
 	    throw(UMATException("negative time step"));
 	  }
 	  behaviour.checkBounds();
-	  this->behaviour.integrate();
+	  if(!this->behaviour.integrate()){
+	    throw(UMATException("behaviour intregration failed"));
+	  }
 	  behaviour.checkBounds();
 	  this->behaviour.UMATexportStateData(STRESS,STATEV);
 	} // end of Integrator::exe

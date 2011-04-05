@@ -299,6 +299,11 @@ namespace mfront{
 
     virtual void treatVariableMethod(void);
 
+    /*!
+     * \param n : variable name
+     */
+    virtual void treatUnknownVariableMethod(const std::string&);
+
     virtual ~MFrontBehaviourParserCommon();
 
     void updateClassName();

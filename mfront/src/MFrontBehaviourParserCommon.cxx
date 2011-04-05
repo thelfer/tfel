@@ -158,16 +158,23 @@ namespace mfront{
 	throw(runtime_error(msg));
       }
     } else {
-      string msg("MFrontBehaviourParserCommon::treatVariableMethod : ");
-      msg += "unknown method '"+this->current->value+"', ";
-      msg += "valid methods are 'setGlossaryName' or 'setEntryName'";
-      throw(runtime_error(msg));
+      this->treatUnknownVariableMethod(n);
     }
     this->checkNotEndOfFile("MFrontBehaviourParserCommon::treatVariableMethod");
     this->readSpecifiedToken("MFrontBehaviourParserCommon::treatVariableMethod",")");
     this->checkNotEndOfFile("MFrontBehaviourParserCommon::treatVariableMethod");
     this->readSpecifiedToken("MFrontBehaviourParserCommon::treatVariableMethod",";");
   } // end of MFrontBehaviourParserCommon::treatVariableMethod
+
+  void
+  MFrontBehaviourParserCommon::treatUnknownVariableMethod(const std::string& n)
+  {
+    using namespace std;
+    string msg("MFrontBehaviourParserCommon::treatVariableMethod : ");
+    msg += "unknown method '"+this->current->value+"' for variable '"+n+"', ";
+    msg += "valid methods are 'setGlossaryName' or 'setEntryName'";
+    throw(runtime_error(msg));
+  } // end of MFrontBehaviourParserCommon::treatUnknownVariableMethod
 
   void
   MFrontBehaviourParserCommon::treatUnknownKeyword(void)
@@ -1044,7 +1051,7 @@ namespace mfront{
     this->behaviourDataFile << "#include\"TFEL/TypeTraits/IsFundamentalNumericType.hxx\"" << endl;
     this->behaviourDataFile << "#include\"TFEL/TypeTraits/IsReal.hxx\"" << endl;
     if(this->behaviourCharacteristic.useQt()){
-      this->behaviourDataFile << "#include\"TFEL/Math/General/CommonCast.hxx\"" << endl;
+      this->behaviourDataFile << "#include\"TFEL/Math/General/BaseCast.hxx\"" << endl;
     }
     this->behaviourDataFile << "#include\"TFEL/Material/MechanicalBehaviourData.hxx\"" << endl;
     this->behaviourDataFile << "#include\"TFEL/Material/ModellingHypothesis.hxx\"" << endl;
@@ -1891,7 +1898,7 @@ namespace mfront{
     this->behaviourFile << "/*!\n";
     this->behaviourFile << "* \\brief Integrate behaviour  over the time step\n";
     this->behaviourFile << "*/\n";
-    this->behaviourFile << "void\n";
+    this->behaviourFile << "bool\n";
     this->behaviourFile << "integrate(void){\n";
     this->behaviourFile << "using namespace std;" << endl;
     this->behaviourFile << "using namespace tfel::math;" << endl;
@@ -1909,6 +1916,7 @@ namespace mfront{
 	p->writeBoundsChecks(this->behaviourFile);
       }
     }
+    this->behaviourFile << "return true;\n";
     this->behaviourFile << "}\n\n";
   }
 

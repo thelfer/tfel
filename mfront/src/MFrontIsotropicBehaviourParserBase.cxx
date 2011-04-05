@@ -22,6 +22,7 @@ namespace mfront{
   {
     using namespace std;
     typedef map<string,string>::value_type MVType;
+    this->reserveName("NewtonIntegration");
     this->registerStaticVariable("theta");
     this->registerStaticVariable("epsilon");
     this->registerStaticVariable("iterMax");

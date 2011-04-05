@@ -84,7 +84,7 @@ namespace mfront{
     this->behaviourFile << this->flowRule << endl;
     this->behaviourFile << "}\n\n";
 
-    this->behaviourFile << "void NewtonIntegration(void){\n";
+    this->behaviourFile << "bool NewtonIntegration(void){\n";
     this->behaviourFile << "using namespace tfel::math;\n";
     this->behaviourFile << "unsigned int iter;\n";
     this->behaviourFile << "bool converge=false;\n";
@@ -117,12 +117,13 @@ namespace mfront{
     this->behaviourFile << "}\n";
     this->behaviourFile << "}\n\n";
     this->behaviourFile << "if(inversible==false){\n";
-    this->behaviourFile << "throw(DivergenceException(\"Newton-Raphson: null derivative\"));\n";
+    this->behaviourFile << "return false;\n";
     this->behaviourFile << "}\n\n";
     
     this->behaviourFile << "if(iter==" << this->className << "::iterMax){\n";
-    this->behaviourFile << "throw(DivergenceException(\"Newton-Raphson: no convergence\"));\n";
+    this->behaviourFile << "return false;\n";
     this->behaviourFile << "}\n\n";
+    this->behaviourFile << "return true;\n";
     this->behaviourFile << "}\n\n";
   } // end of writeBehaviourParserSpecificMembers
 
@@ -134,9 +135,11 @@ namespace mfront{
     this->behaviourFile << "/*!\n";
     this->behaviourFile << "* \\brief Integrate behaviour law over the time step\n";
     this->behaviourFile << "*/\n";
-    this->behaviourFile << "void\n";
+    this->behaviourFile << "bool\n";
     this->behaviourFile << "integrate(void){\n";
-    this->behaviourFile << "this->NewtonIntegration();\n";
+    this->behaviourFile << "if(!this->NewtonIntegration()){\n";
+    this->behaviourFile << "return false;\n";
+    this->behaviourFile << "}\n";
     this->behaviourFile << "this->deel = this->deto-(this->dp)*(this->n);\n";
     this->behaviourFile << "this->updateStateVars();\n";
     this->behaviourFile << "this->sig  = (this->lambda)*trace(this->eel)*StrainStensor::Id()+2*(this->mu)*(this->eel);\n";
@@ -147,6 +150,7 @@ namespace mfront{
 	p->writeBoundsChecks(this->behaviourFile);
       }
     }
+    this->behaviourFile << "return true;\n";
     this->behaviourFile << "}\n\n";
   }
 

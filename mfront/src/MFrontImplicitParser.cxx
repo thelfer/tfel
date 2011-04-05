@@ -593,7 +593,7 @@ namespace mfront{
     this->behaviourFile << "/*!\n";
     this->behaviourFile << "* \\brief Integrate behaviour law over the time step\n";
     this->behaviourFile << "*/\n";
-    this->behaviourFile << "void\nintegrate(void){\n";
+    this->behaviourFile << "bool\nintegrate(void){\n";
     this->behaviourFile << "using namespace std;\n";
     this->behaviourFile << "using namespace tfel::math;\n";
     if((this->algorithm==MFrontImplicitParser::BROYDEN)||
@@ -642,7 +642,7 @@ namespace mfront{
 			  << "," << "real>::exe(jacobian2,Dzeros);\n";
       this->behaviourFile << "}" << endl;
       this->behaviourFile << "catch(LUException&){" << endl;
-      this->behaviourFile << "throw(DivergenceException(\"LUException\"));\n";
+      this->behaviourFile << "return false;\n";
       this->behaviourFile << "}" << endl;
       this->behaviourFile << "jacobian2 = this->jacobian;\n";
       this->behaviourFile << "this->zeros  += this->Dzeros;\n";
@@ -672,14 +672,14 @@ namespace mfront{
 			  << "," << "real>::exe(this->jacobian,this->fzeros);\n";
       this->behaviourFile << "}" << endl;
       this->behaviourFile << "catch(LUException&){" << endl;
-      this->behaviourFile << "throw(DivergenceException(\"LUException\"));\n";
+      this->behaviourFile << "return false;\n";
       this->behaviourFile << "}" << endl;
       this->behaviourFile << "this->zeros -= this->fzeros;\n";
     }
     if(this->algorithm==MFrontImplicitParser::BROYDEN){
       this->behaviourFile << "broyden_inv = (Dzeros|Dzeros);\n";
       this->behaviourFile << "if(broyden_inv<100*std::numeric_limits<real>::epsilon()){\n";
-      this->behaviourFile << "throw(DivergenceException(\"Broyden null increment\"));\n";
+      this->behaviourFile << "return false;\n";
       this->behaviourFile << "}\n";
       this->behaviourFile << "this->jacobian += "
 			  << "(((this->fzeros-fzeros2)-(jacobian2)*(Dzeros))^Dzeros)/broyden_inv;\n";
@@ -689,7 +689,7 @@ namespace mfront{
       this->behaviourFile << "jacobian2 = this->jacobian;\n";
       this->behaviourFile << "broyden_inv = Dzeros|jacobian2*Dfzeros;\n";
       this->behaviourFile << "if(broyden_inv<100*std::numeric_limits<real>::epsilon()){\n";
-      this->behaviourFile << "throw(DivergenceException(\"Broyden null denominator\"));\n";
+      this->behaviourFile << "return false;\n";
       this->behaviourFile << "}\n";
       this->behaviourFile << "this->jacobian += "
 			  << "((Dzeros-jacobian2*Dfzeros)^(Dzeros*jacobian2))/(broyden_inv);\n";
@@ -717,7 +717,7 @@ namespace mfront{
 			  << "<< this->iter << \" iterations\"<< endl << endl;\n";
       this->behaviourFile << "cout << *this << endl;\n";
     }
-    this->behaviourFile << "throw(DivergenceException(\"Newton-Raphson: no convergence\"));\n";
+    this->behaviourFile << "return false;\n";
     this->behaviourFile << "}\n";
     if(this->debugMode){
       this->behaviourFile << "cout << \"" << this->className
@@ -733,6 +733,7 @@ namespace mfront{
 	p3->writeBoundsChecks(this->behaviourFile);
       }
     }
+    this->behaviourFile << "return true;\n";
     this->behaviourFile << "} // end of " << this->className << "::integrate\n\n";
     this->behaviourFile << "/*!\n";
     this->behaviourFile << "* \\brief compute fzeros and jacobian\n";

@@ -1572,7 +1572,7 @@ namespace mfront{
     this->behaviourFile << "/*!" << endl;
     this->behaviourFile << "* \\brief Integrate behaviour law over the time step" << endl;
     this->behaviourFile << "*/" << endl;
-    this->behaviourFile << "void" << endl;
+    this->behaviourFile << "bool" << endl;
     this->behaviourFile << "integrate(void){" << endl;
     if(this->algorithm == "Euler"){
       this->writeBehaviourEulerIntegrator();
@@ -1600,6 +1600,7 @@ namespace mfront{
 	p2->writeBoundsChecks(this->behaviourFile);
       }
     }
+    this->behaviourFile << "return true;" << endl;
     this->behaviourFile << "} // end of " << this->className << "::integrate" << endl << endl;
   } // end of void MFrontRungeKuttaParser::writeBehaviourIntegrator(void)
   
