@@ -220,18 +220,32 @@ namespace mfront
       res += "\"\n";
     }
     if(this->staticVarNames.find(this->current->value)!=this->staticVarNames.end()){
-      res += this->className;
-      res += "::";
+      previous = this->current;
+      --previous;
+      if((previous->value!="->")&&
+	 (previous->value!=".")&&
+	 (previous->value!="::")){
+	res += this->className;
+	res += "::";
+      }
       res += this->current->value;
     } else if(this->varNames.find(this->current->value)!=this->varNames.end()){
       string currentValue;
-      if(modifier!=0){
-	currentValue = (this->*modifier)(this->current->value,addThisPtr);
+      previous = this->current;
+      --previous;
+      if((previous->value=="->")||
+	 (previous->value==".")||
+	 (previous->value=="::")){
+	currentValue = this->current->value;
       } else {
-	if(addThisPtr){
-	  currentValue = "this->"+this->current->value;
+	if(modifier!=0){
+	  currentValue = (this->*modifier)(this->current->value,addThisPtr);
 	} else {
-	  currentValue = this->current->value;
+	  if(addThisPtr){
+	    currentValue = "this->"+this->current->value;
+	  } else {
+	    currentValue = this->current->value;
+	  }
 	}
       }
       previous = this->current;
@@ -283,23 +297,23 @@ namespace mfront
 	string currentValue;
 	previous = this->current;
 	--previous;
-	if(modifier!=0){
-	  currentValue = (this->*modifier)(this->current->value,addThisPtr);
+	if((previous->value=="->")||
+	   (previous->value==".")||
+	   (previous->value=="::")){
+	  currentValue = this->current->value;
 	} else {
-	  if(addThisPtr){
-	    if((previous->value=="->")||
-	       (previous->value==".")||
-	       (previous->value=="::")){
-	      currentValue = this->current->value;
-	    } else {
+	  if(modifier!=0){
+	    currentValue = (this->*modifier)(this->current->value,addThisPtr);	    
+	  } else {
+	    if(addThisPtr){
 	      if(previous->value=="*"){
 		currentValue = "(this->"+this->current->value+')';
 	      } else {
 		currentValue = "this->"+this->current->value;
 	      }
+	    } else {
+	      currentValue = this->current->value;
 	    }
-	  } else {
-	    currentValue = this->current->value;
 	  }
 	}
 	res += currentValue;

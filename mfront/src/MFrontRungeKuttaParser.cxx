@@ -37,6 +37,7 @@ namespace mfront{
     this->registerVariable("t");
     this->registerVariable("dt_");
     this->registerVariable("T_");
+    this->registerVariable("dT_");
     this->registerVariable("eto_");
     this->registerVariable("deto_");
     this->reserveName("corrector");
@@ -47,6 +48,7 @@ namespace mfront{
     this->localVarsHolder.push_back(VarHandler("StrainStensor","eto_",0u));
     this->localVarsHolder.push_back(VarHandler("StrainRateStensor","deto_",0u));
     this->localVarsHolder.push_back(VarHandler("temperature","T_",0u));
+    this->localVarsHolder.push_back(VarHandler("real","dT_",0u));
     this->stateVarsHolder.push_back(VarHandler("StrainStensor","eel",0u));
     this->glossaryNames.insert(MVType("eel","ElasticStrain"));
     // CallBacks
@@ -85,13 +87,26 @@ namespace mfront{
   MFrontRungeKuttaParser::variableModifier1(const std::string& var,
 					    const bool addThisPtr)
   {
-    if((var=="eto")||(var=="T")||(var=="deto")||
+    using namespace std;
+    if((var=="eto") ||(var=="T") ||
+       (var=="deto")||(var=="dT")||
        (this->isInternalStateVariable(var))||
        (this->isExternalStateVariable(var))){
       if(addThisPtr){
 	return "this->"+var+"_";
       } else {
 	return var+"_";
+      }
+    }
+    if(var[0]=='d'){
+      // variable increment
+      string v = var.substr(1);
+      if(this->isExternalStateVariable(v)){
+	if(addThisPtr){
+	  return "(this->"+var+"/(this->dt)";
+	} else {
+	  return "("+var+"/(this->dt)";
+	}
       }
     }
     if(addThisPtr){
@@ -104,12 +119,25 @@ namespace mfront{
   MFrontRungeKuttaParser::variableModifier2(const std::string& var,
 					    const bool addThisPtr)
   {
+    using namespace std;
     if((var=="eto")||(var=="T")||
        (this->isExternalStateVariable(var))){
       if(addThisPtr){
 	return "this->"+var+"+this->d"+var;
       } else {
 	return var+"+d"+var;
+      }
+    }
+    if(var[0]=='d'){
+      // variable increment
+      string v = var.substr(1);
+      if((v=="eto")||(v=="T")||
+	 (this->isExternalStateVariable(v))){
+	if(addThisPtr){
+	  return "(this->"+var+"/(this->dt)";
+	} else {
+	  return "("+var+"/(this->dt)";
+	}
       }
     }
     if(addThisPtr){
@@ -318,6 +346,7 @@ namespace mfront{
     parserInitLocalVars += "throw(runtime_error(msg));\n";
     parserInitLocalVars += "}\n";
     parserInitLocalVars += "this->deto_ = (this->deto)/(this->dt);\n";
+    parserInitLocalVars += "this->dT_   = (this->dT)/(this->dt);\n";
     for(p =this->stateVarsHolder.begin();p!=this->stateVarsHolder.end();++p){
       currentVarName = p->name + "_";
       this->registerVariable(currentVarName);
