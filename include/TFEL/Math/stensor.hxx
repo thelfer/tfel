@@ -442,7 +442,30 @@ namespace tfel{
       void 
       copy(const InputIterator src);
 
-    };
+    }; // end of class stensor
+
+    /*!
+     * compute the tresca stress
+     * for a symmetric tensor
+     *
+     * \param s : symmetric tensor
+     */
+    template<unsigned short N,
+	     typename T,
+	     template<unsigned short,typename> class Storage>
+    T tresca(const stensor<N,T,Storage>&);
+    
+    /*!
+     * compute the tresca stress
+     * for a symmetric tensor.
+     *
+     * Partial specialisation in 1D
+     *
+     * \param s : symmetric tensor
+     */
+    template<typename T,
+	     template<unsigned short,typename> class Storage>
+    T tresca(const stensor<1u,T,Storage>&);
         
   } // end of namespace math
 
