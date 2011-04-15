@@ -160,6 +160,46 @@ namespace mfront{
 			&ParserBase::variableModifier2,true);
   } // end of MFrontRungeKuttaParser::treatComputeStress
 
+  void MFrontRungeKuttaParser::treatUnknownVariableMethod(const std::string& n)
+  {
+    using namespace std;
+    if(this->isInternalStateVariableName(n)){
+      if(this->current->value=="setErrorNormalisationFactor"){
+	string var;
+	++(this->current);
+	this->checkNotEndOfFile("MFrontRungeKuttaParser::treatUnknowVariableMethod");
+	this->readSpecifiedToken("MFrontRungeKuttaParser::treatUnknowVariableMethod","(");
+	this->checkNotEndOfFile("MFrontRungeKuttaParser::treatUnknowVariableMethod");
+	var = this->current->value;
+	if((this->isMaterialPropertyName(var))||
+	   (this->isLocalVariableName(var))){
+	  var = "this->" + var;
+	} else {
+	  // var shall be a number
+	  double value;
+	  istringstream flux(var);
+	  flux >> value;
+	  if(flux.fail()){
+	    this->throwRuntimeError("MFrontRungeKuttaParser::treatUnknowVariableMethod",
+				    "Failed to read error normalisation factor.");
+	  }
+	  if(value<0.){
+	    this->throwRuntimeError("MFrontRungeKuttaParser::treatUnknowVariableMethod",
+				    "invalid error normalisation factor.");
+	  }
+	}
+	if(!this->enf.insert(make_pair(n,var)).second){
+	  this->throwRuntimeError("MFrontRungeKuttaParser::treatUnknowVariableMethod",
+				  "Error normalisation factor already defined for variable '"+n+"'.");
+	}
+	++(this->current);
+	this->checkNotEndOfFile("MFrontRungeKuttaParser::treatUnknowVariableMethod");
+	return;
+      }
+    }
+    MFrontBehaviourParserCommon::treatUnknownVariableMethod(n);
+  } // end of MFrontRungeKuttaParser::treatUnknowVariableMethod
+
   void MFrontRungeKuttaParser::treatDerivative(void)
   {
     if(!this->derivative.empty()){
@@ -345,8 +385,6 @@ namespace mfront{
     parserInitLocalVars += "msg += \"time step too small.\";\n";
     parserInitLocalVars += "throw(runtime_error(msg));\n";
     parserInitLocalVars += "}\n";
-    parserInitLocalVars += "this->deto_ = (this->deto)/(this->dt);\n";
-    parserInitLocalVars += "this->dT_   = (this->dT)/(this->dt);\n";
     for(p =this->stateVarsHolder.begin();p!=this->stateVarsHolder.end();++p){
       currentVarName = p->name + "_";
       this->registerVariable(currentVarName);
@@ -382,6 +420,8 @@ namespace mfront{
        (this->algorithm!="RungeKutta5/4")){
       parserInitLocalVars += "this->computeStress();\n";
     }
+    parserInitLocalVars += "this->deto_ = (this->deto)/(this->dt);\n";
+    parserInitLocalVars += "this->dT_   = (this->dT)/(this->dt);\n";
     this->initLocalVars = parserInitLocalVars + this->initLocalVars;
   }
 
@@ -844,15 +884,23 @@ namespace mfront{
     this->behaviourFile << "// Computing the error" << endl;
     for(p =this->stateVarsHolder.begin();p!=this->stateVarsHolder.end();++p){
       if(p==this->stateVarsHolder.begin()){
-	this->behaviourFile << "error = tfel::math::abs(";
+	this->behaviourFile << "error  = ";
       } else {
-	this->behaviourFile << "error += tfel::math::abs(";
+	this->behaviourFile << "error += ";
       }
+      if(enf.find(p->name)!=enf.end()){
+	this->behaviourFile << "(";
+      }
+      this->behaviourFile << "tfel::math::abs(";
       this->behaviourFile << "cste1_360*(this->d" << p->name << "_K1)"
 			  << "-cste128_4275*(this->d" << p->name << "_K3)"
 			  << "-cste2197_75240*(this->d" << p->name << "_K4)"
 			  << "+cste1_50*(this->d" << p->name << "_K5)"
-			  << "+cste2_55*(this->d" << p->name << "_K6));" << endl;
+			  << "+cste2_55*(this->d" << p->name << "_K6))";
+      if(enf.find(p->name)!=enf.end()){
+	this->behaviourFile << ")/(" << enf.find(p->name)->second << ")";
+      }      
+      this->behaviourFile << ";"  << endl;
     }
     this->behaviourFile << "error/=" << stateVarsSize << ";" << endl;
     if(this->debugMode){
@@ -1418,14 +1466,22 @@ namespace mfront{
     this->behaviourFile << "// Computing the error" << endl;
     for(p =this->stateVarsHolder.begin();p!=this->stateVarsHolder.end();++p){
       if(p==this->stateVarsHolder.begin()){
-	this->behaviourFile << "error = tfel::math::abs(";
+	this->behaviourFile << "error  = ";
       } else {
-	this->behaviourFile << "error += tfel::math::abs(";
+	this->behaviourFile << "error += ";
+      }
+      this->behaviourFile << "tfel::math::abs(";
+      if(enf.find(p->name)!=enf.end()){
+	this->behaviourFile << "(";
       }
       this->behaviourFile << "cste1_6*(this->d" << p->name << "_K1+"
 			  << "this->d" << p->name << "_K4-"
 			  << "this->d" << p->name << "_K2-"
-			  << "this->d" << p->name << "_K3));" << endl;
+			  << "this->d" << p->name << "_K3))";
+      if(enf.find(p->name)!=enf.end()){
+	this->behaviourFile << ")/(" << enf.find(p->name)->second << ")";
+      }
+      this->behaviourFile << ";" << endl;
     }
     this->behaviourFile << "error/=" << stateVarsSize << ";" << endl;
     if(this->debugMode){

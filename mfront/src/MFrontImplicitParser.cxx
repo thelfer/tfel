@@ -91,6 +91,46 @@ namespace mfront{
     this->disableCallBack("@UseQt");
   } // end of MFrontImplicitParser::MFrontImplicitParser
 
+  void MFrontImplicitParser::treatUnknownVariableMethod(const std::string& n)
+  {
+    using namespace std;
+    if(this->isInternalStateVariableName(n)){
+      if(this->current->value=="setErrorNormalisationFactor"){
+	string var;
+	++(this->current);
+	this->checkNotEndOfFile("MFrontImplicitParser::treatUnknowVariableMethod");
+	this->readSpecifiedToken("MFrontImplicitParser::treatUnknowVariableMethod","(");
+	this->checkNotEndOfFile("MFrontImplicitParser::treatUnknowVariableMethod");
+	var = this->current->value;
+	if((this->isMaterialPropertyName(var))||
+	   (this->isLocalVariableName(var))){
+	  var = "this->" + var;
+	} else {
+	  // var shall be a number
+	  double value;
+	  istringstream flux(var);
+	  flux >> value;
+	  if(flux.fail()){
+	    this->throwRuntimeError("MFrontImplicitParser::treatUnknowVariableMethod",
+				    "Failed to read error normalisation factor.");
+	  }
+	  if(value<0.){
+	    this->throwRuntimeError("MFrontImplicitParser::treatUnknowVariableMethod",
+				    "invalid error normalisation factor.");
+	  }
+	}
+	if(!this->enf.insert(make_pair(n,var)).second){
+	  this->throwRuntimeError("MFrontImplicitParser::treatUnknowVariableMethod",
+				  "Error normalisation factor already defined for variable '"+n+"'.");
+	}
+	++(this->current);
+	this->checkNotEndOfFile("MFrontImplicitParser::treatUnknowVariableMethod");
+	return;
+      }
+    }
+    MFrontBehaviourParserCommon::treatUnknownVariableMethod(n);
+  } // end of MFrontImplicitParser::treatUnknowVariableMethod
+
   void
   MFrontImplicitParser::treatUseAcceleration(void)
   {
@@ -830,6 +870,15 @@ namespace mfront{
     this->behaviourFile << "this->fzeros = this->zeros;\n";
     this->behaviourFile << this->integrator;
     this->behaviourFile << "\n";
+    for(p=this->stateVarsHolder.begin();p!=this->stateVarsHolder.end();++p){
+      if(enf.find(p->name)!=enf.end()){
+	this->behaviourFile << "f" << p->name << "*= real(1)/(" << enf.find(p->name)->second << ");" << endl;
+	for(p2=this->stateVarsHolder.begin();p2!=this->stateVarsHolder.end();++p2){
+	  this->behaviourFile << "df" << p->name << "_dd" << p2->name
+			      << "*= real(1)/(" << enf.find(p->name)->second << ");" << endl;
+	}
+      }
+    }
     for(p=this->stateVarsHolder.begin();p!=this->stateVarsHolder.end();++p){
       for(p2=this->stateVarsHolder.begin();p2!=this->stateVarsHolder.end();++p2){
 	this->behaviourFile << "static_cast<void>(df"

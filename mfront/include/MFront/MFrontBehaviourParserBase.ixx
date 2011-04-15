@@ -121,7 +121,7 @@ namespace mfront{
     // begin treatement
     this->current = this->fileTokens.begin();
     while(this->current != this->fileTokens.end()){
-      if((this->isCoefficientName(this->current->value))||
+      if((this->isMaterialPropertyName(this->current->value))||
 	 (this->isInternalStateVariableName(this->current->value))||
 	 (this->isAuxiliaryInternalStateVariableName(this->current->value))||
 	 (this->isExternalStateVariableName(this->current->value))){

@@ -41,16 +41,17 @@ namespace tfel
 	while(p!=string::npos){
 	  rs = r.size();
 	  r.resize(rs+p-pos+s2.size());
-	  copy(s.begin()+pos,s.begin()+p,r.begin()+rs);
-	  copy(s2.begin(),s2.end(),r.begin()+rs+p-pos);
+	  //	  copy(s.begin()+pos,s.begin()+p,r.begin()+rs);
+	  copy(&s[0]+pos,&s[0]+p,&r[0]+rs);
+	  copy(s2.begin(),s2.end(),&r[0]+rs+p-pos);
 	  pos=p+s1.size();
 	  p=s.find(s1,pos);
 	}
       }
       rs = r.size();
       r.resize(rs+s.size()-pos);
-      copy(s.begin()+pos,s.end(),
-	   r.begin()+rs);
+      copy(&s[0]+pos,&s[0]+s.size(),
+	   &r[0]+rs);
     }
 
   } // end of namespace utilities

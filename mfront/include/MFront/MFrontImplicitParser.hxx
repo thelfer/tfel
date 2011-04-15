@@ -76,6 +76,9 @@ namespace mfront{
     std::string
     variableModifier2(const std::string&,const bool);
 
+    virtual void
+    treatUnknownVariableMethod(const std::string&);
+
     void endsInputFileProcessing(void);
 
     void writeBehaviourIntegrator(void);
@@ -123,6 +126,9 @@ namespace mfront{
     void treatRelaxationCoefficient(void);
 
     friend class MFrontBehaviourParserBase<MFrontImplicitParser>;
+
+    // error normalisation factors
+    std::map<std::string,std::string> enf;
 
     std::string computeStress;
 

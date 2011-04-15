@@ -71,6 +71,9 @@ namespace mfront{
     variableModifier2(const std::string&,
 		      const bool);
 
+    virtual void
+    treatUnknownVariableMethod(const std::string&);
+
     void treatStateVariables(void);
 
     void treatEpsilon(void);
@@ -117,6 +120,9 @@ namespace mfront{
     void endsInputFileProcessing(void);
 
     friend class MFrontBehaviourParserBase<MFrontRungeKuttaParser>;
+
+    // error normalisation factors
+    std::map<std::string,std::string> enf;
 
     std::string algorithm;
     std::string computeFinalStress;

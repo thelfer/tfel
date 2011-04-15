@@ -79,10 +79,16 @@ namespace mfront{
   } // end of MFrontBehaviourParserCommon::contains
 
   bool
-  MFrontBehaviourParserCommon::isCoefficientName(const std::string& n) const
+  MFrontBehaviourParserCommon::isMaterialPropertyName(const std::string& n) const
   {
     return this->contains(this->coefsHolder,n);
-  } // end of MFrontBehaviourParserCommon::isCoefficientName
+  } // end of MFrontBehaviourParserCommon::isMaterialPropertyName
+
+  bool
+  MFrontBehaviourParserCommon::isLocalVariableName(const std::string& n) const
+  {
+    return this->contains(this->localVarsHolder,n);
+  } // end of MFrontBehaviourParserCommon::isLocalVariableName
   
   bool
   MFrontBehaviourParserCommon::isInternalStateVariableName(const std::string& n) const

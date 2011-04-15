@@ -168,7 +168,7 @@ namespace tfel
 		  const real dse, // elastic stress estimation
 		  const real e,
 		  const real X,
-		  const real young,
+		  const real ,   // this was formerly the young modulus (actually not used)
 		  const real lambda,
 		  const real mu,
 		  const unsigned short i,

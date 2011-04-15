@@ -313,7 +313,10 @@ namespace mfront{
 	     const std::string&) const;
 
     bool
-    isCoefficientName(const std::string&) const;
+    isMaterialPropertyName(const std::string&) const;
+
+    bool
+    isLocalVariableName(const std::string&) const;
 
     bool
     isInternalStateVariableName(const std::string&) const;
