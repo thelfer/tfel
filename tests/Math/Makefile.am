@@ -24,6 +24,7 @@ test_PROGRAMS = hill                  \
 		lu2                   \
 		tinymatrixsolve       \
 		tinymatrixsolve2      \
+		CubicSplineTest       \
 		krigeage              \
 		krigeage1D            \
 		krigeage2D            \
@@ -112,6 +113,15 @@ SFTMCV_SOURCES                = SFTMCV.cxx
 levenberg_marquardt_SOURCES   = levenberg-marquardt.cxx
 levenberg_marquardt2_SOURCES  = levenberg-marquardt2.cxx
 levenberg_marquardt3_SOURCES  = levenberg-marquardt3.cxx
+
+CubicSplineTest_SOURCES = CubicSplineTest.cxx
+CubicSplineTest_LDADD   = -L$(top_builddir)/src/Math       \
+		          -L$(top_builddir)/src/Utilities  \
+		          -L$(top_builddir)/src/Exception  \
+                          -L$(top_builddir)/src/Tests      \
+		          -lTFELMathCubicSpline -lTFELMath \
+		          -lTFELUtilities -lTFELException  \
+			  -lTFELTests
 
 krigeage_SOURCES = krigeage.cxx
 krigeage_LDADD   = -L$(top_builddir)/src/Math       \

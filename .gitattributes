@@ -778,6 +778,7 @@ tests/Math/Composite/CMakeLists.txt -text
 tests/Math/Composite/Makefile.am -text
 tests/Math/Composite/composite.cxx -text
 tests/Math/CubicRoots.cxx -text
+tests/Math/CubicSplineTest.cxx -text
 tests/Math/ExpressionTemplates/CMakeLists.txt -text
 tests/Math/ExpressionTemplates/Makefile.am -text
 tests/Math/ExpressionTemplates/include/Makefile.am -text
