@@ -41,6 +41,9 @@ static void
 treatMath(void);
 
 static void
+treatMathCubicSpline(void);
+
+static void
 treatMathKriging(void);
 
 static void

@@ -16,6 +16,7 @@ static bool incs            = false;
 static bool libs            = false;
 static bool exceptions      = false;
 static bool math            = false;
+static bool mathCubicSpline = false;
 static bool mathKriging     = false;
 static bool mathParser      = false;
 static bool mathInterpreter = false;
@@ -124,6 +125,14 @@ treatMathKriging(void)
   math       = true;
   mathKriging = true;
 } // end of treatMathKriging
+
+static void
+treatMathCubicSpline(void)
+{
+  exceptions = true;
+  math       = true;
+  mathCubicSpline = true;
+} // end of treatMathCubicSpline
 
 static void
 treatMathParser(void)
@@ -268,6 +277,7 @@ main(const int argc,
 #endif /* HAVE_CASTEM */
   registerCallBack("--exceptions",&treatExceptions,"request flags for libTFELException.");
   registerCallBack("--math-kriging",&treatMathKriging,"request flags for libTFELMathKriging.");
+  registerCallBack("--math-cubic-spline",&treatMathCubicSpline,"request flags for libTFELMathCubicSpline.");
   registerCallBack("--math",&treatMath,"request flags for libTFELMath.");
   registerCallBack("--math-parser",&treatMathParser,"request flags for libTFELMathParser.");
   registerCallBack("--math-interpreter",&treatMathInterpreter,"request flags for libTFELMathInterpreter.");
@@ -316,6 +326,9 @@ main(const int argc,
     }
     if(mathParser){
       cout << "-lTFELMathParser ";
+    }
+    if(mathCubicSpline){
+      cout << "-lTFELMathCubicSpline ";
     }
     if(mathKriging){
       cout << "-lTFELMathKriging ";
