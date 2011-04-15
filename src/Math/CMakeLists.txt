@@ -22,6 +22,9 @@ set(TFELMath_SOURCES
     StensorTag.cxx
     StandardFunctions.cxx)
 
+set(TFELMathCubicSpline_SOURCES
+    CubicSpline.cxx)
+
 set(TFELMathKriging_SOURCES
     KrigingErrors.cxx
     KrigingUtilities.cxx
@@ -58,6 +61,13 @@ set(TFELMathParser_SOURCES
 
 tfel_library(TFELMath ${TFELMath_SOURCES})
 target_link_libraries(TFELMath
+                      TFELException)
+
+
+
+tfel_library(TFELMathCubicSpline ${TFELMathCubicSpline_SOURCES})
+target_link_libraries(TFELMathCubicSpline
+		      TFELMath
                       TFELException)
 
 tfel_library(TFELMathKriging ${TFELMathKriging_SOURCES})

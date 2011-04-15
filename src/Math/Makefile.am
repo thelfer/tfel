@@ -3,6 +3,7 @@
 INCLUDES = -I@top_srcdir@/include
 
 lib_LTLIBRARIES  = libTFELMath.la 
+lib_LTLIBRARIES += libTFELMathCubicSpline.la
 lib_LTLIBRARIES += libTFELMathKriging.la
 lib_LTLIBRARIES += libTFELMathParser.la
 
@@ -22,6 +23,8 @@ libTFELMath_la_SOURCES = MathException.cxx              \
 		         MatrixTag.cxx                  \
 		         StensorTag.cxx                 \
 			 StandardFunctions.cxx
+
+libTFELMathCubicSpline_la_SOURCES = CubicSpline.cxx
 
 libTFELMathKriging_la_SOURCES = KrigingErrors.cxx         \
 				KrigingUtilities.cxx      \
@@ -55,9 +58,10 @@ libTFELMathParser_la_SOURCES = ExternalCFunction.cxx                         \
 			       LevenbergMarquardtExternalFunctionWrapper.cxx \
 			       Variable.cxx
 
-libTFELMathKriging_la_DEPENDENCIES = libTFELMath.la
-libTFELMathParser_la_DEPENDENCIES  = libTFELMath.la \
-				     libTFELMathKriging.la
+libTFELMathCubicSpline_la_DEPENDENCIES = libTFELMath.la
+libTFELMathKriging_la_DEPENDENCIES     = libTFELMath.la
+libTFELMathParser_la_DEPENDENCIES      = libTFELMath.la \
+				         libTFELMathKriging.la
 
 libTFELMath_la_LIBADD       = -L@top_builddir@/src/Exception/ \
 			      -lTFELException
@@ -65,6 +69,10 @@ libTFELMath_la_LIBADD       = -L@top_builddir@/src/Exception/ \
 libTFELMathParser_la_LIBADD = -L@top_builddir@/src/Exception/ \
 			      -L@top_builddir@/src/Math/      \
 			      -lTFELMath -lTFELException
+
+libTFELMathCubicSpline_la_LIBADD = -L@top_builddir@/src/Exception/ \
+			           -L@top_builddir@/src/Math/      \
+			           -lTFELMath -lTFELException
 
 libTFELMathKriging_la_LIBADD = -L@top_builddir@/src/Exception/ \
 			       -L@top_builddir@/src/Math/      \

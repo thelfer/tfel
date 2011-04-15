@@ -96,6 +96,8 @@ nobase_include_HEADERS= TFEL/FiniteElement/Element/ElementsManager.ixx          
 			TFEL/Math/Parser/EvaluatorFunction.ixx                                        \
 			TFEL/Math/Evaluator.hxx 						      \
 			TFEL/Math/Evaluator.ixx 						      \
+			TFEL/Math/CubicSpline.hxx					              \
+			TFEL/Math/CubicSpline.ixx					              \
 			TFEL/Math/Kriging.hxx						              \
 			TFEL/Math/Kriging1D.hxx						              \
 			TFEL/Math/Kriging2D.hxx						              \
