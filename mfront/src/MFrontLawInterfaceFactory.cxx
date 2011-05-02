@@ -9,6 +9,7 @@
 #include<stdexcept>
 #include<algorithm>
 #include<cassert>
+#include<iostream>
 
 #include<dlfcn.h>
 
@@ -84,19 +85,31 @@ namespace mfront{
   }
 
   void 
-  MFrontLawInterfaceFactory::registerInterfaceCreator(const std::string& interfaceName,
+  MFrontLawInterfaceFactory::registerInterfaceCreator(const std::string& i,
 						      const MFrontLawInterfaceFactory::InterfaceCreator f)
   {
     using namespace std;
-    this->getInterfaceCreatorsMap().insert(make_pair(interfaceName,f));
+    InterfaceCreatorsContainer& imap = this->getInterfaceCreatorsMap();
+    if(imap.find(i)!=imap.end()){
+      string msg("MFrontLawInterfaceFactory::registerInterfaceCreator : ");
+      msg += "interface creator '"+i+"' already declared";
+      throw(runtime_error(msg));
+    }
+    imap.insert(make_pair(i,f));
   }
 
   void
-  MFrontLawInterfaceFactory::registerInterfaceAlias(const std::string& interfaceName,
-						    const std::string& alias)
+  MFrontLawInterfaceFactory::registerInterfaceAlias(const std::string& i,
+						    const std::string& a)
   {
     using namespace std;
-    this->getAliasesMap().insert(make_pair(alias,interfaceName));
+    AliasContainer& amap = this->getAliasesMap();
+    if(amap.find(a)!=amap.end()){
+      string msg("MFrontLawInterfaceFactory::registerInterfaceCreator : ");
+      msg += "interface alias '"+a+"' already declared";
+      throw(runtime_error(msg));
+    }
+    amap.insert(make_pair(a,i));
   }
 
   void

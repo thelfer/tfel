@@ -78,7 +78,6 @@ namespace mfront
 
 #ifdef HAVE_PLEIADES
     MFrontLawInterfaceProxy<MFrontPleiadesLawInterface>         pleiadesLawProxy;
-    MFrontLawInterfaceProxy<MFrontPleiadesLawInterface>         pleiadesLawProxy2("Pleiades");
     MFrontModelInterfaceProxy<MFrontCelaenoModelInterface>      celaenoModelProxy;
     MFrontModelInterfaceProxy<MFrontGerminalModelInterface>      germinalModelProxy;
     MFrontModelInterfaceProxy<MFrontCelaenoModelInterface_v1_3> celaenoModelProxy_v13;

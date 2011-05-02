@@ -11,9 +11,11 @@
 
 #include<string>
 
+#include"TFEL/Config/TFELConfig.hxx"
+
 namespace mfront{
 
-  struct MFrontHeader{
+  struct TFEL_VISIBILITY_EXPORT MFrontHeader{
 
     static std::string getVersionName(void);
 

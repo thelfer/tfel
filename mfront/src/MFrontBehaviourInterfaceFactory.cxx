@@ -69,11 +69,17 @@ namespace mfront{
   }
 
   void 
-  MFrontBehaviourInterfaceFactory::registerInterfaceCreator(const std::string& interfaceName,
+  MFrontBehaviourInterfaceFactory::registerInterfaceCreator(const std::string& i,
 							    const MFrontBehaviourInterfaceFactory::InterfaceCreator f)
   {
     using namespace std;
-    this->getInterfaceCreatorsMap().insert(make_pair(interfaceName,f));
+    InterfaceCreatorsContainer& imap = this->getInterfaceCreatorsMap();
+    if(imap.find(i)!=imap.end()){
+      string msg("MFrontBehaviourInterfaceFactory::registerInterfaceCreator : ");
+      msg += "interface creator '"+i+"' already declared";
+      throw(runtime_error(msg));
+    }
+    imap.insert(make_pair(i,f));
   }
 
   MFrontBehaviourVirtualInterface* 
