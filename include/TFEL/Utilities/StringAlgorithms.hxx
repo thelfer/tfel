@@ -8,6 +8,7 @@
 #ifndef _LIB_TFEL_UTILITIES_STRINGALGORITHMS_H_
 #define _LIB_TFEL_UTILITIES_STRINGALGORITHMS_H_ 
 
+#include<vector>
 #include<string>
 
 #include"TFEL/Config/TFELConfig.hxx"
@@ -15,6 +16,27 @@
 namespace tfel{
 
   namespace utilities{
+
+    /*!
+     * split a string into tokens using the specified delimiter
+     * \param s : string to be splitted
+     * \param c : delimiter
+     * \return the tokens
+     */
+    TFEL_VISIBILITY_EXPORT 
+    std::vector<std::string>
+    tokenize(const std::string&,const char);
+
+    /*!
+     * split a string into tokens using the specified delimiter
+     * \param s     : string to be splitted
+     * \param delim : delimiter
+     * \return the tokens
+     */
+    TFEL_VISIBILITY_LOCAL 
+    std::vector<std::string>
+    tokenize(const std::string&,
+	     const std::string&);
 
     /*!
      * \brief replace all occurences of substring s1 by s2

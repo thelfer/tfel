@@ -13,6 +13,40 @@ namespace tfel
   namespace utilities
   {
 
+    std::vector<std::string>
+    tokenize(const std::string& s,
+	     const char c)
+    {
+      using namespace std;
+      vector<string> res;
+      string::size_type b = 0u;
+      string::size_type e = s.find_first_of(c, b);
+      while (string::npos != e || string::npos != b){
+	// Found a token, add it to the vector.
+	res.push_back(s.substr(b, e - b));
+	b = s.find_first_not_of(c, e);
+	e = s.find_first_of(c, b);
+      }
+      return res;
+    } // end of tokenize
+
+    std::vector<std::string>
+    tokenize(const std::string& s,
+	     const std::string& delim)
+    {
+      using namespace std;
+      vector<string> res;
+      string::size_type b = 0u;
+      string::size_type e = s.find_first_of(delim, b);
+      while (string::npos != e || string::npos != b){
+	// Found a token, add it to the vector.
+	res.push_back(s.substr(b, e - b));
+	b = s.find_first_not_of(delim, e);
+	e = s.find_first_of(delim, b);
+      }
+      return res;
+    } // end of tokenize
+
     std::string
     replace_all(const std::string& s,
 		const std::string& s1,
