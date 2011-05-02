@@ -391,11 +391,11 @@ namespace tfel{
     T tresca(const stensor<1u,T,Storage>& s)
     {
       using namespace std;
-      const T s1 = abs(s[0]);
-      const T s2 = abs(s[1]);
-      const T s3 = abs(s[2]);
-      const T tmp  = s1 > s2  ? s1 : s2;
-      const T tmp2 = s3 > tmp ? s3 : tmp;
+      const T sd1 = abs(s[0]-s[1]);
+      const T sd2 = abs(s[0]-s[2]);
+      const T sd3 = abs(s[2]-s[1]);
+      const T tmp  = sd1 > sd2 ? sd1 : sd2;
+      const T tmp2 = sd3 > tmp ? sd3 : tmp;
       return tmp2;
     } // end of tresca
     
@@ -404,15 +404,16 @@ namespace tfel{
 	     template<unsigned short,typename> class Storage>
     T tresca(const stensor<N,T,Storage>& s)
     {
+      using namespace std;
       T s1;
       T s2;
       T s3;
       s.computeEigenValues(s1,s2,s3);
-      s1 = abs(s1);
-      s2 = abs(s2);
-      s3 = abs(s3);
-      const T tmp  = s1 > s2  ? s1 : s2;
-      const T tmp2 = s3 > tmp ? s3 : tmp;
+      const T sd1 = abs(s1-s2);
+      const T sd2 = abs(s1-s3);
+      const T sd3 = abs(s3-s2);
+      const T tmp  = sd1 > sd2  ? sd1 : sd2;
+      const T tmp2 = sd3 > tmp  ? sd3 : tmp;
       return tmp2;
     } // end of tresca
     

@@ -23,7 +23,7 @@ namespace tfel
      * GenTypeBase class
      */
     struct TFEL_VISIBILITY_EXPORT GenTypeCastError
-      : public std::runtime_error
+      : public std::bast_cast
     {
       /*!
        * Default consutructor

@@ -156,10 +156,6 @@ namespace mfront{
     
   private:
 
-//     template<typename T>
-//     static std::string 
-//     toString(const T&);
-
     /*
      * \param const std::string&, name of the original file
      * \param const std::string&, className
