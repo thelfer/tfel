@@ -9,7 +9,9 @@
 #ifndef _LIB_TFEL_GENTYPECASTERROR_H_
 #define _LIB_TFEL_GENTYPECASTERROR_H_ 
 
+#include<typeinfo>
 #include<stdexcept>
+
 #include"TFEL/Config/TFELConfig.hxx"
 
 namespace tfel
@@ -23,7 +25,7 @@ namespace tfel
      * GenTypeBase class
      */
     struct TFEL_VISIBILITY_EXPORT GenTypeCastError
-      : public std::bast_cast
+      : public std::bad_cast
     {
       /*!
        * Default consutructor
