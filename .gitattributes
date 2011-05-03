@@ -928,7 +928,6 @@ tfel-doc/include/TFEL/Utilities/Config.hxx -text
 tfel-doc/include/TFEL/Utilities/ConfigParser.hxx -text
 tfel-doc/include/TFEL/Utilities/Global.hxx -text
 tfel-doc/include/TFEL/Utilities/LaTeXConvertion.hxx -text
-tfel-doc/include/TFEL/Utilities/LaTexConvertion.hxx -text
 tfel-doc/include/TFEL/Utilities/ParserBase.hxx -text
 tfel-doc/include/TFEL/Utilities/TestDocMain.hxx -text
 tfel-doc/include/TFEL/Utilities/TestDocParser.hxx -text

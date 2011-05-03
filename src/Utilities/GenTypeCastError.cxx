@@ -15,7 +15,7 @@ namespace tfel
   {
 
     GenTypeCastError::GenTypeCastError()
-      : std::bad_cast()
+      : std::runtime_error("GenTypeCastError : bad cast")
     {} // end of GenTypeCastError::GenTypeCastError
 
   } // end of namespace utilities
