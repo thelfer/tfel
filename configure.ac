@@ -215,6 +215,9 @@ AC_OUTPUT([debug.sh
 	   tfel-check/Makefile
 	   tfel-check/src/Makefile
 	   tfel-check/include/Makefile
+	   tfel-doc/Makefile
+	   tfel-doc/src/Makefile
+	   tfel-doc/include/Makefile
 	   tests/Makefile
 	   tests/Tests/Makefile
 	   tests/Math/Makefile

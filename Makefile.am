@@ -1,6 +1,7 @@
 ## Makefile.am -- Process this file with automake to produce a Makefile.in file.
 ACLOCAL_AMFLAGS = -I m4
-SUBDIRS = include src mfront tests tfel-check cmake
+SUBDIRS = include src mfront tests cmake \
+	  tfel-check tfel-doc
 
 doc:
 	cd @top_srcdir@ && doxygen @abs_top_builddir@/Doxyfile && cd -
