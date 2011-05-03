@@ -554,7 +554,6 @@ mfront/include/MFront/MFrontMultipleIsotropicMisesFlowsParser.hxx -text
 mfront/include/MFront/MFrontParserFactory.hxx -text
 mfront/include/MFront/MFrontParserProxy.hxx -text
 mfront/include/MFront/MFrontParserProxy.ixx -text
-mfront/include/MFront/MFrontPleiadesLawInterface.hxx -text
 mfront/include/MFront/MFrontPleiadesModelInterfaceBase.hxx -text
 mfront/include/MFront/MFrontPythonLawInterface.hxx -text
 mfront/include/MFront/MFrontRungeKuttaParser.hxx -text
@@ -623,7 +622,6 @@ mfront/src/MFrontModelParserCommon.cxx -text
 mfront/src/MFrontModelVirtualInterface.cxx -text
 mfront/src/MFrontMultipleIsotropicMisesFlowsParser.cxx -text
 mfront/src/MFrontParserFactory.cxx -text
-mfront/src/MFrontPleiadesLawInterface.cxx -text
 mfront/src/MFrontPleiadesModelInterfaceBase.cxx -text
 mfront/src/MFrontPythonLawInterface.cxx -text
 mfront/src/MFrontRungeKuttaParser.cxx -text

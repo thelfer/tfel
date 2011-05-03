@@ -31,7 +31,6 @@
 #endif
 
 #ifdef HAVE_PLEIADES
-#include"MFront/MFrontPleiadesLawInterface.hxx"
 #include"MFront/MFrontCelaenoModelInterface.hxx"
 #include"MFront/MFrontGerminalModelInterface.hxx"
 #include"MFront/MFrontCelaenoModelInterface_v1.3.hxx"
@@ -77,7 +76,6 @@ namespace mfront
 #endif /* HAVE_GNUPLOT */
 
 #ifdef HAVE_PLEIADES
-    MFrontLawInterfaceProxy<MFrontPleiadesLawInterface>         pleiadesLawProxy;
     MFrontModelInterfaceProxy<MFrontCelaenoModelInterface>      celaenoModelProxy;
     MFrontModelInterfaceProxy<MFrontGerminalModelInterface>      germinalModelProxy;
     MFrontModelInterfaceProxy<MFrontCelaenoModelInterface_v1_3> celaenoModelProxy_v13;

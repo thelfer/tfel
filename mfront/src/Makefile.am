@@ -66,7 +66,6 @@ mfront_SOURCES += MFrontPythonLawInterface.cxx
 endif
 
 if SUPPORT_PLEIADES
-mfront_SOURCES += MFrontPleiadesLawInterface.cxx
 mfront_SOURCES += MFrontCelaenoModelInterface.cxx
 mfront_SOURCES += MFrontGerminalModelInterface.cxx
 mfront_SOURCES += MFrontCelaenoModelInterface_v1.3.cxx
