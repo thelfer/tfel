@@ -401,6 +401,7 @@ include/TFEL/System/ExternalFunctionsPrototypes.hxx -text
 include/TFEL/System/ExternalLibraryManager.hxx -text
 include/TFEL/System/ProcessManager.h -text
 include/TFEL/System/ProcessManager.hxx -text
+include/TFEL/System/RecursiveFind.hxx -text
 include/TFEL/System/STLContainerBinaryRead.hxx -text
 include/TFEL/System/STLContainerBinaryWrite.hxx -text
 include/TFEL/System/SignalHandler.hxx -text
@@ -718,6 +719,7 @@ src/System/ExternalLibraryManager.cxx -text
 src/System/Makefile.am -text
 src/System/ProcessManager-c.c -text
 src/System/ProcessManager.cxx -text
+src/System/RecursiveFind.cxx -text
 src/System/SignalHandler.cxx -text
 src/System/SignalManager.cxx -text
 src/System/System.cxx -text

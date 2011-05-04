@@ -4,6 +4,7 @@ INCLUDES = -I$(top_srcdir)/include
 
 lib_LTLIBRARIES = libTFELSystem.la 
 libTFELSystem_la_SOURCES = ExternalLibraryManager.cxx \
+			   RecursiveFind.cxx          \
 			   ProcessManager-c.c         \
 			   ProcessManager.cxx         \
 			   ChildProcess.cxx           \

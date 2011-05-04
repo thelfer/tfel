@@ -3,6 +3,7 @@ link_directories("${PROJECT_BINARY_DIR}/src/Exception")
 
 set(TFELSystem_SOURCES
     ExternalLibraryManager.cxx
+    RecursiveFind.cxx
     ProcessManager-c.c
     ProcessManager.cxx
     ChildProcess.cxx

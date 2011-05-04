@@ -48,6 +48,7 @@ install_header(TFEL/TypeTraits IsInvalid.hxx)
 install_header(TFEL/TypeTraits IsTemporary.hxx)
 install_header(TFEL/TypeTraits IsRandomAccessIterator.hxx)
 
+install_header(TFEL/System RecursiveFind.hxx)
 install_header(TFEL/System ExternalFunctionsPrototypes.hxx)
 install_header(TFEL/System ExternalLibraryManager.hxx)
 install_header(TFEL/System ProcessManager.h)

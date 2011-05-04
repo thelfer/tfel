@@ -386,6 +386,7 @@ nobase_include_HEADERS= TFEL/FiniteElement/Element/ElementsManager.ixx          
 			TFEL/Metaprogramming/HasRandomAccessConstIterator.hxx	                      \
 			TFEL/Metaprogramming/EmptyClass.hxx    	                                      \
 			TFEL/Metaprogramming/HasRandomAccessIterator.hxx                              \
+			TFEL/System/RecursiveFind.hxx                                                 \
 			TFEL/System/ExternalFunctionsPrototypes.hxx                                   \
 			TFEL/System/ExternalLibraryManager.hxx                                        \
 			TFEL/System/ProcessManager.h                                                  \

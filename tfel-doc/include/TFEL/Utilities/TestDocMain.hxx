@@ -43,6 +43,8 @@ namespace tfel{
       
       void treatSrc(void);
 
+      void treatLang(void);
+
       void treatLogFile(void);
 
       void treatKeyFile(void);
@@ -50,6 +52,8 @@ namespace tfel{
       void treatCategoryFile(void);
       
       void treatTranslationFile(void);
+
+      std::string lang;
 
       std::string srcdir;
 
