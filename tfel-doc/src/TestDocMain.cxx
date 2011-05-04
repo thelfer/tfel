@@ -212,7 +212,7 @@ namespace tfel
     void 
     TestDocMain::registerArgumentCallBacks(void)
     {
-      this->registerNewCallBack("--lang",&TestDocMain::treatSrc,
+      this->registerNewCallBack("--lang",&TestDocMain::treatLang,
 				"specify output language (french,english)",true);
       this->registerNewCallBack("--src",&TestDocMain::treatSrc,
 				"specify root of sources",true);
@@ -272,7 +272,7 @@ namespace tfel
       this->lang = this->currentArgument->getOption();
       if(this->lang.empty()){
 	string msg("TestDocMain::treatLang : ");
-	msg += "no option given to the --src argument";
+	msg += "no option given to the --lang argument";
 	throw(runtime_error(msg));
       }
     } // end of TestDocMain::treatLang
@@ -336,7 +336,7 @@ namespace tfel
       }
 
       map<string,vector<string> > files;
-      recursiveFind(files,".*\\.testdoc",".");
+      recursiveFind(files,".*\\.testdoc$",".");
 
       if(realpath(".",cpath)==0){
 	*(this->log) << "main : can't get real path of current directory, aborting\n";

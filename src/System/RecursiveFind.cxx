@@ -6,6 +6,7 @@
  */
 
 #include<stdexcept>
+#include<cstring>
 #include<cerrno>
 
 #include<unistd.h>
