@@ -15,17 +15,14 @@
 #include<stdexcept>
 #include<algorithm>
 #include<stdexcept>
-
+#include<cstdlib>
 #include<cerrno>
 #include<cstring>
 
-#include<dirent.h>
-#include<sys/types.h>
-#include<sys/param.h>
-#include<unistd.h>
-#include<regex.h>
+#include <sys/param.h>
 
 #include"TFEL/System/System.hxx"
+#include"TFEL/System/RecursiveFind.hxx"
 #include"TFEL/Utilities/TerminalColors.hxx"
 #include"TFEL/Utilities/SmartPtr.hxx"
 
@@ -59,54 +56,6 @@ namespace tfel
       }
       return s;
     }
-
-    static std::map<std::string,std::vector<std::string> >
-    recursiveFind(const regex_t& re,
-		  const std::string& name,
-		  const unsigned short depth)
-    {
-      using namespace std;
-      using namespace tfel::system;
-      map<string,vector<string> > res;
-      DIR* dir;
-      struct dirent* p;
-      struct stat buf;
-      if(depth>100){
-	string msg("recursiveFind : ");
-	msg += "maximal directory depth reached";
-	throw(runtime_error(msg));
-      }
-      dir = opendir(name.c_str());
-      if(dir==0){
-	systemCall::throwSystemError("can't open directory "+name,errno);
-      }
-      while((p=readdir(dir))!=0){
-	string file = name+"/";
-	file += p->d_name;
-	if(stat(file.c_str(),&buf)!=0){
-	  string msg("MFront::analyseSourceDirectory : ");
-	  msg += "can't stat file ";
-	  msg += file;
-	  cerr << msg << endl;
-	  systemCall::throwSystemError(msg,errno);
-	}
-	if(S_ISREG(buf.st_mode)){
-	  if(regexec(&re,p->d_name,0,0,0)==0){
-	    res[name].push_back(p->d_name);
-	  }
-	} else if(S_ISDIR(buf.st_mode)){
-	  if((strcmp(p->d_name,".")!=0)&&
-	     strcmp(p->d_name,"..")!=0){
-	    const map<string,vector<string> > & r = recursiveFind(re,
-								  name+'/'+p->d_name,
-								  depth+1u);
-	    res.insert(r.begin(),r.end());
-	  }
-	}
-      }
-      closedir(dir);
-      return res;
-    } // end of recursiveFind
 
     static std::string
     getBabelPackage(const std::string& l)
@@ -236,6 +185,9 @@ namespace tfel
       } else{ 
 	this->log = &cerr;
       }
+      if(this->lang.empty()){
+	lang = "english";
+      }
     } // end of TestDocMain::TestDocMain
 
     void
@@ -260,6 +212,8 @@ namespace tfel
     void 
     TestDocMain::registerArgumentCallBacks(void)
     {
+      this->registerNewCallBack("--lang",&TestDocMain::treatSrc,
+				"specify output language (french,english)",true);
       this->registerNewCallBack("--src",&TestDocMain::treatSrc,
 				"specify root of sources",true);
       this->registerNewCallBack("--log",&TestDocMain::treatLogFile,
@@ -307,6 +261,23 @@ namespace tfel
     } // end of TestDocMain::treatSrc
 
     void
+    TestDocMain::treatLang(void)
+    {
+      using namespace std;
+      if(!this->lang.empty()){
+	cerr << "TestDocMain : lang file already specified" << endl;
+	cerr << this->getUsageDescription() << endl;
+	exit(EXIT_FAILURE);
+      }
+      this->lang = this->currentArgument->getOption();
+      if(this->lang.empty()){
+	string msg("TestDocMain::treatLang : ");
+	msg += "no option given to the --src argument";
+	throw(runtime_error(msg));
+      }
+    } // end of TestDocMain::treatLang
+
+    void
     TestDocMain::treatKeyFile(void)
     {
       using namespace std;
@@ -350,7 +321,7 @@ namespace tfel
     {
       using namespace std;
       using namespace tfel::utilities;
-      regex_t re;
+      using namespace tfel::system;
       char path[MAXPATHLEN];
       char cpath[MAXPATHLEN];
       map<string,vector<string> >::const_iterator p;
@@ -364,12 +335,9 @@ namespace tfel
 	}
       }
 
-      if(regcomp(&re,".*\\.testdoc$",REG_EXTENDED|REG_NOSUB)!=0){
-	cerr << "main : can't compile regular expression\n";
-	return EXIT_FAILURE;      /* Report error. */
-      }
-            
-      const map<string,vector<string> >& files = recursiveFind(re,".",0);
+      map<string,vector<string> > files;
+      recursiveFind(files,".*\\.testdoc",".");
+
       if(realpath(".",cpath)==0){
 	*(this->log) << "main : can't get real path of current directory, aborting\n";
 	exit(EXIT_FAILURE);
@@ -395,14 +363,13 @@ namespace tfel
 	  }
 	}
       }
-      printLaTeXFile(this->output,tests,"french");
+      printLaTeXFile(this->output,tests,this->lang);
       map<string,vector<TestDocumentation> >::const_iterator p3;
       map<string,vector<TestDocumentation> >::size_type count = 0u;
       for(p3=tests.begin();p3!=tests.end();++p3){
 	count += p3->second.size();
       }
       cout << count << " tests treated in " <<  tests.size() << " categories" << endl;
-      regfree(&re);
       return EXIT_SUCCESS;
     }
 
