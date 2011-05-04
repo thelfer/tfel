@@ -8,6 +8,7 @@
 #include<sstream>
 #include<iostream>
 #include<stdexcept>
+#include<algorithm>
 
 #include"TFEL/Utilities/Global.hxx"
 #include"TFEL/Utilities/TestDocParser.hxx"

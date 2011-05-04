@@ -15,7 +15,9 @@
 #include<stdexcept>
 #include<algorithm>
 #include<stdexcept>
+
 #include<cerrno>
+#include<cstring>
 
 #include<dirent.h>
 #include<sys/types.h>
@@ -97,7 +99,7 @@ namespace tfel
 	     strcmp(p->d_name,"..")!=0){
 	    const map<string,vector<string> > & r = recursiveFind(re,
 								  name+'/'+p->d_name,
-								  depth+1);
+								  depth+1u);
 	    res.insert(r.begin(),r.end());
 	  }
 	}
@@ -264,9 +266,9 @@ namespace tfel
 				"specify a log file",true);
       this->registerNewCallBack("--keys",&TestDocMain::treatKeyFile,
 				"specify a key file",true);
-      this->registerNewCallBack("--category",&TestDocMain::treatCategoryFile,
+      this->registerNewCallBack("--categories",&TestDocMain::treatCategoryFile,
 				"specify a category file",true);
-      this->registerNewCallBack("--translation",&TestDocMain::treatTranslationFile,
+      this->registerNewCallBack("--translations",&TestDocMain::treatTranslationFile,
 				"specify a translation file",true);
     } // end of TestDocMain::registerArgumentCallBacks
 
@@ -362,7 +364,7 @@ namespace tfel
 	}
       }
 
-      if(regcomp(&re,".*\\.testdoc",REG_EXTENDED|REG_NOSUB)!=0){
+      if(regcomp(&re,".*\\.testdoc$",REG_EXTENDED|REG_NOSUB)!=0){
 	cerr << "main : can't compile regular expression\n";
 	return EXIT_FAILURE;      /* Report error. */
       }
@@ -379,27 +381,17 @@ namespace tfel
 	} else {
 	  *(this->log) << "entering directory " << path << endl;
 	} 
-	if(chdir(p->first.c_str())==-1){
-	  *(this->log) << "can't move to directory " << p->first << endl;
-	  exit(EXIT_FAILURE);
-	} else {
-	  for(p2=p->second.begin();p2!=p->second.end();++p2){
-	    string name = p->first+'/'+*p2;
-	    try{
-	      TestDocParser parser(name);
-	      parser.execute(tests);
-	    }
-	    catch(std::exception& e){
-	      *(this->log) << TerminalColors::Reset;
-	      *(this->log) << "treatment of file '"+*p2+"' failed : "
-		   << e.what() << endl;
-	      *(this->log) << TerminalColors::Reset;
-	    }
+	for(p2=p->second.begin();p2!=p->second.end();++p2){
+	  string name = p->first+'/'+*p2;
+	  try{
+	    TestDocParser parser(name);
+	    parser.execute(tests);
 	  }
-	  if(chdir(cpath)==-1){
-	    *(this->log)  << "can't move back to top directory " << cpath << endl;
-	    *(this->log)  << ", aborting";
-	    exit(EXIT_FAILURE);
+	  catch(std::exception& e){
+	    *(this->log) << TerminalColors::Reset;
+	    *(this->log) << "treatment of file '"+*p2+"' failed : "
+			 << e.what() << endl;
+	    *(this->log) << TerminalColors::Reset;
 	  }
 	}
       }
