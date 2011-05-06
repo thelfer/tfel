@@ -6,6 +6,7 @@
  * \date   03 fév 2007
  */
 #include<string>
+#include"TFEL/Config/TFELConfig.hxx"
 #include"TFEL/Math/Function/FunctionConcept.hxx"
 
 namespace tfel{
@@ -20,7 +21,7 @@ namespace tfel{
 
     namespace stdfunctions{
 
-      OpDiff D;
+      TFEL_VISIBILITY_EXPORT OpDiff D;
 
     } // end of namespace stdfunctions
     

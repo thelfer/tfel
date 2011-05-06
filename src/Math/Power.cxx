@@ -7,6 +7,7 @@
  */
 
 #include<cmath>
+#include"TFEL/Config/TFELConfig.hxx"
 #include"TFEL/Math/Function/Power.hxx"
 
 namespace tfel{
@@ -15,7 +16,7 @@ namespace tfel{
 
     namespace stdfunctions{
 
-      tfel::math::FctSqrt sqrt;
+      TFEL_VISIBILITY_EXPORT tfel::math::FctSqrt sqrt;
 
       float 
       pow(const float a,const float b)

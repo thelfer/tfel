@@ -5,15 +5,16 @@
  * \date   12 déc 2006
  */
 
+#include"TFEL/Config/TFELConfig.hxx"
 #include"TFEL/Math/lambda.hxx"
 
 namespace tfel{
 
   namespace math{
     
-    Lambda<1u> x_;
-    Lambda<2u> y_;
-    Lambda<3u> z_;
+    TFEL_VISIBILITY_EXPORT Lambda<1u> x_;
+    TFEL_VISIBILITY_EXPORT Lambda<2u> y_;
+    TFEL_VISIBILITY_EXPORT Lambda<3u> z_;
 
   } // end of namespace math
 
