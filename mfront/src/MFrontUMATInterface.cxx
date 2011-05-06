@@ -704,6 +704,10 @@ namespace mfront{
     out << "#define _LIB_"+header+"_HXX_\n\n";
     
     out << "#include\"castem.h\"\n";
+    out << "#ifdef umat" << endl;
+    out << "#undef umat" << endl;
+    out << "#endif /* umat */" << endl << endl;
+
     out << "#include\"TFEL/Config/TFELConfig.hxx\"\n\n";
     out << "#include\"MFront/UMAT/UMAT.hxx\"\n\n";
 
