@@ -903,6 +903,13 @@ namespace mfront{
       this->behaviourFile << ";"  << endl;
     }
     this->behaviourFile << "error/=" << stateVarsSize << ";" << endl;
+    this->behaviourFile << "if(isnan(error)){" << endl;
+    this->behaviourFile << "string msg(\"" << this->className << "::integrate : nan decteted\");" << endl;
+    if(this->debugMode){
+      this->behaviourFile << "cout << msg << endl;" << endl;
+    }
+    this->behaviourFile << "throw(tfel::material::DivergenceException(msg));" << endl;
+    this->behaviourFile << "}" << endl;
     if(this->debugMode){
       this->behaviourFile << "cout << \"" << this->className
 			  << "::integrate() : error \" << error << endl;"  << endl;
@@ -1484,6 +1491,17 @@ namespace mfront{
       this->behaviourFile << ";" << endl;
     }
     this->behaviourFile << "error/=" << stateVarsSize << ";" << endl;
+    this->behaviourFile << "if(isnan(error)){" << endl;
+    this->behaviourFile << "string msg(\"" << this->className << "::integrate : nan decteted\");" << endl;
+    if(this->debugMode){
+      this->behaviourFile << "cout << msg << endl;" << endl;
+    }
+    this->behaviourFile << "throw(tfel::material::DivergenceException(msg));" << endl;
+    this->behaviourFile << "}" << endl;
+    if(this->debugMode){
+      this->behaviourFile << "cout << \"" << this->className
+			  << "::integrate() : error \" << error << endl;"  << endl;
+    }
     if(this->debugMode){
       this->behaviourFile << "cout << \"" << this->className
 			  << "::integrate() : error \" << error << endl;"  << endl;
