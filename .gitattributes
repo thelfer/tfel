@@ -54,6 +54,7 @@ include/TFEL/FiniteElement/Node.hxx -text
 include/TFEL/FiniteElement/Node/Node.ixx -text
 include/TFEL/FiniteElement/Node/NodesManager.ixx -text
 include/TFEL/FiniteElement/NodesManager.hxx -text
+include/TFEL/Macros.hxx -text
 include/TFEL/Material/BoundsCheck.hxx -text
 include/TFEL/Material/DDIF2Base.hxx -text
 include/TFEL/Material/DDIF2Base.ixx -text

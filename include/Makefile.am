@@ -1,6 +1,7 @@
 ## Makefile.am -- Process this file with automake to produce a Makefile.in file.
 
-nobase_include_HEADERS= TFEL/FiniteElement/Element/ElementsManager.ixx                                \
+nobase_include_HEADERS= TFEL/Macros.hxx                                                               \
+			TFEL/FiniteElement/Element/ElementsManager.ixx                                \
 			TFEL/FiniteElement/ElementManager.hxx					      \
 			TFEL/FiniteElement/ElementsManager.hxx					      \
 			TFEL/FiniteElement/Mesh/Mesh.ixx					      \
