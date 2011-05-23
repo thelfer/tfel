@@ -11,6 +11,11 @@
 
 #include<string>
 #include<castem.h>
+#ifdef umat /* the umat symbol might be defined 
+	     * in the castem header, so remove it
+	     */
+#undef umat
+#endif
 
 #ifndef TFEL_UMAT_INLINE
 #define TFEL_UMAT_INLINE inline
