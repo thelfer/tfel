@@ -9,7 +9,8 @@
 #define LIBDIR        "@libdir@"
 
 #ifdef HAVE_CASTEM
-#define CASTEMFLAGS "@CASTEM_CPPFLAGS@ -I@CASTEM_ROOT@/include"
+#define CASTEMFLAGS1 "@CASTEM_CPPFLAGS@"
+#define CASTEMFLAGS2 "-I@CASTEM_ROOT@/include"
 #endif
 
 typedef void (*FuncPtr)(void);

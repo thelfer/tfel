@@ -300,7 +300,13 @@ main(const int argc,
 
 #ifdef HAVE_CASTEM
   if(castem){
-    cout << CASTEMFLAGS << " " << endl;
+    cout << CASTEMFLAGS1 << " ";
+    const char * const castempath = getenv("CASTEM_ROOT");
+    if(castempath!=0){
+      cout << "-I" << castempath << "/include ";
+    } else {
+      cout << CASTEMFLAGS2 << " ";
+    }
   }
 #endif /* HAVE_CASTEM */
 
@@ -358,7 +364,7 @@ main(const int argc,
     cout << COMPILER_WARNINGS << " ";
   }
 
-  if(incs||libs||oflags){
+  if(incs||libs||oflags||warning||castem){
     cout << endl;
   }
 
