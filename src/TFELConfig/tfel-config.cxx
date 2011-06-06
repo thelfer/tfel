@@ -364,9 +364,15 @@ main(const int argc,
     cout << COMPILER_WARNINGS << " ";
   }
 
+#ifdef HAVE_CASTEM
   if(incs||libs||oflags||warning||castem){
     cout << endl;
   }
+#else
+  if(incs||libs||oflags||warning){
+    cout << endl;
+  }
+#endif /* HAVE_CASTEM */
 
   return EXIT_SUCCESS;
 }

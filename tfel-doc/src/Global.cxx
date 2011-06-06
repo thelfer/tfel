@@ -124,6 +124,12 @@ namespace tfel{
       using namespace tfel::utilities;
       const map<string,string>& keys = getKeysMap(l);
       map<string,string>::const_iterator pk;
+      if(s.empty()){
+	return s;
+      }
+      if(s[0]=='!'){
+	return s.substr(1);
+      }
       pk = keys.find(s);
       if(pk!=keys.end()){
 	return pk->second;

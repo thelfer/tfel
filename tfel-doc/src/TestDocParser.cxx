@@ -189,11 +189,15 @@ namespace tfel{
 	map<string,vector<string> >::iterator p2;
 	this->readString(key1,p);
 	if(b){
-	  if(k.find(key1)==k.end()){
-	    cerr << TerminalColors::Red;
-	    cerr << "undefined key '" << key1 
-		 << "'" << endl;
-	    cerr << TerminalColors::Reset;
+	  if(!key1.empty()){
+	    if(key1[0]!='!'){
+	      if(k.find(key1)==k.end()){
+		cerr << TerminalColors::Red;
+		cerr << "undefined key '" << key1 
+		     << "'" << endl;
+		cerr << TerminalColors::Reset;
+	      }
+	    }
 	  }
 	}
 	this->checkNotEndOfFile(p);
@@ -202,11 +206,15 @@ namespace tfel{
 	  this->checkNotEndOfFile(p);
 	  this->readString(key2,p);
 	  if(b){
-	    if(k.find(key2)==k.end()){
-	      cerr << TerminalColors::Red;
-	      cerr << "undefined key '" << key2 
-		   << "'" << endl;
-	      cerr << TerminalColors::Reset;
+	    if(!key2.empty()){
+	      if(key2[0]!='!'){
+		if(k.find(key2)==k.end()){
+		  cerr << TerminalColors::Red;
+		  cerr << "undefined key '" << key2 
+		       << "'" << endl;
+		  cerr << TerminalColors::Reset;
+		}
+	      }
 	    }
 	  }
 	  this->checkNotEndOfFile(p);
