@@ -472,6 +472,29 @@ namespace mfront{
     }
   } // end of MFrontMaterialLawParser::treatFunction(void)
 
+  static void
+  MFrontLawParserCheckIfNameIsAnEntryNameOrAGlossaryName(const std::map<std::string,std::string>& g,
+							 const std::map<std::string,std::string>& e,
+							 const std::string& n)
+  {
+    using namespace std;
+    map<string,string>::const_iterator p;
+    for(p=g.begin();p!=g.end();++p){
+      if(p->second==n){
+	string msg("MFrontLawParserCheckIfNameIsAnEntryNameOrAGlossaryName : ");
+	msg += "name '"+n+"' is already used as a glossary name";
+	throw(runtime_error(msg));
+      }
+    }
+    for(p=e.begin();p!=e.end();++p){
+      if(p->second==n){
+	string msg("MFrontLawParserCheckIfNameIsAnEntryNameOrAGlossaryName : ");
+	msg += "name '"+n+"' is already used as an entry name";
+	throw(runtime_error(msg));
+      }
+    }
+  }
+
   void
   MFrontMaterialLawParser::treatInputMethod(void) 
   {
@@ -511,6 +534,9 @@ namespace mfront{
 				"Glossary name too short.");
       }
       string glossaryName = this->current->value.substr(1,this->current->value.size()-2);
+      MFrontLawParserCheckIfNameIsAnEntryNameOrAGlossaryName(this->glossaryNames,
+							     this->entryNames,
+							     glossaryName);
       if(!this->glossaryNames.insert(MVType(this->currentVar,glossaryName)).second){
 	this->throwRuntimeError("MFrontMaterialLawParser::treatInputMethod",
 				"Glossary name for field '"+ this->currentVar +"' already defined.");
@@ -533,6 +559,9 @@ namespace mfront{
 				"Entry file name too short.");
       }
       string entryName = this->current->value.substr(1,this->current->value.size()-2);
+      MFrontLawParserCheckIfNameIsAnEntryNameOrAGlossaryName(this->glossaryNames,
+							     this->entryNames,
+							     entryName);
       if(!this->entryNames.insert(MVType(this->currentVar,entryName)).second){
 	this->throwRuntimeError("MFrontMaterialLawParser::treatInputMethod",
 				"Entry file name for field '"+ this->currentVar +"' already defined.");

@@ -622,6 +622,29 @@ namespace mfront{
     }
   } // end of MFrontModelParserCommon::treatOutput(void)
 
+  static void
+  MFrontModelParserCommonCheckIfNameIsAnEntryNameOrAGlossaryName(const std::map<std::string,std::string>& g,
+								 const std::map<std::string,std::string>& e,
+								 const std::string& n)
+  {
+    using namespace std;
+    map<string,string>::const_iterator p;
+    for(p=g.begin();p!=g.end();++p){
+      if(p->second==n){
+	string msg("MFrontModelParserCommonCheckIfNameIsAnEntryNameOrAGlossaryName : ");
+	msg += "name '"+n+"' is already used as a glossary name";
+	throw(runtime_error(msg));
+      }
+    }
+    for(p=e.begin();p!=e.end();++p){
+      if(p->second==n){
+	string msg("MFrontModelParserCommonCheckIfNameIsAnEntryNameOrAGlossaryName : ");
+	msg += "name '"+n+"' is already used as an entry name";
+	throw(runtime_error(msg));
+      }
+    }
+  }
+
   void
   MFrontModelParserCommon::treatOutputMethod(void) 
   {
@@ -671,6 +694,9 @@ namespace mfront{
 				"Glossary name too short.");
       }
       string glossaryName = this->current->value.substr(1,this->current->value.size()-2);
+      MFrontModelParserCommonCheckIfNameIsAnEntryNameOrAGlossaryName(this->glossaryNames,
+								     this->entryNames,
+								     glossaryName);
       if(!this->glossaryNames.insert(MVType(this->currentVar,glossaryName)).second){
 	this->throwRuntimeError("MFrontModelParserCommon::treatOutputMethod",
 				"Glossary name for field '"+ this->currentVar +"' already defined.");
@@ -693,6 +719,9 @@ namespace mfront{
 				"Entry file name too short.");
       }
       string entryName = this->current->value.substr(1,this->current->value.size()-2);
+      MFrontModelParserCommonCheckIfNameIsAnEntryNameOrAGlossaryName(this->glossaryNames,
+								     this->entryNames,
+								     entryName);
       if(!this->entryNames.insert(MVType(this->currentVar,entryName)).second){
 	this->throwRuntimeError("MFrontModelParserCommon::treatOutputMethod",
 				"Entry file name for field '"+this->currentVar+"' already defined.");
@@ -806,6 +835,9 @@ namespace mfront{
 				"Glossary name too short.");
       }
       string glossaryName = this->current->value.substr(1,this->current->value.size()-2);
+      MFrontModelParserCommonCheckIfNameIsAnEntryNameOrAGlossaryName(this->glossaryNames,
+								     this->entryNames,
+								     glossaryName);
       if(!this->glossaryNames.insert(MVType(this->currentVar,glossaryName)).second){
 	this->throwRuntimeError("MFrontModelParserCommon::treatInputMethod",
 				"Glossary name for field '"+this->currentVar+"' already defined.");
@@ -828,6 +860,9 @@ namespace mfront{
 				"Entry file name too short.");
       }
       string entryName = this->current->value.substr(1,this->current->value.size()-2);
+      MFrontModelParserCommonCheckIfNameIsAnEntryNameOrAGlossaryName(this->glossaryNames,
+								     this->entryNames,
+								     entryName);
       if(!this->entryNames.insert(MVType(this->currentVar,entryName)).second){
 	this->throwRuntimeError("MFrontModelParserCommon::treatInputMethod",
 				"Entry file name for field '"+ this->currentVar +"' already defined.");

@@ -107,6 +107,29 @@ namespace mfront{
   {
     return this->contains(this->externalStateVarsHolder,n);
   } // end of MFrontBehaviourParserCommon::isExternalStateVariableName
+  
+  static void
+  MFrontBehaviourParserCommonCheckIfNameIsAnEntryNameOrAGlossaryName(const std::map<std::string,std::string>& g,
+								     const std::map<std::string,std::string>& e,
+								     const std::string& n)
+  {
+    using namespace std;
+    map<string,string>::const_iterator p;
+    for(p=g.begin();p!=g.end();++p){
+      if(p->second==n){
+	string msg("MFrontBehaviourParserCommonCheckIfNameIsAnEntryNameOrAGlossaryName : ");
+	msg += "name '"+n+"' is already used as a glossary name";
+	throw(runtime_error(msg));
+      }
+    }
+    for(p=e.begin();p!=e.end();++p){
+      if(p->second==n){
+	string msg("MFrontBehaviourParserCommonCheckIfNameIsAnEntryNameOrAGlossaryName : ");
+	msg += "name '"+n+"' is already used as an entry name";
+	throw(runtime_error(msg));
+      }
+    }
+  }
 
   void
   MFrontBehaviourParserCommon::treatVariableMethod(void)
@@ -114,6 +137,7 @@ namespace mfront{
     using namespace std;
     using namespace tfel::utilities;
     typedef map<string,string>::value_type MVType;
+    map<string,string>::const_iterator p;
     const string& n = this->current->value;
     ++(this->current);
     this->checkNotEndOfFile("MFrontBehaviourParserCommon::treatVariableMethod");
@@ -135,7 +159,14 @@ namespace mfront{
 	msg += "invalid glossary name";
 	throw(runtime_error(msg));
       }
+      MFrontBehaviourParserCommonCheckIfNameIsAnEntryNameOrAGlossaryName(this->glossaryNames,
+									 this->entryNames,g);
       ++(this->current);
+      if(this->entryNames.find(n)!=this->entryNames.end()){
+	string msg("MFrontBehaviourParserCommon::treatVariableMethod : ");
+	msg += "an entry name has already been specified for variable '"+n+"'";
+	throw(runtime_error(msg));
+      }
       if(!this->glossaryNames.insert(MVType(n,g)).second){
 	string msg("MFrontBehaviourParserCommon::treatVariableMethod : ");
 	msg += "glossary name for variable '"+n+"' already specified";
@@ -157,7 +188,14 @@ namespace mfront{
 	msg += "invalid glossary name";
 	throw(runtime_error(msg));
       }
+      MFrontBehaviourParserCommonCheckIfNameIsAnEntryNameOrAGlossaryName(this->glossaryNames,
+									 this->entryNames,e);
       ++(this->current);
+      if(this->glossaryNames.find(n)!=this->glossaryNames.end()){
+	string msg("MFrontBehaviourParserCommon::treatVariableMethod : ");
+	msg += "a glossary name has already been specified for variable '"+n+"'";
+	throw(runtime_error(msg));
+      }
       if(!this->entryNames.insert(MVType(n,e)).second){
 	string msg("MFrontBehaviourParserCommon::treatVariableMethod : ");
 	msg += "entry name for variable '"+n+"' already specified";
