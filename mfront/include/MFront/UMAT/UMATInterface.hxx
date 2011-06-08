@@ -125,8 +125,8 @@ namespace umat{
 	UMATReal dez;
 	UMATReal x[2];
 	UMATReal f[2];
-	
-	dez = c1*deto[0]+c2*deto[1];
+
+	dez = c1*DSTRAN[0]+c2*DSTRAN[1];
 	TreatPlaneStress::template iter<TreatPlaneStrain>(DTIME,DROT,DDSOE,
 							  TEMP,DTEMP,PROPS,
 							  NPROPS,PREDEF,DPRED,
