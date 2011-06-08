@@ -685,8 +685,7 @@ namespace mfront{
 	copy(files.begin(),files.end(),ostream_iterator<string>(cout," "));
 	cout << endl;
       }
-      this->sources.insert(MVType(name.substr(0,name.size()-4),
-				  set<string>(files.begin(),files.end())));
+      this->sources[name.substr(0,name.size()-4)].insert(files.begin(),files.end());
     }
   } // end of MFront::analyseSources
 
@@ -975,6 +974,11 @@ namespace mfront{
 	  }
 	}
 	file.open(("src/"+p->first+".src").c_str());
+	if(!file){
+	  string msg("MFront::writeSourcesLists : ");
+	  msg += "can't open file 'src/"+p->first+".src";
+	  throw(runtime_error(msg));
+	}
 	copy(p->second.begin(),p->second.end(),ostream_iterator<string>(file,"\n"));
 	file.close();
       }
