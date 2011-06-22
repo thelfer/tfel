@@ -118,6 +118,9 @@ namespace mfront{
 				     const MFrontGenericData&,
 				     const MFrontModelData&);
 
+    virtual void
+    buildDomainName(void) = 0;
+
     virtual std::string
     getApplicationName(void) const = 0;
 

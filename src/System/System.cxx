@@ -11,6 +11,7 @@
 #include<functional>
 #include<cstdio>
 #include<cstring>
+#include<cstdlib>
 #include<climits>
 
 #include<unistd.h>

@@ -8,6 +8,7 @@
 #include<cmath>
 #include<fstream>
 #include<cmath>
+#include<cstdlib>
 
 #include"TFEL/Tests/TestCase.hxx"
 #include"TFEL/Tests/TestProxy.hxx"

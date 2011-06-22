@@ -68,16 +68,9 @@ then
       castem_version="V2006"
       CASTEM_LIB="$CASTEM_LIB -lXext -ljpeg -lglut -lGLU -lGL -lpthread -ldl"
     fi
-    castem2005=""
-    for f in `find ${DCHK} \( -type f -o -type l \) -name 'cast*05*'`
-    do
-      castem2005=$f
-    done
-    if test "x$castem2005" != "x" ; then
-      castem_version="V2005"
-    fi
 
-    if test "x$castem2010" == "x" -a "x$castem2008" == "x" -a "x$castem2007" == "x" -a "x$castem2006" == "x" -a "x$castem2005" == "x" ; then
+    if test "x$castem2010" == "x" -a "x$castem2008" == "x" -a "x$castem2007" == "x" -a "x$castem2006" == "x";
+     then
       CASTEM_OK=no
       AC_MSG_ERROR(No right version of castem found in ${DCHK})
     fi

@@ -9,11 +9,11 @@
 #undef NDEBUG
 #endif
 
-#include<iostream>
 #include<cstdlib>
 #include<cmath>
 #include<vector>
 #include<cassert>
+#include<functional>
 #include<iterator>
 
 #include"TFEL/FSAlgorithm/FSAlgorithm.hxx"

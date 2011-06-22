@@ -8,6 +8,8 @@
 #ifndef _LIB_TFEL_MULTIPLEDEQUEVECTORITERATORS_IXX_
 #define _LIB_TFEL_MULTIPLEDEQUEVECTORITERATORS_IXX_ 
 
+#include<iterator>
+
 namespace tfel{
 
   namespace utilities{
@@ -20,8 +22,7 @@ namespace tfel{
     struct MultipleDequeVectorContainer<T,Transform,container,Allocator>::iterator
     {
 
-      typedef typename container<typename Transform<T1>::type,
-				 typename Allocator::template rebind<T1>::other>::iterator::iterator_category iterator_category;
+      typedef typename std::iterator_traits<typename container<typename Transform<T1>::type,typename Allocator::template rebind<T1>::other>::iterator>::iterator_category iterator_category;
       typedef typename Transform<T1>::value_type value_type;
       typedef typename Transform<T1>::pointer    pointer;
       typedef typename Transform<T1>::reference  reference;
@@ -137,8 +138,7 @@ namespace tfel{
     struct MultipleDequeVectorContainer<T,Transform,container,Allocator>::const_iterator
     {
 
-      typedef typename container<typename Transform<T1>::type,
-typename Allocator::template rebind<T1>::other>::const_iterator::iterator_category iterator_category;
+      typedef typename std::iterator_traits<typename container<typename Transform<T1>::type,typename Allocator::template rebind<T1>::other>::const_iterator>::iterator_category iterator_category;
       typedef typename Transform<T1>::value_type      value_type;
       typedef typename Transform<T1>::pointer         pointer;
       typedef typename Transform<T1>::const_pointer   const_pointer;

@@ -252,10 +252,10 @@ namespace tfel{
       TFEL_INLINE void decreaseCounter(void) throw() {
 	if(this->i!=0){
 	  if((--*(this->i))==0){
-	    delete i;
-	    delete p;
-	    i=0;
-	    p=0;
+	    delete this->i;
+	    delete this->p;
+	    this->i=0;
+	    this->p=0;
 	  }
 	}
       }

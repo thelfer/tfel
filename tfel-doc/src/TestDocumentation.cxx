@@ -102,8 +102,8 @@ namespace tfel{
 	  string key1;
 	  key1 = getKeyValue(p->first,l);
 	  if(p->second.empty()){
-	    log << LaTeXConvertion::capitalize(key1) << " & \\\\" << endl;
 	    log << getIndexCommand(key1,"general") << endl;
+	    log << LaTeXConvertion::capitalize(key1) << " & \\\\" << endl;
 	  } else {
 	    string key2;
 	    vector<string>::const_iterator p3;

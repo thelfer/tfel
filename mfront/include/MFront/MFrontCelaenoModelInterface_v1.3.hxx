@@ -20,11 +20,16 @@ namespace mfront{
     static std::string 
     getName(void);
 
+  private:
+
     virtual void
     setOutputFileNames(const MFrontGenericData&);
 
     virtual std::string
     getApplicationName(void) const;
+
+    virtual void
+    buildDomainName(void);
 
   }; // end of class MFrontCelaenoModelInterface_v1_3
 

@@ -32,6 +32,7 @@
 
 #ifdef HAVE_PLEIADES
 #include"MFront/MFrontCelaenoModelInterface.hxx"
+#include"MFront/MFrontAlcyoneModelInterface.hxx"
 #include"MFront/MFrontGerminalModelInterface.hxx"
 #include"MFront/MFrontCelaenoModelInterface_v1.3.hxx"
 #endif /* HAVE_PLEIADES */
@@ -78,6 +79,7 @@ namespace mfront
 #ifdef HAVE_PLEIADES
     MFrontModelInterfaceProxy<MFrontCelaenoModelInterface>      celaenoModelProxy;
     MFrontModelInterfaceProxy<MFrontGerminalModelInterface>      germinalModelProxy;
+    MFrontModelInterfaceProxy<MFrontAlcyoneModelInterface>       alcyonelModelProxy;
     MFrontModelInterfaceProxy<MFrontCelaenoModelInterface_v1_3> celaenoModelProxy_v13;
 #endif /* HAVE_PLEIADES */
 

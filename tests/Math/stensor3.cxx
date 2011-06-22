@@ -43,12 +43,12 @@ int main(void){
   assert(abs(sig2(0)-1.)<1.e-13);
   assert(abs(sig2(1)-1.3)<1.e-14);
   assert(abs(sig2(2)-0.5)<1.e-14);
-  assert(abs(sig2(3)-sqrt(2))<1.e-14);
+  assert(abs(sig2(3)-sqrt(2.))<1.e-14);
   sig2 *= 2u;
   assert(abs(sig2(0)-2.)<1.e-14);
   assert(abs(sig2(1)-2.6)<1.e-14);
   assert(abs(sig2(2)-1.)<1.e-14);
-  assert(abs(sig2(3)-2*sqrt(2))<1.e-14);
+  assert(abs(sig2(3)-2*sqrt(2.))<1.e-14);
 
   return EXIT_SUCCESS;
 }

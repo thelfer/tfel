@@ -51,7 +51,7 @@ int main(void)
   compute(sin/cos,0.,0.,1.,1.e-14);
   compute(id,1.,1.,1.,1.e-14);
   compute(Cst<3,2u>(),1.,1.5,0.,1.e-14);
-  compute(exp[12.*id],1.,std::exp(12),12*std::exp(12),1.e-14);
+  compute(exp[12.*id],1.,std::exp(12.),12*std::exp(12.),1.e-14);
   compute(power<2>(),1.,1.,2.,1.e-14);
   compute(power<2>(sin),1.,std::sin(1.)*std::sin(1.),2*std::cos(1.)*std::sin(1.),1.e-14);
 

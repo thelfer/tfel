@@ -36,5 +36,11 @@ namespace mfront{
     this->srcFileName  = pdata.className;
     this->srcFileName += "-celaeno_v1.3.cpp";
   } // end of MFrontCelaenoModelInterface_v1_3::setOutputFileNames(void)
+
+  void
+  MFrontCelaenoModelInterface_v1_3::buildDomainName(void){
+    this->srcFile << "// building current zone name\n";
+    this->srcFile << "string domainName = *ptr;\n";
+  }
   
 } // end of namespace mfront  

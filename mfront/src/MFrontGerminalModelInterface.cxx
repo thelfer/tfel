@@ -183,11 +183,6 @@ namespace mfront{
     for(p=data.constantMaterialProperties.begin();p!=data.constantMaterialProperties.end();++p){
       this->writeGetConstantMaterialProperty(*p,pdata,data);
     }
-    this->srcFile << "if(!arg.contains(\"ListeTempsReel\")){\n";
-    this->srcFile << "string msg(\"" << pdata.className << "::initializeParameters : \");\n";
-    this->srcFile << "msg += \"internal error (can't find list of times).\";\n";
-    this->srcFile << "throw(PleiadesError(msg));\n}\n";
-    this->srcFile << "this->nbrOfPeriods = static_cast<unsigned short>(arg[\"ListeTempsReel\"].getTabDouble().getTaille())-1;\n";
     this->srcFile << "return true;\n";
     this->srcFile << "} // end of " << pdata.className << "::initializeParameters\n\n";
   } // end of MFrontGerminalModelInterface::writeInitializeParametersMethod
@@ -197,6 +192,12 @@ namespace mfront{
   {
     this->domains.insert("this->getMeshZoneName()");
   } // end of MFrontGerminalModelInterface::generateDomainsList
+
+  void
+  MFrontGerminalModelInterface::buildDomainName(void){
+    this->srcFile << "// building current zone name\n";
+    this->srcFile << "string domainName = *ptr;\n";
+  }
 
   void
   MFrontGerminalModelInterface::writeSpecificPrivateMethodDeclaration(const MFrontGenericData&,

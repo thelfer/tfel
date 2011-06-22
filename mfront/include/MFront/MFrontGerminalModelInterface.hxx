@@ -44,6 +44,9 @@ namespace mfront{
     virtual void
     generateDomainsList(const MFrontModelData&);
 
+    virtual void
+    buildDomainName();
+
     virtual bool
     initializeDefaultDomainListInConstrutor(const MFrontModelData&) const;
 

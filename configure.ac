@@ -60,12 +60,19 @@ AC_ARG_ENABLE([debug],
 #disable default flags
 CFLAGS="";
 
-#choose between intel icpc and g++
+#choose between intel icpc and g++ and ekopath
 INTEL="no"
+PATHSCALE="no"
 if test "x$GXX" = "xyes" -o "${CXX##*/}x" = "icpcx" ; then
     if test "${CXX##*/}x" = "icpcx"; then
 	GXX="no"
 	INTEL="yes"
+    fi
+fi
+if test "x$GXX" = "xyes" -o "${CXX##*/}x" = "pathCCx" ; then
+    if test "${CXX##*/}x" = "pathCCx"; then
+	GXX="no"
+	PATHSCALE="yes"
     fi
 fi
 

@@ -54,22 +54,23 @@ namespace mfront{
   MFrontPleiadesModelInterfaceBase::declareReservedNames(std::set<std::string>& v)
   {
     v.insert("msg");
-    v.insert("period");
+    v.insert("oss");
+    v.insert("mesh");
+    v.insert("nodes");
+    v.insert("mesh");
+    v.insert("node_k");
+    v.insert("gnode_k");
     v.insert("dt");
     v.insert("ptr");
     v.insert("ptr2");
-    v.insert("index");
-    v.insert("nodes");
     v.insert("domains");
-    v.insert("nbrOfPeriods");
+    v.insert("domain");
+    v.insert("domainName");
     v.insert("PleiadesError");
     v.insert("initialize");
     v.insert("initializeInput");
     v.insert("initializeParameter");
     v.insert("initializeInputIFieldDouble");
-    v.insert("nodesOfZones");
-    v.insert("MEDField");
-    v.insert("MEDFieldPtr");
   } // end of MFrontPleiadesModelInterfaceBase::declareReservedNames
 
   void
@@ -200,18 +201,18 @@ namespace mfront{
 
     this->headerFile << "#include<string>\n\n";
     this->headerFile << "#include\"Pleiades/PMetier/IncPMetier.hh\"\n";
-    this->headerFile << "#include\"Pleiades/PMetier/PModels/MEDModel.hh\"\n\n";
     if(!pdata.includes.empty()){
       this->headerFile << pdata.includes << endl << endl;
     }
-    writeExportDirectives(this->headerFile);
+    //    writeExportDirectives(this->headerFile);
     this->headerFile << "namespace Pleiades\n{\n";
     this->headerFile << "namespace PMetier\n{\n";
     this->headerFile << "namespace PModels\n{\n\n";
-    this->headerFile << "struct MFRONT_SHAREDOBJ " << pdata.className << endl;
-    this->headerFile << ": public IModel,\n";
-    this->headerFile << "public MEDModel\n";
+    //    this->headerFile << "class MFRONT_SHAREDOBJ " << pdata.className << endl;
+    this->headerFile << "class " << pdata.className << endl;
+    this->headerFile << ": public IModel\n";
     this->headerFile << "{\n\n";
+    this->headerFile << "public:\n";
     if((!data.localParameters.empty())||(this->hasSpecializedDomain)){
       this->headerFile << "//! Constructor to initialize local parameters\n";
       this->headerFile << pdata.className
@@ -237,10 +238,6 @@ namespace mfront{
 		     << "executePostProcessingTasks(const bool);\n\n";
     this->headerFile << "private:\n\n";
     this->headerFile << "typedef double real;\n";
-    this->headerFile << "typedef std::string string;\n";
-    this->headerFile << "typedef Pleiades::PUtilitaires::TabString TabString;\n";
-    this->headerFile << "typedef Pleiades::PUtilitaires::TabDouble TabDouble;\n";
-    this->headerFile << "typedef Pleiades::PMetier::PField::PtrIFieldDouble PleiadesField;\n\n";
     // Disable copy constructor and assignement operator
     this->headerFile << "//! Copy constructor (disabled)\n";
     this->headerFile << pdata.className << "(const " 
@@ -314,7 +311,7 @@ namespace mfront{
 	this->headerFile << "#line " << p->lineNumber << " \"" 
 			 << pdata.fileName << "\"\n";
       }
-      this->headerFile << "PleiadesField ple" << p->name << ";\n\n";
+      this->headerFile << "VARIABLE(Pleiades::PMetier::PField::PleiadesField,ple" << p->name << ")\n\n";
     }
     this->headerFile << endl;
     for(p=data.inputs.begin();p!=data.inputs.end();++p){
@@ -322,8 +319,10 @@ namespace mfront{
 	this->headerFile << "#line " << p->lineNumber << " \"" 
 			 << pdata.fileName << "\"\n";
       }
-      this->headerFile << "PleiadesField ple" << p->name << ";\n\n";
+      this->headerFile << "VARIABLE(Pleiades::PMetier::PField::PleiadesField,ple" << p->name << ")\n\n";
     }
+    this->headerFile << endl;
+    this->headerFile << "private:"<< endl;
     this->headerFile << endl;
     for(p=data.globalParameters.begin();p!=data.globalParameters.end();++p){
       if(this->debugMode){
@@ -361,8 +360,6 @@ namespace mfront{
     this->headerFile << endl;
     this->headerFile << "std::set<std::string> domains;" << endl;
     this->headerFile << endl;
-    this->headerFile << "unsigned short period;\n";
-    this->headerFile << "unsigned short nbrOfPeriods;\n\n";
     this->headerFile << "}; // end of class " << pdata.className << endl << endl;
     this->headerFile << "} // end of namespace PModels\n\n";
     this->headerFile << "} // end of namespace PMetier\n\n";
@@ -392,6 +389,48 @@ namespace mfront{
     return "";
   } // end of MFrontPleiadesModelInterfaceBase::getGenTypeMethod
 
+  static std::pair<std::string,unsigned short>
+  getFieldAndDepthFromFieldName(const MFrontModelData& data,
+				const std::string& n){
+    // This is a silly hack
+    using namespace std;
+    VarContainer::const_iterator p;
+    map<string,unsigned short>::const_iterator p2;
+    unsigned short j;
+    for(p=data.outputs.begin();p!=data.outputs.end();++p){
+      if(p->name==n){
+	return make_pair(p->name,0u);
+      }
+      if((p2=data.depths.find(p->name))!=data.depths.end()){
+	for(j=1;j<=p2->second;++j){
+	  ostringstream fn;
+	  fn << p->name << "_" << j;
+	  if(fn.str()==n){
+	    return make_pair(p->name,j);
+	  }
+	}
+      }
+    }
+    for(p=data.inputs.begin();p!=data.inputs.end();++p){
+      if(p->name==n){
+	return make_pair(p->name,0);
+      }
+      if((p2=data.depths.find(p->name))!=data.depths.end()){
+	for(j=1;j<=p2->second;++j){
+	  ostringstream fn;
+	  fn << p->name << "_" << j;
+	  if(fn.str()==n){
+	    return make_pair(p->name,j);
+	  }
+	}
+      }
+    }
+    string msg("getFieldAndDepthFromFieldName : ");
+    msg += "field name '"+n+"' has not been found";
+    throw(runtime_error(msg));
+    return pair<string,unsigned short>("",0u);
+  } // end of getFieldAndDepthFromFieldName
+
   void
   MFrontPleiadesModelInterfaceBase::writeSrcFile(const MFrontGenericData& pdata,
 						 const MFrontModelData& data)
@@ -407,8 +446,6 @@ namespace mfront{
     set<string>::const_iterator p12;
     std::map<std::string,std::vector<MFrontModelData::Function> >::iterator p13;
     set<string>::const_iterator p16;
-    set<string>::size_type nbr;
-    unsigned short j;
     this->srcFile << "/*!" << endl;
     this->srcFile << "* \\file   " << this->srcFileName  << endl;
     this->srcFile << "* \\brief  " << "this file implements the " 
@@ -637,42 +674,37 @@ namespace mfront{
     this->srcFile << "using namespace std;\n";
     this->srcFile << "using namespace Pleiades::PUtilitaires;\n";
     this->srcFile << "using namespace Pleiades::PExceptions;\n";
-    this->srcFile << "using namespace Pleiades::PMetier::PTime;\n\n";
-    this->srcFile << "typedef MEDMEM::FIELD<double>* MEDFieldPtr;\n";
-    this->srcFile << "typedef MEDMEM::FIELD<double>& MEDField;\n\n";
-    for(p=data.outputs.begin();p!=data.outputs.end();++p){
-      this->srcFile << "MEDField " << p->name 
-		    << " = *(static_cast<MEDFieldPtr>(this->ple" << p->name << "->getMed()));\n";
-      if((p5=data.depths.find(p->name))!=data.depths.end()){
-	for(j=1;j<=p5->second;++j){
-	  ostringstream converter;
-	  converter << j;
-	  string varName = p->name+"_"+converter.str();
-	  this->srcFile << "MEDField " << varName 
-			<< " = *(static_cast<MEDFieldPtr>(this->ple" 
-			<< p->name << "->getFieldPreceding("<< j <<")->getMed()));\n";
-	}
-      }
-    }
-    for(p=data.inputs.begin();p!=data.inputs.end();++p){
-      this->srcFile << "MEDField " << p->name 
-		    << " = *(static_cast<MEDFieldPtr>(this->ple" << p->name << "->getMed()));\n";
-      if((p5=data.depths.find(p->name))!=data.depths.end()){
-	for(j=1;j<=p5->second;++j){
-	  this->srcFile << "MEDField " << p->name << "_" << j
-			<< " = *(static_cast<MEDFieldPtr>(this->ple" 
-			<< p->name << "->getFieldPreceding("<< j <<")->getMed()));\n";
-	}
-      }
-    }
-    this->srcFile << "this->period = static_cast<unsigned short>(ITime::GlobalTime->get(\"position\"));\n";
+    this->srcFile << "using namespace Pleiades::PMetier::PTime;\n";
+    this->srcFile << "using namespace Pleiades::PMetier::PMesh;\n\n";
+//     for(p=data.outputs.begin();p!=data.outputs.end();++p){
+//       this->srcFile << "MEDField " << p->name 
+// 		    << " = *(static_cast<MEDFieldPtr>(this->ple" << p->name << "->getMed()));\n";
+//       if((p5=data.depths.find(p->name))!=data.depths.end()){
+// 	for(j=1;j<=p5->second;++j){
+// 	  ostringstream converter;
+// 	  converter << j;
+// 	  string varName = p->name+"_"+converter.str();
+// 	  this->srcFile << "MEDField " << varName 
+// 			<< " = *(static_cast<MEDFieldPtr>(this->ple" 
+// 			<< p->name << "->getFieldPreceding("<< j <<")->getMed()));\n";
+// 	}
+//       }
+//     }
+//     for(p=data.inputs.begin();p!=data.inputs.end();++p){
+//       this->srcFile << "MEDField " << p->name 
+// 		    << " = *(static_cast<MEDFieldPtr>(this->ple" << p->name << "->getMed()));\n";
+//       if((p5=data.depths.find(p->name))!=data.depths.end()){
+// 	for(j=1;j<=p5->second;++j){
+// 	  this->srcFile << "MEDField " << p->name << "_" << j
+// 			<< " = *(static_cast<MEDFieldPtr>(this->ple" 
+// 			<< p->name << "->getFieldPreceding("<< j <<")->getMed()));\n";
+// 	}
+//       }
+//     }
     this->srcFile << "const double t  = ITime::GlobalTime->get(\"time\");\n";
     this->srcFile << "const double dt = ITime::GlobalTime->get(\"time increment\");\n";
     this->srcFile << "static_cast<void>(t);  // suppress unused variable warning\n";
     this->srcFile << "static_cast<void>(dt); // suppress unused variable warning\n\n";
-
-    this->srcFile << "cout << \"***" << pdata.className 
-		  << "::execute (period \" << period << \"/\" << this->nbrOfPeriods << \")\\n\";\n\n";
 
     // calling functions
     if(data.functions.empty()){
@@ -680,20 +712,34 @@ namespace mfront{
       msg += "no function defined";
       throw(runtime_error(msg));
     }
-    this->srcFile << "std::set<string>::const_iterator ptr;\n";
-    this->srcFile << "map<string,vector<int> >::const_iterator ptr2;\n";
-    this->srcFile << "vector<int>::const_iterator ptr3;\n";
-    nbr=0u;
-    this->srcFile << "for(ptr=this->domains.begin();ptr!=this->domains.end();++ptr){\n";
-    this->srcFile << "ptr2 = this->nodesOfZones.find(*ptr);\n";
-    this->srcFile << "if(ptr2==this->nodesOfZones.end()){\n";
+    if(data.outputs.size()==0){
+      string msg("MFrontPleiadesModelInterfaceBase::writeSrcFile : ");
+      msg += "no output defined";
+      throw(runtime_error(msg));
+    }
+    this->srcFile << "PtrIMesh mesh = this->_ple" << data.outputs.front().name << "->getMesh();\n";
+    this->srcFile << "set<string>::const_iterator ptr;\n";
+    this->srcFile << "if(this->domains.empty()){\n";
     this->srcFile << "string msg(\"" << pdata.className << "::execute : \");\n";
-    this->srcFile << "msg += \"internal error (no group named '\"+*ptr+\"' defined\";\n";
+    this->srcFile << "msg += \"no domain specified\";\n";
     this->srcFile << "throw(PleiadesError(msg));\n";
     this->srcFile << "}\n";
-    this->srcFile << "const vector<int>& nodes = ptr2->second;\n";
-    this->srcFile << "for(ptr3=nodes.begin();";
-    this->srcFile << "ptr3!=nodes.end();++ptr3){\n";
+    this->srcFile << "int k;\n";
+//     this->srcFile << "map<string,vector<int> >::const_iterator ptr2;\n";
+//     this->srcFile << "vector<int>::const_iterator ptr3;\n";
+
+    this->srcFile << "for(ptr=this->domains.begin();ptr!=this->domains.end();++ptr){\n";
+    this->buildDomainName();
+    this->srcFile << "const int nodes = mesh->getNumberOfElements(NODE,domainName);\n";
+//     this->srcFile << "ptr2 = this->nodesOfZones.find(*ptr);\n";
+//     this->srcFile << "if(ptr2==this->nodesOfZones.end()){\n";
+//     this->srcFile << "string msg(\"" << pdata.className << "::execute : \");\n";
+//     this->srcFile << "msg += \"internal error (no group named '\"+*ptr+\"' defined\";\n";
+//     this->srcFile << "throw(PleiadesError(msg));\n";
+//     this->srcFile << "}\n";
+//     this->srcFile << "const vector<int>& nodes = ptr2->second;\n";
+    this->srcFile << "for(node_k=0;node_k!=nodes;++node_k){\n";
+    this->srcFile << "const int gnode_k = mesh->getElement(NODE,domainName,k);\n";
     this->writeFunctionCall(data,data.functions);
     this->srcFile << "}\n";
     this->srcFile << "}\n";
@@ -900,11 +946,13 @@ namespace mfront{
 						      const std::vector<MFrontModelData::Function>& functions)
   {
     using namespace std;
+    typedef unsigned short ushort;
     set<string> usedVariables;
     set<string> modifiedVariables;
     vector<MFrontModelData::Function>::const_iterator p;
     set<string>::const_iterator p2;
     set<string>::const_iterator p3;
+    map<string,unsigned short>::const_iterator p4;
     usedVariables.clear();
     modifiedVariables.clear();
     // generating temporaries for variables of thoses fields
@@ -924,13 +972,28 @@ namespace mfront{
     // declaring temporaries
     for(p2=usedVariables.begin();p2!=usedVariables.end();++p2){
       if(data.fieldNames.find(*p2)!=data.fieldNames.end()){
-	this->srcFile << "const double tmp_" << *p2 << " = " 
-		      << *p2 << ".getValueIJ(*ptr3,1);\n";
+	const pair<string,ushort>& fn = getFieldAndDepthFromFieldName(data,*p2);
+	if(fn.second==0){
+	  this->srcFile << "const double tmp_" << *p2 << " = this->_ple" 
+			<< fn.first << "[gnode_k];\n";
+	} else {
+	  this->srcFile << "const double tmp_" << *p2 << " = this->_ple" 
+			<< fn.first << "->getValuePrecedingType(" << fn.second << ",gnode_k);\n";
+	}
       }
     }
     for(p2=modifiedVariables.begin();p2!=modifiedVariables.end();++p2){
       if(data.fieldNames.find(*p2)!=data.fieldNames.end()){
-	this->srcFile << "double tmp_" << *p2 << " = " << *p2 << ".getValueIJ(*ptr3,1);\n";
+	const pair<string,ushort>& fn = getFieldAndDepthFromFieldName(data,*p2);
+	if(fn.second==0){
+	  this->srcFile << "double tmp_" << *p2 << " = this->_ple" 
+			<< fn.first << "[gnode_k];\n";
+	} else {
+	  string msg("MFrontPleiadesModelInterfaceBase::writeFunctionCall : ");
+	  msg += "variable '"+*p2+"' shall not be modified";
+	  throw(runtime_error(msg));
+	}
+
       }
     }
     for(p=functions.begin();p!= functions.end();++p){
@@ -975,7 +1038,7 @@ namespace mfront{
       this->srcFile << ");\n";
     }
     for(p2=modifiedVariables.begin();p2!=modifiedVariables.end();++p2){
-      this->srcFile << *p2 << ".setValueIJ(*ptr3,1,tmp_" << *p2 << ");\n";
+      this->srcFile << *p2 << ".setValueType(gnode_k,tmp_" << *p2 << ",1);\n";
     }
   }
 
@@ -1031,11 +1094,6 @@ namespace mfront{
     for(p=data.constantMaterialProperties.begin();p!=data.constantMaterialProperties.end();++p){
       this->writeGetConstantMaterialProperty(*p,pdata,data);
     }
-    this->srcFile << "if(!arg.contains(\"ListeTempsReel\")){\n";
-    this->srcFile << "string msg(\"" << pdata.className << "::initializeParameters : \");\n";
-    this->srcFile << "msg += \"internal error (can't find list of times).\";\n";
-    this->srcFile << "throw(PleiadesError(msg));\n}\n";
-    this->srcFile << "this->nbrOfPeriods = static_cast<unsigned short>(arg[\"ListeTempsReel\"].getTabDouble().getTaille())-1;\n";
     this->srcFile << "return true;\n";
     this->srcFile << "} // end of " << pdata.className << "::initializeParameters\n\n";
   } // end of MFrontPleiadesModelInterfaceBase::writeInitializeParametersMethod
@@ -1066,7 +1124,7 @@ namespace mfront{
 	name = "\""+p->name+"\"";
       }
       this->srcFile << "if(!this->initializeOutputIFieldDouble(arg," << name;
-      this->srcFile << ",\nthis->ple" << p->name << ",\"FieldMedDouble\",";
+      this->srcFile << ",\nthis->_ple" << p->name << ",\"\",";
       if((p3=data.initialValues.find(p->name))!=data.initialValues.end()){
 	this->srcFile << p3->second;
       } else {
@@ -1079,13 +1137,6 @@ namespace mfront{
       this->srcFile << "msg += \"\'\";\n";
       this->srcFile << "throw(PleiadesError(msg));\n";
       this->srcFile << "}\n";
-    }
-    if(!data.outputs.empty()){
-      this->srcFile << "MEDModel::initializeMEDModel(arg,this->ple"
-		    << data.outputs.front().name <<"->getMesh());\n";
-    } else {
-      string msg("MFrontPleiadesModelInterfaceBase::writeSrcFile : no output field (FIXE ME!!!!)");
-      throw(runtime_error(msg));
     }
     this->srcFile << "return true;\n";
     this->srcFile << "} // end of " << pdata.className << "::initializeOutput \n\n";
@@ -1115,9 +1166,9 @@ namespace mfront{
       } else {
 	name = "\""+p->name+"\"";
       }
-      this->srcFile << "if(!this->initializeInputIFieldDouble(this->ple"
+      this->srcFile << "if(!this->initializeInputIFieldDouble(this->_ple"
 		    << p->name << "," << name;
-      this->srcFile << ",\"FieldMedDouble\",arg)){\n";
+      this->srcFile << ",\"\",arg)){\n";
       this->srcFile << "string msg(\"" << pdata.className << "::initializeInput : \");\n";
       this->srcFile << "msg += \"can't initialize input field " << p->name << "\";\n";
       this->srcFile << "throw(PleiadesError(msg));\n";

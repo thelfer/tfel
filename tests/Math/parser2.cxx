@@ -29,7 +29,7 @@ main(void)
 #if __GNUC__ != 3
   shared_ptr<ExternalFunction> df = f.differentiate(0);
   df->setVariableValue(0,2.);
-  assert(abs(df->getValue()+sin(2)*exp(cos(2)))<1.e-12);
+  assert(abs(df->getValue()+sin(2.)*exp(cos(2.)))<1.e-12);
 #endif
   
   shared_ptr<ExternalFunctionManager> manager(new ExternalFunctionManager());

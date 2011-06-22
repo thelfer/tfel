@@ -78,6 +78,4 @@ libTFELMathKriging_la_LIBADD = -L@top_builddir@/src/Exception/ \
 			       -L@top_builddir@/src/Math/      \
 			       -lTFELMath -lTFELException
 
-
-
 EXTRA_DIST = CMakeLists.txt
