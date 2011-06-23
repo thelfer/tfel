@@ -507,6 +507,7 @@ mfront/include/MFront/ComputedVarHandler.hxx -text
 mfront/include/MFront/InterfaceBase.hxx -text
 mfront/include/MFront/LawFunction.hxx -text
 mfront/include/MFront/MFront.hxx -text
+mfront/include/MFront/MFrontAlcyoneModelInterface.hxx -text
 mfront/include/MFront/MFrontBehaviourInterfaceFactory.hxx -text
 mfront/include/MFront/MFrontBehaviourInterfaceProxy.hxx -text
 mfront/include/MFront/MFrontBehaviourInterfaceProxy.ixx -text
@@ -588,6 +589,7 @@ mfront/src/CMakeLists.txt -text
 mfront/src/ComputedVarHandler.cxx -text
 mfront/src/InterfaceBase.cxx -text
 mfront/src/MFront.cxx -text
+mfront/src/MFrontAlcyoneModelInterface.cxx -text
 mfront/src/MFrontBehaviourInterfaceFactory.cxx -text
 mfront/src/MFrontBehaviourParserCommon.cxx -text
 mfront/src/MFrontBehaviourVirtualInterface.cxx -text
