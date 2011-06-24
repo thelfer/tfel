@@ -65,14 +65,6 @@ if HAVE_PYTHON
 mfront_SOURCES += MFrontPythonLawInterface.cxx
 endif
 
-if SUPPORT_PLEIADES
-mfront_SOURCES += MFrontCelaenoModelInterface.cxx
-mfront_SOURCES += MFrontGerminalModelInterface.cxx
-mfront_SOURCES += MFrontAlcyoneModelInterface.cxx
-mfront_SOURCES += MFrontCelaenoModelInterface_v1.3.cxx
-mfront_SOURCES += MFrontPleiadesModelInterfaceBase.cxx
-endif
-
 if HAVE_CASTEM
 mfront_SOURCES += MFrontUMATInterface.cxx      \
 		  MFrontCastemLawInterface.cxx

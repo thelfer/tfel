@@ -62,11 +62,6 @@ nobase_noinst_HEADERS += MFront/MFrontCLawInterfaceBase.hxx          \
 			 MFront/MFrontGnuplotLawInterface.hxx        \
 			 MFront/MFrontExcelLawInterface.hxx          \
 			 MFront/MFrontLaTeXLawInterface.hxx          \
-			 MFront/MFrontCelaenoModelInterface.hxx      \
-			 MFront/MFrontGerminalModelInterface.hxx     \
-			 MFront/MFrontAlcyoneModelInterface.hxx      \
-			 MFront/MFrontPleiadesModelInterfaceBase.hxx \
-			 MFront/MFrontCelaenoModelInterface_v1.3.hxx \
 			 MFront/MFrontPythonLawInterface.hxx
 
 nobase_noinst_HEADERS += MFront/MFrontCastemLawInterface.hxx   \

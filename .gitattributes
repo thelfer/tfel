@@ -518,15 +518,12 @@ mfront/include/MFront/MFrontBehaviourVirtualInterface.hxx -text
 mfront/include/MFront/MFrontCLawInterface.hxx -text
 mfront/include/MFront/MFrontCLawInterfaceBase.hxx -text
 mfront/include/MFront/MFrontCastemLawInterface.hxx -text
-mfront/include/MFront/MFrontCelaenoModelInterface.hxx -text
-mfront/include/MFront/MFrontCelaenoModelInterface_v1.3.hxx -text
 mfront/include/MFront/MFrontCppLawInterface.hxx -text
 mfront/include/MFront/MFrontCppTestLawInterface.hxx -text
 mfront/include/MFront/MFrontDefaultParser.hxx -text
 mfront/include/MFront/MFrontExcelLawInterface.hxx -text
 mfront/include/MFront/MFrontFortranLawInterface.hxx -text
 mfront/include/MFront/MFrontGenericData.hxx -text
-mfront/include/MFront/MFrontGerminalModelInterface.hxx -text
 mfront/include/MFront/MFrontGnuplotLawInterface.hxx -text
 mfront/include/MFront/MFrontHeader.hxx -text
 mfront/include/MFront/MFrontImplicitParser.hxx -text
@@ -557,7 +554,6 @@ mfront/include/MFront/MFrontMultipleIsotropicMisesFlowsParser.hxx -text
 mfront/include/MFront/MFrontParserFactory.hxx -text
 mfront/include/MFront/MFrontParserProxy.hxx -text
 mfront/include/MFront/MFrontParserProxy.ixx -text
-mfront/include/MFront/MFrontPleiadesModelInterfaceBase.hxx -text
 mfront/include/MFront/MFrontPythonLawInterface.hxx -text
 mfront/include/MFront/MFrontRungeKuttaParser.hxx -text
 mfront/include/MFront/MFrontUMATInterface.hxx -text
@@ -589,7 +585,6 @@ mfront/src/CMakeLists.txt -text
 mfront/src/ComputedVarHandler.cxx -text
 mfront/src/InterfaceBase.cxx -text
 mfront/src/MFront.cxx -text
-mfront/src/MFrontAlcyoneModelInterface.cxx -text
 mfront/src/MFrontBehaviourInterfaceFactory.cxx -text
 mfront/src/MFrontBehaviourParserCommon.cxx -text
 mfront/src/MFrontBehaviourVirtualInterface.cxx -text
@@ -597,14 +592,11 @@ mfront/src/MFrontBehaviourVirtualParser.cxx -text
 mfront/src/MFrontCLawInterface.cxx -text
 mfront/src/MFrontCLawInterfaceBase.cxx -text
 mfront/src/MFrontCastemLawInterface.cxx -text
-mfront/src/MFrontCelaenoModelInterface.cxx -text
-mfront/src/MFrontCelaenoModelInterface_v1.3.cxx -text
 mfront/src/MFrontCppLawInterface.cxx -text
 mfront/src/MFrontCppTestLawInterface.cxx -text
 mfront/src/MFrontDefaultParser.cxx -text
 mfront/src/MFrontExcelLawInterface.cxx -text
 mfront/src/MFrontFortranLawInterface.cxx -text
-mfront/src/MFrontGerminalModelInterface.cxx -text
 mfront/src/MFrontGnuplotLawInterface.cxx -text
 mfront/src/MFrontHeader.cxx.in -text
 mfront/src/MFrontImplicitParser.cxx -text
@@ -626,7 +618,6 @@ mfront/src/MFrontModelParserCommon.cxx -text
 mfront/src/MFrontModelVirtualInterface.cxx -text
 mfront/src/MFrontMultipleIsotropicMisesFlowsParser.cxx -text
 mfront/src/MFrontParserFactory.cxx -text
-mfront/src/MFrontPleiadesModelInterfaceBase.cxx -text
 mfront/src/MFrontPythonLawInterface.cxx -text
 mfront/src/MFrontRungeKuttaParser.cxx -text
 mfront/src/MFrontUMATInterface.cxx -text

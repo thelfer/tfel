@@ -167,20 +167,6 @@ fi
 # check for castem
 CHECK_CASTEM
 
-AC_ARG_ENABLE([pleiades],
-               AC_HELP_STRING([--enable-pleiades],
-		   [compile mfront pleiades specific parsers]),
-	       [case "${enableval}" in
-		   yes) enable_pleiades=true ;;
-		   no)  enable_pleiades=false ;;
-		   *) AC_MSG_ERROR(bad value ${enableval} for --enable-enable_pleiades) ;;
-		       esac],[enable_pleiades=false])
-AM_CONDITIONAL(SUPPORT_PLEIADES, test x"$enable_pleiades" = "xtrue")
-if test x"$enable_pleiades" = "xtrue";
-then
-	AC_DEFINE(HAVE_PLEIADES)
-fi
-
 AC_ARG_ENABLE([tests],
                AC_HELP_STRING([--enable-tests], [compile tests file]),
 [case "${enableval}" in
@@ -189,11 +175,6 @@ AC_ARG_ENABLE([tests],
   *) AC_MSG_ERROR(bad value ${enableval} for --enable-enable_tests) ;;
 esac],[enable_tests=false])
 AM_CONDITIONAL(WITH_TESTS, test x"$enable_tests" = "xtrue")
-
-if test x"$enable_pleiades" = "xtrue";
-then
-  AC_DEFINE(HAVE_PLEIADES)
-fi
 
 AC_OUTPUT([debug.sh
 	   Makefile

@@ -1217,6 +1217,14 @@ namespace mfront{
 				"Expected to read a string (read '"+this->current->value+"').");
       }
       res = this->current->value;
+    } else if (p->type=="bool"){
+      if((this->current->value!="true")&&
+	 (this->current->value!="false")){
+	this->throwRuntimeError("MFrontModelParserCommon::readDefaultValue",
+				"expected to read 'true' or 'false' for type 'bool', read '"+
+				this->current->value+"'");
+      }
+      res = this->current->value;
     } else {
       this->throwRuntimeError("MFrontModelParserCommon::readDefaultValue",
 			      "type '"+p->type+"' is not supported.");
