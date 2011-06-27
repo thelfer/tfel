@@ -1172,7 +1172,14 @@ namespace mfront{
     this->behaviourDataFile << "*/\n";
     this->behaviourDataFile << this->className << "BehaviourData(const ";
     this->behaviourDataFile << this->className << "BehaviourData& src)\n";
-    this->behaviourDataFile << ": sig(src.sig),\n";
+    this->behaviourDataFile << ": " << endl;
+    if(this->behaviourCharacteristic.requiresStiffnessTensor()){
+      this->behaviourDataFile << "D(src.D),\n";
+    }
+    if(this->behaviourCharacteristic.requiresThermalExpansionTensor()){
+      this->behaviourDataFile << "A(src.A),\n";
+    }
+    this->behaviourDataFile << "sig(src.sig),\n";
     this->behaviourDataFile << "eto(src.eto),\n";
     this->behaviourDataFile << "T(src.T)";
     if(!this->coefsHolder.empty()){
