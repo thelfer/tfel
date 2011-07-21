@@ -297,6 +297,50 @@ namespace tfel
     } // end of systemCall::unlinkx
 
     void
+    systemCall::rmdir(const std::string& d)
+    {
+      using namespace std;
+      struct stat dInfos;
+      vector<string> o;
+      if(::stat(d.c_str(),&dInfos)==-1){
+	systemCall::throwSystemError("systemCall::rmdir : can't stat directory "+d,errno);
+      }
+      if(!S_ISDIR(dInfos.st_mode)){
+	string msg("systemCall::rmdir : '");
+	msg += d+"' is not a directory";
+	throw(runtime_error(msg));
+      }
+      DIR *dir = opendir(d.c_str());
+      struct dirent *p;
+      if(dir==0){
+	systemCall::throwSystemError("systemCall::rmdir, can't open directory "+d,
+				     errno);
+      }
+      while((p=readdir(dir))!=NULL){
+	if((strcmp(p->d_name,".")!=0)&&
+	   (strcmp(p->d_name,"..")!=0)){
+	  o.push_back(p->d_name);
+	}
+      }
+      vector<string>::const_iterator po;
+      for(po=o.begin();po!=o.end();++po){
+	struct stat pInfos;
+	string f;
+	f = d+"/"+*po;
+	if(::stat(f.c_str(),&pInfos)==-1){
+	  systemCall::throwSystemError("systemCall::rmdir : can't stat '"+f+"'",errno);
+	}
+	if(S_ISDIR(pInfos.st_mode)){
+	  systemCall::rmdir(f);
+	} else {
+	  systemCall::unlink(f);
+	}
+      }
+      closedir(dir);
+      ::rmdir(d.c_str());
+    } // end of systemCall::rmdir
+
+    void
     systemCall::write(const int f,
 		      const void* const v,
 		      size_t s)

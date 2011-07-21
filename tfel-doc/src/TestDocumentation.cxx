@@ -35,6 +35,7 @@ namespace tfel{
       using namespace std;
       string r(s);
       replace_all(r,'/',"/\\-");
+      replace_all(r,'_',"{\textunderscore}");
       return r;
     }
 
@@ -62,7 +63,7 @@ namespace tfel{
       using namespace std;
       map<string,vector<string> >::const_iterator p;
       map<string,string>::const_iterator p2;
-      log << "\\subsection{Test " << this-> name << "}" << endl;
+      log << "\\subsection{Test " << toLaTeX(this-> name) << "}" << endl;
       log << endl;
       log << "\\begin{center}" << endl;
       log << "\\begin{tabular}[!h]{lcp{0.65\\linewidth}}" << endl;

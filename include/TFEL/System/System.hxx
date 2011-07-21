@@ -55,6 +55,12 @@ namespace tfel
       static void
       unlink(const std::string&);
 
+      /*!
+       * \param d : directory to remove
+       */
+      static void
+      rmdir(const std::string&);
+
       static void
       write(const int,const void* const,size_t);
 

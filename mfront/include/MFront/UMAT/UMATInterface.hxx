@@ -321,6 +321,7 @@ namespace umat{
       using namespace std;
       using namespace tfel::meta;
       using namespace tfel::utilities;
+      typedef unsigned short ushort;
       try{
 	if(*NTENS==3){
 	  typedef UMATTraits<Behaviour<1u,UMATReal,false> > Traits;
@@ -354,7 +355,7 @@ namespace umat{
 		     PROPS,NPROPS,PREDEF,DPRED,STATEV,NSTATV,STRESS,
 		     NDI);
 	} else{
-	  throw(UMATInvalidNTENSValue(*NTENS));
+	  throw(UMATInvalidNTENSValue(ushort(*NTENS)));
 	}
       }
       catch(const UMATException& e){
@@ -528,6 +529,7 @@ namespace umat{
 	TFEL_UMAT_INLINE2 void exe(UMATReal *const STRESS,
 				   UMATReal *const STATEV)
 	{
+	  typedef unsigned short ushort;
 	  const UMATOutOfBoundsPolicy& up = UMATOutOfBoundsPolicy::getUMATOutOfBoundsPolicy();
 	  unsigned short subSteps   = 0u;
 	  unsigned short iterations = 1u;
@@ -557,8 +559,8 @@ namespace umat{
 	      behaviour.updateExternalStateVariables();
 	      this->bData = static_cast<const BData&>(behaviour);
 	    } else {
-	      subSteps    += 1;
-	      iterations  *= 2;
+	      ++subSteps;
+	      iterations = ushort(iterations*2u);
 	      this->iData *= 0.5;
 	    }
 	  }
