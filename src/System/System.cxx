@@ -4,6 +4,7 @@
  * \author Helfer Thomas
  * \date   06 Nov 2007
  */
+#include<iostream>
 
 #include<sstream>
 #include<fstream>
@@ -429,19 +430,35 @@ namespace tfel
     systemCall::copyFile(const std::string& src,const std::string& dest)
     {
       using namespace std;
+      struct stat srcInfos;
+      if(::stat(src.c_str(),&srcInfos)==-1){
+	systemCall::throwSystemError("systemCall::copyFile : can't stat file "+src,errno);
+      }
+      if(!S_ISREG(srcInfos.st_mode)){
+	string msg("systemCall::copyFile : source '"+src+"' is not a regular file");
+	throw(runtime_error(msg));
+      }
+      // simple check
+      if(src==dest){
+	return;
+      }
+      // do the copy
       ofstream out(dest.c_str(),ios_base::binary);
       ifstream in(src.c_str(),ios_base::binary);
       if(!in){
 	string msg("systemCall::copyFile : can't open file "+src+" in read mode.");
 	throw(SystemError(msg));
       }
-      // local copy of the file
       if(!out){
 	string msg("systemCall::copyFile : can't open file "+dest+" in write mode.");
 	throw(SystemError(msg));
       }
-      out.exceptions(ifstream::failbit | ifstream::badbit);
-      out << in.rdbuf();
+      // local copy of the file
+      if(srcInfos.st_size!=0){
+	// file is not empty
+	out.exceptions(ifstream::failbit | ifstream::badbit);
+	out << in.rdbuf();
+      }
       in.close();
       out.close();
     } // end of systemCall::copyFile
