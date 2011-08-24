@@ -40,6 +40,8 @@ namespace tfel{
       
       std::string
       getUsageDescription(void) const;
+
+      void treatFragment(void);
       
       void treatSrc(void);
 
@@ -64,6 +66,8 @@ namespace tfel{
       std::ofstream  output;
 
       std::ostream* log;
+
+      bool fragment;
 
       tfel::utilities::shared_ptr<std::ostream> logptr;
 

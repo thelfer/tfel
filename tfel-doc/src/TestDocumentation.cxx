@@ -35,7 +35,7 @@ namespace tfel{
       using namespace std;
       string r(s);
       replace_all(r,'/',"/\\-");
-      replace_all(r,'_',"{\textunderscore}");
+      replace_all(r,'_',"{\\textunderscore}");
       return r;
     }
 

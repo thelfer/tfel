@@ -62,57 +62,54 @@ namespace tfel
     {
       using namespace std;
       using namespace tfel::utilities;
-      if(l!="english"){
+      if(l!="french"){
 	cerr << TerminalColors::Red;
 	cerr << "getBabelPackage : unsupported language '" << l << 
 	  "', using default" << endl;
 	cerr << TerminalColors::Reset;
+	return "";
       }
-      return "anglais";
+      return "\\usepackage[frenchb]{babel}";
     }
 
     static void
     printLaTeXFile(std::ostream& log,
 		   const std::map<std::string,std::vector<TestDocumentation> >& tests,
-		   const std::string& l)
+		   const std::string& l,
+		   bool fragment)
     {
       using namespace std;
       map<string,vector<TestDocumentation> >::const_iterator p;
       vector<TestDocumentation>::const_iterator p2;
-      if(l!="french"){
-	log << "\\documentclass[rectoverso,index,pleiades,pstricks,leqno,anti,latin1,projet,"
-	    << getBabelPackage(l) << "]{note_technique_2010}" << endl;
-      } else {
-	log << "\\documentclass[rectoverso,index,pleiades,pstricks,leqno,anti,latin1,projet]{note_technique_2010}" << endl;
+      if(!fragment){
+	log << "\\documentclass[a4paper,12pt]{article}" << endl;
+	log << endl;
+	log << "\\usepackage[T1]{fontenc}" << endl;
+	log << "\\usepackage{multind}" << endl;
+	log << "\\usepackage{amsmath}" << endl;
+	log << endl;
+	log << "\\newcommand{\\Frac}[2]{\\displaystyle\\frac{\\displaystyle #1}{\\displaystyle #2}}" << endl;
+	log << "\\newcommand{\\paren}[1]{\\ensuremath\\left(#1\\right)}" << endl;
+	log << "\\newcommand{\\tenseur}[1]{\\ensuremath\\underline{#1}}" << endl;
+	log << "\\newcommand{\\tenseurq}[1]{\\ensuremath\\underline{\\underline{#1}}}" << endl;
+	log << "\\newcommand{\\nom}[1]{\\textsc{#1}}" << endl;
+	log << endl;
+	log << "% one column index" << endl;
+	log << "\\makeatletter" << endl;
+	log << "\\def\\printindex#1#2{\\section*{#2}" << endl;
+	log << "\\addcontentsline{toc}{section}{#2}" << endl;
+	log << "\\@input{#1.ind}}"  << endl;
+	log << "\\makeatother" << endl;
+	log << endl;
+	if(l!="english"){
+	  log << getBabelPackage(l) << endl;
+	}
+	log << "\\makeindex{general}" << endl;
+	log << "\\makeindex{models}" << endl;
+	log << endl;
+	log << "\\begin{document}"<< endl;
+	log << endl;
       }
-      log << endl;
-      log << "\\input{LSC}" << endl;
-      log << "\\auteurs{T.~Helfer}" << endl;
-      log << "\\redacteur{T.~Helfer}" << endl;
-      log << "\\titre{Guide des cas tests celaeno}" << endl;
-      log << "\\date{2011}" << endl;
-      log << endl;
-      log << "\\usepackage{multind}" << endl;
-      log << endl;
-      log << "\\newcommand{\\Frac}[2]{\\displaystyle\\frac{\\displaystyle #1}{\\displaystyle #2}}" << endl;
-      log << "\\newcommand{\\paren}[1]{\\ensuremath\\left(#1\\right)}" << endl;
-      log << "\\newcommand{\\tenseur}[1]{\\ensuremath\\underline{#1}}" << endl;
-      log << "\\newcommand{\\tenseurq}[1]{\\ensuremath\\underline{\\underline{#1}}}" << endl;
-      log << "\\newcommand{\\nom}[1]{\\textsc{#1}}" << endl;
-      log << endl;
-      log << "% one column index" << endl;
-      log << "\\makeatletter" << endl;
-      log << "\\def\\printindex#1#2{\\section*{#2}" << endl;
-      log << "\\addcontentsline{toc}{section}{#2}" << endl;
-      log << "\\@input{#1.ind}}"  << endl;
-      log << "\\makeatother" << endl;
-      log << endl;
-
-      log << "\\makeindex{general}" << endl;
-      log << "\\makeindex{models}" << endl;
-      log << endl;
-      log << "\\begin{document}"<< endl;
-      log << endl;
       for(p=tests.begin();p!=tests.end();++p){
 	log << endl;
 	log << "\\clearpage" << endl;
@@ -123,13 +120,15 @@ namespace tfel
 	  p2->writeLaTexDescription(log,l);
 	}
       }
-      log << "\\clearpage" << endl;
-      log << "\\newpage" << endl;
-      log << "\\printindex{general}{" << LaTeXConvertion::capitalize(getTranslation("general index",l)) << "}" << endl  << endl;
-      log << "\\clearpage" << endl;
-      log << "\\newpage" << endl;
-      log << "\\printindex{models}{" << LaTeXConvertion::capitalize(getTranslation("models index",l)) << "}" << endl << endl;
-      log << "\\end{document}"<< endl;
+      if(!fragment){
+	log << "\\clearpage" << endl;
+	log << "\\newpage" << endl;
+	log << "\\printindex{general}{" << LaTeXConvertion::capitalize(getTranslation("general index",l)) << "}" << endl  << endl;
+	log << "\\clearpage" << endl;
+	log << "\\newpage" << endl;
+	log << "\\printindex{models}{" << LaTeXConvertion::capitalize(getTranslation("models index",l)) << "}" << endl << endl;
+	log << "\\end{document}"<< endl;
+      }
     }
 
     static void
@@ -155,7 +154,8 @@ namespace tfel
 
     TestDocMain::TestDocMain(const int argc,
 			     const char*const* argv)
-      : ArgumentParserBase<TestDocMain>(argc,argv)
+      : ArgumentParserBase<TestDocMain>(argc,argv),
+	fragment(false)
     {
       using namespace std;
       using namespace tfel::utilities;
@@ -214,6 +214,8 @@ namespace tfel
     {
       this->registerNewCallBack("--lang",&TestDocMain::treatLang,
 				"specify output language (french,english)",true);
+      this->registerNewCallBack("--fragment","-f",&TestDocMain::treatFragment,
+				"don't print TeX header",false);
       this->registerNewCallBack("--src",&TestDocMain::treatSrc,
 				"specify root of sources",true);
       this->registerNewCallBack("--log",&TestDocMain::treatLogFile,
@@ -225,6 +227,13 @@ namespace tfel
       this->registerNewCallBack("--translations",&TestDocMain::treatTranslationFile,
 				"specify a translation file",true);
     } // end of TestDocMain::registerArgumentCallBacks
+
+
+    void
+    TestDocMain::treatFragment(void)
+    {
+      this->fragment=true;
+    }
 
     void
     TestDocMain::treatLogFile(void)
@@ -363,7 +372,7 @@ namespace tfel
 	  }
 	}
       }
-      printLaTeXFile(this->output,tests,this->lang);
+      printLaTeXFile(this->output,tests,this->lang,this->fragment);
       map<string,vector<TestDocumentation> >::const_iterator p3;
       map<string,vector<TestDocumentation> >::size_type count = 0u;
       for(p3=tests.begin();p3!=tests.end();++p3){
