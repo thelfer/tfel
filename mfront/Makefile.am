@@ -1,2 +1,2 @@
-SUBDIRS = src include tests lisp Examples
+SUBDIRS = src include tests Examples
 EXTRA_DIST = CMakeLists.txt

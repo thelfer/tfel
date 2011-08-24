@@ -25,7 +25,7 @@ fi
 AC_PROG_CXX
 
 # Macro for lisp
-AM_PATH_LISPDIR
+# AM_PATH_LISPDIR
 
 # Libtool specific stuff
 AC_LIBTOOL_DLOPEN
@@ -198,7 +198,6 @@ AC_OUTPUT([debug.sh
            mfront/tests/Makefile
            mfront/tests/properties/Makefile
            mfront/tests/behaviours/Makefile
-           mfront/lisp/Makefile
 	   mfront/Examples/Makefile
 	   tfel-check/Makefile
 	   tfel-check/src/Makefile
