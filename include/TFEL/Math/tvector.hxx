@@ -28,24 +28,12 @@
 #include"TFEL/Math/Vector/VectorConceptOperations.hxx"
 #include"TFEL/Math/Vector/VectorExpr.hxx"
 
+#include"TFEL/Math/Forward/tmatrix.hxx"
+#include"TFEL/Math/Forward/tvector.hxx"
+
 namespace tfel{
   
   namespace math{
-
-    /*!
-     * \class tvector.
-     * \brief a class representing tiny vectors of fixed size.
-     * \param unsigned short, the number of values hold by the
-     * tvector.
-     * \param typename T, the type hold by the tvector.
-     */
-    template<unsigned short N, typename T>
-    class tvector;
-
-    template<unsigned short N,
-	     unsigned short M,
-	     typename T>
-    class tmatrix;
 
     //! Partial specialisation for tvectors.
     /*

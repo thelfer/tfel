@@ -21,19 +21,12 @@
 #include"TFEL/Math/Matrix/MatrixConceptOperations.hxx"
 #include"TFEL/Math/Matrix/MatrixExpr.hxx"
 
+#include"TFEL/Math/Forward/tmatrix.hxx"
+
 namespace tfel{
   
   namespace math{
     
-    /*!
-     * \class tmatrix.
-     * \brief a class representing tiny matrixs of fixed size.
-     * \param unsigned short, the number of rows hold by the tmatrix.
-     * \param unsigned short, the number of columns hold by the tmatrix.
-     * \param typename T, the type hold by the tmatrix.
-     */
-    template<unsigned short N,unsigned short M, typename T>
-    class tmatrix;
 
     //! Partial specialisation for tmatrixs.
     /*

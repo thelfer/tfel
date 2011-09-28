@@ -65,6 +65,9 @@ nobase_include_HEADERS= TFEL/Macros.hxx                                         
 			TFEL/TypeTraits/IsInvalid.hxx		                                      \
 			TFEL/TypeTraits/IsTemporary.hxx		                                      \
 			TFEL/TypeTraits/IsRandomAccessIterator.hxx	                              \
+			TFEL/Math/Forward/stensor.hxx                                                 \
+			TFEL/Math/Forward/tvector.hxx                                                 \
+			TFEL/Math/Forward/tmatrix.hxx                                                 \
 			TFEL/Math/Bindings/atlas.hxx                                                  \
 			TFEL/Math/Parser/BinaryFunction.hxx					      \
 			TFEL/Math/Parser/EvaluatorBase.hxx 					      \

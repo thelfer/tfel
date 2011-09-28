@@ -122,6 +122,9 @@ include/TFEL/Math/FactorizedKriging.hxx -text
 include/TFEL/Math/FactorizedKriging1D1D.hxx -text
 include/TFEL/Math/FactorizedKriging1D2D.hxx -text
 include/TFEL/Math/FactorizedKriging1D3D.hxx -text
+include/TFEL/Math/Forward/stensor.hxx -text
+include/TFEL/Math/Forward/tmatrix.hxx -text
+include/TFEL/Math/Forward/tvector.hxx -text
 include/TFEL/Math/Function/Cst.hxx -text
 include/TFEL/Math/Function/Cst.ixx -text
 include/TFEL/Math/Function/FunctionConcept.hxx -text

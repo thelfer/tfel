@@ -208,7 +208,9 @@ namespace tfel
     {
       using namespace std;
       AIterator px2;
-      size_t i;
+      if(px==pxe){
+	throw(CubicSplineInvalidAbscissaVectorSize());
+      }
       this->values.clear();
       Point p;
       p.x = *px;
@@ -217,7 +219,6 @@ namespace tfel
       px2 = px;
       ++px;
       ++py;
-      i=1;
       while(px!=pxe){
 	px2 = px-1u;
 	if(*px2>=*px){
@@ -229,10 +230,6 @@ namespace tfel
 	px2 = px;
 	++px;
 	++py;
-	++i;
-      }
-      if(i<1){
-	throw(CubicSplineInvalidAbscissaVectorSize());
       }
       this->buildInterpolation();
     } // CubicSpline<real,value>::CubicSpline
