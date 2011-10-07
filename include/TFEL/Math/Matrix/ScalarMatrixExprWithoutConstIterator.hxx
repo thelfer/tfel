@@ -9,6 +9,7 @@
 #define _TFEL_MATH_SCALAR_MATRIX_EXPRWITHOUTCONSTITERATOR_LIB_ 1
 
 #include <string>
+#include<cstddef>
 
 #include"TFEL/Config/TFELConfig.hxx"
 #include"TFEL/Utilities/Name.hxx"

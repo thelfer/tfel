@@ -8,6 +8,7 @@
 #define _TFEL_MATH_TINY_MATRIX_LIB_ 1
 
 #include <string>
+#include <cstddef>
 #include <ostream>
 
 #include"TFEL/Config/TFELConfig.hxx"

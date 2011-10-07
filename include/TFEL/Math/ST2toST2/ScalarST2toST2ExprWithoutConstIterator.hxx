@@ -9,6 +9,7 @@
 #define _MATH_SCALAR_ST2TOST2_EXPRWITHOUTCONSTITERATOR_LIB_ 1
 
 #include <string>
+#include<cstddef>
 
 #include"TFEL/Config/TFELConfig.hxx"
 

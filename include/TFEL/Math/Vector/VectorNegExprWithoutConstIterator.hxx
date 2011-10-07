@@ -9,6 +9,8 @@
 #ifndef _LIB_TFEL_VECTORNEGEXPRWITHOUTCONSTITERATOR_H_
 #define _LIB_TFEL_VECTORNEGEXPRWITHOUTCONSTITERATOR_H_ 
 
+#include<cstddef>
+
 #include"TFEL/Metaprogramming/StaticAssert.hxx"
 #include"TFEL/Metaprogramming/Implements.hxx"
 #include"TFEL/Metaprogramming/InvalidType.hxx"

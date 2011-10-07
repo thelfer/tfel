@@ -9,6 +9,8 @@
 #define _LIB_TFEL_FCT_ARRAY_EXPRWITHOUTCONSTITERATOR_HXX_ 
 
 #include <string>
+#include<cstddef>
+
 #include"TFEL/Config/TFELConfig.hxx"
 #include"TFEL/Utilities/Name.hxx"
 #include"TFEL/Metaprogramming/StaticAssert.hxx"

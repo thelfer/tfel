@@ -8,6 +8,8 @@
 #ifndef _MATH_STENSOR_STENSOR_EXPRWITHOUTCONSTITERATOR_LIB_
 #define _MATH_STENSOR_STENSOR_EXPRWITHOUTCONSTITERATOR_LIB_ 1
 
+#include<cstddef>
+
 #include"TFEL/Config/TFELConfig.hxx"
 #include"TFEL/Metaprogramming/StaticAssert.hxx"
 #include"TFEL/Metaprogramming/Implements.hxx"

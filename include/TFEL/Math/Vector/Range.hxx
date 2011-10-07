@@ -9,6 +9,8 @@
 #ifndef _LIB_TFEL_RANGE_HXX_
 #define _LIB_TFEL_RANGE_HXX_ 
 
+#include<cstddef>
+
 #include"TFEL/Metaprogramming/InvalidType.hxx"
 #include"TFEL/Math/Vector/VectorConcept.hxx"
 #include"TFEL/Math/Vector/VectorExpr.hxx"

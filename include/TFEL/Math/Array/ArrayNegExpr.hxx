@@ -9,6 +9,8 @@
 #ifndef _LIB_TFEL_ARRAY_NEG_EXPR_H_
 #define _LIB_TFEL_ARRAY_NEG_EXPR_H_ 
 
+#include<cstddef>
+
 #include"TFEL/Metaprogramming/IsSuperClassOf.hxx"
 #include"TFEL/TypeTraits/IsTemporary.hxx"
 #include"TFEL/Math/General/RunTimeCheck.hxx"

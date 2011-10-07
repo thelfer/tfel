@@ -9,6 +9,7 @@
 
 #include<string>
 #include<ostream>
+#include<cstddef>
 #include<iterator>
 
 #include"TFEL/Config/TFELConfig.hxx"

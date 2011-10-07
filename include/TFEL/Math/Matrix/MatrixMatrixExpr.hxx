@@ -9,6 +9,7 @@
 #define _TFEL_MATH_MATRIX_MATRIX_EXPR_LIB_ 1
 
 #include <string>
+#include<cstddef>
 
 #include"TFEL/Config/TFELConfig.hxx"
 

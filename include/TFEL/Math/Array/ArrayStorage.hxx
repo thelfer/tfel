@@ -11,6 +11,7 @@
 
 #include<iterator>
 #include<cstdlib>
+#include<cstddef>
 
 #include"TFEL/Config/TFELConfig.hxx"
 

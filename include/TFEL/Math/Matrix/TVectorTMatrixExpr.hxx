@@ -10,6 +10,7 @@
 #define _LIB_TFEL_MATH_TVECTORTMATRIXEXPR_HXX_ 
 
 #include<string>
+#include<cstddef>
 #include<iterator>
 
 #include"TFEL/Config/TFELConfig.hxx"

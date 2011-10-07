@@ -9,6 +9,8 @@
 #define _LIB_TFEL_FCTVECTOREXPRWITHOUTCONSTITERATOR_HXX_ 
 
 #include<string>
+#include<cstddef>
+
 #include"TFEL/Config/TFELConfig.hxx"
 #include"TFEL/Metaprogramming/Implements.hxx"
 #include"TFEL/TypeTraits/IsTemporary.hxx"

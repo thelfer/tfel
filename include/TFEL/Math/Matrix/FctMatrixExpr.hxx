@@ -10,6 +10,7 @@
 
 #include <cmath>
 #include <string>
+#include<cstddef>
 
 #include"TFEL/Config/TFELConfig.hxx"
 

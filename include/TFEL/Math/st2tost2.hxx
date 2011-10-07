@@ -9,6 +9,7 @@
 #define _LIB_TFEL_ST2TOST2_H_ 
 
 #include<string>
+#include<cstddef>
 #include<cassert>
 
 #include"TFEL/Config/TFELConfig.hxx"

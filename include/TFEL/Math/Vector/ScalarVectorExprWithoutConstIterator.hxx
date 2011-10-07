@@ -9,6 +9,8 @@
 #define _MATH_SCALARVECTOREXPRWITHOUTCONSTITERATOR_LIB_ 1
 
 #include <string>
+#include<cstddef>
+
 #include"TFEL/Config/TFELConfig.hxx"
 #include"TFEL/TypeTraits/IsScalar.hxx"
 #include"TFEL/Utilities/Name.hxx"

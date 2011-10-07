@@ -10,6 +10,7 @@
 
 #include<string>
 #include<cassert>
+#include<cstddef>
 
 #include"TFEL/Config/TFELConfig.hxx"
 

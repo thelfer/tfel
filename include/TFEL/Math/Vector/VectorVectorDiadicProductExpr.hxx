@@ -10,6 +10,7 @@
 #define _LIB_VECTORVECTORDIADICPRODUCTEXPR_HXX_ 
 
 #include<string>
+#include<cstddef>
 #include<iterator>
 
 #include"TFEL/Config/TFELConfig.hxx"

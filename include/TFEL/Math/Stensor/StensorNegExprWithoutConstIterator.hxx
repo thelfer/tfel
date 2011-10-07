@@ -9,6 +9,8 @@
 #ifndef _LIB_TFEL_STENSOR_NEG_EXPRWITHOUTCONSTITERATOR_H_
 #define _LIB_TFEL_STENSOR_NEG_EXPRWITHOUTCONSTITERATOR_H_ 
 
+#include<cstddef>
+
 #include"TFEL/Metaprogramming/StaticAssert.hxx"
 #include"TFEL/Metaprogramming/Implements.hxx"
 #include"TFEL/Metaprogramming/IF.hxx"

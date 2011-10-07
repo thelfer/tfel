@@ -317,7 +317,7 @@ AC_DEFUN([AC_CHECK_GXX],
 	    COMPILER_WARNINGS="-W -Wall -Wconversion -Wshadow"
 	    COMPILER_WARNINGS="$COMPILER_WARNINGS -Wpointer-arith -Wcast-qual -Wcast-align"
 	    COMPILER_WARNINGS="$COMPILER_WARNINGS -Wwrite-strings -Wctor-dtor-privacy -Wnon-virtual-dtor"
-	    COMPILER_WARNINGS="$COMPILER_WARNINGS -Woverloaded-virtual -Wimplicit -Wreturn-type -Wfloat-equal"
+	    COMPILER_WARNINGS="$COMPILER_WARNINGS -Woverloaded-virtual -Wreturn-type -Wfloat-equal"
 	    COMPILER_WARNINGS="$COMPILER_WARNINGS -Wno-endif-labels  -Wsign-compare -Wmissing-format-attribute"
 	    COMPILER_WARNINGS="$COMPILER_WARNINGS -Wno-multichar -Wno-deprecated-declarations -Wpacked"
 	    COMPILER_WARNINGS="$COMPILER_WARNINGS -Wredundant-decls -Wlong-long -Wdisabled-optimization"

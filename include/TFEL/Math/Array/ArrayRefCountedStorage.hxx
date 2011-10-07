@@ -11,6 +11,7 @@
 
 #include<cstdlib>
 #include<cassert>
+#include<cstddef>
 #include<algorithm>
 
 #include"TFEL/Config/TFELConfig.hxx"

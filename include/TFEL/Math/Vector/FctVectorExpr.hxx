@@ -9,6 +9,7 @@
 #define _LIB_TFEL_FCT_VECTOR_EXPR_HXX_ 
 
 #include<string>
+#include<cstddef>
 
 #include"TFEL/Config/TFELConfig.hxx"
 

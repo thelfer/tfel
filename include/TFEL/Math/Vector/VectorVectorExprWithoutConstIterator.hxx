@@ -9,6 +9,7 @@
 #define _MATH_VECTORVECTOREXPRWITHOUTCONSTITERATOR_LIB_ 1
 
 #include<string>
+#include<cstddef>
 #include<iterator>
 
 #include"TFEL/Config/TFELConfig.hxx"

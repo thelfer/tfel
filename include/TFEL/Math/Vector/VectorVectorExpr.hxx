@@ -9,6 +9,7 @@
 #define _LIB_TFEL_MATH_VECTOR_VECTOR_EXPR_LIB_ 1
 
 #include<string>
+#include<cstddef>
 #include<iterator>
 
 #include"TFEL/Config/TFELConfig.hxx"
