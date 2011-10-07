@@ -318,8 +318,6 @@ namespace mfront
       for(p3=inputs.begin();p3!=inputs.end();++p3){
 	this->srcFile << "double " << p3->name << ";\n";
       }
-      this->srcFile << "double " << output << ";\n";
-
       if(!bounds.empty()){
 	this->srcFile << "#ifndef PYTHON_NO_BOUNDS_CHECK\n";
 	this->srcFile << "const char * policy;\n";
@@ -434,6 +432,7 @@ namespace mfront
 	this->srcFile << "#endif /* PYTHON_NO_BOUNDS_CHECK */\n";
       }
     }
+    this->srcFile << "double " << output << ";\n";
     this->srcFile << function.body;
     this->srcFile << "return Py_BuildValue(\"d\"," << output << ");\n";
     this->srcFile << "} // end of " << name << "\n\n";
