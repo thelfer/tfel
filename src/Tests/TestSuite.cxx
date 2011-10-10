@@ -7,6 +7,8 @@
 
 #include<stdexcept>
 
+#include<sys/time.h>
+
 #include"TFEL/Tests/TestSuite.hxx"
 
 namespace tfel
