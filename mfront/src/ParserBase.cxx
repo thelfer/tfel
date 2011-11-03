@@ -21,6 +21,17 @@
 namespace mfront
 {
 
+  static bool
+  isInteger(const std::string& s){
+    using namespace std;
+    bool b = true;
+    string::const_iterator p;
+    for(p=s.begin();(p!=s.end()&&(b));++p){
+      b = static_cast<bool>(isdigit(*p));
+    }
+    return b;
+  }
+
   std::string
   ParserBase::variableModifier1(const std::string& var,const bool)
   {
@@ -419,8 +430,8 @@ namespace mfront
       type += "<";      
       while(openBrackets!=0){
 	string t = this->current->value;
-	if(!isValidIdentifier(t,false)){
-	  --(this->current);
+	if((!isValidIdentifier(t,false))&&
+	   (!isInteger(t))){
 	  this->throwRuntimeError("ParserBase::readVarList",
 				  "type given is not valid.");
 	}
@@ -438,6 +449,10 @@ namespace mfront
 	  }
 	  type+=",";
 	} else if(this->current->value=="<"){
+	  if(isInteger(t)){
+	    this->throwRuntimeError("ParserBase::readVarList",
+				    "type given is not valid.");
+	  }
 	  ++openBrackets;
 	  ++(this->current);
 	  this->checkNotEndOfFile("ParserBase::readVarList");
