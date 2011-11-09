@@ -66,6 +66,13 @@ namespace tfel{
 
     template<unsigned short N, typename T, template<unsigned short,typename> class Storage>
     TFEL_MATH_INLINE
+    unsigned short
+    stensor<N,T,Storage>::size(void) const{
+      return StensorDimeToSize<N>::value;
+    }
+
+    template<unsigned short N, typename T, template<unsigned short,typename> class Storage>
+    TFEL_MATH_INLINE
     const T& 
     stensor<N,T,Storage>::operator[](const unsigned short i) const{
       assert(i<StensorDimeToSize<N>::value);

@@ -352,9 +352,14 @@ namespace tfel{
       TFEL_MATH_INLINE const T& operator[](const unsigned short) const;      
       TFEL_MATH_INLINE       T& operator[](const unsigned short);
 
+      /*!
+       * return the size of a symmetric tensor
+       */
+      size_type
+      size(void) const;
  
       /*
-       * return an iterator to the first element of the vector
+       * return an iterator to the first element of the stensor
        * (provided for stl compatibility)
        * \return iterator, an iterator to the first element
        */
@@ -363,7 +368,7 @@ namespace tfel{
       begin(void);
       
       /*
-       * return an const iterator to the first element of the vector
+       * return an const iterator to the first element of the stensor
        * (provided for stl compatibility)
        * \return const_iterator, a const iterator to the first element
        */
@@ -372,7 +377,7 @@ namespace tfel{
       begin(void) const;
 
       /*
-       * return an iterator after the last element of the vector
+       * return an iterator after the last element of the stensor
        * (provided for stl compatibility)
        * \return iterator, an iterator after the last element
        */
@@ -381,7 +386,7 @@ namespace tfel{
       end(void);
       
       /*
-       * return an const iterator after the last element of the vector
+       * return an const iterator after the last element of the stensor
        * (provided for stl compatibility)
        * \return const_iterator, a const iterator after the last element
        */
@@ -390,7 +395,7 @@ namespace tfel{
       end(void) const;
 
       /*
-       * return an reverse iterator to the last element of the vector
+       * return an reverse iterator to the last element of the stensor
        * (provided for stl compatibility)
        * \return reverse_iterator, a reverse iterator to the last element
        */
@@ -399,7 +404,7 @@ namespace tfel{
       rbegin(void);
       
       /*
-       * return an const reverse iterator to the last element of the vector
+       * return an const reverse iterator to the last element of the stensor
        * (provided for stl compatibility)
        * \return const_reverse_iterator, a const reverse iterator to the last element
        */
@@ -408,7 +413,7 @@ namespace tfel{
       rbegin(void) const;
       
       /*
-       * return an  reverse iterator before the first element of the vector
+       * return an  reverse iterator before the first element of the stensor
        * (provided for stl compatibility)
        * \return reverse_iterator, a reverse iterator before the first element
        */
@@ -417,7 +422,7 @@ namespace tfel{
       rend(void);
       
       /*
-       * return an const reverse iterator before the first element of the vector
+       * return an const reverse iterator before the first element of the stensor
        * (provided for stl compatibility)
        * \return const_reverse_iterator, a const reverse iterator before the first element
        */
