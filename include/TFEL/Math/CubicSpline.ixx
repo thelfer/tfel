@@ -7,186 +7,14 @@
 #ifndef _LIB_TFEL_MATH_CUBICSPLINE_IXX
 #define _LIB_TFEL_MATH_CUBICSPLINE_IXX 1
 
-#include"TFEL/Math/tvector.hxx"
-#include"TFEL/Math/stensor.hxx"
+#include<limits>
+#include<stdexcept>
 
 namespace tfel
 {
 
   namespace math
   {
-
-    /*!
-     * an helper function used to multiply two objects
-     *
-     * \return the result of the operation
-     * \param a : left operand
-     * \param b : right operand
-     *
-     * \note partial specialisation are provided for tvector and
-     * stensor
-     */
-    template<typename real>
-    real
-    CubicSplineMultiply(const real a,
-		      const real b)
-    {
-      return a*b;
-    } // end of CubicSplineMultiply
-
-    /*!
-     * an helper function used to multiply two tvector
-     *
-     * \return the result of the operation
-     * \param a : left operand
-     * \param b : right operand
-     */
-    template<unsigned short N,
-	     typename real>
-    tfel::math::tvector<N,real>
-    CubicSplineMultiply(const tfel::math::tvector<N,real>& a,
-		      const tfel::math::tvector<N,real>& b)
-    {
-      tfel::math::tvector<N,real> r;
-      typename tfel::math::tvector<N,real>::size_type i;
-      for(i=0;i!=N;++i){
-	r[i] = a[i]*b[i];
-      }
-      return r;
-    } // end of CubicSplineMultiply
-
-    /*!
-     * an helper function used to multiply two stensor
-     *
-     * \return the result of the operation
-     * \param a : left operand
-     * \param b : right operand
-     */
-    template<typename real>
-    tfel::math::stensor<1u,real>
-    CubicSplineMultiply(const tfel::math::stensor<1u,real>& a,
-		      const tfel::math::stensor<1u,real>& b)
-    {
-      tfel::math::stensor<1u,real> r;
-      r[0] = a[0]*b[0];
-      r[1] = a[1]*b[1];
-      r[2] = a[2]*b[2];
-      return r;
-    } // end of CubicSplineMultiply
-
-    template<typename real>
-    tfel::math::stensor<2u,real>
-    CubicSplineMultiply(const tfel::math::stensor<2u,real>& a,
-		      const tfel::math::stensor<2u,real>& b)
-    {
-      tfel::math::stensor<2u,real> r;
-      r[0] = a[0]*b[0];
-      r[1] = a[1]*b[1];
-      r[2] = a[2]*b[2];
-      r[3] = a[3]*b[3];
-      return r;
-    } // end of CubicSplineMultiply
-
-    template<typename real>
-    tfel::math::stensor<3u,real>
-    CubicSplineMultiply(const tfel::math::stensor<3u,real>& a,
-		      const tfel::math::stensor<3u,real>& b)
-    {
-      tfel::math::stensor<3u,real> r;
-      r[0] = a[0]*b[0];
-      r[1] = a[1]*b[1];
-      r[2] = a[2]*b[2];
-      r[3] = a[3]*b[3];
-      r[4] = a[4]*b[4];
-      r[5] = a[5]*b[5];
-      return r;
-    } // end of CubicSplineMultiply
-
-    /*!
-     * an helper function used to divide two objects
-     *
-     * \return the result of the operation
-     * \param a : left operand
-     * \param b : right operand
-     *
-     * \note partial specialisation are provided for tvector and
-     * stensor
-     */
-    template<typename real>
-    real
-    CubicSplineDivide(const real a,
-		      const real b)
-    {
-      return a/b;
-    } // end of CubicSplineDivide
-
-    /*!
-     * an helper function used to divide two tvector
-     *
-     * \return the result of the operation
-     * \param a : left operand
-     * \param b : right operand
-     */
-    template<unsigned short N,
-	     typename real>
-    tfel::math::tvector<N,real>
-    CubicSplineDivide(const tfel::math::tvector<N,real>& a,
-		      const tfel::math::tvector<N,real>& b)
-    {
-      tfel::math::tvector<N,real> r;
-      typename tfel::math::tvector<N,real>::size_type i;
-      for(i=0;i!=N;++i){
-	r[i] = a[i]/b[i];
-      }
-      return r;
-    } // end of CubicSplineDivide
-
-    /*!
-     * an helper function used to divide two stensor
-     *
-     * \return the result of the operation
-     * \param a : left operand
-     * \param b : right operand
-     */
-    template<typename real>
-    tfel::math::stensor<1u,real>
-    CubicSplineDivide(const tfel::math::stensor<1u,real>& a,
-		      const tfel::math::stensor<1u,real>& b)
-    {
-      tfel::math::stensor<1u,real> r;
-      r[0] = a[0]/b[0];
-      r[1] = a[1]/b[1];
-      r[2] = a[2]/b[2];
-      return r;
-    } // end of CubicSplineDivide
-
-    template<typename real>
-    tfel::math::stensor<2u,real>
-    CubicSplineDivide(const tfel::math::stensor<2u,real>& a,
-		      const tfel::math::stensor<2u,real>& b)
-    {
-      tfel::math::stensor<2u,real> r;
-      r[0] = a[0]/b[0];
-      r[1] = a[1]/b[1];
-      r[2] = a[2]/b[2];
-      r[3] = a[3]/b[3];
-      return r;
-    } // end of CubicSplineDivide
-
-    template<typename real>
-    tfel::math::stensor<3u,real>
-    CubicSplineDivide(const tfel::math::stensor<3u,real>& a,
-		      const tfel::math::stensor<3u,real>& b)
-    {
-      tfel::math::stensor<3u,real> r;
-      r[0] = a[0]/b[0];
-      r[1] = a[1]/b[1];
-      r[2] = a[2]/b[2];
-      r[3] = a[3]/b[3];
-      r[4] = a[4]/b[4];
-      r[5] = a[5]/b[5];
-      return r;
-    } // end of CubicSplineDivide
 
     template<typename real,
 	     typename value>
@@ -321,63 +149,70 @@ namespace tfel
 	     typename value>
     void CubicSpline<real,value>::buildInterpolation(void) {
       using namespace std;
-      // Autres cas
-      real go,gn,Gn;
-      value uo,un,vn;
-      value d_o,d_n,de_o,de_n,X;
-      vector<value> del(this->values.size());
-      typename vector<value>::iterator p1=del.begin();
-      typename vector<value>::const_iterator p2;
-      typename vector<Point>::iterator in= this->values.begin();
-      typename vector<Point>::iterator ip;
-      value d1;
-
-      // Étape n = 1
-      d_o=value(real(0));
-      in->d=d_n=value(real(0));
-      de_o=value(real(0));
-      de_n=value(real(1));
-      *(p1++)=de_n;
-
-      gn=0;
-      un=value(real(0));
-
-      ip=in++;
-
-      // Étapes Médianes 1 < n < N
-      while (in != this->values.end()) {
-	// Calcul g_{n-1}, u_{n-1}, G_{n-1}, v_{n-1}
-	go=gn;
-	gn=1/(in->x-ip->x);
-	Gn=2*(go+gn);
-
-	uo=un;
-	un=3*(in->y-ip->y)*gn*gn;
-	vn=uo+un;
-    
-	// Estimation de la dérivée d_n
-	X=(vn-go*d_o-Gn*d_n)/gn;
-	d_o=d_n;
-	d_n=X;
-
-	X=-(go*de_o+Gn*de_n)/gn;
-	de_o=de_n;
-	de_n=X;
-	*(p1++)=de_n;
-
-	// Estimation de d1
-	d1=CubicSplineDivide(value(un-gn*(d_o+2*d_n)),value(gn*(de_o+2*de_n)));
-	// Correction des dérivées
-	for (ip=this->values.begin(), p2=del.begin(); ip != in; ++ip, ++p2) {
-	  ip->d+=CubicSplineMultiply(*p2,d1);
+      using std::vector;
+      if(this->values.size()==1){
+	this->values[0].d = value(real(0));
+      }{
+	typename vector<real>::size_type i;
+	typename vector<Point>::iterator p;
+	typename vector<value>::const_iterator pd;
+	typename vector<real>::size_type s = this->values.size()-1u;
+	vector<real>  md(s+1u); // main  diagonal
+	vector<real>  mu(s);    // upper diagonal
+	vector<value> d(s+1u);
+	real  ho = real(0);
+	value uo = value(real(0));
+	for(i=0;i!=s;++i){
+	  const real  hn = 1./(this->values[i+1].x-this->values[i].x);
+	  const value un = 3.*hn*hn*(this->values[i+1].y-this->values[i].y);
+	  mu[i] = hn; 
+	  md[i] = 2.*(hn+ho); 
+	  d[i]  = un+uo;
+	  uo=un;
+	  ho=hn;
 	}
-
-	// Réactualisation des dérivées d_{n-1}, d_{n}
-	in->d=d_n=d_n+CubicSplineMultiply(de_n,d1);
-	d_o=(in-1)->d;
-
-	ip=in++;
+	md[s] = 2.*ho;
+	d[s]  = uo;
+	solveMatrix(d,&mu[0],&md[0]);
+	for(p=this->values.begin(),pd=d.begin();
+	    p!=this->values.end();++p,++pd){
+	  p->d = *pd;
+	}
       }
+    }
+          
+    template<typename real,
+	     typename value>
+    void CubicSpline<real,value>::solveMatrix(std::vector<value>& vx,
+					      const real * const c,
+					      real * const b)
+    {
+      using namespace std;
+      using std::vector;
+      typename std::vector<typename CubicSpline<real,value>::Point>::size_type i;
+      typename std::vector<typename CubicSpline<real,value>::Point>::size_type n;
+      n = vx.size();
+      vector<value> v(n);
+      v.swap(vx);
+      value * const x = &vx[0];
+      for (i = 1; i < n; i++) {
+	real m = c[i-1]/b[i-1];
+	b[i] = b[i] - m*c[i-1];
+	v[i] = v[i] - m*v[i-1];
+      }
+      x[n-1] = v[n-1]/b[n-1];
+      i  = n;
+      i -= 2u;
+      for (; i != 0; i--){
+	if(abs(b[i])<100.*numeric_limits<real>::min()){
+	  throw(CubicSplineNullPivot());
+	}
+	x[i]=(v[i]-c[i]*x[i+1])/b[i];
+      }
+      if(abs(b[0])<100.*numeric_limits<real>::min()){
+	throw(CubicSplineNullPivot());
+      }
+      x[0]=(v[0]-c[0]*x[0+1])/b[0];
     }
 
     template<typename real,
@@ -501,11 +336,11 @@ namespace tfel
     } // end of CubicSpline<real,value>::computeIntegral
 
 
-    // Valeur de la spline et de sa dérivée
-    // Interpolation cubique
-    // x : Abscisse où calculer la valeur de la spline
-    // f : Valeur de la fonction
-    // df : Valeur de la dérivée
+      // Valeur de la spline et de sa dérivée
+      // Interpolation cubique
+      // x : Abscisse où calculer la valeur de la spline
+      // f : Valeur de la fonction
+      // df : Valeur de la dérivée
     template<typename real,
 	     typename value>
     void CubicSpline<real,value>::getValues(value& f,value& df,real x) const {

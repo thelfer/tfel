@@ -17,6 +17,10 @@ namespace tfel
       : tfel::exception::TFELException("undefined collocation points")
     {} // end of CubicSplineUninitialised::CubicSplineUninitialised
 
+    CubicSplineNullPivot::CubicSplineNullPivot()
+      : tfel::exception::TFELException("null pivot")
+    {} // end of CubicSplineNullPivot::CubicSplineNullPivot
+
     CubicSplineInvalidAbscissaVectorSize::CubicSplineInvalidAbscissaVectorSize()
       : tfel::exception::TFELException("abscissa size is smaller than 3")
     {} // end of CubicSplineInvalidAbscissaVectorSize::CubicSplineInvalidAbscissaVectorSize

@@ -48,6 +48,18 @@ namespace tfel
     }; // end of struct CubicSplineInvalidAbscissaVectorSize
 
     /*!
+     * Exception thrown when the linear system solved leads to a null pivot
+     */
+    struct TFEL_VISIBILITY_EXPORT CubicSplineNullPivot
+      : public tfel::exception::TFELException
+    {
+      /*!
+       * default constructor
+       */
+      CubicSplineNullPivot();
+    }; // end of struct CubicSplineInvalidAbscissaVectorSize
+
+    /*!
      * Exception thrown when the ordinate vector given to the
      * CubicSpline constructor has a size smaller than 3.
      */
@@ -204,6 +216,18 @@ namespace tfel
 	operator()(const Point&,const real&) const; 
       }; //end of struct PointComparator
 
+      /*!
+       * http://en.wikipedia.org/wiki/Tridiagonal_matrix_algorithm
+       * n - number of equations
+       * c - sup-diagonal (means it is the diagonal above the main diagonal) -- indexed from 0..n-2
+       * b - the main diagonal
+       * x - the answer
+       */
+      static void
+      solveMatrix(std::vector<value>&,
+		  const real * const,
+		  real * const);
+      
       /*!
        * an helper function to ease integral computations
        */
