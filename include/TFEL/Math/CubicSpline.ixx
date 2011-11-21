@@ -8,7 +8,7 @@
 #define _LIB_TFEL_MATH_CUBICSPLINE_IXX 1
 
 #include<limits>
-#include<stdexcept>
+#include<algorithm>
 
 namespace tfel
 {
