@@ -278,6 +278,47 @@ namespace tfel
 
     template<typename real,
 	     typename value>
+    void
+    CubicSpline<real,value>::setCollocationPoints(const tfel::math::vector<real>& x,
+						  const tfel::math::vector<value>& y)
+    {
+      this->values.clear();
+      typename vector<real>::const_iterator px;
+      typename vector<real>::const_iterator px2;
+      typename vector<value>::const_iterator py;
+      Point p;
+      if(x.size()<1){
+	throw(CubicSplineInvalidAbscissaVectorSize());
+      }
+      if(y.size()<1){
+	throw(CubicSplineInvalidOrdinateVectorSize());
+      }
+      if(x.size()!=y.size()){
+	throw(CubicSplineInvalidInputs());
+      }
+      px = x.begin();
+      py = y.begin();
+      p.x = *px;
+      p.y = *py;
+      this->values.push_back(p);
+      ++px;
+      ++py;
+      while(px!=x.end()){
+	px2 = px-1u;
+	if(*px2>=*px){
+	  throw(CubicSplineUnorderedAbscissaVector());
+	}
+	p.x = *px;
+	p.y = *py;
+	this->values.push_back(p);
+	++px;
+	++py;
+      }
+      this->buildInterpolation();
+    } // CubicSpline<real,value>::CubicSpline
+
+    template<typename real,
+	     typename value>
     void CubicSpline<real,value>::buildInterpolation(void) {
       using namespace std;
       // Autres cas

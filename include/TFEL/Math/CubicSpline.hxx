@@ -13,6 +13,8 @@
 #include"TFEL/Config/TFELConfig.hxx"
 #include"TFEL/Exception/TFELException.hxx"
 
+#include"TFEL/Math/vector.hxx"
+
 namespace tfel
 {
 
@@ -114,6 +116,14 @@ namespace tfel
       void
       setCollocationPoints(const std::vector<real>&,
 			   const std::vector<value>&);
+
+      /*!
+       * \param[in] x : abscissa
+       * \param[in] y : ordinates
+       */
+      void
+      setCollocationPoints(const tfel::math::vector<real>&,
+			   const tfel::math::vector<value>&);
 
       /*!
        * \return the spline value at the given point

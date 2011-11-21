@@ -65,6 +65,7 @@ struct CubicSplineTest
   {
     using namespace std;
     using namespace tfel::math;
+    using std::vector;
     const vector<double>::size_type n = 10;
     vector<double> x(n);
     vector<tvector<2u,double> > y(n);

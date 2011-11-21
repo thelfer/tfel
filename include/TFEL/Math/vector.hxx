@@ -174,6 +174,26 @@ namespace tfel{
       vector(const InputIterator,const InputIterator);
 
       /*
+       * get the first element of the vector
+       */
+      using Container::front;
+
+      /*
+       * get the last element of the vector
+       */
+      using Container::back;
+
+      /*
+       * insert element in the vector
+       */
+      using Container::insert;
+
+      /*
+       * clear the vector
+       */
+      using Container::clear;
+
+      /*
        * Resize the vector
        * \param size_type, new size of the vector 
        * Elements added have their default values
