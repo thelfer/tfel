@@ -92,11 +92,10 @@ namespace tfel
 	this->values[0].d = value(real(0));
       }{
 	typename vector<real>::size_type i;
-	typename vector<Point>::iterator p;
-	typename vector<value>::const_iterator pd;
 	typename vector<real>::size_type s = this->values.size()-1u;
-	vector<real>  md(s+1u); // main  diagonal
-	vector<real>  mu(s);    // upper diagonal
+	vector<real>  m(2*s+1u);        // matrix (main an upper diagonal)
+	real * const  md = &m[0];       // main  diagonal
+	real * const  mu = md + s + 1u; // upper diagonal
 	real  ho = real(0);
 	value uo = value(real(0));
 	for(i=0;i!=s;++i){
@@ -110,7 +109,7 @@ namespace tfel
 	}
 	md[s] = 2.*ho;
 	this->values[s].d = uo;
-	solveTridiagonalLinearSystem(&mu[0],&md[0]);
+	solveTridiagonalLinearSystem(mu,md);
       }
     }
           
