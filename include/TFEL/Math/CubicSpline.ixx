@@ -64,16 +64,12 @@ namespace tfel
 
     template<typename real,
 	     typename value>
+    template<typename AContainer,
+	     typename OContainer>
     void
-    CubicSpline<real,value>::setCollocationPoints(const std::vector<real>& x,
-						  const std::vector<value>& y)
+    CubicSpline<real,value>::setCollocationPoints(const AContainer& x,
+						  const OContainer& y)
     {
-      using namespace std;
-      this->values.clear();
-      typename vector<real>::const_iterator px;
-      typename vector<real>::const_iterator px2;
-      typename vector<value>::const_iterator py;
-      Point p;
       if(x.size()<1){
 	throw(CubicSplineInvalidAbscissaVectorSize());
       }
@@ -83,66 +79,8 @@ namespace tfel
       if(x.size()!=y.size()){
 	throw(CubicSplineInvalidInputs());
       }
-      px = x.begin();
-      py = y.begin();
-      p.x = *px;
-      p.y = *py;
-      this->values.push_back(p);
-      ++px;
-      ++py;
-      while(px!=x.end()){
-	px2 = px-1u;
-	if(*px2>=*px){
-	  throw(CubicSplineUnorderedAbscissaVector());
-	}
-	p.x = *px;
-	p.y = *py;
-	this->values.push_back(p);
-	++px;
-	++py;
-      }
-      this->buildInterpolation();
-    } // CubicSpline<real,value>::CubicSpline
-
-    template<typename real,
-	     typename value>
-    void
-    CubicSpline<real,value>::setCollocationPoints(const tfel::math::vector<real>& x,
-						  const tfel::math::vector<value>& y)
-    {
-      this->values.clear();
-      typename vector<real>::const_iterator px;
-      typename vector<real>::const_iterator px2;
-      typename vector<value>::const_iterator py;
-      Point p;
-      if(x.size()<1){
-	throw(CubicSplineInvalidAbscissaVectorSize());
-      }
-      if(y.size()<1){
-	throw(CubicSplineInvalidOrdinateVectorSize());
-      }
-      if(x.size()!=y.size()){
-	throw(CubicSplineInvalidInputs());
-      }
-      px = x.begin();
-      py = y.begin();
-      p.x = *px;
-      p.y = *py;
-      this->values.push_back(p);
-      ++px;
-      ++py;
-      while(px!=x.end()){
-	px2 = px-1u;
-	if(*px2>=*px){
-	  throw(CubicSplineUnorderedAbscissaVector());
-	}
-	p.x = *px;
-	p.y = *py;
-	this->values.push_back(p);
-	++px;
-	++py;
-      }
-      this->buildInterpolation();
+      this->setCollocationPoints(x.begin(),x.end(),
+				 y.begin());
     } // CubicSpline<real,value>::CubicSpline
 
     template<typename real,
@@ -173,46 +111,46 @@ namespace tfel
 	}
 	md[s] = 2.*ho;
 	d[s]  = uo;
-	solveMatrix(d,&mu[0],&md[0]);
-	for(p=this->values.begin(),pd=d.begin();
-	    p!=this->values.end();++p,++pd){
-	  p->d = *pd;
-	}
+	solveTridiagonalLinearSystem(d,&mu[0],&md[0]);
       }
     }
           
     template<typename real,
 	     typename value>
-    void CubicSpline<real,value>::solveMatrix(std::vector<value>& vx,
-					      const real * const c,
-					      real * const b)
+    void CubicSpline<real,value>::solveTridiagonalLinearSystem(std::vector<value>& x,
+							       const real * const c,
+							       real * const b)
     {
       using namespace std;
       using std::vector;
-      typename std::vector<typename CubicSpline<real,value>::Point>::size_type i;
-      typename std::vector<typename CubicSpline<real,value>::Point>::size_type n;
-      n = vx.size();
-      vector<value> v(n);
-      v.swap(vx);
-      value * const x = &vx[0];
+      typename vector<typename CubicSpline<real,value>::Point>::size_type i;
+      typename vector<typename CubicSpline<real,value>::Point>::size_type n;
+      const real prec = 100*numeric_limits<real>::min();
+      n = x.size();
       for (i = 1; i < n; i++) {
+	if(abs(b[i-1])<prec){
+	  throw(CubicSplineNullPivot());
+	}
 	real m = c[i-1]/b[i-1];
 	b[i] = b[i] - m*c[i-1];
-	v[i] = v[i] - m*v[i-1];
+	x[i] = x[i] - m*x[i-1];
       }
-      x[n-1] = v[n-1]/b[n-1];
+      if(abs(b[n-1])<prec){
+	throw(CubicSplineNullPivot());
+      }
+      this->values[n-1].d = x[n-1]/b[n-1];
       i  = n;
       i -= 2u;
       for (; i != 0; i--){
-	if(abs(b[i])<100.*numeric_limits<real>::min()){
+	if(abs(b[i])<prec){
 	  throw(CubicSplineNullPivot());
 	}
-	x[i]=(v[i]-c[i]*x[i+1])/b[i];
+	this->values[i].d = (x[i]-c[i]*(this->values[i+1].d))/b[i];
       }
-      if(abs(b[0])<100.*numeric_limits<real>::min()){
+      if(abs(b[0])<prec){
 	throw(CubicSplineNullPivot());
       }
-      x[0]=(v[0]-c[0]*x[0+1])/b[0];
+      this->values[0].d = (x[0]-c[0]*(this->values[1].d))/b[0];
     }
 
     template<typename real,

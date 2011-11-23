@@ -8,12 +8,9 @@
 #define _LIB_TFEL_MATH_CUBICSPLINE_HXX 1
 
 #include <vector>
-#include <string>
 
 #include"TFEL/Config/TFELConfig.hxx"
 #include"TFEL/Exception/TFELException.hxx"
-
-#include"TFEL/Math/vector.hxx"
 
 namespace tfel
 {
@@ -125,17 +122,11 @@ namespace tfel
        * \param[in] x : abscissa
        * \param[in] y : ordinates
        */
+      template<typename AContainer,
+	       typename OContainer>
       void
-      setCollocationPoints(const std::vector<real>&,
-			   const std::vector<value>&);
-
-      /*!
-       * \param[in] x : abscissa
-       * \param[in] y : ordinates
-       */
-      void
-      setCollocationPoints(const tfel::math::vector<real>&,
-			   const tfel::math::vector<value>&);
+      setCollocationPoints(const AContainer&,
+			   const OContainer&);
 
       /*!
        * \return the spline value at the given point
@@ -223,10 +214,10 @@ namespace tfel
        * b - the main diagonal
        * x - the answer
        */
-      static void
-      solveMatrix(std::vector<value>&,
-		  const real * const,
-		  real * const);
+      void
+      solveTridiagonalLinearSystem(std::vector<value>&,
+				   const real * const,
+				   real * const);
       
       /*!
        * an helper function to ease integral computations
