@@ -215,8 +215,7 @@ namespace tfel
        * x - the answer
        */
       void
-      solveTridiagonalLinearSystem(std::vector<value>&,
-				   const real * const,
+      solveTridiagonalLinearSystem(const real * const,
 				   real * const);
       
       /*!

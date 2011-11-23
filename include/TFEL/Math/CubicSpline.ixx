@@ -97,7 +97,6 @@ namespace tfel
 	typename vector<real>::size_type s = this->values.size()-1u;
 	vector<real>  md(s+1u); // main  diagonal
 	vector<real>  mu(s);    // upper diagonal
-	vector<value> d(s+1u);
 	real  ho = real(0);
 	value uo = value(real(0));
 	for(i=0;i!=s;++i){
@@ -105,20 +104,19 @@ namespace tfel
 	  const value un = 3.*hn*hn*(this->values[i+1].y-this->values[i].y);
 	  mu[i] = hn; 
 	  md[i] = 2.*(hn+ho); 
-	  d[i]  = un+uo;
+	  this->values[i].d = un+uo;
 	  uo=un;
 	  ho=hn;
 	}
 	md[s] = 2.*ho;
-	d[s]  = uo;
-	solveTridiagonalLinearSystem(d,&mu[0],&md[0]);
+	this->values[s].d = uo;
+	solveTridiagonalLinearSystem(&mu[0],&md[0]);
       }
     }
           
     template<typename real,
 	     typename value>
-    void CubicSpline<real,value>::solveTridiagonalLinearSystem(std::vector<value>& x,
-							       const real * const c,
+    void CubicSpline<real,value>::solveTridiagonalLinearSystem(const real * const c,
 							       real * const b)
     {
       using namespace std;
@@ -126,31 +124,31 @@ namespace tfel
       typename vector<typename CubicSpline<real,value>::Point>::size_type i;
       typename vector<typename CubicSpline<real,value>::Point>::size_type n;
       const real prec = 100*numeric_limits<real>::min();
-      n = x.size();
+      n = this->values.size();
       for (i = 1; i < n; i++) {
 	if(abs(b[i-1])<prec){
 	  throw(CubicSplineNullPivot());
 	}
 	real m = c[i-1]/b[i-1];
-	b[i] = b[i] - m*c[i-1];
-	x[i] = x[i] - m*x[i-1];
+	b[i] -= m*c[i-1];
+	this->values[i].d -= m*this->values[i-1].d;
       }
       if(abs(b[n-1])<prec){
 	throw(CubicSplineNullPivot());
       }
-      this->values[n-1].d = x[n-1]/b[n-1];
+      this->values[n-1].d /= b[n-1];
       i  = n;
       i -= 2u;
       for (; i != 0; i--){
 	if(abs(b[i])<prec){
 	  throw(CubicSplineNullPivot());
 	}
-	this->values[i].d = (x[i]-c[i]*(this->values[i+1].d))/b[i];
+	this->values[i].d = (this->values[i].d-c[i]*(this->values[i+1].d))/b[i];
       }
       if(abs(b[0])<prec){
 	throw(CubicSplineNullPivot());
       }
-      this->values[0].d = (x[0]-c[0]*(this->values[1].d))/b[0];
+      this->values[0].d = (this->values[0].d-c[0]*(this->values[1].d))/b[0];
     }
 
     template<typename real,
