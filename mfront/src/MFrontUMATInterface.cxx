@@ -5,6 +5,10 @@
  * \date   17 Jan 2007
  */
 
+#include<iostream>
+#include<iterator>
+#include<algorithm>
+
 #include<sstream>
 #include<cstdlib>
 #include<stdexcept>
@@ -591,7 +595,6 @@ namespace mfront{
   {
     using namespace std;
     using namespace tfel::system;
-
     string header = "UMAT";
     string name;
     string umatFctName;
@@ -870,6 +873,15 @@ namespace mfront{
     out << "#include\"MFront/UMAT/umat" << name << ".hxx\"\n\n";
 
     out << "extern \"C\"{\n\n";
+
+    out << "MFRONT_SHAREDOBJ unsigned short umat"
+      	<< makeLowerCase(name)
+	<< "_UsableInPurelyImplicitResolution = ";
+    if(behaviourCharacteristic.isUsableInPurelyImplicitResolution()){
+      out << "1;\n\n";
+    } else {
+      out << "0;\n\n";
+    }
 
     out << "MFRONT_SHAREDOBJ unsigned short umat"
       	<< makeLowerCase(name);

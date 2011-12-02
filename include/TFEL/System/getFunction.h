@@ -32,6 +32,9 @@ extern "C" {
   int tfel_getCastemFunctionNumberOfVariables(void *,
 					      const char * const);
 
+  int tfel_getBool(void *,
+		   const char * const);
+
   int tfel_getUnsignedShort(void *,
 			    const char * const);
 

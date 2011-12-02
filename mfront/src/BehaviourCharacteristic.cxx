@@ -11,13 +11,16 @@
 namespace mfront{
 
   BehaviourCharacteristic::BehaviourCharacteristic()
-    : sTensor(false),
+    : usableInPurelyImplicitResolution(false),
+      sTensor(false),
       aTensor(false),
-      use_qt(false)
+      use_qt(false)      
   {} // end of BehaviourCharacteristic::BehaviourCharacteristic()
 
   BehaviourCharacteristic::BehaviourCharacteristic(const BehaviourCharacteristic& src)
-    : sTensor(src.sTensor),
+    : pupirv(src.pupirv),
+      usableInPurelyImplicitResolution(src.usableInPurelyImplicitResolution),
+      sTensor(src.sTensor),
       aTensor(src.aTensor),
       use_qt(src.use_qt),
       type(src.type)
@@ -26,11 +29,14 @@ namespace mfront{
   BehaviourCharacteristic&
   BehaviourCharacteristic::operator = (const BehaviourCharacteristic& src)
   {
-    // self assignement dont have to be checked
-    this->use_qt   = src.use_qt;
-    this->type    = src.type;
-    this->sTensor = src.sTensor;
-    this->aTensor = src.aTensor;
+    if(this!=&src){
+      this->pupirv  = src.pupirv;
+      this->use_qt  = src.use_qt;
+      this->type    = src.type;
+      this->sTensor = src.sTensor;
+      this->aTensor = src.aTensor;
+      this->usableInPurelyImplicitResolution = src.usableInPurelyImplicitResolution;
+    }
     return *this;
   } // end of BehaviourCharacteristic::BehaviourCharacteristic()
   
@@ -81,5 +87,30 @@ namespace mfront{
   {
     this->aTensor = b;
   } // end of BehaviourCharacteristic::setRequireThermalExpansionTensor
+  
+  bool
+  BehaviourCharacteristic::isUsableInPurelyImplicitResolution(void) const
+  {
+    return this->usableInPurelyImplicitResolution;
+  } // end of BehaviourCharacteristic::isUsableInPurelyImplicitResolution
+
+  void
+  BehaviourCharacteristic::setUsableInPurelyImplicitResolution(const bool b)
+  {
+    this->usableInPurelyImplicitResolution = b;
+  } // end of BehaviourCharacteristic::setUsableInPurelyImplicitResolution
+
+  void
+  BehaviourCharacteristic::declareExternalStateVariableProbablyUnusableInPurelyImplicitResolution(const std::string& n)
+  {
+    this->pupirv.insert(n);
+  } // end of BehaviourCharacteristic::declareExternalStateVariableProbablyUnusableInPurelyImplicitResolution
+
+  const std::set<std::string>&
+  BehaviourCharacteristic::getExternalStateVariablesDeclaredProbablyUnusableInPurelyImplicitResolution(void) const
+  {
+    return this->pupirv;
+  } // end of BehaviourCharacteristic::getExternalStateVariablesDeclaredProbablyUnusableInPurelyImplicitResolution
+
 
 } // end of namespace mfront

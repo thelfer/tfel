@@ -52,6 +52,8 @@ namespace mfront{
     this->stateVarsHolder.push_back(VarHandler("StrainStensor","eel",0u));
     this->glossaryNames.insert(MVType("eel","ElasticStrain"));
     // CallBacks
+    this->registerNewCallBack("@UsableInPurelyImplicitResolution",
+			      &MFrontRungeKuttaParser::treatUsableInPurelyImplicitResolution);
     this->registerNewCallBack("@MaterialLaw",&MFrontRungeKuttaParser::treatMaterialLaw);
     this->registerNewCallBack("@Algorithm",&MFrontRungeKuttaParser::treatAlgorithm);
     this->registerNewCallBack("@Derivative",&MFrontRungeKuttaParser::treatDerivative);
@@ -89,7 +91,7 @@ namespace mfront{
   {
     using namespace std;
     if((var=="eto") ||(var=="T") ||
-       (var=="deto")||(var=="dT")||
+       (var=="deto")||
        (this->isInternalStateVariable(var))||
        (this->isExternalStateVariable(var))){
       if(addThisPtr){
@@ -98,15 +100,12 @@ namespace mfront{
 	return var+"_";
       }
     }
-    if(var[0]=='d'){
-      // variable increment
-      string v = var.substr(1);
-      if(this->isExternalStateVariable(v)){
-	if(addThisPtr){
-	  return "(this->"+var+"/(this->dt)";
-	} else {
-	  return "("+var+"/(this->dt)";
-	}
+    if((this->isExternalStateVariableIncrementName(var))||(var=="dT")){
+      this->declareExternalStateVariableProbablyUnusableInPurelyImplicitResolution(var.substr(1));
+      if(addThisPtr){
+	return "(this->"+var+"/(this->dt)";
+      } else {
+	return "("+var+"/(this->dt)";
       }
     }
     if(addThisPtr){
@@ -128,16 +127,15 @@ namespace mfront{
 	return var+"+d"+var;
       }
     }
-    if(var[0]=='d'){
-      // variable increment
-      string v = var.substr(1);
-      if((v=="eto")||(v=="T")||
-	 (this->isExternalStateVariable(v))){
-	if(addThisPtr){
-	  return "(this->"+var+"/(this->dt)";
-	} else {
-	  return "("+var+"/(this->dt)";
-	}
+    if((this->isExternalStateVariableIncrementName(var))||
+       (var=="dT")||(var=="deto")){
+      if((this->isExternalStateVariableIncrementName(var))||(var=="dT")){
+	this->declareExternalStateVariableProbablyUnusableInPurelyImplicitResolution(var.substr(1));
+      }
+      if(addThisPtr){
+	return "(this->"+var+"/(this->dt)";
+      } else {
+	return "("+var+"/(this->dt)";
       }
     }
     if(addThisPtr){

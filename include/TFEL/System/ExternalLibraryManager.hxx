@@ -33,6 +33,10 @@ namespace tfel
       bool
       contains(const std::string&,
 	       const std::string&);
+
+      bool
+      isUMATBehaviourUsableInPurelyImplicitResolution(const std::string&,
+						      const std::string&);
       
       std::vector<std::string>
       getUMATMaterialPropertiesNames(const std::string&,

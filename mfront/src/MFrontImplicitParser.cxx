@@ -72,6 +72,8 @@ namespace mfront{
     this->stateVarsHolder.push_back(VarHandler("StrainStensor","eel",0u));
     this->glossaryNames.insert(MVType("eel","ElasticStrain"));
     // CallBacks
+    this->registerNewCallBack("@UsableInPurelyImplicitResolution",
+			      &MFrontImplicitParser::treatUsableInPurelyImplicitResolution);
     this->registerNewCallBack("@MaterialLaw",&MFrontImplicitParser::treatMaterialLaw);
     this->registerNewCallBack("@ComputeStress",&MFrontImplicitParser::treatComputeStress);
     this->registerNewCallBack("@Predictor",&MFrontImplicitParser::treatPredictor);
@@ -396,6 +398,9 @@ namespace mfront{
 	return "("+var+"+("+this->className+"::theta)*d"+var+")";
       }
     }
+    if((this->isExternalStateVariableIncrementName(var))||(var=="dT")){
+      this->declareExternalStateVariableProbablyUnusableInPurelyImplicitResolution(var.substr(1));
+    }
     if(addThisPtr){
       return "this->"+var;
     }
@@ -412,6 +417,9 @@ namespace mfront{
       } else {
 	return "("+var+"+d"+var+")";
       }
+    }
+    if((this->isExternalStateVariableIncrementName(var))||(var=="dT")){
+      this->declareExternalStateVariableProbablyUnusableInPurelyImplicitResolution(var.substr(1));
     }
     if(addThisPtr){
       return "this->"+var;

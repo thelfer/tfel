@@ -46,6 +46,16 @@ int tfel_getUnsignedShort(void *lib,
   return *n;
 } 
 
+int tfel_getBool(void *lib,
+		 const char * const name){
+  unsigned short * n;
+  n= (unsigned short *) dlsym(lib,name);
+  if(n==0){
+    return -1;
+  }  
+  return *n;
+}
+
 char **
 tfel_getArrayOfStrings(void *lib,
 		       const char * const name)

@@ -46,6 +46,8 @@ namespace mfront{
     this->initLocalVars +="this->lambda=tfel::material::lame::computeLambda(this->young,this->nu);\n";
     this->initLocalVars +="this->mu=tfel::material::lame::computeMu(this->young,this->nu);\n";
     // Call Back
+    this->registerNewCallBack("@UsableInPurelyImplicitResolution",
+			      &MFrontIsotropicBehaviourParserBase::treatUsableInPurelyImplicitResolution);
     this->registerNewCallBack("@MaterialLaw",&MFrontIsotropicBehaviourParserBase::treatMaterialLaw);
     this->registerNewCallBack("@FlowRule",&MFrontIsotropicBehaviourParserBase::treatFlowRule);
     this->registerNewCallBack("@Theta",&MFrontIsotropicBehaviourParserBase::treatTheta);
@@ -147,6 +149,9 @@ namespace mfront{
 	return var+"_";
       }
     }
+    if((this->isExternalStateVariableIncrementName(var))||(var=="dT")){
+      this->declareExternalStateVariableProbablyUnusableInPurelyImplicitResolution(var.substr(1));
+    }
     if(addThisPtr){
       return "this->"+var;
     }
@@ -165,6 +170,9 @@ namespace mfront{
       } else {
 	return var+"_";
       }
+    }
+    if((this->isExternalStateVariableIncrementName(var))||(var=="dT")){
+      this->declareExternalStateVariableProbablyUnusableInPurelyImplicitResolution(var.substr(1));
     }
     if(addThisPtr){
       return "this->"+var;

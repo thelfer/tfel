@@ -46,6 +46,9 @@ namespace mfront{
 
   protected:
        
+    virtual std::string
+    variableModifier3(const std::string&,const bool);
+
     std::map<std::string,std::vector<std::string> >
     getGlobalIncludes(void);
 
@@ -86,6 +89,9 @@ namespace mfront{
 
     void
     treatUpdateAuxiliaryStateVars(void);
+
+    void
+    treatUsableInPurelyImplicitResolution(void);
 
     void treatMaterial(void);
 
@@ -306,6 +312,12 @@ namespace mfront{
 
     virtual ~MFrontBehaviourParserCommon();
 
+    /*!
+     * \param n : variable name
+     */
+    void
+    declareExternalStateVariableProbablyUnusableInPurelyImplicitResolution(const std::string&);
+
     void updateClassName();
 
     bool
@@ -326,6 +338,9 @@ namespace mfront{
 
     bool
     isExternalStateVariableName(const std::string&) const;
+
+    bool
+    isExternalStateVariableIncrementName(const std::string&) const;
 
     bool
     isCoefficientName(void);
@@ -368,6 +383,7 @@ namespace mfront{
     std::ofstream srcFile;
 
     bool useStateVarTimeDerivative;
+    bool explicitlyDeclaredUsableInPurelyImplicitResolution;
     BehaviourCharacteristic behaviourCharacteristic;
 
   }; // end of struct MFrontBehaviourParserCommon

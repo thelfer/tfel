@@ -138,6 +138,23 @@ namespace tfel
       copy(res,res+nb,back_inserter(vars));
     } // end of ExternalLibraryManager::getUMATNames
 
+    bool
+    ExternalLibraryManager::isUMATBehaviourUsableInPurelyImplicitResolution(const std::string& l,
+									    const std::string& f)
+    {
+      using namespace std;
+      vector<int> types;
+      void * lib = this->loadLibrary(l);
+      int b = ::tfel_getBool(lib,(f+"_nUsableInPurelyImplicitResolution").c_str());
+      if(b==-1){
+	return false;
+      }
+      if(b==1){
+	return true;
+      }
+      return false;
+    } // end of ExternalLibraryManager::isUMATBehaviourUsableInPurelyImplicitResolution
+
     std::vector<int>
     ExternalLibraryManager::getUMATInternalStateVariablesTypes(const std::string& l,
 							       const std::string& f)

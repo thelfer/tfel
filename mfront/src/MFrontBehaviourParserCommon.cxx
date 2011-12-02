@@ -65,6 +65,28 @@ namespace mfront{
     }
   }
 
+  void
+  MFrontBehaviourParserCommon::declareExternalStateVariableProbablyUnusableInPurelyImplicitResolution(const std::string& n)
+  {
+    if(!this->explicitlyDeclaredUsableInPurelyImplicitResolution){
+      this->behaviourCharacteristic.setUsableInPurelyImplicitResolution(false);
+    }
+    this->behaviourCharacteristic.declareExternalStateVariableProbablyUnusableInPurelyImplicitResolution(n);
+  } // end of MFrontBehaviourParserCommon::declareExternalStateVariableProbablyUnusableInPurelyImplicitResolution
+
+  std::string
+  MFrontBehaviourParserCommon::variableModifier3(const std::string& var,
+						 const bool addThisPtr)
+  {
+    if((this->isExternalStateVariableIncrementName(var))||(var=="dT")){
+      this->declareExternalStateVariableProbablyUnusableInPurelyImplicitResolution(var.substr(1));
+    }
+    if(addThisPtr){
+      return "this->"+var;
+    }
+    return var;
+  } // end of MFrontBehaviourParserCommon::variableModifier3
+
   bool
   MFrontBehaviourParserCommon::contains(const VarContainer& v,
 					const std::string& n) const
@@ -107,7 +129,19 @@ namespace mfront{
   {
     return this->contains(this->externalStateVarsHolder,n);
   } // end of MFrontBehaviourParserCommon::isExternalStateVariableName
-  
+
+  bool
+  MFrontBehaviourParserCommon::isExternalStateVariableIncrementName(const std::string& n) const
+  {
+    if(n.size()<2){
+      return false;
+    }
+    if(n[0]!='d'){
+      return false;
+    }
+    return this->contains(this->externalStateVarsHolder,n.substr(1));
+  } // end of MFrontBehaviourParserCommon::isExternalStateVariableName
+    
   static void
   MFrontBehaviourParserCommonCheckIfNameIsAnEntryNameOrAGlossaryName(const std::map<std::string,std::string>& g,
 								     const std::map<std::string,std::string>& e,
@@ -130,6 +164,18 @@ namespace mfront{
       }
     }
   }
+
+  void
+  MFrontBehaviourParserCommon::treatUsableInPurelyImplicitResolution(void)
+  {
+    this->readSpecifiedToken("MFrontBehaviourParserCommon::treatUsableInPurelyImplicitResolution",";");
+    if(this->explicitlyDeclaredUsableInPurelyImplicitResolution){
+      this->throwRuntimeError("MFrontBehaviourParserCommon::treatUsableInPurelyImplicitResolution",
+			      "keyword '@UsableInPurelyImplicitResolution' already called");
+    }
+    this->explicitlyDeclaredUsableInPurelyImplicitResolution = true;
+    this->behaviourCharacteristic.setUsableInPurelyImplicitResolution(true);
+  } // end of MFrontBehaviourParserCommon::treatUsableInPurelyImplicitResolution
 
   void
   MFrontBehaviourParserCommon::treatVariableMethod(void)
@@ -936,7 +982,8 @@ namespace mfront{
 
   MFrontBehaviourParserCommon::MFrontBehaviourParserCommon()
     : ParserBase(),
-      useStateVarTimeDerivative(false)
+      useStateVarTimeDerivative(false),
+      explicitlyDeclaredUsableInPurelyImplicitResolution(false)
   {
     // Register var names
     this->registerDefaultVarNames();
@@ -944,6 +991,8 @@ namespace mfront{
     this->behaviourCharacteristic.setUseQt(false);
     // By default, a behaviour is isotropic 
     this->behaviourCharacteristic.setBehaviourType(mfront::ISOTROPIC);
+    // By default, a behaviour can be used in a purely implicit resolution
+    this->behaviourCharacteristic.setUsableInPurelyImplicitResolution(true);
   } // end of MFrontBehaviourParserCommon::MFrontParserCommon
 
   void MFrontBehaviourParserCommon::writeIncludes(std::ofstream& file) {
@@ -3643,7 +3692,8 @@ namespace mfront{
   void
   MFrontBehaviourParserCommon::treatInitLocalVars(void)
   {
-    this->initLocalVars += this->readNextBlock(true);
+    this->initLocalVars += this->readNextBlock(&ParserBase::variableModifier3,
+					       true);
     this->initLocalVars += "\n";
   } // end of MFrontBehaviourParserCommon::treatInitLocalVars
 
