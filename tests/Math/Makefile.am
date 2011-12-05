@@ -63,7 +63,8 @@ test_PROGRAMS = hill                  \
 		levenberg-marquardt   \
 		levenberg-marquardt2  \
 		levenberg-marquardt3  \
-		levenberg-marquardt4
+		levenberg-marquardt4  \
+		discretization1D
 
 LDADD = -L$(top_builddir)/src/Math                 \
 	-L$(top_builddir)/src/Utilities            \
@@ -113,6 +114,14 @@ SFTMCV_SOURCES                = SFTMCV.cxx
 levenberg_marquardt_SOURCES   = levenberg-marquardt.cxx
 levenberg_marquardt2_SOURCES  = levenberg-marquardt2.cxx
 levenberg_marquardt3_SOURCES  = levenberg-marquardt3.cxx
+
+discretization1D_SOURCES = discretization1D.cxx
+discretization1D_LDADD   = -L$(top_builddir)/src/Math      \
+		          -L$(top_builddir)/src/Utilities  \
+		          -L$(top_builddir)/src/Exception  \
+                          -L$(top_builddir)/src/Tests      \
+		          -lTFELMath -lTFELException       \
+			  -lTFELTests
 
 CubicSplineTest_SOURCES = CubicSplineTest.cxx
 CubicSplineTest_LDADD   = -L$(top_builddir)/src/Math       \

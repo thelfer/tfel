@@ -145,7 +145,7 @@ namespace tfel
       using namespace std;
       vector<int> types;
       void * lib = this->loadLibrary(l);
-      int b = ::tfel_getBool(lib,(f+"_nUsableInPurelyImplicitResolution").c_str());
+      int b = ::tfel_getBool(lib,(f+"_UsableInPurelyImplicitResolution").c_str());
       if(b==-1){
 	return false;
       }

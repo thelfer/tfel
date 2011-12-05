@@ -106,6 +106,8 @@ tests_math(levenberg-marquardt)
 tests_math(levenberg-marquardt2)
 tests_math(levenberg-marquardt3)
 
+tests_math3(discretization1D)
+
 tests_math2(krigeage)
 tests_math2(krigeage1D)
 tests_math2(krigeage2D)

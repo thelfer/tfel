@@ -115,6 +115,8 @@ include/TFEL/Math/Composite/composite.ixx -text
 include/TFEL/Math/Composite/compositeResultType.ixx -text
 include/TFEL/Math/CubicSpline.hxx -text
 include/TFEL/Math/CubicSpline.ixx -text
+include/TFEL/Math/Discretization1D.hxx -text
+include/TFEL/Math/Discretization1D.ixx -text
 include/TFEL/Math/Evaluator.hxx -text
 include/TFEL/Math/Evaluator.ixx -text
 include/TFEL/Math/FSLevenbergMarquardt.hxx -text
@@ -667,6 +669,7 @@ src/Math/CompositeTag.cxx -text
 src/Math/ConditionalExpr.cxx -text
 src/Math/CubicSpline.cxx -text
 src/Math/DifferentiatedFunctionExpr.cxx -text
+src/Math/Discretization1D.cxx -text
 src/Math/Evaluator.cxx -text
 src/Math/EvaluatorBase.cxx -text
 src/Math/EvaluatorFunction.cxx -text
@@ -830,6 +833,7 @@ tests/Math/broyden.cxx -text
 tests/Math/broyden2.cxx -text
 tests/Math/complex_operations.cxx -text
 tests/Math/conj.cxx -text
+tests/Math/discretization1D.cxx -text
 tests/Math/hill.cxx -text
 tests/Math/include/CubicRoots-header.hxx -text
 tests/Math/include/Makefile.am -text

@@ -126,6 +126,8 @@ install_header(TFEL/FSAlgorithm for_each.hxx)
 install_header(TFEL/FSAlgorithm equal.hxx)
 
 install_header(TFEL/Math/Bindings atlas.hxx)
+install_header(TFEL/Math         Discretization1D.hxx)
+install_header(TFEL/Math         Discretization1D.ixx)
 install_header(TFEL/Math/Forward tvector.hxx)
 install_header(TFEL/Math/Forward tmatrix.hxx)
 install_header(TFEL/Math/Forward stensor.hxx)
