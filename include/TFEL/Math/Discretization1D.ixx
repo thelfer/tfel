@@ -19,12 +19,12 @@ namespace tfel
     
     template<typename T>
     void
-    geometricProgression(T& v,
-			 const typename T::value_type xb,
-			 const typename T::value_type xe,
-			 const typename T::value_type db,
-			 const typename T::value_type de,
-			 const typename T::size_type  n)
+    geometricDiscretization(T& v,
+			    const typename T::value_type xb,
+			    const typename T::value_type xe,
+			    const typename T::value_type db,
+			    const typename T::value_type de,
+			    const typename T::size_type  n)
     {
       using namespace std;
       typedef typename T::value_type real;
@@ -57,7 +57,7 @@ namespace tfel
 	r = 1 + xaux+sqrt(xaux*(2+xaux));
       }
       if(abs(r-1)>1.e-5){
-	rf=(1.-r)/(1.-pow(r,n));
+	rf=(1.-r)/(1.-pow(r,static_cast<real>(n)));
       } else{
 	rf=1./(static_cast<real>(n));
       }
@@ -71,8 +71,8 @@ namespace tfel
       }
       v.back() = xe; // not mandatory (xe is the value that shall be
 		     // found) but this is more precise
-    }
-
+    } // end of geometricDiscretization
+    
   } // end of namespace math
 
 } // end of namespace tfel

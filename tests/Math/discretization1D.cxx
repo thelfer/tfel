@@ -31,8 +31,8 @@ struct Discretization1DTest
     using namespace tfel::math;
     vector<double> v;
     const double eps = 1.e-8;
-    geometricProgression(v,2., 17.,
-			 0.1, 5.,10u);
+    geometricDiscretization(v,2., 17.,
+			    0.1, 5.,10u);
     TFEL_TESTS_ASSERT(v.size()==11u);
     TFEL_TESTS_ASSERT(abs(v[0]-2.)<eps);
     TFEL_TESTS_ASSERT(abs(v[1]-2.2320018)<eps);
