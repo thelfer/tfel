@@ -83,7 +83,8 @@ namespace tfel{
       }
       b(N-1) = x(p(N-1));
       for(i=N-1;i!=0;--i){
-	pi2 = i-1;
+	pi2 = i;
+	--pi2;
 	pi  = p(pi2);
 	b(pi2) = x(pi);
 	for(j=i;j!=N;++j){

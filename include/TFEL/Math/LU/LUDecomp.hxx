@@ -76,7 +76,7 @@ namespace tfel{
 	  // search for pivot
 	  NumType cmax = abs(m(p(i),i));
 	  k = i;
-	  for(j=i+1;j!=n;++j){
+	  for(j=static_cast<IndexType>(i+1u);j!=n;++j){
 	    pj = p(j);
 	    if(abs(m(pj,i))>cmax){
 	      cmax = abs(m(pj,i));
@@ -95,7 +95,7 @@ namespace tfel{
 	  }
 	  pi = p(i);
 	  // U update
-	  for(j=i+1;j!=n;++j){
+	  for(j=static_cast<IndexType>(i+1);j!=n;++j){
 	    for(k=0;k!=i;++k){
 	      m(pi,j) -= m(pi,k)*m(p(k),j);
 	    }
