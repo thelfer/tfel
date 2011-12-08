@@ -346,7 +346,11 @@ namespace mfront
     this->srcFile << name << "_nargs = " << inputs.size() << "u;\n\n";
     this->srcFile << "MFRONT_SHAREDOBJ double MFRONT_STDCALL\n";
     this->srcFile << name << "(";
-    this->srcFile << "const double * const castem_params";
+    if(!inputs.empty()){
+      this->srcFile << "const double * const castem_params";
+    } else {
+      this->srcFile << "const double * const";
+    }
     this->srcFile << ")\n{\n";
     this->srcFile << "using namespace std;\n";
     this->srcFile << "typedef double real;\n";
