@@ -97,7 +97,7 @@ namespace tfel
 	string file = name+"/";
 	file += p->d_name;
 	if(stat(file.c_str(),&buf)!=0){
-	  string msg("MFront::analyseSourceDirectory : ");
+	  string msg("tfel::system::recursiveFind : ");
 	  msg += "can't stat file '"+file+"'";
 	  systemCall::throwSystemError(msg,errno);
 	}
