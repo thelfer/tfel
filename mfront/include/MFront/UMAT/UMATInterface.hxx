@@ -8,7 +8,6 @@
 #ifndef _LIB_MFRONT_UMAT_CALL_H_
 #define _LIB_MFRONT_UMAT_CALL_H_ 
 
-#include<iostream>
 #include<string>
 #include<algorithm>
 #include<vector>
@@ -23,7 +22,6 @@
 
 #include"TFEL/Utilities/Info.hxx"
 #include"TFEL/Utilities/Name.hxx"
-#include"TFEL/Utilities/ToString.hxx"
 
 #include"TFEL/Material/MechanicalBehaviourTraits.hxx"
 #include"TFEL/Material/MechanicalBehaviourData.hxx"
@@ -42,6 +40,123 @@
 namespace umat{
 
   /*!
+   * \class  UMATInterfaceBase
+   * \brief  Base class for umat interfaces
+   * \author Helfer Thomas
+   * \date   12/12/2011
+   */
+  struct TFEL_VISIBILITY_EXPORT UMATInterfaceBase
+  {
+
+    /*!
+     * \brief throw an UMATException. This method shall be called when
+     * the number of materials properties declared by the beahviour and the
+     * number of  materials properties declared by the interface does not
+     * match.
+     * \param[in] b  : behaviour name
+     * \param[in] n1 : number of material properties declared by the behaviour
+     * \param[in] n2 : number of material properties declared by the interface
+     */
+    static void
+    throwUnMatchedNumberOfMaterialProperties(const std::string&,
+					     const unsigned short n1,
+					     const UMATInt n2);
+    
+    /*!
+     * \brief throw an UMATException. This method shall be called when
+     * the number of state variables declared by the beahviour and the
+     * number of state variables declared by the interface does not
+     * match.
+     * \param[in] b  : behaviour name
+     * \param[in] n1 : number of state variables declared by the behaviour
+     * \param[in] n2 : number of state variables declared by the interface
+     */
+    static void
+    throwUnMatchedNumberOfStateVariables(const std::string&,
+					 const unsigned short n1,
+					 const UMATInt n2);
+
+    /*!
+     * \brief display the error message out of an UMATException to the
+     * standard output.
+     * \param[in] b : behaviour name
+     * \param[in] e : the UMATException to be treated
+     */
+    static void
+    treatUmatException(const std::string&,
+		       const UMATException&);
+
+    /*!
+     * \brief display the error message out of a material exception to the
+     * standard output.
+     * \param[in] b : behaviour name
+     * \param[in] e : the material exception to be treated
+     */
+    static void
+    treatMaterialException(const std::string&,
+			   const tfel::material::MaterialException&);
+    
+    /*!
+     * \brief display the error message out of a generic tfel
+     * exception to the standard output.
+     * \param[in] b : behaviour name
+     * \param[in] e : the exception to be treated
+     */
+    static void
+    treatTFELException(const std::string&,
+		       const tfel::exception::TFELException&);
+
+    /*!
+     * \brief display the error message out of a generic standard
+     * exception to the standard output.
+     * \param[in] b : behaviour name
+     * \param[in] e : the exception to be treated
+     */
+    static void
+    treatStandardException(const std::string&,
+			   const std::exception&);
+
+    /*!
+     * \brief display the error message when an unknown exception is caught
+     * \param[in] b : behaviour name
+     */
+    static void
+    treatUnknownException(const std::string&);
+
+    /*!
+     * \brief throw an UMATException if the time step is negative
+     * \param[in] b : behaviour name
+     */
+    static void
+    throwNegativeTimeStepException(const std::string&);
+
+    /*!
+     * \brief throw an UMATException if the behaviour integration
+     * failed
+     * \param[in] b : behaviour name
+     */
+    static void
+    throwBehaviourIntegrationFailedException(const std::string&);
+
+    /*!
+     * \brief throw an UMATException if the maximum number of sub
+     * stepping has been reached
+     * \param[in] b : behaviour name
+     */
+    static void
+    throwMaximumNumberOfSubSteppingReachedException(const std::string&);
+
+    /*!
+     * \brief throw an UMATException if the maximum number of sub
+     * stepping has been reached
+     * \param[in] b : behaviour name
+     */
+    static void
+    throwPlaneStressMaximumNumberOfIterationsReachedException(const std::string&);
+
+  }; // end of struct UMATInterfaceBase
+
+  /*!
    * \class  UMATInterface
    * \brief  This class create an interface between Behaviour and UMAT
    * \author Helfer Thomas
@@ -49,6 +164,7 @@ namespace umat{
    */
   template<template<unsigned short,typename,bool> class Behaviour>
   struct TFEL_VISIBILITY_LOCAL UMATInterface
+    : protected UMATInterfaceBase
   {
 
     struct TreatPlaneStress
@@ -67,8 +183,8 @@ namespace umat{
 	using namespace tfel::meta;
 	typedef UMATTraits<Behaviour<1u,UMATReal,false> > Traits;
 	typedef typename IF<Traits::type==umat::ISOTROPIC,
-	  TreatPlaneStressIsotropicBehaviour,
-	  TreatPlaneStressOrthotropicBehaviour>::type Treat;
+			    TreatPlaneStressIsotropicBehaviour,
+			    TreatPlaneStressOrthotropicBehaviour>::type Treat;
 	Treat::exe(DTIME,DROT,DDSOE,STRAN,DSTRAN,TEMP,DTEMP,
 		   PROPS,NPROPS,PREDEF,DPRED,STATEV,NSTATV,
 		   STRESS);
@@ -79,22 +195,18 @@ namespace umat{
       TFEL_UMAT_INLINE2 static void
       checkNSTATV(const UMATInt NSTATV)
       {
+	using namespace tfel::utilities;
 	typedef Behaviour<2u,UMATReal,false> BV;
 	typedef tfel::material::MechanicalBehaviourTraits<BV> Traits;
 	const unsigned short NSTATV_  = Traits::internal_variables_nb+1u;
 	const bool is_defined_        = Traits::is_defined;
 	//Test if the nb of state variables matches Behaviour requirements
 	if((NSTATV_!=NSTATV)&&is_defined_){
-	  std::string msg = tfel::utilities::Name<Behaviour<2u,UMATReal,false> >::getName();
-	  msg += " : nb of internal state variables does not match (";
-	  msg += tfel::utilities::ToString(NSTATV_);
-	  msg += " required and ";
-	  msg += tfel::utilities::ToString(NSTATV);
-	  msg += " given)";
-	  throw(UMATException(msg));
-	}	  
+	  throwUnMatchedNumberOfStateVariables(Name<Behaviour<2u,UMATReal,false> >::getName(),
+					       NSTATV_,NSTATV);
+	}
       } // end of checkNSTATV
-      
+
       template<typename TreatPlaneStrain>
       TFEL_UMAT_INLINE2 static
       void exe(const UMATReal c1,
@@ -110,6 +222,7 @@ namespace umat{
 	       UMATReal *const STRESS)
       {
 	using namespace std;
+	using namespace tfel::utilities;
 	using tfel::fsalgo::copy;
 	typedef Behaviour<2u,UMATReal,false> BV;
 	typedef tfel::material::MechanicalBehaviourTraits<BV> Traits;
@@ -163,9 +276,7 @@ namespace umat{
 	  ++iter;
 	}
 	if(iter==iterMax){
-	  string msg("TreatPlanStressBehaviour : ");
-	  msg += "maximal number of iterations reached";
-	  throw(runtime_error(msg));
+	  throwPlaneStressMaximumNumberOfIterationsReachedException(Name<Behaviour<2u,UMATReal,false> >::getName());
 	}
 	copy<4>::exe(s,STRESS);
 	copy<NSTATV_>::exe(v,STATEV);
@@ -308,15 +419,15 @@ namespace umat{
 
     
     TFEL_UMAT_INLINE2 static
-    void exe(const UMATInt  *const NTENS, const UMATReal *const DTIME,
-	     const UMATReal *const DROT,  const UMATReal *const DDSOE,
-	     const UMATReal *const STRAN, const UMATReal *const DSTRAN,
-	     const UMATReal *const TEMP,  const UMATReal *const DTEMP,
-	     const UMATReal *const PROPS, const UMATInt  *const NPROPS,
-	     const UMATReal *const PREDEF,const UMATReal *const DPRED,
-	     UMATReal *const STATEV,const UMATInt  *const NSTATV,
-	     UMATReal *const STRESS,const UMATInt  *const NDI,
-	     UMATInt  *const KINC)
+      void exe(const UMATInt  *const NTENS, const UMATReal *const DTIME,
+	       const UMATReal *const DROT,  const UMATReal *const DDSOE,
+	       const UMATReal *const STRAN, const UMATReal *const DSTRAN,
+	       const UMATReal *const TEMP,  const UMATReal *const DTEMP,
+	       const UMATReal *const PROPS, const UMATInt  *const NPROPS,
+	       const UMATReal *const PREDEF,const UMATReal *const DPRED,
+	       UMATReal *const STATEV,const UMATInt  *const NSTATV,
+	       UMATReal *const STRESS,const UMATInt  *const NDI,
+	       UMATInt  *const KINC)
     {
       using namespace std;
       using namespace tfel::meta;
@@ -326,12 +437,12 @@ namespace umat{
 	if(*NTENS==3){
 	  typedef UMATTraits<Behaviour<1u,UMATReal,false> > Traits;
 	  typedef typename IF<Traits::type==umat::ISOTROPIC,
-	    TreatIsotropicBehaviour<1u>,
-	    TreatOrthotropicBehaviour1D>::type Treat;
+			      TreatIsotropicBehaviour<1u>,
+			      TreatOrthotropicBehaviour1D>::type Treat;
 	  Treat::exe(DTIME,DROT,DDSOE,STRAN,DSTRAN,TEMP,DTEMP,
 		     PROPS,NPROPS,PREDEF,DPRED,STATEV,NSTATV,
 		     STRESS,NDI);
-	} else if(*NTENS==4){
+      } else if(*NTENS==4){
 	  if(*NDI==-2){
 	    // plane strain
 	    TreatPlaneStress::exe(DTIME,DROT,DDSOE,STRAN,DSTRAN,TEMP,DTEMP,
@@ -340,8 +451,8 @@ namespace umat{
 	  } else {
 	    typedef UMATTraits<Behaviour<2u,UMATReal,false> > Traits;
 	    typedef typename IF<Traits::type==umat::ISOTROPIC,
-	    TreatIsotropicBehaviour<2u>,
-	    TreatOrthotropicBehaviour2D>::type Treat;
+				TreatIsotropicBehaviour<2u>,
+				TreatOrthotropicBehaviour2D>::type Treat;
 	    Treat::exe(DTIME,DROT,DDSOE,STRAN,DSTRAN,TEMP,DTEMP,
 		       PROPS,NPROPS,PREDEF,DPRED,STATEV,NSTATV,
 		       STRESS,NDI);
@@ -349,87 +460,71 @@ namespace umat{
 	} else if(*NTENS==6){
 	  typedef UMATTraits<Behaviour<3u,UMATReal,false> > Traits;
 	  typedef typename IF<Traits::type==umat::ISOTROPIC,
-	    TreatIsotropicBehaviour<3u>,
-	    TreatOrthotropicBehaviour3D>::type Treat;
+			      TreatIsotropicBehaviour<3u>,
+			      TreatOrthotropicBehaviour3D>::type Treat;
 	  Treat::exe(DTIME,DROT,DDSOE,STRAN,DSTRAN,TEMP,DTEMP,
 		     PROPS,NPROPS,PREDEF,DPRED,STATEV,NSTATV,STRESS,
 		     NDI);
-	} else{
+	} else {
 	  throw(UMATInvalidNTENSValue(ushort(*NTENS)));
 	}
       }
       catch(const UMATException& e){
-	cout << "The ";
 	if(*NTENS==3){
-	  cout << Name<Behaviour<1u,UMATReal,false> >::getName();
+	  treatUmatException(Name<Behaviour<1u,UMATReal,false> >::getName(),e);
 	} else if(*NTENS==4){
-	  cout << Name<Behaviour<2u,UMATReal,false> >::getName();
+	  treatUmatException(Name<Behaviour<2u,UMATReal,false> >::getName(),e);
 	} else if(*NTENS==6){
-	  cout << Name<Behaviour<3u,UMATReal,false> >::getName();
+	  treatUmatException(Name<Behaviour<3u,UMATReal,false> >::getName(),e);
 	}
-	cout << " Behaviour has thrown an " ;
-	cout << "UMAT exception : " << e.getMsg() << endl;
 	*KINC = -2;
       }
       catch(const tfel::material::MaterialException& e){
-	cout << "The ";
 	if(*NTENS==3){
-	  cout << Name<Behaviour<1u,UMATReal,false> >::getName();
+	  treatMaterialException(Name<Behaviour<1u,UMATReal,false> >::getName(),e);
 	} else if(*NTENS==4){
-	  cout << Name<Behaviour<2u,UMATReal,false> >::getName();
+	  treatMaterialException(Name<Behaviour<2u,UMATReal,false> >::getName(),e);
 	} else if(*NTENS==6){
-	  cout << Name<Behaviour<3u,UMATReal,false> >::getName();
+	  treatMaterialException(Name<Behaviour<3u,UMATReal,false> >::getName(),e);
 	}
-	cout << " Behaviour has thrown a " ;
-	cout << "Material exception : " << e.getMsg() << endl;
 	*KINC = -3;
       }
       catch(const tfel::exception::TFELException& e){
-	cout << "The ";
 	if(*NTENS==3){
-	  cout << Name<Behaviour<1u,UMATReal,false> >::getName();
+	  treatTFELException(Name<Behaviour<1u,UMATReal,false> >::getName(),e);
 	} else if(*NTENS==4){
-	  cout << Name<Behaviour<2u,UMATReal,false> >::getName();
+	  treatTFELException(Name<Behaviour<2u,UMATReal,false> >::getName(),e);
 	} else if(*NTENS==6){
-	  cout << Name<Behaviour<3u,UMATReal,false> >::getName();
+	  treatTFELException(Name<Behaviour<3u,UMATReal,false> >::getName(),e);
 	}
-	cout << " Behaviour has thrown a " ;
-	cout << " TFEL exception : " << e.getMsg() << endl;
 	*KINC = -4;
       }
       catch(const std::exception& e){
-	cout << "The ";
 	if(*NTENS==3){
-	  cout << Name<Behaviour<1u,UMATReal,false> >::getName();
+	  treatStandardException(Name<Behaviour<1u,UMATReal,false> >::getName(),e);
 	} else if(*NTENS==4){
-	  cout << Name<Behaviour<2u,UMATReal,false> >::getName();
+	  treatStandardException(Name<Behaviour<2u,UMATReal,false> >::getName(),e);
 	} else if(*NTENS==6){
-	  cout << Name<Behaviour<3u,UMATReal,false> >::getName();
+	  treatStandardException(Name<Behaviour<3u,UMATReal,false> >::getName(),e);
 	}
-	cout << " Behaviour has thrown a " ;
-	cout << " standard exception : " << e.what() << endl;
 	*KINC = -5;
       }
       catch(...){
-	cout << "The ";
 	if(*NTENS==3){
-	  cout << Name<Behaviour<1u,UMATReal,false> >::getName();
+	  treatUnknownException(Name<Behaviour<1u,UMATReal,false> >::getName());
 	} else if(*NTENS==4){
-	  cout << Name<Behaviour<2u,UMATReal,false> >::getName();
+	  treatUnknownException(Name<Behaviour<2u,UMATReal,false> >::getName());
 	} else if(*NTENS==6){
-	  cout << Name<Behaviour<3u,UMATReal,false> >::getName();
+	  treatUnknownException(Name<Behaviour<3u,UMATReal,false> >::getName());
 	}
-	cout << " Behaviour has thrown an " ;
-	cout << " unknown exception (sorry, we can't give you any details) "
-	     << endl;
 	*KINC = -6;
       }
-    } // end of UMATInterface::exe
+} // end of UMATInterface::exe
 
   private:
 
     template<unsigned short N>
-    struct TFEL_VISIBILITY_LOCAL TreatBehaviour
+      struct TFEL_VISIBILITY_LOCAL TreatBehaviour
     {
 
       struct TFEL_VISIBILITY_LOCAL StiffnessTensorInitializer
@@ -437,7 +532,7 @@ namespace umat{
 	typedef Behaviour<N,UMATReal,false> BV;
 	typedef typename BV::BehaviourData  BData;
 	TFEL_UMAT_INLINE static void
-	exe(BData& data,const UMATReal * const props){
+	  exe(BData& data,const UMATReal * const props){
 	  UMATComputeStiffnessTensor<N,UMATTraits<BV>::type>::exe(props,
 								  data.getStiffnessTensor());
 	} // end of exe
@@ -448,7 +543,7 @@ namespace umat{
 	typedef Behaviour<N,UMATReal,false> BV;
 	typedef typename BV::BehaviourData  BData;
 	TFEL_UMAT_INLINE static void
-	exe(BData& data,const UMATReal * const props){
+	  exe(BData& data,const UMATReal * const props){
 	  UMATComputeThermalExpansionTensor<N,UMATTraits<BV>::type>::exe(props,
 									 data.getThermalExpansionTensor());
 	} // end of exe
@@ -459,7 +554,7 @@ namespace umat{
 	typedef Behaviour<N,UMATReal,false> BV;
 	typedef typename BV::BehaviourData  BData;
 	TFEL_UMAT_INLINE static void
-	exe(BData&,const UMATReal * const)
+	  exe(BData&,const UMATReal * const)
 	{}
       }; // end of struct DoNothingInitializer
 
@@ -494,7 +589,7 @@ namespace umat{
       
       template<const bool bs,     // requires StiffnessTensor
 	       const bool ba>     // requires ThermalExpansionTensor
-      struct TFEL_VISIBILITY_LOCAL IntegratorWithTimeStepping
+	struct TFEL_VISIBILITY_LOCAL IntegratorWithTimeStepping
       {
 	typedef typename tfel::meta::IF<bs,
 					StiffnessTensorInitializer,
@@ -518,24 +613,25 @@ namespace umat{
 						    const UMATInt *const NDI)
 	  : bData(STRESS,STRAN,TEMP,PROPS+UMATTraits<BV>::propertiesOffset,
 		  STATEV,PREDEF),
-	    iData(DTIME,DSTRAN,DTEMP,DPRED),
-	    dt(*DTIME),
-	    hypothesis(getModellingHypothesis(*NDI))
-	{
-	  SInitializer::exe(this->bData,PROPS);
-	  AInitializer::exe(this->bData,PROPS);
-	} // end of IntegratorWithTimeStepping
+	  iData(DTIME,DSTRAN,DTEMP,DPRED),
+	  dt(*DTIME),
+	  hypothesis(getModellingHypothesis(*NDI))
+	    {
+	      SInitializer::exe(this->bData,PROPS);
+	      AInitializer::exe(this->bData,PROPS);
+	    } // end of IntegratorWithTimeStepping
 
 	TFEL_UMAT_INLINE2 void exe(UMATReal *const STRESS,
 				   UMATReal *const STATEV)
 	{
+	  using namespace tfel::utilities;
 	  typedef unsigned short ushort;
 	  const UMATOutOfBoundsPolicy& up = UMATOutOfBoundsPolicy::getUMATOutOfBoundsPolicy();
 	  unsigned short subSteps   = 0u;
 	  unsigned short iterations = 1u;
 	  bool convergence;
 	  if(this->dt<0.){
-	    throw(UMATException("negative time step"));
+	    throwNegativeTimeStepExceptionN(Name<Behaviour<N,UMATReal,false> >::getName());
 	  }
 	  while((iterations!=0)&&
 		(subSteps!=UMATTraits<BV>::maximumSubStepping)){
@@ -565,7 +661,7 @@ namespace umat{
 	    }
 	  }
 	  if((subSteps==UMATTraits<BV>::maximumSubStepping)&&(iterations!=0)){
-	    throw(UMATException("Maximum number of substepping reached"));
+	    throwMaximumNumberOfSubSteppingReachedException(Name<Behaviour<N,UMATReal,false> >::getName());
 	  }
 	  this->bData.UMATexportStateData(STRESS,STATEV);
 	} // end of IntegratorWithTimeStepping::exe
@@ -584,7 +680,7 @@ namespace umat{
 
       template<const bool bs,     // requires StiffnessTensor
 	       const bool ba>     // requires ThermalExpansionTensor
-      struct TFEL_VISIBILITY_LOCAL Integrator
+	struct TFEL_VISIBILITY_LOCAL Integrator
       {
 	typedef typename tfel::meta::IF<bs,
 					StiffnessTensorInitializer,
@@ -609,29 +705,30 @@ namespace umat{
 	  : behaviour(DTIME,STRESS,STRAN,DSTRAN,TEMP,DTEMP,
 		      PROPS+UMATTraits<BV>::propertiesOffset,
 		      STATEV,PREDEF,DPRED,getModellingHypothesis(*NDI)),
-	    dt(*DTIME)
-	{
-	  SInitializer::exe(this->behaviour,PROPS);
-	  AInitializer::exe(this->behaviour,PROPS);
-	  const UMATOutOfBoundsPolicy& up = UMATOutOfBoundsPolicy::getUMATOutOfBoundsPolicy();
-	  this->behaviour.setOutOfBoundsPolicy(up.getOutOfBoundsPolicy());
-	} // end of Integrator::Integrator
-
+	  dt(*DTIME)
+	    {
+	      SInitializer::exe(this->behaviour,PROPS);
+	      AInitializer::exe(this->behaviour,PROPS);
+	      const UMATOutOfBoundsPolicy& up = UMATOutOfBoundsPolicy::getUMATOutOfBoundsPolicy();
+	      this->behaviour.setOutOfBoundsPolicy(up.getOutOfBoundsPolicy());
+	    } // end of Integrator::Integrator
+	
 	TFEL_UMAT_INLINE2
-	void exe(UMATReal *const STRESS,
-		 UMATReal *const STATEV)
+	  void exe(UMATReal *const STRESS,
+		   UMATReal *const STATEV)
 	{
+	  using namespace tfel::utilities;
 	  if(this->dt<0.){
-	    throw(UMATException("negative time step"));
+	    throwNegativeTimeStepException(Name<Behaviour<N,UMATReal,false> >::getName());
 	  }
 	  behaviour.checkBounds();
 	  if(!this->behaviour.integrate()){
-	    throw(UMATException("behaviour intregration failed"));
+	    throwBehaviourIntegrationFailedException(Name<Behaviour<N,UMATReal,false> >::getName());
 	  }
 	  behaviour.checkBounds();
 	  this->behaviour.UMATexportStateData(STRESS,STATEV);
 	} // end of Integrator::exe
-
+	
       private:
 	typedef Behaviour<N,UMATReal,false> BV;
 	BV behaviour;
@@ -639,7 +736,7 @@ namespace umat{
       }; // end of struct Integrator
 
       TFEL_UMAT_INLINE2 static void
-      checkNPROPS(const UMATInt NPROPS)
+	checkNPROPS(const UMATInt NPROPS)
       {
 	using namespace std;
 	using namespace tfel::utilities;
@@ -652,19 +749,15 @@ namespace umat{
 	const bool is_defined_       = Traits::is_defined;
 	//Test if the nb of properties matches Behaviour requirements
 	if((NPROPS!=NPROPS_)&&is_defined_){
-	  string msg = Name<Behaviour<N,UMATReal,false> >::getName();
-	  msg += " : number of material properties does not match (";
-	  msg += tfel::utilities::ToString(NPROPS_);
-	  msg += " required and ";
-	  msg += tfel::utilities::ToString(NPROPS);
-	  msg += " given)";
-	  throw(UMATException(msg));
+	  throwUnMatchedNumberOfMaterialProperties(Name<Behaviour<N,UMATReal,false> >::getName(),
+						   NPROPS_,NPROPS);
 	}
       } // end of checkNPROPS
       
       TFEL_UMAT_INLINE2 static void
-      checkNSTATV(const UMATInt NSTATV)
+	checkNSTATV(const UMATInt NSTATV)
       {
+	using namespace tfel::utilities;
 	typedef Behaviour<N,UMATReal,false> BV;
 	typedef tfel::material::MechanicalBehaviourTraits<BV> Traits;
 	const unsigned short nstatv  = Traits::internal_variables_nb;
@@ -672,224 +765,218 @@ namespace umat{
 	const bool is_defined_       = Traits::is_defined;
 	//Test if the nb of state variables matches Behaviour requirements
 	if((NSTATV_!=NSTATV)&&is_defined_){
-	  std::string msg = tfel::utilities::Name<Behaviour<N,UMATReal,false> >::getName();
-	  msg += " : nb of internal state variables does not match (";
-	  msg += tfel::utilities::ToString(NSTATV_);
-	  msg += " required and ";
-	  msg += tfel::utilities::ToString(NSTATV);
-	  msg += " given)";
-	  throw(UMATException(msg));
-	}	  
+	  throwUnMatchedNumberOfStateVariables(Name<Behaviour<N,UMATReal,false> >::getName(),
+					       NSTATV_,NSTATV);
+	}
       } // end of checkNSTATV
-
+      
     }; // end of struct TreatBehaviour
-
+    
     struct TFEL_VISIBILITY_LOCAL TreatOrthotropicBehaviour1D
       : private TreatBehaviour<1u>
-    {
-      TFEL_UMAT_INLINE2 static 
-      void exe(const UMATReal *const DTIME,
-	       const UMATReal *const,
-	       const UMATReal *const DDSOE,
-	       const UMATReal *const STRAN ,
-	       const UMATReal *const DSTRAN,
-	       const UMATReal *const TEMP  ,
-	       const UMATReal *const DTEMP,
-	       const UMATReal *const PROPS ,
-	       const UMATInt  *const NPROPS,
-	       const UMATReal *const PREDEF,
-	       const UMATReal *const DPRED,
-	       UMATReal *const STATEV,
-	       const UMATInt  *const NSTATV,
-	       UMATReal *const STRESS,
-	       const UMATInt  *const NDI)
       {
-	using namespace tfel::meta;
-	using namespace tfel::material;
-	using namespace tfel::math;
-	typedef MechanicalBehaviourTraits<Behaviour<1u,UMATReal,false> > MTraits;
-	typedef UMATTraits<Behaviour<1u,UMATReal,false> > Traits;
-	typedef TreatBehaviour<1u> TreatBehaviour;
-	const bool is_defined_ = MTraits::is_defined;
-	const bool bs = Traits::requiresStiffnessTensor;
-	const bool ba = Traits::requiresThermalExpansionTensor;
-	typedef typename IF<
-	  is_defined_,
-	  typename IF<
-	  Traits::useTimeSubStepping,
-	  typename TreatBehaviour::template IntegratorWithTimeStepping<bs,ba>,
-	  typename TreatBehaviour::template Integrator<bs,ba>
-	  >::type,
-	  typename TreatBehaviour::Error>::type Handler;
-	TreatBehaviour::checkNPROPS(*NPROPS);
-	TreatBehaviour::checkNSTATV(*NSTATV);
-	Handler handler(DTIME,DDSOE,STRAN,
-			DSTRAN,TEMP,DTEMP,PROPS,
-			PREDEF,DPRED,STATEV,
-			STRESS,NDI);
-	handler.exe(STRESS,STATEV);
-      } // end of TreatOrthotropicBehaviour1D::exe
-    }; // end of struct TreatOrthotropicBehaviour1D
+	TFEL_UMAT_INLINE2 static 
+	  void exe(const UMATReal *const DTIME,
+		   const UMATReal *const,
+		   const UMATReal *const DDSOE,
+		   const UMATReal *const STRAN ,
+		   const UMATReal *const DSTRAN,
+		   const UMATReal *const TEMP  ,
+		   const UMATReal *const DTEMP,
+		   const UMATReal *const PROPS ,
+		   const UMATInt  *const NPROPS,
+		   const UMATReal *const PREDEF,
+		   const UMATReal *const DPRED,
+		   UMATReal *const STATEV,
+		   const UMATInt  *const NSTATV,
+		   UMATReal *const STRESS,
+		   const UMATInt  *const NDI)
+	{
+	  using namespace tfel::meta;
+	  using namespace tfel::material;
+	  using namespace tfel::math;
+	  typedef MechanicalBehaviourTraits<Behaviour<1u,UMATReal,false> > MTraits;
+	  typedef UMATTraits<Behaviour<1u,UMATReal,false> > Traits;
+	  typedef TreatBehaviour<1u> TreatBehaviour;
+	  const bool is_defined_ = MTraits::is_defined;
+	  const bool bs = Traits::requiresStiffnessTensor;
+	  const bool ba = Traits::requiresThermalExpansionTensor;
+	  typedef typename IF<
+	    is_defined_,
+	    typename IF<
+	      Traits::useTimeSubStepping,
+	      typename TreatBehaviour::template IntegratorWithTimeStepping<bs,ba>,
+	      typename TreatBehaviour::template Integrator<bs,ba>
+	      >::type,
+	    typename TreatBehaviour::Error>::type Handler;
+	  TreatBehaviour::checkNPROPS(*NPROPS);
+	  TreatBehaviour::checkNSTATV(*NSTATV);
+	  Handler handler(DTIME,DDSOE,STRAN,
+			  DSTRAN,TEMP,DTEMP,PROPS,
+			  PREDEF,DPRED,STATEV,
+			  STRESS,NDI);
+	  handler.exe(STRESS,STATEV);
+	} // end of TreatOrthotropicBehaviour1D::exe
+      }; // end of struct TreatOrthotropicBehaviour1D
 
     struct TFEL_VISIBILITY_LOCAL TreatOrthotropicBehaviour2D
       : private TreatBehaviour<2u>
-    {
-      TFEL_UMAT_INLINE2 static 
-      void exe(const UMATReal *const DTIME ,
-	       const UMATReal *const DROT  ,
-	       const UMATReal *const DDSOE,
-	       const UMATReal *const STRAN ,
-	       const UMATReal *const DSTRAN,
-	       const UMATReal *const TEMP  ,
-	       const UMATReal *const DTEMP,
-	       const UMATReal *const PROPS ,
-	       const UMATInt  *const NPROPS,
-	       const UMATReal *const PREDEF,
-	       const UMATReal *const DPRED,
-	       UMATReal *const STATEV,
-	       const UMATInt  *const NSTATV,
-	       UMATReal *const STRESS,
-	       const UMATInt  *const NDI) 
       {
-	using namespace tfel::meta;
-	using namespace tfel::material;
-	using namespace tfel::math;
-	typedef MechanicalBehaviourTraits<Behaviour<2u,UMATReal,false> > MTraits;
-	typedef UMATTraits<Behaviour<2u,UMATReal,false> > Traits;
-	typedef TreatBehaviour<2u> TreatBehaviour;
-	const bool is_defined_ = MTraits::is_defined;
-	const bool bs = Traits::requiresStiffnessTensor;
-	const bool ba = Traits::requiresThermalExpansionTensor;
-	typedef typename IF<
-	  is_defined_,
-	  typename IF<
-	  Traits::useTimeSubStepping,
-	  typename TreatBehaviour::template IntegratorWithTimeStepping<bs,ba>,
-	  typename TreatBehaviour::template Integrator<bs,ba>
-	  >::type,
-	  typename TreatBehaviour::Error>::type Handler;
-	UMATReal s[4];
-	UMATReal e[4];
-	UMATReal de[4];
-	UMATRotationMatrix2D m(PROPS+7,DROT);
-	m.rotateStressesForward(STRESS,s);
-	m.rotateStrainsForward(STRAN,e);
-	m.rotateStrainsForward(DSTRAN,de);
-	TreatBehaviour::checkNPROPS(*NPROPS);
-	TreatBehaviour::checkNSTATV(*NSTATV);
-	Handler handler(DTIME,DDSOE,
-			e,de,TEMP,DTEMP,PROPS,
-			PREDEF,DPRED,STATEV,s,NDI);
-	handler.exe(s,STATEV);
-	m.rotateStressesBackward(s,STRESS);
-      } // end of TreatOrthotropicBehaviour2D::exe
-    }; // end of TreatOrthotropicBehaviour2D
+	TFEL_UMAT_INLINE2 static 
+	  void exe(const UMATReal *const DTIME ,
+		   const UMATReal *const DROT  ,
+		   const UMATReal *const DDSOE,
+		   const UMATReal *const STRAN ,
+		   const UMATReal *const DSTRAN,
+		   const UMATReal *const TEMP  ,
+		   const UMATReal *const DTEMP,
+		   const UMATReal *const PROPS ,
+		   const UMATInt  *const NPROPS,
+		   const UMATReal *const PREDEF,
+		   const UMATReal *const DPRED,
+		   UMATReal *const STATEV,
+		   const UMATInt  *const NSTATV,
+		   UMATReal *const STRESS,
+		   const UMATInt  *const NDI) 
+	{
+	  using namespace tfel::meta;
+	  using namespace tfel::material;
+	  using namespace tfel::math;
+	  typedef MechanicalBehaviourTraits<Behaviour<2u,UMATReal,false> > MTraits;
+	  typedef UMATTraits<Behaviour<2u,UMATReal,false> > Traits;
+	  typedef TreatBehaviour<2u> TreatBehaviour;
+	  const bool is_defined_ = MTraits::is_defined;
+	  const bool bs = Traits::requiresStiffnessTensor;
+	  const bool ba = Traits::requiresThermalExpansionTensor;
+	  typedef typename IF<
+	    is_defined_,
+	    typename IF<
+	      Traits::useTimeSubStepping,
+	      typename TreatBehaviour::template IntegratorWithTimeStepping<bs,ba>,
+	      typename TreatBehaviour::template Integrator<bs,ba>
+	      >::type,
+	    typename TreatBehaviour::Error>::type Handler;
+	  UMATReal s[4];
+	  UMATReal e[4];
+	  UMATReal de[4];
+	  UMATRotationMatrix2D m(PROPS+7,DROT);
+	  m.rotateStressesForward(STRESS,s);
+	  m.rotateStrainsForward(STRAN,e);
+	  m.rotateStrainsForward(DSTRAN,de);
+	  TreatBehaviour::checkNPROPS(*NPROPS);
+	  TreatBehaviour::checkNSTATV(*NSTATV);
+	  Handler handler(DTIME,DDSOE,
+			  e,de,TEMP,DTEMP,PROPS,
+			  PREDEF,DPRED,STATEV,s,NDI);
+	  handler.exe(s,STATEV);
+	  m.rotateStressesBackward(s,STRESS);
+	} // end of TreatOrthotropicBehaviour2D::exe
+      }; // end of TreatOrthotropicBehaviour2D
 
     struct TFEL_VISIBILITY_LOCAL TreatOrthotropicBehaviour3D
       : private TreatBehaviour<3u>
-    {
-      TFEL_UMAT_INLINE2 static 
-      void exe(const UMATReal *const DTIME,
-	       const UMATReal *const DROT,
-	       const UMATReal *const DDSOE,
-	       const UMATReal *const STRAN,
-	       const UMATReal *const DSTRAN,
-	       const UMATReal *const TEMP  ,
-	       const UMATReal *const DTEMP,
-	       const UMATReal *const PROPS ,
-	       const UMATInt  *const NPROPS,
-	       const UMATReal *const PREDEF,
-	       const UMATReal *const DPRED,
-	       UMATReal *const STATEV,
-	       const UMATInt  *const NSTATV,
-	       UMATReal *const STRESS,
-	       const UMATInt  *const NDI) 
       {
-	using namespace tfel::meta;
-	using namespace tfel::material;
-	using namespace tfel::math;
-	typedef MechanicalBehaviourTraits<Behaviour<3u,UMATReal,false> > MTraits;
-	typedef UMATTraits<Behaviour<3u,UMATReal,false> > Traits;
-	typedef TreatBehaviour<3u> TreatBehaviour;
-	const bool is_defined_ = MTraits::is_defined;
-	const bool bs = Traits::requiresStiffnessTensor;
-	const bool ba = Traits::requiresThermalExpansionTensor;
-	typedef typename IF<
-	  is_defined_,
-	  typename IF<
-	  Traits::useTimeSubStepping,
-	  typename TreatBehaviour::template IntegratorWithTimeStepping<bs,ba>,
-	  typename TreatBehaviour::template Integrator<bs,ba>
-	  >::type,
-	  typename TreatBehaviour::Error>::type Handler;
-	UMATReal  s[6];
-	UMATReal  e[6];
-	UMATReal de[6];
-	// Passage au repère matériau
-	UMATRotationMatrix3D m(PROPS+9,DROT);
-	m.rotateStressesForward(STRESS,s);
-	m.rotateStrainsForward(STRAN,e);
-	m.rotateStrainsForward(DSTRAN,de);
-	using namespace std;
-	TreatBehaviour::checkNPROPS(*NPROPS);
-	TreatBehaviour::checkNSTATV(*NSTATV);
-	Handler handler(DTIME,DDSOE,e,
-			de,TEMP,DTEMP,PROPS,
-			PREDEF,DPRED,STATEV,s,NDI);
-	handler.exe(s,STATEV);
-	m.rotateStressesBackward(s,STRESS);
-      } // end of TreatOrthotropicBehaviour3D::exe
-
-    }; // end of struct TreatOrthotropicBehaviour3D
+	TFEL_UMAT_INLINE2 static 
+	  void exe(const UMATReal *const DTIME,
+		   const UMATReal *const DROT,
+		   const UMATReal *const DDSOE,
+		   const UMATReal *const STRAN,
+		   const UMATReal *const DSTRAN,
+		   const UMATReal *const TEMP  ,
+		   const UMATReal *const DTEMP,
+		   const UMATReal *const PROPS ,
+		   const UMATInt  *const NPROPS,
+		   const UMATReal *const PREDEF,
+		   const UMATReal *const DPRED,
+		   UMATReal *const STATEV,
+		   const UMATInt  *const NSTATV,
+		   UMATReal *const STRESS,
+		   const UMATInt  *const NDI) 
+	{
+	  using namespace tfel::meta;
+	  using namespace tfel::material;
+	  using namespace tfel::math;
+	  typedef MechanicalBehaviourTraits<Behaviour<3u,UMATReal,false> > MTraits;
+	  typedef UMATTraits<Behaviour<3u,UMATReal,false> > Traits;
+	  typedef TreatBehaviour<3u> TreatBehaviour;
+	  const bool is_defined_ = MTraits::is_defined;
+	  const bool bs = Traits::requiresStiffnessTensor;
+	  const bool ba = Traits::requiresThermalExpansionTensor;
+	  typedef typename IF<
+	    is_defined_,
+	    typename IF<
+	    Traits::useTimeSubStepping,
+	    typename TreatBehaviour::template IntegratorWithTimeStepping<bs,ba>,
+	    typename TreatBehaviour::template Integrator<bs,ba>
+	    >::type,
+	    typename TreatBehaviour::Error>::type Handler;
+	  UMATReal  s[6];
+	  UMATReal  e[6];
+	  UMATReal de[6];
+	  // Passage au repère matériau
+	  UMATRotationMatrix3D m(PROPS+9,DROT);
+	  m.rotateStressesForward(STRESS,s);
+	  m.rotateStrainsForward(STRAN,e);
+	  m.rotateStrainsForward(DSTRAN,de);
+	  TreatBehaviour::checkNPROPS(*NPROPS);
+	  TreatBehaviour::checkNSTATV(*NSTATV);
+	  Handler handler(DTIME,DDSOE,e,
+			  de,TEMP,DTEMP,PROPS,
+			  PREDEF,DPRED,STATEV,s,NDI);
+	  handler.exe(s,STATEV);
+	  m.rotateStressesBackward(s,STRESS);
+	} // end of TreatOrthotropicBehaviour3D::exe
+	
+      }; // end of struct TreatOrthotropicBehaviour3D
 
     template<unsigned short N>
-    struct TFEL_VISIBILITY_LOCAL TreatIsotropicBehaviour
-      : public TreatBehaviour<N>
-    {
-      TFEL_UMAT_INLINE static
-      void exe(const UMATReal *const DTIME ,
-	       const UMATReal *const,
-	       const UMATReal *const DDSOE,
-	       const UMATReal *const STRAN ,
-	       const UMATReal *const DSTRAN,
-	       const UMATReal *const TEMP  ,
-	       const UMATReal *const DTEMP,
-	       const UMATReal *const PROPS ,
-	       const UMATInt  *const NPROPS,
-	       const UMATReal *const PREDEF,
-	       const UMATReal *const DPRED,
-	       UMATReal *const STATEV,
-	       const UMATInt  *const NSTATV,
-	       UMATReal *const STRESS,
-	       const UMATInt  *const NDI) 
+      struct TFEL_VISIBILITY_LOCAL TreatIsotropicBehaviour
+	: public TreatBehaviour<N>
       {
-	using namespace tfel::meta;
-	using namespace tfel::material;
-	typedef MechanicalBehaviourTraits<Behaviour<N,UMATReal,false> > MTraits;
-	typedef UMATTraits<Behaviour<N,UMATReal,false> > Traits;
-	typedef TreatBehaviour<N> TreatBehaviour;
-	const bool is_defined_ = MTraits::is_defined;
-	const bool bs = Traits::requiresStiffnessTensor;
-	const bool ba = Traits::requiresThermalExpansionTensor;
-	typedef typename IF<
-	  is_defined_,
-	  typename IF<
-	  Traits::useTimeSubStepping,
-	  typename TreatBehaviour::template IntegratorWithTimeStepping<bs,ba>,
-	  typename TreatBehaviour::template Integrator<bs,ba>
-	  >::type,
-	  typename TreatBehaviour::Error>::type Handler;
-	TreatBehaviour::checkNPROPS(*NPROPS);
-	TreatBehaviour::checkNSTATV(*NSTATV);
-	Handler handler(DTIME,DDSOE,STRAN,
-			DSTRAN,TEMP,DTEMP,PROPS,
-			PREDEF,DPRED,STATEV,STRESS,
-			NDI);
-	handler.exe(STRESS,STATEV);
-      } // end of TreatIsotropicBehaviour::exe
-
-    }; // end of struct TreatIsotropicBehaviour
-
+	TFEL_UMAT_INLINE static
+	  void exe(const UMATReal *const DTIME ,
+		   const UMATReal *const,
+		   const UMATReal *const DDSOE,
+		   const UMATReal *const STRAN ,
+		   const UMATReal *const DSTRAN,
+		   const UMATReal *const TEMP  ,
+		   const UMATReal *const DTEMP,
+		   const UMATReal *const PROPS ,
+		   const UMATInt  *const NPROPS,
+		   const UMATReal *const PREDEF,
+		   const UMATReal *const DPRED,
+		   UMATReal *const STATEV,
+		   const UMATInt  *const NSTATV,
+		   UMATReal *const STRESS,
+		   const UMATInt  *const NDI) 
+	{
+	  using namespace tfel::meta;
+	  using namespace tfel::material;
+	  typedef MechanicalBehaviourTraits<Behaviour<N,UMATReal,false> > MTraits;
+	  typedef UMATTraits<Behaviour<N,UMATReal,false> > Traits;
+	  typedef TreatBehaviour<N> TreatBehaviour;
+	  const bool is_defined_ = MTraits::is_defined;
+	  const bool bs = Traits::requiresStiffnessTensor;
+	  const bool ba = Traits::requiresThermalExpansionTensor;
+	  typedef typename IF<
+	    is_defined_,
+	    typename IF<
+	      Traits::useTimeSubStepping,
+	      typename TreatBehaviour::template IntegratorWithTimeStepping<bs,ba>,
+	      typename TreatBehaviour::template Integrator<bs,ba>
+	      >::type,
+	    typename TreatBehaviour::Error>::type Handler;
+	  TreatBehaviour::checkNPROPS(*NPROPS);
+	  TreatBehaviour::checkNSTATV(*NSTATV);
+	  Handler handler(DTIME,DDSOE,STRAN,
+			  DSTRAN,TEMP,DTEMP,PROPS,
+			  PREDEF,DPRED,STATEV,STRESS,
+			  NDI);
+	  handler.exe(STRESS,STATEV);
+	} // end of TreatIsotropicBehaviour::exe
+	
+      }; // end of struct TreatIsotropicBehaviour
+    
   }; // end of class UMATInterface
   
 } // end of namespace umat

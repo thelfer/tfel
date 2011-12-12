@@ -81,7 +81,8 @@ mfront_LDADD   = -L$(top_builddir)/src/System    -lTFELSystem    \
 
 if HAVE_CASTEM
 lib_LTLIBRARIES = libUMATInterface.la
-libUMATInterface_la_SOURCES = UMATComputeStiffnessTensor.cxx        \
+libUMATInterface_la_SOURCES = UMATInterfaceBase.cxx                 \
+			      UMATComputeStiffnessTensor.cxx        \
 			      UMATComputeThermalExpansionTensor.cxx \
 			      UMATRotationMatrix.cxx                \
 		              UMATOutOfBoundsPolicy.cxx             \
