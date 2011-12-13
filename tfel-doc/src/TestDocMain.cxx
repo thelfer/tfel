@@ -38,6 +38,35 @@ namespace tfel
 
   namespace utilities
   {
+
+    static std::string
+    replace_all(const std::string& c,
+		const char c1,
+		const char c2)
+    {
+      using namespace std;
+      string s(c);
+      string::size_type p  = 0u;
+      if(s.size()==0){
+	return "";
+      }
+      while((p=s.find(c1,p))!=string::npos){
+	s[p] = c2;
+	p+=1u;
+      }
+      return s;
+    } // end of replace_all
+
+    static std::string
+    getOutputDirectory(const std::string& f)
+    {
+      using namespace std;
+      string::size_type pos = f.rfind('/');
+      if(pos==string::npos){
+	return "";
+      }
+      return f.substr(0,pos);
+    } // end of getOutputDirectory
    
     static std::string
     getSectionHeaderTranslation(const std::string& s,
@@ -75,8 +104,11 @@ namespace tfel
     static void
     printLaTeXFile(std::ostream& log,
 		   const std::map<std::string,std::vector<TestDocumentation> >& tests,
+		   const std::string& d,
+		   const std::string& prefix,
 		   const std::string& l,
-		   bool fragment)
+		   const bool fragment,
+		   const bool split)
     {
       using namespace std;
       map<string,vector<TestDocumentation> >::const_iterator p;
@@ -111,13 +143,28 @@ namespace tfel
 	log << endl;
       }
       for(p=tests.begin();p!=tests.end();++p){
-	log << endl;
 	log << "\\clearpage" << endl;
 	log << "\\newpage" << endl;
-	log << "\\section{" << getSectionHeaderTranslation(p->first,l) << "}" << endl;
-	log << endl; 
-	for(p2=p->second.begin();p2!=p->second.end();++p2){
-	  p2->writeLaTexDescription(log,l);
+	if(split){
+	  const string& tf   = replace_all(p->first,' ','_')+".tex";
+	  const string& file = d+"/"+tf;
+	  ofstream f(file.c_str());
+	  if(!f){
+	    string msg("printLaTeXFile : can't open file '"+file+"'");
+	    throw(runtime_error(msg));
+	  }
+	  f << "\\section{" << getSectionHeaderTranslation(p->first,l) << "}" << endl;
+	  f << endl; 
+	  for(p2=p->second.begin();p2!=p->second.end();++p2){
+	    p2->writeLaTexDescription(f,prefix,l);
+	  }
+	  log << "\\input{" << tf << "}" << endl << endl;
+	} else {
+	  log << "\\section{" << getSectionHeaderTranslation(p->first,l) << "}" << endl;
+	  log << endl; 
+	  for(p2=p->second.begin();p2!=p->second.end();++p2){
+	    p2->writeLaTexDescription(log,prefix,l);
+	  }
 	}
       }
       if(!fragment){
@@ -155,7 +202,8 @@ namespace tfel
     TestDocMain::TestDocMain(const int argc,
 			     const char*const* argv)
       : ArgumentParserBase<TestDocMain>(argc,argv),
-	fragment(false)
+	fragment(false),
+	split(false)
     {
       using namespace std;
       using namespace tfel::utilities;
@@ -166,6 +214,7 @@ namespace tfel
 	cerr << this->getUsageDescription() << endl;
 	exit(EXIT_FAILURE);
       }
+      this->outputDirectory = getOutputDirectory(this->outputFile);
       this->output.open(this->outputFile.c_str());
       if(!this->output){
 	string msg("TestDocMain : can't open output file '");
@@ -216,6 +265,8 @@ namespace tfel
 				"specify output language (french,english)",true);
       this->registerNewCallBack("--fragment","-f",&TestDocMain::treatFragment,
 				"don't print TeX header",false);
+      this->registerNewCallBack("--split","-s",&TestDocMain::treatSplit,
+				"split outputs by categories",false);
       this->registerNewCallBack("--src",&TestDocMain::treatSrc,
 				"specify root of sources",true);
       this->registerNewCallBack("--log",&TestDocMain::treatLogFile,
@@ -224,15 +275,22 @@ namespace tfel
 				"specify a key file",true);
       this->registerNewCallBack("--categories",&TestDocMain::treatCategoryFile,
 				"specify a category file",true);
+      this->registerNewCallBack("--prefix",&TestDocMain::treatPrefix,
+				"specify the application installation directory",true);
       this->registerNewCallBack("--translations",&TestDocMain::treatTranslationFile,
 				"specify a translation file",true);
     } // end of TestDocMain::registerArgumentCallBacks
-
 
     void
     TestDocMain::treatFragment(void)
     {
       this->fragment=true;
+    }
+
+    void
+    TestDocMain::treatSplit(void)
+    {
+      this->split=true;
     }
 
     void
@@ -251,6 +309,23 @@ namespace tfel
 	throw(runtime_error(msg));
       }
     } // end of TestDocMain::treatLogFile
+
+    void
+    TestDocMain::treatPrefix(void)
+    {
+      using namespace std;
+      if(!this->prefix.empty()){
+	cerr << "TestDocMain : log file already specified" << endl;
+	cerr << this->getUsageDescription() << endl;
+	exit(EXIT_FAILURE);
+      }
+      this->prefix = this->currentArgument->getOption();
+      if(this->prefix.empty()){
+	string msg("TestDocMain::treatprefix : ");
+	msg += "no option given to the --prefix argument";
+	throw(runtime_error(msg));
+      }
+    } // end of TestDocMain::treatPrefix
 
     void
     TestDocMain::treatSrc(void)
@@ -336,6 +411,12 @@ namespace tfel
       map<string,vector<string> >::const_iterator p;
       vector<string>::const_iterator p2;
       map<string,vector<TestDocumentation> > tests;
+      string currentDirectory;
+
+      if(realpath(".",cpath)==0){
+	*(this->log) << "main : can't get real path of current directory, aborting\n";
+	exit(EXIT_FAILURE);
+      }
 
       if(!this->srcdir.empty()){
 	if(chdir(this->srcdir.c_str())==-1){
@@ -347,10 +428,6 @@ namespace tfel
       map<string,vector<string> > files;
       recursiveFind(files,".*\\.testdoc$",".");
 
-      if(realpath(".",cpath)==0){
-	*(this->log) << "main : can't get real path of current directory, aborting\n";
-	exit(EXIT_FAILURE);
-      }
       
       for(p=files.begin();p!=files.end();++p){
 	if(realpath(p->first.c_str(),path)==0){
@@ -372,7 +449,19 @@ namespace tfel
 	  }
 	}
       }
-      printLaTeXFile(this->output,tests,this->lang,this->fragment);
+
+      if(!this->srcdir.empty()){
+	if(chdir(cpath)==-1){
+	  *(this->log) << "can't move to directory " << cpath << endl;
+	  exit(EXIT_FAILURE);
+	}
+      }
+
+      printLaTeXFile(this->output,tests,
+		     this->outputDirectory,
+		     this->prefix,this->lang,
+		     this->fragment,this->split);
+
       map<string,vector<TestDocumentation> >::const_iterator p3;
       map<string,vector<TestDocumentation> >::size_type count = 0u;
       for(p3=tests.begin();p3!=tests.end();++p3){

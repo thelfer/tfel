@@ -19,8 +19,9 @@ namespace tfel{
 
     struct TestDocumentation
     {
-      void writeLaTexDescription(std::ostream& log,
-				 const std::string& l) const;
+      void writeLaTexDescription(std::ostream&,
+				 const std::string&, 
+				 const std::string&) const;
 
       std::string name;
       std::string date;

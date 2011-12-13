@@ -41,6 +41,8 @@ namespace tfel{
       std::string
       getUsageDescription(void) const;
 
+      void treatSplit(void);
+
       void treatFragment(void);
       
       void treatSrc(void);
@@ -48,6 +50,8 @@ namespace tfel{
       void treatLang(void);
 
       void treatLogFile(void);
+
+      void treatPrefix(void);
 
       void treatKeyFile(void);
 
@@ -59,15 +63,21 @@ namespace tfel{
 
       std::string srcdir;
 
+      std::string outputDirectory;
+
       std::string outputFile;
 
       std::string logFile;
+
+      std::string prefix;
 
       std::ofstream  output;
 
       std::ostream* log;
 
       bool fragment;
+
+      bool split;
 
       tfel::utilities::shared_ptr<std::ostream> logptr;
 

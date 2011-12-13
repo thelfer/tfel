@@ -58,6 +58,7 @@ namespace tfel{
 
     void
     TestDocumentation::writeLaTexDescription(std::ostream& log,
+					     const std::string& prefix,
 					     const std::string& l) const
     {
       using namespace std;
@@ -85,7 +86,13 @@ namespace tfel{
       }
       if(!this->install.empty()){
 	log << LaTeXConvertion::capitalize(getTranslation("path in install",l));
-	log << " &:& \\texttt{\\$\\{prefix\\}/" << toLaTeX(this->install) << "}\\\\"<< endl;
+	log << " &:& ";
+	if(prefix.empty()){
+	  log << "\\texttt{\\$\\{prefix\\}/" << toLaTeX(this->install) << "}\\\\"<< endl;
+	} else {
+	  log << "\\href{run:" << prefix << "/" << this->install 
+	      << "}{\\texttt{\\$\\{prefix\\}/" << toLaTeX(this->install) << "}}\\\\"<< endl;
+	}
       }
       log << "\\end{tabular}" << endl;
       log << "\\end{center}" << endl;
