@@ -27,7 +27,8 @@ namespace tfel
     {} // end of ExternalLibraryManager::ExternalLibraryManager
 
     void *
-    ExternalLibraryManager::loadLibrary(const std::string& name)
+    ExternalLibraryManager::loadLibrary(const std::string& name,
+					const bool b)
     {
       using namespace std;
       typedef map<string,void *>::value_type MVType;
@@ -37,13 +38,15 @@ namespace tfel
 	// this library has not been 
 	void * lib;
 	lib = ::dlopen(name.c_str(),RTLD_NOW);
-	if(lib==0){
+	if((lib==0)&&(!b)){
 	  string msg("ExternalLibraryManager::loadLibrary : library '");
 	  msg += name;
 	  msg += "' could not be loaded, (";
 	  msg += dlerror();
 	  msg += ")";
 	  throw(runtime_error(msg));
+	} else if((lib==0)&&(b)){
+	  return lib;
 	}
 	this->librairies.insert(MVType(name,lib));
 	return lib;
