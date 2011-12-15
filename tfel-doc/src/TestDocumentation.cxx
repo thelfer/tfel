@@ -138,7 +138,7 @@ namespace tfel{
 	vector<string>::const_iterator pm2;
 	if(models.size()==1){
 	  log << getTranslation("\\paragraph{Tested model} The model tested is ",l) << models.begin()->first 
-	      << getIndexCommand(models.begin()->first,"models");
+	      << getIndexCommand(models.begin()->first,"models") << "." << endl;
 	  for(pm2=models.begin()->second.begin();
 	      pm2!=models.begin()->second.end();++pm2){
 	    log << getIndexCommand(models.begin()->first,*pm2,"models") << endl;
