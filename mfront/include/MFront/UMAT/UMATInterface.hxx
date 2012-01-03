@@ -631,7 +631,7 @@ namespace umat{
 	  unsigned short iterations = 1u;
 	  bool convergence;
 	  if(this->dt<0.){
-	    throwNegativeTimeStepExceptionN(Name<Behaviour<N,UMATReal,false> >::getName());
+	    throwNegativeTimeStepException(Name<Behaviour<N,UMATReal,false> >::getName());
 	  }
 	  while((iterations!=0)&&
 		(subSteps!=UMATTraits<BV>::maximumSubStepping)){
