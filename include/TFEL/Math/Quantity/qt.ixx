@@ -208,19 +208,17 @@ namespace tfel{
       return os;
     }
 
+    template<typename Unit,typename Scal>
+    TFEL_MATH_INLINE
+    Scal
+    abs(const qt<Unit,Scal>& s)
+    {
+      return std::abs(s.getValue());
+    }
+
   } // end of namespace math
 
 } // end of namespace tfel
-
-namespace std{
-
-  template<typename unit,typename T>
-  TFEL_MATH_INLINE tfel::math::qt<unit,T> abs(const tfel::math::qt<unit,T> a)
-  {
-    return tfel::math::qt<unit,T>(std::abs(a.getValue()));
-  }
-
-}// end of namespace std
 
 #endif /* _LIB_TFEL_QT_I_ */
 

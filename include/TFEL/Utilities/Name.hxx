@@ -10,8 +10,6 @@
 
 #include<string>
 
-#include"TFEL/Config/TFELConfig.hxx"
-
 namespace tfel{
   
   namespace utilities{

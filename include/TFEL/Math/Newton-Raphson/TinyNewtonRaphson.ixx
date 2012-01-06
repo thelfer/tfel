@@ -61,7 +61,7 @@ namespace tfel{
 
     public:
 
-      static const std::string getName(void)
+      static std::string getName(void)
       {
 	return std::string("TinyNewtonRaphson<")+tfel::utilities::ToString(N)+std::string(",")+tfel::utilities::Name<F>::getName()+std::string(">");
       }
@@ -146,7 +146,7 @@ namespace tfel{
 
     public:
 
-      static const std::string getName(void)
+      static std::string getName(void)
       {
 	using namespace std;
 	using namespace tfel::utilities;

@@ -12,11 +12,10 @@
 #include <cassert>
 #include <iterator>
 
+#include"TFEL/TypeTraits/BaseType.hxx"
 #include"TFEL/FSAlgorithm/FSAlgorithm.hxx"
-#include"TFEL/Math/General/Complex.hxx"
 #include"TFEL/Math/General/BasicOperations.hxx"
 #include"TFEL/Math/General/DotProduct.hxx"
-#include"TFEL/Math/functions.hxx"
 #include"TFEL/Math/Vector/VectorUtilities.hxx"
 
 namespace tfel{

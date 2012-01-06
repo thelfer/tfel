@@ -19,7 +19,7 @@ namespace tfel{
     template<unsigned short N, typename T>
     struct StensorNullStorage{
 
-      static const std::string getName(void){
+      static std::string getName(void){
 	return std::string("StensorNullStorage<")+tfel::utilities::ToString(N)+std::string(",")+tfel::utilities::Name<T>::getName()+std::string(">");
       }
 

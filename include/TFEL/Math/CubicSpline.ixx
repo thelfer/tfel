@@ -10,6 +10,8 @@
 #include<limits>
 #include<algorithm>
 
+#include"TFEL/Math/General/Abs.hxx"
+
 namespace tfel
 {
 

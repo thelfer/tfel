@@ -8,8 +8,8 @@
 #ifndef _LIB_TFEL_THERMALCONDUCTIVITYMATRIXTYPE_H_
 #define _LIB_TFEL_THERMALCONDUCTIVITYMATRIXTYPE_H_ 
 
-#include"TFEL/Math/tmatrix.hxx"
-#include"TFEL/Math/qt.hxx"
+#include"TFEL/Math/Forward/qt.hxx"
+#include"TFEL/Math/Forward/tmatrix.hxx"
 
 namespace tfel{ 
  

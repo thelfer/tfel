@@ -18,7 +18,6 @@
 #include"TFEL/Metaprogramming/StaticAssert.hxx"
 #include"TFEL/Metaprogramming/Implements.hxx"
 #include"TFEL/TypeTraits/IsTemporary.hxx"
-#include"TFEL/TypeTraits/Promote.hxx"
 #include"TFEL/Math/General/ResultType.hxx"
 #include"TFEL/Math/General/BasicOperations.hxx"
 #include"TFEL/Math/General/RunTimeCheck.hxx"
@@ -57,7 +56,7 @@ namespace tfel{
 
       typedef typename ComputeBinaryResult<NumTypeA,NumTypeB,Op>::Handle NumType;
       
-      static const std::string getName(void){
+      static std::string getName(void){
 	using namespace std;
 	using namespace tfel::utilities;
 	return string("VectorVectorExpr<")+Name<A>::getName()+string(",")+Name<B>::getName()+string(",")+Name<Op>::getName()+string(">");

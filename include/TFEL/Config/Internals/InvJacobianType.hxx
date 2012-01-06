@@ -9,7 +9,8 @@
 #define _LIB_TFEL_INVJACOBIANTYPE_H_ 
 
 #include"TFEL/Math/tmatrix.hxx"
-#include"TFEL/Math/qt.hxx"
+#include"TFEL/Math/Forward/qt.hxx"
+#include"TFEL/Math/Quantity/Unit.hxx"
 
 namespace tfel{ 
  

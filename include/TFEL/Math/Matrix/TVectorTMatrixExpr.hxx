@@ -19,7 +19,6 @@
 #include"TFEL/Metaprogramming/StaticAssert.hxx"
 #include"TFEL/Metaprogramming/Implements.hxx"
 #include"TFEL/TypeTraits/IsTemporary.hxx"
-#include"TFEL/TypeTraits/Promote.hxx"
 #include"TFEL/FSAlgorithm/inner_product.hxx"
 #include"TFEL/Math/General/ResultType.hxx"
 #include"TFEL/Math/General/BasicOperations.hxx"
@@ -108,7 +107,7 @@ namespace tfel{
       typedef typename ComputeBinaryResult<NumTypeA,NumTypeB,OpMult>::Handle NumType;
       typedef EmptyRunTimeProperties RunTimeProperties;
 
-      static const std::string getName(void){
+      static std::string getName(void){
 	using namespace std;
 	using namespace tfel::utilities;
 	return string("TVectorTMatrixExpr<")+Name<A>::getName()+string(",")+

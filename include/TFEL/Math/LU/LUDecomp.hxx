@@ -13,6 +13,7 @@
 #include<algorithm>
 
 #include"TFEL/Config/TFELConfig.hxx"
+#include"TFEL/Math/General/Abs.hxx"
 #include"TFEL/Math/Matrix/MatrixConcept.hxx"
 #include"TFEL/Math/LU/Permutation.hxx"
 #include"TFEL/Math/LU/LUException.hxx"

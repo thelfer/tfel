@@ -9,6 +9,7 @@
 #ifndef _LIB_TFEL_TINYMATRIXSOLVE_I_
 #define _LIB_TFEL_TINYMATRIXSOLVE_I_ 
 
+#include"TFEL/Math/General/Abs.hxx"
 #include"TFEL/Math/LU/LUDecomp.hxx"
 #include"TFEL/Math/LU/TinyPermutation.hxx"
 

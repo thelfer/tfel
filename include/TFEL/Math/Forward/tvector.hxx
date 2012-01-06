@@ -14,7 +14,7 @@ namespace tfel
   namespace math
   {
 
-    /*!
+    /*
      * \class tvector.
      * \brief a class representing tiny vectors of fixed size.
      * \param unsigned short, the number of values hold by the

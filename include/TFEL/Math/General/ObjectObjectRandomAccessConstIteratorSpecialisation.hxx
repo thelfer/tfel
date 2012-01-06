@@ -41,7 +41,7 @@ namespace tfel{
        * return std::string, the name of the class.					    
        * see    Name.									    
        */										    
-      static const std::string getName(void){							    
+      static std::string getName(void){							    
 	using namespace std;								    
 	using namespace tfel::utilities;						    
 	return string("ObjectObjectRandomAccessConstIterator<")+Name<A>::getName()+string(",")+Name<B>::getName()+string(",")+Name<OpPlus>::getName()+string(">");        
@@ -168,7 +168,7 @@ namespace tfel{
        * return std::string, the name of the class.					    
        * see    Name.									    
        */										    
-      static const std::string getName(void){							    
+      static std::string getName(void){							    
 	using namespace std;								    
 	using namespace tfel::utilities;						    
 	return string("ObjectObjectRandomAccessConstIterator<")+Name<A>::getName()+string(",")+Name<B>::getName()+string(",")+Name<OpMinus>::getName()+string(">");        
@@ -295,7 +295,7 @@ namespace tfel{
        * return std::string, the name of the class.					    
        * see    Name.									    
        */										    
-      static const std::string getName(void){							    
+      static std::string getName(void){							    
 	using namespace std;								    
 	using namespace tfel::utilities;						    
 	return string("ObjectObjectRandomAccessConstIterator<")+Name<A>::getName()+string(",")+Name<B>::getName()+string(",")+Name<OpMult>::getName()+string(">");        
@@ -422,7 +422,7 @@ namespace tfel{
        * return std::string, the name of the class.					    
        * see    Name.									    
        */										    
-      static const std::string getName(void){							    
+      static std::string getName(void){							    
 	using namespace std;								    
 	using namespace tfel::utilities;						    
 	return string("ObjectObjectRandomAccessConstIterator<")+Name<A>::getName()+string(",")+Name<B>::getName()+string(",")+Name<OpDiv>::getName()+string(">");        

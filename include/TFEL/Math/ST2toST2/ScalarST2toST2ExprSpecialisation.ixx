@@ -34,7 +34,7 @@ namespace tfel{
       
       typedef typename ComputeBinaryResult<A,NumTypeB,OpMult>::Handle NumType;
 
-      static const std::string getName(void){
+      static std::string getName(void){
 	using namespace std;
 	using namespace tfel::utilities;
 	return string("ScalarST2toST2Expr<")+Name<A>::getName()+string(",")+Name<B>::getName()+string(",")+Name<OpMult>::getName()+string(">");
@@ -115,7 +115,7 @@ namespace tfel{
 
       typedef typename ComputeBinaryResult<NumTypeA,B,OpMult>::Handle NumType;
 
-      static const std::string getName(void){
+      static std::string getName(void){
 	using namespace std;
 	using namespace tfel::utilities;
 	return string("ST2toST2ScalarExpr<")+Name<A>::getName()+string(",")+Name<B>::getName()+string(",")+Name<OpMult>::getName()+string(">");
@@ -196,7 +196,7 @@ namespace tfel{
 
       typedef typename ComputeBinaryResult<NumTypeA,B,OpDiv>::Handle NumType;
 
-      static const std::string getName(void){
+      static std::string getName(void){
 	using namespace std;
 	using namespace tfel::utilities;
 	return string("ST2toST2ScalarExpr<")+Name<A>::getName()+string(",")

@@ -67,9 +67,12 @@ nobase_include_HEADERS= TFEL/Macros.hxx                                         
 			TFEL/TypeTraits/IsRandomAccessIterator.hxx	                              \
 			TFEL/Math/Discretization1D.hxx                                                \
 			TFEL/Math/Discretization1D.ixx                                                \
-			TFEL/Math/Forward/stensor.hxx                                                 \
+			TFEL/Math/Forward/qt.hxx                                                      \
+			TFEL/Math/Forward/Complex.hxx                                                 \
 			TFEL/Math/Forward/tvector.hxx                                                 \
 			TFEL/Math/Forward/tmatrix.hxx                                                 \
+			TFEL/Math/Forward/stensor.hxx                                                 \
+			TFEL/Math/Forward/st2tost2.hxx                                                \
 			TFEL/Math/Bindings/atlas.hxx                                                  \
 			TFEL/Math/Parser/BinaryFunction.hxx					      \
 			TFEL/Math/Parser/EvaluatorBase.hxx 					      \

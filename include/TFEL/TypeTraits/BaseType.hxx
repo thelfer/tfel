@@ -8,7 +8,7 @@
 #ifndef _LIB_TFEL_BASETYPE_H_
 #define _LIB_TFEL_BASETYPE_H_ 
 
-#include"TFEL/Math/General/Complex.hxx"
+#include"TFEL/Math/Forward/Complex.hxx"
 
 /*!
  * \def TFEL_MATH_BASETYPE

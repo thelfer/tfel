@@ -20,7 +20,7 @@ namespace tfel{
     struct TFEL_VISIBILITY_EXPORT MaterialException
       : public tfel::exception::TFELException 
     {
-      static const std::string 
+      static std::string 
       getName(void);
       
       MaterialException(const std::string& s);
@@ -29,7 +29,7 @@ namespace tfel{
     struct TFEL_VISIBILITY_EXPORT DivergenceException
       : public tfel::material::MaterialException
     {
-      static const std::string 
+      static std::string 
       getName(void);
       
       DivergenceException(const std::string& s);
@@ -38,7 +38,7 @@ namespace tfel{
     struct TFEL_VISIBILITY_EXPORT OutOfBoundsException
       : public tfel::material::MaterialException
     {
-      static const std::string 
+      static std::string 
       getName(void);
       
       OutOfBoundsException(const std::string& s);

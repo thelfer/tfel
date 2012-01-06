@@ -17,7 +17,7 @@ namespace tfel{
     template<int N1,int N2,int N3,int N4,int N5,int N6,int N7,
 	     unsigned int D1,unsigned int D2,unsigned int D3,
 	     unsigned int D4,unsigned int D5,unsigned int D6,unsigned int D7>
-    const std::string Unit<tfel::meta::Int2Type<N1>,
+    std::string Unit<tfel::meta::Int2Type<N1>,
 		     tfel::meta::Int2Type<N2>,
 		     tfel::meta::Int2Type<N3>,
 		     tfel::meta::Int2Type<N4>,

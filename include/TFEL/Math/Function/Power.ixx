@@ -8,11 +8,8 @@
 #ifndef _LIB_TFEL_POWER_I_
 #define _LIB_TFEL_POWER_I_ 
 
-// #include <string>
-
 #include"TFEL/Config/TFELConfig.hxx"
 #include"TFEL/Metaprogramming/IF.hxx"
-// #include"TFEL/Utilities/ToString.hxx"
 #include"TFEL/Math/Function/FunctionConcept.hxx"
 #include"TFEL/Math/Function/Cst.hxx"
 

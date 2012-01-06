@@ -14,18 +14,21 @@
 #include"TFEL/Math/General/UnaryResultType.hxx"
 #include"TFEL/Math/General/ComputeUnaryResult.hxx"
 #include"TFEL/Math/Function/FunctionConcept.hxx"
-#include"TFEL/Math/Function/Cst.hxx"
 
 namespace tfel{
 
   namespace math{
+
+    // forward declaration (see Cst.hxx)
+    template<short N,unsigned short D>
+    struct Cst;
 
     struct FctId;
 
     template<>
     struct FunctionTraits<FctId>
     {
-      typedef Cst<1> DerivateFunc;
+      typedef Cst<1,1> DerivateFunc;
     };
 
     struct TFEL_VISIBILITY_EXPORT FctId
@@ -74,7 +77,7 @@ namespace tfel{
     };
 
     TFEL_VISIBILITY_EXPORT
-    Cst<1>
+    Cst<1,1>
     derivate(const FctId);
 
     namespace stdfunctions{

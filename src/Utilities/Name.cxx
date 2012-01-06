@@ -6,6 +6,7 @@
  */
 
 #include"TFEL/Utilities/Name.hxx"
+#include"TFEL/Math/General/Complex.hxx"
 
 /*!
  * \def    TFEL_UTILITIES_NAME

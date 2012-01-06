@@ -13,11 +13,11 @@
 #include"TFEL/Metaprogramming/EnableIf.hxx"
 #include"TFEL/Metaprogramming/InvalidType.hxx"
 #include"TFEL/TypeTraits/IsInvalid.hxx"
+#include"TFEL/Math/qt.hxx"
 #include"TFEL/Math/General/Complex.hxx"
 #include"TFEL/Math/General/ComputeUnaryResult.hxx"
 #include"TFEL/Math/General/UnaryResultType.hxx"
 #include"TFEL/Math/Function/FunctionConcept.hxx"
-#include"TFEL/Math/qt.hxx"
 
 namespace tfel{
 

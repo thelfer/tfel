@@ -31,7 +31,7 @@ int main(void){
   assert(b>=a);
   assert(b!=a);
   assert(!(b==a));
-  assert((abs(a)==qt<Mass,int>(12)));
+  assert(abs(a)==12);
 
   return EXIT_SUCCESS;
 }

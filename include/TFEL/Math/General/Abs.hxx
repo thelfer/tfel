@@ -13,7 +13,6 @@
 #include"TFEL/Config/TFELConfig.hxx"
 #include"TFEL/Metaprogramming/EnableIf.hxx"
 #include"TFEL/TypeTraits/IsFundamentalNumericType.hxx"
-#include"TFEL/Math/qt.hxx"
 #include"TFEL/Math/stensor.hxx"
 
 namespace tfel{
@@ -29,14 +28,6 @@ namespace tfel{
     abs(const Scal& s)
     {
       return std::abs(s);
-    }
-
-    template<typename Unit,typename Scal>
-    TFEL_MATH_INLINE
-    Scal
-    abs(const qt<Unit,Scal>& s)
-    {
-      return std::abs(s.getValue());
     }
 
     namespace internals{

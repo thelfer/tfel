@@ -7,6 +7,7 @@
  */
 
 #include"TFEL/Math/Function/Id.hxx"
+#include"TFEL/Math/Function/Cst.hxx"
 
 namespace tfel{
 
@@ -18,10 +19,10 @@ namespace tfel{
       return "FctId";
     }
 
-    Cst<1>
+    Cst<1,1>
     derivate(const FctId)
     {
-      return Cst<1>();
+      return Cst<1,1>();
     }
 
   } // end of namespace tfel

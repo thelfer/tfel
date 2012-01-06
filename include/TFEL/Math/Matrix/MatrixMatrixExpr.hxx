@@ -24,7 +24,6 @@
 #include"TFEL/Math/General/BasicOperations.hxx"
 #include"TFEL/Math/General/ObjectObjectRandomAccessConstIterator.hxx"
 #include"TFEL/Math/Matrix/MatrixConcept.hxx"
-#include"TFEL/TypeTraits/Promote.hxx"
 
 namespace tfel{
 
@@ -60,7 +59,7 @@ namespace tfel{
 
       typedef typename ComputeBinaryResult<NumTypeA,NumTypeB,Op>::Handle NumType;
 
-      static const std::string getName(void){
+      static std::string getName(void){
 	using namespace std;
 	using namespace tfel::utilities;
 	return string("MatrixMatrixExpr<")+Name<A>::getName()+string(",")+Name<B>::getName()+string(",")+Name<Op>::getName()+string(">");

@@ -10,7 +10,7 @@
 #define _LIB_TFEL_REALPARTTYPE_H_ 
 
 #include"TFEL/Metaprogramming/InvalidType.hxx"
-#include"TFEL/Math/General/Complex.hxx"
+#include"TFEL/Math/Forward/Complex.hxx"
 
 /*!
  * \def    TFEL_TYPETRAITS_REALPARTTYPE

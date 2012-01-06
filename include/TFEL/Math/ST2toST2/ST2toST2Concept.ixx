@@ -1,7 +1,6 @@
 #ifndef _ST2TOST2_CONCEPT_IMPL_
 #define _ST2TOST2_CONCEPT_IMPL_ 1
 
-#include"TFEL/Math/functions.hxx"
 #include"TFEL/Math/Stensor/StensorSizeToDime.hxx"
 
 namespace tfel{

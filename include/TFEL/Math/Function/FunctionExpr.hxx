@@ -33,7 +33,7 @@ namespace tfel{
 
     public:
 
-      static const std::string getName(void){
+      static std::string getName(void){
 	using namespace std;
 	using namespace tfel::utilities;
 	return string("FunctionExpr<")+Name<Expr>::getName()+string(">");

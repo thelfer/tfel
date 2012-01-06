@@ -44,7 +44,7 @@ namespace tfel{
 
       typedef typename ComputeBinaryResult<NumTypeA,NumTypeB,OpPlus>::Handle NumType;
 
-      static const std::string getName(void){
+      static std::string getName(void){
 	using namespace std;
 	using namespace tfel::utilities;
 	return string("ArrayArrayExpr<")+Name<A>::getName()+string(",")+Name<B>::getName()+string(",")+Name<OpPlus>::getName()+string(">");
@@ -164,7 +164,7 @@ namespace tfel{
 
       typedef typename ComputeBinaryResult<NumTypeA,NumTypeB,OpMinus>::Handle NumType;
 
-      static const std::string getName(void){
+      static std::string getName(void){
 	using namespace std;
 	using namespace tfel::utilities;
 	return string("ArrayArrayExpr<")+Name<A>::getName()+string(",")+Name<B>::getName()+string(",")+Name<OpMinus>::getName()+string(">");
@@ -284,7 +284,7 @@ namespace tfel{
 
       typedef typename ComputeBinaryResult<NumTypeA,NumTypeB,OpMult>::Handle NumType;
 
-      static const std::string getName(void){
+      static std::string getName(void){
 	using namespace std;
 	using namespace tfel::utilities;
 	return string("ArrayArrayExpr<")+Name<A>::getName()+string(",")+Name<B>::getName()+string(",")+Name<OpMult>::getName()+string(">");
@@ -404,7 +404,7 @@ namespace tfel{
 
       typedef typename ComputeBinaryResult<NumTypeA,NumTypeB,OpDiv>::Handle NumType;
 
-      static const std::string getName(void){
+      static std::string getName(void){
 	using namespace std;
 	using namespace tfel::utilities;
 	return string("ArrayArrayExpr<")+Name<A>::getName()+string(",")+Name<B>::getName()+string(",")+Name<OpDiv>::getName()+string(">");

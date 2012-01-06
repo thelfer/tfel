@@ -36,7 +36,7 @@ namespace tfel{
 	public ArrayRefCountedStorage<T>
     {
 
-      static const std::string getName(void){
+      static std::string getName(void){
 	return "ArrayRowMajorStorage<1u,T>";
       }
 
@@ -285,7 +285,7 @@ namespace tfel{
 	public ArrayRefCountedStorage<T>
     {
 
-      static const std::string getName(void){
+      static std::string getName(void){
 	return "ArrayRowMajorStorage<2u,T>";
       }
 
@@ -559,7 +559,7 @@ namespace tfel{
 	public ArrayRefCountedStorage<T>
     {
 
-      static const std::string getName(void){
+      static std::string getName(void){
 	return "ArrayRowMajorStorage<3u,T>";
       }
 

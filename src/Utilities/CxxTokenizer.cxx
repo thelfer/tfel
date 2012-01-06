@@ -258,7 +258,7 @@ namespace tfel{
       }
     }
 
-    const std::string
+    std::string
     CxxTokenizer::readNumber(std::string::const_iterator& p,
 			     const std::string::const_iterator  pe)
     {

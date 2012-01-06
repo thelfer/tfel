@@ -43,7 +43,7 @@ namespace tfel{
 
       typedef typename ComputeBinaryResult<NumTypeA,NumTypeB,OpPlus>::Handle NumType;
 
-      static const std::string getName(void){
+      static std::string getName(void){
 	using namespace std;
 	using namespace tfel::utilities;
 	return string("StensorStensorExpr<")+Name<A>::getName()
@@ -130,7 +130,7 @@ namespace tfel{
 
       typedef typename ComputeBinaryResult<NumTypeA,NumTypeB,OpMinus>::Handle NumType;
 
-      static const std::string getName(void){
+      static std::string getName(void){
 	using namespace std;
 	using namespace tfel::utilities;
 	return string("StensorStensorExpr<")+Name<A>::getName()+string(",")

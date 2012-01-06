@@ -11,7 +11,6 @@
 #include"TFEL/TypeTraits/IsComplex.hxx"
 #include"TFEL/TypeTraits/IsUnaryOperator.hxx"
 #include"TFEL/TypeTraits/Promote.hxx"
-#include"TFEL/Math/General/Complex.hxx"
 #include"TFEL/Math/General/ComputeBinaryResult.hxx"
 #include"TFEL/Math/General/ComputeUnaryResult.hxx"
 
@@ -74,9 +73,38 @@
       typedef tfel::typetraits::Promote<Complex<X>,Complex<short> >::type type;     \
     }                                                      
 
+#define TFEL_MATH_RESULT_TYPE_COMPLEX_(X,Y)                           \
+    template<>                                                        \
+    struct ResultType<X,Y,OpPlus>{                                    \
+      typedef tfel::typetraits::Promote<X,Y>::type   type;            \
+    };                                                                \
+                                                                      \
+    template<>                                                        \
+    struct ResultType<X,Y,OpMinus>{                                   \
+      typedef tfel::typetraits::Promote<X,Y>::type   type;            \
+    };                                                                \
+                                                                      \
+    template<>                                                        \
+    struct ResultType<X,Y,OpMult>{                                    \
+      typedef tfel::typetraits::Promote<X,Y>::type type;              \
+    };                                                                \
+                                                                      \
+    template<>                                                        \
+    struct ResultType<X,Y,OpDiv>{                                     \
+      typedef tfel::typetraits::Promote<X,Y>::type type;              \
+    }
+
+#define TFEL_MATH_RESULT_TYPE_COMPLEX(X)                              \
+    TFEL_MATH_RESULT_TYPE_(X,Complex<X>);                             \
+    TFEL_MATH_RESULT_TYPE_(Complex<X>,X);                             \
+    TFEL_MATH_RESULT_TYPE_(Complex<X>,Complex<X>)      
+
 namespace tfel{
   
   namespace math {
+
+    template<typename ValueType>
+    struct Complex;
 
     struct TFEL_VISIBILITY_EXPORT OpPlus {
 
@@ -237,32 +265,6 @@ namespace tfel{
     TFEL_MATH_RESULT_TYPE(float);
     TFEL_MATH_RESULT_TYPE(double);
     TFEL_MATH_RESULT_TYPE(long double);
-
-#define TFEL_MATH_RESULT_TYPE_COMPLEX_(X,Y)                           \
-    template<>                                                        \
-    struct ResultType<X,Y,OpPlus>{                                    \
-      typedef tfel::typetraits::Promote<X,Y>::type   type;            \
-    };                                                                \
-                                                                      \
-    template<>                                                        \
-    struct ResultType<X,Y,OpMinus>{                                   \
-      typedef tfel::typetraits::Promote<X,Y>::type   type;            \
-    };                                                                \
-                                                                      \
-    template<>                                                        \
-    struct ResultType<X,Y,OpMult>{                                    \
-      typedef tfel::typetraits::Promote<X,Y>::type type;              \
-    };                                                                \
-                                                                      \
-    template<>                                                        \
-    struct ResultType<X,Y,OpDiv>{                                     \
-      typedef tfel::typetraits::Promote<X,Y>::type type;              \
-    }
-
-#define TFEL_MATH_RESULT_TYPE_COMPLEX(X)                              \
-    TFEL_MATH_RESULT_TYPE_(X,Complex<X>);                             \
-    TFEL_MATH_RESULT_TYPE_(Complex<X>,X);                             \
-    TFEL_MATH_RESULT_TYPE_(Complex<X>,Complex<X>)      
     
     template<typename T1,typename T2>
     TFEL_MATH_INLINE typename tfel::meta::EnableIf<

@@ -7,6 +7,7 @@
 
 #include<algorithm>
 
+#include"TFEL/Math/stensor.hxx"
 #include"MFront/UMAT/UMATComputeThermalExpansionTensor.hxx"
 
 namespace umat

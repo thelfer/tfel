@@ -357,16 +357,14 @@ namespace tfel{
     template<typename unit,typename T>
     TFEL_MATH_INLINE bool operator != (const qt<unit,T>, const qt<unit,T>);
 
-  } // end of Namesapce math
+    template<typename Unit,typename Scal>
+    TFEL_MATH_INLINE
+    Scal
+    abs(const qt<Unit,Scal>&);
+
+  } // end of namesapce math
 
 } // end of namespace tfel
-
-namespace std{
-
-  template<typename unit,typename T>
-  TFEL_MATH_INLINE tfel::math::qt<unit,T> abs(const tfel::math::qt<unit,T>);
-
-}// end of namespace std
 
 #include"TFEL/Math/Quantity/qtLimits.hxx"
 #include"TFEL/Math/Quantity/qtSpecific.hxx"

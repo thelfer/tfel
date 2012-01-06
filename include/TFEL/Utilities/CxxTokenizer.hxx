@@ -224,7 +224,7 @@ namespace tfel{
 
       static const char Separator[20] TFEL_VISIBILITY_LOCAL;
 
-      static const std::string TFEL_VISIBILITY_LOCAL
+      static std::string TFEL_VISIBILITY_LOCAL
       readNumber(std::string::const_iterator&,
 		 const std::string::const_iterator);
 

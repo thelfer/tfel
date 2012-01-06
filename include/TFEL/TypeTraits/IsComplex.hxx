@@ -9,7 +9,7 @@
 #ifndef _LIB_TFEL_ISCOMPLEX_HXX_
 #define _LIB_TFEL_ISCOMPLEX_HXX_ 
 
-#include"TFEL/Math/General/Complex.hxx"
+#include"TFEL/Math/Forward/Complex.hxx"
 
 /*!
  * \def    TFEL_META_IS_COMPLEX

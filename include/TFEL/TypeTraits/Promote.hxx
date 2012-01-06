@@ -11,7 +11,7 @@
 #include <limits>
 
 #include"TFEL/Config/TFELConfig.hxx"
-#include"TFEL/Math/General/Complex.hxx"
+#include"TFEL/Math/Forward/Complex.hxx"
 
 namespace tfel{
   

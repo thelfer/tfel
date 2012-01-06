@@ -17,7 +17,7 @@ namespace tfel
     template<unsigned short N, typename T>
     class StensorStatic;
 
-    /*!
+    /*
      * \class stensor
      * \brief finite size symmetric tensor.
      * \param N, the spatial dimension, see StensorDimeToSize for details. 

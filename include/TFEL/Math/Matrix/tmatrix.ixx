@@ -12,6 +12,7 @@
 #include <cassert>
 
 #include"TFEL/FSAlgorithm/FSAlgorithm.hxx"
+#include"TFEL/TypeTraits/BaseType.hxx"
 
 #include"TFEL/Math/General/AbsCompare.hxx"
 #include"TFEL/Math/Matrix/MatrixUtilities.hxx"

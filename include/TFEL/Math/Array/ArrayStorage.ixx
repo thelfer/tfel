@@ -39,7 +39,7 @@ namespace tfel{
 
     public:
 
-      static const std::string getName(void){
+      static std::string getName(void){
 	return std::string("ArrayStorage_<")+tfel::utilities::Name<T>::getName()+std::string(",")+tfel::utilities::Name<Ordering>::getName()+std::string(",")+tfel::utilities::Name<TAllocator>::getName()+std::string(">");
       }
 
@@ -73,7 +73,7 @@ namespace tfel{
 
       typedef typename ArrayStorage_<T,Ordering,TAllocator>::RunTimeProperties RunTimeProperties;
       
-      static const std::string getName(void){
+      static std::string getName(void){
 	return std::string("ArrayStorage<1u,")+tfel::utilities::Name<T>::getName()+std::string(",")+tfel::utilities::Name<Ordering>::getName()+std::string(",")+tfel::utilities::Name<TAllocator>::getName()+std::string(">");
       }
 
@@ -98,7 +98,7 @@ namespace tfel{
 
       typedef typename ArrayStorage_<T,Ordering,TAllocator>::RunTimeProperties RunTimeProperties;
 
-      static const std::string getName(void){
+      static std::string getName(void){
 	return std::string("ArrayStorage<2u,")+tfel::utilities::Name<T>::getName()+std::string(",")+tfel::utilities::Name<Ordering>::getName()+std::string(",")+tfel::utilities::Name<TAllocator>::getName()+std::string(">");
       }
 
@@ -123,7 +123,7 @@ namespace tfel{
 
       typedef typename ArrayStorage_<T,Ordering,TAllocator>::RunTimeProperties RunTimeProperties;
 
-      static const std::string getName(void){
+      static std::string getName(void){
 	return std::string("ArrayStorage<3u,")+tfel::utilities::Name<T>::getName()+std::string(",")+tfel::utilities::Name<Ordering>::getName()+std::string(",")+tfel::utilities::Name<TAllocator>::getName()+std::string(">");
       }
 

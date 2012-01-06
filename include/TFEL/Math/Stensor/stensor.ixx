@@ -15,6 +15,7 @@
 
 #include"TFEL/TypeTraits/IsSafelyReinterpretCastableTo.hxx"
 #include"TFEL/Math/General/StorageTraits.hxx"
+#include"TFEL/Math/General/Abs.hxx"
 #include"TFEL/Math/Vector/VectorUtilities.hxx"
 
 #include"TFEL/Math/Stensor/Internals/StensorComputeEigenValues.hxx"

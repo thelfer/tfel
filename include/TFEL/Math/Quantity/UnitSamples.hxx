@@ -17,11 +17,6 @@ namespace tfel{
     // Fondamental units
 
     /*!
-     * \brief NoUnit
-     * \see GenerateUnit
-     */
-    typedef GenerateUnit<0,0,0,0,0,0,0>::type  NoUnit;
-    /*!
      * \brief Declares the Mass unit 
      * \see GenerateUnit
      */
@@ -178,7 +173,7 @@ namespace tfel{
        * \return std::string, the name of the class.
        * \see    Name.
        */
-      static const std::string getName(void){
+      static std::string getName(void){
 	return std::string("[]");
       }
     };
@@ -195,7 +190,7 @@ namespace tfel{
        * \return std::string, the name of the class.
        * \see    Name.
        */
-      static const std::string getName(void){
+      static std::string getName(void){
 	return std::string("[kg]");
       }
     };
@@ -212,7 +207,7 @@ namespace tfel{
        * \return std::string, the name of the class.
        * \see    Name.
        */
-      static const std::string getName(void){
+      static std::string getName(void){
 	return std::string("[m]");
       }
     };
@@ -229,7 +224,7 @@ namespace tfel{
        * \return std::string, the name of the class.
        * \see    Name.
        */
-      static const std::string getName(void){
+      static std::string getName(void){
 	return std::string("[s]");
       }
     };
@@ -246,7 +241,7 @@ namespace tfel{
        * \return std::string, the name of the class.
        * \see    Name.
        */
-      static const std::string getName(void){
+      static std::string getName(void){
 	return std::string("[A]");
       }
     };
@@ -263,7 +258,7 @@ namespace tfel{
        * \return std::string, the name of the class.
        * \see    Name.
        */
-      static const std::string getName(void){
+      static std::string getName(void){
 	return std::string("[K]");
       }
     };
@@ -280,7 +275,7 @@ namespace tfel{
        * \return std::string, the name of the class.
        * \see    Name.
        */
-      static const std::string getName(void){
+      static std::string getName(void){
 	return std::string("[cd]");
       }
     };
@@ -297,7 +292,7 @@ namespace tfel{
        * \return std::string, the name of the class.
        * \see    Name.
        */
-      static const std::string getName(void){
+      static std::string getName(void){
 	return std::string("[mol]");
       }
     };
@@ -314,7 +309,7 @@ namespace tfel{
        * \return std::string, the name of the class.
        * \see    Name.
        */
-      static const std::string getName(void){
+      static std::string getName(void){
 	return std::string("[Velocity]");
       }
     };
@@ -331,7 +326,7 @@ namespace tfel{
        * \return std::string, the name of the class.
        * \see    Name.
        */
-      static const std::string getName(void){
+      static std::string getName(void){
 	return std::string("[Acceleration]");
       }
     };
@@ -348,7 +343,7 @@ namespace tfel{
        * \return std::string, the name of the class.
        * \see    Name.
        */
-      static const std::string getName(void){
+      static std::string getName(void){
 	return std::string("[Momentum]");
       }
     };
@@ -365,7 +360,7 @@ namespace tfel{
        * \return std::string, the name of the class.
        * \see    Name.
        */
-      static const std::string getName(void){
+      static std::string getName(void){
 	return std::string("[Force]");
       }
     };

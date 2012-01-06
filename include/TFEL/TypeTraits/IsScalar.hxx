@@ -9,7 +9,7 @@
 #ifndef _LIB_TFEL_ISSCALAR_H_
 #define _LIB_TFEL_ISSCALAR_H_ 
 
-#include"TFEL/Math/General/Complex.hxx"
+#include"TFEL/Math/Forward/Complex.hxx"
 
 /*!
  * \def    TFEL_META_IS_SCALAR

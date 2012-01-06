@@ -13,7 +13,7 @@ namespace tfel{
 
   namespace math{
 
-    const std::string 
+    std::string 
     StensorTag::getName(void)
     {
       return std::string("StensorTag");

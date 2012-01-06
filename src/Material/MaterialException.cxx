@@ -16,12 +16,12 @@ namespace tfel{
       :  tfel::exception::TFELException(s)
     {}
     
-    const std::string 
+    std::string 
     MaterialException::getName(void){
       return "MaterialException";
     }
     
-    const std::string 
+    std::string 
     DivergenceException::getName(void){
       return "DivergenceException";
     }
@@ -30,7 +30,7 @@ namespace tfel{
       :  tfel::material::MaterialException(s)
     {}
 
-    const std::string 
+    std::string 
     OutOfBoundsException::getName(void){
       return "OutOfBoundsException";
     }

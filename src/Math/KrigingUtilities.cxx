@@ -9,6 +9,7 @@
 #include<stdexcept>
 #include<sstream>
 
+#include"TFEL/Math/General/Abs.hxx"
 #include"TFEL/Math/Kriging/KrigingUtilities.hxx"
 
 namespace tfel

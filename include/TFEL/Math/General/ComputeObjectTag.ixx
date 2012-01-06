@@ -12,7 +12,6 @@
 
 #include"TFEL/Metaprogramming/EnableIf.hxx"
 #include"TFEL/Metaprogramming/InvalidType.hxx"
-#include"TFEL/Metaprogramming/Implements.hxx"
 #include"TFEL/TypeTraits/IsScalar.hxx"
 #include"TFEL/TypeTraits/IsUnaryOperator.hxx"
 
@@ -74,7 +73,7 @@ namespace tfel{
        * \return std::string, the name of the class.
        * \see    Name.
        */
-      static const std::string getName(void){
+      static std::string getName(void){
 	return std::string("ScalarTag");
       } // end of getName()
 
@@ -88,7 +87,7 @@ namespace tfel{
        * \return std::string, the name of the class.
        * \see    Name.
        */
-      static const std::string getName(void){
+      static std::string getName(void){
 	return std::string("UnaryOperatorTag");
       } // end of getName()
 

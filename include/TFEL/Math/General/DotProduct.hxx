@@ -9,7 +9,6 @@
 #define _LIB_TFEL_DOTPRODUCT_HXX_ 
 
 #include"TFEL/Config/TFELConfig.hxx"
-#include"TFEL/Math/General/Complex.hxx"
 #include"TFEL/Math/General/BasicOperations.hxx"
 
 namespace tfel{

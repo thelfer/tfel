@@ -35,7 +35,7 @@ namespace tfel{
       
     public:
 
-      static const std::string getName(void){
+      static std::string getName(void){
 	return std::string("StensorStatic<")+tfel::utilities::ToString(N)+std::string(",")+tfel::utilities::Name<T>::getName()+std::string(">");
       }
 

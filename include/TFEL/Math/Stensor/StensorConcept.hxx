@@ -37,7 +37,7 @@ namespace tfel{
        * \return const std::string, the name of the class.
        * \see    Name.
        */
-      static const std::string 
+      static std::string 
       getName(void);
     }; // end of StensorTag
     

@@ -19,7 +19,6 @@
 #include"TFEL/Metaprogramming/StaticAssert.hxx"
 #include"TFEL/Metaprogramming/Implements.hxx"
 #include"TFEL/TypeTraits/IsTemporary.hxx"
-#include"TFEL/TypeTraits/Promote.hxx"
 #include"TFEL/Math/General/ResultType.hxx"
 #include"TFEL/Math/General/BasicOperations.hxx"
 #include"TFEL/Math/General/RunTimeCheck.hxx"

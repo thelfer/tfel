@@ -23,7 +23,7 @@
 #include"TFEL/TypeTraits/BaseType.hxx"
 #include"TFEL/TypeTraits/IsInvalid.hxx"
 #include"TFEL/TypeTraits/IsAssignableTo.hxx"
-
+#include"TFEL/TypeTraits/IsSafelyReinterpretCastableTo.hxx"
 #include"TFEL/Math/General/BasicOperations.hxx"
 
 #include"TFEL/Math/Stensor/StensorSizeToDime.hxx"

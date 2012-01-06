@@ -12,7 +12,7 @@
 
 #include"TFEL/Metaprogramming/IsSameType.hxx"
 #include"TFEL/TypeTraits/Promote.hxx"
-#include"TFEL/Math/General/Complex.hxx"
+#include"TFEL/Math/Forward/Complex.hxx"
 
 /*!
  * \def TFEL_MATH_IS_ASSIGNABLE_

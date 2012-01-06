@@ -8,8 +8,8 @@
 #ifndef _LIB_TFEL_QT_OPERATIONS_H_
 #define _LIB_TFEL_QT_OPERATIONS_H_ 
 
+#include"TFEL/Math/Forward/Complex.hxx"
 #include"TFEL/Math/General/BasicOperations.hxx"
-#include"TFEL/Math/General/Complex.hxx"
 #include"TFEL/Math/Quantity/Unit.hxx"
 #include"TFEL/Math/qt.hxx"
 

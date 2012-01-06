@@ -20,7 +20,7 @@ namespace tfel{
     template<unsigned short N>
     struct VectorUtilities{
 
-      static const std::string getName(void){
+      static std::string getName(void){
 	return std::string("VectorUtilities");
       }
 

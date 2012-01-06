@@ -58,7 +58,7 @@ namespace tfel{
     {
       typedef LambdaTag ConceptTag;
 
-      static const std::string 
+      static std::string 
       getName(void){
 	using namespace std;
 	using namespace tfel::utilities;

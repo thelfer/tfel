@@ -13,7 +13,7 @@ namespace tfel{
 
   namespace math{
     
-    const std::string
+    std::string
     OpDiff::getName(void)
     {
       return "OpDiff";

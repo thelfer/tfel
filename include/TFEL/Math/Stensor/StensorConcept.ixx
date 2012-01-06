@@ -1,7 +1,6 @@
 #ifndef _STENSOR_CONCEPT_IMPL_
 #define _STENSOR_CONCEPT_IMPL_ 1
 
-#include"TFEL/Math/functions.hxx"
 #include"TFEL/Math/Stensor/StensorSizeToDime.hxx"
 
 namespace tfel{
@@ -35,11 +34,22 @@ namespace tfel{
 
     namespace internals{
       
+      struct SigmaEqImplBase
+      {
+	template<typename T>
+	TFEL_MATH_INLINE static T
+	square(const T& x)
+	{
+	  return x*x;
+	}
+      };
+
       template<unsigned short N>
       class SigmaEqImpl;
 
       template<>
       struct SigmaEqImpl<1u>
+	: public SigmaEqImplBase
       {
 	template<class T>
 	TFEL_MATH_INLINE2
@@ -49,18 +59,18 @@ namespace tfel{
 	>::type
 	exe(const T& s)
 	{
-	  USING_TFEL_FUNCTIONS;
 	  typedef typename StensorTraits<T>::NumType NumType;
 	  typedef typename tfel::typetraits::BaseType<NumType>::type Base;
 	  NumType tr = (Base(1)/Base(3))*trace(s);
-	  return sqrt(Base(1.5f)*(Power<2>::exe(s(0)-tr)+
-				  Power<2>::exe(s(1)-tr)+
-				  Power<2>::exe(s(2)-tr)));
+	  return sqrt(Base(1.5f)*(SigmaEqImplBase::square(s(0)-tr)+
+				  SigmaEqImplBase::square(s(1)-tr)+
+				  SigmaEqImplBase::square(s(2)-tr)));
 	}
       };
       
       template<>
       struct SigmaEqImpl<2u>
+	: public SigmaEqImplBase
       {
 	template<class T>
 	TFEL_MATH_INLINE2
@@ -70,19 +80,19 @@ namespace tfel{
 	>::type
 	exe(const T& s)
 	{
-	  USING_TFEL_FUNCTIONS;
 	  typedef typename StensorTraits<T>::NumType NumType;
 	  typedef typename tfel::typetraits::BaseType<NumType>::type Base;
 	  NumType tr = (Base(1)/Base(3))*trace(s);
-	  return sqrt(Base(1.5f)*(Power<2>::exe(s(0)-tr)+
-				  Power<2>::exe(s(1)-tr)+
-				  Power<2>::exe(s(2)-tr)+
-				  Power<2>::exe(s(3))));
+	  return sqrt(Base(1.5f)*(SigmaEqImplBase::square(s(0)-tr)+
+				  SigmaEqImplBase::square(s(1)-tr)+
+				  SigmaEqImplBase::square(s(2)-tr)+
+				  SigmaEqImplBase::square(s(3))));
 	}
       };
 
       template<>
       struct SigmaEqImpl<3u>
+	: public SigmaEqImplBase
       {
 	template<class T>
 	TFEL_MATH_INLINE2
@@ -92,16 +102,15 @@ namespace tfel{
 	>::type
 	exe(const T& s)
 	{
-	  USING_TFEL_FUNCTIONS;
 	  typedef typename StensorTraits<T>::NumType NumType;
 	  typedef typename tfel::typetraits::BaseType<NumType>::type Base;
 	  NumType tr = (Base(1)/Base(3))*trace(s);
-	  return sqrt(Base(1.5f)*(Power<2>::exe(s(0)-tr)+
-				  Power<2>::exe(s(1)-tr)+
-				  Power<2>::exe(s(2)-tr)+
-				  Power<2>::exe(s(3))   +
-				  Power<2>::exe(s(4))   +
-				  Power<2>::exe(s(5))));
+	  return sqrt(Base(1.5f)*(SigmaEqImplBase::square(s(0)-tr)+
+				  SigmaEqImplBase::square(s(1)-tr)+
+				  SigmaEqImplBase::square(s(2)-tr)+
+				  SigmaEqImplBase::square(s(3))   +
+				  SigmaEqImplBase::square(s(4))   +
+				  SigmaEqImplBase::square(s(5))));
 	}
       };
       

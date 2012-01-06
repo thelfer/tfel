@@ -47,7 +47,7 @@ namespace tfel{
        * return std::string, the name of the class.					    
        * see    Name.									    
        */
-      static const std::string
+      static std::string
       getName(void){							    
 	using namespace std;								    
 	using namespace tfel::utilities;						    

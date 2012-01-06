@@ -9,7 +9,7 @@
 #define _LIB_TFEL_JACOBIANTYPE_H_ 
 
 #include"TFEL/Math/tmatrix.hxx"
-#include"TFEL/Math/qt.hxx"
+#include"TFEL/Math/Forward/qt.hxx"
 
 namespace tfel{ 
  

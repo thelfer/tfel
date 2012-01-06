@@ -687,7 +687,7 @@ namespace tfel{
        * \return std::string, the name of the class.
        * \see    Name.
        */
-      static const std::string getName(void){
+      static std::string getName(void){
 	using namespace tfel::utilities;
 	std::string name("composite<");
 	name+=Name<T0>::getName();
@@ -968,7 +968,7 @@ namespace tfel{
        * \return std::string, the name of the class.
        * \see    Name.
        */
-      static const std::string getName(void){
+      static std::string getName(void){
 	using namespace tfel::utilities;
 	std::string name("composite<");
 	name+=Name<T0>::getName();
@@ -1284,7 +1284,7 @@ namespace tfel{
        * \return std::string, the name of the class.
        * \see    Name.
        */
-      static const std::string getName(void){
+      static std::string getName(void){
 	using namespace tfel::utilities;
 	std::string name("composite<");
 	name+=Name<T0>::getName();
@@ -1635,7 +1635,7 @@ namespace tfel{
        * \return std::string, the name of the class.
        * \see    Name.
        */
-      static const std::string getName(void){
+      static std::string getName(void){
 	using namespace tfel::utilities;
 	std::string name("composite<");
 	name+=Name<T0>::getName();
@@ -2033,7 +2033,7 @@ namespace tfel{
        * \return std::string, the name of the class.
        * \see    Name.
        */
-      static const std::string getName(void){
+      static std::string getName(void){
 	using namespace tfel::utilities;
 	std::string name("composite<");
 	name+=Name<T0>::getName();
@@ -2467,7 +2467,7 @@ namespace tfel{
        * \return std::string, the name of the class.
        * \see    Name.
        */
-      static const std::string getName(void){
+      static std::string getName(void){
 	using namespace tfel::utilities;
 	std::string name("composite<");
 	name+=Name<T0>::getName();
@@ -2938,7 +2938,7 @@ namespace tfel{
        * \return std::string, the name of the class.
        * \see    Name.
        */
-      static const std::string getName(void){
+      static std::string getName(void){
 	using namespace tfel::utilities;
 	std::string name("composite<");
 	name+=Name<T0>::getName();
@@ -3445,7 +3445,7 @@ namespace tfel{
        * \return std::string, the name of the class.
        * \see    Name.
        */
-      static const std::string getName(void){
+      static std::string getName(void){
 	using namespace tfel::utilities;
 	std::string name("composite<");
 	name+=Name<T0>::getName();
@@ -3999,7 +3999,7 @@ namespace tfel{
        * \return std::string, the name of the class.
        * \see    Name.
        */
-      static const std::string getName(void){
+      static std::string getName(void){
 	using namespace tfel::utilities;
 	std::string name("composite<");
 	name+=Name<T0>::getName();

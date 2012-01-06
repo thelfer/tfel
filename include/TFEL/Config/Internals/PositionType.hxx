@@ -9,7 +9,9 @@
 #define _LIB_TFEL_POSITIONTYPE_H_ 
 
 #include"TFEL/Math/tvector.hxx"
-#include"TFEL/Math/qt.hxx"
+#include"TFEL/Math/Forward/qt.hxx"
+#include"TFEL/Math/Quantity/Unit.hxx"
+
 
 namespace tfel{ 
  

@@ -9,6 +9,7 @@
 #define _LIB_TFEL_MATH_KRIGINGDEFAULTMODEL1D_H_ 
 
 #include"TFEL/Config/TFELConfig.hxx"
+#include"TFEL/Math/General/Abs.hxx"
 #include"TFEL/Math/Kriging/KrigingVariable.hxx"
 #include"TFEL/Math/Kriging/KrigingDefaultNuggetModel.hxx"
 

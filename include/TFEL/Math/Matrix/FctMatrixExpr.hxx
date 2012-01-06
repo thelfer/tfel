@@ -53,7 +53,7 @@ namespace tfel{
       										        
       typedef typename ComputeUnaryResult<NumTypeA,Func>::Handle NumType;             
       										        
-      static const std::string 
+      static std::string 
       getName(void){ 
 	using namespace std;
 	using namespace tfel::utilities;

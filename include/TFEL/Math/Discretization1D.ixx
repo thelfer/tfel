@@ -11,6 +11,8 @@
 #include<cmath>
 #include<limits>
 
+#include"TFEL/Math/General/Abs.hxx"
+
 namespace tfel
 {
 

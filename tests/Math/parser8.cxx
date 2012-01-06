@@ -13,6 +13,7 @@
 #include<limits>
 #include<cstdlib>
 #include<cassert>
+#include<sstream>
 #include<algorithm>
 #include<stdexcept>
 

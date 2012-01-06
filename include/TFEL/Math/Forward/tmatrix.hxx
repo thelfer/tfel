@@ -14,7 +14,7 @@ namespace tfel
   namespace math
   {
 
-    /*!
+    /*
      * \class tmatrix.
      * \brief a class representing tiny matrixs of fixed size.
      * \param unsigned short, the number of rows hold by the tmatrix.

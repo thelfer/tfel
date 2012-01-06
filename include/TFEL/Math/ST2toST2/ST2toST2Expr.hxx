@@ -42,7 +42,7 @@ namespace tfel{
       typedef typename Expr::size_type 	     size_type;	    
       typedef typename Expr::difference_type difference_type;
 
-      static const std::string getName(void){
+      static std::string getName(void){
 	using namespace std;
 	using namespace tfel::utilities;
 	return string("ST2toST2Expr<")+Name<T_type>::getName()

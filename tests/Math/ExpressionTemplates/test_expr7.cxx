@@ -15,6 +15,7 @@
 #include<algorithm>
 #include<iterator>
 
+#include"TFEL/Math/General/Abs.hxx"
 #include"TFEL/Math/General/ScalarObjectRandomAccessConstIterator.hxx"
 #include"TFEL/Math/General/BasicOperations.hxx"
 

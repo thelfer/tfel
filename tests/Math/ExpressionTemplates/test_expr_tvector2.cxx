@@ -27,10 +27,10 @@ int main(void)
   
   v3 = v1+v2;
 
-  assert(abs(v3(0)-length(26.))<length(1.e-14));
-  assert(abs(v3(1)-length(26.))<length(1.e-14));
-  assert(abs(v3(2)-length(26.))<length(1.e-14));
-  assert(abs(v3(3)-length(26.))<length(1.e-14));
+  assert(abs(v3(0)-length(26.))<1.e-14);
+  assert(abs(v3(1)-length(26.))<1.e-14);
+  assert(abs(v3(2)-length(26.))<1.e-14);
+  assert(abs(v3(3)-length(26.))<1.e-14);
 
   return EXIT_SUCCESS;
 }

@@ -8,9 +8,7 @@
 #ifndef _LIB_TFEL_VECTOR_IXX_
 #define _LIB_TFEL_VECTOR_IXX_ 
 
-#include"cassert"
-#include"TFEL/Math/Function/Power.hxx"
-
+#include<cassert>
 
 namespace tfel{
 
@@ -186,11 +184,11 @@ namespace tfel{
     >::type
     norm(const vector<T>& vec)
     {
-      using tfel::math::stdfunctions::power;
       T n(0);
       typename vector<T>::size_type i;
       for(i=0;i!=vec.size();++i){
-	n += power<2>(vec(i));
+	const T v = vec(i);
+	n += v*v;
       }
       return sqrt(real(n));
     }

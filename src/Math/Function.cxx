@@ -6,6 +6,8 @@
  * \date   02 oct 2007
  */
 
+#include<sstream>
+
 #include"TFEL/Math/Parser/Negation.hxx"
 #include"TFEL/Math/Parser/Number.hxx"
 #include"TFEL/Math/Parser/BinaryOperator.hxx"

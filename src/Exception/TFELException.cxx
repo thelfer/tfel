@@ -12,7 +12,7 @@ namespace tfel{
 
   namespace exception{
     
-    const std::string 
+    std::string 
     TFELException::getName(void){
       return "TFELException";
     }

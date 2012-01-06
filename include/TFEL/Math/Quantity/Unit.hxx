@@ -12,10 +12,9 @@
 #include<sstream>
 
 #include"TFEL/Config/TFELConfig.hxx"
-
 #include"TFEL/Metaprogramming/IntToType.hxx"
-
 #include"TFEL/Utilities/Name.hxx"
+#include"TFEL/Math/Forward/qt.hxx"
 
 namespace tfel{
 
@@ -45,7 +44,7 @@ namespace tfel{
 		tfel::meta::UInt2Type<D6>,
 		tfel::meta::UInt2Type<D7> >
     {
-      static const std::string getName(void);
+      static std::string getName(void);
     };
 
     template<int N1,int N2,int N3,int N4,int N5,int N6,int N7,

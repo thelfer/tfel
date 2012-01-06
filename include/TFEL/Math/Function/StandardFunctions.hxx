@@ -15,12 +15,10 @@
 #include"TFEL/Metaprogramming/EnableIf.hxx"
 #include"TFEL/TypeTraits/IsInvalid.hxx"
 #include"TFEL/Math/General/ComputeUnaryResult.hxx"
-#include"TFEL/Math/qt.hxx"
-#include"TFEL/Math/General/Complex.hxx"
+#include"TFEL/Math/Forward/qt.hxx"
+#include"TFEL/Math/Forward/Complex.hxx"
 #include"TFEL/Math/Function/FunctionConcept.hxx"
 #include"TFEL/Math/Function/Id.hxx"
-#include"TFEL/Math/Function/Cst.hxx"
-#include"TFEL/Math/Function/Power.hxx"
 
 #define TFEL_MATH_UNARY_FUNCTION_I(X,Y,Z)                                                 \
     template<>                                                                            \
@@ -213,6 +211,10 @@ namespace tfel{
   
   namespace math {
 
+    // forward declaration (see Cst.hxx)
+    template<short N,unsigned short D>
+    struct Cst;
+
     /*
      * Forward declarations
      */
@@ -229,41 +231,46 @@ namespace tfel{
     struct FctAcos;
     struct FctAtan;
 
-    typedef FunctionExpr<FunctionFunctionExpr<Cst<1>,FctId,OpDiv> > DFctLog;
+    template<int N,unsigned int D>
+    class Power;
 
-    typedef FunctionExpr<FunctionFunctionExpr<Cst<1>,
-					      FunctionExpr<FunctionsCompositionExpr<Power<2u>,
+    typedef Power<1,2> FctSqrt;
+
+    typedef FunctionExpr<FunctionFunctionExpr<Cst<1,1>,FctId,OpDiv> > DFctLog;
+
+    typedef FunctionExpr<FunctionFunctionExpr<Cst<1,1>,
+					      FunctionExpr<FunctionsCompositionExpr<Power<2u,1u>,
 										    FctCos> >,
 					      OpDiv> > DFctTan;
 
-    typedef FunctionExpr<FunctionFunctionExpr<Cst<1>,
-					      FunctionExpr<FunctionsCompositionExpr<Power<2u>,
+    typedef FunctionExpr<FunctionFunctionExpr<Cst<1,1>,
+					      FunctionExpr<FunctionsCompositionExpr<Power<2u,1u>,
 										    FctCosh> >,
 					      OpDiv> > DFctTanh; 
 
     typedef FunctionExpr<ScalarFunctionExpr<double,FctId,OpDiv> > DFctLog10;
 
-    typedef FunctionExpr<FunctionFunctionExpr<Cst<1>,
-					      FunctionExpr<FunctionsCompositionExpr<Power<2u>,
+    typedef FunctionExpr<FunctionFunctionExpr<Cst<1,1>,
+					      FunctionExpr<FunctionsCompositionExpr<Power<2u,1u>,
 										    FctId> >,
 					      OpMinus> > OMinSquareFctId;
 
-    typedef FunctionExpr<FunctionFunctionExpr<Cst<1>,
-					      FunctionExpr<FunctionsCompositionExpr<Power<2u>,
+    typedef FunctionExpr<FunctionFunctionExpr<Cst<1,1>,
+					      FunctionExpr<FunctionsCompositionExpr<Power<2u,1u>,
 										    FctId> >,
 					      OpPlus> > OnePlusSquareFctId;
 
-    typedef FunctionExpr<FunctionFunctionExpr<Cst<1>,
+    typedef FunctionExpr<FunctionFunctionExpr<Cst<1,1>,
 					      FunctionExpr<FunctionsCompositionExpr<
                                               FctSqrt,
                                               OMinSquareFctId> >,OpDiv> > DFctAsin;
 
-    typedef FunctionExpr<FunctionFunctionExpr<Cst<-1>,
+    typedef FunctionExpr<FunctionFunctionExpr<Cst<-1,1>,
 					      FunctionExpr<
                                               FunctionsCompositionExpr<FctSqrt,OMinSquareFctId> >,
 					      OpDiv> > DFctAcos;
 
-    typedef FunctionExpr<FunctionFunctionExpr<Cst<1>,OnePlusSquareFctId,OpDiv> > DFctAtan;
+    typedef FunctionExpr<FunctionFunctionExpr<Cst<1,1>,OnePlusSquareFctId,OpDiv> > DFctAtan;
 
     TFEL_MATH_UNARY_FUNCTION_I(Sin,sin,FctCos)
     TFEL_MATH_UNARY_FUNCTION_I(Cos,cos,FunctionExpr<FunctionNegExpr<FctSin> >)

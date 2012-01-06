@@ -35,7 +35,7 @@ namespace tfel{
 
       typedef typename ComputeBinaryResult<A,NumTypeB,OpMult>::Handle NumType;
 
-      static const std::string getName(void){
+      static std::string getName(void){
 	using namespace tfel::utilities;
 	using namespace std;
 	return string("ScalarArrayExprWithoutConstIterator<")
@@ -116,7 +116,7 @@ namespace tfel{
 
       typedef typename ComputeBinaryResult<A,NumTypeB,OpDiv>::Handle NumType;
 
-      static const std::string getName(void){
+      static std::string getName(void){
 	using namespace tfel::utilities;
 	using namespace std;
 	return string("ScalarArrayExprWithoutConstIterator<")+Name<A>::getName()
@@ -197,7 +197,7 @@ namespace tfel{
 
       typedef typename ComputeBinaryResult<NumTypeA,B,OpMult>::Handle NumType;
 
-      static const std::string getName(void){
+      static std::string getName(void){
 	using namespace tfel::utilities;
 	using namespace std;
 	return string("ArrayScalarExprWithoutConstIterator<")+Name<A>::getName()+string(",")+Name<B>::getName()+string(",")+Name<OpMult>::getName()+string(">");
@@ -277,7 +277,7 @@ namespace tfel{
 
       typedef typename ComputeBinaryResult<NumTypeA,B,OpDiv>::Handle NumType;
 
-      static const std::string getName(void){
+      static std::string getName(void){
 	using namespace tfel::utilities;
 	using namespace std;
 	return string("ArrayScalarExprWithoutConstIterator<")+Name<A>::getName()+string(",")+Name<B>::getName()+string(",")+Name<OpDiv>::getName()+string(">");

@@ -8,10 +8,6 @@
 #ifndef _LIB_TFEL_MATRIX_IXX_
 #define _LIB_TFEL_MATRIX_IXX_ 
 
-#include"cassert"
-#include"TFEL/Math/Function/Power.hxx"
-
-
 namespace tfel{
 
   namespace math{

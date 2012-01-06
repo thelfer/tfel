@@ -11,6 +11,7 @@
 
 #include"TFEL/Metaprogramming/EnableIf.hxx"
 #include"TFEL/Metaprogramming/InvalidType.hxx"
+#include"TFEL/Metaprogramming/Implements.hxx"
 #include"TFEL/TypeTraits/IsInvalid.hxx"
 #include"TFEL/Math/General/ComputeUnaryResult.hxx"
 
@@ -48,7 +49,7 @@ namespace tfel{
     {
       typedef FunctionTag ConceptTag;
 
-      static const std::string 
+      static std::string 
       getName(void){
 	using namespace std;
 	using namespace tfel::utilities;

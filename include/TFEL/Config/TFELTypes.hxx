@@ -8,12 +8,12 @@
 #ifndef _LIB_TFELTYPES_H_
 #define _LIB_TFELTYPES_H_ 
 
-#include"TFEL/Math/qt.hxx"
-#include"TFEL/Math/tvector.hxx"
-#include"TFEL/Math/tmatrix.hxx"
-#include"TFEL/Math/stensor.hxx"
-#include"TFEL/Math/st2tost2.hxx"
-
+#include"TFEL/Math/Forward/qt.hxx"
+#include"TFEL/Math/Forward/tvector.hxx"
+#include"TFEL/Math/Forward/tmatrix.hxx"
+#include"TFEL/Math/Forward/stensor.hxx"
+#include"TFEL/Math/Forward/st2tost2.hxx"
+#include"TFEL/Math/Stensor/StensorSizeToDime.hxx"
 #include"TFEL/Config/Internals/TFELTypesInternals.hxx"
 
 namespace tfel

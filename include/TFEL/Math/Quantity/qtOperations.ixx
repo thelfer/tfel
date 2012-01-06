@@ -8,6 +8,8 @@
 #ifndef _LIB_TFEL_QTOPERATIONS_I_
 #define _LIB_TFEL_QTOPERATIONS_I_ 
 
+#include"TFEL/Math/General/Complex.hxx"
+
 namespace tfel{
 
   namespace math{

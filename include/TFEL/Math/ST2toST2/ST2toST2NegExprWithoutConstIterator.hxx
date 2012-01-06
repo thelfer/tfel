@@ -41,7 +41,7 @@ namespace tfel{
 
       typedef typename ComputeUnaryResult<NumTypeA,OpNeg>::Handle NumType;
 
-      static const std::string getName(void){
+      static std::string getName(void){
 	using namespace std;
 	using namespace tfel::utilities;
 	return string("ST2toST2NegExprWithoutConstIterator<")+Name<A>::getName()+string(">");

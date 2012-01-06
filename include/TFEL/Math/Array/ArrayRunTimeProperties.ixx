@@ -27,7 +27,7 @@ namespace tfel{
 
     public:
 
-      static const std::string getName(void){
+      static std::string getName(void){
 	return std::string("ArrayRunTimeProperties<1u>");
       }
 
@@ -75,7 +75,7 @@ namespace tfel{
 
     public:
 
-      static const std::string getName(void){
+      static std::string getName(void){
 	return std::string("ArrayRunTimeProperties<2u>");
       }
 
@@ -132,7 +132,7 @@ namespace tfel{
 
     public:
 
-      static const std::string getName(void){
+      static std::string getName(void){
 	return std::string("ArrayRunTimeProperties<3u>");
       }
 
