@@ -46,12 +46,6 @@ namespace tfel{
 
       typedef typename ComputeBinaryResult<NumTypeA,NumTypeB,OpPlus>::Handle NumType;
 
-      static std::string getName(void){
-	using namespace std;
-	using namespace tfel::utilities;
-	return string("MatrixMatrixExpr<")+Name<A>::getName()+string(",")+Name<B>::getName()+string(",")+Name<OpPlus>::getName()+string(">");
-      }
-
     protected:
 
       typedef A first_arg;
@@ -152,12 +146,6 @@ namespace tfel{
     public:
 
       typedef typename ComputeBinaryResult<NumTypeA,NumTypeB,OpMinus>::Handle NumType;
-
-      static std::string getName(void){
-	using namespace std;
-	using namespace tfel::utilities;
-	return string("MatrixMatrixExpr<")+Name<A>::getName()+string(",")+Name<B>::getName()+string(",")+Name<OpMinus>::getName()+string(">");
-      }
 
     protected:
 

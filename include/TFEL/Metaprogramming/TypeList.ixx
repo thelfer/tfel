@@ -11,7 +11,8 @@
 
 #include<string>
 
-#include"TFEL/Utilities/Name.hxx"
+#include"TFEL/Metaprogramming/Forward/TypeList.hxx"
+
 #include"TFEL/Metaprogramming/IF.hxx"
 #include"TFEL/Metaprogramming/StaticAssert.hxx"
 #include"TFEL/Metaprogramming/IsSubClassOf.hxx"
@@ -32,19 +33,6 @@ namespace tfel{
     {
       TFEL_STATIC_ASSERT((IsSubClassOf<U,TL>::cond));
       /*!
-       * Return the Name of the TL beginning with this Node.
-       * \param void.
-       * \return std::string, the Name of the TL.
-       */
-      static std::string
-      getName(void){
-	using namespace std;
-	using namespace tfel::utilities;
-	return string("TLNode<")
-	  +Name<T>::getName()+string(",")
-	  +Name<U>::getName()+string(">");
-      }
-      /*!
        * Current element.
        */
       typedef T Current;
@@ -61,70 +49,7 @@ namespace tfel{
      */
     struct TFEL_VISIBILITY_LOCAL TLE
       : public TL
-    {
-      /*
-       * Return the Name of this class.
-       * \param void.
-       * \return std::string, the Name.
-       */
-      static std::string
-      getName(void){
-	return std::string("TLE");
-      }
-    };
-
-    namespace internals {
-
-      template<typename List>
-      class TFEL_VISIBILITY_LOCAL TLGetNames_
-      {
-	typedef typename List::Current Current;
-	typedef typename List::Next Next;
-      public:
-	static std::string exe(void)
-	{
-	  using namespace std;
-	  using namespace tfel::utilities;
-	  return string(",")+Name<Current>::getName()
-	    +tfel::meta::internals::TLGetNames_<Next>::exe();
-	}
-      };
-
-      template<>
-      struct TFEL_VISIBILITY_LOCAL TLGetNames_<TLE>
-      {
-	static std::string exe(void)
-	{
-	  return "}";
-	}
-      };
-
-    } // end of namespace internals
-
-    template<typename List>
-    class TFEL_VISIBILITY_LOCAL TLGetNames
-    {
-      typedef typename List::Current Current;
-      typedef typename List::Next Next;
-    public:
-      static std::string exe(void)
-      {
-	using namespace std;
-	using namespace tfel::utilities;
-	return string("{")+Name<Current>::getName()
-	  +tfel::meta::internals::TLGetNames_<Next>::exe();
-      }
-    };
-
-    template<>
-    struct TFEL_VISIBILITY_LOCAL TLGetNames<TLE>
-    {
-      static std::string
-      exe(void)
-      {
-	return "{}";
-      }
-    };
+    {};
 
     template<typename Tlist, template<typename> class Transform>
     struct TFEL_VISIBILITY_LOCAL TLTransform

@@ -12,8 +12,6 @@
 #include <ostream>
 
 #include"TFEL/Config/TFELConfig.hxx"
-#include"TFEL/Utilities/Name.hxx"
-#include"TFEL/Utilities/ToString.hxx"
 #include"TFEL/Metaprogramming/StaticAssert.hxx"
 #include"TFEL/TypeTraits/IsAssignableTo.hxx"
 #include"TFEL/Math/General/BasicOperations.hxx"
@@ -132,21 +130,6 @@ namespace tfel{
        * (this is a stl requirement).
        */
       typedef ptrdiff_t difference_type;
-
-      /*!
-       * \brief  Return the name of the class.
-       * \param  void.
-       * \return const std::string, the name of the class.
-       * \see    Name.
-       */
-      static
-      const std::string
-      getName(void){
-	using namespace std;
-	using namespace tfel::utilities;
-	return string("tmatrix<")+ToString(N)+string(",")+
-	  ToString(M)+string(",")+Name<T>::getName()+string(">");
-      }
 
       /*
        * Default constructor.

@@ -13,7 +13,6 @@
 #include"TFEL/Metaprogramming/EnableIf.hxx"
 #include"TFEL/TypeTraits/IsInvalid.hxx"
 #include"TFEL/TypeTraits/IsScalar.hxx"
-#include"TFEL/Utilities/Name.hxx"
 #include"TFEL/Math/General/BasicOperations.hxx"
 #include"TFEL/Math/Function/FunctionConcept.hxx"
 #include"TFEL/Math/Function/FunctionNegExpr.hxx"
@@ -141,16 +140,6 @@ namespace tfel{
       typedef S second_arg;
 
     public:
-
-      static std::string 
-      getName(void){
-	using namespace std;
-	using namespace tfel::utilities;
-	return string("FunctionScalarExpr<")
-	  +Name<F>::getName()+string(",")
-	  +Name<S>::getName()+string(",")
-	  +Name<Op>::getName()+string(">");
-      }
 
       FunctionScalarExpr(const F a_, const S b_)
 	: a(a_), b(b_)

@@ -20,7 +20,8 @@ namespace tfel{
      * \pre   This class is only defined for N=1u,2u and 3u.
      * \see   StensorDimeToSize and StensorSizeToDime.
      */
-    template<unsigned short N,typename T>
+    template<unsigned short N,
+	     typename T = double>
     class st2tost2;
 
   } // end of namespace math

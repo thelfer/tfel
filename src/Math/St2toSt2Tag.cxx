@@ -13,7 +13,7 @@ namespace tfel{
 
   namespace math{
 
-    const std::string 
+    std::string 
     St2toSt2Tag::getName(void)
     {
       return std::string("St2toSt2Tag");

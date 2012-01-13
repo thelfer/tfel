@@ -14,8 +14,6 @@
 
 #include"TFEL/Config/TFELConfig.hxx"
 
-#include"TFEL/Utilities/Name.hxx"
-
 #include"TFEL/Metaprogramming/StaticAssert.hxx"
 #include"TFEL/Metaprogramming/TypeList.hxx"
 #include"TFEL/Metaprogramming/IntToType.hxx"
@@ -65,20 +63,6 @@ namespace tfel{
       T value;
 
     public :
-
-      /*!
-       * \brief  Return the name of the class.
-       * \param  void.
-       * \return const std::string, the name of the class.
-       * \see    Name.
-       */
-      static
-      const std::string 
-      getName(void){
-	using namespace std;
-	using namespace tfel::utilities;
-	return string("qt<")+Name<unit>::getName()+string(",")+Name<T>::getName()+string(">");
-      }
 
       /*!
        * A simple typedef to indicate the numerical type used
@@ -204,20 +188,6 @@ namespace tfel{
       T value;
 
     public :
-
-      /*!
-       * \brief  Return the name of the class.
-       * \param  void.
-       * \return std::string, the name of the class.
-       * \see    Name.
-       */
-      static 
-      const std::string 
-      getName(void){
-	using namespace std;
-	using namespace tfel::utilities;
-	return string("qt<")+Name<NoUnit>::getName()+string(",")+Name<T>::getName()+string(">");
-      }
 
       /*!
        * A simple typedef to indicate the numerical type used

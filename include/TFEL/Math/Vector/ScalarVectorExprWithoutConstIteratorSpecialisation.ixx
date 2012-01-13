@@ -38,12 +38,6 @@ namespace tfel{
       
       typedef typename ComputeBinaryResult<A,NumTypeB,OpMult>::Handle NumType;
 
-      static std::string getName(void){
-	using namespace tfel::utilities;
-	using namespace std;
-	return string("ScalarVectorExprWithoutConstIterator<")+Name<A>::getName()+string(",")+Name<B>::getName()+string(",")+Name<OpMult>::getName()+string(">");
-      }
-
     protected:
 
       typedef A first_arg;
@@ -108,12 +102,6 @@ namespace tfel{
 
       typedef typename ComputeBinaryResult<NumTypeA,B,OpMult>::Handle NumType;
       
-      static std::string getName(void){
-	using namespace std;
-	using namespace tfel::utilities;
-	return string("VectorScalarExprWithoutConstIterator<")+Name<A>::getName()+string(",")+Name<B>::getName()+string(",")+Name<OpMult>::getName()+string(">");
-      }
-
     protected:
 
       typedef A first_arg;
@@ -178,12 +166,6 @@ namespace tfel{
 
       typedef typename ComputeBinaryResult<NumTypeA,B,OpDiv>::Handle NumType;
       
-      static std::string getName(void){
-	using namespace std;
-	using namespace tfel::utilities;
-	return string("VectorScalarExprWithoutConstIterator<")+Name<A>::getName()+string(",")+Name<B>::getName()+string(",")+Name<OpDiv>::getName()+string(">");
-      }
-
     protected:
 
       typedef A first_arg;

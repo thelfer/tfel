@@ -15,7 +15,16 @@ namespace tfel
   {
 
     template<unsigned short N, typename T>
+    class StensorNullStorage;
+
+    template<unsigned short N, typename T>
     class StensorStatic;
+
+    template<unsigned short N, typename T>
+    class StensorExternalTab;
+
+    template<unsigned short N, typename T>
+    class StensorExternalVoigt;
 
     /*
      * \class stensor

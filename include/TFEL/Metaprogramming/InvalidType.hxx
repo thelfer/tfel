@@ -10,7 +10,6 @@
 
 #include<string>
 #include"TFEL/Config/TFELConfig.hxx"
-#include"TFEL/Utilities/Name.hxx"
 
 namespace tfel{
 
@@ -28,23 +27,6 @@ namespace tfel{
     struct InvalidType;
 
   } // end of namespace meta
-
-  namespace utilities{
-
-    /*!
-     * Partial specialisation for 
-     */
-    template<>
-    struct TFEL_VISIBILITY_LOCAL Name<tfel::meta::InvalidType>
-    {
-      static std::string
-      getName(void)
-      {
-	return "InvalidType";
-      }
-    };
-
-  } // end of namespace utilities
 
 } // end of namespace tfel
 

@@ -6,13 +6,13 @@
 
 #include"TFEL/Config/TFELConfig.hxx"
 
-#include"TFEL/Utilities/Name.hxx"
-
 #include"TFEL/Metaprogramming/EnableIf.hxx"
 #include"TFEL/Metaprogramming/Implements.hxx"
 #include"TFEL/Metaprogramming/InvalidType.hxx"
 #include"TFEL/Metaprogramming/IF.hxx"
 #include"TFEL/TypeTraits/IsTemporary.hxx"
+
+#include"TFEL/Math/Forward/ST2toST2Concept.hxx"
 
 namespace tfel{
 
@@ -36,8 +36,7 @@ namespace tfel{
        * \return const std::string, the name of the class.
        * \see    Name.
        */
-      static 
-      const std::string 
+      static std::string 
       getName(void);
     };
 
@@ -57,10 +56,6 @@ namespace tfel{
     public:
       
       typedef St2toSt2Tag ConceptTag;
-
-      static
-      std::string 
-      getName(void);
 
       ValueType
       operator()(const unsigned short,

@@ -58,21 +58,6 @@ namespace tfel{
 
     public:
 
-      /*!										    
-       * brief  Return the name of the class.						    
-       * param  void.									    
-       * return std::string, the name of the class.					    
-       * see    Name.									    
-       */										    
-      static std::string getName(void){							    
-	using namespace std;								    
-	using namespace tfel::utilities;						    
-	return string("ScalarObjectRandomAccessConstIterator<")
-	  +Name<A>::getName()+string(",")
-	  +Name<B>::getName()+string(",")
-	  +Name<OpMult>::getName()+string(">");        
-      } // end of getName()
-
       /*
        * Category of the iterator.
        */
@@ -245,19 +230,6 @@ namespace tfel{
 
     public:
 
-      /*!										    
-       * brief  Return the name of the class.						    
-       * param  void.									    
-       * return std::string, the name of the class.					    
-       * see    Name.									    
-       */										    
-      static
-      std::string getName(void){							    
-	using namespace std;								    
-	using namespace tfel::utilities;						    
-	return string("ScalarObjectRandomAccessConstIterator<")+Name<A>::getName()+string(",")+Name<B>::getName()+string(",")+Name<OpDiv>::getName()+string(">");        
-      }											    
-
       typedef std::random_access_iterator_tag iterator_category;
       typedef typename  ComputeBinaryResult<A,NumTypeB,OpDiv>::Handle NumType;
       typedef const NumType   value_type;
@@ -363,18 +335,6 @@ namespace tfel{
       ConstIteratorType p;
 
     public:
-
-      /*!										    
-       * brief  Return the name of the class.						    
-       * param  void.									    
-       * return std::string, the name of the class.					    
-       * see    Name.									    
-       */										    
-      static std::string getName(void){							    
-	using namespace std;								    
-	using namespace tfel::utilities;						    
-	return string("ObjectScalarRandomAccessConstIterator<")+Name<A>::getName()+string(",")+Name<B>::getName()+string(",")+Name<OpMult>::getName()+string(">");        
-      }											    
 
       typedef typename std::iterator_traits<ConstIteratorType>::difference_type Distance;
 
@@ -492,18 +452,6 @@ namespace tfel{
       ConstIteratorType p;
 
     public:
-
-      /*!										    
-       * brief  Return the name of the class.						    
-       * param  void.									    
-       * return std::string, the name of the class.					    
-       * see    Name.									    
-       */										    
-      static std::string getName(void){							    
-	using namespace std;								    
-	using namespace tfel::utilities;						    
-	return string("ObjectScalarRandomAccessConstIterator<")+Name<A>::getName()+string(",")+Name<B>::getName()+string(",")+Name<OpDiv>::getName()+string(">");        
-      }											    
 
       typedef typename std::iterator_traits<ConstIteratorType>::difference_type Distance;
 

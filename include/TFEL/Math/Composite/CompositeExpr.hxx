@@ -11,7 +11,6 @@
 
 #include<string>
 #include"TFEL/Config/TFELConfig.hxx"
-#include"TFEL/Utilities/Name.hxx"
 #include"TFEL/TypeTraits/IsTemporary.hxx"
 #include"TFEL/Math/Composite/CompositeConcept.hxx"
 
@@ -35,22 +34,6 @@ namespace tfel{
 	public Expr
     {
       typedef typename Expr::Items Items;
-      
-      /*!
-       * \brief  Return the name of the class.
-       * \param  void.
-       * \return std::string, the name of the class.
-       * \see    Name.
-       */
-      static 
-      const std::string 
-      getName(void){
-	using namespace std;
-	using namespace tfel::utilities;
-	return string("CompositeExpr<")
-	  +Name<Res>::getName()+string(",")
-	  +Name<Expr>::getName()+string(">");
-      }
 
       explicit TFEL_MATH_INLINE CompositeExpr()
 	: Expr()

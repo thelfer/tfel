@@ -15,18 +15,16 @@
 #include"TFEL/Metaprogramming/EnableIf.hxx"
 #include"TFEL/Metaprogramming/IF.hxx"
 #include"TFEL/TypeTraits/IsScalar.hxx"
-#include"TFEL/Utilities/ToString.hxx"
 #include"TFEL/Math/General/ResultType.hxx"
 #include"TFEL/Math/General/UnaryResultType.hxx"
 #include"TFEL/Math/tvector.hxx"
+#include"TFEL/Math/Forward/lambda.hxx"
 #include"TFEL/Math/LambdaExpression/LambdaConcept.hxx"
 
 namespace tfel{
 
   namespace math{
 
-    template<unsigned short N>
-    struct Lambda;
 
     template<unsigned short N>
     struct LambdaTraits<Lambda<N> >
@@ -46,20 +44,6 @@ namespace tfel{
       : public LambdaConcept<Lambda<N> >
     {
 
-      /*!
-       * \brief  Return the name of the class.
-       * \param  void.
-       * \return const std::string, the name of the class.
-       * \see    Name.
-       */
-      static
-      std::string
-      getName(void){
-	using namespace std;
-	using namespace tfel::utilities;
-	return std::string("x")+ToString(N)+string("_");
-      }
-
        template<unsigned short M,typename T>
        TFEL_MATH_INLINE
        typename tfel::meta::EnableIf<
@@ -73,19 +57,6 @@ namespace tfel{
     struct Lambda<1u>
       : public LambdaConcept<Lambda<1u> >
     {
-
-      /*!
-       * \brief  Return the name of the class.
-       * \param  void.
-       * \return const std::string, the name of the class.
-       * \see    Name.
-       */
-      static
-      std::string
-      getName(void){
-	using namespace std;
-	return std::string("x1_");
-      }
 
       template<unsigned short M,typename T>
       TFEL_MATH_INLINE

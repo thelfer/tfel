@@ -17,9 +17,6 @@
 #include"TFEL/Metaprogramming/EnableIf.hxx"
 #include"TFEL/Metaprogramming/StaticAssert.hxx"
 
-#include"TFEL/Utilities/Name.hxx"
-#include"TFEL/Utilities/ToString.hxx"
-
 #include"TFEL/TypeTraits/IsScalar.hxx"
 #include"TFEL/TypeTraits/BaseType.hxx"
 #include"TFEL/TypeTraits/IsAssignableTo.hxx"
@@ -62,24 +59,6 @@ namespace tfel{
       TFEL_STATIC_ASSERT((N==1u)||(N==2u)||(N==3u));
 
     public:
-
-      /*!
-       * \brief  Return the name of the class.
-       * \param  void.
-       * \return const std::string, the name of the class.
-       * \see    Name.
-       */
-      static
-      std::string
-      getName(void){
-	using namespace std;
-	using namespace tfel::utilities;
-	return string("stensor<")
-	  +ToString(N)+string(",")
-	  +Name<T>::getName()+string(",")
-	  +Name<Storage<N,T> >::getName()
-	  +string(">");
-      }
 
       /*!
        * type of the stensor's values.

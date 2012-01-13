@@ -38,7 +38,7 @@ int main(void)
   FctObjectRandomAccessConstIterator<vector<double>,FctSin> begin(v.begin(),sin);
   FctObjectRandomAccessConstIterator<vector<double>,FctSin> end(v.end(),sin);
   FctObjectRandomAccessConstIterator<vector<double>,FctSin> p;
-
+  
   assert(name(p)=="FctObjectRandomAccessConstIterator<tfel::math::vector<double>,FctSin>");
 
   for(i=0,p=begin;p!=end;++p,++i){

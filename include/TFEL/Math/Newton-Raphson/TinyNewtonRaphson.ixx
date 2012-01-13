@@ -61,11 +61,6 @@ namespace tfel{
 
     public:
 
-      static std::string getName(void)
-      {
-	return std::string("TinyNewtonRaphson<")+tfel::utilities::ToString(N)+std::string(",")+tfel::utilities::Name<F>::getName()+std::string(">");
-      }
-      
       TinyNewtonRaphson()
 	: convergence(false)
       {}
@@ -145,14 +140,6 @@ namespace tfel{
       T epsilon;
 
     public:
-
-      static std::string getName(void)
-      {
-	using namespace std;
-	using namespace tfel::utilities;
-	return string("TinyNewtonRaphson<1u")+string(",")
-	  +Name<F>::getName()+string(">");
-      }
       
       TinyNewtonRaphson()
 	: convergence(false)

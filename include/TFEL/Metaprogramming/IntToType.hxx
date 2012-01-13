@@ -12,7 +12,6 @@
 #include <string>
 
 #include"TFEL/Config/TFELConfig.hxx"
-#include"TFEL/Utilities/ToString.hxx"
 
 namespace tfel{
 
@@ -34,15 +33,6 @@ namespace tfel{
      */
     template<int N>
     struct TFEL_VISIBILITY_LOCAL Int2Type{
-      /*!
-       * Return the Name of this class 
-       */
-      static std::string 
-      getName(void){
-	using namespace std;
-	using namespace tfel::utilities;
-	return string("Int2Type<")+ToString(N)+string(">");
-      }
       /*
        * Value of the template parameter
        */
@@ -65,15 +55,6 @@ namespace tfel{
      */
     template<unsigned int N>
     struct TFEL_VISIBILITY_LOCAL UInt2Type{
-      /*!
-       * Return the Name of this class 
-       */
-      static std::string 
-      getName(void){
-	using namespace std;
-	using namespace tfel::utilities;
-	return string("UInt2Type<")+ToString(N)+string(">");
-      }
       /*
        * Value of the template parameter
        */

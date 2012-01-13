@@ -6,7 +6,6 @@
 
 #include"TFEL/Config/TFELConfig.hxx"
 #include"TFEL/Metaprogramming/EnableIf.hxx"
-#include"TFEL/Utilities/Name.hxx"
 #include"TFEL/TypeTraits/IsScalar.hxx"
 #include"TFEL/TypeTraits/IsComplex.hxx"
 #include"TFEL/TypeTraits/IsUnaryOperator.hxx"

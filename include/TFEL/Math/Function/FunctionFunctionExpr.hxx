@@ -10,7 +10,6 @@
 
 #include"TFEL/Metaprogramming/Implements.hxx"
 #include"TFEL/Metaprogramming/StaticAssert.hxx"
-#include"TFEL/Utilities/Name.hxx"
 #include"TFEL/Math/General/BasicOperations.hxx"
 #include"TFEL/Math/Function/FunctionConcept.hxx"
 #include"TFEL/Metaprogramming/EnableIf.hxx"
@@ -150,16 +149,6 @@ namespace tfel{
       typedef Func2 second_arg;
 
     public:
-
-      static std::string 
-      getName(void){
-	using namespace std;
-	using namespace tfel::utilities;
-	return string("FunctionFunctionExpr<")
-	  +Name<Func1>::getName()+string(",")
-	  +Name<Func2>::getName()+string(",")
-	  +Name<Op>::getName()+string(">");
-      }
 
       FunctionFunctionExpr(const Func1 a_, const Func2 b_)
 	: a(a_), b(b_)

@@ -13,7 +13,6 @@ int main(void){
   
   using namespace std;
   using namespace tfel::math;
-  using namespace tfel::utilities;
 
   typedef qt<Acceleration,int> acceleration;
   typedef qt<Mass,int>  mass;

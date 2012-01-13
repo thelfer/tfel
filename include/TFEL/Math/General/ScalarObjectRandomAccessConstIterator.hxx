@@ -12,7 +12,6 @@
 #include<string>
 
 #include"TFEL/Config/TFELConfig.hxx"
-#include"TFEL/Utilities/Name.hxx"
 #include"TFEL/Metaprogramming/StaticAssert.hxx"
 #include"TFEL/TypeTraits/IsScalar.hxx"
 #include"TFEL/TypeTraits/IsInvalid.hxx"
@@ -37,21 +36,6 @@ namespace tfel{
       typedef typename std::iterator_traits<ConstIteratorType>::difference_type Distance;
 
     public:
-
-      /*!										    
-       * brief  Return the name of the class.						    
-       * param  void.									    
-       * return std::string, the name of the class.					    
-       * see    Name.									    
-       */										    
-      static std::string getName(void){							    
-	using namespace std;								    
-	using namespace tfel::utilities;						    
-	return string("ScalarObjectRandomAccessConstIterator<")
-	  +Name<A>::getName()+string(",")
-	  +Name<B>::getName()+string(",")
-	  +Name<Op>::getName()+string(">");        
-      } // end of getName()
 
       typedef std::random_access_iterator_tag iterator_category;
       typedef typename ComputeBinaryResult<A,NumTypeB,Op>::Handle NumType;

@@ -9,8 +9,6 @@
 #define _LIB_TFEL_STENSORNULLSTORAGE_HXX_ 
 
 #include<string>
-#include"TFEL/Utilities/Name.hxx"
-#include"TFEL/Utilities/ToString.hxx"
 
 namespace tfel{
   
@@ -18,10 +16,6 @@ namespace tfel{
 
     template<unsigned short N, typename T>
     struct StensorNullStorage{
-
-      static std::string getName(void){
-	return std::string("StensorNullStorage<")+tfel::utilities::ToString(N)+std::string(",")+tfel::utilities::Name<T>::getName()+std::string(">");
-      }
 
       static const bool storage_is_static   = false;
       static const bool storage_is_external = false;

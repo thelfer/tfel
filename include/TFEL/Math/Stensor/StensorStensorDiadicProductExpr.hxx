@@ -14,7 +14,6 @@
 #include<iterator>
 
 #include"TFEL/Config/TFELConfig.hxx"
-#include"TFEL/Utilities/Name.hxx"
 
 #include"TFEL/Metaprogramming/StaticAssert.hxx"
 #include"TFEL/Metaprogramming/Implements.hxx"
@@ -52,15 +51,6 @@ namespace tfel{
 
       typedef typename ComputeBinaryResult<NumTypeA,NumTypeB,OpMult>::Handle NumType;
       
-      static std::string getName(void){
-	using namespace std;
-	using namespace tfel::utilities;
-	return string("StensorStensorDiadicProductExpr<")+
-	  Name<A>::getName()+string(",")+
-	  Name<B>::getName()+string(",")+
-	  Name<OpDiadicProduct>::getName()+string(">");
-      }
-
     protected:
 
       typedef A first_arg;

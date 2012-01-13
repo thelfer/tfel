@@ -6,7 +6,6 @@
 
 #include"TFEL/Config/TFELConfig.hxx"
 
-#include"TFEL/Utilities/Name.hxx"
 #include"TFEL/Metaprogramming/IF.hxx"
 #include"TFEL/Metaprogramming/EmptyClass.hxx"
 #include"TFEL/Metaprogramming/HasIterator.hxx"
@@ -41,13 +40,6 @@ namespace tfel{
       typedef typename Expr::const_reference const_reference;
       typedef typename Expr::size_type 	     size_type;	    
       typedef typename Expr::difference_type difference_type;
-
-      static std::string getName(void){
-	using namespace std;
-	using namespace tfel::utilities;
-	return string("StensorExpr<")+Name<T_type>::getName()
-	  +string(",")+Name<Expr>::getName()+string(">");
-      }
 
       explicit TFEL_MATH_INLINE StensorExpr()
 	: Expr()

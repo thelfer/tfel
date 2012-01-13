@@ -13,25 +13,16 @@
 #include<vector>
 #include<string>
 
-#include"TFEL/Utilities/Name.hxx"
 #include"TFEL/Metaprogramming/EnableIf.hxx"
 #include"TFEL/TypeTraits/IsAssignableTo.hxx"
+
+#include"TFEL/Math/Forward/vector.hxx"
 #include"TFEL/Math/Vector/VectorConcept.hxx"
 #include"TFEL/Math/Vector/VectorConceptOperations.hxx"
 
 namespace tfel{
 
   namespace math{
-    
-    /*!
-     * \class vector
-     * \brief  A class representing resizable medium sized vector.
-     * \param  ValueType, the underlying numerical type.
-     * \author Helfer Thomas
-     * \date   04 April 2007
-     */
-    template<typename ValueType>
-    class vector;
     
     /*!
      * \brief Partial specialisation for the vector class.
@@ -126,20 +117,6 @@ namespace tfel{
        * (this is a vector concept requirement).
        */
       typedef size_type RunTimeProperties;
-
-      /*!
-       * \brief  Return the name of the class.
-       * \param  void.
-       * \return const std::string, the name of the class.
-       * \see    Name.
-       */
-      static
-      std::string 
-      getName(void){
-	using namespace std;
-	using namespace tfel::utilities;
-	return string("tfel::math::vector<")+Name<ValueType>::getName()+string(">");
-      }
 
       /*
        * Default constructor

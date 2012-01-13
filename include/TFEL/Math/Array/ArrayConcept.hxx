@@ -7,9 +7,10 @@
 #include"TFEL/Metaprogramming/InvalidType.hxx"
 #include"TFEL/Metaprogramming/IF.hxx"
 #include"TFEL/TypeTraits/IsTemporary.hxx"
-#include"TFEL/Utilities/Name.hxx"
 
 #include"TFEL/Metaprogramming/InvalidType.hxx"
+
+#include"TFEL/Math/Forward/ArrayConcept.hxx"
 
 namespace tfel{
 
@@ -57,14 +58,6 @@ namespace tfel{
 
       typedef ArrayTag ConceptTag;
       
-      static 
-      const std::string 
-      getName(void){
-	using namespace std;
-	using namespace tfel::utilities;
-	return string("ArrayConcept<")+Name<T>::getName()+string(">");
-      }
-
     };
         
     template<typename T>

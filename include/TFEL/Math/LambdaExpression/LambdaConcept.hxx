@@ -14,7 +14,7 @@
 #include"TFEL/Metaprogramming/TypeList.hxx"
 #include"TFEL/TypeTraits/IsScalar.hxx"
 #include"TFEL/Math/tvector.hxx"
-#include"TFEL/Math/LambdaExpression/LambdaConcept.hxx"
+#include"TFEL/Math/Forward/LambdaConcept.hxx"
 
 namespace tfel{
 
@@ -47,8 +47,7 @@ namespace tfel{
        * \return const std::string, the name of the class.
        * \see    Name.
        */
-      static 
-      const std::string 
+      static std::string 
       getName(void);
     };
 
@@ -57,14 +56,6 @@ namespace tfel{
       : public LambdaConceptImpl<LambdaTraits<LambdaExpr>::dimension,LambdaExpr>
     {
       typedef LambdaTag ConceptTag;
-
-      static std::string 
-      getName(void){
-	using namespace std;
-	using namespace tfel::utilities;
-	return string("LambdaConcept<")+Name<LambdaExpr>::getName()+string(">");
-      }
-
     }; // end of LambdaConcept
 
   } // end of namespace math

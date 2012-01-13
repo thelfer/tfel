@@ -164,6 +164,7 @@ include/TFEL/Math/General/CubicRoots.hxx -text
 include/TFEL/Math/General/DotProduct.hxx -text
 include/TFEL/Math/General/EmptyRunTimeProperties.hxx -text
 include/TFEL/Math/General/FctObjectRandomAccessConstIterator.hxx -text
+include/TFEL/Math/General/Forward/General.hxx -text
 include/TFEL/Math/General/LogicalOperations.hxx -text
 include/TFEL/Math/General/NegObjectRandomAccessConstIterator.hxx -text
 include/TFEL/Math/General/ObjectObjectRandomAccessConstIterator.hxx -text
@@ -276,7 +277,6 @@ include/TFEL/Math/Quantity/FracSimplify.hxx -text
 include/TFEL/Math/Quantity/FracSimplify.ixx -text
 include/TFEL/Math/Quantity/Unit.hxx -text
 include/TFEL/Math/Quantity/Unit.ixx -text
-include/TFEL/Math/Quantity/UnitSamples.hxx -text
 include/TFEL/Math/Quantity/qt.ixx -text
 include/TFEL/Math/Quantity/qtLimits.hxx -text
 include/TFEL/Math/Quantity/qtOperations.hxx -text

@@ -4,8 +4,6 @@
 #include <string>
 #include <vector>
 
-#include"TFEL/Utilities/Name.hxx"
-
 #include"TFEL/Utilities/MultipleDequeVector/TypeTransform.hxx"
 #include"TFEL/Utilities/MultipleDequeVector/MultipleDequeVector.hxx"
 
@@ -25,21 +23,7 @@ namespace tfel{
     template<typename T, template<class> class Transform=tfel::utilities::IdTransform>
     class  MultipleVector
       : public tfel::utilities::MultipleDequeVectorContainer<T,Transform,std::vector>
-    {
-      /*
-       * Return the name of the class.
-       * \param  void.
-       * \return std::string, the name of the class.
-       * \see    Name.
-       */
-      static std::string 
-      getName(void){
-	using namespace std;
-	return string("MultipleVector<")+
-	Name<T>::getName()+string(",")+
-	Transform<T>::getName()+string(">");
-      }
-    };
+    {};
     
   } // end of namespace utilities
 

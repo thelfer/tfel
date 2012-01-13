@@ -16,9 +16,6 @@
 
 #include"TFEL/Metaprogramming/StaticAssert.hxx"
 
-#include"TFEL/Utilities/Name.hxx"
-#include"TFEL/Utilities/ToString.hxx"
-
 #include"TFEL/TypeTraits/IsScalar.hxx"
 #include"TFEL/TypeTraits/BaseType.hxx"
 #include"TFEL/TypeTraits/IsInvalid.hxx"
@@ -26,6 +23,7 @@
 #include"TFEL/TypeTraits/IsSafelyReinterpretCastableTo.hxx"
 #include"TFEL/Math/General/BasicOperations.hxx"
 
+#include"TFEL/Math/Forward/st2tost2.hxx"
 #include"TFEL/Math/Stensor/StensorSizeToDime.hxx"
 #include"TFEL/Math/ST2toST2/ST2toST2Concept.hxx"
 #include"TFEL/Math/ST2toST2/ST2toST2ConceptOperations.hxx"
@@ -34,17 +32,6 @@
 namespace tfel{
   
   namespace math {
-
-    /*!
-     * \class st2tost2
-     * \brief finite size linear function on symmetric tensor.
-     * \param N, the spatial dimension, see StensorDimeToSize for details. 
-     * \param T, numerical type used, by default, double
-     * \pre   This class is only defined for N=1u,2u and 3u.
-     * \see   StensorDimeToSize and StensorSizeToDime.
-     */
-    template<unsigned short N,typename T=double>
-    class st2tost2;
 
     /*
      * Partial specialisation for st2tost2
@@ -59,20 +46,6 @@ namespace tfel{
     struct st2tost2
       : public ST2toST2Concept<st2tost2<N,T> >
     {
-
-      /*!
-       * \brief  Return the name of the class.
-       * \param  void.
-       * \return const std::string, the name of the class.
-       * \see    Name.
-       */
-      static
-      const std::string
-      getName(void){
-	using namespace std;
-	using namespace tfel::utilities;
-	return string("st2tost2<")+ToString(N)+string(",")+Name<T>::getName()+string(">");
-      }
 
       typedef T 		value_type;
       typedef value_type* 	pointer;

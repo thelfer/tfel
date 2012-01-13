@@ -12,7 +12,6 @@
 #include<cstddef>
 
 #include"TFEL/Config/TFELConfig.hxx"
-#include"TFEL/Utilities/Name.hxx"
 #include"TFEL/Metaprogramming/StaticAssert.hxx"
 #include"TFEL/Metaprogramming/Implements.hxx"
 #include"TFEL/Metaprogramming/IF.hxx"
@@ -50,16 +49,6 @@ namespace tfel{
     public:									        
       										        
       typedef typename ComputeUnaryResult<NumTypeA,Func>::Handle NumType;             
-      										        
-      static std::string 
-      getName(void){ 
-	using namespace std;
-	using namespace tfel::utilities;
-	return string("FctArrayExprWithoutConstIterator<")
-	  +Name<A>::getName()
-	  +Name<Func>::getName()
-	  +string(">");        
-      }
        								        
     protected:									        
 										        

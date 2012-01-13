@@ -8,9 +8,7 @@
 #ifndef _LIB_TFEL_QTSAMPLES_HXX_
 #define _LIB_TFEL_QTSAMPLES_HXX_ 
 
-#include"TFEL/Math/Quantity/Unit.hxx"
-#include"TFEL/Math/Quantity/UnitSamples.hxx"
-#include"TFEL/Math/qt.hxx"
+#include"TFEL/Math/Forward/qt.hxx"
 
 namespace tfel{
 

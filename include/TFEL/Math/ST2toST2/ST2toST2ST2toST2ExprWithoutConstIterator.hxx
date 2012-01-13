@@ -45,13 +45,6 @@ namespace tfel{
 
       typedef typename ComputeBinaryResult<NumTypeA,NumTypeB,Op>::Handle NumType;
 
-      static std::string getName(void){
-	using namespace std;
-	using namespace tfel::utilities;
-	return string("ST2toST2ST2toST2ExprWithoutConstIterator<")+Name<A>::getName()+string(",")
-	  +Name<B>::getName()+string(",")+Name<Op>::getName()+string(">");
-      }
-
     protected:
 
       typedef A first_arg;

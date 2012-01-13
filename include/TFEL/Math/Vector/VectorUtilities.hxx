@@ -11,7 +11,6 @@
 #include<string>
 
 #include"TFEL/Config/TFELConfig.hxx"
-#include"TFEL/Utilities/Name.hxx"
 
 namespace tfel{
   

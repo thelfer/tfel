@@ -8,15 +8,6 @@ namespace tfel{
   namespace math{
     
     template<class T>
-    std::string
-    ST2toST2Concept<T>::getName(void)
-    {
-      using namespace std;
-      using namespace tfel::utilities;
-      return string("ST2toST2Concept<")+Name<T>::getName()+string(">");
-    } // end of ST2toST2Concept<T>::getName(void)
-
-    template<class T>
     TFEL_MATH_INLINE 
     typename ST2toST2Concept<T>::ValueType
     ST2toST2Concept<T>::operator()(const unsigned short i,

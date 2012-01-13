@@ -13,7 +13,7 @@ namespace tfel{
 
   namespace math{
 
-    const std::string 
+    std::string 
     VectorTag::getName(void)
     {
       return std::string("VectorTag");

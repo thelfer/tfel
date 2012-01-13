@@ -16,7 +16,6 @@
 #endif /* TFEL_HAVE_BOOST */
 
 #include"TFEL/Config/TFELConfig.hxx"
-#include"TFEL/Utilities/Name.hxx"
 
 namespace tfel{
   

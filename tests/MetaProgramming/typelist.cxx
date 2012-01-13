@@ -15,6 +15,7 @@
 #include<string>
 
 #include"TFEL/Metaprogramming/TypeList.hxx"
+#include"TFEL/Utilities/Name.hxx"
 
 struct A{
   static const std::string getName(void)

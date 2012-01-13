@@ -12,7 +12,6 @@
 
 #include"TFEL/Config/TFELConfig.hxx"
 #include"TFEL/Utilities/Name.hxx"
-#include"TFEL/Utilities/ToString.hxx"
 #include"TFEL/FSAlgorithm/FSAlgorithm.hxx"
 #include"TFEL/TypeTraits/BaseType.hxx"
 #include"TFEL/TypeTraits/IsSafelyReinterpretCastableTo.hxx"
@@ -43,10 +42,6 @@ namespace tfel{
       T v[N];
       
     public:
-
-      static std::string getName(void){
-	return std::string("StensorExternalTab<")+tfel::utilities::ToString(N)+std::string(",")+tfel::utilities::Name<T>::getName()+std::string(">");
-      }
 
       // Copy Constructor
       StensorExternalTab(const StensorExternalTab&);

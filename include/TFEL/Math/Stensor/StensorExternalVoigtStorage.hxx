@@ -12,9 +12,6 @@
 
 #include"TFEL/Config/TFELConfig.hxx"
 
-#include"TFEL/Utilities/Name.hxx"
-#include"TFEL/Utilities/ToString.hxx"
-
 #include"TFEL/FSAlgorithm/FSAlgorithm.hxx"
 
 #include"TFEL/Math/General/StorageTraits.hxx"
@@ -47,10 +44,6 @@ namespace tfel{
       T v[N];
       
     public:
-
-      static std::string getName(void){
-	return std::string("StensorExternalVoigt<")+tfel::utilities::ToString(N)+std::string(",")+tfel::utilities::Name<T>::getName()+std::string(">");
-      }
 
       // Copy Constructor
       StensorExternalVoigt(const StensorExternalVoigt&);

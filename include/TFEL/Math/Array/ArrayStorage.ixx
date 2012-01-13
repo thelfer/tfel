@@ -13,8 +13,6 @@
 
 #include"TFEL/Config/TFELConfig.hxx"
 
-#include"TFEL/Utilities/Name.hxx"
-
 namespace tfel{
   
   namespace math {
@@ -38,10 +36,6 @@ namespace tfel{
       };
 
     public:
-
-      static std::string getName(void){
-	return std::string("ArrayStorage_<")+tfel::utilities::Name<T>::getName()+std::string(",")+tfel::utilities::Name<Ordering>::getName()+std::string(",")+tfel::utilities::Name<TAllocator>::getName()+std::string(">");
-      }
 
       typedef typename Ordering::RunTimeProperties RunTimeProperties;
 
@@ -73,10 +67,6 @@ namespace tfel{
 
       typedef typename ArrayStorage_<T,Ordering,TAllocator>::RunTimeProperties RunTimeProperties;
       
-      static std::string getName(void){
-	return std::string("ArrayStorage<1u,")+tfel::utilities::Name<T>::getName()+std::string(",")+tfel::utilities::Name<Ordering>::getName()+std::string(",")+tfel::utilities::Name<TAllocator>::getName()+std::string(">");
-      }
-
       ArrayStorage(const RunTimeProperties& src)
 	: ArrayStorage_<T,Ordering,TAllocator>(src)
       {};
@@ -98,10 +88,6 @@ namespace tfel{
 
       typedef typename ArrayStorage_<T,Ordering,TAllocator>::RunTimeProperties RunTimeProperties;
 
-      static std::string getName(void){
-	return std::string("ArrayStorage<2u,")+tfel::utilities::Name<T>::getName()+std::string(",")+tfel::utilities::Name<Ordering>::getName()+std::string(",")+tfel::utilities::Name<TAllocator>::getName()+std::string(">");
-      }
-
       ArrayStorage(const RunTimeProperties& src)
 	: ArrayStorage_<T,Ordering,TAllocator>(src)
       {};
@@ -122,10 +108,6 @@ namespace tfel{
     {
 
       typedef typename ArrayStorage_<T,Ordering,TAllocator>::RunTimeProperties RunTimeProperties;
-
-      static std::string getName(void){
-	return std::string("ArrayStorage<3u,")+tfel::utilities::Name<T>::getName()+std::string(",")+tfel::utilities::Name<Ordering>::getName()+std::string(",")+tfel::utilities::Name<TAllocator>::getName()+std::string(">");
-      }
 
       ArrayStorage(const RunTimeProperties& src)
 	: ArrayStorage_<T,Ordering,TAllocator>(src)

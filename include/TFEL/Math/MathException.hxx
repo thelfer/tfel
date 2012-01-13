@@ -20,49 +20,19 @@ namespace tfel{
 
     struct TFEL_VISIBILITY_EXPORT MathException
       : public tfel::exception::TFELException 
-    {
-      /*!
-       * \brief  Return the name of the class.
-       * \param  void.
-       * \return std::string, the name of the class.
-       * \see    Name.
-       */
-      static
-      const std::string
-      getName(void);
-      
+    {      
       MathException(const std::string& s);
     }; // end of struct MathException
 
     struct TFEL_VISIBILITY_EXPORT MathRunTimeException
       : public MathException
     {
-      /*!
-       * \brief  Return the name of the class.
-       * \param  void.
-       * \return std::string, the name of the class.
-       * \see    Name.
-       */
-      static
-      const std::string 
-      getName(void);
-      
       MathRunTimeException(const std::string& s);
     }; // end of struct MathRunTimeException
 
     struct TFEL_VISIBILITY_EXPORT MathDivergenceException
       : public MathException
     {
-      /*!
-       * \brief  Return the name of the class.
-       * \param  void.
-       * \return std::string, the name of the class.
-       * \see    Name.
-       */
-      static
-      const std::string 
-      getName(void);
-      
       MathDivergenceException(const std::string& s);
     }; // end of struct MathDivergenceException
 

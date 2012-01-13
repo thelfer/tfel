@@ -11,7 +11,6 @@
 #include <string>
 
 #include"TFEL/Config/TFELConfig.hxx"
-#include"TFEL/Utilities/Name.hxx"
 
 namespace tfel{
   
@@ -238,19 +237,6 @@ namespace tfel{
      */
     template<typename List>
     struct TLUnique;
-
-    /*!
-     * \class TLGetNames
-     * \brief A metafunction which returns the name of each element.
-     *
-     * \param typename List, a TL.
-     * 
-     * \return std::string, the name of each element.
-     * \author Helfer Thomas
-     * \date   08 Januar 2006
-     */
-    template<typename List>
-    class TLGetNames;
 
     /*!
      * \class TLContainsInvalidType

@@ -15,8 +15,6 @@
 
 #include<ostream>
 
-#include"TFEL/Utilities/Name.hxx"
-
 namespace tfel{
 
   namespace utilities{
@@ -77,18 +75,6 @@ namespace tfel{
       }
 
     public:
-
-      /*!
-       * \brief  Return the name of the class.
-       * \param  void.
-       * \return const std::string.
-       * \see Name
-       */
-      static std::string 
-      getName(void){
-	using namespace std;
-	return string("IntegerSet<")+Name<IntegerType>::getName()+string(">");
-      }
 
       /*!
        * \brief Default Constructor

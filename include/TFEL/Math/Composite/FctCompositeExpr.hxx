@@ -15,7 +15,6 @@
 #include"TFEL/Metaprogramming/Implements.hxx"
 #include"TFEL/TypeTraits/IsTemporary.hxx"
 
-#include"TFEL/Utilities/Name.hxx"
 #include"TFEL/Math/General/FctObjectRandomAccessConstIterator.hxx"
 #include"TFEL/Math/Composite/CompositeConcept.hxx"
 #include"TFEL/Math/Function/FunctionConcept.hxx"

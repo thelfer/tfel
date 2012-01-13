@@ -17,7 +17,6 @@
 #include"TFEL/Metaprogramming/Implements.hxx"
 #include"TFEL/TypeTraits/IsScalar.hxx"
 #include"TFEL/TypeTraits/IsTemporary.hxx"
-#include"TFEL/Utilities/Name.hxx"
 #include"TFEL/Math/General/ResultType.hxx"
 #include"TFEL/Math/General/BasicOperations.hxx"
 #include"TFEL/Math/General/ScalarObjectRandomAccessConstIterator.hxx"
@@ -44,13 +43,6 @@ namespace tfel{
     public:
       
       typedef typename ComputeBinaryResult<A,NumTypeB,Op>::Handle NumType;
-
-      static std::string getName(void){
-	using namespace std;
-	using namespace tfel::utilities;
-	return string("ScalarStensorExpr<")+Name<A>::getName()+string(",")
-	  +Name<B>::getName()+string(",")+Name<Op>::getName()+string(">");
-      }
 
     protected:
 
@@ -123,13 +115,6 @@ namespace tfel{
     public:
 
       typedef typename ComputeBinaryResult<NumTypeA,B,Op>::Handle NumType;
-
-      static std::string getName(void){
-	using namespace std;
-	using namespace tfel::utilities;
-	return string("StensorScalarExpr<")+Name<A>::getName()+string(",")
-	  +Name<B>::getName()+string(",")+Name<Op>::getName()+string(">");
-      }
 
     protected:
 

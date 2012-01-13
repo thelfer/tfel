@@ -12,7 +12,6 @@
 #include<cstddef>
 
 #include"TFEL/Config/TFELConfig.hxx"
-#include"TFEL/Utilities/Name.hxx"
 #include"TFEL/TypeTraits/IsScalar.hxx"
 #include"TFEL/TypeTraits/IsTemporary.hxx"
 #include"TFEL/Metaprogramming/StaticAssert.hxx"
@@ -47,12 +46,6 @@ namespace tfel{
 
       typedef typename ComputeBinaryResult<A,NumTypeB,Op>::Handle NumType;
       
-      static std::string getName(void){
-	using namespace std;
-	using namespace tfel::utilities;
-	return string("ScalarMatrixExprWithoutConstIterator<")+Name<A>::getName()+string(",")+Name<B>::getName()+string(",")+Name<Op>::getName()+string(">");
-      }
-
     protected:
 
       typedef A first_arg;
@@ -113,12 +106,6 @@ namespace tfel{
     public:
 
       typedef typename ComputeBinaryResult<NumTypeA,B,Op>::Handle NumType;
-      
-      static std::string getName(void){
-	using namespace std;
-	using namespace tfel::utilities;
-	return string("MatrixScalarExprWithoutConstIterator<")+Name<A>::getName()+string(",")+Name<B>::getName()+string(",")+Name<Op>::getName()+string(">");
-      }
       
     protected:
 

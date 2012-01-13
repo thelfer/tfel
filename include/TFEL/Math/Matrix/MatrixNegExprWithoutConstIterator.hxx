@@ -40,12 +40,6 @@ namespace tfel{
 
       typedef typename ComputeUnaryResult<NumTypeA,OpNeg>::Handle NumType;
 
-      static std::string getName(void){
-	using namespace std;
-	using namespace tfel::utilities;
-	return string("MatrixNegExprWithoutConstIterator<")+Name<A>::getName()+string(">");
-      }
-
     protected:
 
       typedef typename A::RunTimeProperties RunTimeProperties;

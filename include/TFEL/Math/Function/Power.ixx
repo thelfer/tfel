@@ -713,20 +713,6 @@ namespace tfel{
 
     public:
 
-//       /*!						                                  
-//        * \brief  Return the name of the class.		                                  
-//        * \param  void.					                                  
-//        * \return std::string, the name of the class.	                                  
-//        * \see    Name.					                                  
-//        */						                                  
-//       static
-//       std::string getName(void)
-//       {
-// 	using namespace std;
-// 	using namespace tfel::utilities;
-// 	return string("Power<")+ToString(N)+string(">");
-//       }                                             
-
       static TFEL_MATH_INLINE
       float
       exe(const float x)

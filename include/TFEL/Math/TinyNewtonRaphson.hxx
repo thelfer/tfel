@@ -13,8 +13,6 @@
 
 #include"TFEL/Config/TFELConfig.hxx"
 
-#include"TFEL/Utilities/Name.hxx"
-#include"TFEL/Utilities/ToString.hxx"
 #include"TFEL/FSAlgorithm/FSAlgorithm.hxx"
 
 #include"TFEL/Math/MathException.hxx"

@@ -15,6 +15,8 @@
 #include"TFEL/Metaprogramming/EnableIf.hxx"
 #include"TFEL/TypeTraits/IsTemporary.hxx"
 
+#include"TFEL/Math/Forward/CompositeConcept.hxx"
+
 namespace tfel{
 
   namespace math{

@@ -9,7 +9,7 @@
 #define _LIB_TFEL_CST_H_ 
 
 #include<string>
-#include"TFEL/Utilities/ToString.hxx"
+
 #include"TFEL/Math/qt.hxx"
 #include"TFEL/Math/Function/FunctionConcept.hxx"
 
@@ -30,24 +30,6 @@ namespace tfel{
     struct Cst
       : public FunctionConcept<Cst<N,D> >
     {
-      							                                  
-      /*!						                                  
-       * \brief  Return the name of the class.		                                  
-       * \param  void.					                                  
-       * \return std::string, the name of the class.	                                  
-       * \see    Name.
-       */						                                  
-      static std::string getName(void)
-      {
-	using namespace std;
-	using namespace tfel::utilities;
-	string name("Cst<");
-	name += ToString(N);
-	name += string("/");
-	name += ToString(D);
-	name+=string(">");
-	return name;
-      }
 
       float 
       operator()(const float) const
@@ -144,24 +126,6 @@ namespace tfel{
     struct Cst<N,1u>
       : public FunctionConcept<Cst<N,1u> >
     {
-      							                                  
-      /*!						                                  
-       * \brief  Return the name of the class.		                                  
-       * \param  void.					                                  
-       * \return std::string, the name of the class.	                                  
-       * \see    Name.					                                  
-       */						                                  
-      static
-      std::string
-      getName(void)
-      {
-	using namespace std;
-	using namespace tfel::utilities;
-	string name("Cst<");
-	name += ToString(N);
-	name+=string(">");
-	return name;
-      }
 
       float 
       operator()(const float) const

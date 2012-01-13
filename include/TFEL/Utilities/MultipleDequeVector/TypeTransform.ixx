@@ -26,12 +26,6 @@ namespace tfel{
       typedef T& reference;
       typedef const T& const_reference;
 
-      static
-      const std::string
-      getName(void){
-	return std::string("IdTransform<")+Name<T>::getName()+std::string(">");
-      }
-
       static inline value_type& reverse_transform(type& src){
 	return src;
       }
@@ -59,12 +53,6 @@ namespace tfel{
       typedef const T* const_pointer;
       typedef T& reference;
       typedef const T& const_reference;
-
-      static
-      const std::string
-      getName(void){
-	return std::string("shared_ptrTransform<")+Name<T>::getName()+std::string(">");
-      }
 
       static inline value_type& reverse_transform(type& src){
 	return *src;

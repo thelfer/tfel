@@ -15,9 +15,7 @@
 #include"TFEL/Config/TFELConfig.hxx"
 #include"TFEL/Metaprogramming/IsSuperClassOf.hxx"
 #include"TFEL/TypeTraits/IsTemporary.hxx"
-#include"TFEL/Utilities/Name.hxx"
 #include"TFEL/Math/Matrix/MatrixConcept.hxx"
-
 
 namespace tfel{
 
@@ -50,16 +48,6 @@ namespace tfel{
       										        
       typedef typename ComputeUnaryResult<NumTypeA,Func>::Handle NumType;             
       										        
-      static std::string 
-      getName(void){ 
-	using namespace std;
-	using namespace tfel::utilities;
-	return string("FctMatrixExprWithoutConstIterator<")
-	  +Name<A>::getName()
-	  +Name<Func>::getName()
-	  +string(">");        
-      }
-       								        
     protected:									        
 										        
       typedef A    first_arg;

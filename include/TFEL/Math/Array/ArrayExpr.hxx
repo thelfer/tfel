@@ -9,7 +9,6 @@
 #include"TFEL/Metaprogramming/EmptyClass.hxx"
 #include"TFEL/Metaprogramming/HasIterator.hxx"
 #include"TFEL/Metaprogramming/HasConstIterator.hxx"
-#include"TFEL/Utilities/Name.hxx"
 
 #include"TFEL/TypeTraits/IsTemporary.hxx"
 
@@ -47,15 +46,6 @@ namespace tfel{
       typedef typename Expr::const_reference const_reference;
       typedef typename Expr::size_type 	     size_type;	    
       typedef typename Expr::difference_type difference_type;
-
-      static 
-      const std::string
-      getName(void){
-	using namespace std;
-	using namespace tfel::utilities;
-	return string("ArrayExpr<")+Name<T_type>::getName()+string(",")
-	  +Name<Expr>::getName()+string(">");
-      }
 
       explicit TFEL_MATH_INLINE ArrayExpr()
 	: Expr()

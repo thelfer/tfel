@@ -14,14 +14,12 @@
 
 #include"TFEL/Config/TFELConfig.hxx"
 
-#include"TFEL/Utilities/Name.hxx"
-#include"TFEL/Utilities/ToString.hxx"
-
 #include"TFEL/TypeTraits/IsAssignableTo.hxx"
 #include"TFEL/TypeTraits/IsInvalid.hxx"
 
 #include"TFEL/Math/General/BasicOperations.hxx"
 
+#include"TFEL/Math/Forward/array.hxx"
 #include"TFEL/Math/Array/ArrayConcept.hxx"
 #include"TFEL/Math/Array/ArrayConceptOperations.hxx"
 #include"TFEL/Math/Array/ArrayExpr.hxx"
@@ -30,10 +28,6 @@
 namespace tfel{
   
   namespace math {
-
-    template<unsigned short N,typename T=double,
-	     template<unsigned short,typename> class TStorage=ArrayRowMajorStorage>
-    class array;
 
     template<unsigned short N,typename T,
 	     template<unsigned short,typename> class TStorage>
@@ -50,20 +44,6 @@ namespace tfel{
 	public TStorage<N,T>
     {
       
-      /*!
-       * \brief  Return the name of the class.
-       * \param  void.
-       * \return std::string, the name of the class.
-       * \see    Name.
-       */
-      static
-      const std::string
-      getName(void){
-	using namespace tfel::utilities;
-	std::string tmp = "array<"+ToString(N)+","+Name<T>::getName();
-	tmp+=","+Name<TStorage<N,T> >::getName()+">";
-	return tmp;
-      }
 
       typedef typename TStorage<N,T>::RunTimeProperties RunTimeProperties;
       typedef typename TStorage<N,T>::value_type             value_type;

@@ -30,8 +30,7 @@ namespace tfel{
        * \param  void
        * \return const std::string, the name of the class.
        */
-      static 
-      std::string 
+      static std::string 
       getName(void){
 	return T::getName();
       }
@@ -49,6 +48,23 @@ namespace tfel{
     name(const T&);
 
   } // end of namespace utilities
+
+  namespace meta{
+    
+    /*!
+     * \class TLGetNames
+     * \brief A metafunction which returns the name of each element.
+     *
+     * \param typename List, a TL.
+     * 
+     * \return std::string, the name of each element.
+     * \author Helfer Thomas
+     * \date   08 Januar 2006
+     */
+    template<typename List>
+    class TLGetNames;
+
+  } // end of namespace meta
 
 } // end of namespace tfel
 

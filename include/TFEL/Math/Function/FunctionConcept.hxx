@@ -15,6 +15,8 @@
 #include"TFEL/TypeTraits/IsInvalid.hxx"
 #include"TFEL/Math/General/ComputeUnaryResult.hxx"
 
+#include"TFEL/Math/Forward/FunctionConcept.hxx"
+
 namespace tfel{
 
   namespace math{
@@ -40,21 +42,13 @@ namespace tfel{
        * \return std::string, the name of the class.
        * \see    Name.
        */
-      static 
-      const std::string getName(void);
+      static std::string getName(void);
     }; // end of FunctionTag
 
     template<typename Func>
     struct FunctionConcept
     {
       typedef FunctionTag ConceptTag;
-
-      static std::string 
-      getName(void){
-	using namespace std;
-	using namespace tfel::utilities;
-	return string("FunctionConcept<")+Name<Func>::getName()+string(">");
-      }
 
       template<typename T>		                                  
       TFEL_MATH_INLINE

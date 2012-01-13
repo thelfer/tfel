@@ -56,13 +56,6 @@ namespace tfel{
 
     public:
 
-      static std::string 
-      getName(void){
-	using namespace std;
-	using namespace tfel::utilities;
-	return string("FunctionNegExpr<")+Name<F>::getName()+string(">");
-      }
-
       FunctionNegExpr(const F a_)
 	: a(a_)
       {}

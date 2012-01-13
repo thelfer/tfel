@@ -17,7 +17,6 @@
 #include"TFEL/Metaprogramming/Implements.hxx"
 #include"TFEL/TypeTraits/IsScalar.hxx"
 #include"TFEL/TypeTraits/IsTemporary.hxx"
-#include"TFEL/Utilities/Name.hxx"
 #include"TFEL/Math/General/ResultType.hxx"
 #include"TFEL/Math/General/BasicOperations.hxx"
 #include"TFEL/Math/ST2toST2/ST2toST2Concept.hxx"
@@ -43,13 +42,6 @@ namespace tfel{
     public:
       
       typedef typename ComputeBinaryResult<A,NumTypeB,Op>::Handle NumType;
-
-      static std::string getName(void){
-	using namespace std;
-	using namespace tfel::utilities;
-	return string("ScalarST2toST2ExprWithoutConstIterator<")+Name<A>::getName()+string(",")
-	  +Name<B>::getName()+string(",")+Name<Op>::getName()+string(">");
-      }
 
     protected:
 
@@ -98,13 +90,6 @@ namespace tfel{
     public:
 
       typedef typename ComputeBinaryResult<NumTypeA,B,Op>::Handle NumType;
-
-      static std::string getName(void){
-	using namespace std;
-	using namespace tfel::utilities;
-	return string("ST2toST2ScalarExprWithoutConstIterator<")+Name<A>::getName()+string(",")
-	  +Name<B>::getName()+string(",")+Name<Op>::getName()+string(">");
-      }
 
     protected:
 

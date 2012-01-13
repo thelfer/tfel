@@ -6,14 +6,14 @@
 
 #include"TFEL/Config/TFELConfig.hxx"
 
-#include"TFEL/Utilities/Name.hxx"
-
 #include"TFEL/Metaprogramming/EnableIf.hxx"
 #include"TFEL/Metaprogramming/Implements.hxx"
 #include"TFEL/Metaprogramming/InvalidType.hxx"
 #include"TFEL/Metaprogramming/IF.hxx"
 #include"TFEL/TypeTraits/IsTemporary.hxx"
 #include"TFEL/TypeTraits/BaseType.hxx"
+
+#include"TFEL/Math/Forward/StensorConcept.hxx"
 
 namespace tfel{
 
@@ -58,14 +58,6 @@ namespace tfel{
 
       typedef StensorTag ConceptTag;
       
-      static
-      std::string 
-      getName(void){
-	using namespace std;
-	using namespace tfel::utilities;
-	return string("StensorConcept<")+Name<T>::getName()+string(">");
-      }
-
       ValueType 
       operator()(const unsigned short) const;
 

@@ -14,7 +14,6 @@
 #include<iterator>
 
 #include"TFEL/Config/TFELConfig.hxx"
-#include"TFEL/Utilities/Name.hxx"
 
 #include"TFEL/Metaprogramming/StaticAssert.hxx"
 #include"TFEL/Metaprogramming/Implements.hxx"
@@ -106,13 +105,6 @@ namespace tfel{
 
       typedef typename ComputeBinaryResult<NumTypeA,NumTypeB,OpMult>::Handle NumType;
       typedef EmptyRunTimeProperties RunTimeProperties;
-
-      static std::string getName(void){
-	using namespace std;
-	using namespace tfel::utilities;
-	return string("TVectorTMatrixExpr<")+Name<A>::getName()+string(",")+
-	  Name<B>::getName()+string(",")+Name<OpMult>::getName()+string(">");
-      }
 
     protected:
 

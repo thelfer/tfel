@@ -68,6 +68,7 @@ namespace tfel
       {
 	using namespace std;
 	using namespace tfel::utilities;
+	using std::vector;
 	vector<string> fnames;
 	vector<shared_ptr<Expr> >::const_iterator p;
 	ExternalFunctionManager::const_iterator p2;
@@ -106,6 +107,7 @@ namespace tfel
       {
 	using namespace std;
 	using namespace tfel::utilities;
+	using std::vector;
 	vector<shared_ptr<Expr> > nargs(this->args.size());
 	vector<shared_ptr<Expr> >::const_iterator p = this->args.begin();
 	ExternalFunctionManager::const_iterator p2;
@@ -158,6 +160,7 @@ namespace tfel
       {
 	using namespace std;
 	using namespace tfel::utilities;
+	using std::vector;
 	vector<shared_ptr<Expr> > nargs(this->args.size());
         vector<shared_ptr<Expr> >::const_iterator p;
         vector<shared_ptr<Expr> >::iterator p2;

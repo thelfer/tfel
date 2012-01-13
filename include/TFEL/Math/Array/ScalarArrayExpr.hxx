@@ -13,8 +13,6 @@
 
 #include"TFEL/Config/TFELConfig.hxx"
 
-#include"TFEL/Utilities/Name.hxx"
-
 #include"TFEL/Metaprogramming/StaticAssert.hxx"
 #include"TFEL/Metaprogramming/Implements.hxx"
 
@@ -48,12 +46,6 @@ namespace tfel{
     public:
 
       typedef typename ComputeBinaryResult<A,NumTypeB,Op>::Handle NumType;
-
-      static std::string getName(void){
-	using namespace tfel::utilities;
-	using namespace std;
-	return string("ScalarArrayExpr<")+Name<A>::getName()+string(",")+Name<B>::getName()+string(",")+Name<Op>::getName()+string(">");
-      }
       
     protected:
 
@@ -148,12 +140,6 @@ namespace tfel{
 
 
       typedef typename ComputeBinaryResult<NumTypeA,B,Op>::Handle NumType;
-
-      static std::string getName(void){
-	using namespace tfel::utilities;
-	using namespace std;
-	return string("ArrayScalarExpr<")+Name<A>::getName()+string(",")+Name<B>::getName()+string(",")+Name<Op>::getName()+string(">");
-      }
 
     protected:
       

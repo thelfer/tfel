@@ -5,14 +5,14 @@
 
 #include"TFEL/Config/TFELConfig.hxx"
 
-#include"TFEL/Utilities/Name.hxx"
-
 #include"TFEL/Metaprogramming/InvalidType.hxx"
 #include"TFEL/Metaprogramming/IF.hxx"
 #include"TFEL/TypeTraits/IsTemporary.hxx"
 
 #include"TFEL/Math/General/ResultType.hxx"
 #include"TFEL/Math/General/BasicOperations.hxx"
+
+#include"TFEL/Math/Forward/VectorConcept.hxx"
 
 namespace tfel{
 
@@ -37,8 +37,7 @@ namespace tfel{
        * \return std::string, the name of the class.
        * \see    Name.
        */
-      static 
-      const std::string 
+      static std::string 
       getName(void);
 
     }; // end of VectorTag
@@ -59,11 +58,7 @@ namespace tfel{
     public :
     
       typedef VectorTag ConceptTag;
-  
-      static
-      std::string
-      getName(void);
-      
+        
       TFEL_MATH_INLINE 
       ValueType
       operator()(const typename traits::IndexType) const ;

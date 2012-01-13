@@ -13,7 +13,6 @@
 #include"TFEL/Config/TFELConfig.hxx"
 #include"TFEL/Metaprogramming/EnableIf.hxx"
 #include"TFEL/TypeTraits/IsFundamentalNumericType.hxx"
-#include"TFEL/Math/stensor.hxx"
 
 namespace tfel{
 
@@ -28,62 +27,6 @@ namespace tfel{
     abs(const Scal& s)
     {
       return std::abs(s);
-    }
-
-    namespace internals{
-
-      template<unsigned short N>
-      struct StensorAbs;
-
-      template<>
-      struct StensorAbs<1u>
-      {
-	template<typename StensorType>
-	TFEL_MATH_INLINE
-	static typename tfel::math::StensorTraits<StensorType>::NumType
-	exe(const StensorType& s)
-	{
-	  return tfel::math::abs(s(0))+tfel::math::abs(s(1))+tfel::math::abs(s(2));
-	}
-      };
-
-      template<>
-      struct StensorAbs<2u>
-      {
-	template<typename StensorType>
-	TFEL_MATH_INLINE
-	static typename tfel::math::StensorTraits<StensorType>::NumType
-	exe(const StensorType& s)
-	{
-	  return tfel::math::abs(s(0))+tfel::math::abs(s(1))+tfel::math::abs(s(2))
-	    +tfel::math::abs(s(3));
-	}
-      };
-
-      template<>
-      struct StensorAbs<3u>
-      {
-	template<typename StensorType>
-	TFEL_MATH_INLINE
-	static typename StensorTraits<StensorType>::NumType
-	exe(const StensorType& s)
-	{
-	  return tfel::math::abs(s(0))+tfel::math::abs(s(1))+tfel::math::abs(s(2))
-	    +tfel::math::abs(s(3))+tfel::math::abs(s(4))+tfel::math::abs(s(5));
-	}
-      };
-
-    } // end of namespace internals
-
-    template<typename StensorType>
-    TFEL_MATH_INLINE
-    typename tfel::meta::EnableIf<
-      tfel::meta::Implements<StensorType,StensorConcept>::cond,
-      typename StensorTraits<StensorType>::NumType
-    >::type
-    abs(const StensorType& s)
-    {
-      return tfel::math::internals::StensorAbs<StensorTraits<StensorType>::dime>::exe(s);
     }
 
   } // end of namespace math

@@ -68,11 +68,25 @@ nobase_include_HEADERS= TFEL/Macros.hxx                                         
 			TFEL/Math/Discretization1D.hxx                                                \
 			TFEL/Math/Discretization1D.ixx                                                \
 			TFEL/Math/Forward/qt.hxx                                                      \
+			TFEL/Math/Forward/array.hxx                                                   \
+			TFEL/Math/Forward/vector.hxx                                                  \
+			TFEL/Math/Forward/lambda.hxx                                                  \
 			TFEL/Math/Forward/Complex.hxx                                                 \
 			TFEL/Math/Forward/tvector.hxx                                                 \
 			TFEL/Math/Forward/tmatrix.hxx                                                 \
 			TFEL/Math/Forward/stensor.hxx                                                 \
 			TFEL/Math/Forward/st2tost2.hxx                                                \
+			TFEL/Math/Forward/Function.hxx                                                \
+			TFEL/Math/Forward/ArrayConcept.hxx                                            \
+			TFEL/Math/Forward/LambdaConcept.hxx                                           \
+			TFEL/Math/Forward/VectorConcept.hxx                                           \
+			TFEL/Math/Forward/MatrixConcept.hxx                                           \
+			TFEL/Math/Forward/StensorConcept.hxx                                          \
+			TFEL/Math/Forward/ST2toST2Concept.hxx                                         \
+			TFEL/Math/Forward/CompositeConcept.hxx                                        \
+			TFEL/Math/Forward/TinyNewtonRaphson.hxx                                       \
+			TFEL/Math/Forward/FunctionConcept.hxx                                         \
+			TFEL/Math/General/Forward/General.hxx                                         \
 			TFEL/Math/Bindings/atlas.hxx                                                  \
 			TFEL/Math/Parser/BinaryFunction.hxx					      \
 			TFEL/Math/Parser/EvaluatorBase.hxx 					      \
@@ -251,7 +265,6 @@ nobase_include_HEADERS= TFEL/Macros.hxx                                         
 			TFEL/Math/Quantity/qtSpecific.hxx		                              \
 			TFEL/Math/Quantity/Unit.hxx			                              \
 			TFEL/Math/Quantity/Unit.ixx			                              \
-			TFEL/Math/Quantity/UnitSamples.hxx		                              \
 			TFEL/Math/Quantity/qt.ixx			                              \
 			TFEL/Math/Quantity/qtLimits.hxx                                               \
 			TFEL/Math/Quantity/FracSimplify.hxx                                           \
@@ -372,6 +385,7 @@ nobase_include_HEADERS= TFEL/Macros.hxx                                         
 			TFEL/Math/LevenbergMarquardt/LevenbergMarquardtExternalFunctionWrapper.hxx    \
 			TFEL/Math/FSLevenbergMarquardt.hxx                                            \
 			TFEL/Math/LevenbergMarquardt/FSLevenbergMarquardt.ixx                         \
+			TFEL/Metaprogramming/Forward/TypeList.hxx                                     \
 			TFEL/Metaprogramming/GenerateTypeList.ixx                                     \
 			TFEL/Metaprogramming/StaticAssert.hxx                                         \
 			TFEL/Metaprogramming/IsConvertibleTo.hxx                                      \

@@ -13,7 +13,6 @@
 #include<iterator>
 
 #include"TFEL/Config/TFELConfig.hxx"
-#include"TFEL/Utilities/Name.hxx"
 
 #include"TFEL/Metaprogramming/StaticAssert.hxx"
 #include"TFEL/Metaprogramming/Implements.hxx"
@@ -57,12 +56,6 @@ namespace tfel{
 
       typedef typename ComputeBinaryResult<NumTypeA,NumTypeB,Op>::Handle NumType;
       
-      static std::string getName(void){
-	using namespace std;
-	using namespace tfel::utilities;
-	return string("VectorVectorExprWithoutConstIterator<")+Name<A>::getName()+string(",")+Name<B>::getName()+string(",")+Name<Op>::getName()+string(">");
-      }
-
     protected:
 
       typedef A first_arg;

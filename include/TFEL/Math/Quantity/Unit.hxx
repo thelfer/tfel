@@ -13,7 +13,6 @@
 
 #include"TFEL/Config/TFELConfig.hxx"
 #include"TFEL/Metaprogramming/IntToType.hxx"
-#include"TFEL/Utilities/Name.hxx"
 #include"TFEL/Math/Forward/qt.hxx"
 
 namespace tfel{
@@ -47,28 +46,6 @@ namespace tfel{
       static std::string getName(void);
     };
 
-    template<int N1,int N2,int N3,int N4,int N5,int N6,int N7,
-	     unsigned int D1=1,unsigned int D2=1,
-	     unsigned int D3=1,unsigned int D4=1,
-	     unsigned int D5=1,unsigned int D6=1,
-	     unsigned int D7=1>
-    struct GenerateUnit{
-      typedef Unit<tfel::meta::Int2Type<N1>,
-		   tfel::meta::Int2Type<N2>,
-		   tfel::meta::Int2Type<N3>,
-		   tfel::meta::Int2Type<N4>,
-		   tfel::meta::Int2Type<N5>,
-		   tfel::meta::Int2Type<N6>,
-		   tfel::meta::Int2Type<N7>,
-		   tfel::meta::UInt2Type<D1>,
-		   tfel::meta::UInt2Type<D2>,
-		   tfel::meta::UInt2Type<D3>,
-		   tfel::meta::UInt2Type<D4>,
-		   tfel::meta::UInt2Type<D5>,
-		   tfel::meta::UInt2Type<D6>,
-		   tfel::meta::UInt2Type<D7> > type;
-    };
-
     template<typename A, typename B>
     struct AddUnit_;
     
@@ -78,12 +55,11 @@ namespace tfel{
     template<int N,unsigned int D,typename A>
     struct PowUnit_;
     
-  } // end of Namesapce math
+  } // end of namespace math
 
 } // end of namespace tfel
 
 #include"TFEL/Math/Quantity/Unit.ixx"
-#include"TFEL/Math/Quantity/UnitSamples.hxx"
 
 #endif /* _LIB_TFEL_UNIT_H */
 

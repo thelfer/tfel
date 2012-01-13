@@ -13,8 +13,6 @@
 #include<iterator>
 
 #include"TFEL/Config/TFELConfig.hxx"
-#include"TFEL/Utilities/Name.hxx"
-#include"TFEL/Utilities/ToString.hxx"
 
 #include"TFEL/Metaprogramming/StaticAssert.hxx"
 
@@ -138,21 +136,6 @@ namespace tfel{
       				    reference,
       				    difference_type> reverse_iterator;
 #endif
-
-      /*!
-       * \brief  Return the name of the class.
-       * \param  void.
-       * \return const std::string, the name of the class.
-       * \see    Name.
-       */
-      static 
-      const std::string 
-      getName(void)
-      {
-	using namespace std;
-	using namespace tfel::utilities;
-	return string("tvector<")+ToString(N)+string(",")+Name<T>::getName()+string(">");
-      }
 
       /*
        * Default constructor.

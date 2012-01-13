@@ -39,10 +39,6 @@ namespace tfel{
 
       typedef typename ComputeUnaryResult<NumTypeA,OpNeg>::Handle NumType;
 
-      static std::string getName(void){
-	return std::string("ArrayNegExpr<")+tfel::utilities::Name<A>::getName()+std::string(">");
-      }
-
     protected:
 
       typedef A first_arg;

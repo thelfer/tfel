@@ -30,19 +30,7 @@ namespace tfel{
       ConstIteratorType p;								    
 											    
     public:										    
-											    
-      /*!										    
-       * brief  Return the name of the class.						    
-       * param  void.									    
-       * return std::string, the name of the class.					    
-       * see    Name.									    
-       */										    
-      static std::string getName(void){							    
-	using namespace std;								    
-	using namespace tfel::utilities;						    
-	return string("NegObjectRandomAccessConstIterator<")+Name<A>::getName()+string(">");             
-      }											    
-											    
+
       typedef typename std::iterator_traits<ConstIteratorType>::difference_type Distance;   
 											    
       typedef std::random_access_iterator_tag iterator_category;			    

@@ -16,7 +16,6 @@
 #include"TFEL/Metaprogramming/Implements.hxx"
 #include"TFEL/TypeTraits/IsTemporary.hxx"
 
-#include"TFEL/Utilities/Name.hxx"
 #include"TFEL/Math/General/FctObjectRandomAccessConstIterator.hxx"
 #include"TFEL/Math/Vector/VectorConcept.hxx"
 #include"TFEL/Math/Function/FunctionConcept.hxx"
@@ -52,15 +51,6 @@ namespace tfel{
       										        
       typedef typename ComputeUnaryResult<NumTypeA,Func>::Handle NumType;             
       										        
-      static std::string 
-      getName(void){ 
-	using namespace std;
-	using namespace tfel::utilities;
-	return string("FctVectorExpr<")
-	  +Name<A>::getName()+string(",")
-	  +Name<Func>::getName()+string(">");        
-      }
-       								        
     protected:									        
 										        
       typedef A    first_arg;

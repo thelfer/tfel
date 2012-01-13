@@ -28,7 +28,6 @@ compute(Func f,double value,
 	const double eps)
 {
   using namespace std;
-  using namespace tfel::utilities;
   using tfel::math::stdfunctions::D;
   assert(abs(f(value)-v0)<eps);
   assert(abs(D[f](value)-v1)<eps);
@@ -37,7 +36,6 @@ compute(Func f,double value,
 int main(void)
 {
   using namespace std;
-  using namespace tfel::utilities;
   using namespace tfel::math;
   USING_TFEL_FUNCTIONS;
 

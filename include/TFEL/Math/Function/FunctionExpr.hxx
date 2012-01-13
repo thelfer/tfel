@@ -9,7 +9,6 @@
 #define _LIB_TFEL_FUNCTIONEXPR_HXX_ 
 
 #include<string>
-#include"TFEL/Utilities/Name.hxx"
 
 namespace tfel{
 
@@ -32,12 +31,6 @@ namespace tfel{
       FunctionExpr& operator=(const FunctionExpr&);
 
     public:
-
-      static std::string getName(void){
-	using namespace std;
-	using namespace tfel::utilities;
-	return string("FunctionExpr<")+Name<Expr>::getName()+string(">");
-      }
 
       explicit TFEL_MATH_INLINE FunctionExpr()
 	: Expr()
