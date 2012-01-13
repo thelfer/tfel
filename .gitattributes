@@ -937,12 +937,6 @@ tests/Utilities/gentype.cxx -text
 tests/Utilities/gentype2.cxx -text
 tests/Utilities/gentype3.cxx -text
 tests/Utilities/tuple.cxx -text
-tfel-check/Makefile.am -text
-tfel-check/include/Makefile.am -text
-tfel-check/include/TFEL/Utilities/TestLauncher.hxx -text
-tfel-check/src/Makefile.am -text
-tfel-check/src/TestLauncher.cxx -text
-tfel-check/src/tfel-check.cxx -text
 tfel-doc/Makefile.am -text
 tfel-doc/include/Makefile.am -text
 tfel-doc/include/TFEL/Utilities/Config.hxx -text
