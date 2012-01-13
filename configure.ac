@@ -199,9 +199,6 @@ AC_OUTPUT([debug.sh
            mfront/tests/properties/Makefile
            mfront/tests/behaviours/Makefile
 	   mfront/Examples/Makefile
-	   tfel-check/Makefile
-	   tfel-check/src/Makefile
-	   tfel-check/include/Makefile
 	   tfel-doc/Makefile
 	   tfel-doc/src/Makefile
 	   tfel-doc/include/Makefile
