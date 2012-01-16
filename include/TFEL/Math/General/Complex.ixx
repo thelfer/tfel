@@ -6,8 +6,10 @@
  * \date   10 déc 2006
  */
 
-#ifndef _LIB_TFEL_COMPLEX_IXX_
-#define _LIB_TFEL_COMPLEX_IXX_ 
+#ifndef _LIB_TFEL_MATH_COMPLEX_IXX_
+#define _LIB_TFEL_MATH_COMPLEX_IXX_ 
+
+#include"TFEL/Math/General/UnaryResultType.hxx"
 
 namespace tfel{
 
@@ -58,9 +60,33 @@ namespace tfel{
       return z.real();
     }
 
+    template<int N,unsigned int D>
+    struct Power;
+    
+    template<int N,unsigned int D>
+    class TFEL_VISIBILITY_LOCAL UnaryResultType<Complex<float>,Power<N,D> >
+    {
+    public:
+      typedef Complex<float> type;
+    };
+
+    template<int N,unsigned int D>
+    class TFEL_VISIBILITY_LOCAL UnaryResultType<Complex<double>,Power<N,D> >
+    {
+    public:
+      typedef Complex<double> type;
+    };
+
+    template<int N,unsigned int D>
+    class TFEL_VISIBILITY_LOCAL UnaryResultType<Complex<long double>,Power<N,D> >
+    {
+    public:
+      typedef Complex<long double> type;
+    };
+
   } // end of namespace math
 
 } // end of namespace tfel
 
-#endif /* _LIB_TFEL_COMPLEX_IXX */
+#endif /* _LIB_TFEL_MATH_COMPLEX_IXX */
 

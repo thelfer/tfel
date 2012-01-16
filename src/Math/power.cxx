@@ -1,5 +1,5 @@
 /*!
- * \file   Power.cxx
+ * \file   power.cxx
  * \brief  
  * 
  * \author Helfer Thomas
@@ -7,16 +7,14 @@
  */
 
 #include<cmath>
-#include"TFEL/Config/TFELConfig.hxx"
-#include"TFEL/Math/Function/Power.hxx"
+
+#include"TFEL/Math/power.hxx"
 
 namespace tfel{
 
   namespace math{
 
     namespace stdfunctions{
-
-      TFEL_VISIBILITY_EXPORT tfel::math::FctSqrt sqrt;
 
       float 
       pow(const float a,const float b)

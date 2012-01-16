@@ -65,6 +65,8 @@ nobase_include_HEADERS= TFEL/Macros.hxx                                         
 			TFEL/TypeTraits/IsInvalid.hxx		                                      \
 			TFEL/TypeTraits/IsTemporary.hxx		                                      \
 			TFEL/TypeTraits/IsRandomAccessIterator.hxx	                              \
+			TFEL/Math/power.hxx                                                           \
+			TFEL/Math/power.ixx                                                           \
 			TFEL/Math/Discretization1D.hxx                                                \
 			TFEL/Math/Discretization1D.ixx                                                \
 			TFEL/Math/Forward/qt.hxx                                                      \
@@ -234,6 +236,8 @@ nobase_include_HEADERS= TFEL/Macros.hxx                                         
 			TFEL/Math/Matrix/FctMatrixExprWithoutConstIterator.hxx                        \
 			TFEL/Math/Matrix/TMatrixTVectorExpr.hxx                                       \
 			TFEL/Math/Matrix/TVectorTMatrixExpr.hxx                                       \
+			TFEL/Math/General/FracSimplify.hxx                                            \
+			TFEL/Math/General/FracSimplify.ixx		                              \
 			TFEL/Math/General/LogicalOperations.hxx                                       \
 			TFEL/Math/General/StorageTraits.hxx	                                      \
 			TFEL/Math/General/AbsCompare.hxx	                                      \
@@ -259,7 +263,6 @@ nobase_include_HEADERS= TFEL/Macros.hxx                                         
 			TFEL/Math/General/ScalarObjectRandomAccessConstIteratorSpecialisation.hxx     \
 			TFEL/Math/General/FctObjectRandomAccessConstIterator.hxx	              \
 			TFEL/Math/General/ObjectObjectRandomAccessConstIteratorSpecialisation.hxx     \
-			TFEL/Math/Quantity/FracSimplify.ixx		                              \
 			TFEL/Math/Quantity/qtOperations.ixx		                              \
 			TFEL/Math/Quantity/qtSamples.hxx		                              \
 			TFEL/Math/Quantity/qtSpecific.hxx		                              \
@@ -267,7 +270,6 @@ nobase_include_HEADERS= TFEL/Macros.hxx                                         
 			TFEL/Math/Quantity/Unit.ixx			                              \
 			TFEL/Math/Quantity/qt.ixx			                              \
 			TFEL/Math/Quantity/qtLimits.hxx                                               \
-			TFEL/Math/Quantity/FracSimplify.hxx                                           \
 			TFEL/Math/Quantity/qtOperations.hxx                                           \
 			TFEL/Math/Array/Internals/ArraySerialize.hxx	                              \
 			TFEL/Math/Array/ArrayArrayExpr.hxx	                                      \

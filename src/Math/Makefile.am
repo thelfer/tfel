@@ -13,6 +13,7 @@ libTFELMath_la_SOURCES = MathException.cxx              \
 		         BasicOperations.cxx            \
 		         Id.cxx                         \
 		         Lambda.cxx                     \
+		         power.cxx                      \
 		         Power.cxx                      \
 		         OpDiff.cxx                     \
 		         CompositeTag.cxx               \

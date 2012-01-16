@@ -12,8 +12,9 @@
 #include<algorithm>
 
 #include"TFEL/FSAlgorithm/FSAlgorithm.hxx"
+
+#include"TFEL/Math/power.hxx"
 #include"TFEL/Math/MathException.hxx"
-#include"TFEL/Math/Function/Power.hxx"
 
 namespace tfel
 {

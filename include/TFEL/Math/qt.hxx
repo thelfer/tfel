@@ -27,6 +27,7 @@
 #include"TFEL/TypeTraits/Promote.hxx"
 #include"TFEL/TypeTraits/BaseType.hxx"
 
+#include"TFEL/Math/General/Complex.hxx"
 #include"TFEL/Math/General/BasicOperations.hxx"
 
 #include"TFEL/Math/Quantity/Unit.hxx"
@@ -331,6 +332,40 @@ namespace tfel{
     TFEL_MATH_INLINE
     Scal
     abs(const qt<Unit,Scal>&);
+
+    namespace stdfunctions{
+
+      template<int N,typename Unit>
+      TFEL_MATH_INLINE
+      qt<typename PowUnit_<N,1u,Unit>::type,float>
+      power(const qt<Unit,float>);
+
+      template<int N,typename Unit>
+      TFEL_MATH_INLINE
+      qt<typename PowUnit_<N,1u,Unit>::type,double>
+      power(const qt<Unit,double>);
+
+      template<int N,typename Unit>
+      TFEL_MATH_INLINE
+      qt<typename PowUnit_<N,1u,Unit>::type,long double>
+      power(const qt<Unit,long double>);
+
+      template<int N,typename Unit>
+      TFEL_MATH_INLINE
+      qt<typename PowUnit_<N,1u,Unit>::type,Complex<float> >
+      power(const qt<Unit,Complex<float> >);
+
+      template<int N,typename Unit>
+      TFEL_MATH_INLINE
+      qt<typename PowUnit_<N,1u,Unit>::type,Complex<double> >
+      power(const qt<Unit,Complex<double> >);
+
+      template<int N,typename Unit>
+      TFEL_MATH_INLINE
+      qt<typename PowUnit_<N,1u,Unit>::type,Complex<long double> >
+      power(const qt<Unit,Complex<long double> >);
+
+    } // end of namespace stdfunctions
 
   } // end of namesapce math
 

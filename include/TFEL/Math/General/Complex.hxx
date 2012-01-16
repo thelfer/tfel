@@ -5,8 +5,8 @@
  * \date   10 déc 2006
  */
 
-#ifndef _LIB_TFEL_COMPLEX_HXX_
-#define _LIB_TFEL_COMPLEX_HXX_ 
+#ifndef _LIB_TFEL_MATH_COMPLEX_HXX_
+#define _LIB_TFEL_MATH_COMPLEX_HXX_ 
 
 #include<complex>
 #include"TFEL/Config/TFELConfig.hxx"
@@ -94,5 +94,5 @@ namespace tfel{
 
 #include"TFEL/Math/General/Complex.ixx"
 
-#endif /* _LIB_TFEL_COMPLEX_HXX */
+#endif /* _LIB_TFEL_MATH_COMPLEX_HXX */
 

@@ -8,7 +8,7 @@
 #ifndef _LIB_TFEL_UNIT_I_
 #define _LIB_TFEL_UNIT_I_ 
 
-#include"TFEL/Math/Quantity/FracSimplify.hxx"
+#include"TFEL/Math/General/FracSimplify.hxx"
 
 namespace tfel{
 

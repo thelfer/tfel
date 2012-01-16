@@ -19,7 +19,7 @@ namespace tfel{
 
 } // end of namespace tfel
 
-#include"TFEL/Math/Quantity/FracSimplify.ixx"
+#include"TFEL/Math/General/FracSimplify.ixx"
 
 #endif /* _LIB_TFEL_FRACSIMPLIFY_H */
 

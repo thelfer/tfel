@@ -13,7 +13,7 @@
 #include<sstream>
 #include<cctype>
 
-#include"TFEL/Math/Function/Power.hxx"
+#include"TFEL/Math/power.hxx"
 #include"TFEL/Math/Evaluator.hxx"
 
 namespace tfel
