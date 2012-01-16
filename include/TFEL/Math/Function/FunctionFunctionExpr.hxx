@@ -82,7 +82,7 @@ namespace tfel{
       template<typename Func1,typename Func2>
       struct DerivateFunctionFunctionExpr<Func1,Func2,OpPlus>
       {
-	static const typename 
+	static typename 
 	FunctionTraits<FunctionExpr<FunctionFunctionExpr<Func1,Func2,OpPlus> > >::DerivateFunc
 	exe(const Func1 f,const Func2 g)
 	{
@@ -93,7 +93,7 @@ namespace tfel{
       template<typename Func1,typename Func2>
       struct DerivateFunctionFunctionExpr<Func1,Func2,OpMinus>
       {
-	static const typename 
+	static typename 
 	FunctionTraits<FunctionExpr<FunctionFunctionExpr<Func1,Func2,OpMinus> > >::DerivateFunc
 	exe(const Func1 f,const Func2 g)
 	{
@@ -104,7 +104,7 @@ namespace tfel{
       template<typename Func1,typename Func2>
       struct DerivateFunctionFunctionExpr<Func1,Func2,OpMult>
       {
-	static const typename 
+	static typename 
 	FunctionTraits<FunctionExpr<FunctionFunctionExpr<Func1,Func2,OpMult> > >::DerivateFunc
 	exe(const Func1 f,const Func2 g)
 	{
@@ -115,7 +115,7 @@ namespace tfel{
       template<typename Func1,typename Func2>
       struct DerivateFunctionFunctionExpr<Func1,Func2,OpDiv>
       {
-	static const typename 
+	static typename 
 	FunctionTraits<FunctionExpr<FunctionFunctionExpr<Func1,Func2,OpDiv> > >::DerivateFunc
 	exe(const Func1 f,const Func2 g)
 	{

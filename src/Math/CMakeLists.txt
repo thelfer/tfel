@@ -6,6 +6,7 @@ link_directories("${PROJECT_BINARY_DIR}/src/Math"
 
 set(TFELMath_SOURCES
     MathException.cxx
+    Discretization1D.cxx
     LUException.cxx
     BasicOperations.cxx
     Id.cxx

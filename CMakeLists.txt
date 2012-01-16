@@ -17,8 +17,12 @@ if(UNIX)
     include(cmake/modules/gcc.cmake)
   endif(CMAKE_COMPILER_IS_GNUCC)
 endif(UNIX)
+message("${OPTIMISATION_FLAGS}")
+
+cmake_policy(SET CMP0005 OLD)
 add_definitions("-DOPTIMISATION_FLAGS=\\\"\"${OPTIMISATION_FLAGS}\"\\\"")
 add_definitions("-DCOMPILER_WARNINGS=\\\"\"${COMPILER_WARNINGS}\"\\\"")
+
 
 # sub directories
 add_subdirectory(include) 
@@ -28,10 +32,6 @@ add_subdirectory(tests)
 
 # testing
 enable_testing()
-
-if (${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION} GREATER 2.6)
-add_custom_target(check COMMAND ${CMAKE_CTEST_COMMAND})
-endif (${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION} GREATER 2.6)
 
 # packaging
 include(CPack)
