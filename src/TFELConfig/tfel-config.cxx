@@ -242,6 +242,16 @@ listOptions(std::ostream& os)
 } // end of listOptions
 
 static void
+treatVersion(void)
+{
+  using namespace std;
+  cout << "tfel-config " << VERSION 
+       << " (svn revision : " << TFEL_SVN_REVISION 
+       << ")" << endl;
+  exit(EXIT_SUCCESS);
+} // end of treatHelp
+
+static void
 treatHelp(void)
 {
   using namespace std;
@@ -287,6 +297,7 @@ main(const int argc,
   registerCallBack("--material",&treatMaterial,"request flags for libTFELMaterial.");
   registerCallBack("--finiteElement",&treatFiniteElement,"request flags for libTFELFiniteElement.");
   registerCallBack("--all",&treatAll,"request flags for all librairies.");
+  registerCallBack("--version",&treatVersion,"print tfel version and svn revision.");
 #ifdef USE_GRAPHICS
   registerCallBack("--graphics",&treatGraphics,"request flags for libTFELGraphics.");
 #endif /* USE_GRAPHICS */

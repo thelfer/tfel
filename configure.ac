@@ -12,6 +12,9 @@ AC_CANONICAL_TARGET
 AM_INIT_AUTOMAKE([foreign dist-bzip2])
 m4_ifdef([AM_SILENT_RULES],[AM_SILENT_RULES([yes])])
 
+define([svnrevision],esyscmd([sh -c "svnversion|tr -d '\n'"]))
+AC_DEFINE(TFEL_SVN_REVISION,"svnrevision",[SVN REVISION])
+
 #disable static library generation by default
 AC_ENABLE_STATIC(no)
 
