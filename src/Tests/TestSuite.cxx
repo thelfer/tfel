@@ -5,9 +5,10 @@
  * \brief  
  */
 
-#include<stdexcept>
-
 #include<sys/time.h>
+
+#include<iostream>
+#include<stdexcept>
 
 #include"TFEL/Tests/TestSuite.hxx"
 
@@ -73,11 +74,13 @@ namespace tfel
 	  msg += "' has thrown an exception (";
 	  msg += e.what();
 	  msg += ")";
+	  cerr << msg << endl;
 	  r1 = TestResult(false,msg);
 	  success = false;
 	} catch(...){
 	  string msg("test '"+(*p)->name());
 	  msg += "' has thrown an unknown exception";
+	  cerr << msg << endl;
 	  r1 = TestResult(false,msg);
 	  success = false;
 	}
@@ -126,11 +129,13 @@ namespace tfel
 	  msg += "' has thrown an exception (";
 	  msg += e.what();
 	  msg += ")";
+	  cerr << msg << endl;
 	  r1 = TestResult(false,msg);
 	  success = false;
 	} catch(...){
 	  string msg("test '"+(*p)->name());
 	  msg += "' has thrown an unknown exception";
+	  cerr << msg << endl;
 	  r1 = TestResult(false,msg);
 	  success = false;
 	}

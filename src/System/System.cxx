@@ -512,7 +512,11 @@ namespace tfel
     std::string
     systemCall::getUserName(void)
     {
-      return ::getlogin();
+      const char * const l = ::getlogin();
+      if(l!=0){
+	return l;
+      }
+      return "";
     } // end of systemCall::getUserName
 
     void
