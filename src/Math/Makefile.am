@@ -14,7 +14,7 @@ libTFELMath_la_SOURCES = MathException.cxx              \
 		         Id.cxx                         \
 		         Lambda.cxx                     \
 		         power.cxx                      \
-		         Power.cxx                      \
+		         Sqrt.cxx                       \
 		         OpDiff.cxx                     \
 		         CompositeTag.cxx               \
 		         ArrayTag.cxx                   \
