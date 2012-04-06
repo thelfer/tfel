@@ -138,12 +138,16 @@ namespace mfront
   } // end of MFrontPythonLawInterface::getGeneratedIncludes
 
   std::map<std::string,std::vector<std::string> >
-  MFrontPythonLawInterface::getLibrariesDependencies(const std::string&,
-						     const std::string&,
+  MFrontPythonLawInterface::getLibrariesDependencies(const std::string& lib,
+						     const std::string& mat,
 						     const std::string&)
   {
     using namespace std;
-    return map<string,vector<string> >();
+    map<string,vector<string> > libs;
+    string pylib;
+    pylib = makeLowerCase(getMaterialLawLibraryNameBase(lib,mat));
+    libs[pylib].push_back(TFEL_PYTHON_LIBS);
+    return libs;
   } // end of MFrontPythonLawInterface::getLibrariesDependencies()
 
   std::map<std::string,

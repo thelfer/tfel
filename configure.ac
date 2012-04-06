@@ -139,6 +139,7 @@ if test "x$use_python" != "xno";
     if test  "$PYTHON" != : ;
 	then
 	AC_DEFINE(HAVE_PYTHON)
+#python includes
 	file=$(mktemp)
 	cat > $file << EOF
 #!$PYTHON
@@ -151,6 +152,16 @@ EOF
 	PYTHON_INCLUDES=$($PYTHON $file)
 	rm $file
 	AC_DEFINE_UNQUOTED(TFEL_PYTHON_INCLUDES,"$PYTHON_INCLUDES")
+#python libraries
+	file=$(mktemp)
+	cat > $file << EOF
+#!$PYTHON
+from distutils import sysconfig
+print '-L' + sysconfig.PREFIX  +'/lib/ ' + '-lpython'+sysconfig.get_python_version()
+EOF
+	PYTHON_LIBS=$($PYTHON $file)
+	rm $file
+	AC_DEFINE_UNQUOTED(TFEL_PYTHON_LIBS,"$PYTHON_LIBS")
     else
 	AC_MSG_ERROR("'python' not found")
     fi

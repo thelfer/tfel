@@ -1499,7 +1499,7 @@ namespace mfront{
 	  }
 	  this->makeFile << " -mdll -o $@ -Wl,exp.tmp $^ "
 			 << this->getLibraryLinkDependencies(p2->first)
-			 << "\n\t";
+			 << " $(LDFLAGS)\n\t";
 	  this->makeFile << sb+"$(RM) junk.tmp base.tmp exp.tmp def.tmp\n\n";
 	} else {
 	  if(hasCxxSources){
