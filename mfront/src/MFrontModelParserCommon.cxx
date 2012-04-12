@@ -80,10 +80,11 @@ namespace mfront{
   void
   MFrontModelParserCommon::writeOutputFiles(void)
   {
+    using namespace std;
     typedef MFrontModelInterfaceFactory MMIF;
     MMIF& mmif = MMIF::getMFrontModelInterfaceFactory();
     this->verboseMode = true;
-    StringContainer::const_iterator i;
+    vector<string>::const_iterator i;
     for(i  = this->interfaces.begin();
 	i != this->interfaces.end();++i){
       MFrontModelVirtualInterface *interface = mmif.getInterfacePtr(*i);
@@ -93,10 +94,11 @@ namespace mfront{
 
   void MFrontModelParserCommon::setVerboseMode(void)
   {
+    using namespace std;
     typedef MFrontModelInterfaceFactory MMIF;
     MMIF& mmif = MMIF::getMFrontModelInterfaceFactory();
     this->verboseMode = true;
-    StringContainer::const_iterator i;
+    vector<string>::const_iterator i;
     for(i  = this->interfaces.begin();
 	i != this->interfaces.end();++i){
       MFrontModelVirtualInterface *interface = mmif.getInterfacePtr(*i);
@@ -106,10 +108,11 @@ namespace mfront{
 
   void MFrontModelParserCommon::setDebugMode(void)
   {
+    using namespace std;
     typedef MFrontModelInterfaceFactory MMIF;
     MMIF& mmif = MMIF::getMFrontModelInterfaceFactory();
     this->debugMode = true;
-    StringContainer::const_iterator i;
+    vector<string>::const_iterator i;
     for(i  = this->interfaces.begin();
 	i != this->interfaces.end();++i){
       MFrontModelVirtualInterface *interface = mmif.getInterfacePtr(*i);
@@ -119,10 +122,11 @@ namespace mfront{
 
   void MFrontModelParserCommon::setWarningMode(void)
   {
+    using namespace std;
     typedef MFrontModelInterfaceFactory MMIF;
     MMIF& mmif = MMIF::getMFrontModelInterfaceFactory();
     this->warningMode = true;
-    StringContainer::const_iterator i;
+    vector<string>::const_iterator i;
     for(i  = this->interfaces.begin();
 	i != this->interfaces.end();++i){
       MFrontModelVirtualInterface *interface = mmif.getInterfacePtr(*i);
@@ -139,7 +143,7 @@ namespace mfront{
     MMIF& mmif = MMIF::getMFrontModelInterfaceFactory();
     pair<bool,CxxTokenizer::TokensContainer::const_iterator> p;
     TokensContainer::const_iterator p2;
-    StringContainer::const_iterator i;
+    vector<string>::const_iterator i;
     bool treated = false;
     string key;
     --(this->current);
@@ -1358,7 +1362,7 @@ namespace mfront{
     MMIF& mmif = MMIF::getMFrontModelInterfaceFactory();
     typedef map<string,vector<string> > Map;
     Map incs;
-    StringContainer::const_iterator i;
+    vector<string>::const_iterator i;
     map<string,vector<string> >::const_iterator p;
     for(i  = this->interfaces.begin();
 	i != this->interfaces.end();++i){
@@ -1379,7 +1383,7 @@ namespace mfront{
     typedef MFrontModelInterfaceFactory MMIF;
     MMIF& mmif = MMIF::getMFrontModelInterfaceFactory();
     Map deps;
-    StringContainer::const_iterator i;
+    vector<string>::const_iterator i;
     map<string,vector<string> >::const_iterator p;
     for(i  = this->interfaces.begin();
 	i != this->interfaces.end();++i){
@@ -1400,7 +1404,7 @@ namespace mfront{
     typedef MFrontModelInterfaceFactory MMIF;
     MMIF& mmif = MMIF::getMFrontModelInterfaceFactory();
     Map osources;
-    StringContainer::const_iterator i;
+    vector<string>::const_iterator i;
     map<string,vector<string> >::const_iterator p;
     vector<string>::const_iterator p2;
     for(i  = this->interfaces.begin();
@@ -1429,7 +1433,7 @@ namespace mfront{
     typedef MFrontModelInterfaceFactory MMIF;
     MMIF& mmif = MMIF::getMFrontModelInterfaceFactory();
     vector<string> incs;
-    StringContainer::const_iterator i;
+    vector<string>::const_iterator i;
     for(i  = this->interfaces.begin();
 	i != this->interfaces.end();++i){
       MFrontModelVirtualInterface *interface = mmif.getInterfacePtr(*i);
@@ -1446,7 +1450,7 @@ namespace mfront{
     typedef map<string,vector<string> > Map;
     typedef MFrontModelInterfaceFactory MMIF;
     MMIF& mmif = MMIF::getMFrontModelInterfaceFactory();
-    StringContainer::const_iterator i;
+    vector<string>::const_iterator i;
     map<string,vector<string> >::const_iterator p;
     vector<string>::const_iterator p2;
     vector<string>::const_iterator p3;

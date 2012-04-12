@@ -22,8 +22,6 @@
 
 namespace mfront{
 
-  typedef std::vector<std::string> StringContainer;
-
   struct TFEL_VISIBILITY_EXPORT MFrontModelParserCommon
     : public MFrontVirtualParser,
       public ParserBase,
@@ -141,7 +139,7 @@ namespace mfront{
     bool
     isInputVariable(const std::string&) const;
 
-    StringContainer interfaces;
+    std::vector<std::string> interfaces;
     
     std::string currentVar;
     std::map<std::string,std::vector<std::string> > sourcesLibrairiesDependencies;

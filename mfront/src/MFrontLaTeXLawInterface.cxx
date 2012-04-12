@@ -5,6 +5,8 @@
  * \date   06 mai 2008
  */
 
+#include<iostream>
+
 #include<algorithm>
 #include<fstream>
 #include<sstream>
@@ -151,7 +153,7 @@ namespace mfront
     vector<VariableBoundsDescription>::const_iterator p;
     for(p=bounds.begin();p!=bounds.end();++p){
       if(p->varName==name){
-	out << " Les " << boundsType << " de cette variables sont ";
+	out << " Les " << boundsType << " de cette variable sont ";
 	if(p->boundsType==VariableBoundsDescription::Lower){
 	  out << "\\(\\left["  << p->lowerBound << ":+\\infty\\right[\\)";
 	} else if(p->boundsType==VariableBoundsDescription::Upper){
@@ -205,7 +207,7 @@ namespace mfront
       throw(runtime_error(msg));
     }
     if(!material.empty()){
-      out << "\\subsection{Description de la propriété matériau '"+material+"\\_"+className+"'}" << endl;
+      out << "\\subsection{Description de la propriété matériau '"+className+"' du matériau '"+material+"'}" << endl;
     } else {
       out << "\\subsection{Description de la propriété matériau '"+className+"'}" << endl;
     }
@@ -222,9 +224,8 @@ namespace mfront
     }
     out << "\\end{itemize}" << endl;
     if(!description.empty()){
-      out << "\\subsubsection{Description}" << endl << endl;
       string d(description);
-      if(d.size()>2){
+      if(d.size()>=2){
 	if((d[0]=='*')&&
 	   (d[1]==' ')){
 	  d = d.substr(2);
@@ -243,7 +244,13 @@ namespace mfront
       d = replace_all(d," ]","]");
       d = replace_all(d,"\\ ","\\");
       d = replace_all(d,"~ :","~:");
-      out << d << endl;
+      out << "\\subsubsection{Description}" << endl << endl;
+      if(!d.empty()){
+	cout << "Description1 : '" << d << "'" << endl;
+	out << d << endl;
+      } else {
+	out << "Aucune description disponible" << endl;
+      }
     }
     if(!vars.empty()){
       if(vars.size()==1u){

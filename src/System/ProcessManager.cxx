@@ -139,6 +139,8 @@ namespace tfel
       using namespace std;
       vector<Process>::iterator p;
       // treating handled processes
+      SignalManager& signalManager = SignalManager::getSignalManager();
+      signalManager.removeHandler(this->sHandler);
       for(p=this->processes.begin();p!=this->processes.end();++p){
 	if(p->isRunning){
 	  this->sendSignal(p->id);
@@ -146,6 +148,7 @@ namespace tfel
 	  this->closeProcessFiles(p->id);
 	}
       }
+      exit(-1);
     } // end of ProcessManager::terminateHandler
 
     void

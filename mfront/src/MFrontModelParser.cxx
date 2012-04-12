@@ -26,9 +26,9 @@ namespace mfront
   void
   MFrontModelParser::setInterfaces(const std::set<std::string>& f)
   {
-    MFrontModelParserCommon::setInterfaces(f);
     using namespace std;
-    StringContainer::const_iterator p;
+    MFrontModelParserCommon::setInterfaces(f);
+    vector<string>::const_iterator p;
     typedef MFrontModelInterfaceFactory MMIF;
     MMIF& mmif = MMIF::getMFrontModelInterfaceFactory();
     for(p=this->interfaces.begin();p!=this->interfaces.end();++p){
