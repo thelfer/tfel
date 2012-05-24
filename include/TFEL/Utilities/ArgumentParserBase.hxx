@@ -40,7 +40,7 @@ namespace tfel
        *
        * This class is used internally.
        *
-       * \note inheriting from std::string shall be forbidden in most
+       * \note inheriting from std::string shall be forbidden in most
        *cases. Here its does not harm.
        */
       struct Argument
@@ -218,6 +218,8 @@ namespace tfel
        * \brief slip arguments and options
        */
       void stripArguments(void);
+
+    protected:
     
       /*!
        * \return the version of the program being used

@@ -71,7 +71,6 @@ namespace tfel
 	if(tmp.size()<=32){
 	  tmp.insert(tmp.size(),32-tmp.size(),' ');
 	}
-	cout << tmp << " : " <<  p->second.second.second << endl;
 	aliasFound=false;
       }
       std::exit(EXIT_SUCCESS);
@@ -113,11 +112,40 @@ namespace tfel
     template<typename Child>
     void ArgumentParserBase<Child>::replaceAliases(void)
     {
+      using namespace std;
       typename ArgsContainer::iterator p;
       typename AliasContainer::const_iterator pa;
-      for(p=args.begin();p!=args.end();++p){
+      typename CallBacksContainer::iterator pf;
+      for(p=args.begin();p!=args.end();){
 	if((pa=alias.find(*p))!=alias.end()){
-	  *p = pa->second;
+	  pf = this->callBacksContainer.find(pa->second);
+	  if(pf==this->callBacksContainer.end()){
+	    string msg("ArgumentParserBase<Child>::replaceAliases : '");
+	    msg += *p;
+	    msg += "' is not a known argument";
+	    throw(runtime_error(msg));
+	  }
+	  if(pf->second.second.first){
+	    typename ArgsContainer::iterator p2 = p+1;
+	    if(p2==args.end()){
+	      string msg("ArgumentParserBase<Child>::replaceAliases : '");
+	      msg += "no argument given to option '"+*p+"'";
+	      throw(runtime_error(msg));
+	    }
+	    if((*p2)[0]=='-'){
+	      string msg("ArgumentParserBase<Child>::replaceAliases : '");
+	      msg += "no argument given to option '"+*p+"'";
+	      throw(runtime_error(msg));
+	    }
+	    *p = pa->second;
+	    p->setOption(*p2);
+	    p = this->args.erase(p2);
+	  } else {
+	    *p = pa->second;
+	    ++p;
+	  }
+	} else {
+	  ++p;
 	}
       }
     }
