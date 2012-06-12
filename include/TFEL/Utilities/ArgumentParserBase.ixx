@@ -71,6 +71,7 @@ namespace tfel
 	if(tmp.size()<=32){
 	  tmp.insert(tmp.size(),32-tmp.size(),' ');
 	}
+	cout << tmp << " : " <<  p->second.second.second << endl;
 	aliasFound=false;
       }
       std::exit(EXIT_SUCCESS);

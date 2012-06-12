@@ -60,8 +60,13 @@ namespace tfel
 	 * \param s : argument name
 	 */
 	Argument(const char * const s)
-	  : std::string(s)
+	  : std::string(s),
+	    isOptionSet(false)
 	{}
+	bool hasOption(void) const
+	{
+	  return this->isOptionSet;
+	}
 	/*!
 	 * set argument option
 	 *
@@ -70,6 +75,7 @@ namespace tfel
 	void
 	setOption(const std::string& o)
 	{
+	  this->isOptionSet = true;
 	  this->option = o;
 	}
 	/*!
@@ -83,6 +89,7 @@ namespace tfel
       private:
 	//! argument option
 	std::string option;
+	bool isOptionSet;
       }; // end of struct Argument
     
       //! a simple alias

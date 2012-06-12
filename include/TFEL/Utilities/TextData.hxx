@@ -72,6 +72,11 @@ namespace tfel
       unsigned short
       findColumn(const std::string&) const;
       /*!
+       * \return the legend associated to the curves
+       */
+      const std::vector<std::string>&
+      getLegends(void) const;
+      /*!
        * \return the title of the specified column
        * \param[in] c : column number
        * \throw std::runtime_error if no title is found

@@ -61,6 +61,12 @@ namespace tfel
       }
     } // end of TextData::TextData
       
+    const std::vector<std::string>&
+    TextData::getLegends() const
+    {
+      return this->legends;
+    } // end of TextData::getLegends
+
     std::string
     TextData::getLegend(const unsigned short c) const
     {
