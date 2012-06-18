@@ -687,6 +687,15 @@ namespace tfel{
       file.close();
     }
 
+    void
+    CxxTokenizer::parseString(const std::string& s)
+    {
+      this->fileTokens.clear();
+      this->splitLine(s,0u);
+      this->treatPreprocessorDirectives();
+      this->splitTokens();
+    } // end of CxxTokenizer::parseOneString
+
     CxxTokenizer::CxxTokenizer()
       : cStyleCommentOpened(false),
 	bExtractNumbers(true),

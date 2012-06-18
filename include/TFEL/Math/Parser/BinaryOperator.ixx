@@ -41,8 +41,8 @@ namespace tfel
       {
 	using namespace std;
 	using std::vector;
-	vector<string> a_names;
-	vector<string> b_names;
+	vector<string> a_names(names);
+	vector<string> b_names(names);
 	this->a->checkCyclicDependency(a_names);
 	this->b->checkCyclicDependency(b_names);
 	mergeVariablesNames(names,a_names);

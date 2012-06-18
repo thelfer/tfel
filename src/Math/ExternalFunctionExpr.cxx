@@ -69,7 +69,7 @@ namespace tfel
 	using namespace std;
 	using namespace tfel::utilities;
 	using std::vector;
-	vector<string> fnames;
+	vector<string> pnames;
 	vector<shared_ptr<Expr> >::const_iterator p;
 	ExternalFunctionManager::const_iterator p2;
 	vector<string>::const_iterator p3;
@@ -84,21 +84,14 @@ namespace tfel
 	  msg += "unknown function '"+this->name+"'";
 	  throw(runtime_error(msg));
 	}
+	pnames = names;
+	names.push_back(this->name);
+	p2->second->checkCyclicDependency(names);
 	for(p=this->args.begin();p!=this->args.end();++p){
-	  vector<string> n;
+	  vector<string> n(pnames);
 	  (*p)->checkCyclicDependency(n);
-	  for(p3=names.begin();p3!=names.end();++p3){
-	    if(find(n.begin(),n.end(),*p3)!=n.end()){
-	      string msg("ExternalFunctionExpr::checkCyclicDependency : ");
-	      msg += "cyclic dependency found on function '"+*p3+"'";
-	      throw(runtime_error(msg));
-	    }
-	  }
 	  mergeVariablesNames(names,n);
 	}
-	fnames.push_back(this->name);
-	p2->second->checkCyclicDependency(fnames);
-	mergeVariablesNames(names,fnames);
       } // end of ExternalFunctionExpr::checkCyclicDependency
 
       tfel::utilities::shared_ptr<Expr>

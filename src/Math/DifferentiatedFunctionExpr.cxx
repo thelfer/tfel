@@ -78,9 +78,10 @@ namespace tfel
 	using namespace std;
 	using namespace tfel::utilities;
 	vector<shared_ptr<Expr> >::const_iterator p;
+	vector<string> v(names);
 	this->f->checkCyclicDependency(names);
 	for(p=this->args.begin();p!=this->args.end();++p){
-	  vector<string> n;
+	  vector<string> n(v);
 	  (*p)->checkCyclicDependency(n);
 	  mergeVariablesNames(names,n);
 	}

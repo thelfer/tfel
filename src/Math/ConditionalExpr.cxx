@@ -38,9 +38,9 @@ namespace tfel
       ConditionalExpr::checkCyclicDependency(std::vector<std::string>& vars) const
       {
 	using namespace std;
-	vector<string> a_vars;
-	vector<string> b_vars;
-	vector<string> c_vars;
+	vector<string> a_vars(vars);
+	vector<string> b_vars(vars);
+	vector<string> c_vars(vars);
 	this->c->checkCyclicDependency(c_vars);
 	this->a->checkCyclicDependency(a_vars);
 	this->b->checkCyclicDependency(b_vars);

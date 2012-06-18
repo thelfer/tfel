@@ -585,8 +585,9 @@ namespace tfel
 	using namespace std;
 	using namespace tfel::utilities;
         vector<shared_ptr<Expr> >::const_iterator p;
-        for(p=this->args.begin();p!=this->args.end();++p){
-	  vector<string> n;
+	vector<string> a(names);
+	for(p=this->args.begin();p!=this->args.end();++p){
+	  vector<string> n(a);
 	  (*p)->checkCyclicDependency(n);
 	  mergeVariablesNames(names,n);
 	}
@@ -679,8 +680,9 @@ namespace tfel
 	using namespace std;
 	using namespace tfel::utilities;
         vector<shared_ptr<Expr> >::const_iterator p;
+	vector<string> a(names);
         for(p=this->args.begin();p!=this->args.end();++p){
-	  vector<string> vn;
+	  vector<string> vn(a);
 	  (*p)->checkCyclicDependency(vn);
 	  mergeVariablesNames(names,vn);
         }
@@ -763,8 +765,9 @@ namespace tfel
 	using namespace std;
 	using namespace tfel::utilities;
         vector<shared_ptr<Expr> >::const_iterator p;
+	vector<string> a(names);
         for(p=this->args.begin();p!=this->args.end();++p){
-	  vector<string> vn;
+	  vector<string> vn(a);
 	  (*p)->checkCyclicDependency(vn);
 	  mergeVariablesNames(names,vn);
         }
@@ -857,8 +860,9 @@ namespace tfel
 	using namespace std;
 	using namespace tfel::utilities;
         vector<shared_ptr<Expr> >::const_iterator p;
+	vector<string> a(names);
         for(p=this->args.begin();p!=this->args.end();++p){
-	  vector<string> vn;
+	  vector<string> vn(a);
 	  (*p)->checkCyclicDependency(vn);
 	  mergeVariablesNames(names,vn);
         }
@@ -953,8 +957,9 @@ namespace tfel
 	using namespace std;
 	using namespace tfel::utilities;
         vector<shared_ptr<Expr> >::const_iterator p;
+	vector<string> a(names);
         for(p=this->args.begin();p!=this->args.end();++p){
-	  vector<string> vn;
+	  vector<string> vn(a);
 	  (*p)->checkCyclicDependency(vn);
 	  mergeVariablesNames(names,vn);
         }

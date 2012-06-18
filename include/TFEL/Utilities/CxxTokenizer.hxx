@@ -66,6 +66,13 @@ namespace tfel{
 		  const InputIterator);
     
       /*!
+       * \brief analyse the string given
+       * all previous tokens are erased
+       * \param[in] s : string to be parsed
+       */ 
+      void parseString(const std::string&);
+
+      /*!
        * \brief import the specified file
        * \param[in] f : file name
        */ 
