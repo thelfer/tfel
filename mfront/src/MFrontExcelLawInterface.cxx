@@ -21,6 +21,7 @@
 
 #include"MFront/ParserUtilities.hxx"
 #include"MFront/MFrontHeader.hxx"
+#include"MFront/MFrontLock.hxx"
 #include"MFront/MFrontCLawInterface.hxx"
 #include"MFront/MFrontExcelLawInterface.hxx"
 
@@ -189,6 +190,8 @@ namespace mfront
     using namespace std;
     using namespace tfel::system;
     // writing excel interface
+    MFrontLock& lock = MFrontLock::getMFrontLock();
+    lock.lock();
     vector<ExcelInterface> interfaces;
     map<string,vector<ExcelInterface> > interfaces2;
     vector<ExcelInterface>::iterator p;
@@ -279,6 +282,7 @@ namespace mfront
       }
     }
     wrapper.close();
+    lock.unlock();
   } // end of MFrontExcelLawInterface::writeSrcFile(void)
 
 } // end of namespace mfront

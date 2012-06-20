@@ -20,6 +20,7 @@
 
 #include"MFront/ParserUtilities.hxx"
 #include"MFront/MFrontHeader.hxx"
+#include"MFront/MFrontLock.hxx"
 #include"MFront/MFrontCLawInterface.hxx"
 #include"MFront/MFrontPythonLawInterface.hxx"
 
@@ -445,6 +446,8 @@ namespace mfront
     this->srcFile << "#endif /* __cplusplus */\n\n";
     this->srcFile.close();
     // writing python interface
+    MFrontLock& lock = MFrontLock::getMFrontLock();
+    lock.lock();
     string fname;
     if(lib.empty()){
       if(!material.empty()){
@@ -552,6 +555,7 @@ namespace mfront
     copy(interfaces.begin(),interfaces.end(),
 	 ostream_iterator<string>(wrapper,"\n"));
     wrapper.close();
+    lock.unlock();
   } // end of MFrontPythonLawInterface::writeSrcFile(void)
 
 } // end of namespace mfront

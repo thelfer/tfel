@@ -589,6 +589,7 @@ namespace mfront{
 				     const VarContainer& stateVarsHolder,
 				     const VarContainer& auxiliaryStateVarsHolder,
 				     const VarContainer& externalStateVarsHolder,
+				     const VarContainer& parametersHolder,
 				     const std::map<std::string,std::string>& glossaryNames,
 				     const std::map<std::string,std::string>& entryNames,
 				     const BehaviourCharacteristic behaviourCharacteristic)
@@ -817,6 +818,12 @@ namespace mfront{
     out << "extern \"C\"{\n";
     out << "#endif /* __cplusplus */\n\n";
 
+    if(!parametersHolder.empty()){
+      out << "MFRONT_SHAREDOBJ void MFRONT_STDCALL\numat"
+	  << makeLowerCase(name)
+	  << "_setParameter(const char *const,const umat::UMATReal);\n\n";
+    }
+
     out << "MFRONT_SHAREDOBJ void MFRONT_STDCALL\numat"
 	<< makeLowerCase(name)
 	<< "(const umat::UMATInt *const,const umat::UMATReal *const,\n"
@@ -1026,6 +1033,17 @@ namespace mfront{
 	  << "_ExternalStateVariables = 0;\n\n";
     }
     
+    if(!parametersHolder.empty()){
+      out << "MFRONT_SHAREDOBJ void MFRONT_STDCALL\numat"
+	  << makeLowerCase(name)
+	  << "_setParameter(const char *const key,const umat::UMATReal value){\n"
+	  << "using namespace tfel::material;\n"
+	  << className << "ParametersInitializer& i = " << className << "ParametersInitializer::get();\n"
+	  << "i.set(key,value);\n"
+	  << "}\n\n";
+    }
+
+
     out << "MFRONT_SHAREDOBJ void MFRONT_STDCALL\numat"
 	<< makeLowerCase(name)
 	<< "(const umat::UMATInt *const NTENS, const umat::UMATReal *const DTIME,\n"

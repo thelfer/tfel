@@ -111,6 +111,12 @@ namespace mfront{
   {
     return this->contains(this->localVarsHolder,n);
   } // end of MFrontBehaviourParserCommon::isLocalVariableName
+
+  bool
+  MFrontBehaviourParserCommon::isParameterName(const std::string& n) const
+  {
+    return this->contains(this->parametersHolder,n);
+  } // end of MFrontBehaviourParserCommon::isParameterName
   
   bool
   MFrontBehaviourParserCommon::isInternalStateVariableName(const std::string& n) const
@@ -176,6 +182,44 @@ namespace mfront{
     this->explicitlyDeclaredUsableInPurelyImplicitResolution = true;
     this->behaviourCharacteristic.setUsableInPurelyImplicitResolution(true);
   } // end of MFrontBehaviourParserCommon::treatUsableInPurelyImplicitResolution
+
+  void
+  MFrontBehaviourParserCommon::treatParameterMethod(void)
+  {
+    using namespace std;
+    using namespace tfel::utilities;
+    typedef map<string,double>::value_type MVType;
+    const string& n = this->current->value;
+    ++(this->current);
+    this->checkNotEndOfFile("MFrontBehaviourParserCommon::treatParameterMethod");
+    this->readSpecifiedToken("MFrontBehaviourParserCommon::treatParameterMethod",".");
+    this->checkNotEndOfFile("MFrontBehaviourParserCommon::treatParameterMethod");
+    if(this->current->value=="setDefaultValue"){
+      ++(this->current);
+      this->checkNotEndOfFile("MFrontBehaviourParserCommon::treatParameterMethod");
+      this->readSpecifiedToken("MFrontBehaviourParserCommon::treatVariableMethod","(");
+      this->checkNotEndOfFile("MFrontBehaviourParserCommon::treatVariableMethod");
+      double value;
+      istringstream converter(this->current->value);
+      converter >> value;
+      if(!converter&&(!converter.eof())){
+	this->throwRuntimeError("MFrontBehaviourParserCommon::treatVariableMethod",
+				"could not read default value for parameter '"+n+"'");
+      }
+      ++(this->current);
+      this->checkNotEndOfFile("MFrontBehaviourParserCommon::treatVariableMethod");
+      this->readSpecifiedToken("MFrontBehaviourParserCommon::treatVariableMethod",")");
+      this->checkNotEndOfFile("MFrontBehaviourParserCommon::treatVariableMethod");
+      this->readSpecifiedToken("MFrontBehaviourParserCommon::treatVariableMethod",";");
+      if(!this->parametersDefaultValues.insert(MVType(n,value)).second){
+	this->throwRuntimeError("MFrontBehaviourParserCommon::treatVariableMethod",
+				"default value already defined for parameter '"+n+"'");
+      }
+    } else {
+      this->throwRuntimeError("MFrontBehaviourParserCommon::treatVariableMethod",
+			      "could not read default value for parameter '"+n+"'");
+    }
+  } // end of MFrontBehaviourParserCommon::treatParameterMethod
 
   void
   MFrontBehaviourParserCommon::treatVariableMethod(void)
@@ -260,7 +304,7 @@ namespace mfront{
   MFrontBehaviourParserCommon::treatUnknownVariableMethod(const std::string& n)
   {
     using namespace std;
-    string msg("MFrontBehaviourParserCommon::treatVariableMethod : ");
+    string msg("MFrontBehaviourParserCommon::treatUnknownVariableMethod : ");
     msg += "unknown method '"+this->current->value+"' for variable '"+n+"', ";
     msg += "valid methods are 'setGlossaryName' or 'setEntryName'";
     throw(runtime_error(msg));
@@ -976,6 +1020,7 @@ namespace mfront{
     this->reserveName("updateStateVars");
     this->reserveName("updateAuxiliaryStateVars");
     this->reserveName("getModellingHypothesis");
+    this->reserveName("getParameterValues()");
     this->reserveName("hypothesis");
     this->reserveName("hypothesis_");
   } // end of MFrontBehaviourParserCommon::registerDefaultVarNames
@@ -2178,7 +2223,8 @@ namespace mfront{
     if(!this->initLocalVars.empty()){
       this->behaviourFile << this->initLocalVars;
     }
-    if(!predictor.empty()){
+    this->writeBehaviourParameterInitialisation();
+if(!predictor.empty()){
       this->behaviourFile << predictor;
     }
     this->writeBehaviourParserSpecificConstructorPart();
@@ -2213,7 +2259,8 @@ namespace mfront{
     if(!this->initLocalVars.empty()){
       this->behaviourFile << this->initLocalVars;
     } 
-    if(!predictor.empty()){
+    this->writeBehaviourParameterInitialisation();
+if(!predictor.empty()){
       this->behaviourFile << predictor;
     }
     this->writeBehaviourParserSpecificConstructorPart();
@@ -2240,13 +2287,27 @@ namespace mfront{
       if(!this->initLocalVars.empty()){
 	this->behaviourFile << this->initLocalVars;
       }
-      this->writeBehaviourParserSpecificConstructorPart();
+      this->writeBehaviourParameterInitialisation();
       if(!predictor.empty()){
 	this->behaviourFile << predictor;
       }
+      this->writeBehaviourParserSpecificConstructorPart();
       this->behaviourFile << "}\n\n";
     }
   }
+
+  void MFrontBehaviourParserCommon::writeBehaviourParameterInitialisation(void)
+  {    
+    using namespace std;
+    this->checkBehaviourFile();
+    VarContainer::const_iterator p;
+    if(!this->parametersHolder.empty()){
+      for(p=this->parametersHolder.begin();p!=this->parametersHolder.end();++p){
+	this->behaviourFile << "this->" << p->name << " = " << this->className 
+			    << "ParametersInitializer::get()." << p->name << ";\n";  
+      }
+    }
+  } // end of MFrontBehaviourParserCommon::writeBehaviourParameterInitialisation
 
   void MFrontBehaviourParserCommon::writeBehaviourLocalVars(void)
   {    
@@ -2264,6 +2325,24 @@ namespace mfront{
     }
     this->behaviourFile << endl;
   }
+
+  void MFrontBehaviourParserCommon::writeBehaviourParameters(void)
+  {    
+    using namespace std;
+    this->checkBehaviourFile();
+    VarContainer::const_iterator p;
+    for(p=this->parametersHolder.begin();p!=this->parametersHolder.end();++p){
+      if(!this->debugMode){
+	if(p->lineNumber!=0u){
+	  this->behaviourFile << "#line " << p->lineNumber << " \"" 
+			      << this->fileName << "\"\n";
+	}
+      }
+      this->behaviourFile << p->type << " " << p->name << ";\n";  
+    }
+    this->behaviourFile << endl;
+  }
+
   
   void MFrontBehaviourParserCommon::writeBehaviourPolicyVariable(void)
   {    
@@ -2392,6 +2471,15 @@ namespace mfront{
       this->behaviourFile << "os << \"" << p->name << " : \" << b." 
 			  << p->name;
       if((p+1)!=this->localVarsHolder.end()){
+	this->behaviourFile <<  " << endl;\n";  
+      } else {
+	this->behaviourFile <<  ";\n";  
+      }
+    }
+    for(p=this->parametersHolder.begin();p!=this->parametersHolder.end();++p){
+      this->behaviourFile << "os << \"" << p->name << " : \" << b." 
+			  << p->name;
+      if((p+1)!=this->parametersHolder.end()){
 	this->behaviourFile <<  " << endl;\n";  
       } else {
 	this->behaviourFile <<  ";\n";  
@@ -2582,6 +2670,36 @@ namespace mfront{
     // Empty member meant to be overriden in Child if necessary
   }
 
+  void MFrontBehaviourParserCommon::writeBehaviourParametersInitializer()
+  {
+    using namespace std;
+    if(!this->parametersHolder.empty()){
+      VarContainer::const_iterator p;
+      this->checkBehaviourFile();
+      this->behaviourFile << "struct " << this->className << "ParametersInitializer\n"
+			  << "{\n"
+			  << "static " << this->className << "ParametersInitializer&\n"
+			  << "get();\n\n"
+			  << "void set(const char* const,const double);\n\n";
+      for(p=this->parametersHolder.begin();p!=this->parametersHolder.end();++p){
+	if(p->type!="real"){
+	  string msg("MFrontBehaviourParserCommon::writeBehaviourParametersInitializer : ");
+	  msg += "invalid type for parameter '"+p->name+"'";
+	  throw(runtime_error(msg));
+	}
+	this->behaviourFile << "double " << p->name << ";\n"; 
+      }
+      this->behaviourFile << "\n"; 
+      this->behaviourFile << "private :\n\n"
+			  << this->className << "ParametersInitializer();\n\n"
+			  << this->className << "ParametersInitializer(const " << this->className << "ParametersInitializer&);\n\n"
+			  << this->className << "ParametersInitializer&\n"
+			  << "operator=(const " << this->className << "ParametersInitializer&);\n\n";
+      this->behaviourFile << "};\n\n";
+    }
+    
+  } // end of MFrontBehaviourParserCommon::writeBehaviourParametersInitializer
+
   void MFrontBehaviourParserCommon::writeBehaviourParserSpecificConstructorPart(void)
   {
     // Empty member meant to be overriden in Child if necessary
@@ -2598,12 +2716,14 @@ namespace mfront{
       this->writeIncludes(this->behaviourFile);
     }
     this->writeNamespaceBegin(this->behaviourFile);
+    this->writeBehaviourParametersInitializer();
     this->writeBehaviourClassBegin();
     this->writeBehaviourStandardTFELTypedefs();
     this->writeBehaviourParserSpecificTypedefs();
     this->writeBehaviourStaticVars();
     this->writeBehaviourStateVarsIncrements();
     this->writeBehaviourLocalVars();
+    this->writeBehaviourParameters();
     this->writeBehaviourParserSpecificMembers();
     this->writeBehaviourUpdateStateVars();
     this->writeBehaviourUpdateAuxiliaryStateVars();
@@ -3066,6 +3186,10 @@ namespace mfront{
     }
     this->srcFile << " */" << endl;
     this->srcFile << endl;
+    if(!this->parametersHolder.empty()){
+      this->srcFile << "#include<cstring>\n";
+    }
+    this->srcFile << endl;
     this->srcFile << "#include\"TFEL/Material/" << this->behaviourDataFileName   << "\"\n";
     this->srcFile << "#include\"TFEL/Material/" << this->integrationDataFileName << "\"\n";
     this->srcFile << "#include\"TFEL/Material/" << this->behaviourFileName       << "\"\n";
@@ -3141,10 +3265,62 @@ namespace mfront{
     }
   } // end of MFrontBehaviourParserCommon::writeSrcFileUserDefinedCode
 
+  void
+  MFrontBehaviourParserCommon::writeSrcFileParametersInitializer(void)
+  {
+    using namespace std;
+    this->checkBehaviourFile();
+    if(!this->parametersHolder.empty()){
+      VarContainer::const_iterator p;
+      std::map<std::string,double>::const_iterator p2;
+      this->srcFile << this->className << "ParametersInitializer&\n"
+		    << this->className << "ParametersInitializer::get()\n"
+		    <<"{\n"
+		    << "static " << this->className << "ParametersInitializer i;\n"
+		    << "return i;\n"
+		    << "}\n\n";
+      this->srcFile << this->className << "ParametersInitializer::" 
+		    << this->className << "ParametersInitializer()\n"
+		    <<"{\n";
+      for(p=this->parametersHolder.begin();p!=this->parametersHolder.end();++p){
+	p2 = this->parametersDefaultValues.find(p->name);
+	if(p2==this->parametersDefaultValues.end()){
+	  string msg("MFrontBehaviourParserCommon::writeSrcFileParametersInitializer : ");
+	  msg += "no default value for parameter '"+p->name+"'";
+	  throw(runtime_error(msg));
+	}
+	this->srcFile << "this->" << p->name << " = " << p2->second << ";\n"; 
+      }
+      this->srcFile <<"}\n\n";
+      this->srcFile <<"void\n"
+		    << this->className << "ParametersInitializer::set(const char* const key,\nconst double v)" 
+		    << "{\n"
+		    << "using namespace std;";
+      for(p=this->parametersHolder.begin();p!=this->parametersHolder.end();++p){
+	if(p==this->parametersHolder.begin()){
+	  this->srcFile << "if(";
+	} else {
+	  this->srcFile << "} else if(";
+	}
+	this->srcFile << "::strcmp(\""+p->name+"\",key)==0){\n"
+		      << "this->" << p->name << " = v;\n";
+      }
+      this->srcFile << "} else {";
+      this->srcFile << "string msg(\"" << this->className << "ParametersInitializer::set : \")\n;"
+		    << "msg += \" no paramater named '\";\n"
+		    << "msg += key;\n"
+		    << "msg += \"'\";\n"
+		    << "throw(runtime_error(msg));\n"
+		    << "}\n"
+		    << "}\n\n";
+    }
+  } // end of MFrontBehaviourParserCommon::writeSrcFileParametersInitializer
+
   void MFrontBehaviourParserCommon::writeSrcFile(void)
   {
     this->writeSrcFileHeader();
     this->writeNamespaceBegin(this->srcFile);
+    this->writeSrcFileParametersInitializer();
     this->writeSrcFileUserDefinedCode();
     this->writeSrcFileStaticVars();
     this->writeNamespaceEnd(this->srcFile);
@@ -3688,6 +3864,12 @@ namespace mfront{
   {
     this->readVarList(this->localVarsHolder);
   } // end of MFrontBehaviourParserCommon::treatLocalVar
+
+  void
+  MFrontBehaviourParserCommon::treatParameter(void)
+  {
+    this->readVarList("real",this->parametersHolder,false);
+  } // end of MFrontBehaviourParserCommon::treatParameter
 
   void
   MFrontBehaviourParserCommon::treatInitLocalVars(void)

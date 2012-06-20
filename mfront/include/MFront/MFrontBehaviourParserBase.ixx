@@ -40,6 +40,7 @@ namespace mfront{
     this->registerNewCallBack("@Coef",&Child::treatCoef);
     this->registerNewCallBack("@MaterialProperty",&Child::treatCoef);
     this->registerNewCallBack("@LocalVar",&Child::treatLocalVar);
+    this->registerNewCallBack("@Parameter",&Child::treatParameter);
     this->registerNewCallBack("@LocalVariable",&Child::treatLocalVar);
     this->registerNewCallBack("@StateVar",&Child::treatStateVariables);
     this->registerNewCallBack("@StateVariable",&Child::treatStateVariables);
@@ -126,6 +127,8 @@ namespace mfront{
 	 (this->isAuxiliaryInternalStateVariableName(this->current->value))||
 	 (this->isExternalStateVariableName(this->current->value))){
 	this->treatVariableMethod();
+      } else if (this->isParameterName(this->current->value)){
+	this->treatParameterMethod();
       } else {
 	p = this->callBacks.find(this->current->value);
 	if(p==this->callBacks.end()){

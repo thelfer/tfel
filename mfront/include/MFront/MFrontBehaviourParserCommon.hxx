@@ -95,6 +95,8 @@ namespace mfront{
 
     void treatMaterial(void);
 
+    void treatParameter(void);
+
     void treatLocalVar(void);
 
     void treatInitLocalVars(void);
@@ -267,6 +269,8 @@ namespace mfront{
 
     virtual void writeBehaviourLocalVars(void);
 
+    virtual void writeBehaviourParameters(void);
+
     virtual void writeBehaviourComputedVars(void);
 
     virtual void writeBehaviourStaticVars(void);
@@ -291,17 +295,25 @@ namespace mfront{
 
     virtual void writeBehaviourIncludeBehaviourData(void);
 
+    virtual void writeBehaviourParameterInitialisation(void);
+
+    virtual void writeBehaviourParametersInitializer(void);
+
     void checkSrcFile(void) const;
 
     virtual void writeSrcFileHeader(void);
 
     virtual void writeSrcFileUserDefinedCode(void);
 
+    virtual void writeSrcFileParametersInitializer(void);
+
     virtual void writeSrcFileStaticVars(void);
 
     virtual void writeSrcFile(void);
 
     virtual void writeUnaryLoadingTestFiles(void);
+
+    virtual void treatParameterMethod(void);
 
     virtual void treatVariableMethod(void);
 
@@ -331,6 +343,9 @@ namespace mfront{
     isLocalVariableName(const std::string&) const;
 
     bool
+    isParameterName(const std::string&) const;
+
+    bool
     isInternalStateVariableName(const std::string&) const;
 
     bool
@@ -355,11 +370,14 @@ namespace mfront{
 
     std::map<std::string,std::string> entryNames;
 
+    std::map<std::string,double> parametersDefaultValues;
+
     VarContainer coefsHolder;
     VarContainer stateVarsHolder;
     VarContainer auxiliaryStateVarsHolder;
     VarContainer externalStateVarsHolder;
     VarContainer localVarsHolder;
+    VarContainer parametersHolder;
     ComputedVarContainer computedVars;
 
     StringContainer interfaces;

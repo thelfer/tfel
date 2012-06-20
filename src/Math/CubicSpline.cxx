@@ -22,11 +22,11 @@ namespace tfel
     {} // end of CubicSplineNullPivot::CubicSplineNullPivot
 
     CubicSplineInvalidAbscissaVectorSize::CubicSplineInvalidAbscissaVectorSize()
-      : tfel::exception::TFELException("abscissa size is smaller than 3")
+      : tfel::exception::TFELException("abscissa size is smaller than 1")
     {} // end of CubicSplineInvalidAbscissaVectorSize::CubicSplineInvalidAbscissaVectorSize
     
     CubicSplineInvalidOrdinateVectorSize::CubicSplineInvalidOrdinateVectorSize()
-      : tfel::exception::TFELException("ordinate size is smaller than 3")
+      : tfel::exception::TFELException("ordinate size is smaller than 1")
     {} // end of CubicSplineInvalidOrdinateVectorSize::CubicSplineInvalidOrdinateVectorSize
     
     CubicSplineInvalidInputs::CubicSplineInvalidInputs()

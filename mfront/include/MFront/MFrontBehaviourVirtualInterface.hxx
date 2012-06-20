@@ -88,6 +88,7 @@ namespace mfront{
 		  const VarContainer&,
 		  const VarContainer&,
 		  const VarContainer&,
+		  const VarContainer&,
 		  const std::map<std::string,std::string>&,
 		  const std::map<std::string,std::string>&,
 		  const BehaviourCharacteristic) = 0;

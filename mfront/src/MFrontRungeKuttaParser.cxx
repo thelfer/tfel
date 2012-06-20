@@ -453,6 +453,7 @@ namespace mfront{
 			       this->stateVarsHolder,
 			       this->auxiliaryStateVarsHolder,
 			       this->externalStateVarsHolder,
+			       this->parametersHolder,
 			       this->glossaryNames,
 			       this->entryNames,
 			       this->behaviourCharacteristic);
