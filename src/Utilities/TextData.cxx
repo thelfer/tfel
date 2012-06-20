@@ -73,6 +73,12 @@ namespace tfel
       return this->legends;
     } // end of TextData::getLegends
 
+    const std::vector<std::string>&
+    TextData::getPreamble() const
+    {
+      return this->preamble;
+    } // end of TextData::getPreamble
+
     std::string
     TextData::getLegend(const unsigned short c) const
     {
