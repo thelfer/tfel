@@ -93,6 +93,12 @@ namespace tfel
        */
       std::vector<Line>::const_iterator
       end() const;
+      /*!
+       * get the first commented lines
+       */
+      const std::vector<std::string>&
+      getPreamble(void) const;
+
     private:
       /*!
        * \brief default constructor (disabled)
@@ -124,6 +130,8 @@ namespace tfel
       std::vector<Line>        lines;
       //! list of column titles
       std::vector<std::string> legends;
+      //! first commented lines
+      std::vector<std::string> preamble;
     }; // end of struct TextData
 
   } // end of namespace utilities

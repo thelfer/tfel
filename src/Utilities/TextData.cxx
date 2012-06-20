@@ -25,6 +25,7 @@ namespace tfel
       using namespace std;
       ifstream f(file.c_str());
       bool firstLine;
+      bool firstComments;
       unsigned short nbr;
       if(!f){
 	string msg("TextData::TextData : ");
@@ -33,16 +34,20 @@ namespace tfel
       }
       nbr=1;
       firstLine=true;
+      firstComments = true;
       while(!f.eof()){
 	string line;
 	getline(f,line);
 	if(!line.empty()){
 	  if(line[0]=='#'){
+	    line.erase(line.begin());
 	    if(firstLine){
-	      line.erase(line.begin());
 	      istringstream tokenizer(line);
 	      copy(istream_iterator<string>(tokenizer),
 		   istream_iterator<string>(),back_inserter(this->legends));
+	    }
+	    if(firstComments){
+	      this->preamble.push_back(line);
 	    }
 	  } else {
 	    Line l;
@@ -54,6 +59,7 @@ namespace tfel
 	    if(this->lines.back().tokens.empty()){
 	      this->lines.pop_back();
 	    }
+	    firstComments = false;
 	  }
 	  firstLine = false;
 	}
