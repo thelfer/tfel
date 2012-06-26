@@ -92,7 +92,7 @@ namespace tfel
       using std::vector;
       if(this->values.size()==1){
 	this->values[0].d = value(real(0));
-      }{
+      } else {
 	typename vector<real>::size_type i;
 	typename vector<real>::size_type s = this->values.size()-1u;
 	vector<real>  m(2*s+1u);        // matrix (main an upper diagonal)

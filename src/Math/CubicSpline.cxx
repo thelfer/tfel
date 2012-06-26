@@ -14,27 +14,29 @@ namespace tfel
   {
 
     CubicSplineUninitialised::CubicSplineUninitialised()
-      : tfel::exception::TFELException("undefined collocation points")
+      : tfel::exception::TFELException("CubicSpline : undefined collocation points")
     {} // end of CubicSplineUninitialised::CubicSplineUninitialised
 
     CubicSplineNullPivot::CubicSplineNullPivot()
-      : tfel::exception::TFELException("null pivot")
+      : tfel::exception::TFELException("CubicSpline : null pivot")
     {} // end of CubicSplineNullPivot::CubicSplineNullPivot
 
     CubicSplineInvalidAbscissaVectorSize::CubicSplineInvalidAbscissaVectorSize()
-      : tfel::exception::TFELException("abscissa size is smaller than 1")
+      : tfel::exception::TFELException("CubicSpline : abscissa size is smaller than 1")
     {} // end of CubicSplineInvalidAbscissaVectorSize::CubicSplineInvalidAbscissaVectorSize
     
     CubicSplineInvalidOrdinateVectorSize::CubicSplineInvalidOrdinateVectorSize()
-      : tfel::exception::TFELException("ordinate size is smaller than 1")
+      : tfel::exception::TFELException("CubicSpline : ordinate size is smaller than 1")
     {} // end of CubicSplineInvalidOrdinateVectorSize::CubicSplineInvalidOrdinateVectorSize
     
     CubicSplineInvalidInputs::CubicSplineInvalidInputs()
-      : tfel::exception::TFELException("abscissa and ordinate vectors don't have the same size")
+      : tfel::exception::TFELException("CubicSpline : abscissa and ordinate "
+				       "vectors don't have the same size")
     {} // end of CubicSplineInvalidInputs::CubicSplineInvalidInputs
 
     CubicSplineUnorderedAbscissaVector::CubicSplineUnorderedAbscissaVector()
-      : tfel::exception::TFELException("abscissa vector is not ordered")
+      : tfel::exception::TFELException("CubicSpline : abscissa vector "
+				       "is not ordered")
     {} // end of CubicSplineUnorderedAbscissaVector::CubicSplineUnorderedAbscissaVector
 
   } // end of namespace math
