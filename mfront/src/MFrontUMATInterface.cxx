@@ -786,7 +786,7 @@ namespace mfront{
     }
     if(behaviourCharacteristic.getBehaviourType()==mfront::ISOTROPIC){
       if(!found){
-	out << "static const unsigned short propertiesOffset = 3u;\n";
+	out << "static const unsigned short propertiesOffset = 4u;\n";
       } else {
 	out << "static const unsigned short propertiesOffset = 0u;\n";
       }
