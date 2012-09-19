@@ -164,6 +164,7 @@ include/TFEL/Math/Function/ScalarFunctionExpr.hxx -text
 include/TFEL/Math/Function/ScalarFunctionExpr.ixx -text
 include/TFEL/Math/Function/StandardFunctions.hxx -text
 include/TFEL/Math/General/Abs.hxx -text
+include/TFEL/Math/General/Abs.ixx -text
 include/TFEL/Math/General/AbsCompare.hxx -text
 include/TFEL/Math/General/BaseCast.hxx -text
 include/TFEL/Math/General/BasicOperations.hxx -text
