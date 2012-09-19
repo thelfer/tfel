@@ -6,9 +6,10 @@
  * \date   06 Mar 2007
  */
 
-#include<string>
-#include<stdexcept>
 #include<limits>
+#include<string>
+#include<sstream>
+#include<stdexcept>
 #include"MFront/BoundsDescription.hxx"
 
 namespace mfront{
@@ -23,36 +24,53 @@ namespace mfront{
   BoundsDescription::writeBoundsChecks(std::ofstream& file) const
   {
     using namespace std;
+    if(this->arraySize==1u){
+      this->writeBoundsChecks(file,this->varName);
+    } else {
+      for(unsigned short i=0;i!=this->arraySize;++i){
+	ostringstream n;
+	n << this->varName;
+	n << '[' << i << ']';
+	this->writeBoundsChecks(file,n.str());
+      }
+    }
+  } // end of BoundsDescription::writeBoundsChecks
+
+  void
+  BoundsDescription::writeBoundsChecks(std::ofstream& file,
+				       const std::string& n) const
+  {
+    using namespace std;
     if(this->category==Standard){
       if(this->boundsType==Lower){
 	file << "BoundsCheck<N>::lowerBoundCheck(\""
-	     << this->varName << "\",this->" << this->varName << ","
+	     << n << "\",this->" << n << ","
 	     << "static_cast<real>(" << this->lowerBound << "),this->policy);\n";
 	if(this->varCategory==ExternalStateVar){
 	  file << "BoundsCheck<N>::lowerBoundCheck(\""
-	       << this->varName << "+d" << this->varName << "\",this->" 
-	       << this->varName << "+this->d" << this->varName << ","
+	       << n << "+d" << n << "\",this->" 
+	       << n << "+this->d" << n << ","
 	       << "static_cast<real>(" << this->lowerBound << "),this->policy);\n";
 	}
       } else if(this->boundsType==Upper){
 	file << "BoundsCheck<N>::upperBoundCheck(\""
-	     << this->varName << "\",this->" << this->varName << ","
+	     << n << "\",this->" << n << ","
 	     << "static_cast<real>(" << this->upperBound << "),this->policy);\n";
 	if(this->varCategory==ExternalStateVar){
 	  file << "BoundsCheck<N>::upperBoundCheck(\""
-	       << this->varName << "+d" << this->varName << "\",this->" 
-	       << this->varName << "+this->d" << this->varName << ","
+	       << n << "+d" << n << "\",this->" 
+	       << n << "+this->d" << n << ","
 	       << "static_cast<real>(" << this->upperBound << "),this->policy);\n";
 	}
       } else if(this->boundsType==LowerAndUpper){
 	file << "BoundsCheck<N>::lowerAndUpperBoundsChecks(\""
-	     << this->varName << "\",this->" << this->varName    << ","
+	     << n << "\",this->" << n    << ","
 	     << "static_cast<real>("   << this->lowerBound << "),"
 	     << "static_cast<real>("   << this->upperBound << "),this->policy);\n";
 	if(this->varCategory==ExternalStateVar){
 	  file << "BoundsCheck<N>::lowerAndUpperBoundsChecks(\""
-	       << this->varName << "+d" << this->varName << "\",this->" 
-	       << this->varName << "+this->d" << this->varName << ","
+	       << n << "+d" << n << "\",this->" 
+	       << n << "+this->d" << n << ","
 	       << "static_cast<real>("   << this->lowerBound << "),"
 	       << "static_cast<real>("   << this->upperBound << "),this->policy);\n";
 	}
@@ -60,33 +78,33 @@ namespace mfront{
     } else if(this->category==Physical){
       if(this->boundsType==Lower){
 	file << "BoundsCheck<N>::lowerBoundCheck(\""
-	     << this->varName << "\",this->" << this->varName << ","
+	     << n << "\",this->" << n << ","
 	     << "static_cast<real>(" << this->lowerBound << "));\n";
 	if(this->varCategory==ExternalStateVar){
 	  file << "BoundsCheck<N>::lowerBoundCheck(\""
-	       << this->varName << "+d" << this->varName << "\",this->" 
-	       << this->varName << "+this->d" << this->varName << ","
+	       << n << "+d" << n << "\",this->" 
+	       << n << "+this->d" << n << ","
 	       << "static_cast<real>(" << this->lowerBound << "));\n";
 	}
       } else if(this->boundsType==Upper){
 	file << "BoundsCheck<N>::upperBoundCheck(\""
-	     << this->varName << "\",this->" << this->varName << ","
+	     << n << "\",this->" << n << ","
 	     << "static_cast<real>(" << this->upperBound << "));\n";
 	if(this->varCategory==ExternalStateVar){
 	  file << "BoundsCheck<N>::upperBoundCheck(\""
-	       << this->varName << "+d" << this->varName << "\",this->" 
-	       << this->varName << "+this->d" << this->varName << ","
+	       << n << "+d" << n << "\",this->" 
+	       << n << "+this->d" << n << ","
 	       << "static_cast<real>(" << this->upperBound << "));\n";
 	}
       } else if(this->boundsType==LowerAndUpper){
 	file << "BoundsCheck<N>::lowerAndUpperBoundsChecks(\""
-	     << this->varName << "\",this->" << this->varName    << ","
+	     << n << "\",this->" << n    << ","
 	     << "static_cast<real>("   << this->lowerBound << "),"
 	     << "static_cast<real>("   << this->upperBound << "));\n";
 	if(this->varCategory==ExternalStateVar){
 	  file << "BoundsCheck<N>::lowerAndUpperBoundsChecks(\""
-	       << this->varName << "+d" << this->varName << "\",this->" 
-	       << this->varName << "+this->d" << this->varName << ","
+	       << n << "+d" << n << "\",this->" 
+	       << n << "+this->d" << n << ","
 	       << "static_cast<real>("   << this->lowerBound << "),"
 	       << "static_cast<real>("   << this->upperBound << "));\n";
 	}
@@ -94,6 +112,6 @@ namespace mfront{
     } else {
       throw(runtime_error("BoundsDescription::writeBoundsChecks : internal error"));
     }
-  }
+  } // end of BoundsDescription::writeBoundsChecks
   
 } // end of namespace mfront

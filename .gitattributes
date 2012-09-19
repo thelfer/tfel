@@ -460,6 +460,7 @@ include/TFEL/Tests/TestProxy.ixx -text
 include/TFEL/Tests/TestResult.hxx -text
 include/TFEL/Tests/TestSuite.hxx -text
 include/TFEL/Tests/XMLTestOutput.hxx -text
+include/TFEL/TypeTraits/AbsType.hxx -text
 include/TFEL/TypeTraits/BaseType.hxx -text
 include/TFEL/TypeTraits/IsAssignableTo.hxx -text
 include/TFEL/TypeTraits/IsComplex.hxx -text
@@ -531,7 +532,6 @@ mfront/include/MFront/ComputedVarHandler.hxx -text
 mfront/include/MFront/InterfaceBase.hxx -text
 mfront/include/MFront/LawFunction.hxx -text
 mfront/include/MFront/MFront.hxx -text
-mfront/include/MFront/MFrontAlcyoneModelInterface.hxx -text
 mfront/include/MFront/MFrontBehaviourInterfaceFactory.hxx -text
 mfront/include/MFront/MFrontBehaviourInterfaceProxy.hxx -text
 mfront/include/MFront/MFrontBehaviourInterfaceProxy.ixx -text
@@ -905,6 +905,7 @@ tests/Math/tvector.cxx -text
 tests/Math/tvector2.cxx -text
 tests/Math/tvector3.cxx -text
 tests/Math/tvector4.cxx -text
+tests/Math/tvector5.cxx -text
 tests/Math/vector1.cxx -text
 tests/MetaProgramming/CMakeLists.txt -text
 tests/MetaProgramming/ConceptCheck.cxx -text

@@ -352,13 +352,15 @@ namespace mfront
     return res;
   } // end of ParserBase::readNextBlock
 
-  void ParserBase::readVarList(const std::string& type,
-			       VarContainer& cont,
+  void ParserBase::readVarList(VarContainer& cont,
+			       const std::string& type,
+			       const bool allowArray,
 			       const bool addIncrementVar)
   {
     using namespace std;
     string varName;
     unsigned short lineNumber;
+    unsigned short asize;
     bool endOfTreatement=false;
     while((this->current!=this->fileTokens.end())&&
 	  (!endOfTreatement)){
@@ -368,8 +370,31 @@ namespace mfront
       }
       varName = this->current->value;
       lineNumber = this->current->line;
+      asize = 1u;
       ++(this->current);
       this->checkNotEndOfFile("ParserBase::readVarList");
+      if(this->current->value=="["){
+	if(!allowArray){
+	  this->throwRuntimeError("ParserBase::readVarList : ",
+				  "variable '"+varName+"' can't be declared an array");
+	}
+	++(this->current);
+	this->checkNotEndOfFile("ParserBase::readVarList");
+	istringstream converter(this->current->value);
+	converter >> asize;
+	if(!converter&&(!converter.eof())){
+	  this->throwRuntimeError("ParserBase::readVarList : ",
+				  "could not read array size for variable '"+varName+"'");
+	}
+	if(asize==0){
+	  this->throwRuntimeError("ParserBase::readVarList : ",
+				  "invalid array size for '"+varName+"'");
+	}
+	++(this->current);
+	this->checkNotEndOfFile("ParserBase::readVarList");
+	this->readSpecifiedToken("ParserBase::readVarList","]");
+	this->checkNotEndOfFile("ParserBase::readVarList");
+      }
       if(this->current->value==","){
 	++(this->current);
       } else if (this->current->value==";"){
@@ -380,7 +405,7 @@ namespace mfront
 				", or ; expected afer '"+varName+"'");
       }
       this->registerVariable(varName);
-      cont.push_back(VarHandler(type,varName,lineNumber));
+      cont.push_back(VarHandler(type,varName,asize,lineNumber));
       if(addIncrementVar){
 	string incrVarName("d");
 	incrVarName += varName;	
@@ -395,6 +420,7 @@ namespace mfront
   }
 
   void ParserBase::readVarList(VarContainer& cont,
+			       const bool allowArray,
 			       const bool addIncrementVar)
   {
     using namespace std;
@@ -465,7 +491,7 @@ namespace mfront
 	}
       }
     }
-    this->readVarList(type,cont,addIncrementVar);
+    this->readVarList(cont,type,allowArray,addIncrementVar);
   } // end of ParserBase::readVarList
 
   std::vector<std::string>

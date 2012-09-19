@@ -49,42 +49,6 @@ namespace tfel
       }
 
       static TFEL_MATH_INLINE T
-      xx(const typename KrigingVariable<3u,T>::type& v)
-      {
-	return v(0)*v(0);
-      }
-
-      static TFEL_MATH_INLINE T
-      xy(const typename KrigingVariable<3u,T>::type& v)
-      {
-	return v(0)*v(1);
-      }
-
-      static TFEL_MATH_INLINE T
-      xz(const typename KrigingVariable<3u,T>::type& v)
-      {
-	return v(0)*v(2);
-      }
-
-      static TFEL_MATH_INLINE T
-      yy(const typename KrigingVariable<3u,T>::type& v)
-      {
-	return v(1)*v(1);
-      }
-
-      static TFEL_MATH_INLINE T
-      yz(const typename KrigingVariable<3u,T>::type& v)
-      {
-	return v(1)*v(2);
-      }
-
-      static TFEL_MATH_INLINE T
-      zz(const typename KrigingVariable<3u,T>::type& v)
-      {
-	return v(2)*v(2);
-      }
-
-      static TFEL_MATH_INLINE T
       covariance(const typename KrigingVariable<3u,T>::type& v)
       {
 	using namespace std;
@@ -93,22 +57,16 @@ namespace tfel
 
       typedef T (*Drifts)(const typename KrigingVariable<3u,T>::type&);
 
-      static const unsigned short nb = 10u; /* number of drifts */
-      static const Drifts drifts[10u];
+      static const unsigned short nb = 4u; /* number of drifts */
+      static const Drifts drifts[nb];
     };
 
     template<typename T>
     const typename KrigingDefaultModel<3u,T>::Drifts
-    KrigingDefaultModel<3u,T>::drifts[10u] = {KrigingDefaultModel<3u,T>::one,
-					      KrigingDefaultModel<3u,T>::x,
-					      KrigingDefaultModel<3u,T>::y,
-					      KrigingDefaultModel<3u,T>::y,
-					      KrigingDefaultModel<3u,T>::xx,
-					      KrigingDefaultModel<3u,T>::xy,
-					      KrigingDefaultModel<3u,T>::xz,
-					      KrigingDefaultModel<3u,T>::yy,
-					      KrigingDefaultModel<3u,T>::yz,
-					      KrigingDefaultModel<3u,T>::zz};
+    KrigingDefaultModel<3u,T>::drifts[4u] = {KrigingDefaultModel<3u,T>::one,
+					     KrigingDefaultModel<3u,T>::x,
+					     KrigingDefaultModel<3u,T>::y,
+					     KrigingDefaultModel<3u,T>::z};
 
   } // end of namespace math
 

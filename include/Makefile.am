@@ -52,6 +52,7 @@ nobase_include_HEADERS= TFEL/Macros.hxx                                         
 			TFEL/Config/TFELTypes.hxx			                              \
 			TFEL/Config/TFELConfig.hxx			                              \
 			TFEL/TypeTraits/Promote/Promote.ixx		                              \
+			TFEL/TypeTraits/AbsType.hxx			                              \
 			TFEL/TypeTraits/BaseType.hxx			                              \
 			TFEL/TypeTraits/RealPartType.hxx		                              \
 			TFEL/TypeTraits/IsFundamentalNumericType.hxx	                              \
@@ -242,6 +243,7 @@ nobase_include_HEADERS= TFEL/Macros.hxx                                         
 			TFEL/Math/General/StorageTraits.hxx	                                      \
 			TFEL/Math/General/AbsCompare.hxx	                                      \
 			TFEL/Math/General/Abs.hxx      	                                              \
+			TFEL/Math/General/Abs.ixx      	                                              \
 			TFEL/Math/General/BaseCast.hxx                                                \
 			TFEL/Math/General/CubicRoots.hxx                                              \
 			TFEL/Math/General/floating_point_exceptions.hxx                               \

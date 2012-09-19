@@ -24,8 +24,8 @@ namespace mfront{
     this->registerVariable("dp");
     this->registerVariable("eel");
     this->registerVariable("deel");
-    this->stateVarsHolder.push_back(VarHandler("StrainStensor","eel",0u));
-    this->stateVarsHolder.push_back(VarHandler("strain","p",0u));
+    this->stateVarsHolder.push_back(VarHandler("StrainStensor","eel",1u,0u));
+    this->stateVarsHolder.push_back(VarHandler("strain","p",1u,0u));
     this->glossaryNames.insert(MVType("eel","ElasticStrain"));
     this->glossaryNames.insert(MVType("p","EquivalentViscoplasticStrain"));
     // default local vars
@@ -38,14 +38,14 @@ namespace mfront{
     this->registerVariable("n");
     this->registerVariable("mu_3");
     this->registerVariable("p_");
-    this->localVarsHolder.push_back(VarHandler("DstrainDt","f",0u));
-    this->localVarsHolder.push_back(VarHandler("DF_DSEQ_TYPE","df_dseq",0u));
-    this->localVarsHolder.push_back(VarHandler("DstrainDt","df_dp",0u));
-    this->localVarsHolder.push_back(VarHandler("StressStensor","se",0u));
-    this->localVarsHolder.push_back(VarHandler("stress","seq",0u));
-    this->localVarsHolder.push_back(VarHandler("stress","seq_e",0u));
-    this->localVarsHolder.push_back(VarHandler("StrainStensor","n",0u));
-    this->localVarsHolder.push_back(VarHandler("strain","p_",0u));
+    this->localVarsHolder.push_back(VarHandler("DstrainDt","f",1u,0u));
+    this->localVarsHolder.push_back(VarHandler("DF_DSEQ_TYPE","df_dseq",1u,0u));
+    this->localVarsHolder.push_back(VarHandler("DstrainDt","df_dp",1u,0u));
+    this->localVarsHolder.push_back(VarHandler("StressStensor","se",1u,0u));
+    this->localVarsHolder.push_back(VarHandler("stress","seq",1u,0u));
+    this->localVarsHolder.push_back(VarHandler("stress","seq_e",1u,0u));
+    this->localVarsHolder.push_back(VarHandler("StrainStensor","n",1u,0u));
+    this->localVarsHolder.push_back(VarHandler("strain","p_",1u,0u));
   }
 
   std::string

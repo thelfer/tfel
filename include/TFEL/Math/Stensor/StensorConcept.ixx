@@ -9,21 +9,18 @@ namespace tfel{
   namespace math{
     
     template<class T>
-    TFEL_MATH_INLINE 
     typename StensorConcept<T>::ValueType
     StensorConcept<T>::operator()(const unsigned short i) const {
       return static_cast<const T&>(*this).operator()(i);
     }
 
     template<class T>
-    TFEL_MATH_INLINE 
     typename StensorConcept<T>::ValueType
     StensorConcept<T>::operator[](const unsigned short i) const {
       return static_cast<const T&>(*this).operator()(i);
     }
     
     template<class T>
-    TFEL_MATH_INLINE 
     typename tfel::meta::EnableIf<
       tfel::meta::Implements<T,StensorConcept>::cond,
       typename StensorTraits<T>::NumType
@@ -38,7 +35,7 @@ namespace tfel{
       struct SigmaEqImplBase
       {
 	template<typename T>
-	TFEL_MATH_INLINE static T
+	static T
 	square(const T& x)
 	{
 	  return x*x;
@@ -53,7 +50,6 @@ namespace tfel{
 	: public SigmaEqImplBase
       {
 	template<class T>
-	TFEL_MATH_INLINE2
 	static typename tfel::meta::EnableIf<
 	  tfel::meta::Implements<T,StensorConcept>::cond,
 	  typename StensorTraits<T>::NumType
@@ -74,7 +70,6 @@ namespace tfel{
 	: public SigmaEqImplBase
       {
 	template<class T>
-	TFEL_MATH_INLINE2
 	static typename tfel::meta::EnableIf<
 	  tfel::meta::Implements<T,StensorConcept>::cond,
 	  typename StensorTraits<T>::NumType
@@ -96,7 +91,6 @@ namespace tfel{
 	: public SigmaEqImplBase
       {
 	template<class T>
-	TFEL_MATH_INLINE2
 	static typename tfel::meta::EnableIf<
 	  tfel::meta::Implements<T,StensorConcept>::cond,
 	  typename StensorTraits<T>::NumType
@@ -122,8 +116,7 @@ namespace tfel{
       struct StensorAbs<1u>
       {
 	template<typename StensorType>
-	TFEL_MATH_INLINE
-	static typename tfel::math::StensorTraits<StensorType>::NumType
+	static typename tfel::typetraits::AbsType<typename StensorTraits<StensorType>::NumType>::type
 	exe(const StensorType& s)
 	{
 	  return tfel::math::abs(s(0))+tfel::math::abs(s(1))+tfel::math::abs(s(2));
@@ -134,8 +127,7 @@ namespace tfel{
       struct StensorAbs<2u>
       {
 	template<typename StensorType>
-	TFEL_MATH_INLINE
-	static typename tfel::math::StensorTraits<StensorType>::NumType
+	static typename tfel::typetraits::AbsType<typename StensorTraits<StensorType>::NumType>::type
 	exe(const StensorType& s)
 	{
 	  return tfel::math::abs(s(0))+tfel::math::abs(s(1))+tfel::math::abs(s(2))
@@ -147,8 +139,7 @@ namespace tfel{
       struct StensorAbs<3u>
       {
 	template<typename StensorType>
-	TFEL_MATH_INLINE
-	static typename StensorTraits<StensorType>::NumType
+	static typename tfel::typetraits::AbsType<typename StensorTraits<StensorType>::NumType>::type
 	exe(const StensorType& s)
 	{
 	  return tfel::math::abs(s(0))+tfel::math::abs(s(1))+tfel::math::abs(s(2))
@@ -159,10 +150,9 @@ namespace tfel{
     } // end of namespace internals
 
     template<typename StensorType>
-    TFEL_MATH_INLINE
     typename tfel::meta::EnableIf<
       tfel::meta::Implements<StensorType,StensorConcept>::cond,
-      typename StensorTraits<StensorType>::NumType
+      typename tfel::typetraits::AbsType<typename StensorTraits<StensorType>::NumType>::type
     >::type
     abs(const StensorType& s)
     {
@@ -170,7 +160,6 @@ namespace tfel{
     }
 
     template<class T>
-    TFEL_MATH_INLINE2
     typename tfel::meta::EnableIf<
       tfel::meta::Implements<T,StensorConcept>::cond,
       typename StensorTraits<T>::NumType

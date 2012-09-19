@@ -13,7 +13,7 @@
 #include"TFEL/TypeTraits/IsTemporary.hxx"
 #include"TFEL/TypeTraits/BaseType.hxx"
 
-#include"TFEL/Math/Forward/StensorConcept.hxx"
+#include"TFEL/Math/General/Abs.hxx"
 
 namespace tfel{
 
@@ -70,6 +70,13 @@ namespace tfel{
     struct StensorType{
       typedef T type;
     };
+
+    template<typename StensorType>
+    typename tfel::meta::EnableIf<
+      tfel::meta::Implements<StensorType,StensorConcept>::cond,
+      typename tfel::typetraits::AbsType<typename StensorTraits<StensorType>::NumType>::type
+    >::type
+    abs(const StensorType&);
 
     template<class T>
     TFEL_MATH_INLINE 

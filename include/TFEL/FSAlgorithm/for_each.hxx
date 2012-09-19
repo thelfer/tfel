@@ -16,7 +16,11 @@ namespace tfel{
 
     /*!
      * \class for_each
-     * \brief For_each applies the function object f to each element in the range [first, first+N); f's return value, if any, is ignored. Applications are performed in forward order, i.e. from first to last. For_each returns the function object after it has been applied to each element.
+     * \brief For_each applies the function object f to each element
+     * in the range [first, first+N); f's return value, if any, is
+     * ignored. Applications are performed in forward order, i.e. from
+     * first to last. For_each returns the function object after it
+     * has been applied to each element.
      * \param N number of element to which f will be applied
      *
      * This documentation is mostly inspired from:
@@ -47,10 +51,10 @@ namespace tfel{
        */
       template<typename InputIterator,typename UnaryFunction>
       static TFEL_FSALGORITHM_INLINE
-      UnaryFunction exe(InputIterator p, UnaryFunction f)
+      void exe(InputIterator p, UnaryFunction& f)
       {
 	f(*p);
-	return for_each<N-1>::exe(++p,f);
+	for_each<N-1>::exe(++p,f);
       }
 
     };  
@@ -73,10 +77,8 @@ namespace tfel{
        */
       template<typename InputIterator,typename UnaryFunction>
       static TFEL_FSALGORITHM_INLINE
-      UnaryFunction exe(InputIterator, UnaryFunction f)
-      {
-	return f;
-      }
+      void exe(InputIterator, UnaryFunction&)
+      {}
     };
   
   } // end of namespace fsalgo

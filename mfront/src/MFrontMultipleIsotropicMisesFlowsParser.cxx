@@ -24,8 +24,8 @@ namespace mfront{
     this->registerVariable("eel");
     this->registerVariable("deel");
     this->registerVariable("p");
-    this->stateVarsHolder.push_back(VarHandler("StrainStensor","eel",0u));
-    this->stateVarsHolder.push_back(VarHandler("strain","p",0u));
+    this->stateVarsHolder.push_back(VarHandler("StrainStensor","eel",1u,0u));
+    this->stateVarsHolder.push_back(VarHandler("strain","p",1u,0u));
     this->glossaryNames.insert(MVType("eel","ElasticStrain"));
     this->glossaryNames.insert(MVType("p","EquivalentStrain"));
     // default local vars
@@ -38,11 +38,11 @@ namespace mfront{
     this->registerVariable("error");
     this->registerVariable("iter");
     this->registerVariable("p_");
-    this->localVarsHolder.push_back(VarHandler("StressStensor","se",0u));
-    this->localVarsHolder.push_back(VarHandler("stress","seq",0u));
-    this->localVarsHolder.push_back(VarHandler("stress","seq_e",0u));
-    this->localVarsHolder.push_back(VarHandler("StrainStensor","n",0u));
-    this->localVarsHolder.push_back(VarHandler("strain","p_",0u));
+    this->localVarsHolder.push_back(VarHandler("StressStensor","se",1u,0u));
+    this->localVarsHolder.push_back(VarHandler("stress","seq",1u,0u));
+    this->localVarsHolder.push_back(VarHandler("stress","seq_e",1u,0u));
+    this->localVarsHolder.push_back(VarHandler("StrainStensor","n",1u,0u));
+    this->localVarsHolder.push_back(VarHandler("strain","p_",1u,0u));
     this->flowRule = "unused";
   }
 
@@ -359,10 +359,10 @@ namespace mfront{
       this->registerVariable(f.str());
       this->registerVariable(df_dseq.str());
       this->registerVariable(df_dp.str());
-      this->stateVarsHolder.push_back(VarHandler("strain",p.str(),0u));
-      this->localVarsHolder.push_back(VarHandler("stress",f.str(),0u));
-      this->localVarsHolder.push_back(VarHandler("real",df_dseq.str(),0u));
-      this->localVarsHolder.push_back(VarHandler("stress",df_dp.str(),0u));
+      this->stateVarsHolder.push_back(VarHandler("strain",p.str(),1u,0u));
+      this->localVarsHolder.push_back(VarHandler("stress",f.str(),1u,0u));
+      this->localVarsHolder.push_back(VarHandler("real",df_dseq.str(),1u,0u));
+      this->localVarsHolder.push_back(VarHandler("stress",df_dp.str(),1u,0u));
       flow.flow = FlowHandler::PlasticFlow;
     } else if(this->current->value=="Creep"){
       ostringstream p;
@@ -371,9 +371,9 @@ namespace mfront{
       p       << "p"       << this->flows.size();
       f       << "f"       << this->flows.size();
       df_dseq << "df_dseq" << this->flows.size();
-      this->stateVarsHolder.push_back(VarHandler("strain",p.str(),0u));
-      this->localVarsHolder.push_back(VarHandler("DstrainDt",f.str(),0u));
-      this->localVarsHolder.push_back(VarHandler("DF_DSEQ_TYPE",df_dseq.str(),0u));
+      this->stateVarsHolder.push_back(VarHandler("strain",p.str(),1u,0u));
+      this->localVarsHolder.push_back(VarHandler("DstrainDt",f.str(),1u,0u));
+      this->localVarsHolder.push_back(VarHandler("DF_DSEQ_TYPE",df_dseq.str(),1u,0u));
       this->registerVariable(p.str());
       this->registerVariable(f.str());
       this->registerVariable(df_dseq.str());
@@ -387,10 +387,10 @@ namespace mfront{
       f       << "f"       << this->flows.size();
       df_dseq << "df_dseq" << this->flows.size();
       df_dp   << "df_dp"   << this->flows.size();
-      this->stateVarsHolder.push_back(VarHandler("strain",p.str(),0u));
-      this->localVarsHolder.push_back(VarHandler("DstrainDt",f.str(),0u));
-      this->localVarsHolder.push_back(VarHandler("DF_DSEQ_TYPE",df_dseq.str(),0u));
-      this->localVarsHolder.push_back(VarHandler("DstrainDt",df_dp.str(),0u));
+      this->stateVarsHolder.push_back(VarHandler("strain",p.str(),1u,0u));
+      this->localVarsHolder.push_back(VarHandler("DstrainDt",f.str(),1u,0u));
+      this->localVarsHolder.push_back(VarHandler("DF_DSEQ_TYPE",df_dseq.str(),1u,0u));
+      this->localVarsHolder.push_back(VarHandler("DstrainDt",df_dp.str(),1u,0u));
       this->registerVariable(p.str());
       this->registerVariable(f.str());
       this->registerVariable(df_dseq.str());
@@ -421,7 +421,7 @@ namespace mfront{
       this->reserveName(ose.str());
       this->registerVariable(otheta.str());
       this->registerVariable(oseq_e.str());
-      this->localVarsHolder.push_back(VarHandler("stress",oseq_e.str(),0u));
+      this->localVarsHolder.push_back(VarHandler("stress",oseq_e.str(),1u,0u));
       ++(this->current);
     } else {
       flow.hasSpecificTheta = false;

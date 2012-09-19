@@ -14,7 +14,7 @@ namespace mfront{
 				     const std::string& name_,
 				     const unsigned short line_,
 				     const long double value_)
-    : VarHandler(type_,name_,line_),
+    : VarHandler(type_,name_,1u,line_),
       value(value_)
   {}
 

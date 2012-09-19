@@ -620,7 +620,7 @@ namespace mfront{
       throw(runtime_error(msg));
     }
     VarContainer::const_iterator p;
-    this->readVarList("PleiadesField",this->outputs,false);
+    this->readVarList(this->outputs,"Field",false,false);
     for(p=this->outputs.begin();p!=this->outputs.end();++p){
       this->fieldNames.insert(p->name);
     }
@@ -787,7 +787,7 @@ namespace mfront{
       throw(runtime_error(msg));
     }
     VarContainer::const_iterator p;
-    this->readVarList("PleiadesField",this->inputs,false);
+    this->readVarList(this->inputs,"Field",false,false);
     for(p=this->inputs.begin();p!=this->inputs.end();++p){
       this->fieldNames.insert(p->name);
     }
@@ -907,7 +907,7 @@ namespace mfront{
   void
   MFrontModelParserCommon::treatGlobalParameter(void)
   {
-    this->readVarList(this->globalParameters,false);
+    this->readVarList(this->globalParameters,false,false);
   } // end of MFrontModelParserCommon::treatGlobalParameter(void)
 
   void
@@ -980,7 +980,7 @@ namespace mfront{
   void
   MFrontModelParserCommon::treatLocalParameter(void)
   {
-    this->readVarList(this->localParameters,false);
+    this->readVarList(this->localParameters,false,false);
   } // end of MFrontModelParserCommon::treatLocalParameter(void)
 
   void
@@ -1053,7 +1053,7 @@ namespace mfront{
   void
   MFrontModelParserCommon::treatConstantMaterialProperty(void)
   {
-    this->readVarList("real",this->constantMaterialProperties,false);
+    this->readVarList(this->constantMaterialProperties,"real",false,false);
   } // end of MFrontModelParserCommon::treatConstantMaterialProperty(void)
 
   void

@@ -46,6 +46,7 @@ test_PROGRAMS = hill                  \
 		tvector2              \
 		tvector3              \
 		tvector4              \
+		tvector5              \
 		VectorResultType      \
 		vector1               \
 		parser                \
@@ -67,10 +68,12 @@ test_PROGRAMS = hill                  \
 		levenberg-marquardt4  \
 		discretization1D
 
-LDADD = -L$(top_builddir)/src/Math                 \
-	-L$(top_builddir)/src/Utilities            \
-	-L$(top_builddir)/src/Exception            \
-	-lTFELMath -lTFELUtilities -lTFELException
+LDADD = -L$(top_builddir)/src/Math      \
+	-L$(top_builddir)/src/Utilities \
+	-L$(top_builddir)/src/Exception \
+        -L$(top_builddir)/src/Tests     \
+	-lTFELMath -lTFELUtilities      \
+	-lTFELException -lTFELTests
 
 FracSimplify_SOURCES          = FracSimplify.cxx
 promote_SOURCES               = promote.cxx
@@ -106,6 +109,7 @@ tvector_SOURCES               = tvector.cxx
 tvector2_SOURCES              = tvector2.cxx
 tvector3_SOURCES              = tvector3.cxx
 tvector4_SOURCES              = tvector4.cxx
+tvector5_SOURCES              = tvector5.cxx
 vector1_SOURCES               = vector1.cxx   
 VectorResultType_SOURCES      = VectorResultType.cxx
 Range_SOURCES                 = Range.cxx

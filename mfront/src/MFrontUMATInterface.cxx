@@ -175,59 +175,15 @@ namespace mfront{
     behaviourDataFile << "this->sig.exportTab(UMATstress_);\n";
     if((!stateVarsHolder.empty())||
        (!auxiliaryStateVarsHolder.empty())){
-      SupportedTypes::TypeSize currentOffset;
-      for(p =stateVarsHolder.begin();p!=stateVarsHolder.end();++p){
-	SupportedTypes::TypeFlag flag = this->getTypeFlag(p->type);
-	switch(flag){
-	case SupportedTypes::Scalar :
-	  if(behaviourCharacteristic.useQt()){
-	    behaviourDataFile << "UMATstatev[" 
-			      << currentOffset << "] = base_cast(this->"
-			      << p->name << ");\n";
-	  } else {
-	    behaviourDataFile << "UMATstatev[" 
-			      << currentOffset << "] = this->"
-			      << p->name << ";\n";
-	  }
-	  break;
-	case SupportedTypes::Stensor :
-	  behaviourDataFile << "this->" << p->name 
-			    << ".write(&UMATstatev[" 
-			    << currentOffset << "]);\n";  
-	  break;
-	default :
-	  string msg("MFrontUMATInterface::exportMechanicalData : ");
-	  msg += "internal error, tag unsupported";
-	  throw(runtime_error(msg));
-	}
-	currentOffset+=this->getTypeSize(p->type);
-      }
-      for(p =auxiliaryStateVarsHolder.begin();p!=auxiliaryStateVarsHolder.end();++p){
-	SupportedTypes::TypeFlag flag = this->getTypeFlag(p->type);
-	switch(flag){
-	case SupportedTypes::Scalar :
-	  if(behaviourCharacteristic.useQt()){
-	    behaviourDataFile << "UMATstatev[" 
-			      << currentOffset << "] = base_cast(this->"
-			      << p->name << ");\n";
-	  } else {
-	    behaviourDataFile << "UMATstatev[" 
-			      << currentOffset << "] = this->"
-			      << p->name << ";\n";
-	  }
-	  break;
-	case SupportedTypes::Stensor :
-	  behaviourDataFile << "this->" << p->name 
-			    << ".write(&UMATstatev[" 
-			    << currentOffset << "]);\n";  
-	  break;
-	default :
-	  string msg("MFrontUMATInterface::exportMechanicalData : ");
-	  msg += "internal error, tag unsupported";
-	  throw(runtime_error(msg));
-	}
-	currentOffset+=this->getTypeSize(p->type);
-      }
+      SupportedTypes::TypeSize o;
+      o = this->exportResults(behaviourDataFile,
+			      stateVarsHolder,
+			      "UMATstatev",
+			      behaviourCharacteristic.useQt());
+      this->exportResults(behaviourDataFile,
+			  auxiliaryStateVarsHolder,
+			  "UMATstatev",
+			  behaviourCharacteristic.useQt(),o);
     }
     behaviourDataFile << "} // end of UMATExportStateData\n";
     behaviourDataFile << endl;
@@ -297,7 +253,6 @@ namespace mfront{
   {
     using namespace std;
     VarContainer::const_iterator p;
-    ostringstream body;
     behaviourDataFile << "/*\n";
     behaviourDataFile << " * \\brief constructor for the umat interface\n";
     behaviourDataFile << " *\n";
@@ -329,90 +284,34 @@ namespace mfront{
     }
     behaviourDataFile << ")\n";
     behaviourDataFile << ": T(*UMATT_)";
-    if(!coefsHolder.empty()){
-      SupportedTypes::TypeSize currentOffset;
-      for(p=coefsHolder.begin();p!=coefsHolder.end();++p){
-	SupportedTypes::TypeFlag flag = getTypeFlag(p->type);
-	switch(flag){
-	case SupportedTypes::Scalar : 
-	  behaviourDataFile << ",\n";
-	  behaviourDataFile << p->name << "(UMATmat["<< currentOffset << "])";
-	  break;
-	case SupportedTypes::Stensor :
-	  body << "this->" << p->name << ".import(&UMATmat["<< currentOffset << "]);\n";
-	  break;
-	default :
-	  string msg("MFrontUMATInterface::writeBehaviourDataConstructor : ");
-	  msg += "internal error, tag unsupported";
-	  throw(runtime_error(msg));
-	}
-	currentOffset+=this->getTypeSize(p->type);
-      }
-    }
-    if((!stateVarsHolder.empty())||
-       (!auxiliaryStateVarsHolder.empty())){
-      SupportedTypes::TypeSize currentOffset;
-      for(p=stateVarsHolder.begin();p!=stateVarsHolder.end();++p){
-	SupportedTypes::TypeFlag flag = getTypeFlag(p->type);
-	switch(flag){
-	case SupportedTypes::Scalar : 
-	  behaviourDataFile << ",\n";
-	  behaviourDataFile << p->name << "(UMATint_vars["<< currentOffset << "])";
-	  break;
-	case SupportedTypes::Stensor :
-	  body << "this->" << p->name << ".import(&UMATint_vars["<< currentOffset << "]);\n";
-	  break;
-	default :
-	  string msg("MFrontUMATInterface::writeBehaviourDataConstructor : ");
-	  msg += "internal error, tag unsupported";
-	  throw(runtime_error(msg));
-	}
-	currentOffset+=this->getTypeSize(p->type);
-      }
-      for(p=auxiliaryStateVarsHolder.begin();p!=auxiliaryStateVarsHolder.end();++p){
-	SupportedTypes::TypeFlag flag = getTypeFlag(p->type);
-	switch(flag){
-	case SupportedTypes::Scalar : 
-	  behaviourDataFile << ",\n";
-	  behaviourDataFile << p->name << "(UMATint_vars["<< currentOffset << "])";
-	  break;
-	case SupportedTypes::Stensor :
-	  body << "this->" << p->name << ".import(&UMATint_vars["<< currentOffset << "]);\n";
-	  break;
-	default :
-	  string msg("MFrontUMATInterface::writeBehaviourDataConstructor : ");
-	  msg += "internal error, tag unsupported";
-	  throw(runtime_error(msg));
-	}
-	currentOffset+=this->getTypeSize(p->type);
-      }
-    }
-    if(!externalStateVarsHolder.empty()){
-      SupportedTypes::TypeSize currentOffset;
-      for(p=externalStateVarsHolder.begin();p!=externalStateVarsHolder.end();++p){
-	SupportedTypes::TypeFlag flag = getTypeFlag(p->type);
-	switch(flag){
-	case SupportedTypes::Scalar : 
-	  behaviourDataFile << ",\n";
-	  behaviourDataFile << p->name << "(UMAText_vars["<< currentOffset << "])";
-	  break;
-	case SupportedTypes::Stensor :
-	  body << "this->" << p->name << ".import(&UMAText_vars["<< currentOffset << "]);\n";
-	  break;
-	default :
-	  string msg("MFrontUMATInterface::writeBehaviourDataConstructor : ");
-	  msg += "internal error, tag unsupported";
-	  throw(runtime_error(msg));
-	}
-	currentOffset+=this->getTypeSize(p->type);
-      }
-    }
+    SupportedTypes::TypeSize o;
+    this->writeVariableInitializersInBehaviourDataConstructorI(behaviourDataFile,
+							       coefsHolder,
+							       "UMATmat","","");
+    o = this->writeVariableInitializersInBehaviourDataConstructorI(behaviourDataFile,
+								   stateVarsHolder,
+								   "UMATint_vars","","");
+    this->writeVariableInitializersInBehaviourDataConstructorI(behaviourDataFile,
+							       auxiliaryStateVarsHolder,
+							       "UMATint_vars","","",o);
+    this->writeVariableInitializersInBehaviourDataConstructorI(behaviourDataFile,
+							       externalStateVarsHolder,
+							       "UMAText_vars","","");
     behaviourDataFile << "\n{\n";
     behaviourDataFile << "sig.importTab(UMATstress_);\n";
     behaviourDataFile << "eto.importVoigt(UMATstran);\n";
-    if(!body.str().empty()){
-      behaviourDataFile << body.str();
-    }
+    this->writeVariableInitializersInBehaviourDataConstructorII(behaviourDataFile,
+								coefsHolder,
+								"UMATmat","","");
+    o = this->writeVariableInitializersInBehaviourDataConstructorII(behaviourDataFile,
+								    stateVarsHolder,
+								    "UMATint_vars","","");
+    this->writeVariableInitializersInBehaviourDataConstructorII(behaviourDataFile,
+								auxiliaryStateVarsHolder,
+								"UMATint_vars","","",o);
+    this->writeVariableInitializersInBehaviourDataConstructorII(behaviourDataFile,
+								externalStateVarsHolder,
+								"UMAText_vars","","");
     behaviourDataFile << "}\n\n";
   }
   
@@ -427,7 +326,6 @@ namespace mfront{
   {
     using namespace std;
     VarContainer::const_iterator p;
-    ostringstream body;
     behaviourIntegrationFile << "/*\n";
     behaviourIntegrationFile << " * \\brief constructor for the umat interface\n";
     behaviourIntegrationFile << " * \\param const Type *const UMATdt_, time increment\n";
@@ -447,29 +345,16 @@ namespace mfront{
     }
     behaviourIntegrationFile << ": dt(*UMATdt_),dT(*UMATdT_)";
     if(!externalStateVarsHolder.empty()){
-      SupportedTypes::TypeSize currentOffset;
-      for(p=externalStateVarsHolder.begin();p!=externalStateVarsHolder.end();++p){
-	SupportedTypes::TypeFlag flag = getTypeFlag(p->type);
-	switch(flag){
-	case SupportedTypes::Scalar : 
-	  behaviourIntegrationFile << ",\n";
-	  behaviourIntegrationFile << "d" << p->name << "(UMATdext_vars["<< currentOffset << "])";
-	  break;
-	case SupportedTypes::Stensor :
-	  body << "d" << p->name << ".import(&UMATdext_vars["<< currentOffset << "]);\n";
-	  break;
-	default :
-	  string msg("MFrontUMATInterface::writeBehaviourDataConstructor : ");
-	  msg += "internal error, tag unsupported";
-	  throw(runtime_error(msg));
-	}
-	currentOffset+=this->getTypeSize(p->type);
-      }
+      this->writeVariableInitializersInBehaviourDataConstructorI(behaviourIntegrationFile,
+								 externalStateVarsHolder,
+								 "UMATdext_vars","d","");
     }
     behaviourIntegrationFile << "\n{\n";
     behaviourIntegrationFile << "deto.importVoigt(UMATdstran);\n";
-    if(!body.str().empty()){
-      behaviourIntegrationFile << body.str();
+    if(!externalStateVarsHolder.empty()){
+      this->writeVariableInitializersInBehaviourDataConstructorII(behaviourIntegrationFile,
+								  externalStateVarsHolder,
+								  "UMATdext_vars","d","");
     }
     behaviourIntegrationFile << "}\n\n";
   }
@@ -578,6 +463,72 @@ namespace mfront{
     }
     return res;
   }
+
+  std::vector<std::string>
+  MFrontUMATInterface::getGlossaryNames(const VarContainer& v,
+					const std::map<std::string,std::string>& glossaryNames,
+					const std::map<std::string,std::string>& entryNames)
+  {
+    using namespace std;
+    vector<string> n;
+    this->appendGlossaryNames(n,v,glossaryNames,entryNames);
+    return n;
+  }
+
+  void
+  MFrontUMATInterface::appendGlossaryNames(std::vector<std::string>& n,
+					   const VarContainer& v,
+					   const std::map<std::string,std::string>& glossaryNames,
+					   const std::map<std::string,std::string>& entryNames)
+  {
+    using namespace std;
+    VarContainer::const_iterator p;
+    for(p=v.begin();p!=v.end();++p){
+      const string name = MFrontUMATInterfaceGetName(glossaryNames,entryNames,p->name);
+      if(p->arraySize==1u){
+	n.push_back(name);
+      } else {
+	for(unsigned short i=0;i!=p->arraySize;++i){
+	  ostringstream nb;
+	  nb << '[' << i << ']';
+	  n.push_back(name+nb.str());
+	}
+      }
+    }
+  } // end of MFrontUMATInterface::appendGlossaryNames
+
+
+  void
+  MFrontUMATInterface::writeGlossaryNames(std::ostream& f,
+					  const std::vector<std::string>& n,
+					  const std::string& name,
+					  const std::string& array,
+					  const unsigned short o)
+  {
+    using namespace std;
+    if(o>n.size()){
+      string msg("MFrontUMATInterface::writeGlossaryNames : ");
+      msg += "number of names given is lesser than the offset";
+      throw(runtime_error(msg));
+    }
+    if(n.size()!=o){
+      vector<string>::const_iterator p = n.begin()+o;      
+      f << "MFRONT_SHAREDOBJ const char * umat"
+	<< makeLowerCase(name)
+	<< "_" << array << "[" << n.size()-o <<  "] = {";
+      while(p!=n.end()){
+	f << '"' << *p << '"';
+	if(++p!=n.end()){
+	  f << ",\n";
+	}
+      }
+      f << "};\n";
+    } else {
+      f << "MFRONT_SHAREDOBJ const char * const * umat"
+	<< makeLowerCase(name)
+	<< "_" << array << " = 0;\n\n";
+    }      
+  } // end of MFrontUMATInterface::writeGlossaryNames
 
   void
   MFrontUMATInterface::endTreatement(const std::string& library,
@@ -892,74 +843,45 @@ namespace mfront{
 
     out << "MFRONT_SHAREDOBJ unsigned short umat"
       	<< makeLowerCase(name);
+    unsigned short cs = this->getNumberOfVariables(coefsHolder);
     if(behaviourCharacteristic.getBehaviourType()==mfront::ISOTROPIC){
       // skipping the fourth first coefficients
       if(found){
-	nb = coefsHolder.size()-4;
-	out << "_nMaterialProperties = " << coefsHolder.size()-4 << ";\n";
+	nb = cs-4;
+	out << "_nMaterialProperties = " << cs-4 << ";\n";
       } else {
-	nb = coefsHolder.size();
-	out << "_nMaterialProperties = " << coefsHolder.size() << ";\n";
+	nb = cs;
+	out << "_nMaterialProperties = " << cs << ";\n";
       }
     } else {
-      nb = coefsHolder.size();
-      out << "_nMaterialProperties = " << coefsHolder.size() << ";\n";
+      nb = cs;
+      out << "_nMaterialProperties = " << cs << ";\n";
     }
 
-    if(nb!=0){
-      out << "MFRONT_SHAREDOBJ const char * umat"
-	  << makeLowerCase(name)
-	  << "_MaterialProperties [] = {";
-      p=coefsHolder.begin();
-      if(behaviourCharacteristic.getBehaviourType()==mfront::ISOTROPIC){
-	// skipping the fourth first coefficients
-	if(found){
-	  p+=4;
-	}
-      }
-      while(p!=coefsHolder.end()){
-	out << '"' << MFrontUMATInterfaceGetName(glossaryNames,entryNames,p->name) << '"';
-	if(++p!=coefsHolder.end()){
-	  out << ",\n";
-	}
-      }
-      out << "};\n\n";
+    if((behaviourCharacteristic.getBehaviourType()==mfront::ISOTROPIC)&&(found)){
+      this->writeGlossaryNames(out,this->getGlossaryNames(coefsHolder,
+							  glossaryNames,
+							  entryNames),
+			       name,"MaterialProperties",4u);
     } else {
-      out << "MFRONT_SHAREDOBJ const char * const * umat"
-	  << makeLowerCase(name)
-	  << "_MaterialProperties = 0;\n\n";
-    }      
+      this->writeGlossaryNames(out,this->getGlossaryNames(coefsHolder,
+							  glossaryNames,
+							  entryNames),
+			       name,"MaterialProperties");
+    }
 
+    const unsigned short nStateVariables = this->getNumberOfVariables(stateVarsHolder) + 
+      this->getNumberOfVariables(auxiliaryStateVarsHolder);
     out << "MFRONT_SHAREDOBJ unsigned short umat"
       	<< makeLowerCase(name)
-	<< "_nInternalStateVariables = " << stateVarsHolder.size() + auxiliaryStateVarsHolder.size()
+	<< "_nInternalStateVariables = " << nStateVariables
 	<< ";\n";
-    if((stateVarsHolder.size()!=0)||
-       (auxiliaryStateVarsHolder.size()!=0)){
-      out << "MFRONT_SHAREDOBJ const char * umat"
-	  << makeLowerCase(name)
-	  << "_InternalStateVariables [] = {";
-      for(p=stateVarsHolder.begin();p!=stateVarsHolder.end();){
-	out << '"' << MFrontUMATInterfaceGetName(glossaryNames,entryNames,p->name) << '"';
-	if(++p!=stateVarsHolder.end()){
-	  out << ",\n";
-	}
-      }
-      if(stateVarsHolder.size()!=0){
-	out << ",\n";
-      }
-      for(p=auxiliaryStateVarsHolder.begin();p!=auxiliaryStateVarsHolder.end();){
-	out << '"' << MFrontUMATInterfaceGetName(glossaryNames,entryNames,p->name) << '"';
-	if(++p!=auxiliaryStateVarsHolder.end()){
-	  out << ",\n";
-	}
-      }
-      out << "};\n\n";
-    } else {
-      out << "MFRONT_SHAREDOBJ const char * const * umat"
-	  << makeLowerCase(name)
-	  << "_InternalStateVariables = 0;\n\n";
-    }
+    vector<string> stateVariablesNames = this->getGlossaryNames(stateVarsHolder,
+								glossaryNames,
+								entryNames);
+    this->appendGlossaryNames(stateVariablesNames,auxiliaryStateVarsHolder,
+			      glossaryNames,entryNames);
+    this->writeGlossaryNames(out,stateVariablesNames,name,"InternalStateVariables");
 
     if((stateVarsHolder.size()!=0)||
        (auxiliaryStateVarsHolder.size()!=0)){
@@ -968,38 +890,48 @@ namespace mfront{
 	  << "_InternalStateVariablesTypes [] = {";
       for(p=stateVarsHolder.begin();p!=stateVarsHolder.end();){
 	SupportedTypes::TypeFlag flag = this->getTypeFlag(p->type);
-	switch(flag){
-	case SupportedTypes::Scalar : 
-	  out << 0;
-	  break;
-	case SupportedTypes::Stensor :
-	  out << 1;
-	  break;
-	default :
-	  string msg("MFrontUMATInterface::endTreatement : ");
-	  msg += "internal error, tag unsupported";
-	  throw(runtime_error(msg));
+	for(unsigned short is=0;is!=p->arraySize;){
+	  switch(flag){
+	  case SupportedTypes::Scalar : 
+	    out << 0;
+	    break;
+	  case SupportedTypes::Stensor :
+	    out << 1;
+	    break;
+	  default :
+	    string msg("MFrontUMATInterface::endTreatement : ");
+	    msg += "internal error, tag unsupported";
+	    throw(runtime_error(msg));
+	  }
+	  if(++is!=p->arraySize){
+	    out << ",";
+	  }
 	}
 	if(++p!=stateVarsHolder.end()){
 	  out << ",";
 	}
       }
-      if(stateVarsHolder.size()!=0){
+      if(auxiliaryStateVarsHolder.size()!=0){
 	out << ",";
       }
       for(p=auxiliaryStateVarsHolder.begin();p!=auxiliaryStateVarsHolder.end();){
 	SupportedTypes::TypeFlag flag = this->getTypeFlag(p->type);
-	switch(flag){
-	case SupportedTypes::Scalar : 
-	  out << 0;
-	  break;
-	case SupportedTypes::Stensor :
-	  out << 1;
-	  break;
-	default :
-	  string msg("MFrontUMATInterface::endTreatement : ");
-	  msg += "internal error, tag unsupported";
-	  throw(runtime_error(msg));
+	for(unsigned short is=0;is!=p->arraySize;){
+	  switch(flag){
+	  case SupportedTypes::Scalar : 
+	    out << 0;
+	    break;
+	  case SupportedTypes::Stensor :
+	    out << 1;
+	    break;
+	  default :
+	    string msg("MFrontUMATInterface::endTreatement : ");
+	    msg += "internal error, tag unsupported";
+	    throw(runtime_error(msg));
+	  }
+	  if(++is!=p->arraySize){
+	    out << ",";
+	  }
 	}
 	if(++p!=auxiliaryStateVarsHolder.end()){
 	  out << ",";
@@ -1014,24 +946,11 @@ namespace mfront{
 
     out << "MFRONT_SHAREDOBJ unsigned short umat"
       	<< makeLowerCase(name)
-	<< "_nExternalStateVariables = " << externalStateVarsHolder.size() << ";\n";
-
-    if(externalStateVarsHolder.size()!=0){
-      out << "MFRONT_SHAREDOBJ const char * umat"
-	  << makeLowerCase(name)
-	  << "_ExternalStateVariables [] = {";
-      for(p=externalStateVarsHolder.begin();p!=externalStateVarsHolder.end();){
-	out << '"' << MFrontUMATInterfaceGetName(glossaryNames,entryNames,p->name) << '"';
-	if(++p!=externalStateVarsHolder.end()){
-	  out << ",\n";
-	}
-      }
-      out << "};\n\n";
-    } else {
-      out << "MFRONT_SHAREDOBJ const char * const * umat"
-	  << makeLowerCase(name)
-	  << "_ExternalStateVariables = 0;\n\n";
-    }
+	<< "_nExternalStateVariables = " << this->getNumberOfVariables(externalStateVarsHolder) << ";\n";
+    this->writeGlossaryNames(out,this->getGlossaryNames(externalStateVarsHolder,
+							glossaryNames,
+							entryNames),
+			     name,"ExternalStateVariables");
     
     if(!parametersHolder.empty()){
       out << "MFRONT_SHAREDOBJ void MFRONT_STDCALL\numat"

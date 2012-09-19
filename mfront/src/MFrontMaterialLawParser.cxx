@@ -496,41 +496,41 @@ namespace mfront{
   }
 
   void
-  MFrontMaterialLawParser::treatInputMethod(void) 
+  MFrontMaterialLawParser::treatMethod(void) 
   {
     using namespace std;
     using namespace tfel::utilities;
     string methodName;
     typedef map<string,string>::value_type MVType;
     typedef map<string,unsigned short>::value_type MVType2;
-    this->readSpecifiedToken("MFrontMaterialLawParser::treatInputMethod",".");
-    this->checkNotEndOfFile("MFrontMaterialLawParser::treatInputMethod",
+    this->readSpecifiedToken("MFrontMaterialLawParser::treatMethod",".");
+    this->checkNotEndOfFile("MFrontMaterialLawParser::treatMethod",
 			    "Expected method name.");
     methodName = this->current->value;
     if((methodName!="setGlossaryName")&&
        (methodName!="setEntryName")){
-      this->throwRuntimeError("MFrontMaterialLawParser::treatInputMethod",
+      this->throwRuntimeError("MFrontMaterialLawParser::treatMethod",
 			      "unknown method '"+methodName+
 			      "' valid methods for input fields are "
 			      "'setGlossaryName' or 'setEntryName'");
     }
     ++(this->current);
-    this->readSpecifiedToken("MFrontMaterialLawParser::treatInputMethod","(");
+    this->readSpecifiedToken("MFrontMaterialLawParser::treatMethod","(");
     if(methodName=="setGlossaryName"){
-      this->checkNotEndOfFile("MFrontMaterialLawParser::treatInputMethod",
+      this->checkNotEndOfFile("MFrontMaterialLawParser::treatMethod",
 			      "Expected glossary name.");
       if((this->glossaryNames.find(this->currentVar)!=this->glossaryNames.end()) ||
 	 (this->entryNames.find(this->currentVar)!=this->entryNames.end())){
-	this->throwRuntimeError("MFrontMaterialLawParser::treatInputMethod",
+	this->throwRuntimeError("MFrontMaterialLawParser::treatMethod",
 				"A glossary or an entry name has already been defined for field '"
 				+this->currentVar + "'");
       }
       if(this->current->flag!=Token::String){
-	this->throwRuntimeError("MFrontMaterialLawParser::treatInputMethod",
+	this->throwRuntimeError("MFrontMaterialLawParser::treatMethod",
 				"Expected a string as glossary name.");
       }
       if(this->current->value.size()<3){
-	this->throwRuntimeError("MFrontMaterialLawParser::treatInputMethod",
+	this->throwRuntimeError("MFrontMaterialLawParser::treatMethod",
 				"Glossary name too short.");
       }
       string glossaryName = this->current->value.substr(1,this->current->value.size()-2);
@@ -538,24 +538,24 @@ namespace mfront{
 							     this->entryNames,
 							     glossaryName);
       if(!this->glossaryNames.insert(MVType(this->currentVar,glossaryName)).second){
-	this->throwRuntimeError("MFrontMaterialLawParser::treatInputMethod",
+	this->throwRuntimeError("MFrontMaterialLawParser::treatMethod",
 				"Glossary name for field '"+ this->currentVar +"' already defined.");
       }
     } else if (methodName=="setEntryName"){
-      this->checkNotEndOfFile("MFrontMaterialLawParser::treatInputMethod",
+      this->checkNotEndOfFile("MFrontMaterialLawParser::treatMethod",
 			      "Expected entry file name.");
       if((this->glossaryNames.find(this->currentVar)!=this->glossaryNames.end()) ||
 	 (this->entryNames.find(this->currentVar)!=this->entryNames.end())){
-	this->throwRuntimeError("MFrontMaterialLawParser::treatInputMethod",
+	this->throwRuntimeError("MFrontMaterialLawParser::treatMethod",
 				"A glossary or an entry name has already been defined for field '"
 				+this->currentVar+"'");
       }
       if(this->current->flag!=Token::String){
-	this->throwRuntimeError("MFrontMaterialLawParser::treatInputMethod",
+	this->throwRuntimeError("MFrontMaterialLawParser::treatMethod",
 				"Expected a string as entry file name.");
       }
       if(this->current->value.size()<3){
-	this->throwRuntimeError("MFrontMaterialLawParser::treatInputMethod",
+	this->throwRuntimeError("MFrontMaterialLawParser::treatMethod",
 				"Entry file name too short.");
       }
       string entryName = this->current->value.substr(1,this->current->value.size()-2);
@@ -563,17 +563,17 @@ namespace mfront{
 							     this->entryNames,
 							     entryName);
       if(!this->entryNames.insert(MVType(this->currentVar,entryName)).second){
-	this->throwRuntimeError("MFrontMaterialLawParser::treatInputMethod",
+	this->throwRuntimeError("MFrontMaterialLawParser::treatMethod",
 				"Entry file name for field '"+ this->currentVar +"' already defined.");
       }
     } else {
-      this->throwRuntimeError("MFrontMaterialLawParser::treatInputMethod",
+      this->throwRuntimeError("MFrontMaterialLawParser::treatMethod",
 			      "Internal error (untreated method '"+ methodName +"'");
     }
     ++(this->current);
-    this->readSpecifiedToken("MFrontMaterialLawParser::treatInputMethod",")");
-    this->readSpecifiedToken("MFrontMaterialLawParser::treatInputMethod",";");
-  } // end of MFrontMaterialLawParser::treatInputMethod
+    this->readSpecifiedToken("MFrontMaterialLawParser::treatMethod",")");
+    this->readSpecifiedToken("MFrontMaterialLawParser::treatMethod",";");
+  } // end of MFrontMaterialLawParser::treatMethod
     
   void
   MFrontMaterialLawParser::treatFile(const std::string& fileName_) 
@@ -595,11 +595,16 @@ namespace mfront{
       if(p==this->callBacks.end()){
 	VarContainer::const_iterator p2;
 	bool found = false;
+	if(this->output==this->current->value){
+	  found = true;
+	  this->currentVar = this->output;
+	  handler = &MFrontMaterialLawParser::treatMethod;
+	}
 	for(p2=this->inputs.begin();(p2!=this->inputs.end())&&(!found);){
 	  if(p2->name==this->current->value){
 	    found = true;
 	    this->currentVar = this->current->value;
-	    handler = &MFrontMaterialLawParser::treatInputMethod;
+	    handler = &MFrontMaterialLawParser::treatMethod;
 	  } else {
 	    ++p2;
 	  }
@@ -723,7 +728,7 @@ namespace mfront{
   void
   MFrontMaterialLawParser::treatInput(void)
   {
-    this->readVarList("Var",this->inputs,false);
+    this->readVarList(this->inputs,"real",false,false);
   } // end of MFrontMaterialLawParser::treatInput
 
   void

@@ -69,7 +69,7 @@ namespace mfront{
     this->reserveName("iter");
     this->reserveName("converge");
     this->reserveName("broyden_inv");
-    this->stateVarsHolder.push_back(VarHandler("StrainStensor","eel",0u));
+    this->stateVarsHolder.push_back(VarHandler("StrainStensor","eel",1u,0u));
     this->glossaryNames.insert(MVType("eel","ElasticStrain"));
     // CallBacks
     this->registerNewCallBack("@UsableInPurelyImplicitResolution",
@@ -369,7 +369,7 @@ namespace mfront{
       msg += "state variables shall be defined before the @Integrator and @ComputeStress blocks";
       throw(runtime_error(msg));
     }
-    this->readVarList(this->stateVarsHolder,true);
+    this->readVarList(this->stateVarsHolder,false,true);
   } // end of MFrontImplicitParser::treatStateVariables
 
   void
@@ -382,7 +382,7 @@ namespace mfront{
       msg += "state variables shall be defined before the @Integrator and @ComputeStress blocks";
       throw(runtime_error(msg));
     }
-    this->readVarList(this->auxiliaryStateVarsHolder,true);
+    this->readVarList(this->auxiliaryStateVarsHolder,true,true);
   } // end of MFrontImplicitParser::treatAuxiliaryStateVariables
 
   std::string
@@ -521,7 +521,7 @@ namespace mfront{
     VarContainer::const_iterator p;
     SupportedTypes::TypeSize n;
     for(p=this->stateVarsHolder.begin();p!=this->stateVarsHolder.end();++p){
-      n += this->getTypeSize(p->type);
+      n += this->getTypeSize(p->type,p->arraySize);
     }
     this->behaviourFile << "\n// Jacobian\n";
     this->behaviourFile << "tfel::math::tmatrix<" << n << "," << n << ",Type> jacobian;\n";
@@ -634,7 +634,7 @@ namespace mfront{
     SupportedTypes::TypeSize n2;
     SupportedTypes::TypeSize n3;
     for(p=this->stateVarsHolder.begin();p!=this->stateVarsHolder.end();++p){
-      n2 += this->getTypeSize(p->type);
+      n2 += this->getTypeSize(p->type,p->arraySize);
     }
     this->checkBehaviourFile();
     this->checkBehaviourFile();
@@ -810,7 +810,7 @@ namespace mfront{
 	msg += p->name;
 	throw(runtime_error(msg));
       }
-      n += this->getTypeSize(p->type);
+      n += this->getTypeSize(p->type,p->arraySize);
     }
     n = SupportedTypes::TypeSize();
     for(p=this->stateVarsHolder.begin();p!=this->stateVarsHolder.end();++p){
@@ -863,9 +863,9 @@ namespace mfront{
 	  msg += p->name;
 	  throw(runtime_error(msg));
 	}
-	n3 += this->getTypeSize(p2->type);
+	n3 += this->getTypeSize(p2->type,p2->arraySize);
       }
-      n += this->getTypeSize(p->type);
+      n += this->getTypeSize(p->type,p->arraySize);
     }
     if(this->algorithm==MFrontImplicitParser::NEWTONRAPHSON){
       this->behaviourFile << "// setting jacobian to identity\n";
@@ -920,7 +920,7 @@ namespace mfront{
 	msg += "internal error, tag unsupported";
 	throw(runtime_error(msg));
       }
-      n += this->getTypeSize(p->type);
+      n += this->getTypeSize(p->type,p->arraySize);
     }
     initStateVars << ",\nzeros(real(0)),\nfzeros(real(0))";
     if(!this->computedVars.empty()){
@@ -943,7 +943,7 @@ namespace mfront{
     SupportedTypes::TypeSize n;
     SupportedTypes::TypeSize n2;
     for(p=this->stateVarsHolder.begin();p!=this->stateVarsHolder.end();++p){
-      n2 += this->getTypeSize(p->type);
+      n2 += this->getTypeSize(p->type,p->arraySize);
     }
     for(p=this->stateVarsHolder.begin();p!=this->stateVarsHolder.end();++p){
       if((!this->debugMode)&&(p->lineNumber!=0u)){
@@ -961,7 +961,7 @@ namespace mfront{
 	msg += "unsupported type '"+p->type+"'";
 	throw(runtime_error(msg));
       }
-      n += this->getTypeSize(p->type);
+      n += this->getTypeSize(p->type,p->arraySize);
     }
     this->behaviourFile << endl;
   }

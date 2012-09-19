@@ -47,8 +47,14 @@ namespace mfront{
     BoundsType     boundsType;
     long double lowerBound;
     long double upperBound;
-
+    unsigned short arraySize;
     unsigned short lineNumber;
+
+  protected:
+
+    void
+    writeBoundsChecks(std::ofstream&,
+		      const std::string&) const;
 
   }; // end of class BoundsDescription
 

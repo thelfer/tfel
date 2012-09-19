@@ -118,11 +118,31 @@ namespace mfront
     std::string
     readOnlyOneToken(void);
 
+    /*!
+     * \param[in] cont : variable container to wich variables are
+     * added
+     * \param[in] type : type of the variable
+     * \param[in] allowArray      : allow arrays of variables to be defined
+     * \param[in] addIncrementVar : for each variable read, add
+     * another variable standing for the first variable increment
+     */
     void
-    readVarList(const std::string&,VarContainer&,const bool = false);
+    readVarList(VarContainer&,
+		const std::string&,
+		const bool,
+		const bool);
 
+    /*!
+     * \param[in] cont : variable container to wich variables are
+     * added
+     * \param[in] allowArray      : allow arrays of variables to be defined
+     * \param[in] addIncrementVar : for each variable read, add
+     * another variable standing for the first variable increment
+     */
     void
-    readVarList(VarContainer&,const bool = false);
+    readVarList(VarContainer&,
+		const bool,
+		const bool);
 
     std::vector<std::string>
     readArrayOfString(const std::string&);

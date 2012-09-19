@@ -89,8 +89,12 @@ namespace mfront{
     void
     treatFunction(void);
 
+    /*!
+     * treat the setGlossaryName and the setEntryName method for
+     * inputs or output.
+     */
     void
-    treatInputMethod(void);
+    treatMethod(void);
 
     void
     treatInterface(void);

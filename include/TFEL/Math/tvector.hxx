@@ -20,6 +20,7 @@
 #include"TFEL/TypeTraits/RealPartType.hxx"
 #include"TFEL/FSAlgorithm/copy.hxx"
 
+#include"TFEL/Math/General/Abs.hxx"
 #include"TFEL/Math/General/BasicOperations.hxx"
 #include"TFEL/Math/General/EmptyRunTimeProperties.hxx"
 
@@ -377,6 +378,11 @@ namespace tfel{
       size(void) const;
 
     };
+
+    template<unsigned short N, typename T>
+    TFEL_MATH_INLINE2
+    typename tfel::typetraits::AbsType<T>::type
+    abs(const tvector<N,T>& v);
 
     //! Serialisation operator
     /*

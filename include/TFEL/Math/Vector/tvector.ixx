@@ -14,6 +14,7 @@
 
 #include"TFEL/TypeTraits/BaseType.hxx"
 #include"TFEL/FSAlgorithm/FSAlgorithm.hxx"
+#include"TFEL/Math/General/Abs.hxx"
 #include"TFEL/Math/General/BasicOperations.hxx"
 #include"TFEL/Math/General/DotProduct.hxx"
 #include"TFEL/Math/Vector/VectorUtilities.hxx"
@@ -25,31 +26,31 @@ namespace tfel{
 #ifndef DOXYGENSPECIFIC
 
     template<unsigned short N, typename T>
-    TFEL_MATH_INLINE tvector<N,T>::tvector()
+    tvector<N,T>::tvector()
     {}
 
     template<unsigned short N, typename T>
-    TFEL_MATH_INLINE tvector<N,T>::tvector(const T init)
+    tvector<N,T>::tvector(const T init)
     {
       tfel::fsalgo::fill<N>::exe(this->v,init);
     }
 
     template<unsigned short N, typename T>
-    TFEL_MATH_INLINE tvector<N,T>::tvector(const T *const init)
+    tvector<N,T>::tvector(const T *const init)
     {
       tfel::fsalgo::copy<N>::exe(init,this->v);
     }
     
     template<unsigned short N, typename T>
     template<typename T2,typename Expr>
-    TFEL_MATH_INLINE tvector<N,T>::tvector(const VectorExpr<tvector<N,T2>, Expr>& src)
+    tvector<N,T>::tvector(const VectorExpr<tvector<N,T2>, Expr>& src)
     {
       TFEL_STATIC_ASSERT((tfel::typetraits::IsAssignableTo<T2,T>::cond));
       vectorToTab<N>::exe(src,this->v);
     } // end of tvector<N,T>::tvector(const VectorExpr<tvector<N,T2>, Expr>&)
 
     template<unsigned short N, typename T>
-    TFEL_MATH_INLINE const T& 
+    const T& 
     tvector<N,T>::operator()(const unsigned short i) const
     {
       assert(i<N);
@@ -57,7 +58,7 @@ namespace tfel{
     }
 
     template<unsigned short N, typename T>
-    TFEL_MATH_INLINE T& 
+    T& 
     tvector<N,T>::operator()(const unsigned short i)
     {
       assert(i<N);
@@ -65,7 +66,7 @@ namespace tfel{
     }
 
     template<unsigned short N, typename T>
-    TFEL_MATH_INLINE const T& 
+    const T& 
     tvector<N,T>::operator[](const unsigned short i) const
     {
       assert(i<N);
@@ -73,7 +74,7 @@ namespace tfel{
     }
 
     template<unsigned short N, typename T>
-    TFEL_MATH_INLINE T& 
+    T& 
     tvector<N,T>::operator[](const unsigned short i)
     {
       assert(i<N);
@@ -82,7 +83,7 @@ namespace tfel{
 
     template<unsigned short N, typename T>
     template<typename T2,typename Expr>
-    TFEL_MATH_INLINE typename tfel::meta::EnableIf<
+    typename tfel::meta::EnableIf<
       tfel::typetraits::IsAssignableTo<T2,T>::cond,
       tvector<N,T>&
     >::type 
@@ -93,7 +94,7 @@ namespace tfel{
 
     template<unsigned short N, typename T>
     template<typename T2,typename Expr>
-    TFEL_MATH_INLINE typename tfel::meta::EnableIf<
+    typename tfel::meta::EnableIf<
       tfel::typetraits::IsAssignableTo<T2,T>::cond,
       tvector<N,T>&
     >::type 
@@ -104,7 +105,7 @@ namespace tfel{
 
     template<unsigned short N, typename T>
     template<typename T2,typename Expr>
-    TFEL_MATH_INLINE typename tfel::meta::EnableIf<
+    typename tfel::meta::EnableIf<
       tfel::typetraits::IsAssignableTo<T2,T>::cond,
       tvector<N,T>&
     >::type 
@@ -115,8 +116,7 @@ namespace tfel{
     
     template<unsigned short N, typename T>
     template<typename T2>
-    TFEL_MATH_INLINE typename 
-    tfel::meta::EnableIf<
+    typename tfel::meta::EnableIf<
       tfel::typetraits::IsAssignableTo<T2,T>::cond,
       tvector<N,T>&
     >::type 
@@ -127,8 +127,7 @@ namespace tfel{
 
     template<unsigned short N, typename T>
     template<typename T2>
-    TFEL_MATH_INLINE typename 
-    tfel::meta::EnableIf<
+    typename tfel::meta::EnableIf<
       tfel::typetraits::IsAssignableTo<T2,T>::cond,
       tvector<N,T>&
     >::type 
@@ -139,8 +138,7 @@ namespace tfel{
 
     template<unsigned short N, typename T>
     template<typename T2>
-    TFEL_MATH_INLINE typename 
-    tfel::meta::EnableIf<
+    typename tfel::meta::EnableIf<
       tfel::typetraits::IsAssignableTo<T2,T>::cond,
       tvector<N,T>&
     >::type 
@@ -152,7 +150,6 @@ namespace tfel{
     // *= operator
     template<unsigned short N,typename T>
     template<typename T2>
-    TFEL_MATH_INLINE 
     typename tfel::meta::EnableIf<
       tfel::typetraits::IsScalar<T2>::cond&&
       tfel::meta::IsSameType<typename ResultType<T,T2,OpMult>::type,T>::cond,
@@ -167,7 +164,6 @@ namespace tfel{
     // /= operator
     template<unsigned short N,typename T>
     template<typename T2>
-    TFEL_MATH_INLINE 
     typename tfel::meta::EnableIf<
       tfel::typetraits::IsScalar<T2>::cond&&
       tfel::meta::IsSameType<typename ResultType<T,T2,OpMult>::type,T>::cond,
@@ -189,7 +185,6 @@ namespace tfel{
     }
     
     template<unsigned short N, typename T>
-    TFEL_MATH_INLINE2
     typename tvector<N,T>::iterator 
     tvector<N,T>::begin(void)
     {
@@ -197,7 +192,6 @@ namespace tfel{
     }
 
     template<unsigned short N, typename T>
-    TFEL_MATH_INLINE2
     typename tvector<N,T>::const_iterator 
     tvector<N,T>::begin(void) const
     {
@@ -205,7 +199,6 @@ namespace tfel{
     }
 
     template<unsigned short N, typename T>
-    TFEL_MATH_INLINE2
     typename tvector<N,T>::iterator 
     tvector<N,T>::end(void)
     {
@@ -213,7 +206,6 @@ namespace tfel{
     }
 
     template<unsigned short N, typename T>
-    TFEL_MATH_INLINE2
     typename tvector<N,T>::const_iterator 
     tvector<N,T>::end(void) const
     {
@@ -221,7 +213,6 @@ namespace tfel{
     }
 
     template<unsigned short N, typename T>
-    TFEL_MATH_INLINE2
     typename tvector<N,T>::reverse_iterator 
     tvector<N,T>::rbegin(void)
     {
@@ -229,7 +220,6 @@ namespace tfel{
     }
 
     template<unsigned short N, typename T>
-    TFEL_MATH_INLINE2
     typename tvector<N,T>::const_reverse_iterator 
     tvector<N,T>::rbegin(void) const
     {
@@ -237,7 +227,6 @@ namespace tfel{
     }
 
     template<unsigned short N, typename T>
-    TFEL_MATH_INLINE2
     typename tvector<N,T>::reverse_iterator 
     tvector<N,T>::rend(void)
     {
@@ -245,7 +234,6 @@ namespace tfel{
     }
 
     template<unsigned short N, typename T>
-    TFEL_MATH_INLINE2
     typename tvector<N,T>::const_reverse_iterator 
     tvector<N,T>::rend(void) const
     {
@@ -254,7 +242,6 @@ namespace tfel{
 
     template<unsigned short N, typename T>
     template<typename InputIterator>
-    TFEL_MATH_INLINE2
     void
     tvector<N,T>::copy(const InputIterator src)
     {
@@ -270,7 +257,6 @@ namespace tfel{
 
     // Norm2
     template<unsigned short N,typename T>
-    TFEL_MATH_INLINE2
     typename tfel::meta::EnableIf<
       tfel::typetraits::IsScalar<T>::cond,
       typename tfel::typetraits::RealPartType<T>::type
@@ -279,6 +265,16 @@ namespace tfel{
     {
       typedef typename ResultType<T,T,OpMult>::type squareT;
       return sqrt(real(dotProduct<N>::exe(vec.begin(),vec.begin(),squareT(0u))));
+    }
+
+    template<unsigned short N,typename T>
+    typename tfel::typetraits::AbsType<T>::type
+    abs(const tvector<N,T>& v)
+    {
+      using namespace tfel::fsalgo;
+      AbsSum<T> a;
+      for_each<N>::exe(v.begin(),a);
+      return a.result;
     }
 
     template<unsigned short N,typename T>

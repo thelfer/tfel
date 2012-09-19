@@ -32,7 +32,8 @@ int main()
 {
   using namespace tfel::fsalgo;
   int A[] = {1, 4, 2, 8, 5, 7};
-  count<int> P = for_each<6>::exe(A,count<int>());
+  count<int> P;
+  for_each<6>::exe(A,P);
   assert(P.c==6);
   return EXIT_SUCCESS;
 }

@@ -144,7 +144,7 @@ namespace mfront{
 
     ~MFrontUMATInterface();
     
-  private:
+  protected:
 
     static std::string
     getLibraryName(const std::string&,
@@ -167,6 +167,25 @@ namespace mfront{
 
     static std::string
     treatStateVarStensor(const std::string& s,const unsigned short);
+
+    std::vector<std::string>
+    getGlossaryNames(const VarContainer&,
+		     const std::map<std::string,std::string>&,
+		     const std::map<std::string,std::string>&);
+
+    void
+    appendGlossaryNames(std::vector<std::string>&,
+			const VarContainer&,
+			const std::map<std::string,std::string>&,
+			const std::map<std::string,std::string>&);
+
+
+    void
+    writeGlossaryNames(std::ostream&,
+		       const std::vector<std::string>&,
+		       const std::string&,
+		       const std::string&,
+		       const unsigned short = 0u);
 
     bool verboseMode;
 
