@@ -693,7 +693,7 @@ namespace mfront{
       this->behaviourFile << "return false;\n";
       this->behaviourFile << "}" << endl;
       this->behaviourFile << "jacobian2 = this->jacobian;\n";
-      this->behaviourFile << "this->zeros  += this->Dzeros;\n";
+      this->behaviourFile << "this->zeros  += Dzeros;\n";
       this->behaviourFile << "fzeros2 = this->fzeros;\n";
       this->behaviourFile << "this->computeStress();\n";
       this->behaviourFile << "this->computeFdF();\n";
