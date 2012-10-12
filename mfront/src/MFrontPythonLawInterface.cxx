@@ -352,7 +352,7 @@ namespace mfront
 	      this->srcFile << "if(" << p5->varName<< " < "<< p5->lowerBound << "){\n";
 	      this->srcFile << "ostringstream msg;\nmsg << \"" << name << " : "
 			    << p5->varName << " is below its physical lower bound (\"\n << "
-			    << p5->varName << " << \"<" << p5->lowerBound << ").\\n\";\n";
+			    << p5->varName << " << \"<" << p5->lowerBound << ").\";\n";
 	      this->srcFile << "PyErr_SetString(PyExc_RuntimeError,msg.str().c_str());\n";
 	      this->srcFile << "return NULL;\n";
 	      this->srcFile << "}\n";
@@ -360,7 +360,7 @@ namespace mfront
 	      this->srcFile << "if(" << p5->varName<< " > "<< p5->upperBound << "){\n";
 	      this->srcFile << "ostringstream msg;\nmsg << \"" << name << " : "
 			    << p5->varName << " is beyond its physical upper bound (\"\n << "
-			    << p5->varName << " << \">" << p5->upperBound << ").\\n\";\n";
+			    << p5->varName << " << \">" << p5->upperBound << ").\";\n";
 	      this->srcFile << "PyErr_SetString(PyExc_RuntimeError,msg.str().c_str());\n";
 	      this->srcFile << "return NULL;\n";
 	      this->srcFile << "}\n";
@@ -370,13 +370,13 @@ namespace mfront
 	      this->srcFile << "if(" << p5->varName<< " < " << p5->lowerBound << "){\n";
 	      this->srcFile << "ostringstream msg;\nmsg << \"" << name << " : "
 			    << p5->varName << " is below its physical lower bound (\"\n << "
-			    << p5->varName << " << \"<" << p5->lowerBound << ").\\n\";\n";
+			    << p5->varName << " << \"<" << p5->lowerBound << ").\";\n";
 	      this->srcFile << "PyErr_SetString(PyExc_RuntimeError,msg.str().c_str());\n";
 	      this->srcFile << "return NULL;\n";
 	      this->srcFile << "} else {\n";
 	      this->srcFile << "ostringstream msg;\nmsg << \"" << name << " : "
 			    << p5->varName << " is beyond its physical upper bound (\"\n << "
-			    << p5->varName << " << \">" << p5->upperBound << ").\\n\";\n";
+			    << p5->varName << " << \">" << p5->upperBound << ").\";\n";
 	      this->srcFile << "PyErr_SetString(PyExc_RuntimeError,msg.str().c_str());\n";
 	      this->srcFile << "return NULL;\n";
 	      this->srcFile << "}\n";
@@ -399,7 +399,7 @@ namespace mfront
 	      this->srcFile << "ostringstream msg;\n";
 	      this->srcFile << "msg << \"" << name << " : "
 			    << p5->varName << " is below its lower bound (\"\n << "
-			    << p5->varName << " << \"<" << p5->lowerBound << ").\\n\";\n";
+			    << p5->varName << " << \"<" << p5->lowerBound << ").\";\n";
 	      this->srcFile << "if(strcmp(policy,\"STRICT\")==0){\n";
 	      this->srcFile << "PyErr_SetString(PyExc_RuntimeError,msg.str().c_str());\n";
 	      this->srcFile << "return NULL;\n";
@@ -421,7 +421,7 @@ namespace mfront
 	      this->srcFile << "ostringstream msg;\n";
 	      this->srcFile << "msg << \"" << name << " : "
 			    << p5->varName << " is over its upper bound (\"\n << "
-			    << p5->varName << " << \">" << p5->upperBound << ").\\n\";\n";
+			    << p5->varName << " << \">" << p5->upperBound << ").\";\n";
 	      this->srcFile << "if(strcmp(policy,\"STRICT\")==0){\n";
 	      this->srcFile << "PyErr_SetString(PyExc_RuntimeError,msg.str().c_str());\n";
 	      this->srcFile << "return NULL;\n";
