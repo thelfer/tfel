@@ -700,7 +700,7 @@ namespace mfront{
     }
     if(this->algorithm==MFrontImplicitParser::BROYDEN2){
       this->behaviourFile << "Dzeros   = -(this->jacobian)*(this->fzeros);\n";
-      this->behaviourFile << "this->zeros  += this->Dzeros;\n";
+      this->behaviourFile << "this->zeros  += Dzeros;\n";
       this->behaviourFile << "fzeros2 = this->fzeros;\n";
       this->behaviourFile << "this->computeStress();\n";
       this->behaviourFile << "this->computeFdF();\n";
