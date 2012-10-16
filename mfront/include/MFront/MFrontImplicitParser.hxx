@@ -111,6 +111,10 @@ namespace mfront{
 
     void treatAuxiliaryStateVariables(void);
 
+    void treatCompareToNumericalJacobian(void);
+
+    void treatJacobianComparisonCriterium(void);
+
     void generateOutputFiles(void);
 
     void treatUseAcceleration(void);
@@ -124,6 +128,15 @@ namespace mfront{
     void treatRelaxationTrigger(void);
     
     void treatRelaxationCoefficient(void);
+
+    std::string
+    getJacobianPart(const VarHandler&,
+		    const VarHandler&,
+		    const SupportedTypes::TypeSize&,
+		    const SupportedTypes::TypeSize&,
+		    const SupportedTypes::TypeSize&,
+		    const std::string& = "this->jacobian",
+		    const std::string& = "");
 
     friend class MFrontBehaviourParserBase<MFrontImplicitParser>;
 
@@ -151,6 +164,12 @@ namespace mfront{
     unsigned short accelerationPeriod;
 
     Algorithm algorithm;
+
+    bool hasJacobianComparisonCriterium;
+
+    double jacobianComparisonCriterium;
+
+    bool compareToNumericalJacobian;
 
     bool useRelaxation;
 

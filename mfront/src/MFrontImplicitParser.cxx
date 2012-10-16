@@ -26,6 +26,9 @@ namespace mfront{
       accelerationTrigger(10),
       accelerationPeriod(3),
       algorithm(MFrontImplicitParser::DEFAULT),
+      hasJacobianComparisonCriterium(false),
+      jacobianComparisonCriterium(0.),
+      compareToNumericalJacobian(false),
       useRelaxation(false),
       useAcceleration(false)
   {
@@ -42,18 +45,23 @@ namespace mfront{
     this->registerVariable("deel");
     this->registerVariable("previous_zeros");
     this->registerVariable("zeros");
+    this->registerVariable("tzeros");
     this->registerVariable("zeros_1");
     this->registerVariable("fzeros");
+    this->registerVariable("tfzeros");
     this->registerVariable("zeros2");
     this->registerVariable("fzeros2");
     this->registerVariable("Dzeros");
     this->registerVariable("Dfzeros");
     this->registerVariable("jacobian");
+    this->registerVariable("tjacobian");
+    this->registerVariable("njacobian");
     this->registerVariable("jacobian2");
     this->registerVariable("t");
     this->registerVariable("dt_");
     this->registerVariable("error");
     this->registerVariable("idx");
+    this->registerVariable("idx2");
     this->reserveName("schmidt");
     this->reserveName("accelerate");
     this->reserveName("accelerate_k0");
@@ -88,6 +96,10 @@ namespace mfront{
     this->registerNewCallBack("@UseRelaxation",&MFrontImplicitParser::treatUseRelaxation);
     this->registerNewCallBack("@RelaxationTrigger",&MFrontImplicitParser::treatRelaxationTrigger);
     this->registerNewCallBack("@RelaxationCoefficient",&MFrontImplicitParser::treatRelaxationCoefficient);
+    this->registerNewCallBack("@CompareToNumericalJacobian",
+			      &MFrontImplicitParser::treatCompareToNumericalJacobian);
+    this->registerNewCallBack("@JacobianComparisonCriterium",
+			      &MFrontImplicitParser::treatJacobianComparisonCriterium);
     //    this->disableCallBack("@Integrator");
     this->disableCallBack("@ComputedVar");
     this->disableCallBack("@UseQt");
@@ -224,7 +236,54 @@ namespace mfront{
     ++(this->current);
     this->readSpecifiedToken("MFrontBehaviourParserCommon::treatUseRelaxation",";");
   } // end of MFrontImplicitParser::treatUseRelaxation
+
+  void
+  MFrontImplicitParser::treatCompareToNumericalJacobian(void)
+  {
+    using namespace std;
+    this->checkNotEndOfFile("MFrontBehaviourParserCommon::treatCompareToNumericalJacobian : ",
+			    "Expected 'true' or 'false'.");
+    if(this->compareToNumericalJacobian){
+      this->throwRuntimeError("MFrontBehaviourParserCommon::treatCompareToNumericalJacobian",
+			      "@CompareToNumericalJacobian already specified");
+    }
+    if(this->current->value=="true"){
+      this->compareToNumericalJacobian = true;
+    } else if(this->current->value=="false"){
+      this->compareToNumericalJacobian = false;
+    } else {
+      this->throwRuntimeError("MFrontBehaviourParserCommon::treatCompareToNumericalJacobian",
+			      "Expected to read 'true' or 'false' instead of '"+this->current->value+".");
+    }
+    ++(this->current);
+    this->readSpecifiedToken("MFrontBehaviourParserCommon::treatCompareToNumericalJacobian",";");
+  } // end of MFrontImplicitParser::treatCompareToNumericalJacobian
   
+  void
+  MFrontImplicitParser::treatJacobianComparisonCriterium(void)
+  {
+    using namespace std;
+    if(this->hasJacobianComparisonCriterium){
+      this->throwRuntimeError("MFrontImplicitParser::treatJacobianComparisonCriterium",
+			      "JacobianComparisonCriterium value already defined.");
+    }
+    this->checkNotEndOfFile("MFrontImplicitParser::treatJacobianComparisonCriterium",
+			    "Cannot read epsilon value.");
+    istringstream flux(current->value);
+    flux >> this->jacobianComparisonCriterium;
+    if((flux.fail())||(!flux.eof())){
+      this->throwRuntimeError("MFrontImplicitParser::treatJacobianComparisonCriterium",
+			      "Failed to read epsilon value.");
+    }
+    if(this->jacobianComparisonCriterium<0){
+      this->throwRuntimeError("MFrontImplicitParser::treatJacobianComparisonCriterium",
+			      "JacobianComparisonCriterium value must be positive.");
+    }
+    ++(this->current);
+    this->readSpecifiedToken("MFrontImplicitParser::treatJacobianComparisonCriterium",";");
+    this->hasJacobianComparisonCriterium = true;
+  } // MFrontImplicitParser::treatJacobianComparisonCriterium
+
   void
   MFrontImplicitParser::treatRelaxationTrigger(void)
   {
@@ -625,6 +684,65 @@ namespace mfront{
     this->behaviourFile << endl;
   } // end of MFrontImplicitParser::writeBehaviourParserSpecificMembers
 
+  std::string
+  MFrontImplicitParser::getJacobianPart(const VarHandler&  v1,
+					const VarHandler&  v2,
+					const SupportedTypes::TypeSize& n,
+					const SupportedTypes::TypeSize& n2,
+					const SupportedTypes::TypeSize& n3,
+					const std::string& j,
+					const std::string& p)
+  {
+    using namespace std;
+    ostringstream d;
+    if(this->varNames.find(p+"df"+v1.name+"_dd"+v2.name)!=this->varNames.end()){
+      string msg("MFrontImplicitParser::writeBehaviourIntegrator : ");
+      msg += "variable name 'df"+v1.name+"_dd"+v2.name;
+      msg += "' is reserved.\n";
+      throw(runtime_error(msg));
+    }
+    if(this->getTypeFlag(v1.type)==SupportedTypes::Stensor){
+      if(this->getTypeFlag(v2.type)==SupportedTypes::Stensor){
+	d << "typename tfel::math::ST2toST2FTMV<N,"
+	  << n2 << "," << n2 << ",\n"
+	  << n  << "," << n3
+	  << ",real>::type "+p+"df" << v1.name << "_dd" << v2.name << "("+j+");\n";
+      } else if(this->getTypeFlag(v2.type)==SupportedTypes::Scalar){
+	d << "typename tfel::math::SFTMCV<N," 
+	  << n2 << "," << n2 << ",\n"
+	  << n  << "," << n3
+	  << ",real>::type "+p+"df" << v1.name << "_dd" << v2.name << "("+j+");\n";
+      } else {
+	string msg("MFrontImplicitParser::writeOutputFiles : ");
+	msg += "unsupported type for state variable ";
+	msg += v2.name;
+	throw(runtime_error(msg));
+      }
+    } else if(this->getTypeFlag(v1.type)==SupportedTypes::Scalar){
+      if(this->getTypeFlag(v2.type)==SupportedTypes::Stensor){
+	d << "typename tfel::math::SFTMRV<N,"
+	  << n2 << "," << n2 << ",\n"
+	  << n  << "," << n3
+	  << ",real>::type "+p+"df" << v1.name 
+	  << "_dd" << v2.name << "("+j+");\n";
+      } else if(this->getTypeFlag(v2.type)==SupportedTypes::Scalar){
+	d << "real& "+p+"df" << v1.name << "_dd" << v2.name 
+	  << " = "+j+"(" << n << "," << n3 << ");\n";
+      } else {
+	string msg("MFrontImplicitParser::writeOutputFiles : ");
+	msg += "unsupported type for state variable ";
+	msg += v2.name;
+	throw(runtime_error(msg));
+      }
+    } else {
+      string msg("MFrontImplicitParser::writeOutputFiles : ");
+      msg += "unsupported type for state variable ";
+      msg += v1.name;
+      throw(runtime_error(msg));
+    }
+    return d.str();
+  } // void MFrontImplicitParser::getJacobianPart
+  
   void MFrontImplicitParser::writeBehaviourIntegrator(){
     using namespace std;
     VarContainer::const_iterator p;
@@ -644,6 +762,14 @@ namespace mfront{
     this->behaviourFile << "bool\nintegrate(void){\n";
     this->behaviourFile << "using namespace std;\n";
     this->behaviourFile << "using namespace tfel::math;\n";
+    if(this->compareToNumericalJacobian){
+      this->behaviourFile << "tvector<" << n2 << ",real> tzeros;\n";
+      this->behaviourFile << "tvector<" << n2 << ",real> tfzeros;\n";
+      if(this->algorithm!=MFrontImplicitParser::NEWTONRAPHSON){
+	this->behaviourFile << "tmatrix<" << n2 << "," << n2 << ",real> tjacobian;\n";
+      }
+      this->behaviourFile << "tmatrix<" << n2 << "," << n2 << ",real> njacobian;\n";
+    }
     if((this->algorithm==MFrontImplicitParser::BROYDEN)||
        (this->algorithm==MFrontImplicitParser::BROYDEN2)){
       this->behaviourFile << "tmatrix<" << n2 << "," << n2 << ",real> jacobian2;\n";
@@ -704,6 +830,81 @@ namespace mfront{
       this->behaviourFile << "fzeros2 = this->fzeros;\n";
       this->behaviourFile << "this->computeStress();\n";
       this->behaviourFile << "this->computeFdF();\n";
+    }
+    if(this->compareToNumericalJacobian){
+      this->behaviourFile << "tzeros = this->zeros;\n";
+      if(this->algorithm!=MFrontImplicitParser::NEWTONRAPHSON){
+	this->behaviourFile << "tjacobian = this->jacobian;\n";
+      }
+      this->behaviourFile << "for(unsigned short idx = 0; idx!= "<< n2<<  ";++idx){\n";
+      this->behaviourFile << "this->zeros(idx) -= 10.*"<< this->className << "::epsilon;\n";
+      this->behaviourFile << "this->computeStress();\n";
+      this->behaviourFile << "this->computeFdF();\n";
+      this->behaviourFile << "this->zeros = tzeros;\n";
+      this->behaviourFile << "tfzeros = this->fzeros;\n";
+      if(this->algorithm!=MFrontImplicitParser::NEWTONRAPHSON){
+	this->behaviourFile << "this->jacobian = tjacobian;\n";
+      }
+      this->behaviourFile << "this->zeros(idx) += 10.*"<< this->className << "::epsilon;\n";
+      this->behaviourFile << "this->computeStress();\n";
+      this->behaviourFile << "this->computeFdF();\n";
+      this->behaviourFile << "this->zeros  = tzeros;\n";
+      this->behaviourFile << "this->fzeros = (this->fzeros-tfzeros)/(20.*"
+			  << this->className << "::epsilon);\n";
+      this->behaviourFile << "for(unsigned short idx2 = 0; idx2!= "<< n2<<  ";++idx2){\n";
+      this->behaviourFile << "njacobian(idx2,idx) = this->fzeros(idx2);\n";
+      this->behaviourFile << "}\n";
+      if(this->algorithm!=MFrontImplicitParser::NEWTONRAPHSON){
+	this->behaviourFile << "this->jacobian = tjacobian;\n";
+      }
+      this->behaviourFile << "}\n";
+      n = SupportedTypes::TypeSize();
+      for(p=this->stateVarsHolder.begin();p!=this->stateVarsHolder.end();++p){
+	n3 = SupportedTypes::TypeSize();
+	for(p2=this->stateVarsHolder.begin();p2!=this->stateVarsHolder.end();++p2){
+	  this->behaviourFile << "// derivative of variable f" << p->name 
+			      << " by variable " << p2->name << "\n";
+	  this->behaviourFile << this->getJacobianPart(*p,*p2,n,n2,n3);
+	  this->behaviourFile << "// numerical derivative of variable f" << p->name 
+			      << " by variable " << p2->name << "\n";
+	  this->behaviourFile << this->getJacobianPart(*p,*p2,n,n2,n3,
+						       "njacobian","n");
+	  n3 += this->getTypeSize(p2->type,p2->arraySize);
+	}
+	n += this->getTypeSize(p->type,p->arraySize);
+      }
+      for(p=this->stateVarsHolder.begin();p!=this->stateVarsHolder.end();++p){
+	for(p2=this->stateVarsHolder.begin();p2!=this->stateVarsHolder.end();++p2){
+	  const VarHandler& v1 = *p;
+	  const VarHandler& v2 = *p2;
+	  SupportedTypes::TypeSize nv1 = this->getTypeSize(v1.type,v1.arraySize);
+	  SupportedTypes::TypeSize nv2 = this->getTypeSize(v2.type,v2.arraySize);
+	  if(this->hasJacobianComparisonCriterium){
+	    this->behaviourFile << "error=" << nv1 << "*" << nv2 << "*"
+				<< this->jacobianComparisonCriterium <<";\n";
+	  } else {
+	    this->behaviourFile << "error=" << nv1 << "*" << nv2 << "*"
+				<< this->className << "::epsilon;\n";
+	  }
+	  this->behaviourFile << "if(abs(" << "df" << v1.name  << "_dd" << v2.name << "-"
+			      << "ndf" << v1.name  << "_dd" << v2.name << ") > error)\n" 
+			      << "{\n";
+	  this->behaviourFile << "cout << abs(" << "df" << v1.name  << "_dd" << v2.name << "-"
+			      << "ndf" << v1.name  << "_dd" << v2.name << ") << \" \" << error << endl;\n";
+	  this->behaviourFile << "cout << \"df" << v1.name
+			      << "_dd" << v2.name << " :\\n\" << " 
+			      << "df" << v1.name  << "_dd" << v2.name << " << endl;\n";
+	  this->behaviourFile << "cout << \"ndf" << v1.name
+			      << "_dd" << v2.name << " :\\n\" << " 
+			      << "ndf" << v1.name  << "_dd" << v2.name << " << endl;\n";
+	  this->behaviourFile << "cout << \"df" << v1.name << "_dd" << v2.name 
+			      << " - ndf" << v1.name << "_dd" << v2.name << " :\\n\" << "
+			      << "df" << v1.name  << "_dd" << v2.name << "-"
+			      << "ndf" << v1.name  << "_dd" << v2.name << " << endl;\n";
+	  this->behaviourFile << "cout << endl;\n";
+	  this->behaviourFile << "}\n";
+	}
+      }
     }
     this->behaviourFile << "error=norm(this->fzeros);\n";
     this->behaviourFile << "converge = ((error)/(real(" << n2 << "))<";
@@ -792,6 +993,7 @@ namespace mfront{
     this->behaviourFile << "using namespace tfel::math;\n";
     writeMaterialLaws("MFrontImplicitParser::writeBehaviourParserSpecificMembers",
 		      this->behaviourFile,this->materialLaws);
+    n = SupportedTypes::TypeSize();
     for(p=this->stateVarsHolder.begin();p!=this->stateVarsHolder.end();++p){
       if(this->varNames.find("f"+p->name)!=this->varNames.end()){
 	string msg("MFrontImplicitParser::writeBehaviourIntegrator : ");
@@ -816,53 +1018,9 @@ namespace mfront{
     for(p=this->stateVarsHolder.begin();p!=this->stateVarsHolder.end();++p){
       n3 = SupportedTypes::TypeSize();
       for(p2=this->stateVarsHolder.begin();p2!=this->stateVarsHolder.end();++p2){
-	if(this->varNames.find("df"+p->name+"_dd"+p2->name)!=this->varNames.end()){
-	  string msg("MFrontImplicitParser::writeBehaviourIntegrator : ");
-	  msg += "variable name 'df"+p->name+"_dd"+p2->name;
-	  msg += "' is reserved.\n";
-	  throw(runtime_error(msg));
-	}
 	this->behaviourFile << "// derivative of variable f" << p->name 
 			    << " by variable " << p2->name << "\n";
-	if(this->getTypeFlag(p->type)==SupportedTypes::Stensor){
-	  if(this->getTypeFlag(p2->type)==SupportedTypes::Stensor){
-	    this->behaviourFile << "typename tfel::math::ST2toST2FTMV<N,"
-				<< n2 << "," << n2 << ",\n"
-				<< n  << "," << n3
-				<< ",real>::type df" << p->name << "_dd" << p2->name << "(this->jacobian);\n";
-	  } else if(this->getTypeFlag(p2->type)==SupportedTypes::Scalar){
-	    this->behaviourFile << "typename tfel::math::SFTMCV<N," 
-				<< n2 << "," << n2 << ",\n"
-				<< n  << "," << n3
-				<< ",real>::type df" << p->name << "_dd" << p2->name << "(this->jacobian);\n";
-	  } else {
-	    string msg("MFrontImplicitParser::writeOutputFiles : ");
-	    msg += "unsupported type for state variable ";
-	    msg += p2->name;
-	    throw(runtime_error(msg));
-	  }
-	} else if(this->getTypeFlag(p->type)==SupportedTypes::Scalar){
-	  if(this->getTypeFlag(p2->type)==SupportedTypes::Stensor){
-	    this->behaviourFile << "typename tfel::math::SFTMRV<N,"
-				<< n2 << "," << n2 << ",\n"
-				<< n  << "," << n3
-				<< ",real>::type df" << p->name 
-				<< "_dd" << p2->name << "(this->jacobian);\n";
-	  } else if(this->getTypeFlag(p2->type)==SupportedTypes::Scalar){
-	    this->behaviourFile << "real& df" << p->name << "_dd" << p2->name 
-				<< " = this->jacobian(" << n << "," << n3 << ");\n";
-	  } else {
-	    string msg("MFrontImplicitParser::writeOutputFiles : ");
-	    msg += "unsupported type for state variable ";
-	    msg += p2->name;
-	    throw(runtime_error(msg));
-	  }
-	} else {
-	  string msg("MFrontImplicitParser::writeOutputFiles : ");
-	  msg += "unsupported type for state variable ";
-	  msg += p->name;
-	  throw(runtime_error(msg));
-	}
+	this->behaviourFile << this->getJacobianPart(*p,*p2,n,n2,n3);
 	n3 += this->getTypeSize(p2->type,p2->arraySize);
       }
       n += this->getTypeSize(p->type,p->arraySize);

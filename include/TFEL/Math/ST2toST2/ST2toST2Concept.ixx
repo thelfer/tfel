@@ -15,6 +15,26 @@ namespace tfel{
     {
       return static_cast<const T&>(*this).operator()(i,j);
     } // end of ST2toST2Concept<T>::operator()
+
+    template<typename ST2toST2Type>
+    typename tfel::meta::EnableIf<
+      tfel::meta::Implements<ST2toST2Type,ST2toST2Concept>::cond,
+      typename tfel::typetraits::AbsType<typename ST2toST2Traits<ST2toST2Type>::NumType>::type
+    >::type
+    abs(const ST2toST2Type& v)
+    {
+      unsigned short i;
+      unsigned short j;
+      typedef typename ST2toST2Traits<ST2toST2Type>::NumType NumType;
+      typedef typename tfel::typetraits::AbsType<NumType>::type AbsNumType;
+      AbsNumType a(0);
+      for(i=0;i<StensorDimeToSize<ST2toST2Traits<ST2toST2Type>::dime>::value;++i){
+	for(j=0;j<StensorDimeToSize<ST2toST2Traits<ST2toST2Type>::dime>::value;++j){
+	  a += abs(v(i,j));
+	}
+      }
+      return a;
+    }
     
     template<typename T>
     std::ostream &

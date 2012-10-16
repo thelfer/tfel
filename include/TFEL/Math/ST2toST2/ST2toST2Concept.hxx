@@ -12,6 +12,7 @@
 #include"TFEL/Metaprogramming/IF.hxx"
 #include"TFEL/TypeTraits/IsTemporary.hxx"
 
+#include"TFEL/Math/General/Abs.hxx"
 #include"TFEL/Math/Forward/ST2toST2Concept.hxx"
 
 namespace tfel{
@@ -73,6 +74,13 @@ namespace tfel{
     struct ST2toST2Type{
       typedef T type;
     };
+
+    template<typename ST2toST2Type>
+    typename tfel::meta::EnableIf<
+      tfel::meta::Implements<ST2toST2Type,ST2toST2Concept>::cond,
+      typename tfel::typetraits::AbsType<typename ST2toST2Traits<ST2toST2Type>::NumType>::type
+    >::type
+    abs(const ST2toST2Type&);
 
   } // end of namespace math
 

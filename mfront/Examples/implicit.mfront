@@ -22,10 +22,11 @@ rho.setGlossaryName("MassDensity");
 @Coef real alpha; /* mandatory for castem */
 alpha.setGlossaryName("ThermalExpansion");
 
-@LocalVar real lambda;
-@LocalVar real mu;
+@LocalVariable real     lambda;
+@LocalVariable real     mu;
+@LocalVariable Stensor4 M;
 
-@StateVar real    p;
+@StateVariable real    p;
 
 @Bounds eel(*) in [0:*[;
 @Bounds p in [0.:*[;
@@ -35,6 +36,7 @@ alpha.setGlossaryName("ThermalExpansion");
   using namespace tfel::material::lame;
   lambda = computeLambda(young,nu);
   mu = computeMu(young,nu);
+  M  = Stensor4::Id()-1./3.*(Stensor::Id()^Stensor::Id());
 } // end of @InitLocalVars
 
 @ComputeStress{
@@ -55,7 +57,7 @@ alpha.setGlossaryName("ThermalExpansion");
   feel += dp*n-deto;
   fp   -= tmp*sigeq*dt;
   // jacobian
-  dfeel_ddeel -= mu*theta*dp*inv_sigeq*Stensor4::Id();
+  dfeel_ddeel += 2.*mu*theta*dp*inv_sigeq*(1.5*M-(n^n));
   dfeel_ddp    = n;
   dfp_ddeel    = -2*mu*theta*tmp*E*dt*n;
 } // end of @Integrator
