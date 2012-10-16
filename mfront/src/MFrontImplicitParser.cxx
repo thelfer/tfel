@@ -765,9 +765,8 @@ namespace mfront{
     if(this->compareToNumericalJacobian){
       this->behaviourFile << "tvector<" << n2 << ",real> tzeros;\n";
       this->behaviourFile << "tvector<" << n2 << ",real> tfzeros;\n";
-      if(this->algorithm!=MFrontImplicitParser::NEWTONRAPHSON){
-	this->behaviourFile << "tmatrix<" << n2 << "," << n2 << ",real> tjacobian;\n";
-      }
+      this->behaviourFile << "tvector<" << n2 << ",real> tfzeros2;\n";
+      this->behaviourFile << "tmatrix<" << n2 << "," << n2 << ",real> tjacobian;\n";
       this->behaviourFile << "tmatrix<" << n2 << "," << n2 << ",real> njacobian;\n";
     }
     if((this->algorithm==MFrontImplicitParser::BROYDEN)||
@@ -832,32 +831,35 @@ namespace mfront{
       this->behaviourFile << "this->computeFdF();\n";
     }
     if(this->compareToNumericalJacobian){
-      this->behaviourFile << "tzeros = this->zeros;\n";
-      if(this->algorithm!=MFrontImplicitParser::NEWTONRAPHSON){
-	this->behaviourFile << "tjacobian = this->jacobian;\n";
-      }
+      this->behaviourFile << "tzeros  = this->zeros;\n";
+      this->behaviourFile << "tfzeros = this->fzeros;\n";
+      this->behaviourFile << "tjacobian = this->jacobian;\n";
       this->behaviourFile << "for(unsigned short idx = 0; idx!= "<< n2<<  ";++idx){\n";
       this->behaviourFile << "this->zeros(idx) -= 10.*"<< this->className << "::epsilon;\n";
       this->behaviourFile << "this->computeStress();\n";
       this->behaviourFile << "this->computeFdF();\n";
       this->behaviourFile << "this->zeros = tzeros;\n";
-      this->behaviourFile << "tfzeros = this->fzeros;\n";
+      this->behaviourFile << "tfzeros2 = this->fzeros;\n";
       if(this->algorithm!=MFrontImplicitParser::NEWTONRAPHSON){
 	this->behaviourFile << "this->jacobian = tjacobian;\n";
       }
       this->behaviourFile << "this->zeros(idx) += 10.*"<< this->className << "::epsilon;\n";
       this->behaviourFile << "this->computeStress();\n";
       this->behaviourFile << "this->computeFdF();\n";
-      this->behaviourFile << "this->zeros  = tzeros;\n";
-      this->behaviourFile << "this->fzeros = (this->fzeros-tfzeros)/(20.*"
+      this->behaviourFile << "this->fzeros = (this->fzeros-tfzeros2)/(20.*"
 			  << this->className << "::epsilon);\n";
       this->behaviourFile << "for(unsigned short idx2 = 0; idx2!= "<< n2<<  ";++idx2){\n";
       this->behaviourFile << "njacobian(idx2,idx) = this->fzeros(idx2);\n";
       this->behaviourFile << "}\n";
+      this->behaviourFile << "this->zeros    = tzeros;\n";
+      this->behaviourFile << "this->fzeros   = tfzeros;\n";
       if(this->algorithm!=MFrontImplicitParser::NEWTONRAPHSON){
 	this->behaviourFile << "this->jacobian = tjacobian;\n";
       }
       this->behaviourFile << "}\n";
+      if(this->algorithm==MFrontImplicitParser::NEWTONRAPHSON){
+	this->behaviourFile << "this->jacobian = tjacobian;\n";
+      }
       n = SupportedTypes::TypeSize();
       for(p=this->stateVarsHolder.begin();p!=this->stateVarsHolder.end();++p){
 	n3 = SupportedTypes::TypeSize();
