@@ -63,6 +63,7 @@ namespace mfront{
     this->registerVariable("idx");
     this->registerVariable("idx2");
     this->reserveName("schmidt");
+    this->reserveName("computeNumericalJacobian");
     this->reserveName("accelerate");
     this->reserveName("accelerate_k0");
     this->reserveName("accelerate_k1");
@@ -96,6 +97,8 @@ namespace mfront{
     this->registerNewCallBack("@UseRelaxation",&MFrontImplicitParser::treatUseRelaxation);
     this->registerNewCallBack("@RelaxationTrigger",&MFrontImplicitParser::treatRelaxationTrigger);
     this->registerNewCallBack("@RelaxationCoefficient",&MFrontImplicitParser::treatRelaxationCoefficient);
+    this->registerNewCallBack("@InitJacobian",
+			      &MFrontImplicitParser::treatInitJacobian);
     this->registerNewCallBack("@CompareToNumericalJacobian",
 			      &MFrontImplicitParser::treatCompareToNumericalJacobian);
     this->registerNewCallBack("@JacobianComparisonCriterium",
@@ -104,6 +107,23 @@ namespace mfront{
     this->disableCallBack("@ComputedVar");
     this->disableCallBack("@UseQt");
   } // end of MFrontImplicitParser::MFrontImplicitParser
+
+  void MFrontImplicitParser::treatInitJacobian(void)
+  {
+    using namespace std;
+    if(this->algorithm!=BROYDEN){
+      this->throwRuntimeError("MFrontImplicitParser::treatInitJacobian",
+			      "@InitJacobian can only be used with "
+			      "the broyden algorithm.");
+    }
+    if(!this->initJacobian.empty()){
+      this->throwRuntimeError("MFrontImplicitParser::treatInitJacobian",
+			      "@InitJacobian already used.");
+    }
+    this->initJacobian += this->readNextBlock(&ParserBase::variableModifier3,
+					       true);
+    this->initJacobian += "\n";
+  } // end of MFrontImplicitParser::treatInitJacobian
 
   void MFrontImplicitParser::treatUnknownVariableMethod(const std::string& n)
   {
@@ -666,6 +686,10 @@ namespace mfront{
       this->behaviourFile << "r = accelearate_r0*previous_zeros[0]+accelearate_r1*previous_zeros[1]+accelearate_r2*previous_zeros[2];\n";
       this->behaviourFile << "} // end of accelate\n\n";
     }
+    // compute the numerical part of the jacobian
+    if((this->compareToNumericalJacobian)||(this->algorithm==BROYDEN)){
+      this->writeComputeNumericalJacobian();
+    }
     // compute stress
     this->behaviourFile << "void\ncomputeStress(void){\n";
     this->behaviourFile << "using namespace std;\n";
@@ -743,6 +767,57 @@ namespace mfront{
     return d.str();
   } // void MFrontImplicitParser::getJacobianPart
   
+  void MFrontImplicitParser::writeComputeNumericalJacobian(){
+    using namespace std;
+    VarContainer::const_iterator p;
+    VarContainer::const_iterator p2;
+    SupportedTypes::TypeSize n;
+    for(p=this->stateVarsHolder.begin();p!=this->stateVarsHolder.end();++p){
+      n += this->getTypeSize(p->type,p->arraySize);
+    }
+    this->checkBehaviourFile();
+    this->behaviourFile << "void\ncomputeNumericalJacobian(tfel::math::tmatrix<" << n << "," << n << ",real>& njacobian)\n"
+			<< "{\n";
+    this->behaviourFile << "using namespace std;\n";
+    this->behaviourFile << "using namespace tfel::math;\n";
+    this->behaviourFile << "tvector<" << n << ",real> tzeros(this->zeros);\n";
+    this->behaviourFile << "tvector<" << n << ",real> tfzeros(this->fzeros);\n";
+    this->behaviourFile << "tmatrix<" << n << "," << n << ",real> tjacobian(this->jacobian);\n";
+    this->behaviourFile << "for(unsigned short idx = 0; idx!= "<< n<<  ";++idx){\n";
+    this->behaviourFile << "this->zeros(idx) -= 10.*"<< this->className << "::epsilon;\n";
+    this->behaviourFile << "this->computeStress();\n";
+    this->behaviourFile << "this->computeFdF();\n";
+    this->behaviourFile << "this->zeros = tzeros;\n";
+    this->behaviourFile << "tvector<" << n << ",real> tfzeros2(this->fzeros);\n";
+    // if(this->algorithm!=MFrontImplicitParser::NEWTONRAPHSON){
+    //   this->behaviourFile << "if(&njacobian!=&(this->jacobian)){\n";
+    //   this->behaviourFile << "this->jacobian = tjacobian;\n";
+    //   this->behaviourFile << "}\n";
+    // }
+    this->behaviourFile << "this->zeros(idx) += 10.*"<< this->className << "::epsilon;\n";
+    this->behaviourFile << "this->computeStress();\n";
+    this->behaviourFile << "this->computeFdF();\n";
+    this->behaviourFile << "this->fzeros = (this->fzeros-tfzeros2)/(20.*"
+			<< this->className << "::epsilon);\n";
+    this->behaviourFile << "for(unsigned short idx2 = 0; idx2!= "<< n <<  ";++idx2){\n";
+    this->behaviourFile << "njacobian(idx2,idx) = this->fzeros(idx2);\n";
+    this->behaviourFile << "}\n";
+    this->behaviourFile << "this->zeros    = tzeros;\n";
+    this->behaviourFile << "this->fzeros   = tfzeros;\n";
+    //    if(this->algorithm!=MFrontImplicitParser::NEWTONRAPHSON){
+    // this->behaviourFile << "if(&njacobian!=&(this->jacobian)){\n";
+    // this->behaviourFile << "this->jacobian = tjacobian;\n";
+    // this->behaviourFile << "}\n";
+    //}
+    this->behaviourFile << "}\n";
+    //    if(this->algorithm!=MFrontImplicitParser::NEWTONRAPHSON){
+    this->behaviourFile << "if(&njacobian!=&(this->jacobian)){\n";
+    this->behaviourFile << "this->jacobian = tjacobian;\n";
+    this->behaviourFile << "}\n";
+    //    }
+    this->behaviourFile << "}\n\n";
+  }
+
   void MFrontImplicitParser::writeBehaviourIntegrator(){
     using namespace std;
     VarContainer::const_iterator p;
@@ -755,7 +830,6 @@ namespace mfront{
       n2 += this->getTypeSize(p->type,p->arraySize);
     }
     this->checkBehaviourFile();
-    this->checkBehaviourFile();
     this->behaviourFile << "/*!\n";
     this->behaviourFile << "* \\brief Integrate behaviour law over the time step\n";
     this->behaviourFile << "*/\n";
@@ -763,10 +837,6 @@ namespace mfront{
     this->behaviourFile << "using namespace std;\n";
     this->behaviourFile << "using namespace tfel::math;\n";
     if(this->compareToNumericalJacobian){
-      this->behaviourFile << "tvector<" << n2 << ",real> tzeros;\n";
-      this->behaviourFile << "tvector<" << n2 << ",real> tfzeros;\n";
-      this->behaviourFile << "tvector<" << n2 << ",real> tfzeros2;\n";
-      this->behaviourFile << "tmatrix<" << n2 << "," << n2 << ",real> tjacobian;\n";
       this->behaviourFile << "tmatrix<" << n2 << "," << n2 << ",real> njacobian;\n";
     }
     if((this->algorithm==MFrontImplicitParser::BROYDEN)||
@@ -786,11 +856,6 @@ namespace mfront{
     this->behaviourFile << "bool converge=false;\n";
     if((this->algorithm==MFrontImplicitParser::BROYDEN)||
        (this->algorithm==MFrontImplicitParser::BROYDEN2)){
-      this->behaviourFile << "// setting jacobian to identity\n";
-      this->behaviourFile << "std::fill(this->jacobian.begin(),this->jacobian.end(),real(0));\n";
-      this->behaviourFile << "for(unsigned short idx = 0; idx!= "<< n2<<  ";++idx){\n";
-      this->behaviourFile << "this->jacobian(idx,idx)= real(1);\n";
-      this->behaviourFile << "}\n";
       this->behaviourFile << "this->computeStress();\n";
       this->behaviourFile << "this->computeFdF();\n";
     }
@@ -831,35 +896,7 @@ namespace mfront{
       this->behaviourFile << "this->computeFdF();\n";
     }
     if(this->compareToNumericalJacobian){
-      this->behaviourFile << "tzeros  = this->zeros;\n";
-      this->behaviourFile << "tfzeros = this->fzeros;\n";
-      this->behaviourFile << "tjacobian = this->jacobian;\n";
-      this->behaviourFile << "for(unsigned short idx = 0; idx!= "<< n2<<  ";++idx){\n";
-      this->behaviourFile << "this->zeros(idx) -= 10.*"<< this->className << "::epsilon;\n";
-      this->behaviourFile << "this->computeStress();\n";
-      this->behaviourFile << "this->computeFdF();\n";
-      this->behaviourFile << "this->zeros = tzeros;\n";
-      this->behaviourFile << "tfzeros2 = this->fzeros;\n";
-      if(this->algorithm!=MFrontImplicitParser::NEWTONRAPHSON){
-	this->behaviourFile << "this->jacobian = tjacobian;\n";
-      }
-      this->behaviourFile << "this->zeros(idx) += 10.*"<< this->className << "::epsilon;\n";
-      this->behaviourFile << "this->computeStress();\n";
-      this->behaviourFile << "this->computeFdF();\n";
-      this->behaviourFile << "this->fzeros = (this->fzeros-tfzeros2)/(20.*"
-			  << this->className << "::epsilon);\n";
-      this->behaviourFile << "for(unsigned short idx2 = 0; idx2!= "<< n2<<  ";++idx2){\n";
-      this->behaviourFile << "njacobian(idx2,idx) = this->fzeros(idx2);\n";
-      this->behaviourFile << "}\n";
-      this->behaviourFile << "this->zeros    = tzeros;\n";
-      this->behaviourFile << "this->fzeros   = tfzeros;\n";
-      if(this->algorithm!=MFrontImplicitParser::NEWTONRAPHSON){
-	this->behaviourFile << "this->jacobian = tjacobian;\n";
-      }
-      this->behaviourFile << "}\n";
-      if(this->algorithm==MFrontImplicitParser::NEWTONRAPHSON){
-	this->behaviourFile << "this->jacobian = tjacobian;\n";
-      }
+      this->behaviourFile << "this->computeNumericalJacobian(njacobian);\n";
       n = SupportedTypes::TypeSize();
       for(p=this->stateVarsHolder.begin();p!=this->stateVarsHolder.end();++p){
 	n3 = SupportedTypes::TypeSize();
@@ -1093,6 +1130,28 @@ namespace mfront{
     MFrontBehaviourParserCommon::writeBehaviourConstructors(initStateVars.str(),
 							    initComputedVars.str(),
 							    this->predictor);
+  }
+
+  void MFrontImplicitParser::writeBehaviourParserSpecificConstructorPart(void)
+  {
+    VarContainer::const_iterator p;
+    SupportedTypes::TypeSize n;
+    this->checkBehaviourFile();
+    for(p=this->stateVarsHolder.begin();p!=this->stateVarsHolder.end();++p){
+      n += this->getTypeSize(p->type,p->arraySize);
+    }
+    if(!this->initJacobian.empty()){
+      this->behaviourFile << this->initJacobian;
+    } else {
+      if((this->algorithm==MFrontImplicitParser::BROYDEN)||
+	 (this->algorithm==MFrontImplicitParser::BROYDEN)){
+	this->behaviourFile << "// setting jacobian to identity\n";
+	this->behaviourFile << "std::fill(this->jacobian.begin(),this->jacobian.end(),real(0));\n";
+	this->behaviourFile << "for(unsigned short idx = 0; idx!= "<< n << ";++idx){\n";
+	this->behaviourFile << "this->jacobian(idx,idx)= real(1);\n";
+	this->behaviourFile << "}\n";
+      }
+    }
   }
 
   void MFrontImplicitParser::writeBehaviourStateVarsIncrements(void)

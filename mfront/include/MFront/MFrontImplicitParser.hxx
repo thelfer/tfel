@@ -93,7 +93,11 @@ namespace mfront{
     
     void writeBehaviourConstructors(void);
 
+    void writeBehaviourParserSpecificConstructorPart(void);
+
     void writeBehaviourStaticVars(void);
+
+    void writeComputeNumericalJacobian(void);
 
     void treatTheta(void);
 
@@ -129,6 +133,8 @@ namespace mfront{
     
     void treatRelaxationCoefficient(void);
 
+    void treatInitJacobian(void);
+
     std::string
     getJacobianPart(const VarHandler&,
 		    const VarHandler&,
@@ -148,6 +154,8 @@ namespace mfront{
     std::string computeFinalStress;
 
     std::string predictor;
+
+    std::string initJacobian;
 
     long double theta;
 
