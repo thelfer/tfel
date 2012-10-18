@@ -1144,7 +1144,7 @@ namespace mfront{
       this->behaviourFile << this->initJacobian;
     } else {
       if((this->algorithm==MFrontImplicitParser::BROYDEN)||
-	 (this->algorithm==MFrontImplicitParser::BROYDEN)){
+	 (this->algorithm==MFrontImplicitParser::BROYDEN2)){
 	this->behaviourFile << "// setting jacobian to identity\n";
 	this->behaviourFile << "std::fill(this->jacobian.begin(),this->jacobian.end(),real(0));\n";
 	this->behaviourFile << "for(unsigned short idx = 0; idx!= "<< n << ";++idx){\n";
