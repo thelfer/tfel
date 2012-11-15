@@ -75,7 +75,7 @@ namespace tfel
       using namespace std;
       using namespace tfel::utilities;
       if(l=="french"){
-	return "Test de la catégorie \\og~"+getCategory(s,l)+"~\\fg{}";
+	return "Test de la cat\'{e}gorie \\og~"+getCategory(s,l)+"~\\fg{}";
       }
       if(l!="english"){
 	cerr << TerminalColors::Red;
