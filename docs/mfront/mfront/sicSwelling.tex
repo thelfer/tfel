@@ -1,0 +1,64 @@
+\noindent
+\ttfamily
+\hlstd{@Parser PleiadesModel}\hlsym{;}\hspace*{\fill}\\
+\hlstd{@Model}\hlstd{\ \ }\hlstd{SiCSwellingModelTest}\hlsym{;}\hspace*{\fill}\\
+\hlstd{@Author Helfer Thomas}\hlsym{;}\hspace*{\fill}\\
+\hlstd{@Date}\hlstd{\ \ \ }\hlstd{}\hlnum{05 }\hlstd{Déc}\hlsym{. }\hlstd{}\hlnum{2007}\hlstd{}\hlsym{;}\hspace*{\fill}\\
+\hlstd{\hspace*{\fill}\\
+@LocalParameter TabString domains}\hlsym{;}\hspace*{\fill}\\
+\hlstd{domains}\hlsym{.}\hlstd{}\hlkwd{setDefaultValue}\hlstd{}\hlsym{(}\hlstd{}\hlstr{"MATRIX"}\hlstd{}\hlsym{,}\hlstd{}\hlstr{"CLADDING"}\hlstd{}\hlsym{);}\hspace*{\fill}\\
+\hlstd{\hspace*{\fill}\\
+@BindDomainToParameter }\hlstr{"domains"}\hlstd{}\hlsym{;}\hspace*{\fill}\\
+\hlstd{\hspace*{\fill}\\
+@StaticVar }\hlkwb{double }\hlstd{Phi0 }\hlsym{= }\hlstd{}\hlnum{0.3396}\hlstd{e25}\hlsym{;}\hspace*{\fill}\\
+\hlstd{\hspace*{\fill}\\
+@Output s}\hlsym{;}\hspace*{\fill}\\
+\hlstd{s}\hlsym{.}\hlstd{}\hlkwd{setGlossaryName}\hlstd{}\hlsym{(}\hlstd{}\hlstr{"SolidSwelling"}\hlstd{}\hlsym{);}\hspace*{\fill}\\
+\hlstd{s}\hlsym{.}\hlstd{}\hlkwd{setDepth}\hlstd{}\hlsym{(}\hlstd{}\hlnum{1}\hlstd{}\hlsym{);}\hspace*{\fill}\\
+\hlstd{\hspace*{\fill}\\
+@Input f}\hlsym{;}\hspace*{\fill}\\
+\hlstd{f}\hlsym{.}\hlstd{}\hlkwd{setGlossaryName}\hlstd{}\hlsym{(}\hlstd{}\hlstr{"Fluence"}\hlstd{}\hlsym{);}\hspace*{\fill}\\
+\hlstd{f}\hlsym{.}\hlstd{}\hlkwd{setDepth}\hlstd{}\hlsym{(}\hlstd{}\hlnum{1}\hlstd{}\hlsym{);}\hspace*{\fill}\\
+\hlstd{\hspace*{\fill}\\
+@Input T}\hlsym{;}\hspace*{\fill}\\
+\hlstd{T}\hlsym{.}\hlstd{}\hlkwd{setGlossaryName}\hlstd{}\hlsym{(}\hlstd{}\hlstr{"Temperature"}\hlstd{}\hlsym{);}\hspace*{\fill}\\
+\hlstd{T}\hlsym{.}\hlstd{}\hlkwd{setDepth}\hlstd{}\hlsym{(}\hlstd{}\hlnum{1}\hlstd{}\hlsym{);}\hspace*{\fill}\\
+\hlstd{\hspace*{\fill}\\
+@LoadingVariable n}\hlsym{;}\hspace*{\fill}\\
+\hlstd{n}\hlsym{.}\hlstd{}\hlkwd{setEntryName}\hlstd{}\hlsym{(}\hlstd{}\hlstr{"NeutronFlux"}\hlstd{}\hlsym{);}\hspace*{\fill}\\
+\hlstd{n}\hlsym{.}\hlstd{}\hlkwd{setDepth}\hlstd{}\hlsym{(}\hlstd{}\hlnum{1}\hlstd{}\hlsym{);}\hspace*{\fill}\\
+\hlstd{\hspace*{\fill}\\
+@Function compute}\hspace*{\fill}\\
+\hlsym{\{}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ }\hlstd{}\hlkwb{const double }\hlstd{theta }\hlsym{= }\hlstd{}\hlnum{0.5}\hlstd{}\hlsym{{*}(}\hlstd{T\textunderscore 1}\hlsym{+}\hlstd{T}\hlsym{){-}}\hlstd{}\hlnum{273.15}\hlstd{}\hlsym{;}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ }\hlstd{}\hlkwb{const double }\hlstd{Phi}\hlstd{\ \ \ }\hlstd{}\hlsym{= }\hlstd{}\hlnum{0.5}\hlstd{}\hlsym{{*}(}\hlstd{f\textunderscore 1}\hlsym{+}\hlstd{f}\hlsym{);}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ }\hlstd{}\hlkwb{double }\hlstd{swellingSaturation}\hlsym{;}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ }\hlstd{}\hlkwb{double }\hlstd{incr}\hlsym{;}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ }\hlstd{}\hlslc{// the original law is given in \%,}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ }\hlstd{}\hlslc{// so values of swellingSaturation are here divided by 100.}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ }\hlstd{}\hlkwa{if}\hlstd{}\hlsym{((}\hlstd{}\hlnum{25}\hlstd{}\hlsym{$<$=}\hlstd{theta}\hlsym{)\&\&(}\hlstd{theta}\hlsym{$<$=}\hlstd{}\hlnum{800}\hlstd{}\hlsym{.))\{}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ \ \ }\hlstd{swellingSaturation }\hlsym{= {-}}\hlstd{}\hlnum{3.3283e{-}5}\hlstd{}\hlsym{{*}}\hlstd{theta}\hlsym{+}\hlstd{}\hlnum{3.1133e{-}2}\hlstd{}\hlsym{;}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ }\hlstd{}\hlsym{\} }\hlstd{}\hlkwa{else if }\hlstd{}\hlsym{((}\hlstd{}\hlnum{800}\hlstd{}\hlsym{.$<$}\hlstd{theta}\hlsym{)\&\&(}\hlstd{theta}\hlsym{$<$=}\hlstd{}\hlnum{1000}\hlstd{}\hlsym{.))\{}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ \ \ }\hlstd{swellingSaturation }\hlsym{= {-}}\hlstd{}\hlnum{1.3528e{-}5}\hlstd{}\hlsym{{*}}\hlstd{theta}\hlsym{+}\hlstd{}\hlnum{1.5329e{-}2}\hlstd{}\hlsym{;}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ }\hlstd{}\hlsym{\} }\hlstd{}\hlkwa{else if }\hlstd{}\hlsym{((}\hlstd{}\hlnum{1000}\hlstd{}\hlsym{.$<$}\hlstd{theta}\hlsym{)\&\&(}\hlstd{theta}\hlsym{$<$=}\hlstd{}\hlnum{1500}\hlstd{}\hlsym{.))\{}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ \ \ }\hlstd{swellingSaturation }\hlsym{= }\hlstd{}\hlnum{0.18e{-}2}\hlstd{}\hlsym{;}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ }\hlstd{}\hlsym{\} }\hlstd{}\hlkwa{else }\hlstd{}\hlsym{\{}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ \ \ }\hlstd{ostringstream msg}\hlsym{;}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ \ \ }\hlstd{msg }\hlsym{$<$$<$ }\hlstd{}\hlstr{"SICSolidSwellingModel::computeSolidSwellingIncrement : "}\hlstd{}\hlsym{;}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ \ \ }\hlstd{msg }\hlsym{$<$$<$ }\hlstd{}\hlstr{"temperature is out of bounds ("}\hlstd{ }\hlsym{$<$$<$ }\hlstd{theta }\hlsym{$<$$<$ }\hlstd{}\hlstr{")"}\hlstd{}\hlsym{;}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlkwa{throw}\hlstd{}\hlsym{(}\hlstd{Pleiades}\hlsym{::}\hlstd{PExceptions}\hlsym{::}\hlstd{}\hlkwd{PleiadesError}\hlstd{}\hlsym{(}\hlstd{msg}\hlsym{.}\hlstd{}\hlkwd{str}\hlstd{}\hlsym{()));}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ }\hlstd{}\hlsym{\}}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ }\hlstd{incr}\hlstd{\ \ }\hlstd{}\hlsym{= }\hlstd{swellingSaturation}\hlsym{/}\hlstd{Phi0}\hlsym{;}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ }\hlstd{incr }\hlsym{{*}= }\hlstd{}\hlkwd{exp}\hlstd{}\hlsym{({-}}\hlstd{Phi}\hlsym{/}\hlstd{Phi0}\hlsym{);}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ }\hlstd{}\hlslc{// terme supplémentaire à plus haute température}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ }\hlstd{}\hlkwa{if}\hlstd{}\hlsym{((}\hlstd{}\hlnum{1000}\hlstd{}\hlsym{.$<$}\hlstd{theta}\hlsym{)\&\&(}\hlstd{theta}\hlsym{$<$=}\hlstd{}\hlnum{1250}\hlstd{}\hlsym{.))\{}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ \ \ }\hlstd{incr}\hlsym{+=}\hlstd{}\hlnum{1.297e{-}28}\hlstd{}\hlsym{{*}((}\hlstd{theta}\hlsym{{-}}\hlstd{}\hlnum{1000}\hlstd{}\hlsym{.)/}\hlstd{}\hlnum{250}\hlstd{}\hlsym{.);}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ }\hlstd{}\hlsym{\}}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ }\hlstd{}\hlkwa{if}\hlstd{}\hlsym{(}\hlstd{theta}\hlsym{$>$=}\hlstd{}\hlnum{1250}\hlstd{}\hlsym{.)\{}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ \ \ }\hlstd{incr}\hlsym{+=}\hlstd{}\hlnum{1.297e{-}28}\hlstd{}\hlsym{;}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ }\hlstd{}\hlsym{\}}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ }\hlstd{incr }\hlsym{{*}= }\hlstd{}\hlnum{0.5}\hlstd{}\hlsym{{*}(}\hlstd{n}\hlsym{+}\hlstd{n\textunderscore 1}\hlsym{){*}}\hlstd{dt}\hlsym{;}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ }\hlstd{s }\hlsym{= }\hlstd{s\textunderscore 1 }\hlsym{+ }\hlstd{incr}\hlsym{;}\hspace*{\fill}\\
+\hlstd{}\hlsym{\} }\hlstd{}\hlslc{// end of function compute}\hlstd{}\hspace*{\fill}\\
+\mbox{}
+\normalfont

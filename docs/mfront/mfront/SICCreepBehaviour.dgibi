@@ -1,0 +1,27 @@
+*
+* \file   SiCCreep.dgibi
+* \brief  example of how to use the SiCCreep behaviour law
+* in the Cast3M finite element solver
+* \author Helfer Thomas
+* \date   06 / 12 / 07
+*
+
+** 3D Example
+
+coel3D = 'MOTS' 'YOUN' 'NU' 'ALPH';
+stav3D = 'MOTS' 'EEXX' 'EEYY' 'EEZZ' 'EEXY' 'EEXZ' 'EEYZ'  'P';
+para3D = 'MOTS' 'T' 'FLUX';
+
+MODL3D = 'MODELISER' v3D 'MECANIQUE' 'ELASTIQUE'
+'NON_LINEAIRE' 'UTILISATEUR' 'NUME_LOI' 3
+'C_MATERIAU' coel3D
+'C_VARINTER' stav3D
+'PARA_LOI'   para3D;
+'CONS' M
+
+MATR3D = 'MATERIAU' MODL3D
+'YOUN' xyoun 'NU' xnu 'ALPH' xalph;
+
+VAR3D = 'MANUEL' 'CHML' MODL3D
+'EEXX' 0. 'EEYY' 0. 'EEZZ' 0. 'EEXY' 0. 'EEXZ' 0. 'EEYZ' 0. 'P' 0.
+TYPE 'VARIABLES_INTERNES';

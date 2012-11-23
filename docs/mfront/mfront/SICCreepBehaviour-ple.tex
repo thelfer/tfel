@@ -1,0 +1,21 @@
+\noindent
+\ttfamily
+\hlstd{}\hlcom{/{*}}\hspace*{\fill}\\
+\hlcom{ {*} $\backslash$file}\hlstd{\ \ \ }\hlcom{pleiades/SiCCreep/SiCCreep.ple}\hspace*{\fill}\\
+\hlcom{ {*} $\backslash$brief}\hlstd{\ \ }\hlcom{example of how to use the SiCCreep behaviour law}\hspace*{\fill}\\
+\hlcom{ {*} in the celaeno fuel performanece code}\hspace*{\fill}\\
+\hlcom{ {*} $\backslash$author Helfer Thomas}\hspace*{\fill}\\
+\hlcom{ {*} $\backslash$date}\hlstd{\ \ \ }\hlcom{06 / 12 / 07}\hspace*{\fill}\\
+\hlcom{ {*}/}\hlstd{\hspace*{\fill}\\
+Material }\hlstr{'SOLID0}\hspace*{\fill}\\
+\hlstd{MechanicalBehaviour }\hlstr{'IsotropicUmatBehaviour'}\hlstd{ }\hlstr{'libUmatBehaviour.so'}\hlstd{ }\hlstr{'umatSiCCreep'}\hlstd{\hspace*{\fill}\\
+MaterialProperty}\hlsym{$<$}\hlstd{constant}\hlsym{$>$}\hlstd{\ \ \ \ \ }\hlsym{}\hlstd{}\hlstr{'YoungModulus'}\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlnum{150}\hlstd{}\hlsym{.}\hlstd{e9\hspace*{\fill}\\
+MaterialProperty}\hlsym{$<$}\hlstd{constant}\hlsym{$>$}\hlstd{\ \ \ \ \ }\hlsym{}\hlstd{}\hlstr{'PoissonRatio'}\hlstd{}\hlstd{\ \ \ \ \ \ }\hlstd{}\hlnum{0.3}\hspace*{\fill}\\
+\hlstd{MaterialProperty}\hlsym{$<$}\hlstd{constant}\hlsym{$>$}\hlstd{\ \ \ \ \ }\hlsym{}\hlstd{}\hlstr{'ThermalExpansion'}\hlstd{}\hlstd{\ \ }\hlstd{}\hlnum{0}\hlstd{}\hlsym{.}\hspace*{\fill}\\
+\hlstd{MaterialProperty}\hlsym{$<$}\hlstd{constant}\hlsym{$>$}\hlstd{\ \ \ \ \ }\hlsym{}\hlstd{}\hlstr{'MassDensity'}\hlstd{}\hlstd{\ \ \ \ \ \ \ }\hlstd{}\hlnum{0}\hlstd{}\hlsym{.}\hspace*{\fill}\\
+\hlstd{InternalStateVariable}\hlsym{$<$}\hlstd{Stensor}\hlsym{$>$ }\hlstd{}\hlstr{'ElasticStrain'}\hlstd{\hspace*{\fill}\\
+InternalStateVariable}\hlsym{$<$}\hlstd{Scalar}\hlsym{$>$}\hlstd{\ \ }\hlsym{}\hlstd{}\hlstr{'EquivalentViscoplasticStrain'}\hlstd{\hspace*{\fill}\\
+EndOfMechanicalBehaviour\hspace*{\fill}\\
+EndOfMaterial}\hspace*{\fill}\\
+\mbox{}
+\normalfont

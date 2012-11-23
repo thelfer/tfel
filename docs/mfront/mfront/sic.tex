@@ -1,0 +1,31 @@
+\noindent
+\ttfamily
+\hlstd{@Parser IsotropicMisesCreep}\hlsym{;}\hspace*{\fill}\\
+\hlstd{@Behaviour SiC}\hlsym{;}\hspace*{\fill}\\
+\hlstd{@Author Helfer Thomas}\hlsym{;}\hspace*{\fill}\\
+\hlstd{@Date }\hlnum{22}\hlstd{}\hlsym{/}\hlstd{}\hlnum{01}\hlstd{}\hlsym{/}\hlstd{}\hlnum{06}\hlstd{}\hlsym{;}\hspace*{\fill}\\
+\hlstd{\hspace*{\fill}\\
+@Interface umat}\hlsym{;}\hspace*{\fill}\\
+\hlstd{\hspace*{\fill}\\
+@Coef real young}\hlsym{;}\hspace*{\fill}\\
+\hlstd{@Coef real nu}\hlsym{;}\hspace*{\fill}\\
+\hlstd{@Coef real alpha}\hlsym{;}\hspace*{\fill}\\
+\hlstd{\hspace*{\fill}\\
+@ExternalStateVar real flux}\hlsym{;}\hspace*{\fill}\\
+\hlstd{\hspace*{\fill}\\
+@LocalVar real AF1}\hlsym{;}\hspace*{\fill}\\
+\hlstd{@LocalVar real AF3}\hlsym{;}\hspace*{\fill}\\
+\hlstd{\hspace*{\fill}\\
+@InitLocalVars}\hlsym{\{}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ }\hlstd{real T\textunderscore tdt }\hlsym{= }\hlstd{T}\hlsym{+}\hlstd{theta}\hlsym{{*}}\hlstd{dT}\hlsym{;}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ }\hlstd{real AF1 }\hlsym{= }\hlstd{}\hlnum{5.084957636e{-}8}\hlstd{f}\hlsym{{*}}\hlstd{}\hlkwd{exp}\hlstd{}\hlsym{({-}}\hlstd{}\hlnum{442}\hlstd{}\hlsym{.}\hlstd{e3f}\hlsym{/(}\hlstd{}\hlnum{8.314}\hlstd{f}\hlsym{{*}(}\hlstd{T\textunderscore tdt}\hlsym{)));}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ }\hlstd{real AF3 }\hlsym{= }\hlstd{}\hlnum{0.4e{-}37}\hlstd{f}\hlsym{{*}}\hlstd{flux}\hlsym{;}\hspace*{\fill}\\
+\hlstd{}\hlsym{\}}\hspace*{\fill}\\
+\hlstd{\hspace*{\fill}\\
+@FlowRule}\hlsym{\{}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ }\hlstd{real tmp }\hlsym{= }\hlstd{}\hlkwd{pow}\hlstd{}\hlsym{(}\hlstd{seq}\hlsym{,}\hlstd{}\hlkwd{real}\hlstd{}\hlsym{(}\hlstd{}\hlnum{0.36}\hlstd{}\hlsym{));}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ }\hlstd{f}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{}\hlsym{= }\hlstd{seq}\hlsym{{*}(}\hlstd{AF1}\hlsym{{*}}\hlstd{tmp}\hlsym{+}\hlstd{AF3}\hlsym{);}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ }\hlstd{df\textunderscore dseq}\hlstd{\ \ }\hlstd{}\hlsym{= }\hlstd{}\hlnum{1.36}\hlstd{f}\hlsym{{*}}\hlstd{AF1}\hlsym{{*}}\hlstd{tmp}\hlsym{;}\hspace*{\fill}\\
+\hlstd{}\hlsym{\}}\hlstd{}\hspace*{\fill}\\
+\mbox{}
+\normalfont

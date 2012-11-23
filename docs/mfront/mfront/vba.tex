@@ -1,0 +1,19 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%	Fichier	   : vba.tex
+%%	Auteur     : helfer@pleiades001.cad.cea.fr
+%%	Date       : 03 Nov 2008
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+Declare Function SIC_YOUNGMODULUS_SNEAD Lib "libCastemMaterialLaw" (temp As Double) As Double
+
+Public Function LoiMat(ParamArray VarTableau())
+    Dim v(2) As Double
+    v(0) = VarTableau(0)
+    v(1) = VarTableau(1)
+    LoiMat = SIC_YOUNGMODULUS_SNEAD(v(0))
+End Function
+
+%%% Local Variables: 
+%%% mode: latex
+%%% TeX-master: "~/home-global/Notes/2008/NoticeUtilisationCelaeno-1.0/DeveloppingInCelaeno/mfront/../developpingInCelaeno"
+%%% End: 
