@@ -1,0 +1,149 @@
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{texmf/presentation}[010803]
+
+%\RequirePackage{policescea}
+
+\RequirePackage{pifont}
+\RequirePackage{enumerate}
+\RequirePackage{texmf/couleurs}
+
+%%%%%%%%%%%%%%%%%%%%%%%% Macros tirées du <<coin des Gourous>>
+%%%%%%%%%%%%%%%%%%%%%%%% Georges Weil Décembre 89 
+
+
+\newdimen\entourehor
+\entourehor=6pt
+\newdimen\entourever
+\entourever=6pt
+\newdimen\entourgra
+\entourgra=0.4pt
+
+\newdimen\lgcadre
+\if@twocolumn%
+\lgcadre=0.5\textwidth%
+\advance\lgcadre by-0.5\columnsep
+\else \lgcadre=\textwidth\fi
+
+\newdimen\lgtexte
+\lgtexte=\lgcadre
+\advance\lgtexte by-2\entourehor
+\advance\lgtexte by-2\entourgra
+\newdimen\lgtete
+\lgtete=\lgcadre
+\advance\lgtete by2\entourgra
+
+\newbox\entbox
+
+\long\def\cadre#1\par{
+  \par\tolerance=2000
+  \pretolerance=2000
+  \vbadness=10000
+  \setbox\entbox=
+  \vbox{\hsize\lgtexte #1\par}
+  \hbox to \lgcadre
+  {\vrule width\entourgra
+    \kern\entourehor\vbox
+    {\kern\entourever
+      \hbox{\vbox{\box\entbox}}
+      \kern\entourever}
+    \kern\entourehor\vrule width\entourgra}
+}
+
+\long\def\debcad#1\par{
+  \vskip\entourever\hrule height \entourgra width \lgtete
+  \ifx#1\findcad\hrule height \entourgra width \lgtete
+  \vskip\entourever\let\next=\relax
+  \else \cadre #1\par
+  \let\next=\suitecad
+  \fi\next
+}
+
+\long\def\suitecad#1\par{
+  \vskip-1pt
+  \ifx#1\findcad\hrule  height \entourgra width \lgtete
+  \vskip\entourever\let\next=\relax
+  \else \cadre #1\par
+  \let\next=\suitecad
+  \fi\next
+}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\newcommand{\nom}[1]{\textsc{#1}}
+
+\newenvironment{citationfr}[2]{
+  \noindent\hrulefill %
+  \newline %
+  \newcommand{\@auteurcitation}{#1}%
+  \newcommand{\@sourcecitation}{#2}%
+  \begin{verse}\noindent
+}
+{
+  \begin{flushright}%
+    \textsc{\blue \@auteurcitation}\ (\@sourcecitation) % 
+  \end{flushright}%
+\end{verse}%
+\rule{\linewidth}{0.5pt}\newline}
+
+\newenvironment{conclusion}{
+  \noindent
+  {\bf\flushleft Conclusion}\hfill\break}
+{\hfill\break\par}
+
+
+\newenvironment{enumeration}{
+\begin{center}
+\minipage[h]{0.8\linewidth}
+\begin{enumerate}[\Pisymbol{pzd}{227}]
+}{
+\end{enumerate}
+\endminipage
+\end{center}}
+
+
+\newenvironment{notes}{
+  \noindent\hrulefill
+  {\bf \flushleft Note}\newline 
+  \noindent\rule{\linewidth}{0.5pt}
+  \newline
+}
+{\newline\rule{\linewidth}{0.5pt}\newline}
+
+\newenvironment{attention}{\noindent%\rput(-0.5,-0.5){\includegraphics[width=0.7cm,height=0.7cm]{$HOME/texmf/logos/attention.eps}}
+\hrulefill\newline
+\begin{minipage}[htbp]{\textwidth}
+}
+{
+\end{minipage}
+\noindent\raisebox{0.6em}{\rule{\linewidth}{0.5pt}}\break}
+
+
+\def\narrowpar{%
+  \leftskip=1.cm \rightskip=1.cm } \def\leaderfill{\leaders\hbox to
+  1em{\raisebox{0.3em}{\rule{1em}{0.1em}}}\hfill}
+
+\newcommand*{\FunkyUnderline}[1]{%
+  \setbox0 =\hbox{#1}%
+  \setbox2 =\hbox{%
+    \vrule height 1.5pt depth 0.5pt width 0.4\wd0
+    \vrule height 1.5pt depth -1.pt width 0.6\wd0
+  }%
+  \setbox2 =\vtop{\box0 \nointerlineskip\vskip1.5pt \box2}%
+  \dp2 =\dp0
+  \leavevmode\box2
+}
+\newenvironment{remarque}{\begingroup\everypar{\narrowpar}\it\small\noindent{\usefont{T1}{phv}{bx}{n} \FunkyUnderline{Remarque}~:}}{\hfill\leaderfill\par\endgroup}
+
+
+\endinput
+
+% Fin de presentation.sty
+
+
+
+
+
+
+
+

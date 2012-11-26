@@ -1,0 +1,40 @@
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{texmf/gnuplot}[010803]
+
+\RequirePackage{texmf/couleurs}
+\RequirePackage{pstricks}
+
+\def\PSTloaded{t}
+\psset{arrowsize=.01 3.2 1.4 .3}
+\psset{dotsize=.1}
+\catcode`@=11
+
+\newpsobject{PST@Border}{psline}{linewidth=.0015,linestyle=solid}
+\newpsobject{PST@Axes}{psline}{linewidth=.0015,linestyle=dotted,dotsep=.004}
+\newpsobject{PST@Solid}{psline}{linewidth=.0015,linestyle=solid,linecolor=ceavert}
+\newpsobject{PST@Dashed}{psline}{linewidth=.003,linestyle=dashed,linecolor=ceaorange,dash=.01 .01}
+\newpsobject{PST@Dotted}{psline}{linewidth=.004,linestyle=dotted,linecolor=blue,dotsep=.008}
+\newpsobject{PST@LongDash}{psline}{linewidth=.0015,linestyle=dashed,linecolor=blue,dash=.02 .01}
+\newpsobject{PST@Diamond}{psdots}{linewidth=.001,linestyle=solid,dotstyle=square,dotangle=45,linecolor=red}
+\newpsobject{PST@Filldiamond}{psdots}{linewidth=.001,linestyle=solid,dotstyle=square*,dotangle=45}
+\newpsobject{PST@Cross}{psdots}{linewidth=.002,linestyle=solid,dotstyle=+,dotangle=45,linecolor=red}
+\newpsobject{PST@Plus}{psdots}{linewidth=.002,linestyle=solid,dotstyle=+,linecolor=blue}
+\newpsobject{PST@Square}{psdots}{linewidth=.001,linestyle=solid,dotstyle=square}
+\newpsobject{PST@Circle}{psdots}{linewidth=.001,linestyle=solid,dotstyle=o}
+\newpsobject{PST@Triangle}{psdots}{linewidth=.001,linestyle=solid,dotstyle=triangle}
+\newpsobject{PST@Pentagon}{psdots}{linewidth=.001,linestyle=solid,dotstyle=pentagon}
+\newpsobject{PST@Fillsquare}{psdots}{linewidth=.001,linestyle=solid,dotstyle=square*}
+\newpsobject{PST@Fillcircle}{psdots}{linewidth=.001,linestyle=solid,dotstyle=*}
+\newpsobject{PST@Filltriangle}{psdots}{linewidth=.001,linestyle=solid,dotstyle=triangle*}
+\newpsobject{PST@Fillpentagon}{psdots}{linewidth=.001,linestyle=solid,dotstyle=pentagon*}
+\newpsobject{PST@Arrow}{psline}{linewidth=.003,linestyle=solid,linecolor=ceaorange}
+
+\def\polypmIIId#1{\pspolygon[linestyle=none,fillstyle=solid,fillcolor=ceaorange]}
+
+\catcode`@=12
+
+
+\endinput
+%%
+%% Fin de gnuplot.sty
+
