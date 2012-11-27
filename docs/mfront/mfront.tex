@@ -90,9 +90,7 @@
     \item de générer des bibliothèques matériau {\em numériquement
       optimisée}, en particulier pour les lois de comportement~;
     \item de favoriser un dialogue \og~\oe{}cuménique~\fg entre
-    les différentes applications de l'utilisateur \cea{}. Nous
-    reviendrons sur ce point lorsque nous discuterons des
-    limitations actuelles de la base de données \sirius{}.
+    les différentes applications de l'utilisateur.
   \end{itemize}
 }
 
@@ -763,6 +761,61 @@ connaître~:
   valeur de \(\theta\) par écoulement, permettant une formulation mixte
   en cas de couplage entre plasticité et viscoplasticité.
 \end{itemize}
+
+\subsection{Algorithme de résolution}
+
+Connaissant l'état du matériau à l'instant \(t\), nous voulons connaître
+son comportement à l'instant \(t+\Delta t\). Pour cela, nous utilisons un
+algorithme semi-implicite de type \(\theta\)-méthode où \(\theta\) est un
+nombre compris entre \(0\) et \(1\) indiquant que les incréments des
+variables internes sont calculés en \(t+\theta\Delta t\).
+
+\paragraph{Expression de la contrainte équivalente et de la direction
+  d'écoulement} Les contraintes sont une fonction explicite des
+déformations élastiques et nous supposerons le comportement du matériau
+isotrope de sorte que son tenseur d'élasticité s'écrit~:
+\[
+\tenseurq{D}=\lambda\tenseur{I}\otimes\tenseur{I}+2\mu\tenseur{I}
+\]
+où
+\(\lambda\) et \(\mu\) sont les c{\oe}fficients de \nom{Lamé} du matériau.
+
+À l'instant \(t+\theta\Delta t\), le tenseur normal \(\tenseur{n}\) est
+évalué ainsi~:
+\[
+\begin{aligned}
+  \milieupas{\tenseur{n}}&=\Frac{3}{2\milieupas{\sigmaeq}}
+  \milieupas{\tenseur{s}}=\Frac{3\mu}{\milieupas{\sigmaeq}}\milieupas{\tenseur{e}}
+  =\Frac{3\mu}{\milieupas{\tenseur{n}}}\paren{\debutpas{\tenseur{e}}+\theta\Delta\tenseur{e}}\\
+  &=\Frac{3\mu}{\milieupas{\tenseur{n}}}\paren{\debutpas{\tenseur{e}}+\theta\paren{\Delta\tepsilonto-\Frac{1}{3}\trace\paren{\Delta\tepsilonto}\tenseur{I}-\Delta\,p\,\milieupas{\tenseur{n}}}}
+\end{aligned}
+\]
+où \(\tenseur{e}\) désigne le déviateur du tenseur des déformations
+élastiques \(\tepsilonel\).
+
+Dans la suite, nous noterons \(\tenseur{B}\) le tenseur suivant~:
+\[
+\tenseur{B}=\debutpas{\tepsilonel}+\theta\Delta\tepsilonto-\Frac{1}{3}\trace\paren{\debutpas{\tepsilonel}+\theta\Delta\tepsilonto}
+\]
+Ce tenseur est parfaitement connu au début du pas de temps. Nous pouvons
+alors écrire~:
+\[
+\paren{\milieupas{\sigmaeq}+3\mu\theta\Delta\,p}\milieupas{\tenseur{n}}=3\mu\tenseur{B}
+\]
+En utilisant le fait que le produit contracté
+\(\milieupas{n}\colon\milieupas{n}\) est égal à
+\(\Frac{3}{2}\), nous obtenons
+l'expression suivante de la contrainte équivalente~:
+\begin{equation}
+  \label{eq:IsotropicBehaviour:contrainte_equivalente}
+  \milieupas{\sigmaeq}=\mu\sqrt{6\,\tenseur{B}\colon\tenseur{B}}-3\mu\theta\Delta\,p
+\end{equation}
+
+De plus, la normale est donnée par~:
+\begin{equation}
+  \label{eq:IsotropicBehaviour:normale}
+  \milieupas{\tenseur{n}}=\Frac{3}{\sqrt{6\,\tenseur{B}\colon\tenseur{B}}}\tenseur{B}
+\end{equation}
 
 \subsection{Comportement viscoplastique du \sic{}}
 
