@@ -15,9 +15,18 @@
 \usepackage{texmf/couleurs}
 \usepackage{texmf/presentation}
 
+\usepackage{pst-plot}
 \usepackage{array}
 \usepackage{subfigure}
 \usepackage{relsize}
+\usepackage{multind}
+
+%% one column index
+%\makeatletter
+%\def\printindex#1#2{\section*{#2}
+%\addcontentsline{toc}{section}{#2}
+%\@input{#1.ind}}
+%\makeatother
 
 \usepackage[frenchb]{babel}
 
@@ -30,6 +39,8 @@
 \newcommand{\umat}{\texttt{umat}}
 \newcommand{\sirius}{\texttt{sirius}}
 \newcommand{\fortran}{\texttt{fortran}}
+
+\newcommand{\mkey}[1]{\index{mkeys}{#1@\symbol{64}#1}{\texttt{@#1}}}
 
 %c from texinfo.tex
 \def\ifmonospace{\ifdim\fontdimen3\font=0pt }
@@ -94,6 +105,9 @@
   \end{itemize}
 }
 
+\makeindex{general}
+\makeindex{mkeys}
+
 \begin{document}
 
 \clearpage
@@ -121,9 +135,7 @@ les applications \pleiades{} via l'interface
 \section{Propriétés matériaux}
 
 Les propriétés matériau sont l'un des éléments de connaissance
-essentiel des matériaux. Elles sont également le plus simple à
-traiter, ce qui a naturellement conduit à les regrouper au sein de
-base de données, notamment la base de données \sirius{}.
+essentiel des matériaux. 
 
 \subsection{Généralités}
 
@@ -165,14 +177,15 @@ défaut pour cet analyseur sont~:
   d'évolution des propriétés matériau en fonction de leur paramètres~;
 \end{itemize}
 
-\subsection{Autres interfaces} D'autres interfaces peuvent être ajoutées
+\paragraph{Autres interfaces} D'autres interfaces peuvent être ajoutées
 dynamiquement à \mfront{}. Pour cela, il suffit de définir une variable
 d'environnement nommée {\tt
   MFRONT\textunderscore{}\-ADDITIONAL\textunderscore{}\-LIBRARIES} qui
 doit désigner une liste de librairies automatiquement chargées au
-démarrage\footnote{Ce mécanisme est utilisé par exemple par l'architecture
-  \pleiades{} pour générer l'interface {\tt pleiades} aux propriétés
-  matériau, interface qui évolue avec les versions de l'architecture.}.
+démarrage\footnote{Ce mécanisme est utilisé par exemple par
+  l'architecture \pleiades{} pour générer l'interface {\tt pleiades} aux
+  propriétés matériau, interface qui évolue avec les versions de
+  l'architecture.}.
 
 \begin{table}[htbp]
   \centering
@@ -201,7 +214,7 @@ démarrage\footnote{Ce mécanisme est utilisé par exemple par l'architecture
 \texttt{c++}, \texttt{castem}, \texttt{python} va générer une
 bibliothèque de fonction dont le nom par défaut est donné au
 tableau~\ref{tab:biblio_vs_interface}. Ce nom peut être modifié par le
-mot clé {\tt @Material} ou le mot clé {\tt @Library}.
+mot clé \mkey{Material} ou le mot clé \mkey{Library}.
 
 \paragraph{Autres utilisations} Bien que ces interfaces aient été
 construites pour une utilisation particulière, il est possible
@@ -239,47 +252,47 @@ où~:
 La figure~\ref{fig:mfront_sic_youngmodulus} donne le code source
 implémentant cette corrélation.
 
-\paragraph{Le mot clé \texttt{@Parser}} La première ligne, commençant
-par le mot clé \texttt{@Parser}, décrit le type d'analyseur utilisé,
+\paragraph{Le mot clé \mkey{Parser}} La première ligne, commençant
+par le mot clé \mkey{Parser}, décrit le type d'analyseur utilisé,
 ici \texttt{MaterialLaw}.
 
-\paragraph{Le mot clé \texttt{@Law}} La second ligne, commençant par
-le mot clé \texttt{@Law}, donne le nom de la propriété matériau. Ce
+\paragraph{Le mot clé \mkey{Law}} La second ligne, commençant par
+le mot clé \mkey{Law}, donne le nom de la propriété matériau. Ce
 nom sera utilisé pour l'appel à la propriété matériau (nom de la
 fonction ou de la classe générée suivant l'interface utilisée).
 
-\paragraph{Le mot clé \texttt{@Material}}  Le mot clé \texttt{@Material},
-non utilisé ici, sert à regrouper plusieurs propriétés d'un même
-matériau dans une même bibliothèque.
+\paragraph{Le mot clé \mkey{Material}} Le mot clé \mkey{Material}, non
+utilisé ici, sert à regrouper plusieurs propriétés d'un même matériau
+dans une même bibliothèque.
 
-\paragraph{Les mots clé \texttt{@Author} et \texttt{@Date}} La
-troisième et la quatrième ligne renseignent respectivement l'auteur du
-fichier et la date de création à l'aide des mots clés \texttt{@Author}
-et \texttt{@Date}.
+\paragraph{Les mots clé \mkey{Author} et \mkey{Date}} La troisième et
+la quatrième ligne renseignent respectivement l'auteur du fichier et la
+date de création à l'aide des mots clés \mkey{Author} et \mkey{Date}.
 
-\paragraph{Le mot clé \texttt{@Description}} Le mot clé
-\texttt{@Description} permet de donner les références bibliographiques
+\paragraph{Le mot clé \mkey{Description}} Le mot clé
+\mkey{Description} permet de donner les références bibliographiques
 d'où la corrélation est extraite ou tout commentaire sur son origine.
 
-\paragraph{Le mot clé \texttt{@Output}} Le mot clé \texttt{@Output}
+\paragraph{Le mot clé \mkey{Output}} Le mot clé \mkey{Output}
 change le nom de la propriété matériau calculée. Par défaut, celle-ci
 s'appelle \texttt{res}.
 
-\paragraph{Le mot clé \texttt{@Input}} Le mot clé \texttt{@Input}
+\paragraph{Le mot clé \mkey{Input}} Le mot clé \mkey{Input}
 donne la liste des variables d'état dont dépend la propriété. Les
 variables peuvent être déclarées en une fois ou par plusieurs
-utilisations consécutives du mot clé \texttt{@Input}. L'ordre de
+utilisations consécutives du mot clé \mkey{Input}. L'ordre de
 déclaration des variables peut être important suivant l'interface
 utilisé~: ainsi la fonction générée par les interface \texttt{c} ou
 \texttt{castem} prendront leur arguments dans l'ordre de déclaration
 utilisé dans le fichier \mfront{}.
 
 \paragraph{La méthode \texttt{setGlossaryName}} La méthode
-\texttt{setGlossaryName}, non utilisée ici, permet de préciser le nom
-du champ associé à la variable dans \pleiades{}.
+\texttt{setGlossaryName}, non utilisée ici, permet de préciser un nom
+associé à la variable. Ce nom est utilisé par les applications de la
+plateforme \pleiades{} pour assurer l'échange d'informations.
 
-\paragraph{Le mot clé \texttt{@PhysicalBounds}} Le mot clé
-\texttt{@PhysicalBounds} définit les bornes physiques des variables
+\paragraph{Le mot clé \mkey{PhysicalBounds}} Le mot clé
+\mkey{PhysicalBounds} définit les bornes physiques des variables
 d'état définies plus haut. Ici nous indiquons qu'une température ne
 peut être négative et qu'une porosité est comprise entre \(0\) et
 \(1\). Les cas de dépassement de ces bornes sont très souvent liées à
@@ -288,7 +301,7 @@ inacceptables). Pour ces raisons, la plupart des interfaces
 signaleront une erreur au code appelant, conduisant généralement à son
 arrêt.
 
-\paragraph{Le mot clé \texttt{@Bounds}} Le mot clé \texttt{@Bounds},
+\paragraph{Le mot clé \mkey{Bounds}} Le mot clé \mkey{Bounds},
 non utilisé ici, définit les bornes de validité de la corrélation. Les
 cas de dépassement de ces bornes peuvent être d'origine diverse, et
 peuvent parfois être acceptable.  La plupart des interface permettent
@@ -311,15 +324,15 @@ d'environnement \texttt{CASTEM\_\-OUT\_\-OF\_\-BOUND\_\-POLICY}~;
 d'environnement \texttt{PYTHON\_\-OUT\_\-OF\_\-BOUND\_\-POLICY}~;
 \end{itemize}
 
-\paragraph{Le mot clé \texttt{@Function}} Le mot clé
-\texttt{@Function} permet de définir le code (en \texttt{c++}) utilisé
+\paragraph{Le mot clé \mkey{Function}} Le mot clé
+\mkey{Function} permet de définir le code (en \texttt{c++}) utilisé
 pour définir la propriété matériau. Le fait que le code soit en fait
 du \texttt{c++} est ici anecdotique tant le code est proche de
 l'équation~\eqref{eq:youngmodulussnead}.
 
 \clearpage
 \newpage
-\section{Analyseurs dédiés aux lois de comportements}
+\section{Analyseurs dédiés aux lois de comportement mécanique}
 
 Les lois de comportement sont intrinsèquement plus complexes que les
 propriétés matériau, en partie car la physique traitée est riche
@@ -333,6 +346,15 @@ lois spécialisées (essentiellement des lois de comportement
 isotropes pour lesquels des algorithmes d'intégration particulièrement
 intéressants existent).
 
+Une loi de comportement consiste en la donnée~:
+\begin{itemize}
+  \item d'un jeu de coefficients, variables internes et externes~;
+  \item d'un système d'équations donnant l'évolution des variables
+  internes~;
+  \item d'une méthode d'intégration de ce système d'équations
+  différentielles.
+\end{itemize}
+
 \subsection{Généralités}
 
 Les lois de comportement permettent de décrire la réaction locale d'un
@@ -341,31 +363,86 @@ de temps. Nous ne considérerons ici que des lois de comportement mécanique.
 De manière générale, cette réponse se traduira par une contrainte
 résultante \(\tsigma\) et une évolution des variables d'état du matériau. 
 
-Nous distinguerons trois types de variables~:
+Nous distinguerons différents types de variables~:
 \begin{itemize}
-\item les coefficients qui peuvent être ou des coefficients de la loi
-  de comportement (pente d'adoucissement) ou des variables d'états
-  n'évoluant pas.
-\item les variables internes, dont l'évolution est du ressort de la
-  loi de comportement~;
-\item les variables externes, dont l'évolution est donnée par ailleurs.
-  Ces variables peuvent ou être des variables d'état du matériau ou
-  des paramètres externes (flux de neutrons).
-  Parmi les variables externes, nous pouvons citer la température, la
-  déformation totale du matériau (qui représente la sollicitation locale
-  et dont la valeur est donnée par la résolution de l'équilibre global
-  du matériau). Ces deux variables sont traitées de manière particulière
-  par \mfront{} et déclarées automatiquement~;
+\item les propriétés matériau, déclarées par le mot clé
+  \mkey{Material\-Property}\footnote{Le mot clé \mkey{Coef} est un
+    synonyme du mot clé \mkey{Material\-Property}}~;
+\item les variables internes, déclarées par le mot clé
+  \mkey{State\-Variable}\footnote{Le mot clé \mkey{State\-Var} est
+    un synonyme du mot clé \mkey{State\-Variable}}~;
+\item les variables internes auxiliaires, déclarées par le mot clé
+  \mkey{Auxiliary\-State\-Variable}\footnote{Le mot clé
+    \mkey{Auxiliary\-State\-Var} est un synonyme du mot clé
+    \mkey{Auxiliary\-State\-Variable}}~;
+  \item les variables externes, déclarées par le mot clé
+  \mkey{External\-State\-Variable}\footnote{Le mot clé
+    \mkey{External\-State\-Var} est un synonyme du mot clé
+    \mkey{External\-State\-Variable}}~;
+  \item les variables locales, déclarées par le mot clé
+  \mkey{Local\-Variable}\footnote{Le mot clé
+    \mkey{Local\-Var} est un synonyme du mot clé
+    \mkey{Local\-Variable}}~;
+  \item les variables statiques, déclarées par le mot clé
+  \mkey{Static\-Variable}\footnote{Le mot clé
+    \mkey{Static\-Var} est un synonyme du mot clé
+    \mkey{Static\-Variable}}.
 \end{itemize}
-Ces variables peuvent être ou des {\em scalaires} ou des {\em tenseurs}.
 
-Une loi de comportement consiste en la donnée~:
+\paragraph{Propriétés matériau} Les propriétés matériau peuvent être des
+coefficients de la loi de comportement (pente d'adoucissement).
+
+Les coefficients d'élasticité jouent un rôle particulier.
+
+\paragraph{Les variables internes} Les variables internes décrivent
+l'état mécanique local du matériau. La loi de comportement décrit leurs
+évolutions par l'intégration d'un système d'équation.
+
+Les variables internes peuvent être soit des {\em scalaires} soit des
+{\em tenseurs}.
+
+Certains analyseurs, dédiées à des lois de comportement spécifiques,
+ne permettent pas de déclarer de nouvelles variables internes.
+
+\paragraph{Les variables internes auxiliaires} Les variables internes
+auxiliaires désignent des variables internes qui ne sont pas nécessaires
+pour l'intégration de la loi de comportement. Ces variables ont des
+utilités diverses~:
 \begin{itemize}
-\item d'un jeu de coefficients, variables internes et externes~;
-\item d'un système d'équations différentielles donnant l'évolution
-  des variables internes~;
-\item d'une méthode d'intégration de ce système d'équations différentielles.
+  \item elles peuvent désigner des variables qui peuvent être éliminées
+  de l'intégration~;
+  \item des variables uniquement destinées aux posttraitements.
 \end{itemize}
+
+Les variables sont mises à jour après l'intégration des variables
+internes. Elles peuvent être soit des {\em scalaires} soit des {\em
+  tenseurs}.
+
+Les variables peuvent être ou des {\em scalaires} ou des {\em tenseurs}.
+
+\paragraph{Les variables externes} Les variables externes désignent
+des variables dont l'évolution est donnée par ailleurs et connue sur
+le pas de temps. Ces variables peuvent ou être des variables d'état du
+matériau ou des paramètres externes (flux de neutrons). Parmi les
+variables externes, nous pouvons citer la température, la déformation
+totale du matériau (qui représente la sollicitation locale et dont la
+valeur est donnée par la résolution de l'équilibre global du
+matériau). Ces deux variables sont traitées de manière particulière
+par \mfront{} et déclarées automatiquement.
+
+\paragraph{Les variables locales} Les variables locales permettent
+généralement de calculer des variables avant le débuter l'intégration
+afin d'éviter des calculs superflus.
+
+Une utilisation typique de variable locale est de calculer avant
+l'intégration des termes de type \nom{Arrhenius} (termes de la forme
+\(\exp\paren{-\Frac{Q}{R\,T}}\)) afin de ne pas les réévaluer au cours
+des itérations. Ces termes sont souvent évalués en milieu de pas de
+temps, ce qui est cohérent avec une intégration par une
+\(\theta\)-méthode, et une approximation généralement suffisante pour
+les autres méthodes d'intégration.
+
+Il n'y a pas de limite sur le type des variables locales.
 
 \subsection{Analyseurs disponibles}
 
@@ -382,7 +459,7 @@ Une loi de comportement consiste en la donnée~:
   prédicteur de type \(\pfrac{4}{2}\) ou \(\pfrac{5}{4}\) avec
   adaptation du pas de temps~;
   \item l'analyseur \texttt{IsotropicMisesCreep} qui gère exclusivement
-  les lois de comportements viscoplastiques isotropes de la forme~:
+  les lois de comportement viscoplastique isotrope de la forme~:
   \[
   \dot{p} = f\paren{\sigmaeq}
   \]
@@ -392,7 +469,7 @@ Une loi de comportement consiste en la donnée~:
   Une intégration implicite est effectuée. Cette intégration nécessite
   de préciser la dérivée \(\derivtot{f}{\sigmaeq}\)~;
   \item l'analyseur \texttt{IsotropicStrainHardeningMisesCreep} qui gère
-  exclusivement les lois de comportements viscoplastiques isotropes de
+  exclusivement les lois de comportement viscoplastique isotrope de
   la forme~:
   \[
   \dot{p} = f\paren{\sigmaeq,p}
@@ -403,7 +480,7 @@ Une loi de comportement consiste en la donnée~:
   Une intégration implicite est effectuée. Cette intégration nécessite
   de préciser les dérivées \(\deriv{f}{\sigmaeq}\) et \(\deriv{f}{p}\)~;
   \item l'analyseur \texttt{IsotropicPlasticMisesFlow} qui gère
-  exclusivement les lois de comportements plastiques isotropes de la
+  exclusivement les lois de comportement plastique isotrope de la
   forme~:
   \[
   f(\sigmaeq,p)\leq 0 \quad\quad \dot{p}\geq 0 \quad\quad
@@ -421,7 +498,186 @@ Une loi de comportement consiste en la donnée~:
   types de lois de comportements~;
 \end{itemize}
 
+Les analyseurs \texttt{DefaultParser}, \texttt{RungeKutta} et
+\texttt{Implicit} sont dits {\em génériques} car ils permettent de
+traiter n'importe quelle loi de comportement. Par opposition, les autres
+analyseurs sont dits {\em spécifiques}.
+
+\subsection{Tableaux de variables internes, de propriétés matériau et de
+  variables externes}
+
+Ce paragraphe décrit des fonctionnalités qui ne sont pas accessibles aux
+analyseurs spécifiques.
+
+%\paragraph{Extension aux intégrations implicites} La possibilité
+%d'utiliser des tableaux de variables internes est aujourd'hui limitée à
+%l'intégration par une méthode de \textsc{Runge-Kutta}, son extension à
+%l'intégration par des méthodes implicites est en cours. La principale
+%difficulté dans ce cas est de gérer de manière à la fois efficace et
+%pratique l'accès aux valeurs du jacobien. Cet accès est aujourd'hui
+%délégué à des variables intermédiaires qui représentent des blocs du
+%jacobien (voir à ce sujet le paragraphe~\ref{JacobienNumerique}). Ces
+%variables intermédiaires se comportent comme des tenseurs ou comme des
+%scalaires (ce qui répond au critère de simplicité d'utilisation), mais
+%leur utilisation se fait sans coût car il est possible de calculer à la
+%compilation les décalages mémoire nécessaires pour travailler
+%directement dans la matrice jacobienne (ce qui répond au critère
+%d'efficacité). Ceci n'est plus possible avec des tableaux de variables
+%internes et il est nécessaire donc introduire de nouvelles classes
+%prenant en compte cette contrainte.
+
+Les premières versions de \mfront{} supposait que chaque variable
+interne était indépendante et il fallait écrire pour chaque variable les
+équations décrivant son évolution. Il n'était pas possible de regrouper
+des évolutions dont le {\em formalisme} était similaire.
+
+L'intégration de lois de comportement de plasticité cristalline ou de
+lois issus de l'homogénéisation de structures par la méthode
+NTFA nous ont montré que cette façon de procéder pouvait devenir mal
+commode~: il fallait répéter un grand nombre de fois des équations qui
+ne se différenciaient que par leurs coefficients. Le travail
+d'intégration présentait alors un caractère répétitif pénible et source
+d'erreurs\footnote{Pour illustrer notre propos, nous pouvons donner quelques
+  éléments de la méthode NTFA~\cite{blanc:ver}. Le principe de la méthode
+  est de décomposer le champ de déformation viscoplastique sur une base
+  orthonormée de modes préférentiels de déformation, que l'on identifie
+  par des essais élémentaires sur une microstructure
+  donnée~\cite{largenton12:_model_mox}. La décomposition s'écrit~:
+  \begin{equation}
+    \label{eq:decoeps} \epsilonvis(x) = \sum_{k=1}^M \varepsilon^{\mathrm{vis}}_k
+    \tenseur{\mu}_k(x)
+  \end{equation}
+  où~:
+  \begin{minipage}[t]{0.9\linewidth}
+    \begin{itemize} \item \(M\) le nombre de modes, qui dépend du
+      contraste entre les phases, de la nonlinéarité du comportement et
+      de la géométrie de milieu~; \item \(\tenseur{\mu}_k\) le k-ième
+      mode de déformation plastique (tenseur)~; \item
+      \(\varepsilon^{vp}_k\) est la déformation scalaire associée au
+      mode \(k\), ces \(M\) déformations sont les {\bf variables
+      internes} du modèle.
+  \end{itemize}
+\end{minipage} \medskip Les modes sont tensoriels, orthonormés,
+nonuniformes (dépendants de \(x\)) et à support dans chaque phase. En
+viscoélasticité linéaire isotrope incompressible, le système
+différentiel régissant l'équilibre global s'écrit en utilisant les
+variables réduites scalaires \(e_k\), \(e_k^{\mathrm{vis}}\) et
+\(\tau_k\) définies ci-dessous :
+\begin{equation}
+  \label{eq:modeleeffectif} \displaystyle \left\{
+  \begin{array}{rcl}
+    \tau_k &=& 2 G_r^e (e_k - e_k^{\mathrm{vis}}) \\
+    \dot{e}_k^{\mathrm{vis}} &=& \Frac{1}{2 G_r^{\mathrm{vis}}} \tau_k
+    \\
+    e_k &=& \tenseur{a}_k : \tenseur{E} + \displaystyle\sum_{l=1}^M
+    \Frac{\Big\langle \tenseur{\mu}_k :
+      \tenseur{D}^{*}_{\tenseur{\mu}_{l}} \Big\rangle}{\Big\langle
+      \tenseur{\mu}_l : \tenseur{\mu}_l \Big\rangle } e_l^{\mathrm{vis}}
+    \end{array}
+    \right.
+  \end{equation}
+  où~:
+  \begin{minipage}[t]{0.85\linewidth}
+    \begin{itemize} \item \(e_k = \langle \tepsilonto : \tenseur{\mu}_k
+      \rangle\) \item \(e_k^{\mathrm{vis}} = \langle \epsilonvis :
+      \tenseur{\mu}_k \rangle= \langle \tenseur{\mu}_k : \tenseur{\mu}_k
+      \rangle \varepsilon^{\mathrm{vis}}_k\) \item \(\tau_k=\langle
+      \tsigma : \tenseur{\mu}_k \rangle\) \item \(G_r^e\) est le module
+      de cisaillement élastique de la phase \(r\)~; \item
+      \(G_r^{\mathrm{vis}}\) est le module de cisaillement
+      viscoplastique de la phase \(r\)~; \item \(\tenseur{a}_k = \langle
+      \tenseur{\mu}_k :\tenseur{A}\rangle\) le tenseur de localisation
+      des déformations réduit~; \item
+      \(\tenseur{D}^{*}_{\tenseur{\mu}_{k}}\) est le tenseur
+      d'influence associé au mode \(\tenseur{\mu}_k\).
+    \end{itemize}
+  \end{minipage}\\
+  \medskip 
+  L'évolution de la contrainte macroscopique
+  \(\tenseur{\Sigma}\) est donnée par~:
+  \[
+  \tenseur{\Sigma} = \tenseurq{C} : \tenseur{E} +
+  \displaystyle\sum_{k=1}^M \Frac{\Big\langle
+    \tenseurq{C}\paren{x}\,\colon\,\tenseur{D}^{*}_{\tenseur{\mu}_{k}}
+    \Big\rangle - \Big\langle
+    \tenseurq{C}\paren{x}\,\colon\,\tenseur{\mu}_k
+    \Big\rangle}{\Big\langle \tenseur{\mu}_k\,\colon\,\tenseur{\mu}_k
+    \Big\rangle}e^{\mathrm{vis}}_k
+  \]
+  où~:
+  \begin{minipage}[t]{0.85\linewidth}
+    \begin{itemize} \item \(\tenseur{\Sigma}\) est la contrainte
+      effective~; \item \(\tenseur{E}\) est la déformation effective~;
+      \item \(\tenseurq{C}\paren{x}\) est le tenseur des modules
+      élastiques local~; \item \(\tenseurq{C}\) représente le tenseur des
+      modules élastiques effectif~;
+    \end{itemize}
+  \end{minipage}
+
+  Dans le cas de la méthode NTFA, il fallait répéter \(M\) fois, une
+  fois pour chaque mode, l'équation~\eqref{eq:modeleeffectif}.
+  L'homogénéisation d'une microstructure à \(2\) phases pouvant conduire
+  à une trentaine de modes, et l'homogénéisation d'une microstructure à
+  \(3\) phases à une cinquantaine de modes, on comprend pourquoi la
+  répétition de l'équation~\eqref{eq:modeleeffectif} est
+  particulièrement mal venue.}.
+
+Afin de pouvoir regrouper ces équations, nous avons introduit la
+possibilité de définir des tableaux de variables internes, de propriétés
+matériaux et de variables externes\footnote{Il faut noter que la taille
+de ces tableaux, c'est à dire le nombre de variables internes, de
+propriétés matériau et/ou de variables externes est fixe \og~en
+dur~\fg{} dans le fichier d'entrée. Dans le cas}.
+
+Il est alors possible d'écrire des boucles sur les variables internes
+constituant le tableau pour condenser l'écriture des lois.
+
+\begin{figure}
+  {\scriptsize
+    \include{Images/2norton-rk}
+  }
+  \caption{Exemple de loi de comportement mécanique utilisant des
+    tableaux de propriétés matériau et des tableaux de variables
+    internes.}
+  \label{2norton-rk}
+\end{figure}
+
+La figure~\ref{2norton-rk} présente l'exemple d'une loi de comportement
+somme de deux écoulements de \textsc{Norton}.
+
+\paragraph{Limitation et possibilité d'amélioration} Pour réduire le
+temps de développement de cette fonctionnalité\footnote{Au final, ce
+  temps de développement a été de l'ordre de la journée.} et surtout
+réduire les sources d'erreurs, nous avons utilisé des classes livrés
+avec TFEL (la librairie mathématique sur laquelle se base \mfront{}) qui
+propose des vecteurs de taille finie sur lesquelles les opérations
+mathématiques usuelles ont été définies. La génération de l'algorithme
+de \textsc{Runge-Kutta} est restée inchangée, ce qui est satisfaisant.
+Cette solution n'est cependant pas adaptée à un très grand nombre de
+variables internes (plus d'une centaine par exemple, ce qui est somme
+tout déjà conséquent) car ces classes de vecteurs ont été conçues pour
+être optimales pour des petites tailles et leurs utilisations alourdit
+le temps de compilation et la taille de la librairie générée. Il s'agit
+d'un phénomène connu sous le nom de \og~code bloat~\fg (littéralement,
+explosion du code). Des tests, réalisés dans le cadre de la thèse de J.
+Souslacroix pour des modèles micromécaniques complexes, ont montré que
+ce phénomène était réel et que la tendance à l'augmentation des temps de
+compilation et de la taille de la librairie était fortement non
+linéaire. Notons enfin que pour des tableaux d'un millier de variables
+internes, le temps de compilation pouvait dépasser la minute et que la
+taille de la librairie générée pouvait dépasser le mégaoctet, ce qui est
+encore relativement raisonnable. Si d'aventure, des lois aussi complexes
+devaient être utilisées régulièrement, il serait intéressant de faire
+évoluer les classes de vecteurs citées pour limiter ces tentatives
+d'optimisation\footnote{Il est d'ailleurs a peu près certain que les
+  techniques utilisées n'ont plus d'intérêt pour des vecteurs de cette
+  taille.}.
+
+
 \subsection{Traitement des matériaux orthotropes}
+
+Ce paragraphe décrit des fonctionnalités qui ne sont pas accessibles aux
+analyseurs spécifiques.
 
 \subsubsection{Calculs extérieurs à l'intégration de la loi de comportement}
 
@@ -489,7 +745,7 @@ loi de comportement mécanique. Il est important de noter que
 l'interface \texttt{umat} passe ce tenseur {\em après} l'appel au
 constructeur de la loi de comportement, ce qui signifie qu'il ne peut
 être utilisé dans la phase d'initialisation introduite par le mot-clé
-{\tt Init\-Local\-Vars}. Ce tenseur est calculé par la classe {\tt
+{\tt Init\-Local\-Variables}. Ce tenseur est calculé par la classe {\tt
   UMAT\-Compute\-Thermal\-Expansion\-Tensor}.
 
 \subsubsection{Calcul du tenseur de \nom{Hill}}
@@ -498,7 +754,7 @@ constructeur de la loi de comportement, ce qui signifie qu'il ne peut
 La librairie {\tt TFEL} fournit la fonction {\tt hillTensor}. Cette
 fonction est déclarée dans le fichier d'entête {\tt
   TFEL/\-Material\-Law/\-Hill.hxx} qu'il est nécessaire d'inclure au
-niveau du fichier \mfront{} en utilisant la directive {\tt @Includes}.
+niveau du fichier \mfront{} en utilisant la directive \mkey{Includes}.
 Cette fonction est paramétrée par la dimension d'espace, notée
 \texttt{N} dans le fichier \mfront{}, et par le type numérique
 utilisé, appelé {\tt real} dans le fichier \mfront{}. Elle prend en
@@ -520,395 +776,41 @@ cette fonction s'utilise ainsi~:
   \end{minipage}
 \end{center}
 
+\subsection{Interface aux lois de comportement}
 
-\subsection{Tableaux de variables internes, de propriétés matériau et de
-  variables externes}
+\subsubsection{Rôle des interfaces}
 
-Les versions précédentes de \mfront{} supposait que chaque variable
-interne était indépendante et il fallait écrire pour chaque variable les
-équations décrivant son évolution. Il n'était pas possible de regrouper
-des évolutions dont le {\em formalisme} était similaire.
+Les interfaces aux lois de comportement doivent~:
+\begin{itemize}
+  \item assurer la conversion entre la convention utilisée par le code
+  appelant pour représenter les tenseurs et la convention utilisée dans
+  \tfel{}~;
+  \item gérer les lois de comportement orthotropes. Par exemple,
+  l'interface peut assurer la rotation des déformations totales et de
+  leurs incréments dans le repère propre du matériau avant l'appel à la
+  loi de comportement proprement dite et la rotation des contraintes
+  dans le repère général après l'appel à la loi de comportement.~;
+  \item fournir certains éléménts nécessaires au calcul (matrice
+  d'élasticité) à partir des informations fournies par le code~;
+  \item assurer le sous-découpage locale du pas de temps en cas de non
+  convergence~;
+  \item gérer le cas des contraintes planes car les lois de comportement
+  \mfront{} sont aujourd'hui écrites en déformations~;
+  \item générer des exemples d'utilisation de la loi de comportement.
+\end{itemize}
 
-L'intégration de lois de comportement de plasticité cristalline ou de
-lois issus de l'homogénéisation de structures par la méthode
-NTFA nous ont montré que cette façon de procéder pouvait devenir mal
-commode~: il fallait répéter un grand nombre de fois des équations qui
-ne se différenciaient que par leurs coefficients. Le travail
-d'intégration présentait alors un caractère répétitif pénible et source
-d'erreurs\footnote{Pour illustrer notre propos, nous pouvons donner quelques
-  éléments de la méthode NTFA~\cite{blanc:ver}. Le principe de la méthode
-  est de décomposer le champ de déformation viscoplastique sur une base
-  orthonormée de modes préférentiels de déformation, que l'on identifie
-  par des essais élémentaires sur une microstructure
-  donnée~\cite{largenton12:_model_mox}. La décomposition s'écrit~:
-  \begin{equation}
-    \label{eq:decoeps} \epsilonvis(x) = \sum_{k=1}^M \varepsilon^{\mathrm{vis}}_k
-    \tenseur{\mu}_k(x)
-  \end{equation}
-  où~:
-  \begin{minipage}[t]{0.9\linewidth}
-    \begin{itemize} \item \(M\) le nombre de modes, qui dépend du
-      contraste entre les phases, de la nonlinéarité du comportement et
-      de la géométrie de milieu~; \item \(\tenseur{\mu}_k\) le k-ième
-      mode de déformation plastique (tenseur)~; \item
-      \(\varepsilon^{vp}_k\) est la déformation scalaire associée au
-      mode \(k\), ces \(M\) déformations sont les {\bf variables
-      internes} du modèle.
-  \end{itemize}
-\end{minipage} \medskip Les modes sont tensoriels, orthonormés,
-nonuniformes (dépendants de \(x\)) et à support dans chaque phase. En
-viscoélasticité linéaire isotrope incompressible, le système
-différentiel régissant l'équilibre global s'écrit en utilisant les
-variables réduites scalaires \(e_k\), \(e_k^{\mathrm{vis}}\) et
-\(\tau_k\) définies ci-dessous :
-\begin{equation}
-  \label{eq:modeleeffectif} \displaystyle \left\{
-  \begin{array}{rcl}
-    \tau_k &=& 2 G_r^e (e_k - e_k^{\mathrm{vis}}) \\
-    \dot{e}_k^{\mathrm{vis}} &=& \Frac{1}{2 G_r^{\mathrm{vis}}} \tau_k
-    \\
-    e_k &=& \tenseur{a}_k : \tenseur{E} + \displaystyle\sum_{l=1}^M
-    \Frac{\Big\langle \tenseur{\mu}_k :
-      \tenseur{D}^{*}_{\tenseur{\mu}_{l}} \Big\rangle}{\Big\langle
-      \tenseur{\mu}_l : \tenseur{\mu}_l \Big\rangle } e_l^{\mathrm{vis}}
-    \end{array}
-    \right.
-  \end{equation}
-  où~:
-  \begin{minipage}[t]{0.85\linewidth}
-    \begin{itemize} \item \(e_k = \langle \tepsilonto : \tenseur{\mu}_k
-      \rangle\) \item \(e_k^{\mathrm{vis}} = \langle \epsilonvis :
-      \tenseur{\mu}_k \rangle= \langle \tenseur{\mu}_k : \tenseur{\mu}_k
-      \rangle \varepsilon^{\mathrm{vis}}_k\) \item \(\tau_k=\langle
-      \tsigma : \tenseur{\mu}_k \rangle\) \item \(G_r^e\) est le module
-      de cisaillement élastique de la phase \(r\)~; \item
-      \(G_r^{\mathrm{vis}}\) est le module de cisaillement
-      viscoplastique de la phase \(r\)~; \item \(\tenseur{a}_k = \langle
-      \tenseur{\mu}_k :\tenseur{A}\rangle\) le tenseur de localisation
-      des déformations réduit~; \item
-      \(\tenseur{D}^{*}_{\tenseur{\mu}_{k}}\) est le tenseur
-      d'influence associé au mode \(\tenseur{\mu}_k\).
-    \end{itemize}
-  \end{minipage} \medskip L'évolution de la contrainte macroscopique
-  \(\tenseur{\Sigma}\) est donnée par~:
-  \[
-  \tenseur{\Sigma} = \tenseurq{C} : \tenseur{E} +
-  \displaystyle\sum_{k=1}^M \Frac{\Big\langle
-    \tenseurq{C}\paren{x}\,\colon\,\tenseur{D}^{*}_{\tenseur{\mu}_{k}}
-    \Big\rangle - \Big\langle
-    \tenseurq{C}\paren{x}\,\colon\,\tenseur{\mu}_k
-    \Big\rangle}{\Big\langle \tenseur{\mu}_k\,\colon\,\tenseur{\mu}_k
-    \Big\rangle}e^{\mathrm{vis}}_k
-  \]
-  où~:
-  \begin{minipage}[t]{0.85\linewidth}
-    \begin{itemize} \item \(\tenseur{\Sigma}\) est la contrainte
-      effective~; \item \(\tenseur{E}\) est la déformation effective~;
-      \item \(\tenseurq{C}\paren{x}\) est le tenseur des modules
-      élastiques local~; \item \(\tenseurq{C}\) représente le tenseur des
-      modules élastiques effectif~;
-    \end{itemize}
-  \end{minipage}
+D'autres rôles pourraient à terme être assignées aux interfaces~:
+\begin{itemize}
+\item la gestion des grandes rotations, petites déformations~;
+\item la gestion de géométries dégénérées (éléments coques notamment)~;
+\end{itemize}
 
-  Dans le cas de la méthode NTFA, il fallait répéter \(M\) fois, une
-  fois pour chaque mode, l'équation~\eqref{eq:modeleeffectif}.
-  L'homogénéisation d'une microstructure à \(2\) phases pouvant conduire
-  à une trentaine de modes, et l'homogénéisation d'une microstructure à
-  \(3\) phases à une cinquantaine de modes, on comprend pourquoi la
-  répétition de l'équation~\eqref{eq:modeleeffectif} est
-  particulièrement mal venue.}.
-
-Afin de pouvoir regrouper ces équations, nous avons introduit la
-possibilité de définir des tableaux de variables internes, de propriétés
-matériaux et de variables externes\footnote{Il faut noter que la taille
-de ces tableaux, c'est à dire le nombre de variables internes, de
-propriétés matériau et/ou de variables externes est fixe \og~en
-dur~\fg{} dans le fichier d'entrée. Dans le cas}.
-
-Il est alors possible d'écrire des boucles sur les variables internes
-constituant le tableau pour condenser l'écriture des lois.
-
-\begin{figure}
-  {\scriptsize
-    \include{Images/2norton-rk}
-  }
-  \caption{Exemple de loi de comportement mécanique utilisant des
-    tableaux de propriétés matériau et des tableaux de variables
-    internes.}
-  \label{2norton-rk}
-\end{figure}
-
-La figure~\ref{2norton-rk} présente l'exemple d'une loi de comportement
-somme de deux écoulements de \textsc{Norton}.
-
-\paragraph{Extension aux intégrations implicites} La possibilité
-d'utiliser des tableaux de variables internes est aujourd'hui limitée à
-l'intégration par une méthode de \textsc{Runge-Kutta}, son extension à
-l'intégration par des méthodes implicites est en cours. La principale
-difficulté dans ce cas est de gérer de manière à la fois efficace et
-pratique l'accès aux valeurs du jacobien. Cet accès est aujourd'hui
-délégué à des variables intermédiaires qui représentent des blocs du
-jacobien (voir à ce sujet le paragraphe~\ref{JacobienNumerique}). Ces
-variables intermédiaires se comportent comme des tenseurs ou comme des
-scalaires (ce qui répond au critère de simplicité d'utilisation), mais
-leur utilisation se fait sans coût car il est possible de calculer à la
-compilation les décalages mémoire nécessaires pour travailler
-directement dans la matrice jacobienne (ce qui répond au critère
-d'efficacité). Ceci n'est plus possible avec des tableaux de variables
-internes et il est nécessaire donc introduire de nouvelles classes
-prenant en compte cette contrainte.
-
-\paragraph{Limitation et possibilité d'amélioration} Pour réduire le
-temps de développement de cette fonctionnalité\footnote{Au final, ce
-  temps de développement a été de l'ordre de la journée.} et surtout
-réduire les sources d'erreurs, nous avons utilisé des classes livrés
-avec TFEL (la librairie mathématique sur laquelle se base \mfront{}) qui
-propose des vecteurs de taille finie sur lesquelles les opérations
-mathématiques usuelles ont été définies. La génération de l'algorithme
-de \textsc{Runge-Kutta} est restée inchangée, ce qui est satisfaisant.
-Cette solution n'est cependant pas adaptée à un très grand nombre de
-variables internes (plus d'une centaine par exemple, ce qui est somme
-tout déjà conséquent) car ces classes de vecteurs ont été conçues pour
-être optimales pour des petites tailles et leurs utilisations alourdit
-le temps de compilation et la taille de la librairie générée. Il s'agit
-d'un phénomène connu sous le nom de \og~code bloat~\fg (littéralement,
-explosion du code). Des tests, réalisés dans le cadre de la thèse de J.
-Souslacroix pour des modèles micromécaniques complexes, ont montré que
-ce phénomène était réel et que la tendance à l'augmentation des temps de
-compilation et de la taille de la librairie était fortement non
-linéaire. Notons enfin que pour des tableaux d'un millier de variables
-internes, le temps de compilation pouvait dépasser la minute et que la
-taille de la librairie générée pouvait dépasser le mégaoctet, ce qui est
-encore relativement raisonnable. Si d'aventure, des lois aussi complexes
-devaient être utilisées régulièrement, il serait intéressant de faire
-évoluer les classes de vecteurs citées pour limiter ces tentatives
-d'optimisation\footnote{Il est d'ailleurs a peu près certain que les
-  techniques utilisées n'ont plus d'intérêt pour des vecteurs de cette
-  taille.}.
-
-\subsection{Interface disponible}
+\subsubsection{L'interface \texttt{umat}}
 
 À l'heure actuelle, seule l'interface \texttt{umat}, utilisée par
 \castem{}, est disponible. Pour simplifier l'utilisation des lois de
 comportements générés, \mfront{} génère automatiquement la déclaration
 des lois de comportement générées en instruction gibiane.
-
-\clearpage
-\newpage
-\section{Intégration des lois de comportement, intégrateur par défaut}
-\label{sec:defaultparser}
-
-\subsection{Exemple de l'élasticité orthotrope}
-
-\begin{figure}[htbp]
-  \centering
-  \begin{minipage}[htbp]{0.9\linewidth}
-    \shorthandoff{:}
-    \code{
-      \small
-      \input{mfront/OrthotropicElastic.tex}
-    }
-    \shorthandon{:}
-  \end{minipage}
-  \caption{Implantation d'une loi orthotrope élastique}
-  \label{fig:OrthoElastique}
-\end{figure}
-
-La figure~\ref{fig:OrthoElastique} décrit l'implantation d'une loi de
-comportement orthotrope élastique. Cette loi ne nécessitant pas
-d'algorithme d'intégration, l'analyseur par défaut est utilisé. La
-commande \texttt{@Orthotropic\-Behaviour} permet le support des lois
-orthotropes. La commande \texttt{@Require\-Stiff\-ness\-Tensor} met à
-disposition une variable {\tt D} contenant la matrice d'élasticité.
-
-Le calcul des contraintes en fin de pas de temps (à l'instant
-\(t+\Delta\,t\)) s'écrit de manière similaire à son expression
-mathématique~:
-\[
-\tsigma_{t+\Delta\,t} = \tenseurq{D}\colon\paren{\tepsilonto_{t}+\Delta\tepsilonto}
-\]
-
-\newpage
-\clearpage
-\section{Analyseurs spécifiques}
-
-\subsection{Généralités}
-
-Les analyseurs \texttt{Isotropic\-Mises\-Creep},
-\texttt{Isotropic\-Strain\-Hardening\-Mises\-Creep},
-\texttt{Isotropic\-Plastic\-Mises\-Flow} et
-\texttt{Multiple\-Isotropic\-Mises\-Flows} sont très proches et se
-basent sur un certain nombre d'hypothèse qu'il est important de
-connaître~:
-\begin{itemize}
-  \item ils supposent un comportement élastique isotrope et définissent
-  automatiquement trois coefficients qui sont le module d'\nom{Young},
-  le coefficient de \nom{Poisson} et le coefficient de dilatation
-  thermique linéique~;
-  \item ils utilisent une méthode d'intégration implicite, nommée
-  \(\theta\)-méthode~: les fonctions d'écoulement évaluées à l'instant
-  \(t+\theta\Delta t\), où \(t\) est l'instant de début du pas et
-  \(\Delta t\) l'incrément de temps. Par défaut, la valeur de \(\theta\)
-  est égal à \(\pfrac{1}{2}\) sauf pour l'analyseur
-  \texttt{Isotropic\-Plastic\-Mises\-Flow} où il vaut \(1\). En effet,
-  dans le cas d'écoulement viscoplastique, une valeur de
-  \(\pfrac{1}{2}\) offre une meilleure convergence. Dans le cas d'un
-  écoulement plastique, une valeur de \(1\) garantie que le matériau se
-  trouve dans le domaine d'élasticité en fin de pas de temps. La valeur
-  de \(\theta\) peut être modifiée par le mot clé \texttt{@Theta}.
-  Notons enfin que l'analyseur
-  \texttt{Multiple\-Isotropic\-Mises\-Flows} permet de définir une
-  valeur de \(\theta\) par écoulement, permettant une formulation mixte
-  en cas de couplage entre plasticité et viscoplasticité.
-\end{itemize}
-
-\subsection{Algorithme de résolution}
-
-Connaissant l'état du matériau à l'instant \(t\), nous voulons connaître
-son comportement à l'instant \(t+\Delta t\). Pour cela, nous utilisons un
-algorithme semi-implicite de type \(\theta\)-méthode où \(\theta\) est un
-nombre compris entre \(0\) et \(1\) indiquant que les incréments des
-variables internes sont calculés en \(t+\theta\Delta t\).
-
-\paragraph{Expression de la contrainte équivalente et de la direction
-  d'écoulement} Les contraintes sont une fonction explicite des
-déformations élastiques et nous supposerons le comportement du matériau
-isotrope de sorte que son tenseur d'élasticité s'écrit~:
-\[
-\tenseurq{D}=\lambda\tenseur{I}\otimes\tenseur{I}+2\mu\tenseur{I}
-\]
-où
-\(\lambda\) et \(\mu\) sont les c{\oe}fficients de \nom{Lamé} du matériau.
-
-À l'instant \(t+\theta\Delta t\), le tenseur normal \(\tenseur{n}\) est
-évalué ainsi~:
-\[
-\begin{aligned}
-  \milieupas{\tenseur{n}}&=\Frac{3}{2\milieupas{\sigmaeq}}
-  \milieupas{\tenseur{s}}=\Frac{3\mu}{\milieupas{\sigmaeq}}\milieupas{\tenseur{e}}
-  =\Frac{3\mu}{\milieupas{\tenseur{n}}}\paren{\debutpas{\tenseur{e}}+\theta\Delta\tenseur{e}}\\
-  &=\Frac{3\mu}{\milieupas{\tenseur{n}}}\paren{\debutpas{\tenseur{e}}+\theta\paren{\Delta\tepsilonto-\Frac{1}{3}\trace\paren{\Delta\tepsilonto}\tenseur{I}-\Delta\,p\,\milieupas{\tenseur{n}}}}
-\end{aligned}
-\]
-où \(\tenseur{e}\) désigne le déviateur du tenseur des déformations
-élastiques \(\tepsilonel\).
-
-Dans la suite, nous noterons \(\tenseur{B}\) le tenseur suivant~:
-\[
-\tenseur{B}=\debutpas{\tepsilonel}+\theta\Delta\tepsilonto-\Frac{1}{3}\trace\paren{\debutpas{\tepsilonel}+\theta\Delta\tepsilonto}
-\]
-Ce tenseur est parfaitement connu au début du pas de temps. Nous pouvons
-alors écrire~:
-\[
-\paren{\milieupas{\sigmaeq}+3\mu\theta\Delta\,p}\milieupas{\tenseur{n}}=3\mu\tenseur{B}
-\]
-En utilisant le fait que le produit contracté
-\(\milieupas{n}\colon\milieupas{n}\) est égal à
-\(\Frac{3}{2}\), nous obtenons
-l'expression suivante de la contrainte équivalente~:
-\begin{equation}
-  \label{eq:IsotropicBehaviour:contrainte_equivalente}
-  \milieupas{\sigmaeq}=\mu\sqrt{6\,\tenseur{B}\colon\tenseur{B}}-3\mu\theta\Delta\,p
-\end{equation}
-
-De plus, la normale est donnée par~:
-\begin{equation}
-  \label{eq:IsotropicBehaviour:normale}
-  \milieupas{\tenseur{n}}=\Frac{3}{\sqrt{6\,\tenseur{B}\colon\tenseur{B}}}\tenseur{B}
-\end{equation}
-
-\subsection{Comportement viscoplastique du \sic{}}
-
-Nous voulons décrire le comportement viscoplastique du \sic{}
-Le \sic{} est supposée avoir un comportement viscoplastique isotrope
-donnée par~:
-\[
-  \dot{p} = f\paren{\sigmaeq}
-\]
-où
-\begin{minipage}[t]{0.75\linewidth}
-  \begin{itemize}
-  \item \(p\) est la déformation viscoplastique équivalente~;
-  \item \(\sigmaeq\) est la contrainte de \nom{Von Mises}.
-  \end{itemize}
-\end{minipage}
-
-La fonction d'écoulement est donnée par~:
-\begin{equation}
-  \label{eq:sicBehaviour}
-  f\paren{\sigmaeq}=\paren{A\,\exp\paren{-\Frac{B}{T}}+a\,\phi}\,\sigmaeq
-\end{equation}
-où~:
-\begin{minipage}[t]{0.75\linewidth}
-  \begin{itemize}
-  \item \(A\), \(B\) et \(a\) sont des coefficients~;
-  \item \(T\) est la température~;
-  \item \(\phi\) est le flux de neutrons rapides~;
-  \end{itemize}
-\end{minipage}
-
-\begin{figure}[htbp]
-  \centering
-  \code{{\ttfamily \input{mfront/SICCreepBehaviour.tex}}}  
-  \caption{Implantation de la loi de comportement viscoplastique
-    du \sic{} en \mfront{}.}
-  \label{fig:mfront_sic_behaviour}
-\end{figure}
-
-Cette loi de comportement dépend d'une variable externe, le flux de
-neutron rapide \(\phi\).
-
-Pour implanter cette loi de comportement, nous utilisons l'analyseur
-\texttt{IsotropicMisesCreep}. Le code source est donné en
-figure~\ref{fig:mfront_sic_behaviour}.
-
-\paragraph{Le mot clé \texttt{@Parser}} La première ligne, commençant
-par le mot clé \texttt{@Parser}, décrit le type d'analyseur utilisé,
-ici \texttt{IsotropicMisesCreep}.
-
-\paragraph{Le mot clé \texttt{@Behaviour}} La second ligne, commençant par
-le mot clé \texttt{@Behaviour}, donne le nom de la loi
-de comportement.
-
-\paragraph{Les mots clé \texttt{@Author} et \texttt{@Date}} La
-troisième et la quatrième ligne renseignent respectivement l'auteur du
-fichier et la date de création à l'aide des mots clés \texttt{@Author}
-et \texttt{@Date}.
-
-\paragraph{Le mot clé \texttt{@Description}} Le mot clé
-\texttt{@Description} permet de donner les références bibliographiques
-d'où la loi est extraite.
-
-\paragraph{Le mot clé \texttt{@External\-State\-Variable}} Le mot clé
-\texttt{@External\-State\-Variable} définit une variable externe
-scalaire (\texttt{real}) nommée \texttt{flux}. Cette variable, et son
-incrément \texttt{dflux}, sont dès lors accessibles.
-
-\paragraph{Le mot clé \texttt{@StaticVariable}} Le mot clé
-\texttt{@Static\-Variable} sert à définir les constantes utilisées par
-la loi. Ces constantes sont des scalaires (\texttt{real}).
-
-\paragraph{Le mot clé \texttt{@LocalVariable}} Le mot clé
-\texttt{@Local\-Variable} sert à définir des variables de travail
-locales. Les rôles des variables \texttt{AF1} et \texttt{AF3} sera
-explicités dans la suite.
-
-\paragraph{Le mot clé \texttt{@InitLocalVariables}} Le mot clé
-\texttt{@InitLocalVars} permet d'écrire du code appelé avant tout
-calcul. Nous y initialisons les valeurs de coefficients de la loi. En
-effet, la méthode d'intégration utilisée évalue la fonction \(f\) au
-temps \(t+\theta\,\Delta t\) (intégration implicite).  Le coefficient
-dépendant de la température est donc connu et il est avantageux de
-l'évaluer ici plutôt qu'au cours des itérations de convergence de
-l'algorithme (nous économisons des appels à la fonction
-exponentielle). Nous utilisons ici le fait que la température au temps
-\(t+\theta\,\Delta t\) est égale à \(T+\theta\,\Delta T\). De même la
-valeur du flux de neutrons rapides \(\phi\) est égal à
-\(\phi+\theta\,\Delta \phi\).
-
-\paragraph{Le mot clé \texttt{@FlowRule}} Le mot clé
-\texttt{@FlowRule} permet de renseigner la fonction d'écoulement
-\(f\) et sa dérivée \(\derivtot{f}{\sigmaeq}\).
 
 \paragraph{Exemple de mise en donnée \castem{}} Dans le cas
 de l'interface \texttt{umat}, \mfront{} génère automatiquement
@@ -977,6 +879,431 @@ figure~\ref{fig:mfrontcastem2}.
 Cette extension sera prochainement proposée pour inclusion
 dans la version officielle de \castem{}.
 
+
+\clearpage
+\newpage
+\section{Intégration des lois de comportement, intégrateur par défaut}
+\label{sec:defaultparser}
+
+\subsection{Exemple de l'élasticité orthotrope}
+
+\begin{figure}[htbp]
+  \centering
+  \begin{minipage}[htbp]{0.9\linewidth}
+    \shorthandoff{:}
+    \code{
+      \small
+      \input{mfront/OrthotropicElastic.tex}
+    }
+    \shorthandon{:}
+  \end{minipage}
+  \caption{Implantation d'une loi orthotrope élastique}
+  \label{fig:OrthoElastique}
+\end{figure}
+
+La figure~\ref{fig:OrthoElastique} décrit l'implantation d'une loi de
+comportement orthotrope élastique. Cette loi ne nécessitant pas
+d'algorithme d'intégration, l'analyseur par défaut est utilisé. La
+commande \texttt{@Orthotropic\-Behaviour} permet le support des lois
+orthotropes. La commande \texttt{@Require\-Stiff\-ness\-Tensor} met à
+disposition une variable {\tt D} contenant la matrice d'élasticité.
+
+Le calcul des contraintes en fin de pas de temps (à l'instant
+\(t+\Delta\,t\)) s'écrit de manière similaire à son expression
+mathématique~:
+\[
+\tsigma_{t+\Delta\,t} = \tenseurq{D}\colon\paren{\tepsilonto_{t}+\Delta\tepsilonto}
+\]
+
+\newpage
+\clearpage
+\section{Analyseurs spécifiques}
+
+\subsection{Généralités}
+
+Les analyseurs \texttt{Isotropic\-Mises\-Creep},
+\texttt{Isotropic\-Strain\-Hardening\-Mises\-Creep},
+\texttt{Isotropic\-Plastic\-Mises\-Flow} et
+\texttt{Multiple\-Isotropic\-Mises\-Flows} sont très proches et se
+basent sur un certain nombre d'hypothèse qu'il est important de
+connaître~:
+\begin{itemize}
+  \item ils supposent un comportement élastique isotrope et définissent
+  automatiquement trois coefficients qui sont le module d'\nom{Young},
+  le coefficient de \nom{Poisson} et le coefficient de dilatation
+  thermique linéique~;
+  \item ils utilisent une méthode d'intégration implicite, nommée
+  \(\theta\)-méthode~: les fonctions d'écoulement évaluées à l'instant
+  \(t+\theta\Delta t\), où \(t\) est l'instant de début du pas et
+  \(\Delta t\) l'incrément de temps. Par défaut, la valeur de \(\theta\)
+  est égal à \(\pfrac{1}{2}\) sauf pour l'analyseur
+  \texttt{Isotropic\-Plastic\-Mises\-Flow} où il vaut \(1\), ce qui
+  garantit que le matériau se trouve dans le domaine d'élasticité en fin
+  de pas de temps.
+\end{itemize}
+
+La valeur de \(\theta\) peut être modifiée par le mot clé
+\mkey{Theta}.
+
+Notons enfin que l'analyseur \texttt{Multiple\-Isotropic\-Mises\-Flows}
+permet de définir une valeur de \(\theta\) par écoulement, permettant
+une formulation mixte en cas de couplage entre plasticité et
+viscoplasticité. Il faut cependant que la direction de chargement reste
+constante au cours du temps pour que cette formulation soit valide.
+
+\subsubsection{Expression générales des lois de comportement traitées
+  par les analyseurs spécifiques}
+
+Les analyseurs spécifiques sont dédiés aux lois de comportement
+isotrope. Nous détaillons dans ce paragraphe toutes les hypothèses
+physiques faites.
+
+\paragraph{Partition des déformations} La déformation totale
+\(\tepsilonto\) est supposée se décomposer en une déformation élastique
+\(\tepsilonel\) et une déformation inélastique \(\tepsilonan\)~:
+\[
+\tepsilonto = \tepsilonel + \tepsilonan
+\]
+
+\paragraph{Comportement élastique} Les contraintes sont une fonction
+explicite des déformations élastiques. Le comportement du matériau
+étant isotrope, son tenseur d'élasticité s'écrit~:
+\[
+\tenseurq{D}=\lambda\,\tenseur{I}\otimes\tenseur{I}+2\,\mu\,\tenseur{I}
+\]
+où \(\lambda\) et \(\mu\) sont les coefficients de \nom{Lamé} du
+matériau. Ces deux coefficients sont déduits du module d'\nom{Young} et
+du coefficient de \nom{Poisson} qui sont fournis par \castem{}
+
+\paragraph{Décomposition de la déformation inélastique} Dans la suite,
+la déformation inélastique \(\tepsilonan\) peut être décomposé de
+manière additive en la somme de différents mécanismes {\em
+  indépendants}. Les hypothèses faites sur ces mécanismes sont
+maintenant décrits.
+
+\paragraph{Direction de l'écoulement} Nous supposons que l'intensité de
+ces différents écoulements inélastiques soient fonction de la contrainte
+de \nom{Von Mises}, notée \(\sigmaeq\), et que ces écoulements soient
+associés, c'est à dire que leur direction soit donnée par la normale à
+la contrainte de \nom{Von Mises}, notée \(\tenseur{n}\).
+
+Le tenseur normale s'écrit~:
+\[
+\tenseur{n} = \Frac{3}{2}\Frac{\tenseur{s}}{\sigmaeq}
+\]
+où le tenseur \(\tenseur{s}\) est le déviateur des contraintes. Le fait
+que le tenseur \(\tenseur{n}\) soit déviatorique implique que les
+écoulements sont isochores (aucun changement de volume).
+
+Ce tenseur est relié au déviateur des déformations élastiques, noté
+\(\tenseur{e}\), par la relation~:
+\[
+\tenseur{s}=2\,\mu\,\tenseur{e}
+\]
+
+\paragraph{Déformation inélastique cumulée} Si \(\tepsilonan_{i}\) est
+la déformation inélastique associée à un des mécanismes d'écoulement,
+l'écrouissage du matériau, pour ce mécanisme, est supposé représenté par
+la déformation inélastique cumulée \(p_{i}\) définie par~:
+\[
+p_{i}=\int_{t_{0}}^{t}\sqrt{\Frac{2}{3}\,\tepsilonan_{i}\colon\tepsilonan_{i}}\,\dtot\,u
+\]
+
+\paragraph{Comportements inélastiques supportés}
+L'écoulement est alors pleinement défini si l'évolution de la variable
+\(p_{i}\) est connu. Trois mécanismes sont aujourd'hui disponibles~:
+\begin{itemize}
+  \item des écoulements viscoplastiques de la forme (loi de type
+  \nom{Norton})~:
+  \[
+  \dot{p}_{i} = f\paren{\sigmaeq}
+  \]
+  \item des écoulements viscoplastiques avec écrouissage de la forme
+  (lois de type \nom{Lemaitre})~:
+\[
+\dot{p}_{i} = f\paren{\sigmaeq,p}
+\]
+\item des écoulements plastiques de la forme donné par la condition suivante~:
+\[
+f(\sigmaeq,p_{i})\leq 0 \quad\quad \dot{p_{i}}\geq 0 \quad\quad
+f(\sigmaeq,p_{i})\,\dot{p} = 0
+\]
+\end{itemize}
+
+\paragraph{Variables internes} Les variables internes des analyseurs
+spécifiques sont~:
+\begin{itemize}
+  \item la déformation élastique \(\tepsilonel\)~;
+  \item la déformation inélastique \(p_{i}\) associé à chaque
+  mécanisme~;
+  \item si plus d'un mécanisme est présent, la déformation inélastique
+  totale \(p\) définit comme la somme des déformations inélastiques des
+  différents mécanismes~:
+  \[
+  p = \displaystyle\sum_{i}\,p_{i}
+  \]
+\end{itemize}
+
+\paragraph{Déformations inélastiques} Les déformations inélastiques
+\(\tepsilonan_{i}\) ne sont pas des variables internes. Pour y avoir
+accès (pour des posttraitements), il est possible de définir des
+variables internes auxiliaires.
+
+\subsubsection{Algorithme de résolution}
+
+Les différents mécanismes précédents peuvent partager un algorithme de
+résolution efficace. C'est cette particularité qui a conduit au
+développement de ces analyseurs.
+
+Connaissant l'état du matériau à l'instant \(t\), nous voulons connaître
+son comportement à l'instant \(t+\Delta t\). Pour cela, nous utilisons
+un algorithme semi-implicite de type \(\theta\)-méthode où \(\theta\)
+est un nombre compris entre \(0\) et \(1\) indiquant que les incréments
+des variables internes sont calculés en \(t+\theta\Delta t\). Les
+\(\theta\)-méthodes sont décrites en détail à la
+section~\ref{sec:Implicite}.
+
+\paragraph{Équation associée à la déformation élastique} L'évolution de
+la déformation élastique s'écrit de manière incrémentale ainsi~:
+\[
+\Delta\,\tepsilonel-\Delta\,\tepsilonto+\Delta\,\tepsilonan=0
+\]
+La direction d'écoulement est évaluée en \(t+\theta\Delta t\), ce qui
+permet d'introduire la déformation inélastique cumulée totale \(p\)~:
+\[
+\Delta\,\tepsilonel-\Delta\,\tepsilonto+\Delta\,p\milieupas{\tenseur{n}}=0
+\]
+
+\paragraph{Expression de la contrainte équivalente et de la direction
+  d'écoulement} L'évolution des déformations anélastiques requiert
+d'évaluer une certaine fonction \(f\) de la contrainte équivalente en
+\(t+\theta\Delta t\).
+
+À l'instant \(t+\theta\Delta t\), le tenseur normal \(\tenseur{n}\) est
+évalué ainsi~:
+\[
+\begin{aligned}
+  \milieupas{\tenseur{n}}&=\Frac{3}{2\milieupas{\sigmaeq}}
+  \milieupas{\tenseur{s}}=\Frac{3\mu}{\milieupas{\sigmaeq}}\milieupas{\tenseur{e}}
+  =\Frac{3\mu}{\milieupas{\tenseur{n}}}\paren{\debutpas{\tenseur{e}}+\theta\Delta\tenseur{e}}\\
+  &=\Frac{3\mu}{\milieupas{\tenseur{n}}}\paren{\debutpas{\tenseur{e}}+\theta\paren{\Delta\tepsilonto-\Frac{1}{3}\trace\paren{\Delta\tepsilonto}\tenseur{I}-\Delta\,p\,\milieupas{\tenseur{n}}}}
+\end{aligned}
+\]
+où \(\tenseur{e}\) désigne le déviateur du tenseur des déformations
+élastiques \(\tepsilonel\) (voir plus haut).
+
+Dans la suite, nous noterons \(\tenseur{B}\) le tenseur suivant~:
+\[
+\tenseur{B}=\debutpas{\tepsilonel}+\theta\Delta\tepsilonto-\Frac{1}{3}\trace\paren{\debutpas{\tepsilonel}+\theta\Delta\tepsilonto}
+\]
+Ce tenseur est parfaitement connu au début du pas de temps. Nous pouvons
+alors écrire~:
+\[
+\paren{\milieupas{\sigmaeq}+3\mu\theta\Delta\,p}\milieupas{\tenseur{n}}=3\mu\tenseur{B}
+\]
+En utilisant le fait que le produit contracté
+\(\milieupas{n}\colon\milieupas{n}\) est égal à
+\(\Frac{3}{2}\), nous obtenons
+l'expression suivante de la contrainte équivalente~:
+\begin{equation}
+  \label{eq:IsotropicBehaviour:contrainte_equivalente}
+  \milieupas{\sigmaeq}=\mu\sqrt{6\,\tenseur{B}\colon\tenseur{B}}-3\,\mu\,\theta\,\Delta\,p
+\end{equation}
+
+De plus, la normale est donnée par~:
+\begin{equation}
+  \label{eq:IsotropicBehaviour:normale}
+  \milieupas{\tenseur{n}}=\Frac{3}{\sqrt{6\,\tenseur{B}\colon\tenseur{B}}}\tenseur{B}
+\end{equation}
+
+L'équation~\eqref{eq:IsotropicBehaviour:contrainte_equivalente} permet
+de réduire l'intégration de la loi de comportement à la résolution d'un
+système non linéaire dont la taille est égal au nombre de mécanismes
+présents. En particulier, si l'on considère un unique mécanisme,
+l'intégration se résume à la résolution d'une équation scalaire. Les
+inconnues de ce système sont les incréments des déformations
+inélastiques cumulées \(\Delta\, p_{j}\).
+
+Pour le résoudre, une méthode de \nom{Newton-Raphson} est utilisée.
+Cette méthode est discutée en détail au paragraphe~\ref{sec:NR}. Pour
+l'appliquer, il faut donc préciser les équations associées à chacun des
+incréments des déformations inélastiques cumulées et la dérivée de ces
+équations par rapport à ces incréments.
+
+\paragraph{Équation associée à une loi viscoplastique sans écrouissage}
+L'évolution de la déformation viscoplastique cumulée \(p_{i}\) pour loi
+viscoplastique sans écrouissage est donnée par l'équation \(f_{p_{i}}\)~:
+\[
+f_{p_{i}} = \Delta\,p_{i}-\Delta\,t\,f\paren{\milieupas{\sigmaeq}}=0
+\]
+Les dérivées partielles de cette équation s'écrivent~:
+\[
+\deriv{f_{p_{i}}}{\Delta\, p_{j}}=
+\left\{
+\begin{aligned}
+1-3\,\mu\,\theta\,\Delta\,t\,\left[\deriv{f}{\sigmaeq}\paren{\milieupas{\sigmaeq}}\right] & \text{ si } i=j \\
+3\,\mu\,\theta\,\Delta\,t\,\left[\deriv{f}{\sigmaeq}\paren{\milieupas{\sigmaeq}}\right] & \text{ si } i\neq j
+\end{aligned}
+\right.
+\]
+
+\paragraph{Équation associée à une loi viscoplastique avec écrouissage}
+L'évolution de la déformation viscoplastique cumulée \(p_{i}\) pour loi
+viscoplastique sans écrouissage est donnée par l'équation \(f_{p_{i}}\)~:
+\[
+f_{p_{i}} = \Delta\,p_{i}-\Delta\,t\,f\paren{\milieupas{\sigmaeq},\milieupas{p_{i}}}=0
+\]
+Les dérivées partielles de cette équation s'écrivent~:
+\[
+\deriv{f_{p_{i}}}{\Delta\, p_{j}}=
+\left\{
+\begin{aligned}
+1-3\,\mu\,\theta\,\Delta\,t\,\left[\deriv{f}{\sigmaeq}\paren{\milieupas{\sigmaeq},\milieupas{p_{i}}}\right]-\theta\,\Delta\,t\,\left[\deriv{f}{p_{i}}\paren{\milieupas{\sigmaeq},\milieupas{p_{i}}}\right] & \text{ si } i=j \\
+3\,\mu\,\theta\,\Delta\,t\,\left[\deriv{f}{\sigmaeq}\paren{\milieupas{\sigmaeq},\milieupas{p_{i}}}\right] & \text{ si } i\neq j
+\end{aligned}
+\right.
+\]
+
+\paragraph{Équation associée à une loi plastique} L'évolution de la
+déformation plastique cumulée \(p_{i}\) est donné par~:
+\[
+f_{p_{i}} = \left\{
+\begin{aligned}
+  \Frac{1}{E}f\paren{\milieupas{\sigmaeq},\milieupas{p_{i}}} & \text{ si
+    charge plastique} \\
+  \Delta\,p_{i} & \text{ sinon}
+\end{aligned}
+\right.
+\]
+où \(E\) est le module d'\nom{Young} qui permet ici de normaliser la
+surface de charge.
+
+La condition de charge plastique est vérifiée si l'une des des
+conditions suivante est vraie~:
+\begin{itemize}
+\item \(f\paren{\milieupas{\sigmaeq},\milieupas{p_{i}}} >
+  E\,\varepsilon\) et \(\Delta\,p_{i} \geq 0\)
+\item \(\Delta\,p_{i} > \varepsilon\)
+\end{itemize}
+où \(\varepsilon\) est un paramètre numérique\footnote{Sa valeur est
+  choisie égale à \(100\) fois la plus petite valeur positive
+  représentable par le type de réel utilisé.}.
+
+En cas de charge plastique, les dérivées partielles de cette équation
+s'écrivent~:
+\[
+\deriv{f_{p_{i}}}{\Delta\, p_{j}}= \left\{
+\begin{aligned}
+  \Frac{\theta}{E}\paren{3\,\mu\,\left[\deriv{f}{\sigmaeq}\paren{\milieupas{\sigmaeq},\milieupas{p_{i}}}\right]+
+    \left[\deriv{f}{p_{i}}\paren{\milieupas{\sigmaeq},\milieupas{p_{i}}}\right]} & \text{ si } i=j \\
+  \Frac{3\,\mu\,\theta}{E}\deriv{f}{\sigmaeq}\paren{\milieupas{\sigmaeq},\milieupas{p_{i}}}
+  & \text{ si } i\neq j
+\end{aligned}
+\right.
+\]
+
+En l'absence de charge plastique, ces dérivées s'écrivent~:
+\[
+\deriv{f_{p_{i}}}{\Delta\, p_{j}}= \left\{
+\begin{aligned}
+  1 & \text{ si } i=j \\
+  0 & \text{ si } i\neq j
+\end{aligned}
+\right.
+\]
+\subsection{Comportement viscoplastique du \sic{}}
+
+Nous voulons décrire le comportement viscoplastique du \sic{}
+Le \sic{} est supposée avoir un comportement viscoplastique isotrope
+donnée par~:
+\[
+  \dot{p} = f\paren{\sigmaeq}
+\]
+où
+\begin{minipage}[t]{0.75\linewidth}
+  \begin{itemize}
+  \item \(p\) est la déformation viscoplastique équivalente~;
+  \item \(\sigmaeq\) est la contrainte de \nom{Von Mises}.
+  \end{itemize}
+\end{minipage}
+
+La fonction d'écoulement est donnée par~:
+\begin{equation}
+  \label{eq:sicBehaviour}
+  f\paren{\sigmaeq}=\paren{A\,\exp\paren{-\Frac{B}{T}}+a\,\phi}\,\sigmaeq
+\end{equation}
+où~:
+\begin{minipage}[t]{0.75\linewidth}
+  \begin{itemize}
+  \item \(A\), \(B\) et \(a\) sont des coefficients~;
+  \item \(T\) est la température~;
+  \item \(\phi\) est le flux de neutrons rapides~;
+  \end{itemize}
+\end{minipage}
+
+\begin{figure}[htbp]
+  \centering
+  \code{{\ttfamily \input{mfront/SICCreepBehaviour.tex}}}  
+  \caption{Implantation de la loi de comportement viscoplastique
+    du \sic{} en \mfront{}.}
+  \label{fig:mfront_sic_behaviour}
+\end{figure}
+
+Cette loi de comportement dépend d'une variable externe, le flux de
+neutron rapide \(\phi\).
+
+Pour implanter cette loi de comportement, nous utilisons l'analyseur
+\texttt{IsotropicMisesCreep}. Le code source est donné en
+figure~\ref{fig:mfront_sic_behaviour}.
+
+\paragraph{Le mot clé \mkey{Parser}} La première ligne, commençant
+par le mot clé \mkey{Parser}, décrit le type d'analyseur utilisé,
+ici \texttt{IsotropicMisesCreep}.
+
+\paragraph{Le mot clé \mkey{Behaviour}} La second ligne, commençant par
+le mot clé \mkey{Behaviour}, donne le nom de la loi
+de comportement.
+
+\paragraph{Les mots clé \mkey{Author} et \mkey{Date}} La
+troisième et la quatrième ligne renseignent respectivement l'auteur du
+fichier et la date de création à l'aide des mots clés \mkey{Author}
+et \mkey{Date}.
+
+\paragraph{Le mot clé \mkey{Description}} Le mot clé
+\mkey{Description} permet de donner les références bibliographiques
+d'où la loi est extraite.
+
+\paragraph{Le mot clé \texttt{@External\-State\-Variable}} Le mot clé
+\texttt{@External\-State\-Variable} définit une variable externe
+scalaire (\texttt{real}) nommée \texttt{flux}. Cette variable, et son
+incrément \texttt{dflux}, sont dès lors accessibles.
+
+\paragraph{Le mot clé \mkey{StaticVariable}} Le mot clé
+\texttt{@Static\-Variable} sert à définir les constantes utilisées par
+la loi. Ces constantes sont des scalaires (\texttt{real}).
+
+\paragraph{Le mot clé \mkey{LocalVariable}} Le mot clé
+\texttt{@Local\-Variable} sert à définir des variables de travail
+locales. Les rôles des variables \texttt{AF1} et \texttt{AF3} sera
+explicités dans la suite.
+
+\paragraph{Le mot clé \mkey{InitLocalVariables}} Le mot clé
+\mkey{InitLocalVars} permet d'écrire du code appelé avant tout
+calcul. Nous y initialisons les valeurs de coefficients de la loi. En
+effet, la méthode d'intégration utilisée évalue la fonction \(f\) au
+temps \(t+\theta\,\Delta t\) (intégration implicite).  Le coefficient
+dépendant de la température est donc connu et il est avantageux de
+l'évaluer ici plutôt qu'au cours des itérations de convergence de
+l'algorithme (nous économisons des appels à la fonction
+exponentielle). Nous utilisons ici le fait que la température au temps
+\(t+\theta\,\Delta t\) est égale à \(T+\theta\,\Delta T\). De même la
+valeur du flux de neutrons rapides \(\phi\) est égal à
+\(\phi+\theta\,\Delta \phi\).
+
+\paragraph{Le mot clé \mkey{FlowRule}} Le mot clé
+\mkey{FlowRule} permet de renseigner la fonction d'écoulement
+\(f\) et sa dérivée \(\derivtot{f}{\sigmaeq}\).
+
 \clearpage
 \newpage
 \section{Intégration des lois de comportement par une méthode explicite}
@@ -1021,10 +1348,12 @@ Cette écriture est {\em symbolique} et chaque terme \(y_{j}\) peut
 représenter une variable interne qui peut être soit un scalaire soit un
 tenseur symétrique d'ordre \(2\).
 
-\subsection{Algorithme disponibles}
+\subsection{Algorithmes disponibles}
 
-L'estimation la plus simple consiste à remplacer la dérivée
-\(\dot{Y}\) par la différence finie
+\subsubsection{Algorithmes sans contrôle du pas de temps}
+
+\paragraph{Méthode d'\nom{Euleur} explicite} L'estimation la plus simple
+consiste à remplacer la dérivée \(\dot{Y}\) par la différence finie
 \(\Frac{\finpas{Y}-\debutpas{Y}}{\Delta\, t}\), ce qui conduit à~:
 \begin{equation}
   \label{eq:explicite}
@@ -1064,9 +1393,42 @@ inconnues, plusieurs choix sont possibles.
 
 \paragraph{Méthode de \nom{Runge-Kutta} d'ordre $4$}
 
+\subsubsection{Algorithmes avec contrôle du pas de temps (correcteur/prédicteur)}
+
 \paragraph{Méthode de \nom{Runge-Kutta} d'ordre $\pfrac{4}{2}$}
 
-\paragraph{Méthode de \nom{Runge-Kutta} d'ordre $\pfrac{5}{4}$}
+\paragraph{Méthode de \nom{Runge-Kutta} d'ordre $\pfrac{5}{4}$ (méthode
+  de \nom{Fehlberg})} Pour décrire cette méthode, utilisée par défaut,
+nous reprenons la présentation d'\nom{A. Fortin}~\cite{fortin01:_analy}.
+Il est utile d'introduire les \(6\) constantes suivantes~:
+\[
+\begin{aligned}
+  k_{1} &= \Delta\,t\,\cdot\,G\paren{\debutpas{Y_{i}},t} \\
+  k_{2} &=
+  \Delta\,t\,\cdot\,G\paren{\debutpas{Y_{i}}+\Frac{1}{4}\,k_{1},t+\Frac{1}{4}\,\Delta\,t}\\
+ k_{3} &=
+  \Delta\,t\,\cdot\,G\paren{\debutpas{Y_{i}}+\Frac{3}{32}\,k_{1}+\Frac{9}{32}\,k_{2},t+\Frac{3}{8}\,\Delta\,t}
+ \\
+  k_{4} &=
+  \Delta\,t\,\cdot\,G\paren{\debutpas{Y_{i}}+\Frac{1932}{2197}\,k_{1}-\Frac{7200}{2197}\,k_{2}+\Frac{7296}{2197}\,k_{3},t+\Frac{12}{13}\,\Delta\,t}\\
+ k_{5} &=
+  \Delta\,t\,\cdot\,G\paren{\debutpas{Y_{i}}+\Frac{439}{216}\,k_{1}-8\,k_{2}+\Frac{3680}{513}\,k_{3}-\Frac{845}{4104}\,k_{4},t+\Delta\,t}\\
+ k_{6} &=
+  \Delta\,t\,\cdot\,G\paren{\debutpas{Y_{i}}-\Frac{8}{27}\,k_{1}+2\,k_{2}-\Frac{3544}{2565}\,k_{3}+\Frac{1859}{4104}\,k_{4}-\Frac{11}{40}\,k_{5},t+\Frac{1}{2}\Delta\,t}\\
+\end{aligned}
+\]
+
+Ces coefficients permettent de construire une méthode de
+\nom{Runge-Kutta} d'ordre \(4\)~:
+\[
+\finpas{Y_{i}}=\debutpas{Y_{i}}+\paren{\Frac{25}{216}\,k_{1}+\Frac{1408}{2565}\,k_{3}+\Frac{2197}{4104}\,k_{4}-\Frac{1}{5}\,k_{5}}
+\]
+et une autre d'ordre \(5\)~:
+\[
+\finpas{Y_{i}}=\debutpas{Y_{i}}+\paren{\Frac{16}{135}\,k_{1}+\Frac{6656}{12\,825}\,k_{3}+\Frac{28\,561}{56\,430}\,k_{4}-\Frac{9}{50}\,k_{5}+\Frac{2}{55}\,k_{6}}
+\]
+
+\paragraph{Méthode \castem{}}
 
 \subsection{Intégration d'une loi d'écoulement viscoplastique
   orthotrope par un algorithme de \nom{Runge-Kutta}}
@@ -1076,7 +1438,7 @@ comportement viscoplastique orthotrope. La forme retenue est proche
 d'une loi de \nom{Norton}, la vitesse de l'écoulement étant donnée
 par~:
 \[
-\tdepsilonvis = A\paren{\sigmaH}^{E}\tenseur{n}
+\tdepsilonvis = A\,\paren{\sigmaH}^{E}\,\tenseur{n}
 \]
 où le tenseur normal \(\tenseur{n}\) a été défini au
 paragraphe~\ref{sec:critere-de-nomhill}.
@@ -1092,7 +1454,7 @@ Le système d'équations complet est donc~:
   \label{eq:law}
   \begin{aligned}
     \dot{p}       &= A\paren{\sigmaH}^{E} \\
-    \tdepsilonvis &= \dot{p}\tenseur{n}   \\
+    \tdepsilonvis &= \dot{p}\,\tenseur{n}   \\
     \tdepsilonel  &= \tdepsilonto - \tdepsilonvis
   \end{aligned}
 \end{equation}
@@ -1137,6 +1499,7 @@ Deux remarques peuvent être faites~:
 \clearpage
 \newpage
 \section{Intégration des lois de comportement par une méthode implicite}
+\label{sec:Implicite}
 
 Le paragraphe~\ref{sec:resol-dun-syst} décrit de manière générale la
 résolution d'un système différentielle par une méthode implicite.
@@ -1362,7 +1725,7 @@ de la solution~:
 \Delta\, Y^{0} = \Delta\,t\,G\paren{\debutpas{Y},t}
 \]
 Une estimation explicite de la solution peut être donnée dans un bloc
-\texttt{@Predictor}.
+\mkey{Predictor}.
 
 \subsubsection{Avantages et inconvénients des méthodes implicites} Les
 méthodes implicites sont généralement opposées aux méthodes
@@ -1417,28 +1780,59 @@ Les deux principales faiblesses des méthodes implicites restent~:
 \end{itemize}
 
 \subsection{Méthode de \nom{Newton-Raphson}}
+\label{sec:NR}
+
 Une méthode est généralement utilisée pour trouver un zéro d'une
-fonction est la méthode itérative de \nom{Newton-Raphson} qui s'écrit
-ainsi~:
+fonction est la méthode itérative de \nom{Newton-Raphson}.
+
+Connaissant une estimation \(\Delta\,Y^{n}\) de la solution, la fonction
+\(F\) peut être approximée dans un voisinage \(\Delta\,Y^{n}\) par~:
+\[
+F\paren{\Delta\,Y}=F\paren{\Delta\,Y^{n}}+\left.\derivtot{F}{\Delta\,Y}\right|_{\Delta
+ Y=\Delta\,Y^{n}}\,\paren{\Delta\,Y-\Delta\,Y^{n}}
+\]
+où \(\derivtot{F}{\Delta\,Y}\) est la matrice jacobienne de la fonction
+\(F\), qui sera notée \(J\) dans la suite.
+
+Une nouvelle estimation \(\Delta\,Y^{n+1}\) est choisie en annulant
+cette approximation de \(F\), ce qui conduit à l'expression suivante~:
 \begin{equation}
   \label{eq:NR}
-  \Delta\, Y^{n+1}=\Delta\, Y^{n}-\left.\derivtot{F}{\Delta\,Y}\right|_{\Delta Y=\Delta\,Y^{n+1}}
+  \Delta\, Y^{n+1}=\Delta\,Y^{n}-\left[J^{-1}\paren{\Delta\,Y^{n}}\right]\,F\paren{Y^{n}}
 \end{equation}
-où \(\derivtot{F}{\Delta\,Y}\) est la matrice jacobienne de la
-fonction \(F\). 
+
+Dans cette équation, l'écriture \(\left[J^{-1}\paren{\Delta\,Y^{n}}\right]\,F\paren{Y^{n}}\) représente la
+solution \(\Delta^{2}\,Y\) du système linéaire~:
+\[
+\left[J\paren{\Delta\,Y^{n}}\right]\,\Delta^{2}\,Y = F\paren{Y^{n}}
+\]
+
+\begin{figure}[htbp]
+  \centering 
+  \input{Images/Methode_Newton.pstricks}
+  \caption[Illustration de la méthode de \nom{Newton} en $1D$ utilisée
+  pour la résolution de l'équation $f\paren{y}=0$.]{Illustration de la
+    méthode de \nom{Newton} en $1D$ utilisée pour la résolution de
+    l'équation $f\paren{y}=0$. Les estimations successives de la
+    solution sont données par~:
+    $y_{n+1}=y_{n}-\Frac{f\paren{y_{n}}}{f\primeexp\paren{y_{n}}}$.}
+  \label{fig:illustration_newton_raphson}
+\end{figure}
+
+\paragraph{Illustration en \(1D\)} La
+figure~\ref{fig:illustration_newton_raphson} illustre la méthode de
+\nom{Newton} en $1D$.
 
 \paragraph{Matrice jacobienne}
-
 La matrice jacobienne s'exprime ainsi~:
 \begin{equation}
   \label{eq:J_implicite}
-  \derivtot{F}{\Delta\,Y} = I-\theta\Delta\,t\,\derivtot{G}{Y}\paren{\debutpas{Y}+\theta\Delta{Y},t+\theta\,\Delta t}
+  J = \derivtot{F}{\Delta\,Y} = I-\theta\Delta\,t\,\derivtot{G}{Y}\paren{\debutpas{Y}+\theta\Delta{Y},t+\theta\,\Delta t}
 \end{equation}
 où \(I\) est la matrice identité. 
 
-Le calcul de la matrice jacobienne est généralement le point le plus
-difficile de la méthode implicite. Nous verrons dans ce qui suit que
-l'essentiel des développements mathématiques y est consacré. 
+{\em Le calcul de la matrice jacobienne est généralement le point le
+  plus difficile de la méthode implicite.}
 
 \paragraph{Calcul de la matrice jacobienne par blocs} En pratique, la
 matrice \(J\) est calculée par blocs et prend la forme suivante~:
@@ -1690,6 +2084,7 @@ notées respectivement
 
 Ces différents termes se calculent ainsi~:
 \[
+\left\{
 \begin{aligned}
   \deriv{f_{\tepsilonel}}{\Delta\,\tepsilonel} &= \tenseurq{I} \\
   \deriv{f_{\tepsilonel}}{\Delta\,p} &= \tenseur{n} \\
@@ -1697,6 +2092,7 @@ Ces différents termes se calculent ainsi~:
   &= - A\,E\,\theta\,\Delta\, t\,\paren{\sigmaH}^{E-1}\,\tenseur{n}\,\colon\,\tenseurq{D} \\
   \deriv{f_{p}}{\Delta\,p} &= 1
 \end{aligned}
+\right.
 \],
 
 \begin{figure}[htbp]
@@ -1716,7 +2112,7 @@ Ces différents termes se calculent ainsi~:
 
 \paragraph{Implantation} La figure~\ref{fig:OrthoViscoImplicit}
 présente l'implantation de cette loi. La définition du système
-implicite se fait dans la partie {\tt @Integrator}. Les variables {\tt
+implicite se fait dans la partie \mkey{Integrator}. Les variables {\tt
   feel}, {\tt fp}, {\tt dfeel\_ddeel}, {\tt dfeel\_ddp}, {\tt
   dfp\_ddeel}, {\tt dfp\_ddp} sont automatiquement définies. Les termes
 du système sont initialisés à la valeur des incréments des variables
@@ -1779,28 +2175,28 @@ solide de l'\upuc{}~\cite{pelletier04:_recueil}.
 
 Le code source est donné en figure~\ref{fig:mfront_upuc_solid_swelling}.
 
-\paragraph{Le mot clé \texttt{@Parser}} La première ligne, commençant
-par le mot clé \texttt{@Parser}, décrit le type d'analyseur utilisé,
+\paragraph{Le mot clé \mkey{Parser}} La première ligne, commençant
+par le mot clé \mkey{Parser}, décrit le type d'analyseur utilisé,
 ici \texttt{PleiadesModel}.
 
-\paragraph{Le mot clé \texttt{@Model}} La second ligne, commençant par
-le mot clé \texttt{@Model}, donne le nom du modèle.
+\paragraph{Le mot clé \mkey{Model}} La second ligne, commençant par
+le mot clé \mkey{Model}, donne le nom du modèle.
 
-\paragraph{Les mots clé \texttt{@Author} et \texttt{@Date}} La
+\paragraph{Les mots clé \mkey{Author} et \mkey{Date}} La
 troisième et la quatrième ligne renseignent respectivement l'auteur du
-fichier et la date de création à l'aide des mots clés \texttt{@Author}
-et \texttt{@Date}.
+fichier et la date de création à l'aide des mots clés \mkey{Author}
+et \mkey{Date}.
 
-\paragraph{Le mot clé \texttt{@Description}} Le mot clé
-\texttt{@Description} permet de donner les références bibliographiques
+\paragraph{Le mot clé \mkey{Description}} Le mot clé
+\mkey{Description} permet de donner les références bibliographiques
 d'où le modèle est extrait.
 
-\paragraph{Le mot clé \texttt{@LocalParameter}} Le mot clé
-\texttt{@LocalParameter} permet de déclarer une variable
+\paragraph{Le mot clé \mkey{LocalParameter}} Le mot clé
+\mkey{LocalParameter} permet de déclarer une variable
 locale, propre au modèle.
 
-\paragraph{Le mot clé \texttt{@GlobalParameter}}
-De la même manière, le mot clé \texttt{@GlobalParameter}
+\paragraph{Le mot clé \mkey{GlobalParameter}}
+De la même manière, le mot clé \mkey{GlobalParameter}
 permet de déclarer un paramètre dont la valeur sera
 lue dans le fichier d'entrée. Nous déclarons ici
 une variable locale de type \og~tableau de chaînes de
@@ -1812,16 +2208,16 @@ s'applique le modèle.
 La méthode {\tt setDefaultValue} permet de préciser
 la valeur par défaut de la variable \texttt{domains}.
 
-\paragraph{Le mot clé \texttt{@Domain}} 
-Le mot clé \texttt{@Domain} permet de préciser le domaine
+\paragraph{Le mot clé \mkey{Domain}} 
+Le mot clé \mkey{Domain} permet de préciser le domaine
 d'application du modèle. Sa valeur peut être une expression
-rationnelle. Le mot clé \texttt{@Domains} permet quand à lui de
+rationnelle. Le mot clé \mkey{Domains} permet quand à lui de
 définir une liste de domaines.
 
-\paragraph{Le mot clé \texttt{@Output}} Le mot clé \texttt{@Output}
+\paragraph{Le mot clé \mkey{Output}} Le mot clé \mkey{Output}
 permet de préciser un champ de sortie du modèle.
 
-\paragraph{Le mot clé \texttt{@Input}} Le mot clé \texttt{@Input}
+\paragraph{Le mot clé \mkey{Input}} Le mot clé \mkey{Input}
 permet de préciser un champ d'entrée du modèle.
 
 \paragraph{La méthode \texttt{setDepth}} La méthode \texttt{setDepth}
@@ -1834,8 +2230,8 @@ valeur de $1$ permet d'avoir accès à la valeur courante
 \texttt{setGlossaryName} permet de préciser le nom
 d'un champ dans \pleiades{}.
 
-\paragraph{Le mot clé \texttt{@Function}} Le mot clé
-\texttt{@Function} permet d'introduire l'implantation du modèle. Un
+\paragraph{Le mot clé \mkey{Function}} Le mot clé
+\mkey{Function} permet d'introduire l'implantation du modèle. Un
 même modèle pouvant avoir plusieurs fonctions, un identifiant, ici
 \texttt{compute}, doit être précisé. L'implantation du modèle est
 faite en C++. Dans le code présenté, la variable
@@ -1846,11 +2242,6 @@ temps.
 \subsection{Interface disponible} À ce jour, aucune interface pour les
 modèles n'est disponible par défaut. Les applications de la plateforme
 \pleiades{} fournissent leurs propres interfaces dédiées.
-
-\clearpage
-\newpage
-\section{Conclusions}
-
 
 \clearpage
 \newpage
@@ -2651,7 +3042,7 @@ Les méthodes de résolution des systèmes implicites nécessitent de
 choisir une estimation de la solution \(\vec{X}_{0}\) pour initier la
 recherche. Par défaut, \mfront{} utilisera le vecteur nul comme
 estimation initiale, mais l'utilisateur peut en spécifier une autre par
-la directive \texttt{@Predictor}.
+la directive \mkey{Predictor}.
 
 La convergence des algorithmes de résolutions implicites n'est garantie
 que si l'estimation initiale \(\vec{X}_{0}\) est suffisamment proche de
@@ -3352,5 +3743,13 @@ Nous comparons ici les méthodes
 \paragraph{Comparaison des algorithmes de \textsc{Broyden}} En comparant
   les résultats donnés par les tableaux~\ref{tab:Broyden:1},
   \ref{tab:Broyden:2} et~\ref{tab:Broyden2}, nous pouvons constater que le s
+
+%\clearpage
+%\newpage
+%\printindex{general}{Index général}
+
+\clearpage
+\newpage
+\printindex{mkeys}{Index des directives}
 
 \end{document}

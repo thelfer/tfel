@@ -16,6 +16,7 @@ mfront-doc:
 		ln -s @abs_top_srcdir@/docs/mfront/Bibliographie.bib      . ; \
 		ln -s @abs_top_srcdir@/docs/mfront/Makefile.doc           . ; \
 		ln -s @abs_top_srcdir@/docs/mfront/mfront.tex             . ; \
+		ln -s @abs_top_srcdir@/docs/mfront/style.tex              . ; \
 		ln -s @abs_top_srcdir@/docs/mfront/Champs.tex             . ; \
 		ln -s @abs_top_srcdir@/docs/mfront/annexe-orthotropie.tex . ; \
 	fi ;                                                                  \

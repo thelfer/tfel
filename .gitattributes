@@ -26,6 +26,7 @@ docs/mfront/Images/2norton-rk.mfront.tex -text
 docs/mfront/Images/2norton-rk.tex -text
 docs/mfront/Images/Algo_temps.eps -text
 docs/mfront/Images/CompSeq.eps -text
+docs/mfront/Images/Methode_Newton.pstricks -text
 docs/mfront/Images/mfront.eps -text
 docs/mfront/Images/mfrontexcel.eps -text
 docs/mfront/Images/tubeaxi.eps -text
@@ -89,6 +90,7 @@ docs/mfront/mfront/test-T.cxx -text
 docs/mfront/mfront/test-T.ple -text
 docs/mfront/mfront/test-T.tex -text
 docs/mfront/mfront/vba.tex -text
+docs/mfront/style.ist -text
 docs/tex/texmf/CEA_logo_quadri-sur-fond-rouge.eps -text
 docs/tex/texmf/CEA_logo_quadri-sur-fond-rouge.pdf -text
 docs/tex/texmf/CEA_logo_quadri-sur-fond-rouge.svg -text
