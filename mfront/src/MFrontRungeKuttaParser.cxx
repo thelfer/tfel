@@ -103,9 +103,9 @@ namespace mfront{
     if((this->isExternalStateVariableIncrementName(var))||(var=="dT")){
       this->declareExternalStateVariableProbablyUnusableInPurelyImplicitResolution(var.substr(1));
       if(addThisPtr){
-	return "(this->"+var+"/(this->dt)";
+	return "(this->"+var+")/(this->dt)";
       } else {
-	return "("+var+"/(this->dt)";
+	return "("+var+")/(this->dt)";
       }
     }
     if(addThisPtr){
@@ -133,9 +133,9 @@ namespace mfront{
 	this->declareExternalStateVariableProbablyUnusableInPurelyImplicitResolution(var.substr(1));
       }
       if(addThisPtr){
-	return "(this->"+var+"/(this->dt)";
+	return "(this->"+var+")/(this->dt)";
       } else {
-	return "("+var+"/(this->dt)";
+	return "("+var+")/(this->dt)";
       }
     }
     if(addThisPtr){

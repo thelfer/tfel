@@ -132,7 +132,260 @@ les applications \pleiades{} via l'interface
 
 \clearpage
 \newpage
+\section{Présentation générale}
+
+\mfront{} est un générateur de code~: partant d'un fichier contenant les
+informations physiques et numériques utiles, \mfront{} génère un code
+source \cpp{}.
+
+Le fichier \mfront{} présente un certain nombre de directives
+introduites par une arobase @.
+
+\subsection{Notion d'analyseur}
+
+Les connaissances matériaux supportées par \mfront{} sont classées en
+trois catégories~:
+\begin{itemize}
+  \item les propriétés matériau~;
+  \item les lois de comportement mécanique~;
+  \item les modèles.
+\end{itemize}
+
+\mfront{} utilise la notion d'analyseur pour proposer une solution
+adaptée à la connaissance considérée. Il existe par exemple plusieurs
+analyseurs pour les lois de comportement mécanique~: certains de ces
+analyseurs permettent de traiter toutes les lois de comportement avec un
+formalisme d'intégration particulier et certains sont dédiées à un type
+de loi particulier.
+
+Dans la version présentée de \mfront{}, les analyseurs suivants sont
+disponibles~:
+\begin{itemize}
+  \item l'analyseur {\tt Material\-Law} qui traite de propriétés
+  matériau. La section~\ref{MaterialProperty} lui est consacrée~;
+  \item l'analyseur \texttt{DefaultParser} qui permet de traiter tous
+  types de lois de comportements~;
+  \item l'analyseur \texttt{RungeKutta} qui propose la résolution d'une
+  loi de comportement mécanique quelconque à l'aide de l'une des
+  méthodes de \nom{Runge-Kutta}. Les méthodes disponibles sont des
+  méthodes d'ordre \(2\) et \(4\) sans contrôle d'erreur et des méthodes
+  correcteur prédicteur de type \(\pfrac{4}{2}\) ou \(\pfrac{5}{4}\)
+  avec adaptation du pas de temps~;
+  \item l'analyseur \texttt{IsotropicMisesCreep} qui gère exclusivement
+  les lois de comportement mécanique viscoplastique isotrope de la
+  forme~:
+  \[
+  \dot{p} = f\paren{\sigmaeq}
+  \]
+  où \(\dot{p}\) la vitesse viscoplastique équivalente et où
+  \(\sigmaeq\) est la contrainte équivalente au sens de \nom{Von-Mises}.
+  La direction d'écoulement est donnée par la condition de normalité.
+  Une intégration implicite est effectuée. Cette intégration nécessite
+  de préciser la dérivée \(\derivtot{f}{\sigmaeq}\)~;
+  \item l'analyseur \texttt{IsotropicStrainHardeningMisesCreep} qui gère
+  exclusivement les lois de comportement mécanique viscoplastique
+  isotrope de la forme~:
+  \[
+  \dot{p} = f\paren{\sigmaeq,p}
+  \]
+  où \(\dot{p}\) la vitesse viscoplastique équivalente et où
+  \(\sigmaeq\) est la contrainte équivalente au sens de \nom{Von-Mises}.
+  La direction d'écoulement est donnée par la condition de normalité.
+  Une intégration implicite est effectuée. Cette intégration nécessite
+  de préciser les dérivées \(\deriv{f}{\sigmaeq}\) et \(\deriv{f}{p}\)~;
+  \item l'analyseur \texttt{IsotropicPlasticMisesFlow} qui gère
+  exclusivement les lois de comportement mécanique plastique isotrope de
+  la forme~:
+  \[
+  f(\sigmaeq,p)\leq 0 \quad\quad \dot{p}\geq 0 \quad\quad
+  f(\sigmaeq,p)\,\dot{p} = 0
+  \]
+  où \(p\) est la déformation plastique cumulée et où \(\sigmaeq\) est
+  la contrainte équivalente au sens de \nom{Von-Mises}. La direction
+  d'écoulement est donnée par la condition de normalité. Une intégration
+  implicite est effectuée. Cette intégration nécessite de préciser les
+  dérivées \(\deriv{f}{\sigmaeq}\) et \(\deriv{f}{p}\)~;
+  \item l'analyseur \texttt{MultipleIsotropicMisesFlows} qui gère une
+  combinaison arbitraire d'écoulements des trois types précédents. Les
+  différents écoulements sont supposés non couplés.
+  \item l'analyseur \texttt{Implicit} qui propose la résolution d'une
+  loi de comportement mécanique quelconque à l'aide d'une intégration
+  implicite. La méthode de résolution retenue pourra être ou un
+  algorithme de \nom{Newton-Raphson} ou deux versions de l'algorithme de
+  \nom{Broyden}~;
+  \item l'analyseur \texttt{Model} qui permet de traiter des modèles.
+\end{itemize}
+
+La directive \mkey{Parser}, traditionnellement placé en tête du fichier
+\mfront{} bien que cela ne soit pas nécessaire, est utilisée pour
+décrire quel analyseur utilisé.
+
+\subsection{Notion d'interface}
+
+Les connaissances matériau ont été écrites pour être indépendantes du
+code cible et favorisé leurs réutilisation dans des contextes logiciels
+variés.
+
+Pour cela, \mfront{} propose la notion d'interface~: le code source
+généré dépend de l'interface choisie par l'utilisateur et cherche à
+s'intégrer au mieux dans le contexte logiciel cible et à en tirer le
+meilleur parti.
+
+L'illustration la plus forte de cette notion d'interface est donnée par
+les propriétés matériau qui propose par défaut différentes interfaces~:
+\begin{itemize}
+  \item l'interface \texttt{c} pour une utilisation dans des codes
+  écrits dans ce language~;
+  \item l'interface \texttt{fortran} pour une utilisation dans des codes
+  écrits dans ce language~;
+  \item l'interface \cpp{} pour une utilisation dans des codes
+  écrits dans ce language~;
+  \item l'interface \texttt{castem} pour une utilisation dans le code
+  aux éléments finis \castem{}.~;
+  \item l'interface \texttt{python} pour une utilisation dans des codes
+  écrits dans ce language~;
+  \item l'interface \texttt{gnuplot} pour une visualisation des courbes
+  d'évolution des propriétés matériau en fonction de leur paramètres~;
+\end{itemize}
+
+\paragraph{Ajout d'interfaces} Il est possible de rajouter dynamiquement
+de nouvelles interfaces par l'utilisation de la variable d'environnement
+{\tt MFRONT\textunderscore{}\-ADDITIONAL\textunderscore{}\-LIBRARIES}
+qui doit désigner une liste de librairies automatiquement chargées au
+démarrage de \mfront{} \footnote{Ce mécanisme est utilisé par exemple
+  par l'architecture \pleiades{} pour générer l'interface {\tt pleiades}
+  aux propriétés matériau, interface qui évolue avec les versions de
+  l'architecture.}.
+
+Ce mécanisme permet donc de créer des interfaces sans modifier
+\mfront{}.
+
+\subsection{Noms de glossaire}
+
+\subsection{Utilisation de librairies externes}
+
+Les différents connaissances matériau sont écrites en \cpp{}. L'un des
+intérêts de ce choix est de permettre l'utilisation de librairies
+écrites dans des langages divers (\cpp{}, \texttt{c}, \texttt{fortran},
+\ldots).
+
+L'utilisation de ces librairies externes est décrites dans le paragraphe
+suivant. Un cas particulier, celui des propriétés matériau écrites en
+\mfront{} est ensuite traité.
+
+\subsubsection{Librairies écrites dans d'autres langages}
+
+L'utilisation de librairies extraites dans d'autres langages se fait
+essentiellement à l'aide de deux mots clés~:
+\begin{itemize}
+  \item la directive \mkey{Includes} qui permet de déclarer des lignes
+  de codes \cpp{} introduites en tête des fichiers générés. Ces lignes
+  sont donnés dans un bloc commençant par une accolade ouvrante
+  \texttt{\{} et se terminant par une accolade fermante \texttt{\}}. Le
+  nom de cette directive est due au fait que ces instructions se
+  résument généralement à une suite d'inclusions de fichiers d'entête
+  par le mot clé \texttt{\#include} du préprocesseur \cpp{}.
+  \item la directive \mkey{Link} est utilisée pour lier les librairies
+  générées à des librairies externes. La directive \mkey{Link} est
+  suivie d'une chaîne de caractère (entre doubles quotes) contenant des
+  instructions à fournir à l'éditeurs de liens. L'utilisation des
+  doubles quotes, inhabituelle dans la syntaxe \mfront{}, permet
+  l'utilisation de caractères spéciaux.
+\end{itemize}
+
+\subsubsection{Appel aux propriétés matériau}
+
+Les propriétés matériau jouent un rôle particulier car elles n'ont de
+sens que relativement à une loi de comportement ou à un modèle. Par
+ailleurs, des propriétés matériau peuvent liées. Par exemple, pour un
+matériau dont le comportement mécanique est basé sur une loi
+d'élasticité linéaire isotrope, le module d'\nom{Young} \(E\), le
+coefficient de \nom{Poisson} \(\nu\) et le module de cisaillement \(G\)
+sont reliés par~:
+\[
+\nu=\Frac{E}{2\,G}-1
+\]
+
+Afin de minimiser la duplication du code (et donc le risque d'erreur),
+il est naturel que les différentes connaissances matériau puissent
+utiliser des propriétés matériau définies par ailleurs.
+
+Nous avons introduit la directive \mkey{MaterialLaw} pour traiter ces
+cas.
+
+\subsection{Directives communes à l'ensemble des analyseurs}
+
+Nous décrivons dans ce paragraphe différentes directives communes à
+l'ensemble des analyseurs.
+
+\paragraph{La directive \mkey{Parser}} La directive \mkey{Parser} permet
+de préciser l'analyseur utilisé. Cette directive est suivie du nom de
+l'analyseur à utiliser et d'un point virgule.
+
+\paragraph{La directive \mkey{Material}} La directive \mkey{Material}
+précise le nom du matériau auquel se réfère la connaissance matériau. Ce
+mot clé est suivi du nom du matériau et d'un point virgule. Ce nom de
+matériau est généralement utilisé pour construire le nom des fonctions
+ou des classes générées, il est donc soumis à certaines restrictions~:
+un nom de matériau ne peut commencer par un chiffre et ne peut contenir
+que des lettres alphabétiques ou des chiffres. Le nom du matériau peut
+également être utilisé pour construire le nom de la librairie générée.
+
+Cette information est optionnelle.
+
+\paragraph{La directive \mkey{Description}} La directive
+\mkey{Description} permet de donner de documenter le fichier \mfront{}.
+Cette documentation est donnée dans un bloc commençant par une accolade
+ouvrante \texttt{\{} et se terminant par une accolade fermante
+\texttt{\}}. Elle doit idéalement contenir la référence d'où est
+extraite la connaissance matériau traitée, les éventuelles adaptations
+faites et le cadre d'utilisation.
+
+Cette information est optionnelle.
+
+\paragraph{La directive \mkey{Author}} Le mot clé \mkey{Author} donne le
+nom de la personne qui a écrit le fichier \mfront{}. Ce mot clé est
+suivi du nom jusqu'à ce qu'un point virgule soit rencontré.
+
+Cette information est optionnelle.
+
+\paragraph{La directive \mkey{Date}} Le mot clé \mkey{Date} donne la
+date d'écriture du fichier \mfront{}. Ce mot clé est suivi de cette
+date jusqu'à ce qu'un point virgule soit rencontré.
+
+Cette information est optionnelle.
+
+\paragraph{La directive \mkey{Library}} La directive spécifie le nom de
+la librairie générée.
+
+Cette information est optionnelle.
+
+\paragraph{La directive \mkey{Includes}} La directive \mkey{Includes}
+permet de déclarer des lignes de codes \cpp{} introduites en tête des
+fichiers générés. Ces lignes sont donnés dans un bloc commençant par une
+accolade ouvrante \texttt{\{} et se terminant par une accolade fermante
+\texttt{\}}
+
+Le nom de cette directive est due au fait que ces instructions se
+résument généralement à une suite d'inclusions de fichiers d'entête par
+le mot clé \texttt{\#include} du préprocesseur \cpp{}.
+
+\paragraph{La directive \mkey{Link}} La directive \mkey{Link} est
+utilisée pour lier les librairies générées à des librairies externes.
+
+La directive \mkey{Link} est suivie d'une chaîne de caractère (entre
+doubles quotes) contenant des instructions à fournir à l'éditeurs de
+liens. L'utilisation des doubles quotes permet l'utilisation de
+caractères spéciaux.
+
+
+
+\subsection{Gestion de la compilation}
+
+\clearpage
+\newpage
 \section{Propriétés matériaux}
+\label{sec:MaterialProperty}
 
 Les propriétés matériau sont l'un des éléments de connaissance
 essentiel des matériaux. 
@@ -145,6 +398,8 @@ matériau. Ainsi, définir une propriété matériau revient à donner la
 liste de ces variables d'état et la relation fonctionnelle qui permet
 de la calculer, cette relation fonctionnelle étant souvent une
 corrélation basée sur des mesures expérimentales.
+
+\subsection{Catégorie des variables}
 
 \paragraph{Bornes} Les variables d'états peuvent posséder des bornes
 intrinsèques~: une température ne peut être négative, une porosité
@@ -330,6 +585,8 @@ pour définir la propriété matériau. Le fait que le code soit en fait
 du \texttt{c++} est ici anecdotique tant le code est proche de
 l'équation~\eqref{eq:youngmodulussnead}.
 
+\subsection{Exemple d'interpolation}
+
 \clearpage
 \newpage
 \section{Analyseurs dédiés aux lois de comportement mécanique}
@@ -363,7 +620,7 @@ de temps. Nous ne considérerons ici que des lois de comportement mécanique.
 De manière générale, cette réponse se traduira par une contrainte
 résultante \(\tsigma\) et une évolution des variables d'état du matériau. 
 
-Nous distinguerons différents types de variables~:
+Nous distinguerons différentes catégories de variables~:
 \begin{itemize}
 \item les propriétés matériau, déclarées par le mot clé
   \mkey{Material\-Property}\footnote{Le mot clé \mkey{Coef} est un
@@ -444,67 +701,13 @@ les autres méthodes d'intégration.
 
 Il n'y a pas de limite sur le type des variables locales.
 
-\subsection{Analyseurs disponibles}
+La directive \mkey{InitLocalVariables} est dédiée à l'initialisation des
+variables locales a été introduite\footnote{La directive
+  \mkey{InitLocalVars} est synonyme de la directive
+  \mkey{InitLocalVariables}.}.
 
-\begin{itemize}
-  \item l'analyseur \texttt{Implicit} qui propose la résolution d'une
-  loi de comportement quelconque à l'aide d'une intégration implicite.
-  La méthode de résolution retenue pourra être ou un algorithme de
-  \nom{Newton-Raphson} ou deux versions de l'algorithme de
-  \nom{Broyden}~;
-  \item l'analyseur \texttt{RungeKutta} qui propose la résolution d'une
-  loi de comportement quelconque à l'aide de l'une des méthodes de
-  \nom{Runge-Kutta}. Les méthodes disponibles sont des méthodes d'ordre
-  \(2\) et \(4\) sans contrôle d'erreur et des méthodes correcteur
-  prédicteur de type \(\pfrac{4}{2}\) ou \(\pfrac{5}{4}\) avec
-  adaptation du pas de temps~;
-  \item l'analyseur \texttt{IsotropicMisesCreep} qui gère exclusivement
-  les lois de comportement viscoplastique isotrope de la forme~:
-  \[
-  \dot{p} = f\paren{\sigmaeq}
-  \]
-  où \(\dot{p}\) la vitesse viscoplastique équivalente et où
-  \(\sigmaeq\) est la contrainte équivalente au sens de \nom{Von-Mises}.
-  La direction d'écoulement est donnée par la condition de normalité.
-  Une intégration implicite est effectuée. Cette intégration nécessite
-  de préciser la dérivée \(\derivtot{f}{\sigmaeq}\)~;
-  \item l'analyseur \texttt{IsotropicStrainHardeningMisesCreep} qui gère
-  exclusivement les lois de comportement viscoplastique isotrope de
-  la forme~:
-  \[
-  \dot{p} = f\paren{\sigmaeq,p}
-  \]
-  où \(\dot{p}\) la vitesse viscoplastique équivalente et où
-  \(\sigmaeq\) est la contrainte équivalente au sens de \nom{Von-Mises}.
-  La direction d'écoulement est donnée par la condition de normalité.
-  Une intégration implicite est effectuée. Cette intégration nécessite
-  de préciser les dérivées \(\deriv{f}{\sigmaeq}\) et \(\deriv{f}{p}\)~;
-  \item l'analyseur \texttt{IsotropicPlasticMisesFlow} qui gère
-  exclusivement les lois de comportement plastique isotrope de la
-  forme~:
-  \[
-  f(\sigmaeq,p)\leq 0 \quad\quad \dot{p}\geq 0 \quad\quad
-  f(\sigmaeq,p)\,\dot{p} = 0
-  \]
-  où \(p\) est la déformation plastique cumulée et où \(\sigmaeq\) est
-  la contrainte équivalente au sens de \nom{Von-Mises}. La direction
-  d'écoulement est donnée par la condition de normalité. Une intégration
-  implicite est effectuée. Cette intégration nécessite de préciser les
-  dérivées \(\deriv{f}{\sigmaeq}\) et \(\deriv{f}{p}\)~;
-  \item l'analyseur \texttt{MultipleIsotropicMisesFlows} qui gère une
-  combinaison arbitraire d'écoulements des trois types précédents. Les
-  différents écoulements sont supposés non couplés.
-  \item l'analyseur \texttt{DefaultParser} qui permet de traiter tous
-  types de lois de comportements~;
-\end{itemize}
-
-Les analyseurs \texttt{DefaultParser}, \texttt{RungeKutta} et
-\texttt{Implicit} sont dits {\em génériques} car ils permettent de
-traiter n'importe quelle loi de comportement. Par opposition, les autres
-analyseurs sont dits {\em spécifiques}.
-
-\subsection{Tableaux de variables internes, de propriétés matériau et de
-  variables externes}
+\subsubsection{Tableaux de variables internes, de propriétés matériau et
+  de variables externes}
 
 Ce paragraphe décrit des fonctionnalités qui ne sont pas accessibles aux
 analyseurs spécifiques.
@@ -646,32 +849,92 @@ La figure~\ref{2norton-rk} présente l'exemple d'une loi de comportement
 somme de deux écoulements de \textsc{Norton}.
 
 \paragraph{Limitation et possibilité d'amélioration} Pour réduire le
-temps de développement de cette fonctionnalité\footnote{Au final, ce
-  temps de développement a été de l'ordre de la journée.} et surtout
-réduire les sources d'erreurs, nous avons utilisé des classes livrés
-avec TFEL (la librairie mathématique sur laquelle se base \mfront{}) qui
-propose des vecteurs de taille finie sur lesquelles les opérations
-mathématiques usuelles ont été définies. La génération de l'algorithme
-de \textsc{Runge-Kutta} est restée inchangée, ce qui est satisfaisant.
+temps de développement de cette fonctionnalité et surtout réduire les
+sources d'erreurs, nous avons utilisé des classes livrés avec TFEL (la
+librairie mathématique sur laquelle se base \mfront{}) qui propose des
+vecteurs de taille finie sur lesquelles les opérations mathématiques
+usuelles ont été définies~: l'addition d'un vecteur de tenseur est
+possible et optimisée.
+
+Ainsi, La génération des différents algorithmes de \textsc{Runge-Kutta}
+est restée inchangée, ce qui est satisfaisant. 
+
 Cette solution n'est cependant pas adaptée à un très grand nombre de
 variables internes (plus d'une centaine par exemple, ce qui est somme
 tout déjà conséquent) car ces classes de vecteurs ont été conçues pour
 être optimales pour des petites tailles et leurs utilisations alourdit
 le temps de compilation et la taille de la librairie générée. Il s'agit
 d'un phénomène connu sous le nom de \og~code bloat~\fg (littéralement,
-explosion du code). Des tests, réalisés dans le cadre de la thèse de J.
-Souslacroix pour des modèles micromécaniques complexes, ont montré que
-ce phénomène était réel et que la tendance à l'augmentation des temps de
-compilation et de la taille de la librairie était fortement non
-linéaire. Notons enfin que pour des tableaux d'un millier de variables
-internes, le temps de compilation pouvait dépasser la minute et que la
-taille de la librairie générée pouvait dépasser le mégaoctet, ce qui est
-encore relativement raisonnable. Si d'aventure, des lois aussi complexes
-devaient être utilisées régulièrement, il serait intéressant de faire
-évoluer les classes de vecteurs citées pour limiter ces tentatives
-d'optimisation\footnote{Il est d'ailleurs a peu près certain que les
-  techniques utilisées n'ont plus d'intérêt pour des vecteurs de cette
-  taille.}.
+explosion du code). Des tests ont montré que ce phénomène était réel et
+que la tendance à l'augmentation des temps de compilation et de la
+taille de la librairie était fortement non linéaire~: pour des tableaux
+d'un millier de variables internes, le temps de compilation pouvait
+dépasser la minute et que la taille de la librairie générée pouvait
+dépasser le mégaoctet. Si d'aventure, des lois à grand nombre de
+variables internes devaient être utilisées régulièrement, il serait
+intéressant de faire évoluer les classes de vecteurs citées pour limiter
+ces tentatives d'optimisation\footnote{Il est d'ailleurs a peu près
+  certain que les techniques utilisées n'ont plus d'intérêt pour des
+  vecteurs de grande taille.}.
+
+\subsection{Analyseurs disponibles}
+
+\begin{itemize}
+  \item l'analyseur \texttt{Implicit} qui propose la résolution d'une
+  loi de comportement quelconque à l'aide d'une intégration implicite.
+  La méthode de résolution retenue pourra être ou un algorithme de
+  \nom{Newton-Raphson} ou deux versions de l'algorithme de
+  \nom{Broyden}~;
+  \item l'analyseur \texttt{RungeKutta} qui propose la résolution d'une
+  loi de comportement quelconque à l'aide de l'une des méthodes de
+  \nom{Runge-Kutta}. Les méthodes disponibles sont des méthodes d'ordre
+  \(2\) et \(4\) sans contrôle d'erreur et des méthodes correcteur
+  prédicteur de type \(\pfrac{4}{2}\) ou \(\pfrac{5}{4}\) avec
+  adaptation du pas de temps~;
+  \item l'analyseur \texttt{IsotropicMisesCreep} qui gère exclusivement
+  les lois de comportement viscoplastique isotrope de la forme~:
+  \[
+  \dot{p} = f\paren{\sigmaeq}
+  \]
+  où \(\dot{p}\) la vitesse viscoplastique équivalente et où
+  \(\sigmaeq\) est la contrainte équivalente au sens de \nom{Von-Mises}.
+  La direction d'écoulement est donnée par la condition de normalité.
+  Une intégration implicite est effectuée. Cette intégration nécessite
+  de préciser la dérivée \(\derivtot{f}{\sigmaeq}\)~;
+  \item l'analyseur \texttt{IsotropicStrainHardeningMisesCreep} qui gère
+  exclusivement les lois de comportement viscoplastique isotrope de
+  la forme~:
+  \[
+  \dot{p} = f\paren{\sigmaeq,p}
+  \]
+  où \(\dot{p}\) la vitesse viscoplastique équivalente et où
+  \(\sigmaeq\) est la contrainte équivalente au sens de \nom{Von-Mises}.
+  La direction d'écoulement est donnée par la condition de normalité.
+  Une intégration implicite est effectuée. Cette intégration nécessite
+  de préciser les dérivées \(\deriv{f}{\sigmaeq}\) et \(\deriv{f}{p}\)~;
+  \item l'analyseur \texttt{IsotropicPlasticMisesFlow} qui gère
+  exclusivement les lois de comportement plastique isotrope de la
+  forme~:
+  \[
+  f(\sigmaeq,p)\leq 0 \quad\quad \dot{p}\geq 0 \quad\quad
+  f(\sigmaeq,p)\,\dot{p} = 0
+  \]
+  où \(p\) est la déformation plastique cumulée et où \(\sigmaeq\) est
+  la contrainte équivalente au sens de \nom{Von-Mises}. La direction
+  d'écoulement est donnée par la condition de normalité. Une intégration
+  implicite est effectuée. Cette intégration nécessite de préciser les
+  dérivées \(\deriv{f}{\sigmaeq}\) et \(\deriv{f}{p}\)~;
+  \item l'analyseur \texttt{MultipleIsotropicMisesFlows} qui gère une
+  combinaison arbitraire d'écoulements des trois types précédents. Les
+  différents écoulements sont supposés non couplés.
+  \item l'analyseur \texttt{DefaultParser} qui permet de traiter tous
+  types de lois de comportements~;
+\end{itemize}
+
+Les analyseurs \texttt{DefaultParser}, \texttt{RungeKutta} et
+\texttt{Implicit} sont dits {\em génériques} car ils permettent de
+traiter n'importe quelle loi de comportement. Par opposition, les autres
+analyseurs sont dits {\em spécifiques}.
 
 
 \subsection{Traitement des matériaux orthotropes}
@@ -707,32 +970,24 @@ Pour contourner ces difficultés, nous avons introduit différents
 mots-clés allégeant le travail d'implantation des lois orthotropes.
 
 Le premier de ces mots-clés est \texttt{@Orthotropic\-Behaviour}. En
-présence de ce mot-clé, l'interface \texttt{umat} aux lois de
-comportement se charge~:
+présence de ce mot-clé, les interfaces aux lois de comportement se
+charge~:
 \begin{itemize}
-\item de déclarer implicitement les coefficients thermo-élastiques et
+  \item de déclarer implicitement les coefficients thermo-élastiques et
   les coefficients associés aux directions d'ortho\-tropie~;
-\item d'exprimer le tenseur des déformations totales \(\tepsilonto\),
-  l'incrément du tenseur des déformations totales
-  \(\Delta\tepsilonto\) et le tenseur des contraintes \(\tsigma\) en
-  début de pas dans le repère d'orthotropie avant l'appel à la loi de
-  comportement~;
-\item d'exprimer le tenseur des contraintes résultant de l'intégration
+  \item d'exprimer le tenseur des déformations totales \(\tepsilonto\),
+  l'incrément du tenseur des déformations totales \(\Delta\tepsilonto\)
+  et le tenseur des contraintes \(\tsigma\) en début de pas dans le
+  repère d'orthotropie avant l'appel à la loi de comportement~;
+  \item d'exprimer le tenseur des contraintes résultant de l'intégration
   de la loi de comportement dans le repère initial.
 \end{itemize}
-Les différents changements de repère sont assurés par la classe
-\texttt{UMAT\-Rotation\-Matrix}.
 
 Le deuxième de ces mots-clés est
 \texttt{@Require\-Stiff\-ness\-Tensor} qui demande à ce que la matrice
 d'élasticité soit fournie à la loi de comportement. Cette matrice
 d'élasticité sera connue dans \mfront{} sous le nom de variable
-\texttt{D}. Il est important de noter que l'interface \texttt{umat}
-passe cette matrice d'élasticité {\em après} l'appel au constructeur
-de la loi de comportement, ce qui signifie qu'elle ne peut être
-utilisée dans la phase d'initialisation introduite par le mot-clé {\tt
-  Init\-Local\-Vars}. Le calcul de la matrice d'élasticité est décrit
-en annexe~\ref{sec:calcul-de-la}.
+\texttt{D}.
 
 Le troisième de ces mots-clés est
 \texttt{@Require\-Thermal\-Expansion\-Tensor} qui demande à ce que le
@@ -741,40 +996,9 @@ comportement. Ce tenseur sera connu dans \mfront{} sous le nom de
 variable \texttt{A}. Cette variable a été introduite par souci de
 complétude mais est en pratique inutilisée, les dilatations thermiques
 étant généralement calculées en amont de l'étape d'intégration de la
-loi de comportement mécanique. Il est important de noter que
-l'interface \texttt{umat} passe ce tenseur {\em après} l'appel au
-constructeur de la loi de comportement, ce qui signifie qu'il ne peut
-être utilisé dans la phase d'initialisation introduite par le mot-clé
-{\tt Init\-Local\-Variables}. Ce tenseur est calculé par la classe {\tt
-  UMAT\-Compute\-Thermal\-Expansion\-Tensor}.
+loi de comportement mécanique.
 
-\subsubsection{Calcul du tenseur de \nom{Hill}}
-\label{sec:calcul-du-tenseur}
-
-La librairie {\tt TFEL} fournit la fonction {\tt hillTensor}. Cette
-fonction est déclarée dans le fichier d'entête {\tt
-  TFEL/\-Material\-Law/\-Hill.hxx} qu'il est nécessaire d'inclure au
-niveau du fichier \mfront{} en utilisant la directive \mkey{Includes}.
-Cette fonction est paramétrée par la dimension d'espace, notée
-\texttt{N} dans le fichier \mfront{}, et par le type numérique
-utilisé, appelé {\tt real} dans le fichier \mfront{}. Elle prend en
-argument les \(6\) coefficients \(F\), \(G\), \(H\), \(L\), \(M\) et
-\(N\) présentés aux paragraphes \ref{sec:critere-de-nomhill}.
-
-Avec  les  conventions  décrites au  paragraphe~\ref{sec:conv-de-rang}
-et~\ref{sec:trait-des-probl}   et  les   identifications   faites  aux
-paragraphes~\ref{sec:critere-de-nomhill} et~\ref{sec:trait-des-probl},
-cette fonction s'utilise ainsi~:
-\begin{center}
-  \begin{minipage}[htbp]{0.9\linewidth}
-    \shorthandoff{:}
-    \code{
-      \small
-      \input{mfront/hillTensor.tex}
-    }
-    \shorthandon{:}
-  \end{minipage}
-\end{center}
+\subsection{Traitement des dilatations libres}
 
 \subsection{Interface aux lois de comportement}
 
@@ -782,6 +1006,7 @@ cette fonction s'utilise ainsi~:
 
 Les interfaces aux lois de comportement doivent~:
 \begin{itemize}
+  \item dispatch en fonction de la dimension~;
   \item assurer la conversion entre la convention utilisée par le code
   appelant pour représenter les tenseurs et la convention utilisée dans
   \tfel{}~;
@@ -811,6 +1036,23 @@ D'autres rôles pourraient à terme être assignées aux interfaces~:
 \castem{}, est disponible. Pour simplifier l'utilisation des lois de
 comportements générés, \mfront{} génère automatiquement la déclaration
 des lois de comportement générées en instruction gibiane.
+
+Les différents changements de repère sont assurés par la classe
+\texttt{UMAT\-Rotation\-Matrix}.
+
+ Il est important de noter que l'interface \texttt{umat}
+passe cette matrice d'élasticité {\em après} l'appel au constructeur
+de la loi de comportement, ce qui signifie qu'elle ne peut être
+utilisée dans la phase d'initialisation introduite par le mot-clé {\tt
+  Init\-Local\-Vars}. Le calcul de la matrice d'élasticité est décrit
+en annexe~\ref{sec:calcul-de-la}.
+
+Il est important de noter que l'interface \texttt{umat} passe ce tenseur
+{\em après} l'appel au constructeur de la loi de comportement, ce qui
+signifie qu'il ne peut être utilisé dans la phase d'initialisation
+introduite par le mot-clé {\tt Init\-Local\-Variables}. Ce tenseur est
+calculé par la classe {\tt UMAT\-Compute\-Thermal\-Expansion\-Tensor}.
+
 
 \paragraph{Exemple de mise en donnée \castem{}} Dans le cas
 de l'interface \texttt{umat}, \mfront{} génère automatiquement
@@ -1008,6 +1250,9 @@ la déformation inélastique cumulée \(p_{i}\) définie par~:
 \[
 p_{i}=\int_{t_{0}}^{t}\sqrt{\Frac{2}{3}\,\tepsilonan_{i}\colon\tepsilonan_{i}}\,\dtot\,u
 \]
+où \(t_{0}\) désigne un temps où le matériau est non écroui
+(généralement le temps de début de calcul !) et \(t\) le temps
+considéré.
 
 \paragraph{Comportements inélastiques supportés}
 L'écoulement est alors pleinement défini si l'évolution de la variable
@@ -1211,6 +1456,15 @@ En l'absence de charge plastique, ces dérivées s'écrivent~:
 \end{aligned}
 \right.
 \]
+
+\paragraph{Critère d'arrêt}
+
+\subsection{La directive \mkey{FlowRule}}
+
+\subsection{Mise à jour des variables auxiliaires}
+
+\subsubsection{Transformation du code}
+
 \subsection{Comportement viscoplastique du \sic{}}
 
 Nous voulons décrire le comportement viscoplastique du \sic{}
@@ -1312,25 +1566,25 @@ valeur du flux de neutrons rapides \(\phi\) est égal à
 \subsection{Résolution d'un système différentiel par une méthode explicite}
 \label{sec:resol-dun-syst}
 
-\subsubsection{Généralités} Soit à résoudre le système différentiel
-suivant~:
+Soit à résoudre le système différentiel suivant~:
 \begin{equation}
   \label{eq:systeme_diff}
   \dot{Y}=G\paren{Y,t}
 \end{equation}
 où \(G\) est une fonction {\em a priori} non linéaire et que nous
-supposerons {\em a minima} continûment dérivable. La dépendance en
-temps évoquée ici dans la fonction \(G\) désigne en réalité une
-dépendance à la variation de certaines variables {\em externes} qui
-influencent la loi de comportement. Des exemple de telles variables
-externes sont~:
+supposerons {\em a minima} continûment dérivable.
+
+La dépendance en temps évoquée ici dans la fonction \(G\) désigne en
+réalité une dépendance à la variation de certaines variables {\em
+  externes} qui influencent la loi de comportement. Des exemple de
+telles variables externes sont~:
 \begin{minipage}[t]{0.5\linewidth}
-\begin{itemize}
-\item le taux de combustion~;
-\item la taille de grain~;
-\item la densité de fission~;
-\item etc\ldots
-\end{itemize}
+  \begin{itemize}
+    \item le taux de combustion~;
+    \item la taille de grain~;
+    \item la densité de fission~;
+    \item etc\ldots
+  \end{itemize}
 \end{minipage}
 
 \(Y\) un vecteur regroupant les différentes variables internes~:
@@ -1348,7 +1602,13 @@ Cette écriture est {\em symbolique} et chaque terme \(y_{j}\) peut
 représenter une variable interne qui peut être soit un scalaire soit un
 tenseur symétrique d'ordre \(2\).
 
+\paragraph{Les algorithmes de \nom{Runge-Kutta}} 
+
 \subsection{Algorithmes disponibles}
+
+Différents algorithmes de \nom{Runge-Kutta} sont disponibles.
+L'utilisation peut choisir l'algorithme utilisé par la directive
+\mkey{Algorithm}.
 
 \subsubsection{Algorithmes sans contrôle du pas de temps}
 
@@ -1430,6 +1690,16 @@ et une autre d'ordre \(5\)~:
 
 \paragraph{Méthode \castem{}}
 
+\subsubsection{Critère d'arrêt}
+
+(hors méthode \castem{})
+
+\subsection{La direction \mkey{ComputeStress}}
+
+\subsection{La direction \mkey{Derivative}}
+
+\subsection{Mise à jour des variables auxiliaires}
+
 \subsection{Intégration d'une loi d'écoulement viscoplastique
   orthotrope par un algorithme de \nom{Runge-Kutta}}
 
@@ -1484,16 +1754,16 @@ formules données au paragraphe~\ref{sec:critere-de-nomhill}.
 
 Deux remarques peuvent être faites~:
 \begin{itemize}
-\item les intégrations de type \nom{Runge-Kutta} conduisent souvent à
-  des prédictions initiales élevées des contraintes. Nous testons ici
-  si la contrainte de \nom{Hill} est supérieure à \(10^{9}\, MPa\)~:
-  dans ce cas, nous renvoyons la valeur {\tt false} qui entraîne un
-  découpage du pas de temps~;
-\item le tenseur de \nom{Hill} est ici calculé à chaque évaluation du
-  système différentiel. Lorsque celui-ci est constant, il serait
-  préférable de déclarer ce tenseur en tant que variable locale et de
-  l'initialiser une fois pour toute dans un bloc {\tt
-    @Init\-Local\-Variables}.
+  \item les intégrations de type \nom{Runge-Kutta} conduisent souvent à
+  des prédictions initiales élevées des contraintes. Nous testons ici si
+  la contrainte de \nom{Hill} est supérieure à \(10^{9}\, MPa\)~: dans
+  ce cas, nous renvoyons la valeur {\tt false} qui entraîne un découpage
+  du pas de temps~;
+  \item cette implantation tient compte des limitations du code aux
+  éléments finis \castem{} qui ne permet pas d'avoir une définition
+  homogène des directions d'orthotropie quelque soit l'hypothèse de
+  modélisation. Les conventions utilisées ici sont conformes à celles
+  décrites en annexe~\ref{sec:annexe:orthotropie} pour les tubes.
 \end{itemize}
 
 \clearpage
@@ -1518,18 +1788,19 @@ suivant~:
   \dot{Y}=G\paren{Y,t}
 \end{equation}
 où \(G\) est une fonction {\em a priori} non linéaire et que nous
-supposerons {\em a minima} continûment dérivable. La dépendance en
-temps évoquée ici dans la fonction \(G\) désigne en réalité une
-dépendance à la variation de certaines variables {\em externes} qui
-influencent la loi de comportement. Des exemple de telles variables
-externes sont~:
+supposerons {\em a minima} continûment dérivable.
+
+La dépendance en temps évoquée ici dans la fonction \(G\) désigne en
+réalité une dépendance à la variation de certaines variables {\em
+  externes} qui influencent la loi de comportement. Des exemple de
+telles variables externes sont~:
 \begin{minipage}[t]{0.5\linewidth}
-\begin{itemize}
-\item le taux de combustion~;
-\item la taille de grain~;
-\item la densité de fission~;
-\item etc\ldots
-\end{itemize}
+  \begin{itemize}
+    \item le taux de combustion~;
+    \item la taille de grain~;
+    \item la densité de fission~;
+    \item etc\ldots
+  \end{itemize}
 \end{minipage}
 
 \(Y\) un vecteur regroupant les différentes variables internes~:
@@ -1621,34 +1892,6 @@ s'écrivent alors~:
   \end{aligned}
 \end{equation}
 
-La résolution numérique de cette équation consiste à estimer, à partir
-de la valeur \(\debutpas{Y}\) à un instant \(t\), la valeur
-\(\finpas{Y}\) à un instant \(t+\Delta\, t\).
-
-L'estimation la plus simple consiste à remplacer la dérivée
-\(\dot{Y}\) par la différence finie
-\(\Frac{\finpas{Y}-\debutpas{Y}}{\Delta\, t}\), ce qui conduit à~:
-\begin{equation}
-  \label{eq:explicite}
-  \finpas{Y}=\debutpas{Y}+\Delta\,t\,G\paren{\debutpas{Y},t}
-\end{equation}
-Cette estimation, dite {\em explicite}, est connue pour être à la fois
-peu précise et peu robuste.
-
-Une estimation dite {\em implicite} de la solution consiste à introduire
-la solution recherchée dans la fonction \(G\). Deux schémas implicite
-peuvent être proposés~:
-\begin{equation}
-  \label{eq:implicite}
-  \begin{aligned}
-    \finpas{Y}&=\debutpas{Y}+\Delta\,t\,\left[\paren{1-\theta}G\paren{\debutpas{Y},t}
- +\theta\,G\paren{\finpas{Y},t+\Delta\,t}\right] \\
-    \finpas{Y}&=\debutpas{Y}+\Delta\,t\,G\paren{\paren{1-\theta}\debutpas{Y}+\theta\,\finpas{Y},t+\theta\,\Delta
- t}
-  \end{aligned}
-\end{equation}
-où \(\theta\) est un paramètre numérique compris entre \(0\) et \(1\).
-
 La première forme d'équation implicite est rarement utilisée, au moins
 pour l'intégration des lois de comportement mécaniques.
 
@@ -1726,6 +1969,8 @@ de la solution~:
 \]
 Une estimation explicite de la solution peut être donnée dans un bloc
 \mkey{Predictor}.
+
+\subsubsection{Critère d'arrêt}
 
 \subsubsection{Avantages et inconvénients des méthodes implicites} Les
 méthodes implicites sont généralement opposées aux méthodes
@@ -2034,6 +2279,12 @@ jacobienne par la relation suivante~:
 Cette variante est disponible dans \mfront{} sous le nom de
 \texttt{Broyden2}.
 
+\subsection{Amélioration de la robustesse de algorithme}
+
+\subsubsection{Méthode d'accélération de \castem{}}
+
+\subsubsection{Méthode de relaxation}
+
 \subsection{Intégration d'une loi d'écoulement viscoplastique
   orthotrope par un algorithme implicite}
 
@@ -2119,6 +2370,11 @@ du système sont initialisés à la valeur des incréments des variables
 correspondantes ({\tt feel} est initialisé à {\tt deel}) et la matrice
 jacobienne est initialisée à l'identité.
 
+Cette implantation tient compte des limitations du code aux
+éléments finis \castem{} qui ne permet pas d'avoir une définition
+homogène des directions d'orthotropie quelque soit l'hypothèse de
+modélisation. Les conventions utilisées ici sont conformes à celles
+décrites en annexe~\ref{sec:annexe:orthotropie} pour les tubes
 
 \clearpage
 \newpage
@@ -2198,11 +2454,7 @@ locale, propre au modèle.
 \paragraph{Le mot clé \mkey{GlobalParameter}}
 De la même manière, le mot clé \mkey{GlobalParameter}
 permet de déclarer un paramètre dont la valeur sera
-lue dans le fichier d'entrée. Nous déclarons ici
-une variable locale de type \og~tableau de chaînes de
-caractères~\fg (\texttt{TabString}). Cette variable
-servira à donner la liste des domaines sur lesquels
-s'applique le modèle.  
+lue dans le fichier d'entrée.
 
 \paragraph{La méthode \texttt{setDefaultValue}}
 La méthode {\tt setDefaultValue} permet de préciser
@@ -2293,7 +2545,7 @@ utilise, dépend {\em a priori} de la dimension~: un tenseur a \(3\)
 composantes en \(1D\), \(4\) composantes en \(2D\) et \(6\)
 composantes en \(3D\).
 
-Étant de petite taille, La zone mémoire associée peut être initialisée
+Étant de petite taille, la zone mémoire associée peut être initialisée
 sur la pile (nommée \texttt{stack} en anglais), ou sur le tas (nommé
 \texttt{heap}). L'allocation sur le tas est coûteuse et ne peut être
 utilisée pour des petits calculs, tels que ceux utilisés pour
@@ -2582,7 +2834,7 @@ dernier qui peuvent nécessiter l'emploi de parenthèses.
 
 \clearpage
 \newpage
-\section{Appel de lois externes dans \castem{}}
+\section{Appel de propriétés matériaux externes dans \castem{}}
 
 Pour les besoins du projet \pleiades{}, nous avons modifié le code aux
 éléments finis \castem{} pour pouvoir appeler des propriétés matériau
@@ -2607,11 +2859,6 @@ Ces modifications ont pour objet de pouvoir définir une propriété de
 matériau à partir d'une table. La syntaxe utilisée est décrite au
 paragraphe suivant.
 
-\paragraph{Interface vers les librairies externes} Une fois les fichiers
-{\tt varinu.eso} et {\tt excha1.eso} modifiés, il est nécessaire
-d'écrire le code permettant l'interface vers les bibliothèques externes.
-Ce code est implanté dans le fichier {\tt loiPleiades.cpp}.
-
 \paragraph{Portabilité de la solution proposée} L'appel aux fonctions
 externes se fait par l'appel aux fonctions {\tt dlopen}, {\tt dlsym} et
 {\tt dlclose} déclarées dans le fichier d'entête {\tt dlfcn.h}. Ces
@@ -2620,8 +2867,8 @@ fonctions ont été définies dans la norme POSIX\footnote{POSIX est
   norme a pour objet d'établir une interface de programmation supportée
   par l'ensemble des systèmes d'exploitation dérivés d'UNIX.} et sont de
 ce fait utilisables sur la plupart des systèmes dérivés d'UNIX actuels.
-Une extension du code compatible avec le système MS Windows est
-envisagée.
+Sous \windows{}, les fonctions système {\tt Load\-Library} et {\tt
+  Get\-Proc\-Address} sont utilisées.
 
 Nous faisons également trois hypothèses qui peuvent limiter la portabilité de la solution
 proposée~:
@@ -2660,10 +2907,6 @@ domaine géométrique. {\it A priori}, ce coût est faible, sauf pour des
 domaines petits. Nous avons prévu la possibilité de \og~pré-lier~\fg la
 bibliothèque \castem{} avec une bibliothèque de propriétés de matériau,
 ce qui éviterait le chargement et le déchargement de cette bibliothèque.
-Ceci semble intéressant pour les propriétés de matériau disponibles dans
-{\tt Pléiades}. Ainsi, le coût éventuel de l'utilisation de notre
-solution ne se pose que pour les propriétés définis en dehors de la
-plateforme.
 
 \subsection{Utilisation dans \castem{}}
 \label{sec:util-dans-cast}
@@ -3525,6 +3768,39 @@ S_{13}\,\left(S_{12}\,S_{23}-S_{13}\,S_{22}\right)
     l'interface \umat{} en $1D$}.
   \label{tab:PROPS3D}
 \end{table}
+
+\clearpage
+\newpage
+\section{Fonctions utiles}
+
+\subsection{Calcul du tenseur de \nom{Hill}}
+\label{sec:calcul-du-tenseur}
+
+La librairie {\tt TFEL} fournit la fonction {\tt hillTensor}. Cette
+fonction est déclarée dans le fichier d'entête {\tt
+  TFEL/\-Material\-Law/\-Hill.hxx} qu'il est nécessaire d'inclure au
+niveau du fichier \mfront{} en utilisant la directive \mkey{Includes}.
+Cette fonction est paramétrée par la dimension d'espace, notée
+\texttt{N} dans le fichier \mfront{}, et par le type numérique
+utilisé, appelé {\tt real} dans le fichier \mfront{}. Elle prend en
+argument les \(6\) coefficients \(F\), \(G\), \(H\), \(L\), \(M\) et
+\(N\) présentés aux paragraphes \ref{sec:critere-de-nomhill}.
+
+Avec  les  conventions  décrites au  paragraphe~\ref{sec:conv-de-rang}
+et~\ref{sec:trait-des-probl}   et  les   identifications   faites  aux
+paragraphes~\ref{sec:critere-de-nomhill} et~\ref{sec:trait-des-probl},
+cette fonction s'utilise ainsi~:
+\begin{center}
+  \begin{minipage}[htbp]{0.9\linewidth}
+    \shorthandoff{:}
+    \code{
+      \small
+      \input{mfront/hillTensor.tex}
+    }
+    \shorthandon{:}
+  \end{minipage}
+\end{center}
+
 
 
 \clearpage
