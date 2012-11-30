@@ -2209,19 +2209,31 @@ mesure l'erreur d'intégration et est comparée à un certain critère
 \(\varepsilon\)~:
 \begin{equation}
   \label{eq:RK:epsilon}
-  \Frac{1}{\displaystyle\sum_{i=1}^{N}N_{i}}\displaystyle\sum_{i=1}^{N}\left|
-  y_{i}^{(a)}-y_{i}^{(b)}\right|<\varepsilon
+  \Frac{1}{\displaystyle\sum_{i=1}^{N}N_{y_{i}}}\displaystyle\sum_{i=1}^{N}\Frac{\left|
+ y_{i}^{(a)}-y_{i}^{(b)}\right|}{E_{y_{i}}}<\varepsilon
 \end{equation}
 où~:
 \begin{minipage}[t]{0.9\linewidth}
   \begin{itemize}
     \item \(N\) est le nombre de variables internes~;
-    \item \(N_{i}\) le nombre de composantes de la variable interne
+    \item \(N_{y_{i}}\) le nombre de composantes de la variable interne
     \(y_{i}\)~;
     \item \(y_{i}^{(a)}\) est l'estimation de la variable interne en fin
     de pas de temps obtenue par la première méthode~;
     \item \(y_{i}^{(b)}\) est l'estimation de la variable interne en fin
-    de pas de temps obtenue par la seconde méthode.
+    de pas de temps obtenue par la seconde méthode~;
+    \item \(E_{y_{i}}\) est un paramètre de normalisation associé à la
+    variable \(E_{y_{i}}\), si l'utilisateur en a définit une par la
+    méthode \texttt{set\-Error\-Norma\-lisa\-tion\-Factor}. Ce paramètre
+    permet de normaliser toutes les variables à quelque chose de l'ordre
+    des déformations. Par exemple, si la variable \(y_{i}\) est de
+    l'ordre des contraintes, il est possible de la normaliser ainsi~:
+    \begin{center}
+      \texttt{yi.setErrorNormalisationFactor(young);}
+    \end{center}
+    L'argument de la méthode
+    \texttt{set\-Error\-Norma\-lisa\-tion\-Factor} peut être soit un
+    valeur scalaire soit une propriété matériau.
   \end{itemize}
 \end{minipage}
 
