@@ -37,7 +37,6 @@ namespace mfront{
     this->registerVariable("t");
     this->registerVariable("dt_");
     this->registerVariable("T_");
-    this->registerVariable("dT_");
     this->registerVariable("eto_");
     this->registerVariable("deto_");
     this->reserveName("corrector");
@@ -48,7 +47,6 @@ namespace mfront{
     this->localVarsHolder.push_back(VarHandler("StrainStensor","eto_",1u,0u));
     this->localVarsHolder.push_back(VarHandler("StrainRateStensor","deto_",1u,0u));
     this->localVarsHolder.push_back(VarHandler("temperature","T_",1u,0u));
-    this->localVarsHolder.push_back(VarHandler("real","dT_",1u,0u));
     this->stateVarsHolder.push_back(VarHandler("StrainStensor","eel",1u,0u));
     this->glossaryNames.insert(MVType("eel","ElasticStrain"));
     // CallBacks
@@ -418,9 +416,9 @@ namespace mfront{
        (this->algorithm!="RungeKutta5/4")){
       parserInitLocalVars += "this->computeStress();\n";
     }
+    parserInitLocalVars += this->initLocalVars;
     parserInitLocalVars += "this->deto_ = (this->deto)/(this->dt);\n";
-    parserInitLocalVars += "this->dT_   = (this->dT)/(this->dt);\n";
-    this->initLocalVars = parserInitLocalVars + this->initLocalVars;
+    this->initLocalVars = parserInitLocalVars;
   }
 
   void 

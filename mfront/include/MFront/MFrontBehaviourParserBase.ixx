@@ -40,8 +40,8 @@ namespace mfront{
     this->registerNewCallBack("@Coef",&Child::treatCoef);
     this->registerNewCallBack("@MaterialProperty",&Child::treatCoef);
     this->registerNewCallBack("@LocalVar",&Child::treatLocalVar);
-    this->registerNewCallBack("@Parameter",&Child::treatParameter);
     this->registerNewCallBack("@LocalVariable",&Child::treatLocalVar);
+    this->registerNewCallBack("@Parameter",&Child::treatParameter);
     this->registerNewCallBack("@StateVar",&Child::treatStateVariables);
     this->registerNewCallBack("@StateVariable",&Child::treatStateVariables);
     this->registerNewCallBack("@AuxiliaryStateVar",

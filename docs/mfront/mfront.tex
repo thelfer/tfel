@@ -1,12 +1,15 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% File      : res
+% File      : mfront.tex
 % Author    : th202608@pleiades068.intra.cea.fr
 % Date      : 15 oct. 2012
 % Directory : /home/th202608/codes/tfel/tests/Broyden/
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\documentclass[rectoverso,pleiades,pstricks,leqno,anti,projet]{texmf/note_technique_2010}
+\documentclass[rectoverso,pleiades,pstricks,leqno,anti]{texmf/note_technique_2010}
 
+\usepackage{draftwatermark}
+\SetWatermarkText{Brouillon}
+\SetWatermarkLightness{0.5}
 %\usepackage[dvips]{graphicx}
 %\usepackage[dvips,breaklinks]{hyperref}
 
@@ -40,7 +43,11 @@
 \newcommand{\sirius}{\texttt{sirius}}
 \newcommand{\fortran}{\texttt{fortran}}
 
+\newcommand{\doxygen}{\href{http://www.stack.nl/~dimitri/doxygen/}{\texttt{doxygen}}}
+
 \newcommand{\mkey}[1]{\index{mkeys}{#1@\symbol{64}#1}{\texttt{@#1}}}
+\newcommand{\mkeyb}[2]{\index{mkeys}{#1@\symbol{64}#1}{\texttt{@#2}}}
+\newcommand{\moption}[1]{\texttt{-{}-#1}}
 
 %c from texinfo.tex
 \def\ifmonospace{\ifdim\fontdimen3\font=0pt }
@@ -134,14 +141,28 @@ les applications \pleiades{} via l'interface
 \newpage
 \section{Présentation générale}
 
-\mfront{} est un générateur de code~: partant d'un fichier contenant les
-informations physiques et numériques utiles, \mfront{} génère un code
-source \cpp{}.
+\mfront{} est un générateur de code dédiés aux connaissances matériau~:
+partant d'un fichier contenant les informations physiques et numériques
+utiles, \mfront{} génère un ou plusieurs fichiers \cpp{} et peut
+éventuellement gérer leurs compilations.
 
 Le fichier \mfront{} présente un certain nombre de directives
 introduites par une arobase @.
 
+Nous commençons par décrire les notions d'analyseur
+(paragraphe~\ref{sec:mfront:parser}) et d'interface
+(paragraphe~\ref{sec:mfront:interface}), puis son utilisation
+(paragraphe~\ref{sec:mfront:using}). Nous abordons ensuite différents
+points spécifiques~:
+\begin{itemize}
+  \item la notion des noms de glossaire~;
+  \item l'utilisation des librairies externes~;
+  \item la gestion de la compilation~;
+  \item les directives communes à tous les analyseurs.
+\end{itemize}
+
 \subsection{Notion d'analyseur}
+\label{sec:mfront:parser}
 
 Les connaissances matériaux supportées par \mfront{} sont classées en
 trois catégories~:
@@ -162,7 +183,7 @@ Dans la version présentée de \mfront{}, les analyseurs suivants sont
 disponibles~:
 \begin{itemize}
   \item l'analyseur {\tt Material\-Law} qui traite de propriétés
-  matériau. La section~\ref{MaterialProperty} lui est consacrée~;
+  matériau. La section~\ref{sec:MaterialProperty} lui est consacrée~;
   \item l'analyseur \texttt{DefaultParser} qui permet de traiter tous
   types de lois de comportements~;
   \item l'analyseur \texttt{RungeKutta} qui propose la résolution d'une
@@ -221,6 +242,7 @@ La directive \mkey{Parser}, traditionnellement placé en tête du fichier
 décrire quel analyseur utilisé.
 
 \subsection{Notion d'interface}
+\label{sec:mfront:interface}
 
 Les connaissances matériau ont été écrites pour être indépendantes du
 code cible et favorisé leurs réutilisation dans des contextes logiciels
@@ -260,7 +282,123 @@ démarrage de \mfront{} \footnote{Ce mécanisme est utilisé par exemple
 Ce mécanisme permet donc de créer des interfaces sans modifier
 \mfront{}.
 
+\subsection{Utilisation de \mfront{}}
+\label{sec:mfront:using}
+
+\mfront{} s'utilise en ligne de commande ainsi~:
+\begin{center}
+{\tt mfront [options] fichier1.mfront fichier2.mfront \ldots}
+\end{center}
+
+Les fichiers générés se trouvent généralement dans un sous-répertoire
+nommé {\tt src} pour les fichiers source et {\tt include} pour les
+fichiers d'entête.
+
+Cette commande conduit à la génération~:
+\begin{itemize}
+  \item de fichiers sources~;
+  \item de fichiers de dépendances~;
+  \item de fichiers de cibles.
+\end{itemize}
+Ces derniers fichiers permettent d'utiliser \mfront{} de manière
+séquentielle. \mfront{} peut d'abord être appelé sur plusieurs fichiers
+pour générer les fichiers sources puis lancer la compilation des
+librairies ainsi~:
+\begin{center}
+  \begin{minipage}{0.6\textwidth}
+    \textcolor{ceagrisclair}{\tt \# Génération des fichiers sources}\\
+    {\tt mfront --interface=?? fichier1.mfront} \\
+    {\tt mfront --interface=?? fichier2.mfront} \\
+    {\tt \ldots} \\
+    \textcolor{ceagrisclair}{\tt \# Génération d'un fichier Makefile et lancement de la compilation}\\
+    {\tt mfront --obuild} \\
+  \end{minipage}
+\end{center}
+
+\paragraph{Notes sur la génération des fichiers en parallèle} La
+génération de fichier \mfront{} en parallèle est possible. Pour cela, un
+verrou global est posé au moment de l'écriture des fichiers afin que les
+différents processus \mfront{} ne modifient pas les mêmes fichiers en
+même temps (fichiers cibles et fichiers de dépendances notamment).
+
+\subsubsection{Options de la ligne de commande}
+
+\paragraph{L'option \moption{help}} L'option \moption{help} liste
+l'ensemble des options disponibles et quitte le programme.
+
+\paragraph{L'option \moption{list-parsers}} L'option
+\moption{list-parsers} affiche la liste des analyseurs disponibles et
+quitte le programme.
+
+\paragraph{L'option \moption{version}} L'option \moption{version}
+affiche la version de \mfront{} utilisée et quitte le programme.
+
+\paragraph{L'option \moption{interface}} L'option \moption{interface}
+spécifie la ou les interfaces à utiliser pour générer les fichiers
+sources. Les différentes interfaces sont séparées par une virgule.
+
+\paragraph{L'option \moption{verbose}} L'option \moption{verbose}
+demande l'affiche de messages supplémentaires.
+
+\paragraph{L'option \moption{warning}} L'option \moption{warning}
+demande l'affiche de messages d'avertissement supplémentaires.
+
+\paragraph{L'option \moption{debug}} L'option \moption{debug} modifie la
+génération des fichiers de compilation et son effet dépend de
+l'analyseur choisi. Cette option désactive aussi l'introduction de
+directives \texttt{\#line} qui permettent dans un mode de fonctionnement
+normal de repérer la position des erreurs dans le fichier \mfront{}
+d'origine.
+
+\paragraph{L'option \moption{make}} L'option \moption{make} conduit à la
+génération d'un fichier {\tt Makefile.mfront}.
+
+\paragraph{L'option \moption{omake}} L'option \moption{omake} conduit à la
+génération d'un fichier {\tt Makefile.mfront} avec des directives de
+compilation optimisées.
+
+Les options de compilation optimisées sont données par le résultat de la
+commande~
+\begin{center}
+  {\tt tfel-config -{}-oflags}
+\end{center}
+
+\paragraph{L'option \moption{clean}} L'option \moption{clean} conduit à la
+génération d'un fichier {\tt Makefile.mfront} et lance la commande~:
+\begin{center}
+  {\tt make -C src -f Makefile.mfront clean}
+\end{center}
+
+\paragraph{L'option \moption{build}} L'option \moption{build} conduit à la
+génération d'un fichier {\tt Makefile.mfront} et lance la commande~:
+\begin{center}
+  {\tt make -C src -f Makefile.mfront}
+\end{center}
+
+\paragraph{L'option \moption{obuild}} L'option \moption{obuild} conduit à la
+génération d'un fichier {\tt Makefile.mfront} avec des directives de
+compilation optimisées et lance la commande~:
+\begin{center}
+  {\tt make -C src -f Makefile.mfront}
+\end{center}
+
+\paragraph{L'option \moption{nodeps}} L'option \moption{nodeps} empêche
+l'inclusion des règle de dépendances dans le fichier {\tt
+  Makefile.mfront} généré. Cette option a été introduite pour éviter
+certains problèmes sous \windows{}.
+
+%--silent-build                   : active or desactivate silent build
+%--nomelt                         : don't melt librairies sources
+%--otarget                        : generate MakeFile with optimized compilations flags and build the specified target
+%--target, -t                     : generate MakeFile and build the specified target
+%--win32                          : specify that the target system is win32
+
 \subsection{Noms de glossaire}
+
+Pour l'intégration des fichiers générés dans les applications de la
+plateforme \pleiades{}, il est possible d'affecter aux variables
+d'entrée et de sorties des noms de glossaire. Ces noms de glossaire
+servent à assurer le bon échange d'information.
 
 \subsection{Utilisation de librairies externes}
 
@@ -268,12 +406,6 @@ Les différents connaissances matériau sont écrites en \cpp{}. L'un des
 intérêts de ce choix est de permettre l'utilisation de librairies
 écrites dans des langages divers (\cpp{}, \texttt{c}, \texttt{fortran},
 \ldots).
-
-L'utilisation de ces librairies externes est décrites dans le paragraphe
-suivant. Un cas particulier, celui des propriétés matériau écrites en
-\mfront{} est ensuite traité.
-
-\subsubsection{Librairies écrites dans d'autres langages}
 
 L'utilisation de librairies extraites dans d'autres langages se fait
 essentiellement à l'aide de deux mots clés~:
@@ -293,7 +425,7 @@ essentiellement à l'aide de deux mots clés~:
   l'utilisation de caractères spéciaux.
 \end{itemize}
 
-\subsubsection{Appel aux propriétés matériau}
+\subsection{Appel aux propriétés matériau écrites en \mfront{}}
 
 Les propriétés matériau jouent un rôle particulier car elles n'ont de
 sens que relativement à une loi de comportement ou à un modèle. Par
@@ -311,7 +443,49 @@ il est naturel que les différentes connaissances matériau puissent
 utiliser des propriétés matériau définies par ailleurs.
 
 Nous avons introduit la directive \mkey{MaterialLaw} pour traiter ces
-cas.
+cas. Cette directive est suivie d'un tableau de chaînes de caractères
+désignant des fichiers \mfront{} et d'un point virgule.
+
+Les fichiers désignés sont analysés par \mfront{} avec deux effets~:
+\begin{itemize}
+  \item ces fichiers vont être analysés par une interface spéciale
+  nommée \mfront{}\footnote{L'utilisation de cette interface évite
+    d'éventuels conflits de nom.} et les fichiers générés vont être
+  ajoutés à la liste des fichiers à compiler (voir
+  paragraphe~\ref{sec:mfront:compilation})~;
+  \item l'interface \mfront{} rend disponibles des fonctions dont le nom
+  est donné par~:
+  \begin{itemize}
+    \item le nom du matériau, suivi du caractère tiret-bas (underscore)
+    \texttt{\textunderscore} et par le nom de la propriété, donné par la
+    directive \mkey{Law}, si le nom du matériau est est définit par la
+    directive \mkey{Material}~;
+    \item le nom de la propriété, donné par la directive \mkey{Law}, si
+    le nom du matériau n'est pas défini.
+  \end{itemize}
+\end{itemize}
+
+Ces différentes fonctions sont accessibles dans les différents blocs de
+code définis par l'utilisateur. Les paramètres de ces fonctions sont
+ceux déclarés dans le fichier par la directive \mkey{Input} et doivent
+être fournis dans l'ordre de déclaration.
+
+\begin{figure}[htbp]
+  \centering
+  \code{{\ttfamily \input{mfront/MaterialLaw.tex}}}  
+  \caption{Exemple d'utilisation de la directive \mkey{MaterialLaw}.}
+  \label{fig:mfront_materiallaw}
+\end{figure}
+
+Un exemple d'utilisation de la directive \mkey{MaterialLaw} est donné en
+figure~\ref{fig:mfront_materiallaw}. Deux propriétés matériau externes
+sont déclarées et utilisées ensuite pour initialiser des variables dans
+un bloc commençant par la directive \mkey{InitLocalVariables}.
+
+\paragraph{Note} Il est important de noter que le nom du fichier
+\mfront{} n'intervient pas dans le nom des fonctions générés. Il est
+cependant souhaitable et pratique de garder une certaine cohérence entre
+le nom du fichier et le nom du fichier généré.
 
 \subsection{Directives communes à l'ensemble des analyseurs}
 
@@ -378,9 +552,15 @@ doubles quotes) contenant des instructions à fournir à l'éditeurs de
 liens. L'utilisation des doubles quotes permet l'utilisation de
 caractères spéciaux.
 
-
-
 \subsection{Gestion de la compilation}
+\label{sec:mfront:compilation}
+
+En pas de générer des fichiers source, \mfront{} peut gérer leur
+compilation en librairie.
+
+\subsubsection{Génération de fichiers Makefile}
+
+\subsubsection{Lancement du processus de compilation}
 
 \clearpage
 \newpage
@@ -399,18 +579,89 @@ liste de ces variables d'état et la relation fonctionnelle qui permet
 de la calculer, cette relation fonctionnelle étant souvent une
 corrélation basée sur des mesures expérimentales.
 
-\subsection{Catégorie des variables}
+Le nom de la loi est donné par la directive \mkey{Law}.
 
-\paragraph{Bornes} Les variables d'états peuvent posséder des bornes
-intrinsèques~: une température ne peut être négative, une porosité
-supérieure à \(1\). Ces bornes intrinsèques sont dénommées dans la
-suite \og~bornes physiques~\fg. Par ailleurs, la corrélation définissant
-la propriété matériau a souvent été établie sur certain domaine~:
-les limites de ce domaine expérimental seront dénommées
-\og~bornes de validité~\fg (de la corrélation). 
+Le calcul de la propriété est introduit par la directive \mkey{Function}.
+
+\subsection{Catégories des variables}
+
+Différents types de variables sont manipulés dans les fichiers de
+propriétés matériau.
+
+\subsubsection{Variable de sortie}
+
+La variable de sortie est par défaut nommée \texttt{res}. Ce nom peut
+être changé par la directive \mkey{Output}.
+
+\subsubsection{Variables d'entrée}
+
+Les variables d'entrée des propriétés matériau sont définies par la
+directive \mkey{Input}.
+
+Ces variables d'entrée peuvent utiliser la méthode {\tt
+  set\-Glossary\-Name} pour définir son nom de glossaire. Si aucun nom
+de glossaire adapté n'existe, ces variables peuvent utiliser la méthode
+{\tt set\-Entry\-Name} pour être utilisable dans l'architecture
+\pleiades{}.
+
+Nous verrons au paragraphe~\ref{sec:mfront:properties:bounds} comment
+affecter des bornes aux variables d'entrée.
+
+\subsubsection{Variables statiques}
+
+La directive \mkey{StaticVariable}
+
+\subsubsection{Paramètres}
+
+La directive \mkey{Parameter}
+
+\subsubsection{Constantes}
+
+La directive \mkey{Constant}
+
+\subsection{Gestion des bornes}
+\label{sec:mfront:properties:bounds}
+
+Les variables d'états peuvent posséder des bornes intrinsèques~: une
+température ne peut être négative, une porosité supérieure à \(1\). Ces
+bornes intrinsèques sont dénommées dans la suite \og~bornes
+physiques~\fg. Par ailleurs, la corrélation définissant la propriété
+matériau a souvent été établie sur certain domaine~: les limites de ce
+domaine expérimental seront dénommées \og~bornes de validité~\fg (de la
+corrélation).
+
+\paragraph{Le mot clé \mkey2{PhysicalBounds}{Physical\-Bounds}} Le mot
+clé \mkey2{PhysicalBounds}{Physical\-Bounds} définit les bornes de
+validité des différents variables d'entrée. Le dépassement d'une de ces
+bornes doit arrêtés le calcul.
+
+\paragraph{Le mot clé \mkey{Bounds}} Le mot clé \mkey{Bounds} définit
+les bornes de validité expérimentale de la propriété. Les cas de
+dépassement de ces bornes peuvent être d'origine diverse, et peuvent
+parfois être acceptable. La plupart des interface permettent de
+paramétrer leur réaction en cas de dépassement des bornes de validité.
+Trois politiques sont généralement retenues~:
+\begin{itemize}
+  \item \texttt{STRICT}, qui conduit à signaler une erreur au code
+  appelant~;
+  \item \texttt{WARNING}, qui conduit à afficher un message
+  d'avertissement sans génération d'erreur~;
+  \item \texttt{NONE}, qui ignore le dépassement~;
+\end{itemize}
+
+Par défaut, la politique \texttt{NONE} est utilisée. La manière de
+déclarer ces politiques dépend de l'interface~:
+\begin{itemize}
+  \item l'interface {\texttt{c++}} lit la valeur de variable
+  d'environnement \texttt{OUT\_\-OF\_\-BOUND\_\-POLICY}~;
+  \item l'interface {\texttt{castem}} lit la valeur de variable
+  d'environnement \texttt{CASTEM\_\-OUT\_\-OF\_\-BOUND\_\-POLICY}~;
+  \item l'interface {\texttt{python}} lit la valeur de variable
+  d'environnement \texttt{PYTHON\_\-OUT\_\-OF\_\-BOUND\_\-POLICY}~;
+\end{itemize}
 
 \subsection{Interfaces disponibles} Les interfaces disponibles par
-défaut pour cet analyseur sont~:
+défaut pour les propriétés matériaux sont~:
 \begin{itemize}
   \item l'interface \texttt{c} pour une utilisation dans des codes
   écrits dans ce language~;
@@ -477,6 +728,18 @@ d'utiliser les bibliothèques générées dans des contextes
 distincts. Ainsi, l'annexe~\ref{sec:inter-avec-excel} montre
 comment l'interface \castem{} peut être utilisée pour interagir avec
 \excel{}.
+
+\subsubsection{L'interface \texttt{c}}
+
+\subsubsection{L'interface \texttt{castem}}
+
+\subsubsection{L'interface \texttt{castem}}
+
+\subsection{Mots clés spécifiques}
+
+La directive \mkey{Namespaces}
+
+La directive \mkey{UseTemplate}
 
 \subsection{Exemple du module d'\nom{Young} du \sic{}}
 \label{sec:module-dnomyoung-du}
@@ -556,40 +819,19 @@ inacceptables). Pour ces raisons, la plupart des interfaces
 signaleront une erreur au code appelant, conduisant généralement à son
 arrêt.
 
-\paragraph{Le mot clé \mkey{Bounds}} Le mot clé \mkey{Bounds},
-non utilisé ici, définit les bornes de validité de la corrélation. Les
-cas de dépassement de ces bornes peuvent être d'origine diverse, et
-peuvent parfois être acceptable.  La plupart des interface permettent
-de paramétrer leur réaction en cas de dépassement des bornes de
-validité. Trois politiques sont généralement retenues~:
-\begin{itemize}
-\item \texttt{STRICT}, qui conduit à signaler une erreur au code
-appelant~;
-\item \texttt{WARNING}, qui conduit à afficher un message
-d'avertissement sans génération d'erreur~;
-\item \texttt{NONE}, qui ignore le dépassement~;
-\end{itemize} Par défaut, la politique \texttt{NONE} est utilisée. La
-manière de déclarer ces politiques dépend de l'interface~:
-\begin{itemize}
-\item l'interface {\texttt{c++}} lit la valeur de variable
-d'environnement \texttt{OUT\_\-OF\_\-BOUND\_\-POLICY}~;
-\item l'interface {\texttt{castem}} lit la valeur de variable
-d'environnement \texttt{CASTEM\_\-OUT\_\-OF\_\-BOUND\_\-POLICY}~;
-\item l'interface {\texttt{python}} lit la valeur de variable
-d'environnement \texttt{PYTHON\_\-OUT\_\-OF\_\-BOUND\_\-POLICY}~;
-\end{itemize}
-
 \paragraph{Le mot clé \mkey{Function}} Le mot clé
 \mkey{Function} permet de définir le code (en \texttt{c++}) utilisé
 pour définir la propriété matériau. Le fait que le code soit en fait
 du \texttt{c++} est ici anecdotique tant le code est proche de
 l'équation~\eqref{eq:youngmodulussnead}.
 
-\subsection{Exemple d'interpolation}
+\subsection{Exemple de propriétés dont seuls des mesures sont connues}
+
+
 
 \clearpage
 \newpage
-\section{Analyseurs dédiés aux lois de comportement mécanique}
+\section{Introduction aux analyseurs dédiés aux lois de comportement mécanique}
 
 Les lois de comportement sont intrinsèquement plus complexes que les
 propriétés matériau, en partie car la physique traitée est riche
@@ -836,10 +1078,8 @@ Il est alors possible d'écrire des boucles sur les variables internes
 constituant le tableau pour condenser l'écriture des lois.
 
 \begin{figure}
-  {\scriptsize
-    \include{Images/2norton-rk}
-  }
-  \caption{Exemple de loi de comportement mécanique utilisant des
+  \code{\scriptsize \include{Images/2norton-rk} }
+  \caption{Extrait d'un fichier \mfront{} de loi de comportement mécanique utilisant des
     tableaux de propriétés matériau et des tableaux de variables
     internes.}
   \label{2norton-rk}
@@ -879,18 +1119,11 @@ ces tentatives d'optimisation\footnote{Il est d'ailleurs a peu près
 
 \subsection{Analyseurs disponibles}
 
+Plusieurs analyseurs dédiés aux lois de comportement sont actuellement
+disponibles~:
 \begin{itemize}
-  \item l'analyseur \texttt{Implicit} qui propose la résolution d'une
-  loi de comportement quelconque à l'aide d'une intégration implicite.
-  La méthode de résolution retenue pourra être ou un algorithme de
-  \nom{Newton-Raphson} ou deux versions de l'algorithme de
-  \nom{Broyden}~;
-  \item l'analyseur \texttt{RungeKutta} qui propose la résolution d'une
-  loi de comportement quelconque à l'aide de l'une des méthodes de
-  \nom{Runge-Kutta}. Les méthodes disponibles sont des méthodes d'ordre
-  \(2\) et \(4\) sans contrôle d'erreur et des méthodes correcteur
-  prédicteur de type \(\pfrac{4}{2}\) ou \(\pfrac{5}{4}\) avec
-  adaptation du pas de temps~;
+  \item l'analyseur \texttt{DefaultParser} qui permet de traiter tous
+  types de lois de comportements~;
   \item l'analyseur \texttt{IsotropicMisesCreep} qui gère exclusivement
   les lois de comportement viscoplastique isotrope de la forme~:
   \[
@@ -927,51 +1160,82 @@ ces tentatives d'optimisation\footnote{Il est d'ailleurs a peu près
   \item l'analyseur \texttt{MultipleIsotropicMisesFlows} qui gère une
   combinaison arbitraire d'écoulements des trois types précédents. Les
   différents écoulements sont supposés non couplés.
-  \item l'analyseur \texttt{DefaultParser} qui permet de traiter tous
-  types de lois de comportements~;
+  \item l'analyseur \texttt{RungeKutta} qui propose la résolution d'une
+  loi de comportement quelconque à l'aide de l'une des méthodes de
+  \nom{Runge-Kutta}. Les méthodes disponibles sont des méthodes d'ordre
+  \(2\) et \(4\) sans contrôle d'erreur et des méthodes correcteur
+  prédicteur de type \(\pfrac{4}{2}\) ou \(\pfrac{5}{4}\) avec
+  adaptation du pas de temps~;
+  \item l'analyseur \texttt{Implicit} qui propose la résolution d'une
+  loi de comportement quelconque à l'aide d'une intégration implicite.
+  La méthode de résolution retenue pourra être ou un algorithme de
+  \nom{Newton-Raphson} ou deux versions de l'algorithme de
+  \nom{Broyden}~;
 \end{itemize}
+
+Ces différents analyseurs sont décrits dans les sections suivantes.
 
 Les analyseurs \texttt{DefaultParser}, \texttt{RungeKutta} et
 \texttt{Implicit} sont dits {\em génériques} car ils permettent de
 traiter n'importe quelle loi de comportement. Par opposition, les autres
 analyseurs sont dits {\em spécifiques}.
 
+\paragraph{Conseils sur le choix de l'analyseur à utiliser} Nous pouvons
+donner quelques conseils généraux sur sur le choix de l'analyseur à
+utiliser~:
+\begin{itemize}
+  \item si un intégrateur spécifique existe, il vaut mieux l'utiliser~:
+  ils utilisent un algorithme optimisé et robuste et le nombre
+  d'informations à fournir est réduit.
+  \item si l'on doit recourir un intégrateur générique, il faut mieux
+  préférer l'intégration implicite, surtout s'il s'agit de lois
+  indépendantes du temps (plasticité, endommagement)~:
+  \begin{itemize}
+    \item l'équation différentielle pour la plasticité ou
+    l'endommagement doit être remplacé par la nullité du critère en fin
+    de pas de temps~;
+    \item les temps de calculs sont souvent {\em très} avantageux~;
+  \end{itemize}
+  \item il ne faut utiliser l'analyseur \nom{Runge-Kutta} que~:
+  \begin{itemize}
+    \item si {\em vraiment rien d'autre} n'est possible (impossibilité
+    de calculer la jacobienne)
+    \item si le temps de développement est limité~;
+    \item si le temps d'intégration de la loi de comportement ne pose
+    pas de problème de performance.
+  \end{itemize}
+\end{itemize}
+
+L'analyseur \texttt{DefaultParser} n'est utile que dans ces cas très
+particuliers, par exemple pour des lois dépendant explicitement des
+déformations.
 
 \subsection{Traitement des matériaux orthotropes}
 
 Ce paragraphe décrit des fonctionnalités qui ne sont pas accessibles aux
-analyseurs spécifiques.
+analyseurs spécifiques (dédiés à des lois isotropes).
 
-\subsubsection{Calculs extérieurs à l'intégration de la loi de comportement}
+Écrire les lois de comportement orthotrope de manière indépendante de
+l'hypothèse de modélisation est rendue difficile par certaines
+restrictions imposées par le code aux éléments finis \castem{}~:
+\begin{itemize}
+  \item il est nécessaire de gérer la rotation des contraintes dans le
+  repère propre au matériau.
+  \item il n'est pas possible de choisir de manière cohérente une
+  convention sur l'ordonnancement des axes valable quelque soit la
+  dimension. Le cas des tubes est traité en détail dans
+  l'annexe~\ref{sec:annexe:orthotropie}~;
+  \item les coefficients de thermo-élasticité passés à la loi de
+  comportement sont ceux strictement nécessaires à l'hypothèse de
+  modélisation utilisée. Ce point est traité .
+\end{itemize}
 
-Écrire les lois de comportement de manière indépendante de l'hypothèse
-de modélisation est rendue difficile par certaines restrictions
-imposées par le code aux éléments finis \castem{}. En particulier, les
-coefficients de thermo-élasticité passés à la loi de comportement sont
-ceux strictement nécessaires à l'hypothèse de modélisation
-utilisée. De plus, l'ordre de passage de ces coefficients dépend
-également de cette hypothèse. Enfin, dans le cas de calculs \(2D\) ou
-\(3D\), \castem{} passe les directions d'orthotropie (exprimées dans
-le repère de l'élément fini considéré) comme des coefficients
-matériau. Les coefficients associés aux directions d'orthotropie sont
-au nombre de \(2\) en \(2D\) et de \(6\) en \(3D\).
-
-Le nombre de coefficients matériau et leur ordre dépendant
-explicitement de l'hypothèse de modélisation, il est impossible depuis
-\mfront{} d'accéder à ces coefficients (voir les
-tableaux~\ref{tab:PROPS1D}, \ref{tab:PROPS2D} et \ref{tab:PROPS3D}
-pour plus de détails).
-
-S'il est possible de calculer les coefficients d'élasticité et d'en
-déduire une matrice d'élasticité ou un tenseur de dilatation thermique
-depuis \mfront{}, cette démarche apparaît lourde et fastidieuse.
-
-Pour contourner ces difficultés, nous avons introduit différents
+Pour contourner ces difficultés, \mfront{} introduit différents
 mots-clés allégeant le travail d'implantation des lois orthotropes.
 
-Le premier de ces mots-clés est \texttt{@Orthotropic\-Behaviour}. En
-présence de ce mot-clé, les interfaces aux lois de comportement se
-charge~:
+Le premier de ces mots-clés est
+\mkeyb{OrthotropicBehaviour}{Orthotropic\-Behaviour}. En présence de
+ce mot-clé, les interfaces aux lois de comportement se charge~:
 \begin{itemize}
   \item de déclarer implicitement les coefficients thermo-élastiques et
   les coefficients associés aux directions d'ortho\-tropie~;
@@ -983,30 +1247,108 @@ charge~:
   de la loi de comportement dans le repère initial.
 \end{itemize}
 
-Le deuxième de ces mots-clés est
-\texttt{@Require\-Stiff\-ness\-Tensor} qui demande à ce que la matrice
-d'élasticité soit fournie à la loi de comportement. Cette matrice
-d'élasticité sera connue dans \mfront{} sous le nom de variable
-\texttt{D}.
+Le second de ces mots-clés est
+\mkeyb{RequireStiffnessTensor}{Require\-Stiff\-ness\-Tensor} qui
+demande à ce que la matrice d'élasticité soit fournie à la loi de
+comportement. Cette matrice d'élasticité sera connue dans \mfront{} sous
+le nom de variable \texttt{D}.
 
 Le troisième de ces mots-clés est
-\texttt{@Require\-Thermal\-Expansion\-Tensor} qui demande à ce que le
-tenseur des dilatations thermiques soit fourni à la loi de
-comportement. Ce tenseur sera connu dans \mfront{} sous le nom de
-variable \texttt{A}. Cette variable a été introduite par souci de
+\mkeyb{Require\-Thermal\-Expansion\-Tensor}{RequireThermalExpansionTensor}
+qui demande à ce que le tenseur des dilatations thermiques soit fourni à
+la loi de comportement. Ce tenseur sera connu dans \mfront{} sous le nom
+de variable \texttt{A}. Cette variable a été introduite par souci de
 complétude mais est en pratique inutilisée, les dilatations thermiques
-étant généralement calculées en amont de l'étape d'intégration de la
-loi de comportement mécanique.
+étant généralement calculées en amont de l'étape d'intégration de la loi
+de comportement mécanique.
+
+Notons que les mots clés
+\mkeyb{RequireStiffnessTensor}{Require\-Stiff\-ness\-Tensor} et
+\mkeyb{Require\-Thermal\-Expansion\-Tensor}{RequireThermalExpansionTensor}
+sont valides que la loi traitée soit isotrope ou orthotrope.
 
 \subsection{Traitement des dilatations libres}
 
+Dans un usage standard du code aux éléments finis \castem{}, les
+dilatations libres sont généralement traitées en amont de l'intégration
+de la loi de comportement.
+
+Cela se traduit par le fait que la déformation totale passée à la loi de
+comportement est en fait la déformation mécanique totale, c'est à dire
+la déformation totale à laquelle ont été retranchées toutes les
+dilatations libres.
+
+De ce fait, \mfront{} ne traite en général pas des dilatations libres,
+et plus particulièrement ne traite pas des dilatations thermiques.
+
+Il peut cependant être intéressant de traiter certains gonflements dans
+la loi de comportement. Par exemple, les formulations des lois
+viscoplastiques de gaine des réacteurs refroidis au sodium relient
+l'intensité de l'écoulement viscoplastique à la vitesse de gonflement.
+
+Pour prendre en compte une dilatation libre, il suffit de calculer un
+incrément de dilatation et de le soustraire à l'incrément de dilatation
+totale dans la partie \mkey{InitLocalVariables}. 
+
+Il est possible de garder une trace de cette dilatation en définissant
+une variable auxiliaire associée. Il est cependant nécessaire de prendre
+garde à la manière dont sont mises à jour les variables auxiliaires par
+l'analyseur utilisé.
+
+\subsection{Classes générées}
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[height=15cm]{Images/NortonRK.eps}
+  \caption{Classes générées pour les lois de comportement (diagramme
+    généré par l'outil \doxygen{}).}
+  \label{fig:nortonrk:inheritance}
+\end{figure}
+
+Hormis ce qui est propre aux interfaces, un fichier \mfront{} génère des
+classes \cpp{}. Pour une loi de comportement nommmée \texttt{NortonRK},
+trois classes par loi de comportement sont générées~:
+\begin{itemize}
+  \item une classe \texttt{NortonRKBehaviourData} qui contient la valeur
+  des propriétés matériau, l'état des variables internes et externes en
+  début de pas de temps~;
+  \item une classe \texttt{NortonRKIntegrationData} qui contient la
+  valeur des incréments des variables externes~;
+  \item une classe \texttt{NortonRK} qui contient les variables locales,
+  les différentes variables nécessaires à l'algorithme d'intégration et
+  surtout l'algorithme d'intégration.
+\end{itemize}
+Cette structure est illustrée en figure~\ref{fig:nortonrk:inheritance}.
+
+Cette figure montre également que ces classes sont des classes
+\texttt{template} paramétré par trois arguments~:
+\begin{itemize}
+  \item l'argument \(N\) est la dimension d'espace~;
+  \item l'argument \(Type\) est le type numérique utilisé~;
+  \item le dernier argument est un booléen qui est généralement faux
+  (choix par défaut). Si il est mis à vrai, par la directive
+  \mkey{@UseQt}, les différentes variables sont affectées d'unités, ce
+  qui permet de vérifier à la compilation le respect des unités à la
+  compilation. Cette option est peu usitée car les coefficients des lois
+  de comportements ont souvent des unités exotiques.
+\end{itemize}
+
+\subsubsection{Gestions des bornes}
+
 \subsection{Interface aux lois de comportement}
 
-\subsubsection{Rôle des interfaces}
+Cette section décrit tout d'abord le rôle des interfaces puis décrit
+l'interface \umat{} utilisé pour l'adhérence au code aux éléments finis
+\castem{}.
+
+\subsubsection{Rôle des interfaces aux lois de comportement}
 
 Les interfaces aux lois de comportement doivent~:
 \begin{itemize}
-  \item dispatch en fonction de la dimension~;
+  \item les lois de comportement choisissent l'une des implantations de
+  la loi de comportement en fonction de la dimension\footnote{Les lois
+    de comportements générées par \mfront{} sont représentées par des
+    classes \texttt{template} paramétrée par la dimension d'espace.}~;
   \item assurer la conversion entre la convention utilisée par le code
   appelant pour représenter les tenseurs et la convention utilisée dans
   \tfel{}~;
@@ -1021,8 +1363,12 @@ Les interfaces aux lois de comportement doivent~:
   convergence~;
   \item gérer le cas des contraintes planes car les lois de comportement
   \mfront{} sont aujourd'hui écrites en déformations~;
-  \item générer des exemples d'utilisation de la loi de comportement.
+  \item capter les exceptions \cpp{} et les traduire en message
+  d'erreurs adaptés.
 \end{itemize}
+
+De manière optionnelle, il peut être utile de générer des exemples
+d'utilisation de la loi de comportement traitée.
 
 D'autres rôles pourraient à terme être assignées aux interfaces~:
 \begin{itemize}
@@ -1457,28 +1803,122 @@ En l'absence de charge plastique, ces dérivées s'écrivent~:
 \right.
 \]
 
-\paragraph{Critère d'arrêt}
+\paragraph{Critère d'arrêt} L'algorithme de \nom{Newton} s'arrête quand
+la différence entre deux estimations des incréments des déformations
+viscoplastiques cumulées est inférieur à un certain critère
+\(\varepsilon\)~:
+\[
+\Frac{1}{N}\displaystyle\sum_{i=1}^{N}\left|\Delta_{n}\Delta\,
+p_{i}\right|<\varepsilon
+\]
+où\(\Delta_{n}\Delta\,p_{i}\) désigne la différence entre l'estimation
+de l'incrément de la déformation viscoplastique cumulée à l'étape
+\(n+1\) et de l'estimation à l'étape \(n\).
 
-\subsection{La directive \mkey{FlowRule}}
+La valeur du critère est par défaut de \(10^{-8}\) mais peut être
+modifié par la directive \mkey{Epsilon}.
+
+\subsection{La directive \texttt{@FlowRule}} La directive \mkey{FlowRule}
+permet de définir un écoulement.
+
+\paragraph{Cas des analyseurs \texttt{Isotropic\-Mises\-Creep},
+  \texttt{Isotropic\-Strain\-Hardening\-Mises\-Creep} et
+  \texttt{Isotropic\-Plastic\-Mises\-Flow}}
+
+Pour les analyseurs \texttt{Isotropic\-Mises\-Creep},
+\texttt{Isotropic\-Strain\-Hardening\-Mises\-Creep} et
+\texttt{Isotropic\-Plastic\-Mises\-Flow}, une variable interne nommée
+\(p\) et représentant la déformation inélastique cumulée est
+automatiquement définie. Aucune autre variable interne ne peut être
+définie.
+
+L'évolution de cette variable est introduite par la directive
+\mkey{FlowRule}. Cette directive est suivie d'un bloc définissant
+l'écoulement. Ce bloc doit renseigner la valeur de la fonction
+\texttt{f}, dont la définition a été donnée plus haut en fonction de
+l'écoulement traité, et sa dérivé par rapport à la contrainte
+équivalente \texttt{df\textunderscore{}dseq}. Pour les analyseurs
+\texttt{Isotropic\-Strain\-Hardening\-Mises\-Creep} et
+\texttt{Isotropic\-Plastic\-Mises\-Flow} il est également nécessaire de
+donner la dérivée de \texttt{f} par rapport à la déformation cumulée
+\texttt{df\textunderscore{}dp}.
+
+Dans le bloc suivant la directive \mkey{FlowRule}, les variables
+\texttt{f}, \texttt{df\textunderscore{}dseq} et éventuellement
+\texttt{df\textunderscore{}dp} sont automatiquement défines. La
+contrainte équivalente actualisée en \(t+\theta\,\Delta\,t\) est
+accessible par la variable \texttt{seq}. Pour les analyseurs
+\texttt{Isotropic\-Strain\-Hardening\-Mises\-Creep} et
+\texttt{Isotropic\-Plastic\-Mises\-Flow}. Si nécessaire, la déformation
+équivalente actualisée en \(t+\theta\,\Delta\,t\) est accessible par la
+variable \texttt{p}.
+
+\paragraph{Cas de l'analyseur
+  \texttt{Multiple\-Isotropic\-Mises\-Flows}} Plusieurs blocs
+\mkey{FlowRule} peuvent être définis dans le cas de l'analyseur
+\texttt{Multiple\-Isotropic\-Mises\-Flows}. La directive \mkey{FlowRule}
+est suivie d'un des trois types d'écoulement supportés, respectivement
+\texttt{Creep}, \texttt{StrainHardeningCreep} et \texttt{Plasticity}. Le
+bloc suivant décrit l'écoulement en suivant les règles données au
+paragraphe précédent. Notons que la déclaration d'un nouvel écoulement
+déclare automatiquement la déformation viscoplastique cumulée associée
+sous le nom \texttt{pi} où \texttt{i} est le nombre d'écoulement défini
+jusque là. Il n'est possible d'associer des noms de glossaire ou des
+bornes à ces variables qu'après la définition du bloc.
+
+\paragraph{Transformation du code dans les blocs \texttt{@FlowRule}} Le
+code dans les blocs suivant la directive \texttt{@FlowRule} est modifié
+ainsi~:
+\begin{itemize}
+  \item les variables externes sont remplacées par leurs valeurs en
+  \(t+\theta\,\Delta\,t\)~;
+  \item la déformation inélastique cumulée \(p\) est remplacée par sa
+  valeur en \(t+\theta\,\Delta\,t\).
+\end{itemize}
 
 \subsection{Mise à jour des variables auxiliaires}
+
+La directive \mkey{UpdateAuxiliaryStateVariables} permet de mettre à
+jour les variables auxiliaires.
+
+Ces variables sont mises à jour après les variables internes, mais avant
+les variables externes (incluant la température) ou la déformation
+totale\footnote{Les variables externes ne sont pas mises à jour car cela
+  est du ressort de l'interface en cas de sous-découpage. Si aucun
+  sous-découpage n'a lieu ou si l'on a réalisé le dernier pas de temps,
+  on économise l'opération de mise à jour.}.
+
+\paragraph{Exemple de la déformation inélastique totale} Supposons la
+déformation inélastique totale représentée par une variable auxiliaire
+tensorielle nommée \texttt{evp} (déclarée par la directive
+\mkey2{AuxiliaryStateVariable}{Auxiliary\-State\-Variable}). Cette
+variable peut être calculée, dans le bloc suivant la directive
+\mkey2{UpdateAuxiliaryStateVariables}{Update\-Auxiliary\-State\-Variables}
+ainsi~:
+\begin{center}
+  \texttt{evp += deto-deel;}
+\end{center}
+Une autre manière de calculer cette variable est~:
+\begin{center}
+  \texttt{evp = eto+deto-eel;}
+\end{center}
+qui montre que la déformation élastique a été mise à jour et non la
+déformation totale.
 
 \subsubsection{Transformation du code}
 
 \subsection{Comportement viscoplastique du \sic{}}
 
-Nous voulons décrire le comportement viscoplastique du \sic{}
-Le \sic{} est supposée avoir un comportement viscoplastique isotrope
-donnée par~:
+Nous voulons décrire le comportement viscoplastique du \sic{} Le \sic{}
+est supposée avoir un comportement viscoplastique isotrope donnée par~:
 \[
-  \dot{p} = f\paren{\sigmaeq}
+\dot{p} = f\paren{\sigmaeq}
 \]
-où
-\begin{minipage}[t]{0.75\linewidth}
-  \begin{itemize}
+où\begin{minipage}[t]{0.75\linewidth}
+\begin{itemize}
   \item \(p\) est la déformation viscoplastique équivalente~;
   \item \(\sigmaeq\) est la contrainte de \nom{Von Mises}.
-  \end{itemize}
+\end{itemize}
 \end{minipage}
 
 La fonction d'écoulement est donnée par~:
@@ -1563,6 +2003,10 @@ valeur du flux de neutrons rapides \(\phi\) est égal à
 \section{Intégration des lois de comportement par une méthode explicite}
 \label{sec:RK}
 
+Cette section décrit l'analyseur \texttt{RungeKutta} qui permet
+l'intégration des lois de comportement, formulées en vitesse, par une
+méthode explicite.
+
 \subsection{Résolution d'un système différentiel par une méthode explicite}
 \label{sec:resol-dun-syst}
 
@@ -1602,7 +2046,43 @@ Cette écriture est {\em symbolique} et chaque terme \(y_{j}\) peut
 représenter une variable interne qui peut être soit un scalaire soit un
 tenseur symétrique d'ordre \(2\).
 
-\paragraph{Les algorithmes de \nom{Runge-Kutta}} 
+L'analyseur \texttt{RungeKutta} impose que le premier terme de ce
+vecteur soit la déformation élastique, dont la variable associée est
+\texttt{eel}, qui est automatiquement déclarée. Le nom de glossaire de
+cette variable est \texttt{Elastic\-Strain}.
+
+\paragraph{Les algorithmes de \nom{Runge-Kutta}} Les méthodes de
+\nom{Runge-Kutta} désignent une famille de d'algorithmes telles que~:
+\[
+\finpas{Y}=\debutpas{Y}+\displaystyle\sum_{i=1}^{n}b_{i}k_{i}
+\]
+où~:
+\begin{minipage}[t]{0.9\linewidth}
+  \(
+  \left\{
+  \begin{aligned}
+    k_{1} &= \Delta\,t\,G\paren{\debutpas{Y},t}\\
+    k_{2} &= \Delta\,t\,G\paren{\debutpas{Y}+a_{21}\,k_{1},t+c_{2}\,\Delta\,t}\\
+    k_{3} &= \Delta\,t\,G\paren{\debutpas{Y}+a_{31}\,k_{1}+a_{32}\,k_{2},t+c_{3}\,\Delta\,t}\\
+    &\vdots\\
+    k_{n} &= \Delta\,t\,G\paren{\debutpas{Y}+a_{n1}\,k_{1}+\ldots+a_{n,n-1}\,k_{n-1},t+c_{n}\,\Delta\,t}\\
+  \end{aligned}
+  \right.
+  \)
+\end{minipage}
+
+Une méthode particulière est caractérisée par la donnée du nombre
+d'étape \(n\) et différents coefficients \(a_{ij}\), \(b_{i}\) et
+\(c_{i}\).
+
+L'un des intérêts des méthodes de \nom{Runge-Kutta} est que les
+coefficients \(k_{i}\) d'une méthode d'ordre élevée peuvent parfois être
+utilisé pour construire une méthode d'ordre moins élevée. On obtient
+ainsi deux estimations de la valeurs de fin de pas qui peuvent être
+comparées~: si la comparaison entre les deux estimations n'est pas
+satisfaisante, on en déduit que le pas de temps utilisé est trop grand
+et il est possible de mettre en place une stratégie de gestion du pas de
+temps.
 
 \subsection{Algorithmes disponibles}
 
@@ -1611,6 +2091,11 @@ L'utilisation peut choisir l'algorithme utilisé par la directive
 \mkey{Algorithm}.
 
 \subsubsection{Algorithmes sans contrôle du pas de temps}
+
+\mfront{} permet d'utiliser un certain nombre d'algorithmes de
+\nom{Runge-Kutta} sans contrôle du pas de temps. L'utilisation de ces
+algorithmes n'est pas recommandé car leurs prédictions sont généralement
+peu satisfaisantes.
 
 \paragraph{Méthode d'\nom{Euleur} explicite} L'estimation la plus simple
 consiste à remplacer la dérivée \(\dot{Y}\) par la différence finie
@@ -1624,7 +2109,7 @@ peu précise et peu robuste. L'erreur de cette méthode est
 (asymptotiquement) proportionnelle au pas de temps~: elle est dite
 d'ordre \(1\).
 
-\paragraph{Méthode de \nom{Runge-Kutta} (explicite) d'ordre 2}
+\paragraph{Méthode de \nom{Runge-Kutta} d'ordre 2}
 Les méthodes de \nom{Runge-Kutta} permettent d'améliorer la précision
 du schéma d'\nom{Euler}. Pour obtenir une méthode d'ordre \(2\), la
 valeur \(\finpas{Y}\) est recherchée de la forme~:
@@ -1637,25 +2122,45 @@ développement de \nom{Taylor} à l'ordre \(2\) de la fonction \(G\).
 Cette contrainte conduisant à un système de \(3\) équations à \(4\)
 inconnues, plusieurs choix sont possibles.
 
-\paragraph{Méthode du point milieu} Ce choix correspond à la solution
-\(a_{1}=0\), \(a_{2}=1\), \(a_{3}=\pfrac{1}{2}\) et
-\(a_{4}=\pfrac{G\paren{Y_{i},t}}{2}\). Cette méthode s'écrit ainsi~:
+Le choix fait dans \mfront{} est dite \og~du point milieu~\fg{}. Ce
+choix correspond à la solution \(a_{1}=0\), \(a_{2}=1\),
+\(a_{3}=\pfrac{1}{2}\) et \(a_{4}=\pfrac{G\paren{Y_{i},t}}{2}\). Cette
+méthode s'écrit ainsi~:
 \[
-\finpas{Y} = \debutpas{Y}+\Delta\,t\,G\paren{\debutpas{Y}+\Frac{\Delta\, t}{2}G\paren{\debutpas{Y},t},t+\Frac{\Delta\, t}{2}}
-\]
-
-\paragraph{Méthode d'\nom{Euler} modifiée} Ce choix correspond à la solution
-\(a_{1}=a_{2}=\pfrac{1}{2}\), \(a_{3}=1\) et
-\(a_{4}=G\paren{Y_{i},t}\). Cette méthode s'écrit ainsi~:
-\[
-\finpas{Y} = \debutpas{Y}+\Frac{\Delta\,t}{2}\left[G\paren{\debutpas{Y},t}+G\paren{\debutpas{Y}+\Delta\, t\,G\paren{\debutpas{Y},t},t+\Delta\,t }\right]
+\finpas{Y} = \debutpas{Y}+\Delta\,t\,G\paren{\debutpas{Y}+\Frac{\Delta\,
+    t}{2}G\paren{\debutpas{Y},t},t+\Frac{\Delta\, t}{2}}
 \]
 
 \paragraph{Méthode de \nom{Runge-Kutta} d'ordre $4$}
 
+La méthode de \nom{Runge-Kutta} d'ordre \(4\) retenue dans \mfront{} est
+donnée par~:
+\[
+\finpas{Y} = \debutpas{Y}+\Frac{1}{6}\paren{k_{1}+2\,k_{2}+2\,k_{3}+k_{4}}
+\]
+où~:
+\begin{minipage}[t]{0.9\linewidth}
+  \(
+  \left\{
+  \begin{aligned}
+    k_{1} &= \Delta\,t\,G\paren{\debutpas{Y},t}\\
+    k_{2} &= \Delta\,t\,G\paren{\debutpas{Y}+\Frac{1}{2}\,k_{1},t+\Frac{1}{2}\,\Delta\,t}\\
+    k_{3} &= \Delta\,t\,G\paren{\debutpas{Y}+\Frac{1}{2}\,k_{2},t+\Frac{1}{2}\,\Delta\,t}\\
+    k_{4} &= \Delta\,t\,G\paren{\debutpas{Y}+k_{3},t+\Delta\,t}
+  \end{aligned}
+  \right.
+  \)
+\end{minipage}
+
 \subsubsection{Algorithmes avec contrôle du pas de temps (correcteur/prédicteur)}
 
+\mfront{} propose trois algorithmes de \nom{Runge-Kutta} avec
+sous-découpage du pas de temps pour garantir la qualité de la solution
+trouvée.
+
 \paragraph{Méthode de \nom{Runge-Kutta} d'ordre $\pfrac{4}{2}$}
+
+
 
 \paragraph{Méthode de \nom{Runge-Kutta} d'ordre $\pfrac{5}{4}$ (méthode
   de \nom{Fehlberg})} Pour décrire cette méthode, utilisée par défaut,
@@ -1688,17 +2193,57 @@ et une autre d'ordre \(5\)~:
 \finpas{Y_{i}}=\debutpas{Y_{i}}+\paren{\Frac{16}{135}\,k_{1}+\Frac{6656}{12\,825}\,k_{3}+\Frac{28\,561}{56\,430}\,k_{4}-\Frac{9}{50}\,k_{5}+\Frac{2}{55}\,k_{6}}
 \]
 
-\paragraph{Méthode \castem{}}
+\paragraph{Méthode \castem{}} Une méthode de \nom{Runge-Kutta}
+particulière est disponible dans \castem{}. Cette méthode se distingue
+par sa gestion du pas de temps et son critère d'arrêt qui sont
+uniquement basés sur la différences des contraintes entre deux ordres
+d'approximations (et non sur les variables internes). Cette méthode est
+décrite en annexe~\ref{sec:algoRKcastem}.
 
-\subsubsection{Critère d'arrêt}
+\subsubsection{Critère d'arrêt et gestion du pas de temps}
 
-(hors méthode \castem{})
+Les méthodes de \nom{Runge-Kutta} d'ordre $\pfrac{4}{2}$ et d'ordre
+$\pfrac{5}{4}$ permettent de comparer les estimations fournies par deux
+méthodes d'ordre différents. La différence entres ces deux estimations
+mesure l'erreur d'intégration et est comparée à un certain critère
+\(\varepsilon\)~:
+\begin{equation}
+  \label{eq:RK:epsilon}
+  \Frac{1}{\displaystyle\sum_{i=1}^{N}N_{i}}\displaystyle\sum_{i=1}^{N}\left|
+  y_{i}^{(a)}-y_{i}^{(b)}\right|<\varepsilon
+\end{equation}
+où~:
+\begin{minipage}[t]{0.9\linewidth}
+  \begin{itemize}
+    \item \(N\) est le nombre de variables internes~;
+    \item \(N_{i}\) le nombre de composantes de la variable interne
+    \(y_{i}\)~;
+    \item \(y_{i}^{(a)}\) est l'estimation de la variable interne en fin
+    de pas de temps obtenue par la première méthode~;
+    \item \(y_{i}^{(b)}\) est l'estimation de la variable interne en fin
+    de pas de temps obtenue par la seconde méthode.
+  \end{itemize}
+\end{minipage}
 
-\subsection{La direction \mkey{ComputeStress}}
+Si ce critère n'est pas respecté, le pas de temps est sous-découpé
+automatiquement.
 
-\subsection{La direction \mkey{Derivative}}
+\subsection{La directive \texttt{@ComputeStress}}
+
+La directive \mkey{@ComputeStress} permet de calculer les contraintes.
+
+\subsection{La directive \texttt{@Derivative}}
+
+La directive \mkey{@Derivative} permet de préciser les équations
+différentielles associées aux différentes variables internes.
+
+Cette méthode est appelée après la méthode \mkey{@ComputeStress}.
 
 \subsection{Mise à jour des variables auxiliaires}
+
+Les variables auxiliaires sont mises à jour à chaque fois qu'un pas est
+jugé valide au sens du critère d'arrêt~\eqref{eq:RK:epsilon} après la
+mise à jour des variables internes.
 
 \subsection{Intégration d'une loi d'écoulement viscoplastique
   orthotrope par un algorithme de \nom{Runge-Kutta}}
@@ -1771,20 +2316,20 @@ Deux remarques peuvent être faites~:
 \section{Intégration des lois de comportement par une méthode implicite}
 \label{sec:Implicite}
 
-Le paragraphe~\ref{sec:resol-dun-syst} décrit de manière générale la
-résolution d'un système différentielle par une méthode implicite.
-Outre la présentation des bases mathématiques de ces méthodes, nous
-profitons de ce paragraphe pour justifier certaines initialisations
-implicites faites dans \mfront{} qui rendent l'écriture des lois de
-comportement plus concise.
+Le paragraphe~\ref{sec:resol-dun-syst-implicite} décrit de manière
+générale la résolution d'un système différentielle par une méthode
+implicite. Outre la présentation des bases mathématiques de ces
+méthodes, nous profitons de ce paragraphe pour justifier certaines
+initialisations implicites faites dans \mfront{} qui rendent l'écriture
+des lois de comportement plus concise.
 
 \subsection{Résolution d'un système différentiel par une méthode implicite}
-\label{sec:resol-dun-syst}
+\label{sec:resol-dun-syst-implicite}
 
 \subsubsection{Généralités} Soit à résoudre le système différentiel
 suivant~:
 \begin{equation}
-  \label{eq:systeme_diff}
+  \label{eq:systeme_diff-implicite}
   \dot{Y}=G\paren{Y,t}
 \end{equation}
 où \(G\) est une fonction {\em a priori} non linéaire et que nous
@@ -1818,6 +2363,13 @@ Cette écriture est {\em symbolique} et chaque terme \(y_{j}\) peut
 représenter une variable interne qui peut être soit un scalaire soit un
 tenseur symétrique d'ordre \(2\).
 
+L'analyseur \texttt{Implicite} impose que le premier terme de ce vecteur
+soit la déformation élastique, dont la variable associée est
+\texttt{eel}, qui est automatiquement déclarée. Le nom de glossaire de
+cette variable est \texttt{Elastic\-Strain}\footnote{Le fait que la
+  déformation élastique soit la première variable interne permettra, à
+  terme, un calcul quasi-automatique de la matrice tangente cohérente.}.
+
 La résolution numérique de cette équation consiste à estimer, à partir
 de la valeur \(\debutpas{Y}\) à un instant \(t\), la valeur
 \(\finpas{Y}\) à un instant \(t+\Delta\, t\).
@@ -1827,7 +2379,7 @@ L'estimation la plus simple consiste à remplacer la dérivée
 \(\dot{Y}\) par la différence finie
 \(\Frac{\finpas{Y}-\debutpas{Y}}{\Delta\, t}\), ce qui conduit à~:
 \begin{equation}
-  \label{eq:explicite}
+  \label{eq:explicite-implicite}
   \finpas{Y}=\debutpas{Y}+\Delta\,t\,G\paren{\debutpas{Y},t}
 \end{equation}
 Cette estimation, dite {\em explicite}, est connue pour être à la fois
@@ -1903,19 +2455,20 @@ le principe de la résolution que pour la seconde forme.
 La seconde forme d'équation implicite décrite à
 l'équation~\eqref{eq:implicite} peut s'écrire~:
 \begin{equation}
-  \label{eq:F_implicite}
-  F\paren{\Delta\, Y} = \Delta Y - \Delta\,t\,G\paren{\debutpas{Y}+\theta\Delta{Y},t+\theta\,\Delta t} = 0  
+  \label{eq:F_implicite} F\paren{\Delta\, Y} = \Delta Y -
+  \Delta\,t\,G\paren{\debutpas{Y}+\theta\Delta{Y},t+\theta\,\Delta t} =
+  0
 \end{equation}
 où nous avons introduit l'incrément \(\Delta\,Y\) de la variable \(Y\)
 au cours du pas de temps \(\Delta\,t\), variable qui apparaît comme
-l'inconnue \og~naturelle~\fg{} de cette équation. Nous avons donc
-ramené la résolution du système différentiel~\eqref{eq:systeme_diff} à
-la recherche d'un zéro de la fonction \(F\paren{\Delta\, Y}\).
+l'inconnue \og~naturelle~\fg{} de cette équation. Nous avons donc ramené
+la résolution du système différentiel~\eqref{eq:systeme_diff-implicite}
+à la recherche d'un zéro de la fonction \(F\paren{\Delta\, Y}\).
 
 \paragraph{Décomposition du vecteur $F$} L'écriture
-générique~\ref{eq:systeme_diff} résulte de la concaténation des
-équations différentielles régissant chaque variable interne \(Y\). En
-pratique, le vecteur \(F\) est décomposé en termes associés à chaque
+générique~\ref{eq:systeme_diff-implicite} résulte de la concaténation
+des équations différentielles régissant chaque variable interne \(Y\).
+En pratique, le vecteur \(F\) est décomposé en termes associés à chaque
 variable interne~:
 \[
 F=
@@ -1957,7 +2510,7 @@ de la méthode de résolution.
 
 Les méthodes de résolution convergent si l'initialisation de la
 recherche \(\Delta\, Y^{0}\) est \og~suffisamment proche~\fg{} de la
-solution. Dans le cas présent, l'équation~\eqref{eq:explicite} conduit à
+solution. Dans le cas présent, l'équation~\eqref{eq:explicite-implicite} conduit à
 supposer que \(\Delta\, Y\) ne sera qu'une faible correction de
 \(Y_{t}\) (pour des pas de temps suffisamment petits), de sorte qu'une
 estimation initiale nulle est généralement satisfaisante. Il s'agit du
@@ -1970,7 +2523,18 @@ de la solution~:
 Une estimation explicite de la solution peut être donnée dans un bloc
 \mkey{Predictor}.
 
-\subsubsection{Critère d'arrêt}
+\subsubsection{Critère d'arrêt} Les algorithmes présentés s'arrêtent
+quand la différence entre deux estimations des incréments des
+déformations viscoplastiques cumulées est inférieur à un certain critère
+\(\varepsilon\)~:
+\[
+\Frac{1}{\displaystyle\sum_{i=1}^{N}N_{i}}\displaystyle\sum_{i=1}^{N}\left|\Delta_{n}\Delta\,
+y_{i}\right|<\varepsilon
+\]
+où\(\Delta_{n}\Delta\,y_{i}\) désigne la différence entre l'estimation
+de l'incrément de la i\ieme{} variable à l'étape \(n+1\) et de son
+estimation à l'étape \(n\) et \(N_{i}\) est le nombre de composantes de
+la variable interne \(y_{i}\).
 
 \subsubsection{Avantages et inconvénients des méthodes implicites} Les
 méthodes implicites sont généralement opposées aux méthodes
@@ -1991,9 +2555,9 @@ type \nom{Runge-Kutta} (par défaut un correcteur-prédicteur \(5/4\) à
 pas de temps adaptatif qui allie un ordre de convergence élevé à une
 efficacité numérique acceptable) décrit à la section~\ref{sec:RK}.
 
-Le principal défaut de ces méthodes est le nombre d'appels nécessaires
-à la fonction \(G\) du système~\eqref{eq:systeme_diff}, en particulier
-si une stratégie à pas de temps adaptatif est utilisé.
+Le principal défaut de ces méthodes est le nombre d'appels nécessaires à
+la fonction \(G\) du système~\eqref{eq:systeme_diff-implicite}, en
+particulier si une stratégie à pas de temps adaptatif est utilisé.
 
 En comparaison, les méthodes implicites sont réputées beaucoup plus
 stables numériquement et ne nécessitent qu'un nombre faible d'appels à
@@ -2215,7 +2779,7 @@ substituant à la matrice jacobienne une matrice
 \(\underset{\sim}{J}\) bien choisie~:
 \begin{equation}
   \label{eq:QNR}
-  \vec{Y}_{n}=\vec{Y}_{n-1}-\underset{\sim}{J}^{-1}\,.\,\vec{F}\paren{\vec{Y}_{n-1}}
+  Y_{n}=Y_{n-1}-\underset{\sim}{J}^{-1}\,.\,F\paren{Y_{n-1}}
 \end{equation}
 
 Parmi ces méthodes, les algorithmes de \textsc{Broyden} sont les plus utilisés.
@@ -2231,19 +2795,17 @@ matrice jacobienne à partir de son expression
 \(\underset{\sim}{J}_{n-1}\) à l'itération précédente~:
 \begin{equation}
   \label{eq:Broyden} \underset{\sim}{J}_{n} =
-  \underset{\sim}{J}_{n-1}+\Frac{\Delta\,\vec{F}_{n}-\underset{\sim}{J}_{n-1}\,.\,\Delta\vec{Y}_{n}}{\norm{\Delta\,\vec{Y}_{n}}^{2}}\otimes\Delta\vec{Y}_{n}
+  \underset{\sim}{J}_{n-1}+\Frac{\Delta\,F_{n}-\underset{\sim}{J}_{n-1}\,.\,\Delta\,Y_{n}}{\norm{\Delta\,Y_{n}}^{2}}\otimes\Delta\,Y_{n}
 \end{equation}
 où~:
 \begin{minipage}[t]{0.8\linewidth}
   \begin{itemize}
-    \item \(\Delta\,\vec{Y}_{n}=\vec{Y}_{n}-\vec{Y}_{n-1}\)~;
+    \item \(\Delta\,Y_{n}=Y_{n}-Y_{n-1}\)~;
     \item
-    \(\Delta\,\vec{F}_{n}=\vec{F}\paren{\vec{Y}_{n}}-\vec{F}\paren{\vec{Y}_{n-1}}\)~;
-
-    \item \(\vec{v}_{1}\,\otimes\,\vec{v}_{2}\) est le produit tensoriel
-    de deux vecteurs~;
-    \item \(\norm{\vec{v}}\) est la norme euclidienne du vecteur
-    \(\vec{v}\).
+    \(\Delta\,F_{n}=F\paren{Y_{n}}-F\paren{Y_{n-1}}\)~;
+    \item \(v_{1}\,\otimes\,v_{2}\) est le produit tensoriel de deux
+    vecteurs~;
+    \item \(\norm{v}\) est la norme euclidienne du vecteur \(v\).
   \end{itemize}
 \end{minipage}
 
@@ -2273,7 +2835,7 @@ jacobienne par la relation suivante~:
 \begin{equation}
   \label{eq:Broyden2}
   \underset{\sim}{J}_{n}^{-1} =
-  \underset{\sim}{J}_{n-1}^{-1}+\Frac{\Delta\,\vec{Y}_{n}-\underset{\sim}{J}_{n-1}^{-1}\,.\,\Delta\,\vec{F}_{n}}{\Delta\,\vec{Y}_{n}\,\mid\,\underset{\sim}{J}_{n-1}^{-1}\,.\,\Delta\,\vec{F}_{n}}\,\otimes\,\paren{\Delta\,\vec{Y}_{n}\,\mid\,\underset{\sim}{J}_{n-1}^{-1}}
+  \underset{\sim}{J}_{n-1}^{-1}+\Frac{\Delta\,Y_{n}-\underset{\sim}{J}_{n-1}^{-1}\,.\,\Delta\,F_{n}}{\Delta\,Y_{n}\,\mid\,\underset{\sim}{J}_{n-1}^{-1}\,.\,\Delta\,F_{n}}\,\otimes\,\paren{\Delta\,Y_{n}\,\mid\,\underset{\sim}{J}_{n-1}^{-1}}
 \end{equation}
   
 Cette variante est disponible dans \mfront{} sous le nom de
@@ -2284,6 +2846,18 @@ Cette variante est disponible dans \mfront{} sous le nom de
 \subsubsection{Méthode d'accélération de \castem{}}
 
 \subsubsection{Méthode de relaxation}
+
+\subsubsection{Autres pistes}
+
+D'autres pistes d'amélioration peuvent être suivies. Nous renvoyons à
+l'annexe~\ref{sec:mfront:implicit:robustness} pour la description d'un
+algorithme dû à \nom{Powell} qui semble particulièrement intéressant.
+
+\subsection{La directive \texttt{@ComputeStress}}
+
+\subsection{La directive \texttt{@Integrator}}
+
+\subsection{Mise à jour des variables auxiliaires}
 
 \subsection{Intégration d'une loi d'écoulement viscoplastique
   orthotrope par un algorithme implicite}
@@ -2324,14 +2898,11 @@ Ce système non-linéaire d'inconnues \(\Delta\,\tepsilonel\) et
 \(f_{\tepsilonel}\) et \(f_{p}\).
 
 Ce système est résolu par une méthode de \nom{Newton-Raphson}, ce qui
-nécessite de calculer sa matrice jacobienne. Cette matrice se
-décompose\footnote{Cette décomposition est décrite en détails dans la
-  note en référence~\cite{t.11:_bilan_v2}.} entre quatre parties
-notées respectivement
+nécessite de calculer sa matrice jacobienne. Cette matrice se décompose
+en quatre parties notées respectivement
 \(\deriv{f_{\tepsilonel}}{\Delta\,\tepsilonel}\),
 \(\deriv{f_{\tepsilonel}}{\Delta\,p}\),
-\(\deriv{f_{p}}{\Delta\,\tepsilonel}\) et
-\(\deriv{f_{p}}{\Delta\,p}\).
+\(\deriv{f_{p}}{\Delta\,\tepsilonel}\) et \(\deriv{f_{p}}{\Delta\,p}\).
 
 Ces différents termes se calculent ainsi~:
 \[
@@ -2834,7 +3405,7 @@ dernier qui peuvent nécessiter l'emploi de parenthèses.
 
 \clearpage
 \newpage
-\section{Appel de propriétés matériaux externes dans \castem{}}
+\section{Appels externes dans \castem{}}
 
 Pour les besoins du projet \pleiades{}, nous avons modifié le code aux
 éléments finis \castem{} pour pouvoir appeler des propriétés matériau
@@ -2842,7 +3413,9 @@ définies dans des librairies externes. Cette section décrit les
 modifications faites au code aux éléments finis \castem{} et
 l'utilisation de librairies externes depuis le {\tt gibiane}.
 
-\subsection{Fichiers modifiés et implémentation}
+\subsection{Appel de propriétés matériaux externes dans \castem{}}
+
+\subsubsection{Fichiers modifiés et implémentation}
 
 \paragraph{Modification des sources de \castem{}} L'évolution proposée
 demande de modifier deux fichiers source du code \castem{}~:
@@ -2874,9 +3447,9 @@ Nous faisons également trois hypothèses qui peuvent limiter la portabilité de
 proposée~:
 \begin{itemize}
 \item nous supposons que le type double précision du fortran ({\tt REAL*8}) 
-  et le type double précision du C/C++ ({\tt double}) correspondent.
+  et le type double précision du C/\cpp ({\tt double}) correspondent.
 \item nous supposons que le type entier du fortran ({\tt INTEGER}) correspond au type 
-  entier du C/C++ ({\tt int})~;
+  entier du C/\cpp ({\tt int})~;
 \item nous supposons que la taille d'une variable entière de type ({\tt int}) est plus 
 grande que la taille d'un pointeur~;
 \end{itemize}
@@ -2892,8 +3465,8 @@ aux fonctions externes via le module {\tt
   dl}~\cite{python_librar_refer}.
 
 La nécessité de convertir un pointeur en entier est liée à un échange
-nécessaire entre le fortran et le C++. Cette restriction peut {\it a
-  priori} être levée en échangeant entre le fortran et le C++ non plus
+nécessaire entre le fortran et le \cpp. Cette restriction peut {\it a
+  priori} être levée en échangeant entre le fortran et le \cpp non plus
 un entier mais un tableau de taille adéquate et de recopier
 \og~caractère par caratère~\fg le pointeur dans ce tableau et effectuer
 l'opération inverse lorsque le pointeur doit être récupéré\footnote{Ceci
@@ -2908,7 +3481,7 @@ domaines petits. Nous avons prévu la possibilité de \og~pré-lier~\fg la
 bibliothèque \castem{} avec une bibliothèque de propriétés de matériau,
 ce qui éviterait le chargement et le déchargement de cette bibliothèque.
 
-\subsection{Utilisation dans \castem{}}
+\subsubsection{Utilisation dans \castem{}}
 \label{sec:util-dans-cast}
 
 Nous détaillons ici comment déclarer un modèle et un matériau utilisant
@@ -2986,9 +3559,9 @@ générer la bibliothèque.
 Le langage C est le seul pour lequel le nom de la fonction et le nom du
 symbole sont identiques.
 
-En C++, des fonctions ayant des arguments différents peuvent porter le
+En \cpp, des fonctions ayant des arguments différents peuvent porter le
 même nom. Or un symbole ne peut faire référence qu'à une fonction aux
-arguments déterminés. Le C++ utilise alors une technique appelée "name
+arguments déterminés. Le \cpp utilise alors une technique appelée "name
 mangling" pour résoudre les conflits et assurer une relation biunivoque
 entre le symbole et une fonction~\cite{name_mangling_wikipedia}. La même
 technique est également utilisée pour distinguer des fonctions portant
@@ -3005,7 +3578,7 @@ distinguées) alors que les symboles font cette distinction. Il n'y a
 jamais eu de consensus entre les vendeurs de compilateur fortran autour
 d'un choix unique de "name mangling". Ceci constitue un souci de
 portabilité majeur des codes mélangeant des sources fortran et des
-sources C ou C++~: les appels aux fonctions fortran dépendent du
+sources C ou \cpp~: les appels aux fonctions fortran dépendent du
 compilateur utilisé\footnote{Voir \cite{docum_autoc} pour plus de
   détails.}. En pratique, le symbole associé à une fonction fortran peut
 être le nom de cette fonction écrit uniquement en majuscules ou en
@@ -3019,7 +3592,7 @@ nom {\tt thermalconductivity\_}. Ces difficultés nous ont amenés à {\it
 
 Dans la suite, nous supposerons que les noms de fonctions et les noms de
 symboles associés sont identiques, c'est à dire que la fonction externe
-a été écrite en C ou en C++ à l'intérieur d'un bloc {\tt extern "C"}.
+a été écrite en C ou en \cpp à l'intérieur d'un bloc {\tt extern "C"}.
 
 \paragraph{Précautions relatives aux déclarations de paramètres} La
 déclaration des paramètres dans l'indice 'PARAMETRES' doit également
@@ -3036,6 +3609,43 @@ est nul, l'opérateur {\tt VARI} n'est pas appelé et l'appel à {\tt
   PASAPAS} échoue avec un message d'erreur peu explicite. En fait, une
 tel cas n'a pas été prévue car la déclaration de propriété constante
 peut et doit se faire explicitement dans l'opérateur {\tt 'MATE'}.
+
+\subsection{Appel de lois de comportement mécanique externes dans \castem{}}
+
+\subsection{Utilisation dans \castem{}}
+
+\begin{figure}[htbp]
+  \centering
+  \code{
+    \textcolor{blue}{* Création d'une table contenant les données relatives }\\
+    \textcolor{blue}{* à la propriété externe : }\\
+    \textcolor{blue}{* - 'MODELE' contient le nom de la fonction appelée }\\
+    \textcolor{blue}{* - 'LIBRAIRIE' contient le nom de la librairie externe }\\
+    Tloi = '\textcolor{green}{TABLE}'; \\
+    Tloi. '\textcolor{red}{MODELE}'    = '\textcolor{red}{NbZrCCreep}' ; \\
+    Tloi. '\textcolor{red}{LIBRAIRIE}' = '\textcolor{red}{libNbZrCBehaviours.so}' ; \\
+    \textcolor{blue}{* Création du modèle mécanique}\\
+    ModM1 = '\textcolor{green}{MODELISER}' s1 '\textcolor{red}{MECANIQUE}' '\textcolor{red}{ELASTIQUE}'     \\
+    \hspace{7em}'\textcolor{red}{ISOTROPE}' '\textcolor{red}{NON\_LINEAIRE}' '\textcolor{red}{UTILISATEUR}' \\
+    \hspace{7em}'\textcolor{red}{'DESC\_LOI'}  Tloi \\
+    \hspace{7em}'\textcolor{red}{C\_MATERIAU}' CLOI \\
+    \hspace{7em}'\textcolor{red}{C\_VARINTER}' VLOI \\
+    \hspace{7em}'\textcolor{red}{PARA\_LOI}'   PLOI;
+  }
+  \caption{Déclaration d'un modèle utilisant une loi de comportement externe.}
+  \label{fig:delaration_loi_comportement}
+\end{figure}
+
+La figure~\ref{fig:delaration_loi_comportement} montre comment utiliser une
+loi de comportement fournie par une librairie externe. Par rapport à une
+utilisation standard des lois utilisateur, nous utilisons ici le mot clé
+\texttt{DESC\_LOI} en lieu et place du mot clé \texttt{NUME\_LOI}. Ce mot
+clé est suivi d'une table qui doit avoir deux indices~:
+\begin{itemize}
+\item l'indice \texttt{MODELE} contient le nom de la fonction à appeler~;
+\item l'indice \texttt{LIBRAIRIE} contient le nom de la librairie
+contenant la fonction à appeler~;
+\end{itemize}
 
 \clearpage
 \newpage
@@ -3166,8 +3776,10 @@ La courbe résultante est représentée en figure~\ref{fig:TestGetEvol2}.
 
 \clearpage
 \newpage
-\section{La fonction {\tt umat}}
+\section{L'interface {\tt umat}}
 \label{sec:utilisation_umat}
+
+\subsection{La fonction {\tt umat}}
 
 Le prototype de la fonction {\tt umat} a été initialement défini dans le
 code ABAQUS. Ce prototype a été repris dans \castem{}. La compatibilité
@@ -3276,223 +3888,27 @@ nécessairement utilisés dans \castem{}.
   \label{tab:umat:argument}
 \end{longtable}
 
-\clearpage
-\newpage
-\section{Amélioration de la robustesse des algorithmes de résolutions
-  implicites}
-
-Les méthodes de résolution des systèmes implicites nécessitent de
-choisir une estimation de la solution \(\vec{X}_{0}\) pour initier la
-recherche. Par défaut, \mfront{} utilisera le vecteur nul comme
-estimation initiale, mais l'utilisateur peut en spécifier une autre par
-la directive \mkey{Predictor}.
-
-La convergence des algorithmes de résolutions implicites n'est garantie
-que si l'estimation initiale \(\vec{X}_{0}\) est suffisamment proche de
-la solution recherchée. Loin de la solution, l'algorithme peut
-éventuellement converger mais les premières itérations tendent
-généralement vers la solution assez lentement (phase de recherche)~: il
-est classique d'observer une convergence linéaire lors de la phase de
-recherche et une transition vers un ordre de convergence plus élevé
-proche de la solution.
-
-Pour les lois de comportement fortement non linéaires, il est difficile
-de proposer une estimation \(\vec{X}_{0}\) garantissant la convergence,
-il peut donc être intéressant d'améliorer la robustesse des algorithmes.
-
-\begin{table}
-  \centering
-  \begin{tabular}{|c|c|}
-    \hline
-    Méthode & Expression de \(\vec{s}_{n}\) \\
-    \hline
-    \hline
-    Algorithme de \textsc{Newton-Raphson}
-    & \(-J^{-1}\,.\,\vec{F}\paren{\vec{X}_{n-1}}\) \\
-    \hline
-    \begin{minipage}{7cm}
-      Algorithme de \textsc{Newton-Raphson} et dérivation numérique
-    \end{minipage} &
-    \(-\underset{\sim}{J}^{-1}\,.\,\vec{F}\paren{\vec{X}_{n-1}}\) \\
-    \hline
-    Premier algorithme de \textsc{Broyden} &
-    \begin{minipage}{5cm}
-      \(-\underset{\sim}{J}_{n-1}^{-1}\,.\,\vec{F}\paren{\vec{X}_{n-1}}\)
-      où \(\underset{\sim}{J}_{n}\) est donné par
-      l'équation~\eqref{eq:Broyden}
-    \end{minipage} \\
-    \hline
-    Second algorithme de \textsc{Broyden} &
-    \begin{minipage}{5cm}
-      \(-\underset{\sim}{J}_{n-1}^{-1}\,.\,\vec{F}\paren{\vec{X}_{n-1}}\)
-      où \(\underset{\sim}{J}_{n}^{-1}\) est donné par\(\vec{X}_{0}\)
-      l'équation~\eqref{eq:Broyden2}
-    \end{minipage} \\
-    \hline
-  \end{tabular}
-  \label{tab:sn}
-\end{table}
-
-L'ensemble des algorithmes présentés jusqu'ici prennent la forme~:
-\[
-\vec{X}_{n}=\vec{X}_{n-1}+\vec{s}^{N}_{n}
-\]
-L'expression du pas \(s^{N}_{n}\) pour les différentes algorithmes
-présentés est donnée au tableau~\ref{tab:sn}. D'après la discussion
-précédente, ce pas \(s^{N}_{n}\) est optimal proche de la solution
-finale.
-
-Il est intéressant de trouver une autre estimation de la solution, moins
-performante près de la solution mais plus robuste. Les méthodes
-précédentes donnant une approximation du jacobien, il peut être
-intéressant de substituer à la fonction \(F\) son application tangente
-et de choisir cette nouvelle estimation comme la solution du problème de
-minimisation suivant~:
-\[
-\min_{\vec{s}^{G}\,\in\,\mathcal{R}^{N}}\,\norm{\vec{F}\paren{\vec{X}_{n-1}}+J\paren{\vec{X}_{n-1}}\,.\,\vec{s}^{G}}
-\]
-
-La solution de ce problème est donnée par\footnote{Pour le prouver,
-  nous pouvons écrire que~:
-  \[
-  \begin{array}{rcl}
-    \norm{\vec{F}\paren{\vec{X}_{n-1}}+J\paren{\vec{X}_{n-1}}\,.\,\vec{s}^{G}}^{2}
-    &=& {F}\paren{\vec{X}_{n-1}}\,.\,{F}\paren{\vec{X}_{n-1}}+2\,\vec{F}\paren{\vec{X}_{n-1}}\,\mid\,J\paren{\vec{X}_{n-1}}\,.\,\vec{s}^{G} \\
-    &&+\paren{J\paren{\vec{X}_{n-1}}\,.\,\vec{s}^{G}}\,\mid\,\paren{J\paren{\vec{X}_{n-1}}\,.\,\vec{s}^{G}}
-  \end{array}
-  \]
-  Le gradient de cette expression est égal à~:
-  \[
-  2\,\mbox{}^{t}J\paren{\vec{X}_{n-1}}\vec{F}\paren{\vec{X}_{n-1}}+\mbox{}^{t}J\paren{\vec{X}_{n-1}}\,J\paren{\vec{X}_{n-1}}\,.\vec{s}^{G}
-  \]
-}~:
-\[
-\mbox{}^{t}J\paren{\vec{X}_{n-1}}\,J\paren{\vec{X}_{n-1}}\,.\vec{s}^{G}=-\,\mbox{}^{t}J\paren{\vec{X}_{n-1}}\,.\,\vec{F}\paren{\vec{X}_{n-1}}
-\]
-Ce pas est intéressant loin de la solution.
-
-Les pas \(\vec{s}^{N}_{n}\) et \(\vec{s}_{n}^{G}\) sont combinés ainsi~:
-\[
-\vec{s} = a_{n} \,\vec{s}^{G}_{n} + \paren{1-a_{n}}\,\vec{s}_{n}^{N}
-\]
-
-\clearpage
-\newpage
-\section{Description de l'algorithme \nom{Runge-Kutta}-\castem{}}
-\label{sec:algo}
-% $Y$ représente les vecteurs de variables internes et 
-
-G représente une fonction a priori non linéaire et que nous supposerons
-a minima continûment dérivable. On cherche à résoudre le système
-différentiel suivant:
-\begin{equation}
-  \label{eq:systeme_diff:RK}
-  \dot{Y}=G\paren{Y,t}
-\end{equation}
-
-La résolution numérique de cette équation consiste à estimer, à partir
-de la valeur \(\debutpas{Y}\) à un instant \(t\), la valeur
-\(\finpas{Y}\) à un instant \(t+\Delta\, t\).
-
-Voici une description de l'algorithme \nom{Runge-Kutta}-\castem{}~:
-\begin{itemize}
-\item première estimation d'une solution à \(\Delta\, t /2\)~:
-\begin{subequations}
-\begin{align}
-  \dot{Y}_1 &= G\paren{\debutpas{Y},t} \\
-  \demipas{Y_1} &= \debutpas{Y} + \Frac{\Delta\, t}{2} \dot{Y}_1
-\end{align}
-\end{subequations}
-\item deuxième estimation d'une solution à \(\Delta\, t /2\)~:
-\begin{subequations}
-\begin{align}
-  \dot{Y}_2 &= G\paren{Y_1,t} \\
-  \demipas{Y_{12}} &= \debutpas{Y} + \Frac{\Delta\, t}{2} \paren{\Frac{\dot{Y}_1 + \dot{Y}_2}{2}}
-\end{align}
-\end{subequations}
-\item première estimation d'une solution à \(\Delta\, t\)~:
-\begin{subequations}
-\begin{align}
-  \dot{Y}_3 &= G\paren{Y_{12},t} \\
-  \finpas{Y_{13}} &= \demipas{Y_{12}} + \Frac{\Delta\, t}{2} \dot{Y}_3
-\end{align}
-\end{subequations}
-\item deuxième estimation d'une solution à \(\Delta\, t\)~:
-\begin{subequations}
-\begin{align}
-  \dot{Y}_4 &= G\paren{Y_{13},t} \\
-\label{eq:estimation_yf}
-\finpas{Y_f} &= \demipas{Y_{12}} + \Frac{\Delta\,
-  t}{2} \paren{\Frac{\dot{Y}_3 + \dot{Y}_4}{2}}
-\end{align}
-\end{subequations}
-\item troisième estimation d'une solution à \(\Delta\, t\)~:
-\begin{subequations}
-\begin{align}
-  \dot{Y}_5 &= G\paren{Y_f,t} \\
-\label{eq:estimation_y5}
-\finpas{Y_5} &= \debutpas{Y} + \Delta\, t \paren{\Frac{\dot{Y}_1 +
-    4\dot{Y}_3 + \dot{Y}_5}{6}}
-\end{align}
-\end{subequations}
-\end{itemize}
-
-Dans le cas où le calcul d'une de ces estimations ne pourraient être
-calculés, un sous-découpage du pas de temps est effectué comme le montre
-l'algorithme décrivant le sous-découpage du pas temps (\textsc{Fig.}
-\ref{fig:algo_temps}).
-
-Une fois toutes ces estimations calculées, on compare les contraintes
-obtenues lors des estimations \(\finpas{Y_f}\) (\ref{eq:estimation_yf})
-et \(\finpas{Y_5}\) (\ref{eq:estimation_y5}), notées respectivement
-\(\finpas{\tsigma}\) et \(\tsigma_5\).
-
-Pour cela, on se donne une erreur dont l'amplitude est basée sur la
-valeur des contraintes en début de pas \(\debutpas{\tsigma}\) ou sur la
-valeur du module d'\nom{Young} \(E\)~:
-\[
-errabs = \left\{
-\begin{aligned}
-  \sqrt{\debutpas{\tsigma}:\debutpas{\tsigma}}\,\times\,10^{-5} &\textrm{ si }\sqrt{\debutpas{\tsigma}:\debutpas{\tsigma}}>E\,\times\,10^{-3} \\
-  E\,\times\,10^{-8}                       &\textrm{ si }\sqrt{\debutpas{\tsigma}:\debutpas{\tsigma}}<E\,\times\,10^{-3}
-\end{aligned}
-\right.
-\]
-
-On définit deux variables représentant
-l'écart des contraintes \(ra\) et \(sqra\) définies de la manière
-suivante :
-\begin{align}
-  ra &=
-  \Frac{\sqrt{\paren{\finpas{\tsigma}-\tsigma_5}:\paren{\finpas{\tsigma}-\tsigma_5}}}{errabs}\\
-  sqra &= \sqrt{ra}\\
-\end{align}
-
-En testant ces deux paramètres avec des critères (fixés), on établit la
-convergence ou la non-convergence du calcul ainsi que le nouvel
-incrément de temps \(\Delta\, t\) qui sera utilisé. Dans le code de
-calcul, cet incrément de temps \(\Delta\, t\) est noté \texttt{dt\_}.
-L'algorithme déterminant le nouvel incrément de temps est présenté à la
-figure~\ref{fig:algo_temps}. Dans cet algorithme, le temps est initial
-est noté \texttt{t} tandis que le temps final est noté \texttt{dt}. La
-variable \texttt{dtprec} est définie comme une valeur minimale du
-sous-découpage \texttt{dt\_} en deçà de laquelle on renvoie une erreur.
-
-\begin{figure}[htbp]
-\centering
-\includegraphics[width=0.9\textwidth,height=22cm]{Images/Algo_temps.eps}
-\caption{Description de l'algorithme pour déterminer le sous-découpage du pas de temps}
-\label{fig:algo_temps}
-\end{figure}
-
-\clearpage
-\newpage
-\include{annexe-orthotropie}
-
-\clearpage
-\newpage
-\section{Calcul de la matrice d'élasticité}
+\subsection{Calcul de la matrice d'élasticité orthotrope}
 \label{sec:calcul-de-la}
+
+Le coefficients de thermo-élasticité passés à la loi de comportement
+sont ceux strictement nécessaires à l'hypothèse de modélisation
+utilisée. De plus, l'ordre de passage de ces coefficients dépend
+également de cette hypothèse. Enfin, dans le cas de calculs \(2D\) ou
+\(3D\), \castem{} passe les directions d'orthotropie (exprimées dans le
+repère de l'élément fini considéré) comme des coefficients matériau. Les
+coefficients associés aux directions d'orthotropie sont au nombre de
+\(2\) en \(2D\) et de \(6\) en \(3D\).
+
+Le nombre de coefficients matériau et leur ordre dépendant
+explicitement de l'hypothèse de modélisation, il est impossible depuis
+\mfront{} d'accéder à ces coefficients (voir les
+tableaux~\ref{tab:PROPS1D}, \ref{tab:PROPS2D} et \ref{tab:PROPS3D}
+pour plus de détails).
+
+S'il est possible de calculer les coefficients d'élasticité et d'en
+déduire une matrice d'élasticité ou un tenseur de dilatation thermique
+depuis \mfront{}, cette démarche apparaît lourde et fastidieuse.
 
 La matrice d'élasticité \(\tenseurq{D}\) est calculée à l'aide des
 propriétés matériau fournies par le code aux élément \castem{} par la
@@ -3771,7 +4187,228 @@ S_{13}\,\left(S_{12}\,S_{23}-S_{13}\,S_{22}\right)
 
 \clearpage
 \newpage
+\section{Amélioration de la robustesse des algorithmes de résolutions
+  implicites}
+\label{sec:mfront:implicit:robustness}
+
+Les méthodes de résolution des systèmes implicites nécessitent de
+choisir une estimation de la solution \(Y_{0}\) pour initier la
+recherche. Par défaut, \mfront{} utilisera le vecteur nul comme
+estimation initiale, mais l'utilisateur peut en spécifier une autre par
+la directive \mkey{Predictor}.
+
+La convergence des algorithmes de résolutions implicites n'est garantie
+que si l'estimation initiale \(Y_{0}\) est suffisamment proche de
+la solution recherchée. Loin de la solution, l'algorithme peut
+éventuellement converger mais les premières itérations tendent
+généralement vers la solution assez lentement (phase de recherche)~: il
+est classique d'observer une convergence linéaire lors de la phase de
+recherche et une transition vers un ordre de convergence plus élevé
+proche de la solution.
+
+Pour les lois de comportement fortement non linéaires, il est difficile
+de proposer une estimation \(Y_{0}\) garantissant la convergence,
+il peut donc être intéressant d'améliorer la robustesse des algorithmes.
+
+\begin{table}
+  \centering
+  \begin{tabular}{|c|c|}
+    \hline
+    Méthode & Expression de \(s_{n}\) \\
+    \hline
+    \hline
+    Algorithme de \textsc{Newton-Raphson}
+    & \(-J^{-1}\,.\,F\paren{Y_{n-1}}\) \\
+    \hline
+    \begin{minipage}{7cm}
+      Algorithme de \textsc{Newton-Raphson} et dérivation numérique
+    \end{minipage} &
+    \(-\underset{\sim}{J}^{-1}\,.\,F\paren{Y_{n-1}}\) \\
+    \hline
+    Premier algorithme de \textsc{Broyden} &
+    \begin{minipage}{5cm}
+      \(-\underset{\sim}{J}_{n-1}^{-1}\,.\,F\paren{Y_{n-1}}\)
+      où \(\underset{\sim}{J}_{n}\) est donné par
+      l'équation~\eqref{eq:Broyden}
+    \end{minipage} \\
+    \hline
+    Second algorithme de \textsc{Broyden} &
+    \begin{minipage}{5cm}
+      \(-\underset{\sim}{J}_{n-1}^{-1}\,.\,F\paren{Y_{n-1}}\)
+      où \(\underset{\sim}{J}_{n}^{-1}\) est donné par\(Y_{0}\)
+      l'équation~\eqref{eq:Broyden2}
+    \end{minipage} \\
+    \hline
+  \end{tabular}
+  \label{tab:sn}
+\end{table}
+
+L'ensemble des algorithmes présentés jusqu'ici prennent la forme~:
+\[
+Y_{n}=Y_{n-1}+s^{N}_{n}
+\]
+L'expression du pas \(s^{N}_{n}\) pour les différentes algorithmes
+présentés est donnée au tableau~\ref{tab:sn}. D'après la discussion
+précédente, ce pas \(s^{N}_{n}\) est optimal proche de la solution
+finale.
+
+Il est intéressant de trouver une autre estimation de la solution, moins
+performante près de la solution mais plus robuste. Les méthodes
+précédentes donnant une approximation du jacobien, il peut être
+intéressant de substituer à la fonction \(F\) son application tangente
+et de choisir cette nouvelle estimation comme la solution du problème de
+minimisation suivant~:
+\[
+\min_{s^{G}\,\in\,\mathcal{R}^{N}}\,\norm{F\paren{Y_{n-1}}+J\paren{Y_{n-1}}\,.\,s^{G}}
+\]
+
+La solution de ce problème est donnée par\footnote{Pour le prouver,
+  nous pouvons écrire que~:
+  \[
+  \begin{array}{rcl}
+    \norm{F\paren{Y_{n-1}}+J\paren{Y_{n-1}}\,.\,s^{G}}^{2}
+    &=& {F}\paren{Y_{n-1}}\,.\,{F}\paren{Y_{n-1}}+2\,F\paren{Y_{n-1}}\,\mid\,J\paren{Y_{n-1}}\,.\,s^{G} \\
+    &&+\paren{J\paren{Y_{n-1}}\,.\,s^{G}}\,\mid\,\paren{J\paren{Y_{n-1}}\,.\,s^{G}}
+  \end{array}
+  \]
+  Le gradient de cette expression est égal à~:
+  \[
+  2\,\mbox{}^{t}J\paren{Y_{n-1}}F\paren{Y_{n-1}}+\mbox{}^{t}J\paren{Y_{n-1}}\,J\paren{Y_{n-1}}\,.s^{G}
+  \]
+}~:
+\[
+\mbox{}^{t}J\paren{Y_{n-1}}\,J\paren{Y_{n-1}}\,.s^{G}=-\,\mbox{}^{t}J\paren{Y_{n-1}}\,.\,F\paren{Y_{n-1}}
+\]
+Ce pas est intéressant loin de la solution.
+
+Les pas \(s^{N}_{n}\) et \(s_{n}^{G}\) sont combinés ainsi~:
+\[
+s = a_{n} \,s^{G}_{n} + \paren{1-a_{n}}\,s_{n}^{N}
+\]
+
+\clearpage
+\newpage
+\section{Description de l'algorithme \nom{Runge-Kutta}-\castem{}}
+\label{sec:algoRKcastem}
+% $Y$ représente les vecteurs de variables internes et 
+
+G représente une fonction a priori non linéaire et que nous supposerons
+a minima continûment dérivable. On cherche à résoudre le système
+différentiel suivant:
+\begin{equation}
+  \label{eq:systeme_diff:RK}
+  \dot{Y}=G\paren{Y,t}
+\end{equation}
+
+La résolution numérique de cette équation consiste à estimer, à partir
+de la valeur \(\debutpas{Y}\) à un instant \(t\), la valeur
+\(\finpas{Y}\) à un instant \(t+\Delta\, t\).
+
+Voici une description de l'algorithme \nom{Runge-Kutta}-\castem{}~:
+\begin{itemize}
+\item première estimation d'une solution à \(\Delta\, t /2\)~:
+\begin{subequations}
+\begin{align}
+  \dot{Y}_1 &= G\paren{\debutpas{Y},t} \\
+  \demipas{Y_1} &= \debutpas{Y} + \Frac{\Delta\, t}{2} \dot{Y}_1
+\end{align}
+\end{subequations}
+\item deuxième estimation d'une solution à \(\Delta\, t /2\)~:
+\begin{subequations}
+\begin{align}
+  \dot{Y}_2 &= G\paren{Y_1,t} \\
+  \demipas{Y_{12}} &= \debutpas{Y} + \Frac{\Delta\, t}{2} \paren{\Frac{\dot{Y}_1 + \dot{Y}_2}{2}}
+\end{align}
+\end{subequations}
+\item première estimation d'une solution à \(\Delta\, t\)~:
+\begin{subequations}
+\begin{align}
+  \dot{Y}_3 &= G\paren{Y_{12},t} \\
+  \finpas{Y_{13}} &= \demipas{Y_{12}} + \Frac{\Delta\, t}{2} \dot{Y}_3
+\end{align}
+\end{subequations}
+\item deuxième estimation d'une solution à \(\Delta\, t\)~:
+\begin{subequations}
+\begin{align}
+  \dot{Y}_4 &= G\paren{Y_{13},t} \\
+\label{eq:estimation_yf}
+\finpas{Y_f} &= \demipas{Y_{12}} + \Frac{\Delta\,
+  t}{2} \paren{\Frac{\dot{Y}_3 + \dot{Y}_4}{2}}
+\end{align}
+\end{subequations}
+\item troisième estimation d'une solution à \(\Delta\, t\)~:
+\begin{subequations}
+\begin{align}
+  \dot{Y}_5 &= G\paren{Y_f,t} \\
+\label{eq:estimation_y5}
+\finpas{Y_5} &= \debutpas{Y} + \Delta\, t \paren{\Frac{\dot{Y}_1 +
+    4\dot{Y}_3 + \dot{Y}_5}{6}}
+\end{align}
+\end{subequations}
+\end{itemize}
+
+Dans le cas où le calcul d'une de ces estimations ne pourraient être
+calculés, un sous-découpage du pas de temps est effectué comme le montre
+l'algorithme décrivant le sous-découpage du pas temps (\textsc{Fig.}
+\ref{fig:algo_temps}).
+
+Une fois toutes ces estimations calculées, on compare les contraintes
+obtenues lors des estimations \(\finpas{Y_f}\) (\ref{eq:estimation_yf})
+et \(\finpas{Y_5}\) (\ref{eq:estimation_y5}), notées respectivement
+\(\finpas{\tsigma}\) et \(\tsigma_5\).
+
+Pour cela, on se donne une erreur dont l'amplitude est basée sur la
+valeur des contraintes en début de pas \(\debutpas{\tsigma}\) ou sur la
+valeur du module d'\nom{Young} \(E\)~:
+\[
+errabs = \left\{
+\begin{aligned}
+  \sqrt{\debutpas{\tsigma}:\debutpas{\tsigma}}\,\times\,10^{-5} &\textrm{ si }\sqrt{\debutpas{\tsigma}:\debutpas{\tsigma}}>E\,\times\,10^{-3} \\
+  E\,\times\,10^{-8}                       &\textrm{ si }\sqrt{\debutpas{\tsigma}:\debutpas{\tsigma}}<E\,\times\,10^{-3}
+\end{aligned}
+\right.
+\]
+
+On définit deux variables représentant
+l'écart des contraintes \(ra\) et \(sqra\) définies de la manière
+suivante :
+\begin{align}
+  ra &=
+  \Frac{\sqrt{\paren{\finpas{\tsigma}-\tsigma_5}:\paren{\finpas{\tsigma}-\tsigma_5}}}{errabs}\\
+  sqra &= \sqrt{ra}\\
+\end{align}
+
+En testant ces deux paramètres avec des critères (fixés), on établit la
+convergence ou la non-convergence du calcul ainsi que le nouvel
+incrément de temps \(\Delta\, t\) qui sera utilisé. Dans le code de
+calcul, cet incrément de temps \(\Delta\, t\) est noté \texttt{dt\_}.
+L'algorithme déterminant le nouvel incrément de temps est présenté à la
+figure~\ref{fig:algo_temps}. Dans cet algorithme, le temps est initial
+est noté \texttt{t} tandis que le temps final est noté \texttt{dt}. La
+variable \texttt{dtprec} est définie comme une valeur minimale du
+sous-découpage \texttt{dt\_} en deçà de laquelle on renvoie une erreur.
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.9\textwidth,height=22cm]{Images/Algo_temps.eps}
+\caption{Description de l'algorithme pour déterminer le sous-découpage du pas de temps}
+\label{fig:algo_temps}
+\end{figure}
+
+\clearpage
+\newpage
+\include{annexe-orthotropie}
+
+\clearpage
+\newpage
 \section{Fonctions utiles}
+
+Cette section décrit quelques fonctions utiles à la création de lois de
+comportement mécanique.
+
+\subsection{Calcul des coefficents de \nom{Lamé}}
+
+
 
 \subsection{Calcul du tenseur de \nom{Hill}}
 \label{sec:calcul-du-tenseur}

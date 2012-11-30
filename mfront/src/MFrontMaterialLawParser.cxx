@@ -45,6 +45,7 @@ namespace mfront{
     this->registerNewCallBack("@Date",&MFrontMaterialLawParser::treatDate);
     this->registerNewCallBack("@Includes",&MFrontMaterialLawParser::treatIncludes);
     this->registerNewCallBack("@StaticVar",&MFrontMaterialLawParser::treatStaticVar);
+    this->registerNewCallBack("@StaticVariable",&MFrontMaterialLawParser::treatStaticVar);
     this->registerNewCallBack("@Parameter",&MFrontMaterialLawParser::treatParameter);
     this->registerNewCallBack("@Constant",&MFrontMaterialLawParser::treatConstant);
     this->registerNewCallBack("@Description",&MFrontMaterialLawParser::treatDescription);

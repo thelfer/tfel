@@ -20,13 +20,13 @@ cmake/modules/tfel.cmake -text
 /debug.sh.in -text
 docs/mfront/Bibliographie.bib -text
 docs/mfront/Champs.tex -text
-docs/mfront/Images/2norton-rk.aux -text
 docs/mfront/Images/2norton-rk.mfront -text
 docs/mfront/Images/2norton-rk.mfront.tex -text
 docs/mfront/Images/2norton-rk.tex -text
 docs/mfront/Images/Algo_temps.eps -text
 docs/mfront/Images/CompSeq.eps -text
 docs/mfront/Images/Methode_Newton.pstricks -text
+docs/mfront/Images/NortonRK.eps -text
 docs/mfront/Images/mfront.eps -text
 docs/mfront/Images/mfrontexcel.eps -text
 docs/mfront/Images/tubeaxi.eps -text
@@ -40,6 +40,8 @@ docs/mfront/mfront/GetEvol.ps -text
 docs/mfront/mfront/GetEvol.tex -text
 docs/mfront/mfront/ImplicitOrthotropicCreep.mfront -text
 docs/mfront/mfront/ImplicitOrthotropicCreep.tex -text
+docs/mfront/mfront/MaterialLaw.mfront -text
+docs/mfront/mfront/MaterialLaw.tex -text
 docs/mfront/mfront/OrthotropicCreep.mfront -text
 docs/mfront/mfront/OrthotropicCreep.tex -text
 docs/mfront/mfront/OrthotropicElastic.mfront -text

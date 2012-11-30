@@ -26,3 +26,4 @@ rm -f  $(find . -name "*~")
 rm -f  $(find . -name "Makefile.in")
 rm -f  $(find . -name "Makefile")
 rm -fr ABOUT-NLS
+rm -f docs/mfront/Images/2norton-rk.aux

@@ -1,47 +1,14 @@
-\hlstd{@Parser}\hlstd{\ \ \ \ }\hlstd{RungeKutta}\hlsym{;}\hspace*{\fill}\\
-\hlstd{@Behaviour\ NortonRK}\hlsym{;}\hspace*{\fill}\\
-\hlstd{@Author}\hlstd{\ \ \ \ }\hlstd{Helfer\ Thomas}\hlsym{;}\hspace*{\fill}\\
-\hlstd{@Algorithm\ rk54}\hlsym{;}\hspace*{\fill}\\
-\hlstd{@Date}\hlstd{\ \ \ \ \ \ }\hlstd{}\hlnum{23}\hlstd{}\hlsym{/}\hlstd{}\hlnum{09}\hlstd{}\hlsym{/}\hlstd{}\hlnum{2012}\hlstd{}\hlsym{;}\hspace*{\fill}\\
-\hlstd{\hspace*{\fill}\\
-@Includes}\hlsym{\{}\hspace*{\fill}\\
-\hlstd{}\hldir{\#include}\hldstr{"TFEL/Material/Lame.hxx"}\hldir{}\hspace*{\fill}\\
-\hlstd{}\hlsym{\}}\hspace*{\fill}\\
-\hlstd{\hspace*{\fill}\\
-@Coef\ real\ young}\hlsym{;\ }\hlstd{}\hlcom{/{*}\ mandatory\ for\ castem\ {*}/}\hlstd{\hspace*{\fill}\\
-@Coef\ real\ nu}\hlsym{;}\hlstd{\ \ \ \ }\hlsym{}\hlstd{}\hlcom{/{*}\ mandatory\ for\ castem\ {*}/}\hlstd{\hspace*{\fill}\\
-@Coef\ real\ rho}\hlsym{;}\hlstd{\ \ \ }\hlsym{}\hlstd{}\hlcom{/{*}\ mandatory\ for\ castem\ {*}/}\hlstd{\hspace*{\fill}\\
-@Coef\ real\ alpha}\hlsym{;\ }\hlstd{}\hlcom{/{*}\ mandatory\ for\ castem\ {*}/}\hlstd{\hspace*{\fill}\\
-@Coef\ real\ A}\hlsym{{[}}\hlstd{}\hlnum{2}\hlstd{}\hlsym{{]};}\hlstd{\ \ \ \ \ }\hlsym{}\hlstd{}\hlcom{/{*}\ Norton\ coefficient}\hlstd{\ \ \ }\hlcom{{*}/}\hlstd{\hspace*{\fill}\\
-@Coef\ real\ E}\hlsym{{[}}\hlstd{}\hlnum{2}\hlstd{}\hlsym{{]};}\hlstd{\ \ \ \ \ }\hlsym{}\hlstd{}\hlcom{/{*}\ Norton\ exponant}\hlstd{\ \ \ \ \ \ }\hlcom{{*}/}\hlstd{\hspace*{\fill}\\
-\hspace*{\fill}\\
-@LocalVar\ real\ lambda}\hlsym{;\ }\hlstd{}\hlcom{/{*}\ first}\hlstd{\ \ }\hlcom{Lame\ coefficient}\hlstd{\ \ }\hlcom{{*}/}\hlstd{\hspace*{\fill}\\
-@LocalVar\ real\ mu}\hlsym{;}\hlstd{\ \ \ \ \ }\hlsym{}\hlstd{}\hlcom{/{*}\ second\ Lame\ coefficient\ {*}/}\hlstd{\hspace*{\fill}\\
-\hspace*{\fill}\\
-@StateVar\ real\ p}\hlsym{{[}}\hlstd{}\hlnum{2}\hlstd{}\hlsym{{]};}\hlstd{\ \ \ \ \ \ }\hlsym{}\hlstd{}\hlcom{/{*}\ Equivalent\ viscoplastic\ strain\ {*}/}\hlstd{\hspace*{\fill}\\
-@StateVar\ Stensor\ evp}\hlsym{{[}}\hlstd{}\hlnum{2}\hlstd{}\hlsym{{]};\ }\hlstd{}\hlcom{/{*}\ Viscoplastic\ strain}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ }\hlcom{{*}/}\hlstd{}\hspace*{\fill}\\
-\hspace*{\fill}\\
-\hlcom{/{*}\ Initialize\ Lame\ coefficients\ {*}/}\hlstd{\hspace*{\fill}\\
-@InitLocalVars}\hlsym{\{}\hspace*{\fill}\\
-\hlstd{}\hlstd{\ \ }\hlstd{}\hlkwa{using\ namespace\ }\hlstd{tfel}\hlsym{::}\hlstd{material}\hlsym{::}\hlstd{lame}\hlsym{;}\hspace*{\fill}\\
-\hlstd{}\hlstd{\ \ }\hlstd{lambda\ }\hlsym{=\ }\hlstd{}\hlkwd{computeLambda}\hlstd{}\hlsym{(}\hlstd{young}\hlsym{,}\hlstd{nu}\hlsym{);}\hspace*{\fill}\\
-\hlstd{}\hlstd{\ \ }\hlstd{mu\ }\hlsym{=\ }\hlstd{}\hlkwd{computeMu}\hlstd{}\hlsym{(}\hlstd{young}\hlsym{,}\hlstd{nu}\hlsym{);}\hspace*{\fill}\\
-\hlstd{}\hlsym{\}}\hspace*{\fill}\\
-\hlstd{\hspace*{\fill}\\
-@ComputeStress}\hlsym{\{}\hspace*{\fill}\\
-\hlstd{}\hlstd{\ \ }\hlstd{sig\ }\hlsym{=\ }\hlstd{lambda}\hlsym{{*}}\hlstd{}\hlkwd{trace}\hlstd{}\hlsym{(}\hlstd{eel}\hlsym{){*}}\hlstd{StrainStensor}\hlsym{::}\hlstd{}\hlkwd{Id}\hlstd{}\hlsym{()+}\hlstd{}\hlnum{2}\hlstd{}\hlsym{{*}}\hlstd{mu}\hlsym{{*}}\hlstd{eel}\hlsym{;}\hspace*{\fill}\\
-\hlstd{}\hlsym{\}}\hspace*{\fill}\\
-\hlstd{\hspace*{\fill}\\
-@Derivative}\hlsym{\{}\hspace*{\fill}\\
-\hlstd{}\hlstd{\ \ }\hlstd{real\ sigeq\ }\hlsym{=\ }\hlstd{}\hlkwd{sigmaeq}\hlstd{}\hlsym{(}\hlstd{sig}\hlsym{);}\hspace*{\fill}\\
-\hlstd{}\hlstd{\ \ }\hlstd{}\hlkwa{if}\hlstd{}\hlsym{(}\hlstd{sigeq}\hlsym{$>$}\hlstd{}\hlnum{1}\hlstd{}\hlsym{.}\hlstd{e9}\hlsym{)\{}\hspace*{\fill}\\
-\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlkwa{return\ false}\hlstd{}\hlsym{;}\hspace*{\fill}\\
-\hlstd{}\hlstd{\ \ }\hlstd{}\hlsym{\}}\hspace*{\fill}\\
-\hlstd{}\hlstd{\ \ }\hlstd{Stensor}\hlstd{\ \ }\hlstd{}\hlkwd{n}\hlstd{\ \ }\hlkwd{}\hlstd{}\hlsym{(}\hlstd{}\hlnum{0}\hlstd{}\hlsym{.);}\hspace*{\fill}\\
-\hlstd{}\hlstd{\ \ }\hlstd{}\hlkwa{if}\hlstd{}\hlsym{(}\hlstd{sigeq\ }\hlsym{$>$\ }\hlstd{}\hlnum{10}\hlstd{}\hlsym{.}\hlstd{e}\hlsym{{-}}\hlstd{}\hlnum{7}\hlstd{}\hlsym{)\{}\hspace*{\fill}\\
-\hlstd{}\hlstd{\ \ \ \ }\hlstd{n}\hlstd{\ \ \ \ }\hlstd{}\hlsym{=\ }\hlstd{}\hlnum{1.5}\hlstd{f}\hlsym{{*}}\hlstd{}\hlkwd{deviator}\hlstd{}\hlsym{(}\hlstd{sig}\hlsym{)/}\hlstd{sigeq}\hlsym{;}\hspace*{\fill}\\
-\hlstd{}\hlstd{\ \ }\hlstd{}\hlsym{\}}\hspace*{\fill}\\
-\hlstd{}\hlstd{\ \ }\hlstd{deel\ }\hlsym{=\ }\hlstd{deto}\hlsym{;}\hspace*{\fill}\\
+\hlstd{
+@MaterialProperty\ real\ A}\hlsym{{[}}\hlstd{}\hlnum{2}\hlstd{}\hlsym{{]};}\hlstd{\ \ \ \ \ }\hlsym{}\hlstd{}\hlcom{/{*}\ Norton\ coefficient}\hlstd{\ \ \ }\hlcom{{*}/}\hlstd{\hspace*{\fill}\\
+@MaterialProperty\ real\ E}\hlsym{{[}}\hlstd{}\hlnum{2}\hlstd{}\hlsym{{]};}\hlstd{\ \ \ \ \ }\hlsym{}\hlstd{}\hlcom{/{*}\ Norton\ exponant}\hlstd{\ \ \ \ \ \ }\hlcom{{*}/}\hlstd{\hspace*{\fill}\\
+\ldots\\
+\hlstd{
+@StateVariable\ real\ p}\hlsym{{[}}\hlstd{}\hlnum{2}\hlstd{}\hlsym{{]};}\hlstd{\ \ \ \ \ \ }\hlsym{}\hlstd{}\hlcom{/{*}\ Equivalent\ viscoplastic\ strain\ {*}/}\hlstd{\hspace*{\fill}\\
+@StateVariable\ Stensor\ evp}\hlsym{{[}}\hlstd{}\hlnum{2}\hlstd{}\hlsym{{]};\ }\hlstd{}\hlcom{/{*}\ Viscoplastic\ strain}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ }\hlcom{{*}/}\hlstd{}\hspace*{\fill}\\
+\ldots\\
+\hlstd{
+@Derivative}\hlsym{\{}\hspace*{\fill}}\\
+\hlstd{}\hlstd{\ \ }\hlstd{}\ldots\\
 \hlstd{}\hlstd{\ \ }\hlstd{}\hlkwa{for}\hlstd{}\hlsym{(}\hlstd{}\hlkwb{unsigned\ short\ }\hlstd{i}\hlsym{=}\hlstd{}\hlnum{0}\hlstd{}\hlsym{;}\hlstd{i}\hlsym{!=}\hlstd{}\hlnum{2}\hlstd{}\hlsym{;++}\hlstd{i}\hlsym{)\{}\hspace*{\fill}\\
 \hlstd{}\hlstd{\ \ \ \ }\hlstd{dp}\hlsym{{[}}\hlstd{i}\hlsym{{]}}\hlstd{\ \ \ \ }\hlsym{=\ }\hlstd{A}\hlsym{{[}}\hlstd{i}\hlsym{{]}{*}}\hlstd{}\hlkwd{pow}\hlstd{}\hlsym{(}\hlstd{sigeq}\hlsym{,}\hlstd{E}\hlsym{{[}}\hlstd{i}\hlsym{{]});}\hspace*{\fill}\\
 \hlstd{}\hlstd{\ \ \ \ }\hlstd{devp}\hlsym{{[}}\hlstd{i}\hlsym{{]}}\hlstd{\ \ }\hlsym{=\ }\hlstd{dp}\hlsym{{[}}\hlstd{i}\hlsym{{]}{*}}\hlstd{n}\hlsym{;}\hspace*{\fill}\\
