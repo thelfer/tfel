@@ -619,6 +619,12 @@ La directive \mkey{Parameter}
 
 La directive \mkey{Constant}
 
+\subsection{Mots clés spécifiques}
+
+La directive \mkey{Namespaces}
+
+La directive \mkey{UseTemplate}
+
 \subsection{Gestion des bornes}
 \label{sec:mfront:properties:bounds}
 
@@ -630,35 +636,15 @@ matériau a souvent été établie sur certain domaine~: les limites de ce
 domaine expérimental seront dénommées \og~bornes de validité~\fg (de la
 corrélation).
 
-\paragraph{Le mot clé \mkey2{PhysicalBounds}{Physical\-Bounds}} Le mot
-clé \mkey2{PhysicalBounds}{Physical\-Bounds} définit les bornes de
-validité des différents variables d'entrée. Le dépassement d'une de ces
-bornes doit arrêtés le calcul.
+\paragraph{Le mot clé \texttt{@Bounds}} Le mot clé \mkey{Bounds} définit
+les bornes de validité de la corrélation utilisée pour chacune des
+différentes variables d'entrée. Le traitement du dépassement d'une de
+ces bornes dépend de l'interface utilisée.
 
-\paragraph{Le mot clé \mkey{Bounds}} Le mot clé \mkey{Bounds} définit
-les bornes de validité expérimentale de la propriété. Les cas de
-dépassement de ces bornes peuvent être d'origine diverse, et peuvent
-parfois être acceptable. La plupart des interface permettent de
-paramétrer leur réaction en cas de dépassement des bornes de validité.
-Trois politiques sont généralement retenues~:
-\begin{itemize}
-  \item \texttt{STRICT}, qui conduit à signaler une erreur au code
-  appelant~;
-  \item \texttt{WARNING}, qui conduit à afficher un message
-  d'avertissement sans génération d'erreur~;
-  \item \texttt{NONE}, qui ignore le dépassement~;
-\end{itemize}
-
-Par défaut, la politique \texttt{NONE} est utilisée. La manière de
-déclarer ces politiques dépend de l'interface~:
-\begin{itemize}
-  \item l'interface {\texttt{c++}} lit la valeur de variable
-  d'environnement \texttt{OUT\_\-OF\_\-BOUND\_\-POLICY}~;
-  \item l'interface {\texttt{castem}} lit la valeur de variable
-  d'environnement \texttt{CASTEM\_\-OUT\_\-OF\_\-BOUND\_\-POLICY}~;
-  \item l'interface {\texttt{python}} lit la valeur de variable
-  d'environnement \texttt{PYTHON\_\-OUT\_\-OF\_\-BOUND\_\-POLICY}~;
-\end{itemize}
+\paragraph{Le mot clé \texttt{@Physical\-Bounds}} Le mot clé
+\mkeyb{PhysicalBounds}{Physical\-Bounds} définit les valeurs admissibles
+des différents variables d'entrée. Le dépassement d'une de ces bornes
+doit arrêter le calcul.
 
 \subsection{Interfaces disponibles} Les interfaces disponibles par
 défaut pour les propriétés matériaux sont~:
@@ -670,13 +656,7 @@ défaut pour les propriétés matériaux sont~:
   \item l'interface \texttt{c++} pour une utilisation dans des codes
   écrits dans ce language~;
   \item l'interface \texttt{castem} pour une utilisation dans le code
-  aux éléments finis \castem{}. L'utilisation de cette interface a été
-  décrite ailleurs~\cite{helfer07:_utilis}. Une utilisation directe de
-  la librairie générée nécessite une version modifiée de \castem{}
-  utilisée et maintenue au sein de la plateforme \pleiades{}.
-  L'utilisation dans la version officielle est possible, mais il faut
-  passer par une modification de la méthode {\tt compute} et une
-  recompilation partielle de \castem{}~;
+  aux éléments finis \castem{}~;
   \item l'interface \texttt{python} pour une utilisation dans des codes
   écrits dans ce language~;
   \item l'interface \texttt{gnuplot} pour une visualisation des courbes
@@ -693,53 +673,183 @@ démarrage\footnote{Ce mécanisme est utilisé par exemple par
   propriétés matériau, interface qui évolue avec les versions de
   l'architecture.}.
 
-\begin{table}[htbp]
-  \centering
-  \begin{tabular}[htbp]{|l|l|l|}
-    \cline{2-3}
-    \multicolumn{1}{c|}{\mbox{}} & \multicolumn{2}{c|}{Nom de la bibliothèque générée} \\
-    \hline
-    Interface & sous \windows{} & sous \linux{} \\
-    \hline
-    \hline
-    \texttt{c}        & libMaterialLaw.dll       & libMaterialLaw.so    \\
-    \hline
-    \texttt{c++}      & libCppMaterialLaw.dll    & libCppMaterialLaw.so \\
-    \hline
-    \texttt{castem}   & libCastemMaterialLaw.dll & libCastemMaterialLaw.so \\
-    \hline
-    \texttt{python}   & materiallaw.dll & materiallaw.so\\
-    \hline
-  \end{tabular}
-  \caption{Nom par défaut de la bibliothèque générée en
-    fonction de l'interface choisie.}
-  \label{tab:biblio_vs_interface}
-\end{table}
-
-\paragraph{Bibliothèques générés} Chacune des interfaces \texttt{c},
-\texttt{c++}, \texttt{castem}, \texttt{python} va générer une
-bibliothèque de fonction dont le nom par défaut est donné au
-tableau~\ref{tab:biblio_vs_interface}. Ce nom peut être modifié par le
-mot clé \mkey{Material} ou le mot clé \mkey{Library}.
-
-\paragraph{Autres utilisations} Bien que ces interfaces aient été
-construites pour une utilisation particulière, il est possible
-d'utiliser les bibliothèques générées dans des contextes
-distincts. Ainsi, l'annexe~\ref{sec:inter-avec-excel} montre
-comment l'interface \castem{} peut être utilisée pour interagir avec
-\excel{}.
-
 \subsubsection{L'interface \texttt{c}}
 
-\subsubsection{L'interface \texttt{castem}}
+Ce paragraphe est dédié à l'interface \texttt{c} aux propriétés
+matériau.
+
+\paragraph{Noms des fonctions générées} Par propriété matériau, une ou
+deux fonctions sont générées.
+
+La première calcule effectivement la valeur de la propriétés matériau en
+reprenant le code fourni après la directive \mkey{Function}. Un nom de
+propriété doit nécessairement avoir été défini par la directive \mkey{Law}.
+Deux cas se présentent alors~:
+\begin{itemize}
+  \item si un nom de matériau a été spécifié, le nom de la fonction sera
+  {\texttt{mat\textunderscore{}law}}, où \texttt{mat} est le nom du
+  matériau et \texttt{law} le nom de la propriété~;
+  \item si aucun nom de matériau n'a été spécifié, le nom de la fonction
+  sera {\texttt{law}}, où \texttt{law} est le nom de la propriété.
+\end{itemize}
+
+Cette fonction prend des réels en double précision en arguments, dans
+l'ordre de déclaration des entrées de la propriété matériau, introduites
+par la directive \mkey{Input}.
+
+\paragraph{Gestion des bornes} Une deuxième fonction est générée si des
+bornes ont été fournies. Cette deuxième fonction renvoie~:
+\begin{itemize}
+  \item un nombre positif si une borne de la loi est violée~;
+  \item un nombre négatif si une borne physique l'est~;
+  \item \texttt{0} si aucune borne n'est violée.
+\end{itemize}
+La valeur absolue du nombre est l'ordre de déclaration de la variable
+mise en cause.
+
+Cette fonction a le nom de la première fonction suivi de
+\texttt{\textunderscore{}checkBounds}. Elle prend les mêmes arguments,
+donnés dans le même ordre, que la première fonction.
+
+\paragraph{Noms de la librairie générée} Différents cas se présentent~:
+\begin{itemize}
+  \item si un nom de librairie a été défini par la directive
+  \mkey{Library}, le nom de la librairie sera {\tt libXXX.so} où
+  \texttt{XXX} est le nom fourni par l'utilisateur~;
+  \item si aucun nom de librairie n'est spécifié mais qu'un nom de
+  matériau a été fourni, le nom de la librairie sera {\tt libMMM.so} où
+  \texttt{MMM} est le nom du matériau fourni par l'utilisateur~;
+  \item si aucun nom de librairie ni aucun nom de matériau n'ont été
+  spécifiés, la librairie s'appellera {\tt libMaterialLaw.so}.
+\end{itemize}
 
 \subsubsection{L'interface \texttt{castem}}
 
-\subsection{Mots clés spécifiques}
+Ce paragraphe est dédié à l'interface \texttt{castem} aux propriétés
+matériau. L'utilisation de cette interface est décrite dans
+l'annexe~\ref{sec:castem:materialproperties}. Une utilisation directe de
+la librairie générée nécessite une version modifiée de \castem{}
+utilisée et maintenue au sein de la plateforme \pleiades{}.
+L'utilisation dans la version officielle est possible, mais il faut
+passer par une modification de la méthode {\tt compute} et une
+recompilation partielle de \castem{}.
 
-La directive \mkey{Namespaces}
+\paragraph{Nom de la fonction générée} Par propriété matériau, une
+fonction est générée en reprenant le code fourni après la directive
+\mkey{Function}.
 
-La directive \mkey{UseTemplate}
+Un nom de propriété doit nécessairement avoir été
+défini par la directive \mkey{Law}. Deux cas se présentent alors~:
+\begin{itemize}
+  \item si un nom de matériau a été spécifié, le nom de la fonction sera
+  {\texttt{mat\textunderscore{}law}}, où \texttt{mat} est le nom du
+  matériau et \texttt{law} le nom de la propriété~;
+  \item si aucun nom de matériau n'a été spécifié, le nom de la fonction
+  sera {\texttt{law}}, où \texttt{law} est le nom de la propriété.
+\end{itemize}
+
+Cette fonction prend un tableau de réels en double précision en
+argument. Dans ce tableau, les valeurs des entrées de la propriété
+matériau, introduites par la directive \mkey{Input}, doivent être
+fournies dans l'ordre de déclaration.
+
+\paragraph{Gestion des bornes} Si une borne physique est violée, la
+fonction renvoie la valeur spéciale \texttt{NaN} (pour \texttt{not a
+  number}), définie dans la norme IEEE 754. Cette valeur de retour
+conduit à un arrêt des calculs.
+
+Le traitement d'une violation des bornes de validité expérimentale
+dépendant de la politique définie par l'utilisateur à l'aide de la
+variable d'environnement \index{general}{CASTEM\_OUT\_OF\_BOUND\_POLICY}
+\texttt{CASTEM\_\-OUT\_\-OF\_\-BOUND\_\-POLICY}. Trois politiques sont
+sont possibles~:
+\begin{itemize}
+  \item \texttt{STRICT}, qui traite un dépassement comme une erreur,
+  avec un traitement similaire à ce qui est fait pour les bornes
+  physiques~;
+  \item \texttt{WARNING}, qui conduit à afficher un message
+  d'avertissement sans génération d'erreur~;
+  \item \texttt{NONE}, qui ignore le dépassement~;
+\end{itemize}
+
+Si la variable \texttt{CASTEM\_\-OUT\_\-OF\_\-BOUND\_\-POLICY} n'est pas
+définie, les dépassements sont ignorés.
+
+\paragraph{Noms de la librairie générée} Différents cas se présentent~:
+\begin{itemize}
+  \item si un nom de librairie a été défini par la directive
+  \mkey{Library}, le nom de la librairie sera {\tt libCastemXXX.so} où
+  \texttt{XXX} est le nom fourni par l'utilisateur~;
+  \item si aucun nom de librairie n'est spécifié mais qu'un nom de
+  matériau a été fourni, le nom de la librairie sera {\tt
+    libCastemMMM.so} où \texttt{MMM} est le nom du matériau fourni par
+  l'utilisateur~;
+  \item si aucun nom de librairie ni aucun nom de matériau n'ont été
+  spécifiés, la librairie s'appellera {\tt libCastemMaterialLaw.so}.
+\end{itemize}
+
+\subsubsection{L'interface \texttt{python}}
+
+Ce paragraphe est dédié à l'interface \texttt{python} aux propriétés
+matériau.
+
+Par propriété matériau, deux fonctions sont générées~:
+\begin{itemize}
+  \item la première implante effectivement la propriété matériau~;
+  \item la seconde fonction est en fait propre à la librairie générée et
+  déclare les différentes informations implantées dans cette librairie.
+  Elle ne sera pas décrite plus avant dans ce paragraphe.
+\end{itemize}
+
+\paragraph{Nom de la fonction générée} La première fonction générée
+reprend le code fourni après la directive \mkey{Function}.
+
+Un nom de propriété doit nécessairement avoir été
+défini par la directive \mkey{Law}. Deux cas se présentent alors~:
+\begin{itemize}
+  \item si un nom de matériau a été spécifié, le nom de la fonction sera
+  {\texttt{mat\textunderscore{}law}}, où \texttt{mat} est le nom du
+  matériau et \texttt{law} le nom de la propriété~;
+  \item si aucun nom de matériau n'a été spécifié, le nom de la fonction
+  sera {\texttt{law}}, où \texttt{law} est le nom de la propriété.
+\end{itemize}
+
+Cette fonction prend un tableau de réels en double précision en
+argument. Dans ce tableau, les valeurs des entrées de la propriété
+matériau, introduites par la directive \mkey{Input}, doivent être
+fournies dans l'ordre de déclaration.
+
+\paragraph{Gestion des bornes} Si une borne physique est violée, la
+fonction renvoie une exception du type \texttt{Runtime\-Error}.
+
+Le traitement d'une violation des bornes de validité expérimentale
+dépendant de la politique définie par l'utilisateur à l'aide de la
+variable d'environnement \index{general}{PYTHON\_OUT\_OF\_BOUND\_POLICY}
+\texttt{PYTHON\_\-OUT\_\-OF\_\-BOUND\_\-POLICY}. Trois politiques sont
+sont possibles~:
+\begin{itemize}
+  \item \texttt{STRICT}, qui traite un dépassement comme une erreur,
+  avec un traitement similaire à ce qui est fait pour les bornes
+  physiques~;
+  \item \texttt{WARNING}, qui conduit à afficher un message
+  d'avertissement sans génération d'erreur~;
+  \item \texttt{NONE}, qui ignore le dépassement~;
+\end{itemize}
+
+Si la variable \texttt{PYTHON\_\-OUT\_\-OF\_\-BOUND\_\-POLICY} n'est pas
+définie, les dépassements sont ignorés.
+
+\paragraph{Noms de la librairie générée} Différents cas se présentent~:
+\begin{itemize}
+  \item si un nom de librairie a été défini par la directive
+  \mkey{Library}, le nom de la librairie sera {\tt XXX.so} où
+  \texttt{XXX} est le nom fourni par l'utilisateur~;
+  \item si aucun nom de librairie n'est spécifié mais qu'un nom de
+  matériau a été fourni, le nom de la librairie sera {\tt MMM.so} où
+  \texttt{MMM} est le nom du matériau fourni par l'utilisateur~;
+  \item si aucun nom de librairie ni aucun nom de matériau n'ont été
+  spécifiés, la librairie s'appellera {\tt MaterialLaw.so}.
+\end{itemize}
 
 \subsection{Exemple du module d'\nom{Young} du \sic{}}
 \label{sec:module-dnomyoung-du}
@@ -1891,9 +2001,9 @@ totale\footnote{Les variables externes ne sont pas mises à jour car cela
 \paragraph{Exemple de la déformation inélastique totale} Supposons la
 déformation inélastique totale représentée par une variable auxiliaire
 tensorielle nommée \texttt{evp} (déclarée par la directive
-\mkey2{AuxiliaryStateVariable}{Auxiliary\-State\-Variable}). Cette
+\mkeyb{AuxiliaryStateVariable}{Auxiliary\-State\-Variable}). Cette
 variable peut être calculée, dans le bloc suivant la directive
-\mkey2{UpdateAuxiliaryStateVariables}{Update\-Auxiliary\-State\-Variables}
+\mkeyb{UpdateAuxiliaryStateVariables}{Update\-Auxiliary\-State\-Variables}
 ainsi~:
 \begin{center}
   \texttt{evp += deto-deel;}
@@ -3426,6 +3536,7 @@ modifications faites au code aux éléments finis \castem{} et
 l'utilisation de librairies externes depuis le {\tt gibiane}.
 
 \subsection{Appel de propriétés matériaux externes dans \castem{}}
+\label{sec:castem:materialproperties}
 
 \subsubsection{Fichiers modifiés et implémentation}
 
