@@ -4,7 +4,9 @@ all:
 	latex  $(note).tex
 	latex  $(note).tex
 	bibtex $(note)
-	-makeindex -s style.ist general.idx
+	-makeindex -s style.ist env.idx
+	-makeindex -s style.ist tfel.idx
+	-makeindex -s style.ist headers.idx
 	-makeindex -s style.ist mkeys.idx
 	latex  $(note).tex
 	latex  $(note).tex

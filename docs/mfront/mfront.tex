@@ -7,11 +7,12 @@
 
 \documentclass[rectoverso,pleiades,pstricks,leqno,anti]{texmf/note_technique_2010}
 
-%\usepackage{draftwatermark}
-%\SetWatermarkText{Brouillon}
-%\SetWatermarkLightness{0.5}
-%\usepackage[dvips]{graphicx}
-%\usepackage[dvips,breaklinks]{hyperref}
+\usepackage{draftcopy}
+\draftcopySetGrey{0.8}
+\draftcopyName{Version provisoire}{80}
+
+\usepackage[dvips]{graphicx}
+\usepackage[dvips,breaklinks]{hyperref}
 
 \usepackage{texmf/mathematiques}
 \usepackage{texmf/mecanique}
@@ -24,17 +25,17 @@
 \usepackage{relsize}
 \usepackage{multind}
 
-%% one column index
-%\makeatletter
-%\def\printindex#1#2{\section*{#2}
-%\addcontentsline{toc}{section}{#2}
-%\@input{#1.ind}}
-%\makeatother
+% one column index
+\makeatletter
+\def\printindex#1#2{\section*{#2}
+\addcontentsline{toc}{section}{#2}
+\@input{#1.ind}}
+\makeatother
 
 \usepackage[frenchb]{babel}
 
 \newcommand{\pleiades}{\texttt{pleiades}}
-\newcommand{\tfel}{\texttt{tfel}}
+\newcommand{\TFEL}{\texttt{tfel}}
 \newcommand{\mfront}{\texttt{mfront}}
 \newcommand{\cyrano}{\texttt{cyrano}}
 \newcommand{\castem}{\texttt{Cast3M}}
@@ -47,7 +48,19 @@
 
 \newcommand{\mkey}[1]{\index{mkeys}{#1@\symbol{64}#1}{\texttt{@#1}}}
 \newcommand{\mkeyb}[2]{\index{mkeys}{#1@\symbol{64}#1}{\texttt{@#2}}}
+
+\newcommand{\header}[1]{\index{headers}{#1}{\texttt{#1}}}
+\newcommand{\headerb}[2]{\index{headers}{#1}{\texttt{#2}}}
+
+\newcommand{\tfel}[1]{\index{tfel}{#1}{\texttt{#1}}}
+\newcommand{\tfelb}[2]{\index{tfel}{#1}{\texttt{#2}}}
+
+\newcommand{\env}[1]{\index{env}{#1}{\texttt{#1}}}
+\newcommand{\envb}[2]{\index{env}{#1}{\texttt{#2}}}
+
 \newcommand{\moption}[1]{\texttt{-{}-#1}}
+
+\newcommand{\bigO}[1]{\ensuremath{\mathop{}\mathopen{}O\mathopen{}\left(#1\right)}}
 
 %c from texinfo.tex
 \def\ifmonospace{\ifdim\fontdimen3\font=0pt }
@@ -101,18 +114,26 @@
   
   Les objectifs sont, dans chaque cas~:
   \begin{itemize}
-    \item de proposer un fichier d'entrée clair se focalisant
-    sur l'{\em information physique}~;
+    \item de proposer un fichier d'entrée clair se focalisant sur l'{\em
+      information physique}~;
     \item de ne demander qu'un {\em minimum} de connaissance
     informatique à l'utilisateur~;
     \item de générer des bibliothèques matériau {\em numériquement
       optimisée}, en particulier pour les lois de comportement~;
-    \item de favoriser un dialogue \og~\oe{}cuménique~\fg entre
-    les différentes applications de l'utilisateur.
+    \item de favoriser un dialogue \og~\oe{}cuménique~\fg entre les
+    différentes applications de l'utilisateur par la notion d'interface.
   \end{itemize}
+
+  Pour les propriétés matériau et les lois de comportement mécanique,
+  les fichiers \mfront{} peuvent être introduits par la base de données
+  \sirius{}. Inversement, la base de données \sirius{} permet de
+  récupérer les connaissances matériau sous forme de fichiers \mfront{}.
+
 }
 
-\makeindex{general}
+\makeindex{env}
+\makeindex{tfel}
+\makeindex{headers}
 \makeindex{mkeys}
 
 \begin{document}
@@ -384,7 +405,7 @@ compilation optimisées et lance la commande~:
 
 \paragraph{L'option \moption{nodeps}} L'option \moption{nodeps} empêche
 l'inclusion des règle de dépendances dans le fichier {\tt
-  Makefile.mfront} généré. Cette option a été introduite pour éviter
+  Make\-file\-.mfront} généré. Cette option a été introduite pour éviter
 certains problèmes sous \windows{}.
 
 %--silent-build                   : active or desactivate silent build
@@ -760,9 +781,9 @@ conduit à un arrêt des calculs.
 
 Le traitement d'une violation des bornes de validité expérimentale
 dépendant de la politique définie par l'utilisateur à l'aide de la
-variable d'environnement \index{general}{CASTEM\_OUT\_OF\_BOUND\_POLICY}
-\texttt{CASTEM\_\-OUT\_\-OF\_\-BOUND\_\-POLICY}. Trois politiques sont
-sont possibles~:
+variable d'environnement
+\envb{CASTEM\_OUT\_OF\_BOUND\_POLICY}{CASTEM\_\-OUT\_\-OF\_\-BOUND\_\-POLICY}.
+Trois politiques sont sont possibles~:
 \begin{itemize}
   \item \texttt{STRICT}, qui traite un dépassement comme une erreur,
   avec un traitement similaire à ce qui est fait pour les bornes
@@ -772,8 +793,9 @@ sont possibles~:
   \item \texttt{NONE}, qui ignore le dépassement~;
 \end{itemize}
 
-Si la variable \texttt{CASTEM\_\-OUT\_\-OF\_\-BOUND\_\-POLICY} n'est pas
-définie, les dépassements sont ignorés.
+Si la variable
+\envb{CASTEM\_OUT\_OF\_BOUND\_POLICY}{CASTEM\_\-OUT\_\-OF\_\-BOUND\_\-POLICY}
+n'est pas définie, les dépassements sont ignorés.
 
 \paragraph{Noms de la librairie générée} Différents cas se présentent~:
 \begin{itemize}
@@ -824,9 +846,9 @@ fonction renvoie une exception du type \texttt{Runtime\-Error}.
 
 Le traitement d'une violation des bornes de validité expérimentale
 dépendant de la politique définie par l'utilisateur à l'aide de la
-variable d'environnement \index{general}{PYTHON\_OUT\_OF\_BOUND\_POLICY}
-\texttt{PYTHON\_\-OUT\_\-OF\_\-BOUND\_\-POLICY}. Trois politiques sont
-sont possibles~:
+variable d'environnement
+\envb{PYTHON\_OUT\_OF\_BOUND\_POLICY}{PYTHON\_\-OUT\_\-OF\_\-BOUND\_\-POLICY}.
+Trois politiques sont sont possibles~:
 \begin{itemize}
   \item \texttt{STRICT}, qui traite un dépassement comme une erreur,
   avec un traitement similaire à ce qui est fait pour les bornes
@@ -836,8 +858,9 @@ sont possibles~:
   \item \texttt{NONE}, qui ignore le dépassement~;
 \end{itemize}
 
-Si la variable \texttt{PYTHON\_\-OUT\_\-OF\_\-BOUND\_\-POLICY} n'est pas
-définie, les dépassements sont ignorés.
+Si la variable
+\envb{PYTHON\_OUT\_OF\_BOUND\_POLICY}{PYTHON\_\-OUT\_\-OF\_\-BOUND\_\-POLICY}
+n'est pas définie, les dépassements sont ignorés.
 
 \paragraph{Noms de la librairie générée} Différents cas se présentent~:
 \begin{itemize}
@@ -937,8 +960,6 @@ l'équation~\eqref{eq:youngmodulussnead}.
 
 \subsection{Exemple de propriétés dont seuls des mesures sont connues}
 
-
-
 \clearpage
 \newpage
 \section{Introduction aux analyseurs dédiés aux lois de comportement mécanique}
@@ -963,6 +984,9 @@ Une loi de comportement consiste en la donnée~:
   \item d'une méthode d'intégration de ce système d'équations
   différentielles.
 \end{itemize}
+
+\mfront{} est aujourd'hui limité aux petites déformations. Une extension
+aux transformations finies est envisagé à terme.
 
 \subsection{Généralités}
 
@@ -1206,26 +1230,28 @@ vecteurs de taille finie sur lesquelles les opérations mathématiques
 usuelles ont été définies~: l'addition d'un vecteur de tenseur est
 possible et optimisée.
 
-Ainsi, La génération des différents algorithmes de \textsc{Runge-Kutta}
-est restée inchangée, ce qui est satisfaisant. 
+Ainsi, la génération des différents algorithmes de \textsc{Runge-Kutta}
+est restée inchangée, ce qui est satisfaisant.
 
 Cette solution n'est cependant pas adaptée à un très grand nombre de
 variables internes (plus d'une centaine par exemple, ce qui est somme
 tout déjà conséquent) car ces classes de vecteurs ont été conçues pour
-être optimales pour des petites tailles et leurs utilisations alourdit
-le temps de compilation et la taille de la librairie générée. Il s'agit
-d'un phénomène connu sous le nom de \og~code bloat~\fg (littéralement,
-explosion du code). Des tests ont montré que ce phénomène était réel et
-que la tendance à l'augmentation des temps de compilation et de la
-taille de la librairie était fortement non linéaire~: pour des tableaux
-d'un millier de variables internes, le temps de compilation pouvait
-dépasser la minute et que la taille de la librairie générée pouvait
-dépasser le mégaoctet. Si d'aventure, des lois à grand nombre de
-variables internes devaient être utilisées régulièrement, il serait
-intéressant de faire évoluer les classes de vecteurs citées pour limiter
-ces tentatives d'optimisation\footnote{Il est d'ailleurs a peu près
-  certain que les techniques utilisées n'ont plus d'intérêt pour des
-  vecteurs de grande taille.}.
+être optimales pour des petites tailles~: leurs utilisations pour de
+grandes tailles alourdit le temps de compilation et augmente la taille
+de la librairie générée. Il s'agit d'un phénomène connu sous le nom de
+\og~code bloat~\fg (littéralement, explosion du code).
+
+Des tests ont montré que ce phénomène était réel et que la tendance à
+l'augmentation des temps de compilation et de la taille de la librairie
+était fortement non linéaire~: pour des tableaux d'un millier de
+variables internes, le temps de compilation pouvait dépasser la minute
+et que la taille de la librairie générée pouvait dépasser le mégaoctet.
+Si d'aventure, des lois à grand nombre de variables internes devaient
+être utilisées régulièrement, il serait intéressant de faire évoluer les
+classes de vecteurs citées pour limiter ces tentatives
+d'optimisation\footnote{Il est d'ailleurs a peu près certain que les
+  techniques utilisées n'ont plus d'intérêt pour des vecteurs de grande
+  taille.}.
 
 \subsection{Analyseurs disponibles}
 
@@ -1395,6 +1421,8 @@ Il peut cependant être intéressant de traiter certains gonflements dans
 la loi de comportement. Par exemple, les formulations des lois
 viscoplastiques de gaine des réacteurs refroidis au sodium relient
 l'intensité de l'écoulement viscoplastique à la vitesse de gonflement.
+Le traitement des dilatations libres devra se faire dans la loi de
+comportement en cas d'extension aux transformations finies.
 
 Pour prendre en compte une dilatation libre, il suffit de calculer un
 incrément de dilatation et de le soustraire à l'incrément de dilatation
@@ -1437,13 +1465,125 @@ Cette figure montre également que ces classes sont des classes
   \item l'argument \(Type\) est le type numérique utilisé~;
   \item le dernier argument est un booléen qui est généralement faux
   (choix par défaut). Si il est mis à vrai, par la directive
-  \mkey{@UseQt}, les différentes variables sont affectées d'unités, ce
+  \mkey{UseQt}, les différentes variables sont affectées d'unités, ce
   qui permet de vérifier à la compilation le respect des unités à la
   compilation. Cette option est peu usitée car les coefficients des lois
   de comportements ont souvent des unités exotiques.
 \end{itemize}
 
-\subsubsection{Gestions des bornes}
+\subsubsection{Gestion des bornes}
+
+La distinction entre bornes physiques et bornes de validité, décrites
+pour les propriétés matériau au
+paragraphe~\ref{sec:mfront:properties:bounds}, est reprise pour les lois
+de comportement mécanique.
+
+Des bornes peuvent être posées sur~:
+\begin{itemize}
+  \item les valeurs des variables externes.
+\end{itemize}
+
+La vérification des bornes d'une variable est déléguée aux classes
+\tfelb{BoundsChecks}{Bounds\-Checks} définies dans le fichier d'entête
+\headerb{TFEL/MaterialLaw/BoundsCheck.hxx}{TFEL/\-Material\-Law/\-Bounds\-Check\-.hxx}.
+
+\paragraph{Dépassement des bornes physiques} Une violation d'une borne
+physique conduit à lever une exception du type
+\tfelb{OutOfBoundsException}{Out\-Of\-Bounds\-Exception} définie dans
+le fichier
+\headerb{TFEL/MaterialLaw/OutOfBoundsException.hxx}{TFEL/\-Material\-Law/\-Out\-Of\-Bounds\-Excep\-tion\-.hxx}.
+
+\paragraph{Dépassement des bornes de validité} Le traitement d'une
+violation d'une borne de validité dépend de la politique adoptée. Toutes
+les lois de comportement générées proposent une méthode
+\texttt{set\-Out\-Of\-Bounds\-Policy} qui doit être appelée par les
+interfaces. Cette méthode prend en argument un objet de type énumération
+nommé \tfelb{OutOfBoundsPolicy}{Out\-Of\-Bounds\-Policy} définie dans
+le fichier
+\headerb{TFEL/MaterialLaw/OutOfBoundsPolicy.hxx}{TFEL/\-Material\-Law/\-Out\-Of\-Bounds\-Policy\-.hxx}.
+
+Cette énumération définit trois valeurs valides \texttt{Warning},
+\texttt{Strict} et \texttt{None}.
+
+La politique par défaut est \texttt{None}. Si la politique est fixée à
+\texttt{Warning}, un message est affiché sur la sortie d'erreur en cas
+de violation d'une borne de validité. Si la politique est fixée à
+\texttt{Strict}, une exception du type
+\tfelb{OutOfBoundsException}{Out\-Of\-Bounds\-Exception} est levée.
+
+\subsubsection{Accès à l'hypothèse de modélisation}
+
+Le fichier d'entête
+\headerb{TFEL/MaterialLaw/ModellingHypothesis.hxx}{TFEL/\-Material\-Law/\-Modelling\-Hypo\-thesis\-.hxx}
+définit une structure
+\tfelb{ModellingHypothesis}{Modelling\-Hypo\-thesis}. Dans cette
+structure, un objet de type énumération nommé
+\tfelb{ModellingHypothesis::Hypothesis}{Hypo\-thesis} définit les
+différentes hypothèses de modélisation ajourd'hui supportées~:
+\begin{itemize}
+  \item \texttt{AXISYMETRICAL\-GENERALISED\-PLANE\-STRAIN} qui désigne
+  une modélisation \(1D\) axisymétrique plan généralisée. Dans ce cas,
+  le tenseur des contraintes a \(3\) composantes et est représenté par
+  le vecteur suivant~:
+  \begin{equation}
+    \label{eq:tsigma} \tsigma = \left(
+    \begin{array}{c}
+      \sigma_{rr} \\
+      \sigma_{zz} \\
+      \sigma_{\theta\theta} \\
+    \end{array}
+    \right)
+  \end{equation}
+  \item \texttt{AXI\-SYMETRICAL} qui désigne une modélisation \(2D\)
+  axisymétrique. Dans ce cas, le tenseur des contraintes a \(4\)
+  composantes et est représenté par le vecteur suivant~:
+  \begin{equation}
+    \label{eq:tsigma} \tsigma = \left(
+    \begin{array}{c}
+      \sigma_{rr} \\
+      \sigma_{zz} \\
+      \sigma_{\theta\theta} \\
+      \sqrt{2}\sigma_{rz} \\
+    \end{array}
+    \right)
+  \end{equation}
+  \item \texttt{PLANE\-STRESS}, \texttt{PLANE\-STRAIN} et
+  \texttt{GENERALISED\-PLANE\-STRAIN} qui désigne différentes
+  modélisations \(2D\) qui se distinguent par le traitement de la
+  direction axiale. Dans ces cas, le tenseur des contraintes a \(4\)
+  composantes et est représenté par le vecteur suivant~:
+  \begin{equation}
+    \label{eq:tsigma} \tsigma = \left(
+    \begin{array}{c}
+      \sigma_{xx} \\
+      \sigma_{yy} \\
+      \sigma_{zz} \\
+      \sqrt{2}\sigma_{xy} \\
+    \end{array}
+    \right)
+  \end{equation}
+  \item \texttt{TRIDIMENSIONAL} qui désigne la modélisation la plus
+  générale. Dans ce cas, le tenseur des contraintes a \(6\) composantes
+  est représenté par le vecteur suivant~:
+  \begin{equation}
+    \label{eq:tsigma} \tsigma = \left(
+    \begin{array}{c}
+      \sigma_{xx} \\
+      \sigma_{yy} \\
+      \sigma_{zz} \\
+      \sqrt{2}\sigma_{xy} \\
+      \sqrt{2}\sigma_{xz} \\
+      \sqrt{2}\sigma_{yz} \\
+    \end{array}
+    \right)
+  \end{equation}
+\end{itemize}
+
+L'information de l'hypothèse de modélisation doit être passée au
+constructeur des lois de comportement mécanique.
+
+Les parties de code décrivant les lois de comportement peuvent accéder à
+cette information via la méthode {\tt get\-Modelling\-Hypo\-thesis}.
 
 \subsection{Interface aux lois de comportement}
 
@@ -1461,7 +1601,7 @@ Les interfaces aux lois de comportement doivent~:
     classes \texttt{template} paramétrée par la dimension d'espace.}~;
   \item assurer la conversion entre la convention utilisée par le code
   appelant pour représenter les tenseurs et la convention utilisée dans
-  \tfel{}~;
+  \TFEL{}~;
   \item gérer les lois de comportement orthotropes. Par exemple,
   l'interface peut assurer la rotation des déformations totales et de
   leurs incréments dans le repère propre du matériau avant l'appel à la
@@ -1489,12 +1629,16 @@ D'autres rôles pourraient à terme être assignées aux interfaces~:
 \subsubsection{L'interface \texttt{umat}}
 
 À l'heure actuelle, seule l'interface \texttt{umat}, utilisée par
-\castem{}, est disponible. Pour simplifier l'utilisation des lois de
-comportements générés, \mfront{} génère automatiquement la déclaration
-des lois de comportement générées en instruction gibiane.
+\castem{}, est disponible. Nous donnons ici quelques informations
+générales. Des détails, informatiques notamment, sont donnés en
+annexe~\ref{sec:utilisation_umat}.
+
+Pour simplifier l'utilisation des lois de comportements générés,
+\mfront{} génère automatiquement la déclaration des lois de comportement
+générées en instruction gibiane.
 
 Les différents changements de repère sont assurés par la classe
-\texttt{UMAT\-Rotation\-Matrix}.
+\tfelb{UMATRotationMatrix}{UMAT\-Rotation\-Matrix}.
 
  Il est important de noter que l'interface \texttt{umat}
 passe cette matrice d'élasticité {\em après} l'appel au constructeur
@@ -1507,8 +1651,25 @@ Il est important de noter que l'interface \texttt{umat} passe ce tenseur
 {\em après} l'appel au constructeur de la loi de comportement, ce qui
 signifie qu'il ne peut être utilisé dans la phase d'initialisation
 introduite par le mot-clé {\tt Init\-Local\-Variables}. Ce tenseur est
-calculé par la classe {\tt UMAT\-Compute\-Thermal\-Expansion\-Tensor}.
+calculé par la classe
+\tfelb{UMATComputeThermalExpansionTensor}{UMAT\-Compute\-Thermal\-Expansion\-Tensor}.
 
+\paragraph{Gestion des bornes de validité} Le traitement d'une violation
+des bornes de validité expérimentale dépendant de la politique définie par
+l'utilisateur à l'aide de la variable d'environnement
+\envb{CASTEM\_OUT\_OF\_BOUND\_POLICY}{CASTEM\_\-OUT\_\-OF\_\-BOUND\_\-POLICY}.
+ Trois politiques sont sont possibles~:
+\begin{itemize}
+\item \texttt{STRICT}, qui traite un dépassement comme une erreur, avec
+un traitement similaire à ce qui est fait pour les bornes physiques~;
+\item \texttt{WARNING}, qui conduit à afficher un message
+d'avertissement sans génération d'erreur~;
+\item \texttt{NONE}, qui ignore le dépassement~;
+\end{itemize}
+
+Si la variable
+\envb{CASTEM\_OUT\_OF\_BOUND\_POLICY}{CASTEM\_\-OUT\_\-OF\_\-BOUND\_\-POLICY}
+n'est pas définie, les dépassements sont ignorés.
 
 \paragraph{Exemple de mise en donnée \castem{}} Dans le cas
 de l'interface \texttt{umat}, \mfront{} génère automatiquement
@@ -1574,14 +1735,38 @@ version de \castem{} livrée avec les applications
 la syntaxe proposé par la
 figure~\ref{fig:mfrontcastem2}. 
 
-Cette extension sera prochainement proposée pour inclusion
-dans la version officielle de \castem{}.
-
+Cette extension est décrite dans
+l'annexe~\ref{sec:castem:materialbehaviours}.
 
 \clearpage
 \newpage
 \section{Intégration des lois de comportement, intégrateur par défaut}
 \label{sec:defaultparser}
+
+\subsection{La directive \texttt{@Integrator}}
+
+La directive \mkey{Integrator} permet d'intégrer la loi de comportement.
+
+\paragraph{Conventions spécifiques} Les conventions suivantes
+s'appliquent~:
+\begin{itemize}
+  \item {\tt sig} représente la contrainte qu'il faut calculer~;
+  \item {\tt eto} représente la déformation totale en début de pas~;
+  \item {\tt deto} représente la vitesse de déformation totale
+  (constante sur le pas)~;
+  \item {\tt T} représente la valeur de la température en début de pas~;
+  \item {\tt dT} représente la vitesse de changement de température
+  (constante sur le pas)~;
+  \item pour toute variable interne {\tt Y}, {\tt Y} représente sa
+  valeur en début de pas~;
+  \item pour toute variable interne {\tt Y}, {\tt dY} représente
+  l'incrément de cette variable sur le pas, incrément qu'il faut
+  calculer~;
+  \item pour toute variable externe {\tt V}, {\tt V} représente sa
+  valeur en début de pas~;
+  \item pour toute variable externe {\tt V}, {\tt dV} représente sa
+  vitesse de variation sur le pas de temps (constante sur le pas).
+\end{itemize}
 
 \subsection{Exemple de l'élasticité orthotrope}
 
@@ -2194,18 +2379,56 @@ satisfaisante, on en déduit que le pas de temps utilisé est trop grand
 et il est possible de mettre en place une stratégie de gestion du pas de
 temps.
 
+\paragraph{Pas de temps minimal} En cas de convergence forcé, le code
+aux éléments finis \castem{} envoie à la loi de comportement un pas de
+temps nul qui ne permet pas d'écrire les lois de comportement sous la
+forme d'un système différentiel. Il est nécessaire de préciser un pas de
+temps minimal par la directive
+\mkeyb{MinimalTimeStep}{Minimal\-Time\-Step} pour gérer ce cas.
+
+\begin{table}[htbp]
+  \centering
+  \begin{tabular}{|c|p{9cm}|}
+    \hline
+    Argument & Algorithme associé \\
+    \hline
+    \hline
+    \texttt{Euler} & algorithme d'nom{Euler} \\
+    \hline
+    \texttt{rk2} & algorithme de nom{Runge-Kutta} d'ordre \(2\) \\
+    \hline
+    \texttt{rk4} & algorithme de nom{Runge-Kutta} d'ordre \(4\) \\
+    \hline
+    \texttt{rk42} & algorithme avec contrôle de l'erreur et adaptation
+    du pas de temps basé sur des méthodes de nom{Runge-Kutta} d'ordre
+    \(4\) et d'ordre \(2\) \\
+    \hline
+    \texttt{rk54} & algorithme avec contrôle de l'erreur et adaptation
+    du pas de temps basé sur des méthodes de nom{Runge-Kutta} d'ordre
+    \(5\) et d'ordre \(4\) \\
+    \hline
+    \texttt{rkCastem} & algorithme avec contrôle de l'erreur et adaptation
+    du pas de temps extrait du code \castem{} \\
+    \hline
+  \end{tabular}
+  \caption{Arguments possibles de la directive \texttt{@Algorithm}.}
+  \label{tab:Algorithm}
+\end{table}
+
 \subsection{Algorithmes disponibles}
 
 Différents algorithmes de \nom{Runge-Kutta} sont disponibles.
-L'utilisation peut choisir l'algorithme utilisé par la directive
-\mkey{Algorithm}.
+L'utilisateur peut choisir l'algorithme utilisé par la directive
+\mkey{Algorithm}. Les arguments possibles de cette directive sont
+regroupés au tableau~\ref{tab:Algorithm}.
 
 \subsubsection{Algorithmes sans contrôle du pas de temps}
 
 \mfront{} permet d'utiliser un certain nombre d'algorithmes de
 \nom{Runge-Kutta} sans contrôle du pas de temps. L'utilisation de ces
-algorithmes n'est pas recommandé car leurs prédictions sont généralement
-peu satisfaisantes.
+algorithmes n'est pas recommandée car leurs prédictions sont
+généralement peu satisfaisantes~: il est préférable d'utiliser les
+algorithmes avec contrôle de l'erreur et pas de temps adaptatif.
 
 \paragraph{Méthode d'\nom{Euleur} explicite} L'estimation la plus simple
 consiste à remplacer la dérivée \(\dot{Y}\) par la différence finie
@@ -2236,18 +2459,20 @@ Le choix fait dans \mfront{} est dite \og~du point milieu~\fg{}. Ce
 choix correspond à la solution \(a_{1}=0\), \(a_{2}=1\),
 \(a_{3}=\pfrac{1}{2}\) et \(a_{4}=\pfrac{G\paren{Y_{i},t}}{2}\). Cette
 méthode s'écrit ainsi~:
-\[
-\finpas{Y} = \debutpas{Y}+\Delta\,t\,G\paren{\debutpas{Y}+\Frac{\Delta\,
-    t}{2}G\paren{\debutpas{Y},t},t+\Frac{\Delta\, t}{2}}
-\]
+\begin{equation}
+  \label{eq:RK2}
+  \finpas{Y} = \debutpas{Y}+\Delta\,t\,G\paren{\debutpas{Y}+\Frac{\Delta\,
+      t}{2}G\paren{\debutpas{Y},t},t+\Frac{\Delta\, t}{2}}
+\end{equation}
 
 \paragraph{Méthode de \nom{Runge-Kutta} d'ordre $4$}
 
 La méthode de \nom{Runge-Kutta} d'ordre \(4\) retenue dans \mfront{} est
 donnée par~:
-\[
-\finpas{Y} = \debutpas{Y}+\Frac{1}{6}\paren{k_{1}+2\,k_{2}+2\,k_{3}+k_{4}}
-\]
+\begin{equation}
+  \label{eq:RK4}
+  \finpas{Y} = \debutpas{Y}+\Frac{1}{6}\paren{k_{1}+2\,k_{2}+2\,k_{3}+k_{4}}
+\end{equation}
 où~:
 \begin{minipage}[t]{0.9\linewidth}
   \(
@@ -2266,11 +2491,16 @@ où~:
 
 \mfront{} propose trois algorithmes de \nom{Runge-Kutta} avec
 sous-découpage du pas de temps pour garantir la qualité de la solution
-trouvée.
+trouvée. Pour cela, on introduit un temps local \(t^{l}\), compris
+entre\(t\) et \(t+\Delta\,t\), et un pas de temps local
+\(\delta\,t^{l}\) variable permettant d'augmenter \(t^{l}\).
 
-\paragraph{Méthode de \nom{Runge-Kutta} d'ordre $\pfrac{4}{2}$}
-
-
+\paragraph{Méthode de \nom{Runge-Kutta} d'ordre $\pfrac{4}{2}$} Les
+algorithmes~\ref{eq:RK2} et~\ref{eq:RK4} partagent les mêmes
+coefficients \(k_{1}\) et \(k_{2}\)~: si l'on utilise une méthode
+d'ordre \(4\), on a \og~gratuitement\fg{} une estimation d'ordre \(2\).
+La différence entre ces deux estimations est en \(\bigO 3\) et peut
+servir à contrôler le pas de temps.
 
 \paragraph{Méthode de \nom{Runge-Kutta} d'ordre $\pfrac{5}{4}$ (méthode
   de \nom{Fehlberg})} Pour décrire cette méthode, utilisée par défaut,
@@ -2303,6 +2533,9 @@ et une autre d'ordre \(5\)~:
 \finpas{Y_{i}}=\debutpas{Y_{i}}+\paren{\Frac{16}{135}\,k_{1}+\Frac{6656}{12\,825}\,k_{3}+\Frac{28\,561}{56\,430}\,k_{4}-\Frac{9}{50}\,k_{5}+\Frac{2}{55}\,k_{6}}
 \]
 
+La différence entre ces deux estimations est en \(\bigO 5\) et peut
+servir à contrôler le pas de temps.
+
 \paragraph{Méthode \castem{}} Une méthode de \nom{Runge-Kutta}
 particulière est disponible dans \castem{}. Cette méthode se distingue
 par sa gestion du pas de temps et son critère d'arrêt qui sont
@@ -2310,12 +2543,12 @@ uniquement basés sur la différences des contraintes entre deux ordres
 d'approximations (et non sur les variables internes). Cette méthode est
 décrite en annexe~\ref{sec:algoRKcastem}.
 
-\subsubsection{Critère d'arrêt et gestion du pas de temps}
+\subsubsection{Gestion du pas de temps}
 
 Les méthodes de \nom{Runge-Kutta} d'ordre $\pfrac{4}{2}$ et d'ordre
 $\pfrac{5}{4}$ permettent de comparer les estimations fournies par deux
 méthodes d'ordre différents. La différence entres ces deux estimations
-mesure l'erreur d'intégration et est comparée à un certain critère
+mesure l'erreur d'intégration et est comparée à une certaine tolérance
 \(\varepsilon\)~:
 \begin{equation}
   \label{eq:RK:epsilon}
@@ -2347,25 +2580,129 @@ où~:
   \end{itemize}
 \end{minipage}
 
-Si ce critère n'est pas respecté, le pas de temps est sous-découpé
-automatiquement.
+Si cette inégalité n'est pas respectée, le pas de temps
+\(\delta\,t^{l}\) est sous-découpé automatiquement. Inversement, si elle
+est respectée, le pas de temps \(\delta\,t^{l}\) est augmenté.
+
+Supposons que l'erreur soit en \(\bigO n\), un facteur \(\beta\)
+d'augmentation ou de réduction du pas de temps peut être proposé ainsi~:
+\[
+\beta = \paren{\Frac{\varepsilon}{\Frac{1}{\displaystyle\sum_{i=1}^{N}N_{y_{i}}}\displaystyle\sum_{i=1}^{N}\Frac{\left|
+      y_{i}^{(a)}-y_{i}^{(b)}\right|}{E_{y_{i}}}}}^{\Frac{1}{n}}
+\]
+
+L'augmentation ou la réduction du pas de temps local est limité à un
+facteur \(10\). Naturellement, le pas de temps local \(\delta\,t^{l}\)
+ne peut être supérieur à \(t+\Delta\, t-t^{l}\).
+
+\paragraph{Gestion par l'utilisateur} Si le code suivant la directive
+\mkey{@Derivative} renvoie la valeur booléenne \texttt{false}, le pas de
+temps est automatiquement divisé par \(2\).
+
+\paragraph{Choix de la tolérance} La tolérance \(\varepsilon\) est fixée
+par défaut à \(10^{-8}\). L'utilisateur peut modifier cette valeur par
+la directive \mkey{Epsilon}.
+
+\subsubsection{Critère d'arrêt} L'intégration s'arrête quand l'une des
+conditions suivantes est vérifiée~:
+\begin{itemize}
+  \item le temps local devient trop petit, ce qui marque l'échec de
+  l'algorithme. Le pas de temps minimal admissible est égal au pas de
+  temps total \(\Delta\,t\) multiplié par 100 fois la précision
+  machine du type réel considéré~;
+  \item le temps local est égal au temps de fin de pas. Ceci est vérifié
+  par~:
+  \[
+  \left|t+\Delta\, t-t^{l}\right|<\Frac{\delta\,t^{l}}{2}
+  \]
+\end{itemize}
 
 \subsection{La directive \texttt{@ComputeStress}}
 
-La directive \mkey{@ComputeStress} permet de calculer les contraintes.
+La directive \mkey{ComputeStress} permet de calculer les contraintes aux
+différentes étapes de la méthode et en fin de calcul. Les contraintes
+sont supposées fonction des valeurs actuelles des variables internes.
+
+\paragraph{Conventions spécifiques aux différentes étapes de la méthode}
+Dans la méthode \mkey{ComputeStress}, les conventions suivantes
+s'appliquent~:
+\begin{itemize}
+  \item {\tt sig} représente la contrainte qu'il faut calculer~;
+  \item {\tt eto} représente la déformation totale actualisée~;
+  \item {\tt deto} représente la vitesse de déformation totale
+  (constante sur le pas)~;
+  \item {\tt T} représente la valeur actualisée de température~;
+  \item {\tt dT} représente la vitesse de changement de température
+  (constante sur le pas)~;
+  \item pour toute variable interne {\tt Y}, {\tt Y} représente sa
+  valeur actualisée~;
+  \item pour toute variable interne auxiliaire {\tt Y}, {\tt Y}
+  représente sa valeur en début de pas de temps~;
+  \item pour toute variable externe {\tt V}, {\tt V} représente sa
+  valeur actualisée~;
+  \item pour toute variable externe {\tt V}, {\tt dV} représente sa
+  vitesse de variation sur le pas de temps (constante sur le pas).
+\end{itemize}
+
+\paragraph{Conventions spécifiques en fin d'intégration} Dans la méthode
+\mkey{ComputeStress}, les conventions suivantes s'appliquent~:
+\begin{itemize}
+  \item {\tt sig} représente la contrainte qu'il faut calculer~;
+  \item {\tt eto} représente la déformation totale en fin de pas~;
+  \item {\tt deto} représente la vitesse de déformation totale
+  (constante sur le pas)~;
+  \item {\tt T} représente la valeur de la température en fin d epas~;
+  \item {\tt dT} représente la vitesse de changement de température
+  (constante sur le pas)~;
+  \item pour toute variable interne {\tt Y}, {\tt Y} représente sa
+  valeur en fin de pas~;
+  \item pour toute variable interne auxiliaire {\tt Y}, {\tt Y}
+  représente sa valeur en début de pas de temps~;
+  \item pour toute variable externe {\tt V}, {\tt V} représente sa
+  valeur en fin de pas~;
+  \item pour toute variable externe {\tt V}, {\tt dV} représente sa
+  vitesse de variation sur le pas de temps (constante sur le pas).
+\end{itemize}
 
 \subsection{La directive \texttt{@Derivative}}
 
-La directive \mkey{@Derivative} permet de préciser les équations
+La directive \mkey{Derivative} permet de préciser les équations
 différentielles associées aux différentes variables internes.
 
-Cette méthode est appelée après la méthode \mkey{@ComputeStress}.
+Le code fourni est appelé après celui fourni par la méthode
+\mkey{ComputeStress}.
+
+\paragraph{Conventions spécifiques} Dans la méthode \mkey{Derivative},
+les conventions suivantes s'appliquent~:
+\begin{itemize}
+  \item {\tt sig} représente la valeur actualisée de la contrainte~;
+  \item {\tt eto} représente la déformation totale actualisée~;
+  \item {\tt deto} représente la vitesse de déformation totale
+  (constante sur le pas)~;
+  \item {\tt T} représente la valeur actualisée de température~;
+  \item {\tt dT} représente la vitesse de changement de température
+  (constante sur le pas)~;
+  \item pour toute variable interne {\tt Y}, {\tt Y} représente sa
+  valeur actualisée~;
+  \item pour toute variable interne auxiliaire {\tt Y}, {\tt Y}
+  représente sa valeur en début de pas de temps~;
+  \item pour toute variable externe {\tt V}, {\tt V} représente sa
+  valeur actualisée~;
+  \item pour toute variable externe {\tt V}, {\tt dV} représente sa
+  vitesse de variation sur le pas de temps (constante sur le pas).
+\end{itemize}
+
+Pour toute variable interne {\tt Y}, {\tt dY} représente sa vitesse de
+variation~: c'est cette variable que l'utilisateur doit renseigner.
 
 \subsection{Mise à jour des variables auxiliaires}
 
 Les variables auxiliaires sont mises à jour à chaque fois qu'un pas est
 jugé valide au sens du critère d'arrêt~\eqref{eq:RK:epsilon} après la
 mise à jour des variables internes.
+
+Cette méthode peut donc être appelée plusieurs fois si un algorithme à
+pas de temps adaptatif est utilisé.
 
 \subsection{Intégration d'une loi d'écoulement viscoplastique
   orthotrope par un algorithme de \nom{Runge-Kutta}}
@@ -2977,9 +3314,99 @@ algorithme dû à \nom{Powell} qui semble particulièrement intéressant.
 
 \subsection{La directive \texttt{@ComputeStress}}
 
+La directive \mkey{ComputeStress} permet de calculer les contraintes aux
+différentes itérations de la méthode et en fin de calcul. Les contraintes
+sont supposées fonction des valeurs actuelles des variables internes.
+
+\paragraph{Conventions spécifiques aux différentes itérations de la
+  méthode} Dans la méthode \mkey{ComputeStress}, les conventions
+suivantes s'appliquent~:
+\begin{itemize}
+  \item {\tt sig} représente la contrainte qu'il faut calculer~;
+  \item {\tt eto} représente la déformation totale en milieu de pas (en
+  \(t+\theta\,\Delta\,t\))~;
+  \item {\tt deto} représente l'incrément de la déformation totale
+  (constante sur le pas)~;
+  \item {\tt T} représente la valeur de la température en milieu de
+  pas (en
+  \(t+\theta\,\Delta\,t\))~;
+  \item {\tt dT} représente la variation de température (constante sur
+  le pas)~;
+  \item pour toute variable interne {\tt Y}, {\tt Y} représente son
+  estimation actuelle en milieu de pas (en
+  \(t+\theta\,\Delta\,t\))~;
+  \item pour toute variable interne auxiliaire {\tt Y}, {\tt Y}
+  représente sa valeur en début de pas de temps~;
+  \item pour toute variable externe {\tt V}, {\tt V} représente sa
+  valeur en milieu de pas (en
+  \(t+\theta\,\Delta\,t\))~;
+  \item pour toute variable externe {\tt V}, {\tt dV} représente son
+  incrément sur le pas de temps (constante sur le pas).
+\end{itemize}
+
+\paragraph{Conventions spécifiques en fin d'intégration} Dans la méthode
+\mkey{ComputeStress}, les conventions suivantes s'appliquent~:
+\begin{itemize}
+  \item {\tt sig} représente la contrainte qu'il faut calculer~;
+  \item {\tt eto} représente la déformation totale en fin de pas~;
+  \item {\tt deto} représente la vitesse de déformation totale
+  (constante sur le pas)~;
+  \item {\tt T} représente la valeur de la température en fin de pas~;
+  \item {\tt dT} représente la vitesse de changement de température
+  (constante sur le pas)~;
+  \item pour toute variable interne {\tt Y}, {\tt Y} représente sa
+  valeur en fin de pas~;
+  \item pour toute variable interne auxiliaire {\tt Y}, {\tt Y}
+  représente sa valeur en début de pas de temps~;
+  \item pour toute variable externe {\tt V}, {\tt V} représente sa
+  valeur en fin de pas~;
+  \item pour toute variable externe {\tt V}, {\tt dV} représente sa
+  vitesse de variation sur le pas de temps (constante sur le pas).
+\end{itemize}
+
 \subsection{La directive \texttt{@Integrator}}
 
+La directive \mkey{Integrator} permet de construire le système implicite
+à résoudre.
+
+\paragraph{Conventions spécifiques} Les conventions suivantes
+s'appliquent~:
+\begin{itemize}
+  \item {\tt sig} représente la contrainte actualisée (calculée par le
+  code fourni après la directive
+  \mkeyb{ComputeStress}{Compute\-Stress})~;
+  \item {\tt eto} représente la déformation totale en début de pas~;
+  \item {\tt deto} représente la vitesse de déformation totale
+  (constante sur le pas)~;
+  \item {\tt T} représente la valeur de la température en début de pas~;
+  \item {\tt dT} représente la vitesse de changement de température
+  (constante sur le pas)~;
+  \item pour toute variable interne {\tt Y}, {\tt Y} représente sa
+  valeur en début de pas~;
+  \item pour toute variable interne {\tt Y}, {\tt Y} représente
+  l'estimation courante de l'incrément de cette variable sur le pas~;
+  \item pour toute variable interne {\tt Y}, {\tt fY} représente
+  l'équation implicite associée à cette variable~;
+  \item pour toute variable interne auxiliaire {\tt Y}, {\tt Y}
+  représente sa valeur en début de pas~;
+  \item pour toute variable externe {\tt V}, {\tt V} représente sa
+  valeur en début de pas~;
+  \item pour toute variable externe {\tt V}, {\tt dV} représente sa
+  vitesse de variation sur le pas de temps (constante sur le pas).
+\end{itemize}
+
+Si l'algorithme de \nom{Newton} ou le premier algorithme de
+\nom{Broyden} est utilisé, pour tout couple de variables internes {\tt
+  Yi} et {\tt Yj}, {\tt dfYi\textunderscore{}ddYj} représente le terme du jacobien
+\(\deriv{f_{Y_{i}}}{Y_{j}}\)~;
+
 \subsection{Mise à jour des variables auxiliaires}
+
+Les variables auxiliaires sont mises à jour après la mise à jour des
+variables internes, une fois l'algorithme convergé.
+
+À ce moment, les valeurs externes (déformations totales et températures
+incluses) n'ont pas été mises à jour.
 
 \subsection{Intégration d'une loi d'écoulement viscoplastique
   orthotrope par un algorithme implicite}
@@ -3734,8 +4161,10 @@ tel cas n'a pas été prévue car la déclaration de propriété constante
 peut et doit se faire explicitement dans l'opérateur {\tt 'MATE'}.
 
 \subsection{Appel de lois de comportement mécanique externes dans \castem{}}
+\label{sec:castem:materialbehaviours}
 
-\subsection{Utilisation dans \castem{}}
+
+\subsubsection{Utilisation dans \castem{}}
 
 \begin{figure}[htbp]
   \centering
@@ -4010,6 +4439,28 @@ nécessairement utilisés dans \castem{}.
   \caption{Arguments de la fonction {\texttt umat}}
   \label{tab:umat:argument}
 \end{longtable}
+
+Le type entier {\tt INTEGER} dépend de la plateforme~: \castem{} utilise
+des directives de compilation spéficique pour que ce type soit de la
+taille d'un pointeur.
+
+Dans la suite, en \cpp{}, nous noterons {\tt UMAT\-Real} le type
+numérique utilisé par \castem{} et {\tt UMAT\-Int} le type entier.
+
+\subsection{Prototype des fonctions générées par l'interface {\tt umat} de \mfront{}}
+
+Les fonctions générées par l'interface {\tt umat} de \mfront{}
+n'utilisent qu'un nombre réduit d'arguments de la fonction \umat{}.
+
+\begin{figure}[htbp]
+  \centering
+  \code{
+    \include{Images/mfront-umat}
+  }
+  \caption{Prototype des fonctions générés par l'interface {\tt umat} de
+    \mfront{}.}
+  \label{fig:umat:prototype}
+\end{figure}
 
 \subsection{Calcul de la matrice d'élasticité orthotrope}
 \label{sec:calcul-de-la}
@@ -4527,36 +4978,111 @@ sous-découpage \texttt{dt\_} en deçà de laquelle on renvoie une erreur.
 \section{Fonctions utiles}
 
 Cette section décrit quelques fonctions utiles à la création de lois de
-comportement mécanique.
+comportement mécanique fournies par la librairie \texttt{TFEL}.
+
+\subsection{Manipulation des tenseurs d'ordre $2$ symétriques}
+
+Le fichier d'entête
+\headerb{TFEL/Math/stensor.hxx}{TFEL/\-Math/\-stensor.hxx}, inclut par
+toutes les lois de comportement mécanique, définit la classe
+\tfelb{stensor<N,T,Storage>}{stensor} représentant les tenseurs d'ordre
+$2$ symétriques.
+
+\paragraph{La méthode \texttt{computeEigenValues}} La méthode
+\tfelb{stensor<N,T,Storage>::computeEigenValues}{compute\-Eigen\-Values}
+calcule les valeurs propres du tenseur d'ordre $2$ symétriques. Ses
+valeurs propres doivent être passées en référence.
+
+\paragraph{La méthode \texttt{computeEigenVectors}} La méthode
+\tfelb{stensor<N,T,Storage>::computeEigenVectors}{compute\-Eigen\-Vectors}
+calcule les valeurs et vecteurs propres du tenseur d'ordre $2$
+symétriques. Son premier argument doit être un objet de type
+\tfel{tvector}\footnote{Les objets de type \tfel{tvector} sont définis
+  dans le fichier d'entête
+  \headerb{TFEL/Math/tvector.hxx}{TFEL/\-Math/\-tvector.hxx}.} et
+contiendra les différentes valeurs propres. Son second argument doit
+être un objet de type \tfel{tmatrix} contenant les vecteurs
+propres\footnote{Les objets de type \tfel{tmatrix} sont définis dans le
+  fichier d'entête
+  \headerb{TFEL/Math/tmatrix.hxx}{TFEL/\-Math/\-tmatrix.hxx}.}. Cet
+objet peut être passé directement à la méthode
+\tfelb{stensor<N,T,Storage>::changeBasis}{change\-Basis} .
+
+\paragraph{La méthode \texttt{changeBasis}} La méthode
+\tfelb{stensor<N,T,Storage>::changeBasis}{change\-Basis} effectue le
+changement de repère d'un tenseur d'ordre \(2\) symétrique. Ce
+changement de repère est défini par un objet de type \tfel{tmatrix}.
+
+\paragraph{La fonction \texttt{trace}} La fonction \tfel{trace} renvoie
+la trace d'un tenseur d'ordre $2$ symétrique.
+
+\paragraph{La fonction \texttt{sigmaeq}} La fonction \tfel{sigmaeq}
+renvoie la contrainte équivalente au sens de \nom{Von Mises} d'un
+tenseur d'ordre $2$ symétrique.
+
+\paragraph{La fonction \texttt{abs}} La fonction \tfel{abs} renvoie la
+somme des valeurs absolues des composantes d'un tenseur d'ordre $2$
+symétrique, les termes extradiagonaux sont comptés une fois et sont
+affectés d'un facteur \(\sqrt{2}\).
 
 \subsection{Calcul des coefficents de \nom{Lamé}}
 
+Le fichier d'entête
+\headerb{TFEL/MaterialLaw/Lame.hxx}{TFEL/\-Material\-Law/\-Lame.hxx},
+qu'il est nécessaire d'inclure au niveau du fichier \mfront{} en
+utilisant la directive \mkey{Includes}, définit différentes fonctions
+utilitaires~:
+\begin{itemize}
+  \item \tfel{compute\-Lambda} permet de calculer le premier
+  coefficent de \nom{Lamé}. Elle prend en argument le module
+  d'\nom{Young} et le coefficient de \nom{Poisson}~;
+  \item \tfel{compute\-Mu} permet de calculer le second coefficent de
+  \nom{Lamé}, c'est à dire le module de cisaillement. Elle prend en
+  argument le module d'\nom{Young} et le coefficient de \nom{Poisson}
+\end{itemize}
 
+Ce fichier d'entête propose également une classe
+\tfelb{computeElasticStiffness}{com\-pute\-Elastic\-Stiff\-ness},
+paramétré par la dimension d'espace et le type numérique utilisé qui
+permet de calculer la matrice d'élasticité à partir des coefficients de
+\nom{Lamé}. Cette classe propose en méthode statique nommée
+\tfelb{computeElasticStiffness::exe}{exe} qui prend en arguments~:
+\begin{itemize}
+\item une référence un objet de type \tfelb{st2tost2<N,T>}{st2tost2\-<N,T>}
+qui représente la matrice d'élasticité.
+\item le premier coefficient de \nom{Lamé}~;
+\item le second  coefficient de \nom{Lamé}.
+\end{itemize}
 
 \subsection{Calcul du tenseur de \nom{Hill}}
 \label{sec:calcul-du-tenseur}
 
-La librairie {\tt TFEL} fournit la fonction {\tt hillTensor}. Cette
-fonction est déclarée dans le fichier d'entête {\tt
-  TFEL/\-Material\-Law/\-Hill.hxx} qu'il est nécessaire d'inclure au
-niveau du fichier \mfront{} en utilisant la directive \mkey{Includes}.
-Cette fonction est paramétrée par la dimension d'espace, notée
-\texttt{N} dans le fichier \mfront{}, et par le type numérique
-utilisé, appelé {\tt real} dans le fichier \mfront{}. Elle prend en
-argument les \(6\) coefficients \(F\), \(G\), \(H\), \(L\), \(M\) et
-\(N\) présentés aux paragraphes \ref{sec:critere-de-nomhill}.
+La librairie {\tt TFEL} fournit la fonction \tfel{hillTensor}. Cette
+fonction est déclarée dans le fichier d'entête
+\headerb{TFEL/MaterialLaw/Hill.hxx}{TFEL/\-Material\-Law/\-Hill.hxx}
+qu'il est nécessaire d'inclure au niveau du fichier \mfront{} en
+utilisant la directive \mkey{Includes}.
 
-Avec  les  conventions  décrites au  paragraphe~\ref{sec:conv-de-rang}
-et~\ref{sec:trait-des-probl}   et  les   identifications   faites  aux
+Cette fonction est paramétrée par la dimension d'espace, notée
+\texttt{N} dans le fichier \mfront{}, et par le type numérique utilisé,
+noté T. Ce type est appelé {\tt real} dans le fichier \mfront{}. Elle
+prend en argument les \(6\) coefficients \(F\), \(G\), \(H\), \(L\),
+\(M\) et \(N\) présentés aux paragraphes \ref{sec:critere-de-nomhill}.
+
+Elle retourne un objet de type \tfelb{st2tost2<N,T>}{st2tost2} qui
+représente une forme linéaire sur les tenseurs d'ordre \(2\) symétriques
+et qui se manipule comme une matrice\footnote{Les objets de type
+  \tfelb{st2tost2<N,T>}{st2tost2} sont définis dans le fichier d'entête
+  \headerb{TFEL/Math/st2tost2.hxx}{TFEL/\-Math/\-st2tost2.hxx}.}.
+
+\paragraph{Utilisation dans le cas des tubes} Avec les conventions
+décrites au paragraphe~\ref{sec:conv-de-rang}
+et~\ref{sec:trait-des-probl} et les identifications faites aux
 paragraphes~\ref{sec:critere-de-nomhill} et~\ref{sec:trait-des-probl},
 cette fonction s'utilise ainsi~:
 \begin{center}
   \begin{minipage}[htbp]{0.9\linewidth}
-    \shorthandoff{:}
-    \code{
-      \small
-      \input{mfront/hillTensor.tex}
-    }
+    \shorthandoff{:} \code{ \small \input{mfront/hillTensor.tex} }
     \shorthandon{:}
   \end{minipage}
 \end{center}
@@ -4780,9 +5306,19 @@ Nous comparons ici les méthodes
   les résultats donnés par les tableaux~\ref{tab:Broyden:1},
   \ref{tab:Broyden:2} et~\ref{tab:Broyden2}, nous pouvons constater que le s
 
-%\clearpage
-%\newpage
-%\printindex{general}{Index général}
+\clearpage
+\newpage
+\printindex{env}{Index des variables d'environnement}
+
+\clearpage
+\newpage
+\printindex{headers}{Index des fichiers d'entête fournis par la
+  librairie \texttt{TFEL}}
+
+\clearpage
+\newpage
+\printindex{tfel}{Index des classes, des méthodes et des fonctions
+  fournies par la librairie \texttt{TFEL}}
 
 \clearpage
 \newpage
