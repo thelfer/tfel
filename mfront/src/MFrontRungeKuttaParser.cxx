@@ -35,10 +35,10 @@ namespace mfront{
     this->registerVariable("eel");
     this->registerVariable("deel");
     this->registerVariable("t");
-    this->registerVariable("dt_");
     this->registerVariable("T_");
     this->registerVariable("eto_");
     this->registerVariable("deto_");
+    this->reserveName("dt_");
     this->reserveName("corrector");
     this->reserveName("dtprec");
     this->reserveName("converged");
@@ -412,13 +412,13 @@ namespace mfront{
 	parserInitLocalVars += "this->" + currentVarName + " = this->" + p->name + ";\n";
       }
     }
+    parserInitLocalVars += this->initLocalVars;
+    parserInitLocalVars += "this->deto_ = (this->deto)/(this->dt);\n";
+    this->initLocalVars = parserInitLocalVars;
     if((this->algorithm!="RungeKutta4/2")&&
        (this->algorithm!="RungeKutta5/4")){
       parserInitLocalVars += "this->computeStress();\n";
     }
-    parserInitLocalVars += this->initLocalVars;
-    parserInitLocalVars += "this->deto_ = (this->deto)/(this->dt);\n";
-    this->initLocalVars = parserInitLocalVars;
   }
 
   void 
@@ -555,6 +555,29 @@ namespace mfront{
     // Disabled (makes no sense for this parser)
   } // end of writeBehaviourUpdateStateVars
 
+  void
+  MFrontRungeKuttaParser::writeBehaviourUpdateAuxiliaryStateVars() 
+  {
+    using namespace std;
+    this->behaviourFile << "/*!\n";
+    this->behaviourFile << "* \\brief Update auxiliary state variables at end of integration\n";
+    this->behaviourFile << "*/\n";
+    this->behaviourFile << "void\n";
+    this->behaviourFile << "updateAuxiliaryStateVars(const real dt_)";
+    if(!this->updateAuxiliaryStateVars.empty()){
+      this->behaviourFile << "{\n";
+      this->behaviourFile << "static_cast<void>(dt_);\n";
+      this->behaviourFile << "using namespace std;" << endl;
+      this->behaviourFile << "using namespace tfel::math;" << endl;
+      writeMaterialLaws("MFrontRungeKuttaParser::writeBehaviourUpdateAuxiliaryStateVars",
+			this->behaviourFile,this->materialLaws);		      
+      this->behaviourFile << this->updateAuxiliaryStateVars << endl;
+      this->behaviourFile << "}\n\n";
+    } else {
+      this->behaviourFile << "\n{\nstatic_cast<void>(dt_);\n}\n\n";
+    }
+  } // end of  MFrontRungeKuttaParser::writeBehaviourUpdateAuxiliaryStateVars
+
   void MFrontRungeKuttaParser::writeBehaviourEulerIntegrator(void)
   {
     using namespace std;
@@ -566,9 +589,9 @@ namespace mfront{
 			  << "this->dt*(this->d" << p->name << ");" << endl;
     }
     this->behaviourFile << "// Update stress field" << endl;
-    this->behaviourFile << "this->computeFinalStress();" << endl << endl;
+    this->behaviourFile << "this->computeFinalStress();" << endl;
     if(!this->updateAuxiliaryStateVars.empty()){
-      this->behaviourFile << "this->updateAuxiliaryStateVars();" << endl;
+      this->behaviourFile << "this->updateAuxiliaryStateVars(this->dt);" << endl;
     }
   } // end of writeBehaviourEulerIntegrator
 
@@ -600,9 +623,9 @@ namespace mfront{
 			  << "this->dt*(this->d" << p->name << ");" << endl;
     }
     this->behaviourFile << "// Update stress field" << endl;
-    this->behaviourFile << "this->computeFinalStress();" << endl << endl;
+    this->behaviourFile << "this->computeFinalStress();" << endl;
     if(!this->updateAuxiliaryStateVars.empty()){
-      this->behaviourFile << "this->updateAuxiliaryStateVars();" << endl;
+      this->behaviourFile << "this->updateAuxiliaryStateVars(this->dt);" << endl;
     }
   } // end of writeBehaviourRK2Integrator
 
@@ -944,7 +967,7 @@ namespace mfront{
     this->behaviourFile << "// Update stress field" << endl;
     this->behaviourFile << "this->computeFinalStress();" << endl;
     if(!this->updateAuxiliaryStateVars.empty()){
-      this->behaviourFile << "this->updateAuxiliaryStateVars();" << endl;
+      this->behaviourFile << "this->updateAuxiliaryStateVars(dt_);" << endl;
     }
     this->behaviourFile << "t += dt_;" << endl;
     this->behaviourFile << "if(abs(this->dt-t)<dtprec){" << endl;
@@ -1282,7 +1305,9 @@ namespace mfront{
 			  << "_K2 + this->d" << p->name << "_K3 + this->d" << p->name << "_K4);" << endl;
     }
     this->behaviourFile << "this->computeFinalStress();" << endl;
-    this->behaviourFile << "this->updateAuxiliaryStateVars();" << endl;
+    if(!this->updateAuxiliaryStateVars.empty()){
+      this->behaviourFile << "this->updateAuxiliaryStateVars(dt_);" << endl;
+    }
     this->behaviourFile << "t += dt_;" << endl;
     this->behaviourFile << "if(abs(this->dt-t)<dtprec){" << endl;
     this->behaviourFile << "converged=true;" << endl;
@@ -1554,7 +1579,7 @@ namespace mfront{
     }
     this->behaviourFile << "this->computeFinalStress();" << endl;
     if(!this->updateAuxiliaryStateVars.empty()){
-      this->behaviourFile << "this->updateAuxiliaryStateVars();" << endl;
+      this->behaviourFile << "this->updateAuxiliaryStateVars(dt_);" << endl;
     }
     this->behaviourFile << "t += dt_;" << endl;
     this->behaviourFile << "if(abs(this->dt-t)<dtprec){" << endl;
@@ -1673,7 +1698,10 @@ namespace mfront{
 			  << "_K2+this->d" << p->name << "_K3);" << endl;
     }
     this->behaviourFile << "// Update stress field" << endl;
-    this->behaviourFile << "this->computeFinalStress();" << endl << endl;
+    this->behaviourFile << "this->computeFinalStress();" << endl;
+    if(!this->updateAuxiliaryStateVars.empty()){
+      this->behaviourFile << "this->updateAuxiliaryStateVars(this->dt);" << endl;
+    }
   }  // end of MFrontRungeKuttaParser::writeBehaviourRK4Integrator
 
   void MFrontRungeKuttaParser::writeBehaviourIntegrator(void)

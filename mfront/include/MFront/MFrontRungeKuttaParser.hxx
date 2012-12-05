@@ -111,6 +111,9 @@ namespace mfront{
 
     void writeBehaviourUpdateStateVars(void);
 
+    void
+    writeBehaviourUpdateAuxiliaryStateVars(void);
+
     void writeBehaviourStaticVars(void);
 
     void writeBehaviourIntegrator(void);

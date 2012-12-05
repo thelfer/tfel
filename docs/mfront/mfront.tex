@@ -2702,7 +2702,10 @@ jugé valide au sens du critère d'arrêt~\eqref{eq:RK:epsilon} après la
 mise à jour des variables internes.
 
 Cette méthode peut donc être appelée plusieurs fois si un algorithme à
-pas de temps adaptatif est utilisé.
+pas de temps adaptatif est utilisé. Une variable spécifique, nommée
+\texttt{dt\textunderscore{}}, permet de récupérer l'incrément de temps
+effectivement utilisé par l'algorithme. Le pas de temps total est
+donné par la variable \texttt{dt}.
 
 \subsection{Intégration d'une loi d'écoulement viscoplastique
   orthotrope par un algorithme de \nom{Runge-Kutta}}
