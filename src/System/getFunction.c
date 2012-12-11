@@ -96,6 +96,13 @@ tfel_getCastemFunctionVariables(void *lib,
   return v;
 }
 
+int (*tfel_getSetParameterFunction(void *lib,const char * const name))(const char* const,
+								       const double){
+  return (int (*)(const char*const,
+		  const double)) dlsym(lib,name);
+} 
+
+
 double (*tfel_getCastemFunction(void *lib,const char * const name))(const double*const){
   return (double (*)(const double*const)) dlsym(lib,name);
 } 

@@ -51,7 +51,10 @@ extern "C" {
   tfel_getCastemFunctionVariables(void *,
 				  const char * const);
 
-  
+
+  int (*tfel_getSetParameterFunction(void *lib,const char * const name))(const char* const,
+									 const double);
+
   /*!
    * \brief this function returns a function of type
    * double (*)(const double * const)

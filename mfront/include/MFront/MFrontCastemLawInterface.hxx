@@ -157,15 +157,17 @@ namespace mfront{
   private:
 
     /*
-     * \param const std::string&, className
-     * \param const std::string&, author
-     * \param const std::string&, date
-     * \param const std::string&, description
+     * \param[in] className
+     * \param[in] author
+     * \param[in] date
+     * \param[in] description
+     * \param[in] params
      */
     void writeHeaderFile(const std::string&,
 			 const std::string&,
 			 const std::string&,
-			 const std::string&);
+			 const std::string&,
+			 const std::vector<std::string>&);
 
     /*
      * \param const std::string&, name of the original file

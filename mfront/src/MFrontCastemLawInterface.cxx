@@ -204,7 +204,7 @@ namespace mfront
       throw(runtime_error(msg));
     }
     this->srcFile.exceptions(ios::badbit|ios::failbit);
-    this->writeHeaderFile(name,author,date,description);
+    this->writeHeaderFile(name,author,date,description,params);
     this->writeSrcFile(file,name,author,date,includes,output,
 		       inputs,materialLaws,
 		       staticVars,glossaryNames,
@@ -216,7 +216,8 @@ namespace mfront
   MFrontCastemLawInterface::writeHeaderFile(const std::string& name,
 					    const std::string& author,
 					    const std::string& date,
-					    const std::string& description)
+					    const std::string& description,
+					    const std::vector<std::string>& params)
   {
     using namespace std;
     VarContainer::const_iterator p;
@@ -257,13 +258,18 @@ namespace mfront
     this->headerFile << name << "(";
     this->headerFile << "const double * const";
     this->headerFile << ");\n\n";
+    if(!params.empty()){
+      this->headerFile << "MFRONT_SHAREDOBJ int MFRONT_STDCALL\n";
+      this->headerFile << name << "_setParameter(const char *const,";
+      this->headerFile << "const double";
+      this->headerFile << ");\n\n";
+    }
     this->headerFile << "#ifdef __cplusplus\n";
     this->headerFile << "} // end of extern \"C\"\n";
     this->headerFile << "#endif /* __cplusplus */\n\n";
     this->headerFile << "#endif /* _"
 		     << makeUpperCase(name)
 		     << "_CASTEM_HH */\n";
-
     this->headerFile.close();
   } // end of MFrontCastemLawInterface::writeHeaderFile(void)
 
@@ -317,6 +323,24 @@ namespace mfront
       this->srcFile << includes << endl << endl;
     }
     this->srcFile << "#include\"" << name << "-castem.hxx\"\n\n";
+
+    if(!params.empty()){
+      vector<string>::const_iterator pp;
+      for(pp=params.begin();pp!=params.end();++pp){
+	this->srcFile << "static double&\n";
+	this->srcFile << name << "_getParameter_" << *pp << "(){\n";
+	p6 = paramValues.find(*pp);
+	if(p6==paramValues.end()){
+	  string msg("MFrontCastemLawInterface::writeOutputFile : ");
+	  msg += "internal error (can't find value of parameter " + *p + ")";
+	  throw(runtime_error(msg));
+	}
+	this->srcFile << "static double " << *pp << " = " << p6->second << ";\n";
+	this->srcFile << "return " << *pp << ";\n";
+	this->srcFile << "}\n\n";
+      }	
+    }
+
     this->srcFile << "#ifdef __cplusplus\n";
     this->srcFile << "extern \"C\"{\n";
     this->srcFile << "#endif /* __cplusplus */\n\n";
@@ -344,6 +368,23 @@ namespace mfront
 
     this->srcFile << "MFRONT_SHAREDOBJ unsigned short\n";
     this->srcFile << name << "_nargs = " << inputs.size() << "u;\n\n";
+
+    if(!params.empty()){
+      this->srcFile << "MFRONT_SHAREDOBJ int MFRONT_STDCALL\n";
+      this->srcFile << name << "_setParameter(const char *const p,";
+      this->srcFile << "const double v";
+      this->srcFile << "){\n";
+      vector<string>::const_iterator pp;
+      for(pp=params.begin();pp!=params.end();++pp){
+	this->srcFile << "if(strcmp(\"" << *pp << "\",p)==0){\n";
+	this->srcFile << name << "_getParameter_" << *pp << "() = v;\n";
+	this->srcFile << "return 1;\n";
+	this->srcFile << "}\n";
+      }	
+      this->srcFile << "return 0;\n";
+      this->srcFile << "}\n\n";
+    }
+
     this->srcFile << "MFRONT_SHAREDOBJ double MFRONT_STDCALL\n";
     this->srcFile << name << "(";
     if(!inputs.empty()){
@@ -363,13 +404,8 @@ namespace mfront
     // parameters
     if(!params.empty()){
       for(p=params.begin();p!=params.end();++p){
-	p6 = paramValues.find(*p);
-	if(p6==paramValues.end()){
-	  string msg("MFrontCastemLawInterface::writeOutputFile : ");
-	  msg += "internal error (can't find value of parameter " + *p + ")";
-	  throw(runtime_error(msg));
-	}
-	this->srcFile << "static const double " << *p << " = " << p6->second << ";\n";
+	this->srcFile << "const double " << *p << " = ";
+	this->srcFile << name << "_getParameter_" << *p << "();\n";
       }
     }
     if(!inputs.empty()){

@@ -770,7 +770,7 @@ namespace mfront{
     out << "#endif /* __cplusplus */\n\n";
 
     if(!parametersHolder.empty()){
-      out << "MFRONT_SHAREDOBJ void MFRONT_STDCALL\numat"
+      out << "MFRONT_SHAREDOBJ int MFRONT_STDCALL\numat"
 	  << makeLowerCase(name)
 	  << "_setParameter(const char *const,const umat::UMATReal);\n\n";
     }
@@ -825,6 +825,11 @@ namespace mfront{
     out << "* \\author "  << authorName << endl;
     out << "* \\date   "  << date       << endl;
     out << "*/\n\n";
+
+    if(!parametersHolder.empty()){
+      out << "#include<iostream>\n";
+      out << "#include<stdexcept>\n";
+    }
 
     out << "#include\"TFEL/Material/" << className << ".hxx\"\n";
     out << "#include\"MFront/UMAT/UMATInterface.hxx\"\n\n";
@@ -953,16 +958,22 @@ namespace mfront{
 			     name,"ExternalStateVariables");
     
     if(!parametersHolder.empty()){
-      out << "MFRONT_SHAREDOBJ void MFRONT_STDCALL\numat"
+      out << "MFRONT_SHAREDOBJ int MFRONT_STDCALL\numat"
 	  << makeLowerCase(name)
 	  << "_setParameter(const char *const key,const umat::UMATReal value){\n"
+	  << "using namespace std;\n"
 	  << "using namespace tfel::material;\n"
 	  << className << "ParametersInitializer& i = " << className << "ParametersInitializer::get();\n"
+	  << "try{\n"
 	  << "i.set(key,value);\n"
+	  << "} catch(runtime_error& e){"
+	  << "cerr << e.what() << endl;\n"
+	  << "return 0;\n"
+	  << "}\n"
+	  << "return 1;\n"
 	  << "}\n\n";
     }
-
-
+    
     out << "MFRONT_SHAREDOBJ void MFRONT_STDCALL\numat"
 	<< makeLowerCase(name)
 	<< "(const umat::UMATInt *const NTENS, const umat::UMATReal *const DTIME,\n"

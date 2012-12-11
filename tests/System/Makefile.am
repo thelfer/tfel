@@ -1,12 +1,16 @@
 if WITH_TESTS
 
-INCLUDES = -I$(top_srcdir)/include
+INCLUDES = -I$(top_srcdir)/include \
+           -I@builddir@/include
+
+mfronts = Test.mfront
 
 testdir = $(pkgdatadir)/tests/System
 
-LDADD = -lTFELSystem -lTFELException    \
-	-L$(top_builddir)/src/System    \
-	-L$(top_builddir)/src/Exception
+LDADD = -lTFELSystem -lTFELException -lTFELTests \
+	-L$(top_builddir)/src/System             \
+	-L$(top_builddir)/src/Exception          \
+	-L$(top_builddir)/src/Tests
 
 test_PROGRAMS   = process_test_target \
 		  process             \
@@ -18,8 +22,27 @@ process_SOURCES             = process.cxx
 rstream_SOURCES             = rstream.cxx
 wstream_SOURCES             = wstream.cxx
 
+if HAVE_CASTEM
+
+test_PROGRAMS               += CastemParameterTest
+CastemParameterTest_SOURCES  = CastemParameterTest.cxx
+
+check_LTLIBRARIES = libCastemMaterialLaw.la
+nodist_libCastemMaterialLaw_la_SOURCES = src/Test-castem.cxx
+libCastemMaterialLaw_la_LDFLAGS        = -rpath /
+
+src/%-castem.cxx : %.mfront
+	@top_builddir@/mfront/src/mfront --interface=castem  $<
+
+endif
+
 TESTS=$(test_PROGRAMS)
 
 endif
 
-EXTRA_DIST=CMakeLists.txt
+clean-local:
+	-rm -fr src include
+
+EXTRA_DIST = CMakeLists.txt \
+	     $(mfronts)
+

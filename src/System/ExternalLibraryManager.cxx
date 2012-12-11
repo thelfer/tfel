@@ -63,6 +63,30 @@ namespace tfel
       return p!=static_cast<void *>(0);
     } // end of ExternalLibraryManager::contains
         
+    void
+    ExternalLibraryManager::setParameter(const std::string& l,
+					 const std::string& f,
+					 const std::string& p,
+					 const double v)
+    {
+      using namespace std;
+      void * lib = this->loadLibrary(l);
+      int (*fct)(const char*const,const double);
+      fct = ::tfel_getSetParameterFunction(lib,(f+"_setParameter").c_str());
+      if(fct==0){
+	string msg("ExternalLibraryManager::setParameter : ");
+	msg += " can't get the '"+f+"_setParameter' function (";
+	msg += dlerror();
+	msg += ")";
+	throw(runtime_error(msg));
+      }
+      if(!fct(p.c_str(),v)){
+	string msg("ExternalLibraryManager::setParameter : ");
+	msg += " call to the '"+f+"_setParameter' function failed";
+	throw(runtime_error(msg));
+      }
+    } // end of ExternalLibraryManager::setParameter
+    
     unsigned short
     ExternalLibraryManager::getCastemFunctionNumberOfVariables(const std::string& l,
 							       const std::string& f)
