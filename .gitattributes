@@ -1011,6 +1011,7 @@ tests/MetaProgramming/typelist.cxx -text
 tests/MetaProgramming/typelist2.cxx -text
 tests/System/CMakeLists.txt -text
 tests/System/CastemParameterTest.cxx -text
+tests/System/CastemSourceTest.cxx -text
 tests/System/Makefile.am -text
 tests/System/Test.mfront -text
 tests/System/process.cxx -text

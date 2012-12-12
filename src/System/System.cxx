@@ -146,6 +146,12 @@ namespace tfel
       }
     } // end of throwSystemError
 
+    char
+    systemCall::dirSeparator(void)
+    {
+      return '/';
+    } // end of systemCall::dirSeparator
+
     std::vector<std::string>
     systemCall::tokenize(const std::string& s,
 			 const char c)

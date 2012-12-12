@@ -41,6 +41,12 @@ namespace tfel
 		       const int);
 
       /*
+       * \return the directory separator
+       */
+      static char
+      dirSeparator(void);
+
+      /*
        * create one or more directories.
        * This command is equivalent to the shell command 'mkdir -p'.
        * \param const std::string&, path to be created.

@@ -8,6 +8,7 @@
 #include<sstream>
 #include<stdexcept>
 
+#include"TFEL/Utilities/StringAlgorithms.hxx"
 #include"TFEL/System/System.hxx"
 
 #include"MFront/ParserUtilities.hxx"
@@ -16,7 +17,7 @@
 
 namespace mfront
 {
-
+  
   std::string
   MFrontCastemLawInterface::getName(void)
   {
@@ -292,6 +293,8 @@ namespace mfront
 					 const std::vector<VariableBoundsDescription>& physicalBounds)
   {
     using namespace std;
+    using namespace tfel::system;
+    using namespace tfel::utilities;
     vector<string>::const_iterator p;
     StaticVarContainer::const_iterator p2;
     VarContainer::const_iterator p3;
@@ -344,6 +347,11 @@ namespace mfront
     this->srcFile << "#ifdef __cplusplus\n";
     this->srcFile << "extern \"C\"{\n";
     this->srcFile << "#endif /* __cplusplus */\n\n";
+
+    this->srcFile << "MFRONT_SHAREDOBJ const char *\n";
+    this->srcFile << name << "_src = \""
+		  << tokenize(file,systemCall::dirSeparator()).back()
+		  << "\";\n\n";
 
     if(!inputs.empty()){
       this->srcFile << "MFRONT_SHAREDOBJ const char *\n";

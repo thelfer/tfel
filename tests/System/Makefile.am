@@ -24,8 +24,10 @@ wstream_SOURCES             = wstream.cxx
 
 if HAVE_CASTEM
 
-test_PROGRAMS               += CastemParameterTest
+test_PROGRAMS               += CastemParameterTest \
+			       CastemSourceTest
 CastemParameterTest_SOURCES  = CastemParameterTest.cxx
+CastemSourceTest_SOURCES     = CastemSourceTest.cxx
 
 check_LTLIBRARIES = libCastemMaterialLaw.la
 nodist_libCastemMaterialLaw_la_SOURCES = src/Test-castem.cxx

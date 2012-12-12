@@ -62,6 +62,20 @@ namespace tfel
       void * p   = ::dlsym(lib,s.c_str());
       return p!=static_cast<void *>(0);
     } // end of ExternalLibraryManager::contains
+
+    std::string
+    ExternalLibraryManager::getSource(const std::string& l,
+				      const std::string& f)
+    {
+      using namespace std;
+      string s;
+      void * lib = this->loadLibrary(l);
+      void * p   = ::dlsym(lib,(f+"_src").c_str());
+      if(p!=0){
+	s = *(static_cast<const char* const *>(p));
+      }
+      return s;
+    } // end of ExternalLibraryManager::getSource
         
     void
     ExternalLibraryManager::setParameter(const std::string& l,

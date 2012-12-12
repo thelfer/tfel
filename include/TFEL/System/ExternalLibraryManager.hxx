@@ -43,14 +43,6 @@ namespace tfel
 
       /*!
        * \param[in] l : name of the library
-       * \param[in] s : name of the symbol
-       */
-      bool
-      contains(const std::string&,
-	       const std::string&);
-
-      /*!
-       * \param[in] l : name of the library
        * \param[in] s : name of function or mechanical behaviour 
        * \param[in] p : parameter name
        * \param[in] v : value
@@ -62,8 +54,27 @@ namespace tfel
 		   const double);
 
       /*!
+       * \return the src of the function or the mechanical behaviour
+       * \param[in] l : name of the library
+       * \param[in] s : name of function or mechanical behaviour 
+       * This function looks for the symbol s+'_src' in the library
+       * and expect it to a pointer to characters.
+       * If the symbol is not found, an empty string is returned.
+       */
+      std::string
+      getSource(const std::string&,
+		const std::string&);
+      
+      /*!
        * \param[in] l : name of the library
        * \param[in] f : law name
+       */
+      bool
+      contains(const std::string&,
+	       const std::string&);
+
+      /*!
+       * \note the loadLibrary must have already been called with this name
        */
       bool
       isUMATBehaviourUsableInPurelyImplicitResolution(const std::string&,

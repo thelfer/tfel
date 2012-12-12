@@ -33,7 +33,7 @@ namespace tfel{
      * \param delim : delimiter
      * \return the tokens
      */
-    TFEL_VISIBILITY_LOCAL 
+    TFEL_VISIBILITY_EXPORT 
     std::vector<std::string>
     tokenize(const std::string&,
 	     const std::string&);

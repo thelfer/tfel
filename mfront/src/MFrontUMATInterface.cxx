@@ -13,6 +13,7 @@
 #include<cstdlib>
 #include<stdexcept>
 
+#include"TFEL/Utilities/StringAlgorithms.hxx"
 #include"TFEL/System/System.hxx"
 
 #include"MFront/ParserUtilities.hxx"
@@ -531,7 +532,8 @@ namespace mfront{
   } // end of MFrontUMATInterface::writeGlossaryNames
 
   void
-  MFrontUMATInterface::endTreatement(const std::string& library,
+  MFrontUMATInterface::endTreatement(const std::string& file,
+				     const std::string& library,
 				     const std::string& material,
 				     const std::string& className,
 				     const std::string& authorName,
@@ -547,6 +549,7 @@ namespace mfront{
   {
     using namespace std;
     using namespace tfel::system;
+    using namespace tfel::utilities;
     string header = "UMAT";
     string name;
     string umatFctName;
@@ -769,6 +772,11 @@ namespace mfront{
     out << "extern \"C\"{\n";
     out << "#endif /* __cplusplus */\n\n";
 
+    out << "MFRONT_SHAREDOBJ const char *\n";
+    out << makeLowerCase(name) << "_src = \""
+	<< tokenize(file,systemCall::dirSeparator()).back()
+	<< "\";\n\n";
+
     if(!parametersHolder.empty()){
       out << "MFRONT_SHAREDOBJ int MFRONT_STDCALL\numat"
 	  << makeLowerCase(name)
@@ -837,6 +845,11 @@ namespace mfront{
 
     out << "extern \"C\"{\n\n";
 
+    // this->srcFile << "MFRONT_SHAREDOBJ const char *\n";
+    // this->srcFile << name << "_src = \""
+    // 		  << tokenize(file,systemCall::dirSeparator()).back()
+    // 		  << "\";\n\n";
+
     out << "MFRONT_SHAREDOBJ unsigned short umat"
       	<< makeLowerCase(name)
 	<< "_UsableInPurelyImplicitResolution = ";
@@ -875,8 +888,8 @@ namespace mfront{
 			       name,"MaterialProperties");
     }
 
-    const unsigned short nStateVariables = this->getNumberOfVariables(stateVarsHolder) + 
-      this->getNumberOfVariables(auxiliaryStateVarsHolder);
+    const unsigned short nStateVariables = static_cast<unsigned short>(this->getNumberOfVariables(stateVarsHolder) + 
+								       this->getNumberOfVariables(auxiliaryStateVarsHolder));
     out << "MFRONT_SHAREDOBJ unsigned short umat"
       	<< makeLowerCase(name)
 	<< "_nInternalStateVariables = " << nStateVariables
@@ -1536,102 +1549,6 @@ namespace mfront{
     out << ";\n\n";
 
     out.close();
-
-#ifdef HAVE_PLEIADES
-    systemCall::mkdir("pleiades");
-
-    fileName  = "pleiades/";
-    fileName += name;
-    fileName += ".ple";
-
-    out.open(fileName.c_str());
-    if(!out){
-      string msg("MFrontUMATInterface::endTreatement : ");
-      msg += "could not open file ";
-      msg += fileName;
-      throw(runtime_error(msg));
-    }
-
-    out << "/*\n";
-    out << " * \\file   "  << fileName << endl;
-    out << " * \\brief  example of how to use the " << className << " behaviour law\n"
-	<< " * in the celaeno fuel performanece code\n";
-    out << " * \\author "  << authorName << endl;
-    out << " * \\date   "  << date       << endl;
-    out << " */\n\n";
-
-    out << "Material 'SOLID0'\n";
-    if(behaviourCharacteristic.getBehaviourType()==mfront::ORTHOTROPIC){
-      out << "MechanicalBehaviour 'OrthotropicUmatBehaviour' "
-	  << "'" << MFrontUMATInterface::getLibraryName(library,material)
-	  << ".so' 'umat" << makeLowerCase(name) << "'" << endl;
-    } else {
-      out << "MechanicalBehaviour 'IsotropicUmatBehaviour' "
-	  << "'" << MFrontUMATInterface::getLibraryName(library,material)
-	  << ".so' 'umat" << makeLowerCase(name) << "'" << endl;
-      if(!found){
-	out << "MaterialProperty<constant> 'YoungModulus'    150.e9\n";
-	out << "MaterialProperty<constant> 'PoissonRatio'      0.3\n";
-	out << "MaterialProperty<constant> 'ThermalExpansion'  0.\n";
-	out << "MaterialProperty<constant> 'MassDensity'       0.\n";
-      } 
-    }
-    for(p=coefsHolder.begin();p!=coefsHolder.end();++p){
-      out << "MaterialProperty<constant> '"
-	  << MFrontUMATInterfaceGetName(glossaryNames,entryNames,p->name) << "' 0.\n";
-    }
-    for(p=stateVarsHolder.begin();p!=stateVarsHolder.end();++p){
-      SupportedTypes::TypeFlag flag = this->getTypeFlag(p->type);
-      switch(flag){
-      case SupportedTypes::Scalar : 
-	out << "InternalStateVariable<Scalar>  '"
-	    << MFrontUMATInterfaceGetName(glossaryNames,entryNames,p->name) << "'\n";
-	break;
-      case SupportedTypes::Stensor :
-	out << "InternalStateVariable<Stensor> '"
-	    << MFrontUMATInterfaceGetName(glossaryNames,entryNames,p->name) << "'\n";
-	break;
-      default :
-	string msg("MFrontUMATInterface::endTreatement : ");
-	msg += "internal error, tag unsupported";
-	throw(runtime_error(msg));
-      }
-    }
-    for(p=auxiliaryStateVarsHolder.begin();p!=auxiliaryStateVarsHolder.end();++p){
-      SupportedTypes::TypeFlag flag = this->getTypeFlag(p->type);
-      switch(flag){
-      case SupportedTypes::Scalar : 
-	out << "InternalStateVariable<Scalar>  '"
-	    << MFrontUMATInterfaceGetName(glossaryNames,entryNames,p->name) << "'\n";
-	break;
-      case SupportedTypes::Stensor :
-	out << "InternalStateVariable<Stensor> '"
-	    << MFrontUMATInterfaceGetName(glossaryNames,entryNames,p->name) << "'\n";
-	break;
-      default :
-	string msg("MFrontUMATInterface::endTreatement : ");
-	msg += "internal error, tag unsupported";
-	throw(runtime_error(msg));
-      }
-    }
-    for(p=externalStateVarsHolder.begin();p!=externalStateVarsHolder.end();++p){
-      SupportedTypes::TypeFlag flag = this->getTypeFlag(p->type);
-      switch(flag){
-      case SupportedTypes::Scalar : 
-	out << "ExternalStateVariable '" 
-	    << MFrontUMATInterfaceGetName(glossaryNames,entryNames,p->name) << "'\n";
-	break;
-      default :
-	string msg("MFrontUMATInterface::endTreatement : ");
-	msg += "internal error, tag unsupported";
-	throw(runtime_error(msg));
-      }
-    }
-    out << "EndOfMechanicalBehaviour \n";
-    out << "EndOfMaterial\n";
-    out.close();
-
-#endif /* HAVE_PLEIADES */
 
   } // end of MFrontUMATInterface::endTreatement
   

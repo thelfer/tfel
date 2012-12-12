@@ -82,7 +82,8 @@ namespace mfront{
     for(i  = this->interfaces.begin();
 	i != this->interfaces.end();++i){
       MFrontBehaviourVirtualInterface *interface = mbif.getInterfacePtr(*i);
-      interface->endTreatement(this->library,
+      interface->endTreatement(this->fileName,
+			       this->library,
 			       this->material,
 			       this->className,
 			       this->authorName,
@@ -166,7 +167,8 @@ namespace mfront{
     for(i  = this->interfaces.begin();
 	i != this->interfaces.end();++i){
       MFrontBehaviourVirtualInterface *interface = mbif.getInterfacePtr(*i);
-      interface->endTreatement(this->library,
+      interface->endTreatement(this->fileName,
+			       this->library,
 			       this->material,
 			       this->className,
 			       this->authorName,
