@@ -390,6 +390,24 @@ namespace tfel{
     TFEL_MATH_INLINE2
     tmatrix<M,N,T> transpose(const tmatrix<N,M,T>&);
 
+    template<typename T,
+	     typename Expr>
+    T
+    det(const MatrixExpr<tmatrix<2,2,T>,Expr>&);
+    
+    template<typename T>
+    T
+    det(const tmatrix<2,2,T>&);
+
+    template<typename T,
+	     typename Expr>
+    T
+    det(const MatrixExpr<tmatrix<3,3,T>,Expr>&);
+    
+    template<typename T>
+    T
+    det(const tmatrix<3,3,T>&);
+
     // Serialisation operator
     template<unsigned short N,unsigned short M,typename T>
     std::ostream & operator << (std::ostream &, const tmatrix<N,M,T>&);

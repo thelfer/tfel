@@ -301,10 +301,70 @@ namespace tfel{
       return os;
     }
 
+    namespace internals
+    {
+
+      template<typename T,
+	       typename Matrix>
+      T
+      det2(const Matrix& m)
+      {
+	return m(0,0)*m(1,1)-m(1,0)*m(0,1);
+      }
+
+      template<typename T,
+	       typename Matrix>
+      T
+      det3(const Matrix& m)
+      {
+	const T a = m(0,0);
+	const T b = m(0,1);
+	const T c = m(0,2);
+	const T d = m(1,0);
+	const T e = m(1,1);
+	const T f = m(1,2);
+	const T g = m(2,0);
+	const T h = m(2,1);
+	const T i = m(2,2);
+	return a*(e*i-f*h)+b*(f*g-d*i)+c*(d*h-e*g);
+      }
+
+    }
+    
+    template<typename T,
+	     typename Expr>
+    T
+    det(const MatrixExpr<tmatrix<2,2,T>,Expr>& m)
+    {
+      return tfel::math::internals::det2<T>(m);
+    }
+    
+    template<typename T>
+    T
+    det(const tmatrix<2,2,T>& m)
+    {
+      return tfel::math::internals::det2<T>(m);
+    }
+    
+    template<typename T,
+	     typename Expr>
+    T
+    det(const MatrixExpr<tmatrix<3,3,T>,Expr>& m)
+    {
+      return tfel::math::internals::det3<T>(m);
+    }
+    
+    template<typename T>
+    T
+    det(const tmatrix<3,3,T>& m)
+    {
+      return tfel::math::internals::det3<T>(m);
+    }
+
 #endif
-
+    
   } // end of namespace math
-
+  
 } // end of namespace tfel
 
 #endif /* _LIB_TFEL_TINY_MATRIX_IXX */

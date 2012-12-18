@@ -996,6 +996,7 @@ tests/Math/tmatrix.cxx -text
 tests/Math/tmatrix1.cxx -text
 tests/Math/tmatrix2.cxx -text
 tests/Math/tmatrix3.cxx -text
+tests/Math/tmatrix4.cxx -text
 tests/Math/tvector.cxx -text
 tests/Math/tvector2.cxx -text
 tests/Math/tvector3.cxx -text
