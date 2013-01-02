@@ -103,11 +103,8 @@ namespace mfront
     using namespace std;
     map<string,vector<string> > src;
     string castlib = "libCastem"+getMaterialLawLibraryNameBase(lib,mat);
-    if(!mat.empty()){
-      src[castlib].push_back(mat+"_"+className+"-castem.cxx");
-    } else {
-      src[castlib].push_back(className+"-castem.cxx");
-    }
+    string name          = this->getCastemFunctionName(mat,className);
+    src[castlib].push_back(this->getSourceFileName(name));
     return src;
   } // end of MFrontCastemLawInterface::getGeneratedSources
 
@@ -146,6 +143,27 @@ namespace mfront
     return map<string,pair<vector<string>,vector<string> > >();
   } // end of MFrontCastemLawInterface::getSpecificTargets
 
+  std::string
+  MFrontCastemLawInterface::getCastemFunctionName(const std::string& material,
+						  const std::string& className)
+  {
+    if(material.empty()){
+      return className;
+    }
+    return material+"_"+className;
+  }
+
+  std::string
+  MFrontCastemLawInterface::getHeaderFileName(const std::string& name)
+  {
+    return name + "-castem.hxx";
+  }
+
+  std::string
+  MFrontCastemLawInterface::getSourceFileName(const std::string& name)
+  {
+    return name + "-castem.cxx";
+  }
 
   void
   MFrontCastemLawInterface::writeOutputFiles(const std::string& file,
@@ -172,21 +190,12 @@ namespace mfront
   {
     using namespace std;
     using namespace tfel::system;
-    string dir;
-    string name;
     vector<string>::const_iterator p;
     map<string,string>::const_iterator p2;
     map<string,string>::const_iterator p3;
-
-    if(material.empty()){
-      name = className;
-    } else {
-      name = material+"_"+className;
-    }
-    this->headerFileName  = "include/" + name;
-    this->headerFileName += "-castem.hxx";
-    this->srcFileName     = "src/" + name;
-    this->srcFileName    += "-castem.cxx";
+    string name          = this->getCastemFunctionName(material,className);
+    this->headerFileName = "include/"+this->getHeaderFileName(name);
+    this->srcFileName    = "src/"+this->getSourceFileName(name);
     this->headerFile.open(this->headerFileName.c_str());
     if(!this->headerFile){
       string msg("MFrontCastemLawInterface::writeOutputFiles : ");

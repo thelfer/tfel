@@ -747,9 +747,12 @@ namespace mfront
       } else {
 	mname = res[0]+"_"+res[1];
       }
+      if(!includes.empty()){
+	this->includes += "\n";
+      }
       this->includes+= "#include\"";
       this->includes+= minterface.getHeaderFileName(res[0],res[1]);
-      this->includes+= ".hxx\"\n";
+      this->includes+= ".hxx\"";
       if(find(this->materialLaws.begin(),
 	      this->materialLaws.end(),mname)==this->materialLaws.end()){
 	this->materialLaws.push_back(mname);

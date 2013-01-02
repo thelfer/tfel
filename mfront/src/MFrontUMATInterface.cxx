@@ -772,7 +772,7 @@ namespace mfront{
     out << "extern \"C\"{\n";
     out << "#endif /* __cplusplus */\n\n";
 
-    out << "MFRONT_SHAREDOBJ const char *\n";
+    out << "MFRONT_SHAREDOBJ const char *\numat";
     out << makeLowerCase(name) << "_src = \""
 	<< tokenize(file,systemCall::dirSeparator()).back()
 	<< "\";\n\n";
