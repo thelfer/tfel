@@ -11,6 +11,7 @@
 #include<string>
 #include<fstream>
 
+#include"TFEL/Config/TFELConfig.hxx"
 #include"TFEL/Utilities/CxxTokenizer.hxx"
 
 #include"MFront/VarHandler.hxx"
@@ -21,7 +22,7 @@
 
 namespace mfront{
 
-  struct MFrontCastemLawInterface
+  struct TFEL_VISIBILITY_EXPORT MFrontCastemLawInterface
     : public MFrontLawVirtualInterface
   {
     static std::string 
@@ -29,18 +30,21 @@ namespace mfront{
     
     MFrontCastemLawInterface();
     
-    void setVerboseMode(void);
+    virtual void
+    setVerboseMode(void);
 
-    void setDebugMode(void);
+    virtual void
+    setDebugMode(void);
 
-    void setWarningMode(void);
+    virtual void
+    setWarningMode(void);
 
     /*!
      * \param const std::string&, library
      * \param const std::string&, material
      * \param const std::string&, class
      */
-    std::map<std::string,std::vector<std::string> >
+    virtual std::map<std::string,std::vector<std::string> >
     getGlobalIncludes(const std::string&,
 		      const std::string&,
 		      const std::string&);
@@ -50,7 +54,7 @@ namespace mfront{
      * \param const std::string&, material
      * \param const std::string&, class
      */
-    std::map<std::string,std::vector<std::string> >
+    virtual std::map<std::string,std::vector<std::string> >
     getGlobalDependencies(const std::string&,
 			  const std::string&,
 			  const std::string&);
@@ -60,7 +64,7 @@ namespace mfront{
      * \param const std::string&, material
      * \param const std::string&, class
      */
-    std::map<std::string,std::vector<std::string> >
+    virtual std::map<std::string,std::vector<std::string> >
     getGeneratedSources(const std::string&,
 			const std::string&,
 			const std::string&);
@@ -70,7 +74,7 @@ namespace mfront{
      * \param const std::string&, material
      * \param const std::string&, class
      */
-    std::vector<std::string>
+    virtual std::vector<std::string>
     getGeneratedIncludes(const std::string&,
 			 const std::string&,
 			 const std::string&);
@@ -80,7 +84,7 @@ namespace mfront{
      * \param const std::string&, material
      * \param const std::string&, class
      */
-    std::map<std::string,std::vector<std::string> >
+    virtual std::map<std::string,std::vector<std::string> >
     getLibrariesDependencies(const std::string&,
 			     const std::string&,
 			     const std::string&);
@@ -91,19 +95,19 @@ namespace mfront{
      * \param const std::string&, class
      * \param const std::vector<std::string>&, library links
      */
-    std::map<std::string,
-	     std::pair<std::vector<std::string>,
-		       std::vector<std::string> > >
+    virtual std::map<std::string,
+		     std::pair<std::vector<std::string>,
+			       std::vector<std::string> > >
     getSpecificTargets(const std::string&,
 		       const std::string&,
 		       const std::string&,
 		       const std::vector<std::string>&);
 
-    std::pair<bool,tfel::utilities::CxxTokenizer::TokensContainer::const_iterator>
+    virtual std::pair<bool,tfel::utilities::CxxTokenizer::TokensContainer::const_iterator>
     treatKeyword(const std::string&,
 		 tfel::utilities::CxxTokenizer::TokensContainer::const_iterator,
 		 const tfel::utilities::CxxTokenizer::TokensContainer::const_iterator);
-
+    
     /*
      * \param const std::string&, name of the original file
      * \param const std::string&, name of the output library
@@ -127,33 +131,50 @@ namespace mfront{
      * \param const bool, use template
      * \param const std::vector<std::string>&, namespaces
      */
-    void writeOutputFiles(const std::string&,
-			  const std::string&,
-			  const std::string&,
-			  const std::string&,
-			  const std::string&,
-			  const std::string&,
-			  const std::string&,
-			  const std::string&,
-			  const std::string&,
-			  const VarContainer&,
-			  const std::vector<std::string>&,
-			  const std::map<std::string,std::string>&,
-			  const std::map<std::string,std::string>&,
-			  const StaticVarContainer& staticVars,
-			  const std::vector<std::string>&,
-			  const std::map<std::string,double>&,
-			  const LawFunction&,
-			  const std::vector<VariableBoundsDescription>&,
-			  const std::vector<VariableBoundsDescription>&,
-			  const bool,
-			  const std::vector<std::string>&);
+    virtual void
+    writeOutputFiles(const std::string&,
+		     const std::string&,
+		     const std::string&,
+		     const std::string&,
+		     const std::string&,
+		     const std::string&,
+		     const std::string&,
+		     const std::string&,
+		     const std::string&,
+		     const VarContainer&,
+		     const std::vector<std::string>&,
+		     const std::map<std::string,std::string>&,
+		     const std::map<std::string,std::string>&,
+		     const StaticVarContainer& staticVars,
+		     const std::vector<std::string>&,
+		     const std::map<std::string,double>&,
+		     const LawFunction&,
+		     const std::vector<VariableBoundsDescription>&,
+		     const std::vector<VariableBoundsDescription>&,
+		     const bool,
+		     const std::vector<std::string>&);
     
-    void
+    virtual void
     reset(void);
 
     ~MFrontCastemLawInterface();
+
+  protected:
     
+    /*!
+     * \param[in] material
+     * \param[in] className
+     */
+    virtual std::string
+    getCastemFunctionName(const std::string&,
+			  const std::string&);
+    
+    virtual std::string
+    getHeaderFileName(const std::string&);
+
+    virtual std::string
+    getSourceFileName(const std::string&);
+
   private:
 
     /*
@@ -163,12 +184,13 @@ namespace mfront{
      * \param[in] description
      * \param[in] params
      */
-    void writeHeaderFile(const std::string&,
-			 const std::string&,
-			 const std::string&,
-			 const std::string&,
-			 const std::vector<std::string>&);
-
+    virtual void
+    writeHeaderFile(const std::string&,
+		    const std::string&,
+		    const std::string&,
+		    const std::string&,
+		    const std::vector<std::string>&);
+    
     /*
      * \param const std::string&, name of the original file
      * \param const std::string&, className
@@ -187,23 +209,24 @@ namespace mfront{
      * \param const std::vector<VariableBoundsDescription>&, bounds of the law
      * \param const std::vector<VariableBoundsDescription>&, physical bounds of the law
      */
-    void writeSrcFile(const std::string&,
-		      const std::string&,
-		      const std::string&,
-		      const std::string&,
-		      const std::string&,
-		      const std::string&,
-		      const VarContainer&,
-		      const std::vector<std::string>&,
-		      const StaticVarContainer&,
-		      const std::map<std::string,std::string>&,
-		      const std::map<std::string,std::string>&,
-		      const std::vector<std::string>&,
-		      const std::map<std::string,double>&,
-		      const LawFunction&,
-		      const std::vector<VariableBoundsDescription>&,
-		      const std::vector<VariableBoundsDescription>&);
-
+    virtual void
+    writeSrcFile(const std::string&,
+		 const std::string&,
+		 const std::string&,
+		 const std::string&,
+		 const std::string&,
+		 const std::string&,
+		 const VarContainer&,
+		 const std::vector<std::string>&,
+		 const StaticVarContainer&,
+		 const std::map<std::string,std::string>&,
+		 const std::map<std::string,std::string>&,
+		 const std::vector<std::string>&,
+		 const std::map<std::string,double>&,
+		 const LawFunction&,
+		 const std::vector<VariableBoundsDescription>&,
+		 const std::vector<VariableBoundsDescription>&);
+    
     std::ofstream headerFile;
 
     std::ofstream srcFile;

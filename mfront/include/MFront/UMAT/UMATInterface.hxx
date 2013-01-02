@@ -239,7 +239,7 @@ namespace umat{
 	UMATReal x[2];
 	UMATReal f[2];
 
-	dez = c1*DSTRAN[0]+c2*DSTRAN[1];
+	dez = -c3*s[2]+c1*DSTRAN[0]+c2*DSTRAN[1];
 	TreatPlaneStress::template iter<TreatPlaneStrain>(DTIME,DROT,DDSOE,
 							  TEMP,DTEMP,PROPS,
 							  NPROPS,PREDEF,DPRED,
@@ -249,7 +249,7 @@ namespace umat{
 	x[1] = dez;
 	f[1] = s[2];
 	
-	if(abs(c3*s[2]) > 1.e-8){
+	if(abs(c3*s[2]) > 1.e-12){
 	  dez -= c3*s[2];
 	  TreatPlaneStress::template iter<TreatPlaneStrain>(DTIME,DROT,DDSOE,
 							    TEMP,DTEMP,PROPS,
@@ -260,7 +260,7 @@ namespace umat{
 	}	    
 	
 	iter = 2;
-	while((abs(c3*s[2]) > 1.e-8)&&
+	while((abs(c3*s[2]) > 1.e-12)&&
 	      (iter<iterMax)){
 	  x[0] = x[1];
 	  f[0] = f[1];
@@ -417,7 +417,6 @@ namespace umat{
 
     }; // end of struct TreatPlaneStrain
 
-    
     TFEL_UMAT_INLINE2 static
       void exe(const UMATInt  *const NTENS, const UMATReal *const DTIME,
 	       const UMATReal *const DROT,  const UMATReal *const DDSOE,

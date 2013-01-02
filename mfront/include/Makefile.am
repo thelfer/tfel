@@ -64,8 +64,10 @@ nobase_noinst_HEADERS += MFront/MFrontCLawInterfaceBase.hxx          \
 			 MFront/MFrontLaTeXLawInterface.hxx          \
 			 MFront/MFrontPythonLawInterface.hxx
 
-nobase_noinst_HEADERS += MFront/MFrontCastemLawInterface.hxx   \
-	 	         MFront/MFrontUMATInterface.hxx
+if HAVE_CASTEM
+nobase_include_HEADERS += MFront/MFrontCastemLawInterface.hxx   \
+	 	          MFront/MFrontUMATInterface.hxx
+endif
 
 nobase_include_HEADERS += MFront/UMAT/UMATException.hxx                     \
 			  MFront/UMAT/UMATGetModellingHypothesis.hxx        \
