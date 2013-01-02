@@ -17,7 +17,7 @@ namespace tfel
   {
 
     /*!
-     * This function computes the RambergOsgood paramters K and n
+     * \brief This function computes the RambergOsgood paramters K and n
      * which allow the approximation of the traction curve by the
      * relation:
      * \[
@@ -27,13 +27,6 @@ namespace tfel
      * - p is the cumulated plastic strain
      * - s is the von mises stress
      * - E is the Young modulus
-     *
-     * \param[out] K: first  RambergOsgood paramter
-     * \param[out] n: second RambergOsgood paramter
-     * \param[in]  Rp02: YieldStress
-     * \param[in]  Rm:   UltimateTensileStress
-     * \param[in]  Ag:   UniformElongation
-     * \param[in]  E :   YoungModulus
      *
      * This functions can be used with the mfront'
      * IsotropicPlasticMisesFlow parser like this:
@@ -48,7 +41,7 @@ namespace tfel
      *   const real Ag=...;
      *   real K_r;
      *   real n_r;
-     *   computeRambergOsgoodParamters(K_r,n_r,young,Rp02,Rm,Ag);
+     *   computeRambergOsgoodParameters(K_r,n_r,young,Rp02,Rm,Ag);
      *   K_p=1./K_r;
      *   n_p=1./n_r;
      * }
@@ -61,11 +54,18 @@ namespace tfel
      *   df_dp   = -n_p*K_p*tmp;
      * }
      * \endcode
+	 *
+     * \param[out] K: first  RambergOsgood paramter
+     * \param[out] n: second RambergOsgood paramter
+     * \param[in]  E :   YoungModulus
+     * \param[in]  Rp02: YieldStress
+     * \param[in]  Rm:   UltimateTensileStress
+     * \param[in]  Ag:   UniformElongation
      */
     template<typename T1,
 	     typename T2>
     void
-    computeRambergOsgoodParamters(T1& K,
+    computeRambergOsgoodParameters(T1& K,
 				  T1& n,
 				  const T2 E,
 				  const T2 Rp02,
