@@ -41,6 +41,7 @@ nobase_include_HEADERS= TFEL/Macros.hxx                                         
 			TFEL/Material/BoundsCheck.hxx                                                 \
 			TFEL/Material/DDIF2Base.hxx                                                   \
 			TFEL/Material/DDIF2Base.ixx                                                   \
+			TFEL/Material/RambergOsgood.hxx                                               \
 			TFEL/Config/Internals/TFELTypesInternals.hxx	                              \
 			TFEL/Config/Internals/SpatialGradType.hxx	                              \
 			TFEL/Config/Internals/HeatFluxVectorType.hxx	                              \

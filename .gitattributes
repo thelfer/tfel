@@ -164,6 +164,7 @@ include/TFEL/Material/MechanicalBehaviourTraits.hxx -text
 include/TFEL/Material/MechanicalIntegrationData.hxx -text
 include/TFEL/Material/ModellingHypothesis.hxx -text
 include/TFEL/Material/OutOfBoundsPolicy.hxx -text
+include/TFEL/Material/RambergOsgood.hxx -text
 include/TFEL/Material/ThermalBehaviour.hxx -text
 include/TFEL/Material/ThermalBehaviourData.hxx -text
 include/TFEL/Material/ThermoMechanicalBehaviour.hxx -text
