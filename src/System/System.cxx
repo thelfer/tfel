@@ -18,6 +18,10 @@
 #include<unistd.h>
 #include<dirent.h>
 
+#if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
+#include<windows.h>
+#endif 
+
 #include"TFEL/System/SystemError.hxx"
 #include"TFEL/System/System.hxx"
 
@@ -281,7 +285,7 @@ namespace tfel
 	    // the file does not exist, create the directory
 #if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
 #warning "windows port"
-	    if(::CreateDirectory(path.c_str(),0)!=0){
+	    if(::CreateDirectoryA(path.c_str(),0)==0){
 #else 
 	    if(::mkdir(path.c_str(),mode)!=0){
 #endif /* defined _WIN32 || _WIN64 || defined __CYGWIN__ */      
