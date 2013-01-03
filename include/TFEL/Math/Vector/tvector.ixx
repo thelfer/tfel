@@ -315,6 +315,30 @@ namespace tfel{
       return r;
     } // end of makeTVector3D
 
+    template<typename T>
+    tvector<3u,T>
+    cross_product(const tvector<2u,T>& v1,
+		  const tvector<2u,T>& v2)
+    {
+      tvector<3u,T> v3;
+      v3[0] = T(0);
+      v3[1] = T(0);
+      v3[2] = v1[0]*v2[1]-v1[1]*v2[0];
+      return v3;
+    } // end of cross_product
+
+    template<typename T>
+    tvector<3u,T>
+    cross_product(const tvector<3u,T>& v1,
+		  const tvector<3u,T>& v2)
+    {
+      tvector<3u,T> v3;
+      v3[0] = v1[1]*v2[2]-v1[2]*v2[1];
+      v3[1] = v1[2]*v2[0]-v1[0]*v2[2];
+      v3[2] = v1[0]*v2[1]-v1[1]*v2[0];
+      return v3;
+    } // end of cross_product
+
   } // end of namespace math
 
 } // end of namespace tfel

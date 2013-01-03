@@ -430,6 +430,16 @@ namespace tfel{
 		  const T,
 		  const T);
 
+    template<typename T>
+    tvector<3u,T>
+    cross_product(const tvector<2u,T>&,
+		  const tvector<2u,T>&);
+
+    template<typename T>
+    tvector<3u,T>
+    cross_product(const tvector<3u,T>&,
+		  const tvector<3u,T>&);
+
   } // end of namespace math
 
   namespace typetraits{
