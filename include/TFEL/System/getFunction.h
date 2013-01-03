@@ -9,6 +9,13 @@
 #ifndef _LIB_TFEL_GETFUNCTION_H_
 #define _LIB_TFEL_GETFUNCTION_H_
 
+#if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
+#include <windows.h>
+typedef HINSTANCE__* LibraryHandlerPtr;
+#else
+typedef void*        LibraryHandlerPtr;
+#endif /* defined _WIN32 || defined _WIN64 ||defined __CYGWIN__ */
+
 #ifdef	__cplusplus
 extern "C" {
 #endif /* __cplusplus */
@@ -25,36 +32,37 @@ extern "C" {
    * finite element code that uses function with the following
    * prototype double (*)(const double* const);
    *
-   * \param void *, link to library opened through dlopen
+   * \param LibraryHandlerPtr, link to library opened through dlopen
    * \param const char * const, name of the function to be checked
    * \return int, the number of variables (-1 if on error).
    */
-  int tfel_getCastemFunctionNumberOfVariables(void *,
+  int tfel_getCastemFunctionNumberOfVariables(LibraryHandlerPtr,
 					      const char * const);
 
-  int tfel_getBool(void *,
+  int tfel_getBool(LibraryHandlerPtr,
 		   const char * const);
 
-  int tfel_getUnsignedShort(void *,
+  int tfel_getUnsignedShort(LibraryHandlerPtr,
 			    const char * const);
 
 
   char **
-  tfel_getArrayOfStrings(void *,
+  tfel_getArrayOfStrings(LibraryHandlerPtr,
 			 const char * const);
 
   int *
-  tfel_getArrayOfInt(void *,
+  tfel_getArrayOfInt(LibraryHandlerPtr,
 		     const char * const);
 
   char **
-  tfel_getCastemFunctionVariables(void *,
+  tfel_getCastemFunctionVariables(LibraryHandlerPtr,
 				  const char * const);
 
 
-  int (*tfel_getSetParameterFunction(void *lib,const char * const name))(const char* const,
-									 const double);
-
+  int (*tfel_getSetParameterFunction(LibraryHandlerPtr lib,
+				     const char * const name))(const char* const,
+							       const double);
+  
   /*!
    * \brief this function returns a function of type
    * double (*)(const double * const)
@@ -67,11 +75,11 @@ extern "C" {
    * symbol with the given name exists but cannot check if it points to
    * a function with that prototype.
    *
-   * \param void *, link to library opened through dlopen
+   * \param LibraryHandlerPtr, link to library opened through dlopen
    * \param const char * const, name of the function to be checked
    * \return a function pointer if the call succeed, the NULL pointer if not.
    */
-  double (*tfel_getCastemFunction(void *,const char * const))(const double*const);
+  double (*tfel_getCastemFunction(LibraryHandlerPtr,const char * const))(const double*const);
 
   /*!
    * \brief this function returns a function of type
@@ -81,11 +89,11 @@ extern "C" {
    * symbol with the given name exists but cannot check if it points to
    * a function with that prototype.
    *
-   * \param void *, link to library opened through dlopen
+   * \param LibraryHandlerPtr, link to library opened through dlopen
    * \param const char * const, name of the function to be checked
    * \return a function pointer if the call succeed, the NULL pointer if not.
    */
-  double (*tfel_getCFunction0(void*,const char * const))(void);
+  double (*tfel_getCFunction0(LibraryHandlerPtr,const char * const))(void);
 
   /*!
    * \brief this function returns a function of type
@@ -95,11 +103,11 @@ extern "C" {
    * symbol with the given name exists but cannot check if it points to
    * a function with that prototype.
    *
-   * \param void *, link to library opened through dlopen
+   * \param LibraryHandlerPtr, link to library opened through dlopen
    * \param const char * const, name of the function to be checked
    * \return a function pointer if the call succeed, the NULL pointer if not.
    */
-  double (*tfel_getCFunction1(void*,const char * const))(double);
+  double (*tfel_getCFunction1(LibraryHandlerPtr,const char * const))(double);
 
   /*!
    * \brief this function returns a function of type
@@ -109,11 +117,11 @@ extern "C" {
    * symbol with the given name exists but cannot check if it points to
    * a function with that prototype.
    *
-   * \param void *, link to library opened through dlopen
+   * \param LibraryHandlerPtr, link to library opened through dlopen
    * \param const char * const, name of the function to be checked
    * \return a function pointer if the call succeed, the NULL pointer if not.
    */
-  double (*tfel_getCFunction2(void*,const char * const))(double,double);
+  double (*tfel_getCFunction2(LibraryHandlerPtr,const char * const))(double,double);
 
   /*!
    * \brief this function returns a function of type
@@ -123,12 +131,12 @@ extern "C" {
    * symbol with the given name exists but cannot check if it points to
    * a function with that prototype.
    *
-   * \param void *, link to library opened through dlopen
+   * \param LibraryHandlerPtr, link to library opened through dlopen
    * \param const char * const, name of the function to be checked
    * \return a function pointer if the call succeed, the NULL pointer if not.
    */
-  double (*tfel_getCFunction3(void*,const char * const))(double,double,
-							 double);
+  double (*tfel_getCFunction3(LibraryHandlerPtr,const char * const))(double,double,
+								     double);
 
   /*!
    * \brief this function returns a function of type
@@ -138,12 +146,12 @@ extern "C" {
    * symbol with the given name exists but cannot check if it points to
    * a function with that prototype.
    *
-   * \param void *, link to library opened through dlopen
+   * \param LibraryHandlerPtr, link to library opened through dlopen
    * \param const char * const, name of the function to be checked
    * \return a function pointer if the call succeed, the NULL pointer if not.
    */
-  double (*tfel_getCFunction4(void*,const char * const))(double,double,
-							 double,double);
+  double (*tfel_getCFunction4(LibraryHandlerPtr,const char * const))(double,double,
+								     double,double);
 
   /*!
    * \brief this function returns a function of type
@@ -153,13 +161,13 @@ extern "C" {
    * symbol with the given name exists but cannot check if it points to
    * a function with that prototype.
    *
-   * \param void *, link to library opened through dlopen
+   * \param LibraryHandlerPtr, link to library opened through dlopen
    * \param const char * const, name of the function to be checked
    * \return a function pointer if the call succeed, the NULL pointer if not.
    */
-  double (*tfel_getCFunction5(void*,const char * const))(double,double,
-							 double,double,
-							 double);
+  double (*tfel_getCFunction5(LibraryHandlerPtr,const char * const))(double,double,
+								     double,double,
+								     double);
 
   /*!
    * \brief this function returns a function of type
@@ -169,13 +177,13 @@ extern "C" {
    * symbol with the given name exists but cannot check if it points to
    * a function with that prototype.
    *
-   * \param void *, link to library opened through dlopen
+   * \param LibraryHandlerPtr, link to library opened through dlopen
    * \param const char * const, name of the function to be checked
    * \return a function pointer if the call succeed, the NULL pointer if not.
    */
-  double (*tfel_getCFunction6(void*,const char * const))(double,double,
-							 double,double,
-							 double,double);
+  double (*tfel_getCFunction6(LibraryHandlerPtr,const char * const))(double,double,
+								     double,double,
+								     double,double);
 
   /*!
    * \brief this function returns a function of type
@@ -185,14 +193,14 @@ extern "C" {
    * symbol with the given name exists but cannot check if it points to
    * a function with that prototype.
    *
-   * \param void *, link to library opened through dlopen
+   * \param LibraryHandlerPtr, link to library opened through dlopen
    * \param const char * const, name of the function to be checked
    * \return a function pointer if the call succeed, the NULL pointer if not.
    */
-  double (*tfel_getCFunction7(void*,const char * const))(double,double,
-							 double,double,
-							 double,double,
-							 double);
+  double (*tfel_getCFunction7(LibraryHandlerPtr,const char * const))(double,double,
+								     double,double,
+								     double,double,
+								     double);
 
   /*!
    * \brief this function returns a function of type
@@ -202,14 +210,14 @@ extern "C" {
    * symbol with the given name exists but cannot check if it points to
    * a function with that prototype.
    *
-   * \param void *, link to library opened through dlopen
+   * \param LibraryHandlerPtr, link to library opened through dlopen
    * \param const char * const, name of the function to be checked
    * \return a function pointer if the call succeed, the NULL pointer if not.
    */
-  double (*tfel_getCFunction8(void*,const char * const))(double,double,
-							 double,double,
-							 double,double,
-							 double,double);
+  double (*tfel_getCFunction8(LibraryHandlerPtr,const char * const))(double,double,
+								     double,double,
+								     double,double,
+								     double,double);
 
   /*!
    * \brief this function returns a function of type
@@ -219,15 +227,15 @@ extern "C" {
    * symbol with the given name exists but cannot check if it points to
    * a function with that prototype.
    *
-   * \param void *, link to library opened through dlopen
+   * \param LibraryHandlerPtr, link to library opened through dlopen
    * \param const char * const, name of the function to be checked
    * \return a function pointer if the call succeed, the NULL pointer if not.
    */
-  double (*tfel_getCFunction9(void*,const char * const))(double,double,
-							 double,double,
-							 double,double,
-							 double,double,
-							 double);
+  double (*tfel_getCFunction9(LibraryHandlerPtr,const char * const))(double,double,
+								     double,double,
+								     double,double,
+								     double,double,
+								     double);
 
   /*!
    * \brief this function returns a function of type
@@ -237,15 +245,15 @@ extern "C" {
    * symbol with the given name exists but cannot check if it points to
    * a function with that prototype.
    *
-   * \param void *, link to library opened through dlopen
+   * \param LibraryHandlerPtr, link to library opened through dlopen
    * \param const char * const, name of the function to be checked
    * \return a function pointer if the call succeed, the NULL pointer if not.
    */
-  double (*tfel_getCFunction10(void*,const char * const))(double,double,
-							  double,double,
-							  double,double,
-							  double,double,
-							  double,double);
+  double (*tfel_getCFunction10(LibraryHandlerPtr,const char * const))(double,double,
+								      double,double,
+								      double,double,
+								      double,double,
+								      double,double);
 
   /*!
    * \brief this function returns a function of type
@@ -257,16 +265,16 @@ extern "C" {
    * symbol with the given name exists but cannot check if it points to
    * a function with that prototype.
    *
-   * \param void *, link to library opened through dlopen
+   * \param LibraryHandlerPtr, link to library opened through dlopen
    * \param const char * const, name of the function to be checked
    * \return a function pointer if the call succeed, the NULL pointer if not.
    */
-  double (*tfel_getCFunction11(void*,const char * const))(double,double,
-							  double,double,
-							  double,double,
-							  double,double,
-							  double,double,
-							  double);
+  double (*tfel_getCFunction11(LibraryHandlerPtr,const char * const))(double,double,
+								      double,double,
+								      double,double,
+								      double,double,
+								      double,double,
+								      double);
 
   /*!
    * \brief this function returns a function of type
@@ -278,16 +286,16 @@ extern "C" {
    * symbol with the given name exists but cannot check if it points to
    * a function with that prototype.
    *
-   * \param void *, link to library opened through dlopen
+   * \param LibraryHandlerPtr, link to library opened through dlopen
    * \param const char * const, name of the function to be checked
    * \return a function pointer if the call succeed, the NULL pointer if not.
    */
-  double (*tfel_getCFunction12(void*,const char * const))(double,double,
-							  double,double,
-							  double,double,
-							  double,double,
-							  double,double,
-							  double,double);
+  double (*tfel_getCFunction12(LibraryHandlerPtr,const char * const))(double,double,
+								      double,double,
+								      double,double,
+								      double,double,
+								      double,double,
+								      double,double);
 
   /*!
    * \brief this function returns a function of type
@@ -300,17 +308,17 @@ extern "C" {
    * symbol with the given name exists but cannot check if it points to
    * a function with that prototype.
    *
-   * \param void *, link to library opened through dlopen
+   * \param LibraryHandlerPtr, link to library opened through dlopen
    * \param const char * const, name of the function to be checked
    * \return a function pointer if the call succeed, the NULL pointer if not.
    */
-  double (*tfel_getCFunction13(void*,const char * const))(double,double,
-							  double,double,
-							  double,double,
-							  double,double,
-							  double,double,
-							  double,double,
-							  double);
+  double (*tfel_getCFunction13(LibraryHandlerPtr,const char * const))(double,double,
+								      double,double,
+								      double,double,
+								      double,double,
+								      double,double,
+								      double,double,
+								      double);
 
   /*!
    * \brief this function returns a function of type
@@ -323,17 +331,17 @@ extern "C" {
    * symbol with the given name exists but cannot check if it points to
    * a function with that prototype.
    *
-   * \param void *, link to library opened through dlopen
+   * \param LibraryHandlerPtr, link to library opened through dlopen
    * \param const char * const, name of the function to be checked
    * \return a function pointer if the call succeed, the NULL pointer if not.
    */
-  double (*tfel_getCFunction14(void*,const char * const))(double,double,
-							  double,double,
-							  double,double,
-							  double,double,
-							  double,double,
-							  double,double,
-							  double,double);
+  double (*tfel_getCFunction14(LibraryHandlerPtr,const char * const))(double,double,
+								      double,double,
+								      double,double,
+								      double,double,
+								      double,double,
+								      double,double,
+								      double,double);
 
   /*!
    * \brief this function returns a function of type
@@ -346,18 +354,18 @@ extern "C" {
    * symbol with the given name exists but cannot check if it points to
    * a function with that prototype.
    *
-   * \param void *, link to library opened through dlopen
+   * \param LibraryHandlerPtr, link to library opened through dlopen
    * \param const char * const, name of the function to be checked
    * \return a function pointer if the call succeed, the NULL pointer if not.
    */
-  double (*tfel_getCFunction15(void*,const char * const))(double,double,
-							  double,double,
-							  double,double,
-							  double,double,
-							  double,double,
-							  double,double,
-							  double,double,
-							  double);
+  double (*tfel_getCFunction15(LibraryHandlerPtr,const char * const))(double,double,
+								      double,double,
+								      double,double,
+								      double,double,
+								      double,double,
+								      double,double,
+								      double,double,
+								      double);
 
   /*!
    * \brief this function returns a function of type
@@ -367,11 +375,11 @@ extern "C" {
    * symbol with the given name exists but cannot check if it points to
    * a function with that prototype.
    *
-   * \param void *, link to library opened through dlopen
+   * \param LibraryHandlerPtr, link to library opened through dlopen
    * \param const char * const, name of the function to be checked
    * \return a function pointer if the call succeed, the NULL pointer if not.
    */
-  double (*tfel_getFortranFunction0(void*,const char * const))(void);
+  double (*tfel_getFortranFunction0(LibraryHandlerPtr,const char * const))(void);
 
   /*!
    * \brief this function returns a function of type
@@ -381,11 +389,11 @@ extern "C" {
    * symbol with the given name exists but cannot check if it points to
    * a function with that prototype.
    *
-   * \param void *, link to library opened through dlopen
+   * \param LibraryHandlerPtr, link to library opened through dlopen
    * \param const char * const, name of the function to be checked
    * \return a function pointer if the call succeed, the NULL pointer if not.
    */
-  double (*tfel_getFortranFunction1(void*,const char * const))(const double* const);
+  double (*tfel_getFortranFunction1(LibraryHandlerPtr,const char * const))(const double* const);
 
   /*!
    * \brief this function returns a function of type
@@ -395,11 +403,11 @@ extern "C" {
    * symbol with the given name exists but cannot check if it points to
    * a function with that prototype.
    *
-   * \param void *, link to library opened through dlopen
+   * \param LibraryHandlerPtr, link to library opened through dlopen
    * \param const char * const, name of the function to be checked
    * \return a function pointer if the call succeed, the NULL pointer if not.
    */
-  double (*tfel_getFortranFunction2(void*,const char * const))(const double* const,const double* const);
+  double (*tfel_getFortranFunction2(LibraryHandlerPtr,const char * const))(const double* const,const double* const);
 
   /*!
    * \brief this function returns a function of type
@@ -409,12 +417,12 @@ extern "C" {
    * symbol with the given name exists but cannot check if it points to
    * a function with that prototype.
    *
-   * \param void *, link to library opened through dlopen
+   * \param LibraryHandlerPtr, link to library opened through dlopen
    * \param const char * const, name of the function to be checked
    * \return a function pointer if the call succeed, the NULL pointer if not.
    */
-  double (*tfel_getFortranFunction3(void*,const char * const))(const double* const,const double* const,
-							       const double* const);
+  double (*tfel_getFortranFunction3(LibraryHandlerPtr,const char * const))(const double* const,const double* const,
+									   const double* const);
 
   /*!
    * \brief this function returns a function of type
@@ -424,12 +432,12 @@ extern "C" {
    * symbol with the given name exists but cannot check if it points to
    * a function with that prototype.
    *
-   * \param void *, link to library opened through dlopen
+   * \param LibraryHandlerPtr, link to library opened through dlopen
    * \param const char * const, name of the function to be checked
    * \return a function pointer if the call succeed, the NULL pointer if not.
    */
-  double (*tfel_getFortranFunction4(void*,const char * const))(const double* const,const double* const,
-							       const double* const,const double* const);
+  double (*tfel_getFortranFunction4(LibraryHandlerPtr,const char * const))(const double* const,const double* const,
+									   const double* const,const double* const);
 
   /*!
    * \brief this function returns a function of type
@@ -439,13 +447,13 @@ extern "C" {
    * symbol with the given name exists but cannot check if it points to
    * a function with that prototype.
    *
-   * \param void *, link to library opened through dlopen
+   * \param LibraryHandlerPtr, link to library opened through dlopen
    * \param const char * const, name of the function to be checked
    * \return a function pointer if the call succeed, the NULL pointer if not.
    */
-  double (*tfel_getFortranFunction5(void*,const char * const))(const double* const,const double* const,
-							       const double* const,const double* const,
-							       const double* const);
+  double (*tfel_getFortranFunction5(LibraryHandlerPtr,const char * const))(const double* const,const double* const,
+									   const double* const,const double* const,
+									   const double* const);
 
   /*!
    * \brief this function returns a function of type
@@ -455,13 +463,13 @@ extern "C" {
    * symbol with the given name exists but cannot check if it points to
    * a function with that prototype.
    *
-   * \param void *, link to library opened through dlopen
+   * \param LibraryHandlerPtr, link to library opened through dlopen
    * \param const char * const, name of the function to be checked
    * \return a function pointer if the call succeed, the NULL pointer if not.
    */
-  double (*tfel_getFortranFunction6(void*,const char * const))(const double* const,const double* const,
-							       const double* const,const double* const,
-							       const double* const,const double* const);
+  double (*tfel_getFortranFunction6(LibraryHandlerPtr,const char * const))(const double* const,const double* const,
+									   const double* const,const double* const,
+									   const double* const,const double* const);
 
   /*!
    * \brief this function returns a function of type
@@ -471,14 +479,14 @@ extern "C" {
    * symbol with the given name exists but cannot check if it points to
    * a function with that prototype.
    *
-   * \param void *, link to library opened through dlopen
+   * \param LibraryHandlerPtr, link to library opened through dlopen
    * \param const char * const, name of the function to be checked
    * \return a function pointer if the call succeed, the NULL pointer if not.
    */
-  double (*tfel_getFortranFunction7(void*,const char * const))(const double* const,const double* const,
-							       const double* const,const double* const,
-							       const double* const,const double* const,
-							       const double* const);
+  double (*tfel_getFortranFunction7(LibraryHandlerPtr,const char * const))(const double* const,const double* const,
+									   const double* const,const double* const,
+									   const double* const,const double* const,
+									   const double* const);
 
   /*!
    * \brief this function returns a function of type
@@ -488,14 +496,14 @@ extern "C" {
    * symbol with the given name exists but cannot check if it points to
    * a function with that prototype.
    *
-   * \param void *, link to library opened through dlopen
+   * \param LibraryHandlerPtr, link to library opened through dlopen
    * \param const char * const, name of the function to be checked
    * \return a function pointer if the call succeed, the NULL pointer if not.
    */
-  double (*tfel_getFortranFunction8(void*,const char * const))(const double* const,const double* const,
-							       const double* const,const double* const,
-							       const double* const,const double* const,
-							       const double* const,const double* const);
+  double (*tfel_getFortranFunction8(LibraryHandlerPtr,const char * const))(const double* const,const double* const,
+									   const double* const,const double* const,
+									   const double* const,const double* const,
+									   const double* const,const double* const);
 
   /*!
    * \brief this function returns a function of type
@@ -505,15 +513,15 @@ extern "C" {
    * symbol with the given name exists but cannot check if it points to
    * a function with that prototype.
    *
-   * \param void *, link to library opened through dlopen
+   * \param LibraryHandlerPtr, link to library opened through dlopen
    * \param const char * const, name of the function to be checked
    * \return a function pointer if the call succeed, the NULL pointer if not.
    */
-  double (*tfel_getFortranFunction9(void*,const char * const))(const double* const,const double* const,
-							       const double* const,const double* const,
-							       const double* const,const double* const,
-							       const double* const,const double* const,
-							       const double* const);
+  double (*tfel_getFortranFunction9(LibraryHandlerPtr,const char * const))(const double* const,const double* const,
+									   const double* const,const double* const,
+									   const double* const,const double* const,
+									   const double* const,const double* const,
+									   const double* const);
 
   /*!
    * \brief this function returns a function of type
@@ -523,15 +531,15 @@ extern "C" {
    * symbol with the given name exists but cannot check if it points to
    * a function with that prototype.
    *
-   * \param void *, link to library opened through dlopen
+   * \param LibraryHandlerPtr, link to library opened through dlopen
    * \param const char * const, name of the function to be checked
    * \return a function pointer if the call succeed, the NULL pointer if not.
    */
-  double (*tfel_getFortranFunction10(void*,const char * const))(const double* const,const double* const,
-								const double* const,const double* const,
-								const double* const,const double* const,
-								const double* const,const double* const,
-								const double* const,const double* const);
+  double (*tfel_getFortranFunction10(LibraryHandlerPtr,const char * const))(const double* const,const double* const,
+									    const double* const,const double* const,
+									    const double* const,const double* const,
+									    const double* const,const double* const,
+									    const double* const,const double* const);
 
   /*!
    * \brief this function returns a function of type
@@ -543,16 +551,16 @@ extern "C" {
    * symbol with the given name exists but cannot check if it points to
    * a function with that prototype.
    *
-   * \param void *, link to library opened through dlopen
+   * \param LibraryHandlerPtr, link to library opened through dlopen
    * \param const char * const, name of the function to be checked
    * \return a function pointer if the call succeed, the NULL pointer if not.
    */
-  double (*tfel_getFortranFunction11(void*,const char * const))(const double* const,const double* const,
-								const double* const,const double* const,
-								const double* const,const double* const,
-								const double* const,const double* const,
-								const double* const,const double* const,
-								const double* const);
+  double (*tfel_getFortranFunction11(LibraryHandlerPtr,const char * const))(const double* const,const double* const,
+									    const double* const,const double* const,
+									    const double* const,const double* const,
+									    const double* const,const double* const,
+									    const double* const,const double* const,
+									    const double* const);
 
   /*!
    * \brief this function returns a function of type
@@ -564,16 +572,16 @@ extern "C" {
    * symbol with the given name exists but cannot check if it points to
    * a function with that prototype.
    *
-   * \param void *, link to library opened through dlopen
+   * \param LibraryHandlerPtr, link to library opened through dlopen
    * \param const char * const, name of the function to be checked
    * \return a function pointer if the call succeed, the NULL pointer if not.
    */
-  double (*tfel_getFortranFunction12(void*,const char * const))(const double* const,const double* const,
-								const double* const,const double* const,
-								const double* const,const double* const,
-								const double* const,const double* const,
-								const double* const,const double* const,
-								const double* const,const double* const);
+  double (*tfel_getFortranFunction12(LibraryHandlerPtr,const char * const))(const double* const,const double* const,
+									    const double* const,const double* const,
+									    const double* const,const double* const,
+									    const double* const,const double* const,
+									    const double* const,const double* const,
+									    const double* const,const double* const);
 
   /*!
    * \brief this function returns a function of type
@@ -586,17 +594,17 @@ extern "C" {
    * symbol with the given name exists but cannot check if it points to
    * a function with that prototype.
    *
-   * \param void *, link to library opened through dlopen
+   * \param LibraryHandlerPtr, link to library opened through dlopen
    * \param const char * const, name of the function to be checked
    * \return a function pointer if the call succeed, the NULL pointer if not.
    */
-  double (*tfel_getFortranFunction13(void*,const char * const))(const double* const,const double* const,
-								const double* const,const double* const,
-								const double* const,const double* const,
-								const double* const,const double* const,
-								const double* const,const double* const,
-								const double* const,const double* const,
-								const double* const);
+  double (*tfel_getFortranFunction13(LibraryHandlerPtr,const char * const))(const double* const,const double* const,
+									    const double* const,const double* const,
+									    const double* const,const double* const,
+									    const double* const,const double* const,
+									    const double* const,const double* const,
+									    const double* const,const double* const,
+									    const double* const);
 
   /*!
    * \brief this function returns a function of type
@@ -609,17 +617,17 @@ extern "C" {
    * symbol with the given name exists but cannot check if it points to
    * a function with that prototype.
    *
-   * \param void *, link to library opened through dlopen
+   * \param LibraryHandlerPtr, link to library opened through dlopen
    * \param const char * const, name of the function to be checked
    * \return a function pointer if the call succeed, the NULL pointer if not.
    */
-  double (*tfel_getFortranFunction14(void*,const char * const))(const double* const,const double* const,
-								const double* const,const double* const,
-								const double* const,const double* const,
-								const double* const,const double* const,
-								const double* const,const double* const,
-								const double* const,const double* const,
-								const double* const,const double* const);
+  double (*tfel_getFortranFunction14(LibraryHandlerPtr,const char * const))(const double* const,const double* const,
+									    const double* const,const double* const,
+									    const double* const,const double* const,
+									    const double* const,const double* const,
+									    const double* const,const double* const,
+									    const double* const,const double* const,
+									    const double* const,const double* const);
 
   /*!
    * \brief this function returns a function of type
@@ -632,18 +640,18 @@ extern "C" {
    * symbol with the given name exists but cannot check if it points to
    * a function with that prototype.
    *
-   * \param void *, link to library opened through dlopen
+   * \param LibraryHandlerPtr, link to library opened through dlopen
    * \param const char * const, name of the function to be checked
    * \return a function pointer if the call succeed, the NULL pointer if not.
    */
-  double (*tfel_getFortranFunction15(void*,const char * const))(const double* const,const double* const,
-								const double* const,const double* const,
-								const double* const,const double* const,
-								const double* const,const double* const,
-								const double* const,const double* const,
-								const double* const,const double* const,
-								const double* const,const double* const,
-								const double* const);
+  double (*tfel_getFortranFunction15(LibraryHandlerPtr,const char * const))(const double* const,const double* const,
+									    const double* const,const double* const,
+									    const double* const,const double* const,
+									    const double* const,const double* const,
+									    const double* const,const double* const,
+									    const double* const,const double* const,
+									    const double* const,const double* const,
+									    const double* const);
 #ifdef	__cplusplus
 }
 #endif /* __cplusplus */

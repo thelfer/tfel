@@ -12,6 +12,7 @@ LDADD = -lTFELSystem -lTFELException -lTFELTests \
 	-L$(top_builddir)/src/Exception          \
 	-L$(top_builddir)/src/Tests
 
+if !TFEL_WIN
 test_PROGRAMS   = process_test_target \
 		  process             \
 		  wstream             \
@@ -23,7 +24,6 @@ rstream_SOURCES             = rstream.cxx
 wstream_SOURCES             = wstream.cxx
 
 if HAVE_CASTEM
-
 test_PROGRAMS               += CastemParameterTest \
 			       CastemSourceTest
 CastemParameterTest_SOURCES  = CastemParameterTest.cxx
@@ -32,6 +32,8 @@ CastemSourceTest_SOURCES     = CastemSourceTest.cxx
 check_LTLIBRARIES = libCastemMaterialLaw.la
 nodist_libCastemMaterialLaw_la_SOURCES = src/Test-castem.cxx
 libCastemMaterialLaw_la_LDFLAGS        = -rpath /
+
+endif
 
 src/%-castem.cxx : %.mfront
 	@top_builddir@/mfront/src/mfront --interface=castem  $<

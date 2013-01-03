@@ -5,7 +5,7 @@
  * \date   09 nov 2006
  */
 
-#ifdef __CYGWIN__
+#if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
 #include<windows.h>
 #endif /* __CYGWIN__ */
 
@@ -25,7 +25,7 @@ int main(const int argc, const char *const *const argv)
   using namespace tfel::system;
   using namespace mfront;
   
-#ifdef __CYGWIN__
+#if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
   try{
 #endif /* __CYGWIN__ */
 
@@ -46,7 +46,7 @@ int main(const int argc, const char *const *const argv)
   MFront mfront(argc,argv);
   mfront.exe();
 
-#ifdef __CYGWIN__
+#if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
   }
   catch(exception& e){
     MessageBox(0,e.what(),

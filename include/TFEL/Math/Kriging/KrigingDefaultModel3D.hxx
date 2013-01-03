@@ -63,10 +63,10 @@ namespace tfel
 
     template<typename T>
     const typename KrigingDefaultModel<3u,T>::Drifts
-    KrigingDefaultModel<3u,T>::drifts[4u] = {KrigingDefaultModel<3u,T>::one,
-					     KrigingDefaultModel<3u,T>::x,
-					     KrigingDefaultModel<3u,T>::y,
-					     KrigingDefaultModel<3u,T>::z};
+    KrigingDefaultModel<3u,T>::drifts[ KrigingDefaultModel<3u,T>::nb] = {KrigingDefaultModel<3u,T>::one,
+									 KrigingDefaultModel<3u,T>::x,
+									 KrigingDefaultModel<3u,T>::y,
+									 KrigingDefaultModel<3u,T>::z};
 
   } // end of namespace math
 

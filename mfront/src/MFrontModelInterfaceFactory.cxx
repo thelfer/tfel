@@ -9,8 +9,6 @@
 #include<stdexcept>
 #include<cassert>
 
-#include<dlfcn.h>
-
 #include"MFront/MFrontModelInterfaceFactory.hxx"
 
 namespace mfront{

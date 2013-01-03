@@ -25,6 +25,95 @@ namespace tfel{
 
 #ifndef DOXYGENSPECIFIC
 
+    template<typename Child,unsigned short N,typename T>    template<typename T2,typename Expr>
+    typename tfel::meta::EnableIf<
+      tfel::typetraits::IsAssignableTo<T2,T>::cond,
+      Child&
+    >::type 
+    tvector_base<Child,N,T>::operator=(const VectorExpr<tvector<N,T2>, Expr>& src){
+      vectorToTab<N>::exe(src,static_cast<Child&>(*this));
+      return static_cast<Child&>(*this);
+    }
+
+    template<typename Child,unsigned short N,typename T>    template<typename T2>
+    typename tfel::meta::EnableIf<
+      tfel::typetraits::IsAssignableTo<T2,T>::cond,
+      Child&
+    >::type 
+    tvector_base<Child,N,T>::operator=(const tvector<N,T2>& src){
+      vectorToTab<N>::exe(src,static_cast<Child&>(*this));
+      return static_cast<Child&>(*this);
+    }
+
+    template<typename Child,unsigned short N,typename T>    template<typename T2,typename Expr>
+    typename tfel::meta::EnableIf<
+      tfel::typetraits::IsAssignableTo<T2,T>::cond,
+      Child&
+    >::type 
+    tvector_base<Child,N,T>::operator+=(const VectorExpr<tvector<N,T2>, Expr>& src){
+      VectorUtilities<N>::PlusEqual(static_cast<Child&>(*this),src);
+      return static_cast<Child&>(*this);
+    }
+
+    template<typename Child,unsigned short N,typename T>    template<typename T2,typename Expr>
+    typename tfel::meta::EnableIf<
+      tfel::typetraits::IsAssignableTo<T2,T>::cond,
+      Child&
+    >::type 
+    tvector_base<Child,N,T>::operator-=(const VectorExpr<tvector<N,T2>, Expr>& src){
+      VectorUtilities<N>::MinusEqual(static_cast<Child&>(*this),src);
+      return static_cast<Child&>(*this);
+    }
+    
+    template<typename Child,unsigned short N,typename T>    template<typename T2>
+    typename tfel::meta::EnableIf<
+      tfel::typetraits::IsAssignableTo<T2,T>::cond,
+      Child&
+    >::type 
+    tvector_base<Child,N,T>::operator+=(const tvector<N,T2>& src){
+      VectorUtilities<N>::PlusEqual(static_cast<Child&>(*this),src);
+      return static_cast<Child&>(*this);
+    }
+
+    template<typename Child,unsigned short N,typename T>    template<typename T2>
+    typename tfel::meta::EnableIf<
+      tfel::typetraits::IsAssignableTo<T2,T>::cond,
+      Child&
+    >::type 
+    tvector_base<Child,N,T>::operator-=(const tvector<N,T2>& src){
+      VectorUtilities<N>::MinusEqual(static_cast<Child&>(*this),src);
+      return static_cast<Child&>(*this);
+    }
+
+    // *= operator
+    template<typename Child,unsigned short N,typename T>
+    template<typename T2>
+    typename tfel::meta::EnableIf<
+      tfel::typetraits::IsScalar<T2>::cond&&
+      tfel::meta::IsSameType<typename ResultType<T,T2,OpMult>::type,T>::cond,
+      Child&
+    >::type
+    tvector_base<Child,N,T>::operator*=(const T2 s)
+    {
+      VectorUtilities<N>::scale(static_cast<Child&>(*this),s);
+      return static_cast<Child&>(*this);
+    }
+
+    // /= operator
+    template<typename Child,unsigned short N,typename T>
+    template<typename T2>
+    typename tfel::meta::EnableIf<
+      tfel::typetraits::IsScalar<T2>::cond&&
+      tfel::meta::IsSameType<typename ResultType<T,T2,OpMult>::type,T>::cond,
+      Child&
+    >::type
+    tvector_base<Child,N,T>::operator/=(const T2 s)
+    {
+      VectorUtilities<N>::scale(static_cast<Child&>(*this),
+				(static_cast<typename tfel::typetraits::BaseType<T2>::type>(1u))/s);
+      return static_cast<Child&>(*this);
+    }
+
     template<unsigned short N, typename T>
     tvector<N,T>::tvector()
     {}
@@ -80,102 +169,7 @@ namespace tfel{
       assert(i<N);
       return v[i];
     }
-
-    template<unsigned short N, typename T>
-    template<typename T2,typename Expr>
-    typename tfel::meta::EnableIf<
-      tfel::typetraits::IsAssignableTo<T2,T>::cond,
-      tvector<N,T>&
-    >::type 
-    tvector<N,T>::operator=(const VectorExpr<tvector<N,T2>, Expr>& src){
-      vectorToTab<N>::exe(src,this->v);
-      return *this;
-    }
-
-    template<unsigned short N, typename T>
-    template<typename T2,typename Expr>
-    typename tfel::meta::EnableIf<
-      tfel::typetraits::IsAssignableTo<T2,T>::cond,
-      tvector<N,T>&
-    >::type 
-    tvector<N,T>::operator+=(const VectorExpr<tvector<N,T2>, Expr>& src){
-      VectorUtilities<N>::PlusEqual(*this,src);
-      return *this;
-    }
-
-    template<unsigned short N, typename T>
-    template<typename T2,typename Expr>
-    typename tfel::meta::EnableIf<
-      tfel::typetraits::IsAssignableTo<T2,T>::cond,
-      tvector<N,T>&
-    >::type 
-    tvector<N,T>::operator-=(const VectorExpr<tvector<N,T2>, Expr>& src){
-      VectorUtilities<N>::MinusEqual(*this,src);
-      return *this;
-    }
     
-    template<unsigned short N, typename T>
-    template<typename T2>
-    typename tfel::meta::EnableIf<
-      tfel::typetraits::IsAssignableTo<T2,T>::cond,
-      tvector<N,T>&
-    >::type 
-    tvector<N,T>::operator=(const tvector<N,T2>& src){
-      vectorToTab<N>::exe(src,this->v);
-      return *this;
-    }
-
-    template<unsigned short N, typename T>
-    template<typename T2>
-    typename tfel::meta::EnableIf<
-      tfel::typetraits::IsAssignableTo<T2,T>::cond,
-      tvector<N,T>&
-    >::type 
-    tvector<N,T>::operator+=(const tvector<N,T2>& src){
-      VectorUtilities<N>::PlusEqual(*this,src);
-      return *this;
-    }
-
-    template<unsigned short N, typename T>
-    template<typename T2>
-    typename tfel::meta::EnableIf<
-      tfel::typetraits::IsAssignableTo<T2,T>::cond,
-      tvector<N,T>&
-    >::type 
-    tvector<N,T>::operator-=(const tvector<N,T2>& src){
-      VectorUtilities<N>::MinusEqual(*this,src);
-      return *this;
-    }
-
-    // *= operator
-    template<unsigned short N,typename T>
-    template<typename T2>
-    typename tfel::meta::EnableIf<
-      tfel::typetraits::IsScalar<T2>::cond&&
-      tfel::meta::IsSameType<typename ResultType<T,T2,OpMult>::type,T>::cond,
-      tvector<N,T>&
-    >::type
-    tvector<N,T>::operator*=(const T2 s)
-    {
-      VectorUtilities<N>::scale(*this,s);
-      return *this;
-    }
-
-    // /= operator
-    template<unsigned short N,typename T>
-    template<typename T2>
-    typename tfel::meta::EnableIf<
-      tfel::typetraits::IsScalar<T2>::cond&&
-      tfel::meta::IsSameType<typename ResultType<T,T2,OpMult>::type,T>::cond,
-      tvector<N,T>&
-    >::type
-    tvector<N,T>::operator/=(const T2 s)
-    {
-      VectorUtilities<N>::scale(*this,(static_cast<typename tfel::typetraits::BaseType<T2>::type>(1u))/s);
-      return *this;
-    }
-    
-
     template<unsigned short N, typename T>
     TFEL_MATH_INLINE
     const typename tvector<N,T>::RunTimeProperties
@@ -289,6 +283,37 @@ namespace tfel{
     }
 
 #endif
+
+    template<typename T>
+    tvector<1u,T>
+    makeTVector1D(const T v)
+    {
+      return tvector<1u,T>(v);
+    } // end of makeTVector1D
+
+    template<typename T>
+    tvector<2u,T>
+    makeTVector2D(const T v1,
+		  const T v2)
+    {
+      tvector<2u,T> r;
+      r[0] = v1;
+      r[1] = v2;
+      return r;
+    } // end of makeTVector2D
+    
+    template<typename T>
+    tvector<3u,T>
+    makeTVector3D(const T v1,
+		  const T v2,
+		  const T v3)
+    {
+      tvector<3u,T> r;
+      r[0] = v1;
+      r[1] = v2;
+      r[2] = v3;
+      return r;
+    } // end of makeTVector3D
 
   } // end of namespace math
 

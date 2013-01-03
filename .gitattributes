@@ -354,6 +354,14 @@ include/TFEL/Math/Matrix/TVectorTMatrixExpr.hxx -text
 include/TFEL/Math/Matrix/matrix.ixx -text
 include/TFEL/Math/Matrix/tmatrix.ixx -text
 include/TFEL/Math/Matrix/tmatrixResultType.hxx -text
+include/TFEL/Math/Matrix/tmatrix_column_view.hxx -text
+include/TFEL/Math/Matrix/tmatrix_column_view.ixx -text
+include/TFEL/Math/Matrix/tmatrix_const_column_view.hxx -text
+include/TFEL/Math/Matrix/tmatrix_const_column_view.ixx -text
+include/TFEL/Math/Matrix/tmatrix_const_row_view.hxx -text
+include/TFEL/Math/Matrix/tmatrix_const_row_view.ixx -text
+include/TFEL/Math/Matrix/tmatrix_row_view.hxx -text
+include/TFEL/Math/Matrix/tmatrix_row_view.ixx -text
 include/TFEL/Math/Newton-Raphson/TinyNewtonRaphson.ixx -text
 include/TFEL/Math/Parser/BinaryFunction.hxx -text
 include/TFEL/Math/Parser/BinaryFunction.ixx -text
@@ -827,7 +835,6 @@ src/Math/StensorTag.cxx -text
 src/Math/Variable.cxx -text
 src/Math/VectorTag.cxx -text
 src/Math/power.cxx -text
-src/Math/tfel-eval.cxx -text
 src/System/BinaryRead.cxx -text
 src/System/BinaryWrite.cxx -text
 src/System/CMakeLists.txt -text
@@ -843,7 +850,9 @@ src/System/System.cxx -text
 src/System/SystemError.cxx -text
 src/System/basic_rstream.cxx -text
 src/System/basic_wstream.cxx -text
+src/System/getFunction-win.cxx -text
 src/System/getFunction.c -text
+src/System/getFunction.impl -text
 src/System/rfstream.cxx -text
 src/System/wfstream.cxx -text
 src/TFELConfig/CMakeLists.txt -text
@@ -998,6 +1007,7 @@ tests/Math/tmatrix1.cxx -text
 tests/Math/tmatrix2.cxx -text
 tests/Math/tmatrix3.cxx -text
 tests/Math/tmatrix4.cxx -text
+tests/Math/tmatrix5.cxx -text
 tests/Math/tvector.cxx -text
 tests/Math/tvector2.cxx -text
 tests/Math/tvector3.cxx -text
@@ -1052,7 +1062,6 @@ tfel-doc/include/TFEL/Utilities/ParserBase.hxx -text
 tfel-doc/include/TFEL/Utilities/TestDocMain.hxx -text
 tfel-doc/include/TFEL/Utilities/TestDocParser.hxx -text
 tfel-doc/include/TFEL/Utilities/TestDocumentation.hxx -text
-tfel-doc/src/Config.cxx -text
 tfel-doc/src/ConfigParser.cxx -text
 tfel-doc/src/Global.cxx -text
 tfel-doc/src/LaTeXConvertion.cxx -text

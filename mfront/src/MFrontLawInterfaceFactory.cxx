@@ -11,8 +11,6 @@
 #include<cassert>
 #include<iostream>
 
-#include<dlfcn.h>
-
 #include"MFront/MFrontLawInterfaceFactory.hxx"
 
 namespace mfront{

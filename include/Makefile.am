@@ -218,6 +218,14 @@ nobase_include_HEADERS= TFEL/Macros.hxx                                         
 			TFEL/Math/Matrix/tmatrixResultType.hxx	                                      \
 			TFEL/Math/Matrix/ScalarMatrixExpr.hxx	                                      \
 			TFEL/Math/Matrix/tmatrix.ixx			                              \
+			TFEL/Math/Matrix/tmatrix_column_view.hxx				      \
+			TFEL/Math/Matrix/tmatrix_column_view.ixx				      \
+			TFEL/Math/Matrix/tmatrix_const_column_view.hxx				      \
+			TFEL/Math/Matrix/tmatrix_const_column_view.ixx				      \
+			TFEL/Math/Matrix/tmatrix_const_row_view.hxx				      \
+			TFEL/Math/Matrix/tmatrix_const_row_view.ixx				      \
+			TFEL/Math/Matrix/tmatrix_row_view.hxx					      \
+			TFEL/Math/Matrix/tmatrix_row_view.ixx					      \
 			TFEL/Math/Matrix/matrix.ixx			                              \
 			TFEL/Math/Matrix/MatrixNegExpr.hxx		                              \
 			TFEL/Math/Matrix/FctMatrixExpr.hxx		                              \

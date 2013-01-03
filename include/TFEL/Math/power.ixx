@@ -177,7 +177,7 @@ namespace tfel{
     template<int N>
     class TFEL_VISIBILITY_LOCAL PowerImplSelector<N,1u>
     {
-      static const unsigned short AbsN = (N<0) ? -N : N;
+      static const unsigned short AbsN = static_cast<unsigned short>((N<0) ? -N : N);
 
       typedef typename tfel::meta::IF<(N<0),PowerNeg<N>,
 	PowerPos<AbsN> >::type PowerImplSpe;
@@ -192,7 +192,7 @@ namespace tfel{
     template<int N>
     class TFEL_VISIBILITY_LOCAL PowerImplSelector<N,2u>
     {
-      static const unsigned short AbsN = (N<0) ? -N : N;
+      static const unsigned short AbsN = static_cast<unsigned short>((N<0) ? -N : N);
 
       typedef typename tfel::meta::IF<(N<0),PowerSqrtNeg<N>,
 	PowerSqrtPos<N> >::type PowerImplSpe;

@@ -266,6 +266,38 @@ namespace tfel{
       tfel::fsalgo::copy<N*M>::exe(src,this->m);
     }
 
+    template<unsigned short N,unsigned short M, typename T>
+    template<unsigned short I>
+    tmatrix_row_view<N,M,I,T>
+    tmatrix<N,M,T>::row_view()
+    {
+      return tmatrix_row_view<N,M,I,T>(*this);
+    }
+
+    template<unsigned short N,unsigned short M, typename T>
+    template<unsigned short I>
+    tmatrix_const_row_view<N,M,I,T>
+    tmatrix<N,M,T>::row_view() const
+    {
+      return tmatrix_const_row_view<N,M,I,T>(*this);
+    }
+
+    template<unsigned short N,unsigned short M, typename T>
+    template<unsigned short I>
+    tmatrix_column_view<N,M,I,T>
+    tmatrix<N,M,T>::column_view()
+    {
+      return tmatrix_column_view<N,M,I,T>(*this);
+    }
+
+    template<unsigned short N,unsigned short M, typename T>
+    template<unsigned short I>
+    tmatrix_const_column_view<N,M,I,T>
+    tmatrix<N,M,T>::column_view() const
+    {
+      return tmatrix_const_column_view<N,M,I,T>(*this);
+    }
+
     //template<unsigned short N,unsigned short M,typename T>
     template<unsigned short N,unsigned short M,typename T>
     TFEL_MATH_INLINE2

@@ -1,6 +1,10 @@
 ## Makefile.am -- Process this file with automake to produce a Makefile.in file.
 ACLOCAL_AMFLAGS = -I m4
-SUBDIRS = include src mfront tests cmake tfel-doc
+SUBDIRS = include src mfront tests cmake
+
+if !TFEL_WIN
+SUBDIRS += tfel-doc
+endif
 
 doc: mfront-doc
 	cd @top_srcdir@ && doxygen @abs_top_builddir@/Doxyfile && cd -
@@ -61,6 +65,8 @@ EXTRA_DIST = bootstrap.sh        				     \
 	     docs/tex/texmf/variables_2010.tex			     \
 	     docs/tex/texmf/ceaeaDEC.eps			     \
 	     docs/mfront/Bibliographie.bib			     \
+	     docs/mfront/Images/mfront-umat.hxx                      \
+	     docs/mfront/Images/mfront-umat.tex                      \
 	     docs/mfront/Images/tubeaxi.eps			     \
 	     docs/mfront/Images/2norton-rk.mfront		     \
 	     docs/mfront/Images/mfront.eps			     \

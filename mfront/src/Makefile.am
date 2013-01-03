@@ -70,12 +70,14 @@ mfront_SOURCES += MFrontUMATInterface.cxx      \
 		  MFrontCastemLawInterface.cxx
 endif
 
-
-mfront_LDFLAGS = -export-dynamic
 mfront_LDADD   = -L$(top_builddir)/src/System    -lTFELSystem    \
 		 -L$(top_builddir)/src/Utilities -lTFELUtilities \
-		 -L$(top_builddir)/src/Exception -lTFELException \
-		 -ldl -lpthread
+		 -L$(top_builddir)/src/Exception -lTFELException
+
+if !TFEL_WIN
+mfront_LDADD   += -ldl -lpthread
+mfront_LDFLAGS  = -export-dynamic
+endif
 
 # UMAT Interfaces
 

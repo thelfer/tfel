@@ -12,6 +12,10 @@
 #include<vector>
 #include<string>
 
+#if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
+#include <windows.h>
+#endif
+
 #include"TFEL/Config/TFELConfig.hxx"
 #include"TFEL/System/ExternalFunctionsPrototypes.hxx"
 
@@ -37,9 +41,15 @@ namespace tfel
        * \note on success, the pointer is registred in a map using its
        * name as a key. This name is used in the methods of this call 
        */
+#if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
+      HINSTANCE__*
+      loadLibrary(const std::string&,
+		  const bool = false);
+#else
       void *
       loadLibrary(const std::string&,
 		  const bool = false);
+#endif /* defined _WIN32 || _WIN64 || defined __CYGWIN__ */
 
       /*!
        * \param[in] l : name of the library
@@ -484,7 +494,12 @@ namespace tfel
 		   const std::string&,
 		   const std::string&);
 
+#if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
+      std::map<std::string,HINSTANCE__*> librairies;
+#else 
       std::map<std::string,void *> librairies;
+#endif /* defined _WIN32 || _WIN64 || defined __CYGWIN__ */      
+
 
     }; // end of struct LibraryManager
     

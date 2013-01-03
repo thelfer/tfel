@@ -50,9 +50,103 @@ namespace tfel{
       typedef EmptyRunTimeProperties RunTimeProperties;
     };
     
+    /*!
+     * \brief a base for tvector or classes acting like tvector.
+     */
+    template<typename Child,
+	     unsigned short N,
+	     typename T = double>
+    struct tvector_base
+    {
+      //! Assignement operator
+      /*
+       * \param const VectorExpr<tvector<N,T2>,Expr>&, a vector expression.
+       * \return a reference to this.
+       * \rec T2 must be assignable to a T.
+       */
+      template<typename T2,typename Expr>
+      TFEL_MATH_INLINE
+      typename tfel::meta::EnableIf<
+	tfel::typetraits::IsAssignableTo<T2,T>::cond,
+	Child&
+	>::type
+      operator=(const VectorExpr<tvector<N,T2>,Expr>&);
+
+      // Assignement operator
+      template<typename T2,typename Expr>
+      TFEL_MATH_INLINE
+      typename tfel::meta::EnableIf<
+	tfel::typetraits::IsAssignableTo<T2,T>::cond,
+	Child&
+	>::type
+      operator+=(const VectorExpr<tvector<N,T2>,Expr>&);
+
+      // Assignement operator
+      template<typename T2,typename Expr>
+      TFEL_MATH_INLINE
+      typename tfel::meta::EnableIf<
+	tfel::typetraits::IsAssignableTo<T2,T>::cond,
+	Child&
+	>::type
+      operator-=(const VectorExpr<tvector<N,T2>,Expr>&);
+      
+      // Assignement operator
+      template<typename T2>
+      TFEL_MATH_INLINE
+      typename tfel::meta::EnableIf<
+	tfel::typetraits::IsAssignableTo<T2,T>::cond,
+	Child&
+	>::type
+      operator=(const tvector<N,T2>&);
+    
+      // Assignement operator
+      template<typename T2>
+      TFEL_MATH_INLINE
+      typename tfel::meta::EnableIf<
+	tfel::typetraits::IsAssignableTo<T2,T>::cond,
+	Child&
+	>::type
+      operator+=(const tvector<N,T2>&);
+    
+      // Assignement operator
+      template<typename T2>
+      TFEL_MATH_INLINE
+      typename 
+      tfel::meta::EnableIf<
+	tfel::typetraits::IsAssignableTo<T2,T>::cond,
+	Child&
+	>::type
+      operator-=(const tvector<N,T2>&);
+    
+      /*!
+       * operator*=
+       */
+      template<typename T2>
+      TFEL_MATH_INLINE 
+      typename tfel::meta::EnableIf<
+	tfel::typetraits::IsScalar<T2>::cond&&
+      tfel::meta::IsSameType<typename ResultType<T,T2,OpMult>::type,T>::cond,
+	Child&
+      >::type
+      operator*=(const T2);
+
+      /*!
+       * operator/=
+       */
+      template<typename T2>
+      TFEL_MATH_INLINE 
+      typename tfel::meta::EnableIf<
+	tfel::typetraits::IsScalar<T2>::cond&&
+        tfel::meta::IsSameType<typename ResultType<T,T2,OpMult>::type,T>::cond,
+	Child&
+      >::type
+      operator/=(const T2);
+    };    
+
     template<unsigned short N, typename T = double>
     class tvector
-      : public VectorConcept<tvector<N,T> >
+      : public VectorConcept<tvector<N,T> >,
+	public tvector_base<tvector<N,T>,N,T>
     {
 
       //! a simple assertion stating that the dimension is valid.
@@ -165,6 +259,17 @@ namespace tfel{
        */
       template<typename T2,typename Expr>
       tvector(const VectorExpr<tvector<N,T2>,Expr>&);
+
+      //! using tvector_base::operator=
+      using tvector_base<tvector,N,T>::operator=;
+      //! using tvector_base::operator+=
+      using tvector_base<tvector,N,T>::operator+=;
+      //! using tvector_base::operator-=
+      using tvector_base<tvector,N,T>::operator-=;
+      //! using tvector_base::operator*=
+      using tvector_base<tvector,N,T>::operator*=;
+      //! using tvector_base::operator/=
+      using tvector_base<tvector,N,T>::operator/=;
       
       /*!
        * \brief index operator.
@@ -202,90 +307,6 @@ namespace tfel{
       TFEL_MATH_INLINE
       T& operator[](const unsigned short);
       
-      //! Assignement operator
-      /*
-       * \param const VectorExpr<tvector<N,T2>,Expr>&, a vector expression.
-       * \return tvector<N,T>& a reference to this.
-       * \rec T2 must be assignable to a T.
-       */
-      template<typename T2,typename Expr>
-      TFEL_MATH_INLINE
-      typename tfel::meta::EnableIf<
-	tfel::typetraits::IsAssignableTo<T2,T>::cond,
-	tvector<N,T>&
-	>::type
-      operator=(const VectorExpr<tvector<N,T2>,Expr>&);
-
-      // Assignement operator
-      template<typename T2,typename Expr>
-      TFEL_MATH_INLINE
-      typename tfel::meta::EnableIf<
-	tfel::typetraits::IsAssignableTo<T2,T>::cond,
-	tvector<N,T>&
-	>::type
-      operator+=(const VectorExpr<tvector<N,T2>,Expr>&);
-
-      // Assignement operator
-      template<typename T2,typename Expr>
-      TFEL_MATH_INLINE
-      typename tfel::meta::EnableIf<
-	tfel::typetraits::IsAssignableTo<T2,T>::cond,
-	tvector<N,T>&
-	>::type
-      operator-=(const VectorExpr<tvector<N,T2>,Expr>&);
-      
-      // Assignement operator
-      template<typename T2>
-      TFEL_MATH_INLINE
-      typename tfel::meta::EnableIf<
-	tfel::typetraits::IsAssignableTo<T2,T>::cond,
-	tvector<N,T>&
-	>::type
-      operator=(const tvector<N,T2>&);
-    
-      // Assignement operator
-      template<typename T2>
-      TFEL_MATH_INLINE
-      typename tfel::meta::EnableIf<
-	tfel::typetraits::IsAssignableTo<T2,T>::cond,
-	tvector<N,T>&
-	>::type
-      operator+=(const tvector<N,T2>&);
-    
-      // Assignement operator
-      template<typename T2>
-      TFEL_MATH_INLINE
-      typename 
-      tfel::meta::EnableIf<
-	tfel::typetraits::IsAssignableTo<T2,T>::cond,
-	tvector<N,T>&
-	>::type
-      operator-=(const tvector<N,T2>&);
-    
-      /*!
-       * operator*=
-       */
-      template<typename T2>
-      TFEL_MATH_INLINE 
-      typename tfel::meta::EnableIf<
-	tfel::typetraits::IsScalar<T2>::cond&&
-      tfel::meta::IsSameType<typename ResultType<T,T2,OpMult>::type,T>::cond,
-	tvector<N,T>&
-      >::type
-      operator*=(const T2);
-
-      /*!
-       * operator/=
-       */
-      template<typename T2>
-      TFEL_MATH_INLINE 
-      typename tfel::meta::EnableIf<
-	tfel::typetraits::IsScalar<T2>::cond&&
-        tfel::meta::IsSameType<typename ResultType<T,T2,OpMult>::type,T>::cond,
-	tvector<N,T>&
-      >::type
-      operator/=(const T2);
-
       /*
        * Return the RunTimeProperties of the tvector
        * \return tvector::RunTimeProperties
@@ -393,6 +414,21 @@ namespace tfel{
     template<unsigned short N,typename T>
     std::ostream&
     operator << (std::ostream &, const tvector<N,T>&);
+
+    template<typename T>
+    tvector<1u,T>
+    makeTVector1D(const T);
+
+    template<typename T>
+    tvector<2u,T>
+    makeTVector2D(const T,
+		  const T);
+    
+    template<typename T>
+    tvector<3u,T>
+    makeTVector3D(const T,
+		  const T,
+		  const T);
 
   } // end of namespace math
 

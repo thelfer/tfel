@@ -39,7 +39,10 @@ testdir = $(pkgdatadir)/mfront/tests/
 check_PROGRAMS = test-c
 
 test_c_SOURCES = test-c.c
-test_c_LDFLAGS = -L@builddir@ -lMFrontMaterialProperties -lstdc++
+test_c_LDFLAGS = -L@builddir@ -lMFrontMaterialProperties
+if ! TFEL_WIN
+test_c_LDFLAGS += -lstdc++
+endif
 
 if HAVE_FORTRAN
 check_PROGRAMS += test-f
@@ -50,16 +53,28 @@ endif
 TESTS=$(check_PROGRAMS)
 
 src/%.cxx : %.mfront
+if !TFEL_WIN
 	@top_builddir@/mfront/src/mfront --interface=c $<
+else
+	@top_builddir@/mfront/src/mfront.exe --interface=c $<
+endif
 
 if HAVE_FORTRAN
 src/%-fortran.cxx : %.mfront
+if !TFEL_WIN
 	@top_builddir@/mfront/src/mfront --interface=fortran $<
+else
+	@top_builddir@/mfront/src/mfront.exe --interface=fortran $<
+endif
 endif
 
 if HAVE_CASTEM
 src/%-castem.cxx : %.mfront
-	@top_builddir@/mfront/src/mfront --interface=castem  $<
+if !TFEL_WIN
+	@top_builddir@/mfront/src/mfront --interface=castem $<
+else
+	@top_builddir@/mfront/src/mfront.exe --interface=castem $<
+endif
 endif
 
 clean-local:

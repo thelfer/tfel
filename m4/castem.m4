@@ -104,6 +104,15 @@ then
         CASTEM_FFLAGS="-fPIC -fdefault-double-8  -fdefault-integer-8  -fdefault-real-8"
         CASTEM_CFLAGS="-fPIC"
         ;;
+      x86_64*-mingw32*)
+# Pas sûr, mais c'est pour le test
+	CASTEM_UNIX_TYPE=UNIX32
+	CASTEM_CPPFLAGS="-DUNIX32"
+	;;
+      i*86-*-mingw32*)
+	CASTEM_UNIX_TYPE=UNIX32
+	CASTEM_CPPFLAGS="-DUNIX32"
+	;;
       i686-pc-cygwin)
 	CASTEM_UNIX_TYPE=UNIX32
 	CASTEM_CPPFLAGS="-DUNIX32"

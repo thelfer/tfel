@@ -31,6 +31,7 @@ AC_PROG_CXX
 # AM_PATH_LISPDIR
 
 # Libtool specific stuff
+AC_LIBTOOL_WIN32_DLL
 AC_LIBTOOL_DLOPEN
 AC_PROG_LIBTOOL
 AC_SUBST(INCLTDL)
@@ -62,6 +63,30 @@ AC_ARG_ENABLE([debug],
 
 #disable default flags
 CFLAGS="";
+
+case $host in
+    i[[3456]]86*mingw*)
+    WIN32="yes"
+    ;;
+    i[[3456]]86*cygwin*)
+    WIN32="yes"
+    ;;
+    *)
+	WIN32="no"
+	;;
+esac    
+
+case $host in
+    x86_64*mingw*)
+	WIN64="yes"
+	;;
+    x86_64*cygwin*)
+	WIN64="yes"
+	;;
+    *)
+	WIN64="no"
+	;;
+esac    
 
 #choose between intel icpc and g++ and ekopath
 INTEL="no"
@@ -189,6 +214,13 @@ AC_ARG_ENABLE([tests],
   *) AC_MSG_ERROR(bad value ${enableval} for --enable-enable_tests) ;;
 esac],[enable_tests=false])
 AM_CONDITIONAL(WITH_TESTS, test x"$enable_tests" = "xtrue")
+
+
+
+AM_CONDITIONAL([TFEL_WIN],[test x"$WIN32" = "xyes" -o x"$WIN64" = "xyes"])
+AM_CONDITIONAL([TFEL_WIN32],[test x"$WIN32" = "xyes"])
+AM_CONDITIONAL([TFEL_WIN64],[test x"$WIN64" = "xyes"])
+
 
 AC_OUTPUT([debug.sh
 	   Makefile

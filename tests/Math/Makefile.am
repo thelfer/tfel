@@ -43,6 +43,7 @@ test_PROGRAMS = hill                  \
 		tmatrix2              \
 		tmatrix3              \
 		tmatrix4              \
+		tmatrix5              \
 		tvector               \
 		tvector2              \
 		tvector3              \
@@ -107,6 +108,7 @@ tmatrix1_SOURCES              = tmatrix1.cxx
 tmatrix2_SOURCES              = tmatrix2.cxx
 tmatrix3_SOURCES              = tmatrix3.cxx
 tmatrix4_SOURCES              = tmatrix4.cxx
+tmatrix5_SOURCES              = tmatrix5.cxx
 tvector_SOURCES               = tvector.cxx
 tvector2_SOURCES              = tvector2.cxx
 tvector3_SOURCES              = tvector3.cxx

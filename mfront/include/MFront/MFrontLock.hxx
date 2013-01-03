@@ -8,7 +8,11 @@
 #ifndef   _LIB_MFRONT_MFRONTLOCK_H_
 #define   _LIB_MFRONT_MFRONTLOCK_H_ 
 
+#if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
+#warning "windows port"
+#else
 #include<semaphore.h>
+#endif
 
 namespace mfront{
 
@@ -25,7 +29,11 @@ namespace mfront{
     MFrontLock&
     operator = (const MFrontLock&);
     ~MFrontLock();
+#if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
+#warning "windows port"
+#else
     sem_t * l;
+#endif
   }; // end of struct MFrontLock
 
 } // end of namespace mfront

@@ -52,7 +52,7 @@
  * "Why is the new C++ visibility support so useful?"
  * from http://gcc.gnu.org/wiki/Visibility
  */
-#if defined _WIN32 || defined __CYGWIN__
+#if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
 #define TFEL_VISIBILITY_IMPORT __declspec(dllimport)
 #define TFEL_VISIBILITY_EXPORT __declspec(dllexport)
 #define TFEL_VISIBILITY_LOCAL
@@ -76,6 +76,6 @@
 #define TFEL_VISIBILITY_EXPORT
 #define TFEL_VISIBILITY_LOCAL
 #endif 
-#endif /* defined _WIN32 || defined __CYGWIN__ */
+#endif /* defined _WIN32 || _WIN64 || defined __CYGWIN__ */
 
 #endif /* _LIB_TFEL_CONFIG_HXX */

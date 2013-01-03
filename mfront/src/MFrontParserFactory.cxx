@@ -9,8 +9,6 @@
 #include<string>
 #include<utility>
 
-#include<dlfcn.h>
-
 #include"MFront/MFrontParserFactory.hxx"
 #include"MFront/MFrontParserProxy.hxx"
 

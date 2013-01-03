@@ -52,8 +52,14 @@ namespace tfel
        * \param const std::string&, path to be created.
        * \param const mode_t, opening mode.
        */
+#if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
+#warning "windows port"
+      static void
+      mkdir(const std::string&);
+#else 
       static void
       mkdir(const std::string&,const mode_t = S_IRWXU|S_IRWXG);
+#endif /* defined _WIN32 || _WIN64 || defined __CYGWIN__ */      
 
       /*!
        * \param f : file to unlink

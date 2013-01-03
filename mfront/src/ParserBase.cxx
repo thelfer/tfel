@@ -11,7 +11,9 @@
 #include<algorithm>
 #include<iterator>
 
+#if not (defined _WIN32 || defined _WIN64 ||defined __CYGWIN__)
 #include"TFEL/System/ProcessManager.hxx"
+#endif
 
 #include"MFront/MFront.hxx"
 #include"MFront/ParserBase.hxx"
@@ -561,6 +563,7 @@ namespace mfront
 
   void
   ParserBase::treatMFront(void){
+#if not (defined _WIN32 || defined _WIN64 ||defined __CYGWIN__)
     using namespace std;
     using namespace tfel::system;
     ProcessManager m;
@@ -592,6 +595,7 @@ namespace mfront
     cmd << " ";
     copy(vfiles.begin(),vfiles.end(),ostream_iterator<string>(cmd," "));
     m.execute(cmd.str());
+#endif
   } // end of ParserBase::treatMfront
 
   std::string
@@ -727,6 +731,7 @@ namespace mfront
 
   void
   ParserBase::treatMaterialLaw(void){
+#if not (defined _WIN32 || defined _WIN64 ||defined __CYGWIN__)
     using namespace std;
     using namespace tfel::system;
     MFrontMFrontLawInterface minterface;
@@ -762,6 +767,7 @@ namespace mfront
 	    this->librariesDependencies.end(),"-lMFrontMaterialLaw")==this->librariesDependencies.end()){
       this->librariesDependencies.push_back("-lMFrontMaterialLaw");
     }
+#endif
   } // end of ParserBase::treatMaterialLaw
 
   void

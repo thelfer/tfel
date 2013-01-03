@@ -61,8 +61,6 @@ namespace tfel
     //! a simple alias
     typedef PosixError<EFAULT>  EFAULTError;
     //! a simple alias
-    typedef PosixError<ENOTBLK> ENOTBLKError;
-    //! a simple alias
     typedef PosixError<EBUSY>   EBUSYError;
     //! a simple alias
     typedef PosixError<EEXIST>  EEXISTError;
@@ -83,8 +81,6 @@ namespace tfel
     //! a simple alias
     typedef PosixError<ENOTTY>  ENOTTYError;
     //! a simple alias
-    typedef PosixError<ETXTBSY> ETXTBSYError;
-    //! a simple alias
     typedef PosixError<EFBIG>   EFBIGError;
     //! a simple alias
     typedef PosixError<ENOSPC>  ENOSPCError;
@@ -101,6 +97,13 @@ namespace tfel
     //! a simple alias
     typedef PosixError<ERANGE>  ERANGEError;
   
+#if not (defined _WIN32 || defined _WIN64 ||defined __CYGWIN__)
+    //! a simple alias
+    typedef PosixError<ENOTBLK> ENOTBLKError;
+    //! a simple alias
+    typedef PosixError<ETXTBSY> ETXTBSYError;
+#endif /* defined _WIN32 || _WIN64 || defined __CYGWIN__ */      
+
   } // end of namespace system
 
 } // end of namespace tfel

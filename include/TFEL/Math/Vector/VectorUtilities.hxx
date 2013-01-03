@@ -19,10 +19,6 @@ namespace tfel{
     template<unsigned short N>
     struct VectorUtilities{
 
-      static std::string getName(void){
-	return std::string("VectorUtilities");
-      }
-
       template<typename T, typename T2>
       static TFEL_MATH_INLINE 
       void copy(const T& a, T2& b){

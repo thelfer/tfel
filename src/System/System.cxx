@@ -81,9 +81,6 @@ namespace tfel
       case EFAULT:
 	throw(PosixError<EFAULT>(msg));
 	break;
-      case ENOTBLK:
-	throw(PosixError<ENOTBLK>(msg));
-	break;
       case EBUSY:
 	throw(PosixError<EBUSY>(msg));
 	break;
@@ -114,9 +111,6 @@ namespace tfel
       case ENOTTY:
 	throw(PosixError<ENOTTY>(msg));
 	break;
-      case ETXTBSY:
-	throw(PosixError<ETXTBSY>(msg));
-	break;
       case EFBIG:
 	throw(PosixError<EFBIG>(msg));
 	break;
@@ -141,6 +135,14 @@ namespace tfel
       case ERANGE:
 	throw(PosixError<ERANGE>(msg));
 	break;
+#if not (defined _WIN32 || defined _WIN64 ||defined __CYGWIN__)
+      case ENOTBLK:
+	throw(PosixError<ENOTBLK>(msg));
+	break;
+      case ETXTBSY:
+	throw(PosixError<ETXTBSY>(msg));
+	break;
+#endif /* defined _WIN32 || _WIN64 || defined __CYGWIN__ */      
       default:
 	throw(SystemError(msg));
       }
@@ -242,16 +244,26 @@ namespace tfel
 	systemCall::copyFile(src,dest);
 	return;
       } else if(S_ISCHR(destInfos.st_mode)||S_ISBLK(destInfos.st_mode)||
-		S_ISFIFO(destInfos.st_mode)||S_ISLNK(destInfos.st_mode)||
-		S_ISSOCK(destInfos.st_mode)){
+#if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
+#warning "windows port"
+#else
+		S_ISSOCK(destInfos.st_mode)||S_ISLNK(destInfos.st_mode)||
+#endif /* defined _WIN32 || _WIN64 || defined __CYGWIN__ */      
+		S_ISFIFO(destInfos.st_mode)){
 	string msg("systemCall::copy : can't copy object of type "+
 		   systemCall::fileType(destInfos.st_mode));	
 	throw(SystemError(msg));
       }
     } // end of systemCall::copy
 
+#if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
+#warning "windows port"
+    void
+    systemCall::mkdir(const std::string& dir)
+#else 
     void
     systemCall::mkdir(const std::string& dir,const mode_t mode)
+#endif /* defined _WIN32 || _WIN64 || defined __CYGWIN__ */      
     {
       using namespace std;
       string path;
@@ -267,7 +279,12 @@ namespace tfel
 	if(::stat(path.c_str(),&infos)==-1){
 	  if(errno==ENOENT){
 	    // the file does not exist, create the directory
+#if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
+#warning "windows port"
+	    if(::mkdir(path.c_str())!=0){
+#else 
 	    if(::mkdir(path.c_str(),mode)!=0){
+#endif /* defined _WIN32 || _WIN64 || defined __CYGWIN__ */      
 	      if(errno==EEXIST){
 		// this may happen if many processes are
 		// used in the same time
@@ -374,7 +391,11 @@ namespace tfel
 	  if(errno!=EAGAIN){
 	    systemCall::throwSystemError("systemCall::write failed",errno);
 	  }
+#if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
+#warning "windows port"
+#else
 	  ::sleep(1);
+#endif /* defined _WIN32 || _WIN64 || defined __CYGWIN__ */      
 	}
 	r  = static_cast<size_t>(r-w);
 	b += w;
@@ -395,10 +416,14 @@ namespace tfel
 	return "block device";
       } else if(S_ISFIFO(mode)){
 	return "fifo";
+#if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
+#warning "windows port"
+#else
       } else if(S_ISLNK(mode)){
 	return "symbolic link";
       } else if(S_ISSOCK(mode)){
 	return "socket";
+#endif /* defined _WIN32 || _WIN64 || defined __CYGWIN__ */      
       }
       return "unknown";
     } // end of systemCall::fileType
@@ -496,6 +521,10 @@ namespace tfel
     systemCall::getHostName(void)
     {
       using namespace std;
+#if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
+#warning "windows port"
+      return "";
+#else
       char *name  = 0;
       size_t size = 16u;
       while(1){
@@ -513,16 +542,22 @@ namespace tfel
       const string res(name);
       ::free(name);
       return res;
+#endif
     } // end of systemCall::getHostName
 
     std::string
     systemCall::getUserName(void)
     {
+#if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
+#warning "windows port"
+      return "";
+#else
       const char * const l = ::getlogin();
       if(l!=0){
 	return l;
       }
       return "";
+#endif
     } // end of systemCall::getUserName
 
     void

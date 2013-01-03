@@ -4,7 +4,7 @@ include(cmake/modules/tfel.cmake)
 # some variables for compatibility with autotools
 include(cmake/modules/autotools.cmake)
 
-tfel_project(tfel 1 0)
+tfel_project(tfel 1 1)
 
 set(PACKAGE_BUGREPORT "thomas.helfer@cea.fr")
 
@@ -21,8 +21,10 @@ message("${OPTIMISATION_FLAGS}")
 
 cmake_policy(SET CMP0005 OLD)
 add_definitions("-DOPTIMISATION_FLAGS=\\\"\"${OPTIMISATION_FLAGS}\"\\\"")
+add_definitions("-DOPTIMISATION_FLAGS=\\\"\"${OPTIMISATION_FLAGS}\"\\\"")
 add_definitions("-DCOMPILER_WARNINGS=\\\"\"${COMPILER_WARNINGS}\"\\\"")
-
+add_definitions("-DVERSION=\\\"\"${TFEL_VERSION_MAJOR}\"\\\"")
+add_definitions("-DTFEL_SVN_REVISION=\\\"\"????\"\\\"")
 
 # sub directories
 add_subdirectory(include) 

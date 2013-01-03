@@ -16,9 +16,11 @@
 #include"TFEL/TypeTraits/IsAssignableTo.hxx"
 #include"TFEL/Math/General/BasicOperations.hxx"
 #include"TFEL/Math/General/EmptyRunTimeProperties.hxx"
+
 #include"TFEL/Math/Matrix/MatrixConcept.hxx"
 #include"TFEL/Math/Matrix/MatrixConceptOperations.hxx"
 #include"TFEL/Math/Matrix/MatrixExpr.hxx"
+#include"TFEL/Math/tvector.hxx"
 
 #include"TFEL/Math/Forward/tmatrix.hxx"
 
@@ -42,6 +44,34 @@ namespace tfel{
       typedef EmptyRunTimeProperties RunTimeProperties;
     };
     
+    // forward declaration
+    template<unsigned short N,
+	     unsigned short M,
+	     unsigned short I,
+	     typename T>
+    struct tmatrix_row_view;
+
+    // forward declaration
+    template<unsigned short N,
+	     unsigned short M,
+	     unsigned short I,
+	     typename T>
+    struct tmatrix_const_row_view;
+
+    // forward declaration
+    template<unsigned short N,
+	     unsigned short M,
+	     unsigned short I,
+	     typename T>
+    struct tmatrix_column_view;
+
+    // forward declaration
+    template<unsigned short N,
+	     unsigned short M,
+	     unsigned short I,
+	     typename T>
+    struct tmatrix_const_column_view;
+
     template<unsigned short N,
 	     unsigned short M,
 	     typename T = double>
@@ -274,7 +304,7 @@ namespace tfel{
        * the tmatrix
        */
       TFEL_MATH_INLINE
-      const RunTimeProperties
+      RunTimeProperties
       getRunTimeProperties(void) const
       {
 	return RunTimeProperties();
@@ -285,6 +315,22 @@ namespace tfel{
 
       TFEL_MATH_INLINE2
       unsigned short getNbRows(void) const ;
+
+      template<unsigned short I>
+      tmatrix_row_view<N,M,I,T>
+      row_view();
+
+      template<unsigned short I>
+      tmatrix_const_row_view<N,M,I,T>
+      row_view() const;
+
+      template<unsigned short I>
+      tmatrix_column_view<N,M,I,T>
+      column_view();
+
+      template<unsigned short I>
+      tmatrix_const_column_view<N,M,I,T>
+      column_view() const;
 
       TFEL_MATH_INLINE2
       T max(void) const ;
@@ -430,6 +476,10 @@ namespace tfel{
 
 } // end of namespace tfel
 
+#include"TFEL/Math/Matrix/tmatrix_row_view.hxx"
+#include"TFEL/Math/Matrix/tmatrix_const_row_view.hxx"
+#include"TFEL/Math/Matrix/tmatrix_column_view.hxx"
+#include"TFEL/Math/Matrix/tmatrix_const_column_view.hxx"
 #include"TFEL/Math/Matrix/tmatrix.ixx"
 #include"TFEL/Math/Matrix/tmatrixResultType.hxx"
 

@@ -16,12 +16,16 @@
 #include<memory>
 #include<cassert>
 
+#if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
+#warning "windows port"
+#else
 #include<dlfcn.h> 
 #include<sys/types.h>
 #include<sys/stat.h>
 #include<sys/wait.h>
 #include<dirent.h>
 #include<unistd.h>
+#endif
 
 #include"TFEL/Utilities/CxxTokenizer.hxx"
 #include"TFEL/System/ExternalLibraryManager.hxx"
@@ -85,7 +89,7 @@ namespace mfront{
     using namespace std;
     using namespace tfel::utilities;
     if((*(this->currentArgument))[0]=='-'){
-#ifndef __CYGWIN__
+#if not (defined _WIN32 || defined _WIN64 ||defined __CYGWIN__)
       ArgumentParserBase<MFront>::treatUnknownArgument();
 #else
       cerr << "mfront : unsupported option '" << *(this->currentArgument) << "'\n";
@@ -180,20 +184,20 @@ namespace mfront{
   MFront::treatInterface(void)
   {
     using namespace std;
-    string interface;
+    string ninterface;
     string tmp;
     string::size_type n;
     string::size_type n2;
-    interface = this->currentArgument->getOption();
-    if(interface.empty()){
+    ninterface = this->currentArgument->getOption();
+    if(ninterface.empty()){
       string msg("MFront::treatInterface : ");
       msg += "no option given to the --interface argument";
       throw(runtime_error(msg));
     }
     n = 0u;
-    n2=interface.find(',',n);
+    n2=ninterface.find(',',n);
     while(n2!=string::npos){
-      tmp = interface.substr(n,n2-n);
+      tmp = ninterface.substr(n,n2-n);
       if(tmp.empty()){
 	string msg("MFront::treatInterface : ");
 	msg += "empty interface specified.";
@@ -205,9 +209,9 @@ namespace mfront{
 	throw(runtime_error(msg));
       }
       n=n2+1;
-      n2=interface.find(',',n);
+      n2=ninterface.find(',',n);
     }
-    tmp = interface.substr(n,n2-n);
+    tmp = ninterface.substr(n,n2-n);
     if(tmp.empty()){
       string msg("MFront::treatInterface : ");
       msg += "empty interface specified.";
@@ -289,7 +293,7 @@ namespace mfront{
     this->treatTarget();
   } // end of MFront::treatTarget
 
-#ifndef __CYGWIN__
+#if not (defined _WIN32 || defined _WIN64 ||defined __CYGWIN__)
   void
   MFront::treatWin32(void)
   {
@@ -323,13 +327,13 @@ namespace mfront{
 			      "specify witch interface to use",true);
     this->registerNewCallBack("--silent-build",&MFront::treatSilentBuild,
 			      "active or desactivate silent build",true);
-#ifndef __CYGWIN__
+#if (not defined _WIN32 || defined _WIN64 ||defined __CYGWIN__)
     this->registerNewCallBack("--nodeps",&MFront::treatNoDeps,
 			      "don't generate compilation dependencies");
 #endif /* __CYGWIN__ */
     this->registerNewCallBack("--nomelt",&MFront::treatNoMelt,
 			      "don't melt librairies sources");
-#ifndef __CYGWIN__
+#if not (defined _WIN32 || defined _WIN64 ||defined __CYGWIN__)
     this->registerNewCallBack("--win32",&MFront::treatWin32,
 			      "specify that the target system is win32");
 #endif /* __CYGWIN__ */
@@ -337,7 +341,7 @@ namespace mfront{
 
   MFront::MFront(const int argc, const char *const *const argv)
     : tfel::utilities::ArgumentParserBase<MFront>(argc,argv),
-#ifdef __CYGWIN__
+#if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
       sys("win32"),
 #else
       sys("default"),
@@ -350,7 +354,7 @@ namespace mfront{
       buildLibs(false),
       cleanLibs(false),
       silentBuild(true),
-#ifndef __CYGWIN__
+#if not (defined _WIN32 || defined _WIN64 ||defined __CYGWIN__)
       nodeps(false),
 #else /* __CYGWIN__ */
       nodeps(true),
@@ -866,6 +870,9 @@ namespace mfront{
   void
   MFront::analyseSourceDirectory(void)
   {
+#if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
+#warning "windows port"
+#else
     using namespace std;
     using namespace tfel::system;
     vector<string> files;
@@ -954,6 +961,7 @@ namespace mfront{
       throw;
     }
     l.unlock();
+#endif
   } // end of MFront::analyseSourceDirectory
   
   void
@@ -1245,7 +1253,7 @@ namespace mfront{
       cc = "$(CC)";
     }
     if(sys=="win32"){
-#ifndef __CYGWIN__
+#if not (defined _WIN32 || defined _WIN64 ||defined __CYGWIN__)
       if((ranlib==0)||(dlltool==0)||(ar==0)){
 	string msg("MFront::generateMakeFile : ");
 	msg += "the following environnement variables ";
@@ -1338,7 +1346,7 @@ namespace mfront{
       // CXXFLAGS
       if(!cppSources.empty()){
 	this->makeFile << "CXXFLAGS := -Wall -Wfatal-errors ";
-#ifndef __CYGWIN__
+#if not (defined _WIN32 || defined _WIN64 ||defined __CYGWIN__)
 	this->makeFile << "-ansi ";
 #endif /* __CYGWIN__ */
 	if(cxxflags!=0){
@@ -1357,7 +1365,7 @@ namespace mfront{
       // CFLAGS
       if(!cSources.empty()){
 	this->makeFile << "CFLAGS := -W -Wall -Wfatal-errors ";
-#ifndef __CYGWIN__
+#if not (defined _WIN32 || defined _WIN64 ||defined __CYGWIN__)
 	this->makeFile << "-ansi -std=c99 ";
 #endif /* __CYGWIN__ */
 	if(cflags!=0){
@@ -1581,6 +1589,9 @@ namespace mfront{
   MFront::buildLibraries(const std::string& target)
   {
     using namespace std;
+#if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
+#warning "windows port"
+#else
     const char *const argv[] = {"make","-f",
 				"Makefile.mfront",target.c_str(),0};
     pid_t child_pid;
@@ -1605,11 +1616,15 @@ namespace mfront{
       }
       execvp("make",const_cast<char* const*>(argv));
     }
+#endif
   } // end of MFront::buildLibraries
 
   void
   MFront::cleanLibraries(void)
   {
+#if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
+#warning "windows port"
+#else
     using namespace std;
     const char *const argv[] = {"make","-f",
 				"Makefile.mfront",
@@ -1637,6 +1652,7 @@ namespace mfront{
       }
       execvp("make",const_cast<char* const*>(argv));
     }
+#endif
   } // end of MFront::cleanLibraries
 
   void
