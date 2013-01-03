@@ -21,16 +21,14 @@ namespace mfront{
     : MFrontVirtualParser(), 
       MFrontBehaviourParserBase<MFrontRungeKuttaParser>(),
       algorithm("RungeKutta5/4"),
-      epsilon(1.e-8),
-      dtmin(0.),
       nbrOfEvaluation(6)
   {
     using namespace std;
     typedef map<string,string>::value_type MVType;
     this->useStateVarTimeDerivative=true;
-    // static variable
-    this->registerStaticVariable("epsilon");
-    this->registerStaticVariable("dtmin");
+    this->registerVariable("epsilon");
+    this->parametersHolder.push_back(VarHandler("real","epsilon",1u,0u));
+    this->registerVariable("dtmin");
     // Default state vars
     this->registerVariable("eel");
     this->registerVariable("deel");
@@ -215,40 +213,52 @@ namespace mfront{
   MFrontRungeKuttaParser::treatEpsilon(void)
   {
     using namespace std;
+    typedef map<string,double>::value_type MVType;
+    double epsilon;
     this->checkNotEndOfFile("MFrontRungeKuttaParser::treatEpsilon",
 			    "Cannot read epsilon value.");
-    istringstream flux(this->current->value);
-    flux >> this->epsilon;
-    if(flux.fail()){
+    istringstream flux(current->value);
+    flux >> epsilon;
+    if((flux.fail())||(!flux.eof())){
       this->throwRuntimeError("MFrontRungeKuttaParser::treatEpsilon",
 			      "Failed to read epsilon value.");
     }
-    if(this->epsilon<0.){
+    if(epsilon<0){
       this->throwRuntimeError("MFrontRungeKuttaParser::treatEpsilon",
-			      "Epsilon value can't be negative.");
+			      "Epsilon value must be positive.");
+    }
+    if(!this->parametersDefaultValues.insert(MVType("epsilon",epsilon)).second){
+      this->throwRuntimeError("MFrontRungeKuttaParser::treatEpsilon",
+			      "default value already defined for parameter 'epsilon'");
     }
     ++(this->current);
-    this->readSpecifiedToken("MFrontRungeKuttaParser::treatEpsilon : ",";");
+    this->readSpecifiedToken("MFrontRungeKuttaParser::treatEpsilon",";");
   } // end of MFrontRungeKuttaParser::treatEpsilon
 
   void
   MFrontRungeKuttaParser::treatMinimalTimeStep(void)
   {
     using namespace std;
+    typedef map<string,double>::value_type MVType;
+    double dtmin;
     this->checkNotEndOfFile("MFrontRungeKuttaParser::treatMinimalTimeStep",
-			    "Cannot read minimal time step value.");
-    istringstream flux(this->current->value);
-    flux >> this->dtmin;
-    if(flux.fail()){
+			    "Cannot read dtmin value.");
+    istringstream flux(current->value);
+    flux >> dtmin;
+    if((flux.fail())||(!flux.eof())){
       this->throwRuntimeError("MFrontRungeKuttaParser::treatMinimalTimeStep",
-			      "Failed to read minimal time step value.");
+			      "Failed to read dtmin value.");
     }
-    if(this->dtmin<0.){
+    if(dtmin<0){
       this->throwRuntimeError("MFrontRungeKuttaParser::treatMinimalTimeStep",
-			      "minimal time step value can't be negative.");
+			      "MinimalTimeStep value must be positive.");
+    }
+    if(!this->parametersDefaultValues.insert(MVType("dtmin",dtmin)).second){
+      this->throwRuntimeError("MFrontRungeKuttaParser::treatMinimalTimeStep",
+			      "default value already defined for parameter 'dtmin'");
     }
     ++(this->current);
-    this->readSpecifiedToken("MFrontRungeKuttaParser::treatMinimalTimeStep : ",";");
+    this->readSpecifiedToken("MFrontRungeKuttaParser::treatMinimalTimeStep",";");
   } // end of MFrontRungeKuttaParser::treatEpsilon
 
   void MFrontRungeKuttaParser::treatAlgorithm(void)
@@ -354,13 +364,19 @@ namespace mfront{
   MFrontRungeKuttaParser::endsInputFileProcessing(void)
   {
     using namespace std;
+    typedef map<string,double>::value_type MVType;
     VarContainer::iterator p;
     string currentVarName;
     string parserInitLocalVars;
-
-    this->staticVars.push_back(StaticVarHandler("real","epsilon",0u,this->epsilon));
-    this->staticVars.push_back(StaticVarHandler("real","dtmin",0u,this->dtmin));
-
+    if(this->parametersDefaultValues.find("epsilon")==this->parametersDefaultValues.end()){
+      this->parametersDefaultValues.insert(MVType("epsilon",1.e-8));
+    }
+    if(this->parametersDefaultValues.find("dtmin")==this->parametersDefaultValues.end()){
+      this->parametersHolder.push_back(VarHandler("real","epsilon",1u,0u));
+      parserInitLocalVars += "if(this->dt<" + this->className + "::dtmin){\n";
+      parserInitLocalVars += "this->dt=" + this->className + "::dtmin;\n";
+      parserInitLocalVars += "}\n";
+    }
     if(this->computeStress.empty()){
       string msg("MFrontRungeKuttaParser::endsInputFileProcessing : ");
       msg += "@ComputeStress was not defined.";
@@ -370,11 +386,6 @@ namespace mfront{
       string msg("MFrontRungeKuttaParser::endsInputFileProcessing : ");
       msg += "@Derivative was not defined.";
       throw(runtime_error(msg));
-    }
-    if(this->dtmin>0.){
-      parserInitLocalVars += "if(this->dt<" + this->className + "::dtmin){\n";
-      parserInitLocalVars += "this->dt=" + this->className + "::dtmin;\n";
-      parserInitLocalVars += "}\n";
     }
     parserInitLocalVars += "if(this->dt<100*numeric_limits<time>::min()){\n";
     parserInitLocalVars += "string msg(\"" + this->className + "::" + this->className +"\");\n";
@@ -955,7 +966,7 @@ namespace mfront{
 			  << "::integrate() : error \" << error << endl;"  << endl;
     }
     this->behaviourFile << "// test for convergence" << endl;
-    this->behaviourFile << "if(error<" << this->className << "::epsilon){" << endl;
+    this->behaviourFile << "if(error<this->epsilon){" << endl;
     this->behaviourFile << "// Final Step" << endl;
     for(p =this->stateVarsHolder.begin();p!=this->stateVarsHolder.end();++p){
       this->behaviourFile << "this->" << p->name 
@@ -981,7 +992,7 @@ namespace mfront{
     this->behaviourFile << "if(error<100*std::numeric_limits<real>::min()){" << endl;
     this->behaviourFile << "corrector=real(10);" << endl;
     this->behaviourFile << "} else {" << endl;
-    this->behaviourFile << "corrector = 0.8*pow(" << this->className << "::epsilon/error,0.2);" << endl;
+    this->behaviourFile << "corrector = 0.8*pow(this->epsilon/error,0.2);" << endl;
     this->behaviourFile << "}" << endl;
     this->behaviourFile << "if(corrector<real(0.1f)){" << endl;
     if(this->debugMode){
@@ -1066,9 +1077,9 @@ namespace mfront{
     this->behaviourFile << "}" << endl;
     this->behaviourFile << "asig = sqrt((this->sig)|(this->sig));" << endl;
     this->behaviourFile << "if ((this->young)*Type(1.e-3)>asig){" << endl;
-    this->behaviourFile << "  errabs = (this->young)*Type(1.e-3)*(" << this->className << "::epsilon);" << endl;
+    this->behaviourFile << "  errabs = (this->young)*Type(1.e-3)*(this->epsilon);" << endl;
     this->behaviourFile << "}else{" << endl;
-    this->behaviourFile << "  errabs = (" << this->className << "::epsilon)*asig;\n}\n" << endl;
+    this->behaviourFile << "  errabs = (this->epsilon)*asig;\n}\n" << endl;
     this->behaviourFile << "time dtprec = 100*this->dt*numeric_limits<time>::epsilon();" << endl;
     this->behaviourFile << "bool converged = false;" << endl;
     if(this->debugMode){
@@ -1571,7 +1582,7 @@ namespace mfront{
 			  << "::integrate() : error \" << error << endl;"  << endl;
     }
     this->behaviourFile << "// test for convergence" << endl;
-    this->behaviourFile << "if(error<" << this->className << "::epsilon){" << endl;
+    this->behaviourFile << "if(error<this->epsilon){" << endl;
     this->behaviourFile << "// Final Step" << endl;
     for(p =this->stateVarsHolder.begin();p!=this->stateVarsHolder.end();++p){
       this->behaviourFile << "this->" << p->name 
@@ -1593,7 +1604,7 @@ namespace mfront{
     this->behaviourFile << "if(error<100*std::numeric_limits<real>::min()){" << endl;
     this->behaviourFile << "corrector=real(10.);" << endl;
     this->behaviourFile << "} else {" << endl;
-    this->behaviourFile << "corrector = 0.8*pow((" << this->className << "::epsilon)/error,1./3.);" << endl;
+    this->behaviourFile << "corrector = 0.8*pow((this->epsilon)/error,1./3.);" << endl;
     this->behaviourFile << "}" << endl;
     this->behaviourFile << "if(corrector<=real(0.1f)){" << endl;
     this->behaviourFile << "dt_ *= real(0.1f);" << endl;

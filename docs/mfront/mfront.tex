@@ -1671,6 +1671,69 @@ Si la variable
 \envb{CASTEM\_OUT\_OF\_BOUND\_POLICY}{CASTEM\_\-OUT\_\-OF\_\-BOUND\_\-POLICY}
 n'est pas définie, les dépassements sont ignorés.
 
+\paragraph{Gestion générique des contraintes planes}
+
+L'hypothèse de contraintes planes constituent un cas
+particulier~:
+\begin{itemize}
+  \item la loi de comportement doit assurer en internes le
+  respect de la condition de contraintes planes~;
+  \item la troisième composante de la déformation axiale n'est
+  pas renseignée. En effet, celle-ci ne peut être déduite du champs de
+  déplacement et \castem{} lui affecte par défaut une valeur nulle.
+\end{itemize}
+
+Dans cette hypothèse, la déformation axiale est une inconnue
+supplémentaire du problème.
+
+Pour tenir compte de ces particularités, deux voies sont possibles~:
+\begin{itemize}
+  \item écrire une algorithme de résolution spécifique qui tient
+  explicitement compte de la condition de contraintes planes~;
+  \item réutiliser l'intégration en {\em déformations planes} au
+  sein d'un algorithme de résolution qui se charge de trouver une
+  déformation axiale telle que la contrainte axiale soit nulle. Cette
+  dernière solution est particulièrement intéressant car elle fait
+  l'économie de ce développement spécifique. Il est néanmoins certain
+  que cette méthode a un coût puisque l'intégration en déformations
+  planes sera faites plusieurs fois~\cite{proix:contraintes_planes}.
+\end{itemize}
+
+À l'heure actuelle, aucun des analyseurs de \mfront{} n'a d'algorithmes
+spécifiques aux contraintes planes. L'interface \umat{} utilise donc
+toujours la seconde solution. L'algorithme utilisé est le suivant~:
+\begin{itemize}
+  \item l'incrément de déformation axiale
+  \(\left.\Delta\,\epsilontoz\right.^{(0)}\) est initialisé par une
+  estimation élastique. Dans le cas d'un comportement élastique
+  isotrope, cela se traduit par~:
+  \[
+  \left.\Delta\,\epsilontoz\right.^{(0)}=-\Frac{1}{E}\left.\sigmaz\right.^{(0)}-\nu\paren{\Delta\,\epsilontox+\Delta\,\epsilontoy}
+  \]
+  La présence du terme \(\left.\Frac{1}{E}\sigmaz\right.^{(0)}\)
+  permet de prendre en corriger le fait que la condition de contraintes
+  planes n'est pas vérifiée de manière exacte. La loi de comportement en
+  déformations planes est alors appelée.
+  \item si la contrainte axiale obtenue n'est pas nulle, au
+  critère près, une nouvelle correction élastique est effectuée~:
+  \[
+  \left.\Delta\,\epsilontoz\right.^{(1)}=\left.\Delta\,\epsilontoz\right.^{(0)}-\Frac{1}{E}\left.\Frac{1}{E}\sigmaz\right.^{(1)}
+  \]
+  La loi de comportement en déformations planes est appelée une
+  seconde fois.
+  \item si la contrainte axiale obtenue n'est pas nulle, la
+  méthode itérative de la sécante est utilisée pour estimer un incrément
+  convenable.
+\end{itemize}
+
+Le critère choisi pour tester la condition de contraintes planes est,
+dans le cas isotrope~:
+\[
+\left|\left.\sigmaz\right.^{(0)}\right|<E\,\varepsilon
+\]
+où $\varepsilon$ est choisi égal à \(10^{-12}\)\footnote{Cette valeur
+  n'est aujourd'hui pas modifiable}.
+
 \paragraph{Exemple de mise en donnée \castem{}} Dans le cas
 de l'interface \texttt{umat}, \mfront{} génère automatiquement
 un exemple de mise en donnée \castem{} pour l'appel de la loi
@@ -1971,8 +2034,8 @@ d'évaluer une certaine fonction \(f\) de la contrainte équivalente en
 \begin{aligned}
   \milieupas{\tenseur{n}}&=\Frac{3}{2\milieupas{\sigmaeq}}
   \milieupas{\tenseur{s}}=\Frac{3\mu}{\milieupas{\sigmaeq}}\milieupas{\tenseur{e}}
-  =\Frac{3\mu}{\milieupas{\tenseur{n}}}\paren{\debutpas{\tenseur{e}}+\theta\Delta\tenseur{e}}\\
-  &=\Frac{3\mu}{\milieupas{\tenseur{n}}}\paren{\debutpas{\tenseur{e}}+\theta\paren{\Delta\tepsilonto-\Frac{1}{3}\trace\paren{\Delta\tepsilonto}\tenseur{I}-\Delta\,p\,\milieupas{\tenseur{n}}}}
+  =\Frac{3\mu}{\milieupas{\sigmaeq}}\paren{\debutpas{\tenseur{e}}+\theta\Delta\tenseur{e}}\\
+  &=\Frac{3\mu}{\milieupas{\sigmaeq}}\paren{\debutpas{\tenseur{e}}+\theta\paren{\Delta\tepsilonto-\Frac{1}{3}\trace\paren{\Delta\tepsilonto}\tenseur{I}-\Delta\,p\,\milieupas{\tenseur{n}}}}
 \end{aligned}
 \]
 où \(\tenseur{e}\) désigne le déviateur du tenseur des déformations
@@ -1980,7 +2043,7 @@ où \(\tenseur{e}\) désigne le déviateur du tenseur des déformations
 
 Dans la suite, nous noterons \(\tenseur{B}\) le tenseur suivant~:
 \[
-\tenseur{B}=\debutpas{\tepsilonel}+\theta\Delta\tepsilonto-\Frac{1}{3}\trace\paren{\debutpas{\tepsilonel}+\theta\Delta\tepsilonto}
+\tenseur{B}=\debutpas{\tepsilonel}+\theta\Delta\tepsilonto-\Frac{1}{3}\trace\paren{\debutpas{\tepsilonel}+\theta\Delta\tepsilonto}\tenseur{I}
 \]
 Ce tenseur est parfaitement connu au début du pas de temps. Nous pouvons
 alors écrire~:
@@ -2707,6 +2770,26 @@ pas de temps adaptatif est utilisé. Une variable spécifique, nommée
 effectivement utilisé par l'algorithme. Le pas de temps total est
 donné par la variable \texttt{dt}.
 
+\subsection{Paramètres par défaut}
+
+L'analyseur implicite définit par défaut différents
+paramètres~:
+\begin{itemize}
+  \item \varcpp{epsilon}, la valeur du critère d'arrêt de
+  l'algorithme de \nom{Runge-Kutta}. La valeur par défaut de ce
+  paramètre est de \(10^{-8}\) et peut être modifiée par la directive
+  \mkey{Epsilon}. Ce paramètre doit avoir une valeur strictement
+  positive~;
+  \item \varcpp{dtmin}, la valeur minimale du pas de temps
+  utilisé pour l'intégration\footnote{Ce paramètre a été introduit
+    essentiellement pour contourner les difficultés liées à l'algorithme
+    de convergence forcée du code \castem{} qui envoie, lorsqu'il
+    s'active, un incrément de temps nul à la loi de comportement.}. Par
+  défaut, ce paramètre n'existe que si la directive
+  \mkeyb{MinimalTimeStep}{Minimal\-Time\-Step} est utilisée. Ce
+  paramètre doit avoir une valeur strictement positive.
+\end{itemize}
+
 \subsection{Intégration d'une loi d'écoulement viscoplastique
   orthotrope par un algorithme de \nom{Runge-Kutta}}
 
@@ -3410,6 +3493,21 @@ variables internes, une fois l'algorithme convergé.
 
 À ce moment, les valeurs externes (déformations totales et températures
 incluses) n'ont pas été mises à jour.
+
+\subsection{Paramètres par défaut}
+
+L'analyseur implicite définit par défaut différents
+paramètres~:
+\begin{itemize}
+  \item \varcpp{epsilon}, la valeur du critère d'arrêt de
+  l'algorithme implicite. La valeur par défaut de ce paramètre est de
+  \(10^{-8}\) et peut être modifiée par la directive \mkey{Epsilon}. Ce
+  paramètre doit avoir une valeur strictement positive~;
+  \item \varcpp{theta}, la valeur de \(\theta\) utilisé par
+  l'algorithme implicite. La valeur par défaut de ce paramètre est de
+  \(0.5\) et peut être modifiée par la directive \mkey{Theta}. Les
+  valeurs admissibles sont comprises entre \(0\) et \(1\)~;
+\end{itemize}
 
 \subsection{Intégration d'une loi d'écoulement viscoplastique
   orthotrope par un algorithme implicite}

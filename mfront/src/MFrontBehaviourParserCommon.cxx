@@ -2009,10 +2009,10 @@ namespace mfront{
     this->behaviourFile << "using namespace tfel::math;\n";
     writeMaterialLaws("MFrontBehaviourParserCommon::writeBehaviourConstructors",
 		      this->behaviourFile,this->materialLaws);
+    this->writeBehaviourParameterInitialisation();
     if(!this->initLocalVars.empty()){
       this->behaviourFile << this->initLocalVars;
     }
-    this->writeBehaviourParameterInitialisation();
     if(!predictor.empty()){
       this->behaviourFile << predictor;
     }
@@ -2045,10 +2045,10 @@ namespace mfront{
     this->behaviourFile << "using namespace tfel::math;\n";
     writeMaterialLaws("MFrontBehaviourParserCommon::writeBehaviourConstructors",
 		      this->behaviourFile,this->materialLaws);		      
+    this->writeBehaviourParameterInitialisation();
     if(!this->initLocalVars.empty()){
       this->behaviourFile << this->initLocalVars;
     } 
-    this->writeBehaviourParameterInitialisation();
     if(!predictor.empty()){
       this->behaviourFile << predictor;
     }
@@ -2073,10 +2073,10 @@ namespace mfront{
       this->behaviourFile << "using namespace tfel::math;\n";
       writeMaterialLaws("MFrontBehaviourParserCommon::writeBehaviourConstructors",
 			this->behaviourFile,this->materialLaws);		      
+      this->writeBehaviourParameterInitialisation();
       if(!this->initLocalVars.empty()){
 	this->behaviourFile << this->initLocalVars;
       }
-      this->writeBehaviourParameterInitialisation();
       if(!predictor.empty()){
 	this->behaviourFile << predictor;
       }

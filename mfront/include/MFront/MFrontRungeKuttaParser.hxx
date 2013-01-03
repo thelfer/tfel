@@ -131,8 +131,6 @@ namespace mfront{
     std::string computeFinalStress;
     std::string computeStress;
     std::string derivative;
-    double epsilon;
-    double dtmin;
     unsigned short nbrOfEvaluation;
   };
 

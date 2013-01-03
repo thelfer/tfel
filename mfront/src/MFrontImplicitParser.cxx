@@ -18,8 +18,8 @@ namespace mfront{
   MFrontImplicitParser::MFrontImplicitParser()
     : MFrontVirtualParser(), 
       MFrontBehaviourParserBase<MFrontImplicitParser>(),
-      theta(0.5f),
-      epsilon(1.e-8),
+      //      theta(0.5f),
+      //      epsilon(1.e-8),
       relaxationCoefficient(0.5),
       iterMax(100),
       relaxationTrigger(10),
@@ -35,8 +35,11 @@ namespace mfront{
     using namespace std;
     typedef map<string,string>::value_type MVType;
     // static variable
-    this->registerStaticVariable("theta");
-    this->registerStaticVariable("epsilon");
+    this->registerVariable("theta");
+    this->parametersHolder.push_back(VarHandler("real","theta",1u,0u));
+    this->registerVariable("epsilon");
+    this->parametersHolder.push_back(VarHandler("real","epsilon",1u,0u));
+    //    this->registerStaticVariable("epsilon");
     this->registerStaticVariable("iterMax");
     this->registerStaticVariable("relaxationCoefficient");
     this->registerStaticVariable("relaxationTrigger");
@@ -333,7 +336,7 @@ namespace mfront{
   {
     using namespace std;
     this->checkNotEndOfFile("MFrontImplicitParser::treatRelaxationCoefficient",
-			    "Cannot read epsilon value.");
+			    "Cannot read relaxation coefficient value.");
     if(!this->useRelaxation){
       this->throwRuntimeError("MFrontBehaviourParserCommon::treatRelaxationCoefficient",
 			      "relaxation unused");
@@ -342,7 +345,7 @@ namespace mfront{
     flux >> this->relaxationCoefficient;
     if((flux.fail())||(!flux.eof())){
       this->throwRuntimeError("MFrontImplicitParser::treatRelaxationCoefficient",
-			      "Failed to read epsilon value.");
+			      "Failed to read relaxation coefficient value.");
     }
     if(this->relaxationCoefficient<0){
       this->throwRuntimeError("MFrontImplicitParser::treatRelaxationCoefficient",
@@ -380,17 +383,23 @@ namespace mfront{
   MFrontImplicitParser::treatTheta(void)
   {
     using namespace std;
+    typedef map<string,double>::value_type MVType;
+    double theta;
     this->checkNotEndOfFile("MFrontImplicitParser::treatTheta",
 			    "Cannot read theta value.");
     istringstream flux(current->value);
-    flux >> this->theta;
+    flux >> theta;
     if((flux.fail())||(!flux.eof())){
       this->throwRuntimeError("MFrontImplicitParser::treatTheta",
 			      "Failed to read theta value.");
     }
-    if((this->theta<0.)||(this->theta>1.)){
+    if((theta<0.)||(theta>1.)){
       this->throwRuntimeError("MFrontImplicitParser::treatTheta",
 			      "Theta value must be positive and smaller than 1.");
+    }
+    if(!this->parametersDefaultValues.insert(MVType("theta",theta)).second){
+      this->throwRuntimeError("MFrontImplicitParser::treatTheta",
+			      "default value already defined for parameter 'theta'");
     }
     ++(this->current);
     this->readSpecifiedToken("MFrontImplicitParser::treatTheta",";");
@@ -400,17 +409,23 @@ namespace mfront{
   MFrontImplicitParser::treatEpsilon(void)
   {
     using namespace std;
+    typedef map<string,double>::value_type MVType;
+    double epsilon;
     this->checkNotEndOfFile("MFrontImplicitParser::treatEpsilon",
 			    "Cannot read epsilon value.");
     istringstream flux(current->value);
-    flux >> this->epsilon;
+    flux >> epsilon;
     if((flux.fail())||(!flux.eof())){
       this->throwRuntimeError("MFrontImplicitParser::treatEpsilon",
 			      "Failed to read epsilon value.");
     }
-    if(this->epsilon<0){
+    if(epsilon<0){
       this->throwRuntimeError("MFrontImplicitParser::treatEpsilon",
 			      "Epsilon value must be positive.");
+    }
+    if(!this->parametersDefaultValues.insert(MVType("epsilon",epsilon)).second){
+      this->throwRuntimeError("MFrontImplicitParser::treatEpsilon",
+			      "default value already defined for parameter 'epsilon'");
     }
     ++(this->current);
     this->readSpecifiedToken("MFrontImplicitParser::treatEpsilon",";");
@@ -472,9 +487,9 @@ namespace mfront{
        (this->isInternalStateVariable(var))||
        (this->isExternalStateVariable(var))){
       if(addThisPtr){
-	return "(this->"+var+"+("+this->className+"::theta)*(this->d"+var+"))";
+	return "(this->"+var+"+(this->theta)*(this->d"+var+"))";
       } else {
-	return "("+var+"+("+this->className+"::theta)*d"+var+")";
+	return "("+var+"+(this->theta)*d"+var+")";
       }
     }
     if((this->isExternalStateVariableIncrementName(var))||(var=="dT")){
@@ -784,7 +799,7 @@ namespace mfront{
     this->behaviourFile << "tvector<" << n << ",real> tfzeros(this->fzeros);\n";
     this->behaviourFile << "tmatrix<" << n << "," << n << ",real> tjacobian(this->jacobian);\n";
     this->behaviourFile << "for(unsigned short idx = 0; idx!= "<< n<<  ";++idx){\n";
-    this->behaviourFile << "this->zeros(idx) -= 10.*"<< this->className << "::epsilon;\n";
+    this->behaviourFile << "this->zeros(idx) -= 10.*(this->epsilon);\n";
     this->behaviourFile << "this->computeStress();\n";
     this->behaviourFile << "this->computeFdF();\n";
     this->behaviourFile << "this->zeros = tzeros;\n";
@@ -794,11 +809,10 @@ namespace mfront{
     //   this->behaviourFile << "this->jacobian = tjacobian;\n";
     //   this->behaviourFile << "}\n";
     // }
-    this->behaviourFile << "this->zeros(idx) += 10.*"<< this->className << "::epsilon;\n";
+    this->behaviourFile << "this->zeros(idx) += 10.*(this->epsilon);\n";
     this->behaviourFile << "this->computeStress();\n";
     this->behaviourFile << "this->computeFdF();\n";
-    this->behaviourFile << "this->fzeros = (this->fzeros-tfzeros2)/(20.*"
-			<< this->className << "::epsilon);\n";
+    this->behaviourFile << "this->fzeros = (this->fzeros-tfzeros2)/(20.*(this->epsilon));\n";
     this->behaviourFile << "for(unsigned short idx2 = 0; idx2!= "<< n <<  ";++idx2){\n";
     this->behaviourFile << "njacobian(idx2,idx) = this->fzeros(idx2);\n";
     this->behaviourFile << "}\n";
@@ -923,7 +937,7 @@ namespace mfront{
 				<< this->jacobianComparisonCriterium <<";\n";
 	  } else {
 	    this->behaviourFile << "error=" << nv1 << "*" << nv2 << "*"
-				<< this->className << "::epsilon;\n";
+				<< "(this->epsilon);\n";
 	  }
 	  this->behaviourFile << "if(abs(" << "df" << v1.name  << "_dd" << v2.name << "-"
 			      << "ndf" << v1.name  << "_dd" << v2.name << ") > error)\n" 
@@ -947,7 +961,7 @@ namespace mfront{
     }
     this->behaviourFile << "error=norm(this->fzeros);\n";
     this->behaviourFile << "converge = ((error)/(real(" << n2 << "))<";
-    this->behaviourFile << "(" << this->className << "::epsilon));\n";
+    this->behaviourFile << "(this->epsilon));\n";
     if(this->debugMode){
       this->behaviourFile << "cout << \"" << this->className
 			  << "::integrate() : iteration \" "
@@ -1189,8 +1203,15 @@ namespace mfront{
   MFrontImplicitParser::endsInputFileProcessing(void)
   {
     using namespace std;
-    this->staticVars.push_back(StaticVarHandler("real","theta",0u,this->theta));
-    this->staticVars.push_back(StaticVarHandler("real","epsilon",0u,this->epsilon));
+    typedef map<string,double>::value_type MVType;
+    if(this->parametersDefaultValues.find("theta")==this->parametersDefaultValues.end()){
+      this->parametersDefaultValues.insert(MVType("theta",0.5));
+    }
+    if(this->parametersDefaultValues.find("epsilon")==this->parametersDefaultValues.end()){
+      this->parametersDefaultValues.insert(MVType("epsilon",1.e-8));
+    }
+    //    this->staticVars.push_back(StaticVarHandler("real","theta",0u,this->theta));
+    //    this->staticVars.push_back(StaticVarHandler("real","epsilon",0u,this->epsilon));
     if(this->useRelaxation){
       this->staticVars.push_back(StaticVarHandler("real","relaxationCoefficient",
 						  0u,this->relaxationCoefficient));
