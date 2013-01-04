@@ -371,8 +371,8 @@ namespace mfront{
     if(this->parametersDefaultValues.find("epsilon")==this->parametersDefaultValues.end()){
       this->parametersDefaultValues.insert(MVType("epsilon",1.e-8));
     }
-    if(this->parametersDefaultValues.find("dtmin")==this->parametersDefaultValues.end()){
-      this->parametersHolder.push_back(VarHandler("real","epsilon",1u,0u));
+    if(this->parametersDefaultValues.find("dtmin")!=this->parametersDefaultValues.end()){
+      this->parametersHolder.push_back(VarHandler("real","dtmin",1u,0u));
       parserInitLocalVars += "if(this->dt<" + this->className + "::dtmin){\n";
       parserInitLocalVars += "this->dt=" + this->className + "::dtmin;\n";
       parserInitLocalVars += "}\n";
