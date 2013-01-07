@@ -37,6 +37,7 @@
 \newcommand{\pleiades}{\texttt{pleiades}}
 \newcommand{\TFEL}{\texttt{tfel}}
 \newcommand{\mfront}{\texttt{mfront}}
+\newcommand{\licos}{\texttt{licos}}
 \newcommand{\cyrano}{\texttt{cyrano}}
 \newcommand{\castem}{\texttt{Cast3M}}
 \newcommand{\pycastem}{\texttt{pyCast3M}}
@@ -104,8 +105,8 @@
 
 \resumecea{
 
-  \mfront{} est un générateur de code dédiée aux connaissances
-  matériau~:
+  Développé au sein de la plate-forme \pleiades{}, \mfront{}
+  est un générateur de code dédiée aux connaissances matériau~:
   \begin{itemize}
     \item les propriétés matériau~;
     \item les lois de comportement~;
@@ -128,6 +129,9 @@
   les fichiers \mfront{} peuvent être introduits par la base de données
   \sirius{}. Inversement, la base de données \sirius{} permet de
   récupérer les connaissances matériau sous forme de fichiers \mfront{}.
+
+  Son utilisation au sein de la plate-forme \pleiades{} est
+  aujourd'hui clairement établi.
 
 }
 
@@ -288,7 +292,7 @@ les propriétés matériau qui propose par défaut différentes interfaces~:
   \item l'interface \texttt{python} pour une utilisation dans des codes
   écrits dans ce language~;
   \item l'interface \texttt{gnuplot} pour une visualisation des courbes
-  d'évolution des propriétés matériau en fonction de leur paramètres~;
+  d'évolution des propriétés matériau~;
 \end{itemize}
 
 \paragraph{Ajout d'interfaces} Il est possible de rajouter dynamiquement
@@ -507,6 +511,78 @@ un bloc commençant par la directive \mkey{InitLocalVariables}.
 \mfront{} n'intervient pas dans le nom des fonctions générés. Il est
 cependant souhaitable et pratique de garder une certaine cohérence entre
 le nom du fichier et le nom du fichier généré.
+
+\subsection{Notion de paramètre}
+
+Les études réalisées dans le cadre de la plate-forme \pleiades{} sont
+souvent paramétriques~: il s'agit de mesurer l'impact d'une incertitude
+sur une quantité (conductivité thermique, coefficient d'échange) et
+l'impact d'une valeur numérique (critère de convergence) sur les
+résultats du code.
+
+Il est donc intéressant de pourvoir paramétrer une connaissance
+matériau. Plusieurs solutions sont possibles.
+
+La plus évidente est de prévoir une ou plusieurs entrées
+supplémentaire. Par exemple, si l'on veut introduire un coefficient
+d'incertitude sur une conductivité thermique, il est toujours possible
+de passer ce coefficient comme une argument supplémentaire de la
+fonction qui réalise le calcul de cette conductivité.
+
+Cette approche est très utilisée dans le code \licos{}~: une
+connaissance matériau livrée avec le code est reprise par l'utilisateur
+qui rajoute le ou les paramètres d'intérêts, recompile sa connaissance
+matériau dans une bibliothèque qui lui est propre et relance son calcule
+en utilisant cette bibliothèque.
+
+Cette approche ne peut que difficilement être utilisée dans les
+applications filières qui n'ont pas l'algorithme de gestion de
+dépendances de \licos{}~: en plus des étapes précédentes, il faudrait
+que l'utilisateur fasse les \og~branchements~\fg{} à la main dans le
+code source de l'application, ce qui peut s'avérer complexe.
+
+Le second désavantage de cette méthode est d'alourdir l'appel aux
+connaissances matériau, ce qui peut avoir un coût non
+négligeable\footnote{Dans le cas de l'application \licos{}, ce surcoût
+  est généralement négligeable, mais il peut être nettement sensible sur
+  des calculs \(1D\).}.
+
+Pour contourner ces difficultés, \mfront{} introduit une notion de
+{\em paramètre}, c'est à dire une valeur réelle, considérée comme
+constante au cours d'un calcul, mais pouvant être modifiée par
+l'utilisateur au moment de l'initialisation.
+
+Les interfaces qui le souhaitent peuvent mettre en place une gestion
+appropriée de ces paramètres. Par exemple, l'interface \castem{} aux
+propriétés matériau et l'interface \umat{} aux loi de comportement
+créent automatiquement une fonction permettant de modifier les
+différents paramètres qui sont stockées dans des variables globales. Il
+est facile de mettre en place un mécanisme générique, c'est à dire
+indépendant de toute connaissance matériau, permettant la modifications
+des valeurs des paramètres depuis le jeu de données\footnote{Par
+  exemple, dans \licos{}, le mot clé {\tt Parameter} a été introduit. Ce
+  mot clé est suivi du nom de la bibliothèque matériau, du nom de la
+  connaissance matériau, du nom du paramètre et de sa valeur.}.
+
+Cette solution corrige les défauts de la première approche. En
+particulier, l'accès aux valeurs des paramètres n'a pratiquement aucun
+coût numérique. Cette solution introduit cependant un inconvénient~:
+tous les matériaux utilisant cette connaissance sont affectés alors que
+dans la première solution tous les matériaux pouvaient être paramétrés
+de manière indépendante. Dans les applications filières, les matériaux
+n'ont aucune propriété, loi de comportement ou modèle commun et de ce
+fait, cet inconvénient ne se rencontre pas en pratique. Il resterait un
+cas délicat~: celui de calculs multi-tranches dans lesquels
+l'utilisateur voudraient paramétrer chaque tranche indépendamment.
+
+Dans le cas du code \licos{}, l'utilisateur pourra choisir la
+solution la plus adaptée à son besoin.
+
+\subsubsection{Définition de paramètres}
+
+\subsubsection{Paramètres par défaut}
+
+Les lois de comportement mécaniques introduites par \mfront{} possède 
 
 \subsection{Directives communes à l'ensemble des analyseurs}
 
