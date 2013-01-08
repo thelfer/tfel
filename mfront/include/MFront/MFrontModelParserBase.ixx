@@ -27,6 +27,7 @@ namespace mfront{
     this->registerNewCallBack("@Includes",&Child::treatIncludes);
     this->registerNewCallBack("@MembersFunc",&Child::treatMembers);
     this->registerNewCallBack("@StaticVar",&Child::treatStaticVar);
+    this->registerNewCallBack("@StaticVariable",&Child::treatStaticVar);
     this->registerNewCallBack("@Description",&Child::treatDescription);
     this->registerNewCallBack("@Bounds",
 			      &Child::treatBounds);

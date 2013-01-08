@@ -86,6 +86,7 @@
 \newcommand{\cea}{CEA}
 \newcommand{\windows}{\href{http://www.microsoft.com/france/windows/default.mspx}{\texttt{Windows}}}
 \newcommand{\linux}{\href{http://www.kernel.org/}{\texttt{linux}}}
+\newcommand{\debian}{\href{http://www.debian.org/}{\texttt{debian}}}
 \newcommand{\excel}{\href{http://www.microsoft.com/france/office/2007/programs/excel/overview.mspx}{\texttt{Microsoft Office Excel}}}
 
 \newcommand{\debutpas}[1]{\ensuremath{\left.#1\right|_{t}}}
@@ -315,6 +316,9 @@ Ce mécanisme permet donc de créer des interfaces sans modifier
 {\tt mfront [options] fichier1.mfront fichier2.mfront \ldots}
 \end{center}
 
+L'option la plus utilisée est \moption{interface} qui permet de
+choisir la cible de la compilation.
+
 Les fichiers générés se trouvent généralement dans un sous-répertoire
 nommé {\tt src} pour les fichiers source et {\tt include} pour les
 fichiers d'entête.
@@ -412,11 +416,22 @@ l'inclusion des règle de dépendances dans le fichier {\tt
   Make\-file\-.mfront} généré. Cette option a été introduite pour éviter
 certains problèmes sous \windows{}.
 
-%--silent-build                   : active or desactivate silent build
+\paragraph{L'option \moption{silent-build}}
+L'option \moption{silent-build} permet d'afficher ou non la ligne de
+compilation utilisée.
+
+\paragraph{L'option \moption{otarget}} L'option
+\moption{otarget} permet de ne compiler qu'une des librairies de manière
+optimisée.
+
+\paragraph{L'option \moption{target}} L'option
+\moption{target} permet de ne compiler qu'une des librairies.
+
+\paragraph{L'option \moption{win32}} L'option
+\moption{win32} est utilisée pour permettre la compilation sous \linux{}
+de librairies dynamiques pour \windows{}.
+
 %--nomelt                         : don't melt librairies sources
-%--otarget                        : generate MakeFile with optimized compilations flags and build the specified target
-%--target, -t                     : generate MakeFile and build the specified target
-%--win32                          : specify that the target system is win32
 
 \subsection{Noms de glossaire}
 
@@ -491,7 +506,7 @@ Les fichiers désignés sont analysés par \mfront{} avec deux effets~:
 \end{itemize}
 
 Ces différentes fonctions sont accessibles dans les différents blocs de
-code définis par l'utilisateur. Les paramètres de ces fonctions sont
+code définis par l'utilisateur. Les arguments de ces fonctions sont
 ceux déclarés dans le fichier par la directive \mkey{Input} et doivent
 être fournis dans l'ordre de déclaration.
 
@@ -512,11 +527,33 @@ un bloc commençant par la directive \mkey{InitLocalVariables}.
 cependant souhaitable et pratique de garder une certaine cohérence entre
 le nom du fichier et le nom du fichier généré.
 
+\subsection{Gestion des bornes}
+\label{sec:mfront:bounds}
+
+Les variables d'états peuvent posséder des bornes intrinsèques~: une
+température ne peut être négative, une porosité supérieure à \(1\). Ces
+bornes intrinsèques sont dénommées dans la suite \og~bornes
+physiques~\fg. Par ailleurs, la corrélation définissant la propriété
+matériau a souvent été établie sur certain domaine~: les limites de ce
+domaine expérimental seront dénommées \og~bornes de validité~\fg (de la
+corrélation).
+
+\paragraph{Le mot clé \texttt{@Bounds}} Le mot clé \mkey{Bounds} définit
+les bornes de validité de la corrélation utilisée pour chacune des
+différentes variables d'entrée. Le traitement du dépassement d'une de
+ces bornes dépend de l'interface utilisée.
+
+\paragraph{Le mot clé \texttt{@Physical\-Bounds}} Le mot clé
+\mkeyb{PhysicalBounds}{Physical\-Bounds} définit les valeurs admissibles
+des différents variables d'entrée. Le dépassement d'une de ces bornes
+doit arrêter le calcul.
+
 \subsection{Notion de paramètre}
+\label{sec:mfront:parameters}
 
 Les études réalisées dans le cadre de la plate-forme \pleiades{} sont
 souvent paramétriques~: il s'agit de mesurer l'impact d'une incertitude
-sur une quantité (conductivité thermique, coefficient d'échange) et
+sur une quantité (conductivité thermique, coefficient d'échange) ou
 l'impact d'une valeur numérique (critère de convergence) sur les
 résultats du code.
 
@@ -533,7 +570,8 @@ Cette approche est très utilisée dans le code \licos{}~: une
 connaissance matériau livrée avec le code est reprise par l'utilisateur
 qui rajoute le ou les paramètres d'intérêts, recompile sa connaissance
 matériau dans une bibliothèque qui lui est propre et relance son calcule
-en utilisant cette bibliothèque.
+en utilisant cette bibliothèque. Cette même approche est utilisée par
+les utilisateurs du code \castem{}.
 
 Cette approche ne peut que difficilement être utilisée dans les
 applications filières qui n'ont pas l'algorithme de gestion de
@@ -548,21 +586,27 @@ négligeable\footnote{Dans le cas de l'application \licos{}, ce surcoût
   des calculs \(1D\).}.
 
 Pour contourner ces difficultés, \mfront{} introduit une notion de
-{\em paramètre}, c'est à dire une valeur réelle, considérée comme
-constante au cours d'un calcul, mais pouvant être modifiée par
-l'utilisateur au moment de l'initialisation.
+{\em paramètre}, c'est à dire une valeur, considérée comme constante au
+cours d'un calcul, mais pouvant être modifiée par l'utilisateur au
+moment de l'initialisation. Pour les propriétés et les lois de
+comportements, les paramètres sont des valeurs réelles. Pour les
+modèles, les paramètres peuvent avoir différents types (valeurs réelles
+ou entières, tableaux, etc..).
 
 Les interfaces qui le souhaitent peuvent mettre en place une gestion
-appropriée de ces paramètres. Par exemple, l'interface \castem{} aux
-propriétés matériau et l'interface \umat{} aux loi de comportement
-créent automatiquement une fonction permettant de modifier les
-différents paramètres qui sont stockées dans des variables globales. Il
-est facile de mettre en place un mécanisme générique, c'est à dire
-indépendant de toute connaissance matériau, permettant la modifications
-des valeurs des paramètres depuis le jeu de données\footnote{Par
-  exemple, dans \licos{}, le mot clé {\tt Parameter} a été introduit. Ce
-  mot clé est suivi du nom de la bibliothèque matériau, du nom de la
-  connaissance matériau, du nom du paramètre et de sa valeur.}.
+appropriée de ces paramètres\footnote{Par défaut, la plupart des
+  interfaces décrites plus bas se contentent de traiter les paramètres
+  de la même manière que des valeurs constantes.}. Par exemple,
+l'interface \castem{} aux propriétés matériau et l'interface \umat{} aux
+loi de comportement créent automatiquement une fonction permettant de
+modifier les différents paramètres qui sont stockées dans des variables
+globales. Il est facile de mettre en place un mécanisme générique, c'est
+à dire indépendant de toute connaissance matériau, permettant la
+modifications des valeurs des paramètres depuis le jeu de
+données\footnote{Par exemple, dans \licos{}, le mot clé {\tt Parameter}
+  a été introduit. Ce mot clé est suivi du nom de la bibliothèque
+  matériau, du nom de la connaissance matériau, du nom du paramètre et
+  de sa valeur.}.
 
 Cette solution corrige les défauts de la première approche. En
 particulier, l'accès aux valeurs des paramètres n'a pratiquement aucun
@@ -576,13 +620,30 @@ cas délicat~: celui de calculs multi-tranches dans lesquels
 l'utilisateur voudraient paramétrer chaque tranche indépendamment.
 
 Dans le cas du code \licos{}, l'utilisateur pourra choisir la
-solution la plus adaptée à son besoin.
+solution la plus adaptée à son besoin. Dans \castem{}, seule la première
+solution est possible.
 
 \subsubsection{Définition de paramètres}
 
-\subsubsection{Paramètres par défaut}
+Pour les propriétés et les lois de comportements, la directive {\tt
+  @Parameter} a été définie. Elle est suivie du nom du paramètre, du
+signe égal, de sa valeur par défaut et d'un point-virgule.
 
-Les lois de comportement mécaniques introduites par \mfront{} possède 
+Pour les modèles, les paramètres propres aux modèles, utilisés pour
+leurs spécialisation\footnote{Nous renvoyons à la documentation des
+  codes de la plate-forme \pleiades{} pour une utilisation concrète de
+  ces paramètres.}, sont distingués des paramètres dits globaux. Les
+premiers sont définis par la directive \mkey{LocalParameter}, les
+secondes par la directive \mkey{GlobalParameter}. Ces mots clés sont
+suivis du type du paramètre, de son nom et d'un point-virgule. Une
+valeur par défaut peut être fournie par la méthode {\tt
+  setDefaultValue}.
+
+\subsubsection{Paramètres automatiquement déclarés}
+
+Les lois de comportement mécaniques introduites par \mfront{} peuvent
+déclarer automatiquement un certain nombre de paramètres. La valeur du
+critère de convergence est un exemple de tels paramètres.
 
 \subsection{Directives communes à l'ensemble des analyseurs}
 
@@ -652,12 +713,105 @@ caractères spéciaux.
 \subsection{Gestion de la compilation}
 \label{sec:mfront:compilation}
 
-En pas de générer des fichiers source, \mfront{} peut gérer leur
-compilation en librairie.
+En plus de générer des fichiers source, \mfront{} peut gérer leur
+compilation en librairie. Cette compilation se fait en plusieurs
+étapes~:
+\begin{itemize}
+  \item génération d'un fichier {\tt Makefile.mfront} dans le
+  sous-répertoire des sources {\tt src}. La génération du fichier
+  Makefile se fait en analysant le répertoire {\tt src} qui contient
+  (après la phase de génération des sources) différents fichiers
+  contentant les noms des libraires à générer, la liste de leurs sources
+  et de leurs dépendances, etc..~;
+  \item le lancement du processus de compilation. Il s'agit
+  essentiellement d'un appel à l'utilitaire {\tt make}.
+\end{itemize}
 
-\subsubsection{Génération de fichiers Makefile}
+\subsubsection{Variables affectant le processus de compilation}
 
-\subsubsection{Lancement du processus de compilation}
+Bien que cela n'est généralement pas nécessaire, l'utilisateur
+\mfront{} peut affecter le processus de compilation à l'aide de
+variables d'environnement. Cela est utile dans les situations
+suivantes~:
+\begin{itemize}
+  \item utilisation d'une librairie tierce (variables
+  \env{INCLUDES} et \env{LDFLAGS})~;
+  \item utilisation d'un compilateur différent du compilateur
+  système (variables \env{CC} et \env{CXX})~;
+  \item utiliser des options de compilation particulières
+  (variables \env{CFLAGS} et \env{CXXFLAGS})~;
+  \item génération de binaire pour une système différent
+  (cross-compilation) (variables \env{CC}, \env{CXX} \env{RANLIB},
+  \env{DLLTOOL} et \env{AR})~;
+\end{itemize}
+
+Le fichier {\tt Makefile.mfront} suit les règles des fichiers {\tt
+  Makefile}~: il est sensible aux variables d'environnement suivantes~:
+\begin{itemize}
+  \item \env{CC} qui désigne le compilateur {\tt C} à utiliser~;
+  \item \env{CXX} qui désigne le compilateur \cpp à utiliser. Ce
+  compilateur est également utiliser pour l'édition de liens~;
+  \item \env{INCLUDES} qui désigne des directives de
+  préprocesseur à utiliser en plus des directives définies par les
+  sources~;
+  \item \env{CFLAGS} qui désigne les directives de compilations à
+  utiliser pour les sources {\texttt c}. Si cette variable n'est pas
+  définie, \mfront{} utilisera les valeurs suivantes~:
+  \begin{itemize}
+    \item la sortie de la commande {\tt tfel-config -{}-oflags}
+    si l'une des options {\tt -{}-obuild} ou {\tt -{}-omake} a été
+    utilisée~;
+    \item {\tt -O2} sinon.
+  \end{itemize}
+  \item \env{CXXFLAGS} qui désigne les directives de compilations
+  à utiliser pour les source \cpp. Si cette variable n'est pas définie,
+  \mfront{} utilisera les valeurs suivantes~:
+  \begin{itemize}
+    \item la sortie de la commande {\tt tfel-config -{}-oflags}
+    si l'une des options {\tt -{}-obuild} ou {\tt -{}-omake} a été
+    utilisée~;
+    \item {\tt -O2} sinon.
+  \end{itemize}
+  \item \env{LDFLAGS} qui désigne des directives à passer à
+  l'éditeur de liens~;
+  \item \env{RANLIB}, \env{DLLTOOL} et \env{AR} qui ont été
+  introduits pour la génération de librairie dynamique pour \windows{}
+  depuis \linux{}.
+\end{itemize}
+
+\subsubsection{Génération de librairies
+  dynamiques pour \windows{} depuis \linux{}}
+
+À partir d'une version \linux{} de \mfront{}, il est possible de
+générer des librairies dynamiques pour \windows{} dans le cas des
+propriétés matériau. Il faut cependant que ces propriétés ne fassent pas
+appel à des librairies externes, ou, si tel est le cas de disposer des
+versions \windows{} de ces librairies\footnote{Pour compiler des lois de
+  comportements, il serait nécessaire de disposer des librairies
+  mathématiques de TFEL pour \windows{}~: il faut donc compiler
+  l'ensemble de {\tt TFEL} et \mfront{} en cross-compilation et utiliser
+  la version \windows{} de \mfront{}. Ceci est effectivement possible
+  via l'émulateur {\tt wine}, mais cette manière de procéder sort du
+  cadre de ce paragraphe.}.
+
+Pour générer des librairies dynamiques pour \windows{} depuis
+\linux{}, il est tout d'abord nécessaire de disposer d'un
+cross-compilateur. Sous \debian{}, l'utilisateur pourra installer les
+paquets {\tt mingw32} (\windows{} 32 bits) ou {\tt mingw64} (\windows{}
+32 et 64 bits).
+
+Il est alors nécessaire de définir les variables d'environnement
+\env{CC}, \env{CXX} \env{RANLIB}, \env{DLLTOOL} et \env{AR} et
+d'utiliser l'option \moption{win32}.
+
+Voici un exemple de génération de librairie dynamique pour
+\windows{} depuis \linux{}~:
+\begin{flushleft}
+{\tt AR=i586-mingw32msvc-ar RANLIB=i586-mingw32msvc-ranlib
+DLLTOOL=i586-mingw32msvc-dlltool CXX=i586-mingw32msvc-g++
+../../src/mfront --win32 --obuild --interface=c
+YoungModulus.mfront}
+\end{flushleft}
 
 \clearpage
 \newpage
@@ -701,47 +855,36 @@ de glossaire adapté n'existe, ces variables peuvent utiliser la méthode
 {\tt set\-Entry\-Name} pour être utilisable dans l'architecture
 \pleiades{}.
 
-Nous verrons au paragraphe~\ref{sec:mfront:properties:bounds} comment
+Nous verrons au paragraphe~\ref{sec:mfront:bounds} comment
 affecter des bornes aux variables d'entrée.
 
 \subsubsection{Variables statiques}
 
-La directive \mkey{StaticVariable}
+La directive \mkey{StaticVariable} permet d'introduire une variable
+statique au sens \cpp{}.
 
 \subsubsection{Paramètres}
 
-La directive \mkey{Parameter}
+La directive \mkey{Parameter} a été décrite au
+paragraphe~\ref{sec:mfront:parameters}.
 
 \subsubsection{Constantes}
 
-La directive \mkey{Constant}
+La directive \mkey{Constant} est synonymes de la directive
+\mkey{StaticVariable}.
 
 \subsection{Mots clés spécifiques}
 
-La directive \mkey{Namespaces}
+La directive \mkey{Namespaces} a été introduite pour inclure les
+fonctions ou les classes générées dans un espace de nom distinct. Ce mot
+clé n'est utilisée que par l'interface \cpp{} et peut éventuellement
+être utilisée par l'interface \pleiades{}.
 
-La directive \mkey{UseTemplate}
-
-\subsection{Gestion des bornes}
-\label{sec:mfront:properties:bounds}
-
-Les variables d'états peuvent posséder des bornes intrinsèques~: une
-température ne peut être négative, une porosité supérieure à \(1\). Ces
-bornes intrinsèques sont dénommées dans la suite \og~bornes
-physiques~\fg. Par ailleurs, la corrélation définissant la propriété
-matériau a souvent été établie sur certain domaine~: les limites de ce
-domaine expérimental seront dénommées \og~bornes de validité~\fg (de la
-corrélation).
-
-\paragraph{Le mot clé \texttt{@Bounds}} Le mot clé \mkey{Bounds} définit
-les bornes de validité de la corrélation utilisée pour chacune des
-différentes variables d'entrée. Le traitement du dépassement d'une de
-ces bornes dépend de l'interface utilisée.
-
-\paragraph{Le mot clé \texttt{@Physical\-Bounds}} Le mot clé
-\mkeyb{PhysicalBounds}{Physical\-Bounds} définit les valeurs admissibles
-des différents variables d'entrée. Le dépassement d'une de ces bornes
-doit arrêter le calcul.
+La directive \mkey{UseTemplate} demande la génération de fonctions ou
+de classes paramétrées par le type numérique utilisé (par défaut, les
+interfaces utilisent généralement des valeurs réelles en double
+précision). Cette directive n'est pour l'instant utilisée que par
+l'interface \cpp{}.
 
 \subsection{Interfaces disponibles} Les interfaces disponibles par
 défaut pour les propriétés matériaux sont~:
@@ -817,7 +960,7 @@ donnés dans le même ordre, que la première fonction.
   matériau a été fourni, le nom de la librairie sera {\tt libMMM.so} où
   \texttt{MMM} est le nom du matériau fourni par l'utilisateur~;
   \item si aucun nom de librairie ni aucun nom de matériau n'ont été
-  spécifiés, la librairie s'appellera {\tt libMaterialLaw.so}.
+  spécifiés, la librairie s'appellera {\tt lib\-Material\-Law.so}.
 \end{itemize}
 
 \subsubsection{L'interface \texttt{castem}}
@@ -1034,7 +1177,9 @@ pour définir la propriété matériau. Le fait que le code soit en fait
 du \texttt{c++} est ici anecdotique tant le code est proche de
 l'équation~\eqref{eq:youngmodulussnead}.
 
-\subsection{Exemple de propriétés dont seuls des mesures sont connues}
+\subsection{Exemple de propriétés dont seules des mesures sont connues}
+
+
 
 \clearpage
 \newpage
@@ -1551,11 +1696,13 @@ Cette figure montre également que ces classes sont des classes
 
 La distinction entre bornes physiques et bornes de validité, décrites
 pour les propriétés matériau au
-paragraphe~\ref{sec:mfront:properties:bounds}, est reprise pour les lois
+paragraphe~\ref{sec:mfront:bounds}, est reprise pour les lois
 de comportement mécanique.
 
 Des bornes peuvent être posées sur~:
 \begin{itemize}
+  \item les valeurs des variables internes (en début et en fin de pas).
+  \item les valeurs des contraintes.
   \item les valeurs des variables externes.
 \end{itemize}
 
@@ -1588,6 +1735,14 @@ de violation d'une borne de validité. Si la politique est fixée à
 \tfelb{OutOfBoundsException}{Out\-Of\-Bounds\-Exception} est levée.
 
 \subsubsection{Accès à l'hypothèse de modélisation}
+
+Les lois de comportements écrites en \mfront{} sont généralement
+indépendantes de l'hypothèse de modélisation. Dans le cas des lois de
+comportements orthotropes, il est nécessaire d'avoir accès à cette
+information car il n'est pas possible, pour une utilisation dans
+\castem{}, d'avoir une convention de rangement des axes d'orthotropie
+valides pour toutes les hypothèses (voir
+annexe~\ref{sec:annexe:orthotropie}).
 
 Le fichier d'entête
 \headerb{TFEL/MaterialLaw/ModellingHypothesis.hxx}{TFEL/\-Material\-Law/\-Modelling\-Hypo\-thesis\-.hxx}
@@ -2075,6 +2230,7 @@ accès (pour des posttraitements), il est possible de définir des
 variables internes auxiliaires.
 
 \subsubsection{Algorithme de résolution}
+\label{sec:mfront:isotropic-solver}
 
 Les différents mécanismes précédents peuvent partager un algorithme de
 résolution efficace. C'est cette particularité qui a conduit au
@@ -2339,8 +2495,6 @@ Une autre manière de calculer cette variable est~:
 qui montre que la déformation élastique a été mise à jour et non la
 déformation totale.
 
-\subsubsection{Transformation du code}
-
 \subsection{Comportement viscoplastique du \sic{}}
 
 Nous voulons décrire le comportement viscoplastique du \sic{} Le \sic{}
@@ -2532,18 +2686,18 @@ temps minimal par la directive
     Argument & Algorithme associé \\
     \hline
     \hline
-    \texttt{Euler} & algorithme d'nom{Euler} \\
+    \texttt{Euler} & algorithme d'\nom{Euler} \\
     \hline
-    \texttt{rk2} & algorithme de nom{Runge-Kutta} d'ordre \(2\) \\
+    \texttt{rk2} & algorithme de \nom{Runge-Kutta} d'ordre \(2\) \\
     \hline
-    \texttt{rk4} & algorithme de nom{Runge-Kutta} d'ordre \(4\) \\
+    \texttt{rk4} & algorithme de \nom{Runge-Kutta} d'ordre \(4\) \\
     \hline
     \texttt{rk42} & algorithme avec contrôle de l'erreur et adaptation
-    du pas de temps basé sur des méthodes de nom{Runge-Kutta} d'ordre
+    du pas de temps basé sur des méthodes de \nom{Runge-Kutta} d'ordre
     \(4\) et d'ordre \(2\) \\
     \hline
     \texttt{rk54} & algorithme avec contrôle de l'erreur et adaptation
-    du pas de temps basé sur des méthodes de nom{Runge-Kutta} d'ordre
+    du pas de temps basé sur des méthodes de \nom{Runge-Kutta} d'ordre
     \(5\) et d'ordre \(4\) \\
     \hline
     \texttt{rkCastem} & algorithme avec contrôle de l'erreur et adaptation
@@ -3118,9 +3272,6 @@ indépendants du temps (plasticité ou endommagement) nécessite, pour être
 physiquement satisfaisant, d'utiliser la valeur \(1\) (schéma dit
 \og~purement implicite\fg{}).
 
-\paragraph{Traitement des lois indépendantes du temps, cas de la
-  plasticité}
-
 \paragraph{Initialisation du vecteur $F$} Le vecteur 
 L'équation~\eqref{eq:F_implicite} montre que la fonction \(f_{y_{i}}\)
 comporte comme premier terme l'incrément \(\Delta\,y_{i}\). \mfront{}
@@ -3144,18 +3295,24 @@ de la solution~:
 Une estimation explicite de la solution peut être donnée dans un bloc
 \mkey{Predictor}.
 
-\subsubsection{Critère d'arrêt} Les algorithmes présentés s'arrêtent
-quand la différence entre deux estimations des incréments des
-déformations viscoplastiques cumulées est inférieur à un certain critère
-\(\varepsilon\)~:
+\subsubsection{Critère d'arrêt}
+
+Les algorithmes présentés s'arrêtent quand la différence entre deux
+estimations des incréments des déformations viscoplastiques cumulées est
+inférieur à un certain critère \(\varepsilon\)~:
 \[
 \Frac{1}{\displaystyle\sum_{i=1}^{N}N_{i}}\displaystyle\sum_{i=1}^{N}\left|\Delta_{n}\Delta\,
 y_{i}\right|<\varepsilon
 \]
-où\(\Delta_{n}\Delta\,y_{i}\) désigne la différence entre l'estimation
-de l'incrément de la i\ieme{} variable à l'étape \(n+1\) et de son
-estimation à l'étape \(n\) et \(N_{i}\) est le nombre de composantes de
-la variable interne \(y_{i}\).
+où\(\Delta_{n}\Delta\,y_{i}\) désigne la
+différence entre l'estimation de l'incrément de la i\ieme{} variable à
+l'étape \(n+1\) et de son estimation à l'étape \(n\) et \(N_{i}\) est le
+nombre de composantes de la variable interne \(y_{i}\).
+
+\paragraph{Notes} Cette écriture du critère d'arrêt
+montre qu'il n'est valide que si les différentes variables internes sont
+du même ordre de grandeur. Ceci est également nécessaire pour le bon
+comportement numérique de la méthode de \nom{Newton}.
 
 \subsubsection{Avantages et inconvénients des méthodes implicites} Les
 méthodes implicites sont généralement opposées aux méthodes
@@ -3182,25 +3339,26 @@ particulier si une stratégie à pas de temps adaptatif est utilisé.
 
 En comparaison, les méthodes implicites sont réputées beaucoup plus
 stables numériquement et ne nécessitent qu'un nombre faible d'appels à
-la fonction \(G\). De plus, comme nous le verrons plus loin, les
-méthodes implicites sont particulièrement adaptées aux lois de
-comportement indépendantes du temps (endommagement ou plasticité) où
-le système différentiel peut être remplacé par la nullité du critère
-plastique en fin de pas de temps, ce qui est précisément la condition
-{\em physique} à vérifier. Cette particularité explique pourquoi les
-méthodes implicites sont toujours à préférer aux méthodes de type
-\nom{Runge-Kutta} dans le cas de lois de comportement indépendantes du
-temps, même si elles présentent sur le papier des ordres de
-convergence moins élevés.  L'application des méthodes implicites aux
-lois de comportement dépendantes du temps (écoulements viscoplastiques
-notamment) est plus délicates en raison justement de ces ordres de
-convergences plus faibles (que les méthodes de type \nom{Runge-Kutta})
-et peuvent conduire à des imprécisions. En pratique, nous avons {\em
-  toujours} constaté des résultats extrêmement satisfaisants tant en
-termes de précision qu'en termes de performance numérique avec les
-méthodes implicites, quelque soit le type de loi de comportement. Ceci
-explique que la plupart des analyseurs syntaxiques disponibles dans
-\mfront{} soient basés sur ces méthodes.
+la fonction \(G\). De plus, les méthodes implicites sont
+particulièrement adaptées aux lois de comportement indépendantes du
+temps (endommagement ou plasticité) où le système différentiel peut être
+remplacé par la nullité du critère plastique en fin de pas de temps, ce
+qui est précisément la condition {\em physique} à vérifier\footnote{Nous
+  avons traité le cas de la plasticité isotrope au
+  paragraphe~\ref{sec:mfront:isotropic-solver}.}. Cette particularité
+explique pourquoi les méthodes implicites sont toujours à préférer aux
+méthodes de type \nom{Runge-Kutta} dans le cas de lois de comportement
+indépendantes du temps, même si elles présentent sur le papier des
+ordres de convergence moins élevés. L'application des méthodes
+implicites aux lois de comportement dépendantes du temps (écoulements
+viscoplastiques notamment) est plus délicates en raison justement de ces
+ordres de convergences plus faibles (que les méthodes de type
+\nom{Runge-Kutta}) et peuvent conduire à des imprécisions. En pratique,
+nous avons {\em toujours} constaté des résultats extrêmement
+satisfaisants tant en termes de précision qu'en termes de performance
+numérique avec les méthodes implicites, quelque soit le type de loi de
+comportement. Ceci explique que la plupart des analyseurs syntaxiques
+disponibles dans \mfront{} soient basés sur ces méthodes.
 
 Les deux principales faiblesses des méthodes implicites restent~:
 \begin{itemize}
@@ -3462,11 +3620,51 @@ jacobienne par la relation suivante~:
 Cette variante est disponible dans \mfront{} sous le nom de
 \texttt{Broyden2}.
 
-\subsection{Amélioration de la robustesse de algorithme}
+\subsection{Amélioration de la robustesse des algorithmes}
+
+Différentes méthodes permettant d'améliorer la robustesse des
+algorithmes ont été testées. Nous les décrivons maintenant bien que leur
+utilisation conduise à des résultats mitigés.
 
 \subsubsection{Méthode d'accélération de \castem{}}
 
+L'idée de cette méthode d'accélération est de trouver une nouvelle
+estimation de la solution à partir des itérations précédentes. Soient
+\(F_{n-2}\), \(F_{n-1}\) et \(F_{n}\) les résidus associés aux trois
+dernières estimations \(\Delta\, Y{n-2}\), \(\Delta\, Y{n-1}\) et
+\(\Delta\, Y{n}\) de la solution.
+
+Il est possible de construire à partir de ces trois résidus un
+hyperplan. L'idée est d'exprimer la projection du vecteur nul (qui
+correspond à la solution recherchée) sur cet hyperplan comme une
+combinaison linéaire de ces trois résidus et de déduire une nouvelle
+estimation de la solution en appliquant la même combinaison linéaire aux
+estimations \(\Delta\, Y{n-2}\), \(\Delta\, Y{n-1}\) et \(\Delta\,
+Y{n}\).
+
+Dans certains cas difficiles, cette méthode peut stabiliser les
+calculs, mais elle empêche la convergence quadratique de la méthode de
+\nom{Newton}. Son intérêt apparaît aujourd'hui très limité.
+
+%    this->registerNewCallBack("@UseAcceleration",&MFrontImplicitParser::treatUseAcceleration);
+%    this->registerNewCallBack("@AccelerationTrigger",&MFrontImplicitParser::treatAccelerationTrigger);
+%    this->registerNewCallBack("@AccelerationPeriod",&MFrontImplicitParser::treatAccelerationPeriod);
+
 \subsubsection{Méthode de relaxation}
+
+Une méthode de relaxation a été introduite pour améliorer la
+convergence de certains cas difficiles où des oscillations lors de la
+recherche de solution peuvent apparaître. Soient \(\Delta\, Y{n-1}\) et
+\(\Delta\, Y{n}\) les deux dernières estimations de la solution. La
+relaxation consiste à prendre comme nouvelle estimation~:
+\[
+\paren{1-w}\,\Delta\, Y{n-1}+w\,\Delta\, Y{n}
+\]
+où \(w\) est un coefficient de relaxation.
+
+%    this->registerNewCallBack("@UseRelaxation",&MFrontImplicitParser::treatUseRelaxation);
+%    this->registerNewCallBack("@RelaxationTrigger",&MFrontImplicitParser::treatRelaxationTrigger);
+%    this->registerNewCallBack("@RelaxationCoefficient",&MFrontImplicitParser::treatRelaxationCoefficient);
 
 \subsubsection{Autres pistes}
 
