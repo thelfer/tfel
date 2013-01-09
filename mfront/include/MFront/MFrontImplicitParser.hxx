@@ -157,12 +157,6 @@ namespace mfront{
 
     std::string initJacobian;
 
-    // long double theta;
-
-    //    long double epsilon;
-
-    long double relaxationCoefficient;
-
     unsigned short iterMax;
 
     unsigned short relaxationTrigger;

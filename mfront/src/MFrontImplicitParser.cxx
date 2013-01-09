@@ -18,9 +18,6 @@ namespace mfront{
   MFrontImplicitParser::MFrontImplicitParser()
     : MFrontVirtualParser(), 
       MFrontBehaviourParserBase<MFrontImplicitParser>(),
-      //      theta(0.5f),
-      //      epsilon(1.e-8),
-      relaxationCoefficient(0.5),
       iterMax(100),
       relaxationTrigger(10),
       accelerationTrigger(10),
@@ -34,14 +31,14 @@ namespace mfront{
   {
     using namespace std;
     typedef map<string,string>::value_type MVType;
-    // static variable
+    // parameters
     this->registerVariable("theta");
     this->parametersHolder.push_back(VarHandler("real","theta",1u,0u));
     this->registerVariable("epsilon");
     this->parametersHolder.push_back(VarHandler("real","epsilon",1u,0u));
-    //    this->registerStaticVariable("epsilon");
+    //  static variables
+    this->registerVariable("relaxationCoefficient");
     this->registerStaticVariable("iterMax");
-    this->registerStaticVariable("relaxationCoefficient");
     this->registerStaticVariable("relaxationTrigger");
     // Default state vars
     this->registerVariable("eel");
@@ -250,6 +247,7 @@ namespace mfront{
     }
     if(this->current->value=="true"){
       this->useRelaxation = true;
+      this->parametersHolder.push_back(VarHandler("real","relaxationCoefficient",1u,0u));
     } else if(this->current->value=="false"){
       this->useRelaxation = false;
     } else {
@@ -335,6 +333,7 @@ namespace mfront{
   MFrontImplicitParser::treatRelaxationCoefficient(void)
   {
     using namespace std;
+    typedef map<string,double>::value_type MVType;
     this->checkNotEndOfFile("MFrontImplicitParser::treatRelaxationCoefficient",
 			    "Cannot read relaxation coefficient value.");
     if(!this->useRelaxation){
@@ -342,14 +341,20 @@ namespace mfront{
 			      "relaxation unused");
     }
     istringstream flux(current->value);
-    flux >> this->relaxationCoefficient;
+    double relaxationCoefficient;
+    flux >> relaxationCoefficient;
     if((flux.fail())||(!flux.eof())){
       this->throwRuntimeError("MFrontImplicitParser::treatRelaxationCoefficient",
 			      "Failed to read relaxation coefficient value.");
     }
-    if(this->relaxationCoefficient<0){
+    if(relaxationCoefficient<0){
       this->throwRuntimeError("MFrontImplicitParser::treatRelaxationCoefficient",
 			      "relaxation coefficient value must be positive.");
+    }
+    if(!this->parametersDefaultValues.insert(MVType("relaxationCoefficient",
+						    relaxationCoefficient)).second){
+      this->throwRuntimeError("MFrontImplicitParser::treatRelaxationCoefficient",
+			      "default value already defined for parameter 'relaxationCoefficient'");
     }
     ++(this->current);
     this->readSpecifiedToken("MFrontImplicitParser::treatRelaxationCoefficient",";");    
@@ -1210,11 +1215,10 @@ namespace mfront{
     if(this->parametersDefaultValues.find("epsilon")==this->parametersDefaultValues.end()){
       this->parametersDefaultValues.insert(MVType("epsilon",1.e-8));
     }
-    //    this->staticVars.push_back(StaticVarHandler("real","theta",0u,this->theta));
-    //    this->staticVars.push_back(StaticVarHandler("real","epsilon",0u,this->epsilon));
     if(this->useRelaxation){
-      this->staticVars.push_back(StaticVarHandler("real","relaxationCoefficient",
-						  0u,this->relaxationCoefficient));
+      if(this->parametersDefaultValues.find("relaxationCoefficient")==this->parametersDefaultValues.end()){
+	this->parametersDefaultValues.insert(MVType("relaxationCoefficient",0.5));
+      }
       if(this->relaxationTrigger+1>=this->iterMax){
 	string msg("MFrontImplicitParser::endsInputFileProcessing :");
 	msg += "relaxation can never take place (relaxationTrigger>=iterMax-1)'";

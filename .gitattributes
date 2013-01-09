@@ -14,6 +14,7 @@
 cmake/Makefile.am -text
 cmake/modules/Makefile.am -text
 cmake/modules/autotools.cmake -text
+cmake/modules/castem.cmake -text
 cmake/modules/gcc.cmake -text
 cmake/modules/tfel.cmake -text
 /configure.ac -text

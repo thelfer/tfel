@@ -11,4 +11,6 @@ tfel_library(TFELTests
              TestManager.cxx
              TestCase.cxx)
 
+if(UNIX)
 target_link_libraries(TFELTests rt)
+endif(UNIX)

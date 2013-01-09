@@ -113,9 +113,8 @@ namespace mfront{
 
     std::string flowRule;
 
-    long double theta;
-
-    long double epsilon;
+    //! default value
+    double theta;
 
     unsigned short iterMax;
 

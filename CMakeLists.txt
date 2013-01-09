@@ -3,10 +3,13 @@ cmake_minimum_required(VERSION 2.4)
 include(cmake/modules/tfel.cmake)
 # some variables for compatibility with autotools
 include(cmake/modules/autotools.cmake)
+# check for castem
+include(cmake/modules/autotools.cmake)
 
 tfel_project(tfel 1 1)
-
 set(PACKAGE_BUGREPORT "thomas.helfer@cea.fr")
+
+add_custom_target(check COMMAND ${CMAKE_CTEST_COMMAND})
 
 #compiler specific options
 set(OPTIMISATION_FLAGS "")
@@ -25,6 +28,14 @@ add_definitions("-DOPTIMISATION_FLAGS=\\\"\"${OPTIMISATION_FLAGS}\"\\\"")
 add_definitions("-DCOMPILER_WARNINGS=\\\"\"${COMPILER_WARNINGS}\"\\\"")
 add_definitions("-DVERSION=\\\"\"${TFEL_VERSION_MAJOR}\"\\\"")
 add_definitions("-DTFEL_SVN_REVISION=\\\"\"????\"\\\"")
+
+#castem
+include(cmake/modules/castem.cmake)
+
+#gnuplot
+
+#python
+
 
 # sub directories
 add_subdirectory(include) 

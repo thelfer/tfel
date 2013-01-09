@@ -1,5 +1,9 @@
 include_directories("${PROJECT_SOURCE_DIR}/include"
                     "${PROJECT_SOURCE_DIR}/mfront/include")
+if(HAVE_CASTEM)
+include_directories("${CASTEMHOME}/include")
+endif(HAVE_CASTEM)
+
 link_directories("${PROJECT_BINARY_DIR}/src/Math"
                  "${PROJECT_BINARY_DIR}/src/System"
                  "${PROJECT_BINARY_DIR}/src/Utilities"
@@ -53,10 +57,41 @@ set(mfront_SOURCES
     MFrontLaTeXLawInterface.cxx
     ${PROJECT_BINARY_DIR}/mfront/src/MFrontHeader.cxx)
 
+
+
+if(HAVE_CASTEM)
+    set(mfront_SOURCES
+	MFrontUMATInterface.cxx
+	MFrontCastemLawInterface.cxx
+	${mfront_SOURCES})
+    
+    set(UMATInterface_SOURCES
+	UMATInterfaceBase.cxx
+	UMATComputeStiffnessTensor.cxx
+	UMATComputeThermalExpansionTensor.cxx
+	UMATRotationMatrix.cxx
+	UMATOutOfBoundsPolicy.cxx
+	UMATGetModellingHypothesis.cxx
+	UMATException.cxx)
+
+    tfel_library(UMATInterface ${UMATInterface_SOURCES})
+    target_link_libraries(UMATInterface
+	                  TFELUtilities)
+endif(HAVE_CASTEM)
+
 add_executable(mfront ${mfront_SOURCES})
+
+if(UNIX)
 target_link_libraries(mfront
                       TFELSystem
 		      TFELUtilities
 		      TFELException
 		      -ldl -pthread)
+else(UNIX)
+target_link_libraries(mfront
+                      TFELSystem
+		      TFELUtilities
+		      TFELException)
+endif(UNIX)
+
 install(TARGETS mfront DESTINATION bin)

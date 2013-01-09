@@ -17,14 +17,17 @@ namespace mfront{
     : MFrontVirtualParser(),
       MFrontBehaviourParserBase<MFrontIsotropicBehaviourParserBase>(),
       theta(0.5f),
-      epsilon(1.e-8),
       iterMax(100)
   {
     using namespace std;
     typedef map<string,string>::value_type MVType;
     this->reserveName("NewtonIntegration");
-    this->registerStaticVariable("theta");
-    this->registerStaticVariable("epsilon");
+    this->registerVariable("theta");
+    this->parametersHolder.push_back(VarHandler("real","theta",1u,0u));
+    this->registerVariable("epsilon");
+    this->parametersHolder.push_back(VarHandler("real","epsilon",1u,0u));
+    //    this->registerStaticVariable("epsilon");
+    //    this->registerStaticVariable("theta");
     this->registerStaticVariable("iterMax");
     this->registerVariable("young");
     this->registerVariable("nu");
@@ -78,40 +81,82 @@ namespace mfront{
   MFrontIsotropicBehaviourParserBase::treatTheta(void)
   {
     using namespace std;
-    this->checkNotEndOfFile("MFrontIsotropicBehaviourParserBase::treatTheta",
+    typedef map<string,double>::value_type MVType;
+    double v;
+    this->checkNotEndOfFile("MFrontImplicitParser::treatTheta",
 			    "Cannot read theta value.");
     istringstream flux(current->value);
-    flux >> this->theta;
-    if(flux.fail()){
-      this->throwRuntimeError("MFrontIsotropicBehaviourParserBase::treatTheta",
+    flux >> v;
+    if((flux.fail())||(!flux.eof())){
+      this->throwRuntimeError("MFrontImplicitParser::treatTheta",
 			      "Failed to read theta value.");
     }
-    if((this->theta<0.)||(this->theta>1.)){
-      this->throwRuntimeError("MFrontIsotropicBehaviourParserBase::treatTheta",
+    if((v<0.)||(v>1.)){
+      this->throwRuntimeError("MFrontImplicitParser::treatTheta",
 			      "Theta value must be positive and smaller than 1.");
     }
+    if(!this->parametersDefaultValues.insert(MVType("theta",v)).second){
+      this->throwRuntimeError("MFrontImplicitParser::treatTheta",
+			      "default value already defined for parameter 'theta'");
+    }
     ++(this->current);
-    this->readSpecifiedToken("MFrontIsotropicBehaviourParserBase::treatTheta",";");
+    this->readSpecifiedToken("MFrontImplicitParser::treatTheta",";");
+    // using namespace std;
+    // this->checkNotEndOfFile("MFrontIsotropicBehaviourParserBase::treatTheta",
+    // 			    "Cannot read theta value.");
+    // istringstream flux(current->value);
+    // flux >> this->theta;
+    // if(flux.fail()){
+    //   this->throwRuntimeError("MFrontIsotropicBehaviourParserBase::treatTheta",
+    // 			      "Failed to read theta value.");
+    // }
+    // if((this->theta<0.)||(this->theta>1.)){
+    //   this->throwRuntimeError("MFrontIsotropicBehaviourParserBase::treatTheta",
+    // 			      "Theta value must be positive and smaller than 1.");
+    // }
+    // ++(this->current);
+    // this->readSpecifiedToken("MFrontIsotropicBehaviourParserBase::treatTheta",";");
   } // end of MFrontIsotropicBehaviourParserBase::treatTheta
 
   void
   MFrontIsotropicBehaviourParserBase::treatEpsilon(void)
   {
     using namespace std;
-    this->checkNotEndOfFile("MFrontIsotropicBehaviourParserBase::treatEpsilon",
+    typedef map<string,double>::value_type MVType;
+    double epsilon;
+    this->checkNotEndOfFile("MFrontImplicitParser::treatEpsilon",
 			    "Cannot read epsilon value.");
     istringstream flux(current->value);
-    flux >> this->epsilon;
-    if(flux.fail()){
-      this->throwRuntimeError("MFrontIsotropicBehaviourParserBase::treatEpsilon",
+    flux >> epsilon;
+    if((flux.fail())||(!flux.eof())){
+      this->throwRuntimeError("MFrontImplicitParser::treatEpsilon",
 			      "Failed to read epsilon value.");
     }
-    if(this->epsilon<0){
-      this->throwRuntimeError("MFrontIsotropicBehaviourParserBase::treatEpsilon",
+    if(epsilon<0){
+      this->throwRuntimeError("MFrontImplicitParser::treatEpsilon",
 			      "Epsilon value must be positive.");
     }
+    if(!this->parametersDefaultValues.insert(MVType("epsilon",epsilon)).second){
+      this->throwRuntimeError("MFrontImplicitParser::treatEpsilon",
+			      "default value already defined for parameter 'epsilon'");
+    }
     ++(this->current);
-    this->readSpecifiedToken("MFrontIsotropicBehaviourParserBase::treatEpsilon",";");
+    this->readSpecifiedToken("MFrontImplicitParser::treatEpsilon",";");
+    // using namespace std;
+    // this->checkNotEndOfFile("MFrontIsotropicBehaviourParserBase::treatEpsilon",
+    // 			    "Cannot read epsilon value.");
+    // istringstream flux(current->value);
+    // flux >> this->epsilon;
+    // if(flux.fail()){
+    //   this->throwRuntimeError("MFrontIsotropicBehaviourParserBase::treatEpsilon",
+    // 			      "Failed to read epsilon value.");
+    // }
+    // if(this->epsilon<0){
+    //   this->throwRuntimeError("MFrontIsotropicBehaviourParserBase::treatEpsilon",
+    // 			      "Epsilon value must be positive.");
+    // }
+    // ++(this->current);
+    // this->readSpecifiedToken("MFrontIsotropicBehaviourParserBase::treatEpsilon",";");
   } // MFrontIsotropicBehaviourParserBase::treatEpsilon
 
   void
@@ -204,11 +249,17 @@ namespace mfront{
   MFrontIsotropicBehaviourParserBase::endsInputFileProcessing(void)
   {
     using namespace std;
+    typedef map<string,double>::value_type MVType;
     VarContainer::iterator p;
     string currentVarName;
-
-    this->staticVars.push_back(StaticVarHandler("real","theta",0u,this->theta));
-    this->staticVars.push_back(StaticVarHandler("real","epsilon",0u,this->epsilon));
+    if(this->parametersDefaultValues.find("theta")==this->parametersDefaultValues.end()){
+      this->parametersDefaultValues.insert(MVType("theta",this->theta));
+    }
+    //    this->staticVars.push_back(StaticVarHandler("real","theta",0u,this->theta));
+    if(this->parametersDefaultValues.find("epsilon")==this->parametersDefaultValues.end()){
+      this->parametersDefaultValues.insert(MVType("epsilon",1.e-8));
+    }
+    //    this->staticVars.push_back(StaticVarHandler("real","epsilon",0u,this->epsilon));
 
     if(this->flowRule.empty()){
       string msg("MFrontIsotropicBehaviourParserBase::endsInputFileProcessing : ");
