@@ -21,16 +21,16 @@ namespace tfel
   namespace system
   {
 
-    TFEL_SYSTEM_BINARY_WRITE_SRC(char);
-    TFEL_SYSTEM_BINARY_WRITE_SRC(unsigned short);
-    TFEL_SYSTEM_BINARY_WRITE_SRC(unsigned int);
-    TFEL_SYSTEM_BINARY_WRITE_SRC(long unsigned int);
-    TFEL_SYSTEM_BINARY_WRITE_SRC(short);
-    TFEL_SYSTEM_BINARY_WRITE_SRC(int);
-    TFEL_SYSTEM_BINARY_WRITE_SRC(long int);
-    TFEL_SYSTEM_BINARY_WRITE_SRC(float);
-    TFEL_SYSTEM_BINARY_WRITE_SRC(double);
-    TFEL_SYSTEM_BINARY_WRITE_SRC(long double);
+    TFEL_SYSTEM_BINARY_WRITE_SRC(char)
+    TFEL_SYSTEM_BINARY_WRITE_SRC(unsigned short)
+    TFEL_SYSTEM_BINARY_WRITE_SRC(unsigned int)
+    TFEL_SYSTEM_BINARY_WRITE_SRC(long unsigned int)
+    TFEL_SYSTEM_BINARY_WRITE_SRC(short)
+    TFEL_SYSTEM_BINARY_WRITE_SRC(int)
+    TFEL_SYSTEM_BINARY_WRITE_SRC(long int)
+    TFEL_SYSTEM_BINARY_WRITE_SRC(float)
+    TFEL_SYSTEM_BINARY_WRITE_SRC(double)
+    TFEL_SYSTEM_BINARY_WRITE_SRC(long double)
 
   } // end of namespace system
 

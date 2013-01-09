@@ -12,6 +12,7 @@
 /bootstrap.sh -text
 /clean.sh -text
 cmake/Makefile.am -text
+cmake/ToolChain-i586-mingw32msvc.cmake -text
 cmake/modules/Makefile.am -text
 cmake/modules/autotools.cmake -text
 cmake/modules/castem.cmake -text
@@ -766,8 +767,10 @@ mfront/src/UMATRotationMatrix.cxx -text
 mfront/src/UnaryLoadingDefinition.cxx -text
 mfront/src/VarHandler.cxx -text
 mfront/src/main.cxx -text
+mfront/tests/CMakeLists.txt -text
 mfront/tests/Makefile.am -text
 mfront/tests/behaviours/Makefile.am -text
+mfront/tests/properties/CMakeLists.txt -text
 mfront/tests/properties/Makefile.am -text
 mfront/tests/properties/VanadiumAlloy_PoissonRatio_SRMA.mfront -text
 mfront/tests/properties/VanadiumAlloy_SpecificHeat_SRMA.mfront -text
@@ -1055,7 +1058,9 @@ tests/Utilities/gentype.cxx -text
 tests/Utilities/gentype2.cxx -text
 tests/Utilities/gentype3.cxx -text
 tests/Utilities/tuple.cxx -text
+tfel-doc/CMakeLists.txt -text
 tfel-doc/Makefile.am -text
+tfel-doc/include/CMakeLists.txt -text
 tfel-doc/include/Makefile.am -text
 tfel-doc/include/TFEL/Utilities/Config.hxx -text
 tfel-doc/include/TFEL/Utilities/ConfigParser.hxx -text
@@ -1065,6 +1070,7 @@ tfel-doc/include/TFEL/Utilities/ParserBase.hxx -text
 tfel-doc/include/TFEL/Utilities/TestDocMain.hxx -text
 tfel-doc/include/TFEL/Utilities/TestDocParser.hxx -text
 tfel-doc/include/TFEL/Utilities/TestDocumentation.hxx -text
+tfel-doc/src/CMakeLists.txt -text
 tfel-doc/src/ConfigParser.cxx -text
 tfel-doc/src/Global.cxx -text
 tfel-doc/src/LaTeXConvertion.cxx -text

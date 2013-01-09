@@ -5,8 +5,9 @@ link_directories("${PROJECT_BINARY_DIR}/src/Material"
 
 # a simple macro
 macro(tests_material test_arg)
-  add_executable(${test_arg} ${test_arg}.cxx)
-  add_test(${test_arg} ${EXECUTABLE_OUTPUT_PATH}/${test_arg})
+  add_executable(${test_arg} EXCLUDE_FROM_ALL ${test_arg}.cxx)
+  add_test(${test_arg} ${test_arg})
+  add_dependencies(check ${test_arg})
   target_link_libraries(${test_arg} TFELMaterial TFELMath TFELException)
 endmacro(tests_material)
 

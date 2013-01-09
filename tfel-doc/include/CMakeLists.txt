@@ -1,0 +1,8 @@
+install_header(TFEL/Utilities Global.hxx)
+install_header(TFEL/Utilities Config.hxx)
+install_header(TFEL/Utilities ConfigParser.hxx)
+install_header(TFEL/Utilities LaTeXConvertion.hxx)
+install_header(TFEL/Utilities ParserBase.hxx)
+install_header(TFEL/Utilities TestDocMain.hxx)
+install_header(TFEL/Utilities TestDocParser.hxx)
+install_header(TFEL/Utilities TestDocumentation.hxx)

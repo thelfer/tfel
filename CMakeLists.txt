@@ -9,6 +9,8 @@ include(cmake/modules/autotools.cmake)
 tfel_project(tfel 1 1)
 set(PACKAGE_BUGREPORT "thomas.helfer@cea.fr")
 
+# testing
+enable_testing()
 add_custom_target(check COMMAND ${CMAKE_CTEST_COMMAND})
 
 #compiler specific options
@@ -33,18 +35,45 @@ add_definitions("-DTFEL_SVN_REVISION=\\\"\"????\"\\\"")
 include(cmake/modules/castem.cmake)
 
 #gnuplot
+include(FindGnuplot)
+if(GNUPLOT_FOUND)
+  set(HAVE_GNUPLOT ON)
+  add_definitions("-DHAVE_GNUPLOT=1")
+  add_definitions("-DGNUPLOT_PATH=\\\"\"${GNUPLOT_EXECUTABLE}\"\\\"")
+  message(STATUS "found gnuplot")
+  message(STATUS "gnuplot path ${GNUPLOT_EXECUTABLE}")
+else(GNUPLOT_FOUND)
+  set(HAVE_GNUPLOT OFF)
+endif(GNUPLOT_FOUND)
 
 #python
+include(FindPythonLibs)
+if(PYTHONLIBS_FOUND)
+  set(HAVE_PYTHON ON)
+  add_definitions("-DHAVE_PYTHON=1")
+  add_definitions("-DTFEL_PYTHON_INCLUDES=\\\"\"-I${PYTHON_INCLUDE_DIRS}\"\\\"")
+  get_filename_component(PYTHON_LIBRARY_PATH ${PYTHON_LIBRARIES} PATH)
+  get_filename_component(PYTHON_LIBRARY      ${PYTHON_LIBRARIES} NAME)
+  add_definitions("-DTFEL_PYTHON_LIBS=\\\"\"-L${PYTHON_LIBRARY_PATH} -l ${PYTHON_LIBRARY}\"\\\"")
+  message(STATUS "found python")
+  message(STATUS "python include path   ${PYTHON_INCLUDE_DIRS}")
+  message(STATUS "python libraries path ${PYTHON_LIBRARY_PATH}")
+  message(STATUS "python library        ${PYTHON_LIBRARY}")
+else(PYTHONLIBS_FOUND)
+  set(HAVE_PYTHON OFF)
+endif(PYTHONLIBS_FOUND)
 
 
 # sub directories
 add_subdirectory(include) 
 add_subdirectory(src)
+
+if(UNIX)
+add_subdirectory(tfel-doc)
+endif(UNIX)
+
 add_subdirectory(mfront)
 add_subdirectory(tests)
-
-# testing
-enable_testing()
 
 # packaging
 include(CPack)

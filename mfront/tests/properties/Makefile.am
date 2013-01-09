@@ -82,5 +82,5 @@ clean-local:
 
 endif
 
-EXTRA_DIST = $(mfronts)
-
+EXTRA_DIST = $(mfronts)      \
+	     CMakeLists.txt

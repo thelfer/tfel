@@ -57,6 +57,18 @@ set(mfront_SOURCES
     MFrontLaTeXLawInterface.cxx
     ${PROJECT_BINARY_DIR}/mfront/src/MFrontHeader.cxx)
 
+if(HAVE_GNUPLOT)
+    set(mfront_SOURCES
+	MFrontGnuplotLawInterface.cxx
+	${mfront_SOURCES})
+endif(HAVE_GNUPLOT)
+
+if(HAVE_PYTHON)
+    set(mfront_SOURCES
+	MFrontPythonLawInterface.cxx
+	${mfront_SOURCES})
+endif(HAVE_PYTHON)
+
 if(HAVE_CASTEM)
     set(mfront_SOURCES
 	MFrontUMATInterface.cxx

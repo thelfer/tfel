@@ -18,3 +18,5 @@ tfel_doc_LDADD   = -L@top_builddir@/src/System    \
 		   -lTFELSystem                   \
 		   -lTFELUtilities                \
 		   -lTFELException
+
+EXTRA_DIST = CMakeLists.txt
