@@ -90,7 +90,8 @@ libUMATInterface_la_SOURCES = UMATInterfaceBase.cxx                 \
 		              UMATOutOfBoundsPolicy.cxx             \
 		              UMATGetModellingHypothesis.cxx        \
 		              UMATException.cxx
-libUMATInterface_la_LIBADD  = -L$(top_builddir)/src/Utilities/ -lTFELUtilities
+libUMATInterface_la_LIBADD  = -L$(top_builddir)/src/Utilities -lTFELUtilities \
+			      -L$(top_builddir)/src/Exception -lTFELException
 endif
 
 EXTRA_DIST = CMakeLists.txt

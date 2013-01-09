@@ -57,14 +57,11 @@ set(mfront_SOURCES
     MFrontLaTeXLawInterface.cxx
     ${PROJECT_BINARY_DIR}/mfront/src/MFrontHeader.cxx)
 
-
-
 if(HAVE_CASTEM)
     set(mfront_SOURCES
 	MFrontUMATInterface.cxx
 	MFrontCastemLawInterface.cxx
 	${mfront_SOURCES})
-    
     set(UMATInterface_SOURCES
 	UMATInterfaceBase.cxx
 	UMATComputeStiffnessTensor.cxx
@@ -73,10 +70,10 @@ if(HAVE_CASTEM)
 	UMATOutOfBoundsPolicy.cxx
 	UMATGetModellingHypothesis.cxx
 	UMATException.cxx)
-
     tfel_library(UMATInterface ${UMATInterface_SOURCES})
     target_link_libraries(UMATInterface
-	                  TFELUtilities)
+	                  TFELUtilities
+			  TFELException)
 endif(HAVE_CASTEM)
 
 add_executable(mfront ${mfront_SOURCES})
