@@ -769,6 +769,7 @@ mfront/src/VarHandler.cxx -text
 mfront/src/main.cxx -text
 mfront/tests/CMakeLists.txt -text
 mfront/tests/Makefile.am -text
+mfront/tests/behaviours/CMakeLists.txt -text
 mfront/tests/behaviours/Makefile.am -text
 mfront/tests/properties/CMakeLists.txt -text
 mfront/tests/properties/Makefile.am -text
