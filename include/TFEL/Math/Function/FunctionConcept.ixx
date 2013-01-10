@@ -53,7 +53,7 @@ namespace tfel{
     }; // end of OpDiff
 
     namespace stdfunctions{
-      extern OpDiff D;
+      extern TFELMATH_VISIBILITY_EXPORT OpDiff D;
     } // end of namespace stdfunctions
 
     /*
@@ -68,8 +68,8 @@ namespace tfel{
 
     template<typename Func>
     template<typename T>      			                                  
-    typename tfel::meta::EnableIf<                                                      
-      !tfel::typetraits::IsInvalid<typename ComputeUnaryResult<T,Func>::Result>::cond, 
+    typename tfel::meta::DisableIf<                                                      
+      tfel::typetraits::IsInvalid<typename ComputeUnaryResult<T,Func>::Result>::cond, 
       const typename ComputeUnaryResult<T,Func>::Handle                                
     >::type                                                                             
     FunctionConcept<Func>::operator()(const T& x) const{

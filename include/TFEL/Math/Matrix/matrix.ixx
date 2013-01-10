@@ -12,42 +12,42 @@ namespace tfel{
 
   namespace math{
 
-    template<typename ValueType>
-    matrix<ValueType>::matrix(const matrix<ValueType>& src)
-      : tfel::math::vector<ValueType>(src),
-	MatrixProperties<ValueType>(src)
+    template<typename T>
+    matrix<T>::matrix(const matrix<T>& src)
+      : tfel::math::vector<T>(src),
+	MatrixProperties<T>(src)
     {}
 
-    template<typename ValueType>
-    matrix<ValueType>::matrix(const typename matrix<ValueType>::size_type n,
-			      const typename matrix<ValueType>::size_type m)
-      : tfel::math::vector<ValueType>(n*m),
-	MatrixProperties<ValueType>(n,m)
+    template<typename T>
+    matrix<T>::matrix(const typename matrix<T>::size_type n,
+			      const typename matrix<T>::size_type m)
+      : tfel::math::vector<T>(n*m),
+	MatrixProperties<T>(n,m)
     {}
 
-    template<typename ValueType>
-    matrix<ValueType>::matrix(const typename matrix<ValueType>::size_type n,
-			      const typename matrix<ValueType>::size_type m,
-			      const ValueType& v)
-      : tfel::math::vector<ValueType>(n*m,v),
-	MatrixProperties<ValueType>(n,m)
+    template<typename T>
+    matrix<T>::matrix(const typename matrix<T>::size_type n,
+			      const typename matrix<T>::size_type m,
+			      const T& v)
+      : tfel::math::vector<T>(n*m,v),
+	MatrixProperties<T>(n,m)
     {}
 
-    template<typename ValueType>
-    matrix<ValueType>&
-    matrix<ValueType>::operator=(const matrix<ValueType>& src)
+    template<typename T>
+    matrix<T>&
+    matrix<T>::operator=(const matrix<T>& src)
     {
 #ifndef NO_RUNTIME_CHECK_BOUNDS
       RunTimeCheck<RunTimeProperties>::exe(this->getRunTimeProperties(),
 					   src.getRunTimeProperties());
 #endif
-      tfel::math::vector<ValueType>::operator=(src);
+      tfel::math::vector<T>::operator=(src);
       return *this;
     }
 
-    template<typename ValueType>
-    matrix<ValueType>&
-    matrix<ValueType>::operator+=(const matrix<ValueType>& src)
+    template<typename T>
+    matrix<T>&
+    matrix<T>::operator+=(const matrix<T>& src)
     {
       size_type i;
       size_type j;
@@ -63,9 +63,9 @@ namespace tfel{
       return *this;
     }
 
-    template<typename ValueType>
-    matrix<ValueType>&
-    matrix<ValueType>::operator-=(const matrix<ValueType>& src)
+    template<typename T>
+    matrix<T>&
+    matrix<T>::operator-=(const matrix<T>& src)
     {
       size_type i;
       size_type j;
@@ -81,29 +81,29 @@ namespace tfel{
       return *this;
     }
 
-    template<typename ValueType>
-    ValueType& 
-    matrix<ValueType>::operator()(const typename matrix<ValueType>::size_type i,
-				  const typename matrix<ValueType>::size_type j)
+    template<typename T>
+    T& 
+    matrix<T>::operator()(const typename matrix<T>::size_type i,
+				  const typename matrix<T>::size_type j)
     {
-      return tfel::math::vector<ValueType>::operator[](i*(this->nb_cols)+j);
+      return tfel::math::vector<T>::operator[](i*(this->nb_cols)+j);
     }
     
-    template<typename ValueType>
-    const ValueType& 
-    matrix<ValueType>::operator()(const typename matrix<ValueType>::size_type i,
-				  const typename matrix<ValueType>::size_type j) const
+    template<typename T>
+    const T& 
+    matrix<T>::operator()(const typename matrix<T>::size_type i,
+				  const typename matrix<T>::size_type j) const
     {
-      return tfel::math::vector<ValueType>::operator[](i*(this->nb_cols)+j);
+      return tfel::math::vector<T>::operator[](i*(this->nb_cols)+j);
     }
 
-    template<typename ValueType>
-    template<typename ValueType2,typename Expr>
+    template<typename T>
+    template<typename T2,typename Expr>
     TFEL_MATH_INLINE2 typename tfel::meta::EnableIf<
-      tfel::typetraits::IsAssignableTo<ValueType2,ValueType>::cond,
-      matrix<ValueType>&
+      tfel::typetraits::IsAssignableTo<T2,T>::cond,
+      matrix<T>&
     >::type
-    matrix<ValueType>::operator=(const MatrixExpr<matrix<ValueType2>,Expr>& expr)
+    matrix<T>::operator=(const MatrixExpr<matrix<T2>,Expr>& expr)
     {
       size_type i;
       size_type j;
@@ -119,13 +119,13 @@ namespace tfel{
       return *this;
     }
 
-    template<typename ValueType>
-    template<typename ValueType2,typename Expr>
+    template<typename T>
+    template<typename T2,typename Expr>
     TFEL_MATH_INLINE2 typename tfel::meta::EnableIf<
-      tfel::typetraits::IsAssignableTo<ValueType2,ValueType>::cond,
-      matrix<ValueType>&
+      tfel::typetraits::IsAssignableTo<T2,T>::cond,
+      matrix<T>&
     >::type
-    matrix<ValueType>::operator+=(const MatrixExpr<matrix<ValueType2>,Expr>& expr)
+    matrix<T>::operator+=(const MatrixExpr<matrix<T2>,Expr>& expr)
     {
       size_type i;
       size_type j;
@@ -141,13 +141,13 @@ namespace tfel{
       return *this;
     }
 
-    template<typename ValueType>
-    template<typename ValueType2,typename Expr>
+    template<typename T>
+    template<typename T2,typename Expr>
     TFEL_MATH_INLINE2 typename tfel::meta::EnableIf<
-      tfel::typetraits::IsAssignableTo<ValueType2,ValueType>::cond,
-      matrix<ValueType>&
+      tfel::typetraits::IsAssignableTo<T2,T>::cond,
+      matrix<T>&
     >::type
-    matrix<ValueType>::operator-=(const MatrixExpr<matrix<ValueType2>,Expr>& expr)
+    matrix<T>::operator-=(const MatrixExpr<matrix<T2>,Expr>& expr)
     {
       size_type i;
       size_type j;
@@ -163,28 +163,28 @@ namespace tfel{
       return *this;
     }
 
-    template<typename ValueType>
-    void matrix<ValueType>::swap(matrix<ValueType>& a)
+    template<typename T>
+    void matrix<T>::swap(matrix<T>& a)
     {
 #ifndef NO_RUNTIME_CHECK_BOUNDS
       RunTimeCheck<RunTimeProperties>::exe(this->getRunTimeProperties(),
 					   a.getRunTimeProperties());
 #endif
-      tfel::math::vector<ValueType>::swap(a);
+      tfel::math::vector<T>::swap(a);
     }
 
-    template<typename ValueType>
+    template<typename T>
     TFEL_MATH_INLINE
-    typename matrix<ValueType>::size_type
-    matrix<ValueType>::getNbRows() const
+    typename matrix<T>::size_type
+    matrix<T>::getNbRows() const
     {
       return this->nb_rows;
     }
     
-    template<typename ValueType>
+    template<typename T>
     TFEL_MATH_INLINE
-    typename matrix<ValueType>::size_type
-    matrix<ValueType>::getNbCols() const
+    typename matrix<T>::size_type
+    matrix<T>::getNbCols() const
     {
       return this->nb_cols;
     }

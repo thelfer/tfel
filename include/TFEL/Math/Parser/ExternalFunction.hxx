@@ -27,7 +27,7 @@ namespace tfel
     namespace parser
     {
 
-      struct TFEL_VISIBILITY_EXPORT ExternalFunction
+      struct TFELMATHPARSER_VISIBILITY_EXPORT ExternalFunction
       {
 	virtual double
 	getValue(void) const = 0;

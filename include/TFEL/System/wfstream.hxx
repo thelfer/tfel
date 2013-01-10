@@ -32,7 +32,7 @@ namespace tfel
       static const bool isBlocking = false;
     }; // end of stream_traits<wfstream>
     
-    struct TFEL_VISIBILITY_EXPORT wfstream
+    struct TFELSYSTEM_VISIBILITY_EXPORT wfstream
       : public basic_wstream<wfstream,stream_traits<wfstream> >,
 	protected tfel::utilities::shared_ptr<int>
     {

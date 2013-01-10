@@ -30,7 +30,7 @@ namespace tfel
      * class in charge of handling a function defined by a string.
      * 
      */
-    struct TFEL_VISIBILITY_EXPORT Evaluator
+    struct TFELMATHPARSER_VISIBILITY_EXPORT Evaluator
       : public tfel::math::parser::EvaluatorBase,
 	public tfel::math::parser::ExternalFunction
     {

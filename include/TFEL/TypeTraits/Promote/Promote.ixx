@@ -76,7 +76,9 @@ namespace tfel{
 	/*!
 	 * The result
 	 */
-	typedef typename tfel::meta::IF<((std::numeric_limits<A>::max_exponent10 < std::numeric_limits<B>::max_exponent10 ) || ((std::numeric_limits<A>::max_exponent10 == std::numeric_limits<B>::max_exponent10)&&(std::numeric_limits<A>::digits < std::numeric_limits<B>::digits))),B,A>::type type;
+	typedef typename tfel::meta::IF<((std::numeric_limits<A>::max_exponent10 < std::numeric_limits<B>::max_exponent10 ) || 
+									((std::numeric_limits<A>::max_exponent10 == std::numeric_limits<B>::max_exponent10)&&
+									 (std::numeric_limits<A>::digits <= std::numeric_limits<B>::digits))),B,A>::type type;
 
       };
 

@@ -28,7 +28,7 @@
       typedef Z DerivateFunc;                                                             \
     };                                                                                    \
                                                                                           \
-    struct TFEL_VISIBILITY_EXPORT Fct##X                                                  \
+    struct TFELMATH_VISIBILITY_EXPORT Fct##X                                                  \
       : public FunctionConcept<Fct##X>                                                    \
     {					                                                  \
 							                                  \
@@ -81,11 +81,11 @@
      * \param void                                                                        \
      * \return const Z, the derivate                                                      \
      */                                                                                   \
-    TFEL_VISIBILITY_EXPORT                                                                \
+    TFELMATH_VISIBILITY_EXPORT                                                                \
     const Z derivate(const Fct##X);                                                       \
                                                                                           \
     namespace stdfunctions{                                                               \
-      extern Fct##X Y;                                                                    \
+      extern TFELMATH_VISIBILITY_EXPORT Fct##X Y;                                                                    \
     }
 
 
@@ -97,7 +97,7 @@
       typedef Z DerivateFunc;                                                             \
     };                                                                                    \
                                                                                           \
-    struct TFEL_VISIBILITY_EXPORT Fct##X                                                  \
+    struct TFELMATH_VISIBILITY_EXPORT Fct##X                                                  \
       : public FunctionConcept<Fct##X>                                                    \
     {            					                                  \
 							                                  \

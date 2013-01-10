@@ -251,7 +251,7 @@ namespace tfel{
 	return FunctionExpr<Expr>(Power<N,D>(),f);
       }
 
-      extern tfel::math::FctSqrt sqrt;
+      extern TFELMATH_VISIBILITY_EXPORT tfel::math::FctSqrt sqrt;
 
     } // end of namespace stdfunctions
     

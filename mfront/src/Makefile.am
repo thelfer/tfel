@@ -92,6 +92,11 @@ libUMATInterface_la_SOURCES = UMATInterfaceBase.cxx                 \
 		              UMATException.cxx
 libUMATInterface_la_LIBADD  = -L$(top_builddir)/src/Utilities -lTFELUtilities \
 			      -L$(top_builddir)/src/Exception -lTFELException
+libUMATInterface_la_CPPFLAGS = -DUMATInterface_EXPORTS
+if TFEL_WIN
+libUMATInterface_la_LDFLAGS  = -no-undefined -avoid-version -Wl,--add-stdcall-alias -Wl,--kill-at
+endif
+
 endif
 
 EXTRA_DIST = CMakeLists.txt

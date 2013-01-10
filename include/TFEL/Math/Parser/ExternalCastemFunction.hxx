@@ -26,7 +26,7 @@ namespace tfel
     namespace parser
     {
 
-      struct TFEL_VISIBILITY_EXPORT ExternalCastemFunction
+      struct TFELMATHPARSER_VISIBILITY_EXPORT ExternalCastemFunction
 	: public ExternalFunction
       {
 	ExternalCastemFunction(const tfel::system::CastemFunctionPtr,

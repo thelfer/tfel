@@ -19,7 +19,7 @@ namespace tfel{
     /*!
      * \return the number of c++ keywords
      */
-    TFEL_VISIBILITY_EXPORT 
+    TFELUTILITIES_VISIBILITY_EXPORT 
     unsigned short
     getNumberOfCxxKeywords(void);
 
@@ -27,7 +27,7 @@ namespace tfel{
      * \return true if the specified string is a of c++ keyword
      * \param[in] s : string to be tested
      */
-    TFEL_VISIBILITY_EXPORT 
+    TFELUTILITIES_VISIBILITY_EXPORT 
     bool
     isReservedCxxKeywords(const std::string&);
 

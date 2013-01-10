@@ -22,7 +22,7 @@ namespace tfel{
   namespace math{
 
     template<typename Expr>
-    struct FunctionExpr;
+    class FunctionExpr;
 
     template<typename F1,typename F2>
     struct FunctionsCompositionExpr;
@@ -52,8 +52,8 @@ namespace tfel{
 
       template<typename T>		                                  
       TFEL_MATH_INLINE
-      typename tfel::meta::EnableIf<                                                      
-        !tfel::typetraits::IsInvalid<typename ComputeUnaryResult<T,Func>::Result>::cond, 
+      typename tfel::meta::DisableIf<                                                      
+        tfel::typetraits::IsInvalid<typename ComputeUnaryResult<T,Func>::Result>::cond, 
         const typename ComputeUnaryResult<T,Func>::Handle                                
       >::type                                                                             
       operator()(const T&) const;

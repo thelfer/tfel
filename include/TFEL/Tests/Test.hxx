@@ -22,7 +22,7 @@ namespace tfel
     /*!
      * Base class for all tests
      */
-    struct TFEL_VISIBILITY_EXPORT Test
+    struct TFELTESTS_VISIBILITY_EXPORT Test
     {
       /*! 
        * return the name of the test

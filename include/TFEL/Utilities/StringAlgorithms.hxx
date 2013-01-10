@@ -23,7 +23,7 @@ namespace tfel{
      * \param c : delimiter
      * \return the tokens
      */
-    TFEL_VISIBILITY_EXPORT 
+    TFELUTILITIES_VISIBILITY_EXPORT 
     std::vector<std::string>
     tokenize(const std::string&,const char);
 
@@ -33,7 +33,7 @@ namespace tfel{
      * \param delim : delimiter
      * \return the tokens
      */
-    TFEL_VISIBILITY_EXPORT 
+    TFELUTILITIES_VISIBILITY_EXPORT 
     std::vector<std::string>
     tokenize(const std::string&,
 	     const std::string&);
@@ -47,7 +47,7 @@ namespace tfel{
      * \return a copy of s where all occurences of substring s1 have
      * been replaced by s2
      */
-    TFEL_VISIBILITY_EXPORT std::string
+    TFELUTILITIES_VISIBILITY_EXPORT std::string
     replace_all(const std::string&,
 		const std::string&,
 		const std::string&,
@@ -61,7 +61,7 @@ namespace tfel{
      * \param s2 : replacement string
      * \param ps : beginning of the search
      */
-    TFEL_VISIBILITY_EXPORT void
+    TFELUTILITIES_VISIBILITY_EXPORT void
     replace_all(std::string&,
 		const std::string&,
 		const std::string&,

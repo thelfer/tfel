@@ -18,19 +18,19 @@ namespace tfel
   namespace math
   {
 
-    struct TFEL_VISIBILITY_EXPORT KrigingErrorInvalidLength
+    struct TFELMATHKRIGING_VISIBILITY_EXPORT KrigingErrorInvalidLength
       : public std::runtime_error
     {
       KrigingErrorInvalidLength();
     }; // end of struct KrigingErrorInvalidLength
 
-    struct TFEL_VISIBILITY_EXPORT KrigingErrorNoDataSpecified
+    struct TFELMATHKRIGING_VISIBILITY_EXPORT KrigingErrorNoDataSpecified
       : public std::runtime_error
     {
       KrigingErrorNoDataSpecified();
     }; // end of struct KrigingErrorNoDataSpecified
 
-    struct TFEL_VISIBILITY_EXPORT KrigingErrorInsufficientData
+    struct TFELMATHKRIGING_VISIBILITY_EXPORT KrigingErrorInsufficientData
       : public std::runtime_error
     {
       KrigingErrorInsufficientData();

@@ -23,7 +23,7 @@ namespace tfel
      * exception thrown when requesting a bad type out of a
      * GenTypeBase class
      */
-    struct TFEL_VISIBILITY_EXPORT GenTypeCastError
+    struct TFELUTILITIES_VISIBILITY_EXPORT GenTypeCastError
       : public std::runtime_error
     {
       /*!

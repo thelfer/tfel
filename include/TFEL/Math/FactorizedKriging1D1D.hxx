@@ -20,7 +20,7 @@ namespace tfel
   namespace math
   {
 
-    struct TFEL_VISIBILITY_EXPORT FactorizedKriging1D1D
+    struct TFELMATHKRIGING_VISIBILITY_EXPORT FactorizedKriging1D1D
       : private FactorizedKriging<1u,1u,double,
 				  KrigingPieceWiseLinearModel1D<double>,
 				  KrigingModelAdaptator<KrigingDefaultModel<1u,double> > >,

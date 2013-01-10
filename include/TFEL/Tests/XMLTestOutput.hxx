@@ -25,7 +25,7 @@ namespace tfel
     /*!
      *  Test Output using a standard stream
      */
-    struct TFEL_VISIBILITY_EXPORT XMLTestOutput
+    struct TFELTESTS_VISIBILITY_EXPORT XMLTestOutput
       : public TestOutput
     {
       /*!

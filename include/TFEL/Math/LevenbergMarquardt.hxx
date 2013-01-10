@@ -27,7 +27,7 @@ namespace tfel
   {
 
     template<typename F = LevenbergMarquardtFunctionWrapper<double> >
-    struct TFEL_VISIBILITY_EXPORT LevenbergMarquardt
+    struct LevenbergMarquardt
     {
 
       typedef typename F::NumericType T;

@@ -26,7 +26,7 @@ namespace tfel
     /*!
      * Test Suites
      */
-    struct TFEL_VISIBILITY_EXPORT TestSuite
+    struct TFELTESTS_VISIBILITY_EXPORT TestSuite
     {
       //! a simple alias
       typedef tfel::utilities::shared_ptr<Test> TestPtr;

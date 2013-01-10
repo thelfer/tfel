@@ -31,7 +31,7 @@ namespace tfel{
       typedef Cst<1,1> DerivateFunc;
     };
 
-    struct TFEL_VISIBILITY_EXPORT FctId
+    struct TFELMATH_VISIBILITY_EXPORT FctId
       : public FunctionConcept<FctId>
     {
     
@@ -76,12 +76,12 @@ namespace tfel{
       typedef T type;
     };
 
-    TFEL_VISIBILITY_EXPORT
+    TFELMATH_VISIBILITY_EXPORT
     Cst<1,1>
     derivate(const FctId);
 
     namespace stdfunctions{
-      extern tfel::math::FctId   id;
+      extern TFELMATH_VISIBILITY_EXPORT tfel::math::FctId   id;
     }
 
   } // end of namespace math

@@ -116,12 +116,12 @@ namespace tfel
 
     }; // end of struct basic_rstream
 
-    struct TFEL_VISIBILITY_EXPORT BlockingStreamWriter
+    struct TFELSYSTEM_VISIBILITY_EXPORT BlockingStreamWriter
     {
       static void write(int,const void *const,const size_t);
     }; // end of BlockingStreamWriter
 
-    struct TFEL_VISIBILITY_EXPORT NonBlockingStreamWriter
+    struct TFELSYSTEM_VISIBILITY_EXPORT NonBlockingStreamWriter
     {
       static void write(int,const void *const,const size_t);
     }; // end of NonBlockingStreamWriter

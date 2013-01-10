@@ -26,7 +26,7 @@ namespace tfel
   namespace system
   {
 
-    struct TFEL_VISIBILITY_EXPORT ProcessManager
+    struct TFELSYSTEM_VISIBILITY_EXPORT ProcessManager
     {
 
       // a simple alias
@@ -40,7 +40,7 @@ namespace tfel
       // a simple alias
       typedef wstreamView<true> wstream;
 
-      struct TFEL_VISIBILITY_EXPORT Command
+      struct TFELSYSTEM_VISIBILITY_EXPORT Command
       {
 	virtual bool execute(const StreamId,
 			     const StreamId) = 0;

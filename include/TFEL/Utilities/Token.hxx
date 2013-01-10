@@ -20,7 +20,7 @@ namespace tfel{
     /*!
      * \brief class representing a token in a C++-like file
      */
-    struct TFEL_VISIBILITY_EXPORT Token
+    struct TFELUTILITIES_VISIBILITY_EXPORT Token
     {
 
       //! possible type of the token

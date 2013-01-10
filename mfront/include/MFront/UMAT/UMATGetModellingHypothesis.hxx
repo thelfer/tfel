@@ -8,14 +8,14 @@
 #ifndef _LIB_MFRONT_UMAT_UMATGETMODELLINGHYPOTHESIS_H_
 #define _LIB_MFRONT_UMAT_UMATGETMODELLINGHYPOTHESIS_H_ 
 
-#include"TFEL/Config/TFELConfig.hxx"
+#include"MFront/UMAT/UMATConfig.hxx"
 #include"TFEL/Material/ModellingHypothesis.hxx"
 #include"MFront/UMAT/UMAT.hxx"
 
 namespace umat
 {
 
-  TFEL_VISIBILITY_EXPORT
+  MFRONT_UMAT_VISIBILITY_EXPORT
   tfel::material::ModellingHypothesis::Hypothesis
   getModellingHypothesis(const UMATInt);
   

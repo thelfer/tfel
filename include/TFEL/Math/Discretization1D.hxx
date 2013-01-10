@@ -21,7 +21,7 @@ namespace tfel
      * Exception thrown when the density given to the
      * geometricDiscretization function is invalid
      */
-    struct TFEL_VISIBILITY_EXPORT GeometricDiscretizationInvalidDensity
+    struct TFELMATH_VISIBILITY_EXPORT GeometricDiscretizationInvalidDensity
       : public MathRunTimeException
     {
       /*!
@@ -34,7 +34,7 @@ namespace tfel
      * Exception thrown when the length given to the
      * geometricDiscretization function is invalid
      */
-    struct TFEL_VISIBILITY_EXPORT GeometricDiscretizationInvalidLength
+    struct TFELMATH_VISIBILITY_EXPORT GeometricDiscretizationInvalidLength
       : public MathRunTimeException
     {
       /*!
@@ -47,7 +47,7 @@ namespace tfel
      * Exception thrown when the number of elements given to the
      * geometricDiscretization function is invalid
      */
-    struct TFEL_VISIBILITY_EXPORT GeometricDiscretizationInvalidNumberOfElements
+    struct TFELMATH_VISIBILITY_EXPORT GeometricDiscretizationInvalidNumberOfElements
       : public MathRunTimeException
     {
       /*!

@@ -19,7 +19,7 @@ namespace tfel
   namespace system
   {
 
-    struct TFEL_VISIBILITY_EXPORT SystemError
+    struct TFELSYSTEM_VISIBILITY_EXPORT SystemError
       : public tfel::exception::TFELException
     {
       SystemError(const std::string&);

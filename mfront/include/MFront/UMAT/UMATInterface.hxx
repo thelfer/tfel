@@ -13,7 +13,6 @@
 #include<vector>
 #include<limits>
 
-#include"TFEL/Config/TFELConfig.hxx"
 #include"TFEL/Config/TFELTypes.hxx"
 
 #include"TFEL/Metaprogramming/IF.hxx"
@@ -28,6 +27,7 @@
 #include"TFEL/Material/MaterialException.hxx"
 
 #include"MFront/UMAT/UMAT.hxx"
+#include"MFront/UMAT/UMATConfig.hxx"
 #include"MFront/UMAT/UMATTraits.hxx"
 #include"MFront/UMAT/UMATException.hxx"
 #include"MFront/UMAT/UMATOutOfBoundsPolicy.hxx"
@@ -45,7 +45,7 @@ namespace umat{
    * \author Helfer Thomas
    * \date   12/12/2011
    */
-  struct TFEL_VISIBILITY_EXPORT UMATInterfaceBase
+  struct MFRONT_UMAT_VISIBILITY_EXPORT UMATInterfaceBase
   {
 
     /*!

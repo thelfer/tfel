@@ -94,9 +94,9 @@ namespace tfel{
       typedef Scal type;
     };
     
-    extern Lambda<1u> x_;
-    extern Lambda<2u> y_;
-    extern Lambda<3u> z_;
+    extern TFELMATH_VISIBILITY_EXPORT Lambda<1u> x_;
+    extern TFELMATH_VISIBILITY_EXPORT Lambda<2u> y_;
+    extern TFELMATH_VISIBILITY_EXPORT Lambda<3u> z_;
 
   } // end of namespace math
 

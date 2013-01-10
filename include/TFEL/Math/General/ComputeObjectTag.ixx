@@ -152,8 +152,9 @@ namespace tfel{
     }; // end of ComputeObjectTag_<false,false,true>
 
     template<typename T>
-    class ComputeObjectTag
+    struct ComputeObjectTag
     {
+    private:
       /*!
        * \brief tells if T is a scalar.
        */

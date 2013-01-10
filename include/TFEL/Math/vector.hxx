@@ -28,16 +28,16 @@ namespace tfel{
      * \brief Partial specialisation for the vector class.
      * \see VectorTraits
      */
-    template<typename ValueType>
-    struct TFEL_VISIBILITY_LOCAL VectorTraits<vector<ValueType> >{
+    template<typename T>
+    struct TFEL_VISIBILITY_LOCAL VectorTraits<vector<T> >{
       /*
        * The underlying numerical type.
        */
-      typedef ValueType NumType;
+      typedef T NumType;
       /*
        * The index type
        */
-      typedef typename std::vector<ValueType>::size_type IndexType;
+      typedef typename std::vector<T>::size_type IndexType;
       /*
        * RunTime Properties
        */
@@ -45,15 +45,15 @@ namespace tfel{
     };
     
     
-    template<typename ValueType>
+    template<typename T>
     class vector
-      : public VectorConcept<vector<ValueType> >,
-	protected std::vector<ValueType>
+      : public VectorConcept<vector<T> >,
+	protected std::vector<T>
     {
       /*
        * Typedef to the underlying storage class.
        */
-      typedef std::vector<ValueType> Container;
+      typedef std::vector<T> Container;
 
     public:
 
@@ -137,9 +137,9 @@ namespace tfel{
       /*
        * Constructor
        * \param size_type size, size of vector
-       * \param ValueType value, initial value 
+       * \param T value, initial value 
        */
-      vector(const size_type, const ValueType&);
+      vector(const size_type, const T&);
 
       /*
        * Constructor from a sequence
@@ -203,66 +203,66 @@ namespace tfel{
 
       /*
        * Assignement operator
-       * \param const VectorExpr<vector<ValueType2>,Expr>&, a vector
+       * \param const VectorExpr<vector<T2>,Expr>&, a vector
        * expression based on vector
        * \return vector&, a reference to itself.
        */
-      template<typename ValueType2,typename Expr>
+      template<typename T2,typename Expr>
       TFEL_MATH_INLINE2
       typename tfel::meta::EnableIf<
-	tfel::typetraits::IsAssignableTo<ValueType2,ValueType>::cond,
-	vector<ValueType>&
+	tfel::typetraits::IsAssignableTo<T2,T>::cond,
+	vector<T>&
       >::type
-      operator=(const VectorExpr<vector<ValueType2>,Expr>&);
+      operator=(const VectorExpr<vector<T2>,Expr>&);
 
       /*
        * Assignement operator
-       * \param const VectorExpr<vector<ValueType2>,Expr>&, a vector
+       * \param const VectorExpr<vector<T2>,Expr>&, a vector
        * expression based on vector
        * \return vector&, a reference to itself.
        */
-      template<typename ValueType2,typename Expr>
+      template<typename T2,typename Expr>
       TFEL_MATH_INLINE2
       typename tfel::meta::EnableIf<
-	tfel::typetraits::IsAssignableTo<ValueType2,ValueType>::cond,
-	vector<ValueType>&
+	tfel::typetraits::IsAssignableTo<T2,T>::cond,
+	vector<T>&
       >::type
-      operator+=(const VectorExpr<vector<ValueType2>,Expr>&);
+      operator+=(const VectorExpr<vector<T2>,Expr>&);
 
       /*
        * Assignement operator
-       * \param const VectorExpr<vector<ValueType2>,Expr>&, a vector
+       * \param const VectorExpr<vector<T2>,Expr>&, a vector
        * expression based on vector
        * \return vector&, a reference to itself.
        */
-      template<typename ValueType2,typename Expr>
+      template<typename T2,typename Expr>
       TFEL_MATH_INLINE2
       typename tfel::meta::EnableIf<
-	tfel::typetraits::IsAssignableTo<ValueType2,ValueType>::cond,
-	vector<ValueType>&
+	tfel::typetraits::IsAssignableTo<T2,T>::cond,
+	vector<T>&
       >::type
-      operator-=(const VectorExpr<vector<ValueType2>,Expr>&);
+      operator-=(const VectorExpr<vector<T2>,Expr>&);
 
       /*
        * index operator
        * \param size_type, index
-       * \return ValueType&, a reference to the vector ith element.
+       * \return T&, a reference to the vector ith element.
        */
       TFEL_MATH_INLINE
-      ValueType&
+      T&
       operator()(const size_type);
 
       /*
        * index operator
        * this is a vector concept requirement
        * \param size_type, index
-       * \return const ValueType&, a reference to the vector ith element
+       * \return const T&, a reference to the vector ith element
        */
       TFEL_MATH_INLINE
-      const ValueType&
+      const T&
       operator()(const size_type) const;
 
-      using std::vector<ValueType>::operator[];
+      using std::vector<T>::operator[];
 
       /*
        * Return the runtime property of the vector

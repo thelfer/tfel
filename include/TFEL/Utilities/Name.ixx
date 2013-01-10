@@ -49,7 +49,7 @@
      * Partial specialisation for X                          \
      */                                                      \
     template<>                                               \
-    struct TFEL_VISIBILITY_EXPORT Name< X >                  \
+    struct TFELUTILITIES_VISIBILITY_EXPORT Name< X >                  \
     {                                                        \
       /*!                                                    \
        * \brief returns the Name of X.                       \
@@ -64,7 +64,7 @@
      * Partial specialisation for X*                         \
      */                                                      \
     template<>                                               \
-    struct TFEL_VISIBILITY_EXPORT Name<X*>                   \
+    struct TFELUTILITIES_VISIBILITY_EXPORT Name<X*>                   \
     {                                                        \
       /*!                                                    \
        * \brief returns the Name of X.                       \
@@ -79,7 +79,7 @@
      * Partial specialisation for const X * const            \
      */                                                      \
     template<>                                               \
-    struct TFEL_VISIBILITY_EXPORT Name<const X * const>      \
+    struct TFELUTILITIES_VISIBILITY_EXPORT Name<const X * const>      \
     {                                                        \
       /*!                                                    \
        * \brief returns the Name of X.                       \
@@ -94,7 +94,7 @@
      * Partial specialisation for const X*                   \
      */                                                      \
     template<>                                               \
-    struct TFEL_VISIBILITY_EXPORT Name<const X *>            \
+    struct TFELUTILITIES_VISIBILITY_EXPORT Name<const X *>            \
     {                                                        \
       /*!                                                    \
        * \brief returns the Name of X.                       \
@@ -109,7 +109,7 @@
      * Partial specialisation for  X&                        \
      */                                                      \
     template<>                                               \
-    struct TFEL_VISIBILITY_EXPORT Name<X &>                  \
+    struct TFELUTILITIES_VISIBILITY_EXPORT Name<X &>                  \
     {                                                        \
       /*!                                                    \
        * \brief returns the Name of X.                       \
@@ -124,7 +124,7 @@
      * Partial specialisation for const X&                   \
      */                                                      \
     template<>                                               \
-    struct TFEL_VISIBILITY_EXPORT Name<const X &>            \
+    struct TFELUTILITIES_VISIBILITY_EXPORT Name<const X &>            \
     {                                                        \
       /*!                                                    \
        * \brief returns the Name of X.                       \
@@ -141,7 +141,7 @@
      * Partial specialisation for void                          \
      */                                                         \
     template<>                                                  \
-    struct TFEL_VISIBILITY_EXPORT Name<void>                    \
+    struct TFELUTILITIES_VISIBILITY_EXPORT Name<void>                    \
     {                                                           \
       /*!                                                       \
        * \brief returns the Name of X.                          \
@@ -156,7 +156,7 @@
      * Partial specialisation for void*                         \
      */                                                         \
     template<>                                                  \
-    struct TFEL_VISIBILITY_EXPORT Name<void*>                   \
+    struct TFELUTILITIES_VISIBILITY_EXPORT Name<void*>                   \
     {                                                           \
       /*!                                                       \
        * \brief returns the Name of X.                          \
@@ -171,7 +171,7 @@
      * Partial specialisation for const void* const             \
      */                                                         \
     template<>                                                  \
-    struct TFEL_VISIBILITY_EXPORT Name<const void* const>       \
+    struct TFELUTILITIES_VISIBILITY_EXPORT Name<const void* const>       \
     {                                                           \
       /*!                                                       \
        * \brief returns the Name of X.                          \
@@ -186,7 +186,7 @@
      * Partial specialisation for const void*                   \
      */                                                         \
     template<>                                                  \
-    struct TFEL_VISIBILITY_EXPORT Name<const void *>            \
+    struct TFELUTILITIES_VISIBILITY_EXPORT Name<const void *>            \
     {                                                           \
       /*!                                                       \
        * \brief returns the Name of X.                          \
@@ -1093,7 +1093,7 @@ namespace tfel
      * Partial specialisation for 
      */
     template<>
-    struct TFEL_VISIBILITY_EXPORT Name<tfel::meta::InvalidType>
+    struct TFELUTILITIES_VISIBILITY_EXPORT Name<tfel::meta::InvalidType>
     {
       static std::string
       getName(void)
@@ -1121,7 +1121,7 @@ namespace tfel
     }; // end of struct TFEL_VISIBILITY_LOCAL Name<tfel::meta::TLNode<T,U> >
     
     template<>
-    struct TFEL_VISIBILITY_EXPORT Name<tfel::meta::TLE>
+    struct TFELUTILITIES_VISIBILITY_EXPORT Name<tfel::meta::TLE>
     {
       /*
        * Return the Name of this class.
@@ -1435,7 +1435,7 @@ namespace tfel
      * \brief Partial specialisation for the NoUnit class. 
      */
     template<>
-    struct TFEL_VISIBILITY_EXPORT Name<tfel::math::NoUnit>
+    struct TFELUTILITIES_VISIBILITY_EXPORT Name<tfel::math::NoUnit>
     {
       /*!
        * \brief  Return the name of the class NoUnit.
@@ -1449,7 +1449,7 @@ namespace tfel
      * \brief Partial specialisation for the Mass class. 
      */
     template<>
-    struct TFEL_VISIBILITY_EXPORT Name<tfel::math::Mass>
+    struct TFELUTILITIES_VISIBILITY_EXPORT Name<tfel::math::Mass>
     {
       /*!
        * \brief  Return the name of the class Mass.
@@ -1463,7 +1463,7 @@ namespace tfel
      * \brief Partial specialisation for the Length class. 
      */
     template<>
-    struct TFEL_VISIBILITY_EXPORT Name<tfel::math::Length>
+    struct TFELUTILITIES_VISIBILITY_EXPORT Name<tfel::math::Length>
     {
       /*!
        * \brief  Return the name of the class Length.
@@ -1477,7 +1477,7 @@ namespace tfel
      * \brief Partial specialisation for the Time class. 
      */
     template<>
-    struct TFEL_VISIBILITY_EXPORT Name<tfel::math::Time>
+    struct TFELUTILITIES_VISIBILITY_EXPORT Name<tfel::math::Time>
     {
       /*!
        * \brief  Return the name of the class Time.
@@ -1491,7 +1491,7 @@ namespace tfel
      * \brief Partial specialisation for the Ampere class. 
      */
     template<>
-    struct TFEL_VISIBILITY_EXPORT Name<tfel::math::Ampere>
+    struct TFELUTILITIES_VISIBILITY_EXPORT Name<tfel::math::Ampere>
     {
       /*!
        * \brief  Return the name of the class Ampere.
@@ -1505,7 +1505,7 @@ namespace tfel
      * \brief Partial specialisation for the Temperature class. 
      */
     template<>
-    struct TFEL_VISIBILITY_EXPORT Name<tfel::math::Temperature>
+    struct TFELUTILITIES_VISIBILITY_EXPORT Name<tfel::math::Temperature>
     {
       /*!
        * \brief  Return the name of the class Temperature.
@@ -1519,7 +1519,7 @@ namespace tfel
      * \brief Partial specialisation for the Candela class. 
      */
     template<>
-    struct TFEL_VISIBILITY_EXPORT Name<tfel::math::Candela>
+    struct TFELUTILITIES_VISIBILITY_EXPORT Name<tfel::math::Candela>
     {
       /*!
        * \brief  Return the name of the class Candela.
@@ -1533,7 +1533,7 @@ namespace tfel
      * \brief Partial specialisation for the Mole class. 
      */
     template<>
-    struct TFEL_VISIBILITY_EXPORT Name<tfel::math::Mole>
+    struct TFELUTILITIES_VISIBILITY_EXPORT Name<tfel::math::Mole>
     {
       /*!
        * \brief  Return the name of the class Mole.
@@ -1547,7 +1547,7 @@ namespace tfel
      * \brief Partial specialisation for the Velocity class. 
      */
     template<>
-    struct TFEL_VISIBILITY_EXPORT Name<tfel::math::Velocity>
+    struct TFELUTILITIES_VISIBILITY_EXPORT Name<tfel::math::Velocity>
     {
       /*!
        * \brief  Return the name of the class Velocity.
@@ -1561,7 +1561,7 @@ namespace tfel
      * \brief Partial specialisation for the Acceleration class. 
      */
     template<>
-    struct TFEL_VISIBILITY_EXPORT Name<tfel::math::Acceleration>
+    struct TFELUTILITIES_VISIBILITY_EXPORT Name<tfel::math::Acceleration>
     {
       /*!
        * \brief  Return the name of the class Acceleration.
@@ -1575,7 +1575,7 @@ namespace tfel
      * \brief Partial specialisation for the Momentum class. 
      */
     template<>
-    struct TFEL_VISIBILITY_EXPORT Name<tfel::math::Momentum>
+    struct TFELUTILITIES_VISIBILITY_EXPORT Name<tfel::math::Momentum>
     {
       /*!
        * \brief  Return the name of the class Momentum.
@@ -1589,7 +1589,7 @@ namespace tfel
      * \brief Partial specialisation for the Force class. 
      */
     template<>
-    struct TFEL_VISIBILITY_EXPORT Name<tfel::math::Force>
+    struct TFELUTILITIES_VISIBILITY_EXPORT Name<tfel::math::Force>
     {
       /*!
        * \brief  Return the name of the class Force.
@@ -2212,7 +2212,7 @@ namespace tfel
       };
 
       template<>
-      struct TFEL_VISIBILITY_EXPORT TLGetNames_<TLE>
+      struct TFELUTILITIES_VISIBILITY_EXPORT TLGetNames_<TLE>
       {
 	static std::string exe(void);
       };

@@ -28,7 +28,7 @@ namespace tfel
     /*!
      * base structure for child processes
      */
-    struct TFEL_VISIBILITY_EXPORT ChildProcess
+    struct TFELSYSTEM_VISIBILITY_EXPORT ChildProcess
     {
       /*!
        * \param in  : input stream
@@ -57,7 +57,7 @@ namespace tfel
       int outputStream;
     }; // end of struct ChildProcess
 
-    struct TFEL_VISIBILITY_EXPORT ChildProcessCreationFailedException
+    struct TFELSYSTEM_VISIBILITY_EXPORT ChildProcessCreationFailedException
       : public SystemError
     {
       ChildProcessCreationFailedException();

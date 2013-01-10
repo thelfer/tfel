@@ -26,7 +26,7 @@ namespace tfel{
      * class in charge of reading a C++-style file and converting it
      * in tokens.
      */
-    struct TFEL_VISIBILITY_EXPORT CxxTokenizer
+    struct TFELUTILITIES_VISIBILITY_EXPORT CxxTokenizer
     {
     
       //! a simple alias

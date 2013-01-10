@@ -32,7 +32,8 @@ namespace tfel
      * \param mdepth : maximum depth allowed
      * \return the matching files, ordered by directories
      */
-    TFEL_VISIBILITY_EXPORT std::map<std::string,std::vector<std::string> >
+    TFELSYSTEM_VISIBILITY_EXPORT
+    std::map<std::string,std::vector<std::string> >
     recursiveFind(const std::string&,
 		  const std::string&,
 		  const unsigned short = 0u,
@@ -47,7 +48,7 @@ namespace tfel
      * \param depth  : depth reached in the recursive search
      * \param mdepth : maximum depth allowed
      */
-    TFEL_VISIBILITY_EXPORT void
+    TFELSYSTEM_VISIBILITY_EXPORT void
     recursiveFind(std::map<std::string,std::vector<std::string> >&,
 		  const std::string&,
 		  const std::string&,
@@ -63,7 +64,8 @@ namespace tfel
      * \param mdepth : maximum depth allowed
      * \return the matching files, ordered by directories
      */
-    TFEL_VISIBILITY_EXPORT std::map<std::string,std::vector<std::string> >
+    TFELSYSTEM_VISIBILITY_EXPORT
+    std::map<std::string,std::vector<std::string> >
     recursiveFind(const regex_t&,
 		  const std::string&,
 		  const unsigned short = 0u,
@@ -78,7 +80,7 @@ namespace tfel
      * \param depth  : depth reached in the recursive search
      * \param mdepth : maximum depth allowed
      */
-    TFEL_VISIBILITY_EXPORT void
+    TFELSYSTEM_VISIBILITY_EXPORT void
     recursiveFind(std::map<std::string,std::vector<std::string> >&,
 		  const regex_t&,
 		  const std::string&,

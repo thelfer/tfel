@@ -8,6 +8,8 @@
 #ifndef _LIB_MFRONT_UMATORTHOTROPICBEHAVIOUR_H_
 #define _LIB_MFRONT_UMATORTHOTROPICBEHAVIOUR_H_ 
 
+#include"MFront/UMAT/UMATConfig.hxx"
+
 namespace umat
 {
 
@@ -15,7 +17,7 @@ namespace umat
   struct UMATOrthotropicOffset;
 
   template<>
-  struct TFEL_VISIBILITY_EXPORT UMATOrthotropicOffset<1u>
+  struct MFRONT_UMAT_VISIBILITY_EXPORT UMATOrthotropicOffset<1u>
   {
     // 6 elastic coefficients
     //   mass density
@@ -24,7 +26,7 @@ namespace umat
   }; // end of struct UMATOrthotropicOffset<1u>
 
   template<>
-  struct TFEL_VISIBILITY_EXPORT UMATOrthotropicOffset<2u>
+  struct MFRONT_UMAT_VISIBILITY_EXPORT UMATOrthotropicOffset<2u>
   {
     // 7 elastic coefficients
     // 2 components of direction
@@ -34,7 +36,7 @@ namespace umat
   }; // end of struct UMATOrthotropicOffset<2u>
 
   template<>
-  struct TFEL_VISIBILITY_EXPORT UMATOrthotropicOffset<3u>
+  struct MFRONT_UMAT_VISIBILITY_EXPORT UMATOrthotropicOffset<3u>
   {
     // 9 elastic coefficients
     // 6 components of direction

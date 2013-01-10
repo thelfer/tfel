@@ -18,19 +18,19 @@ namespace tfel{
 
   namespace math{
 
-    struct TFEL_VISIBILITY_EXPORT MathException
+    struct TFELMATH_VISIBILITY_EXPORT MathException
       : public tfel::exception::TFELException 
     {      
       MathException(const std::string& s);
     }; // end of struct MathException
 
-    struct TFEL_VISIBILITY_EXPORT MathRunTimeException
+    struct TFELMATH_VISIBILITY_EXPORT MathRunTimeException
       : public MathException
     {
       MathRunTimeException(const std::string& s);
     }; // end of struct MathRunTimeException
 
-    struct TFEL_VISIBILITY_EXPORT MathDivergenceException
+    struct TFELMATH_VISIBILITY_EXPORT MathDivergenceException
       : public MathException
     {
       MathDivergenceException(const std::string& s);

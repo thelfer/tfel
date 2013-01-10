@@ -22,7 +22,7 @@ namespace tfel
      * Exception thrown when calling any of the getValue method before
      * calling setCollocationPoints.
      */
-    struct TFEL_VISIBILITY_EXPORT CubicSplineUninitialised
+    struct TFELMATHCUBICSPLINE_VISIBILITY_EXPORT CubicSplineUninitialised
       : public tfel::exception::TFELException
     {
       /*!
@@ -35,7 +35,7 @@ namespace tfel
      * Exception thrown when the abscissa vector given to the
      * CubicSpline constructor has a size smaller than 3.
      */
-    struct TFEL_VISIBILITY_EXPORT CubicSplineInvalidAbscissaVectorSize
+    struct TFELMATHCUBICSPLINE_VISIBILITY_EXPORT CubicSplineInvalidAbscissaVectorSize
       : public tfel::exception::TFELException
     {
       /*!
@@ -47,7 +47,7 @@ namespace tfel
     /*!
      * Exception thrown when the linear system solved leads to a null pivot
      */
-    struct TFEL_VISIBILITY_EXPORT CubicSplineNullPivot
+    struct TFELMATHCUBICSPLINE_VISIBILITY_EXPORT CubicSplineNullPivot
       : public tfel::exception::TFELException
     {
       /*!
@@ -60,7 +60,7 @@ namespace tfel
      * Exception thrown when the ordinate vector given to the
      * CubicSpline constructor has a size smaller than 3.
      */
-    struct TFEL_VISIBILITY_EXPORT CubicSplineInvalidOrdinateVectorSize
+    struct TFELMATHCUBICSPLINE_VISIBILITY_EXPORT CubicSplineInvalidOrdinateVectorSize
       : public tfel::exception::TFELException
     {
       /*!
@@ -73,7 +73,7 @@ namespace tfel
      * Exception thrown when the abscissa and the ordinate vectors
      * don't have the same size
      */
-    struct TFEL_VISIBILITY_EXPORT CubicSplineInvalidInputs
+    struct TFELMATHCUBICSPLINE_VISIBILITY_EXPORT CubicSplineInvalidInputs
       : public tfel::exception::TFELException
     {
       /*!
@@ -85,7 +85,7 @@ namespace tfel
     /*!
      * Exception thrown when the abscissa vector is not ordered
      */
-    struct TFEL_VISIBILITY_EXPORT CubicSplineUnorderedAbscissaVector
+    struct TFELMATHCUBICSPLINE_VISIBILITY_EXPORT CubicSplineUnorderedAbscissaVector
       : public tfel::exception::TFELException
     {
       /*!

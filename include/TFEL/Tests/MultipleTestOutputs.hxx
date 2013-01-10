@@ -25,7 +25,7 @@ namespace tfel
     /*!
      * Helper class for gathering multiple outputs
      */
-    struct TFEL_VISIBILITY_EXPORT MultipleTestOutputs
+    struct TFELTESTS_VISIBILITY_EXPORT MultipleTestOutputs
       : public TestOutput
     {
       //! a simple alias

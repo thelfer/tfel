@@ -28,7 +28,7 @@ namespace tfel
      * This structure contains C++ wrapping over many
      * posix system call.
      */
-    struct TFEL_VISIBILITY_EXPORT systemCall
+    struct TFELSYSTEM_VISIBILITY_EXPORT systemCall
     {
 
       /*

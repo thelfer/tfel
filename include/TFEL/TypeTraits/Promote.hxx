@@ -33,7 +33,7 @@ namespace tfel{
      * \date   03 May 2006
      */
     template<typename A, typename B>
-    class Promote;
+    struct Promote;
     
   } // end of namespace typetraits
 

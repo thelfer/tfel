@@ -14,166 +14,166 @@ namespace tfel{
 
   namespace math{
 
-    template<typename ValueType>
-    vector<ValueType>::vector()
-      : std::vector<ValueType>()
+    template<typename T>
+    vector<T>::vector()
+      : std::vector<T>()
     {}
 
-    template<typename ValueType>
-    vector<ValueType>::vector(const vector<ValueType>& src)
-      : std::vector<ValueType>(src)
+    template<typename T>
+    vector<T>::vector(const vector<T>& src)
+      : std::vector<T>(src)
     {}
 
-    template<typename ValueType>
-    vector<ValueType>::vector(const typename vector<ValueType>::size_type s)
-      : std::vector<ValueType>(s)
+    template<typename T>
+    vector<T>::vector(const typename vector<T>::size_type s)
+      : std::vector<T>(s)
     {}
 
-    template<typename ValueType>
-    vector<ValueType>::vector(const typename vector<ValueType>::size_type s, const ValueType& v)
-      : std::vector<ValueType>(s,v)
+    template<typename T>
+    vector<T>::vector(const typename vector<T>::size_type s, const T& v)
+      : std::vector<T>(s,v)
     {}
 
-    template<typename ValueType>
+    template<typename T>
     template<typename InputIterator>
-    vector<ValueType>::vector(const InputIterator begin_, const InputIterator end_)
-      : std::vector<ValueType>(begin_,end_)
+    vector<T>::vector(const InputIterator begin_, const InputIterator end_)
+      : std::vector<T>(begin_,end_)
     {}
 
-    template<typename ValueType>
-    vector<ValueType>&
-    vector<ValueType>::operator=(const vector<ValueType>& src)
+    template<typename T>
+    vector<T>&
+    vector<T>::operator=(const vector<T>& src)
     {
 #ifndef NO_RUNTIME_CHECK_BOUNDS
       RunTimeCheck<RunTimeProperties>::exe(this->size(),src.size());
 #endif
-      std::vector<ValueType>::operator=(src);
+      std::vector<T>::operator=(src);
       return *this;
     }
 
-    template<typename ValueType>
-    vector<ValueType>&
-    vector<ValueType>::operator+=(const vector<ValueType>& src)
+    template<typename T>
+    vector<T>&
+    vector<T>::operator+=(const vector<T>& src)
     {
       size_type i;
 #ifndef NO_RUNTIME_CHECK_BOUNDS
       RunTimeCheck<RunTimeProperties>::exe(this->size(),src.size());
 #endif
       for(i=0;i<this->size();++i){
-	std::vector<ValueType>::operator[](i) += src(i);
+	std::vector<T>::operator[](i) += src(i);
       }
       return *this;
     }
 
-    template<typename ValueType>
-    vector<ValueType>&
-    vector<ValueType>::operator-=(const vector<ValueType>& src)
+    template<typename T>
+    vector<T>&
+    vector<T>::operator-=(const vector<T>& src)
     {
       size_type i;
 #ifndef NO_RUNTIME_CHECK_BOUNDS
       RunTimeCheck<RunTimeProperties>::exe(this->size(),src.size());
 #endif
       for(i=0;i<this->size();++i){
-	std::vector<ValueType>::operator[](i) -= src(i);
+	std::vector<T>::operator[](i) -= src(i);
       }
       return *this;
     }
 
-    template<typename ValueType>
-    TFEL_MATH_INLINE2 const typename vector<ValueType>::RunTimeProperties 
-    vector<ValueType>::getRunTimeProperties(void) const
+    template<typename T>
+    TFEL_MATH_INLINE2 const typename vector<T>::RunTimeProperties 
+    vector<T>::getRunTimeProperties(void) const
     {
-      return std::vector<ValueType>::size();
+      return std::vector<T>::size();
     }
 
-    template<typename ValueType>
-    TFEL_MATH_INLINE ValueType& 
-    vector<ValueType>::operator()(const typename vector<ValueType>::size_type i)
+    template<typename T>
+    TFEL_MATH_INLINE T& 
+    vector<T>::operator()(const typename vector<T>::size_type i)
     {
 #ifndef NO_RUNTIME_CHECK_BOUNDS
 	assert(i<this->size());
 #endif
-      return std::vector<ValueType>::operator[](i);
+      return std::vector<T>::operator[](i);
     }
 
-    template<typename ValueType>
-    TFEL_MATH_INLINE const ValueType& 
-    vector<ValueType>::operator()(const typename vector<ValueType>::size_type i) const
+    template<typename T>
+    TFEL_MATH_INLINE const T& 
+    vector<T>::operator()(const typename vector<T>::size_type i) const
     {
 #ifndef NO_RUNTIME_CHECK_BOUNDS
 	assert(i<this->size());
 #endif
-      return std::vector<ValueType>::operator[](i);
+      return std::vector<T>::operator[](i);
     }
 
-    template<typename ValueType>
-    template<typename ValueType2,typename Expr>
+    template<typename T>
+    template<typename T2,typename Expr>
     TFEL_MATH_INLINE2 typename tfel::meta::EnableIf<
-      tfel::typetraits::IsAssignableTo<ValueType2,ValueType>::cond,
-      vector<ValueType>&
+      tfel::typetraits::IsAssignableTo<T2,T>::cond,
+      vector<T>&
     >::type
-    vector<ValueType>::operator=(const VectorExpr<vector<ValueType2>,Expr>& expr)
+    vector<T>::operator=(const VectorExpr<vector<T2>,Expr>& expr)
     {
       size_type i;
 #ifndef NO_RUNTIME_CHECK_BOUNDS
       RunTimeCheck<RunTimeProperties>::exe(this->getRunTimeProperties(),expr.getRunTimeProperties());
 #endif
       for(i=0;i<this->size();++i){
-	std::vector<ValueType>::operator[](i) = expr(i);
+	std::vector<T>::operator[](i) = expr(i);
       }
       return *this;
     }
 
-    template<typename ValueType>
-    template<typename ValueType2,typename Expr>
+    template<typename T>
+    template<typename T2,typename Expr>
     TFEL_MATH_INLINE2 typename tfel::meta::EnableIf<
-      tfel::typetraits::IsAssignableTo<ValueType2,ValueType>::cond,
-      vector<ValueType>&
+      tfel::typetraits::IsAssignableTo<T2,T>::cond,
+      vector<T>&
     >::type
-    vector<ValueType>::operator+=(const VectorExpr<vector<ValueType2>,Expr>& expr)
+    vector<T>::operator+=(const VectorExpr<vector<T2>,Expr>& expr)
     {
       size_type i;
 #ifndef NO_RUNTIME_CHECK_BOUNDS
       RunTimeCheck<RunTimeProperties>::exe(this->getRunTimeProperties(),expr.getRunTimeProperties());
 #endif
       for(i=0;i<this->size();++i){
-	std::vector<ValueType>::operator[](i) += expr(i);
+	std::vector<T>::operator[](i) += expr(i);
       }
       return *this;
     }
 
-    template<typename ValueType>
-    template<typename ValueType2,typename Expr>
+    template<typename T>
+    template<typename T2,typename Expr>
     TFEL_MATH_INLINE2 typename tfel::meta::EnableIf<
-      tfel::typetraits::IsAssignableTo<ValueType2,ValueType>::cond,
-      vector<ValueType>&
+      tfel::typetraits::IsAssignableTo<T2,T>::cond,
+      vector<T>&
     >::type
-    vector<ValueType>::operator-=(const VectorExpr<vector<ValueType2>,Expr>& expr)
+    vector<T>::operator-=(const VectorExpr<vector<T2>,Expr>& expr)
     {
       size_type i;
 #ifndef NO_RUNTIME_CHECK_BOUNDS
       RunTimeCheck<RunTimeProperties>::exe(this->getRunTimeProperties(),expr.getRunTimeProperties());
 #endif
       for(i=0;i<this->size();++i){
-	std::vector<ValueType>::operator[](i) -= expr(i);
+	std::vector<T>::operator[](i) -= expr(i);
       }
       return *this;
     }
 
-    template<typename ValueType>
+    template<typename T>
     template<typename InputIterator>
-    TFEL_MATH_INLINE2 void vector<ValueType>::copy(const InputIterator b,const InputIterator e)
+    TFEL_MATH_INLINE2 void vector<T>::copy(const InputIterator b,const InputIterator e)
     {
       std::copy(b,e,this->v);
     }
 
-    template<typename ValueType>
-    void vector<ValueType>::swap(vector<ValueType>& a)
+    template<typename T>
+    void vector<T>::swap(vector<T>& a)
     {
 #ifndef NO_RUNTIME_CHECK_BOUNDS
       RunTimeCheck<RunTimeProperties>::exe(this->size(),a.size());
 #endif
-      std::vector<ValueType>::swap(a);
+      std::vector<T>::swap(a);
     }
 
     template<typename T>

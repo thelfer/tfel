@@ -17,7 +17,7 @@
      * \param [in] f : input stream	        \
      * \param [in] v : value read	        \
      */					        \
-    TFEL_VISIBILITY_EXPORT                      \
+    TFELSYSTEM_VISIBILITY_EXPORT                \
     void binary_write(const int,const X&);
 
 namespace tfel

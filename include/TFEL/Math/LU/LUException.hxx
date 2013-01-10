@@ -19,7 +19,7 @@ namespace tfel
   namespace math
   {
     
-    struct TFEL_VISIBILITY_EXPORT LUException
+    struct TFELMATH_VISIBILITY_EXPORT LUException
       : public tfel::exception::TFELException
     {
       LUException(const char* const);

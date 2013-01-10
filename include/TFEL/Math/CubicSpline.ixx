@@ -21,7 +21,7 @@ namespace tfel
     template<typename real,
 	     typename value>
     bool
-    CubicSpline<real,value>::PointComparator::operator()(const CubicSpline<real,value>::Point& p,
+    CubicSpline<real,value>::PointComparator::operator()(const typename CubicSpline<real,value>::Point& p,
 							 const real& x) const
     {
       return p.x < x ;

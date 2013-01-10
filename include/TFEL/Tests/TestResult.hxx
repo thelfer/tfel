@@ -23,7 +23,7 @@ namespace tfel
    /*! 
      * result of test
      */
-    struct TFEL_VISIBILITY_EXPORT TestResult
+    struct TFELTESTS_VISIBILITY_EXPORT TestResult
       : protected std::vector<TestResult>
     {
       using std::vector<TestResult>::const_iterator;

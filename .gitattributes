@@ -696,6 +696,7 @@ mfront/include/MFront/SupportedTypes.hxx -text
 mfront/include/MFront/UMAT/UMAT.hxx -text
 mfront/include/MFront/UMAT/UMATComputeStiffnessTensor.hxx -text
 mfront/include/MFront/UMAT/UMATComputeThermalExpansionTensor.hxx -text
+mfront/include/MFront/UMAT/UMATConfig.hxx -text
 mfront/include/MFront/UMAT/UMATException.hxx -text
 mfront/include/MFront/UMAT/UMATGetModellingHypothesis.hxx -text
 mfront/include/MFront/UMAT/UMATInterface.hxx -text

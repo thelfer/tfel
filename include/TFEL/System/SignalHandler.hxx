@@ -16,13 +16,13 @@ namespace tfel
   namespace system
   {
     
-    struct TFEL_VISIBILITY_EXPORT SignalHandler
+    struct TFELSYSTEM_VISIBILITY_EXPORT SignalHandler
     {
       virtual void execute(const int) = 0;
       virtual ~SignalHandler();
     }; // end of struct SignalHandler
     
-    struct TFEL_VISIBILITY_EXPORT FctSignalHandler
+    struct TFELSYSTEM_VISIBILITY_EXPORT FctSignalHandler
       : public SignalHandler
     {
       typedef void (*Fct)(const int);
@@ -46,7 +46,7 @@ namespace tfel
       const Fct f;
     }; // end of struct MemberSignalHandler
     
-    TFEL_VISIBILITY_EXPORT
+    TFELSYSTEM_VISIBILITY_EXPORT
     FctSignalHandler *
     sigPtrFun(const FctSignalHandler::Fct);
 

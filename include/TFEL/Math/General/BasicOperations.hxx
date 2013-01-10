@@ -105,7 +105,7 @@ namespace tfel{
     template<typename ValueType>
     struct Complex;
 
-    struct TFEL_VISIBILITY_EXPORT OpPlus {
+    struct TFELMATH_VISIBILITY_EXPORT OpPlus {
 
       /*!
        * \brief  Return the name of the class.
@@ -128,7 +128,7 @@ namespace tfel{
 
     };
     
-    struct TFEL_VISIBILITY_EXPORT OpMinus {
+    struct TFELMATH_VISIBILITY_EXPORT OpMinus {
 
       /*!
        * \brief  Return the name of the class.
@@ -151,7 +151,7 @@ namespace tfel{
 
     }; // end of OpMinus
 
-    struct TFEL_VISIBILITY_EXPORT OpMult {
+    struct TFELMATH_VISIBILITY_EXPORT OpMult {
 
       /*!
        * \brief  Return the name of the class.
@@ -174,7 +174,7 @@ namespace tfel{
 
     }; // end of OpMult
 
-    struct TFEL_VISIBILITY_EXPORT OpDiv {
+    struct TFELMATH_VISIBILITY_EXPORT OpDiv {
 
       /*!
        * \brief  Return the name of the class.
@@ -197,7 +197,7 @@ namespace tfel{
 
     }; // end of OpDiv
 
-    struct TFEL_VISIBILITY_EXPORT OpNeg {
+    struct TFELMATH_VISIBILITY_EXPORT OpNeg {
 	
       /*!
        * \brief  Return the name of the class.
@@ -216,7 +216,7 @@ namespace tfel{
 
     };
 
-    struct TFEL_VISIBILITY_EXPORT OpDotProduct
+    struct TFELMATH_VISIBILITY_EXPORT OpDotProduct
     {
       /*!
        * \brief  Return the name of the class.
@@ -227,7 +227,7 @@ namespace tfel{
       static std::string getName(void);
     }; // end of struct OpDotProduct
 
-    struct TFEL_VISIBILITY_EXPORT OpDiadicProduct
+    struct TFELMATH_VISIBILITY_EXPORT OpDiadicProduct
     {
       /*!
        * \brief  Return the name of the class.

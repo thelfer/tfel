@@ -119,7 +119,7 @@ namespace tfel
     /*!
      * Base class for all TestCase
      */
-    struct TFEL_VISIBILITY_EXPORT TestCase
+    struct TFELTESTS_VISIBILITY_EXPORT TestCase
       : public Test
     {
       /*! 

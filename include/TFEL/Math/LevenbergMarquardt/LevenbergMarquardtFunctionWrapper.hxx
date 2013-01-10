@@ -8,7 +8,6 @@
 #ifndef _LIB_LEVENBERGMARQUARDTFUNCTIONWRAPPER_H_
 #define _LIB_LEVENBERGMARQUARDTFUNCTIONWRAPPER_H_ 
 
-#include"TFEL/Config/TFELConfig.hxx"
 #include"TFEL/Math/vector.hxx"
 
 namespace tfel

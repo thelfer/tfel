@@ -78,6 +78,7 @@ nobase_include_HEADERS += MFront/UMAT/UMATException.hxx                     \
 			  MFront/UMAT/UMATComputeStiffnessTensor.hxx        \
 			  MFront/UMAT/UMATComputeThermalExpansionTensor.hxx \
 			  MFront/UMAT/UMATTraits.hxx                        \
-			  MFront/UMAT/UMAT.hxx
+			  MFront/UMAT/UMAT.hxx                              \
+			  MFront/UMAT/UMATConfig.hxx
 
 EXTRA_DIST = CMakeLists.txt

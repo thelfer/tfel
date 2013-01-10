@@ -1,6 +1,7 @@
 ## Makefile.am -- Process this file with automake to produce a Makefile.in file.
 if TFEL_WIN
-AM_LDFLAGS=-no-undefined -avoid-version -Wl,--add-stdcall-alias -Wl,--kill-at
+AM_CPPFLAGS=-DTFELUtilities_EXPORTS
+AM_LDFLAGS =-no-undefined -avoid-version -Wl,--add-stdcall-alias -Wl,--kill-at
 endif
 
 INCLUDES = -I$(top_srcdir)/include

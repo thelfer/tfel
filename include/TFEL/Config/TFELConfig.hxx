@@ -78,4 +78,99 @@
 #endif 
 #endif /* defined _WIN32 || _WIN64 || defined __CYGWIN__ */
 
+/*!
+ * defining macros by librairies using cmake conventions.
+ * When compiling libfoo, cmake defines the macro foo_EXPORTS.
+ * This allows to distinguish import/export definitions of symbols
+ */
+#if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
+#  if defined TFELException_EXPORTS
+#    define TFELEXCEPTION_VISIBILITY_EXPORT TFEL_VISIBILITY_EXPORT
+#  else
+#    define TFELEXCEPTION_VISIBILITY_EXPORT TFEL_VISIBILITY_IMPORT
+#  endif
+#else
+#  define TFELEXCEPTION_VISIBILITY_EXPORT TFEL_VISIBILITY_EXPORT
+#endif
+
+#if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
+#  if defined TFELTests_EXPORTS
+#    define TFELTESTS_VISIBILITY_EXPORT TFEL_VISIBILITY_EXPORT
+#  else
+#    define TFELTESTS_VISIBILITY_EXPORT TFEL_VISIBILITY_IMPORT
+#  endif
+#else
+#  define TFELTESTS_VISIBILITY_EXPORT TFEL_VISIBILITY_EXPORT
+#endif
+
+#if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
+#  if defined TFELUtilities_EXPORTS
+#    define TFELUTILITIES_VISIBILITY_EXPORT TFEL_VISIBILITY_EXPORT
+#  else
+#    define TFELUTILITIES_VISIBILITY_EXPORT TFEL_VISIBILITY_IMPORT
+#  endif
+#else
+#  define TFELUTILITIES_VISIBILITY_EXPORT TFEL_VISIBILITY_EXPORT
+#endif
+
+#if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
+#  if defined TFELSystem_EXPORTS
+#    define TFELSYSTEM_VISIBILITY_EXPORT TFEL_VISIBILITY_EXPORT
+#  else
+#    define TFELSYSTEM_VISIBILITY_EXPORT TFEL_VISIBILITY_IMPORT
+#  endif
+#else
+#  define TFELSYSTEM_VISIBILITY_EXPORT TFEL_VISIBILITY_EXPORT
+#endif
+
+#if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
+#  if defined TFELMath_EXPORTS
+#    define TFELMATH_VISIBILITY_EXPORT TFEL_VISIBILITY_EXPORT
+#  else
+#    define TFELMATH_VISIBILITY_EXPORT TFEL_VISIBILITY_IMPORT
+#  endif
+#else
+#  define TFELMATH_VISIBILITY_EXPORT TFEL_VISIBILITY_EXPORT
+#endif
+
+#if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
+#  if defined TFELMathCubicSpline_EXPORTS
+#    define TFELMATHCUBICSPLINE_VISIBILITY_EXPORT TFEL_VISIBILITY_EXPORT
+#  else
+#    define TFELMATHCUBICSPLINE_VISIBILITY_EXPORT TFEL_VISIBILITY_IMPORT
+#  endif
+#else
+#  define TFELMATHCUBICSPLINE_VISIBILITY_EXPORT TFEL_VISIBILITY_EXPORT
+#endif
+
+#if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
+#  if defined TFELMathKriging_EXPORTS
+#    define TFELMATHKRIGING_VISIBILITY_EXPORT TFEL_VISIBILITY_EXPORT
+#  else
+#    define TFELMATHKRIGING_VISIBILITY_EXPORT TFEL_VISIBILITY_IMPORT
+#  endif
+#else
+#  define TFELMATHKRIGING_VISIBILITY_EXPORT TFEL_VISIBILITY_EXPORT
+#endif
+
+#if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
+#  if defined TFELMathParser_EXPORTS
+#    define TFELMATHPARSER_VISIBILITY_EXPORT TFEL_VISIBILITY_EXPORT
+#  else
+#    define TFELMATHPARSER_VISIBILITY_EXPORT TFEL_VISIBILITY_IMPORT
+#  endif
+#else
+#  define TFELMATHPARSER_VISIBILITY_EXPORT TFEL_VISIBILITY_EXPORT
+#endif
+
+#if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
+#  if defined TFELMaterial_EXPORTS
+#    define TFELMATERIAL_VISIBILITY_EXPORT TFEL_VISIBILITY_EXPORT
+#  else
+#    define TFELMATERIAL_VISIBILITY_EXPORT TFEL_VISIBILITY_IMPORT
+#  endif
+#else
+#  define TFELMATERIAL_VISIBILITY_EXPORT TFEL_VISIBILITY_EXPORT
+#endif
+
 #endif /* _LIB_TFEL_CONFIG_HXX */

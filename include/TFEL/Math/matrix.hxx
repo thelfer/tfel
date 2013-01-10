@@ -208,7 +208,7 @@ namespace tfel
 
       /*
        * Assignement operator
-       * \param const MatrixExpr<matrix<ValueType2>,Expr>&, a matrix
+       * \param const MatrixExpr<matrix<T2>,Expr>&, a matrix
        * expression based on matrix
        * \return matrix&, a reference to itself.
        */

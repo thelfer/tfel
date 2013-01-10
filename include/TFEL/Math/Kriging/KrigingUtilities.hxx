@@ -20,7 +20,7 @@ namespace tfel
   namespace math
   {
 
-    struct TFEL_VISIBILITY_EXPORT KrigingUtilities
+    struct TFELMATHKRIGING_VISIBILITY_EXPORT KrigingUtilities
     {
       
       static std::pair<double,double>

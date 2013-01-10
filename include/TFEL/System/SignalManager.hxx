@@ -22,7 +22,7 @@ namespace tfel
   namespace system
   {
     
-    struct TFEL_VISIBILITY_EXPORT SignalManager
+    struct TFELSYSTEM_VISIBILITY_EXPORT SignalManager
     {
       static void
       printBackTrace(const int);

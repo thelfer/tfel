@@ -21,7 +21,7 @@ namespace tfel{
 
     namespace stdfunctions{
 
-      TFEL_VISIBILITY_EXPORT OpDiff D;
+      TFELMATH_VISIBILITY_EXPORT OpDiff D;
 
     } // end of namespace stdfunctions
     

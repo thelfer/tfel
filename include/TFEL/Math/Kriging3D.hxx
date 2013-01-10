@@ -19,7 +19,7 @@ namespace tfel
   namespace math
   {
 
-    struct TFEL_VISIBILITY_EXPORT Kriging3D
+    struct TFELMATHKRIGING_VISIBILITY_EXPORT Kriging3D
       : private Kriging<3u,double>,
 	private KrigingUtilities
     {

@@ -10,7 +10,9 @@
 #define _LIB_MFRONT_UMATCOMPUTETHERMALEXPANSIONTENSOR_HXX_ 
 
 #include"TFEL/Config/TFELTypes.hxx"
+
 #include"MFront/UMAT/UMAT.hxx"
+#include"MFront/UMAT/UMATConfig.hxx"
 #include"MFront/UMAT/UMATTraits.hxx"
 
 namespace umat
@@ -21,7 +23,7 @@ namespace umat
   struct UMATComputeThermalExpansionTensor;
 
   template<>
-  struct TFEL_VISIBILITY_EXPORT UMATComputeThermalExpansionTensor<1u,ISOTROPIC>
+  struct MFRONT_UMAT_VISIBILITY_EXPORT UMATComputeThermalExpansionTensor<1u,ISOTROPIC>
   {
     static void
     exe(const UMATReal* const,
@@ -29,7 +31,7 @@ namespace umat
   }; // end of struct UMATComputeThermalExpansionTensor
 
   template<>
-  struct TFEL_VISIBILITY_EXPORT UMATComputeThermalExpansionTensor<2u,ISOTROPIC>
+  struct MFRONT_UMAT_VISIBILITY_EXPORT UMATComputeThermalExpansionTensor<2u,ISOTROPIC>
   {
     static void
     exe(const UMATReal* const,
@@ -37,7 +39,7 @@ namespace umat
   }; // end of struct UMATComputeThermalExpansionTensor
 
   template<>
-  struct TFEL_VISIBILITY_EXPORT UMATComputeThermalExpansionTensor<3u,ISOTROPIC>
+  struct MFRONT_UMAT_VISIBILITY_EXPORT UMATComputeThermalExpansionTensor<3u,ISOTROPIC>
   {
     static void
     exe(const UMATReal* const,
@@ -45,7 +47,7 @@ namespace umat
   }; // end of struct UMATComputeThermalExpansionTensor
 
   template<>
-  struct TFEL_VISIBILITY_EXPORT UMATComputeThermalExpansionTensor<1u,ORTHOTROPIC>
+  struct MFRONT_UMAT_VISIBILITY_EXPORT UMATComputeThermalExpansionTensor<1u,ORTHOTROPIC>
   {
     static void
     exe(const UMATReal* const,
@@ -53,7 +55,7 @@ namespace umat
   }; // end of struct UMATComputeThermalExpansionTensor
 
   template<>
-  struct TFEL_VISIBILITY_EXPORT UMATComputeThermalExpansionTensor<2u,ORTHOTROPIC>
+  struct MFRONT_UMAT_VISIBILITY_EXPORT UMATComputeThermalExpansionTensor<2u,ORTHOTROPIC>
   {
     static void
     exe(const UMATReal* const,
@@ -61,7 +63,7 @@ namespace umat
   }; // end of struct UMATComputeThermalExpansionTensor
 
   template<>
-  struct TFEL_VISIBILITY_EXPORT UMATComputeThermalExpansionTensor<3u,ORTHOTROPIC>
+  struct MFRONT_UMAT_VISIBILITY_EXPORT UMATComputeThermalExpansionTensor<3u,ORTHOTROPIC>
   {
     static void
     exe(const UMATReal* const,

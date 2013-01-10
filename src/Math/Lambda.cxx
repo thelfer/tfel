@@ -12,9 +12,9 @@ namespace tfel{
 
   namespace math{
     
-    TFEL_VISIBILITY_EXPORT Lambda<1u> x_;
-    TFEL_VISIBILITY_EXPORT Lambda<2u> y_;
-    TFEL_VISIBILITY_EXPORT Lambda<3u> z_;
+    TFELMATH_VISIBILITY_EXPORT Lambda<1u> x_;
+    TFELMATH_VISIBILITY_EXPORT Lambda<2u> y_;
+    TFELMATH_VISIBILITY_EXPORT Lambda<3u> z_;
 
   } // end of namespace math
 

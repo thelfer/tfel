@@ -21,7 +21,7 @@ namespace tfel{
      * \author Helfer Thomas
      * \date   26 Jul 2006
      */
-    struct TFEL_VISIBILITY_EXPORT TerminalColors
+    struct TFELUTILITIES_VISIBILITY_EXPORT TerminalColors
     {
       /*!
        * \brief char sequence correponding to black.

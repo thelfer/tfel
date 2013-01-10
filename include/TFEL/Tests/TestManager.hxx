@@ -50,7 +50,7 @@ namespace tfel
     /*!
      * class in charge of managing a collection of tests.
      */
-    struct TFEL_VISIBILITY_EXPORT TestManager
+    struct TFELTESTS_VISIBILITY_EXPORT TestManager
     {
       //! a simple alias
       typedef tfel::utilities::shared_ptr<TestOutput> TestOutputPtr;

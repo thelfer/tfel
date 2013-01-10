@@ -19,7 +19,7 @@ namespace tfel
   namespace material
   {
     
-    struct TFEL_VISIBILITY_EXPORT DDIF2Base
+    struct TFELMATERIAL_VISIBILITY_EXPORT DDIF2Base
     {
 
       template<typename Stensor2Type1,

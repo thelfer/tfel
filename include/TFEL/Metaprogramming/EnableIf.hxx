@@ -76,6 +76,21 @@ namespace tfel{
       typedef T type;
     };
     
+	/*!
+	 * An equivalent introduce to fix visual c++ limitations
+	 */
+	template<bool c, typename T>
+    struct DisableIf;
+
+	template<typename T>
+    struct DisableIf<false,T>
+	{
+	   /*!
+       * Returned type
+       */
+      typedef T type;
+    };
+
   } // end of meta namespace
 
 } // end of TFEL namespace

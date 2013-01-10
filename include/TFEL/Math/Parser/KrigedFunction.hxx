@@ -29,7 +29,7 @@ namespace tfel
     namespace parser
     {
 
-      struct TFEL_VISIBILITY_EXPORT KrigedFunctionBase
+      struct TFELMATHPARSER_VISIBILITY_EXPORT KrigedFunctionBase
       {
 	static void
 	throwInvalidCreateFunctionByChangingParametersIntoVariables(void);
@@ -42,7 +42,7 @@ namespace tfel
       }; // end of KrigedFunctionBase
 
       template<unsigned short N>
-      struct TFEL_VISIBILITY_EXPORT KrigedFunction
+      struct TFELMATHPARSER_VISIBILITY_EXPORT KrigedFunction
 	: public ExternalFunction
       {
 	typedef typename KrigingVariable<N,double>::type Variable;

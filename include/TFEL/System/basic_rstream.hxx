@@ -113,12 +113,12 @@ namespace tfel
 
     }; // end of struct basic_rstream
 
-    struct TFEL_VISIBILITY_EXPORT BlockingStreamReader
+    struct TFELSYSTEM_VISIBILITY_EXPORT BlockingStreamReader
     {
       static void read(int,void *const,const size_t);
     }; // end of BlockingStreamReader
 
-    struct TFEL_VISIBILITY_EXPORT NonBlockingStreamReader
+    struct TFELSYSTEM_VISIBILITY_EXPORT NonBlockingStreamReader
     {
       static void read(int,void *const,const size_t);
     }; // end of NonBlockingStreamReader

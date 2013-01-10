@@ -25,7 +25,7 @@ namespace tfel
      * \author Helfer Thomas
      * \date   02 Aug 2006
      */
-    struct TFEL_VISIBILITY_EXPORT TFELException
+    struct TFELEXCEPTION_VISIBILITY_EXPORT TFELException
       : public std::exception
     {
 

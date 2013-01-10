@@ -25,7 +25,7 @@ namespace tfel
   namespace system
   {
 
-    struct TFEL_VISIBILITY_EXPORT ExternalLibraryManager
+    struct TFELSYSTEM_VISIBILITY_EXPORT ExternalLibraryManager
     {
 
       static ExternalLibraryManager&
