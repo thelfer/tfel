@@ -69,6 +69,12 @@ if(HAVE_PYTHON)
 	${mfront_SOURCES})
 endif(HAVE_PYTHON)
 
+if(HAVE_FORTRAN)
+    set(mfront_SOURCES
+	MFrontFortranLawInterface.cxx
+	${mfront_SOURCES})
+endif(HAVE_FORTRAN)
+
 if(HAVE_CASTEM)
     set(mfront_SOURCES
 	MFrontUMATInterface.cxx

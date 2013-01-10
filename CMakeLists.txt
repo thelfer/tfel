@@ -6,12 +6,26 @@ include(cmake/modules/autotools.cmake)
 # check for castem
 include(cmake/modules/autotools.cmake)
 
-tfel_project(tfel 1 1)
+#major and minor version
+tfel_project(1 1)
 set(PACKAGE_BUGREPORT "thomas.helfer@cea.fr")
 
 # testing
+# (must be placed *before* any add_subdirectory, cmake bug ?)
 enable_testing()
 add_custom_target(check COMMAND ${CMAKE_CTEST_COMMAND})
+
+# fortran (placed before compiler detection)
+option(enable-fortran "enable fortran support")
+if(enable-fortran)
+  set(HAVE_FORTRAN ON)
+  add_definitions("-DHAVE_FORTRAN=1")
+  enable_language (Fortran)
+  message(STATUS "fortran support enabled")
+else(enable-fortran)
+  set(HAVE_FORTRAN OFF)
+  message(STATUS "fortran support disabled")
+endif(enable-fortran)
 
 #compiler specific options
 set(OPTIMISATION_FLAGS "")
@@ -53,8 +67,9 @@ if(PYTHONLIBS_FOUND)
   add_definitions("-DHAVE_PYTHON=1")
   add_definitions("-DTFEL_PYTHON_INCLUDES=\\\"\"-I${PYTHON_INCLUDE_DIRS}\"\\\"")
   get_filename_component(PYTHON_LIBRARY_PATH ${PYTHON_LIBRARIES} PATH)
-  get_filename_component(PYTHON_LIBRARY      ${PYTHON_LIBRARIES} NAME)
-  add_definitions("-DTFEL_PYTHON_LIBS=\\\"\"-L${PYTHON_LIBRARY_PATH} -l ${PYTHON_LIBRARY}\"\\\"")
+  get_filename_component(PYTHON_LIBRARY_FULL ${PYTHON_LIBRARIES} NAME)
+  string(REGEX REPLACE "lib(.+)\\.(.+)$" "\\1" PYTHON_LIBRARY ${PYTHON_LIBRARY_FULL})
+  add_definitions("-DTFEL_PYTHON_LIBS=\\\"\"-L${PYTHON_LIBRARY_PATH} -l${PYTHON_LIBRARY}\"\\\"")
   message(STATUS "found python")
   message(STATUS "python include path   ${PYTHON_INCLUDE_DIRS}")
   message(STATUS "python libraries path ${PYTHON_LIBRARY_PATH}")
@@ -75,19 +90,20 @@ endif(UNIX)
 add_subdirectory(mfront)
 add_subdirectory(tests)
 
-# packaging
-include(CPack)
-
-set (CPACK_PACKAGE_EXECUTABLES         "mfront;mfront")
+#set (CPACK_PACKAGE_EXECUTABLES         "mfront;mfront")
 set (CPACK_PACKAGE_INSTALL_DIRECTORY   "${PACKAGE_NAME}-${VERSION}")
 set (CPACK_PACKAGE_NAME                "${PACKAGE_NAME}")
+set (CPACK_PACKAGE_VERSION_PATCH       "0")
 set (CPACK_PACKAGE_VERSION_MAJOR       "${TFEL_VERSION_MAJOR}")
 set (CPACK_PACKAGE_VERSION_MINOR       "${TFEL_VERSION_MINOR}")
 set (CPACK_PACKAGE_VENDOR              "CEA")
-set (CPACK_SOURCE_IGNORE_FILES         "\\.svn/")
+set (CPACK_SOURCE_IGNORE_FILES         "/\\\\.svn")
 set (CPACK_PACKAGE_DESCRIPTION_SUMMARY "tfel is a mathematical library")
 set (CPACK_PACKAGE_DESCRIPTION 	       "tfel is a mathematical library")
 
 # debian  packaging
-set (CPACK_DEBIAN_PACKAGE_MAINTAINER   "Helfer Thomas thomas.helfer@cea.fr ${PACKAGE_BUGREPORT}")
+set (CPACK_DEBIAN_PACKAGE_MAINTAINER   "Helfer Thomas ${PACKAGE_BUGREPORT}")
 set (CPACK_DEBIAN_PACKAGE_SECTION      "Science")
+
+# packaging
+include(CPack)
