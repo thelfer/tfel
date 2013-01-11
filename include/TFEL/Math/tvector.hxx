@@ -51,6 +51,18 @@ namespace tfel{
     };
     
     /*!
+     * An helper class to deal with limitation of Visual Studio 10
+     */
+    template<typename T,
+	     typename T2,
+	     typename Op>
+    struct IsTVectorScalarOperationValid
+    {
+      static const bool cond = tfel::typetraits::IsScalar<T2>::cond&&
+        tfel::meta::IsSameType<typename ResultType<T,T2,OpMult>::type,T>::cond;
+    }; // end of struct IsTVectorScalarOperationValid
+
+    /*!
      * \brief a base for tvector or classes acting like tvector.
      */
     template<typename Child,
@@ -124,8 +136,7 @@ namespace tfel{
       template<typename T2>
       TFEL_MATH_INLINE 
       typename tfel::meta::EnableIf<
-	tfel::typetraits::IsScalar<T2>::cond&&
-      tfel::meta::IsSameType<typename ResultType<T,T2,OpMult>::type,T>::cond,
+	IsTVectorScalarOperationValid<T,T2,OpMult>::cond,
 	Child&
       >::type
       operator*=(const T2);
@@ -136,8 +147,7 @@ namespace tfel{
       template<typename T2>
       TFEL_MATH_INLINE 
       typename tfel::meta::EnableIf<
-	tfel::typetraits::IsScalar<T2>::cond&&
-        tfel::meta::IsSameType<typename ResultType<T,T2,OpMult>::type,T>::cond,
+	IsTVectorScalarOperationValid<T,T2,OpDiv>::cond,
 	Child&
       >::type
       operator/=(const T2);
@@ -213,7 +223,7 @@ namespace tfel{
        * type of the tvector's reverse iterator.
        * (provided for stl compatibility).
        */
-#ifdef __GNUG__
+#ifndef __SUNPRO_CC
       typedef std::reverse_iterator<const_iterator> const_reverse_iterator; 
 #else
       typedef std::reverse_iterator<const_iterator,T,
@@ -224,7 +234,7 @@ namespace tfel{
        * type of the tvector's const reverse iterator.
        * (provided for stl compatibility).
        */
-#ifdef __GNUG__
+#ifndef __SUNPRO_CC
       typedef std::reverse_iterator<iterator> reverse_iterator;
 #else
       typedef std::reverse_iterator<iterator,T,

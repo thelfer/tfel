@@ -36,6 +36,11 @@ if(UNIX)
     include(cmake/modules/gcc.cmake)
   endif(CMAKE_COMPILER_IS_GNUCC)
 endif(UNIX)
+if(MSVC)
+  add_definitions("-DMICROSOFT_COMPILER_MSC_=1")
+  add_definitions("/wd4251 /wd4275")
+endif(MSVC)
+
 message("${OPTIMISATION_FLAGS}")
 
 cmake_policy(SET CMP0005 OLD)
@@ -89,6 +94,23 @@ endif(UNIX)
 
 add_subdirectory(mfront)
 add_subdirectory(tests)
+
+# add a target to generate API documentation with Doxygen
+find_package(Doxygen)
+if(DOXYGEN_FOUND)
+  configure_file(${CMAKE_CURRENT_SOURCE_DIR}/Doxyfile.in
+                 ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile)
+  add_custom_target(doc-html
+    ${DOXYGEN_EXECUTABLE} ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile
+    WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+    COMMENT "Generating API documentation with Doxygen" VERBATIM)
+endif(DOXYGEN_FOUND)
+
+find_package(LATEX)
+if(LATEX_COMPILER)
+  message(STATUS "latex compiler found : ${LATEX_COMPILER}")
+  
+endif(LATEX_COMPILER)
 
 #set (CPACK_PACKAGE_EXECUTABLES         "mfront;mfront")
 set (CPACK_PACKAGE_INSTALL_DIRECTORY   "${PACKAGE_NAME}-${VERSION}")

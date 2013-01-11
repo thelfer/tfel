@@ -383,7 +383,6 @@ nobase_include_HEADERS= TFEL/Macros.hxx                                         
 			TFEL/Math/Composite/CompositeExpr.hxx                                         \
 			TFEL/Math/Composite/compositeResultType.ixx                                   \
 			TFEL/Math/Composite/ScalarCompositeExpr.hxx                                   \
-			TFEL/Math/Composite/CompositeConcept.ixx                                      \
 			TFEL/Math/Composite/composite.ixx                                             \
 			TFEL/Math/Composite/CompositeScalarExpr.hxx                                   \
 			TFEL/Math/Broyden.hxx                                                         \

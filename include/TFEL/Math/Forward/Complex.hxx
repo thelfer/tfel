@@ -11,8 +11,13 @@
 namespace std
 {
 
+#ifndef MICROSOFT_COMPILER_MSC_
   template<typename T>
   struct complex;
+#else
+  template<typename T>
+  class complex;
+#endif
 
 } // end of namespace std
 

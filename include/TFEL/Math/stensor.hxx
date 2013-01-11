@@ -89,7 +89,7 @@ namespace tfel{
        * type of the stensor's reverse iterator.
        * (provided for stl compatibility).
        */
-#ifdef __GNUG__
+#ifndef __SUNPRO_CC
       typedef std::reverse_iterator<iterator> reverse_iterator; 
 #else
       typedef std::reverse_iterator<iterator,T,
@@ -100,7 +100,7 @@ namespace tfel{
        * type of the stensor's const reverse iterator.
        * (provided for stl compatibility).
        */
-#ifdef __GNUG__
+#ifndef __SUNPRO_CC
       typedef std::reverse_iterator<const_iterator> const_reverse_iterator; 
 #else
       typedef std::reverse_iterator<const_iterator,T,

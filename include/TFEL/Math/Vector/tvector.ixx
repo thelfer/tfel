@@ -89,8 +89,7 @@ namespace tfel{
     template<typename Child,unsigned short N,typename T>
     template<typename T2>
     typename tfel::meta::EnableIf<
-      tfel::typetraits::IsScalar<T2>::cond&&
-      tfel::meta::IsSameType<typename ResultType<T,T2,OpMult>::type,T>::cond,
+      IsTVectorScalarOperationValid<T,T2,OpMult>::cond,
       Child&
     >::type
     tvector_base<Child,N,T>::operator*=(const T2 s)
@@ -103,8 +102,7 @@ namespace tfel{
     template<typename Child,unsigned short N,typename T>
     template<typename T2>
     typename tfel::meta::EnableIf<
-      tfel::typetraits::IsScalar<T2>::cond&&
-      tfel::meta::IsSameType<typename ResultType<T,T2,OpMult>::type,T>::cond,
+      IsTVectorScalarOperationValid<T,T2,OpDiv>::cond,
       Child&
     >::type
     tvector_base<Child,N,T>::operator/=(const T2 s)

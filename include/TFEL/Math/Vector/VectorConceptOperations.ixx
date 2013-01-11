@@ -16,9 +16,7 @@ namespace tfel{
     template<typename T1,typename T2>
     TFEL_MATH_INLINE
     typename tfel::meta::EnableIf<
-      tfel::meta::Implements<T1,VectorConcept>::cond&&
-      tfel::meta::Implements<T2,VectorConcept>::cond&&
-      !tfel::typetraits::IsInvalid<typename ComputeBinaryResult<T1,T2,OpPlus>::Result>::cond,
+      IsVectorVectorOperationValid<T1,T2,OpPlus>::cond,
       typename ComputeBinaryResult<T1,T2,OpPlus>::Handle
     >::type
     operator + (const T1& a,const T2& b)
@@ -30,9 +28,7 @@ namespace tfel{
     template<typename T1,typename T2>
     TFEL_MATH_INLINE 
     typename tfel::meta::EnableIf<
-      tfel::meta::Implements<T1,VectorConcept>::cond&&
-      tfel::meta::Implements<T2,VectorConcept>::cond&&
-      !tfel::typetraits::IsInvalid<typename ComputeBinaryResult<T1,T2,OpMinus>::Result>::cond,
+      IsVectorVectorOperationValid<T1,T2,OpMinus>::cond,
       typename ComputeBinaryResult<T1,T2,OpMinus>::Handle
     >::type
     operator - (const T1& a,const T2& b)
@@ -44,9 +40,7 @@ namespace tfel{
     template<typename T1,typename T2>
     TFEL_MATH_INLINE 
     typename tfel::meta::EnableIf<
-      tfel::meta::Implements<T1,VectorConcept>::cond&&
-      tfel::meta::Implements<T2,VectorConcept>::cond&&
-      !tfel::typetraits::IsInvalid<typename ComputeBinaryResult<T1,T2,OpMult>::Result>::cond,
+      IsVectorVectorOperationValid<T1,T2,OpMult>::cond,
       typename ComputeBinaryResult<T1,T2,OpMult>::Handle
     >::type
     operator * (const T1& a,const T2& b)
@@ -58,9 +52,7 @@ namespace tfel{
     template<typename T1,typename T2>
     TFEL_MATH_INLINE 
     typename tfel::meta::EnableIf<
-      tfel::meta::Implements<T1,VectorConcept>::cond&&
-      tfel::meta::Implements<T2,VectorConcept>::cond&&
-      !tfel::typetraits::IsInvalid<typename ComputeBinaryResult<T1,T2,OpDiv>::Result>::cond,
+      IsVectorVectorOperationValid<T1,T2,OpDiv>::cond,
       typename ComputeBinaryResult<T1,T2,OpDiv>::Handle
     >::type
     operator / (const T1& a,const T2& b)
@@ -72,9 +64,7 @@ namespace tfel{
     template<typename T1,typename T2>
     TFEL_MATH_INLINE 
     typename tfel::meta::EnableIf<
-      tfel::typetraits::IsScalar<T1>::cond&&
-      tfel::meta::Implements<T2,VectorConcept>::cond&&
-      !tfel::typetraits::IsInvalid<typename ComputeBinaryResult<T1,T2,OpMult>::Result>::cond,
+      IsScalarVectorOperationValid<T1,T2,OpMult>::cond,
       typename ComputeBinaryResult<T1,T2,OpMult>::Handle
     >::type
     operator * (const T1 a, const T2& b)
@@ -86,9 +76,7 @@ namespace tfel{
     template<typename T1,typename T2>
     TFEL_MATH_INLINE 
     typename tfel::meta::EnableIf<
-      tfel::meta::Implements<T1,VectorConcept>::cond&&
-      tfel::meta::Implements<T2,VectorConcept>::cond&&
-      !tfel::typetraits::IsInvalid<typename ComputeBinaryResult<T1,T2,OpDiadicProduct>::Result>::cond,
+      IsVectorVectorOperationValid<T1,T2,OpDiadicProduct>::cond,
       typename ComputeBinaryResult<T1,T2,OpDiadicProduct>::Handle
     >::type
     operator ^ (const T1& a,const T2& b)
@@ -100,9 +88,7 @@ namespace tfel{
     template<typename T1,typename T2>
     TFEL_MATH_INLINE 
     typename tfel::meta::EnableIf<
-      tfel::meta::Implements<T1,VectorConcept>::cond&&
-      tfel::typetraits::IsScalar<T2>::cond&&
-      !tfel::typetraits::IsInvalid<typename ComputeBinaryResult<T1,T2,OpMult>::Result>::cond,
+      IsVectorScalarOperationValid<T1,T2,OpMult>::cond,
       typename ComputeBinaryResult<T1,T2,OpMult>::Handle
     >::type
     operator * (const T1& a,const T2 b)
@@ -114,9 +100,7 @@ namespace tfel{
     template<typename T1,typename T2>
     TFEL_MATH_INLINE 
     typename tfel::meta::EnableIf<
-      tfel::meta::Implements<T1,VectorConcept>::cond&&
-      tfel::typetraits::IsScalar<T2>::cond&&
-      !tfel::typetraits::IsInvalid<typename ComputeBinaryResult<T1,T2,OpDiv>::Result>::cond,
+      IsVectorScalarOperationValid<T1,T2,OpDiv>::cond,
       typename ComputeBinaryResult<T1,T2,OpDiv>::Handle
     >::type
     operator / (const T1& a,const T2 b)
@@ -139,9 +123,7 @@ namespace tfel{
 
     template<typename T1,typename T2>
     typename tfel::meta::EnableIf<
-      tfel::meta::Implements<T1,VectorConcept>::cond&&
-      tfel::meta::Implements<T2,VectorConcept>::cond&&
-      !tfel::typetraits::IsInvalid<typename ComputeBinaryResult<T1,T2,OpDotProduct>::Result>::cond,
+      IsVectorVectorOperationValid<T1,T2,OpDotProduct>::cond,
       typename ComputeBinaryResult<T1,T2,OpDotProduct>::Result
     >::type
     operator | (const T1& a, const T2& b)
@@ -153,8 +135,7 @@ namespace tfel{
 
     template<typename T1>
     typename tfel::meta::EnableIf<
-      tfel::meta::Implements<T1,VectorConcept>::cond&&
-      !tfel::typetraits::IsInvalid<typename tfel::typetraits::RealPartType<typename ComputeBinaryResult<T1,T1,OpDotProduct>::Result>::type>::cond,
+      IsEuclidianNormValid<T1>::cond,
       typename tfel::typetraits::RealPartType<typename ComputeBinaryResult<T1,T1,OpDotProduct>::Result>::type
     >::type
     norm(const T1& v)

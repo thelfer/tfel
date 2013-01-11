@@ -37,6 +37,18 @@ namespace tfel{
   namespace math{
 
     /*!
+     * An helper class to deal with some limitations of Visual Studio
+     */
+    template<typename T,
+	     typename T2>
+    struct IsQtScalarOperationValid
+    {
+      static const bool cond = tfel::typetraits::IsFundamentalNumericType<T2>::cond&&
+        tfel::typetraits::IsScalar<T>::cond&&
+        tfel::meta::IsSameType<typename tfel::typetraits::Promote<T,T2>::type,T>::cond;
+    };
+
+    /*!
      * \class qt
      * \brief This class describes numbers with unit.
      * qt must be has efficient and simple to use that standard numerical types.
@@ -137,9 +149,7 @@ namespace tfel{
        */
       template<typename T2>
       TFEL_MATH_INLINE typename tfel::meta::EnableIf<
-	tfel::typetraits::IsFundamentalNumericType<T2>::cond&&
-        tfel::typetraits::IsScalar<T>::cond&&
-        tfel::meta::IsSameType<typename tfel::typetraits::Promote<T,T2>::type,T>::cond,
+	IsQtScalarOperationValid<T,T2>::cond,
 	qt<unit,T>&
       >::type
       operator *= (const T2 a);
@@ -150,9 +160,7 @@ namespace tfel{
        */
       template<typename T2>
       TFEL_MATH_INLINE typename tfel::meta::EnableIf<
-	tfel::typetraits::IsFundamentalNumericType<T2>::cond&&
-        tfel::typetraits::IsScalar<T>::cond&&
-        tfel::meta::IsSameType<typename tfel::typetraits::Promote<T,T2>::type,T>::cond,
+	IsQtScalarOperationValid<T,T2>::cond,
 	qt<unit,T>&
       >::type
       operator /= (const T2 a);
@@ -166,6 +174,17 @@ namespace tfel{
       }
 
     };
+
+    /*!
+     * An helper struct to dealt with some limitations of Visual Studio 10
+     */
+    template<typename T,typename T2>
+    struct IsConvertibleToQtNoUnit
+    {
+      static const bool cond = tfel::meta::IsSameType<typename tfel::typetraits::Promote<T,T2>::type,T>::cond&&
+        tfel::typetraits::IsFundamentalNumericType<T2>::cond&&
+        tfel::typetraits::IsScalar<T2>::cond;
+    }; 
 
     /*!
      * \brief Specialization in case NoUnit.
@@ -241,9 +260,7 @@ namespace tfel{
 
       template<typename T2>
       TFEL_MATH_INLINE typename tfel::meta::EnableIf<
-	tfel::meta::IsSameType<typename tfel::typetraits::Promote<T,T2>::type,T>::cond&&
-        tfel::typetraits::IsFundamentalNumericType<T2>::cond&&
-        tfel::typetraits::IsScalar<T2>::cond,
+	IsConvertibleToQtNoUnit<T,T2>::cond,
         qt<NoUnit,T>&
        >::type
       operator = (const T2 src);
@@ -272,9 +289,7 @@ namespace tfel{
        */
       template<typename T2>
       TFEL_MATH_INLINE typename tfel::meta::EnableIf<
-	tfel::typetraits::IsFundamentalNumericType<T2>::cond&&
-        tfel::typetraits::IsScalar<T>::cond&&
-        tfel::meta::IsSameType<typename tfel::typetraits::Promote<T,T2>::type,T>::cond,
+	IsConvertibleToQtNoUnit<T,T2>::cond,
 	qt<NoUnit,T>&
       >::type
       operator *= (const T2 a);
@@ -285,9 +300,7 @@ namespace tfel{
        */
       template<typename T2>
       TFEL_MATH_INLINE typename tfel::meta::EnableIf<
-	tfel::typetraits::IsFundamentalNumericType<T2>::cond&&
-        tfel::typetraits::IsScalar<T>::cond&&
-        tfel::meta::IsSameType<typename tfel::typetraits::Promote<T,T2>::type,T>::cond,
+	IsConvertibleToQtNoUnit<T,T2>::cond,
 	qt<NoUnit,T>&
       >::type
       operator /= (const T2 a);

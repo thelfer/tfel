@@ -46,6 +46,13 @@ namespace tfel{
 
     }; // end of struct CompositeTag
 
+    template<unsigned short N,
+	     typename Items>
+    struct IsComponentIndexValid
+    {
+      static const bool cond = (N<tfel::meta::TLSize<Items>::value);
+    };
+
     template<typename C>
     struct CompositeConcept
     {
@@ -63,24 +70,15 @@ namespace tfel{
 	typedef typename tfel::meta::IF<isTemporary,const NthElt,const NthElt&>::type type;
       };
 
-#ifdef __GNUG__
       template<unsigned short N>
       typename tfel::meta::EnableIf<
-	(N<tfel::meta::TLSize<Items>::value),
-	  typename ConstValueType<N>::type
-      >::type
-      getComponent(void) const;
-#else /* __GNUG__ */
-      template<unsigned short N>
-      typename tfel::meta::EnableIf<
-	(N<tfel::meta::TLSize<Items>::value),
+	N<tfel::meta::TLSize<Items>::value,
 	  typename ConstValueType<N>::type
       >::type
       getComponent(void) const
       {
 	return static_cast<const C&>(*this)->template getComponent<N>();
       }
-#endif /* __GNUG__ */
 
     };
 
@@ -94,7 +92,6 @@ namespace tfel{
 
 } // end of namespace tfel  
 
-#include"TFEL/Math/Composite/CompositeConcept.ixx"
 #include"TFEL/Math/Composite/CompositeConceptOperations.ixx"
 
 #endif /* _LIB_TFEL_COMPOSITECONCEPT_HXX */

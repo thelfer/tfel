@@ -202,7 +202,6 @@ include/TFEL/Math/Broyden.hxx -text
 include/TFEL/Math/Broyden2.hxx -text
 include/TFEL/Math/Composite/CompositeCompositeExpr.hxx -text
 include/TFEL/Math/Composite/CompositeConcept.hxx -text
-include/TFEL/Math/Composite/CompositeConcept.ixx -text
 include/TFEL/Math/Composite/CompositeConceptOperations.ixx -text
 include/TFEL/Math/Composite/CompositeExpr.hxx -text
 include/TFEL/Math/Composite/CompositeNegExpr.hxx -text

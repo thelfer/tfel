@@ -58,9 +58,7 @@ namespace tfel{
     template<typename unit,typename T>
     template<typename T2>
     TFEL_MATH_INLINE typename tfel::meta::EnableIf<
-      tfel::typetraits::IsFundamentalNumericType<T2>::cond&&
-      tfel::typetraits::IsScalar<T>::cond&&
-      tfel::meta::IsSameType<typename tfel::typetraits::Promote<T,T2>::type,T>::cond,
+      IsQtScalarOperationValid<T,T2>::cond,
       qt<unit,T>&
     >::type
     qt<unit,T>::operator *= (const T2 a){
@@ -71,9 +69,7 @@ namespace tfel{
     template<typename unit,typename T>
     template<typename T2>
     TFEL_MATH_INLINE typename tfel::meta::EnableIf<
-      tfel::typetraits::IsFundamentalNumericType<T2>::cond&&
-      tfel::typetraits::IsScalar<T>::cond&&
-      tfel::meta::IsSameType<typename tfel::typetraits::Promote<T,T2>::type,T>::cond,
+      IsQtScalarOperationValid<T,T2>::cond,
       qt<unit,T>&
     >::type
     qt<unit,T>::operator /= (const T2 a){
@@ -106,9 +102,7 @@ namespace tfel{
     template<typename T>
     template<typename T2>
     TFEL_MATH_INLINE typename tfel::meta::EnableIf<
-      tfel::meta::IsSameType<typename tfel::typetraits::Promote<T,T2>::type,T>::cond&&
-      tfel::typetraits::IsFundamentalNumericType<T2>::cond&&
-      tfel::typetraits::IsScalar<T2>::cond,
+      IsConvertibleToQtNoUnit<T,T2>::cond,
       qt<NoUnit,T>&
     >::type
     qt<NoUnit,T>::operator = (const T2 src){
@@ -138,9 +132,7 @@ namespace tfel{
     template<typename T>
     template<typename T2>
     TFEL_MATH_INLINE typename tfel::meta::EnableIf<
-      tfel::typetraits::IsFundamentalNumericType<T2>::cond&&
-      tfel::typetraits::IsScalar<T>::cond&&
-      tfel::meta::IsSameType<typename tfel::typetraits::Promote<T,T2>::type,T>::cond,
+      IsConvertibleToQtNoUnit<T,T2>::cond,
       qt<NoUnit,T>&
     >::type
     qt<NoUnit,T>::operator *= (const T2 a){
@@ -151,9 +143,7 @@ namespace tfel{
     template<typename T>
     template<typename T2>
     TFEL_MATH_INLINE typename tfel::meta::EnableIf<
-      tfel::typetraits::IsFundamentalNumericType<T2>::cond&&
-      tfel::typetraits::IsScalar<T>::cond&&
-      tfel::meta::IsSameType<typename tfel::typetraits::Promote<T,T2>::type,T>::cond,
+      IsConvertibleToQtNoUnit<T,T2>::cond,
       qt<NoUnit,T>&
     >::type
     qt<NoUnit,T>::operator /= (const T2 a){
