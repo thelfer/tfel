@@ -25,11 +25,12 @@ namespace tfel{
     namespace internals{
       
       template<typename Items>
-      struct CompositeNegItems;
+      class CompositeNegItems;
 
       template<>
-      struct CompositeNegItems<tfel::meta::TLE>
+      class CompositeNegItems<tfel::meta::TLE>
       {
+      public:
 	typedef tfel::meta::TLE type;
       };
 

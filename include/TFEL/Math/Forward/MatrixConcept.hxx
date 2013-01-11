@@ -18,19 +18,19 @@ namespace tfel
     struct MatrixConcept;
 
     template<typename T_type, typename Expr>
-    class MatrixExpr;
+    struct MatrixExpr;
 
     template<typename A>
     class MatrixNegExpr;
 
     template<typename A>
-    struct MatrixNegExprWithoutConstIterator;
+    class MatrixNegExprWithoutConstIterator;
 
     template<typename A,typename Func>
     class FctMatrixExpr;
 
     template<typename A, typename Func>
-    struct FctMatrixExprWithoutConstIterator;
+    class FctMatrixExprWithoutConstIterator;
 
     template<typename A, typename B, class Op>
     class MatrixScalarExpr;
@@ -51,10 +51,10 @@ namespace tfel
     class ScalarMatrixExprWithoutConstIterator;
 
     template<typename A, typename B,typename Op>
-    struct MatrixMatrixExpr;
+    class MatrixMatrixExpr;
 
     template<typename A, typename B,typename Op>
-    struct MatrixMatrixExprWithoutConstIterator;
+    class MatrixMatrixExprWithoutConstIterator;
 
   } // end of namespace math
 

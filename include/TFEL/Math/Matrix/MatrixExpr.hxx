@@ -17,7 +17,7 @@ namespace tfel{
   namespace math{
 
     template<typename T_type, typename Expr>
-    class MatrixExpr;
+    struct MatrixExpr;
 
     template<typename T_type, typename Expr>
     struct MatrixTraits<MatrixExpr<T_type,Expr> >{

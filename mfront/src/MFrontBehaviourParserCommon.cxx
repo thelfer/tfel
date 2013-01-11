@@ -2457,12 +2457,17 @@ namespace mfront{
 			  << "get();\n\n"
 			  << "void set(const char* const,const double);\n\n";
       for(p=this->parametersHolder.begin();p!=this->parametersHolder.end();++p){
-	if(p->type!="real"){
+	if(p->type=="real"){
+	  this->behaviourFile << "double " << p->name << ";\n"; 
+	} else 	if(p->type=="int"){
+	  this->behaviourFile << "double " << p->name << ";\n"; 
+	} else 	if(p->type=="ushort"){
+	  this->behaviourFile << "unsigned short " << p->name << ";\n"; 
+	} else {
 	  string msg("MFrontBehaviourParserCommon::writeBehaviourParametersInitializer : ");
-	  msg += "invalid type for parameter '"+p->name+"'";
+	  msg += "invalid type for parameter '"+p->name+"' ('"+p->type+"')";
 	  throw(runtime_error(msg));
 	}
-	this->behaviourFile << "double " << p->name << ";\n"; 
       }
       this->behaviourFile << "\n"; 
       this->behaviourFile << "private :\n\n"
@@ -3034,8 +3039,13 @@ namespace mfront{
     using namespace std;
     this->checkBehaviourFile();
     if(!this->parametersHolder.empty()){
+      bool rp = false; // real    parameter found
+      bool ip = false; // integer parameter found
+      bool up = false; // unsigned short parameter found
       VarContainer::const_iterator p;
       std::map<std::string,double>::const_iterator p2;
+      std::map<std::string,int>::const_iterator p3;
+      std::map<std::string,unsigned short>::const_iterator p4;
       this->srcFile << this->className << "ParametersInitializer&\n"
 		    << this->className << "ParametersInitializer::get()\n"
 		    <<"{\n"
@@ -3046,36 +3056,117 @@ namespace mfront{
 		    << this->className << "ParametersInitializer()\n"
 		    <<"{\n";
       for(p=this->parametersHolder.begin();p!=this->parametersHolder.end();++p){
-	p2 = this->parametersDefaultValues.find(p->name);
-	if(p2==this->parametersDefaultValues.end()){
-	  string msg("MFrontBehaviourParserCommon::writeSrcFileParametersInitializer : ");
-	  msg += "no default value for parameter '"+p->name+"'";
-	  throw(runtime_error(msg));
+	if(p->type=="real"){
+	  rp = true;
+	  p2 = this->parametersDefaultValues.find(p->name);
+	  if(p2==this->parametersDefaultValues.end()){
+	    string msg("MFrontBehaviourParserCommon::writeSrcFileParametersInitializer : ");
+	    msg += "no default value for parameter '"+p->name+"'";
+	    throw(runtime_error(msg));
+	  }
+	  this->srcFile << "this->" << p->name << " = " << p2->second << ";\n"; 
+	} else if(p->type=="int"){
+	  ip = true;
+	  p3 = this->iParametersDefaultValues.find(p->name);
+	  if(p3==this->iParametersDefaultValues.end()){
+	    string msg("MFrontBehaviourParserCommon::writeSrcFileParametersInitializer : ");
+	    msg += "no default value for parameter '"+p->name+"'";
+	    throw(runtime_error(msg));
+	  }
+	  this->srcFile << "this->" << p->name << " = " << p3->second << ";\n"; 
+	} else if(p->type=="ushort"){
+	  up = true;
+	  p4 = this->uParametersDefaultValues.find(p->name);
+	  if(p4==this->uParametersDefaultValues.end()){
+	    string msg("MFrontBehaviourParserCommon::writeSrcFileParametersInitializer : ");
+	    msg += "no default value for parameter '"+p->name+"'";
+	    throw(runtime_error(msg));
+	  }
+	  this->srcFile << "this->" << p->name << " = " << p4->second << ";\n"; 
 	}
-	this->srcFile << "this->" << p->name << " = " << p2->second << ";\n"; 
       }
       this->srcFile <<"}\n\n";
-      this->srcFile <<"void\n"
-		    << this->className << "ParametersInitializer::set(const char* const key,\nconst double v)" 
-		    << "{\n"
-		    << "using namespace std;";
-      for(p=this->parametersHolder.begin();p!=this->parametersHolder.end();++p){
-	if(p==this->parametersHolder.begin()){
-	  this->srcFile << "if(";
-	} else {
-	  this->srcFile << "} else if(";
+      if(rp){
+	this->srcFile <<"void\n"
+		      << this->className << "ParametersInitializer::set(const char* const key,\nconst double v)" 
+		      << "{\n"
+		      << "using namespace std;";
+	bool first = true;
+	for(p=this->parametersHolder.begin();p!=this->parametersHolder.end();++p){
+	  if(p->type=="real"){
+	    if(first){
+	      this->srcFile << "if(";
+	      first = false;
+	    } else {
+	      this->srcFile << "} else if(";
+	    }
+	    this->srcFile << "::strcmp(\""+p->name+"\",key)==0){\n"
+			  << "this->" << p->name << " = v;\n";
+	  }
 	}
-	this->srcFile << "::strcmp(\""+p->name+"\",key)==0){\n"
-		      << "this->" << p->name << " = v;\n";
+	this->srcFile << "} else {";
+	this->srcFile << "string msg(\"" << this->className << "ParametersInitializer::set : \")\n;"
+		      << "msg += \" no paramater named '\";\n"
+		      << "msg += key;\n"
+		      << "msg += \"'\";\n"
+		      << "throw(runtime_error(msg));\n"
+		      << "}\n"
+		      << "}\n\n";
       }
-      this->srcFile << "} else {";
-      this->srcFile << "string msg(\"" << this->className << "ParametersInitializer::set : \")\n;"
-		    << "msg += \" no paramater named '\";\n"
-		    << "msg += key;\n"
-		    << "msg += \"'\";\n"
-		    << "throw(runtime_error(msg));\n"
-		    << "}\n"
-		    << "}\n\n";
+      if(ip){
+	this->srcFile <<"void\n"
+		      << this->className << "ParametersInitializer::set(const char* const key,\nconst int v)" 
+		      << "{\n"
+		      << "using namespace std;";
+	bool first = true;
+	for(p=this->parametersHolder.begin();p!=this->parametersHolder.end();++p){
+	  if(p->type=="int"){
+	    if(first){
+	      this->srcFile << "if(";
+	      first = false;
+	    } else {
+	      this->srcFile << "} else if(";
+	    }
+	    this->srcFile << "::strcmp(\""+p->name+"\",key)==0){\n"
+			  << "this->" << p->name << " = v;\n";
+	  }
+	}
+	this->srcFile << "} else {";
+	this->srcFile << "string msg(\"" << this->className << "ParametersInitializer::set : \")\n;"
+		      << "msg += \" no paramater named '\";\n"
+		      << "msg += key;\n"
+		      << "msg += \"'\";\n"
+		      << "throw(runtime_error(msg));\n"
+		      << "}\n"
+		      << "}\n\n";
+      }
+      if(up){
+	this->srcFile <<"void\n"
+		      << this->className << "ParametersInitializer::set(const char* const key,\nconst unsigned short v)" 
+		      << "{\n"
+		      << "using namespace std;";
+	bool first = true;
+	for(p=this->parametersHolder.begin();p!=this->parametersHolder.end();++p){
+	  if(p->type=="ushort"){
+	    if(first){
+	      this->srcFile << "if(";
+	      first = false;
+	    } else {
+	      this->srcFile << "} else if(";
+	    }
+	    this->srcFile << "::strcmp(\""+p->name+"\",key)==0){\n"
+			  << "this->" << p->name << " = v;\n";
+	  }
+	}
+	this->srcFile << "} else {";
+	this->srcFile << "string msg(\"" << this->className << "ParametersInitializer::set : \")\n;"
+		      << "msg += \" no paramater named '\";\n"
+		      << "msg += key;\n"
+		      << "msg += \"'\";\n"
+		      << "throw(runtime_error(msg));\n"
+		      << "}\n"
+		      << "}\n\n";
+      }
     }
   } // end of MFrontBehaviourParserCommon::writeSrcFileParametersInitializer
 

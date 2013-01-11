@@ -18,7 +18,7 @@ namespace tfel
     struct ST2toST2Concept;
 
     template<typename T_type, typename Expr>
-    class ST2toST2Expr;
+    struct ST2toST2Expr;
 
     template<typename A>
     class ST2toST2NegExpr;
@@ -30,10 +30,10 @@ namespace tfel
     class ScalarST2toST2Expr;
 
     template<typename A, typename B,typename Op>
-    struct ST2toST2ST2toST2Expr;
+    class ST2toST2ST2toST2Expr;
 
     template<typename A, typename B,typename Op>
-    struct ST2toST2ST2toST2ExprWithoutConstIterator;
+    class ST2toST2ST2toST2ExprWithoutConstIterator;
 
   } // end of namespace math
 

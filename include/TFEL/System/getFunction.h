@@ -62,6 +62,14 @@ extern "C" {
   int (*tfel_getSetParameterFunction(LibraryHandlerPtr lib,
 				     const char * const name))(const char* const,
 							       const double);
+
+  int (*tfel_getSetIntegerParameterFunction(LibraryHandlerPtr lib,
+					    const char * const name))(const char* const,
+								      const int);
+
+  int (*tfel_getSetUnsignedShortParameterFunction(LibraryHandlerPtr lib,
+						  const char * const name))(const char* const,
+									    const unsigned short);
   
   /*!
    * \brief this function returns a function of type

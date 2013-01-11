@@ -43,8 +43,10 @@ namespace tfel{
     }; // end of VectorTag
     
     template<typename T>
-    class VectorConcept 
+    struct VectorConcept 
     {
+
+    private:
 
       typedef VectorTraits<T> traits;
       static const bool isTemporary = tfel::typetraits::IsTemporary<T>::cond;

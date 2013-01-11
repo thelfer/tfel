@@ -64,6 +64,32 @@ namespace tfel
 		   const double);
 
       /*!
+       * set the value of an integer parameter
+       * \param[in] l : name of the library
+       * \param[in] s : name of function or mechanical behaviour 
+       * \param[in] p : parameter name
+       * \param[in] v : value
+       */
+      void
+      setParameter(const std::string&,
+		   const std::string&,
+		   const std::string&,
+		   const int);
+
+      /*!
+       * set the value of an unsigned short parameter
+       * \param[in] l : name of the library
+       * \param[in] s : name of function or mechanical behaviour 
+       * \param[in] p : parameter name
+       * \param[in] v : value
+       */
+      void
+      setParameter(const std::string&,
+		   const std::string&,
+		   const std::string&,
+		   const unsigned short);
+
+      /*!
        * \return the src of the function or the mechanical behaviour
        * \param[in] l : name of the library
        * \param[in] s : name of function or mechanical behaviour 

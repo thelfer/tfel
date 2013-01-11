@@ -25,10 +25,10 @@ namespace tfel{
     class FunctionExpr;
 
     template<typename F1,typename F2>
-    struct FunctionsCompositionExpr;
+    class FunctionsCompositionExpr;
 
     template<typename Func>
-    class FunctionTraits;
+    struct FunctionTraits;
     
     /*!
      * \class FunctionTag

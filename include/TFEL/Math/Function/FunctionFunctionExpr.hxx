@@ -29,8 +29,9 @@ namespace tfel{
     class FunctionFunctionExpr;
 
     template<typename Func1,typename Func2>
-    class FunctionTraits<FunctionExpr<FunctionFunctionExpr<Func1,Func2,OpPlus> > >
+    struct FunctionTraits<FunctionExpr<FunctionFunctionExpr<Func1,Func2,OpPlus> > >
     {
+    private:
       typedef typename FunctionTraits<Func1>::DerivateFunc DF1;
       typedef typename FunctionTraits<Func2>::DerivateFunc DF2;
       typedef typename ComputeBinaryResult<DF1,DF2,OpPlus>::Handle Res;
@@ -39,8 +40,9 @@ namespace tfel{
     };
     
     template<typename Func1,typename Func2>
-    class FunctionTraits<FunctionExpr<FunctionFunctionExpr<Func1,Func2,OpMinus> > >
+    struct FunctionTraits<FunctionExpr<FunctionFunctionExpr<Func1,Func2,OpMinus> > >
     {
+    private:
       typedef typename FunctionTraits<Func1>::DerivateFunc DF1;
       typedef typename FunctionTraits<Func2>::DerivateFunc DF2;
       typedef typename ComputeBinaryResult<DF1,DF2,OpMinus>::Handle Res;
@@ -49,8 +51,9 @@ namespace tfel{
     };
 
     template<typename Func1,typename Func2>
-    class FunctionTraits<FunctionExpr<FunctionFunctionExpr<Func1,Func2,OpMult> > >
+    struct FunctionTraits<FunctionExpr<FunctionFunctionExpr<Func1,Func2,OpMult> > >
     {
+    private:
       typedef typename FunctionTraits<Func1>::DerivateFunc DF1;
       typedef typename FunctionTraits<Func2>::DerivateFunc DF2;
       typedef typename ComputeBinaryResult<DF1,Func2,OpMult>::Handle DF1_F2;
@@ -61,8 +64,9 @@ namespace tfel{
     };
 
     template<typename Func1,typename Func2>
-    class FunctionTraits<FunctionExpr<FunctionFunctionExpr<Func1,Func2,OpDiv> > >
+    struct FunctionTraits<FunctionExpr<FunctionFunctionExpr<Func1,Func2,OpDiv> > >
     {
+    private:
       typedef typename FunctionTraits<Func1>::DerivateFunc DF1;
       typedef typename FunctionTraits<Func2>::DerivateFunc DF2;
       typedef typename ComputeBinaryResult<DF1,Func2,OpMult>::Handle DF1_F2;

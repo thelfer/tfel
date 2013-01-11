@@ -22,7 +22,7 @@ namespace tfel{
      */
     template<unsigned short N,
 	     typename T = double>
-    class st2tost2;
+    struct st2tost2;
 
   } // end of namespace math
 

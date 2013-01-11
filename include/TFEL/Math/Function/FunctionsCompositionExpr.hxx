@@ -28,8 +28,9 @@ namespace tfel{
     class FunctionsCompositionExpr;
 
     template<typename Func1,typename Func2>
-    class FunctionTraits<FunctionExpr<FunctionsCompositionExpr<Func1,Func2> > >
+    struct FunctionTraits<FunctionExpr<FunctionsCompositionExpr<Func1,Func2> > >
     {
+    private:
       typedef typename FunctionTraits<Func1>::DerivateFunc DF1;
       typedef typename FunctionTraits<Func2>::DerivateFunc DF2;
       typedef FunctionExpr<FunctionsCompositionExpr<DF1,Func2> > DF1_F2;

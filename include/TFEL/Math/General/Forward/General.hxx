@@ -23,12 +23,12 @@ namespace tfel
     template<typename A,
 	     typename B,
 	     typename Op>
-    struct ScalarObjectRandomAccessConstIterator;
+    class ScalarObjectRandomAccessConstIterator;
 
     template<typename A,
 	     typename B,
 	     typename Op>
-    struct ObjectScalarRandomAccessConstIterator;
+    class ObjectScalarRandomAccessConstIterator;
 
     template<typename A,typename B,typename Op>
     class ObjectObjectRandomAccessConstIterator;

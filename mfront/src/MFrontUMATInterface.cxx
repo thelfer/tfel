@@ -555,6 +555,7 @@ namespace mfront{
     string umatFctName;
     string tmp;
     VarContainer::const_iterator p;
+    VarContainer::const_iterator pp;
     VarContainer::size_type nb;
     unsigned short i;
     bool found;
@@ -777,10 +778,38 @@ namespace mfront{
 	<< tokenize(file,systemCall::dirSeparator()).back()
 	<< "\";\n\n";
 
+    bool rp = false;
+    bool ip = false;
+    bool up = false;
     if(!parametersHolder.empty()){
-      out << "MFRONT_SHAREDOBJ int MFRONT_STDCALL\numat"
-	  << makeLowerCase(name)
-	  << "_setParameter(const char *const,const umat::UMATReal);\n\n";
+      for(pp=parametersHolder.begin();pp!=parametersHolder.end();++pp){
+	if(pp->type=="real"){
+	  rp = true;
+	} else if(pp->type=="int"){
+	  ip = true;
+	} else if(pp->type=="ushort"){
+	  up = true;
+	} else {
+	  string msg("MFrontUMATInterface::endTreatement : ");
+	  msg += "unsupport parameter type '"+p->type+"'.\n";
+	  throw(runtime_error(msg));
+	} 
+      }
+      if(rp){
+	out << "MFRONT_SHAREDOBJ int MFRONT_STDCALL\numat"
+	    << makeLowerCase(name)
+	    << "_setParameter(const char *const,const double);\n\n";
+      }
+      if(ip){
+	out << "MFRONT_SHAREDOBJ int MFRONT_STDCALL\numat"
+	    << makeLowerCase(name)
+	    << "_setIntegerParameter(const char *const,const int);\n\n";
+      }
+      if(up){
+	out << "MFRONT_SHAREDOBJ int MFRONT_STDCALL\numat"
+	    << makeLowerCase(name)
+	    << "_setIntegerParameter(const char *const,const unsigned short);\n\n";
+      }
     }
 
     out << "MFRONT_SHAREDOBJ void MFRONT_STDCALL\numat"
@@ -970,10 +999,42 @@ namespace mfront{
 							entryNames),
 			     name,"ExternalStateVariables");
     
-    if(!parametersHolder.empty()){
+    if(rp){
       out << "MFRONT_SHAREDOBJ int MFRONT_STDCALL\numat"
 	  << makeLowerCase(name)
-	  << "_setParameter(const char *const key,const umat::UMATReal value){\n"
+	  << "_setParameter(const char *const key,const double value){\n"
+	  << "using namespace std;\n"
+	  << "using namespace tfel::material;\n"
+	  << className << "ParametersInitializer& i = " << className << "ParametersInitializer::get();\n"
+	  << "try{\n"
+	  << "i.set(key,value);\n"
+	  << "} catch(runtime_error& e){"
+	  << "cerr << e.what() << endl;\n"
+	  << "return 0;\n"
+	  << "}\n"
+	  << "return 1;\n"
+	  << "}\n\n";
+    }
+    if(ip){
+      out << "MFRONT_SHAREDOBJ int MFRONT_STDCALL\numat"
+	  << makeLowerCase(name)
+	  << "_setIntegerParameter(const char *const key,const int value){\n"
+	  << "using namespace std;\n"
+	  << "using namespace tfel::material;\n"
+	  << className << "ParametersInitializer& i = " << className << "ParametersInitializer::get();\n"
+	  << "try{\n"
+	  << "i.set(key,value);\n"
+	  << "} catch(runtime_error& e){"
+	  << "cerr << e.what() << endl;\n"
+	  << "return 0;\n"
+	  << "}\n"
+	  << "return 1;\n"
+	  << "}\n\n";
+    }
+    if(up){
+      out << "MFRONT_SHAREDOBJ int MFRONT_STDCALL\numat"
+	  << makeLowerCase(name)
+	  << "_setUnsignedShortParameter(const char *const key,const unsigned short value){\n"
 	  << "using namespace std;\n"
 	  << "using namespace tfel::material;\n"
 	  << className << "ParametersInitializer& i = " << className << "ParametersInitializer::get();\n"

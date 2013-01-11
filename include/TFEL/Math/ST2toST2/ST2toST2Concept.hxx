@@ -42,9 +42,11 @@ namespace tfel{
     };
 
     template<class T>
-    class ST2toST2Concept 
+    struct ST2toST2Concept 
     {
-      
+
+    private:
+
       typedef ST2toST2Traits<T> traits;
       static const bool isTemporary = tfel::typetraits::IsTemporary<T>::cond;
       typedef typename tfel::meta::IF<isTemporary,

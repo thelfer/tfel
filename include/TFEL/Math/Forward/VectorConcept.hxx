@@ -27,7 +27,7 @@ namespace tfel
     class VectorNegExpr;
 
     template<typename A>
-    struct VectorNegExprWithoutConstIterator;
+    class VectorNegExprWithoutConstIterator;
 
     template<typename A, typename B, class Op>
     class VectorScalarExpr;
@@ -42,18 +42,18 @@ namespace tfel
     class ScalarVectorExprWithoutConstIterator;
 
     template<typename A, typename B,typename Op>
-    struct VectorVectorExpr;
+    class VectorVectorExpr;
 
     template<typename A, typename B,typename Op>
-    struct VectorVectorExprWithoutConstIterator;
+    class VectorVectorExprWithoutConstIterator;
 
     template<typename A,
 	     typename B>
-    struct VectorVectorDiadicProductExpr;
+    class VectorVectorDiadicProductExpr;
 
     template<typename A,
 	     typename Func>
-    struct FctVectorExprWithoutConstIterator;
+    class FctVectorExprWithoutConstIterator;
 
     template<unsigned short N,
 	     unsigned short M,

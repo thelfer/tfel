@@ -19,7 +19,7 @@ namespace tfel{
   namespace math{
 
     template<typename T_type, typename Expr>
-    class StensorExpr;
+    struct StensorExpr;
 
     template<typename T_type, typename Expr>
     struct StensorTraits<StensorExpr<T_type,Expr> >{

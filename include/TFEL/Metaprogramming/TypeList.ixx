@@ -290,8 +290,9 @@ namespace tfel{
     };    
 
     template<typename First,typename Second>
-    class TLConcatenate
+    struct TLConcatenate
     {
+    private:
       typedef typename TLConcatenate<typename First::Next,Second>::type N_;
     public:
       TFEL_STATIC_ASSERT((IsSubClassOf<First,TL>::cond));
@@ -331,8 +332,9 @@ namespace tfel{
     };
 
     template<typename List>
-    class TLUnique
+    struct TLUnique
     {
+    private:
       typedef typename List::Next    Next;
       typedef typename List::Current Current;
       typedef typename TLUnique<Next>::type UniqueNext;
@@ -355,8 +357,9 @@ namespace tfel{
     };
     
     template<typename TList>
-    class TLContainsInvalidType
+    struct TLContainsInvalidType
     {
+    private:
       //! a simple alias.
       typedef typename TList::Current Current;
       //! a simple alias.

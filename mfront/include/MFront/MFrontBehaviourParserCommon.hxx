@@ -370,7 +370,9 @@ namespace mfront{
 
     std::map<std::string,std::string> entryNames;
 
-    std::map<std::string,double> parametersDefaultValues;
+    std::map<std::string,double>            parametersDefaultValues;
+    std::map<std::string,int>               iParametersDefaultValues;
+    std::map<std::string,unsigned short>    uParametersDefaultValues;
 
     VarContainer coefsHolder;
     VarContainer stateVarsHolder;

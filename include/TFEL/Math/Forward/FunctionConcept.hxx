@@ -33,7 +33,7 @@ namespace tfel
     class ScalarFunctionExpr;
 
     template<typename A, typename B,typename Op>
-    struct FunctionFunctionExpr;
+    class FunctionFunctionExpr;
 
     template<typename Func1,typename Func2>
     class FunctionsCompositionExpr;

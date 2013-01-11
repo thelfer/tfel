@@ -15,16 +15,16 @@ namespace tfel
   {
 
     template<class T>
-    struct StensorConcept;
+    class StensorConcept;
 
     template<typename T_type, typename Expr>
-    class StensorExpr;
+    struct StensorExpr;
 
     template<typename A>
     class StensorNegExpr;
 
     template<typename A>
-    struct StensorNegExprWithoutConstIterator;
+    class StensorNegExprWithoutConstIterator;
 
     template<typename A, typename B, class Op>
     class StensorScalarExpr;
@@ -39,14 +39,14 @@ namespace tfel
     class ScalarStensorExprWithoutConstIterator;
 
     template<typename A, typename B,typename Op>
-    struct StensorStensorExpr;
+    class StensorStensorExpr;
 
     template<typename A, typename B,typename Op>
-    struct StensorStensorExprWithoutConstIterator;
+    class StensorStensorExprWithoutConstIterator;
 
     template<typename A,
 	     typename B>
-    struct StensorStensorDiadicProductExpr;
+    class StensorStensorDiadicProductExpr;
 
   } // end of namespace math
 

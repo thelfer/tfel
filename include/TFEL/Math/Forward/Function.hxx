@@ -25,19 +25,19 @@ namespace tfel{
     class FunctionFunctionExpr;
 
     template<typename Func1,typename Func2, typename Op>
-    struct FunctionFunctionExpr;
+    class FunctionFunctionExpr;
 
     template<typename F>
-    struct FunctionNegExpr;
+    class FunctionNegExpr;
 
     template<typename Func,typename Scal, typename Op>
-    struct FunctionScalarExpr;
+    class FunctionScalarExpr;
 
     template<typename Func1,typename Func2>
-    struct FunctionsCompositionExpr;
+    class FunctionsCompositionExpr;
 
     template<typename Scal,typename Func, typename Op>
-    struct ScalarFunctionExpr;
+    class ScalarFunctionExpr;
 
   } // end of namespace typetraits
     

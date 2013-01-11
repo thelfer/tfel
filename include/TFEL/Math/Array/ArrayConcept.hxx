@@ -44,7 +44,7 @@ namespace tfel{
     }; // end of arrays
 
     template<class T>
-    class ArrayConcept
+    struct ArrayConcept
       : public ArrayConcept_impl<ArrayTraits<T>::dimension,T>
     {
       

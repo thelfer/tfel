@@ -35,13 +35,13 @@ namespace tfel
     class ArrayNegExpr;
 
     template<typename A>
-    struct ArrayNegExprWithoutConstIterator;
+    class ArrayNegExprWithoutConstIterator;
 
     template<typename A,typename Func>
     class FctArrayExpr;
 
     template<typename A, typename Func>
-    struct FctArrayExprWithoutConstIterator;
+    class FctArrayExprWithoutConstIterator;
 
     template<typename A, typename B, class Op>
     class ArrayScalarExpr;
@@ -62,10 +62,10 @@ namespace tfel
     class ScalarArrayExprWithoutConstIterator;
 
     template<typename A, typename B,typename Op>
-    struct ArrayArrayExpr;
+    class ArrayArrayExpr;
 
     template<typename A, typename B,typename Op>
-    struct ArrayArrayExprWithoutConstIterator;
+    class ArrayArrayExprWithoutConstIterator;
 
   } // end of namespace math
 

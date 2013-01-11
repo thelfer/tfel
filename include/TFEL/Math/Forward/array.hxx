@@ -14,14 +14,14 @@ namespace tfel{
 
     // Forward declaration
     template<unsigned short,typename>
-    class ArrayRowMajorStorage;
+    struct ArrayRowMajorStorage;
 
     // Forward declaration
     template<unsigned short N,
 	     typename T=double,
 	     template<unsigned short,
 		      typename> class TStorage=ArrayRowMajorStorage>
-    class array;
+    struct array;
 
   } // end of namespace math
 

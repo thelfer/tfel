@@ -22,7 +22,7 @@ namespace tfel{
   namespace math{
 
     template<int N,unsigned int D=1>
-    class Power;
+    struct Power;
 
     typedef Power<1,2> FctSqrt;
 

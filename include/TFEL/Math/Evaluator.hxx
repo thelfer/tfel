@@ -307,7 +307,7 @@ namespace tfel
       insert(const std::string&,
 	     const Evaluator::ExternalFunctionGenerator);
     private:
-      friend class Evaluator;
+      friend struct Evaluator;
       FunctionGeneratorManager();
       TFEL_VISIBILITY_LOCAL void
       checkName(const std::string&) const;

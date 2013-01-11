@@ -16,7 +16,7 @@ namespace tfel{
   namespace math{
 
     template<typename Lambda1,typename Lambda2,typename Op>
-    struct LambdaLambdaExpr;
+    class LambdaLambdaExpr;
 
     template<typename Lambda1,typename Lambda2,typename Op>
     class LambdaTraits<LambdaLambdaExpr<Lambda1,Lambda2,Op> >{
@@ -31,7 +31,7 @@ namespace tfel{
     };
 
     template<unsigned short N,typename Lambda1,typename Lambda2,typename Op>
-    struct LambdaLambdaExprImpl;
+    class LambdaLambdaExprImpl;
 
     template<typename Lambda1,typename Lambda2,typename Op>
     class LambdaLambdaExpr

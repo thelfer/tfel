@@ -30,24 +30,27 @@ namespace tfel{
     class FunctionScalarExpr;
 
     template<typename Func,typename Scal>
-    class FunctionTraits<FunctionExpr<FunctionScalarExpr<Func,Scal,OpPlus> > >
+    struct FunctionTraits<FunctionExpr<FunctionScalarExpr<Func,Scal,OpPlus> > >
     {
+    private:
       typedef typename FunctionTraits<Func>::DerivateFunc DF;
     public:
       typedef DF DerivateFunc;
     };
     
     template<typename Func,typename Scal>
-    class FunctionTraits<FunctionExpr<FunctionScalarExpr<Func,Scal,OpMinus> > >
+    struct FunctionTraits<FunctionExpr<FunctionScalarExpr<Func,Scal,OpMinus> > >
     {
+    private:
       typedef typename FunctionTraits<Func>::DerivateFunc DF;
     public:
       typedef DF DerivateFunc;
     };
 
     template<typename Func,typename Scal>
-    class FunctionTraits<FunctionExpr<FunctionScalarExpr<Func,Scal,OpMult> > >
+    struct FunctionTraits<FunctionExpr<FunctionScalarExpr<Func,Scal,OpMult> > >
     {
+    private:
       typedef typename FunctionTraits<Func>::DerivateFunc DF;
       typedef FunctionExpr<FunctionScalarExpr<DF,Scal,OpMult> > Res;
     public:
@@ -55,8 +58,9 @@ namespace tfel{
     };
 
     template<typename Func,typename Scal>
-    class FunctionTraits<FunctionExpr<FunctionScalarExpr<Func,Scal,OpDiv> > >
+    struct FunctionTraits<FunctionExpr<FunctionScalarExpr<Func,Scal,OpDiv> > >
     {
+    private:
       typedef typename FunctionTraits<Func>::DerivateFunc DF;
       typedef typename ComputeBinaryResult<DF,Scal,OpMult>::Handle S_DF;
       typedef typename ComputeUnaryResult<S_DF,OpNeg>::Handle N_;

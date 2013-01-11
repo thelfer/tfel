@@ -144,6 +144,70 @@ namespace tfel
 	throw(runtime_error(msg));
       }
     } // end of ExternalLibraryManager::setParameter
+
+    void
+    ExternalLibraryManager::setParameter(const std::string& l,
+					 const std::string& f,
+					 const std::string& p,
+					 const int v)
+    {
+      using namespace std;
+#if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
+      HINSTANCE__* lib = this->loadLibrary(l);
+#else
+      void * lib = this->loadLibrary(l);
+#endif /* defined _WIN32 || _WIN64 || defined __CYGWIN__ */
+      int (*fct)(const char*const,const int);
+      fct = ::tfel_getSetIntegerParameterFunction(lib,(f+"_setIntegerParameter").c_str());
+      if(fct==0){
+	string msg("ExternalLibraryManager::setParameter : ");
+	msg += " can't get the '"+f+"_setParameter' function (";
+#if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
+	  msg += ::GetLastError();
+#else
+	  msg += ::dlerror();
+#endif /* defined _WIN32 || _WIN64 || defined __CYGWIN__ */
+	msg += ")";
+	throw(runtime_error(msg));
+      }
+      if(!fct(p.c_str(),v)){
+	string msg("ExternalLibraryManager::setParameter : ");
+	msg += " call to the '"+f+"_setParameter' function failed";
+	throw(runtime_error(msg));
+      }
+    } // end of ExternalLibraryManager::setParameter
+    
+    void
+    ExternalLibraryManager::setParameter(const std::string& l,
+					 const std::string& f,
+					 const std::string& p,
+					 const unsigned short v)
+    {
+      using namespace std;
+#if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
+      HINSTANCE__* lib = this->loadLibrary(l);
+#else
+      void * lib = this->loadLibrary(l);
+#endif /* defined _WIN32 || _WIN64 || defined __CYGWIN__ */
+      int (*fct)(const char*const,const unsigned short);
+      fct = ::tfel_getSetUnsignedShortParameterFunction(lib,(f+"_setUnsignedShortParameter").c_str());
+      if(fct==0){
+	string msg("ExternalLibraryManager::setParameter : ");
+	msg += " can't get the '"+f+"_setParameter' function (";
+#if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
+	  msg += ::GetLastError();
+#else
+	  msg += ::dlerror();
+#endif /* defined _WIN32 || _WIN64 || defined __CYGWIN__ */
+	msg += ")";
+	throw(runtime_error(msg));
+      }
+      if(!fct(p.c_str(),v)){
+	string msg("ExternalLibraryManager::setParameter : ");
+	msg += " call to the '"+f+"_setParameter' function failed";
+	throw(runtime_error(msg));
+      }
+    } // end of ExternalLibraryManager::setParameter
     
     unsigned short
     ExternalLibraryManager::getCastemFunctionNumberOfVariables(const std::string& l,

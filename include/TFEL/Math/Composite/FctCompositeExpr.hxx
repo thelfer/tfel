@@ -26,11 +26,12 @@ namespace tfel{
     namespace internals{
       
       template<typename Items,typename Op>
-      struct FctCompositeItems;
+      class FctCompositeItems;
 
       template<typename Op>
-      struct FctCompositeItems<tfel::meta::TLE,Op>
+      class FctCompositeItems<tfel::meta::TLE,Op>
       {
+      public:
 	typedef tfel::meta::TLE type;
       };
 

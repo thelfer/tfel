@@ -14,7 +14,7 @@ namespace tfel{
   namespace math {
 
     template<unsigned short N,typename T> 
-    class ArrayRowMajorStorage;
+    struct ArrayRowMajorStorage;
 
   } // end of namespace math
 

@@ -15,7 +15,7 @@ namespace tfel
   {
 
     template<unsigned short N, typename T>
-    class StensorNullStorage;
+    struct StensorNullStorage;
 
     template<unsigned short N, typename T>
     class StensorStatic;

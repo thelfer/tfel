@@ -42,8 +42,9 @@ namespace tfel{
      * Partial specialisaton for Power
      */
     template<int N,unsigned int D>
-    class TFEL_VISIBILITY_LOCAL FunctionTraits<Power<N,D> >
+    struct TFEL_VISIBILITY_LOCAL FunctionTraits<Power<N,D> >
     {
+    private:
       static const int N_ = FracSimplify<N-1,D>::N;
       static const int D_ = FracSimplify<N-1,D>::D;
       typedef Cst<N,D> Cst_;
@@ -56,9 +57,8 @@ namespace tfel{
      * Partial specialisaton for Power
      */
     template<unsigned int D>
-    class TFEL_VISIBILITY_LOCAL FunctionTraits<Power<0,D> >
+    struct TFEL_VISIBILITY_LOCAL FunctionTraits<Power<0,D> >
     {
-    public:
       typedef Cst<0> DerivateFunc;
     }; // end of FunctionTraits<Power<N,D> >
 
@@ -66,16 +66,17 @@ namespace tfel{
      * Partial specialisaton for Power
      */
     template<>
-    class TFEL_VISIBILITY_LOCAL FunctionTraits<Power<1u,1u> >
+    struct TFEL_VISIBILITY_LOCAL FunctionTraits<Power<1u,1u> >
     {
-    public:
       typedef Cst<1u> DerivateFunc;
     }; // end of FunctionTraits<Power<N,D> >
 
     template<int N,unsigned int D>
-    class TFEL_VISIBILITY_LOCAL Power
+    struct TFEL_VISIBILITY_LOCAL Power
       : public FunctionConcept<Power<N,D> >
     {
+
+    private:
 
       TFEL_STATIC_ASSERT(D!=0);
       typedef typename PowerImplSelector<N,D>::type Implementation;

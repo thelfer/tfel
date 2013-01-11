@@ -18,7 +18,7 @@ namespace tfel
     struct CompositeConcept;
 
     template<typename T_type, typename Expr>
-    class CompositeExpr;
+    struct CompositeExpr;
 
     template<typename A,typename Func>
     class FctCompositeExpr;
@@ -33,7 +33,7 @@ namespace tfel
     class ScalarCompositeExpr;
 
     template<typename A, typename B,typename Op>
-    struct CompositeCompositeExpr;
+    class CompositeCompositeExpr;
 
   } // end of namespace math
 

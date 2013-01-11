@@ -327,7 +327,8 @@ AC_DEFUN([AC_CHECK_GXX],
 
 	    if test "${CXX}" = "clang++"; then
                CXXFLAGS="$CXXFLAGS -ftemplate-depth-250"
-	       CXXFLAGS="$CXXFLAGS -Wno-mismatched-tags"
+#	       CXXFLAGS="$CXXFLAGS -Wno-mismatched-tags"
+	       CXXFLAGS="$CXXFLAGS"
 	       COMPILER_SPECIFIC_OPTIONS="-ftemplate-depth-250 -Wno-mismatched-tags $COMPILER_SPECIFIC_OPTIONS"
             fi
 

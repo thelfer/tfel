@@ -20,11 +20,12 @@ namespace tfel{
     namespace internals{
       
       template<typename ItemsA,typename B,typename Op>
-      struct CompositeScalarItems;
+      class CompositeScalarItems;
 
       template<typename B,typename Op>
-      struct CompositeScalarItems<tfel::meta::TLE,B,Op>
+      class CompositeScalarItems<tfel::meta::TLE,B,Op>
       {
+      public:
 	typedef tfel::meta::TLE type;
       };
 

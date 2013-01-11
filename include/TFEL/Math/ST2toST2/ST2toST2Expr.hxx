@@ -19,7 +19,7 @@ namespace tfel{
   namespace math{
 
     template<typename T_type, typename Expr>
-    class ST2toST2Expr;
+    struct ST2toST2Expr;
 
     template<typename T_type, typename Expr>
     struct ST2toST2Traits<ST2toST2Expr<T_type,Expr> >{

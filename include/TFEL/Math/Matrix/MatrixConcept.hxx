@@ -83,9 +83,9 @@ namespace tfel{
      * \date   04 May 2006
      */
     template<typename T>
-    class MatrixConcept 
+    struct MatrixConcept 
     {
-
+    private:
       /*!
        * A simple typedef.
        */

@@ -33,7 +33,7 @@ namespace tfel{
 
     template<unsigned int N,
 	     unsigned int M>
-    class PowerPosImpl;
+    struct PowerPosImpl;
 
     template<unsigned int N>
     class TFEL_VISIBILITY_LOCAL PowerPos

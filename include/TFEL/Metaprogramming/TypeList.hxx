@@ -250,7 +250,7 @@ namespace tfel{
      * \date   10 March 2007
      */
     template<typename List>
-    class TLContainsInvalidType;
+    struct TLContainsInvalidType;
 
     //! Computes the maximum size of all types in a TL.
     /*

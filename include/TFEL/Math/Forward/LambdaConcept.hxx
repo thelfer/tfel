@@ -33,7 +33,7 @@ namespace tfel
     class ScalarLambdaExpr;
 
     template<typename A, typename B,typename Op>
-    struct LambdaLambdaExpr;
+    class LambdaLambdaExpr;
 
   } // end of namespace math
 

@@ -24,8 +24,9 @@ namespace tfel{
     class FunctionNegExpr;
 
     template<typename F>
-    class FunctionTraits<FunctionExpr<FunctionNegExpr<F> > >
+    struct FunctionTraits<FunctionExpr<FunctionNegExpr<F> > >
     {
+    private:
       typedef typename FunctionTraits<F>::DerivateFunc DF;
       typedef typename ComputeUnaryResult<DF,OpNeg>::Handle Res;
     public:

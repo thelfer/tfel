@@ -22,9 +22,8 @@
 
 #define TFEL_MATH_UNARY_FUNCTION_I(X,Y,Z)                                                 \
     template<>                                                                            \
-    class FunctionTraits<Fct##X>                                                          \
+    struct FunctionTraits<Fct##X>                                                         \
     {                                                                                     \
-    public:                                                                               \
       typedef Z DerivateFunc;                                                             \
     };                                                                                    \
                                                                                           \
@@ -91,9 +90,8 @@
 
 #define TFEL_MATH_UNARY_FUNCTION_II(X,Y,Z)                                                \
     template<>                                                                            \
-    class FunctionTraits<Fct##X>                                                          \
+    struct FunctionTraits<Fct##X>                                                         \
     {                                                                                     \
-    public:                                                                               \
       typedef Z DerivateFunc;                                                             \
     };                                                                                    \
                                                                                           \
@@ -232,7 +230,7 @@ namespace tfel{
     struct FctAtan;
 
     template<int N,unsigned int D>
-    class Power;
+    struct Power;
 
     typedef Power<1,2> FctSqrt;
 

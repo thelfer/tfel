@@ -43,7 +43,7 @@ namespace tfel{
       };
 
       template<unsigned short N>
-      class SigmaEqImpl;
+      struct SigmaEqImpl;
 
       template<>
       struct SigmaEqImpl<1u>

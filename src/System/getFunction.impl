@@ -110,6 +110,17 @@ int (*tfel_getSetParameterFunction(LibraryHandlerPtr lib,const char * const name
 		  const double)) dlsym(lib,name);
 } 
 
+int (*tfel_getSetIntegerParameterFunction(LibraryHandlerPtr lib,const char * const name))(const char* const,
+										   const int){
+  return (int (*)(const char*const,
+		  const int)) dlsym(lib,name);
+}
+
+int (*tfel_getSetUnsignedShortParameterFunction(LibraryHandlerPtr lib,const char * const name))(const char* const,
+												const unsigned short){
+  return (int (*)(const char*const,
+		  const unsigned short)) dlsym(lib,name);
+}
 
 double (*tfel_getCastemFunction(LibraryHandlerPtr lib,const char * const name))(const double*const){
   return (double (*)(const double*const)) dlsym(lib,name);
