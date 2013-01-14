@@ -29,7 +29,7 @@ namespace mfront{
     //    this->registerStaticVariable("theta");
     //    this->registerStaticVariable("iterMax");
     this->registerVariable("iterMax");
-    this->parametersHolder.push_back(VarHandler("unsigned short","iterMax",
+    this->parametersHolder.push_back(VarHandler("ushort","iterMax",
 						1u,0u));
     this->registerVariable("young");
     this->registerVariable("nu");
