@@ -46,6 +46,7 @@
 \newcommand{\fortran}{\texttt{fortran}}
 
 \newcommand{\doxygen}{\href{http://www.stack.nl/~dimitri/doxygen/}{\texttt{doxygen}}}
+\newcommand{\valgrind}{\href{http://www.valgrind.org/}{\texttt{valgrind}}}
 
 \newcommand{\mkey}[1]{\index{mkeys}{#1@\symbol{64}#1}{\texttt{@#1}}}
 \newcommand{\mkeyb}[2]{\index{mkeys}{#1@\symbol{64}#1}{\texttt{@#2}}}
@@ -105,9 +106,13 @@
 \include{Champs}
 
 \resumecea{
-  Développé au sein de la plate-forme \pleiades{}, \mfront{}
-  est un générateur de code dédiée aux connaissances matériau, c'est à
-  dire~:
+
+  Couplé à la base de données \sirius{}, \mfront{} vise à
+  garantir une gestion pérenne, robuste, efficace et évolutive des
+  connaissances matériau dans la plateforme \pleiades{}.
+
+  Il s'agit d'un générateur de code dédiée aux connaissances
+  matériau, c'est à dire~:
   \begin{itemize}
     \item les propriétés matériau~;
     \item les lois de comportement~;
@@ -116,14 +121,19 @@
 
   Les objectifs sont, dans chaque cas~:
   \begin{itemize}
-    \item de proposer un fichier d'entrée clair se focalisant sur l'{\em
-      information physique}~;
+    \item de proposer un fichier d'entrée clair se focalisant
+    sur l'{\em information physique}~;
     \item de ne demander qu'un {\em minimum} de connaissance
     informatique à l'utilisateur~;
-    \item de générer des bibliothèques matériau {\em numériquement
-      optimisée}, en particulier pour les lois de comportement~;
-    \item de favoriser un dialogue \og~\oe{}cuménique~\fg entre les
-    différentes applications de l'utilisateur par la notion d'interface.
+    \item de générer des bibliothèques matériau {\em
+      numériquement optimisée}, en particulier pour les lois de
+    comportement. \mfront{} fait partie d'une bibliothèque informatique
+    et numérique nommée \TFEL{}, aujourd'hui intégrée à l'architecture
+    \pleiades{}, qui propose des techniques de programmation et des
+    algorithmes numériques optimisés~;
+    \item de favoriser un dialogue \og~\oe{}cuménique~\fg entre
+    les différentes applications de l'utilisateur par la notion
+    d'interface.
   \end{itemize}
 
   Pour les propriétés matériau et les lois de comportement mécanique,
@@ -134,7 +144,9 @@
   Essentiellement utilisé dans le code de conception
   \licos{} dans un premier temps, \mfront{} s'est imposé comme le
   standard dans la plate-forme \pleiades{} et son utilisation se propage
-  hors du DEC (DER, DMN) et hors du CEA (Areva).  
+  hors du DEC (DER, DMN pour les lois des aciers des réacteurs de
+  quatrième génération) et hors du CEA (évaluation en cours à Areva-NP).
+  
 }
 
 \makeindex{env}
@@ -163,6 +175,48 @@ les applications \pleiades{} via l'interface
 \pycastem~\cite{t.06:_implan}.}.
 
 \paragraph{Utilisation de \mfront{} au DER/SESI}
+
+\clearpage
+\newpage
+\section{Documentation informatique, notice d'installation}
+
+Le générateur de code \mfront{} fait partie d'une librairie
+hétéroclite nommée \TFEL{} qui est elle-même aujourd'hui intégrée à
+l'architecture \pleiades{}.
+
+Nous commençons par abordés des questions liés aux plate-formes et aux
+compilateurs supportés.
+
+Ces différents points permettent d'apprécier la qualité logicielle de
+\TFEL{}.
+
+Les différentes procédures de récupération des sources, de compilation
+et d'installation de \tfel{} sont alors décrites. La générations de
+binaires, sous forme de paquet RPM ou Debian est également détaillée.
+
+\subsection{Plate-formes supportées}
+
+
+
+\subsubsection{Systèmes \unix{}}
+
+Le générateur de code \mfront{} est développé dans un environnement
+\linux{} en se basant sur la norme \(98\) du \cpp{} et sur la norme
+POSIX pour les appels système\footnote{La portabilité de \tfel{}, sans
+  modification du code source, sur d'autres systèmes \unix{} a été
+  vérifiée sur des version antérieures par un portage sur les systèmes
+  OpenSolaris et FreeBSD~: nous pensons qu'un tel portage de la
+  version actuelle se ferait sans difficulté}.
+
+La compatibilité POSIX permet également de compiler \tfel{} dans un
+environnement \cygwin{} qui fournit une surcouche POSIX au-dessus des
+systèmes \windows{}. Pour différentes raisons, un portage natif sous
+\windows{} est préférable et l'utilisation de \tfel{} dans \cygwin{}
+est amené à tomber en désuétude.
+
+\subsubsection{Systèmes \windows{}}
+
+
 
 \clearpage
 \newpage
@@ -309,12 +363,36 @@ démarrage de \mfront{} \footnote{Ce mécanisme est utilisé par exemple
 Ce mécanisme permet donc de créer des interfaces sans modifier
 \mfront{}.
 
+\begin{figure}
+  \center
+  \includegraphics[width=10cm]{Images/sirius8.eps}
+  \caption{Récupération de la loi de comportement
+    de l'acier EM10 depuis la base de données \sirius{}}
+  \label{fig:sirius8}
+\end{figure}
+
 \subsection{Utilisation de \mfront{}}
 \label{sec:mfront:using}
 
-\mfront{} s'utilise en ligne de commande ainsi~:
+\mfront{} est un générateur de code transformant un fichier
+d'entrée en un ensemble de sources \cpp{}. L'utilisation de \mfront{} se
+fait en deux étapes~:
+\begin{itemize}
+  \item l'écriture ou la récupération de fichiers d'entrée. Ces
+  fichiers peuvent être écrits à l'aide de n'importe quel éditeur de
+  texte. Pour les utilisateurs \cea{} de la plate-forme \pleiades{}, il
+  est possible de consulter la base de donnée \sirius{} qui capitalise
+  les connaissances matériau des différentes applications de la
+  plate-forme. La figure~\ref{fig:sirius8} illuste la récupération de la
+  loi de comportement de l'acier EM10 depuis \sirius{}~;
+  \item la génération des sources \cpp{} et la création de
+  librairies matériau~;
+\end{itemize}
+
+Une fois le fichier d'entrée disponible, \mfront{} s'utilise en ligne
+de commande ainsi~:
 \begin{center}
-{\tt mfront [options] fichier1.mfront fichier2.mfront \ldots}
+  {\tt mfront [options] fichier1.mfront fichier2.mfront \ldots}
 \end{center}
 
 L'option la plus utilisée est \moption{interface} qui permet de
@@ -589,10 +667,14 @@ négligeable\footnote{Dans le cas de l'application \licos{}, ce surcoût
 Pour contourner ces difficultés, \mfront{} introduit une notion de
 {\em paramètre}, c'est à dire une valeur, considérée comme constante au
 cours d'un calcul, mais pouvant être modifiée par l'utilisateur au
-moment de l'initialisation. Pour les propriétés et les lois de
-comportements, les paramètres sont des valeurs réelles. Pour les
-modèles, les paramètres peuvent avoir différents types (valeurs réelles
-ou entières, tableaux, etc..).
+moment de l'initialisation. Pour les propriétés, les paramètres sont des
+valeurs réelles. Pour les lois de comportements, les paramètres peuvent
+être des valeurs réelles ou entières\footnote{Nous avons distingué deux
+  types d'entier correspondant respectivement aux types C {\tt int} et
+  {\tt unsigned short} (entiers positifs).}, mais les paramètres définis
+par l'utilisateur ne peuvent être que des rééls. Pour les modèles, les
+paramètres peuvent avoir différents types (valeurs réelles ou entières,
+tableaux, etc..).
 
 Les interfaces qui le souhaitent peuvent mettre en place une gestion
 appropriée de ces paramètres\footnote{Par défaut, la plupart des
@@ -644,7 +726,8 @@ valeur par défaut peut être fournie par la méthode {\tt
 
 Les lois de comportement mécaniques introduites par \mfront{} peuvent
 déclarer automatiquement un certain nombre de paramètres. La valeur du
-critère de convergence est un exemple de tels paramètres.
+critère de convergence ou le nombre maximum d'itération sont des
+exemples de tels paramètres.
 
 \subsection{Directives communes à l'ensemble des analyseurs}
 
@@ -814,6 +897,7 @@ DLLTOOL=i586-mingw32msvc-dlltool CXX=i586-mingw32msvc-g++
 YoungModulus.mfront}
 \end{flushleft}
 
+
 \clearpage
 \newpage
 \section{Propriétés matériaux}
@@ -871,7 +955,7 @@ paragraphe~\ref{sec:mfront:parameters}.
 
 \subsubsection{Constantes}
 
-La directive \mkey{Constant} est synonymes de la directive
+La directive \mkey{Constant} est synonyme de la directive
 \mkey{StaticVariable}.
 
 \subsection{Mots clés spécifiques}
@@ -1247,14 +1331,17 @@ Nous distinguerons différentes catégories de variables~:
 \paragraph{Propriétés matériau} Les propriétés matériau peuvent être des
 coefficients de la loi de comportement (pente d'adoucissement).
 
-Les coefficients d'élasticité jouent un rôle particulier.
+Dans le cas de l'interface \umat{}, les coefficients associés à
+l'élasticité jouent un rôle particulier lié à leurs utilisations par
+\castem{} pour la résolution globale de l'équilibre. Nous détaillerons
+ceci au paragraphe~\ref{sec:umat:interface} dédié à l'interface \umat{}.
 
 \paragraph{Les variables internes} Les variables internes décrivent
 l'état mécanique local du matériau. La loi de comportement décrit leurs
 évolutions par l'intégration d'un système d'équation.
 
 Les variables internes peuvent être soit des {\em scalaires} soit des
-{\em tenseurs}.
+{\em tenseurs} d'ordre \(2\) symétriques.
 
 Certains analyseurs, dédiées à des lois de comportement spécifiques,
 ne permettent pas de déclarer de nouvelles variables internes.
@@ -1273,7 +1360,8 @@ Les variables sont mises à jour après l'intégration des variables
 internes. Elles peuvent être soit des {\em scalaires} soit des {\em
   tenseurs}.
 
-Les variables peuvent être ou des {\em scalaires} ou des {\em tenseurs}.
+Les variables peuvent être ou des {\em scalaires} ou des {\em
+  tenseurs} d'ordre \(2\) symétriques.
 
 \paragraph{Les variables externes} Les variables externes désignent
 des variables dont l'évolution est donnée par ailleurs et connue sur
@@ -1818,6 +1906,7 @@ Les parties de code décrivant les lois de comportement peuvent accéder à
 cette information via la méthode {\tt get\-Modelling\-Hypo\-thesis}.
 
 \subsection{Interface aux lois de comportement}
+\label{sec:umat:interface}
 
 Cette section décrit tout d'abord le rôle des interfaces puis décrit
 l'interface \umat{} utilisé pour l'adhérence au code aux éléments finis
@@ -1961,10 +2050,11 @@ toujours la seconde solution. L'algorithme utilisé est le suivant~:
 Le critère choisi pour tester la condition de contraintes planes est,
 dans le cas isotrope~:
 \[
-\left|\left.\sigmaz\right.^{(0)}\right|<E\,\varepsilon
+\left|\left.\sigmaz\right.^{(n)}\right|<E\,\varepsilon
 \]
-où $\varepsilon$ est choisi égal à \(10^{-12}\)\footnote{Cette valeur
-  n'est aujourd'hui pas modifiable}.
+où \(E\) est le module d'\nom{Young} du matériau et où \(\varepsilon\)
+est choisi égal à \(10^{-12}\)\footnote{Cette valeur n'est aujourd'hui
+  pas modifiable}.
 
 \paragraph{Exemple de mise en donnée \castem{}} Dans le cas
 de l'interface \texttt{umat}, \mfront{} génère automatiquement
@@ -2038,6 +2128,9 @@ l'annexe~\ref{sec:castem:materialbehaviours}.
 \section{Intégration des lois de comportement, intégrateur par défaut}
 \label{sec:defaultparser}
 
+L'intégrateur par défaut est essentiellement utilisé à des
+fins de test ou pour certains lois spécifiques simples.
+
 \subsection{La directive \texttt{@Integrator}}
 
 La directive \mkey{Integrator} permet d'intégrer la loi de comportement.
@@ -2096,6 +2189,10 @@ mathématique~:
 \newpage
 \clearpage
 \section{Analyseurs spécifiques}
+
+Les analyseurs spécifiques sont dédiés à certaines formes de lois de
+comportements courantes et qui peuvent intégrés par des algorithmes
+optimisés.
 
 \subsection{Généralités}
 
@@ -2406,8 +2503,16 @@ où\(\Delta_{n}\Delta\,p_{i}\) désigne la différence entre l'estimation
 de l'incrément de la déformation viscoplastique cumulée à l'étape
 \(n+1\) et de l'estimation à l'étape \(n\).
 
-La valeur du critère est par défaut de \(10^{-8}\) mais peut être
-modifié par la directive \mkey{Epsilon}.
+La valeur du critère est par défaut de \(10^{-8}\). Cette valeur par
+défaut peut être modifiée par la directive \mkey{Epsilon}. Cette valeur
+est également un paramètre de la loi, nommé \varcpp{epsilon}, qui peut
+être modifié à l'exécution.
+
+Le nombre maximum d'itération de l'algorithme est de \(100\) par
+défaut. Cette valeur par défaut peut être modifiée par la directive
+\mkey{IterMax}. Cette valeur est également un paramètre de la loi, nommé
+\varcpp{iterMax}, qui peut être modifié à l'exécution.
+
 
 \subsection{La directive \texttt{@FlowRule}} La directive \mkey{FlowRule}
 permet de définir un écoulement.
@@ -2495,6 +2600,18 @@ Une autre manière de calculer cette variable est~:
 \end{center}
 qui montre que la déformation élastique a été mise à jour et non la
 déformation totale.
+
+\subsection{Paramètres automatiquement définis}
+
+Les analyseurs spécifiques définissent automatiquement trois
+paramètres~:
+\begin{itemize}
+  \item {\tt epsilon} qui fixe la valeur du critère d'arrêt~;
+  \item {\tt theta} qui fixe la valeur du paramètre de la
+  \(\theta\)-méthode~;
+  \item {\tt iterMax} qui fixe le nombre maximum d'itérations
+  autorisées pour l'algorithme implicite.
+\end{itemize}
 
 \subsection{Comportement viscoplastique du \sic{}}
 
@@ -2589,7 +2706,8 @@ valeur du flux de neutrons rapides \(\phi\) est égal à
 
 \clearpage
 \newpage
-\section{Intégration des lois de comportement par une méthode explicite}
+\section{Intégration des lois de comportement par
+  une méthode explicite (algorithme de \nom{Runge-Kutta})}
 \label{sec:RK}
 
 Cette section décrit l'analyseur \texttt{RungeKutta} qui permet
@@ -2673,12 +2791,14 @@ satisfaisante, on en déduit que le pas de temps utilisé est trop grand
 et il est possible de mettre en place une stratégie de gestion du pas de
 temps.
 
-\paragraph{Pas de temps minimal} En cas de convergence forcé, le code
-aux éléments finis \castem{} envoie à la loi de comportement un pas de
-temps nul qui ne permet pas d'écrire les lois de comportement sous la
-forme d'un système différentiel. Il est nécessaire de préciser un pas de
-temps minimal par la directive
-\mkeyb{MinimalTimeStep}{Minimal\-Time\-Step} pour gérer ce cas.
+\paragraph{Pas de temps minimal} En cas de convergence
+forcé, le code aux éléments finis \castem{} envoie à la loi de
+comportement un pas de temps nul qui ne permet pas d'écrire les lois de
+comportement sous la forme d'un système différentiel. Il est nécessaire
+de préciser un pas de temps minimal par la directive
+\mkeyb{MinimalTimeStep}{Minimal\-Time\-Step} pour gérer ce cas. À
+l'exécution, la valeur choisie peut être modifiée à l'aide du paramètre
+\varcpp{dtmin}.
 
 \begin{table}[htbp]
   \centering
@@ -2893,21 +3013,40 @@ ne peut être supérieur à \(t+\Delta\, t-t^{l}\).
 \mkey{@Derivative} renvoie la valeur booléenne \texttt{false}, le pas de
 temps est automatiquement divisé par \(2\).
 
-\paragraph{Choix de la tolérance} La tolérance \(\varepsilon\) est fixée
-par défaut à \(10^{-8}\). L'utilisateur peut modifier cette valeur par
-la directive \mkey{Epsilon}.
+Cette possibilité est en pratique assez importante, en particulier
+pour des comportement très raides. Il est par exemple fréquent de
+rencontrer des lois viscoplastique de type \nom{Nortan} dont l'exposant
+est grand. Dans ces cas, les premières estimations des solutions
+conduisent à des contraintes équivalentes assez importantes qui
+conduisent à des vitesses d'écoulement infinies. Informatiquement, ces
+vitesses se traduisent par l'apparition de la valeur réelle
+\varcpp{NaN}\footnote{Acronyme de \og~Not a Number~\fg{}}. Les
+algorithmes de \nom{Runge-Kutta} captent ce cas et sous-découpent alors
+automatiquement le pas de temps, mais cette solution présente
+l'inconvénient de ne pas être compatible avec certains techniques de
+déverminage extrêmement utilises. Il est dès lors préférable, et
+également plus efficace puisque des opérations lourdes (calculs de
+puissance) peuvent être évités, que l'utilisateur introduise des tests
+appropriés.
 
-\subsubsection{Critère d'arrêt} L'intégration s'arrête quand l'une des
-conditions suivantes est vérifiée~:
+\paragraph{Choix de la tolérance} La tolérance
+\(\varepsilon\) est fixée par défaut à \(10^{-8}\). L'utilisateur peut
+modifier cette valeur par la directive \mkey{Epsilon}. À l'exécution,
+l'utilisateur peut modifier cette valeur à l'aide du paramètre
+\varcpp{epsilon}.
+
+\subsubsection{Critère d'arrêt} L'intégration
+s'arrête quand l'une des conditions suivantes est vérifiée~:
 \begin{itemize}
-  \item le temps local devient trop petit, ce qui marque l'échec de
-  l'algorithme. Le pas de temps minimal admissible est égal au pas de
-  temps total \(\Delta\,t\) multiplié par 100 fois la précision
-  machine du type réel considéré~;
-  \item le temps local est égal au temps de fin de pas. Ceci est vérifié
-  par~:
+  \item le temps local devient trop petit, ce qui marque l'échec
+  de l'algorithme. Le pas de temps minimal admissible est égal au pas de
+  temps total \(\Delta\,t\) multiplié par 100 fois la précision machine
+  du type réel considéré~;
+  \item le temps local est égal au temps de fin de pas, ce qui
+  marque la réussite de l'intégration. Ceci est vérifié par~:
   \[
-  \left|t+\Delta\, t-t^{l}\right|<\Frac{\delta\,t^{l}}{2}
+  \left|t+\Delta\,
+  t-t^{l}\right|<\Frac{\delta\,t^{l}}{2}
   \]
 \end{itemize}
 
@@ -3001,9 +3140,9 @@ pas de temps adaptatif est utilisé. Une variable spécifique, nommée
 effectivement utilisé par l'algorithme. Le pas de temps total est
 donné par la variable \texttt{dt}.
 
-\subsection{Paramètres par défaut}
+\subsection{Paramètres automatiquement définis}
 
-L'analyseur implicite définit par défaut différents
+L'analyseur implicite définit automatiquement différents
 paramètres~:
 \begin{itemize}
   \item \varcpp{epsilon}, la valeur du critère d'arrêt de
@@ -3450,23 +3589,22 @@ juste titre, jugé délicat et une erreur peut avoir un impact
 significatif sur les performances ou la robustesse de l'intégration.
 
 Pour détecter les erreurs dans le calcul du jacobien, nous avons
-introduit le mot clé \texttt{@Compare\-To\-Numerical\-Jacobian}. Ce
-mot clé déclenche un processus de vérification par comparaison du
-jacobien fournit par l'utilisateur à un jacobien évalué numériquement
-par perturbations. Cette vérification se fait par étapes~:
+introduit le mot clé \texttt{@Compare\-To\-Numerical\-Jacobian}. Ce mot
+clé déclenche un processus de vérification par comparaison du jacobien
+fournit par l'utilisateur à un jacobien évalué numériquement par
+perturbations. Cette vérification se fait par étapes~:
 \begin{itemize}
-  \item la première étape est le calcul d'un jacobien numérique par
-  perturbations. Pour gagner en précision, une différence finie centrée
-  est utilisée\footnote{En \(1D\), la dérivée numérique d'une fonction
-    \(f\paren{x}\) au point \(x\) est évaluée ainsi~:
+  \item la première étape est le calcul d'un jacobien numérique
+  par perturbations. Pour gagner en précision, une différence finie
+  centrée est utilisée\footnote{En \(1D\), la dérivée numérique d'une
+    fonction \(f\paren{x}\) au point \(x\) est évaluée ainsi~:
     \[
     \Frac{f\paren{x+\epsilon}-f\paren{x-\epsilon}}{2\,\epsilon}
     \]
-    La perturbation est choisie égale à la valeur du critère d'arrêt de
-    l'algorithme implicite.
-  }~;
-  \item la seconde étape est de comparer les termes du jacobien. La
-  comparaison se fait bloc par bloc~: la différence entre la dérivée
+    La perturbation est choisie égale à la valeur du critère
+    d'arrêt de l'algorithme implicite. }~;
+  \item la seconde étape est de comparer les termes du jacobien.
+  La comparaison se fait bloc par bloc~: la différence entre la dérivée
   \(\deriv{f_{y_{i}}}{y_{j}}\) calculée par l'utilisateur et son
   approximation numérique \(\Frac{\Delta\,f_{y_{i}}}{\Delta\,y_{j}}\)
   est évaluée ainsi~:
@@ -3477,11 +3615,13 @@ par perturbations. Cette vérification se fait par étapes~:
   \(y_{i}\) et où \(\norm{a}\) est la somme des valeurs absolues des
   composantes de \(a\). Cette différence est comparée à un certain
   critère. Ce critère est par défaut égal au critère de convergence de
-  l'algorithme implicite, mais l'utilisateur peut en préciser en autre en
-  utilisant le mot clé {\tt @Jacobian\-Comparison\-Criterium}. Si la
-  différence est supérieure au critère, un message donnant la valeur de la
-  différence, le bloc considéré et son approximation numérique est affiché
-  sur la sortie standard.
+  l'algorithme implicite, mais l'utilisateur peut en préciser en autre
+  en utilisant le mot clé {\tt @Jacobian\-Comparison\-Criterium}.
+  L'utilisateur peut également utiliser le paramètre
+  \varcpp{jacobian\-Comparison\-Criterium} pour modifier ce critère à
+  l'exécution. Si la différence est supérieure au critère, un message
+  donnant la valeur de la différence, le bloc considéré et son
+  approximation numérique est affiché sur la sortie standard.
 \end{itemize}
 
 \begin{table}
@@ -3621,51 +3761,84 @@ jacobienne par la relation suivante~:
 Cette variante est disponible dans \mfront{} sous le nom de
 \texttt{Broyden2}.
 
-\subsection{Amélioration de la robustesse des algorithmes}
+Dans ce cas, il n'est pas possible de fournir des blocs du jacobien.
+
+\subsection{Amélioration de la robustesse des algorithmes implicites}
 
 Différentes méthodes permettant d'améliorer la robustesse des
 algorithmes ont été testées. Nous les décrivons maintenant bien que leur
 utilisation conduise à des résultats mitigés.
+
+Pour des raisons d'efficacité du code généré, il a été décidé que le
+support d'une méthode d'accélération était une décision prise au moment
+de la génération du code. Les méthodes présentées présentent des
+paramètres permettant de fixer un nombre minimale d'itérations avant que
+la méthode s'active. En donnant une valeur suffisamment grande à ce
+paramètre, la méthode ne s'activera jamais, ce qui ne veut pas dire
+qu'elle n'aura aucun coût : par exemple, les méthodes présentées
+utilisent des les valeurs des itérées précédentes qui sont toujours
+stockées.
+
+Enfin, les paramètres associées à ces méthode ne seront
+disponibles que si elles sont activées.
 
 \subsubsection{Méthode d'accélération de \castem{}}
 
 L'idée de cette méthode d'accélération est de trouver une nouvelle
 estimation de la solution à partir des itérations précédentes. Soient
 \(F_{n-2}\), \(F_{n-1}\) et \(F_{n}\) les résidus associés aux trois
-dernières estimations \(\Delta\, Y{n-2}\), \(\Delta\, Y{n-1}\) et
-\(\Delta\, Y{n}\) de la solution.
+dernières estimations \(\Delta\, Y_{n-2}\), \(\Delta\, Y_{n-1}\) et
+\(\Delta\, Y_{n}\) de la solution.
 
 Il est possible de construire à partir de ces trois résidus un
 hyperplan. L'idée est d'exprimer la projection du vecteur nul (qui
 correspond à la solution recherchée) sur cet hyperplan comme une
 combinaison linéaire de ces trois résidus et de déduire une nouvelle
 estimation de la solution en appliquant la même combinaison linéaire aux
-estimations \(\Delta\, Y{n-2}\), \(\Delta\, Y{n-1}\) et \(\Delta\,
-Y{n}\).
+estimations \(\Delta\, Y_{n-2}\), \(\Delta\, Y_{n-1}\) et \(\Delta\,
+Y_{n}\).
 
 Dans certains cas difficiles, cette méthode peut stabiliser les
 calculs, mais elle empêche la convergence quadratique de la méthode de
 \nom{Newton}. Son intérêt apparaît aujourd'hui très limité.
 
-%    this->registerNewCallBack("@UseAcceleration",&MFrontImplicitParser::treatUseAcceleration);
-%    this->registerNewCallBack("@AccelerationTrigger",&MFrontImplicitParser::treatAccelerationTrigger);
-%    this->registerNewCallBack("@AccelerationPeriod",&MFrontImplicitParser::treatAccelerationPeriod);
+La directive \mkey{UseAcceleration} est utilisée pour activer cette
+méthode d'accélération. Elle est suivie soit du mot clé \varcpp{true}
+soit du mot clé \varcpp{false} et d'un point-virgule. 
+
+La directive \mkey{AccelerationTrigger} permet de préciser à partir de
+quelle itération la méthode d'accélération est utilisée. La valeur
+fournie doit être supérieure à \(3\) pour que la méthode ait un sens. La
+valeur fournie peut être modifiée par le paramètre
+\varcpp{acceleration\-Trigger}.
+
+La directive \mkey{AccelerationPeriod} permet de préciser le nombre
+d'itérations séparant deux emplois successifs de cette méthode. La
+valeur fournie peut être modifiée par le paramètre
+\varcpp{acceleration\-Period}.
 
 \subsubsection{Méthode de relaxation}
 
 Une méthode de relaxation a été introduite pour améliorer la
 convergence de certains cas difficiles où des oscillations lors de la
-recherche de solution peuvent apparaître. Soient \(\Delta\, Y{n-1}\) et
-\(\Delta\, Y{n}\) les deux dernières estimations de la solution. La
+recherche de solution peuvent apparaître. Soient \(\Delta\, Y_{n-1}\) et
+\(\Delta\, Y_{n}\) les deux dernières estimations de la solution. La
 relaxation consiste à prendre comme nouvelle estimation~:
 \[
-\paren{1-w}\,\Delta\, Y{n-1}+w\,\Delta\, Y{n}
+\paren{1-w}\,\Delta\, Y_{n-1}+w\,\Delta\, Y_{n}
 \]
 où \(w\) est un coefficient de relaxation.
 
-%    this->registerNewCallBack("@UseRelaxation",&MFrontImplicitParser::treatUseRelaxation);
-%    this->registerNewCallBack("@RelaxationTrigger",&MFrontImplicitParser::treatRelaxationTrigger);
-%    this->registerNewCallBack("@RelaxationCoefficient",&MFrontImplicitParser::treatRelaxationCoefficient);
+La directive \mkey{RelaxationTrigger} permet de préciser à partir de
+quelle itération la méthode d'accélération est utilisée. La valeur
+fournie doit être supérieure à \(3\) pour que la méthode ait un sens. La
+valeur fournie peut être modifiée par le paramètre
+\varcpp{relaxation\-Trigger}.
+
+La directive \mkey{RelaxationCoefficient} permet de préciser le nombre
+d'itérations séparant deux emplois successifs de cette méthode. La
+valeur fournie peut être modifiée par le paramètre
+\varcpp{relaxation\-Coefficient}.
 
 \subsubsection{Autres pistes}
 
@@ -3769,9 +3942,9 @@ variables internes, une fois l'algorithme convergé.
 À ce moment, les valeurs externes (déformations totales et températures
 incluses) n'ont pas été mises à jour.
 
-\subsection{Paramètres par défaut}
+\subsection{Paramètres automatiquement définis}
 
-L'analyseur implicite définit par défaut différents
+L'analyseur implicite définit automatiquement différents
 paramètres~:
 \begin{itemize}
   \item \varcpp{epsilon}, la valeur du critère d'arrêt de
@@ -3782,7 +3955,27 @@ paramètres~:
   l'algorithme implicite. La valeur par défaut de ce paramètre est de
   \(0.5\) et peut être modifiée par la directive \mkey{Theta}. Les
   valeurs admissibles sont comprises entre \(0\) et \(1\)~;
+  \item \varcpp{iterMax}, le nombre maximum d'itération autorisées.
 \end{itemize}
+
+Si la méthode d'accélération de \castem{} est utilisée, les paramètres
+suivants sont déclarés~:
+\begin{itemize}
+  \item \varcpp{accelerationTrigger}, le nombre d'itération
+  minimum pour utiliser la méthode d'accélération~;
+  \item \varcpp{accelerationPeriod}, le nombre d'itération
+  entre deux utilisations la méthode d'accélération~;
+\end{itemize}
+
+Si la méthode de relaxation de \castem{} est utilisée, les paramètres
+suivants sont déclarés~:
+\begin{itemize}
+  \item \varcpp{relaxationTrigger}, le nombre d'itération minimum
+  pour utiliser la méthode de relaxation~;
+  \item \varcpp{relaxationCoefficient}, le coefficient de
+  relaxation.
+\end{itemize}
+
 
 \subsection{Intégration d'une loi d'écoulement viscoplastique
   orthotrope par un algorithme implicite}
@@ -4833,10 +5026,12 @@ n'utilisent qu'un nombre réduit d'arguments de la fonction \umat{}.
   \code{
     \include{Images/mfront-umat}
   }
-  \caption{Prototype des fonctions générés par l'interface {\tt umat} de
-    \mfront{}.}
+  \caption{Prototype des fonctions générés par
+    l'interface {\tt umat} de \mfront{}.}
   \label{fig:umat:prototype}
 \end{figure}
+
+Leur prototype commun est décrit à la figure~\ref{fig:umat:prototype}.
 
 \subsection{Calcul de la matrice d'élasticité orthotrope}
 \label{sec:calcul-de-la}
@@ -5463,18 +5658,46 @@ cette fonction s'utilise ainsi~:
   \end{minipage}
 \end{center}
 
-
-
 \clearpage
 \newpage
-\section{Comparaisons numériques de différents algorithmes de résolution}
+
+\section{Comparaisons numériques de différents
+  algorithmes de résolution}
 \label{QNR:ComparaisonNumeriques}
 
-\paragraph{Loi utilisée pour la comparaison}
+\subsection{Loi utilisée pour la comparaison}
 
-%\paragraph{}
+Pour ces premières évaluations, nous avons utilisés un écoulement
+viscoplastique de \nom{Norton}. Il s'agit d'une loi extrêmement simple
+convergent en peu d'itérations. Le coût intrinsèque des différentes
+méthodes est donc exacerbé. Cette loi présente deux variables internes
+ont été retenues, la déformation élastique \(\tepsilonel\) et la
+déformation viscoplastique cumulée \(p\).
 
-Nous comparons ici les méthodes 
+\subsection{Résultats obtenus}
+
+Nous comparons, dans le cas d'un essai en traction uniaxiale, l'
+algorithme de \nom{Newton} à l'algorithme de \nom{Broyden}.
+
+Pour l'algorithme de \nom{Newton}, nous avons introduit une variante
+dans laquelle le jacobien est estimé numériquement (avec une différence
+finie d'ordre \(1\) ou d'ordre \(2\)) et réactualisé à différentes
+périodes (tableaux~\ref{tab:QNR:1} et~\ref{tab:QNR:2}).
+
+Pour le premier algorithme de \nom{Broyden}, nous avons testé
+différentes variantes suivantes (tableaux~\ref{tab:Brodyen:1}
+et~\ref{tab:Brodyen:2})~:
+\begin{itemize}
+  \item que le jacobien initial était pris égal à l'identité ou
+  évalué numériquement par une différence finie d'ordre \(2\)~;
+  \item que des termes du jacobien étaient calculés
+  explicitement.
+\end{itemize}
+
+Pour le second algorithme de \nom{Broyden}, nous avons distingué
+deux variantes suivant que le jacobien inital était pris égal à
+l'identité ou évalué numériquement par une différence finie d'ordre
+\(2\).
 
 \begin{figure}[htbp]
   \centering
@@ -5485,6 +5708,18 @@ Nous comparons ici les méthodes
   \label{fig:CompVMis}
 \end{figure}
 
+Quand ils convergent, les algorithmes donnent toujours la même
+solution, ce qui est illustré en figure~\ref{fig:CompVMis}. Les coûts
+des différentes méthodes, en termes de nombre cycles
+processeurs\footnote{Il s'agit d'une mesure fiable du coût d'une
+  fonction, indépendante de la charge du système. Nous avons utilisé
+  l'outil \valgrind{} pour avoir accès à cette mesure.}, sont fournis
+dans les tableaux~\ref{fig:CompVMis}, \ref{tab:NR}, \ref{tab:QNR:1},
+\ref{tab:QNR:2}, \ref{tab:Brodyen:1}, \ref{tab:Brodyen:2}
+et~\ref{tab:Brodyen:3}.
+
+Le test effectué étant extrêmement frustre, il serait mal avisé d'être
+conclusif.
 
 \begin{table}
   \centering
@@ -5542,6 +5777,9 @@ Nous comparons ici les méthodes
     \textsc{Newton-Raphson}.}
 \end{table}
 
+Le tableau~\ref{tab:NR} montre à quel point l'algorithme de \nom{Newton}
+est sensible à la qualité de la matrice jacobienne.
+
 \begin{table}
   \centering
   \begin{tabular}[htbp]{|c|c|c|}
@@ -5594,6 +5832,31 @@ Nous comparons ici les méthodes
     différence finie centrée (approximation d'ordre $2$).}
 \end{table}
 
+Les tableaux~\ref{tab:QNR:1} et~\ref{tab:QNR:2} montrent que les
+évalutions numériques des jacobiens sont assez coûteuses. On peut
+également noté que si l'on gagne du temps à n'évaluer la matrice que
+toutes les deux itérations, on en perd à ne l'évaluer toutes les trois
+itérations car la convergence est dégradée. Il n'y a pas de gain à
+utiliser une différence finie d'ordre \(2\).
+
+Il est intéressant de noter que les algorithmes de \nom{Broyden}
+convergent toujours.
+
+Le cas où tous les termes de la jacobienne sont fournis permet de
+comparer le coût intrinsèque plus élevé du premier algorithme de
+\nom{Broyden} (tableau~\ref{tab:Brodyen:2}).
+
+Si aucun terme du jacobien n'est fourni, le premier algorithme de
+\nom{Broyden} peut être relativement efficace, à condition d'estimer
+numériquement la jacobienne initiale (tableau~\ref{tab:Brodyen:2}).
+
+De plus, il est intéressant de s'intéresser au terme
+\(\deriv{f_{\tepsilonel}}{\Delta\,\tepsilonel}\) de la matrice
+jacobienne. Il s'agit du terme le plus complexe (et le plus coûteux) à
+calculer. Nous pouvons noter que si l'on ne calcule pas ce terme dans
+l'algorithme de \nom{Broyden}, mais que l'on calcule les autres,
+l'algorithme converge et est légèrement meilleur que l'algorithme de
+\nom{Newton}.
 
 \begin{table}
   \centering
@@ -5673,14 +5936,10 @@ Nous comparons ici les méthodes
     Défaut    & \(19\,530\,077\) & \(4,15\)\\
     \hline
   \end{tabular}
-  \label{tab:Broyden2}
+  \label{tab:Broyden3}
   \caption{Temps calculs obtenus avec le second algorithme de
     \textsc{Broyden} et jacobien initial égal à l'identité.}
 \end{table}
-
-\paragraph{Comparaison des algorithmes de \textsc{Broyden}} En comparant
-  les résultats donnés par les tableaux~\ref{tab:Broyden:1},
-  \ref{tab:Broyden:2} et~\ref{tab:Broyden2}, nous pouvons constater que le s
 
 \clearpage
 \newpage

@@ -18,13 +18,7 @@ namespace mfront{
   MFrontImplicitParser::MFrontImplicitParser()
     : MFrontVirtualParser(), 
       MFrontBehaviourParserBase<MFrontImplicitParser>(),
-      iterMax(100),
-      relaxationTrigger(10),
-      accelerationTrigger(10),
-      accelerationPeriod(3),
       algorithm(MFrontImplicitParser::DEFAULT),
-      hasJacobianComparisonCriterium(false),
-      jacobianComparisonCriterium(0.),
       compareToNumericalJacobian(false),
       useRelaxation(false),
       useAcceleration(false)
@@ -36,10 +30,13 @@ namespace mfront{
     this->parametersHolder.push_back(VarHandler("real","theta",1u,0u));
     this->registerVariable("epsilon");
     this->parametersHolder.push_back(VarHandler("real","epsilon",1u,0u));
-    //  static variables
+    this->registerVariable("iterMax");
+    this->parametersHolder.push_back(VarHandler("ushort","iterMax",1u,0u));
+    this->registerVariable("jacobianComparisonCriterium");
+    this->registerVariable("relaxationTrigger");
+    this->registerVariable("accelerationTrigger");
+    this->registerVariable("accelerationPeriod");
     this->registerVariable("relaxationCoefficient");
-    this->registerStaticVariable("iterMax");
-    this->registerStaticVariable("relaxationTrigger");
     // Default state vars
     this->registerVariable("eel");
     this->registerVariable("deel");
@@ -177,6 +174,8 @@ namespace mfront{
     }
     if(this->current->value=="true"){
       this->useAcceleration = true;
+      this->parametersHolder.push_back(VarHandler("ushort","accelerationTrigger",1u,0u));
+      this->parametersHolder.push_back(VarHandler("ushort","accelerationPeriod",1u,0u));
     } else if(this->current->value=="false"){
       this->useAcceleration = false;
     } else {
@@ -191,23 +190,17 @@ namespace mfront{
   MFrontImplicitParser::treatAccelerationTrigger(void)
   {
     using namespace std;
-    this->checkNotEndOfFile("MFrontImplicitParser::treatIterMax",
-			    "Cannot read accelerationTrigger value.");
-    if(!this->useAcceleration){
-      this->throwRuntimeError("MFrontBehaviourParserCommon::treatAccelerationTrigger",
-			      "acceleration unused");
-    }
-    istringstream flux(current->value);
-    flux >> this->accelerationTrigger;
-    if((flux.fail())||(!flux.eof())){
-      this->throwRuntimeError("MFrontImplicitParser::treatAccelerationTrigger",
-			      "Failed to read accelerationTrigger value.");
-    }
-    if(this->accelerationTrigger<3){
+    typedef map<string,unsigned short>::value_type MVType;
+    unsigned short accelerationTrigger;
+    accelerationTrigger = this->readUnsignedShort("MFrontImplicitParser::treatAccelerationTrigger");
+    if(accelerationTrigger<3){
       this->throwRuntimeError("MFrontImplicitParser::treatAccelerationTrigger",
 			      "invalid acceleration trigger value.");
     }
-    ++(this->current);
+    if(!this->uParametersDefaultValues.insert(MVType("accelerationTrigger",accelerationTrigger)).second){
+      this->throwRuntimeError("MFrontImplicitParser::treatAccelerationTrigger",
+			      "default value already defined for parameter 'accelerationTrigger'");
+    }
     this->readSpecifiedToken("MFrontImplicitParser::treatAccelerationTrigger",";");
   } // end of MFrontImplicitParser::treatAccelerationTrigger
 
@@ -215,23 +208,17 @@ namespace mfront{
   MFrontImplicitParser::treatAccelerationPeriod(void)
   {
     using namespace std;
-    this->checkNotEndOfFile("MFrontImplicitParser::treatIterMax",
-			    "Cannot read accelerationPeriod value.");
-    if(!this->useAcceleration){
-      this->throwRuntimeError("MFrontBehaviourParserCommon::treatAccelerationPeriod",
-			      "acceleration unused");
-    }
-    istringstream flux(current->value);
-    flux >> this->accelerationPeriod;
-    if((flux.fail())||(!flux.eof())){
-      this->throwRuntimeError("MFrontImplicitParser::treatAccelerationPeriod",
-			      "Failed to read accelerationPeriod value.");
-    }
-    if(this->accelerationPeriod<1){
+    typedef map<string,unsigned short>::value_type MVType;
+    unsigned short accelerationPeriod;
+    accelerationPeriod = this->readUnsignedShort("MFrontImplicitParser::treatAccelerationPeriod");
+    if(accelerationPeriod==0){
       this->throwRuntimeError("MFrontImplicitParser::treatAccelerationPeriod",
 			      "invalid acceleration period value.");
     }
-    ++(this->current);
+    if(!this->uParametersDefaultValues.insert(MVType("accelerationPeriod",accelerationPeriod)).second){
+      this->throwRuntimeError("MFrontImplicitParser::treatAccelerationPeriod",
+			      "default value already defined for parameter 'accelerationPeriod'");
+    }
     this->readSpecifiedToken("MFrontImplicitParser::treatAccelerationPeriod",";");
   } // end of MFrontImplicitParser::treatAccelerationPeriod
 
@@ -248,6 +235,7 @@ namespace mfront{
     if(this->current->value=="true"){
       this->useRelaxation = true;
       this->parametersHolder.push_back(VarHandler("real","relaxationCoefficient",1u,0u));
+      this->parametersHolder.push_back(VarHandler("ushort","relaxationTrigger",1u,0u));
     } else if(this->current->value=="false"){
       this->useRelaxation = false;
     } else {
@@ -270,6 +258,7 @@ namespace mfront{
     }
     if(this->current->value=="true"){
       this->compareToNumericalJacobian = true;
+      this->parametersHolder.push_back(VarHandler("real","jacobianComparisonCriterium",1u,0u));
     } else if(this->current->value=="false"){
       this->compareToNumericalJacobian = false;
     } else {
@@ -284,48 +273,44 @@ namespace mfront{
   MFrontImplicitParser::treatJacobianComparisonCriterium(void)
   {
     using namespace std;
-    if(this->hasJacobianComparisonCriterium){
+    typedef map<string,double>::value_type MVType;
+    if(!this->compareToNumericalJacobian){
       this->throwRuntimeError("MFrontImplicitParser::treatJacobianComparisonCriterium",
-			      "JacobianComparisonCriterium value already defined.");
+			      "must call '@CompareToNumericalJacobian' first");
     }
+    double jacobianComparisonCriterium;
     this->checkNotEndOfFile("MFrontImplicitParser::treatJacobianComparisonCriterium",
-			    "Cannot read epsilon value.");
+			    "Cannot read jacobianComparisonCriterium value.");
     istringstream flux(current->value);
-    flux >> this->jacobianComparisonCriterium;
+    flux >> jacobianComparisonCriterium;
     if((flux.fail())||(!flux.eof())){
       this->throwRuntimeError("MFrontImplicitParser::treatJacobianComparisonCriterium",
-			      "Failed to read epsilon value.");
+			      "Failed to read jacobianComparisonCriterium value.");
     }
-    if(this->jacobianComparisonCriterium<0){
+    if(jacobianComparisonCriterium<0){
       this->throwRuntimeError("MFrontImplicitParser::treatJacobianComparisonCriterium",
 			      "JacobianComparisonCriterium value must be positive.");
     }
+    if(!this->parametersDefaultValues.insert(MVType("jacobianComparisonCriterium",
+						    jacobianComparisonCriterium)).second){
+      this->throwRuntimeError("MFrontImplicitParser::treatJacobianComparisonCriterium",
+			      "default value already defined for parameter 'jacobianComparisonCriterium'");
+    }
     ++(this->current);
     this->readSpecifiedToken("MFrontImplicitParser::treatJacobianComparisonCriterium",";");
-    this->hasJacobianComparisonCriterium = true;
   } // MFrontImplicitParser::treatJacobianComparisonCriterium
 
   void
   MFrontImplicitParser::treatRelaxationTrigger(void)
   {
     using namespace std;
-    this->checkNotEndOfFile("MFrontImplicitParser::treatIterMax",
-			    "Cannot read relaxationTrigger value.");
-    if(!this->useRelaxation){
-      this->throwRuntimeError("MFrontBehaviourParserCommon::treatRelaxationTrigger",
-			      "relaxation unused");
-    }
-    istringstream flux(current->value);
-    flux >> this->relaxationTrigger;
-    if((flux.fail())||(!flux.eof())){
+    typedef map<string,unsigned short>::value_type MVType;
+    unsigned short relaxationTrigger;
+    relaxationTrigger = this->readUnsignedShort("MFrontImplicitParser::treatRelaxationTrigger");
+    if(!this->uParametersDefaultValues.insert(MVType("relaxationTrigger",relaxationTrigger)).second){
       this->throwRuntimeError("MFrontImplicitParser::treatRelaxationTrigger",
-			      "Failed to read relaxationTrigger value.");
+			      "default value already defined for parameter 'relaxationTrigger'");
     }
-    if(this->relaxationTrigger<3){
-      this->throwRuntimeError("MFrontImplicitParser::treatRelaxationTrigger",
-			      "invalid relaxation trigger value.");
-    }
-    ++(this->current);
     this->readSpecifiedToken("MFrontImplicitParser::treatRelaxationTrigger",";");
   } // end of MFrontImplicitParser::treatRelaxationTrigger
   
@@ -440,15 +425,17 @@ namespace mfront{
   MFrontImplicitParser::treatIterMax(void)
   {
     using namespace std;
-    this->checkNotEndOfFile("MFrontImplicitParser::treatIterMax",
-			    "Cannot read iterMax value.");
-    istringstream flux(current->value);
-    flux >> this->iterMax;
-    if((flux.fail())||(!flux.eof())){
+    typedef map<string,unsigned short>::value_type MVType;
+    unsigned short iterMax;
+    iterMax = this->readUnsignedShort("MFrontImplicitParser::treatIterMax");
+    if(iterMax==0){
       this->throwRuntimeError("MFrontImplicitParser::treatIterMax",
-			      "Failed to read iterMax value.");
+			      "invalid value for parameter 'iterMax'");
     }
-    ++(this->current);
+    if(!this->uParametersDefaultValues.insert(MVType("iterMax",iterMax)).second){
+      this->throwRuntimeError("MFrontImplicitParser::treatIterMax",
+			      "default value already defined for parameter 'iterMax'");
+    }
     this->readSpecifiedToken("MFrontImplicitParser::treatIterMax",";");
   } // end of MFrontImplicitParser::treatIterMax
 
@@ -937,13 +924,8 @@ namespace mfront{
 	  const VarHandler& v2 = *p2;
 	  SupportedTypes::TypeSize nv1 = this->getTypeSize(v1.type,v1.arraySize);
 	  SupportedTypes::TypeSize nv2 = this->getTypeSize(v2.type,v2.arraySize);
-	  if(this->hasJacobianComparisonCriterium){
-	    this->behaviourFile << "error=" << nv1 << "*" << nv2 << "*"
-				<< this->jacobianComparisonCriterium <<";\n";
-	  } else {
-	    this->behaviourFile << "error=" << nv1 << "*" << nv2 << "*"
-				<< "(this->epsilon);\n";
-	  }
+	  this->behaviourFile << "error=" << nv1 << "*" << nv2 << "*"
+			      << "(this->jacobianComparisonCriterium)" <<";\n";
 	  this->behaviourFile << "if(abs(" << "df" << v1.name  << "_dd" << v2.name << "-"
 			      << "ndf" << v1.name  << "_dd" << v2.name << ") > error)\n" 
 			      << "{\n";
@@ -1004,20 +986,20 @@ namespace mfront{
     if(this->useAcceleration){
       this->behaviourFile << "this->previous_fzeros[this->iter%3] = this->fzeros;\n";
       this->behaviourFile << "this->previous_zeros[this->iter%3]  = this->zeros;\n";
-      this->behaviourFile << "if((this->iter>=" << this->className << "::accelerationTrigger" << ")&&\n"
-			  <<  "((this->iter-" << this->className << "::accelerationTrigger)%"
-			  << this->className << "::accelerationPeriod==0)){\n";
+      this->behaviourFile << "if((this->iter>this->accelerationTrigger" << ")&&\n"
+			  <<  "((this->iter-this->accelerationTrigger)%"
+			  << "(this->accelerationPeriod)==0)){\n";
       this->behaviourFile << "this->accelerate(this->zeros);\n";
       this->behaviourFile << "}\n";
     }
     if(this->useRelaxation){
-      this->behaviourFile << "if(this->iter>=" << this->className << "::relaxationTrigger" << "){\n";
-      this->behaviourFile << "this->zeros   -= (1-" << this->className << "::relaxationCoefficient) * (this->zeros-this->zeros_1);\n";
+      this->behaviourFile << "if(this->iter>=this->relaxationTrigger" << "){\n";
+      this->behaviourFile << "this->zeros   -= (1-this->relaxationCoefficient) * (this->zeros-this->zeros_1);\n";
       this->behaviourFile << "}\n";
     }
     this->behaviourFile << "}\n";
     this->behaviourFile << "}\n";
-    this->behaviourFile << "if(this->iter==" << this->className << "::iterMax){\n";
+    this->behaviourFile << "if(this->iter==this->iterMax){\n";
     if(this->debugMode){
       this->behaviourFile << "cout << \"" << this->className
 			  << "::integrate() : no convergence after \" "
@@ -1209,24 +1191,47 @@ namespace mfront{
   {
     using namespace std;
     typedef map<string,double>::value_type MVType;
+    typedef map<string,unsigned short>::value_type MVType2;
     if(this->parametersDefaultValues.find("theta")==this->parametersDefaultValues.end()){
       this->parametersDefaultValues.insert(MVType("theta",0.5));
     }
     if(this->parametersDefaultValues.find("epsilon")==this->parametersDefaultValues.end()){
       this->parametersDefaultValues.insert(MVType("epsilon",1.e-8));
     }
+    if(this->uParametersDefaultValues.find("iterMax")==this->uParametersDefaultValues.end()){
+      this->uParametersDefaultValues.insert(MVType2("iterMax",100u));
+    }
+    unsigned short iterMax = this->uParametersDefaultValues.at("iterMax");
+    if(this->compareToNumericalJacobian){
+      
+      if(this->parametersDefaultValues.find("jacobianComparisonCriterium")==this->parametersDefaultValues.end()){
+	double epsilon = this->parametersDefaultValues.at("epsilon");
+	this->parametersDefaultValues.insert(MVType("jacobianComparisonCriterium",epsilon));
+      }
+    }
     if(this->useRelaxation){
       if(this->parametersDefaultValues.find("relaxationCoefficient")==this->parametersDefaultValues.end()){
 	this->parametersDefaultValues.insert(MVType("relaxationCoefficient",0.5));
       }
-      if(this->relaxationTrigger+1>=this->iterMax){
+      if(this->uParametersDefaultValues.find("relaxationTrigger")==this->uParametersDefaultValues.end()){
+	this->uParametersDefaultValues.insert(MVType2("relaxationTrigger",10u));
+      }
+      unsigned short relaxationTrigger = this->uParametersDefaultValues.at("relaxationTrigger");
+      if(relaxationTrigger+1>=iterMax){
 	string msg("MFrontImplicitParser::endsInputFileProcessing :");
 	msg += "relaxation can never take place (relaxationTrigger>=iterMax-1)'";
 	throw(runtime_error(msg));
       }
     }
     if(this->useAcceleration){
-      if(this->accelerationTrigger+1>=this->iterMax){
+      if(this->uParametersDefaultValues.find("accelerationTrigger")==this->uParametersDefaultValues.end()){
+	this->uParametersDefaultValues.insert(MVType2("accelerationTrigger",10u));
+      }
+      if(this->uParametersDefaultValues.find("accelerationPeriod")==this->uParametersDefaultValues.end()){
+	this->uParametersDefaultValues.insert(MVType2("accelerationPeriod",3u));
+      }
+      unsigned short accelerationTrigger = this->uParametersDefaultValues.at("accelerationTrigger");
+      if(accelerationTrigger+1>=iterMax){
 	string msg("MFrontImplicitParser::endsInputFileProcessing :");
 	msg += "acceleration can never take place (accelerationTrigger>=iterMax-1)'";
 	throw(runtime_error(msg));
@@ -1240,19 +1245,6 @@ namespace mfront{
   void 
   MFrontImplicitParser::writeBehaviourStaticVars(void)
   {
-    this->checkBehaviourFile();
-    this->behaviourFile << "static const unsigned short iterMax = ";
-    this->behaviourFile << this->iterMax << ";\n";
-    if(this->useRelaxation){
-      this->behaviourFile << "static const unsigned short relaxationTrigger = ";
-      this->behaviourFile << this->relaxationTrigger << ";\n";
-    }
-    if(this->useAcceleration){
-      this->behaviourFile << "static const unsigned short accelerationTrigger = ";
-      this->behaviourFile << this->accelerationTrigger << ";\n";
-      this->behaviourFile << "static const unsigned short accelerationPeriod = ";
-      this->behaviourFile << this->accelerationPeriod << ";\n";
-    }
     MFrontBehaviourParserBase<MFrontImplicitParser>::writeBehaviourStaticVars();
   } // end of MFrontImplicitParser::writeBehaviourStaticVars
 

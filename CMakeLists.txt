@@ -109,7 +109,8 @@ endif(DOXYGEN_FOUND)
 find_package(LATEX)
 if(LATEX_COMPILER)
   message(STATUS "latex compiler found : ${LATEX_COMPILER}")
-  
+  add_custom_target(doc-mfront)
+  add_subdirectory(docs)
 endif(LATEX_COMPILER)
 
 #set (CPACK_PACKAGE_EXECUTABLES         "mfront;mfront")

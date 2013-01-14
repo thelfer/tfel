@@ -2450,18 +2450,23 @@ namespace mfront{
     using namespace std;
     if(!this->parametersHolder.empty()){
       VarContainer::const_iterator p;
+      bool rp = false;
+      bool ip = false;
+      bool up = false;
       this->checkBehaviourFile();
       this->behaviourFile << "struct " << this->className << "ParametersInitializer\n"
 			  << "{\n"
 			  << "static " << this->className << "ParametersInitializer&\n"
-			  << "get();\n\n"
-			  << "void set(const char* const,const double);\n\n";
+			  << "get();\n\n";
       for(p=this->parametersHolder.begin();p!=this->parametersHolder.end();++p){
 	if(p->type=="real"){
+	  rp = true;
 	  this->behaviourFile << "double " << p->name << ";\n"; 
 	} else 	if(p->type=="int"){
+	  ip = true;
 	  this->behaviourFile << "double " << p->name << ";\n"; 
 	} else 	if(p->type=="ushort"){
+	  up = true;
 	  this->behaviourFile << "unsigned short " << p->name << ";\n"; 
 	} else {
 	  string msg("MFrontBehaviourParserCommon::writeBehaviourParametersInitializer : ");
@@ -2470,6 +2475,15 @@ namespace mfront{
 	}
       }
       this->behaviourFile << "\n"; 
+      if(rp){
+	this->behaviourFile << "void set(const char* const,const double);\n\n";
+      }
+      if(ip){
+	this->behaviourFile << "void set(const char* const,const int);\n\n";
+      }
+      if(up){
+	this->behaviourFile << "void set(const char* const,const unsigned short);\n\n";
+      }
       this->behaviourFile << "private :\n\n"
 			  << this->className << "ParametersInitializer();\n\n"
 			  << this->className << "ParametersInitializer(const " << this->className << "ParametersInitializer&);\n\n"
@@ -3090,7 +3104,7 @@ namespace mfront{
 	this->srcFile <<"void\n"
 		      << this->className << "ParametersInitializer::set(const char* const key,\nconst double v)" 
 		      << "{\n"
-		      << "using namespace std;";
+		      << "using namespace std;\n";
 	bool first = true;
 	for(p=this->parametersHolder.begin();p!=this->parametersHolder.end();++p){
 	  if(p->type=="real"){
@@ -3105,7 +3119,7 @@ namespace mfront{
 	  }
 	}
 	this->srcFile << "} else {";
-	this->srcFile << "string msg(\"" << this->className << "ParametersInitializer::set : \")\n;"
+	this->srcFile << "string msg(\"" << this->className << "ParametersInitializer::set : \");\n"
 		      << "msg += \" no paramater named '\";\n"
 		      << "msg += key;\n"
 		      << "msg += \"'\";\n"
@@ -3117,7 +3131,7 @@ namespace mfront{
 	this->srcFile <<"void\n"
 		      << this->className << "ParametersInitializer::set(const char* const key,\nconst int v)" 
 		      << "{\n"
-		      << "using namespace std;";
+		      << "using namespace std;\n";
 	bool first = true;
 	for(p=this->parametersHolder.begin();p!=this->parametersHolder.end();++p){
 	  if(p->type=="int"){
@@ -3132,7 +3146,7 @@ namespace mfront{
 	  }
 	}
 	this->srcFile << "} else {";
-	this->srcFile << "string msg(\"" << this->className << "ParametersInitializer::set : \")\n;"
+	this->srcFile << "string msg(\"" << this->className << "ParametersInitializer::set : \");\n"
 		      << "msg += \" no paramater named '\";\n"
 		      << "msg += key;\n"
 		      << "msg += \"'\";\n"
@@ -3144,7 +3158,7 @@ namespace mfront{
 	this->srcFile <<"void\n"
 		      << this->className << "ParametersInitializer::set(const char* const key,\nconst unsigned short v)" 
 		      << "{\n"
-		      << "using namespace std;";
+		      << "using namespace std;\n";
 	bool first = true;
 	for(p=this->parametersHolder.begin();p!=this->parametersHolder.end();++p){
 	  if(p->type=="ushort"){
@@ -3159,7 +3173,7 @@ namespace mfront{
 	  }
 	}
 	this->srcFile << "} else {";
-	this->srcFile << "string msg(\"" << this->className << "ParametersInitializer::set : \")\n;"
+	this->srcFile << "string msg(\"" << this->className << "ParametersInitializer::set : \");\n"
 		      << "msg += \" no paramater named '\";\n"
 		      << "msg += key;\n"
 		      << "msg += \"'\";\n"

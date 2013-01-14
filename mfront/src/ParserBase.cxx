@@ -109,6 +109,21 @@ namespace mfront
     }
   } // end of ParserBase::checkNotEndOfFile
 
+  unsigned short
+  ParserBase::readUnsignedShort(const std::string& m)
+  {
+    using namespace std;
+    this->checkNotEndOfFile(m,"Cannot read unsigned short value.");
+    unsigned short value;
+    istringstream flux(current->value);
+    flux >> value;
+    if((flux.fail())||(!flux.eof())){
+      this->throwRuntimeError(m,"Failed to read unsigned short value.");
+    }
+    ++(this->current);
+    return value;
+  } // end of ParserBase::readUnsignedShort
+
   void
   ParserBase::readSpecifiedToken(const std::string& method,
 				 const std::string& token)

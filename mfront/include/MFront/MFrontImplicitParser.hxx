@@ -157,19 +157,7 @@ namespace mfront{
 
     std::string initJacobian;
 
-    unsigned short iterMax;
-
-    unsigned short relaxationTrigger;
-
-    unsigned short accelerationTrigger;
-
-    unsigned short accelerationPeriod;
-
     Algorithm algorithm;
-
-    bool hasJacobianComparisonCriterium;
-
-    double jacobianComparisonCriterium;
 
     bool compareToNumericalJacobian;
 

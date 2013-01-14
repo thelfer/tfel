@@ -116,8 +116,6 @@ namespace mfront{
     //! default value
     double theta;
 
-    unsigned short iterMax;
-
   private:
 
     friend class MFrontBehaviourParserBase<MFrontIsotropicBehaviourParserBase>;

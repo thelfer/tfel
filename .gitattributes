@@ -20,7 +20,10 @@ cmake/modules/gcc.cmake -text
 cmake/modules/tfel.cmake -text
 /configure.ac -text
 /debug.sh.in -text
+docs/CMakeLists.txt -text
+docs/Makefile.am -text
 docs/mfront/Bibliographie.bib -text
+docs/mfront/CMakeLists.txt -text
 docs/mfront/Champs.tex -text
 docs/mfront/Images/2norton-rk.mfront -text
 docs/mfront/Images/2norton-rk.mfront.tex -text
@@ -34,8 +37,11 @@ docs/mfront/Images/mfront-umat.hxx -text
 docs/mfront/Images/mfront-umat.tex -text
 docs/mfront/Images/mfront.eps -text
 docs/mfront/Images/mfrontexcel.eps -text
+docs/mfront/Images/sirius8.eps -text
+docs/mfront/Images/sirius8.png -text
 docs/mfront/Images/tubeaxi.eps -text
 docs/mfront/Images/tubeaxi2.eps -text
+docs/mfront/Makefile.am -text
 docs/mfront/Makefile.doc -text
 docs/mfront/annexe-orthotropie.tex -text
 docs/mfront/mfront.tex -text
@@ -98,6 +104,7 @@ docs/mfront/mfront/test-T.ple -text
 docs/mfront/mfront/test-T.tex -text
 docs/mfront/mfront/vba.tex -text
 docs/mfront/style.ist -text
+docs/tex/Makefile.am -text
 docs/tex/texmf/CEA_logo_quadri-sur-fond-rouge.eps -text
 docs/tex/texmf/CEA_logo_quadri-sur-fond-rouge.pdf -text
 docs/tex/texmf/CEA_logo_quadri-sur-fond-rouge.svg -text

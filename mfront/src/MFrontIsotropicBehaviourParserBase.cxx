@@ -16,8 +16,7 @@ namespace mfront{
   MFrontIsotropicBehaviourParserBase::MFrontIsotropicBehaviourParserBase()
     : MFrontVirtualParser(),
       MFrontBehaviourParserBase<MFrontIsotropicBehaviourParserBase>(),
-      theta(0.5f),
-      iterMax(100)
+      theta(0.5f)
   {
     using namespace std;
     typedef map<string,string>::value_type MVType;
@@ -28,7 +27,10 @@ namespace mfront{
     this->parametersHolder.push_back(VarHandler("real","epsilon",1u,0u));
     //    this->registerStaticVariable("epsilon");
     //    this->registerStaticVariable("theta");
-    this->registerStaticVariable("iterMax");
+    //    this->registerStaticVariable("iterMax");
+    this->registerVariable("iterMax");
+    this->parametersHolder.push_back(VarHandler("unsigned short","iterMax",
+						1u,0u));
     this->registerVariable("young");
     this->registerVariable("nu");
     this->registerVariable("rho");
@@ -142,37 +144,24 @@ namespace mfront{
     }
     ++(this->current);
     this->readSpecifiedToken("MFrontImplicitParser::treatEpsilon",";");
-    // using namespace std;
-    // this->checkNotEndOfFile("MFrontIsotropicBehaviourParserBase::treatEpsilon",
-    // 			    "Cannot read epsilon value.");
-    // istringstream flux(current->value);
-    // flux >> this->epsilon;
-    // if(flux.fail()){
-    //   this->throwRuntimeError("MFrontIsotropicBehaviourParserBase::treatEpsilon",
-    // 			      "Failed to read epsilon value.");
-    // }
-    // if(this->epsilon<0){
-    //   this->throwRuntimeError("MFrontIsotropicBehaviourParserBase::treatEpsilon",
-    // 			      "Epsilon value must be positive.");
-    // }
-    // ++(this->current);
-    // this->readSpecifiedToken("MFrontIsotropicBehaviourParserBase::treatEpsilon",";");
   } // MFrontIsotropicBehaviourParserBase::treatEpsilon
 
   void
   MFrontIsotropicBehaviourParserBase::treatIterMax(void)
   {
     using namespace std;
-    this->checkNotEndOfFile("MFrontIsotropicBehaviourParserBase::treatIterMax",
-			    "Cannot read iterMax value.");
-    istringstream flux(current->value);
-    flux >> this->iterMax;
-    if(flux.fail()){
-      this->throwRuntimeError("MFrontIsotropicBehaviourParserBase::treatIterMax",
-			      "Failed to read iterMax value.");
+    typedef map<string,unsigned short>::value_type MVType;
+    unsigned short iterMax;
+    iterMax = this->readUnsignedShort("MFrontImplicitParser::treatIterMax");
+    if(iterMax==0){
+      this->throwRuntimeError("MFrontImplicitParser::treatIterMax",
+			      "invalid value for parameter 'iterMax'");
     }
-    ++(this->current);
-    this->readSpecifiedToken("MFrontIsotropicBehaviourParserBase::treatIterMax",";");
+    if(!this->uParametersDefaultValues.insert(MVType("iterMax",iterMax)).second){
+      this->throwRuntimeError("MFrontImplicitParser::treatIterMax",
+			      "default value already defined for parameter 'iterMax'");
+    }
+    this->readSpecifiedToken("MFrontImplicitParser::treatIterMax",";");
   } // end of MFrontIsotropicBehaviourParserBase::treatIterMax
 
   void
@@ -250,17 +239,18 @@ namespace mfront{
   {
     using namespace std;
     typedef map<string,double>::value_type MVType;
+    typedef map<string,unsigned short>::value_type MVType2;
     VarContainer::iterator p;
     string currentVarName;
     if(this->parametersDefaultValues.find("theta")==this->parametersDefaultValues.end()){
       this->parametersDefaultValues.insert(MVType("theta",this->theta));
     }
-    //    this->staticVars.push_back(StaticVarHandler("real","theta",0u,this->theta));
     if(this->parametersDefaultValues.find("epsilon")==this->parametersDefaultValues.end()){
       this->parametersDefaultValues.insert(MVType("epsilon",1.e-8));
     }
-    //    this->staticVars.push_back(StaticVarHandler("real","epsilon",0u,this->epsilon));
-
+    if(this->uParametersDefaultValues.find("iterMax")==this->uParametersDefaultValues.end()){
+      this->uParametersDefaultValues.insert(MVType2("iterMax",100u));
+    }
     if(this->flowRule.empty()){
       string msg("MFrontIsotropicBehaviourParserBase::endsInputFileProcessing : ");
       msg += "@FlowRule was not defined.";
@@ -414,8 +404,6 @@ namespace mfront{
   MFrontIsotropicBehaviourParserBase::writeBehaviourStaticVars(void)
   {
     this->checkBehaviourFile();
-    this->behaviourFile << "static const unsigned short iterMax = ";
-    this->behaviourFile << this->iterMax << ";\n";
     MFrontBehaviourParserBase<MFrontIsotropicBehaviourParserBase>::writeBehaviourStaticVars();
   } // end of MFrontIsotropicBehaviourParserBase::writeBehaviourStaticVars
 

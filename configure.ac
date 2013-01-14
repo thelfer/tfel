@@ -225,6 +225,9 @@ AM_CONDITIONAL([TFEL_WIN64],[test x"$WIN64" = "xyes"])
 AC_OUTPUT([debug.sh
 	   Makefile
 	   Doxyfile
+	   docs/Makefile
+	   docs/mfront/Makefile
+	   docs/tex/Makefile
 	   cmake/Makefile
 	   cmake/modules/Makefile
 	   include/Makefile

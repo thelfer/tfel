@@ -57,6 +57,13 @@ namespace mfront
     std::string
     readUntilEndOfInstruction(void);
 
+    /*!
+     * read an unsigned short in the file
+     * \param[in] m : calling method
+     */
+    unsigned short
+    readUnsignedShort(const std::string&);
+
     /*
      * \param std::string&, first result
      * \param std::string&, second result
