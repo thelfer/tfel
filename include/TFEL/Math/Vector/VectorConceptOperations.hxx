@@ -179,17 +179,21 @@ namespace tfel{
     template<typename T1,typename T2,typename Op>
     struct IsVectorVectorOperationValid
     {
-      static const bool cond = tfel::meta::Implements<T1,VectorConcept>::cond&&
-	tfel::meta::Implements<T2,VectorConcept>::cond&&
-	!tfel::typetraits::IsInvalid<typename ComputeBinaryResult<T1,T2,Op>::Result>::cond;
+      enum{
+	cond = (tfel::meta::Implements<T1,VectorConcept>::cond&&
+		tfel::meta::Implements<T2,VectorConcept>::cond&&
+		(!tfel::typetraits::IsInvalid<typename ComputeBinaryResult<T1,T2,Op>::Result>::cond))
+      };
     };
 
     template<typename T1,typename T2,typename Op>
     struct IsScalarVectorOperationValid
     {
-      static const bool cond = tfel::typetraits::IsScalar<T1>::cond&&
-	tfel::meta::Implements<T2,VectorConcept>::cond&&
-	!tfel::typetraits::IsInvalid<typename ComputeBinaryResult<T1,T2,Op>::Result>::cond;
+      enum{
+	cond = (tfel::typetraits::IsScalar<T1>::cond&&
+		tfel::meta::Implements<T2,VectorConcept>::cond&&
+		(!tfel::typetraits::IsInvalid<typename ComputeBinaryResult<T1,T2,Op>::Result>::cond))
+      };
     };
 
     template<typename T1,typename T2,typename Op>

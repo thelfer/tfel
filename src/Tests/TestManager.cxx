@@ -8,9 +8,11 @@
 #include<iostream>
 #include<stdexcept>
 
+#if !(defined _WIN32 || defined _WIN64 ||defined __CYGWIN__)
 #include <sys/time.h> 
 #include <unistd.h> 
 #include <time.h>
+#endif
 
 #include"TFEL/Tests/TestManager.hxx"
 #include"TFEL/Tests/XMLTestOutput.hxx"
