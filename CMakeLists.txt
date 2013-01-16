@@ -30,18 +30,14 @@ endif(enable-fortran)
 #compiler specific options
 set(OPTIMISATION_FLAGS "")
 set(COMPILER_WARNINGS "")
-if(UNIX)
-  if(CMAKE_COMPILER_IS_GNUCC)
-    # gcc specific configuration
-    include(cmake/modules/gcc.cmake)
-  endif(CMAKE_COMPILER_IS_GNUCC)
-endif(UNIX)
+if(CMAKE_COMPILER_IS_GNUCC)
+  # gcc specific configuration
+  include(cmake/modules/gcc.cmake)
+endif(CMAKE_COMPILER_IS_GNUCC)
 if(MSVC)
   add_definitions("-DMICROSOFT_COMPILER_MSC_=1")
   add_definitions("/wd4251 /wd4275")
 endif(MSVC)
-
-message("${OPTIMISATION_FLAGS}")
 
 cmake_policy(SET CMP0005 OLD)
 add_definitions("-DOPTIMISATION_FLAGS=\\\"\"${OPTIMISATION_FLAGS}\"\\\"")
@@ -95,6 +91,10 @@ endif(UNIX)
 add_subdirectory(mfront)
 add_subdirectory(tests)
 
+#documentations
+add_custom_target(doc)
+add_custom_target(doc-install)
+
 # add a target to generate API documentation with Doxygen
 find_package(Doxygen)
 if(DOXYGEN_FOUND)
@@ -104,12 +104,14 @@ if(DOXYGEN_FOUND)
     ${DOXYGEN_EXECUTABLE} ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile
     WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
     COMMENT "Generating API documentation with Doxygen" VERBATIM)
+  add_dependencies(doc doc-html)
 endif(DOXYGEN_FOUND)
 
 find_package(LATEX)
 if(LATEX_COMPILER)
+  add_custom_target(doc-pdf)
+  add_custom_target(doc-pdf-install)
   message(STATUS "latex compiler found : ${LATEX_COMPILER}")
-  add_custom_target(doc-mfront)
   add_subdirectory(docs)
 endif(LATEX_COMPILER)
 

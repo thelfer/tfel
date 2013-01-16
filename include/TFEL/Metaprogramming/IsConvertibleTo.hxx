@@ -40,7 +40,7 @@ namespace tfel{
       /*!
        * \brief A Second type which size is higher than Small
        */
-      class TFEL_VISIBILITY_LOCAL Big{Small dummy[2];};
+      class Big{Small dummy[2];};
       /*!
        * \brief Declaration of function Test for every class 
        * convertible to U. Returns a Small.
@@ -72,8 +72,7 @@ namespace tfel{
        * \param void, no input.
        * \return cond, the result of the metafunction.
        */
-      static 
-      bool 
+      static bool 
       getCond()
       {
 	return cond;

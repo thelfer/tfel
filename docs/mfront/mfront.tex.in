@@ -5,7 +5,7 @@
 % Directory : /home/th202608/codes/tfel/tests/Broyden/
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\documentclass[rectoverso,pleiades,pstricks,leqno,anti]{texmf/note_technique_2010}
+\documentclass[rectoverso,pleiades,pstricks,leqno,anti]{@abs_top_builddir@/docs/tex/texmf/note_technique_2010}
 
 \usepackage{draftcopy}
 \draftcopySetGrey{0.8}
@@ -14,10 +14,10 @@
 \usepackage[dvips]{graphicx}
 \usepackage[dvips,breaklinks]{hyperref}
 
-\usepackage{texmf/mathematiques}
-\usepackage{texmf/mecanique}
-\usepackage{texmf/couleurs}
-\usepackage{texmf/presentation}
+\usepackage{@abs_top_builddir@/docs/tex/texmf/mathematiques}
+\usepackage{@abs_top_builddir@/docs/tex/texmf/mecanique}
+\usepackage{@abs_top_builddir@/docs/tex/texmf/couleurs}
+\usepackage{@abs_top_builddir@/docs/tex/texmf/presentation}
 
 \usepackage{pst-plot}
 \usepackage{array}
@@ -86,6 +86,8 @@
 
 \newcommand{\cea}{CEA}
 \newcommand{\windows}{\href{http://www.microsoft.com/france/windows/default.mspx}{\texttt{Windows}}}
+\newcommand{\unix}{\href{http://www.kernel.org/}{\texttt{unix}}}
+\newcommand{\cygwin}{\href{http://www.cygwin.com/}{\texttt{cygwin}}}
 \newcommand{\linux}{\href{http://www.kernel.org/}{\texttt{linux}}}
 \newcommand{\debian}{\href{http://www.debian.org/}{\texttt{debian}}}
 \newcommand{\excel}{\href{http://www.microsoft.com/france/office/2007/programs/excel/overview.mspx}{\texttt{Microsoft Office Excel}}}
@@ -365,7 +367,7 @@ Ce mécanisme permet donc de créer des interfaces sans modifier
 
 \begin{figure}
   \center
-  \includegraphics[width=10cm]{Images/sirius8.eps}
+  \includegraphics[width=10cm]{@top_srcdir@/docs/mfront/Images/sirius8.eps}
   \caption{Récupération de la loi de comportement
     de l'acier EM10 depuis la base de données \sirius{}}
   \label{fig:sirius8}
@@ -591,7 +593,7 @@ ceux déclarés dans le fichier par la directive \mkey{Input} et doivent
 
 \begin{figure}[htbp]
   \centering
-  \code{{\ttfamily \input{mfront/MaterialLaw.tex}}}  
+  \code{{\ttfamily \input{@abs_top_srcdir@/docs/mfront/mfront/MaterialLaw.tex}}}  
   \caption{Exemple d'utilisation de la directive \mkey{MaterialLaw}.}
   \label{fig:mfront_materiallaw}
 \end{figure}
@@ -1199,7 +1201,7 @@ où~:
 
 \begin{figure}[htbp]
   \centering
-  \code{{\ttfamily \input{mfront/SIC_YoungModulus_SNEAD.tex}}}  
+  \code{{\ttfamily \input{@abs_top_srcdir@/docs/mfront/mfront/SIC_YoungModulus_SNEAD.tex}}}  
   \caption{Implantation du module d'\nom{Young} du \sic{} en \mfront{}.}
   \label{fig:mfront_sic_youngmodulus}
 \end{figure}
@@ -1522,7 +1524,7 @@ Il est alors possible d'écrire des boucles sur les variables internes
 constituant le tableau pour condenser l'écriture des lois.
 
 \begin{figure}
-  \code{\scriptsize \include{Images/2norton-rk} }
+  \code{\scriptsize \input{@top_srcdir@/docs/mfront/Images/2norton-rk.tex} }
   \caption{Extrait d'un fichier \mfront{} de loi de comportement mécanique utilisant des
     tableaux de propriétés matériau et des tableaux de variables
     internes.}
@@ -1747,7 +1749,7 @@ l'analyseur utilisé.
 
 \begin{figure}[htbp]
   \centering
-  \includegraphics[height=15cm]{Images/NortonRK.eps}
+  \includegraphics[height=15cm]{@top_srcdir@/docs/mfront/Images/NortonRK.eps}
   \caption{Classes générées pour les lois de comportement (diagramme
     généré par l'outil \doxygen{}).}
   \label{fig:nortonrk:inheritance}
@@ -2074,7 +2076,7 @@ nombre de composante varie avec la dimension.
 
 \begin{figure}[htbp]
   \centering
-  \code{{\ttfamily \input{mfront/SICCreepBehaviour-gibi.tex}}}  
+  \code{{\ttfamily \input{@abs_top_srcdir@/docs/mfront/mfront/SICCreepBehaviour-gibi.tex}}}  
   \caption{Appel à la loi de comportement générée depuis \castem{}.}
   \label{fig:mfrontcastem}
 \end{figure}
@@ -2105,7 +2107,7 @@ La nécessité de passer par la construction d'un chapeau
 
 \begin{figure}[htbp]
   \centering
-  \code{{\ttfamily \input{mfront/SICCreepBehaviour-gibi2.tex}}}  
+  \code{{\ttfamily \input{@abs_top_srcdir@/docs/mfront/mfront/SICCreepBehaviour-gibi2.tex}}}  
   \caption{Appel direct à la loi de comportement générée depuis la
     version \pleiades{} de \castem{}.}
   \label{fig:mfrontcastem2}
@@ -2164,7 +2166,7 @@ s'appliquent~:
     \shorthandoff{:}
     \code{
       \small
-      \input{mfront/OrthotropicElastic.tex}
+      \input{@abs_top_srcdir@/docs/mfront/mfront/OrthotropicElastic.tex}
     }
     \shorthandon{:}
   \end{minipage}
@@ -2643,7 +2645,7 @@ où~:
 
 \begin{figure}[htbp]
   \centering
-  \code{{\ttfamily \input{mfront/SICCreepBehaviour.tex}}}  
+  \code{{\ttfamily \input{@abs_top_srcdir@/docs/mfront/mfront/SICCreepBehaviour.tex}}}  
   \caption{Implantation de la loi de comportement viscoplastique
     du \sic{} en \mfront{}.}
   \label{fig:mfront_sic_behaviour}
@@ -3195,7 +3197,7 @@ Le système d'équations complet est donc~:
     \shorthandoff{:}
     \code{
       \small
-      \input{mfront/OrthotropicCreep.tex}
+      \input{@abs_top_srcdir@/docs/mfront/mfront/OrthotropicCreep.tex}
     }
     \shorthandon{:}
   \end{minipage}
@@ -3537,7 +3539,7 @@ solution \(\Delta^{2}\,Y\) du système linéaire~:
 
 \begin{figure}[htbp]
   \centering 
-  \input{Images/Methode_Newton.pstricks}
+  \input{@top_srcdir@/docs/mfront/Images/Methode_Newton.pstricks}
   \caption[Illustration de la méthode de \nom{Newton} en $1D$ utilisée
   pour la résolution de l'équation $f\paren{y}=0$.]{Illustration de la
     méthode de \nom{Newton} en $1D$ utilisée pour la résolution de
@@ -4041,7 +4043,7 @@ Ces différents termes se calculent ainsi~:
     \shorthandoff{:}
     \code{
       \small
-      \input{mfront/ImplicitOrthotropicCreep.tex}
+      \input{@abs_top_srcdir@/docs/mfront/mfront/ImplicitOrthotropicCreep.tex}
     }
     \shorthandon{:}
   \end{minipage}
@@ -4112,7 +4114,7 @@ solide de l'\upuc{}~\cite{pelletier04:_recueil}.
 
 \begin{figure}[htbp]
   \centering
-  \code{{\ttfamily \input{mfront/UPuC_SolidSwellingModel.tex}}}  
+  \code{{\ttfamily \input{@abs_top_srcdir@/docs/mfront/mfront/UPuC_SolidSwellingModel.tex}}}  
   \caption{Implantation du modèle de gonflement solide
     de l'\upuc{} en \mfront{}.}
   \label{fig:mfront_upuc_solid_swelling}
@@ -4795,7 +4797,7 @@ depuis \excel{}.
 \begin{figure}[htbp]
   \centering
   \code{
-    \input{mfront/loimat.tex}
+    \input{@abs_top_srcdir@/docs/mfront/mfront/loimat.tex}
   }
   \caption{Appel d'une loi externe depuis \excel{}.}
   \label{fig:excelvba}
@@ -4824,7 +4826,7 @@ l'utilisation des librairies matériau issue de \mfront{} dans
 
 \begin{figure}[htbp]
   \centering
-  \includegraphics[width=9cm]{Images/mfrontexcel.eps}
+  \includegraphics[width=9cm]{@top_srcdir@/docs/mfront/Images/mfrontexcel.eps}
   \caption{Graphique \excel{} réalisé à partir d'une
     bibliothèque dynamique généré par \mfront{}.}
   \label{fig:mfrontexcel}
@@ -4836,7 +4838,7 @@ sur l'exemple traité au paragraphe~\ref{sec:module-dnomyoung-du}.
 
 \begin{figure}[htbp]
   \centering
-  \includegraphics[width=6cm]{Images/mfront.eps}
+  \includegraphics[width=6cm]{@top_srcdir@/docs/mfront/Images/mfront.eps}
   \caption{Export d'une formule \excel{} en \mfront{}.}
   \label{fig:exceltomfront}
 \end{figure}
@@ -4850,7 +4852,7 @@ figure~\ref{fig:exceltomfront} montre un exemple de son utilisation.
 \begin{figure}[htbp]
   \centering
   \code{
-    \input{mfront/GetEvol.tex}
+    \input{@abs_top_srcdir@/docs/mfront/mfront/GetEvol.tex}
   }
   \caption[Code de la procédure \texttt{GETEVOL}]{Procédure utilisée
     pour tracer les valeurs d'une fonction en fonction d'une de ces
@@ -4873,7 +4875,7 @@ La procédure \texttt{GETEVOL}, reproduite en figure~\ref{fig:getEvol} a
 \begin{figure}[htbp]
   \centering
   \code{
-    \input{mfront/TestGetEvol.tex}
+    \input{@abs_top_srcdir@/docs/mfront/mfront/TestGetEvol.tex}
   }
   \caption{Utilisation de la procédure \texttt{GETEVOL}.}
   \label{fig:TestGetEvol}
@@ -4888,7 +4890,7 @@ toutes les variables autre que celle servant au tracé.
 
 \begin{figure}[htbp]
   \centering
-  \includegraphics[width=9cm,angle=90]{mfront/GetEvol.eps}
+  \includegraphics[width=9cm,angle=90]{@abs_top_srcdir@/docs/mfront/mfront/GetEvol.eps}
   \caption{Résultat de la procédure \texttt{GETEVOL}.}
   \label{fig:TestGetEvol2}
 \end{figure}
@@ -5024,7 +5026,7 @@ n'utilisent qu'un nombre réduit d'arguments de la fonction \umat{}.
 \begin{figure}[htbp]
   \centering
   \code{
-    \include{Images/mfront-umat}
+    \input{@top_srcdir@/docs/mfront/Images/mfront-umat.tex}
   }
   \caption{Prototype des fonctions générés par
     l'interface {\tt umat} de \mfront{}.}
@@ -5535,7 +5537,7 @@ sous-découpage \texttt{dt\_} en deçà de laquelle on renvoie une erreur.
 
 \begin{figure}[htbp]
 \centering
-\includegraphics[width=0.9\textwidth,height=22cm]{Images/Algo_temps.eps}
+\includegraphics[width=0.9\textwidth,height=22cm]{@top_srcdir@/docs/mfront/Images/Algo_temps.eps}
 \caption{Description de l'algorithme pour déterminer le sous-découpage du pas de temps}
 \label{fig:algo_temps}
 \end{figure}
@@ -5653,7 +5655,7 @@ paragraphes~\ref{sec:critere-de-nomhill} et~\ref{sec:trait-des-probl},
 cette fonction s'utilise ainsi~:
 \begin{center}
   \begin{minipage}[htbp]{0.9\linewidth}
-    \shorthandoff{:} \code{ \small \input{mfront/hillTensor.tex} }
+    \shorthandoff{:} \code{ \small \input{@abs_top_srcdir@/docs/mfront/mfront/hillTensor.tex} }
     \shorthandon{:}
   \end{minipage}
 \end{center}
@@ -5701,7 +5703,7 @@ l'identité ou évalué numériquement par une différence finie d'ordre
 
 \begin{figure}[htbp]
   \centering
-  \includegraphics[height=0.8\linewidth,angle=-90]{Images/CompSeq.eps}
+  \includegraphics[height=0.8\linewidth,angle=-90]{@top_srcdir@/docs/mfront/Images/CompSeq.eps}
   \caption{Contraintes équivalentes obtenues respectivement par une
     résolution par un algorithme de \textsc{Newton-Raphson} ou par un
     algorithme de \textsc{Broyden}.}

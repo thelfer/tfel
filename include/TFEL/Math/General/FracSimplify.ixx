@@ -43,11 +43,14 @@ namespace tfel{
     template<int N1, unsigned int D1>
     struct FracSimplify
     {
+    private:
       TFEL_STATIC_ASSERT(D1!=0u);
-      static const int sign          = (N1<0) ? -1 : 1;   
-      static const unsigned int Ntmp = sign*N1;
-      static const int N             = sign*tfel::math::internals::RecursiveFracSimplify<Ntmp,D1,2>::N;
-      static const unsigned int D    = tfel::math::internals::RecursiveFracSimplify<Ntmp,D1,2>::D;
+      static const int sign           = (N1<0) ? -1 : 1;   
+      static const unsigned int Ntmp  = sign*N1;
+      static const unsigned int Ntmp2 = tfel::math::internals::RecursiveFracSimplify<Ntmp,D1,2>::N;
+    public:
+      static const int N              = sign*static_cast<int>(Ntmp2);
+      static const unsigned int D     = tfel::math::internals::RecursiveFracSimplify<Ntmp,D1,2>::D;
     };
       
     template<unsigned int D1>

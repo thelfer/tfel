@@ -256,11 +256,11 @@ modélisation impose que~:
 \begin{figure}[htbp]
   \centering
   \subfigure[$1D$,$2D\paren{r,z}$ et $3D$]{
-    \includegraphics[width=5cm]{Images/tubeaxi.eps}
+    \includegraphics[width=5cm]{@abs_top_srcdir@/docs/mfront/Images/tubeaxi.eps}
     \label{Conventionsa}
   }
   \subfigure[$2D\paren{r,\theta}$]{
-    \includegraphics[width=5cm]{Images/tubeaxi2.eps}
+    \includegraphics[width=5cm]{@abs_top_srcdir@/docs/mfront/Images/tubeaxi2.eps}
     \label{Conventionsb}
   }
   \caption{Conventions adoptées pour la définition des axes d'orthotropies}

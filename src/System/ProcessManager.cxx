@@ -338,11 +338,11 @@ namespace tfel
 	if(out[0]!=-1){
 	  dup2(out[1],STDOUT_FILENO);
 	}
-	argv = static_cast<char ** const>(malloc((tmp.size()+2)*sizeof(char*)));
+	argv = static_cast<char **>(malloc((tmp.size()+2)*sizeof(char*)));
 	p  = tmp.begin();
 	p2 = argv;
 	while(p!=tmp.end()){
-	  *p2 = static_cast<char *const>(malloc((p->size()+1)*sizeof(char)));
+	  *p2 = static_cast<char *>(malloc((p->size()+1)*sizeof(char)));
 	  strcpy(*p2,p->c_str());
 	  ++p;
 	  ++p2;

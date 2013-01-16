@@ -5,7 +5,7 @@
 %%	Rpertoire : /home/th202608/documents/notes/2011/LicosPresentation/
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\input{texmf/LSC}
+\input{@abs_top_builddir@/docs/tex/texmf/LSC}
 
 \auteurs{T.~Helfer, V.~Blanc, J.~Julien}
 \redacteur{T.~Helfer}
@@ -59,8 +59,8 @@
 
 % \signatures{-0.}{-39.2}{0.12}{images/signatures.eps}
 
-\stylebib{texmf/bibtex/fr-insa}
-\fichierbib{Bibliographie}
+\stylebib{@abs_top_srcdir@/docs/tex/texmf/bibtex/fr-insa}
+\fichierbib{@abs_top_srcdir@/docs/mfront/Bibliographie}
 
 %%% Local Variables: 
 %%% mode: latex

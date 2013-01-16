@@ -6,6 +6,7 @@ EXTRA_DIST=CMakeLists.txt                            \
 	   Images/2norton-rk.mfront		     \
 	   Images/mfront.eps			     \
 	   Images/mfrontexcel.eps			     \
+	   Images/sirius8.eps			     \
 	   Images/2norton-rk.mfront.tex		     \
 	   Images/tubeaxi2.eps			     \
 	   Images/NortonRK.eps			     \

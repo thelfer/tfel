@@ -34,7 +34,7 @@ namespace tfel{
       /*!
        * \brief A Second type whose size is higher than Small
        */
-      class TFEL_VISIBILITY_LOCAL Big{Small dummy[2];};
+      class Big{Small dummy[2];};
       /*
        * \brief a substitute for classes that have only protected constructors
        */

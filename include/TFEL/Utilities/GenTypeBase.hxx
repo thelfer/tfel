@@ -137,7 +137,7 @@ namespace tfel{
 	static void
 	exe(void *const p)
 	{
-	  T& tmp = *(static_cast<T *const>(p)); 
+	  T& tmp = *(static_cast<T *>(p)); 
 	  tmp.~T();
 	}
       };
@@ -156,12 +156,11 @@ namespace tfel{
 	 * \param const void *const, a pointer to a T-object.
 	 * \return const bool, the result of the comparison.
 	 */
-	static
-	void
+	static void
 	exe(void *const p,const void *const p2)
 	{
-	  T& tmp = *(static_cast<T *const>(p)); 
-	  const T& tmp2 = *(static_cast<const T *const>(p2)); 
+	  T& tmp = *(static_cast<T *>(p)); 
+	  const T& tmp2 = *(static_cast<const T *>(p2)); 
 	  tmp = tmp2;
 	}
       };
@@ -182,7 +181,7 @@ namespace tfel{
 	static void
 	exe(void *const p,const void *const p2)
 	{
-	  const T& tmp2 = *(static_cast<const T *const>(p2)); 
+	  const T& tmp2 = *(static_cast<const T *>(p2)); 
 	  // placement new
 	  new (p) T(tmp2);
 	}

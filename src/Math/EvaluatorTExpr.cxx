@@ -310,7 +310,7 @@ namespace tfel
 		    string msg("TGroup::reduce group two successive operators");
 		    throw(runtime_error(msg));
 		  }
-		  TOperator * const no = dynamic_cast<TOperator * const>(next->get());
+		  TOperator * const no = dynamic_cast<TOperator *>(next->get());
 		  if(no->getOperatorType()!="-"){
 		    string msg("TGroup::reduce group two successive operators");
 		    throw(runtime_error(msg));

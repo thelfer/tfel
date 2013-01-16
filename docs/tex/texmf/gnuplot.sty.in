@@ -1,7 +1,7 @@
 \NeedsTeXFormat{LaTeX2e}
-\ProvidesPackage{texmf/gnuplot}[010803]
+\ProvidesPackage{@abs_top_builddir@/docs/tex/texmf/gnuplot}[010803]
 
-\RequirePackage{texmf/couleurs}
+\RequirePackage{@abs_top_builddir@/docs/tex/texmf/couleurs}
 \RequirePackage{pstricks}
 
 \def\PSTloaded{t}

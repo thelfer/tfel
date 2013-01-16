@@ -1,5 +1,5 @@
 % Initialisation des variables par defaut
-\input{texmf/SESC}
+\input{@abs_top_builddir@/docs/tex/texmf/SESC}
 \laboratoire{LSC}
 % \laboratoiretitre{Laboratoire de simulation du comportement des combustibles}
 % \batiment{151}

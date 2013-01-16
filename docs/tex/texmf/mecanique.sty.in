@@ -1,12 +1,12 @@
 \NeedsTeXFormat{LaTeX2e}
-\ProvidesPackage{texmf/mecanique}[010803]
+\ProvidesPackage{@abs_top_builddir@/docs/tex/texmf/mecanique}[010803]
 
 \RequirePackage{xspace}
 \RequirePackage{amsmath}
 \RequirePackage{amsfonts}
 \RequirePackage{amssymb}
 \RequirePackage{stmaryrd}
-\RequirePackage{texmf/mathematiques}
+\RequirePackage{@abs_top_builddir@/docs/tex/texmf/mathematiques}
 
 % Incréments de temps
 

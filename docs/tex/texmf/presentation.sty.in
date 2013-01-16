@@ -1,11 +1,11 @@
 \NeedsTeXFormat{LaTeX2e}
-\ProvidesPackage{texmf/presentation}[010803]
+\ProvidesPackage{@abs_top_builddir@/docs/tex/texmf/presentation}[010803]
 
 %\RequirePackage{policescea}
 
 \RequirePackage{pifont}
 \RequirePackage{enumerate}
-\RequirePackage{texmf/couleurs}
+\RequirePackage{@abs_top_builddir@/docs/tex/texmf/couleurs}
 
 %%%%%%%%%%%%%%%%%%%%%%%% Macros tirées du <<coin des Gourous>>
 %%%%%%%%%%%%%%%%%%%%%%%% Georges Weil Décembre 89 
@@ -110,14 +110,13 @@
 }
 {\newline\rule{\linewidth}{0.5pt}\newline}
 
-\newenvironment{attention}{\noindent%\rput(-0.5,-0.5){\includegraphics[width=0.7cm,height=0.7cm]{$HOME/texmf/logos/attention.eps}}
+\newenvironment{attention}{\noindent%\rput(-0.5,-0.5){\includegraphics[width=0.7cm,height=0.7cm]{@abs_top_builddir@/docs/tex/texmf/logos/attention.eps}}
 \hrulefill\newline
 \begin{minipage}[htbp]{\textwidth}
 }
 {
 \end{minipage}
 \noindent\raisebox{0.6em}{\rule{\linewidth}{0.5pt}}\break}
-
 
 \def\narrowpar{%
   \leftskip=1.cm \rightskip=1.cm } \def\leaderfill{\leaders\hbox to

@@ -20,7 +20,7 @@
 %% original source files, as listed above, are part of the
 %% same distribution. (The sources need not necessarily be
 %% in the same archive or directory.)
-\ProvidesPackage{texmf/helvetCEA}
+\ProvidesPackage{@abs_top_builddir@/docs/tex/texmf/helvetCEA}
 [2002/09/08 PSNFSS-v9.0a
 (WaS)
 ]

@@ -31,12 +31,12 @@ namespace tfel{
       /*!
        * \brief A Second type which size is higher than Small
        */
-      class TFEL_VISIBILITY_LOCAL Big{Small dummy[2];};
+      struct Big{Small dummy[2];};
       /*
        * \brief a substitute for classes that have only protected constructors
        */
       template<typename B>
-      struct TFEL_VISIBILITY_LOCAL Subs
+      struct Subs
       {};
 
     protected:

@@ -1,0 +1,194 @@
+%%
+%% Nouvelle version du modele de note technique du DEC
+%%
+
+\ProvidesClass{note_technique_2010}[091201]
+
+%%%%%%%%%%%%%%%%%% Variables utilisees dans style CEA %%%%%%%%%%%%%%%%%%
+\RequirePackage{ifthen}
+
+%% Variables booleennes pour la gestion des options
+\newboolean{projet}
+\newboolean{rapport}
+\newboolean{memo}
+\newboolean{modeop}
+\newboolean{latin1}
+\newboolean{pleiades}
+\newboolean{anti}
+\newboolean{index}
+\newboolean{anglais}
+
+\newboolean{annexe}
+\newboolean{section_annexe}
+\newboolean{image_partie}
+
+% Passage des options
+\DeclareOption{projet}{\setboolean{projet}{true}}
+\DeclareOption{rapport}{\setboolean{rapport}{true}}
+\DeclareOption{modeop}{\setboolean{modeop}{true}}
+\DeclareOption{latin1}{\setboolean{latin1}{true}}
+\DeclareOption{pleiades}{\setboolean{pleiades}{true}}
+\DeclareOption{index}{\setboolean{index}{true}}
+\DeclareOption{memo}{\setboolean{memo}{true}}
+\DeclareOption{anti}{\setboolean{anti}{true}}
+\DeclareOption{anglais}{\setboolean{anglais}{true}}
+% \DeclareOption*{\PassOptionsToClass{\CurrentOption}{article}}
+\ProcessOptions
+
+
+\RequirePackage[overload]{textcase}
+
+%% ??
+\ifthenelse{\boolean{rapport}}{}{\setboolean{section_annexe}{true}}
+
+% Classe de reference
+\ifthenelse{\boolean{rapport}}{
+  \LoadClass[a4paper,10pt]{report}
+}{
+  \LoadClass[a4paper,10pt]{article}
+}
+
+% Pour les noms en anglais
+\ifthenelse{\boolean{anglais}}{
+  \newcommand{\annexenom}{Appendix}
+  \newcommand{\appendicesname}{Appendices}
+  \newcommand{\appendiceslistname}{List of appendices}
+  \newcommand{\sommairename}{Table of contents}
+%%  \newcommand{\tableauname}{TABLE}
+  \newcommand{\listfigurenom}{List of figures}
+  \newcommand{\listtablenom}{List of tables}
+  \newcommand{\referencesnom}{References}
+}{
+  \newcommand{\annexenom}{Annexe}
+  \newcommand{\appendicesname}{Annexes}
+  \newcommand{\appendiceslistname}{Liste des annexes}
+  \newcommand{\sommairename}{Sommaire}
+%%  \newcommand{\tableauname}{Tableau}
+  \newcommand{\listfigurenom}{Liste des figures}
+  \newcommand{\listtablenom}{Liste des tableaux}
+  \newcommand{\referencesnom}{R\'ef\'erences}
+}
+
+% Pour les annexes (avant les paquets hyperrefs)
+\makeatletter
+\ifthenelse{\boolean{rapport}}{
+  \renewcommand\appendix{\par
+    \part*{\appendicesname}
+    \addcontentsline{toc}{part}{\appendicesname}
+    \setboolean{annexe}{true}
+    \setcounter{chapter}{0}
+    \setcounter{section}{0}
+    \setcounter{subsection}{0}
+    \gdef\thechapter{\@Alph\c@chapter}
+  }
+}{
+  \renewcommand\appendix{
+    \setboolean{annexe}{true}
+    \setcounter{section}{0}
+    \setcounter{subsection}{0}
+    \gdef\thesection{\@Alph\c@section}
+  }
+}
+\makeatother
+
+%%%%%%%%%%%%%%%%%% Variables utilisees dans style CEA %%%%%%%%%%%%%%%%%%
+\input{@abs_top_builddir@/docs/tex/texmf/variables_2010}
+
+%%% Pour augmenter l'ecart entre les caracteres
+\RequirePackage{soul}
+
+%%% positionnement H des tableaux et figures
+\RequirePackage{float}
+
+%%% Les caracteres accentues (defaut latin1 pour l'instant)
+\RequirePackage[T1]{fontenc}
+\RequirePackage{textcomp}
+\ifthenelse{\boolean{latin1}}{
+  \RequirePackage[latin1]{inputenc}
+}{
+  \RequirePackage[utf8]{inputenc}
+}
+
+%%% quelques symboles
+\RequirePackage{pifont}
+
+%%% Le package pour les mathematiques
+\RequirePackage{amsmath}
+
+%%% Les polices
+%%% Fonte ARIAL de rigueur
+\RequirePackage{@abs_top_builddir@/docs/tex/texmf/helvetCEA}
+%%\RequirePackage{times}
+%%\RequirePackage{pifont}
+
+%%% Entetes et pieds de pages
+\RequirePackage{fancyhdr}
+
+%%% Pour les index
+\ifthenelse{\boolean{index}}{
+  \RequirePackage{makeidx}
+}{}
+
+%%% Reference vers la derniere page
+\RequirePackage{lastpage} %% Pour pouvoir faire reference a la derniere page
+
+%%% Inclusion des paquets selon l'utilisation de pdflatex ou latex+dvips
+\usepackage{ifpdf}
+\ifpdf
+\RequirePackage[pdftex]{color,graphicx,thumbpdf}
+\RequirePackage[pdftex,pdfstartview=FitH,breaklinks,linktocpage]{hyperref}
+\else
+\RequirePackage[dvips]{color,graphicx,thumbpdf,pstricks}
+\RequirePackage[dvips,pdfstartview=FitH,breaklinks,linktocpage]{hyperref} % Permet de generer les hyperlien
+\fi
+%%\RequirePackage{couleursCEA}
+
+\input{@abs_top_srcdir@/docs/tex/texmf/note_technique_2010.tex}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%% Debut et fin de document       %%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\ifthenelse{\boolean{projet}}
+%% Version projet
+{
+  \AtBeginDocument{
+%% Page de Titre et de resume
+    \thispagestyle{empty}
+    \begin{center}
+      \ifthenelse{\isundefined{\Protitre}}{}{\Large\bf \Protitre\\}
+      \ifthenelse{\isundefined{\Proauteurs}}{}{\large\bf \Proauteurs\\}
+      \ifthenelse{\isundefined{\Prodate}}{}{\large\bf \Prodate}
+    \end{center}
+    \ifthenelse{\isundefined{\Proaffiliation}}{}{\Proaffiliation}
+
+    \bigskip
+
+    \ifthenelse{\isundefined{\Proresumecea}}{}{
+      \section*{R\'esum\'e}
+      \Proresumecea
+      \newpage
+
+    }
+%% Sommaire
+    \tableofcontents
+    \newpage
+
+  }
+}
+%% Document definitif
+{
+  \input{@abs_top_builddir@/docs/tex/texmf/mise_en_page_2010}
+  \AtBeginDocument{
+    \pagestyle{fancy}
+    %\ifthenelse{\boolean{pleiades}}{\PageTitrePleiades}{}
+    \PageTitre
+    \PageInfo
+    \PageResume
+    \PageDiffusion
+    \tableofcontents
+    \newpage
+    % Probleme lie a l'utilisation du style
+    % longtable pour les listes de diffusion
+    \setcounter{table}{0}
+  }
+}

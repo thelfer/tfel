@@ -40,7 +40,7 @@ namespace tfel{
     };
 
     template<typename Func1,typename Func2>
-    class FunctionsCompositionExpr
+    class TFEL_VISIBILITY_LOCAL FunctionsCompositionExpr
     {
   
       TFEL_STATIC_ASSERT((tfel::meta::Implements<Func1,FunctionConcept>::cond));

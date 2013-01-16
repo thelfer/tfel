@@ -62,7 +62,7 @@
     \put(0,0){\framebox(170,32){}}
     % \put(2,1){\includegraphics[width=26mm]{logoCEADEC}}
     %\put(0.4,1.5){\includegraphics[width=29mm]{ceaeaDEC}}
-    \put(0.4,31){\includegraphics[height=29mm,angle=-90]{texmf/CEA_logo_quadri-sur-fond-rouge}}
+    \put(0.4,31){\includegraphics[height=29mm,angle=-90]{@abs_top_srcdir@/docs/tex/texmf/CEA_logo_quadri-sur-fond-rouge}}
     \put(0.4,1.5){{\large \color{ceagrisclair} DEN/CAD/DEC}}
     \put(30,6){\framebox(92,26){}}
     \ifthenelse{\equal{\thepage}{1}}{}{
@@ -166,7 +166,7 @@
 
   \setlength{\unitlength}{1mm}
   \begin{picture}(0,0)(20,0)%on se met en bord de page
-    \put(0,-165){\includegraphics[height=111mm]{texmf/Energie2010}}
+    \put(0,-165){\includegraphics[height=111mm]{@abs_top_srcdir@/docs/tex/texmf/Energie2010}}
 %     \ifthenelse{\isundefined{\Procodebarre}}{}{\put(76,-50){\includegraphics[width=57mm]{\Procodebarre}}}
     \ifthenelse{\isundefined{\Procodebarre}}{}{\put(142.5,20){\includegraphics[width=47mm]{\Procodebarre}}}
     \put(23,-98) {

@@ -5,6 +5,8 @@
  * \brief 03 janv. 2013
  */
 
+#include<cstdlib>
+
 #include"TFEL/Tests/TestCase.hxx"
 #include"TFEL/Tests/TestProxy.hxx"
 #include"TFEL/Tests/TestManager.hxx"

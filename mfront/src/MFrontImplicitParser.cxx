@@ -1201,11 +1201,11 @@ namespace mfront{
     if(this->uParametersDefaultValues.find("iterMax")==this->uParametersDefaultValues.end()){
       this->uParametersDefaultValues.insert(MVType2("iterMax",100u));
     }
-    unsigned short iterMax = this->uParametersDefaultValues.at("iterMax");
+    unsigned short iterMax = this->uParametersDefaultValues["iterMax"];
     if(this->compareToNumericalJacobian){
       
       if(this->parametersDefaultValues.find("jacobianComparisonCriterium")==this->parametersDefaultValues.end()){
-	double epsilon = this->parametersDefaultValues.at("epsilon");
+	double epsilon = this->parametersDefaultValues["epsilon"];
 	this->parametersDefaultValues.insert(MVType("jacobianComparisonCriterium",epsilon));
       }
     }
@@ -1216,7 +1216,7 @@ namespace mfront{
       if(this->uParametersDefaultValues.find("relaxationTrigger")==this->uParametersDefaultValues.end()){
 	this->uParametersDefaultValues.insert(MVType2("relaxationTrigger",10u));
       }
-      unsigned short relaxationTrigger = this->uParametersDefaultValues.at("relaxationTrigger");
+      unsigned short relaxationTrigger = this->uParametersDefaultValues["relaxationTrigger"];
       if(relaxationTrigger+1>=iterMax){
 	string msg("MFrontImplicitParser::endsInputFileProcessing :");
 	msg += "relaxation can never take place (relaxationTrigger>=iterMax-1)'";
@@ -1230,7 +1230,7 @@ namespace mfront{
       if(this->uParametersDefaultValues.find("accelerationPeriod")==this->uParametersDefaultValues.end()){
 	this->uParametersDefaultValues.insert(MVType2("accelerationPeriod",3u));
       }
-      unsigned short accelerationTrigger = this->uParametersDefaultValues.at("accelerationTrigger");
+      unsigned short accelerationTrigger = this->uParametersDefaultValues["accelerationTrigger"];
       if(accelerationTrigger+1>=iterMax){
 	string msg("MFrontImplicitParser::endsInputFileProcessing :");
 	msg += "acceleration can never take place (accelerationTrigger>=iterMax-1)'";
