@@ -17,7 +17,8 @@
 #include<cassert>
 
 #if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
-#warning "windows port"
+#include <windows.h>
+#include <conio.h>
 #else
 #include<dlfcn.h> 
 #include<sys/types.h>
@@ -567,18 +568,22 @@ namespace mfront{
   MFront::analyseSources(const std::string& name)
   {
     using namespace std;
+    using namespace tfel::system;
     typedef map<string,set<string> >::value_type MVType;
     ifstream file;
     ofstream f;
     set<string> files; // list of files contained in the file
     string fName;
-    struct stat buffer; // for call to stat
     string object;
     set<string>::iterator p;
     set<string>::iterator p2;
     bool hasValidExtension;
     bool erased = false;
-    fName = "src/" + name;
+#if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
+#warning "windows port"
+#else
+    struct stat buffer; // for call to stat
+    fName = "src"+dirStringSeparator()+ name;
     if(stat(fName.c_str(),&buffer)!=0){
       string msg("MFront::analyseSources : can't stat "+fName);
       throw(runtime_error(msg));
@@ -587,6 +592,7 @@ namespace mfront{
       string msg("MFront::analyseSources : "+fName+" is not a regular file");
       throw(runtime_error(msg));
     }
+#endif
     file.open(fName.c_str());
     if(!file){
       string msg("MFront::analyseSources : can't open file ");
@@ -628,15 +634,12 @@ namespace mfront{
 	msg += "\nError while analysing "+fName;
 	throw(runtime_error(msg));
       }
-      //       if(!this->objects[name.substr(3,name.size()-7)].insert(object).second){
-      // 	string msg("MFront::analyseSources : ");
-      // 	msg += "two sources leads to the same object '"+object+"'.";
-      // 	msg += "\nError while analysing "+fName;
-      // 	throw(runtime_error(msg));
-      //       }
     }
     p=files.begin();
     while(p!=files.end()){
+#if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
+#warning "windows port"
+#else
       if(access(("src/"+*p).c_str(),F_OK)==0){
 	if(stat(("src/"+*p).c_str(),&buffer)!=0){
 	  string msg("MFront::analyseSources : can't stat src/"+*p);
@@ -654,6 +657,7 @@ namespace mfront{
 	  msg += "\nError while analysing "+fName;
 	  throw(runtime_error(msg));
 	}
+#endif
 	++p;
       } else {
 	// removing file from the list
@@ -697,14 +701,18 @@ namespace mfront{
   MFront::analyseDependencies(const std::string& name)
   {
     using namespace std;
+    using namespace tfel::system;
     typedef map<string,vector<string> >::value_type MVType;
     ifstream file;
     ofstream f;
     vector<string> libs; // list of libraries contained in the file
     string fName;
     string line;
+    fName = "src" +dirStringSeparator() + name;
+#if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
+#warning "windows port"
+#else
     struct stat buffer; // for call to stat
-    fName = "src/" + name;
     if(stat(fName.c_str(),&buffer)!=0){
       string msg("MFront::analyseDependencies : can't stat file '"+fName+"'");
       throw(runtime_error(msg));
@@ -713,6 +721,7 @@ namespace mfront{
       string msg("MFront::analyseDependencies : '"+fName+"' is not a regular file");
       throw(runtime_error(msg));
     }
+#endif
     file.open(fName.c_str());
     if(!file){
       string msg("MFront::analyseDependencies : can't open file '");
@@ -748,10 +757,14 @@ namespace mfront{
   MFront::analyseGlobalIncludes()
   {
     using namespace std;
+    using namespace tfel::system;
     using namespace tfel::utilities;
     ifstream file;
-    string name = "src/Makefile.incs";
+    string name = "src"+dirStringSeparator()+"Makefile.incs";
     string line;
+#if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
+#warning "windows port"
+#else
     struct stat buffer; // for call to stat
     if(stat(name.c_str(),&buffer)!=0){
       string msg("MFront::analyseMakefileSpecificTargets : can't stat file '"+name+"'");
@@ -761,9 +774,10 @@ namespace mfront{
       string msg("MFront::analyseMakefileSpecificTargets : '"+name+"' is not a regular file");
       throw(runtime_error(msg));
     }
+#endif
     file.open(name.c_str());
     if(!file){
-      string msg("MFront::analyseGlobalIncludes : can't open file 'src/Makefile.incs'");
+      string msg("MFront::analyseGlobalIncludes : can't open file '"+name+"'");
       throw(runtime_error(msg));
     }
     while(!file.eof()){
@@ -779,13 +793,17 @@ namespace mfront{
   MFront::analyseMakefileSpecificTargets()
   {
     using namespace std;
+    using namespace tfel::system;
     using namespace tfel::utilities;
     ifstream file;
-    string name = "src/Makefile.spec";
+    string name = "src"+dirStringSeparator()+"Makefile.spec";
     string line;
     unsigned short lineNbr;
-    struct stat buffer; // for call to stat
     vector<string>::const_iterator p;
+#if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
+#warning "windows port"
+#else
+    struct stat buffer; // for call to stat
     if(stat(name.c_str(),&buffer)!=0){
       string msg("MFront::analyseMakefileSpecificTargets : can't stat file '"+name+"'");
       throw(runtime_error(msg));
@@ -794,6 +812,7 @@ namespace mfront{
       string msg("MFront::analyseMakefileSpecificTargets : '"+name+"' is not a regular file");
       throw(runtime_error(msg));
     }
+#endif
     file.open(name.c_str());
     lineNbr = 0u;
     if(!file.eof()){
@@ -871,7 +890,74 @@ namespace mfront{
   MFront::analyseSourceDirectory(void)
   {
 #if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
-#warning "windows port"
+    using namespace std;
+    using namespace tfel::system;
+    vector<string> files;
+    vector<string>::const_iterator p;
+    HANDLE          hFile;                // Handle to file
+    WIN32_FIND_DATA FileInformation;      // File information
+    MFrontLock& l = MFrontLock::getMFrontLock();
+    l.lock();
+    try{
+      hFile = ::FindFirstFile("src", &FileInformation);
+      if(hFile == INVALID_HANDLE_VALUE){
+	throw(runtime_error("MFront::analyseSourceDirectory : can't open directory 'src'"));
+      }
+      do {
+	if(FileInformation.cFileName[0] != '.'){
+	  if(!(FileInformation.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)){
+	    files.push_back(FileInformation.cFileName);
+	  }
+	}
+      } while(::FindNextFile(hFile, &FileInformation) == TRUE);
+      // Close handle
+      ::FindClose(hFile);
+      for(p=files.begin();p!=files.end();++p){
+	if(p->substr(p->size()-4)==".src"){
+	  if(this->verboseMode){
+	      cout << "treating library " << p->substr(0,p->size()-4) << ".dll sources.\n";
+	  }
+	  this->analyseSources(*p);
+	}
+	if(*p=="Makefile.spec"){
+	  this->analyseMakefileSpecificTargets();
+	}
+	if(*p=="Makefile.incs"){
+	  this->analyseGlobalIncludes();
+	}
+      }
+      // we treat dependencies separetly because some file might had been
+      // suppressed
+      files.clear();
+      hFile = ::FindFirstFile("src", &FileInformation);
+      if(hFile == INVALID_HANDLE_VALUE){
+	throw(runtime_error("MFront::analyseSourceDirectory : can't open directory 'src'"));
+      }
+      do {
+	if(FileInformation.cFileName[0] != '.'){
+	  if(!(FileInformation.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)){
+	    files.push_back(FileInformation.cFileName);
+	  }
+	}
+      } while(::FindNextFile(hFile, &FileInformation) == TRUE);
+      // Close handle
+      ::FindClose(hFile);
+      for(p=files.begin();p!=files.end();++p){
+	if(p->size()>5){
+	  if(p->substr(p->size()-5)==".deps"){
+	    if(this->verboseMode){
+	      cout << "treating library " << p->substr(0,p->size()-5) << " dependencies.\n";
+	    }
+	    this->analyseDependencies(*p);
+	  }
+	}
+      }
+    }
+    catch(...){
+      l.unlock();
+      throw;
+    }
+    l.unlock();
 #else
     using namespace std;
     using namespace tfel::system;
@@ -968,6 +1054,7 @@ namespace mfront{
   MFront::writeSourcesLists(void)
   {
     using namespace std;
+    using namespace tfel::system;
     ofstream file;
     MFrontLock& l = MFrontLock::getMFrontLock();
     l.lock();
@@ -981,10 +1068,10 @@ namespace mfront{
 	    cout << "writing sources list for library " << p->first << ".so\n";
 	  }
 	}
-	file.open(("src/"+p->first+".src").c_str());
+	file.open(("src"+dirStringSeparator()+p->first+".src").c_str());
 	if(!file){
 	  string msg("MFront::writeSourcesLists : ");
-	  msg += "can't open file 'src/"+p->first+".src";
+	  msg += "can't open file 'src"+dirStringSeparator()+p->first+".src";
 	  throw(runtime_error(msg));
 	}
 	copy(p->second.begin(),p->second.end(),ostream_iterator<string>(file,"\n"));
@@ -1002,6 +1089,7 @@ namespace mfront{
   MFront::writeDependenciesLists(void)
   {
     using namespace std;
+    using namespace tfel::system;
     ofstream file;
     MFrontLock& l = MFrontLock::getMFrontLock();
     l.lock();
@@ -1015,7 +1103,7 @@ namespace mfront{
 	    cout << "writing dependencies list for library " << p->first << ".so\n";
 	  }
 	}
-	file.open(("src/"+p->first+".deps").c_str());
+	file.open(("src"+dirStringSeparator()+p->first+".deps").c_str());
 	copy(p->second.begin(),p->second.end(),ostream_iterator<string>(file,"\n"));
 	file.close();
       }
@@ -1031,6 +1119,7 @@ namespace mfront{
   MFront::writeSpecificTargets(void)
   {
     using namespace std;
+    using namespace tfel::system;
     typedef map<string,pair<vector<string>,vector<string> > > Target;
     ofstream file;
     Target::const_iterator p;
@@ -1038,9 +1127,9 @@ namespace mfront{
     l.lock();
     try{
       if(!this->targets.empty()){
-	file.open("src/Makefile.spec");
+	file.open(("src"+dirStringSeparator()+"Makefile.spec").c_str());
 	if(!file){
-	  string msg("MFront::writeSpecificTargets : can't open file 'src/Makefile.spec'");
+	  string msg("MFront::writeSpecificTargets : can't open file 'src"+dirStringSeparator()+"Makefile.spec'");
 	  throw(runtime_error(msg));
 	}
 	for(p=this->targets.begin();p!=this->targets.end();++p){
@@ -1066,15 +1155,17 @@ namespace mfront{
   MFront::writeGlobalIncludes(void)
   {
     using namespace std;
+    using namespace tfel::system;
     ofstream file;
     set<string>::const_iterator p;
     MFrontLock& l = MFrontLock::getMFrontLock();
     l.lock();
     try{
       if(!this->globalIncludes.empty()){
-	file.open("src/Makefile.incs");
+	file.open(("src"+dirStringSeparator()+"Makefile.incs").c_str());
 	if(!file){
-	  string msg("MFront::writeGlobalIncludes : can't open file 'src/Makefile.incs'");
+	  string msg("MFront::writeGlobalIncludes : can't open file 'src"+
+		     dirStringSeparator()+"Makefile.incs'");
 	  throw(runtime_error(msg));
 	}
 	copy(this->globalIncludes.begin(),
@@ -1214,6 +1305,7 @@ namespace mfront{
   MFront::generateMakeFile(void)
   {
     using namespace std;
+    using namespace tfel::system;
     set<string> cppSources;
     set<string> cSources;
     vector<string>::const_iterator p;
@@ -1278,7 +1370,7 @@ namespace mfront{
     MFrontLock& l = MFrontLock::getMFrontLock();
     l.lock();
     try{
-      this->makeFile.open("src/Makefile.mfront");
+      this->makeFile.open(("src"+dirStringSeparator()+"Makefile.mfront").c_str());
       this->makeFile.exceptions(ios::badbit|ios::failbit);
       if(!this->makeFile){
 	string msg("MFront::generateMakeFile : can't open file Makefile.mfront");

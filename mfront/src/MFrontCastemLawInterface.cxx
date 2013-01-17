@@ -359,7 +359,7 @@ namespace mfront
 
     this->srcFile << "MFRONT_SHAREDOBJ const char *\n";
     this->srcFile << name << "_src = \""
-		  << tokenize(file,systemCall::dirSeparator()).back()
+		  << tokenize(file,dirSeparator()).back()
 		  << "\";\n\n";
 
     if(!inputs.empty()){

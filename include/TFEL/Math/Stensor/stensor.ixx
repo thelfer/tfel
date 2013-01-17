@@ -251,7 +251,7 @@ namespace tfel{
       TFEL_STATIC_ASSERT(tfel::typetraits::IsFundamentalNumericType<typename tfel::typetraits::BaseType<T>::type>::cond);
       TFEL_STATIC_ASSERT(tfel::typetraits::IsReal<typename tfel::typetraits::BaseType<T>::type>::cond);
       TFEL_STATIC_ASSERT((tfel::typetraits::IsSafelyReinterpretCastableTo<T,typename tfel::typetraits::BaseType<T>::type>::cond));
-      tfel::math::internals::StensorComputeEigenValues_<N>::exe(reinterpret_cast<const typename tfel::typetraits::BaseType<T>::type* const>(this->v),reinterpret_cast<typename tfel::typetraits::BaseType<T>::type&>(vp1),reinterpret_cast<typename tfel::typetraits::BaseType<T>::type&>(vp2),reinterpret_cast<typename tfel::typetraits::BaseType<T>::type&>(vp3));
+      tfel::math::internals::StensorComputeEigenValues_<N>::exe(reinterpret_cast<const typename tfel::typetraits::BaseType<T>::type*>(this->v),reinterpret_cast<typename tfel::typetraits::BaseType<T>::type&>(vp1),reinterpret_cast<typename tfel::typetraits::BaseType<T>::type&>(vp2),reinterpret_cast<typename tfel::typetraits::BaseType<T>::type&>(vp3));
     }
 
     // computeEigenValues

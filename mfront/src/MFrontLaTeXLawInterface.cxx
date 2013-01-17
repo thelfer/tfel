@@ -169,7 +169,7 @@ namespace mfront
 
   void
   MFrontLaTeXLawInterface::writeOutputFiles(const std::string& file,
-					    const std::string& library,
+					    const std::string&,
 					    const std::string& material,
 					    const std::string& className,
 					    const std::string& author,
@@ -207,14 +207,14 @@ namespace mfront
       throw(runtime_error(msg));
     }
     if(!material.empty()){
-      out << "\\subsection{Description de la propriété matériau '"+className+"' du matériau '"+material+"'}" << endl;
+      out << "\\subsection{Description de la propri\\'et\\'e mat\\'eriau '"+className+"' du mat\\'eriau '"+material+"'}" << endl;
     } else {
-      out << "\\subsection{Description de la propriété matériau '"+className+"'}" << endl;
+      out << "\\subsection{Description de la propri\\'et\\'e mat\\'eriau '"+className+"'}" << endl;
     }
-    out << "Cette documentation a été générée à partir du fichier {\\tt " << toLaTeX(file)  << "}" << endl;
+    out << "Cette documentation a \\'et\\'e g\\'en\\'er\\'ee \\`a partir du fichier {\\tt " << toLaTeX(file)  << "}" << endl;
     out << "\\begin{itemize}" << endl;
     if(!material.empty()){
-      out << "\\item Matériau~: " << toLaTeX(material) << endl;
+      out << "\\item Mat\\'eriau~: " << toLaTeX(material) << endl;
     }
     if(!author.empty()){
       out << "\\item Auteur~: " << toLaTeX(author) << endl;
@@ -232,7 +232,7 @@ namespace mfront
 	}
       }
       d = replace_all(d,"\n* ","\n");
-      d = replace_all(d,"\\'","'");
+      d = replace_all(d,"\\\'","'");
       d = replace_all(d,"\\\"","\"");
       d = replace_all(d,"{ ","{");
       d = replace_all(d," {","{");
@@ -254,21 +254,21 @@ namespace mfront
     }
     if(!vars.empty()){
       if(vars.size()==1u){
-	out << "\\subsubsection{Variable d'entrée}" << endl << endl;
-	out << "Cette propriété dépend de la variable {\\tt " << toLaTeX(vars.front().name) << "}";
+	out << "\\subsubsection{Variable d'entr\\'ee}" << endl << endl;
+	out << "Cette propri\\'et\\'e d\\'epend de la variable {\\tt " << toLaTeX(vars.front().name) << "}";
 	if((p2=glossaryNames.find(vars.front().name))!=glossaryNames.end()){
 	  out << " dont le nom de glossaire est {\\tt " 
 	      << toLaTeX(p2->second) << "}" << endl;
 	} else if((p2=entryNames.find(vars.front().name))!=entryNames.end()){
-	  out << " qui sera désignée dans le fichier d'entrée par {\\tt " 
+	  out << " qui sera d\\'esign\\'ee dans le fichier d'entr\\'ee par {\\tt " 
 	      << toLaTeX(p2->second) << "}" << endl;
 	}
 	out << "." << endl;
 	describeVariableBounds(out,vars.front().name,"bornes physiques",physicalBounds);
 	describeVariableBounds(out,vars.front().name,"bornes",bounds);
       } else {
-	out << "\\subsubsection{Variables d'entrée}" << endl << endl;
-	out << "Cette propriété dépend des variables~:" << endl;
+	out << "\\subsubsection{Variables d'entr\\'ee}" << endl << endl;
+	out << "Cette propri\\'et\\'e d\\'epend des variables~:" << endl;
 	out << "\\begin{itemize}" << endl;
 	for(p=vars.begin();p!=vars.end();++p){
 	  out << "\\item {\\tt " << toLaTeX(p->name) << "}." << endl;

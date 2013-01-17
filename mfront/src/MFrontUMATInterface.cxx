@@ -775,7 +775,7 @@ namespace mfront{
 
     out << "MFRONT_SHAREDOBJ const char *\numat";
     out << makeLowerCase(name) << "_src = \""
-	<< tokenize(file,systemCall::dirSeparator()).back()
+	<< tokenize(file,dirSeparator()).back()
 	<< "\";\n\n";
 
     bool rp = false;

@@ -9,6 +9,10 @@
 #undef NDEBUG
 #endif /* NDEBUG */
 
+#ifdef NO_RUNTIME_CHECK_BOUNDS
+#undef NO_RUNTIME_CHECK_BOUNDS
+#endif /* NO_RUNTIME_CHECK_BOUNDS */
+
 #include<cstdlib>
 #include<cassert>
 #include<algorithm>

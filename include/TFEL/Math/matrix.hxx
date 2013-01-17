@@ -11,6 +11,10 @@
 #include"TFEL/Math/vector.hxx"
 #include"TFEL/Math/Matrix/MatrixConcept.hxx"
 
+#ifdef NO_RUNTIME_CHECK_BOUNDS
+#include"TFEL/Math/General/EmptyRunTimeProperties.hxx"
+#endif /* NO_RUNTIME_CHECK_BOUNDS */
+
 namespace tfel
 {
 
@@ -37,11 +41,15 @@ namespace tfel
       /*!
        * RunTime Properties
        */
+#ifdef NO_RUNTIME_CHECK_BOUNDS
+      typedef EmptyRunTimeProperties RunTimeProperties;
+#else /* NO_RUNTIME_CHECK_BOUNDS */
       typedef MatrixProperties<T> RunTimeProperties;
+#endif /* NO_RUNTIME_CHECK_BOUNDS */
     };
 
     template<typename T>
-    struct MatrixProperties
+    struct TFEL_VISIBILITY_LOCAL MatrixProperties
     {
       //! a simple alias
       typedef typename MatrixTraits<matrix<T> >::IndexType IndexType;
@@ -74,7 +82,11 @@ namespace tfel
 	protected MatrixProperties<T>
     {
       //! a simple alias
+#ifdef NO_RUNTIME_CHECK_BOUNDS
+      typedef EmptyRunTimeProperties RunTimeProperties;
+#else /* NO_RUNTIME_CHECK_BOUNDS */
       typedef MatrixProperties<T> RunTimeProperties;
+#endif /* NO_RUNTIME_CHECK_BOUNDS */
       /*!
        * type of the matrix's values.
        * (this i<s a stl requirement).

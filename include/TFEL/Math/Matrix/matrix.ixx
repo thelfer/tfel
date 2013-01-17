@@ -194,7 +194,11 @@ namespace tfel{
     const typename matrix<T>::RunTimeProperties&
     matrix<T>::getRunTimeProperties(void) const
     {
+#ifdef NO_RUNTIME_CHECK_BOUNDS
+      return RunTimeProperties();
+#else
       return *this;
+#endif
     } // end of matrix<T>::getRunTimeProperties(void) const
 
     template<typename T>

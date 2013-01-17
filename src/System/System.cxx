@@ -31,6 +31,20 @@ namespace tfel
   namespace system
   {
 
+    char
+    dirSeparator(void)
+    {
+      return '/';
+    } // end of systemCall::dirSeparator
+
+    const std::string&
+    dirStringSeparator(void)
+    {
+      using namespace std;
+      static string s(1u,dirSeparator());
+      return s;
+    } // end of systemCall::dirStringSeparator
+
     void
     systemCall::throwSystemError(const std::string& errMsg,
 				 const int errNbr)
@@ -151,12 +165,6 @@ namespace tfel
 	throw(SystemError(msg));
       }
     } // end of throwSystemError
-
-    char
-    systemCall::dirSeparator(void)
-    {
-      return '/';
-    } // end of systemCall::dirSeparator
 
     std::vector<std::string>
     systemCall::tokenize(const std::string& s,

@@ -24,7 +24,20 @@ namespace tfel
   namespace system
   {
 
-    /*
+    /*!
+     * \return the directory separator
+     */
+    TFELSYSTEM_VISIBILITY_EXPORT
+    char dirSeparator(void);
+    
+    /*!
+     * \return the directory separator as a string
+     */
+    TFELSYSTEM_VISIBILITY_EXPORT
+    const std::string&
+    dirStringSeparator(void);
+
+    /*!
      * This structure contains C++ wrapping over many
      * posix system call.
      */
@@ -39,12 +52,6 @@ namespace tfel
       static void
       throwSystemError(const std::string&,
 		       const int);
-
-      /*
-       * \return the directory separator
-       */
-      static char
-      dirSeparator(void);
 
       /*
        * create one or more directories.

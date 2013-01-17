@@ -78,7 +78,7 @@ namespace tfel{
       {}
 #else
       TFEL_MATH_INLINE ArrayArrayExpr(const A& l, const B& r)
-	: a(l), b(r), RTP(l.getRunTimeProperties());
+	: a(l), b(r), RTP(l.getRunTimeProperties())
       {}
 #endif
 

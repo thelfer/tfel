@@ -53,7 +53,6 @@ namespace tfel
       using namespace std;
       vector<TestPtr>::iterator p;
       TestResult r;
-      bool success =true;
       for(p=this->tests.begin();p!=tests.end();++p){
 	TestResult r1;
 #ifdef _POSIX_TIMERS
@@ -68,9 +67,6 @@ namespace tfel
 #endif
 	try{
 	  r1 = (*p)->execute();
-	  if(!r1.success()){
-	    success = false;
-	  }
 	} catch(exception& e){
 	  string msg("test '"+(*p)->name());
 	  msg += "' has thrown an exception (";
@@ -78,13 +74,11 @@ namespace tfel
 	  msg += ")";
 	  cerr << msg << endl;
 	  r1 = TestResult(false,msg);
-	  success = false;
 	} catch(...){
 	  string msg("test '"+(*p)->name());
 	  msg += "' has thrown an unknown exception";
 	  cerr << msg << endl;
 	  r1 = TestResult(false,msg);
-	  success = false;
 	}
 #ifdef _POSIX_TIMERS
 #if _POSIX_TIMERS != 0

@@ -17,8 +17,12 @@ cmake/ToolChain-i586-mingw32msvc.cmake -text
 cmake/modules/Makefile.am -text
 cmake/modules/autotools.cmake -text
 cmake/modules/castem.cmake -text
+cmake/modules/clang.cmake -text
+cmake/modules/common-compiler-flags.cmake -text
 cmake/modules/compiler.cmake -text
 cmake/modules/gcc.cmake -text
+cmake/modules/intel.cmake -text
+cmake/modules/pathscale.cmake -text
 cmake/modules/tfel.cmake -text
 /configure.ac -text
 /debug.sh.in -text
