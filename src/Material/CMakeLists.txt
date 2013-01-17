@@ -4,7 +4,8 @@ link_directories("${PROJECT_BINARY_DIR}/src/Math"
                  "${PROJECT_BINARY_DIR}/src/Exception")
 
 set(TFELMaterial_SOURCES
-    MaterialException.cxx)
+    MaterialException.cxx
+    DDIF2Base.cxx)
 
 tfel_library(TFELMaterial ${TFELMaterial_SOURCES})
 target_link_libraries(TFELMaterial
