@@ -4,7 +4,6 @@
 include(cmake/modules/compiler.cmake)
 
 tfel_enable_cxx_compiler_flag(COMPILER_WARNINGS "Wall" "W" "Wextra" "pedantic" "Wshadow")
-tfel_enable_cxx_compiler_flag(COMPILER_WARNINGS "fvisibility-inlines-hidden")
 tfel_enable_cxx_compiler_flag(COMPILER_WARNINGS "Wpointer-arith" "Wcast-qual" "Wcast-align")
 tfel_enable_cxx_compiler_flag(COMPILER_WARNINGS "Wwrite-strings" "Wctor-dtor-privacy" "Wnon-virtual-dtor")
 tfel_enable_cxx_compiler_flag(COMPILER_WARNINGS "Woverloaded-virtual" "Wreturn-type" "Wfloat-equal")

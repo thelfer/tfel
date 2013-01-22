@@ -191,7 +191,11 @@ namespace tfel{
 
     template<typename T>
     TFEL_MATH_INLINE
+#ifdef NO_RUNTIME_CHECK_BOUNDS
+    const typename matrix<T>::RunTimeProperties
+#else
     const typename matrix<T>::RunTimeProperties&
+#endif
     matrix<T>::getRunTimeProperties(void) const
     {
 #ifdef NO_RUNTIME_CHECK_BOUNDS

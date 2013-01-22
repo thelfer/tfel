@@ -19,6 +19,7 @@
 #if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
 #include <windows.h>
 #include <conio.h>
+#include <process.h>
 #else
 #include<dlfcn.h> 
 #include<sys/types.h>
@@ -44,6 +45,31 @@
 namespace mfront{
 
   std::string MFront::callingName("mfront");
+
+  static void
+  checkIfFileIsRegularAndReadable(const std::string& n)
+  {
+    using namespace std;
+#if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
+    DWORD dwAttrib = GetFileAttributes(n.c_str());
+    if((dwAttrib == INVALID_FILE_ATTRIBUTES)||
+       (dwAttrib & FILE_ATTRIBUTE_DIRECTORY)){
+      string msg("MFront::analyseSources : can't stat file '"+n+"' ");
+      msg += "or is not a regular file";
+      throw(runtime_error(msg));
+    }
+#else
+    struct stat buffer; // for call to stat
+    if(stat(n.c_str(),&buffer)!=0){
+      string msg("MFront::analyseSources : can't stat file '"+n+"'");
+      throw(runtime_error(msg));
+    }
+    if(!S_ISREG(buffer.st_mode)){
+      string msg("MFront::analyseSources : '"+n+"' is not a regular file");
+      throw(runtime_error(msg));
+    }
+#endif
+  }
 
   std::vector<std::string>
   MFront::tokenize(const std::string& s,
@@ -579,20 +605,8 @@ namespace mfront{
     set<string>::iterator p2;
     bool hasValidExtension;
     bool erased = false;
-#if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
-#warning "windows port"
-#else
-    struct stat buffer; // for call to stat
     fName = "src"+dirStringSeparator()+ name;
-    if(stat(fName.c_str(),&buffer)!=0){
-      string msg("MFront::analyseSources : can't stat "+fName);
-      throw(runtime_error(msg));
-    }
-    if(!S_ISREG(buffer.st_mode)){
-      string msg("MFront::analyseSources : "+fName+" is not a regular file");
-      throw(runtime_error(msg));
-    }
-#endif
+    checkIfFileIsRegularAndReadable(fName);
     file.open(fName.c_str());
     if(!file){
       string msg("MFront::analyseSources : can't open file ");
@@ -637,27 +651,10 @@ namespace mfront{
     }
     p=files.begin();
     while(p!=files.end()){
+      const string fn = "src/"+dirStringSeparator()+*p;
 #if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
-#warning "windows port"
-#else
-      if(access(("src/"+*p).c_str(),F_OK)==0){
-	if(stat(("src/"+*p).c_str(),&buffer)!=0){
-	  string msg("MFront::analyseSources : can't stat src/"+*p);
-	  msg += "\nError while analysing "+fName;
-	  throw(runtime_error(msg));
-	}
-	if(!S_ISREG(buffer.st_mode)){
-	  string msg("MFront::analyseSources : src/"+*p+" is not a regular file");
-	  msg += "\nError while analysing "+fName;
-	  throw(runtime_error(msg));
-	}
-	if(access(("src/"+*p).c_str(),R_OK)!=0){
-	  string msg("MFront::analyseSources : error while treating "+fName+".\n");
-	  msg += "file src/"+*p+" is not readable.";
-	  msg += "\nError while analysing "+fName;
-	  throw(runtime_error(msg));
-	}
-#endif
+      if(access(fn.c_str(),0)==0){
+	checkIfFileIsRegularAndReadable(fn);
 	++p;
       } else {
 	// removing file from the list
@@ -666,6 +663,18 @@ namespace mfront{
 	files.erase(p2);
 	erased = true;
       }
+#else
+      if(access(fn.c_str(),F_OK)==0){
+	checkIfFileIsRegularAndReadable(fn);
+	++p;
+      } else {
+	// removing file from the list
+	p2 = p;
+	++p;
+	files.erase(p2);
+	erased = true;
+      }
+#endif
     }
     if(erased){
       if(files.empty()){
@@ -709,19 +718,7 @@ namespace mfront{
     string fName;
     string line;
     fName = "src" +dirStringSeparator() + name;
-#if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
-#warning "windows port"
-#else
-    struct stat buffer; // for call to stat
-    if(stat(fName.c_str(),&buffer)!=0){
-      string msg("MFront::analyseDependencies : can't stat file '"+fName+"'");
-      throw(runtime_error(msg));
-    }
-    if(!S_ISREG(buffer.st_mode)){
-      string msg("MFront::analyseDependencies : '"+fName+"' is not a regular file");
-      throw(runtime_error(msg));
-    }
-#endif
+    checkIfFileIsRegularAndReadable(fName);
     file.open(fName.c_str());
     if(!file){
       string msg("MFront::analyseDependencies : can't open file '");
@@ -762,19 +759,7 @@ namespace mfront{
     ifstream file;
     string name = "src"+dirStringSeparator()+"Makefile.incs";
     string line;
-#if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
-#warning "windows port"
-#else
-    struct stat buffer; // for call to stat
-    if(stat(name.c_str(),&buffer)!=0){
-      string msg("MFront::analyseMakefileSpecificTargets : can't stat file '"+name+"'");
-      throw(runtime_error(msg));
-    }
-    if(!S_ISREG(buffer.st_mode)){
-      string msg("MFront::analyseMakefileSpecificTargets : '"+name+"' is not a regular file");
-      throw(runtime_error(msg));
-    }
-#endif
+    checkIfFileIsRegularAndReadable(name);
     file.open(name.c_str());
     if(!file){
       string msg("MFront::analyseGlobalIncludes : can't open file '"+name+"'");
@@ -800,19 +785,7 @@ namespace mfront{
     string line;
     unsigned short lineNbr;
     vector<string>::const_iterator p;
-#if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
-#warning "windows port"
-#else
-    struct stat buffer; // for call to stat
-    if(stat(name.c_str(),&buffer)!=0){
-      string msg("MFront::analyseMakefileSpecificTargets : can't stat file '"+name+"'");
-      throw(runtime_error(msg));
-    }
-    if(!S_ISREG(buffer.st_mode)){
-      string msg("MFront::analyseMakefileSpecificTargets : '"+name+"' is not a regular file");
-      throw(runtime_error(msg));
-    }
-#endif
+    checkIfFileIsRegularAndReadable(name);
     file.open(name.c_str());
     lineNbr = 0u;
     if(!file.eof()){
@@ -899,7 +872,7 @@ namespace mfront{
     MFrontLock& l = MFrontLock::getMFrontLock();
     l.lock();
     try{
-      hFile = ::FindFirstFile("src", &FileInformation);
+      hFile = ::FindFirstFile("src/*", &FileInformation);
       if(hFile == INVALID_HANDLE_VALUE){
 	throw(runtime_error("MFront::analyseSourceDirectory : can't open directory 'src'"));
       }
@@ -1682,7 +1655,14 @@ namespace mfront{
   {
     using namespace std;
 #if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
-#warning "windows port"
+    const char *const argv[] = {"-C","src",
+				"-f","Makefile.mfront",
+				target.c_str(),0};
+    if(_spawnvp(_P_WAIT,"make.exe",argv)!=0){
+      string msg("MFront::buildLibraries : ");
+      msg += "can't build target '"+target+"'";
+      throw(runtime_error(msg));
+    }
 #else
     const char *const argv[] = {"make","-f",
 				"Makefile.mfront",target.c_str(),0};
@@ -1714,10 +1694,17 @@ namespace mfront{
   void
   MFront::cleanLibraries(void)
   {
-#if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
-#warning "windows port"
-#else
     using namespace std;
+#if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
+    const char *const argv[] = {"-C","src",
+				"-f","Makefile.mfront",
+				"clean",0};
+    if(_spawnvp(_P_WAIT,"make.exe",argv)!=0){
+      string msg("MFront::cleanLibraries : ");
+      msg += "can't clean libraries";
+      throw(runtime_error(msg));
+    }
+#else
     const char *const argv[] = {"make","-f",
 				"Makefile.mfront",
 				"clean",0};
@@ -1830,7 +1817,6 @@ namespace mfront{
       }
       throw(runtime_error(msg));
     }
-    
     if((this->genMake)&&(!this->sources.empty())){
       this->generateMakeFile();
     }

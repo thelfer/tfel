@@ -43,7 +43,7 @@ namespace mfront
     if(!line.empty()){
       istringstream tokenizer(line);
       vector<string> tokens;
-      ExcelInterface interface;
+      ExcelInterface i;
       vector<string>::const_iterator p;
       copy(istream_iterator<string>(tokenizer),
 	   istream_iterator<string>(),back_inserter(tokens));
@@ -52,12 +52,12 @@ namespace mfront
 	msg += "invalid line '"+line+"'";
 	throw(runtime_error(msg));
       }
-      interface.function  = tokens[0];
-      interface.library   = tokens[1];
+      i.function  = tokens[0];
+      i.library   = tokens[1];
       for(p=tokens.begin()+2;p!=tokens.end();++p){
-	interface.variables.push_back(*p);
+	i.variables.push_back(*p);
       }
-      interfaces.push_back(interface);
+      interfaces.push_back(i);
     }
   } // end of readExcelInterface
     

@@ -56,4 +56,9 @@ install_header(MFront/UMAT UMATGetModellingHypothesis.hxx)
 install_header(MFront/UMAT UMATTraits.hxx)
 install_header(MFront/UMAT UMAT.hxx)
 install_header(MFront/UMAT UMATConfig.hxx)
+
+if(LOCAL_CASTEM_HEADER)
+  install(FILES "castem.h" DESTINATION "include/")
+endif(LOCAL_CASTEM_HEADER)
+
 endif(HAVE_CASTEM)

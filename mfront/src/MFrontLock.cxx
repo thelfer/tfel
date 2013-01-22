@@ -35,7 +35,14 @@ namespace mfront{
   {
     using namespace std;
 #if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
-#warning "windows port"
+    this->ghMutex = CreateMutex(NULL,      // default security attributes
+				FALSE,     // initially not owned
+				"mfront"); // named mutex
+    if (this->ghMutex == NULL){
+      string msg("MFrontLock::MFrontLock : ");
+      msg += "semaphore creation failed";
+      throw(runtime_error(msg));
+    }
 #else
     ostringstream sn;
     sn << "/mfront-" << ::geteuid();
@@ -53,7 +60,14 @@ namespace mfront{
   {
     using namespace std;
 #if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
-#warning "windows port"
+    DWORD dwWaitResult;
+    dwWaitResult = ::WaitForSingleObject(this->ghMutex, // handle to mutex
+					 INFINITE);     // no time-out interval
+    if(dwWaitResult==WAIT_ABANDONED){
+      string msg("MFrontLock::MFrontLock : ");
+      msg += "semaphore can't be aquired";
+      throw(runtime_error(msg));
+    }
 #else
     if(::sem_wait(this->l)==-1){
       string msg("MFrontLock::MFrontLock : ");
@@ -68,7 +82,7 @@ namespace mfront{
   {
     using namespace std;
 #if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
-#warning "windows port"
+    ::ReleaseMutex(this->ghMutex);
 #else
     ::sem_post(this->l);
 #endif
@@ -77,7 +91,7 @@ namespace mfront{
   MFrontLock::~MFrontLock()
   {
 #if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
-#warning "windows port"
+    ::CloseHandle(this->ghMutex);
 #else
     ::sem_close(this->l);
 #endif

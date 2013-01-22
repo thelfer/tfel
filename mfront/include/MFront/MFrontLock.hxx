@@ -9,7 +9,7 @@
 #define   _LIB_MFRONT_MFRONTLOCK_H_ 
 
 #if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
-#warning "windows port"
+#include <windows.h>
 #else
 #include<semaphore.h>
 #endif
@@ -30,7 +30,7 @@ namespace mfront{
     operator = (const MFrontLock&);
     ~MFrontLock();
 #if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
-#warning "windows port"
+    HANDLE ghMutex;
 #else
     sem_t * l;
 #endif

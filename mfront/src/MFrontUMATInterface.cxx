@@ -1634,11 +1634,12 @@ namespace mfront{
     map<string,vector<string> > incs;
     string lib = MFrontUMATInterface::getLibraryName(library,material);
     incs[lib].push_back("`tfel-config --includes`");
-    char * castem_root = ::getenv("CASTEM_ROOT");
 #ifdef CASTEM_CPPFLAGS
     incs[lib].push_back(CASTEM_CPPFLAGS);
 #endif /* CASTEM_CPPFLAGS */
+#ifndef LOCAL_CASTEM_HEADER
 #ifdef CASTEM_ROOT
+    char * castem_root = ::getenv("CASTEM_ROOT");
     if(castem_root!=0){
       incs[lib].push_back("-I"+string(castem_root)+"/include");
     } else {
@@ -1649,6 +1650,7 @@ namespace mfront{
       incs[lib].push_back("-I"+string(castem_root)+"/include");
     }
 #endif /* CASTEM_ROOT */
+#endif /* LOCAL_CASTEM_HEADER_FILE */
     return incs;
   } // end of MFrontUMATInterface::getGeneratedSources
 

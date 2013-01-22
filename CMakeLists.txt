@@ -3,12 +3,17 @@ cmake_minimum_required(VERSION 2.4)
 include(cmake/modules/tfel.cmake)
 # some variables for compatibility with autotools
 include(cmake/modules/autotools.cmake)
-# check for castem
-include(cmake/modules/autotools.cmake)
 
 #major and minor version
 tfel_project(1 1)
 set(PACKAGE_BUGREPORT "thomas.helfer@cea.fr")
+
+#extractin svn revision
+execute_process(COMMAND svnversion
+                WORKING_DIRECTORY "${PROJECT_SOURCE_DIR}"
+                OUTPUT_VARIABLE TFEL_SVN_REVISION 
+		OUTPUT_STRIP_TRAILING_WHITESPACE)
+
 
 # testing
 # (must be placed *before* any add_subdirectory, cmake bug ?)
@@ -51,13 +56,22 @@ add_definitions("-DOPTIMISATION_FLAGS=\\\"\"${OPTIMISATION_FLAGS}\"\\\"")
 add_definitions("-DOPTIMISATION_FLAGS=\\\"\"${OPTIMISATION_FLAGS}\"\\\"")
 add_definitions("-DCOMPILER_WARNINGS=\\\"\"${COMPILER_WARNINGS}\"\\\"")
 add_definitions("-DVERSION=\\\"\"${TFEL_VERSION_MAJOR}\"\\\"")
-add_definitions("-DTFEL_SVN_REVISION=\\\"\"????\"\\\"")
+add_definitions("-DTFEL_SVN_REVISION=\\\"\"${TFEL_SVN_REVISION}\"\\\"")
 
 set(CMAKE_CXX_FLAGS "${OPTIMISATION_FLAGS} ${CMAKE_CXX_FLAGS}")
 set(CMAKE_CXX_FLAGS "${COMPILER_WARNINGS}  ${CMAKE_CXX_FLAGS}")
 
 #castem
-include(cmake/modules/castem.cmake)
+option(local-castem-header "use a local version of castem.h" OFF)
+if(local-castem-header)
+  include(cmake/modules/castem-unix-type.cmake)
+  add_definitions(-DLOCAL_CASTEM_HEADER=1)
+  add_definitions("-DLOCAL_CASTEM_HEADER=1 -DHAVE_CASTEM=1")
+  set(HAVE_CASTEM ON)
+  set(LOCAL_CASTEM_HEADER ON)
+else(local-castem-header)
+  include(cmake/modules/castem.cmake)
+endif(local-castem-header)
 
 #gnuplot
 include(FindGnuplot)

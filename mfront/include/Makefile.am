@@ -67,6 +67,9 @@ nobase_noinst_HEADERS += MFront/MFrontCLawInterfaceBase.hxx          \
 if HAVE_CASTEM
 nobase_include_HEADERS += MFront/MFrontCastemLawInterface.hxx   \
 	 	          MFront/MFrontUMATInterface.hxx
+if LOCAL_CASTEM_HEADER
+nobase_include_HEADERS += castem.h
+endif 
 endif
 
 nobase_include_HEADERS += MFront/UMAT/UMATException.hxx                     \

@@ -16,5 +16,14 @@ tfel_enable_cxx_compiler_flag(OPTIMISATION_FLAGS "march=native")
 set(OPTIMISATION_FLAGS "-DNO_RUNTIME_CHECK_BOUNDS ${OPTIMISATION_FLAGS}")
 
 if(CMAKE_BUILD_TYPE STREQUAL "Release")
-  add_definitions("-DNDEBUG")
+  add_definitions("-O2 -DNDEBUG")
 endif(CMAKE_BUILD_TYPE STREQUAL "Release")
+
+if(CMAKE_BUILD_TYPE STREQUAL "Debug")
+  add_definitions("-g")
+endif(CMAKE_BUILD_TYPE STREQUAL "Debug")
+
+if(HAVE_FORTRAN)
+  # we associate clang with the gnu fortran compiler
+  include(cmake/modules/gnu-fortran-compiler.cmake)
+endif(HAVE_FORTRAN)

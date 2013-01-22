@@ -163,7 +163,11 @@ namespace tfel
       operator()(size_type,
 		 size_type) const;
 
+#ifdef NO_RUNTIME_CHECK_BOUNDS
+      TFEL_MATH_INLINE const RunTimeProperties
+#else
       TFEL_MATH_INLINE const RunTimeProperties&
+#endif
       getRunTimeProperties(void) const;
 
       /*

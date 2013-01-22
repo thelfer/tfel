@@ -310,6 +310,14 @@ main(const int argc,
   }
 
 #ifdef HAVE_CASTEM
+#ifdef LOCAL_CASTEM_HEADER
+  if(castem){
+    cout << CASTEMFLAGS1 << " ";
+    if(!incs){
+      cout << "-I" << includeDir() << " ";
+    }
+  }
+#else  /* LOCAL_CASTEM_HEADER */
   if(castem){
     cout << CASTEMFLAGS1 << " ";
     const char * const castempath = getenv("CASTEM_ROOT");
@@ -319,6 +327,7 @@ main(const int argc,
       cout << CASTEMFLAGS2 << " ";
     }
   }
+#endif /* LOCAL_CASTEM_HEADER */
 #endif /* HAVE_CASTEM */
 
   if(incs){

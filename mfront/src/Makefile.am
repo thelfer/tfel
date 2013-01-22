@@ -4,7 +4,10 @@ INCLUDES = -I$(top_srcdir)/include        \
 	   -I$(top_srcdir)/mfront/include
 
 if HAVE_CASTEM
-INCLUDES += -I$(CASTEM_ROOT)/include $(CASTEM_CPPFLAGS)
+if !LOCAL_CASTEM_HEADER
+INCLUDES += -I$(CASTEM_ROOT)/include
+endif
+INCLUDES += $(CASTEM_CPPFLAGS)
 endif
 
 bin_PROGRAMS = mfront
