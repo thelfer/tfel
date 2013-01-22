@@ -24,9 +24,9 @@ tfel_enable_cxx_compiler_flag(CMAKE_CXX_FLAGS    "ipo")
 
 set(OPTIMISATION_FLAGS "-DNO_RUNTIME_CHECK_BOUNDS ${OPTIMISATION_FLAGS}")
 
-if(CMAKE_BUILD_TYPE STREQUAL "Release")
+if((NOT CMAKE_BUILD_TYPE) OR (CMAKE_BUILD_TYPE STREQUAL "Release"))
   add_definitions("-O3 -DNDEBUG")
-endif(CMAKE_BUILD_TYPE STREQUAL "Release")
+endif((NOT CMAKE_BUILD_TYPE) OR (CMAKE_BUILD_TYPE STREQUAL "Release"))
 
 if(CMAKE_BUILD_TYPE STREQUAL "Debug")
   add_definitions("-g")
