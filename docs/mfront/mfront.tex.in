@@ -45,6 +45,12 @@
 \newcommand{\sirius}{\texttt{sirius}}
 \newcommand{\fortran}{\texttt{fortran}}
 
+\newcommand{\cmake}{\href{http://www.cmake.org/}{\texttt{cmake}}}
+\newcommand{\autotools}{\href{http://fr.wikipedia.org/wiki/Autotools}{\texttt{autotools}}}
+\newcommand{\python}{\href{http://python.org}{\texttt{python}}}
+\newcommand{\gnuplot}{\href{http://www.gnuplot.info}{\texttt{gnuplot}}}
+\newcommand{\latex}{\href{http://www.latex-project.org}{\LaTeX2e{}}}
+\newcommand{\make}{\href{http://www.gnu.org/software/make/}{\texttt{make}}}
 \newcommand{\doxygen}{\href{http://www.stack.nl/~dimitri/doxygen/}{\texttt{doxygen}}}
 \newcommand{\valgrind}{\href{http://www.valgrind.org/}{\texttt{valgrind}}}
 
@@ -89,7 +95,10 @@
 \newcommand{\unix}{\href{http://www.kernel.org/}{\texttt{unix}}}
 \newcommand{\cygwin}{\href{http://www.cygwin.com/}{\texttt{cygwin}}}
 \newcommand{\linux}{\href{http://www.kernel.org/}{\texttt{linux}}}
-\newcommand{\debian}{\href{http://www.debian.org/}{\texttt{debian}}}
+\newcommand{\debian}{\href{http://www.debian.org/}{\texttt{Debian}}}
+\newcommand{\ubuntu}{\href{http://www.ubuntu.com}{\texttt{Ubuntu}}}
+\newcommand{\redhat}{\href{http://www.redhat.com}{\texttt{Red Hat}}}
+\newcommand{\mandriva}{\href{http://www.mandriva.com}{\texttt{Mandriva}}}
 \newcommand{\excel}{\href{http://www.microsoft.com/france/office/2007/programs/excel/overview.mspx}{\texttt{Microsoft Office Excel}}}
 
 \newcommand{\debutpas}[1]{\ensuremath{\left.#1\right|_{t}}}
@@ -103,6 +112,15 @@
       \ttfamily\scriptsize #1
     \end{minipage}
   }
+}
+
+\newcommand{\bash}[1]{
+  \begin{center}
+    \begin{minipage}{0.8\linewidth}
+      \footnotesize{}
+      \texttt{\$#1}
+    \end{minipage}
+  \end{center}
 }
 
 \include{Champs}
@@ -177,48 +195,6 @@ les applications \pleiades{} via l'interface
 \pycastem~\cite{t.06:_implan}.}.
 
 \paragraph{Utilisation de \mfront{} au DER/SESI}
-
-\clearpage
-\newpage
-\section{Documentation informatique, notice d'installation}
-
-Le générateur de code \mfront{} fait partie d'une librairie
-hétéroclite nommée \TFEL{} qui est elle-même aujourd'hui intégrée à
-l'architecture \pleiades{}.
-
-Nous commençons par abordés des questions liés aux plate-formes et aux
-compilateurs supportés.
-
-Ces différents points permettent d'apprécier la qualité logicielle de
-\TFEL{}.
-
-Les différentes procédures de récupération des sources, de compilation
-et d'installation de \tfel{} sont alors décrites. La générations de
-binaires, sous forme de paquet RPM ou Debian est également détaillée.
-
-\subsection{Plate-formes supportées}
-
-
-
-\subsubsection{Systèmes \unix{}}
-
-Le générateur de code \mfront{} est développé dans un environnement
-\linux{} en se basant sur la norme \(98\) du \cpp{} et sur la norme
-POSIX pour les appels système\footnote{La portabilité de \tfel{}, sans
-  modification du code source, sur d'autres systèmes \unix{} a été
-  vérifiée sur des version antérieures par un portage sur les systèmes
-  OpenSolaris et FreeBSD~: nous pensons qu'un tel portage de la
-  version actuelle se ferait sans difficulté}.
-
-La compatibilité POSIX permet également de compiler \tfel{} dans un
-environnement \cygwin{} qui fournit une surcouche POSIX au-dessus des
-systèmes \windows{}. Pour différentes raisons, un portage natif sous
-\windows{} est préférable et l'utilisation de \tfel{} dans \cygwin{}
-est amené à tomber en désuétude.
-
-\subsubsection{Systèmes \windows{}}
-
-
 
 \clearpage
 \newpage
@@ -4442,6 +4418,383 @@ Ca se développe bien (DMN+DER+cyrano) !
 \listefigures
 
 \appendix
+
+\section{Documentation informatique, notice d'installation}
+
+Le générateur de code \mfront{} fait partie d'une librairie
+hétéroclite nommée \TFEL{} qui est elle-même aujourd'hui intégrée à
+l'architecture \pleiades{}.
+
+Nous commençons par abordés des questions liées aux plate-formes et
+aux compilateurs supportés. Ces différents points permettent d'apprécier
+la qualité logicielle de \TFEL{}.
+
+Les différentes procédures de récupération des sources, de compilation
+et d'installation de \tfel{} sont alors décrites. La générations de
+binaires, sous forme de paquet RPM ou Debian est également détaillée.
+
+\subsection{Plate-formes supportées}
+
+\subsubsection{Systèmes \unix{}}
+
+Le générateur de code \mfront{} est développé dans un environnement
+\linux{} en se basant sur la norme \(98\) du \cpp{} et sur la norme
+POSIX pour les appels système\footnote{La portabilité de \tfel{}, sans
+  modification du code source, sur d'autres systèmes \unix{} a été
+  vérifiée sur des version antérieures par un portage sur les systèmes
+  OpenSolaris et FreeBSD~: nous pensons qu'un tel portage de la
+  version actuelle se ferait sans difficulté}.
+
+La compatibilité POSIX permet également de compiler \TFEL{} dans un
+environnement \cygwin{}\footnote{\cygwin{} fournit une surcouche POSIX
+  au-dessus des systèmes \windows{}}. Pour différentes raisons, un
+portage natif sous \windows{} est préférable et l'utilisation de \TFEL{}
+dans un environnement \cygwin{} est amené à tomber en désuétude.
+
+\subsubsection{Systèmes \windows{}}
+
+\subsection{Procédure d'installation}
+
+\TFEL{} propose aujourd'hui deux méthodes de compilation et
+d'installation. La première est basée sur le \og~moteur de
+production~\fg \cmake{}. Cette méthode est aujourd'hui conseillée. La
+seconde est basée sur les traditionnels \autotools{}.
+
+\subsubsection{Compilation, installation et
+  génération de binaires à l'aide de \cmake{}}
+
+À partir du répertoire racine des sources, il est conseillé de créer un
+sous-répertoire pour la construction des binaires~:
+\bash{
+  mkdir build \\
+  \$ cd build
+}
+
+\paragraph{Préparation de la compilation}
+La commande \cmake{} est invoquée pour préparer la compilation~:
+\bash{
+  cmake ../ -DCMAKE\textunderscore{}\-INSTALL\textunderscore{}\-PREFIX=... -DCMAKE\textunderscore{}\-BUILD\textunderscore{}\-TYPE="Release" [options]
+}
+
+La variable
+\varcpp{CMAKE\textunderscore{}\-INSTALL\textunderscore{}\-PREFIX} permet
+de préciser le répertoire d'installation.
+
+La variable
+\varcpp{CMAKE\textunderscore{}\-BUILD\textunderscore{}\-TYPE} précise le
+type de compilation souhaitée. Deux valeurs sont possibles~:
+\texttt{Release} (version de production) et \texttt{Debug} (version de
+développement).
+
+Pour certains systèmes, il est également possible de préciser la
+variable \varcpp{LIB\textunderscore{}\-SUFFIX} pour modifier le nom du
+répertoire d'installation des librairies. Ainsi, pour être compatible
+avec les conventions des distributions \mandriva{} (entre autres), on
+utilisera l'option \varcpp{-DLIB\textunderscore{}\-SUFFIX=64}.
+
+Les options suivantes sont disponibles~:
+\begin{itemize}
+  \item \varcpp{-DENABLE-STATIC=ON/OFF}, qui demande la
+  compilation de librairies statiques en plus de librairies dynamiques.
+  Par défaut, cette option est désactivée~;
+  \item \varcpp{-Denable-fortran=ON/OFF}, qui permet d'activer ou
+  de désactiver la compilation de l'interface \texttt{fortran}. Par
+  défaut, cette option est désactivée~;
+  \item \varcpp{-Denable-python=ON/OFF}, qui permet d'activer ou
+  de désactiver la compilation de l'interface \texttt{python}. Par
+  défaut, cette option est activée si un interpréteur \python{} adéquat
+  est trouvée~;
+  \item \varcpp{-Denable-aster=ON/OFF}, qui permet d'activer ou
+  de désactiver la compilation de l'interface \texttt{aster}. Par
+  défaut, cette option est désactivée~;
+  \item \varcpp{-Dlocal-castem-header=ON/OFF}, qui permet
+  d'activer ou de désactiver la compilation des interfaces
+  \texttt{castem} (propriétés matériau) et \texttt{umat} (loi de
+  comportement) sans utiliser une installation de \castem{}. \TFEL{}
+  fournira alors sa propre version du fichier d'entête
+  \header{castem.h}. Par défaut, cette option est désactivée~;
+\end{itemize}
+
+Cette phase de préparation va automatiquement rechercher~:
+\begin{itemize}
+  \item un installation valide de \castem{}, si l'option
+  \varcpp{-Dlocal-castem-header} n'a pas été spécifiée. Cette recherche
+  peut être facilitée en définissant la variable
+  \varcpp{CASTEM\textunderscore{}\-INSTALL\textunderscore{}\-PATH} par
+  l'option
+  \varcpp{-DCASTEM\textunderscore{}\-INSTALL\textunderscore{}\-PATH=...}
+  ou en définissant une variable d'environnement \env{CASTEMHOME}. Si la
+  recherche réussie, les interfaces \texttt{castem} (propriétés
+  matériau) et \texttt{umat} (loi de comportement) seront construites~;
+  \item une installation valide de \gnuplot{}. Si la recherche
+  réussie, l'interface \texttt{gnuplot} (propriétés matériau) est
+  construite~;
+  \item une installation valide de \doxygen{}~;
+  \item une installation valide de \latex{}~;
+\end{itemize}
+
+Il est possible de préciser le compilateur à utiliser par les
+variables d'environnement \env{CC} (compilateur \texttt{c}), \env{CXX}
+(compilateur \cpp), \env{LD} (éditeur de liens).
+
+Enfin, cette phase de préparation va tenter de trouver les options
+de compilation optimales ainsi que des drapeaux de compilation assez
+contraignants. Ces mêmes options seront utilisées par \mfront{} pour la
+compilation des sources générées\footnote{Pour connaître les options retenues,
+  il est possible d'interroger la commande {\tt tfel-config}~:
+  \bash{
+    \#retourne les avertissements retenus             \\
+    \$ tfel-config --warning                          \\
+    \$ \#retourne les options d'optimisation retenues \\
+    \$ tfel-config --oflags
+  }
+}.
+
+\paragraph{Compilation} La compilation de \TFEL{}
+est lancé par la commande \make{}~:
+\bash{
+  make -j x
+}
+où \texttt{x} est le nombre de processeurs affectés à cette 
+
+\paragraph{Installation des binaires} Les
+binaires sont installés par la commande~:
+\bash{
+  make install
+}
+
+\paragraph{Exécution des tests} La base des cas test
+de \TFEL{} peut être lancée par la commande suivante~:
+\bash{
+  make check
+}
+
+\paragraph{Installation de la documentation} La
+documentation de \TFEL{} est installée par la commande~:
+\bash{
+  make doc-install
+}
+
+Cette documentation se décompose en deux parties~:
+\begin{itemize}
+  \item une documentation informatique générée par \doxygen{} (si
+  cet outil est disponible). Cette documentation peut être générée
+  indépendamment par la commande~:
+  \bash{ make doc-html}
+  \item la présente documentation, au format \texttt{pdf}, si
+  \latex{} est disponible. Cette documentation peut être générée
+  indépendamment par la commande~:
+  \bash{ make doc-pdf}
+\end{itemize}
+
+\paragraph{Génération de paquets RPM} Des paquets
+RPM, utilisés par les distributions \linux{} \redhat{} et \mandriva{}
+(entre autres) peuvent être générés par la commande~:
+\bash{cpack -G RPM}
+
+\paragraph{Génération de paquets DEB} Des paquets
+DEB, utilisés par les distributions \linux{} \debian{} et \ubuntu{}
+(entre autres) peuvent être générés par la commande~:
+\bash{cpack -G DEB}
+
+\subsubsection{Compilation, installation et
+  génération de binaires à l'aide des \autotools{}}
+
+Si les sources ont été récupérées à partir de la gestion de
+configuration, il est nécessaire d'initialiser l'environnement de
+construction des binaires. Pour cela, il faut taper, dans le répertoire
+racine des sources, la commande suivante~:
+\bash{
+  ./bootstrap.sh
+}
+
+Il est conseillé de créer un sous-répertoire pour la construction des
+binaires~:
+\bash{
+  mkdir build \\
+  \$ cd build
+ }
+
+\paragraph{Préparation de la compilation}
+La commande \cmake{} est invoquée pour préparer la compilation~:
+\bash{
+  ../configure -{}-prefix=... [options]
+}
+
+L'option \varcpp{-{}-prefix} permet de préciser le répertoire
+d'installation.
+
+Les options suivantes sont disponibles~:
+\begin{itemize}
+  \item \varcpp{-{}-enable-production}, qui permet de produire
+  une version optimisée (choix par défaut)~;
+  \item \varcpp{-{}-enable-debug}, qui permet de produire une
+  version de développement~;
+  \item \varcpp{-{}-enable-tests}, qui permet d'activer la
+  compilation des cas test~;
+  \item \varcpp{-{}-enable-fortran}, qui permet d'activer ou de
+  désactiver la compilation de l'interface \texttt{fortran}. Par défaut,
+  cette option est désactivée~;
+  \item \varcpp{-{}-enable-python}, qui permet d'activer ou de
+  désactiver la compilation de l'interface \texttt{python}. Par défaut,
+  cette option est activée si un interpréteur \python{} adéquat est
+  trouvée~;
+  \item \varcpp{-{}-enable-aster}, qui permet d'activer ou de
+  désactiver la compilation de l'interface \texttt{aster}. Par défaut,
+  cette option est désactivée~;
+  \item \varcpp{-{}-local-castem-header}, qui permet d'activer ou
+  de désactiver la compilation des interfaces \texttt{castem}
+  (propriétés matériau) et \texttt{umat} (loi de comportement) sans
+  utiliser une installation de \castem{}. \TFEL{} fournira alors sa
+  propre version du fichier d'entête \header{castem.h}. Par défaut,
+  cette option est désactivée~;
+  \item \varcpp{-{}-with-castem=xxx} qui permet de préciser le
+  répertoire d'installation de \castem{}~;
+\end{itemize}
+
+Cette phase de préparation va automatiquement rechercher~:
+\begin{itemize}
+  \item un installation valide de \castem{}, si l'option
+  \varcpp{-{}-local-castem-header} n'a pas été spécifiée. Cette
+  recherche peut être facilitée en utilisant l'option
+  \varcpp{-{}-with-castem=xxx} ou ou en définissant une variable
+  d'environnement \env{CASTEMHOME}. Si la recherche réussie, les
+  interfaces \texttt{castem} (propriétés matériau) et \texttt{umat} (loi
+  de comportement) seront construites~;
+  \item une installation valide de \gnuplot{}. Si la recherche
+  réussie, l'interface \texttt{gnuplot} (propriétés matériau) est
+  construite~;
+  \item une installation valide de \doxygen{}~;
+  \item une installation valide de \latex{}~;
+\end{itemize}
+
+Il est possible de préciser le compilateur à utiliser par les
+variables d'environnement \env{CC} (compilateur \texttt{c}), \env{CXX}
+(compilateur \cpp), \env{LD} (éditeur de liens).
+
+Enfin, cette phase de préparation va tenter de trouver les options
+de compilation optimales ainsi que des drapeaux de compilation assez
+contraignants. Ces mêmes options seront utilisées par \mfront{} pour la
+compilation des sources générées\footnote{Pour connaître les options retenues,
+  il est possible d'interroger la commande {\tt tfel-config}~:
+  \bash{
+    \#retourne les avertissements retenus             \\
+    \$ tfel-config --warning                          \\
+    \$ \#retourne les options d'optimisation retenues \\
+    \$ tfel-config --oflags
+  }
+}.
+
+\paragraph{Compilation} La compilation de \TFEL{}
+est lancé par la commande \make{}~:
+\bash{
+  make -j x
+}
+où \texttt{x} est le nombre de processeurs affectés à cette 
+
+\paragraph{Installation des binaires} Les
+binaires sont installés par la commande~:
+\bash{
+  make install
+}
+
+\paragraph{Exécution des tests} La base des cas test
+de \TFEL{} peut être lancée par la commande suivante~:
+\bash{
+  make check
+}
+
+\paragraph{Installation de la documentation} La
+documentation de \TFEL{} est installée par la commande~:
+\bash{
+  make doc-install
+}
+
+Cette documentation se décompose en deux parties~:
+\begin{itemize}
+  \item une documentation informatique générée par \doxygen{} (si
+  cet outil est disponible). Cette documentation peut être générée
+  indépendamment par la commande~:
+  \bash{ make doc-html}
+  \item la présente documentation, au format \texttt{pdf}, si
+  \latex{} est disponible. Cette documentation peut être générée
+  indépendamment par la commande~:
+  \bash{ make doc-pdf}
+\end{itemize}
+
+\subsection{Description du répertoire d'installation}
+
+Le répertoire d'installation contient quatre répertoires~:
+\begin{itemize}
+  \item le répertoire \texttt{bin} contient les exécutables
+  produits~;
+  \item le répertoire \texttt{lib} contient les librairies
+  produites~;	
+  \item le répertoire \texttt{include} contient les fichiers
+  d'entête des différentes librairies de \TFEL{}~
+  \item le répertoire \texttt{share} contient des tests et des
+  fichiers d'exemple.
+\end{itemize}
+
+\subsubsection{Exécutables produits}
+
+Actuellement, trois exécutables sont produits~:
+\begin{itemize}
+  \item \texttt{tfel-config} qui permet de récupérer des
+  informations sur~:
+  \begin{itemize}
+    \item le répertoire d'installation de \TFEL{}~;
+    \item les options de compilation à utiliser~;
+    \item les drapeaux d'avertissement à utiliser~;
+  \end{itemize}
+  \item \texttt{tfel-doc} est un utilitaire de description de cas
+  test~;
+  \item \texttt{mfront} qui fait l'objet du présent document~;
+\end{itemize}
+
+\subsubsection{Librairies produites}
+
+\TFEL{} est un projet complexe séparé en différentes librairies :
+\begin{itemize}
+  \item TFELException est une librairie utilitaire contenant les
+  bases des classes d'exceptions utilisées dans \TFEL{}~;	
+  \item TFELTests propose un framework de test~
+  \item TFELUtilities est une librairie contenant différentes
+  classes utilitaires~;
+  \item TFELSystem propose :
+  \begin{itemize}
+    \item un enrobage \cpp{} de diverses fonctionnalités
+    \texttt{POSIX}~:
+    \begin{itemize}
+      \item créations et interaction avec des processus
+      (ProcessManager)
+      \item gestion des signaux (SignalManager)
+      \item créations de répertoires, etc..
+      \item traduction des erreurs posix portées par
+      errn\item en exceptions
+    \end{itemize}
+    \item des facilités d'appels de fonctions externes via
+    dlopen (ExternalLibraryManager)
+  \end{itemize}
+  \item TFELMath contient des classes utilitaires nécessaires aux
+  classes mathématiques proposées par \TFEL{}
+  \item TFELMathCubicSpline contient des classes d'interpolation
+  par des splines cubiques~;
+  \item TFELMathKriging contient des classes d'interpolation par
+  des méthodes de Krigeage~;
+  \item TFELMathParser contient les classes dédiées à
+  l'interprétation de formules mathématiques complexes à partir de
+  chaînes de caractères~;
+  \item TFELMaterial contient certains classes utilitaires pour
+  l'écriture de propriétés matériau ou loi de comportement mécanique
+  (vérification des bornes notamment).
+\end{itemize}
+
+Les classes et les fonctionnalités les plus utiles pour l'écriture de
+lois de comportement sont décrites en annexe~\ref{}.
+
+\clearpage
+\newpage
 \section{Opérations tensorielles dans \tfel{}}
 
 La librairie \tfel{} est née d'une initiative personnelle visant à se
