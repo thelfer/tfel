@@ -94,6 +94,19 @@ if(HAVE_CASTEM)
 			  TFELException)
 endif(HAVE_CASTEM)
 
+if(HAVE_ASTER)
+  set(mfront_SOURCES
+    MFrontAsterInterface.cxx
+    ${mfront_SOURCES})
+  set(AsterInterface_SOURCES
+    AsterInterfaceBase.cxx
+    AsterException.cxx)
+  tfel_library(AsterInterface ${AsterInterface_SOURCES})
+  target_link_libraries(AsterInterface
+    TFELUtilities
+    TFELException)
+endif(HAVE_ASTER)
+
 add_executable(mfront ${mfront_SOURCES})
 
 if(UNIX)

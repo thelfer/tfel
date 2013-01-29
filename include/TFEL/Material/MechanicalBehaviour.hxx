@@ -26,7 +26,6 @@ namespace tfel{
     template<unsigned short N,typename NumType, bool use_qt>
     struct MechanicalBehaviour
     {
-
       /*!
        * \brief  Return the name of the class.
        * \param  void.
@@ -37,8 +36,24 @@ namespace tfel{
 	return std::string("MechanicalBehaviour");
       }
 
-      virtual bool integrate() = 0;
+      /*!
+       * determine the value of the internal state variables at the
+       * end of the time step
+       * \param[in] b : compute the stiffness matrix
+       * \return true if the integration is successfull
+       */
+      virtual bool
+      integrate(const bool) = 0;
 
+      /*!
+       * \return the tangent operator
+       */
+      virtual const typename tfel::config::Types<N,NumType,use_qt>::StiffnessTensor&
+      getTangentOperator(void) const = 0;
+
+      /*!
+       * destructor
+       */
       virtual ~MechanicalBehaviour(){};
 
     };

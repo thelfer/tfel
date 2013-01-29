@@ -29,6 +29,8 @@ namespace mfront{
 
     void writeBehaviourIntegrator(void);
 
+    void writeBehaviourComputeTangentOperator(void);
+
     MFrontIsotropicStrainHardeningMisesCreepParser();
 
     ~MFrontIsotropicStrainHardeningMisesCreepParser();

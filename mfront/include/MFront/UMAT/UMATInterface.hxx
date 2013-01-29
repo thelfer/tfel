@@ -640,7 +640,7 @@ namespace umat{
 	    behaviour.setOutOfBoundsPolicy(up.getOutOfBoundsPolicy());
 	    behaviour.checkBounds();
 	    try{
-	      convergence = behaviour.integrate();
+	      convergence = behaviour.integrate(false);
 	    }
 	    catch(const tfel::material::DivergenceException& e){
 #ifdef MFRONT_UMAT_VERBOSE
@@ -721,7 +721,7 @@ namespace umat{
 	    throwNegativeTimeStepException(Name<Behaviour<N,UMATReal,false> >::getName());
 	  }
 	  behaviour.checkBounds();
-	  if(!this->behaviour.integrate()){
+	  if(!this->behaviour.integrate(false)){
 	    throwBehaviourIntegrationFailedException(Name<Behaviour<N,UMATReal,false> >::getName());
 	  }
 	  behaviour.checkBounds();

@@ -19,6 +19,8 @@ namespace mfront{
     using namespace std;
     typedef map<string,string>::value_type MVType;
     // Default state vars
+    this->reserveName("ccto_tmp_1");
+    this->reserveName("inv_sqrt2");
     this->registerVariable("p");
     this->registerVariable("dp");
     this->registerVariable("eel");
@@ -41,6 +43,8 @@ namespace mfront{
     this->localVarsHolder.push_back(VarHandler("stress","seq",1u,0u));
     this->localVarsHolder.push_back(VarHandler("stress","seq_e",1u,0u));
     this->localVarsHolder.push_back(VarHandler("StrainStensor","n",1u,0u));
+    this->hasConsistantTangentOperator = true;
+    this->isConsistantTangentOperatorSymmetric = true;
   }
 
   std::string
@@ -80,19 +84,19 @@ namespace mfront{
     this->behaviourFile << "}\n\n";
 
     this->behaviourFile << "bool NewtonIntegration(void){\n";
+    this->behaviourFile << "using namespace std;\n";
     this->behaviourFile << "using namespace tfel::math;\n";
     this->behaviourFile << "unsigned int iter;\n";
     this->behaviourFile << "bool converge=false;\n";
     this->behaviourFile << "bool inversible=true;\n";
     this->behaviourFile << "strain newton_f;\n";
     this->behaviourFile << "strain newton_df;\n";
-    this->behaviourFile << "real newton_epsilon = 100*std::numeric_limits<real>::epsilon();\n";
-    this->behaviourFile << "stress mu_3_theta = 3*(";
-    this->behaviourFile << this->className << "::theta)*(this->mu);\n";
+    this->behaviourFile << "real newton_epsilon = 100.*std::numeric_limits<real>::epsilon();\n";
+    this->behaviourFile << "stress mu_3_theta = 3*(this->theta)*(this->mu);\n";
     this->behaviourFile << "";
     this->behaviourFile << "iter=0;\n";    
     this->behaviourFile << "while((converge==false)&&\n";
-    this->behaviourFile << "(iter<(" << this->className << "::iterMax))&&\n";
+    this->behaviourFile << "(iter<(this->iterMax))&&\n";
     this->behaviourFile << "(inversible==true)){\n";
     this->behaviourFile << "this->seq = std::max(this->seq_e-mu_3_theta*(this->dp),real(0.f));\n";
     this->behaviourFile << "this->computeFlow();\n";
@@ -102,8 +106,13 @@ namespace mfront{
     this->behaviourFile << ">newton_epsilon){\n";
     this->behaviourFile << "this->dp -= newton_f/newton_df;\n";
     this->behaviourFile << "iter+=1;\n";
+    if(this->debugMode){
+      this->behaviourFile << "cout << \"" << this->className
+			  << "::NewtonIntegration() : iteration \" "
+			  << "<< iter << \" : \" << std::abs(tfel::math::base_cast(newton_f)) << endl;\n";
+    }
     this->behaviourFile << "converge = (std::abs(tfel::math::base_cast(newton_f))<";
-    this->behaviourFile << "(" << this->className << "::epsilon));\n";
+    this->behaviourFile << "(this->epsilon));\n";
     this->behaviourFile << "} else {\n";
     this->behaviourFile << "inversible=false;\n";
     this->behaviourFile << "}\n";
@@ -111,10 +120,20 @@ namespace mfront{
     this->behaviourFile << "if(inversible==false){\n";
     this->behaviourFile << "return false;\n";
     this->behaviourFile << "}\n\n";
-    
-    this->behaviourFile << "if(iter==" << this->className << "::iterMax){\n";
+    this->behaviourFile << "if(iter==this->iterMax){\n";
+    if(this->debugMode){
+      this->behaviourFile << "cout << \"" << this->className
+			  << "::NewtonIntegration() : no convergence after \" "
+			  << "<< iter << \" iterations\"<< endl << endl;\n";
+      this->behaviourFile << "cout << *this << endl;\n";
+    }
     this->behaviourFile << "return false;\n";
     this->behaviourFile << "}\n\n";
+    if(this->debugMode){
+      this->behaviourFile << "cout << \"" << this->className
+			  << "::NewtonIntegration() : convergence after \" "
+			  << "<< iter << \" iterations\"<< endl << endl;\n";
+    }
     this->behaviourFile << "return true;\n";
     this->behaviourFile << "}\n\n";
   } // end of writeBehaviourParserSpecificMembers
@@ -128,9 +147,14 @@ namespace mfront{
     this->behaviourFile << "* \\brief Integrate behaviour law over the time step\n";
     this->behaviourFile << "*/\n";
     this->behaviourFile << "bool\n";
-    this->behaviourFile << "integrate(void){\n";
+    this->behaviourFile << "integrate(const bool computeTangentOperator_){\n";
     this->behaviourFile << "if(!this->NewtonIntegration()){\n";
     this->behaviourFile << "return false;\n";
+    this->behaviourFile << "}\n";
+    this->behaviourFile << "if(computeTangentOperator_){\n";
+    this->behaviourFile << "if(!this->computeConsistantTangentOperator()){\n";
+    this->behaviourFile << "return false;\n";
+    this->behaviourFile << "}\n";
     this->behaviourFile << "}\n";
     this->behaviourFile << "this->deel = this->deto-(this->dp)*(this->n);\n";
     this->behaviourFile << "this->updateStateVars();\n";
@@ -142,6 +166,22 @@ namespace mfront{
 	p->writeBoundsChecks(this->behaviourFile);
       }
     }
+    this->behaviourFile << "return true;\n";
+    this->behaviourFile << "}\n\n";
+  }
+
+  void
+  MFrontIsotropicMisesCreepParser::writeBehaviourComputeTangentOperator(void)
+  {
+    this->behaviourFile << "bool computeConsistantTangentOperator(){\n";
+    this->behaviourFile << "using tfel::material::lame::computeElasticStiffness;\n";
+    this->behaviourFile << "using tfel::math::st2tost2;\n";
+    this->behaviourFile << "computeElasticStiffness<N,Type>::exe(this->Dt,this->lambda,this->mu);\n";
+    this->behaviourFile << "if(this->seq_e>(0.01*(this->young))*std::numeric_limits<stress>::epsilon()){\n";
+    this->behaviourFile << "const real ccto_tmp_1 =  this->dp/this->seq_e;\n";
+    this->behaviourFile << "const st2tost2<N,Type>& M = st2tost2<N,Type>::M();\n";
+    this->behaviourFile << "this->Dt += -4*(this->mu)*(this->mu)*(this->theta)*(ccto_tmp_1*M-(ccto_tmp_1-this->df_dseq*(this->dt)/(1+3*(this->mu)*(this->theta)*(this->dt)*this->df_dseq))*((this->n)^(this->n)));\n";
+    this->behaviourFile << "}\n";
     this->behaviourFile << "return true;\n";
     this->behaviourFile << "}\n\n";
   }
@@ -163,11 +203,9 @@ namespace mfront{
       msg += "nu (the poisson ratio) has not been defined.";
       throw(runtime_error(msg));
     }
-    this->behaviourFile << "this->se=2*(this->mu)*(tfel::math::deviator(this->eel+(";
-    this->behaviourFile << this->className;
-    this->behaviourFile << "::theta)*(this->deto)));\n";
+    this->behaviourFile << "this->se=2*(this->mu)*(tfel::math::deviator(this->eel+(this->theta)*(this->deto)));\n";
     this->behaviourFile << "this->seq_e = sigmaeq(this->se);\n";
-    this->behaviourFile << "if(this->seq_e>100*std::numeric_limits<stress>::epsilon()){\n";
+    this->behaviourFile << "if(this->seq_e>(0.01*(this->young))*std::numeric_limits<stress>::epsilon()){\n";
     this->behaviourFile << "this->n = 1.5f*(this->se)/(this->seq_e);\n";
     this->behaviourFile << "} else {\n";
     this->behaviourFile << "this->n = StrainStensor(strain(0));\n";

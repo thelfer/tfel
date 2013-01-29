@@ -69,6 +69,13 @@ namespace tfel{
       return sK;
     } // end of st2tost2<N,T>::K
 
+    template<unsigned short N, typename T>
+    const st2tost2<N,T>&
+    st2tost2<N,T>::M(void){
+      static const st2tost2<N,T> sM(T(1.5)*st2tost2<N,T>::K());
+      return sM;
+    } // end of st2tost2<N,T>::M
+
     template<unsigned short N,typename T>
     template<typename T2,typename Expr>
     TFEL_MATH_INLINE 

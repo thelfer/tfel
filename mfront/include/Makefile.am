@@ -70,7 +70,6 @@ nobase_include_HEADERS += MFront/MFrontCastemLawInterface.hxx   \
 if LOCAL_CASTEM_HEADER
 nobase_include_HEADERS += castem.h
 endif 
-endif
 
 nobase_include_HEADERS += MFront/UMAT/UMATException.hxx                     \
 			  MFront/UMAT/UMATGetModellingHypothesis.hxx        \
@@ -83,5 +82,22 @@ nobase_include_HEADERS += MFront/UMAT/UMATException.hxx                     \
 			  MFront/UMAT/UMATTraits.hxx                        \
 			  MFront/UMAT/UMAT.hxx                              \
 			  MFront/UMAT/UMATConfig.hxx
+endif
+
+if HAVE_ASTER
+nobase_include_HEADERS += MFront/MFrontAsterInterface.hxx
+nobase_include_HEADERS += MFront/Aster/Aster.hxx                              \
+			  MFront/Aster/AsterConfig.hxx                        \
+			  MFront/Aster/AsterTraits.hxx                        \
+			  MFront/Aster/AsterException.hxx 		      \
+			  MFront/Aster/AsterInterface.hxx	  
+# MFront/Aster/AsterGetModellingHypothesis.hxx        \
+# MFront/Aster/AsterOutOfBoundsPolicy.hxx             \
+# MFront/Aster/AsterRotationMatrix.hxx                \
+# MFront/Aster/AsterOrthotropicBehaviour.hxx          \
+# MFront/Aster/AsterComputeStiffnessTensor.hxx        \
+# MFront/Aster/AsterComputeThermalExpansionTensor.hxx 
+endif
+
 
 EXTRA_DIST = CMakeLists.txt

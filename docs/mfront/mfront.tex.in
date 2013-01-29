@@ -7,9 +7,9 @@
 
 \documentclass[rectoverso,pleiades,pstricks,leqno,anti]{@abs_top_builddir@/docs/tex/texmf/note_technique_2010}
 
-\usepackage{draftcopy}
-\draftcopySetGrey{0.8}
-\draftcopyName{Version provisoire}{80}
+% \usepackage{draftcopy}
+% \draftcopySetGrey{0.8}
+% \draftcopyName{Version provisoire}{80}
 
 \usepackage[dvips]{graphicx}
 \usepackage[dvips,breaklinks]{hyperref}
@@ -1688,7 +1688,7 @@ ce mot-clé, les interfaces aux lois de comportement se charge~:
   \item de déclarer implicitement les coefficients thermo-élastiques et
   les coefficients associés aux directions d'ortho\-tropie~;
   \item d'exprimer le tenseur des déformations totales \(\tepsilonto\),
-  l'incrément du tenseur des déformations totales \(\Delta\tepsilonto\)
+  l'incrément du tenseur des déformations totales \(\Delta\,\tepsilonto\)
   et le tenseur des contraintes \(\tsigma\) en début de pas dans le
   repère d'orthotropie avant l'appel à la loi de comportement~;
   \item d'exprimer le tenseur des contraintes résultant de l'intégration
@@ -2125,6 +2125,13 @@ figure~\ref{fig:mfrontcastem2}.
 Cette extension est décrite dans
 l'annexe~\ref{sec:castem:materialbehaviours}.
 
+\subsection{Noms des variables et des méthodes \cpp{} utilisés en interne}
+
+Pour éviter les conflits avec les noms de variables de travail ou des
+méthodes \cpp{} utilisés par les classes générées, certains noms de
+variables ne peuvent être utilisées. Leur liste est donnée en
+annexe~\ref{sec:noms-des-variables}.
+
 \clearpage
 \newpage
 \section{Intégration des lois de comportement, intégrateur par défaut}
@@ -2185,8 +2192,15 @@ Le calcul des contraintes en fin de pas de temps (à l'instant
 \(t+\Delta\,t\)) s'écrit de manière similaire à son expression
 mathématique~:
 \[
-\tsigma_{t+\Delta\,t} = \tenseurq{D}\colon\paren{\tepsilonto_{t}+\Delta\tepsilonto}
+\tsigma_{t+\Delta\,t} = \tenseurq{D}\colon\paren{\tepsilonto_{t}+\Delta\,\tepsilonto}
 \]
+
+\subsection{Noms des variables et des méthodes \cpp{} utilisés en interne}
+
+Pour éviter les conflits avec les noms de variables de travail ou des
+méthodes \cpp{} utilisés par les classes générées, certains noms de
+variables ne peuvent être utilisées. Leur liste est donnée en
+annexe~\ref{sec:noms-communs-tous}.
 
 \newpage
 \clearpage
@@ -2367,7 +2381,7 @@ d'évaluer une certaine fonction \(f\) de la contrainte équivalente en
   \milieupas{\tenseur{n}}&=\Frac{3}{2\milieupas{\sigmaeq}}
   \milieupas{\tenseur{s}}=\Frac{3\mu}{\milieupas{\sigmaeq}}\milieupas{\tenseur{e}}
   =\Frac{3\mu}{\milieupas{\sigmaeq}}\paren{\debutpas{\tenseur{e}}+\theta\Delta\tenseur{e}}\\
-  &=\Frac{3\mu}{\milieupas{\sigmaeq}}\paren{\debutpas{\tenseur{e}}+\theta\paren{\Delta\tepsilonto-\Frac{1}{3}\trace\paren{\Delta\tepsilonto}\tenseur{I}-\Delta\,p\,\milieupas{\tenseur{n}}}}
+  &=\Frac{3\mu}{\milieupas{\sigmaeq}}\paren{\debutpas{\tenseur{e}}+\theta\paren{\Delta\,\tepsilonto-\Frac{1}{3}\trace\paren{\Delta\,\tepsilonto}\tenseur{I}-\Delta\,p\,\milieupas{\tenseur{n}}}}
 \end{aligned}
 \]
 où \(\tenseur{e}\) désigne le déviateur du tenseur des déformations
@@ -2375,7 +2389,7 @@ où \(\tenseur{e}\) désigne le déviateur du tenseur des déformations
 
 Dans la suite, nous noterons \(\tenseur{B}\) le tenseur suivant~:
 \[
-\tenseur{B}=\debutpas{\tepsilonel}+\theta\Delta\tepsilonto-\Frac{1}{3}\trace\paren{\debutpas{\tepsilonel}+\theta\Delta\tepsilonto}\tenseur{I}
+\tenseur{B}=\debutpas{\tepsilonel}+\theta\Delta\,\tepsilonto-\Frac{1}{3}\trace\paren{\debutpas{\tepsilonel}+\theta\Delta\,\tepsilonto}\tenseur{I}
 \]
 Ce tenseur est parfaitement connu au début du pas de temps. Nous pouvons
 alors écrire~:
@@ -2515,6 +2529,220 @@ défaut. Cette valeur par défaut peut être modifiée par la directive
 \mkey{IterMax}. Cette valeur est également un paramètre de la loi, nommé
 \varcpp{iterMax}, qui peut être modifié à l'exécution.
 
+% \subsubsection{Traitement des contraintes planes}
+
+\subsubsection{Calcul de la matrice tangente cohérente}
+
+Nous recherchons l'expression du tenseur
+\(\tenseurq{D}^{\mathit{tangent}}=\deriv{\Delta \tsigma}{\Delta
+  \tepsilonto}\). Pour cela nous pouvons écrire que~:
+\[
+\begin{aligned}
+\Delta \tsigma &=
+\tenseurq{D}\colon\Delta\tepsilonel=\tenseurq{D}\colon\paren{\Delta\,\tepsilonto-\Delta\,p\tenseur{n}}\\
+ \deriv{\Delta \tsigma}{\Delta \tepsilonto}&=
+\tenseurq{D}-\tenseurq{D}\colon\paren{\tenseur{n}\otimes\deriv{\Delta\,p}{\Delta
+    \tepsilonto}+\Delta\,p\deriv{\tenseur{n}}{\Delta\,\tepsilonto}}
+\end{aligned}
+\] 
+
+\(\Delta\,p\) étant la somme des incréments associés à chaque
+mécanisme considéré, nous avons~:
+\[
+\deriv{\Delta\,p}{\Delta \tepsilonto}=\sum_{i=1}^{N}\deriv{\Delta\,p_{i}}{\Delta \tepsilonto}
+\]
+
+Ne reste donc à calculer que \(\deriv{\Delta\,p_{i}}{\Delta
+  \tepsilonto}\) pour chacun des mécanismes considérés et
+\(\deriv{\tenseur{n}}{\Delta\,\tepsilonto}\).
+
+Pour cela, introduisons le tenseur \(\tsigma^{e}\) définit par~:
+\[
+\tsigma^{e}=\tenseurq{D}\colon\left(\left.\tepsilonel\right|_{t+\theta\Delta t}+\theta\Delta\,\tepsilonto-\Frac{1}{3}\trace\paren{\left.\tepsilonel\right|_{t+\theta\Delta t}+\theta\Delta\,\tepsilonto}\right)
+\]
+qui est l'expression du tenseur d'élasticité en \(t+\theta\Delta t\)
+en l'absence d'incrément de déformation viscoplastique.
+
+Son déviateur \(\tenseur{s}^{e}\) peut être relié au tenseur
+\(\tenseur{B}\) introduit plus haut par la relation~:
+\[
+\tenseur{s}^{e}=2\mu\tenseur{B}
+\]
+Il est possible de relier la contrainte équivalente \(\sigmaeq^{e}\)
+et la normale \(\tenseur{n}^{e}\) associées à ce tenseur
+\(\tenseur{s}^{e}\) aux véritables contrainte équivalente
+\(\left.\sigmaeq\right|_{t+\theta\Delta t}\) et normale en
+\(t+\theta\Delta t\) à l'aide des relations obtenues au paragraphe
+précédent par~:
+\[
+\left.\sigmaeq\right|_{t+\theta\Delta t}=\sigmaeq^{e}-3\mu\theta\Delta\,p \quad\quad \tenseur{n}^{e}=\tenseur{n}
+\]
+
+\paragraph{Expression de $\deriv{\tenseur{n}}{\Delta\,\tepsilonto}$}
+
+Le calcul de la dérivée $\deriv{\tenseur{n}}{\Delta\,\tepsilonto}$ conduit à~:
+\[
+\deriv{\tenseur{n}}{\Delta\,\tepsilonto}=\Frac{2\mu\theta}{\sigmaeq^{e}}\paren{\tenseurq{M}-\tenseur{n}\otimes\tenseur{n}}
+\]
+où $\tenseurq{M}$ tenseur d'ordre quatre
+\(\Frac{3}{2}\paren{\tenseurq{I}-\Frac{1}{3}\tenseur{I}\otimes\tenseur{I}}\)\footnote{Ce
+  tenseur est l'équivalent du tenseur de \nom{Hill} en isotropie.}.
+
+\paragraph{Expression générale de $\deriv{\Delta\,p}{\Delta
+    \tepsilonto}$ pour un mécanisme unique}
+
+Pour un mécanisme unique, l'équation implicite montre qu'il existe une
+relation fonctionnelle \(\mathcal{F}\) scalaire telle que~:
+\[
+\mathcal{F}\paren{\milieupas{\sigmaeq},\Delta\,p}=0
+\]
+Nous avons changé de notations pour mettre en avant les variables
+\(\milieupas{\sigmaeq}\) et \(\Delta\,p\).
+
+Par dérivation, nous avons~:
+\[
+\deriv{\mathcal{F}}{\sigmaeq}\paren{\deriv{\sigmaeq^{e}}{\Delta\,\tepsilonto}-3\,\mu\,\theta\,\deriv{\Delta\,p}{\Delta\,\tepsilonto}}+\deriv{\mathcal{F}}{\Delta\,p}\,\deriv{\Delta\,p}{\Delta\,\tepsilonto}=0
+\]
+nous avons donc~:
+\[
+\deriv{\Delta\,p}{\Delta\,\tepsilonto}=\Frac{\deriv{\mathcal{F}}{\sigmaeq}}{3\,\mu\,\theta\,\deriv{\mathcal{F}}{\sigmaeq}-\deriv{\mathcal{F}}{\Delta\,p}}\deriv{\sigmaeq^{e}}{\Delta\,\tepsilonto}
+\]
+
+La dérivée \(\deriv{\sigmaeq^{e}}{\Delta\,\tepsilonto}\) s'exprime ainsi~:
+\[
+\deriv{\sigmaeq^{e}}{\Delta\,\tepsilonto}=2\,\mu\,\theta\,\tenseur{n}
+\]
+
+Finalement~:
+\[
+\deriv{\Delta\,p}{\Delta\,\tepsilonto}=\Frac{2\,\mu\,\theta\,\deriv{\mathcal{F}}{\sigmaeq}}{3\,\mu\,\theta\,\deriv{\mathcal{F}}{\sigmaeq}-\deriv{\mathcal{F}}{\Delta\,p}}\tenseur{n}
+\]
+
+\paragraph{Expression générale de la matrice tangente cohérente pour
+  un mécanisme unique}
+
+Pour obtenir une expression utilisable de la matrice tangente
+cohérente, il est intéressant de tenir compte de l'isotropie du
+tenseur d'élasticité qui permet d'écrire~:
+\[
+\begin{aligned}
+  \tenseurq{D}\colon\tenseurq{M}&=2\,\mu\,\tenseurq{M}\\
+  \tenseurq{D}\colon\tenseur{n}\otimes\tenseur{n}&=2\,\mu\,\tenseur{n}\otimes\tenseur{n}\\
+\end{aligned}
+\]
+
+La matrice tangente cohérente est alors donnée par~:
+\[
+\begin{aligned}
+  \deriv{\Delta \tsigma}{\Delta \tepsilonto}&=
+  \tenseurq{D}-\tenseurq{D}\colon\paren{\Frac{2\,\mu\,\theta\,\deriv{\mathcal{F}}{\sigmaeq}}{3\,\mu\,\theta\,\deriv{\mathcal{F}}{\sigmaeq}-\deriv{\mathcal{F}}{\Delta\,p}}\tenseur{n}\otimes\tenseur{n}+\Delta\,p\Frac{2\mu\theta}{\sigmaeq^{e}}\paren{\tenseurq{M}-\tenseur{n}\otimes\tenseur{n}}}\\
+  &=\tenseurq{D}-4\,\mu^{2}\,\theta\,\left[\Frac{\Delta\,p}{\sigmaeq^{e}}\tenseurq{M}+\paren{\Frac{\deriv{\mathcal{F}}{\sigmaeq}}{3\,\mu\,\theta\,\deriv{\mathcal{F}}{\sigmaeq}-\deriv{\mathcal{F}}{\Delta\,p}}-\Frac{\Delta\,p}{\sigmaeq^{e}}}\tenseur{n}\otimes\tenseur{n}\right]
+\end{aligned}
+\]
+
+\paragraph{Expression de la matrice tangente cohérente pour une loi viscoplastique}
+
+La relation fonctionnelle \(\mathcal{F}\) peut être réécrite ainsi~:
+\[
+\mathcal{F}\paren{\milieupas{\sigmaeq},\Delta\,p}=\Delta\,p-f\paren{\milieupas{\sigmaeq}}\,\Delta t =0
+\]
+Dans ce cas, nous avons~:
+\[
+\begin{aligned}
+  \deriv{\mathcal{F}}{\sigmaeq}&=-\deriv{f}{\sigmaeq}\,\Delta\,t\\
+  \deriv{\mathcal{F}}{\Delta p}&=1
+\end{aligned}
+\]
+ce qui conduit à l'expression suivante de la matrice tangente cohérente~:
+\[
+\deriv{\Delta \tsigma}{\Delta \tepsilonto}=\tenseurq{D}-4\,\mu^{2}\,\theta\,\left[\Frac{\Delta\,p}{\sigmaeq^{e}}\tenseurq{M}+\paren{\Frac{\Delta\,t\,\deriv{f}{\sigmaeq}}{1+3\,\mu\,\theta\,\Delta\,t\,\deriv{f}{\sigmaeq}}-\Frac{\Delta\,p}{\sigmaeq^{e}}}\tenseur{n}\otimes\tenseur{n}\right]
+\]
+
+\paragraph{Expression de la matrice tangente cohérente pour une loi viscoplastique avec écrouissage}
+
+La relation fonctionnelle \(\mathcal{F}\) peut être réécrite ainsi~:
+\[
+\mathcal{F}\paren{\milieupas{\sigmaeq},\Delta\,p}=\Delta\,p-f\paren{\milieupas{\sigmaeq},\milieupas{p}}\,\Delta t =0
+\]
+Dans ce cas, nous avons~:
+\[
+\begin{aligned}
+  \deriv{\mathcal{F}}{\sigmaeq}&=-\deriv{f}{\sigmaeq}\,\Delta\,t\\
+  \deriv{\mathcal{F}}{\Delta p}&=1-\theta\deriv{f}{p}\,\Delta\,t
+\end{aligned}
+\]
+ce qui conduit à l'expression suivante de la matrice tangente cohérente~:
+\[
+\deriv{\Delta \tsigma}{\Delta \tepsilonto}=\tenseurq{D}-4\,\mu^{2}\,\theta\,\left[\Frac{\Delta\,p}{\sigmaeq^{e}}\tenseurq{M}+\paren{\Frac{\Delta\,t\,\deriv{f}{\sigmaeq}}{1-\theta\,\Delta\,t\paren{\deriv{f}{p}+3\,\mu\,\deriv{f}{\sigmaeq}}}-\Frac{\Delta\,p}{\sigmaeq^{e}}}\tenseur{n}\otimes\tenseur{n}\right]
+\]
+
+\paragraph{Expression de la matrice tangente cohérente pour une loi plastique}
+
+En cas de charge plastique, la fonctionnelle \(\mathcal{F}\) est
+donnée par la surface de charge~:
+\[
+\mathcal{F}\paren{\milieupas{\sigmaeq},\Delta\,p}=f\paren{\milieupas{\sigmaeq},\milieupas{p}}=0
+\]
+Dans ce cas, nous avons~:
+\[
+\begin{aligned}
+  \deriv{\mathcal{F}}{\sigmaeq}&=\deriv{f}{\sigmaeq}\\
+  \deriv{\mathcal{F}}{\Delta p}&=\theta\,\deriv{f}{p}
+\end{aligned}
+\]
+ce qui conduit à l'expression suivante de la matrice tangente cohérente~:
+\[
+\deriv{\Delta \tsigma}{\Delta \tepsilonto}=\tenseurq{D}-4\,\mu^{2}\,\theta\,\left[\Frac{\Delta\,p}{\sigmaeq^{e}}\tenseurq{M}+\paren{\Frac{\,\deriv{f}{\sigmaeq}}{3\,\mu\,\theta\,\deriv{f}{\sigmaeq}-\theta\,\deriv{f}{p}}-\Frac{\Delta\,p}{\sigmaeq^{e}}}\tenseur{n}\otimes\tenseur{n}\right]
+\]
+
+En l'absence de charge plastique, la matrice tangente cohérente est
+égale à la matrice élastique.
+
+\paragraph{Expression générale de $\deriv{\Delta\,p_{i}}{\Delta
+    \tepsilonto}$}
+
+Dans le cas où plusieurs mécanismes sont présents, nous disposons de
+\(N\) relations fonctionnelles \(\mathcal{F}_{i}\), ce qui nous permet
+d'écrire~:
+\[
+\left[3\,\mu\,\theta\,\deriv{\mathcal{F}_{i}}{\sigmaeq}-\deriv{\mathcal{F}_{i}}{\Delta\,p_{i}}\right]\deriv{\Delta\,p_{i}}{\Delta\,\tepsilonto}+3\,\mu\,\theta\,\sum_{j=0,\\j\neq i}^{N}\deriv{\mathcal{F}_{i}}{\sigmaeq}\deriv{\Delta\,p_{j}}{\Delta\,\tepsilonto}=2\,\mu\,\theta\,\deriv{\mathcal{F}_{i}}{\sigmaeq}\tenseur{n}
+\]
+
+Soit \(\tenseur{d}\) un tenseur quelconque, nous avons~:
+\[
+\left[3\,\mu\,\theta\,\deriv{\mathcal{F}_{i}}{\sigmaeq}-\deriv{\mathcal{F}_{i}}{\Delta\,p_{i}}\right]\,\tenseur{d}\,\colon\,\deriv{\Delta\,p_{i}}{\Delta\,\tepsilonto}+3\,\mu\,\theta\,\sum_{j=0,\\j\neq i}^{N}\deriv{\mathcal{F}_{i}}{\sigmaeq}\,\tenseur{d}\,\colon\,\deriv{\Delta\,p_{j}}{\Delta\,\tepsilonto}=2\,\mu\,\theta\,\deriv{\mathcal{F}_{i}}{\sigmaeq}\,\tenseur{d}\,\colon\,\tenseur{n}
+\]
+
+Notons \(d^{i}\) les produits
+\(\tenseur{d}\,\colon\,\deriv{\Delta\,p_{i}}{\Delta\,\tepsilonto}\),
+ces coefficients vérifient un système linéaire donnés par~:
+\[
+\left[3\,\mu\,\theta\,\deriv{\mathcal{F}_{i}}{\sigmaeq}-\deriv{\mathcal{F}_{i}}{\Delta\,p_{i}}\right]\,d^{i}+3\,\mu\,\theta\,\sum_{j=0,\\j\neq i}^{N}\deriv{\mathcal{F}_{i}}{\sigmaeq}\,d^{j}=2\,\mu\,\theta\,\deriv{\mathcal{F}_{i}}{\sigmaeq}\,\tenseur{d}\,\colon\,\tenseur{n}
+\]
+
+Nous supposons ce système inversible. Si la direction \(\tenseur{d}\)
+est prise orthogonale à la direction d'écoulement \(\tenseur{n}\), les
+différents coefficients \(d^{i}\) sont nuls~: les différents
+tenseurs \(\deriv{\Delta\,p_{i}}{\Delta\,\tepsilonto}\) sont
+colinéaires à la direction d'écoulement.
+
+Les coefficients \(n^{i}\), égaux à
+\(\tenseur{n}\,\colon\,\deriv{\Delta\,p_{i}}{\Delta\,\tepsilonto}\),
+sont solution du système linéaire~:
+\[
+\left[3\,\mu\,\theta\,\deriv{\mathcal{F}_{i}}{\sigmaeq}-\deriv{\mathcal{F}_{i}}{\Delta\,p_{i}}\right]\,d^{i}+3\,\mu\,\theta\,\sum_{j=0,\\j\neq i}^{N}\deriv{\mathcal{F}_{i}}{\sigmaeq}\,d^{j}=3\,\mu\,\theta\,\deriv{\mathcal{F}_{i}}{\sigmaeq}
+\]
+
+Une fois ce système résolu, nous avons~:
+\[
+\deriv{\Delta\,p_{i}}{\Delta\,\tepsilonto}=\Frac{2}{3}\,d^{i}\,\tenseur{n}
+\]
+
+\paragraph{Expression générale de la matrice tangente} La matrice
+tangente cohérente est égale à~:
+\[
+\deriv{\Delta \tsigma}{\Delta \tepsilonto}=\tenseurq{D}-\left(\Frac{4\,\mu}{3}\sum_{i}\,d_{i}-\Frac{4\,\mu^{2}\,\theta}{\sigmaeq^{e}}\,\Delta\,p\right)\,\tenseur{n}\otimes\tenseur{n}-\Frac{4\,\mu^{2}\,\theta}{\sigmaeq^{e}}\,\Delta\,p\,\tenseurq{M}
+\]
 
 \subsection{La directive \texttt{@FlowRule}} La directive \mkey{FlowRule}
 permet de définir un écoulement.
@@ -2614,6 +2842,11 @@ paramètres~:
   \item {\tt iterMax} qui fixe le nombre maximum d'itérations
   autorisées pour l'algorithme implicite.
 \end{itemize}
+
+\subsection{Noms réservés}
+
+Les noms réservés par cette analyseur sont décrits en
+annexe~\ref{sec:noms-de-variables}.
 
 \subsection{Comportement viscoplastique du \sic{}}
 
@@ -5942,6 +6175,172 @@ l'algorithme converge et est légèrement meilleur que l'algorithme de
   \caption{Temps calculs obtenus avec le second algorithme de
     \textsc{Broyden} et jacobien initial égal à l'identité.}
 \end{table}
+
+\clearpage
+\newpage
+\section{Noms des variables et des méthodes \cpp{} utilisés en
+  interne par les analyseurs de lois de comportement}
+\label{sec:noms-des-variables}
+
+\subsection{Noms communs à tous les analyseurs de lois de
+  comportement}
+\label{sec:noms-communs-tous}
+
+Certain variables sont utilisées en interne et ne peuvent être
+utilisées par l'utilisateur.
+
+Certaines des variables ont des sens physiques~:
+\begin{itemize}
+\item \varcpp{D} désigne le tenseur d'élasticité. Ce tenseur est
+  calculé à la demande, voir à ce sujet la documentation de la
+  directive
+  \mkeyb{RequireStiffnessTensor}{Require\-Stiff\-ness\-Tensor}.
+\item \varcpp{Dt} désigne la matrice tangente, éventuellement
+  cohérente~;
+\item \varcpp{sig} désigne les contraintes~;
+\item \varcpp{F0} désigne le gradient de la transformation en début de
+  pas~;
+\item \varcpp{F1} désigne le gradient de la transformation en fin de
+  pas~;
+\item \varcpp{eto} désigne les déformations totales~;
+\item \varcpp{deto} désigne l'incrément des déformations totales ou
+  leurs vitesses ou sa vitesse (voir les conventions spécifiques de
+  chaque analyseur)~;
+\item \varcpp{T} est la température, généralement en début de pas
+  (voir les conventions spécifiques de chaque analyseur)~;
+\item \varcpp{dT} est l'incrément de la température ou sa vitesse de
+  variation (voir les conventions spécifiques de chaque analyseur)~;
+\item \varcpp{dt} est l'incrément de temps~;
+\item \varcpp{N} est la dimension spatiale associée à l'hypothèse de
+  modélisation considérée (\(1\), \(2\) ou \(3\))~;
+\end{itemize}
+
+Certaines noms sont utilisés en interne~:
+\begin{itemize}
+\item \varcpp{Type} est le nom du type numérique utilisé pour les
+  calculs~;
+\item \varcpp{use\textunderscore{}qt} est un booléen. Si il est vrai, les variables
+  utilisées sont affectées d'unités et la cohérence des calculs, au
+  sens du respect des unités, est assurée par le compilateur~;
+\item \varcpp{std}, \varcpp{tfel}, \varcpp{math}, \varcpp{material} et
+  \varcpp{utilities} qui désignent des espaces de noms des librairies
+  \cpp{} utilisées pour l'intégration des lois~;
+\item \varcpp{real} qui est un alias du type réel utilisé par la
+  routine d'intégration~;
+\item \varcpp{policy} et \varcpp{policy\textunderscore{}value} qui
+  déterminent la politique à suivre en cas de dépassement des bornes~;
+\item \varcpp{src1}, \varcpp{src2} sont des noms de variables utilisés
+  par les constructeurs des classes générés~;
+\item \varcpp{integrate} est le principal point d'entrée méthode
+  d'intégration~;
+ \item \varcpp{computeStress} qui recalcule la valeur du tenseur des
+   contraintes au cours de l'intégration~;
+ \item \varcpp{computeFinalStress} qui calcule la valeur du tenseur
+   des contraintes en fin de pas~;
+ \item \varcpp{computeFdF} qui calcule la valeur de la fonction à
+   annuler et de sa dérivée pour les méthodes implicites~;
+ \item \varcpp{updateStateVars} qui met à jour les valeurs des
+   variables d'état, après un pas d'intégration réussi~;
+ \item \varcpp{updateAuxiliaryStateVars} qui met à jour les valeurs
+   des variables d'état auxiliaires, après un pas d'intégration
+   réussi~;
+ \item \varcpp{getModellingHypothesis} qui permet de récupérer
+   l'actuelle hypothèse de modélisation~;
+ \item \varcpp{hypothesis}, qui est une variable contenant l'hypothèse
+   de modélisation~;
+ \item \varcpp{hypothesis\textunderscore{}}, qui est utilisé dans les
+   constructeurs pour initialiser la valeur de la variable
+   \varcpp{hypothesis}.
+\end{itemize}
+
+\subsection{Noms de variables réservés par les analyseurs spécifiques}
+\label{sec:noms-de-variables}
+
+Les variables suivantes sont utilisées en interne par les analyseurs
+spécifiques et leurs noms ne peuvent être réutilisés par
+l'utilisateur~:
+\begin{itemize}
+\item \varcpp{NewtonIntegration} est le nom de la méthode réalisant
+  les itérations de la méthode de \nom{Newton}~;
+\item \varcpp{theta} est le nom du paramètre de la méthode implicite~;
+\item \varcpp{epsilon} est le nom de la valeur du critère utilisé pour
+  arrêter les itérations de la méthode de \nom{Newton}~;
+\item \varcpp{iterMax} est le nom du nombre d'itérations autorisées
+  pour la méthode de \nom{Newton}~;
+\item \varcpp{p} est la déformation inélastique cumulée est le nom de
+  la déformation plastique cumulée~;
+\item \varcpp{n} est le nom de la direction d'écoulement, donnée par
+  la normale aux isovaleurs de contrainte équivalente.
+\end{itemize}
+
+\subsection{Noms de variables réservés par l'analyseur \nom{Runge-Kutta}}
+
+\begin{itemize}
+\item \varcpp{epsilon}
+\item \varcpp{dtmin}
+\item \varcpp{eel}
+\item \varcpp{deel}
+\item \varcpp{t}
+\item \varcpp{T\textunderscore{}}
+\item \varcpp{eto\textunderscore{}}
+\item \varcpp{deto\textunderscore{}}
+\item \varcpp{dt\textunderscore{}}
+\item \varcpp{corrector}
+\item \varcpp{dtprec}
+\item \varcpp{converged}
+\item \varcpp{error}
+\item \varcpp{failed}
+\end{itemize}
+
+\subsection{Noms de variables réservés par l'analyseur implicite}
+
+\begin{itemize}
+  \item \varcpp{theta}
+  \item \varcpp{epsilon}
+  \item \varcpp{iterMax}
+  \item \varcpp{jacobianComparisonCriterium}
+  \item \varcpp{relaxationTrigger}
+  \item \varcpp{accelerationTrigger}
+  \item \varcpp{accelerationPeriod}
+  \item \varcpp{relaxationCoefficient}
+  \item \varcpp{eel}
+  \item \varcpp{deel}
+  \item \varcpp{previous\textunderscore{}zeros}
+  \item \varcpp{zeros}
+  \item \varcpp{tzeros}
+  \item \varcpp{zeros\textunderscore{}1}
+  \item \varcpp{fzeros}
+  \item \varcpp{tfzeros}
+  \item \varcpp{zeros2}
+  \item \varcpp{fzeros2}
+  \item \varcpp{Dzeros}
+  \item \varcpp{Dfzeros}
+  \item \varcpp{jacobian}
+  \item \varcpp{tjacobian}
+  \item \varcpp{njacobian}
+  \item \varcpp{jacobian2}
+  \item \varcpp{t}
+  \item \varcpp{dt\textunderscore{}}
+  \item \varcpp{error}
+  \item \varcpp{idx}
+  \item \varcpp{idx2}
+  \item \varcpp{schmidt}
+  \item \varcpp{computeNumericalJacobian}
+  \item \varcpp{accelerate}
+  \item \varcpp{accelerate\textunderscore{}k0}
+  \item \varcpp{accelerate\textunderscore{}k1}
+  \item \varcpp{accelerate\textunderscore{}k2}
+  \item \varcpp{accelerate\textunderscore{}c0}
+  \item \varcpp{accelerate\textunderscore{}c1}
+  \item \varcpp{accelerate\textunderscore{}re0}
+  \item \varcpp{accelerate\textunderscore{}re1}
+  \item \varcpp{accelerate\textunderscore{}r0}
+  \item \varcpp{accelerate\textunderscore{}r1}
+  \item \varcpp{accelerate\textunderscore{}r2}
+  \item \varcpp{iter}
+  \item \varcpp{converge}
+  \item \varcpp{broyden\textunderscore{}inv}
+\end{itemize}
 
 \clearpage
 \newpage

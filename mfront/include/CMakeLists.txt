@@ -62,3 +62,18 @@ if(LOCAL_CASTEM_HEADER)
 endif(LOCAL_CASTEM_HEADER)
 
 endif(HAVE_CASTEM)
+
+
+if(HAVE_ASTER)
+  # install_header(MFront/Aster AsterOutOfBoundsPolicy.hxx)
+  # install_header(MFront/Aster AsterRotationMatrix.hxx)
+  # install_header(MFront/Aster AsterOrthotropicBehaviour.hxx)
+  # install_header(MFront/Aster AsterComputeStiffnessTensor.hxx)
+  # install_header(MFront/Aster AsterComputeThermalExpansionTensor.hxx)
+  # install_header(MFront/Aster AsterGetModellingHypothesis.hxx)
+  install_header(MFront/Aster Aster.hxx)
+  install_header(MFront/Aster AsterConfig.hxx)
+  install_header(MFront/Aster AsterTraits.hxx)
+  install_header(MFront/Aster AsterException.hxx)
+  install_header(MFront/Aster AsterInterface.hxx)
+endif(HAVE_ASTER)

@@ -56,6 +56,7 @@ namespace tfel
       typedef tfel::math::stensor<N,tfel::math::qt<tfel::math::NoUnit,T> >    StrainStensor;
       typedef tfel::math::stensor<N,tfel::math::qt<tfel::math::Frequency,T> > StrainRateStensor;
       typedef tfel::math::stensor<N,thermalexpansion>      ThermalExpansionTensor;
+      typedef tfel::math::st2tost2<N,real>                 Stensor4;
       typedef tfel::math::st2tost2<N,stress>               StiffnessTensor;
       typedef typename tfel::config::internals::PositionType<N,T,true>::type PositionType;
       typedef typename tfel::config::internals::SpatialGradType<N,T,true>::type SpatialGradType;
@@ -95,6 +96,7 @@ namespace tfel
       typedef tfel::math::stensor<N,T> StrainRateStensor;
       typedef tfel::math::stensor<N,T> StressRateStensor;
       typedef tfel::math::stensor<N,T> ThermalExpansionTensor;
+      typedef tfel::math::st2tost2<N,T> Stensor4;
       typedef tfel::math::st2tost2<N,T> StiffnessTensor;
       typedef typename tfel::config::internals::PositionType<N,T,false>::type  PositionType;
       typedef typename tfel::config::internals::SpatialGradType<N,T,true>::type SpatialGradType;

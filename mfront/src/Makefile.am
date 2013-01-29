@@ -73,6 +73,10 @@ mfront_SOURCES += MFrontUMATInterface.cxx      \
 		  MFrontCastemLawInterface.cxx
 endif
 
+if HAVE_ASTER
+mfront_SOURCES += MFrontAsterInterface.cxx
+endif
+
 mfront_LDADD   = -L$(top_builddir)/src/System    -lTFELSystem    \
 		 -L$(top_builddir)/src/Utilities -lTFELUtilities \
 		 -L$(top_builddir)/src/Exception -lTFELException
@@ -101,5 +105,28 @@ libUMATInterface_la_LDFLAGS  = -no-undefined -avoid-version -Wl,--add-stdcall-al
 endif
 
 endif
+
+if HAVE_ASTER
+if HAVE_CASTEM
+    lib_LTLIBRARIES += libAsterInterface.la
+else
+    lib_LTLIBRARIES  = libAsterInterface.la
+endif
+libAsterInterface_la_SOURCES = AsterInterfaceBase.cxx                 \
+		              AsterException.cxx
+# AsterComputeStiffnessTensor.cxx        \
+# AsterComputeThermalExpansionTensor.cxx \
+# AsterRotationMatrix.cxx                \
+# AsterOutOfBoundsPolicy.cxx             \
+# AsterGetModellingHypothesis.cxx
+libAsterInterface_la_LIBADD  = -L$(top_builddir)/src/Utilities -lTFELUtilities \
+			      -L$(top_builddir)/src/Exception -lTFELException
+libAsterInterface_la_CPPFLAGS = -DAsterInterface_EXPORTS
+if TFEL_WIN
+libAsterInterface_la_LDFLAGS  = -no-undefined -avoid-version -Wl,--add-stdcall-alias -Wl,--kill-at
+endif
+
+endif
+
 
 EXTRA_DIST = CMakeLists.txt

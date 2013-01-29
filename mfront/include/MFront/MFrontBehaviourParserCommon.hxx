@@ -313,6 +313,12 @@ namespace mfront{
 
     virtual void writeUnaryLoadingTestFiles(void);
 
+    virtual void writeBehaviourComputeTangentOperator(void);
+
+    virtual void writeBehaviourGetTangentOperator();
+    
+    virtual void writeBehaviourTangentStiffnessOperator();
+
     virtual void treatParameterMethod(void);
 
     virtual void treatVariableMethod(void);
@@ -404,6 +410,9 @@ namespace mfront{
 
     bool useStateVarTimeDerivative;
     bool explicitlyDeclaredUsableInPurelyImplicitResolution;
+    bool hasConsistantTangentOperator;
+    bool isConsistantTangentOperatorSymmetric;
+
     BehaviourCharacteristic behaviourCharacteristic;
 
   }; // end of struct MFrontBehaviourParserCommon

@@ -35,6 +35,10 @@
 #include"MFront/MFrontUMATInterface.hxx"
 #endif
 
+#ifdef HAVE_ASTER
+#include"MFront/MFrontAsterInterface.hxx"
+#endif
+
 namespace mfront
 {
 
@@ -79,6 +83,10 @@ namespace mfront
     MFrontLawInterfaceProxy<MFrontCastemLawInterface> castemLawProxy(castemProxyNames,castemProxyNames+3);
     MFrontBehaviourInterfaceProxy<MFrontUMATInterface> umatProxy;
 #endif /* HAVE_CASTEM */
+
+#ifdef HAVE_ASTER
+    MFrontBehaviourInterfaceProxy<MFrontAsterInterface> asterProxy;
+#endif /* HAVE_ASTER */
 
   } // end of initInterfaces(void)
 

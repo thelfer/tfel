@@ -1725,7 +1725,7 @@ namespace mfront{
     this->behaviourFile << "* \\brief Integrate behaviour law over the time step" << endl;
     this->behaviourFile << "*/" << endl;
     this->behaviourFile << "bool" << endl;
-    this->behaviourFile << "integrate(void){" << endl;
+    this->behaviourFile << "integrate(const bool computeTangentOperator_){" << endl;
     if(this->algorithm == "Euler"){
       this->writeBehaviourEulerIntegrator();
     } else if(this->algorithm == "RungeKutta2"){
@@ -1752,6 +1752,10 @@ namespace mfront{
 	p2->writeBoundsChecks(this->behaviourFile);
       }
     }
+    this->behaviourFile << "if(computeTangentOperator_){\n";
+    this->behaviourFile << "string msg(\""<< this->className << "::integrate : \");\n";
+    this->behaviourFile << "msg += \"tangent operator is not available\";\n";
+    this->behaviourFile << "}\n";
     this->behaviourFile << "return true;" << endl;
     this->behaviourFile << "} // end of " << this->className << "::integrate" << endl << endl;
   } // end of void MFrontRungeKuttaParser::writeBehaviourIntegrator(void)

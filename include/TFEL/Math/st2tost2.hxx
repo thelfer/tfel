@@ -199,6 +199,7 @@ namespace tfel{
       static const st2tost2& Id(void);
       static const st2tost2& J(void);
       static const st2tost2& K(void);
+      static const st2tost2& M(void);
       static const st2tost2& IxI(void);
 
     private:

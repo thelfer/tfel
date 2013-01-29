@@ -223,6 +223,19 @@ else
     AM_CONDITIONAL(LOCAL_CASTEM_HEADER,false)
 fi
 
+#aster
+AC_ARG_ENABLE([aster],
+               AC_HELP_STRING([--enable-aster],
+		   [build aster interface for mechanical behaviours]),
+	       [enable_aster=true],
+	       [enable_aster=false])
+AM_CONDITIONAL(HAVE_ASTER,[test x"$enable_aster" = "xtrue"])
+if(test "x$enable_aster" = "xtrue")
+then
+    AC_DEFINE(HAVE_ASTER)
+    CHECK_ASTER_MACHINE_TYPE
+fi
+
 AC_ARG_ENABLE([tests],
                AC_HELP_STRING([--enable-tests], [compile tests file]),
 [case "${enableval}" in

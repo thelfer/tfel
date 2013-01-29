@@ -70,6 +70,10 @@ namespace mfront
       warningMode(false)
   {
     this->reserveName("std");
+    this->reserveName("tfel");
+    this->reserveName("math");
+    this->reserveName("material");
+    this->reserveName("utilities");
     this->reserveName("real");
     this->reserveName("policy");
   }

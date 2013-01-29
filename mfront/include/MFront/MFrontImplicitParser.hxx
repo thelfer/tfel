@@ -99,6 +99,8 @@ namespace mfront{
 
     void writeComputeNumericalJacobian(void);
 
+    void writeBehaviourComputeTangentOperator(void);
+
     void treatTheta(void);
 
     void treatIterMax(void);
@@ -135,6 +137,8 @@ namespace mfront{
 
     void treatInitJacobian(void);
 
+    void treatTangentOperator(void);
+
     std::string
     getJacobianPart(const VarHandler&,
 		    const VarHandler&,
@@ -156,6 +160,8 @@ namespace mfront{
     std::string predictor;
 
     std::string initJacobian;
+
+    std::string tangentOperator;
 
     Algorithm algorithm;
 

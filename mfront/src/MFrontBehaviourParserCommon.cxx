@@ -1007,7 +1007,10 @@ namespace mfront{
   {
     using namespace std;
     this->registerVariable("D");
+    this->registerVariable("Dt");
     this->registerVariable("sig");
+    this->registerVariable("F0");
+    this->registerVariable("F1");
     this->registerVariable("eto");
     this->registerVariable("deto");
     this->registerVariable("T");
@@ -1023,11 +1026,12 @@ namespace mfront{
     this->reserveName("computeStress");
     this->reserveName("computeFinalStress");
     this->reserveName("computeFdF");
-    this->reserveName("predicte");
     this->reserveName("updateStateVars");
     this->reserveName("updateAuxiliaryStateVars");
     this->reserveName("getModellingHypothesis");
-    this->reserveName("getParameterValues()");
+    this->reserveName("getTangentOperator");
+    this->reserveName("computeConsistantTangentOperator");
+    this->reserveName("computeTangentOperator_");
     this->reserveName("hypothesis");
     this->reserveName("hypothesis_");
   } // end of MFrontBehaviourParserCommon::registerDefaultVarNames
@@ -1035,7 +1039,9 @@ namespace mfront{
   MFrontBehaviourParserCommon::MFrontBehaviourParserCommon()
     : ParserBase(),
       useStateVarTimeDerivative(false),
-      explicitlyDeclaredUsableInPurelyImplicitResolution(false)
+      explicitlyDeclaredUsableInPurelyImplicitResolution(false),
+      hasConsistantTangentOperator(false),
+      isConsistantTangentOperatorSymmetric(false)
   {
     // Register var names
     this->registerDefaultVarNames();
@@ -1111,6 +1117,7 @@ namespace mfront{
     file << "typedef typename Types::thermalexpansion       thermalexpansion;\n";
     file << "typedef typename Types::density                density;\n";
     file << "typedef typename Types::Stensor                Stensor;\n";
+    file << "typedef typename Types::Stensor4               Stensor4;\n";
     file << "typedef typename Types::FrequencyStensor       FrequencyStensor;\n";
     file << "typedef typename Types::StressStensor          StressStensor;\n";
     file << "typedef typename Types::StrainStensor          StrainStensor;\n";
@@ -1864,7 +1871,7 @@ namespace mfront{
     this->behaviourFile << "* \\brief Integrate behaviour  over the time step\n";
     this->behaviourFile << "*/\n";
     this->behaviourFile << "bool\n";
-    this->behaviourFile << "integrate(void){\n";
+    this->behaviourFile << "integrate(const bool computeTangentOperator_){\n";
     this->behaviourFile << "using namespace std;" << endl;
     this->behaviourFile << "using namespace tfel::math;" << endl;
     writeMaterialLaws("MFrontBehaviourParserCommon::writeBehaviourIntegrator",
@@ -2420,6 +2427,18 @@ namespace mfront{
     this->behaviourFile << stateVarsSize << ";\n";
     this->behaviourFile << "static const unsigned short external_variables_nb  = ";
     this->behaviourFile << externalStateVarsSize << ";\n";
+    this->behaviourFile << "static const bool hasConsistantTangentOperator = ";
+    if(this->hasConsistantTangentOperator){
+      this->behaviourFile << "true;\n";
+    } else {
+      this->behaviourFile << "false;\n";
+    }
+    this->behaviourFile << "static const bool isConsistantTangentOperatorSymmetric = ";
+    if(this->isConsistantTangentOperatorSymmetric){
+      this->behaviourFile << "true;\n";
+    } else {
+      this->behaviourFile << "false;\n";
+    }
     this->behaviourFile << "};\n\n";
   }
 
@@ -2531,10 +2550,13 @@ namespace mfront{
     this->writeBehaviourGetModellingHypothesis();
     this->writeBehaviourCheckBounds();
     this->writeBehaviourIntegrator();
+    this->writeBehaviourComputeTangentOperator();
+    this->writeBehaviourGetTangentOperator();
     this->writeBehaviourUpdateExternalStateVariables();
     this->writeBehaviourDestructor();
     this->checkBehaviourFile();
     this->behaviourFile << "private:" << endl << endl;
+    this->writeBehaviourTangentStiffnessOperator();
     this->writeBehaviourPolicyVariable();
     this->writeBehaviourHypothesisVariable();
     this->writeBehaviourClassEnd();
@@ -2543,6 +2565,33 @@ namespace mfront{
     this->writeNamespaceEnd(this->behaviourFile);
     this->writeBehaviourFileHeaderEnd();
   }
+
+  void MFrontBehaviourParserCommon::writeBehaviourComputeTangentOperator(void)
+  {
+    this->behaviourFile << "bool computeConsistantTangentOperator(void){\n";
+    this->behaviourFile << "using namespace std;\n";
+    this->behaviourFile << "string msg(\"" << this->className<< "::writeBehaviourComputeTangentOperator : \");\n";
+    this->behaviourFile << "msg +=\"unimplemented feature\";\n";
+    this->behaviourFile << "throw(runtime_error(msg));\n";
+    this->behaviourFile << "return false;\n";
+    this->behaviourFile << "}\n\n";
+  } // end of MFrontBehaviourParserCommon::writeBehaviourComputeTangentOperator(void)
+
+  void MFrontBehaviourParserCommon::writeBehaviourGetTangentOperator()
+  {
+    this->checkBehaviourFile();
+    this->behaviourFile << "const StiffnessTensor&\n";
+    this->behaviourFile << "getTangentOperator(void) const{\n";
+    this->behaviourFile << "return this->Dt;\n";
+    this->behaviourFile << "};\n\n";
+  } // end of MFrontBehaviourParserCommon::writeBehaviourComputeTangentOperator(void)
+
+  void MFrontBehaviourParserCommon::writeBehaviourTangentStiffnessOperator()
+  {
+    this->checkBehaviourFile();
+    this->behaviourFile << "//! Tangent operator;\n";
+    this->behaviourFile << "StiffnessTensor Dt;\n";
+  } // end of MFrontBehaviourParserCommon::writeBehaviourTangentStiffnessOperator()
 
   void MFrontBehaviourParserCommon::checkIntegrationDataFile() const {
     using namespace std;

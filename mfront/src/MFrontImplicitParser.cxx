@@ -94,6 +94,8 @@ namespace mfront{
     this->registerNewCallBack("@UseRelaxation",&MFrontImplicitParser::treatUseRelaxation);
     this->registerNewCallBack("@RelaxationTrigger",&MFrontImplicitParser::treatRelaxationTrigger);
     this->registerNewCallBack("@RelaxationCoefficient",&MFrontImplicitParser::treatRelaxationCoefficient);
+    this->registerNewCallBack("@TangentOperator",
+			      &MFrontImplicitParser::treatTangentOperator);
     this->registerNewCallBack("@InitJacobian",
 			      &MFrontImplicitParser::treatInitJacobian);
     this->registerNewCallBack("@CompareToNumericalJacobian",
@@ -122,6 +124,20 @@ namespace mfront{
     this->initJacobian += "\n";
   } // end of MFrontImplicitParser::treatInitJacobian
 
+  void MFrontImplicitParser::treatTangentOperator(void)
+  {
+    using namespace std;
+    if(!this->tangentOperator.empty()){
+      this->throwRuntimeError("MFrontImplicitParser::treatTangentOperator",
+			      "@TangentOperator already used.");
+    }
+    this->tangentOperator = this->readNextBlock(&ParserBase::variableModifier3,
+						true);
+    this->tangentOperator += "\n";
+    this->hasConsistantTangentOperator = true;
+    this->isConsistantTangentOperatorSymmetric = false;
+  } // end of MFrontImplicitParser::treatTangentOperator
+  
   void MFrontImplicitParser::treatUnknownVariableMethod(const std::string& n)
   {
     using namespace std;
@@ -597,7 +613,7 @@ namespace mfront{
   void MFrontImplicitParser::writeBehaviourParserSpecificTypedefs(void)
   {
     this->checkBehaviourFile();
-    this->behaviourFile << "typedef tfel::math::st2tost2<N,Type> Stensor4;\n\n";
+    MFrontBehaviourParserCommon::writeBehaviourParserSpecificTypedefs();
   } // end of MFrontImplicitParser::writeBehaviourParserSpecificTypedefs(void)
 
   void
@@ -839,7 +855,7 @@ namespace mfront{
     this->behaviourFile << "/*!\n";
     this->behaviourFile << "* \\brief Integrate behaviour law over the time step\n";
     this->behaviourFile << "*/\n";
-    this->behaviourFile << "bool\nintegrate(void){\n";
+    this->behaviourFile << "bool\nintegrate(const bool computeTangentOperator_){\n";
     this->behaviourFile << "using namespace std;\n";
     this->behaviourFile << "using namespace tfel::math;\n";
     if(this->compareToNumericalJacobian){
@@ -1013,6 +1029,11 @@ namespace mfront{
 			  << "::integrate() : convergence after \" "
 			  << "<< this->iter << \" iterations\"<< endl << endl;\n";
     }
+    this->behaviourFile << "if(computeTangentOperator_){\n";
+    this->behaviourFile << "if(!this->computeConsistantTangentOperator()){\n";
+    this->behaviourFile << "return false;\n";
+    this->behaviourFile << "}\n";
+    this->behaviourFile << "}\n";
     this->behaviourFile << "this->updateStateVars();\n";
     this->behaviourFile << "this->computeFinalStress();\n";
     this->behaviourFile << "this->updateAuxiliaryStateVars();\n";
@@ -1094,6 +1115,22 @@ namespace mfront{
     }
     this->behaviourFile << "}\n\n";
   } // end of MFrontImplicitParser::writeBehaviourIntegrator
+
+  void MFrontImplicitParser::writeBehaviourComputeTangentOperator(void)
+  {
+    if(this->hasConsistantTangentOperator){
+      this->behaviourFile << "bool computeConsistantTangentOperator(){\n";
+      this->behaviourFile << "using namespace std;\n";
+      this->behaviourFile << "using namespace tfel::math;\n";
+      writeMaterialLaws("MFrontImplicitParser::writeBehaviourIntegrator",
+			this->behaviourFile,this->materialLaws);
+      this->behaviourFile << this->tangentOperator;
+      this->behaviourFile << "return true;\n";
+      this->behaviourFile << "}\n\n";
+    } else {
+      MFrontBehaviourParserCommon::writeBehaviourComputeTangentOperator();
+    }
+  }
 
   void MFrontImplicitParser::writeBehaviourConstructors(void)
   {    

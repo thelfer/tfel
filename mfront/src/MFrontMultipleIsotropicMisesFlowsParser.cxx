@@ -112,6 +112,7 @@ namespace mfront{
       this->behaviourFile << "}\n\n";
     }
     this->behaviourFile << "bool NewtonIntegration(void){\n";
+    this->behaviourFile << "using namespace std;\n";
     this->behaviourFile << "using namespace tfel::math;\n";
     this->behaviourFile << "real error;\n";
     this->behaviourFile << "unsigned int iter;\n";
@@ -283,15 +284,30 @@ namespace mfront{
     this->behaviourFile << "}" << endl;
     this->behaviourFile << "vdp -= newton_f;\n";
     this->behaviourFile << "iter+=1;\n";
+    if(this->debugMode){
+      this->behaviourFile << "cout << \"" << this->className
+			  << "::NewtonIntegration() : iteration \" "
+			  << "<< iter << \" : \" << (error/(real(" << this->flows.size() << "))) << endl;\n";
+    }
     this->behaviourFile << "converge = ((error)/(real(" << this->flows.size() << "))<";
     this->behaviourFile << "(" << this->className << "::epsilon));\n";
     this->behaviourFile << "}\n\n";
-    
     this->behaviourFile << "if(iter==" << this->className << "::iterMax){\n";
+    if(this->debugMode){
+      this->behaviourFile << "cout << \"" << this->className
+			  << "::NewtonIntegration() : no convergence after \" "
+			  << "<< iter << \" iterations\"<< endl << endl;\n";
+      this->behaviourFile << "cout << *this << endl;\n";
+    }
     this->behaviourFile << "return false;" << endl;
     this->behaviourFile << "}\n\n";
     for(p=this->flows.begin(),n=0;p!=this->flows.end();++p,++n){
       this->behaviourFile << "this->dp"<< n << " = " << "vdp(" << n<< ");\n";
+    }
+    if(this->debugMode){
+      this->behaviourFile << "cout << \"" << this->className
+			  << "::NewtonIntegration() : convergence after \" "
+			  << "<< iter << \" iterations\"<< endl << endl;\n";
     }
     this->behaviourFile << "return true;" << endl;
     this->behaviourFile << "\n}\n\n";
@@ -308,7 +324,7 @@ namespace mfront{
     this->behaviourFile << "* \\brief Integrate behaviour law over the time step\n";
     this->behaviourFile << "*/\n";
     this->behaviourFile << "bool\n";
-    this->behaviourFile << "integrate(void){\n";
+    this->behaviourFile << "integrate(const bool computeTangentOperator_){\n";
     this->behaviourFile << "if(!this->NewtonIntegration()){\n";
     this->behaviourFile << "return false;\n";
     this->behaviourFile << "}\n";
@@ -324,6 +340,9 @@ namespace mfront{
       }
     }
     this->behaviourFile << ";\n";
+    this->behaviourFile << "if(computeTangentOperator_){\n";
+    this->behaviourFile << "return this->computeConsistantTangentOperator();\n";
+    this->behaviourFile << "}\n";
     this->behaviourFile << "this->deel = this->deto-dp*(this->n);\n";
     this->behaviourFile << "this->updateStateVars();\n";
     this->behaviourFile << "this->sig  = (this->lambda)*trace(this->eel)*StrainStensor::Id()+2*(this->mu)*(this->eel);\n";

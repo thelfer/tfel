@@ -69,6 +69,16 @@ elseif(CMAKE_BUILD_TYPE STREQUAL "Debug")
   set(CMAKE_CXX_FLAGS_DEBUG "${COMPILER_WARNINGS}  ${CMAKE_CXX_FLAGS}")
 endif(CMAKE_BUILD_TYPE STREQUAL "None")
 
+#aster
+option(enable-aster "build aster interface for mechanical behaviours" OFF)
+if(enable-aster)
+  message(STATUS "aster support enabled")
+  set(HAVE_ASTER ON)
+  add_definitions("-DHAVE_ASTER=1")
+  include(cmake/modules/aster.cmake)
+endif(enable-aster)
+
+
 #castem
 option(local-castem-header "use a local version of castem.h" OFF)
 if(local-castem-header)
