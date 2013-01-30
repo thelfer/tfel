@@ -1,12 +1,12 @@
 /*! 
- * \file  UMATGenericPlaneStressTreatment.hxx
+ * \file  UMATGenericPlaneStressHandler.hxx
  * \brief
  * \author Helfer Thomas
  * \brief 30 janv. 2013
  */
 
-#ifndef _LIB_MFRONT_UMAT_UMATGENERICPLANESTRESSTREATMENT_H_
-#define _LIB_MFRONT_UMAT_UMATGENERICPLANESTRESSTREATMENT_H_ 
+#ifndef _LIB_MFRONT_UMAT_UMATGENERICPLANESTRESSHANDLER_H_
+#define _LIB_MFRONT_UMAT_UMATGENERICPLANESTRESSHANDLER_H_ 
 
 #ifndef _LIB_MFRONT_UMAT_CALL_H_
 #error "This header shall not be called directly"
@@ -16,19 +16,19 @@ namespace umat
 {
 
   /*!
-   * \brief Generic treatment for the plane stress hypothesis
+   * \brief Generic handler for the plane stress hypothesis
    * 
-   * This allows behaviours written for the plane stress hypothesis to
-   * be used in plane stress computations.
+   * This allows behaviours written for the generalised plane stress
+   * hypothesis to be used in plane stress computations.
    */
   template<template<unsigned short,typename,bool> class Behaviour>
-  struct UMATGenericPlaneStressTreatment
+  struct UMATGenericPlaneStressHandler
     : public UMATInterfaceBase
   {
     
     /*!
      * Main entry point This mainly choose between a specific
-     * treatment. The choice is made from the nature of elastic
+     * handler. The choice is made from the nature of elastic
      * behaviour (isotropic or not).
      */
     TFEL_UMAT_INLINE2 static
@@ -44,12 +44,14 @@ namespace umat
       using namespace tfel::meta;
       typedef UMATTraits<Behaviour<2u,UMATReal,false> > Traits;
       typedef typename IF<Traits::type==umat::ISOTROPIC,
-			  TreatPlaneStressIsotropicBehaviour,
-			  TreatPlaneStressOrthotropicBehaviour>::type Treat;
+			  UMATIsotropicBehaviourHandler<2u,Behaviour>,
+			  UMATOrthotropicBehaviourHandler<2u,Behaviour> >::type Treat;
+	// generalised plane stress hypothesis
+      const UMATInt NDI = -3;
       Treat::exe(DTIME,DROT,DDSOE,STRAN,DSTRAN,TEMP,DTEMP,
 		 PROPS,NPROPS,PREDEF,DPRED,STATEV,NSTATV,
-		 STRESS);
-    } // end of exe
+		 STRESS,&NDI);
+	} // end of exe
     
   private:
     
@@ -88,7 +90,7 @@ namespace umat
       typedef Behaviour<2u,UMATReal,false> BV;
       typedef tfel::material::MechanicalBehaviourTraits<BV> Traits;
       const unsigned short NSTATV_  = Traits::internal_variables_nb+1u;
-      UMATGenericPlaneStressTreatment::checkNSTATV(*NSTATV);
+      UMATGenericPlaneStressHandler::checkNSTATV(*NSTATV);
       unsigned int iter;
       const unsigned int iterMax = 50;
 	
@@ -101,7 +103,7 @@ namespace umat
       UMATReal f[2];
 
       dez = -c3*s[2]+c1*DSTRAN[0]+c2*DSTRAN[1];
-      UMATGenericPlaneStressTreatment::template iter<TreatPlaneStrain>(DTIME,DROT,DDSOE,
+      UMATGenericPlaneStressHandler::template iter<TreatPlaneStrain>(DTIME,DROT,DDSOE,
 							TEMP,DTEMP,PROPS,
 							NPROPS,PREDEF,DPRED,
 							STATEV,STRESS,
@@ -112,7 +114,7 @@ namespace umat
 	
       if(abs(c3*s[2]) > 1.e-12){
 	dez -= c3*s[2];
-	UMATGenericPlaneStressTreatment::template iter<TreatPlaneStrain>(DTIME,DROT,DDSOE,
+	UMATGenericPlaneStressHandler::template iter<TreatPlaneStrain>(DTIME,DROT,DDSOE,
 							  TEMP,DTEMP,PROPS,
 							  NPROPS,PREDEF,DPRED,
 							  STATEV,STRESS,
@@ -128,7 +130,7 @@ namespace umat
 	x[1] = dez;
 	f[1] = s[2];
 	dez -= (x[1]-x[0])/(f[1]-f[0])*s[2];
-	UMATGenericPlaneStressTreatment::template iter<TreatPlaneStrain>(DTIME,DROT,DDSOE,
+	UMATGenericPlaneStressHandler::template iter<TreatPlaneStrain>(DTIME,DROT,DDSOE,
 							  TEMP,DTEMP,PROPS,
 							  NPROPS,PREDEF,DPRED,
 							  STATEV,STRESS,
@@ -202,7 +204,7 @@ namespace umat
 	const UMATReal n = PROPS[1]; // Poisson ratio
 	const UMATReal c1 = -n/(1-n);
 	const UMATReal c3 = 1/y;
-	UMATGenericPlaneStressTreatment::template exe<BehaviourHandler>(c1,c1,c3,
+	UMATGenericPlaneStressHandler::template exe<BehaviourHandler>(c1,c1,c3,
 									DTIME,DROT,DDSOE,
 									STRAN,DSTRAN,TEMP,
 									DTEMP,PROPS,NPROPS,
@@ -269,7 +271,7 @@ namespace umat
 	const UMATReal c1 = -C20/C22;
 	const UMATReal c2 = -C21/C22;
 	// calling the resolution
-	UMATGenericPlaneStressTreatment::template exe<BehaviourHandler>(c1,c2,S22,
+	UMATGenericPlaneStressHandler::template exe<BehaviourHandler>(c1,c2,S22,
 									DTIME,DROT,DDSOE,
 									STRAN,DSTRAN,TEMP,
 									DTEMP,nPROPS,NPROPS,
@@ -282,5 +284,5 @@ namespace umat
 
 } // end of namespace umat
 
-#endif /* _LIB_MFRONT_UMAT_UMATGENERICPLANESTRESSTREATMENT_H */
+#endif /* _LIB_MFRONT_UMAT_UMATGENERICPLANESTRESSHANDLER_H */
 

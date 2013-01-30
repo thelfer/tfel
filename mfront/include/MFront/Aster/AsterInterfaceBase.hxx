@@ -1,35 +1,35 @@
 /*! 
- * \file  UMATInterfaceBase.hxx
+ * \file  AsterInterfaceBase.hxx
  * \brief
  * \author Helfer Thomas
  * \brief 30 janv. 2013
  */
 
-#ifndef _LIB_MFRONT_UMAT_UMATINTERFACEBASE_H_
-#define _LIB_MFRONT_UMAT_UMATINTERFACEBASE_H_ 
+#ifndef _LIB_MFRONT_ASTER_ASTERINTERFACEBASE_H_
+#define _LIB_MFRONT_ASTER_ASTERINTERFACEBASE_H_ 
 
 #include<string>
 
 #include"TFEL/Exception/TFELException.hxx"
 #include"TFEL/Material/MaterialException.hxx"
 
-#include"MFront/UMAT/UMAT.hxx"
-#include"MFront/UMAT/UMATConfig.hxx"
-#include"MFront/UMAT/UMATException.hxx"
+#include"MFront/Aster/Aster.hxx"
+#include"MFront/Aster/AsterConfig.hxx"
+#include"MFront/Aster/AsterException.hxx"
 
-namespace umat{
+namespace aster{
 
   /*!
-   * \class  UMATInterfaceBase
-   * \brief  Base class for umat interfaces
+   * \class  AsterInterfaceBase
+   * \brief  Base class for Aster interfaces
    * \author Helfer Thomas
    * \date   12/12/2011
    */
-  struct MFRONT_UMAT_VISIBILITY_EXPORT UMATInterfaceBase
+  struct MFRONT_ASTER_VISIBILITY_EXPORT AsterInterfaceBase
   {
 
     /*!
-     * \brief throw an UMATException. This method shall be called when
+     * \brief throw an AsterException. This method shall be called when
      * the number of materials properties declared by the beahviour and the
      * number of  materials properties declared by the interface does not
      * match.
@@ -40,10 +40,10 @@ namespace umat{
     static void
     throwUnMatchedNumberOfMaterialProperties(const std::string&,
 					     const unsigned short n1,
-					     const UMATInt n2);
+					     const AsterInt n2);
     
     /*!
-     * \brief throw an UMATException. This method shall be called when
+     * \brief throw an AsterException. This method shall be called when
      * the number of state variables declared by the beahviour and the
      * number of state variables declared by the interface does not
      * match.
@@ -54,17 +54,17 @@ namespace umat{
     static void
     throwUnMatchedNumberOfStateVariables(const std::string&,
 					 const unsigned short n1,
-					 const UMATInt n2);
+					 const AsterInt n2);
 
     /*!
-     * \brief display the error message out of an UMATException to the
+     * \brief display the error message out of an AsterException to the
      * standard output.
      * \param[in] b : behaviour name
-     * \param[in] e : the UMATException to be treated
+     * \param[in] e : the AsterException to be treated
      */
     static void
-    treatUmatException(const std::string&,
-		       const UMATException&);
+    treatAsterException(const std::string&,
+			const AsterException&);
 
     /*!
      * \brief display the error message out of a material exception to the
@@ -104,14 +104,14 @@ namespace umat{
     treatUnknownException(const std::string&);
 
     /*!
-     * \brief throw an UMATException if the time step is negative
+     * \brief throw an AsterException if the time step is negative
      * \param[in] b : behaviour name
      */
     static void
     throwNegativeTimeStepException(const std::string&);
 
     /*!
-     * \brief throw an UMATException if the behaviour integration
+     * \brief throw an AsterException if the behaviour integration
      * failed
      * \param[in] b : behaviour name
      */
@@ -119,31 +119,23 @@ namespace umat{
     throwBehaviourIntegrationFailedException(const std::string&);
 
     /*!
-     * \brief throw an UMATException if the maximum number of sub
-     * stepping has been reached
+     * \brief throw an AsterException if the a consistant tangent
+     * operator has to be given.
      * \param[in] b : behaviour name
      */
     static void
-    throwMaximumNumberOfSubSteppingReachedException(const std::string&);
-
-    /*!
-     * \brief throw an UMATException if the maximum number of sub
-     * stepping has been reached
-     * \param[in] b : behaviour name
-     */
-    static void
-    throwPlaneStressMaximumNumberOfIterationsReachedException(const std::string&);
+    throwConsistantTangentOperatorIsNotAvalaible(const std::string&);
 
     /*!
      * \brief display an error message if the value of the NTENS
      * parameter is not valid
      */
     static void
-    displayInvalidNTENSValueErrorMessage(void);
+    displayInvalidNTENSValueErrorMessage();
 
-  }; // end of struct UMATInterfaceBase
-  
-} // end of namespace umat
+  }; // end of struct AsterInterfaceBase
 
-#endif /* _LIB_MFRONT_UMAT_UMATINTERFACEBASE_H */
+} // end of namespace aster
+
+#endif /* _LIB_MFRONT_ASTER_ASTERINTERFACEBASE_H */
 

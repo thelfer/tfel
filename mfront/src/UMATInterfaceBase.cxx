@@ -126,4 +126,12 @@ namespace umat{
     throw(runtime_error(msg));  
   } // end of UMATInterfaceBase::throwPlaneStressMaximumNumberOfIterationsReachedException
 
+  void
+  UMATInterfaceBase::displayInvalidNTENSValueErrorMessage()
+  {
+    using namespace std;
+    cout << "UMATInterfaceBase::displayInvalidNTENSValueErrorMessage : "
+	 << "invalide value for the NTENS paramater" << endl;    
+  }
+
 } // end of namespace umat 

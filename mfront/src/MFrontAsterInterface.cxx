@@ -928,11 +928,9 @@ namespace mfront{
 	<< "aster::AsterInt  *const" /*< sortie d'erreur */
 	<< ")\n";
     out << "{\n";
-    out << "aster::AsterInt KINC = 0;\n";
-    out << "aster::AsterInterface<tfel::material::" << className 
+    out << "if(aster::AsterInterface<tfel::material::" << className 
 	<< ">::exe(NTENS,DTIME,DROT,DDSOE,STRAN,DSTRAN,TEMP,DTEMP,PROPS,NPROPS,"
-	<< "PREDEF,DPRED,STATEV,NSTATV,STRESS,&KINC);\n";
-    out << "if(KINC!=0){\n";
+	<< "PREDEF,DPRED,STATEV,NSTATV,STRESS)!=0){\n";
     out << "*PNEWDT = -1.;\n";
     out << "}\n";
     out << "}\n\n";

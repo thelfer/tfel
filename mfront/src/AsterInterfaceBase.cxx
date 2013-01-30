@@ -9,7 +9,7 @@
 #include<sstream>
 #include<iostream>
 
-#include "MFront/Aster/AsterInterface.hxx"
+#include "MFront/Aster/AsterInterfaceBase.hxx"
 
 namespace aster{
 
@@ -115,5 +115,13 @@ namespace aster{
     msg += "behaviour '"+b+"' can't compute a consistant tangent operator";
     throw(runtime_error(msg));
   } // end of AsterInterfaceBase::throwBehaviourIntegrationFailedException
+
+  void
+  AsterInterfaceBase::displayInvalidNTENSValueErrorMessage()
+  {
+    using namespace std;
+    cout << "AsterInterfaceBase::displayInvalidNTENSValueErrorMessage : "
+	 << "invalide value for the NTENS paramater" << endl;    
+  }
 
 } // end of namespace aster 

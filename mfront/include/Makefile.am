@@ -76,7 +76,10 @@ nobase_include_HEADERS += MFront/UMAT/UMATException.hxx                     \
 			  MFront/UMAT/UMATOutOfBoundsPolicy.hxx             \
 			  MFront/UMAT/UMATInterface.hxx                     \
 			  MFront/UMAT/UMATInterfaceBase.hxx                 \
-			  MFront/UMAT/UMATGenericPlaneStressTreatment.hxx   \
+			  MFront/UMAT/UMATBehaviourHandler.hxx              \
+			  MFront/UMAT/UMATIsotropicBehaviourHandler.hxx     \
+			  MFront/UMAT/UMATOrthotropicBehaviourHandler.hxx   \
+			  MFront/UMAT/UMATGenericPlaneStressHandler.hxx     \
 			  MFront/UMAT/UMATRotationMatrix.hxx                \
 			  MFront/UMAT/UMATOrthotropicBehaviour.hxx          \
 			  MFront/UMAT/UMATComputeStiffnessTensor.hxx        \
@@ -88,11 +91,15 @@ endif
 
 if HAVE_ASTER
 nobase_include_HEADERS += MFront/MFrontAsterInterface.hxx
-nobase_include_HEADERS += MFront/Aster/Aster.hxx                              \
-			  MFront/Aster/AsterConfig.hxx                        \
-			  MFront/Aster/AsterTraits.hxx                        \
-			  MFront/Aster/AsterException.hxx 		      \
-			  MFront/Aster/AsterInterface.hxx	  
+nobase_include_HEADERS += MFront/Aster/Aster.hxx                            \
+			  MFront/Aster/AsterConfig.hxx                      \
+			  MFront/Aster/AsterTraits.hxx                      \
+			  MFront/Aster/AsterException.hxx 		    \
+			  MFront/Aster/AsterInterface.hxx	            \
+			  MFront/Aster/AsterInterfaceBase.hxx               \
+			  MFront/Aster/AsterBehaviourHandler.hxx            \
+			  MFront/Aster/AsterIsotropicBehaviourHandler.hxx   \
+			  MFront/Aster/AsterOrthotropicBehaviourHandler.hxx
 # MFront/Aster/AsterGetModellingHypothesis.hxx        \
 # MFront/Aster/AsterOutOfBoundsPolicy.hxx             \
 # MFront/Aster/AsterRotationMatrix.hxx                \
