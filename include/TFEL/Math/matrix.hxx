@@ -77,7 +77,7 @@ namespace tfel
     }; // end of MatrixProperties
 
     template<typename T>
-    struct matrix
+    struct TFEL_VISIBILITY_LOCAL matrix
       : protected tfel::math::vector<T>,
 	protected MatrixProperties<T>
     {

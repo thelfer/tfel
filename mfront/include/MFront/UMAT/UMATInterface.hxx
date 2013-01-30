@@ -37,124 +37,15 @@
 #include"MFront/UMAT/UMATRotationMatrix.hxx"
 #include"MFront/UMAT/UMATGetModellingHypothesis.hxx"
 
+#include"MFront/UMAT/UMATInterfaceBase.hxx"
+
 namespace umat{
 
   /*!
-   * \class  UMATInterfaceBase
-   * \brief  Base class for umat interfaces
-   * \author Helfer Thomas
-   * \date   12/12/2011
+   * forward declaration
    */
-  struct MFRONT_UMAT_VISIBILITY_EXPORT UMATInterfaceBase
-  {
-
-    /*!
-     * \brief throw an UMATException. This method shall be called when
-     * the number of materials properties declared by the beahviour and the
-     * number of  materials properties declared by the interface does not
-     * match.
-     * \param[in] b  : behaviour name
-     * \param[in] n1 : number of material properties declared by the behaviour
-     * \param[in] n2 : number of material properties declared by the interface
-     */
-    static void
-    throwUnMatchedNumberOfMaterialProperties(const std::string&,
-					     const unsigned short n1,
-					     const UMATInt n2);
-    
-    /*!
-     * \brief throw an UMATException. This method shall be called when
-     * the number of state variables declared by the beahviour and the
-     * number of state variables declared by the interface does not
-     * match.
-     * \param[in] b  : behaviour name
-     * \param[in] n1 : number of state variables declared by the behaviour
-     * \param[in] n2 : number of state variables declared by the interface
-     */
-    static void
-    throwUnMatchedNumberOfStateVariables(const std::string&,
-					 const unsigned short n1,
-					 const UMATInt n2);
-
-    /*!
-     * \brief display the error message out of an UMATException to the
-     * standard output.
-     * \param[in] b : behaviour name
-     * \param[in] e : the UMATException to be treated
-     */
-    static void
-    treatUmatException(const std::string&,
-		       const UMATException&);
-
-    /*!
-     * \brief display the error message out of a material exception to the
-     * standard output.
-     * \param[in] b : behaviour name
-     * \param[in] e : the material exception to be treated
-     */
-    static void
-    treatMaterialException(const std::string&,
-			   const tfel::material::MaterialException&);
-    
-    /*!
-     * \brief display the error message out of a generic tfel
-     * exception to the standard output.
-     * \param[in] b : behaviour name
-     * \param[in] e : the exception to be treated
-     */
-    static void
-    treatTFELException(const std::string&,
-		       const tfel::exception::TFELException&);
-
-    /*!
-     * \brief display the error message out of a generic standard
-     * exception to the standard output.
-     * \param[in] b : behaviour name
-     * \param[in] e : the exception to be treated
-     */
-    static void
-    treatStandardException(const std::string&,
-			   const std::exception&);
-
-    /*!
-     * \brief display the error message when an unknown exception is caught
-     * \param[in] b : behaviour name
-     */
-    static void
-    treatUnknownException(const std::string&);
-
-    /*!
-     * \brief throw an UMATException if the time step is negative
-     * \param[in] b : behaviour name
-     */
-    static void
-    throwNegativeTimeStepException(const std::string&);
-
-    /*!
-     * \brief throw an UMATException if the behaviour integration
-     * failed
-     * \param[in] b : behaviour name
-     */
-    static void
-    throwBehaviourIntegrationFailedException(const std::string&);
-
-    /*!
-     * \brief throw an UMATException if the maximum number of sub
-     * stepping has been reached
-     * \param[in] b : behaviour name
-     */
-    static void
-    throwMaximumNumberOfSubSteppingReachedException(const std::string&);
-
-    /*!
-     * \brief throw an UMATException if the maximum number of sub
-     * stepping has been reached
-     * \param[in] b : behaviour name
-     */
-    static void
-    throwPlaneStressMaximumNumberOfIterationsReachedException(const std::string&);
-
-  }; // end of struct UMATInterfaceBase
+  template<template<unsigned short,typename,bool> class Behaviour>
+  struct UMATGenericPlaneStressTreatment;
 
   /*!
    * \class  UMATInterface
@@ -167,256 +58,11 @@ namespace umat{
     : protected UMATInterfaceBase
   {
 
-    struct TreatPlaneStress
-    {
-      
-      TFEL_UMAT_INLINE2 static
-      void exe(const UMATReal *const DTIME,
-	       const UMATReal *const DROT,  const UMATReal *const DDSOE,
-	       const UMATReal *const STRAN, const UMATReal *const DSTRAN,
-	       const UMATReal *const TEMP,  const UMATReal *const DTEMP,
-	       const UMATReal *const PROPS, const UMATInt  *const NPROPS,
-	       const UMATReal *const PREDEF,const UMATReal *const DPRED,
-	       UMATReal *const STATEV,const UMATInt  *const NSTATV,
-	       UMATReal *const STRESS)
-      {
-	using namespace tfel::meta;
-	typedef UMATTraits<Behaviour<1u,UMATReal,false> > Traits;
-	typedef typename IF<Traits::type==umat::ISOTROPIC,
-			    TreatPlaneStressIsotropicBehaviour,
-			    TreatPlaneStressOrthotropicBehaviour>::type Treat;
-	Treat::exe(DTIME,DROT,DDSOE,STRAN,DSTRAN,TEMP,DTEMP,
-		   PROPS,NPROPS,PREDEF,DPRED,STATEV,NSTATV,
-		   STRESS);
-      } // end of exe
-
-    private:
-
-      TFEL_UMAT_INLINE2 static void
-      checkNSTATV(const UMATInt NSTATV)
-      {
-	using namespace tfel::utilities;
-	typedef Behaviour<2u,UMATReal,false> BV;
-	typedef tfel::material::MechanicalBehaviourTraits<BV> Traits;
-	const unsigned short NSTATV_  = Traits::internal_variables_nb+1u;
-	const bool is_defined_        = Traits::is_defined;
-	//Test if the nb of state variables matches Behaviour requirements
-	if((NSTATV_!=NSTATV)&&is_defined_){
-	  throwUnMatchedNumberOfStateVariables(Name<Behaviour<2u,UMATReal,false> >::getName(),
-					       NSTATV_,NSTATV);
-	}
-      } // end of checkNSTATV
-
-      template<typename TreatPlaneStrain>
-      TFEL_UMAT_INLINE2 static
-      void exe(const UMATReal c1,
-	       const UMATReal c2,
-	       const UMATReal c3,
-	       const UMATReal *const DTIME,
-	       const UMATReal *const DROT,  const UMATReal *const DDSOE,
-	       const UMATReal *const STRAN, const UMATReal *const DSTRAN,
-	       const UMATReal *const TEMP,  const UMATReal *const DTEMP,
-	       const UMATReal *const PROPS, const UMATInt  *const NPROPS,
-	       const UMATReal *const PREDEF,const UMATReal *const DPRED,
-	       UMATReal *const STATEV,const UMATInt  *const NSTATV,
-	       UMATReal *const STRESS)
-      {
-	using namespace std;
-	using namespace tfel::utilities;
-	using tfel::fsalgo::copy;
-	typedef Behaviour<2u,UMATReal,false> BV;
-	typedef tfel::material::MechanicalBehaviourTraits<BV> Traits;
-	const unsigned short NSTATV_  = Traits::internal_variables_nb+1u;
-	TreatPlaneStress::checkNSTATV(*NSTATV);
-	unsigned int iter;
-	const unsigned int iterMax = 50;
-	
-	UMATReal eto[4];
-	UMATReal deto[4];
-	UMATReal s[4];
-	UMATReal v[NSTATV_];
-	UMATReal dez;
-	UMATReal x[2];
-	UMATReal f[2];
-
-	dez = -c3*s[2]+c1*DSTRAN[0]+c2*DSTRAN[1];
-	TreatPlaneStress::template iter<TreatPlaneStrain>(DTIME,DROT,DDSOE,
-							  TEMP,DTEMP,PROPS,
-							  NPROPS,PREDEF,DPRED,
-							  STATEV,STRESS,
-							  STRAN,DSTRAN,dez,
-							  v,s,eto,deto);
-	x[1] = dez;
-	f[1] = s[2];
-	
-	if(abs(c3*s[2]) > 1.e-12){
-	  dez -= c3*s[2];
-	  TreatPlaneStress::template iter<TreatPlaneStrain>(DTIME,DROT,DDSOE,
-							    TEMP,DTEMP,PROPS,
-							    NPROPS,PREDEF,DPRED,
-							    STATEV,STRESS,
-							    STRAN,DSTRAN,dez,
-							    v,s,eto,deto);
-	}	    
-	
-	iter = 2;
-	while((abs(c3*s[2]) > 1.e-12)&&
-	      (iter<iterMax)){
-	  x[0] = x[1];
-	  f[0] = f[1];
-	  x[1] = dez;
-	  f[1] = s[2];
-	  dez -= (x[1]-x[0])/(f[1]-f[0])*s[2];
-	  TreatPlaneStress::template iter<TreatPlaneStrain>(DTIME,DROT,DDSOE,
-							    TEMP,DTEMP,PROPS,
-							    NPROPS,PREDEF,DPRED,
-							    STATEV,STRESS,
-							    STRAN,DSTRAN,dez,
-							    v,s,eto,deto);
-	  ++iter;
-	}
-	if(iter==iterMax){
-	  throwPlaneStressMaximumNumberOfIterationsReachedException(Name<Behaviour<2u,UMATReal,false> >::getName());
-	}
-	copy<4>::exe(s,STRESS);
-	copy<NSTATV_>::exe(v,STATEV);
-	STATEV[*NSTATV-1] += dez;
-      } // end of exe
-      
-      template<typename TreatPlaneStrain>
-      TFEL_UMAT_INLINE2 static
-      void iter(const UMATReal *const DTIME,
-		const UMATReal *const DROT,
-		const UMATReal *const DDSOE,
-		const UMATReal *const TEMP,
-		const UMATReal *const DTEMP,
-		const UMATReal *const PROPS,
-		const UMATInt  *const NPROPS,
-		const UMATReal *const PREDEF,
-		const UMATReal *const DPRED,
-		const UMATReal *const STATEV,
-		const UMATReal *const STRESS,
-		const UMATReal *const STRAN,
-		const UMATReal *const DSTRAN,
-		const UMATReal dez,
-		UMATReal *const v,
-		UMATReal *const s,
-		UMATReal *const eto,
-		UMATReal *const deto)
-      {
-	using tfel::fsalgo::copy;
-	typedef Behaviour<2u,UMATReal,false> BV;
-	typedef tfel::material::MechanicalBehaviourTraits<BV> Traits;
-	const UMATInt nNSTATV = Traits::internal_variables_nb;
-	const UMATInt NDI = -1;
-	const unsigned short NSTATV_  = Traits::internal_variables_nb+1u;
-	
-	copy<4>::exe(STRESS,s);
-	copy<4>::exe(STRAN,eto);
-	copy<4>::exe(DSTRAN,deto);
-	eto[2]  = STATEV[NSTATV_-1];
-	deto[2] = dez;
-	copy<NSTATV_>::exe(STATEV,v);
-	
-	TreatPlaneStrain::exe(DTIME,DROT,DDSOE,eto,deto,TEMP,DTEMP,
-			      PROPS,NPROPS,PREDEF,DPRED,v,
-			      &nNSTATV,s,&NDI);
-      }
-    
-      struct TreatPlaneStressIsotropicBehaviour
-      {
-	
-	TFEL_UMAT_INLINE2 static
-	void exe(const UMATReal *const DTIME,
-		 const UMATReal *const DROT,  const UMATReal *const DDSOE,
-		 const UMATReal *const STRAN, const UMATReal *const DSTRAN,
-		 const UMATReal *const TEMP,  const UMATReal *const DTEMP,
-		 const UMATReal *const PROPS, const UMATInt  *const NPROPS,
-		 const UMATReal *const PREDEF,const UMATReal *const DPRED,
-		 UMATReal *const STATEV,const UMATInt  *const NSTATV,
-		 UMATReal *const STRESS)
-	{
-	  const UMATReal y = PROPS[0]; // Young Modulus
-	  const UMATReal n = PROPS[1]; // Poisson ratio
-	  const UMATReal c1 = -n/(1-n);
-	  const UMATReal c3 = 1/y;
-	  TreatPlaneStress::template exe<TreatIsotropicBehaviour<2u> >(c1,c1,c3,
-								       DTIME,DROT,DDSOE,
-								       STRAN,DSTRAN,TEMP,
-								       DTEMP,PROPS,NPROPS,
-								       PREDEF,DPRED,STATEV,
-								       NSTATV,STRESS);
-	} // end of exe
-      }; // end of struct TreatPlanStressIsotropicBehaviour
-
-      struct TreatPlaneStressOrthotropicBehaviour
-      {
-	TFEL_UMAT_INLINE2 static
-	void exe(const UMATReal *const DTIME,
-		 const UMATReal *const DROT,  const UMATReal *const DDSOE,
-		 const UMATReal *const STRAN, const UMATReal *const DSTRAN,
-		 const UMATReal *const TEMP,  const UMATReal *const DTEMP,
-		 const UMATReal *const PROPS, const UMATInt  *const NPROPS,
-		 const UMATReal *const PREDEF,const UMATReal *const DPRED,
-		 UMATReal *const STATEV,const UMATInt  *const NSTATV,
-		 UMATReal *const STRESS)
-	{
-	  using namespace tfel::meta;
-	  using namespace tfel::material;
-	  using tfel::fsalgo::copy;
-	  typedef Behaviour<2u,UMATReal,false> BV;
-	  typedef MechanicalBehaviourTraits<BV> Traits;
-	  const unsigned short offset  = UMATTraits<BV>::propertiesOffset;
-	  const unsigned short nprops  = Traits::material_properties_nb;
-	  const unsigned short NPROPS_ = offset+nprops == 0 ? 1u : offset+nprops; 
-	  UMATReal nPROPS[NPROPS_];
-	  nPROPS[0]  = PROPS[0];
-	  nPROPS[1]  = PROPS[1];
-	  nPROPS[2]  = PROPS[6];
-	  nPROPS[3]  = PROPS[2];
-	  nPROPS[4]  = PROPS[7];
-	  nPROPS[5]  = PROPS[8];
-	  nPROPS[6]  = PROPS[3];
-	  nPROPS[7]  = PROPS[4];
-	  nPROPS[8]  = PROPS[5];
-	  nPROPS[9]  = PROPS[9];
-	  nPROPS[10]  = PROPS[10];
-	  nPROPS[11]  = PROPS[11];
-	  nPROPS[12] = UMATReal(0);
-	  copy<nprops>::exe(PROPS+13,nPROPS+13);
-
-	  // S11 = 1/E1
-	  const UMATReal S11=1/nPROPS[0];
-	  // S22 = 1/E2
-	  const UMATReal S22=1/nPROPS[1];
-	  // S22 = 1/E3
-	  const UMATReal S33=1/nPROPS[2];
-	  // S12 = -n12/E1
-	  const UMATReal S12=-nPROPS[3]/nPROPS[0];
-	  // S13 = -n13/E1
-	  const UMATReal S13=-nPROPS[5]/nPROPS[0];
-	  // S23 = -n23/E2
-	  const UMATReal S23=-nPROPS[4]/nPROPS[1];
-	  const UMATReal detS=S11*S22*S33+2*S23*S13*S12-S11*S23*S23-S22*S13*S13-S33*S12*S12;
-	  const UMATReal C22=(S11*S22-S12*S12)/detS;
-	  const UMATReal C20=(S12*S23-S13*S22)/detS;
-	  const UMATReal C21=(S12*S13-S11*S23)/detS;
-	  // Plane stress condition leads to :
-	  // Dezz = - (1/C22)*(C20*Dexx+C21*Deyy)
-	  const UMATReal c1 = -C20/C22;
-	  const UMATReal c2 = -C21/C22;
-	  // calling the resolution
-	  TreatPlaneStress::template exe<TreatOrthotropicBehaviour2D>(c1,c2,S22,
-								      DTIME,DROT,DDSOE,
-								      STRAN,DSTRAN,TEMP,
-								      DTEMP,nPROPS,NPROPS,
-								      PREDEF,DPRED,STATEV,
-								      NSTATV,STRESS);
-	} // end of exe
-      }; // end of struct TreatPlanStressOrthotropicBehaviour
-
-    }; // end of struct TreatPlaneStrain
-
+    /*!
+     * Main entry point This barely make a dispatch base on the
+     * modelling hypothesis and the nature of elastic behaviour
+     * (isotropic or not).
+     */
     TFEL_UMAT_INLINE2 static
       void exe(const UMATInt  *const NTENS, const UMATReal *const DTIME,
 	       const UMATReal *const DROT,  const UMATReal *const DDSOE,
@@ -444,9 +90,9 @@ namespace umat{
       } else if(*NTENS==4){
 	  if(*NDI==-2){
 	    // plane strain
-	    TreatPlaneStress::exe(DTIME,DROT,DDSOE,STRAN,DSTRAN,TEMP,DTEMP,
-				  PROPS,NPROPS,PREDEF,DPRED,STATEV,NSTATV,
-				  STRESS);
+	    UMATGenericPlaneStressTreatment<Behaviour>::exe(DTIME,DROT,DDSOE,STRAN,DSTRAN,TEMP,DTEMP,
+							    PROPS,NPROPS,PREDEF,DPRED,STATEV,NSTATV,
+							    STRESS);
 	  } else {
 	    typedef UMATTraits<Behaviour<2u,UMATReal,false> > Traits;
 	    typedef typename IF<Traits::type==umat::ISOTROPIC,
@@ -975,10 +621,14 @@ namespace umat{
 	} // end of TreatIsotropicBehaviour::exe
 	
       }; // end of struct TreatIsotropicBehaviour
+
+    friend struct UMATGenericPlaneStressTreatment<Behaviour>;
     
   }; // end of class UMATInterface
   
 } // end of namespace umat
+
+#include"MFront/UMAT/UMATGenericPlaneStressTreatment.hxx"
 
 #endif /* _LIB_MFRONT_UMAT_CALL_H */
 

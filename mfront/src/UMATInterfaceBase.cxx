@@ -9,7 +9,7 @@
 #include<sstream>
 #include<iostream>
 
-#include "MFront/UMAT/UMATInterface.hxx"
+#include "MFront/UMAT/UMATInterfaceBase.hxx"
 
 namespace umat{
 
