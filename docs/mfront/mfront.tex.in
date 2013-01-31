@@ -4430,7 +4430,7 @@ aux compilateurs supportés. Ces différents points permettent d'apprécier
 la qualité logicielle de \TFEL{}.
 
 Les différentes procédures de récupération des sources, de compilation
-et d'installation de \tfel{} sont alors décrites. La générations de
+et d'installation de \TFEL{} sont alors décrites. La générations de
 binaires, sous forme de paquet RPM ou Debian est également détaillée.
 
 \subsection{Plate-formes supportées}
@@ -4439,7 +4439,7 @@ binaires, sous forme de paquet RPM ou Debian est également détaillée.
 
 Le générateur de code \mfront{} est développé dans un environnement
 \linux{} en se basant sur la norme \(98\) du \cpp{} et sur la norme
-POSIX pour les appels système\footnote{La portabilité de \tfel{}, sans
+POSIX pour les appels système\footnote{La portabilité de \TFEL{}, sans
   modification du code source, sur d'autres systèmes \unix{} a été
   vérifiée sur des version antérieures par un portage sur les systèmes
   OpenSolaris et FreeBSD~: nous pensons qu'un tel portage de la
@@ -4795,9 +4795,9 @@ lois de comportement sont décrites en annexe~\ref{}.
 
 \clearpage
 \newpage
-\section{Opérations tensorielles dans \tfel{}}
+\section{Opérations tensorielles dans \TFEL{}}
 
-La librairie \tfel{} est née d'une initiative personnelle visant à se
+La librairie \TFEL{} est née d'une initiative personnelle visant à se
 doter d'outils, notamment mathématiques, basés sur des paradigmes de
 programmation avancés et innovants, dont nous présenterons certains
 dans la suite de cette annexe. Le langage \cpp{} a été choisi pour sa
@@ -4805,10 +4805,10 @@ grande disponibilité, son interaction avec les langages \texttt{C} et
 \texttt{fortran}, et son support de tels paradigmes.
 
 \subsection{Quelques techniques de programmation sous-tendant la
-  librairie de calculs tensoriels de \tfel{}}
+  librairie de calculs tensoriels de \TFEL{}}
 
 Nous décrivons ici quelques techniques de programmation sous-tendant
-la librairie de calculs tensoriels de \tfel{}. Ces techniques, aux
+la librairie de calculs tensoriels de \TFEL{}. Ces techniques, aux
 quels de nombreux travaux ont été consacrés, se différencient
 notamment de techniques plus traditionnelles et ont été développées
 pour combiner simplicité d'utilisation par la surcharge des opérateurs
@@ -4858,7 +4858,7 @@ tenseur \(1D\) est un objet différent d'un objet \(2D\). Ce choix permet
 d'utiliser un ensemble de techniques de programmation générique
 permettant par exemple de \og~dérouler les boucles\fg{} à la compilation
 et au compilateur de vérifier notre code\footnote{De manière générale,
-  nous avons privilégié dans \tfel{} des techniques de programmation
+  nous avons privilégié dans \TFEL{} des techniques de programmation
   permettant de détecter au plus tôt, c'est à dire dès la phase de
   compilation, des erreurs qui ne sont détectables dans d'autres
   langages qu'à l'exécution.}.
@@ -4872,7 +4872,7 @@ problématiques pour les lois de comportement).
 
 \subsubsection{Choix du type numérique}
 
-L'ensemble des objets mathématiques de \tfel{} sont également
+L'ensemble des objets mathématiques de \TFEL{} sont également
 paramétrés par le type numérique utilisé. 
 
 Ce paramétrage du type numérique est masqué dans \mfront{}. \mfront{}
@@ -4947,7 +4947,7 @@ de transformer l'addition de trois tenseurs à du code équivalent à~:
 si les tenseurs \texttt{a}, \texttt{b}, \texttt{c} et \texttt{d} sont
 des tenseurs \(1D\).
 
-Le moteur d'\texttt{expression template} de \tfel{} se compare
+Le moteur d'\texttt{expression template} de \TFEL{} se compare
 favorablement, en terme de fonctionnalités, à toutes les implantations
 publiées à notre connaissance, en particulier car nous avons développé
 une notion de concept qui est maintenant décrite.
@@ -4955,7 +4955,7 @@ une notion de concept qui est maintenant décrite.
 \subsubsection{Notion de concept}
 
 Nous avons décrit brièvement le moteur d'\texttt{expression template}
-qui sous-tend les opérations mathématiques dans \tfel{}. Chaque
+qui sous-tend les opérations mathématiques dans \TFEL{}. Chaque
 opération conduit à des objets dont le type est généré automatiquement
 par le compilateur. D'un point de vue pratique, il est nécessaire que
 ses objets se comportent comme des tenseurs \og~normaux~\fg{} afin de
@@ -4980,9 +4980,9 @@ recherches ont permis de dégager la notion de \og~concept~\fg{}. Cette
 notion aurait dû être un des piliers du futur standard du langage
 \cpp{} mais son introduction a été différée par manque de maturité.
 
-\tfel{} propose une notion de \og~concept\fg{} beaucoup moins étendue et
+\TFEL{} propose une notion de \og~concept\fg{} beaucoup moins étendue et
 générale que celle proposée pour le futur standard mais qui est basée
-sur le standard actuel. La notion de concept dans \tfel{} repose sur la
+sur le standard actuel. La notion de concept dans \TFEL{} repose sur la
 combinaison de différentes techniques de programmation relativement
 pointues~:
 \begin{itemize}
@@ -5007,7 +5007,7 @@ pointues~:
   à un échec, alors cette fonction est simplement {\em éliminée} de la
   liste des candidats {\em sans causer d'erreur}.
 
-  L'application de ce principe se fait dans \tfel{} par la classe
+  L'application de ce principe se fait dans \TFEL{} par la classe
   \texttt{EnableIf} qui paramétrée par une variable booléenne et une
   type \texttt{T}. La classe \texttt{EnableIf<true,T>} est implantée
   et contient un alias nommé \texttt{type} égal à \texttt{T}. La
@@ -5016,7 +5016,7 @@ pointues~:
   variable \texttt{cond} vaut \texttt{true}.
 
   Ces préliminaires permettent de comprendre la déclaration de la
-  fonction \texttt{trace} dans \tfel{}~:
+  fonction \texttt{trace} dans \TFEL{}~:
 
   \begin{center}
     \begin{minipage}{0.8\textwidth}
@@ -5067,47 +5067,218 @@ traduire la trace de la somme de deux tenseurs \texttt{s1} et
 \subsection{Principales opérations tensorielles}
 
 Nous décrivons dans ce paragraphe les opérations tensorielles fournies
-par \tfel{} pour les tenseurs d'ordre \(2\) et d'ordre \(4\).
+par \TFEL{} pour les tenseurs d'ordre \(2\) et d'ordre \(4\).
 
 \subsubsection{Conventions de représentation des tenseurs}
 
-Les tenseurs d'ordre \(2\) peuvent être représentés par des vecteurs.
+Les tenseurs d'ordre \(2\) symétriques peuvent être représentés par
+des vecteurs et \og~tenseurs d'ordre \(4\)~\fg{}, peuvent être
+représentés par des matrices.
+
+En \(3D\), les tenseurs d'ordre \(2\) symétriques ont \(6\)
+composantes. Un tenseur \(\tenseur{a}\) est représenté par le vecteur
+suivant~:
+\[
+\left(
+\begin{array}{c}
+  \mathcal{A}_{0} \\
+  \mathcal{A}_{1} \\
+  \mathcal{A}_{2} \\
+  \mathcal{A}_{3} \\
+  \mathcal{A}_{4} \\
+  \mathcal{A}_{5} \\
+\end{array}
+\right)
+=
+\left(
+\begin{array}{c}
+  a_{xx} \\
+  a_{yy} \\
+  a_{zz} \\
+  \sqrt{2}a_{xy} \\
+  \sqrt{2}a_{xz} \\
+  \sqrt{2}a_{yz} \\
+\end{array}
+\right)
+\]
+
+Le racine de \(2\) sur les termes extradiagonaux sont là pour assurer
+que le produit doublement contracté de deux tenseurs d'ordre \(2\)
+symétriques \(\tenseur{a}\) et \(\tenseur{b}\) est égal au produit
+scalaire de leurs représentations vectorielles.
 
 \subsubsection{Opérations sur les tenseurs d'ordre 2}
 
-Pour les tenseurs d'ordre \(2\), \tfel{} propose~:
+Pour les tenseurs d'ordre \(2\), \TFEL{} propose~:
 \begin{itemize}
-\item la négation d'un tenseur~;
-\item la somme de deux tenseurs~;
-\item la différence de deux tenseurs~;
-\item la multiplication à droite ou à gauche d'un tenseur par un scalaire~;
-\item la division à droite d'un tenseur par un scalaire~;
-\item le produit tensoriel de deux tenseurs grâce à l'opérateur \texttt{\^}~;
-\item le produit contracté de deux tenseurs grâce à l'opérateur \texttt{|}.
+  \item la négation d'un tenseur~;
+  \item la somme de deux tenseurs~;
+  \item la différence de deux tenseurs~;
+  \item la multiplication à droite ou à gauche d'un tenseur par
+  un scalaire~;
+  \item la division à droite d'un tenseur par un scalaire~;
+  \item le produit tensoriel de deux tenseurs grâce à l'opérateur
+  \texttt{\^}. Le résultat est un tenseur d'ordre \(4\) \og~tenseurs
+  d'ordre \(4\)~\fg{} \(\tenseur{a}\otimes\tenseur{b}\) dont la
+  représentation matricielle vérifie a pour élément
+  \[
+  \tenseurq{c}=\tenseur{a}\otimes\tenseur{b}
+  \quad\Rightarrow\quad\tenseurq{C}_{ij}=\mathcal{A}_{i}\,\mathcal{B}_{j}
+  \]
+  \item le produit contracté de deux tenseurs grâce à l'opérateur
+  \texttt{|}. Comme indiqué plus haut, ce produit contracté est égal au
+  produit scalaire de leurs représentations tensorielles~:
+  \[
+  \tenseur{a}\,\colon\,\tenseur{b} = \sum\,\mathcal{A}_{i}\,\mathcal{B}_{i}
+  \]
 \end{itemize}
 
-Ces opérations respectent l'ordre de priorité usuel sauf pour les deux
-derniers qui peuvent nécessiter l'emploi de parenthèses.
+En \cpp{}, ces opérations respectent l'ordre de priorité usuel sauf
+pour les deux derniers qui peuvent nécessiter l'emploi de parenthèses.
 
 \subsubsection{Opérations sur les tenseurs d'ordre 4}
 
-Pour les tenseurs d'ordre \(4\), \tfel{} propose~:
+Pour les tenseurs d'ordre \(4\), \TFEL{} propose~:
 \begin{itemize}
-\item la négation d'un tenseur~;
-\item la somme de deux tenseurs~;
-\item la différence de deux tenseurs~;
-\item la multiplication à droite ou à gauche d'un tenseur par un scalaire~;
-\item la division à droite d'un tenseur par un scalaire~;
-\item la multiplication de deux tenseurs~;
-\item l'application d'un tenseur d'ordre \(4\) à un tenseur d'ordre
-  \(2\) par l'opérateur de multiplication~;
-\item le produit contracté à gauche d'un tenseur d'ordre \(4\) par un
-  tenseur d'ordre \(2\) grâce à l'opérateur \texttt{\^}~;
+  \item la négation d'un tenseur~;
+  \item la somme de deux tenseurs~;
+  \item la différence de deux tenseurs~;
+  \item la multiplication à droite ou à gauche d'un tenseur par
+  un scalaire~;
+  \item la division à droite d'un tenseur par un scalaire~;
+  \item la multiplication de deux tenseurs~;
+  \item l'application d'un tenseur d'ordre \(4\) à un tenseur
+  d'ordre \(2\) par l'opérateur de multiplication \texttt{*}. La
+  représentation vectorielle du résultat de cette opération est égal à
+  la multiplication vectorielle de la représentation matricielle du
+  tenseur d'ordre \(4\) par la représentation vectorielle du tenseur
+  d'ordre \(2\)~:
+  \[
+  \tenseur{c}=\tenseurq{b}\,\colon\,\tenseur{a} \quad \Rightarrow \quad \mathcal{C}_{i} = \sum_{j} \mathcal{B}_{ij}A_{j}
+  \]
+  \item le produit contracté à gauche d'un tenseur d'ordre \(4\)
+  par un tenseur d'ordre \(2\) grâce à l'opérateur \texttt{|}~:
+  \[
+  \tenseur{c}=\tenseur{a}\,\colon\,\tenseurq{B} \quad \Rightarrow \quad \mathcal{C}_{i} = \sum_{j} \mathcal{A}_{j}\mathcal{B}_{ji}
+  \]
 \end{itemize}
 
 Ces opérations respectent l'ordre de priorité usuel sauf pour le
 dernier qui peuvent nécessiter l'emploi de parenthèses.
 
+\clearpage
+\newpage
+\section{Fonctions utiles}
+
+Cette section décrit quelques fonctions utiles à la création de lois de
+comportement mécanique fournies par la librairie \texttt{TFEL}.
+
+\subsection{Manipulation des tenseurs d'ordre $2$ symétriques}
+
+Le fichier d'entête
+\headerb{TFEL/Math/stensor.hxx}{TFEL/\-Math/\-stensor.hxx}, inclut par
+toutes les lois de comportement mécanique, définit la classe
+\tfelb{stensor<N,T,Storage>}{stensor} représentant les tenseurs d'ordre
+$2$ symétriques.
+
+\paragraph{La méthode \texttt{computeEigenValues}} La méthode
+\tfelb{stensor<N,T,Storage>::computeEigenValues}{compute\-Eigen\-Values}
+calcule les valeurs propres du tenseur d'ordre $2$ symétriques. Ses
+valeurs propres doivent être passées en référence.
+
+\paragraph{La méthode \texttt{computeEigenVectors}} La méthode
+\tfelb{stensor<N,T,Storage>::computeEigenVectors}{compute\-Eigen\-Vectors}
+calcule les valeurs et vecteurs propres du tenseur d'ordre $2$
+symétriques. Son premier argument doit être un objet de type
+\tfel{tvector}\footnote{Les objets de type \tfel{tvector} sont définis
+  dans le fichier d'entête
+  \headerb{TFEL/Math/tvector.hxx}{TFEL/\-Math/\-tvector.hxx}.} et
+contiendra les différentes valeurs propres. Son second argument doit
+être un objet de type \tfel{tmatrix} contenant les vecteurs
+propres\footnote{Les objets de type \tfel{tmatrix} sont définis dans le
+  fichier d'entête
+  \headerb{TFEL/Math/tmatrix.hxx}{TFEL/\-Math/\-tmatrix.hxx}.}. Cet
+objet peut être passé directement à la méthode
+\tfelb{stensor<N,T,Storage>::changeBasis}{change\-Basis} .
+
+\paragraph{La méthode \texttt{changeBasis}} La méthode
+\tfelb{stensor<N,T,Storage>::changeBasis}{change\-Basis} effectue le
+changement de repère d'un tenseur d'ordre \(2\) symétrique. Ce
+changement de repère est défini par un objet de type \tfel{tmatrix}.
+
+\paragraph{La fonction \texttt{trace}} La fonction \tfel{trace} renvoie
+la trace d'un tenseur d'ordre $2$ symétrique.
+
+\paragraph{La fonction \texttt{sigmaeq}} La fonction \tfel{sigmaeq}
+renvoie la contrainte équivalente au sens de \nom{Von Mises} d'un
+tenseur d'ordre $2$ symétrique.
+
+\paragraph{La fonction \texttt{abs}} La fonction \tfel{abs} renvoie la
+somme des valeurs absolues des composantes d'un tenseur d'ordre $2$
+symétrique, les termes extradiagonaux sont comptés une fois et sont
+affectés d'un facteur \(\sqrt{2}\).
+
+\subsection{Calcul des coefficents de \nom{Lamé}}
+
+Le fichier d'entête
+\headerb{TFEL/MaterialLaw/Lame.hxx}{TFEL/\-Material\-Law/\-Lame.hxx},
+qu'il est nécessaire d'inclure au niveau du fichier \mfront{} en
+utilisant la directive \mkey{Includes}, définit différentes fonctions
+utilitaires~:
+\begin{itemize}
+  \item \tfel{compute\-Lambda} permet de calculer le premier
+  coefficent de \nom{Lamé}. Elle prend en argument le module
+  d'\nom{Young} et le coefficient de \nom{Poisson}~;
+  \item \tfel{compute\-Mu} permet de calculer le second coefficent de
+  \nom{Lamé}, c'est à dire le module de cisaillement. Elle prend en
+  argument le module d'\nom{Young} et le coefficient de \nom{Poisson}
+\end{itemize}
+
+Ce fichier d'entête propose également une classe
+\tfelb{computeElasticStiffness}{com\-pute\-Elastic\-Stiff\-ness},
+paramétré par la dimension d'espace et le type numérique utilisé qui
+permet de calculer la matrice d'élasticité à partir des coefficients de
+\nom{Lamé}. Cette classe propose en méthode statique nommée
+\tfelb{computeElasticStiffness::exe}{exe} qui prend en arguments~:
+\begin{itemize}
+\item une référence un objet de type \tfelb{st2tost2<N,T>}{st2tost2\-<N,T>}
+qui représente la matrice d'élasticité.
+\item le premier coefficient de \nom{Lamé}~;
+\item le second  coefficient de \nom{Lamé}.
+\end{itemize}
+
+\subsection{Calcul du tenseur de \nom{Hill}}
+\label{sec:calcul-du-tenseur}
+
+La librairie {\tt TFEL} fournit la fonction \tfel{hillTensor}. Cette
+fonction est déclarée dans le fichier d'entête
+\headerb{TFEL/MaterialLaw/Hill.hxx}{TFEL/\-Material\-Law/\-Hill.hxx}
+qu'il est nécessaire d'inclure au niveau du fichier \mfront{} en
+utilisant la directive \mkey{Includes}.
+
+Cette fonction est paramétrée par la dimension d'espace, notée
+\texttt{N} dans le fichier \mfront{}, et par le type numérique utilisé,
+noté T. Ce type est appelé {\tt real} dans le fichier \mfront{}. Elle
+prend en argument les \(6\) coefficients \(F\), \(G\), \(H\), \(L\),
+\(M\) et \(N\) présentés aux paragraphes \ref{sec:critere-de-nomhill}.
+
+Elle retourne un objet de type \tfelb{st2tost2<N,T>}{st2tost2} qui
+représente une forme linéaire sur les tenseurs d'ordre \(2\) symétriques
+et qui se manipule comme une matrice\footnote{Les objets de type
+  \tfelb{st2tost2<N,T>}{st2tost2} sont définis dans le fichier d'entête
+  \headerb{TFEL/Math/st2tost2.hxx}{TFEL/\-Math/\-st2tost2.hxx}.}.
+
+\paragraph{Utilisation dans le cas des tubes} Avec les conventions
+décrites au paragraphe~\ref{sec:conv-de-rang}
+et~\ref{sec:trait-des-probl} et les identifications faites aux
+paragraphes~\ref{sec:critere-de-nomhill} et~\ref{sec:trait-des-probl},
+cette fonction s'utilise ainsi~:
+\begin{center}
+  \begin{minipage}[htbp]{0.9\linewidth}
+    \shorthandoff{:} \code{ \small \input{@abs_top_srcdir@/docs/mfront/mfront/hillTensor.tex} }
+    \shorthandon{:}
+  \end{minipage}
+\end{center}
 
 \clearpage
 \newpage
@@ -6134,121 +6305,6 @@ sous-découpage \texttt{dt\_} en deçà de laquelle on renvoie une erreur.
 
 \clearpage
 \newpage
-\section{Fonctions utiles}
-
-Cette section décrit quelques fonctions utiles à la création de lois de
-comportement mécanique fournies par la librairie \texttt{TFEL}.
-
-\subsection{Manipulation des tenseurs d'ordre $2$ symétriques}
-
-Le fichier d'entête
-\headerb{TFEL/Math/stensor.hxx}{TFEL/\-Math/\-stensor.hxx}, inclut par
-toutes les lois de comportement mécanique, définit la classe
-\tfelb{stensor<N,T,Storage>}{stensor} représentant les tenseurs d'ordre
-$2$ symétriques.
-
-\paragraph{La méthode \texttt{computeEigenValues}} La méthode
-\tfelb{stensor<N,T,Storage>::computeEigenValues}{compute\-Eigen\-Values}
-calcule les valeurs propres du tenseur d'ordre $2$ symétriques. Ses
-valeurs propres doivent être passées en référence.
-
-\paragraph{La méthode \texttt{computeEigenVectors}} La méthode
-\tfelb{stensor<N,T,Storage>::computeEigenVectors}{compute\-Eigen\-Vectors}
-calcule les valeurs et vecteurs propres du tenseur d'ordre $2$
-symétriques. Son premier argument doit être un objet de type
-\tfel{tvector}\footnote{Les objets de type \tfel{tvector} sont définis
-  dans le fichier d'entête
-  \headerb{TFEL/Math/tvector.hxx}{TFEL/\-Math/\-tvector.hxx}.} et
-contiendra les différentes valeurs propres. Son second argument doit
-être un objet de type \tfel{tmatrix} contenant les vecteurs
-propres\footnote{Les objets de type \tfel{tmatrix} sont définis dans le
-  fichier d'entête
-  \headerb{TFEL/Math/tmatrix.hxx}{TFEL/\-Math/\-tmatrix.hxx}.}. Cet
-objet peut être passé directement à la méthode
-\tfelb{stensor<N,T,Storage>::changeBasis}{change\-Basis} .
-
-\paragraph{La méthode \texttt{changeBasis}} La méthode
-\tfelb{stensor<N,T,Storage>::changeBasis}{change\-Basis} effectue le
-changement de repère d'un tenseur d'ordre \(2\) symétrique. Ce
-changement de repère est défini par un objet de type \tfel{tmatrix}.
-
-\paragraph{La fonction \texttt{trace}} La fonction \tfel{trace} renvoie
-la trace d'un tenseur d'ordre $2$ symétrique.
-
-\paragraph{La fonction \texttt{sigmaeq}} La fonction \tfel{sigmaeq}
-renvoie la contrainte équivalente au sens de \nom{Von Mises} d'un
-tenseur d'ordre $2$ symétrique.
-
-\paragraph{La fonction \texttt{abs}} La fonction \tfel{abs} renvoie la
-somme des valeurs absolues des composantes d'un tenseur d'ordre $2$
-symétrique, les termes extradiagonaux sont comptés une fois et sont
-affectés d'un facteur \(\sqrt{2}\).
-
-\subsection{Calcul des coefficents de \nom{Lamé}}
-
-Le fichier d'entête
-\headerb{TFEL/MaterialLaw/Lame.hxx}{TFEL/\-Material\-Law/\-Lame.hxx},
-qu'il est nécessaire d'inclure au niveau du fichier \mfront{} en
-utilisant la directive \mkey{Includes}, définit différentes fonctions
-utilitaires~:
-\begin{itemize}
-  \item \tfel{compute\-Lambda} permet de calculer le premier
-  coefficent de \nom{Lamé}. Elle prend en argument le module
-  d'\nom{Young} et le coefficient de \nom{Poisson}~;
-  \item \tfel{compute\-Mu} permet de calculer le second coefficent de
-  \nom{Lamé}, c'est à dire le module de cisaillement. Elle prend en
-  argument le module d'\nom{Young} et le coefficient de \nom{Poisson}
-\end{itemize}
-
-Ce fichier d'entête propose également une classe
-\tfelb{computeElasticStiffness}{com\-pute\-Elastic\-Stiff\-ness},
-paramétré par la dimension d'espace et le type numérique utilisé qui
-permet de calculer la matrice d'élasticité à partir des coefficients de
-\nom{Lamé}. Cette classe propose en méthode statique nommée
-\tfelb{computeElasticStiffness::exe}{exe} qui prend en arguments~:
-\begin{itemize}
-\item une référence un objet de type \tfelb{st2tost2<N,T>}{st2tost2\-<N,T>}
-qui représente la matrice d'élasticité.
-\item le premier coefficient de \nom{Lamé}~;
-\item le second  coefficient de \nom{Lamé}.
-\end{itemize}
-
-\subsection{Calcul du tenseur de \nom{Hill}}
-\label{sec:calcul-du-tenseur}
-
-La librairie {\tt TFEL} fournit la fonction \tfel{hillTensor}. Cette
-fonction est déclarée dans le fichier d'entête
-\headerb{TFEL/MaterialLaw/Hill.hxx}{TFEL/\-Material\-Law/\-Hill.hxx}
-qu'il est nécessaire d'inclure au niveau du fichier \mfront{} en
-utilisant la directive \mkey{Includes}.
-
-Cette fonction est paramétrée par la dimension d'espace, notée
-\texttt{N} dans le fichier \mfront{}, et par le type numérique utilisé,
-noté T. Ce type est appelé {\tt real} dans le fichier \mfront{}. Elle
-prend en argument les \(6\) coefficients \(F\), \(G\), \(H\), \(L\),
-\(M\) et \(N\) présentés aux paragraphes \ref{sec:critere-de-nomhill}.
-
-Elle retourne un objet de type \tfelb{st2tost2<N,T>}{st2tost2} qui
-représente une forme linéaire sur les tenseurs d'ordre \(2\) symétriques
-et qui se manipule comme une matrice\footnote{Les objets de type
-  \tfelb{st2tost2<N,T>}{st2tost2} sont définis dans le fichier d'entête
-  \headerb{TFEL/Math/st2tost2.hxx}{TFEL/\-Math/\-st2tost2.hxx}.}.
-
-\paragraph{Utilisation dans le cas des tubes} Avec les conventions
-décrites au paragraphe~\ref{sec:conv-de-rang}
-et~\ref{sec:trait-des-probl} et les identifications faites aux
-paragraphes~\ref{sec:critere-de-nomhill} et~\ref{sec:trait-des-probl},
-cette fonction s'utilise ainsi~:
-\begin{center}
-  \begin{minipage}[htbp]{0.9\linewidth}
-    \shorthandoff{:} \code{ \small \input{@abs_top_srcdir@/docs/mfront/mfront/hillTensor.tex} }
-    \shorthandon{:}
-  \end{minipage}
-\end{center}
-
-\clearpage
-\newpage
-
 \section{Comparaisons numériques de différents
   algorithmes de résolution}
 \label{QNR:ComparaisonNumeriques}
