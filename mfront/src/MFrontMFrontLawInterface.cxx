@@ -117,7 +117,9 @@ namespace mfront
   void
   MFrontMFrontLawInterface::writeHeaderPreprocessorDirectives(const std::string&,
 							      const std::string&)
-  {} // end of MFrontMFrontLawInterface::writePreprocessorDirectives
+  {
+    writeExportDirectives(this->headerFile);
+  } // end of MFrontMFrontLawInterface::writePreprocessorDirectives
 
   void
   MFrontMFrontLawInterface::writeSrcPreprocessorDirectives(const std::string&,
@@ -153,9 +155,9 @@ namespace mfront
 						   const std::string& className)
   {
     if(material.empty()){
-      return "double\n"+className;
+      return "MFRONT_SHAREDOBJ double MFRONT_STDCALL\n"+className;
     } else {
-      return "double\n"+material+"_"+className;
+      return "MFRONT_SHAREDOBJ double MFRONT_STDCALL\n"+material+"_"+className;
     }
   } // end of MFrontMFrontLawInterface::getFunctionDeclaration
   
@@ -164,9 +166,9 @@ namespace mfront
 							      const std::string& className)
   {
     if(material.empty()){
-      return  "int\n"+className+"_checkBounds";
+      return  "MFRONT_SHAREDOBJ int MFRONT_STDCALL\n"+className+"_checkBounds";
     }
-    return  "int\n"+material+className+"_checkBounds";
+    return  "MFRONT_SHAREDOBJ int MFRONT_STDCALL\n"+material+className+"_checkBounds";
   } // end of MFrontMFrontLawInterface::getCheckBoundsFunctionDeclaration
   
   MFrontMFrontLawInterface::~MFrontMFrontLawInterface()

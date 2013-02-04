@@ -27,6 +27,7 @@ namespace mfront
     vector<string>::const_iterator p;
     for(p=materialLaws.begin();p!=materialLaws.end();++p){
       srcFile << "using mfront::" << *p << ";" << endl;
+      srcFile << "using mfront::" << *p << "_checkBounds;" << endl;
     }
   } // end of writeMaterialLaws
 
