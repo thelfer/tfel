@@ -65,6 +65,7 @@ namespace mfront{
 
     enum Algorithm{
       NEWTONRAPHSON,
+      NEWTONRAPHSON_NR,
       BROYDEN,
       BROYDEN2,
       DEFAULT
@@ -100,6 +101,8 @@ namespace mfront{
     void writeComputeNumericalJacobian(void);
 
     void writeBehaviourComputeTangentOperator(void);
+
+    void writeGetPartialJacobianInvert(void);
 
     void treatTheta(void);
 

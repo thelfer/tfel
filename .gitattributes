@@ -1015,6 +1015,7 @@ tests/Math/include/function_tests.ixx -text
 tests/Math/include/function_unary_tests.hxx -text
 tests/Math/include/function_unary_tests.ixx -text
 tests/Math/include/promote-header.hxx -text
+tests/Math/invert.cxx -text
 tests/Math/krigeage.cxx -text
 tests/Math/krigeage1D.cxx -text
 tests/Math/krigeage2D.cxx -text

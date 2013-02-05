@@ -41,6 +41,7 @@ namespace mfront{
     this->registerVariable("eel");
     this->registerVariable("deel");
     this->registerVariable("previous_zeros");
+    this->registerVariable("vect_e");
     this->registerVariable("zeros");
     this->registerVariable("tzeros");
     this->registerVariable("zeros_1");
@@ -53,6 +54,7 @@ namespace mfront{
     this->registerVariable("jacobian");
     this->registerVariable("tjacobian");
     this->registerVariable("njacobian");
+    this->registerVariable("partial_jacobian");
     this->registerVariable("jacobian2");
     this->registerVariable("t");
     this->registerVariable("dt_");
@@ -61,6 +63,7 @@ namespace mfront{
     this->registerVariable("idx2");
     this->reserveName("schmidt");
     this->reserveName("computeNumericalJacobian");
+    this->reserveName("TinyMatrixSolve");
     this->reserveName("accelerate");
     this->reserveName("accelerate_k0");
     this->reserveName("accelerate_k1");
@@ -370,8 +373,10 @@ namespace mfront{
       this->throwRuntimeError("MFrontImplicitParser::treatAlgorithm",
 			      "@Algorithm has already been read.");
     }
-    if(this->current->value=="Newton-Raphson"){
+    if(this->current->value=="NewtonRaphson"){
       this->algorithm = MFrontImplicitParser::NEWTONRAPHSON;
+    } else if(this->current->value=="NewtonRaphson_NumericalJacobian"){
+      this->algorithm = MFrontImplicitParser::NEWTONRAPHSON_NR;
     } else if(this->current->value=="Broyden"){
       this->algorithm = MFrontImplicitParser::BROYDEN;
     } else if(this->current->value=="Broyden2"){
@@ -379,7 +384,7 @@ namespace mfront{
     } else {
       this->throwRuntimeError("MFrontImplicitParser::treatAlgorithm : ",
 			      this->current->value+" is not a valid algorithm name\n"
-			      "Supported algorithms are : Newton-Raphson, Broyden, and Broyden2.");
+			      "Supported algorithms are : NewtonRaphson, NewtonRaphson_NumericalJacobian, Broyden, and Broyden2.");
     }
     ++this->current;
     this->readSpecifiedToken("MFrontImplicitParser::treatAlgorithm",";");
@@ -710,8 +715,13 @@ namespace mfront{
       this->behaviourFile << "} // end of accelate\n\n";
     }
     // compute the numerical part of the jacobian
-    if((this->compareToNumericalJacobian)||(this->algorithm==BROYDEN)){
+    if((this->compareToNumericalJacobian)||(this->algorithm==BROYDEN)||
+       (this->algorithm==MFrontImplicitParser::NEWTONRAPHSON_NR)){
       this->writeComputeNumericalJacobian();
+    }
+    if((this->algorithm==MFrontImplicitParser::NEWTONRAPHSON)||
+       (this->algorithm==MFrontImplicitParser::NEWTONRAPHSON_NR)){
+      this->writeGetPartialJacobianInvert();
     }
     // compute stress
     this->behaviourFile << "void\ncomputeStress(void){\n";
@@ -789,6 +799,35 @@ namespace mfront{
     }
     return d.str();
   } // void MFrontImplicitParser::getJacobianPart
+
+  void
+  MFrontImplicitParser::writeGetPartialJacobianInvert(void)
+  {
+    using namespace std;
+    this->checkBehaviourFile();
+    SupportedTypes::TypeSize n;
+    VarContainer::const_iterator p;
+    for(p=this->stateVarsHolder.begin();p!=this->stateVarsHolder.end();++p){
+      n += this->getTypeSize(p->type,p->arraySize);
+    }
+    this->behaviourFile << "void\ngetPartialJacobianInvert(tfel::math::tmatrix<StensorSize,StensorSize,real>& partial_jacobian)\n"
+			<< "{\n";
+    this->behaviourFile << "using namespace tfel::math;" << endl;
+    this->behaviourFile << "TinyPermutation<" << n << "> permuation;" << endl;
+    if(this->algorithm==MFrontImplicitParser::NEWTONRAPHSON_NR){
+      this->behaviourFile << "this->computeNumericalJacobian(this->jacobian);\n";
+    }
+    this->behaviourFile << "TinyMatrixSolve<" << n << ",real>::decomp(this->jacobian,permuation);" << endl;
+    this->behaviourFile << "for(unsigned short idx=0;idx!=StensorSize;++idx){\n";
+    this->behaviourFile << "tvector<" << n << ",real> vect_e(real(0));" << endl;
+    this->behaviourFile << "vect_e(idx) = real(1);" << endl;
+    this->behaviourFile << "TinyMatrixSolve<" << n << ",real>::back_substitute(this->jacobian,permuation,vect_e);" << endl;
+    this->behaviourFile << "for(unsigned short idx2=0;idx2!=StensorSize;++idx2){\n";
+    this->behaviourFile << "partial_jacobian(idx2,idx)=vect_e(idx2);\n";
+    this->behaviourFile << "}\n";
+    this->behaviourFile << "}\n";
+    this->behaviourFile << "}\n\n";
+  } // end of MFrontImplicitParser::writeGetPartialJacobianInvert
   
   void MFrontImplicitParser::writeComputeNumericalJacobian(){
     using namespace std;
@@ -894,6 +933,10 @@ namespace mfront{
       this->behaviourFile << "this->computeStress();\n";
       this->behaviourFile << "this->computeFdF();\n";
     }
+    if(this->algorithm==MFrontImplicitParser::NEWTONRAPHSON_NR){
+      this->behaviourFile << "this->computeStress();\n";
+      this->behaviourFile << "this->computeFdF();\n";
+    }
     if(this->algorithm==MFrontImplicitParser::BROYDEN){
       this->behaviourFile << "Dzeros = -this->fzeros;\n";
       this->behaviourFile << "jacobian2 = this->jacobian;\n";
@@ -971,8 +1014,12 @@ namespace mfront{
 			  << "<< this->iter << \" : \" << (error)/(real(" << n2 << ")) << endl;\n";
     }
     this->behaviourFile << "if(!converge){\n";
-    if(this->algorithm==MFrontImplicitParser::NEWTONRAPHSON){
+    if((this->algorithm==MFrontImplicitParser::NEWTONRAPHSON)||
+       (this->algorithm==MFrontImplicitParser::NEWTONRAPHSON_NR)){
       this->behaviourFile << "try{" << endl;
+      if(this->algorithm==MFrontImplicitParser::NEWTONRAPHSON_NR){
+	this->behaviourFile << "this->computeNumericalJacobian(this->jacobian);\n";
+      }
       this->behaviourFile << "TinyMatrixSolve<" << n2
 			  << "," << "real>::exe(this->jacobian,this->fzeros);\n";
       this->behaviourFile << "}" << endl;
@@ -1075,16 +1122,19 @@ namespace mfront{
       }
       n += this->getTypeSize(p->type,p->arraySize);
     }
-    n = SupportedTypes::TypeSize();
-    for(p=this->stateVarsHolder.begin();p!=this->stateVarsHolder.end();++p){
-      n3 = SupportedTypes::TypeSize();
-      for(p2=this->stateVarsHolder.begin();p2!=this->stateVarsHolder.end();++p2){
-	this->behaviourFile << "// derivative of variable f" << p->name 
-			    << " by variable " << p2->name << "\n";
-	this->behaviourFile << this->getJacobianPart(*p,*p2,n,n2,n3);
-	n3 += this->getTypeSize(p2->type,p2->arraySize);
+    if((this->algorithm==MFrontImplicitParser::NEWTONRAPHSON)||
+       (this->algorithm==MFrontImplicitParser::BROYDEN)){
+      n = SupportedTypes::TypeSize();
+      for(p=this->stateVarsHolder.begin();p!=this->stateVarsHolder.end();++p){
+	n3 = SupportedTypes::TypeSize();
+	for(p2=this->stateVarsHolder.begin();p2!=this->stateVarsHolder.end();++p2){
+	  this->behaviourFile << "// derivative of variable f" << p->name 
+			      << " by variable " << p2->name << "\n";
+	  this->behaviourFile << this->getJacobianPart(*p,*p2,n,n2,n3);
+	  n3 += this->getTypeSize(p2->type,p2->arraySize);
+	}
+	n += this->getTypeSize(p->type,p->arraySize);
       }
-      n += this->getTypeSize(p->type,p->arraySize);
     }
     if(this->algorithm==MFrontImplicitParser::NEWTONRAPHSON){
       this->behaviourFile << "// setting jacobian to identity\n";
@@ -1099,18 +1149,24 @@ namespace mfront{
     this->behaviourFile << "\n";
     for(p=this->stateVarsHolder.begin();p!=this->stateVarsHolder.end();++p){
       if(enf.find(p->name)!=enf.end()){
-	this->behaviourFile << "f" << p->name << "*= real(1)/(" << enf.find(p->name)->second << ");" << endl;
-	for(p2=this->stateVarsHolder.begin();p2!=this->stateVarsHolder.end();++p2){
-	  this->behaviourFile << "df" << p->name << "_dd" << p2->name
-			      << "*= real(1)/(" << enf.find(p->name)->second << ");" << endl;
+    	this->behaviourFile << "f" << p->name << "*= real(1)/(" << enf.find(p->name)->second << ");" << endl;
+	if(this->algorithm==MFrontImplicitParser::NEWTONRAPHSON){
+#warning "check for broyden !"
+	  for(p2=this->stateVarsHolder.begin();p2!=this->stateVarsHolder.end();++p2){
+	    this->behaviourFile << "df" << p->name << "_dd" << p2->name
+				<< "*= real(1)/(" << enf.find(p->name)->second << ");" << endl;
+	  }
 	}
       }
     }
-    for(p=this->stateVarsHolder.begin();p!=this->stateVarsHolder.end();++p){
-      for(p2=this->stateVarsHolder.begin();p2!=this->stateVarsHolder.end();++p2){
-	this->behaviourFile << "static_cast<void>(df"
-			    << p->name << "_dd" << p2->name
-			    << "); /* suppress potential warnings */\n";
+    if((this->algorithm==MFrontImplicitParser::NEWTONRAPHSON)||
+       (this->algorithm==MFrontImplicitParser::BROYDEN)){
+      for(p=this->stateVarsHolder.begin();p!=this->stateVarsHolder.end();++p){
+	for(p2=this->stateVarsHolder.begin();p2!=this->stateVarsHolder.end();++p2){
+	  this->behaviourFile << "static_cast<void>(df"
+			      << p->name << "_dd" << p2->name
+			      << "); /* suppress potential warnings */\n";
+	}
       }
     }
     this->behaviourFile << "}\n\n";
@@ -1276,6 +1332,14 @@ namespace mfront{
     }
     if(this->algorithm==MFrontImplicitParser::DEFAULT){
       this->algorithm=MFrontImplicitParser::NEWTONRAPHSON;
+    }
+    if(this->compareToNumericalJacobian){
+      if(this->algorithm!=MFrontImplicitParser::NEWTONRAPHSON){
+	string msg("MFrontImplicitParser::endsInputFileProcessing :");
+	msg += "@CompareToNumericalJacobian can only be used with the NewtonRaphson algorithm";
+	throw(runtime_error(msg));
+
+      }
     }
   } // end of MFrontImplicitParser::endsInputFileProcessing(void)
 
