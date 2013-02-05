@@ -168,7 +168,7 @@ namespace mfront
     if(material.empty()){
       return  "MFRONT_SHAREDOBJ int MFRONT_STDCALL\n"+className+"_checkBounds";
     }
-    return  "MFRONT_SHAREDOBJ int MFRONT_STDCALL\n"+material+className+"_checkBounds";
+    return  "MFRONT_SHAREDOBJ int MFRONT_STDCALL\n"+material+"_"+className+"_checkBounds";
   } // end of MFrontMFrontLawInterface::getCheckBoundsFunctionDeclaration
   
   MFrontMFrontLawInterface::~MFrontMFrontLawInterface()
