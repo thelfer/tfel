@@ -413,9 +413,14 @@ namespace tfel{
 	using namespace tfel::meta;
 	using namespace tfel::utilities::internals;
 	if(this->index==TLFindEltPos<T1,List>::value){
+	  // a silly trick to avoir a gcc warning
+	  union{
+	    unsigned char *c;
+	    T1 *ptr;
+	  } ptr;
 	  // The GenType already holds an object of type T1
-	  unsigned char *c = this->container.buffer;
-	  T1& tmp  = *(reinterpret_cast<T1*>(c));
+	  ptr.c = this->container.buffer;
+	  T1& tmp  = *(ptr.ptr);
 	  tmp = src;
 	} else {
 	  // We create a new object of type T1 by calling the copy constructor
@@ -470,11 +475,16 @@ namespace tfel{
 	using namespace std;
 	using namespace tfel::meta;
 	using namespace tfel::utilities::internals;
+	// a silly trick to avoir a gcc warning
+	union{
+	  const unsigned char *c;
+	  const T1 *ptr;
+	} ptr;
 	if(this->index!=TLFindEltPos<T1,List>::value){
 	  throw(GenTypeCastError());
 	}
-	const unsigned char *c = this->container.buffer;
-	return *(reinterpret_cast<const T1*>(c));
+	ptr.c = this->container.buffer;
+	return *(ptr.ptr);
       }
       //! get the value contained in the GenType.
       /*
@@ -492,11 +502,16 @@ namespace tfel{
 	using namespace std;
 	using namespace tfel::meta;
 	using namespace tfel::utilities::internals;
+	// a silly trick to avoir a gcc warning
+	union{
+	  unsigned char *c;
+	  T1 *ptr;
+	} ptr;
 	if(this->index!=TLFindEltPos<T1,List>::value){
 	  throw(GenTypeCastError());
 	}
-	unsigned char *c = this->container.buffer;
-	return *(reinterpret_cast<T1*>(c));
+	ptr.c = this->container.buffer;
+	return *(ptr.ptr);
       }
       /*
        * Destructor
