@@ -1,0 +1,292 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%	Fichier	   : glossaire
+%%	Auteur     : th202608@pleiades068.intra.cea.fr
+%%	Date       : 14 sept. 2011
+%%	Répertoire : /home/th202608/Documents/notes/2011/common/
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\newcommand{\Glossary}[4]{
+  \paragraph{#1} L'entrée \texttt{#1} désigne #4.
+
+  \texttt{#1} désigne une quantité #2. L'unité recommandée
+  est \(#3\). }
+
+\newcommand{\Glossaryb}[3]{
+  \paragraph{#1} L'entrée \texttt{#1} désigne #3.
+
+  \texttt{#1} désigne une quantité #2. Cette quantité est sans unité.
+}
+
+\section{Description des mots du glossaire spécifiques aux
+  modèles thermiques et mécaniques}
+\label{sec:mfront:glossary}
+
+Cette annexe décrit les mots du glossaire pouvant être utilisés par
+les modèles thermiques et mécaniques (ou par les conditions aux
+limites associées).
+
+Nous indiquons pratiquement systématiquement l'unité qu'il est
+préférable d'utiliser pour les différentes quantités. Il s'agit du
+système d'unité du système international.
+
+\subsection{Entrées communes}
+
+Nous décrivons ici les entrées communes aux modèles thermiques et
+mécaniques.
+
+\Glossary{MassDensity}{scalaire}{kg/m^{3}}{la densité massique}
+\Glossaryb{OrthotropicAxisX1}{scalaire}{la première coordonnée du
+  premier axe d'orthotropie. Cette quantité est automatiquement
+  calculée par \licos{} à partir de la définition du matériau}
+\Glossaryb{OrthotropicAxisY1}{scalaire}{la deuxième coordonnée du
+  premier axe d'orthotropie. Cette quantité est automatiquement
+  calculée par \licos{} à partir de la définition du matériau}
+\Glossaryb{OrthotropicAxisZ1}{scalaire}{la troisième coordonnée du
+  premier axe d'orthotropie. Cette quantité est automatiquement
+  calculée par \licos{} à partir de la définition du matériau}
+\Glossaryb{OrthotropicAxisX2}{scalaire}{la première coordonnée du
+  second axe d'orthotropie. Cette quantité est automatiquement
+  calculée par \licos{} à partir de la définition du matériau}
+\Glossaryb{OrthotropicAxisY2}{scalaire}{la deuxième coordonnée du
+  second axe d'orthotropie. Cette quantité est automatiquement
+  calculée par \licos{} à partir de la définition du matériau}
+\Glossaryb{OrthotropicAxisZ2}{scalaire}{la troisième coordonnée du
+  second axe d'orthotropie. Cette quantité est automatiquement
+  calculée par \licos{} à partir de la définition du matériau}
+
+\subsection{Entrées spécifiques aux modèles thermiques}
+
+Nous décrivons ici les entrées spécifiques aux modèles
+thermiques. Nous les classons en trois catégories~:
+\begin{itemize}
+\item les entrées relatives aux propriétés matériau~;
+\item les sorties du modèle thermique~;
+\item les conditions aux limites.
+\end{itemize}
+
+\subsubsection{Propriétés matériau}
+
+\Glossary{ThermalConductivity}{scalaire}{W.m^{-1}}{la conductivité
+  thermique d'un matériau isotrope}
+\Glossary{ThermalConductivity1}{scalaire}{W.m^{-1}}{la conductivité
+  thermique d'un matériau orthotrope suivant la première direction
+  d'orthotropie}
+\Glossary{ThermalConductivity2}{scalaire}{W.m^{-1}}{la conductivité
+  thermique d'un matériau orthotrope suivant la deuxième direction
+  d'orthotropie}
+\Glossary{ThermalConductivity3}{scalaire}{W.m^{-1}}{la conductivité
+  thermique d'un matériau orthotrope suivant la troisième direction
+  d'orthotropie}
+\Glossary{SpecificHeat}{scalaire}{J.kg^{-1}.K^{-1}}{la chaleur
+  spécifique}
+
+\subsubsection{Sortie des modèles thermiques}
+\label{sec:sortie-des-modeles-th}
+
+\Glossary{Temperature}{scalaire}{K}{la température}
+
+\Glossary{IrradiationTemperature}{scalaire}{K}{la température moyenne
+  (dans le temps) au cours de l'irradiation. Cette température est
+  définie ainsi~:
+  \[
+  \average{T}\paren{t,\vec{r}}  = \Frac{1}{t-t_{0}}\int_{t_{0}}^{t}T\paren{u,\vec{r}}\,\dtot\, u
+  \]
+  où
+  \begin{minipage}[t]{0.8\linewidth}
+    \begin{itemize}
+    \item \(T\paren{t,\vec{r}}\) est la valeur à un instant \(t\) de
+      la température au point \(\vec{r}\)~;
+    \item \(t_{0}\) est la date du début de calcul~;
+    \item \(t\) est la date courante~;
+    \end{itemize}
+  \end{minipage}\\
+  En pratique, l'intégrale temporelle est évaluée de manière incrémentale ainsi~:
+  \[
+  \begin{aligned}
+    \average{T}\paren{t+dt,\vec{r}}  &= \Frac{1}{t+dt-t_{0}}\int_{t_{0}}^{t+dt}T\paren{u,\vec{r}}\,\dtot\, u \\
+    &= \Frac{1}{t+dt-t_{0}}\left[\int_{t_{0}}^{t}T\paren{u,\vec{r}}\,\dtot\, u+\int_{t}^{t+dt}T\paren{u,\vec{r}}\,\dtot\, u\right] \\
+    &= \Frac{1}{t+dt-t_{0}}\left[\paren{t-t_{0}}\,\average{T}\paren{t,\vec{r}}+\int_{t}^{t+dt}T\paren{u,\vec{r}}\,\dtot\, u\right] \\
+    &\approx \Frac{1}{t+dt-t_{0}}\left[\paren{t-t_{0}}\,\average{T}\paren{t,\vec{r}}+\Frac{dt}{2}\left[T\paren{t,\vec{r}}+T\paren{t+dt,\vec{r}}\right]\right] \\
+  \end{aligned}
+  \]
+  Ce mode de calcul peut conduire à de légères erreurs numériques
+}
+
+\Glossary{MeanTemperature}{scalaire}{K}{la température moyenne dans un
+  domaine \(\Omega\) donné. Cette température est définie ainsi~:
+  \[
+  \average{T}\paren{t}  = \Frac{1}{\int_{\Omega}\dtot\,V}\int_{\Omega}T\paren{t,\vec{r}}\,\dtot\, V
+  \]
+  où \(T\paren{t,\vec{r}}\) est la valeur à un instant \(t\) de la
+  température au point \(\vec{r}\). En pratique, l'intégrale spatiale
+  est calculée à l'aide de la discrétisation par éléments finis
+}
+
+\Glossary{MeanIrradiationTemperature}{scalaire}{K}{la température
+  moyenne dans le temps et dans un domaine \(\Omega\) donné. Cette
+  température est définie ainsi~:
+  \[
+  \average{T}\paren{t} =
+  \Frac{1}{t-t_{0}}\Frac{1}{\int_{\Omega}\dtot\,V}\int_{t_{0}}^{t}\paren{\int_{\Omega}T\paren{u,\vec{r}}\,\dtot\,
+    V}
+  \]
+  où \(T\paren{t,\vec{r}}\) est la valeur à un instant \(t\) de la
+  température au point \(\vec{r}\).
+
+  En pratique, l'intégrale spatiale est calculée à l'aide de la
+  discrétisation par éléments finis et l'intégrale temporelle est
+  calculée de manière incrémentale}
+
+\Glossary{TemperatureGradient}{vectorielle}{T.m^{-1}}{le gradient de
+  température}
+
+\Glossary{HeatFlux}{vectorielle}{J.m^{-2}.s^{-1}}{le flux de chaleur
+  (uniquement disponible pour les matériaux isotropes)}
+
+\Glossary{NormalHeatFlux}{scalaire}{J.m^{-2}.s^{-1}}{la projection du
+  flux de chaleur sur la normale à une surface (uniquement disponible
+  pour les matériaux isotropes)}
+
+\subsubsection{Conditions aux limites}
+
+\Glossary{FirstMaterialTemperature}{scalaire}{K}{la température sur le
+  \og~premier~\fg matériau d'une condition d'échange (le choix
+  de ce \og~premier~\fg matériau est fait par l'utilisateur)}
+
+\Glossary{SecondMaterialTemperature}{scalaire}{K}{la température sur
+  le \og~se\-cond~\fg matériau d'une condition d'échange (le choix de
+  ce \og~second~\fg matériau est fait par l'utilisateur)}
+
+\Glossary{FirstMaterialRadius}{scalaire}{m}{le rayon du premier
+  matériau dans le cas d'une condition d'échange entre deux matériaux
+  (le choix du \og~second~\fg matériau est fait par l'utilisateur)}
+
+\Glossary{SecondMaterialRadius}{scalaire}{m}{le rayon du second
+  matériau dans le cas d'une condition d'échange entre deux matériaux
+  (le choix du \og~second~\fg matériau est fait par l'utilisateur)}
+
+\Glossary{ExternalTemperature}{scalaire}{K}{la température imposée.
+  L'utilisation de ce nom pour imposer une température n'est pas
+  obligatoire.}
+
+\Glossary{PowerDensity}{scalaire}{W.m^{-3}}{la densité de puissance}
+
+\Glossary{ConvectiveHeatTransferCoefficient}{scalaire}{W.m^{-2}.K^{-1}}{le
+  coefficient d'échange par convection}
+
+\subsection{Entrées spécifiques aux modèles mécaniques}
+
+Nous décrivons ici les entrées spécifiques aux modèles
+mécaniques. Nous les classons en trois catégories~:
+\begin{itemize}
+\item les entrées relatives au propriétés matériau~;
+\item les sorties du modèle mécanique~;
+\item les conditions aux limites.
+\end{itemize}
+
+\subsubsection{Propriétés matériau}
+
+\Glossary{YoungModulus}{scalaire}{Pa}{le module d'\nom{Young} d'un
+  matériau isotrope}
+\Glossary{YoungModulus1}{scalaire}{Pa}{le module d'\nom{Young} d'un
+  matériau orthotrope suivant la première direction d'orthotropie}
+\Glossary{YoungModulus2}{scalaire}{Pa}{le module d'\nom{Young} d'un
+  matériau orthotrope suivant la deuxième direction d'orthotropie}
+\Glossary{YoungModulus3}{scalaire}{Pa}{le module d'\nom{Young} d'un
+  matériau orthotrope suivant la troisième direction d'orthotropie}
+\Glossaryb{PoissonRatio}{scalaire}{le coefficient de \nom{Poisson}
+  d'un matériau isotrope}
+\Glossaryb{PoissonRatio12}{scalaire}{le coefficient de \nom{Poisson}
+  d'un matériau orthotrope relatif aux première et deuxième directions
+  d'orthotropie}
+\Glossaryb{PoissonRatio23}{scalaire}{le coefficient de \nom{Poisson}
+  d'un matériau orthotrope relatif aux deuxième et troisième
+  directions d'orthotropie}
+\Glossaryb{PoissonRatio13}{scalaire}{le coefficient de \nom{Poisson}
+  d'un matériau orthotrope relatif aux première et troisième
+  directions d'orthotropie}
+\Glossary{ShearModulus12}{scalaire}{Pa}{le module de cisaillement d'un
+  matériau orthotrope relatif aux première et deuxième directions
+  d'orthotropie}
+\Glossary{ShearModulus23}{scalaire}{Pa}{le module de cisaillement d'un
+  matériau orthotrope relatif aux deuxième et troisième directions
+  d'orthotropie}
+\Glossary{ShearModulus13}{scalaire}{Pa}{le module de cisaillement d'un
+  matériau orthotrope relatif aux première et troisième directions
+  d'orthotropie}
+\Glossary{ThermalExpansion}{scalaire}{K^{-1}}{le coefficient de
+  dilatation linéique d'un matériau isotrope}
+\Glossary{ThermalExpansion1}{scalaire}{K^{-1}}{le coefficient de
+  dilatation linéique d'un matériau orthotrope suivant la première
+  direction d'orthotropie}
+\Glossary{ThermalExpansion2}{scalaire}{K^{-1}}{le coefficient de
+  dilatation linéique d'un matériau orthotrope suivant la deuxième
+  direction d'orthotropie}
+\Glossary{ThermalExpansion3}{scalaire}{K^{-1}}{le coefficient de
+  dilatation linéique d'un matériau orthotrope suivant la troisième
+  direction d'orthotropie}
+
+\subsubsection{Sorties des modèles mécaniques}
+\label{sec:sorties-des-modeles-meca}
+
+\Glossary{Displacement}{vectorielle}{m}{le déplacement}
+\Glossary{UpdatedFirstCoordinate}{scalaire}{m}{la première coordonnée
+  actua\-lisée} \Glossary{UpdatedSecondCoordinate}{scalaire}{m}{la
+  deuxième coordonnée actua\-lisée}
+\Glossary{UpdatedThirdCoordinate}{scalaire}{m}{la troisième coordonnée
+  actua\-lisée} \Glossaryb{Strain}{tensorielle}{la déformation}
+\Glossaryb{AxialStrain}{scalaire}{la déformation axiale (cette
+  grandeur n'a de sens que pour les calculs "plan généralisé")}
+\Glossaryb{VolumetricStrain}{scalaire}{la dilatation volumique}
+\Glossary{Stress}{tensorielle}{Pa}{les contraintes}
+\Glossary{CylindricalStress}{tensorielle}{Pa}{les contraintes
+  exprimées dans le repère cylindrique}
+\Glossary{SphericalStress}{tensorielle}{Pa}{les contraintes exprimées
+  dans le repère sphérique}
+\Glossary{HydrostaticPressure}{tensorielle}{Pa}{la pression
+  hydrostatique (égale au tiers de la trace du tenseur des
+  contraintes)} \Glossary{VonMisesStress}{scalaire}{Pa}{la contrainte
+  équivalente au sens de \nom{von mises}}
+\Glossary{Trescastress}{scalaire}{Pa}{la contrainte équivalente au
+  sens de \nom{Tresca}} \Glossary{PrincipalStress1}{scalaire}{Pa}{la
+  première contrainte principale. Son sens est précisé dans la notice
+  de l'opérateur prin de castem
+  (\href{http://www-cast3m.cea.fr/cast3m/printnotice.do?name=prin}{http://www-cast3m.cea.fr})}
+\Glossary{PrincipalStress2}{scalaire}{Pa}{la deuxième contrainte
+  principale. Son sens est précisé dans la notice de l'opérateur prin
+  de castem
+  (\href{http://www-cast3m.cea.fr/cast3m/printnotice.do?name=prin}{http://www-cast3m.cea.fr/})}
+\Glossary{PrincipalStress3}{scalaire}{Pa}{la troisième contrainte
+  principale. Son sens est précisé dans la notice de l'opérateur prin
+  de castem
+  (\href{http://www-cast3m.cea.fr/cast3m/printnotice.do?name=prin}{http://www-cast3m.cea.fr/cast3m/})}
+
+\subsubsection{Conditions aux limites}
+
+\Glossary{Pressure}{scalaire}{Pa}{la pression d'un gaz}
+\Glossary{ExternalPressure}{scalaire}{Pa}{la pression imposée.
+  L'utilisation de ce nom pour imposer une pression n'est pas
+  obligatoire, l'utilisateur pouvant utiliser un nom différent lors de
+  la définition de la condition aux limites..}
+\Glossary{ExternalTraction}{scalaire}{Pa}{une contrainte de traction
+  imposée. L'utilisation de ce nom pour imposer une traction n'est pas
+  obligatoire, l'utilisateur pouvant utiliser un nom différent lors de
+  la définition de la condition aux limites.}
+\Glossary{ExternalDisplacement}{scalaire}{m}{un déplacement imposé.
+  L'utilisation de ce nom pour imposer un déplacement n'est pas
+  obligatoire.}  \Glossaryb{Swelling}{scalaire}{un gonflement
+  imposé. l'utilisation de ce nom pour imposer un gonflement n'est pas
+  obligatoire.}  \Glossaryb{SolidSwelling}{scalaire}{un gonflement
+  imposé dû à des produits de fission solides. L'utilisation de ce nom
+  pour imposer un gonflement n'est pas obligatoire}
+\Glossaryb{GaseousSwelling}{scalaire}{un gonflement imposé dû à des
+  produits de fission gazeux. L'utilisation de ce nom pour imposer un
+  gonflement n'est pas obligatoire}
+\Glossaryb{IrradiationInducedSwelling}{scalaire}{un gonflement imposé
+  dû à des dégâts d'irradiation. L'utilisation de ce nom pour imposer
+  un gonflement n'est pas obligatoire}
+
+%%% Local Variables: 
+%%% mode: latex
+%%% TeX-master: t
+%%% End: 

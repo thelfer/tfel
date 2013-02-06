@@ -17,7 +17,6 @@ EXTRA_DIST=CMakeLists.txt                            \
 	   annexe-orthotropie.tex			     \
 	   style.ist				     \
 	   Champs.tex				     \
-	   mfront.tex				     \
 	   Makefile.doc				     \
 	   mfront/nbzrSwellingModel.cxx		     \
 	   mfront/SIC_SpecificHeat_AUDUBERT.cxx	     \

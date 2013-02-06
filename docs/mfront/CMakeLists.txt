@@ -3,6 +3,8 @@ configure_file(annexe-orthotropie.tex.in
                annexe-orthotropie.tex @ONLY)
 configure_file(mfront.tex.in
                mfront.tex @ONLY)
+configure_file(glossary.tex.in
+               glossary.tex @ONLY)
 
 ADD_CUSTOM_COMMAND(
     OUTPUT    mfront.pdf
