@@ -806,27 +806,69 @@ namespace mfront{
     using namespace std;
     this->checkBehaviourFile();
     SupportedTypes::TypeSize n;
+    VarContainer::size_type i;
     VarContainer::const_iterator p;
+    VarContainer::const_iterator p2;
     for(p=this->stateVarsHolder.begin();p!=this->stateVarsHolder.end();++p){
       n += this->getTypeSize(p->type,p->arraySize);
     }
-    this->behaviourFile << "void\ngetPartialJacobianInvert(tfel::math::tmatrix<StensorSize,StensorSize,real>& partial_jacobian)\n"
-			<< "{\n";
-    this->behaviourFile << "using namespace tfel::math;" << endl;
-    this->behaviourFile << "TinyPermutation<" << n << "> permuation;" << endl;
-    if(this->algorithm==MFrontImplicitParser::NEWTONRAPHSON_NR){
-      this->behaviourFile << "this->computeNumericalJacobian(this->jacobian);\n";
+    p=this->stateVarsHolder.begin();
+    ++p;
+    for(i=0;i!=this->stateVarsHolder.size();++p,++i){
+      this->behaviourFile << "void\ngetPartialJacobianInvert(";
+      for(p2=this->stateVarsHolder.begin();p2!=p;){
+	SupportedTypes::TypeFlag flag = this->getTypeFlag(p2->type);
+	switch(flag){
+	case SupportedTypes::Scalar : 
+	  this->behaviourFile << "Stensor& ";
+	  break;
+	case SupportedTypes::Stensor :
+	  this->behaviourFile << "Stensor4& ";
+	  break;
+	default :
+	  string msg("MFrontImplicitParser::writeGetPartialJacobianInvert : ");
+	  msg += "internal error, tag unsupported";
+	  throw(runtime_error(msg));
+	}
+	this->behaviourFile << "partial_jacobian_" << p2->name;
+	if(++p2!=p){
+	  this->behaviourFile << "," << endl;
+	}	  
+      }
+      this->behaviourFile << ")" << endl;
+      this->behaviourFile << "{\n";
+      this->behaviourFile << "using namespace tfel::math;" << endl;
+      this->behaviourFile << "TinyPermutation<" << n << "> permuation;" << endl;
+      if(this->algorithm==MFrontImplicitParser::NEWTONRAPHSON_NR){
+	this->behaviourFile << "this->computeNumericalJacobian(this->jacobian);\n";
+      }
+      this->behaviourFile << "TinyMatrixSolve<" << n << ",real>::decomp(this->jacobian,permuation);" << endl;
+      this->behaviourFile << "for(unsigned short idx=0;idx!=StensorSize;++idx){\n";
+      this->behaviourFile << "tvector<" << n << ",real> vect_e(real(0));" << endl;
+      this->behaviourFile << "vect_e(idx) = real(1);" << endl;
+      this->behaviourFile << "TinyMatrixSolve<" << n << ",real>::back_substitute(this->jacobian,permuation,vect_e);" << endl;
+      SupportedTypes::TypeSize n2;
+      for(p2=this->stateVarsHolder.begin();p2!=p;++p2){
+	SupportedTypes::TypeFlag flag = this->getTypeFlag(p2->type);
+	if(flag==SupportedTypes::Scalar){
+	  this->behaviourFile << "partial_jacobian_" << p2->name << "(idx)=vect_e(" << n2 << ");\n";
+	  n2 += this->getTypeSize(p2->type,p2->arraySize);
+	} else if(flag==SupportedTypes::Stensor){
+	  this->behaviourFile << "for(unsigned short idx2=" << n2;
+	  this->behaviourFile << ";idx2!=";
+	  n2 += this->getTypeSize(p2->type,p2->arraySize);
+	  this->behaviourFile << n2 << ";++idx2){" << endl;
+	  this->behaviourFile << "partial_jacobian_" << p2->name << "(idx2,idx)=vect_e(idx2);\n";
+	  this->behaviourFile << "}\n";
+	} else {
+	  string msg("MFrontImplicitParser::writeGetPartialJacobianInvert : ");
+	  msg += "internal error, tag unsupported";
+	  throw(runtime_error(msg));
+	}
+      }
+      this->behaviourFile << "}\n";
+      this->behaviourFile << "}\n\n";
     }
-    this->behaviourFile << "TinyMatrixSolve<" << n << ",real>::decomp(this->jacobian,permuation);" << endl;
-    this->behaviourFile << "for(unsigned short idx=0;idx!=StensorSize;++idx){\n";
-    this->behaviourFile << "tvector<" << n << ",real> vect_e(real(0));" << endl;
-    this->behaviourFile << "vect_e(idx) = real(1);" << endl;
-    this->behaviourFile << "TinyMatrixSolve<" << n << ",real>::back_substitute(this->jacobian,permuation,vect_e);" << endl;
-    this->behaviourFile << "for(unsigned short idx2=0;idx2!=StensorSize;++idx2){\n";
-    this->behaviourFile << "partial_jacobian(idx2,idx)=vect_e(idx2);\n";
-    this->behaviourFile << "}\n";
-    this->behaviourFile << "}\n";
-    this->behaviourFile << "}\n\n";
   } // end of MFrontImplicitParser::writeGetPartialJacobianInvert
   
   void MFrontImplicitParser::writeComputeNumericalJacobian(){
