@@ -595,6 +595,7 @@ namespace mfront{
     using namespace std;
     using namespace std;
     VarContainer::iterator p;
+    this->behaviourFile << "using namespace std;" << endl;
     this->behaviourFile << "this->computeDerivative();" << endl;
     for(p =this->stateVarsHolder.begin();p!=this->stateVarsHolder.end();++p){
       this->behaviourFile << "this->" << p->name << " += " 
@@ -612,6 +613,7 @@ namespace mfront{
     using namespace std;
     using namespace std;
     VarContainer::iterator p;
+    this->behaviourFile << "using namespace std;" << endl;
     this->behaviourFile << "// Compute K1's values" << endl;
     this->behaviourFile << "this->computeDerivative();" << endl;
     for(p =this->stateVarsHolder.begin();p!=this->stateVarsHolder.end();++p){
@@ -1650,6 +1652,7 @@ namespace mfront{
   {
     using namespace std;
     VarContainer::iterator p;
+    this->behaviourFile << "using namespace std;" << endl;
     this->behaviourFile << "// Compute K1's values" << endl;
     this->behaviourFile << "this->computeDerivative();" << endl;
     for(p =this->stateVarsHolder.begin();p!=this->stateVarsHolder.end();++p){
