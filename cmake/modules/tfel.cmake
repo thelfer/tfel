@@ -40,3 +40,34 @@ if(ENABLE_STATIC)
  install(TARGETS ${name}-static DESTINATION lib${LIB_SUFFIX})
 endif(ENABLE_STATIC)
 endmacro(tfel_library)
+
+macro(add_mfront_behaviour_generated_source lib interface file)
+  set(mfront_file   "${PROJECT_SOURCE_DIR}/mfront/tests/behaviours/${file}.mfront")
+  if(WIN32)
+    set(mfront_executable "${PROJECT_BINARY_DIR}/mfront/src/mfront.exe")
+  else(WIN32)
+    set(mfront_executable "${PROJECT_BINARY_DIR}/mfront/src/mfront")
+  endif(WIN32)
+  add_custom_command(
+    OUTPUT  "src/${file}.cxx"
+    OUTPUT  "src/${interface}${file}.cxx"
+    COMMAND "${mfront_executable}"
+    ARGS    "--interface=${interface}" "${mfront_file}"
+    DEPENDS "${PROJECT_BINARY_DIR}/mfront/src/mfront"
+    DEPENDS "${mfront_file}"
+    COMMENT "mfront source")
+  set(${lib}_SOURCES "src/${file}.cxx" "src/${interface}${file}.cxx"
+    ${${lib}_SOURCES})
+endmacro(add_mfront_behaviour_generated_source)
+
+macro(mfront_behaviour_check_library lib interface)
+  if(${ARGC} LESS 1)
+    message(FATAL_ERROR "mfront_library : no source specified")
+  endif(${ARGC} LESS 1)
+  foreach(source ${ARGN})
+    add_mfront_behaviour_generated_source(${lib} ${interface} ${source})
+  endforeach(source)
+  add_library(${lib} SHARED EXCLUDE_FROM_ALL
+    ${${lib}_SOURCES})
+  add_dependencies(check ${lib})
+endmacro(mfront_behaviour_check_library)

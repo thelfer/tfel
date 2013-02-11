@@ -135,11 +135,20 @@ namespace umat{
     throwPlaneStressMaximumNumberOfIterationsReachedException(const std::string&);
 
     /*!
-     * \brief display an error message if the value of the NTENS
+     * \brief throw an error message if the value of the NTENS
+     * parameter is not valid
+     * \param[in] NTENS : NTENS value
+     * \param[in] N     : space dimension
+     */
+    static void
+    checkNTENSValue(const UMATInt,const unsigned short);
+
+    /*!
+     * \brief display an error message if the value of the NDI
      * parameter is not valid
      */
     static void
-    displayInvalidNTENSValueErrorMessage(void);
+    displayInvalidModellingHypothesisErrorMessage(void);
 
   }; // end of struct UMATInterfaceBase
   

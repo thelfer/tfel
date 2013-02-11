@@ -109,9 +109,16 @@ namespace mfront{
   {
     using namespace std;
     VarContainer::const_iterator p;
-    behaviourDataFile << "void\n"
-		      << "AsterExportStateData("
-		      << "Type * const Asterstress_,Type * const Asterstatev) const\n";
+    if((!stateVarsHolder.empty())||
+       (!auxiliaryStateVarsHolder.empty())){
+      behaviourDataFile << "void\n"
+			<< "AsterExportStateData("
+			<< "Type * const Asterstress_,Type * const Asterstatev) const\n";
+    } else {
+      behaviourDataFile << "void\n"
+			<< "AsterExportStateData("
+			<< "Type * const Asterstress_,Type * const) const\n";
+    }
     behaviourDataFile << "{\n";
     behaviourDataFile << "using namespace tfel::math;\n";
     behaviourDataFile << "this->sig.exportTab(Asterstress_);\n";
@@ -164,8 +171,7 @@ namespace mfront{
 		  <<  "const Type* const Asterstran, const Type* const Asterdstran,\n" 
 		  <<  "const Type* const AsterT_,const Type* const AsterdT_,\n"
 		  <<  "const Type* const Astermat,const Type* const Asterint_vars,\n"
-		  <<  "const Type* const Asterext_vars,const Type* const Asterdext_vars,"
-		  <<  "const ModellingHypothesis::Hypothesis hypothesis_)\n";
+		  <<  "const Type* const Asterext_vars,const Type* const Asterdext_vars)\n";
     if(characteristic.useQt()){
       behaviourFile << ": " << className 
 		    << "BehaviourData<N,Type,use_qt>(Asterstress_,Asterstran,AsterT_,Astermat,\n"
@@ -181,7 +187,6 @@ namespace mfront{
     }
     behaviourFile << initStateVarsIncrements;
     behaviourFile << initComputedVars;
-    behaviourFile << ",\nhypothesis(hypothesis_)";
   }
   
   void 
@@ -392,7 +397,6 @@ namespace mfront{
     string tmp;
     VarContainer::const_iterator p;
     VarContainer::const_iterator pp;
-    VarContainer::size_type nb;
     bool found;
 
     systemCall::mkdir("include/MFront");
@@ -729,14 +733,11 @@ namespace mfront{
     if(behaviourCharacteristic.getBehaviourType()==mfront::ISOTROPIC){
       // skipping the fourth first coefficients
       if(found){
-	nb = cs-4;
 	out << "_nMaterialProperties = " << cs-4 << ";\n";
       } else {
-	nb = cs;
 	out << "_nMaterialProperties = " << cs << ";\n";
       }
     } else {
-      nb = cs;
       out << "_nMaterialProperties = " << cs << ";\n";
     }
 

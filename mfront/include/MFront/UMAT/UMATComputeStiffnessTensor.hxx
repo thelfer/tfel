@@ -9,6 +9,8 @@
 #define _LIB_MFRONT_UMATCOMPUTESTIFFNESSTENSOR_H_ 
 
 #include"TFEL/Config/TFELTypes.hxx"
+#include"TFEL/Material/ModellingHypothesis.hxx"
+
 #include"MFront/UMAT/UMAT.hxx"
 #include"MFront/UMAT/UMATConfig.hxx"
 #include"MFront/UMAT/UMATTraits.hxx"
@@ -16,56 +18,118 @@
 namespace umat
 {
 
-  template<unsigned short N,
+  template<tfel::material::ModellingHypothesis::Hypothesis H,
 	   UMATBehaviourType>
   struct UMATComputeStiffnessTensor;
 
   template<>
-  struct MFRONT_UMAT_VISIBILITY_EXPORT UMATComputeStiffnessTensor<1u,ISOTROPIC>
+  struct MFRONT_UMAT_VISIBILITY_EXPORT
+  UMATComputeStiffnessTensor<tfel::material::ModellingHypothesis::AXISYMETRICALGENERALISEDPLANESTRAIN,ISOTROPIC>
   {
     static void
-    exe(const UMATReal* const,
-	tfel::config::Types<1u,UMATReal,false>::StiffnessTensor&);
+      exe(const UMATReal* const,
+	  tfel::config::Types<1u,UMATReal,false>::StiffnessTensor&);
   }; // end of struct UMATComputeStiffnessTensor
 
   template<>
-  struct MFRONT_UMAT_VISIBILITY_EXPORT UMATComputeStiffnessTensor<2u,ISOTROPIC>
+  struct MFRONT_UMAT_VISIBILITY_EXPORT
+  UMATComputeStiffnessTensor<tfel::material::ModellingHypothesis::AXISYMETRICAL,ISOTROPIC>
   {
     static void
-    exe(const UMATReal* const,
-	tfel::config::Types<2u,UMATReal,false>::StiffnessTensor&);
+      exe(const UMATReal* const,
+	  tfel::config::Types<2u,UMATReal,false>::StiffnessTensor&);
   }; // end of struct UMATComputeStiffnessTensor
 
   template<>
-  struct MFRONT_UMAT_VISIBILITY_EXPORT UMATComputeStiffnessTensor<3u,ISOTROPIC>
+  struct MFRONT_UMAT_VISIBILITY_EXPORT
+  UMATComputeStiffnessTensor<tfel::material::ModellingHypothesis::PLANESTRESS,ISOTROPIC>
   {
     static void
-    exe(const UMATReal* const,
-	tfel::config::Types<3u,UMATReal,false>::StiffnessTensor&);
+      exe(const UMATReal* const,
+	  tfel::config::Types<2u,UMATReal,false>::StiffnessTensor&);
+  }; // end of struct UMATComputeStiffnessTensor
+
+
+  template<>
+  struct MFRONT_UMAT_VISIBILITY_EXPORT
+  UMATComputeStiffnessTensor<tfel::material::ModellingHypothesis::PLANESTRAIN,ISOTROPIC>
+  {
+    static void
+      exe(const UMATReal* const,
+	  tfel::config::Types<2u,UMATReal,false>::StiffnessTensor&);
   }; // end of struct UMATComputeStiffnessTensor
 
   template<>
-  struct MFRONT_UMAT_VISIBILITY_EXPORT UMATComputeStiffnessTensor<1u,ORTHOTROPIC>
+  struct MFRONT_UMAT_VISIBILITY_EXPORT
+  UMATComputeStiffnessTensor<tfel::material::ModellingHypothesis::GENERALISEDPLANESTRAIN,ISOTROPIC>
   {
     static void
-    exe(const UMATReal* const,
-	tfel::config::Types<1u,UMATReal,false>::StiffnessTensor&);
+      exe(const UMATReal* const,
+	  tfel::config::Types<2u,UMATReal,false>::StiffnessTensor&);
   }; // end of struct UMATComputeStiffnessTensor
 
   template<>
-  struct MFRONT_UMAT_VISIBILITY_EXPORT UMATComputeStiffnessTensor<2u,ORTHOTROPIC>
+  struct MFRONT_UMAT_VISIBILITY_EXPORT
+  UMATComputeStiffnessTensor<tfel::material::ModellingHypothesis::TRIDIMENSIONAL,ISOTROPIC>
   {
     static void
-    exe(const UMATReal* const,
-	tfel::config::Types<2u,UMATReal,false>::StiffnessTensor&);
+      exe(const UMATReal* const,
+	  tfel::config::Types<3u,UMATReal,false>::StiffnessTensor&);
   }; // end of struct UMATComputeStiffnessTensor
 
   template<>
-  struct MFRONT_UMAT_VISIBILITY_EXPORT UMATComputeStiffnessTensor<3u,ORTHOTROPIC>
+  struct MFRONT_UMAT_VISIBILITY_EXPORT
+  UMATComputeStiffnessTensor<tfel::material::ModellingHypothesis::AXISYMETRICALGENERALISEDPLANESTRAIN,ORTHOTROPIC>
   {
     static void
-    exe(const UMATReal* const,
-	tfel::config::Types<3u,UMATReal,false>::StiffnessTensor&);
+      exe(const UMATReal* const,
+	  tfel::config::Types<1u,UMATReal,false>::StiffnessTensor&);
+  }; // end of struct UMATComputeStiffnessTensor
+
+  template<>
+  struct MFRONT_UMAT_VISIBILITY_EXPORT
+  UMATComputeStiffnessTensor<tfel::material::ModellingHypothesis::AXISYMETRICAL,ORTHOTROPIC>
+  {
+    static void
+      exe(const UMATReal* const,
+	  tfel::config::Types<2u,UMATReal,false>::StiffnessTensor&);
+  }; // end of struct UMATComputeStiffnessTensor
+
+  template<>
+  struct MFRONT_UMAT_VISIBILITY_EXPORT
+  UMATComputeStiffnessTensor<tfel::material::ModellingHypothesis::PLANESTRESS,ORTHOTROPIC>
+  {
+    static void
+      exe(const UMATReal* const,
+	  tfel::config::Types<2u,UMATReal,false>::StiffnessTensor&);
+  }; // end of struct UMATComputeStiffnessTensor
+
+
+  template<>
+  struct MFRONT_UMAT_VISIBILITY_EXPORT
+  UMATComputeStiffnessTensor<tfel::material::ModellingHypothesis::PLANESTRAIN,ORTHOTROPIC>
+  {
+    static void
+      exe(const UMATReal* const,
+	  tfel::config::Types<2u,UMATReal,false>::StiffnessTensor&);
+  }; // end of struct UMATComputeStiffnessTensor
+
+  template<>
+  struct MFRONT_UMAT_VISIBILITY_EXPORT
+  UMATComputeStiffnessTensor<tfel::material::ModellingHypothesis::GENERALISEDPLANESTRAIN,ORTHOTROPIC>
+  {
+    static void
+      exe(const UMATReal* const,
+	  tfel::config::Types<2u,UMATReal,false>::StiffnessTensor&);
+  }; // end of struct UMATComputeStiffnessTensor
+
+  template<>
+  struct MFRONT_UMAT_VISIBILITY_EXPORT
+  UMATComputeStiffnessTensor<tfel::material::ModellingHypothesis::TRIDIMENSIONAL,ORTHOTROPIC>
+  {
+    static void
+      exe(const UMATReal* const,
+	  tfel::config::Types<3u,UMATReal,false>::StiffnessTensor&);
   }; // end of struct UMATComputeStiffnessTensor
 
 } // end of namespace umat

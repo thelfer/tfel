@@ -8,6 +8,7 @@
 #ifndef _LIB_TFEL_MECHANICALBEHAVIOUR_H_
 #define _LIB_TFEL_MECHANICALBEHAVIOUR_H_ 
 
+#include"TFEL/Material/ModellingHypothesis.hxx"
 #include"TFEL/Material/MechanicalBehaviourData.hxx"
 
 namespace tfel{
@@ -17,15 +18,21 @@ namespace tfel{
     /*!
      * \class MechanicalBehaviour
      * \brief This class declares an interface for mechanical behaviours.
-     * \param unsigned short N, space dimension.
+     * \param H, modelling hypothesis
      * \param typename T, numerical type.
      * \param bool use_qt, says if one shall use quantities.
      * \author Helfer Thomas
      * \date   28 Jul 2006
      */
-    template<unsigned short N,typename NumType, bool use_qt>
+    template<ModellingHypothesis::Hypothesis H,
+	     typename NumType, bool use_qt>
     struct MechanicalBehaviour
     {
+      /*!
+       * dimension of the space for the the given modelling hypothesis
+       */
+      static const unsigned short N = ModellingHypothesisToSpaceDimension<H>::value;
+
       /*!
        * \brief  Return the name of the class.
        * \param  void.

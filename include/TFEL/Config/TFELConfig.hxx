@@ -47,6 +47,16 @@
 #define TFEL_FE_INLINE             inline  
 #endif /* TFEL_FE_INLINE */
 
+#if (defined __GNUC__) && (! defined __INTEL_COMPILER)
+#if __GNUC__ >= 4
+#define TFEL_MAY_ALIAS_ATTRIBUTE __attribute__((__may_alias__)) 
+#else /* __GNUC__ >= 4 */
+#define TFEL_MAY_ALIAS_ATTRIBUTE 
+#endif
+#else /* (defined __GNUC__) && (! defined __INTEL_COMPILER) */
+#define TFEL_MAY_ALIAS_ATTRIBUTE 
+#endif
+
 /*!
  * Macro extracted from :
  * "Why is the new C++ visibility support so useful?"

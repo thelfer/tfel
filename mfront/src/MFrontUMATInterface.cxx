@@ -168,9 +168,16 @@ namespace mfront{
   {
     using namespace std;
     VarContainer::const_iterator p;
-    behaviourDataFile << "void\n"
-		      << "UMATexportStateData("
-		      << "Type * const UMATstress_,Type * const UMATstatev) const\n";
+    if((!stateVarsHolder.empty())||
+       (!auxiliaryStateVarsHolder.empty())){
+      behaviourDataFile << "void\n"
+			<< "UMATexportStateData("
+			<< "Type * const UMATstress_,Type * const UMATstatev) const\n";
+    } else {
+      behaviourDataFile << "void\n"
+			<< "UMATexportStateData("
+			<< "Type * const UMATstress_,Type * const) const\n";
+    }
     behaviourDataFile << "{\n";
     behaviourDataFile << "using namespace tfel::math;\n";
     behaviourDataFile << "this->sig.exportTab(UMATstress_);\n";
@@ -223,8 +230,7 @@ namespace mfront{
 		  <<  "const Type* const UMATstran, const Type* const UMATdstran,\n" 
 		  <<  "const Type* const UMATT_,const Type* const UMATdT_,\n"
 		  <<  "const Type* const UMATmat,const Type* const UMATint_vars,\n"
-		  <<  "const Type* const UMAText_vars,const Type* const UMATdext_vars,"
-		  <<  "const ModellingHypothesis::Hypothesis hypothesis_)\n";
+		  <<  "const Type* const UMAText_vars,const Type* const UMATdext_vars)\n";
     if(characteristic.useQt()){
       behaviourFile << ": " << className 
 		    << "BehaviourData<N,Type,use_qt>(UMATstress_,UMATstran,UMATT_,UMATmat,\n"
@@ -240,7 +246,6 @@ namespace mfront{
     }
     behaviourFile << initStateVarsIncrements;
     behaviourFile << initComputedVars;
-    behaviourFile << ",\nhypothesis(hypothesis_)";
   }
   
   void 
@@ -556,10 +561,9 @@ namespace mfront{
     string tmp;
     VarContainer::const_iterator p;
     VarContainer::const_iterator pp;
-    VarContainer::size_type nb;
     unsigned short i;
     bool found;
-
+    
     systemCall::mkdir("include/MFront");
     systemCall::mkdir("include/MFront/UMAT");
 
@@ -706,11 +710,11 @@ namespace mfront{
     out << "namespace umat{\n\n";
 
     if(behaviourCharacteristic.useQt()){
-      out << "template<unsigned short N,typename Type,bool use_qt>\n";
+      out << "template<tfel::material::ModellingHypothesis::Hypothesis H,typename Type,bool use_qt>\n";
     } else {
-      out << "template<unsigned short N,typename Type>\n";
+      out << "template<tfel::material::ModellingHypothesis::Hypothesis H,typename Type>\n";
     } 
-    out << "struct UMATTraits<tfel::material::" << className << "<N,Type,";
+    out << "struct UMATTraits<tfel::material::" << className << "<H,Type,";
     if(behaviourCharacteristic.useQt()){
       out << "use_qt";
     } else {
@@ -746,6 +750,8 @@ namespace mfront{
 	out << "static const unsigned short propertiesOffset = 0u;\n";
       }
     } else if (behaviourCharacteristic.getBehaviourType()==mfront::ORTHOTROPIC){
+      out << "#warning \"something needs to be done here\"\n";
+      out << "static const unsigned short N = tfel::material::ModellingHypothesisToSpaceDimension<H>::value;\n";
       out << "static const unsigned short propertiesOffset = UMATOrthotropicOffset<N>::value;\n";
     } else {
       string msg("MFrontUMATInterface::endTreatement : ");
@@ -894,14 +900,11 @@ namespace mfront{
     if(behaviourCharacteristic.getBehaviourType()==mfront::ISOTROPIC){
       // skipping the fourth first coefficients
       if(found){
-	nb = cs-4;
 	out << "_nMaterialProperties = " << cs-4 << ";\n";
       } else {
-	nb = cs;
 	out << "_nMaterialProperties = " << cs << ";\n";
       }
     } else {
-      nb = cs;
       out << "_nMaterialProperties = " << cs << ";\n";
     }
 

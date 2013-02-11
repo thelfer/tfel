@@ -127,11 +127,31 @@ namespace umat{
   } // end of UMATInterfaceBase::throwPlaneStressMaximumNumberOfIterationsReachedException
 
   void
-  UMATInterfaceBase::displayInvalidNTENSValueErrorMessage()
+  UMATInterfaceBase::checkNTENSValue(const UMATInt NTENS,
+				     const unsigned short N)
   {
     using namespace std;
-    cout << "UMATInterfaceBase::displayInvalidNTENSValueErrorMessage : "
-	 << "invalide value for the NTENS paramater" << endl;    
+    bool ok = false;
+    if(NTENS==3){
+      ok = (N==1u);
+    } else if (NTENS==4){
+      ok = (N==2u);
+    } else if (NTENS==6){
+      ok = (N==3u);
+    }
+    if(!ok){
+      string msg("UMATInterfaceBase::checkNTENSValue : ");
+      msg += "invalid value for the NTENS parameter";
+      throw(runtime_error(msg));  
+    }
+  } // end of UMATInterfaceBase::checkNTENSValue
+
+  void
+  UMATInterfaceBase::displayInvalidModellingHypothesisErrorMessage(void)
+  {
+    using namespace std;
+    cout << "UMATInterfaceBase::displayInvalidModellingHypothesisErrorMessage : "
+	 << "invalid value for the NDI parameter" << endl;    
   }
 
 } // end of namespace umat 

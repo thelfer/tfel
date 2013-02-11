@@ -100,7 +100,8 @@ if(HAVE_ASTER)
     ${mfront_SOURCES})
   set(AsterInterface_SOURCES
     AsterInterfaceBase.cxx
-    AsterException.cxx)
+    AsterException.cxx
+    AsterTangentOperator.cxx)
   tfel_library(AsterInterface ${AsterInterface_SOURCES})
   target_link_libraries(AsterInterface
     TFELUtilities

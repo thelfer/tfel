@@ -14,7 +14,6 @@
 
 #include"TFEL/Math/Stensor/SFTMCV.hxx"
 #include"TFEL/Math/Stensor/SFTMRV.hxx"
-#include"TFEL/Math/Stensor/SFTVV.hxx"
 
 int
 main(void)

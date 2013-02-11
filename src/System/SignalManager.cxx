@@ -106,6 +106,7 @@ namespace tfel
       write(in[1],"\n",sizeof(char));
       write(in[1],"backtrace\n",strlen("backtrace\n"));
       write(in[1],"quit\n",strlen("quit\n"));
+      write(in[1],"y\n",strlen("y\n"));
       waitpid(pid,&status,0);
       // tells the father to die
       write(fd,"OK",2u);

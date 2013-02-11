@@ -243,17 +243,15 @@ namespace mfront{
 
     virtual void writeBehaviourClassBegin(void);
 
+    virtual void writeBehaviourGetModellingHypothesis(void);
+
     virtual void writeBehaviourClassEnd(void);
 
     virtual void writeBehaviourGetName(void);
 
     virtual void writeBehaviourPolicyVariable(void);
 
-    virtual void writeBehaviourHypothesisVariable(void);
-    
     virtual void writeBehaviourSetOutOfBoundsPolicy(void);
-
-    virtual void writeBehaviourGetModellingHypothesis(void);
 
     virtual void writeBehaviourCheckBounds(void);
 

@@ -8,4 +8,7 @@
 
 @Integrator{
   sig = D*(eto+deto);
+  if(computeTangentOperator_){
+    Dt = D;
+  }
 }

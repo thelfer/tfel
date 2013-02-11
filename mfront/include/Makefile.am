@@ -99,7 +99,8 @@ nobase_include_HEADERS += MFront/Aster/Aster.hxx                            \
 			  MFront/Aster/AsterInterfaceBase.hxx               \
 			  MFront/Aster/AsterBehaviourHandler.hxx            \
 			  MFront/Aster/AsterIsotropicBehaviourHandler.hxx   \
-			  MFront/Aster/AsterOrthotropicBehaviourHandler.hxx
+			  MFront/Aster/AsterOrthotropicBehaviourHandler.hxx \
+			  MFront/Aster/AsterTangentOperator.hxx
 # MFront/Aster/AsterGetModellingHypothesis.hxx        \
 # MFront/Aster/AsterOutOfBoundsPolicy.hxx             \
 # MFront/Aster/AsterRotationMatrix.hxx                \

@@ -15,10 +15,10 @@
 namespace umat
 {
 
-  template<unsigned short N,
-	   template<unsigned short,typename,bool> class Behaviour>
+  template<tfel::material::ModellingHypothesis::Hypothesis H,
+	   template<tfel::material::ModellingHypothesis::Hypothesis,typename,bool> class Behaviour>
   struct TFEL_VISIBILITY_LOCAL UMATIsotropicBehaviourHandler
-    : public UMATBehaviourHandler<N,Behaviour>
+    : public UMATBehaviourHandler<H,Behaviour>
   {
     TFEL_UMAT_INLINE static
       void exe(const UMATReal *const DTIME ,
@@ -34,14 +34,13 @@ namespace umat
 	       const UMATReal *const DPRED,
 	       UMATReal *const STATEV,
 	       const UMATInt  *const NSTATV,
-	       UMATReal *const STRESS,
-	       const UMATInt  *const NDI) 
+	       UMATReal *const STRESS) 
     {
       using namespace tfel::meta;
       using namespace tfel::material;
-      typedef MechanicalBehaviourTraits<Behaviour<N,UMATReal,false> > MTraits;
-      typedef UMATTraits<Behaviour<N,UMATReal,false> > Traits;
-      typedef UMATBehaviourHandler<N,Behaviour> UMATBehaviourHandler;
+      typedef MechanicalBehaviourTraits<Behaviour<H,UMATReal,false> > MTraits;
+      typedef UMATTraits<Behaviour<H,UMATReal,false> > Traits;
+      typedef UMATBehaviourHandler<H,Behaviour> UMATBehaviourHandler;
       const bool is_defined_ = MTraits::is_defined;
       const bool bs = Traits::requiresStiffnessTensor;
       const bool ba = Traits::requiresThermalExpansionTensor;
@@ -57,8 +56,7 @@ namespace umat
       UMATBehaviourHandler::checkNSTATV(*NSTATV);
       Handler handler(DTIME,DDSOE,STRAN,
 		      DSTRAN,TEMP,DTEMP,PROPS,
-		      PREDEF,DPRED,STATEV,STRESS,
-		      NDI);
+		      PREDEF,DPRED,STATEV,STRESS);
       handler.exe(STRESS,STATEV);
     } // end of UMATIsotropicBehaviourHandler::exe
 

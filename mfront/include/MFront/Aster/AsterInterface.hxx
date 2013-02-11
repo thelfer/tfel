@@ -43,18 +43,44 @@
 namespace aster
 {
 
+  template<unsigned short N>
+  struct AsterModellingHypothesis;
+
+  template<>
+  struct AsterModellingHypothesis<1u>
+  {
+    typedef tfel::material::ModellingHypothesis ModellingHypothesis;
+    static const ModellingHypothesis::Hypothesis value = ModellingHypothesis::AXISYMETRICALGENERALISEDPLANESTRAIN;
+  };
+
+  template<>
+  struct AsterModellingHypothesis<2u>
+  {
+    typedef tfel::material::ModellingHypothesis ModellingHypothesis;
+    static const ModellingHypothesis::Hypothesis value = ModellingHypothesis::GENERALISEDPLANESTRAIN;
+  };
+
+  template<>
+  struct AsterModellingHypothesis<3u>
+  {
+    typedef tfel::material::ModellingHypothesis ModellingHypothesis;
+    static const ModellingHypothesis::Hypothesis value = ModellingHypothesis::TRIDIMENSIONAL;
+  };
+
   /*!
    * forward declaration
    */
   template<unsigned short N,
-	   template<unsigned short,typename,bool> class Behaviour>
+	   template<tfel::material::ModellingHypothesis::Hypothesis,
+		    typename,bool> class Behaviour>
   struct AsterIsotropicBehaviourHandler;
 
   /*!
    * forward declaration
    */
   template<unsigned short N,
-	   template<unsigned short,typename,bool> class Behaviour>
+	   template<tfel::material::ModellingHypothesis::Hypothesis,
+		    typename,bool> class Behaviour>
   struct AsterOrthotropicBehaviourHandler;
 
   /*!
@@ -63,7 +89,8 @@ namespace aster
    * \author Helfer Thomas
    * \date   28 Jul 2006
    */
-  template<template<unsigned short,typename,bool> class Behaviour>
+  template<template<tfel::material::ModellingHypothesis::Hypothesis,
+		    typename,bool> class Behaviour>
   struct TFEL_VISIBILITY_LOCAL AsterInterface
     : protected AsterInterfaceBase
   {
@@ -102,7 +129,7 @@ namespace aster
     struct DimensionDispatch
     {
       TFEL_ASTER_INLINE2 static
-      int exe(const AsterInt  *const NTENS, const AsterReal *const DTIME,
+      int exe(const AsterInt  *const, const AsterReal *const DTIME,
 	      const AsterReal *const DROT,  AsterReal *const DDSOE,
 	      const AsterReal *const STRAN, const AsterReal *const DSTRAN,
 	      const AsterReal *const TEMP,  const AsterReal *const DTEMP,
@@ -114,7 +141,7 @@ namespace aster
 	using namespace std;
 	using namespace tfel::meta;
 	using namespace tfel::utilities;
-	typedef Behaviour<N,AsterReal,false> BV;
+	typedef Behaviour<AsterModellingHypothesis<N>::value,AsterReal,false> BV;
 	try {
 	  typedef AsterTraits<BV> Traits;
 	  typedef typename IF<Traits::type==aster::ISOTROPIC,

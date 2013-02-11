@@ -8,6 +8,8 @@
 #ifndef _LIB_TFEL_MATH_FORWARD_TVECTOR_H_
 #define _LIB_TFEL_MATH_FORWARD_TVECTOR_H_ 
 
+#include"TFEL/Config/TFELConfig.hxx"
+
 namespace tfel
 {
 

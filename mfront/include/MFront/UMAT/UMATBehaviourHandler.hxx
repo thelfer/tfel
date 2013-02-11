@@ -20,8 +20,9 @@ namespace umat
    * This structure handles two cases wether or not we shall handle
    * local substepping.
    */
-  template<unsigned short N,
-	   template<unsigned short,typename,bool> class Behaviour>
+  template<tfel::material::ModellingHypothesis::Hypothesis H,
+	   template<tfel::material::ModellingHypothesis::Hypothesis,
+		    typename,bool> class Behaviour>
   struct TFEL_VISIBILITY_LOCAL UMATBehaviourHandler
     :public UMATInterfaceBase
   {
@@ -32,11 +33,11 @@ namespace umat
      */
     struct TFEL_VISIBILITY_LOCAL StiffnessTensorInitializer
     {
-      typedef Behaviour<N,UMATReal,false> BV;
+      typedef Behaviour<H,UMATReal,false> BV;
       typedef typename BV::BehaviourData  BData;
       TFEL_UMAT_INLINE static void
-	exe(BData& data,const UMATReal * const props){
-	UMATComputeStiffnessTensor<N,UMATTraits<BV>::type>::exe(props,
+      exe(BData& data,const UMATReal * const props){
+	UMATComputeStiffnessTensor<H,UMATTraits<BV>::type>::exe(props,
 								data.getStiffnessTensor());
       } // end of exe
     }; // end of struct StiffnessTensorInitializer
@@ -47,11 +48,11 @@ namespace umat
      */
     struct TFEL_VISIBILITY_LOCAL ThermalExpansionTensorInitializer
     {
-      typedef Behaviour<N,UMATReal,false> BV;
+      typedef Behaviour<H,UMATReal,false> BV;
       typedef typename BV::BehaviourData  BData;
       TFEL_UMAT_INLINE static void
 	exe(BData& data,const UMATReal * const props){
-	UMATComputeThermalExpansionTensor<N,UMATTraits<BV>::type>::exe(props,
+	UMATComputeThermalExpansionTensor<H,UMATTraits<BV>::type>::exe(props,
 								       data.getThermalExpansionTensor());
       } // end of exe
     }; // end of struct ThermalExpansionTensorInitializer
@@ -61,7 +62,7 @@ namespace umat
      */
     struct TFEL_VISIBILITY_LOCAL DoNothingInitializer
     {
-      typedef Behaviour<N,UMATReal,false> BV;
+      typedef Behaviour<H,UMATReal,false> BV;
       typedef typename BV::BehaviourData  BData;
       TFEL_UMAT_INLINE static void
 	exe(BData&,const UMATReal * const)
@@ -98,7 +99,7 @@ namespace umat
       {
 	using namespace std;
 	using namespace tfel::utilities;
-	throw(UMATInvalidDimension(Name<Behaviour<N,UMATReal,false> >::getName()));
+	throw(UMATInvalidDimension(Name<Behaviour<H,UMATReal,false> >::getName()));
 	return;
       } // end of Error::exe
       
@@ -128,13 +129,11 @@ namespace umat
 				 const UMATReal *const PREDEF,
 				 const UMATReal *const DPRED,
 				 UMATReal *const STATEV,
-				 UMATReal *const STRESS,
-				 const UMATInt *const NDI)
+				 UMATReal *const STRESS)
 	: bData(STRESS,STRAN,TEMP,PROPS+UMATTraits<BV>::propertiesOffset,
 		STATEV,PREDEF),
 	iData(DTIME,DSTRAN,DTEMP,DPRED),
-	dt(*DTIME),
-	hypothesis(getModellingHypothesis(*NDI))
+	dt(*DTIME)
 	  {
 	    SInitializer::exe(this->bData,PROPS);
 	    AInitializer::exe(this->bData,PROPS);
@@ -151,13 +150,12 @@ namespace umat
 	unsigned short iterations = 1u;
 	bool convergence;
 	if(this->dt<0.){
-	  throwNegativeTimeStepException(Name<Behaviour<N,UMATReal,false> >::getName());
+	  throwNegativeTimeStepException(Name<Behaviour<H,UMATReal,false> >::getName());
 	}
 	while((iterations!=0)&&
 	      (subSteps!=UMATTraits<BV>::maximumSubStepping)){
 	  convergence = true;
-	  BV behaviour(this->bData,this->iData,
-		       this->hypothesis);
+	  BV behaviour(this->bData,this->iData);
 	  behaviour.setOutOfBoundsPolicy(up.getOutOfBoundsPolicy());
 	  behaviour.checkBounds();
 	  try{
@@ -181,13 +179,13 @@ namespace umat
 	  }
 	}
 	if((subSteps==UMATTraits<BV>::maximumSubStepping)&&(iterations!=0)){
-	  throwMaximumNumberOfSubSteppingReachedException(Name<Behaviour<N,UMATReal,false> >::getName());
+	  throwMaximumNumberOfSubSteppingReachedException(Name<Behaviour<H,UMATReal,false> >::getName());
 	}
 	this->bData.UMATexportStateData(STRESS,STATEV);
       } // end of IntegratorWithTimeStepping::exe
 
     private:
-      typedef Behaviour<N,UMATReal,false> BV;
+      typedef Behaviour<H,UMATReal,false> BV;
       typedef typename BV::BehaviourData  BData;
       typedef typename BV::IntegrationData  IData;
 
@@ -220,11 +218,10 @@ namespace umat
 				  const UMATReal *const PREDEF,
 				  const UMATReal *const DPRED,
 				  const UMATReal *const STATEV,
-				  const UMATReal *const STRESS,
-				  const UMATInt  *const NDI)
+				  const UMATReal *const STRESS)
 	: behaviour(DTIME,STRESS,STRAN,DSTRAN,TEMP,DTEMP,
 		    PROPS+UMATTraits<BV>::propertiesOffset,
-		    STATEV,PREDEF,DPRED,getModellingHypothesis(*NDI)),
+		    STATEV,PREDEF,DPRED),
 	dt(*DTIME)
 	  {
 	    SInitializer::exe(this->behaviour,PROPS);
@@ -239,18 +236,18 @@ namespace umat
       {
 	using namespace tfel::utilities;
 	if(this->dt<0.){
-	  throwNegativeTimeStepException(Name<Behaviour<N,UMATReal,false> >::getName());
+	  throwNegativeTimeStepException(Name<Behaviour<H,UMATReal,false> >::getName());
 	}
 	behaviour.checkBounds();
 	if(!this->behaviour.integrate(false)){
-	  throwBehaviourIntegrationFailedException(Name<Behaviour<N,UMATReal,false> >::getName());
+	  throwBehaviourIntegrationFailedException(Name<Behaviour<H,UMATReal,false> >::getName());
 	}
 	behaviour.checkBounds();
 	this->behaviour.UMATexportStateData(STRESS,STATEV);
       } // end of Integrator::exe
 	
     private:
-      typedef Behaviour<N,UMATReal,false> BV;
+      typedef Behaviour<H,UMATReal,false> BV;
       BV behaviour;
       UMATReal dt;
     }; // end of struct Integrator
@@ -261,7 +258,7 @@ namespace umat
       using namespace std;
       using namespace tfel::utilities;
       using namespace tfel::material;
-      typedef Behaviour<N,UMATReal,false> BV;
+      typedef Behaviour<H,UMATReal,false> BV;
       typedef MechanicalBehaviourTraits<BV> Traits;
       const unsigned short offset  = UMATTraits<BV>::propertiesOffset;
       const unsigned short nprops  = Traits::material_properties_nb;
@@ -269,7 +266,7 @@ namespace umat
       const bool is_defined_       = Traits::is_defined;
       //Test if the nb of properties matches Behaviour requirements
       if((NPROPS!=NPROPS_)&&is_defined_){
-	throwUnMatchedNumberOfMaterialProperties(Name<Behaviour<N,UMATReal,false> >::getName(),
+	throwUnMatchedNumberOfMaterialProperties(Name<Behaviour<H,UMATReal,false> >::getName(),
 						 NPROPS_,NPROPS);
       }
     } // end of checkNPROPS
@@ -278,14 +275,14 @@ namespace umat
       checkNSTATV(const UMATInt NSTATV)
     {
       using namespace tfel::utilities;
-      typedef Behaviour<N,UMATReal,false> BV;
+      typedef Behaviour<H,UMATReal,false> BV;
       typedef tfel::material::MechanicalBehaviourTraits<BV> Traits;
       const unsigned short nstatv  = Traits::internal_variables_nb;
       const unsigned short NSTATV_ = nstatv == 0 ? 1u : nstatv;
       const bool is_defined_       = Traits::is_defined;
       //Test if the nb of state variables matches Behaviour requirements
       if((NSTATV_!=NSTATV)&&is_defined_){
-	throwUnMatchedNumberOfStateVariables(Name<Behaviour<N,UMATReal,false> >::getName(),
+	throwUnMatchedNumberOfStateVariables(Name<Behaviour<H,UMATReal,false> >::getName(),
 					     NSTATV_,NSTATV);
       }
     } // end of checkNSTATV

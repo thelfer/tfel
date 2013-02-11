@@ -16,7 +16,7 @@ namespace aster
 {
 
   template<unsigned short N,
-	   template<unsigned short,typename,bool> class Behaviour>
+	   template<tfel::material::ModellingHypothesis::Hypothesis,typename,bool> class Behaviour>
   struct TFEL_VISIBILITY_LOCAL AsterIsotropicBehaviourHandler
     : public AsterBehaviourHandler<N,Behaviour>
   {
@@ -38,8 +38,9 @@ namespace aster
     {
       using namespace tfel::meta;
       using namespace tfel::material;
-      typedef MechanicalBehaviourTraits<Behaviour<N,AsterReal,false> > MTraits;
-      typedef AsterTraits<Behaviour<N,AsterReal,false> > Traits;
+      typedef Behaviour<AsterModellingHypothesis<N>::value,AsterReal,false> BV;
+      typedef MechanicalBehaviourTraits<BV> MTraits;
+      typedef AsterTraits<BV> Traits;
       typedef AsterBehaviourHandler<N,Behaviour> AsterBehaviourHandler;
       const bool is_defined_ = MTraits::is_defined;
       const bool bs = Traits::requiresStiffnessTensor;

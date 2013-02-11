@@ -23,6 +23,9 @@ namespace tfel
   namespace math
   {
 
+    /*!
+     * ST2toST2 From Tiny Matrix
+     */
     template<unsigned short N,
 	     unsigned short Mn,
 	     unsigned short Mm,

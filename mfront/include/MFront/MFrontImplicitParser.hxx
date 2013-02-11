@@ -142,6 +142,8 @@ namespace mfront{
 
     void treatTangentOperator(void);
 
+    void treatIsTangentOperatorSymmetric(void);
+
     std::string
     getJacobianPart(const VarHandler&,
 		    const VarHandler&,
@@ -169,6 +171,8 @@ namespace mfront{
     Algorithm algorithm;
 
     bool compareToNumericalJacobian;
+
+    bool isConsistantTangentOperatorSymmetricDefined;
 
     bool useRelaxation;
 

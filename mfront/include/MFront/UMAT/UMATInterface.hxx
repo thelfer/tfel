@@ -44,21 +44,24 @@ namespace umat{
   /*!
    * forward declaration
    */
-  template<template<unsigned short,typename,bool> class Behaviour>
+  template<template<tfel::material::ModellingHypothesis::Hypothesis,
+		    typename,bool> class Behaviour>
   struct UMATGenericPlaneStressHandler;
 
   /*!
    * forward declaration
    */
-  template<unsigned short N,
-	   template<unsigned short,typename,bool> class Behaviour>
+  template<tfel::material::ModellingHypothesis::Hypothesis,
+	   template<tfel::material::ModellingHypothesis::Hypothesis,
+		    typename,bool> class Behaviour>
   struct UMATIsotropicBehaviourHandler;
 
   /*!
    * forward declaration
    */
-  template<unsigned short N,
-	   template<unsigned short,typename,bool> class Behaviour>
+  template<tfel::material::ModellingHypothesis::Hypothesis,
+	   template<tfel::material::ModellingHypothesis::Hypothesis,
+		    typename,bool> class Behaviour>
   struct UMATOrthotropicBehaviourHandler;
 
   /*!
@@ -67,7 +70,8 @@ namespace umat{
    * \author Helfer Thomas
    * \date   28 Jul 2006
    */
-  template<template<unsigned short,typename,bool> class Behaviour>
+  template<template<tfel::material::ModellingHypothesis::Hypothesis,
+		    typename,bool> class Behaviour>
   struct TFEL_VISIBILITY_LOCAL UMATInterface
     : protected UMATInterfaceBase
   {
@@ -87,35 +91,42 @@ namespace umat{
 	       UMATReal *const STRESS,const UMATInt  *const NDI,
 	       UMATInt  *const KINC)
     {
-      if(*NDI==-2){
-	// plane strain
-	UMATGenericPlaneStressHandler<Behaviour>::exe(DTIME,DROT,DDSOE,STRAN,DSTRAN,TEMP,DTEMP,
-						      PROPS,NPROPS,PREDEF,DPRED,STATEV,NSTATV,
-						      STRESS);
+      typedef tfel::material::ModellingHypothesis MH;
+      if(*NDI==2){
+	MHDispatch<MH::TRIDIMENSIONAL>::exe(NTENS,DTIME,DROT,DDSOE,STRAN,DSTRAN,
+					    TEMP,DTEMP,PROPS,NPROPS,PREDEF,DPRED,
+					    STATEV,NSTATV,STRESS,KINC);
+      } else if(*NDI==0){
+	MHDispatch<MH::AXISYMETRICAL>::exe(NTENS,DTIME,DROT,DDSOE,STRAN,DSTRAN,
+					   TEMP,DTEMP,PROPS,NPROPS,PREDEF,DPRED,
+					   STATEV,NSTATV,STRESS,KINC);
+      } else if(*NDI==-1){
+	MHDispatch<MH::PLANESTRAIN>::exe(NTENS,DTIME,DROT,DDSOE,STRAN,DSTRAN,
+					 TEMP,DTEMP,PROPS,NPROPS,PREDEF,DPRED,
+					 STATEV,NSTATV,STRESS,KINC);
+      } else if(*NDI==-2){
+	MHDispatch<MH::PLANESTRESS>::exe(NTENS,DTIME,DROT,DDSOE,STRAN,DSTRAN,
+					 TEMP,DTEMP,PROPS,NPROPS,PREDEF,DPRED,
+					 STATEV,NSTATV,STRESS,KINC);
+      } else if(*NDI==-3){
+	MHDispatch<MH::GENERALISEDPLANESTRAIN>::exe(NTENS,DTIME,DROT,DDSOE,STRAN,DSTRAN,
+						    TEMP,DTEMP,PROPS,NPROPS,PREDEF,DPRED,
+						    STATEV,NSTATV,STRESS,KINC);
+      } else if(*NDI==14){
+	MHDispatch<MH::AXISYMETRICALGENERALISEDPLANESTRAIN>::exe(NTENS,DTIME,DROT,DDSOE,STRAN,DSTRAN,
+								 TEMP,DTEMP,PROPS,NPROPS,PREDEF,DPRED,
+								 STATEV,NSTATV,STRESS,KINC);
       } else {
-	if(*NTENS==3u){
-	  DimensionDispatch<1u>::exe(NTENS,DTIME,DROT,DDSOE,STRAN,DSTRAN,
-				     TEMP,DTEMP,PROPS,NPROPS,PREDEF,DPRED,
-				     STATEV,NSTATV,STRESS,NDI,KINC);
-	} else if(*NTENS==4){
-	  DimensionDispatch<2u>::exe(NTENS,DTIME,DROT,DDSOE,STRAN,DSTRAN,
-				     TEMP,DTEMP,PROPS,NPROPS,PREDEF,DPRED,
-				     STATEV,NSTATV,STRESS,NDI,KINC);
-	} else if(*NTENS==6){
-	  DimensionDispatch<3u>::exe(NTENS,DTIME,DROT,DDSOE,STRAN,DSTRAN,
-				     TEMP,DTEMP,PROPS,NPROPS,PREDEF,DPRED,
-				     STATEV,NSTATV,STRESS,NDI,KINC);
-	} else {
-	  UMATInterfaceBase::displayInvalidNTENSValueErrorMessage();
-	  *KINC = -2;
-	}
+	UMATInterfaceBase::displayInvalidModellingHypothesisErrorMessage();
+	*KINC = -2;
       }
     } // end of UMATInterface::exe
 
   private:
 
-    template<unsigned short N>
-      struct DimensionDispatch
+
+    template<tfel::material::ModellingHypothesis::Hypothesis H>
+    struct MHDispatch
     {
       TFEL_UMAT_INLINE2 static
       void exe(const UMATInt  *const NTENS, const UMATReal *const DTIME,
@@ -125,21 +136,25 @@ namespace umat{
 	       const UMATReal *const PROPS, const UMATInt  *const NPROPS,
 	       const UMATReal *const PREDEF,const UMATReal *const DPRED,
 	       UMATReal *const STATEV,const UMATInt  *const NSTATV,
-	       UMATReal *const STRESS,const UMATInt  *const NDI,
-	       UMATInt  *const KINC)
+	       UMATReal *const STRESS,UMATInt  *const KINC)
       {
 	using namespace std;
 	using namespace tfel::meta;
 	using namespace tfel::utilities;
-	typedef Behaviour<N,UMATReal,false> BV;
+	typedef Behaviour<H,UMATReal,false> BV;
+	//! a simple alias
+	typedef tfel::material::ModellingHypothesisToSpaceDimension<H> ModellingHypothesisToSpaceDimension;
+	// spatial dimension
+	static const unsigned short N = ModellingHypothesisToSpaceDimension::value;
 	try {
 	  typedef UMATTraits<BV> Traits;
 	  typedef typename IF<Traits::type==umat::ISOTROPIC,
-			      UMATIsotropicBehaviourHandler<N,Behaviour>,
-			      UMATOrthotropicBehaviourHandler<N,Behaviour> >::type Handler;
+			      UMATIsotropicBehaviourHandler<H,Behaviour>,
+			      UMATOrthotropicBehaviourHandler<H,Behaviour> >::type Handler;
+	  UMATInterfaceBase::checkNTENSValue(*NTENS,N);
 	  Handler::exe(DTIME,DROT,DDSOE,STRAN,DSTRAN,TEMP,DTEMP,
 		       PROPS,NPROPS,PREDEF,DPRED,STATEV,NSTATV,
-		       STRESS,NDI);
+		       STRESS);
 	} 
 	catch(const UMATException& e){
 	  UMATInterfaceBase::treatUmatException(Name<BV>::getName(),e);

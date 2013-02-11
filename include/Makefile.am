@@ -187,8 +187,10 @@ nobase_include_HEADERS= TFEL/Macros.hxx                                         
 			TFEL/Math/Stensor/StensorStensorExprWithoutConstIterator.hxx                  \
 			TFEL/Math/Stensor/ScalarStensorExprWithoutConstIteratorSpecialisation.ixx     \
 			TFEL/Math/Stensor/SFTMCV.hxx                                                  \
+			TFEL/Math/Stensor/SFTMCV2.hxx                                                 \
 			TFEL/Math/Stensor/SFTMRV.hxx                                                  \
-			TFEL/Math/Stensor/SFTVV.hxx                                                   \
+			TFEL/Math/Stensor/SFTMRV2.hxx                                                 \
+			TFEL/Math/Stensor/SFTV.hxx                                                    \
 			TFEL/Math/Vector/tvectorResultType.hxx	                                      \
 			TFEL/Math/Vector/VectorNegExpr.hxx		                              \
 			TFEL/Math/Vector/FctVectorExpr.hxx		                              \
@@ -214,6 +216,8 @@ nobase_include_HEADERS= TFEL/Macros.hxx                                         
 			TFEL/Math/Vector/VectorVectorExprWithoutConstIteratorSpecialisation.ixx       \
 			TFEL/Math/Vector/VectorVectorDiadicProductExpr.hxx                            \
 			TFEL/Math/Vector/VectorVectorDotProduct.hxx                                   \
+			TFEL/Math/Vector/TFTV.hxx                                                     \
+			TFEL/Math/Vector/TSFTV.hxx                                                    \
 			TFEL/Math/matrix.hxx                 	                                      \
 			TFEL/Math/Matrix/tmatrixResultType.hxx	                                      \
 			TFEL/Math/Matrix/ScalarMatrixExpr.hxx	                                      \
@@ -374,6 +378,7 @@ nobase_include_HEADERS= TFEL/Macros.hxx                                         
 			TFEL/Math/ST2toST2/ST2toST2NegExprWithoutConstIterator.hxx                    \
 			TFEL/Math/ST2toST2/ScalarST2toST2ExprWithoutConstIteratorSpecialisation.ixx   \
 			TFEL/Math/ST2toST2/ST2toST2FTMV.hxx                                           \
+			TFEL/Math/ST2toST2/ST2toST2FTMV2.hxx                                          \
 			TFEL/Math/composite.hxx                                                       \
 			TFEL/Math/Composite/CompositeCompositeExpr.hxx                                \
 			TFEL/Math/Composite/CompositeConceptOperations.ixx                            \

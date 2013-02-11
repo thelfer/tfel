@@ -21,7 +21,8 @@ namespace umat
    * This allows behaviours written for the generalised plane stress
    * hypothesis to be used in plane stress computations.
    */
-  template<template<unsigned short,typename,bool> class Behaviour>
+  template<template<tfel::material::ModellingHypothesis::Hypothesis,
+		    typename,bool> class Behaviour>
   struct UMATGenericPlaneStressHandler
     : public UMATInterfaceBase
   {
@@ -42,10 +43,12 @@ namespace umat
 	     UMATReal *const STRESS)
     {
       using namespace tfel::meta;
-      typedef UMATTraits<Behaviour<2u,UMATReal,false> > Traits;
+      using namespace tfel::material;
+      const ModellingHypothesis::Hypothesis H = ModellingHypothesis::GENERALISEDPLANESTRAIN;
+      typedef UMATTraits<Behaviour<H,UMATReal,false> > Traits;
       typedef typename IF<Traits::type==umat::ISOTROPIC,
-			  UMATIsotropicBehaviourHandler<2u,Behaviour>,
-			  UMATOrthotropicBehaviourHandler<2u,Behaviour> >::type Treat;
+			  UMATIsotropicBehaviourHandler<H,Behaviour>,
+			  UMATOrthotropicBehaviourHandler<H,Behaviour> >::type Treat;
 	// generalised plane stress hypothesis
       const UMATInt NDI = -3;
       Treat::exe(DTIME,DROT,DDSOE,STRAN,DSTRAN,TEMP,DTEMP,
@@ -59,14 +62,15 @@ namespace umat
     checkNSTATV(const UMATInt NSTATV)
     {
       using namespace tfel::utilities;
-      typedef Behaviour<2u,UMATReal,false> BV;
+      using namespace tfel::material;
+      const ModellingHypothesis::Hypothesis H = ModellingHypothesis::GENERALISEDPLANESTRAIN;
+      typedef Behaviour<H,UMATReal,false> BV;
       typedef tfel::material::MechanicalBehaviourTraits<BV> Traits;
       const unsigned short NSTATV_  = Traits::internal_variables_nb+1u;
       const bool is_defined_        = Traits::is_defined;
       //Test if the nb of state variables matches Behaviour requirements
       if((NSTATV_!=NSTATV)&&is_defined_){
-	throwUnMatchedNumberOfStateVariables(Name<Behaviour<2u,UMATReal,false> >::getName(),
-					     NSTATV_,NSTATV);
+	throwUnMatchedNumberOfStateVariables(Name<BV>::getName(),NSTATV_,NSTATV);
       }
     } // end of checkNSTATV
 
@@ -86,8 +90,10 @@ namespace umat
     {
       using namespace std;
       using namespace tfel::utilities;
+      using namespace tfel::material;
+      const ModellingHypothesis::Hypothesis H = ModellingHypothesis::GENERALISEDPLANESTRAIN;
       using tfel::fsalgo::copy;
-      typedef Behaviour<2u,UMATReal,false> BV;
+      typedef Behaviour<H,UMATReal,false> BV;
       typedef tfel::material::MechanicalBehaviourTraits<BV> Traits;
       const unsigned short NSTATV_  = Traits::internal_variables_nb+1u;
       UMATGenericPlaneStressHandler::checkNSTATV(*NSTATV);
@@ -139,7 +145,7 @@ namespace umat
 	++iter;
       }
       if(iter==iterMax){
-	throwPlaneStressMaximumNumberOfIterationsReachedException(Name<Behaviour<2u,UMATReal,false> >::getName());
+	throwPlaneStressMaximumNumberOfIterationsReachedException(Name<BV>::getName());
       }
       copy<4>::exe(s,STRESS);
       copy<NSTATV_>::exe(v,STATEV);
@@ -167,8 +173,10 @@ namespace umat
 	      UMATReal *const eto,
 	      UMATReal *const deto)
     {
+      using namespace tfel::material;
       using tfel::fsalgo::copy;
-      typedef Behaviour<2u,UMATReal,false> BV;
+      const ModellingHypothesis::Hypothesis H = ModellingHypothesis::GENERALISEDPLANESTRAIN;
+      typedef Behaviour<H,UMATReal,false> BV;
       typedef tfel::material::MechanicalBehaviourTraits<BV> Traits;
       const UMATInt nNSTATV = Traits::internal_variables_nb;
       const UMATInt NDI = -1;
@@ -199,7 +207,9 @@ namespace umat
 	       UMATReal *const STATEV,const UMATInt  *const NSTATV,
 	       UMATReal *const STRESS)
       {
-	typedef typename UMATInterface<Behaviour>::template TreatIsotropicBehaviour<2u> BehaviourHandler;
+	using namespace tfel::material;
+	const ModellingHypothesis::Hypothesis H = ModellingHypothesis::GENERALISEDPLANESTRAIN;
+	typedef UMATIsotropicBehaviourHandler<H,Behaviour> BehaviourHandler;
 	const UMATReal y = PROPS[0]; // Young Modulus
 	const UMATReal n = PROPS[1]; // Poisson ratio
 	const UMATReal c1 = -n/(1-n);
@@ -227,10 +237,11 @@ namespace umat
       {
 	using namespace tfel::meta;
 	using namespace tfel::material;
+	const ModellingHypothesis::Hypothesis H = ModellingHypothesis::GENERALISEDPLANESTRAIN;
 	using tfel::fsalgo::copy;
-	typedef Behaviour<2u,UMATReal,false> BV;
+	typedef Behaviour<H,UMATReal,false> BV;
 	typedef MechanicalBehaviourTraits<BV> Traits;
-	typedef typename UMATInterface<Behaviour>::TreatOrthotropicBehaviour2D BehaviourHandler;
+	typedef UMATOrthotropicBehaviourHandler<H,Behaviour> BehaviourHandler;
 	const unsigned short offset  = UMATTraits<BV>::propertiesOffset;
 	const unsigned short nprops  = Traits::material_properties_nb;
 	const unsigned short NPROPS_ = offset+nprops == 0 ? 1u : offset+nprops; 

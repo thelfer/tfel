@@ -132,7 +132,7 @@ namespace aster{
      */
     static void
     displayInvalidNTENSValueErrorMessage();
-
+    
   }; // end of struct AsterInterfaceBase
 
 } // end of namespace aster

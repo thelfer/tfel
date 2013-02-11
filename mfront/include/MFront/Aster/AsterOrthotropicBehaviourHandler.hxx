@@ -19,10 +19,10 @@ namespace aster
    * forward declaration
    */
   template<unsigned short N,
-	   template<unsigned short,typename,bool> class Behaviour>
+	   template<tfel::material::ModellingHypothesis::Hypothesis,typename,bool> class Behaviour>
   struct AsterOrthotropicBehaviourHandler;
 
-  // template<template<unsigned short,typename,bool> class Behaviour>
+  // template<template<tfel::material::ModellingHypothesis::Hypothesis,typename,bool> class Behaviour>
   // struct TFEL_VISIBILITY_LOCAL AsterOrthotropicBehaviourHandler<1u,Behaviour>
   //   : private AsterBehaviourHandler<1u,Behaviour>
   //   {
@@ -65,7 +65,7 @@ namespace aster
   // 	} // end of AsterOrthotropicBehaviourHandler1D::exe
   //   }; // end of struct AsterOrthotropicBehaviourHandler1D
 
-  // template<template<unsigned short,typename,bool> class Behaviour>
+  // template<template<tfel::material::ModellingHypothesis::Hypothesis,typename,bool> class Behaviour>
   // struct TFEL_VISIBILITY_LOCAL AsterOrthotropicBehaviourHandler<2u,Behaviour>
   //   : private AsterBehaviourHandler<2u,Behaviour>
   //   {
@@ -115,7 +115,7 @@ namespace aster
   // 	} // end of AsterOrthotropicBehaviourHandler2D::exe
   //   }; // end of AsterOrthotropicBehaviourHandler2D
 
-  // template<template<unsigned short,typename,bool> class Behaviour>
+  // template<template<tfel::material::ModellingHypothesis::Hypothesis,typename,bool> class Behaviour>
   // struct TFEL_VISIBILITY_LOCAL AsterOrthotropicBehaviourHandler<3u,Behaviour>
   //   : private AsterBehaviourHandler<3u,Behaviour>
   //   {

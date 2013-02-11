@@ -112,8 +112,9 @@ if HAVE_CASTEM
 else
     lib_LTLIBRARIES  = libAsterInterface.la
 endif
-libAsterInterface_la_SOURCES = AsterInterfaceBase.cxx                 \
-		              AsterException.cxx
+libAsterInterface_la_SOURCES = AsterInterfaceBase.cxx   \
+		               AsterException.cxx       \
+		               AsterTangentOperator.cxx
 # AsterComputeStiffnessTensor.cxx        \
 # AsterComputeThermalExpansionTensor.cxx \
 # AsterRotationMatrix.cxx                \

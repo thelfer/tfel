@@ -1,0 +1,75 @@
+@Parser    Implicit;
+@Behaviour ImplicitOrthotropicCreep;
+@Author    Helfer Thomas;
+@Date      15/03/11;
+
+@OrthotropicBehaviour;
+@RequireStiffnessTensor;
+
+@Theta 1.;
+
+@StateVariable real p;      /* Equivalent viscoplastic strain */
+p.setGlossaryName("EquivalentViscoplasticStrain");
+
+@AuxiliaryStateVariable real seq;
+seq.setGlossaryName("HillStress");
+
+@LocalVariable real H_F;
+@LocalVariable real H_G;
+@LocalVariable real H_H;
+@LocalVariable real H_L;
+@LocalVariable real H_M;
+@LocalVariable real H_N;
+
+@Includes{
+#include<TFEL/Material/Lame.hxx>
+#include<TFEL/Material/Hill.hxx>
+}
+
+@InitLocalVariables{
+  H_F = 0.371;
+  H_G = 1-H_F;
+  H_H = 4.052;
+  H_L = 1.5;
+  H_M = 1.5;
+  H_N = 1.5;
+}
+
+@ComputeStress{
+  sig = D*eel;
+}
+
+@Integrator{
+  const real A = 8.e-67;
+  const real E = 8.2;
+
+  const st2tost2<N,real> H = hillTensor<N,real>(H_F,H_G,H_H,
+						H_L,H_M,H_N);
+
+  const real sigeq = sqrt(sig|H*sig);
+
+  const real tmp = A*pow(sigeq,E-1.);
+  real inv_sigeq(0);
+  Stensor  n(0.);
+  if(sigeq > 1.){
+    inv_sigeq = 1/sigeq;
+  }
+  n  = (H*sig)*inv_sigeq;
+  
+  feel += dp*n-deto;
+  fp   -= tmp*sigeq*dt;
+
+  // jacobian
+  dfeel_ddeel += theta*dp*(H-(n^n))*D*inv_sigeq;
+  dfeel_ddp    = n;
+  dfp_ddeel    = -theta*tmp*E*dt*(n|D);
+
+}
+
+@UpdateAuxiliaryStateVars{
+  using namespace tfel::math;
+  const st2tost2<N,real> H = hillTensor<N,real>(H_F,H_G,H_H,
+						H_L,H_M,H_N);
+  seq = sqrt(sig|H*sig);
+
+}

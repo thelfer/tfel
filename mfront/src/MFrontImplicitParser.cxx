@@ -20,6 +20,7 @@ namespace mfront{
       MFrontBehaviourParserBase<MFrontImplicitParser>(),
       algorithm(MFrontImplicitParser::DEFAULT),
       compareToNumericalJacobian(false),
+      isConsistantTangentOperatorSymmetricDefined(false),
       useRelaxation(false),
       useAcceleration(false)
   {
@@ -61,6 +62,7 @@ namespace mfront{
     this->registerVariable("error");
     this->registerVariable("idx");
     this->registerVariable("idx2");
+    this->registerVariable("idx3");
     this->reserveName("schmidt");
     this->reserveName("computeNumericalJacobian");
     this->reserveName("TinyMatrixSolve");
@@ -99,6 +101,8 @@ namespace mfront{
     this->registerNewCallBack("@RelaxationCoefficient",&MFrontImplicitParser::treatRelaxationCoefficient);
     this->registerNewCallBack("@TangentOperator",
 			      &MFrontImplicitParser::treatTangentOperator);
+    this->registerNewCallBack("@IsTangentOperatorSymmetric",
+			      &MFrontImplicitParser::treatIsTangentOperatorSymmetric);
     this->registerNewCallBack("@InitJacobian",
 			      &MFrontImplicitParser::treatInitJacobian);
     this->registerNewCallBack("@CompareToNumericalJacobian",
@@ -138,8 +142,30 @@ namespace mfront{
 						true);
     this->tangentOperator += "\n";
     this->hasConsistantTangentOperator = true;
-    this->isConsistantTangentOperatorSymmetric = false;
   } // end of MFrontImplicitParser::treatTangentOperator
+
+  void MFrontImplicitParser::treatIsTangentOperatorSymmetric(void)
+  {
+    using namespace std;
+    if(this->isConsistantTangentOperatorSymmetricDefined){
+      this->throwRuntimeError("MFrontImplicitParser::treatIsTangentOperatorSymmetric",
+			      "@IsTangentOperatorSymmetric already used.");
+    }
+    this->isConsistantTangentOperatorSymmetricDefined = true;
+    this->checkNotEndOfFile("MFrontBehaviourParserCommon::treatIsTangentOperatorSymmetric : ",
+			    "Expected 'true' or 'false'.");
+    if(this->current->value=="true"){
+      this->isConsistantTangentOperatorSymmetric = true;
+    } else if(this->current->value=="false"){
+      this->isConsistantTangentOperatorSymmetric = false;
+    } else {
+      this->throwRuntimeError("MFrontBehaviourParserCommon::treatIsTangentOperatorSymmetric",
+			      "Expected to read 'true' or 'false' instead of '"+this->current->value+".");
+    }
+    ++(this->current);
+    this->readSpecifiedToken("MFrontBehaviourParserCommon::treatIsTangentOperatorSymmetric",";");
+  } // end of MFrontImplicitParser::treatTangentOperator
+
   
   void MFrontImplicitParser::treatUnknownVariableMethod(const std::string& n)
   {
@@ -471,12 +497,16 @@ namespace mfront{
   {
     using namespace std;
     if((!this->integrator.empty())||
-       (!this->computeStress.empty())){
+       (!this->computeStress.empty())||
+       (!this->predictor.empty())||
+       (!this->initJacobian.empty())||
+       (!this->tangentOperator.empty())){
       string msg("MFrontImplicitParser::treatStateVariables : ");
-      msg += "state variables shall be defined before the @Integrator and @ComputeStress blocks";
+      msg += "state variables shall be defined before any of the @Integrator "
+	"@ComputeStress, @InitJacobian and @TangentOperator blocks";
       throw(runtime_error(msg));
     }
-    this->readVarList(this->stateVarsHolder,false,true);
+    this->readVarList(this->stateVarsHolder,true,true);
   } // end of MFrontImplicitParser::treatStateVariables
 
   void
@@ -484,9 +514,13 @@ namespace mfront{
   {
     using namespace std;
     if((!this->integrator.empty())||
-       (!this->computeStress.empty())){
+       (!this->computeStress.empty())||
+       (!this->predictor.empty())||
+       (!this->initJacobian.empty())||
+       (!this->tangentOperator.empty())){
       string msg("MFrontImplicitParser::treatStateVariables : ");
-      msg += "state variables shall be defined before the @Integrator and @ComputeStress blocks";
+      msg += "state variables shall be defined before any of the @Integrator "
+	"@ComputeStress, @InitJacobian and @TangentOperator blocks";
       throw(runtime_error(msg));
     }
     this->readVarList(this->auxiliaryStateVarsHolder,true,true);
@@ -609,10 +643,15 @@ namespace mfront{
     this->behaviourFile << "#include\"TFEL/Math/tmatrix.hxx\"\n";
     this->behaviourFile << "#include\"TFEL/Math/tvector.hxx\"\n";
     this->behaviourFile << "#include\"TFEL/Math/TinyMatrixSolve.hxx\"\n";
+    this->behaviourFile << "#include\"TFEL/Math/Vector/TFTV.hxx\"\n";
+    this->behaviourFile << "#include\"TFEL/Math/Vector/TSFTV.hxx\"\n";
     this->behaviourFile << "#include\"TFEL/Math/Stensor/SFTMCV.hxx\"\n";
     this->behaviourFile << "#include\"TFEL/Math/Stensor/SFTMRV.hxx\"\n";
-    this->behaviourFile << "#include\"TFEL/Math/Stensor/SFTVV.hxx\"\n";
+    this->behaviourFile << "#include\"TFEL/Math/Stensor/SFTMCV2.hxx\"\n";
+    this->behaviourFile << "#include\"TFEL/Math/Stensor/SFTMRV2.hxx\"\n";
+    this->behaviourFile << "#include\"TFEL/Math/Stensor/SFTV.hxx\"\n";
     this->behaviourFile << "#include\"TFEL/Math/ST2toST2/ST2toST2FTMV.hxx\"\n\n";
+    this->behaviourFile << "#include\"TFEL/Math/ST2toST2/ST2toST2FTMV2.hxx\"\n\n";
   } // end of MFrontImplicitParser::writeBehaviourParserSpecificIncludes(void)
 
   void MFrontImplicitParser::writeBehaviourParserSpecificTypedefs(void)
@@ -626,11 +665,246 @@ namespace mfront{
   {
     using namespace std;
     VarContainer::const_iterator p;
+    VarContainer::const_iterator p2;
     SupportedTypes::TypeSize n;
+    SupportedTypes::TypeSize n3;
+    // size of linear system
     for(p=this->stateVarsHolder.begin();p!=this->stateVarsHolder.end();++p){
+      n3 += this->getTypeSize(p->type,p->arraySize);
+    }
+    for(p=this->stateVarsHolder.begin();p!=this->stateVarsHolder.end();++p){
+      SupportedTypes::TypeSize n2;
+      for(p2=this->stateVarsHolder.begin();p2!=this->stateVarsHolder.end();++p2){
+	SupportedTypes::TypeFlag flag  = this->getTypeFlag(p->type);
+	SupportedTypes::TypeFlag flag2 = this->getTypeFlag(p2->type);
+	if((p->arraySize!=1u)||(p2->arraySize!=1u)){
+	  this->behaviourFile << "/*!\n"
+			      << " * \\return the part of the jacobian matrix "
+			      << "corresponding to the derivative "
+			      << "of variable " << p->name 
+			      << " by variable " << p2->name << "\n"
+			      << " */\n";
+	}
+	if((p->arraySize!=1u)&&(p2->arraySize==1u)){
+	  if(flag==SupportedTypes::Scalar){
+	    if(flag2==SupportedTypes::Scalar){
+	      this->behaviourFile << "real&\n"
+				  << "df" << p->name << "_dd" << p2->name
+				  << "(tfel::math::tmatrix<" << n3 << "," << n3 << ">& tjacobian,\n"
+				  << "const unsigned short idx){\n"
+				  << "return tjacobian(" << n << "+idx, " << n2 << ");\n"
+				  << "}\n\n";
+	      this->behaviourFile << "real&\n"
+				  << "df" << p->name << "_dd" << p2->name << "(const unsigned short idx){\n"
+				  << "return this->jacobian(" << n << "+idx, " << n2 << ");\n"
+				  << "}\n\n";
+	    } else {
+	      // Le résultat est un tenseur, une ligne dans la matrice jacobienne
+	      this->behaviourFile << "typename tfel::math::SFTMRV2<N," << n3 << "," << n3 << "," << n << "," << n2 << ",real>::type\n"
+				  << "df" << p->name << "_dd" << p2->name 
+				  << "(tfel::math::tmatrix<" << n3 << "," << n3 << ">& tjacobian,\n"
+				  << "const unsigned short idx){\n"
+				  << "using namespace tfel::math;\n"
+				  << "return typename SFTMRV2<N,"
+				  << n3 << "," << n3 << "," << n << "," << n2 << ",real>::type(tjacobian,idx,0);\n"
+				  << "}\n\n";
+	      this->behaviourFile << "typename tfel::math::SFTMRV2<N," << n3 << "," << n3 << "," << n << "," << n2 << ",real>::type\n"
+				  << "df" << p->name << "_dd" << p2->name 
+				  << "(const unsigned short idx){\n"
+				  << "using namespace tfel::math;\n"
+				  << "return typename SFTMRV2<N,"
+				  << n3 << "," << n3 << "," << n << "," << n2 << ",real>::type(this->jacobian,idx,0);\n"
+				  << "}\n\n";
+	    }
+	  } else {
+	    if(flag2==SupportedTypes::Scalar){
+	      // Le résultat est un tenseur, une colonne dans la matrice jacobienne
+	      this->behaviourFile << "typename tfel::math::SFTMCV2<N," << n3 << "," << n3 << "," << n << "," << n2 << ",real>::type\n"
+				  << "df" << p->name << "_dd" << p2->name 
+				  << "(tfel::math::tmatrix<" << n3 << "," << n3 << ">& tjacobian,\n"
+				  << "const unsigned short idx){\n"
+				  << "using namespace tfel::math;\n"
+				  << "return typename SFTMCV2<N,"
+				  << n3 << "," << n3 << "," << n << "," << n2 << ",real>::type(tjacobian,idx,0);\n"
+				  << "}\n\n";
+	      this->behaviourFile << "typename tfel::math::SFTMCV2<N," << n3 << "," << n3 << "," << n << "," << n2 << ",real>::type\n"
+				  << "df" << p->name << "_dd" << p2->name 
+				  << "(const unsigned short idx){\n"
+				  << "using namespace tfel::math;\n"
+				  << "return typename SFTMCV2<N,"
+				  << n3 << "," << n3 << "," << n << "," << n2 << ",real>::type(this->jacobian,idx,0);\n"
+				  << "}\n\n";
+	    } else {
+	      // Le résultat est un tenseur d'ordre 4
+	      this->behaviourFile << "typename tfel::math::ST2toST2FTMV2<N," << n3 << "," << n3 << "," << n << "," << n2 << ",real>::type\n"
+				  << "df" << p->name << "_dd" << p2->name 
+				  << "(tfel::math::tmatrix<" << n3 << "," << n3 << ">& tjacobian,\n"
+				  << "const unsigned short idx){\n"
+				  << "using namespace tfel::math;\n"
+				  << "return typename ST2toST2FTMV2<N,"
+				  << n3 << "," << n3 << "," << n << "," << n2 << ",real>::type(this->jacobian,idx,0u);\n"
+				  << "}\n\n";
+	      this->behaviourFile << "typename tfel::math::ST2toST2FTMV2<N," << n3 << "," << n3 << "," << n << "," << n2 << ",real>::type\n"
+				  << "df" << p->name << "_dd" << p2->name 
+				  << "(const unsigned short idx){\n"
+				  << "using namespace tfel::math;\n"
+				  << "return typename ST2toST2FTMV2<N,"
+				  << n3 << "," << n3 << "," << n << "," << n2 << ",real>::type(this->jacobian,idx,0u);\n"
+				  << "}\n\n";
+	    }
+	  }
+	} else if((p->arraySize==1u)&&(p2->arraySize!=1u)){
+	  if(flag==SupportedTypes::Scalar){
+	    if(flag2==SupportedTypes::Scalar){
+	      this->behaviourFile << "real&\n"
+				  << "df" << p->name << "_dd" << p2->name 
+				  << "(tfel::math::tmatrix<" << n3 << "," << n3 << ">& tjacobian,\n"
+				  << "const unsigned short idx){\n"
+				  << "return tjacobian(" << n << ", " << n2 << "+idx);\n"
+				  << "}\n\n";
+	      this->behaviourFile << "real&\n"
+				  << "df" << p->name << "_dd" << p2->name 
+				  << "(const unsigned short idx){\n"
+				  << "return this->jacobian(" << n << ", " << n2 << "+idx);\n"
+				  << "}\n\n";
+	    } else {
+	      // Le résultat est un tenseur, une ligne dans la matrice jacobienne
+	      this->behaviourFile << "typename tfel::math::SFTMRV2<N," << n3 << "," << n3 << "," << n << "," << n2 << ",real>::type\n"
+				  << "df" << p->name << "_dd" << p2->name 
+				  << "(tfel::math::tmatrix<" << n3 << "," << n3 << ">& tjacobian,\n"
+				  << "const unsigned short idx){\n"
+				  << "using namespace tfel::math;\n"
+				  << "return typename SFTMRV2<N,"
+				  << n3 << "," << n3 << "," << n << "," << n2 << ",real>::type(tjacobian,0,idx);\n"
+				  << "}\n\n";
+	      this->behaviourFile << "typename tfel::math::SFTMRV2<N," << n3 << "," << n3 << "," << n << "," << n2 << ",real>::type\n"
+				  << "df" << p->name << "_dd" << p2->name 
+				  << "(const unsigned short idx){\n"
+				  << "using namespace tfel::math;\n"
+				  << "return typename SFTMRV2<N,"
+				  << n3 << "," << n3 << "," << n << "," << n2 << ",real>::type(this->jacobian,0,idx);\n"
+				  << "}\n\n";
+	    }
+	  } else {
+	    if(flag2==SupportedTypes::Scalar){
+	      // Le résultat est un tenseur, une colonne dans la matrice jacobienne
+	      this->behaviourFile << "typename tfel::math::SFTMCV2<N," << n3 << "," << n3 << "," << n << "," << n2 << ",real>::type\n"
+				  << "df" << p->name << "_dd" << p2->name 
+				  << "(tfel::math::tmatrix<" << n3 << "," << n3 << ">& tjacobian,\n"
+				  << "const unsigned short idx){\n"
+				  << "using namespace tfel::math;\n"
+				  << "return typename SFTMCV2<N,"
+				  << n3 << "," << n3 << "," << n << "," << n2 << ",real>::type(tjacobian,0,idx);\n"
+				  << "}\n\n";
+	      this->behaviourFile << "typename tfel::math::SFTMCV2<N," << n3 << "," << n3 << "," << n << "," << n2 << ",real>::type\n"
+				  << "df" << p->name << "_dd" << p2->name 
+				  << "(const unsigned short idx){\n"
+				  << "using namespace tfel::math;\n"
+				  << "return typename SFTMCV2<N,"
+				  << n3 << "," << n3 << "," << n << "," << n2 << ",real>::type(this->jacobian,0,idx);\n"
+				  << "}\n\n";
+	    } else {
+	      this->behaviourFile << "typename tfel::math::ST2toST2FTMV2<N," << n3 << "," << n3 << "," << n << "," << n2 << ",real>::type\n"
+				  << "df" << p->name << "_dd" << p2->name 
+				  << "(tfel::math::tmatrix<" << n3 << "," << n3 << ">& tjacobian,\n"
+				  << "const unsigned short idx){\n"
+				  << "using namespace tfel::math;\n"
+				  << "return typename ST2toST2FTMV2<N,"
+				  << n3 << "," << n3 << "," << n << "," << n2 << ",real>::type(tjacobian,0,idx);\n"
+				  << "}\n\n";
+	      this->behaviourFile << "typename tfel::math::ST2toST2FTMV2<N," << n3 << "," << n3 << "," << n << "," << n2 << ",real>::type\n"
+				  << "df" << p->name << "_dd" << p2->name 
+				  << "(const unsigned short idx){\n"
+				  << "using namespace tfel::math;\n"
+				  << "return typename ST2toST2FTMV2<N,"
+				  << n3 << "," << n3 << "," << n << "," << n2 << ",real>::type(this->jacobian,0,idx);\n"
+				  << "}\n\n";
+	    }
+	  }
+	} else if((p->arraySize!=1u)&&(p2->arraySize!=1u)){
+	  if(flag==SupportedTypes::Scalar){
+	    if(flag2==SupportedTypes::Scalar){
+	      this->behaviourFile << "real&\n"
+				  << "df" << p->name << "_dd" << p2->name 
+				  << "(tfel::math::tmatrix<" << n3 << "," << n3 << ">& tjacobian,\n"
+				  << "const unsigned short idx,"
+				  << " const unsigned short idx2){\n"
+				  << "return tjacobian(" << n << "+idx, " << n2 << "+idx2);\n"
+				  << "}\n\n";
+	      this->behaviourFile << "real&\n"
+				  << "df" << p->name << "_dd" << p2->name 
+				  << "(const unsigned short idx,"
+				  << " const unsigned short idx2){\n"
+				  << "return this->jacobian(" << n << "+idx, " << n2 << "+idx2);\n"
+				  << "}\n\n";
+	    } else {
+	      // Le résultat est un tenseur, une ligne dans la matrice jacobienne
+	      this->behaviourFile << "typename tfel::math::SFTMRV2<N," << n3 << "," << n3 << "," << n << "," << n2 << ",real>::type\n"
+				  << "df" << p->name << "_dd" << p2->name 
+				  << "(tfel::math::tmatrix<" << n3 << "," << n3 << ">& tjacobian,\n"
+				  << "const unsigned short idx,"
+				  << " const unsigned short idx2){\n"
+				  << "using namespace tfel::math;\n"
+				  << "return typename SFTMRV2<N,"
+				  << n3 << "," << n3 << "," << n << "," << n2 << ",real>::type(tjacobian,idx,idx2);\n"
+				  << "}\n\n";
+	      this->behaviourFile << "typename tfel::math::SFTMRV2<N," << n3 << "," << n3 << "," << n << "," << n2 << ",real>::type\n"
+				  << "df" << p->name << "_dd" << p2->name 
+				  << "(const unsigned short idx,"
+				  << " const unsigned short idx2){\n"
+				  << "using namespace tfel::math;\n"
+				  << "return typename SFTMRV2<N,"
+				  << n3 << "," << n3 << "," << n << "," << n2 << ",real>::type(this->jacobian,idx,idx2);\n"
+				  << "}\n\n";
+	    }
+	  } else {
+	    if(flag2==SupportedTypes::Scalar){
+	      // Le résultat est un tenseur, une colonne dans la matrice jacobienne
+	      this->behaviourFile << "typename tfel::math::SFTMCV2<N," << n3 << "," << n3 << "," << n << "," << n2 << ",real>::type\n"
+				  << "df" << p->name << "_dd" << p2->name 
+				  << "(tfel::math::tmatrix<" << n3 << "," << n3 << ">& tjacobian,\n"
+				  << "const unsigned short idx,"
+				  << " const unsigned short idx2){\n"
+				  << "using namespace tfel::math;\n"
+				  << "return typename SFTMCV2<N,"
+				  << n3 << "," << n3 << "," << n << "," << n2 << ",real>::type(tjacobian,idx,idx2);\n"
+				  << "}\n\n";
+	      this->behaviourFile << "typename tfel::math::SFTMCV2<N," << n3 << "," << n3 << "," << n << "," << n2 << ",real>::type\n"
+				  << "df" << p->name << "_dd" << p2->name 
+				  << "(const unsigned short idx,"
+				  << " const unsigned short idx2){\n"
+				  << "using namespace tfel::math;\n"
+				  << "return typename SFTMCV2<N,"
+				  << n3 << "," << n3 << "," << n << "," << n2 << ",real>::type(this->jacobian,idx,idx2);\n"
+				  << "}\n\n";
+	    } else {
+	      this->behaviourFile << "typename tfel::math::ST2toST2FTMV2<N," << n3 << "," << n3 << "," << n << "," << n2 << ",real>::type\n"
+				  << "df" << p->name << "_dd" << p2->name 
+				  << "(tfel::math::tmatrix<" << n3 << "," << n3 << ">& tjacobian,\n"
+				  << "const unsigned short idx,"
+				  << " const unsigned short idx2){\n"
+				  << "using namespace tfel::math;\n"
+				  << "return typename ST2toST2FTMV2<N,"
+				  << n3 << "," << n3 << "," << n << "," << n2 << ",real>::type(tjacobian,idx,idx2);\n"
+				  << "}\n\n";
+	      this->behaviourFile << "typename tfel::math::ST2toST2FTMV2<N," << n3 << "," << n3 << "," << n << "," << n2 << ",real>::type\n"
+				  << "df" << p->name << "_dd" << p2->name 
+				  << "(const unsigned short idx,"
+				  << " const unsigned short idx2){\n"
+				  << "using namespace tfel::math;\n"
+				  << "return typename ST2toST2FTMV2<N,"
+				  << n3 << "," << n3 << "," << n << "," << n2 << ",real>::type(this->jacobian,idx,idx2);\n"
+				  << "}\n\n";
+	    }
+	  }
+	}
+	n2 += this->getTypeSize(p2->type,p2->arraySize);
+      }
       n += this->getTypeSize(p->type,p->arraySize);
     }
-    this->behaviourFile << "\n// Jacobian\n";
+    // size of linear system
+    n = n3;
+    this->behaviourFile << "// Jacobian\n";
     this->behaviourFile << "tfel::math::tmatrix<" << n << "," << n << ",Type> jacobian;\n";
     this->behaviourFile << "// zeros\n";
     this->behaviourFile << "tfel::math::tvector<" << n << ",Type> zeros;\n\n";
@@ -818,17 +1092,32 @@ namespace mfront{
       this->behaviourFile << "void\ngetPartialJacobianInvert(";
       for(p2=this->stateVarsHolder.begin();p2!=p;){
 	SupportedTypes::TypeFlag flag = this->getTypeFlag(p2->type);
-	switch(flag){
-	case SupportedTypes::Scalar : 
-	  this->behaviourFile << "Stensor& ";
-	  break;
-	case SupportedTypes::Stensor :
-	  this->behaviourFile << "Stensor4& ";
-	  break;
-	default :
-	  string msg("MFrontImplicitParser::writeGetPartialJacobianInvert : ");
-	  msg += "internal error, tag unsupported";
-	  throw(runtime_error(msg));
+	if(p2->arraySize==1u){
+	  switch(flag){
+	  case SupportedTypes::Scalar : 
+	    this->behaviourFile << "Stensor& ";
+	    break;
+	  case SupportedTypes::Stensor :
+	    this->behaviourFile << "Stensor4& ";
+	    break;
+	  default :
+	    string msg("MFrontImplicitParser::writeGetPartialJacobianInvert : ");
+	    msg += "internal error, tag unsupported";
+	    throw(runtime_error(msg));
+	  }
+	} else {
+	  switch(flag){
+	  case SupportedTypes::Scalar : 
+	    this->behaviourFile << "tfel::math::tvector<" << p2->arraySize << "u,Stensor>& ";
+	    break;
+	  case SupportedTypes::Stensor :
+	    this->behaviourFile << "tfel::math::tvector<" << p2->arraySize << "u,Stensor4>& ";
+	    break;
+	  default :
+	    string msg("MFrontImplicitParser::writeGetPartialJacobianInvert : ");
+	    msg += "internal error, tag unsupported";
+	    throw(runtime_error(msg));
+	  }
 	}
 	this->behaviourFile << "partial_jacobian_" << p2->name;
 	if(++p2!=p){
@@ -851,15 +1140,34 @@ namespace mfront{
       for(p2=this->stateVarsHolder.begin();p2!=p;++p2){
 	SupportedTypes::TypeFlag flag = this->getTypeFlag(p2->type);
 	if(flag==SupportedTypes::Scalar){
-	  this->behaviourFile << "partial_jacobian_" << p2->name << "(idx)=vect_e(" << n2 << ");\n";
+	  if(p2->arraySize==1u){
+	    this->behaviourFile << "partial_jacobian_" << p2->name << "(idx)=vect_e(" << n2 << ");\n";
+	  } else {
+	    this->behaviourFile << "for(unsigned short idx2=0;idx2!="
+				<< p->arraySize << ";++idx2){" << endl;
+	    this->behaviourFile << "partial_jacobian_" << p2->name << "(idx2)(idx)=vect_e(" << n2 << "+idx2);\n";
+	    this->behaviourFile << "}\n";
+	  }
 	  n2 += this->getTypeSize(p2->type,p2->arraySize);
 	} else if(flag==SupportedTypes::Stensor){
-	  this->behaviourFile << "for(unsigned short idx2=" << n2;
-	  this->behaviourFile << ";idx2!=";
-	  n2 += this->getTypeSize(p2->type,p2->arraySize);
-	  this->behaviourFile << n2 << ";++idx2){" << endl;
-	  this->behaviourFile << "partial_jacobian_" << p2->name << "(idx2,idx)=vect_e(idx2);\n";
-	  this->behaviourFile << "}\n";
+	  if(p2->arraySize==1u){
+	    this->behaviourFile << "for(unsigned short idx2=" << n2;
+	    this->behaviourFile << ";idx2!=";
+	    n2 += this->getTypeSize(p2->type,p2->arraySize);
+	    this->behaviourFile << n2 << ";++idx2){" << endl;
+	    this->behaviourFile << "partial_jacobian_" << p2->name << "(idx2,idx)=vect_e(idx2);\n";
+	    this->behaviourFile << "}\n";
+	  } else {
+	    this->behaviourFile << "for(unsigned short idx2=0;idx2!="
+				<< p->arraySize << ";++idx2){" << endl;
+	    this->behaviourFile << "for(unsigned short idx3=" << n2;
+	    this->behaviourFile << ";idx3!=StensorSize;++idx3){" << endl;
+	    this->behaviourFile << "partial_jacobian_" << p2->name 
+				<< "(idx2)(idx3,idx)=vect_e(" << n2 << "+idx3+idx2*StensorSize);\n";
+	    this->behaviourFile << "}\n";
+	    this->behaviourFile << "}\n";
+	    n2 += this->getTypeSize(p2->type,p2->arraySize);
+	  }
 	} else {
 	  string msg("MFrontImplicitParser::writeGetPartialJacobianInvert : ");
 	  msg += "internal error, tag unsupported";
@@ -907,17 +1215,10 @@ namespace mfront{
     this->behaviourFile << "}\n";
     this->behaviourFile << "this->zeros    = tzeros;\n";
     this->behaviourFile << "this->fzeros   = tfzeros;\n";
-    //    if(this->algorithm!=MFrontImplicitParser::NEWTONRAPHSON){
-    // this->behaviourFile << "if(&njacobian!=&(this->jacobian)){\n";
-    // this->behaviourFile << "this->jacobian = tjacobian;\n";
-    // this->behaviourFile << "}\n";
-    //}
     this->behaviourFile << "}\n";
-    //    if(this->algorithm!=MFrontImplicitParser::NEWTONRAPHSON){
     this->behaviourFile << "if(&njacobian!=&(this->jacobian)){\n";
     this->behaviourFile << "this->jacobian = tjacobian;\n";
     this->behaviourFile << "}\n";
-    //    }
     this->behaviourFile << "}\n\n";
   }
 
@@ -1006,16 +1307,20 @@ namespace mfront{
       this->behaviourFile << "this->computeNumericalJacobian(njacobian);\n";
       n = SupportedTypes::TypeSize();
       for(p=this->stateVarsHolder.begin();p!=this->stateVarsHolder.end();++p){
-	n3 = SupportedTypes::TypeSize();
-	for(p2=this->stateVarsHolder.begin();p2!=this->stateVarsHolder.end();++p2){
-	  this->behaviourFile << "// derivative of variable f" << p->name 
-			      << " by variable " << p2->name << "\n";
-	  this->behaviourFile << this->getJacobianPart(*p,*p2,n,n2,n3);
-	  this->behaviourFile << "// numerical derivative of variable f" << p->name 
-			      << " by variable " << p2->name << "\n";
-	  this->behaviourFile << this->getJacobianPart(*p,*p2,n,n2,n3,
-						       "njacobian","n");
-	  n3 += this->getTypeSize(p2->type,p2->arraySize);
+	if(p->arraySize==1){
+	  n3 = SupportedTypes::TypeSize();
+	  for(p2=this->stateVarsHolder.begin();p2!=this->stateVarsHolder.end();++p2){
+	    if((p->arraySize==1)&&(p2->arraySize==1)){
+	      this->behaviourFile << "// derivative of variable f" << p->name 
+				  << " by variable " << p2->name << "\n";
+	      this->behaviourFile << this->getJacobianPart(*p,*p2,n,n2,n3);
+	      this->behaviourFile << "// numerical derivative of variable f" << p->name 
+				  << " by variable " << p2->name << "\n";
+	      this->behaviourFile << this->getJacobianPart(*p,*p2,n,n2,n3,
+							   "njacobian","n");
+	      n3 += this->getTypeSize(p2->type,p2->arraySize);
+	    }
+	  }
 	}
 	n += this->getTypeSize(p->type,p->arraySize);
       }
@@ -1023,28 +1328,79 @@ namespace mfront{
 	for(p2=this->stateVarsHolder.begin();p2!=this->stateVarsHolder.end();++p2){
 	  const VarHandler& v1 = *p;
 	  const VarHandler& v2 = *p2;
-	  SupportedTypes::TypeSize nv1 = this->getTypeSize(v1.type,v1.arraySize);
-	  SupportedTypes::TypeSize nv2 = this->getTypeSize(v2.type,v2.arraySize);
+	  SupportedTypes::TypeSize nv1 = this->getTypeSize(v1.type,1u);
+	  SupportedTypes::TypeSize nv2 = this->getTypeSize(v2.type,1u);
 	  this->behaviourFile << "error=" << nv1 << "*" << nv2 << "*"
 			      << "(this->jacobianComparisonCriterium)" <<";\n";
-	  this->behaviourFile << "if(abs(" << "df" << v1.name  << "_dd" << v2.name << "-"
-			      << "ndf" << v1.name  << "_dd" << v2.name << ") > error)\n" 
-			      << "{\n";
-	  this->behaviourFile << "cout << abs(" << "df" << v1.name  << "_dd" << v2.name << "-"
-			      << "ndf" << v1.name  << "_dd" << v2.name << ") << \" \" << error << endl;\n";
-	  this->behaviourFile << "cout << \"df" << v1.name
-			      << "_dd" << v2.name << " :\\n\" << " 
-			      << "df" << v1.name  << "_dd" << v2.name << " << endl;\n";
-	  this->behaviourFile << "cout << \"ndf" << v1.name
-			      << "_dd" << v2.name << " :\\n\" << " 
-			      << "ndf" << v1.name  << "_dd" << v2.name << " << endl;\n";
-	  this->behaviourFile << "cout << \"df" << v1.name << "_dd" << v2.name 
-			      << " - ndf" << v1.name << "_dd" << v2.name << " :\\n\" << "
-			      << "df" << v1.name  << "_dd" << v2.name << "-"
-			      << "ndf" << v1.name  << "_dd" << v2.name << " << endl;\n";
-	  this->behaviourFile << "cout << endl;\n";
-	  this->behaviourFile << "}\n";
-	}
+	  if((v1.arraySize==1u)&&(v2.arraySize==1u)){
+	    this->behaviourFile << "if(abs(" << "df" << v1.name  << "_dd" << v2.name << "-"
+				<< "ndf" << v1.name  << "_dd" << v2.name << ") > error)\n" 
+				<< "{\n";
+	    this->behaviourFile << "cout << abs(" << "df" << v1.name  << "_dd" << v2.name << "-"
+				<< "ndf" << v1.name  << "_dd" << v2.name << ") << \" \" << error << endl;\n";
+	    this->behaviourFile << "cout << \"df" << v1.name
+				<< "_dd" << v2.name << " :\\n\" << " 
+				<< "df" << v1.name  << "_dd" << v2.name << " << endl;\n";
+	    this->behaviourFile << "cout << \"ndf" << v1.name
+				<< "_dd" << v2.name << " :\\n\" << " 
+				<< "ndf" << v1.name  << "_dd" << v2.name << " << endl;\n";
+	    this->behaviourFile << "cout << \"df" << v1.name << "_dd" << v2.name 
+				<< " - ndf" << v1.name << "_dd" << v2.name << " :\\n\" << "
+				<< "df" << v1.name  << "_dd" << v2.name << "-"
+				<< "ndf" << v1.name  << "_dd" << v2.name << " << endl;\n";
+	    this->behaviourFile << "cout << endl;\n";
+	    this->behaviourFile << "}\n";
+	  } else if(((v1.arraySize!=1u)&&(v2.arraySize==1u))||
+		    ((v2.arraySize!=1u)&&(v1.arraySize==1u))){
+	    unsigned short asize;
+	    if(v1.arraySize!=1u){
+	      asize = v1.arraySize;
+	    } else {
+	      asize = v2.arraySize;
+	    }
+	    this->behaviourFile << "for(unsigned short idx=0;idx!=" << asize << ";++idx){\n";
+	    this->behaviourFile << "if(abs(" << "df" << v1.name  << "_dd" << v2.name << "(idx)-"
+				<< "df" << v1.name  << "_dd" << v2.name << "(njacobian,idx)) > error)\n" 
+				<< "{\n";
+	    this->behaviourFile << "cout << abs(" << "df" << v1.name  << "_dd" << v2.name << "(idx)-"
+				<< "df" << v1.name  << "_dd" << v2.name << "(njacobian,idx)) << \" \" << error << endl;\n";
+	    this->behaviourFile << "cout << \"df" << v1.name
+				<< "_dd" << v2.name << "(\" << idx << \") :\\n\" << " 
+				<< "df" << v1.name  << "_dd" << v2.name << "(idx) << endl;\n";
+	    this->behaviourFile << "cout << \"ndf" << v1.name
+				<< "_dd" << v2.name << "(\" << idx << \") :\\n\" << " 
+				<< "df" << v1.name  << "_dd" << v2.name << "(njacobian,idx) << endl;\n";
+	    this->behaviourFile << "cout << \"df" << v1.name << "_dd" << v2.name 
+				<< " - ndf" << v1.name << "_dd" << v2.name << "(\" << idx << \") :\\n\" << "
+				<< "df" << v1.name  << "_dd" << v2.name << "(idx) -"
+				<< "df" << v1.name  << "_dd" << v2.name << "(njacobian,idx) << endl;\n";
+	    this->behaviourFile << "cout << endl;\n";
+	    this->behaviourFile << "}\n";
+	    this->behaviourFile << "}\n";
+	  } else {
+	    this->behaviourFile << "for(unsigned short idx=0;idx!=" << v1.arraySize << ";++idx){\n";
+	    this->behaviourFile << "for(unsigned short idx2=0;idx2!=" << v2.arraySize << ";++idx2){\n";
+	    this->behaviourFile << "if(abs(" << "df" << v1.name  << "_dd" << v2.name << "(idx,idx2)-"
+				<< "df" << v1.name  << "_dd" << v2.name << "(njacobian,idx,idx2)) > error)\n" 
+				<< "{\n";
+	    this->behaviourFile << "cout << abs(" << "df" << v1.name  << "_dd" << v2.name << "(idx,idx2)-"
+				<< "df" << v1.name  << "_dd" << v2.name << "(njacobian,idx,idx2)) << \" \" << error << endl;\n";
+	    this->behaviourFile << "cout << \"df" << v1.name
+				<< "_dd" << v2.name << "(\" << idx << \",\" << idx2 << \") :\\n\" << " 
+				<< "df" << v1.name  << "_dd" << v2.name << "(idx,idx2) << endl;\n";
+	    this->behaviourFile << "cout << \"ndf" << v1.name
+				<< "_dd" << v2.name << "(\" << idx << \",\" << idx2 << \") :\\n\" << " 
+				<< "df" << v1.name  << "_dd" << v2.name << "(njacobian,idx,idx2) << endl;\n";
+	    this->behaviourFile << "cout << \"df" << v1.name << "_dd" << v2.name 
+				<< " - ndf" << v1.name << "_dd" << v2.name << "(\" << idx << \",\" << idx2 << \") :\\n\" << "
+				<< "df" << v1.name  << "_dd" << v2.name << "(idx,idx2) -"
+				<< "df" << v1.name  << "_dd" << v2.name << "(njacobian,idx,idx2) << endl;\n";
+	    this->behaviourFile << "cout << endl;\n";
+	    this->behaviourFile << "}\n";
+	    this->behaviourFile << "}\n";
+	    this->behaviourFile << "}\n";
+	  }
+	} 
       }
     }
     this->behaviourFile << "error=norm(this->fzeros);\n";
@@ -1152,14 +1508,26 @@ namespace mfront{
 	throw(runtime_error(msg));
       }
       if(this->getTypeFlag(p->type)==SupportedTypes::Stensor){
-	this->behaviourFile << "typename tfel::math::SFTVV<N," << n2 
-			    << "," << n << ",real>::type f" << p->name << "(this->fzeros);\n";
+	if(p->arraySize==1u){
+	  this->behaviourFile << "typename tfel::math::SFTV<N," 
+			      << n2 << "," << n << ",real>::type"
+			      << " f" << p->name << "(this->fzeros);\n";
+	} else {
+	  this->behaviourFile << "typename tfel::math::TSFTV<N," 
+			      << n2 << "," << n << "," << p-> arraySize << ",real>::type"
+			      << " f" << p->name << "(this->fzeros);\n";
+	}
       } else if(this->getTypeFlag(p->type)==SupportedTypes::Scalar){
-	this->behaviourFile << "real& f" << p->name << "= this->fzeros(" << n << ");\n";
+	if(p->arraySize==1u){
+	  this->behaviourFile << "real& f" << p->name << "(this->fzeros(" << n << "));\n";
+	} else {
+	  this->behaviourFile << "typename tfel::math::TFTV<" 
+			      << n2 << "," << n << "," << p->arraySize << ",real>::type"
+			      << " f" << p->name << "(this->fzeros);\n";
+	}
       } else {
-	string msg("MFrontImplicitParser::writeOutputFiles : ");
-	msg += "unsupported type for state variable ";
-	msg += p->name;
+	string msg("MFrontImplicitParser::writeBehaviourStateVarsIncrements :");
+	msg += "unsupported type '"+p->type+"'";
 	throw(runtime_error(msg));
       }
       n += this->getTypeSize(p->type,p->arraySize);
@@ -1170,9 +1538,12 @@ namespace mfront{
       for(p=this->stateVarsHolder.begin();p!=this->stateVarsHolder.end();++p){
 	n3 = SupportedTypes::TypeSize();
 	for(p2=this->stateVarsHolder.begin();p2!=this->stateVarsHolder.end();++p2){
-	  this->behaviourFile << "// derivative of variable f" << p->name 
-			      << " by variable " << p2->name << "\n";
-	  this->behaviourFile << this->getJacobianPart(*p,*p2,n,n2,n3);
+	  if((p->arraySize==1u)&&
+	     (p2->arraySize==1u)){
+	    this->behaviourFile << "// derivative of variable f" << p->name 
+				<< " by variable " << p2->name << "\n";
+	    this->behaviourFile << this->getJacobianPart(*p,*p2,n,n2,n3);
+	  }
 	  n3 += this->getTypeSize(p2->type,p2->arraySize);
 	}
 	n += this->getTypeSize(p->type,p->arraySize);
@@ -1205,9 +1576,11 @@ namespace mfront{
        (this->algorithm==MFrontImplicitParser::BROYDEN)){
       for(p=this->stateVarsHolder.begin();p!=this->stateVarsHolder.end();++p){
 	for(p2=this->stateVarsHolder.begin();p2!=this->stateVarsHolder.end();++p2){
-	  this->behaviourFile << "static_cast<void>(df"
+	  if((p->arraySize==1u)&&(p2->arraySize==1u)){
+	    this->behaviourFile << "static_cast<void>(df"
 			      << p->name << "_dd" << p2->name
-			      << "); /* suppress potential warnings */\n";
+				<< "); /* suppress potential warnings */\n";
+	  }
 	}
       }
     }
@@ -1240,18 +1613,17 @@ namespace mfront{
     for(p=this->stateVarsHolder.begin();p!=this->stateVarsHolder.end();++p){
       SupportedTypes::TypeFlag flag = getTypeFlag(p->type);
       initStateVars << ",\n";
-      switch(flag){
-      case SupportedTypes::Scalar : 
-	initStateVars << "d" << p->name << "(this->zeros(" << n << "))";
-	break;
-      case SupportedTypes::Stensor :
-	initStateVars << "d" << p->name 
-		      << "(this->zeros)";
-	break;
-      default :
+      if((flag!=SupportedTypes::Scalar)&&
+	 (flag!=SupportedTypes::Stensor)){
 	string msg("MFrontImplicitParser::writeBehaviourConstructors : ");
 	msg += "internal error, tag unsupported";
 	throw(runtime_error(msg));
+      }
+      if((flag==SupportedTypes::Scalar)&&(p->arraySize==1u)){
+	initStateVars << "d" << p->name << "(this->zeros(" << n << "))";
+      } else {
+	initStateVars << "d" << p->name 
+		      << "(this->zeros)";
       }
       n += this->getTypeSize(p->type,p->arraySize);
     }
@@ -1306,11 +1678,23 @@ namespace mfront{
 			    << this->fileName << "\"\n";
       }
       if(this->getTypeFlag(p->type)==SupportedTypes::Stensor){
-	this->behaviourFile << "typename tfel::math::SFTVV<N," 
-			    << n2 << "," << n << ",real>::type"
-			    << " d" << p->name << ";\n";
+	if(p->arraySize==1u){
+	  this->behaviourFile << "typename tfel::math::SFTV<N," 
+			      << n2 << "," << n << ",real>::type"
+			      << " d" << p->name << ";\n";
+	} else {
+	  this->behaviourFile << "typename tfel::math::TSFTV<N," 
+			      << n2 << "," << n << "," << p-> arraySize << ",real>::type"
+			      << " d" << p->name << ";\n";
+	}
       } else if(this->getTypeFlag(p->type)==SupportedTypes::Scalar){
-	this->behaviourFile << "real& d" << p->name << ";\n";
+	if(p->arraySize==1u){
+	  this->behaviourFile << "real& d" << p->name << ";\n";
+	} else {
+	  this->behaviourFile << "typename tfel::math::TFTV<" 
+			      << n2 << "," << n << "," << p->arraySize << ",real>::type"
+			      << " d" << p->name << ";\n";
+	}
       } else {
 	string msg("MFrontImplicitParser::writeBehaviourStateVarsIncrements :");
 	msg += "unsupported type '"+p->type+"'";

@@ -1,7 +1,7 @@
 /*!
  * \file   SFTMCV.hxx
  * \brief  
- * 
+ * Stensor From Matric Column View
  * \author Helfer Thomas
  * \date   16 oct 2008
  */

@@ -1028,12 +1028,10 @@ namespace mfront{
     this->reserveName("computeFdF");
     this->reserveName("updateStateVars");
     this->reserveName("updateAuxiliaryStateVars");
-    this->reserveName("getModellingHypothesis");
     this->reserveName("getTangentOperator");
     this->reserveName("computeConsistantTangentOperator");
     this->reserveName("computeTangentOperator_");
     this->reserveName("hypothesis");
-    this->reserveName("hypothesis_");
   } // end of MFrontBehaviourParserCommon::registerDefaultVarNames
 
   MFrontBehaviourParserCommon::MFrontBehaviourParserCommon()
@@ -1695,29 +1693,29 @@ namespace mfront{
     this->checkBehaviourFile();
 
     this->behaviourFile << "// Forward Declaration" << endl;
-    this->behaviourFile << "template<unsigned short N,typename Type,bool use_qt>" << endl;
+    this->behaviourFile << "template<ModellingHypothesis::Hypothesis hypothesis,typename Type,bool use_qt>" << endl;
     this->behaviourFile << "class " << this->className << ";\n\n";
 
     if(this->behaviourCharacteristic.useQt()){
       this->behaviourFile << "// Forward Declaration" << endl;
-      this->behaviourFile << "template<unsigned short N,typename Type,bool use_qt>" << endl;
+      this->behaviourFile << "template<ModellingHypothesis::Hypothesis hypothesis,typename Type,bool use_qt>" << endl;
       this->behaviourFile << "std::ostream&\n operator <<(std::ostream&,";
-      this->behaviourFile << "const " << this->className << "<N,Type,use_qt>&);\n\n";
+      this->behaviourFile << "const " << this->className << "<hypothesis,Type,use_qt>&);\n\n";
     } else {
       this->behaviourFile << "// Forward Declaration" << endl;
-      this->behaviourFile << "template<unsigned short N,typename Type>" << endl;
+      this->behaviourFile << "template<ModellingHypothesis::Hypothesis hypothesis,typename Type>" << endl;
       this->behaviourFile << "std::ostream&\n operator <<(std::ostream&,";
-      this->behaviourFile << "const " << this->className << "<N,Type,false>&);\n\n";
+      this->behaviourFile << "const " << this->className << "<hypothesis,Type,false>&);\n\n";
     }
 
     this->behaviourFile << "/*!" << endl;
     this->behaviourFile << "* \\class " << this->className    << endl;
     this->behaviourFile << "* \\brief This class implements the " 
-			<< this->className << " ." << endl;
-    this->behaviourFile << "* \\param unsigned short N, space dimension." << endl;
-    this->behaviourFile << "* \\param typename Type, numerical type." << endl;
+			<< this->className << " behaviour." << endl;
+    this->behaviourFile << "* \\param H, modelling hypothesis." << endl;
+    this->behaviourFile << "* \\param Type, numerical type." << endl;
     if(this->behaviourCharacteristic.useQt()){    
-      this->behaviourFile << "* \\param bool use_qt, conditional "
+      this->behaviourFile << "* \\param use_qt, conditional "
 			  << "saying if quantities are use." << endl;
     }
     if(!this->authorName.empty()){
@@ -1732,25 +1730,27 @@ namespace mfront{
     this->behaviourFile << "*/" << endl;
 
     if(this->behaviourCharacteristic.useQt()){        
-      this->behaviourFile << "template<unsigned short N,typename Type,bool use_qt>" << endl;
+      this->behaviourFile << "template<ModellingHypothesis::Hypothesis hypothesis,typename Type,bool use_qt>" << endl;
       this->behaviourFile << "class " << this->className << endl;
-      this->behaviourFile << ": public MechanicalBehaviour<N,Type,use_qt>,\n";
+      this->behaviourFile << ": public MechanicalBehaviour<hypothesis,Type,use_qt>,\n";
       this->behaviourFile << "public "
-			  << this->className << "BehaviourData<N,Type,use_qt>," << endl;
+			  << this->className << "BehaviourData<ModellingHypothesisToSpaceDimension<hypothesis>::value,Type,use_qt>," << endl;
       this->behaviourFile << "public "
-			  << this->className << "IntegrationData<N,Type,use_qt>";
+			  << this->className << "IntegrationData<ModellingHypothesisToSpaceDimension<hypothesis>::value,Type,use_qt>";
       this->writeBehaviourParserSpecificInheritanceRelationship();
     } else {
-      this->behaviourFile << "template<unsigned short N,typename Type>" << endl;
-      this->behaviourFile << "class " << this->className << "<N,Type,false>" << endl;
-      this->behaviourFile << ": public MechanicalBehaviour<N,Type,false>,\n";
+      this->behaviourFile << "template<ModellingHypothesis::Hypothesis hypothesis,typename Type>" << endl;
+      this->behaviourFile << "class " << this->className << "<hypothesis,Type,false>" << endl;
+      this->behaviourFile << ": public MechanicalBehaviour<hypothesis,Type,false>,\n";
       this->behaviourFile << "public "
-			  << this->className << "BehaviourData<N,Type,false>," << endl;
+			  << this->className << "BehaviourData<ModellingHypothesisToSpaceDimension<hypothesis>::value,Type,false>," << endl;
       this->behaviourFile << "public "
-			  << this->className << "IntegrationData<N,Type,false>";
+			  << this->className << "IntegrationData<ModellingHypothesisToSpaceDimension<hypothesis>::value,Type,false>";
       this->writeBehaviourParserSpecificInheritanceRelationship();
     }
     this->behaviourFile << "{" << endl;
+    this->behaviourFile << endl;
+    this->behaviourFile << "static const unsigned short N = ModellingHypothesisToSpaceDimension<hypothesis>::value;\n";
     this->behaviourFile << endl;
     this->behaviourFile << "TFEL_STATIC_ASSERT(N==1||N==2||N==3);" << endl;
     this->behaviourFile << "TFEL_STATIC_ASSERT(tfel::typetraits::"
@@ -1924,18 +1924,6 @@ namespace mfront{
     this->behaviourFile << "}; // end of setOutOfBoundsPolicy\n\n";
   } // end of MFrontBehaviourParserCommon::writeBehaviourOutOfBoundsEnumeration(void)
 
-  void MFrontBehaviourParserCommon::writeBehaviourGetModellingHypothesis()
-  {
-    using namespace std;
-    this->checkBehaviourFile();
-    this->behaviourFile << "/*!\n";
-    this->behaviourFile << "* \\brief set the policy for \"out of bounds\" conditions\n";
-    this->behaviourFile << "*/\n";
-    this->behaviourFile << "tfel::material::ModellingHypothesis::Hypothesis\ngetModellingHypothesis(void) const{\n";
-    this->behaviourFile << "return this->hypothesis;\n";
-    this->behaviourFile << "}; // end of getModellingHypothesis\n\n";
-  } // end of MFrontBehaviourParserCommon::writeBehaviourGetModellingHypothesis();
-
   void MFrontBehaviourParserCommon::writeBehaviourCheckBounds(void)
   {
     using namespace std;
@@ -1988,8 +1976,7 @@ namespace mfront{
 			  << "const " << this->className 
 			  << "BehaviourData<N,Type,use_qt>& src1,\n"
 			  << "const " << this->className 
-			  << "IntegrationData<N,Type,use_qt>& src2,\n"
-			  << "const ModellingHypothesis::Hypothesis hypothesis_)"
+			  << "IntegrationData<N,Type,use_qt>& src2)"
 			  << "\n";
       this->behaviourFile << ": " << this->className 
 			  << "BehaviourData<N,Type,use_qt>(src1),\n";
@@ -2000,8 +1987,7 @@ namespace mfront{
 			  << "const " << this->className 
 			  << "BehaviourData<N,Type,false>& src1,\n"
 			  << "const " << this->className 
-			  << "IntegrationData<N,Type,false>& src2,\n"
-			  << "const ModellingHypothesis::Hypothesis hypothesis_)"
+			  << "IntegrationData<N,Type,false>& src2)"
 			  << "\n"; 
       this->behaviourFile << ": " << this->className 
 			  << "BehaviourData<N,Type,false>(src1),\n";
@@ -2010,7 +1996,6 @@ namespace mfront{
     }
     this->behaviourFile << initStateVarsIncrements;
     this->behaviourFile << initComputedVars;
-    this->behaviourFile << ",\nhypothesis(hypothesis_)\n";
     this->behaviourFile << "\n{\n";
     this->behaviourFile << "using namespace std;\n";
     this->behaviourFile << "using namespace tfel::math;\n";
@@ -2105,6 +2090,18 @@ namespace mfront{
     }
   } // end of MFrontBehaviourParserCommon::writeBehaviourParameterInitialisation
 
+  void MFrontBehaviourParserCommon::writeBehaviourGetModellingHypothesis()
+  {
+    using namespace std;
+    this->checkBehaviourFile();
+    this->behaviourFile << "/*!\n";
+    this->behaviourFile << "* \\brief set the policy for \"out of bounds\" conditions\n";
+    this->behaviourFile << "*/\n";
+    this->behaviourFile << "tfel::material::ModellingHypothesis::Hypothesis\ngetModellingHypothesis(void) const{\n";
+    this->behaviourFile << "return hypothesis;\n";
+    this->behaviourFile << "}; // end of getModellingHypothesis\n\n";
+  } // end of MFrontBehaviourParserCommon::writeBehaviourGetModellingHypothesis();
+
   void MFrontBehaviourParserCommon::writeBehaviourLocalVars(void)
   {    
     using namespace std;
@@ -2141,14 +2138,6 @@ namespace mfront{
     this->behaviourFile << "//! policy for treating out of bounds conditions\n";
     this->behaviourFile << "OutOfBoundsPolicy policy;\n";  
   } // end of MFrontBehaviourParserCommon::writeBehaviourPolicyVariable
-
-  void MFrontBehaviourParserCommon::writeBehaviourHypothesisVariable(void)
-  {    
-    using namespace std;
-    this->checkBehaviourFile();
-    this->behaviourFile << "//! modelling hypothesis\n";
-    this->behaviourFile << "tfel::material::ModellingHypothesis::Hypothesis hypothesis;\n";  
-  } // end of MFrontBehaviourParserCommon::writeBehaviourHypothesisVariable
 
   void MFrontBehaviourParserCommon::writeBehaviourComputedVars(void)
   {    
@@ -2202,24 +2191,24 @@ namespace mfront{
     this->checkBehaviourFile();
     VarContainer::const_iterator p;
     if(this->behaviourCharacteristic.useQt()){        
-      this->behaviourFile << "template<unsigned short N,typename Type,bool use_qt>" << endl;
+      this->behaviourFile << "template<ModellingHypothesis::Hypothesis hypothesis,typename Type,bool use_qt>" << endl;
       this->behaviourFile << "std::ostream&\n";
       this->behaviourFile << "operator <<(std::ostream& os,";
-      this->behaviourFile << "const " << this->className << "<N,Type,use_qt>& b)\n";
+      this->behaviourFile << "const " << this->className << "<hypothesis,Type,use_qt>& b)\n";
     } else {
-      this->behaviourFile << "template<unsigned short N,typename Type>" << endl;
+      this->behaviourFile << "template<ModellingHypothesis::Hypothesis hypothesis,typename Type>" << endl;
       this->behaviourFile << "std::ostream&\n";
       this->behaviourFile << "operator <<(std::ostream& os,";
-      this->behaviourFile << "const " << this->className << "<N,Type,false>& b)\n";
+      this->behaviourFile << "const " << this->className << "<hypothesis,Type,false>& b)\n";
     }
     this->behaviourFile << "{" << endl;
     this->behaviourFile << "using namespace std;" << endl;
     if(this->behaviourCharacteristic.useQt()){        
       this->behaviourFile << "os << " << this->className 
-			  << "<N,Type,use_qt>::getName() << endl;\n";
+			  << "<hypothesis,Type,use_qt>::getName() << endl;\n";
     } else {
       this->behaviourFile << "os << " << this->className 
-			  << "<N,Type,false>::getName() << endl;\n";
+			  << "<hypothesis,Type,false>::getName() << endl;\n";
     }
     this->behaviourFile << "os << \"sig : \" << b.sig << endl;\n";
     this->behaviourFile << "os << \"eto : \" << b.eto << endl;\n";
@@ -2400,15 +2389,16 @@ namespace mfront{
     this->behaviourFile << "*/\n";
 
     if(this->behaviourCharacteristic.useQt()){
-      this->behaviourFile << "template<unsigned short N,typename Type,bool use_qt>\n";
+      this->behaviourFile << "template<ModellingHypothesis::Hypothesis hypothesis,typename Type,bool use_qt>\n";
       this->behaviourFile << "class MechanicalBehaviourTraits<";
-      this->behaviourFile << this->className << "<N,Type,use_qt> >\n";
+      this->behaviourFile << this->className << "<hypothesis,Type,use_qt> >\n";
     } else {
-      this->behaviourFile << "template<unsigned short N,typename Type>\n";
+      this->behaviourFile << "template<ModellingHypothesis::Hypothesis hypothesis,typename Type>\n";
       this->behaviourFile << "class MechanicalBehaviourTraits<";
-      this->behaviourFile << this->className << "<N,Type,false> >\n";
+      this->behaviourFile << this->className << "<hypothesis,Type,false> >\n";
     }
     this->behaviourFile << "{\n";
+    this->behaviourFile << "static const unsigned short N = ModellingHypothesisToSpaceDimension<hypothesis>::value;\n";
     this->behaviourFile << "typedef tfel::math::StensorDimeToSize<N> StensorDimeToSize;\n";
     this->behaviourFile << "static const unsigned short StensorSize = ";
     this->behaviourFile << "StensorDimeToSize::value;\n";
@@ -2558,7 +2548,6 @@ namespace mfront{
     this->behaviourFile << "private:" << endl << endl;
     this->writeBehaviourTangentStiffnessOperator();
     this->writeBehaviourPolicyVariable();
-    this->writeBehaviourHypothesisVariable();
     this->writeBehaviourClassEnd();
     this->writeBehaviourOutputOperator();
     this->writeBehaviourTraits();
@@ -3030,57 +3019,64 @@ namespace mfront{
   void MFrontBehaviourParserCommon::writeSrcFileStaticVars(void){
     using namespace std;
     this->checkSrcFile();
-    unsigned short i;
+    vector<string> m;
     StaticVarContainer::const_iterator p;
+    vector<string>::const_iterator pm;
+    m.push_back("tfel::material::ModellingHypothesis::AXISYMETRICALGENERALISEDPLANESTRAIN");
+    m.push_back("tfel::material::ModellingHypothesis::AXISYMETRICAL");
+    m.push_back("tfel::material::ModellingHypothesis::PLANESTRESS");
+    m.push_back("tfel::material::ModellingHypothesis::PLANESTRAIN");
+    m.push_back("tfel::material::ModellingHypothesis::GENERALISEDPLANESTRAIN");
+    m.push_back("tfel::material::ModellingHypothesis::TRIDIMENSIONAL");
     for(p=this->staticVars.begin();p!=this->staticVars.end();++p){
-      for(i=1;i!=4;++i){
+      for(pm=m.begin();pm!=m.end();++pm){
 	if(this->behaviourCharacteristic.useQt()){
 	  this->srcFile << "template<>\n";
-	  this->srcFile << this->className << "<" << i << "u,float,true>::" 
+	  this->srcFile << this->className << "<" << *pm << ",float,true>::" 
 			<< p->type << "\n" << this->className 
-			<< "<" << i << "u"  << ",float,true>::" 
+			<< "<" << *pm << ",float,true>::" 
 			<< p->name << " = " << this->className 
-			<< "<" << i << "u,float,true>::" << p->type 
+			<< "<" << *pm << ",float,true>::" << p->type 
 			<< "(static_cast<float>(" << p->value <<"));\n\n";
 	}
 	this->srcFile << "template<>\n";
-	this->srcFile << this->className << "<" << i << "u,float,false>::" 
+	this->srcFile << this->className << "<" << *pm << ",float,false>::" 
 		      << p->type << "\n" << this->className 
-		      << "<" << i << "u"  << ",float,false>::" 
+		      << "<" << *pm << ",float,false>::" 
 		      << p->name << " = " << this->className 
-		      << "<" << i << "u,float,false>::" << p->type 
+		      << "<" << *pm << ",float,false>::" << p->type 
 		      << "(static_cast<float>(" << p->value <<"));\n\n";
 	if(this->behaviourCharacteristic.useQt()){
 	  this->srcFile << "template<>\n";
-	  this->srcFile << this->className << "<" << i << "u,double,true>::" 
+	  this->srcFile << this->className << "<" << *pm << ",double,true>::" 
 			<< p->type << "\n" << this->className 
-			<< "<" << i << "u"  << ",double,true>::" 
+			<< "<" << *pm << ",double,true>::" 
 			<< p->name << " = " << this->className 
-			<< "<" << i << "u,double,true>::" << p->type 
+			<< "<" << *pm << ",double,true>::" << p->type 
 			<< "(static_cast<double>(" << p->value <<"));\n\n";
 	}
 	this->srcFile << "template<>\n";
-	this->srcFile << this->className << "<" << i << "u,double,false>::" 
+	this->srcFile << this->className << "<" << *pm << ",double,false>::" 
 		      << p->type << "\n" << this->className 
-		      << "<" << i << "u"  << ",double,false>::" 
+		      << "<" << *pm << ",double,false>::" 
 		      << p->name << " = " << this->className 
-		      << "<" << i << "u,double,false>::" << p->type 
+		      << "<" << *pm << ",double,false>::" << p->type 
 		      << "(static_cast<double>(" << p->value <<"));\n\n";
 	if(this->behaviourCharacteristic.useQt()){
 	  this->srcFile << "template<>\n";
-	  this->srcFile << this->className << "<" << i << "u,long double,true>::" 
+	  this->srcFile << this->className << "<" << *pm << ",long double,true>::" 
 			<< p->type << "\n" << this->className 
-			<< "<" << i << "u"  << ",long double,true>::" 
+			<< "<" << *pm << ",long double,true>::" 
 			<< p->name << " = " << this->className << "<" 
-			<< i << "u,long double,true>::" << p->type 
+			<< *pm << ",long double,true>::" << p->type 
 			<< "(static_cast<long double>(" << p->value <<"));\n\n";
 	}
 	this->srcFile << "template<>\n";
-	this->srcFile << this->className << "<" << i << "u,long double,false>::" 
+	this->srcFile << this->className << "<" << *pm << ",long double,false>::" 
 		      << p->type << "\n" << this->className 
-		      << "<" << i << "u"  << ",long double,false>::" 
+		      << "<" << *pm << ",long double,false>::" 
 		      << p->name << " = " << this->className 
-		      << "<" << i << "u,long double,false>::" << p->type 
+		      << "<" << *pm << ",long double,false>::" << p->type 
 		      << "(static_cast<long double>(" << p->value <<"));\n\n";
       }
     }

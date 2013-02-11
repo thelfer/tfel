@@ -39,6 +39,7 @@
 \newcommand{\mfront}{\texttt{mfront}}
 \newcommand{\licos}{\texttt{licos}}
 \newcommand{\cyrano}{\texttt{cyrano}}
+\newcommand{\galileo}{\texttt{galileo}}
 \newcommand{\castem}{\texttt{Cast3M}}
 \newcommand{\aster}{\href{http://www.code-aster.org/}{\texttt{Aster}}}
 \newcommand{\pycastem}{\texttt{pyCast3M}}
@@ -134,7 +135,7 @@
   connaissances matériau dans la plateforme \pleiades{}.
 
   Faute d'une meilleure formule, \mfront{} peut se décrire comme
-  comme un générateur de code dédiée aux connaissances matériau. Ce
+  comme un générateur de code dédié aux connaissances matériau. Ce
   document montre qu'il capitalise en réalité un important savoir-faire
   physique, numérique et informatique. Son domaine d'application
   couvre~:
@@ -148,10 +149,10 @@
   \begin{itemize}
     \item de proposer un fichier d'entrée clair se focalisant
     sur l'{\em information physique}~;
-    \item de ne demander qu'un {\em minimum} de connaissance
-    informatique à l'utilisateur~;
+    \item de ne demander qu'un {\em minimum} de connaissances
+    informatiques à l'utilisateur~;
     \item de générer des bibliothèques matériau {\em
-      numériquement optimisée}, en particulier pour les lois de
+      numériquement optimisées}, en particulier pour les lois de
     comportement. \mfront{} fait partie d'une bibliothèque informatique
     et numérique nommée \TFEL{}, aujourd'hui intégrée à l'architecture
     \pleiades{}, qui propose des techniques de programmation et des
@@ -162,9 +163,10 @@
   \end{itemize}
 
   Pour les propriétés matériau et les lois de comportement mécanique,
-  les fichiers \mfront{} peuvent être introduits par la base de données
-  \sirius{}. Inversement, la base de données \sirius{} permet de
-  récupérer les connaissances matériau sous forme de fichiers \mfront{}.
+  les fichiers \mfront{} peuvent être introduits dans la base de
+  données \sirius{}. Inversement, la base de données \sirius{} permet
+  de récupérer les connaissances matériau sous forme de fichiers
+  \mfront{}.
   
   Essentiellement utilisé dans le code de conception
   \licos{} dans un premier temps, \mfront{} s'est imposé comme le
@@ -190,22 +192,53 @@
 \newpage
 \section{Introduction}
 
-\paragraph{Utilisation de \mfront{} dans \cyrano{}}
+Couplé à la base de données \sirius{}, \mfront{} est devenu un
+élément essentiel de la gestion des connaissances matériau dans la
+plate-forme \pleiades{}. D'abord utilisé par les applications \cea{},
+\mfront{} peut maintenant être utilisé par le code combustible \cyrano{}
+d'eDF et sont utilisation se répand en dehors de la plate-forme~:
+\begin{itemize}
+  \item Areva le teste actuellement et évalue la possibilité de
+  l'intégrer dans sont nouveau code combustible \galileo{}~;
+  \item le DER/SESI l'a utilisé pour construire une bibliothèque
+  de connaissances matériau basée sur le RCCM 2010 dans le cadre l'étude
+  des aciers de cuve~;
+  \item l'équipe de code \aster{} l'évalue.
+\end{itemize}
 
-Un effort de développement a été fait pour faciliter l'introduction
-d'une loi de comportement mécanique dans \cyrano{} en utilisant le
-formalisme de appels externes utilisé par \mfront{}\footnote{Il s'agit
-d'une modification de l'interface \umat{} que nous avons proposé pour
-permettre l'appel de lois de comportement mécanique dans des
-bibliothèques externes. Auparavant une recompilation partielle de
-\castem{} était nécessaire pour ajouter une loi. Outre la relative
-complexité de cette recompilation pour un utilisateur final, cette façon
-de procéder était incompatible avec l'utilisation faite de \castem{} par
-les applications \pleiades{} via l'interface
-\pycastem~\cite{t.06:_implan}.}.
+Comme l'indique le titre de ce document, nous avons pour ambition
+que \mfront{} permette une gestion des connaissances matériau pérenne,
+robuste, efficace et évolutive.
 
-\paragraph{Utilisation de \mfront{} au DER/SESI}
+La pérennité est garantie par différents points~:
+\begin{itemize}
+  \item la capitalisation dans la base de données \sirius{}~;
+  \item le choix d'un langage, le \cpp{}, qui est aujourd'hui
+  l'un des langages les plus utilisés dans le monde~;
+  \item le fait que les fichiers \mfront{} ne contiennent que
+  l'information physique et éventuellement quelques paramètres
+  numériques. Ces fichiers ne sont adhérents à aucun code ni aucun
+  langage cible et sont lisibles par des personnes qui n'ont pas ou peu
+  de connaissances informatiques.
+\end{itemize}
+Ce dernier point garantie également le caractère évolutif de cette
+solution car il est facile de créer des interfaces vers de nouveaux
+codes ou de nouveaux langages.
 
+
+
+Faute d'une meilleure formule, \mfront{} peut se décrire comme
+comme un générateur de code dédiée aux connaissances matériau. 
+
+
+Ce document montre qu'il capitalise en réalité un important
+savoir-faire physique, numérique et informatique. Son domaine
+d'application couvre~:
+\begin{itemize}
+  \item les propriétés matériau~;
+  \item les lois de comportement~;
+  \item les modèles~;
+\end{itemize}
 
 \subsection{Documentation informatique,
   installation} La documentation informatique de \mfront{} et sa
@@ -1745,38 +1778,7 @@ constituant le tableau pour condenser l'écriture des lois.
 \end{figure}
 
 La figure~\ref{2norton-rk} présente l'exemple d'une loi de comportement
-somme de deux écoulements de \textsc{Norton}.
-
-\paragraph{Limitation et possibilité d'amélioration} Pour réduire le
-temps de développement de cette fonctionnalité et surtout réduire les
-sources d'erreurs, nous avons utilisé des classes livrés avec TFEL (la
-librairie mathématique sur laquelle se base \mfront{}) qui propose des
-vecteurs de taille finie sur lesquelles les opérations mathématiques
-usuelles ont été définies~: l'addition d'un vecteur de tenseur est
-possible et optimisée.
-
-Ainsi, la génération des différents algorithmes de \textsc{Runge-Kutta}
-est restée inchangée, ce qui est satisfaisant.
-
-Cette solution n'est cependant pas adaptée à un très grand nombre de
-variables internes (plus d'une centaine par exemple, ce qui est somme
-tout déjà conséquent) car ces classes de vecteurs ont été conçues pour
-être optimales pour des petites tailles~: leurs utilisations pour de
-grandes tailles alourdit le temps de compilation et augmente la taille
-de la librairie générée. Il s'agit d'un phénomène connu sous le nom de
-\og~code bloat~\fg (littéralement, explosion du code).
-
-Des tests ont montré que ce phénomène était réel et que la tendance à
-l'augmentation des temps de compilation et de la taille de la librairie
-était fortement non linéaire~: pour des tableaux d'un millier de
-variables internes, le temps de compilation pouvait dépasser la minute
-et que la taille de la librairie générée pouvait dépasser le mégaoctet.
-Si d'aventure, des lois à grand nombre de variables internes devaient
-être utilisées régulièrement, il serait intéressant de faire évoluer les
-classes de vecteurs citées pour limiter ces tentatives
-d'optimisation\footnote{Il est d'ailleurs a peu près certain que les
-  techniques utilisées n'ont plus d'intérêt pour des vecteurs de grande
-  taille.}.
+somme de deux écoulements viscoplastiques de \textsc{Norton}.
 
 \subsection{Analyseurs disponibles}
 
@@ -2382,6 +2384,13 @@ s'appliquent~:
   vitesse de variation sur le pas de temps (constante sur le pas).
 \end{itemize}
 
+\paragraph{Calcul de la matrice tangente cohérente}
+
+Si l'appelant demande le calcul de la matrice tangente cohérente, la
+variable booléenne \varcpp{computeTangentOperator\textunderscore{}} est
+vraie. L'utilisateur doit tester cette valeur et effectuer le calcul le
+cas échéant.
+
 \subsection{Exemple de l'élasticité orthotrope}
 
 \begin{figure}[htbp]
@@ -2411,6 +2420,8 @@ mathématique~:
 \[
 \tsigma_{t+\Delta\,t} = \tenseurq{D}\colon\paren{\tepsilonto_{t}+\Delta\,\tepsilonto}
 \]
+
+Dans ce cas, le calcul de la matrice tangente cohérente est immédiat.
 
 \subsection{Noms des variables et des méthodes \cpp{} utilisés en interne}
 
@@ -3580,6 +3591,37 @@ les conventions suivantes s'appliquent~:
 Pour toute variable interne {\tt Y}, {\tt dY} représente sa vitesse de
 variation~: c'est cette variable que l'utilisateur doit renseigner.
 
+%\subsection{La directive \texttt{@TangentOperator}}
+%
+%La directive \mkey{TangentOperator} permet de préciser une matrice
+%tangente.
+
+%Le code fourni est appelé après celui fourni par la méthode
+%\mkey{ComputeStress}.
+%
+%\paragraph{Conventions spécifiques} Dans la méthode \mkey{Derivative},
+%les conventions suivantes s'appliquent~:
+%\begin{itemize}
+%  \item {\tt sig} représente la valeur actualisée de la contrainte~;
+%  \item {\tt eto} représente la déformation totale actualisée~;
+%  \item {\tt deto} représente la vitesse de déformation totale
+%  (constante sur le pas)~;
+%  \item {\tt T} représente la valeur actualisée de température~;
+%  \item {\tt dT} représente la vitesse de changement de température
+%  (constante sur le pas)~;
+%  \item pour toute variable interne {\tt Y}, {\tt Y} représente sa
+%  valeur actualisée~;
+%  \item pour toute variable interne auxiliaire {\tt Y}, {\tt Y}
+%  représente sa valeur en {\em début} de pas de temps~;
+%  \item pour toute variable externe {\tt V}, {\tt V} représente sa
+%  valeur actualisée~;
+%  \item pour toute variable externe {\tt V}, {\tt dV} représente sa
+%  vitesse de variation sur le pas de temps (constante sur le pas).
+%\end{itemize}
+%
+%Pour toute variable interne {\tt Y}, {\tt dY} représente sa vitesse de
+%variation~: c'est cette variable que l'utilisateur doit renseigner.
+
 \subsection{Mise à jour des variables auxiliaires}
 
 Les variables auxiliaires sont mises à jour à chaque fois qu'un pas est
@@ -3611,6 +3653,41 @@ paramètres~:
   \mkeyb{MinimalTimeStep}{Minimal\-Time\-Step} est utilisée. Ce
   paramètre doit avoir une valeur strictement positive.
 \end{itemize}
+
+\subsection{Notes sur l'utilisation des tableaux de variables internes}
+
+L'utilisation des tableaux de variables internes dans le
+cas des algorithmes de \nom{Runge-Kutta} mérite quelques précisions.
+
+Pour réduire le temps de développement de cette fonctionnalité et
+surtout réduire les sources d'erreurs, nous avons utilisé des classes
+livrés avec TFEL (la librairie mathématique sur laquelle se base
+\mfront{}) qui propose des vecteurs de taille finie sur lesquelles les
+opérations mathématiques usuelles ont été définies~: l'addition d'un
+vecteur de tenseur est possible et optimisée.
+
+Ainsi, la génération des différents algorithmes de \textsc{Runge-Kutta}
+est restée inchangée, ce qui est satisfaisant.
+
+Cette solution n'est cependant pas adaptée à un très grand nombre de
+variables internes (plus d'une centaine par exemple, ce qui est somme
+tout déjà conséquent) car ces classes de vecteurs ont été conçues pour
+être optimales pour des petites tailles~: leurs utilisations pour de
+grandes tailles alourdit le temps de compilation et augmente la taille
+de la librairie générée. Il s'agit d'un phénomène connu sous le nom de
+\og~code bloat~\fg (littéralement, explosion du code).
+
+Des tests ont montré que ce phénomène était réel et que la tendance à
+l'augmentation des temps de compilation et de la taille de la librairie
+était fortement non linéaire~: pour des tableaux d'un millier de
+variables internes, le temps de compilation pouvait dépasser la minute
+et que la taille de la librairie générée pouvait dépasser le mégaoctet.
+Si d'aventure, des lois à grand nombre de variables internes devaient
+être utilisées régulièrement, il serait intéressant de faire évoluer les
+classes de vecteurs citées pour limiter ces tentatives
+d'optimisation\footnote{Il est d'ailleurs à peu près certain que les
+  techniques utilisées n'ont plus d'intérêt pour des vecteurs de grande
+  taille.}.
 
 \subsection{Intégration d'une loi d'écoulement viscoplastique
   orthotrope par un algorithme de \nom{Runge-Kutta}}
@@ -3866,10 +3943,16 @@ Cette écriture est là aussi {\em symbolique} et chaque terme
 \(f{y_{j}}\) peut être soit soit un scalaire soit un tenseur symétrique
 d'ordre \(2\).
 
-\mfront{} définit automatiquement les différents termes \(f_{y_{j}}\).
+\mfront{} définit automatiquement les différents termes
+\(f_{y_{j}}\). Ces termes se manipulent comme un scalaire si \(y_{i}\)
+est un scalaire, et comme une tenseur d'ordre \(2\) si \(y_{i}\) l'est.
+
 Pour des raisons de performances, la variable \(f_{y_{j}}\) est l'image
 d'une portion du vecteur \(F\) et toute modification de cette variable
 modifie le vecteur \(F\)
+
+Si \(y_{i}\) désigne un tableau de variables internes, \(f_{y_{j}}\)
+est une méthode qui prend en argument un indice entier.
 
 \paragraph{Choix du paramètre $\theta$} L'optimum entre
 terme d'efficacité numérique est obtenu pour \(\theta=\pfrac{1}{2}\)
@@ -4032,28 +4115,50 @@ où \(I\) est la matrice identité.
 \paragraph{Calcul de la matrice jacobienne par blocs} En pratique, la
 matrice \(J\) est calculée par blocs et prend la forme suivante~:
 \[
-J = \deriv{F}{Y} =
+J = \deriv{F}{\Delta\,Y} =
 \begin{pmatrix}
-  \deriv{f_{y_{1}}}{y_{1}} & \ldots & \ldots & \ldots & \ldots \\
+  \deriv{f_{y_{1}}}{\Delta\,y_{1}} & \ldots & \ldots & \ldots & \ldots \\
   \vdots & \vdots & \vdots & \vdots & \vdots \\
-  \vdots & \vdots & \deriv{f_{y_{i}}}{y_{j}} & \vdots & \vdots \\
+  \vdots & \vdots & \deriv{f_{y_{i}}}{\Delta\,y_{j}} & \vdots & \vdots \\
   \vdots & \vdots & \vdots & \vdots & \vdots \\
-  \ldots & \ldots & \ldots & \ldots & \deriv{f_{y_{N}}}{y_{N}} \\
+  \ldots & \ldots & \ldots & \ldots & \deriv{f_{y_{N}}}{\Delta\,y_{N}} \\
 \end{pmatrix}
 \]
 
-Les différents termes \(\deriv{f_{y_{i}}}{y_{j}}\) sont automatiquement
-définies par \mfront{}. La nature mathématique de ces termes dépend de
-la nature des variables \(y_{i}\) et \(y_{j}\) et pourront être
-manipulées par les opérations mathématiques usuelles. Pour des raisons
-de performances, ces variables sont des images de la matrice
+Les différents termes \(\deriv{f_{y_{i}}}{\Delta\,y_{j}}\) sont
+automatiquement définies par \mfront{}. La nature mathématique de ces
+termes dépend de la nature des variables \(y_{i}\) et \(y_{j}\) et
+pourront être manipulées par les opérations mathématiques usuelles. Pour
+des raisons de performances, ces variables sont des images de la matrice
 jacobienne~: en les manipulant, on modifie directement la matrice
 jacobienne.
 
-\paragraph{Comparaison de la matrice jacobienne fournies à une
-  approximation numérique} Le calcul de la matrice jacobienne est, à
-juste titre, jugé délicat et une erreur peut avoir un impact
-significatif sur les performances ou la robustesse de l'intégration.
+Ainsi, la dérivée d'une variable \varcpp{a} par rapport à la
+variable \varcpp{b} sera accessible par \varcpp{dfa\_ddb}.
+
+Dans le cas particuliers des tableaux de variables internes,
+\varcpp{dfa\_ddb} est une méthode qui prend~:
+\begin{itemize}
+  \item un unique argument entier si soit \varcpp{a} ou soit
+  \varcpp{b} désigne un tableau de variables internes internes, mais pas
+  les deux en mêmes temps~;
+  \item deux arguments entiers si \varcpp{a} et \varcpp{b}
+  désignent deux tableaux de variables internes~;
+\end{itemize}
+Ces méthodes renvoient des objets spéciaux, qui agissent comme des
+scalaires ou des tenseurs d'ordre \(2\) ou \(4\) suivant les cas. Ces
+objets permettent un accès aux valeurs de la jacobienne qui peut être,
+en fonction des capacités du compilateur utilisé, moins performant que
+dans le cas des variables ordinaires.
+
+\paragraph{Comparaison de la matrice jacobienne
+  fournie à une approximation numérique} Le calcul de la matrice
+jacobienne est, à juste titre, jugé délicat et une erreur peut avoir un
+impact significatif sur les performances ou la robustesse de
+l'intégration et dans le meilleur des cas une non
+convergence\footnote{En effet, dans ce cas, l'erreur apparaît alors que
+  sinon le seul symptôme est une convergence lente qui peut passer
+  inaperçue si l'on y prend garde.}.
 
 Pour détecter les erreurs dans le calcul du jacobien, nous avons
 introduit le mot clé \texttt{@Compare\-To\-Numerical\-Jacobian}. Ce mot
@@ -4072,11 +4177,11 @@ perturbations. Cette vérification se fait par étapes~:
     d'arrêt de l'algorithme implicite. }~;
   \item la seconde étape est de comparer les termes du jacobien.
   La comparaison se fait bloc par bloc~: la différence entre la dérivée
-  \(\deriv{f_{y_{i}}}{y_{j}}\) calculée par l'utilisateur et son
-  approximation numérique \(\Frac{\Delta\,f_{y_{i}}}{\Delta\,y_{j}}\)
+  \(\deriv{f_{y_{i}}}{\Delta\,y_{j}}\) calculée par l'utilisateur et son
+  approximation numérique \(\Frac{\Delta\,f_{y_{i}}}{\Delta\,\Delta\,y_{j}}\)
   est évaluée ainsi~:
   \[
-  \Frac{1}{N_{y_{i}}\,N_{y_{j}}}\norm{\deriv{f_{y_{i}}}{y_{j}}-\Frac{\Delta\,f_{y_{i}}}{\Delta\,y_{j}}}
+  \Frac{1}{N_{y_{i}}\,N_{y_{j}}}\norm{\deriv{f_{y_{i}}}{\Delta\,y_{j}}-\Frac{\Delta\,f_{y_{i}}}{\Delta\,\Delta\,y_{j}}}
   \]
   où \(N_{y_{i}}\) est le nombre de composantes de la variables
   \(y_{i}\) et où \(\norm{a}\) est la somme des valeurs absolues des
@@ -4134,8 +4239,8 @@ jacobienne à la matrice identité.
 
 \subsection{Méthodes alternatives}
 
-Le calcul de la matrice jacobienne est la principale difficulté de la
-méthode de \nom{Newton-Raphson}.
+Insistons, le calcul de la matrice jacobienne est la
+principale difficulté de la méthode de \nom{Newton-Raphson}.
 
 Afin de dispenser l'utilisateur de fournir la matrice jacobienne,
 nous avons envisagé d'approximer le jacobien par différentiation
@@ -4145,7 +4250,6 @@ important(voir au paragraphe~\ref{QNR:ComparaisonNumeriques} les
 tableaux~\ref{tab:QNR:1} et~\ref{tab:QNR:2}). Cette méthode est
 accessible par l'algorithme
 \texttt{Newton\-Raphson\textunderscore{}\-Numerical\-Jacobian}.
-
 
 Ce constat est général et de nombreux auteurs ont proposés des
 algorithmes qui ne se basent pas sur une différentiation numérique (sauf
@@ -4304,15 +4408,24 @@ D'autres pistes d'amélioration peuvent être suivies. Nous renvoyons à
 l'annexe~\ref{sec:mfront:implicit:robustness} pour la description d'un
 algorithme dû à \nom{Powell} qui semble particulièrement intéressant.
 
-\subsection{Une façon générique de calculer de la matrice tangente cohérente}
+\subsection{Calcul de la matrice tangente cohérente}
+
+L'utilisateur peut calculer la matrice tangente cohérente
+dans un bloc introduit par la directive \texttt{@TangentOperator}.
+
+Cette directive est appelée si l'intégration de la loi a été un
+succès, avant la mise à jour des variables internes et la mise à jour de
+contraintes.
+
+\subsubsection{Une façon générique de calculer de la matrice tangente cohérente}
 
 Si la matrice jacobienne du système est connue, alors il existe une
 façon générique de calculer de la matrice tangente cohérente La matrice
-tangente valide dans de très nombreux cas. Pour cela, il faut que la
-contrainte ne dépende que du tenseur d'élasticité (éventuellement de
-manière non linéaire) et que l'incrément de déformation totales
+tangente valide dans de très nombreux cas. Pour cela, nous supposerons
+que la contrainte ne dépende que du tenseur d'élasticité (éventuellement
+de manière non linéaire) et que l'incrément de déformation totales
 \(\Delta\tepsilonto\) n'apparaissent que dans l'équation relative aux
-déformations élastiques par une relation issue de la partition des
+déformations élastiques par la relation de partition des
 déformation~:
 \[
 \Delta\,\tepsilonel+\sum_{i}\Delta\,\tepsilonan_{i}-\Delta\,\tepsilonto=0
@@ -4325,38 +4438,42 @@ De la première hypothèse, nous tirons~:
 
 La seconde hypothèse nous permet de calculer directement
 \(\deriv{\Delta\,\tepsilonel}{\Delta\,\tepsilonto}\). En effet, en
-dérivant l'ensemble du système différentiel, nous avons~:
+faisant varier l'ensemble du système différentiel par variation
+\(\delta\Delta\tepsilonto\) du tenseur des déformations totales, nous avons~:
+\[
+\delta\,F\paren{\delta\Delta\,y_{i},\delta\Delta\tepsilonto} = 0
+\]
+Par différentiation~:
 \[
 J\,.\,
 \begin{pmatrix}
-  \deriv{\Delta\,\tepsilonel}{\Delta\,\tepsilonto}
+  \delta\Delta\,\tepsilonel
   \\
   \vdots \\
-  \deriv{\Delta\, y_{i}}{\Delta\,\tepsilonto} \\
+  \delta\Delta\, y_{i} \\
   \vdots \\
-  \deriv{\Delta\, y_{n}}{\Delta\,\tepsilonto} \\
+  \delta\Delta\, y_{n} \\
 \end{pmatrix}
 -
 \begin{pmatrix}
-  \tenseur{I} \\
+  \delta\Delta\tepsilonto \\
   \vdots \\
   0 \\
   \vdots \\
   0\\
 \end{pmatrix}
-= 0
-\quad\Rightarrow\quad 
+= 0 \quad\Rightarrow\quad
 \begin{pmatrix}
-  \deriv{\Delta\,\tepsilonel}{\Delta\,\tepsilonto}
+  \delta\Delta\,\tepsilonel
   \\
   \vdots \\
-  \deriv{\Delta\, y_{i}}{\Delta\,\tepsilonto} \\
+  \delta\Delta\, y_{i} \\
   \vdots \\
-  \deriv{\Delta\, y_{n}}{\Delta\,\tepsilonto} \\
+  \delta\Delta\, y_{n} \\
 \end{pmatrix}
 =J^{-1}\,.\,
 \begin{pmatrix}
-  \tenseur{I} \\
+  \delta\Delta\tepsilonto \\
   \vdots \\
   0 \\
   \vdots \\
@@ -4365,19 +4482,120 @@ J\,.\,
 \]
 et donc~:
 \[
-\deriv{\Delta\,\tepsilonel}{\Delta\,\tepsilonto}=J_{\tepsilonel}
+\delta\Delta\,\tepsilonel=J^{-1}_{\tepsilonel}\,\colon\,\delta\Delta\tepsilonto
 \]
-où \(J_{\tepsilonel}\) est la partie supérieure gauche de
-l'inverse de la jacobienne.
+où \(J^{-1}_{\tepsilonel}\) est la partie supérieure gauche de l'inverse de
+la jacobienne.
 
 Finalement, nous obtenons~:
 \[
-\deriv{\Delta\,\tsigma}{\Delta\,\tepsilonto} =  \left.\deriv{\tsigma}{\tepsilonel}\right|_{\tepsilonel+\Delta\,\tepsilonel}\,\colon\, J_{\tepsilonel}
+\deriv{\Delta\,\tsigma}{\Delta\,\tepsilonto} =  \left.\deriv{\tsigma}{\tepsilonel}\right|_{\tepsilonel+\Delta\,\tepsilonel}\,\colon\, J^{-1}_{\tepsilonel}
 \]
 
-La matrice \(J_{\tepsilonel}\) peut être calculée par la méthode
-\varcpp{getPartialJacobianInvert}. Cette méthode ne doit être utilisée
+La matrice \(J^{-1}_{\tepsilonel}\) peut être calculée par la méthode
+\varcpp{getPartialJacobianInvert} à qui l'on doit passer un tenseur
+d'ordre \(4\). Cette méthode ne doit être utilisée quand le bloc
+\mkey{TangentOperator}.
+
+Ce cas explique pourquoi la déformation élastique est toujours définie
+comme la première variable interne.
+
+\paragraph{Généralisation} La méthode
+précédente se généralise dans le cas où la contrainte dépend de
+plusieurs variables internes et éventuellement de la déformation totale.
+En effet, il suffit d'écrire~:
+\[
+\deriv{\Delta\,\tsigma}{\Delta\,\tepsilonto}
+=
+\sum_{i}\left.\deriv{\tsigma}{y_{i}}\right|_{y_{i}+\Delta\,y_{i}}\,\colon\,\deriv{\Delta\,y_{i}}{\Delta\,\tepsilonto}
++
+\left.\deriv{\tsigma}{\tepsilonto}\right|_{\tepsilonto+\Delta\,\tepsilonto}
+\]
+Les mêmes considérations que précédemment montrent que les
+différentes dérivées \(\deriv{\Delta\,y_{i}}{\Delta\,\tepsilonto}\) se
+lisent sur les \(N_{\tepsilonto}\) premières colonnes de l'inverse de la
+matrice jacobienne, où \(N_{\tepsilonto}\) est le nombre de composantes
+du tenseur \(\tepsilonto\).
+
+Il est possible de récupérer ses dérivées par la méthode
+\varcpp{get\-Partial\-Jacobian\-Invert} à qui l'on doit passer
+successivement des variables qui vont contenir les dérivées des
+variables d'intérêt dans {\em l'ordre de déclaration des variables}. Ces
+variables doivent être des tenseurs d'ordre \(2\) dans le cas de
+variables scalaires et des tenseurs d'ordre \(4\) dans le cas de
+variables tensorielles.
+
+Dans le cas des tableaux de variables internes, il faut passer des
+vecteurs de tailles finies du type adéquat (classe \tfel{tvector} de
+\TFEL{} qui paramétrée par la taille et le type d'object contenu).
+
+Insistons~: si l'on a besoin que des dérivées de deux
+premières variables internes (par exemple la déformation élastique et la
+variable d'endommagement) alors il suffit de passer deux arguments à la
+méthode \varcpp{get\-Partial\-Jacobian\-Invert}, on ne calculera donc
+pas les autres dérivées pour rien. À l'utilisateur de déclarer les
+variables dans le bon ordre !
+
+La méthode \varcpp{getPartialJacobianInvert} ne doit être utilisée
 quand le bloc \mkey{TangentOperator}.
+
+\subsubsection{Une méthode alternative de calculer de la matrice tangente cohérente}
+
+Il existe une autre méthode de calcul de la matrice tangente cohérente
+basée sur un partitionnement de la jacobienne et non de son inverse.
+Pour cela, notons \(z_{i}\) les variables internes autres que les
+déformations élastiques. Nous avons, avec les mêmes hypothèses que
+précédemment~:
+\[
+\delta\,F\paren{\delta\Delta\,\tepsilonel,\delta\Delta\,z_{i},\delta\Delta\tepsilonto}
+= 0
+\]
+Par différentiation~:
+\[
+J\,.\,
+\begin{pmatrix}
+  \delta\Delta\,\tepsilonel \\
+  \delta\Delta\, Z
+\end{pmatrix}
+-
+\begin{pmatrix}
+  \delta\Delta\tepsilonto \\
+  0 \\
+\end{pmatrix}
+= 0
+\]
+où \(\delta\Delta\, Z\) est un vecteur regroupant les variations
+des incréments des variables internes \(z_{i}\).
+
+En découpant la matrice jacobienne en quatres blocs~:
+\[
+J=
+\begin{pmatrix}
+  J_{0} & J_{1} \\
+  J_{2} & J_{3} \\
+\end{pmatrix}
+\]
+on obtient deux systèmes~:
+\[
+\left\{
+\begin{aligned}
+J_{0}\,\delta\Delta\,\tepsilonel+J_{1}\, \delta\Delta\, Z &= \delta\Delta\tepsilonto \\
+J_{2}\,\delta\Delta\,\tepsilonel+J_{3}\, \delta\Delta\, Z &= 0\\
+\end{aligned}
+\right.
+\]
+Le second système conduit à~:
+\[
+\delta\Delta\, Z = -J_{3}^{-1}\,J_{2}\,\delta\Delta\,\tepsilonel
+\]
+Par report dans le premier système, nous obtenons~:
+\[
+\delta\Delta\,\tepsilonel = \paren{J_{0}-J_{1}\,J_{3}^{-1}\,J_{2}}^{-1}\,\delta\Delta\tepsilonto
+\]
+et finalement~:
+\[
+\deriv{\Delta\,\tepsilonel}{\Delta\tepsilonto}=\paren{J_{0}-J_{1}\,J_{3}^{-1}\,J_{2}}^{-1}
+\]
 
 \subsection{La directive \texttt{@ComputeStress}}
 
@@ -4878,7 +5096,7 @@ compilation des sources générées\footnote{Pour connaître les options retenue
 }.
 
 \paragraph{Compilation} La compilation de \TFEL{}
-est lancé par la commande \make{}~:
+est lancée par la commande \make{}~:
 \bash{
   make -j x
 }

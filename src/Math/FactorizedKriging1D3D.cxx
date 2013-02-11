@@ -23,7 +23,7 @@ namespace tfel
       using namespace tfel::math;
       typedef FactorizedKriging<1u,3u,double,
 	KrigingPieceWiseLinearModel1D<double>,
-	KrigingModelAdaptator<KrigingDefaultModel<3u,double> > > FactorizedKriging;
+	KrigingModelAdaptator<KrigingDefaultModel<3u,double> > > MyFactorizedKriging;
       using std::vector;
       vector<double>::const_iterator pt;
       vector<double>::const_iterator px;
@@ -54,9 +54,9 @@ namespace tfel
 	v(0) = this->a1*(*px)+b1;
 	v(1) = this->a2*(*py)+b2;
 	v(2) = this->a3*(*pz)+b3;
-	FactorizedKriging::addValue(this->a0*(*pt)+b0,v,*pv);
+	MyFactorizedKriging::addValue(this->a0*(*pt)+b0,v,*pv);
       }
-      FactorizedKriging::buildInterpolation();
+      MyFactorizedKriging::buildInterpolation();
     }
 
     FactorizedKriging1D3D::FactorizedKriging1D3D(const tfel::math::vector<double>& vt,
@@ -70,7 +70,7 @@ namespace tfel
       using tfel::math::vector;
       typedef FactorizedKriging<1u,3u,double,
 	KrigingPieceWiseLinearModel1D<double>,
-	KrigingModelAdaptator<KrigingDefaultModel<3u,double> > > FactorizedKriging;
+	KrigingModelAdaptator<KrigingDefaultModel<3u,double> > > MyFactorizedKriging;
       vector<double>::const_iterator pt;
       vector<double>::const_iterator px;
       vector<double>::const_iterator py;
@@ -100,9 +100,9 @@ namespace tfel
 	v(0) = this->a1*(*px)+b1;
 	v(1) = this->a2*(*py)+b2;
 	v(2) = this->a3*(*pz)+b3;
-	FactorizedKriging::addValue(this->a0*(*pt)+b0,v,*pv);
+	MyFactorizedKriging::addValue(this->a0*(*pt)+b0,v,*pv);
       }
-      FactorizedKriging::buildInterpolation();
+      MyFactorizedKriging::buildInterpolation();
     }
   
     double
@@ -114,12 +114,12 @@ namespace tfel
       using namespace tfel::math;
       typedef FactorizedKriging<1u,3u,double,
 	KrigingPieceWiseLinearModel1D<double>,
-	KrigingModelAdaptator<KrigingDefaultModel<3u,double> > > FactorizedKriging;
+	KrigingModelAdaptator<KrigingDefaultModel<3u,double> > > MyFactorizedKriging;
       tvector<3u> v;
       v(0) = this->a1*(vx)+b1;
       v(1) = this->a2*(vy)+b2;
       v(2) = this->a3*(vz)+b3;
-      return FactorizedKriging::operator()(this->a0*vt+this->b0,v);
+      return MyFactorizedKriging::operator()(this->a0*vt+this->b0,v);
     } // end of FactorizedKriging1D3D::operator()
 
     FactorizedKriging1D3D::~FactorizedKriging1D3D()
