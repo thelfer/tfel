@@ -72,8 +72,9 @@ namespace mfront{
   void
   MFrontUMATInterface::reset(void)
   {
-    this->useTimeSubStepping = false;
-    this->maximumSubStepping = 0u;
+    this->finiteStrainStrategy = NONE;
+    this->useTimeSubStepping   = false;
+    this->maximumSubStepping   = 0u;
   }
   
   void 
@@ -115,7 +116,12 @@ namespace mfront{
 	msg += "expected 'true' or 'false'";
 	throw(runtime_error(msg));
       }
-      ++(current);      
+      ++(current); 
+      if(current==end){
+	string msg("UmatInterface::treatKeyword (@UMATUseTimeSubStepping) : ");
+	msg += "unexpected end of file";
+	throw(runtime_error(msg));
+      }    
       if(current->value!=";"){
 	string msg("UmatInterface::treatKeyword : expected ';', read ");
 	msg += current->value;
@@ -143,7 +149,12 @@ namespace mfront{
 	msg+="failed to read maximum substepping value.\n";
 	throw(runtime_error(msg));
       }
-      ++(current);      
+      ++(current);
+      if(current==end){
+	string msg("UmatInterface::treatKeyword (@UMATMaximumSubStepping) : ");
+	msg += "unexpected end of file";
+	throw(runtime_error(msg));
+      }      
       if(current->value!=";"){
 	string msg("UmatInterface::treatKeyword : expected ';', read ");
 	msg += current->value;
@@ -151,6 +162,38 @@ namespace mfront{
       }
       ++(current);
       return make_pair(true,current);      
+    } else if (key=="@UMATFiniteStrainStrategy"){
+      if(this->finiteStrainStrategy!=NONE){
+	string msg("UmatInterface::treatKeyword (@UMATFiniteStrainStrategy) : ");
+	msg += "a strategy has already been defined.\n";
+	throw(runtime_error(msg));
+      }
+      if(current==end){
+	string msg("UmatInterface::treatKeyword (@UMATFiniteStrainStrategy) : ");
+	msg += "unexpected end of file";
+	throw(runtime_error(msg));
+      }
+      const string& fss = current->value;
+      if(fss=="FiniteRotationSmallStrain"){
+	this->finiteStrainStrategy = FINITEROTATIONSMALLSTRAIN;
+      } else {
+	string msg("UmatInterface::treatKeyword (@UMATFiniteStrainStrategy) : ");
+	msg += "unsupported strategy '"+fss+"'\n";
+	msg += "The only supported strategy is 'FiniteRotationSmallStrain'";
+	throw(runtime_error(msg));
+      }
+      ++(current);
+      if(current==end){
+	string msg("UmatInterface::treatKeyword (@UMATFiniteStrainStrategy) : ");
+	msg += "unexpected end of file";
+	throw(runtime_error(msg));
+      }
+      if(current->value!=";"){
+	string msg("UmatInterface::treatKeyword : expected ';', read ");
+	msg += current->value;
+	throw(runtime_error(msg));
+      }
+      ++(current);
     }
 
     return make_pair(false,current);
@@ -875,6 +918,9 @@ namespace mfront{
     }
 
     out << "#include\"TFEL/Material/" << className << ".hxx\"\n";
+    if(this->finiteStrainStrategy==FINITEROTATIONSMALLSTRAIN){
+      out << "#include\"MFront/UMAT/UMATFiniteStrain.hxx\"\n\n";
+    }
     out << "#include\"MFront/UMAT/UMATInterface.hxx\"\n\n";
     out << "#include\"MFront/UMAT/umat" << name << ".hxx\"\n\n";
 
@@ -1051,40 +1097,96 @@ namespace mfront{
 	  << "}\n\n";
     }
     
-    out << "MFRONT_SHAREDOBJ void MFRONT_STDCALL\numat"
-	<< makeLowerCase(name)
-	<< "(const umat::UMATInt *const NTENS, const umat::UMATReal *const DTIME,\n"
-	<< "const umat::UMATReal *const DROT,  umat::UMATReal *const DDSOE,\n"
-	<< "const umat::UMATReal *const STRAN, const umat::UMATReal *const DSTRAN,\n"
-	<< "const umat::UMATReal *const TEMP,  const umat::UMATReal *const DTEMP,\n"
-	<< "const umat::UMATReal *const PROPS, const umat::UMATInt    *const NPROPS,\n"
-	<< "const umat::UMATReal *const PREDEF,const umat::UMATReal *const DPRED,\n"
-	<< "umat::UMATReal *const STATEV,const umat::UMATInt    *const NSTATV,\n"
-	<< "umat::UMATReal *const STRESS,const umat::UMATInt    *const NDI,\n"
-	<< "umat::UMATInt    *const KINC)\n";
-    out << "{\n";
-    out << "umat::UMATInterface<tfel::material::" << className 
-	<< ">::exe(NTENS,DTIME,DROT,DDSOE,STRAN,DSTRAN,TEMP,DTEMP,PROPS,NPROPS,"
-	<< "PREDEF,DPRED,STATEV,NSTATV,STRESS,NDI,KINC);\n";
-    out << "}\n\n";
+    if(this->finiteStrainStrategy==FINITEROTATIONSMALLSTRAIN){
+      out << "MFRONT_SHAREDOBJ unsigned short umat"
+	  << makeLowerCase(name) << "_Interface = 2u;\n";
+    } else {
+      out << "MFRONT_SHAREDOBJ unsigned short umat"
+	  << makeLowerCase(name) << "_Interface = 1u;\n";
+    }
 
-    out << "MFRONT_SHAREDOBJ void MFRONT_STDCALL\n" << umatFctName
-	<< "(const umat::UMATInt *const NTENS, const umat::UMATReal *const DTIME,\n"
-	<< "const umat::UMATReal *const DROT,  umat::UMATReal *const DDSOE,\n"
-	<< "const umat::UMATReal *const STRAN, const umat::UMATReal *const DSTRAN,\n"
-	<< "const umat::UMATReal *const TEMP,  const umat::UMATReal *const DTEMP,\n"
-	<< "const umat::UMATReal *const PROPS, const umat::UMATInt    *const NPROPS,\n"
-	<< "const umat::UMATReal *const PREDEF,const umat::UMATReal *const DPRED,\n"
-	<< "umat::UMATReal *const STATEV,const umat::UMATInt    *const NSTATV,\n"
-	<< "umat::UMATReal *const STRESS,const umat::UMATInt    *const NDI,\n"
-	<< "umat::UMATInt    *const KINC)\n";
-    out << "{\n";
-    out << "umat" << makeLowerCase(name)
-	<< "(NTENS, DTIME,DROT,DDSOE,STRAN,DSTRAN,TEMP,DTEMP,\n"
-	<< "PROPS,NPROPS,PREDEF,DPRED,STATEV,NSTATV,\n"
-	<< "STRESS,NDI,KINC);\n";
-    out << "}\n\n";
-
+    if(this->finiteStrainStrategy==FINITEROTATIONSMALLSTRAIN){
+      out << "MFRONT_SHAREDOBJ void MFRONT_STDCALL\numat"
+	  << makeLowerCase(name)
+	  << "(const umat::UMATInt *const NTENS, const umat::UMATReal *const DTIME,\n"
+	  << "const umat::UMATReal *const DROT,  umat::UMATReal *const DDSOE,\n"
+	  << "const umat::UMATReal *const F0,    const umat::UMATReal *const F1,\n"
+	  << "const umat::UMATReal *const TEMP,  const umat::UMATReal *const DTEMP,\n"
+	  << "const umat::UMATReal *const PROPS, const umat::UMATInt    *const NPROPS,\n"
+	  << "const umat::UMATReal *const PREDEF,const umat::UMATReal *const DPRED,\n"
+	  << "umat::UMATReal *const STATEV,const umat::UMATInt    *const NSTATV,\n"
+	  << "umat::UMATReal *const STRESS,const umat::UMATInt    *const NDI,\n"
+	  << "umat::UMATInt    *const KINC)\n";
+      out << "{\n";
+      out << "using namespace umat;\n";
+      out << "// computing the Green Lagrange strains\n";
+      out << "UMATReal eto[6];\n";
+      out << "UMATReal deto[6];\n";
+      out << "UMATInt  i;\n";
+      out << "UMATFiniteStrain::computeGreenLagrangeStrain(eto,F0,*NTENS);\n";
+      out << "UMATFiniteStrain::computeGreenLagrangeStrain(deto,F1,*NTENS);\n";
+      out << "for(i=0;i!=*NTENS;++i){\n";
+      out << "deto[i] -= eto[i]\n";
+      out << "}\n";
+      out << "umat::UMATInterface<tfel::material::" << className 
+	  << ">::exe(NTENS,DTIME,DROT,DDSOE,eto,deto,TEMP,DTEMP,PROPS,NPROPS,"
+	  << "PREDEF,DPRED,STATEV,NSTATV,STRESS,NDI,KINC);\n";
+      out << "if(*KINC==0){\n";
+      out << "UMATFiniteStrain::computeCauchyStressFromSecondPiolaKirchhoffStress(STRESS,F1,*NTENS);\n";
+      out << "}\n";
+      out << "}\n\n";
+      
+      out << "MFRONT_SHAREDOBJ void MFRONT_STDCALL\n" << umatFctName
+	  << "(const umat::UMATInt *const NTENS, const umat::UMATReal *const DTIME,\n"
+	  << "const umat::UMATReal *const DROT,  umat::UMATReal *const DDSOE,\n"
+	  << "const umat::UMATReal *const F0, const umat::UMATReal *const F1,\n"
+	  << "const umat::UMATReal *const TEMP,  const umat::UMATReal *const DTEMP,\n"
+	  << "const umat::UMATReal *const PROPS, const umat::UMATInt    *const NPROPS,\n"
+	  << "const umat::UMATReal *const PREDEF,const umat::UMATReal *const DPRED,\n"
+	  << "umat::UMATReal *const STATEV,const umat::UMATInt    *const NSTATV,\n"
+	  << "umat::UMATReal *const STRESS,const umat::UMATInt    *const NDI,\n"
+	  << "umat::UMATInt    *const KINC)\n";
+      out << "{\n";
+      out << "umat" << makeLowerCase(name)
+	  << "(NTENS, DTIME,DROT,DDSOE,F0,F1,TEMP,DTEMP,\n"
+	  << "PROPS,NPROPS,PREDEF,DPRED,STATEV,NSTATV,\n"
+	  << "STRESS,NDI,KINC);\n";
+      out << "}\n\n";
+    } else {
+      out << "MFRONT_SHAREDOBJ void MFRONT_STDCALL\numat"
+	  << makeLowerCase(name)
+	  << "(const umat::UMATInt *const NTENS, const umat::UMATReal *const DTIME,\n"
+	  << "const umat::UMATReal *const DROT,  umat::UMATReal *const DDSOE,\n"
+	  << "const umat::UMATReal *const STRAN, const umat::UMATReal *const DSTRAN,\n"
+	  << "const umat::UMATReal *const TEMP,  const umat::UMATReal *const DTEMP,\n"
+	  << "const umat::UMATReal *const PROPS, const umat::UMATInt    *const NPROPS,\n"
+	  << "const umat::UMATReal *const PREDEF,const umat::UMATReal *const DPRED,\n"
+	  << "umat::UMATReal *const STATEV,const umat::UMATInt    *const NSTATV,\n"
+	  << "umat::UMATReal *const STRESS,const umat::UMATInt    *const NDI,\n"
+	  << "umat::UMATInt    *const KINC)\n";
+      out << "{\n";
+      out << "umat::UMATInterface<tfel::material::" << className 
+	  << ">::exe(NTENS,DTIME,DROT,DDSOE,STRAN,DSTRAN,TEMP,DTEMP,PROPS,NPROPS,"
+	  << "PREDEF,DPRED,STATEV,NSTATV,STRESS,NDI,KINC);\n";
+      out << "}\n\n";
+      
+      out << "MFRONT_SHAREDOBJ void MFRONT_STDCALL\n" << umatFctName
+	  << "(const umat::UMATInt *const NTENS, const umat::UMATReal *const DTIME,\n"
+	  << "const umat::UMATReal *const DROT,  umat::UMATReal *const DDSOE,\n"
+	  << "const umat::UMATReal *const STRAN, const umat::UMATReal *const DSTRAN,\n"
+	  << "const umat::UMATReal *const TEMP,  const umat::UMATReal *const DTEMP,\n"
+	  << "const umat::UMATReal *const PROPS, const umat::UMATInt    *const NPROPS,\n"
+	  << "const umat::UMATReal *const PREDEF,const umat::UMATReal *const DPRED,\n"
+	  << "umat::UMATReal *const STATEV,const umat::UMATInt    *const NSTATV,\n"
+	  << "umat::UMATReal *const STRESS,const umat::UMATInt    *const NDI,\n"
+	  << "umat::UMATInt    *const KINC)\n";
+      out << "{\n";
+      out << "umat" << makeLowerCase(name)
+	  << "(NTENS, DTIME,DROT,DDSOE,STRAN,DSTRAN,TEMP,DTEMP,\n"
+	  << "PROPS,NPROPS,PREDEF,DPRED,STATEV,NSTATV,\n"
+	  << "STRESS,NDI,KINC);\n";
+      out << "}\n\n";
+    }
     out << "} // end of extern \"C\"\n";
 
     out.close();

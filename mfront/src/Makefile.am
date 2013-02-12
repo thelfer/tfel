@@ -91,6 +91,7 @@ endif
 if HAVE_CASTEM
 lib_LTLIBRARIES = libUMATInterface.la
 libUMATInterface_la_SOURCES = UMATInterfaceBase.cxx                 \
+			      UMATFiniteStrain.cxx                  \
 			      UMATComputeStiffnessTensor.cxx        \
 			      UMATComputeThermalExpansionTensor.cxx \
 			      UMATRotationMatrix.cxx                \

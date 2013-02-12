@@ -24,6 +24,12 @@ namespace mfront{
     : public SupportedTypes,
       public MFrontBehaviourVirtualInterface
   {
+    
+    enum FiniteStrainStrategy{
+      NONE,
+      FINITEROTATIONSMALLSTRAIN
+    }; // end of enum FiniteStrainStrategy
+
     static std::string 
     getName(void);
     
@@ -187,6 +193,8 @@ namespace mfront{
 		       const std::string&,
 		       const std::string&,
 		       const unsigned short = 0u);
+
+    FiniteStrainStrategy finiteStrainStrategy;
 
     bool verboseMode;
 

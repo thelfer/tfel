@@ -736,6 +736,7 @@ mfront/include/MFront/UMAT/UMATComputeStiffnessTensor.hxx -text
 mfront/include/MFront/UMAT/UMATComputeThermalExpansionTensor.hxx -text
 mfront/include/MFront/UMAT/UMATConfig.hxx -text
 mfront/include/MFront/UMAT/UMATException.hxx -text
+mfront/include/MFront/UMAT/UMATFiniteStrain.hxx -text
 mfront/include/MFront/UMAT/UMATGenericPlaneStressHandler.hxx -text
 mfront/include/MFront/UMAT/UMATGetModellingHypothesis.hxx -text
 mfront/include/MFront/UMAT/UMATInterface.hxx -text
@@ -809,6 +810,7 @@ mfront/src/SupportedTypes.cxx -text
 mfront/src/UMATComputeStiffnessTensor.cxx -text
 mfront/src/UMATComputeThermalExpansionTensor.cxx -text
 mfront/src/UMATException.cxx -text
+mfront/src/UMATFiniteStrain.cxx -text
 mfront/src/UMATGetModellingHypothesis.cxx -text
 mfront/src/UMATInterfaceBase.cxx -text
 mfront/src/UMATOutOfBoundsPolicy.cxx -text

@@ -76,6 +76,7 @@ nobase_include_HEADERS += MFront/UMAT/UMATException.hxx                     \
 			  MFront/UMAT/UMATOutOfBoundsPolicy.hxx             \
 			  MFront/UMAT/UMATInterface.hxx                     \
 			  MFront/UMAT/UMATInterfaceBase.hxx                 \
+			  MFront/UMAT/UMATFiniteStrain.hxx                  \
 			  MFront/UMAT/UMATBehaviourHandler.hxx              \
 			  MFront/UMAT/UMATIsotropicBehaviourHandler.hxx     \
 			  MFront/UMAT/UMATOrthotropicBehaviourHandler.hxx   \

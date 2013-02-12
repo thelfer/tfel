@@ -82,6 +82,7 @@ if(HAVE_CASTEM)
 	${mfront_SOURCES})
     set(UMATInterface_SOURCES
 	UMATInterfaceBase.cxx
+	UMATFiniteStrain.cxx
 	UMATComputeStiffnessTensor.cxx
 	UMATComputeThermalExpansionTensor.cxx
 	UMATRotationMatrix.cxx

@@ -116,7 +116,12 @@ namespace mfront{
 	msg += "expected 'true' or 'false'";
 	throw(runtime_error(msg));
       }
-      ++(current);      
+      ++(current);
+      if(current==end){
+	string msg("AsterInterface::treatKeyword (@AsterCompareToNumericalTangentOperator) : ");
+	msg += "unexpected end of file";
+	throw(runtime_error(msg));
+      }     
       if(current->value!=";"){
 	string msg("AsterInterface::treatKeyword : expected ';', read ");
 	msg += current->value;
@@ -144,7 +149,12 @@ namespace mfront{
 	msg+="failed to read criterium value.\n";
 	throw(runtime_error(msg));
       }
-      ++(current);      
+      ++(current);    
+      if(current==end){
+	string msg("AsterInterface::treatKeyword (@AsterTangentOperatorComparisonCriterium) : ");
+	msg += "unexpected end of file";
+	throw(runtime_error(msg));
+      }  
       if(current->value!=";"){
 	string msg("AsterInterface::treatKeyword : expected ';', read ");
 	msg += current->value;
@@ -172,7 +182,12 @@ namespace mfront{
 	msg+="failed to read string perturbation value.\n";
 	throw(runtime_error(msg));
       }
-      ++(current);      
+      ++(current);
+      if(current==end){
+	string msg("AsterInterface::treatKeyword (@AsterStrainPerturbationValue) : ");
+	msg += "unexpected end of file";
+	throw(runtime_error(msg));
+      }      
       if(current->value!=";"){
 	string msg("AsterInterface::treatKeyword : expected ';', read ");
 	msg += current->value;
@@ -1029,9 +1044,9 @@ namespace mfront{
       out << "const bool computeTangentOperator = (*DDSOE>0.5);\n";
     }
     if(this->compareToNumericalTangentOperator){
-      out << "vector<AsterReal> deto0((*NTENS));\n";
-      out << "vector<AsterReal> sig0((*NTENS));\n";
-      out << "vector<AsterReal> sv0((*NSTATV));\n";
+      out << "vector<AsterReal> deto0(*NTENS);\n";
+      out << "vector<AsterReal> sig0(*NTENS);\n";
+      out << "vector<AsterReal> sv0(*NSTATV);\n";
       out << "copy(DSTRAN,DSTRAN+*(NTENS),deto0.begin());\n";
       out << "copy(STRESS,STRESS+*(NTENS),sig0.begin());\n";
       out << "copy(STATEV,STATEV+*(NSTATV),sv0.begin());\n";
@@ -1065,7 +1080,7 @@ namespace mfront{
       out << "vector<AsterReal> deto(*NTENS);\n";
       out << "vector<AsterReal> sigf(*NTENS);\n";
       out << "vector<AsterReal> sigb(*NTENS);\n";
-      out << "vector<AsterReal> sv(*NTENS);\n";
+      out << "vector<AsterReal> sv(*NSTATV);\n";
       out << "vector<AsterReal> D((*NTENS)*(*NTENS));\n";
       out << "AsterReal m;\n";
       out << "AsterReal mDt;\n";
