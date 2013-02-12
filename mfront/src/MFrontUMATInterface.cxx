@@ -64,10 +64,10 @@ namespace mfront{
   MFrontUMATInterface::MFrontUMATInterface()
     : verboseMode(false),
       debugMode(false),
-      warningMode(false),
-      useTimeSubStepping(false),
-      maximumSubStepping(0u)
-  {}
+      warningMode(false)
+  {
+    this->reset();
+  }
 
   void
   MFrontUMATInterface::reset(void)

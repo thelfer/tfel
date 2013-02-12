@@ -170,6 +170,12 @@ namespace mfront{
 		       const std::string&,
 		       const unsigned short = 0u);
 
+    bool   compareToNumericalTangentOperator;
+
+    double strainPerturbationValue;
+
+    double tangentOperatorComparisonCriterium;
+
     bool verboseMode;
 
     bool debugMode;

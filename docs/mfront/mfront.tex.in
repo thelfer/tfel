@@ -4417,6 +4417,12 @@ Cette directive est appelée si l'intégration de la loi a été un
 succès, avant la mise à jour des variables internes et la mise à jour de
 contraintes.
 
+\paragraph{Symétrie de la matrice tangente} Par
+défaut, la matrice tangente est supposée non symétrique. L'utilisateur
+peut explicitement dire que la matrice est symétrique par la directive
+\mkeyb{IsTangentOperatorSymmetric}{Is\-Tangent\-Operator\-Symmetric} qui
+est suivi d'une des valeurs booléennes \varcpp{true} ou \varcpp{false}.
+
 \subsubsection{Une façon générique de calculer de la matrice tangente cohérente}
 
 Si la matrice jacobienne du système est connue, alors il existe une
@@ -6641,9 +6647,179 @@ S_{13}\,\left(S_{12}\,S_{23}-S_{13}\,S_{22}\right)
 
 \clearpage
 \newpage
-\section{Amélioration de la robustesse des algorithmes de résolutions
-  implicites}
-\label{sec:mfront:implicit:robustness}
+\section{L'interface {\tt aster}}
+\label{sec:utilisation_aster}
+
+\subsection{La fonction {\tt aster}}
+
+Le prototype de la fonction {\tt aster} a été initialement défini dans le
+code ABAQUS. Ce prototype a été repris dans \aster{}. La compatibilité
+avec ABAQUS nécessite cependant de déclarer des champs qui ne sont pas
+nécessairement utilisés dans \aster{}.
+
+\begin{figure}[htbp]
+  \centering
+  \begin{tabular}[htbp]{lll}
+    & {\tt {\color{purple} SUBROUTINE} {\color{green} aster} ( }&{\tt  STRESS, STATEV, DDSDDE, SSE, SPD, SCD,}\\
+    {\color{ceabluecurve} \&} &                   & {\tt RPL, DDSDDT, DRPLDE, DRPLDT,}\\
+    {\color{ceabluecurve} \&} &                   & {\tt STRAN, DSTRAN, TIME, DTIME,}\\
+    {\color{ceabluecurve} \&} &                   & {\tt TEMP, DTEMP, PREDEF, DPRED,}\\
+    {\color{ceabluecurve} \&} &                   & {\tt CMNAME, NDI, NSHR, NTENS, NSTATV,}\\
+    {\color{ceabluecurve} \&} &                   & {\tt PROPS, NPROPS, COORDS,}\\
+    {\color{ceabluecurve} \&} &                   & {\tt DROT, PNEWDT, CELENT, DFGRD0, DFGRD1,}\\
+    {\color{ceabluecurve} \&} &                   & {\tt NOEL, NPT, LAYER, KSPT, KSTEP, KINC )}\\
+   \end{tabular}
+  \caption{Prototype de la fonction {\tt aster}.}
+  \label{fig:aster:prototype}
+\end{figure}
+
+\begin{longtable}[htpb]{|p{2.cm}|p{4.cm}|p{9cm}|}
+  \endfirsthead \hline \multicolumn{3}{|c|}{Suite de la page
+    précédente}\\ \hline \endhead \hline \multicolumn{3}{|r|}{{\em Suite
+      à la page suivante}}\\ \hline \endfoot \endlastfoot \hline {\tt
+    STRESS } & REAL*8(NTENS) & tenseur des contraintes. En entrée, ce
+  tableau donne le tenseur des contraintes à $t_{0}$. En sortie, ce
+  tableau doit contenir le tenseur des contraintes à $t_{0}+\Delta t$ \\
+  {\tt STATEV } & REAL*8(*) & variables internes. En entrée, ce tableau
+  contient les variables internes à $t_{0}$. En sortie, il doit contenir
+  les variables internes à $t_{0}+\Delta t$ \\
+  {\tt DDSDDE } & REAL*8(NTENS,NTENS) & matrice jacobienne du modèle
+  (matrice de Hooke tangente) à $t_{0}+\Delta t$. \\
+  {\tt SSE } & REAL*8 & énergie de déformation élastique \\
+  {\tt SPD } & REAL*8 & dissipation plastique \\
+  {\tt SCD } & REAL*8 & dissipation visqueuse. \\
+  {\tt RPL } & REAL*8 & puissance calorifique volumique dégagée par le
+  travail mécanique, à $t_{0}+\Delta t$ \\
+  {\tt DDSDDT } & REAL*8(NTENS) & dérivée du tenseur des contraintes par
+  rapport a la température, à $t_{0}+\Delta t$ \\
+  {\tt DRPLDE } & REAL*8(NTENS) & dérivées de RPL par rapport aux
+  composantes du tenseur des déformations, à $t_{0}+\Delta t$\\ {\tt
+    DRPLDT } & REAL*8 & derivée de RPL par rapport a la température, à
+  $t_{0}+\Delta t$. \\
+  {\tt STRAN } & REAL*8(NTENS) & tenseur des déformations totales à
+  $t_{0}$ \\
+  {\tt DSTRAN } & REAL*8(NTENS) & tenseur des incréments de déformation
+  totale par rapport a l'état de reference à $t_{0}$ \\
+  {\tt TIME } & REAL*8(2) & TIME(1) = 0, TIME(2) = $t_{0}$ où $t_{0}$
+  est le précédent instant d'équilibre atteint \\
+  {\tt DTIME } & REAL*8 & DTIME = $\Delta t$ où $\Delta t$ est le
+  nouveau pas de temps propose par {\tt PASAPAS} pour atteindre
+  l'equilibre avec l'incrément de déformation totale impose ({\tt
+    DSTRAN}) \\
+  {\tt TEMP } & REAL*8 & température à $t_{0}$ \\
+  {\tt DTEMP } & REAL*8 & incrément de température à $t_{0}+\Delta t$ \\
+  {\tt PREDEF } & REAL*8(*) & vecteur des paramètres externes de la loi
+  de comportement, valeurs à $t_{0}$ \\
+  {\tt DPRED } & REAL*8(*) & incréments des paramètres externes à
+  $t_{0}+\Delta t$ \\
+  {\tt CMNAME } & CHARACTER*16 & identifiant de la loi de comportement. \\
+  {\tt NDI } & INTEGER & nombre de composantes diagonales du tenseur des
+  contraintes \\
+  {\tt NSHR } & INTEGER & nombre de composantes extradiagonales du
+  tenseur des contraintes. \\
+  {\tt NTENS } & INTEGER & nombre de composantes du tenseur des
+  contraintes\\ {\tt NSTATV } & INTEGER & nombre de variables internes
+  \\
+  {\tt PROPS } & REAL*8(NPROPS) & vecteur des propriétés du matériau. \\
+  {\tt NPROPS } & INTEGER & nombre de propriétés du matériau \\
+  {\tt COORDS } & REAL*8(3) & coordonnees cartésiennes du point
+  d'intégration courant \\
+  {\tt DROT } & REAL*8(3,3) & matrice d'incréments de rotation. Cette
+  matrice décrit la rotation sur le pas de temps de la base dans
+  laquelle sont exprimés les tenseurs de contraintes et de déformations.
+  \\
+  {\tt PNEWDT } & REAL*8 & rapport entre le nouveau pas de temps suggéré
+  et le pas de temps donné en entrée \\
+  {\tt CELENT } & REAL*8 & longueur caractéristique de l'élément. Dans
+  le cas d'une adhérence à \aster{}, cette longueur caractéristique est
+  déterminée par {\tt LOCARA} comme la distance maximale entre deux
+  noeuds de l'élément. \\
+  {\tt DFGRD0 } & REAL*8(3,3) & tenseur gradient de déplacement à
+  $t_{0}$ \\
+  {\tt DFGRD1 } & REAL*8(3,3) & tenseur gradient de déplacement à
+  $t_{0}+\Delta t$ \\
+  {\tt NOEL } & INTEGER & numéro de l'élément courant \\
+  {\tt NPT } & INTEGER & numéro du point d'intégration courant \\
+  {\tt LAYER } & INTEGER & numéro de couche pour des coques composites
+  ou des solides multi-couches \\
+  {\tt KSPT } & INTEGER & numéro de section dans la couche courante. \\
+  {\tt KSTEP } & INTEGER & Cette entrée n'a pas de sens dans le cas
+  d'une adhérence à \aster{} \\
+  {\tt KINC } & INTEGER & Code de sortie \\
+  \hline
+  \caption{Arguments de la fonction {\texttt aster}}
+  \label{tab:aster:argument}
+\end{longtable}
+
+Le type entier {\tt INTEGER} dépend de la plateforme~: \aster{} utilise
+des directives de compilation spéficique pour que ce type soit de la
+taille d'un pointeur.
+
+En \cpp{}, nous noterons {\tt Aster\-Real} le type numérique utilisé
+par \aster{} et {\tt Aster\-Int} le type entier.
+
+\subsection{Conventions}
+
+La matrice tangente cohérente n'est calculée que si le premier élément
+du tableau \varcpp{DDSOE} est supérieur à \(0.5\).
+
+La loi de comportement a rencontré une erreur grave si la valeur de
+\varcpp{PNEWDT} est inférieure à \(0\). Différents cas peuvent se
+présenter~:
+\begin{itemize}
+  \item l'intégration n'a pas convergé~;
+  \item le nombre de valeurs transmises pour les variables
+  internes ou les propriétés matériau n'est pas celui attendu~;
+  \item un borne physique a été atteinte~;
+  \item etc...
+\end{itemize}
+
+\subsection{Mots clés spécifiques}
+
+\subsubsection{Vérification de la matrice tangente calculée par perturbation}
+
+L'interface \aster{} propose de vérifier la matrice tangente
+calculée par comparaison à une matrice tangente obtenue par
+perturbation.
+
+Le mot clé \mkey{AsterCompareToNumericalTangentOperator} qui doit être
+suivi d'une valeur booléenne \varcpp{true} ou \varcpp{false} demande à
+ce que cette comparaison soit effectuée (ou pas).
+
+La matrice tangente numérique est obtenue par différences finies
+centrées. Le valeur de la perturbation utilisée pour ce calcul peut être
+spécifié par le mot clé
+\mkeyb{AsterStrainPerturbationValue}{Aster\-Strain\-Perturbation\-Value}
+qui est suivi par la valeur à utiliser. Par défaut, cette
+perturbation est prise égale à \(10^{-6}\).
+
+La comparaison entre la matrice jacobienne
+\(\deriv{\Delta\,\tsigma}{\Delta\,\tepsilonto}\) et son approximation
+numérique
+\(\underset{\sim}{\deriv{\Delta\,\tsigma}{\Delta\,\tepsilonto}}\) est
+faite terme à terme et l'on retient comme erreur~:
+\[
+\varepsilon =
+\underset{i,j}{\mathrm{max}}\left|\deriv{\Delta\,\tsigma}{\Delta\,\tepsilonto}\paren{i,j}-\underset{\sim}{\deriv{\Delta\,\tsigma}{\Delta\,\tepsilonto}}\paren{i,j}\right|
+\]
+
+Cette erreur est comparée à un critère que l'utilisateur peut
+définir par le mot clé
+\mkeyb{AsterTangentOperatorComparisonCriterium}{Aster\-Tangent\-Operator\-Comparison\-Criterium}.
+La valeur par défaut de ce critère est de \(10^{7}\).
+
+Si l'erreur est supérieure au critère, la valeur de l'erreur, un
+pourcentage relatif de l'erreur\footnote{Ce pourcentage relatif de
+  l'erreur est calculé ainsi~:
+  \[
+  \Frac{100\,\varepsilon}{\Frac{1}{2}\mathrm{max}\paren{\underset{i,j}{\mathrm{max}}\left|\deriv{\Delta\,\tsigma}{\Delta\,\tepsilonto}\paren{i,j}\right|,\underset{i,j}{\mathrm{max}}\left|\underset{\sim}{\deriv{\Delta\,\tsigma}{\Delta\,\tepsilonto}}\paren{i,j}\right|}}
+  \]},
+la jacobienne calculée par l'utilisateur et son approximation
+numérique sont affichés.
+
+\clearpage
+\newpage \section{Amélioration de la robustesse des algorithmes de
+  résolutions implicites} \label{sec:mfront:implicit:robustness}
 
 Les méthodes de résolution des systèmes implicites nécessitent de
 choisir une estimation de la solution \(Y_{0}\) pour initier la

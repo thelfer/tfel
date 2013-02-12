@@ -65,11 +65,17 @@ namespace mfront{
     : verboseMode(false),
       debugMode(false),
       warningMode(false)
-  {}
+  {
+    this->reset();
+  }
 
   void
   MFrontAsterInterface::reset(void)
-  {}
+  {
+    this->compareToNumericalTangentOperator  = false;
+    this->strainPerturbationValue            = 1.e-6;
+    this->tangentOperatorComparisonCriterium = 1.e7;
+  }
   
   void 
   MFrontAsterInterface::setVerboseMode(void)
@@ -90,11 +96,91 @@ namespace mfront{
   }
 
   std::pair<bool,tfel::utilities::CxxTokenizer::TokensContainer::const_iterator>
-  MFrontAsterInterface::treatKeyword(const std::string&,
+  MFrontAsterInterface::treatKeyword(const std::string& key,
 				    tfel::utilities::CxxTokenizer::TokensContainer::const_iterator current,
-				    const tfel::utilities::CxxTokenizer::TokensContainer::const_iterator)
+				    const tfel::utilities::CxxTokenizer::TokensContainer::const_iterator end)
   {
     using namespace std;
+    if(key=="@AsterCompareToNumericalTangentOperator"){
+      if(current==end){
+	string msg("AsterInterface::treatKeyword (@AsterCompareToNumericalTangentOperator) : ");
+	msg += "unexpected end of file";
+	throw(runtime_error(msg));
+      }
+      if(current->value=="true"){
+	this->compareToNumericalTangentOperator = true;
+      } else if(current->value=="false"){
+	this->compareToNumericalTangentOperator = false;
+      } else {
+	string msg("AsterInterface::treatKeyword (@AsterCompareToNumericalTangentOperator) :");
+	msg += "expected 'true' or 'false'";
+	throw(runtime_error(msg));
+      }
+      ++(current);      
+      if(current->value!=";"){
+	string msg("AsterInterface::treatKeyword : expected ';', read ");
+	msg += current->value;
+	throw(runtime_error(msg));
+      }
+      ++(current);
+      return make_pair(true,current);      
+    } else if (key=="@AsterTangentOperatorComparisonCriterium"){
+      if(!this->compareToNumericalTangentOperator){
+	string msg("AsterInterface::treatKeyword (@AsterTangentOperatorComparisonCriterium) : ");
+	msg += "time stepping is not enabled at this stage.\n";
+	msg += "Use the @AsterUseTimeSubStepping directive before ";
+	msg += "@AsterTangentOperatorComparisonCriterium";
+	throw(runtime_error(msg));
+      }
+      if(current==end){
+	string msg("AsterInterface::treatKeyword (@AsterTangentOperatorComparisonCriterium) : ");
+	msg += "unexpected end of file";
+	throw(runtime_error(msg));
+      }
+      istringstream flux(current->value);
+      flux >> this->tangentOperatorComparisonCriterium;
+      if(flux.fail()){
+	string msg("AsterInterface::treatKeyword (@AsterTangentOperatorComparisonCriterium) : ");
+	msg+="failed to read criterium value.\n";
+	throw(runtime_error(msg));
+      }
+      ++(current);      
+      if(current->value!=";"){
+	string msg("AsterInterface::treatKeyword : expected ';', read ");
+	msg += current->value;
+	throw(runtime_error(msg));
+      }
+      ++(current);
+      return make_pair(true,current);      
+    } else if (key=="@AsterStrainPerturbationValue"){
+      if(!this->compareToNumericalTangentOperator){
+	string msg("AsterInterface::treatKeyword (@AsterStrainPerturbationValue) : ");
+	msg += "time stepping is not enabled at this stage.\n";
+	msg += "Use the @AsterUseTimeSubStepping directive before ";
+	msg += "@AsterStrainPerturbationValue";
+	throw(runtime_error(msg));
+      }
+      if(current==end){
+	string msg("AsterInterface::treatKeyword (@AsterStrainPerturbationValue) : ");
+	msg += "unexpected end of file";
+	throw(runtime_error(msg));
+      }
+      istringstream flux(current->value);
+      flux >> this->strainPerturbationValue;
+      if(flux.fail()){
+	string msg("AsterInterface::treatKeyword (@AsterStrainPerturbationValue) : ");
+	msg+="failed to read string perturbation value.\n";
+	throw(runtime_error(msg));
+      }
+      ++(current);      
+      if(current->value!=";"){
+	string msg("AsterInterface::treatKeyword : expected ';', read ");
+	msg += current->value;
+	throw(runtime_error(msg));
+      }
+      ++(current);
+      return make_pair(true,current);      
+    }
     return make_pair(false,current);
   } // end of treatKeyword
 
@@ -702,11 +788,19 @@ namespace mfront{
     out << "* \\date   "  << date       << endl;
     out << "*/\n\n";
 
-    if(!parametersHolder.empty()){
+    if((!parametersHolder.empty())||(this->debugMode)){
       out << "#include<iostream>\n";
+    }
+
+    if(!parametersHolder.empty()){
       out << "#include<stdexcept>\n";
     }
 
+    if(this->compareToNumericalTangentOperator){
+      out << "#include<cmath>\n";
+      out << "#include<vector>\n";
+      out << "#include<algorithm>\n";
+    }
     out << "#include\"TFEL/Material/" << className << ".hxx\"\n";
     out << "#include\"MFront/Aster/AsterInterface.hxx\"\n\n";
     out << "#include\"MFront/Aster/aster" << name << ".hxx\"\n\n";
@@ -929,11 +1023,107 @@ namespace mfront{
 	<< "aster::AsterInt  *const" /*< sortie d'erreur */
 	<< ")\n";
     out << "{\n";
+    if((this->debugMode)||(this->compareToNumericalTangentOperator)){
+      out << "using namespace std;\n";
+      out << "using namespace aster;\n";
+      out << "const bool computeTangentOperator = (*DDSOE>0.5);\n";
+    }
+    if(this->compareToNumericalTangentOperator){
+      out << "vector<AsterReal> deto0((*NTENS));\n";
+      out << "vector<AsterReal> sig0((*NTENS));\n";
+      out << "vector<AsterReal> sv0((*NSTATV));\n";
+      out << "copy(DSTRAN,DSTRAN+*(NTENS),deto0.begin());\n";
+      out << "copy(STRESS,STRESS+*(NTENS),sig0.begin());\n";
+      out << "copy(STATEV,STATEV+*(NSTATV),sv0.begin());\n";
+    }
     out << "if(aster::AsterInterface<tfel::material::" << className 
 	<< ">::exe(NTENS,DTIME,DROT,DDSOE,STRAN,DSTRAN,TEMP,DTEMP,PROPS,NPROPS,"
 	<< "PREDEF,DPRED,STATEV,NSTATV,STRESS)!=0){\n";
     out << "*PNEWDT = -1.;\n";
+    out << "return;\n";
     out << "}\n";
+    if(this->debugMode){
+      out << "if(computeTangentOperator){\n";
+      out << "AsterInt i;\n";
+      out << "AsterInt j;\n";
+      out << "cout << \"Dt :\" << endl;\n";
+      out << "for(i=0;i!=*NTENS;++i){\n";
+      out << "for(j=0;j!=*NTENS;++j){\n";
+      out << "cout << *(DDSOE+j*(*NTENS)+i) << \" \";\n";
+      out << "}\n";
+      out << "cout << endl;\n";
+      out << "}\n";
+      out << "cout << endl;\n";
+      out << "}\n";
+    }
+    if(this->compareToNumericalTangentOperator){
+      out << "if(computeTangentOperator){\n";
+      out << "// computing the tangent operator by pertubation\n";
+      out << "AsterInt i;\n";
+      out << "AsterInt j;\n";
+      out << "vector<AsterReal> nD((*NTENS)*(*NTENS));\n";
+      out << "vector<AsterReal> deto(*NTENS);\n";
+      out << "vector<AsterReal> sigf(*NTENS);\n";
+      out << "vector<AsterReal> sigb(*NTENS);\n";
+      out << "vector<AsterReal> sv(*NTENS);\n";
+      out << "vector<AsterReal> D((*NTENS)*(*NTENS));\n";
+      out << "AsterReal m;\n";
+      out << "AsterReal mDt;\n";
+      out << "AsterReal mnDt;\n";
+      out << "for(i=0;i!=*NTENS;++i){\n";
+      out << "copy(deto0.begin(),deto0.end(),deto.begin());\n";
+      out << "copy(sig0.begin(),sig0.end(),sigf.begin());\n";
+      out << "copy(sv0.begin(),sv0.end(),sv.begin());\n";
+      out << "deto[i] += " << this->strainPerturbationValue << ";\n";
+      out << "D[0] = 0.;\n";
+      out << "if(aster::AsterInterface<tfel::material::" << className 
+	  << ">::exe(NTENS,DTIME,DROT,&D[0],STRAN,&deto[0],TEMP,DTEMP,PROPS,NPROPS,"
+	  << "PREDEF,DPRED,&sv[0],NSTATV,&sigf[0])!=0){\n";
+      out << "return;\n";
+      out << "}\n";
+      out << "copy(deto0.begin(),deto0.end(),deto.begin());\n";
+      out << "copy(sig0.begin(),sig0.end(),sigb.begin());\n";
+      out << "copy(sv0.begin(),sv0.end(),sv.begin());\n";
+      out << "deto[i] -= " << this->strainPerturbationValue << ";\n";
+      out << "D[0] = 0.;\n";
+      out << "if(aster::AsterInterface<tfel::material::" << className 
+	  << ">::exe(NTENS,DTIME,DROT,&D[0],STRAN,&deto[0],TEMP,DTEMP,PROPS,NPROPS,"
+	  << "PREDEF,DPRED,&sv[0],NSTATV,&sigb[0])!=0){\n";
+      out << "return;\n";
+      out << "}\n";
+      out << "for(j=0;j!=*NTENS;++j){\n";
+      out << "nD[j*(*NTENS)+i] = (sigf[j]-sigb[j])/(2.*" << this->strainPerturbationValue << ");\n";
+      out << "}\n";
+      out << "}\n";
+      out << "// comparison\n";
+      out << "m=0.;\n";
+      out << "mDt=0.;\n";
+      out << "mnDt=0.;\n";
+      out << "for(i=0;i!=(*NTENS)*(*NTENS);++i){\n";
+      out << "mDt=max(mDt,*(DDSOE+i));\n";
+      out << "mnDt=max(mnDt,nD[i]);\n";
+      out << "m=max(m,abs(nD[i]-*(DDSOE+i)));\n";
+      out << "}\n";
+      out << "if(m>" << this->tangentOperatorComparisonCriterium << "){\n";
+      out << "cout << \"||nDt-Dt|| = \" << m << \" (\" << 100.*m/(0.5*(mDt+mnDt)) << \"%)\"<< endl;\n";
+      out << "cout << \"Dt :\" << endl;\n";
+      out << "for(i=0;i!=*NTENS;++i){\n";
+      out << "for(j=0;j!=*NTENS;++j){\n";
+      out << "cout << *(DDSOE+j*(*NTENS)+i) << \" \";\n";
+      out << "}\n";
+      out << "cout << endl;\n";
+      out << "}\n";
+      out << "cout << \"nDt :\" << endl;\n";
+      out << "for(i=0;i!=*NTENS;++i){\n";
+      out << "for(j=0;j!=*NTENS;++j){\n";
+      out << "cout << nD[j*(*NTENS)+i] << \" \";\n";
+      out << "}\n";
+      out << "cout << endl;\n";
+      out << "}\n";
+      out << "cout << endl;\n";
+      out << "}\n";
+      out << "}\n";
+    }
     out << "}\n\n";
     out << "} // end of extern \"C\"\n";
     out.close();
