@@ -5,7 +5,8 @@
 % Directory : /home/th202608/codes/tfel/tests/Broyden/
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\documentclass[rectoverso,pleiades,pstricks,leqno,anti]{@abs_top_builddir@/docs/tex/texmf/note_technique_2010}
+% \documentclass[rectoverso,pleiades,pstricks,leqno,anti]{@abs_top_builddir@/docs/tex/texmf/note_technique_2010}
+\documentclass[rectoverso,pleiades,pstricks,leqno,anti,projet]{@abs_top_builddir@/docs/tex/texmf/note_technique_2010}
 
 % \usepackage{draftcopy}
 % \draftcopySetGrey{0.8}
@@ -41,6 +42,8 @@
 \newcommand{\cyrano}{\texttt{cyrano}}
 \newcommand{\galileo}{\texttt{galileo}}
 \newcommand{\castem}{\texttt{Cast3M}}
+\newcommand{\gibiane}{\texttt{gibiane}}
+\newcommand{\tmfft}{\texttt{TMFFT}}
 \newcommand{\aster}{\href{http://www.code-aster.org/}{\texttt{Aster}}}
 \newcommand{\pycastem}{\texttt{pyCast3M}}
 \newcommand{\umat}{\texttt{umat}}
@@ -399,158 +402,8 @@ pré-recquis.
 \subsection{Utilisation de \mfront{}}
 \label{sec:mfront:using}
 
-Nous décrivons dans ce paragraphe l'utilisation de \mfront{} sous
- \unix{}. Les commandes présentées restent valides sous \windows{} à
-condition d'utiliser l'un des environnements \msys{} ou \cygwin{}.
-
-\mfront{} est un générateur de code transformant un fichier
-d'entrée en un ensemble de sources \cpp{}. L'utilisation de \mfront{} se
-fait en deux étapes~:
-\begin{itemize}
-  \item l'écriture ou la récupération de fichiers d'entrée. Ces
-  fichiers peuvent être écrits à l'aide de n'importe quel éditeur de
-  texte. Pour les utilisateurs \cea{} de la plate-forme \pleiades{}, il
-  est possible de consulter la base de donnée \sirius{} qui capitalise
-  les connaissances matériau des différentes applications de la
-  plate-forme. La figure~\ref{fig:sirius8} illuste la récupération de la
-  loi de comportement de l'acier EM10 depuis \sirius{}~;
-  \item la génération des sources \cpp{} et la création de
-  librairies matériau~;
-\end{itemize}
-
-Une fois le fichier d'entrée disponible, \mfront{} s'utilise en ligne
-de commande ainsi~:
-\begin{center}
-  {\tt mfront [options] fichier1.mfront fichier2.mfront \ldots}
-\end{center}
-
-L'option la plus utilisée est \moption{interface} qui permet de
-choisir la cible de la compilation.
-
-Les fichiers générés se trouvent généralement dans un sous-répertoire
-nommé {\tt src} pour les fichiers source et {\tt include} pour les
-fichiers d'entête.
-
-Cette commande conduit à la génération~:
-\begin{itemize}
-  \item de fichiers sources~;
-  \item de fichiers de dépendances~;
-  \item de fichiers de cibles.
-\end{itemize}
-Ces derniers fichiers permettent d'utiliser \mfront{} de manière
-séquentielle. \mfront{} peut d'abord être appelé sur plusieurs fichiers
-pour générer les fichiers sources puis lancer la compilation des
-librairies ainsi~:
-\begin{center}
-  \begin{minipage}{0.6\textwidth}
-    \textcolor{ceagrisclair}{\tt \# Génération des fichiers sources}\\
-    {\tt mfront --interface=?? fichier1.mfront} \\
-    {\tt mfront --interface=?? fichier2.mfront} \\
-    {\tt \ldots} \\
-    \textcolor{ceagrisclair}{\tt \# Génération d'un fichier Makefile et lancement de la compilation}\\
-    {\tt mfront --obuild} \\
-  \end{minipage}
-\end{center}
-
-\paragraph{Notes sur la génération des fichiers en
-  parallèle} La génération de fichiers \mfront{} en parallèle est
-possible. Pour cela, un verrou global est posé au moment de l'écriture
-des fichiers afin que les différents processus \mfront{} ne modifient
-pas les mêmes fichiers en même temps (fichiers cibles et fichiers de
-dépendances notamment).
-
-Cela pourrait conduire à des blocages si \mfront{} quitte sans
-libérer ce verrou\footnote{Nous devons cependant préciser que ce
-  problème ne s'est présenté qu'une unique fois.}. Dans ce cas, il est
-nécessaire de retirer ce verrou global à la main. Sous \linux{}, il
-s'agit de supprimer le fichier~:
-\begin{center}
- \texttt{/dev/shm/sem-mfront.\${UID}}
-\end{center}
-
-Un moyen plus brutal consiste à redémarrer la machine.
-
-\subsubsection{Options de la ligne de commande}
-
-\paragraph{L'option \moption{help}} L'option \moption{help} liste
-l'ensemble des options disponibles et quitte le programme.
-
-\paragraph{L'option \moption{list-parsers}} L'option
-\moption{list-parsers} affiche la liste des analyseurs disponibles et
-quitte le programme.
-
-\paragraph{L'option \moption{version}} L'option \moption{version}
-affiche la version de \mfront{} utilisée et quitte le programme.
-
-\paragraph{L'option \moption{interface}} L'option \moption{interface}
-spécifie la ou les interfaces à utiliser pour générer les fichiers
-sources. Les différentes interfaces sont séparées par une virgule.
-
-\paragraph{L'option \moption{verbose}} L'option \moption{verbose}
-demande l'affiche de messages supplémentaires.
-
-\paragraph{L'option \moption{warning}} L'option \moption{warning}
-demande l'affiche de messages d'avertissement supplémentaires.
-
-\paragraph{L'option \moption{debug}} L'option \moption{debug} modifie la
-génération des fichiers de compilation et son effet dépend de
-l'analyseur choisi. Cette option désactive aussi l'introduction de
-directives \texttt{\#line} qui permettent dans un mode de fonctionnement
-normal de repérer la position des erreurs dans le fichier \mfront{}
-d'origine.
-
-\paragraph{L'option \moption{make}} L'option \moption{make} conduit à la
-génération d'un fichier {\tt Makefile.mfront}.
-
-\paragraph{L'option \moption{omake}} L'option \moption{omake} conduit à la
-génération d'un fichier {\tt Makefile.mfront} avec des directives de
-compilation optimisées.
-
-Les options de compilation optimisées sont données par le résultat de la
-commande~
-\begin{center}
-  {\tt tfel-config -{}-oflags}
-\end{center}
-
-\paragraph{L'option \moption{clean}} L'option \moption{clean} conduit à la
-génération d'un fichier {\tt Makefile.mfront} et lance la commande~:
-\begin{center}
-  {\tt make -C src -f Makefile.mfront clean}
-\end{center}
-
-\paragraph{L'option \moption{build}} L'option \moption{build} conduit à la
-génération d'un fichier {\tt Makefile.mfront} et lance la commande~:
-\begin{center}
-  {\tt make -C src -f Makefile.mfront}
-\end{center}
-
-\paragraph{L'option \moption{obuild}} L'option \moption{obuild} conduit à la
-génération d'un fichier {\tt Makefile.mfront} avec des directives de
-compilation optimisées et lance la commande~:
-\begin{center}
-  {\tt make -C src -f Makefile.mfront}
-\end{center}
-
-\paragraph{L'option \moption{nodeps}} L'option \moption{nodeps} empêche
-l'inclusion des règle de dépendances dans le fichier {\tt
-  Make\-file\-.mfront} généré. Cette option a été introduite pour éviter
-certains problèmes sous \windows{}.
-
-\paragraph{L'option \moption{silent-build}}
-L'option \moption{silent-build} permet d'afficher ou non la ligne de
-compilation utilisée.
-
-\paragraph{L'option \moption{otarget}} L'option
-\moption{otarget} permet de ne compiler qu'une des librairies de manière
-optimisée. Cette option est suivie du nom de la cible.
-
-\paragraph{L'option \moption{target}} L'option
-\moption{target} permet de ne compiler qu'une des librairies.
-
-\paragraph{L'option \moption{win32}} L'option
-\moption{win32} est utilisée pour permettre la compilation croisée sous
-\linux{} de librairies dynamiques pour \windows{}. Cette possibilité est
-décrite au paragraphe~\ref{sec:mfront:comp_croisee_lib_windows_linux}.
+L'utilisation de \mfront{} en ligne de commande est décrite en
+annexe~\ref{sec:appendix:mfront:using}
 
 \subsection{Noms de glossaire}
 
@@ -1334,14 +1187,16 @@ intéressants existent).
 
 \subsection{Généralités}
 
-Nous décrivons succinctement la résolution par la méthode des
-éléments finis utilisées pour décrire l'évolution quasi-statique d'une
-système linéaire. Ceci nous permet de bien préciser la place de la loi
-de comportement et de faire apparaître la notion de matrice tangente
+Nous décrivons succinctement la résolution par la méthode des éléments
+finis utilisées pour décrire l'évolution quasi-statique d'un système
+mécanique. Ceci nous permet de bien préciser la place de la loi de
+comportement et de faire apparaître la notion de matrice tangente
 cohérente.
 
-La présentation faite est assez générale et chaque code présentera sa
-propre variation, plus au moins
+La présentation faite est suffisamment générale pour notre propos mais
+nous avons passé sous silence de nombreux points (transformations
+finies, gestion du contact, etc...). Chaque code aux éléments finis
+présentera sa propre variation, plus au moins
 sophistiquée~\cite{caill_01,pascal05_increpl,abbas:stat_non_lin:2013}.
 
 \subsubsection{Résolution d'un problème
@@ -1582,7 +1437,7 @@ coefficients de la loi de comportement (pente d'adoucissement).
 Dans le cas de l'interface \umat{}, les coefficients associés à
 l'élasticité jouent un rôle particulier lié à leurs utilisations par
 \castem{} pour la résolution globale de l'équilibre. Nous détaillerons
-ceci au paragraphe~\ref{sec:umat:interface} dédié à l'interface \umat{}.
+ceci au paragraphe~\ref{sec:behaviours:interface} dédié à l'interface \umat{}.
 
 \paragraph{Les variables internes} Les variables internes décrivent
 l'état mécanique local du matériau. La loi de comportement décrit leurs
@@ -2125,46 +1980,66 @@ accéder à cette information via la méthode {\tt
 de la classe.
 
 \subsection{Interface aux lois de comportement}
-\label{sec:umat:interface}
+\label{sec:behaviours:interface}
 
-Cette section décrit tout d'abord le rôle des interfaces puis décrit
-l'interface \umat{} utilisé pour l'adhérence au code aux éléments finis
-\castem{}.
+Cette section décrit tout d'abord le rôle des interfaces puis chacune
+des deux interfaces disponibles actuellement~:
+\begin{itemize}
+\item l'interface \umat{} utilisée pour l'adhérence au code aux
+  éléments finis \castem{}. Cette interface est également utilisée par
+  le code d'homogénéisation par transformées de \nom{Fourier} rapides
+  \tmfft{}~\cite{castelier09:_specif_fourier,jerome10:_tmfft_softw_concep}~;
+\item l'interface \aster{} utilisée pour l'adhérence au code aux
+  éléments finis \aster{}.
+\end{itemize}
+
 
 \subsubsection{Rôle des interfaces aux lois de comportement}
 
-Les interfaces aux lois de comportement doivent~:
+Les interfaces aux lois de comportement ont différentes fonctions~:
 \begin{itemize}
-  \item les lois de comportement choisissent l'une des implantations de
-  la loi de comportement en fonction de la dimension\footnote{Les lois
-    de comportements générées par \mfront{} sont représentées par des
-    classes \texttt{template} paramétrée par la dimension d'espace.}~;
+\item les lois de comportement choisissent l'une des implantations de
+  la loi de comportement en fonction de l'hypothèse de
+  modélisation\footnote{Les lois de comportements générées par
+    \mfront{} sont représentées par des classes \texttt{template}
+    paramétrée par l'hypothèse de modélisation.}~;
   \item assurer la conversion entre la convention utilisée par le code
   appelant pour représenter les tenseurs et la convention utilisée dans
   \TFEL{}~;
-  \item gérer les lois de comportement orthotropes. Par exemple,
-  l'interface peut assurer la rotation des déformations totales et de
-  leurs incréments dans le repère propre du matériau avant l'appel à la
-  loi de comportement proprement dite et la rotation des contraintes
-  dans le repère général après l'appel à la loi de comportement.~;
-  \item fournir certains éléménts nécessaires au calcul (matrice
-  d'élasticité) à partir des informations fournies par le code~;
-  \item assurer le sous-découpage locale du pas de temps en cas de non
+\item l'interface doit gérer les lois de comportement orthotropes. Par
+  exemple, l'interface peut assurer la rotation des déformations
+  totales et de leurs incréments dans le repère propre du matériau
+  avant l'appel à la loi de comportement proprement dite et la
+  rotation des contraintes dans le repère général après l'appel à la
+  loi de comportement.~;
+\item l'interface doit fournir certains éléménts nécessaires au calcul
+  (matrice d'élasticité) à partir des informations fournies par le
+  code~;
+\item l'interface doit capter les exceptions \cpp{} et les traduire en
+  message d'erreurs adaptés.
+\end{itemize}
+
+En fonction des fonctionnalités disponibles ou absentes du code cible,
+l'interface peut également~:
+\begin{itemize}
+\item assurer le sous-découpage locale du pas de temps en cas de non
   convergence~;
-  \item gérer le cas des contraintes planes car les lois de comportement
+\item gérer le cas des contraintes planes car les lois de comportement
   \mfront{} sont aujourd'hui écrites en déformations~;
-  \item capter les exceptions \cpp{} et les traduire en message
-  d'erreurs adaptés.
+\item gérer le cas des contraintes planes si les lois de comportement
+  ne gèrent pas cette hypothèse, ce qui est le cas de la plupart des
+  lois générées par \mfront{}~;
+\item permettre l'utilisation des lois écrites pour les petites
+  déformations dans un calcul en transformations finies. Pour cela,
+  plusieurs pistes semblent intéressante~:
+  \begin{itemize}
+  \item le cas des des grandes rotations, petites déformations~;
+  \item l'utilisation des déformations logarithmiques~;
+  \end{itemize}
 \end{itemize}
 
 De manière optionnelle, il peut être utile de générer des exemples
 d'utilisation de la loi de comportement traitée.
-
-D'autres rôles pourraient à terme être assignées aux interfaces~:
-\begin{itemize}
-\item la gestion des grandes rotations, petites déformations~;
-\item la gestion de géométries dégénérées (éléments coques notamment)~;
-\end{itemize}
 
 \subsubsection{L'interface \texttt{umat}}
 
@@ -2172,43 +2047,55 @@ Nous donnons ici quelques informations générales. Des détails,
 informatiques notamment, sont donnés en
 annexe~\ref{sec:utilisation_umat}.
 
-Pour simplifier l'utilisation des lois de comportements générés,
-\mfront{} génère automatiquement la déclaration des lois de comportement
-générées en instruction gibiane.
-
-Les différents changements de repère sont assurés par la classe
-\tfelb{UMATRotationMatrix}{UMAT\-Rotation\-Matrix}.
-
- Il est important de noter que l'interface \texttt{umat}
-passe cette matrice d'élasticité {\em après} l'appel au constructeur
-de la loi de comportement, ce qui signifie qu'elle ne peut être
-utilisée dans la phase d'initialisation introduite par le mot-clé {\tt
-  Init\-Local\-Vars}. Le calcul de la matrice d'élasticité est décrit
-en annexe~\ref{sec:calcul-de-la}.
-
-Il est important de noter que l'interface \texttt{umat} passe ce tenseur
-{\em après} l'appel au constructeur de la loi de comportement, ce qui
-signifie qu'il ne peut être utilisé dans la phase d'initialisation
-introduite par le mot-clé {\tt Init\-Local\-Variables}. Ce tenseur est
-calculé par la classe
-\tfelb{UMATComputeThermalExpansionTensor}{UMAT\-Compute\-Thermal\-Expansion\-Tensor}.
-
-\paragraph{Gestion des bornes de validité} Le traitement d'une violation
-des bornes de validité expérimentale dépendant de la politique définie par
-l'utilisateur à l'aide de la variable d'environnement
-\envb{CASTEM\_OUT\_OF\_BOUND\_POLICY}{CASTEM\_\-OUT\_\-OF\_\-BOUND\_\-POLICY}.
- Trois politiques sont sont possibles~:
+L'interface {\tt umat} gère plusieurs aspects du calcul~:
 \begin{itemize}
-\item \texttt{STRICT}, qui traite un dépassement comme une erreur, avec
-un traitement similaire à ce qui est fait pour les bornes physiques~;
-\item \texttt{WARNING}, qui conduit à afficher un message
-d'avertissement sans génération d'erreur~;
-\item \texttt{NONE}, qui ignore le dépassement~;
+\item dans le cas de matériaux orthotropes, l'interface \umat{} se
+  charge des changements de repère. Ils sont assurés par la classe
+  \tfelb{UMATRotationMatrix}{UMAT\-Rotation\-Matrix}.
+\item l'interface se charge du calcul de la matrice d'élasticité, si
+  l'utilisateur le demande via la directive
+  \mkeyb{RequireStiffnessTensor}{Require\-Stiff\-ness\-Tensor}.  Il
+  est important de noter que l'interface \texttt{umat} passe cette
+  matrice d'élasticité {\em après} l'appel au constructeur de la loi
+  de comportement, ce qui signifie qu'elle ne peut être utilisée dans
+  la phase d'initialisation introduite par le mot-clé {\tt
+    Init\-Local\-Vars}. Le calcul de la matrice d'élasticité est
+  décrit en annexe~\ref{sec:calcul-de-la}.
+\item l'interface se charge du calcul du tenseur des coefficients de
+  dilatation thermique, si l'utilisateur le demande via la directive
+  \mkeyb{RequireThermalExpansionTensor}{Require\-Thermal\-Expansion\-Tensor}.
+  Il est important de noter que l'interface \texttt{umat} passe ce
+  tenseur {\em après} l'appel au constructeur de la loi de
+  comportement, ce qui signifie qu'il ne peut être utilisé dans la
+  phase d'initialisation introduite par le mot-clé {\tt
+    Init\-Local\-Variables}. Ce tenseur est calculé par la classe
+  \tfelb{UMATComputeThermalExpansionTensor}{UMAT\-Compute\-Thermal\-Expansion\-Tensor}.
 \end{itemize}
 
-Si la variable
-\envb{CASTEM\_OUT\_OF\_BOUND\_POLICY}{CASTEM\_\-OUT\_\-OF\_\-BOUND\_\-POLICY}
-n'est pas définie, les dépassements sont ignorés.
+Nous traitons de manière plus détaillée plusieurs points~:
+\begin{itemize}
+\item le sous-découpage automatique du pas de temps~;
+\item la gestion des contraintes planes~;
+\item l'utilisation de lois de comportements en petites déformations
+  dans des calculs en transformations finies~;
+\item la gestion des bornes~;
+\item la génération automatique de la déclaration des lois de
+  comportement en \gibiane{}.
+\end{itemize}
+
+\paragraph{Sous-découpage automatique du pas de temps} En cas d'échec
+de l'intégration de la loi de comportement, l'interface \umat{} permet
+de sous-découper localement le pas de temps~: en cas de non
+convergence le pas de temps est divisé par deux.
+
+Le mot clé
+\mkeyb{UMATUseTimeSubStepping}{UMAT\-Use\-Time\-Sub\-Stepping} demande
+à ce que l'interface mette en place une stratégie de sous-découpage.
+
+Le mot clé
+\mkeyb{UMATMaximumSubStepping}{UMAT\-Maximum\-Sub\-Stepping} permet de
+préciser le nombre maximum de sous-découpages autorisés. Cette
+information doit être explicitement fournie par l'utilisateur.
 
 \paragraph{Gestion générique des contraintes planes}
 
@@ -2272,6 +2159,46 @@ dans le cas isotrope~:
 où \(E\) est le module d'\nom{Young} du matériau et où \(\varepsilon\)
 est choisi égal à \(10^{-12}\)\footnote{Cette valeur n'est aujourd'hui
   pas modifiable}.
+
+\paragraph{Transformations finies} Les lois de comportement générées
+par \mfront{} sont écrites avec l'hypothèse des petites déformations
+et ne peuvent en l'état être utilisée dans des calculs en
+transformations finies.
+
+Il existe cependant différentes façon d'adapter des lois de
+comportements en petites déformations au contexte des transformations
+finies. Deux stratégies sont disponibles~:
+\begin{itemize}
+\item un cas simple, en terme d'implantation informatique, est celui
+  de cas des grandes rotations mais petites déformations. Ce cas est
+  traité en annexe~\ref{sec:umat:gdef_rot}~;
+\item un cas plus complexe qui consiste à déduire du gradient de la
+  transformation des déformations dites logarithmiques. Ce cas est
+  traité en annexe~\ref{sec:umat:gdef_log}.
+\end{itemize}
+
+L'utilisateur peut choisir d'utiliser l'une et l'autre des ces
+stratégies par la directive
+\mkeyb{UMATFiniteStrainStrategy}{UMAT\-Finite\-Strain\-Strategy} qui
+admet pour arguments {\tt Finite\-Rotation\-Small\-Strain} et {\tt
+  Logarithmic\-Strain}.
+
+\paragraph{Gestion des bornes de validité} Le traitement d'une violation
+des bornes de validité expérimentale dépendant de la politique définie par
+l'utilisateur à l'aide de la variable d'environnement
+\envb{CASTEM\_OUT\_OF\_BOUND\_POLICY}{CASTEM\_\-OUT\_\-OF\_\-BOUND\_\-POLICY}.
+ Trois politiques sont sont possibles~:
+\begin{itemize}
+\item \texttt{STRICT}, qui traite un dépassement comme une erreur, avec
+un traitement similaire à ce qui est fait pour les bornes physiques~;
+\item \texttt{WARNING}, qui conduit à afficher un message
+d'avertissement sans génération d'erreur~;
+\item \texttt{NONE}, qui ignore le dépassement~;
+\end{itemize}
+
+Si la variable
+\envb{CASTEM\_OUT\_OF\_BOUND\_POLICY}{CASTEM\_\-OUT\_\-OF\_\-BOUND\_\-POLICY}
+n'est pas définie, les dépassements sont ignorés.
 
 \paragraph{Exemple de mise en donnée \castem{}} Dans le cas
 de l'interface \texttt{umat}, \mfront{} génère automatiquement
@@ -2572,7 +2499,7 @@ spécifiques sont~:
 accès (pour des posttraitements), il est possible de définir des
 variables internes auxiliaires.
 
-\subsubsection{Réduction du nombre d'équation}
+\subsubsection{Réduction du nombre d'équations}
 \label{sec:mfront:isotropic-solver}
 
 Les différents mécanismes précédents peuvent partager un algorithme de
@@ -5344,6 +5271,162 @@ Actuellement, trois exécutables sont produits~:
 Les classes et les fonctionnalités les plus utiles pour l'écriture de
 lois de comportement sont décrites en annexe~\ref{sec:mfront:fcts}.
 
+\subsection{Utilisation de \mfront{} en ligne de commande}
+\label{sec:appendix:mfront:using}
+
+Nous décrivons dans ce paragraphe l'utilisation de \mfront{} sous
+ \unix{}. Les commandes présentées restent valides sous \windows{} à
+condition d'utiliser l'un des environnements \msys{} ou \cygwin{}.
+
+\mfront{} est un générateur de code transformant un fichier
+d'entrée en un ensemble de sources \cpp{}. L'utilisation de \mfront{} se
+fait en deux étapes~:
+\begin{itemize}
+  \item l'écriture ou la récupération de fichiers d'entrée. Ces
+  fichiers peuvent être écrits à l'aide de n'importe quel éditeur de
+  texte. Pour les utilisateurs \cea{} de la plate-forme \pleiades{}, il
+  est possible de consulter la base de donnée \sirius{} qui capitalise
+  les connaissances matériau des différentes applications de la
+  plate-forme. La figure~\ref{fig:sirius8} illuste la récupération de la
+  loi de comportement de l'acier EM10 depuis \sirius{}~;
+  \item la génération des sources \cpp{} et la création de
+  librairies matériau~;
+\end{itemize}
+
+Une fois le fichier d'entrée disponible, \mfront{} s'utilise en ligne
+de commande ainsi~:
+\begin{center}
+  {\tt mfront [options] fichier1.mfront fichier2.mfront \ldots}
+\end{center}
+
+L'option la plus utilisée est \moption{interface} qui permet de
+choisir la cible de la compilation.
+
+Les fichiers générés se trouvent généralement dans un sous-répertoire
+nommé {\tt src} pour les fichiers source et {\tt include} pour les
+fichiers d'entête.
+
+Cette commande conduit à la génération~:
+\begin{itemize}
+  \item de fichiers sources~;
+  \item de fichiers de dépendances~;
+  \item de fichiers de cibles.
+\end{itemize}
+Ces derniers fichiers permettent d'utiliser \mfront{} de manière
+séquentielle. \mfront{} peut d'abord être appelé sur plusieurs fichiers
+pour générer les fichiers sources puis lancer la compilation des
+librairies ainsi~:
+\begin{center}
+  \begin{minipage}{0.6\textwidth}
+    \textcolor{ceagrisclair}{\tt \# Génération des fichiers sources}\\
+    {\tt mfront --interface=?? fichier1.mfront} \\
+    {\tt mfront --interface=?? fichier2.mfront} \\
+    {\tt \ldots} \\
+    \textcolor{ceagrisclair}{\tt \# Génération d'un fichier Makefile et lancement de la compilation}\\
+    {\tt mfront --obuild} \\
+  \end{minipage}
+\end{center}
+
+\paragraph{Notes sur la génération des fichiers en
+  parallèle} La génération de fichiers \mfront{} en parallèle est
+possible. Pour cela, un verrou global est posé au moment de l'écriture
+des fichiers afin que les différents processus \mfront{} ne modifient
+pas les mêmes fichiers en même temps (fichiers cibles et fichiers de
+dépendances notamment).
+
+Cela pourrait conduire à des blocages si \mfront{} quitte sans
+libérer ce verrou\footnote{Nous devons cependant préciser que ce
+  problème ne s'est présenté qu'une unique fois.}. Dans ce cas, il est
+nécessaire de retirer ce verrou global à la main. Sous \linux{}, il
+s'agit de supprimer le fichier~:
+\begin{center}
+ \texttt{/dev/shm/sem-mfront.\${UID}}
+\end{center}
+
+Un moyen plus brutal consiste à redémarrer la machine.
+
+\subsubsection{Options de la ligne de commande}
+
+\paragraph{L'option \moption{help}} L'option \moption{help} liste
+l'ensemble des options disponibles et quitte le programme.
+
+\paragraph{L'option \moption{list-parsers}} L'option
+\moption{list-parsers} affiche la liste des analyseurs disponibles et
+quitte le programme.
+
+\paragraph{L'option \moption{version}} L'option \moption{version}
+affiche la version de \mfront{} utilisée et quitte le programme.
+
+\paragraph{L'option \moption{interface}} L'option \moption{interface}
+spécifie la ou les interfaces à utiliser pour générer les fichiers
+sources. Les différentes interfaces sont séparées par une virgule.
+
+\paragraph{L'option \moption{verbose}} L'option \moption{verbose}
+demande l'affiche de messages supplémentaires.
+
+\paragraph{L'option \moption{warning}} L'option \moption{warning}
+demande l'affiche de messages d'avertissement supplémentaires.
+
+\paragraph{L'option \moption{debug}} L'option \moption{debug} modifie la
+génération des fichiers de compilation et son effet dépend de
+l'analyseur choisi. Cette option désactive aussi l'introduction de
+directives \texttt{\#line} qui permettent dans un mode de fonctionnement
+normal de repérer la position des erreurs dans le fichier \mfront{}
+d'origine.
+
+\paragraph{L'option \moption{make}} L'option \moption{make} conduit à la
+génération d'un fichier {\tt Makefile.mfront}.
+
+\paragraph{L'option \moption{omake}} L'option \moption{omake} conduit à la
+génération d'un fichier {\tt Makefile.mfront} avec des directives de
+compilation optimisées.
+
+Les options de compilation optimisées sont données par le résultat de la
+commande~
+\begin{center}
+  {\tt tfel-config -{}-oflags}
+\end{center}
+
+\paragraph{L'option \moption{clean}} L'option \moption{clean} conduit à la
+génération d'un fichier {\tt Makefile.mfront} et lance la commande~:
+\begin{center}
+  {\tt make -C src -f Makefile.mfront clean}
+\end{center}
+
+\paragraph{L'option \moption{build}} L'option \moption{build} conduit à la
+génération d'un fichier {\tt Makefile.mfront} et lance la commande~:
+\begin{center}
+  {\tt make -C src -f Makefile.mfront}
+\end{center}
+
+\paragraph{L'option \moption{obuild}} L'option \moption{obuild} conduit à la
+génération d'un fichier {\tt Makefile.mfront} avec des directives de
+compilation optimisées et lance la commande~:
+\begin{center}
+  {\tt make -C src -f Makefile.mfront}
+\end{center}
+
+\paragraph{L'option \moption{nodeps}} L'option \moption{nodeps} empêche
+l'inclusion des règle de dépendances dans le fichier {\tt
+  Make\-file\-.mfront} généré. Cette option a été introduite pour éviter
+certains problèmes sous \windows{}.
+
+\paragraph{L'option \moption{silent-build}}
+L'option \moption{silent-build} permet d'afficher ou non la ligne de
+compilation utilisée.
+
+\paragraph{L'option \moption{otarget}} L'option
+\moption{otarget} permet de ne compiler qu'une des librairies de manière
+optimisée. Cette option est suivie du nom de la cible.
+
+\paragraph{L'option \moption{target}} L'option
+\moption{target} permet de ne compiler qu'une des librairies.
+
+\paragraph{L'option \moption{win32}} L'option
+\moption{win32} est utilisée pour permettre la compilation croisée sous
+\linux{} de librairies dynamiques pour \windows{}. Cette possibilité est
+décrite au paragraphe~\ref{sec:mfront:comp_croisee_lib_windows_linux}.
+
 \clearpage
 \newpage
 \include{glossary}
@@ -6225,6 +6308,22 @@ fournies par l'utilisateur~: cette routine se contente de rediriger
 vers la loi de comportement que l'utilisateur veut effectivement
 utiliser.
 
+Cette annexe décrit successivement~:
+\begin{itemize}
+\item la routine {\tt umat} telle qu'elle a été reprise dans
+  \castem{}~;
+\item le prototype des fonctions générées par l'interface {\tt umat}
+  de \mfront{}~;
+\item l'utilisation des lois de comportement écrites petites
+  déformations dans un contexte de transformations finies avec
+  l'hypothèse de grandes rotations et de petites déformations~;
+\item l'utilisation des déformations logarithmiques pour pouvoir
+  utiliser des lois de comportement écrites petites déformations dans
+  un contexte de transformations finies~;
+\item le calcul de la matrice d'élasticité dans le cas des matériaux
+  orthotropes.
+\end{itemize}
+
 \paragraph{Avertissement} Le code \castem{} utilise des conventions
 différentes de celle du code {\tt ABAQUS} qui a initialement introduit
 la routine {\tt umat}. Nous ne nous sommes rendus compte de ces
@@ -6233,8 +6332,12 @@ interface apparaît inapproprié~: il ne faut donc pas croire que
 l'interface \umat{} permette d'utiliser les lois générées par
 \mfront{} dans {\tt ABAQUS}.
 
+\subsection{La routine {\tt umat}}
 
-\subsection{La fonction {\tt umat}}
+Le prototype de la fonction {\tt umat} a été initialement défini dans le
+code ABAQUS. Ce prototype a été repris dans \castem{}. La compatibilité
+avec ABAQUS nécessite cependant de déclarer des champs qui ne sont pas
+nécessairement utilisés dans \castem{}.
 
 \begin{figure}[htbp]
   \centering
@@ -6347,7 +6450,8 @@ taille d'un pointeur.
 Dans la suite, en \cpp{}, nous noterons {\tt UMAT\-Real} le type
 numérique utilisé par \castem{} et {\tt UMAT\-Int} le type entier.
 
-\subsection{Prototype des fonctions générées par l'interface {\tt umat} de \mfront{}}
+\subsection{Prototypes des fonctions générées par l'interface {\tt
+    umat} de \mfront{}}
 
 Les fonctions générées par l'interface {\tt umat} de \mfront{}
 n'utilisent qu'un nombre réduit d'arguments de la fonction \umat{}.
@@ -6357,12 +6461,87 @@ n'utilisent qu'un nombre réduit d'arguments de la fonction \umat{}.
   \code{
     \input{@top_srcdir@/docs/mfront/Images/mfront-umat.tex}
   }
-  \caption{Prototype des fonctions générés par
-    l'interface {\tt umat} de \mfront{}.}
-  \label{fig:umat:prototype}
+  \caption{Prototype des fonctions générés par l'interface {\tt umat}
+    de \mfront{} pour des calculs en petites transformations.}
+  \label{fig:umat:prototype:hpp}
 \end{figure}
 
-Leur prototype commun est décrit à la figure~\ref{fig:umat:prototype}.
+\begin{figure}[htbp]
+  \centering
+  \code{
+    \input{@top_srcdir@/docs/mfront/Images/mfront-umat2.tex}
+  }
+  \caption{Prototype des fonctions générés par l'interface {\tt umat}
+    de \mfront{} pour des calculs en grandes transformations.}
+  \label{fig:umat:prototype:fs}
+\end{figure}
+
+Ils présentent deux prototypes différents suivant que~:
+\begin{itemize}
+\item la loi soit compatible avec un calcul en petites déformations
+  (figure~\ref{fig:umat:prototype:hpp})~;
+\item la loi soit compatible avec un calcul en transformations finies
+  (figure~\ref{fig:umat:prototype:fs}).
+\end{itemize}
+ 
+\subsection{Grandes rotations, petites déformations}
+\label{sec:umat:gdef_rot}
+
+Les calculs en transformations finies introduisent le gradient de la
+transformation, noté \(F\). Celui-ci est relié au gradient du
+champ de déplacement par~:
+\[
+F=Id+\nabla\,\vec{u}
+\]
+
+\texttt{F} permet de définir une multitude de tenseurs de
+déformation, auxquels sont associés de tenseurs de contrainte.
+
+La décomposition polaire de \(F\) permet d'introduire une matrice de
+rotation \(R\) et un tenseur de dilatation \(U\)~:
+\[
+F = R\,U
+\]
+
+L'hypothèse des grandes rotations, petites déformations consiste à
+supposer que \(U\) est proche de l'identité~:
+\[
+U \approx Id + \varepsilon^{\star}
+\]
+
+Le tenseur de déformation adaptée à cette situation est le tenseur de
+\nom{Green-Lagrange}~:
+\[
+\begin{aligned}
+  \tenseur{\varepsilon}_{GL}=\Frac{1}{2}\paren{\transpose{F}\,F-\tenseur{Id}}
+  =\Frac{1}{2}\paren{\transpose{U}\,U-\tenseur{Id}}
+  \approx\varepsilon^{\star}
+\end{aligned}
+\]
+Le tenseur de \nom{Green-Lagrange} présente l'avantage de se calculer
+sans avoir à effectuer la décomposition polaire de \(F\).
+
+Le tenseur des contraintes associé est le second tenseur de
+\nom{Piola-Kirchoff} \(\tenseur{\tau}\).
+
+Pour adapter une loi petites déformations au contexte des grandes
+rotations, petites déformations, il suffit donc de calculer le tenseur
+de \nom{Green-Lagrange} et le passer à la loi de comportement en tant
+que déformation totale. En sortie, il faut interpréter la contrainte
+comme étant le second tenseur de \nom{Piola-Kirchoff}
+\(\tenseur{\tau}\).
+
+\castem{} attend en sortie la contrainte de \nom{Cauchy} actualisée
+\(\tsigma\) qui est reliée à la contrainte \(\tenseur{\tau}\) par~:
+\[
+\tsigma = \Frac{1}{J}\,F\,\tenseur{\tau}\,\transpose{F}
+\]
+où \(J\) est le déterminant de \(F\).
+
+\subsection{Déformations logarithmiques}
+\label{sec:umat:gdef_log}.
+
+En cours
 
 \begin{table}[htbp]
   \centering
@@ -6706,12 +6885,14 @@ S_{13}\,\left(S_{12}\,S_{23}-S_{13}\,S_{22}\right)
 \section{L'interface {\tt aster}}
 \label{sec:utilisation_aster}
 
-\subsection{La fonction {\tt aster}}
+Cette annexe décrit l'interface \aster{}.
 
-Le prototype de la fonction {\tt aster} a été initialement défini dans le
-code ABAQUS. Ce prototype a été repris dans \aster{}. La compatibilité
-avec ABAQUS nécessite cependant de déclarer des champs qui ne sont pas
-nécessairement utilisés dans \aster{}.
+\subsection{La fonction {\tt umat}}
+
+Le prototype de la fonction {\tt umat} a été initialement défini dans
+le code ABAQUS. Ce prototype a été repris dans \aster{}. La
+compatibilité avec ABAQUS nécessite cependant de déclarer des champs
+qui ne sont pas nécessairement utilisés dans \aster{}.
 
 \begin{figure}[htbp]
   \centering
@@ -7111,8 +7292,8 @@ finie d'ordre \(1\) ou d'ordre \(2\)) et réactualisé à différentes
 périodes (tableaux~\ref{tab:QNR:1} et~\ref{tab:QNR:2}).
 
 Pour le premier algorithme de \nom{Broyden}, nous avons testé
-différentes variantes suivantes (tableaux~\ref{tab:Brodyen:1}
-et~\ref{tab:Brodyen:2})~:
+différentes variantes suivantes (tableaux~\ref{tab:Broyden:1}
+et~\ref{tab:Broyden:2})~:
 \begin{itemize}
   \item que le jacobien initial était pris égal à l'identité ou
   évalué numériquement par une différence finie d'ordre \(2\)~;
@@ -7140,9 +7321,9 @@ des différentes méthodes, en termes de nombre cycles
 processeurs\footnote{Il s'agit d'une mesure fiable du coût d'une
   fonction, indépendante de la charge du système. Nous avons utilisé
   l'outil \valgrind{} pour avoir accès à cette mesure.}, sont fournis
-dans les tableaux~\ref{fig:CompVMis}, \ref{tab:NR}, \ref{tab:QNR:1},
-\ref{tab:QNR:2}, \ref{tab:Brodyen:1}, \ref{tab:Brodyen:2}
-et~\ref{tab:Brodyen:3}.
+dans les tableaux~\ref{tab:NR}, \ref{tab:QNR:1},
+\ref{tab:QNR:2}, \ref{tab:Broyden:1}, \ref{tab:Broyden:2}
+et~\ref{tab:Broyden:3}.
 
 Le test effectué étant extrêmement frustre, il serait mal avisé d'être
 conclusif.
@@ -7198,9 +7379,9 @@ conclusif.
     \(152\,721\,841\) & \(32.44\)\\
     \hline
   \end{tabular}
-  \label{tab:NR}
   \caption{Temps calculs obtenus avec l'algorithme de
     \textsc{Newton-Raphson}.}
+  \label{tab:NR}
 \end{table}
 
 Le tableau~\ref{tab:NR} montre à quel point l'algorithme de \nom{Newton}
@@ -7226,10 +7407,10 @@ est sensible à la qualité de la matrice jacobienne.
     \(\underset{\sim}{J}\) réactualisé toutes les \(3\) itérations & \(9\,159\,968\) & \(1,94\) \\
     \hline
   \end{tabular}
-  \label{tab:QNR:1}
   \caption{Temps calculs obtenus avec l'algorithme de
     quasi-\textsc{Newton} et un calcul numérique du jacobien par une
     différence finie (approximation d'ordre $1$).}
+  \label{tab:QNR:1}
 \end{table}
 
 \begin{table}
@@ -7252,10 +7433,10 @@ est sensible à la qualité de la matrice jacobienne.
     \(\underset{\sim}{J}\) réactualisé toutes les \(3\) itérations & \(13\,330\,216\) & \(2,83\) \\
     \hline
   \end{tabular}
-  \label{tab:QNR:2}
   \caption{Temps calculs obtenus avec l'algorithme de
     quasi-\textsc{Newton} et un calcul numérique du jacobien par une
     différence finie centrée (approximation d'ordre $2$).}
+  \label{tab:QNR:2}
 \end{table}
 
 Les tableaux~\ref{tab:QNR:1} et~\ref{tab:QNR:2} montrent que les
@@ -7270,11 +7451,11 @@ convergent toujours.
 
 Le cas où tous les termes de la jacobienne sont fournis permet de
 comparer le coût intrinsèque plus élevé du premier algorithme de
-\nom{Broyden} (tableau~\ref{tab:Brodyen:2}).
+\nom{Broyden} (tableau~\ref{tab:Broyden:2}).
 
 Si aucun terme du jacobien n'est fourni, le premier algorithme de
 \nom{Broyden} peut être relativement efficace, à condition d'estimer
-numériquement la jacobienne initiale (tableau~\ref{tab:Brodyen:2}).
+numériquement la jacobienne initiale (tableau~\ref{tab:Broyden:2}).
 
 De plus, il est intéressant de s'intéresser au terme
 \(\deriv{f_{\tepsilonel}}{\Delta\,\tepsilonel}\) de la matrice
@@ -7317,9 +7498,9 @@ l'algorithme converge et est légèrement meilleur que l'algorithme de
     \(4\,686\,228\) & \(0,995\) \\
     \hline
   \end{tabular}
-  \label{tab:Broyden:1}
   \caption{Temps calculs obtenus avec le premier algorithme de
     \textsc{Broyden} et jacobien initial égal à l'identité.}
+  \label{tab:Broyden:1}
 \end{table}
 
 \begin{table}
@@ -7341,9 +7522,9 @@ l'algorithme converge et est légèrement meilleur que l'algorithme de
     \(8\,178\,547\) & \(1,73\) \\
     \hline
   \end{tabular}
-  \label{tab:Broyden:2}
   \caption{Temps calculs obtenus avec le premier algorithme de
     \textsc{Broyden} et jacobien initial approximé numériquement.}
+  \label{tab:Broyden:2}
 \end{table}
 
 \begin{table}
@@ -7362,9 +7543,9 @@ l'algorithme converge et est légèrement meilleur que l'algorithme de
     Défaut    & \(19\,530\,077\) & \(4,15\)\\
     \hline
   \end{tabular}
-  \label{tab:Broyden3}
   \caption{Temps calculs obtenus avec le second algorithme de
     \textsc{Broyden} et jacobien initial égal à l'identité.}
+  \label{tab:Broyden:3}
 \end{table}
 
 \clearpage
