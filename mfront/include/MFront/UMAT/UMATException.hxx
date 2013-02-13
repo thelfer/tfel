@@ -43,6 +43,18 @@ namespace umat {
     
   }; // end of struct UMATException
 
+  struct MFRONT_UMAT_VISIBILITY_EXPORT UMATIntegrationFailed
+    : public UMATException
+  {
+    UMATIntegrationFailed();
+    UMATIntegrationFailed(const std::string&);
+    UMATIntegrationFailed(const UMATIntegrationFailed&);
+    virtual ~UMATIntegrationFailed() throw();
+  private:
+    UMATIntegrationFailed&
+    operator=(const UMATIntegrationFailed&);
+  }; // end of struct UMATIntegrationFailed
+
   struct MFRONT_UMAT_VISIBILITY_EXPORT UMATInvalidNTENSValue
     : public UMATException
   {

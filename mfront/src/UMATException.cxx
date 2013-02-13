@@ -36,6 +36,21 @@ namespace umat
   UMATException::~UMATException() throw()
   {} // end of UMATException::~UMATException
 
+  UMATIntegrationFailed::UMATIntegrationFailed()
+    : UMATException("behaviour integration failed")
+  {} // end of UMATIntegrationFailed::UMATIntegrationFailed
+
+  UMATIntegrationFailed::UMATIntegrationFailed(const std::string& m)
+    : UMATException("behaviour integration failed : "+m)
+  {} // end of UMATIntegrationFailed::UMATIntegrationFailed
+
+  UMATIntegrationFailed::UMATIntegrationFailed(const UMATIntegrationFailed& e)
+    : UMATException(e)
+  {} // end of UMATIntegrationFailed::UMATIntegrationFailed
+
+  UMATIntegrationFailed::~UMATIntegrationFailed() throw()
+  {} // end of UMATIntegrationFailed::~UMATIntegrationFailed()
+
   UMATInvalidNTENSValue::UMATInvalidNTENSValue(const unsigned short N)
     : UMATException("Invalid tensor size declared '"+tfel::utilities::ToString(N)+"'")
   {} // end of UMATInvalidNTENSValue::UMATInvalidNTENSValue

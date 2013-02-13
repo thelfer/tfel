@@ -102,28 +102,28 @@ namespace umat{
   UMATInterfaceBase::throwBehaviourIntegrationFailedException(const std::string& b)
   {
     using namespace std;
-    string msg("UMATInterfaceBase::throwBehaviourIntegrationFailedException : ");
+    string msg;
     msg += "integration failed for behaviour '"+b+"'";
-    throw(runtime_error(msg));
+    throw(UMATIntegrationFailed(msg));
   } // end of UMATInterfaceBase::throwBehaviourIntegrationFailedException
   
   void
   UMATInterfaceBase::throwMaximumNumberOfSubSteppingReachedException(const std::string& b)
   {
     using namespace std;
-    string msg("UMATInterfaceBase::throwBehaviourIntegrationFailedException : ");
+    string msg;
     msg += "maximum number of sub stepping reached failed for behaviour '"+b+"'";
-    throw(runtime_error(msg));    
+    throw(UMATIntegrationFailed(msg));    
   } // end of UMATInterfaceBase::throwMaximumNumberOfSubSteppingReachedException
   
   void
   UMATInterfaceBase::throwPlaneStressMaximumNumberOfIterationsReachedException(const std::string& b)
   {
     using namespace std;
-    string msg("UMATInterfaceBase::throwPlaneStressMaximumNumberOfIterationsReachedException : ");
+    string msg;
     msg += "maximum number of iterations of the plane stress algorithm ";
     msg += "reached failed for behaviour '"+b+"'";
-    throw(runtime_error(msg));  
+    throw(UMATIntegrationFailed(msg));  
   } // end of UMATInterfaceBase::throwPlaneStressMaximumNumberOfIterationsReachedException
 
   void

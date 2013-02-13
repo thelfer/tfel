@@ -118,7 +118,7 @@ namespace umat{
 								 STATEV,NSTATV,STRESS,KINC);
       } else {
 	UMATInterfaceBase::displayInvalidModellingHypothesisErrorMessage();
-	*KINC = -2;
+	*KINC = -7;
       }
     } // end of UMATInterface::exe
 
@@ -155,7 +155,11 @@ namespace umat{
 	  Handler::exe(DTIME,DROT,DDSOE,STRAN,DSTRAN,TEMP,DTEMP,
 		       PROPS,NPROPS,PREDEF,DPRED,STATEV,NSTATV,
 		       STRESS);
-	} 
+	}
+	catch(const UMATIntegrationFailed& e){
+	  UMATInterfaceBase::treatUmatException(Name<BV>::getName(),e);
+	  *KINC = -1;
+	}
 	catch(const UMATException& e){
 	  UMATInterfaceBase::treatUmatException(Name<BV>::getName(),e);
 	  *KINC = -2;

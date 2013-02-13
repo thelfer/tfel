@@ -6215,12 +6215,26 @@ La courbe résultante est représentée en figure~\ref{fig:TestGetEvol2}.
 \section{L'interface {\tt umat}}
 \label{sec:utilisation_umat}
 
-\subsection{La fonction {\tt umat}}
+L'interface {\tt umat} décrite dans cette section est utilisée pour
+l'adhérence à \castem{}. Initialement introduite par le code aux
+éléments finis {\tt ABAQUS}, {\tt umat} désigne une routine fournie
+par l'utilisateur qui permet d'introduire de nouvelles lois de
+comportement. La routine {\tt umat} n'est généralement pas utilisée
+pour réaliser l'intégration de la loi mais comme chapeau aux lois
+fournies par l'utilisateur~: cette routine se contente de rediriger
+vers la loi de comportement que l'utilisateur veut effectivement
+utiliser.
 
-Le prototype de la fonction {\tt umat} a été initialement défini dans le
-code ABAQUS. Ce prototype a été repris dans \castem{}. La compatibilité
-avec ABAQUS nécessite cependant de déclarer des champs qui ne sont pas
-nécessairement utilisés dans \castem{}.
+\paragraph{Avertissement} Le code \castem{} utilise des conventions
+différentes de celle du code {\tt ABAQUS} qui a initialement introduit
+la routine {\tt umat}. Nous ne nous sommes rendus compte de ces
+incompatibilités que tardivement et de ce fait, le nom de cette
+interface apparaît inapproprié~: il ne faut donc pas croire que
+l'interface \umat{} permette d'utiliser les lois générées par
+\mfront{} dans {\tt ABAQUS}.
+
+
+\subsection{La fonction {\tt umat}}
 
 \begin{figure}[htbp]
   \centering
@@ -6237,6 +6251,8 @@ nécessairement utilisés dans \castem{}.
   \caption{Prototype de la fonction {\tt umat}.}
   \label{fig:umat:prototype}
 \end{figure}
+
+La figure~\ref{fig:umat:prototype}
 
 \begin{longtable}[htpb]{|p{2.cm}|p{4.cm}|p{9cm}|}
   \endfirsthead \hline \multicolumn{3}{|c|}{Suite de la page
@@ -6347,6 +6363,46 @@ n'utilisent qu'un nombre réduit d'arguments de la fonction \umat{}.
 \end{figure}
 
 Leur prototype commun est décrit à la figure~\ref{fig:umat:prototype}.
+
+\begin{table}[htbp]
+  \centering
+  \begin{tabular}{|c|p{0.8\linewidth}|}
+    \hline
+    Valeur de \varcpp{KINC} & \multicolumn{1}{c|}{Signification} \\
+    \hline
+    \hline
+    \(0\) & aucune erreur n'est survenue \\
+    \hline
+    \(-1\) & l'intégration a échouée \\
+    \hline
+    \(-2\) & une exception de type \tfel{UMATException} a été levée.
+    Ces exceptions sont utilisées par l'interface umat pour gérer les
+    incohérences entre les arguments donnés par l'utilisateur et les
+    arguments attendus par la loi. \\
+    \hline
+    \(-3\) & une exception de type \tfel{MaterialException} a été levée.
+    Ces exceptions sont utilisée par la gestion des bornes \\
+    \hline
+    \(-4\) & une exception de type \tfel{TFELException} a été levée.
+    Il s'agit de la base de toutes les exceptions de la librairie \TFEL{}.\\
+    \hline
+    \(-5\) & une exception standard de type \varcpp{exception} a été levée. \\
+    \hline
+    \(-6\) & un type d'exception inconnu. \\
+    \hline
+    \(-7\) & l'hypothèse de modélisation passée par l'argument \varcpp{NDI}
+    n'est pas supportée. \\
+    \hline
+  \end{tabular}
+  \caption{Valeurs de retour de l'interface \umat{}}
+  \label{tab:mfront:umat:KINC}
+\end{table}
+
+\subsection{Valeurs de retour}
+
+Une erreur s'est produite si \varcpp{KINC} est différent de \(0\). Le
+tableau~\ref{tab:mfront:umat:KINC} donne la signification des
+différentes valeurs de retour possible.
 
 \subsection{Calcul de la matrice d'élasticité orthotrope}
 \label{sec:calcul-de-la}
