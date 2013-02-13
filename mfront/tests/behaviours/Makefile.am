@@ -6,6 +6,7 @@ EXTRA_DIST=CMakeLists.txt                  \
            Plasticity.mfront               \
            Norton.mfront                   \
            ImplicitNorton.mfront           \
+           ImplicitNorton2.mfront          \
            NortonRK.mfront                 \
            Norton_Euler.mfront             \
            Norton_rk2.mfront               \

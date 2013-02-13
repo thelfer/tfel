@@ -131,7 +131,7 @@ namespace tfel{
     } // end of namespace internals
 
     template<typename Func1,typename Func2, typename Op>
-    class FunctionFunctionExpr
+    class TFEL_VISIBILITY_LOCAL FunctionFunctionExpr
     {
       
       TFEL_STATIC_ASSERT((tfel::meta::Implements<Func1,FunctionConcept>::cond));

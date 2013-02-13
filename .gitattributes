@@ -824,6 +824,7 @@ mfront/tests/behaviours/CMakeLists.txt -text
 mfront/tests/behaviours/DDIF2.mfront -text
 mfront/tests/behaviours/Elasticity.mfront -text
 mfront/tests/behaviours/ImplicitNorton.mfront -text
+mfront/tests/behaviours/ImplicitNorton2.mfront -text
 mfront/tests/behaviours/ImplicitOrthotropicCreep.mfront -text
 mfront/tests/behaviours/Makefile.am -text
 mfront/tests/behaviours/Norton.mfront -text

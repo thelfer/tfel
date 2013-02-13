@@ -11,6 +11,7 @@ set(mfront_tests_SOURCES
   Norton_rk4   Norton_rk42
   Norton_rkCastem
   ImplicitNorton
+  ImplicitNorton2
   OrthotropicCreep
   ImplicitOrthotropicCreep
   OrthotropicElastic)

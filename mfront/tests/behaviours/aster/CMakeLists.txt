@@ -9,6 +9,7 @@ set(mfront_tests_SOURCES
   Norton_Euler Norton_rk2
   Norton_rk4   Norton_rk42
   Norton_rkCastem
-  ImplicitNorton)
+  ImplicitNorton
+  ImplicitNorton2)
 
 mfront_behaviour_check_library(MFrontAsterBehaviours  aster ${mfront_tests_SOURCES})

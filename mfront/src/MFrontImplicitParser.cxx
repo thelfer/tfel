@@ -742,7 +742,7 @@ namespace mfront{
 				  << "const unsigned short idx){\n"
 				  << "using namespace tfel::math;\n"
 				  << "return typename ST2toST2FTMV2<N,"
-				  << n3 << "," << n3 << "," << n << "," << n2 << ",real>::type(this->jacobian,idx,0u);\n"
+				  << n3 << "," << n3 << "," << n << "," << n2 << ",real>::type(tjacobian,idx,0u);\n"
 				  << "}\n\n";
 	      this->behaviourFile << "typename tfel::math::ST2toST2FTMV2<N," << n3 << "," << n3 << "," << n << "," << n2 << ",real>::type\n"
 				  << "df" << p->name << "_dd" << p2->name 
