@@ -1220,7 +1220,8 @@ appelés {\em mailles} ou {\em éléments}. Ces polygones définissent~:
 \paragraph{Notion de champ nodal} La discrétisation
 éléments finis permet de définir la notion de {\em champ nodal}~: à
 chaque n{\oe}ud est associé des valeurs qui permettent de construire une
-approximation d'un champ réel.
+approximation d'une fonction, dont la solution du problème mécanique, le
+champ de déplacements.
 
 \paragraph{Principe des travaux virtuels}
 
@@ -1234,7 +1235,7 @@ virtuels~:
 \[
 \forall \vec{v}^{h}\; C.A.^{h},\quad
 \underbrace{\int_{\Omega^{h}}\tsigma_{t+\Delta
-    t}\paren{\Delta\tepsilonto,\Delta\,
+    t}\paren{\Delta\tepsilonto,t,\Delta\,
     t}\colon\tepsilonto\paren{\vec{v}^{h}}\;\dtot V}_{\text{Travaux
     intérieurs}}=\underbrace{\int_{\Omega^{h}}\vec{f}_{t+\Delta
     t}.\vec{v}^{h}\;\dtot
@@ -1243,12 +1244,14 @@ virtuels~:
 \]
 où nous avons noté \(\Delta\tepsilonto\) la déformation totale
 associée à la fonction \(\Delta\vec{u}^{h}\)
-\(\paren{\Delta\tepsilonto=\tepsilonto\paren{\Delta\vec{u}^{h}}}\).
-L'espace \(C.A.^{h}\) est l'ensemble des fonctions \(\vec{v}^{h}\)
-correspondant aux champs nodaux vérifiant les conditions aux limites
-cinématiques. L'espace \(C.A.^{h}\) étant fini, il existe deux champs
-nodaux \(\forceintEF\paren{\Delta\discret{\vec{u}}}\) et \(\forceextEF\)
-tels que~:
+\(\paren{\Delta\tepsilonto=\tepsilonto\paren{\Delta\vec{u}^{h}}}\). La
+dépendance au \(t\) symbolise la dépendance de la réponse du matériau à
+des variables externes (fluence, flux neutronique, etc...). L'espace
+\(C.A.^{h}\) est l'ensemble des fonctions \(\vec{v}^{h}\) correspondant
+aux champs nodaux vérifiant les conditions aux limites cinématiques.
+L'espace \(C.A.^{h}\) étant fini, il existe deux champs nodaux
+\(\forceintEF\paren{\Delta\discret{\vec{u}}}\) et \(\forceextEF\) tels
+que~:
 \[
 \begin{aligned}
   \forall \vec{v}^{h}\; C.A.^{h},\quad &
@@ -1405,16 +1408,17 @@ Cette relation doit fournir~:
   \(\deriv{\Delta\tsigma}{\Delta\tepsilonto}\) si nécessaire.
 \end{itemize}
 
-Nous distinguerons différentes catégories de variables~:
+En pratique, cette relation peut être très complexe. Pour continuer,
+il nous faut introduire différentes catégories de variables~:
 \begin{itemize}
-\item les propriétés matériau, déclarées par le mot clé
+  \item les propriétés matériau, déclarées par le mot clé
   \mkey{Material\-Property}\footnote{Le mot clé \mkey{Coef} est un
     synonyme du mot clé \mkey{Material\-Property}}~;
-\item les variables internes, déclarées par le mot clé
-  \mkey{State\-Variable}\footnote{Le mot clé \mkey{State\-Var} est
-    un synonyme du mot clé \mkey{State\-Variable}}~;
-\item les variables internes auxiliaires, déclarées par le mot clé
-  \mkey{Auxiliary\-State\-Variable}\footnote{Le mot clé
+  \item les variables internes, déclarées par le mot clé
+  \mkey{State\-Variable}\footnote{Le mot clé \mkey{State\-Var} est un
+    synonyme du mot clé \mkey{State\-Variable}}~;
+  \item les variables internes auxiliaires, déclarées par le mot
+  clé \mkey{Auxiliary\-State\-Variable}\footnote{Le mot clé
     \mkey{Auxiliary\-State\-Var} est un synonyme du mot clé
     \mkey{Auxiliary\-State\-Variable}}~;
   \item les variables externes, déclarées par le mot clé
@@ -1422,13 +1426,11 @@ Nous distinguerons différentes catégories de variables~:
     \mkey{External\-State\-Var} est un synonyme du mot clé
     \mkey{External\-State\-Variable}}~;
   \item les variables locales, déclarées par le mot clé
-  \mkey{Local\-Variable}\footnote{Le mot clé
-    \mkey{Local\-Var} est un synonyme du mot clé
-    \mkey{Local\-Variable}}~;
+  \mkey{Local\-Variable}\footnote{Le mot clé \mkey{Local\-Var} est un
+    synonyme du mot clé \mkey{Local\-Variable}}~;
   \item les variables statiques, déclarées par le mot clé
-  \mkey{Static\-Variable}\footnote{Le mot clé
-    \mkey{Static\-Var} est un synonyme du mot clé
-    \mkey{Static\-Variable}}.
+  \mkey{Static\-Variable}\footnote{Le mot clé \mkey{Static\-Var} est un
+    synonyme du mot clé \mkey{Static\-Variable}}.
 \end{itemize}
 
 \paragraph{Propriétés matériau} Les propriétés matériau peuvent être des
@@ -2290,25 +2292,29 @@ fins de test ou pour certains lois spécifiques simples.
 
 La directive \mkey{Integrator} permet d'intégrer la loi de comportement.
 
-\paragraph{Conventions spécifiques} Les conventions suivantes
-s'appliquent~:
+\paragraph{Conventions spécifiques} Les
+conventions suivantes s'appliquent~:
 \begin{itemize}
+  \item {\tt Dt} représente la matrice tangente cohérente qu'il
+  faut calculer~;
   \item {\tt sig} représente la contrainte qu'il faut calculer~;
-  \item {\tt eto} représente la déformation totale en début de pas~;
+  \item {\tt eto} représente la déformation totale en début de
+  pas~;
   \item {\tt deto} représente la vitesse de déformation totale
   (constante sur le pas)~;
-  \item {\tt T} représente la valeur de la température en début de pas~;
-  \item {\tt dT} représente la vitesse de changement de température
-  (constante sur le pas)~;
-  \item pour toute variable interne {\tt Y}, {\tt Y} représente sa
-  valeur en début de pas~;
+  \item {\tt T} représente la valeur de la température en début
+  de pas~;
+  \item {\tt dT} représente la vitesse de changement de
+  température (constante sur le pas)~;
+  \item pour toute variable interne {\tt Y}, {\tt Y} représente
+  sa valeur en début de pas~;
   \item pour toute variable interne {\tt Y}, {\tt dY} représente
   l'incrément de cette variable sur le pas, incrément qu'il faut
   calculer~;
-  \item pour toute variable externe {\tt V}, {\tt V} représente sa
-  valeur en début de pas~;
-  \item pour toute variable externe {\tt V}, {\tt dV} représente sa
-  vitesse de variation sur le pas de temps (constante sur le pas).
+  \item pour toute variable externe {\tt V}, {\tt V} représente
+  sa valeur en début de pas~;
+  \item pour toute variable externe {\tt V}, {\tt dV} représente
+  sa vitesse de variation sur le pas de temps (constante sur le pas).
 \end{itemize}
 
 \paragraph{Calcul de la matrice tangente cohérente}
@@ -2480,14 +2486,19 @@ f(\sigmaeq,p_{i})\,\dot{p} = 0
 \]
 \end{itemize}
 
-\paragraph{Variables internes} Les variables internes des analyseurs
-spécifiques sont~:
+\paragraph{Variables internes} Les variables
+internes des analyseurs spécifiques sont~:
 \begin{itemize}
   \item la déformation élastique \(\tepsilonel\)~;
   \item la déformation inélastique \(p_{i}\) associé à chaque
   mécanisme~;
-  \item si plus d'un mécanisme est présent, la déformation inélastique
-  totale \(p\) définit comme la somme des déformations inélastiques des
+  \item si plus d'un mécanisme est présent, la déformation
+  inélastique totale \(p\) définit comme~:
+  \[
+  p=\int_{t_{0}}^{t}\sqrt{\Frac{2}{3}\,\tepsilonan\colon\tepsilonan}\,\dtot\,u
+  \]
+  Chaque écoulement se faisant suivant la normale, \(p\) est
+  également la somme des déformations inélastiques équivalentes des
   différents mécanismes~:
   \[
   p = \displaystyle\sum_{i}\,p_{i}
@@ -3974,7 +3985,31 @@ ordres de convergences plus faibles (que les méthodes de type
 nous avons {\em toujours} constaté des résultats extrêmement
 satisfaisants tant en termes de précision qu'en termes de performance
 numérique avec les méthodes implicites, quelque soit le type de loi de
-comportement. Ceci explique que la plupart des analyseurs syntaxiques
+comportement. 
+
+\begin{table}[htbp]
+  \begin{tabular}{|c|c|c|}
+    \hline Méthode d'intégration & Temps CPU & Nombre
+    d'itérations \\
+    \hline \hline Implicite & 5 m 26 s & 1817 itérations \\
+    \hline \nom{Runge-Kutta} \(5/4\) & 32 m 21 s & 17493
+    itérations \\
+    \hline
+  \end{tabular}
+  \caption{Temps de calculs obtenus sur une éprouvette
+    entaillée en traction modélisée en $2D\paren{r,z}$. Calcul réalisé
+    par \nom{J.-M. Proix} sur la version $11$ de code \aster{}. La loi
+    de comportement locale modélise est la loi de
+    \nom{HayHurst}~\cite{proix:hayhurst:2012}.}
+  \label{tab:mfront:NR:comparison:methode}
+\end{table}
+
+Enfin, les méthodes implicites introduisent naturellement la
+matrice tangente cohérente, ce qui permet de réduire considérablement le
+nombre d'itérations nécessaires à la méthode globale. Ceci est illustré
+sur la figure~\ref{tab:mfront:NR:comparison:methode}.
+
+Ceci explique que la plupart des analyseurs syntaxiques
 disponibles dans \mfront{} soient basés sur ces méthodes.
 
 Les deux principales faiblesses des méthodes implicites restent~:
