@@ -2102,6 +2102,22 @@ namespace mfront{
     this->behaviourFile << "}; // end of getModellingHypothesis\n\n";
   } // end of MFrontBehaviourParserCommon::writeBehaviourGetModellingHypothesis();
 
+  const VarHandler&
+  MFrontBehaviourParserCommon::getStateVariableHandler(const std::string& v) const
+  {
+    using namespace std;
+    VarContainer::const_iterator p;
+    for(p=this->stateVarsHolder.begin();p!=this->stateVarsHolder.end();++p){
+      if(p->name==v){
+	return *p;
+      }
+    }
+    string msg("MFrontBehaviourParserCommon::getStateVariableHandler : ");
+    msg += "no state variable '"+v+"'";
+    throw(runtime_error(msg));
+    return *(static_cast<VarHandler*>(0));
+  } // end of MFrontBehaviourParserCommon::getStateVariableHandler
+
   void MFrontBehaviourParserCommon::writeBehaviourLocalVars(void)
   {    
     using namespace std;

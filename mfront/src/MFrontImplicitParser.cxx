@@ -173,6 +173,18 @@ namespace mfront{
     if((this->isInternalStateVariableName(n))||
        ((n[0]=='f')&&(this->isInternalStateVariableName(n.substr(1))))){
       if(this->current->value=="setNormalisationFactor"){
+	string v;
+	if(this->isInternalStateVariableName(n)){
+	  v = n;
+	} else {
+	  v = n.substr(1);
+	}
+	const VarHandler& s = this->getStateVariableHandler(v);
+	if(s.arraySize!=1u){
+	  string msg("MFrontImplicitParser::treatUnknownVariableMethod : ");
+	  msg += "can't set a normalisation factor on an array of state variables";
+	  throw(runtime_error(msg));
+	}
 	string var;
 	++(this->current);
 	this->checkNotEndOfFile("MFrontImplicitParser::treatUnknowVariableMethod");

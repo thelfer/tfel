@@ -354,6 +354,9 @@ namespace mfront{
 
     virtual ~MFrontBehaviourParserCommon();
 
+    const VarHandler&
+    getStateVariableHandler(const std::string&) const;
+
     /*!
      * \param n : variable name
      */
