@@ -18,7 +18,6 @@ namespace mfront{
   void
   MFrontModelParserBase<Child>::registerDefaultCallBacks(void)
   {
-    this->registerNewCallBack("Unknown keyword handler",&Child::treatUnknownKeyword);
     this->registerNewCallBack("@Parser",&Child::treatParser);
     this->registerNewCallBack("@Model",&Child::treatModel);
     this->registerNewCallBack("@Material",&Child::treatMaterial);

@@ -29,8 +29,6 @@ namespace mfront{
       useTemplate(false)
   {
     // Call Back
-    this->registerNewCallBack("Unknown keyword handler",
-			      &MFrontMaterialLawParser::treatUnknownKeyword);
     this->registerNewCallBack("@Link",
 			      &MFrontMaterialLawParser::treatLink);
     this->registerNewCallBack("@MaterialLaw",

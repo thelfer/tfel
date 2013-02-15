@@ -751,6 +751,10 @@ mfront/include/MFront/UMAT/UMATTraits.hxx -text
 mfront/include/MFront/UnaryLoadingDefinition.hxx -text
 mfront/include/MFront/VarHandler.hxx -text
 mfront/include/MFront/VariableBoundsDescription.hxx -text
+mfront/include/MFront/VariableModifier.hxx -text
+mfront/include/MFront/VariableModifier.ixx -text
+mfront/include/MFront/WordAnalyser.hxx -text
+mfront/include/MFront/WordAnalyser.ixx -text
 mfront/include/Makefile.am -text
 mfront/include/castem.h -text
 mfront/lisp/CMakeLists.txt -text
@@ -818,6 +822,8 @@ mfront/src/UMATOutOfBoundsPolicy.cxx -text
 mfront/src/UMATRotationMatrix.cxx -text
 mfront/src/UnaryLoadingDefinition.cxx -text
 mfront/src/VarHandler.cxx -text
+mfront/src/VariableModifier.cxx -text
+mfront/src/WordAnalyser.cxx -text
 mfront/src/main.cxx -text
 mfront/tests/CMakeLists.txt -text
 mfront/tests/Makefile.am -text

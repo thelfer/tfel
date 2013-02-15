@@ -82,7 +82,7 @@ namespace mfront{
   } // end of MFrontRungeKuttaParser::treatStateVariables
 
   std::string
-  MFrontRungeKuttaParser::variableModifier1(const std::string& var,
+  MFrontRungeKuttaParser::computeStressVariableModifier1(const std::string& var,
 					    const bool addThisPtr)
   {
     using namespace std;
@@ -108,10 +108,10 @@ namespace mfront{
       return "this->"+var;
     }
     return var;
-  } // end of MFrontRungeKuttaParser::variableModifier1
+  } // end of MFrontRungeKuttaParser::computeStressVariableModifier1
 
   std::string
-  MFrontRungeKuttaParser::variableModifier2(const std::string& var,
+  MFrontRungeKuttaParser::computeStressVariableModifier2(const std::string& var,
 					    const bool addThisPtr)
   {
     using namespace std;
@@ -138,7 +138,7 @@ namespace mfront{
       return "this->"+var;
     }
     return var;
-  } // end of MFrontRungeKuttaParser::variableModifier2
+  } // end of MFrontRungeKuttaParser::computeStressVariableModifier2
 
   void
   MFrontRungeKuttaParser::treatComputeStress(void)
@@ -150,8 +150,8 @@ namespace mfront{
     }
     this->readNextBlock(this->computeStress,
 			this->computeFinalStress,
-			&ParserBase::variableModifier1,
-			&ParserBase::variableModifier2,true);
+			makeVariableModifier(*this,&MFrontRungeKuttaParser::computeStressVariableModifier1),
+			makeVariableModifier(*this,&MFrontRungeKuttaParser::computeStressVariableModifier2),true);
   } // end of MFrontRungeKuttaParser::treatComputeStress
 
   void MFrontRungeKuttaParser::treatUnknownVariableMethod(const std::string& n)
@@ -200,13 +200,13 @@ namespace mfront{
       this->throwRuntimeError("MFrontRungeKuttaParser::treatDerivative",
 			      "@Derivative has already been called");
     }
-    this->derivative = this->readNextBlock(&ParserBase::variableModifier1,true);
+    this->derivative = this->readNextBlock(makeVariableModifier(*this,&MFrontRungeKuttaParser::computeStressVariableModifier1),true);
   } // end of MFrontRungeKuttaParser::treatDerivative
 
   void
   MFrontRungeKuttaParser::treatUpdateAuxiliaryStateVars(void)
   {
-    this->updateAuxiliaryStateVars = this->readNextBlock(0,true);
+    this->updateAuxiliaryStateVars = this->readNextBlock(tfel::utilities::shared_ptr<VariableModifier>(),true);
   } // end of MFrontRungeKuttaParser::treatUpdateAuxiliaryStateVarBase
 
   void

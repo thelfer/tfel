@@ -173,7 +173,7 @@ namespace mfront{
   } // end of MFrontIsotropicBehaviourParserBase::writeBehaviourParserSpecificIncludes
 
   std::string
-  MFrontIsotropicBehaviourParserBase::variableModifier1(const std::string& var,
+  MFrontIsotropicBehaviourParserBase::flowRuleVariableModifier(const std::string& var,
 							const bool addThisPtr)
   {
     if((var=="T")||(this->isExternalStateVariable(var))||
@@ -191,34 +191,13 @@ namespace mfront{
       return "this->"+var;
     }
     return var;
-  } // end of MFrontIsotropicBehaviourParserBase::variableModifier1
-
-  std::string
-  MFrontIsotropicBehaviourParserBase::variableModifier2(const std::string& var,
-							const bool addThisPtr)
-  {
-    if((var=="T")||(this->isExternalStateVariable(var))||
-       (this->isInternalStateVariable(var))||
-       (this->isInternalStateVariableIncrement(var))){
-      if(addThisPtr){
-	return "this->"+var+"_";
-      } else {
-	return var+"_";
-      }
-    }
-    if((this->isExternalStateVariableIncrementName(var))||(var=="dT")){
-      this->declareExternalStateVariableProbablyUnusableInPurelyImplicitResolution(var.substr(1));
-    }
-    if(addThisPtr){
-      return "this->"+var;
-    }
-    return var;
-  } // end of MFrontIsotropicBehaviourParserBase::variableModifier2
+  } // end of MFrontIsotropicBehaviourParserBase::flowRuleVariableModifier
 
   void
   MFrontIsotropicBehaviourParserBase::treatFlowRuleBase(std::string &flow)
   {
-    flow = this->readNextBlock(&ParserBase::variableModifier1,true);
+    flow = this->readNextBlock(makeVariableModifier(*this,&MFrontIsotropicBehaviourParserBase::flowRuleVariableModifier),
+			       true);
   } // end of MFrontIsotropicBehaviourParserBase::treatFlowRuleBase
 
   void

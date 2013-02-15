@@ -18,6 +18,8 @@
 #include"MFront/VarHandler.hxx"
 #include"MFront/StaticVarHandler.hxx"
 #include"MFront/MFrontGenericData.hxx"
+#include"MFront/VariableModifier.hxx"
+#include"MFront/WordAnalyser.hxx"
 
 namespace mfront
 {
@@ -26,15 +28,6 @@ namespace mfront
     : public tfel::utilities::CxxTokenizer,
       protected MFrontGenericData
   {
-    virtual std::string variableModifier1(const std::string&,const bool);
-
-    virtual std::string variableModifier2(const std::string&,const bool);
-
-    virtual std::string variableModifier3(const std::string&,const bool);
-
-    virtual std::string variableModifier4(const std::string&,const bool);
-
-    virtual std::string variableModifier5(const std::string&,const bool);
     
   protected:
 
@@ -67,9 +60,9 @@ namespace mfront
     /*
      * \param std::string&, first result
      * \param std::string&, second result
-     * \param std::string (ParserBase::*)(const std::string&,const bool),
+     * \param tfel::utilities::shared_ptr<VariableModifier>,
      * first modifier of variable names
-     * \param std::string (ParserBase::*)(const std::string&,const bool), 
+     * \param tfel::utilities::shared_ptr<VariableModifier>, 
      * second modifier of variable names 
      * \param const bool, add "this->" before variable names
      * \param const std::string, first delimiter
@@ -80,8 +73,8 @@ namespace mfront
     void
     readNextBlock(std::string&,
 		  std::string&,
-		  std::string (ParserBase:: *)(const std::string&,const bool),
-		  std::string (ParserBase:: *)(const std::string&,const bool),
+		  tfel::utilities::shared_ptr<VariableModifier>,
+		  tfel::utilities::shared_ptr<VariableModifier>,
 		  const bool = false,
 		  const std::string = "{",
 		  const std::string = "}",
@@ -89,7 +82,7 @@ namespace mfront
 		  const bool = true);
 
     /*
-     * \param std::string (ParserBase::*)(const std::string&,const bool),
+     * \param tfel::utilities::shared_ptr<VariableModifier>,
      * modifier of variable names
      * \param const bool, add "this->" before variable names
      * \param const std::string, first delimiter
@@ -98,7 +91,7 @@ namespace mfront
      * \param const bool, add line number between lines
      */
     std::string
-    readNextBlock(std::string (ParserBase:: *)(const std::string&,const bool),
+    readNextBlock(tfel::utilities::shared_ptr<VariableModifier>,
 		  const bool = false,
 		  const std::string = "{",
 		  const std::string = "}",
@@ -111,7 +104,7 @@ namespace mfront
      * \param const std::string, second delimiter
      * \param const bool, allow ';' in the block
      * \param const bool, add line number between lines
-     * \param std::string (ParserBase::*)(const std::string&,const bool),
+     * \param tfel::utilities::shared_ptr<VariableModifier>,
      * modifier of variable names
      */
     std::string
@@ -120,7 +113,10 @@ namespace mfront
 		  const std::string = "}",
 		  const bool = true,
 		  const bool = true,
-		  std::string (ParserBase::*)(const std::string&,const bool) = 0);
+		  tfel::utilities::shared_ptr<VariableModifier> =
+		  tfel::utilities::shared_ptr<VariableModifier>(),
+		  tfel::utilities::shared_ptr<WordAnalyser> =
+		  tfel::utilities::shared_ptr<WordAnalyser>());
 
     std::string
     readOnlyOneToken(void);

@@ -53,7 +53,9 @@ mfront_SOURCES = main.cxx                                             \
 		 MFrontCppLawInterface.cxx                            \
 		 MFrontCppTestLawInterface.cxx                        \
 		 MFrontExcelLawInterface.cxx                          \
-		 MFrontLaTeXLawInterface.cxx
+		 MFrontLaTeXLawInterface.cxx                          \
+		 VariableModifier.cxx                                 \
+		 WordAnalyser.cxx
 
 
 if HAVE_GNUPLOT

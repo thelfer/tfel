@@ -34,36 +34,6 @@ namespace mfront
     return b;
   }
 
-  std::string
-  ParserBase::variableModifier1(const std::string& var,const bool)
-  {
-    return var;
-  } // end of ParserBase::variableModifier1
-
-  std::string
-  ParserBase::variableModifier2(const std::string& var,const bool)
-  {
-    return var;
-  } // end of ParserBase::variableModifier2
-
-  std::string
-  ParserBase::variableModifier3(const std::string& var,const bool)
-  {
-    return var;
-  } // end of ParserBase::variableModifier3
-
-  std::string
-  ParserBase::variableModifier4(const std::string& var,const bool)
-  {
-    return var;
-  } // end of ParserBase::variableModifier4
-
-  std::string
-  ParserBase::variableModifier5(const std::string& var,const bool)
-  {
-    return var;
-  } // end of ParserBase::variableModifier5
-
   ParserBase::ParserBase()
     : debugMode(false),
       verboseMode(false),
@@ -187,8 +157,8 @@ namespace mfront
   void
   ParserBase::readNextBlock(std::string& res1,
 			    std::string& res2,
-			    std::string (ParserBase::* modifier1)(const std::string&,const bool),
-			    std::string (ParserBase::* modifier2)(const std::string&,const bool),
+			    tfel::utilities::shared_ptr<VariableModifier> modifier1,
+			    tfel::utilities::shared_ptr<VariableModifier> modifier2,
 			    const bool addThisPtr,
 			    const std::string delim1,
 			    const std::string delim2,
@@ -202,7 +172,7 @@ namespace mfront
   } // end of ParserBase::readNextBlock
 
   std::string
-  ParserBase::readNextBlock(std::string (ParserBase::* modifier)(const std::string&,const bool),
+  ParserBase::readNextBlock(tfel::utilities::shared_ptr<VariableModifier> modifier,
 			    const bool addThisPtr,
 			    const std::string delim1,
 			    const std::string delim2,
@@ -218,7 +188,8 @@ namespace mfront
 			    const std::string delim2,
 			    const bool allowSemiColon,
 			    const bool registerLine,
-			    std::string (ParserBase::* modifier)(const std::string&,const bool))
+			    tfel::utilities::shared_ptr<VariableModifier> modifier,
+			    tfel::utilities::shared_ptr<WordAnalyser> analyser)
   {
     using namespace std;
     string res;
@@ -251,6 +222,9 @@ namespace mfront
       res += this->fileName;
       res += "\"\n";
     }
+    if(analyser.get()!=0){
+      analyser->exe(this->current->value);
+    }
     if(this->staticVarNames.find(this->current->value)!=this->staticVarNames.end()){
       previous = this->current;
       --previous;
@@ -270,8 +244,8 @@ namespace mfront
 	 (previous->value=="::")){
 	currentValue = this->current->value;
       } else {
-	if(modifier!=0){
-	  currentValue = (this->*modifier)(this->current->value,addThisPtr);
+	if(modifier.get()!=0){
+	  currentValue = modifier->exe(this->current->value,addThisPtr);
 	} else {
 	  if(addThisPtr){
 	    currentValue = "this->"+this->current->value;
@@ -315,6 +289,9 @@ namespace mfront
 	msg += toString(openedBlock);
 	throw(runtime_error(msg));
       }
+      if(analyser.get()!=0){
+	analyser->exe(this->current->value);
+      }
       if(this->staticVarNames.find(this->current->value)!=this->staticVarNames.end()){
 	previous = this->current;
 	--previous;
@@ -334,8 +311,8 @@ namespace mfront
 	   (previous->value=="::")){
 	  currentValue = this->current->value;
 	} else {
-	  if(modifier!=0){
-	    currentValue = (this->*modifier)(this->current->value,addThisPtr);	    
+	  if(modifier.get()!=0){
+	    currentValue = modifier->exe(this->current->value,addThisPtr);	    
 	  } else {
 	    if(addThisPtr){
 	      if(previous->value=="*"){

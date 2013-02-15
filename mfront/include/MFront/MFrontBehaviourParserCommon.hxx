@@ -38,31 +38,34 @@ namespace mfront{
       public SupportedTypes
   {
 
-    void setVerboseMode(void);
+    virtual void
+      setVerboseMode(void);
 
-    void setDebugMode(void);
+    virtual void
+      setDebugMode(void);
 
-    void setWarningMode(void);
+    virtual void
+      setWarningMode(void);
 
   protected:
        
     virtual std::string
-    variableModifier3(const std::string&,const bool);
+    standardModifier(const std::string&,const bool);
 
     std::map<std::string,std::vector<std::string> >
-    getGlobalIncludes(void);
+      getGlobalIncludes(void);
 
     std::map<std::string,std::vector<std::string> >
-    getGlobalDependencies(void);
+      getGlobalDependencies(void);
 
     std::map<std::string,std::vector<std::string> >
-    getGeneratedSources(void);
+      getGeneratedSources(void);
 
     std::vector<std::string>
-    getGeneratedIncludes(void);
+      getGeneratedIncludes(void);
 
     std::map<std::string,std::vector<std::string> >
-    getLibrariesDependencies(void);
+      getLibrariesDependencies(void);
     
     std::map<std::string,
 	     std::pair<std::vector<std::string>,
@@ -70,105 +73,128 @@ namespace mfront{
     getSpecificTargets(void);
  
     bool
-    isInternalStateVariable(const std::string&);
-
+      isInternalStateVariable(const std::string&);
+    
     bool
-    isInternalStateVariableIncrement(const std::string&);
-
+      isInternalStateVariableIncrement(const std::string&);
+    
     bool
-    isExternalStateVariable(const std::string&);
-
-    void readStringList(StringContainer&);
-
+      isExternalStateVariable(const std::string&);
+    
+    virtual void
+      readStringList(StringContainer&);
+    
     void
-    setInterfaces(const std::set<std::string>&);
+      setInterfaces(const std::set<std::string>&);
 
-    void registerDefaultVarNames(void);
+    virtual void
+      registerDefaultVarNames(void);
+    
+    virtual void
+      treatUnknownKeyword(void);
+    
+    virtual void
+      treatUpdateAuxiliaryStateVars(void);
+    
+    virtual void
+      treatUsableInPurelyImplicitResolution(void);
 
-    void treatUnknownKeyword(void);
+    virtual void
+      treatMaterial(void);
 
-    void
-    treatUpdateAuxiliaryStateVars(void);
+    virtual void
+      treatParameter(void);
 
-    void
-    treatUsableInPurelyImplicitResolution(void);
+    virtual void
+      treatLocalVar(void);
 
-    void treatMaterial(void);
+    virtual void
+      treatInitLocalVars(void);
 
-    void treatParameter(void);
+    virtual void
+      treatOrthotropicBehaviour(void);
 
-    void treatLocalVar(void);
+    virtual void
+      treatIsotropicBehaviour(void);
 
-    void treatInitLocalVars(void);
+    virtual void
+      treatRequireStiffnessTensor(void);
 
-    void treatOrthotropicBehaviour(void);
+    virtual void
+      treatRequireThermalExpansionTensor(void);
 
-    void treatIsotropicBehaviour(void);
+    virtual void
+      treatBehaviour(void);
 
-    void treatRequireStiffnessTensor(void);
+    virtual void
+      treatExternalStateVariables(void);
 
-    void treatRequireThermalExpansionTensor(void);
+    virtual void
+      treatInterface(void);
 
-    void treatBehaviour(void);
+    virtual void
+      treatStateVariables(void);
 
-    void treatExternalStateVariables(void);
+    virtual void
+      treatAuxiliaryStateVariables(void);  
 
-    void treatInterface(void);
+    virtual void
+      treatComputedVar(void);
 
-    void treatStateVariables(void);
+    virtual void
+      treatIntegrator(void);
 
-    void treatAuxiliaryStateVariables(void);  
+    virtual void
+      treatCoef(void);
 
-    void treatComputedVar(void);
+    virtual void
+      treatUseQt(void);
 
-    void treatIntegrator(void);
+    virtual void
+      treatUnaryLoadingTest(void);
 
-    void treatCoef(void);
+    virtual void
+      treatBounds(void);
 
-    void treatUseQt(void);
+    virtual void
+      treatPhysicalBounds(void);
 
-    void treatUnaryLoadingTest(void);
+    virtual void
+      treatBounds(BoundsDescription&);
 
-    void treatBounds(void);
-
-    void treatPhysicalBounds(void);
-
-    void treatBounds(BoundsDescription&);
-
-    void addThisPtrToVarNames(void);
-
-    virtual void writeIncludes(std::ofstream&);
+    virtual void
+      writeIncludes(std::ofstream&);
 
     virtual void writeNamespaceBegin(std::ofstream&);
-
+    
     virtual void writeNamespaceEnd(std::ofstream&);
-
+    
     virtual void writeStandardTFELTypedefs(std::ofstream&); 
-
-    void checkBehaviourDataFile(void) const;
-
+    
+    virtual void checkBehaviourDataFile(void) const;
+    
     virtual void writeBehaviourDataStandardTFELTypedefs(void);
-
+    
     virtual void writeBehaviourDataStandardTFELIncludes(void);
-
+    
     virtual void writeBehaviourDataFileHeader(void);
-
+    
     virtual void writeBehaviourDataFileHeaderBegin(void);
-
+    
     virtual void writeBehaviourDataFileHeaderEnd(void);
-
+    
     virtual void writeBehaviourDataClassHeader(void);
-
+    
     virtual void writeBehaviourDataGetName(void);
-
+    
     virtual void writeBehaviourDataDisabledConstructors(void);
-
+    
     virtual void writeBehaviourDataConstructors(void);
-
+    
     virtual void writeBehaviourDataClassBegin(void);
-
+    
     virtual void writeBehaviourDataClassEnd(void);
-
+    
     virtual void writeBehaviourDataDefaultMembers(void);
 
     virtual void writeBehaviourDataCoefs(void);
@@ -297,7 +323,7 @@ namespace mfront{
 
     virtual void writeBehaviourParametersInitializer(void);
 
-    void checkSrcFile(void) const;
+    virtual void checkSrcFile(void) const;
 
     virtual void writeSrcFileHeader(void);
 
@@ -332,37 +358,37 @@ namespace mfront{
      * \param n : variable name
      */
     void
-    declareExternalStateVariableProbablyUnusableInPurelyImplicitResolution(const std::string&);
+      declareExternalStateVariableProbablyUnusableInPurelyImplicitResolution(const std::string&);
 
     void updateClassName();
 
     bool
-    contains(const VarContainer&,
-	     const std::string&) const;
+      contains(const VarContainer&,
+	       const std::string&) const;
 
     bool
-    isMaterialPropertyName(const std::string&) const;
+      isMaterialPropertyName(const std::string&) const;
 
     bool
-    isLocalVariableName(const std::string&) const;
+      isLocalVariableName(const std::string&) const;
 
     bool
-    isParameterName(const std::string&) const;
+      isParameterName(const std::string&) const;
 
     bool
-    isInternalStateVariableName(const std::string&) const;
+      isInternalStateVariableName(const std::string&) const;
 
     bool
-    isAuxiliaryInternalStateVariableName(const std::string&) const;
+      isAuxiliaryInternalStateVariableName(const std::string&) const;
 
     bool
-    isExternalStateVariableName(const std::string&) const;
+      isExternalStateVariableName(const std::string&) const;
 
     bool
-    isExternalStateVariableIncrementName(const std::string&) const;
+      isExternalStateVariableIncrementName(const std::string&) const;
 
     bool
-    isCoefficientName(void);
+      isCoefficientName(void);
 
     MFrontBehaviourParserCommon();
     

@@ -64,12 +64,12 @@ namespace mfront{
   private:
 
     std::string
-    variableModifier1(const std::string&,
-		      const bool);
+    computeStressVariableModifier1(const std::string&,
+				   const bool);
 
     std::string
-    variableModifier2(const std::string&,
-		      const bool);
+    computeStressVariableModifier2(const std::string&,
+				   const bool);
 
     virtual void
     treatUnknownVariableMethod(const std::string&);

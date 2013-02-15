@@ -43,7 +43,11 @@ nobase_include_HEADERS= MFront/MFront.hxx                          \
 			MFront/LawFunction.hxx                     \
 			MFront/MFrontDefaultParser.hxx             \
 			MFront/MFrontMaterialLawParser.hxx         \
-			MFront/MFrontModelParser.hxx
+			MFront/MFrontModelParser.hxx               \
+			MFront/VariableModifier.hxx                \
+			MFront/VariableModifier.ixx                \
+			MFront/WordAnalyser.hxx                    \
+			MFront/WordAnalyser.ixx
 
 nobase_noinst_HEADERS = MFront/MFrontIsotropicBehaviourParserBase.hxx               \
 			MFront/MFrontIsotropicMisesCreepParser.hxx                  \

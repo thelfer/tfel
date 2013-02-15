@@ -75,7 +75,7 @@ namespace mfront{
   } // end of MFrontBehaviourParserCommon::declareExternalStateVariableProbablyUnusableInPurelyImplicitResolution
 
   std::string
-  MFrontBehaviourParserCommon::variableModifier3(const std::string& var,
+  MFrontBehaviourParserCommon::standardModifier(const std::string& var,
 						 const bool addThisPtr)
   {
     if((this->isExternalStateVariableIncrementName(var))||(var=="dT")){
@@ -85,7 +85,7 @@ namespace mfront{
       return "this->"+var;
     }
     return var;
-  } // end of MFrontBehaviourParserCommon::variableModifier3
+  } // end of MFrontBehaviourParserCommon::standardModifier
 
   bool
   MFrontBehaviourParserCommon::contains(const VarContainer& v,
@@ -197,26 +197,26 @@ namespace mfront{
     if(this->current->value=="setDefaultValue"){
       ++(this->current);
       this->checkNotEndOfFile("MFrontBehaviourParserCommon::treatParameterMethod");
-      this->readSpecifiedToken("MFrontBehaviourParserCommon::treatVariableMethod","(");
-      this->checkNotEndOfFile("MFrontBehaviourParserCommon::treatVariableMethod");
+      this->readSpecifiedToken("MFrontBehaviourParserCommon::treatParameterMethod","(");
+      this->checkNotEndOfFile("MFrontBehaviourParserCommon::treatParameterMethod");
       double value;
       istringstream converter(this->current->value);
       converter >> value;
       if(!converter&&(!converter.eof())){
-	this->throwRuntimeError("MFrontBehaviourParserCommon::treatVariableMethod",
+	this->throwRuntimeError("MFrontBehaviourParserCommon::treatParameterMethod",
 				"could not read default value for parameter '"+n+"'");
       }
       ++(this->current);
-      this->checkNotEndOfFile("MFrontBehaviourParserCommon::treatVariableMethod");
-      this->readSpecifiedToken("MFrontBehaviourParserCommon::treatVariableMethod",")");
-      this->checkNotEndOfFile("MFrontBehaviourParserCommon::treatVariableMethod");
-      this->readSpecifiedToken("MFrontBehaviourParserCommon::treatVariableMethod",";");
+      this->checkNotEndOfFile("MFrontBehaviourParserCommon::treatParameterMethod");
+      this->readSpecifiedToken("MFrontBehaviourParserCommon::treatParameterMethod",")");
+      this->checkNotEndOfFile("MFrontBehaviourParserCommon::treatParameterMethod");
+      this->readSpecifiedToken("MFrontBehaviourParserCommon::treatParameterMethod",";");
       if(!this->parametersDefaultValues.insert(MVType(n,value)).second){
-	this->throwRuntimeError("MFrontBehaviourParserCommon::treatVariableMethod",
+	this->throwRuntimeError("MFrontBehaviourParserCommon::treatParameterMethod",
 				"default value already defined for parameter '"+n+"'");
       }
     } else {
-      this->throwRuntimeError("MFrontBehaviourParserCommon::treatVariableMethod",
+      this->throwRuntimeError("MFrontBehaviourParserCommon::treatParameterMethod",
 			      "could not read default value for parameter '"+n+"'");
     }
   } // end of MFrontBehaviourParserCommon::treatParameterMethod
@@ -3755,7 +3755,7 @@ namespace mfront{
   void
   MFrontBehaviourParserCommon::treatInitLocalVars(void)
   {
-    this->initLocalVars += this->readNextBlock(&ParserBase::variableModifier3,
+    this->initLocalVars += this->readNextBlock(makeVariableModifier(*this,&MFrontBehaviourParserCommon::standardModifier),
 					       true);
     this->initLocalVars += "\n";
   } // end of MFrontBehaviourParserCommon::treatInitLocalVars

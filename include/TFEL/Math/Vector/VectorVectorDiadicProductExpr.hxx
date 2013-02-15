@@ -29,7 +29,7 @@ namespace tfel{
   namespace math {
     
     template<typename A, typename B>
-    class VectorVectorDiadicProductExpr
+    class TFEL_VISIBILITY_LOCAL VectorVectorDiadicProductExpr
     {
       
       TFEL_STATIC_ASSERT((tfel::meta::Implements<A,VectorConcept>::cond));

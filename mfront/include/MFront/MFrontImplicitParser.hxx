@@ -71,78 +71,99 @@ namespace mfront{
       DEFAULT
     };
 
-    std::string
-    variableModifier1(const std::string&,const bool);
+    bool
+    isJacobianPart(const std::string&);
 
-    std::string
-    variableModifier2(const std::string&,const bool);
+    virtual void
+    predictorAnalyser(const std::string&);
+    
+    virtual void
+    integratorAnalyser(const std::string&);
+
+    virtual std::string
+    tangentOperatorVariableModifier(const std::string&,const bool);
+
+    virtual std::string
+    integratorVariableModifier(const std::string&,const bool);
+
+    virtual std::string
+    computeStressVariableModifier1(const std::string&,const bool);
+
+    virtual std::string
+    computeStressVariableModifier2(const std::string&,const bool);
 
     virtual void
     treatUnknownVariableMethod(const std::string&);
 
-    void endsInputFileProcessing(void);
+    virtual void
+    treatIntegrator(void);
 
-    void writeBehaviourIntegrator(void);
+    virtual void endsInputFileProcessing(void);
 
-    void writeBehaviourParserSpecificIncludes(void);
+    virtual void writeBehaviourIntegrator(void);
 
-    void writeBehaviourParserSpecificTypedefs(void);
+    virtual void writeBehaviourParserSpecificIncludes(void);
 
-    void writeBehaviourParserSpecificMembers(void);
+    virtual void writeBehaviourParserSpecificTypedefs(void);
 
-    void writeBehaviourStateVarsIncrements(void);
+    virtual void writeBehaviourParserSpecificMembers(void);
+
+    virtual void writeBehaviourStateVarsIncrements(void);
     
-    void writeBehaviourConstructors(void);
+    virtual void writeBehaviourConstructors(void);
 
-    void writeBehaviourParserSpecificConstructorPart(void);
+    virtual void writeBehaviourParserSpecificConstructorPart(void);
 
-    void writeBehaviourStaticVars(void);
+    virtual void writeBehaviourStaticVars(void);
 
-    void writeComputeNumericalJacobian(void);
+    virtual void writeComputeNumericalJacobian(void);
 
-    void writeBehaviourComputeTangentOperator(void);
+    virtual void writeBehaviourComputeTangentOperator(void);
 
-    void writeGetPartialJacobianInvert(void);
+    virtual void writeGetPartialJacobianInvert(void);
 
-    void treatTheta(void);
+    virtual void treatTheta(void);
 
-    void treatIterMax(void);
+    virtual void treatIterMax(void);
 
-    void treatEpsilon(void);
+    virtual void treatEpsilon(void);
 
-    void treatAlgorithm(void);
+    virtual void treatAlgorithm(void);
 
-    void treatPredictor(void);
+    virtual void treatPredictor(void);
 
-    void treatComputeStress(void);
+    virtual void treatComputeStress(void);
 
-    void treatStateVariables(void);
+    virtual void treatStateVariables(void);
 
-    void treatAuxiliaryStateVariables(void);
+    virtual void treatAuxiliaryStateVariables(void);
 
-    void treatCompareToNumericalJacobian(void);
+    virtual void treatCompareToNumericalJacobian(void);
 
-    void treatJacobianComparisonCriterium(void);
+    virtual void treatJacobianComparisonCriterium(void);
 
-    void generateOutputFiles(void);
+    virtual void generateOutputFiles(void);
 
-    void treatUseAcceleration(void);
+    virtual void treatUseAcceleration(void);
 
-    void treatAccelerationTrigger(void);
+    virtual void treatAccelerationTrigger(void);
 
-    void treatAccelerationPeriod(void);
+    virtual void treatAccelerationPeriod(void);
 
-    void treatUseRelaxation(void);
+    virtual void treatUseRelaxation(void);
 
-    void treatRelaxationTrigger(void);
+    virtual void treatRelaxationTrigger(void);
     
-    void treatRelaxationCoefficient(void);
+    virtual void treatRelaxationCoefficient(void);
 
-    void treatInitJacobian(void);
+    virtual void treatInitJacobian(void);
 
-    void treatTangentOperator(void);
+    virtual void treatTangentOperator(void);
 
-    void treatIsTangentOperatorSymmetric(void);
+    virtual void treatIsTangentOperatorSymmetric(void);
+
+    virtual void
+    treatUnknownKeyword(void);
 
     std::string
     getJacobianPart(const VarHandler&,
@@ -155,8 +176,12 @@ namespace mfront{
 
     friend class MFrontBehaviourParserBase<MFrontImplicitParser>;
 
-    // error normalisation factors
-    std::map<std::string,std::string> enf;
+    std::set<std::string> jacobianPartsUsedInIntegrator;
+
+    std::set<std::string> internalStateVariableIncrementsUsedInPredictor;
+
+    // normalisation factors
+    std::map<std::string,std::string> nf;
 
     std::string computeStress;
 

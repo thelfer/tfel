@@ -45,4 +45,4 @@ cmake usefull variables
 cmake typical usage
 ===================
 
-cmake ../head -DCMAKE_BUILD_TYPE=Release -Dlocal-castem-header-ON -Denable-fortran=ON -Denable-python=ON -Denable-aster=ON -DCMAKE_INSTALL_PREFIX=/home/th202608/codes/tfel/trunk/install
+cmake ../head -DCMAKE_BUILD_TYPE=Release -Dlocal-castem-header=ON -Denable-fortran=ON -Denable-python=ON -Denable-aster=ON -DCMAKE_INSTALL_PREFIX=/home/th202608/codes/tfel/trunk/install

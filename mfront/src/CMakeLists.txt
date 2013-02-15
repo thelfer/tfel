@@ -55,6 +55,8 @@ set(mfront_SOURCES
     MFrontCppTestLawInterface.cxx
     MFrontExcelLawInterface.cxx
     MFrontLaTeXLawInterface.cxx
+    VariableModifier.cxx
+    WordAnalyser.cxx
     ${PROJECT_BINARY_DIR}/mfront/src/MFrontHeader.cxx)
 
 if(HAVE_GNUPLOT)
