@@ -16,6 +16,7 @@
 #include"MFront/MFrontMultipleIsotropicMisesFlowsParser.hxx"
 #include"MFront/MFrontRungeKuttaParser.hxx"
 #include"MFront/MFrontImplicitParser.hxx"
+#include"MFront/MFrontImplicitParserII.hxx"
 
 #include"MFront/MFrontModelParser.hxx"
 
@@ -32,8 +33,9 @@ namespace mfront
     MFrontParserProxy<MFrontMaterialLawParser>  proxy5;
     MFrontParserProxy<MFrontMultipleIsotropicMisesFlowsParser>  proxy6;
     MFrontParserProxy<MFrontRungeKuttaParser>  proxy7;
-    MFrontParserProxy<MFrontImplicitParser>  proxy8;
-    MFrontParserProxy<MFrontModelParser>  proxy9;
+    MFrontParserProxy<MFrontImplicitParser>    proxy8;
+    MFrontParserProxy<MFrontImplicitParserII>  proxy9;
+    MFrontParserProxy<MFrontModelParser>       proxy10;
   } // end of initParsers 
 
 } // end of namespace mfront

@@ -695,7 +695,8 @@ mfront/include/MFront/MFrontFortranLawInterface.hxx -text
 mfront/include/MFront/MFrontGenericData.hxx -text
 mfront/include/MFront/MFrontGnuplotLawInterface.hxx -text
 mfront/include/MFront/MFrontHeader.hxx -text
-mfront/include/MFront/MFrontImplicitParser.hxx -text
+mfront/include/MFront/MFrontImplicitParserBase.hxx -text
+mfront/include/MFront/MFrontImplicitParserII.hxx -text
 mfront/include/MFront/MFrontInitInterfaces.hxx -text
 mfront/include/MFront/MFrontInitParsers.hxx -text
 mfront/include/MFront/MFrontIsotropicBehaviourParserBase.hxx -text
@@ -785,7 +786,8 @@ mfront/src/MFrontExcelLawInterface.cxx -text
 mfront/src/MFrontFortranLawInterface.cxx -text
 mfront/src/MFrontGnuplotLawInterface.cxx -text
 mfront/src/MFrontHeader.cxx.in -text
-mfront/src/MFrontImplicitParser.cxx -text
+mfront/src/MFrontImplicitParserBase.cxx -text
+mfront/src/MFrontImplicitParserII.cxx -text
 mfront/src/MFrontInitInterfaces.cxx -text
 mfront/src/MFrontInitParsers.cxx -text
 mfront/src/MFrontIsotropicBehaviourParserBase.cxx -text

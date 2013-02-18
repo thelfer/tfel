@@ -85,24 +85,24 @@ namespace mfront{
     using namespace std;
     typedef map<string,double>::value_type MVType;
     double v;
-    this->checkNotEndOfFile("MFrontImplicitParser::treatTheta",
+    this->checkNotEndOfFile("MFrontIsotropicBehaviourParserBase::treatTheta",
 			    "Cannot read theta value.");
     istringstream flux(current->value);
     flux >> v;
     if((flux.fail())||(!flux.eof())){
-      this->throwRuntimeError("MFrontImplicitParser::treatTheta",
+      this->throwRuntimeError("MFrontIsotropicBehaviourParserBase::treatTheta",
 			      "Failed to read theta value.");
     }
     if((v<0.)||(v>1.)){
-      this->throwRuntimeError("MFrontImplicitParser::treatTheta",
+      this->throwRuntimeError("MFrontIsotropicBehaviourParserBase::treatTheta",
 			      "Theta value must be positive and smaller than 1.");
     }
     if(!this->parametersDefaultValues.insert(MVType("theta",v)).second){
-      this->throwRuntimeError("MFrontImplicitParser::treatTheta",
+      this->throwRuntimeError("MFrontIsotropicBehaviourParserBase::treatTheta",
 			      "default value already defined for parameter 'theta'");
     }
     ++(this->current);
-    this->readSpecifiedToken("MFrontImplicitParser::treatTheta",";");
+    this->readSpecifiedToken("MFrontIsotropicBehaviourParserBase::treatTheta",";");
     // using namespace std;
     // this->checkNotEndOfFile("MFrontIsotropicBehaviourParserBase::treatTheta",
     // 			    "Cannot read theta value.");
@@ -126,24 +126,24 @@ namespace mfront{
     using namespace std;
     typedef map<string,double>::value_type MVType;
     double epsilon;
-    this->checkNotEndOfFile("MFrontImplicitParser::treatEpsilon",
+    this->checkNotEndOfFile("MFrontIsotropicBehaviourParserBase::treatEpsilon",
 			    "Cannot read epsilon value.");
     istringstream flux(current->value);
     flux >> epsilon;
     if((flux.fail())||(!flux.eof())){
-      this->throwRuntimeError("MFrontImplicitParser::treatEpsilon",
+      this->throwRuntimeError("MFrontIsotropicBehaviourParserBase::treatEpsilon",
 			      "Failed to read epsilon value.");
     }
     if(epsilon<0){
-      this->throwRuntimeError("MFrontImplicitParser::treatEpsilon",
+      this->throwRuntimeError("MFrontIsotropicBehaviourParserBase::treatEpsilon",
 			      "Epsilon value must be positive.");
     }
     if(!this->parametersDefaultValues.insert(MVType("epsilon",epsilon)).second){
-      this->throwRuntimeError("MFrontImplicitParser::treatEpsilon",
+      this->throwRuntimeError("MFrontIsotropicBehaviourParserBase::treatEpsilon",
 			      "default value already defined for parameter 'epsilon'");
     }
     ++(this->current);
-    this->readSpecifiedToken("MFrontImplicitParser::treatEpsilon",";");
+    this->readSpecifiedToken("MFrontIsotropicBehaviourParserBase::treatEpsilon",";");
   } // MFrontIsotropicBehaviourParserBase::treatEpsilon
 
   void
@@ -152,16 +152,16 @@ namespace mfront{
     using namespace std;
     typedef map<string,unsigned short>::value_type MVType;
     unsigned short iterMax;
-    iterMax = this->readUnsignedShort("MFrontImplicitParser::treatIterMax");
+    iterMax = this->readUnsignedShort("MFrontIsotropicBehaviourParserBase::treatIterMax");
     if(iterMax==0){
-      this->throwRuntimeError("MFrontImplicitParser::treatIterMax",
+      this->throwRuntimeError("MFrontIsotropicBehaviourParserBase::treatIterMax",
 			      "invalid value for parameter 'iterMax'");
     }
     if(!this->uParametersDefaultValues.insert(MVType("iterMax",iterMax)).second){
-      this->throwRuntimeError("MFrontImplicitParser::treatIterMax",
+      this->throwRuntimeError("MFrontIsotropicBehaviourParserBase::treatIterMax",
 			      "default value already defined for parameter 'iterMax'");
     }
-    this->readSpecifiedToken("MFrontImplicitParser::treatIterMax",";");
+    this->readSpecifiedToken("MFrontIsotropicBehaviourParserBase::treatIterMax",";");
   } // end of MFrontIsotropicBehaviourParserBase::treatIterMax
 
   void

@@ -1,12 +1,12 @@
 /*!
- * \file   MFrontImplicitParser.hxx
- * \brief  This file declares the MFrontImplicitParser class
+ * \file   MFrontImplicitParserBase.hxx
+ * \brief  This file declares the MFrontImplicitParserBase class
  * \author Helfer Thomas
  * \date   10 Nov 2006
  */
 
-#ifndef _LIB_MFRONTIMPLICITPARSER_H_
-#define _LIB_MFRONTIMPLICITPARSER_H_ 
+#ifndef _LIB_MFRONTIMPLICITPARSERBASE_H_
+#define _LIB_MFRONTIMPLICITPARSERBASE_H_ 
 
 #include<string>
 #include"MFront/MFrontBehaviourParserBase.hxx"
@@ -14,54 +14,53 @@
 
 namespace mfront{
 
-  struct MFrontImplicitParser
+  struct MFrontImplicitParserBase
     : public MFrontVirtualParser,
-      public MFrontBehaviourParserBase<MFrontImplicitParser>
+      public MFrontBehaviourParserBase<MFrontImplicitParserBase>
   {
-    static std::string 
-    getName(void);
 
-    static std::string 
-    getDescription(void);
+    MFrontImplicitParserBase();
 
-    MFrontImplicitParser();
+    virtual void setVerboseMode();
 
-    void setVerboseMode();
+    virtual void setDebugMode();
 
-    void setDebugMode();
+    virtual void setWarningMode();
 
-    void setWarningMode();
+    virtual void treatFile(const std::string&);
 
-    void treatFile(const std::string&);
+    virtual void writeOutputFiles();
 
-    void writeOutputFiles();
-
-    void
+    virtual void
     setInterfaces(const std::set<std::string>&);
 
-    std::map<std::string,std::vector<std::string> >
+    virtual std::map<std::string,
+		     std::vector<std::string> >
     getGlobalIncludes(void);
 
-    std::map<std::string,std::vector<std::string> >
+    virtual std::map<std::string,
+	     std::vector<std::string> >
     getGlobalDependencies(void);
 
-    std::map<std::string,std::vector<std::string> >
+    virtual std::map<std::string,
+		     std::vector<std::string> >
     getGeneratedSources(void);
 
-    std::vector<std::string>
+    virtual std::vector<std::string>
     getGeneratedIncludes(void);
 
-    std::map<std::string,std::vector<std::string> >
+    virtual std::map<std::string,
+		     std::vector<std::string> >
     getLibrariesDependencies(void);
 
-    std::map<std::string,
-	     std::pair<std::vector<std::string>,
-		       std::vector<std::string> > >
+    virtual std::map<std::string,
+		     std::pair<std::vector<std::string>,
+			       std::vector<std::string> > >
     getSpecificTargets(void);
 
-    ~MFrontImplicitParser();
+    virtual ~MFrontImplicitParserBase();
 
-  private:
+  protected:
 
     enum Algorithm{
       NEWTONRAPHSON,
@@ -71,7 +70,7 @@ namespace mfront{
       DEFAULT
     };
 
-    bool
+    virtual bool
     isJacobianPart(const std::string&);
 
     virtual void
@@ -174,7 +173,7 @@ namespace mfront{
 		    const std::string& = "this->jacobian",
 		    const std::string& = "");
 
-    friend class MFrontBehaviourParserBase<MFrontImplicitParser>;
+    friend class MFrontBehaviourParserBase<MFrontImplicitParserBase>;
 
     std::set<std::string> jacobianPartsUsedInIntegrator;
 
@@ -203,9 +202,9 @@ namespace mfront{
 
     bool useAcceleration;
 
-  }; // end of struct MFrontImplicitParser
+  }; // end of struct MFrontImplicitParserBase
 
 } // end of namespace mfront  
 
-#endif /* _LIB_MFRONTIMPLICITPARSER_H */
+#endif /* _LIB_MFRONTIMPLICITPARSERBASE_H */
 

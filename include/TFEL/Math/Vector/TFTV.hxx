@@ -13,6 +13,7 @@
 #include"TFEL/Math/Vector/VectorUtilities.hxx"
 #include"TFEL/Math/Vector/VectorConcept.hxx"
 #include"TFEL/Math/Vector/VectorExpr.hxx"
+#include"TFEL/Math/General/EmptyRunTimeProperties.hxx"
 #include"TFEL/Math/tvector.hxx"
 
 namespace tfel
@@ -51,12 +52,24 @@ namespace tfel
 	     unsigned short Nn,
 	     typename T>
     struct VectorExpr<tvector<Nn,T>,TFTVExpr<Mn,In,Nn,T> >
-      : public VectorConcept<VectorExpr<T,TFTVExpr<Mn,In,Nn,T> > >
+      : public VectorConcept<VectorExpr<tvector<Nn,T>,TFTVExpr<Mn,In,Nn,T> > >
     {
+
+      typedef EmptyRunTimeProperties RunTimeProperties;
 
       VectorExpr(tvector<Mn,T>& v_)
 	: v(v_)
       {} // end of VectorExpr
+
+      /*
+       * Return the RunTimeProperties of the tvector
+       * \return tvector::RunTimeProperties
+       */
+      const RunTimeProperties
+      getRunTimeProperties(void) const
+      {
+	return RunTimeProperties();
+      }
 
       const T&
       operator[](const unsigned short i) const
@@ -242,6 +255,20 @@ namespace tfel
     } // end of operator << 
     
   } // end of namespace math
+
+  namespace typetraits{
+
+    template<unsigned short Mn,
+  	     unsigned short In,
+  	     unsigned short Nn,
+  	     typename T>
+    struct IsTemporary<tfel::math::VectorExpr<tfel::math::tvector<Nn,T >,
+					      tfel::math::TFTVExpr<Mn,In,Nn,T> > >
+    {
+      static const bool cond = false;
+    };
+
+  }// end of namespace typetraits
 
 } // end of namespace tfel
 

@@ -44,7 +44,9 @@ mfront_SOURCES = main.cxx                                             \
 		 MFrontIsotropicStrainHardeningMisesCreepParser.cxx   \
 		 MFrontIsotropicMisesPlasticFlowParser.cxx            \
 		 MFrontRungeKuttaParser.cxx                           \
+		 MFrontImplicitParserBase.cxx                         \
 		 MFrontImplicitParser.cxx                             \
+		 MFrontImplicitParserII.cxx                           \
 		 MFrontMultipleIsotropicMisesFlowsParser.cxx          \
 		 MFrontIsotropicBehaviourParserBase.cxx               \
 		 MFrontMFrontLawInterface.cxx                         \
