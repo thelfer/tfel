@@ -127,6 +127,8 @@ namespace mfront{
 
     virtual void treatEpsilon(void);
 
+    virtual void treatPertubationValueForNumericalJacobianComputation(void);
+
     virtual void treatAlgorithm(void);
 
     virtual void treatPredictor(void);

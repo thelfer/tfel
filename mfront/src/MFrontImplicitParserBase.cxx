@@ -30,6 +30,7 @@ namespace mfront{
     this->parametersHolder.push_back(VarHandler("real","theta",1u,0u));
     this->registerVariable("epsilon");
     this->parametersHolder.push_back(VarHandler("real","epsilon",1u,0u));
+    this->registerVariable("numerical_jacobian_epsilon");
     this->registerVariable("iterMax");
     this->parametersHolder.push_back(VarHandler("ushort","iterMax",1u,0u));
     this->registerVariable("jacobianComparisonCriterium");
@@ -84,6 +85,7 @@ namespace mfront{
     this->registerNewCallBack("@Predictor",&MFrontImplicitParserBase::treatPredictor);
     this->registerNewCallBack("@Theta",&MFrontImplicitParserBase::treatTheta);
     this->registerNewCallBack("@Epsilon",&MFrontImplicitParserBase::treatEpsilon);
+    this->registerNewCallBack("@PertubationValueForNumericalJacobianComputation",&MFrontImplicitParserBase::treatPertubationValueForNumericalJacobianComputation);
     this->registerNewCallBack("@IterMax",&MFrontImplicitParserBase::treatIterMax);
     this->registerNewCallBack("@MaximumNumberOfIterations",&MFrontImplicitParserBase::treatIterMax);
     this->registerNewCallBack("@Algorithm",&MFrontImplicitParserBase::treatAlgorithm);
@@ -493,6 +495,32 @@ namespace mfront{
 			      "Epsilon value must be positive.");
     }
     if(!this->parametersDefaultValues.insert(MVType("epsilon",epsilon)).second){
+      this->throwRuntimeError("MFrontImplicitParserBase::treatEpsilon",
+			      "default value already defined for parameter 'epsilon'");
+    }
+    ++(this->current);
+    this->readSpecifiedToken("MFrontImplicitParserBase::treatEpsilon",";");
+  } // MFrontImplicitParserBase::treatEpsilon
+
+  void
+  MFrontImplicitParserBase::treatPertubationValueForNumericalJacobianComputation(void)
+  {
+    using namespace std;
+    typedef map<string,double>::value_type MVType;
+    double epsilon;
+    this->checkNotEndOfFile("MFrontImplicitParserBase::treatPertubationValueForNumericalJacobianComputation",
+			    "Cannot read epsilon value.");
+    istringstream flux(current->value);
+    flux >> epsilon;
+    if((flux.fail())||(!flux.eof())){
+      this->throwRuntimeError("MFrontImplicitParserBase::treatPertubationValueForNumericalJacobianComputation",
+			      "Failed to read epsilon value.");
+    }
+    if(epsilon<0){
+      this->throwRuntimeError("MFrontImplicitParserBase::treatPertubationValueForNumericalJacobianComputation",
+			      "Epsilon value must be positive.");
+    }
+    if(!this->parametersDefaultValues.insert(MVType("numerical_jacobian_epsilon",epsilon)).second){
       this->throwRuntimeError("MFrontImplicitParserBase::treatEpsilon",
 			      "default value already defined for parameter 'epsilon'");
     }
@@ -1390,7 +1418,7 @@ namespace mfront{
     this->behaviourFile << "tvector<" << n << ",real> tfzeros(this->fzeros);\n";
     this->behaviourFile << "tmatrix<" << n << "," << n << ",real> tjacobian(this->jacobian);\n";
     this->behaviourFile << "for(unsigned short idx = 0; idx!= "<< n<<  ";++idx){\n";
-    this->behaviourFile << "this->zeros(idx) -= 10.*(this->epsilon);\n";
+    this->behaviourFile << "this->zeros(idx) -= this->numerical_jacobian_epsilon;\n";
     this->behaviourFile << "this->computeStress();\n";
     this->behaviourFile << "this->computeFdF();\n";
     this->behaviourFile << "this->zeros = tzeros;\n";
@@ -1400,10 +1428,10 @@ namespace mfront{
     //   this->behaviourFile << "this->jacobian = tjacobian;\n";
     //   this->behaviourFile << "}\n";
     // }
-    this->behaviourFile << "this->zeros(idx) += 10.*(this->epsilon);\n";
+    this->behaviourFile << "this->zeros(idx) += this->numerical_jacobian_epsilon;\n";
     this->behaviourFile << "this->computeStress();\n";
     this->behaviourFile << "this->computeFdF();\n";
-    this->behaviourFile << "this->fzeros = (this->fzeros-tfzeros2)/(20.*(this->epsilon));\n";
+    this->behaviourFile << "this->fzeros = (this->fzeros-tfzeros2)/(real(2)*(this->numerical_jacobian_epsilon));\n";
     this->behaviourFile << "for(unsigned short idx2 = 0; idx2!= "<< n <<  ";++idx2){\n";
     this->behaviourFile << "njacobian(idx2,idx) = this->fzeros(idx2);\n";
     this->behaviourFile << "}\n";
@@ -2014,15 +2042,25 @@ namespace mfront{
     if(this->parametersDefaultValues.find("theta")==this->parametersDefaultValues.end()){
       this->parametersDefaultValues.insert(MVType("theta",0.5));
     }
-    if(this->parametersDefaultValues.find("epsilon")==this->parametersDefaultValues.end()){
+    if(this->parametersDefaultValues.find("epsilon")==
+       this->parametersDefaultValues.end()){
       this->parametersDefaultValues.insert(MVType("epsilon",1.e-8));
+    }
+    if((this->compareToNumericalJacobian)||(this->algorithm==BROYDEN)||
+       (this->algorithm==MFrontImplicitParserBase::NEWTONRAPHSON_NR)){
+      const string nje = "numerical_jacobian_epsilon";
+      this->parametersHolder.push_back(VarHandler("real",nje,1u,0u));
+      if(this->parametersDefaultValues.find(nje)==
+	 this->parametersDefaultValues.end()){
+	const double eps = 0.1*this->parametersDefaultValues.at("epsilon");
+	this->parametersDefaultValues.insert(MVType(nje,eps));
+      }
     }
     if(this->uParametersDefaultValues.find("iterMax")==this->uParametersDefaultValues.end()){
       this->uParametersDefaultValues.insert(MVType2("iterMax",100u));
     }
     unsigned short iterMax = this->uParametersDefaultValues["iterMax"];
     if(this->compareToNumericalJacobian){
-      
       if(this->parametersDefaultValues.find("jacobianComparisonCriterium")==this->parametersDefaultValues.end()){
 	double epsilon = this->parametersDefaultValues["epsilon"];
 	this->parametersDefaultValues.insert(MVType("jacobianComparisonCriterium",epsilon));
