@@ -2459,7 +2459,7 @@ la déformation inélastique associée à un des mécanismes d'écoulement,
 l'écrouissage du matériau, pour ce mécanisme, est supposé représenté par
 la déformation inélastique cumulée \(p_{i}\) définie par~:
 \[
-p_{i}=\int_{t_{0}}^{t}\sqrt{\Frac{2}{3}\,\tepsilonan_{i}\colon\tepsilonan_{i}}\,\dtot\,u
+p_{i}=\int_{t_{0}}^{t}\sqrt{\Frac{2}{3}\,\tdepsilonan_{i}\colon\tdepsilonan_{i}}\,\dtot\,u
 \]
 où \(t_{0}\) désigne un temps où le matériau est non écroui
 (généralement le temps de début de calcul !) et \(t\) le temps
@@ -2495,7 +2495,7 @@ internes des analyseurs spécifiques sont~:
   \item si plus d'un mécanisme est présent, la déformation
   inélastique totale \(p\) définit comme~:
   \[
-  p=\int_{t_{0}}^{t}\sqrt{\Frac{2}{3}\,\tepsilonan\colon\tepsilonan}\,\dtot\,u
+  p=\int_{t_{0}}^{t}\sqrt{\Frac{2}{3}\,\tdepsilonan\colon\tdepsilonan}\,\dtot\,u
   \]
   Chaque écoulement se faisant suivant la normale, \(p\) est
   également la somme des déformations inélastiques équivalentes des

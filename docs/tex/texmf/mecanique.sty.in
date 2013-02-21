@@ -58,6 +58,7 @@
 \newcommand{\depsilonto}{\ensuremath{\dot{\epsilon}^{\mathit{to}}}}
 \newcommand{\epsilonan}{\ensuremath{\epsilon^{\mathit{an}}}}
 \newcommand{\tepsilonan}{\ensuremath{\tenseur{\epsilon}^{\mathit{an}}}}
+\newcommand{\tdepsilonan}{\ensuremath{\tenseur{\dot{\epsilon}}^{\mathit{an}}}}
 
 \newcommand{\epsilontor}{\ensuremath{\epsilon^{\mathit{to}}_{r}}}
 \newcommand{\epsilontot}{\ensuremath{\epsilon^{\mathit{to}}_{\theta}}}

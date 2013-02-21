@@ -22,9 +22,9 @@
 \renewcommand{\th}{\ensuremath{\mathop{th}}}
 
 %*************************************************************************************************************************************
-%Opérateurs différentiels
+%OpÃ©rateurs diffÃ©rentiels
 
-\newcommand{\dtot}{\ensuremath{\text{d}}}
+\newcommand{\dtot}{\ensuremath{\mathrm{d}}}
 
 \newcommand{\Frac}[2]{\ensuremath{{\displaystyle \frac{\displaystyle #1}{\displaystyle #2}}}}
 
@@ -47,7 +47,7 @@
 \newcommand{\divergence}{\mathop{\mathrm{div}}}
 
 %*************************************************************************************************************************************
-%Opérateurs vectoriels
+%OpÃ©rateurs vectoriels
 
 \newcommand{\norm}[1]{\ensuremath{\left|\left|#1\right|\right|}}
 \newcommand{\abs}[1]{\ensuremath{\left|#1\right|}}
@@ -61,12 +61,12 @@
 
 
 %*************************************************************************************************************************************
-%Opérations vectorielles
+%OpÃ©rations vectorielles
 
 \newcommand{\prodvec}[2]{\ensuremath{\vec{#1}_{\wedge}\vec{#2}}}
 
 %*************************************************************************************************************************************
-%Opérateurs tensoriel
+%OpÃ©rateurs tensoriel
 
 %\newcommand{\tenseur}[1]{\ensuremath{\underset{\tilde{}}{\mathbf{#1}}}}
 %\newcommand{\tenseurq}[1]{\ensuremath{\underset{\approx}{\mathbf{#1}}}}
@@ -74,7 +74,7 @@
 \newcommand{\tenseurq}[1]{\ensuremath{\underline{\underline{\mathbf{#1}}}}}
 
 %*************************************************************************************************************************************
-%Opérations tensorielles
+%OpÃ©rations tensorielles
 
 \newcommand{\trace}[1]{\ensuremath{{\text{tr}}\; #1}}
 \newcommand{\tracepos}[1]{\ensuremath{\left(\trace{#1}\right)_{+}}}
@@ -82,12 +82,12 @@
 \newcommand{\transpose}[1]{\ensuremath{\mbox{}^{t}{#1}}}
 
 %*************************************************************************************************************************************
-%Opérations statistiques
+%OpÃ©rations statistiques
 
 \newcommand{\average}[1]{\ensuremath{\langle~#1~\rangle}}
 
 %*************************************************************************************************************************************
-%Objets mathématiques
+%Objets mathÃ©matiques
 
 \newenvironment{matrice}[1]{
   \ensuremath
@@ -108,9 +108,9 @@
 
 % \theoremheaderfont{\usefont{T1}{phv}{bx}{n}}
 % \theorembodyfont{}
-% \newframedtheorem{theoreme}{Théoreme}
-% \newframedtheorem{definition}{Définition}
-% \newframedtheorem{hypothese}{Hypothèse}
+% \newframedtheorem{theoreme}{ThÃ©oreme}
+% \newframedtheorem{definition}{DÃ©finition}
+% \newframedtheorem{hypothese}{HypothÃ¨se}
 
 \newcommand{\dualite}[1]{\ensuremath{\paren{#1}}}
 \newcommand{\crochet}[1]{\ensuremath{\left\{#1\right\}}}
@@ -121,7 +121,7 @@
   \rightskip=1.cm
   }
 \def\leaderfill{\leaders\hbox to 1em{\raisebox{0.3em}{\rule{1em}{0.1em}}}\hfill}
-\newenvironment{demonstration}{\begingroup\everypar{\narrowpar}\it\scriptsize\noindent{\usefont{T1}{phv}{bx}{n} \FunkyUnderline{Démonstration}~:}}{\hfill\leaderfill C.Q.F.D.\par\endgroup}
+\newenvironment{demonstration}{\begingroup\everypar{\narrowpar}\it\scriptsize\noindent{\usefont{T1}{phv}{bx}{n} \FunkyUnderline{DÃ©monstration}~:}}{\hfill\leaderfill C.Q.F.D.\par\endgroup}
 
 
 \endinput

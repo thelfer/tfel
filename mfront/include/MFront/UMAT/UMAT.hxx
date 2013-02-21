@@ -9,8 +9,8 @@
 #ifndef _LIB_TFEL_UMAT_MFRONT_UMAT_H_
 #define _LIB_TFEL_UMAT_MFRONT_UMAT_H_ 
 
-#include<string>
 #include<castem.h>
+
 #ifdef umat /* the umat symbol might be defined 
 	     * in the castem header, so remove it
 	     */

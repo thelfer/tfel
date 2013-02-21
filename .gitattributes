@@ -54,6 +54,7 @@ docs/mfront/Images/tubeaxi2.eps -text
 docs/mfront/Makefile.am -text
 docs/mfront/Makefile.doc.in -text
 docs/mfront/annexe-orthotropie.tex.in -text
+docs/mfront/behaviours.tex.in -text
 docs/mfront/glossary.tex.in -text
 docs/mfront/mfront.tex.in -text
 docs/mfront/mfront/GetEvol.dgibi -text
