@@ -67,6 +67,27 @@ namespace mfront
     throw(runtime_error(msg));
   } // end of ParserBase::throwRuntimeError
 
+  void ParserBase::treatImport()
+  {
+    using namespace std;
+    const string m = "MFrontBehaviourParserBase<Child>::treatImport";
+    const string oFileName = this->fileName;
+    this->checkNotEndOfFile(m);
+    const vector<string>& files = this->readStringOrArrayOfString(m);
+    this->checkNotEndOfFile(m);
+    this->readSpecifiedToken(m,";");
+    vector<string>::const_iterator p;
+    TokensContainer oFileTokens;
+    oFileTokens.swap(this->fileTokens);
+    TokensContainer::const_iterator ocurrent = this->current;
+    for(p=files.begin();p!=files.end();++p){
+      this->analyseFile(*p);
+    }
+    this->fileName = oFileName;
+    this->fileTokens.swap(oFileTokens);
+    this->current = ocurrent;
+  }
+
   void
   ParserBase::checkNotEndOfFile(const std::string& method,
 				const std::string& error){

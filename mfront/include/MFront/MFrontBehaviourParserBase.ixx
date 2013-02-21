@@ -27,6 +27,7 @@ namespace mfront{
   MFrontBehaviourParserBase<Child>::registerDefaultCallBacks(void)
   {
     this->registerNewCallBack("@Parser",&Child::treatParser);
+    this->registerNewCallBack("@Import",&Child::treatImport);
     this->registerNewCallBack("@Material",&Child::treatMaterial);
     this->registerNewCallBack("@Library",&Child::treatLibrary);
     this->registerNewCallBack("@Behaviour",&Child::treatBehaviour);
@@ -107,7 +108,7 @@ namespace mfront{
   } // end of MFrontBehaviourParserBase<Child>::MFrontBehaviourParserBase
 
   template<typename Child>
-  void MFrontBehaviourParserBase<Child>::treatFile(const std::string fileName_)
+  void MFrontBehaviourParserBase<Child>::analyseFile(const std::string& fileName_)
   {
     using namespace std;
 

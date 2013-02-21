@@ -3942,6 +3942,10 @@ montre qu'il n'est valide que si les différentes variables internes sont
 du même ordre de grandeur. Ceci est également nécessaire pour le bon
 comportement numérique de la méthode de \nom{Newton}.
 
+\paragraph{Normalisation des variables internes et des équations du
+système implicite}
+
+
 \subsubsection{Avantages et inconvénients des méthodes implicites} Les
 méthodes implicites sont généralement opposées aux méthodes
 d'intégration plus ou moins basées sur des algorithmes de type
@@ -4135,8 +4139,10 @@ perturbations. Cette vérification se fait par étapes~:
     \[
     \Frac{f\paren{x+\epsilon}-f\paren{x-\epsilon}}{2\,\epsilon}
     \]
-    La perturbation est choisie égale à la valeur du critère
-    d'arrêt de l'algorithme implicite. }~;
+  }. Par défaut, la perturbation est choisie égale à \(10\) fois la
+  valeur du critère d'arrêt de l'algorithme implicite. Cette valeur
+  peut être fixée par la directive
+  \mkeyb{PertubationValueForNumericalJacobian}{Pertubation\-Value\-For\-Numerical\-Jacobian}~;
   \item la seconde étape est de comparer les termes du jacobien.
   La comparaison se fait bloc par bloc~: la différence entre la dérivée
   \(\deriv{f_{y_{i}}}{\Delta\,y_{j}}\) calculée par l'utilisateur et son
@@ -4178,9 +4184,9 @@ perturbations. Cette vérification se fait par étapes~:
     & 26\,944\,564 & 5,65\\
     \hline
   \end{tabular}
-  \label{tab:NR:nJ}
   \caption{Impact du calcul de jacobien numérique et de sa comparaison à
     celui fourni par l'utilisateur pour une loi de comportement simple.}
+  \label{tab:NR:nJ}
 \end{table}
 
 Le coût du calcul du jacobien numérique est souvent important. Nous
@@ -4204,14 +4210,19 @@ jacobienne à la matrice identité.
 Insistons, le calcul de la matrice jacobienne est la
 principale difficulté de la méthode de \nom{Newton-Raphson}.
 
-Afin de dispenser l'utilisateur de fournir la matrice jacobienne,
-nous avons envisagé d'approximer le jacobien par différentiation
-numérique. Un jacobien correctement évalué (ordre \(2\) conduit à une
+Afin de dispenser l'utilisateur de fournir la matrice jacobienne, nous
+avons envisagé d'approximer le jacobien par différentiation
+numérique. Cette méthode est accessible par l'algorithme
+\texttt{Newton\-Raphson\textunderscore{}\-Numerical\-Jacobian}.  Par
+défaut, la perturbation est choisie égale à \(10\) fois la valeur du
+critère d'arrêt de l'algorithme implicite. Cette valeur peut être
+fixée par la directive
+\mkeyb{PertubationValueForNumericalJacobian}{Pertubation\-Value\-For\-Numerical\-Jacobian}.
+
+Un jacobien correctement évalué (ordre \(2\) conduit à une
 bonne convergence de l'algorithme, mais a un coût numérique
 important(voir au paragraphe~\ref{QNR:ComparaisonNumeriques} les
-tableaux~\ref{tab:QNR:1} et~\ref{tab:QNR:2}). Cette méthode est
-accessible par l'algorithme
-\texttt{Newton\-Raphson\textunderscore{}\-Numerical\-Jacobian}.
+tableaux~\ref{tab:QNR:1} et~\ref{tab:QNR:2}).
 
 Ce constat est général et de nombreux auteurs ont proposés des
 algorithmes qui ne se basent pas sur une différentiation numérique (sauf

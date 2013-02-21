@@ -376,7 +376,7 @@ namespace mfront{
   MFrontIsotropicBehaviourParserBase::treatFile(const std::string& fileName_) 
   {
     this->fileName = fileName_;
-    MFrontBehaviourParserBase<MFrontIsotropicBehaviourParserBase>::treatFile(fileName_);
+    MFrontBehaviourParserBase<MFrontIsotropicBehaviourParserBase>::analyseFile(fileName_);
   } // end of MFrontIsotropicBehaviourParserBase::treatFile
 
   void 

@@ -36,7 +36,9 @@ namespace mfront{
 
     void setDebugMode(void);
 
-    void treatFile(const std::string&);
+    virtual void treatFile(const std::string&);
+
+    virtual void analyseFile(const std::string&);
 
     void writeOutputFiles(void);
 

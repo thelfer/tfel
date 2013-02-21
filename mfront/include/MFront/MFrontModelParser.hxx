@@ -26,6 +26,9 @@ namespace mfront{
     treatFile(const std::string&);
 
     virtual void
+    analyseFile(const std::string&);
+
+    virtual void
     setInterfaces(const std::set<std::string>&);
 
   }; // end of MFrontModelParser

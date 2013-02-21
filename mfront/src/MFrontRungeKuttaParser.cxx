@@ -350,7 +350,7 @@ namespace mfront{
   MFrontRungeKuttaParser::treatFile(const std::string& fileName_) 
   {
     this->fileName = fileName_;
-    MFrontBehaviourParserBase<MFrontRungeKuttaParser>::treatFile(fileName_);
+    MFrontBehaviourParserBase<MFrontRungeKuttaParser>::analyseFile(fileName_);
   }
 
   void 

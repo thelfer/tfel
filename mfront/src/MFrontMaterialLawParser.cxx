@@ -577,6 +577,12 @@ namespace mfront{
   void
   MFrontMaterialLawParser::treatFile(const std::string& fileName_) 
   {
+    this->analyseFile(fileName_);
+  }
+
+  void
+  MFrontMaterialLawParser::analyseFile(const std::string& fileName_) 
+  {
     using namespace std;
     typedef MFrontLawInterfaceFactory MLIF;
     MLIF& mlif = MLIF::getMFrontLawInterfaceFactory();

@@ -848,7 +848,7 @@ namespace mfront{
   MFrontImplicitParserBase::treatFile(const std::string& fileName_) 
   {
     this->fileName = fileName_;
-    MFrontBehaviourParserBase<MFrontImplicitParserBase>::treatFile(fileName_);
+    MFrontBehaviourParserBase<MFrontImplicitParserBase>::analyseFile(fileName_);
   }
 
   void MFrontImplicitParserBase::writeBehaviourParserSpecificIncludes(void)

@@ -40,6 +40,12 @@ namespace mfront
   void
   MFrontModelParser::treatFile(const std::string& f)
   {
+    this->analyseFile(f);
+  }
+  
+  void
+  MFrontModelParser::analyseFile(const std::string& f)
+  {  
     using namespace std;
     if(this->interfaces.empty()){
       string msg("MFrontModelParser::treatFile : ");

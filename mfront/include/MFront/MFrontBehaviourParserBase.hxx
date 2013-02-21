@@ -39,7 +39,7 @@ namespace mfront{
 
   public:
 
-    void treatFile(const std::string);
+    void analyseFile(const std::string&);
 
   };
 

@@ -33,6 +33,9 @@ namespace mfront
 
     ParserBase();
 
+    virtual void
+    analyseFile(const std::string&) = 0;
+
     virtual ~ParserBase();
 
     void
@@ -165,38 +168,39 @@ namespace mfront
     std::vector<std::string>
     readSpecifiedValues(const std::string&,
 			const std::vector<std::string>&);
-
-    void
+    virtual void
     treatMFront(void);
-    void
+    virtual void
+    treatImport(void);
+    virtual void
     treatMaterialLaw(void);
-    void
+    virtual void
     treatLink(void);
-    void
+    virtual void
     treatAuthor(void);
-    void
+    virtual void
     treatUnknownKeyword(void);
-    void
+    virtual void
     treatDate(void);
-    void
+    virtual void
     treatIncludes(void);
-    void
+    virtual void
     treatSources(void);
-    void
+    virtual void
     treatPrivate(void);
-    void
+    virtual void
     treatMembers(void);
-    void
+    virtual void
     treatParser(void);
-    void
+    virtual void
     treatStaticVar(void);
-    void
+    virtual void
     treatDescription(void);
-    void
+    virtual void
     treatMaterial(void);
-    void
+    virtual void
     treatLibrary(void);
-    void
+    virtual void
     ignoreKeyWord(const std::string&);
     void
     registerVariable(const std::string&);

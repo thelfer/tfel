@@ -39,13 +39,13 @@ namespace mfront{
   {
 
     virtual void
-      setVerboseMode(void);
+    setVerboseMode(void);
 
     virtual void
-      setDebugMode(void);
+    setDebugMode(void);
 
     virtual void
-      setWarningMode(void);
+    setWarningMode(void);
 
   protected:
        
@@ -53,19 +53,19 @@ namespace mfront{
     standardModifier(const std::string&,const bool);
 
     std::map<std::string,std::vector<std::string> >
-      getGlobalIncludes(void);
+    getGlobalIncludes(void);
 
     std::map<std::string,std::vector<std::string> >
-      getGlobalDependencies(void);
+    getGlobalDependencies(void);
 
     std::map<std::string,std::vector<std::string> >
-      getGeneratedSources(void);
+    getGeneratedSources(void);
 
     std::vector<std::string>
-      getGeneratedIncludes(void);
+    getGeneratedIncludes(void);
 
     std::map<std::string,std::vector<std::string> >
-      getLibrariesDependencies(void);
+    getLibrariesDependencies(void);
     
     std::map<std::string,
 	     std::pair<std::vector<std::string>,
@@ -73,16 +73,16 @@ namespace mfront{
     getSpecificTargets(void);
  
     bool
-      isInternalStateVariable(const std::string&);
+    isInternalStateVariable(const std::string&);
     
     bool
-      isInternalStateVariableIncrement(const std::string&);
+    isInternalStateVariableIncrement(const std::string&);
     
     bool
-      isExternalStateVariable(const std::string&);
+    isExternalStateVariable(const std::string&);
     
     virtual void
-      readStringList(StringContainer&);
+    readStringList(StringContainer&);
     
     void
       setInterfaces(const std::set<std::string>&);

@@ -25,13 +25,13 @@ namespace mfront{
 
     void generateOutputFiles(void);
 
-    void setVerboseMode();
+    virtual void setVerboseMode();
 
-    void setDebugMode();
+    virtual void setDebugMode();
 
-    void setWarningMode();
+    virtual void setWarningMode();
 
-    void treatFile(const std::string&);
+    virtual void treatFile(const std::string&);
 
     void writeOutputFiles();
 

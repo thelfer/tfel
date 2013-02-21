@@ -59,7 +59,7 @@ namespace mfront{
   void 
   MFrontDefaultParser::treatFile(const std::string& fileName_){
     this->fileName = fileName_;
-    MFrontBehaviourParserBase<MFrontDefaultParser>::treatFile(fileName_);
+    MFrontBehaviourParserBase<MFrontDefaultParser>::analyseFile(fileName_);
   }
 
   void 
