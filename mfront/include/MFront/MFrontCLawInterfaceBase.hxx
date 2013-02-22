@@ -125,6 +125,9 @@ namespace mfront{
     writeSrcPreprocessorDirectives(const std::string&,
 				   const std::string&) = 0;
 
+    virtual bool
+    requiresCheckBoundsFunction(void) const = 0;
+
     /*!
      * \param const std::string&, name of the material
      * \param const std::string&, name of the class

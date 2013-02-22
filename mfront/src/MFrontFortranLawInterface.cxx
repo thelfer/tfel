@@ -207,6 +207,12 @@ namespace mfront
     return "MFRONT_SHAREDOBJ mfront_fortran_real8\n"+ makeUpperCase(material+"_"+className) + "_F77";
   } // end of MFrontFortranLawInterface::getFunctionDeclaration
   
+  bool
+  MFrontFortranLawInterface::requiresCheckBoundsFunction(void) const
+  {
+    return false;
+  }
+
   std::string
   MFrontFortranLawInterface::getCheckBoundsFunctionDeclaration(const std::string& material,
 							       const std::string& className)

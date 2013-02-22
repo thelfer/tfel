@@ -168,6 +168,12 @@ namespace mfront
     return "MFRONT_SHAREDOBJ double MFRONT_STDCALL\n"+material+"_"+className;
   } // end of MFrontCLawInterface::getFunctionDeclaration
   
+  bool
+  MFrontCLawInterface::requiresCheckBoundsFunction(void) const
+  {
+    return false;
+  }
+
   std::string
   MFrontCLawInterface::getCheckBoundsFunctionDeclaration(const std::string& material,
 							 const std::string& className)

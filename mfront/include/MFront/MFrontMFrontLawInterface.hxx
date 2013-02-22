@@ -140,6 +140,9 @@ namespace mfront{
     getCheckBoundsFunctionDeclaration(const std::string&,
 				      const std::string&);
 
+    bool
+    requiresCheckBoundsFunction(void) const;
+
   }; // end of MfrontMFrontLawInterface
 
 } // end of namespace mfront

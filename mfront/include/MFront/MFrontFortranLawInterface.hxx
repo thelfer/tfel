@@ -147,6 +147,9 @@ namespace mfront{
     getCheckBoundsFunctionDeclaration(const std::string&,
 				      const std::string&);
 
+    bool
+    requiresCheckBoundsFunction(void) const;
+
   }; // end of MfrontFortranLawInterface
 
 } // end of namespace mfront

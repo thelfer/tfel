@@ -161,6 +161,12 @@ namespace mfront
     }
   } // end of MFrontMFrontLawInterface::getFunctionDeclaration
   
+  bool
+  MFrontMFrontLawInterface::requiresCheckBoundsFunction(void) const
+  {
+    return true;
+  }
+
   std::string
   MFrontMFrontLawInterface::getCheckBoundsFunctionDeclaration(const std::string& material,
 							      const std::string& className)

@@ -188,8 +188,8 @@ namespace mfront
     this->headerFile << "(";
     this->writeParameterList(this->headerFile,inputs);
     this->headerFile << ");\n\n";
-    if((!bounds.empty())||
-       (!physicalBounds.empty())){
+    if(((!bounds.empty())||(!physicalBounds.empty()))||
+       (this->requiresCheckBoundsFunction())){
       this->headerFile << this->getCheckBoundsFunctionDeclaration(material,className);
       this->headerFile << "(";
       this->writeParameterList(this->headerFile,inputs);
@@ -301,8 +301,8 @@ namespace mfront
     this->srcFile << function.body;
     this->srcFile << "return " << output << ";\n";
     this->srcFile << "} /* end of " << className << " */\n\n";
-    if((!bounds.empty())||
-       (!physicalBounds.empty())){
+    if(((!bounds.empty())||(!physicalBounds.empty()))||
+       (this->requiresCheckBoundsFunction())){
       this->srcFile << this->getCheckBoundsFunctionDeclaration(material,className);
       this->srcFile << "(";
       this->writeParameterList(this->srcFile,inputs);
