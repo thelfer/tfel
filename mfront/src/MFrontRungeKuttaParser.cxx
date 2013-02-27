@@ -1727,7 +1727,7 @@ namespace mfront{
     this->behaviourFile << "/*!" << endl;
     this->behaviourFile << "* \\brief Integrate behaviour law over the time step" << endl;
     this->behaviourFile << "*/" << endl;
-    this->behaviourFile << "bool" << endl;
+    this->behaviourFile << "IntegrationResult" << endl;
     this->behaviourFile << "integrate(const bool computeTangentOperator_){" << endl;
     if(this->algorithm == "Euler"){
       this->writeBehaviourEulerIntegrator();
@@ -1759,7 +1759,11 @@ namespace mfront{
     this->behaviourFile << "string msg(\""<< this->className << "::integrate : \");\n";
     this->behaviourFile << "msg += \"tangent operator is not available\";\n";
     this->behaviourFile << "}\n";
-    this->behaviourFile << "return true;" << endl;
+    if(this->behaviourCharacteristic.useQt()){        
+      this->behaviourFile << "return MechanicalBehaviour<hypothesis,Type,use_qt>::SUCCESS;\n";
+    } else {
+      this->behaviourFile << "return MechanicalBehaviour<hypothesis,Type,false>::SUCCESS;\n";
+    }
     this->behaviourFile << "} // end of " << this->className << "::integrate" << endl << endl;
   } // end of void MFrontRungeKuttaParser::writeBehaviourIntegrator(void)
   

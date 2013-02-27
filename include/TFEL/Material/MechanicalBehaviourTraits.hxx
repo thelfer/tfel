@@ -39,19 +39,25 @@ namespace tfel{
        */
       static const unsigned short internal_variables_nb  = 0;
       /*!
-       * Says if the behaviour uses quantities
+       * Says if the Behaviour class uses quantities
        * \see qt.hxx
        */
       static const bool use_quantities = false;
       /*!
-       * Says if behaviour provides a consistent tangent operator
+       * Says if the Behaviour class is able to compute a consistent
+       * tangent operator
        */
       static const bool hasConsistantTangentOperator = false;
       /*!
-       * Says if behaviour the consistent tangent operator (if any) is
-       * symmetric
+       * Says if the consistent tangent operator computed by the
+       * Behaviour class (if any) is symmetric
        */
       static const bool isConsistantTangentOperatorSymmetric = false;
+      /*!
+       * Says if the Behaviour class is able the compute a Time Step
+       * Scaling factor
+       */
+      static const bool hasTimeStepScalingFactor = false;
     };
 
   } // end of namespace material

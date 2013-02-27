@@ -1039,7 +1039,8 @@ namespace mfront{
       useStateVarTimeDerivative(false),
       explicitlyDeclaredUsableInPurelyImplicitResolution(false),
       hasConsistantTangentOperator(false),
-      isConsistantTangentOperatorSymmetric(false)
+      isConsistantTangentOperatorSymmetric(false),
+      hasTimeStepScalingFactor(false)
   {
     // Register var names
     this->registerDefaultVarNames();
@@ -1870,7 +1871,7 @@ namespace mfront{
     this->behaviourFile << "/*!\n";
     this->behaviourFile << "* \\brief Integrate behaviour  over the time step\n";
     this->behaviourFile << "*/\n";
-    this->behaviourFile << "bool\n";
+    this->behaviourFile << "IntegrationResult\n";
     this->behaviourFile << "integrate(const bool computeTangentOperator_){\n";
     this->behaviourFile << "using namespace std;" << endl;
     this->behaviourFile << "using namespace tfel::math;" << endl;
@@ -1888,7 +1889,11 @@ namespace mfront{
 	p->writeBoundsChecks(this->behaviourFile);
       }
     }
-    this->behaviourFile << "return true;\n";
+    if(this->behaviourCharacteristic.useQt()){        
+      this->behaviourFile << "return MechanicalBehaviour<hypothesis,Type,use_qt>::SUCCESS;\n";
+    } else {
+      this->behaviourFile << "return MechanicalBehaviour<hypothesis,Type,false>::SUCCESS;\n";
+    }
     this->behaviourFile << "}\n\n";
   }
 
@@ -2369,11 +2374,13 @@ namespace mfront{
 			  << "BehaviourData<N,Type,use_qt> BehaviourData;\n";
       this->behaviourFile << "typedef " << this->className 
 			  << "IntegrationData<N,Type,use_qt> IntegrationData;\n";
+      this->behaviourFile << "typedef typename MechanicalBehaviour<hypothesis,Type,use_qt>::IntegrationResult IntegrationResult;\n\n";
     } else {
       this->behaviourFile << "typedef " << this->className 
 			  << "BehaviourData<N,Type,false> BehaviourData;\n";
       this->behaviourFile << "typedef " << this->className 
-			  << "IntegrationData<N,Type,false> IntegrationData;\n\n";
+			  << "IntegrationData<N,Type,false> IntegrationData;\n";
+      this->behaviourFile << "typedef typename MechanicalBehaviour<hypothesis,Type,false>::IntegrationResult IntegrationResult;\n\n";
     }
     this->behaviourFile << "private :\n\n";
   } // end of MFrontBehaviourParserCommon::writeBehaviourStandardTFELTypedefs
@@ -2441,6 +2448,12 @@ namespace mfront{
     }
     this->behaviourFile << "static const bool isConsistantTangentOperatorSymmetric = ";
     if(this->isConsistantTangentOperatorSymmetric){
+      this->behaviourFile << "true;\n";
+    } else {
+      this->behaviourFile << "false;\n";
+    }
+    this->behaviourFile << "static const bool hasTimeStepScalingFactor = ";
+    if(this->hasTimeStepScalingFactor){
       this->behaviourFile << "true;\n";
     } else {
       this->behaviourFile << "false;\n";
@@ -2558,6 +2571,7 @@ namespace mfront{
     this->writeBehaviourIntegrator();
     this->writeBehaviourComputeTangentOperator();
     this->writeBehaviourGetTangentOperator();
+    this->writeBehaviourGetTimeStepScalingFactor();
     this->writeBehaviourUpdateExternalStateVariables();
     this->writeBehaviourDestructor();
     this->checkBehaviourFile();
@@ -2588,6 +2602,15 @@ namespace mfront{
     this->behaviourFile << "const StiffnessTensor&\n";
     this->behaviourFile << "getTangentOperator(void) const{\n";
     this->behaviourFile << "return this->Dt;\n";
+    this->behaviourFile << "};\n\n";
+  } // end of MFrontBehaviourParserCommon::writeBehaviourComputeTangentOperator(void)
+
+  void MFrontBehaviourParserCommon::writeBehaviourGetTimeStepScalingFactor()
+  {
+    this->checkBehaviourFile();
+    this->behaviourFile << "real\n";
+    this->behaviourFile << "getTimeStepScalingFactor(void) const{\n";
+    this->behaviourFile << "return real(1);\n";
     this->behaviourFile << "};\n\n";
   } // end of MFrontBehaviourParserCommon::writeBehaviourComputeTangentOperator(void)
 

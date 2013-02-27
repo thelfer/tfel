@@ -1234,17 +1234,17 @@ namespace mfront{
 
   std::string
   MFrontImplicitParserBase::getJacobianPart(const VarHandler&  v1,
-					const VarHandler&  v2,
-					const SupportedTypes::TypeSize& n,
-					const SupportedTypes::TypeSize& n2,
-					const SupportedTypes::TypeSize& n3,
-					const std::string& j,
-					const std::string& p)
+					    const VarHandler&  v2,
+					    const SupportedTypes::TypeSize& n,
+					    const SupportedTypes::TypeSize& n2,
+					    const SupportedTypes::TypeSize& n3,
+					    const std::string& j,
+					    const std::string& p)
   {
     using namespace std;
     ostringstream d;
     if(this->varNames.find(p+"df"+v1.name+"_dd"+v2.name)!=this->varNames.end()){
-      string msg("MFrontImplicitParserBase::writeBehaviourIntegrator : ");
+      string msg("MFrontImplicitParserBase::getJacobianPart : ");
       msg += "variable name 'df"+v1.name+"_dd"+v2.name;
       msg += "' is reserved.\n";
       throw(runtime_error(msg));
@@ -1459,7 +1459,8 @@ namespace mfront{
     this->behaviourFile << "/*!\n";
     this->behaviourFile << "* \\brief Integrate behaviour law over the time step\n";
     this->behaviourFile << "*/\n";
-    this->behaviourFile << "bool\nintegrate(const bool computeTangentOperator_){\n";
+    this->behaviourFile << "IntegrationResult" << endl;
+    this->behaviourFile << "integrate(const bool computeTangentOperator_){\n";
     this->behaviourFile << "using namespace std;\n";
     this->behaviourFile << "using namespace tfel::math;\n";
     if(this->compareToNumericalJacobian){
@@ -1510,7 +1511,11 @@ namespace mfront{
 			  << "," << "real>::exe(jacobian2,Dzeros);\n";
       this->behaviourFile << "}" << endl;
       this->behaviourFile << "catch(LUException&){" << endl;
-      this->behaviourFile << "return false;\n";
+      if(this->behaviourCharacteristic.useQt()){        
+	this->behaviourFile << "return MechanicalBehaviour<hypothesis,Type,use_qt>::FAILURE;\n";
+      } else {
+	this->behaviourFile << "return MechanicalBehaviour<hypothesis,Type,false>::FAILURE;\n";
+      }
       this->behaviourFile << "}" << endl;
       this->behaviourFile << "jacobian2 = this->jacobian;\n";
       this->behaviourFile << "this->zeros  += Dzeros;\n";
@@ -1644,14 +1649,22 @@ namespace mfront{
 			  << "," << "real>::exe(this->jacobian,this->fzeros);\n";
       this->behaviourFile << "}" << endl;
       this->behaviourFile << "catch(LUException&){" << endl;
-      this->behaviourFile << "return false;\n";
+      if(this->behaviourCharacteristic.useQt()){        
+	this->behaviourFile << "return MechanicalBehaviour<hypothesis,Type,use_qt>::FAILURE;\n";
+      } else {
+	this->behaviourFile << "return MechanicalBehaviour<hypothesis,Type,false>::FAILURE;\n";
+      }
       this->behaviourFile << "}" << endl;
       this->behaviourFile << "this->zeros -= this->fzeros;\n";
     }
     if(this->algorithm==MFrontImplicitParserBase::BROYDEN){
       this->behaviourFile << "broyden_inv = (Dzeros|Dzeros);\n";
       this->behaviourFile << "if(broyden_inv<100*std::numeric_limits<real>::epsilon()){\n";
-      this->behaviourFile << "return false;\n";
+      if(this->behaviourCharacteristic.useQt()){        
+	this->behaviourFile << "return MechanicalBehaviour<hypothesis,Type,use_qt>::FAILURE;\n";
+      } else {
+	this->behaviourFile << "return MechanicalBehaviour<hypothesis,Type,false>::FAILURE;\n";
+      }
       this->behaviourFile << "}\n";
       this->behaviourFile << "this->jacobian += "
 			  << "(((this->fzeros-fzeros2)-(jacobian2)*(Dzeros))^Dzeros)/broyden_inv;\n";
@@ -1661,7 +1674,11 @@ namespace mfront{
       this->behaviourFile << "jacobian2 = this->jacobian;\n";
       this->behaviourFile << "broyden_inv = Dzeros|jacobian2*Dfzeros;\n";
       this->behaviourFile << "if(broyden_inv<100*std::numeric_limits<real>::epsilon()){\n";
-      this->behaviourFile << "return false;\n";
+      if(this->behaviourCharacteristic.useQt()){        
+	this->behaviourFile << "return MechanicalBehaviour<hypothesis,Type,use_qt>::FAILURE;\n";
+      } else {
+	this->behaviourFile << "return MechanicalBehaviour<hypothesis,Type,false>::FAILURE;\n";
+      }
       this->behaviourFile << "}\n";
       this->behaviourFile << "this->jacobian += "
 			  << "((Dzeros-jacobian2*Dfzeros)^(Dzeros*jacobian2))/(broyden_inv);\n";
@@ -1689,7 +1706,11 @@ namespace mfront{
 			  << "<< this->iter << \" iterations\"<< endl << endl;\n";
       this->behaviourFile << "cout << *this << endl;\n";
     }
-    this->behaviourFile << "return false;\n";
+    if(this->behaviourCharacteristic.useQt()){        
+      this->behaviourFile << "return MechanicalBehaviour<hypothesis,Type,use_qt>::FAILURE;\n";
+    } else {
+      this->behaviourFile << "return MechanicalBehaviour<hypothesis,Type,false>::FAILURE;\n";
+    }
     this->behaviourFile << "}\n";
     if(this->debugMode){
       this->behaviourFile << "cout << \"" << this->className
@@ -1698,7 +1719,11 @@ namespace mfront{
     }
     this->behaviourFile << "if(computeTangentOperator_){\n";
     this->behaviourFile << "if(!this->computeConsistantTangentOperator()){\n";
-    this->behaviourFile << "return false;\n";
+    if(this->behaviourCharacteristic.useQt()){        
+      this->behaviourFile << "return MechanicalBehaviour<hypothesis,Type,use_qt>::FAILURE;\n";
+    } else {
+      this->behaviourFile << "return MechanicalBehaviour<hypothesis,Type,false>::FAILURE;\n";
+    }
     this->behaviourFile << "}\n";
     this->behaviourFile << "}\n";
     for(p=this->stateVarsHolder.begin();p!=this->stateVarsHolder.end();++p){
@@ -1715,7 +1740,11 @@ namespace mfront{
 	p3->writeBoundsChecks(this->behaviourFile);
       }
     }
-    this->behaviourFile << "return true;\n";
+    if(this->behaviourCharacteristic.useQt()){        
+      this->behaviourFile << "return MechanicalBehaviour<hypothesis,Type,use_qt>::SUCCESS;\n";
+    } else {
+      this->behaviourFile << "return MechanicalBehaviour<hypothesis,Type,false>::SUCCESS;\n";
+    }
     this->behaviourFile << "} // end of " << this->className << "::integrate\n\n";
     this->behaviourFile << "/*!\n";
     this->behaviourFile << "* \\brief compute fzeros and jacobian\n";

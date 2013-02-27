@@ -323,10 +323,14 @@ namespace mfront{
     this->behaviourFile << "/*!\n";
     this->behaviourFile << "* \\brief Integrate behaviour law over the time step\n";
     this->behaviourFile << "*/\n";
-    this->behaviourFile << "bool\n";
+    this->behaviourFile << "IntegrationResult" << endl;
     this->behaviourFile << "integrate(const bool computeTangentOperator_){\n";
     this->behaviourFile << "if(!this->NewtonIntegration()){\n";
-    this->behaviourFile << "return false;\n";
+    if(this->behaviourCharacteristic.useQt()){        
+      this->behaviourFile << "return MechanicalBehaviour<hypothesis,Type,use_qt>::FAILURE;\n";
+    } else {
+      this->behaviourFile << "return MechanicalBehaviour<hypothesis,Type,false>::FAILURE;\n";
+    }
     this->behaviourFile << "}\n";
     this->behaviourFile << "this->dp = ";
     p2=this->flows.begin();
@@ -341,7 +345,13 @@ namespace mfront{
     }
     this->behaviourFile << ";\n";
     this->behaviourFile << "if(computeTangentOperator_){\n";
-    this->behaviourFile << "return this->computeConsistantTangentOperator();\n";
+    this->behaviourFile << "if(!this->computeConsistantTangentOperator()){\n";
+    if(this->behaviourCharacteristic.useQt()){        
+      this->behaviourFile << "return MechanicalBehaviour<hypothesis,Type,use_qt>::FAILURE;\n";
+    } else {
+      this->behaviourFile << "return MechanicalBehaviour<hypothesis,Type,false>::FAILURE;\n";
+    }
+    this->behaviourFile << "}\n";
     this->behaviourFile << "}\n";
     this->behaviourFile << "this->deel = this->deto-dp*(this->n);\n";
     this->behaviourFile << "this->updateStateVars();\n";
@@ -353,7 +363,11 @@ namespace mfront{
 	p->writeBoundsChecks(this->behaviourFile);
       }
     }
-    this->behaviourFile << "return true;\n";
+    if(this->behaviourCharacteristic.useQt()){        
+      this->behaviourFile << "return MechanicalBehaviour<hypothesis,Type,use_qt>::SUCCESS;\n";
+    } else {
+      this->behaviourFile << "return MechanicalBehaviour<hypothesis,Type,false>::SUCCESS;\n";
+    }
     this->behaviourFile << "}\n\n";
   }
 

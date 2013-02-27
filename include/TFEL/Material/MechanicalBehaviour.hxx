@@ -19,7 +19,7 @@ namespace tfel{
      * \class MechanicalBehaviour
      * \brief This class declares an interface for mechanical behaviours.
      * \param H, modelling hypothesis
-     * \param typename T, numerical type.
+     * \param NumType, numerical type.
      * \param bool use_qt, says if one shall use quantities.
      * \author Helfer Thomas
      * \date   28 Jul 2006
@@ -28,6 +28,18 @@ namespace tfel{
 	     typename NumType, bool use_qt>
     struct MechanicalBehaviour
     {
+
+      /*!
+       * \brief return values of the integrate method
+       */
+      enum IntegrationResult{
+	SUCCESS,            //<! Integration is a success
+	FAILURE,            //<! Integration failed
+	UNRELIABLE_RESULTS  //<! Integration succeed, but one or more
+			    //   internal criteria show that the
+			    //   results may be inaccurate
+      }; // end of enum IntegrationResult
+      
       /*!
        * dimension of the space for the the given modelling hypothesis
        */
@@ -44,19 +56,46 @@ namespace tfel{
       }
 
       /*!
-       * determine the value of the internal state variables at the
-       * end of the time step
+       * \brief determine the value of the internal state variables at
+       * the end of the time step
        * \param[in] b : compute the stiffness matrix
-       * \return true if the integration is successfull
+       * \return SUCCESS if the integration is successfull.
        */
-      virtual bool
+      virtual IntegrationResult
       integrate(const bool) = 0;
 
       /*!
-       * \return the tangent operator
+       * \return the tangent operator This shall be called afer the
+       * integration.  Normally this operator has been computed at the
+       * end of the integration, this is a why we return a reference.
+       *
+       * Interfaces to behaviour law shall use the
+       * hasConsistantTangentOperator of the traits class
+       * MechanicalBehaviourTraits to know if the behaviour provides a
+       * consistent tangent operator. If not, behaviours shall throw
+       * an exception.
+       *
+       * The behaviour indicates wheter the constistent operator is
+       * symmetric through the isConsistantTangentOperatorSymmetric
+       * member of the traits class MechanicalBehaviourTraits
        */
       virtual const typename tfel::config::Types<N,NumType,use_qt>::StiffnessTensor&
       getTangentOperator(void) const = 0;
+
+      /*!
+       * This method returns a scaling factor that can be used to:
+       * - increase the time step if the integration was successfull
+       * - decrease the time step if the integration failed or if the
+       *   results were not reliable (time step too large).
+       *
+       * Interfaces to behaviour law shall use the
+       * hasTimeStepScalingFactor of the traits class
+       * MechanicalBehaviourTraits to know if the behaviour is able to
+       * give such a time step scaling factor. If not, behaviours
+       * may return the NumType(1) value.
+       */
+      virtual NumType
+      getTimeStepScalingFactor(void) const = 0;
 
       /*!
        * destructor

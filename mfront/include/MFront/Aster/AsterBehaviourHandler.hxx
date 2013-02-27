@@ -139,7 +139,8 @@ namespace aster
 	  throwNegativeTimeStepException(Name<BV>::getName());
 	}
 	this->behaviour.checkBounds();
-	if(!this->behaviour.integrate(*DDSOE>0.5)){
+	if(this->behaviour.integrate(*DDSOE>0.5)==MechanicalBehaviour<AsterModellingHypothesis<N>::value,AsterReal,false>::FAILURE){
+#warning "treat unreliable results"
 	  throwBehaviourIntegrationFailedException(Name<BV>::getName());
 	}
 	this->behaviour.checkBounds();

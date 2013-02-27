@@ -144,30 +144,32 @@ namespace umat
 	    UMATReal *const STATEV)
       {
 	using namespace tfel::utilities;
+	using namespace tfel::material;
 	typedef unsigned short ushort;
 	const UMATOutOfBoundsPolicy& up = UMATOutOfBoundsPolicy::getUMATOutOfBoundsPolicy();
 	unsigned short subSteps   = 0u;
 	unsigned short iterations = 1u;
-	bool convergence;
 	if(this->dt<0.){
 	  throwNegativeTimeStepException(Name<Behaviour<H,UMATReal,false> >::getName());
 	}
 	while((iterations!=0)&&
 	      (subSteps!=UMATTraits<BV>::maximumSubStepping)){
-	  convergence = true;
+	  typename BV::IntegrationResult result;
 	  BV behaviour(this->bData,this->iData);
 	  behaviour.setOutOfBoundsPolicy(up.getOutOfBoundsPolicy());
 	  behaviour.checkBounds();
 	  try{
-	    convergence = behaviour.integrate(false);
+	    result = behaviour.integrate(false);
 	  }
 	  catch(const tfel::material::DivergenceException& e){
 #ifdef MFRONT_UMAT_VERBOSE
 	    std::cerr << "no convergence : " << e.what() << std::endl;
 #endif
-	    convergence = false;
+	    result = MechanicalBehaviour<H,UMATReal,false>::FAILURE;
 	  }
-	  if(convergence){
+	  if((result==MechanicalBehaviour<H,UMATReal,false>::SUCCESS)||
+	     (result==MechanicalBehaviour<H,UMATReal,false>::UNRELIABLE_RESULTS)){
+#warning "substepping on unreliable results"
 	    --(iterations);
 	    behaviour.checkBounds();
 	    behaviour.updateExternalStateVariables();
@@ -235,12 +237,13 @@ namespace umat
 		 UMATReal *const STATEV)
       {
 	using namespace tfel::utilities;
+	using namespace tfel::material;
 	if(this->dt<0.){
-	  throwNegativeTimeStepException(Name<Behaviour<H,UMATReal,false> >::getName());
+	  throwNegativeTimeStepException(Name<BV>::getName());
 	}
 	behaviour.checkBounds();
-	if(!this->behaviour.integrate(false)){
-	  throwBehaviourIntegrationFailedException(Name<Behaviour<H,UMATReal,false> >::getName());
+	if(this->behaviour.integrate(false)==MechanicalBehaviour<H,UMATReal,false>::FAILURE){
+	  throwBehaviourIntegrationFailedException(Name<BV>::getName());
 	}
 	behaviour.checkBounds();
 	this->behaviour.UMATexportStateData(STRESS,STATEV);

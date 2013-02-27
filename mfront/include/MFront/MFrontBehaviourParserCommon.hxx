@@ -309,6 +309,8 @@ namespace mfront{
 
     virtual void writeBehaviourIntegrator(void);
 
+    virtual void writeBehaviourGetTimeStepScalingFactor(void);
+
     virtual void writeBehaviourUpdateExternalStateVariables(void);
 
     virtual void writeBehaviourOutputOperator(void);
@@ -439,6 +441,7 @@ namespace mfront{
     bool explicitlyDeclaredUsableInPurelyImplicitResolution;
     bool hasConsistantTangentOperator;
     bool isConsistantTangentOperatorSymmetric;
+    bool hasTimeStepScalingFactor;
 
     BehaviourCharacteristic behaviourCharacteristic;
 
