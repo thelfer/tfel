@@ -51,6 +51,7 @@ docs/mfront/Images/sirius8.eps -text
 docs/mfront/Images/sirius8.png -text
 docs/mfront/Images/tubeaxi.eps -text
 docs/mfront/Images/tubeaxi2.eps -text
+docs/mfront/InternalNames.tex.in -text
 docs/mfront/Makefile.am -text
 docs/mfront/Makefile.doc.in -text
 docs/mfront/annexe-orthotropie.tex.in -text

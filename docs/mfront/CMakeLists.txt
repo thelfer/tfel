@@ -7,6 +7,8 @@ configure_file(behaviours.tex.in
                behaviours.tex @ONLY)
 configure_file(glossary.tex.in
                glossary.tex @ONLY)
+configure_file(InternalNames.tex.in
+               InternalNames.tex @ONLY)
 
 ADD_CUSTOM_COMMAND(
     OUTPUT    mfront.pdf

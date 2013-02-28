@@ -1029,6 +1029,7 @@ namespace mfront{
     this->reserveName("updateStateVars");
     this->reserveName("updateAuxiliaryStateVars");
     this->reserveName("getTangentOperator");
+    this->reserveName("getTimeStepScalingFactor");
     this->reserveName("computeConsistantTangentOperator");
     this->reserveName("computeTangentOperator_");
     this->reserveName("hypothesis");
@@ -1694,7 +1695,7 @@ namespace mfront{
     this->checkBehaviourFile();
 
     this->behaviourFile << "// Forward Declaration" << endl;
-    this->behaviourFile << "template<ModellingHypothesis::Hypothesis hypothesis,typename Type,bool use_qt>" << endl;
+    this->behaviourFile << "template<ModellingHypothesis::Hypothesis,typename Type,bool use_qt>" << endl;
     this->behaviourFile << "class " << this->className << ";\n\n";
 
     if(this->behaviourCharacteristic.useQt()){
@@ -1713,7 +1714,7 @@ namespace mfront{
     this->behaviourFile << "* \\class " << this->className    << endl;
     this->behaviourFile << "* \\brief This class implements the " 
 			<< this->className << " behaviour." << endl;
-    this->behaviourFile << "* \\param H, modelling hypothesis." << endl;
+    this->behaviourFile << "* \\param hypothesis, modelling hypothesis." << endl;
     this->behaviourFile << "* \\param Type, numerical type." << endl;
     if(this->behaviourCharacteristic.useQt()){    
       this->behaviourFile << "* \\param use_qt, conditional "
@@ -2375,13 +2376,20 @@ namespace mfront{
       this->behaviourFile << "typedef " << this->className 
 			  << "IntegrationData<N,Type,use_qt> IntegrationData;\n";
       this->behaviourFile << "typedef typename MechanicalBehaviour<hypothesis,Type,use_qt>::IntegrationResult IntegrationResult;\n\n";
+      this->behaviourFile << "using MechanicalBehaviour<hypothesis,Type,use_qt>::SUCCESS;\n";
+      this->behaviourFile << "using MechanicalBehaviour<hypothesis,Type,use_qt>::FAILURE;\n";
+      this->behaviourFile << "using MechanicalBehaviour<hypothesis,Type,use_qt>::UNRELIABLE_RESULTS;\n\n";
     } else {
       this->behaviourFile << "typedef " << this->className 
 			  << "BehaviourData<N,Type,false> BehaviourData;\n";
       this->behaviourFile << "typedef " << this->className 
 			  << "IntegrationData<N,Type,false> IntegrationData;\n";
-      this->behaviourFile << "typedef typename MechanicalBehaviour<hypothesis,Type,false>::IntegrationResult IntegrationResult;\n\n";
+      this->behaviourFile << "typedef typename MechanicalBehaviour<hypothesis,Type,false>::IntegrationResult IntegrationResult;\n";
+      this->behaviourFile << "using MechanicalBehaviour<hypothesis,Type,false>::SUCCESS;\n";
+      this->behaviourFile << "using MechanicalBehaviour<hypothesis,Type,false>::FAILURE;\n";
+      this->behaviourFile << "using MechanicalBehaviour<hypothesis,Type,false>::UNRELIABLE_RESULTS;\n\n";
     }
+    
     this->behaviourFile << "private :\n\n";
   } // end of MFrontBehaviourParserCommon::writeBehaviourStandardTFELTypedefs
 

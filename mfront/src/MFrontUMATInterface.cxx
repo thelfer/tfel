@@ -75,6 +75,7 @@ namespace mfront{
     this->finiteStrainStrategy = NONE;
     this->useTimeSubStepping   = false;
     this->maximumSubStepping   = 0u;
+    this->doSubSteppingOnInvalidResults = false;
   }
   
   void 
@@ -132,7 +133,7 @@ namespace mfront{
     } else if (key=="@UMATMaximumSubStepping"){
       if(!this->useTimeSubStepping){
 	string msg("UmatInterface::treatKeyword (@UMATMaximumSubStepping) : ");
-	msg += "time stepping is not enabled at this stage.\n";
+	msg += "time sub stepping is not enabled at this stage.\n";
 	msg += "Use the @UMATUseTimeSubStepping directive before ";
 	msg += "@UMATMaximumSubStepping";
 	throw(runtime_error(msg));
@@ -155,6 +156,41 @@ namespace mfront{
 	msg += "unexpected end of file";
 	throw(runtime_error(msg));
       }      
+      if(current->value!=";"){
+	string msg("UmatInterface::treatKeyword : expected ';', read ");
+	msg += current->value;
+	throw(runtime_error(msg));
+      }
+      ++(current);
+      return make_pair(true,current);      
+    } else if (key=="@UMATDoSubSteppingOnInvalidResults"){
+      if(!this->useTimeSubStepping){
+	string msg("UmatInterface::treatKeyword (@UMATDoSubSteppingOnInvalidResults) : ");
+	msg += "time sub stepping is not enabled at this stage.\n";
+	msg += "Use the @UMATUseTimeSubStepping directive before ";
+	msg += "@UMATMaximumSubStepping";
+	throw(runtime_error(msg));
+      }
+      if(current==end){
+	string msg("UmatInterface::treatKeyword (@UMATDoSubSteppingOnInvalidResults) : ");
+	msg += "unexpected end of file";
+	throw(runtime_error(msg));
+      }
+      if(current->value=="true"){
+	this->doSubSteppingOnInvalidResults = true;
+      } else if(current->value=="false"){
+	this->doSubSteppingOnInvalidResults = false;
+      } else {
+	string msg("UmatInterface::treatKeyword (@UMATDoSubSteppingOnInvalidResults) :");
+	msg += "expected 'true' or 'false'";
+	throw(runtime_error(msg));
+      }
+      ++(current);
+      if(current==end){
+	string msg("UmatInterface::treatKeyword (@UMATDoSubSteppingOnInvalidResults) : ");
+	msg += "unexpected end of file";
+	throw(runtime_error(msg));
+      }
       if(current->value!=";"){
 	string msg("UmatInterface::treatKeyword : expected ';', read ");
 	msg += current->value;
@@ -692,7 +728,7 @@ namespace mfront{
     if(this->useTimeSubStepping){
       if(this->maximumSubStepping==0u){
 	string msg("MFrontUMATInterface::endTreatement : ");
-	msg += "use of time stepping requested but maximumSubStepping is zero.\n";
+	msg += "use of time sub stepping requested but MaximumSubStepping is zero.\n";
 	msg += "Please use the @UMATMaximumSubStepping directive";
 	throw(runtime_error(msg));
       }
@@ -766,6 +802,12 @@ namespace mfront{
     out << "> >{\n";
     out << "static const bool useTimeSubStepping = ";
     if(this->useTimeSubStepping){
+      out << "true;\n";
+    } else {
+      out << "false;\n";
+    }
+    out << "static const bool doSubSteppingOnInvalidResults = ";
+    if(this->doSubSteppingOnInvalidResults){
       out << "true;\n";
     } else {
       out << "false;\n";

@@ -165,15 +165,19 @@ namespace umat
 #ifdef MFRONT_UMAT_VERBOSE
 	    std::cerr << "no convergence : " << e.what() << std::endl;
 #endif
-	    result = MechanicalBehaviour<H,UMATReal,false>::FAILURE;
+	    result = BV::FAILURE;
 	  }
-	  if((result==MechanicalBehaviour<H,UMATReal,false>::SUCCESS)||
-	     (result==MechanicalBehaviour<H,UMATReal,false>::UNRELIABLE_RESULTS)){
-#warning "substepping on unreliable results"
+	  if((result==BV::SUCCESS)||
+	     ((result==BV::UNRELIABLE_RESULTS)&&
+	      (!UMATTraits<BV>::doSubSteppingOnInvalidResults))){
 	    --(iterations);
 	    behaviour.checkBounds();
 	    behaviour.updateExternalStateVariables();
 	    this->bData = static_cast<const BData&>(behaviour);
+	  } else if ((result==BV::UNRELIABLE_RESULTS)&&
+		     (UMATTraits<BV>::doSubSteppingOnInvalidResults)){
+	    iterations = ushort(iterations*2u);
+	    this->iData *= 0.5;
 	  } else {
 	    ++subSteps;
 	    iterations = ushort(iterations*2u);
@@ -242,7 +246,7 @@ namespace umat
 	  throwNegativeTimeStepException(Name<BV>::getName());
 	}
 	behaviour.checkBounds();
-	if(this->behaviour.integrate(false)==MechanicalBehaviour<H,UMATReal,false>::FAILURE){
+	if(this->behaviour.integrate(false)==BV::FAILURE){
 	  throwBehaviourIntegrationFailedException(Name<BV>::getName());
 	}
 	behaviour.checkBounds();

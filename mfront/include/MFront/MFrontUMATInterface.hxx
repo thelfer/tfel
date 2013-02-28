@@ -203,6 +203,8 @@ namespace mfront{
     bool warningMode;
 
     bool useTimeSubStepping;
+
+    bool doSubSteppingOnInvalidResults;
     
     unsigned short maximumSubStepping;
 

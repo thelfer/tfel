@@ -257,6 +257,7 @@ AC_OUTPUT([debug.sh
 	   docs/mfront/Makefile.doc
 	   docs/mfront/mfront.tex
 	   docs/mfront/glossary.tex
+	   docs/mfront/InternalNames.tex
 	   docs/mfront/Champs.tex
            docs/mfront/annexe-orthotropie.tex
 	   docs/tex/Makefile
