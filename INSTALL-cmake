@@ -30,6 +30,7 @@ Basic Installation
 Options
 =======
 
+  enable-static  : compiles static libraries
   enable-fortran : enables fortran support
   enable-python  : enables python support
   enable-aster   : enables aster support

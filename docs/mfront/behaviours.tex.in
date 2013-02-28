@@ -923,48 +923,59 @@ cas échéant.
 \clearpage
 \section{Analyseurs spécifiques}
 
-Les analyseurs spécifiques sont dédiés à certaines formes de lois de
-comportements courantes et qui peuvent intégrés par des algorithmes
-optimisés. Ils représentent la majorité des besoins de la plate-forme
+Nous nous intéressons dans cette section à des lois de comportement
+mécanique très utilisées pour décrire les matériaux {\em isotropes} qui
+réagissent à une sollicitation mécanique l'apparition de déformations
+rémanentes. Ces déformations sont dûs aux phénomènes de viscoplasticité
+(avec et sans écrouissage) et/ou de plasticité instantanée. Nous
+supposerons que ces déformations se font sans changement de volume
+(écoulements isochores).
+
+Elles représentent la majorité des besoins de la plate-forme
 \pleiades{}.
+
+Nous présentons dans un premier temps les caractéristiques de ces
+lois puis nous montrons que ces lois peuvent intégrés par des
+algorithmes optimisés.
 
 \subsection{Généralités}
 
-Ces analyseurs spécifiques supposent~:
-\begin{itemize}
-  \item ils supposent un comportement élastique isotrope. Pour
-  être cohérent avec les conventions du code \castem{}, il définissent
-  automatiquement quatre propriétés matériau qui sont le module
-  d'\nom{Young}, le coefficient de \nom{Poisson}, le coefficient de
-  dilatation thermique linéique et la densité massique~;
-  \item ils utilisent une méthode d'intégration implicite, nommée
-  \(\theta\)-méthode~: les fonctions d'écoulement évaluées à l'instant
-  \(t+\theta\Delta t\), où \(t\) est l'instant de début du pas et
-  \(\Delta t\) l'incrément de temps. Par défaut, la valeur de \(\theta\)
-  est égal à \(\pfrac{1}{2}\) sauf pour l'analyseur
-  \texttt{Isotropic\-Plastic\-Mises\-Flow} où il vaut \(1\), ce qui
-  garantit que le matériau se trouve dans le domaine d'élasticité en fin
-  de pas de temps.
-\end{itemize}
+\subsubsection{Expression générales des lois de comportement}
 
-\subsubsection{Expression générales des lois de comportement traitées
-  par les analyseurs spécifiques}
+\paragraph{Isotropie} Les lois de comportement
+présentées décrivent un matériau {\em isotrope}.
 
-Les analyseurs spécifiques sont dédiés aux lois de comportement
-isotropes. Nous détaillons dans ce paragraphe toutes les hypothèses
-physiques faites.
+\paragraph{Partition des déformations} Les lois de
+comportements traitées dans cette section supposent tout d'abord que la
+déformation totale \(\tepsilonto\) soit égale à la somme d'une
+déformation élastique réversible \(\tepsilonel\) et d'une déformation
+inélastique \(\tepsilonan\)~:
+\begin{equation}
+  \label{eq:partition_deformation}
+  \tepsilonto = \tepsilonel + \tepsilonan
+\end{equation}
+C'est l'hypothèse de {\em partition des déformations}.
 
-\paragraph{Partition des déformations} La déformation totale
-\(\tepsilonto\) est supposée se décomposer en une déformation élastique
-\(\tepsilonel\) et une déformation inélastique \(\tepsilonan\)~:
+\paragraph{Décomposition de la déformation
+  inélastique} Dans la suite, la déformation inélastique \(\tepsilonan\)
+pourra être décomposée de manière additive en la somme de différents
+mécanismes {\em indépendants}~:
 \[
-\tepsilonto = \tepsilonel + \tepsilonan
+\tepsilonan= \displaystyle\sum_{i}\,\tepsilonan_{i}
+\]
+
+\paragraph{Écoulements isochores} Nous supposerons
+dans la suite que les déformations \(\tepsilonan_{i}\) n'induisent pas
+de changement de volume. Nous parlerons d'écoulements isochores. En
+terme mathématique, cela signifie que ces tenseurs sont à trace nulle~:
+\[
+\trace{\tepsilonan_{i}} = 0
 \]
 
 \paragraph{Comportement élastique} Les
-contraintes \(\tsigma\) sont une fonction explicite des déformations
-élastiques \(\tepsilonel\). Le comportement du matériau étant isotrope,
-cette relation s'écrit~:
+contraintes \(\tsigma\) se déduisent des déformations élastiques
+\(\tepsilonel\) par la loi de \nom{Hooke}. Le comportement du matériau
+étant isotrope, cette relation s'écrit~:
 \begin{equation}
   \label{mfront:as:tsigma} \tsigma =
   \lambda\,\trace{\tepsilonel}\tenseurq{I}+2\,\mu\,\tepsilonel
@@ -997,85 +1008,130 @@ où~:
   \end{itemize}
 \end{minipage}
 
-\paragraph{Décomposition de la déformation
-  inélastique} Dans la suite, la déformation inélastique \(\tepsilonan\)
-peut être décomposé de manière additive en la somme de différents
-mécanismes {\em indépendants}~:
-\[
-\tepsilonan= \displaystyle\sum_{i}\,\tepsilonan_{i}
-\]
-
-Les hypothèses faites sur ces mécanismes sont maintenant décrits. Ils
-se caractérisent par une intensité et une direction d'écoulement.
-
-\paragraph{Intensité de l'écoulement} Nous supposons
-que l'intensité de ces différents écoulements inélastiques soient
-fonction de la contrainte de \nom{Von Mises}, notée \(\sigmaeq\) et
-définie par~:
+\paragraph{Contraintes déviatoriques} Le tenseur
+des contraintes se décompose en une partie dite sphérique où apparaît la
+pression hydrostatique \(p_{h}\) et une partie déviatorique
+\(\tenseur{s}\) à trace nulle~:
 \begin{equation}
-  \label{mfront:sigmaeq} \sigmaeq =
-  \displaystyle\sqrt{\Frac{3}{2}\,\tenseur{s}\colon\tenseur{s}}
+  \label{eq:mfront:deviateur_contraintes}
+  \tsigma=\tenseur{s}+p_h\,\tenseur{I}\quad\text{avec}\quad \left\{
+  \begin{array}{cc}
+    p_{h} &= \Frac{1}{3}\,\trace{\tsigma} \\
+    \tenseur{s} &= \tsigma-p_h\,\tenseur{I}
+  \end{array}
+  \right.
 \end{equation}
-où \(\tenseur{s}\) est le déviateur des contraintes et \(\colon\) le
-produit contracté. Ce tenseur est relié au déviateur des déformations
-élastiques, noté \(\tenseur{e}\), par la relation~:
+Le tenseur \(\tenseur{s}\) est appelé déviateur des contraintes.
+
+Dans la suite, nous ferons l'hypothèse que la pression hydrostatique
+n'intervient pas dans les lois présentées, c'est à dire qu'un chargement
+en pression seule ne conduit pas à l'apparition d'une déformation
+inélastique. Seule la partie déviatorique des contraintes joue un rôle.
+
+La relation~\eqref{mfront:as:tsigma} permet de montrer que le
+déviateur des contraintes \(\tenseur{s}\) est relié au déviateur des
+déformations élastiques, noté \(\tenseur{e}\), par la relation~:
 \[
-\tenseur{s}=2\,\mu\,\tenseur{e}=2\,\mu\,\paren{\tepsilonel-\Frac{1}{3}\,\trace\paren{\tepsilonel}\,\tenseur{I}}
+\tenseur{s}=2\,\mu\,\tenseur{e}\quad\text{avec}\quad
+\tenseur{e}=\tepsilonel-\Frac{1}{3}\,\trace\paren{\tepsilonel}\,\tenseur{I}
 \]
+
+\paragraph{Contraintes de \nom{Von Mises}} Le
+tenseur des contraintes est utilisé pour décrire l'évolution des
+déformations inélastiques \(\tepsilonan_{i}\). Ces lois étant isotropes,
+il est naturel de ne considérer que les trois invariants du tenseur de
+contraintes qui sont également des mesures scalaires de l'intensité des
+contraintes. Le premier de ces invariants est la pression et est supposé
+ne jouer aucun rôle. Différentes mesures des contraintes peuvent être
+obtenues en combinant les deux autres invariants. Nous supposons que les
+lois présentées dépendent uniquement de la contrainte de \nom{Von
+  Mises}, notée \(\sigmaeq\) définie comme la norme du déviateur des
+contraintes \(\tenseur{s}\)\footnote{\(\tenseur{a}\colon\tenseur{b}\)
+  représente le produit contracté de deux tenseurs \(a\) et \(b\).}~:
+\begin{equation}
+\label{mfront:sigmaeq} \sigmaeq =
+\displaystyle\sqrt{\Frac{3}{2}\,\tenseur{s}\colon\tenseur{s}}
+\end{equation}
+
+Le facteur \(\pfrac{3}{2}\) permet, dans le cas d'un chargement de
+traction uniaxiale, d'assurer l'égalité de la contrainte dans la direction
+de traction et de la contrainte de \nom{Von Mises}.
 
 \paragraph{Direction de l'écoulement} Nous supposons
-que ces écoulements sont associés, c'est à dire que leur direction est
-donnée par la normale aux isovaleurs de la contrainte de \nom{Von
-  Mises}, notée \(\tenseur{n}\). Tous les écoulements
-\(\tepsilonan_{i}\) sont donc supposés avoir la même direction
-d'écoulement.
+à partir de maintenant qu'à chaque instant la vitesse de déformation
+inélastique portée par le déviateur des contraintes~:
+\[
+\tdepsilonan_{i} \propto \tenseur{s}
+\]
+Le déviateur des contraintes étant de trace nulle, cette hypothèse est
+cohérente avec le fait que les écoulements inélastiques sont isochores.
 
-Ce tenseur normal s'obtient en dérivant la contrainte équivalente par
-la contrainte~:
+Pour simplifier la présentation, il est d'usage d'introduire un
+tenseur normé \(\tenseur{n}\) donnant la direction de l'écoulement. 
+\[
+\tenseur{n} = \Frac{3}{2}\Frac{\tenseur{s}}{\sigmaeq}
+\]
+
+Le facteur \(\pfrac{3}{2}\) permet de satisfaire l'égalité suivante~:
 \begin{equation}
   \label{mfront:as:n} \tenseur{n} =
   \deriv{\sigmaeq}{\tsigma} = \Frac{3}{2}\Frac{\tenseur{s}}{\sigmaeq}
 \end{equation}
-Le fait que le tenseur \(\tenseur{n}\) soit déviatorique implique que
-les écoulements sont isochores (aucun changement de volume).
 
-La définition~\ref{mfront:as:n} expression montre que \(\tenseur{n}\) est
-normé~:
+Cette nouvelle définition montre que le \(\tenseur{n}\) est normal
+aux isovaleurs de la contrainte de \nom{Von Mises}.
+
+La définition~\eqref{mfront:as:n} et la
+définition~\eqref{mfront:sigmaeq} de la contrainte de \nom{Von Mises}
+permettent de montrer le \(\tenseur{n}\) est normé~:
 \begin{equation}
   \label{mfront:as:n:2}
-  \tenseur{n}\,\colon\,\tenseur{n}=\Frac{3}{2}
+  \tenseur{n}\,\colon\,\tenseur{n}=\Frac{9}{4\,\sigmaeq^{2}}\tenseur{s}\,\colon\,\tenseur{s}=\Frac{3}{2}
 \end{equation}
 
-\paragraph{Déformation inélastique cumulée} Si \(\tepsilonan_{i}\) est
-la déformation inélastique associée à un des mécanismes d'écoulement,
-l'écrouissage du matériau, pour ce mécanisme, est supposé représenté par
-la déformation inélastique cumulée \(p_{i}\) définie par~:
-\[
-p_{i}=\int_{t_{0}}^{t}\sqrt{\Frac{2}{3}\,\tdepsilonan_{i}\colon\tdepsilonan_{i}}\,\dtot\,u
-\]
+\paragraph{Déformation inélastique cumulée} Nous
+introduisons maintenant la dernière notion utile pour présenter les lois
+présentées dans cette section. Pour mesurer l'écrouissage d'un matériau,
+il est d'usage d'introduire une mesure scalaire de l'écoulement
+inélastique du matériau. Cette mesure est appelée la {\em déformation
+  inélastique cumulée} et sera notée \(p_{i}\) pour le \(i\)\ieme
+mécanisme. \(p_{i}\) est définie par~:
+\begin{equation}
+  \label{mfront:as:p}
+  p_{i}=\int_{t_{0}}^{t}\sqrt{\Frac{2}{3}\,\tdepsilonan_{i}\colon\tdepsilonan_{i}}\,\dtot\,u
+\end{equation}
 où \(t_{0}\) désigne un temps où le matériau est non écroui
 (généralement le temps de début de calcul !) et \(t\) le temps
-considéré.
+considéré. 
 
-Tous les écoulements ayant la même direction, il est possible de
-définir une déformation inélastique cumulée totale par~:
-\[
-p =\displaystyle\int_{t_{0}}^{t}\sqrt{\Frac{2}{3}\,\tdepsilonan\colon\tdepsilonan}\,\dtot\,u = \sum_{i} p_{i}
-\]
-
-Les différentes vitesses d'écoulement s'évaluent ainsi~:
+\paragraph{Expression des vitesses de déformations
+  inélastiques} Le facteur \(\pfrac{2}{3}\) introduit dans
+l'expression~\eqref{mfront:as:p} et la définition~\eqref{mfront:as:n} de
+la normale permettent d'écrire que~:
 \begin{equation}
   \label{mfront:as:epsilonan}
+  \left\{
   \begin{aligned}
     \tepsilonan_{i} &= \dot{p}_{i}\,\tenseur{n} \\
-    \tepsilonan     &= \dot{p}\,\tenseur{n}
+    \tepsilonan &= \dot{p}\,\tenseur{n}
   \end{aligned}
+  \right.
 \end{equation}
 
+Cette expression montre que l'écoulement est parfaitement défini si
+l'évolution de la déformation plastique cumulée \(p_{i}\) est connue.
+Les lois présentées dans la suite sont toutes caractérisées par une
+relation permettant de déduire l'évolution de \(p_{i}\) à partir de~:
+\begin{itemize}
+\item la contrainte équivalente \(\sigmaeq\)~;
+\item \(p_{i}\) qui représente l'écrouissage du matériau~;
+\end{itemize}
+Cette relation peut éventuellement faire intervenir des variables
+externes évoluant indépendamment de la mécanique (densité de fission,
+flux de neutrons rapides, taille de grain, etc..).
+
 \paragraph{Comportements inélastiques supportés}
-Il découle de ce qui précède qu'un écoulement est pleinement défini si
-l'évolution de la variable \(p_{i}\) est connu. Trois mécanismes sont
-aujourd'hui disponibles~:
+Trois mécanismes seront considérés dans la suite~:
 \begin{itemize}
   \item des écoulements viscoplastiques de la forme (loi de type
   \nom{Norton})~:
@@ -1085,18 +1141,33 @@ aujourd'hui disponibles~:
   \item des écoulements viscoplastiques avec écrouissage de la
   forme (lois de type \nom{Lemaitre})~:
   \[
-  \dot{p}_{i} = f_{i}^{\textrm{an}}\paren{\sigmaeq,p}
+  \dot{p}_{i} = f_{i}^{\textrm{an}}\paren{\sigmaeq,p_{i}}
   \]
-  \item des écoulements plastiques de la forme donné par la
-  condition suivante~:
+  \item des écoulements plastiques qui satisfont une relation du
+  type~:
   \[
-  f_{i}^{\textrm{an}}(\sigmaeq,p_{i})\leq 0 \quad\quad
-  \dot{p_{i}}\geq 0 \quad\quad f_{i}^{\textrm{an}}(\sigmaeq,p_{i})\,\dot{p} = 0
+  f_{i}^{\textrm{an}}(\sigmaeq,p_{i})\leq
+  0 \quad\quad \dot{p_{i}}\geq 0 \quad\quad
+  f_{i}^{\textrm{an}}(\sigmaeq,p_{i})\,\dot{p}_{i} = 0
   \]
 \end{itemize}
 
-\paragraph{Variables internes} Les variables
-internes des analyseurs spécifiques sont~:
+\paragraph{Déformation inélastique cumulée totale}
+Tous les écoulements ayant la même direction donnée par le tenseur
+normal \tenseur{n}, il est possible de définir une déformation
+inélastique cumulée totale par~:
+\[
+p
+=\displaystyle\int_{t_{0}}^{t}\sqrt{\Frac{2}{3}\,\tdepsilonan\colon\tdepsilonan}\,\dtot\,u
+= \sum_{i} p_{i}
+\]
+
+
+\subsubsection{Réduction du nombre d'équations}
+\label{sec:mfront:isotropic-solver}
+
+Au minimum, les variables internes nécessaires pour décrire les lois
+présentées sont~:
 \begin{itemize}
   \item la déformation élastique \(\tepsilonel\)~;
   \item la déformation inélastique \(p_{i}\) associé à chaque
@@ -1104,28 +1175,54 @@ internes des analyseurs spécifiques sont~:
   \item si plus d'un mécanisme est présent, la déformation
   inélastique totale.
 \end{itemize}
+Nous pouvons noter que les déformations inélastiques
+\(\tepsilonan_{i}\) ne sont pas nécessaires. 
 
-\subsubsection{Réduction du nombre d'équations}
-\label{sec:mfront:isotropic-solver}
+L'évolution de la déformation élastique se déduit de
+l'hypothèse de partitions de déformations et l'évolution des différentes
+déformations inélastiques de la forme de la loi. 
 
-Les différents mécanismes précédents peuvent partager un algorithme de
-résolution efficace. C'est cette particularité qui a conduit au
-développement de ces analyseurs.
+Nous montrons dans ce paragraphe comment intégrer le système
+différentiel qui en résulte par une \(\theta\)-méthode et comment il est
+possible de réduire le nombre d'équations à résoudre en éliminant
+l'équation portant sur la déformation élastique. 
 
-Connaissant l'état du matériau à l'instant \(t\), nous voulons connaître
-son comportement à l'instant \(t+\Delta t\). Pour cela, nous utilisons
-un algorithme semi-implicite de type \(\theta\)-méthode où \(\theta\)
-est un nombre compris entre \(0\) et \(1\) indiquant que les incréments
-des variables internes sont calculés en \(t+\theta\Delta t\). Les
-\(\theta\)-méthodes sont décrites en détail à la
-section~\ref{sec:Implicite}.
+\paragraph{Convention d'écriture} Les \(\theta\)-méthodes
+sont décrites en détail à la section~\ref{sec:Implicite}. Nous nous
+contentons de rappeler pour une variable interne \(v\), les
+\(\theta\)-méthodes déterminent son incrément \(\Delta\,v\) sur le pas
+de temps en transformant le système différentiel initial en un système
+d'équation non linéaires.
+
+Quand on utilise ces méthodes, il est d'usage d'introduire des
+notations (et des abus de langage) pratiques. Ainsi, si dans le système
+différentiel apparaît une fonction des variables internes \(f\paren{v}\)
+alors dans le système non-linéaire de la \(\theta\)-méthodes apparaît
+l'expression \(f\paren{v+\theta\,\Delta\,v}\).
+
+Par abus de langage, nous dirons que \(v+\theta\,\Delta\,v\) est la
+valeur en milieu de pas de \(v\), que nous noterons \(\milieupas{v}\)~:
+\[
+\milieupas{v} = v+\theta\,\Delta\,v
+\]
+
+De même nous dirons que \(f\paren{v+\theta\,\Delta\,v}\) est la valeur
+en milieu de pas de \(f\) et nous la noterons \(\milieupas{f}\)~:
+\[
+\milieupas{f} = f\paren{v+\theta\,\Delta\,v}
+\]
+
+En particulier, ces notations donnent un sens à l'expression
+\(\deriv{\milieupas{v}}{\Delta\,v}\) qui est égale à \(\theta\).
 
 \paragraph{Équation associée à la déformation
-  élastique} L'évolution de la déformation élastique s'écrit de manière
-incrémentale ainsi~:
+  élastique} Nous pouvons déduire de l'hypothèse de partitions des
+déformations~\eqref{eq:partition_deformation} l'évolution de la
+déformation élastique s'écrit de manière incrémentale ainsi~:
 \[
 \Delta\,\tepsilonel-\Delta\,\tepsilonto+\Delta\,\tepsilonan=0
 \]
+
 La direction d'écoulement est évaluée en \(t+\theta\Delta t\), ce qui
 permet d'introduire l'incrément de déformation inélastique cumulée
 totale \(p\)~:
@@ -1133,10 +1230,11 @@ totale \(p\)~:
 \Delta\,\tepsilonel-\Delta\,\tepsilonto+\Delta\,p\milieupas{\tenseur{n}}=0
 \]
 
-\paragraph{Expression de la contrainte équivalente et de la direction
-  d'écoulement} L'évolution des déformations anélastiques requiert
-d'évaluer une certaine fonction \(f\) de la contrainte équivalente en
-\(t+\theta\Delta t\).
+\paragraph{Expression de la contrainte équivalente
+  et de la direction d'écoulement} L'évolution des déformations
+inélastiques cumulée \(\Delta\,p_{i}\) requiert d'évaluer de certaines
+fonctions \(f_{i}\) de la contrainte équivalente en \(t+\theta\Delta
+t\).
 
 À l'instant \(t+\theta\Delta t\), le tenseur normal \(\tenseur{n}\) est
 évalué ainsi~:

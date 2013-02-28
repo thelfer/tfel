@@ -181,5 +181,15 @@ set (CPACK_PACKAGE_DESCRIPTION 	       "tfel is a mathematical library")
 set (CPACK_DEBIAN_PACKAGE_MAINTAINER   "Helfer Thomas ${PACKAGE_BUGREPORT}")
 set (CPACK_DEBIAN_PACKAGE_SECTION      "Science")
 
+# if(UNIX)
+#   add_custom_target(dist-bzip2
+#     COMMAND svn export svn://localhost/PLEIADES/SVN/TFEL/trunk 
+#     ${CMAKE_BINARY_DIR}/${PACKAGE_NAME}-${VERSION}
+#     COMMAND tar -cvjf ${CMAKE_BINARY_DIR}/${PACKAGE_NAME}-${VERSION}.tar.bz2 
+#     ${CMAKE_BINARY_DIR}/${PACKAGE_NAME}-${VERSION}
+#     COMMAND ${CMAKE_COMMAND} -E remove_directory ${CMAKE_BINARY_DIR}/${PACKAGE_NAME}-${VERSION}
+#     WORKING_DIRECTORY ${CMAKE_SOURCE_DIR})
+# endif(UNIX)
+
 # packaging
 include(CPack)
