@@ -1,0 +1,355 @@
+\documentclass[rectoverso,pleiades,pstricks,leqno,anti,projet]{@abs_top_builddir@/docs/tex/texmf/note_technique_2010}
+
+% \usepackage{draftcopy}
+% \draftcopySetGrey{0.8}
+% \draftcopyName{Version provisoire}{80}
+
+\usepackage[dvips]{graphicx}
+\usepackage[dvips,breaklinks]{hyperref}
+
+\usepackage{@abs_top_builddir@/docs/tex/texmf/mathematiques}
+\usepackage{@abs_top_builddir@/docs/tex/texmf/mecanique}
+\usepackage{@abs_top_builddir@/docs/tex/texmf/couleurs}
+\usepackage{@abs_top_builddir@/docs/tex/texmf/presentation}
+
+\usepackage{pst-plot}
+\usepackage{array}
+\usepackage{subfigure}
+\usepackage{relsize}
+\usepackage{multind}
+
+% one column index
+\makeatletter
+\def\printindex#1#2{\section*{#2}
+\addcontentsline{toc}{section}{#2}
+\@input{#1.ind}}
+\makeatother
+
+\usepackage[frenchb]{babel}
+
+\newcommand{\pleiades}{\texttt{pleiades}}
+\newcommand{\TFEL}{\texttt{tfel}}
+\newcommand{\mfront}{\texttt{mfront}}
+\newcommand{\licos}{\texttt{licos}}
+\newcommand{\cyrano}{\texttt{cyrano}}
+\newcommand{\galileo}{\texttt{galileo}}
+\newcommand{\castem}{\texttt{Cast3M}}
+\newcommand{\gibiane}{\texttt{gibiane}}
+\newcommand{\tmfft}{\texttt{TMFFT}}
+\newcommand{\aster}{\href{http://www.code-aster.org/}{\texttt{Aster}}}
+\newcommand{\pycastem}{\texttt{pyCast3M}}
+\newcommand{\umat}{\texttt{umat}}
+\newcommand{\sirius}{\texttt{sirius}}
+\newcommand{\fortran}{\texttt{fortran}}
+
+\newcommand{\cmake}{\href{http://www.cmake.org/}{\texttt{cmake}}}
+\newcommand{\autotools}{\href{http://fr.wikipedia.org/wiki/Autotools}{\texttt{autotools}}}
+\newcommand{\python}{\href{http://python.org}{\texttt{python}}}
+\newcommand{\gnuplot}{\href{http://www.gnuplot.info}{\texttt{gnuplot}}}
+\newcommand{\latex}{\href{http://www.latex-project.org}{\LaTeX2e{}}}
+\newcommand{\make}{\href{http://www.gnu.org/software/make/}{\texttt{make}}}
+\newcommand{\doxygen}{\href{http://www.stack.nl/~dimitri/doxygen/}{\texttt{doxygen}}}
+\newcommand{\valgrind}{\href{http://www.valgrind.org/}{\texttt{valgrind}}}
+
+\newcommand{\mkey}[1]{\index{mkeys}{#1@\symbol{64}#1}{\texttt{@#1}}}
+\newcommand{\mkeyb}[2]{\index{mkeys}{#1@\symbol{64}#1}{\texttt{@#2}}}
+
+\newcommand{\header}[1]{\index{headers}{#1}{\texttt{#1}}}
+\newcommand{\headerb}[2]{\index{headers}{#1}{\texttt{#2}}}
+
+\newcommand{\tfel}[1]{\index{tfel}{#1}{\texttt{#1}}}
+\newcommand{\tfelb}[2]{\index{tfel}{#1}{\texttt{#2}}}
+
+\newcommand{\env}[1]{\index{env}{#1}{\texttt{#1}}}
+\newcommand{\envb}[2]{\index{env}{#1}{\texttt{#2}}}
+
+\newcommand{\moption}[1]{\texttt{-{}-#1}}
+
+\newcommand{\bigO}[1]{\ensuremath{\mathop{}\mathopen{}O\mathopen{}\left(#1\right)}}
+
+%c from texinfo.tex
+\def\ifmonospace{\ifdim\fontdimen3\font=0pt }
+
+%c C plus plus
+\def\cpp{%
+\ifmonospace%
+    C++%
+\else%
+    C\kern-.1667em\raise.30ex\hbox{\smaller{++}}%
+\fi%
+\spacefactor1000 }
+
+\newcommand{\varcpp}[1]{\texttt{#1}}
+
+\newcommand{\sigmaH}{\ensuremath{\sigma_{H}}}
+
+\newcommand{\cea}{CEA}
+\newcommand{\windows}{\href{http://www.microsoft.com/france/windows/default.mspx}{\texttt{Windows}}}
+\newcommand{\unix}{\href{http://www.kernel.org/}{\texttt{unix}}}
+\newcommand{\msys}{\href{http://www.mingw.org/wiki/MSYS}{\texttt{msys}}}
+\newcommand{\cygwin}{\href{http://www.cygwin.com/}{\texttt{cygwin}}}
+\newcommand{\linux}{\href{http://www.kernel.org/}{\texttt{linux}}}
+\newcommand{\debian}{\href{http://www.debian.org/}{\texttt{Debian}}}
+\newcommand{\ubuntu}{\href{http://www.ubuntu.com}{\texttt{Ubuntu}}}
+\newcommand{\redhat}{\href{http://www.redhat.com}{\texttt{Red Hat}}}
+\newcommand{\mandriva}{\href{http://www.mandriva.com}{\texttt{Mandriva}}}
+\newcommand{\excel}{\href{http://www.microsoft.com/france/office/2007/programs/excel/overview.mspx}{\texttt{Microsoft Office Excel}}}
+
+\newcommand{\debutpas}[1]{\ensuremath{\left.#1\right|_{t}}}
+\newcommand{\milieupas}[1]{\ensuremath{\left.#1\right|_{t+\theta\, \Delta\, t}}}
+\newcommand{\finpas}[1]{\ensuremath{\left.#1\right|_{t+\Delta\, t}}}
+\newcommand{\demipas}[1]{\ensuremath{\left.#1\right|_{t+\frac{\Delta\, t}{2}}}}
+
+\newcommand{\code}[1]{
+  \psframebox[linecolor=ceaorange,shadow=true,blur=true]{
+    \begin{minipage}[htbp]{1.0\linewidth}
+      \ttfamily\small#1
+    \end{minipage}
+  }
+}
+
+\newcommand{\bash}[1]{
+  \begin{center}
+    \begin{minipage}{0.8\linewidth}
+      \footnotesize{}
+      \texttt{\$#1}
+    \end{minipage}
+  \end{center}
+}
+
+\input{@abs_top_builddir@/docs/tex/texmf/LSC}
+
+\auteurs{T.~Helfer}
+\redacteur{T.~Helfer}
+\verificateur{}
+\approbateur{R.~Masson}
+\emetteur{E.~Touron}
+
+\titre{Interface \aster{} aux lois de comportements
+  mécaniques dans \mfront{}}
+
+\date{2013}
+% \numero{12-014}
+\indice{0}
+% \dateversion{09/2012}
+\numeroaffaire{A-SICOM-A1-01}
+\domaine{DEN/DISN/SIMU}
+% \accords{tripartite}
+% \clients{AREVA - EDF}
+\programmerecherche{SICOM}
+\classification{DO}
+\motsclefs{
+  \mfront{} - \pleiades{}
+}
+
+% \codebarre{images/code_barre}
+% \diffusionexterne{
+% {EDF/R\&D}              & O. Marchand     & 1 & Diffusion par\\
+% {EDF/R\&D}              & P. Vasseur      & 1 & courriel     \\
+% {EDF/R\&D/MMC}          & P. Ollar         & 1 & \\
+% {EDF/R\&D/MMC/CPM}      & N. Prompt       & 1 & \\
+%                         & N. Barnel       & 1 & \\
+% {EDF/R\&D/MMC/CPM}      & G. Thouvenin    & 1 & \\
+%                         & R. Largenton    & 1 & \\
+%                         & C. Petry        & 1 & \\
+% EDF/SEPTEN              & N. Waeckel      & 1 & \\
+%                         & P. Hemmerich    & 1 & \\
+%                         & H. Billat       & 1 & \\
+%                         & C. Bernaudat    & 1 & \\
+% AREVA NP/LA DEFENSE     & L. Catalani     & 1 & \\
+%                         & L. Brunel       & 1 & \\
+% AREVA NP/LYON           & P. Melin        & 1 & \\
+%                         & V. Bessiron     & 1 & \\
+%                         & C. Garnier      & 1 & \\                           
+%                         & V. Garat        & 1 & \\
+%                         & F. Arnoux       & 1 &
+% }
+
+\diffusioninterne{
+}
+
+% \signatures{-0.}{-39.2}{0.12}{images/signatures.eps}
+
+\stylebib{@abs_top_srcdir@/docs/tex/texmf/bibtex/fr-insa}
+\fichierbib{@abs_top_srcdir@/docs/mfront/Bibliographie}
+
+\resumecea{}
+
+\makeindex{env}
+\makeindex{tfel}
+\makeindex{headers}
+\makeindex{mkeys}
+
+\begin{document}
+
+Cette annexe décrit l'interface \aster{}.
+
+\subsection{La fonction {\tt umat}}
+
+Le prototype de la fonction {\tt umat} a été initialement défini dans
+le code ABAQUS. Ce prototype a été repris dans \aster{}. La
+compatibilité avec ABAQUS nécessite cependant de déclarer des champs
+qui ne sont pas nécessairement utilisés dans \aster{}.
+
+\begin{figure}[htbp]
+  \centering
+  \begin{tabular}[htbp]{lll}
+    & {\tt {\color{purple} SUBROUTINE} {\color{green} aster} ( }&{\tt  STRESS, STATEV, DDSDDE, SSE, SPD, SCD,}\\
+    {\color{ceabluecurve} \&} &                   & {\tt RPL, DDSDDT, DRPLDE, DRPLDT,}\\
+    {\color{ceabluecurve} \&} &                   & {\tt STRAN, DSTRAN, TIME, DTIME,}\\
+    {\color{ceabluecurve} \&} &                   & {\tt TEMP, DTEMP, PREDEF, DPRED,}\\
+    {\color{ceabluecurve} \&} &                   & {\tt CMNAME, NDI, NSHR, NTENS, NSTATV,}\\
+    {\color{ceabluecurve} \&} &                   & {\tt PROPS, NPROPS, COORDS,}\\
+    {\color{ceabluecurve} \&} &                   & {\tt DROT, PNEWDT, CELENT, DFGRD0, DFGRD1,}\\
+    {\color{ceabluecurve} \&} &                   & {\tt NOEL, NPT, LAYER, KSPT, KSTEP, KINC )}\\
+   \end{tabular}
+  \caption{Prototype de la fonction {\tt aster}.}
+  \label{fig:aster:prototype}
+\end{figure}
+
+\begin{longtable}[htpb]{|p{2.cm}|p{4.cm}|p{9cm}|}
+  \endfirsthead \hline \multicolumn{3}{|c|}{Suite de la page
+    précédente}\\ \hline \endhead \hline \multicolumn{3}{|r|}{{\em Suite
+      à la page suivante}}\\ \hline \endfoot \endlastfoot \hline {\tt
+    STRESS } & REAL*8(NTENS) & tenseur des contraintes. En entrée, ce
+  tableau donne le tenseur des contraintes à $t_{0}$. En sortie, ce
+  tableau doit contenir le tenseur des contraintes à $t_{0}+\Delta t$ \\
+  {\tt STATEV } & REAL*8(*) & variables internes. En entrée, ce tableau
+  contient les variables internes à $t_{0}$. En sortie, il doit contenir
+  les variables internes à $t_{0}+\Delta t$ \\
+  {\tt DDSDDE } & REAL*8(NTENS,NTENS) & matrice jacobienne du modèle
+  (matrice de Hooke tangente) à $t_{0}+\Delta t$. \\
+  {\tt SSE } & REAL*8 & énergie de déformation élastique \\
+  {\tt SPD } & REAL*8 & dissipation plastique \\
+  {\tt SCD } & REAL*8 & dissipation visqueuse. \\
+  {\tt RPL } & REAL*8 & puissance calorifique volumique dégagée par le
+  travail mécanique, à $t_{0}+\Delta t$ \\
+  {\tt DDSDDT } & REAL*8(NTENS) & dérivée du tenseur des contraintes par
+  rapport a la température, à $t_{0}+\Delta t$ \\
+  {\tt DRPLDE } & REAL*8(NTENS) & dérivées de RPL par rapport aux
+  composantes du tenseur des déformations, à $t_{0}+\Delta t$\\ {\tt
+    DRPLDT } & REAL*8 & derivée de RPL par rapport a la température, à
+  $t_{0}+\Delta t$. \\
+  {\tt STRAN } & REAL*8(NTENS) & tenseur des déformations totales à
+  $t_{0}$ \\
+  {\tt DSTRAN } & REAL*8(NTENS) & tenseur des incréments de déformation
+  totale par rapport a l'état de reference à $t_{0}$ \\
+  {\tt TIME } & REAL*8(2) & TIME(1) = 0, TIME(2) = $t_{0}$ où $t_{0}$
+  est le précédent instant d'équilibre atteint \\
+  {\tt DTIME } & REAL*8 & DTIME = $\Delta t$ où $\Delta t$ est le
+  nouveau pas de temps propose par {\tt PASAPAS} pour atteindre
+  l'equilibre avec l'incrément de déformation totale impose ({\tt
+    DSTRAN}) \\
+  {\tt TEMP } & REAL*8 & température à $t_{0}$ \\
+  {\tt DTEMP } & REAL*8 & incrément de température à $t_{0}+\Delta t$ \\
+  {\tt PREDEF } & REAL*8(*) & vecteur des paramètres externes de la loi
+  de comportement, valeurs à $t_{0}$ \\
+  {\tt DPRED } & REAL*8(*) & incréments des paramètres externes à
+  $t_{0}+\Delta t$ \\
+  {\tt CMNAME } & CHARACTER*16 & identifiant de la loi de comportement. \\
+  {\tt NDI } & INTEGER & nombre de composantes diagonales du tenseur des
+  contraintes \\
+  {\tt NSHR } & INTEGER & nombre de composantes extradiagonales du
+  tenseur des contraintes. \\
+  {\tt NTENS } & INTEGER & nombre de composantes du tenseur des
+  contraintes\\ {\tt NSTATV } & INTEGER & nombre de variables internes
+  \\
+  {\tt PROPS } & REAL*8(NPROPS) & vecteur des propriétés du matériau. \\
+  {\tt NPROPS } & INTEGER & nombre de propriétés du matériau \\
+  {\tt COORDS } & REAL*8(3) & coordonnees cartésiennes du point
+  d'intégration courant \\
+  {\tt DROT } & REAL*8(3,3) & matrice d'incréments de rotation. Cette
+  matrice décrit la rotation sur le pas de temps de la base dans
+  laquelle sont exprimés les tenseurs de contraintes et de déformations.
+  \\
+  {\tt PNEWDT } & REAL*8 & rapport entre le nouveau pas de temps suggéré
+  et le pas de temps donné en entrée \\
+  {\tt CELENT } & REAL*8 & longueur caractéristique de l'élément. Dans
+  le cas d'une adhérence à \aster{}, cette longueur caractéristique est
+  déterminée par {\tt LOCARA} comme la distance maximale entre deux
+  noeuds de l'élément. \\
+  {\tt DFGRD0 } & REAL*8(3,3) & tenseur gradient de déplacement à
+  $t_{0}$ \\
+  {\tt DFGRD1 } & REAL*8(3,3) & tenseur gradient de déplacement à
+  $t_{0}+\Delta t$ \\
+  {\tt NOEL } & INTEGER & numéro de l'élément courant \\
+  {\tt NPT } & INTEGER & numéro du point d'intégration courant \\
+  {\tt LAYER } & INTEGER & numéro de couche pour des coques composites
+  ou des solides multi-couches \\
+  {\tt KSPT } & INTEGER & numéro de section dans la couche courante. \\
+  {\tt KSTEP } & INTEGER & Cette entrée n'a pas de sens dans le cas
+  d'une adhérence à \aster{} \\
+  {\tt KINC } & INTEGER & Code de sortie \\
+  \hline
+  \caption{Arguments de la fonction {\texttt aster}}
+  \label{tab:aster:argument}
+\end{longtable}
+
+Le type entier {\tt INTEGER} dépend de la plateforme~: \aster{} utilise
+des directives de compilation spéficique pour que ce type soit de la
+taille d'un pointeur.
+
+En \cpp{}, nous noterons {\tt Aster\-Real} le type numérique utilisé
+par \aster{} et {\tt Aster\-Int} le type entier.
+
+\subsection{Conventions}
+
+La matrice tangente cohérente n'est calculée que si le premier élément
+du tableau \varcpp{DDSOE} est supérieur à \(0.5\).
+
+La loi de comportement a rencontré une erreur grave si la valeur de
+\varcpp{PNEWDT} est inférieure à \(0\). Différents cas peuvent se
+présenter~:
+\begin{itemize}
+  \item l'intégration n'a pas convergé~;
+  \item le nombre de valeurs transmises pour les variables
+  internes ou les propriétés matériau n'est pas celui attendu~;
+  \item un borne physique a été atteinte~;
+  \item etc...
+\end{itemize}
+
+\subsection{Mots clés spécifiques}
+
+\subsubsection{Vérification de la matrice tangente calculée par perturbation}
+
+L'interface \aster{} propose de vérifier la matrice tangente
+calculée par comparaison à une matrice tangente obtenue par
+perturbation.
+
+Le mot clé \mkey{AsterCompareToNumericalTangentOperator} qui doit être
+suivi d'une valeur booléenne \varcpp{true} ou \varcpp{false} demande à
+ce que cette comparaison soit effectuée (ou pas).
+
+La matrice tangente numérique est obtenue par différences finies
+centrées. Le valeur de la perturbation utilisée pour ce calcul peut être
+spécifié par le mot clé
+\mkeyb{AsterStrainPerturbationValue}{Aster\-Strain\-Perturbation\-Value}
+qui est suivi par la valeur à utiliser. Par défaut, cette
+perturbation est prise égale à \(10^{-6}\).
+
+La comparaison entre la matrice jacobienne
+\(\deriv{\Delta\,\tsigma}{\Delta\,\tepsilonto}\) et son approximation
+numérique
+\(\underset{\sim}{\deriv{\Delta\,\tsigma}{\Delta\,\tepsilonto}}\) est
+faite terme à terme et l'on retient comme erreur~:
+\[
+\varepsilon =
+\underset{i,j}{\mathrm{max}}\left|\deriv{\Delta\,\tsigma}{\Delta\,\tepsilonto}\paren{i,j}-\underset{\sim}{\deriv{\Delta\,\tsigma}{\Delta\,\tepsilonto}}\paren{i,j}\right|
+\]
+
+Cette erreur est comparée à un critère que l'utilisateur peut
+définir par le mot clé
+\mkeyb{AsterTangentOperatorComparisonCriterium}{Aster\-Tangent\-Operator\-Comparison\-Criterium}.
+La valeur par défaut de ce critère est de \(10^{7}\).
+
+Si l'erreur est supérieure au critère, la valeur de l'erreur, un
+pourcentage relatif de l'erreur\footnote{Ce pourcentage relatif de
+  l'erreur est calculé ainsi~:
+  \[
+  \Frac{100\,\varepsilon}{\Frac{1}{2}\mathrm{max}\paren{\underset{i,j}{\mathrm{max}}\left|\deriv{\Delta\,\tsigma}{\Delta\,\tepsilonto}\paren{i,j}\right|,\underset{i,j}{\mathrm{max}}\left|\underset{\sim}{\deriv{\Delta\,\tsigma}{\Delta\,\tepsilonto}}\paren{i,j}\right|}}
+  \]},
+la jacobienne calculée par l'utilisateur et son approximation
+numérique sont affichés.
+
+
+\end{document}

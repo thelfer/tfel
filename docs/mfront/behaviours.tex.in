@@ -137,7 +137,8 @@
 \approbateur{R.~Masson}
 \emetteur{E.~Touron}
 
-\titre{Lois de comportements mécaniques dans \mfront{}}
+\titre{Écriture de lois de comportement mécanique à
+  l'aide du générateur de code \mfront{}}
 
 \date{2013}
 % \numero{12-014}
@@ -218,58 +219,59 @@ la richesse des analyseurs proposés par \mfront{}, qui sont au nombre
 
 \subsection{Analyseurs disponibles}
 
-Plusieurs analyseurs dédiés aux lois de comportement sont actuellement
-disponibles~:
+Plusieurs analyseurs dédiés aux lois de comportement sont
+actuellement disponibles~:
 \begin{itemize}
-  \item l'analyseur \texttt{DefaultParser} qui permet de traiter tous
-  types de lois de comportements~;
-  \item l'analyseur \texttt{IsotropicMisesCreep} qui gère exclusivement
-  les lois de comportement viscoplastique isotrope de la forme~:
+  \item l'analyseur \texttt{DefaultParser} qui permet de traiter
+  tous types de lois de comportements~;
+  \item l'analyseur \texttt{IsotropicMisesCreep} qui gère
+  exclusivement les lois de comportement viscoplastique isotrope de la
+  forme~:
   \[
   \dot{p} = f\paren{\sigmaeq}
   \]
   où \(\dot{p}\) la vitesse viscoplastique équivalente et où
   \(\sigmaeq\) est la contrainte équivalente au sens de \nom{Von-Mises}.
-  La direction d'écoulement est donnée par l'hypothèse de normalité.
-  Une intégration implicite est effectuée. Cette intégration nécessite
-  de préciser la dérivée \(\derivtot{f}{\sigmaeq}\)~;
-  \item l'analyseur \texttt{IsotropicStrainHardeningMisesCreep} qui gère
-  exclusivement les lois de comportement viscoplastique isotrope de
-  la forme~:
+  La direction d'écoulement est donnée par l'hypothèse de normalité. Une
+  intégration implicite est effectuée. Cette intégration nécessite de
+  préciser la dérivée \(\derivtot{f}{\sigmaeq}\)~;
+  \item l'analyseur \texttt{IsotropicStrainHardeningMisesCreep}
+  qui gère exclusivement les lois de comportement viscoplastique
+  isotrope de la forme~:
   \[
   \dot{p} = f\paren{\sigmaeq,p}
   \]
   où \(\dot{p}\) la vitesse viscoplastique équivalente et où
   \(\sigmaeq\) est la contrainte équivalente au sens de \nom{Von-Mises}.
-  La direction d'écoulement est donnée par l'hypothèse de normalité.
-  Une intégration implicite est effectuée. Cette intégration nécessite
-  de préciser les dérivées \(\deriv{f}{\sigmaeq}\) et \(\deriv{f}{p}\)~;
+  La direction d'écoulement est donnée par l'hypothèse de normalité. Une
+  intégration implicite est effectuée. Cette intégration nécessite de
+  préciser les dérivées \(\deriv{f}{\sigmaeq}\) et \(\deriv{f}{p}\)~;
   \item l'analyseur \texttt{IsotropicPlasticMisesFlow} qui gère
   exclusivement les lois de comportement plastique isotrope de la
   forme~:
   \[
-  f(\sigmaeq,p)\leq 0 \quad\quad \dot{p}\geq 0 \quad\quad
-  f(\sigmaeq,p)\,\dot{p} = 0
+  f(\sigmaeq,p)\leq 0 \quad\quad \dot{p}\geq 0
+  \quad\quad f(\sigmaeq,p)\,\dot{p} = 0
   \]
-  où \(p\) est la déformation plastique cumulée et où \(\sigmaeq\) est
-  la contrainte équivalente au sens de \nom{Von-Mises}. La direction
+  où \(p\) est la déformation plastique cumulée et où \(\sigmaeq\)
+  est la contrainte équivalente au sens de \nom{Von-Mises}. La direction
   d'écoulement est donnée par l'hypothèse de normalité. Une intégration
   implicite est effectuée. Cette intégration nécessite de préciser les
   dérivées \(\deriv{f}{\sigmaeq}\) et \(\deriv{f}{p}\)~;
-  \item l'analyseur \texttt{MultipleIsotropicMisesFlows} qui gère une
-  combinaison arbitraire d'écoulements des trois types précédents. Les
-  différents écoulements sont supposés non couplés.
-  \item l'analyseur \texttt{RungeKutta} qui propose la résolution d'une
-  loi de comportement quelconque à l'aide de l'une des méthodes de
+  \item l'analyseur \texttt{MultipleIsotropicMisesFlows} qui gère
+  une combinaison arbitraire d'écoulements des trois types précédents.
+  Les différents écoulements sont supposés non couplés.
+  \item l'analyseur \texttt{RungeKutta} qui propose la résolution
+  d'une loi de comportement quelconque à l'aide de l'une des méthodes de
   \nom{Runge-Kutta}. Les méthodes disponibles sont des méthodes d'ordre
   \(2\) et \(4\) sans contrôle d'erreur et des méthodes correcteur
   prédicteur de type \(\pfrac{4}{2}\) ou \(\pfrac{5}{4}\) avec
   adaptation du pas de temps~;
-  \item l'analyseur \texttt{Implicit} qui propose la résolution d'une
-  loi de comportement quelconque à l'aide d'une intégration implicite.
-  La méthode de résolution retenue pourra être ou un algorithme de
-  \nom{Newton-Raphson} ou deux versions de l'algorithme de
-  \nom{Broyden}~;
+  \item les analyseurs \texttt{Implicit} et \texttt{ImplicitII}
+  qui propose la résolution d'une loi de comportement quelconque à
+  l'aide d'une intégration implicite. La méthode de résolution retenue
+  pourra être ou un algorithme de \nom{Newton-Raphson} ou deux versions
+  de l'algorithme de \nom{Broyden}~;
 \end{itemize}
 
 Ces différents analyseurs sont décrits dans les sections suivantes.
@@ -817,19 +819,18 @@ Les interfaces aux lois de comportement ont différentes fonctions~:
 En fonction des fonctionnalités disponibles ou absentes du code cible,
 l'interface peut également~:
 \begin{itemize}
-\item assurer le sous-découpage locale du pas de temps en cas de non
-  convergence~;
-\item gérer le cas des contraintes planes car les lois de comportement
-  \mfront{} sont aujourd'hui écrites en déformations~;
-\item gérer le cas des contraintes planes si les lois de comportement
-  ne gèrent pas cette hypothèse, ce qui est le cas de la plupart des
-  lois générées par \mfront{}~;
-\item permettre l'utilisation des lois écrites pour les petites
+  \item assurer le sous-découpage local (au niveau du point de
+  \nom{Gauss}) du pas de temps en cas de non convergence~;
+  \item gérer le cas des contraintes planes si les lois de
+  comportement ne gèrent pas cette hypothèse, ce qui est le cas de la
+  plupart des lois générées par \mfront{}~;
+  \item permettre l'utilisation des lois écrites pour les petites
   déformations dans un calcul en transformations finies. Pour cela,
   plusieurs pistes semblent intéressante~:
   \begin{itemize}
-  \item le cas des des grandes rotations, petites déformations~;
-  \item l'utilisation des déformations logarithmiques~;
+    \item le cas des des grandes rotations, petites
+    déformations~;
+    \item l'utilisation des déformations logarithmiques~;
   \end{itemize}
 \end{itemize}
 
@@ -919,9 +920,12 @@ variable booléenne \varcpp{computeTangentOperator\textunderscore{}} est
 vraie. L'utilisateur doit tester cette valeur et effectuer le calcul le
 cas échéant.
 
-\newpage \clearpage \section{Analyseurs dédiés aux lois de
+\newpage 
+\clearpage
+\section{Analyseurs dédiés aux lois de
   comportement plastique et viscoplastique incompressible des matériaux
   isotropes}
+\label{sec:mfront:isotropic:analyser}
 
 Nous nous intéressons dans cette section à des lois de comportement
 mécanique très utilisées pour décrire les matériaux {\em isotropes} qui
@@ -1091,7 +1095,7 @@ aux isovaleurs de la contrainte de \nom{Von Mises}.
 
 La définition~\eqref{mfront:as:n} et la
 définition~\eqref{mfront:sigmaeq} de la contrainte de \nom{Von Mises}
-permettent de montrer le \(\tenseur{n}\) est normé~:
+permettent de montrer le tenseur \(\tenseur{n}\) est normé~:
 \begin{equation}
   \label{mfront:as:n:2}
   \tenseur{n}\,\colon\,\tenseur{n}=\Frac{9}{4\,\sigmaeq^{2}}\tenseur{s}\,\colon\,\tenseur{s}=\Frac{3}{2}
@@ -1159,6 +1163,11 @@ Trois mécanismes seront considérés dans la suite~:
   f_{i}^{\textrm{an}}(\sigmaeq,p_{i})\,\dot{p}_{i} = 0
   \]
 \end{itemize}
+
+Nous pouvons remarquer que l'évolution de la déformation
+viscoplastique pour les lois viscoplastiques est donnée par une équation
+différentielle, tandis que pour les lois plastiques nous avons retenu
+une formulation basée sur le respect de la surface de charge.
 
 \paragraph{Déformation inélastique cumulée totale}
 Tous les écoulements ayant la même direction donnée par le tenseur
@@ -1260,15 +1269,15 @@ Dans la suite, nous noterons \(\tenseur{B}\) le tenseur suivant~:
 \[
 \tenseur{B}=\debutpas{\tepsilonel}+\theta\Delta\,\tepsilonto-\Frac{1}{3}\trace\paren{\debutpas{\tepsilonel}+\theta\Delta\,\tepsilonto}\tenseur{I}
 \]
-Ce tenseur est parfaitement connu au début du pas de temps. Nous pouvons
-alors écrire~:
+Ce tenseur est parfaitement connu au début du pas de temps. Nous
+pouvons alors écrire~:
 \[
 \paren{\milieupas{\sigmaeq}+3\mu\theta\Delta\,p}\milieupas{\tenseur{n}}=3\mu\tenseur{B}
 \]
 En utilisant le fait que le produit contracté
-\(\milieupas{n}\colon\milieupas{n}\) est égal à
-\(\Frac{3}{2}\), nous obtenons
-l'expression suivante de la contrainte équivalente~:
+\(\milieupas{n}\colon\milieupas{n}\) est égal à \(\Frac{3}{2}\)
+(équation~\eqref{mfront:as:n:2}), nous obtenons l'expression suivante de
+la contrainte équivalente~:
 \begin{equation}
   \label{eq:IsotropicBehaviour:contrainte_equivalente}
   \milieupas{\sigmaeq}=\mu\sqrt{6\,\tenseur{B}\colon\tenseur{B}}-3\,\mu\,\theta\,\Delta\,p=\mu\sqrt{6\,\tenseur{B}\colon\tenseur{B}}-3\,\mu\,\theta\,\sum_{i}\,\Delta\,p_{i}
@@ -1805,7 +1814,7 @@ algorithmes n'est pas recommandée car leurs prédictions sont
 généralement peu satisfaisantes~: il est préférable d'utiliser les
 algorithmes avec contrôle de l'erreur et pas de temps adaptatif.
 
-\paragraph{Méthode d'\nom{Euleur} explicite} L'estimation la plus simple
+\paragraph{Méthode d'\nom{Euler} explicite} L'estimation la plus simple
 consiste à remplacer la dérivée \(\dot{Y}\) par la différence finie
 \(\Frac{\finpas{Y}-\debutpas{Y}}{\Delta\, t}\), ce qui conduit à~:
 \begin{equation}
@@ -2259,11 +2268,36 @@ Deux remarques peuvent être faites~:
 \section{Intégration des lois de comportement par une méthode implicite}
 \label{sec:Implicite}
 
-Le paragraphe~\ref{sec:resol-dun-syst-implicite} décrit de manière
-générale la résolution d'un système différentielle par une méthode
-implicite.
+Nous décrivons dans cette section l'intégration des lois de
+comportement par une méthode implicite. Ces méthodes sont très
+efficaces, stables et peuvent être utilisées pour intégrer toutes les
+lois de comportement.
 
-Différents méthodes sont disponibles~:
+Elles présentent de nombreux avantages par rapport aux autres
+méthodes. Les plus importants sont que~:
+\begin{itemize}
+  \item ces méthodes introduisent naturellement la matrice
+  tangente cohérente. De plus, dans la plupart des cas, cette matrice
+  est pratiquement gratuite (voir
+  paragraphe~\ref{sec:mfront:implicit:tangentOperator})~;
+  \item elles permettent de traiter naturellement les lois de
+  comportement indépendantes du temps. Un exemple est donné par le
+  traitement de la plasticité dans les analyseurs spécifiques (voir
+  paragraphe~\ref{sec:mfront:isotropic:analyser}).
+\end{itemize}
+
+Ces méthodes supposent que l'on soit capable de résumer l'intégration
+de la loi de comportement à la résolution d'un système non-linéaire.
+Nous avons détaillé comment procéder pour les analyseurs spécifiques
+(voir paragraphe~\ref{sec:mfront:isotropic:analyser}). Nous montrons
+comment procéder pour transformer un système différentiel en système
+d'équations non linéaires et nous en profitons pour introduire les
+méthodes implicites en se basant sur les méthodes de \nom{Runge-Kutta}.
+
+Deux analyseurs sont disponibles pour décrire les
+
+Différents méthodes pour résoudre le système non-linéaire
+introduit par la méthode implicite sont disponibles~:
 \begin{itemize}
   \item \varcpp{NewtonRaphson}, l'algorithme classique de
   \nom{Newton-Raphson}~;
@@ -2276,10 +2310,10 @@ Différents méthodes sont disponibles~:
 L'utilisateur choisi l'algorithme par la directive
 \mkey{Algorithm}.
 
-Outre la présentation des bases mathématiques de ces
-méthodes, nous profitons de ce paragraphe pour justifier certaines
-initialisations implicites faites dans \mfront{} qui rendent l'écriture
-des lois de comportement plus concise.
+Outre la présentation des bases mathématiques de ces méthodes, nous
+profitons de ce paragraphe pour justifier certaines initialisations
+implicites faites dans \mfront{} qui rendent l'écriture des lois de
+comportement plus concise.
 
 \subsection{Résolution d'un système différentiel par une méthode implicite}
 \label{sec:resol-dun-syst-implicite}
@@ -2361,57 +2395,69 @@ inconnues, plusieurs choix sont possibles.
 \paragraph{Méthode du point milieu} Ce choix correspond à la solution
 \(a_{1}=0\), \(a_{2}=1\), \(a_{3}=\pfrac{1}{2}\) et
 \(a_{4}=\pfrac{G\paren{Y_{i},t}}{2}\). Cette méthode s'écrit ainsi~:
-\[
-\finpas{Y} = \debutpas{Y}+\Delta\,t\,G\paren{\debutpas{Y}+\Frac{\Delta\, t}{2}G\paren{\debutpas{Y},t},t+\Frac{\Delta\, t}{2}}
-\]
+\begin{equation}
+  \label{eq:mfront:implicite:midpoint}
+  \finpas{Y} = \debutpas{Y}+\Delta\,t\,G\paren{\debutpas{Y}+\Frac{\Delta\, t}{2}G\paren{\debutpas{Y},t},t+\Frac{\Delta\, t}{2}}
+\end{equation}
 
 \paragraph{Méthode d'\nom{Euler} modifiée} Ce choix correspond à la solution
 \(a_{1}=a_{2}=\pfrac{1}{2}\), \(a_{3}=1\) et
 \(a_{4}=G\paren{Y_{i},t}\). Cette méthode s'écrit ainsi~:
-\[
-\finpas{Y} = \debutpas{Y}+\Frac{\Delta\,t}{2}\left[G\paren{\debutpas{Y},t}+G\paren{\debutpas{Y}+\Delta\, t\,G\paren{\debutpas{Y},t},t+\Delta\,t }\right]
-\]
+\begin{equation}
+  \label{eq:mfront:implicite:euler}
+  \finpas{Y} = \debutpas{Y}+\Frac{\Delta\,t}{2}\left[G\paren{\debutpas{Y},t}+G\paren{\debutpas{Y}+\Delta\, t\,G\paren{\debutpas{Y},t},t+\Delta\,t }\right]
+\end{equation}
 
 \paragraph{Estimation implicite}
 Des estimations dites {\em implicites} de la solution consistent à
 introduire, à la place de l'estimation \(\debutpas{Y}+\Delta\, t\,
 G\paren{\debutpas{Y},t}\), la valeur recherchée \(\finpas{Y}\).  Deux
 schémas implicites, se déduisent alors des schémas de
-\nom{Runge-Kutta} précédent~:
+\nom{Runge-Kutta} précédent.
+
+À partir de la méthode du point
+milieu~\eqref{eq:mfront:implicite:midpoint}, nous obtenons~:
 \[
-\begin{aligned}
-  \finpas{Y}&=\debutpas{Y}+\Delta\,t\,G\paren{\Frac{1}{2}\left(\debutpas{Y}+\finpas{Y}\right),t+\Frac{\Delta\, t}{2}} \\
-  \finpas{Y}&=\debutpas{Y}+\Frac{\Delta\,t}{2}\,\left[G\paren{\debutpas{Y},t}
-    +\,G\paren{\finpas{Y},t+\Delta\,t}\right] \\
-\end{aligned}
+\finpas{Y}
+=\debutpas{Y}+\Delta\,t\,G\paren{\Frac{1}{2}\left(\debutpas{Y}+\finpas{Y}\right),t+\Frac{\Delta\,
+ t}{2}}
+\]
+
+À partir de la méthode d'\nom{Euler}
+modifiée~\eqref{eq:mfront:implicite:euler}, nous obtenons~:
+\[
+\finpas{Y} =\debutpas{Y}+\Frac{\Delta\,t}{2}\,\left[G\paren{\debutpas{Y},t}
++\,G\paren{\finpas{Y},t+\Delta\,t}\right]
 \]
 
 \paragraph{\(\theta\)-méthodes}
-
 Les schémas implicites précédents sont généralement présentés en
 introduisant un paramètre \(\theta\), compris entre \(0\) et \(1\),
 dans les expressions précédentes afin de rendre les apports des termes
-\(\debutpas{Y}\) et \(\finpas{Y}\) dissymétriques. Ces schémas
-s'écrivent alors~:
+\(\debutpas{Y}\) et \(\finpas{Y}\) dissymétriques. 
+
+À partir de la méthode du point
+milieu~\eqref{eq:mfront:implicite:midpoint}, nous obtenons~:
 \begin{equation}
   \label{eq:implicite}
-  \begin{aligned}
-    \finpas{Y}&=\debutpas{Y}+\Delta\,t\,G\paren{\paren{1-\theta}\debutpas{Y}+\theta\,\finpas{Y},t+\theta\,\Delta\, t} \\
-    \finpas{Y}&=\debutpas{Y}+\Delta\,t\,\left[\paren{1-\theta}G\paren{\debutpas{Y},t}
-      +\theta\,G\paren{\finpas{Y},t+\Delta\,t}\right]
-  \end{aligned}
+  \finpas{Y} =\debutpas{Y}+\Delta\,t\,G\paren{\paren{1-\theta}\debutpas{Y}+\theta\,\finpas{Y},t+\theta\,\Delta\, t} \\
 \end{equation}
 
-La première forme d'équation implicite est rarement utilisée, au moins
+La seconde forme, obtenue à partir de la méthode d'\nom{Euler}
+modifiée~\eqref{eq:mfront:implicite:euler}, nous obtenons~:
+\[
+\finpas{Y} =\debutpas{Y}+\Delta\,t\,\left[\paren{1-\theta}G\paren{\debutpas{Y},t}
++\theta\,G\paren{\finpas{Y},t+\Delta\,t}\right]
+\]
+Cette seconde forme d'équation implicite est rarement utilisée, au moins
 pour l'intégration des lois de comportement mécaniques.
 
 \mfront{} tend, suivant l'usage, à supporter naturellement la
-seconde formulation, mais rien n'interdit d'utiliser la première. Pour
-simplifier l'écriture, nous ne décrirons le principe de la résolution
-que pour la seconde forme.
+la formulation~\eqref{eq:implicite}, mais rien n'interdit d'utiliser la
+première. Pour simplifier la présentation, nous ne décrirons le principe
+de la résolution que pour la première forme.
 
-La seconde forme d'équation implicite décrite à
-l'équation~\eqref{eq:implicite} peut s'écrire~:
+L'équation~\eqref{eq:implicite} peut s'écrire~:
 \begin{equation}
   \label{eq:F_implicite} F\paren{\Delta\, Y} = \Delta Y -
   \Delta\,t\,G\paren{\debutpas{Y}+\theta\Delta{Y},t+\theta\,\Delta t} =
@@ -2422,6 +2468,31 @@ au cours du pas de temps \(\Delta\,t\), variable qui apparaît comme
 l'inconnue \og~naturelle~\fg{} de cette équation. Nous avons donc ramené
 la résolution du système différentiel~\eqref{eq:systeme_diff-implicite}
 à la recherche d'un zéro de la fonction \(F\paren{\Delta\, Y}\).
+
+\paragraph{Convention d'écriture} Il est d'usage
+d'introduire des notations (et des abus de langage) pratiques. Ainsi, si
+dans le système différentiel initial apparaît une fonction \(f\) des
+variables internes \(f\paren{Y}\) alors dans le système non-linéaire de
+la \(\theta\)-méthodes apparaît l'expression
+\(f\paren{Y+\theta\,\Delta\,Y}\).
+
+Par abus de langage, nous dirons que \(Y+\theta\,\Delta\,Y\) est la
+valeur en milieu de pas de \(Y\), que nous noterons \(\milieupas{Y}\)~:
+\[
+\milieupas{Y} = Y+\theta\,\Delta\,Y
+\]
+Cette notation s'étend naturellement aux composantes de \(Y\)~:
+\[
+\milieupas{y_{i}} = y_{i}+\theta\,\Delta\,y_{i}
+\]
+En particulier, ces notations donnent un sens à l'expression
+\(\deriv{\milieupas{y_{i}}}{\Delta\,y_{i}}\) qui est égale à \(\theta\).
+
+De même, nous dirons que \(f\paren{Y+\theta\,\Delta\,Y}\) est la
+valeur en milieu de pas de \(f\) et nous la noterons \(\milieupas{f}\)~:
+\[
+\milieupas{f} = f\paren{Y+\theta\,\Delta\,Y}
+\]
 
 \paragraph{Décomposition du vecteur $F$} L'écriture
 générique~\ref{eq:systeme_diff-implicite} résulte de la concaténation
@@ -2463,6 +2534,14 @@ implicite\fg{}). La valeur par défaut peut être modifié par la directive
 \mkey{Theta}. À l'exécution, il peut être modifié par le paramètre
 \varcpp{theta}.
 
+\paragraph{Méthodes mixtes} Le choix du paramètre
+\(\theta\) dépend du phénomène traité. Pour des lois mêlant différents
+types de phénomènes, certains auteurs choisissent de traiter les
+écoulements viscoplastiques par une méthode semi-implicite et les
+phénomènes indépendants du temps par une méthode purement implicite. Il
+est possible de faire de même dans \mfront{} en prenant certaines
+précautions sur le calcul des contraintes.
+
 \paragraph{Initialisation du vecteur $F$} Le vecteur 
 L'équation~\eqref{eq:F_implicite} montre que la fonction \(f_{y_{i}}\)
 comporte comme premier terme l'incrément \(\Delta\,y_{i}\). \mfront{}
@@ -2493,15 +2572,20 @@ inférieur à un certain critère \(\varepsilon\)~:
 \Frac{1}{\displaystyle\sum_{i=1}^{N}N_{i}}\displaystyle\sum_{i=1}^{N}\left|\Delta_{n}\Delta\,
 y_{i}\right|<\varepsilon
 \]
-où\(\Delta_{n}\Delta\,y_{i}\) désigne la
-différence entre l'estimation de l'incrément de la i\ieme{} variable à
-l'étape \(n+1\) et de son estimation à l'étape \(n\) et \(N_{i}\) est le
-nombre de composantes de la variable interne \(y_{i}\).
+où \(\Delta_{n}\Delta\,y_{i}\) désigne la différence entre
+l'estimation de l'incrément de la i\ieme{} variable à l'étape \(n+1\) et
+de son estimation à l'étape \(n\) et \(N_{i}\) est le nombre de
+composantes de la variable interne \(y_{i}\)\footnote{Pour les tenseurs,
+  \(\left|s\right|\) représente la somme des valeurs absolues des termes
+  du tenseurs (les composantes extra-diagonales ne sont comptées qu'une
+  fois).}.
 
 \paragraph{Notes} Cette écriture du critère d'arrêt
 montre qu'il n'est valide que si les différentes variables internes sont
 du même ordre de grandeur. Ceci est également nécessaire pour le bon
-comportement numérique de la méthode de \nom{Newton}.
+comportement numérique de la méthode de \nom{Newton}. Dans le cas
+contraire, il est possible de normaliser les variables par la méthode
+{\tt setNormalisationFactor}.
 
 \subsubsection{Avantages et inconvénients des méthodes implicites} Les
 méthodes implicites sont généralement opposées aux méthodes
@@ -2549,6 +2633,7 @@ numérique avec les méthodes implicites, quelque soit le type de loi de
 comportement. 
 
 \begin{table}[htbp]
+  \centering
   \begin{tabular}{|c|c|c|}
     \hline Méthode d'intégration & Temps CPU & Nombre
     d'itérations \\
@@ -2607,22 +2692,22 @@ solution \(\Delta^{2}\,Y\) du système linéaire~:
 \[
 \left[J\paren{\Delta\,Y^{n}}\right]\,\Delta^{2}\,Y = F\paren{Y^{n}}
 \]
-
-\begin{figure}[htbp]
-  \centering 
-  \input{@top_srcdir@/docs/mfront/Images/Methode_Newton.pstricks}
-  \caption[Illustration de la méthode de \nom{Newton} en $1D$ utilisée
-  pour la résolution de l'équation $f\paren{y}=0$.]{Illustration de la
-    méthode de \nom{Newton} en $1D$ utilisée pour la résolution de
-    l'équation $f\paren{y}=0$. Les estimations successives de la
-    solution sont données par~:
-    $y_{n+1}=y_{n}-\Frac{f\paren{y_{n}}}{f\primeexp\paren{y_{n}}}$.}
-  \label{fig:illustration_newton_raphson}
-\end{figure}
-
-\paragraph{Illustration en \(1D\)} La
-figure~\ref{fig:illustration_newton_raphson} illustre la méthode de
-\nom{Newton} en $1D$.
+%
+%\begin{figure}[htbp]
+%  \centering 
+%  \input{@top_srcdir@/docs/mfront/Images/Methode_Newton.pstricks}
+%  \caption[Illustration de la méthode de \nom{Newton} en $1D$ utilisée
+%  pour la résolution de l'équation $f\paren{y}=0$.]{Illustration de la
+%    méthode de \nom{Newton} en $1D$ utilisée pour la résolution de
+%    l'équation $f\paren{y}=0$. Les estimations successives de la
+%    solution sont données par~:
+%    $y_{n+1}=y_{n}-\Frac{f\paren{y_{n}}}{f\primeexp\paren{y_{n}}}$.}
+%  \label{fig:illustration_newton_raphson}
+%\end{figure}
+%
+%\paragraph{Illustration en \(1D\)} La
+%figure~\ref{fig:illustration_newton_raphson} illustre la méthode de
+%\nom{Newton} en $1D$.
 
 \paragraph{Matrice jacobienne}
 La matrice jacobienne s'exprime ainsi~:
@@ -2867,7 +2952,8 @@ stockées.
 Enfin, les paramètres associées à ces méthode ne seront
 disponibles que si elles sont activées.
 
-\subsubsection{Méthode d'accélération de \castem{}}
+\subsubsection{Méthode d'accélération utilisé par
+  les algorithmes de résolution globaux de \castem{}}
 
 L'idée de cette méthode d'accélération est de trouver une nouvelle
 estimation de la solution à partir des itérations précédentes. Soient
@@ -2947,71 +3033,84 @@ peut explicitement dire que la matrice est symétrique par la directive
 est suivi d'une des valeurs booléennes \varcpp{true} ou \varcpp{false}.
 
 \subsubsection{Une façon générique de calculer de la matrice tangente cohérente}
+\label{sec:mfront:implicit:tangentOperator}
 
-Si la matrice jacobienne du système est connue, alors il existe une
-façon générique de calculer de la matrice tangente cohérente La matrice
-tangente valide dans de très nombreux cas. Pour cela, nous supposerons
-que la contrainte ne dépende que du tenseur d'élasticité (éventuellement
-de manière non linéaire) et que l'incrément de déformation totales
-\(\Delta\tepsilonto\) n'apparaissent que dans l'équation relative aux
-déformations élastiques par la relation de partition des
-déformation~:
+La matrice tangente cohérente est la dérivée d'incrément de
+contraintes \(\tsigma\) par rapport à l'incrément de déformations
+totales \(\tepsilonto\). Cet incrément était considéré jusqu'à présent
+comme un paramètre du système d'équations implicites. Il est considéré
+dans ce paragraphe comme la variable principale.
+
+Pour commencer, nous supposerons que le tenseur d'élasticité est une
+des variables internes de la loi. Plus loin, nous imposerons que cette
+variable soit la première dans le système implicite. Ces conditions sont
+imposées si on utilise l'analyseur \texttt{Implicit}.
+
+Nous supposerons ensuite que la contrainte ne dépende que du
+tenseur d'élasticité (éventuellement de manière non linéaire). Nous
+reviendrons sur cette hypothèse plus tard. Nous en tirons que~:
+\[
+\deriv{\Delta\,\tsigma}{\Delta\,\tepsilonto}
+=
+\left.\deriv{\tsigma}{\tepsilonel}\right|_{\tepsilonel+\Delta\,\tepsilonel}\,\colon\,\deriv{\Delta\,\tepsilonel}{\Delta\,\tepsilonto}
+\]
+
+Le problème du calcul de la matrice tangente cohérente se ramène donc
+au calcul de la dérivée
+\(\deriv{\Delta\,\tepsilonel}{\Delta\,\tepsilonto}\).
+
+Nous montrons dans ce paragraphe que si la matrice jacobienne du
+système est connue, alors il existe une façon générique de calculer ce
+terme dans de très nombreux cas.
+
+\paragraph{Rappels mathématiques} Avant de rentrer
+dans les détails de la méthode, il est utile de faire quelques rappels
+mathématiques. Les incréments des variables internes \(\Delta\,Y\) sont
+reliées à l'incrément de déformations totales par la relation
+implicite~:
+\[
+F\paren{\Delta\,Y\paren{\Delta\tepsilonto},\Delta\,\tepsilonto}
+= 0
+\]
+Si \(\Delta\tepsilonto\) varie, cette relation reste vraie. Par
+différentiation, nous obtenons~:
+\[
+\dtot\,F = \deriv{F}{\Delta\,Y}\,\dtot\,\Delta\,Y+\deriv{F}{\Delta\,\tepsilonto}\,\dtot\,\Delta\,\tepsilonto=0
+\]
+
+Le terme \(\deriv{F}{\Delta\,Y}\) est la jacobienne \(J\) du système
+qui est connue après la résolution.
+
+Pour déduire \(\deriv{\Delta\,\tsigma}{\Delta\,\tepsilonto}\) de
+cette équation, nous avons faire une hypothèse qui permet de calculer
+explicitement \(\deriv{F}{\Delta\,\tepsilonto}\).
+
+\paragraph{Hypothèse} Nous supposons que
+l'incrément de déformation totales \(\Delta\tepsilonto\) n'apparaît que
+dans l'équation relative aux déformations élastiques par la relation de
+partition des déformation, qui, une fois discrétisée, donne~:
 \[
 \Delta\,\tepsilonel+\sum_{i}\Delta\,\tepsilonan_{i}-\Delta\,\tepsilonto=0
 \]
 
-De la première hypothèse, nous tirons~:
+La dérivée de \(\deriv{F}{\Delta\,\tepsilonto}\) est alors évidente et
+le vecteur
+\(\deriv{F}{\Delta\,\tepsilonto}\,\dtot\,\Delta\,\tepsilonto\) est égal
+à~:
 \[
-\deriv{\Delta\,\tsigma}{\Delta\,\tepsilonto} = \left.\deriv{\tsigma}{\tepsilonel}\right|_{\tepsilonel+\Delta\,\tepsilonel}\,\colon\,\deriv{\Delta\,\tepsilonel}{\Delta\,\tepsilonto}
+\deriv{F}{\Delta\,\tepsilonto}\,\dtot\,\Delta\,\tepsilonto = -
+\begin{pmatrix}
+  \dtot\,\Delta\tepsilonto \\
+  \vdots \\
+  0 \\
+  \vdots \\
+  0\\
+\end{pmatrix}
 \]
 
-La seconde hypothèse nous permet de calculer directement
-\(\deriv{\Delta\,\tepsilonel}{\Delta\,\tepsilonto}\). En effet, en
-faisant varier l'ensemble du système différentiel par variation
-\(\delta\Delta\tepsilonto\) du tenseur des déformations totales, nous avons~:
+Nous en déduisons que~:
 \[
-\delta\,F\paren{\delta\Delta\,y_{i},\delta\Delta\tepsilonto} = 0
-\]
-Par différentiation~:
-\[
-J\,.\,
-\begin{pmatrix}
-  \delta\Delta\,\tepsilonel
-  \\
-  \vdots \\
-  \delta\Delta\, y_{i} \\
-  \vdots \\
-  \delta\Delta\, y_{n} \\
-\end{pmatrix}
--
-\begin{pmatrix}
-  \delta\Delta\tepsilonto \\
-  \vdots \\
-  0 \\
-  \vdots \\
-  0\\
-\end{pmatrix}
-= 0 \quad\Rightarrow\quad
-\begin{pmatrix}
-  \delta\Delta\,\tepsilonel
-  \\
-  \vdots \\
-  \delta\Delta\, y_{i} \\
-  \vdots \\
-  \delta\Delta\, y_{n} \\
-\end{pmatrix}
-=J^{-1}\,.\,
-\begin{pmatrix}
-  \delta\Delta\tepsilonto \\
-  \vdots \\
-  0 \\
-  \vdots \\
-  0\\
-\end{pmatrix}
-\]
-et donc~:
-\[
-\delta\Delta\,\tepsilonel=J^{-1}_{\tepsilonel}\,\colon\,\delta\Delta\tepsilonto
+\dtot\,\Delta\,\tepsilonel=J^{-1}_{\tepsilonel}\,\colon\,\dtot\,\Delta\tepsilonto
 \]
 où \(J^{-1}_{\tepsilonel}\) est la partie supérieure gauche de l'inverse de
 la jacobienne.
@@ -3027,7 +3126,8 @@ d'ordre \(4\). Cette méthode ne doit être utilisée quand le bloc
 \mkey{TangentOperator}.
 
 Ce cas explique pourquoi la déformation élastique est toujours définie
-comme la première variable interne.
+comme la première variable interne dans le cas de l'analyseur
+\texttt{Implicit}.
 
 \paragraph{Généralisation} La méthode
 précédente se généralise dans le cas où la contrainte dépend de
@@ -3071,30 +3171,25 @@ quand le bloc \mkey{TangentOperator}.
 \subsubsection{Une méthode alternative de calculer de la matrice tangente cohérente}
 
 Il existe une autre méthode de calcul de la matrice tangente cohérente
-basée sur un partitionnement de la jacobienne et non de son inverse.
+basée sur un partitionnement de la jacobienne et non de son
+inverse~\cite{proix:integ:2012}.
+
 Pour cela, notons \(z_{i}\) les variables internes autres que les
 déformations élastiques. Nous avons, avec les mêmes hypothèses que
 précédemment~:
 \[
-\delta\,F\paren{\delta\Delta\,\tepsilonel,\delta\Delta\,z_{i},\delta\Delta\tepsilonto}
-= 0
-\]
-Par différentiation~:
-\[
 J\,.\,
 \begin{pmatrix}
-  \delta\Delta\,\tepsilonel \\
-  \delta\Delta\, Z
+  \dtot\,\Delta\,\tepsilonel \\
+  \dtot\,\Delta\, Z
 \end{pmatrix}
 -
 \begin{pmatrix}
-  \delta\Delta\tepsilonto \\
+  \dtot\,\Delta\tepsilonto \\
   0 \\
 \end{pmatrix}
 = 0
 \]
-où \(\delta\Delta\, Z\) est un vecteur regroupant les variations
-des incréments des variables internes \(z_{i}\).
 
 En découpant la matrice jacobienne en quatres blocs~:
 \[
@@ -3108,23 +3203,26 @@ on obtient deux systèmes~:
 \[
 \left\{
 \begin{aligned}
-J_{0}\,\delta\Delta\,\tepsilonel+J_{1}\, \delta\Delta\, Z &= \delta\Delta\tepsilonto \\
-J_{2}\,\delta\Delta\,\tepsilonel+J_{3}\, \delta\Delta\, Z &= 0\\
+J_{0}\,\dtot\,\Delta\,\tepsilonel+J_{1}\, \dtot\,\Delta\, Z &= \dtot\,\Delta\tepsilonto \\
+J_{2}\,\dtot\,\Delta\,\tepsilonel+J_{3}\, \dtot\,\Delta\, Z &= 0\\
 \end{aligned}
 \right.
 \]
 Le second système conduit à~:
 \[
-\delta\Delta\, Z = -J_{3}^{-1}\,J_{2}\,\delta\Delta\,\tepsilonel
+\dtot\,\Delta\, Z = -J_{3}^{-1}\,J_{2}\,\dtot\,\Delta\,\tepsilonel
 \]
 Par report dans le premier système, nous obtenons~:
 \[
-\delta\Delta\,\tepsilonel = \paren{J_{0}-J_{1}\,J_{3}^{-1}\,J_{2}}^{-1}\,\delta\Delta\tepsilonto
+\dtot\,\Delta\,\tepsilonel = \paren{J_{0}-J_{1}\,J_{3}^{-1}\,J_{2}}^{-1}\,\dtot\,\Delta\tepsilonto
 \]
 et finalement~:
 \[
 \deriv{\Delta\,\tepsilonel}{\Delta\tepsilonto}=\paren{J_{0}-J_{1}\,J_{3}^{-1}\,J_{2}}^{-1}
 \]
+
+Cette méthode peut être avantageuse si le nombre de variables
+internes est petit.
 
 \subsection{La directive \texttt{@ComputeStress}}
 
@@ -3566,6 +3664,379 @@ itération peut cependant être important.
 \clearpage
 \newpage
 \include{glossary}
+
+\clearpage
+\newpage
+\section{Opérations tensorielles dans \TFEL{}}
+
+La librairie \TFEL{} est née d'une initiative personnelle visant à se
+doter d'outils, notamment mathématiques, basés sur des paradigmes de
+programmation avancés et innovants, dont nous présenterons certains
+dans la suite de cette annexe. Le langage \cpp{} a été choisi pour sa
+grande disponibilité, son interaction avec les langages \texttt{C} et
+\texttt{fortran}, et son support de tels paradigmes.
+
+\subsection{Quelques techniques de programmation sous-tendant la
+  librairie de calculs tensoriels de \TFEL{}}
+
+Nous décrivons ici quelques techniques de programmation sous-tendant
+la librairie de calculs tensoriels de \TFEL{}. Ces techniques, aux
+quels de nombreux travaux ont été consacrés, se différencient
+notamment de techniques plus traditionnelles et ont été développées
+pour combiner simplicité d'utilisation par la surcharge des opérateurs
+mathématiques usuels et performances optimales, au moins égales à
+celles obtenues en \fortran{}.
+
+\subsubsection{Utilisation de la mémoire}
+
+Le nombre de composantes d'un tenseur, et donc la taille mémoire qu'il
+utilise, dépend {\em a priori} de la dimension~: un tenseur a \(3\)
+composantes en \(1D\), \(4\) composantes en \(2D\) et \(6\)
+composantes en \(3D\).
+
+Étant de petite taille, la zone mémoire associée peut être initialisée
+sur la pile (nommée \texttt{stack} en anglais), ou sur le tas (nommé
+\texttt{heap}). L'allocation sur le tas est coûteuse et ne peut être
+utilisée pour des petits calculs, tels que ceux utilisés pour
+l'intégration des lois de comportement, sans réduire considérablement
+les performances. L'allocation sur la pile est en comparaison sans
+coût. Elle permet par ailleurs une meilleure localisation des données
+(et donc des optimisations par le compilateur) et est compatible sans
+précautions particulières avec une utilisation des exceptions.
+
+L'allocation sur la pile peut se faire en stockant de manière
+systématique un tableau de taille \(6\) qui est la taille maximale des
+tenseurs quelque soit la dimension. Il est alors nécessaire de stocker
+la dimension d'espace dans le tenseur. Toutes les opérations
+tensorielles doivent faire appel à des boucles sur allant de \(0\) à la
+taille du tenseur. Cette méthode présente plusieurs désavantages~:
+\begin{itemize}
+  \item la définition d'un champ de tenseur, où l'on attribue un tenseur
+  à chaque point de discrétisation d'un domaine géométrique, conduit à
+  une gaspillage de mémoire~;
+  \item il n'est pas possible au compilateur de dérouler ces boucles et
+  d'optimiser les opérations tensorielles~;
+  \item le compilateur ne peut vérifier que l'accès aux données est
+  valide, c'est à dire qu'un indice trop grand n'est pas utilisé. Une
+  telle vérification peut être faite par des tests, mais cela alourdit
+  le code et ralentit l'exécution~;
+  \item il est nécessaire de passer la dimension d'espace au
+  constructeur des objets, ce qui alourdit l'écriture.
+\end{itemize}
+
+Nous avons choisi une solution qui nous est apparue plus avantageuse et
+consistant à paramétrer les tenseurs par la dimension d'espace~: un
+tenseur \(1D\) est un objet différent d'un objet \(2D\). Ce choix permet
+d'utiliser un ensemble de techniques de programmation générique
+permettant par exemple de \og~dérouler les boucles\fg{} à la compilation
+et au compilateur de vérifier notre code\footnote{De manière générale,
+  nous avons privilégié dans \TFEL{} des techniques de programmation
+  permettant de détecter au plus tôt, c'est à dire dès la phase de
+  compilation, des erreurs qui ne sont détectables dans d'autres
+  langages qu'à l'exécution.}.
+
+Ce paramétrage par la dimension d'espace est masqué dans \mfront{}~:
+une loi de comportement est en fait paramétrée par la dimension
+d'espace et est spécialisée pour chaque dimension d'espace, produisant
+un code optimisé dans chaque cas (au détriment du temps de compilation
+et de la taille du code généré, mais ces aspects ne sont pas
+problématiques pour les lois de comportement).
+
+\subsubsection{Choix du type numérique}
+
+L'ensemble des objets mathématiques de \TFEL{} sont également
+paramétrés par le type numérique utilisé. 
+
+Ce paramétrage du type numérique est masqué dans \mfront{}. \mfront{}
+propose d'utiliser un type opaque \texttt{real} pour les opérations
+mathématiques. Dans le cas de l'interface \texttt{umat}, la loi de
+comportement est spécialisée en utilisant un nombre flottant en double
+précision. D'autres codes peuvent faire des choix différents~: le code
+de résolution par transformées rapides développé au sein du projet
+\pleiades{} permet de choisir le type numérique à utiliser à la
+compilation.
+
+\subsubsection{Élimination des objets temporaires}
+
+Il est classique de vanter, pour des applications scientifiques, la
+possibilité dans le langage \cpp{} de surcharger les opérateurs
+mathématiques afin de rapprocher l'écriture du code de l'écriture
+mathématique usuelle.
+
+Une implantation \og~naïve~\fg{} de la surcharge des opérateurs
+consiste à écrire, dans le cas particulier de l'addition, que la somme
+de deux tenseurs est un tenseur. Ainsi, la somme \texttt{d} de trois
+tenseurs \texttt{a}, \texttt{b} et \texttt{c} s'écrit~:
+\begin{center}
+  \texttt{d} =  \texttt{a} + \texttt{b} + \texttt{c}
+\end{center}
+Cette expression est interprétée par le compilateur en introduisant
+des objets temporaires, résultats des opérations prises deux à deux~:
+\begin{center}
+  \texttt{d} =  \texttt{a} + \texttt{b} + \texttt{c}
+  \(\quad\Rightarrow\quad
+  \left\{
+      \begin{array}[p]{rl}
+        \text{\texttt{tmp1}} &= \text{\texttt{a}}    + \text{\texttt{b}} \\ 
+        \text{\texttt{tmp2}} &= \text{\texttt{tmp1}} + \text{\texttt{c}} \\ 
+        \text{\texttt{d}}    &= \text{\texttt{tmp3}}
+      \end{array}
+    \right.
+    \)
+\end{center}
+
+L'évaluation et l'affectation des ces temporaires conduit à trois
+boucles (qui peuvent être éventuellement déroulées), là où une doit
+suffire.
+
+Une solution à cela est d'utiliser une évaluation paresseuse des
+opérations~: le résultat de la somme de deux tenseurs étant un objet
+particulier \og~résultat de la somme de deux tenseurs~\fg{} dont le
+rôle est de porter l'information des opérations à effectuer jusqu'au
+moment de leur évaluation effective, c'est à dire jusqu'au moment de
+l'affectation au tenseur \texttt{d}. Le résultat de la somme de trois
+tenseurs est un objet du type \og~résultat de la somme du résultat de
+la somme de deux tenseurs et d'un tenseur~\fg{}. 
+
+Nous utilisons le compilateur pour générer en arrière plan de tels
+objets (en nous appuyant sur la notion de concept développée au
+paragraphe suivant) et les éliminer au moment de l'évaluation
+effective du résultat. Cette technique, appelée \texttt{expression
+  template}, couplée aux techniques de déroulement de boucles, permet
+de transformer l'addition de trois tenseurs à du code équivalent à~:
+\begin{center}
+  \texttt{d} =  \texttt{a} + \texttt{b} + \texttt{c}
+  \(\quad\Rightarrow\quad
+  \left\{
+      \begin{array}[p]{rl}
+        d[0] &= \texttt{a}[0] + \texttt{b}[0] + \texttt{c}[0] \\
+        d[1] &= \texttt{a}[1] + \texttt{b}[1] + \texttt{c}[1] \\
+        d[2] &= \texttt{a}[2] + \texttt{b}[2] + \texttt{c}[2] \\
+      \end{array}
+    \right.
+    \)
+\end{center}
+si les tenseurs \texttt{a}, \texttt{b}, \texttt{c} et \texttt{d} sont
+des tenseurs \(1D\).
+
+Le moteur d'\texttt{expression template} de \TFEL{} se compare
+favorablement, en terme de fonctionnalités, à toutes les implantations
+publiées à notre connaissance, en particulier car nous avons développé
+une notion de concept qui est maintenant décrite.
+
+\subsubsection{Notion de concept}
+
+Nous avons décrit brièvement le moteur d'\texttt{expression template}
+qui sous-tend les opérations mathématiques dans \TFEL{}. Chaque
+opération conduit à des objets dont le type est généré automatiquement
+par le compilateur. D'un point de vue pratique, il est nécessaire que
+ses objets se comportent comme des tenseurs \og~normaux~\fg{} afin de
+pouvoir les utiliser dans des fonctions tensorielles usuelles (trace,
+contrainte équivalente, etc..).
+
+Il pourrait être tenté d'utiliser une classe mère abstraite et des
+méthodes virtuelles associées. Cette approche est incompatible avec
+les choix de conception précédent~:
+\begin{itemize}
+\item il est nécessaire d'allouer les objets sur le tas et de
+  manipuler des pointeurs ce qui est à la fois inefficace et
+  incompatible avec une écriture proche de l'écriture mathématique
+  usuelle~;
+\item l'utilisation de méthodes virtuelles ruine toutes les
+  optimisations que nous avons cherchées à mettre en place dans les
+  paragraphes précédents.
+\end{itemize}
+
+Une autre technique d'abstraction est donc nécessaire. De nombreuses
+recherches ont permis de dégager la notion de \og~concept~\fg{}. Cette
+notion aurait dû être un des piliers du futur standard du langage
+\cpp{} mais son introduction a été différée par manque de maturité.
+
+\TFEL{} propose une notion de \og~concept\fg{} beaucoup moins étendue et
+générale que celle proposée pour le futur standard mais qui est basée
+sur le standard actuel. La notion de concept dans \TFEL{} repose sur la
+combinaison de différentes techniques de programmation relativement
+pointues~:
+\begin{itemize}
+  \item une classe \texttt{S} implante la notion de concept en dérivant
+  de la classe \texttt{StensorConcept<S>}~: \texttt{S} hérite d'une
+  classe dont elle est paramètre. Cette technique, appelée
+  \texttt{Curiously Recurring Template Pattern}, a été énormément
+  utilisée en programmation générique pour obtenir une flexibilité
+  équivalente aux méthodes virtuelles sans en payer le coût~;
+  \item une classe à deux paramètres \texttt{Implements} qui contient
+  une variable statique \varcpp{cond}. Si une \texttt{S} implante le
+  concept \texttt{StensorConcept}, la variable statique
+  \texttt{Implements<S,StensorConcept>::cond} vaut \texttt{true},
+  \texttt{false} dans le cas contraire. L'implantation effective de la
+  classe \texttt{Implements} repose sur les capacités d'introspection de
+  l'opérateur \texttt{sizeof}~;
+  \item le recours au principe \texttt{SFINAE}, \texttt{Substitution
+    Failure Is Not An Error} pour filtrer les paramètres valides d'une
+  fonction. Ce principe stipule que lorsque le compilateur examine la
+  définition d'une fonction paramétrée pour savoir si elle applicable
+  dans une contexte particulier, si la substitution du paramètre conduit
+  à un échec, alors cette fonction est simplement {\em éliminée} de la
+  liste des candidats {\em sans causer d'erreur}.
+
+  L'application de ce principe se fait dans \TFEL{} par la classe
+  \texttt{EnableIf} qui paramétrée par une variable booléenne et une
+  type \texttt{T}. La classe \texttt{EnableIf<true,T>} est implantée
+  et contient un alias nommé \texttt{type} égal à \texttt{T}. La
+  classe \texttt{EnableIf<false,T>} n'est jamais définie. Ainsi,
+  l'alias \texttt{EnableIf<cond,T>::type} n'est défini que si la
+  variable \texttt{cond} vaut \texttt{true}.
+
+  Ces préliminaires permettent de comprendre la déclaration de la
+  fonction \texttt{trace} dans \TFEL{}~:
+
+  \begin{center}
+    \begin{minipage}{0.8\textwidth}
+      \mbox{}\\
+      \hlkwc{template}\hlstd{}\hlsym{$<$}\hlstd{}\hlkwc{class }\hlstd{T}\hlsym{$>$}\hspace*{\fill}\\
+      \hlstd{TFEL\textunderscore MATH\textunderscore INLINE\hspace*{\fill}\\
+        typename tfel}\hlsym{::}\hlstd{meta}\hlsym{::}\hlstd{EnableIf}\hlsym{$<$}\hspace*{\fill}\\
+      \hlstd{}\hlstd{\ \ }\hlstd{tfel}\hlsym{::}\hlstd{meta}\hlsym{::}\hlstd{Implements}\hlsym{$<$}\hlstd{T}\hlsym{,}\hlstd{StensorConcept}\hlsym{$>$::}\hlstd{cond}\hlsym{,}\hspace*{\fill}\\
+      \hlstd{}\hlstd{\ \ }\hlstd{typename StensorTraits}\hlsym{$<$}\hlstd{T}\hlsym{$>$::}\hlstd{NumType}\hspace*{\fill}\\
+      \hlsym{$>$::}\hlstd{type}\hspace*{\fill}\\
+      \hlkwd{trace}\hlstd{}\hlsym{(}\hlstd{}\hlkwb{const }\hlstd{T}\hlsym{\&);}\\
+    \end{minipage}
+  \end{center}
+
+  L'utilisation de la classe \texttt{EnableIf} conduit à ce que cette
+  fonction ne puisse être appliquée que si la classe \texttt{T}
+  implante le concept \texttt{StensorConcept}. Ce filtre permet
+  d'éviter un conflit possible avec la déclaration de la fonction
+  \texttt{trace} d'une matrice~:
+
+  \begin{center}
+    \begin{minipage}{0.8\textwidth}
+      \mbox{}\\
+      \hlkwc{template}\hlstd{}\hlsym{$<$}\hlstd{}\hlkwc{class }\hlstd{T}\hlsym{$>$}\hspace*{\fill}\\
+      \hlstd{TFEL\textunderscore MATH\textunderscore INLINE\hspace*{\fill}\\
+        typename tfel}\hlsym{::}\hlstd{meta}\hlsym{::}\hlstd{EnableIf}\hlsym{$<$}\hspace*{\fill}\\
+      \hlstd{}\hlstd{\ \ }\hlstd{tfel}\hlsym{::}\hlstd{meta}\hlsym{::}\hlstd{Implements}\hlsym{$<$}\hlstd{T}\hlsym{,}\hlstd{MatrixConcept}\hlsym{$>$::}\hlstd{cond}\hlsym{,}\hspace*{\fill}\\
+      \hlstd{}\hlstd{\ \ }\hlstd{typename MatrixTraits}\hlsym{$<$}\hlstd{T}\hlsym{$>$::}\hlstd{NumType}\hspace*{\fill}\\
+      \hlsym{$>$::}\hlstd{type}\hspace*{\fill}\\
+      \hlkwd{trace}\hlstd{}\hlsym{(}\hlstd{}\hlkwb{const }\hlstd{T}\hlsym{\&);}\\
+    \end{minipage}
+  \end{center}
+
+\end{itemize}
+
+L'application de toutes ces techniques permet au compilateur de
+traduire la trace de la somme de deux tenseurs \texttt{s1} et
+\texttt{s2} en un code équivalent à~:
+\begin{center}
+  \texttt{trace(s1+s2)}
+  \(\quad\Rightarrow\quad
+  \texttt{s1}[0] + \texttt{s2}[0] +
+  \texttt{s1}[1] + \texttt{s2}[1] +
+  \texttt{s1}[2] + \texttt{s2}[2]
+  \)
+\end{center}
+  
+\subsection{Principales opérations tensorielles}
+
+Nous décrivons dans ce paragraphe les opérations tensorielles fournies
+par \TFEL{} pour les tenseurs d'ordre \(2\) et d'ordre \(4\).
+
+\subsubsection{Conventions de représentation des tenseurs}
+
+Les tenseurs d'ordre \(2\) symétriques peuvent être représentés par
+des vecteurs et \og~tenseurs d'ordre \(4\)~\fg{}, peuvent être
+représentés par des matrices.
+
+En \(3D\), les tenseurs d'ordre \(2\) symétriques ont \(6\)
+composantes. Un tenseur \(\tenseur{a}\) est représenté par le vecteur
+suivant~:
+\[
+\left(
+\begin{array}{c}
+  \mathcal{A}_{0} \\
+  \mathcal{A}_{1} \\
+  \mathcal{A}_{2} \\
+  \mathcal{A}_{3} \\
+  \mathcal{A}_{4} \\
+  \mathcal{A}_{5} \\
+\end{array}
+\right)
+=
+\left(
+\begin{array}{c}
+  a_{xx} \\
+  a_{yy} \\
+  a_{zz} \\
+  \sqrt{2}a_{xy} \\
+  \sqrt{2}a_{xz} \\
+  \sqrt{2}a_{yz} \\
+\end{array}
+\right)
+\]
+
+Le racine de \(2\) sur les termes extradiagonaux sont là pour assurer
+que le produit doublement contracté de deux tenseurs d'ordre \(2\)
+symétriques \(\tenseur{a}\) et \(\tenseur{b}\) est égal au produit
+scalaire de leurs représentations vectorielles.
+
+\subsubsection{Opérations sur les tenseurs d'ordre 2}
+
+Pour les tenseurs d'ordre \(2\), \TFEL{} propose~:
+\begin{itemize}
+  \item la négation d'un tenseur~;
+  \item la somme de deux tenseurs~;
+  \item la différence de deux tenseurs~;
+  \item la multiplication à droite ou à gauche d'un tenseur par
+  un scalaire~;
+  \item la division à droite d'un tenseur par un scalaire~;
+  \item le produit tensoriel de deux tenseurs grâce à l'opérateur
+  \texttt{\^}. Le résultat est un tenseur d'ordre \(4\) \og~tenseurs
+  d'ordre \(4\)~\fg{} \(\tenseur{a}\otimes\tenseur{b}\) dont la
+  représentation matricielle vérifie a pour élément
+  \[
+  \tenseurq{c}=\tenseur{a}\otimes\tenseur{b}
+  \quad\Rightarrow\quad\tenseurq{C}_{ij}=\mathcal{A}_{i}\,\mathcal{B}_{j}
+  \]
+  \item le produit contracté de deux tenseurs grâce à l'opérateur
+  \texttt{|}. Comme indiqué plus haut, ce produit contracté est égal au
+  produit scalaire de leurs représentations tensorielles~:
+  \[
+  \tenseur{a}\,\colon\,\tenseur{b} = \sum\,\mathcal{A}_{i}\,\mathcal{B}_{i}
+  \]
+\end{itemize}
+
+En \cpp{}, ces opérations respectent l'ordre de priorité usuel sauf
+pour les deux derniers qui peuvent nécessiter l'emploi de parenthèses.
+
+\subsubsection{Opérations sur les tenseurs d'ordre 4}
+
+Pour les tenseurs d'ordre \(4\), \TFEL{} propose~:
+\begin{itemize}
+  \item la négation d'un tenseur~;
+  \item la somme de deux tenseurs~;
+  \item la différence de deux tenseurs~;
+  \item la multiplication à droite ou à gauche d'un tenseur par
+  un scalaire~;
+  \item la division à droite d'un tenseur par un scalaire~;
+  \item la multiplication de deux tenseurs~;
+  \item l'application d'un tenseur d'ordre \(4\) à un tenseur
+  d'ordre \(2\) par l'opérateur de multiplication \texttt{*}. La
+  représentation vectorielle du résultat de cette opération est égal à
+  la multiplication vectorielle de la représentation matricielle du
+  tenseur d'ordre \(4\) par la représentation vectorielle du tenseur
+  d'ordre \(2\)~:
+  \[
+  \tenseur{c}=\tenseurq{b}\,\colon\,\tenseur{a} \quad \Rightarrow \quad \mathcal{C}_{i} = \sum_{j} \mathcal{B}_{ij}A_{j}
+  \]
+  \item le produit contracté à gauche d'un tenseur d'ordre \(4\)
+  par un tenseur d'ordre \(2\) grâce à l'opérateur \texttt{|}~:
+  \[
+  \tenseur{c}=\tenseur{a}\,\colon\,\tenseurq{B} \quad \Rightarrow \quad \mathcal{C}_{i} = \sum_{j} \mathcal{A}_{j}\mathcal{B}_{ji}
+  \]
+\end{itemize}
+
+Ces opérations respectent l'ordre de priorité usuel sauf pour le
+dernier qui peuvent nécessiter l'emploi de parenthèses.
 
 \clearpage
 \newpage

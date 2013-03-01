@@ -55,6 +55,7 @@ docs/mfront/InternalNames.tex.in -text
 docs/mfront/Makefile.am -text
 docs/mfront/Makefile.doc.in -text
 docs/mfront/annexe-orthotropie.tex.in -text
+docs/mfront/aster.tex.in -text
 docs/mfront/behaviours.tex.in -text
 docs/mfront/glossary.tex.in -text
 docs/mfront/mfront.tex.in -text
@@ -117,6 +118,7 @@ docs/mfront/mfront/test-T.ple -text
 docs/mfront/mfront/test-T.tex -text
 docs/mfront/mfront/vba.tex -text
 docs/mfront/style.ist -text
+docs/mfront/umat.tex.in -text
 docs/tex/CMakeLists.txt -text
 docs/tex/Makefile.am -text
 docs/tex/texmf/CEA_logo_quadri-sur-fond-rouge.eps -text
