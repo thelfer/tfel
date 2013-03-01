@@ -863,8 +863,8 @@ fins de test ou pour certains lois spécifiques simples.
 La figure~\ref{fig:OrthoElastique} décrit l'implantation d'une loi de
 comportement orthotrope élastique. Cette loi ne nécessitant pas
 d'algorithme d'intégration, l'analyseur par défaut est utilisé. La
-commande \texttt{@Orthotropic\-Behaviour} permet le support des lois
-orthotropes. La commande \texttt{@Require\-Stiff\-ness\-Tensor} met à
+commande \mkey{Orthotropic\-Behaviour} permet le support des lois
+orthotropes. La commande \mkey{Require\-Stiff\-ness\-Tensor} met à
 disposition une variable {\tt D} contenant la matrice d'élasticité.
 
 Le calcul des contraintes en fin de pas de temps (à l'instant
@@ -919,13 +919,13 @@ variable booléenne \varcpp{computeTangentOperator\textunderscore{}} est
 vraie. L'utilisateur doit tester cette valeur et effectuer le calcul le
 cas échéant.
 
-\newpage
-\clearpage
-\section{Analyseurs spécifiques}
+\newpage \clearpage \section{Analyseurs dédiés aux lois de
+  comportement plastique et viscoplastique incompressible des matériaux
+  isotropes}
 
 Nous nous intéressons dans cette section à des lois de comportement
 mécanique très utilisées pour décrire les matériaux {\em isotropes} qui
-réagissent à une sollicitation mécanique l'apparition de déformations
+réagissent à une sollicitation mécanique par l'apparition de déformations
 rémanentes. Ces déformations sont dûs aux phénomènes de viscoplasticité
 (avec et sans écrouissage) et/ou de plasticité instantanée. Nous
 supposerons que ces déformations se font sans changement de volume
@@ -936,9 +936,17 @@ Elles représentent la majorité des besoins de la plate-forme
 
 Nous présentons dans un premier temps les caractéristiques de ces
 lois puis nous montrons que ces lois peuvent intégrés par des
-algorithmes optimisés.
+algorithmes optimisés. Enfin, nous détaillons l'utilisation des \(4\)
+analyseurs \mfront{} qui leurs sont dédiés.
 
-\subsection{Généralités}
+
+\subsection{Généralités et résolution implicite}
+
+Nous présentons dans ce paragraphe les hypothèses faites sur les
+lois que nous traitons dans cette section, puis nous détaillons comment
+est réalisée l'intégration de ces lois par une \(\theta\)-méthode. Le
+calcul de la matrice tangente cohérente, plus technique, est reporté en
+annexe~\ref{mfront:isotropic:tangentOpertor}.
 
 \subsubsection{Expression générales des lois de comportement}
 
@@ -1162,8 +1170,7 @@ p
 = \sum_{i} p_{i}
 \]
 
-
-\subsubsection{Réduction du nombre d'équations}
+\subsubsection{Méthode d'intégration numérique}
 \label{sec:mfront:isotropic-solver}
 
 Au minimum, les variables internes nécessaires pour décrire les lois
@@ -1385,247 +1392,61 @@ En l'absence de charge plastique, ces dérivées s'écrivent~:
 \right.
 \]
 
-% \subsubsection{Traitement des contraintes planes}
-
-\subsubsection{Calcul de la matrice tangente cohérente}
-
-Nous recherchons l'expression du tenseur
-\(\tenseurq{D}^{\mathit{tangent}}=\deriv{\Delta \tsigma}{\Delta
-  \tepsilonto}\). Pour cela nous pouvons écrire que~:
-\[
-\begin{aligned}
-\Delta \tsigma &=
-\tenseurq{D}\colon\Delta\tepsilonel=\tenseurq{D}\colon\paren{\Delta\,\tepsilonto-\Delta\,p\tenseur{n}}\\
- \deriv{\Delta \tsigma}{\Delta \tepsilonto}&=
-\tenseurq{D}-\tenseurq{D}\colon\paren{\tenseur{n}\otimes\deriv{\Delta\,p}{\Delta
-    \tepsilonto}+\Delta\,p\deriv{\tenseur{n}}{\Delta\,\tepsilonto}}
-\end{aligned}
-\] 
-
-\(\Delta\,p\) étant la somme des incréments associés à chaque
-mécanisme considéré, nous avons~:
-\[
-\deriv{\Delta\,p}{\Delta \tepsilonto}=\sum_{i=1}^{N}\deriv{\Delta\,p_{i}}{\Delta \tepsilonto}
-\]
-
-Ne reste donc à calculer que \(\deriv{\Delta\,p_{i}}{\Delta
-  \tepsilonto}\) pour chacun des mécanismes considérés et
-\(\deriv{\tenseur{n}}{\Delta\,\tepsilonto}\).
-
-Pour cela, introduisons le tenseur \(\tsigma^{e}\) définit par~:
-\[
-\tsigma^{e}=\tenseurq{D}\colon\left(\left.\tepsilonel\right|_{t+\theta\Delta t}+\theta\Delta\,\tepsilonto-\Frac{1}{3}\trace\paren{\left.\tepsilonel\right|_{t+\theta\Delta t}+\theta\Delta\,\tepsilonto}\right)
-\]
-qui est l'expression du tenseur d'élasticité en \(t+\theta\Delta t\)
-en l'absence d'incrément de déformation viscoplastique.
-
-Son déviateur \(\tenseur{s}^{e}\) peut être relié au tenseur
-\(\tenseur{B}\) introduit plus haut par la relation~:
-\[
-\tenseur{s}^{e}=2\mu\tenseur{B}
-\]
-Il est possible de relier la contrainte équivalente \(\sigmaeq^{e}\)
-et la normale \(\tenseur{n}^{e}\) associées à ce tenseur
-\(\tenseur{s}^{e}\) aux véritables contrainte équivalente
-\(\left.\sigmaeq\right|_{t+\theta\Delta t}\) et normale en
-\(t+\theta\Delta t\) à l'aide des relations obtenues au paragraphe
-précédent par~:
-\[
-\left.\sigmaeq\right|_{t+\theta\Delta t}=\sigmaeq^{e}-3\mu\theta\Delta\,p \quad\quad \tenseur{n}^{e}=\tenseur{n}
-\]
-
-\paragraph{Expression de $\deriv{\tenseur{n}}{\Delta\,\tepsilonto}$}
-
-Le calcul de la dérivée $\deriv{\tenseur{n}}{\Delta\,\tepsilonto}$ conduit à~:
-\[
-\deriv{\tenseur{n}}{\Delta\,\tepsilonto}=\Frac{2\mu\theta}{\sigmaeq^{e}}\paren{\tenseurq{M}-\tenseur{n}\otimes\tenseur{n}}
-\]
-où $\tenseurq{M}$ tenseur d'ordre quatre
-\(\Frac{3}{2}\paren{\tenseurq{I}-\Frac{1}{3}\tenseur{I}\otimes\tenseur{I}}\)\footnote{Ce
-  tenseur est l'équivalent du tenseur de \nom{Hill} en isotropie.}.
-
-\paragraph{Expression générale de $\deriv{\Delta\,p}{\Delta
-    \tepsilonto}$ pour un mécanisme unique}
-
-Pour un mécanisme unique, l'équation implicite montre qu'il existe une
-relation fonctionnelle \(\mathcal{F}\) scalaire telle que~:
-\[
-\mathcal{F}\paren{\milieupas{\sigmaeq},\Delta\,p}=0
-\]
-Nous avons changé de notations pour mettre en avant les variables
-\(\milieupas{\sigmaeq}\) et \(\Delta\,p\).
-
-Par dérivation, nous avons~:
-\[
-\deriv{\mathcal{F}}{\sigmaeq}\paren{\deriv{\sigmaeq^{e}}{\Delta\,\tepsilonto}-3\,\mu\,\theta\,\deriv{\Delta\,p}{\Delta\,\tepsilonto}}+\deriv{\mathcal{F}}{\Delta\,p}\,\deriv{\Delta\,p}{\Delta\,\tepsilonto}=0
-\]
-nous avons donc~:
-\[
-\deriv{\Delta\,p}{\Delta\,\tepsilonto}=\Frac{\deriv{\mathcal{F}}{\sigmaeq}}{3\,\mu\,\theta\,\deriv{\mathcal{F}}{\sigmaeq}-\deriv{\mathcal{F}}{\Delta\,p}}\deriv{\sigmaeq^{e}}{\Delta\,\tepsilonto}
-\]
-
-La dérivée \(\deriv{\sigmaeq^{e}}{\Delta\,\tepsilonto}\) s'exprime ainsi~:
-\[
-\deriv{\sigmaeq^{e}}{\Delta\,\tepsilonto}=2\,\mu\,\theta\,\tenseur{n}
-\]
-
-Finalement~:
-\[
-\deriv{\Delta\,p}{\Delta\,\tepsilonto}=\Frac{2\,\mu\,\theta\,\deriv{\mathcal{F}}{\sigmaeq}}{3\,\mu\,\theta\,\deriv{\mathcal{F}}{\sigmaeq}-\deriv{\mathcal{F}}{\Delta\,p}}\tenseur{n}
-\]
-
-\paragraph{Expression générale de la matrice tangente cohérente pour
-  un mécanisme unique}
-
-Pour obtenir une expression utilisable de la matrice tangente
-cohérente, il est intéressant de tenir compte de l'isotropie du
-tenseur d'élasticité qui permet d'écrire~:
-\[
-\begin{aligned}
-  \tenseurq{D}\colon\tenseurq{M}&=2\,\mu\,\tenseurq{M}\\
-  \tenseurq{D}\colon\tenseur{n}\otimes\tenseur{n}&=2\,\mu\,\tenseur{n}\otimes\tenseur{n}\\
-\end{aligned}
-\]
-
-La matrice tangente cohérente est alors donnée par~:
-\[
-\begin{aligned}
-  \deriv{\Delta \tsigma}{\Delta \tepsilonto}&=
-  \tenseurq{D}-\tenseurq{D}\colon\paren{\Frac{2\,\mu\,\theta\,\deriv{\mathcal{F}}{\sigmaeq}}{3\,\mu\,\theta\,\deriv{\mathcal{F}}{\sigmaeq}-\deriv{\mathcal{F}}{\Delta\,p}}\tenseur{n}\otimes\tenseur{n}+\Delta\,p\Frac{2\mu\theta}{\sigmaeq^{e}}\paren{\tenseurq{M}-\tenseur{n}\otimes\tenseur{n}}}\\
-  &=\tenseurq{D}-4\,\mu^{2}\,\theta\,\left[\Frac{\Delta\,p}{\sigmaeq^{e}}\tenseurq{M}+\paren{\Frac{\deriv{\mathcal{F}}{\sigmaeq}}{3\,\mu\,\theta\,\deriv{\mathcal{F}}{\sigmaeq}-\deriv{\mathcal{F}}{\Delta\,p}}-\Frac{\Delta\,p}{\sigmaeq^{e}}}\tenseur{n}\otimes\tenseur{n}\right]
-\end{aligned}
-\]
-
-\paragraph{Expression de la matrice tangente cohérente pour une loi viscoplastique}
-
-La relation fonctionnelle \(\mathcal{F}\) peut être réécrite ainsi~:
-\[
-\mathcal{F}\paren{\milieupas{\sigmaeq},\Delta\,p}=\Delta\,p-f^{\textrm{an}}_{i}\paren{\milieupas{\sigmaeq}}\,\Delta t =0
-\]
-Dans ce cas, nous avons~:
-\[
-\begin{aligned}
-  \deriv{\mathcal{F}}{\sigmaeq}&=-\deriv{f^{\textrm{an}}_{i}}{\sigmaeq}\,\Delta\,t\\
-  \deriv{\mathcal{F}}{\Delta p}&=1
-\end{aligned}
-\]
-ce qui conduit à l'expression suivante de la matrice tangente cohérente~:
-\[
-\deriv{\Delta \tsigma}{\Delta \tepsilonto}=\tenseurq{D}-4\,\mu^{2}\,\theta\,\left[\Frac{\Delta\,p}{\sigmaeq^{e}}\tenseurq{M}+\paren{\Frac{\Delta\,t\,\deriv{f^{\textrm{an}}_{i}}{\sigmaeq}}{1+3\,\mu\,\theta\,\Delta\,t\,\deriv{f^{\textrm{an}}_{i}}{\sigmaeq}}-\Frac{\Delta\,p}{\sigmaeq^{e}}}\tenseur{n}\otimes\tenseur{n}\right]
-\]
-
-\paragraph{Expression de la matrice tangente cohérente pour une loi viscoplastique avec écrouissage}
-
-La relation fonctionnelle \(\mathcal{F}\) peut être réécrite ainsi~:
-\[
-\mathcal{F}\paren{\milieupas{\sigmaeq},\Delta\,p}=\Delta\,p-f^{\textrm{an}}_{i}\paren{\milieupas{\sigmaeq},\milieupas{p}}\,\Delta t =0
-\]
-Dans ce cas, nous avons~:
-\[
-\begin{aligned}
-  \deriv{\mathcal{F}}{\sigmaeq}&=-\deriv{f^{\textrm{an}}_{i}}{\sigmaeq}\,\Delta\,t\\
-  \deriv{\mathcal{F}}{\Delta p}&=1-\theta\deriv{f^{\textrm{an}}_{i}}{p}\,\Delta\,t
-\end{aligned}
-\]
-ce qui conduit à l'expression suivante de la matrice tangente cohérente~:
-\[
-\deriv{\Delta \tsigma}{\Delta \tepsilonto}=\tenseurq{D}-4\,\mu^{2}\,\theta\,\left[\Frac{\Delta\,p}{\sigmaeq^{e}}\tenseurq{M}+\paren{\Frac{\Delta\,t\,\deriv{f^{\textrm{an}}_{i}}{\sigmaeq}}{1-\theta\,\Delta\,t\paren{\deriv{f^{\textrm{an}}_{i}}{p}+3\,\mu\,\deriv{f^{\textrm{an}}_{i}}{\sigmaeq}}}-\Frac{\Delta\,p}{\sigmaeq^{e}}}\tenseur{n}\otimes\tenseur{n}\right]
-\]
-
-\paragraph{Expression de la matrice tangente cohérente pour une loi plastique}
-
-En cas de charge plastique, la fonctionnelle \(\mathcal{F}\) est
-donnée par la surface de charge~:
-\[
-\mathcal{F}\paren{\milieupas{\sigmaeq},\Delta\,p}=f^{\textrm{an}}_{i}\paren{\milieupas{\sigmaeq},\milieupas{p}}=0
-\]
-Dans ce cas, nous avons~:
-\[
-\begin{aligned}
-  \deriv{\mathcal{F}}{\sigmaeq}&=\deriv{f^{\textrm{an}}_{i}}{\sigmaeq}\\
-  \deriv{\mathcal{F}}{\Delta p}&=\theta\,\deriv{f^{\textrm{an}}_{i}}{p}
-\end{aligned}
-\]
-ce qui conduit à l'expression suivante de la matrice tangente cohérente~:
-\[
-\deriv{\Delta \tsigma}{\Delta \tepsilonto}=\tenseurq{D}-4\,\mu^{2}\,\theta\,\left[\Frac{\Delta\,p}{\sigmaeq^{e}}\tenseurq{M}+\paren{\Frac{\,\deriv{f^{\textrm{an}}_{i}}{\sigmaeq}}{3\,\mu\,\theta\,\deriv{f^{\textrm{an}}_{i}}{\sigmaeq}-\theta\,\deriv{f^{\textrm{an}}_{i}}{p}}-\Frac{\Delta\,p}{\sigmaeq^{e}}}\tenseur{n}\otimes\tenseur{n}\right]
-\]
-
-En l'absence de charge plastique, la matrice tangente cohérente est
-égale à la matrice élastique.
-
-\paragraph{Expression générale de $\deriv{\Delta\,p_{i}}{\Delta
-    \tepsilonto}$}
-
-Dans le cas où plusieurs mécanismes sont présents, nous disposons de
-\(N\) relations fonctionnelles \(\mathcal{F}_{i}\), ce qui nous permet
-d'écrire~:
-\[
-\left[3\,\mu\,\theta\,\deriv{\mathcal{F}_{i}}{\sigmaeq}-\deriv{\mathcal{F}_{i}}{\Delta\,p_{i}}\right]\deriv{\Delta\,p_{i}}{\Delta\,\tepsilonto}+3\,\mu\,\theta\,\sum_{j=0,\\j\neq i}^{N}\deriv{\mathcal{F}_{i}}{\sigmaeq}\deriv{\Delta\,p_{j}}{\Delta\,\tepsilonto}=2\,\mu\,\theta\,\deriv{\mathcal{F}_{i}}{\sigmaeq}\tenseur{n}
-\]
-
-Soit \(\tenseur{d}\) un tenseur quelconque, nous avons~:
-\[
-\left[3\,\mu\,\theta\,\deriv{\mathcal{F}_{i}}{\sigmaeq}-\deriv{\mathcal{F}_{i}}{\Delta\,p_{i}}\right]\,\tenseur{d}\,\colon\,\deriv{\Delta\,p_{i}}{\Delta\,\tepsilonto}+3\,\mu\,\theta\,\sum_{j=0,\\j\neq i}^{N}\deriv{\mathcal{F}_{i}}{\sigmaeq}\,\tenseur{d}\,\colon\,\deriv{\Delta\,p_{j}}{\Delta\,\tepsilonto}=2\,\mu\,\theta\,\deriv{\mathcal{F}_{i}}{\sigmaeq}\,\tenseur{d}\,\colon\,\tenseur{n}
-\]
-
-Notons \(d^{i}\) les produits
-\(\tenseur{d}\,\colon\,\deriv{\Delta\,p_{i}}{\Delta\,\tepsilonto}\),
-ces coefficients vérifient un système linéaire donnés par~:
-\[
-\left[3\,\mu\,\theta\,\deriv{\mathcal{F}_{i}}{\sigmaeq}-\deriv{\mathcal{F}_{i}}{\Delta\,p_{i}}\right]\,d^{i}+3\,\mu\,\theta\,\sum_{j=0,\\j\neq i}^{N}\deriv{\mathcal{F}_{i}}{\sigmaeq}\,d^{j}=2\,\mu\,\theta\,\deriv{\mathcal{F}_{i}}{\sigmaeq}\,\tenseur{d}\,\colon\,\tenseur{n}
-\]
-
-Nous supposons ce système inversible. Si la direction \(\tenseur{d}\)
-est prise orthogonale à la direction d'écoulement \(\tenseur{n}\), les
-différents coefficients \(d^{i}\) sont nuls~: les différents
-tenseurs \(\deriv{\Delta\,p_{i}}{\Delta\,\tepsilonto}\) sont
-colinéaires à la direction d'écoulement.
-
-Les coefficients \(n^{i}\), égaux à
-\(\tenseur{n}\,\colon\,\deriv{\Delta\,p_{i}}{\Delta\,\tepsilonto}\),
-sont solution du système linéaire~:
-\[
-\left[3\,\mu\,\theta\,\deriv{\mathcal{F}_{i}}{\sigmaeq}-\deriv{\mathcal{F}_{i}}{\Delta\,p_{i}}\right]\,d^{i}+3\,\mu\,\theta\,\sum_{j=0,\\j\neq i}^{N}\deriv{\mathcal{F}_{i}}{\sigmaeq}\,d^{j}=3\,\mu\,\theta\,\deriv{\mathcal{F}_{i}}{\sigmaeq}
-\]
-
-Une fois ce système résolu, nous avons~:
-\[
-\deriv{\Delta\,p_{i}}{\Delta\,\tepsilonto}=\Frac{2}{3}\,d^{i}\,\tenseur{n}
-\]
-
-\paragraph{Expression générale de la matrice tangente} La matrice
-tangente cohérente est égale à~:
-\[
-\deriv{\Delta \tsigma}{\Delta \tepsilonto}=\tenseurq{D}-\left(\Frac{4\,\mu}{3}\sum_{i}\,d_{i}-\Frac{4\,\mu^{2}\,\theta}{\sigmaeq^{e}}\,\Delta\,p\right)\,\tenseur{n}\otimes\tenseur{n}-\Frac{4\,\mu^{2}\,\theta}{\sigmaeq^{e}}\,\Delta\,p\,\tenseurq{M}
-\]
-
-\subsection{Paramètres numériques}
+Nous avons donné toutes les équations nécessaires pour résoudre le
+système implicite issu de la \(\theta\)-méthode. Un dernier point mérite
+encore d'être discuté, le calcul de la matrice tangente cohérente. Les
+calculs menant à cette matrice, plus techniques, ont été reportés en
+annnexe~\ref{mfront:isotropic:tangentOpertor}.
 
 \paragraph{Critère d'arrêt} L'algorithme de \nom{Newton} s'arrête quand
 la différence entre deux estimations des incréments des déformations
 viscoplastiques cumulées est inférieur à un certain critère
 \(\varepsilon\)~:
-\[
-\Frac{1}{N}\displaystyle\sum_{i=1}^{N}\left|\Delta_{n}\Delta\,
-p_{i}\right|<\varepsilon
-\]
+\begin{equation}
+  \label{eq:mfront:isotropic:convergence_criteria}
+  \Frac{1}{N}\displaystyle\sum_{i=1}^{N}\left|\Delta_{n}\Delta\,
+  p_{i}\right|<\varepsilon
+\end{equation}
 où\(\Delta_{n}\Delta\,p_{i}\) désigne la différence entre l'estimation
 de l'incrément de la déformation viscoplastique cumulée à l'étape
 \(n+1\) et de l'estimation à l'étape \(n\).
 
-La valeur du critère est par défaut de \(10^{-8}\). Cette valeur par
-défaut peut être modifiée par la directive \mkey{Epsilon}. Cette valeur
-est également un paramètre de la loi, nommé \varcpp{epsilon}, qui peut
-être modifié à l'exécution.
+L'algorithme échoue si le nombre d'itérations dépasse une
+borne maximale.
 
-\paragraph{Nombre d'itération maximal} Le nombre
-maximum d'itération de l'algorithme est de \(100\) par défaut. Cette
-valeur par défaut peut être modifiée par la directive \mkey{IterMax}.
-Cette valeur est également un paramètre de la loi, nommé
-\varcpp{iterMax}, qui peut être modifié à l'exécution.
+% \subsubsection{Traitement des contraintes planes}
 
-\subsection{La directive \texttt{@FlowRule}} La directive \mkey{FlowRule}
+\subsection{Description des analyseurs spécifiques \mfront{}}
+
+Nous présentons dans ce paragraphe les analyseurs \mfront{} dédiés
+aux les lois de comportement plastique et viscoplastique incompressible
+des matériaux isotropes. Ils sont aux nombres de \(4\)~:
+\begin{itemize}
+  \item l'analyseur \texttt{IsotropicMisesCreep} gère
+  exclusivement les lois de comportement viscoplastique isotrope de la
+  forme~:
+  \[
+  \dot{p} = f\paren{\sigmaeq}
+  \]
+  \item l'analyseur \texttt{IsotropicStrainHardeningMisesCreep}
+  gère exclusivement les lois de comportement viscoplastique
+  isotrope de la forme~:
+  \[
+  \dot{p} = f\paren{\sigmaeq,p}
+  \]
+  \item l'analyseur \texttt{IsotropicPlasticMisesFlow} gère
+  exclusivement les lois de comportement plastique isotrope de la
+  forme~:
+  \[
+  f(\sigmaeq,p)\leq 0 \quad\quad \dot{p}\geq 0
+  \quad\quad f(\sigmaeq,p)\,\dot{p} = 0
+  \]
+  \item l'analyseur \texttt{MultipleIsotropicMisesFlows} gère
+  une combinaison arbitraire d'écoulements des trois types précédents.
+  Les différents écoulements sont supposés non couplés.
+\end{itemize}
+
+\subsubsection{La directive \texttt{@FlowRule}} La directive \mkey{FlowRule}
 permet de définir un écoulement.
 
 \paragraph{Cas des analyseurs \texttt{Isotropic\-Mises\-Creep},
@@ -1674,7 +1495,7 @@ jusque là. Il n'est possible d'associer des noms de glossaire ou des
 bornes à ces variables qu'après la définition du bloc.
 
 \paragraph{Transformation du code dans les blocs \texttt{@FlowRule}} Le
-code dans les blocs suivant la directive \texttt{@FlowRule} est modifié
+code dans les blocs suivant la directive \mkey{FlowRule} est modifié
 ainsi~:
 \begin{itemize}
   \item les variables externes sont remplacées par leurs valeurs en
@@ -1683,7 +1504,7 @@ ainsi~:
   valeur en \(t+\theta\,\Delta\,t\).
 \end{itemize}
 
-\subsection{Mise à jour des variables auxiliaires}
+\subsubsection{Mise à jour des variables auxiliaires}
 
 La directive \mkey{UpdateAuxiliaryStateVariables} permet de mettre à
 jour les variables auxiliaires.
@@ -1717,24 +1538,31 @@ Une autre manière de calculer cette variable est~:
 qui montre que la déformation élastique a été mise à jour et non la
 déformation totale.
 
-\subsection{Paramètres automatiquement définis}
+\subsubsection{Paramètres numériques automatiquement définis}
 
-Les analyseurs spécifiques définissent automatiquement trois
-paramètres~:
-\begin{itemize}
-  \item {\tt epsilon} qui fixe la valeur du critère d'arrêt~;
-  \item {\tt theta} qui fixe la valeur du paramètre de la
-  \(\theta\)-méthode~;
-  \item {\tt iterMax} qui fixe le nombre maximum d'itérations
-  autorisées pour l'algorithme implicite.
-\end{itemize}
+Le paramètre \(\theta\) de la \(\theta\)-méthode vaut par défaut \(1\)
+pour l'analyseur \texttt{Isotropic\-Plastic\-Mises\-Flow} et
+\(\pfrac{1}{2}\) pour les autres. Cette valeur par défaut peut être
+modifiée par la directive \mkey{Theta}. Cette valeur est également un
+paramètre de la loi, nommé \varcpp{theta}, qui peut être modifié à
+l'exécution.
 
-\subsection{Noms réservés}
+La valeur du critère d'arrêt est par défaut de \(10^{-8}\). Cette
+valeur par défaut peut être modifiée par la directive \mkey{Epsilon}.
+Cette valeur est également un paramètre de la loi, nommé
+\varcpp{epsilon}, qui peut être modifié à l'exécution.
+
+Le nombre maximum d'itération de l'algorithme est de \(100\) par
+défaut. Cette valeur par défaut peut être modifiée par la directive
+\mkey{IterMax}. Cette valeur est également un paramètre de la loi, nommé
+\varcpp{iterMax}, qui peut être modifié à l'exécution.
+
+\subsubsection{Noms réservés}
 
 Les noms réservés par cette analyseur sont décrits en
 annexe~\ref{sec:noms-de-variables}.
 
-\subsection{Comportement viscoplastique du \sic{}}
+\subsubsection{Comportement viscoplastique du \sic{}}
 
 Nous voulons décrire le comportement viscoplastique du \sic{} Le \sic{}
 est supposée avoir un comportement viscoplastique isotrope donnée par~:
@@ -1795,16 +1623,16 @@ et \mkey{Date}.
 d'où la loi est extraite.
 
 \paragraph{Le mot clé \texttt{@External\-State\-Variable}} Le mot clé
-\texttt{@External\-State\-Variable} définit une variable externe
+\mkey{External\-State\-Variable} définit une variable externe
 scalaire (\texttt{real}) nommée \texttt{flux}. Cette variable, et son
 incrément \texttt{dflux}, sont dès lors accessibles.
 
 \paragraph{Le mot clé \mkey{StaticVariable}} Le mot clé
-\texttt{@Static\-Variable} sert à définir les constantes utilisées par
+\mkey{Static\-Variable} sert à définir les constantes utilisées par
 la loi. Ces constantes sont des scalaires (\texttt{real}).
 
 \paragraph{Le mot clé \mkey{LocalVariable}} Le mot clé
-\texttt{@Local\-Variable} sert à définir des variables de travail
+\mkey{Local\-Variable} sert à définir des variables de travail
 locales. Les rôles des variables \texttt{AF1} et \texttt{AF3} sera
 explicités dans la suite.
 
@@ -1834,6 +1662,18 @@ valeur du flux de neutrons rapides \(\phi\) est égal à
 Cette section décrit l'analyseur \texttt{RungeKutta} qui permet
 l'intégration des lois de comportement, formulées en vitesse, par une
 méthode explicite.
+
+Contrairement aux analyseurs spécifiques décrits dans la
+section précédente, aucune hypothèse n'est faite sur les lois de
+comportement présentés~: l'analyseur \texttt{RungeKutta} est dit
+générique.
+
+Nous supposons que l'utilisateur a réussi à réduire l'intégration de
+la loi de comportement à un système différentiel et nous détaillons les
+méthodes d'intégration proposés par l'analyseur \texttt{RungeKutta}.
+Nous donnons en même temps les directives \mfront{} qui permettent de
+programmer le système différentiel et de modifier le comportement des
+algorithmes.
 
 \subsection{Résolution d'un système différentiel par une méthode explicite}
 \label{sec:resol-dun-syst}
@@ -1905,8 +1745,8 @@ d'étape \(n\) et différents coefficients \(a_{ij}\), \(b_{i}\) et
 
 L'un des intérêts des méthodes de \nom{Runge-Kutta} est que les
 coefficients \(k_{i}\) d'une méthode d'ordre élevée peuvent parfois être
-utilisé pour construire une méthode d'ordre moins élevée. On obtient
-ainsi deux estimations de la valeurs de fin de pas qui peuvent être
+utilisés pour construire une méthode d'ordre moins élevée. On obtient
+ainsi deux estimations de la valeur de fin de pas qui peuvent être
 comparées~: si la comparaison entre les deux estimations n'est pas
 satisfaisante, on en déduit que le pas de temps utilisé est trop grand
 et il est possible de mettre en place une stratégie de gestion du pas de
@@ -2132,7 +1972,8 @@ facteur \(10\). Naturellement, le pas de temps local \(\delta\,t^{l}\)
 ne peut être supérieur à \(t+\Delta\, t-t^{l}\).
 
 \paragraph{Gestion par l'utilisateur} Si le code
-suivant la directive \mkey{Derivative} renvoie la valeur booléenne
+suivant la directive \mkey{Derivative}, présenté dans la suite et qui
+sert à programmer le système différentiel, renvoie la valeur booléenne
 \texttt{false}, le pas de temps est automatiquement divisé par \(2\).
 
 Cette possibilité est en pratique assez importante, en particulier
@@ -2843,7 +2684,7 @@ convergence\footnote{En effet, dans ce cas, l'erreur apparaît alors que
   inaperçue si l'on y prend garde.}.
 
 Pour détecter les erreurs dans le calcul du jacobien, nous avons
-introduit le mot clé \texttt{@Compare\-To\-Numerical\-Jacobian}. Ce mot
+introduit le mot clé \mkey{Compare\-To\-Numerical\-Jacobian}. Ce mot
 clé déclenche un processus de vérification par comparaison du jacobien
 fournit par l'utilisateur à un jacobien évalué numériquement par
 perturbations. Cette vérification se fait par étapes~:
@@ -3093,7 +2934,7 @@ algorithme dû à \nom{Powell} qui semble particulièrement intéressant.
 \subsection{Calcul de la matrice tangente cohérente}
 
 L'utilisateur peut calculer la matrice tangente cohérente
-dans un bloc introduit par la directive \texttt{@TangentOperator}.
+dans un bloc introduit par la directive \mkey{TangentOperator}.
 
 Cette directive est appelée si l'intégration de la loi a été un
 succès, avant la mise à jour des variables internes et la mise à jour de
@@ -4051,6 +3892,231 @@ sous-découpage \texttt{dt\_} en deçà de laquelle on renvoie une erreur.
 \clearpage
 \newpage
 \include{annexe-orthotropie}
+
+\clearpage
+\newpage
+\section{Calcul de la matrice tangente cohérente}
+\label{mfront:isotropic:tangentOpertor}
+
+Cette annexe complète la présentation de l'algorithme d'intégration
+numérique utilisé pour les lois de comportement plastique et
+viscoplastique incompressible des matériaux isotropes présenté au
+paragraphe~\ref{sec:mfront:isotropic-solver} en détaillant le calcul de
+la matrice tangente cohérente dans les différents cas traités.
+
+Les notations utilisées sont celles du
+paragraphe~\ref{sec:mfront:isotropic-solver}.
+
+Nous recherchons l'expression du tenseur
+\(\tenseurq{D}^{\mathit{tangent}}=\deriv{\Delta \tsigma}{\Delta
+  \tepsilonto}\). Pour cela nous pouvons écrire que~:
+\[
+\begin{aligned}
+\Delta \tsigma &=
+\tenseurq{D}\colon\Delta\tepsilonel=\tenseurq{D}\colon\paren{\Delta\,\tepsilonto-\Delta\,p\tenseur{n}}\\
+ \deriv{\Delta \tsigma}{\Delta \tepsilonto}&=
+\tenseurq{D}-\tenseurq{D}\colon\paren{\tenseur{n}\otimes\deriv{\Delta\,p}{\Delta
+    \tepsilonto}+\Delta\,p\deriv{\tenseur{n}}{\Delta\,\tepsilonto}}
+\end{aligned}
+\] 
+
+\(\Delta\,p\) étant la somme des incréments associés à chaque
+mécanisme considéré, nous avons~:
+\[
+\deriv{\Delta\,p}{\Delta \tepsilonto}=\sum_{i=1}^{N}\deriv{\Delta\,p_{i}}{\Delta \tepsilonto}
+\]
+
+Ne reste donc à calculer que \(\deriv{\Delta\,p_{i}}{\Delta
+  \tepsilonto}\) pour chacun des mécanismes considérés et
+\(\deriv{\tenseur{n}}{\Delta\,\tepsilonto}\).
+
+Pour cela, introduisons le tenseur \(\tsigma^{e}\) définit par~:
+\[
+\tsigma^{e}=\tenseurq{D}\colon\left(\left.\tepsilonel\right|_{t+\theta\Delta t}+\theta\Delta\,\tepsilonto-\Frac{1}{3}\trace\paren{\left.\tepsilonel\right|_{t+\theta\Delta t}+\theta\Delta\,\tepsilonto}\right)
+\]
+qui est l'expression du tenseur d'élasticité en \(t+\theta\Delta t\)
+en l'absence d'incrément de déformation viscoplastique.
+
+Son déviateur \(\tenseur{s}^{e}\) peut être relié au tenseur
+\(\tenseur{B}\) introduit plus haut par la relation~:
+\[
+\tenseur{s}^{e}=2\mu\tenseur{B}
+\]
+Il est possible de relier la contrainte équivalente \(\sigmaeq^{e}\)
+et la normale \(\tenseur{n}^{e}\) associées à ce tenseur
+\(\tenseur{s}^{e}\) aux véritables contrainte équivalente
+\(\left.\sigmaeq\right|_{t+\theta\Delta t}\) et normale en
+\(t+\theta\Delta t\) à l'aide des relations obtenues au paragraphe
+précédent par~:
+\[
+\left.\sigmaeq\right|_{t+\theta\Delta t}=\sigmaeq^{e}-3\mu\theta\Delta\,p \quad\quad \tenseur{n}^{e}=\tenseur{n}
+\]
+
+\paragraph{Expression de $\deriv{\tenseur{n}}{\Delta\,\tepsilonto}$}
+
+Le calcul de la dérivée $\deriv{\tenseur{n}}{\Delta\,\tepsilonto}$ conduit à~:
+\[
+\deriv{\tenseur{n}}{\Delta\,\tepsilonto}=\Frac{2\mu\theta}{\sigmaeq^{e}}\paren{\tenseurq{M}-\tenseur{n}\otimes\tenseur{n}}
+\]
+où $\tenseurq{M}$ tenseur d'ordre quatre
+\(\Frac{3}{2}\paren{\tenseurq{I}-\Frac{1}{3}\tenseur{I}\otimes\tenseur{I}}\)\footnote{Ce
+  tenseur est l'équivalent du tenseur de \nom{Hill} en isotropie.}.
+
+\paragraph{Expression générale de $\deriv{\Delta\,p}{\Delta
+    \tepsilonto}$ pour un mécanisme unique}
+
+Pour un mécanisme unique, l'équation implicite montre qu'il existe une
+relation fonctionnelle \(\mathcal{F}\) scalaire telle que~:
+\[
+\mathcal{F}\paren{\milieupas{\sigmaeq},\Delta\,p}=0
+\]
+Nous avons changé de notations pour mettre en avant les variables
+\(\milieupas{\sigmaeq}\) et \(\Delta\,p\).
+
+Par dérivation, nous avons~:
+\[
+\deriv{\mathcal{F}}{\sigmaeq}\paren{\deriv{\sigmaeq^{e}}{\Delta\,\tepsilonto}-3\,\mu\,\theta\,\deriv{\Delta\,p}{\Delta\,\tepsilonto}}+\deriv{\mathcal{F}}{\Delta\,p}\,\deriv{\Delta\,p}{\Delta\,\tepsilonto}=0
+\]
+nous avons donc~:
+\[
+\deriv{\Delta\,p}{\Delta\,\tepsilonto}=\Frac{\deriv{\mathcal{F}}{\sigmaeq}}{3\,\mu\,\theta\,\deriv{\mathcal{F}}{\sigmaeq}-\deriv{\mathcal{F}}{\Delta\,p}}\deriv{\sigmaeq^{e}}{\Delta\,\tepsilonto}
+\]
+
+La dérivée \(\deriv{\sigmaeq^{e}}{\Delta\,\tepsilonto}\) s'exprime ainsi~:
+\[
+\deriv{\sigmaeq^{e}}{\Delta\,\tepsilonto}=2\,\mu\,\theta\,\tenseur{n}
+\]
+
+Finalement~:
+\[
+\deriv{\Delta\,p}{\Delta\,\tepsilonto}=\Frac{2\,\mu\,\theta\,\deriv{\mathcal{F}}{\sigmaeq}}{3\,\mu\,\theta\,\deriv{\mathcal{F}}{\sigmaeq}-\deriv{\mathcal{F}}{\Delta\,p}}\tenseur{n}
+\]
+
+\paragraph{Expression générale de la matrice tangente cohérente pour
+  un mécanisme unique}
+
+Pour obtenir une expression utilisable de la matrice tangente
+cohérente, il est intéressant de tenir compte de l'isotropie du
+tenseur d'élasticité qui permet d'écrire~:
+\[
+\begin{aligned}
+  \tenseurq{D}\colon\tenseurq{M}&=2\,\mu\,\tenseurq{M}\\
+  \tenseurq{D}\colon\tenseur{n}\otimes\tenseur{n}&=2\,\mu\,\tenseur{n}\otimes\tenseur{n}\\
+\end{aligned}
+\]
+
+La matrice tangente cohérente est alors donnée par~:
+\[
+\begin{aligned}
+  \deriv{\Delta \tsigma}{\Delta \tepsilonto}&=
+  \tenseurq{D}-\tenseurq{D}\colon\paren{\Frac{2\,\mu\,\theta\,\deriv{\mathcal{F}}{\sigmaeq}}{3\,\mu\,\theta\,\deriv{\mathcal{F}}{\sigmaeq}-\deriv{\mathcal{F}}{\Delta\,p}}\tenseur{n}\otimes\tenseur{n}+\Delta\,p\Frac{2\mu\theta}{\sigmaeq^{e}}\paren{\tenseurq{M}-\tenseur{n}\otimes\tenseur{n}}}\\
+  &=\tenseurq{D}-4\,\mu^{2}\,\theta\,\left[\Frac{\Delta\,p}{\sigmaeq^{e}}\tenseurq{M}+\paren{\Frac{\deriv{\mathcal{F}}{\sigmaeq}}{3\,\mu\,\theta\,\deriv{\mathcal{F}}{\sigmaeq}-\deriv{\mathcal{F}}{\Delta\,p}}-\Frac{\Delta\,p}{\sigmaeq^{e}}}\tenseur{n}\otimes\tenseur{n}\right]
+\end{aligned}
+\]
+
+\paragraph{Expression de la matrice tangente cohérente pour une loi viscoplastique}
+
+La relation fonctionnelle \(\mathcal{F}\) peut être réécrite ainsi~:
+\[
+\mathcal{F}\paren{\milieupas{\sigmaeq},\Delta\,p}=\Delta\,p-f^{\textrm{an}}_{i}\paren{\milieupas{\sigmaeq}}\,\Delta t =0
+\]
+Dans ce cas, nous avons~:
+\[
+\begin{aligned}
+  \deriv{\mathcal{F}}{\sigmaeq}&=-\deriv{f^{\textrm{an}}_{i}}{\sigmaeq}\,\Delta\,t\\
+  \deriv{\mathcal{F}}{\Delta p}&=1
+\end{aligned}
+\]
+ce qui conduit à l'expression suivante de la matrice tangente cohérente~:
+\[
+\deriv{\Delta \tsigma}{\Delta \tepsilonto}=\tenseurq{D}-4\,\mu^{2}\,\theta\,\left[\Frac{\Delta\,p}{\sigmaeq^{e}}\tenseurq{M}+\paren{\Frac{\Delta\,t\,\deriv{f^{\textrm{an}}_{i}}{\sigmaeq}}{1+3\,\mu\,\theta\,\Delta\,t\,\deriv{f^{\textrm{an}}_{i}}{\sigmaeq}}-\Frac{\Delta\,p}{\sigmaeq^{e}}}\tenseur{n}\otimes\tenseur{n}\right]
+\]
+
+\paragraph{Expression de la matrice tangente cohérente pour une loi viscoplastique avec écrouissage}
+
+La relation fonctionnelle \(\mathcal{F}\) peut être réécrite ainsi~:
+\[
+\mathcal{F}\paren{\milieupas{\sigmaeq},\Delta\,p}=\Delta\,p-f^{\textrm{an}}_{i}\paren{\milieupas{\sigmaeq},\milieupas{p}}\,\Delta t =0
+\]
+Dans ce cas, nous avons~:
+\[
+\begin{aligned}
+  \deriv{\mathcal{F}}{\sigmaeq}&=-\deriv{f^{\textrm{an}}_{i}}{\sigmaeq}\,\Delta\,t\\
+  \deriv{\mathcal{F}}{\Delta p}&=1-\theta\deriv{f^{\textrm{an}}_{i}}{p}\,\Delta\,t
+\end{aligned}
+\]
+ce qui conduit à l'expression suivante de la matrice tangente cohérente~:
+\[
+\deriv{\Delta \tsigma}{\Delta \tepsilonto}=\tenseurq{D}-4\,\mu^{2}\,\theta\,\left[\Frac{\Delta\,p}{\sigmaeq^{e}}\tenseurq{M}+\paren{\Frac{\Delta\,t\,\deriv{f^{\textrm{an}}_{i}}{\sigmaeq}}{1-\theta\,\Delta\,t\paren{\deriv{f^{\textrm{an}}_{i}}{p}+3\,\mu\,\deriv{f^{\textrm{an}}_{i}}{\sigmaeq}}}-\Frac{\Delta\,p}{\sigmaeq^{e}}}\tenseur{n}\otimes\tenseur{n}\right]
+\]
+
+\paragraph{Expression de la matrice tangente cohérente pour une loi plastique}
+
+En cas de charge plastique, la fonctionnelle \(\mathcal{F}\) est
+donnée par la surface de charge~:
+\[
+\mathcal{F}\paren{\milieupas{\sigmaeq},\Delta\,p}=f^{\textrm{an}}_{i}\paren{\milieupas{\sigmaeq},\milieupas{p}}=0
+\]
+Dans ce cas, nous avons~:
+\[
+\begin{aligned}
+  \deriv{\mathcal{F}}{\sigmaeq}&=\deriv{f^{\textrm{an}}_{i}}{\sigmaeq}\\
+  \deriv{\mathcal{F}}{\Delta p}&=\theta\,\deriv{f^{\textrm{an}}_{i}}{p}
+\end{aligned}
+\]
+ce qui conduit à l'expression suivante de la matrice tangente cohérente~:
+\[
+\deriv{\Delta \tsigma}{\Delta \tepsilonto}=\tenseurq{D}-4\,\mu^{2}\,\theta\,\left[\Frac{\Delta\,p}{\sigmaeq^{e}}\tenseurq{M}+\paren{\Frac{\,\deriv{f^{\textrm{an}}_{i}}{\sigmaeq}}{3\,\mu\,\theta\,\deriv{f^{\textrm{an}}_{i}}{\sigmaeq}-\theta\,\deriv{f^{\textrm{an}}_{i}}{p}}-\Frac{\Delta\,p}{\sigmaeq^{e}}}\tenseur{n}\otimes\tenseur{n}\right]
+\]
+
+En l'absence de charge plastique, la matrice tangente cohérente est
+égale à la matrice élastique.
+
+\paragraph{Expression générale de $\deriv{\Delta\,p_{i}}{\Delta
+    \tepsilonto}$}
+
+Dans le cas où plusieurs mécanismes sont présents, nous disposons de
+\(N\) relations fonctionnelles \(\mathcal{F}_{i}\), ce qui nous permet
+d'écrire~:
+\[
+\left[3\,\mu\,\theta\,\deriv{\mathcal{F}_{i}}{\sigmaeq}-\deriv{\mathcal{F}_{i}}{\Delta\,p_{i}}\right]\deriv{\Delta\,p_{i}}{\Delta\,\tepsilonto}+3\,\mu\,\theta\,\sum_{j=0,\\j\neq i}^{N}\deriv{\mathcal{F}_{i}}{\sigmaeq}\deriv{\Delta\,p_{j}}{\Delta\,\tepsilonto}=2\,\mu\,\theta\,\deriv{\mathcal{F}_{i}}{\sigmaeq}\tenseur{n}
+\]
+
+Soit \(\tenseur{d}\) un tenseur quelconque, nous avons~:
+\[
+\left[3\,\mu\,\theta\,\deriv{\mathcal{F}_{i}}{\sigmaeq}-\deriv{\mathcal{F}_{i}}{\Delta\,p_{i}}\right]\,\tenseur{d}\,\colon\,\deriv{\Delta\,p_{i}}{\Delta\,\tepsilonto}+3\,\mu\,\theta\,\sum_{j=0,\\j\neq i}^{N}\deriv{\mathcal{F}_{i}}{\sigmaeq}\,\tenseur{d}\,\colon\,\deriv{\Delta\,p_{j}}{\Delta\,\tepsilonto}=2\,\mu\,\theta\,\deriv{\mathcal{F}_{i}}{\sigmaeq}\,\tenseur{d}\,\colon\,\tenseur{n}
+\]
+
+Notons \(d^{i}\) les produits
+\(\tenseur{d}\,\colon\,\deriv{\Delta\,p_{i}}{\Delta\,\tepsilonto}\),
+ces coefficients vérifient un système linéaire donnés par~:
+\[
+\left[3\,\mu\,\theta\,\deriv{\mathcal{F}_{i}}{\sigmaeq}-\deriv{\mathcal{F}_{i}}{\Delta\,p_{i}}\right]\,d^{i}+3\,\mu\,\theta\,\sum_{j=0,\\j\neq i}^{N}\deriv{\mathcal{F}_{i}}{\sigmaeq}\,d^{j}=2\,\mu\,\theta\,\deriv{\mathcal{F}_{i}}{\sigmaeq}\,\tenseur{d}\,\colon\,\tenseur{n}
+\]
+
+Nous supposons ce système inversible. Si la direction \(\tenseur{d}\)
+est prise orthogonale à la direction d'écoulement \(\tenseur{n}\), les
+différents coefficients \(d^{i}\) sont nuls~: les différents
+tenseurs \(\deriv{\Delta\,p_{i}}{\Delta\,\tepsilonto}\) sont
+colinéaires à la direction d'écoulement.
+
+Les coefficients \(n^{i}\), égaux à
+\(\tenseur{n}\,\colon\,\deriv{\Delta\,p_{i}}{\Delta\,\tepsilonto}\),
+sont solution du système linéaire~:
+\[
+\left[3\,\mu\,\theta\,\deriv{\mathcal{F}_{i}}{\sigmaeq}-\deriv{\mathcal{F}_{i}}{\Delta\,p_{i}}\right]\,d^{i}+3\,\mu\,\theta\,\sum_{j=0,\\j\neq i}^{N}\deriv{\mathcal{F}_{i}}{\sigmaeq}\,d^{j}=3\,\mu\,\theta\,\deriv{\mathcal{F}_{i}}{\sigmaeq}
+\]
+
+Une fois ce système résolu, nous avons~:
+\[
+\deriv{\Delta\,p_{i}}{\Delta\,\tepsilonto}=\Frac{2}{3}\,d^{i}\,\tenseur{n}
+\]
+
+\paragraph{Expression générale de la matrice tangente} La matrice
+tangente cohérente est égale à~:
+\[
+\deriv{\Delta \tsigma}{\Delta \tepsilonto}=\tenseurq{D}-\left(\Frac{4\,\mu}{3}\sum_{i}\,d_{i}-\Frac{4\,\mu^{2}\,\theta}{\sigmaeq^{e}}\,\Delta\,p\right)\,\tenseur{n}\otimes\tenseur{n}-\Frac{4\,\mu^{2}\,\theta}{\sigmaeq^{e}}\,\Delta\,p\,\tenseurq{M}
+\]
 
 \clearpage
 \newpage
