@@ -38,6 +38,8 @@
 \newcommand{\pleiades}{\texttt{pleiades}}
 \newcommand{\TFEL}{\texttt{tfel}}
 \newcommand{\mfront}{\texttt{mfront}}
+\newcommand{\alcyone}{\texttt{alcyone}}
+\newcommand{\germinal}{\texttt{germinal}}
 \newcommand{\licos}{\texttt{licos}}
 \newcommand{\cyrano}{\texttt{cyrano}}
 \newcommand{\galileo}{\texttt{galileo}}
@@ -68,8 +70,8 @@
 \newcommand{\tfel}[1]{\index{tfel}{#1}{\texttt{#1}}}
 \newcommand{\tfelb}[2]{\index{tfel}{#1}{\texttt{#2}}}
 
-\newcommand{\env}[1]{\index{env}{#1}{\texttt{#1}}}
-\newcommand{\envb}[2]{\index{env}{#1}{\texttt{#2}}}
+%\newcommand{\env}[1]{\index{env}{#1}{\texttt{#1}}}
+%\newcommand{\envb}[2]{\index{env}{#1}{\texttt{#2}}}
 
 \newcommand{\moption}[1]{\texttt{-{}-#1}}
 
@@ -131,14 +133,14 @@
 
 \input{@abs_top_builddir@/docs/tex/texmf/LSC}
 
-\auteurs{T.~Helfer, V.~Blanc, J.~Julien}
+\auteurs{T.~Helfer, É. Castelier, V.~Blanc, J.~Julien}
 \redacteur{T.~Helfer}
 \verificateur{}
 \approbateur{R.~Masson}
 \emetteur{E.~Touron}
 
-\titre{Écriture de lois de comportement mécanique à
-  l'aide du générateur de code \mfront{}}
+\titre{Le générateur de code \mfront{}~: écriture de lois de
+  comportement mécanique}
 
 \date{2013}
 % \numero{12-014}
@@ -185,9 +187,30 @@
 \stylebib{@abs_top_srcdir@/docs/tex/texmf/bibtex/fr-insa}
 \fichierbib{@abs_top_srcdir@/docs/mfront/Bibliographie}
 
-\resumecea{}
+\resumecea{
+  Cette note décrit comment écrire des lois de
+  comportement mécanique à l'aide du générateur de code \mfront{}.
 
-\makeindex{env}
+  La variétés des phénomènes traités fait que \mfront{} propose
+  différents façon décrire des lois de comportement mécaniques.
+
+  Certaines sont spécifiques à certaines formes de loi de comportement
+  qui sont d'usage courant et pour lesquels des algorithmes
+  d'intégration performants existent.
+
+  Pour les lois les plus complexes, \mfront{} permet d'utiliser
+  des méthodes de \nom{Runge-Kutta} ou des méthodes implicites.
+
+  Le retour d'expérience des utilisateurs montre que l'utilisation
+  de \mfront{} simplifie grandement l'écriture de lois de comportement
+  mécanique.
+
+  Les différents tests menés avec les codes aux éléments finis
+  \castem{} et \aster{} montrent que les lois de comportement générées
+  sont numériquement très
+  efficaces~\cite{michel09,helfer:opti:2011,proix:mfront:2013}. }
+
+%\makeindex{env}
 \makeindex{tfel}
 \makeindex{headers}
 \makeindex{mkeys}
@@ -198,24 +221,44 @@
 \newpage
 \section{Introduction}
 
-Les lois de comportement décrivent la réaction locale (en un point de
-\nom{Gauss}) d'un matériau à un incrément de sollicitation externe au
-cours d'un incrément de temps. Connaissant l'état mécanique du matériau
-à un instant \(t\), les lois de comportement doivent fournir~:
+Ce document décrit comment écrire des lois de comportement mécanique
+avec le générateur de code \mfront{} La lecture de ce document suppose
+au le lecteur une certaine familiarité avec \mfront{}. A minima, la
+lecture de la présentation générale de \mfront{} semble
+nécessaire~\cite{helfer:mfront:2013}.
+
+Nous décrivons en annexe~\ref{sec:mfront:mechanical_equilibrium} un
+algorithme simplifié de recherche de l'équilibre mécanique qui précise
+la place de la loi de comportement mécanique~: les lois de comportement
+décrivent la réaction locale (en un point de \nom{Gauss}) d'un matériau
+à un incrément de sollicitation externe au cours d'un incrément de
+temps.
+
+\paragraph{Rôle de la loi de comportement}
+Connaissant l'état mécanique du matériau à un instant \(t\),
+les lois de comportement doivent fournir~:
 \begin{itemize}
-  \item l'évolution d'un ensemble de variables internes \(z_{i}\)
+  \item l'évolution d'un ensemble de variables internes \(y_{i}\)
   sur le pas de temps \(\Delta\, t\)~;
   \item la valeur de la contrainte en fin de pas de temps.
 \end{itemize}
+
 Si l'algorithme de résolution global le nécessite, la loi de
 comportement peut également fournir la matrice tangente cohérente
 \(\deriv{\Delta\tsigma}{\Delta\tepsilonto}\).
 
-Pour cela, les lois de comportement sont amenées à résoudre un
-système différentiel portant sur les variables internes \(z_{i}\). La
-variétés des phénomènes décrits et des méthodes disponibles expliquent
-la richesse des analyseurs proposés par \mfront{}, qui sont au nombre
-\(7\). La description de ces analyseurs est l'objet de ce document.
+Dans certains cas, les lois de comportement peuvent également
+fournir des indications sur la qualité de la discrétisation temporelle
+du problème.
+
+\paragraph{De multiples phénomènes} Les matériaux solides
+réagissent aux sollicitations mécaniques par différents phénomènes~:
+élasticité, viscoplasticité, plasticité, endommagement.
+
+La variété des phénomènes possibles et des méthodes disponibles
+expliquent la richesse des analyseurs proposés par \mfront{}, qui sont
+actuellement au nombre \(8\). La description de ces analyseurs est
+l'objet de ce document.
 
 \subsection{Analyseurs disponibles}
 
@@ -225,65 +268,46 @@ actuellement disponibles~:
   \item l'analyseur \texttt{DefaultParser} qui permet de traiter
   tous types de lois de comportements~;
   \item l'analyseur \texttt{IsotropicMisesCreep} qui gère
-  exclusivement les lois de comportement viscoplastique isotrope de la
-  forme~:
-  \[
-  \dot{p} = f\paren{\sigmaeq}
-  \]
-  où \(\dot{p}\) la vitesse viscoplastique équivalente et où
-  \(\sigmaeq\) est la contrainte équivalente au sens de \nom{Von-Mises}.
-  La direction d'écoulement est donnée par l'hypothèse de normalité. Une
-  intégration implicite est effectuée. Cette intégration nécessite de
-  préciser la dérivée \(\derivtot{f}{\sigmaeq}\)~;
+  exclusivement les lois de comportement mécanique viscoplastique
+  incompressible des matériaux isotropes~;
   \item l'analyseur \texttt{IsotropicStrainHardeningMisesCreep}
-  qui gère exclusivement les lois de comportement viscoplastique
-  isotrope de la forme~:
-  \[
-  \dot{p} = f\paren{\sigmaeq,p}
-  \]
-  où \(\dot{p}\) la vitesse viscoplastique équivalente et où
-  \(\sigmaeq\) est la contrainte équivalente au sens de \nom{Von-Mises}.
-  La direction d'écoulement est donnée par l'hypothèse de normalité. Une
-  intégration implicite est effectuée. Cette intégration nécessite de
-  préciser les dérivées \(\deriv{f}{\sigmaeq}\) et \(\deriv{f}{p}\)~;
+  qui gère exclusivement les lois de comportement mécanique
+  viscoplastique incompressible des matériaux isotropes~;
   \item l'analyseur \texttt{IsotropicPlasticMisesFlow} qui gère
-  exclusivement les lois de comportement plastique isotrope de la
-  forme~:
-  \[
-  f(\sigmaeq,p)\leq 0 \quad\quad \dot{p}\geq 0
-  \quad\quad f(\sigmaeq,p)\,\dot{p} = 0
-  \]
-  où \(p\) est la déformation plastique cumulée et où \(\sigmaeq\)
-  est la contrainte équivalente au sens de \nom{Von-Mises}. La direction
-  d'écoulement est donnée par l'hypothèse de normalité. Une intégration
-  implicite est effectuée. Cette intégration nécessite de préciser les
-  dérivées \(\deriv{f}{\sigmaeq}\) et \(\deriv{f}{p}\)~;
+  exclusivement les lois de comportement mécanique plastique
+  incompressible des matériaux isotropes~;
   \item l'analyseur \texttt{MultipleIsotropicMisesFlows} qui gère
   une combinaison arbitraire d'écoulements des trois types précédents.
-  Les différents écoulements sont supposés non couplés.
-  \item l'analyseur \texttt{RungeKutta} qui propose la résolution
-  d'une loi de comportement quelconque à l'aide de l'une des méthodes de
-  \nom{Runge-Kutta}. Les méthodes disponibles sont des méthodes d'ordre
-  \(2\) et \(4\) sans contrôle d'erreur et des méthodes correcteur
-  prédicteur de type \(\pfrac{4}{2}\) ou \(\pfrac{5}{4}\) avec
-  adaptation du pas de temps~;
+  Les différents écoulements sont supposés non couplés~;
   \item les analyseurs \texttt{Implicit} et \texttt{ImplicitII}
-  qui propose la résolution d'une loi de comportement quelconque à
-  l'aide d'une intégration implicite. La méthode de résolution retenue
-  pourra être ou un algorithme de \nom{Newton-Raphson} ou deux versions
-  de l'algorithme de \nom{Broyden}~;
+  qui simplifie la résolution d'une loi de comportement mécanique
+  quelconque à l'aide d'une intégration implicite.
 \end{itemize}
 
 Ces différents analyseurs sont décrits dans les sections suivantes.
 
+\subsection{Plan de la note}
+
+La section~\ref{mfront:behaviours:gen} décrits des généralités sur les
+lois de comportements mécaniques et introduit certaines notions
+nécessaires à la suite.
+
+Les analyseurs \texttt{Isotropic\-Mises\-Creep},
+\texttt{IsotropicStrainHardening\-Mises\-Creep},
+\texttt{Isotropic\-Plastic\-Mises\-Flow} et
+\texttt{Multiple\-Isotropic\-Mises\-Flows} sont très proches et sont
+décrits en section~\ref{sec:mfront:isotropic:analyser}.
+
 Les analyseurs \texttt{DefaultParser}, \texttt{RungeKutta} et
 \texttt{Implicit} sont dits {\em génériques} car ils permettent de
-traiter n'importe quelle loi de comportement. Par opposition, les autres
-analyseurs sont dits {\em spécifiques}.
+traiter n'importe quelle loi de comportement. Ils sont respectivement
+décrits dans les sections~\ref{sec:defaultparser}, \ref{sec:RK}
+et~\ref{sec:Implicite}.
 
 \clearpage
 \newpage
 \section{Généralités}
+\label{mfront:behaviours:gen}
 
 Les lois de comportement peuvent être complexes. Pour les décrire, il
 nous faut introduire quelques notions.
@@ -837,89 +861,6 @@ l'interface peut également~:
 De manière optionnelle, il peut être utile de générer des exemples
 d'utilisation de la loi de comportement traitée.
 
-\clearpage
-\newpage
-\section{Intégration des lois de comportement, intégrateur par défaut}
-\label{sec:defaultparser}
-
-L'intégrateur par défaut est essentiellement utilisé à des
-fins de test ou pour certains lois spécifiques simples.
-
-\subsection{Exemple de l'élasticité orthotrope}
-
-\begin{figure}[htbp]
-  \centering
-  \begin{minipage}[htbp]{0.9\linewidth}
-    \shorthandoff{:}
-    \code{
-      \small
-      \input{@abs_top_srcdir@/docs/mfront/mfront/OrthotropicElastic.tex}
-    }
-    \shorthandon{:}
-  \end{minipage}
-  \caption{Implantation d'une loi orthotrope élastique}
-  \label{fig:OrthoElastique}
-\end{figure}
-
-La figure~\ref{fig:OrthoElastique} décrit l'implantation d'une loi de
-comportement orthotrope élastique. Cette loi ne nécessitant pas
-d'algorithme d'intégration, l'analyseur par défaut est utilisé. La
-commande \mkey{Orthotropic\-Behaviour} permet le support des lois
-orthotropes. La commande \mkey{Require\-Stiff\-ness\-Tensor} met à
-disposition une variable {\tt D} contenant la matrice d'élasticité.
-
-Le calcul des contraintes en fin de pas de temps (à l'instant
-\(t+\Delta\,t\)) s'écrit de manière similaire à son expression
-mathématique~:
-\[
-\tsigma_{t+\Delta\,t} = \tenseurq{D}\colon\paren{\tepsilonto_{t}+\Delta\,\tepsilonto}
-\]
-
-Dans ce cas, le calcul de la matrice tangente cohérente est immédiat.
-
-\subsection{Noms des variables et des méthodes \cpp{} utilisés en interne}
-
-Pour éviter les conflits avec les noms de variables de travail ou des
-méthodes \cpp{} utilisés par les classes générées, certains noms de
-variables ne peuvent être utilisées. Leur liste est donnée en
-annexe~\ref{sec:noms-communs-tous}.
-
-\subsection{La directive \texttt{@Integrator}}
-
-La directive \mkey{Integrator} permet d'intégrer la loi de comportement.
-
-\paragraph{Conventions spécifiques} Les
-conventions suivantes s'appliquent~:
-\begin{itemize}
-  \item {\tt Dt} représente la matrice tangente cohérente qu'il
-  faut calculer~;
-  \item {\tt sig} représente la contrainte qu'il faut calculer~;
-  \item {\tt eto} représente la déformation totale en début de
-  pas~;
-  \item {\tt deto} représente la vitesse de déformation totale
-  (constante sur le pas)~;
-  \item {\tt T} représente la valeur de la température en début
-  de pas~;
-  \item {\tt dT} représente la vitesse de changement de
-  température (constante sur le pas)~;
-  \item pour toute variable interne {\tt Y}, {\tt Y} représente
-  sa valeur en début de pas~;
-  \item pour toute variable interne {\tt Y}, {\tt dY} représente
-  l'incrément de cette variable sur le pas, incrément qu'il faut
-  calculer~;
-  \item pour toute variable externe {\tt V}, {\tt V} représente
-  sa valeur en début de pas~;
-  \item pour toute variable externe {\tt V}, {\tt dV} représente
-  sa vitesse de variation sur le pas de temps (constante sur le pas).
-\end{itemize}
-
-\paragraph{Calcul de la matrice tangente cohérente}
-
-Si l'appelant demande le calcul de la matrice tangente cohérente, la
-variable booléenne \varcpp{computeTangentOperator\textunderscore{}} est
-vraie. L'utilisateur doit tester cette valeur et effectuer le calcul le
-cas échéant.
-
 \newpage 
 \clearpage
 \section{Analyseurs dédiés aux lois de
@@ -1425,7 +1366,7 @@ borne maximale.
 
 % \subsubsection{Traitement des contraintes planes}
 
-\subsection{Description des analyseurs spécifiques \mfront{}}
+\subsection{Utilisation des analyseurs spécifiques}
 
 Nous présentons dans ce paragraphe les analyseurs \mfront{} dédiés
 aux les lois de comportement plastique et viscoplastique incompressible
@@ -1661,6 +1602,89 @@ valeur du flux de neutrons rapides \(\phi\) est égal à
 \paragraph{Le mot clé \mkey{FlowRule}} Le mot clé
 \mkey{FlowRule} permet de renseigner la fonction d'écoulement
 \(f\) et sa dérivée \(\derivtot{f}{\sigmaeq}\).
+
+\clearpage
+\newpage
+\section{Intégration des lois de comportement, intégrateur par défaut}
+\label{sec:defaultparser}
+
+L'intégrateur par défaut est essentiellement utilisé à des
+fins de test ou pour certains lois spécifiques simples.
+
+\subsection{Exemple de l'élasticité orthotrope}
+
+\begin{figure}[htbp]
+  \centering
+  \begin{minipage}[htbp]{0.9\linewidth}
+    \shorthandoff{:}
+    \code{
+      \small
+      \input{@abs_top_srcdir@/docs/mfront/mfront/OrthotropicElastic.tex}
+    }
+    \shorthandon{:}
+  \end{minipage}
+  \caption{Implantation d'une loi orthotrope élastique}
+  \label{fig:OrthoElastique}
+\end{figure}
+
+La figure~\ref{fig:OrthoElastique} décrit l'implantation d'une loi de
+comportement orthotrope élastique. Cette loi ne nécessitant pas
+d'algorithme d'intégration, l'analyseur par défaut est utilisé. La
+commande \mkey{Orthotropic\-Behaviour} permet le support des lois
+orthotropes. La commande \mkey{Require\-Stiff\-ness\-Tensor} met à
+disposition une variable {\tt D} contenant la matrice d'élasticité.
+
+Le calcul des contraintes en fin de pas de temps (à l'instant
+\(t+\Delta\,t\)) s'écrit de manière similaire à son expression
+mathématique~:
+\[
+\tsigma_{t+\Delta\,t} = \tenseurq{D}\colon\paren{\tepsilonto_{t}+\Delta\,\tepsilonto}
+\]
+
+Dans ce cas, le calcul de la matrice tangente cohérente est immédiat.
+
+\subsection{Noms des variables et des méthodes \cpp{} utilisés en interne}
+
+Pour éviter les conflits avec les noms de variables de travail ou des
+méthodes \cpp{} utilisés par les classes générées, certains noms de
+variables ne peuvent être utilisées. Leur liste est donnée en
+annexe~\ref{sec:noms-communs-tous}.
+
+\subsection{La directive \texttt{@Integrator}}
+
+La directive \mkey{Integrator} permet d'intégrer la loi de comportement.
+
+\paragraph{Conventions spécifiques} Les
+conventions suivantes s'appliquent~:
+\begin{itemize}
+  \item {\tt Dt} représente la matrice tangente cohérente qu'il
+  faut calculer~;
+  \item {\tt sig} représente la contrainte qu'il faut calculer~;
+  \item {\tt eto} représente la déformation totale en début de
+  pas~;
+  \item {\tt deto} représente la vitesse de déformation totale
+  (constante sur le pas)~;
+  \item {\tt T} représente la valeur de la température en début
+  de pas~;
+  \item {\tt dT} représente la vitesse de changement de
+  température (constante sur le pas)~;
+  \item pour toute variable interne {\tt Y}, {\tt Y} représente
+  sa valeur en début de pas~;
+  \item pour toute variable interne {\tt Y}, {\tt dY} représente
+  l'incrément de cette variable sur le pas, incrément qu'il faut
+  calculer~;
+  \item pour toute variable externe {\tt V}, {\tt V} représente
+  sa valeur en début de pas~;
+  \item pour toute variable externe {\tt V}, {\tt dV} représente
+  sa vitesse de variation sur le pas de temps (constante sur le pas).
+\end{itemize}
+
+\paragraph{Calcul de la matrice tangente cohérente}
+
+Si l'appelant demande le calcul de la matrice tangente cohérente, la
+variable booléenne \varcpp{computeTangentOperator\textunderscore{}} est
+vraie. L'utilisateur doit tester cette valeur et effectuer le calcul le
+cas échéant.
 
 \clearpage
 \newpage
@@ -3448,6 +3472,8 @@ décrites en annexe~\ref{sec:annexe:orthotropie} pour les tubes.
 \newpage
 \section{Conclusions}
 
+
+
 \clearpage
 \newpage
 \referencecea
@@ -3458,6 +3484,7 @@ décrites en annexe~\ref{sec:annexe:orthotropie} pour les tubes.
 
 \section{Résolution d'un problème
   mécanique quasi-statique par la méthode des éléments finis}
+\label{sec:mfront:mechanical_equilibrium}
 
 Nous décrivons succinctement la résolution par la méthode des éléments
 finis utilisées pour décrire l'évolution quasi-statique d'un système
@@ -4152,8 +4179,11 @@ cette fonction s'utilise ainsi~:
     \shorthandon{:}
   \end{minipage}
 \end{center}
+
+
 \clearpage
-\newpage \section{Amélioration de la robustesse des algorithmes de
+\newpage
+\section{Amélioration de la robustesse des algorithmes de
   résolutions implicites} \label{sec:mfront:implicit:robustness}
 
 Les méthodes de résolution des systèmes implicites nécessitent de
@@ -4178,34 +4208,34 @@ il peut donc être intéressant d'améliorer la robustesse des algorithmes.
 \begin{table}
   \centering
   \begin{tabular}{|c|c|}
-    \hline
-    Méthode & Expression de \(s_{n}\) \\
-    \hline
-    \hline
-    Algorithme de \textsc{Newton-Raphson}
-    & \(-J^{-1}\,.\,F\paren{Y_{n-1}}\) \\
+    \hline Méthode & Expression de \(s_{n}\) \\
+    \hline \hline Algorithme de \textsc{Newton-Raphson} &
+    \(-J^{-1}\,.\,F\paren{Y_{n-1}}\) \\
     \hline
     \begin{minipage}{7cm}
-      Algorithme de \textsc{Newton-Raphson} et dérivation numérique
-    \end{minipage} &
-    \(-\underset{\sim}{J}^{-1}\,.\,F\paren{Y_{n-1}}\) \\
-    \hline
-    Premier algorithme de \textsc{Broyden} &
+      Algorithme de \textsc{Newton-Raphson} et
+      dérivation numérique
+    \end{minipage}
+    & \(-\underset{\sim}{J}^{-1}\,.\,F\paren{Y_{n-1}}\) \\
+    \hline Premier algorithme de \textsc{Broyden} &
     \begin{minipage}{5cm}
       \(-\underset{\sim}{J}_{n-1}^{-1}\,.\,F\paren{Y_{n-1}}\)
       où \(\underset{\sim}{J}_{n}\) est donné par
       l'équation~\eqref{eq:Broyden}
-    \end{minipage} \\
-    \hline
-    Second algorithme de \textsc{Broyden} &
+    \end{minipage}
+    \\
+    \hline Second algorithme de \textsc{Broyden} &
     \begin{minipage}{5cm}
       \(-\underset{\sim}{J}_{n-1}^{-1}\,.\,F\paren{Y_{n-1}}\)
       où \(\underset{\sim}{J}_{n}^{-1}\) est donné par\(Y_{0}\)
       l'équation~\eqref{eq:Broyden2}
-    \end{minipage} \\
+    \end{minipage}
+    \\
     \hline
   \end{tabular}
-  \label{tab:sn}
+  \caption{Expression de $s_{n}$ pour les
+    différents algorithmes de résolution de système d'équations non
+    linéaires} \label{tab:sn}
 \end{table}
 
 L'ensemble des algorithmes présentés jusqu'ici prennent la forme~:
@@ -4366,7 +4396,8 @@ sous-découpage \texttt{dt\_} en deçà de laquelle on renvoie une erreur.
 
 \clearpage
 \newpage
-\section{Calcul de la matrice tangente cohérente}
+\section{Calcul de la matrice tangente cohérente pour les
+  lois traités par les analyseurs spécifiques}
 \label{mfront:isotropic:tangentOpertor}
 
 Cette annexe complète la présentation de l'algorithme d'intégration
@@ -4875,9 +4906,9 @@ l'algorithme converge et est légèrement meilleur que l'algorithme de
 \newpage
 \include{InternalNames}
 
-\clearpage
-\newpage
-\printindex{env}{Index des variables d'environnement}
+%\clearpage
+%\newpage
+%\printindex{env}{Index des variables d'environnement}
 
 \clearpage
 \newpage

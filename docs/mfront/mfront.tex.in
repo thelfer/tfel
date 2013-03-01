@@ -225,10 +225,10 @@ présentée de \mfront{}, les analyseurs suivants sont disponibles~:
 
 Les analyseurs dédiés aux lois de comportement mécaniques sont
 largement majoritaires. Ils sont décrits dans une note
-spécifique~\cite{helfer:mfront:2013}. La lecture de cette note suppose
-que le lecteur ait lu la présente section. L'écriture de propriétés
-matériau est décrit en section~\ref{sec:MaterialProperty}. L'écriture
-des modèles physico-chimiques est décrit en
+spécifique~\cite{helfer:mfront:behaviours:2013}. La lecture de cette
+note suppose que le lecteur ait lu la présente section. L'écriture de
+propriétés matériau est décrit en section~\ref{sec:MaterialProperty}.
+L'écriture des modèles physico-chimiques est décrit en
 section~\ref{sec:mfront:models}.
 
 La directive \mkey{Parser}, traditionnellement placé en tête du fichier
