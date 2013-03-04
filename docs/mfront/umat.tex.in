@@ -190,36 +190,15 @@
 \newpage
 \section{Introduction}
 
-Nous donnons ici quelques informations générales. Des détails,
-informatiques notamment, sont donnés en
+Nous présentons dans cette note l'interface \umat{} utilisée par le
+code aux éléments finis \castem{} pour l'utilisation de lois de
+comportement mécanique externes.
+
+Nous traitons dans le corps du texte des aspects physiques ou
+numériques. Les aspects informatiques sont traités en
 annexe~\ref{sec:utilisation_umat}.
 
-L'interface {\tt umat} gère plusieurs aspects du calcul~:
-\begin{itemize}
-\item dans le cas de matériaux orthotropes, l'interface \umat{} se
-  charge des changements de repère. Ils sont assurés par la classe
-  \tfelb{UMATRotationMatrix}{UMAT\-Rotation\-Matrix}.
-\item l'interface se charge du calcul de la matrice d'élasticité, si
-  l'utilisateur le demande via la directive
-  \mkeyb{RequireStiffnessTensor}{Require\-Stiff\-ness\-Tensor}.  Il
-  est important de noter que l'interface \texttt{umat} passe cette
-  matrice d'élasticité {\em après} l'appel au constructeur de la loi
-  de comportement, ce qui signifie qu'elle ne peut être utilisée dans
-  la phase d'initialisation introduite par le mot-clé {\tt
-    Init\-Local\-Vars}. Le calcul de la matrice d'élasticité est
-  décrit en annexe~\ref{sec:calcul-de-la}.
-\item l'interface se charge du calcul du tenseur des coefficients de
-  dilatation thermique, si l'utilisateur le demande via la directive
-  \mkeyb{RequireThermalExpansionTensor}{Require\-Thermal\-Expansion\-Tensor}.
-  Il est important de noter que l'interface \texttt{umat} passe ce
-  tenseur {\em après} l'appel au constructeur de la loi de
-  comportement, ce qui signifie qu'il ne peut être utilisé dans la
-  phase d'initialisation introduite par le mot-clé {\tt
-    Init\-Local\-Variables}. Ce tenseur est calculé par la classe
-  \tfelb{UMATComputeThermalExpansionTensor}{UMAT\-Compute\-Thermal\-Expansion\-Tensor}.
-\end{itemize}
-
-Nous traitons de manière plus détaillée plusieurs points~:
+Cette note traite les points~:
 \begin{itemize}
 \item le sous-découpage automatique du pas de temps~;
 \item la gestion des contraintes planes~;
@@ -230,10 +209,59 @@ Nous traitons de manière plus détaillée plusieurs points~:
   comportement en \gibiane{}.
 \end{itemize}
 
-\paragraph{Sous-découpage automatique du pas de temps} En cas d'échec
-de l'intégration de la loi de comportement, l'interface \umat{} permet
-de sous-découper localement le pas de temps~: en cas de non
-convergence le pas de temps est divisé par deux.
+Cette note suppose que le lecteur soit familier avec l'écriture de
+lois de comportement mécanique à l'aide de \mfront{}, écriture qui est
+décrite en détail par ailleurs~\cite{helfer:mfront:behaviours:2013}.
+
+\clearpage
+\newpage
+\section{Sous-découpage automatique du pas de temps}
+
+L'intégration d'une loi de comportement peut échouer. La
+loi de comportement peut également indiquer que les résultats obtenus
+sont imprécis.
+
+Pour gérer ces cas, l'interface \umat{} permet de sous-découper
+localement, au niveau des points de \nom{Gauss}, le pas de temps.
+
+\paragraph{Note} Il est important de réaliser que
+l'intégration peut échouer ou indiquer que les résultats sont imprécis
+pour deux raisons~:
+\begin{itemize}
+  \item l'intégration locale peut effectivement être très
+  difficile~;
+  \item le pas de temps utilisé globalement pour la recherche
+  d'équilibre est trop grand. En particulier, ce pas de temps peut ne
+  pas respecter l'hypothèse de radialité du
+  chargement~\cite{proix:comp_nonline:2013}.
+\end{itemize}
+Le défault de méthode présentée est de ne pas distinguer ces deux cas.
+En particulier, elle peut permetre la convergence de l'intégration
+locale en masquant le fait que la recherche de l'équilibre global est
+fondamentalement faussée par un pas de temps trop grand.
+
+\subsection{Description de l'algorithme}
+
+Pour décrire l'algorithme utilisé, notons \(\Delta\,t\) le pas de
+temps utilisé par l'algorithme de résolution global, \(\delta\,t\) un
+pas de temps de courant et \(n\) le nombre d'étapes d'intégration qu'il
+reste pour réaliser l'intégration sur l'intégralité du pas de temps.
+
+En début d'intégration, le pas de temps courant \(\delta\,t\) est
+initialisé à \(\Delta\,t\) et \(n\) est initialisé à \(1\).
+
+En cas de sous-découpage, la stratégie adoptée est simpliste~: le pas
+de temps courant \(\delta\,t\) est divisé par \(2\) et \(n\) est
+multiplié par \(2\).
+
+Quand l'intégration réussit pour le pas de temps courant
+\(\delta\,t\), \(n\) est diminué de \(1\). Le travail d'intégration est
+fini quand \(n\) vaut \(0\).
+
+Le nombre maximum de sous-découpage est limité. Si cette limite est
+atteinte, le code retourne une execption.
+
+\subsection{Directives gérant le sous-découpage du pas de temps}
 
 Le mot clé
 \mkeyb{UMATUseTimeSubStepping}{UMAT\-Use\-Time\-Sub\-Stepping} demande
@@ -244,12 +272,12 @@ Le mot clé
 préciser le nombre maximum de sous-découpages autorisés. Cette
 information doit être explicitement fournie par l'utilisateur.
 
-\paragraph{Gestion générique des contraintes planes}
+\section{Gestion générique des contraintes planes}
 
 L'hypothèse de contraintes planes constituent un cas
 particulier~:
 \begin{itemize}
-  \item la loi de comportement doit assurer en internes le
+  \item la loi de comportement doit assurer en interne le
   respect de la condition de contraintes planes~;
   \item la troisième composante de la déformation axiale n'est
   pas renseignée. En effet, celle-ci ne peut être déduite du champs de
@@ -261,12 +289,12 @@ supplémentaire du problème.
 
 Pour tenir compte de ces particularités, deux voies sont possibles~:
 \begin{itemize}
-  \item écrire une algorithme de résolution spécifique qui tient
+  \item écrire un algorithme de résolution spécifique qui tient
   explicitement compte de la condition de contraintes planes~;
   \item réutiliser l'intégration en {\em déformations planes} au
   sein d'un algorithme de résolution qui se charge de trouver une
   déformation axiale telle que la contrainte axiale soit nulle. Cette
-  dernière solution est particulièrement intéressant car elle fait
+  dernière solution est particulièrement intéressante car elle fait
   l'économie de ce développement spécifique. Il est néanmoins certain
   que cette méthode a un coût puisque l'intégration en déformations
   planes sera faites plusieurs fois~\cite{proix:contraintes_planes}.
@@ -307,10 +335,14 @@ où \(E\) est le module d'\nom{Young} du matériau et où \(\varepsilon\)
 est choisi égal à \(10^{-12}\)\footnote{Cette valeur n'est aujourd'hui
   pas modifiable}.
 
-\paragraph{Transformations finies} Les lois de comportement générées
-par \mfront{} sont écrites avec l'hypothèse des petites déformations
-et ne peuvent en l'état être utilisée dans des calculs en
-transformations finies.
+\clearpage
+\newpage
+\section{Utilisation des lois écrites en petites
+  déformations dans un contexte de transformations finies}
+
+Les lois de comportement générées par \mfront{} sont écrites avec
+l'hypothèse des petites déformations et ne peuvent en l'état être
+utilisées dans des calculs en transformations finies.
 
 Il existe cependant différentes façon d'adapter des lois de
 comportements en petites déformations au contexte des transformations
@@ -330,37 +362,73 @@ stratégies par la directive
 admet pour arguments {\tt Finite\-Rotation\-Small\-Strain} et {\tt
   Logarithmic\-Strain}.
 
-\paragraph{Gestion des bornes de validité} Le traitement d'une violation
-des bornes de validité expérimentale dépendant de la politique définie par
-l'utilisateur à l'aide de la variable d'environnement
-\envb{CASTEM\_OUT\_OF\_BOUND\_POLICY}{CASTEM\_\-OUT\_\-OF\_\-BOUND\_\-POLICY}.
- Trois politiques sont sont possibles~:
+\clearpage
+\newpage
+\section{Traitements des matériaux orthotropes}
+
+L'interface {\tt umat} gère plusieurs aspects du calcul~:
 \begin{itemize}
-\item \texttt{STRICT}, qui traite un dépassement comme une erreur, avec
-un traitement similaire à ce qui est fait pour les bornes physiques~;
-\item \texttt{WARNING}, qui conduit à afficher un message
-d'avertissement sans génération d'erreur~;
-\item \texttt{NONE}, qui ignore le dépassement~;
+\item dans le cas de matériaux orthotropes, l'interface \umat{} se
+  charge des changements de repère. Ils sont assurés par la classe
+  \tfelb{UMATRotationMatrix}{UMAT\-Rotation\-Matrix}.
+\item l'interface se charge du calcul de la matrice d'élasticité, si
+  l'utilisateur le demande via la directive
+  \mkeyb{RequireStiffnessTensor}{Require\-Stiff\-ness\-Tensor}.  Il
+  est important de noter que l'interface \texttt{umat} passe cette
+  matrice d'élasticité {\em après} l'appel au constructeur de la loi
+  de comportement, ce qui signifie qu'elle ne peut être utilisée dans
+  la phase d'initialisation introduite par le mot-clé {\tt
+    Init\-Local\-Vars}. Le calcul de la matrice d'élasticité est
+  décrit en annexe~\ref{sec:calcul-de-la}.
+\item l'interface se charge du calcul du tenseur des coefficients de
+  dilatation thermique, si l'utilisateur le demande via la directive
+  \mkeyb{RequireThermalExpansionTensor}{Require\-Thermal\-Expansion\-Tensor}.
+  Il est important de noter que l'interface \texttt{umat} passe ce
+  tenseur {\em après} l'appel au constructeur de la loi de
+  comportement, ce qui signifie qu'il ne peut être utilisé dans la
+  phase d'initialisation introduite par le mot-clé {\tt
+    Init\-Local\-Variables}. Ce tenseur est calculé par la classe
+  \tfelb{UMATComputeThermalExpansionTensor}{UMAT\-Compute\-Thermal\-Expansion\-Tensor}.
+\end{itemize}
+
+\clearpage
+\newpage
+\section{Gestion des bornes de validité}
+
+Le traitement d'une violation des bornes de validité expérimentale
+dépendant de la politique définie par l'utilisateur à l'aide de la
+variable d'environnement
+\envb{CASTEM\_OUT\_OF\_BOUND\_POLICY}{CASTEM\_\-OUT\_\-OF\_\-BOUND\_\-POLICY}.
+Trois politiques sont sont possibles~:
+\begin{itemize}
+  \item \texttt{STRICT}, qui traite un dépassement comme une
+  erreur, avec un traitement similaire à ce qui est fait pour les bornes
+  physiques~;
+  \item \texttt{WARNING}, qui conduit à afficher un message
+  d'avertissement sans génération d'erreur~;
+  \item \texttt{NONE}, qui ignore le dépassement~;
 \end{itemize}
 
 Si la variable
 \envb{CASTEM\_OUT\_OF\_BOUND\_POLICY}{CASTEM\_\-OUT\_\-OF\_\-BOUND\_\-POLICY}
 n'est pas définie, les dépassements sont ignorés.
 
-\paragraph{Exemple de mise en donnée \castem{}} Dans le cas
-de l'interface \texttt{umat}, \mfront{} génère automatiquement
-un exemple de mise en donnée \castem{} pour l'appel de la loi
-générée. Plusieurs remarques sont nécessaires~:
+\clearpage
+\newpage
+\section{Génération de la mise en donnée \castem{}}
+
+Dans le cas de l'interface \texttt{umat}, \mfront{} génère
+automatiquement un exemple de mise en donnée \castem{} pour l'appel de
+la loi générée. Plusieurs remarques sont nécessaires~:
 \begin{itemize}
-\item la loi générée ne peut être appelée directement, il est
-nécessaire de créer à la main un chapeau \texttt{umat} qui
-appellera la loi générée et de recompiler \castem{} pour
-intégrer ce chapeau.
-\item la syntaxe varie suivant la dimension du problème. En
-effet, \castem{} ne définit que des variables internes
-scalaires. Il est donc nécessaire de définir les variables
-internes tensorielles composante par composante et le
-nombre de composante varie avec la dimension.
+  \item la loi générée ne peut être appelée directement, il est
+  nécessaire de créer à la main un chapeau \texttt{umat} qui appellera
+  la loi générée et de recompiler \castem{} pour intégrer ce chapeau.
+  \item la syntaxe varie suivant la dimension du problème. En
+  effet, \castem{} ne définit que des variables internes scalaires. Il
+  est donc nécessaire de définir les variables internes tensorielles
+  composante par composante et le nombre de composante varie avec la
+  dimension.
 \end{itemize}
 
 \begin{figure}[htbp]
