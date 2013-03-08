@@ -19,8 +19,14 @@ namespace tfel{
     {}
 
     template<typename T>
+    matrix<T>::matrix()
+      : tfel::math::vector<T>(),
+	MatrixProperties<T>(0,0)
+    {} // end of matrix::matrix
+
+    template<typename T>
     matrix<T>::matrix(const typename matrix<T>::size_type n,
-			      const typename matrix<T>::size_type m)
+		      const typename matrix<T>::size_type m)
       : tfel::math::vector<T>(n*m),
 	MatrixProperties<T>(n,m)
     {}
@@ -32,6 +38,15 @@ namespace tfel{
       : tfel::math::vector<T>(n*m,v),
 	MatrixProperties<T>(n,m)
     {}
+
+    template<typename T>
+    void
+    matrix<T>::resize(const typename matrix<T>::size_type n,
+		      const typename matrix<T>::size_type m)
+    {
+      vector<T>::resize(n*m);
+      MatrixProperties<T>::operator=(MatrixProperties<T>(n,m));
+    } // end of matrix<T>::resize
 
     template<typename T>
     matrix<T>&

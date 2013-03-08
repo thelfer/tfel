@@ -10,6 +10,7 @@
 
 #include"TFEL/Math/vector.hxx"
 #include"TFEL/Math/Matrix/MatrixConcept.hxx"
+#include"TFEL/Math/Forward/matrix.hxx"
 
 #ifdef NO_RUNTIME_CHECK_BOUNDS
 #include"TFEL/Math/General/EmptyRunTimeProperties.hxx"
@@ -21,8 +22,6 @@ namespace tfel
   namespace math
   {
 
-    template<typename T>
-    struct matrix;
 
     template<typename T>
     struct MatrixProperties;
@@ -70,9 +69,9 @@ namespace tfel
 
     protected:
 
-      const typename MatrixTraits<matrix<T> >::IndexType nb_rows;
+      typename MatrixTraits<matrix<T> >::IndexType nb_rows;
 
-      const typename MatrixTraits<matrix<T> >::IndexType nb_cols;
+      typename MatrixTraits<matrix<T> >::IndexType nb_cols;
 
     }; // end of MatrixProperties
 
@@ -144,6 +143,9 @@ namespace tfel
       using typename std::vector<T>::difference_type;
 
       TFEL_MATH_INLINE2
+      matrix(void);
+
+      TFEL_MATH_INLINE2
       matrix(const size_type,
 	     const size_type);
 
@@ -154,6 +156,15 @@ namespace tfel
 
       TFEL_MATH_INLINE2
       matrix(const matrix&);
+
+      /*!
+       * resize the matrix
+       * \param[in] n : number of rows
+       * \param[in] m : number of columns
+       */
+      void
+      resize(const size_type,
+	     const size_type);
 
       TFEL_MATH_INLINE T&
       operator()(const size_type,

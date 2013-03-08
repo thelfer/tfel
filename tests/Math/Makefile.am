@@ -23,6 +23,7 @@ test_PROGRAMS = hill                  \
 		lu                    \
 		lu2                   \
 		invert                \
+		invert2               \
 		tinymatrixsolve       \
 		tinymatrixsolve2      \
 		CubicSplineTest       \
@@ -95,6 +96,7 @@ complex_operations_SOURCES    = complex_operations.cxx
 conj_SOURCES                  = conj.cxx                 
 Function_SOURCES              = Function.cxx             
 invert_SOURCES                = invert.cxx
+invert2_SOURCES               = invert2.cxx
 tinymatrixsolve_SOURCES       = tinymatrixsolve.cxx
 tinymatrixsolve2_SOURCES      = tinymatrixsolve2.cxx
 newton_raphson_SOURCES        = newton_raphson.cxx       

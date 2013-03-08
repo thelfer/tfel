@@ -74,6 +74,7 @@ nobase_include_HEADERS= TFEL/Macros.hxx                                         
 			TFEL/Math/Forward/qt.hxx                                                      \
 			TFEL/Math/Forward/array.hxx                                                   \
 			TFEL/Math/Forward/vector.hxx                                                  \
+			TFEL/Math/Forward/matrix.hxx                                                  \
 			TFEL/Math/Forward/lambda.hxx                                                  \
 			TFEL/Math/Forward/Complex.hxx                                                 \
 			TFEL/Math/Forward/tvector.hxx                                                 \
@@ -219,6 +220,7 @@ nobase_include_HEADERS= TFEL/Macros.hxx                                         
 			TFEL/Math/Vector/TFTV.hxx                                                     \
 			TFEL/Math/Vector/TSFTV.hxx                                                    \
 			TFEL/Math/matrix.hxx                 	                                      \
+			TFEL/Math/Matrix/TinyMatrixInvert.ixx	                                      \
 			TFEL/Math/Matrix/tmatrixResultType.hxx	                                      \
 			TFEL/Math/Matrix/ScalarMatrixExpr.hxx	                                      \
 			TFEL/Math/Matrix/tmatrix.ixx			                              \
@@ -320,6 +322,7 @@ nobase_include_HEADERS= TFEL/Macros.hxx                                         
 			TFEL/Math/RungeKutta54.hxx			                              \
 			TFEL/Math/array.hxx				                              \
 			TFEL/Math/TinyMatrixSolve.hxx		                                      \
+			TFEL/Math/TinyMatrixInvert.hxx		                                      \
 			TFEL/Math/tvector.hxx			                                      \
 			TFEL/Math/tmatrix.hxx			                                      \
 			TFEL/Math/stensor.hxx			                                      \

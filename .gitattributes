@@ -259,6 +259,7 @@ include/TFEL/Math/Forward/TinyNewtonRaphson.hxx -text
 include/TFEL/Math/Forward/VectorConcept.hxx -text
 include/TFEL/Math/Forward/array.hxx -text
 include/TFEL/Math/Forward/lambda.hxx -text
+include/TFEL/Math/Forward/matrix.hxx -text
 include/TFEL/Math/Forward/qt.hxx -text
 include/TFEL/Math/Forward/st2tost2.hxx -text
 include/TFEL/Math/Forward/stensor.hxx -text
@@ -378,6 +379,7 @@ include/TFEL/Math/Matrix/ScalarMatrixExprWithoutConstIterator.hxx -text
 include/TFEL/Math/Matrix/ScalarMatrixExprWithoutConstIteratorSpecialisation.ixx -text
 include/TFEL/Math/Matrix/TMatrixTVectorExpr.hxx -text
 include/TFEL/Math/Matrix/TVectorTMatrixExpr.hxx -text
+include/TFEL/Math/Matrix/TinyMatrixInvert.ixx -text
 include/TFEL/Math/Matrix/matrix.ixx -text
 include/TFEL/Math/Matrix/tmatrix.ixx -text
 include/TFEL/Math/Matrix/tmatrixResultType.hxx -text
@@ -489,6 +491,7 @@ include/TFEL/Math/Stensor/StensorStensorExprWithoutConstIterator.hxx -text
 include/TFEL/Math/Stensor/StensorStensorExprWithoutConstIteratorSpecialisation.ixx -text
 include/TFEL/Math/Stensor/stensor.ixx -text
 include/TFEL/Math/Stensor/stensorResultType.hxx -text
+include/TFEL/Math/TinyMatrixInvert.hxx -text
 include/TFEL/Math/TinyMatrixSolve.hxx -text
 include/TFEL/Math/TinyNewtonRaphson.hxx -text
 include/TFEL/Math/Vector/FctVectorExpr.hxx -text
@@ -1062,6 +1065,7 @@ tests/Math/include/function_unary_tests.hxx -text
 tests/Math/include/function_unary_tests.ixx -text
 tests/Math/include/promote-header.hxx -text
 tests/Math/invert.cxx -text
+tests/Math/invert2.cxx -text
 tests/Math/krigeage.cxx -text
 tests/Math/krigeage1D.cxx -text
 tests/Math/krigeage2D.cxx -text

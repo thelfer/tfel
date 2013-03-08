@@ -33,7 +33,6 @@ namespace tfel{
       tfel::fsalgo::fill<N*M>::exe(this->m,init);
     }
 
-
     template<unsigned short N,unsigned short M, typename T>
     TFEL_MATH_INLINE tmatrix<N,M,T>::tmatrix(const T * const init)
     {
