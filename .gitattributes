@@ -650,6 +650,10 @@ include/TFEL/Utilities/Tuple.ixx -text
 m4/aster-machine-type.m4 -text
 m4/castem-unix-type.m4 -text
 m4/castem.m4 -text
+m4/check_boost.m4 -text
+m4/check_boost_python.m4 -text
+m4/check_pthreads.m4 -text
+m4/enable_pthreads.m4 -text
 m4/gxx.m4 -text
 m4/intel.m4 -text
 m4/mp_with_curses.m4 -text
