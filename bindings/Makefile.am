@@ -1,0 +1,5 @@
+if TFEL_PYTHON_BINDINGS
+SUBDIRS = python
+endif
+
+EXTRA_DIST=CMakeLists.txt
