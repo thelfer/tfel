@@ -156,14 +156,19 @@ AC_ARG_ENABLE(python,
    AC_HELP_STRING([--enable-python],
                   [enable python support.]),
    use_python=yes,[])
+# enable python bindings
+use_python_bindings=no
+AC_ARG_ENABLE([python_bindings],
+    AC_HELP_STRING([--enable-python-bindings],
+	[Compile python bindings and python tests]),
+    [use_python_bindings="yes"],[])
 
-if test "x$use_python" != "xno";
-    then
-    AM_PATH_PYTHON([2.2],,[:])
-    AM_CONDITIONAL([HAVE_PYTHON], [test "$PYTHON" != :])
+have_python=no
+if test "x$use_python" != "xno" -o "x$use_python_bindings" != "xno" ;
+then
+    AM_PATH_PYTHON([2.4],,[:])
     if test  "$PYTHON" != : ;
 	then
-	AC_DEFINE(HAVE_PYTHON)
 #python includes
 	file=$(mktemp)
 	cat > $file << EOF
@@ -187,11 +192,38 @@ EOF
 	PYTHON_LIBS=$($PYTHON $file)
 	rm $file
 	AC_DEFINE_UNQUOTED(TFEL_PYTHON_LIBS,"$PYTHON_LIBS")
-    else
-	AC_MSG_ERROR("'python' not found")
+	PYTHONPATH=$(echo $PYTHON |sed 's/\/bin\/python.*//')
+	AC_SUBST(PYTHONPATH)
+	have_python=yes
     fi
+fi
+
+if test "x$use_python" != "xno";
+   then
+    if test "x$have_python" == "xno";
+    then
+	AC_MSG_ERROR("'python' not found. python is mandatory for python support.")
+    fi
+    AC_DEFINE(HAVE_PYTHON)
+    AM_CONDITIONAL([HAVE_PYTHON],true)
 else
     AM_CONDITIONAL([HAVE_PYTHON],false)
+fi
+
+if test "x$use_python_bindings" != "xno";
+    then  
+    if test "x$have_python" == "xno";
+    then
+	AC_MSG_ERROR("'python' not found. python is mandatory for python bindings.")
+    fi
+    CHECK_BOOST
+    CHECK_BOOST_PYTHON
+    TFEL_PYTHON_BINDINGS=yes
+    AC_DEFINE(HAVE_TFEL_PYTHON_BINDINGS)
+    AM_CONDITIONAL([TFEL_PYTHON_BINDINGS],true)
+else
+    TFEL_PYTHON_BINDINGS=no
+    AM_CONDITIONAL([TFEL_PYTHON_BINDINGS],false)
 fi
 
 #gnuplot
@@ -256,6 +288,9 @@ AC_OUTPUT([debug.sh
 	   docs/mfront/Makefile
 	   docs/mfront/Makefile.doc
 	   docs/mfront/mfront.tex
+	   docs/mfront/behaviours.tex
+	   docs/mfront/aster.tex
+	   docs/mfront/umat.tex
 	   docs/mfront/glossary.tex
 	   docs/mfront/InternalNames.tex
 	   docs/mfront/Champs.tex
@@ -297,6 +332,11 @@ AC_OUTPUT([debug.sh
 	   tfel-doc/Makefile
 	   tfel-doc/src/Makefile
 	   tfel-doc/include/Makefile
+	   bindings/Makefile
+	   bindings/python/Makefile
+	   bindings/python/std/Makefile
+	   bindings/python/tfel/Makefile
+	   bindings/python/include/Makefile
 	   tests/Makefile
 	   tests/Tests/Makefile
 	   tests/Math/Makefile

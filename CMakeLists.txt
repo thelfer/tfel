@@ -112,7 +112,8 @@ endif(GNUPLOT_FOUND)
 
 #python
 option(enable-python "enable python support" ON)
-if(enable-python)
+option(enable-python-bindings "enable  python bindings support" OFF)
+if(enable-python OR enable-python-bindings)
   include(FindPythonLibs)
   if(PYTHONLIBS_FOUND)
     set(HAVE_PYTHON ON)
@@ -129,11 +130,35 @@ if(enable-python)
   else(PYTHONLIBS_FOUND)
     set(HAVE_PYTHON OFF)
   endif(PYTHONLIBS_FOUND)
+endif(enable-python OR enable-python-bindings)
+
+#some checks
+if(enable-python)
+  if(NOT HAVE_PYTHON)
+    message(FATAL_ERROR "python not found. python is mandatory for python suppot.")
+  endif(NOT HAVE_PYTHON)
 endif(enable-python)
+
+#python bindings
+# (declared after python to search boost python)
+if(enable-python-bindings)
+  if(NOT HAVE_PYTHON)
+    message(FATAL_ERROR "python not found. python is mandatory for python bindings.")
+  endif(NOT HAVE_PYTHON)
+  find_package(Boost 1.36.0 COMPONENTS python)
+  if(Boost_FOUND)
+    get_filename_component(Boost_PYTHON_LIBRARY ${Boost_PYTHON_LIBRARY} NAME)
+    message(STATUS "Boost library python found (${Boost_PYTHON_LIBRARY}).")
+  else(Boost_FOUND)
+    message(FATAL_ERROR "Boost libraries not found.\n"
+      "Required packages are :"${BOOST_MANDATORY_COMPONENTS})
+  endif(Boost_FOUND)
+endif(enable-python-bindings)
 
 # sub directories
 add_subdirectory(include) 
 add_subdirectory(src)
+add_subdirectory(bindings)
 
 if(UNIX)
 add_subdirectory(tfel-doc)
