@@ -8,6 +8,7 @@
 #ifndef _LIB_TFEL_PYTHON_VECTORCONVERTER_H_
 #define _LIB_TFEL_PYTHON_VECTORCONVERTER_H_ 
 
+#include<iostream>
 #include<vector>
 
 #include<boost/python.hpp>
@@ -27,10 +28,14 @@ namespace tfel
     {
       static PyObject* convert(const std::vector<T>& v)
       {
+	using namespace std;
 	using namespace boost::python;
-	object get_iter = iterator<std::vector<T> >();
-	object iter = get_iter(v);
-	list l(iter);
+	using boost::python::iterator;
+	typename vector<T>::const_iterator p;
+	list l;
+	for(p=v.begin();p!=v.end();++p){
+	  l.append(*p);
+	}
 	return incref(l.ptr());
       }
     };

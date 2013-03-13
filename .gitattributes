@@ -30,11 +30,13 @@ bindings/python/tfel/ExternalLibraryManager.cxx -text
 bindings/python/tfel/Makefile.am -text
 bindings/python/tfel/ModellingHypothesis.cxx -text
 bindings/python/tfel/ProcessManagerCommand.cxx -text
+bindings/python/tfel/TextData.cxx -text
 bindings/python/tfel/__init__.py -text
 bindings/python/tfel/math.cxx -text
 bindings/python/tfel/stensor.cxx -text
 bindings/python/tfel/system.cxx -text
 bindings/python/tfel/tvector.cxx -text
+bindings/python/tfel/utilities.cxx -text
 /bootstrap.sh -text
 /clean.sh -text
 cmake/Makefile.am -text

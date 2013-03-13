@@ -27,6 +27,17 @@ tvector_setitem(tfel::math::tvector<N,double>& v,
 }
 
 template<unsigned short N>
+static std::string
+tvector_str(const tfel::math::tvector<N,double>& v)
+{
+  using namespace std;
+  ostringstream os;
+  os << v;
+  return os.str();
+}
+
+
+template<unsigned short N>
 static void declaretvector(const char * const n)
 {
   using namespace std;
@@ -35,12 +46,14 @@ static void declaretvector(const char * const n)
   using namespace tfel::math;
   using boost::python::iterator;
 
-  class_<tvector<N,double> >(n,init<double>())
+  class_<tvector<N,double> >(n,init<>())
+    .def(init<double>())
     .def("__getitem__",&tvector_getitem<N>,
 	 return_value_policy<copy_non_const_reference>())
     .def("__setitem__",&tvector_setitem<N>,
 	 with_custodian_and_ward<1,2>())
     .def("__iter__",iterator<tvector<N,double> >())
+    .def("__str__",tvector_str<N>)
     ;
 
 }

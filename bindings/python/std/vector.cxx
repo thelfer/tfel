@@ -53,6 +53,7 @@ BOOST_PYTHON_MODULE(_stl_vector)
   initializeVectorConverter<stensor<3u,double> >();
 
   initializeVectorConverter<string>();
+  initializeVectorConverter<vector<string> >();
   initializeVectorConverter<pair<string,string> >();
   
   IF<IsSameType<ProcessManager::ProcessId,

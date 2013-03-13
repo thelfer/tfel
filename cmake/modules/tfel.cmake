@@ -81,6 +81,8 @@ macro(python_lib_module name package)
   install(TARGETS py_${package}_${name} DESTINATION lib/${PYTHON_LIBRARY}/site-packages/${package})
   set_target_properties(py_${package}_${name} PROPERTIES PREFIX "")
   set_target_properties(py_${package}_${name} PROPERTIES OUTPUT_NAME ${name})
+  target_link_libraries(py_${name}
+    ${Boost_PYTHON_LIBRARY} ${PYTHON_LIBRARY})
 endmacro(python_lib_module)
 
 macro(std_python_module name)
