@@ -76,12 +76,11 @@ macro(python_lib_module name package)
   if(${ARGC} LESS 1)
     message(FATAL_ERROR "python_lib_module : no source specified")
   endif(${ARGC} LESS 1)
-  message("creating py_${package}_${name}")
   add_library(py_${package}_${name} SHARED ${ARGN})
   install(TARGETS py_${package}_${name} DESTINATION lib/${PYTHON_LIBRARY}/site-packages/${package})
   set_target_properties(py_${package}_${name} PROPERTIES PREFIX "")
   set_target_properties(py_${package}_${name} PROPERTIES OUTPUT_NAME ${name})
-  target_link_libraries(py_${name}
+  target_link_libraries(py_${package}_${name}
     ${Boost_PYTHON_LIBRARY} ${PYTHON_LIBRARY})
 endmacro(python_lib_module)
 
