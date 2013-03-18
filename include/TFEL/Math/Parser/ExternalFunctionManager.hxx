@@ -23,7 +23,7 @@ namespace tfel
 
     namespace parser
     {
-    
+
       struct ExternalFunctionManager
 	: public std::map<std::string,
 			  tfel::utilities::shared_ptr<ExternalFunction> >

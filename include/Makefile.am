@@ -107,6 +107,7 @@ nobase_include_HEADERS= TFEL/Macros.hxx                                         
 			TFEL/Math/Parser/ExternalCFunction.hxx                                        \
 			TFEL/Math/Parser/ExternalCastemFunction.hxx                                   \
 			TFEL/Math/Parser/ExternalFunction.hxx                                         \
+			TFEL/Math/Parser/ConstantExternalFunction.hxx                                 \
 			TFEL/Math/Parser/ExternalFunctionManager.hxx                                  \
 			TFEL/Math/Parser/ExternalFunctionExpr.hxx                                     \
 			TFEL/Math/Parser/ExternalFunctionExpr2.hxx                                    \

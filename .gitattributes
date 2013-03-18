@@ -424,6 +424,7 @@ include/TFEL/Math/Parser/BinaryFunction.ixx -text
 include/TFEL/Math/Parser/BinaryOperator.hxx -text
 include/TFEL/Math/Parser/BinaryOperator.ixx -text
 include/TFEL/Math/Parser/ConditionalExpr.hxx -text
+include/TFEL/Math/Parser/ConstantExternalFunction.hxx -text
 include/TFEL/Math/Parser/DifferentiatedFunctionExpr.hxx -text
 include/TFEL/Math/Parser/EvaluatorBase.hxx -text
 include/TFEL/Math/Parser/EvaluatorFunction.hxx -text

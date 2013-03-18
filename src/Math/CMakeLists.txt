@@ -50,6 +50,7 @@ set(TFELMathParser_SOURCES
     LogicalExpr.cxx
     ConditionalExpr.cxx
     ExternalFunction.cxx
+    ConstantExternalFunction.cxx
     EvaluatorBase.cxx
     EvaluatorTExpr.cxx
     EvaluatorFunction.cxx
