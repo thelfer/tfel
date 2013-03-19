@@ -917,6 +917,7 @@ src/Math/BinaryOperator.cxx -text
 src/Math/CMakeLists.txt -text
 src/Math/CompositeTag.cxx -text
 src/Math/ConditionalExpr.cxx -text
+src/Math/ConstantExternalFunction.cxx -text
 src/Math/CubicSpline.cxx -text
 src/Math/DifferentiatedFunctionExpr.cxx -text
 src/Math/Discretization1D.cxx -text
