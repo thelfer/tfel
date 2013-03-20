@@ -14,6 +14,9 @@ extern "C" {
 #include<clapack.h>
 }
 
+#include"TFEL/Math/vector.hxx"
+#include"TFEL/Math/matrix.hxx"
+
 namespace tfel
 {
 
