@@ -415,19 +415,14 @@ namespace tfel{
       const_reverse_iterator
       rend(void) const;
 
-      template<typename InputIterator>
-      
       /*
        * copy the N*Mth elements following this argument.
        * \param const InputIterator, an iterator to the first element
        * to be copied.
        */
-      TFEL_MATH_INLINE2
-      void
+      template<typename InputIterator>
+      TFEL_MATH_INLINE2 void
       copy(const InputIterator);
-
-      void
-      invert();
 
     };
 

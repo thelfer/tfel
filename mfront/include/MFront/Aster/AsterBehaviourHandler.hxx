@@ -172,6 +172,7 @@ namespace aster
 	  using namespace tfel::math;
 	  st2tost2<N,AsterReal>& Dt = *(reinterpret_cast<st2tost2<N,AsterReal>*>(DDSOE));
 	  Dt = bv.getTangentOperator();
+	  // l'opérateur tangent contient des sqrt(2)...
 	  AsterTangentOperator::normalize(Dt);
 	} // end of exe	  
       };
@@ -193,6 +194,7 @@ namespace aster
 	  using namespace tfel::math;
 	  ConsistantTangentOperatorComputer::exe(bv,DDSOE);
 	  st2tost2<N,AsterReal>& Dt = *(reinterpret_cast<st2tost2<N,AsterReal>*>(DDSOE));
+	  // les conventions fortran....
 	  AsterTangentOperator::transpose(Dt);
 	} // end of exe	  
       };

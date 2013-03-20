@@ -106,6 +106,9 @@ if(HAVE_ASTER)
   set(AsterInterface_SOURCES
     AsterInterfaceBase.cxx
     AsterException.cxx
+    AsterRotationMatrix.cxx
+    AsterComputeStiffnessTensor.cxx
+    AsterComputeThermalExpansionTensor.cxx
     AsterTangentOperator.cxx)
   tfel_library(AsterInterface ${AsterInterface_SOURCES})
   target_link_libraries(AsterInterface

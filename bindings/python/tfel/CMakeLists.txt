@@ -14,7 +14,6 @@ tfel_python_module(utilities utilities.cxx
   TextData.cxx)
 target_link_libraries(py_tfel_utilities TFELUtilities)
 
-
 tfel_python_module(math math.cxx
   tvector.cxx
   stensor.cxx)

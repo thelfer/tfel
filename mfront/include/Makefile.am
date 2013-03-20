@@ -98,22 +98,23 @@ endif
 
 if HAVE_ASTER
 nobase_include_HEADERS += MFront/MFrontAsterInterface.hxx
-nobase_include_HEADERS += MFront/Aster/Aster.hxx                            \
-			  MFront/Aster/AsterConfig.hxx                      \
-			  MFront/Aster/AsterTraits.hxx                      \
-			  MFront/Aster/AsterException.hxx 		    \
-			  MFront/Aster/AsterInterface.hxx	            \
-			  MFront/Aster/AsterInterfaceBase.hxx               \
-			  MFront/Aster/AsterBehaviourHandler.hxx            \
-			  MFront/Aster/AsterIsotropicBehaviourHandler.hxx   \
-			  MFront/Aster/AsterOrthotropicBehaviourHandler.hxx \
+nobase_include_HEADERS += MFront/Aster/Aster.hxx                              \
+			  MFront/Aster/AsterConfig.hxx                        \
+			  MFront/Aster/AsterTraits.hxx                        \
+			  MFront/Aster/AsterException.hxx 		      \
+			  MFront/Aster/AsterInterface.hxx	              \
+			  MFront/Aster/AsterInterfaceBase.hxx                 \
+			  MFront/Aster/AsterBehaviourHandler.hxx              \
+			  MFront/Aster/AsterIsotropicBehaviourHandler.hxx     \
+			  MFront/Aster/AsterOrthotropicBehaviourHandler.hxx   \
+			  MFront/Aster/AsterRotationMatrix.hxx                \
+			  MFront/Aster/AsterOrthotropicBehaviour.hxx          \
+			  MFront/Aster/AsterComputeStiffnessTensor.hxx        \
+			  MFront/Aster/AsterComputeThermalExpansionTensor.hxx \
 			  MFront/Aster/AsterTangentOperator.hxx
 # MFront/Aster/AsterGetModellingHypothesis.hxx        \
-# MFront/Aster/AsterOutOfBoundsPolicy.hxx             \
-# MFront/Aster/AsterRotationMatrix.hxx                \
-# MFront/Aster/AsterOrthotropicBehaviour.hxx          \
-# MFront/Aster/AsterComputeStiffnessTensor.hxx        \
-# MFront/Aster/AsterComputeThermalExpansionTensor.hxx 
+# MFront/Aster/AsterOutOfBoundsPolicy.hxx
+
 endif
 
 

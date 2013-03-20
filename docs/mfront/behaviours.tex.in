@@ -863,525 +863,566 @@ d'utilisation de la loi de comportement traitée.
 
 \newpage 
 \clearpage
-\section{Analyseurs dédiés aux lois de
-  comportement plastique et viscoplastique incompressible des matériaux
-  isotropes}
+\section{Matériaux isotropes à écoulement plastique ou viscoplastique
+  incompressible}
 \label{sec:mfront:isotropic:analyser}
 
-Nous nous intéressons dans cette section à des lois de comportement
-mécanique très utilisées pour décrire les matériaux {\em isotropes} qui
-réagissent à une sollicitation mécanique par l'apparition de
-déformations rémanentes. Ces déformations sont dues aux phénomènes de
-viscoplasticité (avec et sans écrouissage) et/ou de plasticité
-instantanée. Nous supposerons que ces déformations se font sans
-changement de volume (écoulements isochores).
+Nous nous intéressons dans cette section à une famille particulière de
+lois de comportement, très utilisée en mécanique, et qui représente la
+majorité des comportements de la plate-forme {\pleiades}. Ces lois
+s'appliquent à des matériaux {\em isotropes} et décrivent un
+comportement {\em plastique} ou {\em viscoplastique}, avec ou sans
+{\em écrouissage}, dont les déformations résiduelles sont {\em
+  isochores}. Ces particularités permettent d'optimiser les techniques
+d'intégration numérique.
 
-Ces lois sont d'un usage fréquent. Elles représentent la majorité des
-besoins de la plate-forme \pleiades{}.
-
-Nous présentons dans un premier temps les caractéristiques de ces
-lois puis nous montrons que ces lois peuvent être intégrées par des
-algorithmes optimisés. Enfin, nous détaillons l'utilisation des \(4\)
-analyseurs \mfront{} qui leurs sont dédiés.
-
+Après un présentation des techniques intégrations adaptées à cette
+famille de lois, nous détaillons la syntaxe des quatre analyseurs
+{\mfront} qui leurs sont dédiés.
 
 \subsection{Généralités et résolution implicite}
 
-Nous présentons dans ce paragraphe les hypothèses faites sur les
-lois que nous traitons dans cette section, puis nous détaillons comment
-est réalisée l'intégration de ces lois par une \(\theta\)-méthode. Le
-calcul de la matrice tangente cohérente, plus technique, est reporté en
+Après une description des particularités des lois de comportement
+mécanique traitées dans cette section, les techniques d'intégration
+qui leurs sont appliquées dans {\mfront} sont exposées. Celles-ci
+s'appuient sur une résolution implicite, une \(\theta\)-méthode
+semblable à celles qui sont décrites en section~\ref{sec:bipbip}.
+
+Elles permettent également le calcul de la matrice tangente cohérente,
+qui, plus technique (pas sûr!?), est reporté en
 annexe~\ref{mfront:isotropic:tangentOpertor}.
 
-\subsubsection{Expression générales des lois de comportement}
+\subsubsection{Expression des lois de comportement}
 
-\paragraph{Isotropie} Les lois de comportement
-présentées décrivent un matériau {\em isotrope}.
+Les lois de comportement traitées dans cette section se composent
+d'une partie élastique, et de plusieurs mécanismes d'écoulement
+plastique ou viscoplastique.
 
-\paragraph{Partition des déformations} Les lois de
-comportements traitées dans cette section supposent tout d'abord que la
-déformation totale \(\tepsilonto\) soit égale à la somme d'une
-déformation élastique réversible \(\tepsilonel\) et d'une déformation
-inélastique \(\tepsilonan\)~:
+\paragraph{Partition des déformations} 
+Cette combinaison se traduit par la {\em partition des déformations}:
+la déformation totale \(\tepsilonto\) est la somme d'une déformation
+élastique \(\tepsilonel\) et d'une déformation inélastique
+\(\tepsilonan\):
+\begin{subequations}
+\label{eq:partition_deformation}
 \begin{equation}
-  \label{eq:partition_deformation}
   \tepsilonto = \tepsilonel + \tepsilonan
-\end{equation}
-C'est l'hypothèse de {\em partition des déformations}.
-
-\paragraph{Décomposition de la déformation
-  inélastique} Dans la suite, la déformation inélastique \(\tepsilonan\)
-pourra être décomposée de manière additive en la somme de différents
-mécanismes {\em indépendants}~:
-\[
+.\end{equation}
+Cette dernière se décompose à son tour en plusieurs déformations
+relatives aux différents mécanismes d'écoulement, indicés par $i$,
+et supposés indépendants:
+\begin{equation}
 \tepsilonan= \displaystyle\sum_{i}\,\tepsilonan_{i}
-\]
+.\end{equation}
+\end{subequations}
 
-\paragraph{Écoulements isochores} Nous supposerons
-dans la suite que les déformations \(\tepsilonan_{i}\) n'induisent pas
-de changement de volume. Nous parlerons d'écoulements isochores. En
-terme mathématique, cela signifie que ces tenseurs sont à trace nulle~:
+\paragraph{Isotropie} 
+Les matériaux décrit ici sont supposés {\em isotropes}. Cette
+hypothèse sera utilisée pour formuler l'ensemble des mécanismes:
+élasticité, écoulements plastiques ou viscoplastiques.
+
+\paragraph{Tenseurs}
+Pour simplifier les expressions à venir, il est commode d'introduire
+des notations tensorielles, détaillées en annexe~\ref{bipbip}:
+\begin{itemize}
+\item le produit tensoriel de deux tenseurs $a$, $b$: $a\otimes b$;
+\item le produit contracté de deux tenseurs $a$, $b$: $a\colon b$;
+\item le tenseur identité d'ordre 2: \(\tenseur{I}\);
+\item le tenseur identité d'ordre 4: \(\tenseurq{I}\).
+\end{itemize}
+
+\paragraph{Comportement élastique} 
+Les contraintes \(\tsigma\) se déduisent des déformations élastiques
+\(\tepsilonel\) par la loi de \nom{Hooke}. Pour un matériau isotrope,
+cette relation peut s'écrire~:
+\begin{subequations}
+\label{mfront:as:tsigma}
+\begin{equation}
+\tsigma =
+\lambda\,\trace{\tepsilonel}\tenseurq{I}+2\,\mu\,\tepsilonel
+\end{equation}
+où $\trace{\tepsilonel}$ désigne la trace du tenseur \(\tepsilonel\)
+(somme des termes diagonaux). les coefficients de \nom{Lamé}
+\(\lambda\) et \(\mu\) du matériau se déduisent du module
+d'\nom{Young} et du coefficient de \nom{Poisson}.  Sous forme
+tensorielle cette loi s'écrit de manière plus compacte:
+\begin{equation}
+\tsigma=\tenseurq{D}\colon\tepsilonel
+,\quad\text{avec}\quad
+\tenseurq{D}=\lambda\,\tenseur{I}\otimes\tenseur{I}+2\,\mu\,\tenseurq{I}
+.\end{equation}
+La loi est alors résumée par le tenseur élastique $\tenseurq{D}$.
+\end{subequations}
+
+\paragraph{Écoulements}
+Les écoulements $i$, plastiques ou viscoplastiques, sont les
+mécanismes qui créent les déformations inélastiques $\tepsilonan_{i}$
+de la partition~\eqref{eq:partition_deformation}. Pour les lois
+décrites ici, la direction d'écoulement est supposée proportionnelle
+au déviateur des contraintes:
+\begin{equation}
+\label{eq:direcoul}
+\tdepsilonan_{i} \propto \tenseur{s}
+,\end{equation}
+défini par:
+\begin{equation}
+\label{eq:mfront:deviateur_contraintes}
+\tenseur{s}
+=\tsigma-\Frac{1}{3}\,\trace{\tsigma}\,\tenseur{I}
+=\tenseurq{K}\colon\tsigma
+,\quad\text{avec}\quad
+\tenseurq{K}
+=\tenseurq{I}-\Frac{1}{3}\tenseur{I}\otimes\tenseur{I}
+.\end{equation}
+Avec cette hypothèse, les écoulement modélisés vérifient:
 \[
 \trace{\tepsilonan_{i}} = 0
-\]
+,\]
+c'est-à-dire n'induisent pas de changement de volume: ils sont dits
+{\em isochores}.
 
-\paragraph{Comportement élastique} Les
-contraintes \(\tsigma\) se déduisent des déformations élastiques
-\(\tepsilonel\) par la loi de \nom{Hooke}. Le comportement du matériau
-étant isotrope, cette relation s'écrit~:
-\begin{equation}
-  \label{mfront:as:tsigma} \tsigma =
-  \lambda\,\trace{\tepsilonel}\tenseurq{I}+2\,\mu\,\tepsilonel
-\end{equation}
-où~:
-\begin{minipage}[t]{0.9\linewidth}
-  \begin{itemize}
-    \item \(\trace{\tepsilonel}\) désigne la trace de
-    \(\tepsilonel\) (somme des termes diagonaux)~;
-    \item \(\tenseur{I}\) est le tenseur identité d'ordre
-    \(2\)~;
-    \item \(\lambda\) et \(\mu\) sont les coefficients de
-    \nom{Lamé} du matériau. Ces deux coefficients sont déduits du module
-    d'\nom{Young} et du coefficient de \nom{Poisson}.
-  \end{itemize}
-\end{minipage}
-
-Le tenseur d'élasticité \(\tenseurq{D}\) s'en déduit~:
-\begin{equation}
-  \label{mfront:as:D}
-  \tenseurq{D}=\deriv{\tsigma}{\tepsilonel}=\lambda\,\tenseur{I}\otimes\tenseur{I}+2\,\mu\,\tenseurq{I}
-\end{equation}
-où~:
-\begin{minipage}[t]{0.9\linewidth}
-  \begin{itemize}
-    \item \(\otimes\) est le produit tensoriel de deux
-    tenseurs~;
-    \item \(\tenseurq{I}\) est le tenseur identité d'ordre
-    \(4\).
-  \end{itemize}
-\end{minipage}
-
-\paragraph{Contraintes déviatoriques} Le tenseur
-des contraintes se décompose en une partie dite sphérique où apparaît la
-pression hydrostatique \(\sigma_{h}\) et une partie déviatorique
-\(\tenseur{s}\) à trace nulle~:
-\begin{equation}
-  \label{eq:mfront:deviateur_contraintes}
-  \tsigma=\tenseur{s}+\sigma_{h}\,\tenseur{I}\quad\text{avec}\quad \left\{
-  \begin{array}{cc}
-    \sigma_{h}  &= \Frac{1}{3}\,\trace{\tsigma} \\
-    \tenseur{s} &= \tsigma-\sigma_{h}\,\tenseur{I}
-  \end{array}
-  \right.
-\end{equation}
-Le tenseur \(\tenseur{s}\) est appelé déviateur des contraintes.
-
-Dans la suite, nous ferons l'hypothèse que la pression hydrostatique
-n'intervient pas dans les lois présentées, c'est à dire qu'un chargement
-en pression seule ne conduit pas à l'apparition d'une déformation
-inélastique. Seule la partie déviatorique des contraintes joue un rôle.
-
-La loi de Hooke~\eqref{mfront:as:tsigma} permet de montrer que le
-déviateur des contraintes \(\tenseur{s}\) est relié au déviateur des
-déformations élastiques, noté \(\tenseur{e}\), par la relation~:
-\begin{equation}
-\label{mfont:as:2me}
-\tenseur{s}=2\,\mu\,\tenseur{e}\quad\text{avec}\quad
-\tenseur{e}=\tepsilonel-\Frac{1}{3}\,\trace\paren{\tepsilonel}\,\tenseur{I}
-\end{equation}
-
-\paragraph{Contraintes de \nom{Von Mises}} Le
-tenseur des contraintes est utilisé pour décrire l'évolution des
-déformations inélastiques \(\tepsilonan_{i}\). Nous supposons que les
-lois présentées dépendent uniquement de la contrainte de \nom{Von
-  Mises}, notée \(\sigmaeq\) définie comme la norme du déviateur des
-contraintes \(\tenseur{s}\)\footnote{\(\tenseur{a}\colon\tenseur{b}\)
-  représente le produit contracté de deux tenseurs \(a\) et \(b\).}~:
+\paragraph{Contraintes de \nom{Von Mises}}
+Les écoulements décrits ici sont supposés dépendre du tenseur des
+contraintes $\tsigma$ à travers la norme de son
+déviateur~\eqref{eq:mfront:deviateur_contraintes}, appelée contrainte
+de \nom{Von Mises}:
 \begin{equation}
 \label{mfront:sigmaeq} \sigmaeq =
 \displaystyle\sqrt{\Frac{3}{2}\,\tenseur{s}\colon\tenseur{s}}
-\end{equation}
+.\end{equation}
+La contrainte de \nom{Von Mises} est un des invariants isotropes de la
+contrainte. L'hypothèse assure donc le caractère isotrope de la loi
+d'écoulement.
 
-Le facteur \(\pfrac{3}{2}\) permet, dans le cas d'un chargement de
-traction uniaxiale, d'assurer l'égalité de la contrainte dans la direction
-de traction et de la contrainte de \nom{Von Mises}.
-
-Soulignons que le choix de la contrainte de \nom{Von Mises}
-est cohérent avec les hypothèses faites jusqu'à présent~: il s'agit
-d'une part d'une norme isotrope (pas de direction privilégiée) et d'une
-part d'une norme qui ne dépend pas de la pression hydrostatique.
-
-\paragraph{Direction de l'écoulement} Nous supposons
-qu'à chaque instant la vitesse de déformation inélastique portée par le
-déviateur des contraintes~:
+\paragraph{Écrouissage}
+Pour chaque écoulement $i$, la loi d'écoulement peut également dépendre de son {\em
+  écrouissage}, ou {\em déformation inélastique cumulée} $p_i$, défini
+par l'équation différentielle:
+\begin{subequations}
+\label{mfront:as:p}
 \begin{equation}
-  \label{mfront:as:ean} \tdepsilonan_{i} \propto
-  \tenseur{s}
-\end{equation}
-Le déviateur des contraintes étant de trace nulle, cette hypothèse est
-cohérente avec le fait que les écoulements inélastiques sont isochores.
-
-Pour simplifier la présentation, il est d'usage d'introduire un
-tenseur normé \(\tenseur{n}\) donnant la direction de l'écoulement. 
+\label{eq.dotpi}
+\dot{p}_{i}=\sqrt{\Frac{2}{3}\,\tdepsilonan_{i}\colon\tdepsilonan_{i}}
+.\end{equation}
+Le facteur \(\pfrac{3}{2}\), introduit par convention dans la
+contrainte de \nom{Von Mises}~\eqref{mfront:sigmaeq}, est compensé ici
+dans la définition de $\dot{p}_{i}$.  En général, en début de calcul,
+au temps $t=t_0$, le matériau est supposé non écroui:
 \begin{equation}
-  \label{mfront:as:n1}
-  \tenseur{n} = \Frac{3}{2}\Frac{\tenseur{s}}{\sigmaeq}
-\end{equation}
+p_i(t_0)=0
+.\end{equation}
+\end{subequations}
 
-Le facteur \(\pfrac{3}{2}\) permet de satisfaire l'égalité suivante~:
+Avec l'hypothèse sur la direction d'écoulement~\eqref{eq:direcoul},
+la relation~\eqref{eq.dotpi} s'inverse en:
 \begin{equation}
-  \label{mfront:as:n} \tenseur{n} =
-  \deriv{\sigmaeq}{\tsigma} = \Frac{3}{2}\Frac{\tenseur{s}}{\sigmaeq}
-\end{equation}
-
-Cette nouvelle définition montre que le \(\tenseur{n}\) est normal
-aux isovaleurs de la contrainte de \nom{Von Mises}.
-
-La définition~\eqref{mfront:sigmaeq} et la
-définition~\eqref{mfront:as:n} de la contrainte de \nom{Von Mises}
-permettent de montrer la norme du tenseur \(\tenseur{n}\) est
-constante~:
+\label{mfront:as:epsilonan}
+\tdepsilonan_{i} = \dot{p}_{i}\,\tenseur{n}
+,\quad\text{avec}\quad
+\tenseur{n} = \Frac{3}{2}\Frac{\tenseur{s}}{\sigmaeq}
+,\end{equation}
+où le tenseur $\tenseur{n}$ est appelé {\em normale} à
+l'écoulement. C'est un tenseur déviatorique de norme constante, 
+qui vérifie:
 \begin{equation}
-  \label{mfront:as:n:2}
-  \tenseur{n}\,\colon\,\tenseur{n}=\Frac{9}{4\,\sigmaeq^{2}}\tenseur{s}\,\colon\,\tenseur{s}=\Frac{3}{2}
-\end{equation}
+\label{mfront:as:n:2}
+\tenseurq{K}\colon\tenseur{n}=\tenseur{n}
+,\quad\text{et}\quad
+\tenseur{n}\colon\tenseur{n}=\Frac{3}{2}
+.\end{equation}
 
-\paragraph{Intensité de l'écoulement} Le tenseur
-\(\tenseur{n}\) permet de réécrire l'équation~\eqref{mfront:as:ean} sous
-la forme~:
-\begin{equation}
-  \label{mfront:as:ean}
-  \tdepsilonan_{i} = a\tenseur{n}
-\end{equation}
-où \(a\) est nombre positif mesurant l'intensité de l'écoulement.
-
-\paragraph{Déformation inélastique cumulée} Pour
-caractériser l'historique de déformations inélastiques, nous pouvons
-introduire la mesure suivante, notée \(p_{i}\)~:
-\begin{equation}
-  \label{mfront:as:p} p_{i}=
-  \int_{t_{0}}^{t}\sqrt{\Frac{2}{3}\,\tdepsilonan_{i}\colon\tdepsilonan_{i}}\,\dtot\,u=
- \int_{t_{0}}^{t}a\paren{u}\,\dtot\,u
-\end{equation}
-où \(t_{0}\) désigne un temps de début de calcul et \(t\) le temps
-courant et où nous avons utilisé la valeur de la norme du tenseur
-\(\tenseur{n}\) (équation~\eqref{mfront:as:n:2}).
-
-\(p_{i}\) est appelée la {\em déformation inélastique cumulée}
-du \(i\)\ieme mécanisme. \(p_{i}\) est utilisé dans les lois présentées
-pour mesurer l'{\em écrouissage} du matériau.
-
-\paragraph{Expression des vitesses de déformations
-  inélastiques} Par dérivation de l'expression~\eqref{mfront:as:p} et
-par report dans l'expression~\eqref{mfront:as:ean}, nous pouvons écrire
-que~: 
-\begin{equation}
-  \label{mfront:as:epsilonan}
-  \tepsilonan_{i} = \dot{p}_{i}\,\tenseur{n}
-\end{equation}
-
-Cette expression montre que l'écoulement est parfaitement défini si
-l'évolution de la déformation plastique cumulée \(p_{i}\) est connue.
-Les lois présentées dans la suite sont toutes caractérisées par une
-relation permettant de déduire l'évolution de \(p_{i}\) à partir de~:
+\paragraph{Écoulements supportés}
+Il est maintenant possibles de formuler les trois types de mécanismes
+qui relèvent d'une intégration spécifiques dans {\mfront}:
+\begin{subequations}
+\label{eq:loistype}
 \begin{itemize}
-\item la contrainte équivalente \(\sigmaeq\)~;
-\item \(p_{i}\) qui représente l'écrouissage du matériau~;
-\end{itemize}
-Cette relation peut éventuellement faire intervenir des variables
-externes évoluant indépendamment de la mécanique (densité de fission,
-flux de neutrons rapides, taille de grain, etc..).
-
-\paragraph{Comportements inélastiques supportés}
-Trois mécanismes seront considérés dans la suite~:
-\begin{itemize}
-  \item des écoulements viscoplastiques de la forme (loi de type
-  \nom{Norton})~:
-  \begin{equation}
-    \label{mfront:as:norton}
-    \dot{p}_{i} = f_{i}^{\textrm{an}}\paren{\sigmaeq}
-  \end{equation}
+\item des écoulements viscoplastiques de la forme suivante, dont
+  relève la loi de \nom{Norton}~\cite{cha_1996}:
+\begin{equation}
+\label{eq:loistype_a}
+  \tdepsilonan_{i} = f_{i}^{\textrm{an}}\paren{\sigmaeq}\,\tenseur{n}
+,\quad\text{c'est-à-dire}\quad
+\dot{p}_{i} = f_{i}^{\textrm{an}}\paren{\sigmaeq}
+;\end{equation}
   \item des écoulements viscoplastiques avec écrouissage de la
-  forme (lois de type \nom{Lemaitre})~:
-  \begin{equation}
-    \label{mfront:as:lemaitre}
-    \dot{p}_{i} = f_{i}^{\textrm{an}}\paren{\sigmaeq,p_{i}}
-  \end{equation}
-  \item des écoulements plastiques qui satisfont une relation du
+  forme suivante, dont relève la loi \nom{Lemaitre}~\cite{cha_1996}:
+\begin{equation}
+\label{eq:loistype_b}
+  \tdepsilonan_{i} = f_{i}^{\textrm{an}}\paren{\sigmaeq,p_{i}}\,\tenseur{n}
+,\quad\text{c'est-à-dire}\quad
+\dot{p}_{i} = f_{i}^{\textrm{an}}\paren{\sigmaeq,p_i}
+.\end{equation}
+\item et des écoulements plastiques qui satisfont une relation du
   type~:
-  \begin{equation}
-    \label{mfront:as:plasticity}
-    f_{i}^{\textrm{an}}(\sigmaeq,p_{i})\leq
-    0 \quad\quad \dot{p_{i}}\geq 0 \quad\quad
-    f_{i}^{\textrm{an}}(\sigmaeq,p_{i})\,\dot{p}_{i} = 0
-  \end{equation}
+\begin{equation}
+\label{eq:loistype_c}
+  f_{i}^{\textrm{an}}(\sigmaeq,p_{i})\leq
+  0 \quad\quad \dot{p_{i}}\geq 0 \quad\quad
+  f_{i}^{\textrm{an}}(\sigmaeq,p_{i})\,\dot{p}_{i} = 0
+\end{equation}
+Il est classique de que la fonction $f_{i}^{\textrm{an}}$ de
+l'écoulement plastique ait la dimension d'une contrainte. {\mfront}
+suppose que l'utilisateur a respecté cette convention, et divise de ce
+fait la fonction $f_{i}^{\textrm{an}}$ par le module d'Young du
+matériau, pour que l'ensemble des inéquations~\eqref{eq:loistype_c}
+aient la dimension d'une déformation.
+\end{itemize}
+\end{subequations}
+La fonction $f_{i}^{\textrm{an}}$, qui définit l'écoulement, peut
+éventuellement faire intervenir des variables externes évoluant
+indépendamment de la mécanique (densité de fission, flux de neutrons
+rapides, taille de grain, {\it etc.}).
+
+\paragraph{Remarques}
+\begin{enumerate}
+\item Les écoulements viscoplastiques sans
+  écrouissage~\eqref{eq:loistype_a} sont un cas particulier des
+  écoulement avec écrouissage~\eqref{eq:loistype_b}. Pour optimiser
+  les temps de calculs, il est intéressant de maintenir leur
+  distinction lors de l'implantation numérique. Pour les
+  développements théoriques, il est préférable de regrouper ces
+  écoulements sous leur forme commune~\eqref{eq:loistype_b}.
+
+\item Avec l'hypothèse sur la direction de
+  l'écoulement~\eqref{mfront:as:epsilonan}, les écoulements
+  viscoplastiques~\eqref{eq:loistype_b} comme les écoulements
+  plastiques~\eqref{eq:loistype_c} dépendent de l'écrouissage $p_i$ au
+  lieu de dépendre de la déformation $\tepsilonan_{i}$. Cette
+  particularité explique l'optimisation possible lors de l'intégration
+  des lois~\eqref{eq:loistype}: il suffit d'intégrer des équations
+  avec une inconnue scalaire ($p_i$) plutôt que tensorielle
+  ($\tepsilonan_{i}$).
+
+\item L'évolution de la déformation
+  viscoplastique~\eqref{eq:loistype_b} est donnée par une équation
+  différentielle, tandis que la formulation des lois
+  plastiques est basée sur une équation~\eqref{eq:loistype_c}: le
+  respect de la surface de charge.
+
+\end{enumerate}
+
+\paragraph{Système d'équations}
+L'intégration de la loi de comportement proposée par {\mfront}
+consiste à charger un point matériel avec la déformation totale
+$\tepsilonto$ et à en déduire l'évolution des contraintes
+$\tsigma$. Pour cela, la loi s'appuie sur un jeu de variables
+internes, conservées en mémoire, et qui évoluent simultanément. Nous
+avons décidé de choisir comme variables internes:
+\begin{itemize}
+  \item la déformation élastique \(\tepsilonel\);
+  \item l'écrouissage \(p_{i}\) associé à chaque mécanisme.
 \end{itemize}
 
-Les deux premières équations ne diffèrent que par la présence d'un
-écrouissage. Ils ne sont plus distingués dans la suite.
+\begin{subequations}
+\label{eq:systemeSpecifique}
+Les équations qui permettent de calculer cette évolution sont
+rassemblées ici. Il s'agit de:
+\begin{enumerate}
+\item la partition des déformations~\eqref{eq:partition_deformation}
+\begin{equation}
+\tepsilonto = \tepsilonel + \tepsilonan
+,\quad\text{avec}\quad
+\tepsilonan= \displaystyle\sum_{i}\,\tepsilonan_{i}
+;\end{equation}
 
-Nous pouvons remarquer que l'évolution de la déformation
-viscoplastique pour les lois viscoplastiques est donnée par une équation
-différentielle, tandis que pour les lois plastiques nous avons retenu
-une formulation basée sur le respect de la surface de charge.
+\item la loi d'élasticité~\eqref{mfront:as:tsigma}
+\begin{equation}
+\tsigma=\tenseurq{D}\colon\tepsilonel
+;\end{equation}
 
-\paragraph{Déformation inélastique cumulée totale}
-Il est intéressant de définir une déformation
-inélastique cumulée totale par~:
-\[
-p
-=\displaystyle\int_{t_{0}}^{t}\sqrt{\Frac{2}{3}\,\tdepsilonan\colon\tdepsilonan}\,\dtot\,u
-\]
-Toutes les déformations inélastiques ayant la même direction, la déformation
-inélastique cumulée totale est la somme des déformations
-inélastiques cumulées de tous les mécanismes~:
-\[
-p = \sum_{i} p_{i}
-\]
+\item la décomposition du tenseur des contraintes $\tsigma$ en
+  déviateur~\eqref{eq:mfront:deviateur_contraintes} et contrainte de
+  \nom{Von Mises}~\eqref{mfront:sigmaeq}:
+\begin{equation}
+\tenseur{s}= \tenseurq{K}\colon\tsigma
+,\quad\text{et}\quad
+\sigmaeq=
+\displaystyle\sqrt{\Frac{3}{2}\,\tenseur{s}\colon\tenseur{s}}
+;\end{equation}
 
-\subsubsection{Intégration numérique}
+\item la direction des écoulements, orientée suivant la normale à
+  l'écoulement~\eqref{mfront:as:epsilonan}:
+\begin{equation}
+\tdepsilonan_{i} = \dot{p}_{i}\,\tenseur{n}
+,\quad\text{avec}\quad
+\tenseur{n}= \Frac{3}{2}\Frac{\tenseur{s}}{\sigmaeq}
+;\end{equation}
+
+\item les écoulements viscoplastiques~\eqref{eq:loistype_b} ou
+  plastiques~\eqref{eq:loistype_c}:
+\begin{align}
+\dot{p}_{i} &= f_{i}^{\textrm{an}}\paren{\sigmaeq,p_i}
+,\\
+f_{i}^{\textrm{an}}(\sigmaeq,p_{i})\leq
+0,\quad&\dot{p_{i}}\geq 0,\quad
+f_{i}^{\textrm{an}}(\sigmaeq,p_{i})\,\dot{p}_{i} = 0
+.\end{align}
+\end{enumerate}
+\end{subequations}
+
+\subsubsection{Méthode d'intégration numérique}
 \label{sec:mfront:isotropic-solver}
 
-Au minimum, les variables internes nécessaires pour décrire les lois
-présentées sont~:
-\begin{itemize}
-  \item la déformation élastique \(\tepsilonel\)~;
-  \item la déformation inélastique cumulée \(p_{i}\) associé à
-  chaque mécanisme~;
-\end{itemize}
-Nous pouvons noter que les déformations inélastiques
-\(\tepsilonan_{i}\) ne sont pas nécessaires.
+Dans {\mfront}, la loi de comportement~\eqref{eq:systemeSpecifique}
+est intégrée par une méthode implicite, une \(\theta\)-méthode,
+semblable à celle présentée au paragraphe~\ref{sec:bipbip}.
 
-L'évolution de la déformation élastique se déduit de
-l'hypothèse de partitions de
-déformations~\eqref{eq:partition_deformation} et l'évolution des
-différentes déformations inélastiques de la forme de la loi
-(équations~\eqref{mfront:as:norton}, \eqref{mfront:as:lemaitre} et
-\eqref{mfront:as:plasticity}).
+\paragraph{Incrément de temps}
+D'après ce qui précède, les variables internes sont la déformation
+élastique $\tepsilonel$ et l'écrouissage $p_i$ associé à chaque
+mécanisme. Elles sont connues au temps $t$, en début de pas de temps,
+et pour une déformation totale $\debutpas{\tepsilonto}$. L'intégration
+consiste à calculer leurs nouvelles valeurs induites par un incrément
+de déformation totale $\Delta\tepsilonto$ en fin d'un pas de temps
+$\Delta t$. Leurs incréments respectifs seront notés
+$\Delta\tepsilonel$ et $\Delta p_i$.
 
-Étant donné un incrément de temps \(\Delta\, t\) et un incrément de
-déformations totales \(\Delta\,\tepsilonto\), nous montrons dans ce
-paragraphe comment intégrer la loi de comportement par une
-\(\theta\)-méthode, c'est à dire déterminer l'incrément des déformations
-élastiques \(\Delta\,\tepsilonel\) et les incréments des déformations
-inélastiques cumulées \(\Delta\,p_{i}\).
+La notion de \(\theta\)-méthode, employée ici, consiste à s'intéresser
+également aux valeurs de certaines variables au temps intermédiaire
+$t+\theta\,\Delta t$, où le paramètre $\theta$, déterminé à l'avance
+est compris entre 0 et 1. Une première approximation consiste à
+supposer les variables internes linéaires sur le pas de temps
+$\Delta t$, donc à poser:
+\begin{subequations}
+\label{eq:applin}
+\begin{align}
+\milieupas{\tepsilonel}
+&\approx\debutpas{\tepsilonel}+\theta\,\Delta\tepsilonel
+,\\
+\milieupas{p_i}&\approx
+\debutpas{p_i}+\theta\,\Delta p_i
+.\end{align}
+\end{subequations}
 
-Nous montrons dans ce paragraphe comment il est possible de réduire
-le nombre d'équations à résoudre en exprimant la contrainte équivalente
-en fonction uniquement des incréments des déformations inélastiques
-cumulées \(\Delta\,p_{i}\) (ou non plus de l'incrément des déformations
-élastiques \(\Delta\,\tepsilonel\)).
-
-\paragraph{Convention d'écriture} Les \(\theta\)-méthodes
-sont décrites en détail à la section~\ref{sec:Implicite}. Nous nous
-contentons de rappeler pour une variable interne \(v\), les
-\(\theta\)-méthodes déterminent son incrément \(\Delta\,v\) sur le pas
-de temps en transformant le système différentiel initial en un système
-d'équation non linéaires.
-
-Quand on utilise ces méthodes, il est d'usage d'introduire des
-notations (et des abus de langage) pratiques. Ainsi, si dans le système
-différentiel apparaît une fonction des variables internes \(f\paren{v}\)
-alors dans le système non-linéaire de la \(\theta\)-méthodes apparaît
-l'expression \(f\paren{v+\theta\,\Delta\,v}\).
-
-Nous noterons \(\milieupas{v}\) l'expression suivante~:
-\[
-\milieupas{v} = v+\theta\,\Delta\,v
-\]
-De même, nous noterons \(\milieupas{f}\) l'expression suivante~:
-\[
-\milieupas{f} = f\paren{v+\theta\,\Delta\,v}
-\]
-
-Ces notations donnent un sens à l'expression
-\(\deriv{\milieupas{v}}{\Delta\,v}\) qui est égale à \(\theta\).
-
-Par abus de language, nous dirons que \(\milieupas{v}\) et
-\(\milieupas{f}\) sont respectivement les valeurs en milieu de pas de
-\(v\) et de \(f\).
-
-\paragraph{Équation associée à la déformation
-  élastique} Nous pouvons déduire de l'hypothèse de partitions des
-déformations~\eqref{eq:partition_deformation} l'évolution de la
-déformation élastique s'écrit de manière incrémentale ainsi~:
+\paragraph{Contraintes}
+D'après la loi d'élasticité~\eqref{mfront:as:tsigma} et sa propre
+définition~\eqref{eq:mfront:deviateur_contraintes}, le déviateur des
+contraintes vaut:
+\begin{equation*}
+\tenseur{s}=2\,\mu\,\tenseurq{K}\colon\tepsilonel
+,\end{equation*}
+et d'après les approximations~\eqref{eq:applin}, sa valeur au temps
+intermédiaire vaut:
 \begin{equation}
-\label{mfront:as:feel}
-\Delta\,\tepsilonel-\Delta\,\tepsilonto+\Delta\,\tepsilonan=0
+\milieupas{\tenseur{s}}=2\,\mu\,\tenseurq{K}\colon
+\left(\debutpas{\tepsilonel}+\theta\,\Delta\tepsilonel
+\right)
+,\label{eq:stthDt}
+\end{equation}
+et la contrainte de \nom{Von Mises}~\eqref{mfront:sigmaeq} et la
+normale à l'écoulement~\eqref{mfront:as:epsilonan} pour cette même
+date s'en déduisent:
+\begin{equation}
+\milieupas{\sigmaeq}=
+\displaystyle\sqrt{\Frac{3}{2}\,\milieupas{\tenseur{s}}\colon\milieupas{\tenseur{s}}}
+,\quad\text{et}\quad
+\milieupas{\tenseur{n}}
+=\Frac{3}{2}\Frac{\milieupas{\tenseur{s}}}{\milieupas{\sigmaeq}}
+.\label{eq:ntthDt}
 \end{equation}
 
-La direction d'écoulement est évaluée en \(t+\theta\Delta t\), ce qui
-permet d'introduire l'incrément de déformation inélastique cumulée
-totale \(p\)~:
-\[
-\Delta\,\tepsilonel-\Delta\,\tepsilonto+\Delta\,p\milieupas{\tenseur{n}}=0
-\]
-
-Cette expression montre également que l'incrément des déformations
-élastiques \(\Delta\,\tepsilonel\) est connu dès que les incréments des
-déformations inélastiques cumulées \(\Delta\,p_{i}\) et que le tenseur
-\(\tenseur{n}\) sont connus.
-
-\paragraph{Expression de la contrainte équivalente
-  et de la direction d'écoulement} L'évolution des déformations
-inélastiques cumulée \(\Delta\,p_{i}\) requiert d'évaluer de certaines
-fonctions \(f_{i}\) de la contrainte équivalente en \(t+\theta\Delta
-t\).
-
-À l'instant \(t+\theta\Delta t\), le tenseur normal \(\tenseur{n}\) est
-relié à l'incrément des déformations élastiques \(\Delta\tepsilonel\)
-par l'équation~\eqref{mfont:as:2me} ainsi~:
-\[
-  \milieupas{\tenseur{n}}=\Frac{3}{2\milieupas{\sigmaeq}}
-  \milieupas{\tenseur{s}}=\Frac{3\mu}{\milieupas{\sigmaeq}}\milieupas{\tenseur{e}}
-=\Frac{3\mu}{\milieupas{\sigmaeq}}\paren{\debutpas{\tenseur{e}}+\theta\Delta\tenseur{e}}
-\]
-où \(\tenseur{e}\) désigne le déviateur du tenseur des déformations
-élastiques \(\tepsilonel\).
-
-En calculant l'incrément du déviateurs des déformations élastiques en
-utilisant l'équation~\eqref{mfront:as:feel}, nous obtenons~:
-\[
-\milieupas{\tenseur{n}}=\Frac{3\mu}{\milieupas{\sigmaeq}}\paren{\debutpas{\tenseur{e}}+\theta\paren{\Delta\,\tepsilonto-\Frac{1}{3}\trace\paren{\Delta\,\tepsilonto}\tenseur{I}-\Delta\,p\,\milieupas{\tenseur{n}}}}
-\]
-
-Le tenseur normal \(\milieupas{\tenseur{n}}\) vérifie donc~:
+\paragraph{Partition des déformations} 
+La partition des déformations~\eqref{eq:partition_deformation}, et la
+direction des écoulements~\eqref{mfront:as:epsilonan} s'intègrent en:
 \begin{equation}
-  \label{eq:mfront:n_tdt}
-  \paren{\milieupas{\sigmaeq}+3\mu\theta\Delta\,p}\milieupas{\tenseur{n}}=3\mu\tenseur{B}
+\Delta\tepsilonto
+=
+\Delta\tepsilonel+
+\sum_i\int_t^{t+\Delta t}
+\dot{p}_{i}\,\tenseur{n}\,\dtot t
+\approx
+\Delta\tepsilonel+
+\milieupas{\tenseur{n}}\,
+\sum_i\Delta p_{i}
+.\label{eq:partdef2}
 \end{equation}
-où le tenseur \(\tenseur{B}\) vaut~:
-\[
-\tenseur{B}=\debutpas{\tepsilonel}+\theta\Delta\,\tepsilonto-\Frac{1}{3}\trace\paren{\debutpas{\tepsilonel}+\theta\Delta\,\tepsilonto}\tenseur{I}
-\]
-Ce tenseur ne fait intervenir aucun des incréments recherchés.
+Cette approximation s'appuie sur la valeur de la normale $\tenseur{n}$
+au temps intermédiaire. Avec les relations
+précédentes~\eqref{eq:stthDt} et \eqref{eq:ntthDt}, et le type
+déviateur~\eqref{mfront:as:n:2} de $\tenseur{n}$, cela permet
+d'écrire:
+\begin{equation*}
+\milieupas{\tenseur{n}}
+=\Frac{3\,\mu}{\milieupas{\sigmaeq}}
+\left[
+\tenseurq{K}\colon
+\left(\debutpas{\tepsilonel}+\theta\,\Delta\tepsilonto
+\right)
+-\milieupas{\tenseur{n}}\,
+\theta\,\sum_i\Delta p_{i}
+\right]
+,\end{equation*}
+c'est-à-dire:
+\begin{equation}
+\label{eq:signB}
+\paren{\milieupas{\sigmaeq}+3\mu\theta\sum_i\Delta p_{i}}
+\milieupas{\tenseur{n}}
+=3\mu\tenseur{B}
+,\quad\text{avec}\quad
+\tenseur{B}=\tenseurq{K}\colon
+\left(\debutpas{\tepsilonel}+\theta\,\Delta\tepsilonto
+\right)
+.\end{equation}
 
-En utilisant la valeur de la norme du tenseur normal \(\milieupas{n}\)
-(équation~\eqref{mfront:as:n:2}), nous obtenons l'expression suivante de
-la contrainte équivalente~:
+Le norme de cette expression~\eqref{eq:signB}, compte tenu de la
+norme~\eqref{mfront:as:n:2} de $\milieupas{\tenseur{n}}$, donne
+finalement pour la contrainte équivalente:
 \begin{equation}
   \label{eq:IsotropicBehaviour:contrainte_equivalente}
-  \milieupas{\sigmaeq}=\mu\sqrt{6\,\tenseur{B}\colon\tenseur{B}}-3\,\mu\,\theta\,\Delta\,p=\mu\sqrt{6\,\tenseur{B}\colon\tenseur{B}}-3\,\mu\,\theta\,\sum_{i}\,\Delta\,p_{i}
-\end{equation}
-
-\paragraph{Expression de la normale} À partir des
-équations~\eqref{eq:mfront:n_tdt}
-et~\eqref{eq:IsotropicBehaviour:contrainte_equivalente}, la normale est
-donnée par~:
+  \milieupas{\sigmaeq}
+=\mu\sqrt{6\,\tenseur{B}\colon\tenseur{B}}-3\,\mu\,\theta\,\sum_{i}\,\Delta p_{i}
+.\end{equation}
+Cette valeur, réinjectée dans la relation~\eqref{eq:signB}, donne la normale:
 \begin{equation}
   \label{eq:IsotropicBehaviour:normale}
   \milieupas{\tenseur{n}}=\Frac{3}{\sqrt{6\,\tenseur{B}\colon\tenseur{B}}}\tenseur{B}
+.\end{equation}
+
+L'équation~\eqref{eq:IsotropicBehaviour:contrainte_equivalente} va
+permettre de former, à partir des équations d'écoulements, un système
+non linéaire d'équations dont les inconnues sont les incréments
+$\Delta p_{i}$. Il faut maintenant construire ce système en intégrant
+les écoulements viscoplastiques, puis plastiques.
+
+\begin{subequations}
+\label{eq:fpis}
+\paragraph{Écoulement viscoplastique}
+L'intégrale sur le pas de temps $\Delta t$ de l'écoulement
+viscoplastique~\eqref{eq:loistype_b} s'écrit:
+\begin{equation*}
+\Delta p_{i}
+=\int_t^{t+\Delta t}f_{i}^{\textrm{an}}
+\paren{\sigmaeq,p_i}\,\dtot t
+\approx\Delta t\,
+f_{i}^{\textrm{an}}\paren{\milieupas{\sigmaeq},\milieupas{p_{i}}}
+,\end{equation*}
+où l'intégrale est approchée par la valeur de $f_{i}^{\textrm{an}}$ au
+temps intermédiaire. Avec cette approximation, vérifier l'écoulement
+consiste à annuler une fonction à trois paramètres:
+\begin{equation}
+f_{p_{i}}\paren{\Delta p_{i},\milieupas{\sigmaeq},\milieupas{p_{i}}}
+=\Delta p_{i}
+-\Delta t\,f^{\textrm{an}}_{i}\paren{\milieupas{\sigmaeq},\milieupas{p_{i}}}
+.\label{eq:fpivis}
 \end{equation}
 
-\paragraph{Réduction du système}
-L'équation~\eqref{eq:IsotropicBehaviour:contrainte_equivalente} permet
-de réduire l'intégration de la loi de comportement à la résolution d'un
-système non linéaire dont la taille est égal au nombre d'écoulements
-présents. En particulier, si l'on considère un unique mécanisme,
-l'intégration se résume à la résolution d'une équation scalaire. Les
-inconnues de ce système sont les incréments des déformations
-inélastiques cumulées \(\Delta\, p_{j}\).
+\paragraph{Écoulement plastique} L'écoulement plastique consiste à
+annuler une fonction de même forme, dépendant des mêmes trois
+paramètres:
+\begin{equation}
+f_{p_{i}}\paren{\Delta p_{i},\milieupas{\sigmaeq},\milieupas{p_{i}}}
+=\left\{
+\begin{aligned}
+  f^{\textrm{an}}_{i}\paren{\milieupas{\sigmaeq},\milieupas{p_{i}}}
+  &\quad\text{en cas de charge plastique,}\\
+  \Delta p_{i}&\quad\text{sinon.}
+\end{aligned}
+\right.
+\label{eq:fpiplas}
+\end{equation}
+La condition de charge plastique, qui augmente l'écrouissage $p_i$,
+doit respecter les conditions d'écoulement
+plastique~\eqref{eq:loistype_c}. Dans la pratique, les incréments
+$\Delta p_i$, inconnues d'un système non linéaire, sont calculés de
+manière itérative. Chaque nouvelle itération propose de nouvelles
+valeurs de ces incréments. Pour ces nouvelles valeurs, la condition de
+charge plastique est activée si l'une des conditions suivante est
+vérifiée:
+\begin{enumerate}
+\item \(f^{\textrm{an}}_{i}\paren{\milieupas{\sigmaeq},\milieupas{p_{i}}} >
+  \varepsilon\) et \(\Delta p_{i} \geq 0\),
+\item \(\Delta p_{i} > \varepsilon\),
+\end{enumerate}
+où \(\varepsilon\) est un paramètre numérique, qui stabilise les
+itérations.
 
+\end{subequations}
+
+\paragraph{Système non linéaire}
+Les équations d'écoulement~\eqref{eq:fpis}:
+\begin{equation*}
+f_{p_{i}}\paren{\Delta p_{i},\milieupas{\sigmaeq},\milieupas{p_{i}}}
+=0,\quad\forall\ p_i
+,\end{equation*}
+modifiées avec les équations~\eqref{eq:applin} et
+\eqref{eq:IsotropicBehaviour:contrainte_equivalente}, forment un
+système non linéaire d'équations, dont les inconnues sont les
+incréments $\Delta
+p_i$:
+\begin{equation}
+f_{p_{i}}\paren{\Delta p_{i},
+\mu\sqrt{6\,\tenseur{B}\colon\tenseur{B}}-3\,\mu\,\theta\,\sum_{j}\,\Delta p_{j},
+\debutpas{p_i}+\theta\,\Delta p_i}
+=0,\quad\forall\ p_i
+.\label{eq:sysnonlinDpi}
+\end{equation}
 Pour le résoudre, une méthode de \nom{Newton-Raphson} est utilisée.
-Cette méthode est discutée en détail au paragraphe~\ref{sec:NR}. Pour
-l'appliquer, il faut donc préciser les équations associées à chacun des
-incréments des déformations inélastiques cumulées et la dérivée de ces
-équations par rapport à ces incréments.
+Cette méthode, discutée en détail au paragraphe~\ref{sec:NR},
+nécessite les dérivées partielles des fonctions $f_{p_{i}}$ par
+rapport aux incréments $\Delta p_i$. Celles-ci s'obtiennent par une
+dérivation composée des $f_{p_i}$:
+\begin{equation*}
+\deriv{f_{p_{i}}}{\Delta p_j}=
+\deriv{f_{p_{i}}}{\Delta p_i}
+\,\deriv{\Delta p_i}{\Delta p_j}
++\deriv{f_{p_{i}}}{\milieupas{\sigmaeq}}
+\,\deriv{\milieupas{\sigmaeq}}{\Delta p_j}
++\deriv{f_{p_{i}}}{\milieupas{p_{i}}}
+\,\deriv{\milieupas{p_{i}}}{\Delta p_j}
+,\end{equation*}
+avec, d'après les équations~\eqref{eq:applin} et
+\eqref{eq:IsotropicBehaviour:contrainte_equivalente}:
+\begin{equation*}
+\deriv{\Delta p_i}{\Delta p_j}=\delta_{ij}
+,\quad
+\deriv{\milieupas{\sigmaeq}}{\Delta p_j}=-3\,\mu\,\theta
+,\quad\text{et}\quad
+\deriv{\milieupas{p_{i}}}{\Delta p_j}=\theta\,\delta_{ij}
+,\quad\text{avec}\quad
+\delta_{ij}=
+\left\{
+\begin{array}{ll}
+1&\text{si $i=j$,}\\0&\text{sinon.}
+\end{array}
+\right.
+\end{equation*}
 
-\paragraph{Calcul de l'incrément des déformations
-  élastiques} Une fois les déformations inélastiques cumulées
-\(\Delta\, p_{j}\) connues, l'incrément des déformations élastiques
-\(\Delta\,\tepsilonel\) est calculé à l'aide des
-relations~\eqref{mfront:as:feel}
-et~\eqref{eq:IsotropicBehaviour:normale}.
-
-
-\paragraph{Quelques dérivées utiles}
-Pour déterminer ces dérivées, nous avons besoin de deux résultats.
-Le premier est la dérivée de \(\milieupas{p_{i}}\) par rapport à
-l'incrément \(\Delta\,p_{i}\)~:
+Appliquée aux écoulements, ces relations différentielles donnent:
+\begin{itemize}
+\item pour les écoulement viscoplastiques~\eqref{eq:fpivis}:
 \[
-\deriv{\milieupas{p_{i}}}{\Delta\,p_{i}}
-= \theta
-\]
-
-Le second est la dérivée de la contrainte équivalente \(\sigmaeq\) par
-rapport à l'incrément \(\Delta\,p_{i}\)~:
-\[
-\deriv{\milieupas{\sigmaeq}}{\Delta\,p_{i}}
-= -3\,\mu\,\theta
-\]
-
-\paragraph{Équation associée à une loi viscoplastique}
-L'évolution de la déformation viscoplastique cumulée \(p_{i}\) pour une loi
-viscoplastique est donnée par l'équation \(f_{p_{i}}\)~:
-\[
-f_{p_{i}} = \Delta\,p_{i}-\Delta\,t\,f^{\textrm{an}}_{i}\paren{\milieupas{\sigmaeq},\milieupas{p_{i}}}=0
-\]
-Les dérivées partielles de cette équation s'écrivent~:
-\[
-\deriv{f_{p_{i}}}{\Delta\, p_{j}}=
+\deriv{f_{p_{i}}}{\Delta p_{j}}=
 \left\{
 \begin{aligned}
-1-3\,\mu\,\theta\,\Delta\,t\,\left[\deriv{f^{\textrm{an}}_{i}}{\sigmaeq}\paren{\milieupas{\sigmaeq},\milieupas{p_{i}}}\right]-\theta\,\Delta\,t\,\left[\deriv{f^{\textrm{an}}_{i}}{p_{i}}\paren{\milieupas{\sigmaeq},\milieupas{p_{i}}}\right] & \text{ si } i=j \\
-3\,\mu\,\theta\,\Delta\,t\,\left[\deriv{f^{\textrm{an}}_{i}}{\sigmaeq}\paren{\milieupas{\sigmaeq},\milieupas{p_{i}}}\right] & \text{ si } i\neq j
+1-3\,\mu\,\theta\,\Delta t\,\left[\deriv{f^{\textrm{an}}_{i}}{\sigmaeq}\paren{\milieupas{\sigmaeq},\milieupas{p_{i}}}\right]-\theta\,\Delta t\,\left[\deriv{f^{\textrm{an}}_{i}}{p_{i}}\paren{\milieupas{\sigmaeq},\milieupas{p_{i}}}\right] & \text{ si } i=j, \\
+-3\,\mu\,\theta\,\Delta t\,\left[\deriv{f^{\textrm{an}}_{i}}{\sigmaeq}\paren{\milieupas{\sigmaeq},\milieupas{p_{i}}}\right] & \text{ si } i\neq j;
 \end{aligned}
 \right.
 \]
 
-\paragraph{Équation associée à une loi plastique} L'évolution de la
-déformation plastique cumulée \(p_{i}\) est donné par~:
+\item pour les écoulement plastiques~\eqref{eq:fpiplas}, en cas de
+  décharge plastique:
 \[
-f_{p_{i}} = \left\{
+\deriv{f_{p_{i}}}{\Delta p_{j}}= \left\{
 \begin{aligned}
-  \Frac{1}{E}f^{\textrm{an}}_{i}\paren{\milieupas{\sigmaeq},\milieupas{p_{i}}} & \text{ si
-    charge plastique} \\
-  \Delta\,p_{i} & \text{ sinon}
+  \theta\,\paren{3\,\mu\,\left[\deriv{f^{\textrm{an}}_{i}}{\sigmaeq}\paren{\milieupas{\sigmaeq},\milieupas{p_{i}}}\right]+
+    \left[\deriv{f^{\textrm{an}}_{i}}{p_{i}}\paren{\milieupas{\sigmaeq},\milieupas{p_{i}}}\right]} & \text{ si } i=j, \\
+  -3\,\mu\,\theta\,\deriv{f^{\textrm{an}}_{i}}{\sigmaeq}\paren{\milieupas{\sigmaeq},\milieupas{p_{i}}}
+  & \text{ si } i\neq j.
 \end{aligned}
 \right.
 \]
-où \(E\) est le module d'\nom{Young} qui permet ici de normaliser la
-surface de charge.
-
-La condition de charge plastique est vérifiée si l'une des des
-conditions suivante est vraie~:
-\begin{itemize}
-\item \(f^{\textrm{an}}_{i}\paren{\milieupas{\sigmaeq},\milieupas{p_{i}}} >
-  E\,\varepsilon\) et \(\Delta\,p_{i} \geq 0\)
-\item \(\Delta\,p_{i} > \varepsilon\)
+et en absence de charge plastique:
+\[
+\deriv{f_{p_{i}}}{\Delta p_{j}}= \left\{
+\begin{aligned}
+  1 & \text{ si } i=j, \\
+  0 & \text{ si } i\neq j.
+\end{aligned}
+\right.
+\]
 \end{itemize}
-où \(\varepsilon\) est un paramètre numérique\footnote{Sa valeur est
-  choisie égale à \(100\) fois la plus petite valeur positive
-  représentable par le type de réel utilisé.}.
-
-En cas de charge plastique, les dérivées partielles de cette équation
-s'écrivent~:
-\[
-\deriv{f_{p_{i}}}{\Delta\, p_{j}}= \left\{
-\begin{aligned}
-  \Frac{\theta}{E}\paren{3\,\mu\,\left[\deriv{f^{\textrm{an}}_{i}}{\sigmaeq}\paren{\milieupas{\sigmaeq},\milieupas{p_{i}}}\right]+
-    \left[\deriv{f^{\textrm{an}}_{i}}{p_{i}}\paren{\milieupas{\sigmaeq},\milieupas{p_{i}}}\right]} & \text{ si } i=j \\
-  \Frac{3\,\mu\,\theta}{E}\deriv{f^{\textrm{an}}_{i}}{\sigmaeq}\paren{\milieupas{\sigmaeq},\milieupas{p_{i}}}
-  & \text{ si } i\neq j
-\end{aligned}
-\right.
-\]
-
-En l'absence de charge plastique, ces dérivées s'écrivent~:
-\[
-\deriv{f_{p_{i}}}{\Delta\, p_{j}}= \left\{
-\begin{aligned}
-  1 & \text{ si } i=j \\
-  0 & \text{ si } i\neq j
-\end{aligned}
-\right.
-\]
-
-Nous avons donné toutes les équations nécessaires pour résoudre le
-système implicite issu de la \(\theta\)-méthode. Un dernier point mérite
-encore d'être discuté, le calcul de la matrice tangente cohérente. Les
-calculs menant à cette matrice, plus techniques, ont été reportés en
-annnexe~\ref{mfront:isotropic:tangentOpertor}.
 
 \paragraph{Critère d'arrêt} L'algorithme de \nom{Newton} s'arrête quand
 la différence entre deux estimations des incréments des déformations
@@ -1389,15 +1430,538 @@ viscoplastiques cumulées est inférieur à un certain critère
 \(\varepsilon\)~:
 \begin{equation}
   \label{eq:mfront:isotropic:convergence_criteria}
-  \Frac{1}{N}\displaystyle\sum_{i=1}^{N}\left|\Delta_{n}\Delta\,
+  \Frac{1}{N}\displaystyle\sum_{i=1}^{N}\left|\Delta_{n}\Delta
   p_{i}\right|<\varepsilon
 \end{equation}
-où\(\Delta_{n}\Delta\,p_{i}\) désigne la différence entre l'estimation
+où\(\Delta_{n}\Delta p_{i}\) désigne la différence entre l'estimation
 de l'incrément de la déformation viscoplastique cumulée à l'étape
 \(n+1\) et de l'estimation à l'étape \(n\).
 
 L'algorithme échoue si le nombre d'itérations dépasse une
 borne maximale.
+
+\paragraph{Étapes}
+Finalement les différentes étapes de l'intégration de la loi de
+comportement mécanique par la $\theta$-méthode sont les suivantes:
+\begin{enumerate}
+\item calcul du tenseur $\tenseur{B}$~\eqref{eq:signB}:
+\begin{equation*}
+\tenseur{B}=\tenseurq{K}\colon
+\left(\debutpas{\tepsilonel}+\theta\,\Delta\tepsilonto
+\right)
+~;\end{equation*}
+
+\item calcul des incréments $\Delta p_i$, par résolution du système
+  non linéaire~\eqref{eq:sysnonlinDpi}:
+\begin{equation*}
+f_{p_{i}}\paren{\Delta p_{i},
+\mu\sqrt{6\,\tenseur{B}\colon\tenseur{B}}-3\,\mu\,\theta\,\sum_{j}\,\Delta p_{j},
+\debutpas{p_i}+\theta\,\Delta p_i}
+=0,\quad\forall\ p_i
+,\end{equation*}
+en utilisant la méthode de \nom{Newton-Raphson}, et calcul des
+nouvelles valeurs d'écrouissage:
+\begin{equation*}
+\finpas{p_i}=\debutpas{p_i}+\Delta p_i
+~;\end{equation*}
+
+\item calcul de l'incrément de déformation élastique, grâce à la
+  partition des déformations~\eqref{eq:partdef2}, de la
+  normale~\eqref{eq:IsotropicBehaviour:normale}:
+\begin{equation*}
+\Delta\tepsilonel
+=
+\Delta\tepsilonto
+-\milieupas{\tenseur{n}}\,
+\sum_i\Delta p_{i}
+,\quad\text{avec}\quad
+\milieupas{\tenseur{n}}
+=\Frac{3}{\sqrt{6\,\tenseur{B}\colon\tenseur{B}}}\tenseur{B}
+,\end{equation*}
+et de la nouvelle valeur de déformation élastique:
+\begin{equation*}
+\finpas{\tepsilonel}=\debutpas{\tepsilonel}+\Delta\tepsilonel
+~;\end{equation*}
+\item calcul de la contrainte en fin de pas de temps, par la loi
+  d'élasticité~\eqref{mfront:as:tsigma}:
+\begin{equation*}
+\finpas{\tsigma}=\tenseurq{D}\colon\finpas{\tepsilonel}
+.\end{equation*}
+\end{enumerate}
+
+\subsubsection{Matrice tangente cohérente}
+
+La méthode de résolution implicite permet le calcul de la matrice
+tangente cohérente.
+
+La matrice tangente, décrite au paragraphe~\ref{bipbip}, permet
+d'améliorer la résolution du calcul de structure....
+
+\paragraph{Définition}
+L'intégration numérique décrite au paragraphe précédent, permet de
+calculer l'évolution des con\-train\-tes $\Delta\tsigma$ induite par un
+incrément de déformation $\Delta\tepsilonto$ sur un pas de temps
+$\Delta t$. La matrice tangente cohérente est définie comme le
+tenseur:
+\begin{equation}
+\tenseurq{D}^{\mathit{tangent}}
+=\deriv{\Delta\tsigma}{\Delta\tepsilonto}
+.\label{eq:defTangent}
+\end{equation}
+La loi d'élasticité~\eqref{mfront:as:tsigma} et la partition des
+déformations~\eqref{eq:partdef2} permettent d'exprimer l'incrément de
+contrainte:
+\begin{equation*}
+\Delta\tsigma
+=\tenseurq{D}\colon\Delta\tepsilonel
+=\tenseurq{D}\colon\paren{\Delta\tepsilonto
+-\milieupas{\tenseur{n}}\,
+\sum_i\Delta p_{i}
+}
+\end{equation*}
+et d'en déduire par dérivation~\eqref{eq:defTangent} la matrice
+tangente:
+\begin{equation}
+\tenseurq{D}^{\mathit{tangent}}
+=\tenseurq{D}-\tenseurq{D}\colon\paren{\milieupas{\tenseur{n}}\otimes
+\sum_i\deriv{\Delta p_{i}}{\Delta\tepsilonto}
++\sum_i\Delta p_{i}\deriv{\milieupas{\tenseur{n}}}{\Delta\tepsilonto}}
+.\label{eq:tang1}
+\end{equation}
+Il faut maintenant calculer les dérivées de la normale
+$\milieupas{\tenseur{n}}$ et des incréments $\Delta p_i$ pour chaque écoulement.
+
+\paragraph{Normale}
+La dérivées du tenseur~\eqref{eq:signB} $\tenseur{B}$ et de la
+normale~\eqref{eq:IsotropicBehaviour:normale} valent respectivement:
+\begin{subequations}
+\begin{align}
+\deriv{\tenseur{B}}{\Delta\tepsilonto}
+&=\theta\,\tenseurq{K}
+,\label{eq:dBdDeto}
+\\
+\deriv{\milieupas{\tenseur{n}}}{\Delta\tepsilonto}
+&=\Frac{3}{\sqrt{6\,\tenseur{B}\colon\tenseur{B}}}
+\,\left(
+\deriv{\tenseur{B}}{\Delta\tepsilonto}
+-\frac{2}{3}
+\deriv{\tenseur{B}}{\Delta\tepsilonto}\colon
+\milieupas{\tenseur{n}}\otimes\milieupas{\tenseur{n}}
+\right)
+,\notag\\
+&=\Frac{3\,\theta}{\sqrt{6\,\tenseur{B}\colon\tenseur{B}}}
+\,\left(\tenseurq{K}
+-\frac{2}{3}\milieupas{\tenseur{n}}\otimes\milieupas{\tenseur{n}}
+\right)
+.\label{eq:dndDeto}\end{align}
+\end{subequations}
+Ce calcul utilise la propriété~\eqref{mfront:as:n:2} du tenseur
+$\milieupas{\tenseur{n}}$.
+
+\paragraph{Incréments}
+Les incréments d'écrouissage $\Delta p_i$ sont issus de la résolution
+du système non linéaire, formé par les équations
+d'écoulement~\eqref{eq:fpis}:
+\begin{equation*}
+f_{p_{i}}\paren{\Delta p_{i},\milieupas{\sigmaeq},\milieupas{p_{i}}}
+=0,\quad\forall\ p_i
+.\end{equation*}
+La dérivation de ces équations conduit à:
+\begin{equation}
+\label{eq:dfpidDetoa}
+\deriv{f_{p_{i}}}{\Delta p_i}
+\,\deriv{\Delta p_i}{\Delta\tepsilonto}
++\deriv{f_{p_{i}}}{\milieupas{\sigmaeq}}
+\,\deriv{\milieupas{\sigmaeq}}{\Delta\tepsilonto}
++\deriv{f_{p_{i}}}{\milieupas{p_{i}}}
+\,\deriv{\milieupas{p_{i}}}{\Delta\tepsilonto}
+=0,\quad\forall\ p_i
+.\end{equation}
+La dérivation des équations~\eqref{eq:applin} et
+\eqref{eq:IsotropicBehaviour:contrainte_equivalente}, en utilisant
+les relations~\eqref{mfront:as:n:2} et \eqref{eq:dBdDeto}:
+\begin{align*}
+\deriv{\milieupas{\sigmaeq}}{\Delta\tepsilonto}
+&=2\,\mu\,\theta\,\milieupas{\tenseur{n}}
+-3\,\mu\,\theta\,\sum_j\,\deriv{\Delta p_j}{\Delta\tepsilonto}
+,\\
+\deriv{\milieupas{p_{i}}}{\Delta\tepsilonto}
+&=\theta\,\deriv{\Delta p_i}{\Delta\tepsilonto}
+,\end{align*}
+permet de modifier les équations~\eqref{eq:dfpidDetoa}:
+\begin{equation}
+\label{eq:dfpidDetob}
+\left(
+\deriv{f_{p_{i}}}{\Delta p_i}
++\theta\,\deriv{f_{p_{i}}}{\milieupas{p_{i}}}
+\right)
+\,\deriv{\Delta p_i}{\Delta\tepsilonto}
+-3\,\mu\,\theta\,\deriv{f_{p_{i}}}{\milieupas{\sigmaeq}}
+\,\sum_j\,\deriv{\Delta p_j}{\Delta\tepsilonto}
+=-\deriv{f_{p_{i}}}{\milieupas{\sigmaeq}}
+\,2\,\mu\,\theta\,\milieupas{\tenseur{n}}
+,\quad\forall\ p_i
+.\end{equation}
+C'est un jeu d'équations linéaires, dont les inconnues sont les
+tenseurs dérivées recherchés $\deriv{\Delta p_i}{\Delta\tepsilonto}$.
+
+\paragraph{Solutions scalaires}
+Le produit contracté des équations~\eqref{eq:dfpidDetob} par
+$\milieupas{\tenseur{n}}$ donne un système d'équations:
+\begin{subequations}
+\label{eq:dfpidDetoc}
+\begin{equation}
+\left(
+\deriv{f_{p_{i}}}{\Delta p_i}
++\theta\,\deriv{f_{p_{i}}}{\milieupas{p_{i}}}
+\right)\,d_i
+-3\,\mu\,\theta\,\deriv{f_{p_{i}}}{\milieupas{\sigmaeq}}
+\,\sum_j\,d_j
+=-\deriv{f_{p_{i}}}{\milieupas{\sigmaeq}}
+\,3\,\mu\,\theta
+,\quad\forall\ p_i
+.\end{equation}
+avec pour inconnues, les produits contractés:
+\begin{equation}
+d_i=\deriv{\Delta p_i}{\Delta\tepsilonto}\colon\milieupas{\tenseur{n}}
+.\end{equation}
+\end{subequations}
+
+Le produit contracté des équations~\eqref{eq:dfpidDetob} par tout
+tenseur $\tenseur{x}$ orthogonal à $\milieupas{\tenseur{n}}$ donne un
+système d'équations:
+\begin{equation*}
+\left(
+\deriv{f_{p_{i}}}{\Delta p_i}
++\theta\,\deriv{f_{p_{i}}}{\milieupas{p_{i}}}
+\right)\,\deriv{\Delta p_i}{\Delta\tepsilonto}\colon\tenseur{x}
+-3\,\mu\,\theta\,\deriv{f_{p_{i}}}{\milieupas{\sigmaeq}}
+\,\sum_j\,\deriv{\Delta p_j}{\Delta\tepsilonto}\colon\tenseur{x}
+=0
+,\quad\forall\ p_i
+,\end{equation*}
+de second membre nul. Ses inconnues sont donc nulles: 
+\begin{equation}
+\deriv{\Delta p_i}{\Delta\tepsilonto}\colon\tenseur{x}
+=0
+,\quad\forall\ p_i
+,\end{equation}
+ce qui montre que les tenseurs $\deriv{\Delta p_i}{\Delta\tepsilonto}$
+sont tous colinéaires au tenseur $\milieupas{\tenseur{n}}$. Ils
+s'écrivent donc:
+\begin{equation}
+\deriv{\Delta p_i}{\Delta\tepsilonto}
+=\Frac{\deriv{\Delta p_i}{\Delta\tepsilonto}:\milieupas{\tenseur{n}}}
+{\milieupas{\tenseur{n}}\colon\milieupas{\tenseur{n}}}
+\,\milieupas{\tenseur{n}}
+=\frac{2\,d_i}{3}\,\milieupas{\tenseur{n}}
+,\label{eq:dDpdDeto}
+\end{equation}
+où les composantes $d_i$ sont les solutions du
+système~\eqref{eq:dfpidDetoc}.
+
+\paragraph{Matrice tangente}
+Finalement, la matrice tangente peut être reconstituée à partir des
+expressions~\eqref{eq:tang1}, \eqref{eq:dndDeto} et
+\eqref{eq:dDpdDeto}, et en notant que:
+\begin{equation*}
+\tenseurq{D}\colon\tenseurq{K}=2\,\mu\,\tenseurq{K}
+,\quad\text\quad
+\tenseurq{D}\colon\milieupas{\tenseur{n}}=2\,\mu\,\milieupas{\tenseur{n}}
+.\end{equation*}
+Elle vaut ainsi:
+\begin{equation}
+\tenseurq{D}^{\mathit{tangent}}
+=\tenseurq{D}-2\,\mu\,\left(
+\frac{3\,\theta\,\sum_i\Delta p_i}
+{\sqrt{6\,\tenseur{B}\colon\tenseur{B}}}
+\,\tenseurq{K}
++\left(\frac{2\,\sum_id_i}{3}
+-\frac{2\,\theta\,\sum_i\Delta p_i}
+{\sqrt{6\,\tenseur{B}\colon\tenseur{B}}}
+\right)
+\,\milieupas{\tenseur{n}}\otimes\milieupas{\tenseur{n}}
+\right)
+,\label{eq:tang2}
+\end{equation}
+avec les composantes $d_i$ solutions du système~\eqref{eq:dfpidDetoc}.
+
+\subsubsection{Cas particuliers}
+
+Dans le cas où le système se limite à un mécanisme unique,
+l'expression de la matrice tangente se simplifie.
+
+\paragraph{Écoulement viscoplastique}
+Dans le cas d'un seul écoulement viscoplastique~\eqref{eq:fpivis},
+d'incrément $\Delta p$, le système~\eqref{eq:dfpidDetoc} se réduit à
+une équation d'inconnue $d$:
+\begin{equation*}
+\left(
+1
+-\Delta t\,\theta\,\deriv{f^{\textrm{an}}}{p}
++3\,\mu\,\Delta t\,\theta\,\deriv{f^{\textrm{an}}}{\sigmaeq}
+\right)\,d
+=\deriv{f^{\textrm{an}}}{\sigmaeq}
+\,3\,\mu\,\Delta t\,\theta
+.\end{equation*}
+L'expression~\eqref{eq:tang2} de la matrice tangente se simplifie
+alors en:
+\begin{equation*}
+\tenseurq{D}^{\mathit{tangent}}
+=\tenseurq{D}-2\,\mu\,\theta\,\left(
+\Frac{3\,\Delta p}
+{\sqrt{6\,\tenseur{B}\colon\tenseur{B}}}
+\,\tenseurq{K}
++\left(
+\Frac{2\,\mu\,\Delta t
+\,\deriv{f^{\textrm{an}}}{\sigmaeq}}
+{1+\theta\,\Delta t\,\left(
+3\,\mu\,\deriv{f^{\textrm{an}}}{\sigmaeq}
+-\deriv{f^{\textrm{an}}}{p}\right)
+}
+-\Frac{2\,\Delta p}
+{\sqrt{6\,\tenseur{B}\colon\tenseur{B}}}
+\right)
+\,\milieupas{\tenseur{n}}\otimes\milieupas{\tenseur{n}}
+\right)
+.\end{equation*}
+
+\paragraph{Écoulement plastique}
+Dans le cas d'un seul écoulement viscoplastique,
+d'incrément $\Delta p$, le système~\eqref{eq:dfpidDetoc} se réduit à
+une équation d'inconnue $d$. Si l'écoulement plastique est
+activé~\eqref{eq:fpiplas}, cette équation devient:
+\begin{equation*}
+\left(
+\theta\,\deriv{f^{\textrm{an}}}{p}
+-3\,\mu\,\theta\,\deriv{f^{\textrm{an}}}{\sigmaeq}
+\right)\,d
+=-\deriv{f^{\textrm{an}}}{\sigmaeq}
+\,3\,\mu\,\theta
+.\end{equation*}
+L'expression~\eqref{eq:tang2} de la matrice tangente se simplifie
+alors en:
+\begin{equation*}
+\tenseurq{D}^{\mathit{tangent}}
+=\tenseurq{D}-2\,\mu\,\theta\,\left(
+\Frac{3\,\Delta p}
+{\sqrt{6\,\tenseur{B}\colon\tenseur{B}}}
+\,\tenseurq{K}
++\left(
+\Frac{2\,\mu\,\deriv{f^{\textrm{an}}}{\sigmaeq}}
+{3\,\mu\,\theta\,\deriv{f^{\textrm{an}}}{\sigmaeq}
+-\theta\,\deriv{f^{\textrm{an}}}{p}
+}
+-\Frac{2\,\Delta p}
+{\sqrt{6\,\tenseur{B}\colon\tenseur{B}}}
+\right)
+\,\milieupas{\tenseur{n}}\otimes\milieupas{\tenseur{n}}
+\right)
+.\end{equation*}
+
+Lorsque l'écoulement plastique n'est pas activé, l'équation d'écoulement~\eqref{eq:fpiplas} et
+le système~\eqref{eq:dfpidDetoc} se réduisent respectivement à:
+\begin{equation*}
+\Delta p=0
+,\quad\text{et}\quad
+d=0
+,\end{equation*}
+et la matrice tangente au tenseur d'élasticité:
+\begin{equation*}
+\tenseurq{D}^{\mathit{tangent}}
+=\tenseurq{D}
+.\end{equation*}
+
+\subsubsection{OLD}
+
+\paragraph{Normale}
+Pour cela, introduisons le tenseur \(\tsigma^{e}\) définit par~:
+\[
+\tsigma^{e}=\tenseurq{D}\colon\left(\left.\tepsilonel\right|_{t+\theta\Delta t}+\theta\Delta\,\tepsilonto-\Frac{1}{3}\trace\paren{\left.\tepsilonel\right|_{t+\theta\Delta t}+\theta\Delta\,\tepsilonto}\right)
+\]
+qui est l'expression du tenseur d'élasticité en \(t+\theta\Delta t\)
+en l'absence d'incrément de déformation viscoplastique.
+
+Son déviateur \(\tenseur{s}^{e}\) peut être relié au tenseur
+\(\tenseur{B}\) introduit plus haut par la relation~:
+\[
+\tenseur{s}^{e}=2\mu\tenseur{B}
+\]
+Il est possible de relier la contrainte équivalente \(\sigmaeq^{e}\)
+et la normale \(\tenseur{n}^{e}\) associées à ce tenseur
+\(\tenseur{s}^{e}\) aux véritables contrainte équivalente
+\(\left.\sigmaeq\right|_{t+\theta\Delta t}\) et normale en
+\(t+\theta\Delta t\) à l'aide des relations obtenues au paragraphe
+précédent par~:
+\[
+\left.\sigmaeq\right|_{t+\theta\Delta t}=\sigmaeq^{e}-3\mu\theta\Delta\,p \quad\quad \tenseur{n}^{e}=\tenseur{n}
+\]
+
+\paragraph{Expression de $\deriv{\tenseur{n}}{\Delta\,\tepsilonto}$}
+
+Le calcul de la dérivée $\deriv{\tenseur{n}}{\Delta\,\tepsilonto}$ conduit à~:
+\[
+\deriv{\tenseur{n}}{\Delta\,\tepsilonto}=\Frac{2\mu\theta}{\sigmaeq^{e}}\paren{\tenseurq{M}-\tenseur{n}\otimes\tenseur{n}}
+\]
+où $\tenseurq{M}$ tenseur d'ordre quatre
+\(\Frac{3}{2}\paren{\tenseurq{I}-\Frac{1}{3}\tenseur{I}\otimes\tenseur{I}}\)\footnote{Ce
+  tenseur est l'équivalent du tenseur de \nom{Hill} en isotropie.}.
+
+\paragraph{Expression générale de $\deriv{\Delta\,p}{\Delta
+    \tepsilonto}$ pour un mécanisme unique}
+
+Pour un mécanisme unique, l'équation implicite montre qu'il existe une
+relation fonctionnelle \(\mathcal{F}\) scalaire telle que~:
+\[
+\mathcal{F}\paren{\milieupas{\sigmaeq},\Delta\,p}=0
+\]
+Nous avons changé de notations pour mettre en avant les variables
+\(\milieupas{\sigmaeq}\) et \(\Delta\,p\).
+
+Par dérivation, nous avons~:
+\[
+\deriv{\mathcal{F}}{\sigmaeq}\paren{\deriv{\sigmaeq^{e}}{\Delta\,\tepsilonto}-3\,\mu\,\theta\,\deriv{\Delta\,p}{\Delta\,\tepsilonto}}+\deriv{\mathcal{F}}{\Delta\,p}\,\deriv{\Delta\,p}{\Delta\,\tepsilonto}=0
+\]
+nous avons donc~:
+\[
+\deriv{\Delta\,p}{\Delta\,\tepsilonto}=\Frac{\deriv{\mathcal{F}}{\sigmaeq}}{3\,\mu\,\theta\,\deriv{\mathcal{F}}{\sigmaeq}-\deriv{\mathcal{F}}{\Delta\,p}}\deriv{\sigmaeq^{e}}{\Delta\,\tepsilonto}
+\]
+
+La dérivée \(\deriv{\sigmaeq^{e}}{\Delta\,\tepsilonto}\) s'exprime ainsi~:
+\[
+\deriv{\sigmaeq^{e}}{\Delta\,\tepsilonto}=2\,\mu\,\theta\,\tenseur{n}
+\]
+
+Finalement~:
+\[
+\deriv{\Delta\,p}{\Delta\,\tepsilonto}=\Frac{2\,\mu\,\theta\,\deriv{\mathcal{F}}{\sigmaeq}}{3\,\mu\,\theta\,\deriv{\mathcal{F}}{\sigmaeq}-\deriv{\mathcal{F}}{\Delta\,p}}\tenseur{n}
+\]
+
+\paragraph{Expression générale de la matrice tangente cohérente pour
+  un mécanisme unique}
+
+Pour obtenir une expression utilisable de la matrice tangente
+cohérente, il est intéressant de tenir compte de l'isotropie du
+tenseur d'élasticité qui permet d'écrire~:
+\[
+\begin{aligned}
+  \tenseurq{D}\colon\tenseurq{M}&=2\,\mu\,\tenseurq{M}\\
+  \tenseurq{D}\colon\tenseur{n}\otimes\tenseur{n}&=2\,\mu\,\tenseur{n}\otimes\tenseur{n}\\
+\end{aligned}
+\]
+
+La matrice tangente cohérente est alors donnée par~:
+\[
+\begin{aligned}
+  \deriv{\Delta \tsigma}{\Delta \tepsilonto}&=
+  \tenseurq{D}-\tenseurq{D}\colon\paren{\Frac{2\,\mu\,\theta\,\deriv{\mathcal{F}}{\sigmaeq}}{3\,\mu\,\theta\,\deriv{\mathcal{F}}{\sigmaeq}-\deriv{\mathcal{F}}{\Delta\,p}}\tenseur{n}\otimes\tenseur{n}+\Delta\,p\Frac{2\mu\theta}{\sigmaeq^{e}}\paren{\tenseurq{M}-\tenseur{n}\otimes\tenseur{n}}}\\
+  &=\tenseurq{D}-4\,\mu^{2}\,\theta\,\left[\Frac{\Delta\,p}{\sigmaeq^{e}}\tenseurq{M}+\paren{\Frac{\deriv{\mathcal{F}}{\sigmaeq}}{3\,\mu\,\theta\,\deriv{\mathcal{F}}{\sigmaeq}-\deriv{\mathcal{F}}{\Delta\,p}}-\Frac{\Delta\,p}{\sigmaeq^{e}}}\tenseur{n}\otimes\tenseur{n}\right]
+\end{aligned}
+\]
+
+\paragraph{Expression de la matrice tangente cohérente pour une loi viscoplastique}
+
+La relation fonctionnelle \(\mathcal{F}\) peut être réécrite ainsi~:
+\[
+\mathcal{F}\paren{\milieupas{\sigmaeq},\Delta\,p}=\Delta\,p-f^{\textrm{an}}_{i}\paren{\milieupas{\sigmaeq}}\,\Delta t =0
+\]
+Dans ce cas, nous avons~:
+\[
+\begin{aligned}
+  \deriv{\mathcal{F}}{\sigmaeq}&=-\deriv{f^{\textrm{an}}_{i}}{\sigmaeq}\,\Delta\,t\\
+  \deriv{\mathcal{F}}{\Delta p}&=1
+\end{aligned}
+\]
+ce qui conduit à l'expression suivante de la matrice tangente cohérente~:
+\[
+\deriv{\Delta \tsigma}{\Delta \tepsilonto}=\tenseurq{D}-4\,\mu^{2}\,\theta\,\left[\Frac{\Delta\,p}{\sigmaeq^{e}}\tenseurq{M}+\paren{\Frac{\Delta\,t\,\deriv{f^{\textrm{an}}_{i}}{\sigmaeq}}{1+3\,\mu\,\theta\,\Delta\,t\,\deriv{f^{\textrm{an}}_{i}}{\sigmaeq}}-\Frac{\Delta\,p}{\sigmaeq^{e}}}\tenseur{n}\otimes\tenseur{n}\right]
+\]
+
+\paragraph{Expression de la matrice tangente cohérente pour une loi viscoplastique avec écrouissage}
+
+La relation fonctionnelle \(\mathcal{F}\) peut être réécrite ainsi~:
+\[
+\mathcal{F}\paren{\milieupas{\sigmaeq},\Delta\,p}=\Delta\,p-f^{\textrm{an}}_{i}\paren{\milieupas{\sigmaeq},\milieupas{p}}\,\Delta t =0
+\]
+Dans ce cas, nous avons~:
+\[
+\begin{aligned}
+  \deriv{\mathcal{F}}{\sigmaeq}&=-\deriv{f^{\textrm{an}}_{i}}{\sigmaeq}\,\Delta\,t\\
+  \deriv{\mathcal{F}}{\Delta p}&=1-\theta\deriv{f^{\textrm{an}}_{i}}{p}\,\Delta\,t
+\end{aligned}
+\]
+ce qui conduit à l'expression suivante de la matrice tangente cohérente~:
+\[
+\deriv{\Delta \tsigma}{\Delta \tepsilonto}=\tenseurq{D}-4\,\mu^{2}\,\theta\,\left[\Frac{\Delta\,p}{\sigmaeq^{e}}\tenseurq{M}+\paren{\Frac{\Delta\,t\,\deriv{f^{\textrm{an}}_{i}}{\sigmaeq}}{1-\theta\,\Delta\,t\paren{\deriv{f^{\textrm{an}}_{i}}{p}+3\,\mu\,\deriv{f^{\textrm{an}}_{i}}{\sigmaeq}}}-\Frac{\Delta\,p}{\sigmaeq^{e}}}\tenseur{n}\otimes\tenseur{n}\right]
+\]
+
+\paragraph{Expression de la matrice tangente cohérente pour une loi plastique}
+
+En cas de charge plastique, la fonctionnelle \(\mathcal{F}\) est
+donnée par la surface de charge~:
+\[
+\mathcal{F}\paren{\milieupas{\sigmaeq},\Delta\,p}=f^{\textrm{an}}_{i}\paren{\milieupas{\sigmaeq},\milieupas{p}}=0
+\]
+Dans ce cas, nous avons~:
+\[
+\begin{aligned}
+  \deriv{\mathcal{F}}{\sigmaeq}&=\deriv{f^{\textrm{an}}_{i}}{\sigmaeq}\\
+  \deriv{\mathcal{F}}{\Delta p}&=\theta\,\deriv{f^{\textrm{an}}_{i}}{p}
+\end{aligned}
+\]
+ce qui conduit à l'expression suivante de la matrice tangente cohérente~:
+\[
+\deriv{\Delta \tsigma}{\Delta \tepsilonto}=\tenseurq{D}-4\,\mu^{2}\,\theta\,\left[\Frac{\Delta\,p}{\sigmaeq^{e}}\tenseurq{M}+\paren{\Frac{\,\deriv{f^{\textrm{an}}_{i}}{\sigmaeq}}{3\,\mu\,\theta\,\deriv{f^{\textrm{an}}_{i}}{\sigmaeq}-\theta\,\deriv{f^{\textrm{an}}_{i}}{p}}-\Frac{\Delta\,p}{\sigmaeq^{e}}}\tenseur{n}\otimes\tenseur{n}\right]
+\]
+
+En l'absence de charge plastique, la matrice tangente cohérente est
+égale à la matrice élastique.
+
+\paragraph{Expression générale de $\deriv{\Delta\,p_{i}}{\Delta
+    \tepsilonto}$}
+
+Dans le cas où plusieurs mécanismes sont présents, nous disposons de
+\(N\) relations fonctionnelles \(\mathcal{F}_{i}\), ce qui nous permet
+d'écrire~:
+\[
+\left[3\,\mu\,\theta\,\deriv{\mathcal{F}_{i}}{\sigmaeq}-\deriv{\mathcal{F}_{i}}{\Delta\,p_{i}}\right]\deriv{\Delta\,p_{i}}{\Delta\,\tepsilonto}+3\,\mu\,\theta\,\sum_{j=0,\\j\neq i}^{N}\deriv{\mathcal{F}_{i}}{\sigmaeq}\deriv{\Delta\,p_{j}}{\Delta\,\tepsilonto}=2\,\mu\,\theta\,\deriv{\mathcal{F}_{i}}{\sigmaeq}\tenseur{n}
+\]
+
+Soit \(\tenseur{d}\) un tenseur quelconque, nous avons~:
+\[
+\left[3\,\mu\,\theta\,\deriv{\mathcal{F}_{i}}{\sigmaeq}-\deriv{\mathcal{F}_{i}}{\Delta\,p_{i}}\right]\,\tenseur{d}\,\colon\,\deriv{\Delta\,p_{i}}{\Delta\,\tepsilonto}+3\,\mu\,\theta\,\sum_{j=0,\\j\neq i}^{N}\deriv{\mathcal{F}_{i}}{\sigmaeq}\,\tenseur{d}\,\colon\,\deriv{\Delta\,p_{j}}{\Delta\,\tepsilonto}=2\,\mu\,\theta\,\deriv{\mathcal{F}_{i}}{\sigmaeq}\,\tenseur{d}\,\colon\,\tenseur{n}
+\]
+
+Notons \(d^{i}\) les produits
+\(\tenseur{d}\,\colon\,\deriv{\Delta\,p_{i}}{\Delta\,\tepsilonto}\),
+ces coefficients vérifient un système linéaire donnés par~:
+\[
+\left[3\,\mu\,\theta\,\deriv{\mathcal{F}_{i}}{\sigmaeq}-\deriv{\mathcal{F}_{i}}{\Delta\,p_{i}}\right]\,d^{i}+3\,\mu\,\theta\,\sum_{j=0,\\j\neq i}^{N}\deriv{\mathcal{F}_{i}}{\sigmaeq}\,d^{j}=2\,\mu\,\theta\,\deriv{\mathcal{F}_{i}}{\sigmaeq}\,\tenseur{d}\,\colon\,\tenseur{n}
+\]
+
+Nous supposons ce système inversible. Si la direction \(\tenseur{d}\)
+est prise orthogonale à la direction d'écoulement \(\tenseur{n}\), les
+différents coefficients \(d^{i}\) sont nuls~: les différents
+tenseurs \(\deriv{\Delta\,p_{i}}{\Delta\,\tepsilonto}\) sont
+colinéaires à la direction d'écoulement.
+
+Les coefficients \(n^{i}\), égaux à
+\(\tenseur{n}\,\colon\,\deriv{\Delta\,p_{i}}{\Delta\,\tepsilonto}\),
+sont solution du système linéaire~:
+\[
+\left[3\,\mu\,\theta\,\deriv{\mathcal{F}_{i}}{\sigmaeq}-\deriv{\mathcal{F}_{i}}{\Delta\,p_{i}}\right]\,d^{i}+3\,\mu\,\theta\,\sum_{j=0,\\j\neq i}^{N}\deriv{\mathcal{F}_{i}}{\sigmaeq}\,d^{j}=3\,\mu\,\theta\,\deriv{\mathcal{F}_{i}}{\sigmaeq}
+\]
+
+Une fois ce système résolu, nous avons~:
+\[
+\deriv{\Delta\,p_{i}}{\Delta\,\tepsilonto}=\Frac{2}{3}\,d^{i}\,\tenseur{n}
+\]
+
+\paragraph{Expression générale de la matrice tangente} La matrice
+tangente cohérente est égale à~:
+\[
+\deriv{\Delta \tsigma}{\Delta \tepsilonto}=\tenseurq{D}-\left(\Frac{4\,\mu}{3}\sum_{i}\,d_{i}-\Frac{4\,\mu^{2}\,\theta}{\sigmaeq^{e}}\,\Delta\,p\right)\,\tenseur{n}\otimes\tenseur{n}-\Frac{4\,\mu^{2}\,\theta}{\sigmaeq^{e}}\,\Delta\,p\,\tenseurq{M}
+\]
 
 % \subsubsection{Traitement des contraintes planes}
 
