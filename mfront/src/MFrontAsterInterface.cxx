@@ -636,11 +636,11 @@ namespace mfront{
     out << "namespace aster{\n\n";
 
     if(behaviourCharacteristic.useQt()){
-      out << "template<unsigned short N,typename Type,bool use_qt>\n";
+      out << "template<tfel::material::ModellingHypothesis::Hypothesis H,typename Type,bool use_qt>\n";
     } else {
-      out << "template<unsigned short N,typename Type>\n";
+      out << "template<tfel::material::ModellingHypothesis::Hypothesis H,typename Type>\n";
     } 
-    out << "struct AsterTraits<tfel::material::" << className << "<N,Type,";
+    out << "struct AsterTraits<tfel::material::" << className << "<H,Type,";
     if(behaviourCharacteristic.useQt()){
       out << "use_qt";
     } else {
@@ -664,6 +664,7 @@ namespace mfront{
 	out << "static const unsigned short propertiesOffset = 0u;\n";
       }
     } else if (behaviourCharacteristic.getBehaviourType()==mfront::ORTHOTROPIC){
+      out << "static const unsigned short N = tfel::material::ModellingHypothesisToSpaceDimension<H>::value;\n";
       out << "static const unsigned short propertiesOffset = AsterOrthotropicOffset<N>::value;\n";
     } else {
       string msg("MFrontAsterInterface::endTreatement : ");

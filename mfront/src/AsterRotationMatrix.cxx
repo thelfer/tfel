@@ -143,7 +143,7 @@ namespace aster
     AsterReal N[4][4];
     for(unsigned short i=0;i!=4;++i){
       for(unsigned short j=0;j!=4;++j){
-	N[i][i] = MN[i][j];
+	N[i][j] = MN[i][j];
       }
     }
     N[3][0] *= AsterReal(2.);
@@ -320,7 +320,7 @@ namespace aster
     AsterReal N[6][6];
     for(unsigned short i=0;i!=6;++i){
       for(unsigned short j=0;j!=6;++j){
-	N[i][i] = MN[i][j];
+	N[i][j] = MN[i][j];
       }
     }
     N[3][0] *= AsterReal(2.);

@@ -2597,7 +2597,7 @@ namespace mfront{
   {
     this->behaviourFile << "bool computeConsistantTangentOperator(void){\n";
     this->behaviourFile << "using namespace std;\n";
-    this->behaviourFile << "string msg(\"" << this->className<< "::writeBehaviourComputeTangentOperator : \");\n";
+    this->behaviourFile << "string msg(\"" << this->className<< "::computeConsistantTangentOperator : \");\n";
     this->behaviourFile << "msg +=\"unimplemented feature\";\n";
     this->behaviourFile << "throw(runtime_error(msg));\n";
     this->behaviourFile << "return false;\n";

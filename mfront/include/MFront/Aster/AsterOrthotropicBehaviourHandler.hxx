@@ -31,7 +31,7 @@ namespace aster
     TFEL_ASTER_INLINE2 static 
       void exe(const AsterReal *const DTIME,
 	       const AsterReal *const,
-	       const AsterReal *const DDSOE,
+	       AsterReal *const DDSOE,
 	       const AsterReal *const STRAN ,
 	       const AsterReal *const DSTRAN,
 	       const AsterReal *const TEMP  ,
@@ -60,11 +60,10 @@ namespace aster
 	typename AsterBehaviourHandler::Error>::type Handler;
       AsterBehaviourHandler::checkNPROPS(*NPROPS);
       AsterBehaviourHandler::checkNSTATV(*NSTATV);
-      Handler handler(DTIME,DDSOE,STRAN,
+      Handler handler(DTIME,STRAN,
 		      DSTRAN,TEMP,DTEMP,PROPS,
-		      PREDEF,DPRED,STATEV,
-		      STRESS);
-      handler.exe(STRESS,STATEV);
+		      PREDEF,DPRED,STATEV,STRESS);
+      handler.exe(DDSOE,STRESS,STATEV);
   } // end of AsterOrthotropicBehaviourHandler1D::exe
 }; // end of struct AsterOrthotropicBehaviourHandler1D
 
@@ -112,10 +111,9 @@ struct TFEL_VISIBILITY_LOCAL AsterOrthotropicBehaviourHandler<2u,Behaviour>
     AsterBehaviourHandler::checkNPROPS(*NPROPS);
     AsterBehaviourHandler::checkNSTATV(*NSTATV);
     const bool bDDSOE = *DDSOE>0.5; 
-    Handler handler(DTIME,DDSOE,
-		    e,de,TEMP,DTEMP,PROPS,
+    Handler handler(DTIME,e,de,TEMP,DTEMP,PROPS,
 		    PREDEF,DPRED,STATEV,s);
-    handler.exe(s,STATEV);
+    handler.exe(DDSOE,s,STATEV);
     m.rotateStressesBackward(s,STRESS);
     if(bDDSOE){
       m.rotateStiffnessMatrixBackward(DDSOE);
@@ -168,10 +166,9 @@ struct TFEL_VISIBILITY_LOCAL AsterOrthotropicBehaviourHandler<2u,Behaviour>
       AsterBehaviourHandler::checkNPROPS(*NPROPS);
       AsterBehaviourHandler::checkNSTATV(*NSTATV);
       const bool bDDSOE = *DDSOE>0.5; 
-      Handler handler(DTIME,DDSOE,e,
-		      de,TEMP,DTEMP,PROPS,
+      Handler handler(DTIME,e,de,TEMP,DTEMP,PROPS,
 		      PREDEF,DPRED,STATEV,s);
-      handler.exe(s,STATEV);
+      handler.exe(DDSOE,s,STATEV);
       m.rotateStressesBackward(s,STRESS);
       if(bDDSOE){
 	m.rotateStiffnessMatrixBackward(DDSOE);
