@@ -114,7 +114,7 @@ namespace aster
 	  {
 	    SInitializer::exe(this->behaviour,PROPS);
 	    AInitializer::exe(this->behaviour,PROPS);
-#warning "out of bounds policy"
+	    // 22/03/2012 : la gestion des bornes sera implantée plus tard
 	    // const AsterOutOfBoundsPolicy& up = AsterOutOfBoundsPolicy::getAsterOutOfBoundsPolicy();
 	    // this->behaviour.setOutOfBoundsPolicy(up.getOutOfBoundsPolicy());
 	  } // end of Integrator::Integrator
@@ -140,13 +140,11 @@ namespace aster
 	}
 	this->behaviour.checkBounds();
 	if(this->behaviour.integrate(*DDSOE>0.5)==BV::FAILURE){
-#warning "treat unreliable results"
+	  // gestion local de résultats imprécis
 	  throwBehaviourIntegrationFailedException(Name<BV>::getName());
 	}
 	this->behaviour.checkBounds();
 	this->behaviour.AsterExportStateData(STRESS,STATEV);
-#warning "voir avec Jean-Michel : rotation matrice tangente cohérente (repère propre,...)"
-#warning "voir avec Jean-Michel : grande déf et matrice tangente cohérente"
 	if(*DDSOE>0.5){
 	  ConsistantTangentOperatorHandler::exe(this->behaviour,DDSOE);
 	}
