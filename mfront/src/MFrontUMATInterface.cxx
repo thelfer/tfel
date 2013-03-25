@@ -646,6 +646,17 @@ namespace mfront{
     systemCall::mkdir("include/MFront");
     systemCall::mkdir("include/MFront/UMAT");
 
+    if(behaviourCharacteristic.getBehaviourType()!=
+       behaviourCharacteristic.getElasticBehaviourType()){
+      string msg("MFrontUMATInterface::endTreatement : ");
+      msg += "the type of the behaviour (isotropic or orthotropic) does not ";
+      msg += "match the the type of its elastic behaviour.\n";
+      msg += "This is not allowed here :\n";
+      msg += "- an isotropic behaviour must have an isotropic elastic behaviour\n";
+      msg += "- an orthotropic behaviour must have an orthotropic elastic behaviour";
+      throw(runtime_error(msg));
+    }
+
     if(!library.empty()){
       header += "_";
       header += makeUpperCase(library);
@@ -692,7 +703,7 @@ namespace mfront{
 	 */
 	if(coefsHolder.size()<4){
 	  string msg("MFrontUMATInterface::endTreatement : the umat interface requires the ");
-	  msg += "following three coefficients to be defined (in the right order) ";
+	  msg += "following four coefficients to be defined (in the right order) ";
 	  msg += "(currently only ";
 	  msg += toString(static_cast<unsigned short>(coefsHolder.size()));
 	  msg += " defined):\n";

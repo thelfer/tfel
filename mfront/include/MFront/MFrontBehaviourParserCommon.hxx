@@ -115,6 +115,9 @@ namespace mfront{
       treatOrthotropicBehaviour(void);
 
     virtual void
+      treatIsotropicElasticBehaviour(void);
+
+    virtual void
       treatIsotropicBehaviour(void);
 
     virtual void

@@ -67,6 +67,7 @@ namespace mfront{
     this->registerNewCallBack("@RequireStiffnessTensor",&Child::treatRequireStiffnessTensor);
     this->registerNewCallBack("@RequireThermalExpansionTensor",&Child::treatRequireThermalExpansionTensor);
     this->registerNewCallBack("@OrthotropicBehaviour",&Child::treatOrthotropicBehaviour);
+    this->registerNewCallBack("@IsotropicElasticBehaviour",&Child::treatIsotropicElasticBehaviour);
     this->registerNewCallBack("@IsotropicBehaviour",&Child::treatIsotropicBehaviour);
     this->registerNewCallBack("@Private",&Child::treatPrivate);
     this->registerNewCallBack("@Sources",&Child::treatSources);

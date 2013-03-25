@@ -44,6 +44,12 @@ namespace mfront{
     void
     setBehaviourType(const BehaviourType);
 
+    BehaviourType
+    getElasticBehaviourType() const;
+
+    void
+    setElasticBehaviourType(const BehaviourType);
+
     void setUseQt(const bool);
 
     bool requiresStiffnessTensor(void) const;
@@ -130,7 +136,10 @@ namespace mfront{
      * type of behaviour (isotropic or orthotropic)
      */
     BehaviourType type;
-    
+    /*!
+     * type of elastic behaviour (isotropic or orthotropic)
+     */
+    BehaviourType etype;
   }; // end of struct BehaviourCharacteristic
 
 } // end of namespace mfront

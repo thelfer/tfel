@@ -424,8 +424,12 @@ namespace mfront{
   MFrontBehaviourParserCommon::treatIsotropicBehaviour(void)
   {
     using namespace std;
+    if(this->behaviourCharacteristic.getBehaviourType()!=mfront::ISOTROPIC){
+      string msg("MFrontBehaviourParserCommon::treatIsotropicBehaviour  : ");
+      msg += "this behaviour has been declared orthotropic";
+      throw(runtime_error(msg));
+    }
     this->readSpecifiedToken("MFrontBehaviourParserCommon::treatIsotropicBehaviour",";");
-    this->behaviourCharacteristic.setBehaviourType(mfront::ISOTROPIC);
   } // end of MFrontBehaviourParserCommon::treatIsotropicBehaviour
 
   void
@@ -434,7 +438,27 @@ namespace mfront{
     using namespace std;
     this->readSpecifiedToken("MFrontBehaviourParserCommon::treatOrthotropicBehaviour",";");
     this->behaviourCharacteristic.setBehaviourType(mfront::ORTHOTROPIC);
+    // by defaut the elastic behaviour is also orthotropic
+    this->behaviourCharacteristic.setElasticBehaviourType(mfront::ORTHOTROPIC);
   } // end of MFrontBehaviourParserCommon::treatOrthotropicBehaviour
+
+  void
+  MFrontBehaviourParserCommon::treatIsotropicElasticBehaviour(void)
+  {
+    using namespace std;
+    this->readSpecifiedToken("MFrontBehaviourParserCommon::treatIsotropicElasticBehaviour",";");
+    if(this->behaviourCharacteristic.getBehaviourType()!=mfront::ORTHOTROPIC){
+      string msg("MFrontBehaviourParserCommon::treatIsotropicElasticBehaviour  : ");
+      msg += "this behaviour has not been declared orthotropic";
+      throw(runtime_error(msg));
+    }
+    if(this->behaviourCharacteristic.getElasticBehaviourType()!=mfront::ORTHOTROPIC){
+      string msg("MFrontBehaviourParserCommon::treatIsotropicElasticBehaviour  : ");
+      msg += "the elastic behaviour has already been declared isotropic";
+      throw(runtime_error(msg));
+    }
+    this->behaviourCharacteristic.setElasticBehaviourType(mfront::ISOTROPIC);
+  } // end of MFrontBehaviourParserCommon::treatIsotropicElasticBehaviour
 
   void
   MFrontBehaviourParserCommon::treatRequireStiffnessTensor(void)
@@ -1049,6 +1073,8 @@ namespace mfront{
     this->behaviourCharacteristic.setUseQt(false);
     // By default, a behaviour is isotropic 
     this->behaviourCharacteristic.setBehaviourType(mfront::ISOTROPIC);
+    // By default, a behaviour is isotropic 
+    this->behaviourCharacteristic.setElasticBehaviourType(mfront::ISOTROPIC);
     // By default, a behaviour can be used in a purely implicit resolution
     this->behaviourCharacteristic.setUsableInPurelyImplicitResolution(true);
   } // end of MFrontBehaviourParserCommon::MFrontParserCommon

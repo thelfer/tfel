@@ -31,8 +31,8 @@ namespace aster
       typedef typename BV::BehaviourData  BData;
       TFEL_ASTER_INLINE static void
 	exe(BData& data,const AsterReal * const props){
-	AsterComputeStiffnessTensor<N,AsterTraits<BV>::type>::exe(props,
-								  data.getStiffnessTensor());
+	AsterComputeStiffnessTensor<N,AsterTraits<BV>::etype>::exe(props,
+								   data.getStiffnessTensor());
       } // end of exe
     }; // end of struct StiffnessTensorInitializer
 
@@ -42,8 +42,8 @@ namespace aster
       typedef typename BV::BehaviourData  BData;
       TFEL_ASTER_INLINE static void
 	exe(BData& data,const AsterReal * const props){
-	AsterComputeThermalExpansionTensor<N,AsterTraits<BV>::type>::exe(props,
-									 data.getThermalExpansionTensor());
+	AsterComputeThermalExpansionTensor<N,AsterTraits<BV>::etype>::exe(props,
+									  data.getThermalExpansionTensor());
       } // end of exe
     }; // end of struct ThermalExpansionTensorInitializer
 

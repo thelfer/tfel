@@ -62,6 +62,7 @@ namespace mfront{
     this->disableCallBack("@StateVariable");
     this->disableCallBack("@Integrator");
     this->disableCallBack("@OrthotropicBehaviour");
+    this->disableCallBack("@IsotropicElasticBehaviour");
     this->disableCallBack("@IsotropicBehaviour");
   } // end of MFrontIsotropicBehaviourParserBase::MFrontIsotropicBehaviourParserBase
 

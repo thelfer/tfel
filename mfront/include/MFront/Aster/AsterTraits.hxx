@@ -21,7 +21,10 @@ namespace aster{
     static const bool requiresStiffnessTensor        = false;
     static const bool requiresThermalExpansionTensor = false;
     static const unsigned short propertiesOffset     = 0u;
-    static const AsterBehaviourType type = aster::ISOTROPIC;
+    // Type of the behaviour of the material (isotropic or orthotropic)
+    static const AsterBehaviourType type   = aster::ISOTROPIC;
+    // Type of the elastic behaviour of the material (isotropic or orthotropic)
+    static const AsterBehaviourType  etype = aster::ISOTROPIC;
   }; // end of class ASTERTraits
 
 } // end of namespace aster  

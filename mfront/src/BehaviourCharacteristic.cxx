@@ -23,7 +23,8 @@ namespace mfront{
       sTensor(src.sTensor),
       aTensor(src.aTensor),
       use_qt(src.use_qt),
-      type(src.type)
+      type(src.type),
+      etype(src.etype)
   {} // end of BehaviourCharacteristic::BehaviourCharacteristic()
 
   BehaviourCharacteristic&
@@ -33,6 +34,7 @@ namespace mfront{
       this->pupirv  = src.pupirv;
       this->use_qt  = src.use_qt;
       this->type    = src.type;
+      this->etype    = src.etype;
       this->sTensor = src.sTensor;
       this->aTensor = src.aTensor;
       this->usableInPurelyImplicitResolution = src.usableInPurelyImplicitResolution;
@@ -51,6 +53,18 @@ namespace mfront{
   {
     return this->use_qt;
   } // end of BehaviourCharacteristic::useQt
+
+  BehaviourType
+  BehaviourCharacteristic::getElasticBehaviourType() const
+  {
+    return this->etype;
+  } // end of BehaviourCharacteristic::getElasticBehaviourType
+
+  void
+  BehaviourCharacteristic::setElasticBehaviourType(const BehaviourType t)
+  {
+    this->etype = t;
+  } // end of BehaviourCharacteristic::setElasticBehaviourType
 
   BehaviourType
   BehaviourCharacteristic::getBehaviourType() const
