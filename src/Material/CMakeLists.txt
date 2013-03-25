@@ -12,3 +12,11 @@ target_link_libraries(TFELMaterial
                       TFELMath
                       TFELUtilities
                       TFELException)
+
+tfel_library(TFELMaterialSingleCristals
+  MetallicCFCSlidingSystems.cxx
+  MetallicCFCGenericSlidingSystemsInteractionMatrix.cxx)
+target_link_libraries(TFELMaterial
+                      TFELMath
+                      TFELUtilities
+                      TFELException)

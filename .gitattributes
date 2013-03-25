@@ -219,6 +219,9 @@ include/TFEL/Material/MechanicalBehaviour.hxx -text
 include/TFEL/Material/MechanicalBehaviourData.hxx -text
 include/TFEL/Material/MechanicalBehaviourTraits.hxx -text
 include/TFEL/Material/MechanicalIntegrationData.hxx -text
+include/TFEL/Material/MetallicCFCGenericSlidingSystemsInteractionMatrix.hxx -text
+include/TFEL/Material/MetallicCFCSlidingSystems.hxx -text
+include/TFEL/Material/MetallicCFCSlidingSystems.ixx -text
 include/TFEL/Material/ModellingHypothesis.hxx -text
 include/TFEL/Material/OutOfBoundsPolicy.hxx -text
 include/TFEL/Material/RambergOsgood.hxx -text
@@ -919,6 +922,8 @@ src/Material/CMakeLists.txt -text
 src/Material/DDIF2Base.cxx -text
 src/Material/Makefile.am -text
 src/Material/MaterialException.cxx -text
+src/Material/MetallicCFCGenericSlidingSystemsInteractionMatrix.cxx -text
+src/Material/MetallicCFCSlidingSystems.cxx -text
 src/Math/ArrayTag.cxx -text
 src/Math/BasicOperations.cxx -text
 src/Math/BinaryFunction.cxx -text
