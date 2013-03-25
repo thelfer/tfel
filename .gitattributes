@@ -54,6 +54,8 @@ cmake/modules/gnu-fortran-compiler.cmake -text
 cmake/modules/intel.cmake -text
 cmake/modules/pathscale.cmake -text
 cmake/modules/tfel.cmake -text
+cmake/pyc-compile.py -text
+cmake/pyo-compile.py -text
 /configure.ac -text
 /debug.sh.in -text
 docs/CMakeLists.txt -text
