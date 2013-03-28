@@ -44,7 +44,7 @@ namespace tfel
       this->m(6,2)=this->m(2,6)=h5;
       this->m(6,3)=this->m(3,6)=h6;
       this->m(6,4)=this->m(4,6)=h3;
-      this->m(6,6)=this->m(6,6)=h5;
+      this->m(6,5)=this->m(5,6)=h5;
       this->m(7,0)=this->m(0,7)=h6;
       this->m(7,1)=this->m(1,7)=h5;
       this->m(7,2)=this->m(2,7)=h3;

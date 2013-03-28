@@ -1060,7 +1060,8 @@ namespace mfront{
 	  out << ",";
 	}
       }
-      if(auxiliaryStateVarsHolder.size()!=0){
+      if((!stateVarsHolder.empty())&&
+	 (auxiliaryStateVarsHolder.size()!=0)){
 	out << ",";
       }
       for(p=auxiliaryStateVarsHolder.begin();p!=auxiliaryStateVarsHolder.end();){
