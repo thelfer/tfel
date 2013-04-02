@@ -27,3 +27,5 @@ tfel_python_module(system system.cxx
   ExternalLibraryManager.cxx)
 target_link_libraries(py_tfel_system
   TFELSystem)
+
+tfel_python_script(tfel __init__.py)
