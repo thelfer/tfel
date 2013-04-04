@@ -2280,10 +2280,27 @@ conventions suivantes s'appliquent~:
 
 \paragraph{Calcul de la matrice tangente cohérente}
 
+La loi de comportement peut éventuellement fournir une matrice de
+raideur. Pour que les interfaces puissent gérer cette possibilité,
+l'analyseur {\tt Default\-Parser} fournit deux mots clés~:
+\begin{itemize}
+\item {\tt @Provides\-Tangent\-Operator} indique que la loi fournit
+  une matrice tangente non symétrique~;
+\item {\tt @Provides\-Symmetric\-Tangent\-Operator} indique que la loi
+  fournit une matrice tangente symétrique~;
+\end{itemize}
+
 Si l'appelant demande le calcul de la matrice tangente cohérente, la
 variable booléenne \varcpp{computeTangentOperator\textunderscore{}} est
-vraie. L'utilisateur doit tester cette valeur et effectuer le calcul le
-cas échéant.
+vraie.
+
+%  L'utilisateur doit tester cette valeur et effectuer le calcul le
+% cas échéant. Le type de matrice attendue est soit~:
+% \begin{itemize}
+% \item {\tt ELASTIC}, pour la matrice d'élasticité~;
+% \item {\tt SECANT},  pour la matrice sécante~;
+% \item {\tt CONSISTANT},  pour la matrice tangente cohérente~;
+% \end{itemize}
 
 \clearpage
 \newpage

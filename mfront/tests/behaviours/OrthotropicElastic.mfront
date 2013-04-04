@@ -5,6 +5,7 @@
 
 @OrthotropicBehaviour;
 @RequireStiffnessTensor;
+@ProvidesSymmetricTangentOperator;
 
 @Integrator{
   sig = D*(eto+deto);

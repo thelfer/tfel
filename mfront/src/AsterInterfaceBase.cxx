@@ -15,8 +15,8 @@ namespace aster{
 
   void
   AsterInterfaceBase::throwUnMatchedNumberOfMaterialProperties(const std::string& b,
-							      const unsigned short n1,
-							      const AsterInt n2)
+							       const unsigned short n1,
+							       const AsterInt n2)
   {
     using namespace std;
     ostringstream msg;

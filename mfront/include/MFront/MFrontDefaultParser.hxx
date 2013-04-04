@@ -34,6 +34,12 @@ namespace mfront{
     void setWarningMode(void);
 
     void
+    treatProvidesTangentOperator(void);
+
+    void
+    treatProvidesSymmetricTangentOperator(void);
+
+    void
     setInterfaces(const std::set<std::string>&);
 
     void treatFile(const std::string&);

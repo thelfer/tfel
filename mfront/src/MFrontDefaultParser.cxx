@@ -20,7 +20,39 @@ namespace mfront{
   MFrontDefaultParser::MFrontDefaultParser()
     : MFrontVirtualParser(),
       MFrontBehaviourParserBase<MFrontDefaultParser>()
-  {}
+  {
+    this->registerNewCallBack("@ProvidesTangentOperator",
+			      &MFrontDefaultParser::treatProvidesTangentOperator);
+    this->registerNewCallBack("@ProvidesSymmetricTangentOperator",
+			      &MFrontDefaultParser::treatProvidesSymmetricTangentOperator);
+  }
+
+  void
+  MFrontDefaultParser::treatProvidesTangentOperator()
+  {
+    using namespace std;
+    if(this->hasConsistantTangentOperator){
+      string msg("MFrontDefaultParser::treatProvidesTangentOperator : ");
+      msg += "one of the key @ProvidesTangentOperator or @ProvidesSymmetricTangentOperator ";
+      msg += "has already been called";
+      throw(runtime_error(msg));
+    }
+    this->hasConsistantTangentOperator = true;
+  } // end of MFrontDefaultParser::treatProvidesTangentOperator
+
+  void
+  MFrontDefaultParser::treatProvidesSymmetricTangentOperator()
+  {
+    using namespace std;
+    if(this->hasConsistantTangentOperator){
+      string msg("MFrontDefaultParser::treatProvidesSymmetricTangentOperator : ");
+      msg += "one of the key @ProvidesTangentOperator or @ProvidesSymmetricTangentOperator ";
+      msg += "has already been called";
+      throw(runtime_error(msg));
+    }
+    this->hasConsistantTangentOperator = true;
+    this->isConsistantTangentOperatorSymmetric = true;
+  } // end of MFrontDefaultParser::treatProvidesSymmetricTangentOperator
 
   std::string
   MFrontDefaultParser::getDescription(void)
