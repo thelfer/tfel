@@ -33,10 +33,15 @@ namespace mfront{
     using namespace std;
     if(this->hasConsistantTangentOperator){
       string msg("MFrontDefaultParser::treatProvidesTangentOperator : ");
-      msg += "one of the key @ProvidesTangentOperator or @ProvidesSymmetricTangentOperator ";
+      msg += "one of the key @ProvidesTangentOperator or "
+	"@ProvidesSymmetricTangentOperator ";
       msg += "has already been called";
       throw(runtime_error(msg));
     }
+    this->checkNotEndOfFile("MFrontBehaviourParserCommon::"
+			    "treatProvidesTangentOperator");
+    this->readSpecifiedToken("MFrontBehaviourParserCommon::"
+			     "treatProvidesTangentOperator",";");
     this->hasConsistantTangentOperator = true;
   } // end of MFrontDefaultParser::treatProvidesTangentOperator
 
@@ -45,11 +50,17 @@ namespace mfront{
   {
     using namespace std;
     if(this->hasConsistantTangentOperator){
-      string msg("MFrontDefaultParser::treatProvidesSymmetricTangentOperator : ");
-      msg += "one of the key @ProvidesTangentOperator or @ProvidesSymmetricTangentOperator ";
+      string msg("MFrontDefaultParser::"
+		 "treatProvidesSymmetricTangentOperator : ");
+      msg += "one of the key @ProvidesTangentOperator "
+	"or @ProvidesSymmetricTangentOperator ";
       msg += "has already been called";
       throw(runtime_error(msg));
     }
+    this->checkNotEndOfFile("MFrontBehaviourParserCommon::"
+			    "treatProvidesSymmetricTangentOperator");
+    this->readSpecifiedToken("MFrontBehaviourParserCommon::"
+			     "treatProvidesSymmetricTangentOperator",";");
     this->hasConsistantTangentOperator = true;
     this->isConsistantTangentOperatorSymmetric = true;
   } // end of MFrontDefaultParser::treatProvidesSymmetricTangentOperator
