@@ -1,12 +1,12 @@
 /*! 
- * \file  MTestUmatBehaviour.hxx
+ * \file  MTestAsterBehaviour.hxx
  * \brief
  * \author Helfer Thomas
  * \brief 07 avril 2013
  */
 
-#ifndef _LIB_MFRONT_MTESTUMATBEHAVIOUR_H_
-#define _LIB_MFRONT_MTESTUMATBEHAVIOUR_H_ 
+#ifndef _LIB_MFRONT_MTESTASTERBEHAVIOUR_H_
+#define _LIB_MFRONT_MTESTASTERBEHAVIOUR_H_ 
 
 #include"TFEL/System/ExternalFunctionsPrototypes.hxx"
 #include"MFront/MTestUmatBehaviourBase.hxx"
@@ -15,18 +15,18 @@ namespace mfront
 {
 
   /*!
-   * A class to handle mechanical beheaviours written using the umat
+   * A class to handle mechanical beheaviours written using the aster
    * interface
    */
-  struct MTestUmatBehaviour
+  struct MTestAsterBehaviour
     : public MTestUmatBehaviourBase
   {
     /*!
      * \param[in] l : library name
      * \param[in] b : behaviour name
      */
-    MTestUmatBehaviour(const std::string&,
-		       const std::string&);
+    MTestAsterBehaviour(const std::string&,
+			const std::string&);
     /*!
      * \brief integrate the mechanical behaviour over the time step
      * \return true if the integration was successfull, false otherwise
@@ -59,13 +59,13 @@ namespace mfront
 	      const tfel::material::ModellingHypothesis::Hypothesis,
 	      const real) const;
     //! destructor
-    virtual ~MTestUmatBehaviour();
+    virtual ~MTestAsterBehaviour();
   protected:
-    //! the umat fonction
-    tfel::system::UMATFctPtr fct;
+    //! the aster fonction
+    tfel::system::AsterFctPtr fct;
   }; // end of struct MTestBehaviour
   
 } // end of namespace mfront
 
-#endif /* _LIB_MFRONT_MTESTUMATBEHAVIOUR_H */
+#endif /* _LIB_MFRONT_MTESTASTERBEHAVIOUR_H */
 

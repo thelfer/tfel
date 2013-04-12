@@ -1,7 +1,5 @@
 message(STATUS "looked for castem library.")
 
-include(cmake/modules/castem-unix-type.cmake)
-
 if(CASTEM_INSTALL_PATH)
   set(CASTEMHOME "${CASTEM_INSTALL_PATH}")
 else(CASTEM_INSTALL_PATH)

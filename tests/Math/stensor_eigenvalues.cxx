@@ -14,6 +14,8 @@
 #include<cassert>
 #include<cstdlib>
 
+#include "fenv.h"
+
 #include"TFEL/Math/stensor.hxx"
 
 int main(void)
@@ -24,16 +26,19 @@ int main(void)
   double vp1;
   double vp2;
   double vp3;
-  stensor<1,double> s(0.);
-  s(0)=1.;
-  s(1)=2.5;
-  s(2)=0.234;
+  stensor<3,double> s(0.);
 
   s.computeEigenValues(vp1,vp2,vp3);
 
-  assert(abs(vp1-1.)<1.e-14);
-  assert(abs(vp2-2.5)<1.e-14);
-  assert(abs(vp3-0.234)<1.e-14);
+      feenableexcept(FE_DIVBYZERO); //	division by zero
+      feenableexcept(FE_UNDERFLOW); //	result not representable due to underflow
+      feenableexcept(FE_OVERFLOW);  //	result not representable due to overflow
+      feenableexcept(FE_INVALID);   //	invalid operation
+      fedisableexcept(FE_INEXACT);  // The Inexact exception occurs when the  ro
+
+  assert(abs(vp1-0)<1.e-14);
+  assert(abs(vp2-0)<1.e-14);
+  assert(abs(vp3-0)<1.e-14);
 
   return EXIT_SUCCESS;
 }

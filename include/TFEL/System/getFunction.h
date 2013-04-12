@@ -120,6 +120,92 @@ extern "C" {
 								     UMATRealType *const,
 								     const UMATIntegerType  *const,
 								     UMATIntegerType  *const);
+
+  /*!
+   * \brief this function returns a function of type
+   *  void (*)(AsterRealType *const,
+   *	       AsterRealType *const,
+   *	       AsterRealType *const,
+   *	       AsterRealType *const,
+   *	       AsterRealType *const,
+   *	       AsterRealType *const,
+   *	       AsterRealType *const,
+   *	       AsterRealType *const,
+   *	       AsterRealType *const,
+   *	       AsterRealType *const,
+   *	       const AsterRealType *const,
+   *	       const AsterRealType *const,
+   *	       const AsterRealType *const,
+   *	       const AsterRealType *const,
+   *	       const AsterRealType *const,
+   *	       const AsterRealType *const,
+   *	       const AsterRealType *const,
+   *	       const AsterRealType *const,
+   *	       const char     *const,
+   *	       const AsterIntegerType  *const,
+   *	       const AsterIntegerType  *const,
+   *	       const AsterIntegerType  *const,
+   *	       const AsterIntegerType  *const,
+   *	       const AsterRealType *const,
+   *	       const AsterIntegerType  *const,
+   *	       const AsterRealType *const,
+   *	       const AsterRealType *const,
+   *	       AsterRealType *const,
+   *	       const AsterRealType *const,
+   *	       const AsterRealType *const,
+   *	       const AsterRealType *const,
+   *	       const AsterIntegerType  *const,
+   *	       const AsterIntegerType  *const,
+   *	       const AsterIntegerType  *const,
+   *	       const AsterIntegerType  *const,
+   *	       const AsterIntegerType  *const,
+   *	       AsterIntegerType  *const)
+   *
+   * This function is a simple wrapper around dlsym. We can check if a
+   * symbol with the given name exists but cannot check if it points to
+   * a function with that prototype.
+   *
+   * \param LibraryHandlerPtr, link to library opened through dlopen
+   * \param const char * const, name of the function to be checked
+   * \return a function pointer if the call succeed, the NULL pointer if not.
+   */
+  void (*tfel_getAsterFunction(LibraryHandlerPtr,const char * const))(AsterRealType *const,
+								      AsterRealType *const,
+								      AsterRealType *const,
+								      AsterRealType *const,
+								      AsterRealType *const,
+								      AsterRealType *const,
+								      AsterRealType *const,
+								      AsterRealType *const,
+								      AsterRealType *const,
+								      AsterRealType *const,
+								      const AsterRealType *const,
+								      const AsterRealType *const,
+								      const AsterRealType *const,
+								      const AsterRealType *const,
+								      const AsterRealType *const,
+								      const AsterRealType *const,
+								      const AsterRealType *const,
+								      const AsterRealType *const,
+								      const char      *const,
+								      const AsterIntegerType  *const,
+								      const AsterIntegerType  *const,
+								      const AsterIntegerType  *const,
+								      const AsterIntegerType  *const,
+								      const AsterRealType *const,
+								      const AsterIntegerType  *const,
+								      const AsterRealType *const,
+								      const AsterRealType *const,
+								      AsterRealType *const,
+								      const AsterRealType *const,
+								      const AsterRealType *const,
+								      const AsterRealType *const,
+								      const AsterIntegerType  *const,
+								      const AsterIntegerType  *const,
+								      const AsterIntegerType  *const,
+								      const AsterIntegerType  *const,
+								      const AsterIntegerType  *const,
+								      AsterIntegerType  *const);
  
   /*!
    * \brief this function returns a function of type

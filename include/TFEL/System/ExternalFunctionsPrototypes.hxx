@@ -15,10 +15,14 @@ extern "C" {
 #ifdef UNIX32
   typedef int    UMATIntegerType;
   typedef double UMATRealType;
+  typedef int    AsterIntegerType;
+  typedef double AsterRealType;
 #endif 
 #ifdef UNIX64
   typedef long   UMATIntegerType;
   typedef double UMATRealType;
+  typedef long   AsterIntegerType;
+  typedef double AsterRealType;
 #endif
 
 #ifdef	__cplusplus
@@ -213,11 +217,15 @@ namespace tfel
 					     const double *,const double *,
 					     const double *);
 
-      //! a simple alias
+      /*!
+       * a simple alias.
+       * This is the prototype of the external functions used by the
+       * pleiades version of the castem finite element solver
+       */
       typedef void (*UMATFctPtr)(const UMATIntegerType  *const, /* nombre de composantes des contraintes  */
 				 const UMATRealType *const, /* incrément de temps                     */
 				 const UMATRealType *const, /* matrice de passage du repère élement
-							   au repère global                       */
+							       au repère global                       */
 				 UMATRealType *const,       /* matrice tangente                       */
 				 const UMATRealType *const, /* tenseur des déformations               */
 				 const UMATRealType *const, /* tenseur des incréments de déformations */
@@ -232,7 +240,50 @@ namespace tfel
 				 UMATRealType *const,       /* tenseur des contraintes */
 				 const UMATIntegerType  *const, /* entier définissant le type de calcul  */
 				 UMATIntegerType  *const);      /* code sortie */
-    
+
+      /*!
+       * a simple alias.
+       * This is the prototype of the external functions used by the
+       * pleiades version of the castem finite element solver
+       */
+      typedef void (*AsterFctPtr)(AsterRealType *const,       /* stress                   */
+				  AsterRealType *const,       /* internal state variables */
+				  AsterRealType *const,       /* tangent operator         */
+				  AsterRealType *const,
+				  AsterRealType *const,
+				  AsterRealType *const,
+				  AsterRealType *const,
+				  AsterRealType *const,
+				  AsterRealType *const,
+				  AsterRealType *const,
+				  const AsterRealType *const, /* strain tensor    */
+				  const AsterRealType *const, /* strain increment */
+				  const AsterRealType *const,
+				  const AsterRealType *const, /* time increment   */
+				  const AsterRealType *const, /* temperature      */
+				  const AsterRealType *const, /* temperature increment    */
+				  const AsterRealType *const, /* external state variables */
+				  const AsterRealType *const, /* external state variables increments   */
+				  const char     *const,
+				  const AsterIntegerType  *const,
+				  const AsterIntegerType  *const,
+				  const AsterIntegerType  *const, /* number of components of tensors       */
+				  const AsterIntegerType  *const, /* number of internal state variables    */
+				  const AsterRealType *const,     /* material properties                   */
+				  const AsterIntegerType  *const, /* number of material properties         */
+				  const AsterRealType *const,
+				  const AsterRealType *const, /* rotation matrix                       */
+				  AsterRealType *const,       /* estimation of the next time increment */
+				  const AsterRealType *const,
+				  const AsterRealType *const,
+				  const AsterRealType *const,
+				  const AsterIntegerType  *const,
+				  const AsterIntegerType  *const,
+				  const AsterIntegerType  *const,
+				  const AsterIntegerType  *const,
+				  const AsterIntegerType  *const,
+				  AsterIntegerType  *const);
+
     }
     
   } // end of namespace system

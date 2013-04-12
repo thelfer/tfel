@@ -778,6 +778,7 @@ mfront/include/MFront/MFrontRungeKuttaParser.hxx -text
 mfront/include/MFront/MFrontUMATInterface.hxx -text
 mfront/include/MFront/MFrontVirtualParser.hxx -text
 mfront/include/MFront/MTest.hxx -text
+mfront/include/MFront/MTestAsterBehaviour.hxx -text
 mfront/include/MFront/MTestBehaviour.hxx -text
 mfront/include/MFront/MTestConstraint.hxx -text
 mfront/include/MFront/MTestEvolution.hxx -text
@@ -785,6 +786,7 @@ mfront/include/MFront/MTestImposedStrain.hxx -text
 mfront/include/MFront/MTestImposedStress.hxx -text
 mfront/include/MFront/MTestTypes.hxx -text
 mfront/include/MFront/MTestUmatBehaviour.hxx -text
+mfront/include/MFront/MTestUmatBehaviourBase.hxx -text
 mfront/include/MFront/ParserBase.hxx -text
 mfront/include/MFront/ParserUtilities.hxx -text
 mfront/include/MFront/StaticVarHandler.hxx -text
@@ -819,12 +821,14 @@ mfront/lisp/CMakeLists.txt -text
 mfront/lisp/Makefile.am -text
 mfront/lisp/mfront.el -text
 mfront/mtest/CMakeLists.txt -text
+mfront/mtest/MTestAsterBehaviour.cxx -text
 mfront/mtest/MTestBehaviour.cxx -text
 mfront/mtest/MTestConstraint.cxx -text
 mfront/mtest/MTestEvolution.cxx -text
 mfront/mtest/MTestImposedStrain.cxx -text
 mfront/mtest/MTestImposedStress.cxx -text
 mfront/mtest/MTestUmatBehaviour.cxx -text
+mfront/mtest/MTestUmatBehaviourBase.cxx -text
 mfront/mtest/Makefile.am -text
 mfront/mtest/mtest.cxx -text
 mfront/src/AsterChangeBasis.cxx -text

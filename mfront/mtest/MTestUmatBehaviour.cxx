@@ -19,19 +19,13 @@ namespace mfront
 
   MTestUmatBehaviour::MTestUmatBehaviour(const std::string& l,
 					 const std::string& b)
+    : MTestUmatBehaviourBase(l,b)
   {
     using namespace std;
     using namespace tfel::system;
     typedef ExternalLibraryManager ELM;
     ELM& elm = ELM::getExternalLibraryManager();
     this->fct = elm.getUMATFunction(l,b);
-    this->type = elm.getUMATBehaviourType(l,b);
-    if(this->type>=2u){
-      string msg("MTestUmatBehaviour::MTestUmatBehaviour : "
-		 "unsupported behaviour type "
-		 "(neither isotropic nor orthotropic)");
-      throw(runtime_error(msg));
-    }
     this->mpnames = elm.getUMATMaterialPropertiesNames(l,b);
     if(this->type==0){
       this->mpnames.insert(this->mpnames.begin(),"ThermalExpansion");
@@ -40,179 +34,10 @@ namespace mfront
       this->mpnames.insert(this->mpnames.begin(),"YoungModulus");
     } else {
       // shall depend on the modelling hypothesis
-      string msg("MTestUmatBehaviour::MTestUmatBehaviour : ");
+      string msg("MTestUmatBehaviourBase::MTestUmatBehaviourBase : ");
       msg += "orthotropic material are not supported yet";
       throw(runtime_error(msg));
     }
-    this->ivnames = elm.getUMATInternalStateVariablesNames(l,b);
-    this->ivtypes = elm.getUMATInternalStateVariablesTypes(l,b);
-    this->evnames = elm.getUMATExternalStateVariablesNames(l,b);
-    this->evnames.insert(this->evnames.begin(),"Temperature");
-  }
-
-  std::vector<std::string>
-  MTestUmatBehaviour::getMaterialPropertiesNames(void) const
-  {
-    return this->mpnames;
-  }
-
-  std::vector<std::string>
-  MTestUmatBehaviour::getInternalStateVariablesNames(void) const
-  {
-    return this->ivnames;
-  }
-
-  std::vector<std::string>
-  MTestUmatBehaviour::getExternalStateVariablesNames(void) const
-  {
-    return this->evnames;
-  }
-
-  size_t
-  MTestUmatBehaviour::getInternalStateVariablesSize(const unsigned short d) const
-  {
-    using namespace std;
-    vector<int>::const_iterator p;
-    size_t s = 0;
-    for(p=this->ivtypes.begin();p!=this->ivtypes.end();++p){
-      if(*p==0){
-	s+=1;
-      } else if(*p==1){
-	if(d==1){
-	  s+=3;
-	} else if(d==2){ 
-	  s+=4;
-	} else if(d==3){ 
-	  s+=6;
-	} else {
-	  string msg("MTestUmatBehaviour::getInternalStateVariablesSize : "
-		     "invalid space dimension");
-	  throw(runtime_error(msg));
-	}
-      } else {
-	string msg("MTestUmatBehaviour::getInternalStateVariablesSize : "
-		   "unsupported variable type");
-	throw(runtime_error(msg));
-      }
-    }
-    return s;
-  } // end of MTestUmatBehaviour::getInternalStateVariablesSize
-
-  std::vector<std::string>
-  MTestUmatBehaviour::getInternalStateVariablesDescriptions(const unsigned short d) const
-  {
-    using namespace std;
-    vector<string> desc;
-    vector<int>::const_iterator p;
-    vector<string>::const_iterator pn;
-    if(this->ivnames.size()!=this->ivtypes.size()){
-      string msg("MTestUmatBehaviour::getInternalStateVariablesDescriptions : "
-		 "internal error (the number of internal state variables names "
-		 "dont match the number of internal state variables types)");
-      throw(runtime_error(msg));
-    }
-    for(p=this->ivtypes.begin(),pn=this->ivnames.begin();
-	p!=this->ivtypes.end();++p,++pn){
-      if(*p==0){
-	desc.push_back(*pn);
-      } else if(*p==1){
-	desc.push_back("first  component of internal variable '"+*pn+"'");
-	desc.push_back("second component of internal variable '"+*pn+"'");
-	desc.push_back("third  component of internal variable '"+*pn+"'");
-	if(d==2){ 
-	  desc.push_back("fourth  component of internal variable '"+*pn+"'");
-	} else if(d==3){ 
-	  desc.push_back("fourth  component of internal variable '"+*pn+"'");
-	  desc.push_back("fifth   component of internal variable '"+*pn+"'");
-	  desc.push_back("sixth   component of internal variable '"+*pn+"'");
-	} else {
-	  string msg("MTestUmatBehaviour::getInternalStateVariablesDescriptions : "
-		     "invalid space dimension");
-	  throw(runtime_error(msg));
-	}
-      } else {
-	string msg("MTestUmatBehaviour::getInternalStateVariablesDescriptions : "
-		   "unsupported variable type");
-	throw(runtime_error(msg));
-      }
-    }
-    return desc;
-  } // end of MTestUmatBehaviour::getInternalStateVariablesDescriptions
-
-  unsigned short
-  MTestUmatBehaviour::getInternalStateVariableType(const std::string& n) const
-  {
-    using namespace std;
-    vector<string>::const_iterator p;
-    p=find(this->ivnames.begin(),this->ivnames.end(),n);
-    if(p==this->ivnames.end()){
-      string msg("MTestUmatBehaviour::getInternalStateVariableType : ");
-      msg += "no internal variable named '"+n+"' declared";
-      throw(runtime_error(msg));
-    }
-    if(this->ivnames.size()!=this->ivtypes.size()){
-      string msg("MTestUmatBehaviour::getInternalStateVariableType : "
-		 "the number of internal variables names and "
-		 "the number of internal variables types do not match");
-      throw(runtime_error(msg));
-    }
-    int t = this->ivtypes[p-this->ivnames.begin()];
-    if(t==0){
-      return 0u;
-    } else if(t==1){
-      return 1u;
-    } else {
-      string msg("MTestUmatBehaviour::getInternalStateVariableType : ");
-      msg += "unsupported internal variable type";
-      throw(runtime_error(msg));
-    }
-    return 0u;
-  }
-  
-  unsigned short
-  MTestUmatBehaviour::getInternalStateVariablePosition(const unsigned short d,
-						       const std::string& n) const
-  {
-    using namespace std;
-    vector<string>::const_iterator p;
-    p=find(this->ivnames.begin(),this->ivnames.end(),n);
-    if(p==this->ivnames.end()){
-      string msg("MTestUmatBehaviour::getInternalStateVariablePosition : ");
-      msg += "no internal variable named '"+n+"' declared";
-      throw(runtime_error(msg));
-    }
-    if(this->ivnames.size()!=this->ivtypes.size()){
-      string msg("MTestUmatBehaviour::getInternalStateVariablePosition : "
-		 "the number of internal variables names and "
-		 "the number of internal variables types do not match");
-      throw(runtime_error(msg));
-    }
-    vector<string>::size_type i  = 0;
-    vector<string>::size_type ie = p-this->ivnames.begin();
-    unsigned short s = 0;
-    while(i!=ie){
-      int t = this->ivtypes[i];
-      if(t==0){
-	s += 1;
-      } else if(t==1){
-	if(d==1u){
-	  s += 3u;
-	} else if(d==2u){
-	  s += 4u;
-	} else if(d==3u){
-	  s += 6u;
-	} else {
-	  string msg("MTestUmatBehaviour::getInternalStateVariablePosition : "
-		     "invalid dimension");
-	  throw(runtime_error(msg));
-	}
-      } else {
-	string msg("MTestUmatBehaviour::getInternalStateVariablePosition : "
-		   "unsupported internal variable type");
-	throw(runtime_error(msg));
-      }
-    }
-    return s;
   }
 
   bool
@@ -299,8 +124,8 @@ namespace mfront
     }
     // tangent operator (...)
 //     if(this->hasTangentOpertor){
-//     for(i=0;i!=r.getNbRows();++i){
-//       for(j=0;j!=r.getNbCols();++j){
+//     for(i=0;i!=Kt.getNbRows();++i){
+//       for(j=0;j!=Kt.getNbCols();++j){
 //     	Kt(i,j) = D(j,i);
 // #warning "something to correct here"
 // 	if(i>=3){
@@ -380,7 +205,7 @@ namespace mfront
     }
     // turning things in standard conventions
     for(i=3;i!=static_cast<unsigned short>(ntens);++i){
-      s1(i) /= sqrt2;
+      s1(i) *= sqrt2;
     }
     return true;
   } // end of MTestUmatBehaviour::integrate

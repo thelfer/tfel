@@ -80,12 +80,12 @@ endif(enable-aster)
 
 
 #castem
+include(cmake/modules/castem-unix-type.cmake)
 option(local-castem-header "use a local version of castem.h" OFF)
 if(local-castem-header)
   if(NOT HAVE_FORTRAN)
     message(FATAL_ERROR "fortran support must be enabled for castem support")
   endif(NOT HAVE_FORTRAN)
-  include(cmake/modules/castem-unix-type.cmake)
   add_definitions(-DLOCAL_CASTEM_HEADER=1)
   add_definitions("-DLOCAL_CASTEM_HEADER=1 -DHAVE_CASTEM=1")
   set(HAVE_CASTEM ON)

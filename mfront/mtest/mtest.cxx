@@ -32,7 +32,10 @@
 
 #ifdef HAVE_CASTEM
 #include"MFront/MTestUmatBehaviour.hxx"
-#endif HAVE_CASTEM
+#endif /* HAVE_CASTEM */
+#ifdef HAVE_ASTER
+#include"MFront/MTestAsterBehaviour.hxx"
+#endif /* HAVE_ASTER  */
 
 namespace mfront
 {
@@ -408,7 +411,12 @@ namespace mfront
     if(p->value=="umat"){
       interface = p->value;
     }
-#endif HAVE_CASTEM
+#endif /* HAVE_CASTEM */
+#ifdef HAVE_ASTER
+    if(p->value=="aster"){
+      interface = p->value;
+    }
+#endif /* HAVE_ASTER */
     if(interface.empty()){
       string msg("MTest::handleBehaviour : ");
       msg += "unknown interface '"+p->value+"'";
@@ -424,6 +432,11 @@ namespace mfront
 #ifdef HAVE_CASTEM
     if(interface=="umat"){
       this->b = shared_ptr<MTestBehaviour>(new MTestUmatBehaviour(l,f));
+    }
+#endif
+#ifdef HAVE_ASTER
+    if(interface=="aster"){
+      this->b = shared_ptr<MTestBehaviour>(new MTestAsterBehaviour(l,f));
     }
 #endif
     if(this->b.get()==0){

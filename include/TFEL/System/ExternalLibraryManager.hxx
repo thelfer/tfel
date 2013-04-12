@@ -115,7 +115,13 @@ namespace tfel
       bool
       isUMATBehaviourUsableInPurelyImplicitResolution(const std::string&,
 						      const std::string&);
-
+      /*!
+       * \param[in] l : name of the library
+       * \param[in] f : law name
+       */
+      AsterFctPtr
+      getAsterFunction(const std::string&,
+		       const std::string&);
       /*!
        * \param[in] l : name of the library
        * \param[in] f : law name

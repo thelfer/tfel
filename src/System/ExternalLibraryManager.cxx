@@ -303,6 +303,31 @@ namespace tfel
       return fct;
     }
 
+    AsterFctPtr
+    ExternalLibraryManager::getAsterFunction(const std::string& l,
+					     const std::string& f)
+    {
+      using namespace std;
+      #if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
+      HINSTANCE__* lib = this->loadLibrary(l);
+#else
+      void * lib = this->loadLibrary(l);
+#endif /* defined _WIN32 || _WIN64 || defined __CYGWIN__ */
+      AsterFctPtr fct = ::tfel_getAsterFunction(lib,f.c_str());
+      if(fct==0){
+	string msg("ExternalLibraryManager::getAsterFunction : ");
+	msg += " could not load Aster function '"+f+"' (";
+#if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
+	  msg += ::GetLastError();
+#else
+	  msg += ::dlerror();
+#endif /* defined _WIN32 || _WIN64 || defined __CYGWIN__ */
+	msg += ")";
+	throw(runtime_error(msg));
+      }
+      return fct;
+    }
+
     void
     ExternalLibraryManager::getUMATNames(std::vector<std::string>& vars,
 					 const std::string& l,
