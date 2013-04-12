@@ -24,7 +24,7 @@ namespace umat
 
   template<>
   struct MFRONT_UMAT_VISIBILITY_EXPORT
-  UMATComputeStiffnessTensor<tfel::material::ModellingHypothesis::AXISYMETRICALGENERALISEDPLANESTRAIN,ISOTROPIC>
+  UMATComputeStiffnessTensor<tfel::material::ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN,ISOTROPIC>
   {
     static void
       exe(const UMATReal* const,
@@ -33,7 +33,7 @@ namespace umat
 
   template<>
   struct MFRONT_UMAT_VISIBILITY_EXPORT
-  UMATComputeStiffnessTensor<tfel::material::ModellingHypothesis::AXISYMETRICAL,ISOTROPIC>
+  UMATComputeStiffnessTensor<tfel::material::ModellingHypothesis::AXISYMMETRICAL,ISOTROPIC>
   {
     static void
       exe(const UMATReal* const,
@@ -79,7 +79,7 @@ namespace umat
 
   template<>
   struct MFRONT_UMAT_VISIBILITY_EXPORT
-  UMATComputeStiffnessTensor<tfel::material::ModellingHypothesis::AXISYMETRICALGENERALISEDPLANESTRAIN,ORTHOTROPIC>
+  UMATComputeStiffnessTensor<tfel::material::ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN,ORTHOTROPIC>
   {
     static void
       exe(const UMATReal* const,
@@ -88,7 +88,7 @@ namespace umat
 
   template<>
   struct MFRONT_UMAT_VISIBILITY_EXPORT
-  UMATComputeStiffnessTensor<tfel::material::ModellingHypothesis::AXISYMETRICAL,ORTHOTROPIC>
+  UMATComputeStiffnessTensor<tfel::material::ModellingHypothesis::AXISYMMETRICAL,ORTHOTROPIC>
   {
     static void
       exe(const UMATReal* const,

@@ -70,6 +70,15 @@ nobase_noinst_HEADERS += MFront/MFrontCLawInterfaceBase.hxx          \
 			 MFront/MFrontLaTeXLawInterface.hxx          \
 			 MFront/MFrontPythonLawInterface.hxx
 
+nobase_noinst_HEADERS += MFront/MTestTypes.hxx	       \
+			 MFront/MTest.hxx	       \
+			 MFront/MTestUmatBehaviour.hxx \
+			 MFront/MTestBehaviour.hxx     \
+			 MFront/MTestEvolution.hxx     \
+			 MFront/MTestConstraint.hxx    \
+			 MFront/MTestImposedStrain.hxx \
+			 MFront/MTestImposedStress.hxx
+
 if HAVE_CASTEM
 nobase_include_HEADERS += MFront/MFrontCastemLawInterface.hxx   \
 	 	          MFront/MFrontUMATInterface.hxx

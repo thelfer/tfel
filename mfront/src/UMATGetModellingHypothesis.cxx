@@ -22,7 +22,7 @@ namespace umat
     case 2:
       return ModellingHypothesis::TRIDIMENSIONAL;
     case 0:
-      return ModellingHypothesis::AXISYMETRICAL;
+      return ModellingHypothesis::AXISYMMETRICAL;
     case -1:
       return ModellingHypothesis::PLANESTRAIN;
     case -2:
@@ -30,7 +30,7 @@ namespace umat
     case -3:
       return ModellingHypothesis::GENERALISEDPLANESTRAIN;
     case 14:
-      return ModellingHypothesis::AXISYMETRICALGENERALISEDPLANESTRAIN;
+      return ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN;
 // C                       =  3 a 11 : unidimensionnel plan (massif 1D)
 // C                       = 12 a 14 : unidimensionnel axisymetrique (massif 1D)
 // C                       = 15 : unidimensionnel spherique (massif 1D)

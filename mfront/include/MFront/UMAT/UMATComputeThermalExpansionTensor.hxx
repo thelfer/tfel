@@ -25,7 +25,7 @@ namespace umat
 
   template<>
   struct MFRONT_UMAT_VISIBILITY_EXPORT
-  UMATComputeThermalExpansionTensor<tfel::material::ModellingHypothesis::AXISYMETRICALGENERALISEDPLANESTRAIN,ISOTROPIC>
+  UMATComputeThermalExpansionTensor<tfel::material::ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN,ISOTROPIC>
   {
     static void
       exe(const UMATReal* const,
@@ -34,7 +34,7 @@ namespace umat
 
   template<>
   struct MFRONT_UMAT_VISIBILITY_EXPORT
-  UMATComputeThermalExpansionTensor<tfel::material::ModellingHypothesis::AXISYMETRICAL,ISOTROPIC>
+  UMATComputeThermalExpansionTensor<tfel::material::ModellingHypothesis::AXISYMMETRICAL,ISOTROPIC>
   {
     static void
       exe(const UMATReal* const,
@@ -80,7 +80,7 @@ namespace umat
 
   template<>
   struct MFRONT_UMAT_VISIBILITY_EXPORT
-  UMATComputeThermalExpansionTensor<tfel::material::ModellingHypothesis::AXISYMETRICALGENERALISEDPLANESTRAIN,ORTHOTROPIC>
+  UMATComputeThermalExpansionTensor<tfel::material::ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN,ORTHOTROPIC>
   {
     static void
       exe(const UMATReal* const,
@@ -89,7 +89,7 @@ namespace umat
 
   template<>
   struct MFRONT_UMAT_VISIBILITY_EXPORT
-  UMATComputeThermalExpansionTensor<tfel::material::ModellingHypothesis::AXISYMETRICAL,ORTHOTROPIC>
+  UMATComputeThermalExpansionTensor<tfel::material::ModellingHypothesis::AXISYMMETRICAL,ORTHOTROPIC>
   {
     static void
       exe(const UMATReal* const,

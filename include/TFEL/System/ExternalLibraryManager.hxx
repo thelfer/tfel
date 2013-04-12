@@ -120,10 +120,29 @@ namespace tfel
        * \param[in] l : name of the library
        * \param[in] f : law name
        */
+      UMATFctPtr
+      getUMATFunction(const std::string&,
+		      const std::string&);
+      /*!
+       * \return the type of the behaviour
+       * (isotropic or orthotropic)
+       * If the returned value is 0,
+       * the beahviour is isotropic.
+       * If the returned value is 1,
+       * the beahviour is orthotropic.
+       * \param[in] l : name of the library
+       * \param[in] f : law name
+       */
+      unsigned short
+      getUMATBehaviourType(const std::string&,
+			   const std::string&);
+      /*!
+       * \param[in] l : name of the library
+       * \param[in] f : law name
+       */
       std::vector<std::string>
       getUMATMaterialPropertiesNames(const std::string&,
 				     const std::string&);
-
       /*!
        * \param[in] l : name of the library
        * \param[in] f : law name

@@ -36,7 +36,7 @@ namespace umat
   } // end of struct UMATComputeThermalExpansionTensor
  
   void
-  UMATComputeThermalExpansionTensor<tfel::material::ModellingHypothesis::AXISYMETRICALGENERALISEDPLANESTRAIN,ISOTROPIC>::exe(const UMATReal* const props,
+  UMATComputeThermalExpansionTensor<tfel::material::ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN,ISOTROPIC>::exe(const UMATReal* const props,
 						       tfel::config::Types<1u,UMATReal,false>::ThermalExpansionTensor& A)
   {
     const double a = props[3];
@@ -55,7 +55,7 @@ namespace umat
   } // end of struct UMATComputeThermalExpansionTensor
 
   void
-  UMATComputeThermalExpansionTensor<tfel::material::ModellingHypothesis::AXISYMETRICAL,ISOTROPIC>::exe(const UMATReal* const props,
+  UMATComputeThermalExpansionTensor<tfel::material::ModellingHypothesis::AXISYMMETRICAL,ISOTROPIC>::exe(const UMATReal* const props,
 							   tfel::config::Types<2u,UMATReal,false>::ThermalExpansionTensor& C)
   {
     UMATComputeIsotropicThermalExpansionTensor2D(props,C);
@@ -85,7 +85,7 @@ namespace umat
   } // end of struct UMATComputeThermalExpansionTensor
 
   void
-  UMATComputeThermalExpansionTensor<tfel::material::ModellingHypothesis::AXISYMETRICALGENERALISEDPLANESTRAIN,ORTHOTROPIC>::exe(const UMATReal* const props,
+  UMATComputeThermalExpansionTensor<tfel::material::ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN,ORTHOTROPIC>::exe(const UMATReal* const props,
 							 tfel::config::Types<1u,UMATReal,false>::ThermalExpansionTensor& A)
   {
     const double a0 = props[7];
@@ -108,7 +108,7 @@ namespace umat
   } // end of struct UMATComputeThermalExpansionTensor
 
   void
-  UMATComputeThermalExpansionTensor<tfel::material::ModellingHypothesis::AXISYMETRICAL,ORTHOTROPIC>::exe(const UMATReal* const props,
+  UMATComputeThermalExpansionTensor<tfel::material::ModellingHypothesis::AXISYMMETRICAL,ORTHOTROPIC>::exe(const UMATReal* const props,
 							   tfel::config::Types<2u,UMATReal,false>::ThermalExpansionTensor& C)
   {
     UMATComputeOrthotropicThermalExpansionTensor2D(props,C);

@@ -243,9 +243,9 @@ AC_ARG_ENABLE([local-castem-header],
 	       [local_castem_header=true],
 	       [local_castem_header=false])
 
+CHECK_CASTEM_UNIX_TYPE
 if(test "x$local_castem_header" = "xtrue")
 then
-    CHECK_CASTEM_UNIX_TYPE
     AC_DEFINE(HAVE_CASTEM)
     AM_CONDITIONAL(HAVE_CASTEM,true)
     AC_DEFINE(LOCAL_CASTEM_HEADER)
@@ -323,6 +323,7 @@ AC_OUTPUT([debug.sh
 	   mfront/include/Makefile
 	   mfront/src/Makefile
            mfront/src/MFrontHeader.cxx
+           mfront/mtest/Makefile
            mfront/tests/Makefile
            mfront/tests/properties/Makefile
            mfront/tests/behaviours/Makefile

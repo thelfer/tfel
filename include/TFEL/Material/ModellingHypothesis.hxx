@@ -24,8 +24,8 @@ namespace tfel
        * the list of supported modelling hypothesis
        */
       enum Hypothesis{
-	AXISYMETRICALGENERALISEDPLANESTRAIN,
-	AXISYMETRICAL,
+	AXISYMMETRICALGENERALISEDPLANESTRAIN,
+	AXISYMMETRICAL,
 	PLANESTRESS,
 	PLANESTRAIN,
 	GENERALISEDPLANESTRAIN,
@@ -47,7 +47,7 @@ namespace tfel
      * ModellingHypothesis::AXISYMETRICALGENERALISEDPLANESTRAIN
      */
     template<>
-    struct ModellingHypothesisToSpaceDimension<ModellingHypothesis::AXISYMETRICALGENERALISEDPLANESTRAIN>
+    struct ModellingHypothesisToSpaceDimension<ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN>
     {
       //! the return of the metafunction
       static const unsigned short value = 1u;
@@ -58,7 +58,7 @@ namespace tfel
      * ModellingHypothesis::AXISYMETRICAL
      */
     template<>
-    struct ModellingHypothesisToSpaceDimension<ModellingHypothesis::AXISYMETRICAL>
+    struct ModellingHypothesisToSpaceDimension<ModellingHypothesis::AXISYMMETRICAL>
     {
       //! the return of the metafunction
       static const unsigned short value = 2u;

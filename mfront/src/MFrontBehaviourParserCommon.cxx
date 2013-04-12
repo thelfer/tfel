@@ -3095,8 +3095,8 @@ namespace mfront{
     vector<string> m;
     StaticVarContainer::const_iterator p;
     vector<string>::const_iterator pm;
-    m.push_back("tfel::material::ModellingHypothesis::AXISYMETRICALGENERALISEDPLANESTRAIN");
-    m.push_back("tfel::material::ModellingHypothesis::AXISYMETRICAL");
+    m.push_back("tfel::material::ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN");
+    m.push_back("tfel::material::ModellingHypothesis::AXISYMMETRICAL");
     m.push_back("tfel::material::ModellingHypothesis::PLANESTRESS");
     m.push_back("tfel::material::ModellingHypothesis::PLANESTRAIN");
     m.push_back("tfel::material::ModellingHypothesis::GENERALISEDPLANESTRAIN");

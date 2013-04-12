@@ -50,7 +50,7 @@ namespace aster
   struct AsterModellingHypothesis<1u>
   {
     typedef tfel::material::ModellingHypothesis ModellingHypothesis;
-    static const ModellingHypothesis::Hypothesis value = ModellingHypothesis::AXISYMETRICALGENERALISEDPLANESTRAIN;
+    static const ModellingHypothesis::Hypothesis value = ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN;
   };
 
   template<>

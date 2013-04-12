@@ -8,12 +8,10 @@
 #define INCLUDEDIR    "@includedir@"
 #define LIBDIR        "@libdir@"
 
-#ifdef HAVE_CASTEM
 #define CASTEMFLAGS1 "@CASTEM_CPPFLAGS@"
 #ifndef LOCAL_CASTEM_HEADER
 #define CASTEMFLAGS2 "-I@CASTEM_ROOT@/include"
 #endif /* LOCAL_CASTEM_HEADER */
-#endif
 
 typedef void (*FuncPtr)(void);
 typedef std::map<std::string,std::pair<FuncPtr,std::string> > CallBacksContainer;

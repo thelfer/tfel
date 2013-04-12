@@ -278,6 +278,31 @@ namespace tfel
       }
     } // end of ExternalLibraryManager::getCastemFunctionVariables
 
+    UMATFctPtr
+    ExternalLibraryManager::getUMATFunction(const std::string& l,
+					      const std::string& f)
+    {
+      using namespace std;
+      #if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
+      HINSTANCE__* lib = this->loadLibrary(l);
+#else
+      void * lib = this->loadLibrary(l);
+#endif /* defined _WIN32 || _WIN64 || defined __CYGWIN__ */
+      UMATFctPtr fct = ::tfel_getUMATFunction(lib,f.c_str());
+      if(fct==0){
+	string msg("ExternalLibraryManager::getUMATFunction : ");
+	msg += " could not load UMAT function '"+f+"' (";
+#if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
+	  msg += ::GetLastError();
+#else
+	  msg += ::dlerror();
+#endif /* defined _WIN32 || _WIN64 || defined __CYGWIN__ */
+	msg += ")";
+	throw(runtime_error(msg));
+      }
+      return fct;
+    }
+
     void
     ExternalLibraryManager::getUMATNames(std::vector<std::string>& vars,
 					 const std::string& l,
@@ -341,13 +366,40 @@ namespace tfel
       return false;
     } // end of ExternalLibraryManager::isUMATBehaviourUsableInPurelyImplicitResolution
 
+    unsigned short
+    ExternalLibraryManager::getUMATBehaviourType(const std::string& l,
+						 const std::string& f)
+    {
+      using namespace std;
+      vector<int> types;
+#if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
+      HINSTANCE__* lib = this->loadLibrary(l);
+#else
+      void * lib = this->loadLibrary(l);
+#endif /* defined _WIN32 || _WIN64 || defined __CYGWIN__ */
+
+      int u = ::tfel_getUnsignedShort(lib,(f+"_BehaviourType").c_str());
+      if(u==-1){
+	string msg("ExternalLibraryManager::getUMATBehaviourType : ");
+	msg += " behavour type could not be read (";
+#if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
+	  msg += ::GetLastError();
+#else
+	  msg += ::dlerror();
+#endif /* defined _WIN32 || _WIN64 || defined __CYGWIN__ */
+	msg += ")";
+	throw(runtime_error(msg));
+      }
+      return static_cast<unsigned short>(u);
+    } // end of ExternalLibraryManager::getUMATBehaviourType
+
     std::vector<int>
     ExternalLibraryManager::getUMATInternalStateVariablesTypes(const std::string& l,
 							       const std::string& f)
     {
       using namespace std;
       vector<int> types;
-      #if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
+#if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
       HINSTANCE__* lib = this->loadLibrary(l);
 #else
       void * lib = this->loadLibrary(l);

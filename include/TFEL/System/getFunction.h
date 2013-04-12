@@ -16,6 +16,8 @@ typedef HINSTANCE__* LibraryHandlerPtr;
 typedef void*        LibraryHandlerPtr;
 #endif /* defined _WIN32 || defined _WIN64 ||defined __CYGWIN__ */
 
+#include"TFEL/System/ExternalFunctionsPrototypes.hxx"
+
 #ifdef	__cplusplus
 extern "C" {
 #endif /* __cplusplus */
@@ -70,7 +72,55 @@ extern "C" {
   int (*tfel_getSetUnsignedShortParameterFunction(LibraryHandlerPtr lib,
 						  const char * const name))(const char* const,
 									    const unsigned short);
-  
+  /*!
+   * \brief this function returns a function of type
+   * void (*)(const UMATIntegerType  *const,
+   *          const UMATRealType *const,
+   *          const UMATRealType *const,
+   *          UMATRealType *const,
+   * 	      const UMATRealType *const,
+   * 	      const UMATRealType *const,
+   * 	      const UMATRealType *const,
+   * 	      const UMATRealType *const,
+   * 	      const UMATRealType *const,
+   * 	      const UMATIntegerType  *const,
+   * 	      const UMATRealType *const,
+   * 	      const UMATRealType *const,
+   * 	      UMATRealType *const,
+   * 	      const UMATIntegerType  *const,
+   * 	      UMATRealType *const,
+   * 	      const UMATIntegerType  *const,
+   * 	      UMATIntegerType  *const);
+   *
+   * The name 'umat' comes from an extension we wrote for the Cast3M
+   * finite element code.
+   *
+   * This function is a simple wrapper around dlsym. We can check if a
+   * symbol with the given name exists but cannot check if it points to
+   * a function with that prototype.
+   *
+   * \param LibraryHandlerPtr, link to library opened through dlopen
+   * \param const char * const, name of the function to be checked
+   * \return a function pointer if the call succeed, the NULL pointer if not.
+   */
+  void (*tfel_getUMATFunction(LibraryHandlerPtr,const char * const))(const UMATIntegerType  *const,
+								     const UMATRealType *const,
+								     const UMATRealType *const,
+								     UMATRealType *const,
+								     const UMATRealType *const,
+								     const UMATRealType *const,
+								     const UMATRealType *const,
+								     const UMATRealType *const,
+								     const UMATRealType *const,
+								     const UMATIntegerType  *const,
+								     const UMATRealType *const,
+								     const UMATRealType *const,
+								     UMATRealType *const,
+								     const UMATIntegerType  *const,
+								     UMATRealType *const,
+								     const UMATIntegerType  *const,
+								     UMATIntegerType  *const);
+ 
   /*!
    * \brief this function returns a function of type
    * double (*)(const double * const)

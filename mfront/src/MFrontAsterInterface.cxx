@@ -846,6 +846,14 @@ namespace mfront{
     }
 
     out << "MFRONT_SHAREDOBJ unsigned short aster"
+      	<< makeLowerCase(name) << "_BehaviourType = " ;
+    if(behaviourCharacteristic.getBehaviourType()==mfront::ISOTROPIC){
+      out << "0u;" << endl << endl;
+    } else {
+      out << "1u;" << endl << endl;
+    }
+
+    out << "MFRONT_SHAREDOBJ unsigned short aster"
       	<< makeLowerCase(name);
     unsigned short cs = this->getNumberOfVariables(coefsHolder);
     out << "_nMaterialProperties = " << cs << ";\n";

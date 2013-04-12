@@ -14,9 +14,9 @@ BOOST_PYTHON_MODULE(material)
   using namespace boost::python;
   using namespace tfel::material;
   enum_<ModellingHypothesis::Hypothesis>("ModellingHypothesis")
-    .value("AXISYMETRICALGENERALISEDPLANESTRAIN",
-	   ModellingHypothesis::AXISYMETRICALGENERALISEDPLANESTRAIN)
-    .value("AXISYMETRICAL",ModellingHypothesis::AXISYMETRICAL)
+    .value("AXISYMMETRICALGENERALISEDPLANESTRAIN",
+	   ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN)
+    .value("AXISYMMETRICAL",ModellingHypothesis::AXISYMMETRICAL)
     .value("PLANESTRESS",ModellingHypothesis::PLANESTRESS)
     .value("PLANESTRAIN",ModellingHypothesis::PLANESTRAIN)
     .value("GENERALISEDPLANESTRAIN",ModellingHypothesis::GENERALISEDPLANESTRAIN)

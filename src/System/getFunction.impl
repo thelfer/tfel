@@ -126,6 +126,44 @@ double (*tfel_getCastemFunction(LibraryHandlerPtr lib,const char * const name))(
   return (double (*)(const double*const)) dlsym(lib,name);
 } 
 
+void (*tfel_getUMATFunction(LibraryHandlerPtr lib,
+			    const char * const name))(const UMATIntegerType  *const,
+						      const UMATRealType *const,
+						      const UMATRealType *const,
+						      UMATRealType *const,
+						      const UMATRealType *const,
+						      const UMATRealType *const,
+						      const UMATRealType *const,
+						      const UMATRealType *const,
+						      const UMATRealType *const,
+						      const UMATIntegerType  *const,
+						      const UMATRealType *const,
+						      const UMATRealType *const,
+						      UMATRealType *const,
+						      const UMATIntegerType  *const,
+						      UMATRealType *const,
+						      const UMATIntegerType  *const,
+						      UMATIntegerType  *const)
+{
+  return (void (*)(const UMATIntegerType  *const,
+		   const UMATRealType *const,
+		   const UMATRealType *const,
+		   UMATRealType *const,
+		   const UMATRealType *const,
+		   const UMATRealType *const,
+		   const UMATRealType *const,
+		   const UMATRealType *const,
+		   const UMATRealType *const,
+		   const UMATIntegerType  *const,
+		   const UMATRealType *const,
+		   const UMATRealType *const,
+		   UMATRealType *const,
+		   const UMATIntegerType  *const,
+		   UMATRealType *const,
+		   const UMATIntegerType  *const,
+		   UMATIntegerType  *const)) dlsym(lib,name);
+}
+
 double (*tfel_getCFunction0(LibraryHandlerPtr lib,const char * const name))(void){
   return (double (*)(void)) dlsym(lib,name);
 } 
