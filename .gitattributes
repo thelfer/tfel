@@ -1027,6 +1027,7 @@ mfront/tests/behaviours/castem/norton2.mtest.in -text
 mfront/tests/behaviours/castem/orthotropiccreep.mtest.in -text
 mfront/tests/behaviours/castem/plasticity.mtest.in -text
 mfront/tests/behaviours/castem/strainhardeningcreep.mtest.in -text
+mfront/tests/behaviours/references/chaboche-aster.ref -text
 mfront/tests/behaviours/references/elasticity15-aster.ref -text
 mfront/tests/behaviours/references/mazars-aster.ref -text
 mfront/tests/behaviours/references/plasticity.ref -text

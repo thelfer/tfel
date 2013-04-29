@@ -97,8 +97,15 @@ alpha.setGlossaryName("ThermalExpansion");
   d=min(dmax,d);
   sig = (1.-d)*s0;
   if(computeTangentOperator_){
-     StiffnessTensor Hooke;
-     computeElasticStiffness<N,Type>::exe(Hooke,lambda,mu);
-     Dt = (1.-d)*Hooke;
+    if(smt==ELASTIC){
+      computeElasticStiffness<N,Type>::exe(Dt,lambda,mu);
+    } else if(smt==SECANTOPERATOR){
+      StiffnessTensor Hooke;
+      computeElasticStiffness<N,Type>::exe(Hooke,lambda,mu);
+      Dt = (1.-d)*Hooke;
+    } else {
+      string msg("Mazars : unsupported stiffness matrix type");
+      throw(runtime_error(msg));
+    }
   }
 }

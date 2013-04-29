@@ -5,6 +5,8 @@
  * \brief  17 avril 2013
  */
 
+@StiffnessMatrixType 'SecantOperator';
+
 @Behaviour<aster> 'libMFrontAsterBehaviours.so' 'astermazars';
 @MaterialProperty<constant> 'YoungModulus'     3.2e10; 
 @MaterialProperty<constant> 'PoissonRatio'     0.2;    
