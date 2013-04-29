@@ -1,8 +1,3 @@
-#include<iostream>
-#include<cstdlib>
-#include<map>
-#include<string>
-
 #define PREFIXDIR     "@prefix@"
 #define EXECPREFIXDIR "@exec_prefix@"
 #define INCLUDEDIR    "@includedir@"
@@ -12,67 +7,3 @@
 #ifndef LOCAL_CASTEM_HEADER
 #define CASTEMFLAGS2 "-I@CASTEM_ROOT@/include"
 #endif /* LOCAL_CASTEM_HEADER */
-
-typedef void (*FuncPtr)(void);
-typedef std::map<std::string,std::pair<FuncPtr,std::string> > CallBacksContainer;
-
-const std::string
-libDir(void);
-
-const std::string
-includeDir(void);
-
-static void
-registerCallBack(const std::string&,
-		 const FuncPtr&,
-		 const std::string&);
-
-static void
-treatOFlags(void);
-
-#ifdef HAVE_CASTEM
-static void
-treatCastem(void);
-#endif /* HAVE_CASTEM */
-
-static void
-treatExceptions(void);
-
-static void
-treatMath(void);
-
-static void
-treatMathCubicSpline(void);
-
-static void
-treatMathKriging(void);
-
-static void
-treatMathParser(void);
-
-static void
-treatMathInterpreter(void);
-
-static void
-treatUtilities(void);
-
-static void
-treatFiniteElement(void);
-
-static void
-treatAll(void);
-
-static void
-treatIncludes(void);
-
-static void
-treatLibs(void);
-
-static void
-listOptions(std::ostream&);
-
-static void
-treatUnknownOption(const std::string&);
-
-static void
-treatHelp(void);

@@ -39,3 +39,5 @@ system_la_LIBADD  = -L@top_builddir@/src/System -lTFELSystem    \
 		    @BOOST_LIBS@ @BOOST_PYTHON_LIBS@            \
 	            -L@PYTHONPATH@/lib -lpython@PYTHON_VERSION@
 system_la_LDFLAGS = -module
+
+EXTRA_DIST=CMakeLists.txt

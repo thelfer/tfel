@@ -24,6 +24,12 @@ namespace mfront
   } // end of MFrontModelParser::getDescription
 
   void
+  MFrontModelParser::getKeywordsList(std::vector<std::string>& k) const
+  {
+    MFrontModelParserBase<MFrontModelParser>::getKeywordsList(k);
+  } // end of MFrontModelParser::getKeywordsList
+
+  void
   MFrontModelParser::setInterfaces(const std::set<std::string>& f)
   {
     using namespace std;

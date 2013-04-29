@@ -109,7 +109,21 @@ namespace aster{
      */
     static void
     throwNegativeTimeStepException(const std::string&);
-
+    /*!
+     * \brief throw an AsterException if the DDSOE parameter is invalid
+     * \param[in] b : behaviour name
+     * \param[in] v : DDSOE value
+     */
+    static void
+    throwInvalidDDSOEException(const std::string&,
+			       const AsterReal);
+    /*!
+     * \brief throw an AsterException if the prediction computation
+     * failed
+     * \param[in] b : behaviour name
+     */
+    static void
+    throwPredictionComputationFailedException(const std::string&);
     /*!
      * \brief throw an AsterException if the behaviour integration
      * failed

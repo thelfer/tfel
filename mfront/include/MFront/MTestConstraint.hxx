@@ -10,6 +10,7 @@
 
 #include"TFEL/Math/matrix.hxx"
 #include"TFEL/Math/vector.hxx"
+#include"TFEL/Math/stensor.hxx"
 #include"TFEL/Math/tvector.hxx"
 
 #include"MFront/MTestTypes.hxx"
@@ -65,7 +66,7 @@ namespace mfront
     virtual bool
     checkConvergence(const unsigned short,
 		     const tfel::math::vector<real>&,
-		     const tfel::math::tvector<6u,real>&,
+		     const tfel::math::stensor<3u,real>&,
 		     const real,
 		     const real,
 		     const real,

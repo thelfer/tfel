@@ -144,8 +144,15 @@ namespace mfront
     string res;
     while((this->current!=this->fileTokens.end())&&
 	  (this->current->value != ";")){
-      res+=this->current->value;
-      res+=" ";
+      if(!this->current->value.empty()){
+	if(this->current->value[0]=='@'){
+	  string msg("ParserBase::readUntilEndOfInstruction : ");
+	  msg += "no word beginning with '@' are allowed here";
+	  throw(runtime_error(msg));
+	}
+	res+=this->current->value;
+	res+=" ";
+      }
       ++(this->current);
     }
     this->checkNotEndOfFile("ParserBase::readUntilEndOfInstruction",

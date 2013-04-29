@@ -110,6 +110,12 @@ namespace mfront{
     this->disableCallBack("@UseQt");
   } // end of MFrontImplicitParserBase::MFrontImplicitParserBase
 
+  void
+  MFrontImplicitParserBase::getKeywordsList(std::vector<std::string>& k) const
+  {
+    MFrontBehaviourParserBase<MFrontImplicitParserBase>::getKeywordsList(k);
+  } // end of MFrontImplicitParserBase::getKeywordsList
+
   void MFrontImplicitParserBase::treatInitJacobian(void)
   {
     using namespace std;
@@ -161,7 +167,6 @@ namespace mfront{
     ++(this->current);
     this->readSpecifiedToken("MFrontBehaviourParserCommon::treatIsTangentOperatorSymmetric",";");
   } // end of MFrontImplicitParserBase::treatTangentOperator
-
   
   void MFrontImplicitParserBase::treatUnknownVariableMethod(const std::string& n)
   {
@@ -617,7 +622,7 @@ namespace mfront{
 
   std::string
   MFrontImplicitParserBase::integratorVariableModifier(const std::string& var,
-						   const bool addThisPtr)
+						       const bool addThisPtr)
   {
     if(this->isInternalStateVariableIncrement(var)){
       if(nf.find(var.substr(1))!=nf.end()){
@@ -1460,7 +1465,7 @@ namespace mfront{
     this->behaviourFile << "* \\brief Integrate behaviour law over the time step\n";
     this->behaviourFile << "*/\n";
     this->behaviourFile << "IntegrationResult" << endl;
-    this->behaviourFile << "integrate(const bool computeTangentOperator_){\n";
+    this->behaviourFile << "integrate(const SMType smt){\n";
     this->behaviourFile << "using namespace std;\n";
     this->behaviourFile << "using namespace tfel::math;\n";
     if(this->compareToNumericalJacobian){
@@ -1717,8 +1722,8 @@ namespace mfront{
 			  << "::integrate() : convergence after \" "
 			  << "<< this->iter << \" iterations\"<< endl << endl;\n";
     }
-    this->behaviourFile << "if(computeTangentOperator_){\n";
-    this->behaviourFile << "if(!this->computeConsistantTangentOperator()){\n";
+    this->behaviourFile << "if(smt!=NOSTIFFNESSREQUESTED){\n";
+    this->behaviourFile << "if(!this->computeConsistantTangentOperator(smt)){\n";
     if(this->behaviourCharacteristic.useQt()){        
       this->behaviourFile << "return MechanicalBehaviour<hypothesis,Type,use_qt>::FAILURE;\n";
     } else {
@@ -1947,7 +1952,7 @@ namespace mfront{
   void MFrontImplicitParserBase::writeBehaviourComputeTangentOperator(void)
   {
     if(this->hasConsistantTangentOperator){
-      this->behaviourFile << "bool computeConsistantTangentOperator(){\n";
+      this->behaviourFile << "bool computeConsistantTangentOperator(const SMType smt){\n";
       this->behaviourFile << "using namespace std;\n";
       this->behaviourFile << "using namespace tfel::math;\n";
       writeMaterialLaws("MFrontImplicitParserBase::writeBehaviourIntegrator",

@@ -28,6 +28,12 @@ namespace mfront{
   }
 
   void
+  MFrontDefaultParser::getKeywordsList(std::vector<std::string>& k) const
+  {
+    MFrontBehaviourParserBase<MFrontDefaultParser>::getKeywordsList(k);
+  } // end of MFrontDefaultParser::getKeywordsList
+
+  void
   MFrontDefaultParser::treatProvidesTangentOperator()
   {
     using namespace std;

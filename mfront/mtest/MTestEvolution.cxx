@@ -26,6 +26,12 @@ namespace mfront
     return this->value;
   } // end of MTestConstantEvolution::operator()
 
+  bool
+  MTestConstantEvolution::isConstant() const
+  {
+    return true;
+  } // end of MTestConstantEvolution::isConstant
+
   MTestConstantEvolution::~MTestConstantEvolution()
   {} // end of MTestConstantEvolution::~MTestConstantEvolution
 
@@ -83,6 +89,12 @@ namespace mfront
     }
     return (y1-y0)/(x1-x0)*(t-x0)+y0;
   }
+
+  bool
+  MTestLPIEvolution::isConstant() const
+  {
+    return (this->values.size()==1);
+  } // end of MTestLPIEvolution::isLPI
 
   MTestLPIEvolution::~MTestLPIEvolution()
   {}

@@ -237,6 +237,76 @@ namespace tfel
       return static_cast<unsigned short>(res);
     }
 
+    bool
+    ExternalLibraryManager::checkIfAsterBehaviourRequiresElasticMaterialPropertiesOffset(const std::string& l,
+											 const std::string& f)
+    {
+      using namespace std;
+      int res;
+      #if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
+      HINSTANCE__* lib = this->loadLibrary(l);
+#else
+      void * lib = this->loadLibrary(l);
+#endif /* defined _WIN32 || _WIN64 || defined __CYGWIN__ */
+
+      res = ::tfel_checkIfAsterBehaviourRequiresElasticMaterialPropertiesOffset(lib,f.c_str());
+      if(res<0){
+	string msg("ExternalLibraryManager::checkIfAsterBehaviourRequiresThermalExpansionMaterialPropertiesOffset : ");
+	msg += "information could not be read (";
+#if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
+	  msg += ::GetLastError();
+#else
+	  msg += ::dlerror();
+#endif /* defined _WIN32 || _WIN64 || defined __CYGWIN__ */
+	msg += ")";
+	throw(runtime_error(msg));
+      }
+      if(res==1){
+	return true;
+      }
+      if(res!=0){
+	string msg("ExternalLibraryManager::checkIfAsterBehaviourRequiresThermalExpansionMaterialPropertiesOffset : ");
+	msg += "invalid returned value";
+	throw(runtime_error(msg));
+      }
+      return false;
+    } // end of ExternalLibraryManager::checkIfAsterBehaviourRequiresElasticMaterialPropertiesOffset
+ 
+    bool
+    ExternalLibraryManager::checkIfAsterBehaviourRequiresThermalExpansionMaterialPropertiesOffset(const std::string& l,
+												  const std::string& f)
+    {
+      using namespace std;
+      int res;
+      #if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
+      HINSTANCE__* lib = this->loadLibrary(l);
+#else
+      void * lib = this->loadLibrary(l);
+#endif /* defined _WIN32 || _WIN64 || defined __CYGWIN__ */
+
+      res = ::tfel_checkIfAsterBehaviourRequiresThermalExpansionMaterialPropertiesOffset(lib,f.c_str());
+      if(res<0){
+	string msg("ExternalLibraryManager::checkIfAsterBehaviourRequiresThermalExpansionMaterialPropertiesOffset : ");
+	msg += "information could not be read (";
+#if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
+	  msg += ::GetLastError();
+#else
+	  msg += ::dlerror();
+#endif /* defined _WIN32 || _WIN64 || defined __CYGWIN__ */
+	msg += ")";
+	throw(runtime_error(msg));
+      }
+      if(res==1){
+	return true;
+      }
+      if(res!=0){
+	string msg("ExternalLibraryManager::checkIfAsterBehaviourRequiresThermalExpansionMaterialPropertiesOffset : ");
+	msg += "invalid returned value";
+	throw(runtime_error(msg));
+      }
+      return false;
+    } // end of ExternalLibraryManager::checkIfAsterBehaviourRequiresThermalExpansionMaterialPropertiesOffset
+
     std::vector<std::string>
     ExternalLibraryManager::getCastemFunctionVariables(const std::string& l,
 						       const std::string& f)
@@ -280,7 +350,7 @@ namespace tfel
 
     UMATFctPtr
     ExternalLibraryManager::getUMATFunction(const std::string& l,
-					      const std::string& f)
+					    const std::string& f)
     {
       using namespace std;
       #if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__

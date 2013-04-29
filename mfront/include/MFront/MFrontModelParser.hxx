@@ -22,6 +22,13 @@ namespace mfront{
     static std::string
     getDescription(void);
 
+    /*!
+     * \brief return the list of keywords usable with this parser
+     * \param[out] k : the list of keywords registred for this parser
+     */
+    virtual void
+    getKeywordsList(std::vector<std::string>&) const;
+
     virtual void
     treatFile(const std::string&);
 

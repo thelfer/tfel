@@ -7,11 +7,16 @@
 }
 
 @UseQt true;
+@ProvidesSymmetricTangentOperator;
 
 @MaterialProperty stress young;
-@MaterialProperty real   nu;
-@MaterialProperty real   rho;
-@MaterialProperty real   alpha;
+young.setGlossaryName("YoungModulus");
+@MaterialProperty real nu;
+nu.setGlossaryName("PoissonRatio");
+@MaterialProperty real rho;
+rho.setGlossaryName("MassDensity");
+@MaterialProperty real alpha;
+alpha.setGlossaryName("ThermalExpansion");
 
 @LocalVariable stress lambda;
 @LocalVariable stress mu;

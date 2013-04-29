@@ -174,6 +174,32 @@ namespace tfel
 					 const std::string&);
 
       /*!
+       * \return true if a behaviour generated throught the aster
+       * interface requires a offset for the elastic properties
+       * \param[in] l : name of the library
+       * \param[in] f : law name
+       */
+      bool
+      checkIfAsterBehaviourRequiresElasticMaterialPropertiesOffset(const std::string&,
+								  const std::string&);
+      /*!
+       * \return true if a behaviour generated throught the aster
+       * interface requires a offset for the elastic properties
+       * \param[in] l : name of the library
+       * \param[in] f : law name
+       */
+      bool
+      checkIfAsterBehaviourRequiresThermalExpansionMaterialPropertiesOffset(const std::string&,
+									    const std::string&);
+      /*!
+       * \return the number of elastic properties offset
+       * \param[in] l : name of the library
+       * \param[in] f : law name
+       */
+      unsigned short
+      getAsterElasticMaterialPropertiesOffset(const std::string&,
+					      const std::string&);
+      /*!
        * \param[in] l : name of the library
        * \param[in] f : function name
        */

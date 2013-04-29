@@ -50,12 +50,18 @@ alpha.setGlossaryName("ThermalExpansion");
 
 @IsTangentOperatorSymmetric true;
 @TangentOperator{
-  Dt = lambda*Stensor4::IxI()+2*mu*Stensor4::Id();
-  const real seq_e = seq+3*mu*theta*dp;
-  if(seq_e>1.e-8*young){
-    const real tmp =  dp/seq_e;
-    const Stensor4& M = Stensor4::M();
-    Dt += -4*mu*mu*theta*(tmp*M-(tmp-df_dseq*dt/(1+3*mu*theta*dt*df_dseq))*(n^n));
+  if((smt==ELASTIC)||(smt==CONSISTANTTANGENTOPERATOR)){
+    Dt = lambda*Stensor4::IxI()+2*mu*Stensor4::Id();
+    if(smt==CONSISTANTTANGENTOPERATOR){
+      const real seq_e = seq+3*mu*theta*dp;
+      if(seq_e>1.e-8*young){
+	const real tmp =  dp/seq_e;
+	const Stensor4& M = Stensor4::M();
+	Dt += -4*mu*mu*theta*(tmp*M-(tmp-df_dseq*dt/(1+3*mu*theta*dt*df_dseq))*(n^n));
+      }
+    }
+  } else {
+    return false;
   }
 }
 

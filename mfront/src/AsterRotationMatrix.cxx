@@ -5,6 +5,10 @@
  * \date   17 mar 2008
  */
 
+#include<iostream>
+#include<algorithm>
+#include<iterator>
+
 #include"MFront/Aster/AsterRotationMatrix.hxx"
 
 namespace aster
@@ -28,18 +32,15 @@ namespace aster
     a[2]=-a[1];
     // a[2,2]
     a[3]=a[0];
-
     // Contruction de la matrice de passage N (pour les tenseurs)
     // Première ligne
     MN[0][0]=a[0]*a[0];
     MN[0][1]=a[1]*a[1];
     MN[0][2]=a[0]*a[1];
-
     // Deuxième ligne
     MN[1][0]=a[2]*a[2];
     MN[1][1]=a[3]*a[3];
     MN[1][2]=a[2]*a[3];
-
     // Troisième ligne
     MN[2][0]=a[0]*a[2];
     MN[2][1]=a[1]*a[3];
@@ -141,15 +142,28 @@ namespace aster
   {
     // matrice N
     AsterReal N[4][4];
-    for(unsigned short i=0;i!=4;++i){
-      for(unsigned short j=0;j!=4;++j){
+    for(unsigned short i=0;i!=2;++i){
+      for(unsigned short j=0;j!=2;++j){
 	N[i][j] = MN[i][j];
       }
     }
+    N[2][0]  = 0.;
+    N[2][1]  = 0.;
+    N[2][3]  = 0.;
+    N[0][2]  = 0.;
+    N[1][2]  = 0.;
+    N[3][2]  = 0.;
+    N[2][2]  = 1.;
+    for(unsigned short i=0;i!=2;++i){
+      N[3][i] = MN[2][i];
+      N[i][3] = MN[i][2];
+    }
+    N[3][3]  = MN[2][2];
     N[3][0] *= AsterReal(2.);
     N[3][1] *= AsterReal(2.);
     N[3][2] *= AsterReal(2.);
     // matrice temporaire
+    using namespace std;
     AsterReal t[4][4];
     for(unsigned short i=0;i!=4;++i){
       for(unsigned short j=0;j!=4;++j){

@@ -116,7 +116,6 @@ namespace tfel
       /*!
        * add a test to the specified test suite
        * \param g : group of the test
-       * \param n : name of the test suite
        * \param t : test to be added
        */
       void

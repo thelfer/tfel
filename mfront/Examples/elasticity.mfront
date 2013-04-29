@@ -7,6 +7,7 @@
 }
 
 @UseQt true;
+@ProvidesSymmetricTangentOperator;
 
 @MaterialProperty stress young;
 @MaterialProperty real   nu;

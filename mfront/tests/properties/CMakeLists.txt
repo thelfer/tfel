@@ -44,7 +44,8 @@ set(mfront_SOURCES
     VanadiumAlloy_PoissonRatio_SRMA
     VanadiumAlloy_SpecificHeat_SRMA
     VanadiumAlloy_ThermalExpansion_SRMA
-    VanadiumAlloy_ThermalConductivity_SRMA)
+    VanadiumAlloy_ThermalConductivity_SRMA
+    Inconel600_YoungModulus)
 
 mfront_check_library(MFrontMaterialProperties c "" ${mfront_SOURCES})
 

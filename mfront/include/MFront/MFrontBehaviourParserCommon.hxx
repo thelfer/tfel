@@ -342,6 +342,8 @@ namespace mfront{
 
     virtual void writeUnaryLoadingTestFiles(void);
 
+    virtual void writeBehaviourComputePredictionOperator(void);
+
     virtual void writeBehaviourComputeTangentOperator(void);
 
     virtual void writeBehaviourGetTangentOperator();

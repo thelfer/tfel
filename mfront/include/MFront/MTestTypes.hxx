@@ -14,6 +14,22 @@ namespace mfront
   //! a simple alias
   typedef double real;
 
+      /*!
+     * \brief possible type of stiffness matrix
+     */
+  struct MTestStiffnessMatrixType
+  {
+    //! list of possible matrix type
+    enum mtype{
+      NOSTIFFNESS,
+      ELASTIC,
+      SECANTOPERATOR,
+      TANGENTOPERATOR,
+      CONSISTANTTANGENTOPERATOR,
+      UNSPECIFIEDSTIFFNESSMATRIXTYPE
+    }; // end of enum StiffnessMatrixType
+  };
+
 } // end of namespace mfront
 
 #endif /* _LIB_MFRONT_MTESTTYPES_H */

@@ -66,6 +66,12 @@ namespace mfront{
     this->disableCallBack("@IsotropicBehaviour");
   } // end of MFrontIsotropicBehaviourParserBase::MFrontIsotropicBehaviourParserBase
 
+  void
+  MFrontIsotropicBehaviourParserBase::getKeywordsList(std::vector<std::string>& k) const
+  {
+    MFrontBehaviourParserBase<MFrontIsotropicBehaviourParserBase>::getKeywordsList(k);
+  } // end of MFrontIsotropicBehaviourParserBase::getKeywordsList
+
   MFrontIsotropicBehaviourParserBase::~MFrontIsotropicBehaviourParserBase()
   {
     this->behaviourFile.close();
@@ -355,6 +361,21 @@ namespace mfront{
 			<< "DstrainDt,stress,tfel::math::OpDiv>::Result DF_DSEQ_TYPE;\n\n";
   } // end of MFrontIsotropicBehaviourParserBase::writeBehaviourParserSpecificTypedefs
 
+  void MFrontIsotropicBehaviourParserBase::writeBehaviourComputePredictionOperator(void)
+  {
+    this->behaviourFile << "IntegrationResult computePredictionOperator(const SMType smt){\n";
+    this->behaviourFile << "using namespace std;\n";
+    this->behaviourFile << "if(smt==ELASTIC){\n";
+    this->behaviourFile << "Dt = lambda*Stensor4::IxI()+2*mu*Stensor4::Id();\n";
+    this->behaviourFile << "} else {";
+    this->behaviourFile << "string msg(\"" << this->className<< "::computePredictionOperator : \");\n";
+    this->behaviourFile << "msg +=\"unimplemented feature\";\n";
+    this->behaviourFile << "throw(runtime_error(msg));\n";
+    this->behaviourFile << "}\n\n";
+    this->behaviourFile << "return SUCCESS;\n";
+    this->behaviourFile << "}\n\n";
+  } // end of MFrontIsotropicBehaviourParserBase::writeBehaviourComputePredictionOperator(void)
+
   void
   MFrontIsotropicBehaviourParserBase::setVerboseMode(void) 
   {
@@ -424,5 +445,6 @@ namespace mfront{
   {
     return MFrontBehaviourParserCommon::getSpecificTargets();
   } // end of MFrontIsotropicBehaviourParserBase::getSpecificTargets(void)
+
 
 } // end of namespace mfront

@@ -1,0 +1,41 @@
+@Author Helfer Thomas;
+@Date   09 avril 2013;
+@Description{
+  This test verify the @RotationMatrix
+  keyword.
+ };
+
+@Behaviour<umat> 'libMFrontCastemBehaviours.so' 'umatorthotropicelastic';
+@MaterialProperty<constant> 'YoungModulus1'     100.e9;
+@MaterialProperty<constant> 'YoungModulus2'     300.e9;
+@MaterialProperty<constant> 'YoungModulus3'     100.e9;
+@MaterialProperty<constant> 'PoissonRatio12'      0.3;
+@MaterialProperty<constant> 'PoissonRatio13'      0.3;
+@MaterialProperty<constant> 'PoissonRatio23'      0.25;
+@MaterialProperty<constant> 'ShearModulus12'    100.e9;
+@MaterialProperty<constant> 'ShearModulus13'     85.e9;
+@MaterialProperty<constant> 'ShearModulus23'    120.e9;
+@MaterialProperty<constant> 'V1X' 1.;
+@MaterialProperty<constant> 'V1Y' 0.;
+@MaterialProperty<constant> 'V1Z' 0.;
+@MaterialProperty<constant> 'V2X' 0.;
+@MaterialProperty<constant> 'V2Y' 1.;
+@MaterialProperty<constant> 'V2Z' 0.;
+@MaterialProperty<constant> 'MassDensity' 0.;
+@MaterialProperty<constant> 'ThermalExpansion1' 0.;
+@MaterialProperty<constant> 'ThermalExpansion2' 0.;
+@MaterialProperty<constant> 'ThermalExpansion3' 0.;
+
+
+@ExternalStateVariable 'Temperature' 293.15;
+
+@ImposedStress 'SXX' {0.:0.,1:50.e6};
+
+@Times {0.,1.};
+@RotationMatrix{{0,1,0},
+                {1,0,0},
+		{0,0,1}};
+
+@Test<function> {'EXX':'SXX/YoungModulus2',
+                 'EYY':'-PoissonRatio12*SXX/YoungModulus1',
+                 'EZZ':'-PoissonRatio23*SXX/YoungModulus2'} 1.e-12;

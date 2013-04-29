@@ -30,6 +30,7 @@
 #include"TFEL/Utilities/LaTeXConvertion.hxx"
 #include"TFEL/Utilities/TestDocumentation.hxx"
 #include"TFEL/Utilities/TestDocParser.hxx"
+#include"TFEL/Utilities/MTestDocParser.hxx"
 #include"TFEL/Utilities/ConfigParser.hxx"
 #include"TFEL/Utilities/TestDocMain.hxx"
 
@@ -202,6 +203,7 @@ namespace tfel
     TestDocMain::TestDocMain(const int argc,
 			     const char*const* argv)
       : ArgumentParserBase<TestDocMain>(argc,argv),
+	mtest(false),
 	fragment(false),
 	split(false)
     {
@@ -279,7 +281,15 @@ namespace tfel
 				"specify the application installation directory",true);
       this->registerNewCallBack("--translations",&TestDocMain::treatTranslationFile,
 				"specify a translation file",true);
+      this->registerNewCallBack("--mtest",&TestDocMain::treatMTest,
+				"add mtest files");
     } // end of TestDocMain::registerArgumentCallBacks
+
+    void
+    TestDocMain::treatMTest(void)
+    {
+      this->mtest=true;
+    }
 
     void
     TestDocMain::treatFragment(void)
@@ -425,10 +435,9 @@ namespace tfel
 	}
       }
 
+      // testdoc files
       map<string,vector<string> > files;
       recursiveFind(files,".*\\.testdoc$",".");
-
-      
       for(p=files.begin();p!=files.end();++p){
 	if(realpath(p->first.c_str(),path)==0){
 	  *(this->log) << "entering directory " << p->first << endl;
@@ -439,6 +448,29 @@ namespace tfel
 	  string name = p->first+'/'+*p2;
 	  try{
 	    TestDocParser parser(name);
+	    parser.execute(tests);
+	  }
+	  catch(std::exception& e){
+	    *(this->log) << TerminalColors::Reset;
+	    *(this->log) << "treatment of file '"+*p2+"' failed : "
+			 << e.what() << endl;
+	    *(this->log) << TerminalColors::Reset;
+	  }
+	}
+      }
+      
+      // mtest files
+      recursiveFind(files,".*\\.mtest",".");
+      for(p=files.begin();p!=files.end();++p){
+	if(realpath(p->first.c_str(),path)==0){
+	  *(this->log) << "entering directory " << p->first << endl;
+	} else {
+	  *(this->log) << "entering directory " << path << endl;
+	} 
+	for(p2=p->second.begin();p2!=p->second.end();++p2){
+	  string name = p->first+'/'+*p2;
+	  try{
+	    MTestDocParser parser(name);
 	    parser.execute(tests);
 	  }
 	  catch(std::exception& e){

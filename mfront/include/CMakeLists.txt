@@ -73,7 +73,6 @@ endif(LOCAL_CASTEM_HEADER)
 
 endif(HAVE_CASTEM)
 
-
 if(HAVE_ASTER)
   # install_header(MFront/Aster AsterOutOfBoundsPolicy.hxx)
   # install_header(MFront/Aster AsterGetModellingHypothesis.hxx)

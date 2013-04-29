@@ -34,9 +34,7 @@ namespace aster
     // compute the stiffness matrix in the global space
     void rotateStiffnessMatrixBackward(AsterReal *const) const;
   private:
-
-    AsterReal MN[4][4];
-  
+    AsterReal MN[3][3];
   }; // end of struct AsterRotationMatrix2D
   
   struct MFRONT_ASTER_VISIBILITY_EXPORT AsterRotationMatrix3D

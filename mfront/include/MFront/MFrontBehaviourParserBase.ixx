@@ -78,6 +78,16 @@ namespace mfront{
   } // end of MFrontBehaviourParserBase<Child>::registerDefaultCallBacks
 
   template<typename Child>
+  void
+  MFrontBehaviourParserBase<Child>::getKeywordsList(std::vector<std::string>& k) const
+  {
+    typename CallBackContainer::const_iterator p;
+    for(p=this->callBacks.begin();p!=this->callBacks.end();++p){
+      k.push_back(p->first);
+    }
+  } // end of MFrontBehaviourParserBase<Child>::getKeywordsList
+
+  template<typename Child>
   void MFrontBehaviourParserBase<Child>::treatDisabledCallBack()
   {
     using namespace std;

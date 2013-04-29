@@ -159,7 +159,7 @@ namespace umat
 	  behaviour.setOutOfBoundsPolicy(up.getOutOfBoundsPolicy());
 	  behaviour.checkBounds();
 	  try{
-	    result = behaviour.integrate(false);
+	    result = behaviour.integrate(BV::NOSTIFFNESSREQUESTED);
 	  }
 	  catch(const tfel::material::DivergenceException& e){
 #ifdef MFRONT_UMAT_VERBOSE
@@ -246,7 +246,7 @@ namespace umat
 	  throwNegativeTimeStepException(Name<BV>::getName());
 	}
 	behaviour.checkBounds();
-	if(this->behaviour.integrate(false)==BV::FAILURE){
+	if(this->behaviour.integrate(BV::NOSTIFFNESSREQUESTED)==BV::FAILURE){
 	  throwBehaviourIntegrationFailedException(Name<BV>::getName());
 	}
 	behaviour.checkBounds();

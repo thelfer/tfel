@@ -324,7 +324,7 @@ namespace mfront{
     this->behaviourFile << "* \\brief Integrate behaviour law over the time step\n";
     this->behaviourFile << "*/\n";
     this->behaviourFile << "IntegrationResult" << endl;
-    this->behaviourFile << "integrate(const bool computeTangentOperator_){\n";
+    this->behaviourFile << "integrate(const SMType){\n";
     this->behaviourFile << "if(!this->NewtonIntegration()){\n";
     if(this->behaviourCharacteristic.useQt()){        
       this->behaviourFile << "return MechanicalBehaviour<hypothesis,Type,use_qt>::FAILURE;\n";
@@ -344,8 +344,8 @@ namespace mfront{
       }
     }
     this->behaviourFile << ";\n";
-    this->behaviourFile << "if(computeTangentOperator_){\n";
-    this->behaviourFile << "if(!this->computeConsistantTangentOperator()){\n";
+    this->behaviourFile << "if(smt!=NOSTIFFNESSREQUESTED){\n";
+    this->behaviourFile << "if(!this->computeConsistantTangentOperator(smt)){\n";
     if(this->behaviourCharacteristic.useQt()){        
       this->behaviourFile << "return MechanicalBehaviour<hypothesis,Type,use_qt>::FAILURE;\n";
     } else {

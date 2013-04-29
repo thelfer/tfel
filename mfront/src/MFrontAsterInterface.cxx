@@ -23,8 +23,8 @@ namespace mfront{
 
   static const std::string&
   MFrontAsterInterfaceGetName(const std::map<std::string,std::string>& glossaryNames,
-			     const std::map<std::string,std::string>& entryNames,
-			     const std::string& v)
+			      const std::map<std::string,std::string>& entryNames,
+			      const std::string& v)
   {
     using namespace std;
     map<string,string>::const_iterator p2;
@@ -440,7 +440,6 @@ namespace mfront{
     }
   } // end of MFrontAsterInterface::appendGlossaryNames
 
-
   void
   MFrontAsterInterface::writeGlossaryNames(std::ostream& f,
 					  const std::vector<std::string>& n,
@@ -550,7 +549,7 @@ namespace mfront{
 		     "stiffness tensor or the thermal expansion "
 		     "tensor to be computed for you. Thus,"
 		     "the aster interface requires the ");
-	  msg += "following coefficients to be defined (in the right order) ";
+	  msg += "following material propertys to be defined (in the right order) ";
 	  msg += "- the young modulus     (use @Coef stress           young)\n";
 	  msg += "- the poisson ratio     (use @Coef real             nu)\n";
 	  if(behaviourCharacteristic.requiresThermalExpansionTensor()){
@@ -561,23 +560,23 @@ namespace mfront{
 	}
 	if(coefsHolder[0].name!="young"){
 	  string msg("MFrontASTERInterface::endTreatement : the aster interface requires the ");
-	  msg += "first coefficient to be the young modulus (use @Coef stress young)";
+	  msg += "first material property to be the young modulus (use @Coef stress young)";
 	  throw(runtime_error(msg));
 	}
 	if(coefsHolder[1].name!="nu"){
 	  string msg("MFrontASTERInterface::endTreatement : the aster interface requires the ");
-	  msg += "second coefficient to be the poisson ratio (use @Coef real nu)";
+	  msg += "second material property to be the poisson ratio (use @Coef real nu)";
 	  throw(runtime_error(msg));
 	}
 	if(behaviourCharacteristic.requiresThermalExpansionTensor()){
 	  if(coefsHolder[2].name!="rho"){
 	    string msg("MFrontASTERInterface::endTreatement : the aster interface requires the " );
-	    msg += "third coefficient to be the density (use @Coef density rho)";
+	    msg += "third material property to be the density (use @Coef density rho)";
 	    throw(runtime_error(msg));
 	  }
 	  if(coefsHolder[3].name!="alpha"){
 	    string msg("MFrontASTERInterface::endTreatement : the aster interface requires the" );
-	    msg += "fourth coefficient to be the thermal expansion (use @Coef thermalexpansion alpha)";
+	    msg += "fourth material property to be the thermal expansion (use @Coef thermalexpansion alpha)";
 	    throw(runtime_error(msg));
 	  }
 	}
@@ -659,21 +658,152 @@ namespace mfront{
     } else {
       out << "static const bool requiresThermalExpansionTensor = false;\n";
     }
-    if(behaviourCharacteristic.getElasticBehaviourType()==mfront::ISOTROPIC){
-      out << "static const unsigned short propertiesOffset = 0u;\n";
-    } else if (behaviourCharacteristic.getElasticBehaviourType()==mfront::ORTHOTROPIC){
-      out << "static const unsigned short N = tfel::material::ModellingHypothesisToSpaceDimension<H>::value;\n";
-      out << "static const unsigned short propertiesOffset = AsterOrthotropicOffset<N>::value;\n";
-    } else {
-      string msg("MFrontAsterInterface::endTreatement : ");
-      msg += "unsupported behaviour type.\n";
-      msg += "The aster interface only support isotropic or orthotropic behaviour at this time.";
-      throw(runtime_error(msg));
-    }
+    bool hasElasticMaterialPropertiesOffset          = false;
+    bool hasThermalExpansionMaterialPropertiesOffset = false;
+    // this indicates that the material properties required to compute
+    // the stiffness tensor are part of the material properties
+    bool founde = false;
+    // this indicates that the material properties required to compute
+    // the thermal expansion tensor are part of the material properties
+    bool foundt = false;
     if(behaviourCharacteristic.getElasticBehaviourType()==mfront::ISOTROPIC){
       out << "static const AsterBehaviourType etype = aster::ISOTROPIC;\n";
+      if(behaviourCharacteristic.requiresStiffnessTensor()){
+	for(p=coefsHolder.begin();(p!=coefsHolder.end())&&(!founde);++p){
+	  if((p->name=="young")||
+	     (p->name=="nu")){
+	    founde = true;
+	  }
+	}
+	if(founde){
+	  /*
+	   * Check Aster requirements
+	   */
+	  if(coefsHolder.size()<2){
+	    string msg("MFrontAsterInterface::endTreatement : the aster interface requires the ");
+	    msg += "following two material propertys to be defined (in the right order) when the ";
+	    msg += "stiffness tensor is required";
+	    msg += "(currently only ";
+	    msg += toString(static_cast<unsigned short>(coefsHolder.size()));
+	    msg += " defined):\n";
+	    msg += "- the young modulus     (use @Coef stress young)\n";
+	    msg += "- the poisson ratio     (use @Coef real   nu)\n";
+	    throw(runtime_error(msg));
+	  }
+	  if(coefsHolder[0].name!="young"){
+	    string msg("MFrontAsterInterface::endTreatement : the aster interface requires the ");
+	    msg += "first material property to be the young modulus (use @Coef stress young)";
+	    throw(runtime_error(msg));
+	  }
+	  if(coefsHolder[1].name!="nu"){
+	    string msg("MFrontAsterInterface::endTreatement : the aster interface requires the ");
+	    msg += "second material property to be the poisson ratio (use @Coef real nu)";
+	    throw(runtime_error(msg));
+	  }
+	  out << "static const unsigned short elasticPropertiesOffset = 0u;\n";
+	} else {
+	  out << "static const unsigned short elasticPropertiesOffset = 2u;\n";
+	  hasElasticMaterialPropertiesOffset = true;
+	}
+      } else {
+	out << "static const unsigned short elasticPropertiesOffset = 0u;\n";
+      }
+      if(behaviourCharacteristic.requiresThermalExpansionTensor()){
+	for(p=coefsHolder.begin();(p!=coefsHolder.end())&&(!foundt);++p){
+	  if(p->name=="alpha"){
+	    foundt = true;
+	  }
+	}
+	if(foundt){
+	  if(behaviourCharacteristic.requiresStiffnessTensor()){
+	    if(coefsHolder.size()<3){
+	      string msg("MFrontAsterInterface::endTreatement : the aster interface requires the ");
+	      msg += "following three or four material propertys to be defined (in the right order) when the ";
+	      msg += "stiffness and the thermal expansion tensors are required";
+	      msg += "(currently only ";
+	      msg += toString(static_cast<unsigned short>(coefsHolder.size()));
+	      msg += " defined):\n";
+	      msg += "- the young modulus     (use @Coef stress young)\n";
+	      msg += "- the poisson ratio     (use @Coef real   nu)\n";
+	      msg += "[- the mass density     (use @Coef density rho)]\n";
+	      msg += "- the thermal expansion (use @Coef thermalexpansion alpha)\n";
+	      msg += "(the mass density is optionnal and shall be used only if the law ";
+	      msg += "has to be compatible with Cast3M.)";
+	      throw(runtime_error(msg));
+	    }
+	    // compatibility with Cast3M
+	    if((coefsHolder[2].name!="alpha")&&
+	       (coefsHolder[2].name!="rho")){
+	      string msg("MFrontAsterInterface::endTreatement : the aster interface requires the ");
+	      msg += "third material property to be the thermal expansion or the density";
+	      throw(runtime_error(msg));
+	    }
+	    if(coefsHolder[2].name=="rho"){
+	      if(coefsHolder.size()<4){
+		string msg("MFrontAsterInterface::endTreatement : the aster interface requires the ");
+		msg += "following three or four material propertys to be defined (in the right order) when the ";
+		msg += "stiffness and the thermal expansion tensors are required";
+		msg += "(currently only ";
+		msg += toString(static_cast<unsigned short>(coefsHolder.size()));
+		msg += " defined):\n";
+		msg += "- the young modulus     (use @Coef stress young)\n";
+		msg += "- the poisson ratio     (use @Coef real   nu)\n";
+		msg += "[- the mass density     (use @Coef density rho)]\n";
+		msg += "- the thermal expansion (use @Coef thermalexpansion alpha)\n";
+		msg += "(the mass density is optionnal and shall be used only if the law ";
+		msg += "has to be compatible with Cast3M.)";
+		throw(runtime_error(msg));
+	      }
+	      if(coefsHolder[3].name!="alpha"){
+		string msg("MFrontAsterInterface::endTreatement : the aster interface requires the ");
+		msg += "third material property to be the thermal expansion or the density";
+		throw(runtime_error(msg));
+	      }
+	      out << "static const unsigned short massDensityOffsetForThermalExpansion = 1u;\n";
+	    } else {
+	      out << "static const unsigned short massDensityOffsetForThermalExpansion = 0u;\n";
+	    }
+	  } else {
+	    if(coefsHolder.empty()){
+	      string msg("MFrontAsterInterface::endTreatement : the aster interface requires the ");
+	      msg += "thermal expansion to be defined as the first material property";
+	      throw(runtime_error(msg));
+	    }
+	    if(coefsHolder[0].name!="alpha"){
+	      string msg("MFrontAsterInterface::endTreatement : the aster interface requires the ");
+	      msg += "thermal expansion to be defined as the first material property";
+	      throw(runtime_error(msg));
+	    }
+	    out << "static const unsigned short massDensityOffsetForThermalExpansion = 0u;\n";
+	  }
+	  out << "static const unsigned short thermalExpansionPropertiesOffset = 0u;\n"; 
+	} else {
+	  out << "static const unsigned short massDensityOffsetForThermalExpansion = 0u;\n";
+	  out << "static const unsigned short thermalExpansionPropertiesOffset = 1u;\n"; 
+	  hasThermalExpansionMaterialPropertiesOffset = true;
+	}
+      } else {
+	out << "static const unsigned short massDensityOffsetForThermalExpansion = 0u;\n";
+	out << "static const unsigned short thermalExpansionPropertiesOffset     = 0u;\n"; 
+      }
     } else if (behaviourCharacteristic.getElasticBehaviourType()==mfront::ORTHOTROPIC){
       out << "static const AsterBehaviourType etype = aster::ORTHOTROPIC;\n";
+      out << "static const unsigned short N = tfel::material::ModellingHypothesisToSpaceDimension<H>::value;\n";
+      if(behaviourCharacteristic.requiresStiffnessTensor()){
+	out << "static const unsigned short elasticPropertiesOffset "
+	    << "= AsterOrthotropicElasticPropertiesOffset<N>::value;\n";
+	hasElasticMaterialPropertiesOffset = true;
+      } else {
+	out << "static const unsigned short elasticPropertiesOffset = 0u;\n";
+      }
+      if(behaviourCharacteristic.requiresThermalExpansionTensor()){
+	out << "static const unsigned short massDensityOffsetForThermalExpansion = 0u;\n";
+	out << "static const unsigned short thermalExpansionPropertiesOffset = 3u;\n";
+	hasThermalExpansionMaterialPropertiesOffset = true;
+      } else {
+	out << "static const unsigned short massDensityOffsetForThermalExpansion = 0u;\n";
+	out << "static const unsigned short thermalExpansionPropertiesOffset = 0u;\n";
+      }
     } else {
       string msg("MFrontAsterInterface::endTreatement : ");
       msg += "unsupported behaviour type.\n";
@@ -857,6 +987,27 @@ namespace mfront{
       	<< makeLowerCase(name);
     unsigned short cs = this->getNumberOfVariables(coefsHolder);
     out << "_nMaterialProperties = " << cs << ";\n";
+
+    out << "MFRONT_SHAREDOBJ unsigned short aster"
+      	<< makeLowerCase(name);
+    out << "_eoffset = ";
+    if(hasElasticMaterialPropertiesOffset){
+      out << "1";
+    } else {
+      out << "0";
+    }
+    out << ";\n";
+
+    out << "MFRONT_SHAREDOBJ unsigned short aster"
+      	<< makeLowerCase(name);
+    out << "_teoffset = ";
+    if(hasThermalExpansionMaterialPropertiesOffset){
+      out << "1";
+    } else {
+      out << "0";
+    }
+    out << ";\n";
+
     this->writeGlossaryNames(out,this->getGlossaryNames(coefsHolder,
 							glossaryNames,
 							entryNames),

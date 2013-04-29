@@ -52,6 +52,10 @@ namespace mfront{
 			      &MFrontRungeKuttaParser::treatUsableInPurelyImplicitResolution);
     this->registerNewCallBack("@MaterialLaw",&MFrontRungeKuttaParser::treatMaterialLaw);
     this->registerNewCallBack("@Algorithm",&MFrontRungeKuttaParser::treatAlgorithm);
+    // this->registerNewCallBack("@TangentOperator",
+    // 			      &MFrontRungeKuttaParser::treatTangentOperator);
+    // this->registerNewCallBack("@IsTangentOperatorSymmetric",
+    // 			      &MFrontRungeKuttaParser::treatIsTangentOperatorSymmetric);
     this->registerNewCallBack("@Derivative",&MFrontRungeKuttaParser::treatDerivative);
     this->registerNewCallBack("@ComputeStress",&MFrontRungeKuttaParser::treatComputeStress);
     this->registerNewCallBack("@Epsilon",&MFrontRungeKuttaParser::treatEpsilon);
@@ -60,6 +64,47 @@ namespace mfront{
     this->disableCallBack("@Integrator");
     this->disableCallBack("@ComputedVar");
   }
+
+  // void MFrontRungeKuttaParser::treatTangentOperator(void)
+  // {
+  //   using namespace std;
+  //   if(!this->tangentOperator.empty()){
+  //     this->throwRuntimeError("MFrontRungeKuttaParser::treatTangentOperator",
+  // 			      "@TangentOperator already used.");
+  //   }
+  //   this->tangentOperator = this->readNextBlock(makeVariableModifier(*this,&MFrontRungeKuttaParser::tangentOperatorVariableModifier),
+  // 						true);
+  //   this->tangentOperator += "\n";
+  //   this->hasConsistantTangentOperator = true;
+  // } // end of MFrontRungeKuttaParser::treatTangentOperator
+
+  // void MFrontRungeKuttaParser::treatIsTangentOperatorSymmetric(void)
+  // {
+  //   using namespace std;
+  //   if(this->isConsistantTangentOperatorSymmetricDefined){
+  //     this->throwRuntimeError("MFrontRungeKuttaParser::treatIsTangentOperatorSymmetric",
+  // 			      "@IsTangentOperatorSymmetric already used.");
+  //   }
+  //   this->isConsistantTangentOperatorSymmetricDefined = true;
+  //   this->checkNotEndOfFile("MFrontRungeKuttaParser::treatIsTangentOperatorSymmetric : ",
+  // 			    "Expected 'true' or 'false'.");
+  //   if(this->current->value=="true"){
+  //     this->isConsistantTangentOperatorSymmetric = true;
+  //   } else if(this->current->value=="false"){
+  //     this->isConsistantTangentOperatorSymmetric = false;
+  //   } else {
+  //     this->throwRuntimeError("MFrontRungeKuttaParser::treatIsTangentOperatorSymmetric",
+  // 			      "Expected to read 'true' or 'false' instead of '"+this->current->value+".");
+  //   }
+  //   ++(this->current);
+  //   this->readSpecifiedToken("MFrontRungeKuttaParser::treatIsTangentOperatorSymmetric",";");
+  // } // end of MFrontRungeKuttaParser::treatTangentOperator
+
+  void
+  MFrontRungeKuttaParser::getKeywordsList(std::vector<std::string>& k) const
+  {
+    MFrontBehaviourParserBase<MFrontRungeKuttaParser>::getKeywordsList(k);
+  } // end of MFrontRungeKuttaParser::getKeywordsList
 
   void
   MFrontRungeKuttaParser::setInterfaces(const std::set<std::string>& i)
@@ -1728,7 +1773,7 @@ namespace mfront{
     this->behaviourFile << "* \\brief Integrate behaviour law over the time step" << endl;
     this->behaviourFile << "*/" << endl;
     this->behaviourFile << "IntegrationResult" << endl;
-    this->behaviourFile << "integrate(const bool computeTangentOperator_){" << endl;
+    this->behaviourFile << "integrate(const SMType smt){" << endl;
     if(this->algorithm == "Euler"){
       this->writeBehaviourEulerIntegrator();
     } else if(this->algorithm == "RungeKutta2"){
@@ -1755,7 +1800,7 @@ namespace mfront{
 	p2->writeBoundsChecks(this->behaviourFile);
       }
     }
-    this->behaviourFile << "if(computeTangentOperator_){\n";
+    this->behaviourFile << "if(smt!=NOSTIFFNESSREQUESTED){\n";
     this->behaviourFile << "string msg(\""<< this->className << "::integrate : \");\n";
     this->behaviourFile << "msg += \"tangent operator is not available\";\n";
     this->behaviourFile << "}\n";

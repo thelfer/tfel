@@ -59,6 +59,8 @@ namespace tfel{
       
       void treatTranslationFile(void);
 
+      void treatMTest(void);
+
       std::string lang;
 
       std::string srcdir;
@@ -74,6 +76,8 @@ namespace tfel{
       std::ofstream  output;
 
       std::ostream* log;
+
+      bool mtest;
 
       bool fragment;
 

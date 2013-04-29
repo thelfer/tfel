@@ -31,6 +31,13 @@ namespace mfront{
 
     virtual void setWarningMode();
 
+    /*!
+     * \brief return the list of keywords usable with this parser
+     * \param[out] k : the list of keywords registred for this parser
+     */
+    virtual void
+    getKeywordsList(std::vector<std::string>&) const;
+
     virtual void treatFile(const std::string&);
 
     void writeOutputFiles();
@@ -52,6 +59,8 @@ namespace mfront{
 
     virtual
     void writeBehaviourIntegrator(void) = 0;
+
+    virtual void writeBehaviourComputePredictionOperator(void);
 
     virtual
     std::map<std::string,std::vector<std::string> >

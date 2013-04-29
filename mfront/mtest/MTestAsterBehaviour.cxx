@@ -13,36 +13,176 @@
 #include"TFEL/System/ExternalLibraryManager.hxx"
 #include"MFront/Aster/Aster.hxx"
 #include"MFront/Aster/AsterComputeStiffnessTensor.hxx"
+
+#include"MFront/MTestUmatNormaliseTangentOperator.hxx"
 #include"MFront/MTestAsterBehaviour.hxx"
 
 namespace mfront
 {
 
-  MTestAsterBehaviour::MTestAsterBehaviour(const std::string& l,
-					 const std::string& b)
+  MTestAsterBehaviour::MTestAsterBehaviour(const tfel::material::ModellingHypothesis::Hypothesis h,
+					   const std::string& l,
+					   const std::string& b)
     : MTestUmatBehaviourBase(l,b)
   {
+    using namespace std;
     using namespace tfel::system;
+    using namespace tfel::material;
     typedef ExternalLibraryManager ELM;
     ELM& elm = ELM::getExternalLibraryManager();
     this->fct = elm.getAsterFunction(l,b);
     this->mpnames = elm.getUMATMaterialPropertiesNames(l,b);
+    bool eo = elm.checkIfAsterBehaviourRequiresElasticMaterialPropertiesOffset(l,b);
+    bool to = elm.checkIfAsterBehaviourRequiresThermalExpansionMaterialPropertiesOffset(l,b);
+    vector<string> tmp;
+    if(this->type==0u){
+      if(eo){
+	tmp.push_back("YoungModulus");
+	tmp.push_back("PoissonRatio");
+      }
+      if(to){
+	tmp.push_back("ThermalExpansion");
+      }
+    } else if(this->type==1u){
+      if(h==ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN){
+	if(eo){
+	  tmp.push_back("YoungModulus1");
+	  tmp.push_back("YoungModulus2");
+	  tmp.push_back("YoungModulus3");
+	  tmp.push_back("PoissonRatio12");
+	  tmp.push_back("PoissonRatio13");
+	  tmp.push_back("PoissonRatio23");
+	}
+	if(to){
+	  tmp.push_back("ThermalExpansion1");
+	  tmp.push_back("ThermalExpansion2");
+	  tmp.push_back("ThermalExpansion3");
+	}
+      } else if((h==ModellingHypothesis::PLANESTRESS)||
+		(h==ModellingHypothesis::PLANESTRAIN)||
+		(h==ModellingHypothesis::AXISYMMETRICAL)||
+		(h==ModellingHypothesis::GENERALISEDPLANESTRAIN)){
+	if(eo){
+	  tmp.push_back("YoungModulus1");
+	  tmp.push_back("YoungModulus2");
+	  tmp.push_back("YoungModulus3");
+	  tmp.push_back("PoissonRatio12");
+	  tmp.push_back("PoissonRatio23");
+	  tmp.push_back("PoissonRatio13");
+	  tmp.push_back("ShearModulus12");
+	}
+	if(to){
+	  tmp.push_back("ThermalExpansion1");
+	  tmp.push_back("ThermalExpansion2");
+	  tmp.push_back("ThermalExpansion3");
+	}
+      } else if(h==ModellingHypothesis::TRIDIMENSIONAL){
+	if(eo){
+	  tmp.push_back("YoungModulus1");
+	  tmp.push_back("YoungModulus2");
+	  tmp.push_back("YoungModulus3");
+	  tmp.push_back("PoissonRatio12");
+	  tmp.push_back("PoissonRatio23");
+	  tmp.push_back("PoissonRatio13");
+	  tmp.push_back("ShearModulus12");
+	  tmp.push_back("ShearModulus23");
+	  tmp.push_back("ShearModulus13");
+	}
+	if(to){
+	  tmp.push_back("ThermalExpansion1");
+	  tmp.push_back("ThermalExpansion2");
+	  tmp.push_back("ThermalExpansion3");
+	}
+      } else { 
+	string msg("MTestUmatBehaviourBase::MTestUmatBehaviourBase : "
+		   "unsupported modelling hypothesis");
+	throw(runtime_error(msg));
+      }
+    } else {
+      string msg("MTestUmatBehaviourBase::MTestUmatBehaviourBase : "
+		 "unsupported behaviour type "
+		 "(neither isotropic nor orthotropic)");
+      throw(runtime_error(msg));
+    }
+    this->mpnames.insert(this->mpnames.begin(),tmp.begin(),tmp.end());
+  }
+
+  void
+  MTestAsterBehaviour::allocate(const size_t ntens,
+				const size_t nstatev)
+  {
+    this->D.resize(ntens,ntens);
+    if(nstatev==0){
+      this->iv.resize(1u,real(0));
+    } else {
+      this->iv.resize(nstatev);
+    }
+  } // end of MTestAsterBehaviour::allocate
+
+  MTestStiffnessMatrixType::mtype
+  MTestAsterBehaviour::getDefaultStiffnessMatrixType(void) const
+  {
+    return MTestStiffnessMatrixType::CONSISTANTTANGENTOPERATOR;
+  }
+  
+  bool
+  MTestAsterBehaviour::computePredictionOperator(tfel::math::matrix<real>& Kt,
+						 const tfel::math::tmatrix<3u,3u,real>& r,
+						 const tfel::math::stensor<3u,real>& e0,
+						 const tfel::math::stensor<3u,real>& s0,
+						 const tfel::math::vector<real>& mprops0,
+						 const tfel::math::vector<real>& iv0,
+						 const tfel::math::vector<real>& esv0,
+						 const tfel::material::ModellingHypothesis::Hypothesis h,
+						 const MTestStiffnessMatrixType::mtype ktype) const
+  {
+    using namespace tfel::math;
+    stensor<3u,real> s1(s0);
+    stensor<3u,real> de(real(0));
+    vector<real> iv1(iv0);
+    vector<real> desv(esv0.size(),real(0));
+    return this->call_behaviour(Kt,s1,iv1,r,e0,de,s0,
+				mprops0,iv0,esv0,desv,
+				h,real(1),ktype,false);
   }
 
   bool
   MTestAsterBehaviour::integrate(tfel::math::matrix<real>& Kt,
-				tfel::math::tvector<6u,real>& s1,
-				tfel::math::vector<real>& iv1,
-				const tfel::math::tmatrix<3u,3u,real>& r,
-				const tfel::math::tvector<6u,real>& e0,
-				const tfel::math::tvector<6u,real>& de,
-				const tfel::math::tvector<6u,real>& s0,
-				const tfel::math::vector<real>& mp,
-				const tfel::math::vector<real>& iv0,
-				const tfel::math::vector<real>& ev0,
-				const tfel::math::vector<real>& dev,
-				const tfel::material::ModellingHypothesis::Hypothesis h,
-				const real dt) const
+				 tfel::math::stensor<3u,real>& s1,
+				 tfel::math::vector<real>& iv1,
+				 const tfel::math::tmatrix<3u,3u,real>& r,
+				 const tfel::math::stensor<3u,real>& e0,
+				 const tfel::math::stensor<3u,real>& de,
+				 const tfel::math::stensor<3u,real>& s0,
+				 const tfel::math::vector<real>& mp,
+				 const tfel::math::vector<real>& iv0,
+				 const tfel::math::vector<real>& ev0,
+				 const tfel::math::vector<real>& dev,
+				 const tfel::material::ModellingHypothesis::Hypothesis h,
+				 const real dt,
+				 const MTestStiffnessMatrixType::mtype ktype) const
+  {
+    return this->call_behaviour(Kt,s1,iv1,r,e0,de,s0,
+				mp,iv0,ev0,dev,h,dt,
+				ktype,true);
+  } // end of MTestAsterBehaviour::integrate
+
+  bool
+  MTestAsterBehaviour::call_behaviour(tfel::math::matrix<real>& Kt,
+				      tfel::math::stensor<3u,real>& s1,
+				      tfel::math::vector<real>& iv1,
+				      const tfel::math::tmatrix<3u,3u,real>& r,
+				      const tfel::math::stensor<3u,real>& e0,
+				      const tfel::math::stensor<3u,real>& de,
+				      const tfel::math::stensor<3u,real>& s0,
+				      const tfel::math::vector<real>& mp,
+				      const tfel::math::vector<real>& iv0,
+				      const tfel::math::vector<real>& ev0,
+				      const tfel::math::vector<real>& dev,
+				      const tfel::material::ModellingHypothesis::Hypothesis h,
+				      const real dt,
+				      const MTestStiffnessMatrixType::mtype ktype,
+				      const bool b) const
   {
     using namespace std;
     using namespace tfel::math;
@@ -73,26 +213,58 @@ namespace mfront
       ntens = 6;
       dimension = 3u;
     } else {
-      string msg("MTestAsterBehaviour::integrate : ");
+      string msg("MTestAsterBehaviour::call_beahviour : ");
       msg += "unsupported hypothesis";
       throw(runtime_error(msg));
     }
-    matrix<real> D(Kt.getNbRows(),Kt.getNbCols(),0.);
-    vector<real> iv(iv0);
-    if(iv.size()==0){
-      iv.push_back(0.);
+    fill(this->D.begin(),this->D.end(),0.);
+    // choosing the type of stiffness matrix
+    if(b){
+      if(ktype==MTestStiffnessMatrixType::NOSTIFFNESS){
+	// do nothing
+      } else if(ktype==MTestStiffnessMatrixType::ELASTIC){
+	D(0,0) = real(1);
+      } else if(ktype==MTestStiffnessMatrixType::SECANTOPERATOR){
+	D(0,0) = real(2);
+      } else if(ktype==MTestStiffnessMatrixType::TANGENTOPERATOR){
+	D(0,0) = real(3);
+      } else if(ktype==MTestStiffnessMatrixType::CONSISTANTTANGENTOPERATOR){
+	D(0,0) = real(4);
+      } else {
+	string msg("MTestAsterBehaviour::call_behaviour : "
+		   "invalid or unspecified stiffness matrix type");
+	throw(runtime_error(msg));
+      }
+    } else {
+      if(ktype==MTestStiffnessMatrixType::ELASTIC){
+	D(0,0) = real(-1);
+      } else if(ktype==MTestStiffnessMatrixType::SECANTOPERATOR){
+	D(0,0) = real(-2);
+      } else if(ktype==MTestStiffnessMatrixType::TANGENTOPERATOR){
+	D(0,0) = real(-3);
+      } else {
+	string msg("MTestAsterBehaviour::call_behaviour : "
+		   "invalid or unspecified stiffness matrix type");
+	throw(runtime_error(msg));
+      }
+    }
+    // using a local copy of internal state variables to handle the
+    // case where iv0 is empty
+    copy(iv0.begin(),iv0.end(),this->iv.begin());
+    if(iv0.empty()){
+      iv[0] = real(0.);
     }
     nstatv = static_cast<AsterInt>(iv.size());
     // rotation matrix
-    matrix<real> drot(r.getNbRows(),r.getNbCols(),0.);
-    matrix<real>::size_type i,j;
-    for(i=0;i!=r.getNbRows();++i){
-      for(j=0;j!=r.getNbCols();++j){
+    tmatrix<3u,3u,real> drot;
+    tmatrix<3u,3u,real>::size_type i,j;
+    for(i=0;i!=3u;++i){
+      for(j=0;j!=3u;++j){
 	drot(i,j) = r(j,i);
       }
     }
-    tvector<6u,real> ue0(e0);
-    tvector<6u,real> ude(de);
+    stensor<3u,real> ue0(e0);
+    stensor<3u,real> ude(de);
     copy(s0.begin(),s0.end(),s1.begin());
     for(i=3;i!=static_cast<unsigned short>(ntens);++i){
       s1(i)  /= sqrt2;
@@ -100,7 +272,6 @@ namespace mfront
       ude(i) *= sqrt2;
     }
     AsterReal ndt(1.);
-    D(0,0)=1.;
     (this->fct)(&s1(0),&iv(0),&D(0,0),
 		0,0,0,0,0,0,0,
 		&ue0(0),&ude(0),0,&dt,
@@ -109,61 +280,35 @@ namespace mfront
 		0,0,0,&ntens,&nstatv,&mp(0),
 		&nprops,0,&drot(0,0),&ndt,
 		0,0,0,0,0,0,0,0,0);
-    if(!iv1.empty()){
-      copy(iv.begin(),iv.end(),iv1.begin());
+    if(ndt<0.){
+      return false;
     }
-    // tangent operator (...)
-    for(i=0;i!=Kt.getNbRows();++i){
-      for(j=0;j!=Kt.getNbCols();++j){
-    	Kt(i,j) = D(j,i);
+    if(ktype!=MTestStiffnessMatrixType::NOSTIFFNESS){
+      MTestUmatNormaliseTangentOperator::exe(Kt,D,dimension);
+    }
+    if(b){
+      if(!iv0.empty()){
+	copy(iv.begin(),iv.end(),iv1.begin());
+      }
+      // turning things in standard conventions
+      for(i=3;i!=static_cast<unsigned short>(ntens);++i){
+	s1(i) *= sqrt2;
       }
     }
-    if(dimension==2u){
-      Kt(0,3) *= sqrt2;
-      Kt(1,3) *= sqrt2;
-      Kt(2,3) *= sqrt2;
-      Kt(3,0) *= sqrt2;
-      Kt(3,1) *= sqrt2;
-      Kt(3,2) *= sqrt2;
-      Kt(3,3) *= 2;
-    } else if (dimension==3u){
-      Kt(0,3) *= sqrt2;
-      Kt(1,3) *= sqrt2;
-      Kt(2,3) *= sqrt2;
-      Kt(0,4) *= sqrt2;
-      Kt(1,4) *= sqrt2;
-      Kt(2,4) *= sqrt2;
-      Kt(0,5) *= sqrt2;
-      Kt(1,5) *= sqrt2;
-      Kt(2,5) *= sqrt2;
-      Kt(3,0) *= sqrt2;
-      Kt(3,1) *= sqrt2;
-      Kt(3,2) *= sqrt2;
-      Kt(4,0) *= sqrt2;
-      Kt(4,1) *= sqrt2;
-      Kt(4,2) *= sqrt2;
-      Kt(5,0) *= sqrt2;
-      Kt(5,1) *= sqrt2;
-      Kt(5,2) *= sqrt2;
-      Kt(3,3) *= 2;
-      Kt(3,4) *= 2;
-      Kt(3,5) *= 2;
-      Kt(4,3) *= 2;
-      Kt(4,4) *= 2;
-      Kt(4,5) *= 2;
-      Kt(5,3) *= 2;
-      Kt(5,4) *= 2;
-      Kt(5,5) *= 2;
-    }
-    // turning things in standard conventions
-    for(i=3;i!=static_cast<unsigned short>(ntens);++i){
-      s1(i) *= sqrt2;
-    }
     return true;
-  } // end of MTestAsterBehaviour::integrate
+  }
+
 
   MTestAsterBehaviour::~MTestAsterBehaviour()
   {}
   
 } // end of namespace mfront
+
+
+
+
+
+
+
+
 

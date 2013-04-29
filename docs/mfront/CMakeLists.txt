@@ -1,3 +1,11 @@
+macro(install_mfront_desc file)
+  install(FILES ${file} DESTINATION share/doc/mfront)
+endmacro(install_mfront_desc file)
+
+macro(install_mfront_desc2 parser file)
+  install(FILES ${parser}/${file} DESTINATION share/doc/mfront/${parser})
+endmacro(install_mfront_desc2 parser file)
+
 configure_file(Champs.tex.in Champs.tex @ONLY)
 configure_file(annexe-orthotropie.tex.in
                annexe-orthotropie.tex @ONLY)
@@ -145,3 +153,11 @@ add_dependencies(doc-install
   behaviours-doc-install
   umat-doc-install
   aster-doc-install)
+
+install_mfront_desc(Author.txt)
+install_mfront_desc(Bounds.txt)
+install_mfront_desc(Date.txt)
+install_mfront_desc(Description.txt)
+
+install_mfront_desc2(MaterialLaw Constant.txt)
+install_mfront_desc2(MaterialLaw Function.txt)

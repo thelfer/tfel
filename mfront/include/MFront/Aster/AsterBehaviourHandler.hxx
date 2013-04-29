@@ -42,7 +42,10 @@ namespace aster
       typedef typename BV::BehaviourData  BData;
       TFEL_ASTER_INLINE static void
 	exe(BData& data,const AsterReal * const props){
-	AsterComputeThermalExpansionTensor<N,AsterTraits<BV>::etype>::exe(props,
+	const unsigned short o =
+	  AsterTraits<BV>::elasticPropertiesOffset+
+	  AsterTraits<BV>::massDensityOffsetForThermalExpansion;
+	AsterComputeThermalExpansionTensor<N,AsterTraits<BV>::etype>::exe(props+o,
 									  data.getThermalExpansionTensor());
       } // end of exe
     }; // end of struct ThermalExpansionTensorInitializer
@@ -108,7 +111,8 @@ namespace aster
 				   const AsterReal *const STATEV,
 				   const AsterReal *const STRESS)
 	: behaviour(DTIME,STRESS,STRAN,DSTRAN,TEMP,DTEMP,
-		    PROPS+AsterTraits<BV>::propertiesOffset,
+		    PROPS+AsterTraits<BV>::elasticPropertiesOffset+
+		    AsterTraits<BV>::thermalExpansionPropertiesOffset,
 		    STATEV,PREDEF,DPRED),
 	dt(*DTIME)
 	  {
@@ -139,13 +143,37 @@ namespace aster
 	  throwNegativeTimeStepException(Name<BV>::getName());
 	}
 	this->behaviour.checkBounds();
-	if(this->behaviour.integrate(*DDSOE>0.5)==BV::FAILURE){
-	  // gestion local de résultats imprécis
-	  throwBehaviourIntegrationFailedException(Name<BV>::getName());
+	typename BV::IntegrationResult r = BV::SUCCESS;
+	if((-3.25<*DDSOE)&&(*DDSOE<-2.75)){
+	  r = this->behaviour.computePredictionOperator(BV::TANGENTOPERATOR);
+	} else if((-2.25<*DDSOE)&&(*DDSOE<-1.75)){
+	  r = this->behaviour.computePredictionOperator(BV::SECANTOPERATOR);
+	} else if((-1.25<*DDSOE)&&(*DDSOE<-0.75)){
+	  r = this->behaviour.computePredictionOperator(BV::ELASTIC);
+	} else if((-0.25<*DDSOE)&&(*DDSOE<0.25)){
+	  r = this->behaviour.integrate(BV::NOSTIFFNESSREQUESTED);
+	} else if((0.75<*DDSOE)&&(*DDSOE<1.25)){
+	  r = this->behaviour.integrate(BV::ELASTIC);
+	} else if((1.75<*DDSOE)&&(*DDSOE<2.25)){
+	  r = this->behaviour.integrate(BV::SECANTOPERATOR);
+	} else if((2.75<*DDSOE)&&(*DDSOE<3.25)){
+	  r = this->behaviour.integrate(BV::TANGENTOPERATOR);
+	} else if((3.75<*DDSOE)&&(*DDSOE<4.25)){
+	  r = this->behaviour.integrate(BV::CONSISTANTTANGENTOPERATOR);
+	} else {
+	  throwInvalidDDSOEException(Name<BV>::getName(),*DDSOE);
+	}
+	if(r==BV::FAILURE){
+	  // Il manque un vraie gestion locale de résultats imprécis
+	  if(*DDSOE<-0.5){
+	    throwPredictionComputationFailedException(Name<BV>::getName());
+	  } else {
+	    throwBehaviourIntegrationFailedException(Name<BV>::getName());
+	  }
 	}
 	this->behaviour.checkBounds();
 	this->behaviour.AsterExportStateData(STRESS,STATEV);
-	if(*DDSOE>0.5){
+	if((*DDSOE>0.5)||(*DDSOE<-0.5)){
 	  ConsistantTangentOperatorHandler::exe(this->behaviour,DDSOE);
 	}
       } // end of Integrator::exe
@@ -210,7 +238,8 @@ namespace aster
       using namespace tfel::material;
       typedef Behaviour<AsterModellingHypothesis<N>::value,AsterReal,false> BV;
       typedef MechanicalBehaviourTraits<BV> Traits;
-      const unsigned short offset  = AsterTraits<BV>::propertiesOffset;
+      const unsigned short offset  = (AsterTraits<BV>::elasticPropertiesOffset+
+				      AsterTraits<BV>::thermalExpansionPropertiesOffset);
       const unsigned short nprops  = Traits::material_properties_nb;
       const unsigned short NPROPS_ = offset+nprops == 0 ? 1u : offset+nprops; 
       const bool is_defined_       = Traits::is_defined;

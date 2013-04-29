@@ -14,34 +14,25 @@ namespace aster
 {
 
   template<unsigned short>
-  struct AsterOrthotropicOffset;
+  struct AsterOrthotropicElasticPropertiesOffset;
 
   template<>
-  struct MFRONT_ASTER_VISIBILITY_EXPORT AsterOrthotropicOffset<1u>
+  struct MFRONT_ASTER_VISIBILITY_EXPORT AsterOrthotropicElasticPropertiesOffset<1u>
   {
-    // 6 elastic coefficients
-    //   mass density
-    // 3 thermal expansion coefficients
-    static const unsigned short value = 10u;
-  }; // end of struct AsterOrthotropicOffset<1u>
+    static const unsigned short value = 6u;
+  }; // end of struct AsterOrthotropicElasticPropertiesOffset<1u>
 
   template<>
-  struct MFRONT_ASTER_VISIBILITY_EXPORT AsterOrthotropicOffset<2u>
+  struct MFRONT_ASTER_VISIBILITY_EXPORT AsterOrthotropicElasticPropertiesOffset<2u>
   {
-    // 7 elastic coefficients
-    //   mass density
-    // 3 thermal expansion coefficients
-    static const unsigned short value = 11u;
-  }; // end of struct AsterOrthotropicOffset<2u>
+    static const unsigned short value = 7u;
+  }; // end of struct AsterOrthotropicElasticPropertiesOffset<2u>
 
   template<>
-  struct MFRONT_ASTER_VISIBILITY_EXPORT AsterOrthotropicOffset<3u>
+  struct MFRONT_ASTER_VISIBILITY_EXPORT AsterOrthotropicElasticPropertiesOffset<3u>
   {
-    // 9 elastic coefficients
-    //   mass density
-    // 3 thermal expansion coefficients
-    static const unsigned short value = 13u;
-  }; // end of struct AsterOrthotropicOffset<3u>
+    static const unsigned short value = 9u;
+  }; // end of struct AsterOrthotropicElasticPropertiesOffset<3u>
 
 } // end of namespace aster
 

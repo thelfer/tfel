@@ -13,6 +13,7 @@
 
 #include"TFEL/Math/matrix.hxx"
 #include"TFEL/Math/vector.hxx"
+#include"TFEL/Math/stensor.hxx"
 #include"TFEL/Math/tvector.hxx"
 #include"TFEL/Material/ModellingHypothesis.hxx"
 
@@ -26,6 +27,13 @@ namespace mfront
    */
   struct MTestBehaviour
   {
+    /*!
+     * \return the type of the behaviour
+     * 0 means that the behaviour is isotropic.
+     * 1 means that the behaviour is orthotropic.
+     */
+    virtual unsigned short
+    getBehaviourType(void) const = 0;
     /*!
      * \return the number of material properties
      */
@@ -67,36 +75,75 @@ namespace mfront
     virtual std::vector<std::string>
     getExternalStateVariablesNames(void) const  = 0;
     /*!
+     * \brief allocate workspace
+     * \param[in] ntens   : number of components of symmetric tensors
+     * \param[in] nstatev : size of the internal state variables
+     */
+    virtual void
+    allocate(const size_t,
+	     const size_t) = 0;
+    /*!
+     * \return the default type of stiffness matrix used by the behaviour
+     */
+    virtual MTestStiffnessMatrixType::mtype
+    getDefaultStiffnessMatrixType(void) const = 0;
+    /*!
      * \brief integrate the mechanical behaviour over the time step
      * \return true if the integration was successfull, false otherwise
-     * \param[out] Kt  : tangent operator
-     * \param[out] s1  : stresses at the end of the time step
-     * \param[out] iv1 : internal state variables at the end of the time step
-     * \param[in]  r   : rotation matrix
-     * \param[in] e0   : strain at the beginning of the time step
-     * \param[in] de   : strain increment
-     * \param[in] s0   : stresses at the beginning of the time step
-     * \param[in] mp   : material properties
-     * \param[in] iv0  : internal state variables at the beginning of the time step
-     * \param[in] ev0  : external state variables at the beginning of the time step
-     * \param[in] dev  : external state variables increments
-     * \param[in] h    : modelling hypothesis
-     * \param[in] dt   : time increment
+     * \param[out] Kt    : tangent operator
+     * \param[in]  r     : rotation matrix
+     * \param[in]  e0    : strain at the beginning of the time step
+     * \param[in]  s0    : stresses at the beginning of the time step
+     * \param[in]  mp    : material properties at the beginning of the time step
+     * \param[in]  iv0   : internal state variables at the beginning of the time step
+     * \param[in]  ev0   : external state variables at the beginning of the time step
+     * \param[in]  h     : modelling hypothesis
+     * \param[in]  dt    : time increment
+     * \param[in]  ktype : type of the stiffness matrix
+     */
+    virtual bool
+    computePredictionOperator(tfel::math::matrix<real>&,
+			      const tfel::math::tmatrix<3u,3u,real>&,
+			      const tfel::math::stensor<3u,real>&,
+			      const tfel::math::stensor<3u,real>&,
+			      const tfel::math::vector<real>&,
+			      const tfel::math::vector<real>&,
+			      const tfel::math::vector<real>&,
+			      const tfel::material::ModellingHypothesis::Hypothesis,
+			      const MTestStiffnessMatrixType::mtype) const = 0;
+    /*!
+     * \brief integrate the mechanical behaviour over the time step
+     * \return true if the integration was successfull, false otherwise
+     * \param[out] Kt    : tangent operator
+     * \param[out] s1    : stresses at the end of the time step
+     * \param[out] iv1   : internal state variables at the end of the time step
+     * \param[in]  r     : rotation matrix
+     * \param[in]  e0    : strain at the beginning of the time step
+     * \param[in]  de    : strain increment
+     * \param[in]  s0    : stresses at the beginning of the time step
+     * \param[in]  mp    : material properties
+     * \param[in]  iv0   : internal state variables at the beginning of the time step
+     * \param[in]  ev0   : external state variables at the beginning of the time step
+     * \param[in]  dev   : external state variables increments
+     * \param[in]  h     : modelling hypothesis
+     * \param[in]  dt    : time increment
+     * \param[in]  ktype : type of the stiffness matrix
      */
     virtual bool
     integrate(tfel::math::matrix<real>&,
-	      tfel::math::tvector<6u,real>&,
+	      tfel::math::stensor<3u,real>&,
 	      tfel::math::vector<real>&,
 	      const tfel::math::tmatrix<3u,3u,real>&,
-	      const tfel::math::tvector<6u,real>&,
-	      const tfel::math::tvector<6u,real>&,
-	      const tfel::math::tvector<6u,real>&,
+	      const tfel::math::stensor<3u,real>&,
+	      const tfel::math::stensor<3u,real>&,
+	      const tfel::math::stensor<3u,real>&,
 	      const tfel::math::vector<real>&,
 	      const tfel::math::vector<real>&,
 	      const tfel::math::vector<real>&,
 	      const tfel::math::vector<real>&,
 	      const tfel::material::ModellingHypothesis::Hypothesis,
-	      const real) const = 0;
+	      const real,
+	      const MTestStiffnessMatrixType::mtype) const = 0;
     //! destructor
     virtual ~MTestBehaviour();
   }; // end of struct MTestBehaviour

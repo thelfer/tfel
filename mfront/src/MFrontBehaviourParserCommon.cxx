@@ -1055,7 +1055,9 @@ namespace mfront{
     this->reserveName("getTangentOperator");
     this->reserveName("getTimeStepScalingFactor");
     this->reserveName("computeConsistantTangentOperator");
+    this->reserveName("computePredictionOperator");
     this->reserveName("computeTangentOperator_");
+    this->reserveName("smt");
     this->reserveName("hypothesis");
   } // end of MFrontBehaviourParserCommon::registerDefaultVarNames
 
@@ -1899,11 +1901,12 @@ namespace mfront{
     this->behaviourFile << "* \\brief Integrate behaviour  over the time step\n";
     this->behaviourFile << "*/\n";
     this->behaviourFile << "IntegrationResult\n";
-    this->behaviourFile << "integrate(const bool computeTangentOperator_){\n";
+    this->behaviourFile << "integrate(const SMType smt){\n";
     this->behaviourFile << "using namespace std;" << endl;
     this->behaviourFile << "using namespace tfel::math;" << endl;
+    this->behaviourFile << "bool computeTangentOperator_ = smt!=NOSTIFFNESSREQUESTED;\n";
     writeMaterialLaws("MFrontBehaviourParserCommon::writeBehaviourIntegrator",
-		      this->behaviourFile,this->materialLaws);		      
+		      this->behaviourFile,this->materialLaws);
     if(!this->integrator.empty()){
       this->behaviourFile << this->integrator;
       this->behaviourFile << "\n";
@@ -1953,7 +1956,7 @@ namespace mfront{
     this->behaviourFile << "*/\n";
     this->behaviourFile << "void\nsetOutOfBoundsPolicy(const OutOfBoundsPolicy policy_value){\n";
     this->behaviourFile << "this->policy = policy_value;\n";
-    this->behaviourFile << "}; // end of setOutOfBoundsPolicy\n\n";
+    this->behaviourFile << "} // end of setOutOfBoundsPolicy\n\n";
   } // end of MFrontBehaviourParserCommon::writeBehaviourOutOfBoundsEnumeration(void)
 
   void MFrontBehaviourParserCommon::writeBehaviourCheckBounds(void)
@@ -1969,7 +1972,7 @@ namespace mfront{
 	b != this->boundsDescriptions.end();++b){
       b->writeBoundsChecks(this->behaviourFile);
     }      
-    this->behaviourFile << "}; // end of checkBounds\n\n";
+    this->behaviourFile << "} // end of checkBounds\n\n";
   } // end of MFrontBehaviourParserCommon::writeBehaviourCheckBounds(void)
 
   void MFrontBehaviourParserCommon::writeBehaviourConstructors(void)
@@ -2131,7 +2134,7 @@ namespace mfront{
     this->behaviourFile << "*/\n";
     this->behaviourFile << "tfel::material::ModellingHypothesis::Hypothesis\ngetModellingHypothesis(void) const{\n";
     this->behaviourFile << "return hypothesis;\n";
-    this->behaviourFile << "}; // end of getModellingHypothesis\n\n";
+    this->behaviourFile << "} // end of getModellingHypothesis\n\n";
   } // end of MFrontBehaviourParserCommon::writeBehaviourGetModellingHypothesis();
 
   const VarHandler&
@@ -2401,6 +2404,12 @@ namespace mfront{
 			  << "BehaviourData<N,Type,use_qt> BehaviourData;\n";
       this->behaviourFile << "typedef " << this->className 
 			  << "IntegrationData<N,Type,use_qt> IntegrationData;\n";
+      this->behaviourFile << "typedef typename MechanicalBehaviour<hypothesis,Type,use_qt>::SMType            SMType;\n\n";
+      this->behaviourFile << "using MechanicalBehaviour<hypothesis,Type,use_qt>::ELASTIC;\n";
+      this->behaviourFile << "using MechanicalBehaviour<hypothesis,Type,use_qt>::SECANTOPERATOR;\n";
+      this->behaviourFile << "using MechanicalBehaviour<hypothesis,Type,use_qt>::TANGENTOPERATOR;\n";
+      this->behaviourFile << "using MechanicalBehaviour<hypothesis,Type,use_qt>::CONSISTANTTANGENTOPERATOR;\n";
+      this->behaviourFile << "using MechanicalBehaviour<hypothesis,Type,use_qt>::NOSTIFFNESSREQUESTED;\n";
       this->behaviourFile << "typedef typename MechanicalBehaviour<hypothesis,Type,use_qt>::IntegrationResult IntegrationResult;\n\n";
       this->behaviourFile << "using MechanicalBehaviour<hypothesis,Type,use_qt>::SUCCESS;\n";
       this->behaviourFile << "using MechanicalBehaviour<hypothesis,Type,use_qt>::FAILURE;\n";
@@ -2410,6 +2419,12 @@ namespace mfront{
 			  << "BehaviourData<N,Type,false> BehaviourData;\n";
       this->behaviourFile << "typedef " << this->className 
 			  << "IntegrationData<N,Type,false> IntegrationData;\n";
+      this->behaviourFile << "typedef typename MechanicalBehaviour<hypothesis,Type,false>::SMType            SMType;\n\n";
+      this->behaviourFile << "using MechanicalBehaviour<hypothesis,Type,false>::ELASTIC;\n";
+      this->behaviourFile << "using MechanicalBehaviour<hypothesis,Type,false>::SECANTOPERATOR;\n";
+      this->behaviourFile << "using MechanicalBehaviour<hypothesis,Type,false>::TANGENTOPERATOR;\n";
+      this->behaviourFile << "using MechanicalBehaviour<hypothesis,Type,false>::CONSISTANTTANGENTOPERATOR;\n";
+      this->behaviourFile << "using MechanicalBehaviour<hypothesis,Type,false>::NOSTIFFNESSREQUESTED;\n";
       this->behaviourFile << "typedef typename MechanicalBehaviour<hypothesis,Type,false>::IntegrationResult IntegrationResult;\n";
       this->behaviourFile << "using MechanicalBehaviour<hypothesis,Type,false>::SUCCESS;\n";
       this->behaviourFile << "using MechanicalBehaviour<hypothesis,Type,false>::FAILURE;\n";
@@ -2602,6 +2617,7 @@ namespace mfront{
     this->writeBehaviourSetOutOfBoundsPolicy();
     this->writeBehaviourGetModellingHypothesis();
     this->writeBehaviourCheckBounds();
+    this->writeBehaviourComputePredictionOperator();
     this->writeBehaviourIntegrator();
     this->writeBehaviourComputeTangentOperator();
     this->writeBehaviourGetTangentOperator();
@@ -2619,9 +2635,20 @@ namespace mfront{
     this->writeBehaviourFileHeaderEnd();
   }
 
+  void MFrontBehaviourParserCommon::writeBehaviourComputePredictionOperator(void)
+  {
+    this->behaviourFile << "IntegrationResult computePredictionOperator(const SMType){\n";
+    this->behaviourFile << "using namespace std;\n";
+    this->behaviourFile << "string msg(\"" << this->className<< "::computePredictionOperator : \");\n";
+    this->behaviourFile << "msg +=\"unimplemented feature\";\n";
+    this->behaviourFile << "throw(runtime_error(msg));\n";
+    this->behaviourFile << "return FAILURE;\n";
+    this->behaviourFile << "}\n\n";
+  } // end of MFrontBehaviourParserCommon::writeBehaviourComputePredictionOperator(void)
+
   void MFrontBehaviourParserCommon::writeBehaviourComputeTangentOperator(void)
   {
-    this->behaviourFile << "bool computeConsistantTangentOperator(void){\n";
+    this->behaviourFile << "bool computeConsistantTangentOperator(const SMType){\n";
     this->behaviourFile << "using namespace std;\n";
     this->behaviourFile << "string msg(\"" << this->className<< "::computeConsistantTangentOperator : \");\n";
     this->behaviourFile << "msg +=\"unimplemented feature\";\n";
@@ -2636,7 +2663,7 @@ namespace mfront{
     this->behaviourFile << "const StiffnessTensor&\n";
     this->behaviourFile << "getTangentOperator(void) const{\n";
     this->behaviourFile << "return this->Dt;\n";
-    this->behaviourFile << "};\n\n";
+    this->behaviourFile << "}\n\n";
   } // end of MFrontBehaviourParserCommon::writeBehaviourComputeTangentOperator(void)
 
   void MFrontBehaviourParserCommon::writeBehaviourGetTimeStepScalingFactor()
@@ -2645,7 +2672,7 @@ namespace mfront{
     this->behaviourFile << "real\n";
     this->behaviourFile << "getTimeStepScalingFactor(void) const{\n";
     this->behaviourFile << "return real(1);\n";
-    this->behaviourFile << "};\n\n";
+    this->behaviourFile << "}\n\n";
   } // end of MFrontBehaviourParserCommon::writeBehaviourComputeTangentOperator(void)
 
   void MFrontBehaviourParserCommon::writeBehaviourTangentStiffnessOperator()

@@ -27,6 +27,11 @@ namespace mfront
      */
     virtual real
     operator()(const real) const = 0;
+    /*!
+     * \return true if the evolution
+     * is constant
+     */
+    virtual bool isConstant(void) const = 0;
     //! destructor
     virtual ~MTestEvolution();
   };
@@ -48,6 +53,11 @@ namespace mfront
      */
     virtual real
     operator()(const real) const;
+    /*!
+     * \return true if the evolution
+     * is constant
+     */
+    virtual bool isConstant(void) const;
     //! destructor
     virtual ~MTestConstantEvolution();
   protected:
@@ -73,6 +83,11 @@ namespace mfront
      */
     virtual real
     operator()(const real) const;
+    /*!
+     * \return true if the evolution
+     * is constant
+     */
+    virtual bool isConstant(void) const;
     //! destructor
     virtual ~MTestLPIEvolution();
   private:

@@ -49,6 +49,10 @@ namespace mfront{
 
     void treatVerbose(void);
 
+    void treatHelpCommandsList(void);
+
+    void treatHelpCommand(void);
+
     void treatWarning(void);
 
     void treatDebug(void);

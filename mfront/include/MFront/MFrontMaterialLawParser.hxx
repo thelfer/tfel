@@ -40,6 +40,9 @@ namespace mfront{
 
     virtual void analyseFile(const std::string&);
 
+    virtual void
+    getKeywordsList(std::vector<std::string>&) const;
+
     void writeOutputFiles(void);
 
     void

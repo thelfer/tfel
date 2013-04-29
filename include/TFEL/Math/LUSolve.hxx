@@ -19,6 +19,10 @@ namespace tfel{
 
   namespace math{
 
+    /*!
+     * This structure contains two static methods for solving linear
+     * systems by LU decomposition.
+     */
     struct LUSolve
     {
 
@@ -27,29 +31,62 @@ namespace tfel{
       void exe(MatrixType& m,
 	       VectorType& b)
       {
+	typedef typename MatrixTraits<MatrixType>::IndexType IndexType;
+	Permutation<IndexType> p(m.getNbRows());
+	VectorType x(b.size());
+	LUSolve::exe(m,b,x,p);
+      } // end of exe
+
+      template<typename MatrixType,typename VectorType>
+      static TFEL_MATH_INLINE2
+      void exe(MatrixType& m,
+	       VectorType& b,
+	       VectorType& x,
+	       Permutation<typename MatrixTraits<MatrixType>::IndexType>& p)
+      {
 	using namespace std;
 	typedef typename MatrixTraits<MatrixType>::IndexType IndexType;
-	typedef typename MatrixTraits<MatrixType>::NumType NumType;
 	if(m.getNbRows()!=m.getNbCols()){
 	  throw(LUException("matrix is not square"));
 	}
-	if(m.getNbRows()!=b.size()){
+	if((m.getNbRows()!=b.size())||
+	   (m.getNbRows()!=p.size())||
+	   (m.getNbRows()!=p.size())){
 	  throw(LUException("matrix size and vector size does not match"));
 	}
 	if(m.getNbRows()==0){
 	  throw(LUException("invalid matrix size"));
 	}
-	Permutation<IndexType> p(m.getNbRows());
+	p.reset();
 	LUDecomp::exe(m,p);
+	LUSolve::back_substitute(m,b,x,p);
+      } // end of LUSolve::exe
 
+      template<typename MatrixType,typename VectorType>
+      static TFEL_MATH_INLINE2
+      void back_substitute(MatrixType& m,
+			   VectorType& b,
+			   VectorType& x,
+			   Permutation<typename MatrixTraits<MatrixType>::IndexType>& p)
+      {	
+	using namespace std;
+	typedef typename MatrixTraits<MatrixType>::IndexType IndexType;
+	if(m.getNbRows()!=m.getNbCols()){
+	  throw(LUException("matrix is not square"));
+	}
+	if((m.getNbRows()!=b.size())||
+	   (m.getNbRows()!=p.size())||
+	   (m.getNbRows()!=p.size())){
+	  throw(LUException("matrix size and vector size does not match"));
+	}
+	if(m.getNbRows()==0){
+	  throw(LUException("invalid matrix size"));
+	}
 	IndexType i,j;
 	IndexType pi;
 	IndexType pi2;
 	IndexType n = m.getNbRows();
-
-	VectorType x(n);
 	copy(b.begin(),b.end(),x.begin());
-
 	for(i=0;i!=n;++i){
 	  pi = p(i);
 	  for(j=0;j!=i;++j){
@@ -57,7 +94,6 @@ namespace tfel{
 	  }
 	  x(pi) /= m(pi,i);
 	}
-	
 	b(n-1) = x(p(n-1));
 	for(i=n-1;i!=0;--i){
 	  pi2 = i-1;
@@ -67,15 +103,13 @@ namespace tfel{
 	    b(pi2) -= m(pi,j)*b(j);
 	  }
 	}
+      } // end of LUSolve::back_substitute
 
-      } // end of LUSolve::exe	
-
-    }; // end of struct LUSolve
+    }; // end of struct LUSolve 
 
   } // end of namespace math
 
 } // end of namespace tfel
-  
 
 #endif /* _LIB_TFEL_MATH_LUSOLVE_HXX */
 

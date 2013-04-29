@@ -22,8 +22,18 @@ namespace tfel{
       : public vector<T>
     {
       
+      /*!
+       * default constructor
+       */
       TFEL_MATH_INLINE
       Permutation(const typename vector<T>::size_type);
+
+      /*!
+       * \brief set this permutation vector to be equal to the
+       * identity
+       */
+      TFEL_MATH_INLINE
+      void reset(void);
 
     private:
 

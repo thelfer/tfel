@@ -37,6 +37,22 @@ namespace mfront
     this->evnames.insert(this->evnames.begin(),"Temperature");
   }
 
+  unsigned short
+  MTestUmatBehaviourBase::getBehaviourType(void) const
+  {
+    using namespace std;
+    if(this->type==0){
+      return 0u;
+    } else if(this->type==1){
+      return 1u;
+    }
+    string msg("MTestUmatBehaviourBase::MTestUmatBehaviourBase : "
+	       "unsupported behaviour type "
+	       "(neither isotropic nor orthotropic)");
+    throw(runtime_error(msg));
+    return 0u;
+  } // end of MTestUmatBehaviourBase::getBehaviourType
+
   std::vector<std::string>
   MTestUmatBehaviourBase::getMaterialPropertiesNames(void) const
   {

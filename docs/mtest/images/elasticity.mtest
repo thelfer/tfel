@@ -1,0 +1,36 @@
+@Author Helfer Thomas;
+@Date   09 avril 2013;
+@Description{
+  "Test simple en traction uniaxiale imposant que la composante EXX
+  de la déformation varie dans le temps de manière sinusoïdale. La
+  contrainte SXX est égale à cette déformation multipliée par le
+  module d'Young. Les déformations EYY et EZZ sont égales à cette
+  déformation multipliée par l'opposée du coefficient de Poisson."
+};
+
+@Behaviour<aster> 'libMFrontAsterBehaviours.so' 'asterelasticity';
+@MaterialProperty<constant> 'YoungModulus'     150.e9;
+@MaterialProperty<constant> 'PoissonRatio'       0.3;
+@MaterialProperty<constant> 'MassDensity'        0.;
+@MaterialProperty<constant> 'ThermalExpansion'   0.;
+
+@ExternalStateVariable 'Temperature' {0:293.15,3600.:800};
+
+@Real 'e0' 1.e-3;
+@ImposedStrain<function> 'EXX' 'e0*sin(t/900.)';
+
+@Times {0.,3600 in 20};
+
+// stresses
+@Test<function> 'SXX' 'YoungModulus*EXX'  1.e-3;
+@Test<function> 'SYY' '0.'                1.e-3;
+@Test<function> 'SZZ' '0.'                1.e-3;
+@Test<function> 'SXY' '0.'                1.e-3;
+@Test<function> 'SXZ' '0.'                1.e-3;
+@Test<function> 'SYZ' '0.'                1.e-3;
+// strains
+@Test<function> 'EYY' '-PoissonRatio*EXX' 1.e-3;
+@Test<function> 'EZZ' '-PoissonRatio*EXX' 1.e-3;
+@Test<function> 'EXY' '0.'                1.e-3;
+@Test<function> 'EXZ' '0.'                1.e-3;
+@Test<function> 'EYZ' '0.'                1.e-3;

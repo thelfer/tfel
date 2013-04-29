@@ -703,7 +703,7 @@ namespace mfront{
 	 */
 	if(coefsHolder.size()<4){
 	  string msg("MFrontUMATInterface::endTreatement : the umat interface requires the ");
-	  msg += "following four coefficients to be defined (in the right order) ";
+	  msg += "following four material properties to be defined (in the right order) ";
 	  msg += "(currently only ";
 	  msg += toString(static_cast<unsigned short>(coefsHolder.size()));
 	  msg += " defined):\n";
@@ -715,22 +715,22 @@ namespace mfront{
 	}
 	if(coefsHolder[0].name!="young"){
 	  string msg("MFrontUMATInterface::endTreatement : the umat interface requires the ");
-	  msg += "first coefficient to be the young modulus (use @Coef stress young)";
+	  msg += "first material property to be the young modulus (use @Coef stress young)";
 	  throw(runtime_error(msg));
 	}
 	if(coefsHolder[1].name!="nu"){
 	  string msg("MFrontUMATInterface::endTreatement : the umat interface requires the ");
-	  msg += "second coefficient to be the poisson ratio (use @Coef real nu)";
+	  msg += "second material property to be the poisson ratio (use @Coef real nu)";
 	  throw(runtime_error(msg));
 	}
 	if(coefsHolder[2].name!="rho"){
 	  string msg("MFrontUMATInterface::endTreatement : the umat interface requires the " );
-	  msg += "third coefficient to be the density (use @Coef density rho)";
+	  msg += "third material property to be the density (use @Coef density rho)";
 	  throw(runtime_error(msg));
 	}
 	if(coefsHolder[3].name!="alpha"){
 	  string msg("MFrontUMATInterface::endTreatement : the umat interface requires the" );
-	  msg += "fourth coefficient to be the thermal expansion (use @Coef thermalexpansion alpha)";
+	  msg += "fourth material property to be the thermal expansion (use @Coef thermalexpansion alpha)";
 	  throw(runtime_error(msg));
 	}
       }
@@ -1005,7 +1005,7 @@ namespace mfront{
       	<< makeLowerCase(name);
     unsigned short cs = this->getNumberOfVariables(coefsHolder);
     if(behaviourCharacteristic.getBehaviourType()==mfront::ISOTROPIC){
-      // skipping the fourth first coefficients
+      // skipping the fourth first material properties
       if(found){
 	out << "_nMaterialProperties = " << cs-4 << ";\n";
       } else {

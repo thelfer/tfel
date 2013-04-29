@@ -18,9 +18,14 @@ namespace tfel{
     template<typename T>
     Permutation<T>::Permutation(const typename vector<T>::size_type n)
       : vector<T>(n)
+    {}
+
+    template<typename T>
+    void
+    Permutation<T>::reset()
     {
       typename vector<T>::size_type i;
-      for(i=0;i!=n;++i){
+      for(i=0;i!=this->size();++i){
 	this->operator[](i) = i;
       }
     }

@@ -28,6 +28,13 @@ namespace mfront
     MTestUmatBehaviourBase(const std::string&,
 		       const std::string&);
     /*!
+     * \return the type of the behaviour
+     * 0 means that the behaviour is isotropic.
+     * 1 means that the behaviour is orthotropic.
+     */
+    virtual unsigned short
+    getBehaviourType(void) const;
+    /*!
      * \return the names of material properties
      */
     virtual std::vector<std::string>

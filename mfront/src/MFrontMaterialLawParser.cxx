@@ -71,6 +71,15 @@ namespace mfront{
     this->registredKeyWords.insert(keyword);
   } // end of MFrontMaterialLawParser::registerCallBacks
 
+  void
+  MFrontMaterialLawParser::getKeywordsList(std::vector<std::string>& k) const
+  {
+    CallBackContainer::const_iterator p;
+    for(p=this->callBacks.begin();p!=this->callBacks.end();++p){
+      k.push_back(p->first);
+    }
+  }
+
   std::string
   MFrontMaterialLawParser::getDescription()
   {

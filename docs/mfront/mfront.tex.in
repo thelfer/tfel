@@ -1558,6 +1558,20 @@ l'ensemble des options disponibles et quitte le programme.
 \moption{list-parsers} affiche la liste des analyseurs disponibles et
 quitte le programme.
 
+\paragraph{L'option \moption{help-keywords-list}} L'option
+\moption{help-\-key\-words-\-list} liste l'ensemble des mots clés
+d'une interface et quitte le programme. Par exemple~:
+\begin{center}
+  {\tt mfront -{}-help-keywords-list=MaterialLaw}
+\end{center}
+
+\paragraph{L'option \moption{help-keyword}} L'option
+\moption{help-\-key\-word} affiche la documentation d'un des mots clés
+d'une interface et quitte le programme. Par exemple~:
+\begin{center}
+  {\tt mfront -{}-help-keyword=MaterialLaw:@Function}
+\end{center}
+
 \paragraph{L'option \moption{version}} L'option \moption{version}
 affiche la version de \mfront{} utilisée et quitte le programme.
 

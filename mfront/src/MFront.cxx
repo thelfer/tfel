@@ -29,7 +29,9 @@
 #include<unistd.h>
 #endif
 
+#include"tfel-config.hxx"
 #include"TFEL/Utilities/CxxTokenizer.hxx"
+#include"TFEL/Utilities/TerminalColors.hxx"
 #include"TFEL/System/ExternalLibraryManager.hxx"
 #include"TFEL/System/System.hxx"
 
@@ -69,6 +71,37 @@ namespace mfront{
       throw(runtime_error(msg));
     }
 #endif
+  }
+
+  /*!
+   * \return the path to the documentation file if available.
+   * If not, an empty string is returned
+   * \param[in] pn : parser name
+   * \param[in] k  : keyword
+   */
+  static std::string
+  getDocumentationFilePath(const std::string& pn,
+			   const std::string& k)
+  {
+    using namespace std;
+    string root;
+    const char * const path = getenv("TFELHOME");
+    if(path!=0){
+      root = string(path);
+    } else {
+      root = PREFIXDIR;
+    }
+    string fn = root+"/share/doc/mfront/"+pn+"/"+k.substr(1)+".txt";
+    ifstream desc(fn.c_str());
+    if(desc){
+      return fn;
+    }
+    fn = root+"/share/doc/mfront/"+k.substr(1)+".txt";
+    desc.open(fn.c_str());
+    if(desc){
+      return fn;
+    }
+    return "";
   }
 
   std::vector<std::string>
@@ -333,6 +366,16 @@ namespace mfront{
   {
     this->registerNewCallBack("--verbose",&MFront::treatVerbose,"set verbose output");
     this->registerNewCallBack("--list-parsers",&MFront::treatListParsers,"list all available parsers");
+    this->registerNewCallBack("--help-commands-list",&MFront::treatHelpCommandsList,
+			      "list all keywords for the given parser and exits",true);
+    this->registerNewCallBack("--help-keywords-list",&MFront::treatHelpCommandsList,
+			      "list all keywords for the given parser and exits",true);
+    this->registerNewCallBack("--help-keyword",&MFront::treatHelpCommand,
+			      "display the help associated for given parser "
+			      "and the given parser and exits",true);
+    this->registerNewCallBack("--help-command",&MFront::treatHelpCommand,
+			      "display the help associated for given parser "
+			      "and the given parser and exits",true);
     this->registerNewCallBack("--debug",&MFront::treatDebug,
 			      "set debug mode (remove references to initial file)");
     this->registerNewCallBack("--warning","-W",&MFront::treatWarning,"print warnings");
@@ -392,6 +435,102 @@ namespace mfront{
     this->parseArguments();
     MFront::callingName = argv[0];
   } // end of MFront::MFront
+
+  void
+  MFront::treatHelpCommandsList(void)
+  {
+    using namespace std;
+    using namespace tfel::utilities;
+    MFrontParserFactory& f = MFrontParserFactory::getMFrontParserFactory();
+    const string& o = this->currentArgument->getOption();
+    if(o.empty()){
+      string msg("MFront::treatHelpCommandsList : ");
+      msg += "no parser name given";
+      throw(runtime_error(msg));
+    }
+    auto_ptr<MFrontVirtualParser> p;
+    p = auto_ptr<MFrontVirtualParser>(f.createNewParser(o));
+    vector<string> k;
+    vector<string>::const_iterator pk;
+    p->getKeywordsList(k);
+    string::size_type msize = 0;
+    for(pk=k.begin();pk!=k.end();++pk){
+      msize = max(msize,pk->size());
+    }
+    for(pk=k.begin();pk!=k.end();++pk){
+      string fp = getDocumentationFilePath(o,*pk);
+      string key = *pk;
+      key.resize(msize,' ');
+      cout << key << "  ";
+      if(!fp.empty()){
+	cout.write(TerminalColors::Green,sizeof(TerminalColors::Green));
+	cout << "(documented)";
+      } else {
+	cout.write(TerminalColors::Red,sizeof(TerminalColors::Red));
+	cout << "(undocumented)";
+      }
+      cout.write(TerminalColors::Reset,sizeof(TerminalColors::Reset));
+      cout << endl;
+    }
+    exit(EXIT_SUCCESS);
+  } // end of MFront::treatHelpCommandsList
+
+  void
+  MFront::treatHelpCommand(void)
+  {
+    using namespace std;
+    MFrontParserFactory& f = MFrontParserFactory::getMFrontParserFactory();
+    const string& o = this->currentArgument->getOption();
+    if(o.empty()){
+      string msg("MFront::treatHelpCommand : ");
+      msg += "no argument given";
+      throw(runtime_error(msg));
+    }
+    string pn;
+    string k;
+    string::size_type pos = o.rfind(':');
+    if((pos==string::npos)||(pos+1==o.size())){
+      string msg("MFront::treatHelpCommand : ");
+      msg += "ill-formed argument, expected 'parser:@keyword'";
+      throw(runtime_error(msg));
+    }
+    pn = o.substr(0,pos); // parser name
+    k  = o.substr(pos+1); // key
+    if((pn.empty())||(k.empty())){
+      string msg("MFront::treatHelpCommand : ");
+      msg += "ill-formed argument, expected 'parser:@keyword'";
+      throw(runtime_error(msg));
+    }
+    if(k[0]!='@'){
+      string msg("MFront::treatHelpCommand : ");
+      msg += "ill-formed argument, expected 'parser:@keyword'";
+      throw(runtime_error(msg));
+    }
+    auto_ptr<MFrontVirtualParser> p;
+    p = auto_ptr<MFrontVirtualParser>(f.createNewParser(pn));
+    vector<string> keys;
+    p->getKeywordsList(keys);
+    if(find(keys.begin(),keys.end(),k)==keys.end()){
+      string msg("MFront::treatHelpCommand : ");
+      msg += "keyword '"+k+"' is not declared ";
+      throw(runtime_error(msg));
+    }
+    string fp = getDocumentationFilePath(pn,k);
+    if(fp.empty()){
+      cout << "no description available for keyword '"
+	   << k << "'" << endl;
+    } else {
+      ifstream desc(fp.c_str());
+      if(!desc){
+	// note, this shall never append...
+	cout << "can't access to the description of keyword '"
+	     << k << "'" << endl;
+      } else {
+	cout << desc.rdbuf();
+      }
+    }
+    exit(EXIT_SUCCESS);
+  } // end of MFront::treatHelpCommand
 
   void
   MFront::treatNoDeps(void)

@@ -51,6 +51,17 @@ namespace mfront{
 
   template<typename Child>
   void
+  MFrontModelParserBase<Child>::getKeywordsList(std::vector<std::string>& k) const
+  {
+    typename CallBackContainer::const_iterator p;
+    for(p=this->callBacks.begin();p!=this->callBacks.end();++p){
+      k.push_back(p->first);
+    }
+  } // end of MFrontModelParserBase<Child>::getKeywordsList
+
+
+  template<typename Child>
+  void
   MFrontModelParserBase<Child>::treatFile(const std::string& fileName_) 
   {
     using namespace std;

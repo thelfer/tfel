@@ -131,31 +131,22 @@ namespace mfront
 				const real) const
   {
     using namespace std;
-    static const real sqrt2 = sqrt(real(2));
     const MTestEvolution& s = *(this->sev);
-    if(this->c<3){
-      r(this->c) -= s(t+dt);
-    } else {
-      r(this->c) -= sqrt2*s(t+dt);
-    }
+    r(this->c) -= s(t+dt);
   } // end of MTestImposedStress::setValues
 
   bool
   MTestImposedStress::checkConvergence(const unsigned short,
 				       const tfel::math::vector<real>&,
-				       const tfel::math::tvector<6u,real>& s,
+				       const tfel::math::stensor<3u,real>& s,
 				       const real,
 				       const real seps,
 				       const real t,
 				       const real dt) const
   {
     using namespace std;
-    static const real sqrt2 = sqrt(real(2));
     const MTestEvolution& sv = *(this->sev);
-    if(this->c<3){
-      return abs(s(this->c)-sv(t+dt))<seps;
-    }
-    return abs(s(this->c)-sqrt2*sv(t+dt))<seps;
+    return abs(s(this->c)-sv(t+dt))<seps;
   }
 
   MTestImposedStress::~MTestImposedStress()

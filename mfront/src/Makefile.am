@@ -1,6 +1,7 @@
 ## Makefile.am -- Process this file with automake to produce a Makefile.in file.
 
-INCLUDES = -I$(top_srcdir)/include        \
+INCLUDES = -I$(top_builddir)/src/TFELConfig \
+	   -I$(top_srcdir)/include          \
 	   -I$(top_srcdir)/mfront/include
 
 if HAVE_CASTEM

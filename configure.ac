@@ -285,6 +285,9 @@ AC_OUTPUT([debug.sh
 	   Makefile
 	   Doxyfile
 	   docs/Makefile
+	   docs/mtest/Makefile
+	   docs/mtest/mtest.tex
+	   docs/mtest/Champs.tex
 	   docs/mfront/Makefile
 	   docs/mfront/Makefile.doc
 	   docs/mfront/mfront.tex
@@ -328,7 +331,47 @@ AC_OUTPUT([debug.sh
            mfront/tests/properties/Makefile
            mfront/tests/behaviours/Makefile
            mfront/tests/behaviours/aster/Makefile
+           mfront/tests/behaviours/aster/elasticity.mtest
+           mfront/tests/behaviours/aster/elasticity2.mtest
+           mfront/tests/behaviours/aster/elasticity3.mtest
+           mfront/tests/behaviours/aster/elasticity4.mtest
+           mfront/tests/behaviours/aster/elasticity5.mtest
+           mfront/tests/behaviours/aster/elasticity6.mtest
+           mfront/tests/behaviours/aster/elasticity7.mtest
+           mfront/tests/behaviours/aster/elasticity8.mtest
+           mfront/tests/behaviours/aster/elasticity9.mtest
+           mfront/tests/behaviours/aster/elasticity10.mtest
+           mfront/tests/behaviours/aster/elasticity11.mtest
+           mfront/tests/behaviours/aster/elasticity12.mtest
+           mfront/tests/behaviours/aster/elasticity13.mtest
+           mfront/tests/behaviours/aster/elasticity14.mtest
+           mfront/tests/behaviours/aster/norton.mtest
+           mfront/tests/behaviours/aster/norton2.mtest
+           mfront/tests/behaviours/aster/implicitnorton.mtest
+           mfront/tests/behaviours/aster/implicitnorton2.mtest
+           mfront/tests/behaviours/aster/implicitorthotropiccreep.mtest
+           mfront/tests/behaviours/aster/plasticity.mtest
+           mfront/tests/behaviours/aster/strainhardeningcreep.mtest
            mfront/tests/behaviours/castem/Makefile
+           mfront/tests/behaviours/castem/elasticity.mtest
+           mfront/tests/behaviours/castem/elasticity2.mtest
+           mfront/tests/behaviours/castem/elasticity3.mtest
+           mfront/tests/behaviours/castem/elasticity4.mtest
+           mfront/tests/behaviours/castem/elasticity5.mtest
+           mfront/tests/behaviours/castem/elasticity6.mtest
+           mfront/tests/behaviours/castem/elasticity7.mtest
+           mfront/tests/behaviours/castem/elasticity8.mtest
+           mfront/tests/behaviours/castem/elasticity9.mtest
+           mfront/tests/behaviours/castem/elasticity10.mtest
+           mfront/tests/behaviours/castem/elasticity11.mtest
+           mfront/tests/behaviours/castem/elasticity12.mtest
+           mfront/tests/behaviours/castem/elasticity13.mtest
+           mfront/tests/behaviours/castem/elasticity14.mtest
+           mfront/tests/behaviours/castem/norton.mtest
+           mfront/tests/behaviours/castem/norton2.mtest
+           mfront/tests/behaviours/castem/orthotropiccreep.mtest
+           mfront/tests/behaviours/castem/plasticity.mtest
+           mfront/tests/behaviours/castem/strainhardeningcreep.mtest
 	   mfront/Examples/Makefile
 	   tfel-doc/Makefile
 	   tfel-doc/src/Makefile

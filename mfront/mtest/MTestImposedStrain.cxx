@@ -95,34 +95,25 @@ namespace mfront
 				      const real a) const
   {
     using namespace std;
-    static const real sqrt2 = sqrt(real(2));
     const MTestEvolution& e = *(this->eev);
     K(pos,this->c)+=a;
     K(this->c,pos)+=a;
-    r(this->c) = a*u1(pos);
-    if(this->c<3){
-      r(pos) -= a*(e(t+dt)-u1(this->c));
-    } else {
-      r(pos) -= a*(sqrt2*e(t+dt)-u1(this->c));
-    }
+    r(this->c)     =a*u1(pos);
+    r(pos)        -=a*(e(t+dt)-u1(this->c));
   } // end of MTestImposedStrain::setValues
 
   bool
   MTestImposedStrain::checkConvergence(const unsigned short,
 				       const tfel::math::vector<real>& u,
-				       const tfel::math::tvector<6u,real>&,
+				       const tfel::math::stensor<3u,real>&,
 				       const real eeps,
 				       const real,
 				       const real t,
 				       const real dt) const
   {
     using namespace std;
-    static const real sqrt2 = sqrt(real(2));
     const MTestEvolution& e = *(this->eev);
-    if(c<3){
-      return abs(u(this->c)-e(t+dt))<eeps;
-    }
-    return abs(u(this->c)-sqrt2*e(t+dt))<eeps;
+    return abs(u(this->c)-e(t+dt))<eeps;
   }
 
   MTestImposedStrain::~MTestImposedStrain()

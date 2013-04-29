@@ -99,6 +99,27 @@ namespace aster{
   } // end of AsterInterfaceBase::throwNegativeTimeStepException
   
   void
+  AsterInterfaceBase::throwInvalidDDSOEException(const std::string& b,
+						 const AsterReal v)
+  {
+    using namespace std;
+    ostringstream msg;
+    msg << "AsterInterfaceBase::throwInvalidDDSOEException : "
+	<< "an invalid value for the DDSOE parameter has been given ('" << v << "')"
+	<< " to the behaviour '" << b << "'.\n"
+	<< "The following values are accepted:\n"
+	<< "-3 : compute the prediction tangent operator, no behaviour integration\n"
+	<< "-2 : compute the prediction secant  operator, no behaviour integration\n"
+	<< "-1 : compute the prediction elastic operator, no behaviour integration\n"
+	<< " 0 : integrate the behaviour over the time step, no stiffness requested\n"
+	<< " 1 : integrate the behaviour over the time step, elastic stiffness requested\n"
+	<< " 2 : integrate the behaviour over the time step, secant  operator  requested\n"
+	<< " 3 : integrate the behaviour over the time step, tagent  operator  requested\n"
+	<< " 4 : integrate the behaviour over the time step, consistant tagent operator requested\n";
+    throw(runtime_error(msg.str()));
+  } // end of AsterInterfaceBase::throwInvalidDDSOEException
+
+  void
   AsterInterfaceBase::throwBehaviourIntegrationFailedException(const std::string& b)
   {
     using namespace std;
@@ -107,6 +128,15 @@ namespace aster{
     throw(runtime_error(msg));
   } // end of AsterInterfaceBase::throwBehaviourIntegrationFailedException
   
+  void
+  AsterInterfaceBase::throwPredictionComputationFailedException(const std::string& b)
+  {
+    using namespace std;
+    string msg("AsterInterfaceBase::throwPredictionComputationFailedException : ");
+    msg += "prediction computation failed for behaviour '"+b+"'";
+    throw(runtime_error(msg));
+  }
+
   void
   AsterInterfaceBase::throwConsistantTangentOperatorIsNotAvalaible(const std::string& b)
   {
@@ -121,7 +151,7 @@ namespace aster{
   {
     using namespace std;
     cout << "AsterInterfaceBase::displayInvalidNTENSValueErrorMessage : "
-	 << "invalide value for the NTENS paramater" << endl;    
+	 << "invalid value for the NTENS paramater" << endl;    
   }
 
 } // end of namespace aster 

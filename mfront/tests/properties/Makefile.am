@@ -5,7 +5,8 @@ mfronts = VanadiumAlloy_YoungModulus_SRMA.mfront        \
 	  VanadiumAlloy_PoissonRatio_SRMA.mfront        \
 	  VanadiumAlloy_SpecificHeat_SRMA.mfront        \
 	  VanadiumAlloy_ThermalExpansion_SRMA.mfront    \
-	  VanadiumAlloy_ThermalConductivity_SRMA.mfront
+	  VanadiumAlloy_ThermalConductivity_SRMA.mfront \
+	  Inconel600_YoungModulus.mfront
 
 INCLUDES = -I@builddir@/include
 
@@ -31,7 +32,8 @@ nodist_libMFrontMaterialProperties_castem_la_SOURCES = src/VanadiumAlloy_YoungMo
 						       src/VanadiumAlloy_PoissonRatio_SRMA-castem.cxx        \
 						       src/VanadiumAlloy_SpecificHeat_SRMA-castem.cxx        \
 						       src/VanadiumAlloy_ThermalExpansion_SRMA-castem.cxx    \
-						       src/VanadiumAlloy_ThermalConductivity_SRMA-castem.cxx
+						       src/VanadiumAlloy_ThermalConductivity_SRMA-castem.cxx \
+						       src/Inconel600_YoungModulus-castem.cxx
 endif
 
 testdir = $(pkgdatadir)/mfront/tests/

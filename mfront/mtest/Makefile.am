@@ -1,28 +1,46 @@
-INCLUDES = -I$(top_srcdir)/include        \
+INCLUDES = -I$(top_builddir)/src/TFELConfig \
+	   -I$(top_srcdir)/include          \
 	   -I$(top_srcdir)/mfront/include
 
-bin_PROGRAMS  = mtest
-mtest_SOURCES = mtest.cxx	           \
-		MTestEvolution.cxx         \
-		MTestBehaviour.cxx         \
-		MTestUmatBehaviourBase.cxx \
-		MTestConstraint.cxx        \
-		MTestImposedStrain.cxx     \
-		MTestImposedStress.cxx
+lib_LTLIBRARIES = libTFELMTest.la
 
-mtest_LDADD   = -L$(top_builddir)/src/Math      -lTFELMath    \
-		-L$(top_builddir)/src/System    -lTFELSystem    \
-		-L$(top_builddir)/src/Utilities -lTFELUtilities \
-		-L$(top_builddir)/src/Exception -lTFELException
+bin_PROGRAMS  = mtest
+mtest_SOURCES = mtest.cxx
+
+libTFELMTest_la_SOURCES = MTest.cxx                             \
+			  MTestAnalyticalTest.cxx               \
+			  MTestReferenceFileComparisonTest.cxx  \
+			  MTestLogStream.cxx                    \
+			  MTestEvolution.cxx                    \
+			  MTestCastemEvolution.cxx              \
+			  MTestFunctionEvolution.cxx            \
+			  MTestBehaviour.cxx                    \
+			  MTestUmatBehaviourBase.cxx            \
+			  MTestUmatNormaliseTangentOperator.cxx \
+			  MTestConstraint.cxx                   \
+			  MTestImposedStrain.cxx                \
+			  MTestImposedStress.cxx
+
+libTFELMTest_la_LIBADD  = -L$(top_builddir)/src/Math                      \
+			  -lTFELMathParser -lTFELMath                     \
+		 	  -L$(top_builddir)/src/System    -lTFELSystem    \
+			  -L$(top_builddir)/src/Utilities -lTFELUtilities \
+			  -L$(top_builddir)/src/Exception -lTFELException \
+			  -L$(top_builddir)/src/Tests     -lTFELTests
+
+mtest_LDADD = -L$(top_builddir)/mfront/mtest \
+	      -lTFELMTest
+
+mtest_DEPENDENCIES = libTFELMTest.la
 
 if HAVE_CASTEM
-mtest_SOURCES += MTestUmatBehaviour.cxx
-mtest_LDADD   += -L$(top_builddir)/mfront/src -lUMATInterface
+libTFELMTest_la_SOURCES += MTestUmatBehaviour.cxx
+libTFELMTest_la_LIBADD  += -L$(top_builddir)/mfront/src -lUMATInterface
 endif
 
 if HAVE_ASTER
-mtest_SOURCES += MTestAsterBehaviour.cxx
-mtest_LDADD   += -L$(top_builddir)/mfront/src -lAsterInterface
+libTFELMTest_la_SOURCES += MTestAsterBehaviour.cxx
+libTFELMTest_la_LIBADD  += -L$(top_builddir)/mfront/src -lAsterInterface
 endif
 
 EXTRA_DIST=CMakeLists.txt

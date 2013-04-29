@@ -17,8 +17,6 @@ EXTRA_DIST=CMakeLists.txt                            \
 	   Images/CompSeq.eps			     \
 	   annexe-orthotropie.tex		     \
 	   style.ist				     \
-	   Champs.tex				     \
-	   Makefile.doc				     \
 	   mfront/nbzrSwellingModel.cxx		     \
 	   mfront/SIC_SpecificHeat_AUDUBERT.cxx	     \
 	   mfront/SICCreepBehaviour-ple.tex	     \
@@ -76,4 +74,10 @@ EXTRA_DIST=CMakeLists.txt                            \
 	   mfront/OrthotropicElastic.mfront	     \
 	   mfront/loimat.vba			     \
 	   mfront/hillTensor.cxx		     \
-	   mfront/highlight.sty
+	   mfront/highlight.sty			     \
+	   Author.txt				     \
+	   Bounds.txt				     \
+	   Date.txt				     \
+	   Description.txt                           \
+	   MaterialLaw/Constant.txt                  \
+	   MaterialLaw/Function.txt

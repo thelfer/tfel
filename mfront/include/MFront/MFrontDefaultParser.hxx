@@ -33,11 +33,12 @@ namespace mfront{
 
     void setWarningMode(void);
 
-    void
-    treatProvidesTangentOperator(void);
-
-    void
-    treatProvidesSymmetricTangentOperator(void);
+    /*!
+     * \brief return the list of keywords usable with this parser
+     * \param[out] k : the list of keywords registred for this parser
+     */
+    virtual void
+    getKeywordsList(std::vector<std::string>&) const;
 
     void
     setInterfaces(const std::set<std::string>&);
@@ -68,7 +69,13 @@ namespace mfront{
 
     ~MFrontDefaultParser();
 
-  private:
+  protected:
+
+    virtual void
+    treatProvidesTangentOperator(void);
+
+    virtual void
+    treatProvidesSymmetricTangentOperator(void);
 
     void generateOutputFiles();
 
