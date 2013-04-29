@@ -20,7 +20,9 @@ set(mfront_tests_SOURCES
   Norton_rkCastem
   ImplicitNorton
   ImplicitNorton2
-  StrainHardeningCreep)
+  StrainHardeningCreep
+  Mazars
+  Chaboche)
 
 mfront_behaviour_check_library(MFrontAsterBehaviours  aster ${mfront_tests_SOURCES})
 target_link_libraries(MFrontAsterBehaviours
@@ -59,6 +61,8 @@ test_aster(elasticity11)
 test_aster(elasticity12)
 test_aster(elasticity13)
 test_aster(elasticity14)
+test_aster(elasticity15)
+test_aster(mazars)
 test_aster(norton)
 test_aster(norton2)
 test_aster(implicitnorton)
@@ -66,3 +70,4 @@ test_aster(implicitnorton2)
 test_aster(implicitorthotropiccreep)
 test_aster(plasticity)
 test_aster(strainhardeningcreep)
+test_aster(chaboche)

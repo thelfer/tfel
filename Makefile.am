@@ -14,8 +14,9 @@ mfront-doc:
 	cd docs/mfront ;                                            \
 	make -f Makefile.doc
 
-EXTRA_DIST = bootstrap.sh        				    \
-	     CMakeLists.txt      				    \
-	     LGPL.txt            				    \
-	     CeCILL-B.txt        				    \
-	     INSTALL
+EXTRA_DIST = bootstrap.sh   \
+	     CMakeLists.txt \
+	     LGPL.txt       \
+	     CeCILL-B.txt   \
+	     INSTALL        \
+             INSTALL-cmake

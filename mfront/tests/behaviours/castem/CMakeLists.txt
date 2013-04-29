@@ -20,7 +20,9 @@ set(mfront_tests_SOURCES
   OrthotropicCreep
   ImplicitOrthotropicCreep
   OrthotropicElastic
-  StrainHardeningCreep)
+  StrainHardeningCreep
+  Mazars
+  Chaboche)
   
 mfront_behaviour_check_library(MFrontCastemBehaviours umat  ${mfront_tests_SOURCES})
 target_link_libraries(MFrontCastemBehaviours
@@ -59,8 +61,11 @@ test_umat(elasticity11)
 test_umat(elasticity12)
 test_umat(elasticity13)
 test_umat(elasticity14)
+test_umat(elasticity15)
+test_umat(mazars)
 test_umat(norton)
 test_umat(norton2)
 test_umat(orthotropiccreep)
 test_umat(strainhardeningcreep)
 test_umat(plasticity)
+test_umat(chaboche)

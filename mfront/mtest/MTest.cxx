@@ -1822,36 +1822,41 @@ namespace mfront
 						    this->hypothesis,
 						    MTestStiffnessMatrixType::TANGENTOPERATOR);
 	  }
-	  if(!sp){
-	    string msg("MTest::execute : behaviour "
-		       "compute prediction matrix failed");
-	    throw(runtime_error(msg));
-	  }
-	  fill(K.begin(),K.end(),0.);
-	  fill(r.begin(),r.end(),0.);
-	  u1 = u0;
-	  for(i=0;i!=N;++i){
-	    r(i) += s0(i);
-	    for(j=0;j!=N;++j){
-	      K(i,j)+=Kp(i,j);
-	      // free dilatation treatment
-	      r(i) -= Kp(i,j)*(e_th1[j]-e_th0[j]);
+	  if(sp){
+	    fill(K.begin(),K.end(),0.);
+	    fill(r.begin(),r.end(),0.);
+	    u1 = u0;
+	    for(i=0;i!=N;++i){
+	      r(i) += s0(i);
+	      for(j=0;j!=N;++j){
+		K(i,j)+=Kp(i,j);
+		// free dilatation treatment
+		r(i) -= Kp(i,j)*(e_th1[j]-e_th0[j]);
+	      }
 	    }
+	    if(first){
+	      a = *(max_element(K.begin(),K.end()));
+	      first = false;
+	    }
+	    unsigned short pos = N;
+	    for(pc =this->constraints.begin();
+		pc!=this->constraints.end();++pc){
+	      const MTestConstraint& c = *(*pc);
+	      c.setValues(K,r,u0,u1,pos,
+			  this->dimension,t,dt,a);
+	      pos = static_cast<unsigned short>(pos+c.getNumberOfLagrangeMultipliers());
+	    }
+	    LUSolve::exe(K,r,x,p_lu);
+	    u1 -= r;
+	  } else {
+	    if(getVerboseMode()>VERBOSE_QUIET){
+	      ostream& log = getLogStream();
+	      log << "MTest::execute : behaviour compute prediction matrix failed" << endl;
+	    }
+	    u1  = u0;
+	    s1  = s0;
+	    iv1 = iv0;
 	  }
-	  if(first){
-	    a = *(max_element(K.begin(),K.end()));
-	    first = false;
-	  }
-	  unsigned short pos = N;
-	  for(pc =this->constraints.begin();
-	      pc!=this->constraints.end();++pc){
-	    const MTestConstraint& c = *(*pc);
-	    c.setValues(K,r,u0,u1,pos,
-			this->dimension,t,dt,a);
-	    pos = static_cast<unsigned short>(pos+c.getNumberOfLagrangeMultipliers());
-	  }
-	  LUSolve::exe(K,r,x,p_lu);
-	  u1 -= r;
 	} else {
 	  if(this->ppolicy != NOPREDICTION){
 	    string msg("MTest::execute : "
@@ -1864,7 +1869,8 @@ namespace mfront
 	  iv1 = iv0;
 	}
 	/* resolution */
-	while((!converged)&&(iter!=this->iterMax)){
+	bool cont = true;
+	while((!converged)&&(iter!=this->iterMax)&&(cont)){
 	  ++iter;
 	  nep2 = nep;
 	  nep  = ne;
@@ -1874,128 +1880,132 @@ namespace mfront
 	  for(i=0;i!=N;++i){
 	    de[i] = u1[i]-e_th1[i]-u0[i]+e_th0[i];
 	  }
-	  if(!this->b->integrate(Kt,s1,iv1,this->rm,e0,
-				 de,s0,mprops1,iv0,esv0,desv,
-				 this->hypothesis,dt,
-				 this->ktype)){
-	    string msg("MTest::execute : behaviour "
-		       "integration failed");
-	    throw(runtime_error(msg));
-	  }
-	  for(i=0;i!=N;++i){
-	    r(i) += s1(i);
-	    for(j=0;j!=N;++j){
-	      K(i,j)+=Kt(i,j);
+	  const bool bi = this->b->integrate(Kt,s1,iv1,this->rm,e0,
+					     de,s0,mprops1,iv0,esv0,desv,
+					     this->hypothesis,dt,
+					     this->ktype);
+	  if(bi){
+	    for(i=0;i!=N;++i){
+	      r(i) += s1(i);
+	      for(j=0;j!=N;++j){
+		K(i,j)+=Kt(i,j);
+	      }
 	    }
-	  }
-	  if(first){
-	    a = *(max_element(K.begin(),K.end()));
-	    first = false;
-	  }
-	  unsigned short pos = N;
-	  for(pc =this->constraints.begin();
-	      pc!=this->constraints.end();++pc){
-	    const MTestConstraint& c = *(*pc);
-	    c.setValues(K,r,u0,u1,pos,
-			this->dimension,t,dt,a);
-	    pos = static_cast<unsigned short>(pos+c.getNumberOfLagrangeMultipliers());
-	  }
-	  if(getVerboseMode()>=VERBOSE_DEBUG){
-	    ostream& log = getLogStream();
-	    for(i=0;i!=K.getNbRows();++i){
-	      for(j=0;j!=K.getNbCols();++j){
-		log << K(i,j) << " ";
+	    if(first){
+	      a = *(max_element(K.begin(),K.end()));
+	      first = false;
+	    }
+	    unsigned short pos = N;
+	    for(pc =this->constraints.begin();
+		pc!=this->constraints.end();++pc){
+	      const MTestConstraint& c = *(*pc);
+	      c.setValues(K,r,u0,u1,pos,
+			  this->dimension,t,dt,a);
+	      pos = static_cast<unsigned short>(pos+c.getNumberOfLagrangeMultipliers());
+	    }
+	    if(getVerboseMode()>=VERBOSE_DEBUG){
+	      ostream& log = getLogStream();
+	      for(i=0;i!=K.getNbRows();++i){
+		for(j=0;j!=K.getNbCols();++j){
+		  log << K(i,j) << " ";
+		}
+		log << endl;
 	      }
 	      log << endl;
 	    }
-	    log << endl;
-	  }
-	  if(this->useCastemAcceleration){
-	    ca_r = r;
-	  }
-	  real nr = 0.;
-	  for(i=0;i!=N;++i){
-	    nr += abs(r(i));
-	  }
-	  LUSolve::exe(K,r,x,p_lu);
-	  u1 -= r;
-	  ne = 0;
-	  for(i=0;i!=N;++i){
-	    ne += abs(r(i));
-	  }
-	  if(getVerboseMode()>=VERBOSE_LEVEL2){
-	    ostream& log = getLogStream();
-	    log << "iteration " << iter << " : " << ne << " " 
-		 << nr << " (";
-	    for(i=0;i!=N;){
-	      log << u1(i);
-	      if(++i!=N){
-		log << " ";
-	      }
+	    if(this->useCastemAcceleration){
+	      ca_r = r;
 	    }
-	    log << ")" << endl;
-	  }
-	  converged = (ne<this->eeps)&&(nr<this->seps);
-	  for(pc =this->constraints.begin();
-	      (pc!=this->constraints.end())&&(converged);++pc){
-	    const MTestConstraint& c = *(*pc);
-	    converged = c.checkConvergence(N,u1,s1,
-					   this->eeps,
-					   this->seps,
-					   t,dt);
-	  }
-	  if(this->ppolicy == NOPREDICTION){
-	    converged = (converged) && (iter>1);
-	  }
-	  if((!converged)&&(this->useCastemAcceleration)){
-	    const real ca_eps = 100*(this->seps*numeric_limits<real>::epsilon());
-	    ca_u0.swap(ca_u1);
-	    ca_u1.swap(ca_u2);
-	    ca_r0.swap(ca_r1);
-	    ca_r1.swap(ca_r2);
-	    ca_u2 = u1;
-	    ca_r2 = ca_r;
-	    if((iter>=this->cat)&&((iter-this->cat)%this->cap==0)){
-	      if(getVerboseMode()>=VERBOSE_LEVEL1){
-		ostream& log = getLogStream();
-		log << "castem acceleration convergence" << endl;
+	    real nr = 0.;
+	    for(i=0;i!=N;++i){
+	      nr += abs(r(i));
+	    }
+	    LUSolve::exe(K,r,x,p_lu);
+	    u1 -= r;
+	    ne = 0;
+	    for(i=0;i!=N;++i){
+	      ne += abs(r(i));
+	    }
+	    if(getVerboseMode()>=VERBOSE_LEVEL2){
+	      ostream& log = getLogStream();
+	      log << "iteration " << iter << " : " << ne << " " 
+		  << nr << " (";
+	      for(i=0;i!=N;){
+		log << u1(i);
+		if(++i!=N){
+		  log << " ";
+		}
 	      }
-	      bool c  = true;
-	      ca_tmp0 = ca_r1-ca_r0;
-	      ca_tmp1 = ca_r2-ca_r0;
-	      const real nr0 = norm(ca_tmp0);
-	      c = nr0>ca_eps;
-	      if(c){
-		ca_n0   = ca_tmp0/nr0;
-		const real ntmp1  = ca_tmp1|ca_n0;
-		ca_tmp1          -= ntmp1*ca_n0;
-		const real nr1    = norm(ca_tmp1);
-		c = nr1>0.1*abs(ntmp1);
+	      log << ")" << endl;
+	    }
+	    converged = (ne<this->eeps)&&(nr<this->seps);
+	    for(pc =this->constraints.begin();
+		(pc!=this->constraints.end())&&(converged);++pc){
+	      const MTestConstraint& c = *(*pc);
+	      converged = c.checkConvergence(N,u1,s1,
+					     this->eeps,
+					     this->seps,
+					     t,dt);
+	    }
+	    if(this->ppolicy == NOPREDICTION){
+	      converged = (converged) && (iter>1);
+	    }
+	    if((!converged)&&(this->useCastemAcceleration)){
+	      const real ca_eps = 100*(this->seps*numeric_limits<real>::epsilon());
+	      ca_u0.swap(ca_u1);
+	      ca_u1.swap(ca_u2);
+	      ca_r0.swap(ca_r1);
+	      ca_r1.swap(ca_r2);
+	      ca_u2 = u1;
+	      ca_r2 = ca_r;
+	      if((iter>=this->cat)&&((iter-this->cat)%this->cap==0)){
+		if(getVerboseMode()>=VERBOSE_LEVEL1){
+		  ostream& log = getLogStream();
+		  log << "castem acceleration convergence" << endl;
+		}
+		bool c  = true;
+		ca_tmp0 = ca_r1-ca_r0;
+		ca_tmp1 = ca_r2-ca_r0;
+		const real nr0 = norm(ca_tmp0);
+		c = nr0>ca_eps;
 		if(c){
-		  ca_n1      =   ca_tmp1/nr1;
-		  const real ca_p0 = -(ca_r0|ca_n0);
-		  const real ca_p1 = -(ca_r0|ca_n1);
-		  // La projection du vecteur nul est
-		  // donnée par
-		  // (1-ca_c0-ca_c1)*r0+ca_c0*ca_r1+ca_c1*r2;
-		  // avec - ca_c0 = (ca_p0/nr0-ca_p1/nr1)
-		  //      - ca_c1 = ca_p1/nr1
-		  // maintenant on applique la même relation
-		  // linéaire
-		  // aux inconnues..
-		  const real ca_c0 = (ca_p0/nr0-ca_p1/nr1);
-		  const real ca_c1 = ca_p1/nr1;
-		  u1 = (1-ca_c0-ca_c1)*ca_u0+ca_c0*ca_u1+ca_c1*ca_u2;
-		} else {
-		  // the previous iterations were (almost) colinear
-		  const real ca_c0 = -(ca_r0|ca_n0)/nr0;
-		  u1 = (1-ca_c0)*ca_u0+ca_c0*ca_u1;
+		  ca_n0   = ca_tmp0/nr0;
+		  const real ntmp1  = ca_tmp1|ca_n0;
+		  ca_tmp1          -= ntmp1*ca_n0;
+		  const real nr1    = norm(ca_tmp1);
+		  c = nr1>0.1*abs(ntmp1);
+		  if(c){
+		    ca_n1      =   ca_tmp1/nr1;
+		    const real ca_p0 = -(ca_r0|ca_n0);
+		    const real ca_p1 = -(ca_r0|ca_n1);
+		    // La projection du vecteur nul est
+		    // donnée par
+		    // (1-ca_c0-ca_c1)*r0+ca_c0*ca_r1+ca_c1*r2;
+		    // avec - ca_c0 = (ca_p0/nr0-ca_p1/nr1)
+		    //      - ca_c1 = ca_p1/nr1
+		    // maintenant on applique la même relation
+		    // linéaire
+		    // aux inconnues..
+		    const real ca_c0 = (ca_p0/nr0-ca_p1/nr1);
+		    const real ca_c1 = ca_p1/nr1;
+		    u1 = (1-ca_c0-ca_c1)*ca_u0+ca_c0*ca_u1+ca_c1*ca_u2;
+		  } else {
+		    // the previous iterations were (almost) colinear
+		    const real ca_c0 = -(ca_r0|ca_n0)/nr0;
+		    u1 = (1-ca_c0)*ca_u0+ca_c0*ca_u1;
+		  }
 		}
 	      }
 	    }
+	  } else {
+	    if(getVerboseMode()>VERBOSE_QUIET){
+	      ostream& log = getLogStream();
+	      log << "MTest::execute : behaviour intregration failed" << endl;
+	    }
+	    cont = false;
 	  }
 	}
-	if(iter==this->iterMax){
+	if((iter==this->iterMax)||(!cont)){
 	  // no convergence
 	  ++subStep;
 	  if(subStep==this->mSubSteps){

@@ -345,6 +345,8 @@ AC_OUTPUT([debug.sh
            mfront/tests/behaviours/aster/elasticity12.mtest
            mfront/tests/behaviours/aster/elasticity13.mtest
            mfront/tests/behaviours/aster/elasticity14.mtest
+           mfront/tests/behaviours/aster/elasticity15.mtest
+           mfront/tests/behaviours/aster/mazars.mtest
            mfront/tests/behaviours/aster/norton.mtest
            mfront/tests/behaviours/aster/norton2.mtest
            mfront/tests/behaviours/aster/implicitnorton.mtest
@@ -352,6 +354,7 @@ AC_OUTPUT([debug.sh
            mfront/tests/behaviours/aster/implicitorthotropiccreep.mtest
            mfront/tests/behaviours/aster/plasticity.mtest
            mfront/tests/behaviours/aster/strainhardeningcreep.mtest
+           mfront/tests/behaviours/aster/chaboche.mtest
            mfront/tests/behaviours/castem/Makefile
            mfront/tests/behaviours/castem/elasticity.mtest
            mfront/tests/behaviours/castem/elasticity2.mtest
@@ -367,11 +370,14 @@ AC_OUTPUT([debug.sh
            mfront/tests/behaviours/castem/elasticity12.mtest
            mfront/tests/behaviours/castem/elasticity13.mtest
            mfront/tests/behaviours/castem/elasticity14.mtest
+           mfront/tests/behaviours/castem/elasticity15.mtest
+           mfront/tests/behaviours/castem/mazars.mtest
            mfront/tests/behaviours/castem/norton.mtest
            mfront/tests/behaviours/castem/norton2.mtest
            mfront/tests/behaviours/castem/orthotropiccreep.mtest
            mfront/tests/behaviours/castem/plasticity.mtest
            mfront/tests/behaviours/castem/strainhardeningcreep.mtest
+           mfront/tests/behaviours/castem/chaboche.mtest
 	   mfront/Examples/Makefile
 	   tfel-doc/Makefile
 	   tfel-doc/src/Makefile
