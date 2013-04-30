@@ -3332,9 +3332,9 @@ namespace mfront{
   void MFrontBehaviourParserCommon::writeSrcFile(void)
   {
     this->writeSrcFileHeader();
+    this->writeSrcFileUserDefinedCode();
     this->writeNamespaceBegin(this->srcFile);
     this->writeSrcFileParametersInitializer();
-    this->writeSrcFileUserDefinedCode();
     this->writeSrcFileStaticVars();
     this->writeNamespaceEnd(this->srcFile);
   } // end of MFrontBehaviourParserCommon::writeSrcFile(void)

@@ -887,6 +887,9 @@ namespace mfront
   void
   ParserBase::treatSources(void)
   {
+    if(!this->sources.empty()){
+      this->sources += "\n";
+    }
     this->sources = this->readNextBlock();
   } // end of ParserBase::treatSources(void)
 
