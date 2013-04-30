@@ -1,0 +1,20 @@
+note=reference-guide
+
+all:
+	latex  $(note).tex
+	latex  $(note).tex
+#	bibtex $(note)
+	-makeindex -s @srcdir@/style.ist env.idx
+	-makeindex -s @srcdir@/style.ist tfel.idx
+	-makeindex -s @srcdir@/style.ist headers.idx
+	-makeindex -s @srcdir@/style.ist mkeys.idx
+	latex  $(note).tex
+	latex  $(note).tex
+	dvips  $(note).dvi -o
+	ps2pdf $(note).ps
+
+clean:
+	-$(RM) $(note).aux $(note).log
+	-$(RM) $(note).out $(note).toc
+	-$(RM) $(note).dvi $(note).ps
+	-$(RM) $(note).pdf

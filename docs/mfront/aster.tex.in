@@ -1,4 +1,4 @@
-\documentclass[rectoverso,pleiades,pstricks,leqno,anti,projet]{@abs_top_builddir@/docs/tex/texmf/note_technique_2010}
+c\documentclass[rectoverso,pleiades,pstricks,leqno,anti,projet]{@abs_top_builddir@/docs/tex/texmf/note_technique_2010}
 
 % \usepackage{draftcopy}
 % \draftcopySetGrey{0.8}
@@ -236,10 +236,7 @@ qui ne sont pas nécessairement utilisés dans \aster{}.
   totale par rapport a l'état de reference à $t_{0}$ \\
   {\tt TIME } & REAL*8(2) & TIME(1) = 0, TIME(2) = $t_{0}$ où $t_{0}$
   est le précédent instant d'équilibre atteint \\
-  {\tt DTIME } & REAL*8 & DTIME = $\Delta t$ où $\Delta t$ est le
-  nouveau pas de temps propose par {\tt PASAPAS} pour atteindre
-  l'equilibre avec l'incrément de déformation totale impose ({\tt
-    DSTRAN}) \\
+  {\tt DTIME } & REAL*8 & DTIME = $\Delta t$ est l'incrément de temps \\
   {\tt TEMP } & REAL*8 & température à $t_{0}$ \\
   {\tt DTEMP } & REAL*8 & incrément de température à $t_{0}+\Delta t$ \\
   {\tt PREDEF } & REAL*8(*) & vecteur des paramètres externes de la loi
@@ -264,10 +261,7 @@ qui ne sont pas nécessairement utilisés dans \aster{}.
   \\
   {\tt PNEWDT } & REAL*8 & rapport entre le nouveau pas de temps suggéré
   et le pas de temps donné en entrée \\
-  {\tt CELENT } & REAL*8 & longueur caractéristique de l'élément. Dans
-  le cas d'une adhérence à \aster{}, cette longueur caractéristique est
-  déterminée par {\tt LOCARA} comme la distance maximale entre deux
-  noeuds de l'élément. \\
+  {\tt CELENT } & REAL*8 & longueur caractéristique de l'élément. \\
   {\tt DFGRD0 } & REAL*8(3,3) & tenseur gradient de déplacement à
   $t_{0}$ \\
   {\tt DFGRD1 } & REAL*8(3,3) & tenseur gradient de déplacement à
@@ -294,8 +288,38 @@ par \aster{} et {\tt Aster\-Int} le type entier.
 
 \subsection{Conventions}
 
-La matrice tangente cohérente n'est calculée que si le premier élément
-du tableau \varcpp{DDSOE} est supérieur à \(0.5\).
+\subsubsection{Choix du type de calcul}
+
+Le premier élément du tableau \varcpp{DDSOE} permet de préciser le
+type de calcul à effectuer et le type de matrice de raideur
+attendue.
+
+Une valeur strictement négative correspond à un calcul d'une matrice
+de prédiction. Dans ce cas, il n'y a pas d'intégration de la loi de
+comportement. Les valeurs supportées sont~:
+\begin{itemize}
+\item -1, qui correspond au calcul de la matrice d'élasticité initiale
+  (non endommagée)~;
+\item -2, qui correspond au calcul de la matrice sécante (matrice
+  d'élasticité endommagée)~;
+\item -3, qui correspond au calcul de la matrice tangente.
+\end{itemize}
+
+Une valeur positive ou nulle du premier élément du tableau
+\varcpp{DDSOE} conduit à l'intégration de la loi de comportement sur
+le pas de temps. Si cette intégration s'effectue avec succès, une
+matrice de raideur peut être calculée. Le type de matrice calculée
+dépend de la valeur du premier élément du tableau \varcpp{DDSOE}~:
+\begin{itemize}
+\item 1, correspond au calcul de la matrice d'élasticité initiale
+  (non endommagée)~;
+\item 2, correspond au calcul de la matrice sécante (matrice
+  d'élasticité endommagée)~;
+\item 3, correspond au calcul de la matrice tangente~;
+\item 4, correspond au calcul de la matrice tangente cohérente~;
+\end{itemize}
+
+\subsubsection{Valeur de retour}
 
 La loi de comportement a rencontré une erreur grave si la valeur de
 \varcpp{PNEWDT} est inférieure à \(0\). Différents cas peuvent se

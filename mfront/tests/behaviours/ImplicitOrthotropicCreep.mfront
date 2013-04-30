@@ -26,7 +26,7 @@ seq.setGlossaryName("HillStress");
 
 @IsTangentOperatorSymmetric true;
 @TangentOperator{
-  if(smt==ELASTIC){
+  if((smt==ELASTIC)||(smt==SECANTOPERATOR)){
     Dt = D;
   } else if(smt==CONSISTANTTANGENTOPERATOR){
     Stensor4 Je;

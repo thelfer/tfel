@@ -52,16 +52,14 @@ evp.setGlossaryName("ViscoplasticStrain");
 
 @TangentOperator{
   using namespace tfel::material::lame;
-  if((smt==ELASTIC)||(smt==CONSISTANTTANGENTOPERATOR)){
+  if((smt==ELASTIC)||(smt==SECANTOPERATOR)){
+     computeElasticStiffness<N,Type>::exe(Dt,lambda,mu);
+  } else if (smt==CONSISTANTTANGENTOPERATOR){
     StiffnessTensor De;
+    Stensor4 Je;
     computeElasticStiffness<N,Type>::exe(De,lambda,mu);
-    if(smt==ELASTIC){
-      Dt = De;
-    } else {
-      Stensor4 Je;
-      getPartialJacobianInvert(Je);
-      Dt = De*Je;
-    }
+    getPartialJacobianInvert(Je);
+    Dt = De*Je;
   } else {
     return false;
   }

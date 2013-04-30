@@ -19,6 +19,8 @@ EXTRA_DIST=CMakeLists.txt                    \
            StrainHardeningCreep.mfront       \
            Mazars.mfront                     \
            Chaboche.mfront                   \
+           Chaboche2.mfront                  \
 	   references/elasticity15-aster.ref \
            references/plasticity.ref         \
-	   references/mazars-aster.ref
+	   references/chaboche-aster.ref     \
+	   references/chaboche2-aster.ref

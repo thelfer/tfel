@@ -22,7 +22,8 @@ set(mfront_tests_SOURCES
   OrthotropicElastic
   StrainHardeningCreep
   Mazars
-  Chaboche)
+  Chaboche
+  Chaboche2)
   
 mfront_behaviour_check_library(MFrontCastemBehaviours umat  ${mfront_tests_SOURCES})
 target_link_libraries(MFrontCastemBehaviours
@@ -69,3 +70,4 @@ test_umat(orthotropiccreep)
 test_umat(strainhardeningcreep)
 test_umat(plasticity)
 test_umat(chaboche)
+test_umat(chaboche2)

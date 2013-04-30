@@ -283,22 +283,268 @@ Ce mécanisme permet donc de créer des interfaces sans modifier
 plate-forme \pleiades{} pour que \TFEL{} puisse être considéré comme un
 pré-recquis.
 
-\subsection{Utilisation de \mfront{}}
-\label{sec:mfront:using}
+\subsection{Utilisation de \mfront{} en ligne de commande}
+\label{sec:appendix:mfront:using}
 
-\mfront{} transforme un fichier d'entrée en du code \cpp{} et
-gère éventuellement sa compilation. Son utilisation se résume
-généralement à~:
-\bash{
-  mfront -{}-obuild --interface=?? *.mfront
-}
-Toutes les options de l'utilisation de \mfront{} en ligne de
-commande sont décrites en annexe~\ref{sec:appendix:mfront:using}.
+Nous décrivons dans ce paragraphe l'utilisation de \mfront{} sous
+ \unix{}. Les commandes présentées restent valides sous \windows{} à
+condition d'utiliser l'un des environnements \msys{} ou \cygwin{}.
 
 Un fichier \mfront{} présente un certain nombre de directives
 introduites par une arobase @. Les directives communes à tous les
 analyseurs sont présentées dans la suite. Il est également possible que
 les interfaces présentent des mots clés qui leurs soient propres.
+
+\mfront{} s'utilise en ligne de commande ainsi~:
+\begin{center}
+  {\tt mfront [options] fichier1.mfront fichier2.mfront \ldots}
+\end{center}
+
+L'option la plus utilisée est \moption{interface} qui permet de
+choisir la cible de la compilation.
+
+Les fichiers générés se trouvent généralement dans un sous-répertoire
+nommé {\tt src} pour les fichiers source et {\tt include} pour les
+fichiers d'entête.
+
+Cette commande conduit à la génération~:
+\begin{itemize}
+  \item de fichiers sources~;
+  \item de fichiers de dépendances~;
+  \item de fichiers de cibles.
+\end{itemize}
+Ces derniers fichiers permettent d'utiliser \mfront{} de manière
+séquentielle. \mfront{} peut d'abord être appelé sur plusieurs fichiers
+pour générer les fichiers sources puis lancer la compilation des
+librairies ainsi~:
+\begin{center}
+  \begin{minipage}{0.6\textwidth}
+    \textcolor{ceagrisclair}{\tt \# Génération des fichiers sources}\\
+    {\tt mfront --interface=?? fichier1.mfront} \\
+    {\tt mfront --interface=?? fichier2.mfront} \\
+    {\tt \ldots} \\
+    \textcolor{ceagrisclair}{\tt \# Génération d'un fichier Makefile et lancement de la compilation}\\
+    {\tt mfront --obuild} \\
+  \end{minipage}
+\end{center}
+
+\paragraph{Notes sur la génération des fichiers en
+  parallèle} La génération de fichiers \mfront{} en parallèle est
+possible. Pour cela, un verrou global est posé au moment de l'écriture
+des fichiers afin que les différents processus \mfront{} ne modifient
+pas les mêmes fichiers en même temps (fichiers cibles et fichiers de
+dépendances notamment).
+
+Cela pourrait conduire à des blocages si \mfront{} quitte sans
+libérer ce verrou\footnote{Nous devons cependant préciser que ce
+  problème ne s'est présenté qu'une unique fois.}. Dans ce cas, il est
+nécessaire de retirer ce verrou global à la main. Sous \linux{}, il
+s'agit de supprimer le fichier~:
+\begin{center}
+ \texttt{/dev/shm/sem-mfront.\${UID}}
+\end{center}
+
+Un moyen plus brutal consiste à redémarrer la machine.
+
+\subsubsection{Options de la ligne de commande}
+
+\paragraph{L'option \moption{help}} L'option \moption{help} liste
+l'ensemble des options disponibles et quitte le programme.
+
+\paragraph{L'option \moption{list-parsers}} L'option
+\moption{list-parsers} affiche la liste des analyseurs disponibles et
+quitte le programme.
+
+\paragraph{L'option \moption{help-keywords-list}} L'option
+\moption{help-\-key\-words-\-list} liste l'ensemble des mots clés
+d'une interface et quitte le programme. Par exemple~:
+\begin{center}
+  {\tt mfront -{}-help-keywords-list=MaterialLaw}
+\end{center}
+
+\paragraph{L'option \moption{help-keyword}} L'option
+\moption{help-\-key\-word} affiche la documentation d'un des mots clés
+d'une interface et quitte le programme. Par exemple~:
+\begin{center}
+  {\tt mfront -{}-help-keyword=MaterialLaw:@Function}
+\end{center}
+
+\paragraph{L'option \moption{version}} L'option \moption{version}
+affiche la version de \mfront{} utilisée et quitte le programme.
+
+\paragraph{L'option \moption{interface}} L'option \moption{interface}
+spécifie la ou les interfaces à utiliser pour générer les fichiers
+sources. Les différentes interfaces sont séparées par une virgule.
+
+\paragraph{L'option \moption{verbose}} L'option \moption{verbose}
+demande l'affiche de messages supplémentaires.
+
+\paragraph{L'option \moption{warning}} L'option \moption{warning}
+demande l'affiche de messages d'avertissement supplémentaires.
+
+\paragraph{L'option \moption{debug}} L'option \moption{debug} modifie la
+génération des fichiers de compilation et son effet dépend de
+l'analyseur choisi. Cette option désactive aussi l'introduction de
+directives \texttt{\#line} qui permettent dans un mode de fonctionnement
+normal de repérer la position des erreurs dans le fichier \mfront{}
+d'origine.
+
+\paragraph{L'option \moption{make}} L'option \moption{make} conduit à la
+génération d'un fichier {\tt Makefile.mfront}.
+
+\paragraph{L'option \moption{omake}} L'option \moption{omake} conduit à la
+génération d'un fichier {\tt Makefile.mfront} avec des directives de
+compilation optimisées.
+
+Les options de compilation optimisées sont données par le résultat de la
+commande~
+\begin{center}
+  {\tt tfel-config -{}-oflags}
+\end{center}
+
+\paragraph{L'option \moption{clean}} L'option \moption{clean} conduit à la
+génération d'un fichier {\tt Makefile.mfront} et lance la commande~:
+\begin{center}
+  {\tt make -C src -f Makefile.mfront clean}
+\end{center}
+
+\paragraph{L'option \moption{build}} L'option \moption{build} conduit à la
+génération d'un fichier {\tt Makefile.mfront} et lance la commande~:
+\begin{center}
+  {\tt make -C src -f Makefile.mfront}
+\end{center}
+
+\paragraph{L'option \moption{obuild}} L'option \moption{obuild} conduit à la
+génération d'un fichier {\tt Makefile.mfront} avec des directives de
+compilation optimisées et lance la commande~:
+\begin{center}
+  {\tt make -C src -f Makefile.mfront}
+\end{center}
+
+\paragraph{L'option \moption{nodeps}} L'option \moption{nodeps} empêche
+l'inclusion des règle de dépendances dans le fichier {\tt
+  Make\-file\-.mfront} généré. Cette option a été introduite pour éviter
+certains problèmes sous \windows{}.
+
+\paragraph{L'option \moption{silent-build}}
+L'option \moption{silent-build} permet d'afficher ou non la ligne de
+compilation utilisée.
+
+\paragraph{L'option \moption{otarget}} L'option
+\moption{otarget} permet de ne compiler qu'une des librairies de manière
+optimisée. Cette option est suivie du nom de la cible.
+
+\paragraph{L'option \moption{target}} L'option
+\moption{target} permet de ne compiler qu'une des librairies.
+
+\paragraph{L'option \moption{win32}} L'option
+\moption{win32} est utilisée pour permettre la compilation croisée sous
+\linux{} de librairies dynamiques pour \windows{}. Cette possibilité est
+décrite au paragraphe~\ref{sec:mfront:comp_croisee_lib_windows_linux}.
+
+\subsection{Gestion de la compilation}
+\label{sec:mfront:compilation}
+
+En plus de générer des fichiers source, \mfront{} peut gérer leurs
+compilations sous forme de librairies dynamiques. Cette compilation se
+fait en plusieurs étapes~:
+\begin{itemize}
+  \item génération d'un fichier {\tt Makefile.mfront} dans le
+  sous-répertoire des sources {\tt src}. La génération du fichier
+  Makefile se fait en analysant le répertoire {\tt src} qui contient
+  (après la phase de génération des sources) différents fichiers
+  contentant les noms des libraires à générer, la liste de leurs sources
+  et de leurs dépendances, etc..~;
+  \item le lancement du processus de compilation. Il s'agit
+  essentiellement d'un appel à l'utilitaire {\tt make}.
+\end{itemize}
+
+\subsubsection{Variables affectant le processus de compilation}
+
+Bien que cela n'est généralement pas nécessaire, l'utilisateur
+\mfront{} peut affecter le processus de compilation à l'aide de
+variables d'environnement. Cela est utile dans les situations
+suivantes~:
+\begin{itemize}
+  \item utilisation d'une librairie tierce (variables
+  \env{INCLUDES} et \env{LDFLAGS})~;
+  \item utilisation d'un compilateur différent du compilateur
+  système (variables \env{CC} et \env{CXX})~;
+  \item utiliser des options de compilation particulières
+  (variables \env{CFLAGS} et \env{CXXFLAGS})~;
+  \item génération de binaire pour une système différent
+  (cross-compilation) (variables \env{CC}, \env{CXX} \env{RANLIB},
+  \env{DLLTOOL} et \env{AR})~;
+\end{itemize}
+
+Le fichier {\tt Makefile.mfront} suit les règles des fichiers {\tt
+  Makefile}~: il est sensible aux variables d'environnement suivantes~:
+\begin{itemize}
+  \item \env{CC} qui désigne le compilateur {\tt C} à utiliser~;
+  \item \env{CXX} qui désigne le compilateur \cpp à utiliser. Ce
+  compilateur est également utiliser pour l'édition de liens~;
+  \item \env{INCLUDES} qui désigne des directives de
+  préprocesseur à utiliser en plus des directives définies par les
+  sources~;
+  \item \env{CFLAGS} qui désigne les directives de compilations à
+  utiliser pour les sources {\texttt c}. Si cette variable n'est pas
+  définie, \mfront{} utilisera les valeurs suivantes~:
+  \begin{itemize}
+    \item la sortie de la commande {\tt tfel-config -{}-oflags}
+    si l'une des options {\tt -{}-obuild} ou {\tt -{}-omake} a été
+    utilisée~;
+    \item {\tt -O2} sinon.
+  \end{itemize}
+  \item \env{CXXFLAGS} qui désigne les directives de compilations
+  à utiliser pour les source \cpp. Si cette variable n'est pas définie,
+  \mfront{} utilisera les valeurs suivantes~:
+  \begin{itemize}
+    \item la sortie de la commande {\tt tfel-config -{}-oflags}
+    si l'une des options {\tt -{}-obuild} ou {\tt -{}-omake} a été
+    utilisée~;
+    \item {\tt -O2} sinon.
+  \end{itemize}
+  \item \env{LDFLAGS} qui désigne des directives à passer à
+  l'éditeur de liens~;
+  \item \env{RANLIB}, \env{DLLTOOL} et \env{AR} qui ont été
+  introduits pour la compilation croisée de librairies dynamiques pour
+  \windows{} depuis \linux{}.
+\end{itemize}
+
+\subsubsection{Compilation croisée de
+  librairies dynamiques pour \windows{} depuis \linux{}}
+\label{sec:mfront:comp_croisee_lib_windows_linux}
+
+À partir d'une version \linux{} de \mfront{}, il est possible de
+générer des librairies dynamiques pour \windows{} dans le cas des
+propriétés matériau. Il faut cependant que ces propriétés ne fassent pas
+appel à des librairies externes, ou, si tel est le cas de disposer des
+versions \windows{} de ces librairies\footnote{Pour compiler des lois de
+  comportements, il serait nécessaire de disposer des librairies
+  mathématiques de TFEL pour \windows{}~: il faut donc compiler
+  l'ensemble de {\tt TFEL} et \mfront{} en cross-compilation et utiliser
+  la version \windows{} de \mfront{}. Ceci est effectivement possible
+  via l'émulateur {\tt wine}, mais cette manière de procéder sort du
+  cadre de ce paragraphe.}.
+
+Pour générer des librairies dynamiques pour \windows{} depuis
+\linux{}, il est tout d'abord nécessaire de disposer d'un
+cross-compilateur. Sous \debian{}, l'utilisateur pourra installer les
+paquets {\tt mingw32} (\windows{} 32 bits) ou {\tt mingw64} (\windows{}
+32 et 64 bits).
+
+Il est alors nécessaire de définir les variables d'environnement
+\env{CC}, \env{CXX} \env{RANLIB}, \env{DLLTOOL} et \env{AR} et
+d'utiliser l'option \moption{win32}.
+
+Voici un exemple de génération de librairie dynamique pour
+\windows{} depuis \linux{}~:
+\begin{flushleft}
+{\tt AR=i586-mingw32msvc-ar RANLIB=i586-mingw32msvc-ranlib
+DLLTOOL=i586-mingw32msvc-dlltool CXX=i586-mingw32msvc-g++
+../../src/mfront --win32 --obuild --interface=c
+YoungModulus.mfront}
+\end{flushleft}
 
 \subsection{Directives communes à l'ensemble des analyseurs}
 \label{sec:mfront:pres:common}
@@ -1091,663 +1337,6 @@ Ca se développe bien (DMN+DER+cyrano) !
 \listefigures
 
 \appendix
-
-\section{Documentation informatique, notice d'installation}
-\label{sec:mfront:doc:info}
-
-Le générateur de code \mfront{} fait partie d'une librairie
-hétéroclite nommée \TFEL{} qui est elle-même aujourd'hui intégrée à
-l'architecture \pleiades{}.
-
-Nous commençons par abordés des questions liées aux plate-formes et
-aux compilateurs supportés. Ces différents points permettent d'apprécier
-la qualité logicielle de \TFEL{}.
-
-Les différentes procédures de récupération des sources, de compilation
-et d'installation de \TFEL{} sont alors décrites. La générations de
-binaires, sous forme de paquet RPM ou Debian est également détaillée.
-
-\subsection{Plate-formes supportées}
-
-\subsubsection{Systèmes \unix{}}
-
-Le générateur de code \mfront{} est développé dans un environnement
-\linux{} en se basant sur la norme \(98\) du \cpp{} et sur la norme
-POSIX pour les appels système\footnote{La portabilité de \TFEL{}, sans
-  modification du code source, sur d'autres systèmes \unix{} a été
-  vérifiée sur des version antérieures par un portage sur les systèmes
-  OpenSolaris et FreeBSD~: nous pensons qu'un tel portage de la
-  version actuelle se ferait sans difficulté}.
-
-La compatibilité POSIX permet également de compiler \TFEL{} dans un
-environnement \cygwin{}\footnote{\cygwin{} fournit une surcouche POSIX
-  au-dessus des systèmes \windows{}}. Pour différentes raisons, un
-portage natif sous \windows{} est préférable et l'utilisation de \TFEL{}
-dans un environnement \cygwin{} est amené à tomber en désuétude.
-
-\subsubsection{Systèmes \windows{}}
-
-\subsection{Procédure d'installation}
-
-\TFEL{} propose aujourd'hui deux méthodes de compilation et
-d'installation. La première est basée sur le \og~moteur de
-production~\fg \cmake{}. Cette méthode est aujourd'hui conseillée. La
-seconde est basée sur les traditionnels \autotools{}.
-
-\subsubsection{Compilation, installation et
-  génération de binaires à l'aide de \cmake{}}
-
-L'installation de \TFEL{} nécessite une version supérieure
-à \(2.8\) de \cmake{}.
-
-À partir du répertoire racine des sources, il est conseillé de créer un
-sous-répertoire pour la construction des binaires~:
-\bash{
-  mkdir build \\
-  \$ cd build
-}
-
-\paragraph{Préparation de la compilation}
-La commande \cmake{} est invoquée pour préparer la compilation~:
-\bash{
-  cmake ../ -DCMAKE\textunderscore{}\-INSTALL\textunderscore{}\-PREFIX=... -DCMAKE\textunderscore{}\-BUILD\textunderscore{}\-TYPE="Release" [options]
-}
-
-La variable
-\varcpp{CMAKE\textunderscore{}\-INSTALL\textunderscore{}\-PREFIX} permet
-de préciser le répertoire d'installation.
-
-La variable
-\varcpp{CMAKE\textunderscore{}\-BUILD\textunderscore{}\-TYPE} précise le
-type de compilation souhaitée. Deux valeurs sont possibles~:
-\texttt{Release} (version de production) et \texttt{Debug} (version de
-développement).
-
-Pour certains systèmes, il est également possible de préciser la
-variable \varcpp{LIB\textunderscore{}\-SUFFIX} pour modifier le nom du
-répertoire d'installation des librairies. Ainsi, pour être compatible
-avec les conventions des distributions \mandriva{} (entre autres), on
-utilisera l'option \varcpp{-DLIB\textunderscore{}\-SUFFIX=64}.
-
-Les options suivantes sont disponibles~:
-\begin{itemize}
-  \item \varcpp{-DENABLE-STATIC=ON/OFF}, qui demande la
-  compilation de librairies statiques en plus de librairies dynamiques.
-  Par défaut, cette option est désactivée~;
-  \item \varcpp{-Denable-fortran=ON/OFF}, qui permet d'activer ou
-  de désactiver la compilation de l'interface \texttt{fortran}. Par
-  défaut, cette option est désactivée~;
-  \item \varcpp{-Denable-python=ON/OFF}, qui permet d'activer ou
-  de désactiver la compilation de l'interface \texttt{python}. Par
-  défaut, cette option est activée si un interpréteur \python{} adéquat
-  est trouvée~;
-  \item \varcpp{-Denable-aster=ON/OFF}, qui permet d'activer ou
-  de désactiver la compilation de l'interface \texttt{aster}. Par
-  défaut, cette option est désactivée~;
-  \item \varcpp{-Dlocal-castem-header=ON/OFF}, qui permet
-  d'activer ou de désactiver la compilation des interfaces
-  \texttt{castem} (propriétés matériau) et \texttt{umat} (loi de
-  comportement) sans utiliser une installation de \castem{}. \TFEL{}
-  fournira alors sa propre version du fichier d'entête
-  \texttt{castem.h}. Par défaut, cette option est désactivée~;
-\end{itemize}
-
-Cette phase de préparation va automatiquement rechercher~:
-\begin{itemize}
-  \item un installation valide de \castem{}, si l'option
-  \varcpp{-Dlocal-castem-header} n'a pas été spécifiée. Cette recherche
-  peut être facilitée en définissant la variable
-  \varcpp{CASTEM\textunderscore{}\-INSTALL\textunderscore{}\-PATH} par
-  l'option
-  \varcpp{-DCASTEM\textunderscore{}\-INSTALL\textunderscore{}\-PATH=...}
-  ou en définissant une variable d'environnement \env{CASTEMHOME}. Si la
-  recherche réussie, les interfaces \texttt{castem} (propriétés
-  matériau) et \texttt{umat} (loi de comportement) seront construites~;
-  \item une installation valide de \gnuplot{}. Si la recherche
-  réussie, l'interface \texttt{gnuplot} (propriétés matériau) est
-  construite~;
-  \item une installation valide de \doxygen{}~;
-  \item une installation valide de \latex{}~;
-\end{itemize}
-
-Il est possible de préciser le compilateur à utiliser par les
-variables d'environnement \env{CC} (compilateur \texttt{c}), \env{CXX}
-(compilateur \cpp), \env{LD} (éditeur de liens).
-
-Enfin, cette phase de préparation va tenter de trouver les options
-de compilation optimales ainsi que des drapeaux de compilation assez
-contraignants. Ces mêmes options seront utilisées par \mfront{} pour la
-compilation des sources générées\footnote{Pour connaître les options retenues,
-  il est possible d'interroger la commande {\tt tfel-config}~:
-  \bash{
-    \#retourne les avertissements retenus             \\
-    \$ tfel-config --warning                          \\
-    \$ \#retourne les options d'optimisation retenues \\
-    \$ tfel-config --oflags
-  }
-}.
-
-\paragraph{Compilation} La compilation de \TFEL{}
-est lancée par la commande \make{}~:
-\bash{
-  make -j x
-}
-où \texttt{x} est le nombre de processeurs affectés à cette 
-
-\paragraph{Installation des binaires} Les
-binaires sont installés par la commande~:
-\bash{
-  make install
-}
-
-\paragraph{Exécution des tests} La base des cas test
-de \TFEL{} peut être lancée par la commande suivante~:
-\bash{
-  make check
-}
-
-\paragraph{Installation de la documentation} La
-documentation de \TFEL{} est installée par la commande~:
-\bash{
-  make doc-install
-}
-
-Cette documentation se décompose en deux parties~:
-\begin{itemize}
-  \item une documentation informatique générée par \doxygen{} (si
-  cet outil est disponible). Cette documentation peut être générée
-  indépendamment par la commande~:
-  \bash{ make doc-html}
-  \item la présente documentation, au format \texttt{pdf}, si
-  \latex{} est disponible. Cette documentation peut être générée
-  indépendamment par la commande~:
-  \bash{ make doc-pdf}
-\end{itemize}
-
-\paragraph{Génération de paquets RPM} Des paquets
-RPM, utilisés par les distributions \linux{} \redhat{} et \mandriva{}
-(entre autres) peuvent être générés par la commande~:
-\bash{cpack -G RPM}
-
-\paragraph{Génération de paquets DEB} Des paquets
-DEB, utilisés par les distributions \linux{} \debian{} et \ubuntu{}
-(entre autres) peuvent être générés par la commande~:
-\bash{cpack -G DEB}
-
-\subsubsection{Compilation, installation et
-  génération de binaires à l'aide des \autotools{}}
-
-Si les sources ont été récupérées à partir de la gestion de
-configuration, il est nécessaire d'initialiser l'environnement de
-construction des binaires. Pour cela, il faut taper, dans le répertoire
-racine des sources, la commande suivante~:
-\bash{
-  ./bootstrap.sh
-}
-
-Il est conseillé de créer un sous-répertoire pour la construction des
-binaires~:
-\bash{
-  mkdir build \\
-  \$ cd build
- }
-
-\paragraph{Préparation de la compilation}
-La commande \cmake{} est invoquée pour préparer la compilation~:
-\bash{
-  ../configure -{}-prefix=... [options]
-}
-
-L'option \varcpp{-{}-prefix} permet de préciser le répertoire
-d'installation.
-
-Les options suivantes sont disponibles~:
-\begin{itemize}
-  \item \varcpp{-{}-enable-production}, qui permet de produire
-  une version optimisée (choix par défaut)~;
-  \item \varcpp{-{}-enable-debug}, qui permet de produire une
-  version de développement~;
-  \item \varcpp{-{}-enable-tests}, qui permet d'activer la
-  compilation des cas test~;
-  \item \varcpp{-{}-enable-fortran}, qui permet d'activer ou de
-  désactiver la compilation de l'interface \texttt{fortran}. Par défaut,
-  cette option est désactivée~;
-  \item \varcpp{-{}-enable-python}, qui permet d'activer ou de
-  désactiver la compilation de l'interface \texttt{python}. Par défaut,
-  cette option est activée si un interpréteur \python{} adéquat est
-  trouvée~;
-  \item \varcpp{-{}-enable-aster}, qui permet d'activer ou de
-  désactiver la compilation de l'interface \texttt{aster}. Par défaut,
-  cette option est désactivée~;
-  \item \varcpp{-{}-local-castem-header}, qui permet d'activer ou
-  de désactiver la compilation des interfaces \texttt{castem}
-  (propriétés matériau) et \texttt{umat} (loi de comportement) sans
-  utiliser une installation de \castem{}. \TFEL{} fournira alors sa
-  propre version du fichier d'entête \texttt{castem.h}. Par défaut,
-  cette option est désactivée~;
-  \item \varcpp{-{}-with-castem=xxx} qui permet de préciser le
-  répertoire d'installation de \castem{}~;
-\end{itemize}
-
-Cette phase de préparation va automatiquement rechercher~:
-\begin{itemize}
-  \item un installation valide de \castem{}, si l'option
-  \varcpp{-{}-local-castem-header} n'a pas été spécifiée. Cette
-  recherche peut être facilitée en utilisant l'option
-  \varcpp{-{}-with-castem=xxx} ou ou en définissant une variable
-  d'environnement \env{CASTEMHOME}. Si la recherche réussie, les
-  interfaces \texttt{castem} (propriétés matériau) et \texttt{umat} (loi
-  de comportement) seront construites~;
-  \item une installation valide de \gnuplot{}. Si la recherche
-  réussie, l'interface \texttt{gnuplot} (propriétés matériau) est
-  construite~;
-  \item une installation valide de \doxygen{}~;
-  \item une installation valide de \latex{}~;
-\end{itemize}
-
-Il est possible de préciser le compilateur à utiliser par les
-variables d'environnement \env{CC} (compilateur \texttt{c}), \env{CXX}
-(compilateur \cpp), \env{LD} (éditeur de liens).
-
-Enfin, cette phase de préparation va tenter de trouver les options
-de compilation optimales ainsi que des drapeaux de compilation assez
-contraignants. Ces mêmes options seront utilisées par \mfront{} pour la
-compilation des sources générées\footnote{Pour connaître les options retenues,
-  il est possible d'interroger la commande {\tt tfel-config}~:
-  \bash{
-    \#retourne les avertissements retenus             \\
-    \$ tfel-config --warning                          \\
-    \$ \#retourne les options d'optimisation retenues \\
-    \$ tfel-config --oflags
-  }
-}.
-
-\paragraph{Compilation} La compilation de \TFEL{}
-est lancé par la commande \make{}~:
-\bash{
-  make -j x
-}
-où \texttt{x} est le nombre de processeurs affectés à cette 
-
-\paragraph{Installation des binaires} Les
-binaires sont installés par la commande~:
-\bash{
-  make install
-}
-
-\paragraph{Exécution des tests} La base des cas test
-de \TFEL{} peut être lancée par la commande suivante~:
-\bash{
-  make check
-}
-
-\paragraph{Installation de la documentation} La
-documentation de \TFEL{} est installée par la commande~:
-\bash{
-  make doc-install
-}
-
-Cette documentation se décompose en deux parties~:
-\begin{itemize}
-  \item une documentation informatique générée par \doxygen{} (si
-  cet outil est disponible). Cette documentation peut être générée
-  indépendamment par la commande~:
-  \bash{ make doc-html}
-  \item la présente documentation, au format \texttt{pdf}, si
-  \latex{} est disponible. Cette documentation peut être générée
-  indépendamment par la commande~:
-  \bash{ make doc-pdf}
-\end{itemize}
-
-\subsection{Description du répertoire d'installation}
-
-Le répertoire d'installation contient quatre répertoires~:
-\begin{itemize}
-  \item le répertoire \texttt{bin} contient les exécutables
-  produits~;
-  \item le répertoire \texttt{lib} contient les librairies
-  produites~;	
-  \item le répertoire \texttt{include} contient les fichiers
-  d'entête des différentes librairies de \TFEL{}~
-  \item le répertoire \texttt{share} contient des tests et des
-  fichiers d'exemple.
-\end{itemize}
-
-\subsubsection{Exécutables produits}
-
-Actuellement, trois exécutables sont produits~:
-\begin{itemize}
-  \item \texttt{tfel-config} qui permet de récupérer des
-  informations sur~:
-  \begin{itemize}
-    \item le répertoire d'installation de \TFEL{}~;
-    \item les options de compilation à utiliser~;
-    \item les drapeaux d'avertissement à utiliser~;
-  \end{itemize}
-  \item \texttt{tfel-doc} est un utilitaire de description de cas
-  test~;
-  \item \texttt{mfront} qui fait l'objet du présent document~;
-\end{itemize}
-
-\subsubsection{Librairies produites}
-
-\TFEL{} est un projet complexe séparé en différentes librairies :
-\begin{itemize}
-  \item TFELException est une librairie utilitaire contenant les
-  bases des classes d'exceptions utilisées dans \TFEL{}~;	
-  \item TFELTests propose un framework de test~
-  \item TFELUtilities est une librairie contenant différentes
-  classes utilitaires~;
-  \item TFELSystem propose :
-  \begin{itemize}
-    \item un enrobage \cpp{} de diverses fonctionnalités
-    \texttt{POSIX}~:
-    \begin{itemize}
-      \item créations et interaction avec des processus
-      (ProcessManager)
-      \item gestion des signaux (SignalManager)
-      \item créations de répertoires, etc..
-      \item traduction des erreurs posix portées par
-      \texttt{errno} en exceptions
-    \end{itemize}
-    \item des facilités d'appels de fonctions externes via
-    dlopen (ExternalLibraryManager)
-  \end{itemize}
-  \item TFELMath contient des classes utilitaires nécessaires aux
-  classes mathématiques proposées par \TFEL{}
-  \item TFELMathCubicSpline contient des classes d'interpolation
-  par des splines cubiques~;
-  \item TFELMathKriging contient des classes d'interpolation par
-  des méthodes de Krigeage~;
-  \item TFELMathParser contient les classes dédiées à
-  l'interprétation de formules mathématiques complexes à partir de
-  chaînes de caractères~;
-  \item TFELMaterial contient certains classes utilitaires pour
-  l'écriture de propriétés matériau ou loi de comportement mécanique
-  (vérification des bornes notamment).
-\end{itemize}
-
-\begin{figure}
-  \center
-  \includegraphics[width=10cm]{@top_srcdir@/docs/mfront/Images/sirius8.eps}
-  \caption{Récupération de la loi de comportement
-    de l'acier EM10 depuis la base de données \sirius{}}
-  \label{fig:sirius8}
-\end{figure}
-
-\subsection{Utilisation de \mfront{} en ligne de commande}
-\label{sec:appendix:mfront:using}
-
-Nous décrivons dans ce paragraphe l'utilisation de \mfront{} sous
- \unix{}. Les commandes présentées restent valides sous \windows{} à
-condition d'utiliser l'un des environnements \msys{} ou \cygwin{}.
-
-\mfront{} est un générateur de code transformant un fichier
-d'entrée en un ensemble de sources \cpp{}. L'utilisation de \mfront{} se
-fait en deux étapes~:
-\begin{itemize}
-  \item l'écriture ou la récupération de fichiers d'entrée. Ces
-  fichiers peuvent être écrits à l'aide de n'importe quel éditeur de
-  texte. Pour les utilisateurs \cea{} de la plate-forme \pleiades{}, il
-  est possible de consulter la base de donnée \sirius{} qui capitalise
-  les connaissances matériau des différentes applications de la
-  plate-forme. La figure~\ref{fig:sirius8} illuste la récupération de la
-  loi de comportement de l'acier EM10 depuis \sirius{}~;
-  \item la génération des sources \cpp{} et la création de
-  librairies matériau~;
-\end{itemize}
-
-Une fois le fichier d'entrée disponible, \mfront{} s'utilise en ligne
-de commande ainsi~:
-\begin{center}
-  {\tt mfront [options] fichier1.mfront fichier2.mfront \ldots}
-\end{center}
-
-L'option la plus utilisée est \moption{interface} qui permet de
-choisir la cible de la compilation.
-
-Les fichiers générés se trouvent généralement dans un sous-répertoire
-nommé {\tt src} pour les fichiers source et {\tt include} pour les
-fichiers d'entête.
-
-Cette commande conduit à la génération~:
-\begin{itemize}
-  \item de fichiers sources~;
-  \item de fichiers de dépendances~;
-  \item de fichiers de cibles.
-\end{itemize}
-Ces derniers fichiers permettent d'utiliser \mfront{} de manière
-séquentielle. \mfront{} peut d'abord être appelé sur plusieurs fichiers
-pour générer les fichiers sources puis lancer la compilation des
-librairies ainsi~:
-\begin{center}
-  \begin{minipage}{0.6\textwidth}
-    \textcolor{ceagrisclair}{\tt \# Génération des fichiers sources}\\
-    {\tt mfront --interface=?? fichier1.mfront} \\
-    {\tt mfront --interface=?? fichier2.mfront} \\
-    {\tt \ldots} \\
-    \textcolor{ceagrisclair}{\tt \# Génération d'un fichier Makefile et lancement de la compilation}\\
-    {\tt mfront --obuild} \\
-  \end{minipage}
-\end{center}
-
-\paragraph{Notes sur la génération des fichiers en
-  parallèle} La génération de fichiers \mfront{} en parallèle est
-possible. Pour cela, un verrou global est posé au moment de l'écriture
-des fichiers afin que les différents processus \mfront{} ne modifient
-pas les mêmes fichiers en même temps (fichiers cibles et fichiers de
-dépendances notamment).
-
-Cela pourrait conduire à des blocages si \mfront{} quitte sans
-libérer ce verrou\footnote{Nous devons cependant préciser que ce
-  problème ne s'est présenté qu'une unique fois.}. Dans ce cas, il est
-nécessaire de retirer ce verrou global à la main. Sous \linux{}, il
-s'agit de supprimer le fichier~:
-\begin{center}
- \texttt{/dev/shm/sem-mfront.\${UID}}
-\end{center}
-
-Un moyen plus brutal consiste à redémarrer la machine.
-
-\subsubsection{Options de la ligne de commande}
-
-\paragraph{L'option \moption{help}} L'option \moption{help} liste
-l'ensemble des options disponibles et quitte le programme.
-
-\paragraph{L'option \moption{list-parsers}} L'option
-\moption{list-parsers} affiche la liste des analyseurs disponibles et
-quitte le programme.
-
-\paragraph{L'option \moption{help-keywords-list}} L'option
-\moption{help-\-key\-words-\-list} liste l'ensemble des mots clés
-d'une interface et quitte le programme. Par exemple~:
-\begin{center}
-  {\tt mfront -{}-help-keywords-list=MaterialLaw}
-\end{center}
-
-\paragraph{L'option \moption{help-keyword}} L'option
-\moption{help-\-key\-word} affiche la documentation d'un des mots clés
-d'une interface et quitte le programme. Par exemple~:
-\begin{center}
-  {\tt mfront -{}-help-keyword=MaterialLaw:@Function}
-\end{center}
-
-\paragraph{L'option \moption{version}} L'option \moption{version}
-affiche la version de \mfront{} utilisée et quitte le programme.
-
-\paragraph{L'option \moption{interface}} L'option \moption{interface}
-spécifie la ou les interfaces à utiliser pour générer les fichiers
-sources. Les différentes interfaces sont séparées par une virgule.
-
-\paragraph{L'option \moption{verbose}} L'option \moption{verbose}
-demande l'affiche de messages supplémentaires.
-
-\paragraph{L'option \moption{warning}} L'option \moption{warning}
-demande l'affiche de messages d'avertissement supplémentaires.
-
-\paragraph{L'option \moption{debug}} L'option \moption{debug} modifie la
-génération des fichiers de compilation et son effet dépend de
-l'analyseur choisi. Cette option désactive aussi l'introduction de
-directives \texttt{\#line} qui permettent dans un mode de fonctionnement
-normal de repérer la position des erreurs dans le fichier \mfront{}
-d'origine.
-
-\paragraph{L'option \moption{make}} L'option \moption{make} conduit à la
-génération d'un fichier {\tt Makefile.mfront}.
-
-\paragraph{L'option \moption{omake}} L'option \moption{omake} conduit à la
-génération d'un fichier {\tt Makefile.mfront} avec des directives de
-compilation optimisées.
-
-Les options de compilation optimisées sont données par le résultat de la
-commande~
-\begin{center}
-  {\tt tfel-config -{}-oflags}
-\end{center}
-
-\paragraph{L'option \moption{clean}} L'option \moption{clean} conduit à la
-génération d'un fichier {\tt Makefile.mfront} et lance la commande~:
-\begin{center}
-  {\tt make -C src -f Makefile.mfront clean}
-\end{center}
-
-\paragraph{L'option \moption{build}} L'option \moption{build} conduit à la
-génération d'un fichier {\tt Makefile.mfront} et lance la commande~:
-\begin{center}
-  {\tt make -C src -f Makefile.mfront}
-\end{center}
-
-\paragraph{L'option \moption{obuild}} L'option \moption{obuild} conduit à la
-génération d'un fichier {\tt Makefile.mfront} avec des directives de
-compilation optimisées et lance la commande~:
-\begin{center}
-  {\tt make -C src -f Makefile.mfront}
-\end{center}
-
-\paragraph{L'option \moption{nodeps}} L'option \moption{nodeps} empêche
-l'inclusion des règle de dépendances dans le fichier {\tt
-  Make\-file\-.mfront} généré. Cette option a été introduite pour éviter
-certains problèmes sous \windows{}.
-
-\paragraph{L'option \moption{silent-build}}
-L'option \moption{silent-build} permet d'afficher ou non la ligne de
-compilation utilisée.
-
-\paragraph{L'option \moption{otarget}} L'option
-\moption{otarget} permet de ne compiler qu'une des librairies de manière
-optimisée. Cette option est suivie du nom de la cible.
-
-\paragraph{L'option \moption{target}} L'option
-\moption{target} permet de ne compiler qu'une des librairies.
-
-\paragraph{L'option \moption{win32}} L'option
-\moption{win32} est utilisée pour permettre la compilation croisée sous
-\linux{} de librairies dynamiques pour \windows{}. Cette possibilité est
-décrite au paragraphe~\ref{sec:mfront:comp_croisee_lib_windows_linux}.
-
-\subsection{Gestion de la compilation}
-\label{sec:mfront:compilation}
-
-En plus de générer des fichiers source, \mfront{} peut gérer leurs
-compilations sous forme de librairies dynamiques. Cette compilation se
-fait en plusieurs étapes~:
-\begin{itemize}
-  \item génération d'un fichier {\tt Makefile.mfront} dans le
-  sous-répertoire des sources {\tt src}. La génération du fichier
-  Makefile se fait en analysant le répertoire {\tt src} qui contient
-  (après la phase de génération des sources) différents fichiers
-  contentant les noms des libraires à générer, la liste de leurs sources
-  et de leurs dépendances, etc..~;
-  \item le lancement du processus de compilation. Il s'agit
-  essentiellement d'un appel à l'utilitaire {\tt make}.
-\end{itemize}
-
-\subsubsection{Variables affectant le processus de compilation}
-
-Bien que cela n'est généralement pas nécessaire, l'utilisateur
-\mfront{} peut affecter le processus de compilation à l'aide de
-variables d'environnement. Cela est utile dans les situations
-suivantes~:
-\begin{itemize}
-  \item utilisation d'une librairie tierce (variables
-  \env{INCLUDES} et \env{LDFLAGS})~;
-  \item utilisation d'un compilateur différent du compilateur
-  système (variables \env{CC} et \env{CXX})~;
-  \item utiliser des options de compilation particulières
-  (variables \env{CFLAGS} et \env{CXXFLAGS})~;
-  \item génération de binaire pour une système différent
-  (cross-compilation) (variables \env{CC}, \env{CXX} \env{RANLIB},
-  \env{DLLTOOL} et \env{AR})~;
-\end{itemize}
-
-Le fichier {\tt Makefile.mfront} suit les règles des fichiers {\tt
-  Makefile}~: il est sensible aux variables d'environnement suivantes~:
-\begin{itemize}
-  \item \env{CC} qui désigne le compilateur {\tt C} à utiliser~;
-  \item \env{CXX} qui désigne le compilateur \cpp à utiliser. Ce
-  compilateur est également utiliser pour l'édition de liens~;
-  \item \env{INCLUDES} qui désigne des directives de
-  préprocesseur à utiliser en plus des directives définies par les
-  sources~;
-  \item \env{CFLAGS} qui désigne les directives de compilations à
-  utiliser pour les sources {\texttt c}. Si cette variable n'est pas
-  définie, \mfront{} utilisera les valeurs suivantes~:
-  \begin{itemize}
-    \item la sortie de la commande {\tt tfel-config -{}-oflags}
-    si l'une des options {\tt -{}-obuild} ou {\tt -{}-omake} a été
-    utilisée~;
-    \item {\tt -O2} sinon.
-  \end{itemize}
-  \item \env{CXXFLAGS} qui désigne les directives de compilations
-  à utiliser pour les source \cpp. Si cette variable n'est pas définie,
-  \mfront{} utilisera les valeurs suivantes~:
-  \begin{itemize}
-    \item la sortie de la commande {\tt tfel-config -{}-oflags}
-    si l'une des options {\tt -{}-obuild} ou {\tt -{}-omake} a été
-    utilisée~;
-    \item {\tt -O2} sinon.
-  \end{itemize}
-  \item \env{LDFLAGS} qui désigne des directives à passer à
-  l'éditeur de liens~;
-  \item \env{RANLIB}, \env{DLLTOOL} et \env{AR} qui ont été
-  introduits pour la compilation croisée de librairies dynamiques pour
-  \windows{} depuis \linux{}.
-\end{itemize}
-
-\subsubsection{Compilation croisée de
-  librairies dynamiques pour \windows{} depuis \linux{}}
-\label{sec:mfront:comp_croisee_lib_windows_linux}
-
-À partir d'une version \linux{} de \mfront{}, il est possible de
-générer des librairies dynamiques pour \windows{} dans le cas des
-propriétés matériau. Il faut cependant que ces propriétés ne fassent pas
-appel à des librairies externes, ou, si tel est le cas de disposer des
-versions \windows{} de ces librairies\footnote{Pour compiler des lois de
-  comportements, il serait nécessaire de disposer des librairies
-  mathématiques de TFEL pour \windows{}~: il faut donc compiler
-  l'ensemble de {\tt TFEL} et \mfront{} en cross-compilation et utiliser
-  la version \windows{} de \mfront{}. Ceci est effectivement possible
-  via l'émulateur {\tt wine}, mais cette manière de procéder sort du
-  cadre de ce paragraphe.}.
-
-Pour générer des librairies dynamiques pour \windows{} depuis
-\linux{}, il est tout d'abord nécessaire de disposer d'un
-cross-compilateur. Sous \debian{}, l'utilisateur pourra installer les
-paquets {\tt mingw32} (\windows{} 32 bits) ou {\tt mingw64} (\windows{}
-32 et 64 bits).
-
-Il est alors nécessaire de définir les variables d'environnement
-\env{CC}, \env{CXX} \env{RANLIB}, \env{DLLTOOL} et \env{AR} et
-d'utiliser l'option \moption{win32}.
-
-Voici un exemple de génération de librairie dynamique pour
-\windows{} depuis \linux{}~:
-\begin{flushleft}
-{\tt AR=i586-mingw32msvc-ar RANLIB=i586-mingw32msvc-ranlib
-DLLTOOL=i586-mingw32msvc-dlltool CXX=i586-mingw32msvc-g++
-../../src/mfront --win32 --obuild --interface=c
-YoungModulus.mfront}
-\end{flushleft}
 
 \clearpage
 \newpage

@@ -122,37 +122,37 @@ ADD_CUSTOM_COMMAND(
     COMMENT   "aster.pdf")
   
 # Eventually trigger the whole process
-add_custom_target(mfront-doc echo DEPENDS mfront.pdf)
-add_custom_target(mfront-doc-install
+add_custom_target(mfront-doc-pdf echo DEPENDS mfront.pdf)
+add_custom_target(mfront-doc-pdf-install
                   ${CMAKE_COMMAND} -E copy mfront.pdf ${CMAKE_INSTALL_PREFIX}/share/doc/mfront/mfront.pdf)
-add_dependencies(mfront-doc-install mfront-doc)
+add_dependencies(mfront-doc-pdf-install mfront-doc-pdf)
 
-add_custom_target(behaviours-doc echo DEPENDS behaviours.pdf)
-add_custom_target(behaviours-doc-install
+add_custom_target(behaviours-doc-pdf echo DEPENDS behaviours.pdf)
+add_custom_target(behaviours-doc-pdf-install
                   ${CMAKE_COMMAND} -E copy behaviours.pdf ${CMAKE_INSTALL_PREFIX}/share/doc/mfront/behaviours.pdf)
-add_dependencies(behaviours-doc-install behaviours-doc)
+add_dependencies(behaviours-doc-pdf-install behaviours-doc-pdf)
 
-add_custom_target(umat-doc echo DEPENDS umat.pdf)
-add_custom_target(umat-doc-install
+add_custom_target(umat-doc-pdf echo DEPENDS umat.pdf)
+add_custom_target(umat-doc-pdf-install
                   ${CMAKE_COMMAND} -E copy umat.pdf ${CMAKE_INSTALL_PREFIX}/share/doc/mfront/umat.pdf)
-add_dependencies(umat-doc-install umat-doc)
+add_dependencies(umat-doc-pdf-install umat-doc-pdf)
 
-add_custom_target(aster-doc echo DEPENDS aster.pdf)
-add_custom_target(aster-doc-install
+add_custom_target(aster-doc-pdf echo DEPENDS aster.pdf)
+add_custom_target(aster-doc-pdf-install
                   ${CMAKE_COMMAND} -E copy aster.pdf ${CMAKE_INSTALL_PREFIX}/share/doc/mfront/aster.pdf)
-add_dependencies(aster-doc-install aster-doc)
+add_dependencies(aster-doc-pdf-install aster-doc-pdf)
 
 add_dependencies(doc-pdf
-  mfront-doc
-  behaviours-doc
-  umat-doc
-  aster-doc)
+  mfront-doc-pdf
+  behaviours-doc-pdf
+  umat-doc-pdf
+  aster-doc-pdf)
 
 add_dependencies(doc-install
-  mfront-doc-install
-  behaviours-doc-install
-  umat-doc-install
-  aster-doc-install)
+  mfront-doc-pdf-install
+  behaviours-doc-pdf-install
+  umat-doc-pdf-install
+  aster-doc-pdf-install)
 
 install_mfront_desc(Author.txt)
 install_mfront_desc(Bounds.txt)

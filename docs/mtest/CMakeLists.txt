@@ -27,16 +27,16 @@ ADD_CUSTOM_COMMAND(
     COMMENT   "mtest.pdf")
   
 # Eventually trigger the whole process
-add_custom_target(mtest-doc echo DEPENDS mtest.pdf)
-add_custom_target(mtest-doc-install
+add_custom_target(mtest-doc-pdf echo DEPENDS mtest.pdf)
+add_custom_target(mtest-doc-pdf-install
                   ${CMAKE_COMMAND} -E copy mtest.pdf ${CMAKE_INSTALL_PREFIX}/share/doc/mtest/mtest.pdf)
-add_dependencies(mtest-doc-install mtest-doc)
+add_dependencies(mtest-doc-pdf-install mtest-doc-pdf)
 
 add_dependencies(doc-pdf
-  mtest-doc)
+  mtest-doc-pdf)
 
 add_dependencies(doc-install
-  mtest-doc-install)
+  mtest-doc-pdf-install)
 
 install_mtest_desc(Behaviour.txt)
 install_mtest_desc(ExternalStateVariable.txt)
@@ -56,4 +56,3 @@ install_mtest_desc(StrainEpsilon.txt)
 install_mtest_desc(StressEpsilon.txt)
 install_mtest_desc(Test.txt)
 install_mtest_desc(Times.txt)
-

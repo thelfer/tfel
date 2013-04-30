@@ -445,6 +445,9 @@ namespace mfront
 		&ev0(0)+1,&dev(0)+1,
 		&iv(0),&nstatv,&s1(0),
 		&ndi,&kinc);
+    if(kinc!=0){
+      return false;
+    }
     if(!iv1.empty()){
       copy(iv.begin(),iv.end(),iv1.begin());
     }

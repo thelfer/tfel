@@ -285,7 +285,12 @@ AC_OUTPUT([debug.sh
 	   Makefile
 	   Doxyfile
 	   docs/Makefile
+	   docs/tfel/Makefile
+	   docs/tfel/Makefile.doc
+	   docs/tfel/reference-guide.tex
+	   docs/tfel/Champs.tex
 	   docs/mtest/Makefile
+	   docs/mtest/Makefile.doc
 	   docs/mtest/mtest.tex
 	   docs/mtest/Champs.tex
 	   docs/mfront/Makefile

@@ -1,20 +1,55 @@
-note=mfront
-
-all:
-	latex  $(note).tex
-	latex  $(note).tex
-	bibtex $(note)
+mfront:
+	latex  mfront.tex
+	latex  mfront.tex
+	bibtex mfront
 	-makeindex -s @srcdir@/style.ist env.idx
-	-makeindex -s @srcdir@/style.ist tfel.idx
-	-makeindex -s @srcdir@/style.ist headers.idx
 	-makeindex -s @srcdir@/style.ist mkeys.idx
-	latex  $(note).tex
-	latex  $(note).tex
-	dvips  $(note).dvi -o
-	ps2pdf $(note).ps
+	latex  mfront.tex
+	latex  mfront.tex
+	dvips  mfront.dvi -o
+	ps2pdf mfront.ps
+
+behaviours:
+	latex  behaviours.tex
+	latex  behaviours.tex
+	bibtex behaviours
+	-makeindex -s @srcdir@/style.ist env.idx
+	-makeindex -s @srcdir@/style.ist headers.idx
+	-makeindex -s @srcdir@/style.ist tfel.idx
+	-makeindex -s @srcdir@/style.ist mkeys.idx
+	latex  behaviours.tex
+	latex  behaviours.tex
+	dvips  behaviours.dvi -o
+	ps2pdf behaviours.ps
+
+aster:
+	latex  aster.tex
+	latex  aster.tex
+#	bibtex aster
+	-makeindex -s @srcdir@/style.ist env.idx
+	-makeindex -s @srcdir@/style.ist headers.idx
+	-makeindex -s @srcdir@/style.ist tfel.idx
+	-makeindex -s @srcdir@/style.ist mkeys.idx
+	latex  aster.tex
+	latex  aster.tex
+	dvips  aster.dvi -o
+	ps2pdf aster.ps
+
+umat:
+	latex  umat.tex
+	latex  umat.tex
+	bibtex umat
+	-makeindex -s @srcdir@/style.ist env.idx
+	-makeindex -s @srcdir@/style.ist headers.idx
+	-makeindex -s @srcdir@/style.ist tfel.idx
+	-makeindex -s @srcdir@/style.ist mkeys.idx
+	latex  umat.tex
+	latex  umat.tex
+	dvips  umat.dvi -o
+	ps2pdf umat.ps
 
 clean:
-	-$(RM) $(note).aux $(note).log
-	-$(RM) $(note).out $(note).toc
-	-$(RM) $(note).dvi $(note).ps
-	-$(RM) $(note).pdf
+	-$(RM) *.aux *.log
+	-$(RM) *.out *.toc
+	-$(RM) *.dvi *.ps
+	-$(RM) *.pdf
