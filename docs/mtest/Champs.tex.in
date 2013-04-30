@@ -13,7 +13,7 @@
 \approbateur{R.~Masson}
 \emetteur{E.~Touron}
 
-\titre{\mtest{}~; un outil de test unitaire
+\titre{\mtest{}~: un outil de test unitaire
   de lois comportement mécanique}
 
 \date{2013}
@@ -59,7 +59,7 @@
 % \signatures{-0.}{-39.2}{0.12}{images/signatures.eps}
 
 \stylebib{@abs_top_srcdir@/docs/tex/texmf/bibtex/fr-insa}
-\fichierbib{@abs_top_srcdir@/docs/mfront/Bibliographie}
+\fichierbib{@abs_top_srcdir@/docs/mtest/Bibliographie}
 
 %%% Local Variables: 
 %%% mode: latex

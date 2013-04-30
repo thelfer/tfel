@@ -119,9 +119,9 @@
   présentées. L'utilisation de cet outil en ligne de commande et
   l'ensemble des commandes disponibles sont décrits.
 
-  Nous détaillons ensuite quelques tests intégrées à la gestion de
-  configuration de \TFEL{}, dont certains sont des contributions
-  externes.
+  Nous détaillons ensuite quelques tests intégrés à la gestion de
+  configuration de la librairie \TFEL{}, dont certains sont des
+  contributions externes.
 }
 
 \makeindex{env}
@@ -150,20 +150,21 @@ donnaient des résultats conformes. En particulier, l'application
 nombreux tests couvrant de manière quasi exhaustive les
 fonctionnalités de \mfront{}.
 
-Récemment l'utilisation de \mfront{} en dehors de la plate-forme
-\pleiades{}, au sein du \cea{} tout d'abord, au DER~\cite{...} et au
-DMN~\cite{...} notamment, puis chez les partenaires industriels du
-\cea{}, à \areva~\cite{...} et à \edf{}~\cite{proix:mfront:2013}, a
-ouvert des perspectives très intéressantes de qualification et de
-développement de \mfront{}. Il n'est cependant plus possible de se
-satisfaire du mode de fonctionnement décrit plus haut.
+Récemment, l'utilisation de \mfront{} en dehors de la plate-forme
+\pleiades{}, au sein du \cea{}, DER~\cite{arrigo12:_notic_le2s} au
+DMN~\cite{11:_dec_semi}, puis l'intérêt des partenaires industriels du
+\cea{}, à \areva~\cite{olagnon13:_analy} à
+\edf{}~\cite{proix:mfront:2013}, a ouvert des perspectives très
+intéressantes de qualification et de développement de \mfront{}. Il
+n'est cependant plus possible de se satisfaire du mode de
+fonctionnement décrit plus haut.
 
 En particulier, les lois de comportement mécanique, par leur
 complexité intrinsèque et la variété des fonctionnalités disponibles,
 posent le plus de difficultés car elles ne pouvaient être testées
 qu'avec l'aide d'un code tiers, typiquement
-\castem{}~\cite{p.98:_castem,12:_cast3_cea}, \aster~\cite{},
-\tmfft{}~\cite{castelier09:_specif_fourier,jerome10:_tmfft_softw_concep,}
+\castem{}~\cite{p.98:_castem,12:_cast3_cea}, \aster~\cite{_aster:13},
+\tmfft{}~\cite{castelier09:_specif_fourier,jerome10:_tmfft_softw_concep}
 ou \licos{}~\cite{licos1.0}. Ce document présente un outil de test
 unitaire pour les lois de comportements mécaniques générés par
 mfront~\cite{helfer:mfront:2013} nommé \mtest{}.
@@ -172,11 +173,7 @@ Cet outil permet de piloter le chargement mécanique d'un point
 matériel, en imposant certaines composantes des contraintes et/ou
 certaines composantes des déformations au cours d'un historique. Cet
 outil est similaire à la procédure {\tt SIMU\_POINT\_MAT} disponible
-dans \aster{}~\cite{...}.
-
-Les résultats obtenus peuvent être comparés à des solutions
-analytiques ou à des résultats de référence contenus dans un fichier
-externe. Il est ainsi possible de créer des tests de non régression.
+dans \aster{}~\cite{proix:simu_point_mat:2013}.
 
 \subsection*{Plan de cet note}
 
@@ -238,12 +235,8 @@ les lois de comportement mécaniques déterminent le tenseur des
 contraintes et les variables internes en fin de pas de temps, notés
 respectivement \(\finpas{\tsigma}\) et \(\finpas{Y}\). Pour cela,
 elles sont généralement amenées à intégrer un système différentiel, et
-l'on parle généralement d'intégration locale de la loi de
-comportement. La loi de comportement permet également de calculer la
-dérivée \(\deriv{\finpas{\tsigma}}{\Delta\,\tepsilonto}\), appelée
-matrice tangente cohérente, dont nous verrons l'importance dans la
-suite. A minima, la loi de comportement doit en fournir une
-estimation.
+l'on parle généralement d'{\em intégration locale de la loi de
+  comportement}.
   
 \paragraph{Recherche de l'équilibre} Dans la plupart des codes de
 mécanique (formulés en déplacements), l'appel à la loi de comportement
@@ -260,6 +253,29 @@ contraintes \(\tsigma\) est alors comparé aux chargements mécaniques
 subis par la structure. Si cette réaction locale n'assure pas
 l'équilibre de la structure, alors une nouvelle estimation est
 proposée et ce processus est répété jusqu'à convergence.
+
+\paragraph{Matrices de raideur}
+Ce processus, une variante plus ou moins sophistiquée de l'algorithme
+de \nom{Newton}, résout à chaque itération un problème linéaire en se
+basant sur une matrice de raideur déduite du comportement du
+matériau. Différentes types de matrice de raideur (et autant de
+variantes de l'algorithme de résolution) existent, citons~:
+\begin{itemize}
+\item la matrice élastique initiale~;
+\item la matrice élastique endommagée, dite matrice sécante~;
+\item la matrice tangente au comportement, définie dans une
+  formulation en vitesse par la dérivée
+  \(\finpas{\deriv{\dot{\tsigma}}{\dot{\tepsilonto}}}\)~;
+\item la matrice tangente cohérente, définie par la
+  \(\deriv{\finpas{\tsigma}}{\Delta\,\tepsilonto}\)~;
+\end{itemize}
+
+\paragraph{Initialisation de la recherche} Certains codes aux éléments
+finis (\aster{} notamment), peuvent s'appuyer sur la loi de
+comportement pour démarrer de manière plus efficace la recherche de
+l'équilibre. Dans le cas, la loi de comportement est appelée pour
+fournir une prédiction {\em a priori} de la matrice de raideur, sans
+effectuer l'intégration de la loi.
 
 \subsection{Simulation d'un point matériel}
 
