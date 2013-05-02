@@ -1,3 +1,3 @@
-EXTRA_DIST=CMakeLists.txt \
-	   style.ist
+EXTRA_DIST=CMakeLists.txt
+#	   style.ist
 
