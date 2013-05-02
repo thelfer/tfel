@@ -182,6 +182,9 @@ docs/mtest/images/CastemAccelerationAlgorithm.eps -text
 docs/mtest/images/CastemAccelerationAlgorithm.svg -text
 docs/mtest/images/acceleration.eps -text
 docs/mtest/images/acceleration.tplot -text
+docs/mtest/images/chaboche2.eps -text
+docs/mtest/images/chaboche2.tplot -text
+docs/mtest/images/chaboche2.txt -text
 docs/mtest/images/elasticity.mtest -text
 docs/mtest/images/elasticity.tex -text
 docs/mtest/images/elasticity16.mtest -text

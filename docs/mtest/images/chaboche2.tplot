@@ -1,0 +1,9 @@
+set term eps
+set output "chaboche2.eps"
+set grid
+set xlabel  "Temps (s)
+set ylabel  "Déformation imposée EXX (&times; 100)"
+set y2label "Température imposée (°C)"
+
+plot "chaboche2.txt" u 1:($2*100) t "EXX", \
+     "chaboche2.txt" u 1:4 t "Température" axis x1y2
