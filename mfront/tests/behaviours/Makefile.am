@@ -14,6 +14,8 @@ EXTRA_DIST=CMakeLists.txt                    \
            Norton_rk42.mfront                \
            Norton_rkCastem.mfront            \
            OrthotropicCreep.mfront           \
+           OrthotropicCreep_rk42.mfront      \
+           OrthotropicCreep_rkCastem.mfront  \
            ImplicitOrthotropicCreep.mfront   \
            OrthotropicElastic.mfront         \
            StrainHardeningCreep.mfront       \
