@@ -7,7 +7,8 @@
 
 \input{@abs_top_builddir@/docs/tex/texmf/LSC}
 
-\auteurs{T.~Helfer}
+\auteurs{T.~Helfer, J.M.~Proix\(\mbox{}^{(a)}\)}
+\affiliation{\(\mbox{}^{(a)}\) Électricité de France, R\&D - Département Analyses Mécaniques et Acoustique}
 \redacteur{T.~Helfer}
 \verificateur{}
 \approbateur{R.~Masson}

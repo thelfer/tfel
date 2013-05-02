@@ -5,8 +5,8 @@
 % Directory : /home/th202608/codes/tfel/tests/Broyden/
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-% \documentclass[rectoverso,pleiades,pstricks,leqno,anti]{@abs_top_builddir@/docs/tex/texmf/note_technique_2010}
-\documentclass[rectoverso,pleiades,pstricks,leqno,anti,projet]{@abs_top_builddir@/docs/tex/texmf/note_technique_2010}
+\documentclass[rectoverso,pleiades,pstricks,leqno,anti]{@abs_top_builddir@/docs/tex/texmf/note_technique_2010}
+% \documentclass[rectoverso,pleiades,pstricks,leqno,anti,projet]{@abs_top_builddir@/docs/tex/texmf/note_technique_2010}
 
 % \usepackage{draftcopy}
 % \draftcopySetGrey{0.8}
@@ -154,11 +154,11 @@ fonctionnalités de \mfront{}.
 Récemment, l'utilisation de \mfront{} en dehors de la plate-forme
 \pleiades{}, au sein du \cea{}, DER~\cite{arrigo12:_notic_le2s} au
 DMN~\cite{11:dec_semi}, puis l'intérêt des partenaires industriels du
-\cea{}, à \areva~\cite{olagnon13:_analy} à
-\edf{}~\cite{proix:mfront:2013}, a ouvert des perspectives très
-intéressantes de qualification et de développement de \mfront{}. Il
-n'est cependant plus possible de se satisfaire du mode de
-fonctionnement décrit plus haut.
+\cea{}, à \areva \cite{olagnon13:_analy} à \edf{}
+\cite{proix:mfront:2013}, a ouvert des perspectives très intéressantes
+de qualification et de développement de \mfront{}. Il n'est cependant
+plus possible de se satisfaire du mode de fonctionnement décrit plus
+haut.
 
 En particulier, les lois de comportement mécanique, par leur
 complexité intrinsèque et la variété des fonctionnalités disponibles,
@@ -257,12 +257,12 @@ l'équilibre de la structure, alors une nouvelle estimation est
 proposée et ce processus est répété jusqu'à convergence.
 
 \paragraph{Matrices de raideur}
-Ce processus, une variante plus ou moins sophistiquée de l'algorithme
-de \nom{Newton}, résout à chaque itération un problème linéaire en se
-basant sur une matrice de raideur déduite du comportement du
-matériau.
+Ce processus utilise une variante plus ou moins sophistiquée de
+l'algorithme de \nom{Newton}~: à chaque itération, un problème
+linéaire en se basant sur une matrice de raideur déduite du
+comportement du matériau est résolu..
 
-Différentes choix de matrice de raideur (et autant de variantes de
+Différents choix de matrice de raideur (et autant de variantes de
 l'algorithme de résolution) sont donc possibles, citons~:
 \begin{itemize}
 \item la matrice élastique non endommagée~;
@@ -271,7 +271,7 @@ l'algorithme de résolution) sont donc possibles, citons~:
   formulation en vitesse par la dérivée
   \(\finpas{\deriv{\dot{\tsigma}}{\dot{\tepsilonto}}}\)~;
 \item la matrice tangente cohérente, définie par la
-  \(\deriv{\finpas{\tsigma}}{\Delta\,\tepsilonto}\)~;
+  dérivée \(\deriv{\finpas{\tsigma}}{\Delta\,\tepsilonto}\).
 \end{itemize}
 
 \paragraph{Initialisation de la recherche} Certains codes aux éléments
@@ -291,6 +291,7 @@ matrice de raideur sont envisageables~:
 \end{itemize}
 
 \subsection{Algorithmes de résolution}
+\label{sec:algor-de-resol}
 
 \mtest{} calcule la réaction d'un point matériel à un historique de
 chargement mécanique au cours duquel certaines composantes des
@@ -328,7 +329,7 @@ solution obtenue à la n\ieme{} itérations, l'estimation suivante
 \(\Delta\,\tepsilonto_{n+1}\) est obtenue en linéarisant la fonction
 \(r\) à l'aide d'un développement limitée à l'ordre \(1\)~:
 \[
-r\paren{\Delta\,\tepsilonto_{n+1}}\approx R\paren{\Delta\,\tepsilonto_{n}}+\deriv{\finpas{\tsigma}}{\Delta\,\tepsilonto}.\paren{\Delta\,\tepsilonto_{n+1}-\Delta\,\tepsilonto_{n}}
+r\paren{\Delta\,\tepsilonto_{n+1}}\approx r\paren{\Delta\,\tepsilonto_{n}}+\deriv{\finpas{\tsigma}}{\Delta\,\tepsilonto}.\paren{\Delta\,\tepsilonto_{n+1}-\Delta\,\tepsilonto_{n}}
 \]
 où apparaît la matrice tangente cohérente
 \(\deriv{\finpas{\tsigma}}{\Delta\,\tepsilonto}\).
@@ -337,7 +338,7 @@ En annulant cette estimation linéarisée de \(r\), nous obtenons la
 nouvelle estimation \(\Delta\,\tepsilonto_{n+1}\)~:
 \begin{equation}
   \label{eq:mtest:NR1}
-  \Delta\,\tepsilonto_{n+1}=\Delta\,\tepsilonto_{n}-\paren{\deriv{\finpas{\tsigma}}{\Delta\,\tepsilonto}}^{-1}.R\paren{\Delta\,\tepsilonto_{n}}
+  \Delta\,\tepsilonto_{n+1}=\Delta\,\tepsilonto_{n}-\paren{\deriv{\finpas{\tsigma}}{\Delta\,\tepsilonto}}^{-1}.r\paren{\Delta\,\tepsilonto_{n}}
 \end{equation}
 
 Comme nous l'avons évoqué plus haut, l'utilisation de la matrice
@@ -350,10 +351,6 @@ en pratique~:
 \end{equation}
 
 La matrice de raideur \(K\) doit être bien choisie pour permettre la
-convergence de l'algorithme, mais ce choix n'influence pas la solution
-trouvée.
-
-La matrice de raideur doit être bien choisie pour permettre la
 convergence de l'algorithme, mais ce choix n'influence pas la solution
 trouvée.
 
@@ -371,7 +368,7 @@ La matrice de raideur raideur peut-être\footnote{Voir le mot clé
 
 \paragraph{Critère de convergence} L'algorithme de \nom{Newton} est
 répété jusqu'à ce que deux critères de convergence soient
-simultanément satisfait~:
+simultanément satisfaits~:
 \begin{itemize}
 \item un critère sur la valeur du résidu, qui doit être inférieure à
   une certaine valeur notée \(\varepsilon_{\sigma}\)~:
@@ -408,7 +405,7 @@ Cette estimation est cependant assez souvent imprécise.
 linéaire, il est possible d'utiliser un algorithme d'accélération de
 convergence utilisé dans les opérateurs de résolution de
 \castem{}~\cite{pascal05_increpl}\footnote{Voir le mot clé
-  \mkeyb{Use-Castem\-Acceleration\-Algorithm}{UseCastemAccelerationAlgorithm}.}.
+  \mkeyb{UseCastemAccelerationAlgorithm}{Use\-Castem\-Acceleration\-Algorithm}.}.
 
 \begin{figure}[htbp]
   \centering
@@ -459,17 +456,17 @@ L'idée de cette algorithme est de~:
     \]
     En notant \(c_{1}\) le produit scalaire
     \(\tilde{r}_{0}\,\colon\,n\), la projection
-    \(\tilde{r}_{0p}\) du vecteur \(\tilde{r}_{0}\) s'écrit~:
+    \(\tilde{r}_{\perp}\) du vecteur \(\tilde{r}_{0}\) s'écrit~:
     \[
-    \tilde{r}_{0p}=c_{1}n_{1}=\Frac{c_{1}}{\norm{\tilde{r}_{n-1}}}\tilde{r}_{n-1}
+    \tilde{r}_{\perp}=c_{1}n_{1}=\Frac{c_{1}}{\norm{\tilde{r}_{n-1}}}\tilde{r}_{n-1}
     \]
     Dans le repère initial, nous avons~:
     \[
-    r_{0p} = \paren{1-\Frac{c_{1}}{\norm{\tilde{r}_{n-1}}}}\,r_{n-2}+\Frac{c_{1}}{\norm{\tilde{r}_{n-1}}}\,r_{n-1}
+    r_{\perp} = \paren{1-\Frac{c_{1}}{\norm{\tilde{r}_{n-1}}}}\,r_{n-2}+\Frac{c_{1}}{\norm{\tilde{r}_{n-1}}}\,r_{n-1}
     \]
     La nouvelle estimation des inconnues sera donnée par la même combinaison linéaire~:
     \[
-    u_{new} = \paren{1-\Frac{c_{1}}{\norm{\tilde{r}_{n-1}}}}\,u_{n-2}+\Frac{c_{1}}{\norm{\tilde{r}_{n-1}}}\,u_{n-1}
+    u_{\perp} = \paren{1-\Frac{c_{1}}{\norm{\tilde{r}_{n-1}}}}\,u_{n-2}+\Frac{c_{1}}{\norm{\tilde{r}_{n-1}}}\,u_{n-1}
     \]
   \item si ces deux vecteurs sont indépendants, ne nouvelle estimation
     des inconnues peut être fournie d'une manière tout à fait
@@ -498,9 +495,9 @@ dégradée (on perd la convergence quadratique).
 
 Par défaut l'accélération de convergence ne se déclenche qu'à la
 quatrième itération\footnote{Voir le mot clé
-  \mkeyb{Castem\-Acceleration\-Trigger}{CastemAccelerationTrigger}.} et
-est répétée toutes les deux itérations\footnote{Voir le mot clé
-  \mkeyb{Castem\-Acceleration\-Period}{CastemAccelerationPeriod}.}.
+  \mkeyb{CastemAccelerationTrigger}{Castem\-Acceleration\-Trigger}.}
+et est répétée toutes les deux itérations\footnote{Voir le mot clé
+  \mkeyb{CastemAccelerationPeriod}{Castem\-Acceleration\-Period}.}.
 
 \paragraph{Traitement des déformations imposées}
 L'algorithme précédent doit être modifié pour tenir compte des
@@ -891,6 +888,16 @@ Deux arguments sont ensuite attendus~:
 \item le nom de la fonction qui implante la loi.
 \end{itemize}
 
+\paragraph{Le mot clé \mkey{CastemAccelerationPeriod}} Le mot clé
+\mkeyb{CastemAccelerationPeriod}{Castem\-Acceleration\-Period} permet
+de préciser la fréquence d'utilisation de la méthode d'accélération
+présentée au paragraphe~\ref{sec:algor-de-resol}.
+
+\paragraph{Le mot clé \mkey{CastemAccelerationTrigger}} Le mot clé
+\mkeyb{CastemAccelerationTrigger}{Castem\-Acceleration\-Trigger} permet
+de préciser la fréquence d'utilisation de la méthode d'accélération
+présentée au paragraphe~\ref{sec:algor-de-resol}.
+
 \paragraph{Le mot clé \mkey{Date}} Le mot clé \mkey{Date} permet
 de préciser la date d'écriture du fichier de test.
 
@@ -900,6 +907,23 @@ compte.
 \paragraph{Le mot clé \mkey{Description}} Le mot clé
 \mkey{Description} permet de donner une description du test. Il est
 suivi d'un bloc contenant la description.
+
+\paragraph{Le mot clé \mkey{Evolution}} permet de définir une fonction
+du temps (évolution).
+
+Ce mot clé prend comme option le type d'évolution souhaitée. Si
+l'option \varcpp{evolution} est utilisée, une évolution discrète sera
+attendue. Si l'option \varcpp{function} est utilisée, la définition
+d'une fonction du temps sera attendue. Par défaut, une évolution
+discrète est attendue.
+
+Le mot clé \mkey{ExternalStateVariable} prend deux arguments~:
+\begin{itemize}
+\item le nom de la variable externe, sous la forme d'une chaîne de
+  caractères~;
+\item l'évolution, ce qui est attendu
+  dépendant du type d'évolution choisie~;
+\end{itemize}
 
 \paragraph{Le mot clé \mkey{ExternalStateVariable}} Le mot clé
 \mkey{ExternalStateVariable} permet de spécifier l'évolution d'une
@@ -1105,6 +1129,26 @@ ce sujet le paragraphe~\ref{sec:fichiers-generes}).
 significatifs utilisées pour l'affichage des résultats. Ce nombre est
 l'unique argument attendu.
 
+\paragraph{Le mot clé \mkey{PredictionPolicy}} Le mot clé
+\mkey{PredictionPolicy}{Prediction\-Policy} permet de choisir comment
+est prédite l'estimation de la solution (voir le
+paragraphe~\ref{sec:algor-de-resol}).
+
+Ce mot clé est suivi d'une chaîne de caractères. Les valeurs suivantes
+son admises~:
+\begin{itemize}
+\item {\tt NoPrediction}, qui est le choix par défaut~;
+\item {\tt LinearPrediction}, qui demande à ce que la prédiction se
+  fasse par une interpolation linéaire~;
+\item {\tt ElasticPrediction}, qui demande à ce que la prédiction se
+  fasse par une résolution utilisant la matrice élastique non endommagée~;
+\item {\tt SecantPrediction}, qui demande à ce que la prédiction se
+  fasse par une résolution utilisant la matrice élastique endommagée~;
+\item {\tt TangentOperatorPrediction}, qui demande à ce que la
+  prédiction se fasse par une résolution utilisant la matrice tangente
+  en début de pas de temps.
+\end{itemize}
+
 \paragraph{Le mot clé \mkey{Real}} Le mot clé \mkey{Real} permet de
 déclarer une constante. Deux arguments sont attendus, le nom de la
 constante et sa valeur.
@@ -1113,8 +1157,38 @@ constante et sa valeur.
 \mkey{RotationMatrix} permet de spécifier les axes d'orthotropie du
 matériau. Il n'est valide que si la loi traitée est orthotrope.
 
+\paragraph{Le mot clé \mkey{StiffnessMatrixType}} Le mot clé
+\mkey{StiffnessMatrixType} permet de spécifier quelle matrice doit
+être utilisée pour la recherche de l'équilibre.
+
+Ce mot clé est suivi d'une chaîne de caractères. Les valeurs suivantes
+son admises~:
+\begin{itemize}
+\item {\tt Elastic}, qui demande à ce que la prédiction se
+  fasse par une résolution utilisant la matrice élastique non endommagée~;
+\item {\tt SecantOperator}, qui demande à ce que la prédiction se
+  fasse par une résolution utilisant la matrice élastique endommagée~;
+\item {\tt TangentOperator}, qui demande à ce que la
+  prédiction se fasse par une résolution utilisant la matrice tangente~;
+\item {\tt ConsistantTangentOperator}, qui demande à ce que la
+  prédiction se fasse par une résolution utilisant la matrice
+  tangente cohérente.
+\end{itemize}
+
+Le type de matrice utilisée par défaut dépend de l'interface à la loi
+de comportement utilisée.
+
 \paragraph{Le mot clé \mkey{Strain}} Le mot clé \mkey{Strain} permet
 de donner la valeur initiale des déformations totales.
+
+Ce mot clé prend un argument, un tableau de valeurs réelles. La taille
+de ce tableau dépend de l'hypothèse de modélisation (voir le
+tableau~\ref{tab:mtest:modellinghypothesis}). L'utilisateur doit
+respecter les conventions utilisées dans \mfront{}~: les termes
+extra-diagonaux sont affectés d'un facteur \(\sqrt{2}\)~;
+
+\paragraph{Le mot clé \mkey{Stress}} Le mot clé \mkey{Stress} permet
+de donner la valeur initiale des contraintes.
 
 Ce mot clé prend un argument, un tableau de valeurs réelles. La taille
 de ce tableau dépend de l'hypothèse de modélisation (voir le
@@ -1180,6 +1254,14 @@ atteint.
 les temps de calculs. Ces temps sont donnés par intervalles. Un
 intervalle peut être découpé un certain nombre de fois à l'aide du mot
 clé {\tt in}.
+
+\paragraph{Le mot clé \mkey{UseCastemAccelerationAlgorithm}} Le mot clé
+\mkey{UseCastemAccelerationAlgorithm}{Use\-Castem\-Acceleration\-Algorithm}
+précise si l'on veut utiliser l'algorithme d'accélération de
+convergence présenté en paragraphe~\ref{sec:algor-de-resol}
+
+Ce mot clé est suivi de la valeur {\tt true} si l'on veut activer cet
+algorithme, {\tt false} sinon.
 
 \clearpage
 \newpage

@@ -1,0 +1,14 @@
+The @PredictionPolicy keyword let the user how the initial estimate of
+the solution shall be obtained.
+
+This keyword is followed by a string. The following values are
+allowed:
+- NoPrediction
+- LinearPrediction
+- ElasticPrediction
+- SecantPrediction
+- TangentPrediction
+
+Exemple:
+@PredictionPolicy 'ElasticPrediction';
+

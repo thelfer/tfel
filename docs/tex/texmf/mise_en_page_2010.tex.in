@@ -69,7 +69,7 @@
       \put(30,10){
         \parbox[b]{90mm}{\centering\bf\large\scshape{\ifthenelse{\isundefined{\Protitrecourt}}{\Protitre}{\Protitrecourt}}}
       }
-      \put(122.5,17){\parbox[c]{47mm}{\centering\Prosigle\\NT~\Pronumero~-~Ind. \Proindice \\\vspace*{2mm} \Prodate}}
+      \put(122.5,17){\parbox[c]{47mm}{\centering\Prosigle\\NT~\Pronumero~-~Ind. \Proindice}}
     }
     \put(30,0){\framebox(92,5.8){\centering\bf\large\scshape{Document technique DEN}}}
     \put(122.2,0){\framebox(47.8,5.8){\centering\scshape{Page \thepage/\pageref{LastPage}}}}

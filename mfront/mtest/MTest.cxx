@@ -473,7 +473,7 @@ namespace mfront
     this->checkNotEndOfLine("handlePredictionPolicy",
 			    p,this->fileTokens.end());
     const string& s = this->readString(p,this->fileTokens.end());
-    this->readSpecifiedToken("MTest::handleStiffnessMatrixType",";",
+    this->readSpecifiedToken("MTest::handlePredictionPolicy",";",
 			     p,this->fileTokens.end());
     if(s=="NoPrediction"){
       this->ppolicy = NOPREDICTION;
@@ -481,6 +481,8 @@ namespace mfront
       this->ppolicy = LINEARPREDICTION;
     } else if(s=="ElasticPrediction"){
       this->ppolicy = ELASTICPREDICTION;
+    } else if(s=="SecantOperatorPrediction"){
+      this->ppolicy = SECANTOPERATORPREDICTION;
     } else if(s=="TangentOperatorPrediction"){
       this->ppolicy = TANGENTOPERATORPREDICTION;
     } else {
