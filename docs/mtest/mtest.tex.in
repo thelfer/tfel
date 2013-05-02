@@ -115,9 +115,9 @@
   analytiques ou à des résultats de référence contenus dans un fichier
   externe. Il est ainsi possible de créer des tests de non régression.
 
-  Les principales fonctionnalités de cet outil sont
-  présentées. L'utilisation de cet outil en ligne de commande et
-  l'ensemble des commandes disponibles sont décrits.
+  Les principales fonctionnalités de cet outil sont présentées. Son
+  utilisation en ligne de commande et l'ensemble des commandes
+  disponibles sont décrits.
 
   Nous détaillons ensuite quelques tests intégrés à la gestion de
   configuration de la librairie \TFEL{}, dont certains sont des
@@ -152,7 +152,7 @@ fonctionnalités de \mfront{}.
 
 Récemment, l'utilisation de \mfront{} en dehors de la plate-forme
 \pleiades{}, au sein du \cea{}, DER~\cite{arrigo12:_notic_le2s} au
-DMN~\cite{11:_dec_semi}, puis l'intérêt des partenaires industriels du
+DMN~\cite{11:dec_semi}, puis l'intérêt des partenaires industriels du
 \cea{}, à \areva~\cite{olagnon13:_analy} à
 \edf{}~\cite{proix:mfront:2013}, a ouvert des perspectives très
 intéressantes de qualification et de développement de \mfront{}. Il
@@ -163,7 +163,7 @@ En particulier, les lois de comportement mécanique, par leur
 complexité intrinsèque et la variété des fonctionnalités disponibles,
 posent le plus de difficultés car elles ne pouvaient être testées
 qu'avec l'aide d'un code tiers, typiquement
-\castem{}~\cite{p.98:_castem,12:_cast3_cea}, \aster~\cite{_aster:13},
+\castem{}~\cite{p.98:_castem,12:castemcea}, \aster~\cite{aster:13},
 \tmfft{}~\cite{castelier09:_specif_fourier,jerome10:_tmfft_softw_concep}
 ou \licos{}~\cite{licos1.0}. Ce document présente un outil de test
 unitaire pour les lois de comportements mécaniques générés par
@@ -171,11 +171,12 @@ mfront~\cite{helfer:mfront:2013} nommé \mtest{}.
 
 Cet outil permet de piloter le chargement mécanique d'un point
 matériel, en imposant certaines composantes des contraintes et/ou
-certaines composantes des déformations au cours d'un historique. Cet
-outil est similaire à la procédure {\tt SIMU\_POINT\_MAT} disponible
-dans \aster{}~\cite{proix:simu_point_mat:2013}.
+certaines composantes des déformations au cours d'un historique. Le
+principe de \mtest{} est similaire à la macro commande {\tt
+  SIMU\_POINT\_MAT} disponible dans
+\aster{}~\cite{proix:simu_point_mat:2013}.
 
-\subsection*{Plan de cet note}
+\subsection*{Plan de cette note}
 
 Nous présentons tout d'abord le principe des tests menés par \mtest{}
 et les algorithmes de résolution utilisés.
@@ -184,7 +185,7 @@ Nous détaillons ensuite l'utilisation de {\tt mtest} en ligne de
 commandes et les différents fichiers générés.
 
 Dans un troisième temps, nous décrivons la structure d'un fichier
-d'entrées et donnons la liste de mots clés disponibles et leurs
+d'entrée et donnons la liste de mots clés disponibles et leurs
 significations.
 
 Enfin, nous donnons des exemples de tests utilisés dans \TFEL{} pour
@@ -258,10 +259,12 @@ proposée et ce processus est répété jusqu'à convergence.
 Ce processus, une variante plus ou moins sophistiquée de l'algorithme
 de \nom{Newton}, résout à chaque itération un problème linéaire en se
 basant sur une matrice de raideur déduite du comportement du
-matériau. Différentes types de matrice de raideur (et autant de
-variantes de l'algorithme de résolution) existent, citons~:
+matériau.
+
+Différentes choix de matrice de raideur (et autant de variantes de
+l'algorithme de résolution) sont donc possibles, citons~:
 \begin{itemize}
-\item la matrice élastique initiale~;
+\item la matrice élastique non endommagée~;
 \item la matrice élastique endommagée, dite matrice sécante~;
 \item la matrice tangente au comportement, définie dans une
   formulation en vitesse par la dérivée
@@ -275,13 +278,24 @@ finis (\aster{} notamment), peuvent s'appuyer sur la loi de
 comportement pour démarrer de manière plus efficace la recherche de
 l'équilibre. Dans le cas, la loi de comportement est appelée pour
 fournir une prédiction {\em a priori} de la matrice de raideur, sans
-effectuer l'intégration de la loi.
+effectuer l'intégration de la loi. Différentes prédictions de la
+matrice de raideur sont envisageables~:
+\begin{itemize}
+\item la matrice élastique initiale~;
+\item la matrice élastique endommagée, dite matrice sécante~;
+\item la matrice tangente au comportement, définie dans une
+  formulation en vitesse par la dérivée
+  \(\debutpas{\deriv{\dot{\tsigma}}{\dot{\tepsilonto}}}\) calculée en
+  début de pas de temps.
+\end{itemize}
 
-\subsection{Simulation d'un point matériel}
+\subsection{Algorithmes de résolution}
 
 \mtest{} calcule la réaction d'un point matériel à un historique de
 chargement mécanique au cours duquel certaines composantes des
-contraintes et/ou des déformations peuvent être imposées.
+contraintes et/ou des déformations peuvent être imposées. Ce
+paragraphe présente les différents algorithmes de résolution
+disponible.
 
 \paragraph{Équilibre mécanique en l'absence de déformations imposées}
 En l'absence de déformations imposées, l'équilibre mécanique se
@@ -302,30 +316,60 @@ algorithme de \nom{Newton} est utilisé pour déterminer
 \(\Delta\,\tepsilonto\).
 
 L'algorithme de \nom{Newton} cherche à annuler d'une fonction
-\(R\paren{\Delta\,\tepsilonto}\), nommée le résidu, définie par~:
+\(r\paren{\Delta\,\tepsilonto}\), nommée le résidu, définie par~:
 \begin{equation}
   \label{eq:mtest:newton}
-  R\paren{\Delta\,\tepsilonto}=\finpas{\tsigma}\paren{\Delta\,\tepsilonto}-\finpas{\tsigma^{\text{ext}}}
+  r\paren{\Delta\,\tepsilonto}=\finpas{\tsigma}\paren{\Delta\,\tepsilonto}-\finpas{\tsigma^{\text{ext}}}
 \end{equation}
 Pour cela, l'algorithme de \nom{Newton} procède de manière
 itérative. Soit \(\Delta\,\tepsilonto_{n}\) l'estimation de la
 solution obtenue à la n\ieme{} itérations, l'estimation suivante
 \(\Delta\,\tepsilonto_{n+1}\) est obtenue en linéarisant la fonction
-\(R\) à l'aide d'un développement limitée à l'ordre \(1\)~:
+\(r\) à l'aide d'un développement limitée à l'ordre \(1\)~:
 \[
-R\paren{\Delta\,\tepsilonto_{n+1}}\approx R\paren{\Delta\,\tepsilonto_{n}}+\deriv{\finpas{\tsigma}}{\Delta\,\tepsilonto}.\paren{\Delta\,\tepsilonto_{n+1}-\Delta\,\tepsilonto_{n}}
+r\paren{\Delta\,\tepsilonto_{n+1}}\approx R\paren{\Delta\,\tepsilonto_{n}}+\deriv{\finpas{\tsigma}}{\Delta\,\tepsilonto}.\paren{\Delta\,\tepsilonto_{n+1}-\Delta\,\tepsilonto_{n}}
 \]
 où apparaît la matrice tangente cohérente
 \(\deriv{\finpas{\tsigma}}{\Delta\,\tepsilonto}\).
 
-En annulant cette estimation linéarisée de \(R\), nous obtenons la
+En annulant cette estimation linéarisée de \(r\), nous obtenons la
 nouvelle estimation \(\Delta\,\tepsilonto_{n+1}\)~:
-\[
-\Delta\,\tepsilonto_{n+1}=\Delta\,\tepsilonto_{n}-\paren{\deriv{\finpas{\tsigma}}{\Delta\,\tepsilonto}}^{-1}.R\paren{\Delta\,\tepsilonto_{n}}
-\]
+\begin{equation}
+  \label{eq:mtest:NR1}
+  \Delta\,\tepsilonto_{n+1}=\Delta\,\tepsilonto_{n}-\paren{\deriv{\finpas{\tsigma}}{\Delta\,\tepsilonto}}^{-1}.R\paren{\Delta\,\tepsilonto_{n}}
+\end{equation}
+
+Comme nous l'avons évoqué plus haut, l'utilisation de la matrice
+tangente cohérente, même si elle apparaît naturelle n'est qu'une
+possibilité parmi d'autres et l'équation~\eqref{eq:mtest:NR1} s'écrit
+en pratique~:
+\begin{equation}
+  \label{eq:mtest:NR2}
+  \Delta\,\tepsilonto_{n+1}=\Delta\,\tepsilonto_{n}-K^{-1}.r\paren{\Delta\,\tepsilonto_{n}}
+\end{equation}
+
+La matrice de raideur \(K\) doit être bien choisie pour permettre la
+convergence de l'algorithme, mais ce choix n'influence pas la solution
+trouvée.
+
+La matrice de raideur doit être bien choisie pour permettre la
+convergence de l'algorithme, mais ce choix n'influence pas la solution
+trouvée.
+
+La matrice de raideur raideur peut-être\footnote{Voir le mot clé
+  \mkey{StiffnessMatrixType}.}~:
+\begin{itemize}
+\item la matrice élastique non endommagée~;
+\item la matrice élastique endommagée, dite matrice sécante~;
+\item la matrice tangente au comportement, définie dans une
+  formulation en vitesse par la dérivée
+  \(\finpas{\deriv{\dot{\tsigma}}{\dot{\tepsilonto}}}\)~;
+\item la matrice tangente cohérente, définie par la
+  \(\deriv{\finpas{\tsigma}}{\Delta\,\tepsilonto}\)~;
+\end{itemize}
 
 \paragraph{Critère de convergence} L'algorithme de \nom{Newton} est
-répétée jusqu'à ce que deux critères de convergence soient
+répété jusqu'à ce que deux critères de convergence soient
 simultanément satisfait~:
 \begin{itemize}
 \item un critère sur la valeur du résidu, qui doit être inférieure à
@@ -353,15 +397,26 @@ matrice d'élasticité, la convergence est en générale linéaire (ordre
 donnée à partir de quatre estimations successives de la solution
 \(\Delta\,\tepsilonto_{n+3}\),
 \(\Delta\,\tepsilonto_{n+2}\),\(\Delta\,\tepsilonto_{n+1}\) et
-\(\Delta\,\tepsilonto_{n}\)~:
+\(\Delta\,\tepsilonto_{n}\)~\cite{brezinski2006methodes}~:
 \[
 o\approx\Frac{\log\paren{\Frac{\norm{\Delta\,\tepsilonto_{n+3}-\Delta\,\tepsilonto_{n+2}}}{\norm{\Delta\,\tepsilonto_{n+2}-\Delta\,\tepsilonto_{n+1}}}}}{\log\paren{\Frac{\norm{\Delta\,\tepsilonto_{n+2}-\Delta\,\tepsilonto_{n+1}}}{\norm{\Delta\,\tepsilonto_{n+1}-\Delta\,\tepsilonto_{n}}}}}
 \]
+Cette estimation est cependant assez souvent imprécise.
 
 \paragraph{Accélération de convergence} Dans le cas d'une convergence
 linéaire, il est possible d'utiliser un algorithme d'accélération de
 convergence utilisé dans les opérateurs de résolution de
-\castem{}~\cite{pascal05_increpl}.
+\castem{}~\cite{pascal05_increpl}\footnote{Voir le mot clé
+  \mkeyb{Use-Castem\-Acceleration\-Algorithm}{UseCastemAccelerationAlgorithm}.}.
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=0.55\linewidth,angle=-90]{@abs_top_srcdir@/docs/mtest/images/CastemAccelerationAlgorithm.eps}
+  \caption{Illustration géométrique de la méthode d'accélération de
+    \castem{}~: projection du vecteur nul sur l'hyperplan formé par
+    les trois derniers résidus.}
+  \label{fig:mtest:acceleration}
+\end{figure}
 
 L'idée de cette algorithme est de~:
 \begin{itemize}
@@ -369,8 +424,9 @@ L'idée de cette algorithme est de~:
   \(r_{n-1}\), \(r_{n-2}\) et les \(3\) dernières estimations de la
   solutions, notées \(u_{n}\), \(u_{n-1}\), \(u_{n-2}\).
 \item projeter le vecteur nul (la solution recherchée !) sur
-  l'hyperplan construit à partir des trois derniers résidus. Pour
-  cela~:
+  l'hyperplan construit à partir des trois derniers résidus. La
+  figure~\ref{fig:mtest:acceleration} illustre géométriquement cette
+  projection. Pour cela~:
   \begin{itemize}
   \item   on choisit un des résidus comme origine du plan, dans notre
     implantation \(r_{n-2}\)~;
@@ -379,14 +435,15 @@ L'idée de cette algorithme est de~:
     \[
     \left\{
       \begin{aligned}
-        \tilde{r}_{n}   &= & r_{n} - r_{n-2} \\
-        \tilde{r}_{n-1} &= & r_{n-1} - r_{n-2}\\
-        \tilde{r}_{0} &= & - r_{n-2}\\
+        \tilde{r}_{n}   &=  r_{n} - r_{n-2} \\
+        \tilde{r}_{n-1} &=  r_{n-1} - r_{n-2}\\
+        \tilde{r}_{0} &=  - r_{n-2}\\
       \end{aligned}
     \right.
     \]
     Le vecteur \(\tilde{r}_{0}\) est l'expression du vecteur nul dont
-    nous recherchons la projection.
+    nous recherchons la projection dans ce nouveau système de
+    coordonnées.
   \item on utilise le procédé d'orthogonalisation de \nom{Schmidt} pour
     construire deux vecteurs normaux dans le plan à partir des vecteurs
     \(\tilde{r}_{n-1}\) et \(\tilde{r}_{n}\). Deux cas se présente~:
@@ -397,27 +454,157 @@ L'idée de cette algorithme est de~:
   \item si ces deux vecteurs sont colinéaires, nous pouvons définir un
     vecteur normal par~:
     \[
-    \vec{n}=\Frac{\tilde{r}_{n-1}}{\norm{\tilde{r}_{n-1}}}
+    n_{1}=\Frac{\tilde{r}_{n-1}}{\norm{\tilde{r}_{n-1}}}
     \]
+    En notant \(c_{1}\) le produit scalaire
+    \(\tilde{r}_{0}\,\colon\,n\), la projection
+    \(\tilde{r}_{0p}\) du vecteur \(\tilde{r}_{0}\) s'écrit~:
+    \[
+    \tilde{r}_{0p}=c_{1}n_{1}=\Frac{c_{1}}{\norm{\tilde{r}_{n-1}}}\tilde{r}_{n-1}
+    \]
+    Dans le repère initial, nous avons~:
+    \[
+    r_{0p} = \paren{1-\Frac{c_{1}}{\norm{\tilde{r}_{n-1}}}}\,r_{n-2}+\Frac{c_{1}}{\norm{\tilde{r}_{n-1}}}\,r_{n-1}
+    \]
+    La nouvelle estimation des inconnues sera donnée par la même combinaison linéaire~:
+    \[
+    u_{new} = \paren{1-\Frac{c_{1}}{\norm{\tilde{r}_{n-1}}}}\,u_{n-2}+\Frac{c_{1}}{\norm{\tilde{r}_{n-1}}}\,u_{n-1}
+    \]
+  \item si ces deux vecteurs sont indépendants, ne nouvelle estimation
+    des inconnues peut être fournie d'une manière tout à fait
+    similaire au cas précédent.
   \end{itemize}
 \end{itemize}
 
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=0.75\linewidth]{@abs_top_srcdir@/docs/mtest/images/acceleration.eps}
+  \caption{Effet de la méthode d'accélération de \castem{} sur la
+    convergence vers l'équilibre.}
+  \label{fig:mtest:acceleration2}
+\end{figure}
 
-\paragraph{Initialisation de la recherche} La résolution débute avec
-une estimation nulle de l'incrément de déformations totales.
+La méthode d'accélération peut s'avérer très efficace quand la matrice
+tangente cohérente n'est pas disponible. À titre d'exemple, la
+figure~\ref{fig:mtest:acceleration2} compare comment les estimations
+d'équilibre convergent en fonction des options choisies pour la
+résolution~: avec l'accélération de convergence, la vitesse ce
+convergence est super-linéaire.
+
+Cette méthode ne doit pas être utilisée avec une matrice tangente
+cohérente. En effet, dans ce cas, la vitesse de convergence serait
+dégradée (on perd la convergence quadratique).
+
+Par défaut l'accélération de convergence ne se déclenche qu'à la
+quatrième itération\footnote{Voir le mot clé
+  \mkeyb{Castem\-Acceleration\-Trigger}{CastemAccelerationTrigger}.} et
+est répétée toutes les deux itérations\footnote{Voir le mot clé
+  \mkeyb{Castem\-Acceleration\-Period}{CastemAccelerationPeriod}.}.
 
 \paragraph{Traitement des déformations imposées}
 L'algorithme précédent doit être modifié pour tenir compte des
-déformations imposées. Pour cela, \mtest{} introduit, comme la plupart
-des codes éléments finis, de nouvelles variables nommées
-multiplicateurs de \nom{Lagrange}. Le principe de ces multiplicateurs
+déformations imposées. Pour cela, comme dans la plupart des codes
+éléments finis, de nouvelles variables nommées multiplicateurs de
+\nom{Lagrange} sont introduites. Le principe de ces multiplicateurs
 est expliqué dans la documentation du code \aster{} (qui reprend ce
 principe de \castem{})~\cite{}, à laquelle nous renvoyons le lecteur
-intéressé.
+intéressé. Dans la suite, nous continuerons d'omettre les détails liés
+aux multiplicateurs de \nom{Lagrange}\footnote{En particulier, nous
+  confondons dans cette note la matrice de raideur donnée par le
+  comportement et la matrice utilisée pour la résolution de
+  l'équilibre.}.
+
+\paragraph{Dilatation thermique} La dilatation thermique peut être
+prise en compte. Pour cela, l'incrément des dilatations thermiques est
+tout simplement déduite de l'incrément de déformation fournie à la loi
+de comportement.
+
+Pour définir une dilatation thermique orthotrope, il est nécessaire de
+définir les coefficients de dilatation thermique associés à chacune
+des trois directions principales, notés respectivement \(\alpha_{1}\),
+\(\alpha_{2}\) et \(\alpha_{3}\), par des propriétés matériau, nommées
+respectivement {\tt Thermal\-Expansion1}, {\tt Thermal\-Expansion2} et
+{\tt Thermal\-Expansion3}\footnote{Voir le mot clé
+  \mkey{MaterialProperty}.}. Dans le repère propre du matériau, la
+dilatation thermique s'écrit alors~:
+\[
+\tepsilonth = 
+\begin{pmatrix}
+  \alpha_{1}\,\paren{T-T_{\text{ref}}} \\
+  \alpha_{2}\,\paren{T-T_{\text{ref}}} \\
+  \alpha_{3}\,\paren{T-T_{\text{ref}}} \\
+  0         \\
+  0         \\
+  0         \\
+\end{pmatrix}
+\]
+où \(T_{\text{ref}}\) est la température de référence. Ce tenseur est
+exprimé dans le repère du calcul par un changement
+repère\footnote{Voir le mot clé \mkey{RotationMatrix}.}.
+
+Pour définir une dilatation thermique orthotrope, il est nécessaire de
+définir un coefficient de dilatation thermique, noté \(\alpha\), par
+une propriété matériau, nommée {\tt Thermal\-Expansion}\footnote{Voir
+  le mot clé \mkey{MaterialProperty}.}. La déformation thermique
+s'écrit alors~:
+\[
+\tepsilonth = 
+\begin{pmatrix}
+  \alpha\,\paren{T-T_{\text{ref}}} \\
+  \alpha\,\paren{T-T_{\text{ref}}} \\
+  \alpha\,\paren{T-T_{\text{ref}}} \\
+  0         \\
+  0         \\
+  0         \\
+\end{pmatrix}
+\]
+où \(T_{\text{ref}}\) est la température de référence. 
+
+Par défaut, la température de référence est égale à \(293.15\,
+K\). Cette valeur peut être changée en définissant une variable réelle
+nommée {\tt Thermal\-Expansion\-Reference\-Temperature}\footnote{Voir
+  le mot clé \mkey{Real}.}.
+
+
+\paragraph{Prédiction initiale} Par défaut, la solution trouvée au pas
+de temps précédent est utilisée comme estimation initiale de la
+solution en fin de pas de temps.
+
+D'autres stratégies peuvent cependant être utilisée\footnote{Voir le
+  mot-clé \mkey{PredictionPolicy}.}~:
+\begin{itemize}
+\item utiliser une extrapolation linéaire des précédents pas de
+  temps. Si \(\Delta\, t_{p}\) et \(\Delta\,\tepsilonto_p\) désignent
+  respectivement l'incrément de temps et l'incrément de déformation du
+  pas précédent, l'estimation initiale \(\tepsilonto_{0}\) de la
+  solution est donnée par~:
+  \[
+  \tepsilonto_{0}=\debutpas{\tepsilonto}+\Frac{\Delta\, t}{\Delta\, t_{p}}\Delta\,\tepsilonto_p
+  \]
+\item effectuer une première résolution utilisant une matrice de
+  raideur \(K\) adaptée. Il est possible d'utiliser~:
+  \begin{itemize}
+  \item la matrice élastique non endommagée~;
+  \item la matrice élastique endommagée, dite matrice sécante~;
+  \item la matrice tangente au comportement, définie dans une
+    formulation en vitesse par la dérivée
+    \(\debutpas{\deriv{\dot{\tsigma}}{\dot{\tepsilonto}}}\) calculée en
+    début de pas de temps.
+  \end{itemize}
+  L'estimation initiale \(\tepsilonto_{0}\) de la solution est alors donnée
+  par~:
+  \[
+  K\,\paren{\tepsilonto_{0}-\debutpas{\tepsilonto}}=\debutpas{\tsigma}-\finpas{\tsigma^{\text{ext}}}+K\,\paren{\finpas{\tepsilonth}-\debutpas{\tepsilonth}}
+  \]
+  On remarque que par rapport à l'équation~\eqref{eq:mtest:NR2}, le
+  rôle des dilatation thermique doit être explicitement pris en
+  compte.
+\end{itemize}
 
 \subsection{Interface aux lois de comportement}
 
-\mtest supporte les mêmes interfaces que \mfront{}~:
+\mtest{} supporte les mêmes interfaces que \mfront{}\footnote{Voir le
+  mot clé \mkey{Behaviour}.}~:
 \begin{itemize}
 \item l'interface \umat{} est utilisée pour une adhérence des lois au
   code~\castem{} et aux différentes applications de la plate-forme
@@ -492,16 +679,15 @@ version plan généralisé de la loi de comportement.
 \newpage
 \section{Utilisation de \mtest{}}
 
-Nous décrivons dans ce paragraphe l'utilisation de \mtest{} sous
- \unix{}. Les commandes présentées restent valides sous \windows{} à
-condition d'utiliser l'un des environnements \msys{} ou \cygwin{}.
+Nous décrivons dans ce paragraphe l'utilisation de \mtest{} en ligne
+de commande.
 
 \mtest{} s'utilise ainsi~:
 \begin{center}
   {\tt mtest [options] fichier1.mtest fichier2.mtest \ldots}
 \end{center}
 
-La structure des fichiers d'entrées ainsi que l'ensemble des mots clés
+La structure des fichiers d'entrée ainsi que l'ensemble des mots clés
 sont décrits au paragraphe~\ref{sec:descr-du-fich}.
 
 \mtest{} s'inspire de l'utilitaire \cmake{} et permet de consulter sa
@@ -589,23 +775,23 @@ d'exception mathématique (signal {\tt SIGFPE}).
 \item un fichier texte organisé en colonnes. La première colonne donne
   l'instant considéré. Les colonnes suivantes contiennent les
   déformations, les contraintes et les variables internes de la loi de
-  comportement. Par défaut, si le fichier d'entrées se nomme {\tt
+  comportement. Par défaut, si le fichier d'entrée se nomme {\tt
     xxx.mtest}, ce fichier se nomme {\tt xxx.res}~;
 \item le second fichier est un fichier au format {\tt xml} donnant les
   résultats des comparaisons à des résultats de référence (donnés par
   une formule analytique ou par un fichier externe) et le temps
   d'exécution du test. Ce fichier est directement analysable par le
   gestionnaire d'exécution \jenkins{}. Par défaut, si le fichier
-  d'entrées se nomme {\tt xxx.mtest}, ce fichier se nomme {\tt
+  d'entrée se nomme {\tt xxx.mtest}, ce fichier se nomme {\tt
     xxx.xml}.
 \end{itemize}
 
 \clearpage
 \newpage
-\section{Description du fichier d'entrées}
+\section{Description du fichier d'entrée}
 \label{sec:descr-du-fich}
 
-Cette section s'intéresse au fichier d'entrées de \mtest{}. Nous
+Cette section s'intéresse au fichier d'entrée de \mtest{}. Nous
 décrivons tout d'abord sa structure puis la liste des mots clés
 disponibles.
 
@@ -619,11 +805,11 @@ disponibles.
 \end{figure}
 
 \paragraph{Premier exemple} La figure~\ref{fig:mtest:firstexample}
-donne un premier exemple de fichier d'entrées de \mtest{}.
+donne un premier exemple de fichier d'entrée de \mtest{}.
 
 \subsection{Structure}
 
-Le fichier d'entrées de \mtest{} reprend la syntaxe des fichiers
+Le fichier d'entrée de \mtest{} reprend la syntaxe des fichiers
 \mfront{}~: il se présente sous la forme d'une liste de mots clés
 commençant par une arobase \texttt{@}. Ces mots clés peuvent
 éventuellement être suivi par des options, donnés entre chevrons
@@ -997,7 +1183,175 @@ clé {\tt in}.
 \newpage
 \section{Quelques exemples}
 
+Nous décrivons quelques exemples de mise en \oe{}uvre de \mtest{}.
 
+\subsection{Essais élémentaires}
+
+Il est intéressant de préciser comment simuler quelques essais
+élémentaires.
+
+\subsubsection{Essai de traction uniaxiale en déplacement imposé}
+
+Il est possible de simuler un essai de traction uniaxiale en
+déplacement imposé en ne spécifiant que la déformation dans l'axe de
+traction. L'équilibre imposera que les autres composantes des
+contraintes soient nulles.
+
+Il est possible de se ramener à des données expérimentales de type
+\og~force-déplacement~\og{} par les équivalences classiques~:
+\begin{itemize}
+\item le déplacement est égal à la déformation multipliée par la
+  taille de la longueur de l'éprouvette dans l'axe de traction~;
+\item la force est égale à la contrainte multipliée par la surface de
+  la section de l'éprouvette transverse à l'axe de traction.
+\end{itemize}
+
+Nous avons déjà recontré en figure~\ref{fig:mtest:firstexample} un
+exemple de simulation d'un essai de traction uniaxiale en déplacement
+imposé.
+
+\subsubsection{Essai de traction uniaxiale en force imposé}
+
+Il est possible de simuler un essai de traction uniaxiale en force
+imposée en ne spécifiant que la contrainte dans l'axe de
+traction. L'équilibre imposera que les autres composantes des
+contraintes soient nulles.
+
+Il est possible de se ramener à des données expérimentales de type
+\og~force-déplacement~\og{} par les mêmes équivalences qu'au paragraphe
+précédent.
+
+Ce type d'essai permet en particulier une première modélisation rapide
+d'essais de fluage (charge constante). Pour ces essais, il est
+intéressant de ne pas simuler la phase de mise en charge en
+fournissant des valeurs initiales des déformations, contraintes et
+variables internes adéquats\footnote{Voir les mots clés \mkey{Strain},
+  \mkey{Stress} et
+  \mkeyb{InternalStateVariable}{{Internal\-State\-Variable}}}.
+
+\begin{figure}[htbp]
+  \centering
+  \code{
+    \input{@abs_top_srcdir@/docs/mtest/images/strainhardeningcreep.tex}
+  }
+  \caption{Simulation d'un essai de fluage.}
+  \label{fig:mtest:strainhardeningcreep}
+\end{figure}
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=0.75\linewidth]{@abs_top_srcdir@/docs/mtest/images/strainhardeningcreep.eps}
+  \caption{Comparaison entre la solution obtenue par la simulation
+    \mtest{} et la solution analytique.}
+  \label{fig:mtest:strainhardeningcreep:res}
+\end{figure}
+
+
+Le cas test {\tt strainhardeningcreep.mtest}, reporté en
+figure~\ref{fig:mtest:strainhardeningcreep}, donne un exemple de
+simulation d'un essai de fluage pour une loi d'écoulement
+viscoplastique avec écrouissage. Le résultat de ce cas test est
+comparé à la solution analytique en
+figure~\ref{fig:mtest:strainhardeningcreep:res}.
+
+\subsubsection{Essai de cisaillement}
+
+L'essai de cisaillement est un essai numérique pratique permettant de
+tester simplement des lois. 
+
+\subsubsection{Tube sous pression}
+
+Dans le cas d'un point matériel, nous pouvons simuler un tube sous
+pression en imposant les contraintes à l'aide des solutions
+classiques.
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=5cm,angle=-90]{@abs_top_srcdir@/docs/mtest/images/tubeaxi.eps}
+  \caption{Coordonnées cylindriques.}
+  \label{fig:CoordonneesCylindriques}
+\end{figure}
+
+Le système d'axe naturel pour l'analyse des contraintes dans un tube
+est donné par le repère cylindrique illustré en
+figure~\ref{fig:CoordonneesCylindriques}.
+
+Nous considérons donc un tube sous pression fermé de rayon interne
+\(R_{i}\) et de rayon externe \(R_{e}\). La pression à l'intérieur du
+crayon est notée \(P_{i}\) et la pression externe \(P_{e}\).
+
+La contrainte axiale est donnée par l'effet de fond~:
+\[
+\sigmaz = \Frac{1}{R_{e}^{2}-R_{i}^{2}}\paren{R_{i}^{2}P_{i}-R_{e}^{2}P_{e}}
+\]
+
+Les composantes radiales et tangentielles sont données par les
+expressions classiques suivantes~:
+\[
+\begin{aligned}
+  \sigmar &= K_{1}+\Frac{K_{2}}{r^{2}} \\
+  \sigmat &= K_{1}-\Frac{K_{2}}{r^{2}} \\
+\end{aligned}
+\]
+où \(K_{1}\) et \(K_{2}\) sont deux paramètres choisis pour vérifier
+les conditions aux limites \(\sigmar\paren{R_{i}}=-P_{i}\) et
+\(\sigmar\paren{R_{e}}=-P_{e}\). Ces paramètres valent~:
+\[
+\begin{aligned}
+  K_{2}&=\Frac{R^{2}_{i}R^{2}_{e}}{R^{2}_{e}-R^{2}_{i}}\paren{P_{e}-P_{i}} \\
+  K_{1}&=-P_{i}-\Frac{K_{2}}{R^{2}_{i}}
+\end{aligned}
+\]
+
+\begin{figure}[htbp]
+  \centering
+  \code{
+    \input{@abs_top_srcdir@/docs/mtest/images/elasticity16.tex}
+  }
+  \caption{Exemple de fichier \mtest{} simulant un tube en pression.}
+  \label{fig:mtest:elasticity16}
+\end{figure}
+
+La mise en données d'un tel test est donnée en
+figure~\ref{fig:mtest:elasticity16}.
+
+\subsection{Un cas test complexe}
+
+Nous décrivons dans ce paragrpahe un test, proposé par l'IPSI
+(Insititut pour la Promotion des Sciences de l'Ingénieur) pour la
+journée \(\Phi{}2As\)\footnote{Formation IPSI pour la Formation et
+  l'Information en analyse de Structures.} du 30 Mars 2000 sur les
+comportements non linéaires, qui permet de valider la bonne prise en
+compte de la variation des coefficients avec la
+température~\cite{proix:hsnv125:2013}. Il s'agit d'un test
+particulièrement sollicitant pour les lois de comportement.
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=0.75\linewidth]{@abs_top_srcdir@/docs/mtest/images/chaboche2.eps}
+  \caption{Évolution de la déformation $\varepsilon_{xx}$ et de la
+    température au cours de l'essai {\tt
+      HSNV125}~\cite{proix:hsnv125:2013}.}
+  \label{fig:CoordonneesCylindriques}
+\end{figure}
+
+\subsubsection{Chargements}
+
+Deux chargements mécaniques sont imposées au point matériel~:
+\begin{itemize}
+\item une déformation \(\varepsilon_{xx}\) variable dans le temps~;
+\item une contrainte de cisaillement \(\sigma_{xy}\) qui est
+  constante dans le temps à \(100 MPa\).
+\end{itemize}
+
+Une température \(T\) évoluant de manière cyclique est également prise
+en compte.
+
+Les évolutions de la déformation \(\varepsilon_{xx}\) et de la
+température au cours du temps sont reportées en
+figure~\ref{fig:mtest:chaboche2}.
+
+\subsubsection{Application}
 
 \clearpage
 \newpage

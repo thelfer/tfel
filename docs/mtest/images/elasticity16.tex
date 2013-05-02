@@ -1,0 +1,35 @@
+\noindent
+\ttfamily
+\hlstd{@Author\ Helfer\ Thomas}\hlsym{;}\hspace*{\fill}\\
+\hlstd{@Date}\hlstd{\ \ \ }\hlstd{}\hlnum{09\ }\hlstd{avril\ }\hlnum{2013}\hlstd{}\hlsym{;}\hspace*{\fill}\\
+\hlstd{@Description}\hlsym{\{}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ }\hlstd{}\hlstr{"Modélisation\ d'un\ tube\ sous\ pression"}\hlstd{}\hspace*{\fill}\\
+\hlsym{\};}\hspace*{\fill}\\
+\hlstd{\hspace*{\fill}\\
+@ModellingHypothesis\ }\hlstr{'Axisymmetrical'}\hlstd{}\hlsym{;}\hspace*{\fill}\\
+\hlstd{@Behaviour}\hlsym{$<$}\hlstd{aster}\hlsym{$>$\ }\hlstd{}\hlstr{'libMFrontAsterBehaviours.so'}\hlstd{\ }\hlstr{'asterelasticity'}\hlstd{}\hlsym{;}\hspace*{\fill}\\
+\hlstd{@MaterialProperty}\hlsym{$<$}\hlstd{constant}\hlsym{$>$\ }\hlstd{}\hlstr{'YoungModulus'}\hlstd{}\hlstd{\ \ \ \ \ }\hlstd{}\hlnum{150}\hlstd{}\hlsym{.}\hlstd{e9}\hlsym{;}\hspace*{\fill}\\
+\hlstd{@MaterialProperty}\hlsym{$<$}\hlstd{constant}\hlsym{$>$\ }\hlstd{}\hlstr{'PoissonRatio'}\hlstd{}\hlstd{\ \ \ \ \ \ \ }\hlstd{}\hlnum{0.3}\hlstd{}\hlsym{;}\hspace*{\fill}\\
+\hlstd{@MaterialProperty}\hlsym{$<$}\hlstd{constant}\hlsym{$>$\ }\hlstd{}\hlstr{'MassDensity'}\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{}\hlnum{0}\hlstd{}\hlsym{.;}\hspace*{\fill}\\
+\hlstd{@MaterialProperty}\hlsym{$<$}\hlstd{constant}\hlsym{$>$\ }\hlstd{}\hlstr{'ThermalExpansion'}\hlstd{}\hlstd{\ \ \ }\hlstd{}\hlnum{0}\hlstd{}\hlsym{.;}\hspace*{\fill}\\
+\hlstd{\hspace*{\fill}\\
+@ExternalStateVariable\ }\hlstr{'Temperature'}\hlstd{\ }\hlnum{293.15}\hlstd{}\hlsym{;}\hspace*{\fill}\\
+\hlstd{}\hspace*{\fill}\\
+\hlslc{//\ Phenix\ cladding\ radii}\hspace*{\fill}\\
+\hlstd{@Real\ }\hlstr{'Ri'}\hlstd{\ }\hlnum{2.825e{-}3}\hlstd{}\hlsym{;}\hspace*{\fill}\\
+\hlstd{@Real\ }\hlstr{'Re'}\hlstd{\ }\hlnum{3.250e{-}3}\hlstd{}\hlsym{;}\hspace*{\fill}\\
+\hlstd{@Real\ }\hlstr{'Rm'}\hlstd{\ }\hlstr{'0.5{*}(Re+Ri)'}\hlstd{}\hlsym{;}\hspace*{\fill}\\
+\hlstd{}\hlslc{//\ inner\ and\ outer\ pressures}\hspace*{\fill}\\
+\hlstd{@Evolution\ }\hlstr{'Pi'}\hlstd{\ }\hlsym{\{}\hlstd{}\hlnum{0}\hlstd{}\hlsym{:}\hlstd{}\hlnum{0}\hlstd{}\hlsym{,}\hlstd{}\hlnum{1}\hlstd{}\hlsym{:}\hlstd{}\hlnum{1}\hlstd{}\hlsym{.}\hlstd{e5}\hlsym{\};}\hspace*{\fill}\\
+\hlstd{@Evolution\ }\hlstr{'Pe'}\hlstd{\ }\hlsym{\{}\hlstd{}\hlnum{0}\hlstd{}\hlsym{:}\hlstd{}\hlnum{0}\hlstd{}\hlsym{,}\hlstd{}\hlnum{1}\hlstd{}\hlsym{:}\hlstd{}\hlnum{2}\hlstd{}\hlsym{.}\hlstd{e5}\hlsym{\};}\hspace*{\fill}\\
+\hlstd{\hspace*{\fill}\\
+@Evolution}\hlsym{$<$}\hlstd{function}\hlsym{$>$\ }\hlstd{}\hlstr{'K2'}\hlstd{\ }\hlstr{'Ri{*}{*}2{*}Re{*}{*}2/(Re{*}{*}2{-}Ri{*}{*}2){*}(Pe{-}Pi)'}\hlstd{}\hlsym{;}\hspace*{\fill}\\
+\hlstd{@Evolution}\hlsym{$<$}\hlstd{function}\hlsym{$>$\ }\hlstd{}\hlstr{'K1'}\hlstd{\ }\hlstr{'{-}Pi{-}K2/Ri{*}{*}2'}\hlstd{}\hlsym{;}\hspace*{\fill}\\
+\hlstd{\hspace*{\fill}\\
+@ImposedStress}\hlsym{$<$}\hlstd{function}\hlsym{$>$\ }\hlstd{}\hlstr{'SRR'}\hlstd{\ }\hlstr{'K1+K2/Rm{*}{*}2'}\hlstd{}\hlsym{;}\hspace*{\fill}\\
+\hlstd{@ImposedStress}\hlsym{$<$}\hlstd{function}\hlsym{$>$\ }\hlstd{}\hlstr{'STT'}\hlstd{\ }\hlstr{'K1{-}K2/Rm{*}{*}2'}\hlstd{}\hlsym{;}\hspace*{\fill}\\
+\hlstd{@ImposedStress}\hlsym{$<$}\hlstd{function}\hlsym{$>$\ }\hlstd{}\hlstr{'SZZ'}\hlstd{\ }\hlstr{'1/(Re{*}{*}2{-}Ri{*}{*}2){*}(Ri{*}{*}2{*}Pi{-}Re{*}{*}2{*}Pe)'}\hlstd{}\hlsym{;}\hspace*{\fill}\\
+\hlstd{\hspace*{\fill}\\
+@Times\ }\hlsym{\{}\hlstd{}\hlnum{0}\hlstd{}\hlsym{.,}\hlstd{}\hlnum{1}\hlstd{}\hlsym{.\};}\hlstd{}\hspace*{\fill}\\
+\mbox{}
+\normalfont

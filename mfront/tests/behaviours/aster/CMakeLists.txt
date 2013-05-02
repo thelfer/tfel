@@ -12,6 +12,8 @@ set(mfront_tests_SOURCES
   Elasticity
   OrthotropicElastic
   OrthotropicCreep
+  OrthotropicCreep_rk42
+  OrthotropicCreep_rkCastem
   ImplicitOrthotropicCreep
   Plasticity
   Norton NortonRK DDIF2
@@ -63,9 +65,13 @@ test_aster(elasticity12)
 test_aster(elasticity13)
 test_aster(elasticity14)
 test_aster(elasticity15)
+test_aster(elasticity16)
 test_aster(mazars)
 test_aster(norton)
 test_aster(norton2)
+# test_aster(orthotropiccreep)
+# test_aster(orthotropiccreep-rk42)
+# test_aster(orthotropiccreep-rkCastem)
 test_aster(implicitnorton)
 test_aster(implicitnorton2)
 test_aster(implicitorthotropiccreep)

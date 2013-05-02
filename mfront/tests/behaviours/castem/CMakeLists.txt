@@ -18,6 +18,8 @@ set(mfront_tests_SOURCES
   ImplicitNorton
   ImplicitNorton2
   OrthotropicCreep
+  OrthotropicCreep_rk42
+  OrthotropicCreep_rkCastem
   ImplicitOrthotropicCreep
   OrthotropicElastic
   StrainHardeningCreep
@@ -63,10 +65,16 @@ test_umat(elasticity12)
 test_umat(elasticity13)
 test_umat(elasticity14)
 test_umat(elasticity15)
+test_umat(elasticity16)
 test_umat(mazars)
 test_umat(norton)
 test_umat(norton2)
+test_umat(norton-euler)
+test_umat(norton-rk2)
+test_umat(norton-rk4)
 test_umat(orthotropiccreep)
+test_umat(orthotropiccreep-rk42)
+test_umat(orthotropiccreep-rkCastem)
 test_umat(strainhardeningcreep)
 test_umat(plasticity)
 test_umat(chaboche)

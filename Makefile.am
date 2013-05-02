@@ -43,6 +43,8 @@ mfront-doc-pdf:
 	make -f Makefile.doc aster ;				    \
 	make -f Makefile.doc umat
 
+
+
 EXTRA_DIST = bootstrap.sh   \
 	     CMakeLists.txt \
 	     LGPL.txt       \

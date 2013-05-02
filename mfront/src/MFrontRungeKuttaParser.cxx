@@ -1081,6 +1081,11 @@ namespace mfront{
     }
     this->behaviourFile << "// failed is true" << endl;
     this->behaviourFile << "dt_ *= real(0.1f);" << endl;
+    this->behaviourFile << "if(dt_<dtprec){" << endl;
+    this->behaviourFile << "string msg(\"" << this->className << "::integrate : \");" << endl;
+    this->behaviourFile << "msg += \"time step reduction has gone too far.\";" << endl;
+    this->behaviourFile << "throw(tfel::material::DivergenceException(msg));" << endl;
+    this->behaviourFile << "}" << endl;
     this->behaviourFile << "}" << endl;
     this->behaviourFile << "}" << endl;
   } // end of MFrontRungeKuttaParser::writeBehaviourRK54Integrator
@@ -1397,6 +1402,11 @@ namespace mfront{
 			  << this->className << "::rkcastem_fac) << endl;" << endl;
     }
     this->behaviourFile << "}" << endl;
+    this->behaviourFile << "if(dt_<dtprec){" << endl;
+    this->behaviourFile << "string msg(\"" << this->className << "::integrate : \");" << endl;
+    this->behaviourFile << "msg += \"time step reduction has gone too far.\";" << endl;
+    this->behaviourFile << "throw(tfel::material::DivergenceException(msg));" << endl;
+    this->behaviourFile << "}" << endl;
     this->behaviourFile << "if(!converged){" << endl;
     this->behaviourFile << "if((abs(this->dt-t-dt_)<2*dtprec)||(t+dt_>this->dt)){" << endl;
     this->behaviourFile << "dt_=this->dt-t;" << endl;
@@ -1689,6 +1699,11 @@ namespace mfront{
     this->behaviourFile << "} else {" << endl;
     this->behaviourFile << "// failed is true" << endl;
     this->behaviourFile << "dt_ *= real(0.1f);" << endl;
+    this->behaviourFile << "if(dt_<dtprec){" << endl;
+    this->behaviourFile << "string msg(\"" << this->className << "::integrate : \");" << endl;
+    this->behaviourFile << "msg += \"time step reduction has gone too far.\";" << endl;
+    this->behaviourFile << "throw(tfel::material::DivergenceException(msg));" << endl;
+    this->behaviourFile << "}" << endl;
     this->behaviourFile << "}" << endl;
     this->behaviourFile << "}" << endl;
   } // end of MFrontRungeKuttaParser::writeBehaviourRK42Integrator

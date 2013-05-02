@@ -38,4 +38,5 @@
 @Times {0.,10. in 200, 100. in 30,3600 in 20};
 
 @Real 'p0' 1.e-6;
-@Test<function> 'EquivalentViscoplasticStrain' '(p0**(Np+1)-(Np+1)*A*srr**Ns*t)**(1/(Np+1))-p0' 1.e-5;
+@Test<function> 'EquivalentViscoplasticStrain'
+     '(p0**(Np+1)-(Np+1)*A*srr**Ns*t)**(1/(Np+1))-p0' 1.e-5;

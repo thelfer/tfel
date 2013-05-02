@@ -5,7 +5,7 @@
   de la déformation varie dans le temps de manière sinusoïdale. La
   contrainte SXX est égale à cette déformation multipliée par le
   module d'Young. Les déformations EYY et EZZ sont égales à cette
-  déformation multipliée par l'opposée du coefficient de Poisson."
+  déformation multipliée par l'opposé du coefficient de Poisson."
 };
 
 @Behaviour<aster> 'libMFrontAsterBehaviours.so' 'asterelasticity';
