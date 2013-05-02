@@ -7,3 +7,10 @@ set y2label "Température imposée (°C)"
 
 plot "chaboche2.txt" u 1:($2*100) t "EXX", \
      "chaboche2.txt" u 1:4 t "Température" axis x1y2
+
+set output "chaboche2-comp.eps"
+set xlabel  "Temps (s)
+set ylabel  "Contrainte SXX (MPa)"
+unset y2label
+plot [:] [-400:450] "chaboche2.res"       u 1:8 t "Solution mtest",    \
+     "chaboche2-aster.ref" u 1:8 t "Solution SIMU_POINT_MAT" w crosses

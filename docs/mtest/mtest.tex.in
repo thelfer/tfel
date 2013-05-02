@@ -14,6 +14,7 @@
 
 \usepackage[dvips]{graphicx}
 \usepackage[dvips,breaklinks]{hyperref}
+\usepackage{multicol}
 
 \usepackage{@abs_top_builddir@/docs/tex/texmf/mathematiques}
 \usepackage{@abs_top_builddir@/docs/tex/texmf/mecanique}
@@ -507,12 +508,12 @@ déformations imposées. Pour cela, comme dans la plupart des codes
 éléments finis, de nouvelles variables nommées multiplicateurs de
 \nom{Lagrange} sont introduites. Le principe de ces multiplicateurs
 est expliqué dans la documentation du code \aster{} (qui reprend ce
-principe de \castem{})~\cite{}, à laquelle nous renvoyons le lecteur
-intéressé. Dans la suite, nous continuerons d'omettre les détails liés
-aux multiplicateurs de \nom{Lagrange}\footnote{En particulier, nous
-  confondons dans cette note la matrice de raideur donnée par le
-  comportement et la matrice utilisée pour la résolution de
-  l'équilibre.}.
+principe de \castem{})~\cite{pellet:dual:2011}, à laquelle nous
+renvoyons le lecteur intéressé. Dans la suite, nous continuerons
+d'omettre les détails liés aux multiplicateurs de
+\nom{Lagrange}\footnote{En particulier, nous confondons dans cette
+  note la matrice de raideur donnée par le comportement et la matrice
+  utilisée pour la résolution de l'équilibre.}.
 
 \paragraph{Dilatation thermique} La dilatation thermique peut être
 prise en compte. Pour cela, l'incrément des dilatations thermiques est
@@ -672,8 +673,9 @@ hypothèses supportées par \mtest{} et leurs caractéristiques.
 pas aujourd'hui de distinguer les hypothèses de modélisation et ne se
 base que sur la dimension d'espace\footnote{Les contraintes planes
   sont traitées dans \aster{} par l'algorithme global par une méthode
-  due à \nom{De Borst}~\cite{,}.}. En \(2D\), l'interface utilise la
-version plan généralisé de la loi de comportement.
+  due à \nom{De Borst}~\cite{proix:contraintes_planes}.}. En \(2D\),
+l'interface utilise la version plan généralisé de la loi de
+comportement.
 
 \clearpage
 \newpage
@@ -1332,7 +1334,7 @@ particulièrement sollicitant pour les lois de comportement.
   \caption{Évolution de la déformation $\varepsilon_{xx}$ et de la
     température au cours de l'essai {\tt
       HSNV125}~\cite{proix:hsnv125:2013}.}
-  \label{fig:CoordonneesCylindriques}
+  \label{fig:hsvn125:loading}
 \end{figure}
 
 \subsubsection{Chargements}
@@ -1349,9 +1351,55 @@ en compte.
 
 Les évolutions de la déformation \(\varepsilon_{xx}\) et de la
 température au cours du temps sont reportées en
-figure~\ref{fig:mtest:chaboche2}.
+figure~\ref{fig:hsvn125:loading}.
 
 \subsubsection{Application}
+
+\begin{figure}[htbp]
+  \centering
+  \code{
+    \begin{multicols}{2}
+      \tiny
+      \input{@abs_top_srcdir@/docs/mtest/images/chaboche2-mfront.tex}
+    \end{multicols}
+  }
+  \caption{Exemple d'une loi viscoplastique à écrouissage cinématique
+    non linéaire.}
+  \label{fig:mtest:chaboche2:mfront}
+\end{figure}
+
+Le cas test {\tt chaboche2.mtest} applique les conditions aux limites
+décrites au paragraphe précédent à une loi viscoplastique à
+écrouissage cinématique non linéaire donnée en
+figure~\ref{fig:mtest:chaboche2:mfront}.
+
+\begin{figure}[htbp]
+  \centering
+  \code{
+    \small
+    \input{@abs_top_srcdir@/docs/mtest/images/chaboche2-mtest.tex}
+  }
+  \caption{Test d'une loi viscoplastique à écrouissage cinématique non
+    linéaire.}
+  \label{fig:mtest:chaboche2:mtest}
+\end{figure}
+
+Le fichier d'entrée de ce cas test est donné en
+figure~\ref{fig:mtest:chaboche2:mtest}.
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=0.75\linewidth]{@abs_top_srcdir@/docs/mtest/images/chaboche2-comp.eps}
+  \caption{Comparaison de la solution obtenue au cours de l'essai {\tt
+      HSNV125}~\cite{proix:hsnv125:2013} à la solution obtenue par la
+    macro-commande {\tt SIMU\_POINT\_MAT}
+    d'\aster{}~\cite{proix:simu_point_mat:2013}.}
+  \label{fig:hsnv125:res}
+\end{figure}
+
+La figure~\ref{fig:hsnv125:res} compare la solution obtenue à la une
+simulation effectuée avec la macro-commande {\tt SIMU\_POINT\_MAT}
+d'\aster{}~\cite{proix:simu_point_mat:2013}.
 
 \clearpage
 \newpage

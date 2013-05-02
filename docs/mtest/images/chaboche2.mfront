@@ -1,15 +1,10 @@
-/*!
- * \file   Chaboche2.mfront
- * \brief  
- *   resolution implicite jabobienne numerique
- * \author jmp
- * \date   13 02 2013
- */
+@Author jmp;
+@Date   13 02 2013;
 
 @Parser    Implicit;
 @Behaviour Chaboche2;
-@Algorithm NewtonRaphson_NumericalJacobian;
 
+@Algorithm NewtonRaphson_NumericalJacobian;
 @Theta 1.0 ;
 @Epsilon 1.e-12 ;
 @IterMax 200 ;
@@ -22,29 +17,17 @@ nu.setGlossaryName("PoissonRatio");
 rho.setGlossaryName("MassDensity");
 @MaterialProperty real alpha; /* mandatory for castem */
 alpha.setGlossaryName("ThermalExpansion");
-
-@MaterialProperty real Rinf;
-@MaterialProperty real R0;
-@MaterialProperty real b;
-@MaterialProperty real k;
-@MaterialProperty real w;
-@MaterialProperty real C1inf;
-@MaterialProperty real g1;
-@MaterialProperty real C2inf;
-@MaterialProperty real g2;
-@MaterialProperty real E;
-@MaterialProperty real UNsurK;
+@MaterialProperty real Rinf,R0,b,k,w;
+@MaterialProperty real C1inf,g1;
+@MaterialProperty real C2inf,g2,E,NsurK;
 
 @Includes{
 #include"TFEL/Material/Lame.hxx"
 }
 
 @StateVariable real    p;
-@StateVariable Stensor a1; 
-@StateVariable Stensor a2; 
-
-@LocalVariable real    lambda;
-@LocalVariable real    mu;
+@StateVariable Stensor a1,a2; 
+@LocalVariable real    lambda,mu;
 
 /* Initialize Lame coefficients */
 @InitLocalVars{
