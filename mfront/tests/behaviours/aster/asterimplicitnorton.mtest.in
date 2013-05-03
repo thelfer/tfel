@@ -33,8 +33,8 @@
 // for @StrainEpsilon), thus we may expect the strain to be known at
 // '3.6*1.e-9'. If pratice, things are a bit better but not much
 // better.
-@Real 'A' 2.e-37;
-@Real 'E' 4.2;
+@Real 'A' 8.e-67;
+@Real 'E' 8.2;
 @Test<function> 'EXX' 'EELXX0+A*SXX**E*t'     1.e-9;
 @Test<function> 'EYY' 'EELZZ0-0.5*A*SXX**E*t' 1.e-10;
 @Test<function> 'EZZ' 'EELZZ0-0.5*A*SXX**E*t' 1.e-10;
