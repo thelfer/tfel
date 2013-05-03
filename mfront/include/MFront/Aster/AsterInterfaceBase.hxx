@@ -134,12 +134,19 @@ namespace aster{
 
     /*!
      * \brief throw an AsterException if the a consistant tangent
-     * operator has to be given.
+     * operator has to been requested and that the behaviour does not
+     * provide one.
      * \param[in] b : behaviour name
      */
     static void
     throwConsistantTangentOperatorIsNotAvalaible(const std::string&);
-
+    /*!
+     * \brief throw an AsterException if the a prediction operator has
+     * to been requested and that the behaviour does not provide one.
+     * \param[in] b : behaviour name
+     */
+    static void
+    throwPredictionOperatorIsNotAvalaible(const std::string&);
     /*!
      * \brief display an error message if the value of the NTENS
      * parameter is not valid

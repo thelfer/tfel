@@ -1,0 +1,78 @@
+@Behaviour ImplicitNorton_Broyden;
+@Parser    Implicit;
+@Algorithm Broyden;
+@Author Helfer Thomas;
+@Date   21 sep 2008;
+@Description{
+  "The norton law integrated using "
+  "an implicit scheme."
+  "The non linear system is solved "
+  "using Broyden Algorithm"
+}
+
+@Includes{
+#include"TFEL/Material/Lame.hxx"
+}
+
+@Coef real young; /* mandatory for castem */
+young.setGlossaryName("YoungModulus");
+@Coef real nu;    /* mandatory for castem */
+nu.setGlossaryName("PoissonRatio");
+@Coef real rho;   /* mandatory for castem */
+rho.setGlossaryName("MassDensity");
+@Coef real alpha; /* mandatory for castem */
+alpha.setGlossaryName("ThermalExpansion");
+
+@LocalVar real lambda;
+@LocalVar real mu;
+
+@StateVar real p;
+p.setGlossaryName("EquivalentViscoplasticStrain");
+
+/* Initialize Lame coefficients */
+@InitLocalVariables{
+  using namespace tfel::material::lame;
+  lambda = computeLambda(young,nu);
+  mu = computeMu(young,nu);
+} // end of @InitLocalVars
+
+@InitJacobian{
+  computeNumericalJacobian(this->jacobian);
+}
+
+@IsTangentOperatorSymmetric true;
+@TangentOperator{
+  using namespace tfel::material::lame;
+  computeNumericalJacobian(this->jacobian);
+  if((smt==ELASTIC)||(smt==SECANTOPERATOR)){
+     computeElasticStiffness<N,Type>::exe(Dt,lambda,mu);
+  } else if (smt==CONSISTANTTANGENTOPERATOR){
+    StiffnessTensor De;
+    Stensor4 Je;
+    computeElasticStiffness<N,Type>::exe(De,lambda,mu);
+    getPartialJacobianInvert(Je);
+    Dt = De*Je;
+  } else {
+    return false;
+  }
+}
+
+@ComputeStress{
+  sig = lambda*trace(eel)*Stensor::Id()+2*mu*eel;
+} // end of @ComputeStresss
+
+@Integrator{
+  static Stensor4 M(Stensor4::Id()-1./3.*(Stensor::Id()^Stensor::Id()));
+  const real A = 8.e-67;
+  const real E = 8.2;
+  const real sigeq = sigmaeq(sig);
+  const real tmp = A*pow(sigeq,E-1.);
+  real inv_sigeq(0);
+  Stensor  n(0.);
+  if(sigeq > 1.){
+    inv_sigeq = 1/sigeq;
+  }
+  n     = 1.5f*deviator(sig)*inv_sigeq;
+  feel  += dp*n-deto;
+  fp    -= tmp*sigeq*dt;
+} // end of @Integrator

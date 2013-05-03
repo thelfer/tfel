@@ -2501,6 +2501,12 @@ namespace mfront{
     } else {
       this->behaviourFile << "false;\n";
     }
+    this->behaviourFile << "static const bool hasPredictionOperator = ";
+    if(this->hasPredictionOperator){
+      this->behaviourFile << "true;\n";
+    } else {
+      this->behaviourFile << "false;\n";
+    }
     this->behaviourFile << "static const bool hasTimeStepScalingFactor = ";
     if(this->hasTimeStepScalingFactor){
       this->behaviourFile << "true;\n";

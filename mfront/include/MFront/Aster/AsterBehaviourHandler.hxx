@@ -139,17 +139,22 @@ namespace aster
 	    GeneralConsistantTangentOperatorComputer>::type,
 	  ConsistantTangentOperatorIsNotAvalaible
 	  >::type ConsistantTangentOperatorHandler;
+	typedef typename tfel::meta::IF<
+	  Traits::hasPredictionOperator,
+	  StandardPredictionOperatorComputer,
+	  PredictionOperatorIsNotAvalaible
+	  >::type PredictionOperatorComputer;
 	if(this->dt<0.){
 	  throwNegativeTimeStepException(Name<BV>::getName());
 	}
 	this->behaviour.checkBounds();
 	typename BV::IntegrationResult r = BV::SUCCESS;
 	if((-3.25<*DDSOE)&&(*DDSOE<-2.75)){
-	  r = this->behaviour.computePredictionOperator(BV::TANGENTOPERATOR);
+	  r = PredictionOperatorComputer::exe(this->behaviour,BV::TANGENTOPERATOR);
 	} else if((-2.25<*DDSOE)&&(*DDSOE<-1.75)){
-	  r = this->behaviour.computePredictionOperator(BV::SECANTOPERATOR);
+	  r = PredictionOperatorComputer::exe(this->behaviour,BV::SECANTOPERATOR);
 	} else if((-1.25<*DDSOE)&&(*DDSOE<-0.75)){
-	  r = this->behaviour.computePredictionOperator(BV::ELASTIC);
+	  r = PredictionOperatorComputer::exe(this->behaviour,BV::ELASTIC);
 	} else if((-0.25<*DDSOE)&&(*DDSOE<0.25)){
 	  r = this->behaviour.integrate(BV::NOSTIFFNESSREQUESTED);
 	} else if((0.75<*DDSOE)&&(*DDSOE<1.25)){
@@ -180,6 +185,28 @@ namespace aster
 	
     private:
 
+      struct StandardPredictionOperatorComputer
+      {
+	typedef Behaviour<AsterModellingHypothesis<N>::value,AsterReal,false> BV;
+	static typename BV::IntegrationResult
+	exe(BV& b,const typename BV::SMType smt)
+	{
+	  return b.computePredictionOperator(smt);
+	} // end of exe	  
+      };
+
+      struct PredictionOperatorIsNotAvalaible
+      {
+	typedef Behaviour<AsterModellingHypothesis<N>::value,AsterReal,false> BV;
+	static typename BV::IntegrationResult
+	exe(BV&,const typename BV::SMType)
+	{
+	  using namespace tfel::utilities;
+	  throwPredictionOperatorIsNotAvalaible(Name<BV>::getName());
+	  return BV::FAILURE;
+	} // end of exe	  
+      };
+      
       struct ConsistantTangentOperatorIsNotAvalaible
       {
 	typedef Behaviour<AsterModellingHypothesis<N>::value,AsterReal,false> BV;

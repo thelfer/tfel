@@ -17,6 +17,8 @@ set(mfront_tests_SOURCES
   Norton_rkCastem
   ImplicitNorton
   ImplicitNorton2
+  ImplicitNorton_Broyden
+  ImplicitNorton_Broyden2
   OrthotropicCreep
   OrthotropicCreep_rk42
   OrthotropicCreep_rkCastem
@@ -36,46 +38,46 @@ target_link_libraries(MFrontCastemBehaviours
   TFELException)
 
 macro(test_umat test_arg)
-  configure_file(${test_arg}.mtest.in
-    ${test_arg}.mtest @ONLY)
+  configure_file(castem${test_arg}.mtest.in
+    castem${test_arg}.mtest @ONLY)
   add_test(castem${test_arg}_mtest
-    ${PROJECT_BINARY_DIR}/mfront/mtest/mtest --verbose=level0 ${test_arg}.mtest)
+    ${PROJECT_BINARY_DIR}/mfront/mtest/mtest --verbose=level0 castem${test_arg}.mtest)
   set_tests_properties(castem${test_arg}_mtest
     PROPERTIES DEPENDS MFrontCastemBehaviours)
   set_tests_properties(castem${test_arg}_mtest
     PROPERTIES DEPENDS mtest)
 endmacro(test_umat)
 
-test_umat(castemelasticity)
-test_umat(castemelasticity2)
+test_umat(elasticity)
+test_umat(elasticity2)
 if(HAVE_CASTEM)
-  test_umat(castemelasticity3)
+  test_umat(elasticity3)
   set_tests_properties(castemelasticity3_mtest
     PROPERTIES DEPENDS MFrontMaterialProperties-castem)
 endif(HAVE_CASTEM)
-test_umat(castemelasticity4)
-test_umat(castemelasticity5)
-test_umat(castemelasticity6)
-test_umat(castemelasticity7)
-test_umat(castemelasticity8)
-test_umat(castemelasticity9)
-test_umat(castemelasticity10)
-test_umat(castemelasticity11)
-test_umat(castemelasticity12)
-test_umat(castemelasticity13)
-test_umat(castemelasticity14)
-test_umat(castemelasticity15)
-test_umat(castemelasticity16)
-test_umat(castemmazars)
-test_umat(castemnorton)
-test_umat(castemnorton2)
-test_umat(castemnorton-euler)
-test_umat(castemnorton-rk2)
-test_umat(castemnorton-rk4)
-test_umat(castemorthotropiccreep)
-test_umat(castemorthotropiccreep-rk42)
-test_umat(castemorthotropiccreep-rkCastem)
-test_umat(castemstrainhardeningcreep)
-test_umat(castemplasticity)
-test_umat(castemchaboche)
-test_umat(castemchaboche2)
+test_umat(elasticity4)
+test_umat(elasticity5)
+test_umat(elasticity6)
+test_umat(elasticity7)
+test_umat(elasticity8)
+test_umat(elasticity9)
+test_umat(elasticity10)
+test_umat(elasticity11)
+test_umat(elasticity12)
+test_umat(elasticity13)
+test_umat(elasticity14)
+test_umat(elasticity15)
+test_umat(elasticity16)
+test_umat(mazars)
+test_umat(norton)
+test_umat(norton2)
+test_umat(norton-euler)
+test_umat(norton-rk2)
+test_umat(norton-rk4)
+test_umat(orthotropiccreep)
+test_umat(orthotropiccreep-rk42)
+test_umat(orthotropiccreep-rkCastem)
+test_umat(strainhardeningcreep)
+test_umat(plasticity)
+test_umat(chaboche)
+test_umat(chaboche2)

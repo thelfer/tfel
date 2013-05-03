@@ -1216,7 +1216,8 @@ namespace mfront{
       this->writeComputeNumericalJacobian();
     }
     if((this->algorithm==MFrontImplicitParserBase::NEWTONRAPHSON)||
-       (this->algorithm==MFrontImplicitParserBase::NEWTONRAPHSON_NR)){
+       (this->algorithm==MFrontImplicitParserBase::NEWTONRAPHSON_NR)||
+       (this->algorithm==BROYDEN)){
       this->writeGetPartialJacobianInvert();
     }
     // compute stress

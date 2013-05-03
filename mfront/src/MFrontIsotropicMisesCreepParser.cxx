@@ -43,6 +43,7 @@ namespace mfront{
     this->localVarsHolder.push_back(VarHandler("stress","seq",1u,0u));
     this->localVarsHolder.push_back(VarHandler("stress","seq_e",1u,0u));
     this->localVarsHolder.push_back(VarHandler("StrainStensor","n",1u,0u));
+    //    this->hasPredictionOperator = true;
     this->hasConsistantTangentOperator = true;
     this->isConsistantTangentOperatorSymmetric = true;
   }
@@ -196,7 +197,7 @@ namespace mfront{
     this->behaviourFile << "const st2tost2<N,Type>& M = st2tost2<N,Type>::M();\n";
     this->behaviourFile << "this->Dt += -4*(this->mu)*(this->mu)*(this->theta)*(ccto_tmp_1*M-(ccto_tmp_1-this->df_dseq*(this->dt)/(1+3*(this->mu)*(this->theta)*(this->dt)*this->df_dseq))*((this->n)^(this->n)));\n";
     this->behaviourFile << "}\n";
-    this->behaviourFile << "} else if(smt==ELASTIC){\n";
+    this->behaviourFile << "} else if((smt==ELASTIC)||(smt==SECANTOPERATOR)){\n";
     this->behaviourFile << "computeElasticStiffness<N,Type>::exe(this->Dt,this->lambda,this->mu);\n";
     this->behaviourFile << "} else {\n";
     this->behaviourFile << "return false;";

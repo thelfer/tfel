@@ -44,15 +44,24 @@ namespace tfel{
        */
       static const bool use_quantities = false;
       /*!
-       * Says if the Behaviour class is able to compute a consistent
-       * tangent operator
+       * Says if the Behaviour class is able to compute a consistant
+       * tangent operator. More precisely, this must be true if the
+       * behaviour is able to compute an approximation of the
+       * consistant tangent operator.
        */
       static const bool hasConsistantTangentOperator = false;
       /*!
        * Says if the consistent tangent operator computed by the
-       * Behaviour class (if any) is symmetric
+       * Behaviour class (if any) is symmetric. If true, we also
+       * consider that all the possible stiffness matrix are
+       * symmetric.
        */
       static const bool isConsistantTangentOperatorSymmetric = false;
+      /*!
+       * Says if the Behaviour class is able to compute a prediction
+       * operator.
+       */
+      static const bool hasPredictionOperator = false;
       /*!
        * Says if the Behaviour class is able the compute a Time Step
        * Scaling factor

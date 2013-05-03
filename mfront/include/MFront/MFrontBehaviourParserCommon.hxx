@@ -446,6 +446,7 @@ namespace mfront{
     bool explicitlyDeclaredUsableInPurelyImplicitResolution;
     bool hasConsistantTangentOperator;
     bool isConsistantTangentOperatorSymmetric;
+    bool hasPredictionOperator;
     bool hasTimeStepScalingFactor;
 
     BehaviourCharacteristic behaviourCharacteristic;

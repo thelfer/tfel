@@ -64,6 +64,7 @@ namespace mfront{
     this->disableCallBack("@OrthotropicBehaviour");
     this->disableCallBack("@IsotropicElasticBehaviour");
     this->disableCallBack("@IsotropicBehaviour");
+    this->hasPredictionOperator = true;
   } // end of MFrontIsotropicBehaviourParserBase::MFrontIsotropicBehaviourParserBase
 
   void
@@ -365,8 +366,8 @@ namespace mfront{
   {
     this->behaviourFile << "IntegrationResult computePredictionOperator(const SMType smt){\n";
     this->behaviourFile << "using namespace std;\n";
-    this->behaviourFile << "if(smt==ELASTIC){\n";
-    this->behaviourFile << "Dt = lambda*Stensor4::IxI()+2*mu*Stensor4::Id();\n";
+    this->behaviourFile << "if((smt==ELASTIC)||(smt==SECANTOPERATOR)){\n";
+    this->behaviourFile << "Dt = (this->lambda)*Stensor4::IxI()+2*(this->mu)*Stensor4::Id();\n";
     this->behaviourFile << "} else {";
     this->behaviourFile << "string msg(\"" << this->className<< "::computePredictionOperator : \");\n";
     this->behaviourFile << "msg +=\"unimplemented feature\";\n";

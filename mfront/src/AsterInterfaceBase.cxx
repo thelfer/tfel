@@ -138,6 +138,15 @@ namespace aster{
   }
 
   void
+  AsterInterfaceBase::throwPredictionOperatorIsNotAvalaible(const std::string& b)
+  {
+    using namespace std;
+    string msg("AsterInterfaceBase::throwPredictionOperatorIsNotAvalaible : ");
+    msg += "behaviour '"+b+"' can't compute a prediction operator";
+    throw(runtime_error(msg));
+  } // end of AsterInterfaceBase::throwBehaviourIntegrationFailedException
+
+  void
   AsterInterfaceBase::throwConsistantTangentOperatorIsNotAvalaible(const std::string& b)
   {
     using namespace std;

@@ -1005,6 +1005,8 @@ mfront/tests/behaviours/DDIF2.mfront -text
 mfront/tests/behaviours/Elasticity.mfront -text
 mfront/tests/behaviours/ImplicitNorton.mfront -text
 mfront/tests/behaviours/ImplicitNorton2.mfront -text
+mfront/tests/behaviours/ImplicitNorton_Broyden.mfront -text
+mfront/tests/behaviours/ImplicitNorton_Broyden2.mfront -text
 mfront/tests/behaviours/ImplicitOrthotropicCreep.mfront -text
 mfront/tests/behaviours/Makefile.am -text
 mfront/tests/behaviours/Mazars.mfront -text
@@ -1044,6 +1046,8 @@ mfront/tests/behaviours/aster/asterelasticity8.mtest.in -text
 mfront/tests/behaviours/aster/asterelasticity9.mtest.in -text
 mfront/tests/behaviours/aster/asterimplicitnorton.mtest.in -text
 mfront/tests/behaviours/aster/asterimplicitnorton2.mtest.in -text
+mfront/tests/behaviours/aster/asterimplicitnorton_broyden.mtest.in -text
+mfront/tests/behaviours/aster/asterimplicitnorton_broyden2.mtest.in -text
 mfront/tests/behaviours/aster/asterimplicitorthotropiccreep.mtest.in -text
 mfront/tests/behaviours/aster/astermazars.mtest.in -text
 mfront/tests/behaviours/aster/asternorton.mtest.in -text

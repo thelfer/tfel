@@ -1,7 +1,7 @@
 @Author Helfer Thomas;
 @Date   09 avril 2013;
 @Description{
-  "Essai de fluage sur un matériau modéliser"
+  "Essai de fluage sur un matériau modélisé"
   "par une loi de type Lemaître (loi viscoplastique "
   "avec écroussage)."
   "Vérification de la réponse fournie par "

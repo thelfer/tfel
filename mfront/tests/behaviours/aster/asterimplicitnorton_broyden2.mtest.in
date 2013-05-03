@@ -7,7 +7,7 @@
 
 @PredictionPolicy 'LinearPrediction';
 
-@Behaviour<aster> 'libMFrontAsterBehaviours.so' 'asterimplicitnorton';
+@Behaviour<aster> 'libMFrontAsterBehaviours.so' 'asterimplicitnorton_broyden2';
 @MaterialProperty<constant> 'YoungModulus'     150.e9;
 @MaterialProperty<constant> 'PoissonRatio'       0.3;
 @MaterialProperty<constant> 'MassDensity'        0.;
@@ -33,18 +33,18 @@
 // for @StrainEpsilon), thus we may expect the strain to be known at
 // '3.6*1.e-9'. If pratice, things are a bit better but not much
 // better.
-@Real 'A' 2.e-37;
-@Real 'E' 4.2;
-@Test<function> 'EXX' 'EELXX0+A*SXX**E*t'     1.e-9;
-@Test<function> 'EYY' 'EELZZ0-0.5*A*SXX**E*t' 1.e-10;
-@Test<function> 'EZZ' 'EELZZ0-0.5*A*SXX**E*t' 1.e-10;
-@Test<function> 'EXY' '0.'                    1.e-10;
+@Real 'A' 8.e-67;
+@Real 'E' 8.2;
+@Test<function> 'EXX' 'EELXX0+A*SXX**E*t'     1.e-6;
+@Test<function> 'EYY' 'EELZZ0-0.5*A*SXX**E*t' 1.e-7;
+@Test<function> 'EZZ' 'EELZZ0-0.5*A*SXX**E*t' 1.e-7;
+@Test<function> 'EXY' '0.'                    1.e-7;
 // tests on internal state variables
-@Test<function> 'ElasticStrainXX' 'EELXX0'  1.e-12;
-@Test<function> 'ElasticStrainYY' 'EELZZ0'  1.e-12;
-@Test<function> 'ElasticStrainZZ' 'EELZZ0'  1.e-12;
-@Test<function> 'ElasticStrainXY' '0.'      1.e-12;
-@Test<function> 'p'               'A*SXX**E*t' 1.e-12;
+@Test<function> 'ElasticStrainXX' 'EELXX0'  1.e-7;
+@Test<function> 'ElasticStrainYY' 'EELZZ0'  1.e-7;
+@Test<function> 'ElasticStrainZZ' 'EELZZ0'  1.e-7;
+@Test<function> 'ElasticStrainXY' '0.'      1.e-7;
+@Test<function> 'EquivalentViscoplasticStrain' 'A*SXX**E*t' 1.e-7;
 // this test is a bit paranoiac since SXX is imposed
 @Test<function> 'SXX' 'SXX'     1.e-3;
 // check that the mechanical equilibrium is satisfied
