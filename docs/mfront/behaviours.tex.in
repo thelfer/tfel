@@ -192,23 +192,20 @@
   comportement mécanique à l'aide du générateur de code \mfront{}.
 
   La variétés des phénomènes traités fait que \mfront{} propose
-  différents façon décrire des lois de comportement mécaniques.
+  différentes façon décrire des lois de comportement mécaniques.
 
-  Certaines sont spécifiques à certaines formes de loi de comportement
-  qui sont d'usage courant et pour lesquels des algorithmes
-  d'intégration performants existent.
+  Certaines sont spécifiques à des lois de comportement qui sont
+  d'usage courant et pour lesquelles des algorithmes d'intégration
+  performants existent (plasticité et viscoplasticité isotropes
+  notamment).
 
   Pour les lois les plus complexes, \mfront{} permet d'utiliser
   des méthodes de \nom{Runge-Kutta} ou des méthodes implicites.
 
-  Le retour d'expérience des utilisateurs montre que l'utilisation
-  de \mfront{} simplifie grandement l'écriture de lois de comportement
-  mécanique.
-
   Les différents tests menés avec les codes aux éléments finis
   \castem{} et \aster{} montrent que les lois de comportement générées
   sont numériquement très
-  efficaces~\cite{michel09,helfer:opti:2011,proix:mfront:2013}. }
+  efficaces~\cite{michel09,helfer:opti:2011,proix:mfront:2013,olagnon13:_analy}. }
 
 %\makeindex{env}
 \makeindex{tfel}
@@ -223,44 +220,58 @@
 
 Ce document décrit comment écrire des lois de comportement mécanique
 avec le générateur de code \mfront{} La lecture de ce document suppose
-au le lecteur une certaine familiarité avec \mfront{}. A minima, la
-lecture de la présentation générale de \mfront{} semble
+que le lecteur a déjà une certaine familiarité avec \mfront{}. A
+minima, la lecture de la présentation générale de \mfront{} semble
 nécessaire~\cite{helfer:mfront:2013}.
 
-Nous décrivons en annexe~\ref{sec:mfront:mechanical_equilibrium} un
-algorithme simplifié de recherche de l'équilibre mécanique qui précise
-la place de la loi de comportement mécanique~: les lois de comportement
-décrivent la réaction locale (en un point de \nom{Gauss}) d'un matériau
-à un incrément de sollicitation externe au cours d'un incrément de
-temps.
+\paragraph{De multiples phénomènes} Les matériaux solides réagissent
+aux sollicitations mécaniques par différents phénomènes~: élasticité,
+viscoplasticité, plasticité, endommagement. Nous renvoyons à 
 
-\paragraph{Rôle de la loi de comportement}
-Connaissant l'état mécanique du matériau à un instant \(t\),
-les lois de comportement doivent fournir~:
+\paragraph{Rôle de la loi de comportement} Nous décrivons en
+annexe~\ref{sec:mfront:mechanical_equilibrium} un algorithme simplifié
+de recherche de l'équilibre mécanique qui précise la place de la loi
+de comportement mécanique. Le lecteur intéressé pourra se reporter aux
+documentations des codes éléments finis pour une description plus
+précise~\cite{pascal05_increpl,abbas:stat_non_lin:2013,caill_01}.
+
+En résumé, connaissant l'état mécanique du matériau à un instant
+\(t\), les lois de comportement doivent, en réponse à un incrément de
+sollicitation mécanique représentée par un incrément de déformations
+totales \(\Delta\,\tepsilonto\), fournir~:
 \begin{itemize}
-  \item l'évolution d'un ensemble de variables internes \(y_{i}\)
-  sur le pas de temps \(\Delta\, t\)~;
+\item l'évolution microstructurelle du matériau, décrit par un
+  ensemble de variables internes \(y_{i}\) sur le pas de temps
+  \(\Delta\, t\)~;
   \item la valeur de la contrainte en fin de pas de temps.
 \end{itemize}
 
-Si l'algorithme de résolution global le nécessite, la loi de
-comportement peut également fournir la matrice tangente cohérente
-\(\deriv{\Delta\tsigma}{\Delta\tepsilonto}\).
+Si l'algorithme de recherche de l'équilibre mécanique le nécessite, la
+loi de comportement peut également fournir~:
+\begin{itemize}
+\item la matrice tangente cohérente
+  \(\deriv{\Delta\tsigma}{\Delta\tepsilonto}\) ou une estimation de
+  celle-ci.
+\item une matrice de prédiction en début de pas de temps permettant de
+  fournir une estimation de la solution en fin de pas de temps, avant
+  de débuter la résolution.
+\end{itemize}
 
-Dans certains cas, les lois de comportement peuvent également
-fournir des indications sur la qualité de la discrétisation temporelle
-du problème.
-
-\paragraph{De multiples phénomènes} Les matériaux solides
-réagissent aux sollicitations mécaniques par différents phénomènes~:
-élasticité, viscoplasticité, plasticité, endommagement.
-
-La variété des phénomènes possibles et des méthodes disponibles
-expliquent la richesse des analyseurs proposés par \mfront{}, qui sont
-actuellement au nombre \(8\). La description de ces analyseurs est
-l'objet de ce document.
+Dans certains cas, les lois de comportement peuvent également donner
+des indications sur la qualité de la discrétisation temporelle du
+problème~\cite{proix11:_etude}.
 
 \subsection{Analyseurs disponibles}
+
+L'écriture de lois de comportement nécessite de prendre à la fois en
+compte les mécanismes physiques décrits (certains algorithmes sont
+plus adaptés à certains phénomènes) et des besoins des codes éléments
+finis (matrice tangente cohérente).
+
+La variété des situations rencontrées en pratique expliquent la
+richesse des analyseurs proposés par \mfront{}, qui sont actuellement
+au nombre \(8\). La description de ces analyseurs est l'objet de ce
+document.
 
 Plusieurs analyseurs dédiés aux lois de comportement sont
 actuellement disponibles~:
@@ -309,20 +320,39 @@ et~\ref{sec:Implicite}.
 \section{Généralités}
 \label{mfront:behaviours:gen}
 
-Les lois de comportement peuvent être complexes. Pour les décrire, il
-nous faut introduire quelques notions.
+Nous abordons dans cette section des points qui sont utiles pour la
+lecture de la suite. Nous commençons par préciser les définitions
+utilisées dans la suite. Nous donnons ensuite quelques conseils sur le
+choix de l'analyseur à utiliser. Nous traitons quelques points qui
+sont indépendants de l'analyseur utilisé. Enfin, nous précisons le
+rôle des interfaces aux lois de comportement.
 
-\paragraph{Propriétés matériau} Afin de pouvoir
-adapter des lois de comportements à différents matériaux, celles-ci
-peuvent utiliser des propriétés matériau qui sont calculées en amont par
-le code appelant. Ces propriétés matériau peuvent être très variées~: il
-peut s'agir des propriétés élastiques du matériau ou de coefficients
-internes.
+\subsection{Quelques définitions}
+
+Les lois de comportement peuvent être complexes. Pour les décrire, il
+nous faut introduire quelques définitions.
+
+\paragraph{Propriétés matériau} Afin de pouvoir adapter des lois de
+comportements à différents matériaux, celles-ci peuvent utiliser des
+propriétés matériau, qui sont définies, dans \mfront{}, comme des
+fonctions des valeurs actuelles des variables d'état du
+matériau~\cite{helfer:mfront:2013}.
+
+Les lois de comportement mécaniques peuvent~:
+\begin{itemize}
+\item demander à ce qu'un certain nombre de propriétés matériau leur
+  soient fournies par le code appelant~\footnote{Voir le mot clé
+    \mkey{MaterialProperty}.}. Dans certains cas, le code \castem{}
+  notamment~\cite{helfer:umat:2013}, le code appelant impose que la
+  loi de comportement utilise des propriétés matériau prédéfinies.
+\item utiliser des lois définies dans des fichiers \mfront{}
+  dédiés~\footnote{Voir le mot clé \mkey{MaterialLaw}.}.
+\end{itemize}
 
 \paragraph{Les variables internes} Les variables internes décrivent
 l'état mécanique local du matériau. 
 
-Pour \mfront{}, lles variables internes peuvent être soit des {\em
+Pour \mfront{}, les variables internes peuvent être soit des {\em
   scalaires} soit des {\em tenseurs} d'ordre \(2\) symétriques.
 
 Certains analyseurs, dédiées à des lois de comportement spécifiques,
@@ -376,151 +406,26 @@ variables locales a été introduite\footnote{La directive
   \mkey{InitLocalVars} est synonyme de la directive
   \mkey{InitLocalVariables}.}.
 
-\subsubsection{Tableaux de variables internes, de propriétés matériau et
-  de variables externes}
+\paragraph{Tableaux de variables internes, de propriétés matériau et
+  de variables externes} Afin de pouvoir regrouper des équations dont
+le {\em formalisme} était similaire, nous avons introduit la
+possibilité de définir des tableaux de variables internes, de
+propriétés matériaux et de variables externes\footnote{Il faut noter
+  que la taille de ces tableaux, c'est à dire le nombre de variables
+  internes, de propriétés matériau et/ou de variables externes est
+  fixe \og~en dur~\fg{} dans le fichier d'entrée.}. Il est alors
+possible d'écrire des boucles sur les variables internes constituant
+le tableau pour condenser l'écriture des lois.
 
-Ce paragraphe décrit des fonctionnalités qui ne sont pas accessibles aux
-analyseurs spécifiques.
+\subsection{Conseils sur le choix de l'analyseur à utiliser}
 
-%\paragraph{Extension aux intégrations implicites} La possibilité
-%d'utiliser des tableaux de variables internes est aujourd'hui limitée à
-%l'intégration par une méthode de \textsc{Runge-Kutta}, son extension à
-%l'intégration par des méthodes implicites est en cours. La principale
-%difficulté dans ce cas est de gérer de manière à la fois efficace et
-%pratique l'accès aux valeurs du jacobien. Cet accès est aujourd'hui
-%délégué à des variables intermédiaires qui représentent des blocs du
-%jacobien (voir à ce sujet le paragraphe~\ref{JacobienNumerique}). Ces
-%variables intermédiaires se comportent comme des tenseurs ou comme des
-%scalaires (ce qui répond au critère de simplicité d'utilisation), mais
-%leur utilisation se fait sans coût car il est possible de calculer à la
-%compilation les décalages mémoire nécessaires pour travailler
-%directement dans la matrice jacobienne (ce qui répond au critère
-%d'efficacité). Ceci n'est plus possible avec des tableaux de variables
-%internes et il est nécessaire donc introduire de nouvelles classes
-%prenant en compte cette contrainte.
+Pour pouvoir traiter tous les types de lois de comportement,
+différents analyseurs sont disponibles. Les analyseurs propres à des
+formes de lois de comportement sont dits spécifiques. Par opposition,
+les autres sont dits génériques.
 
-Les premières versions de \mfront{} supposait que chaque variable
-interne était indépendante et il fallait écrire pour chaque variable les
-équations décrivant son évolution. Il n'était pas possible de regrouper
-des évolutions dont le {\em formalisme} était similaire.
-
-L'intégration de lois de comportement de plasticité cristalline ou de
-lois issus de l'homogénéisation de structures par la méthode
-NTFA nous ont montré que cette façon de procéder pouvait devenir mal
-commode~: il fallait répéter un grand nombre de fois des équations qui
-ne se différenciaient que par leurs coefficients. Le travail
-d'intégration présentait alors un caractère répétitif pénible et source
-d'erreurs.
-
-%\footnote{Pour illustrer notre propos, nous pouvons donner quelques
-%  éléments de la méthode NTFA~\cite{blanc:ver}. Le principe de la méthode
-%  est de décomposer le champ de déformation viscoplastique sur une base
-%  orthonormée de modes préférentiels de déformation, que l'on identifie
-%  par des essais élémentaires sur une microstructure
-%  donnée~\cite{largenton12:_model_mox}. La décomposition s'écrit~:
-%  \begin{equation}
-%    \label{eq:decoeps} \epsilonvis(x) = \sum_{k=1}^M \varepsilon^{\mathrm{vis}}_k
-%    \tenseur{\mu}_k(x)
-%  \end{equation}
-%  où~:
-%  \begin{minipage}[t]{0.9\linewidth}
-%    \begin{itemize} \item \(M\) le nombre de modes, qui dépend du
-%      contraste entre les phases, de la nonlinéarité du comportement et
-%      de la géométrie de milieu~; \item \(\tenseur{\mu}_k\) le k-ième
-%      mode de déformation plastique (tenseur)~; \item
-%      \(\varepsilon^{vp}_k\) est la déformation scalaire associée au
-%      mode \(k\), ces \(M\) déformations sont les {\em variables
-%      internes} du modèle.
-%  \end{itemize}
-%\end{minipage} \medskip Les modes sont tensoriels, orthonormés,
-%nonuniformes (dépendants de \(x\)) et à support dans chaque phase. En
-%viscoélasticité linéaire isotrope incompressible, le système
-%différentiel régissant l'équilibre global s'écrit en utilisant les
-%variables réduites scalaires \(e_k\), \(e_k^{\mathrm{vis}}\) et
-%\(\tau_k\) définies ci-dessous :
-%\begin{equation}
-%  \label{eq:modeleeffectif} \displaystyle \left\{
-%  \begin{array}{rcl}
-%    \tau_k &=& 2 G_r^e (e_k - e_k^{\mathrm{vis}}) \\
-%    \dot{e}_k^{\mathrm{vis}} &=& \Frac{1}{2 G_r^{\mathrm{vis}}} \tau_k
-%    \\
-%    e_k &=& \tenseur{a}_k : \tenseur{E} + \displaystyle\sum_{l=1}^M
-%    \Frac{\Big\langle \tenseur{\mu}_k :
-%      \tenseur{D}^{*}_{\tenseur{\mu}_{l}} \Big\rangle}{\Big\langle
-%      \tenseur{\mu}_l : \tenseur{\mu}_l \Big\rangle } e_l^{\mathrm{vis}}
-%    \end{array}
-%    \right.
-%  \end{equation}
-%  où~:
-%  \begin{minipage}[t]{0.85\linewidth}
-%    \begin{itemize} \item \(e_k = \langle \tepsilonto : \tenseur{\mu}_k
-%      \rangle\) \item \(e_k^{\mathrm{vis}} = \langle \epsilonvis :
-%      \tenseur{\mu}_k \rangle= \langle \tenseur{\mu}_k : \tenseur{\mu}_k
-%      \rangle \varepsilon^{\mathrm{vis}}_k\) \item \(\tau_k=\langle
-%      \tsigma : \tenseur{\mu}_k \rangle\) \item \(G_r^e\) est le module
-%      de cisaillement élastique de la phase \(r\)~; \item
-%      \(G_r^{\mathrm{vis}}\) est le module de cisaillement
-%      viscoplastique de la phase \(r\)~; \item \(\tenseur{a}_k = \langle
-%      \tenseur{\mu}_k :\tenseur{A}\rangle\) le tenseur de localisation
-%      des déformations réduit~; \item
-%      \(\tenseur{D}^{*}_{\tenseur{\mu}_{k}}\) est le tenseur
-%      d'influence associé au mode \(\tenseur{\mu}_k\).
-%    \end{itemize}
-%  \end{minipage}\\
-%  \medskip 
-%  L'évolution de la contrainte macroscopique
-%  \(\tenseur{\Sigma}\) est donnée par~:
-%  \[
-%  \tenseur{\Sigma} = \tenseurq{C} : \tenseur{E} +
-%  \displaystyle\sum_{k=1}^M \Frac{\Big\langle
-%    \tenseurq{C}\paren{x}\,\colon\,\tenseur{D}^{*}_{\tenseur{\mu}_{k}}
-%    \Big\rangle - \Big\langle
-%    \tenseurq{C}\paren{x}\,\colon\,\tenseur{\mu}_k
-%    \Big\rangle}{\Big\langle \tenseur{\mu}_k\,\colon\,\tenseur{\mu}_k
-%    \Big\rangle}e^{\mathrm{vis}}_k
-%  \]
-%  où~:
-%  \begin{minipage}[t]{0.85\linewidth}
-%    \begin{itemize} \item \(\tenseur{\Sigma}\) est la contrainte
-%      effective~; \item \(\tenseur{E}\) est la déformation effective~;
-%      \item \(\tenseurq{C}\paren{x}\) est le tenseur des modules
-%      élastiques local~; \item \(\tenseurq{C}\) représente le tenseur des
-%      modules élastiques effectif~;
-%    \end{itemize}
-%  \end{minipage}
-%
-%  Dans le cas de la méthode NTFA, il fallait répéter \(M\) fois, une
-%  fois pour chaque mode, l'équation~\eqref{eq:modeleeffectif}.
-%  L'homogénéisation d'une microstructure à \(2\) phases pouvant conduire
-%  à une trentaine de modes, et l'homogénéisation d'une microstructure à
-%  \(3\) phases à une cinquantaine de modes, on comprend pourquoi la
-%  répétition de l'équation~\eqref{eq:modeleeffectif} est
-%  particulièrement mal venue.}.
-
-Afin de pouvoir regrouper ces équations, nous avons introduit la
-possibilité de définir des tableaux de variables internes, de propriétés
-matériaux et de variables externes\footnote{Il faut noter que la taille
-de ces tableaux, c'est à dire le nombre de variables internes, de
-propriétés matériau et/ou de variables externes est fixe \og~en
-dur~\fg{} dans le fichier d'entrée. Dans le cas}.
-
-Il est alors possible d'écrire des boucles sur les variables internes
-constituant le tableau pour condenser l'écriture des lois.
-
-%\begin{figure}
-%  \code{\scriptsize \input{@top_srcdir@/docs/mfront/Images/2norton-rk.tex} }
-%  \caption{Extrait d'un fichier \mfront{} de loi de comportement mécanique utilisant des
-%    tableaux de propriétés matériau et des tableaux de variables
-%    internes.}
-%  \label{2norton-rk}
-%\end{figure}
-%
-%La figure~\ref{2norton-rk} présente l'exemple d'une loi de comportement
-%somme de deux écoulements viscoplastiques de \textsc{Norton}.
-
-\subsection{Conseils sur le choix de l'analyseur à utiliser} Nous pouvons
-donner quelques conseils généraux sur sur le choix de l'analyseur à
-utiliser~:
+Nous pouvons donner quelques conseils généraux sur sur le choix de
+l'analyseur à utiliser~:
 \begin{itemize}
   \item si un intégrateur spécifique existe, il vaut mieux l'utiliser~:
   ils utilisent un algorithme optimisé et robuste et le nombre
@@ -540,15 +445,29 @@ utiliser~:
     de calculer la jacobienne)
     \item si le temps de développement est limité~;
     \item si le temps d'intégration de la loi de comportement ne pose
-    pas de problème de performance.
+    pas de problème de performance~;
+  \item si le nombre de variables internes est très grand (loi de
+    comportement issus de l'homogénéisation de
+    poly-cristaux~\cite{proix13:_compor} notamment).
   \end{itemize}
 \end{itemize}
 
+Insistons sur le fait que l'utilisation de l'analyseur
+\nom{Runge-Kutta} est fortement déconseillée. De nombreux
+développements ont été faits pour rendre l'utilisation des méthodes
+implicites plus simples (calcul automatique de la jacobienne par
+différentiation numérique, algorithmes de \nom{Broyden}) et si
+l'expression de la loi reste encore un peu plus complexe, les gains en
+performance valent largement l'effort supplémentaire.
+
 L'analyseur \texttt{DefaultParser} n'est utile que dans ces cas très
 particuliers, par exemple pour des lois dépendant explicitement des
-déformations.
+déformations (loi de \nom{Mazars} par
+exemple~\cite{francois13:_model}).
 
-\subsection{Traitement des matériaux orthotropes}
+\subsection{Points particuliers}
+
+\subsubsection{Traitement des matériaux orthotropes}
 
 Ce paragraphe décrit des fonctionnalités qui ne sont pas accessibles aux
 analyseurs spécifiques (dédiés à des lois isotropes).
@@ -565,54 +484,13 @@ restrictions imposées par les codes aux éléments finis \castem{} et
   dimension. Le cas des tubes est traité en détail dans
   l'annexe~\ref{sec:annexe:orthotropie}~;
 \end{itemize}
-%
-%Par ailleurs, dans \castem{}, les coefficients de thermo-élasticité
-%passés à la loi de comportement sont ceux strictement nécessaires à
-%l'hypothèse de modélisation utilisée. Ce point est traité
-%annexe~\ref{sec:calcul-de-la}.
-%
-%Pour contourner ces difficultés, \mfront{} introduit différents
-%mots-clés allégeant le travail d'implantation des lois orthotropes.
-%
-%Le premier de ces mots-clés est
-%\mkeyb{OrthotropicBehaviour}{Orthotropic\-Behaviour}. En présence de
-%ce mot-clé, les interfaces aux lois de comportement se charge~:
-%\begin{itemize}
-%  \item de déclarer implicitement les coefficients thermo-élastiques et
-%  les coefficients associés aux directions d'ortho\-tropie~;
-%  \item d'exprimer le tenseur des déformations totales \(\tepsilonto\),
-%  l'incrément du tenseur des déformations totales \(\Delta\,\tepsilonto\)
-%  et le tenseur des contraintes \(\tsigma\) en début de pas dans le
-%  repère d'orthotropie avant l'appel à la loi de comportement~;
-%  \item d'exprimer le tenseur des contraintes résultant de l'intégration
-%  de la loi de comportement dans le repère initial.
-%\end{itemize}
-%
-%Le second de ces mots-clés est
-%\mkeyb{RequireStiffnessTensor}{Require\-Stiff\-ness\-Tensor} qui
-%demande à ce que la matrice d'élasticité soit fournie à la loi de
-%comportement. Cette matrice d'élasticité sera connue dans \mfront{} sous
-%le nom de variable \texttt{D}.
-%
-%Le troisième de ces mots-clés est
-%\mkeyb{Require\-Thermal\-Expansion\-Tensor}{RequireThermalExpansionTensor}
-%qui demande à ce que le tenseur des dilatations thermiques soit fourni à
-%la loi de comportement. Ce tenseur sera connu dans \mfront{} sous le nom
-%de variable \texttt{A}. Cette variable a été introduite par souci de
-%complétude mais est en pratique inutilisée, les dilatations thermiques
-%étant généralement calculées en amont de l'étape d'intégration de la loi
-%de comportement mécanique.
-%
-%Notons que les mots clés
-%\mkeyb{RequireStiffnessTensor}{Require\-Stiff\-ness\-Tensor} et
-%\mkeyb{Require\-Thermal\-Expansion\-Tensor}{RequireThermalExpansionTensor}
-%sont valides que la loi traitée soit isotrope ou orthotrope.
 
-\subsection{Traitement des dilatations libres}
+\subsubsection{Traitement des dilatations libres}
 
-Dans un usage standard du code aux éléments finis \castem{}, les
-dilatations libres sont généralement traitées en amont de l'intégration
-de la loi de comportement.
+Dans la plupart des codes aux éléments
+finis~\cite{aster:13,12:castemcea}, les dilatations libres sont
+généralement traitées en amont de l'intégration de la loi de
+comportement.
 
 Cela se traduit par le fait que la déformation totale passée à la loi de
 comportement est en fait la déformation mécanique totale, c'est à dire
@@ -626,19 +504,17 @@ Il peut cependant être intéressant de traiter certains gonflements dans
 la loi de comportement. Par exemple, les formulations des lois
 viscoplastiques de gaine des réacteurs refroidis au sodium relient
 l'intensité de l'écoulement viscoplastique à la vitesse de gonflement.
-Le traitement des dilatations libres devra se faire dans la loi de
-comportement en cas d'extension aux transformations finies.
 
-%Pour prendre en compte une dilatation libre, il suffit de calculer un
-%incrément de dilatation et de le soustraire à l'incrément de dilatation
-%totale dans la partie \mkey{InitLocalVariables}. 
-%
-%Il est possible de garder une trace de cette dilatation en définissant
-%une variable auxiliaire associée. Il est cependant nécessaire de prendre
-%garde à la manière dont sont mises à jour les variables auxiliaires par
-%l'analyseur utilisé.
+Pour prendre en compte une dilatation libre, il suffit de calculer un
+incrément de dilatation et de le soustraire à l'incrément de dilatation
+totale dans la partie \mkey{InitLocalVariables}. 
 
-%\subsection{Classes générées}
+Il est possible de garder une trace de cette dilatation en définissant
+une variable auxiliaire associée. Il est cependant nécessaire de prendre
+garde à la manière dont sont mises à jour les variables auxiliaires par
+l'analyseur utilisé.
+
+%\subsubsection{Classes générées}
 %
 %\begin{figure}[htbp]
 %  \centering
@@ -676,12 +552,20 @@ comportement en cas d'extension aux transformations finies.
 %  de comportements ont souvent des unités exotiques.
 %\end{itemize}
 %
+
 \subsubsection{Gestion des bornes}
 
-%La distinction entre bornes physiques et bornes de validité, décrites
-%pour les propriétés matériau au
-%paragraphe~\ref{sec:mfront:bounds}, est reprise pour les lois
-%de comportement mécanique.
+Deux types de bornes sont distinguées dans \mfront{}~:
+\begin{itemize}
+\item les bornes physiques\footnote{Voir le mot clé
+    \mkey{@PhysicalBounds}}, qui désignent les plages de valeurs
+  acceptables pour une variable donnée. Par exemple, une température
+  (en Kelvin) ne peut être négative, une porosité est positive et
+  inférieure à 1~;
+\item les bornes de validité\footnote{Voir le mot clé \mkey{@Bounds}},
+  qui désignent les plages de valeurs sur lesquelles la loi de
+  comportement a été identifiée.
+\end{itemize}
 
 Des bornes peuvent être posées sur~:
 \begin{itemize}
@@ -690,18 +574,17 @@ Des bornes peuvent être posées sur~:
   \item les valeurs des variables externes.
 \end{itemize}
 
-%La vérification des bornes d'une variable est déléguée aux classes
-%\tfelb{BoundsChecks}{Bounds\-Checks} définies dans le fichier d'entête
-%\headerb{TFEL/MaterialLaw/BoundsCheck.hxx}{TFEL/\-Material\-Law/\-Bounds\-Check\-.hxx}.
-%
-%\paragraph{Dépassement des bornes physiques} Une violation d'une borne
-%physique conduit à lever une exception du type
-%\tfelb{OutOfBoundsException}{Out\-Of\-Bounds\-Exception} définie dans
-%le fichier
-%\headerb{TFEL/MaterialLaw/OutOfBoundsException.hxx}{TFEL/\-Material\-Law/\-Out\-Of\-Bounds\-Excep\-tion\-.hxx}.
-
 \paragraph{Dépassement des bornes de validité} Le traitement d'une
-violation d'une borne de validité dépend de la politique adoptée.
+violation d'une borne de validité dépend de la politique
+adoptée. Trois politiques sont actuellement implantées~:
+\begin{itemize}
+\item ne rien faire~;
+\item afficher un message d'avertissement~;
+\item arrêter le calcul.
+\end{itemize}
+
+La façon préciser cette politique dépend du code cible (voir
+paragraphe~\ref{sec:behaviours:interface}).
 
 % Toutes
 %les lois de comportement générées proposent une méthode
@@ -719,16 +602,6 @@ violation d'une borne de validité dépend de la politique adoptée.
 %de violation d'une borne de validité. Si la politique est fixée à
 %\texttt{Strict}, une exception du type
 %\tfelb{OutOfBoundsException}{Out\-Of\-Bounds\-Exception} est levée.
-
-\subsubsection{Accès à l'hypothèse de modélisation}
-
-Les lois de comportements écrites en \mfront{} sont généralement
-indépendantes de l'hypothèse de modélisation. Dans le cas des lois de
-comportements orthotropes, il est nécessaire d'avoir accès à cette
-information car il n'est pas possible, pour une utilisation dans
-\castem{}, d'avoir une convention de rangement des axes d'orthotropie
-valides pour toutes les hypothèses (voir
-annexe~\ref{sec:annexe:orthotropie}).
 
 %Le fichier d'entête
 %\headerb{TFEL/MaterialLaw/ModellingHypothesis.hxx}{TFEL/\-Material\-Law/\-Modelling\-Hypo\-thesis\-.hxx}
@@ -796,10 +669,6 @@ annexe~\ref{sec:annexe:orthotropie}).
 %  \end{equation}
 %\end{itemize}
 %
-%Les parties de code décrivant les lois de comportement peuvent
-%accéder à cette information via la méthode {\tt
-%  get\-Modelling\-Hypo\-thesis} ou par le paramètre \varcpp{hypothesis}
-%de la classe.
 %
 \subsection{Interface aux lois de comportement}
 \label{sec:behaviours:interface}
@@ -808,11 +677,12 @@ Cette section décrit tout d'abord le rôle des interfaces puis chacune
 des deux interfaces disponibles actuellement~:
 \begin{itemize}
 \item l'interface \umat{} utilisée pour l'adhérence au code aux
-  éléments finis \castem{}. Cette interface est également utilisée par
-  le code d'homogénéisation par transformées de \nom{Fourier} rapides
+  éléments finis \castem{}~\cite{12:castemcea,helfer:umat:2013}. Cette
+  interface est également utilisée par le code d'homogénéisation par
+  transformées de \nom{Fourier} rapides
   \tmfft{}~\cite{castelier09:_specif_fourier,jerome10:_tmfft_softw_concep}~;
 \item l'interface \aster{} utilisée pour l'adhérence au code aux
-  éléments finis \aster{}.
+  éléments finis \aster{}~\cite{aster:13,helfer:aster:2013}.
 \end{itemize}
 
 \subsubsection{Rôle des interfaces aux lois de comportement}
@@ -886,11 +756,9 @@ Après une description des particularités des lois de comportement
 mécanique traitées dans cette section, les techniques d'intégration
 qui leurs sont appliquées dans {\mfront} sont exposées. Celles-ci
 s'appuient sur une résolution implicite, une \(\theta\)-méthode
-semblable à celles qui sont décrites en section~\ref{sec:bipbip}.
+semblable à celles qui sont décrites en section~\ref{sec:Implicite}.
 
-Elles permettent également le calcul de la matrice tangente cohérente,
-qui, plus technique (pas sûr!?), est reporté en
-annexe~\ref{mfront:isotropic:tangentOpertor}.
+Elles permettent également le calcul de la matrice tangente cohérente.
 
 \subsubsection{Expression des lois de comportement}
 
@@ -923,7 +791,8 @@ hypothèse sera utilisée pour formuler l'ensemble des mécanismes:
 
 \paragraph{Tenseurs}
 Pour simplifier les expressions à venir, il est commode d'introduire
-des notations tensorielles, détaillées en annexe~\ref{bipbip}:
+des notations tensorielles, détaillées en
+annexe~\ref{sec:oper-tens-dans}~:
 \begin{itemize}
 \item le produit tensoriel de deux tenseurs $a$, $b$: $a\otimes b$;
 \item le produit contracté de deux tenseurs $a$, $b$: $a\colon b$;
@@ -1166,7 +1035,7 @@ f_{i}^{\textrm{an}}(\sigmaeq,p_{i})\,\dot{p}_{i} = 0
 
 Dans {\mfront}, la loi de comportement~\eqref{eq:systemeSpecifique}
 est intégrée par une méthode implicite, une \(\theta\)-méthode,
-semblable à celle présentée au paragraphe~\ref{sec:bipbip}.
+semblable à celle présentée au paragraphe~\ref{sec:Implicite}.
 
 \paragraph{Incrément de temps}
 D'après ce qui précède, les variables internes sont la déformation
@@ -1494,8 +1363,8 @@ et de la nouvelle valeur de déformation élastique:
 La méthode de résolution implicite permet le calcul de la matrice
 tangente cohérente.
 
-La matrice tangente, décrite au paragraphe~\ref{bipbip}, permet
-d'améliorer la résolution du calcul de structure....
+La matrice tangente cohérente, permet d'améliorer la résolution du
+calcul de structure
 
 \paragraph{Définition}
 L'intégration numérique décrite au paragraphe précédent, permet de
@@ -2015,8 +1884,9 @@ valeur du flux de neutrons rapides \(\phi\) est égal à
 \section{Intégration des lois de comportement, intégrateur par défaut}
 \label{sec:defaultparser}
 
-L'intégrateur par défaut est essentiellement utilisé à des
-fins de test ou pour certains lois spécifiques simples.
+L'intégrateur par défaut est essentiellement utilisé à des fins de
+test ou pour certains lois spécifiques (loi d'endommagement pilotée en
+déformations).
 
 \subsection{Exemple de l'élasticité orthotrope}
 
@@ -2099,16 +1969,21 @@ l'analyseur {\tt Default\-Parser} fournit deux mots clés~:
 \end{itemize}
 
 Si l'appelant demande le calcul de la matrice tangente cohérente, la
-variable booléenne \varcpp{computeTangentOperator\textunderscore{}} est
-vraie.
+variable booléenne
+\varcpp{compute\-Tangent\-Operator\textunderscore{}} est vraie.
 
-%  L'utilisateur doit tester cette valeur et effectuer le calcul le
-% cas échéant. Le type de matrice attendue est soit~:
-% \begin{itemize}
-% \item {\tt ELASTIC}, pour la matrice d'élasticité~;
-% \item {\tt SECANT},  pour la matrice sécante~;
-% \item {\tt CONSISTANT},  pour la matrice tangente cohérente~;
-% \end{itemize}
+Le type de matrice demandé est stocké dans la variable {\tt smt}
+(\varcpp{stiffness matrix type}). L'utilisateur doit tester sa valeur
+et effectuer le calcul le cas échéant. Sa valeur peut être~:
+\begin{itemize}
+\item {\tt ELASTIC}, pour la matrice d'élasticité (matrice
+  d'élasticité)~;
+\item {\tt SECANTOPERATOR}, pour la matrice sécante (matrice
+  d'élasticité endommagée)~;
+\item {\tt TANGENTOPERATOR},  pour la matrice tangente~;
+\item {\tt CONSISTANTTANGENTOPERATOR}, pour la matrice tangente
+  cohérente~;
+\end{itemize}
 
 \clearpage
 \newpage
@@ -2121,40 +1996,18 @@ l'intégration des lois de comportement, formulées en vitesse, par une
 méthode explicite.
 
 Contrairement aux analyseurs spécifiques décrits dans la
-section précédente, aucune hypothèse n'est faite sur les lois de
-comportement présentés~: l'analyseur \texttt{RungeKutta} est dit
-générique.
+section~\ref{sec:mfront:isotropic:analyser}, aucune hypothèse n'est
+faite sur les lois de comportement présentés~: l'analyseur
+\texttt{RungeKutta} est dit générique.
 
-Nous supposons que l'utilisateur a réussi à réduire l'intégration de
-la loi de comportement à un système différentiel et nous détaillons les
-méthodes d'intégration proposés par l'analyseur \texttt{RungeKutta}.
-Nous donnons en même temps les directives \mfront{} qui permettent de
-programmer le système différentiel et de modifier le comportement des
-algorithmes.
-
-\subsection{Résolution d'un système différentiel par une méthode explicite}
-\label{sec:resol-dun-syst}
-
-Soit à résoudre le système différentiel suivant~:
+Nous supposons que l'utilisateur a réussi à exprimer la loi de
+comportement sous la forme d'un système différentiel~:
 \begin{equation}
   \label{eq:systeme_diff}
   \dot{Y}=G\paren{Y,t}
 \end{equation}
 où \(G\) est une fonction {\em a priori} non linéaire et que nous
 supposerons {\em a minima} continûment dérivable.
-
-La dépendance en temps évoquée ici dans la fonction \(G\) désigne en
-réalité une dépendance à la variation de certaines variables {\em
-  externes} qui influencent la loi de comportement. Des exemple de
-telles variables externes sont~:
-\begin{minipage}[t]{0.5\linewidth}
-  \begin{itemize}
-    \item le taux de combustion~;
-    \item la taille de grain~;
-    \item la densité de fission~;
-    \item etc\ldots
-  \end{itemize}
-\end{minipage}
 
 \(Y\) un vecteur regroupant les différentes variables internes~:
 \[
@@ -2168,16 +2021,36 @@ Y=
 \end{pmatrix}
 \]
 Cette écriture est {\em symbolique} et chaque terme \(y_{j}\) peut
-représenter une variable interne qui peut être soit un scalaire soit un
-tenseur symétrique d'ordre \(2\).
+représenter une variable interne qui peut être soit un scalaire soit
+un tenseur symétrique d'ordre \(2\). L'analyseur \texttt{RungeKutta}
+impose que le premier terme de ce vecteur soit la déformation
+élastique, dont la variable associée est \texttt{eel}, qui est
+automatiquement déclarée. Le nom de glossaire de cette variable est
+\texttt{Elastic\-Strain}.
 
-L'analyseur \texttt{RungeKutta} impose que le premier terme de ce
-vecteur soit la déformation élastique, dont la variable associée est
-\texttt{eel}, qui est automatiquement déclarée. Le nom de glossaire de
-cette variable est \texttt{Elastic\-Strain}.
+La dépendance en temps de la fonction \(G\) qui apparaît dans
+l'équation~\eqref{eq:systeme_diff} désigne en réalité une dépendance à
+la variation de certaines variables {\em externes} qui influencent la
+loi de comportement. Des exemple de telles variables externes sont~:
+\begin{minipage}[t]{0.5\linewidth}
+  \begin{itemize}
+    \item le taux de combustion~;
+    \item la taille de grain~;
+    \item la densité de fission~;
+    \item etc\ldots
+  \end{itemize}
+\end{minipage}
 
-\paragraph{Les algorithmes de \nom{Runge-Kutta}} Les méthodes de
-\nom{Runge-Kutta} désignent une famille de d'algorithmes telles que~:
+Nous détaillons les méthodes d'intégration proposés par l'analyseur
+\texttt{RungeKutta}. Nous donnons en même temps les directives
+\mfront{} qui permettent de programmer le système différentiel et de
+modifier le comportement des algorithmes.
+
+\subsection{Les algorithmes de \nom{Runge-Kutta}}
+\label{sec:resol-dun-syst}
+
+Les méthodes de \nom{Runge-Kutta} désignent une famille de
+d'algorithmes telles que~:
 \[
 \finpas{Y}=\debutpas{Y}+\displaystyle\sum_{i=1}^{n}b_{i}k_{i}
 \]
@@ -3459,11 +3332,11 @@ d'itérations séparant deux emplois successifs de cette méthode. La
 valeur fournie peut être modifiée par le paramètre
 \varcpp{relaxation\-Coefficient}.
 
-\subsubsection{Autres pistes}
+% \subsubsection{Autres pistes}
 
-D'autres pistes d'amélioration peuvent être suivies. Nous renvoyons à
-l'annexe~\ref{sec:mfront:implicit:robustness} pour la description d'un
-algorithme dû à \nom{Powell} qui semble particulièrement intéressant.
+% D'autres pistes d'amélioration peuvent être suivies. Nous renvoyons à
+% l'annexe~\ref{sec:mfront:implicit:robustness} pour la description d'un
+% algorithme dû à \nom{Powell} qui semble particulièrement intéressant.
 
 \subsection{Calcul de la matrice tangente cohérente}
 
@@ -3896,8 +3769,6 @@ décrites en annexe~\ref{sec:annexe:orthotropie} pour les tubes.
 \newpage
 \section{Conclusions}
 
-
-
 \clearpage
 \newpage
 \referencecea
@@ -4119,6 +3990,7 @@ itération peut cependant être important.
 \clearpage
 \newpage
 \section{Opérations tensorielles dans \TFEL{}}
+\label{sec:oper-tens-dans}
 
 La librairie \TFEL{} est née d'une initiative personnelle visant à se
 doter d'outils, notamment mathématiques, basés sur des paradigmes de
@@ -4604,106 +4476,105 @@ cette fonction s'utilise ainsi~:
   \end{minipage}
 \end{center}
 
+% \clearpage
+% \newpage
+% \section{Amélioration de la robustesse des algorithmes de
+%   résolutions implicites} \label{sec:mfront:implicit:robustness}
 
-\clearpage
-\newpage
-\section{Amélioration de la robustesse des algorithmes de
-  résolutions implicites} \label{sec:mfront:implicit:robustness}
+% Les méthodes de résolution des systèmes implicites nécessitent de
+% choisir une estimation de la solution \(Y_{0}\) pour initier la
+% recherche. Par défaut, \mfront{} utilisera le vecteur nul comme
+% estimation initiale, mais l'utilisateur peut en spécifier une autre par
+% la directive \mkey{Predictor}.
 
-Les méthodes de résolution des systèmes implicites nécessitent de
-choisir une estimation de la solution \(Y_{0}\) pour initier la
-recherche. Par défaut, \mfront{} utilisera le vecteur nul comme
-estimation initiale, mais l'utilisateur peut en spécifier une autre par
-la directive \mkey{Predictor}.
+% La convergence des algorithmes de résolutions implicites n'est garantie
+% que si l'estimation initiale \(Y_{0}\) est suffisamment proche de
+% la solution recherchée. Loin de la solution, l'algorithme peut
+% éventuellement converger mais les premières itérations tendent
+% généralement vers la solution assez lentement (phase de recherche)~: il
+% est classique d'observer une convergence linéaire lors de la phase de
+% recherche et une transition vers un ordre de convergence plus élevé
+% proche de la solution.
 
-La convergence des algorithmes de résolutions implicites n'est garantie
-que si l'estimation initiale \(Y_{0}\) est suffisamment proche de
-la solution recherchée. Loin de la solution, l'algorithme peut
-éventuellement converger mais les premières itérations tendent
-généralement vers la solution assez lentement (phase de recherche)~: il
-est classique d'observer une convergence linéaire lors de la phase de
-recherche et une transition vers un ordre de convergence plus élevé
-proche de la solution.
+% Pour les lois de comportement fortement non linéaires, il est difficile
+% de proposer une estimation \(Y_{0}\) garantissant la convergence,
+% il peut donc être intéressant d'améliorer la robustesse des algorithmes.
 
-Pour les lois de comportement fortement non linéaires, il est difficile
-de proposer une estimation \(Y_{0}\) garantissant la convergence,
-il peut donc être intéressant d'améliorer la robustesse des algorithmes.
+% \begin{table}
+%   \centering
+%   \begin{tabular}{|c|c|}
+%     \hline Méthode & Expression de \(s_{n}\) \\
+%     \hline \hline Algorithme de \textsc{Newton-Raphson} &
+%     \(-J^{-1}\,.\,F\paren{Y_{n-1}}\) \\
+%     \hline
+%     \begin{minipage}{7cm}
+%       Algorithme de \textsc{Newton-Raphson} et
+%       dérivation numérique
+%     \end{minipage}
+%     & \(-\underset{\sim}{J}^{-1}\,.\,F\paren{Y_{n-1}}\) \\
+%     \hline Premier algorithme de \textsc{Broyden} &
+%     \begin{minipage}{5cm}
+%       \(-\underset{\sim}{J}_{n-1}^{-1}\,.\,F\paren{Y_{n-1}}\)
+%       où \(\underset{\sim}{J}_{n}\) est donné par
+%       l'équation~\eqref{eq:Broyden}
+%     \end{minipage}
+%     \\
+%     \hline Second algorithme de \textsc{Broyden} &
+%     \begin{minipage}{5cm}
+%       \(-\underset{\sim}{J}_{n-1}^{-1}\,.\,F\paren{Y_{n-1}}\)
+%       où \(\underset{\sim}{J}_{n}^{-1}\) est donné par\(Y_{0}\)
+%       l'équation~\eqref{eq:Broyden2}
+%     \end{minipage}
+%     \\
+%     \hline
+%   \end{tabular}
+%   \caption{Expression de $s_{n}$ pour les
+%     différents algorithmes de résolution de système d'équations non
+%     linéaires} \label{tab:sn}
+% \end{table}
 
-\begin{table}
-  \centering
-  \begin{tabular}{|c|c|}
-    \hline Méthode & Expression de \(s_{n}\) \\
-    \hline \hline Algorithme de \textsc{Newton-Raphson} &
-    \(-J^{-1}\,.\,F\paren{Y_{n-1}}\) \\
-    \hline
-    \begin{minipage}{7cm}
-      Algorithme de \textsc{Newton-Raphson} et
-      dérivation numérique
-    \end{minipage}
-    & \(-\underset{\sim}{J}^{-1}\,.\,F\paren{Y_{n-1}}\) \\
-    \hline Premier algorithme de \textsc{Broyden} &
-    \begin{minipage}{5cm}
-      \(-\underset{\sim}{J}_{n-1}^{-1}\,.\,F\paren{Y_{n-1}}\)
-      où \(\underset{\sim}{J}_{n}\) est donné par
-      l'équation~\eqref{eq:Broyden}
-    \end{minipage}
-    \\
-    \hline Second algorithme de \textsc{Broyden} &
-    \begin{minipage}{5cm}
-      \(-\underset{\sim}{J}_{n-1}^{-1}\,.\,F\paren{Y_{n-1}}\)
-      où \(\underset{\sim}{J}_{n}^{-1}\) est donné par\(Y_{0}\)
-      l'équation~\eqref{eq:Broyden2}
-    \end{minipage}
-    \\
-    \hline
-  \end{tabular}
-  \caption{Expression de $s_{n}$ pour les
-    différents algorithmes de résolution de système d'équations non
-    linéaires} \label{tab:sn}
-\end{table}
+% L'ensemble des algorithmes présentés jusqu'ici prennent la forme~:
+% \[
+% Y_{n}=Y_{n-1}+s^{N}_{n}
+% \]
+% L'expression du pas \(s^{N}_{n}\) pour les différentes algorithmes
+% présentés est donnée au tableau~\ref{tab:sn}. D'après la discussion
+% précédente, ce pas \(s^{N}_{n}\) est optimal proche de la solution
+% finale.
 
-L'ensemble des algorithmes présentés jusqu'ici prennent la forme~:
-\[
-Y_{n}=Y_{n-1}+s^{N}_{n}
-\]
-L'expression du pas \(s^{N}_{n}\) pour les différentes algorithmes
-présentés est donnée au tableau~\ref{tab:sn}. D'après la discussion
-précédente, ce pas \(s^{N}_{n}\) est optimal proche de la solution
-finale.
+% Il est intéressant de trouver une autre estimation de la solution, moins
+% performante près de la solution mais plus robuste. Les méthodes
+% précédentes donnant une approximation du jacobien, il peut être
+% intéressant de substituer à la fonction \(F\) son application tangente
+% et de choisir cette nouvelle estimation comme la solution du problème de
+% minimisation suivant~:
+% \[
+% \min_{s^{G}\,\in\,\mathcal{R}^{N}}\,\norm{F\paren{Y_{n-1}}+J\paren{Y_{n-1}}\,.\,s^{G}}
+% \]
 
-Il est intéressant de trouver une autre estimation de la solution, moins
-performante près de la solution mais plus robuste. Les méthodes
-précédentes donnant une approximation du jacobien, il peut être
-intéressant de substituer à la fonction \(F\) son application tangente
-et de choisir cette nouvelle estimation comme la solution du problème de
-minimisation suivant~:
-\[
-\min_{s^{G}\,\in\,\mathcal{R}^{N}}\,\norm{F\paren{Y_{n-1}}+J\paren{Y_{n-1}}\,.\,s^{G}}
-\]
+% La solution de ce problème est donnée par\footnote{Pour le prouver,
+%   nous pouvons écrire que~:
+%   \[
+%   \begin{array}{rcl}
+%     \norm{F\paren{Y_{n-1}}+J\paren{Y_{n-1}}\,.\,s^{G}}^{2}
+%     &=& {F}\paren{Y_{n-1}}\,.\,{F}\paren{Y_{n-1}}+2\,F\paren{Y_{n-1}}\,\mid\,J\paren{Y_{n-1}}\,.\,s^{G} \\
+%     &&+\paren{J\paren{Y_{n-1}}\,.\,s^{G}}\,\mid\,\paren{J\paren{Y_{n-1}}\,.\,s^{G}}
+%   \end{array}
+%   \]
+%   Le gradient de cette expression est égal à~:
+%   \[
+%   2\,\mbox{}^{t}J\paren{Y_{n-1}}F\paren{Y_{n-1}}+\mbox{}^{t}J\paren{Y_{n-1}}\,J\paren{Y_{n-1}}\,.s^{G}
+%   \]
+% }~:
+% \[
+% \mbox{}^{t}J\paren{Y_{n-1}}\,J\paren{Y_{n-1}}\,.s^{G}=-\,\mbox{}^{t}J\paren{Y_{n-1}}\,.\,F\paren{Y_{n-1}}
+% \]
+% Ce pas est intéressant loin de la solution.
 
-La solution de ce problème est donnée par\footnote{Pour le prouver,
-  nous pouvons écrire que~:
-  \[
-  \begin{array}{rcl}
-    \norm{F\paren{Y_{n-1}}+J\paren{Y_{n-1}}\,.\,s^{G}}^{2}
-    &=& {F}\paren{Y_{n-1}}\,.\,{F}\paren{Y_{n-1}}+2\,F\paren{Y_{n-1}}\,\mid\,J\paren{Y_{n-1}}\,.\,s^{G} \\
-    &&+\paren{J\paren{Y_{n-1}}\,.\,s^{G}}\,\mid\,\paren{J\paren{Y_{n-1}}\,.\,s^{G}}
-  \end{array}
-  \]
-  Le gradient de cette expression est égal à~:
-  \[
-  2\,\mbox{}^{t}J\paren{Y_{n-1}}F\paren{Y_{n-1}}+\mbox{}^{t}J\paren{Y_{n-1}}\,J\paren{Y_{n-1}}\,.s^{G}
-  \]
-}~:
-\[
-\mbox{}^{t}J\paren{Y_{n-1}}\,J\paren{Y_{n-1}}\,.s^{G}=-\,\mbox{}^{t}J\paren{Y_{n-1}}\,.\,F\paren{Y_{n-1}}
-\]
-Ce pas est intéressant loin de la solution.
-
-Les pas \(s^{N}_{n}\) et \(s_{n}^{G}\) sont combinés ainsi~:
-\[
-s = a_{n} \,s^{G}_{n} + \paren{1-a_{n}}\,s_{n}^{N}
-\]
+% Les pas \(s^{N}_{n}\) et \(s_{n}^{G}\) sont combinés ainsi~:
+% \[
+% s = a_{n} \,s^{G}_{n} + \paren{1-a_{n}}\,s_{n}^{N}
+% \]
 
 \clearpage
 \newpage
