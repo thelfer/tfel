@@ -1,4 +1,4 @@
-@Parser   PleiadesModel;
+@Parser   Model;
 @Model    SolidSwellingModel;
 @Material UPuC;
 @Author   Helfer Thomas;

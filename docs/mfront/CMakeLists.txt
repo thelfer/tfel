@@ -39,6 +39,8 @@ ADD_CUSTOM_COMMAND(
     ARGS      -s ${CMAKE_CURRENT_SOURCE_DIR}/style.ist mkeys.idx
     COMMAND   ${LATEX_COMPILER}
     ARGS      -interaction=batchmode mfront.tex
+    COMMAND   ${LATEX_COMPILER}
+    ARGS      -interaction=batchmode mfront.tex
     COMMAND   ${DVIPS_CONVERTER}
     ARGS      mfront.dvi
     COMMAND   ${PS2PDF_CONVERTER}
@@ -63,6 +65,8 @@ ADD_CUSTOM_COMMAND(
     ARGS      -s ${CMAKE_CURRENT_SOURCE_DIR}/style.ist mkeys.idx
     COMMAND   ${MAKEINDEX_COMPILER}
     ARGS      -s ${CMAKE_CURRENT_SOURCE_DIR}/style.ist tfel.idx
+    COMMAND   ${LATEX_COMPILER}
+    ARGS      -interaction=batchmode behaviours.tex
     COMMAND   ${LATEX_COMPILER}
     ARGS      -interaction=batchmode behaviours.tex
     COMMAND   ${DVIPS_CONVERTER}
@@ -90,6 +94,8 @@ ADD_CUSTOM_COMMAND(
     ARGS      -s ${CMAKE_CURRENT_SOURCE_DIR}/style.ist tfel.idx
     COMMAND   ${LATEX_COMPILER}
     ARGS      -interaction=batchmode umat.tex
+    COMMAND   ${LATEX_COMPILER}
+    ARGS      -interaction=batchmode umat.tex
     COMMAND   ${DVIPS_CONVERTER}
     ARGS      umat.dvi
     COMMAND   ${PS2PDF_CONVERTER}
@@ -113,6 +119,8 @@ ADD_CUSTOM_COMMAND(
     ARGS      -s ${CMAKE_CURRENT_SOURCE_DIR}/style.ist mkeys.idx
     COMMAND   ${MAKEINDEX_COMPILER}
     ARGS      -s ${CMAKE_CURRENT_SOURCE_DIR}/style.ist tfel.idx
+    COMMAND   ${LATEX_COMPILER}
+    ARGS      -interaction=batchmode aster.tex
     COMMAND   ${LATEX_COMPILER}
     ARGS      -interaction=batchmode aster.tex
     COMMAND   ${DVIPS_CONVERTER}

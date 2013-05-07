@@ -7,13 +7,14 @@
 
 \input{@abs_top_builddir@/docs/tex/texmf/LSC}
 
-\auteurs{T.~Helfer, É~Castelier, V.~Blanc, J.~Julien}
+\auteurs{T.~Helfer, É~Castelier}
 \redacteur{T.~Helfer}
 \verificateur{}
 \approbateur{R.~Masson}
 \emetteur{E.~Touron}
 
-\titre{Le générateur de code \mfront{}}
+\titre{Le générateur de code \mfront{}~: présentation générale et
+  application aux propriétés matériau et aux modèles}
 
 \date{2013}
 % \numero{12-014}

@@ -225,6 +225,7 @@ docs/mtest/images/strainhardeningcreep.tplot -text
 docs/mtest/images/tubeaxi.eps -text
 docs/mtest/mtest.tex.in -text
 docs/mtest/style.ist -text
+docs/rotation_matrix.tm -text
 docs/tex/CMakeLists.txt -text
 docs/tex/Makefile.am -text
 docs/tex/texmf/CEA_logo_quadri-sur-fond-rouge.eps -text
@@ -246,11 +247,15 @@ docs/tex/texmf/note_technique_2010.cls.in -text
 docs/tex/texmf/note_technique_2010.tex -text
 docs/tex/texmf/presentation.sty.in -text
 docs/tex/texmf/variables_2010.tex.in -text
+docs/tfel/Bibliographie.bib -text
 docs/tfel/CMakeLists.txt -text
 docs/tfel/Champs.tex.in -text
 docs/tfel/Makefile.am -text
 docs/tfel/Makefile.doc.in -text
+docs/tfel/images/EllipticFuelRodPowerDensity.eps -text
+docs/tfel/images/EllipticFuelRodPowerDensityLegend.eps -text
 docs/tfel/reference-guide.tex.in -text
+docs/tfel/style.ist -text
 include/CMakeLists.txt -text
 include/Makefile.am -text
 include/TFEL/Config/Internals/HeatFluxVectorType.hxx -text
@@ -1334,6 +1339,9 @@ tests/Math/stensor2.cxx -text
 tests/Math/stensor3.cxx -text
 tests/Math/stensor4.cxx -text
 tests/Math/stensor5.cxx -text
+tests/Math/stensor_changeBasis.cxx -text
+tests/Math/stensor_changeBasis2.cxx -text
+tests/Math/stensor_changeBasis3.cxx -text
 tests/Math/stensor_eigenvalues.cxx -text
 tests/Math/stensor_eigenvectors.cxx -text
 tests/Math/stensor_eigenvectors2.cxx -text

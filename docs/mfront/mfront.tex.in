@@ -5,8 +5,8 @@
 % Directory : /home/th202608/codes/tfel/tests/Broyden/
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-% \documentclass[rectoverso,pleiades,pstricks,leqno,anti]{@abs_top_builddir@/docs/tex/texmf/note_technique_2010}
-\documentclass[rectoverso,pleiades,pstricks,leqno,anti,projet]{@abs_top_builddir@/docs/tex/texmf/note_technique_2010}
+\documentclass[rectoverso,pleiades,pstricks,leqno,anti]{@abs_top_builddir@/docs/tex/texmf/note_technique_2010}
+% \documentclass[rectoverso,pleiades,pstricks,leqno,anti,projet]{@abs_top_builddir@/docs/tex/texmf/note_technique_2010}
 
 % \usepackage{draftcopy}
 % \draftcopySetGrey{0.8}
@@ -127,22 +127,29 @@
 
 \resumecea{
 
-  Couplé à la base de données \sirius{}, \mfront{} vise à
-  garantir une gestion pérenne, robuste, efficace et évolutive des
-  connaissances matériau dans la plateforme \pleiades{}.
+  Couplé à la base de données \sirius{}, \mfront{} vise à garantir une
+  gestion pérenne, robuste, efficace et évolutive des connaissances
+  matériau dans la plateforme \pleiades{}~\cite{michel09}. Il s'agit
+  d'un outil mature, qui se veut de qualité industrielle, et qui
+  intéresse différents départements du
+  \cea{}~\cite{11:dec_semi,arrigo12:_notic_le2s} ainsi que ses
+  partenaires, Areva~\cite{olagnon13:_analy} et
+  ÉDF~\cite{proix:mfront:2013}.
 
   \mfront{} est un générateur de code dédié aux connaissances
-  matériau.  Son domaine
-  d'application couvre~:
+  matériau.  Son domaine d'application couvre~:
   \begin{itemize}
     \item les propriétés matériau~;
     \item les lois de comportement~;
-    \item les modèles~;
+    \item les modèles,
   \end{itemize} 
+  domaine pour lesquels il rassemble un important savoir-faire
+  physique, numérique et informatique.
 
-  Ce document montre qu'il capitalise un important
-  savoir-faire physique, numérique et informatique.
-
+  Nous y décrivons l'utilisation de \mfront{} et détaillons comment
+  écrire des propriétés matériau et des modèles. Les lois de
+  comportement mécaniques sont détaillées dans une note à
+  part~\cite{helfer:mfront:behaviours:2013}.
 }
 
 \makeindex{env}
@@ -154,23 +161,64 @@
 \newpage
 \section{Introduction}
 
-Ce note donne une vue générale du générateur de code \mfront{}.
+Ce note donne une vue générale du générateur de code \mfront{} et de
+son application aux propriétés matériau et aux modèles
+physico-chimiques. Elle est la première d'un corpus de \(4\)
+notes\footnote{Les trois autres notes traitent~:
+  \begin{itemize}
+  \item des lois de comportement
+    mécanique~\cite{helfer:mfront:behaviours:2013}~;
+  \item de l'interface {\tt umat} utilisée par le codes aux éléments
+    finis \castem{}~\cite{helfer:umat:2013}~;
+  \item de l'interface utilisée par le codes aux éléments finis
+    \aster{}~\cite{helfer:aster:2013}~;
+  \end{itemize}
+}.
 
-\subsection{Documentation informatique,
-  installation} La documentation informatique de \mfront{} et sa
-procédure d'installation sont reportées en
-annexe~\ref{sec:mfront:doc:info}.
+Couplé à la base de données \sirius{}, \mfront{} vise à garantir une
+gestion pérenne, robuste, efficace et évolutive des connaissances
+matériau dans la plateforme \pleiades{}~\cite{michel09}. Il s'agit
+d'un outil mature, qui se veut de qualité industrielle, et qui
+intéresse différents départements du
+\cea{}~\cite{11:dec_semi,arrigo12:_notic_le2s} ainsi que ses
+partenaires, Areva~\cite{olagnon13:_analy} et
+ÉDF~\cite{proix:mfront:2013}.
+
+\subsection{Plan de la note}
+
+La première partie constitue une présentation générale de
+\mfront{} et de son utilisation.
+
+La seconde partie décrit comment écrire des propriétés matériau.
+
+La troisième partie est dédiée à l'écriture des modèles
+physico-chimiques.
+
+Les annexes traitent des questions suivantes~:
+\begin{itemize}
+\item le contrôle de la compilation des fichiers \mfront{} en
+  librairies dynamiques~;
+\item l'appel de propriétés matériaux externes dans \castem{} et des
+  modifications qui ont été effectuées à ce code pour permettre cet
+  appel~;
+\item l'utilisation des propriétés matériau dans le tableur \excel{}
+  via l'interface \castem{}.
+\end{itemize}
 
 \clearpage
 \newpage
 \section{Présentation générale de \mfront{}}
 
-\mfront{} est un générateur de code dédiés aux connaissances matériau~:
-partant d'un fichier contenant les informations physiques et numériques
-utiles, \mfront{} génère un ou plusieurs fichiers \cpp{} et peut
-éventuellement gérer leurs compilations.
+\mfront{} est un générateur de code dédiés aux connaissances
+matériau~: partant d'un fichier contenant les informations physiques
+et numériques utiles, \mfront{} génère un ou plusieurs fichiers \cpp{}
+et peut éventuellement gérer leurs compilations. Pour différencier les
+différents cas, différentes analyseurs syntaxiques sont disponibles.
 
-Nous commençons par décrire les d'{\em analyseurs}
+Nous commençons par présenter la structure du fichier de donnée et les
+directives communes à tous les analyseurs.
+
+Puis, nous décrivons les {\em analyseurs}
 (paragraphe~\ref{sec:mfront:parser}) et les interfaces
 (paragraphe~\ref{sec:mfront:interface}) disponibles, puis son
 utilisation (paragraphe~\ref{sec:mfront:using}). Nous abordons ensuite
@@ -179,372 +227,46 @@ différents points spécifiques~:
   \item la notion des noms de glossaire~;
   \item l'utilisation des librairies externes~;
   \item la gestion de la compilation~;
-  \item les directives communes à tous les analyseurs.
 \end{itemize}
 
-\subsection{Analyseurs disponibles}
-\label{sec:mfront:parser}
+\subsection{Fichiers d'entrée}
 
-Les connaissances matériaux supportées par \mfront{} sont classées en
-trois catégories~:
+\begin{figure}[htbp]
+  \centering
+  \code{{\ttfamily \input{@abs_top_srcdir@/docs/mfront/mfront/SICCreepBehaviour.tex}}}  
+  \caption{Implantation de la loi de comportement viscoplastique
+    du \sic{} en \mfront{}.}
+  \label{fig:mfront_sic_behaviour}
+\end{figure}
+
+La figure~\ref{fig:mfront_sic_behaviour} donne un premier exemple de
+fichier \mfront{}. Nous décrivons en détail cet exemple dans la note
+dédiée aux lois de comportement
+mécanique~\cite{helfer:mfront:behaviours:2013} et nous insistons ici
+sur sa structure, puis nous décrivons certains mots clés communs à
+l'ensemble des analyseurs.
+
+\subsubsection{Structure du fichier d'entrée}
+
+Un fichier d'entrée de \mfront{} se présente sous la forme d'une liste
+de mots clés commençant par une arobase \texttt{@}. Dans la mesure du
+possible, nous avons recherché à nous rapprocher le plus possible de
+la syntaxe utilisée par le langage C++ et certaines parties du fichier
+sont directement écrites en C++. La surcouche apportée par \mfront{} a
+cependant été créée pour minimiser les détails propres à ce
+langage. Le retour d'expérience montre que l'écriture d'un fichier
+\mfront{} est accessible, dans les cas usuels, à des personnes n'ayant
+pas ou peu de compétences en développement informatique.
+
+\paragraph{Commentaires} Les deux types de commentaires introduits par
+le langage C++ sont supportés~:
 \begin{itemize}
-  \item les propriétés matériau~;
-  \item les lois de comportement mécanique~;
-  \item les modèles.
+\item les commentaires commençant par les caractères \texttt{/*} et
+  finissant par les caractères \texttt{*/}. Ces commentaires peuvent
+  s'étendre sur plusieurs lignes~;
+\item les commentaires commençant par les caractères \texttt{//}
+  s'étendent jusqu'à la fin de la ligne courante~;
 \end{itemize}
-
-Pour chacune de ces connaissances, \mfront{} propose des analyseurs
-pour proposer une solution adaptée au cas traité. Dans la version
-présentée de \mfront{}, les analyseurs suivants sont disponibles~:
-\begin{itemize}
-  \item l'analyseur {\tt Material\-Law} qui traite de propriétés
-  matériau. La section~\ref{sec:MaterialProperty} lui est consacrée~;
-  \item l'analyseur \texttt{DefaultParser} qui permet de traiter
-  tous types de lois de comportements~;
-  \item l'analyseur \texttt{RungeKutta} qui propose la résolution
-  d'une loi de comportement mécanique quelconque à l'aide de l'une des
-  méthodes de \nom{Runge-Kutta}~;
-  \item l'analyseur \texttt{IsotropicMisesCreep} qui gère
-  exclusivement les lois de comportement mécanique viscoplastique
-  incompressible des matériaux isotropes~;
-  \item l'analyseur \texttt{IsotropicStrainHardeningMisesCreep}
-  qui gère exclusivement les lois de comportement mécanique
-  viscoplastique incompressible des matériaux isotropes~;
-  \item l'analyseur \texttt{IsotropicPlasticMisesFlow} qui gère
-  exclusivement les lois de comportement mécanique plastique
-  incompressible des matériaux isotropes~;
-  \item l'analyseur \texttt{MultipleIsotropicMisesFlows} qui gère
-  une combinaison arbitraire d'écoulements des trois types précédents.
-  Les différents écoulements sont supposés non couplés~;
-  \item les analyseurs \texttt{Implicit} et \texttt{ImplicitII}
-  qui simplifie la résolution d'une loi de comportement mécanique
-  quelconque à l'aide d'une intégration implicite~;
-  \item l'analyseur \texttt{Model} qui permet de traiter des
-  modèles.
-\end{itemize}
-
-Les analyseurs dédiés aux lois de comportement mécaniques sont
-largement majoritaires. Ils sont décrits dans une note
-spécifique~\cite{helfer:mfront:behaviours:2013}. La lecture de cette
-note suppose que le lecteur ait lu la présente section. L'écriture de
-propriétés matériau est décrit en section~\ref{sec:MaterialProperty}.
-L'écriture des modèles physico-chimiques est décrit en
-section~\ref{sec:mfront:models}.
-
-La directive \mkey{Parser}, traditionnellement placé en tête du fichier
-\mfront{} bien que cela ne soit pas nécessaire, est utilisée pour
-décrire quel analyseur utilisé.
-
-\subsection{Interfaces disponibles}
-\label{sec:mfront:interface}
-
-\mfront{} permet d'écrire les connaissances matériau de manière
-indépendante du code ou du langage cible.
-
-Pour que celles-ci soit utilisables dans un code particulier,
-\mfront{} introduit la notion d'{\em interface}~: le code source généré
-dépend de l'interface choisie par l'utilisateur et cherche à s'intégrer
-au mieux dans le contexte logiciel cible et à en tirer le meilleur
-parti.
-
-Les propriétés matériau propose par défaut différentes interfaces~:
-\begin{itemize}
-  \item les interfaces \texttt{c}, \texttt{fortran}, \cpp{} et
-  \texttt{python} pour pourvoir utiliser les propriétés dans ce
-  language~;
-  \item l'interface \texttt{castem} pour pourvoir utiliser les
-  propriétés dans le code aux éléments finis \castem{}.~;
-  \item l'interface \texttt{gnuplot} pour une visualisation des
-  courbes d'évolution des propriétés matériau~;
-\end{itemize}
-
-Pour les lois de comportement, deux interfaces sont actuellement
-disponibles~:
-\begin{itemize}
-  \item l'interface {\tt umat} pour une utilisation des lois
-  générées dans le code aux éléments finis \castem{}. Cette interface
-  est décrite dans une note dédiée~\cite{helfer:umat:2013}~;
-  \item l'interface {\tt aster} pour une utilisation des lois
-  générées dans le code aux éléments finis \aster{}. Cette interface est
-  décrite dans une note dédiée~\cite{helfer:aster:2013}.
-\end{itemize}
-
-\paragraph{Ajout d'interfaces} Il est possible de rajouter dynamiquement
-de nouvelles interfaces par l'utilisation de la variable d'environnement
-{\tt MFRONT\textunderscore{}\-ADDITIONAL\textunderscore{}\-LIBRARIES}
-qui doit désigner une liste de librairies automatiquement chargées au
-démarrage de \mfront{} \footnote{Ce mécanisme est utilisé par exemple
-  par l'architecture \pleiades{} pour générer l'interface {\tt pleiades}
-  aux propriétés matériau, interface qui évolue avec les versions de
-  l'architecture.}.
-
-Ce mécanisme permet donc de créer des interfaces sans modifier
-\mfront{}. Il est principalement utilisé par les applications de la
-plate-forme \pleiades{} pour que \TFEL{} puisse être considéré comme un
-pré-recquis.
-
-\subsection{Utilisation de \mfront{} en ligne de commande}
-\label{sec:appendix:mfront:using}
-
-Nous décrivons dans ce paragraphe l'utilisation de \mfront{} sous
- \unix{}. Les commandes présentées restent valides sous \windows{} à
-condition d'utiliser l'un des environnements \msys{} ou \cygwin{}.
-
-Un fichier \mfront{} présente un certain nombre de directives
-introduites par une arobase @. Les directives communes à tous les
-analyseurs sont présentées dans la suite. Il est également possible que
-les interfaces présentent des mots clés qui leurs soient propres.
-
-\mfront{} s'utilise en ligne de commande ainsi~:
-\begin{center}
-  {\tt mfront [options] fichier1.mfront fichier2.mfront \ldots}
-\end{center}
-
-L'option la plus utilisée est \moption{interface} qui permet de
-choisir la cible de la compilation.
-
-Les fichiers générés se trouvent généralement dans un sous-répertoire
-nommé {\tt src} pour les fichiers source et {\tt include} pour les
-fichiers d'entête.
-
-Cette commande conduit à la génération~:
-\begin{itemize}
-  \item de fichiers sources~;
-  \item de fichiers de dépendances~;
-  \item de fichiers de cibles.
-\end{itemize}
-Ces derniers fichiers permettent d'utiliser \mfront{} de manière
-séquentielle. \mfront{} peut d'abord être appelé sur plusieurs fichiers
-pour générer les fichiers sources puis lancer la compilation des
-librairies ainsi~:
-\begin{center}
-  \begin{minipage}{0.6\textwidth}
-    \textcolor{ceagrisclair}{\tt \# Génération des fichiers sources}\\
-    {\tt mfront --interface=?? fichier1.mfront} \\
-    {\tt mfront --interface=?? fichier2.mfront} \\
-    {\tt \ldots} \\
-    \textcolor{ceagrisclair}{\tt \# Génération d'un fichier Makefile et lancement de la compilation}\\
-    {\tt mfront --obuild} \\
-  \end{minipage}
-\end{center}
-
-\paragraph{Notes sur la génération des fichiers en
-  parallèle} La génération de fichiers \mfront{} en parallèle est
-possible. Pour cela, un verrou global est posé au moment de l'écriture
-des fichiers afin que les différents processus \mfront{} ne modifient
-pas les mêmes fichiers en même temps (fichiers cibles et fichiers de
-dépendances notamment).
-
-Cela pourrait conduire à des blocages si \mfront{} quitte sans
-libérer ce verrou\footnote{Nous devons cependant préciser que ce
-  problème ne s'est présenté qu'une unique fois.}. Dans ce cas, il est
-nécessaire de retirer ce verrou global à la main. Sous \linux{}, il
-s'agit de supprimer le fichier~:
-\begin{center}
- \texttt{/dev/shm/sem-mfront.\${UID}}
-\end{center}
-
-Un moyen plus brutal consiste à redémarrer la machine.
-
-\subsubsection{Options de la ligne de commande}
-
-\paragraph{L'option \moption{help}} L'option \moption{help} liste
-l'ensemble des options disponibles et quitte le programme.
-
-\paragraph{L'option \moption{list-parsers}} L'option
-\moption{list-parsers} affiche la liste des analyseurs disponibles et
-quitte le programme.
-
-\paragraph{L'option \moption{help-keywords-list}} L'option
-\moption{help-\-key\-words-\-list} liste l'ensemble des mots clés
-d'une interface et quitte le programme. Par exemple~:
-\begin{center}
-  {\tt mfront -{}-help-keywords-list=MaterialLaw}
-\end{center}
-
-\paragraph{L'option \moption{help-keyword}} L'option
-\moption{help-\-key\-word} affiche la documentation d'un des mots clés
-d'une interface et quitte le programme. Par exemple~:
-\begin{center}
-  {\tt mfront -{}-help-keyword=MaterialLaw:@Function}
-\end{center}
-
-\paragraph{L'option \moption{version}} L'option \moption{version}
-affiche la version de \mfront{} utilisée et quitte le programme.
-
-\paragraph{L'option \moption{interface}} L'option \moption{interface}
-spécifie la ou les interfaces à utiliser pour générer les fichiers
-sources. Les différentes interfaces sont séparées par une virgule.
-
-\paragraph{L'option \moption{verbose}} L'option \moption{verbose}
-demande l'affiche de messages supplémentaires.
-
-\paragraph{L'option \moption{warning}} L'option \moption{warning}
-demande l'affiche de messages d'avertissement supplémentaires.
-
-\paragraph{L'option \moption{debug}} L'option \moption{debug} modifie la
-génération des fichiers de compilation et son effet dépend de
-l'analyseur choisi. Cette option désactive aussi l'introduction de
-directives \texttt{\#line} qui permettent dans un mode de fonctionnement
-normal de repérer la position des erreurs dans le fichier \mfront{}
-d'origine.
-
-\paragraph{L'option \moption{make}} L'option \moption{make} conduit à la
-génération d'un fichier {\tt Makefile.mfront}.
-
-\paragraph{L'option \moption{omake}} L'option \moption{omake} conduit à la
-génération d'un fichier {\tt Makefile.mfront} avec des directives de
-compilation optimisées.
-
-Les options de compilation optimisées sont données par le résultat de la
-commande~
-\begin{center}
-  {\tt tfel-config -{}-oflags}
-\end{center}
-
-\paragraph{L'option \moption{clean}} L'option \moption{clean} conduit à la
-génération d'un fichier {\tt Makefile.mfront} et lance la commande~:
-\begin{center}
-  {\tt make -C src -f Makefile.mfront clean}
-\end{center}
-
-\paragraph{L'option \moption{build}} L'option \moption{build} conduit à la
-génération d'un fichier {\tt Makefile.mfront} et lance la commande~:
-\begin{center}
-  {\tt make -C src -f Makefile.mfront}
-\end{center}
-
-\paragraph{L'option \moption{obuild}} L'option \moption{obuild} conduit à la
-génération d'un fichier {\tt Makefile.mfront} avec des directives de
-compilation optimisées et lance la commande~:
-\begin{center}
-  {\tt make -C src -f Makefile.mfront}
-\end{center}
-
-\paragraph{L'option \moption{nodeps}} L'option \moption{nodeps} empêche
-l'inclusion des règle de dépendances dans le fichier {\tt
-  Make\-file\-.mfront} généré. Cette option a été introduite pour éviter
-certains problèmes sous \windows{}.
-
-\paragraph{L'option \moption{silent-build}}
-L'option \moption{silent-build} permet d'afficher ou non la ligne de
-compilation utilisée.
-
-\paragraph{L'option \moption{otarget}} L'option
-\moption{otarget} permet de ne compiler qu'une des librairies de manière
-optimisée. Cette option est suivie du nom de la cible.
-
-\paragraph{L'option \moption{target}} L'option
-\moption{target} permet de ne compiler qu'une des librairies.
-
-\paragraph{L'option \moption{win32}} L'option
-\moption{win32} est utilisée pour permettre la compilation croisée sous
-\linux{} de librairies dynamiques pour \windows{}. Cette possibilité est
-décrite au paragraphe~\ref{sec:mfront:comp_croisee_lib_windows_linux}.
-
-\subsection{Gestion de la compilation}
-\label{sec:mfront:compilation}
-
-En plus de générer des fichiers source, \mfront{} peut gérer leurs
-compilations sous forme de librairies dynamiques. Cette compilation se
-fait en plusieurs étapes~:
-\begin{itemize}
-  \item génération d'un fichier {\tt Makefile.mfront} dans le
-  sous-répertoire des sources {\tt src}. La génération du fichier
-  Makefile se fait en analysant le répertoire {\tt src} qui contient
-  (après la phase de génération des sources) différents fichiers
-  contentant les noms des libraires à générer, la liste de leurs sources
-  et de leurs dépendances, etc..~;
-  \item le lancement du processus de compilation. Il s'agit
-  essentiellement d'un appel à l'utilitaire {\tt make}.
-\end{itemize}
-
-\subsubsection{Variables affectant le processus de compilation}
-
-Bien que cela n'est généralement pas nécessaire, l'utilisateur
-\mfront{} peut affecter le processus de compilation à l'aide de
-variables d'environnement. Cela est utile dans les situations
-suivantes~:
-\begin{itemize}
-  \item utilisation d'une librairie tierce (variables
-  \env{INCLUDES} et \env{LDFLAGS})~;
-  \item utilisation d'un compilateur différent du compilateur
-  système (variables \env{CC} et \env{CXX})~;
-  \item utiliser des options de compilation particulières
-  (variables \env{CFLAGS} et \env{CXXFLAGS})~;
-  \item génération de binaire pour une système différent
-  (cross-compilation) (variables \env{CC}, \env{CXX} \env{RANLIB},
-  \env{DLLTOOL} et \env{AR})~;
-\end{itemize}
-
-Le fichier {\tt Makefile.mfront} suit les règles des fichiers {\tt
-  Makefile}~: il est sensible aux variables d'environnement suivantes~:
-\begin{itemize}
-  \item \env{CC} qui désigne le compilateur {\tt C} à utiliser~;
-  \item \env{CXX} qui désigne le compilateur \cpp à utiliser. Ce
-  compilateur est également utiliser pour l'édition de liens~;
-  \item \env{INCLUDES} qui désigne des directives de
-  préprocesseur à utiliser en plus des directives définies par les
-  sources~;
-  \item \env{CFLAGS} qui désigne les directives de compilations à
-  utiliser pour les sources {\texttt c}. Si cette variable n'est pas
-  définie, \mfront{} utilisera les valeurs suivantes~:
-  \begin{itemize}
-    \item la sortie de la commande {\tt tfel-config -{}-oflags}
-    si l'une des options {\tt -{}-obuild} ou {\tt -{}-omake} a été
-    utilisée~;
-    \item {\tt -O2} sinon.
-  \end{itemize}
-  \item \env{CXXFLAGS} qui désigne les directives de compilations
-  à utiliser pour les source \cpp. Si cette variable n'est pas définie,
-  \mfront{} utilisera les valeurs suivantes~:
-  \begin{itemize}
-    \item la sortie de la commande {\tt tfel-config -{}-oflags}
-    si l'une des options {\tt -{}-obuild} ou {\tt -{}-omake} a été
-    utilisée~;
-    \item {\tt -O2} sinon.
-  \end{itemize}
-  \item \env{LDFLAGS} qui désigne des directives à passer à
-  l'éditeur de liens~;
-  \item \env{RANLIB}, \env{DLLTOOL} et \env{AR} qui ont été
-  introduits pour la compilation croisée de librairies dynamiques pour
-  \windows{} depuis \linux{}.
-\end{itemize}
-
-\subsubsection{Compilation croisée de
-  librairies dynamiques pour \windows{} depuis \linux{}}
-\label{sec:mfront:comp_croisee_lib_windows_linux}
-
-À partir d'une version \linux{} de \mfront{}, il est possible de
-générer des librairies dynamiques pour \windows{} dans le cas des
-propriétés matériau. Il faut cependant que ces propriétés ne fassent pas
-appel à des librairies externes, ou, si tel est le cas de disposer des
-versions \windows{} de ces librairies\footnote{Pour compiler des lois de
-  comportements, il serait nécessaire de disposer des librairies
-  mathématiques de TFEL pour \windows{}~: il faut donc compiler
-  l'ensemble de {\tt TFEL} et \mfront{} en cross-compilation et utiliser
-  la version \windows{} de \mfront{}. Ceci est effectivement possible
-  via l'émulateur {\tt wine}, mais cette manière de procéder sort du
-  cadre de ce paragraphe.}.
-
-Pour générer des librairies dynamiques pour \windows{} depuis
-\linux{}, il est tout d'abord nécessaire de disposer d'un
-cross-compilateur. Sous \debian{}, l'utilisateur pourra installer les
-paquets {\tt mingw32} (\windows{} 32 bits) ou {\tt mingw64} (\windows{}
-32 et 64 bits).
-
-Il est alors nécessaire de définir les variables d'environnement
-\env{CC}, \env{CXX} \env{RANLIB}, \env{DLLTOOL} et \env{AR} et
-d'utiliser l'option \moption{win32}.
-
-Voici un exemple de génération de librairie dynamique pour
-\windows{} depuis \linux{}~:
-\begin{flushleft}
-{\tt AR=i586-mingw32msvc-ar RANLIB=i586-mingw32msvc-ranlib
-DLLTOOL=i586-mingw32msvc-dlltool CXX=i586-mingw32msvc-g++
-../../src/mfront --win32 --obuild --interface=c
-YoungModulus.mfront}
-\end{flushleft}
 
 \subsection{Directives communes à l'ensemble des analyseurs}
 \label{sec:mfront:pres:common}
@@ -611,6 +333,131 @@ La directive \mkey{Link} est suivie d'une chaîne de caractère (entre
 doubles quotes) contenant des instructions à fournir à l'éditeurs de
 liens. L'utilisation des doubles quotes permet l'utilisation de
 caractères spéciaux.
+
+\subsection{Analyseurs disponibles}
+\label{sec:mfront:parser}
+
+Les connaissances matériaux supportées par \mfront{} sont classées en
+trois catégories~:
+\begin{itemize}
+  \item les propriétés matériau~;
+  \item les lois de comportement mécanique~;
+  \item les modèles.
+\end{itemize}
+
+Pour traiter ces connaissances, différents analyseurs sont
+disponibles~:
+\begin{itemize}
+  \item l'analyseur {\tt Material\-Law} qui traite de propriétés
+  matériau. La section~\ref{sec:MaterialProperty} lui est consacrée~;
+  \item l'analyseur \texttt{DefaultParser} qui permet de traiter
+  tous types de lois de comportements~;
+  \item l'analyseur \texttt{RungeKutta} qui propose la résolution
+  d'une loi de comportement mécanique quelconque à l'aide de l'une des
+  méthodes de \nom{Runge-Kutta}~;
+\item l'analyseur \texttt{IsotropicMisesCreep} qui gère exclusivement
+  des lois de type \nom{Norton}, c'est à dire des comportements
+  viscoplastiques incompressibles sans écrouissage de matériaux
+  isotropes~;
+\item l'analyseur \texttt{IsotropicStrainHardeningMisesCreep} qui gère
+  exclusivement les lois de type \nom{Lemaître} \cite{cha_1996}, c'est
+  à dire des comportements mécaniques viscoplastiques incompressibles
+  avec écrouissage des matériaux isotropes~;
+  \item l'analyseur \texttt{IsotropicPlasticMisesFlow} qui gère
+  exclusivement les lois de comportement mécanique plastique
+  incompressible des matériaux isotropes~;
+  \item l'analyseur \texttt{MultipleIsotropicMisesFlows} qui gère
+  une combinaison arbitraire d'écoulements des trois types précédents.
+  Les différents écoulements sont alors supposés non couplés~;
+  \item les analyseurs \texttt{Implicit} et \texttt{ImplicitII}
+  qui simplifie la résolution d'une loi de comportement mécanique
+  quelconque à l'aide d'une intégration implicite~;
+\item l'analyseur \texttt{Model} qui permet de traiter des
+  modèles. Cet analyseur fait l'objet de la
+  section~\ref{sec:mfront:models}.
+\end{itemize}
+
+Les analyseurs dédiés aux lois de comportement mécaniques sont
+largement majoritaires. Ils sont décrits dans une note
+spécifique~\cite{helfer:mfront:behaviours:2013}, mais la lecture de la
+présente section est nécessaire pour l'aborder.
+
+L'écriture de propriétés matériau est décrite en
+section~\ref{sec:MaterialProperty}, celle des modèles
+physico-chimiques en section~\ref{sec:mfront:models}.
+
+La directive \mkey{Parser} (voir
+figure~\ref{fig:mfront_sic_behaviour}) est utilisée pour préciser quel
+analyseur doit être utilisé pour interpréter le fichier
+considéré\footnote{Cette directive est traditionnellement placée en
+  tête du fichier \mfront{} bien que cela ne soit pas nécessaire.}.
+
+\subsection{Interfaces}
+\label{sec:mfront:interface}
+
+\mfront{} permet d'écrire les connaissances matériau de manière
+indépendante du code ou du langage cible.
+
+Pour que celles-ci soit utilisables dans un code particulier,
+\mfront{} introduit la notion d'{\em interface}~: le code source
+généré dépend de l'interface choisie par l'utilisateur et cherche à
+s'intégrer au mieux dans le contexte du code cible et à en tirer le
+meilleur parti.
+
+Insistons sur l'originalité de cette démarche. Dans des solutions plus
+habituelles, un code source fixe est généré puis une couche d'enrobage
+permet d'utiliser ce code dans des cibles distinctes. Cette solution
+conduit souvent à des conversions de données et des allocations
+mémoires inutiles. Dans l'approche \mfront{}, le code source fixe est
+limité au maximum~: il se limite souvent au code fourni par
+l'utilisateur (s'il n'est pas transformé) afin de créer un code qui
+s'utilise de manière optimale dans le contexte logiciel cible.
+
+Précisons enfin que si une interface vise à fournir un code utilisable
+dans un langage de programmation particulier, {\em le code généré est
+  toujours du C++}. Il est ainsi possible d'utiliser toute la richesse
+de ce langage.
+
+\subsubsection{Interfaces disponibles}
+
+Par exemple, \mfront{} est livré avec différentes interfaces sont
+disponibles pour les propriétés matériau~:
+\begin{itemize}
+  \item les interfaces \texttt{c}, \texttt{fortran}, \cpp{} et
+  \texttt{python} pour pourvoir utiliser les propriétés dans ce
+  language~;
+  \item l'interface \texttt{castem} pour pourvoir utiliser les
+  propriétés dans le code aux éléments finis \castem{}.~;
+  \item l'interface \texttt{gnuplot} pour une visualisation des
+  courbes d'évolution des propriétés matériau~;
+\end{itemize}
+
+Pour les lois de comportement, deux interfaces sont actuellement
+disponibles~:
+\begin{itemize}
+\item l'interface {\tt umat} pour une utilisation des lois générées
+  dans le code aux éléments finis \castem{}~\cite{12:castemcea}. Cette
+  interface est décrite dans une note dédiée~\cite{helfer:umat:2013}~;
+\item l'interface {\tt aster} pour une utilisation des lois générées
+  dans le code aux éléments finis \aster{}~\cite{aster:13}. Cette
+  interface est décrite dans une note dédiée~\cite{helfer:aster:2013}.
+\end{itemize}
+
+\subsubsection{Ajout d'interfaces}
+
+Il est possible de rajouter dynamiquement de nouvelles interfaces par
+l'utilisation de la variable d'environnement {\tt
+  MFRONT\textunderscore{}\-ADDITIONAL\textunderscore{}\-LIBRARIES} qui
+doit désigner une liste de librairies automatiquement chargées au
+démarrage de \mfront{} \footnote{Ce mécanisme est utilisé par exemple
+  par l'architecture \pleiades{} pour générer l'interface {\tt
+    pleiades} aux propriétés matériau, interface qui évolue avec les
+  versions de l'architecture.}.
+
+Ce mécanisme permet donc de créer des interfaces sans modifier
+\mfront{}. Il est principalement utilisé par les applications de la
+plate-forme \pleiades{} pour que \TFEL{} puisse être considéré comme un
+pré-recquis.
 
 \subsection{Noms de glossaire}
 
@@ -814,9 +661,9 @@ solution est possible.
 
 \subsubsection{Définition de paramètres}
 
-Pour les propriétés et les lois de comportements, la directive {\tt
-  @Parameter} a été définie. Elle est suivie du nom du paramètre, du
-signe égal, de sa valeur par défaut et d'un point-virgule.
+Pour les propriétés et les lois de comportements, la directive
+\mkey{Parameter} a été définie. Elle est suivie du nom du paramètre,
+du signe égal, de sa valeur par défaut et d'un point-virgule.
 
 Pour les modèles, les paramètres propres aux modèles, utilisés pour
 leurs spécialisation\footnote{Nous renvoyons à la documentation des
@@ -840,6 +687,168 @@ les paramètres déclarés automatiquement.
 
 \clearpage
 \newpage
+\section{Utilisation de \mfront{} en ligne de commande}
+\label{sec:mfront:using}
+
+Nous décrivons dans ce paragraphe l'utilisation de \mfront{} sous
+ \unix{}. Les commandes présentées restent valides sous \windows{} à
+condition d'utiliser l'un des environnements \msys{} ou \cygwin{}.
+
+\subsection{Utilisation de \mfront{} en ligne de commande}
+
+\mfront{} s'utilise ainsi~:
+\begin{center}
+  {\tt mfront [options] fichier1.mfront fichier2.mfront \ldots}
+\end{center}
+
+L'option la plus utilisée est \moption{interface} qui permet de
+choisir la cible de la compilation.
+
+Les fichiers générés se trouvent généralement dans un sous-répertoire
+nommé {\tt src} pour les fichiers source et {\tt include} pour les
+fichiers d'entête.
+
+Cette commande conduit à la génération~:
+\begin{itemize}
+  \item de fichiers sources~;
+  \item de fichiers de dépendances~;
+  \item de fichiers de cibles.
+\end{itemize}
+Ces derniers fichiers permettent d'utiliser \mfront{} de manière
+séquentielle. \mfront{} peut d'abord être appelé sur plusieurs fichiers
+pour générer les fichiers sources puis lancer la compilation des
+librairies ainsi~:
+\begin{center}
+  \begin{minipage}{0.6\textwidth}
+    \textcolor{ceagrisclair}{\tt \# Génération des fichiers sources}\\
+    {\tt mfront --interface=?? fichier1.mfront} \\
+    {\tt mfront --interface=?? fichier2.mfront} \\
+    {\tt \ldots} \\
+    \textcolor{ceagrisclair}{\tt \# Génération d'un fichier Makefile et lancement de la compilation}\\
+    {\tt mfront --obuild} \\
+  \end{minipage}
+\end{center}
+
+Dans une utilisation avancée, l'utilisateur peut avoir un contrôle
+assez fin sur le processus de compilation. Nous renvoyons le lecteur à
+l'annexe~\ref{sec:mfront:compilation} pour plus de détails.
+
+\paragraph{Note sur la génération des fichiers en
+  parallèle} La génération de fichiers \mfront{} en parallèle est
+possible. Pour cela, un verrou global est posé au moment de l'écriture
+des fichiers afin que les différents processus \mfront{} ne modifient
+pas les mêmes fichiers en même temps (fichiers cibles et fichiers de
+dépendances notamment).
+
+Cela pourrait conduire à des blocages si \mfront{} quitte sans
+libérer ce verrou\footnote{Nous devons cependant préciser que ce
+  problème ne s'est présenté qu'une unique fois.}. Dans ce cas, il est
+nécessaire de retirer ce verrou global à la main. Sous \linux{}, il
+s'agit de supprimer le fichier~:
+\begin{center}
+ \texttt{/dev/shm/sem-mfront.\${UID}}
+\end{center}
+
+Un moyen plus brutal consiste à redémarrer la machine.
+
+\subsection{Options de la ligne de commande}
+
+\paragraph{L'option \moption{help}} L'option \moption{help} liste
+l'ensemble des options disponibles et quitte le programme.
+
+\paragraph{L'option \moption{list-parsers}} L'option
+\moption{list-parsers} affiche la liste des analyseurs disponibles et
+quitte le programme.
+
+\paragraph{L'option \moption{help-keywords-list}} L'option
+\moption{help-\-key\-words-\-list} liste l'ensemble des mots clés
+d'une interface et quitte le programme. Par exemple~:
+\begin{center}
+  {\tt mfront -{}-help-keywords-list=MaterialLaw}
+\end{center}
+
+\paragraph{L'option \moption{help-keyword}} L'option
+\moption{help-\-key\-word} affiche la documentation d'un des mots clés
+d'une interface et quitte le programme. Par exemple~:
+\begin{center}
+  {\tt mfront -{}-help-keyword=MaterialLaw:@Function}
+\end{center}
+
+\paragraph{L'option \moption{version}} L'option \moption{version}
+affiche la version de \mfront{} utilisée et quitte le programme.
+
+\paragraph{L'option \moption{interface}} L'option \moption{interface}
+spécifie la ou les interfaces à utiliser pour générer les fichiers
+sources. Les différentes interfaces sont séparées par une virgule.
+
+\paragraph{L'option \moption{verbose}} L'option \moption{verbose}
+demande l'affiche de messages supplémentaires.
+
+\paragraph{L'option \moption{warning}} L'option \moption{warning}
+demande l'affiche de messages d'avertissement supplémentaires.
+
+\paragraph{L'option \moption{debug}} L'option \moption{debug} modifie la
+génération des fichiers de compilation et son effet dépend de
+l'analyseur choisi. Cette option désactive aussi l'introduction de
+directives \texttt{\#line} qui permettent dans un mode de fonctionnement
+normal de repérer la position des erreurs dans le fichier \mfront{}
+d'origine.
+
+\paragraph{L'option \moption{make}} L'option \moption{make} conduit à la
+génération d'un fichier {\tt Makefile.mfront}.
+
+\paragraph{L'option \moption{omake}} L'option \moption{omake} conduit à la
+génération d'un fichier {\tt Makefile.mfront} avec des directives de
+compilation optimisées.
+
+Les options de compilation optimisées sont données par le résultat de la
+commande~
+\begin{center}
+  {\tt tfel-config -{}-oflags}
+\end{center}
+
+\paragraph{L'option \moption{clean}} L'option \moption{clean} conduit à la
+génération d'un fichier {\tt Makefile.mfront} et lance la commande~:
+\begin{center}
+  {\tt make -C src -f Makefile.mfront clean}
+\end{center}
+
+\paragraph{L'option \moption{build}} L'option \moption{build} conduit à la
+génération d'un fichier {\tt Makefile.mfront} et lance la commande~:
+\begin{center}
+  {\tt make -C src -f Makefile.mfront}
+\end{center}
+
+\paragraph{L'option \moption{obuild}} L'option \moption{obuild} conduit à la
+génération d'un fichier {\tt Makefile.mfront} avec des directives de
+compilation optimisées et lance la commande~:
+\begin{center}
+  {\tt make -C src -f Makefile.mfront}
+\end{center}
+
+\paragraph{L'option \moption{nodeps}} L'option \moption{nodeps} empêche
+l'inclusion des règle de dépendances dans le fichier {\tt
+  Make\-file\-.mfront} généré. Cette option a été introduite pour éviter
+certains problèmes sous \windows{}.
+
+\paragraph{L'option \moption{silent-build}}
+L'option \moption{silent-build} permet d'afficher ou non la ligne de
+compilation utilisée.
+
+\paragraph{L'option \moption{otarget}} L'option
+\moption{otarget} permet de ne compiler qu'une des librairies de manière
+optimisée. Cette option est suivie du nom de la cible.
+
+\paragraph{L'option \moption{target}} L'option
+\moption{target} permet de ne compiler qu'une des librairies.
+
+\paragraph{L'option \moption{win32}} L'option
+\moption{win32} est utilisée pour permettre la compilation croisée sous
+\linux{} de librairies dynamiques pour \windows{}. Cette possibilité est
+décrite au paragraphe~\ref{sec:mfront:comp_croisee_lib_windows_linux}.
+
+\clearpage
+\newpage
 \section{Propriétés matériaux}
 \label{sec:MaterialProperty}
 
@@ -847,7 +856,7 @@ Les propriétés matériau sont l'un des éléments de connaissance
 essentiel des matériaux. Une propriété matériau est une fonction d'un
 ensemble de variables d'état thermodynamique du matériau.
 
-\subsection{Les catégories types de variables}
+\subsection{Les différents types de variables}
 
 Ce paragraphe décrit les différents types de variables manipulés
 lorsque l'on écrit des propriétés matériau.
@@ -874,7 +883,7 @@ affecter des bornes aux variables d'entrée.
 \subsubsection{Variables statiques}
 
 La directive \mkey{StaticVariable} permet d'introduire une variable
-statique au sens \cpp{}.
+statique au sens du langage \cpp{}.
 
 \subsubsection{Paramètres}
 
@@ -884,7 +893,7 @@ paragraphe~\ref{sec:mfront:parameters}.
 \subsubsection{Constantes}
 
 La directive \mkey{Constant} est synonyme de la directive
-\mkey{StaticVariable}.
+\mkey{StaticVariable} pour des variables réelles.
 
 \subsection{Mots clés spécifiques}
 
@@ -1316,22 +1325,6 @@ modèles n'est disponible par défaut. Les applications de la plateforme
 
 \clearpage
 \newpage
-\section{Conclusions}
-
-Ca se développe bien (DMN+DER+cyrano) !
-
-\subsection{Perspectives de développement}
-
-\begin{itemize}
-  \item passage en déformations finies~;
-  \item possibilité d'utiliser des tableaux de variables internes dans
-  les algorithmes implicites~;
-  \item améliorer la robustesse des intégrations implicites.
-  Perspectives de travail avec les expert d'eDF.
-\end{itemize}
-
-\clearpage
-\newpage
 \referencecea
 %\listetableaux
 \listefigures
@@ -1342,16 +1335,122 @@ Ca se développe bien (DMN+DER+cyrano) !
 \newpage
 \include{glossary}
 
-Pour les besoins du projet \pleiades{}, nous avons modifié le code aux
-éléments finis \castem{} pour pouvoir appeler des propriétés matériau
-définies dans des librairies externes. Cette section décrit les
-modifications faites au code aux éléments finis \castem{} et
-l'utilisation de librairies externes depuis le {\tt gibiane}.
+\clearpage
+\newpage
+\section{Gestion de la compilation}
+\label{sec:mfront:compilation}
+
+En plus de générer des fichiers source, \mfront{} peut gérer leurs
+compilations sous forme de librairies dynamiques. Cette compilation se
+fait en plusieurs étapes~:
+\begin{itemize}
+  \item génération d'un fichier {\tt Makefile.mfront} dans le
+  sous-répertoire des sources {\tt src}. La génération du fichier
+  Makefile se fait en analysant le répertoire {\tt src} qui contient
+  (après la phase de génération des sources) différents fichiers
+  contentant les noms des libraires à générer, la liste de leurs sources
+  et de leurs dépendances, etc..~;
+  \item le lancement du processus de compilation. Il s'agit
+  essentiellement d'un appel à l'utilitaire {\tt make}.
+\end{itemize}
+
+\subsection{Variables affectant le processus de compilation}
+
+Bien que cela n'est généralement pas nécessaire, l'utilisateur
+\mfront{} peut affecter le processus de compilation à l'aide de
+variables d'environnement. Cela est utile dans les situations
+suivantes~:
+\begin{itemize}
+  \item utilisation d'une librairie tierce (variables
+  \env{INCLUDES} et \env{LDFLAGS})~;
+  \item utilisation d'un compilateur différent du compilateur
+  système (variables \env{CC} et \env{CXX})~;
+  \item utiliser des options de compilation particulières
+  (variables \env{CFLAGS} et \env{CXXFLAGS})~;
+  \item génération de binaire pour une système différent
+  (cross-compilation) (variables \env{CC}, \env{CXX} \env{RANLIB},
+  \env{DLLTOOL} et \env{AR})~;
+\end{itemize}
+
+Le fichier {\tt Makefile.mfront} suit les règles des fichiers {\tt
+  Makefile}~: il est sensible aux variables d'environnement suivantes~:
+\begin{itemize}
+  \item \env{CC} qui désigne le compilateur {\tt C} à utiliser~;
+  \item \env{CXX} qui désigne le compilateur \cpp à utiliser. Ce
+  compilateur est également utiliser pour l'édition de liens~;
+  \item \env{INCLUDES} qui désigne des directives de
+  préprocesseur à utiliser en plus des directives définies par les
+  sources~;
+  \item \env{CFLAGS} qui désigne les directives de compilations à
+  utiliser pour les sources {\texttt c}. Si cette variable n'est pas
+  définie, \mfront{} utilisera les valeurs suivantes~:
+  \begin{itemize}
+    \item la sortie de la commande {\tt tfel-config -{}-oflags}
+    si l'une des options {\tt -{}-obuild} ou {\tt -{}-omake} a été
+    utilisée~;
+    \item {\tt -O2} sinon.
+  \end{itemize}
+  \item \env{CXXFLAGS} qui désigne les directives de compilations
+  à utiliser pour les source \cpp. Si cette variable n'est pas définie,
+  \mfront{} utilisera les valeurs suivantes~:
+  \begin{itemize}
+    \item la sortie de la commande {\tt tfel-config -{}-oflags}
+    si l'une des options {\tt -{}-obuild} ou {\tt -{}-omake} a été
+    utilisée~;
+    \item {\tt -O2} sinon.
+  \end{itemize}
+  \item \env{LDFLAGS} qui désigne des directives à passer à
+  l'éditeur de liens~;
+  \item \env{RANLIB}, \env{DLLTOOL} et \env{AR} qui ont été
+  introduits pour la compilation croisée de librairies dynamiques pour
+  \windows{} depuis \linux{}.
+\end{itemize}
+
+\subsection{Compilation croisée de
+  librairies dynamiques pour \windows{} depuis \linux{}}
+\label{sec:mfront:comp_croisee_lib_windows_linux}
+
+À partir d'une version \linux{} de \mfront{}, il est possible de
+générer des librairies dynamiques pour \windows{} dans le cas des
+propriétés matériau. Il faut cependant que ces propriétés ne fassent pas
+appel à des librairies externes, ou, si tel est le cas de disposer des
+versions \windows{} de ces librairies\footnote{Pour compiler des lois de
+  comportements, il serait nécessaire de disposer des librairies
+  mathématiques de TFEL pour \windows{}~: il faut donc compiler
+  l'ensemble de {\tt TFEL} et \mfront{} en cross-compilation et utiliser
+  la version \windows{} de \mfront{}. Ceci est effectivement possible
+  via l'émulateur {\tt wine}, mais cette manière de procéder sort du
+  cadre de ce paragraphe.}.
+
+Pour générer des librairies dynamiques pour \windows{} depuis
+\linux{}, il est tout d'abord nécessaire de disposer d'un
+cross-compilateur. Sous \debian{}, l'utilisateur pourra installer les
+paquets {\tt mingw32} (\windows{} 32 bits) ou {\tt mingw64} (\windows{}
+32 et 64 bits).
+
+Il est alors nécessaire de définir les variables d'environnement
+\env{CC}, \env{CXX} \env{RANLIB}, \env{DLLTOOL} et \env{AR} et
+d'utiliser l'option \moption{win32}.
+
+Voici un exemple de génération de librairie dynamique pour
+\windows{} depuis \linux{}~:
+\begin{flushleft}
+{\tt AR=i586-mingw32msvc-ar RANLIB=i586-mingw32msvc-ranlib
+DLLTOOL=i586-mingw32msvc-dlltool CXX=i586-mingw32msvc-g++
+../../src/mfront --win32 --obuild --interface=c
+YoungModulus.mfront}
+\end{flushleft}
 
 \clearpage
 \newpage
 \section{Appel de propriétés matériaux externes dans \castem{}}
 \label{sec:castem:materialproperties}
+
+Pour les besoins du projet \pleiades{}, nous avons modifié le code aux
+éléments finis \castem{} pour pouvoir appeler des propriétés matériau
+définies dans des librairies externes. Cette section décrit les
+modifications faites au code aux éléments finis \castem{} et
+l'utilisation de librairies externes depuis le {\tt gibiane}.
 
 \subsection{Fichiers modifiés et implémentation}
 
@@ -1548,9 +1647,8 @@ est nul, l'opérateur {\tt VARI} n'est pas appelé et l'appel à {\tt
 tel cas n'a pas été prévue car la déclaration de propriété constante
 peut et doit se faire explicitement dans l'opérateur {\tt 'MATE'}.
 
-\clearpage
-\newpage
-\section{Complément sur l'utilisation des propriétés matériau dans \castem{}}
+\subsection{Un procédure de tracer des propriétés matériau dans
+  \castem{}}
 
 L'usage a cependant montré qu'il était très pratique de pouvoir tracer
 les propriétés matériau dans \castem{}, pour vérification. Nous nous

@@ -75,7 +75,7 @@ namespace tfel{
      */
     typedef qt<Force>  force;
     
-  } // end of namespace utilities
+  } // end of namespace math
 
 } // end of namespace tfel
   

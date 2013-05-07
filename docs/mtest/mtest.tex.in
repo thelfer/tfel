@@ -149,7 +149,7 @@ unitaires permettant de vérifier que le code généré par \mfront{}
 donnaient des résultats conformes. En particulier, l'application
 \licos{}, développée par le même auteur que \mfront{}, contenait de
 nombreux tests couvrant de manière quasi exhaustive les
-fonctionnalités de \mfront{}.
+fonctionnalités de \mfront{}~\cite{helfer12:_cas}.
 
 Récemment, l'utilisation de \mfront{} en dehors de la plate-forme
 \pleiades{}, au sein du \cea{}, DER~\cite{arrigo12:_notic_le2s} au
@@ -317,7 +317,7 @@ réaction locale du matériau étant généralement non linéaire, un
 algorithme de \nom{Newton} est utilisé pour déterminer
 \(\Delta\,\tepsilonto\).
 
-L'algorithme de \nom{Newton} cherche à annuler d'une fonction
+L'algorithme de \nom{Newton} cherche à annuler une fonction
 \(r\paren{\Delta\,\tepsilonto}\), nommée le résidu, définie par~:
 \begin{equation}
   \label{eq:mtest:newton}
@@ -342,7 +342,7 @@ nouvelle estimation \(\Delta\,\tepsilonto_{n+1}\)~:
 \end{equation}
 
 Comme nous l'avons évoqué plus haut, l'utilisation de la matrice
-tangente cohérente, même si elle apparaît naturelle n'est qu'une
+tangente cohérente, même si elle apparaît naturelle, n'est qu'une
 possibilité parmi d'autres et l'équation~\eqref{eq:mtest:NR1} s'écrit
 en pratique~:
 \begin{equation}
@@ -1403,8 +1403,8 @@ figure~\ref{fig:mtest:elasticity16}.
 
 Nous décrivons dans ce paragrpahe un test, proposé par l'IPSI
 (Insititut pour la Promotion des Sciences de l'Ingénieur) pour la
-journée \(\Phi{}2As\)\footnote{Formation IPSI pour la Formation et
-  l'Information en analyse de Structures.} du 30 Mars 2000 sur les
+journée \(\Phi^{2}AS\)\footnote{Formation IPSI pour la Formation et
+  l'Information en Analyse de Structures.} du 30 Mars 2000 sur les
 comportements non linéaires, qui permet de valider la bonne prise en
 compte de la variation des coefficients avec la
 température~\cite{proix:hsnv125:2013}. Il s'agit d'un test

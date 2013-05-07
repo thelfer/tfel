@@ -10,10 +10,10 @@ ADD_CUSTOM_COMMAND(
     ARGS      -interaction=batchmode reference-guide.tex
     COMMAND   ${LATEX_COMPILER}
     ARGS      -interaction=batchmode reference-guide.tex
-    # COMMAND   ${BIBTEX_COMPILER}
-    # ARGS      -terse reference-guide
-    # COMMAND   ${MAKEINDEX_COMPILER}
-    # ARGS      -s ${CMAKE_CURRENT_SOURCE_DIR}/style.ist mkeys.idx
+    COMMAND   ${BIBTEX_COMPILER}
+    ARGS      -terse reference-guide
+    COMMAND   ${MAKEINDEX_COMPILER}
+    ARGS      -s ${CMAKE_CURRENT_SOURCE_DIR}/style.ist tclass.idx
     COMMAND   ${LATEX_COMPILER}
     ARGS      -interaction=batchmode reference-guide.tex
     COMMAND   ${DVIPS_CONVERTER}

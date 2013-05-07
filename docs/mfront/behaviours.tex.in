@@ -5,8 +5,8 @@
 % Directory : /home/th202608/codes/tfel/tests/Broyden/
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-% \documentclass[rectoverso,pleiades,pstricks,leqno,anti]{@abs_top_builddir@/docs/tex/texmf/note_technique_2010}
-\documentclass[rectoverso,pleiades,pstricks,leqno,anti,projet]{@abs_top_builddir@/docs/tex/texmf/note_technique_2010}
+\documentclass[rectoverso,pleiades,pstricks,leqno,anti]{@abs_top_builddir@/docs/tex/texmf/note_technique_2010}
+% \documentclass[rectoverso,pleiades,pstricks,leqno,anti,projet]{@abs_top_builddir@/docs/tex/texmf/note_technique_2010}
 
 % \usepackage{draftcopy}
 % \draftcopySetGrey{0.8}
@@ -3989,282 +3989,13 @@ itération peut cependant être important.
 
 \clearpage
 \newpage
-\section{Opérations tensorielles dans \TFEL{}}
+\section{Principales opérations tensorielles}
 \label{sec:oper-tens-dans}
-
-La librairie \TFEL{} est née d'une initiative personnelle visant à se
-doter d'outils, notamment mathématiques, basés sur des paradigmes de
-programmation avancés et innovants, dont nous présenterons certains
-dans la suite de cette annexe. Le langage \cpp{} a été choisi pour sa
-grande disponibilité, son interaction avec les langages \texttt{C} et
-\texttt{fortran}, et son support de tels paradigmes.
-
-\subsection{Quelques techniques de programmation sous-tendant la
-  librairie de calculs tensoriels de \TFEL{}}
-
-Nous décrivons ici quelques techniques de programmation sous-tendant
-la librairie de calculs tensoriels de \TFEL{}. Ces techniques, aux
-quels de nombreux travaux ont été consacrés, se différencient
-notamment de techniques plus traditionnelles et ont été développées
-pour combiner simplicité d'utilisation par la surcharge des opérateurs
-mathématiques usuels et performances optimales, au moins égales à
-celles obtenues en \fortran{}.
-
-\subsubsection{Utilisation de la mémoire}
-
-Le nombre de composantes d'un tenseur, et donc la taille mémoire qu'il
-utilise, dépend {\em a priori} de la dimension~: un tenseur a \(3\)
-composantes en \(1D\), \(4\) composantes en \(2D\) et \(6\)
-composantes en \(3D\).
-
-Étant de petite taille, la zone mémoire associée peut être initialisée
-sur la pile (nommée \texttt{stack} en anglais), ou sur le tas (nommé
-\texttt{heap}). L'allocation sur le tas est coûteuse et ne peut être
-utilisée pour des petits calculs, tels que ceux utilisés pour
-l'intégration des lois de comportement, sans réduire considérablement
-les performances. L'allocation sur la pile est en comparaison sans
-coût. Elle permet par ailleurs une meilleure localisation des données
-(et donc des optimisations par le compilateur) et est compatible sans
-précautions particulières avec une utilisation des exceptions.
-
-L'allocation sur la pile peut se faire en stockant de manière
-systématique un tableau de taille \(6\) qui est la taille maximale des
-tenseurs quelque soit la dimension. Il est alors nécessaire de stocker
-la dimension d'espace dans le tenseur. Toutes les opérations
-tensorielles doivent faire appel à des boucles sur allant de \(0\) à la
-taille du tenseur. Cette méthode présente plusieurs désavantages~:
-\begin{itemize}
-  \item la définition d'un champ de tenseur, où l'on attribue un tenseur
-  à chaque point de discrétisation d'un domaine géométrique, conduit à
-  une gaspillage de mémoire~;
-  \item il n'est pas possible au compilateur de dérouler ces boucles et
-  d'optimiser les opérations tensorielles~;
-  \item le compilateur ne peut vérifier que l'accès aux données est
-  valide, c'est à dire qu'un indice trop grand n'est pas utilisé. Une
-  telle vérification peut être faite par des tests, mais cela alourdit
-  le code et ralentit l'exécution~;
-  \item il est nécessaire de passer la dimension d'espace au
-  constructeur des objets, ce qui alourdit l'écriture.
-\end{itemize}
-
-Nous avons choisi une solution qui nous est apparue plus avantageuse et
-consistant à paramétrer les tenseurs par la dimension d'espace~: un
-tenseur \(1D\) est un objet différent d'un objet \(2D\). Ce choix permet
-d'utiliser un ensemble de techniques de programmation générique
-permettant par exemple de \og~dérouler les boucles\fg{} à la compilation
-et au compilateur de vérifier notre code\footnote{De manière générale,
-  nous avons privilégié dans \TFEL{} des techniques de programmation
-  permettant de détecter au plus tôt, c'est à dire dès la phase de
-  compilation, des erreurs qui ne sont détectables dans d'autres
-  langages qu'à l'exécution.}.
-
-Ce paramétrage par la dimension d'espace est masqué dans \mfront{}~:
-une loi de comportement est en fait paramétrée par la dimension
-d'espace et est spécialisée pour chaque dimension d'espace, produisant
-un code optimisé dans chaque cas (au détriment du temps de compilation
-et de la taille du code généré, mais ces aspects ne sont pas
-problématiques pour les lois de comportement).
-
-\subsubsection{Choix du type numérique}
-
-L'ensemble des objets mathématiques de \TFEL{} sont également
-paramétrés par le type numérique utilisé. 
-
-Ce paramétrage du type numérique est masqué dans \mfront{}. \mfront{}
-propose d'utiliser un type opaque \texttt{real} pour les opérations
-mathématiques. Dans le cas de l'interface \texttt{umat}, la loi de
-comportement est spécialisée en utilisant un nombre flottant en double
-précision. D'autres codes peuvent faire des choix différents~: le code
-de résolution par transformées rapides développé au sein du projet
-\pleiades{} permet de choisir le type numérique à utiliser à la
-compilation.
-
-\subsubsection{Élimination des objets temporaires}
-
-Il est classique de vanter, pour des applications scientifiques, la
-possibilité dans le langage \cpp{} de surcharger les opérateurs
-mathématiques afin de rapprocher l'écriture du code de l'écriture
-mathématique usuelle.
-
-Une implantation \og~naïve~\fg{} de la surcharge des opérateurs
-consiste à écrire, dans le cas particulier de l'addition, que la somme
-de deux tenseurs est un tenseur. Ainsi, la somme \texttt{d} de trois
-tenseurs \texttt{a}, \texttt{b} et \texttt{c} s'écrit~:
-\begin{center}
-  \texttt{d} =  \texttt{a} + \texttt{b} + \texttt{c}
-\end{center}
-Cette expression est interprétée par le compilateur en introduisant
-des objets temporaires, résultats des opérations prises deux à deux~:
-\begin{center}
-  \texttt{d} =  \texttt{a} + \texttt{b} + \texttt{c}
-  \(\quad\Rightarrow\quad
-  \left\{
-      \begin{array}[p]{rl}
-        \text{\texttt{tmp1}} &= \text{\texttt{a}}    + \text{\texttt{b}} \\ 
-        \text{\texttt{tmp2}} &= \text{\texttt{tmp1}} + \text{\texttt{c}} \\ 
-        \text{\texttt{d}}    &= \text{\texttt{tmp3}}
-      \end{array}
-    \right.
-    \)
-\end{center}
-
-L'évaluation et l'affectation des ces temporaires conduit à trois
-boucles (qui peuvent être éventuellement déroulées), là où une doit
-suffire.
-
-Une solution à cela est d'utiliser une évaluation paresseuse des
-opérations~: le résultat de la somme de deux tenseurs étant un objet
-particulier \og~résultat de la somme de deux tenseurs~\fg{} dont le
-rôle est de porter l'information des opérations à effectuer jusqu'au
-moment de leur évaluation effective, c'est à dire jusqu'au moment de
-l'affectation au tenseur \texttt{d}. Le résultat de la somme de trois
-tenseurs est un objet du type \og~résultat de la somme du résultat de
-la somme de deux tenseurs et d'un tenseur~\fg{}. 
-
-Nous utilisons le compilateur pour générer en arrière plan de tels
-objets (en nous appuyant sur la notion de concept développée au
-paragraphe suivant) et les éliminer au moment de l'évaluation
-effective du résultat. Cette technique, appelée \texttt{expression
-  template}, couplée aux techniques de déroulement de boucles, permet
-de transformer l'addition de trois tenseurs à du code équivalent à~:
-\begin{center}
-  \texttt{d} =  \texttt{a} + \texttt{b} + \texttt{c}
-  \(\quad\Rightarrow\quad
-  \left\{
-      \begin{array}[p]{rl}
-        d[0] &= \texttt{a}[0] + \texttt{b}[0] + \texttt{c}[0] \\
-        d[1] &= \texttt{a}[1] + \texttt{b}[1] + \texttt{c}[1] \\
-        d[2] &= \texttt{a}[2] + \texttt{b}[2] + \texttt{c}[2] \\
-      \end{array}
-    \right.
-    \)
-\end{center}
-si les tenseurs \texttt{a}, \texttt{b}, \texttt{c} et \texttt{d} sont
-des tenseurs \(1D\).
-
-Le moteur d'\texttt{expression template} de \TFEL{} se compare
-favorablement, en terme de fonctionnalités, à toutes les implantations
-publiées à notre connaissance, en particulier car nous avons développé
-une notion de concept qui est maintenant décrite.
-
-\subsubsection{Notion de concept}
-
-Nous avons décrit brièvement le moteur d'\texttt{expression template}
-qui sous-tend les opérations mathématiques dans \TFEL{}. Chaque
-opération conduit à des objets dont le type est généré automatiquement
-par le compilateur. D'un point de vue pratique, il est nécessaire que
-ses objets se comportent comme des tenseurs \og~normaux~\fg{} afin de
-pouvoir les utiliser dans des fonctions tensorielles usuelles (trace,
-contrainte équivalente, etc..).
-
-Il pourrait être tenté d'utiliser une classe mère abstraite et des
-méthodes virtuelles associées. Cette approche est incompatible avec
-les choix de conception précédent~:
-\begin{itemize}
-\item il est nécessaire d'allouer les objets sur le tas et de
-  manipuler des pointeurs ce qui est à la fois inefficace et
-  incompatible avec une écriture proche de l'écriture mathématique
-  usuelle~;
-\item l'utilisation de méthodes virtuelles ruine toutes les
-  optimisations que nous avons cherchées à mettre en place dans les
-  paragraphes précédents.
-\end{itemize}
-
-Une autre technique d'abstraction est donc nécessaire. De nombreuses
-recherches ont permis de dégager la notion de \og~concept~\fg{}. Cette
-notion aurait dû être un des piliers du futur standard du langage
-\cpp{} mais son introduction a été différée par manque de maturité.
-
-\TFEL{} propose une notion de \og~concept\fg{} beaucoup moins étendue et
-générale que celle proposée pour le futur standard mais qui est basée
-sur le standard actuel. La notion de concept dans \TFEL{} repose sur la
-combinaison de différentes techniques de programmation relativement
-pointues~:
-\begin{itemize}
-  \item une classe \texttt{S} implante la notion de concept en dérivant
-  de la classe \texttt{StensorConcept<S>}~: \texttt{S} hérite d'une
-  classe dont elle est paramètre. Cette technique, appelée
-  \texttt{Curiously Recurring Template Pattern}, a été énormément
-  utilisée en programmation générique pour obtenir une flexibilité
-  équivalente aux méthodes virtuelles sans en payer le coût~;
-  \item une classe à deux paramètres \texttt{Implements} qui contient
-  une variable statique \varcpp{cond}. Si une \texttt{S} implante le
-  concept \texttt{StensorConcept}, la variable statique
-  \texttt{Implements<S,StensorConcept>::cond} vaut \texttt{true},
-  \texttt{false} dans le cas contraire. L'implantation effective de la
-  classe \texttt{Implements} repose sur les capacités d'introspection de
-  l'opérateur \texttt{sizeof}~;
-  \item le recours au principe \texttt{SFINAE}, \texttt{Substitution
-    Failure Is Not An Error} pour filtrer les paramètres valides d'une
-  fonction. Ce principe stipule que lorsque le compilateur examine la
-  définition d'une fonction paramétrée pour savoir si elle applicable
-  dans une contexte particulier, si la substitution du paramètre conduit
-  à un échec, alors cette fonction est simplement {\em éliminée} de la
-  liste des candidats {\em sans causer d'erreur}.
-
-  L'application de ce principe se fait dans \TFEL{} par la classe
-  \texttt{EnableIf} qui paramétrée par une variable booléenne et une
-  type \texttt{T}. La classe \texttt{EnableIf<true,T>} est implantée
-  et contient un alias nommé \texttt{type} égal à \texttt{T}. La
-  classe \texttt{EnableIf<false,T>} n'est jamais définie. Ainsi,
-  l'alias \texttt{EnableIf<cond,T>::type} n'est défini que si la
-  variable \texttt{cond} vaut \texttt{true}.
-
-  Ces préliminaires permettent de comprendre la déclaration de la
-  fonction \texttt{trace} dans \TFEL{}~:
-
-  \begin{center}
-    \begin{minipage}{0.8\textwidth}
-      \mbox{}\\
-      \hlkwc{template}\hlstd{}\hlsym{$<$}\hlstd{}\hlkwc{class }\hlstd{T}\hlsym{$>$}\hspace*{\fill}\\
-      \hlstd{TFEL\textunderscore MATH\textunderscore INLINE\hspace*{\fill}\\
-        typename tfel}\hlsym{::}\hlstd{meta}\hlsym{::}\hlstd{EnableIf}\hlsym{$<$}\hspace*{\fill}\\
-      \hlstd{}\hlstd{\ \ }\hlstd{tfel}\hlsym{::}\hlstd{meta}\hlsym{::}\hlstd{Implements}\hlsym{$<$}\hlstd{T}\hlsym{,}\hlstd{StensorConcept}\hlsym{$>$::}\hlstd{cond}\hlsym{,}\hspace*{\fill}\\
-      \hlstd{}\hlstd{\ \ }\hlstd{typename StensorTraits}\hlsym{$<$}\hlstd{T}\hlsym{$>$::}\hlstd{NumType}\hspace*{\fill}\\
-      \hlsym{$>$::}\hlstd{type}\hspace*{\fill}\\
-      \hlkwd{trace}\hlstd{}\hlsym{(}\hlstd{}\hlkwb{const }\hlstd{T}\hlsym{\&);}\\
-    \end{minipage}
-  \end{center}
-
-  L'utilisation de la classe \texttt{EnableIf} conduit à ce que cette
-  fonction ne puisse être appliquée que si la classe \texttt{T}
-  implante le concept \texttt{StensorConcept}. Ce filtre permet
-  d'éviter un conflit possible avec la déclaration de la fonction
-  \texttt{trace} d'une matrice~:
-
-  \begin{center}
-    \begin{minipage}{0.8\textwidth}
-      \mbox{}\\
-      \hlkwc{template}\hlstd{}\hlsym{$<$}\hlstd{}\hlkwc{class }\hlstd{T}\hlsym{$>$}\hspace*{\fill}\\
-      \hlstd{TFEL\textunderscore MATH\textunderscore INLINE\hspace*{\fill}\\
-        typename tfel}\hlsym{::}\hlstd{meta}\hlsym{::}\hlstd{EnableIf}\hlsym{$<$}\hspace*{\fill}\\
-      \hlstd{}\hlstd{\ \ }\hlstd{tfel}\hlsym{::}\hlstd{meta}\hlsym{::}\hlstd{Implements}\hlsym{$<$}\hlstd{T}\hlsym{,}\hlstd{MatrixConcept}\hlsym{$>$::}\hlstd{cond}\hlsym{,}\hspace*{\fill}\\
-      \hlstd{}\hlstd{\ \ }\hlstd{typename MatrixTraits}\hlsym{$<$}\hlstd{T}\hlsym{$>$::}\hlstd{NumType}\hspace*{\fill}\\
-      \hlsym{$>$::}\hlstd{type}\hspace*{\fill}\\
-      \hlkwd{trace}\hlstd{}\hlsym{(}\hlstd{}\hlkwb{const }\hlstd{T}\hlsym{\&);}\\
-    \end{minipage}
-  \end{center}
-
-\end{itemize}
-
-L'application de toutes ces techniques permet au compilateur de
-traduire la trace de la somme de deux tenseurs \texttt{s1} et
-\texttt{s2} en un code équivalent à~:
-\begin{center}
-  \texttt{trace(s1+s2)}
-  \(\quad\Rightarrow\quad
-  \texttt{s1}[0] + \texttt{s2}[0] +
-  \texttt{s1}[1] + \texttt{s2}[1] +
-  \texttt{s1}[2] + \texttt{s2}[2]
-  \)
-\end{center}
-  
-\subsection{Principales opérations tensorielles}
 
 Nous décrivons dans ce paragraphe les opérations tensorielles fournies
 par \TFEL{} pour les tenseurs d'ordre \(2\) et d'ordre \(4\).
 
-\subsubsection{Conventions de représentation des tenseurs}
+\subsection{Conventions de représentation des tenseurs}
 
 Les tenseurs d'ordre \(2\) symétriques peuvent être représentés par
 des vecteurs et \og~tenseurs d'ordre \(4\)~\fg{}, peuvent être
@@ -4302,7 +4033,7 @@ que le produit doublement contracté de deux tenseurs d'ordre \(2\)
 symétriques \(\tenseur{a}\) et \(\tenseur{b}\) est égal au produit
 scalaire de leurs représentations vectorielles.
 
-\subsubsection{Opérations sur les tenseurs d'ordre 2}
+\subsection{Opérations sur les tenseurs d'ordre 2}
 
 Pour les tenseurs d'ordre \(2\), \TFEL{} propose~:
 \begin{itemize}
@@ -4331,7 +4062,7 @@ Pour les tenseurs d'ordre \(2\), \TFEL{} propose~:
 En \cpp{}, ces opérations respectent l'ordre de priorité usuel sauf
 pour les deux derniers qui peuvent nécessiter l'emploi de parenthèses.
 
-\subsubsection{Opérations sur les tenseurs d'ordre 4}
+\subsection{Opérations sur les tenseurs d'ordre 4}
 
 Pour les tenseurs d'ordre \(4\), \TFEL{} propose~:
 \begin{itemize}
@@ -4367,7 +4098,7 @@ dernier qui peuvent nécessiter l'emploi de parenthèses.
 \label{sec:mfront:fcts}
 
 Cette section décrit quelques fonctions utiles à la création de lois de
-comportement mécanique fournies par la librairie \texttt{TFEL}.
+comportement mécanique fournies par la librairie \TFEL{}.
 
 \subsection{Manipulation des tenseurs d'ordre $2$ symétriques}
 
@@ -4982,12 +4713,12 @@ l'algorithme converge et est légèrement meilleur que l'algorithme de
 \clearpage
 \newpage
 \printindex{headers}{Index des fichiers d'entête fournis par la
-  librairie \texttt{TFEL}}
+  librairie \TFEL{}}
 
 \clearpage
 \newpage
 \printindex{tfel}{Index des classes, des méthodes et des fonctions
-  fournies par la librairie \texttt{TFEL}}
+  fournies par la librairie \TFEL{}}
 
 \clearpage
 \newpage

@@ -38,6 +38,7 @@
 \newcommand{\pleiades}{\texttt{pleiades}}
 \newcommand{\TFEL}{\texttt{tfel}}
 \newcommand{\mfront}{\texttt{mfront}}
+\newcommand{\mtest}{\texttt{mtest}}
 \newcommand{\licos}{\texttt{licos}}
 \newcommand{\cyrano}{\texttt{cyrano}}
 \newcommand{\galileo}{\texttt{galileo}}
@@ -51,6 +52,7 @@
 \newcommand{\fortran}{\texttt{fortran}}
 
 \newcommand{\cmake}{\href{http://www.cmake.org/}{\texttt{cmake}}}
+\newcommand{\cppunit}{\texttt{CppUnit}}
 \newcommand{\autotools}{\href{http://fr.wikipedia.org/wiki/Autotools}{\texttt{autotools}}}
 \newcommand{\python}{\href{http://python.org}{\texttt{python}}}
 \newcommand{\gnuplot}{\href{http://www.gnuplot.info}{\texttt{gnuplot}}}
@@ -61,6 +63,9 @@
 
 \newcommand{\mkey}[1]{\index{mkeys}{#1@\symbol{64}#1}{\texttt{@#1}}}
 \newcommand{\mkeyb}[2]{\index{mkeys}{#1@\symbol{64}#1}{\texttt{@#2}}}
+
+\newcommand{\tclass}[1]{\index{tclass}{#1}{\texttt{#1}}}
+\newcommand{\tclassb}[2]{\index{tclass}{#1}{\texttt{#2}}}
 
 \newcommand{\env}[1]{\index{env}{#1}{\texttt{#1}}}
 \newcommand{\envb}[2]{\index{env}{#1}{\texttt{#2}}}
@@ -128,39 +133,408 @@
 \resumecea{
 }
 
-\makeindex{env}
-\makeindex{mkeys}
+\makeindex{tclass}
 
 \begin{document}
 
-\clearpage
-\newpage
 \section{Introduction}
 
-Ce note constitue la notice d'installation de la librairie \TFEL{}.
+Ce note constitue la notice d'installation de la bibliothèque \TFEL{}.
 
-Le générateur de code \mfront{} fait partie d'une librairie
-hétéroclite nommée \TFEL{} qui est elle-même aujourd'hui intégrée à
-l'architecture \pleiades{}.
+la bibliothèque \TFEL{} vise à se doter d'outils, notamment
+mathématiques, basés sur des paradigmes de programmation avancés, dont
+nous présenterons certains en
+section~\ref{sec:tfel::quelq-techn-de}.
 
+Elle est aujourd'hui intégrée à l'architecture \pleiades{} même si il
+est possible de la distribuer indépendamment, en particulier pour des
+utilisations du générateur de code \mfront{} hors du cadre
+\pleiades{}~\cite{11:dec_semi,arrigo12:_notic_le2s,olagnon13:_analy,proix:mfront:2013}.
+
+Le langage \cpp{} a été choisi pour sa grande disponibilité, son
+caractère libre et pérenne, son interaction avec les langages
+\texttt{C} et \texttt{fortran}, et son support de tels paradigmes.
+
+\newpage
+\clearpage
+\section{Vue d'ensemble}
+
+Nous décrivons dans cette section le contenu de la bibliothèque. Nous
+commençons par décrire les quelques exécutables fournis par \TFEL{},
+puis nous détaillons les différentes librairies produites.
+
+\subsection{Exécutables}
+
+Actuellement, quatre exécutables sont produits~:
+\begin{itemize}
+  \item \texttt{tfel-config} qui permet de récupérer des
+  informations sur~:
+  \begin{itemize}
+    \item le répertoire d'installation de \TFEL{}~;
+    \item les options de compilation (et d'optimisation) que nous
+      conseillons d'utiliser avec le compilateur qui a servi à
+      construire \TFEL{}~;
+    \item les drapeaux d'avertissement à utiliser que nous conseillons
+      d'utiliser avec le compilateur qui a servi à construire
+      \TFEL{}~;
+  \end{itemize}
+\item \texttt{tfel-doc} est un utilitaire de description de cas test
+  et de génération d'un guide en \LaTeX{}. Il a notamment été utilisé
+  pour décrire les cas tests de la bibliothèque \TFEL{} et de
+  l'application \licos{}~\cite{helfer12:_cas}~;
+\item le générateur de code \texttt{mfront} qui fait l'objet d'une
+  documentation
+  particulière~\cite{helfer:mfront:2013,helfer:mfront:behaviours:2013}~;
+\item un outil de test élémentaire de lois de comportement mécanique
+  nommé \mtest{}~\cite{helfer:mtest:2013}.
+\end{itemize}
+
+\subsection{Modules disponibles et librairies produites}
+
+\TFEL{} est un projet complexe séparé en différents modules (packages
+en anglais). Nous en dressons ici la liste accompagnée d'une
+description succincte. Les principaux modules seront chacun décrits
+dans une section spécifique.
+
+\begin{itemize}
+\item le module {\tt TFEL/Math} est de loin le module le plus
+  important de la librairie. Il contient de nombreuses classes
+  représentant les objets mathématiques usuels et différents
+  algorithmes numériques. La plupart de ces classes et de ces
+  algorithmes sont implantés à l'aide de {\tt template}. Ce module
+  fournit plusieurs librairies~:
+  \begin{itemize}
+  \item {\tt libTFELMath.so} contient quelques classes de base pour
+    les autres librairies du module~;
+  \item {\tt libTFELMathCubicSpline.so} contient la gestion des
+    erreurs des classes d'interpolation de données par des splines
+    cubiques~;
+  \item {\tt libTFELMathKriging.so} contient certaines spécialisations
+    des classes d'interpolation de données multi-dimensionnelles par
+    des méthodes de krigeage et la gestion d'erreur associée~;
+  \item {\tt libTFELMathParser.so} contient des classes dédiées à
+    l'interprétation de formules mathématiques complexes à partir de
+    chaînes de caractères~;
+  \end{itemize}
+\item TFELMaterial contient certains classes utilitaires pour
+  l'écriture de propriétés matériau ou loi de comportement mécanique.
+\item le module {\tt TFEL/Exception} contient les bases des classes
+  d'exceptions utilisées dans \TFEL{}. Les sources de ce module sont
+  compilées dans la librairie {\tt libTFELException.so}~;
+\item le module {\tt TFEL/Tests} propose un framework de test
+  similaire à \cppunit{}. Les sources de ce module sont compilées dans
+  la librairie {\tt libTFELTests.so}~;
+\item le module {\tt TFEL/Utilities} contient différentes classes
+  utilitaires. Il fournit la librairie {\tt libTFELUtilities.so}~;
+\item le module {\tt TFEL/System} propose :
+  \begin{itemize}
+  \item un enrobage \cpp{} de diverses fonctionnalités~:
+    \texttt{POSIX}~\cite{blaess05:_progr_c_linux_ipc}~:
+    \begin{itemize}
+    \item créations et interaction avec des processus~;
+    \item gestion des signaux~;
+    \item créations de répertoires, etc..~;
+    \item traduction des erreurs \texttt{POSIX} en exceptions~;
+    \end{itemize}
+  \item des facilités d'appels de fonctions définies dans des
+    librairies externes~;
+  \end{itemize}
+\end{itemize}
+
+\paragraph{Modules internes} D'autres modules existent qui ont
+essentiellement vocation à être utilisés en interne~:
+\begin{itemize}
+\item le module {\tt TFEL/Metaprogramming} contient des classes
+  utilitaires simplifiant la \og~méta-programmation à base de
+  template~\fg~\cite{Alexandrescu:2001:MCD:377789,Abrahams:2004:CTM:1044941}.
+\item le module {\tt TFEL/Typetraits} contient un ensemble de classes
+  permettant de donner de manière non intrusive des informations sur
+  des classes d'objets.
+\item le module {\tt TFEL/FSAlgorithm} contient la réécriture de la
+  plupart des algorithmes de la librairie standard pour des objets
+  dont la taille est (raisonnablement) petite et connue à la
+  compilation. L'idée de ce module est tirée des travaux réalisés pour
+  bâtir la librairie {\tt MTL} (Matrix Template
+  Library)~\cite{Siek:1998:MTL:646894.709706}. Son rôle est essentiel
+  pour les performances de la librairie.
+\end{itemize}
+Ces modules sont constitués de fichiers d'entête uniquement.
+
+Les modules {\tt TFEL/Metaprogramming} et {\tt TFEL/Typetraits}
+permettent de faciliter l'emploi de certaines techniques de
+programmation avancées sur la base du standard C++ de 1998. Elles
+contiennent des parties très ardues et potentiellement les plus
+difficiles à maintenir. Leur documentation a été de ce fait été
+l'objet d'une attention particulière. Nous les avons également
+construites en surveillant les travaux du comité de
+standardisation. Ainsi, leur taille devrait largement diminuer avec le
+portage de \TFEL{} sur le standard de 2011 dont le support par la
+compilateur standard est maintenant quasi-complet.
+
+\newpage
+\clearpage
+\section{Description du module {\tt TFEL/Math}}
+
+Nous décrivons dans cette section les principales fonctionnalités
+proposées par le module {\tt TFEL/Math}.
+
+\subsection{Objets mathématiques}
+
+Dans ce paragraphe, nous détaillons les objets mathématiques qui ont
+été implantés dans le module {\tt TFEL/Math}.
+
+\subsubsection{Quantités physiques}
+
+\begin{table}[htbp]
+  \centering
+  \begin{tabular}{|c|c|c|c|c|c|c|c|}
+    \hline
+    Nom & Masse & Longueur & Temps & Ampère & Température & Candela & Mole \\
+    \hline
+    \hline
+    NoUnit      & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\  
+    \hline
+    Mass        & 1 & 0 & 0 & 0 & 0 & 0 & 0 \\  
+    \hline
+    Length      & 0 & 1 & 0 & 0 & 0 & 0 & 0 \\  
+    \hline
+    Time        & 0 & 0 & 1 & 0 & 0 & 0 & 0 \\  
+    \hline
+    Ampere      & 0 & 0 & 0 & 1 & 0 & 0 & 0 \\  
+    \hline
+    Temperature & 0 & 0 & 0 & 0 & 1 & 0 & 0 \\  
+    \hline
+    Kelvin      & 0 & 0 & 0 & 0 & 1 & 0 & 0 \\  
+    \hline
+    Candela     & 0 & 0 & 0 & 0 & 0 & 1 & 0 \\  
+    \hline
+    Mole        & 0 & 0 & 0 & 0 & 0 & 0 & 1 \\  
+    \hline
+    InvLength           & 0 & -1 & 0 & 0 & 0 & 0 & 0 \\
+     \hline
+    InvTemperature      & 0 & 0 & 0 & 0 & -1 & 0 & 0 \\
+     \hline
+    Frequency           & 0 & 0 & -1 & 0 & 0 & 0 & 0 \\
+     \hline
+    Velocity            & 0 & 1 & -1 & 0 & 0 & 0 & 0 \\
+     \hline
+    Acceleration        & 0 & 1 & -2 & 0 & 0 & 0 & 0 \\
+     \hline
+    Momentum            & 1 & 1 & -1 & 0 & 0 & 0 & 0 \\
+     \hline
+    Force               & 1 & 1 & -2 & 0 & 0 & 0 & 0 \\
+     \hline
+    Newton              & 1 & 1 & -2 & 0 & 0 & 0 & 0 \\
+     \hline
+    Stress              & 1 & -1 & -2 & 0 & 0 & 0 & 0 \\
+     \hline
+    StressRate          & 1 & -1 & -3 & 0 & 0 & 0 & 0 \\
+     \hline
+     Pressure            & 1 & -1 & -2 & 0 & 0 & 0 & 0 \\
+     \hline
+    Energy              & 1 & 2 & -2 & 0 & 0 & 0 & 0 \\
+     \hline
+    EnergyDensity       & 1 & -1 & -2 & 0 & 0 & 0 & 0 \\
+     \hline
+    Density             & 1 & -3 & 0 & 0 & 0 & 0 & 0 \\
+     \hline
+    ThermalConductivity & 1 & 1 & -3 & 0 & -1 & 0 & 0 \\
+     \hline
+     HeatFluxDensity     & 1 & 0 & -3 & 0 & 0 & 0 & 0 \\
+     \hline
+   \end{tabular}
+   \caption{Grandeurs prédéfinies et décomposition suivant les grandeurs
+     de base du système international.}
+  \label{tab:tfel:units}
+\end{table}
+
+La classe \tclass{qt} représente des nombres réels représentant des
+quantités physiques. Il s'agit d'une classe {\tt template} prenant
+deux arguments~: une classe représentant le type de grandeur
+représentée et le type numérique utilisé.
+
+Les grandeurs usuelles ont été prédéfinies et sont regroupées au
+tableau~\ref{tab:tfel:units} qui donne également leurs décompositions
+suivant les grandeurs de base du système international. Il est
+possible de définir d'autres grandeurs par des puissances rationnelles
+des unités de base à l'aide de la méta-fonction \tclass{GenerateUnit}.
+
+Toutes les opérations mathématiques usuelles ont été définies. Le
+compilateur autorisera toutes les opérations conservant le sens
+physique. Ainsi le produit d'une force par une distance à pour
+résultat une énergie. L'addition d'une masse et d'une température
+n'est pas autorisée.
+
+Ces vérifications sont faites à la compilation et l'utilisation des
+{\tt template} et de l'{\tt inlining} fait que les quantités ainsi
+définies n'ont aucun coût à l'exécution.
+
+Des résultats de type {\tt NoUnit} peuvent être convertis
+automatiquement dans le type numérique sous-jacent. Ils peuvent être
+ainsi utilisés dans toutes les fonctions usuelles (logarithmes,
+exponentielle, etc...).
+
+\paragraph{Note} Les quantités ainsi définies sont aujourd'hui de peu
+d'utilité pratique\footnote{En effet, la plupart des corrélations
+  expérimentales font apparaître des coefficients numériques dont il
+  est difficile de donner l'unité. Il s'agit d'une difficulté pratique
+  que nous allons rapidement illustrer et dont nous donnons une
+  solution acceptable. Cette solution présente certains avantages
+  numériques.
+
+  Par exemple, une loi de \nom{Norton} s'écrit~:
+  \[
+  \dot{p} = A\,\sigmaeq^{E}
+  \]
+  où apparaissent la déformation plastique cumulée \(p\) , la contrainte
+  équivalente \(\sigmaeq\), et deux coefficients \(A\) et \(E\). L'unité
+  du coefficient \(A\) est pour le moins exotique.
+  
+  En fait, la loi de \nom{Norton} devrait être écrite ainsi~:
+  \[
+  \dot{p} = \dot{\varepsilon}_{0}\,\paren{\Frac{\sigmaeq}{\sigma_{0}}}^{E}
+  \]
+  où apparaît une contrainte de normalisation \(\sigma_{0}\). Cette
+  forme est {\tt a priori} plus complexe, mais en pratique elle peut
+  s'avérer numériquement beaucoup plus précise et efficace. En effet,
+  dans la première version, on évalue une puissance d'un nombre de
+  l'ordre de \(10^{8}\) alors que dans la seconde, on évalue la
+  puissance d'un nombre proche de l'unité~: les risques de divergence
+  sont bien moindre.
+  
+  Cette remarque se généralise assez bien~: si l'utilisation de
+  quantité demande un travail supplémentaire aux développeurs de loi,
+  ce travail peut avoir des avantages numériques. 
+}, mais nous
+pouvons espérer que leur usage se répande à terme.
+
+L'introduction des quantités a cependant eu un grand rôle sur la
+conception des classes mathématiques de \TFEL{}. En particulier, nous
+vérifions que toutes les opérations mathématiques sont valides avec
+des conventions très strictes\footnote{Par exemple, il n'est pas
+  possible d'affecter un objet dont le type numérique est en double
+  précision à un objet dont le type numérique est en double
+  précision. De manière générale, il n'est pas possible d'affecter un
+  résultat basé sur un certain type numérique à un résultat sur un
+  type plus petit. La classification des types numériques standard est
+  assuré par une classe nommée \tclass{Promote}}.
+
+
+
+\subsubsection{Tenseurs d'ordre $2$ symétriques}
+
+La classe \tclass{stensor} représente des tenseurs d'ordre $2$
+symétriques.
+
+Cette classe est paramétrée par~:
+% \begin{itemize}
+% \item 
+% \end{itemize}
+
+\paragraph{Importation et exportation}
+
+\subsubsection{Applications linéaires sur les tenseurs d'ordre $2$
+  symétriques}
+
+\subsubsection{Vecteurs}
+
+\paragraph{Vecteurs de petite taille connue}
+
+\paragraph{Vecteurs quelconques}
+
+\subsubsection{Matrices}
+
+\paragraph{Matrices de petite taille connue}
+
+\paragraph{Matrices quelconques}
+
+\subsubsection{Tableaux multi-dimensionnels}
+
+\subsubsection{Objets composites}
+
+\subsection{Algorithmes mathématiques}
+
+\subsubsection{Résolution de systèmes linéaires par un décomposition
+  {\tt LU}}
+
+\paragraph{Décomposition {\tt LU}}
+
+\paragraph{Résolution par descente/remontée}
+
+\paragraph{Calcul de l'inverse d'une matrice}
+
+\subsubsection{Résolutions de systèmes non linéaires}
+
+\paragraph{Algorithmes de \nom{Newton}}
+
+\paragraph{Algorithmes de \nom{Broyden}}
+
+\subsubsection{Intégration des systèmes différentiels par des méthodes
+  de \nom{Runge-Kutta}}
+
+\subsubsection{Interpolation de données par splines cubiques}
+
+\subsubsection{Interpolation de données par krigeage}
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=0.6\linewidth]{@abs_top_srcdir@/docs/tfel/images/EllipticFuelRodPowerDensity.eps}\\
+  \includegraphics[width=0.6\linewidth]{@abs_top_srcdir@/docs/tfel/images/EllipticFuelRodPowerDensityLegend.eps}
+  \caption{Interpolation des puissances calculées par le code
+    {\tt TRIPOLI} sur un maillage utilisé par un calcul
+    thermo-mécanique effectué avec le code \licos{}.}
+  \label{fig:PowerDensityInterpolation}
+\end{figure}
+
+\subsubsection{Identifications de paramètres par la méthode de
+  \nom{Levenberg-Marquardt}}
+
+\subsection{Évaluation d'expressions mathématiques}
+
+\newpage
+\clearpage
+\section{Description du module {\tt TFEL/Material}}
+
+\newpage
+\clearpage
+\section{Description du module {\tt TFEL/System}}
+
+\subsection{Gestion des librairies externes}
+
+\subsection{Gestion des processus}
+
+\subsection{Gestion des signaux}
+
+\newpage
+\clearpage
+\section{Description du module {\tt TFEL/Utilities}}
+
+\subsection{La classe {\tt GenType}}
+
+\subsection{Lecture de fichier texte}
+
+\subsection{Lecture d'un jeu de données}
+
+\newpage
+\clearpage
 \section{Documentation informatique}
 \label{sec:mfront:doc:info}
 
-Nous commençons par abordés des questions liées aux plate-formes et
-aux compilateurs supportés. Ces différents points permettent d'apprécier
-la qualité logicielle de \TFEL{}.
+\TFEL{} est développé en C++ sur la base du standard de \(1998\). Nous
+détaillons dans ce paragraphe quels sont les plate-formes et les
+compilateurs supportés.
+
+Ces différents points permettent d'apprécier la qualité logicielle de
+\TFEL{}.
 
 \subsection{Plate-formes supportées}
 
 \subsubsection{Systèmes \unix{}}
 
-Le générateur de code \mfront{} est développé dans un environnement
-\linux{} en se basant sur la norme \(98\) du \cpp{} et sur la norme
-POSIX pour les appels système\footnote{La portabilité de \TFEL{}, sans
-  modification du code source, sur d'autres systèmes \unix{} a été
-  vérifiée sur des version antérieures par un portage sur les systèmes
-  OpenSolaris et FreeBSD~: nous pensons qu'un tel portage de la
-  version actuelle se ferait sans difficulté}.
+Sous \unix{}, nous nous sommes appuyés sur la norme {\tt POSIX} pour
+réaliser les appels système~\cite{blaess05:_progr_c_linux_ipc}. Le
+principal utilisé est \linux{} et des tests de portabilité ont été
+effectués sur les systèmes {\tt Solaris} et {\tt FreeBSD}.
 
 La compatibilité POSIX permet également de compiler \TFEL{} dans un
 environnement \cygwin{}\footnote{\cygwin{} fournit une surcouche POSIX
@@ -170,8 +544,33 @@ dans un environnement \cygwin{} est amené à tomber en désuétude.
 
 \subsubsection{Systèmes \windows{}}
 
+Il est possible de compiler \TFEL{} pour les systèmes \windows{} à
+l'aide de la suite \msys{}.
+
 \subsection{Compilateurs supportées}
 
+\paragraph{Compilateur GNU} Les compilateurs de la suite {\tt gcc } et
+développé dans le cadre du projet {\tt GNU} sont les compilateurs
+disponibles par défaut sur les distributions \linux{}.
+
+Toutes les versions du compilateur depuis la version \(3.4\) sont
+supportées. Les versions antérieures ne supportent pas de manière
+satisfaisantes la norme \(98\).
+
+\paragraph{Compilateur Clang} Le compilateur 
+
+\paragraph{Compilateur Intel}
+
+\paragraph{Compilateur Pathscale}
+
+\subsection{Compilateurs non supportées}
+
+Différents tests ont été menés avec des compilateurs 
+
+SunStudio dans la version 12.3. Visual C++
+
+\newpage
+\clearpage
 \section{Notice d'installation}
 
 \TFEL{} propose aujourd'hui deux méthodes de compilation et
@@ -458,58 +857,276 @@ Le répertoire d'installation contient quatre répertoires~:
   fichiers d'exemple.
 \end{itemize}
 
-\subsubsection{Exécutables produits}
+\newpage
+\clearpage
+\section{Quelques techniques de programmation sous-tendant la
+  librairie de calculs tensoriels de \TFEL{}}
+\label{sec:tfel::quelq-techn-de}
 
-Actuellement, trois exécutables sont produits~:
+Nous décrivons ici quelques techniques de programmation sous-tendant
+la bibliothèque de calculs tensoriels de \TFEL{}. Ces techniques, aux
+quels de nombreux travaux ont été consacrés, se différencient
+notamment de techniques plus traditionnelles et ont été développées
+pour combiner simplicité d'utilisation par la surcharge des opérateurs
+mathématiques usuels et performances optimales, au moins égales à
+celles obtenues en \fortran{}.
+
+\subsection{Utilisation de la mémoire}
+
+Le nombre de composantes d'un tenseur, et donc la taille mémoire qu'il
+utilise, dépend {\em a priori} de la dimension~: un tenseur a \(3\)
+composantes en \(1D\), \(4\) composantes en \(2D\) et \(6\)
+composantes en \(3D\).
+
+Étant de petite taille, la zone mémoire associée peut être initialisée
+sur la pile (nommée \texttt{stack} en anglais), ou sur le tas (nommé
+\texttt{heap}). L'allocation sur le tas est coûteuse et ne peut être
+utilisée pour des petits calculs, tels que ceux utilisés pour
+l'intégration des lois de comportement, sans réduire considérablement
+les performances. L'allocation sur la pile est en comparaison sans
+coût. Elle permet par ailleurs une meilleure localisation des données
+(et donc des optimisations par le compilateur) et est compatible sans
+précautions particulières avec une utilisation des exceptions.
+
+L'allocation sur la pile peut se faire en stockant de manière
+systématique un tableau de taille \(6\) qui est la taille maximale des
+tenseurs quelque soit la dimension. Il est alors nécessaire de stocker
+la dimension d'espace dans le tenseur. Toutes les opérations
+tensorielles doivent faire appel à des boucles sur allant de \(0\) à la
+taille du tenseur. Cette méthode présente plusieurs désavantages~:
 \begin{itemize}
-  \item \texttt{tfel-config} qui permet de récupérer des
-  informations sur~:
-  \begin{itemize}
-    \item le répertoire d'installation de \TFEL{}~;
-    \item les options de compilation à utiliser~;
-    \item les drapeaux d'avertissement à utiliser~;
-  \end{itemize}
-  \item \texttt{tfel-doc} est un utilitaire de description de cas
-  test~;
-  \item \texttt{mfront} qui fait l'objet du présent document~;
+  \item la définition d'un champ de tenseur, où l'on attribue un tenseur
+  à chaque point de discrétisation d'un domaine géométrique, conduit à
+  une gaspillage de mémoire~;
+  \item il n'est pas possible au compilateur de dérouler ces boucles et
+  d'optimiser les opérations tensorielles~;
+  \item le compilateur ne peut vérifier que l'accès aux données est
+  valide, c'est à dire qu'un indice trop grand n'est pas utilisé. Une
+  telle vérification peut être faite par des tests, mais cela alourdit
+  le code et ralentit l'exécution~;
+  \item il est nécessaire de passer la dimension d'espace au
+  constructeur des objets, ce qui alourdit l'écriture.
 \end{itemize}
 
-\subsubsection{Librairies produites}
+Nous avons choisi une solution qui nous est apparue plus avantageuse et
+consistant à paramétrer les tenseurs par la dimension d'espace~: un
+tenseur \(1D\) est un objet différent d'un objet \(2D\). Ce choix permet
+d'utiliser un ensemble de techniques de programmation générique
+permettant par exemple de \og~dérouler les boucles\fg{} à la compilation
+et au compilateur de vérifier notre code\footnote{De manière générale,
+  nous avons privilégié dans \TFEL{} des techniques de programmation
+  permettant de détecter au plus tôt, c'est à dire dès la phase de
+  compilation, des erreurs qui ne sont détectables dans d'autres
+  langages qu'à l'exécution.}.
 
-\TFEL{} est un projet complexe séparé en différentes librairies :
+Ce paramétrage par la dimension d'espace est masqué dans \mfront{}~:
+une loi de comportement est en fait paramétrée par la dimension
+d'espace et est spécialisée pour chaque dimension d'espace, produisant
+un code optimisé dans chaque cas (au détriment du temps de compilation
+et de la taille du code généré, mais ces aspects ne sont pas
+problématiques pour les lois de comportement).
+
+\subsection{Choix du type numérique}
+
+L'ensemble des objets mathématiques de \TFEL{} sont également
+paramétrés par le type numérique utilisé. 
+
+Ce paramétrage du type numérique est masqué dans \mfront{}. \mfront{}
+propose d'utiliser un type opaque \texttt{real} pour les opérations
+mathématiques. Dans le cas de l'interface \texttt{umat}, la loi de
+comportement est spécialisée en utilisant un nombre flottant en double
+précision. D'autres codes peuvent faire des choix différents~: le code
+de résolution par transformées rapides développé au sein du projet
+\pleiades{} permet de choisir le type numérique à utiliser à la
+compilation.
+
+\subsection{Élimination des objets temporaires}
+
+Il est classique de vanter, pour des applications scientifiques, la
+possibilité dans le langage \cpp{} de surcharger les opérateurs
+mathématiques afin de rapprocher l'écriture du code de l'écriture
+mathématique usuelle.
+
+Une implantation \og~naïve~\fg{} de la surcharge des opérateurs
+consiste à écrire, dans le cas particulier de l'addition, que la somme
+de deux tenseurs est un tenseur. Ainsi, la somme \texttt{d} de trois
+tenseurs \texttt{a}, \texttt{b} et \texttt{c} s'écrit~:
+\begin{center}
+  \texttt{d} =  \texttt{a} + \texttt{b} + \texttt{c}
+\end{center}
+Cette expression est interprétée par le compilateur en introduisant
+des objets temporaires, résultats des opérations prises deux à deux~:
+\begin{center}
+  \texttt{d} =  \texttt{a} + \texttt{b} + \texttt{c}
+  \(\quad\Rightarrow\quad
+  \left\{
+      \begin{array}[p]{rl}
+        \text{\texttt{tmp1}} &= \text{\texttt{a}}    + \text{\texttt{b}} \\ 
+        \text{\texttt{tmp2}} &= \text{\texttt{tmp1}} + \text{\texttt{c}} \\ 
+        \text{\texttt{d}}    &= \text{\texttt{tmp3}}
+      \end{array}
+    \right.
+    \)
+\end{center}
+
+L'évaluation et l'affectation des ces temporaires conduit à trois
+boucles (qui peuvent être éventuellement déroulées), là où une doit
+suffire.
+
+Une solution à cela est d'utiliser une évaluation paresseuse des
+opérations~: le résultat de la somme de deux tenseurs étant un objet
+particulier \og~résultat de la somme de deux tenseurs~\fg{} dont le
+rôle est de porter l'information des opérations à effectuer jusqu'au
+moment de leur évaluation effective, c'est à dire jusqu'au moment de
+l'affectation au tenseur \texttt{d}. Le résultat de la somme de trois
+tenseurs est un objet du type \og~résultat de la somme du résultat de
+la somme de deux tenseurs et d'un tenseur~\fg{}. 
+
+Nous utilisons le compilateur pour générer en arrière plan de tels
+objets (en nous appuyant sur la notion de concept développée au
+paragraphe suivant) et les éliminer au moment de l'évaluation
+effective du résultat. Cette technique, appelée \texttt{expression
+  template}, couplée aux techniques de déroulement de boucles, permet
+de transformer l'addition de trois tenseurs à du code équivalent à~:
+\begin{center}
+  \texttt{d} =  \texttt{a} + \texttt{b} + \texttt{c}
+  \(\quad\Rightarrow\quad
+  \left\{
+      \begin{array}[p]{rl}
+        d[0] &= \texttt{a}[0] + \texttt{b}[0] + \texttt{c}[0] \\
+        d[1] &= \texttt{a}[1] + \texttt{b}[1] + \texttt{c}[1] \\
+        d[2] &= \texttt{a}[2] + \texttt{b}[2] + \texttt{c}[2] \\
+      \end{array}
+    \right.
+    \)
+\end{center}
+si les tenseurs \texttt{a}, \texttt{b}, \texttt{c} et \texttt{d} sont
+des tenseurs \(1D\).
+
+Le moteur d'\texttt{expression template} de \TFEL{} se compare
+favorablement, en terme de fonctionnalités, à toutes les implantations
+publiées à notre connaissance, en particulier car nous avons développé
+une notion de concept qui est maintenant décrite.
+
+\subsection{Notion de concept}
+
+Nous avons décrit brièvement le moteur d'\texttt{expression template}
+qui sous-tend les opérations mathématiques dans \TFEL{}. Chaque
+opération conduit à des objets dont le type est généré automatiquement
+par le compilateur. D'un point de vue pratique, il est nécessaire que
+ses objets se comportent comme des tenseurs \og~normaux~\fg{} afin de
+pouvoir les utiliser dans des fonctions tensorielles usuelles (trace,
+contrainte équivalente, etc..).
+
+Il pourrait être tenté d'utiliser une classe mère abstraite et des
+méthodes virtuelles associées. Cette approche est incompatible avec
+les choix de conception précédent~:
 \begin{itemize}
-  \item TFELException est une librairie utilitaire contenant les
-  bases des classes d'exceptions utilisées dans \TFEL{}~;	
-  \item TFELTests propose un framework de test~
-  \item TFELUtilities est une librairie contenant différentes
-  classes utilitaires~;
-  \item TFELSystem propose :
-  \begin{itemize}
-    \item un enrobage \cpp{} de diverses fonctionnalités
-    \texttt{POSIX}~:
-    \begin{itemize}
-      \item créations et interaction avec des processus
-      (ProcessManager)
-      \item gestion des signaux (SignalManager)
-      \item créations de répertoires, etc..
-      \item traduction des erreurs posix portées par
-      \texttt{errno} en exceptions
-    \end{itemize}
-    \item des facilités d'appels de fonctions externes via
-    dlopen (ExternalLibraryManager)
-  \end{itemize}
-  \item TFELMath contient des classes utilitaires nécessaires aux
-  classes mathématiques proposées par \TFEL{}
-  \item TFELMathCubicSpline contient des classes d'interpolation
-  par des splines cubiques~;
-  \item TFELMathKriging contient des classes d'interpolation par
-  des méthodes de Krigeage~;
-  \item TFELMathParser contient les classes dédiées à
-  l'interprétation de formules mathématiques complexes à partir de
-  chaînes de caractères~;
-  \item TFELMaterial contient certains classes utilitaires pour
-  l'écriture de propriétés matériau ou loi de comportement mécanique
-  (vérification des bornes notamment).
+\item il est nécessaire d'allouer les objets sur le tas et de
+  manipuler des pointeurs ce qui est à la fois inefficace et
+  incompatible avec une écriture proche de l'écriture mathématique
+  usuelle~;
+\item l'utilisation de méthodes virtuelles ruine toutes les
+  optimisations que nous avons cherchées à mettre en place dans les
+  paragraphes précédents.
 \end{itemize}
+
+Une autre technique d'abstraction est donc nécessaire. De nombreuses
+recherches ont permis de dégager la notion de \og~concept~\fg{}. Cette
+notion aurait dû être un des piliers du futur standard du langage
+\cpp{} mais son introduction a été différée par manque de maturité.
+
+\TFEL{} propose une notion de \og~concept\fg{} beaucoup moins étendue et
+générale que celle proposée pour le futur standard mais qui est basée
+sur le standard actuel. La notion de concept dans \TFEL{} repose sur la
+combinaison de différentes techniques de programmation relativement
+pointues~:
+\begin{itemize}
+  \item une classe \texttt{S} implante la notion de concept en dérivant
+  de la classe \texttt{StensorConcept<S>}~: \texttt{S} hérite d'une
+  classe dont elle est paramètre. Cette technique, appelée
+  \texttt{Curiously Recurring Template Pattern}, a été énormément
+  utilisée en programmation générique pour obtenir une flexibilité
+  équivalente aux méthodes virtuelles sans en payer le coût~;
+  \item une classe à deux paramètres \texttt{Implements} qui contient
+  une variable statique \varcpp{cond}. Si une \texttt{S} implante le
+  concept \texttt{StensorConcept}, la variable statique
+  \texttt{Implements<S,StensorConcept>::cond} vaut \texttt{true},
+  \texttt{false} dans le cas contraire. L'implantation effective de la
+  classe \texttt{Implements} repose sur les capacités d'introspection de
+  l'opérateur \texttt{sizeof}~;
+  \item le recours au principe \texttt{SFINAE}, \texttt{Substitution
+    Failure Is Not An Error} pour filtrer les paramètres valides d'une
+  fonction. Ce principe stipule que lorsque le compilateur examine la
+  définition d'une fonction paramétrée pour savoir si elle applicable
+  dans une contexte particulier, si la substitution du paramètre conduit
+  à un échec, alors cette fonction est simplement {\em éliminée} de la
+  liste des candidats {\em sans causer d'erreur}.
+
+  L'application de ce principe se fait dans \TFEL{} par la classe
+  \texttt{EnableIf} qui paramétrée par une variable booléenne et une
+  type \texttt{T}. La classe \texttt{EnableIf<true,T>} est implantée
+  et contient un alias nommé \texttt{type} égal à \texttt{T}. La
+  classe \texttt{EnableIf<false,T>} n'est jamais définie. Ainsi,
+  l'alias \texttt{EnableIf<cond,T>::type} n'est défini que si la
+  variable \texttt{cond} vaut \texttt{true}.
+
+  Ces préliminaires permettent de comprendre la déclaration de la
+  fonction \texttt{trace} dans \TFEL{}~:
+
+  \begin{center}
+    \begin{minipage}{0.8\textwidth}
+      \mbox{}\\
+      \hlkwc{template}\hlstd{}\hlsym{$<$}\hlstd{}\hlkwc{class }\hlstd{T}\hlsym{$>$}\hspace*{\fill}\\
+      \hlstd{TFEL\textunderscore MATH\textunderscore INLINE\hspace*{\fill}\\
+        typename tfel}\hlsym{::}\hlstd{meta}\hlsym{::}\hlstd{EnableIf}\hlsym{$<$}\hspace*{\fill}\\
+      \hlstd{}\hlstd{\ \ }\hlstd{tfel}\hlsym{::}\hlstd{meta}\hlsym{::}\hlstd{Implements}\hlsym{$<$}\hlstd{T}\hlsym{,}\hlstd{StensorConcept}\hlsym{$>$::}\hlstd{cond}\hlsym{,}\hspace*{\fill}\\
+      \hlstd{}\hlstd{\ \ }\hlstd{typename StensorTraits}\hlsym{$<$}\hlstd{T}\hlsym{$>$::}\hlstd{NumType}\hspace*{\fill}\\
+      \hlsym{$>$::}\hlstd{type}\hspace*{\fill}\\
+      \hlkwd{trace}\hlstd{}\hlsym{(}\hlstd{}\hlkwb{const }\hlstd{T}\hlsym{\&);}\\
+    \end{minipage}
+  \end{center}
+
+  L'utilisation de la classe \texttt{EnableIf} conduit à ce que cette
+  fonction ne puisse être appliquée que si la classe \texttt{T}
+  implante le concept \texttt{StensorConcept}. Ce filtre permet
+  d'éviter un conflit possible avec la déclaration de la fonction
+  \texttt{trace} d'une matrice~:
+
+  \begin{center}
+    \begin{minipage}{0.8\textwidth}
+      \mbox{}\\
+      \hlkwc{template}\hlstd{}\hlsym{$<$}\hlstd{}\hlkwc{class }\hlstd{T}\hlsym{$>$}\hspace*{\fill}\\
+      \hlstd{TFEL\textunderscore MATH\textunderscore INLINE\hspace*{\fill}\\
+        typename tfel}\hlsym{::}\hlstd{meta}\hlsym{::}\hlstd{EnableIf}\hlsym{$<$}\hspace*{\fill}\\
+      \hlstd{}\hlstd{\ \ }\hlstd{tfel}\hlsym{::}\hlstd{meta}\hlsym{::}\hlstd{Implements}\hlsym{$<$}\hlstd{T}\hlsym{,}\hlstd{MatrixConcept}\hlsym{$>$::}\hlstd{cond}\hlsym{,}\hspace*{\fill}\\
+      \hlstd{}\hlstd{\ \ }\hlstd{typename MatrixTraits}\hlsym{$<$}\hlstd{T}\hlsym{$>$::}\hlstd{NumType}\hspace*{\fill}\\
+      \hlsym{$>$::}\hlstd{type}\hspace*{\fill}\\
+      \hlkwd{trace}\hlstd{}\hlsym{(}\hlstd{}\hlkwb{const }\hlstd{T}\hlsym{\&);}\\
+    \end{minipage}
+  \end{center}
+
+\end{itemize}
+
+L'application de toutes ces techniques permet au compilateur de
+traduire la trace de la somme de deux tenseurs \texttt{s1} et
+\texttt{s2} en un code équivalent à~:
+\begin{center}
+  \texttt{trace(s1+s2)}
+  \(\quad\Rightarrow\quad
+  \texttt{s1}[0] + \texttt{s2}[0] +
+  \texttt{s1}[1] + \texttt{s2}[1] +
+  \texttt{s1}[2] + \texttt{s2}[2]
+  \)
+\end{center}
+
+\clearpage
+\newpage
+\referencecea
+\listetableaux
+\listefigures
+
+\newpage
+\printindex{tclass}{Index des classes}
 
 \end{document}
