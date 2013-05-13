@@ -17,6 +17,8 @@
 #include<cctype>
 #include<cmath>
 
+#include"TFEL/System/System.hxx"
+
 #include"MFront/ParserUtilities.hxx"
 #include"MFront/MFrontHeader.hxx"
 #include"MFront/MFrontBehaviourVirtualInterface.hxx"
@@ -28,10 +30,11 @@ namespace mfront{
 
   void MFrontBehaviourParserCommon::setVerboseMode(void)
   {
+    using namespace std;
     typedef MFrontBehaviourInterfaceFactory MBIF;
     MBIF& mbif = MBIF::getMFrontBehaviourInterfaceFactory();
     this->verboseMode = true;
-    StringContainer::const_iterator i;
+    vector<string>::const_iterator i;
     for(i  = this->interfaces.begin();
 	i != this->interfaces.end();++i){
       MFrontBehaviourVirtualInterface *interface = mbif.getInterfacePtr(*i);
@@ -41,10 +44,11 @@ namespace mfront{
 
   void MFrontBehaviourParserCommon::setDebugMode(void)
   {
+    using namespace std;
     typedef MFrontBehaviourInterfaceFactory MBIF;
     MBIF& mbif = MBIF::getMFrontBehaviourInterfaceFactory();
     this->debugMode = true;
-    StringContainer::const_iterator i;
+    vector<string>::const_iterator i;
     for(i  = this->interfaces.begin();
 	i != this->interfaces.end();++i){
       MFrontBehaviourVirtualInterface *interface = mbif.getInterfacePtr(*i);
@@ -54,14 +58,105 @@ namespace mfront{
 
   void MFrontBehaviourParserCommon::setWarningMode(void)
   {
+    using namespace std;
     typedef MFrontBehaviourInterfaceFactory MBIF;
     MBIF& mbif = MBIF::getMFrontBehaviourInterfaceFactory();
     this->warningMode = true;
-    StringContainer::const_iterator i;
+    vector<string>::const_iterator i;
     for(i  = this->interfaces.begin();
 	i != this->interfaces.end();++i){
       MFrontBehaviourVirtualInterface *interface = mbif.getInterfacePtr(*i);
       interface->setWarningMode();
+    }
+  }
+  
+  void
+  MFrontBehaviourParserCommon::endsInputFileProcessing()
+  {} // end of MFrontBehaviourParserCommon::endsInputFileProcessing
+
+  void 
+  MFrontBehaviourParserCommon::writeOutputFiles(){
+    using namespace std;
+    using namespace tfel::system;
+    typedef MFrontBehaviourInterfaceFactory MBIF;
+    MBIF& mbif = MBIF::getMFrontBehaviourInterfaceFactory();
+    systemCall::mkdir("src");
+    systemCall::mkdir("include");
+    systemCall::mkdir("include/TFEL/");
+    systemCall::mkdir("include/TFEL/Material");
+    if(this->className.empty()){
+      string msg("MFrontBehaviourParserCommon::writeOutputFiles : ");
+      msg += "no behaviour name defined.";
+      throw(runtime_error(msg));      
+    }
+    this->behaviourFileName  = this->className;
+    this->behaviourFileName += ".hxx";
+    this->behaviourFile.open(("include/TFEL/Material/"+this->behaviourFileName).c_str());
+    if(!this->behaviourFile){
+      string msg("MFrontBehaviourParserCommon::writeOutputFiles : ");
+      msg += "unable to open ";
+      msg += this->behaviourFileName;
+      msg += " for writing output file.";
+      throw(runtime_error(msg));
+    }
+    this->behaviourDataFileName  = this->className;
+    this->behaviourDataFileName += "BehaviourData.hxx";
+    this->behaviourDataFile.open(("include/TFEL/Material/"+this->behaviourDataFileName).c_str());
+    if(!this->behaviourDataFile){
+      string msg("MFrontBehaviourParserCommon::writeOutputFiles : ");
+      msg += "unable to open ";
+      msg += this->behaviourDataFileName;
+      msg += " for writing output file.";
+      throw(runtime_error(msg));
+    }
+    this->integrationDataFileName  = this->className;
+    this->integrationDataFileName += "IntegrationData.hxx";
+    this->integrationDataFile.open(("include/TFEL/Material/"+this->integrationDataFileName).c_str());
+    if(!this->integrationDataFile){
+      string msg("MFrontBehaviourParserCommon::writeOutputFiles : ");
+      msg += "unable to open ";
+      msg += this->integrationDataFileName;
+      msg += " for writing output file.";
+      throw(runtime_error(msg));
+    }
+    this->srcFileName  = this->className;
+    this->srcFileName += ".cxx";
+    this->srcFile.open(("src/"+this->srcFileName).c_str());
+    if(!this->srcFile){
+      string msg("MFrontBehaviourParserCommon::writeOutputFiles : ");
+      msg += "unable to open ";
+      msg += this->srcFileName;
+      msg += " for writing output file.";
+      throw(runtime_error(msg));
+    }
+    // Adds some stuff
+    this->endsInputFileProcessing();
+    // Generating BehaviourData's outputFile
+    this->writeBehaviourDataFile();
+    // Generating IntegrationData's outputFile
+    this->writeIntegrationDataFile();
+    // Generating Behaviour's outputFile
+    this->writeBehaviourFile();
+    // Generating Behaviour's outputFile
+    this->writeSrcFile();
+    vector<string>::const_iterator i;
+    for(i  = this->interfaces.begin();
+	i != this->interfaces.end();++i){
+      MFrontBehaviourVirtualInterface *interface = mbif.getInterfacePtr(*i);
+      interface->endTreatement(this->fileName,
+			       this->library,
+			       this->material,
+			       this->className,
+			       this->authorName,
+			       this->date,
+			       this->coefsHolder,
+			       this->stateVarsHolder,
+			       this->auxiliaryStateVarsHolder,
+			       this->externalStateVarsHolder,
+			       this->parametersHolder,
+			       this->glossaryNames,
+			       this->entryNames,
+			       this->behaviourCharacteristic);
     }
   }
 
@@ -319,7 +414,7 @@ namespace mfront{
     MBIF& mbif = MBIF::getMFrontBehaviourInterfaceFactory();
     pair<bool,CxxTokenizer::TokensContainer::const_iterator> p;
     TokensContainer::const_iterator p2;
-    StringContainer::const_iterator i;
+    vector<string>::const_iterator i;
     bool treated = false;
     string key;
     --(this->current);
@@ -513,13 +608,13 @@ namespace mfront{
   } // end of MFrontBehaviourParserCommon::treatMaterial
 
   void 
-  MFrontBehaviourParserCommon::readStringList(StringContainer& cont)
+  MFrontBehaviourParserCommon::readStringList(std::vector<std::string>& cont)
   {
     using namespace std;
     string type;
     string s;
     bool endOfTreatement;
-    StringContainer::iterator p;
+    vector<string>::iterator p;
     this->checkNotEndOfFile("MFrontBehaviourParserCommon::readStringList",
 			    "Cannot read interface name.");
     endOfTreatement=false;
@@ -641,192 +736,6 @@ namespace mfront{
     this->readVarList(this->externalStateVarsHolder,true,true);
   }
 
-  void MFrontBehaviourParserCommon::treatUnaryLoadingTest(void)
-  {
-    using namespace std;
-
-    string test;
-    string testVariable;
-    unsigned short dimension;
-    string numericType = "double";
-    bool use_qt = false;
-    bool isTimeDefined = false;
-    this->readSpecifiedToken("MFrontBehaviourParserCommon::treatUnaryLoadingTest","<");
-    this->checkNotEndOfFile("MFrontBehaviourParserCommon::treatUnaryLoadingTest",
-			    "Expected loading name.");
-    if((this->current->value!="\"sigxx\"")&&
-       (this->current->value!="\"sigyy\"")&&
-       (this->current->value!="\"sigzz\"")&&
-       (this->current->value!="\"sigxy\"")&&
-       (this->current->value!="\"sigxz\"")&&
-       (this->current->value!="\"sigyz\"")&&
-       (this->current->value!="\"etoxx\"")&&
-       (this->current->value!="\"etoyy\"")&&
-       (this->current->value!="\"etozz\"")&&
-       (this->current->value!="\"etoxy\"")&&
-       (this->current->value!="\"etoxz\"")&&       
-       (this->current->value!="\"etoyz\"")&&
-       (this->current->value!="\"Ux\"")&&
-       (this->current->value!="\"Uy\"")&&       
-       (this->current->value!="\"Uz\"")){
-      string msg("Test description is not valid (read '");
-      msg+= this->current->value+"').";
-      msg+=".\nValid test descriptions are : \n";
-      msg+="'sigxx' 'sigyy' 'sigzz' 'sigxy' 'sigxz' 'sigyz'\n" ;
-      msg+="'etoxx' 'etoyy' 'etozz' 'etoxy' 'etoxz' 'etoyz'\n" ;
-      msg+="'Ux' 'Uy' 'Uz'\n";
-      this->throwRuntimeError("MFrontBehaviourParserCommon::treatUnaryLoadingTest",msg);
-    } 
-    test = this->current->value; 
-    testVariable = test.substr(1,test.size()-2);
-    ++(this->current);
-    this->readSpecifiedToken("MFrontBehaviourParserCommon::treatUnaryLoadingTest",",");
-    this->checkNotEndOfFile("MFrontBehaviourParserCommon::treatUnaryLoadingTest",
-			    "Expected dimension.");
-    istringstream tmp(this->current->value);
-    tmp >> dimension;
-    if(tmp.fail()){
-      this->throwRuntimeError("MFrontBehaviourParserCommon::treatUnaryLoadingTest",
-			      "Unable to treat the dimension (read '"+this->current->value+"')");
-    }
-    if(!tmp.eof()){
-      this->throwRuntimeError("MFrontBehaviourParserCommon::treatUnaryLoadingTest",
-			      "Error while reading the dimension. ('"+tmp.str()+
-			      "' has not been parsed correctly).");
-    }
-    if((dimension!=1u)&&(dimension!=2u)&&(dimension!=3u)){
-      this->throwRuntimeError("MFrontBehaviourParserCommon::treatUnaryLoadingTest",
-			      "Dimension must be either 1, 2 or 3 (read '"+this->current->value+"')");
-    }
-    ++(this->current);
-    this->checkNotEndOfFile("MFrontBehaviourParserCommon::treatUnaryLoadingTest");
-    if(this->current->value!=">"){
-      if(this->current->value!=","){
-	this->throwRuntimeError("MFrontBehaviourParserCommon::treatUnaryLoadingTest",
-				"Expected ',' or '>' (read '"+this->current->value+"')");
-      }
-      ++(this->current);
-      this->checkNotEndOfFile("MFrontBehaviourParserCommon::treatUnaryLoadingTest");
-      if((this->current->value!="float")&&
-	 (this->current->value!="double")&&
-	 (this->current->value!="long double")){
-	this->throwRuntimeError("MFrontBehaviourParserCommon::treatUnaryLoadingTest",
-				"Numeric type must be either a float, a double or a long double (read '"
-				+this->current->value+"')");
-      }
-      numericType = this->current->value;
-      ++(this->current);
-      this->checkNotEndOfFile("MFrontBehaviourParserCommon::treatUnaryLoadingTest");
-      if(this->current->value!=">"){
-	if(this->current->value!=","){
-	  this->throwRuntimeError("MFrontBehaviourParserCommon::treatUnaryLoadingTest",
-				  "Expected ',' or '>' (read '"+this->current->value+"')");
-	}
-	++(this->current);
-	this->checkNotEndOfFile("MFrontBehaviourParserCommon::treatUnaryLoadingTest");
-	if((this->current->value!="true")&&
-	   (this->current->value!="false")){
-	  this->throwRuntimeError("MFrontBehaviourParserCommon::treatUnaryLoadingTest",
-				  "Expected 'true' or 'false'  (read '"+this->current->value+"')");
-	}
-	if(this->current->value=="true"){
-	  if(!this->behaviourCharacteristic.useQt()){
-	    this->throwRuntimeError("MFrontBehaviourParserCommon::treatUnaryLoadingTest",
-				    "This behaviour does not use quantities."
-				    "Please have a look at the '@UseQt' directive.");
-	  }
-	  use_qt = true;
-	} else {
-	  use_qt = false;
-	}
-	++(this->current);
-	this->readSpecifiedToken("MFrontBehaviourParserCommon::treatUnaryLoadingTest",">");
-      }
-    }
-    ++(this->current);
-    UnaryLoadingDefinition definition(test,dimension,numericType,use_qt);
-    this->readSpecifiedToken("MFrontBehaviourParserCommon::treatUnaryLoadingTest","{");
-    while((this->current->value!="}")&&
-	  (this->current!=this->fileTokens.end())){
-      VarContainer::const_iterator p;
-      bool found = false;
-      if(this->current->value=="times"){
-	if(isTimeDefined){
-	  this->throwRuntimeError("MFrontBehaviourParserCommon::treatUnaryLoadingTest",
-				  "time already defined.");
-	}
-	isTimeDefined = true;
-	++(this->current);
-	this->current = definition.treatTimes(this->current,
-					      this->fileTokens.end());
-	found = true;
-      }
-      if(this->current->value=="T"){
-	++(this->current);
-	this->current = definition.treatParticularInput("T",
-							this->current,
-							this->fileTokens.end());
-	found = true;
-      }
-      for(p =this->coefsHolder.begin();
-	  (!found)&&(p!=this->coefsHolder.end());
-	  ++p){
-	if(p->name==this->current->value){
-	  ++(this->current);
-	  this->current = definition.treatCoef(p->name,
-					       this->getTypeFlag(p->type),
-					       this->current,
-					       this->fileTokens.end());
-	  found = true;
-	}
-      }
-      for(p =this->stateVarsHolder.begin();
-	  (!found)&&(p!=this->stateVarsHolder.end());
-	  ++p){
-	if(p->name==this->current->value){
-	  ++(this->current);
-	  this->current = definition.treatStateVar(p->name,
-						   this->getTypeFlag(p->type),
-						   this->current,
-						   this->fileTokens.end());
-	  found = true;
-	}
-      }
-      for(p =this->auxiliaryStateVarsHolder.begin();
-	  (!found)&&(p!=this->auxiliaryStateVarsHolder.end());
-	  ++p){
-	if(p->name==this->current->value){
-	  ++(this->current);
-	  this->current = definition.treatStateVar(p->name,
-						   this->getTypeFlag(p->type),
-						   this->current,
-						   this->fileTokens.end());
-	  found = true;
-	}
-      }
-      for(p =this->externalStateVarsHolder.begin();
-	  (!found)&&(p!=this->externalStateVarsHolder.end());
-	  ++p){
-	if(p->name==this->current->value){
-	  ++(this->current);
-	  this->current = definition.treatExternalStateVar(p->name,
-							   this->getTypeFlag(p->type),
-							   this->current,
-							   this->fileTokens.end());
-	  found = true;
-	}
-      }
-      if(!found){
-	this->throwRuntimeError("MFrontBehaviourParserCommon::treatUnaryLoadingTest",
-				"unkwown keyword '"+this->current->value+"'");
-      }
-    }
-    this->checkNotEndOfFile("MFrontBehaviourParserCommon::treatUnaryLoadingTest",
-			    "Block defining the unary loading test is not finished.");
-    ++(this->current);
-    unaryLoadingDefinitions.push_back(definition);
-  } // end of MFrontBehaviourParserCommon::treatUnaryLoadingTest
-
   void
   MFrontBehaviourParserCommon::treatBounds(void)
   {
@@ -850,6 +759,9 @@ namespace mfront{
     using namespace std;
     VarContainer::const_iterator p;
     ComputedVarContainer::const_iterator p2;
+    map<DrivingVariable,
+	ThermodynamicForce>::const_iterator p3;
+
     bool found;
     this->checkNotEndOfFile("MFrontBehaviourParserCommon::treatBounds");
 
@@ -858,20 +770,30 @@ namespace mfront{
     
     found = false;
     boundsDescription.arraySize = 1u;
-    if(boundsDescription.varName=="sig"){
-      found=true;
-      boundsDescription.varCategory = BoundsDescription::StateVar;
-      boundsDescription.varType     = Stensor;
+    for(p3=this->mvariables.begin();
+	p3!=this->mvariables.end();++p3){
+      // check if the driving variable match
+      if(boundsDescription.varName==p3->first.name){
+	found=true;
+	if(p3->first.increment_known){
+	  boundsDescription.varCategory = BoundsDescription::ExternalStateVar;
+	} else {
+	  boundsDescription.varCategory = BoundsDescription::ExternalStateVarII;
+	}
+	boundsDescription.varType     = this->getTypeFlag(p3->first.type);
+      }
+      // check if the associated thermodynamic force match
+      if(boundsDescription.varName==p3->second.name){
+	found=true;
+	boundsDescription.varCategory = BoundsDescription::StateVar;
+	boundsDescription.varType     = this->getTypeFlag(p3->second.type);
+      }
     }
+    // temperature
     if(boundsDescription.varName=="T"){
       found=true;
       boundsDescription.varCategory = BoundsDescription::StateVar;
       boundsDescription.varType     = Scalar;
-    }
-    if(boundsDescription.varName=="eto"){
-      found=true;
-      boundsDescription.varCategory = BoundsDescription::ExternalStateVar;
-      boundsDescription.varType     = Stensor;
     }
     for(p   = this->coefsHolder.begin();
 	(p != this->coefsHolder.end())&&(!found);++p){
@@ -1032,11 +954,6 @@ namespace mfront{
     using namespace std;
     this->registerVariable("D");
     this->registerVariable("Dt");
-    this->registerVariable("sig");
-    this->registerVariable("F0");
-    this->registerVariable("F1");
-    this->registerVariable("eto");
-    this->registerVariable("deto");
     this->registerVariable("T");
     this->registerVariable("dT");
     this->registerVariable("dt");
@@ -1062,7 +979,8 @@ namespace mfront{
   } // end of MFrontBehaviourParserCommon::registerDefaultVarNames
 
   MFrontBehaviourParserCommon::MFrontBehaviourParserCommon()
-    : ParserBase(),
+    : MFrontVirtualParser(),
+      ParserBase(),
       useStateVarTimeDerivative(false),
       explicitlyDeclaredUsableInPurelyImplicitResolution(false),
       hasConsistantTangentOperator(false),
@@ -1156,8 +1074,12 @@ namespace mfront{
   } // end of MFrontBehaviourParserCommon::writeStandardTFELTypedefs
 
   MFrontBehaviourParserCommon::~MFrontBehaviourParserCommon()
-  {} // end of MFrontBehaviourParserCommon::~MFrontParserCommon
-
+  {
+    this->behaviourFile.close();
+    this->behaviourDataFile.close();
+    this->integrationDataFile.close();
+    this->srcFile.close();    
+  } // end of MFrontBehaviourParserCommon::~MFrontParserCommon
 
   void MFrontBehaviourParserCommon::checkBehaviourDataFile() const {
     using namespace std;
@@ -1241,6 +1163,8 @@ namespace mfront{
   void MFrontBehaviourParserCommon::writeBehaviourDataDefaultMembers(void)
   {
     using namespace std;
+    map<DrivingVariable,
+	ThermodynamicForce>::const_iterator p3;
     this->checkBehaviourDataFile();
     this->behaviourDataFile << "protected: \n\n";
     if(this->behaviourCharacteristic.requiresStiffnessTensor()){
@@ -1249,8 +1173,14 @@ namespace mfront{
     if(this->behaviourCharacteristic.requiresThermalExpansionTensor()){
       this->behaviourDataFile << "ThermalExpansionTensor A;\n";
     }
-    this->behaviourDataFile << "StressStensor sig;\n";
-    this->behaviourDataFile << "StrainStensor eto;\n\n";
+    for(p3=this->mvariables.begin();p3!=this->mvariables.end();++p3){
+      if(p3->first.increment_known){
+	this->behaviourDataFile << p3->first.type  << " " << p3->first.name << ";\n\n";
+      } else {
+	this->behaviourDataFile << p3->first.type  << " " << p3->first.name << "0;\n\n";
+      }
+      this->behaviourDataFile << p3->second.type << " " << p3->second.name << ";\n\n";
+    }
     this->behaviourDataFile << "temperature T;\n";
     this->behaviourDataFile << endl;
   }
@@ -1295,6 +1225,8 @@ namespace mfront{
   {
     using namespace std;
     typedef MFrontBehaviourInterfaceFactory MBIF;
+    map<DrivingVariable,
+	ThermodynamicForce>::const_iterator p3;
     MBIF& mbif = MBIF::getMFrontBehaviourInterfaceFactory();
     VarContainer::const_iterator p;
     this->checkBehaviourDataFile();
@@ -1315,8 +1247,14 @@ namespace mfront{
     if(this->behaviourCharacteristic.requiresThermalExpansionTensor()){
       this->behaviourDataFile << "A(src.A),\n";
     }
-    this->behaviourDataFile << "sig(src.sig),\n";
-    this->behaviourDataFile << "eto(src.eto),\n";
+    for(p3=this->mvariables.begin();p3!=this->mvariables.end();++p3){
+      if(p3->first.increment_known){
+	this->behaviourDataFile << p3->first.name  << "(src." << p3->first.name << "),\n";
+      } else {
+	this->behaviourDataFile << p3->first.name  << "0(src." << p3->first.name << "0),\n";
+      }
+      this->behaviourDataFile << p3->second.name << "(src." << p3->second.name << "),\n";
+    }
     this->behaviourDataFile << "T(src.T)";
     if(!this->coefsHolder.empty()){
       for(p=this->coefsHolder.begin();p!=this->coefsHolder.end();++p){
@@ -1355,8 +1293,15 @@ namespace mfront{
     } else {
       this->behaviourDataFile << "MechanicalBehaviourData<N,Type,false>& src)\n";
     }
-    this->behaviourDataFile << ": sig(src.sig),\n";
-    this->behaviourDataFile << "eto(src.eto),\n";
+    this->behaviourDataFile << ":";
+    for(p3=this->mvariables.begin();p3!=this->mvariables.end();++p3){
+      if(p3->first.increment_known){
+	this->behaviourDataFile << p3->first.name  << "(src." << p3->first.name << "),\n";
+      } else {
+	this->behaviourDataFile << p3->first.name  << "0(src." << p3->first.name << "0),\n";
+      }
+      this->behaviourDataFile << p3->second.name << "(src." << p3->second.name << "),\n";
+    }
     this->behaviourDataFile << "T(src.T)";
     SupportedTypes::TypeSize o;
     this->writeVariableInitializersInBehaviourDataConstructorI(this->behaviourDataFile,
@@ -1387,7 +1332,7 @@ namespace mfront{
 								"src.external_variables","","");
     this->behaviourDataFile << "}\n\n";
     // Creating constructor for external interfaces
-    StringContainer::const_iterator i;
+    vector<string>::const_iterator i;
     for(i  = this->interfaces.begin(); i != this->interfaces.end();++i){
       MFrontBehaviourVirtualInterface *interface = mbif.getInterfacePtr(*i);
       interface->writeBehaviourDataConstructor(this->behaviourDataFile,
@@ -1403,6 +1348,8 @@ namespace mfront{
   void MFrontBehaviourParserCommon::writeBehaviourDataAssignementOperator(void)
   {
     using namespace std;
+    map<DrivingVariable,
+	ThermodynamicForce>::const_iterator p3;
     VarContainer::const_iterator p;
     this->checkBehaviourDataFile();
     this->behaviourDataFile << "/*\n";
@@ -1411,8 +1358,14 @@ namespace mfront{
     this->behaviourDataFile << this->className << "BehaviourData&\n";
     this->behaviourDataFile << "operator=(const " 
 			    << this->className << "BehaviourData& src){\n";
-    this->behaviourDataFile << "this->sig = src.sig;\n";
-    this->behaviourDataFile << "this->eto = src.eto;\n";
+    for(p3=this->mvariables.begin();p3!=this->mvariables.end();++p3){
+      if(p3->first.increment_known){
+	this->behaviourDataFile << "this->" << p3->first.name  << " = src." << p3->first.name << ";\n\n";
+      } else {
+	this->behaviourDataFile << "this->" << p3->first.name  << "0 = src." << p3->first.name << "0;\n\n";
+      }
+      this->behaviourDataFile << "this->" << p3->second.name << " = src." << p3->second.name << ";\n\n";
+    }
     if(!this->coefsHolder.empty()){
       for(p=this->coefsHolder.begin();p!=this->coefsHolder.end();++p){
 	this->behaviourDataFile << "this->" << p->name << " = src." << p->name << ";\n";  
@@ -1444,6 +1397,8 @@ namespace mfront{
     typedef MFrontBehaviourInterfaceFactory MBIF;
     MBIF& mbif = MBIF::getMFrontBehaviourInterfaceFactory();
     VarContainer::const_iterator p;
+    map<DrivingVariable,
+	ThermodynamicForce>::const_iterator p2;
     this->checkBehaviourDataFile();
     this->behaviourDataFile << "void\n"
 			    << "exportBehaviourData(const ";
@@ -1454,8 +1409,14 @@ namespace mfront{
     }
     this->behaviourDataFile << "{\n";
     this->behaviourDataFile << "using namespace tfel::math;\n";
-    this->behaviourDataFile << "res.sig = this->sig;\n";
-    this->behaviourDataFile << "res.eto = this->eto;\n";
+    for(p2=this->mvariables.begin();p2!=this->mvariables.end();++p2){
+      if(p2->first.increment_known){
+	this->behaviourDataFile << "res." << p2->first.name  << " = this->" << p2->first.name << ";\n\n";
+      } else {
+	this->behaviourDataFile << "res." << p2->first.name  << "0 = this->" << p2->first.name << "0;\n\n";
+      }
+      this->behaviourDataFile << "res." << p2->second.name << " = this->" << p2->second.name << ";\n\n";
+    }
     if(!this->coefsHolder.empty()){
       this->writeResultsArrayResize(this->behaviourDataFile,
 				    "res.material_properties",
@@ -1493,7 +1454,7 @@ namespace mfront{
     this->behaviourDataFile << "} // end of exportBehaviourData\n";
     this->behaviourDataFile << endl;
     // Creating constructor for external interfaces
-    StringContainer::const_iterator i;
+    vector<string>::const_iterator i;
     for(i  = this->interfaces.begin();
 	i != this->interfaces.end();++i){
       MFrontBehaviourVirtualInterface *interface = mbif.getInterfacePtr(*i);
@@ -1634,6 +1595,8 @@ namespace mfront{
     using namespace std;
     this->checkBehaviourFile();
     VarContainer::const_iterator p;
+    map<DrivingVariable,
+	ThermodynamicForce>::const_iterator p2;
     if(this->behaviourCharacteristic.useQt()){        
       this->behaviourDataFile << "template<unsigned short N,typename Type,bool use_qt>" << endl;
       this->behaviourDataFile << "std::ostream&\n";
@@ -1656,8 +1619,14 @@ namespace mfront{
       this->behaviourDataFile << "os << " << this->className 
 			      << "BehaviourData<N,Type,false>::getName() << endl;\n";
     }
-    this->behaviourDataFile << "os << \"sig : \" << b.sig << endl;\n";
-    this->behaviourDataFile << "os << \"eto : \" << b.eto << endl;\n";
+    for(p2=this->mvariables.begin();p2!=this->mvariables.end();++p2){
+      if(p2->first.increment_known){
+	this->behaviourDataFile << "os << \"" << p2->first.name  << " : \" << b." << p2->first.name  << " << endl;\n";
+      } else {
+	this->behaviourDataFile << "os << \"" << p2->first.name  << "0 : \" << b." << p2->first.name  << "0 << endl;\n";
+      }
+      this->behaviourDataFile << "os << \"" << p2->second.name << " : \" << b." << p2->second.name << " << endl;\n";
+    }
     this->behaviourDataFile << "os << \"T : \" << b.T << endl;\n";
     for(p=this->coefsHolder.begin();p!=this->coefsHolder.end();++p){
       this->behaviourDataFile <<  "os << \"" << p->name << " : \" << b." 
@@ -2082,7 +2051,7 @@ namespace mfront{
     this->writeBehaviourParserSpecificConstructorPart();
     this->behaviourFile << "}\n\n";
     // Creating constructor for external interfaces
-    StringContainer::const_iterator i;
+    vector<string>::const_iterator i;
     for(i  = this->interfaces.begin();
 	i != this->interfaces.end();++i){
       MFrontBehaviourVirtualInterface *interface = mbif.getInterfacePtr(*i);
@@ -2239,8 +2208,10 @@ namespace mfront{
   void MFrontBehaviourParserCommon::writeBehaviourOutputOperator(void)
   {    
     using namespace std;
-    this->checkBehaviourFile();
     VarContainer::const_iterator p;
+    map<DrivingVariable,
+	ThermodynamicForce>::const_iterator p2;
+    this->checkBehaviourFile();
     if(this->behaviourCharacteristic.useQt()){        
       this->behaviourFile << "template<ModellingHypothesis::Hypothesis hypothesis,typename Type,bool use_qt>" << endl;
       this->behaviourFile << "std::ostream&\n";
@@ -2261,9 +2232,16 @@ namespace mfront{
       this->behaviourFile << "os << " << this->className 
 			  << "<hypothesis,Type,false>::getName() << endl;\n";
     }
-    this->behaviourFile << "os << \"sig : \" << b.sig << endl;\n";
-    this->behaviourFile << "os << \"eto : \" << b.eto << endl;\n";
-    this->behaviourFile << "os << \"deto : \" << b.deto << endl;\n";
+    for(p2=this->mvariables.begin();p2!=this->mvariables.end();++p2){
+      if(p2->first.increment_known){
+	this->behaviourFile << "os << \""  << p2->first.name << " : \" << b." << p2->first.name << " << endl;\n";
+	this->behaviourFile << "os << \"d" << p2->first.name << " : \" << b.d" << p2->first.name << " << endl;\n";
+      } else {
+	this->behaviourFile << "os << \"" << p2->first.name << "0 : \" << b." << p2->first.name << "0 << endl;\n";
+	this->behaviourFile << "os << \"" << p2->first.name << "1 : \" << b." << p2->first.name << "1 << endl;\n";
+      }
+      this->behaviourFile << "os << \"" << p2->second.name << " : \" << b." << p2->second.name << " << endl;\n";
+    }
     this->behaviourFile << "os << \"dt : \" << b.dt << endl;\n";
     this->behaviourFile << "os << \"T : \" << b.T << endl;\n";
     this->behaviourFile << "os << \"dT : \" << b.dT << endl;\n";
@@ -2325,9 +2303,17 @@ namespace mfront{
   {    
     using namespace std;
     VarContainer::const_iterator p;
+    map<DrivingVariable,
+	ThermodynamicForce>::const_iterator p2;
     this->checkBehaviourFile();
     this->behaviourFile << "void updateExternalStateVariables(void){\n";
-    this->behaviourFile << "this->eto += this->deto;\n";
+    for(p2=this->mvariables.begin();p2!=this->mvariables.end();++p2){
+      if(p2->first.increment_known){
+	this->behaviourFile << "this->" << p2->first.name  << "  += this->d" << p2->first.name << ";\n\n";
+      } else {
+	this->behaviourFile << "this->" << p2->first.name  << "0  = this->"  << p2->first.name << "1;\n\n";
+      }
+    }
     this->behaviourFile << "this->T   += this->dT;\n";
     for(p=this->externalStateVarsHolder.begin();p!=this->externalStateVarsHolder.end();++p){
       this->behaviourFile << "this->" << p->name << " += this->d" << p->name << ";\n";
@@ -2768,12 +2754,23 @@ namespace mfront{
   void MFrontBehaviourParserCommon::writeIntegrationDataDefaultMembers(void)
   {
     using namespace std;
+    map<DrivingVariable,
+	ThermodynamicForce>::const_iterator p;
     this->checkIntegrationDataFile();
     this->integrationDataFile << "protected: \n\n";
-    this->integrationDataFile << "/*!\n";
-    this->integrationDataFile << " * \\brief strain increment\n";
-    this->integrationDataFile << " */\n";
-    this->integrationDataFile << "StrainStensor deto;\n";
+    for(p=this->mvariables.begin();p!=this->mvariables.end();++p){
+      if(p->first.increment_known){
+	this->integrationDataFile << "/*!\n";
+	this->integrationDataFile << " * \\brief " << p->first.name << " increment\n";
+	this->integrationDataFile << " */\n";
+	this->integrationDataFile << p->first.type  << " d" << p->first.name << ";\n\n";
+      } else {
+	this->integrationDataFile << "/*!\n";
+	this->integrationDataFile << " * \\brief " << p->first.name << " at the end of the time step\n";
+	this->integrationDataFile << " */\n";
+	this->integrationDataFile << p->first.type  << " " << p->first.name << "1;\n\n";
+      }
+    }
     this->integrationDataFile << "/*!\n";
     this->integrationDataFile << " * \\brief time increment\n";
     this->integrationDataFile << " */\n";
@@ -2827,6 +2824,8 @@ namespace mfront{
     typedef MFrontBehaviourInterfaceFactory MBIF;
     MBIF& mbif = MBIF::getMFrontBehaviourInterfaceFactory();
     VarContainer::const_iterator p;
+    map<DrivingVariable,
+	ThermodynamicForce>::const_iterator p2;
     this->checkIntegrationDataFile();
     this->integrationDataFile << "/*!\n";
     this->integrationDataFile << "* \\brief Default constructor\n";
@@ -2838,7 +2837,14 @@ namespace mfront{
     this->integrationDataFile << "*/\n";
     this->integrationDataFile << this->className << "IntegrationData(const ";
     this->integrationDataFile << this->className << "IntegrationData& src)\n";
-    this->integrationDataFile << ": deto(src.deto),\n";
+    this->integrationDataFile << ": ";
+    for(p2=this->mvariables.begin();p2!=this->mvariables.end();++p2){
+      if(p2->first.increment_known){
+	this->integrationDataFile << "d" <<p2->first.name  << "(src.d" << p2->first.name << "),\n";
+      } else {
+	this->integrationDataFile << p2->first.name  << "1(src." << p2->first.name << "1),\n";
+      }
+    }
     this->integrationDataFile << "dt(src.dt),\n";
     this->integrationDataFile << "dT(src.dT)";
     if(!this->externalStateVarsHolder.empty()){
@@ -2859,7 +2865,14 @@ namespace mfront{
     } else {
       this->integrationDataFile << "MechanicalIntegrationData<N,Type,false>& src)\n";
     }
-    this->integrationDataFile << ": deto(src.deto),\n";
+    this->integrationDataFile << ": \n";
+    for(p2=this->mvariables.begin();p2!=this->mvariables.end();++p2){
+      if(p2->first.increment_known){
+	this->integrationDataFile << "d" <<p2->first.name  << "(src.d" << p2->first.name << "),\n";
+      } else {
+	this->integrationDataFile << p2->first.name  << "1(src." << p2->first.name << "1),\n";
+      }
+    }
     this->integrationDataFile << "dt(src.dt),\n";
     this->integrationDataFile << "dT(src.dT)";
     if(!this->externalStateVarsHolder.empty()){
@@ -2873,7 +2886,7 @@ namespace mfront{
 								"src.dexternal_variables","d","");
     this->integrationDataFile << "}\n\n";
     // Creating constructor for external interfaces
-    StringContainer::const_iterator i;
+    vector<string>::const_iterator i;
     for(i  = this->interfaces.begin(); i != this->interfaces.end();++i){
       MFrontBehaviourVirtualInterface *interface = mbif.getInterfacePtr(*i);
       interface->writeIntegrationDataConstructor(this->integrationDataFile,
@@ -2890,6 +2903,8 @@ namespace mfront{
   {
     using namespace std;
     VarContainer::const_iterator p;
+    map<DrivingVariable,
+	ThermodynamicForce>::const_iterator p2;
     this->checkIntegrationDataFile();
     this->integrationDataFile << "/*\n";
     this->integrationDataFile << "* Multiplication by a scalar.\n";
@@ -2906,7 +2921,15 @@ namespace mfront{
 			      << ">::type\n";
     this->integrationDataFile << "operator *= (const Scal s){\n";
     this->integrationDataFile << "this->dt   *= s;\n";
-    this->integrationDataFile << "this->deto *= s;\n";
+    for(p2=this->mvariables.begin();p2!=this->mvariables.end();++p2){
+      if(p2->first.increment_known){
+	this->integrationDataFile << "this->d" <<p2->first.name  << " *= s;\n";
+      } else {
+	string msg("MFrontBehaviourParserCommon::writeIntegrationDataScaleOperators : ");
+	msg += "unimplemented feature.";
+	throw(runtime_error(msg));
+      }
+    }
     this->integrationDataFile << "this->dT   *= s;\n";
     for(p=this->externalStateVarsHolder.begin();p!=this->externalStateVarsHolder.end();++p){
       this->integrationDataFile << "this->d" << p->name << " *= s;\n";
@@ -2998,8 +3021,10 @@ namespace mfront{
   void MFrontBehaviourParserCommon::writeIntegrationDataOutputOperator(void)
   {    
     using namespace std;
-    this->checkBehaviourFile();
     VarContainer::const_iterator p;
+    map<DrivingVariable,
+	ThermodynamicForce>::const_iterator p2;
+    this->checkBehaviourFile();
     if(this->behaviourCharacteristic.useQt()){        
       this->integrationDataFile << "template<unsigned short N,typename Type,bool use_qt>" << endl;
       this->integrationDataFile << "std::ostream&\n";
@@ -3022,7 +3047,13 @@ namespace mfront{
       this->integrationDataFile << "os << " << this->className 
 				<< "IntegrationData<N,Type,false>::getName() << endl;\n";
     }
-    this->integrationDataFile << "os << \"deto : \" << b.deto << endl;\n";
+    for(p2=this->mvariables.begin();p2!=this->mvariables.end();++p2){
+      if(p2->first.increment_known){
+	this->integrationDataFile << "os << \"d" << p2->first.name << " : \" << b.d" << p2->first.name << " << endl;\n";
+      } else {
+	this->integrationDataFile << "os << \"" << p2->first.name << "1 : \" << b." << p2->first.name << "1 << endl;\n";
+      }
+    }
     this->integrationDataFile << "os << \"dt : \" << b.dt << endl;\n";
     this->integrationDataFile << "os << \"dT : \" << b.dT << endl;\n";
     for(p=this->externalStateVarsHolder.begin();p!=this->externalStateVarsHolder.end();++p){
@@ -3345,346 +3376,6 @@ namespace mfront{
     this->writeNamespaceEnd(this->srcFile);
   } // end of MFrontBehaviourParserCommon::writeSrcFile(void)
 
-  void
-  MFrontBehaviourParserCommon::writeUnaryLoadingTestFiles(void)
-  {
-    using namespace std;
-    vector<UnaryLoadingDefinition>::const_iterator p;
-    vector<UnaryLoadingDefinition>::size_type nbr = 0u;
-    vector<long double>::const_iterator p2;
-    VarContainer::const_iterator p3;
-    map<string,long double>::const_iterator p4;
-    string test;
-    ostringstream testFileName;
-    ofstream testFile;
-    string numType;
-    unsigned short i;
-    unsigned short stensorSize;
-    unsigned short coefNbr;
-    unsigned short statevNbr;
-    unsigned short extStatNbr;
-    unsigned short pos;
-    
-    for(p=unaryLoadingDefinitions.begin();
-	p!=unaryLoadingDefinitions.end();++p,++nbr){
-      testFileName.clear();
-      testFileName << this->className;
-      testFileName << "-";
-      test = p->getTestType();
-      test = test.substr(1,test.size()-2);
-      testFileName << test;
-      testFileName << "-";
-      testFileName << p->getDimension();
-      testFileName << "D-test";
-      testFileName << nbr;
-      testFileName << ".cxx";
-      numType = p->getNumericType();
-      testFile.open(("src/"+testFileName.str()).c_str());
-      if(!testFile){
-	string msg("MFrontBehaviourParserCommon::writeUnaryLoadingTestFiles : ");
-	msg+="cannot open file : ";
-	msg+=testFileName.str();
-	throw(runtime_error(msg));
-      }
-      testFile << "/*!" << endl;
-      testFile << "* \\file  " << testFileName.str() << endl;
-      testFile << "* \\brief this file implements unary loading test\n"
-	       << "*        for the " << this->className << " Behaviour." << endl;
-      testFile << "*        File generated by ";
-      testFile << MFrontHeader::getVersionName() << " ";
-      testFile << "version " << MFrontHeader::getVersionNumber();
-      testFile << endl;
-      if(!this->authorName.empty()){
-	testFile << "* \\author " << this->authorName << endl;
-      }
-      if(!this->date.empty()){
-	testFile << "* \\date   " << this->date       << endl;
-      }
-      testFile << "* Test type : " << p->getTestType()  << "\n";
-      testFile << "* Dimension : " << p->getDimension() << "\n";
-      if(p->getUseQt()){
-	testFile << "* UseQt : true\n";
-      } else {
-	testFile << "* UseQt : false\n";
-      }
-      testFile << " */" << endl;
-      testFile << endl;
-      testFile << "#include<utility>\n\n";
-      testFile << "#include\"TFEL/Config/TFELConfig.hxx\"\n";
-      testFile << "#include\"TFEL/Config/TFELTypes.hxx\"\n";
-      testFile << "#include\"TFEL/Material/MechanicalBehaviourData.hxx\"\n";
-      testFile << "#include\"TFEL/Material/";
-      testFile << this->behaviourFileName << "\"\n\n";
-      testFile << "int\nmain(void)\n{\n\n";
-      testFile << "using namespace std;\n";
-      testFile << "using namespace tfel::material;\n\n";
-      if(p->getUseQt()){
-	testFile << "typedef tfel::config::Types<"
-		 << p->getDimension() << "," << numType << ",true> Types;\n";
-      } else {
-	testFile << "typedef tfel::config::Types<" 
-		 << p->getDimension() << "," << numType << ",false> Types;\n";
-      }
-      testFile << "typedef Types::real            real;\n";
-      testFile << "typedef Types::time            time;\n";
-      testFile << "typedef Types::stress          stress;\n";
-      testFile << "typedef Types::strain          strain;\n";
-      testFile << "typedef Types::temperature     temperature;\n";
-      testFile << "typedef Types::StressStensor   StressStensor;\n";
-      testFile << "typedef Types::StrainStensor   StrainStensor;\n";
-      testFile << "typedef Types::StiffnessTensor StiffnessTensor;\n";
-      if(p->getDimension()==1){
-	stensorSize = 3u;
-      } else if (p->getDimension()==2){
-      	stensorSize = 4u;
-      } else {
-	stensorSize = 6u;
-      }
-      // writing times
-      testFile << "// time values\n";
-      const vector<long double>& times = p->getTimes();
-      testFile << "const " << numType << " times [] = {";
-      for(i=1u,p2=times.begin();p2!=times.end();++i){
-	if(numType=="float"){
-	  if(abs(*p2)>numeric_limits<float>::max()){
-	    string msg("MFrontBehaviourParserCommon::writeUnaryLoadingTestFiles : ");
-	    msg += "cannot convert time to float (out of range)";
-	    throw(runtime_error(msg));
-	  }
-	  testFile << static_cast<float>(*p2);
-	} else if (numType=="double"){
-	  if(abs(*p2)>numeric_limits<double>::max()){
-	    string msg("MFrontBehaviourParserCommon::writeUnaryLoadingTestFiles : ");
-	    msg += "cannot convert time to double (out of range)";
-	    throw(runtime_error(msg));
-	  }
-	  testFile << static_cast<double>(*p2);
-	} else {
-	  testFile << *p2;
-	}
-	if(++p2!=times.end()){
-	  testFile << ",";
-	  if(i%5==0){
-	    testFile << "\n";
-	  }
-	}
-      }
-      testFile << "};\n";
-      // we now treat coefficients values
-      SupportedTypes::TypeSize s = this->getTotalSize(this->coefsHolder);
-      coefNbr = static_cast<unsigned short>(s.getStensorSize()*stensorSize+s.getScalarSize());      
-      testFile << "// coefficients values\n";
-      testFile << "vector<real> coefficients("<< coefNbr << "u);\n";
-      const map<string,long double>& coefficients = p->getCoefficientsValues();
-      pos = 0u;
-      for(p3 =this->coefsHolder.begin();
-	  p3!=this->coefsHolder.end();++p3){
-	testFile << "// treating coefficient " << p3->name << endl;
-	if(this->getTypeFlag(p3->type)==SupportedTypes::Stensor){
-	  for(i=0;i!=stensorSize;++i,++pos){
-	    if((p4=coefficients.find(p3->name+"("+toString(i)+")"))==coefficients.end()){
-	      string msg("MFrontBehaviourParserCommon::writeUnaryLoadingTestFiles : ");
-	      msg += "no value defined for "+toString(i);
-	      msg += " component of the coefficient " + p3->name;
-	      throw(runtime_error(msg));
-	    }
-	    testFile << "coefficients[" << pos << "] = ";
-	    if(numType=="float"){
-	      if(abs(p4->second)>numeric_limits<float>::max()){
-		string msg("MFrontBehaviourParserCommon::writeUnaryLoadingTestFiles : ");
-		msg += "cannot convert coefficient " + p4->first + " value to float";
-		msg += "(out of range)";
-		throw(runtime_error(msg));
-	      }
-	      testFile << "real(" << static_cast<float>(p4->second) << ");\n";
-	    } else if(numType=="double"){
-	      if(abs(p4->second)>numeric_limits<double>::max()){
-		string msg("MFrontBehaviourParserCommon::writeUnaryLoadingTestFiles : ");
-		msg += "cannot convert coefficient " + p4->first + " value to double";
-		msg += "(out of range)";
-		throw(runtime_error(msg));
-	      }
-	      testFile << "real(" << static_cast<double>(p4->second) << ");\n";
-	    } else {
-	      testFile << "real(" << p4->second << ");\n";
-	    }	
-	  }
-	} else {
-	  // scalar coefficient
-	  if((p4=coefficients.find(p3->name))==coefficients.end()){
-	    string msg("MFrontBehaviourParserCommon::writeUnaryLoadingTestFiles : ");
-	    msg += "no value defined for coefficient " + p3->name;
-	    throw(runtime_error(msg));
-	  }
-	  if(numType=="float"){
-	    if(abs(p4->second)>numeric_limits<float>::max()){
-	      string msg("MFrontBehaviourParserCommon::writeUnaryLoadingTestFiles : ");
-	      msg += "cannot convert coefficient " + p4->first + " value to float";
-	      msg += "(out of range)";
-	      throw(runtime_error(msg));
-	    }
-	    testFile << "coefficients[" << pos << "] = "
-		     << "real(" << static_cast<float>(p4->second) << ");\n";
-	  } else if(numType=="double"){
-	    if(abs(p4->second)>numeric_limits<double>::max()){
-	      string msg("MFrontBehaviourParserCommon::writeUnaryLoadingTestFiles : ");
-	      msg += "cannot convert coefficient " + p4->first + " value to double";
-	      msg += "(out of range)";
-	      throw(runtime_error(msg));
-	    }
-	    testFile << "coefficients[" << pos << "] = "
-		     << "real(" << static_cast<double>(p4->second) << ");\n";
-	  } else {
-	    testFile << "coefficients[" << pos << "] = "
-		     << "real(" << p4->second << ");\n";
-	  }
-	}
-      }
-      // we now treat initial state variables values
-      const map<string,long double>& stateVar = p->getInternalStateVariablesValues();
-      s  = this->getTotalSize(this->stateVarsHolder);
-      s += this->getTotalSize(this->auxiliaryStateVarsHolder);
-      statevNbr = static_cast<unsigned short>(s.getStensorSize()*stensorSize+s.getScalarSize());
-      testFile << "vector<real> internalStateVariables(" << statevNbr << "u);\n";
-      pos = 0u;
-      for(p3 =this->stateVarsHolder.begin();
-	  p3!=this->stateVarsHolder.end();++p3){
-	testFile << "// treating internal variable " << p3->name << endl;
-	if(this->getTypeFlag(p3->type)==SupportedTypes::Stensor){
-	  for(i=0;i!=stensorSize;++i,++pos){
-	    if((p4=stateVar.find(p3->name+"("+toString(i)+")"))==stateVar.end()){
-	      testFile << "internalStateVariables[" << pos << "] = 0;\n";
-	    } else {
-	      testFile << "internalStateVariables[" << pos << "] = real(";
-	      if(numType=="float"){
-		if(abs(p4->second)>numeric_limits<float>::max()){
-		  string msg("MFrontBehaviourParserCommon::writeUnaryLoadingTestFiles : ");
-		  msg += "cannot convert coefficient " + p4->first + " value to float";
-		  msg += "(out of range)";
-		  throw(runtime_error(msg));
-		}
-		testFile << static_cast<float>(p4->second) << ");\n";
-	      } else if(numType=="double"){
-		if(abs(p4->second)>numeric_limits<double>::max()){
-		  string msg("MFrontBehaviourParserCommon::writeUnaryLoadingTestFiles : ");
-		  msg += "cannot convert coefficient " + p4->first + " value to double";
-		  msg += "(out of range)";
-		  throw(runtime_error(msg));
-		}
-		testFile << static_cast<double>(p4->second) << ");\n";
-	      } else {
-		testFile << p4->second << ");\n";
-	      }
-	    }
-	  }
-	} else {
-	  if((p4=stateVar.find(p3->name+"("+toString(i)+")"))==stateVar.end()){
-	    testFile << "internalStateVariables[" << pos << "] = 0;\n";
-	  } else {
-	    testFile << "internalStateVariables[" << pos << "] = real(";
-	    if(numType=="float"){
-	      if(abs(p4->second)>numeric_limits<float>::max()){
-		string msg("MFrontBehaviourParserCommon::writeUnaryLoadingTestFiles : ");
-		msg += "cannot convert coefficient " + p4->first + " value to float";
-		msg += "(out of range)";
-		throw(runtime_error(msg));
-	      }
-	      testFile << static_cast<float>(p4->second) << ");\n";
-	    } else if(numType=="double"){
-	      if(abs(p4->second)>numeric_limits<double>::max()){
-		string msg("MFrontBehaviourParserCommon::writeUnaryLoadingTestFiles : ");
-		msg += "cannot convert coefficient " + p4->first + " value to double";
-		msg += "(out of range)";
-		throw(runtime_error(msg));
-	      }
-	      testFile << static_cast<double>(p4->second) << ");\n";
-	    } else {
-	      testFile << p4->second << ");\n";
-	    }
-	  }
-	  ++pos;
-	}
-      }
-      for(p3 =this->auxiliaryStateVarsHolder.begin();
-	  p3!=this->auxiliaryStateVarsHolder.end();++p3){
-	testFile << "// treating internal variable " << p3->name << endl;
-	if(this->getTypeFlag(p3->type)==SupportedTypes::Stensor){
-	  for(i=0;i!=stensorSize;++i,++pos){
-	    if((p4=stateVar.find(p3->name+"("+toString(i)+")"))==stateVar.end()){
-	      testFile << "internalStateVariables[" << pos << "] = 0;\n";
-	    } else {
-	      testFile << "internalStateVariables[" << pos << "] = real(";
-	      if(numType=="float"){
-		if(abs(p4->second)>numeric_limits<float>::max()){
-		  string msg("MFrontBehaviourParserCommon::writeUnaryLoadingTestFiles : ");
-		  msg += "cannot convert coefficient " + p4->first + " value to float";
-		  msg += "(out of range)";
-		  throw(runtime_error(msg));
-		}
-		testFile << static_cast<float>(p4->second) << ");\n";
-	      } else if(numType=="double"){
-		if(abs(p4->second)>numeric_limits<double>::max()){
-		  string msg("MFrontBehaviourParserCommon::writeUnaryLoadingTestFiles : ");
-		  msg += "cannot convert coefficient " + p4->first + " value to double";
-		  msg += "(out of range)";
-		  throw(runtime_error(msg));
-		}
-		testFile << static_cast<double>(p4->second) << ");\n";
-	      } else {
-		testFile << p4->second << ");\n";
-	      }
-	    }
-	  }
-	} else {
-	  if((p4=stateVar.find(p3->name+"("+toString(i)+")"))==stateVar.end()){
-	    testFile << "internalStateVariables[" << pos << "] = 0;\n";
-	  } else {
-	    testFile << "internalStateVariables[" << pos << "] = real(";
-	    if(numType=="float"){
-	      if(abs(p4->second)>numeric_limits<float>::max()){
-		string msg("MFrontBehaviourParserCommon::writeUnaryLoadingTestFiles : ");
-		msg += "cannot convert coefficient " + p4->first + " value to float";
-		msg += "(out of range)";
-		throw(runtime_error(msg));
-	      }
-	      testFile << static_cast<float>(p4->second) << ");\n";
-	    } else if(numType=="double"){
-	      if(abs(p4->second)>numeric_limits<double>::max()){
-		string msg("MFrontBehaviourParserCommon::writeUnaryLoadingTestFiles : ");
-		msg += "cannot convert coefficient " + p4->first + " value to double";
-		msg += "(out of range)";
-		throw(runtime_error(msg));
-	      }
-	      testFile << static_cast<double>(p4->second) << ");\n";
-	    } else {
-	      testFile << p4->second << ");\n";
-	    }
-	  }
-	  ++pos;
-	}
-      }
-      s = this->getTotalSize(this->externalStateVarsHolder);
-      extStatNbr = static_cast<unsigned short>(s.getStensorSize()*stensorSize+s.getScalarSize());
-      if(p->getUseQt()){
-	testFile << "MechanicalBehaviourData<"
-		 << p->getDimension() << "," << numType << ",true> ";
-      } else {
-	testFile << "MechanicalBehaviourData<" 
-		 << p->getDimension() << "," << numType << ",false> ";
-      }
-      testFile << "behaviourData(StressStensor(),\n";
-      testFile << "StrainStensor(),\n";
-      testFile << "StiffnessTensor(),\n";
-      testFile << "coefficients,\n";
-      testFile << "internalStateVariables,\n";
-      testFile << "vector<real>(" << extStatNbr << "u),\n";
-      testFile << "temperature());\n";
-      testFile << "} // end of main\n";
-      testFile.close();
-    }
-
-  } // end of namespace MFrontBehaviourParserCommon::writeUnaryLoadingTestFiles
-
   bool
   MFrontBehaviourParserCommon::isInternalStateVariable(const std::string& name)
   {
@@ -3723,7 +3414,7 @@ namespace mfront{
     MBIF& mbif = MBIF::getMFrontBehaviourInterfaceFactory();
     typedef map<string,vector<string> > Map;
     Map incs;
-    StringContainer::const_iterator i;
+    vector<string>::const_iterator i;
     map<string,vector<string> >::const_iterator p;
     for(i  = this->interfaces.begin();
 	i != this->interfaces.end();++i){
@@ -3746,7 +3437,7 @@ namespace mfront{
     typedef MFrontBehaviourInterfaceFactory MBIF;
     MBIF& mbif = MBIF::getMFrontBehaviourInterfaceFactory();
     Map deps;
-    StringContainer::const_iterator i;
+    vector<string>::const_iterator i;
     map<string,vector<string> >::const_iterator p;
     for(i  = this->interfaces.begin();
 	i != this->interfaces.end();++i){
@@ -3769,7 +3460,7 @@ namespace mfront{
     typedef MFrontBehaviourInterfaceFactory MBIF;
     MBIF& mbif = MBIF::getMFrontBehaviourInterfaceFactory();
     Map osources;
-    StringContainer::const_iterator i;
+    vector<string>::const_iterator i;
     map<string,vector<string> >::const_iterator p;
     vector<string>::const_iterator p2;
     for(i  = this->interfaces.begin();
@@ -3801,7 +3492,7 @@ namespace mfront{
     typedef MFrontBehaviourInterfaceFactory MBIF;
     MBIF& mbif = MBIF::getMFrontBehaviourInterfaceFactory();
     vector<string> incs;
-    StringContainer::const_iterator i;
+    vector<string>::const_iterator i;
     for(i  = this->interfaces.begin();
 	i != this->interfaces.end();++i){
       MFrontBehaviourVirtualInterface *interface = mbif.getInterfacePtr(*i);
@@ -3823,7 +3514,7 @@ namespace mfront{
     typedef map<string,vector<string> > Map;
     typedef MFrontBehaviourInterfaceFactory MBIF;
     MBIF& mbif = MBIF::getMFrontBehaviourInterfaceFactory();
-    StringContainer::const_iterator i;
+    vector<string>::const_iterator i;
     map<string,vector<string> >::const_iterator p;
     vector<string>::const_iterator p2;
     vector<string>::const_iterator p3;
@@ -3865,6 +3556,24 @@ namespace mfront{
 					       true);
     this->initLocalVars += "\n";
   } // end of MFrontBehaviourParserCommon::treatInitLocalVars
+
+  void
+  MFrontBehaviourParserCommon::defineSmallStrainInputVariables(void)
+  {
+    using namespace std;
+    typedef map<DrivingVariable,ThermodynamicForce>::value_type MVType;
+    DrivingVariable eto;
+    eto.name = "eto";
+    eto.type = "StrainStensor";
+    eto.increment_known = true;
+    ThermodynamicForce sig;
+    sig.name = "sig";
+    sig.type = "StressStensor";
+    this->mvariables.insert(MVType(eto,sig));
+    this->registerVariable("eto");
+    this->registerVariable("deto");
+    this->registerVariable("sig");
+  }
 
   std::map<std::string,
 	   std::pair<std::vector<std::string>,

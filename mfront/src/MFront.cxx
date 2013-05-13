@@ -149,12 +149,29 @@ namespace mfront{
     using namespace std;
     using namespace tfel::utilities;
     if((*(this->currentArgument))[0]=='-'){
+      bool ok = false;
+      if(this->currentArgument->size()>=4){
+	if(((*(this->currentArgument))[1]=='-')&&
+	   ((*(this->currentArgument))[2]=='@')){
+	  const string& o = this->currentArgument->getOption();
+	  string cmd = this->currentArgument->substr(2);
+	  if(!o.empty()){
+	    cmd += ' '+o;
+	  }
+	  cmd += ';';
+	  this->ecmds.push_back(cmd);
+	  ok = true;
+	}
+      }
+      if(!ok){
 #if not (defined _WIN32 || defined _WIN64 ||defined __CYGWIN__)
       ArgumentParserBase<MFront>::treatUnknownArgument();
 #else
       cerr << "mfront : unsupported option '" << *(this->currentArgument) << "'\n";
       exit(EXIT_FAILURE);
 #endif /* __CYGWIN__ */
+      }
+      return;
     }
     this->inputs.insert(*(this->currentArgument));
     return;
@@ -672,8 +689,8 @@ namespace mfront{
     }
     file.clear();
 
-    parser->treatFile(this->fileName);
-    parser->writeOutputFiles();
+    parser->treatFile(this->fileName,
+		      this->ecmds);
 
     // getting generated sources
     const map<string,vector<string> >& src = parser->getGeneratedSources();

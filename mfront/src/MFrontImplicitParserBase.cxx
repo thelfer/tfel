@@ -9,15 +9,13 @@
 #include<cstdlib>
 #include<sstream>
 
-#include"TFEL/System/System.hxx"
 #include"MFront/ParserUtilities.hxx"
 #include"MFront/MFrontImplicitParserBase.hxx"
 
 namespace mfront{
 
   MFrontImplicitParserBase::MFrontImplicitParserBase()
-    : MFrontVirtualParser(), 
-      MFrontBehaviourParserBase<MFrontImplicitParserBase>(),
+    : MFrontBehaviourParserBase<MFrontImplicitParserBase>(),
       algorithm(MFrontImplicitParserBase::DEFAULT),
       compareToNumericalJacobian(false),
       isConsistantTangentOperatorSymmetricDefined(false),
@@ -26,6 +24,7 @@ namespace mfront{
   {
     using namespace std;
     // parameters
+    this->defineSmallStrainInputVariables();
     this->registerVariable("theta");
     this->parametersHolder.push_back(VarHandler("real","theta",1u,0u));
     this->registerVariable("epsilon");
@@ -109,12 +108,6 @@ namespace mfront{
     this->disableCallBack("@ComputedVar");
     this->disableCallBack("@UseQt");
   } // end of MFrontImplicitParserBase::MFrontImplicitParserBase
-
-  void
-  MFrontImplicitParserBase::getKeywordsList(std::vector<std::string>& k) const
-  {
-    MFrontBehaviourParserBase<MFrontImplicitParserBase>::getKeywordsList(k);
-  } // end of MFrontImplicitParserBase::getKeywordsList
 
   void MFrontImplicitParserBase::treatInitJacobian(void)
   {
@@ -552,12 +545,6 @@ namespace mfront{
   } // end of MFrontImplicitParserBase::treatIterMax
 
   void
-  MFrontImplicitParserBase::setInterfaces(const std::set<std::string>& i)
-  {
-    MFrontBehaviourParserBase<MFrontImplicitParserBase>::setInterfaces(i);
-  } // end of MFrontImplicitParserBase::setInterfaces
-
-  void
   MFrontImplicitParserBase::treatStateVariables(void)
   {
     using namespace std;
@@ -830,31 +817,6 @@ namespace mfront{
 			makeVariableModifier(*this,&MFrontImplicitParserBase::computeStressVariableModifier2),
 			true);
   } // end of MFrontImplicitParserBase::treatComputeStress
-
-  void
-  MFrontImplicitParserBase::setVerboseMode(void) 
-  {
-    this->verboseMode = true;
-  }
-
-  void
-  MFrontImplicitParserBase::setDebugMode(void) 
-  {
-    this->debugMode = true;
-  }
-
-  void
-  MFrontImplicitParserBase::setWarningMode(void) 
-  {
-    this->warningMode = true;
-  }
-
-  void
-  MFrontImplicitParserBase::treatFile(const std::string& fileName_) 
-  {
-    this->fileName = fileName_;
-    MFrontBehaviourParserBase<MFrontImplicitParserBase>::analyseFile(fileName_);
-  }
 
   void MFrontImplicitParserBase::writeBehaviourParserSpecificIncludes(void)
   {
@@ -1267,7 +1229,7 @@ namespace mfront{
 	  << n  << "," << n3
 	  << ",real>::type "+p+"df" << v1.name << "_dd" << v2.name << "("+j+");\n";
       } else {
-	string msg("MFrontImplicitParserBase::writeOutputFiles : ");
+	string msg("MFrontImplicitParserBase::getJacobianPart : ");
 	msg += "unsupported type for state variable ";
 	msg += v2.name;
 	throw(runtime_error(msg));
@@ -1283,13 +1245,13 @@ namespace mfront{
 	d << "real& "+p+"df" << v1.name << "_dd" << v2.name 
 	  << " = "+j+"(" << n << "," << n3 << ");\n";
       } else {
-	string msg("MFrontImplicitParserBase::writeOutputFiles : ");
+	string msg("MFrontImplicitParserBase::getJacobianPart : ");
 	msg += "unsupported type for state variable ";
 	msg += v2.name;
 	throw(runtime_error(msg));
       }
     } else {
-      string msg("MFrontImplicitParserBase::writeOutputFiles : ");
+      string msg("MFrontImplicitParserBase::getJacobianPart : ");
       msg += "unsupported type for state variable ";
       msg += v1.name;
       throw(runtime_error(msg));
@@ -2072,6 +2034,17 @@ namespace mfront{
   MFrontImplicitParserBase::endsInputFileProcessing(void)
   {
     using namespace std;
+    MFrontBehaviourParserCommon::endsInputFileProcessing();
+    if(this->integrator.empty()){
+      string msg("MFrontImplicitParserBase::endsInputFileProcessing : ");
+      msg += "definining the @Integrator block is required";
+      throw(runtime_error(msg));
+    }
+    if(this->computeStress.empty()){
+      string msg("MFrontImplicitParserBase::endsInputFileProcessing : ");
+      msg += "definining the @ComputeStress block is required";
+      throw(runtime_error(msg));
+    }
     typedef map<string,double>::value_type MVType;
     typedef map<string,unsigned short>::value_type MVType2;
     if(this->parametersDefaultValues.find("theta")==this->parametersDefaultValues.end()){
@@ -2148,156 +2121,8 @@ namespace mfront{
     MFrontBehaviourParserBase<MFrontImplicitParserBase>::writeBehaviourStaticVars();
   } // end of MFrontImplicitParserBase::writeBehaviourStaticVars
 
-  void 
-  MFrontImplicitParserBase::generateOutputFiles(void){
-    using namespace std;
-    typedef MFrontBehaviourInterfaceFactory MBIF;
-    MBIF& mbif = MBIF::getMFrontBehaviourInterfaceFactory();
-    if(this->integrator.empty()){
-      string msg("MFrontImplicitParserBase::generateOutputFiles : ");
-      msg += "definining the @Integrator block is required";
-      throw(runtime_error(msg));
-    }
-    if(this->computeStress.empty()){
-      string msg("MFrontImplicitParserBase::generateOutputFiles : ");
-      msg += "definining the @ComputeStress block is required";
-      throw(runtime_error(msg));
-    }
-    // Adds some stuff
-    this->endsInputFileProcessing();
-    // Generating BehaviourData's outputFile
-    this->writeBehaviourDataFile();
-    // Generating IntegrationData's outputFile
-    this->writeIntegrationDataFile();
-    // Generating Behaviour's outputFile
-    this->writeBehaviourFile();
-    // Generating Behaviour's outputFile
-    this->writeSrcFile();
-    // Generating Behaviour's unary loading tests
-    this->writeUnaryLoadingTestFiles();
-
-    StringContainer::const_iterator i;
-    for(i  = this->interfaces.begin(); i != this->interfaces.end();++i){
-      MFrontBehaviourVirtualInterface *interface = mbif.getInterfacePtr(*i);
-      interface->endTreatement(this->fileName,
-			       this->library,
-			       this->material,
-			       this->className,
-    			       this->authorName,
-    			       this->date,
-    			       this->coefsHolder,
-    			       this->stateVarsHolder,
-    			       this->auxiliaryStateVarsHolder,
-    			       this->externalStateVarsHolder,
-			       this->parametersHolder,
-			       this->glossaryNames,
-			       this->entryNames,
-    			       this->behaviourCharacteristic);
-    }
-  }
-
-  void
-  MFrontImplicitParserBase::writeOutputFiles() 
-  {    
-    using namespace std;
-    using namespace tfel::system;
-    systemCall::mkdir("include");
-    systemCall::mkdir("include/TFEL/");
-    systemCall::mkdir("include/TFEL/Material/");
-    systemCall::mkdir("src");
-    if(this->className.empty()){
-      string msg("MFrontImplicitParserBase::writeOutputFiles : ");
-      msg += "no behaviour name defined.";
-      throw(runtime_error(msg));      
-    }
-    this->behaviourFileName  = this->className;
-    this->behaviourFileName += ".hxx";
-    this->behaviourFile.open(("include/TFEL/Material/"+this->behaviourFileName).c_str());
-    if(!this->behaviourFile){
-      string msg("MFrontImplicitParserBase::writeOutputFiles : ");
-      msg += "unable to open ";
-      msg += this->behaviourFileName;
-      msg += " for writing output file.";
-      throw(runtime_error(msg));
-    }
-    this->behaviourDataFileName  = this->className;
-    this->behaviourDataFileName += "BehaviourData.hxx";
-    this->behaviourDataFile.open(("include/TFEL/Material/"+this->behaviourDataFileName).c_str());
-    if(!this->behaviourDataFile){
-      string msg("MFrontImplicitParserBase::writeOutputFiles : ");
-      msg += "unable to open ";
-      msg += this->behaviourDataFileName;
-      msg += " for writing output file.";
-      throw(runtime_error(msg));
-    }
-    this->integrationDataFileName  = this->className;
-    this->integrationDataFileName += "IntegrationData.hxx";
-    this->integrationDataFile.open(("include/TFEL/Material/"+this->integrationDataFileName).c_str());
-    if(!this->integrationDataFile){
-      string msg("MFrontImplicitParserBase::writeOutputFiles : ");
-      msg += "unable to open ";
-      msg += this->integrationDataFileName;
-      msg += " for writing output file.";
-      throw(runtime_error(msg));
-    }
-    this->srcFileName  = this->className;
-    this->srcFileName += ".cxx";
-    this->srcFile.open(("src/"+this->srcFileName).c_str());
-    if(!this->srcFile){
-      string msg("MFrontImplicitParserBase::writeOutputFiles : ");
-      msg += "unable to open ";
-      msg += this->srcFileName;
-      msg += " for writing output file.";
-      throw(runtime_error(msg));
-    }
-    this->generateOutputFiles();
-  }
-
   MFrontImplicitParserBase::~MFrontImplicitParserBase()
-  {
-    this->behaviourFile.close();
-    this->behaviourDataFile.close();
-    this->integrationDataFile.close();
-    this->srcFile.close();    
-  } // end of ~MFrontImplicitParserBase
-
-  std::map<std::string,std::vector<std::string> >
-  MFrontImplicitParserBase::getGlobalIncludes(void)
-  {
-    return MFrontBehaviourParserCommon::getGlobalIncludes();
-  } // end of MFrontMFrontImplicitParserBase::getGlobalIncludes
-
-  std::map<std::string,std::vector<std::string> >
-  MFrontImplicitParserBase::getGlobalDependencies(void)
-  {
-    return MFrontBehaviourParserCommon::getGlobalDependencies();
-  } // end of MFrontMFrontImplicitParserBase::getGlobalDependencies
-
-  std::map<std::string,std::vector<std::string> >
-  MFrontImplicitParserBase::getGeneratedSources(void)
-  {
-    return MFrontBehaviourParserCommon::getGeneratedSources();
-  } // end of MFrontImplicitParserBase::getGeneratedSources
-
-  std::vector<std::string>
-  MFrontImplicitParserBase::getGeneratedIncludes(void)
-  {
-    return MFrontBehaviourParserCommon::getGeneratedIncludes();
-  } // end of MFrontImplicitParserBase::getGeneratedIncludes(void)
-
-  std::map<std::string,std::vector<std::string> >
-  MFrontImplicitParserBase::getLibrariesDependencies(void)
-  {
-    return MFrontBehaviourParserCommon::getLibrariesDependencies();
-  } // end of MFrontImplicitParserBase::getLibrariesDependencies
-
-  std::map<std::string,
-	   std::pair<std::vector<std::string>,
-		     std::vector<std::string> > >
-  MFrontImplicitParserBase::getSpecificTargets(void)
-  {
-    return MFrontBehaviourParserCommon::getSpecificTargets();
-  } // end of MFrontImplicitParserBase::getSpecificTargets(void)
+  {} // end of ~MFrontImplicitParserBase
 
 } // end of namespace mfront  
 

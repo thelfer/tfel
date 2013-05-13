@@ -28,13 +28,24 @@ namespace mfront
     : public tfel::utilities::CxxTokenizer,
       protected MFrontGenericData
   {
+
+    /*!
+     * \brief open a file and add given external instructions at the
+     * beginning
+     * \param[in] f     : file
+     * \param[in] ecmds : external commands
+     */
+    virtual void
+    openFile(const std::string&,
+	     const std::vector<std::string>&);
     
   protected:
 
     ParserBase();
 
     virtual void
-    analyseFile(const std::string&) = 0;
+    analyseFile(const std::string&,
+		const std::vector<std::string>&) = 0;
 
     virtual ~ParserBase();
 

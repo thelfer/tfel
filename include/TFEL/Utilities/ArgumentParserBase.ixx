@@ -165,17 +165,13 @@ namespace tfel
 	    string option(*p,pos+1,string::npos);
 	    p->erase(pos,string::npos);
 	    pf = this->callBacksContainer.find(*p);
-	    if(pf==this->callBacksContainer.end()){
-	      string msg("ArgumentParserBase<Child>::stripArguments : '");
-	      msg += *p;
-	      msg += "' is not a valid argument";
-	      throw(runtime_error(msg));
-	    }
-	    if(!(pf->second.second.first)){
-	      string msg("ArgumentParserBase<Child>::stripArguments : argument '");
-	      msg += *p;
-	      msg += "' does not have any option";
-	      throw(runtime_error(msg));
+	    if(pf!=this->callBacksContainer.end()){
+	      if(!(pf->second.second.first)){
+		string msg("ArgumentParserBase<Child>::stripArguments : argument '");
+		msg += *p;
+		msg += "' does not have any option";
+		throw(runtime_error(msg));
+	      }
 	    }
 	    p->setOption(option);
 	  }

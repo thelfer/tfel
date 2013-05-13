@@ -16,25 +16,27 @@
 #include<fstream>
 
 #include"TFEL/Config/TFELConfig.hxx"
+#include"TFEL/Material/ModellingHypothesis.hxx"
 
 #include"MFront/SupportedTypes.hxx"
 #include"MFront/VarHandler.hxx"
 #include"MFront/StaticVarHandler.hxx"
 #include"MFront/ComputedVarHandler.hxx"
 #include"MFront/BehaviourCharacteristic.hxx"
-#include"MFront/UnaryLoadingDefinition.hxx"
 #include"MFront/BoundsDescription.hxx"
 #include"MFront/ParserBase.hxx"
+#include"MFront/DrivingVariable.hxx"
+#include"MFront/ThermodynamicForce.hxx"
 
+#include"MFront/MFrontVirtualParser.hxx"
 #include"MFront/MFrontBehaviourVirtualInterface.hxx"
 #include"MFront/MFrontBehaviourInterfaceFactory.hxx"
 
 namespace mfront{
 
-  typedef std::vector<std::string> StringContainer;
-
   struct TFEL_VISIBILITY_EXPORT MFrontBehaviourParserCommon
-    : public ParserBase,
+    : public MFrontVirtualParser,
+      public ParserBase,
       public SupportedTypes
   {
 
@@ -47,30 +49,38 @@ namespace mfront{
     virtual void
     setWarningMode(void);
 
-  protected:
-       
-    virtual std::string
-    standardModifier(const std::string&,const bool);
-
-    std::map<std::string,std::vector<std::string> >
+    virtual std::map<std::string,std::vector<std::string> >
     getGlobalIncludes(void);
-
-    std::map<std::string,std::vector<std::string> >
+	
+    virtual std::map<std::string,std::vector<std::string> >
     getGlobalDependencies(void);
 
-    std::map<std::string,std::vector<std::string> >
+    virtual std::map<std::string,std::vector<std::string> >
     getGeneratedSources(void);
 
-    std::vector<std::string>
+    virtual std::vector<std::string>
     getGeneratedIncludes(void);
 
-    std::map<std::string,std::vector<std::string> >
+    virtual std::map<std::string,std::vector<std::string> >
     getLibrariesDependencies(void);
     
-    std::map<std::string,
-	     std::pair<std::vector<std::string>,
-		       std::vector<std::string> > >
+    virtual std::map<std::string,
+		     std::pair<std::vector<std::string>,
+			       std::vector<std::string> > >
     getSpecificTargets(void);
+
+  protected:
+       
+    typedef tfel::material::ModellingHypothesis::Hypothesis Hypothesis;
+
+    virtual void
+    writeOutputFiles(void);
+
+    virtual void
+    endsInputFileProcessing();
+
+    virtual std::string
+    standardModifier(const std::string&,const bool);
  
     bool
     isInternalStateVariable(const std::string&);
@@ -82,7 +92,7 @@ namespace mfront{
     isExternalStateVariable(const std::string&);
     
     virtual void
-    readStringList(StringContainer&);
+    readStringList(std::vector<std::string>&);
     
     void
       setInterfaces(const std::set<std::string>&);
@@ -154,9 +164,6 @@ namespace mfront{
       treatUseQt(void);
 
     virtual void
-      treatUnaryLoadingTest(void);
-
-    virtual void
       treatBounds(void);
 
     virtual void
@@ -168,196 +175,290 @@ namespace mfront{
     virtual void
       writeIncludes(std::ofstream&);
 
-    virtual void writeNamespaceBegin(std::ofstream&);
+    virtual void
+    writeNamespaceBegin(std::ofstream&);
     
-    virtual void writeNamespaceEnd(std::ofstream&);
+    virtual void
+    writeNamespaceEnd(std::ofstream&);
     
-    virtual void writeStandardTFELTypedefs(std::ofstream&); 
+    virtual void
+    writeStandardTFELTypedefs(std::ofstream&); 
     
-    virtual void checkBehaviourDataFile(void) const;
+    virtual void
+    checkBehaviourDataFile(void) const;
     
-    virtual void writeBehaviourDataStandardTFELTypedefs(void);
+    virtual void
+    writeBehaviourDataStandardTFELTypedefs(void);
     
-    virtual void writeBehaviourDataStandardTFELIncludes(void);
+    virtual void
+    writeBehaviourDataStandardTFELIncludes(void);
     
-    virtual void writeBehaviourDataFileHeader(void);
+    virtual void
+    writeBehaviourDataFileHeader(void);
     
-    virtual void writeBehaviourDataFileHeaderBegin(void);
+    virtual void
+    writeBehaviourDataFileHeaderBegin(void);
     
-    virtual void writeBehaviourDataFileHeaderEnd(void);
+    virtual void
+    writeBehaviourDataFileHeaderEnd(void);
     
-    virtual void writeBehaviourDataClassHeader(void);
+    virtual void
+    writeBehaviourDataClassHeader(void);
     
-    virtual void writeBehaviourDataGetName(void);
+    virtual void
+    writeBehaviourDataGetName(void);
     
-    virtual void writeBehaviourDataDisabledConstructors(void);
+    virtual void
+    writeBehaviourDataDisabledConstructors(void);
     
-    virtual void writeBehaviourDataConstructors(void);
+    virtual void
+    writeBehaviourDataConstructors(void);
     
-    virtual void writeBehaviourDataClassBegin(void);
+    virtual void
+    writeBehaviourDataClassBegin(void);
     
-    virtual void writeBehaviourDataClassEnd(void);
+    virtual void
+    writeBehaviourDataClassEnd(void);
     
-    virtual void writeBehaviourDataDefaultMembers(void);
+    virtual void
+    writeBehaviourDataDefaultMembers(void);
 
-    virtual void writeBehaviourDataCoefs(void);
+    virtual void
+    writeBehaviourDataCoefs(void);
 
-    virtual void writeBehaviourDataStateVars(void);
+    virtual void
+    writeBehaviourDataStateVars(void);
 
-    virtual void writeBehaviourDataAssignementOperator(void);
+    virtual void
+    writeBehaviourDataAssignementOperator(void);
     
-    virtual void writeBehaviourDataOutputOperator(void);
+    virtual void
+    writeBehaviourDataOutputOperator(void);
 
-    virtual void writeBehaviourDataExport(void);
+    virtual void
+    writeBehaviourDataExport(void);
 
-    virtual void writeBehaviourDataPublicMembers(void);
+    virtual void
+    writeBehaviourDataPublicMembers(void);
 
-    virtual void writeBehaviourDataFile(void);
+    virtual void
+    writeBehaviourDataFile(void);
     
     void checkIntegrationDataFile(void) const;
 
-    virtual void writeIntegrationDataStandardTFELTypedefs(void);
+    virtual void
+    writeIntegrationDataStandardTFELTypedefs(void);
 
-    virtual void writeIntegrationDataStandardTFELIncludes(void);
+    virtual void
+    writeIntegrationDataStandardTFELIncludes(void);
 
-    virtual void writeIntegrationDataFileHeader(void);
+    virtual void
+    writeIntegrationDataFileHeader(void);
 
-    virtual void writeIntegrationDataFileHeaderBegin(void);
+    virtual void
+    writeIntegrationDataFileHeaderBegin(void);
 
-    virtual void writeIntegrationDataFileHeaderEnd(void);
+    virtual void
+    writeIntegrationDataFileHeaderEnd(void);
 
-    virtual void writeIntegrationDataClassHeader(void);
+    virtual void
+    writeIntegrationDataClassHeader(void);
 
-    virtual void writeIntegrationDataGetName(void);
+    virtual void
+    writeIntegrationDataGetName(void);
 
-    virtual void writeIntegrationDataDisabledConstructors(void);
+    virtual void
+    writeIntegrationDataDisabledConstructors(void);
 
-    virtual void writeIntegrationDataConstructors(void);
+    virtual void
+    writeIntegrationDataConstructors(void);
 
-    virtual void writeIntegrationDataScaleOperators(void);
+    virtual void
+    writeIntegrationDataScaleOperators(void);
 
-    virtual void writeIntegrationDataClassBegin(void);
+    virtual void
+    writeIntegrationDataClassBegin(void);
 
-    virtual void writeIntegrationDataClassEnd(void);
+    virtual void
+    writeIntegrationDataClassEnd(void);
 
-    virtual void writeIntegrationDataDefaultMembers(void);
+    virtual void
+    writeIntegrationDataDefaultMembers(void);
 
-    virtual void writeIntegrationDataExternalStateVars(void);
+    virtual void
+    writeIntegrationDataExternalStateVars(void);
 
-    virtual void writeIntegrationDataFile(void);
+    virtual void
+    writeIntegrationDataFile(void);
 
-    virtual void writeIntegrationDataOutputOperator(void);
+    virtual void
+    writeIntegrationDataOutputOperator(void);
 
     void checkBehaviourFile(void) const;
 
-    virtual void writeBehaviourStandardTFELTypedefs(void);
+    virtual void
+    writeBehaviourStandardTFELTypedefs(void);
 
-    virtual void writeBehaviourFileHeader(void);
+    virtual void
+    writeBehaviourFileHeader(void);
 
-    virtual void writeBehaviourFileHeaderBegin(void);
+    virtual void
+    writeBehaviourFileHeaderBegin(void);
 
-    virtual void writeBehaviourFileHeaderEnd(void);
+    virtual void
+    writeBehaviourFileHeaderEnd(void);
     
-    virtual void writeBehaviourFile(void);
+    virtual void
+    writeBehaviourFile(void);
 
-    virtual void writeBehaviourParserSpecificInheritanceRelationship(void);
+    virtual void
+    writeBehaviourParserSpecificInheritanceRelationship(void);
 
-    virtual void writeBehaviourParserSpecificTypedefs(void);
+    virtual void
+    writeBehaviourParserSpecificTypedefs(void);
 
-    virtual void writeBehaviourParserSpecificMembers(void);
+    virtual void
+    writeBehaviourParserSpecificMembers(void);
 
-    virtual void writeBehaviourParserSpecificIncludes(void);
+    virtual void
+    writeBehaviourParserSpecificIncludes(void);
 
-    virtual void writeBehaviourParserSpecificConstructorPart(void);
+    virtual void
+    writeBehaviourParserSpecificConstructorPart(void);
 
-    virtual void writeBehaviourClassBegin(void);
+    virtual void
+    writeBehaviourClassBegin(void);
 
-    virtual void writeBehaviourGetModellingHypothesis(void);
+    virtual void
+    writeBehaviourGetModellingHypothesis(void);
 
-    virtual void writeBehaviourClassEnd(void);
+    virtual void
+    writeBehaviourClassEnd(void);
 
-    virtual void writeBehaviourGetName(void);
+    virtual void
+    writeBehaviourGetName(void);
 
-    virtual void writeBehaviourPolicyVariable(void);
+    virtual void
+    writeBehaviourPolicyVariable(void);
 
-    virtual void writeBehaviourSetOutOfBoundsPolicy(void);
+    virtual void
+    writeBehaviourSetOutOfBoundsPolicy(void);
 
-    virtual void writeBehaviourCheckBounds(void);
+    virtual void
+    writeBehaviourCheckBounds(void);
 
-    virtual void writeBehaviourDisabledConstructors(void);
+    virtual void
+    writeBehaviourDisabledConstructors(void);
 
-    virtual void writeBehaviourConstructors(void);
+    virtual void
+    writeBehaviourConstructors(void);
 
     void writeBehaviourConstructors(const std::string&,
 				    const std::string&,
 				    const std::string& = "");
 
-    virtual void writeBehaviourStateVarsIncrements(void);
+    virtual void
+    writeBehaviourStateVarsIncrements(void);
 
-    virtual void writeBehaviourLocalVars(void);
+    virtual void
+    writeBehaviourLocalVars(void);
 
-    virtual void writeBehaviourParameters(void);
+    virtual void
+    writeBehaviourParameters(void);
 
-    virtual void writeBehaviourComputedVars(void);
+    virtual void
+    writeBehaviourComputedVars(void);
 
-    virtual void writeBehaviourStaticVars(void);
+    virtual void
+    writeBehaviourStaticVars(void);
 
-    virtual void writeBehaviourMembersFunc(void);
+    virtual void
+    writeBehaviourMembersFunc(void);
 
-    virtual void writeBehaviourPrivate(void);
+    virtual void
+    writeBehaviourPrivate(void);
 
-    virtual void writeBehaviourUpdateStateVars(void);
+    virtual void
+    writeBehaviourUpdateStateVars(void);
 
-    virtual void writeBehaviourUpdateAuxiliaryStateVars(void);
+    virtual void
+    writeBehaviourUpdateAuxiliaryStateVars(void);
 
-    virtual void writeBehaviourIntegrator(void);
+    virtual void
+    writeBehaviourIntegrator(void);
 
-    virtual void writeBehaviourGetTimeStepScalingFactor(void);
+    virtual void
+    writeBehaviourGetTimeStepScalingFactor(void);
 
-    virtual void writeBehaviourUpdateExternalStateVariables(void);
+    virtual void
+    writeBehaviourUpdateExternalStateVariables(void);
 
-    virtual void writeBehaviourOutputOperator(void);
+    virtual void
+    writeBehaviourOutputOperator(void);
 
-    virtual void writeBehaviourDestructor(void);
+    virtual void
+    writeBehaviourDestructor(void);
 
-    virtual void writeBehaviourTraits(void);
+    virtual void
+    writeBehaviourTraits(void);
 
-    virtual void writeBehaviourIncludeBehaviourData(void);
+    virtual void
+    writeBehaviourIncludeBehaviourData(void);
 
-    virtual void writeBehaviourParameterInitialisation(void);
+    virtual void
+    writeBehaviourParameterInitialisation(void);
 
-    virtual void writeBehaviourParametersInitializer(void);
+    virtual void
+    writeBehaviourParametersInitializer(void);
 
-    virtual void checkSrcFile(void) const;
+    virtual void
+    checkSrcFile(void) const;
 
-    virtual void writeSrcFileHeader(void);
+    virtual void
+    writeSrcFileHeader(void);
 
-    virtual void writeSrcFileUserDefinedCode(void);
+    virtual void
+    writeSrcFileUserDefinedCode(void);
 
-    virtual void writeSrcFileParametersInitializer(void);
+    virtual void
+    writeSrcFileParametersInitializer(void);
 
-    virtual void writeSrcFileStaticVars(void);
+    virtual void
+    writeSrcFileStaticVars(void);
 
-    virtual void writeSrcFile(void);
+    virtual void
+    writeSrcFile(void);
 
-    virtual void writeUnaryLoadingTestFiles(void);
+    virtual void
+    writeBehaviourComputePredictionOperator(void);
 
-    virtual void writeBehaviourComputePredictionOperator(void);
+    virtual void
+    writeBehaviourComputeTangentOperator(void);
 
-    virtual void writeBehaviourComputeTangentOperator(void);
-
-    virtual void writeBehaviourGetTangentOperator();
+    virtual void
+    writeBehaviourGetTangentOperator();
     
-    virtual void writeBehaviourTangentStiffnessOperator();
+    virtual void
+    writeBehaviourTangentStiffnessOperator();
 
-    virtual void treatParameterMethod(void);
+    virtual void
+    treatParameterMethod(void);
 
-    virtual void treatVariableMethod(void);
+    virtual void
+    treatVariableMethod(void);
 
     /*!
      * \param n : variable name
      */
-    virtual void treatUnknownVariableMethod(const std::string&);
+    virtual void
+    treatUnknownVariableMethod(const std::string&);
+
+    /*!
+     * an helper method used to defined the total strain as the main
+     * variable
+     */
+    virtual void
+    defineSmallStrainInputVariables(void);
 
     virtual ~MFrontBehaviourParserCommon();
 
@@ -368,39 +469,43 @@ namespace mfront{
      * \param n : variable name
      */
     void
-      declareExternalStateVariableProbablyUnusableInPurelyImplicitResolution(const std::string&);
+    declareExternalStateVariableProbablyUnusableInPurelyImplicitResolution(const std::string&);
 
     void updateClassName();
 
     bool
-      contains(const VarContainer&,
-	       const std::string&) const;
+    contains(const VarContainer&,
+	     const std::string&) const;
 
     bool
-      isMaterialPropertyName(const std::string&) const;
+    isMaterialPropertyName(const std::string&) const;
 
     bool
-      isLocalVariableName(const std::string&) const;
+    isLocalVariableName(const std::string&) const;
 
     bool
-      isParameterName(const std::string&) const;
+    isParameterName(const std::string&) const;
 
     bool
-      isInternalStateVariableName(const std::string&) const;
+    isInternalStateVariableName(const std::string&) const;
 
     bool
-      isAuxiliaryInternalStateVariableName(const std::string&) const;
+    isAuxiliaryInternalStateVariableName(const std::string&) const;
 
     bool
-      isExternalStateVariableName(const std::string&) const;
+    isExternalStateVariableName(const std::string&) const;
 
     bool
-      isExternalStateVariableIncrementName(const std::string&) const;
+    isExternalStateVariableIncrementName(const std::string&) const;
 
     bool
-      isCoefficientName(void);
+    isCoefficientName(void);
 
     MFrontBehaviourParserCommon();
+
+    //! main variables, association of a driving variable and a thermodynamic force
+    std::map<DrivingVariable,
+	     ThermodynamicForce> mvariables;
     
     std::map<std::string,std::vector<std::string> > sourcesLibrairiesDependencies;
 
@@ -422,8 +527,7 @@ namespace mfront{
     VarContainer parametersHolder;
     ComputedVarContainer computedVars;
 
-    StringContainer interfaces;
-    std::vector<UnaryLoadingDefinition> unaryLoadingDefinitions;
+    std::vector<std::string> interfaces;
     std::vector<BoundsDescription>      boundsDescriptions;
     std::vector<BoundsDescription>      physicalBoundsDescriptions;
 
@@ -441,6 +545,12 @@ namespace mfront{
     std::ofstream behaviourDataFile;
     std::ofstream integrationDataFile;
     std::ofstream srcFile;
+    
+    /*!
+     * list of modelling hypotheses for
+     * which the behaviour is defined
+     */
+    std::set<Hypothesis> hypotheses;
 
     bool useStateVarTimeDerivative;
     bool explicitlyDeclaredUsableInPurelyImplicitResolution;

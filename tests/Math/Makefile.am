@@ -39,6 +39,7 @@ test_PROGRAMS = hill                  \
 		stensor               \
 		stensor_changeBasis   \
 		stensor_changeBasis2  \
+		stensor_changeBasis3  \
 		stensor_eigenvalues   \
 		stensor_eigenvectors2 \
 		stensor_eigenvectors  \

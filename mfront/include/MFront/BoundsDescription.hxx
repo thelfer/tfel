@@ -32,6 +32,7 @@ namespace mfront{
       LocalVar,
       StateVar,
       ExternalStateVar,
+      ExternalStateVarII,
       ComputedVar
     };
 

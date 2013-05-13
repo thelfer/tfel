@@ -18,26 +18,9 @@
 namespace mfront{
 
   template<typename Child>
-  class MFrontModelParserBase
+  struct MFrontModelParserBase
     : public MFrontModelParserCommon
   {
-  protected:
-    typedef void (Child::* MemberFuncPtr)(void);
-    typedef std::map<std::string,MemberFuncPtr> CallBackContainer;
-
-    void
-    registerDefaultCallBacks(void);
-
-    void
-    registerNewCallBack(const std::string&,const MemberFuncPtr);
-
-    virtual void
-    treatFile(const std::string&);
-    
-    std::set<std::string> registredKeyWords;
-
-    CallBackContainer callBacks;
-    
     /*!
      * \brief return the list of keywords usable with this parser
      * \param[out] k : the list of keywords registred for this parser
@@ -45,7 +28,30 @@ namespace mfront{
     virtual void
     getKeywordsList(std::vector<std::string>&) const;
 
+    virtual void
+    treatFile(const std::string&,
+	      const std::vector<std::string>&);
+
+  protected:
+
+    typedef void (Child::* MemberFuncPtr)(void);
+    typedef std::map<std::string,MemberFuncPtr> CallBackContainer;
+
     MFrontModelParserBase();
+
+    virtual void
+    analyseFile(const std::string&,
+		const std::vector<std::string>&);
+
+    void
+    registerDefaultCallBacks(void);
+
+    void
+    registerNewCallBack(const std::string&,const MemberFuncPtr);
+    
+    CallBackContainer callBacks;
+    
+    std::set<std::string> registredKeyWords;
 
     bool verboseMode;
 

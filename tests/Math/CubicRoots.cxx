@@ -93,8 +93,10 @@ void solve(const double a3,const double a2,const double a1,const double a0)
   double z=0.;
   static const double prec = 1.e-14;
 
-  assert(cubicRoots::exe(a3,a2,a1,a0,x,y,z));
-  if(!((std::abs(cubic(a3,a2,a1,a0,x))<prec)||(std::abs(cubic(a3,a2,a1,a0,y))<prec)||(std::abs(cubic(a3,a2,a1,a0,z))<prec))){
+  assert(CubicRoots::exe(x,y,z,a3,a2,a1,a0));
+  if(!((std::abs(cubic(a3,a2,a1,a0,x))<prec)||
+       (std::abs(cubic(a3,a2,a1,a0,y))<prec)||
+       (std::abs(cubic(a3,a2,a1,a0,z))<prec))){
     assert(false);
   }
 #ifdef TFEL_VERBOSE

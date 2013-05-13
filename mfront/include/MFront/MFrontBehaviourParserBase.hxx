@@ -14,16 +14,31 @@
 namespace mfront{
 
   template<typename Child>
-  class MFrontBehaviourParserBase
+  struct MFrontBehaviourParserBase
     : public MFrontBehaviourParserCommon
   {
+
+    virtual void
+    treatFile(const std::string&,
+	      const std::vector<std::string>&);
+
+    /*!
+     * \brief return the list of keywords usable with this parser
+     * \param[out] k : the list of keywords registred for this parser
+     */
+    virtual void
+    getKeywordsList(std::vector<std::string>&) const;
 
   protected:
     
     typedef void (Child::* MemberFuncPtr)(void);
     typedef std::map<std::string,MemberFuncPtr> CallBackContainer;
 
-    CallBackContainer callBacks;
+    MFrontBehaviourParserBase();
+
+    virtual void
+    analyseFile(const std::string&,
+		const std::vector<std::string>&);
 
     void registerDefaultCallBacks(void);
 
@@ -33,21 +48,9 @@ namespace mfront{
 
     void disableCallBack(const std::string&);
 
-    /*!
-     * \brief return the list of keywords usable with this parser
-     * \param[out] k : the list of keywords registred for this parser
-     */
-    virtual void
-    getKeywordsList(std::vector<std::string>&) const;
-
     virtual ~MFrontBehaviourParserBase();
 
-    MFrontBehaviourParserBase();
-
-  public:
-
-    virtual void
-    analyseFile(const std::string&);
+    CallBackContainer callBacks;
 
   };
 
@@ -56,4 +59,3 @@ namespace mfront{
 #include"MFront/MFrontBehaviourParserBase.ixx"
 
 #endif /* _LIB_MFRONTBASE_HXX */
-

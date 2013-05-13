@@ -43,70 +43,128 @@ namespace mfront{
     using namespace std;
     if(this->category==Standard){
       if(this->boundsType==Lower){
-	file << "BoundsCheck<N>::lowerBoundCheck(\""
-	     << n << "\",this->" << n << ","
-	     << "static_cast<real>(" << this->lowerBound << "),this->policy);\n";
-	if(this->varCategory==ExternalStateVar){
+	if(this->varCategory==ExternalStateVarII){
 	  file << "BoundsCheck<N>::lowerBoundCheck(\""
-	       << n << "+d" << n << "\",this->" 
-	       << n << "+this->d" << n << ","
+	       << n << "0\",this->" << n << "0,"
 	       << "static_cast<real>(" << this->lowerBound << "),this->policy);\n";
+	  file << "BoundsCheck<N>::lowerBoundCheck(\""
+	       << n << "1\",this->" << n << "1,"
+	       << "static_cast<real>(" << this->lowerBound << "),this->policy);\n";
+	} else {
+	  file << "BoundsCheck<N>::lowerBoundCheck(\""
+	       << n << "\",this->" << n << ","
+	       << "static_cast<real>(" << this->lowerBound << "),this->policy);\n";
+	  if(this->varCategory==ExternalStateVar){
+	    file << "BoundsCheck<N>::lowerBoundCheck(\""
+		 << n << "+d" << n << "\",this->" 
+		 << n << "+this->d" << n << ","
+		 << "static_cast<real>(" << this->lowerBound << "),this->policy);\n";
+	  }
 	}
       } else if(this->boundsType==Upper){
-	file << "BoundsCheck<N>::upperBoundCheck(\""
-	     << n << "\",this->" << n << ","
-	     << "static_cast<real>(" << this->upperBound << "),this->policy);\n";
-	if(this->varCategory==ExternalStateVar){
+	if(this->varCategory==ExternalStateVarII){
 	  file << "BoundsCheck<N>::upperBoundCheck(\""
-	       << n << "+d" << n << "\",this->" 
-	       << n << "+this->d" << n << ","
+	       << n << "0\",this->" << n << "0,"
 	       << "static_cast<real>(" << this->upperBound << "),this->policy);\n";
+	  file << "BoundsCheck<N>::upperBoundCheck(\""
+	       << n << "1\",this->" << n << "1,"
+	       << "static_cast<real>(" << this->upperBound << "),this->policy);\n";
+	} else {
+	  file << "BoundsCheck<N>::upperBoundCheck(\""
+	       << n << "\",this->" << n << ","
+	     << "static_cast<real>(" << this->upperBound << "),this->policy);\n";
+	  if(this->varCategory==ExternalStateVar){
+	    file << "BoundsCheck<N>::upperBoundCheck(\""
+		 << n << "+d" << n << "\",this->" 
+		 << n << "+this->d" << n << ","
+		 << "static_cast<real>(" << this->upperBound << "),this->policy);\n";
+	  }
 	}
       } else if(this->boundsType==LowerAndUpper){
-	file << "BoundsCheck<N>::lowerAndUpperBoundsChecks(\""
-	     << n << "\",this->" << n    << ","
-	     << "static_cast<real>("   << this->lowerBound << "),"
-	     << "static_cast<real>("   << this->upperBound << "),this->policy);\n";
-	if(this->varCategory==ExternalStateVar){
-	  file << "BoundsCheck<N>::lowerAndUpperBoundsChecks(\""
-	       << n << "+d" << n << "\",this->" 
-	       << n << "+this->d" << n << ","
+	if(this->varCategory==ExternalStateVarII){
+	  file << "BoundsCheck<N>::lowerAndUpperBoundCheck(\""
+	       << n << "0\",this->" << n << "0,"
 	       << "static_cast<real>("   << this->lowerBound << "),"
 	       << "static_cast<real>("   << this->upperBound << "),this->policy);\n";
+	  file << "BoundsCheck<N>::lowerAndUpperBoundCheck(\""
+	       << n << "1\",this->" << n << "1,"
+	       << "static_cast<real>("   << this->lowerBound << "),"
+	       << "static_cast<real>("   << this->upperBound << "),this->policy);\n";
+	} else {
+	  file << "BoundsCheck<N>::lowerAndUpperBoundsChecks(\""
+	       << n << "\",this->" << n    << ","
+	       << "static_cast<real>("   << this->lowerBound << "),"
+	       << "static_cast<real>("   << this->upperBound << "),this->policy);\n";
+	  if(this->varCategory==ExternalStateVar){
+	    file << "BoundsCheck<N>::lowerAndUpperBoundsChecks(\""
+		 << n << "+d" << n << "\",this->" 
+		 << n << "+this->d" << n << ","
+		 << "static_cast<real>("   << this->lowerBound << "),"
+		 << "static_cast<real>("   << this->upperBound << "),this->policy);\n";
+	  }
 	}
       }
     } else if(this->category==Physical){
       if(this->boundsType==Lower){
-	file << "BoundsCheck<N>::lowerBoundCheck(\""
-	     << n << "\",this->" << n << ","
-	     << "static_cast<real>(" << this->lowerBound << "));\n";
-	if(this->varCategory==ExternalStateVar){
+	if(this->varCategory==ExternalStateVarII){
 	  file << "BoundsCheck<N>::lowerBoundCheck(\""
-	       << n << "+d" << n << "\",this->" 
-	       << n << "+this->d" << n << ","
+	       << n << "0\",this->" << n << "0,"
 	       << "static_cast<real>(" << this->lowerBound << "));\n";
+	  file << "BoundsCheck<N>::lowerBoundCheck(\""
+	       << n << "1\",this->" << n << "1,"
+	       << "static_cast<real>(" << this->lowerBound << "));\n";
+	} else {
+	  file << "BoundsCheck<N>::lowerBoundCheck(\""
+	       << n << "\",this->" << n << ","
+	       << "static_cast<real>(" << this->lowerBound << "));\n";
+	  if(this->varCategory==ExternalStateVar){
+	    file << "BoundsCheck<N>::lowerBoundCheck(\""
+		 << n << "+d" << n << "\",this->" 
+		 << n << "+this->d" << n << ","
+	       << "static_cast<real>(" << this->lowerBound << "));\n";
+	  }
 	}
       } else if(this->boundsType==Upper){
-	file << "BoundsCheck<N>::upperBoundCheck(\""
-	     << n << "\",this->" << n << ","
-	     << "static_cast<real>(" << this->upperBound << "));\n";
-	if(this->varCategory==ExternalStateVar){
+	if(this->varCategory==ExternalStateVarII){
 	  file << "BoundsCheck<N>::upperBoundCheck(\""
-	       << n << "+d" << n << "\",this->" 
-	       << n << "+this->d" << n << ","
+	       << n << "0\",this->" << n << "0,"
 	       << "static_cast<real>(" << this->upperBound << "));\n";
+	  file << "BoundsCheck<N>::upperBoundCheck(\""
+	       << n << "1\",this->" << n << "1,"
+	       << "static_cast<real>(" << this->upperBound << "));\n";
+	} else {
+	  file << "BoundsCheck<N>::upperBoundCheck(\""
+	       << n << "\",this->" << n << ","
+	       << "static_cast<real>(" << this->upperBound << "));\n";
+	  if(this->varCategory==ExternalStateVar){
+	    file << "BoundsCheck<N>::upperBoundCheck(\""
+		 << n << "+d" << n << "\",this->" 
+		 << n << "+this->d" << n << ","
+		 << "static_cast<real>(" << this->upperBound << "));\n";
+	  }
 	}
       } else if(this->boundsType==LowerAndUpper){
-	file << "BoundsCheck<N>::lowerAndUpperBoundsChecks(\""
-	     << n << "\",this->" << n    << ","
-	     << "static_cast<real>("   << this->lowerBound << "),"
-	     << "static_cast<real>("   << this->upperBound << "));\n";
-	if(this->varCategory==ExternalStateVar){
-	  file << "BoundsCheck<N>::lowerAndUpperBoundsChecks(\""
-	       << n << "+d" << n << "\",this->" 
-	       << n << "+this->d" << n << ","
+	if(this->varCategory==ExternalStateVarII){
+	  file << "BoundsCheck<N>::lowerAndUpperBoundCheck(\""
+	       << n << "0\",this->" << n << "0,"
 	       << "static_cast<real>("   << this->lowerBound << "),"
 	       << "static_cast<real>("   << this->upperBound << "));\n";
+	  file << "BoundsCheck<N>::lowerAndUpperBoundCheck(\""
+	       << n << "1\",this->" << n << "1,"
+	       << "static_cast<real>("   << this->lowerBound << "),"
+	       << "static_cast<real>("   << this->upperBound << "));\n";
+	} else {
+	  file << "BoundsCheck<N>::lowerAndUpperBoundsChecks(\""
+	       << n << "\",this->" << n    << ","
+	       << "static_cast<real>("   << this->lowerBound << "),"
+	       << "static_cast<real>("   << this->upperBound << "));\n";
+	  if(this->varCategory==ExternalStateVar){
+	    file << "BoundsCheck<N>::lowerAndUpperBoundsChecks(\""
+		 << n << "+d" << n << "\",this->" 
+		 << n << "+this->d" << n << ","
+		 << "static_cast<real>("   << this->lowerBound << "),"
+		 << "static_cast<real>("   << this->upperBound << "));\n";
+	  }
 	}
       }
     } else {

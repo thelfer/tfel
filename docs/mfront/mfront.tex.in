@@ -847,6 +847,23 @@ optimisée. Cette option est suivie du nom de la cible.
 \linux{} de librairies dynamiques pour \windows{}. Cette possibilité est
 décrite au paragraphe~\ref{sec:mfront:comp_croisee_lib_windows_linux}.
 
+\paragraph{Ajout de directives} Il est possible d'ajouter des
+directives à un fichier depuis la ligne de commande.
+
+La ligne de commande suivante~:
+\begin{center}
+  {\tt mfront --@AsterCompareToNumericalTangentOperator=true implicit.mfront}
+\end{center}
+donnera le même résultat que si on avait rajouter la ligne suivant en
+tête du fichier {\tt implicit.mfront}~:
+\begin{center}
+  @AsterCompareToNumericalTangentOperator true;
+\end{center}
+
+La règle générale est la suivante~: toute option de la ligne de
+commande commençant par une arobase est interprétée comme une
+directive à ajouter en début de l'analyse du fichier.
+
 \clearpage
 \newpage
 \section{Propriétés matériaux}

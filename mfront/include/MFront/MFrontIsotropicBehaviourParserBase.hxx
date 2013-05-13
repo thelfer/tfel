@@ -18,79 +18,31 @@
 namespace mfront{
 
   struct TFEL_VISIBILITY_EXPORT MFrontIsotropicBehaviourParserBase
-    : public MFrontVirtualParser,
-      public MFrontBehaviourParserBase<MFrontIsotropicBehaviourParserBase>
+    : public MFrontBehaviourParserBase<MFrontIsotropicBehaviourParserBase>
   {
     MFrontIsotropicBehaviourParserBase();
-
-    void generateOutputFiles(void);
-
-    virtual void setVerboseMode();
-
-    virtual void setDebugMode();
-
-    virtual void setWarningMode();
-
-    /*!
-     * \brief return the list of keywords usable with this parser
-     * \param[out] k : the list of keywords registred for this parser
-     */
-    virtual void
-    getKeywordsList(std::vector<std::string>&) const;
-
-    virtual void treatFile(const std::string&);
-
-    void writeOutputFiles();
-
-    void
-    setInterfaces(const std::set<std::string>&);
-
-    virtual
-    void writeBehaviourParserSpecificIncludes(void);
-
-    virtual
-    void writeBehaviourParserSpecificTypedefs(void);
-
-    virtual
-    void writeBehaviourParserSpecificConstructorPart(void) = 0;
-
-    virtual
-    void writeBehaviourParserSpecificMembers(void) = 0;
-
-    virtual
-    void writeBehaviourIntegrator(void) = 0;
-
-    virtual void writeBehaviourComputePredictionOperator(void);
-
-    virtual
-    std::map<std::string,std::vector<std::string> >
-    getGlobalIncludes(void);
-
-    virtual
-    std::map<std::string,std::vector<std::string> >
-    getGlobalDependencies(void);
-
-    virtual
-    std::map<std::string,std::vector<std::string> >
-    getGeneratedSources(void);
-
-    virtual
-    std::vector<std::string>
-    getGeneratedIncludes(void);
-
-    virtual
-    std::map<std::string,std::vector<std::string> >
-    getLibrariesDependencies(void);
-    
-    virtual
-    std::map<std::string,
-	     std::pair<std::vector<std::string>,
-		       std::vector<std::string> > >
-    getSpecificTargets(void);
 
     virtual ~MFrontIsotropicBehaviourParserBase();
 
   protected:
+
+    virtual void
+    writeBehaviourParserSpecificIncludes(void);
+
+    virtual void
+    writeBehaviourParserSpecificTypedefs(void);
+
+    virtual void
+    writeBehaviourParserSpecificConstructorPart(void) = 0;
+
+    virtual void
+    writeBehaviourParserSpecificMembers(void) = 0;
+
+    virtual void
+    writeBehaviourIntegrator(void) = 0;
+
+    virtual void
+    writeBehaviourComputePredictionOperator(void);
 
     std::string
     flowRuleVariableModifier(const std::string&,const bool);

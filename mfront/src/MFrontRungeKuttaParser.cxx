@@ -9,8 +9,6 @@
 #include<sstream>
 #include<stdexcept>
 
-#include"TFEL/System/System.hxx"
-
 #include"MFront/ParserUtilities.hxx"
 #include"MFront/MFrontParserFactory.hxx"
 #include"MFront/MFrontRungeKuttaParser.hxx"
@@ -18,8 +16,7 @@
 namespace mfront{
 
   MFrontRungeKuttaParser::MFrontRungeKuttaParser()
-    : MFrontVirtualParser(), 
-      MFrontBehaviourParserBase<MFrontRungeKuttaParser>(),
+    : MFrontBehaviourParserBase<MFrontRungeKuttaParser>(),
       algorithm("RungeKutta5/4"),
       nbrOfEvaluation(6)
   {
@@ -29,6 +26,7 @@ namespace mfront{
     this->registerVariable("epsilon");
     this->parametersHolder.push_back(VarHandler("real","epsilon",1u,0u));
     this->registerVariable("dtmin");
+    this->defineSmallStrainInputVariables();
     // Default state vars
     this->registerVariable("eel");
     this->registerVariable("deel");
@@ -99,18 +97,6 @@ namespace mfront{
   //   ++(this->current);
   //   this->readSpecifiedToken("MFrontRungeKuttaParser::treatIsTangentOperatorSymmetric",";");
   // } // end of MFrontRungeKuttaParser::treatTangentOperator
-
-  void
-  MFrontRungeKuttaParser::getKeywordsList(std::vector<std::string>& k) const
-  {
-    MFrontBehaviourParserBase<MFrontRungeKuttaParser>::getKeywordsList(k);
-  } // end of MFrontRungeKuttaParser::getKeywordsList
-
-  void
-  MFrontRungeKuttaParser::setInterfaces(const std::set<std::string>& i)
-  {
-     MFrontBehaviourParserBase<MFrontRungeKuttaParser>::setInterfaces(i);
-  } // end of MFrontRungeKuttaParser::setInterfaces
 
   void MFrontRungeKuttaParser::writeBehaviourParserSpecificIncludes(void)
   {
@@ -373,31 +359,6 @@ namespace mfront{
            "'r42', 'rk54' and 'rkCastem'";
   } // end of MFrontRungeKuttaParser::getDescription
 
-  void
-  MFrontRungeKuttaParser::setVerboseMode(void) 
-  {
-    this->verboseMode = true;
-  }
-
-  void
-  MFrontRungeKuttaParser::setDebugMode(void) 
-  {
-    this->debugMode = true;
-  }
-
-  void
-  MFrontRungeKuttaParser::setWarningMode(void) 
-  {
-    this->warningMode = true;
-  }
-
-  void
-  MFrontRungeKuttaParser::treatFile(const std::string& fileName_) 
-  {
-    this->fileName = fileName_;
-    MFrontBehaviourParserBase<MFrontRungeKuttaParser>::analyseFile(fileName_);
-  }
-
   void 
   MFrontRungeKuttaParser::writeBehaviourStaticVars(void)
   {
@@ -409,6 +370,7 @@ namespace mfront{
   MFrontRungeKuttaParser::endsInputFileProcessing(void)
   {
     using namespace std;
+    MFrontBehaviourParserCommon::endsInputFileProcessing();
     typedef map<string,double>::value_type MVType;
     VarContainer::iterator p;
     string currentVarName;
@@ -475,101 +437,6 @@ namespace mfront{
        (this->algorithm!="RungeKutta5/4")){
       parserInitLocalVars += "this->computeStress();\n";
     }
-  }
-
-  void 
-  MFrontRungeKuttaParser::generateOutputFiles(void){
-    using namespace std;
-    typedef MFrontBehaviourInterfaceFactory MBIF;
-    MBIF& mbif = MBIF::getMFrontBehaviourInterfaceFactory();
-    // Adds some stuff
-    this->endsInputFileProcessing();
-    // Generating BehaviourData's outputFile
-    this->writeBehaviourDataFile();
-    // Generating IntegrationData's outputFile
-    this->writeIntegrationDataFile();
-    // Generating Behaviour's outputFile
-    this->writeBehaviourFile();
-    // Generating Behaviour's outputFile
-    this->writeSrcFile();
-    // Generating Behaviour's unary loading tests
-    this->writeUnaryLoadingTestFiles();
-
-    StringContainer::const_iterator i;
-    for(i  = this->interfaces.begin(); i != this->interfaces.end();++i){
-      MFrontBehaviourVirtualInterface *interface = mbif.getInterfacePtr(*i);
-      interface->endTreatement(this->fileName,
-			       this->library,
-			       this->material,
-			       this->className,
-			       this->authorName,
-			       this->date,
-			       this->coefsHolder,
-			       this->stateVarsHolder,
-			       this->auxiliaryStateVarsHolder,
-			       this->externalStateVarsHolder,
-			       this->parametersHolder,
-			       this->glossaryNames,
-			       this->entryNames,
-			       this->behaviourCharacteristic);
-    }
-  }
-
-  void
-  MFrontRungeKuttaParser::writeOutputFiles() 
-  {    
-    using namespace std;
-    using namespace tfel::system;
-    systemCall::mkdir("include");
-    systemCall::mkdir("include/TFEL/");
-    systemCall::mkdir("include/TFEL/Material/");
-    systemCall::mkdir("src");
-    if(this->className.empty()){
-      string msg("MFrontRungeKuttaParser::writeOutputFiles : ");
-      msg += "no behaviour name defined.";
-      throw(runtime_error(msg));      
-    }
-    this->behaviourFileName  = this->className;
-    this->behaviourFileName += ".hxx";
-    this->behaviourFile.open(("include/TFEL/Material/"+this->behaviourFileName).c_str());
-    if(!this->behaviourFile){
-      string msg("MFrontRungeKuttaParser::writeOutputFiles : ");
-      msg += "unable to open ";
-      msg += this->behaviourFileName;
-      msg += " for writing output file.";
-      throw(runtime_error(msg));
-    }
-    this->behaviourDataFileName  = this->className;
-    this->behaviourDataFileName += "BehaviourData.hxx";
-    this->behaviourDataFile.open(("include/TFEL/Material/"+this->behaviourDataFileName).c_str());
-    if(!this->behaviourDataFile){
-      string msg("MFrontRungeKuttaParser::writeOutputFiles : ");
-      msg += "unable to open ";
-      msg += this->behaviourDataFileName;
-      msg += " for writing output file.";
-      throw(runtime_error(msg));
-    }
-    this->integrationDataFileName  = this->className;
-    this->integrationDataFileName += "IntegrationData.hxx";
-    this->integrationDataFile.open(("include/TFEL/Material/"+this->integrationDataFileName).c_str());
-    if(!this->integrationDataFile){
-      string msg("MFrontRungeKuttaParser::writeOutputFiles : ");
-      msg += "unable to open ";
-      msg += this->integrationDataFileName;
-      msg += " for writing output file.";
-      throw(runtime_error(msg));
-    }
-    this->srcFileName  = this->className;
-    this->srcFileName += ".cxx";
-    this->srcFile.open(("src/"+this->srcFileName).c_str());
-    if(!this->srcFile){
-      string msg("MFrontRungeKuttaParser::writeOutputFiles : ");
-      msg += "unable to open ";
-      msg += this->srcFileName;
-      msg += " for writing output file.";
-      throw(runtime_error(msg));
-    }
-    this->generateOutputFiles();
   }
 
   void
@@ -1827,50 +1694,7 @@ namespace mfront{
     this->behaviourFile << "} // end of " << this->className << "::integrate" << endl << endl;
   } // end of void MFrontRungeKuttaParser::writeBehaviourIntegrator(void)
   
-    MFrontRungeKuttaParser::~MFrontRungeKuttaParser()
-  {
-    this->behaviourFile.close();
-    this->behaviourDataFile.close();
-    this->integrationDataFile.close();
-    this->srcFile.close();    
-  } // end of ~MFrontRungeKuttaParser
-
-  std::map<std::string,std::vector<std::string> >
-  MFrontRungeKuttaParser::getGlobalIncludes(void)
-  {
-    return MFrontBehaviourParserCommon::getGlobalIncludes();
-  } // end of MFrontMFrontRungeKuttaParser::getGlobalIncludes
-
-  std::map<std::string,std::vector<std::string> >
-  MFrontRungeKuttaParser::getGlobalDependencies(void)
-  {
-    return MFrontBehaviourParserCommon::getGlobalDependencies();
-  } // end of MFrontMFrontRungeKuttaParser::getGlobalDependencies
-
-  std::map<std::string,std::vector<std::string> >
-  MFrontRungeKuttaParser::getGeneratedSources(void)
-  {
-    return MFrontBehaviourParserCommon::getGeneratedSources();
-  } // end of MFrontRungeKuttaParser::getGeneratedSources
-
-  std::vector<std::string>
-  MFrontRungeKuttaParser::getGeneratedIncludes(void)
-  {
-    return MFrontBehaviourParserCommon::getGeneratedIncludes();
-  } // end of MFrontRungeKuttaParser::getGeneratedIncludes(void)
-
-  std::map<std::string,std::vector<std::string> >
-  MFrontRungeKuttaParser::getLibrariesDependencies(void)
-  {
-    return MFrontBehaviourParserCommon::getLibrariesDependencies();
-  } // end of MFrontRungeKuttaParser::getLibrariesDependencies
-
-  std::map<std::string,
-	   std::pair<std::vector<std::string>,
-		     std::vector<std::string> > >
-  MFrontRungeKuttaParser::getSpecificTargets(void)
-  {
-    return MFrontBehaviourParserCommon::getSpecificTargets();
-  } // end of MFrontRungeKuttaParser::getSpecificTargets(void)
+  MFrontRungeKuttaParser::~MFrontRungeKuttaParser()
+  {} // end of ~MFrontRungeKuttaParser
 
 } // end of namespace mfront  

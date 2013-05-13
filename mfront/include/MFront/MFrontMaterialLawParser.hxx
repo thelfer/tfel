@@ -30,48 +30,56 @@ namespace mfront{
 
     MFrontMaterialLawParser();
 
-    void setVerboseMode(void);
+    virtual void
+    setVerboseMode(void);
 
-    void setWarningMode(void);
+    virtual void
+    setWarningMode(void);
 
-    void setDebugMode(void);
+    virtual void
+    setDebugMode(void);
 
-    virtual void treatFile(const std::string&);
-
-    virtual void analyseFile(const std::string&);
-
+    virtual void
+    treatFile(const std::string&,
+	      const std::vector<std::string>&);
+    
     virtual void
     getKeywordsList(std::vector<std::string>&) const;
 
-    void writeOutputFiles(void);
-
-    void
+    virtual void
     setInterfaces(const std::set<std::string>&);
 
-    std::map<std::string,std::vector<std::string> >
+    virtual std::map<std::string,std::vector<std::string> >
     getGlobalIncludes(void);
 
-    std::map<std::string,std::vector<std::string> >
+    virtual std::map<std::string,std::vector<std::string> >
     getGlobalDependencies(void);
 
-    std::map<std::string,std::vector<std::string> >
+    virtual std::map<std::string,std::vector<std::string> >
     getGeneratedSources(void);
 
-    std::vector<std::string>
+    virtual std::vector<std::string>
     getGeneratedIncludes(void);
 
-    std::map<std::string,std::vector<std::string> >
+    virtual std::map<std::string,std::vector<std::string> >
     getLibrariesDependencies(void);
 
-    std::map<std::string,
-	     std::pair<std::vector<std::string>,
-		       std::vector<std::string> > >
+    virtual std::map<std::string,
+		     std::pair<std::vector<std::string>,
+			       std::vector<std::string> > >
     getSpecificTargets(void);
 
-  private:
-    
+  protected:
+
     typedef void (MFrontMaterialLawParser::* MemberFuncPtr)(void);
     typedef std::map<std::string,MemberFuncPtr> CallBackContainer;
+
+    virtual void
+    analyseFile(const std::string&,
+		const std::vector<std::string>&);
+
+    virtual void
+    writeOutputFiles(void);
 
     void
     addInterface(const std::string&);

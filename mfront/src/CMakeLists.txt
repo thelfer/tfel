@@ -20,6 +20,7 @@ set(mfront_SOURCES
     MFrontInitInterfaces.cxx
     MFrontInitParsers.cxx
     MFrontParserFactory.cxx
+    DrivingVariable.cxx
     BehaviourCharacteristic.cxx
     BoundsDescription.cxx
     VarHandler.cxx
@@ -36,7 +37,6 @@ set(mfront_SOURCES
     ParserBase.cxx
     InterfaceBase.cxx
     ParserUtilities.cxx
-    UnaryLoadingDefinition.cxx
     MFrontLawInterfaceFactory.cxx
     MFrontBehaviourInterfaceFactory.cxx
     MFrontModelInterfaceFactory.cxx

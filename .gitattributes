@@ -282,16 +282,6 @@ include/TFEL/FSAlgorithm/max_element.hxx -text
 include/TFEL/FSAlgorithm/min_element.hxx -text
 include/TFEL/FSAlgorithm/swap_ranges.hxx -text
 include/TFEL/FSAlgorithm/transform.hxx -text
-include/TFEL/FiniteElement/Element/ElementsManager.ixx -text
-include/TFEL/FiniteElement/ElementManager.hxx -text
-include/TFEL/FiniteElement/ElementsManager.hxx -text
-include/TFEL/FiniteElement/FiniteElement_dir.doc -text
-include/TFEL/FiniteElement/Mesh.hxx -text
-include/TFEL/FiniteElement/Mesh/Mesh.ixx -text
-include/TFEL/FiniteElement/Node.hxx -text
-include/TFEL/FiniteElement/Node/Node.ixx -text
-include/TFEL/FiniteElement/Node/NodesManager.ixx -text
-include/TFEL/FiniteElement/NodesManager.hxx -text
 include/TFEL/Macros.hxx -text
 include/TFEL/Material/BoundsCheck.hxx -text
 include/TFEL/Material/DDIF2Base.hxx -text
@@ -808,6 +798,7 @@ mfront/include/MFront/Aster/AsterTraits.hxx -text
 mfront/include/MFront/BehaviourCharacteristic.hxx -text
 mfront/include/MFront/BoundsDescription.hxx -text
 mfront/include/MFront/ComputedVarHandler.hxx -text
+mfront/include/MFront/DrivingVariable.hxx -text
 mfront/include/MFront/InterfaceBase.hxx -text
 mfront/include/MFront/LawFunction.hxx -text
 mfront/include/MFront/MFront.hxx -text
@@ -884,6 +875,7 @@ mfront/include/MFront/ParserBase.hxx -text
 mfront/include/MFront/ParserUtilities.hxx -text
 mfront/include/MFront/StaticVarHandler.hxx -text
 mfront/include/MFront/SupportedTypes.hxx -text
+mfront/include/MFront/ThermodynamicForce.hxx -text
 mfront/include/MFront/UMAT/UMAT.hxx -text
 mfront/include/MFront/UMAT/UMATBehaviourHandler.hxx -text
 mfront/include/MFront/UMAT/UMATComputeStiffnessTensor.hxx -text
@@ -901,7 +893,6 @@ mfront/include/MFront/UMAT/UMATOrthotropicBehaviourHandler.hxx -text
 mfront/include/MFront/UMAT/UMATOutOfBoundsPolicy.hxx -text
 mfront/include/MFront/UMAT/UMATRotationMatrix.hxx -text
 mfront/include/MFront/UMAT/UMATTraits.hxx -text
-mfront/include/MFront/UnaryLoadingDefinition.hxx -text
 mfront/include/MFront/VarHandler.hxx -text
 mfront/include/MFront/VariableBoundsDescription.hxx -text
 mfront/include/MFront/VariableModifier.hxx -text
@@ -942,6 +933,7 @@ mfront/src/BehaviourCharacteristic.cxx -text
 mfront/src/BoundsDescription.cxx -text
 mfront/src/CMakeLists.txt -text
 mfront/src/ComputedVarHandler.cxx -text
+mfront/src/DrivingVariable.cxx -text
 mfront/src/InterfaceBase.cxx -text
 mfront/src/MFront.cxx -text
 mfront/src/MFrontAsterInterface.cxx -text
@@ -996,7 +988,6 @@ mfront/src/UMATGetModellingHypothesis.cxx -text
 mfront/src/UMATInterfaceBase.cxx -text
 mfront/src/UMATOutOfBoundsPolicy.cxx -text
 mfront/src/UMATRotationMatrix.cxx -text
-mfront/src/UnaryLoadingDefinition.cxx -text
 mfront/src/VarHandler.cxx -text
 mfront/src/VariableModifier.cxx -text
 mfront/src/WordAnalyser.cxx -text

@@ -30,13 +30,14 @@ nobase_include_HEADERS= MFront/MFront.hxx                          \
 			MFront/MFrontModelParserBase.hxx           \
 			MFront/MFrontModelParserBase.ixx           \
 			MFront/BehaviourCharacteristic.hxx         \
-			MFront/UnaryLoadingDefinition.hxx          \
 			MFront/ParserBase.hxx                      \
 			MFront/InterfaceBase.hxx                   \
 			MFront/ParserUtilities.hxx                 \
 			MFront/StaticVarHandler.hxx                \
 			MFront/ComputedVarHandler.hxx              \
 			MFront/SupportedTypes.hxx                  \
+			MFront/DrivingVariable.hxx                 \
+			MFront/ThermodynamicForce.hxx              \
 			MFront/BoundsDescription.hxx               \
 			MFront/VariableBoundsDescription.hxx       \
 			MFront/VarHandler.hxx                      \

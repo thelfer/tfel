@@ -1,15 +1,6 @@
 ## Makefile.am -- Process this file with automake to produce a Makefile.in file.
 
 nobase_include_HEADERS= TFEL/Macros.hxx                                                               \
-			TFEL/FiniteElement/Element/ElementsManager.ixx                                \
-			TFEL/FiniteElement/ElementManager.hxx					      \
-			TFEL/FiniteElement/ElementsManager.hxx					      \
-			TFEL/FiniteElement/Mesh/Mesh.ixx					      \
-			TFEL/FiniteElement/Mesh.hxx						      \
-			TFEL/FiniteElement/Node/Node.ixx					      \
-			TFEL/FiniteElement/Node/NodesManager.ixx				      \
-			TFEL/FiniteElement/Node.hxx						      \
-			TFEL/FiniteElement/NodesManager.hxx					      \
 			TFEL/FSAlgorithm/swap_ranges.hxx		                              \
 			TFEL/FSAlgorithm/copy.hxx			                              \
 			TFEL/FSAlgorithm/generate.hxx		                                      \

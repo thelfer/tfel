@@ -10,13 +10,11 @@
 
 #include<string>
 #include"MFront/MFrontBehaviourParserBase.hxx"
-#include"MFront/MFrontVirtualParser.hxx"
 
 namespace mfront{
 
   struct MFrontRungeKuttaParser
-    : public MFrontVirtualParser,
-      public MFrontBehaviourParserBase<MFrontRungeKuttaParser>
+    : public MFrontBehaviourParserBase<MFrontRungeKuttaParser>
   {
     static std::string 
     getName(void);
@@ -25,46 +23,6 @@ namespace mfront{
     getDescription(void);
 
     MFrontRungeKuttaParser();
-
-    void setVerboseMode();
-
-    void setDebugMode();
-
-    void setWarningMode();
-
-    /*!
-     * \brief return the list of keywords usable with this parser
-     * \param[out] k : the list of keywords registred for this parser
-     */
-    virtual void
-    getKeywordsList(std::vector<std::string>&) const;
-
-    void treatFile(const std::string&);
-
-    void writeOutputFiles();
-
-    void
-    setInterfaces(const std::set<std::string>&);
-
-    std::map<std::string,std::vector<std::string> >
-    getGlobalIncludes(void);
-
-    std::map<std::string,std::vector<std::string> >
-    getGlobalDependencies(void);
-
-    std::map<std::string,std::vector<std::string> >
-    getGeneratedSources(void);
-
-    std::vector<std::string>
-    getGeneratedIncludes(void);
-
-    std::map<std::string,std::vector<std::string> >
-    getLibrariesDependencies(void);
-
-    std::map<std::string,
-	     std::pair<std::vector<std::string>,
-		       std::vector<std::string> > >
-    getSpecificTargets(void);
 
     ~MFrontRungeKuttaParser();
 
@@ -121,13 +79,14 @@ namespace mfront{
     void
     writeBehaviourUpdateAuxiliaryStateVars(void);
 
-    void writeBehaviourStaticVars(void);
+    virtual void
+    writeBehaviourStaticVars(void);
 
-    void writeBehaviourIntegrator(void);
+    virtual void
+    writeBehaviourIntegrator(void);
 
-    void generateOutputFiles(void);
-
-    void endsInputFileProcessing(void);
+    virtual void
+    endsInputFileProcessing(void);
 
     friend class MFrontBehaviourParserBase<MFrontRungeKuttaParser>;
 

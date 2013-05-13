@@ -25,8 +25,6 @@ namespace mfront{
   {
     MFront(const int, const char *const *const);
 
-    void treatUnknownArgument(void);
-
     void exe(void);
 
     ~MFront();
@@ -35,7 +33,11 @@ namespace mfront{
 
   private :
 
+    friend class tfel::utilities::ArgumentParserBase<MFront>;
+
     static std::string callingName;
+
+    void treatUnknownArgument(void);
 
     static std::vector<std::string>
     tokenize(const std::string&,
@@ -152,6 +154,12 @@ namespace mfront{
 
     std::set<std::string> specifiedTargets;
 
+    /*!
+     * \brief external commands specificed on the command line through
+     * an --@XXX option
+     */
+    std::vector<std::string> ecmds;
+
     std::string fileName;
 
     std::string sys;
@@ -181,4 +189,3 @@ namespace mfront{
 } // end of namespace mfront
 
 #endif /* _LIB_MFRONT_H */
-

@@ -10,60 +10,14 @@
 
 #include<string>
 #include"MFront/MFrontBehaviourParserBase.hxx"
-#include"MFront/MFrontVirtualParser.hxx"
 
 namespace mfront{
 
   struct MFrontImplicitParserBase
-    : public MFrontVirtualParser,
-      public MFrontBehaviourParserBase<MFrontImplicitParserBase>
+    : public MFrontBehaviourParserBase<MFrontImplicitParserBase>
   {
 
     MFrontImplicitParserBase();
-
-    virtual void setVerboseMode();
-
-    virtual void setDebugMode();
-
-    virtual void setWarningMode();
-
-    /*!
-     * \brief return the list of keywords usable with this parser
-     * \param[out] k : the list of keywords registred for this parser
-     */
-    virtual void
-    getKeywordsList(std::vector<std::string>&) const;
-
-    virtual void treatFile(const std::string&);
-
-    virtual void writeOutputFiles();
-
-    virtual void
-    setInterfaces(const std::set<std::string>&);
-
-    virtual std::map<std::string,
-		     std::vector<std::string> >
-    getGlobalIncludes(void);
-
-    virtual std::map<std::string,
-	     std::vector<std::string> >
-    getGlobalDependencies(void);
-
-    virtual std::map<std::string,
-		     std::vector<std::string> >
-    getGeneratedSources(void);
-
-    virtual std::vector<std::string>
-    getGeneratedIncludes(void);
-
-    virtual std::map<std::string,
-		     std::vector<std::string> >
-    getLibrariesDependencies(void);
-
-    virtual std::map<std::string,
-		     std::pair<std::vector<std::string>,
-			       std::vector<std::string> > >
-    getSpecificTargets(void);
 
     virtual ~MFrontImplicitParserBase();
 
@@ -149,8 +103,6 @@ namespace mfront{
     virtual void treatCompareToNumericalJacobian(void);
 
     virtual void treatJacobianComparisonCriterium(void);
-
-    virtual void generateOutputFiles(void);
 
     virtual void treatUseAcceleration(void);
 

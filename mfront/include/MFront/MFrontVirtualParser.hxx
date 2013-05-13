@@ -26,9 +26,8 @@ namespace mfront{
 
     virtual void setWarningMode() = 0;
 
-    virtual void treatFile(const std::string&) = 0;
-
-    virtual void writeOutputFiles() = 0;
+    virtual void treatFile(const std::string&,
+			   const std::vector<std::string>&) = 0;
 
     virtual std::map<std::string,std::vector<std::string> >
     getGlobalIncludes(void) = 0;

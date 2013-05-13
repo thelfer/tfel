@@ -5,6 +5,8 @@
  * \date   10 Nov 2006
  */
 
+#include<iostream>
+
 #include<string>
 #include<stdexcept>
 #include<sstream>
@@ -190,7 +192,6 @@ namespace mfront{
     this->readSpecifiedToken("MFrontMaterialLawParser::treatParameter","=");
     this->checkNotEndOfFile("MFrontMaterialLawParser::treatParameter",
 			    "Expected to read value of variable '"+parameter+"'");
-    //    cout << "treating : " << this->current->value << endl;
     istringstream tmp(this->current->value);
     tmp >> value;
     if(!tmp&&(!tmp.eof())){
@@ -584,13 +585,16 @@ namespace mfront{
   } // end of MFrontMaterialLawParser::treatMethod
     
   void
-  MFrontMaterialLawParser::treatFile(const std::string& fileName_) 
+  MFrontMaterialLawParser::treatFile(const std::string& fileName_,
+				     const std::vector<std::string>& ecmds) 
   {
-    this->analyseFile(fileName_);
-  }
+    this->analyseFile(fileName_,ecmds);
+    this->writeOutputFiles();
+  } // end of MFrontMaterialLawParser::treatFile
 
   void
-  MFrontMaterialLawParser::analyseFile(const std::string& fileName_) 
+  MFrontMaterialLawParser::analyseFile(const std::string& fileName_,
+				       const std::vector<std::string>& ecmds) 
   {
     using namespace std;
     typedef MFrontLawInterfaceFactory MLIF;
@@ -599,7 +603,7 @@ namespace mfront{
     CallBackContainer::const_iterator p;
     MemberFuncPtr handler = 0;
     this->fileName = fileName_;
-    this->openFile(fileName_);
+    this->openFile(this->fileName,ecmds);
     // strip comments from file
     this->stripComments();
     // begin treatement
@@ -672,7 +676,7 @@ namespace mfront{
 	}
       }
     }
-  } // end of MFrontMaterialLawParser::treatFile
+  }
 
   void
   MFrontMaterialLawParser::writeOutputFiles(void)

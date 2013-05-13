@@ -62,15 +62,25 @@ namespace mfront{
 
   template<typename Child>
   void
-  MFrontModelParserBase<Child>::treatFile(const std::string& fileName_) 
+  MFrontModelParserBase<Child>::treatFile(const std::string& fileName_,
+					  const std::vector<std::string>& ecmds) 
+  {
+    this->analyseFile(fileName_,ecmds);
+    this->writeOutputFiles();
+  } // end of Child::treatFile
+
+  template<typename Child>
+  void
+  MFrontModelParserBase<Child>::analyseFile(const std::string& fileName_,
+						const std::vector<std::string>& ecmds)
   {
     using namespace std;
-    this->fileName = fileName_;
-    this->openFile(fileName_);
     typename CallBackContainer::const_iterator p;
     typename VarContainer::const_iterator p2;
     typename FunctionContainer::const_iterator p3;
     MemberFuncPtr handler = 0;
+    this->fileName = fileName_;
+    this->openFile(this->fileName,ecmds);
     // strip comments from file
     this->stripComments();
     // begin treatement
@@ -133,7 +143,7 @@ namespace mfront{
       ++(this->current);
       (static_cast<Child*>(this)->*handler)();
     }
-  } // end of Child::treatFile
+  } // end of MFrontModelParserBase<Child>::analyseFile
 
   template<typename Child>
   void MFrontModelParserBase<Child>::registerNewCallBack(const std::string& keyword,

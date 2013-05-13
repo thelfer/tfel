@@ -8,26 +8,22 @@
 
 #include<sstream>
 
-#include"TFEL/System/System.hxx"
 #include"MFront/MFrontIsotropicBehaviourParserBase.hxx"
 
 namespace mfront{
 
   MFrontIsotropicBehaviourParserBase::MFrontIsotropicBehaviourParserBase()
-    : MFrontVirtualParser(),
-      MFrontBehaviourParserBase<MFrontIsotropicBehaviourParserBase>(),
+    : MFrontBehaviourParserBase<MFrontIsotropicBehaviourParserBase>(),
       theta(0.5f)
   {
     using namespace std;
     typedef map<string,string>::value_type MVType;
+    this->defineSmallStrainInputVariables();
     this->reserveName("NewtonIntegration");
     this->registerVariable("theta");
     this->parametersHolder.push_back(VarHandler("real","theta",1u,0u));
     this->registerVariable("epsilon");
     this->parametersHolder.push_back(VarHandler("real","epsilon",1u,0u));
-    //    this->registerStaticVariable("epsilon");
-    //    this->registerStaticVariable("theta");
-    //    this->registerStaticVariable("iterMax");
     this->registerVariable("iterMax");
     this->parametersHolder.push_back(VarHandler("ushort","iterMax",
 						1u,0u));
@@ -67,25 +63,8 @@ namespace mfront{
     this->hasPredictionOperator = true;
   } // end of MFrontIsotropicBehaviourParserBase::MFrontIsotropicBehaviourParserBase
 
-  void
-  MFrontIsotropicBehaviourParserBase::getKeywordsList(std::vector<std::string>& k) const
-  {
-    MFrontBehaviourParserBase<MFrontIsotropicBehaviourParserBase>::getKeywordsList(k);
-  } // end of MFrontIsotropicBehaviourParserBase::getKeywordsList
-
   MFrontIsotropicBehaviourParserBase::~MFrontIsotropicBehaviourParserBase()
-  {
-    this->behaviourFile.close();
-    this->behaviourDataFile.close();
-    this->integrationDataFile.close();
-    this->srcFile.close();    
-  } // end of MFrontIsotropicBehaviourParserBase::~MFrontIsotropicBehaviourParserBase()
-
-  void
-  MFrontIsotropicBehaviourParserBase::setInterfaces(const std::set<std::string>& i)
-  {
-    MFrontBehaviourParserBase<MFrontIsotropicBehaviourParserBase>::setInterfaces(i);
-  } // end of MFrontIsotropicBehaviourParserBase::setInterfaces
+  {} // end of MFrontIsotropicBehaviourParserBase::~MFrontIsotropicBehaviourParserBase()
 
   void
   MFrontIsotropicBehaviourParserBase::treatTheta(void)
@@ -111,21 +90,6 @@ namespace mfront{
     }
     ++(this->current);
     this->readSpecifiedToken("MFrontIsotropicBehaviourParserBase::treatTheta",";");
-    // using namespace std;
-    // this->checkNotEndOfFile("MFrontIsotropicBehaviourParserBase::treatTheta",
-    // 			    "Cannot read theta value.");
-    // istringstream flux(current->value);
-    // flux >> this->theta;
-    // if(flux.fail()){
-    //   this->throwRuntimeError("MFrontIsotropicBehaviourParserBase::treatTheta",
-    // 			      "Failed to read theta value.");
-    // }
-    // if((this->theta<0.)||(this->theta>1.)){
-    //   this->throwRuntimeError("MFrontIsotropicBehaviourParserBase::treatTheta",
-    // 			      "Theta value must be positive and smaller than 1.");
-    // }
-    // ++(this->current);
-    // this->readSpecifiedToken("MFrontIsotropicBehaviourParserBase::treatTheta",";");
   } // end of MFrontIsotropicBehaviourParserBase::treatTheta
 
   void
@@ -225,6 +189,7 @@ namespace mfront{
   MFrontIsotropicBehaviourParserBase::endsInputFileProcessing(void)
   {
     using namespace std;
+    MFrontBehaviourParserCommon::endsInputFileProcessing();
     typedef map<string,double>::value_type MVType;
     typedef map<string,unsigned short>::value_type MVType2;
     VarContainer::iterator p;
@@ -257,101 +222,6 @@ namespace mfront{
     }
   } // end of MFrontIsotropicBehaviourParserBase::endsInputFileProcessing
 
-  void 
-  MFrontIsotropicBehaviourParserBase::generateOutputFiles(void){
-    using namespace std;
-    typedef MFrontBehaviourInterfaceFactory MBIF;
-    MBIF& mbif = MBIF::getMFrontBehaviourInterfaceFactory();
-    // Adds some stuff
-    this->endsInputFileProcessing();
-    // Generating BehaviourData's outputFile
-    this->writeBehaviourDataFile();
-    // Generating IntegrationData's outputFile
-    this->writeIntegrationDataFile();
-    // Generating Behaviour's outputFile
-    this->writeBehaviourFile();
-    // Generating Behaviour's outputFile
-    this->writeSrcFile();
-    // Generating Behaviour's unary loading tests
-    this->writeUnaryLoadingTestFiles();
-    StringContainer::const_iterator i;
-    for(i  = this->interfaces.begin();
-	i != this->interfaces.end();++i){
-      MFrontBehaviourVirtualInterface *interface = mbif.getInterfacePtr(*i);
-      interface->endTreatement(this->fileName,
-			       this->library,
-			       this->material,
-			       this->className,
-			       this->authorName,
-			       this->date,
-			       this->coefsHolder,
-			       this->stateVarsHolder,
-    			       this->auxiliaryStateVarsHolder,
-			       this->externalStateVarsHolder,
-			       this->parametersHolder,
-			       this->glossaryNames,
-			       this->entryNames,
-			       this->behaviourCharacteristic);
-    }
-  } // end of MFrontIsotropicBehaviourParserBase::generateOutputFiles
-
-  void
-  MFrontIsotropicBehaviourParserBase::writeOutputFiles() 
-  {    
-    using namespace std;
-    using namespace tfel::system;
-    systemCall::mkdir("include");
-    systemCall::mkdir("include/TFEL/");
-    systemCall::mkdir("include/TFEL/Material/");
-    systemCall::mkdir("src");
-    if(this->className.empty()){
-      string msg("MFrontIsotropicBehaviourParserBase::writeOutputFiles : ");
-      msg += "no behaviour name defined.";
-      throw(runtime_error(msg));      
-    }
-    this->behaviourFileName  = this->className;
-    this->behaviourFileName += ".hxx";
-    this->behaviourFile.open(("include/TFEL/Material/"+this->behaviourFileName).c_str());
-    if(!this->behaviourFile){
-      string msg("MFrontIsotropicBehaviourParserBase::writeOutputFiles : ");
-      msg += "unable to open ";
-      msg += this->behaviourFileName;
-      msg += " for writing output file.";
-      throw(runtime_error(msg));
-    }
-    this->behaviourDataFileName  = this->className;
-    this->behaviourDataFileName += "BehaviourData.hxx";
-    this->behaviourDataFile.open(("include/TFEL/Material/"+this->behaviourDataFileName).c_str());
-    if(!this->behaviourDataFile){
-      string msg("MFrontIsotropicBehaviourParserBase::writeOutputFiles : ");
-      msg += "unable to open ";
-      msg += this->behaviourDataFileName;
-      msg += " for writing output file.";
-      throw(runtime_error(msg));
-    }
-    this->integrationDataFileName  = this->className;
-    this->integrationDataFileName += "IntegrationData.hxx";
-    this->integrationDataFile.open(("include/TFEL/Material/"+this->integrationDataFileName).c_str());
-    if(!this->integrationDataFile){
-      string msg("MFrontIsotropicBehaviourParserBase::writeOutputFiles : ");
-      msg += "unable to open ";
-      msg += this->integrationDataFileName;
-      msg += " for writing output file.";
-      throw(runtime_error(msg));
-    }
-    this->srcFileName  = this->className;
-    this->srcFileName += ".cxx";
-    this->srcFile.open(("src/"+this->srcFileName).c_str());
-    if(!this->srcFile){
-      string msg("MFrontIsotropicBehaviourParserBase::writeOutputFiles : ");
-      msg += "unable to open ";
-      msg += this->srcFileName;
-      msg += " for writing output file.";
-      throw(runtime_error(msg));
-    }
-    this->generateOutputFiles();
-  } // end of MFrontIsotropicBehaviourParserBase::writeOutputFiles
-
   void
   MFrontIsotropicBehaviourParserBase::writeBehaviourParserSpecificTypedefs(void)
   {
@@ -377,75 +247,11 @@ namespace mfront{
     this->behaviourFile << "}\n\n";
   } // end of MFrontIsotropicBehaviourParserBase::writeBehaviourComputePredictionOperator(void)
 
-  void
-  MFrontIsotropicBehaviourParserBase::setVerboseMode(void) 
-  {
-    this->verboseMode = true;
-  } // end of MFrontIsotropicBehaviourParserBase::setVerboseMode
-
-  void
-  MFrontIsotropicBehaviourParserBase::setDebugMode(void) 
-  {
-    this->debugMode = true;
-  } // end of MFrontIsotropicBehaviourParserBase::setDebugMode
-
-  void
-  MFrontIsotropicBehaviourParserBase::setWarningMode(void) 
-  {
-    this->warningMode = true;
-  } // end of MFrontIsotropicBehaviourParserBase::setWarningMode
-
-  void
-  MFrontIsotropicBehaviourParserBase::treatFile(const std::string& fileName_) 
-  {
-    this->fileName = fileName_;
-    MFrontBehaviourParserBase<MFrontIsotropicBehaviourParserBase>::analyseFile(fileName_);
-  } // end of MFrontIsotropicBehaviourParserBase::treatFile
-
   void 
   MFrontIsotropicBehaviourParserBase::writeBehaviourStaticVars(void)
   {
     this->checkBehaviourFile();
     MFrontBehaviourParserBase<MFrontIsotropicBehaviourParserBase>::writeBehaviourStaticVars();
   } // end of MFrontIsotropicBehaviourParserBase::writeBehaviourStaticVars
-
-  std::map<std::string,std::vector<std::string> >
-  MFrontIsotropicBehaviourParserBase::getGlobalIncludes(void)
-  {
-    return MFrontBehaviourParserCommon::getGlobalIncludes();
-  } // end of MFrontMFrontIsotropicBehaviourParserBase::getGlobalIncludes
-
-  std::map<std::string,std::vector<std::string> >
-  MFrontIsotropicBehaviourParserBase::getGlobalDependencies(void)
-  {
-    return MFrontBehaviourParserCommon::getGlobalDependencies();
-  } // end of MFrontMFrontIsotropicBehaviourParserBase::getGlobalDependencies
-
-  std::map<std::string,std::vector<std::string> >
-  MFrontIsotropicBehaviourParserBase::getGeneratedSources(void)
-  {
-    return MFrontBehaviourParserCommon::getGeneratedSources();
-  } // end of MFrontIsotropicBehaviourParserBase::getGeneratedSources
-
-  std::vector<std::string>
-  MFrontIsotropicBehaviourParserBase::getGeneratedIncludes(void)
-  {
-    return MFrontBehaviourParserCommon::getGeneratedIncludes();
-  } // end of MFrontIsotropicBehaviourParserBase::getGeneratedIncludes(void)
-
-  std::map<std::string,std::vector<std::string> >
-  MFrontIsotropicBehaviourParserBase::getLibrariesDependencies(void)
-  {
-    return MFrontBehaviourParserCommon::getLibrariesDependencies();
-  } // end of MFrontIsotropicBehaviourParserBase::getLibrariesDependencies
-
-  std::map<std::string,
-	   std::pair<std::vector<std::string>,
-		     std::vector<std::string> > >
-  MFrontIsotropicBehaviourParserBase::getSpecificTargets(void)
-  {
-    return MFrontBehaviourParserCommon::getSpecificTargets();
-  } // end of MFrontIsotropicBehaviourParserBase::getSpecificTargets(void)
-
 
 } // end of namespace mfront

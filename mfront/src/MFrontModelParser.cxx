@@ -24,12 +24,6 @@ namespace mfront
   } // end of MFrontModelParser::getDescription
 
   void
-  MFrontModelParser::getKeywordsList(std::vector<std::string>& k) const
-  {
-    MFrontModelParserBase<MFrontModelParser>::getKeywordsList(k);
-  } // end of MFrontModelParser::getKeywordsList
-
-  void
   MFrontModelParser::setInterfaces(const std::set<std::string>& f)
   {
     using namespace std;
@@ -44,21 +38,16 @@ namespace mfront
   } // end of MFrontModelParser::setInterfaces
 
   void
-  MFrontModelParser::treatFile(const std::string& f)
+  MFrontModelParser::treatFile(const std::string& f,
+			       const std::vector<std::string>& ecmds)
   {
-    this->analyseFile(f);
-  }
-  
-  void
-  MFrontModelParser::analyseFile(const std::string& f)
-  {  
     using namespace std;
     if(this->interfaces.empty()){
       string msg("MFrontModelParser::treatFile : ");
       msg += "no interface defined";
       throw(runtime_error(msg));
     }
-    MFrontModelParserBase<MFrontModelParser>::treatFile(f);
+    MFrontModelParserBase<MFrontModelParser>::treatFile(f,ecmds);
   }
 
 } // end of namespace mfront

@@ -61,7 +61,6 @@ namespace mfront{
     this->registerNewCallBack("@ComputedVar",&Child::treatComputedVar);
     this->registerNewCallBack("@ComputedVariable",&Child::treatComputedVar);
     this->registerNewCallBack("@Description",&Child::treatDescription);
-    this->registerNewCallBack("@UnaryLoadingTest",&Child::treatUnaryLoadingTest);
     this->registerNewCallBack("@Bounds",&Child::treatBounds);
     this->registerNewCallBack("@PhysicalBounds",&Child::treatPhysicalBounds);
     this->registerNewCallBack("@RequireStiffnessTensor",&Child::treatRequireStiffnessTensor);
@@ -119,15 +118,24 @@ namespace mfront{
   } // end of MFrontBehaviourParserBase<Child>::MFrontBehaviourParserBase
 
   template<typename Child>
-  void MFrontBehaviourParserBase<Child>::analyseFile(const std::string& fileName_)
+  void MFrontBehaviourParserBase<Child>::treatFile(const std::string& fileName_,
+						   const std::vector<std::string>& ecmds)
+  {
+    this->analyseFile(fileName_,ecmds);
+    this->writeOutputFiles();
+  } // end of MFrontBehaviourParserBase<Child>::treatFile
+
+  template<typename Child>
+  void
+  MFrontBehaviourParserBase<Child>::analyseFile(const std::string& fileName_,
+						const std::vector<std::string>& ecmds)
   {
     using namespace std;
-
-    this->openFile(fileName_);
-    this->fileName = fileName_;
-    
     typename CallBackContainer::const_iterator p;
     MemberFuncPtr handler;
+    // opening file
+    this->fileName = fileName_;
+    this->openFile(this->fileName,ecmds);
     // strip comments from file
     this->stripComments();
     // begin treatement
@@ -151,7 +159,7 @@ namespace mfront{
 	((static_cast<Child *>(this))->*handler)();
       }
     }
-  } // end of MFrontBehaviourParserBase<Child>::treatFile
+  } // end of MFrontBehaviourParserBase<Child>::analyseFile
 
   template<typename Child>
   MFrontBehaviourParserBase<Child>::~MFrontBehaviourParserBase()

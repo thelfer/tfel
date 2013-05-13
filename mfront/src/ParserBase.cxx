@@ -48,6 +48,28 @@ namespace mfront
     this->reserveName("policy");
   }
 
+  void
+  ParserBase::openFile(const std::string& f,
+		       const std::vector<std::string>& ecmds)
+  {
+    using namespace std;
+    CxxTokenizer::openFile(f);
+    vector<string>::const_iterator p;
+    for(p=ecmds.begin();p!=ecmds.end();++p){
+      CxxTokenizer t;
+      try{
+	t.parseString(*p);
+      } catch(exception& e){
+	string msg("ParserBase::openFile : ");
+	msg += "error while parsing external command '"+*p+"'";
+	throw(runtime_error(msg));
+      }
+      this->fileTokens.insert(this->fileTokens.begin(),
+			      t.begin(),t.end());
+    }
+  } // end of ParserBase::openFile
+
+
   ParserBase::~ParserBase()
   {} // end of ParserBase::~ParserBase
 
@@ -81,7 +103,7 @@ namespace mfront
     oFileTokens.swap(this->fileTokens);
     TokensContainer::const_iterator ocurrent = this->current;
     for(p=files.begin();p!=files.end();++p){
-      this->analyseFile(*p);
+      this->analyseFile(*p,vector<string>());
     }
     this->fileName = oFileName;
     this->fileTokens.swap(oFileTokens);
