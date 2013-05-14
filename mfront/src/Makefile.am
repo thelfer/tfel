@@ -82,7 +82,8 @@ if HAVE_ASTER
 mfront_SOURCES += MFrontAsterInterface.cxx
 endif
 
-mfront_LDADD   = -L$(top_builddir)/src/System    -lTFELSystem    \
+mfront_LDADD   = -L$(top_builddir)/src/Material  -lTFELMaterial  \
+		 -L$(top_builddir)/src/System    -lTFELSystem    \
 		 -L$(top_builddir)/src/Utilities -lTFELUtilities \
 		 -L$(top_builddir)/src/Exception -lTFELException
 

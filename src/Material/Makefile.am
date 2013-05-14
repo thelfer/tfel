@@ -8,7 +8,8 @@ INCLUDES = -I$(top_srcdir)/include
 lib_LTLIBRARIES = libTFELMaterial.la \
 		  libTFELMaterialSingleCristals.la
 
-libTFELMaterial_la_SOURCES = MaterialException.cxx \
+libTFELMaterial_la_SOURCES = MaterialException.cxx   \
+			     ModellingHypothesis.cxx \
 			     DDIF2Base.cxx
 libTFELMaterial_la_LIBADD = -L$(top_builddir)/src/Math      -lTFELMath      \
 		            -L$(top_builddir)/src/Exception -lTFELException \

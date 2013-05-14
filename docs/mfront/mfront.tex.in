@@ -161,8 +161,8 @@
 \newpage
 \section{Introduction}
 
-Ce note donne une vue générale du générateur de code \mfront{} et de
-son application aux propriétés matériau et aux modèles
+Cette note donne une vue générale du générateur de code \mfront{} et
+de son application aux propriétés matériau et aux modèles
 physico-chimiques. Elle est la première d'un corpus de \(4\)
 notes\footnote{Les trois autres notes traitent~:
   \begin{itemize}
@@ -213,7 +213,8 @@ Les annexes traitent des questions suivantes~:
 matériau~: partant d'un fichier contenant les informations physiques
 et numériques utiles, \mfront{} génère un ou plusieurs fichiers \cpp{}
 et peut éventuellement gérer leurs compilations. Pour différencier les
-différents cas, différentes analyseurs syntaxiques sont disponibles.
+différentes situations, plusieurs analyseurs syntaxiques sont
+disponibles.
 
 Nous commençons par présenter la structure du fichier de donnée et les
 directives communes à tous les analyseurs.
@@ -249,10 +250,11 @@ l'ensemble des analyseurs.
 \subsubsection{Structure du fichier d'entrée}
 
 Un fichier d'entrée de \mfront{} se présente sous la forme d'une liste
-de mots clés commençant par une arobase \texttt{@}. Dans la mesure du
-possible, nous avons recherché à nous rapprocher le plus possible de
-la syntaxe utilisée par le langage C++ et certaines parties du fichier
-sont directement écrites en C++. La surcouche apportée par \mfront{} a
+de mots clés, appelées également directives dans la suite du document,
+commençant par une arobase \texttt{@}. Dans la mesure du possible,
+nous avons recherché à nous rapprocher le plus possible de la syntaxe
+utilisée par le langage C++ et certaines parties du fichier sont
+directement écrites en C++. La surcouche apportée par \mfront{} a
 cependant été créée pour minimiser les détails propres à ce
 langage. Le retour d'expérience montre que l'écriture d'un fichier
 \mfront{} est accessible, dans les cas usuels, à des personnes n'ayant

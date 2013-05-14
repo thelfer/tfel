@@ -24,92 +24,31 @@ namespace tfel
      * tensor of directional sense.
      * Those tensors are computed as matrices.
      */
-    template<unsigned short N>
-    struct MetallicCFCSlidingSystemsBase
+    struct MetallicCFCSlidingSystems
     {
+      //! number of gliding systems
+      static const unsigned short Ngs = 12;
       //! tensor of directional sense
-      tfel::math::tvector<12,tfel::math::stensor<N,double> > mus;
+      tfel::math::tvector<Ngs,tfel::math::stensor<3u,double> > mus;
+      //! return the uniq instance of the class
+      static const MetallicCFCSlidingSystems&
+      getSlidingSystems(void);
     protected:
       /*!
        * constructor
        */
-      MetallicCFCSlidingSystemsBase();
+      MetallicCFCSlidingSystems();
     private:
       // copy constructor (disabled)
-      MetallicCFCSlidingSystemsBase(const MetallicCFCSlidingSystemsBase&);
+      MetallicCFCSlidingSystems(const MetallicCFCSlidingSystems&);
       // assignement operator (disabled)
-      MetallicCFCSlidingSystemsBase&
-      operator=(const MetallicCFCSlidingSystemsBase&);
-    };
-
-    /*!
-     * structure in charge of evaluation the tensor of directional
-     * sense systems of MetallicCFC's cristals.
-     *
-     * We use the singleton pattern to ensure that this object is only
-     * build once. This class is specialised in 1D, 2D and 3D but the
-     * very sense of using those class in 1D or 2D has not been
-     * investigated yet.
-     */
-    template<unsigned short N>
-    struct MetallicCFCSlidingSystems;
-
-    /*!
-     * specialisation in 1D
-     */
-    template<>
-    struct TFELMATERIALSINGLECRISTAL_VISIBILITY_EXPORT MetallicCFCSlidingSystems<1u>
-      : public MetallicCFCSlidingSystemsBase<1u>
-    {
-      /*!
-       * \return the uniq instance of this class
-       */
-      static MetallicCFCSlidingSystems&
-      getMetallicCFCSlidingSystems();
-    protected:
-      // constructor
-      MetallicCFCSlidingSystems();
-    };
-
-    /*!
-     * specialisation in 2D
-     */
-    template<>
-    struct TFELMATERIALSINGLECRISTAL_VISIBILITY_EXPORT MetallicCFCSlidingSystems<2u>
-      : public MetallicCFCSlidingSystemsBase<2u>
-    {
-      /*!
-       * \return the uniq instance of this class
-       */
-      static MetallicCFCSlidingSystems&
-      getMetallicCFCSlidingSystems();
-    protected:
-      // constructor
-      MetallicCFCSlidingSystems();
-    };
-
-    /*!
-     * specialisation in 3D
-     */
-    template<>
-    struct TFELMATERIALSINGLECRISTAL_VISIBILITY_EXPORT MetallicCFCSlidingSystems<3u>
-      : public MetallicCFCSlidingSystemsBase<3u>
-    {
-      /*!
-       * \return the uniq instance of this class
-       */
-      static MetallicCFCSlidingSystems&
-      getMetallicCFCSlidingSystems();
-    protected:
-      // constructor
-      MetallicCFCSlidingSystems();
+      MetallicCFCSlidingSystems&
+      operator=(const MetallicCFCSlidingSystems&);
     };
 
   } // end of namespace material
 
 } // end of namespace tfel
-
-#include"TFEL/Material/MetallicCFCSlidingSystems.ixx"
 
 #endif /* _LIB_TFEL_MATERIAL_METALLICCFCSLIDINGSYSTEMS_H */
 

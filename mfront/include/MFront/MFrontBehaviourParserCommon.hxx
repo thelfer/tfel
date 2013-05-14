@@ -73,11 +73,17 @@ namespace mfront{
        
     typedef tfel::material::ModellingHypothesis::Hypothesis Hypothesis;
 
+    static tfel::material::ModellingHypothesis::Hypothesis
+    getModellingHypothesisFromString(const std::string&);
+
     virtual void
     writeOutputFiles(void);
 
     virtual void
     endsInputFileProcessing();
+
+    virtual void
+    setDefaultHypotheses();
 
     virtual std::string
     standardModifier(const std::string&,const bool);
@@ -99,6 +105,12 @@ namespace mfront{
 
     virtual void
       registerDefaultVarNames(void);
+
+    virtual void
+    treatModellingHypothesis(void);
+
+    virtual void
+    treatModellingHypotheses(void);
     
     virtual void
       treatUnknownKeyword(void);
@@ -401,6 +413,20 @@ namespace mfront{
 
     virtual void
     writeBehaviourTraits(void);
+
+    /*!
+     * \param[in] h : modelling hypothesis
+     * \param[in] coefSize      : number of material properties
+     * \param[in] stateVarsSize : number of state variables
+     * \param[in] externalStateVarsSize : number of external state variables
+     * \param[in] b : true if the behaviour is defined for the given modelling hypothesis
+     */
+    virtual void
+    writeBehaviourTraitsSpecialisation(const tfel::material::ModellingHypothesis::Hypothesis h,
+				       const SupportedTypes::TypeSize coefSize,
+				       const SupportedTypes::TypeSize stateVarsSize,
+				       const SupportedTypes::TypeSize externalStateVarsSize,
+				       const bool);
 
     virtual void
     writeBehaviourIncludeBehaviourData(void);

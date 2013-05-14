@@ -10,6 +10,7 @@
 /LGPL.txt -text
 /Makefile.am -text
 /README -text
+/TODO -text
 bindings/CMakeLists.txt -text
 bindings/Makefile.am -text
 bindings/python/CMakeLists.txt -text
@@ -298,7 +299,6 @@ include/TFEL/Material/MechanicalBehaviourTraits.hxx -text
 include/TFEL/Material/MechanicalIntegrationData.hxx -text
 include/TFEL/Material/MetallicCFCGenericSlidingSystemsInteractionMatrix.hxx -text
 include/TFEL/Material/MetallicCFCSlidingSystems.hxx -text
-include/TFEL/Material/MetallicCFCSlidingSystems.ixx -text
 include/TFEL/Material/ModellingHypothesis.hxx -text
 include/TFEL/Material/OutOfBoundsPolicy.hxx -text
 include/TFEL/Material/RambergOsgood.hxx -text
@@ -1112,6 +1112,7 @@ src/Material/Makefile.am -text
 src/Material/MaterialException.cxx -text
 src/Material/MetallicCFCGenericSlidingSystemsInteractionMatrix.cxx -text
 src/Material/MetallicCFCSlidingSystems.cxx -text
+src/Material/ModellingHypothesis.cxx -text
 src/Math/ArrayTag.cxx -text
 src/Math/BasicOperations.cxx -text
 src/Math/BinaryFunction.cxx -text
@@ -1333,6 +1334,7 @@ tests/Math/stensor5.cxx -text
 tests/Math/stensor_changeBasis.cxx -text
 tests/Math/stensor_changeBasis2.cxx -text
 tests/Math/stensor_changeBasis3.cxx -text
+tests/Math/stensor_changeBasis4.cxx -text
 tests/Math/stensor_eigenvalues.cxx -text
 tests/Math/stensor_eigenvectors.cxx -text
 tests/Math/stensor_eigenvectors2.cxx -text

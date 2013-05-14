@@ -89,7 +89,6 @@ namespace umat
 			     const UMATReal *const,
 			     const UMATReal *const,
 			     const UMATReal *const,
-			     const UMATReal *const,
 			     const UMATReal *const)
       {} // end of Error
       
@@ -98,8 +97,10 @@ namespace umat
 	throw(UMATException)
       {
 	using namespace std;
+	using namespace tfel::material;
 	using namespace tfel::utilities;
-	throw(UMATInvalidDimension(Name<Behaviour<H,UMATReal,false> >::getName()));
+	throw(UMATInvalidDimension(Name<Behaviour<H,UMATReal,false> >::getName(),
+				   ModellingHypothesisToSpaceDimension<H>::value));
 	return;
       } // end of Error::exe
       

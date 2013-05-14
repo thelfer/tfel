@@ -62,27 +62,28 @@ namespace aster
     struct TFEL_VISIBILITY_LOCAL Error
     {
 	
-      TFEL_ASTER_INLINE Error(const AsterReal *const,
-			      const AsterReal *const,
-			      const AsterReal *const,
-			      const AsterReal *const,
-			      const AsterReal *const,
-			      const AsterReal *const,
-			      const AsterReal *const,
-			      const AsterReal *const,
-			      const AsterReal *const,
-			      const AsterReal *const,
-			      const AsterReal *const,
-			      const AsterReal *const)
+      TFEL_ASTER_INLINE
+      Error(const AsterReal *const,
+	    const AsterReal *const,
+	    const AsterReal *const,
+	    const AsterReal *const,
+	    const AsterReal *const,
+	    const AsterReal *const,
+	    const AsterReal *const,
+	    const AsterReal *const,
+	    const AsterReal *const,
+	    const AsterReal *const)
       {} // end of Error
-	
+
       TFEL_ASTER_INLINE void exe(AsterReal *const,
+				 AsterReal *const,
 				 AsterReal *const)
 	throw(AsterException)
       {
 	using namespace std;
 	using namespace tfel::utilities;
-	throw(AsterInvalidDimension(Name<Behaviour<AsterModellingHypothesis<N>::value,AsterReal,false> >::getName()));
+	typedef Behaviour<AsterModellingHypothesis<N>::value,AsterReal,false> BV;
+	throw(AsterInvalidDimension(Name<BV>::getName(),N));
 	return;
       } // end of Error::exe
 	

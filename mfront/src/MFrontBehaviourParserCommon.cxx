@@ -28,6 +28,38 @@
 
 namespace mfront{
 
+  tfel::material::ModellingHypothesis::Hypothesis
+  MFrontBehaviourParserCommon::getModellingHypothesisFromString(const std::string& h)
+  {
+    using namespace std;
+    using namespace tfel::material;
+    if(h=="AxisymmetricalGeneralisedPlaneStrain"){
+      return ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN;
+    } else if(h=="Axisymmetrical"){
+      return ModellingHypothesis::AXISYMMETRICAL;
+    } else if(h=="PlaneStress"){
+      return ModellingHypothesis::PLANESTRESS;
+    } else if(h=="PlaneStrain"){
+      return ModellingHypothesis::PLANESTRAIN;
+    } else if(h=="GeneralisedPlaneStrain"){
+      return ModellingHypothesis::GENERALISEDPLANESTRAIN;
+    } else if(h=="Tridimensional"){
+      return ModellingHypothesis::TRIDIMENSIONAL;
+    } else {
+      string msg("MFrontBehaviourParserCommon::getModellingHypothesisFromString : "
+		 "invalid or unsupported hypothesis '"+h+"'. The following "
+		 "hypotheses are supported:\n"
+		 "- AxisymmetricalGeneralisedPlaneStrain\n"
+		 "- Axisymmetrical\n"
+		 "- PlaneStress\n"
+		 "- PlaneStrain\n"
+		 "- GeneralisedPlaneStrain\n"
+		 "- Tridimensional");
+      throw(runtime_error(msg));
+    }
+    return ModellingHypothesis::UNDEFINEDHYPOTHESIS;
+  }
+
   void MFrontBehaviourParserCommon::setVerboseMode(void)
   {
     using namespace std;
@@ -72,7 +104,32 @@ namespace mfront{
   
   void
   MFrontBehaviourParserCommon::endsInputFileProcessing()
-  {} // end of MFrontBehaviourParserCommon::endsInputFileProcessing
+  {
+    using namespace std;
+    if(this->hypotheses.empty()){
+      this->setDefaultHypotheses();
+    }
+    if(this->hypotheses.empty()){
+      string msg("MFrontBehaviourParserCommon::endsInputFileProcessing : "
+		 "no modelling hypothesis defined by the user and "
+		 "no default modelling hypothesis");
+      throw(runtime_error(msg));
+    }
+  } // end of MFrontBehaviourParserCommon::endsInputFileProcessing
+
+  void
+  MFrontBehaviourParserCommon::setDefaultHypotheses(void)
+  {
+    using namespace tfel::material;
+    typedef ModellingHypothesis MH;
+    static const MH::Hypothesis h[6u] = {MH::AXISYMMETRICALGENERALISEDPLANESTRAIN,
+					 MH::AXISYMMETRICAL,
+					 MH::PLANESTRAIN,
+					 MH::GENERALISEDPLANESTRAIN,
+					 MH::TRIDIMENSIONAL};
+    this->hypotheses.clear();
+    this->hypotheses.insert(h,h+6u);
+  } // end of MFrontBehaviourParserCommon::setDefaultHypotheses  
 
   void 
   MFrontBehaviourParserCommon::writeOutputFiles(){
@@ -265,6 +322,54 @@ namespace mfront{
       }
     }
   }
+
+  void
+  MFrontBehaviourParserCommon::treatModellingHypothesis(void)
+  {
+    using namespace std;
+    if(!this->hypotheses.empty()){
+      string msg("MFrontBehaviourParserCommon::treatModellingHypothesis : "
+		 "one or more modelling hypotheses have already been declared");
+      throw(runtime_error(msg));
+    }
+    this->checkNotEndOfFile("MFrontBehaviourParserCommon::treatModellingHypothesis");
+    const string& h = this->current->value;
+    ++(this->current);
+    this->checkNotEndOfFile("MFrontBehaviourParserCommon::treatModellingHypothesis");
+    this->readSpecifiedToken("MFrontBehaviourParserCommon::treatModellingHypothesis",";");
+    this->hypotheses.insert(MFrontBehaviourParserCommon::getModellingHypothesisFromString(h));
+  } // end of MFrontBehaviourParserCommon::treatModellingHypothesis
+
+  void
+  MFrontBehaviourParserCommon::treatModellingHypotheses(void)
+  {
+    using namespace std;
+    if(!this->hypotheses.empty()){
+      string msg("MFrontBehaviourParserCommon::treatModellingHypotheses : "
+		 "one or more modelling hypotheses have already been declared");
+      throw(runtime_error(msg));
+    }
+    this->checkNotEndOfFile("MFrontBehaviourParserCommon::treatModellingHypotheses");
+    this->readSpecifiedToken("MFrontBehaviourParserCommon::treatModellingHypotheses","{");
+    this->checkNotEndOfFile("MFrontBehaviourParserCommon::treatModellingHypotheses");
+    while(this->current->value!="}"){
+      const string& h = this->current->value;
+      this->hypotheses.insert(MFrontBehaviourParserCommon::getModellingHypothesisFromString(h));
+      ++(this->current);
+      this->checkNotEndOfFile("MFrontBehaviourParserCommon::treatModellingHypotheses");
+      if(this->current->value!="}"){
+	this->readSpecifiedToken("MFrontBehaviourParserCommon::treatModellingHypotheses",",");
+	this->checkNotEndOfFile("MFrontBehaviourParserCommon::treatModellingHypotheses");
+	if(this->current->value=="}"){
+	  string msg("MFrontBehaviourParserCommon::treatModellingHypotheses : ");
+	  msg += "unexpected token '}'";
+	  throw(runtime_error(msg));
+	}
+      }
+    }
+    this->checkNotEndOfFile("MFrontBehaviourParserCommon::treatModellingHypotheses");
+    this->readSpecifiedToken("MFrontBehaviourParserCommon::treatModellingHypotheses",";");
+  } // end of MFrontBehaviourParserCommon::treatModellingHypotheses
 
   void
   MFrontBehaviourParserCommon::treatUsableInPurelyImplicitResolution(void)
@@ -2422,11 +2527,17 @@ namespace mfront{
 
   void MFrontBehaviourParserCommon::writeBehaviourTraits(void)
   {
+    using namespace std;
+    using namespace tfel::material;
+    typedef ModellingHypothesis MH;
     this->checkBehaviourFile();
     VarContainer::const_iterator p;
     SupportedTypes::TypeSize coefSize;
     SupportedTypes::TypeSize stateVarsSize;
     SupportedTypes::TypeSize externalStateVarsSize;
+    const vector<MH::Hypothesis>& ah = MH::getModellingHypotheses();
+    vector<MH::Hypothesis>::const_iterator ph;
+    set<MH::Hypothesis>::const_iterator ph2;
     for(p=this->coefsHolder.begin();p!=this->coefsHolder.end();++p){
       coefSize+=this->getTypeSize(p->type,p->arraySize);
     }
@@ -2441,27 +2552,82 @@ namespace mfront{
 	p != this->externalStateVarsHolder.end();++p){
       externalStateVarsSize+=this->getTypeSize(p->type,p->arraySize);
     }
+    // writing partial specialisations
+    if(this->hypotheses.size()>=4u){
+      // on définit toutes les hypothèses par défaut
+      this->writeBehaviourTraitsSpecialisation(MH::UNDEFINEDHYPOTHESIS,
+					       coefSize,stateVarsSize,
+					       externalStateVarsSize,true);
+      // unsupported hypothesis
+      for(ph=ah.begin();ph!=ah.end();++ph){
+	if(this->hypotheses.find(*ph)==this->hypotheses.end()){
+	  this->writeBehaviourTraitsSpecialisation(*ph,coefSize,stateVarsSize,
+						   externalStateVarsSize,false);
+	}
+      }
+    } else {
+      // on définit toutes les hypothèses par défaut
+      this->writeBehaviourTraitsSpecialisation(MH::UNDEFINEDHYPOTHESIS,
+					       coefSize,stateVarsSize,
+					       externalStateVarsSize,false);
+      // unsupported hypothesis
+      for(ph2=this->hypotheses.begin();ph2!=this->hypotheses.end();++ph2){
+	this->writeBehaviourTraitsSpecialisation(*ph2,coefSize,stateVarsSize,
+						 externalStateVarsSize,true);
+      }
+    }
+  }
+
+  void
+  MFrontBehaviourParserCommon::writeBehaviourTraitsSpecialisation(const tfel::material::ModellingHypothesis::Hypothesis h,
+								  const SupportedTypes::TypeSize coefSize,
+								  const SupportedTypes::TypeSize stateVarsSize,
+								  const SupportedTypes::TypeSize externalStateVarsSize,
+								  const bool b)
+  {
+    using namespace tfel::material;
+    typedef ModellingHypothesis MH;
     this->behaviourFile << "/*!\n";
     this->behaviourFile << "* Partial specialisation for ";
     this->behaviourFile << this->className << ".\n";
     this->behaviourFile << "*/\n";
-
-    if(this->behaviourCharacteristic.useQt()){
-      this->behaviourFile << "template<ModellingHypothesis::Hypothesis hypothesis,typename Type,bool use_qt>\n";
-      this->behaviourFile << "class MechanicalBehaviourTraits<";
-      this->behaviourFile << this->className << "<hypothesis,Type,use_qt> >\n";
+    if(h==MH::UNDEFINEDHYPOTHESIS){
+      if(this->behaviourCharacteristic.useQt()){
+	this->behaviourFile << "template<ModellingHypothesis::Hypothesis hypothesis,typename Type,bool use_qt>\n";
+	this->behaviourFile << "class MechanicalBehaviourTraits<";
+	this->behaviourFile << this->className << "<hypothesis,Type,use_qt> >\n";
+      } else {
+	this->behaviourFile << "template<ModellingHypothesis::Hypothesis hypothesis,typename Type>\n";
+	this->behaviourFile << "class MechanicalBehaviourTraits<";
+	this->behaviourFile << this->className << "<hypothesis,Type,false> >\n";
+      }
     } else {
-      this->behaviourFile << "template<ModellingHypothesis::Hypothesis hypothesis,typename Type>\n";
-      this->behaviourFile << "class MechanicalBehaviourTraits<";
-      this->behaviourFile << this->className << "<hypothesis,Type,false> >\n";
+      if(this->behaviourCharacteristic.useQt()){
+	this->behaviourFile << "template<typename Type,bool use_qt>\n";
+	this->behaviourFile << "class MechanicalBehaviourTraits<";
+	this->behaviourFile << this->className << "<ModellingHypothesis::" << MH::HypothesisToString(h) << ",Type,use_qt> >\n";
+      } else {
+	this->behaviourFile << "template<typename Type>\n";
+	this->behaviourFile << "class MechanicalBehaviourTraits<";
+	this->behaviourFile << this->className << "<ModellingHypothesis::" << MH::HypothesisToString(h) << ",Type,false> >\n";
+      }
     }
     this->behaviourFile << "{\n";
-    this->behaviourFile << "static const unsigned short N = ModellingHypothesisToSpaceDimension<hypothesis>::value;\n";
+    if(h==MH::UNDEFINEDHYPOTHESIS){
+      this->behaviourFile << "static const unsigned short N = ModellingHypothesisToSpaceDimension<hypothesis>::value;\n";
+    } else {
+      this->behaviourFile << "static const unsigned short N = ModellingHypothesisToSpaceDimension<"
+			  << "ModellingHypothesis::" << MH::HypothesisToString(h) << ">::value;\n";
+    }
     this->behaviourFile << "typedef tfel::math::StensorDimeToSize<N> StensorDimeToSize;\n";
     this->behaviourFile << "static const unsigned short StensorSize = ";
     this->behaviourFile << "StensorDimeToSize::value;\n";
     this->behaviourFile << "public:\n";
-    this->behaviourFile << "static const bool is_defined = true;\n";
+    if(b){
+      this->behaviourFile << "static const bool is_defined = true;\n";
+    } else {
+      this->behaviourFile << "static const bool is_defined = false;\n";
+    }
     if(this->behaviourCharacteristic.useQt()){
       this->behaviourFile << "static const bool use_quantities = use_qt;\n";
     } else {

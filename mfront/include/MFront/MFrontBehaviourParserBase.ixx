@@ -27,6 +27,10 @@ namespace mfront{
   MFrontBehaviourParserBase<Child>::registerDefaultCallBacks(void)
   {
     this->registerNewCallBack("@Parser",&Child::treatParser);
+    this->registerNewCallBack("@ModellingHypothesis",
+			      &Child::treatModellingHypothesis);
+    this->registerNewCallBack("@ModellingHypotheses",
+			      &Child::treatModellingHypotheses);
     this->registerNewCallBack("@Import",&Child::treatImport);
     this->registerNewCallBack("@Material",&Child::treatMaterial);
     this->registerNewCallBack("@Library",&Child::treatLibrary);

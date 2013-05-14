@@ -91,7 +91,9 @@ namespace umat{
 	       UMATReal *const STRESS,const UMATInt  *const NDI,
 	       UMATInt  *const KINC)
     {
-      typedef tfel::material::ModellingHypothesis MH;
+      using namespace tfel::meta;
+      using namespace tfel::material;
+      typedef ModellingHypothesis MH;
       if(*NDI==2){
 	MHDispatch<MH::TRIDIMENSIONAL>::exe(NTENS,DTIME,DROT,DDSOE,STRAN,DSTRAN,
 					    TEMP,DTEMP,PROPS,NPROPS,PREDEF,DPRED,
@@ -105,9 +107,14 @@ namespace umat{
 					 TEMP,DTEMP,PROPS,NPROPS,PREDEF,DPRED,
 					 STATEV,NSTATV,STRESS,KINC);
       } else if(*NDI==-2){
-	MHDispatch<MH::PLANESTRESS>::exe(NTENS,DTIME,DROT,DDSOE,STRAN,DSTRAN,
-					 TEMP,DTEMP,PROPS,NPROPS,PREDEF,DPRED,
-					 STATEV,NSTATV,STRESS,KINC);
+	typedef Behaviour<MH::PLANESTRESS,UMATReal,false> PlaneStressBV;
+	typedef MechanicalBehaviourTraits<PlaneStressBV>  PlaneStressTraits;
+	typedef typename tfel::meta::IF<PlaneStressTraits::is_defined,
+					MHDispatch<MH::PLANESTRESS>,
+					UMATGenericPlaneStressHandler<Behaviour> >::type PlaneStressHandler;
+	PlaneStressHandler::exe(NTENS,DTIME,DROT,DDSOE,STRAN,DSTRAN,
+				TEMP,DTEMP,PROPS,NPROPS,PREDEF,DPRED,
+				STATEV,NSTATV,STRESS,KINC);
       } else if(*NDI==-3){
 	MHDispatch<MH::GENERALISEDPLANESTRAIN>::exe(NTENS,DTIME,DROT,DDSOE,STRAN,DSTRAN,
 						    TEMP,DTEMP,PROPS,NPROPS,PREDEF,DPRED,

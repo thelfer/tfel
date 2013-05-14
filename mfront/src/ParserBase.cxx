@@ -92,7 +92,7 @@ namespace mfront
   void ParserBase::treatImport()
   {
     using namespace std;
-    const string m = "MFrontBehaviourParserBase<Child>::treatImport";
+    const string m = "ParserBase::treatImport";
     const string oFileName = this->fileName;
     this->checkNotEndOfFile(m);
     const vector<string>& files = this->readStringOrArrayOfString(m);
@@ -883,7 +883,7 @@ namespace mfront
     using namespace std;
     --(this->current);
     this->throwRuntimeError("ParserBase::treatUnknownKeyword",
-			    "unknown keyword read ('"+this->current->value+"')");
+			    "unknown keyword (read '"+this->current->value+"')");
   } // end of ParserBase::treatUnknownKeyword
 
   void ParserBase::treatIncludes(void)

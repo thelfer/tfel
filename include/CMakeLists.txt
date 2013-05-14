@@ -493,7 +493,6 @@ install_header(TFEL/Material DDIF2Base.hxx)
 install_header(TFEL/Material DDIF2Base.ixx)
 install_header(TFEL/Material RambergOsgood.hxx)
 install_header(TFEL/Material MetallicCFCSlidingSystems.hxx)
-install_header(TFEL/Material MetallicCFCSlidingSystems.ixx)
 install_header(TFEL/Material MetallicCFCGenericSlidingSystemsInteractionMatrix.hxx)
 
 install_header(TFEL/Tests MultipleTestOutputs.hxx)

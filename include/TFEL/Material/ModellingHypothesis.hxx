@@ -8,6 +8,11 @@
 #ifndef _LIB_TFEL_MATERIAL_MODELLINGHYPOTHESIS_H_
 #define _LIB_TFEL_MATERIAL_MODELLINGHYPOTHESIS_H_ 
 
+#include<string>
+#include<vector>
+
+#include"TFEL/Config/TFELConfig.hxx"
+
 namespace tfel
 {
 
@@ -17,7 +22,7 @@ namespace tfel
     /*!
      * a helper structure defining the Hypothesis enum.
      */
-    struct ModellingHypothesis
+    struct TFEL_VISIBILITY_EXPORT ModellingHypothesis
     {
       
       /*!
@@ -32,6 +37,12 @@ namespace tfel
 	TRIDIMENSIONAL,
 	UNDEFINEDHYPOTHESIS
       }; // end of enum ModellingHypothesis
+
+      static const std::vector<Hypothesis>&
+      getModellingHypotheses(void);
+
+      static std::string
+      HypothesisToString(const Hypothesis);
 
     }; // end of struct ModellingHypothesis
 

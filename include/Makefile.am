@@ -34,7 +34,6 @@ nobase_include_HEADERS= TFEL/Macros.hxx                                         
 			TFEL/Material/DDIF2Base.ixx                                                   \
 			TFEL/Material/RambergOsgood.hxx                                               \
 			TFEL/Material/MetallicCFCSlidingSystems.hxx                                   \
-			TFEL/Material/MetallicCFCSlidingSystems.ixx                                   \
 			TFEL/Material/MetallicCFCGenericSlidingSystemsInteractionMatrix.hxx           \
 			TFEL/Config/Internals/TFELTypesInternals.hxx	                              \
 			TFEL/Config/Internals/SpatialGradType.hxx	                              \

@@ -5,7 +5,8 @@ if(HAVE_CASTEM)
 include_directories("${CASTEMHOME}/include")
 endif(HAVE_CASTEM)
 
-link_directories("${PROJECT_BINARY_DIR}/src/Math"
+link_directories("${PROJECT_BINARY_DIR}/src/Material"
+                 "${PROJECT_BINARY_DIR}/src/Math"
                  "${PROJECT_BINARY_DIR}/src/System"
                  "${PROJECT_BINARY_DIR}/src/Utilities"
                  "${PROJECT_BINARY_DIR}/src/Exception")
@@ -121,12 +122,14 @@ add_executable(mfront ${mfront_SOURCES})
 
 if(UNIX)
 target_link_libraries(mfront
+                      TFELMaterial
                       TFELSystem
 		      TFELUtilities
 		      TFELException
 		      -ldl -pthread)
 else(UNIX)
 target_link_libraries(mfront
+                      TFELMaterial
                       TFELSystem
 		      TFELUtilities
 		      TFELException)
