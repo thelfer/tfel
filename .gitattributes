@@ -1053,6 +1053,7 @@ mfront/tests/behaviours/aster/asterorthotropiccreep-rkCastem.mtest.in -text
 mfront/tests/behaviours/aster/asterorthotropiccreep.mtest.in -text
 mfront/tests/behaviours/aster/asterplasticity.mtest.in -text
 mfront/tests/behaviours/aster/asterstrainhardeningcreep.mtest.in -text
+mfront/tests/behaviours/aster/asterstressrelaxation.mtest.in -text
 mfront/tests/behaviours/aster/strainhardeningcreep.gnuplot -text
 mfront/tests/behaviours/castem/CMakeLists.txt -text
 mfront/tests/behaviours/castem/Makefile.am -text
@@ -1085,6 +1086,7 @@ mfront/tests/behaviours/castem/castemorthotropiccreep-rkCastem.mtest.in -text
 mfront/tests/behaviours/castem/castemorthotropiccreep.mtest.in -text
 mfront/tests/behaviours/castem/castemplasticity.mtest.in -text
 mfront/tests/behaviours/castem/castemstrainhardeningcreep.mtest.in -text
+mfront/tests/behaviours/castem/castemstressrelaxation.mtest.in -text
 mfront/tests/behaviours/references/chaboche-aster.ref -text
 mfront/tests/behaviours/references/chaboche2-aster.ref -text
 mfront/tests/behaviours/references/elasticity15-aster.ref -text
