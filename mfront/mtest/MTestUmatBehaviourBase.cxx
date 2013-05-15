@@ -122,16 +122,18 @@ namespace mfront
 	desc.push_back("first  component of internal variable '"+*pn+"'");
 	desc.push_back("second component of internal variable '"+*pn+"'");
 	desc.push_back("third  component of internal variable '"+*pn+"'");
-	if(d==2){ 
-	  desc.push_back("fourth  component of internal variable '"+*pn+"'");
-	} else if(d==3){ 
-	  desc.push_back("fourth  component of internal variable '"+*pn+"'");
-	  desc.push_back("fifth   component of internal variable '"+*pn+"'");
-	  desc.push_back("sixth   component of internal variable '"+*pn+"'");
-	} else {
-	  string msg("MTestUmatBehaviourBase::getInternalStateVariablesDescriptions : "
-		     "invalid space dimension");
-	  throw(runtime_error(msg));
+	if(d!=1){
+	  if(d==2){ 
+	    desc.push_back("fourth  component of internal variable '"+*pn+"'");
+	  } else if(d==3){ 
+	    desc.push_back("fourth  component of internal variable '"+*pn+"'");
+	    desc.push_back("fifth   component of internal variable '"+*pn+"'");
+	    desc.push_back("sixth   component of internal variable '"+*pn+"'");
+	  } else {
+	    string msg("MTestUmatBehaviourBase::getInternalStateVariablesDescriptions : "
+		       "invalid space dimension");
+	    throw(runtime_error(msg));
+	  }
 	}
       } else {
 	string msg("MTestUmatBehaviourBase::getInternalStateVariablesDescriptions : "
