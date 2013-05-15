@@ -18,6 +18,7 @@ namespace mfront{
   MFrontRungeKuttaParser::MFrontRungeKuttaParser()
     : MFrontBehaviourParserBase<MFrontRungeKuttaParser>(),
       algorithm("RungeKutta5/4"),
+      eev(DEFAULTERROREVALUATION),
       nbrOfEvaluation(6)
   {
     using namespace std;
@@ -27,21 +28,28 @@ namespace mfront{
     this->parametersHolder.push_back(VarHandler("real","epsilon",1u,0u));
     this->registerVariable("dtmin");
     this->defineSmallStrainInputVariables();
+    // driving variables
+    map<DrivingVariable,
+	ThermodynamicForce>::const_iterator pm;
+    for(pm=this->mvariables.begin();pm!=this->mvariables.end();++pm){
+      const DrivingVariable& dv = pm->first;
+      this->registerVariable(dv.name+"_");
+      this->registerVariable("d"+dv.name+"_");
+      this->localVarsHolder.push_back(VarHandler(dv.type,dv.name+"_",1u,0u));
+      this->localVarsHolder.push_back(VarHandler(SupportedTypes::getTimeDerivativeType(dv.type),
+						 "d"+dv.name+"_",1u,0u));
+    }
     // Default state vars
     this->registerVariable("eel");
     this->registerVariable("deel");
     this->registerVariable("t");
     this->registerVariable("T_");
-    this->registerVariable("eto_");
-    this->registerVariable("deto_");
     this->reserveName("dt_");
     this->reserveName("corrector");
     this->reserveName("dtprec");
     this->reserveName("converged");
     this->reserveName("error");
     this->reserveName("failed");
-    this->localVarsHolder.push_back(VarHandler("StrainStensor","eto_",1u,0u));
-    this->localVarsHolder.push_back(VarHandler("StrainRateStensor","deto_",1u,0u));
     this->localVarsHolder.push_back(VarHandler("temperature","T_",1u,0u));
     this->stateVarsHolder.push_back(VarHandler("StrainStensor","eel",1u,0u));
     this->glossaryNames.insert(MVType("eel","ElasticStrain"));
@@ -101,10 +109,19 @@ namespace mfront{
   void MFrontRungeKuttaParser::writeBehaviourParserSpecificIncludes(void)
   {
     using namespace std;
+    bool b1 = false;
+    bool b2 = false;
     this->checkBehaviourFile();
     this->behaviourFile << "#include<limits>" << endl << endl;
     this->behaviourFile << "#include<stdexcept>" << endl << endl;
     this->behaviourFile << "#include\"TFEL/Math/General/Abs.hxx\"" << endl << endl;
+    this->requiresTVectorOrVectorIncludes(b1,b2);
+    if(b1){
+      this->behaviourFile << "#include\"TFEL/Math/tvector.hxx\"\n";
+    }
+    if(b2){
+      this->behaviourFile << "#include\"TFEL/Math/vector.hxx\"\n";
+    }
   }
 
   void MFrontRungeKuttaParser::treatStateVariables(void)
@@ -114,11 +131,11 @@ namespace mfront{
 
   std::string
   MFrontRungeKuttaParser::computeStressVariableModifier1(const std::string& var,
-					    const bool addThisPtr)
+							 const bool addThisPtr)
   {
     using namespace std;
-    if((var=="eto") ||(var=="T") ||
-       (var=="deto")||
+    if((this->isDrivingVariableName(var)) ||(var=="T") ||
+       (this->isDrivingVariableIncrementName(var))||
        (this->isInternalStateVariable(var))||
        (this->isExternalStateVariable(var))){
       if(addThisPtr){
@@ -127,12 +144,30 @@ namespace mfront{
 	return var+"_";
       }
     }
-    if((this->isExternalStateVariableIncrementName(var))||(var=="dT")){
+    if(var=="dT"){
       this->declareExternalStateVariableProbablyUnusableInPurelyImplicitResolution(var.substr(1));
       if(addThisPtr){
 	return "(this->"+var+")/(this->dt)";
       } else {
 	return "("+var+")/(this->dt)";
+      }
+    }
+    if(this->isExternalStateVariableIncrementName(var)){
+      this->declareExternalStateVariableProbablyUnusableInPurelyImplicitResolution(var.substr(1));
+      const VarHandler& v = this->getVariableHandler(this->externalStateVarsHolder,
+						     var.substr(1));
+      if(v.arraySize>1){
+	if(addThisPtr){
+	  return "(real(1)/(this->dt)) * (this->"+var+")";
+	} else {
+	  return "(real(1)/(this->dt)) * "+var;
+	}
+      } else {
+	if(addThisPtr){
+	  return "(this->"+var+")/(this->dt)";
+	} else {
+	  return "("+var+")/(this->dt)";
+	}
       }
     }
     if(addThisPtr){
@@ -143,10 +178,10 @@ namespace mfront{
 
   std::string
   MFrontRungeKuttaParser::computeStressVariableModifier2(const std::string& var,
-					    const bool addThisPtr)
+							 const bool addThisPtr)
   {
     using namespace std;
-    if((var=="eto")||(var=="T")||
+    if((this->isDrivingVariableName(var))||(var=="T")||
        (this->isExternalStateVariable(var))){
       if(addThisPtr){
 	return "this->"+var+"+this->d"+var;
@@ -155,7 +190,7 @@ namespace mfront{
       }
     }
     if((this->isExternalStateVariableIncrementName(var))||
-       (var=="dT")||(var=="deto")){
+       (var=="dT")||(this->isDrivingVariableIncrementName(var))){
       if((this->isExternalStateVariableIncrementName(var))||(var=="dT")){
 	this->declareExternalStateVariableProbablyUnusableInPurelyImplicitResolution(var.substr(1));
       }
@@ -375,6 +410,15 @@ namespace mfront{
     VarContainer::iterator p;
     string currentVarName;
     string parserInitLocalVars;
+    // choosing the error evaluation
+    if(this->eev==DEFAULTERROREVALUATION){
+      SupportedTypes::TypeSize svsize = this->getTotalSize(this->stateVarsHolder);
+      if(3u*svsize.getStensorSize()+svsize.getScalarSize()>=20){
+	this->eev = MAXIMUMVALUEERROREVALUATION;
+      } else {
+	this->eev = ERRORSUMMATIONEVALUATION;
+      }
+    }
     if(this->parametersDefaultValues.find("epsilon")==this->parametersDefaultValues.end()){
       this->parametersDefaultValues.insert(MVType("epsilon",1.e-8));
     }
@@ -403,14 +447,17 @@ namespace mfront{
       currentVarName = p->name + "_";
       this->registerVariable(currentVarName);
       this->localVarsHolder.push_back(VarHandler(p->type,currentVarName,p->arraySize,0u));
-      if((this->algorithm!="RungeKutta4/2")&&
-	 (this->algorithm!="RungeKutta5/4")){
-	parserInitLocalVars += "this->" +currentVarName + " = this->" + p->name + ";\n";
+      if(p->arraySize>=SupportedTypes::ArraySizeLimit){
+	parserInitLocalVars += "this->"+currentVarName +".resize("+toString(p->arraySize)+");\n";
       }
+      parserInitLocalVars += "this->" +currentVarName + " = this->" + p->name + ";\n";
       for(unsigned short i=0u;i!=this->nbrOfEvaluation;++i){
 	currentVarName = "d" + p->name + "_K"+toString(static_cast<unsigned short>(i+1u));
 	this->registerVariable(currentVarName);
 	this->localVarsHolder.push_back(VarHandler(p->type,currentVarName,p->arraySize,0u));
+	if(p->arraySize>=SupportedTypes::ArraySizeLimit){
+	  parserInitLocalVars += "this->" + currentVarName+".resize("+toString(p->arraySize)+");\n";
+	}
       }
     }
     if((this->algorithm!="RungeKutta4/2")&&
@@ -425,10 +472,10 @@ namespace mfront{
       currentVarName = p->name + "_";
       this->registerVariable(currentVarName);
       this->localVarsHolder.push_back(VarHandler(p->type,currentVarName,p->arraySize,0u));
-      if((this->algorithm!="RungeKutta4/2")&&
-	 (this->algorithm!="RungeKutta5/4")){
-	parserInitLocalVars += "this->" + currentVarName + " = this->" + p->name + ";\n";
+      if(p->arraySize>=SupportedTypes::ArraySizeLimit){
+	parserInitLocalVars += "this->"+currentVarName+".resize("+toString(p->arraySize)+");\n";
       }
+      parserInitLocalVars += "this->" + currentVarName + " = this->" + p->name + ";\n";
     }
     parserInitLocalVars += this->initLocalVars;
     parserInitLocalVars += "this->deto_ = (this->deto)/(this->dt);\n";
@@ -824,29 +871,10 @@ namespace mfront{
     this->behaviourFile << "}" << endl << endl;
     this->behaviourFile << "if(!failed){" << endl;
     this->behaviourFile << "// Computing the error" << endl;
-    for(p =this->stateVarsHolder.begin();p!=this->stateVarsHolder.end();++p){
-      if(p->arraySize==1u){
-	if(p==this->stateVarsHolder.begin()){
-	  this->behaviourFile << "error  = ";
-	} else {
-	  this->behaviourFile << "error += ";
-	}
-	if(enf.find(p->name)!=enf.end()){
-	  this->behaviourFile << "(";
-	}
-	this->behaviourFile << "tfel::math::abs(";
-	this->behaviourFile << "cste1_360*(this->d" << p->name << "_K1)"
-			    << "-cste128_4275*(this->d" << p->name << "_K3)"
-			    << "-cste2197_75240*(this->d" << p->name << "_K4)"
-			    << "+cste1_50*(this->d" << p->name << "_K5)"
-			    << "+cste2_55*(this->d" << p->name << "_K6))";
-	if(enf.find(p->name)!=enf.end()){
-	  this->behaviourFile << ")/(" << enf.find(p->name)->second << ")";
-	}
-	this->behaviourFile << ";"  << endl;
-      } else {
-	for(unsigned short i=0;i!=p->arraySize;++i){
-	  if((p==this->stateVarsHolder.begin())&&(i==0)){
+    if(this->eev==ERRORSUMMATIONEVALUATION){
+      for(p =this->stateVarsHolder.begin();p!=this->stateVarsHolder.end();++p){
+	if(p->arraySize==1u){
+	  if(p==this->stateVarsHolder.begin()){
 	    this->behaviourFile << "error  = ";
 	  } else {
 	    this->behaviourFile << "error += ";
@@ -855,19 +883,122 @@ namespace mfront{
 	    this->behaviourFile << "(";
 	  }
 	  this->behaviourFile << "tfel::math::abs(";
-	  this->behaviourFile << "cste1_360*(this->d" << p->name       << "_K1[" << i << "])"
-			      << "-cste128_4275*(this->d" << p->name   << "_K3[" << i << "])"
-			      << "-cste2197_75240*(this->d" << p->name << "_K4[" << i << "])"
-			      << "+cste1_50*(this->d" << p->name       << "_K5[" << i << "])"
-			      << "+cste2_55*(this->d" << p->name       << "_K6[" << i << "]))";
+	  this->behaviourFile << "cste1_360*(this->d" << p->name << "_K1)"
+			      << "-cste128_4275*(this->d" << p->name << "_K3)"
+			      << "-cste2197_75240*(this->d" << p->name << "_K4)"
+			      << "+cste1_50*(this->d" << p->name << "_K5)"
+			      << "+cste2_55*(this->d" << p->name << "_K6))";
 	  if(enf.find(p->name)!=enf.end()){
 	    this->behaviourFile << ")/(" << enf.find(p->name)->second << ")";
 	  }
 	  this->behaviourFile << ";"  << endl;
+	} else {
+	  if(p->arraySize<SupportedTypes::ArraySizeLimit){
+	    for(unsigned short i=0;i!=p->arraySize;++i){
+	      if((p==this->stateVarsHolder.begin())&&(i==0)){
+		this->behaviourFile << "error  = ";
+	      } else {
+		this->behaviourFile << "error += ";
+	      }
+	      if(enf.find(p->name)!=enf.end()){
+		this->behaviourFile << "(";
+	      }
+	      this->behaviourFile << "tfel::math::abs(";
+	      this->behaviourFile << "cste1_360*(this->d" << p->name       << "_K1[" << i << "])"
+				  << "-cste128_4275*(this->d" << p->name   << "_K3[" << i << "])"
+				  << "-cste2197_75240*(this->d" << p->name << "_K4[" << i << "])"
+				  << "+cste1_50*(this->d" << p->name       << "_K5[" << i << "])"
+				  << "+cste2_55*(this->d" << p->name       << "_K6[" << i << "]))";
+	      if(enf.find(p->name)!=enf.end()){
+		this->behaviourFile << ")/(" << enf.find(p->name)->second << ")";
+	      }
+	      this->behaviourFile << ";"  << endl;
+	    }
+	  } else {
+	    if(p==this->stateVarsHolder.begin()){
+	      this->behaviourFile << "error  = Type(0);" << endl;
+	    }
+	    this->behaviourFile << "for(unsigned short idx=0;idx!=" << p->arraySize << ";++idx){"  << endl;
+	    this->behaviourFile << "error += ";
+	    if(enf.find(p->name)!=enf.end()){
+	      this->behaviourFile << "(";
+	    }
+	    this->behaviourFile << "tfel::math::abs(";
+	    this->behaviourFile << "cste1_360*(this->d" << p->name       << "_K1[idx])"
+				<< "-cste128_4275*(this->d" << p->name   << "_K3[idx])"
+				<< "-cste2197_75240*(this->d" << p->name << "_K4[idx])"
+				<< "+cste1_50*(this->d" << p->name       << "_K5[idx])"
+				<< "+cste2_55*(this->d" << p->name       << "_K6[idx]))";
+	    if(enf.find(p->name)!=enf.end()){
+	      this->behaviourFile << ")/(" << enf.find(p->name)->second << ")";
+	    }
+	    this->behaviourFile << ";"  << endl;
+	    this->behaviourFile << "}" << endl;
+	  }
 	}
       }
+      this->behaviourFile << "error/=" << stateVarsSize << ";" << endl;
+    } else if(this->eev==MAXIMUMVALUEERROREVALUATION){
+      this->behaviourFile << "error  = Type(0);" << endl;
+      for(p =this->stateVarsHolder.begin();p!=this->stateVarsHolder.end();++p){
+	if(p->arraySize==1u){
+	  this->behaviourFile << "error = std::max(error,";
+	  if(enf.find(p->name)!=enf.end()){
+	    this->behaviourFile << "(";
+	  }
+	  this->behaviourFile << "tfel::math::abs(";
+	  this->behaviourFile << "cste1_360*(this->d" << p->name << "_K1)"
+			      << "-cste128_4275*(this->d" << p->name << "_K3)"
+			      << "-cste2197_75240*(this->d" << p->name << "_K4)"
+			      << "+cste1_50*(this->d" << p->name << "_K5)"
+			      << "+cste2_55*(this->d" << p->name << "_K6))";
+	  if(enf.find(p->name)!=enf.end()){
+	    this->behaviourFile << ")/(" << enf.find(p->name)->second << ")";
+	  }
+	  this->behaviourFile << ");"  << endl;
+	} else {
+	  if(p->arraySize<SupportedTypes::ArraySizeLimit){
+	    for(unsigned short i=0;i!=p->arraySize;++i){
+	      this->behaviourFile << "error  = std::max(error,";
+	      if(enf.find(p->name)!=enf.end()){
+		this->behaviourFile << "(";
+	      }
+	      this->behaviourFile << "tfel::math::abs(";
+	      this->behaviourFile << "cste1_360*(this->d" << p->name       << "_K1[" << i << "])"
+				  << "-cste128_4275*(this->d" << p->name   << "_K3[" << i << "])"
+				  << "-cste2197_75240*(this->d" << p->name << "_K4[" << i << "])"
+				  << "+cste1_50*(this->d" << p->name       << "_K5[" << i << "])"
+				  << "+cste2_55*(this->d" << p->name       << "_K6[" << i << "]))";
+	      if(enf.find(p->name)!=enf.end()){
+		this->behaviourFile << ")/(" << enf.find(p->name)->second << ")";
+	      }
+	      this->behaviourFile << ");"  << endl;
+	    }
+	  } else {
+	    this->behaviourFile << "for(unsigned short idx=0;idx!=" << p->arraySize << ";++idx){"  << endl;
+	    this->behaviourFile << "error = std::max(error,";
+	    if(enf.find(p->name)!=enf.end()){
+	      this->behaviourFile << "(";
+	    }
+	    this->behaviourFile << "tfel::math::abs(";
+	    this->behaviourFile << "cste1_360*(this->d" << p->name       << "_K1[idx])"
+				<< "-cste128_4275*(this->d" << p->name   << "_K3[idx])"
+				<< "-cste2197_75240*(this->d" << p->name << "_K4[idx])"
+				<< "+cste1_50*(this->d" << p->name       << "_K5[idx])"
+				<< "+cste2_55*(this->d" << p->name       << "_K6[idx]))";
+	    if(enf.find(p->name)!=enf.end()){
+	      this->behaviourFile << ")/(" << enf.find(p->name)->second << ")";
+	    }
+	    this->behaviourFile << ");"  << endl;
+	    this->behaviourFile << "}" << endl;
+	  }
+	}
+      }
+    } else {
+      string msg("MFrontRungeKuttaParser::writeBehaviourRK54Integrator : ");
+      msg += "internal error, unsupported error evaluation.";
+      throw(runtime_error(msg));
     }
-    this->behaviourFile << "error/=" << stateVarsSize << ";" << endl;
     this->behaviourFile << "if(isnan(error)){" << endl;
     this->behaviourFile << "string msg(\"" << this->className << "::integrate : nan decteted\");" << endl;
     if(this->debugMode){
@@ -1448,28 +1579,10 @@ namespace mfront{
     this->behaviourFile << "}" << endl << endl;
     this->behaviourFile << "if(!failed){" << endl;
     this->behaviourFile << "// Computing the error" << endl;
-    for(p =this->stateVarsHolder.begin();p!=this->stateVarsHolder.end();++p){
-      if(p->arraySize==1u){
-	if(p==this->stateVarsHolder.begin()){
-	  this->behaviourFile << "error  = ";
-	} else {
-	  this->behaviourFile << "error += ";
-	}
-	this->behaviourFile << "tfel::math::abs(";
-	if(enf.find(p->name)!=enf.end()){
-	  this->behaviourFile << "(";
-	}
-	this->behaviourFile << "cste1_6*(this->d" << p->name << "_K1+"
-			    << "this->d" << p->name << "_K4-"
-			    << "this->d" << p->name << "_K2-"
-			    << "this->d" << p->name << "_K3))";
-	if(enf.find(p->name)!=enf.end()){
-	  this->behaviourFile << ")/(" << enf.find(p->name)->second << ")";
-	}
-	this->behaviourFile << ";" << endl;
-      } else {
-	for(unsigned short i=0;i!=p->arraySize;++i){
-	  if((p==this->stateVarsHolder.begin())&&(i==0)){
+    if(this->eev==ERRORSUMMATIONEVALUATION){
+      for(p =this->stateVarsHolder.begin();p!=this->stateVarsHolder.end();++p){
+	if(p->arraySize==1u){
+	  if(p==this->stateVarsHolder.begin()){
 	    this->behaviourFile << "error  = ";
 	  } else {
 	    this->behaviourFile << "error += ";
@@ -1478,18 +1591,112 @@ namespace mfront{
 	  if(enf.find(p->name)!=enf.end()){
 	    this->behaviourFile << "(";
 	  }
-	  this->behaviourFile << "cste1_6*(this->d" << p->name << "_K1[" << i << "]+"
-			      << "this->d" << p->name          << "_K4[" << i << "]-"
-			      << "this->d" << p->name          << "_K2[" << i << "]-"
-			      << "this->d" << p->name          << "_K3[" << i << "]))";
+	  this->behaviourFile << "cste1_6*(this->d" << p->name << "_K1+"
+			      << "this->d" << p->name << "_K4-"
+			      << "this->d" << p->name << "_K2-"
+			      << "this->d" << p->name << "_K3))";
 	  if(enf.find(p->name)!=enf.end()){
 	    this->behaviourFile << ")/(" << enf.find(p->name)->second << ")";
 	  }
 	  this->behaviourFile << ";" << endl;
+	} else {
+	  if(p->arraySize<SupportedTypes::ArraySizeLimit){
+	    for(unsigned short i=0;i!=p->arraySize;++i){
+	      if((p==this->stateVarsHolder.begin())&&(i==0)){
+		this->behaviourFile << "error  = ";
+	      } else {
+		this->behaviourFile << "error += ";
+	      }
+	      this->behaviourFile << "tfel::math::abs(";
+	      if(enf.find(p->name)!=enf.end()){
+		this->behaviourFile << "(";
+	      }
+	      this->behaviourFile << "cste1_6*(this->d" << p->name << "_K1[" << i << "]+"
+				  << "this->d" << p->name          << "_K4[" << i << "]-"
+				  << "this->d" << p->name          << "_K2[" << i << "]-"
+				  << "this->d" << p->name          << "_K3[" << i << "]))";
+	      if(enf.find(p->name)!=enf.end()){
+		this->behaviourFile << ")/(" << enf.find(p->name)->second << ")";
+	      }
+	      this->behaviourFile << ";" << endl;
+	    }
+	  } else {
+	    if(p==this->stateVarsHolder.begin()){
+	      this->behaviourFile << "error  = Type(0);" << endl;
+	    }
+	    this->behaviourFile << "for(unsigned short idx=0;idx!=" <<p->arraySize << ";++idx){" << endl;
+	    this->behaviourFile << "error += tfel::math::abs(";
+	    if(enf.find(p->name)!=enf.end()){
+	      this->behaviourFile << "(";
+	    }
+	    this->behaviourFile << "cste1_6*(this->d" << p->name << "_K1[idx]+"
+				<< "this->d" << p->name          << "_K4[idx]-"
+				<< "this->d" << p->name          << "_K2[idx]-"
+				<< "this->d" << p->name          << "_K3[idx]))";
+	    if(enf.find(p->name)!=enf.end()){
+	      this->behaviourFile << ")/(" << enf.find(p->name)->second << ")";
+	    }
+	    this->behaviourFile << ";" << endl;
+	    this->behaviourFile << "}" << endl;
+	  }
 	}
       }
+      this->behaviourFile << "error/=" << stateVarsSize << ";" << endl;
+    } else if(this->eev==MAXIMUMVALUEERROREVALUATION){
+      this->behaviourFile << "error  = Type(0);" << endl;
+      for(p =this->stateVarsHolder.begin();p!=this->stateVarsHolder.end();++p){
+	if(p->arraySize==1u){
+	  this->behaviourFile << "error = std::max(error,tfel::math::abs(";
+	  if(enf.find(p->name)!=enf.end()){
+	    this->behaviourFile << "(";
+	  }
+	  this->behaviourFile << "cste1_6*(this->d" << p->name << "_K1+"
+			      << "this->d" << p->name << "_K4-"
+			      << "this->d" << p->name << "_K2-"
+			      << "this->d" << p->name << "_K3))";
+	  if(enf.find(p->name)!=enf.end()){
+	    this->behaviourFile << ")/(" << enf.find(p->name)->second << ")";
+	  }
+	  this->behaviourFile << ");" << endl;
+	} else {
+	  if(p->arraySize<SupportedTypes::ArraySizeLimit){
+	    for(unsigned short i=0;i!=p->arraySize;++i){
+	      this->behaviourFile << "error = std::max(error,tfel::math::abs(";
+	      if(enf.find(p->name)!=enf.end()){
+		this->behaviourFile << "(";
+	      }
+	      this->behaviourFile << "cste1_6*(this->d" << p->name << "_K1[" << i << "]+"
+				  << "this->d" << p->name          << "_K4[" << i << "]-"
+				  << "this->d" << p->name          << "_K2[" << i << "]-"
+				  << "this->d" << p->name          << "_K3[" << i << "]))";
+	      if(enf.find(p->name)!=enf.end()){
+		this->behaviourFile << ")/(" << enf.find(p->name)->second << ")";
+	      }
+	      this->behaviourFile << ");" << endl;
+	    }
+	  } else {
+	    this->behaviourFile << "for(unsigned short idx=0;idx!=" <<p->arraySize << ";++idx){" << endl;
+	    this->behaviourFile << "error = std::max(error,tfel::math::abs(";
+	    if(enf.find(p->name)!=enf.end()){
+	      this->behaviourFile << "(";
+	    }
+	    this->behaviourFile << "cste1_6*(this->d" << p->name << "_K1[idx]+"
+				<< "this->d" << p->name          << "_K4[idx]-"
+				<< "this->d" << p->name          << "_K2[idx]-"
+				<< "this->d" << p->name          << "_K3[idx]))";
+	    if(enf.find(p->name)!=enf.end()){
+	      this->behaviourFile << ")/(" << enf.find(p->name)->second << ")";
+	    }
+	    this->behaviourFile << ");" << endl;
+	    this->behaviourFile << "}" << endl;
+	  }
+	}
+      }
+    } else {
+      string msg("MFrontRungeKuttaParser::writeBehaviourRK42Integrator : ");
+      msg += "internal error, unsupported error evaluation.";
+      throw(runtime_error(msg));
     }
-    this->behaviourFile << "error/=" << stateVarsSize << ";" << endl;
     this->behaviourFile << "if(isnan(error)){" << endl;
     this->behaviourFile << "string msg(\"" << this->className << "::integrate : nan decteted\");" << endl;
     if(this->debugMode){
@@ -1497,10 +1704,6 @@ namespace mfront{
     }
     this->behaviourFile << "throw(tfel::material::DivergenceException(msg));" << endl;
     this->behaviourFile << "}" << endl;
-    if(this->debugMode){
-      this->behaviourFile << "cout << \"" << this->className
-			  << "::integrate() : error \" << error << endl;"  << endl;
-    }
     if(this->debugMode){
       this->behaviourFile << "cout << \"" << this->className
 			  << "::integrate() : error \" << error << endl;"  << endl;

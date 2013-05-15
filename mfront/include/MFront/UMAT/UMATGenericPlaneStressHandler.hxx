@@ -8,6 +8,11 @@
 #ifndef _LIB_MFRONT_UMAT_UMATGENERICPLANESTRESSHANDLER_H_
 #define _LIB_MFRONT_UMAT_UMATGENERICPLANESTRESSHANDLER_H_ 
 
+#include<algorithm>
+
+#include"TFEL/Math/vector.hxx"
+#include"TFEL/Math/tvector.hxx"
+
 #ifndef _LIB_MFRONT_UMAT_CALL_H_
 #error "This header shall not be called directly"
 #endif
@@ -120,6 +125,7 @@ namespace umat
 	     UMATReal *const STRESS)
     {
       using namespace std;
+      using namespace tfel::meta;
       using namespace tfel::utilities;
       using namespace tfel::material;
       const ModellingHypothesis::Hypothesis H = ModellingHypothesis::GENERALISEDPLANESTRAIN;
@@ -127,6 +133,9 @@ namespace umat
       typedef Behaviour<H,UMATReal,false> BV;
       typedef tfel::material::MechanicalBehaviourTraits<BV> Traits;
       const unsigned short NSTATV_  = Traits::internal_variables_nb+1u;
+      typedef typename tfel::meta::IF<(NSTATV_<20),
+	tfel::math::tvector<NSTATV_,UMATReal>,
+	tfel::math::vector<UMATReal> >::type SVector;
       UMATGenericPlaneStressHandler::checkNSTATV(*NSTATV);
       unsigned int iter;
       const unsigned int iterMax = 50;
@@ -134,29 +143,30 @@ namespace umat
       UMATReal eto[4];
       UMATReal deto[4];
       UMATReal s[4];
-      UMATReal v[NSTATV_];
+      SVector v;
+      UMATGenericPlaneStressHandler::resize(v,NSTATV_);
       UMATReal dez;
       UMATReal x[2];
       UMATReal f[2];
 
       dez = -c3*s[2]+c1*DSTRAN[0]+c2*DSTRAN[1];
       UMATGenericPlaneStressHandler::template iter<GeneralisedPlaneStrainBehaviour>(DTIME,DROT,DDSOE,
-								     TEMP,DTEMP,PROPS,
-								     NPROPS,PREDEF,DPRED,
-								     STATEV,STRESS,
-								     STRAN,DSTRAN,dez,
-								     v,s,eto,deto);
+										    TEMP,DTEMP,PROPS,
+										    NPROPS,PREDEF,DPRED,
+										    STATEV,STRESS,
+										    STRAN,DSTRAN,dez,
+										    &v[0],s,eto,deto);
       x[1] = dez;
       f[1] = s[2];
 	
       if(abs(c3*s[2]) > 1.e-12){
 	dez -= c3*s[2];
 	UMATGenericPlaneStressHandler::template iter<GeneralisedPlaneStrainBehaviour>(DTIME,DROT,DDSOE,
-								       TEMP,DTEMP,PROPS,
-								       NPROPS,PREDEF,DPRED,
-								       STATEV,STRESS,
-								       STRAN,DSTRAN,dez,
-								       v,s,eto,deto);
+										      TEMP,DTEMP,PROPS,
+										      NPROPS,PREDEF,DPRED,
+										      STATEV,STRESS,
+										      STRAN,DSTRAN,dez,
+										      &v[0],s,eto,deto);
       }	    
 	
       iter = 2;
@@ -172,16 +182,31 @@ namespace umat
 								       NPROPS,PREDEF,DPRED,
 								       STATEV,STRESS,
 								       STRAN,DSTRAN,dez,
-								       v,s,eto,deto);
+								       &v[0],s,eto,deto);
 	++iter;
       }
       if(iter==iterMax){
 	throwPlaneStressMaximumNumberOfIterationsReachedException(Name<BV>::getName());
       }
       copy<4>::exe(s,STRESS);
-      copy<NSTATV_>::exe(v,STATEV);
+      std::copy(v.begin(),v.end(),STATEV);
       STATEV[*NSTATV-1] += dez;
     } // end of exe
+
+    template<unsigned short N,
+	     typename T>
+    static void
+    resize(tfel::math::tvector<N,T>&,
+	   const unsigned short)
+    {}
+
+    template<typename T>
+    static void
+    resize(tfel::math::vector<T>& v,
+	   const unsigned short n)
+    {
+      v.resize(n);
+    }
       
     template<typename GeneralisedPlaneStrainBehaviour>
     TFEL_UMAT_INLINE2 static
@@ -217,7 +242,7 @@ namespace umat
       copy<4>::exe(DSTRAN,deto);
       eto[2]  = STATEV[NSTATV_-1];
       deto[2] = dez;
-      copy<NSTATV_>::exe(STATEV,v);
+      std::copy(STATEV,STATEV+NSTATV_,v);
 	
       GeneralisedPlaneStrainBehaviour::exe(DTIME,DROT,DDSOE,eto,deto,TEMP,DTEMP,
 					   PROPS,NPROPS,PREDEF,DPRED,v,

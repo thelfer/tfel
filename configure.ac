@@ -385,6 +385,9 @@ AC_OUTPUT([debug.sh
            mfront/tests/behaviours/castem/castemmazars.mtest
            mfront/tests/behaviours/castem/castemnorton.mtest
            mfront/tests/behaviours/castem/castemnorton2.mtest
+           mfront/tests/behaviours/castem/castemnortonrk2.mtest
+           mfront/tests/behaviours/castem/castemnortonrk3.mtest
+           mfront/tests/behaviours/castem/castemnortonrk4.mtest
            mfront/tests/behaviours/castem/castemnorton-euler.mtest
            mfront/tests/behaviours/castem/castemnorton-rk2.mtest
            mfront/tests/behaviours/castem/castemnorton-rk4.mtest

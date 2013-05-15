@@ -1008,6 +1008,9 @@ mfront/tests/behaviours/Makefile.am -text
 mfront/tests/behaviours/Mazars.mfront -text
 mfront/tests/behaviours/Norton.mfront -text
 mfront/tests/behaviours/NortonRK.mfront -text
+mfront/tests/behaviours/NortonRK2.mfront -text
+mfront/tests/behaviours/NortonRK3.mfront -text
+mfront/tests/behaviours/NortonRK4.mfront -text
 mfront/tests/behaviours/Norton_Euler.mfront -text
 mfront/tests/behaviours/Norton_rk2.mfront -text
 mfront/tests/behaviours/Norton_rk4.mfront -text
@@ -1081,6 +1084,9 @@ mfront/tests/behaviours/castem/castemnorton-rk2.mtest.in -text
 mfront/tests/behaviours/castem/castemnorton-rk4.mtest.in -text
 mfront/tests/behaviours/castem/castemnorton.mtest.in -text
 mfront/tests/behaviours/castem/castemnorton2.mtest.in -text
+mfront/tests/behaviours/castem/castemnortonrk2.mtest.in -text
+mfront/tests/behaviours/castem/castemnortonrk3.mtest.in -text
+mfront/tests/behaviours/castem/castemnortonrk4.mtest.in -text
 mfront/tests/behaviours/castem/castemorthotropiccreep-rk42.mtest.in -text
 mfront/tests/behaviours/castem/castemorthotropiccreep-rkCastem.mtest.in -text
 mfront/tests/behaviours/castem/castemorthotropiccreep.mtest.in -text

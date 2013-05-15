@@ -87,15 +87,21 @@ namespace mfront{
 
     virtual std::string
     standardModifier(const std::string&,const bool);
+
+    bool
+    isDrivingVariableName(const std::string&) const;
+
+    bool
+    isDrivingVariableIncrementName(const std::string&) const;
  
     bool
-    isInternalStateVariable(const std::string&);
+    isInternalStateVariable(const std::string&) const;
     
     bool
-    isInternalStateVariableIncrement(const std::string&);
+    isInternalStateVariableIncrement(const std::string&) const;
     
     bool
-    isExternalStateVariable(const std::string&);
+    isExternalStateVariable(const std::string&) const;
     
     virtual void
     readStringList(std::vector<std::string>&);
@@ -491,6 +497,10 @@ namespace mfront{
     const VarHandler&
     getStateVariableHandler(const std::string&) const;
 
+    const VarHandler&
+    getVariableHandler(const VarContainer&,
+		       const std::string&) const;
+
     /*!
      * \param n : variable name
      */
@@ -524,8 +534,12 @@ namespace mfront{
     bool
     isExternalStateVariableIncrementName(const std::string&) const;
 
-    bool
-    isCoefficientName(void);
+    /*!
+     * \brief check if one has to include tvector.hxx or vector.hxx
+     */
+    void
+    requiresTVectorOrVectorIncludes(bool&,
+				    bool&) const;   
 
     MFrontBehaviourParserCommon();
 

@@ -28,6 +28,12 @@ namespace mfront{
 
   private:
 
+    enum ErrorEvaluation{
+      DEFAULTERROREVALUATION,
+      ERRORSUMMATIONEVALUATION,
+      MAXIMUMVALUEERROREVALUATION
+    }; // end of ErrorEvaluation
+
     std::string
     computeStressVariableModifier1(const std::string&,
 				   const bool);
@@ -97,6 +103,11 @@ namespace mfront{
     std::string computeFinalStress;
     std::string computeStress;
     std::string derivative;
+
+    //! how the integration error is evaluated for the RK54 and RK42
+    //! integrators
+    ErrorEvaluation eev;
+    //! number of evaluations used by the algorithm
     unsigned short nbrOfEvaluation;
   };
 

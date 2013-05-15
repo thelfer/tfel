@@ -15,6 +15,10 @@ set(mfront_tests_SOURCES
   Norton_Euler Norton_rk2
   Norton_rk4   Norton_rk42
   Norton_rkCastem
+  NortonRK
+  NortonRK2
+  NortonRK3
+  NortonRK4
   ImplicitNorton
   ImplicitNorton2
   ImplicitNorton_Broyden
@@ -71,6 +75,9 @@ test_umat(elasticity16)
 test_umat(mazars)
 test_umat(norton)
 test_umat(norton2)
+test_umat(nortonrk2)
+test_umat(nortonrk3)
+test_umat(nortonrk4)
 test_umat(stressrelaxation)
 test_umat(norton-euler)
 test_umat(norton-rk2)

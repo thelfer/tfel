@@ -22,6 +22,8 @@ namespace mfront
   struct TFEL_VISIBILITY_EXPORT SupportedTypes
   {
 
+    static const unsigned short ArraySizeLimit;
+
     enum TypeFlag{Scalar,Stensor};
 
     struct TypeSize;

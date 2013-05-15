@@ -60,6 +60,55 @@ namespace mfront{
     return ModellingHypothesis::UNDEFINEDHYPOTHESIS;
   }
 
+  void
+  MFrontBehaviourParserCommon::requiresTVectorOrVectorIncludes(bool& b1,
+							       bool& b2) const
+  {
+    VarContainer::const_iterator ps;
+    b1 = false;
+    b2 = false;
+    for(ps=this->coefsHolder.begin();
+	(ps!=this->coefsHolder.end())&&(!(b1&&b2));++ps){
+      if(ps->arraySize>1){
+	if(ps->arraySize>=SupportedTypes::ArraySizeLimit){
+	  b2 = true;
+	} else {
+	  b1 = true;
+	}
+      }
+    }
+    for(ps=this->stateVarsHolder.begin();
+	(ps!=this->stateVarsHolder.end())&&(!(b1&&b2));++ps){
+      if(ps->arraySize>1){
+	if(ps->arraySize>=SupportedTypes::ArraySizeLimit){
+	  b2 = true;
+	} else {
+	  b1 = true;
+	}
+      }
+    }
+    for(ps=this->auxiliaryStateVarsHolder.begin();
+	(ps!=this->auxiliaryStateVarsHolder.end())&&(!(b1&&b2));++ps){
+      if(ps->arraySize>1){
+	if(ps->arraySize>=SupportedTypes::ArraySizeLimit){
+	  b2 = true;
+	} else {
+	  b1 = true;
+	}
+      }
+    }
+    for(ps=this->localVarsHolder.begin();
+	(ps!=this->localVarsHolder.end())&&(!(b1&&b2));++ps){
+      if(ps->arraySize>1){
+	if(ps->arraySize>=SupportedTypes::ArraySizeLimit){
+	  b2 = true;
+	} else {
+	  b1 = true;
+	}
+      }
+    }
+  } // end of MFrontBehaviourParserCommon::requiresTVectorOrVectorIncludes
+
   void MFrontBehaviourParserCommon::setVerboseMode(void)
   {
     using namespace std;
@@ -251,6 +300,38 @@ namespace mfront{
     }
     return false;
   } // end of MFrontBehaviourParserCommon::contains
+
+  bool
+  MFrontBehaviourParserCommon::isDrivingVariableName(const std::string& n) const
+  {
+    using namespace std;
+    map<DrivingVariable,
+	ThermodynamicForce>::const_iterator pm;
+    for(pm=mvariables.begin();pm!=mvariables.end();++pm){
+      const DrivingVariable& dv = pm->first;
+      if(dv.name==n){
+	return true;
+      }
+    }
+    return false;
+  } // end of MFrontBehaviourParserCommon::isDrivingVariableName
+
+  bool
+  MFrontBehaviourParserCommon::isDrivingVariableIncrementName(const std::string& n) const
+  {
+    using namespace std;
+    map<DrivingVariable,
+	ThermodynamicForce>::const_iterator pm;
+    for(pm=mvariables.begin();pm!=mvariables.end();++pm){
+      const DrivingVariable& dv = pm->first;
+      if(dv.increment_known){
+	if("d"+dv.name==n){
+	  return true;
+	}
+      }
+    }
+    return false;
+  } // end of MFrontBehaviourParserCommon::isDrivingVariableIncrementName
 
   bool
   MFrontBehaviourParserCommon::isMaterialPropertyName(const std::string& n) const
@@ -1246,9 +1327,9 @@ namespace mfront{
   void MFrontBehaviourParserCommon::writeBehaviourDataStandardTFELIncludes(void)
   {
     using namespace std;
-
+    bool b1 = false;
+    bool b2 = false;
     this->checkBehaviourDataFile();
-
     this->behaviourDataFile << "#include<iostream>\n";
     this->behaviourDataFile << "#include<algorithm>\n";
     this->behaviourDataFile << "#include<string>\n\n";
@@ -1259,6 +1340,13 @@ namespace mfront{
     this->behaviourDataFile << "#include\"TFEL/TypeTraits/IsReal.hxx\"" << endl;
     if(this->behaviourCharacteristic.useQt()){
       this->behaviourDataFile << "#include\"TFEL/Math/General/BaseCast.hxx\"" << endl;
+    }
+    this->requiresTVectorOrVectorIncludes(b1,b2);
+    if(b1){
+      this->behaviourDataFile << "#include\"TFEL/Math/tvector.hxx\"\n";
+    }
+    if(b2){
+      this->behaviourDataFile << "#include\"TFEL/Math/vector.hxx\"\n";
     }
     this->behaviourDataFile << "#include\"TFEL/Material/MechanicalBehaviourData.hxx\"" << endl;
     this->behaviourDataFile << "#include\"TFEL/Material/ModellingHypothesis.hxx\"" << endl;
@@ -2214,18 +2302,25 @@ namespace mfront{
   const VarHandler&
   MFrontBehaviourParserCommon::getStateVariableHandler(const std::string& v) const
   {
+    return this->getVariableHandler(this->stateVarsHolder,v);
+  } // end of MFrontBehaviourParserCommon::getStateVariableHandler
+
+  const VarHandler&
+  MFrontBehaviourParserCommon::getVariableHandler(const VarContainer& cont,
+						  const std::string& v) const
+  {
     using namespace std;
     VarContainer::const_iterator p;
-    for(p=this->stateVarsHolder.begin();p!=this->stateVarsHolder.end();++p){
+    for(p=cont.begin();p!=cont.end();++p){
       if(p->name==v){
 	return *p;
       }
     }
-    string msg("MFrontBehaviourParserCommon::getStateVariableHandler : ");
+    string msg("MFrontBehaviourParserCommon::getVariableHandler : ");
     msg += "no state variable '"+v+"'";
     throw(runtime_error(msg));
     return *(static_cast<VarHandler*>(0));
-  } // end of MFrontBehaviourParserCommon::getStateVariableHandler
+  } // end of MFrontBehaviourParserCommon::getVariableHandler
 
   void MFrontBehaviourParserCommon::writeBehaviourLocalVars(void)
   {    
@@ -2900,7 +2995,8 @@ namespace mfront{
   void MFrontBehaviourParserCommon::writeIntegrationDataStandardTFELIncludes(void)
   {
     using namespace std;
-
+    bool b1 = false;
+    bool b2 = false;
     this->checkIntegrationDataFile();
     this->integrationDataFile << "#include<iostream>\n";
     this->integrationDataFile << "#include<algorithm>\n";
@@ -2914,6 +3010,13 @@ namespace mfront{
     this->integrationDataFile << "#include\"TFEL/TypeTraits/IsScalar.hxx\"\n";
     this->integrationDataFile << "#include\"TFEL/TypeTraits/IsReal.hxx\"\n";
     this->integrationDataFile << "#include\"TFEL/TypeTraits/Promote.hxx\"\n";
+    this->requiresTVectorOrVectorIncludes(b1,b2);
+    if(b1){
+      this->integrationDataFile << "#include\"TFEL/Math/tvector.hxx\"\n";
+    }
+    if(b2){
+      this->integrationDataFile << "#include\"TFEL/Math/vector.hxx\"\n";
+    }
     this->integrationDataFile << "#include\"TFEL/Material/MechanicalIntegrationData.hxx\"\n\n";
   }
 
@@ -3244,15 +3347,26 @@ namespace mfront{
     using namespace std;
     VarContainer::const_iterator p;
     this->checkIntegrationDataFile();
-    for(p =this->externalStateVarsHolder.begin();
-	p!=this->externalStateVarsHolder.end();++p){
-      if((!this->debugMode)&&(p->lineNumber!=0u)){
-	this->integrationDataFile << "#line " << p->lineNumber << " \"" 
-				  << this->fileName << "\"\n";
-      }
-      this->integrationDataFile << p->type << " d" << p->name << ";\n";  
-    }
-    this->integrationDataFile << endl;
+    this->writeVariablesDeclarations(this->integrationDataFile,
+				     this->externalStateVarsHolder,
+				     "d","",this->fileName,
+				     false,this->debugMode);
+    // this->writeVariablesIncrementsDeclaration(std::ostream& f,
+    // 					      const VarContainer& v,
+    // 					     const std::string& prefix,
+    // 					     const std::string& suffix,
+    // 					     const std::string& fileName,
+    // 					     const bool useTimeDerivative,
+    // 					     const bool b)
+    // for(p =this->externalStateVarsHolder.begin();
+    // 	p!=this->externalStateVarsHolder.end();++p){
+    //   if((!this->debugMode)&&(p->lineNumber!=0u)){
+    // 	this->integrationDataFile << "#line " << p->lineNumber << " \"" 
+    // 				  << this->fileName << "\"\n";
+    //   }
+    //   this->integrationDataFile << p->type << " d" << p->name << ";\n";  
+    // }
+    // this->integrationDataFile << endl;
   }
 
 
@@ -3543,7 +3657,7 @@ namespace mfront{
   } // end of MFrontBehaviourParserCommon::writeSrcFile(void)
 
   bool
-  MFrontBehaviourParserCommon::isInternalStateVariable(const std::string& name)
+  MFrontBehaviourParserCommon::isInternalStateVariable(const std::string& name) const
   {
     VarContainer::const_iterator ps;
     for(ps=this->stateVarsHolder.begin();
@@ -3553,7 +3667,7 @@ namespace mfront{
   } // end of MFrontBehaviourParserCommon::isInternalStateVariable
 
   bool
-  MFrontBehaviourParserCommon::isInternalStateVariableIncrement(const std::string& name)
+  MFrontBehaviourParserCommon::isInternalStateVariableIncrement(const std::string& name) const
   {
     VarContainer::const_iterator ps;
     for(ps=this->stateVarsHolder.begin();
@@ -3563,7 +3677,7 @@ namespace mfront{
   } // end of MFrontBehaviourParserCommon::isInternalStateVariable
 
   bool
-  MFrontBehaviourParserCommon::isExternalStateVariable(const std::string& name)
+  MFrontBehaviourParserCommon::isExternalStateVariable(const std::string& name) const
   {
     VarContainer::const_iterator ps;
     for(ps=this->externalStateVarsHolder.begin();

@@ -641,7 +641,7 @@ namespace mfront{
 						       const bool addThisPtr)
   {
     using namespace std;
-    if((var=="eto")||(var=="T")|
+    if(this->isDrivingVariableName(var)||(var=="T")|
        (this->isExternalStateVariable(var))){
       if(addThisPtr){
 	return "(this->"+var+"+(this->theta)*(this->d"+var+"))";
@@ -686,7 +686,8 @@ namespace mfront{
   MFrontImplicitParserBase::computeStressVariableModifier2(const std::string& var,
 						       const bool addThisPtr)
   {
-    if((var=="eto")||(var=="T")||(this->isExternalStateVariable(var))){
+    if((this->isDrivingVariableName(var))||(var=="T")||
+       (this->isExternalStateVariable(var))){
       if(addThisPtr){
 	return "(this->"+var+"+this->d"+var+")";
       } else {

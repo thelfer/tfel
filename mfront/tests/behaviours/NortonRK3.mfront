@@ -1,0 +1,53 @@
+@Parser    RungeKutta;
+@Behaviour NortonRK3;
+@Author    Helfer Thomas;
+@Algorithm rk42;
+@Date 23/11/06;
+
+@Epsilon 1.e-8;
+
+@Includes{
+#include"TFEL/Material/Lame.hxx"
+}
+
+@MaterialProperty real young; /* mandatory for castem */
+@MaterialProperty real nu;    /* mandatory for castem */
+@MaterialProperty real rho;   /* mandatory for castem */
+@MaterialProperty real alpha; /* mandatory for castem */
+@MaterialProperty real A;     /* Norton coefficient   */
+@MaterialProperty real E;     /* Norton exponant      */
+
+@LocalVariable real lambda; /* first  Lame coefficient  */
+@LocalVariable real mu;     /* second Lame coefficient */
+
+@StateVariable real    p[100];   /* Equivalent viscoplastic strain */
+@StateVariable Stensor evp[100]; /* Viscoplastic strain            */
+
+/* Initialize Lame coefficients */
+@InitLocalVariables{
+  using namespace tfel::material::lame;
+  lambda = computeLambda(young,nu);
+  mu = computeMu(young,nu);
+}
+
+@ComputeStress{
+  sig = lambda*trace(eel)*StrainStensor::Id()+2*mu*eel;
+}
+
+@Derivative{
+  real sigeq = sigmaeq(sig);
+  if(sigeq>1.e9){
+    return false;
+  }
+  Stensor  n(0.);
+  if(sigeq > 10.e-7){
+    n    = 1.5f*deviator(sig)/sigeq;
+  }
+  deel = deto;
+  const real vp = (A/evp.size())*pow(sigeq,E); 
+  for(unsigned short i=0;i!=evp.size();++i){
+    dp[i]    = vp;
+    devp[i]  = dp[i]*n;
+    deel    -= devp[i];
+  }
+}

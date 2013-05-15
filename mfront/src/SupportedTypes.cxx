@@ -13,7 +13,9 @@
 
 namespace mfront{
 
-  
+
+  const unsigned short SupportedTypes::ArraySizeLimit = 10u;
+
   SupportedTypes::TypeSize::TypeSize()
     : scalarSize(0u),
       stensorSize(0u)
@@ -225,15 +227,36 @@ namespace mfront{
 	} else {
 	  const SupportedTypes::TypeFlag flag = this->getTypeFlag(p->type);
 	  const string n = prefix+p->name+suffix;
-	  for(int i=0;i!=p->arraySize;++i){
+	  if(p->arraySize<SupportedTypes::ArraySizeLimit){
+	    for(int i=0;i!=p->arraySize;++i){
+	      switch(flag){
+	      case SupportedTypes::Scalar : 
+		f << n << "[" << i << "] = "+src+"[" 
+		  << currentOffset << "];\n";  
+		break;
+	      case SupportedTypes::Stensor :
+		f << n << "["<< i << "].import(&"+src+"[" 
+		  << currentOffset << "]);\n";  
+		break;
+	      default : 
+		string msg("SupportedTypes::");
+		msg += "writeVariableInitializersInBehaviourDataConstructorII : ";
+		msg += "internal error, tag unsupported";
+		throw(runtime_error(msg));
+	      }
+	      currentOffset+=this->getTypeSize(p->type,1u);
+	    }
+	  } else {
+	    f << n << ".resize(" << p->arraySize << ");" << endl;
+	    f << "for(unsigned short idx=0;idx!=" << p->arraySize << ";++idx){" << endl;
 	    switch(flag){
 	    case SupportedTypes::Scalar : 
-	      f << n << "[" << i << "] = "+src+"[" 
-		<< currentOffset << "];\n";  
+	      f << n << "[idx] = "+src+"[" 
+		<< currentOffset << "+idx];\n";  
 	      break;
 	    case SupportedTypes::Stensor :
-	      f << n << "["<< i << "].import(&"+src+"[" 
-		<< currentOffset << "]);\n";  
+	      f << n << "[idx].import(&"+src+"[" 
+		  << currentOffset << "+idx*StensorSize]);\n";  
 	      break;
 	    default : 
 	      string msg("SupportedTypes::");
@@ -241,7 +264,8 @@ namespace mfront{
 	      msg += "internal error, tag unsupported";
 	      throw(runtime_error(msg));
 	    }
-	    currentOffset+=this->getTypeSize(p->type,1u);
+	    f << "}" << endl;
+	    currentOffset+=this->getTypeSize(p->type,p->arraySize);
 	  }
 	}
       }
@@ -264,7 +288,11 @@ namespace mfront{
 	f << ",\n";
 	switch(flag){
 	case SupportedTypes::Scalar : 
-	  f << "d" << n << "(" << t <<"(0))";
+	  if(p->arraySize<SupportedTypes::ArraySizeLimit){
+	    f << "d" << n << "(" << t <<"(0))";
+	  } else {
+	    f << "d" << n << "(" << p->arraySize << "," << t <<"(0))";
+	  }
 	  break;
 	case SupportedTypes::Stensor :
 	  if(p->arraySize==1u){
@@ -272,9 +300,15 @@ namespace mfront{
 	      << "(typename tfel::math::StensorTraits<" 
 	      << t << ">::NumType(0))";
 	  } else {
-	    f << "d" << n 
-	      << "(" << t << "(typename tfel::math::StensorTraits<" 
-	      << t << ">::NumType(0)))";
+	    if(p->arraySize<SupportedTypes::ArraySizeLimit){
+	      f << "d" << n 
+		<< "(" << t << "(typename tfel::math::StensorTraits<" 
+		<< t << ">::NumType(0)))";
+	    } else {
+	      f << "d" << n 
+		<< "(" << p->arraySize << "," << t << "(typename tfel::math::StensorTraits<" 
+		<< t << ">::NumType(0)))";
+	    }
 	  }
 	  break;
 	default :
@@ -365,31 +399,59 @@ namespace mfront{
 	  }
 	  currentOffset+=this->getTypeSize(p->type,p->arraySize);
 	} else {
-	  for(unsigned short i=0;i!=p->arraySize;++i){
+	  if(p->arraySize<SupportedTypes::ArraySizeLimit){
+	    for(unsigned short i=0;i!=p->arraySize;++i){
+	      switch(flag){
+	      case SupportedTypes::Scalar : 
+		if(useQt){
+		  f << dest << "[" 
+		    << currentOffset << "] = common_cast(this->"
+		    << p->name << "[" << i << "]);\n"; 
+		} else {
+		  f << dest << "[" 
+		    << currentOffset << "] = this->"
+		    << p->name << "[" << i << "];\n"; 
+		} 
+		break;
+	      case SupportedTypes::Stensor :
+		f << "this->" << p->name
+		  << "[" << i << "]" 
+		  << ".write(&" << dest << "[" 
+		  << currentOffset << "]);\n";  
+		break;
+	      default :
+		string msg("SupportedTypes::exportResults : ");
+		msg += "internal error, tag unsupported";
+		throw(runtime_error(msg));
+	      }
+	      currentOffset+=this->getTypeSize(p->type,1u);
+	    }
+	  } else {
+	    f << "for(unsigned short idx=0;idx!=" << p->arraySize << ";++idx){" << endl;
 	    switch(flag){
 	    case SupportedTypes::Scalar : 
 	      if(useQt){
 		f << dest << "[" 
-		  << currentOffset << "] = common_cast(this->"
-		  << p->name << "[" << i << "]);\n"; 
+		  << currentOffset << "+idx] = common_cast(this->"
+		  << p->name << "[idx]);\n"; 
 	      } else {
 		f << dest << "[" 
-		  << currentOffset << "] = this->"
-		  << p->name << "[" << i << "];\n"; 
+		  << currentOffset << "+idx] = this->"
+		  << p->name << "[idx];\n"; 
 	      } 
 	      break;
 	    case SupportedTypes::Stensor :
 	      f << "this->" << p->name
-		<< "[" << i << "]" 
-		<< ".write(&" << dest << "[" 
-		<< currentOffset << "]);\n";  
+		<< "[idx].write(&" << dest << "[" 
+		<< currentOffset << "+idx*StensorSize]);\n";  
 	      break;
 	    default :
 	      string msg("SupportedTypes::exportResults : ");
 	      msg += "internal error, tag unsupported";
 	      throw(runtime_error(msg));
 	    }
-	    currentOffset+=this->getTypeSize(p->type,1u);
+	    f << "}" << endl;
+	    currentOffset+=this->getTypeSize(p->type,p->arraySize);
 	  }
 	}
       }
@@ -418,8 +480,12 @@ namespace mfront{
       if(p->arraySize==1u){
 	f << t << " "  << n << ";\n";  
       } else {
-	f << "tfel::math::tvector<" << p->arraySize 
-	  << ", " << t << " > "  << n << ";\n";
+	if(p->arraySize<SupportedTypes::ArraySizeLimit){
+	  f << "tfel::math::tvector<" << p->arraySize 
+	    << ", " << t << " > "  << n << ";\n";
+	} else {
+	  f << "tfel::math::vector<" << t << " > "  << n << ";\n";
+	}
       }
     }
   } // end of SupportedTypes::writeVariablesDeclarations

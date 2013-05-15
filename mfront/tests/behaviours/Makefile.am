@@ -10,6 +10,9 @@ EXTRA_DIST=CMakeLists.txt                    \
            ImplicitNorton_Broyden.mfront     \
            ImplicitNorton_Broyden2.mfront    \
            NortonRK.mfront                   \
+           NortonRK2.mfront                  \
+           NortonRK3.mfront                  \
+           NortonRK4.mfront                  \
            Norton_Euler.mfront               \
            Norton_rk2.mfront                 \
            Norton_rk4.mfront                 \
