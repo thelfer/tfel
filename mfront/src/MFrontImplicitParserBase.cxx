@@ -9,6 +9,8 @@
 #include<cstdlib>
 #include<sstream>
 
+#include"TFEL/Utilities/ToString.hxx"
+
 #include"MFront/ParserUtilities.hxx"
 #include"MFront/MFrontImplicitParserBase.hxx"
 
@@ -2035,7 +2037,16 @@ namespace mfront{
   MFrontImplicitParserBase::endsInputFileProcessing(void)
   {
     using namespace std;
+    using namespace tfel::utilities;
+    VarContainer::const_iterator p;
     MFrontBehaviourParserCommon::endsInputFileProcessing();
+    for(p=this->stateVarsHolder.begin();p!=this->stateVarsHolder.end();++p){
+      if(p->arraySize>=SupportedTypes::ArraySizeLimit){
+	string msg("MFrontImplicitParserBase::endsInputFileProcessing : ");
+	msg += "array size greater than '"+toString(SupportedTypes::ArraySizeLimit)+"' are not supported";	
+	throw(runtime_error(msg));
+      }
+    }
     if(this->integrator.empty()){
       string msg("MFrontImplicitParserBase::endsInputFileProcessing : ");
       msg += "definining the @Integrator block is required";
