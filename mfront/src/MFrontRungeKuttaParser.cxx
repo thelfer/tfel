@@ -427,6 +427,12 @@ namespace mfront{
       parserInitLocalVars += "if(this->dt<" + this->className + "::dtmin){\n";
       parserInitLocalVars += "this->dt=" + this->className + "::dtmin;\n";
       parserInitLocalVars += "}\n";
+    } else {
+      parserInitLocalVars += "if(this->dt<100*numeric_limits<time>::min()){\n";
+      parserInitLocalVars += "string msg(\"" + this->className + "::" + this->className +"\");\n";
+      parserInitLocalVars += "msg += \"time step too small.\";\n";
+      parserInitLocalVars += "throw(runtime_error(msg));\n";
+      parserInitLocalVars += "}\n";
     }
     if(this->computeStress.empty()){
       string msg("MFrontRungeKuttaParser::endsInputFileProcessing : ");
@@ -438,11 +444,6 @@ namespace mfront{
       msg += "@Derivative was not defined.";
       throw(runtime_error(msg));
     }
-    parserInitLocalVars += "if(this->dt<100*numeric_limits<time>::min()){\n";
-    parserInitLocalVars += "string msg(\"" + this->className + "::" + this->className +"\");\n";
-    parserInitLocalVars += "msg += \"time step too small.\";\n";
-    parserInitLocalVars += "throw(runtime_error(msg));\n";
-    parserInitLocalVars += "}\n";
     for(p =this->stateVarsHolder.begin();p!=this->stateVarsHolder.end();++p){
       currentVarName = p->name + "_";
       this->registerVariable(currentVarName);
@@ -455,9 +456,6 @@ namespace mfront{
 	currentVarName = "d" + p->name + "_K"+toString(static_cast<unsigned short>(i+1u));
 	this->registerVariable(currentVarName);
 	this->localVarsHolder.push_back(VarHandler(p->type,currentVarName,p->arraySize,0u));
-	if(p->arraySize>=SupportedTypes::ArraySizeLimit){
-	  parserInitLocalVars += "this->" + currentVarName+".resize("+toString(p->arraySize)+");\n";
-	}
       }
     }
     if((this->algorithm!="RungeKutta4/2")&&

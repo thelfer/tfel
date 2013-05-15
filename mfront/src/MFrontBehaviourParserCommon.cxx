@@ -2199,6 +2199,7 @@ namespace mfront{
     writeMaterialLaws("MFrontBehaviourParserCommon::writeBehaviourConstructors",
 		      this->behaviourFile,this->materialLaws);
     this->writeBehaviourParameterInitialisation();
+    this->writeBehaviourLocalVariablesInitialisation();
     if(!this->initLocalVars.empty()){
       this->behaviourFile << this->initLocalVars;
     }
@@ -2235,6 +2236,7 @@ namespace mfront{
     writeMaterialLaws("MFrontBehaviourParserCommon::writeBehaviourConstructors",
 		      this->behaviourFile,this->materialLaws);		      
     this->writeBehaviourParameterInitialisation();
+    this->writeBehaviourLocalVariablesInitialisation();
     if(!this->initLocalVars.empty()){
       this->behaviourFile << this->initLocalVars;
     } 
@@ -2263,6 +2265,7 @@ namespace mfront{
       writeMaterialLaws("MFrontBehaviourParserCommon::writeBehaviourConstructors",
 			this->behaviourFile,this->materialLaws);		      
       this->writeBehaviourParameterInitialisation();
+      this->writeBehaviourLocalVariablesInitialisation();
       if(!this->initLocalVars.empty()){
 	this->behaviourFile << this->initLocalVars;
       }
@@ -2274,6 +2277,19 @@ namespace mfront{
     }
   }
 
+  void
+  MFrontBehaviourParserCommon::writeBehaviourLocalVariablesInitialisation()
+  {
+    using namespace std;
+    VarContainer::const_iterator p;
+    this->checkBehaviourFile();
+    for(p=this->localVarsHolder.begin();p!=this->localVarsHolder.end();++p){
+      if(p->arraySize>=SupportedTypes::ArraySizeLimit){
+	this->behaviourFile << "this->" << p->name << ".resize(" << p->arraySize << ");" << endl;
+      }
+    }  
+  }
+  
   void MFrontBehaviourParserCommon::writeBehaviourParameterInitialisation(void)
   {    
     using namespace std;

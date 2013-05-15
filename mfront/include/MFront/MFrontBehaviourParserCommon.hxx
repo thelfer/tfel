@@ -438,6 +438,9 @@ namespace mfront{
     writeBehaviourIncludeBehaviourData(void);
 
     virtual void
+    writeBehaviourLocalVariablesInitialisation();
+
+    virtual void
     writeBehaviourParameterInitialisation(void);
 
     virtual void
