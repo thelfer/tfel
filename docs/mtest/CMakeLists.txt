@@ -35,7 +35,7 @@ add_dependencies(mtest-doc-pdf-install mtest-doc-pdf)
 add_dependencies(doc-pdf
   mtest-doc-pdf)
 
-add_dependencies(doc-install
+add_dependencies(doc-pdf-install
   mtest-doc-pdf-install)
 
 install_mtest_desc(Author.txt)

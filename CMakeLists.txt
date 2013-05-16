@@ -187,6 +187,8 @@ find_package(LATEX)
 if(LATEX_COMPILER)
   add_custom_target(doc-pdf)
   add_custom_target(doc-pdf-install)
+  add_dependencies(doc-install
+    doc-pdf-install)
   message(STATUS "latex compiler found : ${LATEX_COMPILER}")
   add_subdirectory(docs)
 endif(LATEX_COMPILER)

@@ -156,7 +156,7 @@ add_dependencies(doc-pdf
   umat-doc-pdf
   aster-doc-pdf)
 
-add_dependencies(doc-install
+add_dependencies(doc-pdf-install
   mfront-doc-pdf-install
   behaviours-doc-pdf-install
   umat-doc-pdf-install

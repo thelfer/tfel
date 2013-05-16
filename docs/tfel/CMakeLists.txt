@@ -31,5 +31,5 @@ add_dependencies(tfel-doc-pdf-install tfel-doc-pdf)
 add_dependencies(doc-pdf
   tfel-doc-pdf)
 
-add_dependencies(doc-install
+add_dependencies(doc-pdf-install
   tfel-doc-pdf-install)
