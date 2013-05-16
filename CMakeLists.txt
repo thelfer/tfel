@@ -8,12 +8,13 @@ include(cmake/modules/autotools.cmake)
 tfel_project(1 1)
 set(PACKAGE_BUGREPORT "thomas.helfer@cea.fr")
 
-#extractin svn revision
+#extraction svn revision
+if(NOT TFEL_SVN_REVISION)
 execute_process(COMMAND svnversion
                 WORKING_DIRECTORY "${PROJECT_SOURCE_DIR}"
                 OUTPUT_VARIABLE TFEL_SVN_REVISION 
 		OUTPUT_STRIP_TRAILING_WHITESPACE)
-
+endif(NOT TFEL_SVN_REVISION)
 
 # testing
 # (must be placed *before* any add_subdirectory, cmake bug ?)
@@ -55,7 +56,7 @@ cmake_policy(SET CMP0005 OLD)
 add_definitions("-DOPTIMISATION_FLAGS=\\\"\"${OPTIMISATION_FLAGS}\"\\\"")
 add_definitions("-DOPTIMISATION_FLAGS=\\\"\"${OPTIMISATION_FLAGS}\"\\\"")
 add_definitions("-DCOMPILER_WARNINGS=\\\"\"${COMPILER_WARNINGS}\"\\\"")
-add_definitions("-DVERSION=\\\"\"${TFEL_VERSION_MAJOR}\"\\\"")
+add_definitions("-DVERSION=\\\"\"${TFEL_VERSION_MAJOR}.${TFEL_VERSION_MINOR}\"\\\"")
 add_definitions("-DTFEL_SVN_REVISION=\\\"\"${TFEL_SVN_REVISION}\"\\\"")
 
 if(CMAKE_BUILD_TYPE STREQUAL "None")
@@ -77,7 +78,6 @@ if(enable-aster)
   add_definitions("-DHAVE_ASTER=1")
   include(cmake/modules/aster.cmake)
 endif(enable-aster)
-
 
 #castem
 include(cmake/modules/castem-unix-type.cmake)
