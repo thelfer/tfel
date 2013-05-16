@@ -410,12 +410,23 @@ variables locales a été introduite\footnote{La directive
   de variables externes} Afin de pouvoir regrouper des équations dont
 le {\em formalisme} était similaire, nous avons introduit la
 possibilité de définir des tableaux de variables internes, de
-propriétés matériaux et de variables externes\footnote{Il faut noter
-  que la taille de ces tableaux, c'est à dire le nombre de variables
-  internes, de propriétés matériau et/ou de variables externes est
-  fixe \og~en dur~\fg{} dans le fichier d'entrée.}. Il est alors
-possible d'écrire des boucles sur les variables internes constituant
-le tableau pour condenser l'écriture des lois.
+propriétés matériaux et de variables externes. Il faut noter que la
+taille de ces tableaux, c'est à dire le nombre de variables internes,
+de propriétés matériau et/ou de variables externes est fixés \og~en
+dur~\fg{} dans le fichier d'entrée.
+
+Il est alors possible d'écrire des boucles sur les variables internes
+constituant le tableau pour condenser l'écriture des lois.
+
+La possibilité d'utiliser des tableaux de variables internes est
+particulièrement utile en homogénéisation. Les lois de comportement
+homogénéisées peuvent avoir un grand nombre de variables internes qui
+partagent des lois d'évolutions similaires. Un exemple de cela est
+donné par les lois issues de l'homogénéisation de poly-cristaux qui
+peuvent conduire à plusieurs milliers de variables
+internes~\cite{proix13:_compor}. Grâce aux tableaux de variables
+internes, l'implantation de ce type de lois peut être très courte (une
+centaine de lignes).
 
 \subsection{Conseils sur le choix de l'analyseur à utiliser}
 
@@ -466,6 +477,130 @@ déformations (loi de \nom{Mazars} par
 exemple~\cite{francois13:_model}).
 
 \subsection{Points particuliers}
+
+\subsubsection{Hypothèses de modélisation} 
+
+Les lois de comportement sont implantées par des classes {\tt
+  template} paramétrée par l'hypothèse de modélisation. Ce choix
+permet de~:
+\begin{itemize}
+\item proposer une implantation optimisée et fiable de la loi de
+  comportement pour chacune des hypothèses de modélisation~;
+\item traiter les cas particuliers, les contraintes planes notamment~;
+\item de spécifier quelles sont les hypothèses valides. Par exemple,
+  les lois issues de l'homogénéisation de poly-cristaux doivent
+  nécessairement être intégrées en \(3D\)~\cite{proix13:_compor}
+\end{itemize}
+
+Le fichier d'entête
+\headerb{TFEL/MaterialLaw/ModellingHypothesis.hxx}{TFEL/\-Material\-Law/\-Modelling\-Hypo\-thesis\-.hxx}
+définit une structure
+\tfelb{ModellingHypothesis}{Modelling\-Hypo\-thesis}. Dans cette
+structure, un objet de type énumération nommé
+\tfelb{ModellingHypothesis::Hypothesis}{Hypo\-thesis} définit les
+différentes hypothèses de modélisation ajourd'hui supportées~:
+\begin{itemize}
+ \item \texttt{AXISYMETRICAL\-GENERALISED\-PLANE\-STRAIN} qui désigne
+ une modélisation \(1D\) axisymétrique plan généralisée. Dans ce cas,
+ le tenseur des contraintes a \(3\) composantes et est représenté par
+ le vecteur suivant~:
+ \begin{equation}
+   \label{eq:tsigma} \tsigma = \left(
+   \begin{array}{c}
+     \sigma_{rr} \\
+     \sigma_{zz} \\
+     \sigma_{\theta\theta} \\
+   \end{array}
+   \right)
+ \end{equation}
+ \item \texttt{AXI\-SYMETRICAL} qui désigne une modélisation \(2D\)
+ axisymétrique. Dans ce cas, le tenseur des contraintes a \(4\)
+ composantes et est représenté par le vecteur suivant~:
+ \begin{equation}
+   \label{eq:tsigma} \tsigma = \left(
+   \begin{array}{c}
+     \sigma_{rr} \\
+     \sigma_{zz} \\
+     \sigma_{\theta\theta} \\
+     \sqrt{2}\sigma_{rz} \\
+   \end{array}
+   \right)
+ \end{equation}
+ \item \texttt{PLANE\-STRESS}, \texttt{PLANE\-STRAIN} et
+ \texttt{GENERALISED\-PLANE\-STRAIN} qui désigne différentes
+ modélisations \(2D\) qui se distinguent par le traitement de la
+ direction axiale. Dans ces cas, le tenseur des contraintes a \(4\)
+ composantes et est représenté par le vecteur suivant~:
+ \begin{equation}
+   \label{eq:tsigma} \tsigma = \left(
+   \begin{array}{c}
+     \sigma_{xx} \\
+     \sigma_{yy} \\
+     \sigma_{zz} \\
+     \sqrt{2}\sigma_{xy} \\
+   \end{array}
+   \right)
+ \end{equation}
+ \item \texttt{TRIDIMENSIONAL} qui désigne la modélisation la plus
+ générale. Dans ce cas, le tenseur des contraintes a \(6\) composantes
+ est représenté par le vecteur suivant~:
+ \begin{equation}
+   \label{eq:tsigma} \tsigma = \left(
+   \begin{array}{c}
+     \sigma_{xx} \\
+     \sigma_{yy} \\
+     \sigma_{zz} \\
+     \sqrt{2}\sigma_{xy} \\
+     \sqrt{2}\sigma_{xz} \\
+     \sqrt{2}\sigma_{yz} \\
+   \end{array}
+   \right)
+ \end{equation}
+\end{itemize}
+
+\paragraph{Les directives \mkey{ModellingHypothesis} et
+  \mkey{ModellingHypotheses}} Les directives
+\mkeyb{ModellingHypothesis}{Modelling\-Hypothesis} et
+\mkeyb{ModellingHypotheses}{Modelling\-Hypotheses} permettent
+spécifier les hypothèses de modélisation valides. La première attend
+le nom d'une hypothèse, la seconde un tableau contenant une ou
+plusieurs hypothèses.
+
+Les noms d'hypothèses valides sont les suivants~:
+\begin{itemize}
+\item AxisymmetricalGeneralisedPlaneStrain~;
+\item Axisymmetrical~;
+\item PlaneStress~;
+\item PlaneStrain~;
+\item GeneralisedPlaneStrain~;
+\item Tridimensional.
+\end{itemize}
+
+\paragraph{Cas des contraintes planes}
+Le cas des contraintes planes appelle certaines remarques. Le plus
+souvent, les lois de comportements ne peuvent être utilisées telles
+quelles en contraintes planes~: un implantation spécifique doit être
+faites. Pour cette raison, les contraintes planes sont exclues des
+hypothèses de modélisation supportées par défaut.
+
+Plusieurs stratégies peuvent être mises en place pour éviter d'avoir à
+écrire une implantation spécifique~:
+\begin{itemize}
+\item le code aux éléments finis {\tt Zebulon} introduit des éléments
+  finis spécifiques, possédant un degré de liberté supplémentaire (la
+  déformation axiale) dont la force associée (liées à la contrainte
+  axiale) est nulle~\cite{besson98:_objec}~;
+\item le code aux éléments finis \aster{} modifie l'algorithme de
+  résolution global pour converger vers une solution en contraintes
+  planes~\cite{}.
+\end{itemize}
+
+Pour le code aux éléments finis \castem{}, si une implantation en
+contraintes planes n'est pas disponible, l'interface \umat{} fournie
+par \mfront{} gère les contraintes planes en introduisant une variable
+interne supplémentaire (la déformation axiale) qu'elle ajuste (par
+appels successifs à la loi de comportement \(2D\)) pour trouver une
+contrainte axiale nulle~\cite{helfer:umat:2013}.
 
 \subsubsection{Traitement des matériaux orthotropes}
 
@@ -603,72 +738,6 @@ paragraphe~\ref{sec:behaviours:interface}).
 %\texttt{Strict}, une exception du type
 %\tfelb{OutOfBoundsException}{Out\-Of\-Bounds\-Exception} est levée.
 
-%Le fichier d'entête
-%\headerb{TFEL/MaterialLaw/ModellingHypothesis.hxx}{TFEL/\-Material\-Law/\-Modelling\-Hypo\-thesis\-.hxx}
-%définit une structure
-%\tfelb{ModellingHypothesis}{Modelling\-Hypo\-thesis}. Dans cette
-%structure, un objet de type énumération nommé
-%\tfelb{ModellingHypothesis::Hypothesis}{Hypo\-thesis} définit les
-%différentes hypothèses de modélisation ajourd'hui supportées~:
-%\begin{itemize}
-%  \item \texttt{AXISYMETRICAL\-GENERALISED\-PLANE\-STRAIN} qui désigne
-%  une modélisation \(1D\) axisymétrique plan généralisée. Dans ce cas,
-%  le tenseur des contraintes a \(3\) composantes et est représenté par
-%  le vecteur suivant~:
-%  \begin{equation}
-%    \label{eq:tsigma} \tsigma = \left(
-%    \begin{array}{c}
-%      \sigma_{rr} \\
-%      \sigma_{zz} \\
-%      \sigma_{\theta\theta} \\
-%    \end{array}
-%    \right)
-%  \end{equation}
-%  \item \texttt{AXI\-SYMETRICAL} qui désigne une modélisation \(2D\)
-%  axisymétrique. Dans ce cas, le tenseur des contraintes a \(4\)
-%  composantes et est représenté par le vecteur suivant~:
-%  \begin{equation}
-%    \label{eq:tsigma} \tsigma = \left(
-%    \begin{array}{c}
-%      \sigma_{rr} \\
-%      \sigma_{zz} \\
-%      \sigma_{\theta\theta} \\
-%      \sqrt{2}\sigma_{rz} \\
-%    \end{array}
-%    \right)
-%  \end{equation}
-%  \item \texttt{PLANE\-STRESS}, \texttt{PLANE\-STRAIN} et
-%  \texttt{GENERALISED\-PLANE\-STRAIN} qui désigne différentes
-%  modélisations \(2D\) qui se distinguent par le traitement de la
-%  direction axiale. Dans ces cas, le tenseur des contraintes a \(4\)
-%  composantes et est représenté par le vecteur suivant~:
-%  \begin{equation}
-%    \label{eq:tsigma} \tsigma = \left(
-%    \begin{array}{c}
-%      \sigma_{xx} \\
-%      \sigma_{yy} \\
-%      \sigma_{zz} \\
-%      \sqrt{2}\sigma_{xy} \\
-%    \end{array}
-%    \right)
-%  \end{equation}
-%  \item \texttt{TRIDIMENSIONAL} qui désigne la modélisation la plus
-%  générale. Dans ce cas, le tenseur des contraintes a \(6\) composantes
-%  est représenté par le vecteur suivant~:
-%  \begin{equation}
-%    \label{eq:tsigma} \tsigma = \left(
-%    \begin{array}{c}
-%      \sigma_{xx} \\
-%      \sigma_{yy} \\
-%      \sigma_{zz} \\
-%      \sqrt{2}\sigma_{xy} \\
-%      \sqrt{2}\sigma_{xz} \\
-%      \sqrt{2}\sigma_{yz} \\
-%    \end{array}
-%    \right)
-%  \end{equation}
-%\end{itemize}
-%
 %
 \subsection{Interface aux lois de comportement}
 \label{sec:behaviours:interface}

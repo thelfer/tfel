@@ -96,6 +96,7 @@ namespace mfront{
   }
 
   SupportedTypes::SupportedTypes()
+    : areDynamicallyAllocatedVectorsAllowed_(true)
   {
     this->registerTypes();
   }
@@ -209,6 +210,18 @@ namespace mfront{
     return currentOffset;
   } // end of SupportedTypes::writeVariableInitializersInBehaviourDataConstructorI
 
+  bool
+  SupportedTypes::useDynamicallyAllocatedVector(const unsigned short s) const
+  {
+    return (s>=SupportedTypes::ArraySizeLimit)&&(this->areDynamicallyAllocatedVectorsAllowed());
+  } // end of SupportedTypes::useDynamicallyAllocatedVector
+
+  bool
+  SupportedTypes::areDynamicallyAllocatedVectorsAllowed(void) const
+  {
+    return this->areDynamicallyAllocatedVectorsAllowed_;
+  } // end of SupportedTypes::areDynamicallyAllocatedVectorsAllowed
+
   SupportedTypes::TypeSize
   SupportedTypes::writeVariableInitializersInBehaviourDataConstructorII(std::ostream& f,
 									const VarContainer& v,
@@ -227,26 +240,7 @@ namespace mfront{
 	} else {
 	  const SupportedTypes::TypeFlag flag = this->getTypeFlag(p->type);
 	  const string n = prefix+p->name+suffix;
-	  if(p->arraySize<SupportedTypes::ArraySizeLimit){
-	    for(int i=0;i!=p->arraySize;++i){
-	      switch(flag){
-	      case SupportedTypes::Scalar : 
-		f << n << "[" << i << "] = "+src+"[" 
-		  << currentOffset << "];\n";  
-		break;
-	      case SupportedTypes::Stensor :
-		f << n << "["<< i << "].import(&"+src+"[" 
-		  << currentOffset << "]);\n";  
-		break;
-	      default : 
-		string msg("SupportedTypes::");
-		msg += "writeVariableInitializersInBehaviourDataConstructorII : ";
-		msg += "internal error, tag unsupported";
-		throw(runtime_error(msg));
-	      }
-	      currentOffset+=this->getTypeSize(p->type,1u);
-	    }
-	  } else {
+	  if(this->useDynamicallyAllocatedVector(p->arraySize)){
 	    f << n << ".resize(" << p->arraySize << ");" << endl;
 	    f << "for(unsigned short idx=0;idx!=" << p->arraySize << ";++idx){" << endl;
 	    switch(flag){
@@ -266,6 +260,25 @@ namespace mfront{
 	    }
 	    f << "}" << endl;
 	    currentOffset+=this->getTypeSize(p->type,p->arraySize);
+	  } else {
+	    for(int i=0;i!=p->arraySize;++i){
+	      switch(flag){
+	      case SupportedTypes::Scalar : 
+		f << n << "[" << i << "] = "+src+"[" 
+		  << currentOffset << "];\n";  
+		break;
+	      case SupportedTypes::Stensor :
+		f << n << "["<< i << "].import(&"+src+"[" 
+		  << currentOffset << "]);\n";  
+		break;
+	      default : 
+		string msg("SupportedTypes::");
+		msg += "writeVariableInitializersInBehaviourDataConstructorII : ";
+		msg += "internal error, tag unsupported";
+		throw(runtime_error(msg));
+	      }
+	      currentOffset+=this->getTypeSize(p->type,1u);
+	    }
 	  }
 	}
       }
@@ -288,10 +301,10 @@ namespace mfront{
 	f << ",\n";
 	switch(flag){
 	case SupportedTypes::Scalar : 
-	  if(p->arraySize<SupportedTypes::ArraySizeLimit){
-	    f << "d" << n << "(" << t <<"(0))";
-	  } else {
+	  if(this->useDynamicallyAllocatedVector(p->arraySize)){
 	    f << "d" << n << "(" << p->arraySize << "," << t <<"(0))";
+	  } else {
+	    f << "d" << n << "(" << t <<"(0))";
 	  }
 	  break;
 	case SupportedTypes::Stensor :
@@ -300,13 +313,13 @@ namespace mfront{
 	      << "(typename tfel::math::StensorTraits<" 
 	      << t << ">::NumType(0))";
 	  } else {
-	    if(p->arraySize<SupportedTypes::ArraySizeLimit){
+	    if(this->useDynamicallyAllocatedVector(p->arraySize)){
 	      f << "d" << n 
-		<< "(" << t << "(typename tfel::math::StensorTraits<" 
+		<< "(" << p->arraySize << "," << t << "(typename tfel::math::StensorTraits<" 
 		<< t << ">::NumType(0)))";
 	    } else {
 	      f << "d" << n 
-		<< "(" << p->arraySize << "," << t << "(typename tfel::math::StensorTraits<" 
+		<< "(" << t << "(typename tfel::math::StensorTraits<" 
 		<< t << ">::NumType(0)))";
 	    }
 	  }
@@ -399,7 +412,33 @@ namespace mfront{
 	  }
 	  currentOffset+=this->getTypeSize(p->type,p->arraySize);
 	} else {
-	  if(p->arraySize<SupportedTypes::ArraySizeLimit){
+	  if(this->useDynamicallyAllocatedVector(p->arraySize)){
+	    f << "for(unsigned short idx=0;idx!=" << p->arraySize << ";++idx){" << endl;
+	    switch(flag){
+	    case SupportedTypes::Scalar : 
+	      if(useQt){
+		f << dest << "[" 
+		  << currentOffset << "+idx] = common_cast(this->"
+		  << p->name << "[idx]);\n"; 
+	      } else {
+		f << dest << "[" 
+		  << currentOffset << "+idx] = this->"
+		  << p->name << "[idx];\n"; 
+	      } 
+	      break;
+	    case SupportedTypes::Stensor :
+	      f << "this->" << p->name
+		<< "[idx].write(&" << dest << "[" 
+		<< currentOffset << "+idx*StensorSize]);\n";  
+	      break;
+	    default :
+	      string msg("SupportedTypes::exportResults : ");
+	      msg += "internal error, tag unsupported";
+	      throw(runtime_error(msg));
+	    }
+	    f << "}" << endl;
+	    currentOffset+=this->getTypeSize(p->type,p->arraySize);
+	  } else {
 	    for(unsigned short i=0;i!=p->arraySize;++i){
 	      switch(flag){
 	      case SupportedTypes::Scalar : 
@@ -426,32 +465,6 @@ namespace mfront{
 	      }
 	      currentOffset+=this->getTypeSize(p->type,1u);
 	    }
-	  } else {
-	    f << "for(unsigned short idx=0;idx!=" << p->arraySize << ";++idx){" << endl;
-	    switch(flag){
-	    case SupportedTypes::Scalar : 
-	      if(useQt){
-		f << dest << "[" 
-		  << currentOffset << "+idx] = common_cast(this->"
-		  << p->name << "[idx]);\n"; 
-	      } else {
-		f << dest << "[" 
-		  << currentOffset << "+idx] = this->"
-		  << p->name << "[idx];\n"; 
-	      } 
-	      break;
-	    case SupportedTypes::Stensor :
-	      f << "this->" << p->name
-		<< "[idx].write(&" << dest << "[" 
-		<< currentOffset << "+idx*StensorSize]);\n";  
-	      break;
-	    default :
-	      string msg("SupportedTypes::exportResults : ");
-	      msg += "internal error, tag unsupported";
-	      throw(runtime_error(msg));
-	    }
-	    f << "}" << endl;
-	    currentOffset+=this->getTypeSize(p->type,p->arraySize);
 	  }
 	}
       }
@@ -480,11 +493,11 @@ namespace mfront{
       if(p->arraySize==1u){
 	f << t << " "  << n << ";\n";  
       } else {
-	if(p->arraySize<SupportedTypes::ArraySizeLimit){
+	if(this->useDynamicallyAllocatedVector(p->arraySize)){
+	  f << "tfel::math::vector<" << t << " > "  << n << ";\n";
+	} else {
 	  f << "tfel::math::tvector<" << p->arraySize 
 	    << ", " << t << " > "  << n << ";\n";
-	} else {
-	  f << "tfel::math::vector<" << t << " > "  << n << ";\n";
 	}
       }
     }

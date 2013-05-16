@@ -70,7 +70,7 @@ namespace mfront{
     for(ps=this->coefsHolder.begin();
 	(ps!=this->coefsHolder.end())&&(!(b1&&b2));++ps){
       if(ps->arraySize>1){
-	if(ps->arraySize>=SupportedTypes::ArraySizeLimit){
+	if(this->useDynamicallyAllocatedVector(ps->arraySize)){
 	  b2 = true;
 	} else {
 	  b1 = true;
@@ -80,7 +80,7 @@ namespace mfront{
     for(ps=this->stateVarsHolder.begin();
 	(ps!=this->stateVarsHolder.end())&&(!(b1&&b2));++ps){
       if(ps->arraySize>1){
-	if(ps->arraySize>=SupportedTypes::ArraySizeLimit){
+	if(this->useDynamicallyAllocatedVector(ps->arraySize)){
 	  b2 = true;
 	} else {
 	  b1 = true;
@@ -90,7 +90,7 @@ namespace mfront{
     for(ps=this->auxiliaryStateVarsHolder.begin();
 	(ps!=this->auxiliaryStateVarsHolder.end())&&(!(b1&&b2));++ps){
       if(ps->arraySize>1){
-	if(ps->arraySize>=SupportedTypes::ArraySizeLimit){
+	if(this->useDynamicallyAllocatedVector(ps->arraySize)){
 	  b2 = true;
 	} else {
 	  b1 = true;
@@ -100,7 +100,7 @@ namespace mfront{
     for(ps=this->localVarsHolder.begin();
 	(ps!=this->localVarsHolder.end())&&(!(b1&&b2));++ps){
       if(ps->arraySize>1){
-	if(ps->arraySize>=SupportedTypes::ArraySizeLimit){
+	if(this->useDynamicallyAllocatedVector(ps->arraySize)){
 	  b2 = true;
 	} else {
 	  b1 = true;
@@ -2284,7 +2284,7 @@ namespace mfront{
     VarContainer::const_iterator p;
     this->checkBehaviourFile();
     for(p=this->localVarsHolder.begin();p!=this->localVarsHolder.end();++p){
-      if(p->arraySize>=SupportedTypes::ArraySizeLimit){
+      if(this->useDynamicallyAllocatedVector(p->arraySize)){
 	this->behaviourFile << "this->" << p->name << ".resize(" << p->arraySize << ");" << endl;
       }
     }  

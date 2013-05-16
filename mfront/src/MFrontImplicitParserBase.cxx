@@ -25,6 +25,9 @@ namespace mfront{
       useAcceleration(false)
   {
     using namespace std;
+    // dynamically allocated vectors are not yet allowed in implicit
+    // parsers
+    this->areDynamicallyAllocatedVectorsAllowed_ = false;
     // parameters
     this->defineSmallStrainInputVariables();
     this->registerVariable("theta");
@@ -2038,15 +2041,15 @@ namespace mfront{
   {
     using namespace std;
     using namespace tfel::utilities;
-    VarContainer::const_iterator p;
+    // VarContainer::const_iterator p;
+    // for(p=this->stateVarsHolder.begin();p!=this->stateVarsHolder.end();++p){
+    //   if(p->arraySize>=SupportedTypes::ArraySizeLimit){
+    // 	string msg("MFrontImplicitParserBase::endsInputFileProcessing : ");
+    // 	msg += "array size greater than '"+toString(SupportedTypes::ArraySizeLimit)+"' are not supported";	
+    // 	throw(runtime_error(msg));
+    //   }
+    // }
     MFrontBehaviourParserCommon::endsInputFileProcessing();
-    for(p=this->stateVarsHolder.begin();p!=this->stateVarsHolder.end();++p){
-      if(p->arraySize>=SupportedTypes::ArraySizeLimit){
-	string msg("MFrontImplicitParserBase::endsInputFileProcessing : ");
-	msg += "array size greater than '"+toString(SupportedTypes::ArraySizeLimit)+"' are not supported";	
-	throw(runtime_error(msg));
-      }
-    }
     if(this->integrator.empty()){
       string msg("MFrontImplicitParserBase::endsInputFileProcessing : ");
       msg += "definining the @Integrator block is required";

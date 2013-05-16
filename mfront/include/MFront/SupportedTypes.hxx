@@ -78,6 +78,19 @@ namespace mfront
       getTimeDerivativeType(const std::string&) const;
 
     /*!
+     * \return true of the parser shall declare a dynamically
+     * allocated vector for the given array size
+     */
+    bool
+    useDynamicallyAllocatedVector(const unsigned short) const;
+
+    /*!
+     * \return true if dynamically allocated vectors are allowed
+     */
+    bool
+    areDynamicallyAllocatedVectorsAllowed(void) const;
+
+    /*!
      * write the variables declaration
      * \param[out] f                 : output file
      * \param[in]  v                 : variables to be declared
@@ -175,6 +188,15 @@ namespace mfront
 			    const SupportedTypes::TypeSize&);
     
     virtual ~SupportedTypes();
+
+  protected:
+
+    /*!
+     * Support for dynamically allocated vectors is not allowed in all
+     * parsers. Parsers may change this value to disable the use of
+     * dynamically allocated vectors
+     */
+    bool areDynamicallyAllocatedVectorsAllowed_;
 
   private:
     

@@ -448,7 +448,7 @@ namespace mfront{
       currentVarName = p->name + "_";
       this->registerVariable(currentVarName);
       this->localVarsHolder.push_back(VarHandler(p->type,currentVarName,p->arraySize,0u));
-      if(p->arraySize>=SupportedTypes::ArraySizeLimit){
+      if(this->useDynamicallyAllocatedVector(p->arraySize)){
 	parserInitLocalVars += "this->"+currentVarName +".resize("+toString(p->arraySize)+");\n";
       }
       parserInitLocalVars += "this->" +currentVarName + " = this->" + p->name + ";\n";
@@ -470,7 +470,7 @@ namespace mfront{
       currentVarName = p->name + "_";
       this->registerVariable(currentVarName);
       this->localVarsHolder.push_back(VarHandler(p->type,currentVarName,p->arraySize,0u));
-      if(p->arraySize>=SupportedTypes::ArraySizeLimit){
+      if(this->useDynamicallyAllocatedVector(p->arraySize)){
 	parserInitLocalVars += "this->"+currentVarName+".resize("+toString(p->arraySize)+");\n";
       }
       parserInitLocalVars += "this->" + currentVarName + " = this->" + p->name + ";\n";
@@ -891,7 +891,27 @@ namespace mfront{
 	  }
 	  this->behaviourFile << ";"  << endl;
 	} else {
-	  if(p->arraySize<SupportedTypes::ArraySizeLimit){
+	  if(this->useDynamicallyAllocatedVector(p->arraySize)){
+	    if(p==this->stateVarsHolder.begin()){
+	      this->behaviourFile << "error  = Type(0);" << endl;
+	    }
+	    this->behaviourFile << "for(unsigned short idx=0;idx!=" << p->arraySize << ";++idx){"  << endl;
+	    this->behaviourFile << "error += ";
+	    if(enf.find(p->name)!=enf.end()){
+	      this->behaviourFile << "(";
+	    }
+	    this->behaviourFile << "tfel::math::abs(";
+	    this->behaviourFile << "cste1_360*(this->d" << p->name       << "_K1[idx])"
+				<< "-cste128_4275*(this->d" << p->name   << "_K3[idx])"
+				<< "-cste2197_75240*(this->d" << p->name << "_K4[idx])"
+				<< "+cste1_50*(this->d" << p->name       << "_K5[idx])"
+				<< "+cste2_55*(this->d" << p->name       << "_K6[idx]))";
+	    if(enf.find(p->name)!=enf.end()){
+	      this->behaviourFile << ")/(" << enf.find(p->name)->second << ")";
+	    }
+	    this->behaviourFile << ";"  << endl;
+	    this->behaviourFile << "}" << endl;
+	  } else {
 	    for(unsigned short i=0;i!=p->arraySize;++i){
 	      if((p==this->stateVarsHolder.begin())&&(i==0)){
 		this->behaviourFile << "error  = ";
@@ -912,26 +932,6 @@ namespace mfront{
 	      }
 	      this->behaviourFile << ";"  << endl;
 	    }
-	  } else {
-	    if(p==this->stateVarsHolder.begin()){
-	      this->behaviourFile << "error  = Type(0);" << endl;
-	    }
-	    this->behaviourFile << "for(unsigned short idx=0;idx!=" << p->arraySize << ";++idx){"  << endl;
-	    this->behaviourFile << "error += ";
-	    if(enf.find(p->name)!=enf.end()){
-	      this->behaviourFile << "(";
-	    }
-	    this->behaviourFile << "tfel::math::abs(";
-	    this->behaviourFile << "cste1_360*(this->d" << p->name       << "_K1[idx])"
-				<< "-cste128_4275*(this->d" << p->name   << "_K3[idx])"
-				<< "-cste2197_75240*(this->d" << p->name << "_K4[idx])"
-				<< "+cste1_50*(this->d" << p->name       << "_K5[idx])"
-				<< "+cste2_55*(this->d" << p->name       << "_K6[idx]))";
-	    if(enf.find(p->name)!=enf.end()){
-	      this->behaviourFile << ")/(" << enf.find(p->name)->second << ")";
-	    }
-	    this->behaviourFile << ";"  << endl;
-	    this->behaviourFile << "}" << endl;
 	  }
 	}
       }
@@ -955,24 +955,7 @@ namespace mfront{
 	  }
 	  this->behaviourFile << ");"  << endl;
 	} else {
-	  if(p->arraySize<SupportedTypes::ArraySizeLimit){
-	    for(unsigned short i=0;i!=p->arraySize;++i){
-	      this->behaviourFile << "error  = std::max(error,";
-	      if(enf.find(p->name)!=enf.end()){
-		this->behaviourFile << "(";
-	      }
-	      this->behaviourFile << "tfel::math::abs(";
-	      this->behaviourFile << "cste1_360*(this->d" << p->name       << "_K1[" << i << "])"
-				  << "-cste128_4275*(this->d" << p->name   << "_K3[" << i << "])"
-				  << "-cste2197_75240*(this->d" << p->name << "_K4[" << i << "])"
-				  << "+cste1_50*(this->d" << p->name       << "_K5[" << i << "])"
-				  << "+cste2_55*(this->d" << p->name       << "_K6[" << i << "]))";
-	      if(enf.find(p->name)!=enf.end()){
-		this->behaviourFile << ")/(" << enf.find(p->name)->second << ")";
-	      }
-	      this->behaviourFile << ");"  << endl;
-	    }
-	  } else {
+	  if(this->useDynamicallyAllocatedVector(p->arraySize)){
 	    this->behaviourFile << "for(unsigned short idx=0;idx!=" << p->arraySize << ";++idx){"  << endl;
 	    this->behaviourFile << "error = std::max(error,";
 	    if(enf.find(p->name)!=enf.end()){
@@ -989,6 +972,23 @@ namespace mfront{
 	    }
 	    this->behaviourFile << ");"  << endl;
 	    this->behaviourFile << "}" << endl;
+	  } else {
+	    for(unsigned short i=0;i!=p->arraySize;++i){
+	      this->behaviourFile << "error  = std::max(error,";
+	      if(enf.find(p->name)!=enf.end()){
+		this->behaviourFile << "(";
+	      }
+	      this->behaviourFile << "tfel::math::abs(";
+	      this->behaviourFile << "cste1_360*(this->d" << p->name       << "_K1[" << i << "])"
+				  << "-cste128_4275*(this->d" << p->name   << "_K3[" << i << "])"
+				  << "-cste2197_75240*(this->d" << p->name << "_K4[" << i << "])"
+				  << "+cste1_50*(this->d" << p->name       << "_K5[" << i << "])"
+				  << "+cste2_55*(this->d" << p->name       << "_K6[" << i << "]))";
+	      if(enf.find(p->name)!=enf.end()){
+		this->behaviourFile << ")/(" << enf.find(p->name)->second << ")";
+	      }
+	      this->behaviourFile << ");"  << endl;
+	    }
 	  }
 	}
       }
@@ -1598,7 +1598,25 @@ namespace mfront{
 	  }
 	  this->behaviourFile << ";" << endl;
 	} else {
-	  if(p->arraySize<SupportedTypes::ArraySizeLimit){
+	  if(this->useDynamicallyAllocatedVector(p->arraySize)){
+	    if(p==this->stateVarsHolder.begin()){
+	      this->behaviourFile << "error  = Type(0);" << endl;
+	    }
+	    this->behaviourFile << "for(unsigned short idx=0;idx!=" <<p->arraySize << ";++idx){" << endl;
+	    this->behaviourFile << "error += tfel::math::abs(";
+	    if(enf.find(p->name)!=enf.end()){
+	      this->behaviourFile << "(";
+	    }
+	    this->behaviourFile << "cste1_6*(this->d" << p->name << "_K1[idx]+"
+				<< "this->d" << p->name          << "_K4[idx]-"
+				<< "this->d" << p->name          << "_K2[idx]-"
+				<< "this->d" << p->name          << "_K3[idx]))";
+	    if(enf.find(p->name)!=enf.end()){
+	      this->behaviourFile << ")/(" << enf.find(p->name)->second << ")";
+	    }
+	    this->behaviourFile << ";" << endl;
+	    this->behaviourFile << "}" << endl;
+	  } else {
 	    for(unsigned short i=0;i!=p->arraySize;++i){
 	      if((p==this->stateVarsHolder.begin())&&(i==0)){
 		this->behaviourFile << "error  = ";
@@ -1618,24 +1636,6 @@ namespace mfront{
 	      }
 	      this->behaviourFile << ";" << endl;
 	    }
-	  } else {
-	    if(p==this->stateVarsHolder.begin()){
-	      this->behaviourFile << "error  = Type(0);" << endl;
-	    }
-	    this->behaviourFile << "for(unsigned short idx=0;idx!=" <<p->arraySize << ";++idx){" << endl;
-	    this->behaviourFile << "error += tfel::math::abs(";
-	    if(enf.find(p->name)!=enf.end()){
-	      this->behaviourFile << "(";
-	    }
-	    this->behaviourFile << "cste1_6*(this->d" << p->name << "_K1[idx]+"
-				<< "this->d" << p->name          << "_K4[idx]-"
-				<< "this->d" << p->name          << "_K2[idx]-"
-				<< "this->d" << p->name          << "_K3[idx]))";
-	    if(enf.find(p->name)!=enf.end()){
-	      this->behaviourFile << ")/(" << enf.find(p->name)->second << ")";
-	    }
-	    this->behaviourFile << ";" << endl;
-	    this->behaviourFile << "}" << endl;
 	  }
 	}
       }
@@ -1657,22 +1657,7 @@ namespace mfront{
 	  }
 	  this->behaviourFile << ");" << endl;
 	} else {
-	  if(p->arraySize<SupportedTypes::ArraySizeLimit){
-	    for(unsigned short i=0;i!=p->arraySize;++i){
-	      this->behaviourFile << "error = std::max(error,tfel::math::abs(";
-	      if(enf.find(p->name)!=enf.end()){
-		this->behaviourFile << "(";
-	      }
-	      this->behaviourFile << "cste1_6*(this->d" << p->name << "_K1[" << i << "]+"
-				  << "this->d" << p->name          << "_K4[" << i << "]-"
-				  << "this->d" << p->name          << "_K2[" << i << "]-"
-				  << "this->d" << p->name          << "_K3[" << i << "]))";
-	      if(enf.find(p->name)!=enf.end()){
-		this->behaviourFile << ")/(" << enf.find(p->name)->second << ")";
-	      }
-	      this->behaviourFile << ");" << endl;
-	    }
-	  } else {
+	  if(this->useDynamicallyAllocatedVector(p->arraySize)){
 	    this->behaviourFile << "for(unsigned short idx=0;idx!=" <<p->arraySize << ";++idx){" << endl;
 	    this->behaviourFile << "error = std::max(error,tfel::math::abs(";
 	    if(enf.find(p->name)!=enf.end()){
@@ -1687,6 +1672,21 @@ namespace mfront{
 	    }
 	    this->behaviourFile << ");" << endl;
 	    this->behaviourFile << "}" << endl;
+	  } else {
+	    for(unsigned short i=0;i!=p->arraySize;++i){
+	      this->behaviourFile << "error = std::max(error,tfel::math::abs(";
+	      if(enf.find(p->name)!=enf.end()){
+		this->behaviourFile << "(";
+	      }
+	      this->behaviourFile << "cste1_6*(this->d" << p->name << "_K1[" << i << "]+"
+				  << "this->d" << p->name          << "_K4[" << i << "]-"
+				  << "this->d" << p->name          << "_K2[" << i << "]-"
+				  << "this->d" << p->name          << "_K3[" << i << "]))";
+	      if(enf.find(p->name)!=enf.end()){
+		this->behaviourFile << ")/(" << enf.find(p->name)->second << ")";
+	      }
+	      this->behaviourFile << ");" << endl;
+	    }
 	  }
 	}
       }
