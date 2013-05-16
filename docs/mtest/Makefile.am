@@ -58,7 +58,6 @@ EXTRA_DIST=CMakeLists.txt                         \
 	   images/strainhardeningcreep.tplot	  \
 	   images/tubeaxi.eps			  \
 	   images/chaboche2-comp.eps		  \
-	   images/chaboche2-comp.tex		  \
 	   images/chaboche2-mtest.tex		  \
 	   images/chaboche2-mfront.tex		  \
 	   images/chaboche2.eps			  \
