@@ -10,7 +10,6 @@
 
 #include"TFEL/Config/TFELConfig.hxx"
 #include"TFEL/Math/tvector.hxx"
-#include"TFEL/Math/tmatrix.hxx"
 #include"TFEL/Math/stensor.hxx"
 
 namespace tfel
@@ -21,15 +20,17 @@ namespace tfel
 
     /*!
      * An helper class which actually does the computation of the
-     * tensor of directional sense.
-     * Those tensors are computed as matrices.
+     * tensor of directional sense for CFC cristals.
      */
+    template<typename NumType>
     struct MetallicCFCSlidingSystems
     {
-      //! number of gliding systems
-      static const unsigned short Ngs = 12;
+      //! a simple alias
+      typedef NumType real;
+      //! number of sliding systems
+      static const unsigned short Nss = 12;
       //! tensor of directional sense
-      tfel::math::tvector<Ngs,tfel::math::stensor<3u,double> > mus;
+      tfel::math::tvector<Nss,tfel::math::stensor<3u,real> > mus;
       //! return the uniq instance of the class
       static const MetallicCFCSlidingSystems&
       getSlidingSystems(void);
@@ -49,6 +50,8 @@ namespace tfel
   } // end of namespace material
 
 } // end of namespace tfel
+
+#include"TFEL/Material/MetallicCFCSlidingSystems.ixx"
 
 #endif /* _LIB_TFEL_MATERIAL_METALLICCFCSLIDINGSYSTEMS_H */
 

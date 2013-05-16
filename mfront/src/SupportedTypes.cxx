@@ -101,6 +101,12 @@ namespace mfront{
     this->registerTypes();
   }
 
+  void
+  SupportedTypes::reset(void)
+  {
+    this->areDynamicallyAllocatedVectorsAllowed_ = true;
+  } // end of SupportedTypes::reset
+
   SupportedTypes::TypeFlag
   SupportedTypes::getTypeFlag(const std::string& name) const
   {

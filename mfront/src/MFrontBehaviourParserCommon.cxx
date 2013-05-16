@@ -155,6 +155,9 @@ namespace mfront{
   MFrontBehaviourParserCommon::endsInputFileProcessing()
   {
     using namespace std;
+    typedef MFrontBehaviourInterfaceFactory MBIF;
+    MBIF& mbif = MBIF::getMFrontBehaviourInterfaceFactory();
+    vector<string>::const_iterator i;
     if(this->hypotheses.empty()){
       this->setDefaultHypotheses();
     }
@@ -163,6 +166,11 @@ namespace mfront{
 		 "no modelling hypothesis defined by the user and "
 		 "no default modelling hypothesis");
       throw(runtime_error(msg));
+    }
+    for(i  = this->interfaces.begin();
+	i != this->interfaces.end();++i){
+      MFrontBehaviourVirtualInterface *interface = mbif.getInterfacePtr(*i);
+      interface->allowDynamicallyAllocatedArrays(this->areDynamicallyAllocatedVectorsAllowed());
     }
   } // end of MFrontBehaviourParserCommon::endsInputFileProcessing
 

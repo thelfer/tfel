@@ -1,11 +1,9 @@
 /*! 
  * \file  MetallicCFCGenericSlidingSystemsInteractionMatrix.cxx
  * \brief
- * \author Helfer Thomas
+ * \author Helfer Thomas/Proix Jean-Michel
  * \brief 25 mars 2013
  */
-
-#include"TFEL/Material/MetallicCFCGenericSlidingSystemsInteractionMatrix.hxx"
 
 namespace tfel
 {
@@ -13,15 +11,16 @@ namespace tfel
   namespace material
   {
 
-    MetallicCFCGenericSlidingSystemsInteractionMatrix::MetallicCFCGenericSlidingSystemsInteractionMatrix(const double h1,
-													 const double h2,
-													 const double h3,
-													 const double h4,
-													 const double h5,
-													 const double h6)
+    template<typename NumType>
+    MetallicCFCGenericSlidingSystemsInteractionMatrix<NumType>::MetallicCFCGenericSlidingSystemsInteractionMatrix(const NumType h1,
+														  const NumType h2,
+														  const NumType h3,
+														  const NumType h4,
+														  const NumType h5,
+														  const NumType h6)
     {
       using namespace tfel::math;
-      for(tmatrix<12u,12u,double>::size_type i=0;i!=12;++i){
+      for(typename tmatrix<12u,12u,real>::size_type i=0;i!=12;++i){
 	this->m(i,i)=h1;
       }
       this->m(1,0)=this->m(0,1)=h2;
@@ -92,13 +91,14 @@ namespace tfel
       this->m(11,10)=this->m(10,11)=h2;
     } // end of MetallicCFCGenericSlidingSystemsInteractionMatrix::MetallicCFCGenericSlidingSystemsInteractionMatrix
 
-    const tfel::math::tmatrix<12,12,double>&
-    MetallicCFCGenericSlidingSystemsInteractionMatrix::getInteractionMatrix(const double h1,
-									    const double h2,
-									    const double h3,
-									    const double h4,
-									    const double h5,
-									    const double h6)
+    template<typename NumType>
+    const tfel::math::tmatrix<12,12,NumType>&
+    MetallicCFCGenericSlidingSystemsInteractionMatrix<NumType>::getInteractionMatrix(const NumType h1,
+										     const NumType h2,
+										     const NumType h3,
+										     const NumType h4,
+										     const NumType h5,
+										     const NumType h6)
     {
       static MetallicCFCGenericSlidingSystemsInteractionMatrix s(h1,h2,h3,h4,h5,h6);
       return s.m;

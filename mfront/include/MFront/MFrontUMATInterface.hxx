@@ -42,6 +42,13 @@ namespace mfront{
     void setWarningMode(void);
 
     /*!
+     * set if dynamically allocated arrays are allowed
+     * \param[in] b : boolean
+     */
+    virtual void
+    allowDynamicallyAllocatedArrays(const bool);
+
+    /*!
      * \param const std::string&, library
      * \param const std::string&, material
      * \param const std::string&, class

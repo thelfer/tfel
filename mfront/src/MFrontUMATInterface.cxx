@@ -72,6 +72,7 @@ namespace mfront{
   void
   MFrontUMATInterface::reset(void)
   {
+    SupportedTypes::reset();
     this->finiteStrainStrategy = NONE;
     this->useTimeSubStepping   = false;
     this->maximumSubStepping   = 0u;
@@ -95,6 +96,12 @@ namespace mfront{
   {
     this->debugMode = true;
   }
+
+  void
+  MFrontUMATInterface::allowDynamicallyAllocatedArrays(const bool b)
+  {
+    this->areDynamicallyAllocatedVectorsAllowed_ = b;
+  } // end of MFrontUMATInterface::allowDynamicallyAllocatedArrays
 
   std::pair<bool,tfel::utilities::CxxTokenizer::TokensContainer::const_iterator>
   MFrontUMATInterface::treatKeyword(const std::string& key,

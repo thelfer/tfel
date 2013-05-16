@@ -35,6 +35,13 @@ namespace mfront{
     virtual void 
     setWarningMode() = 0;
 
+    /*!
+     * set if dynamically allocated arrays are allowed
+     * \param[in] b : boolean
+     */
+    virtual void
+    allowDynamicallyAllocatedArrays(const bool) = 0;
+
     virtual std::pair<bool,tfel::utilities::CxxTokenizer::TokensContainer::const_iterator>
     treatKeyword(const std::string&,
 		 tfel::utilities::CxxTokenizer::TokensContainer::const_iterator,

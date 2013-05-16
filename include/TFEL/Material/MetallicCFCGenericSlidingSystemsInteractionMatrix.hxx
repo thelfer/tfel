@@ -1,7 +1,7 @@
 /*! 
  * \file  MetallicCFCGenericSlidingSystemsInteractionMatrix.hxx
  * \brief
- * \author Helfer Thomas
+ * \author Helfer Thomas/Proix Jean-Michel
  * \brief 25 mars 2013
  */
 
@@ -23,8 +23,11 @@ namespace tfel
      * called if the interaction coefficients may evolve with time~:
      * the matrix is only compute at the first call.
      */
-    struct TFELMATERIALSINGLECRISTAL_VISIBILITY_EXPORT MetallicCFCGenericSlidingSystemsInteractionMatrix
+    template<typename NumType>
+    struct MetallicCFCGenericSlidingSystemsInteractionMatrix
     {
+      //! a simple alias
+      typedef NumType real;
       /*!
        * \return the interaction matrix
        * \param[in] h1 : first  interaction coefficient
@@ -36,13 +39,13 @@ namespace tfel
        * The interaction matrix is the following :
        *
        */
-      static const tfel::math::tmatrix<12,12,double>&
-      getInteractionMatrix(const double,
-			   const double,
-			   const double,
-			   const double,
-			   const double,
-			   const double);
+      static const tfel::math::tmatrix<12,12,real>&
+      getInteractionMatrix(const real,
+			   const real,
+			   const real,
+			   const real,
+			   const real,
+			   const real);
     private:
       /*!
        * constructor (disabled)
@@ -56,12 +59,12 @@ namespace tfel
        * \param[in] h5 : fifth  interaction coefficient
        * \param[in] h6 : sixth  interaction coefficient
        */
-      MetallicCFCGenericSlidingSystemsInteractionMatrix(const double,
-							const double,
-							const double,
-							const double,
-							const double,
-							const double);
+      MetallicCFCGenericSlidingSystemsInteractionMatrix(const real,
+							const real,
+							const real,
+							const real,
+							const real,
+							const real);
       /*!
        * constructor (disabled)
        */
@@ -72,12 +75,14 @@ namespace tfel
       MetallicCFCGenericSlidingSystemsInteractionMatrix&
       operator=(const MetallicCFCGenericSlidingSystemsInteractionMatrix&);
       //! interaction matrix
-      tfel::math::tmatrix<12,12,double> m;
+      tfel::math::tmatrix<12,12,real> m;
     };
 
   } // end of namespace material
 
 } // end of namespace tfel
+
+#include"TFEL/Material/MetallicCFCGenericSlidingSystemsInteractionMatrix.ixx"
 
 #endif /* _LIB_TFEL_MATERIAL_SINGLECRISTAL_METALLICCFCGENERICSLIDINGSYSTEMSINTERACTIONMATRIX_H */
 

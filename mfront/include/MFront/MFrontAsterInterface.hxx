@@ -29,11 +29,21 @@ namespace mfront{
     
     MFrontAsterInterface();
     
-    void setVerboseMode(void);
+    virtual void
+    setVerboseMode(void);
 
-    void setDebugMode(void);
+    virtual void
+    setDebugMode(void);
 
-    void setWarningMode(void);
+    virtual void
+    setWarningMode(void);
+
+    /*!
+     * set if dynamically allocated arrays are allowed
+     * \param[in] b : boolean
+     */
+    virtual void
+    allowDynamicallyAllocatedArrays(const bool);
 
     /*!
      * \param const std::string&, library

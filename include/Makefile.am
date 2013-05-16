@@ -34,7 +34,11 @@ nobase_include_HEADERS= TFEL/Macros.hxx                                         
 			TFEL/Material/DDIF2Base.ixx                                                   \
 			TFEL/Material/RambergOsgood.hxx                                               \
 			TFEL/Material/MetallicCFCSlidingSystems.hxx                                   \
+			TFEL/Material/MetallicCFCSlidingSystems.ixx                                   \
 			TFEL/Material/MetallicCFCGenericSlidingSystemsInteractionMatrix.hxx           \
+			TFEL/Material/MetallicCFCGenericSlidingSystemsInteractionMatrix.ixx           \
+			TFEL/Material/PolyCristalsSlidingSystems.hxx                                  \
+			TFEL/Material/PolyCristalsSlidingSystems.ixx                                  \
 			TFEL/Config/Internals/TFELTypesInternals.hxx	                              \
 			TFEL/Config/Internals/SpatialGradType.hxx	                              \
 			TFEL/Config/Internals/HeatFluxVectorType.hxx	                              \
@@ -274,6 +278,7 @@ nobase_include_HEADERS= TFEL/Macros.hxx                                         
 			TFEL/Math/General/ScalarObjectRandomAccessConstIteratorSpecialisation.hxx     \
 			TFEL/Math/General/FctObjectRandomAccessConstIterator.hxx	              \
 			TFEL/Math/General/ObjectObjectRandomAccessConstIteratorSpecialisation.hxx     \
+			TFEL/Math/General/RandomRotationMatrix.hxx                                    \
 			TFEL/Math/Quantity/qtOperations.ixx		                              \
 			TFEL/Math/Quantity/qtSamples.hxx		                              \
 			TFEL/Math/Quantity/qtSpecific.hxx		                              \

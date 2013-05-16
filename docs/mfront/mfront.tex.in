@@ -40,6 +40,9 @@
 \newcommand{\mfront}{\texttt{mfront}}
 \newcommand{\licos}{\texttt{licos}}
 \newcommand{\cyrano}{\texttt{cyrano}}
+\newcommand{\alcyone}{\texttt{alcyone}}
+\newcommand{\germinal}{\texttt{germinal}}
+\newcommand{\celaeno}{\texttt{celaeno}}
 \newcommand{\galileo}{\texttt{galileo}}
 \newcommand{\castem}{\texttt{Cast3M}}
 \newcommand{\gibiane}{\texttt{gibiane}}
@@ -129,9 +132,10 @@
 
   Couplé à la base de données \sirius{}, \mfront{} vise à garantir une
   gestion pérenne, robuste, efficace et évolutive des connaissances
-  matériau dans la plateforme \pleiades{}~\cite{michel09}. Il s'agit
-  d'un outil mature, qui se veut de qualité industrielle, et qui
-  intéresse différents départements du
+  matériau dans la plateforme
+  \pleiades{}~\cite{michel09,helfer10,helfer:opti:2011}. Il s'agit
+  d'un outil mature, qui se veut de qualité industrielle. Il intéresse
+  également différents départements du
   \cea{}~\cite{11:dec_semi,arrigo12:_notic_le2s} ainsi que ses
   partenaires, Areva~\cite{olagnon13:_analy} et
   ÉDF~\cite{proix:mfront:2013}.
@@ -146,11 +150,10 @@
   domaine pour lesquels il rassemble un important savoir-faire
   physique, numérique et informatique.
 
-  Nous y décrivons l'utilisation de \mfront{} et détaillons comment
-  écrire des propriétés matériau et des modèles. Les lois de
-  comportement mécaniques sont détaillées dans une note à
-  part~\cite{helfer:mfront:behaviours:2013}.
-}
+  Nous décrivons dans cette note l'utilisation de \mfront{} et
+  détaillons comment écrire des propriétés matériau et des
+  modèles. Les lois de comportement mécaniques sont détaillées dans
+  une note à part~\cite{helfer:mfront:behaviours:2013}.  }
 
 \makeindex{env}
 \makeindex{mkeys}
@@ -212,9 +215,14 @@ Les annexes traitent des questions suivantes~:
 \mfront{} est un générateur de code dédiés aux connaissances
 matériau~: partant d'un fichier contenant les informations physiques
 et numériques utiles, \mfront{} génère un ou plusieurs fichiers \cpp{}
-et peut éventuellement gérer leurs compilations. Pour différencier les
-différentes situations, plusieurs analyseurs syntaxiques sont
-disponibles.
+utilisables dans différents contextes logiciels, ce qui englobe des
+codes de calculs ou des langages de programmation. \mfront{} peut
+éventuellement gérer leurs compilations.
+
+Pour proposer une solution adaptée aux différentes situations,
+plusieurs analyseurs syntaxiques sont disponibles. Pour chaque
+analyseur, différentes interfaces sont disponibles qui permettent
+d'adapter le code généré au contexte logiciel cible.
 
 Nous commençons par présenter la structure du fichier de donnée et les
 directives communes à tous les analyseurs.
@@ -260,6 +268,15 @@ langage. Le retour d'expérience montre que l'écriture d'un fichier
 \mfront{} est accessible, dans les cas usuels, à des personnes n'ayant
 pas ou peu de compétences en développement informatique.
 
+\paragraph{Ordre des directives} L'ordre des directives n'est pas
+imposé. Il faut cependant souligner que \mfront{} analyse le fichier
+de manière séquentielle et n'autorisera pas qu'une variable soit
+utilisée avant d'avoir été déclarée.
+
+Par exemple, il est impossible de préciser la plage de validité en
+température d'une propriété de matériau avant de déclarer que la
+propriété dépend de la température.
+
 \paragraph{Commentaires} Les deux types de commentaires introduits par
 le langage C++ sont supportés~:
 \begin{itemize}
@@ -276,20 +293,81 @@ le langage C++ sont supportés~:
 Nous décrivons dans ce paragraphe différentes directives communes à
 l'ensemble des analyseurs.
 
-\paragraph{La directive \mkey{Parser}} La directive \mkey{Parser} permet
-de préciser l'analyseur utilisé. Cette directive est suivie du nom de
-l'analyseur à utiliser et d'un point virgule.
+\subsection{Directives générales}
+
+\paragraph{La directive \mkey{Parser}} La directive \mkey{Parser}
+permet de préciser l'analyseur utilisé. Cette directive est suivie du
+nom de l'analyseur à utiliser et d'un point virgule. La liste des
+analyseurs disponible est donnée au
+paragraphe~\ref{sec:mfront:parser}. Par défaut, l'analyseur {\tt
+  Default\-Parser} est utilisé.
 
 \paragraph{La directive \mkey{Material}} La directive \mkey{Material}
 précise le nom du matériau auquel se réfère la connaissance matériau. Ce
-mot clé est suivi du nom du matériau et d'un point virgule. Ce nom de
-matériau est généralement utilisé pour construire le nom des fonctions
-ou des classes générées, il est donc soumis à certaines restrictions~:
-un nom de matériau ne peut commencer par un chiffre et ne peut contenir
-que des lettres alphabétiques ou des chiffres. Le nom du matériau peut
-également être utilisé pour construire le nom de la librairie générée.
+mot clé est suivi du nom du matériau et d'un point virgule.
+
+Ce nom de matériau est généralement utilisé pour construire le nom des
+fonctions ou des classes générées, il est donc soumis à certaines
+restrictions~: un nom de matériau ne peut commencer par un chiffre et
+ne peut contenir que des lettres alphabétiques ou des chiffres. Le nom
+du matériau peut également être utilisé pour construire le nom de la
+librairie générée.
+
+Cette information est optionnelle. Elle est utilisée lors de
+l'insertion de fichiers \mfront{} dans la base de données \sirius{}.
+
+\paragraph{La directive \mkey{Library}} La directive spécifie le nom de
+la librairie générée.
 
 Cette information est optionnelle.
+
+\paragraph{La directive \mkey{Includes}} La directive \mkey{Includes}
+permet de déclarer des lignes de codes \cpp{} introduites en tête des
+fichiers générés. Ces lignes sont données dans un bloc commençant par
+une accolade ouvrante \texttt{\{} et se terminant par une accolade
+fermante \texttt{\}}.
+
+Le nom de cette directive est due au fait que ces instructions se
+résument généralement à une suite d'inclusions de fichiers d'entête par
+le mot clé \texttt{\#include} du préprocesseur \cpp{}.
+
+
+\begin{figure}[htbp]
+  \centering
+  \code{{\ttfamily \input{@abs_top_srcdir@/docs/mfront/mfront/Includes.tex}}}  
+  \caption{Exemple d'utilisation de la directive {\tt Includes}.}
+  \label{fig:mfront:Includes}
+\end{figure}
+
+La figure~\ref{fig:mfront:Includes} donne un exemple d'utilisation de la
+directive \mkey{Includes}.
+
+\paragraph{La directive \mkey{Link}} La directive \mkey{Link} est
+utilisée pour lier les librairies générées à des librairies externes.
+
+La directive \mkey{Link} est suivie d'une chaîne de caractère (entre
+doubles quotes) contenant des instructions à fournir à l'éditeurs de
+liens. L'utilisation des doubles quotes permet l'utilisation de
+caractères spéciaux.
+
+\begin{figure}[htbp]
+  \centering
+  \code{{\ttfamily \input{@abs_top_srcdir@/docs/mfront/mfront/Link.tex}}}  
+  \caption{Exemple d'utilisation de la directive {\tt Link}.}
+  \label{fig:mfront:Link}
+\end{figure}
+
+La figure~\ref{fig:mfront:Link} donne un exemple d'utilisation de la
+directive \mkey{Link}.
+
+\subsubsection{Directives informatives}
+
+Nous décrivons dans ce paragraphe trois directives optionnelles dont
+le but est uniquement informatif. Elles sont utilisées lors de
+l'insertion d'un fichier \mfront{} dans la base de données
+\sirius{}. Elles devraient également servir à terme lors de la
+génération automatiquement d'une documentation à partir d'un fichier
+\mfront{}.
 
 \paragraph{La directive \mkey{Description}} La directive
 \mkey{Description} permet de donner de documenter le fichier \mfront{}.
@@ -299,42 +377,13 @@ ouvrante \texttt{\{} et se terminant par une accolade fermante
 extraite la connaissance matériau traitée, les éventuelles adaptations
 faites et le cadre d'utilisation.
 
-Cette information est optionnelle.
-
 \paragraph{La directive \mkey{Author}} Le mot clé \mkey{Author} donne le
 nom de la personne qui a écrit le fichier \mfront{}. Ce mot clé est
 suivi du nom jusqu'à ce qu'un point virgule soit rencontré.
 
-Cette information est optionnelle.
-
 \paragraph{La directive \mkey{Date}} Le mot clé \mkey{Date} donne la
 date d'écriture du fichier \mfront{}. Ce mot clé est suivi de cette
 date jusqu'à ce qu'un point virgule soit rencontré.
-
-Cette information est optionnelle.
-
-\paragraph{La directive \mkey{Library}} La directive spécifie le nom de
-la librairie générée.
-
-Cette information est optionnelle.
-
-\paragraph{La directive \mkey{Includes}} La directive \mkey{Includes}
-permet de déclarer des lignes de codes \cpp{} introduites en tête des
-fichiers générés. Ces lignes sont donnés dans un bloc commençant par une
-accolade ouvrante \texttt{\{} et se terminant par une accolade fermante
-\texttt{\}}.
-
-Le nom de cette directive est due au fait que ces instructions se
-résument généralement à une suite d'inclusions de fichiers d'entête par
-le mot clé \texttt{\#include} du préprocesseur \cpp{}.
-
-\paragraph{La directive \mkey{Link}} La directive \mkey{Link} est
-utilisée pour lier les librairies générées à des librairies externes.
-
-La directive \mkey{Link} est suivie d'une chaîne de caractère (entre
-doubles quotes) contenant des instructions à fournir à l'éditeurs de
-liens. L'utilisation des doubles quotes permet l'utilisation de
-caractères spéciaux.
 
 \subsection{Analyseurs disponibles}
 \label{sec:mfront:parser}
@@ -943,16 +992,6 @@ défaut pour les propriétés matériaux sont~:
   \item l'interface \texttt{gnuplot} pour une visualisation des courbes
   d'évolution des propriétés matériau en fonction de leur paramètres~;
 \end{itemize}
-
-\paragraph{Autres interfaces} D'autres interfaces peuvent être ajoutées
-dynamiquement à \mfront{}. Pour cela, il suffit de définir une variable
-d'environnement nommée {\tt
-  MFRONT\textunderscore{}\-ADDITIONAL\textunderscore{}\-LIBRARIES} qui
-doit désigner une liste de librairies automatiquement chargées au
-démarrage\footnote{Ce mécanisme est utilisé par exemple par
-  l'architecture \pleiades{} pour générer l'interface {\tt pleiades} aux
-  propriétés matériau, interface qui évolue avec les versions de
-  l'architecture.}.
 
 \subsubsection{L'interface \texttt{c}}
 

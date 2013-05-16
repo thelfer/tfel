@@ -72,9 +72,10 @@ namespace mfront{
   void
   MFrontAsterInterface::reset(void)
   {
-    this->compareToNumericalTangentOperator  = false;
-    this->strainPerturbationValue            = 1.e-6;
-    this->tangentOperatorComparisonCriterium = 1.e7;
+    SupportedTypes::reset();
+    this->compareToNumericalTangentOperator      = false;
+    this->strainPerturbationValue                = 1.e-6;
+    this->tangentOperatorComparisonCriterium     = 1.e7;
   }
   
   void 
@@ -94,6 +95,12 @@ namespace mfront{
   {
     this->debugMode = true;
   }
+
+  void
+  MFrontAsterInterface::allowDynamicallyAllocatedArrays(const bool b)
+  {
+    this->areDynamicallyAllocatedVectorsAllowed_ = b;
+  } // end of MFrontAsterInterface::allowDynamicallyAllocatedArrays
 
   std::pair<bool,tfel::utilities::CxxTokenizer::TokensContainer::const_iterator>
   MFrontAsterInterface::treatKeyword(const std::string& key,

@@ -192,6 +192,11 @@ namespace mfront
   protected:
 
     /*!
+     * reset the class members
+     */
+    void reset(void);
+
+    /*!
      * Support for dynamically allocated vectors is not allowed in all
      * parsers. Parsers may change this value to disable the use of
      * dynamically allocated vectors
@@ -203,7 +208,7 @@ namespace mfront
     std::map<std::string,TypeFlag> flags;
     
     TFEL_VISIBILITY_LOCAL
-      void registerTypes(void);
+    void registerTypes(void);
 
   }; // end of class SupportedTypes
 

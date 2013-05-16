@@ -17,6 +17,10 @@ EXTRA_DIST=CMakeLists.txt                            \
 	   Images/CompSeq.eps			     \
 	   annexe-orthotropie.tex		     \
 	   style.ist				     \
+	   mfront/Includes.tex	                     \
+	   mfront/Link.tex		             \
+           mfront/Link.mfront	                     \
+           mfront/Includes.mfront	             \
 	   mfront/nbzrSwellingModel.cxx		     \
 	   mfront/SIC_SpecificHeat_AUDUBERT.cxx	     \
 	   mfront/SICCreepBehaviour-ple.tex	     \

@@ -103,6 +103,10 @@ docs/mfront/mfront/GetEvol.ps -text
 docs/mfront/mfront/GetEvol.tex -text
 docs/mfront/mfront/ImplicitOrthotropicCreep.mfront -text
 docs/mfront/mfront/ImplicitOrthotropicCreep.tex -text
+docs/mfront/mfront/Includes.mfront -text
+docs/mfront/mfront/Includes.tex -text
+docs/mfront/mfront/Link.mfront -text
+docs/mfront/mfront/Link.tex -text
 docs/mfront/mfront/MaterialLaw.mfront -text
 docs/mfront/mfront/MaterialLaw.tex -text
 docs/mfront/mfront/OrthotropicCreep.mfront -text
@@ -298,9 +302,13 @@ include/TFEL/Material/MechanicalBehaviourData.hxx -text
 include/TFEL/Material/MechanicalBehaviourTraits.hxx -text
 include/TFEL/Material/MechanicalIntegrationData.hxx -text
 include/TFEL/Material/MetallicCFCGenericSlidingSystemsInteractionMatrix.hxx -text
+include/TFEL/Material/MetallicCFCGenericSlidingSystemsInteractionMatrix.ixx -text
 include/TFEL/Material/MetallicCFCSlidingSystems.hxx -text
+include/TFEL/Material/MetallicCFCSlidingSystems.ixx -text
 include/TFEL/Material/ModellingHypothesis.hxx -text
 include/TFEL/Material/OutOfBoundsPolicy.hxx -text
+include/TFEL/Material/PolyCristalsSlidingSystems.hxx -text
+include/TFEL/Material/PolyCristalsSlidingSystems.ixx -text
 include/TFEL/Material/RambergOsgood.hxx -text
 include/TFEL/Material/ThermalBehaviour.hxx -text
 include/TFEL/Material/ThermalBehaviourData.hxx -text
@@ -417,6 +425,7 @@ include/TFEL/Math/General/LogicalOperations.hxx -text
 include/TFEL/Math/General/NegObjectRandomAccessConstIterator.hxx -text
 include/TFEL/Math/General/ObjectObjectRandomAccessConstIterator.hxx -text
 include/TFEL/Math/General/ObjectObjectRandomAccessConstIteratorSpecialisation.hxx -text
+include/TFEL/Math/General/RandomRotationMatrix.hxx -text
 include/TFEL/Math/General/ResultType.hxx -text
 include/TFEL/Math/General/RunTimeCheck.hxx -text
 include/TFEL/Math/General/ScalarObjectRandomAccessConstIterator.hxx -text
@@ -1118,8 +1127,6 @@ src/Material/CMakeLists.txt -text
 src/Material/DDIF2Base.cxx -text
 src/Material/Makefile.am -text
 src/Material/MaterialException.cxx -text
-src/Material/MetallicCFCGenericSlidingSystemsInteractionMatrix.cxx -text
-src/Material/MetallicCFCSlidingSystems.cxx -text
 src/Material/ModellingHypothesis.cxx -text
 src/Math/ArrayTag.cxx -text
 src/Math/BasicOperations.cxx -text
