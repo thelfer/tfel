@@ -4,8 +4,6 @@
 @Author   Helfer Thomas;
 @Date     06 Déc. 2007;
 
-@Domain "FUEL.*";
-
 @Output s;
 s.setGlossaryName("SolidSwelling");
 s.setDefaultInitialValue(0.);

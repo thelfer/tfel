@@ -97,6 +97,10 @@ docs/mfront/aster.tex.in -text
 docs/mfront/behaviours.tex.in -text
 docs/mfront/glossary.tex.in -text
 docs/mfront/mfront.tex.in -text
+docs/mfront/mfront/A316TiHyperTrempe_CreepExponent.mfront -text
+docs/mfront/mfront/A316TiHyperTrempe_CreepExponent.tex -text
+docs/mfront/mfront/Bounds.mfront -text
+docs/mfront/mfront/Bounds.tex -text
 docs/mfront/mfront/GetEvol.dgibi -text
 docs/mfront/mfront/GetEvol.eps -text
 docs/mfront/mfront/GetEvol.ps -text

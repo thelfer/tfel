@@ -21,18 +21,14 @@
   modèles thermiques et mécaniques}
 \label{sec:mfront:glossary}
 
-Cette annexe décrit les mots du glossaire pouvant être utilisés par
-les modèles thermiques et mécaniques (ou par les conditions aux
-limites associées).
+Cette annexe décrit les mots du glossaire utilisés dans l'application
+\licos{}.
 
 Nous indiquons pratiquement systématiquement l'unité qu'il est
 préférable d'utiliser pour les différentes quantités. Il s'agit du
 système d'unité du système international.
 
-\subsection{Entrées communes}
-
-Nous décrivons ici les entrées communes aux modèles thermiques et
-mécaniques.
+\subsection{Entrées générales}
 
 \Glossary{MassDensity}{scalaire}{kg/m^{3}}{la densité massique}
 \Glossaryb{OrthotropicAxisX1}{scalaire}{la première coordonnée du
@@ -66,17 +62,17 @@ thermiques. Nous les classons en trois catégories~:
 
 \subsubsection{Propriétés matériau}
 
-\Glossary{ThermalConductivity}{scalaire}{W.m^{-1}}{la conductivité
-  thermique d'un matériau isotrope}
-\Glossary{ThermalConductivity1}{scalaire}{W.m^{-1}}{la conductivité
-  thermique d'un matériau orthotrope suivant la première direction
-  d'orthotropie}
-\Glossary{ThermalConductivity2}{scalaire}{W.m^{-1}}{la conductivité
-  thermique d'un matériau orthotrope suivant la deuxième direction
-  d'orthotropie}
-\Glossary{ThermalConductivity3}{scalaire}{W.m^{-1}}{la conductivité
-  thermique d'un matériau orthotrope suivant la troisième direction
-  d'orthotropie}
+\Glossary{ThermalConductivity}{scalaire}{W.m^{-1}.K^{-1}}{la
+  conductivité thermique d'un matériau isotrope}
+\Glossary{ThermalConductivity1}{scalaire}{W.m^{-1}.K^{-1}}{la
+  conductivité thermique d'un matériau orthotrope suivant la première
+  direction d'orthotropie}
+\Glossary{ThermalConductivity2}{scalaire}{W.m^{-1}.K^{-1}}{la
+  conductivité thermique d'un matériau orthotrope suivant la deuxième
+  direction d'orthotropie}
+\Glossary{ThermalConductivity3}{scalaire}{W.m^{-1}.K^{-1}}{la
+  conductivité thermique d'un matériau orthotrope suivant la troisième
+  direction d'orthotropie}
 \Glossary{SpecificHeat}{scalaire}{J.kg^{-1}.K^{-1}}{la chaleur
   spécifique}
 
@@ -137,33 +133,17 @@ thermiques. Nous les classons en trois catégories~:
   discrétisation par éléments finis et l'intégrale temporelle est
   calculée de manière incrémentale}
 
-\Glossary{TemperatureGradient}{vectorielle}{T.m^{-1}}{le gradient de
+\Glossary{TemperatureGradient}{vectorielle}{K.m^{-1}}{le gradient de
   température}
 
-\Glossary{HeatFlux}{vectorielle}{J.m^{-2}.s^{-1}}{le flux de chaleur
-  (uniquement disponible pour les matériaux isotropes)}
+\Glossary{HeatFlux}{vectorielle}{J.m^{-2}.s^{-1}}{la densité de flux
+  de chaleur (uniquement disponible pour les matériaux isotropes)}
 
 \Glossary{NormalHeatFlux}{scalaire}{J.m^{-2}.s^{-1}}{la projection du
   flux de chaleur sur la normale à une surface (uniquement disponible
   pour les matériaux isotropes)}
 
 \subsubsection{Conditions aux limites}
-
-\Glossary{FirstMaterialTemperature}{scalaire}{K}{la température sur le
-  \og~premier~\fg matériau d'une condition d'échange (le choix
-  de ce \og~premier~\fg matériau est fait par l'utilisateur)}
-
-\Glossary{SecondMaterialTemperature}{scalaire}{K}{la température sur
-  le \og~se\-cond~\fg matériau d'une condition d'échange (le choix de
-  ce \og~second~\fg matériau est fait par l'utilisateur)}
-
-\Glossary{FirstMaterialRadius}{scalaire}{m}{le rayon du premier
-  matériau dans le cas d'une condition d'échange entre deux matériaux
-  (le choix du \og~second~\fg matériau est fait par l'utilisateur)}
-
-\Glossary{SecondMaterialRadius}{scalaire}{m}{le rayon du second
-  matériau dans le cas d'une condition d'échange entre deux matériaux
-  (le choix du \og~second~\fg matériau est fait par l'utilisateur)}
 
 \Glossary{ExternalTemperature}{scalaire}{K}{la température imposée.
   L'utilisation de ce nom pour imposer une température n'est pas
@@ -231,12 +211,13 @@ mécaniques. Nous les classons en trois catégories~:
 
 \Glossary{Displacement}{vectorielle}{m}{le déplacement}
 \Glossary{UpdatedFirstCoordinate}{scalaire}{m}{la première coordonnée
-  actua\-lisée} \Glossary{UpdatedSecondCoordinate}{scalaire}{m}{la
-  deuxième coordonnée actua\-lisée}
+  de la géométrie déformée}
+\Glossary{UpdatedSecondCoordinate}{scalaire}{m}{la deuxième coordonnée
+  de la géométrie déformée}
 \Glossary{UpdatedThirdCoordinate}{scalaire}{m}{la troisième coordonnée
-  actua\-lisée} \Glossaryb{Strain}{tensorielle}{la déformation}
-\Glossaryb{AxialStrain}{scalaire}{la déformation axiale (cette
-  grandeur n'a de sens que pour les calculs "plan généralisé")}
+  de la géométrie déformée} \Glossaryb{Strain}{tensorielle}{la
+  déformation} \Glossaryb{AxialStrain}{scalaire}{la déformation axiale
+  (cette grandeur n'a de sens que pour les calculs "plan généralisé")}
 \Glossaryb{VolumetricStrain}{scalaire}{la dilatation volumique}
 \Glossary{Stress}{tensorielle}{Pa}{les contraintes}
 \Glossary{CylindricalStress}{tensorielle}{Pa}{les contraintes
@@ -247,7 +228,7 @@ mécaniques. Nous les classons en trois catégories~:
   hydrostatique (égale au tiers de la trace du tenseur des
   contraintes)} \Glossary{VonMisesStress}{scalaire}{Pa}{la contrainte
   équivalente au sens de \nom{von mises}}
-\Glossary{Trescastress}{scalaire}{Pa}{la contrainte équivalente au
+\Glossary{TrescaStress}{scalaire}{Pa}{la contrainte équivalente au
   sens de \nom{Tresca}} \Glossary{PrincipalStress1}{scalaire}{Pa}{la
   première contrainte principale. Son sens est précisé dans la notice
   de l'opérateur prin de castem
