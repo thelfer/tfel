@@ -8,6 +8,8 @@
 #ifndef TFEL_MATERIAL_POLYCRISTALSSLIDINGSYSTEMS_IXX
 #define TFEL_MATERIAL_POLYCRISTALSSLIDINGSYSTEMS_IXX 1
 
+#include"TFEL/Math/General/RandomRotationMatrix.hxx"
+
 namespace tfel
 {
   
@@ -34,10 +36,10 @@ namespace tfel
       const GS& gs = GS::getSlidingSystems();
       for (unsigned short i=0;i!=Np;i++){
 	// allocting memory
-	this->mus[i].resize(Ngs);
+	this->mus[i].resize(Nss);
 	// rotation matrix
-	tmatrix<3u,3u,real> drot = getRandomMatrix();
-	for (unsigned short j=0;j!=Ngs;j++){
+	tmatrix<3u,3u,real> drot = getRandomRotationMatrix<real>();
+	for (unsigned short j=0;j!=Nss;j++){
 	  StrainStensor& mu = mus[i][j];
 	  // local tensor of directional sense
 	  mu = gs.mus[j];

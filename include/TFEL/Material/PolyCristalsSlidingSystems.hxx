@@ -29,7 +29,7 @@ namespace tfel
     struct PolyCristalsSlidingSystems
     {
       //! number of sliding systems of the mono cristal
-      static const unsigned short Ngs = GS::Ngs;
+      static const unsigned short Nss = GS::Nss;
       //! a simple alias
       typedef NumType real;
       //! a simple alias
@@ -59,5 +59,7 @@ namespace tfel
   } // end of namespace material
   
 } // end of namespace tfel
+
+#include"TFEL/Material/PolyCristalsSlidingSystems.ixx"
 
 #endif /* TFEL_MATERIAL_POLYCRISTALSSLIDINGSYSTEMS_HXX */

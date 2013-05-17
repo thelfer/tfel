@@ -226,7 +226,9 @@ nécessaire~\cite{helfer:mfront:2013}.
 
 \paragraph{De multiples phénomènes} Les matériaux solides réagissent
 aux sollicitations mécaniques par différents phénomènes~: élasticité,
-viscoplasticité, plasticité, endommagement. Nous renvoyons à 
+viscoplasticité, plasticité, endommagement. Nous renvoyons aux
+ouvrages classiques pour la description physique de ces
+phénomènes~\cite{zaoui_95,cha_1996,caill_01}.
 
 \paragraph{Rôle de la loi de comportement} Nous décrivons en
 annexe~\ref{sec:mfront:mechanical_equilibrium} un algorithme simplifié
@@ -238,7 +240,8 @@ précise~\cite{pascal05_increpl,abbas:stat_non_lin:2013,caill_01}.
 En résumé, connaissant l'état mécanique du matériau à un instant
 \(t\), les lois de comportement doivent, en réponse à un incrément de
 sollicitation mécanique représentée par un incrément de déformations
-totales \(\Delta\,\tepsilonto\), fournir~:
+totales \(\Delta\,\tepsilonto\), fournir, en chaque point
+d'intégration~:
 \begin{itemize}
 \item l'évolution microstructurelle du matériau, décrit par un
   ensemble de variables internes \(y_{i}\) sur le pas de temps
@@ -253,8 +256,8 @@ loi de comportement peut également fournir~:
   \(\deriv{\Delta\tsigma}{\Delta\tepsilonto}\) ou une estimation de
   celle-ci.
 \item une matrice de prédiction en début de pas de temps permettant de
-  fournir une estimation de la solution en fin de pas de temps, avant
-  de débuter la résolution.
+  fournir une première estimation de la solution en fin de pas de
+  temps, avant de débuter la résolution.
 \end{itemize}
 
 Dans certains cas, les lois de comportement peuvent également donner
@@ -266,32 +269,33 @@ problème~\cite{proix11:_etude}.
 L'écriture de lois de comportement nécessite de prendre à la fois en
 compte les mécanismes physiques décrits (certains algorithmes sont
 plus adaptés à certains phénomènes) et des besoins des codes éléments
-finis (matrice tangente cohérente).
-
-La variété des situations rencontrées en pratique expliquent la
-richesse des analyseurs proposés par \mfront{}, qui sont actuellement
-au nombre \(8\). La description de ces analyseurs est l'objet de ce
-document.
+finis (matrice tangente cohérente). La variété des situations
+rencontrées en pratique expliquent la richesse des analyseurs proposés
+par \mfront{}, qui sont actuellement au nombre \(8\)\footnote{La
+  notion d'analyseur est décrite plus en détails dans la première
+  partie de la documentation de
+  \mfront~\cite{helfer:mfront:2013}.}. La description de ces
+analyseurs est l'objet de ce document.
 
 Plusieurs analyseurs dédiés aux lois de comportement sont
 actuellement disponibles~:
 \begin{itemize}
-  \item l'analyseur \texttt{DefaultParser} qui permet de traiter
+\item l'analyseur \texttt{DefaultParser} qui permet de traiter
   tous types de lois de comportements~;
-  \item l'analyseur \texttt{IsotropicMisesCreep} qui gère
+\item l'analyseur \texttt{IsotropicMisesCreep} qui gère
   exclusivement les lois de comportement mécanique viscoplastique
   incompressible des matériaux isotropes~;
-  \item l'analyseur \texttt{IsotropicStrainHardeningMisesCreep}
+\item l'analyseur \texttt{IsotropicStrainHardeningMisesCreep}
   qui gère exclusivement les lois de comportement mécanique
   viscoplastique incompressible des matériaux isotropes~;
-  \item l'analyseur \texttt{IsotropicPlasticMisesFlow} qui gère
+\item l'analyseur \texttt{IsotropicPlasticMisesFlow} qui gère
   exclusivement les lois de comportement mécanique plastique
   incompressible des matériaux isotropes~;
-  \item l'analyseur \texttt{MultipleIsotropicMisesFlows} qui gère
+\item l'analyseur \texttt{MultipleIsotropicMisesFlows} qui gère
   une combinaison arbitraire d'écoulements des trois types précédents.
   Les différents écoulements sont supposés non couplés~;
-  \item les analyseurs \texttt{Implicit} et \texttt{ImplicitII}
-  qui simplifie la résolution d'une loi de comportement mécanique
+\item les analyseurs \texttt{Implicit} et \texttt{ImplicitII} qui
+  simplifient la résolution d'une loi de comportement mécanique
   quelconque à l'aide d'une intégration implicite.
 \end{itemize}
 
@@ -504,20 +508,20 @@ différentes hypothèses de modélisation ajourd'hui supportées~:
  une modélisation \(1D\) axisymétrique plan généralisée. Dans ce cas,
  le tenseur des contraintes a \(3\) composantes et est représenté par
  le vecteur suivant~:
- \begin{equation}
-   \label{eq:tsigma} \tsigma = \left(
+\[
+ \tsigma = \left(
    \begin{array}{c}
      \sigma_{rr} \\
      \sigma_{zz} \\
      \sigma_{\theta\theta} \\
    \end{array}
    \right)
- \end{equation}
+ \]
  \item \texttt{AXI\-SYMETRICAL} qui désigne une modélisation \(2D\)
  axisymétrique. Dans ce cas, le tenseur des contraintes a \(4\)
  composantes et est représenté par le vecteur suivant~:
- \begin{equation}
-   \label{eq:tsigma} \tsigma = \left(
+\[
+ \tsigma = \left(
    \begin{array}{c}
      \sigma_{rr} \\
      \sigma_{zz} \\
@@ -525,14 +529,14 @@ différentes hypothèses de modélisation ajourd'hui supportées~:
      \sqrt{2}\sigma_{rz} \\
    \end{array}
    \right)
- \end{equation}
+ \]
  \item \texttt{PLANE\-STRESS}, \texttt{PLANE\-STRAIN} et
  \texttt{GENERALISED\-PLANE\-STRAIN} qui désigne différentes
  modélisations \(2D\) qui se distinguent par le traitement de la
  direction axiale. Dans ces cas, le tenseur des contraintes a \(4\)
  composantes et est représenté par le vecteur suivant~:
- \begin{equation}
-   \label{eq:tsigma} \tsigma = \left(
+\[
+ \tsigma = \left(
    \begin{array}{c}
      \sigma_{xx} \\
      \sigma_{yy} \\
@@ -540,12 +544,12 @@ différentes hypothèses de modélisation ajourd'hui supportées~:
      \sqrt{2}\sigma_{xy} \\
    \end{array}
    \right)
- \end{equation}
+ \]
  \item \texttt{TRIDIMENSIONAL} qui désigne la modélisation la plus
  générale. Dans ce cas, le tenseur des contraintes a \(6\) composantes
  est représenté par le vecteur suivant~:
- \begin{equation}
-   \label{eq:tsigma} \tsigma = \left(
+\[
+ \tsigma = \left(
    \begin{array}{c}
      \sigma_{xx} \\
      \sigma_{yy} \\
@@ -555,7 +559,7 @@ différentes hypothèses de modélisation ajourd'hui supportées~:
      \sqrt{2}\sigma_{yz} \\
    \end{array}
    \right)
- \end{equation}
+ \]
 \end{itemize}
 
 \paragraph{Les directives \mkey{ModellingHypothesis} et
@@ -693,11 +697,11 @@ l'analyseur utilisé.
 Deux types de bornes sont distinguées dans \mfront{}~:
 \begin{itemize}
 \item les bornes physiques\footnote{Voir le mot clé
-    \mkey{@PhysicalBounds}}, qui désignent les plages de valeurs
+    \mkey{PhysicalBounds}}, qui désignent les plages de valeurs
   acceptables pour une variable donnée. Par exemple, une température
   (en Kelvin) ne peut être négative, une porosité est positive et
   inférieure à 1~;
-\item les bornes de validité\footnote{Voir le mot clé \mkey{@Bounds}},
+\item les bornes de validité\footnote{Voir le mot clé \mkey{Bounds}},
   qui désignent les plages de valeurs sur lesquelles la loi de
   comportement a été identifiée.
 \end{itemize}
@@ -798,7 +802,9 @@ l'interface peut également~:
 \end{itemize}
 
 De manière optionnelle, il peut être utile de générer des exemples
-d'utilisation de la loi de comportement traitée.
+d'utilisation de la loi de comportement traitée. Ainsi,
+l'interface~\umat{} génère automatiquement un exemple de mise en
+données \gibiane{}~\cite{helfer:umat:2013}.
 
 \newpage 
 \clearpage
@@ -912,7 +918,7 @@ défini par:
 \tenseurq{K}
 =\tenseurq{I}-\Frac{1}{3}\tenseur{I}\otimes\tenseur{I}
 .\end{equation}
-Avec cette hypothèse, les écoulement modélisés vérifient:
+Avec cette hypothèse, les écoulements modélisés vérifient:
 \[
 \trace{\tepsilonan_{i}} = 0
 ,\]
@@ -1430,10 +1436,9 @@ et de la nouvelle valeur de déformation élastique:
 \subsubsection{Matrice tangente cohérente}
 
 La méthode de résolution implicite permet le calcul de la matrice
-tangente cohérente.
-
-La matrice tangente cohérente, permet d'améliorer la résolution du
-calcul de structure
+tangente cohérente. Cette matrice tangente cohérente permet une
+convergence quadratique du calcul de structure, ce qui peut nettement
+accélérer les calculs.
 
 \paragraph{Définition}
 L'intégration numérique décrite au paragraphe précédent, permet de
@@ -1977,8 +1982,13 @@ La figure~\ref{fig:OrthoElastique} décrit l'implantation d'une loi de
 comportement orthotrope élastique. Cette loi ne nécessitant pas
 d'algorithme d'intégration, l'analyseur par défaut est utilisé. La
 commande \mkey{Orthotropic\-Behaviour} permet le support des lois
-orthotropes. La commande \mkey{Require\-Stiff\-ness\-Tensor} met à
-disposition une variable {\tt D} contenant la matrice d'élasticité.
+orthotropes. La commande \mkey{Require\-Stiff\-ness\-Tensor} demande à
+ce que l'interface au code appelant mette à disposition une variable
+{\tt D} contenant la matrice d'élasticité\footnote{Pour ce faire,
+  l'interface déclare des propriétés matériaux supplémentaires. Leurs
+  nombres et l'ordre dans lequel il est nécessaire de les passer est
+  décrit dans les documentations des
+  interfaces~\cite{helfer:umat:2013,helfer:aster:2013}.}.
 
 Le calcul des contraintes en fin de pas de temps (à l'instant
 \(t+\Delta\,t\)) s'écrit de manière similaire à son expression
@@ -2025,11 +2035,11 @@ conventions suivantes s'appliquent~:
   sa vitesse de variation sur le pas de temps (constante sur le pas).
 \end{itemize}
 
-\paragraph{Calcul de la matrice tangente cohérente}
-
-La loi de comportement peut éventuellement fournir une matrice de
-raideur. Pour que les interfaces puissent gérer cette possibilité,
-l'analyseur {\tt Default\-Parser} fournit deux mots clés~:
+\paragraph{Calcul d'une matrice de raideur} La loi de comportement
+peut éventuellement fournir une matrice de raideur pour réaliser les
+itérations de la résolution globale. Pour que les interfaces puissent
+gérer cette possibilité, l'analyseur {\tt Default\-Parser} fournit
+deux mots clés~:
 \begin{itemize}
 \item {\tt @Provides\-Tangent\-Operator} indique que la loi fournit
   une matrice tangente non symétrique~;
@@ -2037,8 +2047,8 @@ l'analyseur {\tt Default\-Parser} fournit deux mots clés~:
   fournit une matrice tangente symétrique~;
 \end{itemize}
 
-Si l'appelant demande le calcul de la matrice tangente cohérente, la
-variable booléenne
+Si le code appelant demande le calcul de la matrice tangente
+cohérente, la variable booléenne
 \varcpp{compute\-Tangent\-Operator\textunderscore{}} est vraie.
 
 Le type de matrice demandé est stocké dans la variable {\tt smt}
@@ -2053,6 +2063,9 @@ et effectuer le calcul le cas échéant. Sa valeur peut être~:
 \item {\tt CONSISTANTTANGENTOPERATOR}, pour la matrice tangente
   cohérente~;
 \end{itemize}
+
+\paragraph{Matrice de prédiction} Il n'est aujourd'hui pas possible de
+préciser une matrice de prédiction avec cet analyseur.
 
 \clearpage
 \newpage
@@ -2076,7 +2089,9 @@ comportement sous la forme d'un système différentiel~:
   \dot{Y}=G\paren{Y,t}
 \end{equation}
 où \(G\) est une fonction {\em a priori} non linéaire et que nous
-supposerons {\em a minima} continûment dérivable.
+supposerons {\em a minima} continûment dérivable. Cette fonction se
+construit en rassemblant les équations régissant les différentes
+variables d'états.
 
 \(Y\) un vecteur regroupant les différentes variables internes~:
 \[
@@ -2151,14 +2166,17 @@ satisfaisante, on en déduit que le pas de temps utilisé est trop grand
 et il est possible de mettre en place une stratégie de gestion du pas de
 temps.
 
-\paragraph{Pas de temps minimal} En cas de convergence
-forcé, le code aux éléments finis \castem{} envoie à la loi de
-comportement un pas de temps nul qui ne permet pas d'écrire les lois de
-comportement sous la forme d'un système différentiel. Il est nécessaire
-de préciser un pas de temps minimal par la directive
+\paragraph{Pas de temps minimal} En cas de convergence forcée, le code
+aux éléments finis \castem{} envoie à la loi de comportement un pas de
+temps nul qui ne permet pas d'écrire les lois de comportement sous la
+forme d'un système différentiel. Il est nécessaire de préciser un pas
+de temps minimal par la directive
 \mkeyb{MinimalTimeStep}{Minimal\-Time\-Step} pour gérer ce cas. À
-l'exécution, la valeur choisie peut être modifiée à l'aide du paramètre
-\varcpp{dtmin}.
+l'exécution, la valeur choisie peut être modifiée à l'aide du
+paramètre \varcpp{dtmin}.
+
+\subsection{Algorithmes disponibles}
+
 
 \begin{table}[htbp]
   \centering
@@ -2188,8 +2206,6 @@ l'exécution, la valeur choisie peut être modifiée à l'aide du paramètre
   \caption{Arguments possibles de la directive \texttt{@Algorithm}.}
   \label{tab:Algorithm}
 \end{table}
-
-\subsection{Algorithmes disponibles}
 
 Différents algorithmes de \nom{Runge-Kutta} sont disponibles.
 L'utilisateur peut choisir l'algorithme utilisé par la directive
@@ -2270,7 +2286,7 @@ entre\(t\) et \(t+\Delta\,t\), et un pas de temps local
 \(\delta\,t^{l}\) variable permettant d'augmenter \(t^{l}\).
 
 \paragraph{Méthode de \nom{Runge-Kutta} d'ordre $\pfrac{4}{2}$} Les
-algorithmes~\ref{eq:RK2} et~\ref{eq:RK4} partagent les mêmes
+algorithmes~\eqref{eq:RK2} et~\eqref{eq:RK4} partagent les mêmes
 coefficients \(k_{1}\) et \(k_{2}\)~: si l'on utilise une méthode
 d'ordre \(4\), on a \og~gratuitement\fg{} une estimation d'ordre \(2\).
 La différence entre ces deux estimations est en \(\bigO 3\) et peut
@@ -2320,18 +2336,35 @@ décrite en annexe~\ref{sec:algoRKcastem}.
 \subsubsection{Gestion du pas de temps}
 
 Les méthodes de \nom{Runge-Kutta} d'ordre $\pfrac{4}{2}$ et d'ordre
-$\pfrac{5}{4}$ permettent de comparer les estimations fournies par deux
-méthodes d'ordre différents. La différence entres ces deux estimations
-mesure l'erreur d'intégration et est comparée à une certaine tolérance
-\(\varepsilon\)~:
+$\pfrac{5}{4}$ permettent de comparer les estimations fournies par
+deux méthodes d'ordre différents. La différence entres ces deux
+estimations mesure l'erreur d'intégration et est comparée à une
+certaine tolérance \(\varepsilon\)~:
 \begin{equation}
   \label{eq:RK:epsilon}
+  \norm{Y^{(a)}-Y^{(b)}}_{\text{RK}}<\varepsilon\quad\text{avec}\quad
+\end{equation}
+
+Deux mesures de l'erreur sont utilisées. Pour un nombre restreint de
+variables internes\footnote{Cette mesure est utilisée si la taille du
+  vecteur \(Y\) est inférieure à \(20\) en \(1D\).}, la mesure
+utilisée est la suivante~:
+\begin{equation}
   \norm{Y^{(a)}-Y^{(b)}}_{\text{RK}}<\varepsilon\quad\text{avec}\quad
 \norm{Y^{(a)}-Y^{(b)}}_{\text{RK}}=
   \Frac{1}{\displaystyle\sum_{i=1}^{N}N_{y_{i}}}\displaystyle\sum_{i=1}^{N}\Frac{\left|
     y_{i}^{(a)}-y_{i}^{(b)}\right|}{E_{y_{i}}}
 \end{equation}
-où~:
+
+Pour des systèmes différentiels de plus grandes tailles, la norme
+suivante est utilisée~:
+\begin{equation}
+  \norm{Y^{(a)}-Y^{(b)}}_{\text{RK}}=
+  \Frac{1}{\displaystyle\sum_{i=1}^{N}N_{y_{i}}}\displaystyle\sum_{i=1}^{N}\Frac{\left|
+    y_{i}^{(a)}-y_{i}^{(b)}\right|}{E_{y_{i}}}
+\end{equation}
+
+Dans ces deux expressions, nous avons noté~:
 \begin{minipage}[t]{0.9\linewidth}
   \begin{itemize}
     \item \(N\) est le nombre de variables internes~;
@@ -2356,9 +2389,9 @@ où~:
   \end{itemize}
 \end{minipage}
 
-Si cette inégalité n'est pas respectée, le pas de temps
-\(\delta\,t^{l}\) est sous-découpé automatiquement. Inversement, si elle
-est respectée, le pas de temps \(\delta\,t^{l}\) est augmenté.
+Si l'inégalité~\eqref{eq:RK:epsilon} n'est pas respectée, le pas de
+temps \(\delta\,t^{l}\) est sous-découpé automatiquement. Inversement,
+si elle est respectée, le pas de temps \(\delta\,t^{l}\) est augmenté.
 
 Supposons que l'erreur soit en \(\bigO n\), un facteur \(\beta\)
 d'augmentation ou de réduction du pas de temps peut être proposé ainsi~:
@@ -2377,18 +2410,25 @@ sert à programmer le système différentiel, renvoie la valeur booléenne
 
 Cette possibilité est en pratique assez importante, en particulier
 pour des comportement très raides. Il est par exemple fréquent de
-rencontrer des lois viscoplastique de type \nom{Norton} dont l'exposant
-est grand. Dans ces cas, les premières estimations des solutions
-conduisent à des contraintes équivalentes assez importantes qui
-conduisent à des vitesses d'écoulement infinies. Informatiquement, ces
-vitesses se traduisent par l'apparition de la valeur réelle
+rencontrer des lois viscoplastique de type \nom{Norton} dont
+l'exposant est grand. Dans ces cas, les premières estimations des
+solutions conduisent à des contraintes équivalentes assez importantes
+qui conduisent à des vitesses d'écoulement infinies\footnote{Ceci est
+  particulièrement vrai quand on utilise le système international où
+  les contraintes s'expriment en Pascal. Une autre manière de résoudre
+  le problème est de réécrire la loi de \nom{Norton} différemment. Au
+  lieu d'écrire \(\dot{p}=A\,\sigmaeq^{n}\), il faudrait mieux écrire
+  \(\dot{p}=\dot{p}_{0}\,\paren{\Frac{\sigmaeq}{\sigma_{0}}}^{n}\)
+  avec \(\dot{p}_{0}=A\,\sigmaeq^{0}\).}.  Informatiquement, ces
+vitesses se traduisent par l'apparition de la valeur flottante
 \varcpp{NaN}\footnote{Acronyme de \og~Not a Number~\fg{}}. Les
-algorithmes de \nom{Runge-Kutta} captent ce cas et sous-découpent alors
-automatiquement le pas de temps, mais cette solution présente
+algorithmes de \nom{Runge-Kutta} captent ce cas et sous-découpent
+alors automatiquement le pas de temps, mais cette solution présente
 l'inconvénient de ne pas être compatible avec certains techniques de
-déverminage extrêmement utiles. Il est dès lors préférable, et également
-plus efficace puisque des opérations lourdes (calculs de puissance)
-peuvent être évités, que l'utilisateur introduise des tests appropriés.
+déverminage extrêmement utiles. Il est dès lors préférable, et
+également plus efficace puisque des opérations lourdes (calculs de
+puissance) peuvent être évités, que l'utilisateur introduise des tests
+appropriés.
 
 \paragraph{Choix de la tolérance} La tolérance
 \(\varepsilon\) est fixée par défaut à \(10^{-8}\). L'utilisateur peut
@@ -2560,32 +2600,20 @@ cas des algorithmes de \nom{Runge-Kutta} mérite quelques précisions.
 Pour réduire le temps de développement de cette fonctionnalité et
 surtout réduire les sources d'erreurs, nous avons utilisé des classes
 livrés avec TFEL (la librairie mathématique sur laquelle se base
-\mfront{}) qui propose des vecteurs de taille finie sur lesquelles les
-opérations mathématiques usuelles ont été définies~: l'addition d'un
-vecteur de tenseur est possible et optimisée.
+\mfront{}). En fonction de la taille des tableaux, deux types de
+vecteurs sont utilisés~:
+\begin{itemize}
+\item pour des tableaux de taille inférieure à \(10\), des vecteurs de
+  taille finie, alloués sur la pile, sont utilisés~;
+\item pour des tableaux plus grands, des vecteurs alloués
+  dynamiquement ont été utilisés.
+\end{itemize}
+Dans les deux cas, les opérations mathématiques usuelles ont été
+définies~: l'addition d'un vecteur de tenseur est possible et
+optimisée.
 
 Ainsi, la génération des différents algorithmes de \textsc{Runge-Kutta}
 est restée inchangée, ce qui est satisfaisant.
-
-Cette solution n'est cependant pas adaptée à un très grand nombre de
-variables internes (plus d'une centaine par exemple, ce qui est somme
-tout déjà conséquent) car ces classes de vecteurs ont été conçues pour
-être optimales pour des petites tailles~: leurs utilisations pour de
-grandes tailles alourdit le temps de compilation et augmente la taille
-de la librairie générée. Il s'agit d'un phénomène connu sous le nom de
-\og~code bloat~\fg (littéralement, explosion du code).
-
-Des tests ont montré que ce phénomène était réel et que la tendance à
-l'augmentation des temps de compilation et de la taille de la librairie
-était fortement non linéaire~: pour des tableaux d'un millier de
-variables internes, le temps de compilation pouvait dépasser la minute
-et que la taille de la librairie générée pouvait dépasser le mégaoctet.
-Si d'aventure, des lois à grand nombre de variables internes devaient
-être utilisées régulièrement, il serait intéressant de faire évoluer les
-classes de vecteurs citées pour limiter ces tentatives
-d'optimisation\footnote{Il est d'ailleurs à peu près certain que les
-  techniques utilisées n'ont plus d'intérêt pour des vecteurs de grande
-  taille.}.
 
 \subsection{Intégration d'une loi d'écoulement viscoplastique
   orthotrope par un algorithme de \nom{Runge-Kutta}}
@@ -2680,13 +2708,20 @@ Ces méthodes supposent que l'on soit capable de résumer l'intégration
 de la loi de comportement à la résolution d'un système non-linéaire.
 Nous avons détaillé comment procéder pour les analyseurs spécifiques
 (voir paragraphe~\ref{sec:mfront:isotropic:analyser}). Nous montrons
-comment procéder pour transformer un système différentiel en système
-d'équations non linéaires et nous en profitons pour introduire les
-méthodes implicites en se basant sur les méthodes de \nom{Runge-Kutta}.
+dans le paragraphe suivant comment procéder pour transformer un
+système différentiel en système d'équations non linéaires et nous en
+profitons pour introduire les méthodes implicites en se basant sur les
+méthodes de \nom{Runge-Kutta}.
 
-Deux analyseurs sont disponibles pour décrire les
+Deux analyseurs, nommés \texttt{Implicit} et \texttt{ImplicitII}, sont
+disponibles pour intégrer les lois de comportement par une méthode
+implicite. Ils se distinguent par le fait que l'analyseur
+\texttt{Implicit} déclare automatiquement la déformation élastique
+comme première variable interne\footnote{Nous verrons plus loin une
+  justification de ce choix~: il permet un calcul quasi-automatique de
+  la matrice tangente cohérente.}.
 
-Différents méthodes pour résoudre le système non-linéaire
+Différentes méthodes pour résoudre le système non-linéaire
 introduit par la méthode implicite sont disponibles~:
 \begin{itemize}
   \item \varcpp{NewtonRaphson}, l'algorithme classique de
@@ -2745,12 +2780,12 @@ Cette écriture est {\em symbolique} et chaque terme \(y_{j}\) peut
 représenter une variable interne qui peut être soit un scalaire soit un
 tenseur symétrique d'ordre \(2\).
 
-L'analyseur \texttt{Implicite} impose que le premier terme de ce vecteur
-soit la déformation élastique, dont la variable associée est
-\texttt{eel}, qui est automatiquement déclarée. Le nom de glossaire de
-cette variable est \texttt{Elastic\-Strain}\footnote{Le fait que la
-  déformation élastique soit la première variable interne permettra, à
-  terme, un calcul quasi-automatique de la matrice tangente cohérente.}.
+L'analyseur \texttt{Implicit} impose que le premier terme de ce
+vecteur soit la déformation élastique, dont la variable associée est
+\texttt{eel}, qui est automatiquement déclarée\footnote{Le nom de
+  glossaire de cette variable est \texttt{Elastic\-Strain}. La notion
+  de nom de glossaire est décrite dans la première partie de la
+  documentation de \mfront{}~\cite{helfer:mfront:2013}.}.
 
 La résolution numérique de cette équation consiste à estimer, à partir
 de la valeur \(\debutpas{Y}\) à un instant \(t\), la valeur
@@ -2842,10 +2877,12 @@ modifiée~\eqref{eq:mfront:implicite:euler}, nous obtenons~:
 Cette seconde forme d'équation implicite est rarement utilisée, au moins
 pour l'intégration des lois de comportement mécaniques.
 
-\mfront{} tend, suivant l'usage, à supporter naturellement la
-la formulation~\eqref{eq:implicite}, mais rien n'interdit d'utiliser la
-première. Pour simplifier la présentation, nous ne décrirons le principe
-de la résolution que pour la première forme.
+\subsection{Méthode implicite utilisée dans \mfront{}}
+
+\mfront{} tend, suivant l'usage, à supporter naturellement la la
+formulation~\eqref{eq:implicite}, mais rien n'interdit d'utiliser la
+première. Pour simplifier la présentation, nous ne décrirons le
+principe de la résolution que pour la première forme.
 
 L'équation~\eqref{eq:implicite} peut s'écrire~:
 \begin{equation}
@@ -2859,12 +2896,13 @@ l'inconnue \og~naturelle~\fg{} de cette équation. Nous avons donc ramené
 la résolution du système différentiel~\eqref{eq:systeme_diff-implicite}
 à la recherche d'un zéro de la fonction \(F\paren{\Delta\, Y}\).
 
-\paragraph{Convention d'écriture} Il est d'usage
-d'introduire des notations (et des abus de langage) pratiques. Ainsi, si
-dans le système différentiel initial apparaît une fonction \(f\) des
-variables internes \(f\paren{Y}\) alors dans le système non-linéaire de
-la \(\theta\)-méthodes apparaît l'expression
-\(f\paren{Y+\theta\,\Delta\,Y}\).
+\paragraph{Convention d'écriture} Il est d'usage d'introduire des
+notations (et des abus de langage) pratiques.
+
+Si dans le système différentiel initial, une fonction \(f\) des
+variables internes \(f\paren{Y}\) est présente, alors l'expression
+\(f\paren{Y+\theta\,\Delta\,Y}\) apparaîtra dans le système
+d'équations.
 
 Par abus de langage, nous dirons que \(Y+\theta\,\Delta\,Y\) est la
 valeur en milieu de pas de \(Y\), que nous noterons \(\milieupas{Y}\)~:
@@ -2885,7 +2923,7 @@ valeur en milieu de pas de \(f\) et nous la noterons \(\milieupas{f}\)~:
 \]
 
 \paragraph{Décomposition du vecteur $F$} L'écriture
-générique~\ref{eq:systeme_diff-implicite} résulte de la concaténation
+générique~\eqref{eq:systeme_diff-implicite} résulte de la concaténation
 des équations différentielles régissant chaque variable interne \(Y\).
 En pratique, le vecteur \(F\) est décomposé en termes associés à chaque
 variable interne~:
@@ -2900,7 +2938,7 @@ F=
 \end{pmatrix}
 \]
 Cette écriture est là aussi {\em symbolique} et chaque terme
-\(f{y_{j}}\) peut être soit soit un scalaire soit un tenseur symétrique
+\(f{y_{j}}\) peut être soit un scalaire soit un tenseur symétrique
 d'ordre \(2\).
 
 \mfront{} définit automatiquement les différents termes
@@ -3012,15 +3050,22 @@ qui est précisément la condition {\em physique} à vérifier\footnote{Nous
 explique pourquoi les méthodes implicites sont toujours à préférer aux
 méthodes de type \nom{Runge-Kutta} dans le cas de lois de comportement
 indépendantes du temps, même si elles présentent sur le papier des
-ordres de convergence moins élevés. L'application des méthodes
-implicites aux lois de comportement dépendantes du temps (écoulements
-viscoplastiques notamment) est plus délicates en raison justement de ces
-ordres de convergences plus faibles (que les méthodes de type
-\nom{Runge-Kutta}) et peuvent conduire à des imprécisions. En pratique,
-nous avons {\em toujours} constaté des résultats extrêmement
-satisfaisants tant en termes de précision qu'en termes de performance
-numérique avec les méthodes implicites, quelque soit le type de loi de
-comportement. 
+ordres de convergence moins élevés.
+
+L'application des méthodes implicites aux lois de comportement
+dépendantes du temps (écoulements viscoplastiques notamment) est plus
+délicate en raison justement de ces ordres de convergences plus
+faibles (que les méthodes de type \nom{Runge-Kutta})\footnote{Il ne
+  faut pas oublier qu'il ne sert généralement à rien d'utiliser des
+  pas de temps trop grand. En effet, l'algorithme de résolution global
+  (en quasi-statique) utilise une résolution implicite~: sur un pas de
+  temps, il faut que l'hypothèse qui permet la linéarisation du
+  l'évolution mécanique de la structure soit vérifiée.}.
+
+En pratique, nous avons {\em toujours} constaté des résultats
+extrêmement satisfaisants tant en termes de précision qu'en termes de
+performance numérique avec les méthodes implicites, quelque soit le
+type de loi de comportement.
 
 \begin{table}[htbp]
   \centering
@@ -3035,8 +3080,9 @@ comportement.
   \caption{Temps de calculs obtenus sur une éprouvette
     entaillée en traction modélisée en $2D\paren{r,z}$. Calcul réalisé
     par \nom{J.-M. Proix} sur la version $11$ de code \aster{}. La loi
-    de comportement locale modélise est la loi de
-    \nom{HayHurst}~\cite{proix:hayhurst:2012}.}
+    de comportement locale est la loi de
+    \nom{HayHurst}~\cite{proix:hayhurst:2012}.
+    Cette comparaison a été fournie par J.-M. Proix (EDF/AMA).}
   \label{tab:mfront:NR:comparison:methode}
 \end{table}
 
@@ -3240,11 +3286,12 @@ jacobienne à la matrice identité.
 Insistons, le calcul de la matrice jacobienne est la
 principale difficulté de la méthode de \nom{Newton-Raphson}.
 
-Afin de dispenser l'utilisateur de fournir la matrice jacobienne,
-nous avons envisagé d'approximer le jacobien par différentiation
-numérique. Un jacobien correctement évalué (ordre \(2\) conduit à une
-bonne convergence de l'algorithme, mais a un coût numérique
-important(voir au paragraphe~\ref{QNR:ComparaisonNumeriques} les
+Afin de dispenser l'utilisateur de fournir la matrice jacobienne, nous
+avons envisagé d'approximer le jacobien par différentiation
+numérique. Un jacobien correctement évalué (par une différence finie
+d'ordre \(2\)) conduit à une bonne convergence de l'algorithme, mais a
+un coût numérique important(voir au
+paragraphe~\ref{QNR:ComparaisonNumeriques} les
 tableaux~\ref{tab:QNR:1} et~\ref{tab:QNR:2}). Cette méthode est
 accessible par l'algorithme
 \texttt{Newton\-Raphson\textunderscore{}\-Numerical\-Jacobian}.
@@ -3290,11 +3337,11 @@ où~:
 \end{minipage}
 
 \paragraph{Calcul exact de certains blocs}
-Il est intéressant de remarquer qu'il est toujours possible de modifier
-la matrice jacobienne par blocs~: si certains termes sont connus et/ou
-facile à calculer, il peut être intéressant de les injecter dans la
-matrice jacobienne en écrasant les modifications fournies par
-l'algorithme de \textsc{Broyden}.
+Il est intéressant de remarquer qu'il est toujours possible de
+modifier la matrice jacobienne par blocs~: si certains termes sont
+connus et/ou faciles à calculer, il peut être intéressant de les
+injecter dans la matrice jacobienne en écrasant les modifications
+fournies par l'algorithme de \textsc{Broyden}.
 
 \paragraph{Initialisation du jacobien} Il est nécessaire de fournir une
 estimation initiale \(\underset{\sim}{J}_{0}\) du jacobien. Deux choix
@@ -3396,10 +3443,9 @@ fournie doit être supérieure à \(3\) pour que la méthode ait un sens. La
 valeur fournie peut être modifiée par le paramètre
 \varcpp{relaxation\-Trigger}.
 
-La directive \mkey{RelaxationCoefficient} permet de préciser le nombre
-d'itérations séparant deux emplois successifs de cette méthode. La
-valeur fournie peut être modifiée par le paramètre
-\varcpp{relaxation\-Coefficient}.
+La directive \mkey{RelaxationCoefficient} permet de préciser le
+coefficient \(w\). La valeur fournie peut être modifiée à l'exécution
+par le paramètre \varcpp{relaxation\-Coefficient}.
 
 % \subsubsection{Autres pistes}
 
@@ -3416,13 +3462,18 @@ Cette directive est appelée si l'intégration de la loi a été un
 succès, avant la mise à jour des variables internes et la mise à jour de
 contraintes.
 
-\paragraph{Symétrie de la matrice tangente} Par
-défaut, la matrice tangente est supposée non symétrique. L'utilisateur
-peut explicitement dire que la matrice est symétrique par la directive
-\mkeyb{IsTangentOperatorSymmetric}{Is\-Tangent\-Operator\-Symmetric} qui
-est suivi d'une des valeurs booléennes \varcpp{true} ou \varcpp{false}.
+\paragraph{Symétrie de la matrice tangente} Par défaut, la matrice
+tangente est supposée non symétrique. L'utilisateur peut explicitement
+dire que la matrice est symétrique par la directive
+\mkeyb{IsTangentOperatorSymmetric}{Is\-Tangent\-Operator\-Symmetric}
+qui est suivi d'une des valeurs booléennes \varcpp{true} ou
+\varcpp{false}\footnote{Si l'opérateur tangent est symétrique,
+  l'interface \aster{} fait l'économie d'une transposition de la
+  matrice (cette transposition est nécessaire pour la compatibilité
+  avec le {\tt fortran}.}.
 
-\subsubsection{Une façon générique de calculer de la matrice tangente cohérente}
+\subsubsection{Une façon générique de calculer de la matrice tangente
+  cohérente}
 \label{sec:mfront:implicit:tangentOperator}
 
 La matrice tangente cohérente est la dérivée d'incrément de
@@ -4438,14 +4489,15 @@ Voici une description de l'algorithme \nom{Runge-Kutta}-\castem{}~:
 \end{itemize}
 
 Dans le cas où le calcul d'une de ces estimations ne pourraient être
-calculés, un sous-découpage du pas de temps est effectué comme le montre
-l'algorithme décrivant le sous-découpage du pas temps (\textsc{Fig.}
-\ref{fig:algo_temps}).
+calculés, un sous-découpage du pas de temps est effectué comme le
+montre l'algorithme décrivant le sous-découpage du pas temps. Ceci est
+illustré en figure~\ref{fig:algo_temps}.
 
 Une fois toutes ces estimations calculées, on compare les contraintes
-obtenues lors des estimations \(\finpas{Y_f}\) (\ref{eq:estimation_yf})
-et \(\finpas{Y_5}\) (\ref{eq:estimation_y5}), notées respectivement
-\(\finpas{\tsigma}\) et \(\tsigma_5\).
+obtenues lors des estimations \(\finpas{Y_f}\)
+(\eqref{eq:estimation_yf}) et \(\finpas{Y_5}\)
+(\eqref{eq:estimation_y5}), notées respectivement \(\finpas{\tsigma}\)
+et \(\tsigma_5\).
 
 Pour cela, on se donne une erreur dont l'amplitude est basée sur la
 valeur des contraintes en début de pas \(\debutpas{\tsigma}\) ou sur la

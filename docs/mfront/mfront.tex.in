@@ -130,18 +130,8 @@
 
 \resumecea{
 
-  Couplé à la base de données \sirius{}, \mfront{} vise à garantir une
-  gestion pérenne, robuste, efficace et évolutive des connaissances
-  matériau dans la plateforme
-  \pleiades{}~\cite{michel09,helfer10,helfer:opti:2011}. Il s'agit
-  d'un outil mature, qui se veut de qualité industrielle. Il intéresse
-  également différents départements du
-  \cea{}~\cite{11:dec_semi,arrigo12:_notic_le2s} ainsi que ses
-  partenaires, Areva~\cite{olagnon13:_analy} et
-  ÉDF~\cite{proix:mfront:2013}.
-
   \mfront{} est un générateur de code dédié aux connaissances
-  matériau.  Son domaine d'application couvre~:
+  matériau. Son domaine d'application couvre~:
   \begin{itemize}
     \item les propriétés matériau~;
     \item les lois de comportement~;
@@ -150,10 +140,24 @@
   domaine pour lesquels il rassemble un important savoir-faire
   physique, numérique et informatique.
 
+  Couplé à la base de données \sirius{}, \mfront{} vise à garantir une
+  gestion pérenne, robuste, efficace et évolutive des connaissances
+  matériau dans la plate-forme
+  \pleiades{}~\cite{michel09,helfer:opti:2011}. Il permet également à
+  des utilisateurs non développeur d'écrire ses propres connaissances
+  matériau~\cite{helfer10}.
+
+  Il s'agit d'un outil mature, qui se veut de qualité industrielle et
+  qui intéresse fortement différents départements du
+  \cea{}~\cite{11:dec_semi,arrigo12:_notic_le2s} ainsi que ses
+  partenaires, Areva~\cite{olagnon13:_analy} et
+  ÉDF~\cite{proix:mfront:2013}.
+
   Nous décrivons dans cette note l'utilisation de \mfront{} et
   détaillons comment écrire des propriétés matériau et des
   modèles. Les lois de comportement mécaniques sont détaillées dans
-  une note à part~\cite{helfer:mfront:behaviours:2013}.  }
+  une note à part~\cite{helfer:mfront:behaviours:2013}.
+}
 
 \makeindex{env}
 \makeindex{mkeys}
@@ -166,26 +170,90 @@
 
 Cette note donne une vue générale du générateur de code \mfront{} et
 de son application aux propriétés matériau et aux modèles
-physico-chimiques. Elle est la première d'un corpus de \(4\)
-notes\footnote{Les trois autres notes traitent~:
-  \begin{itemize}
-  \item des lois de comportement
-    mécanique~\cite{helfer:mfront:behaviours:2013}~;
-  \item de l'interface {\tt umat} utilisée par le codes aux éléments
-    finis \castem{}~\cite{helfer:umat:2013}~;
-  \item de l'interface utilisée par le codes aux éléments finis
-    \aster{}~\cite{helfer:aster:2013}~;
-  \end{itemize}
-}.
+physico-chimiques. \mfront{} fait partie d'une librairie mathématique
+généraliste nommée \TFEL{} très utilisée par \mfront{}, mais qui a
+également de nombreuses autres utilisations dans la plate-forme
+\pleiades{}.
+
+Cette note est la première d'un corpus de \(4\) notes. Les trois
+autres notes traitent\footnote{Citons également qu'un guide de
+  référence de la librairie \TFEL{} est également en cours de
+  rédaction. Cette note étant assez ambitieuse, sa rédaction s'étalera
+  dans le temps. Elle est cependant disponible en version projet dans
+  les sources de la librairie. Elle contient en particulier le guide
+  d'installation de la librairie.}~:
+\begin{itemize}
+\item des lois de comportement
+  mécanique~\cite{helfer:mfront:behaviours:2013}~;
+\item de l'interface {\tt umat} utilisée par le codes aux éléments
+  finis \castem{}~\cite{helfer:umat:2013}~;
+\item de l'interface utilisée par le codes aux éléments finis
+  \aster{}~\cite{helfer:aster:2013}~;
+\end{itemize}
+Ces notes sont intégrés à la gestion de configuration de \TFEL{} et
+évoluent continûment avec les développement de \TFEL{}. La version la
+plus à jour est obtenue par la commande~:
+\begin{center}
+  {\tt make doc-pdf}
+\end{center}
+Le présent document a été généré à partir de la révision
+@TFEL_SVN_REVISION@.
 
 Couplé à la base de données \sirius{}, \mfront{} vise à garantir une
-gestion pérenne, robuste, efficace et évolutive des connaissances
-matériau dans la plateforme \pleiades{}~\cite{michel09}. Il s'agit
-d'un outil mature, qui se veut de qualité industrielle, et qui
-intéresse différents départements du
-\cea{}~\cite{11:dec_semi,arrigo12:_notic_le2s} ainsi que ses
-partenaires, Areva~\cite{olagnon13:_analy} et
-ÉDF~\cite{proix:mfront:2013}.
+gestion pérenne, robuste, efficace et évolutive (au sens du suivie des
+évolutions logicielles) des connaissances matériau dans la plateforme
+\pleiades{}~\cite{michel09} et à faciliter leurs écritures par des
+utilisateurs non développeurs~:
+\begin{itemize}
+\item la pérennisation et le caractère évolutif des connaissances
+  matériau est assuré par~:
+  \begin{itemize}
+  \item l'écriture des connaissances matériau dans un fichier
+    indépendant du contexte logiciel cible (code ou langage de
+    programmation). Ce fichier contient uniquement l'information
+    physique et, éventuellement, des informations numériques. Ce
+    fichier sert à générer des sources \cpp{} qui sont adaptées au
+    contexte l'utilisation de la notion d'interface (voir
+    section~\ref{sec:mfront:interface}). Si le code ou le langage
+    cible évolue, il suffit de faire évoluer l'interface, sans
+    modifier le fichier \mfront{}\footnote{Pour illustrer notre
+      propos, donnons quelques exemples~:
+      \begin{itemize}
+      \item toutes les lois de comportement mécanique écrites avec
+        \mfront{} peuvent être utilisées ou dans le code aux éléments
+        finis \castem{}~\cite{12:castemcea} ou dans le code
+        \aster{}~\cite{aster:13}. Le support d'autres codes est
+        envisageable~;
+      \item certains modèles utilisés dans \licos{} sont restés
+        inchangés depuis leur écriture pour l'application \celaeno{}
+        (les deux codes n'ont plus grand chose de commun)~;
+      \item Les modèles \mfront{} sont interchangeables entre les
+        \licos{} et \germinal{}, ce qui n'est pas le cas des modèles
+        écrits en \cpp{}~;
+      \item Les modèles \mfront{} utilisés dans \germinal{} ne seront
+        pas modifiés par le passage à l'architecture \(2.0\).
+      \end{itemize}
+    }
+  \item l'utilisation du langage \cpp{}, actuellement considéré comme
+    l'une des langages les plus utilisés au monde\footnote{Il s'agit
+      du langage plus utilisé si on considère le langage \texttt{C}
+      comme un sous-ensemble du \cpp{}, et du troisième langage si on
+      les distingue.} et est particulièrement utilisé dans le monde
+    scientifique~;
+  \end{itemize}
+\item les performances, en particulier pour les lois de comportement
+  mécaniques, sont également assurées par l'utilisation du langage
+  \cpp{} qui permet d'utiliser des techniques de programmation
+  extrêmement efficaces. Ces bonnes performances ont été constatées à
+  plusieurs
+  reprises~\cite{michel09,helfer:opti:2011,olagnon13:_analy,proix:mfront:2013}~;
+\item la simplicité d'utilisation est liée à l'utilisation de la
+  génération de code, qui permet de masquer la plupart des détails
+  informatiques. Dans le cas des lois de comportement mécanique,
+  l'écriture d'une bibliothèque de calcul tensorielle permet de
+  décrire les équations régissant l'évolution des variables internes
+  sous une forme quasi-symbolique.
+\end{itemize}
 
 \subsection{Plan de la note}
 
@@ -201,6 +269,9 @@ Les annexes traitent des questions suivantes~:
 \begin{itemize}
 \item le contrôle de la compilation des fichiers \mfront{} en
   librairies dynamiques~;
+\item l'interface {\tt C} aux propriétés matériau~;
+\item l'interface \castem{} aux propriétés matériau~;
+\item l'interface \python{} aux propriétés matériau~;
 \item l'appel de propriétés matériaux externes dans \castem{} et des
   modifications qui ont été effectuées à ce code pour permettre cet
   appel~;
@@ -211,6 +282,7 @@ Les annexes traitent des questions suivantes~:
 \clearpage
 \newpage
 \section{Présentation générale de \mfront{}}
+\label{sec:pres-gener-de}
 
 \mfront{} est un générateur de code dédiés aux connaissances
 matériau~: partant d'un fichier contenant les informations physiques
@@ -499,7 +571,7 @@ ce domaine expérimental seront dénommées \og~bornes de validité~\fg
   \code{{\ttfamily \input{@abs_top_srcdir@/docs/mfront/mfront/Bounds.tex}}}  
   \caption{Exemple d'utilisation des directives {\tt Bounds} et
     \texttt{@Physical\-Bounds}.}
-  \label{fig:mfront:Link}
+  \label{fig:mfront:Bounds}
 \end{figure}
 
 \paragraph{Le mot clé \texttt{@Bounds}} Le mot clé \mkey{Bounds} définit
@@ -512,7 +584,7 @@ ces bornes dépend de l'interface utilisée.
 des différents variables d'entrée. Le dépassement d'une de ces bornes
 doit arrêter le calcul.
 
-La figure~\ref{fig:mfront:Link} donne un exemple d'utilisation des
+La figure~\ref{fig:mfront:Bounds} donne un exemple d'utilisation des
 directives \mkey{Bounds} et \mkeyb{PhysicalBounds}{Physical\-Bounds}.
 
 \subsubsection{Notion de paramètre}
@@ -1768,7 +1840,8 @@ La courbe résultante est représentée en figure~\ref{fig:TestGetEvol2}.
 
 \clearpage
 \newpage
-\section{Utilisation des propriétés matériau dans \excel{} via l'interface \castem{}}
+\section{Utilisation des propriétés matériau dans \excel{} via
+  l'interface \castem{}}
 \label{sec:inter-avec-excel}
 
 % \excel{} apparaît comme un logiciel particulièrement apprécié par les
