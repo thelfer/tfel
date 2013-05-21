@@ -38,9 +38,12 @@
 \newcommand{\pleiades}{\texttt{pleiades}}
 \newcommand{\TFEL}{\texttt{tfel}}
 \newcommand{\mfront}{\texttt{mfront}}
+\newcommand{\mtest}{\texttt{mtest}}
 \newcommand{\alcyone}{\texttt{alcyone}}
 \newcommand{\germinal}{\texttt{germinal}}
 \newcommand{\licos}{\texttt{licos}}
+\newcommand{\celaeno}{\texttt{celaeno}}
+\newcommand{\mfm}{\texttt{MFront\-Materials}}
 \newcommand{\cyrano}{\texttt{cyrano}}
 \newcommand{\galileo}{\texttt{galileo}}
 \newcommand{\castem}{\texttt{Cast3M}}
@@ -188,8 +191,17 @@
 \fichierbib{@abs_top_srcdir@/docs/mfront/Bibliographie}
 
 \resumecea{
-  Cette note décrit comment écrire des lois de
-  comportement mécanique à l'aide du générateur de code \mfront{}.
+  L'une des missions de la plate-forme \pleiades{} est de capitaliser
+  les connaissances matériau utilisées pour la simulation des éléments
+  combustibles et absorbants.
+
+  Cette note s'intéresse aux lois de comportement mécanique et plus
+  particulièrement à écriture à l'aide du générateur de code
+  \mfront{}. Elle complète la présentation générale de \mfront{} qui
+  traite également comment des propriétés matériau et des modèles
+  physico-chimiques~\cite{helfer:mfront:2013}. Une fois écrite, ces
+  lois de comportement peuvent être stockés dans la base de données
+  \sirius{}.
 
   La variétés des phénomènes traités fait que \mfront{} propose
   différentes façon décrire des lois de comportement mécaniques.
@@ -197,7 +209,7 @@
   Certaines sont spécifiques à des lois de comportement qui sont
   d'usage courant et pour lesquelles des algorithmes d'intégration
   performants existent (plasticité et viscoplasticité isotropes
-  notamment).
+  notamment). 
 
   Pour les lois les plus complexes, \mfront{} permet d'utiliser
   des méthodes de \nom{Runge-Kutta} ou des méthodes implicites.
@@ -205,7 +217,17 @@
   Les différents tests menés avec les codes aux éléments finis
   \castem{} et \aster{} montrent que les lois de comportement générées
   sont numériquement très
-  efficaces~\cite{michel09,helfer:opti:2011,proix:mfront:2013,olagnon13:_analy}. }
+  efficaces~\cite{michel09,helfer:opti:2011,proix:mfront:2013,olagnon13:_analy}.
+  Il s'agit d'un outil mature, qui se veut de qualité industrielle et
+  qui intéresse fortement différents départements du
+  \cea{}~\cite{11:dec_semi,arrigo12:_notic_le2s} ainsi que ses
+  partenaires, Areva~\cite{olagnon13:_analy} et
+  ÉDF~\cite{proix:mfront:2013}. Cet intérêt confirme la crédibilité et
+  la rigueur de la gestion des connaissances matériau au sein de la
+  plate-forme. Le partage de cet outil ouvre des perspectives variées
+  et enrichissantes de co-développement et de mutualisation.
+
+}
 
 %\makeindex{env}
 \makeindex{tfel}
@@ -219,10 +241,40 @@
 \section{Introduction}
 
 Ce document décrit comment écrire des lois de comportement mécanique
-avec le générateur de code \mfront{} La lecture de ce document suppose
-que le lecteur a déjà une certaine familiarité avec \mfront{}. A
-minima, la lecture de la présentation générale de \mfront{} semble
-nécessaire~\cite{helfer:mfront:2013}.
+avec le générateur de code \mfront{}. Couplé à la base de données
+\sirius{}, \mfront{} vise à garantir une gestion pérenne, robuste,
+efficace et évolutive des connaissances matériau dans la plate-forme
+\pleiades{}~\cite{michel09,helfer:opti:2011}. Il permet également à
+des utilisateurs non développeur d'écrire ses propres connaissances
+matériau~\cite{helfer10}.
+
+Cette note est la première d'un corpus de \(4\) notes. Les trois
+autres notes traitent\footnote{Citons également qu'un guide de
+  référence de la librairie \TFEL{} est également en cours de
+  rédaction. Cette note étant assez ambitieuse, sa rédaction s'étalera
+  dans le temps. Elle est cependant disponible en version projet dans
+  les sources de la librairie. Elle contient en particulier le guide
+  d'installation de la librairie.}~:
+\begin{itemize}
+\item une présentation générale de
+  \mfront{}~\cite{helfer:mfront:2013}~;
+\item de l'interface {\tt umat} utilisée par le codes aux éléments
+  finis \castem{}~\cite{helfer:umat:2013}~;
+\item de l'interface utilisée par le codes aux éléments finis
+  \aster{}~\cite{helfer:aster:2013}~;
+\end{itemize}
+Ces notes sont intégrées à la gestion de configuration de \TFEL{} et
+évoluent continûment avec les développement de \TFEL{}\footnote{ La
+  version la plus à jour est obtenue dans le répertoire de compilation
+  des sources par la commande~:
+\begin{center}
+  {\tt make doc-pdf}
+\end{center}}. Le présent document a été généré à partir de la
+révision @TFEL_SVN_REVISION@.
+
+La lecture de ce document suppose que le lecteur a déjà une certaine
+familiarité avec \mfront{}. A minima, la lecture de la présentation
+générale de \mfront{} semble nécessaire~\cite{helfer:mfront:2013}.
 
 \paragraph{De multiples phénomènes} Les matériaux solides réagissent
 aux sollicitations mécaniques par différents phénomènes~: élasticité,
@@ -3888,6 +3940,168 @@ décrites en annexe~\ref{sec:annexe:orthotropie} pour les tubes.
 \clearpage
 \newpage
 \section{Conclusions}
+
+Cette note a décrit les possibilités de \mfront{} dans le domaine de
+l'intégration des lois de comportement mécanique. Elle complète la
+présentation générale de \mfront{}~\cite{helfer:mfront:2013}.
+
+Pour des raisons pédagogiques, nous avons choisis de ne présenter dans
+cette note que des exemples élémentaires. Des exemples plus complexes
+peuvent être trouvés dans les sources de la librairie \TFEL{}. Pour
+les applications de la plate-forme \pleiades{}, des lois de
+comportement des matériaux usuels du nucléaire peuvent être trouvés
+dans la base de données \sirius{}. Les utilisateurs \cea{} de
+l'application \licos{} peuvent également accéder à un corpus de
+connaissances matériau précompilées via le projet
+\mfm{}~\cite{helfer:mfm:2013}.
+
+\subsection{Une solution flexible, mature et performante}
+
+\mfront{} constitue aujourd'hui une solution flexible et mature au
+c\oe{}ur de la gestion des matériaux de la plate-forme \pleiades{}. Il
+a été évalué en interne ou par les partenaires industriels du
+\cea{}~\cite{olagnon13:_analy}.
+
+\paragraph{L'évaluation par l'équipe \aster{}}
+Pour illustrer ce point, nous pouvons nous appuyer sur l'évaluation
+faite l'équipe de code \aster{} qui est particulièrement
+complète~\cite{proix13:_integ}.
+
+Différentes classes de lois de comportement ont été testées~:
+\begin{itemize}
+\item loi de \nom{Mazars} décrivant l'endommagement fragile du
+  béton~\cite{francois13:_model}~;
+\item l'endommagement sous fluage tertiaire de structure en acier par
+  une loi dite de \nom{Hayhurst}~\cite{proix:hayhurst:2012}~;
+\item lois plastiques et viscoplastiques de type \nom{Chaboche} avec
+  écrouissage cinématique (linéaire ou non linéaire)~;
+\item comportement mono-cristallin et poly-cristallins pour des
+  structures CFC. 
+\end{itemize}
+De plus, l'équipe \aster{} a reversé de nombreux tests de loi de
+comportement dans la librairie \TFEL{}. Ces tests ont été écrits à
+l'aide de l'aide d'utilitaire \mtest{}~\cite{helfer:mtest:2013}.
+
+\begin{table}[htbp]
+  \centering
+  \begin{tabular}[htbp]{|>{\centering}m{3.cm}|>{\centering}m{3.cm}|>{\centering}m{3.cm}|m{1mm}c|}
+    \cline{2-5}
+    \multicolumn{1}{c|}{}&
+    \mfront{} implicite (\(19\) équations) &
+    {\tt VISC\_CIN1\_CHAB} implicite aster optimisé \\(1 équation) & \vrule width 0mm height 1.4cm&
+    \multirow{3}{*}{\includegraphics[width=6.cm]{@top_srcdir@/docs/mfront/Images/hsnv125d.eps}}\\
+    \cline{1-3}
+    Nombre de pas de temps                 &76          &76      & \vrule width 0mm height 1.4cm&\\
+    \cline{1-3}
+    Nombre d'itérations de \nom{Newton}    &160         &151     & \vrule width 0mm height 1.4cm&\\
+    \cline{1-3}
+    Temps CPU                              &4,67s      &4,19s    & \vrule width 0mm height 1.4cm&\\
+    \hline
+  \end{tabular}
+  \caption{Résultat du test {\tt HSNV125}~\cite{proix:hsnv125:2013}.}
+  \label{fig:mfront:behaviours:hsnv125}
+\end{table}
+
+\paragraph{Test de robustesse} Le test {\tt HSNV125} est extrait de la
+base de cas test de \aster{}~\cite{proix:hsnv125:2013}. Il s'agit d'un
+test particulièrement sollicitant pour les algorithmes d'intégration
+des loi de comportement. Un exemple de résultat de ce test, qui permet
+d'apprécier la complexité du chargement imposé, est donné en
+figure~\ref{fig:mfront:behaviours:hsnv125} pour une loi de type
+\nom{Chaboche} avec deux variables cinématiques non linéaires. Dans
+cet exemple, la loi \mfront{} est légèrement moins efficace que la loi
+optimisée d'\aster{}\footnote{Une version non optimisée de la loi est
+  également disponible dans \aster{} (\(21\) équations résolues par
+  une méthode implicite). Cette version conduit à une divergence du
+  calcul pour le test proposé.}.
+
+\begin{table}[htbp]
+  \centering
+  \begin{tabular}[htbp]{|>{\centering}m{2.5cm}|>{\centering}m{2.5cm}|>{\centering}m{2.5cm}|>{\centering}m{2.5cm}|c|}
+    \cline{2-5}
+    \multicolumn{1}{c|}{}&
+    MFRONT Implicite&
+    MFRONT implicite avec jacobienne numérique&
+    Aster avec jacobienne numérique & 
+    \multirow{6}{*}{\includegraphics[width=3.25cm]{@top_srcdir@/docs/mfront/Images/hayhurst.eps}}\\
+    \cline{1-4}
+    \cline{1-4}
+    Nombre de pas de temps                 &11          &11            &11& \\
+    \cline{1-4}
+    Nombre d'itérations de \nom{Newton}    &37          &36            &44& \\
+    \cline{1-4}
+    Temps CPU                              &8mn11s      &7mn58s    &17mn43s& \\
+    \cline{1-4}
+    Temps d'intégration de la loi de comportement &2mn26s &2mn21s  &10mn51s& \\
+    \cline{1-4}
+    Temps d'inversion de la matrice               &5mn11s &5mn5s   &6mn11s& \\
+    \hline
+  \end{tabular}
+  \caption{Résultat des test de fluage sur éprouvette entaillée $3D$,
+    loi de \nom{Hayhurst}~\cite{proix13:_integ}.}
+  \label{tab:mfront:behaviours:hayhurst}
+\end{table}
+
+\paragraph{Tests de performances} Plusieurs comparaisons avec les lois
+implantées dans \aster{} ont été menées. Dans l'ensemble, les lois
+générées par \mfront{} se sont avérées efficaces, autant que les lois
+\aster{} et parfois meilleures.
+
+Un premier exemple est donnée par le
+tableau~\ref{tab:mfront:behaviours:hayhurst} où sur une éprouvette
+entaillée en \(3D\). Le calcul est effectué en 3D en grandes
+déformations grâce aux formalisme des déformations logarithmiques qui
+permet d'utiliser des lois écrites en petites
+déformations~\cite{bargellini13:_model_gdef_log_gdef_hypo_elas}.
+
+\begin{table}[htbp]
+  \centering
+  \begin{tabular}[htbp]{|>{\centering}m{2.cm}|>{\centering}m{2.cm}|>{\centering}m{2.cm}|m{1mm}m{8.cm}|}
+    \cline{2-5}
+    \multicolumn{1}{c|}{}&
+    \mfront{} (RK42)  &
+    \aster{}  & \vrule width 0mm height 2.75cm&
+    \multirow{2}{*}{\includegraphics[width=7.cm]{@top_srcdir@/docs/mfront/Images/polybz.eps}}\\
+    \cline{1-3}
+    Temps CPU                              &90s      &136s    & \vrule width 0mm height 2.75cm&\\
+    \hline
+  \end{tabular}
+  \caption{Comparaison des temps de calculs pour une loi issue de l'homogénéisation d'un poly-cristal constitué de $100$ grains.}
+  \label{fig:mfront:behaviours:polybz}
+\end{table}
+
+Un second test, basé sur une loi d'homogénéisation de lois de
+plasticité cristalline, démontre les capacités de \mfront{} à traiter
+un grand nombre de variables internes (plus de \(4\,200\) ici) en
+conservant des performances numériques intéressantes, reportées au
+tableau~\ref{fig:mfront:behaviours:polybz}. Le fichier \mfront{} fait
+une centaine de lignes.
+
+\subsection{Perspectives}
+
+La diffusion de \mfront{} hors de la plate-forme \pleiades{}, au DMN
+et à EDF notamment, offre des possibilités de qualification de l'outil
+extrêmement intéressantes et des voies de collaboration extrêmement
+riches et enrichissantes.
+
+De nombreux points de développement ont été identifiés~:
+\begin{itemize}
+\item un meilleur support des contraintes planes~;
+\item la possibilité d'utiliser d'écrire des lois de comportement qui
+  ne soit pas limités au cas volumique petites déformations. Ceci
+  inclut~:
+  \begin{itemize}
+  \item le cas des poutres qui utilisent des variables généralisées~;
+  \item le cas des modèles de zones cohésives qui travaillent en
+    traction/saut de déplacement~;
+  \item les grandes transformations~;
+  \item les lois à gradients (de déformations ou à variables internes).
+  \end{itemize}
+\item l'amélioration de la robustesse de algorithmes implicites, qui
+  peuvent diverger si l'estimation initiale est mauvaise. La méthode
+  de \nom{Powell} semble particulièrement
+  intéressante~\cite{Chen1981143}.
+\end{itemize}
 
 \clearpage
 \newpage

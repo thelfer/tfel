@@ -28,8 +28,8 @@ namespace tfel
     {
       using namespace tfel::math;
       using namespace tfel::fsalgo;
-      const real coefm=real(1)/real(2);
-      const real coefn=real(1)/real(3);
+      const real coefm=real(1)/sqrt(real(2));
+      const real coefn=real(1)/sqrt(real(3));
       // sliding systems
       const real nx[Nss]={ 1.0,1.0,1.0, 1.0, 1.0, 1.0,-1.0,-1.0,-1.0,-1.0,-1.0,-1.0};
       const real ny[Nss]={ 1.0,1.0,1.0,-1.0,-1.0,-1.0, 1.0, 1.0, 1.0,-1.0,-1.0,-1.0};

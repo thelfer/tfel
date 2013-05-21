@@ -15,6 +15,11 @@ EXTRA_DIST=CMakeLists.txt                                \
 	   Images/2norton-rk.tex		         \
 	   Images/Algo_temps.eps		         \
 	   Images/CompSeq.eps			         \
+	   Images/hayhurst.eps			         \
+	   Images/polybz.eps				 \
+	   Images/polybz.png				 \
+	   Images/hsnv125d.eps				 \
+	   Images/hsnv125d.png				 \
 	   annexe-orthotropie.tex		         \
 	   style.ist				         \
 	   mfront/A316TiHyperTrempe_CreepExponent.mfront \

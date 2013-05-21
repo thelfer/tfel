@@ -129,6 +129,9 @@
 \include{Champs}
 
 \resumecea{
+  L'une des missions de la plate-forme \pleiades{} est de capitaliser
+  les connaissances matériau utilisées pour la simulation des éléments
+  combustibles et absorbants.
 
   \mfront{} est un générateur de code dédié aux connaissances
   matériau. Son domaine d'application couvre~:
@@ -190,20 +193,22 @@ autres notes traitent\footnote{Citons également qu'un guide de
 \item de l'interface utilisée par le codes aux éléments finis
   \aster{}~\cite{helfer:aster:2013}~;
 \end{itemize}
-Ces notes sont intégrés à la gestion de configuration de \TFEL{} et
-évoluent continûment avec les développement de \TFEL{}. La version la
-plus à jour est obtenue par la commande~:
+Ces notes sont intégrées à la gestion de configuration de \TFEL{} et
+évoluent continûment avec les développement de \TFEL{}\footnote{ La
+  version la plus à jour est obtenue dans le répertoire de compilation
+  des sources par la commande~:
 \begin{center}
   {\tt make doc-pdf}
-\end{center}
-Le présent document a été généré à partir de la révision
-@TFEL_SVN_REVISION@.
+\end{center}}. Le présent document a été généré à partir de la
+révision @TFEL_SVN_REVISION@.
+
+\subsection{Objectif de \mfront{}}
 
 Couplé à la base de données \sirius{}, \mfront{} vise à garantir une
 gestion pérenne, robuste, efficace et évolutive (au sens du suivie des
 évolutions logicielles) des connaissances matériau dans la plateforme
-\pleiades{}~\cite{michel09} et à faciliter leurs écritures par des
-utilisateurs non développeurs~:
+\pleiades{} et à faciliter leurs écritures par des utilisateurs non
+développeurs~\cite{michel09,helfer10}~:
 \begin{itemize}
 \item la pérennisation et le caractère évolutif des connaissances
   matériau est assuré par~:
