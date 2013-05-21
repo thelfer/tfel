@@ -140,7 +140,7 @@
     \item les lois de comportement~;
     \item les modèles,
   \end{itemize} 
-  domaine pour lesquels il rassemble un important savoir-faire
+  pour lesquels il rassemble un important savoir-faire
   physique, numérique et informatique.
 
   Couplé à la base de données \sirius{}, \mfront{} vise à garantir une
@@ -205,7 +205,7 @@ révision @TFEL_SVN_REVISION@.
 \subsection{Objectif de \mfront{}}
 
 Couplé à la base de données \sirius{}, \mfront{} vise à garantir une
-gestion pérenne, robuste, efficace et évolutive (au sens du suivie des
+gestion pérenne, robuste, efficace et évolutive (au sens du suivi des
 évolutions logicielles) des connaissances matériau dans la plateforme
 \pleiades{} et à faciliter leurs écritures par des utilisateurs non
 développeurs~\cite{michel09,helfer10}~:
@@ -218,12 +218,16 @@ développeurs~\cite{michel09,helfer10}~:
     programmation). Ce fichier contient uniquement l'information
     physique et, éventuellement, des informations numériques. Ce
     fichier sert à générer des sources \cpp{} qui sont adaptées au
-    contexte l'utilisation de la notion d'interface (voir
+    contexte par l'utilisation de la notion d'interface (voir
     section~\ref{sec:mfront:interface}). Si le code ou le langage
     cible évolue, il suffit de faire évoluer l'interface, sans
     modifier le fichier \mfront{}\footnote{Pour illustrer notre
       propos, donnons quelques exemples~:
       \begin{itemize}
+      \item l'architecture \(V2.0\) fournit une interface aux
+        propriétés matériau qui a permis de porter l'ensemble de
+        propriétés matériau de {\tt MAYA}. Le temps de développement
+        de l'interface est de l'ordre de l'heure~;
       \item toutes les lois de comportement mécanique écrites avec
         \mfront{} peuvent être utilisées ou dans le code aux éléments
         finis \castem{}~\cite{12:castemcea} ou dans le code
@@ -240,10 +244,10 @@ développeurs~\cite{michel09,helfer10}~:
       \end{itemize}
     }
   \item l'utilisation du langage \cpp{}, actuellement considéré comme
-    l'une des langages les plus utilisés au monde\footnote{Il s'agit
-      du langage plus utilisé si on considère le langage \texttt{C}
-      comme un sous-ensemble du \cpp{}, et du troisième langage si on
-      les distingue.} et est particulièrement utilisé dans le monde
+    l'un des langages les plus utilisés au monde\footnote{Il s'agit du
+      langage plus utilisé si on considère le langage \texttt{C} comme
+      un sous-ensemble du \cpp{}, et du troisième langage si on les
+      distingue.} et qui est particulièrement utilisé dans le monde
     scientifique~;
   \end{itemize}
 \item les performances, en particulier pour les lois de comportement
