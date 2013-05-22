@@ -53,6 +53,7 @@ namespace mfront{
     this->registerNewCallBack("@Output",&MFrontMaterialLawParser::treatOutput);
     this->registerNewCallBack("@Namespace",&MFrontMaterialLawParser::treatNamespace);
     this->registerNewCallBack("@Function",&MFrontMaterialLawParser::treatFunction);
+    this->registerNewCallBack("@Import",&MFrontMaterialLawParser::treatImport);
     this->registerNewCallBack("@Interface",
 			      &MFrontMaterialLawParser::treatInterface);
     this->registerNewCallBack("@Bounds",
@@ -71,7 +72,7 @@ namespace mfront{
     using namespace std;
     this->callBacks.insert(make_pair(keyword,ptr));
     this->registredKeyWords.insert(keyword);
-  } // end of MFrontMaterialLawParser::registerCallBacks
+  } // end of MFrontMaterialLawParser::registerNewCall
 
   void
   MFrontMaterialLawParser::getKeywordsList(std::vector<std::string>& k) const

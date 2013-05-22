@@ -18,6 +18,7 @@ set(mfront_SOURCES
     main.cxx
     MFront.cxx
     MFrontLock.cxx
+    MFrontSearchFile.cxx
     MFrontInitInterfaces.cxx
     MFrontInitParsers.cxx
     MFrontParserFactory.cxx

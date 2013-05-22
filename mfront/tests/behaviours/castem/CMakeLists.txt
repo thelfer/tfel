@@ -31,7 +31,9 @@ set(mfront_tests_SOURCES
   StrainHardeningCreep
   Mazars
   Chaboche
-  Chaboche2)
+  Chaboche2
+  MonoCristal
+  Hayhurst)
   
 mfront_behaviour_check_library(MFrontCastemBehaviours umat  ${mfront_tests_SOURCES})
 target_link_libraries(MFrontCastemBehaviours
@@ -89,3 +91,5 @@ test_umat(strainhardeningcreep)
 test_umat(plasticity)
 test_umat(chaboche)
 test_umat(chaboche2)
+test_umat(monocristal)
+test_umat(hayhurst)

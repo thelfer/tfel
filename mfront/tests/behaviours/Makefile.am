@@ -27,8 +27,13 @@ EXTRA_DIST=CMakeLists.txt                    \
            Mazars.mfront                     \
            Chaboche.mfront                   \
            Chaboche2.mfront                  \
+	   MonoCristal.mfront                \
+	   MonoCristalNewtonRaphson.mfront   \
+	   Hayhurst.mfront                   \
            references/plasticity.ref         \
 	   references/elasticity15-aster.ref \
 	   references/mazars-aster.ref       \
 	   references/chaboche-aster.ref     \
-	   references/chaboche2-aster.ref
+	   references/chaboche2-aster.ref    \
+	   references/monocristal.ref        \
+	   references/hayhurst.ref

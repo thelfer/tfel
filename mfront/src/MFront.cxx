@@ -38,6 +38,7 @@
 #include"MFront/SupportedTypes.hxx"
 #include"MFront/MFront.hxx"
 #include"MFront/MFrontHeader.hxx"
+#include"MFront/MFrontSearchFile.hxx"
 #include"MFront/MFrontParserFactory.hxx"
 #include"MFront/MFrontLawInterfaceFactory.hxx"
 #include"MFront/MFrontBehaviourInterfaceFactory.hxx"
@@ -387,6 +388,10 @@ namespace mfront{
 			      "list all keywords for the given parser and exits",true);
     this->registerNewCallBack("--help-keywords-list",&MFront::treatHelpCommandsList,
 			      "list all keywords for the given parser and exits",true);
+    this->registerNewCallBack("--include","-I",&MFront::treatSearchPath,
+			      "add a new path at the beginning of the search paths",true);
+    this->registerNewCallBack("--search-path",&MFront::treatSearchPath,
+			      "add a new path at the beginning of the search paths",true);
     this->registerNewCallBack("--help-keyword",&MFront::treatHelpCommand,
 			      "display the help associated for given parser "
 			      "and the given parser and exits",true);
@@ -452,6 +457,19 @@ namespace mfront{
     this->parseArguments();
     MFront::callingName = argv[0];
   } // end of MFront::MFront
+
+  void
+  MFront::treatSearchPath(void)
+  {
+    using namespace std;
+    const string& o = this->currentArgument->getOption();
+    if(o.empty()){
+      string msg("MFront::treatSearchPath : ");
+      msg += "no path given";
+      throw(runtime_error(msg));
+    }
+    MFrontSearchFile::addSearchPaths(o);
+  }
 
   void
   MFront::treatHelpCommandsList(void)
@@ -759,6 +777,7 @@ namespace mfront{
     string object;
     set<string>::iterator p;
     set<string>::iterator p2;
+    vector<string>::iterator p3;
     bool hasValidExtension;
     bool erased = false;
     fName = "src"+dirStringSeparator()+ name;
@@ -1559,6 +1578,14 @@ namespace mfront{
 	  }
 	}
       }
+      // adding the mfront search path to the include files
+      if(!MFrontSearchFile::getSearchPaths().empty()){
+	const vector<string>& paths = MFrontSearchFile::getSearchPaths();
+	for(p6=paths.begin();p6!=paths.end();++p6){
+	  this->makeFile << "\\\n\t     -I" << *p6;
+	}
+      }
+      //
       this->makeFile << endl << endl;
       // LDFLAGS
       if(ldflags!=0){

@@ -35,6 +35,7 @@ mfront_SOURCES = main.cxx                                             \
 		 ParserBase.cxx                                       \
 		 InterfaceBase.cxx                                    \
 		 ParserUtilities.cxx                                  \
+		 MFrontSearchFile.cxx                                 \
 		 MFrontLawInterfaceFactory.cxx                        \
 		 MFrontBehaviourInterfaceFactory.cxx                  \
 		 MFrontModelInterfaceFactory.cxx                      \

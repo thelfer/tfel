@@ -28,6 +28,7 @@ namespace mfront{
     this->registerNewCallBack("@StaticVar",&Child::treatStaticVar);
     this->registerNewCallBack("@StaticVariable",&Child::treatStaticVar);
     this->registerNewCallBack("@Description",&Child::treatDescription);
+    this->registerNewCallBack("@Import",&Child::treatImport);
     this->registerNewCallBack("@Bounds",
 			      &Child::treatBounds);
     this->registerNewCallBack("@PhysicalBounds",

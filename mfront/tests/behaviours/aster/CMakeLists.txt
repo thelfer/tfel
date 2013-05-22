@@ -27,7 +27,9 @@ set(mfront_tests_SOURCES
   StrainHardeningCreep
   Mazars
   Chaboche
-  Chaboche2)
+  Chaboche2
+  MonoCristal
+  Hayhurst)
 
 mfront_behaviour_check_library(MFrontAsterBehaviours  aster ${mfront_tests_SOURCES})
 target_link_libraries(MFrontAsterBehaviours
@@ -84,3 +86,4 @@ test_aster(plasticity)
 test_aster(strainhardeningcreep)
 test_aster(chaboche)
 test_aster(chaboche2)
+test_aster(monocristal)

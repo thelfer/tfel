@@ -18,6 +18,7 @@
 #include"MFront/MFront.hxx"
 #include"MFront/ParserBase.hxx"
 #include"MFront/ParserUtilities.hxx"
+#include"MFront/MFrontSearchFile.hxx"
 #include"MFront/MFrontMFrontLawInterface.hxx"
 
 namespace mfront
@@ -103,7 +104,8 @@ namespace mfront
     oFileTokens.swap(this->fileTokens);
     TokensContainer::const_iterator ocurrent = this->current;
     for(p=files.begin();p!=files.end();++p){
-      this->analyseFile(*p,vector<string>());
+      this->analyseFile(MFrontSearchFile::search(*p),
+			vector<string>());
     }
     this->fileName = oFileName;
     this->fileTokens.swap(oFileTokens);

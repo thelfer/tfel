@@ -36,6 +36,7 @@ nobase_include_HEADERS= MFront/MFront.hxx                          \
 			MFront/StaticVarHandler.hxx                \
 			MFront/ComputedVarHandler.hxx              \
 			MFront/SupportedTypes.hxx                  \
+			MFront/MFrontSearchFile.hxx                \
 			MFront/DrivingVariable.hxx                 \
 			MFront/ThermodynamicForce.hxx              \
 			MFront/BoundsDescription.hxx               \

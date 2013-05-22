@@ -513,6 +513,71 @@ fichier \mfront{} n'intervient pas dans le nom des fonctions générés. Il
 est cependant souhaitable et pratique de garder une certaine cohérence
 entre le nom du fichier et le nom des fonctions générées.
 
+\subsubsection{Inclusion d'autres fichiers {\tt mfront}}
+
+La directive \mkey{Import} permet d'inclure un fichier {\tt mfront}
+dans le fichier courant.
+
+Cette directive présente un intérêt particulier pour les lois de
+comportement mécanique\footnote{Pour comprendre ce paragraphe, une
+  lecture préalable de la note dédiée aux lois de comportement
+  mécanique peut s'avérer
+  nécessaire~\cite{helfer:mfront:behaviours:2013}.}. En effet,
+beaucoup de lois de comportement utilisent le même formalisme et ne se
+différencient que par leurs coefficients. Une solution classique
+consiste à rajouter des propriétés matériau à la liste d'appel de la
+loi de comportement. Cette solution présente plusieurs inconvénients~:
+\begin{itemize}
+\item on s'éloigne du choix \pleiades{} de proposer des lois de
+  comportement mécanique spécifiques aux matériaux~;
+\item il augmente le risque d'erreur de la part de l'utilisateur, qui
+  doit correctement renseigné son jeu de données dans le code
+  appelant~;
+\item il est difficile de passer d'un coefficient indépendant de la
+  température à un coefficient dépendant de la
+  température\footnote{Les propriétés matériau fournies par le code
+    appelant sont constantes sur le pas de temps et l'instant auquel
+    elles sont évaluées n'est pas nécessairement cohérent avec le
+    schéma d'intégration utilisé par la loi de comportement.} alors
+  que cela se fait naturellement dans les schémas d'intégration
+  implicite\footnote{Pour des raisons intrinsèques à ces schémas
+    d'intégration, il est possible de substituer une propriété
+    matériau variable dans le temps par sa valeur \og~en milieu de pas
+    de temps~\fg{}. Cette remarque n'est absolument pas valable pour
+    les schémas d'intégration explicite de type \nom{Runge-Kutta}.}.
+\item dans la plupart des codes appelant, la gestion des propriétés
+  matériau a un coût non négligeable.
+\end{itemize}
+
+La solution qu'apporte la directive \mkey{Import} est la suivante~:
+\begin{itemize}
+\item on écrit un fichier maître définissant les différents
+  coefficients. La façon de définir ces coefficients (propriété
+  matériau\footnote{Voir le mot clé \mkey{MaterialProperty}.},
+  variable locale\footnote{Voir le mot clé \mkey{LocalVariable}.},
+  etc..) et éventuellement la façon de les initialiser\footnote{Voir
+    le mot clé \mkey{InitLocalVariable}.} dépend du cas traité.
+\item ce fichier maître inclut un fichier patron (\og~\tt
+  template~\fg{} en anglais) contenant tout le détail de
+l'intégration.
+\end{itemize}
+
+\paragraph{Chemins de recherche} La directive \mkey{Import} recherche
+le fichier à inclure~:
+\begin{itemize}
+\item dans le répertoire courant~;
+\item dans les répertoires précisés en ligne de commandes par l'option
+  \moption{search-path} (voir la section~\ref{sec:mfront:using})~;
+\item dans les répertoires pointés par la variable d'environnement
+  \envb{MFRONT\_INCLUDE\_PATH}{MFRONT\_\-INCLUDE\_\-PATH}. Cette
+  variable fournit une liste de chemins séparés par le caractère {\tt
+    ':'}.
+\end{itemize}
+
+\paragraph{Une limitation} Il est aujourd'hui nécessaire de préciser
+l'analyseur à utiliser dans le fichier principal\footnote{Voir le mot
+  clé \mkey{Parser}.}.
+
 \subsubsection{Directives de compilation}
 
 Trois directives sont liées à la compilation des sources. Les
@@ -834,7 +899,7 @@ Nous décrivons dans ce paragraphe l'utilisation de \mfront{} sous
  \unix{}. Les commandes présentées restent valides sous \windows{} à
 condition d'utiliser l'un des environnements \msys{} ou \cygwin{}.
 
-\subsection{Utilisation de \mfront{} en ligne de commande}
+\subsection{Appel à \mfront{} en ligne de commande}
 
 \mfront{} s'utilise ainsi~:
 \begin{center}
@@ -967,6 +1032,15 @@ compilation optimisées et lance la commande~:
 \begin{center}
   {\tt make -C src -f Makefile.mfront}
 \end{center}
+
+\paragraph{L'option \moption{search-path}} Un fichier \mfront{} peut
+inclure d'autres fichiers grâce à la directive {\tt @Import}. L'option
+\moption{search-path} permet d'ajouter un ou plusieurs chemins de
+recherche pour ses fichiers. Plusieurs chemins peuvent être précisés
+en les séparant par le caractère {\tt ':'}.
+
+\paragraph{L'option \moption{include}} L'option \moption{include} est
+synonyme de l'option \moption{search-path}.
 
 \paragraph{L'option \moption{nodeps}} L'option \moption{nodeps}
 empêche l'inclusion des règles de dépendances dans le fichier {\tt

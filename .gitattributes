@@ -871,6 +871,7 @@ mfront/include/MFront/MFrontParserProxy.hxx -text
 mfront/include/MFront/MFrontParserProxy.ixx -text
 mfront/include/MFront/MFrontPythonLawInterface.hxx -text
 mfront/include/MFront/MFrontRungeKuttaParser.hxx -text
+mfront/include/MFront/MFrontSearchFile.hxx -text
 mfront/include/MFront/MFrontUMATInterface.hxx -text
 mfront/include/MFront/MFrontVirtualParser.hxx -text
 mfront/include/MFront/MTest.hxx -text
@@ -992,6 +993,7 @@ mfront/src/MFrontMultipleIsotropicMisesFlowsParser.cxx -text
 mfront/src/MFrontParserFactory.cxx -text
 mfront/src/MFrontPythonLawInterface.cxx -text
 mfront/src/MFrontRungeKuttaParser.cxx -text
+mfront/src/MFrontSearchFile.cxx -text
 mfront/src/MFrontUMATInterface.cxx -text
 mfront/src/Makefile.am -text
 mfront/src/ParserBase.cxx -text
@@ -1017,6 +1019,7 @@ mfront/tests/behaviours/Chaboche.mfront -text
 mfront/tests/behaviours/Chaboche2.mfront -text
 mfront/tests/behaviours/DDIF2.mfront -text
 mfront/tests/behaviours/Elasticity.mfront -text
+mfront/tests/behaviours/Hayhurst.mfront -text
 mfront/tests/behaviours/ImplicitNorton.mfront -text
 mfront/tests/behaviours/ImplicitNorton2.mfront -text
 mfront/tests/behaviours/ImplicitNorton_Broyden.mfront -text
@@ -1024,6 +1027,8 @@ mfront/tests/behaviours/ImplicitNorton_Broyden2.mfront -text
 mfront/tests/behaviours/ImplicitOrthotropicCreep.mfront -text
 mfront/tests/behaviours/Makefile.am -text
 mfront/tests/behaviours/Mazars.mfront -text
+mfront/tests/behaviours/MonoCristal.mfront -text
+mfront/tests/behaviours/MonoCristalNewtonRaphson.mfront -text
 mfront/tests/behaviours/Norton.mfront -text
 mfront/tests/behaviours/NortonRK.mfront -text
 mfront/tests/behaviours/NortonRK2.mfront -text
@@ -1067,6 +1072,7 @@ mfront/tests/behaviours/aster/asterimplicitnorton_broyden.mtest.in -text
 mfront/tests/behaviours/aster/asterimplicitnorton_broyden2.mtest.in -text
 mfront/tests/behaviours/aster/asterimplicitorthotropiccreep.mtest.in -text
 mfront/tests/behaviours/aster/astermazars.mtest.in -text
+mfront/tests/behaviours/aster/astermonocristal.mtest.in -text
 mfront/tests/behaviours/aster/asternorton.mtest.in -text
 mfront/tests/behaviours/aster/asternorton2.mtest.in -text
 mfront/tests/behaviours/aster/asterorthotropiccreep-rk42.mtest.in -text
@@ -1096,7 +1102,9 @@ mfront/tests/behaviours/castem/castemelasticity6.mtest.in -text
 mfront/tests/behaviours/castem/castemelasticity7.mtest.in -text
 mfront/tests/behaviours/castem/castemelasticity8.mtest.in -text
 mfront/tests/behaviours/castem/castemelasticity9.mtest.in -text
+mfront/tests/behaviours/castem/castemhayhurst.mtest.in -text
 mfront/tests/behaviours/castem/castemmazars.mtest.in -text
+mfront/tests/behaviours/castem/castemmonocristal.mtest.in -text
 mfront/tests/behaviours/castem/castemnorton-euler.mtest.in -text
 mfront/tests/behaviours/castem/castemnorton-rk2.mtest.in -text
 mfront/tests/behaviours/castem/castemnorton-rk4.mtest.in -text
@@ -1114,7 +1122,9 @@ mfront/tests/behaviours/castem/castemstressrelaxation.mtest.in -text
 mfront/tests/behaviours/references/chaboche-aster.ref -text
 mfront/tests/behaviours/references/chaboche2-aster.ref -text
 mfront/tests/behaviours/references/elasticity15-aster.ref -text
+mfront/tests/behaviours/references/hayhurst.ref -text
 mfront/tests/behaviours/references/mazars-aster.ref -text
+mfront/tests/behaviours/references/monocristal.ref -text
 mfront/tests/behaviours/references/plasticity.ref -text
 mfront/tests/properties/CMakeLists.txt -text
 mfront/tests/properties/Inconel600_YoungModulus.mfront -text

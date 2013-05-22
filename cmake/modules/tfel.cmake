@@ -52,6 +52,7 @@ macro(add_mfront_behaviour_generated_source lib interface file)
     OUTPUT  "src/${file}.cxx"
     OUTPUT  "src/${interface}${file}.cxx"
     COMMAND "${mfront_executable}"
+    ARGS    "--search-path=${PROJECT_SOURCE_DIR}/mfront/tests/behaviours"
     ARGS    "--interface=${interface}" "${mfront_file}"
     DEPENDS "${PROJECT_BINARY_DIR}/mfront/src/mfront"
     DEPENDS "${mfront_file}"

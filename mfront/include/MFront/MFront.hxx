@@ -51,6 +51,8 @@ namespace mfront{
 
     void treatVerbose(void);
 
+    void treatSearchPath(void);
+
     void treatHelpCommandsList(void);
 
     void treatHelpCommand(void);
