@@ -1391,7 +1391,7 @@ namespace mfront
     const vector<string>& ivsnames = this->b->getInternalStateVariablesNames();
     if(find(ivsnames.begin(),ivsnames.end(),n)==ivsnames.end()){
       string msg("MTest::handleInternalStateVariable : ");
-      msg += "the behaviour don't declare an external state variable '";
+      msg += "the behaviour don't declare an internal state variable named '";
       msg += n+"'";
       throw(runtime_error(msg));
     }

@@ -176,7 +176,7 @@ namespace mfront
   
   unsigned short
   MTestUmatBehaviourBase::getInternalStateVariablePosition(const unsigned short d,
-						       const std::string& n) const
+							   const std::string& n) const
   {
     using namespace std;
     vector<string>::const_iterator p;
@@ -216,6 +216,7 @@ namespace mfront
 		   "unsupported internal variable type");
 	throw(runtime_error(msg));
       }
+      ++i;
     }
     return s;
   }
