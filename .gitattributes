@@ -1014,6 +1014,7 @@ mfront/src/WordAnalyser.cxx -text
 mfront/src/main.cxx -text
 mfront/tests/CMakeLists.txt -text
 mfront/tests/Makefile.am -text
+mfront/tests/behaviours/Burger.mfront -text
 mfront/tests/behaviours/CMakeLists.txt -text
 mfront/tests/behaviours/Chaboche.mfront -text
 mfront/tests/behaviours/Chaboche2.mfront -text
@@ -1084,6 +1085,7 @@ mfront/tests/behaviours/aster/asterstressrelaxation.mtest.in -text
 mfront/tests/behaviours/aster/strainhardeningcreep.gnuplot -text
 mfront/tests/behaviours/castem/CMakeLists.txt -text
 mfront/tests/behaviours/castem/Makefile.am -text
+mfront/tests/behaviours/castem/castemburger.mtest.in -text
 mfront/tests/behaviours/castem/castemchaboche.mtest.in -text
 mfront/tests/behaviours/castem/castemchaboche2.mtest.in -text
 mfront/tests/behaviours/castem/castemelasticity.mtest.in -text
@@ -1119,6 +1121,7 @@ mfront/tests/behaviours/castem/castemorthotropiccreep.mtest.in -text
 mfront/tests/behaviours/castem/castemplasticity.mtest.in -text
 mfront/tests/behaviours/castem/castemstrainhardeningcreep.mtest.in -text
 mfront/tests/behaviours/castem/castemstressrelaxation.mtest.in -text
+mfront/tests/behaviours/references/burger.ref -text
 mfront/tests/behaviours/references/chaboche-aster.ref -text
 mfront/tests/behaviours/references/chaboche2-aster.ref -text
 mfront/tests/behaviours/references/elasticity15-aster.ref -text

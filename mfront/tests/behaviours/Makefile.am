@@ -18,6 +18,7 @@ EXTRA_DIST=CMakeLists.txt                    \
            Norton_rk4.mfront                 \
            Norton_rk42.mfront                \
            Norton_rkCastem.mfront            \
+           Burger.mfront                     \
            OrthotropicCreep.mfront           \
            OrthotropicCreep_rk42.mfront      \
            OrthotropicCreep_rkCastem.mfront  \
@@ -36,4 +37,5 @@ EXTRA_DIST=CMakeLists.txt                    \
 	   references/chaboche-aster.ref     \
 	   references/chaboche2-aster.ref    \
 	   references/monocristal.ref        \
-	   references/hayhurst.ref
+	   references/hayhurst.ref           \
+	   references/burger.ref
