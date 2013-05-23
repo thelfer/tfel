@@ -251,7 +251,7 @@ namespace tfel
 
       res = ::tfel_checkIfAsterBehaviourRequiresElasticMaterialPropertiesOffset(lib,f.c_str());
       if(res<0){
-	string msg("ExternalLibraryManager::checkIfAsterBehaviourRequiresThermalExpansionMaterialPropertiesOffset : ");
+	string msg("ExternalLibraryManager::checkIfAsterBehaviourRequiresElasticMaterialPropertiesOffset : ");
 	msg += "information could not be read (";
 #if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
 	  msg += ::GetLastError();
@@ -265,7 +265,7 @@ namespace tfel
 	return true;
       }
       if(res!=0){
-	string msg("ExternalLibraryManager::checkIfAsterBehaviourRequiresThermalExpansionMaterialPropertiesOffset : ");
+	string msg("ExternalLibraryManager::checkIfAsterBehaviourRequiresElasticMaterialPropertiesOffset : ");
 	msg += "invalid returned value";
 	throw(runtime_error(msg));
       }

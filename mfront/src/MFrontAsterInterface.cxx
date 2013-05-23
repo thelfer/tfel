@@ -138,10 +138,10 @@ namespace mfront{
       return make_pair(true,current);      
     } else if (key=="@AsterTangentOperatorComparisonCriterium"){
       if(!this->compareToNumericalTangentOperator){
-	string msg("AsterInterface::treatKeyword (@AsterTangentOperatorComparisonCriterium) : ");
-	msg += "time stepping is not enabled at this stage.\n";
-	msg += "Use the @AsterUseTimeSubStepping directive before ";
-	msg += "@AsterTangentOperatorComparisonCriterium";
+	string msg("AsterInterface::treatKeyword (@AsterTangentOperatorComparisonCriterium) : "
+		   "comparison to tangent operator is not enabled at this stage.\n"
+		   "Use the @AsterCompareToNumericalTangentOperator directive before "
+		   "@AsterTangentOperatorComparisonCriterium");
 	throw(runtime_error(msg));
       }
       if(current==end){
