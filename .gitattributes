@@ -1049,6 +1049,7 @@ mfront/tests/behaviours/StrainHardeningCreep.mfront -text
 mfront/tests/behaviours/aster/CMakeLists.txt -text
 mfront/tests/behaviours/aster/Makefile.am -text
 mfront/tests/behaviours/aster/asterIsotropicHomogeneousPipe.mtest.in -text
+mfront/tests/behaviours/aster/asterburger.mtest.in -text
 mfront/tests/behaviours/aster/asterchaboche.mtest.in -text
 mfront/tests/behaviours/aster/asterchaboche2.mtest.in -text
 mfront/tests/behaviours/aster/asterelasticity.mtest.in -text
