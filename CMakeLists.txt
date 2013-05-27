@@ -19,7 +19,8 @@ endif(NOT TFEL_SVN_REVISION)
 # testing
 # (must be placed *before* any add_subdirectory, cmake bug ?)
 enable_testing()
-add_custom_target(check COMMAND ${CMAKE_CTEST_COMMAND})
+add_custom_target(check COMMAND 
+  ${CMAKE_CTEST_COMMAND} ARGS "-T test")
 
 # fortran (placed before compiler detection)
 option(enable-fortran "enable fortran support")
