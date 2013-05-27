@@ -12,6 +12,7 @@ lib_LTLIBRARIES += libTFELMathParser.la
 
 libTFELMath_la_SOURCES = MathException.cxx              \
 			 LUException.cxx                \
+			 QRException.cxx                \
 			 Discretization1D.cxx           \
 		         BasicOperations.cxx            \
 		         Id.cxx                         \

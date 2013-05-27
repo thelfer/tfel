@@ -151,6 +151,9 @@ nobase_include_HEADERS= TFEL/Macros.hxx                                         
 			TFEL/Math/LU/TinyPermutation.ixx                                              \
 			TFEL/Math/LU/TinyMatrixSolve.ixx		                              \
 			TFEL/Math/LU/LUDecomp.hxx			                              \
+			TFEL/Math/QR/QRDecomp.hxx			                              \
+			TFEL/Math/QR/QRDecomp.ixx			                              \
+			TFEL/Math/QR/QRException.hxx			                              \
 			TFEL/Math/Newton-Raphson/TinyNewtonRaphson.ixx                                \
 			TFEL/Math/RungeKutta/RungeKutta2.ixx		                              \
 			TFEL/Math/RungeKutta/RungeKutta4.ixx		                              \

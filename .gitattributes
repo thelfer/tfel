@@ -549,6 +549,9 @@ include/TFEL/Math/Parser/LogicalExpr.ixx -text
 include/TFEL/Math/Parser/Negation.hxx -text
 include/TFEL/Math/Parser/Number.hxx -text
 include/TFEL/Math/Parser/Variable.hxx -text
+include/TFEL/Math/QR/QRDecomp.hxx -text
+include/TFEL/Math/QR/QRDecomp.ixx -text
+include/TFEL/Math/QR/QRException.hxx -text
 include/TFEL/Math/Quantity/Unit.hxx -text
 include/TFEL/Math/Quantity/Unit.ixx -text
 include/TFEL/Math/Quantity/qt.ixx -text
@@ -1196,6 +1199,7 @@ src/Math/MatrixTag.cxx -text
 src/Math/Negation.cxx -text
 src/Math/Number.cxx -text
 src/Math/OpDiff.cxx -text
+src/Math/QRException.cxx -text
 src/Math/Sqrt.cxx -text
 src/Math/St2toSt2Tag.cxx -text
 src/Math/StandardFunctions.cxx -text
@@ -1360,6 +1364,7 @@ tests/Math/parser7.cxx -text
 tests/Math/parser8.cxx -text
 tests/Math/parser9.cxx -text
 tests/Math/promote.cxx -text
+tests/Math/qr.cxx -text
 tests/Math/qt.cxx -text
 tests/Math/qt2.cxx -text
 tests/Math/qt3.cxx -text

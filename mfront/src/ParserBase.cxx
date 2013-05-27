@@ -55,8 +55,8 @@ namespace mfront
   {
     using namespace std;
     CxxTokenizer::openFile(f);
-    vector<string>::const_iterator p;
-    for(p=ecmds.begin();p!=ecmds.end();++p){
+    vector<string>::const_reverse_iterator p;
+    for(p=ecmds.rbegin();p!=ecmds.rend();++p){
       CxxTokenizer t;
       try{
 	t.parseString(*p);

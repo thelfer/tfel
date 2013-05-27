@@ -767,7 +767,37 @@ Ces deux classes implémentent le concept
 
 \paragraph{Calcul de l'inverse d'une matrice}
 
-\subsubsection{Résolutions de systèmes non linéaires}
+\subsubsection{Résolution de systèmes linéaires par un décomposition
+  {\tt QR}}
+
+\paragraph{Décomposition {\tt QR}}
+
+Toute matrice \(A\) de format \(\paren{M,N}\) admet une décomposition
+de la forme~:
+\[
+A = Q\,R
+\]
+où~:
+\begin{minipage}[htbp]{0.9\linewidth}
+  \begin{itemize}
+  \item \(Q\) est une matrice orthogonale de format \(\paren{M,M}\)~;
+  \item \(R\) est une matrice triangulaire supérieure de format
+    \(M,N\).
+  \end{itemize}
+\end{minipage}
+
+La classe \tclass{QRDecomp} réalise cette factorisation par la méthode
+de \nom{HouseHolder}. L'algorithme utilisé est extrait du livre de
+P. Lascaux et R. Théodor~\cite{opac-b1123463}.
+
+\paragraph{Stockage de la décomposition}
+
+\paragraph{Résolution par descente/remontée}
+
+\paragraph{Résolution d'un problème de moindres carrés}
+
+
+\subsubsection{Résolutions de systèmes d'équations non linéaires}
 
 \paragraph{Algorithmes de \nom{Newton}}
 

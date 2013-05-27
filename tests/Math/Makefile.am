@@ -26,6 +26,7 @@ test_PROGRAMS = hill                  \
 		invert2               \
 		tinymatrixsolve       \
 		tinymatrixsolve2      \
+		qr                    \
 		CubicSplineTest       \
 		krigeage              \
 		krigeage1D            \
@@ -245,6 +246,15 @@ lu_LDADD      = -L$(top_builddir)/src/Tests        \
 
 lu2_SOURCES   = lu2.cxx
 lu2_LDADD     = -L$(top_builddir)/src/Tests        \
+		-L$(top_builddir)/src/Math         \
+	        -L$(top_builddir)/src/Utilities    \
+	        -L$(top_builddir)/src/Exception    \
+	        -lTFELMathParser -lTFELMathKriging \
+		-lTFELMath  -lTFELUtilities        \
+		-lTFELException	-lTFELTests
+
+qr_SOURCES    = qr.cxx
+qr_LDADD      = -L$(top_builddir)/src/Tests        \
 		-L$(top_builddir)/src/Math         \
 	        -L$(top_builddir)/src/Utilities    \
 	        -L$(top_builddir)/src/Exception    \
