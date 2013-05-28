@@ -92,6 +92,9 @@ namespace mfront{
     writeBehaviourIntegrator(void);
 
     virtual void
+    writeBehaviourComputeTangentOperator(void);
+
+    virtual void
     endsInputFileProcessing(void);
 
     friend class MFrontBehaviourParserBase<MFrontRungeKuttaParser>;
@@ -103,7 +106,7 @@ namespace mfront{
     std::string computeFinalStress;
     std::string computeStress;
     std::string derivative;
-
+    std::string tangentOperator;
     //! how the integration error is evaluated for the RK54 and RK42
     //! integrators
     ErrorEvaluation eev;

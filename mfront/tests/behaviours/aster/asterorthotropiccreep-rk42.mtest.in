@@ -5,8 +5,8 @@
   integrated using a Runge-Kutta algorithm.
  };
 
-@UseCastemAccelerationAlgorithm true;
 @StiffnessMatrixType 'Elastic';
+@UseCastemAccelerationAlgorithm true;
 
 @Real 'young' 100e9;
 @Real 'nu'    0.3;
@@ -21,9 +21,6 @@
 @MaterialProperty<constant> 'ShearModulus12'    'young';
 @MaterialProperty<constant> 'ShearModulus13'    'young';
 @MaterialProperty<constant> 'ShearModulus23'    'young';
-@MaterialProperty<constant> 'ThermalExpansion1' 0.;
-@MaterialProperty<constant> 'ThermalExpansion2' 0.;
-@MaterialProperty<constant> 'ThermalExpansion3' 0.;
 
 @ExternalStateVariable 'Temperature' 293.15;
 

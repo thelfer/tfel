@@ -357,6 +357,9 @@ AC_OUTPUT([debug.sh
            mfront/tests/behaviours/aster/asternorton.mtest
            mfront/tests/behaviours/aster/asternorton2.mtest
            mfront/tests/behaviours/aster/asterstressrelaxation.mtest
+           mfront/tests/behaviours/aster/asterorthotropiccreep.mtest
+           mfront/tests/behaviours/aster/asterorthotropiccreep-rk42.mtest
+           mfront/tests/behaviours/aster/asterorthotropiccreep-rkCastem.mtest
            mfront/tests/behaviours/aster/asterimplicitnorton.mtest
            mfront/tests/behaviours/aster/asterimplicitnorton2.mtest
            mfront/tests/behaviours/aster/asterimplicitnorton_broyden.mtest

@@ -2128,6 +2128,17 @@ namespace mfront{
 
       }
     }
+    // minimal tangent operator
+    if(!this->hasConsistantTangentOperator){
+      if(this->behaviourCharacteristic.requiresStiffnessTensor()){
+	this->hasConsistantTangentOperator = true;
+	this->tangentOperator = "if(smt==ELASTIC){\n"
+	                        "this->Dt = this->D;"
+ 	                        "} else {\n"
+	                        "return false;\n"
+	                        "}\n";
+      }
+    }
   } // end of MFrontImplicitParserBase::endsInputFileProcessing(void)
 
   void 

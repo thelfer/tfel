@@ -482,6 +482,17 @@ namespace mfront{
        (this->algorithm!="RungeKutta5/4")){
       parserInitLocalVars += "this->computeStress();\n";
     }
+    // minimal tangent operator
+    if(!this->hasConsistantTangentOperator){
+      if(this->behaviourCharacteristic.requiresStiffnessTensor()){
+	this->hasConsistantTangentOperator = true;
+	this->tangentOperator = "if(smt==ELASTIC){\n"
+	                        "this->Dt = this->D;"
+ 	                        "} else {\n"
+	                        "return false;\n"
+	                        "}\n";
+      }
+    }
   }
 
   void
@@ -1884,8 +1895,13 @@ namespace mfront{
       }
     }
     this->behaviourFile << "if(smt!=NOSTIFFNESSREQUESTED){\n";
-    this->behaviourFile << "string msg(\""<< this->className << "::integrate : \");\n";
-    this->behaviourFile << "msg += \"tangent operator is not available\";\n";
+    this->behaviourFile << "if(!this->computeConsistantTangentOperator(smt)){\n";
+    if(this->behaviourCharacteristic.useQt()){        
+      this->behaviourFile << "return MechanicalBehaviour<hypothesis,Type,use_qt>::FAILURE;\n";
+    } else {
+      this->behaviourFile << "return MechanicalBehaviour<hypothesis,Type,false>::FAILURE;\n";
+    }
+    this->behaviourFile << "}\n";
     this->behaviourFile << "}\n";
     if(this->behaviourCharacteristic.useQt()){        
       this->behaviourFile << "return MechanicalBehaviour<hypothesis,Type,use_qt>::SUCCESS;\n";
@@ -1895,6 +1911,22 @@ namespace mfront{
     this->behaviourFile << "} // end of " << this->className << "::integrate" << endl << endl;
   } // end of void MFrontRungeKuttaParser::writeBehaviourIntegrator(void)
   
+  void MFrontRungeKuttaParser::writeBehaviourComputeTangentOperator(void)
+  {
+    if(this->hasConsistantTangentOperator){
+      this->behaviourFile << "bool computeConsistantTangentOperator(const SMType smt){\n";
+      this->behaviourFile << "using namespace std;\n";
+      this->behaviourFile << "using namespace tfel::math;\n";
+      writeMaterialLaws("MFrontImplicitParserBase::writeBehaviourIntegrator",
+			this->behaviourFile,this->materialLaws);
+      this->behaviourFile << this->tangentOperator;
+      this->behaviourFile << "return true;\n";
+      this->behaviourFile << "}\n\n";
+    } else {
+      MFrontBehaviourParserCommon::writeBehaviourComputeTangentOperator();
+    }
+  }
+
   MFrontRungeKuttaParser::~MFrontRungeKuttaParser()
   {} // end of ~MFrontRungeKuttaParser
 
