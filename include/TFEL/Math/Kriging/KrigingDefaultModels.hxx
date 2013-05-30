@@ -12,6 +12,7 @@
 
 #include"TFEL/Math/tvector.hxx"
 #include"TFEL/Math/Kriging/KrigingVariable.hxx"
+#include"TFEL/Math/Kriging/KrigingDefaultNuggetModel.hxx"
 
 namespace tfel
 {
@@ -20,7 +21,8 @@ namespace tfel
   {
 
     template<unsigned short N,
-	     typename T>
+	     typename T,
+	     typename NM = KrigingDefaultNuggetModel<N,T> >
     struct KrigingDefaultModel;
 
   } // end of namespace math

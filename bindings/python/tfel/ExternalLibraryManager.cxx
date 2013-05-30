@@ -41,7 +41,7 @@ ELM_setDoubleParameter(tfel::system::ExternalLibraryManager& elm,
 					  const std::string& l,
 					  const std::string& n,
 					  const std::string& p,
-					  const int v)
+					  const double v)
 {
   elm.setParameter(l,n,p,v);
 }

@@ -381,8 +381,8 @@ main(const int argc,
 #ifdef LOCAL_CASTEM_HEADER
   if(castem){
     if(!incs){
-      cout << CASTEMFLAGS1 << " ";
       cout << "-I" << includeDir() << " ";
+      cout << CASTEMFLAGS1 << " ";
     }
   }
 #else  /* LOCAL_CASTEM_HEADER */
@@ -401,7 +401,6 @@ main(const int argc,
 #endif /* HAVE_CASTEM */
 
   if(incs){
-    cout << CASTEMFLAGS1 << " ";
     cout << "-I" << includeDir() << " ";
   }
 

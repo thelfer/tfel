@@ -13,7 +13,6 @@
 
 #include"TFEL/Config/TFELConfig.hxx"
 #include"TFEL/Math/Kriging/KrigingVariable.hxx"
-#include"TFEL/Math/Kriging/KrigingDefaultNuggetModel.hxx"
 
 namespace tfel
 {
@@ -21,9 +20,15 @@ namespace tfel
   namespace math
   {
 
-    template<typename T>
-    struct KrigingDefaultModel<2u,T>
-      : public KrigingDefaultNuggetModel<2u,T>
+    /*!
+     * Partial specialisation in 2D
+     * \param T  : numeric type
+     * \param NM : nugget model
+     */
+    template<typename T,
+	     typename NM>
+    struct KrigingDefaultModel<2u,T,NM>
+      : public NM
     {
       static TFEL_MATH_INLINE T
       one(const typename KrigingVariable<2u,T>::type&)
@@ -60,11 +65,12 @@ namespace tfel
       static const Drifts drifts[3u];
     };
 
-    template<typename T>
-    const typename KrigingDefaultModel<2u,T>::Drifts
-    KrigingDefaultModel<2u,T>::drifts[3u] = {KrigingDefaultModel<2u,T>::one,
-					     KrigingDefaultModel<2u,T>::x,
-					     KrigingDefaultModel<2u,T>::y};
+    template<typename T,
+	     typename NM>
+    const typename KrigingDefaultModel<2u,T,NM>::Drifts
+    KrigingDefaultModel<2u,T,NM>::drifts[3u] = {KrigingDefaultModel<2u,T,NM>::one,
+						KrigingDefaultModel<2u,T,NM>::x,
+						KrigingDefaultModel<2u,T,NM>::y};
 
   } // end of namespace math
 

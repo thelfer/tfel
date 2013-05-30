@@ -786,15 +786,88 @@ où~:
   \end{itemize}
 \end{minipage}
 
+Une telle décomposition peut être obtenue par une série de
+transformations de \nom{HouseHolder}. De telles transformations sont
+représentées par des matrices de la forme~:
+\begin{equation}
+  \label{eq:tfel:QR:Hi}
+  H_{i}=I+\Frac{1}{\beta_{i}}\transpose{v}_{i}\,v_{i}
+\end{equation}
+où \(\beta\) est un coefficient de normalisation.
+
+À la fin de la décomposition, la matrice \(Q\) est le produit ces
+matrices~:
+\begin{equation}
+  \label{eq:tfel:QR:Q}
+  Q = H_{1}\,\cdots\,H_{n}
+\end{equation}
+
+L'algorithme utilisé pour la décomposition de la matrice est extrait
+du livre de P. Lascaux et R. Théodor~\cite{opac-b1123463}.
+
 La classe \tclass{QRDecomp} réalise cette factorisation par la méthode
-de \nom{HouseHolder}. L'algorithme utilisé est extrait du livre de
-P. Lascaux et R. Théodor~\cite{opac-b1123463}.
+de \nom{HouseHolder} et propose différentes méthodes pour travailler
+avec cette décomposition~:
+\begin{itemize}
+\item la méthode \tmethod{QRDecomp}{exe} réalise la décomposition de
+  la matrice. Cette méthode s'appuie sur un vecteur auxiliaire qui
+  contient les éléments diagonaux de la matrice \(R\) (voir paragraphe
+  précédent). La décomposition est faite sur place, c'est à dire que
+  la matrice \(A\) est utilisée pour stocker les matrices \(Q\) et
+  \(R\). Deux vecteurs supplémentaires, correctement dimensionnés,
+  sont nécessaires pour stocker les termes diagonaux de \(R\) et les
+  coefficients de normalisation qui interviennent dans la
+  normalisation des vecteurs \(\beta\) définissant les transformations
+  de \nom{HouseHolder}~;
+\item la méthode \tmethod{QRDecomp}{tq\_product} réalise le produit de
+  la matrice \(\transpose{Q}\) (transposée de la matrice \(Q\)) et
+  d'un vecteur \(v\).
+\item la méthode \tmethod{QRDecomp}{back\_substitute} résout le
+  problème~:
+  \[
+  R\,x = b
+  \]
+\end{itemize}
 
-\paragraph{Stockage de la décomposition}
+\paragraph{Stockage de la décomposition} Les termes diagonaux de \(R\)
+sont stockés dans un vecteur annexe. Les termes non situés sur la
+diagonale de matrice \(R\) est stockés dans la partie triangulaire de
+la matrice \(A\).  La matrice \(Q\) n'est pas stockée explicitement,
+mais on stocke dans partie inférieure de \(A\) les vecteurs \(v_{i}\)
+qui apparaissent dans les transformations de
+\nom{HouseHolder}~\eqref{eq:tfel:QR:Hi}. Les coefficients de
+normalisation \(beta_{i}\) sont stockés dans un vecteur annexe.
 
-\paragraph{Résolution par descente/remontée}
+\paragraph{Application de la décomposition $QR$ à la résolution de
+  systèmes linéaires}. Si \(A\) est une matrice, \(b\) un
+vecteur. \(A\) se décompose en une matrice orthogonale \(Q\) et
+matrice triangulaire supérieure \(R\). 
 
-\paragraph{Résolution d'un problème de moindres carrés}
+La matrice \(Q\) étant orthogonale, son inverse est sa égale à sa
+transposée. 
+
+Le problème linéaire \(A\,x=b\) est donc équivalent au problème~:
+\begin{equation}
+  \label{eq:tfel:QR:lin_solve}
+  R\,x=y \quad\text{ avec }\quad y=\transpose{Q}\,b
+\end{equation}
+
+La solution du problème~\eqref{eq:tfel:QR:lin_solve} peut être obtenue
+par les opérations suivantes~:
+\begin{itemize}
+\item décomposition de la matrice \(A\) par la méthode
+  \tmethod{QRDecomp}{exe}~;
+\item calcul du vecteur \(y\) par la méthode
+  \tmethod{QRDecomp}{tq\_product}~;
+\item inversion du système triangulaire \(R\,x=y\) par la méthode
+  \tmethod{QRDecomp}{back\_substitute}.
+\end{itemize}
+
+À la fin de ses opérations, le vecteur \(b\) contient la solution du
+problème~\eqref{eq:tfel:QR:lin_solve} et la matrice \(A\) contient les
+matrices \(Q\) et \(R\).
+
+% \paragraph{Résolution d'un problème de moindres carrés} Les problèmes de moindres carrés
 
 
 \subsubsection{Résolutions de systèmes d'équations non linéaires}

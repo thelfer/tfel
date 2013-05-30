@@ -31,7 +31,7 @@ namespace tfel
       {
 	using namespace std;
 	return this->nugget;
-      } // end of covariance
+      } // end of nuggetEffect
 
       void
       setNuggetEffect(const T& v)
