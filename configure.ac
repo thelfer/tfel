@@ -6,6 +6,7 @@ AC_CONFIG_SRCDIR([include/TFEL/Config/TFELConfig.hxx])
 AC_CONFIG_COMMANDS
 AC_CONFIG_MACRO_DIR([m4])
 AC_CONFIG_AUX_DIR([config])
+AC_CANONICAL_HOST
 AC_CANONICAL_TARGET
 
 # Automake specific stuff
@@ -27,6 +28,32 @@ if test "x$CXXFLAGS" = "x";
 fi
 
 AC_PROG_CXX
+
+AC_CHECKING("castem unix type")
+case $host in
+# machine 386 -> 686, 32 bits
+    i[[3456]]86*linux*)
+	AC_DEFINE(TFEL_ARCH32)
+        ;;
+# machine amd opteron, 64 bits
+    x86_64*linux*)
+	AC_DEFINE(TFEL_ARCH64)
+        ;;
+    x86_64*-mingw32*)
+# Pas sûr, mais c'est pour le test
+	AC_DEFINE(TFEL_ARCH32)
+	;;
+    i*86-*-mingw32*)
+	AC_DEFINE(TFEL_ARCH32)
+	;;
+    i686-pc-cygwin)
+	AC_DEFINE(TFEL_ARCH32)
+	;;
+    # ben on ne sait pas :-(
+    *)
+        AC_MSG_ERROR(unsupported host $host)
+        ;;
+esac
 
 # Macro for lisp
 # AM_PATH_LISPDIR

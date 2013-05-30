@@ -8,6 +8,14 @@ include(cmake/modules/autotools.cmake)
 tfel_project(1 1)
 set(PACKAGE_BUGREPORT "thomas.helfer@cea.fr")
 
+# type of architecture
+if( CMAKE_SIZEOF_VOID_P EQUAL 8 )
+  add_definitions("-DTFEL_ARCH64")
+else( CMAKE_SIZEOF_VOID_P EQUAL 8 )
+  add_definitions("-DTFEL_ARCH32")
+endif( CMAKE_SIZEOF_VOID_P EQUAL 8 )
+
+
 #extraction svn revision
 if(NOT TFEL_SVN_REVISION)
 execute_process(COMMAND svnversion

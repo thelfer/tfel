@@ -12,13 +12,13 @@
 extern "C" {
 #endif /* __cplusplus */
 
-#ifdef UNIX32
+#ifdef TFEL_ARCH32
   typedef int    UMATIntegerType;
   typedef double UMATRealType;
   typedef int    AsterIntegerType;
   typedef double AsterRealType;
 #endif 
-#ifdef UNIX64
+#ifdef TFEL_ARCH64
   typedef long   UMATIntegerType;
   typedef double UMATRealType;
   typedef long   AsterIntegerType;

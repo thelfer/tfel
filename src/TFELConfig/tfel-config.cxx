@@ -63,6 +63,9 @@ static void
 treatAll(void);
 
 static void
+treatCppFlags(void);
+
+static void
 treatIncludes(void);
 
 static void
@@ -81,6 +84,7 @@ static CallBacksContainer callBacksContainer;
 static bool oflags          = false;
 static bool warning         = false;
 static bool incs            = false;
+static bool cppflags        = false;
 static bool libs            = false;
 static bool exceptions      = false;
 static bool math            = false;
@@ -282,10 +286,17 @@ treatAll(void)
 } // end of treatAll
 
 static void
+treatCppFlags(void)
+{
+  cppflags = true;
+} // end of treatCppFlags
+
+static void
 treatIncludes(void)
 {
   incs = true;
 } // end of treatIncludes
+
 
 static void
 treatLibs(void)
@@ -347,7 +358,8 @@ main(const int argc,
 
   registerCallBack("--oflags",&treatOFlags,"return tfel recommended optimisation flags.");
   registerCallBack("--warning",&treatWarning,"return tfel recommended warnings.");
-  registerCallBack("--includes",&treatIncludes,"return preprocessor flags.");
+  registerCallBack("--includes",&treatIncludes,"return tfel include path.");
+  registerCallBack("--cppflags",&treatCppFlags,"return preprocessor flags.");
   registerCallBack("--libs",&treatLibs,"return linking flags.");
   registerCallBack("--help",&treatHelp,"print this help message.");
 #ifdef HAVE_CASTEM
@@ -377,6 +389,19 @@ main(const int argc,
     (*(p->second.first))();
   }
 
+  if(cppflags){
+#ifdef TFEL_ARCH32
+    cout << "-DTFEL_ARCH32" << " ";
+#endif
+#ifdef TFEL_ARCH64
+    cout << "-DTFEL_ARCH64" << " ";
+#endif
+  }
+
+  if(incs){
+    cout << "-I" << includeDir() << " ";
+  }
+
 #ifdef HAVE_CASTEM
 #ifdef LOCAL_CASTEM_HEADER
   if(castem){
@@ -399,10 +424,6 @@ main(const int argc,
   }
 #endif /* LOCAL_CASTEM_HEADER */
 #endif /* HAVE_CASTEM */
-
-  if(incs){
-    cout << "-I" << includeDir() << " ";
-  }
 
   if(libs){
     cout << "-L" << libDir() << " ";
@@ -455,11 +476,11 @@ main(const int argc,
   }
 
 #ifdef HAVE_CASTEM
-  if(incs||libs||oflags||warning||castem){
+  if(cppflags||incs||libs||oflags||warning||castem){
     cout << endl;
   }
 #else
-  if(incs||libs||oflags||warning){
+  if(cppflags||incs||libs||oflags||warning){
     cout << endl;
   }
 #endif /* HAVE_CASTEM */
