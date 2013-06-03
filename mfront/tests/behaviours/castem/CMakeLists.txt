@@ -9,6 +9,9 @@ link_directories("${PROJECT_BINARY_DIR}/mfront/src"
                  "${PROJECT_BINARY_DIR}/src/Utilities"
                  "${PROJECT_BINARY_DIR}/src/Exception")
 
+configure_file("${PROJECT_SOURCE_DIR}/mfront/tests/behaviours/references/PolyCristalsAngles.txt"
+    PolyCristalsAngles.txt @ONLY)
+
 set(mfront_tests_SOURCES
   Elasticity Plasticity
   Norton DDIF2
@@ -33,6 +36,7 @@ set(mfront_tests_SOURCES
   Chaboche
   Chaboche2
   MonoCristal
+  PolyCristals
   Hayhurst
   Burger)
   
@@ -93,5 +97,6 @@ test_castem(plasticity)
 test_castem(chaboche)
 test_castem(chaboche2)
 test_castem(monocristal)
+test_castem(polycristals)
 test_castem(hayhurst)
 test_castem(burger)

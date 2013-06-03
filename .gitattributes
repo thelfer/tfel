@@ -1048,6 +1048,7 @@ mfront/tests/behaviours/OrthotropicCreep_rk42.mfront -text
 mfront/tests/behaviours/OrthotropicCreep_rkCastem.mfront -text
 mfront/tests/behaviours/OrthotropicElastic.mfront -text
 mfront/tests/behaviours/Plasticity.mfront -text
+mfront/tests/behaviours/PolyCristals.mfront -text
 mfront/tests/behaviours/StrainHardeningCreep.mfront -text
 mfront/tests/behaviours/aster/CMakeLists.txt -text
 mfront/tests/behaviours/aster/Makefile.am -text
@@ -1084,6 +1085,7 @@ mfront/tests/behaviours/aster/asterorthotropiccreep-rk42.mtest.in -text
 mfront/tests/behaviours/aster/asterorthotropiccreep-rkCastem.mtest.in -text
 mfront/tests/behaviours/aster/asterorthotropiccreep.mtest.in -text
 mfront/tests/behaviours/aster/asterplasticity.mtest.in -text
+mfront/tests/behaviours/aster/asterpolycristals.mtest.in -text
 mfront/tests/behaviours/aster/asterstrainhardeningcreep.mtest.in -text
 mfront/tests/behaviours/aster/asterstressrelaxation.mtest.in -text
 mfront/tests/behaviours/aster/strainhardeningcreep.gnuplot -text
@@ -1123,8 +1125,10 @@ mfront/tests/behaviours/castem/castemorthotropiccreep-rk42.mtest.in -text
 mfront/tests/behaviours/castem/castemorthotropiccreep-rkCastem.mtest.in -text
 mfront/tests/behaviours/castem/castemorthotropiccreep.mtest.in -text
 mfront/tests/behaviours/castem/castemplasticity.mtest.in -text
+mfront/tests/behaviours/castem/castempolycristals.mtest.in -text
 mfront/tests/behaviours/castem/castemstrainhardeningcreep.mtest.in -text
 mfront/tests/behaviours/castem/castemstressrelaxation.mtest.in -text
+mfront/tests/behaviours/references/PolyCristalsAngles.txt -text
 mfront/tests/behaviours/references/burger.ref -text
 mfront/tests/behaviours/references/chaboche-aster.ref -text
 mfront/tests/behaviours/references/chaboche2-aster.ref -text
@@ -1133,6 +1137,7 @@ mfront/tests/behaviours/references/hayhurst.ref -text
 mfront/tests/behaviours/references/mazars-aster.ref -text
 mfront/tests/behaviours/references/monocristal.ref -text
 mfront/tests/behaviours/references/plasticity.ref -text
+mfront/tests/behaviours/references/polycristals.ref -text
 mfront/tests/properties/CMakeLists.txt -text
 mfront/tests/properties/Inconel600_YoungModulus.mfront -text
 mfront/tests/properties/Makefile.am -text

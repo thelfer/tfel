@@ -30,6 +30,7 @@ EXTRA_DIST=CMakeLists.txt                    \
            Chaboche2.mfront                  \
 	   MonoCristal.mfront                \
 	   MonoCristalNewtonRaphson.mfront   \
+	   PolyCristals.mfront               \
 	   Hayhurst.mfront                   \
            references/plasticity.ref         \
 	   references/elasticity15-aster.ref \
@@ -37,5 +38,7 @@ EXTRA_DIST=CMakeLists.txt                    \
 	   references/chaboche-aster.ref     \
 	   references/chaboche2-aster.ref    \
 	   references/monocristal.ref        \
+	   references/PolyCristalsAngles.txt \
+	   references/polycristals.ref       \
 	   references/hayhurst.ref           \
 	   references/burger.ref
