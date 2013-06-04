@@ -29,12 +29,11 @@ nobase_include_HEADERS= MFront/MFront.hxx                          \
 			MFront/MFrontModelParserCommon.hxx         \
 			MFront/MFrontModelParserBase.hxx           \
 			MFront/MFrontModelParserBase.ixx           \
-			MFront/BehaviourCharacteristic.hxx         \
+			MFront/MechanicalBehaviourDescription.hxx  \
 			MFront/ParserBase.hxx                      \
 			MFront/InterfaceBase.hxx                   \
 			MFront/ParserUtilities.hxx                 \
 			MFront/StaticVarHandler.hxx                \
-			MFront/ComputedVarHandler.hxx              \
 			MFront/SupportedTypes.hxx                  \
 			MFront/MFrontSearchFile.hxx                \
 			MFront/DrivingVariable.hxx                 \

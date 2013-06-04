@@ -816,9 +816,7 @@ mfront/include/MFront/Aster/AsterOrthotropicBehaviourHandler.hxx -text
 mfront/include/MFront/Aster/AsterRotationMatrix.hxx -text
 mfront/include/MFront/Aster/AsterTangentOperator.hxx -text
 mfront/include/MFront/Aster/AsterTraits.hxx -text
-mfront/include/MFront/BehaviourCharacteristic.hxx -text
 mfront/include/MFront/BoundsDescription.hxx -text
-mfront/include/MFront/ComputedVarHandler.hxx -text
 mfront/include/MFront/DrivingVariable.hxx -text
 mfront/include/MFront/InterfaceBase.hxx -text
 mfront/include/MFront/LawFunction.hxx -text
@@ -893,6 +891,7 @@ mfront/include/MFront/MTestTypes.hxx -text
 mfront/include/MFront/MTestUmatBehaviour.hxx -text
 mfront/include/MFront/MTestUmatBehaviourBase.hxx -text
 mfront/include/MFront/MTestUmatNormaliseTangentOperator.hxx -text
+mfront/include/MFront/MechanicalBehaviourDescription.hxx -text
 mfront/include/MFront/ParserBase.hxx -text
 mfront/include/MFront/ParserUtilities.hxx -text
 mfront/include/MFront/StaticVarHandler.hxx -text
@@ -951,10 +950,8 @@ mfront/src/AsterException.cxx -text
 mfront/src/AsterInterfaceBase.cxx -text
 mfront/src/AsterRotationMatrix.cxx -text
 mfront/src/AsterTangentOperator.cxx -text
-mfront/src/BehaviourCharacteristic.cxx -text
 mfront/src/BoundsDescription.cxx -text
 mfront/src/CMakeLists.txt -text
-mfront/src/ComputedVarHandler.cxx -text
 mfront/src/DrivingVariable.cxx -text
 mfront/src/InterfaceBase.cxx -text
 mfront/src/MFront.cxx -text
@@ -999,6 +996,7 @@ mfront/src/MFrontRungeKuttaParser.cxx -text
 mfront/src/MFrontSearchFile.cxx -text
 mfront/src/MFrontUMATInterface.cxx -text
 mfront/src/Makefile.am -text
+mfront/src/MechanicalBehaviourDescription.cxx -text
 mfront/src/ParserBase.cxx -text
 mfront/src/ParserUtilities.cxx -text
 mfront/src/StaticVarHandler.cxx -text

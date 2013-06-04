@@ -14,8 +14,7 @@
 #include"TFEL/Utilities/CxxTokenizer.hxx"
 #include"MFront/SupportedTypes.hxx"
 #include"MFront/VarHandler.hxx"
-#include"MFront/ComputedVarHandler.hxx"
-#include"MFront/BehaviourCharacteristic.hxx"
+#include"MFront/MechanicalBehaviourDescription.hxx"
 #include"MFront/MFrontBehaviourVirtualInterface.hxx"
 
 namespace mfront{
@@ -105,37 +104,20 @@ namespace mfront{
     
     void exportMechanicalData(std::ofstream&,
 			      const std::string&,
-			      const VarContainer&,
-			      const VarContainer&,
-			      const VarContainer&,
-			      const VarContainer&,
-			      const BehaviourCharacteristic);
+			      const MechanicalBehaviourDescription&);
     
     void writeBehaviourConstructor(std::ofstream&,
 				   const std::string&,
-				   const VarContainer&,
-				   const VarContainer&,
-				   const VarContainer&,
-				   const VarContainer&,
-				   const BehaviourCharacteristic,
-				   const std::string&,
+				   const MechanicalBehaviourDescription&,
 				   const std::string&);
     
     void writeBehaviourDataConstructor(std::ofstream&,
 				       const std::string&,
-				       const VarContainer&,
-				       const VarContainer&,
-				       const VarContainer&,
-				       const VarContainer&,
-				       const BehaviourCharacteristic);
+				       const MechanicalBehaviourDescription&);
     
     void writeIntegrationDataConstructor(std::ofstream&,
 					 const std::string&,
-					 const VarContainer&,
-					 const VarContainer&,
-					 const VarContainer&,
-					 const VarContainer&,
-					 const BehaviourCharacteristic);
+					 const MechanicalBehaviourDescription&);
 
     void
     endTreatement(const std::string&,
@@ -144,14 +126,9 @@ namespace mfront{
 		  const std::string&,
 		  const std::string&,
 		  const std::string&,
-		  const VarContainer&,
-		  const VarContainer&,
-		  const VarContainer&,
-		  const VarContainer&,
-		  const VarContainer&,
 		  const std::map<std::string,std::string>&,
 		  const std::map<std::string,std::string>&,
-		  const BehaviourCharacteristic);
+		  const MechanicalBehaviourDescription&);
 
     void
     reset(void);

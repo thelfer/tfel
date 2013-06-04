@@ -246,13 +246,11 @@ namespace mfront{
   void 
   MFrontUMATInterface::exportMechanicalData(std::ofstream& behaviourDataFile,
 					    const std::string&,
-					    const VarContainer&,
-					    const VarContainer& stateVarsHolder,
-					    const VarContainer& auxiliaryStateVarsHolder,
-					    const VarContainer&,
-					    const BehaviourCharacteristic behaviourCharacteristic)
+					    const MechanicalBehaviourDescription& mb)
   {
     using namespace std;
+    const VarContainer& stateVarsHolder          = mb.getStateVariables();
+    const VarContainer& auxiliaryStateVarsHolder = mb.getAuxiliaryStateVariables();
     VarContainer::const_iterator p;
     if((!stateVarsHolder.empty())||
        (!auxiliaryStateVarsHolder.empty())){
@@ -273,11 +271,11 @@ namespace mfront{
       o = this->exportResults(behaviourDataFile,
 			      stateVarsHolder,
 			      "UMATstatev",
-			      behaviourCharacteristic.useQt());
+			      mb.useQt());
       this->exportResults(behaviourDataFile,
 			  auxiliaryStateVarsHolder,
 			  "UMATstatev",
-			  behaviourCharacteristic.useQt(),o);
+			  mb.useQt(),o);
     }
     behaviourDataFile << "} // end of UMATExportStateData\n";
     behaviourDataFile << endl;
@@ -286,13 +284,8 @@ namespace mfront{
   void
   MFrontUMATInterface::writeBehaviourConstructor(std::ofstream& behaviourFile,
 						 const std::string& className,
-						 const VarContainer&,
-						 const VarContainer&,
-						 const VarContainer&,
-						 const VarContainer&,
-						 const BehaviourCharacteristic characteristic,
-						 const std::string& initStateVarsIncrements,
-						 const std::string& initComputedVars)
+						 const MechanicalBehaviourDescription& mb,
+						 const std::string& initStateVarsIncrements)
   {
     using namespace std;
     VarContainer::const_iterator p;
@@ -317,7 +310,7 @@ namespace mfront{
 		  <<  "const Type* const UMATT_,const Type* const UMATdT_,\n"
 		  <<  "const Type* const UMATmat,const Type* const UMATint_vars,\n"
 		  <<  "const Type* const UMAText_vars,const Type* const UMATdext_vars)\n";
-    if(characteristic.useQt()){
+    if(mb.useQt()){
       behaviourFile << ": " << className 
 		    << "BehaviourData<N,Type,use_qt>(UMATstress_,UMATstran,UMATT_,UMATmat,\n"
 		    << "UMATint_vars,UMAText_vars),\n";
@@ -331,19 +324,18 @@ namespace mfront{
 		    << "IntegrationData<N,Type,false>(UMATdt_,UMATdstran,UMATdT_,UMATdext_vars)";
     }
     behaviourFile << initStateVarsIncrements;
-    behaviourFile << initComputedVars;
   }
   
   void 
   MFrontUMATInterface::writeBehaviourDataConstructor(std::ofstream& behaviourDataFile,
 						     const std::string& className,
-						     const VarContainer& coefsHolder,
-						     const VarContainer& stateVarsHolder,
- 						     const VarContainer& auxiliaryStateVarsHolder,
-						     const VarContainer& externalStateVarsHolder,
-						     const BehaviourCharacteristic)
+						     const MechanicalBehaviourDescription& mb)
   {
     using namespace std;
+    const VarContainer& coefsHolder              = mb.getMaterialProperties();
+    const VarContainer& stateVarsHolder          = mb.getStateVariables();
+    const VarContainer& auxiliaryStateVarsHolder = mb.getAuxiliaryStateVariables();
+    const VarContainer& externalStateVarsHolder  = mb.getExternalStateVariables();
     VarContainer::const_iterator p;
     behaviourDataFile << "/*\n";
     behaviourDataFile << " * \\brief constructor for the umat interface\n";
@@ -390,8 +382,38 @@ namespace mfront{
 							       externalStateVarsHolder,
 							       "UMAText_vars","","");
     behaviourDataFile << "\n{\n";
-    behaviourDataFile << "sig.importTab(UMATstress_);\n";
-    behaviourDataFile << "eto.importVoigt(UMATstran);\n";
+    map<DrivingVariable,
+	ThermodynamicForce>::const_iterator pm;
+    SupportedTypes::TypeSize ov;
+    SupportedTypes::TypeSize of;
+    for(pm=mb.getMainVariables().begin();pm!=mb.getMainVariables().end();++pm){
+      const DrivingVariable&    v = pm->first;
+      const ThermodynamicForce& f = pm->second;
+      if(this->getTypeFlag(f.type)==SupportedTypes::Stensor){
+	if(pm!=mb.getMainVariables().begin()){
+	  behaviourDataFile << f.name << ".importTab(UMATstress_+" << of <<");\n";
+	} else {
+	  behaviourDataFile << f.name << ".importTab(UMATstress_);\n";
+	}
+      } else {
+	string msg("MFrontUMATInterface::writeBehaviourDataConstructor : ");
+	msg += "unsupported forces type";
+	throw(runtime_error(msg));
+      }
+      if(this->getTypeFlag(v.type)==SupportedTypes::Stensor){
+	if(pm!=mb.getMainVariables().begin()){
+	  behaviourDataFile << v.name << ".importVoigt(UMATstran+" << ov <<");\n";
+	} else {
+	  behaviourDataFile << v.name << ".importVoigt(UMATstran);\n";
+	}
+      } else {
+	string msg("MFrontUMATInterface::writeBehaviourDataConstructor : ");
+	msg += "unsupported forces type";
+	throw(runtime_error(msg));
+      }
+      ov += this->getTypeSize(v.type,1u);
+      of += this->getTypeSize(f.type,1u);
+    }
     this->writeVariableInitializersInBehaviourDataConstructorII(behaviourDataFile,
 								coefsHolder,
 								"UMATmat","","");
@@ -410,13 +432,10 @@ namespace mfront{
   void 
   MFrontUMATInterface::writeIntegrationDataConstructor(std::ofstream& behaviourIntegrationFile,
 						       const std::string& className,
-						       const VarContainer&,
-						       const VarContainer&,
-						       const VarContainer&,
-						       const VarContainer& externalStateVarsHolder,
-						       const BehaviourCharacteristic)
+						       const MechanicalBehaviourDescription& mb)
   {
     using namespace std;
+    const VarContainer& externalStateVarsHolder  = mb.getExternalStateVariables();
     VarContainer::const_iterator p;
     behaviourIntegrationFile << "/*\n";
     behaviourIntegrationFile << " * \\brief constructor for the umat interface\n";
@@ -442,7 +461,29 @@ namespace mfront{
 								 "UMATdext_vars","d","");
     }
     behaviourIntegrationFile << "\n{\n";
-    behaviourIntegrationFile << "deto.importVoigt(UMATdstran);\n";
+    map<DrivingVariable,
+	ThermodynamicForce>::const_iterator pm;
+    SupportedTypes::TypeSize ov;
+    for(pm=mb.getMainVariables().begin();pm!=mb.getMainVariables().end();++pm){
+      const DrivingVariable&    v = pm->first;
+      if(!v.increment_known){
+	string msg("MFrontUMATInterface::writeIntegrationDataConstructor : ");
+	msg += "unsupported driving variable '"+v.name+"'";
+	throw(runtime_error(msg));
+      }
+      if(this->getTypeFlag(v.type)==SupportedTypes::Stensor){
+	if(pm!=mb.getMainVariables().begin()){
+	  behaviourIntegrationFile << "d" << v.name << ".importVoigt(UMATdstran);\n";
+	} else {
+	  behaviourIntegrationFile << "d" << v.name << ".importVoigt(UMATdstran+" << ov << ");\n";
+	}
+      } else {
+	string msg("MFrontUMATInterface::writeIntegrationDataConstructor : ");
+	msg += "unsupported driving variable '"+v.name+"'";
+	throw(runtime_error(msg));
+      }
+      ov += this->getTypeSize(v.type,1u);
+    }
     if(!externalStateVarsHolder.empty()){
       this->writeVariableInitializersInBehaviourDataConstructorII(behaviourIntegrationFile,
 								  externalStateVarsHolder,
@@ -604,6 +645,7 @@ namespace mfront{
       throw(runtime_error(msg));
     }
     if(n.size()!=o){
+      vector<string>::size_type s = 0u;
       vector<string>::const_iterator p = n.begin()+o;      
       f << "MFRONT_SHAREDOBJ const char * umat"
 	<< makeLowerCase(name)
@@ -611,7 +653,11 @@ namespace mfront{
       while(p!=n.end()){
 	f << '"' << *p << '"';
 	if(++p!=n.end()){
-	  f << ",\n";
+	  if(s%5==0){
+	    f << ",\n";
+	  } else {
+	    f << ",";
+	  }
 	}
       }
       f << "};\n";
@@ -629,18 +675,18 @@ namespace mfront{
 				     const std::string& className,
 				     const std::string& authorName,
 				     const std::string& date,
-				     const VarContainer& coefsHolder,
-				     const VarContainer& stateVarsHolder,
-				     const VarContainer& auxiliaryStateVarsHolder,
-				     const VarContainer& externalStateVarsHolder,
-				     const VarContainer& parametersHolder,
 				     const std::map<std::string,std::string>& glossaryNames,
 				     const std::map<std::string,std::string>& entryNames,
-				     const BehaviourCharacteristic behaviourCharacteristic)
+				     const MechanicalBehaviourDescription& mb)
   {
     using namespace std;
     using namespace tfel::system;
     using namespace tfel::utilities;
+    const VarContainer& coefsHolder              = mb.getMaterialProperties();
+    const VarContainer& stateVarsHolder          = mb.getStateVariables();
+    const VarContainer& auxiliaryStateVarsHolder = mb.getAuxiliaryStateVariables();
+    const VarContainer& externalStateVarsHolder  = mb.getExternalStateVariables();
+    const VarContainer& parametersHolder         = mb.getParameters();
     string header = "UMAT";
     string name;
     string umatFctName;
@@ -653,8 +699,8 @@ namespace mfront{
     systemCall::mkdir("include/MFront");
     systemCall::mkdir("include/MFront/UMAT");
 
-    if(behaviourCharacteristic.getBehaviourType()!=
-       behaviourCharacteristic.getElasticBehaviourType()){
+    if(mb.getBehaviourType()!=
+       mb.getElasticBehaviourType()){
       string msg("MFrontUMATInterface::endTreatement : ");
       msg += "the type of the behaviour (isotropic or orthotropic) does not ";
       msg += "match the the type of its elastic behaviour.\n";
@@ -695,7 +741,7 @@ namespace mfront{
 
     found = false;
     // specific treatment for isotropic behaviour
-    if(behaviourCharacteristic.getBehaviourType()==mfront::ISOTROPIC){
+    if(mb.getBehaviourType()==mfront::ISOTROPIC){
       for(p=coefsHolder.begin();(p!=coefsHolder.end())&&(!found);++p){
 	if((p->name=="young")||
 	   (p->name=="nu")||
@@ -773,7 +819,7 @@ namespace mfront{
 
     out << "#ifdef __cplusplus\n";
     out << "#include\"MFront/UMAT/UMATTraits.hxx\"\n";
-    if (behaviourCharacteristic.getBehaviourType()==mfront::ORTHOTROPIC){
+    if (mb.getBehaviourType()==mfront::ORTHOTROPIC){
       out << "#include\"MFront/UMAT/UMATOrthotropicBehaviour.hxx\"\n";
     }
     out << "#include\"TFEL/Material/" << className << ".hxx\"\n";
@@ -806,13 +852,13 @@ namespace mfront{
 
     out << "namespace umat{\n\n";
 
-    if(behaviourCharacteristic.useQt()){
+    if(mb.useQt()){
       out << "template<tfel::material::ModellingHypothesis::Hypothesis H,typename Type,bool use_qt>\n";
     } else {
       out << "template<tfel::material::ModellingHypothesis::Hypothesis H,typename Type>\n";
     } 
     out << "struct UMATTraits<tfel::material::" << className << "<H,Type,";
-    if(behaviourCharacteristic.useQt()){
+    if(mb.useQt()){
       out << "use_qt";
     } else {
       out << "false";
@@ -836,23 +882,23 @@ namespace mfront{
     } else {
       out << "0u;\n";
     }
-    if(behaviourCharacteristic.requiresStiffnessTensor()){
+    if(mb.requiresStiffnessTensor()){
       out << "static const bool requiresStiffnessTensor = true;\n";
     } else {
       out << "static const bool requiresStiffnessTensor = false;\n";
     }
-    if(behaviourCharacteristic.requiresThermalExpansionTensor()){
+    if(mb.requiresThermalExpansionTensor()){
       out << "static const bool requiresThermalExpansionTensor = true;\n";
     } else {
       out << "static const bool requiresThermalExpansionTensor = false;\n";
     }
-    if(behaviourCharacteristic.getBehaviourType()==mfront::ISOTROPIC){
+    if(mb.getBehaviourType()==mfront::ISOTROPIC){
       if(!found){
 	out << "static const unsigned short propertiesOffset = 4u;\n";
       } else {
 	out << "static const unsigned short propertiesOffset = 0u;\n";
       }
-    } else if (behaviourCharacteristic.getBehaviourType()==mfront::ORTHOTROPIC){
+    } else if (mb.getBehaviourType()==mfront::ORTHOTROPIC){
       out << "#warning \"something needs to be done here\"\n";
       out << "static const unsigned short N = tfel::material::ModellingHypothesisToSpaceDimension<H>::value;\n";
       out << "static const unsigned short propertiesOffset = UMATOrthotropicOffset<N>::value;\n";
@@ -862,9 +908,9 @@ namespace mfront{
       msg += "The umat interface only support isotropic or orthotropic behaviour at this time.";
       throw(runtime_error(msg));
     }
-    if(behaviourCharacteristic.getBehaviourType()==mfront::ISOTROPIC){
+    if(mb.getBehaviourType()==mfront::ISOTROPIC){
       out << "static const UMATBehaviourType type = umat::ISOTROPIC;\n";
-    } else if (behaviourCharacteristic.getBehaviourType()==mfront::ORTHOTROPIC){
+    } else if (mb.getBehaviourType()==mfront::ORTHOTROPIC){
       out << "static const UMATBehaviourType type = umat::ORTHOTROPIC;\n";
     } else {
       string msg("MFrontUMATInterface::endTreatement : ");
@@ -994,7 +1040,7 @@ namespace mfront{
     out << "MFRONT_SHAREDOBJ unsigned short umat"
       	<< makeLowerCase(name)
 	<< "_UsableInPurelyImplicitResolution = ";
-    if(behaviourCharacteristic.isUsableInPurelyImplicitResolution()){
+    if(mb.isUsableInPurelyImplicitResolution()){
       out << "1;\n\n";
     } else {
       out << "0;\n\n";
@@ -1002,7 +1048,7 @@ namespace mfront{
 
     out << "MFRONT_SHAREDOBJ unsigned short umat"
       	<< makeLowerCase(name) << "_BehaviourType = " ;
-    if(behaviourCharacteristic.getBehaviourType()==mfront::ISOTROPIC){
+    if(mb.getBehaviourType()==mfront::ISOTROPIC){
       out << "0u;" << endl << endl;
     } else {
       out << "1u;" << endl << endl;
@@ -1011,7 +1057,7 @@ namespace mfront{
     out << "MFRONT_SHAREDOBJ unsigned short umat"
       	<< makeLowerCase(name);
     unsigned short cs = this->getNumberOfVariables(coefsHolder);
-    if(behaviourCharacteristic.getBehaviourType()==mfront::ISOTROPIC){
+    if(mb.getBehaviourType()==mfront::ISOTROPIC){
       // skipping the fourth first material properties
       if(found){
 	out << "_nMaterialProperties = " << cs-4 << ";\n";
@@ -1022,7 +1068,7 @@ namespace mfront{
       out << "_nMaterialProperties = " << cs << ";\n";
     }
 
-    if((behaviourCharacteristic.getBehaviourType()==mfront::ISOTROPIC)&&(found)){
+    if((mb.getBehaviourType()==mfront::ISOTROPIC)&&(found)){
       this->writeGlossaryNames(out,this->getGlossaryNames(coefsHolder,
 							  glossaryNames,
 							  entryNames),
@@ -1285,12 +1331,12 @@ namespace mfront{
     out << "** 1D Example\n\n";
     out << "coel1D = 'MOTS'";
     i=0;
-    if(behaviourCharacteristic.getBehaviourType()==mfront::ISOTROPIC){
+    if(mb.getBehaviourType()==mfront::ISOTROPIC){
       if(!found){
 	out << "'YOUN' 'NU' 'RHO' 'ALPH' ";
 	i=4u;
       }
-    } else if(behaviourCharacteristic.getBehaviourType()==mfront::ORTHOTROPIC){
+    } else if(mb.getBehaviourType()==mfront::ORTHOTROPIC){
       out << "'YG1' 'YG2' 'YG3' 'NU12' 'NU23' 'NU13' 'RHO' 'ALP1' 'ALP2' 'ALP3' ";
       i=10u;
     }
@@ -1411,7 +1457,7 @@ namespace mfront{
 
     out << "MATR1D = 'MATERIAU' MODL1D";
     i=6;
-    if((behaviourCharacteristic.getBehaviourType()==mfront::ISOTROPIC)){
+    if((mb.getBehaviourType()==mfront::ISOTROPIC)){
       if(!found){
 	out << "'YOUN' xyoung 'NU' xnu 'RHO' xrho 'ALPH' xalpha ";
 	i=9u;
@@ -1450,12 +1496,12 @@ namespace mfront{
     out << "** 2D Example\n\n";
     out << "coel2D = 'MOTS'";
     i=0;
-    if((behaviourCharacteristic.getBehaviourType()==mfront::ISOTROPIC)){
+    if((mb.getBehaviourType()==mfront::ISOTROPIC)){
       if(!found){
 	out << "'YOUN' 'NU' 'RHO' 'ALPH' ";
 	i=3u;
       }
-    } else if(behaviourCharacteristic.getBehaviourType()==mfront::ORTHOTROPIC){
+    } else if(mb.getBehaviourType()==mfront::ORTHOTROPIC){
       out << "'YG1' 'YG2' 'YG3' 'NU12' 'NU23' 'NU13' 'G12' 'V1X' 'V1Y'\n"
 	  << "'RHO' 'ALP1' 'ALP2' 'ALP3'";
       i=3u;
@@ -1575,7 +1621,7 @@ namespace mfront{
 
     out << "MATR2D = 'MATERIAU' MODL2D";
     i=6;
-    if((behaviourCharacteristic.getBehaviourType()==mfront::ISOTROPIC)){
+    if((mb.getBehaviourType()==mfront::ISOTROPIC)){
       if(!found){
 	out << "'YOUN' xyoung 'NU' xnu 'RHO' xrho 'ALPH' xalpha";
 	i=9u;
@@ -1609,7 +1655,7 @@ namespace mfront{
       }
       out << tmp;
     }
-    if(behaviourCharacteristic.getBehaviourType()==mfront::ORTHOTROPIC){
+    if(mb.getBehaviourType()==mfront::ORTHOTROPIC){
       out << "\n'DIRECTION' 'PARALLELE' (1 0)";
     }
     out << ";\n\n";
@@ -1617,7 +1663,7 @@ namespace mfront{
     out << "** 3D Example\n\n";
     out << "coel3D = 'MOTS'";
     i=0;
-    if(behaviourCharacteristic.getBehaviourType()==mfront::ISOTROPIC){
+    if(mb.getBehaviourType()==mfront::ISOTROPIC){
       if(!found){
 	out << "'YOUN' 'NU' 'RHO' 'ALPH'";
 	i=3u;
@@ -1744,7 +1790,7 @@ namespace mfront{
 
     out << "MATR3D = 'MATERIAU' MODL3D";
     i=6;
-    if(behaviourCharacteristic.getBehaviourType()==mfront::ISOTROPIC){
+    if(mb.getBehaviourType()==mfront::ISOTROPIC){
       if(!found){
 	out << "'YOUN' xyoung 'NU' xnu 'ALPH' xalpha";
 	i=9u;
@@ -1778,7 +1824,7 @@ namespace mfront{
       }
       out << tmp;
     }
-    if(behaviourCharacteristic.getBehaviourType()==mfront::ORTHOTROPIC){
+    if(mb.getBehaviourType()==mfront::ORTHOTROPIC){
       out << "\n'DIRECTION' 'PARALLELE' (1 0 0) (0 0 1)";
     }
     out << ";\n\n";

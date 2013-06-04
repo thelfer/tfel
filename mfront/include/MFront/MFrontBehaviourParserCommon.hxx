@@ -21,12 +21,8 @@
 #include"MFront/SupportedTypes.hxx"
 #include"MFront/VarHandler.hxx"
 #include"MFront/StaticVarHandler.hxx"
-#include"MFront/ComputedVarHandler.hxx"
-#include"MFront/BehaviourCharacteristic.hxx"
-#include"MFront/BoundsDescription.hxx"
+#include"MFront/MechanicalBehaviourDescription.hxx"
 #include"MFront/ParserBase.hxx"
-#include"MFront/DrivingVariable.hxx"
-#include"MFront/ThermodynamicForce.hxx"
 
 #include"MFront/MFrontVirtualParser.hxx"
 #include"MFront/MFrontBehaviourVirtualInterface.hxx"
@@ -87,30 +83,15 @@ namespace mfront{
 
     virtual std::string
     standardModifier(const std::string&,const bool);
-
-    bool
-    isDrivingVariableName(const std::string&) const;
-
-    bool
-    isDrivingVariableIncrementName(const std::string&) const;
- 
-    bool
-    isInternalStateVariable(const std::string&) const;
-    
-    bool
-    isInternalStateVariableIncrement(const std::string&) const;
-    
-    bool
-    isExternalStateVariable(const std::string&) const;
     
     virtual void
     readStringList(std::vector<std::string>&);
     
     void
-      setInterfaces(const std::set<std::string>&);
+    setInterfaces(const std::set<std::string>&);
 
     virtual void
-      registerDefaultVarNames(void);
+    registerDefaultVarNames(void);
 
     virtual void
     treatModellingHypothesis(void);
@@ -168,9 +149,6 @@ namespace mfront{
 
     virtual void
       treatAuxiliaryStateVariables(void);  
-
-    virtual void
-      treatComputedVar(void);
 
     virtual void
       treatIntegrator(void);
@@ -262,7 +240,8 @@ namespace mfront{
     virtual void
     writeBehaviourDataFile(void);
     
-    void checkIntegrationDataFile(void) const;
+    virtual void
+    checkIntegrationDataFile(void) const;
 
     virtual void
     writeIntegrationDataStandardTFELTypedefs(void);
@@ -371,9 +350,9 @@ namespace mfront{
     virtual void
     writeBehaviourConstructors(void);
 
-    void writeBehaviourConstructors(const std::string&,
-				    const std::string&,
-				    const std::string& = "");
+    void
+    writeBehaviourConstructors(const std::string&,
+			       const std::string& = "");
 
     virtual void
     writeBehaviourStateVarsIncrements(void);
@@ -383,9 +362,6 @@ namespace mfront{
 
     virtual void
     writeBehaviourParameters(void);
-
-    virtual void
-    writeBehaviourComputedVars(void);
 
     virtual void
     writeBehaviourStaticVars(void);
@@ -497,13 +473,6 @@ namespace mfront{
 
     virtual ~MFrontBehaviourParserCommon();
 
-    const VarHandler&
-    getStateVariableHandler(const std::string&) const;
-
-    const VarHandler&
-    getVariableHandler(const VarContainer&,
-		       const std::string&) const;
-
     /*!
      * \param n : variable name
      */
@@ -511,31 +480,6 @@ namespace mfront{
     declareExternalStateVariableProbablyUnusableInPurelyImplicitResolution(const std::string&);
 
     void updateClassName();
-
-    bool
-    contains(const VarContainer&,
-	     const std::string&) const;
-
-    bool
-    isMaterialPropertyName(const std::string&) const;
-
-    bool
-    isLocalVariableName(const std::string&) const;
-
-    bool
-    isParameterName(const std::string&) const;
-
-    bool
-    isInternalStateVariableName(const std::string&) const;
-
-    bool
-    isAuxiliaryInternalStateVariableName(const std::string&) const;
-
-    bool
-    isExternalStateVariableName(const std::string&) const;
-
-    bool
-    isExternalStateVariableIncrementName(const std::string&) const;
 
     /*!
      * \brief check if one has to include tvector.hxx or vector.hxx
@@ -546,10 +490,6 @@ namespace mfront{
 
     MFrontBehaviourParserCommon();
 
-    //! main variables, association of a driving variable and a thermodynamic force
-    std::map<DrivingVariable,
-	     ThermodynamicForce> mvariables;
-    
     std::map<std::string,std::vector<std::string> > sourcesLibrairiesDependencies;
 
     std::set<std::string> registredKeyWords;
@@ -558,21 +498,7 @@ namespace mfront{
 
     std::map<std::string,std::string> entryNames;
 
-    std::map<std::string,double>            parametersDefaultValues;
-    std::map<std::string,int>               iParametersDefaultValues;
-    std::map<std::string,unsigned short>    uParametersDefaultValues;
-
-    VarContainer coefsHolder;
-    VarContainer stateVarsHolder;
-    VarContainer auxiliaryStateVarsHolder;
-    VarContainer externalStateVarsHolder;
-    VarContainer localVarsHolder;
-    VarContainer parametersHolder;
-    ComputedVarContainer computedVars;
-
     std::vector<std::string> interfaces;
-    std::vector<BoundsDescription>      boundsDescriptions;
-    std::vector<BoundsDescription>      physicalBoundsDescriptions;
 
     std::string initLocalVars;
     std::string integrator;
@@ -602,7 +528,7 @@ namespace mfront{
     bool hasPredictionOperator;
     bool hasTimeStepScalingFactor;
 
-    BehaviourCharacteristic behaviourCharacteristic;
+    MechanicalBehaviourDescription mb;
 
   }; // end of struct MFrontBehaviourParserCommon
 

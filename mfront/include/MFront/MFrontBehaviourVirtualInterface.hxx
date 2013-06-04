@@ -18,8 +18,7 @@
 #include"TFEL/Utilities/CxxTokenizer.hxx"
 
 #include"MFront/VarHandler.hxx"
-#include"MFront/ComputedVarHandler.hxx"
-#include"MFront/BehaviourCharacteristic.hxx"
+#include"MFront/MechanicalBehaviourDescription.hxx"
 
 namespace mfront{
   
@@ -50,40 +49,23 @@ namespace mfront{
     virtual void 
     exportMechanicalData(std::ofstream&,
 			 const std::string&,
-			 const VarContainer&,
-			 const VarContainer&,
-			 const VarContainer&,
-			 const VarContainer&,
-			 const BehaviourCharacteristic) = 0;
+			 const MechanicalBehaviourDescription&) = 0;
     
     virtual void 
     writeBehaviourConstructor(std::ofstream&,
 			      const std::string&,
-			      const VarContainer&,
-			      const VarContainer&,
-			      const VarContainer&,
-			      const VarContainer&,
-			      const BehaviourCharacteristic,
-			      const std::string&,
+			      const MechanicalBehaviourDescription&,
 			      const std::string&) = 0;
     
     virtual void
     writeBehaviourDataConstructor(std::ofstream&,
 				  const std::string&,
-				  const VarContainer&,
-				  const VarContainer&,
-				  const VarContainer&,
-				  const VarContainer&,
-				  const BehaviourCharacteristic) = 0;
+				  const MechanicalBehaviourDescription&) = 0;
     
     virtual void 
     writeIntegrationDataConstructor(std::ofstream&,
 				    const std::string&,
-				    const VarContainer&,
-				    const VarContainer&,
-				    const VarContainer&,
-				    const VarContainer&,
-				    const BehaviourCharacteristic) = 0;
+				    const MechanicalBehaviourDescription&) = 0;
 
     virtual void
     endTreatement(const std::string&,
@@ -92,14 +74,9 @@ namespace mfront{
 		  const std::string&,
 		  const std::string&,
 		  const std::string&,
-		  const VarContainer&,
-		  const VarContainer&,
-		  const VarContainer&,
-		  const VarContainer&,
-		  const VarContainer&,
 		  const std::map<std::string,std::string>&,
 		  const std::map<std::string,std::string>&,
-		  const BehaviourCharacteristic) = 0;
+		  const MechanicalBehaviourDescription&) = 0;
 
     virtual void
     reset(void) = 0;

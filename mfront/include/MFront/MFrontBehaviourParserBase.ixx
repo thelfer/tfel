@@ -62,8 +62,6 @@ namespace mfront{
     this->registerNewCallBack("@StaticVar",&Child::treatStaticVar);
     this->registerNewCallBack("@StaticVariable",&Child::treatStaticVar);
     this->registerNewCallBack("@UseQt",&Child::treatUseQt);
-    this->registerNewCallBack("@ComputedVar",&Child::treatComputedVar);
-    this->registerNewCallBack("@ComputedVariable",&Child::treatComputedVar);
     this->registerNewCallBack("@Description",&Child::treatDescription);
     this->registerNewCallBack("@Bounds",&Child::treatBounds);
     this->registerNewCallBack("@PhysicalBounds",&Child::treatPhysicalBounds);
@@ -145,12 +143,12 @@ namespace mfront{
     // begin treatement
     this->current = this->fileTokens.begin();
     while(this->current != this->fileTokens.end()){
-      if((this->isMaterialPropertyName(this->current->value))||
-	 (this->isInternalStateVariableName(this->current->value))||
-	 (this->isAuxiliaryInternalStateVariableName(this->current->value))||
-	 (this->isExternalStateVariableName(this->current->value))){
+      if((this->mb.isMaterialPropertyName(this->current->value))||
+	 (this->mb.isInternalStateVariableName(this->current->value))||
+	 (this->mb.isAuxiliaryInternalStateVariableName(this->current->value))||
+	 (this->mb.isExternalStateVariableName(this->current->value))){
 	this->treatVariableMethod();
-      } else if (this->isParameterName(this->current->value)){
+      } else if (this->mb.isParameterName(this->current->value)){
 	this->treatParameterMethod();
       } else {
 	p = this->callBacks.find(this->current->value);

@@ -209,13 +209,11 @@ namespace mfront{
   void 
   MFrontAsterInterface::exportMechanicalData(std::ofstream& behaviourDataFile,
 					    const std::string&,
-					    const VarContainer&,
-					    const VarContainer& stateVarsHolder,
-					    const VarContainer& auxiliaryStateVarsHolder,
-					    const VarContainer&,
-					    const BehaviourCharacteristic behaviourCharacteristic)
+					    const MechanicalBehaviourDescription& mb)
   {
     using namespace std;
+    const VarContainer&   stateVarsHolder        = mb.getStateVariables();
+    const VarContainer& auxiliaryStateVarsHolder = mb.getAuxiliaryStateVariables();
     VarContainer::const_iterator p;
     if((!stateVarsHolder.empty())||
        (!auxiliaryStateVarsHolder.empty())){
@@ -236,11 +234,11 @@ namespace mfront{
       o = this->exportResults(behaviourDataFile,
 			      stateVarsHolder,
 			      "Asterstatev",
-			      behaviourCharacteristic.useQt());
+			      mb.useQt());
       this->exportResults(behaviourDataFile,
 			  auxiliaryStateVarsHolder,
 			  "Asterstatev",
-			  behaviourCharacteristic.useQt(),o);
+			  mb.useQt(),o);
     }
     behaviourDataFile << "} // end of AsterExportStateData\n";
     behaviourDataFile << endl;
@@ -249,13 +247,8 @@ namespace mfront{
   void
   MFrontAsterInterface::writeBehaviourConstructor(std::ofstream& behaviourFile,
 						 const std::string& className,
-						 const VarContainer&,
-						 const VarContainer&,
-						 const VarContainer&,
-						 const VarContainer&,
-						 const BehaviourCharacteristic characteristic,
-						 const std::string& initStateVarsIncrements,
-						 const std::string& initComputedVars)
+						 const MechanicalBehaviourDescription& characteristic,
+						 const std::string& initStateVarsIncrements)
   {
     using namespace std;
     VarContainer::const_iterator p;
@@ -294,20 +287,21 @@ namespace mfront{
 		    << "IntegrationData<N,Type,false>(Asterdt_,Asterdstran,AsterdT_,Asterdext_vars)";
     }
     behaviourFile << initStateVarsIncrements;
-    behaviourFile << initComputedVars;
   }
   
   void 
   MFrontAsterInterface::writeBehaviourDataConstructor(std::ofstream& behaviourDataFile,
-						     const std::string& className,
-						     const VarContainer& coefsHolder,
-						     const VarContainer& stateVarsHolder,
- 						     const VarContainer& auxiliaryStateVarsHolder,
-						     const VarContainer& externalStateVarsHolder,
-						     const BehaviourCharacteristic)
+						      const std::string& className,
+						      const MechanicalBehaviourDescription& mb)
   {
     using namespace std;
+    const VarContainer& coefsHolder              = mb.getMaterialProperties();
+    const VarContainer& stateVarsHolder          = mb.getStateVariables();
+    const VarContainer& auxiliaryStateVarsHolder = mb.getAuxiliaryStateVariables();
+    const VarContainer& externalStateVarsHolder  = mb.getExternalStateVariables();
     VarContainer::const_iterator p;
+    map<DrivingVariable,
+	ThermodynamicForce>::const_iterator pm;
     behaviourDataFile << "/*\n";
     behaviourDataFile << " * \\brief constructor for the aster interface\n";
     behaviourDataFile << " *\n";
@@ -353,8 +347,36 @@ namespace mfront{
 							       externalStateVarsHolder,
 							       "Asterext_vars","","");
     behaviourDataFile << "\n{\n";
-    behaviourDataFile << "sig.importTab(Asterstress_);\n";
-    behaviourDataFile << "eto.importVoigt(Asterstran);\n";
+    SupportedTypes::TypeSize ov;
+    SupportedTypes::TypeSize of;
+    for(pm=mb.getMainVariables().begin();pm!=mb.getMainVariables().end();++pm){
+      const DrivingVariable&    v = pm->first;
+      const ThermodynamicForce& f = pm->second;
+      if(this->getTypeFlag(f.type)==SupportedTypes::Stensor){
+	if(pm!=mb.getMainVariables().begin()){
+	  behaviourDataFile << f.name << ".importTab(Asterstress_+" << of <<");\n";
+	} else {
+	  behaviourDataFile << f.name << ".importTab(Asterstress_);\n";
+	}
+      } else {
+	string msg("MFrontAsterInterface::writeBehaviourDataConstructor : ");
+	msg += "unsupported forces type";
+	throw(runtime_error(msg));
+      }
+      if(this->getTypeFlag(v.type)==SupportedTypes::Stensor){
+	if(pm!=mb.getMainVariables().begin()){
+	  behaviourDataFile << v.name << ".importVoigt(Asterstran+" << ov <<");\n";
+	} else {
+	  behaviourDataFile << v.name << ".importVoigt(Asterstran);\n";
+	}
+      } else {
+	string msg("MFrontAsterInterface::writeBehaviourDataConstructor : ");
+	msg += "unsupported forces type";
+	throw(runtime_error(msg));
+      }
+      ov += this->getTypeSize(v.type,1u);
+      of += this->getTypeSize(f.type,1u);
+    }
     this->writeVariableInitializersInBehaviourDataConstructorII(behaviourDataFile,
 								coefsHolder,
 								"Astermat","","");
@@ -372,14 +394,11 @@ namespace mfront{
   
   void 
   MFrontAsterInterface::writeIntegrationDataConstructor(std::ofstream& behaviourIntegrationFile,
-						       const std::string& className,
-						       const VarContainer&,
-						       const VarContainer&,
-						       const VarContainer&,
-						       const VarContainer& externalStateVarsHolder,
-						       const BehaviourCharacteristic)
+							const std::string& className,
+							const MechanicalBehaviourDescription& mb)
   {
     using namespace std;
+    const VarContainer& externalStateVarsHolder = mb.getExternalStateVariables();
     VarContainer::const_iterator p;
     behaviourIntegrationFile << "/*\n";
     behaviourIntegrationFile << " * \\brief constructor for the aster interface\n";
@@ -405,7 +424,29 @@ namespace mfront{
 								 "Asterdext_vars","d","");
     }
     behaviourIntegrationFile << "\n{\n";
-    behaviourIntegrationFile << "deto.importVoigt(Asterdstran);\n";
+    map<DrivingVariable,
+	ThermodynamicForce>::const_iterator pm;
+    SupportedTypes::TypeSize ov;
+    for(pm=mb.getMainVariables().begin();pm!=mb.getMainVariables().end();++pm){
+      const DrivingVariable&    v = pm->first;
+      if(!v.increment_known){
+	string msg("MFrontAsterInterface::writeIntegrationDataConstructor : ");
+	msg += "unsupported driving variable '"+v.name+"'";
+	throw(runtime_error(msg));
+      }
+      if(this->getTypeFlag(v.type)==SupportedTypes::Stensor){
+	if(pm!=mb.getMainVariables().begin()){
+	  behaviourIntegrationFile << "d" << v.name << ".importVoigt(Asterdstran);\n";
+	} else {
+	  behaviourIntegrationFile << "d" << v.name << ".importVoigt(Asterdstran+" << ov << ");\n";
+	}
+      } else {
+	string msg("MFrontAsterInterface::writeIntegrationDataConstructor : ");
+	msg += "unsupported driving variable '"+v.name+"'";
+	throw(runtime_error(msg));
+      }
+      ov += this->getTypeSize(v.type,1u);
+    }
     if(!externalStateVarsHolder.empty()){
       this->writeVariableInitializersInBehaviourDataConstructorII(behaviourIntegrationFile,
 								  externalStateVarsHolder,
@@ -461,6 +502,7 @@ namespace mfront{
       throw(runtime_error(msg));
     }
     if(n.size()!=o){
+      vector<string>::size_type s = 0u;
       vector<string>::const_iterator p = n.begin()+o;      
       f << "MFRONT_SHAREDOBJ const char * aster"
 	<< makeLowerCase(name)
@@ -468,8 +510,13 @@ namespace mfront{
       while(p!=n.end()){
 	f << '"' << *p << '"';
 	if(++p!=n.end()){
-	  f << ",\n";
+	  if(s%5==0){
+	    f << ",\n";
+	  } else {
+	    f << ",";
+	  }
 	}
+	++s;
       }
       f << "};\n";
     } else {
@@ -486,18 +533,18 @@ namespace mfront{
 				     const std::string& className,
 				     const std::string& authorName,
 				     const std::string& date,
-				     const VarContainer& coefsHolder,
-				     const VarContainer& stateVarsHolder,
-				     const VarContainer& auxiliaryStateVarsHolder,
-				     const VarContainer& externalStateVarsHolder,
-				     const VarContainer& parametersHolder,
 				     const std::map<std::string,std::string>& glossaryNames,
 				     const std::map<std::string,std::string>& entryNames,
-				     const BehaviourCharacteristic behaviourCharacteristic)
+				     const MechanicalBehaviourDescription& mb)
   {
     using namespace std;
     using namespace tfel::system;
     using namespace tfel::utilities;
+    const VarContainer& coefsHolder              = mb.getMaterialProperties();
+    const VarContainer& stateVarsHolder          = mb.getStateVariables();
+    const VarContainer& auxiliaryStateVarsHolder = mb.getAuxiliaryStateVariables();
+    const VarContainer& externalStateVarsHolder  = mb.getExternalStateVariables();
+    const VarContainer& parametersHolder         = mb.getParameters();
     string header = "Aster";
     string name;
     string asterFctName;
@@ -538,16 +585,16 @@ namespace mfront{
     }
 
     // specific treatment for isotropic behaviour
-    if(behaviourCharacteristic.getBehaviourType()==mfront::ISOTROPIC){
-      if(behaviourCharacteristic.getElasticBehaviourType()!=mfront::ISOTROPIC){
+    if(mb.getBehaviourType()==mfront::ISOTROPIC){
+      if(mb.getElasticBehaviourType()!=mfront::ISOTROPIC){
 	string msg("MFrontAsterInterface::endTreatement : ");
 	msg += "an isotropic behaviour must have an isotropic elastic behaviour";
 	throw(runtime_error(msg));
       }
-      if((behaviourCharacteristic.requiresStiffnessTensor())||
-	 (behaviourCharacteristic.requiresThermalExpansionTensor())){
+      if((mb.requiresStiffnessTensor())||
+	 (mb.requiresThermalExpansionTensor())){
 	unsigned short min_nprops = 2u;
-	if(behaviourCharacteristic.requiresThermalExpansionTensor()){
+	if(mb.requiresThermalExpansionTensor()){
 	  min_nprops = 4u;
 	}
 	if(coefsHolder.size()<min_nprops){
@@ -559,7 +606,7 @@ namespace mfront{
 	  msg += "following material propertys to be defined (in the right order) ";
 	  msg += "- the young modulus     (use @Coef stress           young)\n";
 	  msg += "- the poisson ratio     (use @Coef real             nu)\n";
-	  if(behaviourCharacteristic.requiresThermalExpansionTensor()){
+	  if(mb.requiresThermalExpansionTensor()){
 	    msg += "- the density           (use @Coef density rho)";
 	    msg += "- the thermal expansion (use @Coef thermalexpansion alpha)\n";
 	  }
@@ -575,7 +622,7 @@ namespace mfront{
 	  msg += "second material property to be the poisson ratio (use @Coef real nu)";
 	  throw(runtime_error(msg));
 	}
-	if(behaviourCharacteristic.requiresThermalExpansionTensor()){
+	if(mb.requiresThermalExpansionTensor()){
 	  if(coefsHolder[2].name!="rho"){
 	    string msg("MFrontASTERInterface::endTreatement : the aster interface requires the " );
 	    msg += "third material property to be the density (use @Coef density rho)";
@@ -610,7 +657,7 @@ namespace mfront{
 
     out << "#ifdef __cplusplus\n";
     out << "#include\"MFront/Aster/AsterTraits.hxx\"\n";
-    if (behaviourCharacteristic.getBehaviourType()==mfront::ORTHOTROPIC){
+    if (mb.getBehaviourType()==mfront::ORTHOTROPIC){
       out << "#include\"MFront/Aster/AsterOrthotropicBehaviour.hxx\"\n";
     }
     out << "#include\"TFEL/Material/" << className << ".hxx\"\n";
@@ -643,24 +690,24 @@ namespace mfront{
 
     out << "namespace aster{\n\n";
 
-    if(behaviourCharacteristic.useQt()){
+    if(mb.useQt()){
       out << "template<tfel::material::ModellingHypothesis::Hypothesis H,typename Type,bool use_qt>\n";
     } else {
       out << "template<tfel::material::ModellingHypothesis::Hypothesis H,typename Type>\n";
     } 
     out << "struct AsterTraits<tfel::material::" << className << "<H,Type,";
-    if(behaviourCharacteristic.useQt()){
+    if(mb.useQt()){
       out << "use_qt";
     } else {
       out << "false";
     }
     out << "> >{\n";
-    if(behaviourCharacteristic.requiresStiffnessTensor()){
+    if(mb.requiresStiffnessTensor()){
       out << "static const bool requiresStiffnessTensor = true;\n";
     } else {
       out << "static const bool requiresStiffnessTensor = false;\n";
     }
-    if(behaviourCharacteristic.requiresThermalExpansionTensor()){
+    if(mb.requiresThermalExpansionTensor()){
       out << "static const bool requiresThermalExpansionTensor = true;\n";
     } else {
       out << "static const bool requiresThermalExpansionTensor = false;\n";
@@ -673,9 +720,9 @@ namespace mfront{
     // this indicates that the material properties required to compute
     // the thermal expansion tensor are part of the material properties
     bool foundt = false;
-    if(behaviourCharacteristic.getElasticBehaviourType()==mfront::ISOTROPIC){
+    if(mb.getElasticBehaviourType()==mfront::ISOTROPIC){
       out << "static const AsterBehaviourType etype = aster::ISOTROPIC;\n";
-      if(behaviourCharacteristic.requiresStiffnessTensor()){
+      if(mb.requiresStiffnessTensor()){
 	for(p=coefsHolder.begin();(p!=coefsHolder.end())&&(!founde);++p){
 	  if((p->name=="young")||
 	     (p->name=="nu")){
@@ -715,14 +762,14 @@ namespace mfront{
       } else {
 	out << "static const unsigned short elasticPropertiesOffset = 0u;\n";
       }
-      if(behaviourCharacteristic.requiresThermalExpansionTensor()){
+      if(mb.requiresThermalExpansionTensor()){
 	for(p=coefsHolder.begin();(p!=coefsHolder.end())&&(!foundt);++p){
 	  if(p->name=="alpha"){
 	    foundt = true;
 	  }
 	}
 	if(foundt){
-	  if(behaviourCharacteristic.requiresStiffnessTensor()){
+	  if(mb.requiresStiffnessTensor()){
 	    if(coefsHolder.size()<3){
 	      string msg("MFrontAsterInterface::endTreatement : the aster interface requires the ");
 	      msg += "following three or four material propertys to be defined (in the right order) when the ";
@@ -793,17 +840,17 @@ namespace mfront{
 	out << "static const unsigned short massDensityOffsetForThermalExpansion = 0u;\n";
 	out << "static const unsigned short thermalExpansionPropertiesOffset     = 0u;\n"; 
       }
-    } else if (behaviourCharacteristic.getElasticBehaviourType()==mfront::ORTHOTROPIC){
+    } else if (mb.getElasticBehaviourType()==mfront::ORTHOTROPIC){
       out << "static const AsterBehaviourType etype = aster::ORTHOTROPIC;\n";
       out << "static const unsigned short N = tfel::material::ModellingHypothesisToSpaceDimension<H>::value;\n";
-      if(behaviourCharacteristic.requiresStiffnessTensor()){
+      if(mb.requiresStiffnessTensor()){
 	out << "static const unsigned short elasticPropertiesOffset "
 	    << "= AsterOrthotropicElasticPropertiesOffset<N>::value;\n";
 	hasElasticMaterialPropertiesOffset = true;
       } else {
 	out << "static const unsigned short elasticPropertiesOffset = 0u;\n";
       }
-      if(behaviourCharacteristic.requiresThermalExpansionTensor()){
+      if(mb.requiresThermalExpansionTensor()){
 	out << "static const unsigned short massDensityOffsetForThermalExpansion = 0u;\n";
 	out << "static const unsigned short thermalExpansionPropertiesOffset = 3u;\n";
 	hasThermalExpansionMaterialPropertiesOffset = true;
@@ -817,9 +864,9 @@ namespace mfront{
       msg += "The aster interface only support isotropic or orthotropic behaviour at this time.";
       throw(runtime_error(msg));
     }
-    if(behaviourCharacteristic.getBehaviourType()==mfront::ISOTROPIC){
+    if(mb.getBehaviourType()==mfront::ISOTROPIC){
       out << "static const AsterBehaviourType type = aster::ISOTROPIC;\n";
-    } else if (behaviourCharacteristic.getBehaviourType()==mfront::ORTHOTROPIC){
+    } else if (mb.getBehaviourType()==mfront::ORTHOTROPIC){
       out << "static const AsterBehaviourType type = aster::ORTHOTROPIC;\n";
     } else {
       string msg("MFrontAsterInterface::endTreatement : ");
@@ -976,7 +1023,7 @@ namespace mfront{
     out << "MFRONT_SHAREDOBJ unsigned short aster"
       	<< makeLowerCase(name)
 	<< "_UsableInPurelyImplicitResolution = ";
-    if(behaviourCharacteristic.isUsableInPurelyImplicitResolution()){
+    if(mb.isUsableInPurelyImplicitResolution()){
       out << "1;\n\n";
     } else {
       out << "0;\n\n";
@@ -984,7 +1031,7 @@ namespace mfront{
 
     out << "MFRONT_SHAREDOBJ unsigned short aster"
       	<< makeLowerCase(name) << "_BehaviourType = " ;
-    if(behaviourCharacteristic.getBehaviourType()==mfront::ISOTROPIC){
+    if(mb.getBehaviourType()==mfront::ISOTROPIC){
       out << "0u;" << endl << endl;
     } else {
       out << "1u;" << endl << endl;
@@ -1203,6 +1250,17 @@ namespace mfront{
       out << "const bool computeTangentOperator = (*DDSOE>0.5);\n";
     }
     if(this->compareToNumericalTangentOperator){
+      const map<DrivingVariable,
+		ThermodynamicForce>& mvariables=mb.getMainVariables();
+      if((mvariables.size()!=1)||
+	 (mvariables.begin()->first.name!="eto")||
+	 (this->getTypeFlag(mvariables.begin()->first.type)!=SupportedTypes::Stensor)||
+	 (mvariables.begin()->second.name!="sig")||
+	 (this->getTypeFlag(mvariables.begin()->second.type)!=SupportedTypes::Stensor)){
+	string msg("MFrontAsterInterface::endTreatement : ");
+	msg += "unsupported case";
+	throw(runtime_error(msg));
+      }
       out << "vector<AsterReal> deto0(*NTENS);\n";
       out << "vector<AsterReal> sig0(*NTENS);\n";
       out << "vector<AsterReal> sv0(*NSTATV);\n";
@@ -1231,6 +1289,17 @@ namespace mfront{
       out << "}\n";
     }
     if(this->compareToNumericalTangentOperator){
+      const map<DrivingVariable,
+		ThermodynamicForce>& mvariables=mb.getMainVariables();
+      if((mvariables.size()!=1)||
+	 (mvariables.begin()->first.name!="eto")||
+	 (this->getTypeFlag(mvariables.begin()->first.type)!=SupportedTypes::Stensor)||
+	 (mvariables.begin()->second.name!="sig")||
+	 (this->getTypeFlag(mvariables.begin()->second.type)!=SupportedTypes::Stensor)){
+	string msg("MFrontAsterInterface::endTreatement : ");
+	msg += "unsupported case";
+	throw(runtime_error(msg));
+      }
       out << "if(computeTangentOperator){\n";
       out << "// computing the tangent operator by pertubation\n";
       out << "AsterInt i;\n";

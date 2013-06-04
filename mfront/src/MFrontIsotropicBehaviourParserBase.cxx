@@ -21,11 +21,11 @@ namespace mfront{
     this->defineSmallStrainInputVariables();
     this->reserveName("NewtonIntegration");
     this->registerVariable("theta");
-    this->parametersHolder.push_back(VarHandler("real","theta",1u,0u));
+    this->mb.getParameters().push_back(VarHandler("real","theta",1u,0u));
     this->registerVariable("epsilon");
-    this->parametersHolder.push_back(VarHandler("real","epsilon",1u,0u));
+    this->mb.getParameters().push_back(VarHandler("real","epsilon",1u,0u));
     this->registerVariable("iterMax");
-    this->parametersHolder.push_back(VarHandler("ushort","iterMax",
+    this->mb.getParameters().push_back(VarHandler("ushort","iterMax",
 						1u,0u));
     this->registerVariable("young");
     this->registerVariable("nu");
@@ -33,16 +33,16 @@ namespace mfront{
     this->registerVariable("alpha");
     this->registerVariable("lambda");
     this->registerVariable("mu");
-    this->coefsHolder.push_back(VarHandler("stress","young",1u,0u));
+    this->mb.getMaterialProperties().push_back(VarHandler("stress","young",1u,0u));
     this->glossaryNames.insert(MVType("young","YoungModulus"));
-    this->coefsHolder.push_back(VarHandler("real","nu",1u,0u));
+    this->mb.getMaterialProperties().push_back(VarHandler("real","nu",1u,0u));
     this->glossaryNames.insert(MVType("nu","PoissonRatio"));
-    this->coefsHolder.push_back(VarHandler("density","rho",1u,0u));
+    this->mb.getMaterialProperties().push_back(VarHandler("density","rho",1u,0u));
     this->glossaryNames.insert(MVType("rho","MassDensity"));
-    this->coefsHolder.push_back(VarHandler("thermalexpansion","alpha",1u,0u));
+    this->mb.getMaterialProperties().push_back(VarHandler("thermalexpansion","alpha",1u,0u));
     this->glossaryNames.insert(MVType("alpha","ThermalExpansion"));
-    this->localVarsHolder.push_back(VarHandler("stress","lambda",1u,0u));
-    this->localVarsHolder.push_back(VarHandler("stress","mu",1u,0u));
+    this->mb.getLocalVariables().push_back(VarHandler("stress","lambda",1u,0u));
+    this->mb.getLocalVariables().push_back(VarHandler("stress","mu",1u,0u));
     // local var initialisation
     this->initLocalVars +="this->lambda=tfel::material::lame::computeLambda(this->young,this->nu);\n";
     this->initLocalVars +="this->mu=tfel::material::lame::computeMu(this->young,this->nu);\n";
@@ -84,7 +84,7 @@ namespace mfront{
       this->throwRuntimeError("MFrontIsotropicBehaviourParserBase::treatTheta",
 			      "Theta value must be positive and smaller than 1.");
     }
-    if(!this->parametersDefaultValues.insert(MVType("theta",v)).second){
+    if(!this->mb.getParametersDefaultValues().insert(MVType("theta",v)).second){
       this->throwRuntimeError("MFrontIsotropicBehaviourParserBase::treatTheta",
 			      "default value already defined for parameter 'theta'");
     }
@@ -110,7 +110,7 @@ namespace mfront{
       this->throwRuntimeError("MFrontIsotropicBehaviourParserBase::treatEpsilon",
 			      "Epsilon value must be positive.");
     }
-    if(!this->parametersDefaultValues.insert(MVType("epsilon",epsilon)).second){
+    if(!this->mb.getParametersDefaultValues().insert(MVType("epsilon",epsilon)).second){
       this->throwRuntimeError("MFrontIsotropicBehaviourParserBase::treatEpsilon",
 			      "default value already defined for parameter 'epsilon'");
     }
@@ -129,7 +129,7 @@ namespace mfront{
       this->throwRuntimeError("MFrontIsotropicBehaviourParserBase::treatIterMax",
 			      "invalid value for parameter 'iterMax'");
     }
-    if(!this->uParametersDefaultValues.insert(MVType("iterMax",iterMax)).second){
+    if(!this->mb.getUnsignedShortParametersDefaultValues().insert(MVType("iterMax",iterMax)).second){
       this->throwRuntimeError("MFrontIsotropicBehaviourParserBase::treatIterMax",
 			      "default value already defined for parameter 'iterMax'");
     }
@@ -148,15 +148,15 @@ namespace mfront{
   MFrontIsotropicBehaviourParserBase::flowRuleVariableModifier(const std::string& var,
 							const bool addThisPtr)
   {
-    if((var=="T")||(this->isExternalStateVariable(var))||
-       (this->isInternalStateVariable(var))){
+    if((var=="T")||(this->mb.isExternalStateVariableName(var))||
+       (this->mb.isInternalStateVariableName(var))){
       if(addThisPtr){
 	return "this->"+var+"_";
       } else {
 	return var+"_";
       }
     }
-    if((this->isExternalStateVariableIncrementName(var))||(var=="dT")){
+    if((this->mb.isExternalStateVariableIncrementName(var))||(var=="dT")){
       this->declareExternalStateVariableProbablyUnusableInPurelyImplicitResolution(var.substr(1));
     }
     if(addThisPtr){
@@ -194,14 +194,14 @@ namespace mfront{
     typedef map<string,unsigned short>::value_type MVType2;
     VarContainer::iterator p;
     string currentVarName;
-    if(this->parametersDefaultValues.find("theta")==this->parametersDefaultValues.end()){
-      this->parametersDefaultValues.insert(MVType("theta",this->theta));
+    if(this->mb.getParametersDefaultValues().find("theta")==this->mb.getParametersDefaultValues().end()){
+      this->mb.getParametersDefaultValues().insert(MVType("theta",this->theta));
     }
-    if(this->parametersDefaultValues.find("epsilon")==this->parametersDefaultValues.end()){
-      this->parametersDefaultValues.insert(MVType("epsilon",1.e-8));
+    if(this->mb.getParametersDefaultValues().find("epsilon")==this->mb.getParametersDefaultValues().end()){
+      this->mb.getParametersDefaultValues().insert(MVType("epsilon",1.e-8));
     }
-    if(this->uParametersDefaultValues.find("iterMax")==this->uParametersDefaultValues.end()){
-      this->uParametersDefaultValues.insert(MVType2("iterMax",100u));
+    if(this->mb.getUnsignedShortParametersDefaultValues().find("iterMax")==this->mb.getUnsignedShortParametersDefaultValues().end()){
+      this->mb.getUnsignedShortParametersDefaultValues().insert(MVType2("iterMax",100u));
     }
     if(this->flowRule.empty()){
       string msg("MFrontIsotropicBehaviourParserBase::endsInputFileProcessing : ");
@@ -209,14 +209,13 @@ namespace mfront{
       throw(runtime_error(msg));
     }
     this->registerVariable("T_");
-    this->localVarsHolder.push_back(VarHandler("temperature","T_",1u,0u));
+    this->mb.getLocalVariables().push_back(VarHandler("temperature","T_",1u,0u));
     this->initLocalVars = "this->T_ = this->T+(" + this->className + "::theta)*(this->dT);\n" + this->initLocalVars;
-
-    for(p =this->externalStateVarsHolder.begin();
-	p!=this->externalStateVarsHolder.end();++p){
+    for(p =this->mb.getExternalStateVariables().begin();
+	p!=this->mb.getExternalStateVariables().end();++p){
       currentVarName = p->name + "_";
       this->registerVariable(currentVarName);
-      this->localVarsHolder.push_back(VarHandler(p->type,currentVarName,p->arraySize,0u));
+      this->mb.getLocalVariables().push_back(VarHandler(p->type,currentVarName,p->arraySize,0u));
       this->initLocalVars = "this->" + currentVarName + " = this->" + p->name +
 	"+(" + this->className + "::theta)*(this->d" + p->name + ");\n" + this->initLocalVars;
     }

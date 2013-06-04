@@ -24,8 +24,8 @@ namespace mfront{
     this->registerVariable("eel");
     this->registerVariable("deel");
     this->registerVariable("p");
-    this->stateVarsHolder.push_back(VarHandler("StrainStensor","eel",1u,0u));
-    this->stateVarsHolder.push_back(VarHandler("strain","p",1u,0u));
+    this->mb.getStateVariables().push_back(VarHandler("StrainStensor","eel",1u,0u));
+    this->mb.getStateVariables().push_back(VarHandler("strain","p",1u,0u));
     this->glossaryNames.insert(MVType("eel","ElasticStrain"));
     this->glossaryNames.insert(MVType("p","EquivalentStrain"));
     // default local vars
@@ -38,11 +38,11 @@ namespace mfront{
     this->registerVariable("error");
     this->registerVariable("iter");
     this->registerVariable("p_");
-    this->localVarsHolder.push_back(VarHandler("StressStensor","se",1u,0u));
-    this->localVarsHolder.push_back(VarHandler("stress","seq",1u,0u));
-    this->localVarsHolder.push_back(VarHandler("stress","seq_e",1u,0u));
-    this->localVarsHolder.push_back(VarHandler("StrainStensor","n",1u,0u));
-    this->localVarsHolder.push_back(VarHandler("strain","p_",1u,0u));
+    this->mb.getLocalVariables().push_back(VarHandler("StressStensor","se",1u,0u));
+    this->mb.getLocalVariables().push_back(VarHandler("stress","seq",1u,0u));
+    this->mb.getLocalVariables().push_back(VarHandler("stress","seq_e",1u,0u));
+    this->mb.getLocalVariables().push_back(VarHandler("StrainStensor","n",1u,0u));
+    this->mb.getLocalVariables().push_back(VarHandler("strain","p_",1u,0u));
     this->flowRule = "unused";
   }
 
@@ -326,7 +326,7 @@ namespace mfront{
     this->behaviourFile << "IntegrationResult" << endl;
     this->behaviourFile << "integrate(const SMType smt){\n";
     this->behaviourFile << "if(!this->NewtonIntegration()){\n";
-    if(this->behaviourCharacteristic.useQt()){        
+    if(this->mb.useQt()){        
       this->behaviourFile << "return MechanicalBehaviour<hypothesis,Type,use_qt>::FAILURE;\n";
     } else {
       this->behaviourFile << "return MechanicalBehaviour<hypothesis,Type,false>::FAILURE;\n";
@@ -346,7 +346,7 @@ namespace mfront{
     this->behaviourFile << ";\n";
     this->behaviourFile << "if(smt!=NOSTIFFNESSREQUESTED){\n";
     this->behaviourFile << "if(!this->computeConsistantTangentOperator(smt)){\n";
-    if(this->behaviourCharacteristic.useQt()){        
+    if(this->mb.useQt()){        
       this->behaviourFile << "return MechanicalBehaviour<hypothesis,Type,use_qt>::FAILURE;\n";
     } else {
       this->behaviourFile << "return MechanicalBehaviour<hypothesis,Type,false>::FAILURE;\n";
@@ -357,13 +357,13 @@ namespace mfront{
     this->behaviourFile << "this->updateStateVars();\n";
     this->behaviourFile << "this->sig  = (this->lambda)*trace(this->eel)*StrainStensor::Id()+2*(this->mu)*(this->eel);\n";
     this->behaviourFile << "this->updateAuxiliaryStateVars();\n";
-    for(p  = this->boundsDescriptions.begin();
-	p != this->boundsDescriptions.end();++p){
+    for(p  = this->mb.getBounds().begin();
+	p != this->mb.getBounds().end();++p){
       if(p->varCategory==BoundsDescription::StateVar){
 	p->writeBoundsChecks(this->behaviourFile);
       }
     }
-    if(this->behaviourCharacteristic.useQt()){        
+    if(this->mb.useQt()){        
       this->behaviourFile << "return MechanicalBehaviour<hypothesis,Type,use_qt>::SUCCESS;\n";
     } else {
       this->behaviourFile << "return MechanicalBehaviour<hypothesis,Type,false>::SUCCESS;\n";
@@ -392,10 +392,10 @@ namespace mfront{
       this->registerVariable(f.str());
       this->registerVariable(df_dseq.str());
       this->registerVariable(df_dp.str());
-      this->stateVarsHolder.push_back(VarHandler("strain",p.str(),1u,0u));
-      this->localVarsHolder.push_back(VarHandler("stress",f.str(),1u,0u));
-      this->localVarsHolder.push_back(VarHandler("real",df_dseq.str(),1u,0u));
-      this->localVarsHolder.push_back(VarHandler("stress",df_dp.str(),1u,0u));
+      this->mb.getStateVariables().push_back(VarHandler("strain",p.str(),1u,0u));
+      this->mb.getLocalVariables().push_back(VarHandler("stress",f.str(),1u,0u));
+      this->mb.getLocalVariables().push_back(VarHandler("real",df_dseq.str(),1u,0u));
+      this->mb.getLocalVariables().push_back(VarHandler("stress",df_dp.str(),1u,0u));
       flow.flow = FlowHandler::PlasticFlow;
     } else if(this->current->value=="Creep"){
       ostringstream p;
@@ -404,9 +404,9 @@ namespace mfront{
       p       << "p"       << this->flows.size();
       f       << "f"       << this->flows.size();
       df_dseq << "df_dseq" << this->flows.size();
-      this->stateVarsHolder.push_back(VarHandler("strain",p.str(),1u,0u));
-      this->localVarsHolder.push_back(VarHandler("DstrainDt",f.str(),1u,0u));
-      this->localVarsHolder.push_back(VarHandler("DF_DSEQ_TYPE",df_dseq.str(),1u,0u));
+      this->mb.getStateVariables().push_back(VarHandler("strain",p.str(),1u,0u));
+      this->mb.getLocalVariables().push_back(VarHandler("DstrainDt",f.str(),1u,0u));
+      this->mb.getLocalVariables().push_back(VarHandler("DF_DSEQ_TYPE",df_dseq.str(),1u,0u));
       this->registerVariable(p.str());
       this->registerVariable(f.str());
       this->registerVariable(df_dseq.str());
@@ -420,10 +420,10 @@ namespace mfront{
       f       << "f"       << this->flows.size();
       df_dseq << "df_dseq" << this->flows.size();
       df_dp   << "df_dp"   << this->flows.size();
-      this->stateVarsHolder.push_back(VarHandler("strain",p.str(),1u,0u));
-      this->localVarsHolder.push_back(VarHandler("DstrainDt",f.str(),1u,0u));
-      this->localVarsHolder.push_back(VarHandler("DF_DSEQ_TYPE",df_dseq.str(),1u,0u));
-      this->localVarsHolder.push_back(VarHandler("DstrainDt",df_dp.str(),1u,0u));
+      this->mb.getStateVariables().push_back(VarHandler("strain",p.str(),1u,0u));
+      this->mb.getLocalVariables().push_back(VarHandler("DstrainDt",f.str(),1u,0u));
+      this->mb.getLocalVariables().push_back(VarHandler("DF_DSEQ_TYPE",df_dseq.str(),1u,0u));
+      this->mb.getLocalVariables().push_back(VarHandler("DstrainDt",df_dp.str(),1u,0u));
       this->registerVariable(p.str());
       this->registerVariable(f.str());
       this->registerVariable(df_dseq.str());
@@ -454,7 +454,7 @@ namespace mfront{
       this->reserveName(ose.str());
       this->registerVariable(otheta.str());
       this->registerVariable(oseq_e.str());
-      this->localVarsHolder.push_back(VarHandler("stress",oseq_e.str(),1u,0u));
+      this->mb.getLocalVariables().push_back(VarHandler("stress",oseq_e.str(),1u,0u));
       ++(this->current);
     } else {
       flow.hasSpecificTheta = false;

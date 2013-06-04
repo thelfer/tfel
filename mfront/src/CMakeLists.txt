@@ -23,11 +23,10 @@ set(mfront_SOURCES
     MFrontInitParsers.cxx
     MFrontParserFactory.cxx
     DrivingVariable.cxx
-    BehaviourCharacteristic.cxx
+    MechanicalBehaviourDescription.cxx
     BoundsDescription.cxx
     VarHandler.cxx
     StaticVarHandler.cxx
-    ComputedVarHandler.cxx
     MFrontBehaviourParserCommon.cxx
     MFrontModelParserCommon.cxx
     MFrontModelParser.cxx

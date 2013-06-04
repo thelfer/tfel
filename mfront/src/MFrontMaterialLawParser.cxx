@@ -907,7 +907,6 @@ namespace mfront{
   {
     using namespace std;
     VarContainer::const_iterator p;
-    ComputedVarContainer::const_iterator p2;
     vector<VariableBoundsDescription>::const_iterator p3;
     VariableBoundsDescription boundsDescription;
     unsigned short i;

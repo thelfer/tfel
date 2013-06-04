@@ -24,8 +24,8 @@ namespace mfront{
     this->registerVariable("dp");
     this->registerVariable("eel");
     this->registerVariable("deel");
-    this->stateVarsHolder.push_back(VarHandler("StrainStensor","eel",1u,0u));
-    this->stateVarsHolder.push_back(VarHandler("strain","p",1u,0u));
+    this->mb.getStateVariables().push_back(VarHandler("StrainStensor","eel",1u,0u));
+    this->mb.getStateVariables().push_back(VarHandler("strain","p",1u,0u));
     this->glossaryNames.insert(MVType("eel","ElasticStrain"));
     this->glossaryNames.insert(MVType("p","EquivalentViscoplasticStrain"));
     // default local vars
@@ -38,14 +38,14 @@ namespace mfront{
     this->registerVariable("n");
     this->registerVariable("mu_3");
     this->registerVariable("p_");
-    this->localVarsHolder.push_back(VarHandler("DstrainDt","f",1u,0u));
-    this->localVarsHolder.push_back(VarHandler("DF_DSEQ_TYPE","df_dseq",1u,0u));
-    this->localVarsHolder.push_back(VarHandler("DstrainDt","df_dp",1u,0u));
-    this->localVarsHolder.push_back(VarHandler("StressStensor","se",1u,0u));
-    this->localVarsHolder.push_back(VarHandler("stress","seq",1u,0u));
-    this->localVarsHolder.push_back(VarHandler("stress","seq_e",1u,0u));
-    this->localVarsHolder.push_back(VarHandler("StrainStensor","n",1u,0u));
-    this->localVarsHolder.push_back(VarHandler("strain","p_",1u,0u));
+    this->mb.getLocalVariables().push_back(VarHandler("DstrainDt","f",1u,0u));
+    this->mb.getLocalVariables().push_back(VarHandler("DF_DSEQ_TYPE","df_dseq",1u,0u));
+    this->mb.getLocalVariables().push_back(VarHandler("DstrainDt","df_dp",1u,0u));
+    this->mb.getLocalVariables().push_back(VarHandler("StressStensor","se",1u,0u));
+    this->mb.getLocalVariables().push_back(VarHandler("stress","seq",1u,0u));
+    this->mb.getLocalVariables().push_back(VarHandler("stress","seq_e",1u,0u));
+    this->mb.getLocalVariables().push_back(VarHandler("StrainStensor","n",1u,0u));
+    this->mb.getLocalVariables().push_back(VarHandler("strain","p_",1u,0u));
     this->hasConsistantTangentOperator = true;
     this->isConsistantTangentOperatorSymmetric = true;
   }
@@ -154,7 +154,7 @@ namespace mfront{
     this->behaviourFile << "IntegrationResult" << endl;
     this->behaviourFile << "integrate(const SMType smt){\n";
     this->behaviourFile << "if(!this->NewtonIntegration()){\n";
-    if(this->behaviourCharacteristic.useQt()){        
+    if(this->mb.useQt()){        
       this->behaviourFile << "return MechanicalBehaviour<hypothesis,Type,use_qt>::FAILURE;\n";
     } else {
       this->behaviourFile << "return MechanicalBehaviour<hypothesis,Type,false>::FAILURE;\n";
@@ -162,7 +162,7 @@ namespace mfront{
     this->behaviourFile << "}\n";
     this->behaviourFile << "if(smt!=NOSTIFFNESSREQUESTED){\n";
     this->behaviourFile << "if(!this->computeConsistantTangentOperator(smt)){\n";
-    if(this->behaviourCharacteristic.useQt()){        
+    if(this->mb.useQt()){        
       this->behaviourFile << "return MechanicalBehaviour<hypothesis,Type,use_qt>::FAILURE;\n";
     } else {
       this->behaviourFile << "return MechanicalBehaviour<hypothesis,Type,false>::FAILURE;\n";
@@ -173,13 +173,13 @@ namespace mfront{
     this->behaviourFile << "this->updateStateVars();\n";
     this->behaviourFile << "this->sig  = (this->lambda)*trace(this->eel)*StrainStensor::Id()+2*(this->mu)*(this->eel);\n";
     this->behaviourFile << "this->updateAuxiliaryStateVars();\n";
-    for(p  = this->boundsDescriptions.begin();
-	p != this->boundsDescriptions.end();++p){
+    for(p  = this->mb.getBounds().begin();
+	p != this->mb.getBounds().end();++p){
       if(p->varCategory==BoundsDescription::StateVar){
 	p->writeBoundsChecks(this->behaviourFile);
       }
     }
-    if(this->behaviourCharacteristic.useQt()){        
+    if(this->mb.useQt()){        
       this->behaviourFile << "return MechanicalBehaviour<hypothesis,Type,use_qt>::SUCCESS;\n";
     } else {
       this->behaviourFile << "return MechanicalBehaviour<hypothesis,Type,false>::SUCCESS;\n";

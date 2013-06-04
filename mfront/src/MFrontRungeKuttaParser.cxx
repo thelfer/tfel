@@ -25,18 +25,19 @@ namespace mfront{
     typedef map<string,string>::value_type MVType;
     this->useStateVarTimeDerivative=true;
     this->registerVariable("epsilon");
-    this->parametersHolder.push_back(VarHandler("real","epsilon",1u,0u));
+    this->mb.getParameters().push_back(VarHandler("real","epsilon",1u,0u));
     this->registerVariable("dtmin");
     this->defineSmallStrainInputVariables();
     // driving variables
     map<DrivingVariable,
 	ThermodynamicForce>::const_iterator pm;
-    for(pm=this->mvariables.begin();pm!=this->mvariables.end();++pm){
+    for(pm=this->mb.getMainVariables().begin();
+	pm!=this->mb.getMainVariables().end();++pm){
       const DrivingVariable& dv = pm->first;
       this->registerVariable(dv.name+"_");
       this->registerVariable("d"+dv.name+"_");
-      this->localVarsHolder.push_back(VarHandler(dv.type,dv.name+"_",1u,0u));
-      this->localVarsHolder.push_back(VarHandler(SupportedTypes::getTimeDerivativeType(dv.type),
+      this->mb.getLocalVariables().push_back(VarHandler(dv.type,dv.name+"_",1u,0u));
+      this->mb.getLocalVariables().push_back(VarHandler(SupportedTypes::getTimeDerivativeType(dv.type),
 						 "d"+dv.name+"_",1u,0u));
     }
     // Default state vars
@@ -50,8 +51,8 @@ namespace mfront{
     this->reserveName("converged");
     this->reserveName("error");
     this->reserveName("failed");
-    this->localVarsHolder.push_back(VarHandler("temperature","T_",1u,0u));
-    this->stateVarsHolder.push_back(VarHandler("StrainStensor","eel",1u,0u));
+    this->mb.getLocalVariables().push_back(VarHandler("temperature","T_",1u,0u));
+    this->mb.getStateVariables().push_back(VarHandler("StrainStensor","eel",1u,0u));
     this->glossaryNames.insert(MVType("eel","ElasticStrain"));
     // CallBacks
     this->registerNewCallBack("@UsableInPurelyImplicitResolution",
@@ -126,7 +127,7 @@ namespace mfront{
 
   void MFrontRungeKuttaParser::treatStateVariables(void)
   {
-    this->readVarList(this->stateVarsHolder,true,true);
+    this->readVarList(this->mb.getStateVariables(),true,true);
   } // end of MFrontRungeKuttaParser::treatStateVariables
 
   std::string
@@ -134,10 +135,10 @@ namespace mfront{
 							 const bool addThisPtr)
   {
     using namespace std;
-    if((this->isDrivingVariableName(var)) ||(var=="T") ||
-       (this->isDrivingVariableIncrementName(var))||
-       (this->isInternalStateVariable(var))||
-       (this->isExternalStateVariable(var))){
+    if((this->mb.isDrivingVariableName(var)) ||(var=="T") ||
+       (this->mb.isDrivingVariableIncrementName(var))||
+       (this->mb.isInternalStateVariableName(var))||
+       (this->mb.isExternalStateVariableName(var))){
       if(addThisPtr){
 	return "this->"+var+"_";
       } else {
@@ -152,10 +153,10 @@ namespace mfront{
 	return "("+var+")/(this->dt)";
       }
     }
-    if(this->isExternalStateVariableIncrementName(var)){
+    if(this->mb.isExternalStateVariableIncrementName(var)){
       this->declareExternalStateVariableProbablyUnusableInPurelyImplicitResolution(var.substr(1));
-      const VarHandler& v = this->getVariableHandler(this->externalStateVarsHolder,
-						     var.substr(1));
+      const VarHandler& v = this->mb.getVariableHandler(this->mb.getExternalStateVariables(),
+							var.substr(1));
       if(v.arraySize>1){
 	if(addThisPtr){
 	  return "(real(1)/(this->dt)) * (this->"+var+")";
@@ -181,17 +182,17 @@ namespace mfront{
 							 const bool addThisPtr)
   {
     using namespace std;
-    if((this->isDrivingVariableName(var))||(var=="T")||
-       (this->isExternalStateVariable(var))){
+    if((this->mb.isDrivingVariableName(var))||(var=="T")||
+       (this->mb.isExternalStateVariableName(var))){
       if(addThisPtr){
 	return "this->"+var+"+this->d"+var;
       } else {
 	return var+"+d"+var;
       }
     }
-    if((this->isExternalStateVariableIncrementName(var))||
-       (var=="dT")||(this->isDrivingVariableIncrementName(var))){
-      if((this->isExternalStateVariableIncrementName(var))||(var=="dT")){
+    if((this->mb.isExternalStateVariableIncrementName(var))||
+       (var=="dT")||(this->mb.isDrivingVariableIncrementName(var))){
+      if((this->mb.isExternalStateVariableIncrementName(var))||(var=="dT")){
 	this->declareExternalStateVariableProbablyUnusableInPurelyImplicitResolution(var.substr(1));
       }
       if(addThisPtr){
@@ -223,7 +224,7 @@ namespace mfront{
   void MFrontRungeKuttaParser::treatUnknownVariableMethod(const std::string& n)
   {
     using namespace std;
-    if(this->isInternalStateVariableName(n)){
+    if(this->mb.isInternalStateVariableName(n)){
       if(this->current->value=="setErrorNormalisationFactor"){
 	string var;
 	++(this->current);
@@ -231,8 +232,8 @@ namespace mfront{
 	this->readSpecifiedToken("MFrontRungeKuttaParser::treatUnknowVariableMethod","(");
 	this->checkNotEndOfFile("MFrontRungeKuttaParser::treatUnknowVariableMethod");
 	var = this->current->value;
-	if((this->isMaterialPropertyName(var))||
-	   (this->isLocalVariableName(var))){
+	if((this->mb.isMaterialPropertyName(var))||
+	   (this->mb.isLocalVariableName(var))){
 	  var = "this->" + var;
 	} else {
 	  // var shall be a number
@@ -293,7 +294,7 @@ namespace mfront{
       this->throwRuntimeError("MFrontRungeKuttaParser::treatEpsilon",
 			      "Epsilon value must be positive.");
     }
-    if(!this->parametersDefaultValues.insert(MVType("epsilon",epsilon)).second){
+    if(!this->mb.getParametersDefaultValues().insert(MVType("epsilon",epsilon)).second){
       this->throwRuntimeError("MFrontRungeKuttaParser::treatEpsilon",
 			      "default value already defined for parameter 'epsilon'");
     }
@@ -319,7 +320,7 @@ namespace mfront{
       this->throwRuntimeError("MFrontRungeKuttaParser::treatMinimalTimeStep",
 			      "MinimalTimeStep value must be positive.");
     }
-    if(!this->parametersDefaultValues.insert(MVType("dtmin",dtmin)).second){
+    if(!this->mb.getParametersDefaultValues().insert(MVType("dtmin",dtmin)).second){
       this->throwRuntimeError("MFrontRungeKuttaParser::treatMinimalTimeStep",
 			      "default value already defined for parameter 'dtmin'");
     }
@@ -408,22 +409,24 @@ namespace mfront{
     MFrontBehaviourParserCommon::endsInputFileProcessing();
     typedef map<string,double>::value_type MVType;
     VarContainer::iterator p;
+    map<DrivingVariable,
+	ThermodynamicForce>::const_iterator pm;
     string currentVarName;
     string parserInitLocalVars;
     // choosing the error evaluation
     if(this->eev==DEFAULTERROREVALUATION){
-      SupportedTypes::TypeSize svsize = this->getTotalSize(this->stateVarsHolder);
+      SupportedTypes::TypeSize svsize = this->getTotalSize(this->mb.getStateVariables());
       if(3u*svsize.getStensorSize()+svsize.getScalarSize()>=20){
 	this->eev = MAXIMUMVALUEERROREVALUATION;
       } else {
 	this->eev = ERRORSUMMATIONEVALUATION;
       }
     }
-    if(this->parametersDefaultValues.find("epsilon")==this->parametersDefaultValues.end()){
-      this->parametersDefaultValues.insert(MVType("epsilon",1.e-8));
+    if(this->mb.getParametersDefaultValues().find("epsilon")==this->mb.getParametersDefaultValues().end()){
+      this->mb.getParametersDefaultValues().insert(MVType("epsilon",1.e-8));
     }
-    if(this->parametersDefaultValues.find("dtmin")!=this->parametersDefaultValues.end()){
-      this->parametersHolder.push_back(VarHandler("real","dtmin",1u,0u));
+    if(this->mb.getParametersDefaultValues().find("dtmin")!=this->mb.getParametersDefaultValues().end()){
+      this->mb.getParameters().push_back(VarHandler("real","dtmin",1u,0u));
       parserInitLocalVars += "if(this->dt<" + this->className + "::dtmin){\n";
       parserInitLocalVars += "this->dt=" + this->className + "::dtmin;\n";
       parserInitLocalVars += "}\n";
@@ -444,10 +447,10 @@ namespace mfront{
       msg += "@Derivative was not defined.";
       throw(runtime_error(msg));
     }
-    for(p =this->stateVarsHolder.begin();p!=this->stateVarsHolder.end();++p){
+    for(p =this->mb.getStateVariables().begin();p!=this->mb.getStateVariables().end();++p){
       currentVarName = p->name + "_";
       this->registerVariable(currentVarName);
-      this->localVarsHolder.push_back(VarHandler(p->type,currentVarName,p->arraySize,0u));
+      this->mb.getLocalVariables().push_back(VarHandler(p->type,currentVarName,p->arraySize,0u));
       if(this->useDynamicallyAllocatedVector(p->arraySize)){
 	parserInitLocalVars += "this->"+currentVarName +".resize("+toString(p->arraySize)+");\n";
       }
@@ -455,28 +458,42 @@ namespace mfront{
       for(unsigned short i=0u;i!=this->nbrOfEvaluation;++i){
 	currentVarName = "d" + p->name + "_K"+toString(static_cast<unsigned short>(i+1u));
 	this->registerVariable(currentVarName);
-	this->localVarsHolder.push_back(VarHandler(p->type,currentVarName,p->arraySize,0u));
+	this->mb.getLocalVariables().push_back(VarHandler(p->type,currentVarName,p->arraySize,0u));
       }
     }
     if((this->algorithm!="RungeKutta4/2")&&
        (this->algorithm!="RungeKutta5/4")){
-      parserInitLocalVars += "this->eto_ = this->eto;\n";
+      for(pm=this->mb.getMainVariables().begin();pm!=this->mb.getMainVariables().end();++pm){
+	const DrivingVariable& dv = pm->first;
+	parserInitLocalVars += "this->" + dv.name + 
+	  "_ = this->" + dv.name + ";\n";
+      }
     }
     if((this->algorithm!="RungeKutta4/2")&&
        (this->algorithm!="RungeKutta5/4")){
       parserInitLocalVars += "this->T_ = this->T;\n";
     }
-    for(p =this->externalStateVarsHolder.begin();p!=this->externalStateVarsHolder.end();++p){
+    for(p =this->mb.getExternalStateVariables().begin();p!=this->mb.getExternalStateVariables().end();++p){
       currentVarName = p->name + "_";
       this->registerVariable(currentVarName);
-      this->localVarsHolder.push_back(VarHandler(p->type,currentVarName,p->arraySize,0u));
+      this->mb.getLocalVariables().push_back(VarHandler(p->type,currentVarName,p->arraySize,0u));
       if(this->useDynamicallyAllocatedVector(p->arraySize)){
 	parserInitLocalVars += "this->"+currentVarName+".resize("+toString(p->arraySize)+");\n";
       }
       parserInitLocalVars += "this->" + currentVarName + " = this->" + p->name + ";\n";
     }
     parserInitLocalVars += this->initLocalVars;
-    parserInitLocalVars += "this->deto_ = (this->deto)/(this->dt);\n";
+    for(pm=this->mb.getMainVariables().begin();pm!=this->mb.getMainVariables().end();++pm){
+      const DrivingVariable& dv = pm->first;
+      if(dv.increment_known){
+	parserInitLocalVars += "this->d" + dv.name + "_ = (this->d"+dv.name+")/(this->dt);\n";
+      } else {
+	string msg("MFrontRungeKuttaParser::endsInputFileProcessing : ");
+	msg += "unsupported driving variable '"+dv.name+"'";
+	throw(runtime_error(msg));
+      }
+
+    }
     this->initLocalVars = parserInitLocalVars;
     if((this->algorithm!="RungeKutta4/2")&&
        (this->algorithm!="RungeKutta5/4")){
@@ -484,7 +501,7 @@ namespace mfront{
     }
     // minimal tangent operator
     if(!this->hasConsistantTangentOperator){
-      if(this->behaviourCharacteristic.requiresStiffnessTensor()){
+      if(this->mb.requiresStiffnessTensor()){
 	this->hasConsistantTangentOperator = true;
 	this->tangentOperator = "if(smt==ELASTIC){\n"
 	                        "this->Dt = this->D;"
@@ -565,7 +582,7 @@ namespace mfront{
     VarContainer::iterator p;
     this->behaviourFile << "using namespace std;" << endl;
     this->behaviourFile << "this->computeDerivative();" << endl;
-    for(p =this->stateVarsHolder.begin();p!=this->stateVarsHolder.end();++p){
+    for(p =this->mb.getStateVariables().begin();p!=this->mb.getStateVariables().end();++p){
       this->behaviourFile << "this->" << p->name << " += " 
 			  << "this->dt*(this->d" << p->name << ");" << endl;
     }
@@ -581,26 +598,36 @@ namespace mfront{
     using namespace std;
     using namespace std;
     VarContainer::iterator p;
+    map<DrivingVariable,
+	ThermodynamicForce>::const_iterator pm;
     this->behaviourFile << "using namespace std;" << endl;
     this->behaviourFile << "// Compute K1's values" << endl;
     this->behaviourFile << "this->computeDerivative();" << endl;
-    for(p =this->stateVarsHolder.begin();p!=this->stateVarsHolder.end();++p){
+    for(p =this->mb.getStateVariables().begin();p!=this->mb.getStateVariables().end();++p){
       this->behaviourFile << "this->d" << p->name 
 			  << "_K1 = (this->dt)*(this->d" << p->name << ");" << endl;
     }
-    for(p =this->stateVarsHolder.begin();p!=this->stateVarsHolder.end();++p){
+    for(p =this->mb.getStateVariables().begin();p!=this->mb.getStateVariables().end();++p){
       this->behaviourFile << "this->" << p->name << "_ += 0.5f*(this->d" << p->name << "_K1);" << endl;
     }
-    this->behaviourFile << "this->eto_ += 0.5f*(this->deto);" << endl;
+    for(pm=this->mb.getMainVariables().begin();pm!=this->mb.getMainVariables().end();++pm){
+      const DrivingVariable& dv = pm->first;
+      if(!dv.increment_known){
+	string msg("MFrontRungeKuttaParser::endsInputFileProcessing : ");
+	msg += "unsupported driving variable '"+dv.name+"'";
+	throw(runtime_error(msg));
+      }
+      this->behaviourFile << "this->"+dv.name+"_ += 0.5f*(this->d"+dv.name+");" << endl;
+    }
     this->behaviourFile << "this->T_   += 0.5f*(this->dT);" << endl;
-    for(p =this->externalStateVarsHolder.begin();p!=this->externalStateVarsHolder.end();++p){
+    for(p =this->mb.getExternalStateVariables().begin();p!=this->mb.getExternalStateVariables().end();++p){
       this->behaviourFile << "this->" << p->name << "_ += 0.5f*(this->d" << p->name << ");" << endl;
     }
     this->behaviourFile << "// Update stress field" << endl;
     this->behaviourFile << "this->computeStress();" << endl << endl;
     this->behaviourFile << "this->computeDerivative();" << endl;
     this->behaviourFile << "// Final Step" << endl;
-    for(p =this->stateVarsHolder.begin();p!=this->stateVarsHolder.end();++p){
+    for(p =this->mb.getStateVariables().begin();p!=this->mb.getStateVariables().end();++p){
       this->behaviourFile << "this->" << p->name << " += " 
 			  << "this->dt*(this->d" << p->name << ");" << endl;
     }
@@ -615,7 +642,9 @@ namespace mfront{
   {
     using namespace std;
     VarContainer::iterator p;
-    SupportedTypes::TypeSize stateVarsSize = this->getTotalSize(this->stateVarsHolder);
+    map<DrivingVariable,
+	ThermodynamicForce>::const_iterator pm;
+    SupportedTypes::TypeSize stateVarsSize = this->getTotalSize(this->mb.getStateVariables());
     this->behaviourFile << "using namespace std;" << endl;
     this->behaviourFile << "static const Type cste12_13       = Type(12)/Type(13);" << endl;
     this->behaviourFile << "static const Type cste1932_2197   = Type(1932)/Type(2197);" << endl;
@@ -637,7 +666,6 @@ namespace mfront{
     this->behaviourFile << "static const Type cste128_4275    = Type(128)/Type(4275);" << endl;
     this->behaviourFile << "static const Type cste2197_75240  = Type(2197)/Type(75240);" << endl;
     this->behaviourFile << "static const Type cste1_50        = Type(1)/Type(50);" << endl;
-
     this->behaviourFile << "time t      = time(0);" << endl;
     this->behaviourFile << "time dt_    = this->dt;" << endl;
     this->behaviourFile << "time dtprec = 100*this->dt*numeric_limits<time>::epsilon();" << endl;
@@ -654,12 +682,20 @@ namespace mfront{
     }
     this->behaviourFile << "bool failed = false;" << endl;
     this->behaviourFile << "// Compute K1's values" << endl;
-    this->behaviourFile << "this->eto_ = this->eto+(this->deto)*(t/this->dt);" << endl;
+    for(pm=this->mb.getMainVariables().begin();pm!=this->mb.getMainVariables().end();++pm){
+      const DrivingVariable& dv = pm->first;
+      if(!dv.increment_known){
+	string msg("MFrontRungeKuttaParser::endsInputFileProcessing : ");
+	msg += "unsupported driving variable '"+dv.name+"'";
+	throw(runtime_error(msg));
+      }
+      this->behaviourFile << "this->"+dv.name+"_ +=this->"+dv.name+"+(this->d"+dv.name+")*(t/this->dt);\n";
+    }
     this->behaviourFile << "this->T_   = this->T+(this->dT)*(t/this->dt);" << endl;
-    for(p =this->externalStateVarsHolder.begin();p!=this->externalStateVarsHolder.end();++p){
+    for(p =this->mb.getExternalStateVariables().begin();p!=this->mb.getExternalStateVariables().end();++p){
       this->behaviourFile << "this->" << p->name << "_ = this->" << p->name << "+(this->d" << p->name << ")*(t/this->dt);" << endl;
     }
-    for(p =this->stateVarsHolder.begin();p!=this->stateVarsHolder.end();++p){
+    for(p =this->mb.getStateVariables().begin();p!=this->mb.getStateVariables().end();++p){
       this->behaviourFile << "this->" << p->name << "_ = this->" << p->name << ";" << endl;
     }
     this->behaviourFile << "failed = !this->computeStress();" << endl;
@@ -678,7 +714,7 @@ namespace mfront{
       this->behaviourFile << "}" << endl;
     }
     this->behaviourFile << "if(!failed){" << endl;
-    for(p =this->stateVarsHolder.begin();p!=this->stateVarsHolder.end();++p){
+    for(p =this->mb.getStateVariables().begin();p!=this->mb.getStateVariables().end();++p){
       this->behaviourFile << "this->d" << p->name 
 			  << "_K1 = (dt_)*(this->d" << p->name << ");" << endl;
     }
@@ -686,13 +722,22 @@ namespace mfront{
     this->behaviourFile << "}" << endl << endl;
     this->behaviourFile << "if(!failed){" << endl;
     this->behaviourFile << "// Compute K2's values" << endl;
-    this->behaviourFile << "this->eto_ = this->eto+(this->deto)*(t+0.25f*dt_)/(this->dt);" << endl;
+    for(pm=this->mb.getMainVariables().begin();pm!=this->mb.getMainVariables().end();++pm){
+      const DrivingVariable& dv = pm->first;
+      if(!dv.increment_known){
+	string msg("MFrontRungeKuttaParser::endsInputFileProcessing : ");
+	msg += "unsupported driving variable '"+dv.name+"'";
+	throw(runtime_error(msg));
+      }
+      this->behaviourFile << "this->" << dv.name << "_ = this->" << dv.name 
+			  << "+(this->d" << dv.name << ")*(t+0.25f*dt_)/(this->dt);" << endl;
+    }
     this->behaviourFile << "this->T_   = this->T+(this->dT)*(t+0.25f*dt_)/(this->dt);" << endl;
-    for(p =this->externalStateVarsHolder.begin();p!=this->externalStateVarsHolder.end();++p){
+    for(p =this->mb.getExternalStateVariables().begin();p!=this->mb.getExternalStateVariables().end();++p){
       this->behaviourFile << "this->" << p->name << "_ = this->" << p->name 
 			  << "+(this->d" << p->name << ")*(t+0.25f*dt_)/(this->dt);" << endl;
     }
-    for(p =this->stateVarsHolder.begin();p!=this->stateVarsHolder.end();++p){
+    for(p =this->mb.getStateVariables().begin();p!=this->mb.getStateVariables().end();++p){
       this->behaviourFile << "this->" << p->name << "_ += 0.25f*(this->d" << p->name << "_K1);" << endl;
     }
     this->behaviourFile << "// Update stress field" << endl;
@@ -712,7 +757,7 @@ namespace mfront{
       this->behaviourFile << "}" << endl;
     }
     this->behaviourFile << "if(!failed){" << endl;
-    for(p =this->stateVarsHolder.begin();p!=this->stateVarsHolder.end();++p){
+    for(p =this->mb.getStateVariables().begin();p!=this->mb.getStateVariables().end();++p){
       this->behaviourFile << "this->d" << p->name 
 			  << "_K2 = (dt_)*(this->d" << p->name << ");" << endl;
     }
@@ -721,13 +766,22 @@ namespace mfront{
     this->behaviourFile << "}" << endl << endl;
     this->behaviourFile << "if(!failed){" << endl;
     this->behaviourFile << "// Compute K3's values" << endl;
-    this->behaviourFile << "this->eto_ = this->eto+(this->deto)*(t+0.375f*dt_)/(this->dt);" << endl;
+    for(pm=this->mb.getMainVariables().begin();pm!=this->mb.getMainVariables().end();++pm){
+      const DrivingVariable& dv = pm->first;
+      if(!dv.increment_known){
+	string msg("MFrontRungeKuttaParser::endsInputFileProcessing : ");
+	msg += "unsupported driving variable '"+dv.name+"'";
+	throw(runtime_error(msg));
+      }
+      this->behaviourFile << "this->" << dv.name << "_ = this->" << dv.name 
+			  << "+(this->d" << dv.name << ")*(t+0.375f*dt_)/(this->dt);" << endl;
+    }
     this->behaviourFile << "this->T_   = this->T+(this->dT)*(t+0.375f*dt_)/(this->dt);" << endl;
-    for(p =this->externalStateVarsHolder.begin();p!=this->externalStateVarsHolder.end();++p){
+    for(p =this->mb.getExternalStateVariables().begin();p!=this->mb.getExternalStateVariables().end();++p){
       this->behaviourFile << "this->" << p->name << "_ = this->" << p->name 
 			  << "+(this->d" << p->name << ")*(t+0.375f*dt_)/(this->dt);" << endl;
     }
-    for(p =this->stateVarsHolder.begin();p!=this->stateVarsHolder.end();++p){
+    for(p =this->mb.getStateVariables().begin();p!=this->mb.getStateVariables().end();++p){
       this->behaviourFile << "this->" << p->name 
 			  << "_ = this->" << p->name
 			  << "+0.09375f*(this->d" << p->name << "_K1+3*(this->d"
@@ -750,7 +804,7 @@ namespace mfront{
       this->behaviourFile << "}" << endl;
     }
     this->behaviourFile << "if(!failed){" << endl;
-    for(p =this->stateVarsHolder.begin();p!=this->stateVarsHolder.end();++p){
+    for(p =this->mb.getStateVariables().begin();p!=this->mb.getStateVariables().end();++p){
       this->behaviourFile << "this->d" << p->name 
 			  << "_K3 = (dt_)*(this->d" << p->name << ");" << endl;
     }
@@ -760,13 +814,22 @@ namespace mfront{
 
     this->behaviourFile << "if(!failed){" << endl;    
     this->behaviourFile << "// Compute K4's values" << endl;
-    this->behaviourFile << "this->eto_ = this->eto+(this->deto)*(t+cste12_13*dt_)/(this->dt);" << endl;
+    for(pm=this->mb.getMainVariables().begin();pm!=this->mb.getMainVariables().end();++pm){
+      const DrivingVariable& dv = pm->first;
+      if(!dv.increment_known){
+	string msg("MFrontRungeKuttaParser::endsInputFileProcessing : ");
+	msg += "unsupported driving variable '"+dv.name+"'";
+	throw(runtime_error(msg));
+      }
+      this->behaviourFile << "this->" << dv.name << "_ = this->" << dv.name 
+			  << "+(this->d" << dv.name << ")*(t+cste12_13*dt_)/(this->dt);" << endl;
+    }
     this->behaviourFile << "this->T_   = this->T+(this->dT)*(t+cste12_13*dt_)/(this->dt);" << endl;
-    for(p =this->externalStateVarsHolder.begin();p!=this->externalStateVarsHolder.end();++p){
+    for(p =this->mb.getExternalStateVariables().begin();p!=this->mb.getExternalStateVariables().end();++p){
       this->behaviourFile << "this->" << p->name << "_ = this->" << p->name 
 			  << "+(this->d" << p->name << ")*(t+cste12_13*dt_)/(this->dt);" << endl;
     }
-    for(p =this->stateVarsHolder.begin();p!=this->stateVarsHolder.end();++p){
+    for(p =this->mb.getStateVariables().begin();p!=this->mb.getStateVariables().end();++p){
       this->behaviourFile << "this->" << p->name 
 			  << "_ = this->" << p->name
 			  << "+cste1932_2197*(this->d" << p->name << "_K1)"
@@ -790,7 +853,7 @@ namespace mfront{
       this->behaviourFile << "}" << endl;
     }
     this->behaviourFile << "if(!failed){" << endl;
-    for(p =this->stateVarsHolder.begin();p!=this->stateVarsHolder.end();++p){
+    for(p =this->mb.getStateVariables().begin();p!=this->mb.getStateVariables().end();++p){
       this->behaviourFile << "this->d" << p->name 
 			  << "_K4 = (dt_)*(this->d" << p->name << ");" << endl;
     }
@@ -799,13 +862,22 @@ namespace mfront{
     this->behaviourFile << "}" << endl << endl;
     this->behaviourFile << "if(!failed){" << endl;
     this->behaviourFile << "// Compute K5's values" << endl;
-    this->behaviourFile << "this->eto_ = this->eto+(this->deto)*(t+dt_)/(this->dt);" << endl;
+    for(pm=this->mb.getMainVariables().begin();pm!=this->mb.getMainVariables().end();++pm){
+      const DrivingVariable& dv = pm->first;
+      if(!dv.increment_known){
+	string msg("MFrontRungeKuttaParser::endsInputFileProcessing : ");
+	msg += "unsupported driving variable '"+dv.name+"'";
+	throw(runtime_error(msg));
+      }
+      this->behaviourFile << "this->" << dv.name << "_ = this->" << dv.name 
+			  << "+(this->d" << dv.name << ")*(t+dt_)/(this->dt);" << endl;
+    }
     this->behaviourFile << "this->T_   = this->T+(this->dT)*(t+dt_)/(this->dt);" << endl;
-    for(p =this->externalStateVarsHolder.begin();p!=this->externalStateVarsHolder.end();++p){
+    for(p =this->mb.getExternalStateVariables().begin();p!=this->mb.getExternalStateVariables().end();++p){
       this->behaviourFile << "this->" << p->name << "_ = this->" << p->name 
 			  << "+(this->d" << p->name << ")*(t+dt_)/(this->dt);" << endl;
     }
-    for(p =this->stateVarsHolder.begin();p!=this->stateVarsHolder.end();++p){
+    for(p =this->mb.getStateVariables().begin();p!=this->mb.getStateVariables().end();++p){
       this->behaviourFile << "this->" << p->name 
 			  << "_ = this->" << p->name
 			  << "+cste439_216*(this->d" << p->name << "_K1)"
@@ -830,7 +902,7 @@ namespace mfront{
       this->behaviourFile << "}" << endl;
     }
     this->behaviourFile << "if(!failed){" << endl;
-    for(p =this->stateVarsHolder.begin();p!=this->stateVarsHolder.end();++p){
+    for(p =this->mb.getStateVariables().begin();p!=this->mb.getStateVariables().end();++p){
       this->behaviourFile << "this->d" << p->name 
 			  << "_K5 = (dt_)*(this->d" << p->name << ");" << endl;
     }
@@ -839,13 +911,22 @@ namespace mfront{
     this->behaviourFile << "}" << endl << endl;
     this->behaviourFile << "if(!failed){" << endl;
     this->behaviourFile << "// Compute K6's values" << endl;
-    this->behaviourFile << "this->eto_ = this->eto+(this->deto)*(t+0.5f*dt_)/(this->dt);" << endl;
+    for(pm=this->mb.getMainVariables().begin();pm!=this->mb.getMainVariables().end();++pm){
+      const DrivingVariable& dv = pm->first;
+      if(!dv.increment_known){
+	string msg("MFrontRungeKuttaParser::endsInputFileProcessing : ");
+	msg += "unsupported driving variable '"+dv.name+"'";
+	throw(runtime_error(msg));
+      }
+      this->behaviourFile << "this->" << dv.name << "_ = this->" << dv.name 
+			  << "+(this->d" << dv.name << ")*(t+0.5f*dt_)/(this->dt);" << endl;
+    }
     this->behaviourFile << "this->T_   = this->T+(this->dT)*(t+0.5f*dt_)/(this->dt);" << endl;
-    for(p =this->externalStateVarsHolder.begin();p!=this->externalStateVarsHolder.end();++p){
+    for(p =this->mb.getExternalStateVariables().begin();p!=this->mb.getExternalStateVariables().end();++p){
       this->behaviourFile << "this->" << p->name << "_ = this->" << p->name 
 			  << "+(this->d" << p->name << ")*(t+0.5f*dt_)/(this->dt);" << endl;
     }
-    for(p =this->stateVarsHolder.begin();p!=this->stateVarsHolder.end();++p){
+    for(p =this->mb.getStateVariables().begin();p!=this->mb.getStateVariables().end();++p){
       this->behaviourFile << "this->" << p->name 
 			  << "_ = this->" << p->name
 			  << "-cste8_27*(this->d" << p->name << "_K1)"
@@ -871,7 +952,7 @@ namespace mfront{
       this->behaviourFile << "}" << endl;
     }
     this->behaviourFile << "if(!failed){" << endl;
-    for(p =this->stateVarsHolder.begin();p!=this->stateVarsHolder.end();++p){
+    for(p =this->mb.getStateVariables().begin();p!=this->mb.getStateVariables().end();++p){
       this->behaviourFile << "this->d" << p->name 
 			  << "_K6 = (dt_)*(this->d" << p->name << ");" << endl;
     }
@@ -881,9 +962,9 @@ namespace mfront{
     this->behaviourFile << "if(!failed){" << endl;
     this->behaviourFile << "// Computing the error" << endl;
     if(this->eev==ERRORSUMMATIONEVALUATION){
-      for(p =this->stateVarsHolder.begin();p!=this->stateVarsHolder.end();++p){
+      for(p =this->mb.getStateVariables().begin();p!=this->mb.getStateVariables().end();++p){
 	if(p->arraySize==1u){
-	  if(p==this->stateVarsHolder.begin()){
+	  if(p==this->mb.getStateVariables().begin()){
 	    this->behaviourFile << "error  = ";
 	  } else {
 	    this->behaviourFile << "error += ";
@@ -903,7 +984,7 @@ namespace mfront{
 	  this->behaviourFile << ";"  << endl;
 	} else {
 	  if(this->useDynamicallyAllocatedVector(p->arraySize)){
-	    if(p==this->stateVarsHolder.begin()){
+	    if(p==this->mb.getStateVariables().begin()){
 	      this->behaviourFile << "error  = Type(0);" << endl;
 	    }
 	    this->behaviourFile << "for(unsigned short idx=0;idx!=" << p->arraySize << ";++idx){"  << endl;
@@ -924,7 +1005,7 @@ namespace mfront{
 	    this->behaviourFile << "}" << endl;
 	  } else {
 	    for(unsigned short i=0;i!=p->arraySize;++i){
-	      if((p==this->stateVarsHolder.begin())&&(i==0)){
+	      if((p==this->mb.getStateVariables().begin())&&(i==0)){
 		this->behaviourFile << "error  = ";
 	      } else {
 		this->behaviourFile << "error += ";
@@ -949,7 +1030,7 @@ namespace mfront{
       this->behaviourFile << "error/=" << stateVarsSize << ";" << endl;
     } else if(this->eev==MAXIMUMVALUEERROREVALUATION){
       this->behaviourFile << "error  = Type(0);" << endl;
-      for(p =this->stateVarsHolder.begin();p!=this->stateVarsHolder.end();++p){
+      for(p =this->mb.getStateVariables().begin();p!=this->mb.getStateVariables().end();++p){
 	if(p->arraySize==1u){
 	  this->behaviourFile << "error = std::max(error,";
 	  if(enf.find(p->name)!=enf.end()){
@@ -1022,7 +1103,7 @@ namespace mfront{
     this->behaviourFile << "// test for convergence" << endl;
     this->behaviourFile << "if(error<this->epsilon){" << endl;
     this->behaviourFile << "// Final Step" << endl;
-    for(p =this->stateVarsHolder.begin();p!=this->stateVarsHolder.end();++p){
+    for(p =this->mb.getStateVariables().begin();p!=this->mb.getStateVariables().end();++p){
       this->behaviourFile << "this->" << p->name 
 			  << " += cste16_135*(this->d" << p->name << "_K1)"
 			  << "+cste6656_12825*(this->d" << p->name << "_K3)"
@@ -1101,8 +1182,10 @@ namespace mfront{
   {
     using namespace std;
     VarContainer::iterator p;
+    map<DrivingVariable,
+	ThermodynamicForce>::const_iterator pm;
     SupportedTypes::TypeSize stateVarsSize;
-    for(p=this->stateVarsHolder.begin();p!=this->stateVarsHolder.end();++p){
+    for(p=this->mb.getStateVariables().begin();p!=this->mb.getStateVariables().end();++p){
       stateVarsSize+=this->getTypeSize(p->type,p->arraySize);
     }
     this->behaviourFile << "using namespace std;" << endl;
@@ -1113,12 +1196,20 @@ namespace mfront{
     this->behaviourFile << "StressStensor sigf;" << endl;
     this->behaviourFile << "real errabs;" << endl;
     this->behaviourFile << "real asig;" << endl;
-    this->behaviourFile << "this->eto_  = this->eto;" << endl;
+    for(pm=this->mb.getMainVariables().begin();pm!=this->mb.getMainVariables().end();++pm){
+      const DrivingVariable& dv = pm->first;
+      if(!dv.increment_known){
+	string msg("MFrontRungeKuttaParser::endsInputFileProcessing : ");
+	msg += "unsupported driving variable '"+dv.name+"'";
+	throw(runtime_error(msg));
+      }
+      this->behaviourFile << "this->" << dv.name << "_  = this->" << dv.name << ";" << endl;
+    }
     this->behaviourFile << "this->T_    = this->T;" << endl;
-    for(p =this->externalStateVarsHolder.begin();p!=this->externalStateVarsHolder.end();++p){
+    for(p =this->mb.getExternalStateVariables().begin();p!=this->mb.getExternalStateVariables().end();++p){
       this->behaviourFile << "this->" << p->name << "_ = this->" << p->name << ";" << endl;
     }
-    for(p =this->stateVarsHolder.begin();p!=this->stateVarsHolder.end();++p){
+    for(p =this->mb.getStateVariables().begin();p!=this->mb.getStateVariables().end();++p){
       this->behaviourFile << "this->" << p->name << "_ = this->" << p->name << ";" << endl;
     }
     this->behaviourFile << "bool failed;" << endl;
@@ -1157,13 +1248,22 @@ namespace mfront{
 			  << "::integrate() : from \" << t <<  \" to \" << t+dt_ << \" with time step \" << dt_ << endl;\n";
     }
     this->behaviourFile << "// Compute K1's values => y in castem " << endl;
-    this->behaviourFile << "this->eto_  = this->eto+(t/(this->dt))*(this->deto);" << endl;
+    for(pm=this->mb.getMainVariables().begin();pm!=this->mb.getMainVariables().end();++pm){
+      const DrivingVariable& dv = pm->first;
+      if(!dv.increment_known){
+	string msg("MFrontRungeKuttaParser::endsInputFileProcessing : ");
+	msg += "unsupported driving variable '"+dv.name+"'";
+	throw(runtime_error(msg));
+      }
+      this->behaviourFile << "this->" << dv.name << "_  = this->" << dv.name 
+			  << "+(t/(this->dt))*(this->d" << dv.name << ");" << endl;
+    }
     this->behaviourFile << "this->T_    = this->T+(t/(this->dt))*(this->dT);" << endl;
-    for(p =this->externalStateVarsHolder.begin();p!=this->externalStateVarsHolder.end();++p){
+    for(p =this->mb.getExternalStateVariables().begin();p!=this->mb.getExternalStateVariables().end();++p){
       this->behaviourFile << "this->" << p->name << "_ = this->" << p->name
 			  << "+ (t/(this->dt))*(this->d" << p->name << ");" << endl;
     }
-    for(p =this->stateVarsHolder.begin();p!=this->stateVarsHolder.end();++p){
+    for(p =this->mb.getStateVariables().begin();p!=this->mb.getStateVariables().end();++p){
       this->behaviourFile << "this->" << p->name << "_ = this->" << p->name << ";" << endl;
     }
     this->behaviourFile << "failed = !this->computeStress();" << endl;
@@ -1183,7 +1283,7 @@ namespace mfront{
     }
     this->behaviourFile << "if(!failed){" << endl;
     this->behaviourFile << "// Compute y'1*dt=f(y)*dt in castem" << endl;
-    for(p =this->stateVarsHolder.begin();p!=this->stateVarsHolder.end();++p){
+    for(p =this->mb.getStateVariables().begin();p!=this->mb.getStateVariables().end();++p){
       this->behaviourFile << "this->d" << p->name 
 			  << "_K1 = (dt_)*(this->d" << p->name << ");" << endl;
     }
@@ -1191,13 +1291,22 @@ namespace mfront{
     this->behaviourFile << "}" << endl << endl;
     this->behaviourFile << "if(!failed){" << endl;
     this->behaviourFile << "// Compute K2's values => y1 in castem" << endl;
-    this->behaviourFile << "this->eto_ = this->eto+(this->deto)*(t+0.5f*dt_)/(this->dt);" << endl;
+    for(pm=this->mb.getMainVariables().begin();pm!=this->mb.getMainVariables().end();++pm){
+      const DrivingVariable& dv = pm->first;
+      if(!dv.increment_known){
+	string msg("MFrontRungeKuttaParser::endsInputFileProcessing : ");
+	msg += "unsupported driving variable '"+dv.name+"'";
+	throw(runtime_error(msg));
+      }
+      this->behaviourFile << "this->" << dv.name << "_ = this->" << dv.name 
+			  << "+(this->d" << dv.name << ")*(t+0.5f*dt_)/(this->dt);" << endl;
+    }
     this->behaviourFile << "this->T_   = this->T+(this->dT)*(t+0.5f*dt_)/(this->dt);" << endl;
-    for(p =this->externalStateVarsHolder.begin();p!=this->externalStateVarsHolder.end();++p){
+    for(p =this->mb.getExternalStateVariables().begin();p!=this->mb.getExternalStateVariables().end();++p){
       this->behaviourFile << "this->" << p->name   << "_ = this->" << p->name 
 			  <<"+(this->d" << p->name << ")*(t+0.5f*dt_)/(this->dt);" << endl;
     }
-    for(p =this->stateVarsHolder.begin();p!=this->stateVarsHolder.end();++p){
+    for(p =this->mb.getStateVariables().begin();p!=this->mb.getStateVariables().end();++p){
       this->behaviourFile << "this->" << p->name << "_ += 0.5f*(this->d" << p->name << "_K1);" << endl;
     }
     this->behaviourFile << "// Update stress field" << endl;
@@ -1218,7 +1327,7 @@ namespace mfront{
     }
     this->behaviourFile << "if(!failed){" << endl;
     this->behaviourFile << "// Compute y'2*dt=f(y1)*dt in castem" << endl;
-    for(p =this->stateVarsHolder.begin();p!=this->stateVarsHolder.end();++p){
+    for(p =this->mb.getStateVariables().begin();p!=this->mb.getStateVariables().end();++p){
       this->behaviourFile << "this->d" << p->name 
 			  << "_K2 = (dt_)*(this->d" << p->name << ");" << endl;
     }
@@ -1227,7 +1336,7 @@ namespace mfront{
     this->behaviourFile << "}" << endl << endl;
     this->behaviourFile << "// Compute K3's values => y12 in castem" << endl;
     this->behaviourFile << "if(!failed){" << endl;
-    for(p =this->stateVarsHolder.begin();p!=this->stateVarsHolder.end();++p){
+    for(p =this->mb.getStateVariables().begin();p!=this->mb.getStateVariables().end();++p){
       this->behaviourFile << "this->" << p->name 
 			  << "_ = this->" << p->name
 			  << "+0.25f*(this->d" << p->name << "_K1 + this->d" << p->name << "_K2);" << endl;
@@ -1250,7 +1359,7 @@ namespace mfront{
     }
     this->behaviourFile << "if(!failed){" << endl;
     this->behaviourFile << "// Compute y'3*dt=f(y12)*dt in castem" << endl;
-    for(p =this->stateVarsHolder.begin();p!=this->stateVarsHolder.end();++p){
+    for(p =this->mb.getStateVariables().begin();p!=this->mb.getStateVariables().end();++p){
       this->behaviourFile << "this->d" << p->name 
 			  << "_K3 = (dt_)*(this->d" << p->name << ");" << endl;
     }
@@ -1259,14 +1368,23 @@ namespace mfront{
     this->behaviourFile << "}" << endl << endl;
     this->behaviourFile << "if(!failed){" << endl;
     this->behaviourFile << "// Compute K4's values => y13 = y12+y'3*dt/2 in castem" << endl;
-    this->behaviourFile << "this->eto_ = this->eto+(this->deto)*(t+dt_)/(this->dt);" << endl;
+    for(pm=this->mb.getMainVariables().begin();pm!=this->mb.getMainVariables().end();++pm){
+      const DrivingVariable& dv = pm->first;
+      if(!dv.increment_known){
+	string msg("MFrontRungeKuttaParser::endsInputFileProcessing : ");
+	msg += "unsupported driving variable '"+dv.name+"'";
+	throw(runtime_error(msg));
+      }
+      this->behaviourFile << "this->" << dv.name << "_ = this->" << dv.name 
+			  << "+(this->d" << dv.name << ")*(t+dt_)/(this->dt);" << endl;
+    }
     this->behaviourFile << "this->T_   = this->T+(this->dT)*(t+dt_)/(this->dt);" << endl;
-    for(p =this->externalStateVarsHolder.begin();p!=this->externalStateVarsHolder.end();++p){
+    for(p =this->mb.getExternalStateVariables().begin();p!=this->mb.getExternalStateVariables().end();++p){
       this->behaviourFile << "this->" << p->name << "_ = this->" << p->name 
 			  <<"+(this->d" << p->name 
 			  << ")*(t+dt_)/(this->dt);" << endl;
     }
-    for(p =this->stateVarsHolder.begin();p!=this->stateVarsHolder.end();++p){
+    for(p =this->mb.getStateVariables().begin();p!=this->mb.getStateVariables().end();++p){
       this->behaviourFile << "this->" << p->name 
 			  << "_ += 0.5f*(this->d" << p->name << "_K3);" << endl;
     }
@@ -1288,7 +1406,7 @@ namespace mfront{
     }
     this->behaviourFile << "if(!failed){" << endl;
     this->behaviourFile << "// Compute y'4*dt=f(y13)*dt in castem" << endl;
-    for(p =this->stateVarsHolder.begin();p!=this->stateVarsHolder.end();++p){
+    for(p =this->mb.getStateVariables().begin();p!=this->mb.getStateVariables().end();++p){
       this->behaviourFile << "this->d" << p->name 
 			  << "_K4 = (dt_)*(this->d" << p->name << ");" << endl;
     }
@@ -1298,7 +1416,7 @@ namespace mfront{
     this->behaviourFile << "if(!failed){" << endl;
     this->behaviourFile << "// Compute K5's values => yf = y12+0.5*(y'3+y'4)*dt/2 in castem" << endl;
     this->behaviourFile << "//                     => yf = y+0.5*(y'1+y'2+y'3+y'4)*dt/2 in castem" << endl;
-    for(p =this->stateVarsHolder.begin();p!=this->stateVarsHolder.end();++p){
+    for(p =this->mb.getStateVariables().begin();p!=this->mb.getStateVariables().end();++p){
       this->behaviourFile << "this->" << p->name 
 			  << "_ = this->" << p->name
 			  << "+0.25f*(this->d" << p->name << "_K1 + this->d" << p->name 
@@ -1324,7 +1442,7 @@ namespace mfront{
     }
     this->behaviourFile << "if(!failed){" << endl;
     this->behaviourFile << "// Compute y'5*dt=f(yf)*dt in castem" << endl;
-    for(p =this->stateVarsHolder.begin();p!=this->stateVarsHolder.end();++p){
+    for(p =this->mb.getStateVariables().begin();p!=this->mb.getStateVariables().end();++p){
       this->behaviourFile << "this->d" << p->name 
 			  << "_K5 = (dt_)*(this->d" << p->name << ");" << endl;
     }
@@ -1333,7 +1451,7 @@ namespace mfront{
     this->behaviourFile << "}" << endl << endl;
     this->behaviourFile << "if(!failed){" << endl;
     this->behaviourFile << "// Compute K6's values => y5 = y+1/6*(y'1+4*y'3+y'5)*dt in castem" << endl;
-    for(p =this->stateVarsHolder.begin();p!=this->stateVarsHolder.end();++p){
+    for(p =this->mb.getStateVariables().begin();p!=this->mb.getStateVariables().end();++p){
       this->behaviourFile << "this->" << p->name 
 			  << "_ = this->" << p->name
 			  << "+cste1_6*(this->d" << p->name << "_K1 + Type(4)*this->d" << p->name 
@@ -1370,7 +1488,7 @@ namespace mfront{
 			  << "::integrate() : multiplying time step by a factor \" << 1/sqra << endl;" << endl;
     }
     this->behaviourFile << "}else{" << endl;
-    for(p =this->stateVarsHolder.begin();p!=this->stateVarsHolder.end();++p){
+    for(p =this->mb.getStateVariables().begin();p!=this->mb.getStateVariables().end();++p){
       this->behaviourFile << "this->" << p->name 
 			  << " += 0.25f*(this->d" << p->name << "_K1 + this->d" << p->name 
 			  << "_K2 + this->d" << p->name << "_K3 + this->d" << p->name << "_K4);" << endl;
@@ -1426,8 +1544,10 @@ namespace mfront{
   {
     using namespace std;
     VarContainer::iterator p;
+    map<DrivingVariable,
+	ThermodynamicForce>::const_iterator pm;
     SupportedTypes::TypeSize stateVarsSize;
-    for(p=this->stateVarsHolder.begin();p!=this->stateVarsHolder.end();++p){
+    for(p=this->mb.getStateVariables().begin();p!=this->mb.getStateVariables().end();++p){
       stateVarsSize+=this->getTypeSize(p->type,p->arraySize);
     }
     this->behaviourFile << "using namespace std;" << endl;
@@ -1450,13 +1570,22 @@ namespace mfront{
     }
     this->behaviourFile << "bool failed = false;" << endl;
     this->behaviourFile << "// Compute K1's values" << endl;
-    this->behaviourFile << "this->eto_  = this->eto+(t/(this->dt))*(this->deto);" << endl;
+    for(pm=this->mb.getMainVariables().begin();pm!=this->mb.getMainVariables().end();++pm){
+      const DrivingVariable& dv = pm->first;
+      if(!dv.increment_known){
+	string msg("MFrontRungeKuttaParser::endsInputFileProcessing : ");
+	msg += "unsupported driving variable '"+dv.name+"'";
+	throw(runtime_error(msg));
+      }
+      this->behaviourFile << "this->" << dv.name << "_  = this->" << dv.name
+			  << "+(t/(this->dt))*(this->d" << dv.name << ");" << endl;
+    }
     this->behaviourFile << "this->T_    = this->T+(t/(this->dt))*(this->dT);" << endl;
-    for(p =this->externalStateVarsHolder.begin();p!=this->externalStateVarsHolder.end();++p){
+    for(p =this->mb.getExternalStateVariables().begin();p!=this->mb.getExternalStateVariables().end();++p){
       this->behaviourFile << "this->" << p->name << "_ = this->" << p->name
 			  << "+ (t/(this->dt))*(this->d" << p->name << ");" << endl;
     }
-    for(p =this->stateVarsHolder.begin();p!=this->stateVarsHolder.end();++p){
+    for(p =this->mb.getStateVariables().begin();p!=this->mb.getStateVariables().end();++p){
       this->behaviourFile << "this->" << p->name << "_ = this->" << p->name << ";" << endl;
     }
     this->behaviourFile << "failed = !this->computeStress();" << endl;
@@ -1475,7 +1604,7 @@ namespace mfront{
       this->behaviourFile << "}" << endl;
     }
     this->behaviourFile << "if(!failed){" << endl;
-    for(p =this->stateVarsHolder.begin();p!=this->stateVarsHolder.end();++p){
+    for(p =this->mb.getStateVariables().begin();p!=this->mb.getStateVariables().end();++p){
       this->behaviourFile << "this->d" << p->name 
 			  << "_K1 = (dt_)*(this->d" << p->name << ");" << endl;
     }
@@ -1483,14 +1612,23 @@ namespace mfront{
     this->behaviourFile << "}" << endl << endl;
     this->behaviourFile << "if(!failed){" << endl;
     this->behaviourFile << "// Compute K2's values" << endl;
-    this->behaviourFile << "this->eto_ = this->eto+(this->deto)*(t+0.5f*dt_)/(this->dt);" << endl;
+    for(pm=this->mb.getMainVariables().begin();pm!=this->mb.getMainVariables().end();++pm){
+      const DrivingVariable& dv = pm->first;
+      if(!dv.increment_known){
+	string msg("MFrontRungeKuttaParser::endsInputFileProcessing : ");
+	msg += "unsupported driving variable '"+dv.name+"'";
+	throw(runtime_error(msg));
+      }
+      this->behaviourFile << "this->" << dv.name << "_ = this->" << dv.name
+			  << "+(this->d" << dv.name << ")*(t+0.5f*dt_)/(this->dt);" << endl;
+    }
     this->behaviourFile << "this->T_   = this->T+(this->dT)*(t+0.5f*dt_)/(this->dt);" << endl;
-    for(p =this->externalStateVarsHolder.begin();p!=this->externalStateVarsHolder.end();++p){
+    for(p =this->mb.getExternalStateVariables().begin();p!=this->mb.getExternalStateVariables().end();++p){
       this->behaviourFile << "this->" << p->name << "_ = this->" << p->name 
 			  <<"+(this->d" << p->name 
 			  << ")*(t+0.5f*dt_)/(this->dt);" << endl;
     }
-    for(p =this->stateVarsHolder.begin();p!=this->stateVarsHolder.end();++p){
+    for(p =this->mb.getStateVariables().begin();p!=this->mb.getStateVariables().end();++p){
       this->behaviourFile << "this->" << p->name << "_ += 0.5f*(this->d" << p->name << "_K1);" << endl;
     }
     this->behaviourFile << "// Update stress field" << endl;
@@ -1510,7 +1648,7 @@ namespace mfront{
       this->behaviourFile << "}" << endl;
     }
     this->behaviourFile << "if(!failed){" << endl;
-    for(p =this->stateVarsHolder.begin();p!=this->stateVarsHolder.end();++p){
+    for(p =this->mb.getStateVariables().begin();p!=this->mb.getStateVariables().end();++p){
       this->behaviourFile << "this->d" << p->name 
 			  << "_K2 = (dt_)*(this->d" << p->name << ");" << endl;
     }
@@ -1519,7 +1657,7 @@ namespace mfront{
     this->behaviourFile << "}" << endl << endl;
     this->behaviourFile << "// Compute K3's values" << endl;
     this->behaviourFile << "if(!failed){" << endl;
-    for(p =this->stateVarsHolder.begin();p!=this->stateVarsHolder.end();++p){
+    for(p =this->mb.getStateVariables().begin();p!=this->mb.getStateVariables().end();++p){
       this->behaviourFile << "this->" << p->name 
 			  << "_ = this->" << p->name
 			  << "+0.5f*(this->d" << p->name << "_K2);" << endl;
@@ -1541,7 +1679,7 @@ namespace mfront{
       this->behaviourFile << "}" << endl;
     }
     this->behaviourFile << "if(!failed){" << endl;
-    for(p =this->stateVarsHolder.begin();p!=this->stateVarsHolder.end();++p){
+    for(p =this->mb.getStateVariables().begin();p!=this->mb.getStateVariables().end();++p){
       this->behaviourFile << "this->d" << p->name 
 			  << "_K3 = (dt_)*(this->d" << p->name << ");" << endl;
     }
@@ -1550,14 +1688,23 @@ namespace mfront{
     this->behaviourFile << "}" << endl << endl;
     this->behaviourFile << "if(!failed){" << endl;
     this->behaviourFile << "// Compute K4's values" << endl;
-    this->behaviourFile << "this->eto_ = this->eto+(this->deto)*(t+dt_)/(this->dt);" << endl;
+    for(pm=this->mb.getMainVariables().begin();pm!=this->mb.getMainVariables().end();++pm){
+      const DrivingVariable& dv = pm->first;
+      if(!dv.increment_known){
+	string msg("MFrontRungeKuttaParser::endsInputFileProcessing : ");
+	msg += "unsupported driving variable '"+dv.name+"'";
+	throw(runtime_error(msg));
+      }
+      this->behaviourFile << "this->" << dv.name << "_ = this->" << dv.name
+			  << "+(this->d" << dv.name << ")*(t+dt_)/(this->dt);" << endl;
+    }
     this->behaviourFile << "this->T_   = this->T+(this->dT)*(t+dt_)/(this->dt);" << endl;
-    for(p =this->externalStateVarsHolder.begin();p!=this->externalStateVarsHolder.end();++p){
+    for(p =this->mb.getExternalStateVariables().begin();p!=this->mb.getExternalStateVariables().end();++p){
       this->behaviourFile << "this->" << p->name << "_ = this->" << p->name 
 			  <<"+(this->d" << p->name 
 			  << ")*(t+dt_)/(this->dt);" << endl;
     }
-    for(p =this->stateVarsHolder.begin();p!=this->stateVarsHolder.end();++p){
+    for(p =this->mb.getStateVariables().begin();p!=this->mb.getStateVariables().end();++p){
       this->behaviourFile << "this->" << p->name 
 			  << "_ = this->" << p->name
 			  << "+this->d" << p->name << "_K3;" << endl;
@@ -1579,7 +1726,7 @@ namespace mfront{
       this->behaviourFile << "}" << endl;
     }
     this->behaviourFile << "if(!failed){" << endl;
-    for(p =this->stateVarsHolder.begin();p!=this->stateVarsHolder.end();++p){
+    for(p =this->mb.getStateVariables().begin();p!=this->mb.getStateVariables().end();++p){
       this->behaviourFile << "this->d" << p->name 
 			  << "_K4 = (dt_)*(this->d" << p->name << ");" << endl;
     }
@@ -1589,9 +1736,9 @@ namespace mfront{
     this->behaviourFile << "if(!failed){" << endl;
     this->behaviourFile << "// Computing the error" << endl;
     if(this->eev==ERRORSUMMATIONEVALUATION){
-      for(p =this->stateVarsHolder.begin();p!=this->stateVarsHolder.end();++p){
+      for(p =this->mb.getStateVariables().begin();p!=this->mb.getStateVariables().end();++p){
 	if(p->arraySize==1u){
-	  if(p==this->stateVarsHolder.begin()){
+	  if(p==this->mb.getStateVariables().begin()){
 	    this->behaviourFile << "error  = ";
 	  } else {
 	    this->behaviourFile << "error += ";
@@ -1610,7 +1757,7 @@ namespace mfront{
 	  this->behaviourFile << ";" << endl;
 	} else {
 	  if(this->useDynamicallyAllocatedVector(p->arraySize)){
-	    if(p==this->stateVarsHolder.begin()){
+	    if(p==this->mb.getStateVariables().begin()){
 	      this->behaviourFile << "error  = Type(0);" << endl;
 	    }
 	    this->behaviourFile << "for(unsigned short idx=0;idx!=" <<p->arraySize << ";++idx){" << endl;
@@ -1629,7 +1776,7 @@ namespace mfront{
 	    this->behaviourFile << "}" << endl;
 	  } else {
 	    for(unsigned short i=0;i!=p->arraySize;++i){
-	      if((p==this->stateVarsHolder.begin())&&(i==0)){
+	      if((p==this->mb.getStateVariables().begin())&&(i==0)){
 		this->behaviourFile << "error  = ";
 	      } else {
 		this->behaviourFile << "error += ";
@@ -1653,7 +1800,7 @@ namespace mfront{
       this->behaviourFile << "error/=" << stateVarsSize << ";" << endl;
     } else if(this->eev==MAXIMUMVALUEERROREVALUATION){
       this->behaviourFile << "error  = Type(0);" << endl;
-      for(p =this->stateVarsHolder.begin();p!=this->stateVarsHolder.end();++p){
+      for(p =this->mb.getStateVariables().begin();p!=this->mb.getStateVariables().end();++p){
 	if(p->arraySize==1u){
 	  this->behaviourFile << "error = std::max(error,tfel::math::abs(";
 	  if(enf.find(p->name)!=enf.end()){
@@ -1720,7 +1867,7 @@ namespace mfront{
     this->behaviourFile << "// test for convergence" << endl;
     this->behaviourFile << "if(error<this->epsilon){" << endl;
     this->behaviourFile << "// Final Step" << endl;
-    for(p =this->stateVarsHolder.begin();p!=this->stateVarsHolder.end();++p){
+    for(p =this->mb.getStateVariables().begin();p!=this->mb.getStateVariables().end();++p){
       this->behaviourFile << "this->" << p->name 
 			  << " += cste1_6*(this->d" << p->name << "_K1 + this->d" << p->name << "_K4)+"
 			  << "    cste1_3*(this->d" << p->name << "_K3 + this->d" << p->name << "_K2);" << endl;
@@ -1791,30 +1938,40 @@ namespace mfront{
   {
     using namespace std;
     VarContainer::iterator p;
+    map<DrivingVariable,
+	ThermodynamicForce>::const_iterator pm;
     this->behaviourFile << "using namespace std;" << endl;
     this->behaviourFile << "// Compute K1's values" << endl;
     this->behaviourFile << "this->computeDerivative();" << endl;
-    for(p =this->stateVarsHolder.begin();p!=this->stateVarsHolder.end();++p){
+    for(p =this->mb.getStateVariables().begin();p!=this->mb.getStateVariables().end();++p){
       this->behaviourFile << "this->d" << p->name 
 			  << "_K1 = (this->dt)*(this->d" << p->name << ");" << endl;
     }
-    for(p =this->stateVarsHolder.begin();p!=this->stateVarsHolder.end();++p){
+    for(p =this->mb.getStateVariables().begin();p!=this->mb.getStateVariables().end();++p){
       this->behaviourFile << "this->" << p->name << "_ += 0.5f*(this->d" << p->name << "_K1);" << endl;
     }
-    this->behaviourFile << "this->eto_ += 0.5f*(this->deto);" << endl;
+    for(pm=this->mb.getMainVariables().begin();pm!=this->mb.getMainVariables().end();++pm){
+      const DrivingVariable& dv = pm->first;
+      if(!dv.increment_known){
+	string msg("MFrontRungeKuttaParser::endsInputFileProcessing : ");
+	msg += "unsupported driving variable '"+dv.name+"'";
+	throw(runtime_error(msg));
+      }
+      this->behaviourFile << "this->" << dv.name << "_ += 0.5f*(this->d" << dv.name << ");" << endl;
+    }
     this->behaviourFile << "this->T_   += 0.5f*(this->dT);" << endl;
-    for(p =this->externalStateVarsHolder.begin();p!=this->externalStateVarsHolder.end();++p){
+    for(p =this->mb.getExternalStateVariables().begin();p!=this->mb.getExternalStateVariables().end();++p){
       this->behaviourFile << "this->" << p->name << "_ += 0.5f*(this->d" << p->name << ");" << endl;
     }
     this->behaviourFile << "// Update stress field" << endl;
     this->behaviourFile << "this->computeStress();" << endl << endl;
     this->behaviourFile << "// Compute K2's values" << endl;
     this->behaviourFile << "this->computeDerivative();" << endl;
-    for(p =this->stateVarsHolder.begin();p!=this->stateVarsHolder.end();++p){
+    for(p =this->mb.getStateVariables().begin();p!=this->mb.getStateVariables().end();++p){
       this->behaviourFile << "this->d" << p->name 
 			  << "_K2 = (this->dt)*(this->d" << p->name << ");" << endl;
     }
-    for(p =this->stateVarsHolder.begin();p!=this->stateVarsHolder.end();++p){
+    for(p =this->mb.getStateVariables().begin();p!=this->mb.getStateVariables().end();++p){
       this->behaviourFile << "this->" << p->name << "_ = " << "this->" << p->name 
 			  << "+ 0.5f*(this->d" << p->name << "_K2);" << endl;
     }
@@ -1822,29 +1979,37 @@ namespace mfront{
     this->behaviourFile << "this->computeStress();" << endl << endl;
     this->behaviourFile << "// Compute K3's values" << endl;
     this->behaviourFile << "this->computeDerivative();" << endl;
-    for(p =this->stateVarsHolder.begin();p!=this->stateVarsHolder.end();++p){
+    for(p =this->mb.getStateVariables().begin();p!=this->mb.getStateVariables().end();++p){
       this->behaviourFile << "this->d" << p->name 
 			  << "_K3 = (this->dt)*(this->d" << p->name << ");" << endl;
     }
-    for(p =this->stateVarsHolder.begin();p!=this->stateVarsHolder.end();++p){
+    for(p =this->mb.getStateVariables().begin();p!=this->mb.getStateVariables().end();++p){
       this->behaviourFile << "this->" << p->name << "_ = " << "this->" << p->name 
 			  << "+ (this->d" << p->name << "_K3);" << endl;
     }
-    this->behaviourFile << "this->eto_ += 0.5f*(this->deto);" << endl;
+    for(pm=this->mb.getMainVariables().begin();pm!=this->mb.getMainVariables().end();++pm){
+      const DrivingVariable& dv = pm->first;
+      if(!dv.increment_known){
+	string msg("MFrontRungeKuttaParser::endsInputFileProcessing : ");
+	msg += "unsupported driving variable '"+dv.name+"'";
+	throw(runtime_error(msg));
+      }
+      this->behaviourFile << "this->" << dv.name << "_ += 0.5f*(this->d" << dv.name << ");" << endl;
+    }
     this->behaviourFile << "this->T_   += 0.5f*(this->dT);" << endl;
-    for(p =this->externalStateVarsHolder.begin();p!=this->externalStateVarsHolder.end();++p){
+    for(p =this->mb.getExternalStateVariables().begin();p!=this->mb.getExternalStateVariables().end();++p){
       this->behaviourFile << "this->" << p->name << "_ += 0.5f*(this->d" << p->name << ");" << endl;
     }
     this->behaviourFile << "// Update stress field" << endl;
     this->behaviourFile << "this->computeStress();" << endl << endl;
     this->behaviourFile << "// Compute K4's values" << endl;
     this->behaviourFile << "this->computeDerivative();" << endl;
-    for(p =this->stateVarsHolder.begin();p!=this->stateVarsHolder.end();++p){
+    for(p =this->mb.getStateVariables().begin();p!=this->mb.getStateVariables().end();++p){
       this->behaviourFile << "this->d" << p->name 
 			  << "_K4 = (this->dt)*(this->d" << p->name << ");" << endl;
     }
     this->behaviourFile << "// Final Step" << endl;
-    for(p =this->stateVarsHolder.begin();p!=this->stateVarsHolder.end();++p){
+    for(p =this->mb.getStateVariables().begin();p!=this->mb.getStateVariables().end();++p){
       this->behaviourFile << "this->" << p->name << " += " 
 			  << "1.f/6.f*(this->d" << p->name 
 			  << "_K1+this->d" << p->name << "_K4)+" << endl;
@@ -1888,22 +2053,22 @@ namespace mfront{
       msg += " Please contact MFront developper to help them debug this.";
       throw(runtime_error(msg));
     }
-    for(p2  = this->boundsDescriptions.begin();
-	p2 != this->boundsDescriptions.end();++p2){
+    for(p2  = this->mb.getBounds().begin();
+	p2 != this->mb.getBounds().end();++p2){
       if(p2->varCategory==BoundsDescription::StateVar){
 	p2->writeBoundsChecks(this->behaviourFile);
       }
     }
     this->behaviourFile << "if(smt!=NOSTIFFNESSREQUESTED){\n";
     this->behaviourFile << "if(!this->computeConsistantTangentOperator(smt)){\n";
-    if(this->behaviourCharacteristic.useQt()){        
+    if(this->mb.useQt()){        
       this->behaviourFile << "return MechanicalBehaviour<hypothesis,Type,use_qt>::FAILURE;\n";
     } else {
       this->behaviourFile << "return MechanicalBehaviour<hypothesis,Type,false>::FAILURE;\n";
     }
     this->behaviourFile << "}\n";
     this->behaviourFile << "}\n";
-    if(this->behaviourCharacteristic.useQt()){        
+    if(this->mb.useQt()){        
       this->behaviourFile << "return MechanicalBehaviour<hypothesis,Type,use_qt>::SUCCESS;\n";
     } else {
       this->behaviourFile << "return MechanicalBehaviour<hypothesis,Type,false>::SUCCESS;\n";
