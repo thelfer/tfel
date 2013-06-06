@@ -6,7 +6,7 @@
  */
 
 #include"TFEL/Math/Kriging3D.hxx"
-
+3
 namespace tfel
 {
 
@@ -20,7 +20,6 @@ namespace tfel
     {
       using namespace std;
       using tfel::math::tvector;
-      Kriging<3u,double>::buildInterpolation();
       vector<double>::const_iterator px;
       vector<double>::const_iterator py;
       vector<double>::const_iterator pz;
