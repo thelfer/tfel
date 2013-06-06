@@ -12,6 +12,7 @@
 #error "This header shall not be called directly"
 #endif
 
+#include<cmath>
 #include"MFront/Aster/AsterRotationMatrix.hxx"
 
 namespace aster
@@ -110,7 +111,7 @@ struct TFEL_VISIBILITY_LOCAL AsterOrthotropicBehaviourHandler<2u,Behaviour>
     m.rotateStrainsForward(DSTRAN,de);
     AsterBehaviourHandler::checkNPROPS(*NPROPS);
     AsterBehaviourHandler::checkNSTATV(*NSTATV);
-    const bool bDDSOE = *DDSOE>0.5; 
+    const bool bDDSOE = std::abs(*DDSOE)>0.5; 
     Handler handler(DTIME,e,de,TEMP,DTEMP,PROPS,
 		    PREDEF,DPRED,STATEV,s);
     handler.exe(DDSOE,s,STATEV);
@@ -118,7 +119,7 @@ struct TFEL_VISIBILITY_LOCAL AsterOrthotropicBehaviourHandler<2u,Behaviour>
     if(bDDSOE){
       m.rotateStiffnessMatrixBackward(DDSOE);
     }
-} // end of AsterOrthotropicBehaviourHandler2D::exe
+  } // end of AsterOrthotropicBehaviourHandler2D::exe
   }; // end of AsterOrthotropicBehaviourHandler2D
 
   template<template<tfel::material::ModellingHypothesis::Hypothesis,typename,bool> class Behaviour>
@@ -165,7 +166,7 @@ struct TFEL_VISIBILITY_LOCAL AsterOrthotropicBehaviourHandler<2u,Behaviour>
       m.rotateStrainsForward(DSTRAN,de);
       AsterBehaviourHandler::checkNPROPS(*NPROPS);
       AsterBehaviourHandler::checkNSTATV(*NSTATV);
-      const bool bDDSOE = *DDSOE>0.5; 
+      const bool bDDSOE = std::abs(*DDSOE)>0.5; 
       Handler handler(DTIME,e,de,TEMP,DTEMP,PROPS,
 		      PREDEF,DPRED,STATEV,s);
       handler.exe(DDSOE,s,STATEV);
