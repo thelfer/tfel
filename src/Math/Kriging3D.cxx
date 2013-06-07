@@ -6,7 +6,7 @@
  */
 
 #include"TFEL/Math/Kriging3D.hxx"
-3
+
 namespace tfel
 {
 
