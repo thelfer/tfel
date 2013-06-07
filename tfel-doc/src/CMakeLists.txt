@@ -21,9 +21,9 @@ set(tfel-doc_SOURCES tfel-doc.cxx
 		     LaTeXConvertion.cxx)
 
 add_executable(tfel-doc ${tfel-doc_SOURCES})
-
 target_link_libraries(tfel-doc
                       TFELMTest
                       TFELSystem
 		      TFELUtilities
 		      TFELException)
+install(TARGETS tfel-doc DESTINATION bin)
