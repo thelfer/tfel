@@ -30,8 +30,12 @@ namespace tfel{
       /*!
        * add a new test documentation
        */
-      void
-      execute(std::map<std::string,std::vector<TestDocumentation> >& tests);
+      virtual void
+      addDocumentation(std::map<std::string,std::vector<TestDocumentation> >& tests);
+      /*!
+       * destructor
+       */
+      ~MTestDocParser();
     }; // end of struct MTestDocParser
 
   } // end of namespace utilities

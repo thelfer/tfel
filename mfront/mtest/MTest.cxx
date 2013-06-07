@@ -405,6 +405,7 @@ namespace mfront
   MTest::handleDescription(TokensContainer::const_iterator& p)
   {
     using namespace std;
+    using namespace tfel::utilities;
     unsigned short currentLine;
     unsigned short openedBrackets;
     if(!this->description.empty()){
@@ -417,7 +418,6 @@ namespace mfront
     this->checkNotEndOfLine("MTest::handleDescription",
 			    p,this->fileTokens.end());
     currentLine = p->line;
-    this->description = "* ";
     openedBrackets = 1u;
     while((!((p->value=="}")&&
 	     (openedBrackets==1u)))&&
@@ -439,10 +439,14 @@ namespace mfront
 	}
       }
       if(currentLine!=p->line){
-	this->description+="\n* ";
+	this->description+="\n";
 	currentLine=p->line;
       }
-      this->description+=p->value;
+      if(p->flag==Token::String){
+	this->description+=p->value.substr(1,p->value.size()-2);
+      } else {
+	this->description+=p->value;
+      }
       this->description+=" ";
       ++p;
     }

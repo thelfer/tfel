@@ -72,7 +72,7 @@ namespace tfel{
       if(!this->author.empty()){
 	log << " &:& " << this->author << "\\\\"<< endl;
       } else {
-	log << "\\textcolor{red}{" << getTranslation("unknown author",l) << "} \\\\"<< endl;
+	log << " &:& \\textcolor{red}{" << getTranslation("unknown author",l) << "} \\\\"<< endl;
       }
       log << LaTeXConvertion::capitalize(getTranslation("date",l));
       if(!this->date.empty()){

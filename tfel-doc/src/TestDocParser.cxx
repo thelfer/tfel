@@ -24,7 +24,8 @@ namespace tfel{
     } // end of TestDocParser::TestDocParser
 
     void
-    TestDocParser::execute(std::map<std::string,std::vector<TestDocumentation> >& tests)
+    TestDocParser::addDocumentation(std::map<std::string,
+					     std::vector<TestDocumentation> >& tests)
     {
       using namespace std;
       using namespace tfel::utilities;
@@ -34,7 +35,7 @@ namespace tfel{
       try{
 	while(p!=pe){
 	  if(p->flag!=Token::String){
-	    string msg("TestDocParser::execute : ");
+	    string msg("TestDocParser::addDocumentation : ");
 	    msg += "expected to read a string";
 	    throw(runtime_error(msg));
 	  }
@@ -46,7 +47,7 @@ namespace tfel{
 	    vector<TestDocumentation>::const_iterator p3;
 	    for(p3=p2->second.begin();p3!=p2->second.end();++p3){
 	      if(t.name==p3->name){
-		string msg("TestDocParser::execute : ");
+		string msg("TestDocParser::addDocumentation : ");
 		msg += "test '"+t.name+"' already described";
 		throw(runtime_error(msg));	  
 	      }
@@ -65,7 +66,7 @@ namespace tfel{
 	}
       } catch(exception& e){
 	ostringstream msg;
-	msg << "TestDocParser::execute : "
+	msg << "TestDocParser::addDocumentation : "
 	    << e.what();
 	if(p!=this->end()){
 	  msg << "\nError at line " << p->line;
@@ -248,6 +249,9 @@ namespace tfel{
       this->checkNotEndOfFile(p);
       this->readSpecifiedToken("}",p);
     }
+
+    TestDocParser::~TestDocParser()
+    {} // end of MTestDocParser::~MTestDocParser
 
   } // end of namespace utilities
 

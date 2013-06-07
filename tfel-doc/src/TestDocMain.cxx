@@ -76,7 +76,7 @@ namespace tfel
       using namespace std;
       using namespace tfel::utilities;
       if(l=="french"){
-	return "Test de la cat\'{e}gorie \\og~"+getCategory(s,l)+"~\\fg{}";
+	return "Test de la catégorie \\og~"+getCategory(s,l)+"~\\fg{}";
       }
       if(l!="english"){
 	cerr << TerminalColors::Red;
@@ -117,9 +117,10 @@ namespace tfel
       if(!fragment){
 	log << "\\documentclass[a4paper,12pt]{article}" << endl;
 	log << endl;
-	log << "\\usepackage[T1]{fontenc}" << endl;
+	log << "\\usepackage[utf8]{inputenc}" << endl;
 	log << "\\usepackage{multind}" << endl;
 	log << "\\usepackage{amsmath}" << endl;
+	log << "\\usepackage{color}" << endl;
 	log << endl;
 	log << "\\newcommand{\\Frac}[2]{\\displaystyle\\frac{\\displaystyle #1}{\\displaystyle #2}}" << endl;
 	log << "\\newcommand{\\paren}[1]{\\ensuremath\\left(#1\\right)}" << endl;
@@ -448,7 +449,7 @@ namespace tfel
 	  string name = p->first+'/'+*p2;
 	  try{
 	    TestDocParser parser(name);
-	    parser.execute(tests);
+	    parser.addDocumentation(tests);
 	  }
 	  catch(std::exception& e){
 	    *(this->log) << TerminalColors::Reset;
@@ -471,7 +472,7 @@ namespace tfel
 	  string name = p->first+'/'+*p2;
 	  try{
 	    MTestDocParser parser(name);
-	    parser.execute(tests);
+	    parser.addDocumentation(tests);
 	  }
 	  catch(std::exception& e){
 	    *(this->log) << TerminalColors::Reset;

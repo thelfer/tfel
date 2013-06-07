@@ -153,7 +153,7 @@ namespace mfront
      */
     virtual void
     displayKeyWordDescription(const std::string&) const;
-  private:
+  protected:
     //! a simple alias
     typedef void (MTest::* CallBack)(TokensContainer::const_iterator&);
     /*!

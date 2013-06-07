@@ -25,10 +25,15 @@ namespace tfel{
        * \param f : file to be read
        */
       TestDocParser(const std::string&);
-
-      void
-      execute(std::map<std::string,std::vector<TestDocumentation> >& tests);
-      
+      /*!
+       * add the documentation of the tests
+       */
+      virtual void
+      addDocumentation(std::map<std::string,std::vector<TestDocumentation> >& tests);
+      /*!
+       * desctructor
+       */
+      virtual ~TestDocParser();
     private:
       
       void
