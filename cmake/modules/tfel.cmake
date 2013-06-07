@@ -99,6 +99,6 @@ macro(tfel_python_script dir)
   endif(${ARGC} LESS 1)
   foreach(pyscript ${ARGN})
     install(PROGRAMS ${pyscript}
-      DESTINATION lib/python2.6/site-packages/${dir}/)
+      DESTINATION lib/${PYTHON_LIBRARY}/site-packages/${dir}/)
   endforeach(pyscript ${ARGN})
 endmacro(tfel_python_script)
