@@ -1,0 +1,27 @@
+\ProvidesPackageRCS $Header: /cvsroot/latex-beamer/latex-beamer/themes/font/beamerfontthemestructuresmallcapsserif.sty,v 1.2 2004/10/07 20:53:09 tantau Exp $
+
+% Copyright 2003 by Till Tantau <tantau@users.sourceforge.net>
+%
+% This program can be redistributed and/or modified under the terms
+% of the GNU Public License, version 2.
+
+\def\beamer@ftb@str{
+  \setbeamerfont{structure}{shape=\scshape,family=\rmfamily}
+  \setbeamerfont{section in toc}{size=\large}
+}
+\def\beamer@ftb@tstr{\setbeamerfont{tiny structure}{shape=\scshape,family=\rmfamily}}
+
+\DeclareOptionBeamer{onlysmall}{\let\beamer@ftb@str=\relax}
+\DeclareOptionBeamer{onlylarge}{\let\beamer@ftb@tstr=\relax}
+
+\ProcessOptionsBeamer
+
+\mode<presentation>
+
+\beamer@ftb@str
+\beamer@ftb@tstr
+
+
+\mode
+<all>
+

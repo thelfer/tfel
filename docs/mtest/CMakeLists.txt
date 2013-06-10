@@ -10,18 +10,18 @@ ADD_CUSTOM_COMMAND(
     OUTPUT    mtest.pdf
     DEPENDS    ${CMAKE_CURRENT_SOURCE_DIR}/Champs.tex.in
     DEPENDS    ${CMAKE_CURRENT_SOURCE_DIR}/mtest.tex.in
-    COMMAND   ${LATEX_COMPILER}
+    COMMAND   TEXMFHOME=@abs_top_srcdir@/docs/tex/texmf        ${LATEX_COMPILER}
     ARGS      -interaction=batchmode mtest.tex
-    COMMAND   ${LATEX_COMPILER}
+    COMMAND   TEXMFHOME=@abs_top_srcdir@/docs/tex/texmf        ${LATEX_COMPILER}
     ARGS      -interaction=batchmode mtest.tex
-    COMMAND   ${BIBTEX_COMPILER}
+    COMMAND   BSTINPUTS=@abs_top_srcdir@/docs/tex/texmf/bibtex ${BIBTEX_COMPILER}
     ARGS      -terse mtest
     COMMAND   ${MAKEINDEX_COMPILER}
     ARGS      -s ${CMAKE_CURRENT_SOURCE_DIR}/style.ist mkeys.idx
-    COMMAND   ${LATEX_COMPILER}
+    COMMAND   TEXMFHOME=@abs_top_srcdir@/docs/tex/texmf        ${LATEX_COMPILER}
     ARGS      -interaction=batchmode mtest.tex
-    COMMAND   ${DVIPS_CONVERTER}
-    ARGS      mtest.dvi
+    COMMAND   TEXMFHOME=@abs_top_srcdir@/docs/tex/texmf        ${DVIPS_CONVERTER}
+    ARGS      -R0 mtest.dvi
     COMMAND   ${PS2PDF_CONVERTER}
     ARGS      mtest.ps
     COMMENT   "mtest.pdf")

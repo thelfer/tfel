@@ -5,8 +5,8 @@
 % Directory : /home/th202608/codes/tfel/tests/Broyden/
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-% \documentclass[rectoverso,pleiades,pstricks,leqno,anti]{@abs_top_builddir@/docs/tex/texmf/note_technique_2010}
-\documentclass[rectoverso,pleiades,pstricks,leqno,anti,projet]{@abs_top_builddir@/docs/tex/texmf/note_technique_2010}
+% \documentclass[rectoverso,pleiades,pstricks,leqno,anti]{note_technique_2010}
+\documentclass[rectoverso,pleiades,pstricks,leqno,anti,projet]{note_technique_2010}
 
 % \usepackage{draftcopy}
 % \draftcopySetGrey{0.8}
@@ -15,10 +15,10 @@
 \usepackage[dvips]{graphicx}
 \usepackage[dvips,breaklinks]{hyperref}
 
-\usepackage{@abs_top_builddir@/docs/tex/texmf/mathematiques}
-\usepackage{@abs_top_builddir@/docs/tex/texmf/mecanique}
-\usepackage{@abs_top_builddir@/docs/tex/texmf/couleurs}
-\usepackage{@abs_top_builddir@/docs/tex/texmf/presentation}
+\usepackage{mathematiques}
+\usepackage{mecanique}
+\usepackage{couleurs}
+\usepackage{presentation}
 
 \usepackage{pst-plot}
 \usepackage{array}

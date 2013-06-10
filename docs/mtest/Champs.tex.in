@@ -5,7 +5,7 @@
 %%	Rpertoire : /home/th202608/documents/notes/2011/LicosPresentation/
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\input{@abs_top_builddir@/docs/tex/texmf/LSC}
+\input{LSC}
 
 \auteurs{T.~Helfer, J.M.~Proix\(\mbox{}^{(a)}\)}
 \affiliation{\(\mbox{}^{(a)}\) Électricité de France, R\&D - Département Analyses Mécaniques et Acoustique}

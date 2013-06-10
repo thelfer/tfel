@@ -1,0 +1,52 @@
+\ProvidesPackageRCS $Header: /cvsroot/latex-beamer/latex-beamer/themes/color/beamercolorthemealbatross.sty,v 1.8 2004/10/07 22:21:15 tantau Exp $
+
+% Copyright 2003 by Till Tantau <tantau@users.sourceforge.net>.
+%
+% This program can be redistributed and/or modified under the terms
+% of the GNU Public License, version 2.
+
+\setbeamercolor*{normal text}{fg=yellow!50!white,bg=blue!50!black}
+
+\DeclareOption{overlystylish}
+{
+  \def\beamer@cta@do{
+    \setbeamertemplate{background canvas}[vertical shading][bottom=black,top=black,middle=blue!50!black]
+  }
+}
+\ProcessOptions
+
+\@ifundefined{beamer@cta@do}{}{\beamer@cta@do}
+
+\mode<presentation>
+
+\setbeamercolor*{example text}{fg=green!65!black}
+
+\setbeamercolor*{structure}{fg=blue!25!white}
+
+\setbeamercolor{palette primary}{use={structure,normal text},fg=structure.fg,bg=normal text.bg!75!black}
+\setbeamercolor{palette secondary}{use={structure,normal text},fg=structure.fg,bg=normal text.bg!60!black}
+\setbeamercolor{palette tertiary}{use={structure,normal text},fg=structure.fg,bg=normal text.bg!45!black}
+\setbeamercolor{palette quaternary}{use={structure,normal text},fg=structure.fg,bg=normal text.bg!30!black}
+
+\setbeamercolor*{block body}{bg=normal text.bg!90!black}
+\setbeamercolor*{block body alerted}{bg=normal text.bg!90!black}
+\setbeamercolor*{block body example}{bg=normal text.bg!90!black}
+\setbeamercolor*{block title}{parent=structure,bg=normal text.bg!75!black}
+\setbeamercolor*{block title alerted}{use={normal text,alerted text},fg=alerted text.fg!75!normal text.fg,bg=normal text.bg!75!black}
+\setbeamercolor*{block title example}{use={normal text,example text},fg=example text.fg!75!normal text.fg,bg=normal text.bg!75!black}
+
+\setbeamercolor{item projected}{fg=black}
+
+\setbeamercolor*{sidebar}{parent=palette primary}
+
+\setbeamercolor{palette sidebar primary}{use=normal text,fg=normal text.fg}
+\setbeamercolor{palette sidebar secondary}{use=structure,fg=structure.fg}
+\setbeamercolor{palette sidebar tertiary}{use=normal text,fg=normal text.fg}
+\setbeamercolor{palette sidebar quaternary}{use=structure,fg=structure.fg}
+
+\setbeamercolor*{separation line}{}
+\setbeamercolor*{fine separation line}{}
+
+
+\mode
+<all>

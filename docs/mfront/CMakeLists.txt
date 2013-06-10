@@ -27,22 +27,22 @@ ADD_CUSTOM_COMMAND(
     DEPENDS    ${CMAKE_CURRENT_SOURCE_DIR}/Champs.tex.in
     DEPENDS    ${CMAKE_CURRENT_SOURCE_DIR}/mfront.tex.in
     DEPENDS    ${CMAKE_CURRENT_SOURCE_DIR}/annexe-orthotropie.tex.in
-    COMMAND   ${LATEX_COMPILER}
+    COMMAND   TEXMFHOME=@abs_top_srcdir@/docs/tex/texmf        ${LATEX_COMPILER}
     ARGS      -interaction=batchmode mfront.tex
-    COMMAND   ${LATEX_COMPILER}
+    COMMAND   TEXMFHOME=@abs_top_srcdir@/docs/tex/texmf        ${LATEX_COMPILER}
     ARGS      -interaction=batchmode mfront.tex
-    COMMAND   ${BIBTEX_COMPILER}
+    COMMAND   BSTINPUTS=@abs_top_srcdir@/docs/tex/texmf/bibtex ${BIBTEX_COMPILER}
     ARGS      -terse mfront
     COMMAND   ${MAKEINDEX_COMPILER}
     ARGS      -s ${CMAKE_CURRENT_SOURCE_DIR}/style.ist env.idx
     COMMAND   ${MAKEINDEX_COMPILER}
     ARGS      -s ${CMAKE_CURRENT_SOURCE_DIR}/style.ist mkeys.idx
-    COMMAND   ${LATEX_COMPILER}
+    COMMAND   TEXMFHOME=@abs_top_srcdir@/docs/tex/texmf        ${LATEX_COMPILER}
     ARGS      -interaction=batchmode mfront.tex
-    COMMAND   ${LATEX_COMPILER}
+    COMMAND   TEXMFHOME=@abs_top_srcdir@/docs/tex/texmf        ${LATEX_COMPILER}
     ARGS      -interaction=batchmode mfront.tex
-    COMMAND   ${DVIPS_CONVERTER}
-    ARGS      mfront.dvi
+    COMMAND   TEXMFHOME=@abs_top_srcdir@/docs/tex/texmf        ${DVIPS_CONVERTER}
+    ARGS      -R0 mfront.dvi
     COMMAND   ${PS2PDF_CONVERTER}
     ARGS      mfront.ps
     COMMENT   "mfront.pdf")
@@ -51,11 +51,11 @@ ADD_CUSTOM_COMMAND(
     OUTPUT    behaviours.pdf
     DEPENDS    ${CMAKE_CURRENT_SOURCE_DIR}/behaviours.tex.in
     DEPENDS    ${CMAKE_CURRENT_SOURCE_DIR}/annexe-orthotropie.tex.in
-    COMMAND   ${LATEX_COMPILER}
+    COMMAND   TEXMFHOME=@abs_top_srcdir@/docs/tex/texmf        ${LATEX_COMPILER}
     ARGS      -interaction=batchmode behaviours.tex
-    COMMAND   ${LATEX_COMPILER}
+    COMMAND   TEXMFHOME=@abs_top_srcdir@/docs/tex/texmf        ${LATEX_COMPILER}
     ARGS      -interaction=batchmode behaviours.tex
-    COMMAND   ${BIBTEX_COMPILER}
+    COMMAND   BSTINPUTS=@abs_top_srcdir@/docs/tex/texmf/bibtex ${BIBTEX_COMPILER}
     ARGS      -terse behaviours
     COMMAND   ${MAKEINDEX_COMPILER}
     ARGS      -s ${CMAKE_CURRENT_SOURCE_DIR}/style.ist env.idx
@@ -65,12 +65,12 @@ ADD_CUSTOM_COMMAND(
     ARGS      -s ${CMAKE_CURRENT_SOURCE_DIR}/style.ist mkeys.idx
     COMMAND   ${MAKEINDEX_COMPILER}
     ARGS      -s ${CMAKE_CURRENT_SOURCE_DIR}/style.ist tfel.idx
-    COMMAND   ${LATEX_COMPILER}
+    COMMAND   TEXMFHOME=@abs_top_srcdir@/docs/tex/texmf        ${LATEX_COMPILER}
     ARGS      -interaction=batchmode behaviours.tex
-    COMMAND   ${LATEX_COMPILER}
+    COMMAND   TEXMFHOME=@abs_top_srcdir@/docs/tex/texmf        ${LATEX_COMPILER}
     ARGS      -interaction=batchmode behaviours.tex
-    COMMAND   ${DVIPS_CONVERTER}
-    ARGS      behaviours.dvi
+    COMMAND   TEXMFHOME=@abs_top_srcdir@/docs/tex/texmf        ${DVIPS_CONVERTER}
+    ARGS      -R0 behaviours.dvi
     COMMAND   ${PS2PDF_CONVERTER}
     ARGS      behaviours.ps
     COMMENT   "behaviours.pdf")
@@ -78,11 +78,11 @@ ADD_CUSTOM_COMMAND(
 ADD_CUSTOM_COMMAND(
     OUTPUT    umat.pdf
     DEPENDS    ${CMAKE_CURRENT_SOURCE_DIR}/umat.tex.in
-    COMMAND   ${LATEX_COMPILER}
+    COMMAND   TEXMFHOME=@abs_top_srcdir@/docs/tex/texmf        ${LATEX_COMPILER}
     ARGS      -interaction=batchmode umat.tex
-    COMMAND   ${LATEX_COMPILER}
+    COMMAND   TEXMFHOME=@abs_top_srcdir@/docs/tex/texmf        ${LATEX_COMPILER}
     ARGS      -interaction=batchmode umat.tex
-    COMMAND   ${BIBTEX_COMPILER}
+    COMMAND   BSTINPUTS=@abs_top_srcdir@/docs/tex/texmf/bibtex ${BIBTEX_COMPILER}
     ARGS      -terse umat
     COMMAND   ${MAKEINDEX_COMPILER}
     ARGS      -s ${CMAKE_CURRENT_SOURCE_DIR}/style.ist env.idx
@@ -92,12 +92,12 @@ ADD_CUSTOM_COMMAND(
     ARGS      -s ${CMAKE_CURRENT_SOURCE_DIR}/style.ist mkeys.idx
     COMMAND   ${MAKEINDEX_COMPILER}
     ARGS      -s ${CMAKE_CURRENT_SOURCE_DIR}/style.ist tfel.idx
-    COMMAND   ${LATEX_COMPILER}
+    COMMAND   TEXMFHOME=@abs_top_srcdir@/docs/tex/texmf        ${LATEX_COMPILER}
     ARGS      -interaction=batchmode umat.tex
-    COMMAND   ${LATEX_COMPILER}
+    COMMAND   TEXMFHOME=@abs_top_srcdir@/docs/tex/texmf        ${LATEX_COMPILER}
     ARGS      -interaction=batchmode umat.tex
-    COMMAND   ${DVIPS_CONVERTER}
-    ARGS      umat.dvi
+    COMMAND   TEXMFHOME=@abs_top_srcdir@/docs/tex/texmf        ${DVIPS_CONVERTER}
+    ARGS      -R0 umat.dvi
     COMMAND   ${PS2PDF_CONVERTER}
     ARGS      umat.ps
     COMMENT   "umat.pdf")
@@ -105,11 +105,11 @@ ADD_CUSTOM_COMMAND(
 ADD_CUSTOM_COMMAND(
     OUTPUT    aster.pdf
     DEPENDS    ${CMAKE_CURRENT_SOURCE_DIR}/aster.tex.in
-    COMMAND   ${LATEX_COMPILER}
+    COMMAND   TEXMFHOME=@abs_top_srcdir@/docs/tex/texmf        ${LATEX_COMPILER}
     ARGS      -interaction=batchmode aster.tex
-    COMMAND   ${LATEX_COMPILER}
+    COMMAND   TEXMFHOME=@abs_top_srcdir@/docs/tex/texmf        ${LATEX_COMPILER}
     ARGS      -interaction=batchmode aster.tex
-#    COMMAND   ${BIBTEX_COMPILER}
+#    COMMAND   BSTINPUTS=@abs_top_srcdir@/docs/tex/texmf/bibtex ${BIBTEX_COMPILER}
 #    ARGS      -terse aster
     COMMAND   ${MAKEINDEX_COMPILER}
     ARGS      -s ${CMAKE_CURRENT_SOURCE_DIR}/style.ist env.idx
@@ -119,12 +119,12 @@ ADD_CUSTOM_COMMAND(
     ARGS      -s ${CMAKE_CURRENT_SOURCE_DIR}/style.ist mkeys.idx
     COMMAND   ${MAKEINDEX_COMPILER}
     ARGS      -s ${CMAKE_CURRENT_SOURCE_DIR}/style.ist tfel.idx
-    COMMAND   ${LATEX_COMPILER}
+    COMMAND   TEXMFHOME=@abs_top_srcdir@/docs/tex/texmf        ${LATEX_COMPILER}
     ARGS      -interaction=batchmode aster.tex
-    COMMAND   ${LATEX_COMPILER}
+    COMMAND   TEXMFHOME=@abs_top_srcdir@/docs/tex/texmf        ${LATEX_COMPILER}
     ARGS      -interaction=batchmode aster.tex
-    COMMAND   ${DVIPS_CONVERTER}
-    ARGS      aster.dvi
+    COMMAND   TEXMFHOME=@abs_top_srcdir@/docs/tex/texmf        ${DVIPS_CONVERTER}
+    ARGS      -R0 aster.dvi
     COMMAND   ${PS2PDF_CONVERTER}
     ARGS      aster.ps
     COMMENT   "aster.pdf")

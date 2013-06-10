@@ -1,0 +1,29 @@
+\ProvidesPackageRCS $Header: /cvsroot/latex-beamer/latex-beamer/themes/theme/beamerthemeGoettingen.sty,v 1.6 2004/10/07 20:53:10 tantau Exp $
+
+% Copyright 2003 by Till Tantau <tantau@users.sourceforge.net>
+%
+% This program can be redistributed and/or modified under the terms
+% of the GNU Public License, version 2.
+
+\DeclareOptionBeamer{hideothersubsections}{\PassOptionsToPackage{hideothersubsections}{beamerouterthemesidebar}}
+\DeclareOptionBeamer{hideallsubsections}{\PassOptionsToPackage{hideallsubsections}{beamerouterthemesidebar}}
+
+\PassOptionsToPackage{right}{beamerouterthemesidebar}
+\PassOptionsToPackage{width=2cm}{beamerouterthemesidebar}
+
+\DeclareOptionBeamer{width}{\PassOptionsToPackage{width=#1}{beamerouterthemesidebar}}
+\DeclareOptionBeamer{left}{\PassOptionsToPackage{left}{beamerouterthemesidebar}}
+\DeclareOptionBeamer{right}{\PassOptionsToPackage{right}{beamerouterthemesidebar}}
+
+\ProcessOptionsBeamer
+
+\mode<presentation>
+
+\useoutertheme[height=0pt]{sidebar}
+
+{\usebeamercolor{structure}}
+
+\setbeamertemplate{sidebar canvas \beamer@sidebarside}[vertical shading][top=structure.fg!25,bottom=structure.fg!10]
+
+\mode
+<all>

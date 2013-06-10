@@ -1,0 +1,48 @@
+\ProvidesPackageRCS $Header: /cvsroot/latex-beamer/latex-beamer/themes/theme/compatibility/beamerthemesidebar.sty,v 1.12 2004/10/07 22:21:16 tantau Exp $
+
+% Copyright 2003 by Till Tantau <tantau@users.sourceforge.net>
+%
+% This program can be redistributed and/or modified under the terms
+% of the GNU Public License, version 2.
+
+\newif\ifbeamer@sidebartab
+\newif\ifbeamer@sidebardark
+
+\beamer@sidebartabfalse
+\beamer@sidebardarkfalse
+
+\PassOptionsToPackage{width=2.5cm}{beamerouterthemesidebar}
+
+\DeclareOptionBeamer{width}{\PassOptionsToPackage{width=#1}{beamerouterthemesidebar}}
+\DeclareOptionBeamer{tab}[true]{\csname beamer@sidebartab#1\endcsname}
+\DeclareOptionBeamer{dark}[true]{\csname beamer@sidebardark#1\endcsname}
+
+\ProcessOptionsBeamer
+
+\mode<presentation>
+
+\useoutertheme[right,height=0pt]{sidebar}
+
+\ifbeamer@sidebardark
+  \usefonttheme{structurebold}
+  \usecolortheme{whale}
+
+  \setbeamercolor{sidebar}{parent=palette primary}
+
+  \usebeamercolor{palette quaternary}
+  \usebeamercolor{palette primary}
+  \setbeamertemplate{sidebar canvas right}[vertical shading][top=palette quaternary.bg,bottom=palette primary.bg]
+\else
+  \usecolortheme{seahorse}  
+
+  \usebeamercolor{sidebar}
+  \setbeamertemplate{sidebar canvas right}[vertical shading][top=sidebar.bg,bottom=white]
+\fi
+
+\ifbeamer@sidebartab
+  \usecolortheme{sidebartab}
+\fi
+
+\mode
+<all>
+

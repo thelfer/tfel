@@ -1,0 +1,471 @@
+%!PS-Adobe-3.0 EPSF-3.0
+%%Creator: (ImageMagick)
+%%Title: (beamericonarticle.20.eps)
+%%CreationDate: (Wed Mar 23 13:30:24 2005)
+%%BoundingBox: 0 0 48 48
+%%HiResBoundingBox: 0 0 48 48
+%%DocumentData: Clean7Bit
+%%LanguageLevel: 1
+%%Pages: 1
+%%EndComments
+
+%%BeginDefaults
+%%EndDefaults
+
+%%BeginProlog
+%
+% Display a color image.  The image is displayed in color on
+% Postscript viewers or printers that support color, otherwise
+% it is displayed as grayscale.
+%
+/DirectClassPacket
+{
+  %
+  % Get a DirectClass packet.
+  %
+  % Parameters:
+  %   red.
+  %   green.
+  %   blue.
+  %   length: number of pixels minus one of this color (optional).
+  %
+  currentfile color_packet readhexstring pop pop
+  compression 0 eq
+  {
+    /number_pixels 3 def
+  }
+  {
+    currentfile byte readhexstring pop 0 get
+    /number_pixels exch 1 add 3 mul def
+  } ifelse
+  0 3 number_pixels 1 sub
+  {
+    pixels exch color_packet putinterval
+  } for
+  pixels 0 number_pixels getinterval
+} bind def
+
+/DirectClassImage
+{
+  %
+  % Display a DirectClass image.
+  %
+  systemdict /colorimage known
+  {
+    columns rows 8
+    [
+      columns 0 0
+      rows neg 0 rows
+    ]
+    { DirectClassPacket } false 3 colorimage
+  }
+  {
+    %
+    % No colorimage operator;  convert to grayscale.
+    %
+    columns rows 8
+    [
+      columns 0 0
+      rows neg 0 rows
+    ]
+    { GrayDirectClassPacket } image
+  } ifelse
+} bind def
+
+/GrayDirectClassPacket
+{
+  %
+  % Get a DirectClass packet;  convert to grayscale.
+  %
+  % Parameters:
+  %   red
+  %   green
+  %   blue
+  %   length: number of pixels minus one of this color (optional).
+  %
+  currentfile color_packet readhexstring pop pop
+  color_packet 0 get 0.299 mul
+  color_packet 1 get 0.587 mul add
+  color_packet 2 get 0.114 mul add
+  cvi
+  /gray_packet exch def
+  compression 0 eq
+  {
+    /number_pixels 1 def
+  }
+  {
+    currentfile byte readhexstring pop 0 get
+    /number_pixels exch 1 add def
+  } ifelse
+  0 1 number_pixels 1 sub
+  {
+    pixels exch gray_packet put
+  } for
+  pixels 0 number_pixels getinterval
+} bind def
+
+/GrayPseudoClassPacket
+{
+  %
+  % Get a PseudoClass packet;  convert to grayscale.
+  %
+  % Parameters:
+  %   index: index into the colormap.
+  %   length: number of pixels minus one of this color (optional).
+  %
+  currentfile byte readhexstring pop 0 get
+  /offset exch 3 mul def
+  /color_packet colormap offset 3 getinterval def
+  color_packet 0 get 0.299 mul
+  color_packet 1 get 0.587 mul add
+  color_packet 2 get 0.114 mul add
+  cvi
+  /gray_packet exch def
+  compression 0 eq
+  {
+    /number_pixels 1 def
+  }
+  {
+    currentfile byte readhexstring pop 0 get
+    /number_pixels exch 1 add def
+  } ifelse
+  0 1 number_pixels 1 sub
+  {
+    pixels exch gray_packet put
+  } for
+  pixels 0 number_pixels getinterval
+} bind def
+
+/PseudoClassPacket
+{
+  %
+  % Get a PseudoClass packet.
+  %
+  % Parameters:
+  %   index: index into the colormap.
+  %   length: number of pixels minus one of this color (optional).
+  %
+  currentfile byte readhexstring pop 0 get
+  /offset exch 3 mul def
+  /color_packet colormap offset 3 getinterval def
+  compression 0 eq
+  {
+    /number_pixels 3 def
+  }
+  {
+    currentfile byte readhexstring pop 0 get
+    /number_pixels exch 1 add 3 mul def
+  } ifelse
+  0 3 number_pixels 1 sub
+  {
+    pixels exch color_packet putinterval
+  } for
+  pixels 0 number_pixels getinterval
+} bind def
+
+/PseudoClassImage
+{
+  %
+  % Display a PseudoClass image.
+  %
+  % Parameters:
+  %   class: 0-PseudoClass or 1-Grayscale.
+  %
+  currentfile buffer readline pop
+  token pop /class exch def pop
+  class 0 gt
+  {
+    currentfile buffer readline pop
+    token pop /depth exch def pop
+    /grays columns 8 add depth sub depth mul 8 idiv string def
+    columns rows depth
+    [
+      columns 0 0
+      rows neg 0 rows
+    ]
+    { currentfile grays readhexstring pop } image
+  }
+  {
+    %
+    % Parameters:
+    %   colors: number of colors in the colormap.
+    %   colormap: red, green, blue color packets.
+    %
+    currentfile buffer readline pop
+    token pop /colors exch def pop
+    /colors colors 3 mul def
+    /colormap colors string def
+    currentfile colormap readhexstring pop pop
+    systemdict /colorimage known
+    {
+      columns rows 8
+      [
+        columns 0 0
+        rows neg 0 rows
+      ]
+      { PseudoClassPacket } false 3 colorimage
+    }
+    {
+      %
+      % No colorimage operator;  convert to grayscale.
+      %
+      columns rows 8
+      [
+        columns 0 0
+        rows neg 0 rows
+      ]
+      { GrayPseudoClassPacket } image
+    } ifelse
+  } ifelse
+} bind def
+
+/DisplayImage
+{
+  %
+  % Display a DirectClass or PseudoClass image.
+  %
+  % Parameters:
+  %   x & y translation.
+  %   x & y scale.
+  %   label pointsize.
+  %   image label.
+  %   image columns & rows.
+  %   class: 0-DirectClass or 1-PseudoClass.
+  %   compression: 0-none or 1-RunlengthEncoded.
+  %   hex color packets.
+  %
+  gsave
+  /buffer 512 string def
+  /byte 1 string def
+  /color_packet 3 string def
+  /pixels 768 string def
+
+  currentfile buffer readline pop
+  token pop /x exch def
+  token pop /y exch def pop
+  x y translate
+  currentfile buffer readline pop
+  token pop /x exch def
+  token pop /y exch def pop
+  currentfile buffer readline pop
+  token pop /pointsize exch def pop
+  /Times-Roman findfont pointsize scalefont setfont
+  x y scale
+  currentfile buffer readline pop
+  token pop /columns exch def
+  token pop /rows exch def pop
+  currentfile buffer readline pop
+  token pop /class exch def pop
+  currentfile buffer readline pop
+  token pop /compression exch def pop
+  class 0 gt { PseudoClassImage } { DirectClassImage } ifelse
+  grestore
+} bind def
+%%EndProlog
+%%Page:  1 1
+%%PageBoundingBox: 0 0 48 48
+userdict begin
+DisplayImage
+0 0
+48 48
+12.000000
+48 48
+0
+0
+ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff
+ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff
+ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff
+ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff
+ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff
+ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff
+ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff
+ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff
+ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff
+ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff
+ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff
+ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff
+ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff
+ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff
+FFFFFFFFFFFFFFFFFFffffffffffffffffffffffffffffffffffffffffffffffffffffff
+ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff
+ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff
+ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffFFFFFF
+FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFffffffffffffffffffffffffffffffffffff
+ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff
+ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff
+ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffFFFFFFFFFFFF
+FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFffffffffffffffffffffffff
+ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff
+ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff
+ffffffffffffffffffffffffffffffffffffffffffffffffffffffFFFFFFFFFFFFFFFFFF
+FFFFFFFFFFFFFFFFFFFFFFFFFDF8F7DDD6D6B9B4B4A29898918D8DDDDDDD000000ffffff
+ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff
+ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff
+ffffffffffffffffffffffffffffffffffffffffffffffffFFFFFFFFFFFFFFFFFFFFFFFF
+FFFFFFFFFFFFFFFFFFFDF8F8CEC2C06866664746463D3B3C3B3A3A666666B8B6B4F3F1F1
+ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff
+ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff
+ffffffffffffffffffffffffffffffffffffffffffFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+FFFFFFFFFFFFFCFBFBE2D6D69B96948E8E8D5554543938383936363B3A3B575655CBCAC9
+FFFFFFFFFFFFffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff
+ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff
+ffffffffffffffffffffffffffffffffffffFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+FFFFFFFDFDFDDCDAD88E7D7988827DAFAEAB787777424141403F3F414040807F7FE2E2E2
+FFFFFFFFFFFFFFFFFFFFFFFFffffffffffffffffffffffffffffffffffffffffffffffff
+ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff
+ffffffffffffffffffffffffffffffFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+FDFCFCEEE7E7A0948B997D4AA38F57A49A767876718C8B8B7C7C7C4341425D595ACFCCCC
+FEFEFEFEFEFEFEFEFEFFFFFFFFFFFFFFFFFFffffffffffffffffffffffffffffffffffff
+ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff
+ffffffffffffffffffffffffFFFFFFFFFFFFFEFEFEFEFEFEFFFFFFFFFFFFFFFFFFF4F2F0
+D2C3C2A99898968468D9B546EACB46D1BE4EB1A97BA5A49FBBBCBA4F4F4E484746AEABA9
+FEFEFEFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFffffffffffffffffffffffff
+ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff
+000000ffffffffffffFFFFFFFFFFFFFFFFFFFFFFFFFEFEFDFEFCF9E7E5DFDDD5C29E9889
+7C78799C9998BFB393E4C648F2DC48F3E14AC0B4589D998D989796444443525251C4C4C3
+FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFffffffffffff
+ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff
+ffffffffffffFEFEFEFEFEFEFFFFFFFEFEFEFDFBF7EFEBDFCDC5B8757372777571959391
+DADAD9E7E7E6D7D2C2DABD65DFC358E4C94CD8C14EA297675E5D59424140908B85E9E9E8
+FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff
+ffffffFEFEFEFEFDFBFEFDFBFEFDFCF8F6F2D2C7B5938D8076736E949393C0BFBEE5E5E4
+F9F9F8F6F6F5E3E2DFD7CDB9D8C9A7DCC586B89D546259423C3B396A655DCFC9C2FAFAFA
+FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF555555556666
+ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff333300
+FBF3E4FCF8EDFCF7E8F4EEDAC1BAAC918D84686664979695D4D3D2F0EFEEFAFAF8FAFAF7
+F9F8F7F7F7F6F7F7F5F3F4F2F2F2F1EFEDE997938F4A48466F6B6BC6BFB8E3E1DDECEBE8
+FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF555555557766555555
+ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff000000F8F3E9
+EDCE84EED495EBD694D9C37892824E5B574CB4B4B3F1F1F0F7F7F6FAFAF9FBFBFAFBFBF9
+F8F8F6F7F7F5FAFAF8F9F9F8F9F9F8F2F2F1737373484747A6A1A1FFFFFFF9F9F9FAFAFA
+FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF555555556666555555AAAAAA
+ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffF9F7F3F1E1AA
+F3CF4AEFC745EDC94DF1CC45D0B44BAEA78EF2F2F1F9F9F8FAFAF9FAFAF9F8F8F7FAF9F8
+FAFAF8FAFAF7FAFAF8F4F4F3F5F5F4E5E5E4565556444242BCBAB9FFFFFFFFFFFFFFFFFF
+FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF555555556666555555AAAAAA555555
+ffffffffffffffffffffffffffffffffffffffffffffffffffffffF9F9F8EFE1B7F7D755
+F8D543F8D543F9D543F8D644D8BC4CB9B196F9F9F9FBFBFAFAFAF9F6F6F5F6F6F5FAFBF9
+FBFBF9FBFAF9FAFAF9F0F1F0EAEBEAB1B1B1454445403D3BA6A19CFDFDFDFFFFFFFFFFFF
+FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF555555556666555555AAAAAA555555AAAAAA
+ffffffffffffffffffffffffffffffffffffffffffffffffFFFFFFEFECE5F4D778F7D443
+F6D644F8D744F8D744F6D544CDB244A19A83F5F5F4FCFCFBF9F9F8F5F6F5F8F8F7FBFAF7
+FBFAF9FAFAF9FAFAF9F7F8F6DEDFDF8888883A393A464340ADA7A0FFFFFFFFFFFFFFFFFF
+FFFFFFFFFFFFFFFFFFFFFFFFFFFFFF555555557766555555AAAAAA555555AAAAAA444455
+ffffffffffffffffffffffffffffffffffffffffffFFFFFFFFFFFFF9F6F0E9D5A1F1CF52
+F7D643F9D944F7D744F5D343BCA4427A7463F1F1EEFAFAF7F6F6F5F9FAF9F9F9F8FAFAF8
+FAFAF9FAFAF9FAFAF9FAFBFAD5D6D66968693C3C3C464544BCB9B3FFFFFFFFFFFFFFFFFF
+FFFFFFFFFFFFFFFFFFFFFFFF555555556666555555AAAAAA555555AAAAAA444455333333
+ffffffffffffffffffffffffffffffffffffFFFFFFFFFFFFFFFFFFFFFFFFE7E5E0E1C783
+F2CD43F9D744F9D643F3D244AD97456A655BDEDEDDF8F8F7FAFAF9FBFBFAFBFBF9FBFBF8
+FBFBF9FBFBF9FBFBF9F8F8F7B9B9B94D4C4D3939396D6B68E1E0DFFFFFFFFFFFFFFFFFFF
+FFFFFFFFFFFFFFFFFF555555556666555555AAAAAA555555AAAAAA444466223344000000
+ffffffffffffffffffffffffffffffE1E1E1030303FFFFFFFFFFFFFFFFFFFFFFFFF1EDE3
+E9C763F6D144F9D543F5D348CAB871A09E98E7E7E6FBFBFAFCFCF9FCFCF9FBFBF8FBFBF9
+FBFBFAFBFBF8FBFBF9DCDCDC6F6F6F3A3A3A3B3A3A878582EEEDECFFFFFFFFFFFFFFFFFF
+FFFFFFFFFFFF555555556666555555AAAAAA555555AAAAAA444455333344000000333333
+ffffffffffffffffffffffffFFFFFF6C6C6C787878FFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+EAD6A5EBC553F3CD44EDCA58E9D8A6EDEBE7FBFBF8FBFBF8FCFCF9FCFCFAFBFBFAFBFBFA
+FBFBFAFBFAF9F8F8F7A9A9A94F4F4F3838384B4A48B2B1AFFDFDFDFFFFFFFFFFFFFFFFFF
+FFFFFF555555557766555555AAAAAA555555AAAAAA444455223344000000333333333333
+ffffffffffffffffffFFFFFF3434347B7B7BECECECFFFFFFFFFFFF6969697B7B7BFFFFFF
+F4F4F3E6D8BAE6D19EEADCBCEDE9E0F0EFEEFCFCFBFCFCFAFCFCFAFBFBFAFBFBFAFAF9F6
+F6EED3F1E8C1C5C3B65C5D5C383838373737615F5ED1D0CFFFFFFFFFFFFFFFFFFFFFFFFF
+555555556666555555AAAAAA555555AAAAAA444455333333000000333333333333ffffff
+ffffffffffffFFFFFFFFFFFF9B9B9BFFFFFFFFFFFFE1E1E1D7D7D70D0D0DF0F0F02D2D2D
+9D9D9DFAFAFAFCFBF9FAFAF9FFFFFFE7E7E7FCFCFAFAFAF7FBFBFAFAFAF9F7F7F5EBE6D4
+EBD582CBB65B716B553938393737373B3A3AB0ADACFDFDFDFFFFFFFFFFFFFFFFFF555555
+556666555555AAAAAA555555AAAAAA444466223344000000333333333333ffffffffffff
+ffffffFFFFFFFFFFFF2828284D4D4DC2C2C2FFFFFF4545459696968080809A9A9A000000
+2D2D2DFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFECECECF2F2F1E8E8E7EEEEECEDEAE2E3D19E
+E4BF4B9F853F464239383838383837574E41E1DEDAFFFFFFFFFFFFFFFFFF555555556666
+555555AAAAAA555555AAAAAA444455333344000000333333333333ffffffffffffffffff
+ffffffFFFFFFFFFFFFFFFFFF9696967D7D7DB3B3B3303030E6E6E6090909BDBDBD626262
+A2A2A2FFFFFF9797974D4D4DD0D0D0FFFFFFFFFFFFFFFFFFFFFFFFFAFAFAE7DEC6E8C65B
+ECC440C59D3E826C3C665C3F7C6E47AD9F8CFFFFFFFFFFFFFFFFFF555555557766555555
+AAAAAA555555AAAAAA444455223344000000333333333333ffffffffffffffffffffffff
+555555555555AAAAAAFFFFFFFFFFFFFAFAFAABABABAEAEAE7777776D6D6DFFFFFFCCCCCC
+303030A5A5A5222222C2C2C25B5B5B898989FFFFFFFFFFFFFFFFFFE9E3D4EECD69F3CD43
+F7D042EBC341E0BA41D7B745D2BF71EBE9E1FFFFFFFFFFFF555555556666555555AAAAAA
+555555AAAAAA444455333333000000333333333333ffffffffffffffffffffffffffffff
+555555556666334444555555AAAAAAFFFFFFFFFFFFFCFCFC898989E4E4E4FFFFFF727272
+0000007070709999999999991B1B1BFEFEFEFFFFFFFFFFFF575757ECCE87F2CD47F9D643
+F8D543F8D443F7D543F6D756E1D9BAF9F9F9FFFFFF555555556666555555AAAAAA555555
+AAAAAA444466223344000000333333333333ffffffffffffffffffffffffffffffffffff
+555555333322888899556666443344555555AAAAAAFFFFFFFFFFFFFFFFFFFFFFFFE3E3E3
+020202E5E5E5373737ACACACE4E4E4FFFFFFFFFFFFC5C5C51D1D1CE4C57B191507F4D245
+F7D643F8D643F8D743EED361E1DCCBFFFFFF555555556666555555AAAAAA555555AAAAAA
+444455333344000000333333333333ffffffffffffffffffffffffffffffffffffffffff
+555555333333555555555555779999556666334444555555AAAAAAFFFFFFFFFFFFF6F6F6
+B8B8B8FFFFFF888888E5E5E5FFFFFFFFFFFF6B6B6B6A6A6A929292B3B3B35B5B5BE9CE7C
+F4DA75F5D655F8D74DF2DB72E9E5D3555555557766555555AAAAAA555555AAAAAA444455
+223344000000333333333333ffffffffffffffffffffffffffffffffffffffffffffffff
+555555333322AAAAAAAAAAAA555555555555888899556666443344555555AAAAAAFFFFFF
+FFFFFFFFFFFF9D9D9D0202027777779D9D9D424242FFFFFFFFFFFFFFFFFF5252529D9B97
+7D7D7D818181FDF2CAE0DDD356544F556666555555AAAAAA555555AAAAAA444455333333
+000000333333333333ffffffffffffffffffffffffffffffffffffffffffffffffffffff
+555555333333555555555555AAAAAAAAAAAA555555555555779999556666334444555555
+AAAAAAFFFFFFFFFFFFE1E1E16D6D6DCDCDCDDCDCDCF8F8F8B5B5B5969696000000292929
+C5C5C5F4F4F4F9F9F9555555556666555555AAAAAA555555AAAAAA444466223344000000
+333333333333ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff
+555555555555AAAAAAAAAAAA555555555555AAAAAAAAAAAA555555555555888899556666
+443344555555AAAAAAFFFFFFFFFFFFFFFFFFE5E5E51E1E1E7C7C7CD7D7D7909090989898
+FFFFFFFFFFFF555555556666555555AAAAAA555555AAAAAA444455333344000000333333
+333333ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff
+000000000000555555555555AAAAAAAAAAAA555555555555AAAAAAAAAAAA555555555555
+779999556666334444555555AAAAAAFFFFFFFFFFFFEAEAEAFFFFFFFFFFFFD0D0D0151515
+F7F7F7555555557766555555AAAAAA555555AAAAAA444455223344000000333333333333
+ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff
+333333222222000000000000555555555555AAAAAAAAAAAA555555555555AAAAAAAAAAAA
+555555555555888899556666443344555555AAAAAAFFFFFFFEFEFEFFFFFF939393888888
+555555556666555555AAAAAA555555AAAAAA444455333333000000333333333333ffffff
+ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff
+ffffff333333333333111111000000000000555555555555AAAAAAAAAAAA555555555555
+AAAAAAAAAAAA555555555555779999556666334444555555AAAAAAFFFFFFFFFFFF535353
+556666555555AAAAAA555555AAAAAA444466223344000000333333333333ffffffffffff
+ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff
+ffffffffffffffffff333333333333222222000000000000555555555555AAAAAAAAAAAA
+555555555555AAAAAAAAAAAA555555555555888899556666443344555555555555556666
+555555AAAAAA555555AAAAAA444455333344000000333333333333ffffffffffffffffff
+ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff
+ffffffffffffffffffffffffffffff333333333333111111000000000000555555555555
+AAAAAAAAAAAA555555555555AAAAAAAAAAAA555555555555779999555555557766555555
+AAAAAA555555AAAAAA444455223344000000333333333333ffffffffffffffffffffffff
+ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff
+ffffffffffffffffffffffffffffffffffffffffff333333333333222222000000000000
+555555555555AAAAAAAAAAAA555555555555AAAAAAAAAAAA555555AAAAAA555555AAAAAA
+555555AAAAAA444455333333000000333333333333ffffffffffffffffffffffffffffff
+ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff
+ffffffffffffffffffffffffffffffffffffffffffffffffffffff333333333333111111
+000000000000555555555555AAAAAAAAAAAA555555555555AAAAAA555555AAAAAA555555
+AAAAAA444466223344000000333333333333ffffffffffffffffffffffffffffffffffff
+ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff
+ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff333333
+333333222222000000000000555555555555AAAAAAAAAAAA555555AAAAAA555555AAAAAA
+444455333344000000333333333333ffffffffffffffffffffffffffffffffffffffffff
+ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff
+ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff
+ffffff333333333333111111000000000000555555555555AAAAAA555555AAAAAA444455
+223344000000333333333333ffffffffffffffffffffffffffffffffffffffffffffffff
+ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff
+ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff
+ffffffffffffffffff333333333333222222000000000000555555AAAAAA444455333333
+000000333333333333ffffffffffffffffffffffffffffffffffffffffffffffffffffff
+ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff
+ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff
+ffffffffffffffffffffffffffffff333333333333111111000000000000000000000000
+333333333333ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff
+ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff
+ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff
+ffffffffffffffffffffffffffffffffffffffffff333333333333222222333333333333
+333333ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff
+ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff
+ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff
+ffffffffffffffffffffffffffffffffffffffffffffffffffffff333333333333333333
+ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff
+ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff
+
+end
+%%PageTrailer
+%%Trailer
+%%EOF

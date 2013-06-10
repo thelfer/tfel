@@ -1,0 +1,51 @@
+\ProvidesPackageRCS $Header: /cvsroot/latex-beamer/latex-beamer/base/beamerbaseoptions.sty,v 1.6 2004/10/07 20:17:58 tantau Exp $
+
+% Copyright 2003 by Till Tantau <tantau@users.sourceforge.net>.
+%
+% This program can be redistributed and/or modified under the terms
+% of the GNU Public License, version 2.
+
+\RequirePackage{keyval}[1997/11/10]
+
+\def\ProcessOptionsBeamer{%
+  \let\@tempa\@empty
+  \ifx\@currext\@clsextension%
+  \else
+  \@for\CurrentOption:=\@classoptionslist\do{%
+    \@ifundefined{KV@\@currname @\CurrentOption}%
+    {}{\edef\@tempa{\@tempa,\CurrentOption,}}}%
+  \fi
+  \edef\@tempa{%
+    \noexpand\setkeys{\@currname}{\@tempa\@ptionlist{\@currname.\@currext}}}%
+  \let\beamer@origkverr\KV@err%
+  \ifx\@currext\@clsextension\let\KV@errx=\@gobble\fi% never mind
+  \@tempa%
+  \let\KV@err\beamer@origkverr%
+  \AtEndOfPackage{\let\@unprocessedoptions\relax}}
+
+\def\ExecuteOptionsBeamer#1{%
+  \setkeys{\@currname}{#1}}
+
+\def\DeclareOptionBeamer#1{\@ifnextchar[{\beamer@dokv{#1}}{\beamer@dokv{#1}[]}}
+\long\def\beamer@dokv#1[#2]#3{\define@key{\@currname}{#1}[#2]{#3}}
+
+
+\def\beamer@filterclassoptions{
+  \def\beamer@filteredclassoptionslist{}
+  \@for\CurrentOption:=\@classoptionslist\do{%
+    \ifx\CurrentOption\@empty\else
+    \@expandtwoargs\in@{=}{\CurrentOption}%
+    \ifin@
+    \else
+    \edef\beamer@filteredclassoptionslist{%
+      \beamer@filteredclassoptionslist,\CurrentOption}
+    \fi
+    \fi
+  }%
+  \let\@classoptionslist=\beamer@filteredclassoptionslist
+}
+
+%%% Local Variables: 
+%%% mode: latex
+%%% TeX-master: "~/tex/latex/beamer/examples/beamerexample1.tex"
+%%% End: 

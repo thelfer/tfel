@@ -1,0 +1,24 @@
+\ProvidesPackageRCS $Header: /cvsroot/latex-beamer/latex-beamer/themes/inner/beamerinnerthemerounded.sty,v 1.4 2004/10/07 20:53:09 tantau Exp $
+
+% Copyright 2003 by Till Tantau <tantau@users.sourceforge.net>
+%
+% This program can be redistributed and/or modified under the terms
+% of the GNU Public License, version 2.
+
+\DeclareOptionBeamer{shadow}[true]{\def\beamer@themerounded@shadow{#1}}
+\ExecuteOptionsBeamer{shadow=false}
+\ProcessOptionsBeamer
+
+\mode<presentation>
+
+\setbeamertemplate{blocks}[rounded][shadow=\beamer@themerounded@shadow]
+\setbeamertemplate{items}[ball]
+\setbeamertemplate{sections/subsections in toc}[ball]
+\setbeamertemplate{title page}[default][colsep=-4bp,rounded=true,shadow=\beamer@themerounded@shadow]
+\setbeamertemplate{part page}[default][colsep=-4bp,rounded=true,shadow=\beamer@themerounded@shadow]
+  
+\mode<all>
+
+%%% Local Variables: 
+%%% TeX-master: "~/tex/latex/beamer/test/test.tex"
+%%% End: 

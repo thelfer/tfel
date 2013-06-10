@@ -332,17 +332,6 @@ AC_OUTPUT([debug.sh
 	   docs/mfront/Champs.tex
            docs/mfront/annexe-orthotropie.tex
 	   docs/tex/Makefile
-	   docs/tex/texmf/note_technique_2010.cls
-	   docs/tex/texmf/couleurs.sty
-	   docs/tex/texmf/gnuplot.sty
-	   docs/tex/texmf/helvetCEA.sty
-	   docs/tex/texmf/LSC.tex
-	   docs/tex/texmf/mathematiques.sty
-	   docs/tex/texmf/mecanique.sty
-	   docs/tex/texmf/mise_en_page_2010.tex
-	   docs/tex/texmf/presentation.sty
-	   docs/tex/texmf/SESC.tex
-	   docs/tex/texmf/variables_2010.tex
 	   cmake/Makefile
 	   cmake/modules/Makefile
 	   include/Makefile

@@ -5,7 +5,7 @@
 %%	Rpertoire : /home/th202608/documents/notes/2011/LicosPresentation/
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\input{@abs_top_builddir@/docs/tex/texmf/LSC}
+\input{LSC}
 
 \auteurs{T.~Helfer, É~Castelier}
 \redacteur{T.~Helfer}

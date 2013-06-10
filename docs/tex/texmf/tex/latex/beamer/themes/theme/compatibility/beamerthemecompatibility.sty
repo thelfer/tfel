@@ -1,0 +1,27 @@
+\ProvidesPackageRCS $Header: /cvsroot/latex-beamer/latex-beamer/themes/theme/compatibility/beamerthemecompatibility.sty,v 1.7 2004/10/07 20:53:10 tantau Exp $
+
+% Copyright 2003 by Till Tantau <tantau@users.sourceforge.net>
+%
+% This program can be redistributed and/or modified under the terms
+% of the GNU Public License, version 2.
+
+\mode<presentation>
+
+\usefonttheme[onlysmall]{structurebold}
+\setbeamerfont{frametitle}{series=\bfseries}
+
+\useoutertheme[subsection=false]{miniframes}
+\addtobeamertemplate{headline}
+{}
+{%
+  \begin{beamercolorbox}[wd=\paperwidth,colsep=0.2pt]{fine separation line}
+  \end{beamercolorbox}%
+}
+
+\setbeamercolor{fine separation line}{use=structure,bg=structure.fg!50!bg}
+
+
+\beamertemplatedefaultframetitle[center]
+
+\mode
+<all>

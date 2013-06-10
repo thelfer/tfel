@@ -6,18 +6,18 @@ ADD_CUSTOM_COMMAND(
     OUTPUT    reference-guide.pdf
     DEPENDS    ${CMAKE_CURRENT_SOURCE_DIR}/Champs.tex.in
     DEPENDS    ${CMAKE_CURRENT_SOURCE_DIR}/reference-guide.tex.in
-    COMMAND   ${LATEX_COMPILER}
+    COMMAND   TEXMFHOME=@abs_top_srcdir@/docs/tex/texmf        ${LATEX_COMPILER}
     ARGS      -interaction=batchmode reference-guide.tex
-    COMMAND   ${LATEX_COMPILER}
+    COMMAND   TEXMFHOME=@abs_top_srcdir@/docs/tex/texmf        ${LATEX_COMPILER}
     ARGS      -interaction=batchmode reference-guide.tex
-    COMMAND   ${BIBTEX_COMPILER}
+    COMMAND   BSTINPUTS=@abs_top_srcdir@/docs/tex/texmf/bibtex ${BIBTEX_COMPILER}
     ARGS      -terse reference-guide
     COMMAND   ${MAKEINDEX_COMPILER}
     ARGS      -s ${CMAKE_CURRENT_SOURCE_DIR}/style.ist tclass.idx
-    COMMAND   ${LATEX_COMPILER}
+    COMMAND   TEXMFHOME=@abs_top_srcdir@/docs/tex/texmf        ${LATEX_COMPILER}
     ARGS      -interaction=batchmode reference-guide.tex
-    COMMAND   ${DVIPS_CONVERTER}
-    ARGS      reference-guide.dvi
+    COMMAND   TEXMFHOME=@abs_top_srcdir@/docs/tex/texmf        ${DVIPS_CONVERTER}
+    ARGS      -R0 reference-guide.dvi
     COMMAND   ${PS2PDF_CONVERTER}
     ARGS      reference-guide.ps
     COMMENT   "reference-guide.pdf")

@@ -1,0 +1,45 @@
+\ProvidesPackageRCS $Header: /cvsroot/latex-beamer/latex-beamer/themes/color/beamercolorthemebeetle.sty,v 1.5 2004/10/07 22:21:15 tantau Exp $
+
+% Copyright 2003 by Till Tantau <tantau@users.sourceforge.net>.
+%
+% This program can be redistributed and/or modified under the terms
+% of the GNU Public License, version 2.
+
+\mode<presentation>
+
+\setbeamercolor{normal text}{fg=black,bg=black!40}
+\setbeamercolor{structure}{fg=white}
+
+\setbeamercolor{alerted text}{fg=red!85!black}
+
+\setbeamercolor{item projected}{use=item,fg=black,bg=item.fg!75}
+
+\definecolor{beetle@other}{RGB}{64,80,127}
+
+\setbeamercolor*{palette primary}{fg=white,bg=beetle@other}
+\setbeamercolor*{palette secondary}{parent=palette primary,use=palette primary,bg=palette primary.bg!95!black}
+\setbeamercolor*{palette tertiary}{parent=palette primary,use=palette primary,bg=palette primary.bg!90!black}
+\setbeamercolor*{palette quaternary}{parent=palette primary,use=palette primary,bg=palette primary.bg!85!black}
+
+\setbeamercolor*{sidebar}{parent=palette primary}
+
+\setbeamercolor*{palette sidebar primary}{fg=white}
+\setbeamercolor*{palette sidebar secondary}{fg=black}
+\setbeamercolor*{palette sidebar tertiary}{fg=white}
+\setbeamercolor*{palette sidebar quaternary}{fg=black}
+
+\setbeamercolor{framesubtitle}{fg=black}
+
+\setbeamercolor*{subtitle}{fg=black}
+
+\setbeamercolor*{block title}{parent=structure}
+\setbeamercolor*{block title alerted}{parent=alerted text}
+\setbeamercolor*{block title example}{parent=example text}
+\setbeamercolor*{block body}{}
+\setbeamercolor*{block body alerted}{}
+\setbeamercolor*{block body example}{}
+
+\setbeamercolor*{titlelike}{parent=structure}
+
+\mode
+<all>

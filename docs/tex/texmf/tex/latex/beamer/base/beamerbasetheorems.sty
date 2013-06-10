@@ -1,0 +1,153 @@
+\ProvidesPackageRCS $Header: /cvsroot/latex-beamer/latex-beamer/base/beamerbasetheorems.sty,v 1.6 2004/10/07 20:19:44 tantau Exp $
+
+% Copyright 2003 by Till Tantau <tantau@users.sourceforge.net>.
+%
+% This program can be redistributed and/or modified under the terms
+% of the GNU Public License, version 2.
+
+\mode<presentation>
+
+\ifbeamer@ams
+
+\RequirePackage{amsmath}
+\RequirePackage{amsthm}
+
+% For old versions of amsthm
+\providecommand\thm@space@setup{}
+\providecommand\pushQED[1]{\def\beamer@qed{#1}}
+\providecommand\popQED{\beamer@qed}
+\providecommand\qedhere{\qed}
+
+% Redfine certain amsthm internals:
+\def\@thm#1#2#3{%
+  \ifhmode\unskip\unskip\par\fi
+  \normalfont
+  \let\thmheadnl\relax
+  \let\thm@swap\@gobble
+  \thm@headpunct{.}% add period after heading
+  \thm@space@setup
+  #1% style overrides
+  \def\inserttheoremname{#3}
+  \def\inserttheorempunctuation{\the\thm@headpunct}
+  \def\@tempa{#2}%
+  \ifx\@empty\@tempa
+    \def\inserttheoremnumber{}
+  \else
+    \refstepcounter{#2}%
+    \expandafter\def\expandafter\inserttheoremnumber\expandafter{ \csname the#2\endcsname}
+  \fi
+  \beamer@begintheorem%
+}
+
+\let\beamer@origxthm=\@xthm
+\def\@xthm#1{\resetcounteronoverlays{#1}\beamer@origxthm{#1}}
+
+\def\inserttheoremheadfont{\the\thm@headfont}
+\def\inserttheoremblockenv{block}
+
+\def\th@example{%
+  \normalfont % body font
+  \def\inserttheoremblockenv{exampleblock}  
+}
+
+\newcommand<>\beamer@begintheorem[1][]{%
+  \beamer@ifempty{#1}
+  {\def\inserttheoremaddition{}}
+  {\def\inserttheoremaddition{#1}}
+  \usebeamertemplate{theorem begin}#2}
+\def\@endtheorem{\usebeamertemplate{theorem end}}
+
+\renewenvironment<>{proof}[1][\proofname]{%
+  \par
+  \def\insertproofname{#1\@addpunct{.}}%
+  \pushQED{\qed}
+  \usebeamertemplate{proof begin}#2}
+{\popQED\usebeamertemplate{proof end}}
+
+\fi
+
+\def\qedsymbol{\leavevmode\hbox{\usebeamertemplate*{qed symbol}}}
+
+
+\mode
+<article>
+{
+  \ifbeamer@ams
+    \RequirePackage{amsmath}
+    \RequirePackage{amsthm}
+
+    \renewenvironment<>{proof}[1][\proofname]
+    {\begin{actionenv}#2\begin{originalproof}[#1]}{\end{originalproof}\end{actionenv}}
+
+    % Make new theorem overlay-specification-aware
+    \let\beamer@origthm=\@thm
+    \def\@thm#1#2#3{\def\beamer@store{{#1}{#2}{#3}}\beamer@readspec}
+    \newcommand<>\beamer@readspec[1][]{\def\beamer@storeaction{\begin{actionenv}#2}%
+      \expandafter\beamer@origthm\beamer@store[#1]}
+
+    \let\beamer@origbegintheorem=\@begintheorem
+    \def\@begintheorem{\beamer@storeaction\beamer@origbegintheorem}
+
+    \let\beamer@origendtheorem=\@endtheorem
+    \def\@endtheorem{\beamer@origendtheorem\end{actionenv}}
+  \fi
+
+  \def\th@example{\th@remark}
+
+  \newcommand{\BeispielInline}[1]{Beispiel: \ignorespaces#1}
+  \newcommand{\ExampleInline}[1]{Example: \ignorespaces#1}
+}
+
+\mode
+<all>
+{
+  \ifbeamer@blocks
+    \ifbeamer@countsect
+      \newtheorem{theorem}{Theorem}[section]
+    \else
+      \newtheorem{theorem}{Theorem}
+    \fi
+    \newtheorem{corollary}[theorem]{Corollary}
+    \newtheorem{fact}[theorem]{Fact}
+    \newtheorem{lemma}[theorem]{Lemma}
+    \newtheorem{problem}[theorem]{Problem}
+    
+    \newtheorem{Loesung}[theorem]{L\"osung}
+    \newtheorem{Satz}[theorem]{Satz}
+    \newtheorem{Folgerung}[theorem]{Folgerung}
+    \newtheorem{Fakt}[theorem]{Fakt}
+
+    \theoremstyle{definition}
+    \newtheorem{definition}[theorem]{Definition}
+    \newtheorem{definitions}[theorem]{Definitions}
+    
+    \theoremstyle{example}
+    \newtheorem{Beispiel}[theorem]{Beispiel}
+    \newtheorem{Beispiele}[theorem]{Beispiele}
+    \newtheorem{example}[theorem]{Example}
+    \newtheorem{examples}[theorem]{Examples}
+
+    \theoremstyle{plain}
+
+    % Alias
+    \newenvironment{Beweis}{\begin{proof}[Beweis.]}{\end{proof}}
+    \newenvironment{Lemma}{\begin{lemma}}{\end{lemma}}
+    \newenvironment{Proof}{\begin{proof}}{\end{proof}}
+    \newenvironment{Theorem}{\begin{theorem}}{\end{theorem}}
+    \newenvironment{Problem}{\begin{problem}}{\end{problem}}
+    \newenvironment{Corollary}{\begin{corollary}}{\end{corollary}}
+    \newenvironment{Example}{\begin{example}}{\end{example}}
+    \newenvironment{Examples}{\begin{examples}}{\end{examples}}
+    \newenvironment{Definition}{\begin{definition}}{\end{definition}}
+  \fi
+}
+
+\mode
+<all>
+% End in common mode
+
+
+%%% Local Variables: 
+%%% mode: latex
+%%% TeX-master: "~/tex/latex/beamer/examples/beamerexample1.tex"
+%%% End: 

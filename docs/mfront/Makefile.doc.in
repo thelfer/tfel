@@ -1,51 +1,51 @@
 mfront:
-	latex  mfront.tex
-	latex  mfront.tex
-	bibtex mfront
+	TEXMFHOME=@abs_top_srcdir@/docs/tex/texmf        latex  mfront.tex
+	TEXMFHOME=@abs_top_srcdir@/docs/tex/texmf        latex  mfront.tex
+	BSTINPUTS=@abs_top_srcdir@/docs/tex/texmf/bibtex bibtex mfront
 	-makeindex -s @srcdir@/style.ist env.idx
 	-makeindex -s @srcdir@/style.ist mkeys.idx
-	latex  mfront.tex
-	latex  mfront.tex
-	dvips  mfront.dvi -o
+	TEXMFHOME=@abs_top_srcdir@/docs/tex/texmf        latex  mfront.tex
+	TEXMFHOME=@abs_top_srcdir@/docs/tex/texmf        latex  mfront.tex
+	TEXMFHOME=@abs_top_srcdir@/docs/tex/texmf        dvips -R0 mfront.dvi -o
 	ps2pdf mfront.ps
 
 behaviours:
-	latex  behaviours.tex
-	latex  behaviours.tex
-	bibtex behaviours
+	TEXMFHOME=@abs_top_srcdir@/docs/tex/texmf        latex  behaviours.tex
+	TEXMFHOME=@abs_top_srcdir@/docs/tex/texmf        latex  behaviours.tex
+	BSTINPUTS=@abs_top_srcdir@/docs/tex/texmf/bibtex bibtex behaviours
 	-makeindex -s @srcdir@/style.ist env.idx
 	-makeindex -s @srcdir@/style.ist headers.idx
 	-makeindex -s @srcdir@/style.ist tfel.idx
 	-makeindex -s @srcdir@/style.ist mkeys.idx
-	latex  behaviours.tex
-	latex  behaviours.tex
-	dvips  behaviours.dvi -o
+	TEXMFHOME=@abs_top_srcdir@/docs/tex/texmf        latex  behaviours.tex
+	TEXMFHOME=@abs_top_srcdir@/docs/tex/texmf        latex  behaviours.tex
+	TEXMFHOME=@abs_top_srcdir@/docs/tex/texmf        dvips -R0 behaviours.dvi -o
 	ps2pdf behaviours.ps
 
 aster:
-	latex  aster.tex
-	latex  aster.tex
-#	bibtex aster
+	TEXMFHOME=@abs_top_srcdir@/docs/tex/texmf        latex  aster.tex
+	TEXMFHOME=@abs_top_srcdir@/docs/tex/texmf        latex  aster.tex
+#	BSTINPUTS=@abs_top_srcdir@/docs/tex/texmf/bibtex bibtex aster
 	-makeindex -s @srcdir@/style.ist env.idx
 	-makeindex -s @srcdir@/style.ist headers.idx
 	-makeindex -s @srcdir@/style.ist tfel.idx
 	-makeindex -s @srcdir@/style.ist mkeys.idx
-	latex  aster.tex
-	latex  aster.tex
-	dvips  aster.dvi -o
+	TEXMFHOME=@abs_top_srcdir@/docs/tex/texmf        latex  aster.tex
+	TEXMFHOME=@abs_top_srcdir@/docs/tex/texmf        latex  aster.tex
+	TEXMFHOME=@abs_top_srcdir@/docs/tex/texmf        dvips -R0 aster.dvi -o
 	ps2pdf aster.ps
 
 umat:
-	latex  umat.tex
-	latex  umat.tex
-	bibtex umat
+	TEXMFHOME=@abs_top_srcdir@/docs/tex/texmf        latex  umat.tex
+	TEXMFHOME=@abs_top_srcdir@/docs/tex/texmf        latex  umat.tex
+	BSTINPUTS=@abs_top_srcdir@/docs/tex/texmf/bibtex bibtex umat
 	-makeindex -s @srcdir@/style.ist env.idx
 	-makeindex -s @srcdir@/style.ist headers.idx
 	-makeindex -s @srcdir@/style.ist tfel.idx
 	-makeindex -s @srcdir@/style.ist mkeys.idx
-	latex  umat.tex
-	latex  umat.tex
-	dvips  umat.dvi -o
+	TEXMFHOME=@abs_top_srcdir@/docs/tex/texmf        latex  umat.tex
+	TEXMFHOME=@abs_top_srcdir@/docs/tex/texmf        latex  umat.tex
+	TEXMFHOME=@abs_top_srcdir@/docs/tex/texmf        dvips -R0 umat.dvi -o
 	ps2pdf umat.ps
 
 clean:
