@@ -1,0 +1,22 @@
+\noindent
+\ttfamily
+\hlstd{@Parser}\hlstd{\ \ \ \ }\hlstd{RungeKutta}\hlsym{;}\hspace*{\fill}\\
+\hlstd{@Behaviour GPLS}\hlsym{;}\hspace*{\fill}\\
+\hlstd{@Author}\hlstd{\ \ \ \ }\hlstd{Helfer Thomas}\hlsym{;}\hspace*{\fill}\\
+\hlstd{@Algorithm rk54}\hlsym{;}\hspace*{\fill}\\
+\hlstd{@Date }\hlnum{27}\hlstd{}\hlsym{/}\hlstd{}\hlnum{03}\hlstd{}\hlsym{/}\hlstd{}\hlnum{09}\hlstd{}\hlsym{;}\hspace*{\fill}\\
+\hlstd{\hspace*{\fill}\\
+@Includes}\hlsym{\{}\hspace*{\fill}\\
+\hlstd{}\hldir{\#include$<$MaterialLaw/Lame.hxx$>$}\hspace*{\fill}\\
+\hlstd{}\hldir{\#include$<$MaterialLaw/Hill.hxx$>$}\hspace*{\fill}\\
+\hlstd{}\hlsym{\}}\hspace*{\fill}\\
+\hlstd{\hspace*{\fill}\\
+@Epsilon }\hlnum{1}\hlstd{}\hlsym{.}\hlstd{e}\hlsym{{-}}\hlstd{}\hlnum{6}\hlstd{}\hlsym{;}\hspace*{\fill}\\
+\hlstd{\hspace*{\fill}\\
+@OrthotropicBehaviour}\hlsym{;}\hspace*{\fill}\\
+\hlstd{@RequireStiffnessTensor}\hlsym{;}\hspace*{\fill}\\
+\hlstd{\hspace*{\fill}\\
+@StateVar real p}\hlsym{;}\hlstd{\ \ \ \ \ \ }\hlsym{}\hlstd{}\hlcom{/{*} Equivalent viscoplastic strain {*}/}\hlstd{\hspace*{\fill}\\
+@StateVar Stensor evp}\hlsym{; }\hlstd{}\hlcom{/{*} Viscoplastic strain}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ }\hlcom{{*}/}\hlstd{}\hspace*{\fill}\\
+\mbox{}
+\normalfont

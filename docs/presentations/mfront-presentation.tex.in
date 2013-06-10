@@ -1,0 +1,1026 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
+%%	Fichier	   : ces
+%%	Auteur     : th202608@pleiades043.intra.cea.fr
+%%	Date       : 26 mai 2009
+%%	Répertoire : /home/th202608/documents/presentations/2009/CES/
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
+
+\documentclass{beamer}
+
+\usepackage{beamerthemecea2012}
+\usepackage[utf8]{inputenc}
+\usepackage{pstricks}
+\usepackage{couleurs}
+
+\usepackage{mathematiques}
+\usepackage{mecanique}
+\usepackage{gnuplot}
+
+\usepackage[frenchb]{babel}
+
+\newcommand{\unix}{\texttt{Unix}}
+\newcommand{\linux}{\texttt{LiNuX}}
+\newcommand{\windows}{\texttt{Windows}}
+
+\newcommand{\tfel}{\texttt{tfel}}
+\newcommand{\mfront}{\texttt{mfront}}
+\newcommand{\umat}{\texttt{umat}}
+\newcommand{\castem}{\texttt{Cast3M}}
+\newcommand{\pycastem}{\texttt{pyCast3M}}
+\newcommand{\pleiades}{\texttt{pleiades}}
+\newcommand{\sirius}{\texttt{sirius}}
+\newcommand{\nom}[1]{\textsc{#1}}
+
+\newcommand{\code}[1]{
+  \psframebox[linecolor=ceaorange,fillcolor=ceabluecurve,fillstyle=solid]{
+    \begin{minipage}[t]{0.9\linewidth}
+      \scriptsize\tt #1
+    \end{minipage}
+  }
+}
+
+\Titre{Présentation de \mfront{}}
+\Auteur{T. Helfer}
+%\Evenement{Formation Areva}
+\Date{Avril 2014}
+
+\begin{document}
+
+\PageTitre{}
+
+\titre{Sommaire}
+\frame{
+  \setcounter{tocdepth}{1}
+  \tableofcontents{}
+}
+
+\section{Contexte}
+
+\titre{\mfront{} dans \pleiades{}}
+\frame{
+
+  \begin{itemize}
+  \item \textbf{gérer} les connaissances matériau (+ de 100 matériaux
+    différents dans \sirius{})~:
+    \begin{itemize}
+    \item les propriétés matériau (module d'\nom{Young}, etc...)~;
+    \item les lois de comportement mécanique (viscoplasticité,
+      plasticité, endommagement)~;
+    \item les modèles (gonflement, évolution physico-chimique)~;
+    \end{itemize}
+  \item<2-> \textbf{mutualiser} ces connaissances matériau~:
+    \begin{itemize}
+    \item entre les différentes études des applications de la
+      plate-forme \pleiades{}~:
+      \begin{itemize}
+      \item toutes les lois de comportement de la plate-forme vont
+        être ré-écrites en \mfront{} dès cette année~; 
+      \item la base de données \sirius{} a été adaptée pour supporter
+        \mfront{}~;
+      \end{itemize}
+    \item avec d'autres codes~:
+      \begin{itemize}
+      \item quelque soit leur langage (fortran,C,C++,VBA, etc..)~;
+      \end{itemize}
+    \end{itemize}
+  \item<3-> \textcolor{red}{\textbf{simplifier} le travail des utilisateurs}~:
+    \begin{itemize}
+    \item \textcolor{red}{numérique}~;
+    \item \textcolor{red}{informatique}~;
+    \item \textcolor{red}{minimiser le risque d'erreur}
+    \end{itemize}
+  \end{itemize}
+}
+
+\titre{Des situations variées}
+\frame{
+  % \begin{center}
+  %   \includegraphics[width=0.5\paperwidth]{@abs_top_srcdir@/docs/presentations/images/}
+  %   \includegraphics[width=0.5\paperwidth]{@abs_top_srcdir@/docs/presentations/images/}
+  % \end{center}
+  \begin{itemize}
+  \item différents langages (C++,fortran,python)~;
+  \item différents solveurs (FEM,FFT)~;
+  \end{itemize}
+}
+
+
+\section{Propriétés matériaux}
+
+\titre{}
+\frame{
+  \begin{center}
+    {\huge \bf Propriétés matériaux}
+  \end{center}
+}
+
+\titre{{\small Conductivité thermique du combustible $UPuC$}}
+\frame{
+  \begin{itemize}
+  \item conductivité thermique du combustible \(UPuC\)~:
+    \[
+    k\paren{T,p,\tau}
+    \]
+    \begin{itemize}
+    \item \(T\)    est la température~;
+    \item \(p\)    est la porosité~;
+    \item \(\tau\) est le taux de combustion~;
+    \end{itemize}
+  \item<2-> introduction en \(3\) étapes~:
+    \begin{itemize}
+    \item écriture d'une fonction \texttt{UPuC\_ThermalConductivity}~;
+    \item création d'une librairie \texttt{libUPuCMaterialProperties.so}~;
+    \item appel depuis \castem{}~;
+    \end{itemize}
+  \end{itemize}
+}
+
+\titre{Exemple en \mfront{}}
+\frame{
+
+  \begin{center}
+    \resizebox{!}{2.5mm}{
+      \code{
+        \tiny
+        \alt<1>{
+          \input{@abs_top_srcdir@/docs/presentations/images/UPuC_ThermalConductivity-mfront.tex}
+        }{
+          \input{@abs_top_srcdir@/docs/presentations/images/UPuC_ThermalConductivity-mfront2.tex}
+        }
+      }
+    }
+  \end{center}
+  \begin{itemize}
+  \item<3-> \texttt{\tiny mfront --obuild --interface=castem UPuC\_ThermalConductivity.mfront}
+  \end{itemize}
+}
+
+\titre{Commentaires}
+\frame{
+
+  \begin{itemize}
+  \item un fichier clair (avis subjectif)~;
+  \item<2-> interfaces disponibles~:
+    \begin{itemize}
+    \item castem (!)~;
+    \item Excel (Visual Basic)~;
+    \item C/C++/fortran~;
+    \item python~;
+    \item octave~;
+    \item gnuplot~;
+    \item etc...
+    \end{itemize}
+  \item<3-> gestion facilitée des bornes des propriétés matériau~;
+  \item<4-> gestion facilitée des dépendances entre propriétés matériau~;
+  \item<5-> support de la procédure de compilation~:
+  \item<6-> interaction avec la base de données matériau \sirius{}~:
+    \begin{itemize}
+    \item en entrée~;
+    \item en sortie~;
+    \end{itemize}
+  \end{itemize}
+
+}
+
+\titre{Utilisation dans \castem{}}
+\frame{
+
+  \begin{center}
+    \code{
+      \tiny
+      \textcolor{blue}{* Création d'un modèle thermique isotrope}\\    
+      ModT1 = '\textcolor{green}{MODELISER}' s1 '\textcolor{red}{THERMIQUE}' '\textcolor{red}{ISOTROPE}' ; \\
+      \\
+      \textcolor{blue}{* Création d'une table contenant les données relatives }\\
+      \textcolor{blue}{* à la propriété externe : }\\
+      \textcolor{blue}{* - 'MODELE' contient le nom de la fonction appelée }\\
+      \textcolor{blue}{* - 'LIBRAIRIE' contient le nom de la librairie externe }\\
+      \textcolor{blue}{*   dans laquelle cette fonction est définie }\\
+      \textcolor{blue}{* - 'VARIABLES' contient la liste des paramètres dont dépend }\\
+      \textcolor{blue}{*   la fonction appelée  }\\
+      Tmat = '\textcolor{green}{TABLE}'; \\
+      Tmat. '\textcolor{red}{MODELE}'    = '\textcolor{red}{UPuC\_ThermalConductivity}' ; \\
+      Tmat. '\textcolor{red}{LIBRAIRIE}' = '\textcolor{red}{libUPuCMaterialProperties.so}' ; \\
+      \fbox{Tmat. '\textcolor{red}{VARIABLES}' = '\textcolor{green}{MOTS}' '\textcolor{red}{T}' '\textcolor{red}{PORO}' '\textcolor{red}{FIMA}';} \\
+      \\
+      \textcolor{blue}{* Création du matériau. }\\
+      MatT1 = '\textcolor{green}{MATERIAU}' ModT1 '\textcolor{red}{K}' Tmat;
+    }
+  \end{center}
+  \begin{itemize}
+  \item<2-> utilisation transparente dans les procédures classiques (\texttt{PASAPAS})~;
+  \item<3-> utilisation simple de lois multi-variables~:
+    \begin{itemize}
+    \item les paramètres doivent être définies par des \og~chargements~\fg~;
+    \end{itemize}
+  \end{itemize}
+}
+
+\section{Lois de comportement mécanique}
+
+\titre{}
+\frame{
+  \begin{center}
+    {\huge \bf Lois de comportement mécanique}
+  \end{center}
+}
+
+\titre{Définitions}
+\frame{
+  \begin{itemize}
+  \item propriété matériau {\tt @MaterialProperty}~;
+  \item propriété matériau {\tt @LocalVariable}~:
+    \begin{itemize}
+    \item permet de réduire le nombre de calculs en précalculant
+      certains termes avant l'intégration~;
+    \end{itemize}
+  \item variable interne {\tt @StateVariable}~;
+  \item variable interne auxiliaire {\tt @AuxiliaryStateVariable}~:
+    \begin{itemize}
+    \item permet de réduire la taille des systèmes à intégrer~;
+    \end{itemize}
+  \item variable externe {\tt @ExternalStateVarible}~;
+  \end{itemize}
+}
+
+\titre{Généralités}
+\frame{
+
+  \begin{itemize}
+  \item les lois de comportement mécanique sont par nature complexes~:
+    \begin{itemize}
+    \item<1-> {\bf intégrer} une équation différentielle~;
+    \item<2-> variables scalaires ou tensorielles~;
+    \item<3-> cas très différents~:
+      \begin{itemize}
+      \item plasticité, endommagement, surfaces de charges~;
+      \item orthotropie~;
+      \end{itemize}
+    \end{itemize}
+  \item<4-> l'algorithme d'intégration doit être~:
+    \begin{itemize}
+    \item fiable   (donner le bon résultat)~;
+    \item robuste  (converger)~;
+    \item efficace (temps de calcul)~;
+    \end{itemize}
+  \item<5-> travail long et pénible~;
+  \end{itemize}
+
+}
+
+\titre{Analyseurs disponibles}
+\frame{
+
+  \begin{itemize}
+  \item quatre intégrateurs spécifiques (\(80\%\) des besoins)~:
+    \begin{itemize}
+    \item écoulement viscoplastique isotrope \(\depsiloneq=f\paren{\sigmaeq}\)~;
+    \item écoulement viscoplastique isotrope avec écrouissage \(\depsiloneq=f\paren{\sigmaeq,\epsiloneq}\)~;
+    \item écoulement plastique isotrope \(f\paren{\sigmaeq,\epsiloneq}<=0\)~;
+    \item une somme des différents écoulements précédents~;
+    \end{itemize}
+  \item<2-> un intégrateur de type \nom{Runge-Kutta}~:
+    \begin{itemize}
+    \item différents algorithmes disponibles (correcteur prédicteur \(5/4\) par défaut)~;
+    \end{itemize}
+  \item<3-> un intégrateur de type \nom{implicite}~:
+    \begin{itemize}
+    \item différents algorithmes disponibles (\nom{Newton-Raphson} par défaut)~;
+    \end{itemize}
+  \item<4-> un intégrateur par défaut laissant l'utilisateur libre de
+    faire ce qu'il veut !
+  \end{itemize}
+}
+
+\titre{Un premier exemple}
+\frame{
+  \begin{center}
+    \code{
+      \tiny
+      \noindent
+      \ttfamily
+      \hlstd{@Parser}\hlstd{\ \ \ \ }\hlstd{DefaultParser}\hlsym{;}\hspace*{\fill}\\
+      \hlstd{@Behaviour OrthotropicElastic}\hlsym{;}\hspace*{\fill}\\
+      \hlstd{@Author}\hlstd{\ \ \ \ }\hlstd{Helfer Thomas}\hlsym{;}\hspace*{\fill}\\
+      \hlstd{@Date}\hlstd{\ \ \ \ \ \ }\hlstd{}\hlnum{10}\hlstd{}\hlsym{/}\hlstd{}\hlnum{03}\hlstd{}\hlsym{/}\hlstd{}\hlnum{11}\hlstd{}\hlsym{;}\hspace*{\fill}\\
+      \hlstd{\hspace*{\fill}\\
+        @OrthotropicBehaviour}\hlsym{;}\hspace*{\fill}\\
+      \hlstd{@RequireStiffnessTensor}\hlsym{;}\hspace*{\fill}\\
+      \hlstd{\hspace*{\fill}\\
+        @Integrator}\hlsym{\{}\hspace*{\fill}\\
+      \hlstd{}\hlstd{\ \ }\hlstd{sig }\hlsym{= }\hlstd{D}\hlsym{{*}(}\hlstd{eto}\hlsym{+}\hlstd{deto}\hlsym{);}\hspace*{\fill}\\
+      \hlstd{}\hlsym{\}}
+    }
+  \end{center}
+  \begin{itemize}
+  \item<2-> principaux fichiers générés~:
+    \begin{itemize}
+    \item {\tt OrthotropicElastic.hxx}, qui contient l'algorithme
+      d'intégration~;
+    \item {\tt OrthotropicElasticBehaviourData.hxx}, qui contient les
+      valeurs des variables en début de pas~;
+    \item {\tt OrthotropicElasticIntegrationData.hxx}, qui contient
+      les valeurs des incréments des différents variables au cours du
+      pas~;
+    \end{itemize}
+  \item<3-> ces trois classes simplifient l'implantation d'un
+    algorithme de sous-découpage du pas de temps en cas de
+    non-convergence.
+  \end{itemize}
+}
+
+\titre{Choix de l'analyseur à utiliser}
+\frame{
+  \begin{itemize}
+  \item si un intégrateur spécifique existe, l'utiliser~:
+    \begin{itemize}
+    \item réduction du nombre de variables d'intégration et méthode
+      implicite~;
+    \end{itemize}
+  \item<2-> si l'on doit recourir à un intégrateur spécifique,
+    {\bf préférer l'intégration implicite}, surtout s'il s'agit de lois
+    indépendantes du temps (plasticité, endommagement)~:
+    \begin{itemize}
+    \item l'équation différentielle pour la plasticité ou
+      l'endommagement doit être remplacée par la nullité du critère en
+      fin de pas de temps~;
+    \item il est nécessaire de savoir calculer la jacobienne~:
+      \begin{itemize}
+      \item la bibliothèque tensorielle livrée avec \mfront{} est
+        alors très utile~;
+      \end{itemize}
+    \item les temps de calculs sont souvent {\bf très} avantageux~;
+    \end{itemize}
+  \item<3-> utiliser une méthode de \nom{Runge-Kutta} si~:
+    \begin{itemize}
+    \item {\bf vraiment rien d'autre} n'est possible (impossibilité de
+      calculer la jacobienne)
+    \item si le temps de développement est limité~;
+    \item si le temps d'intégration de la loi de comportement ne pose
+      pas de problème de performance.
+    \end{itemize}
+  \end{itemize}
+}
+
+\titre{Variables prédéfinies}
+\frame{
+  \begin{itemize}
+  \item la déformation élastique {\tt eel} est déclarée
+    automatiquement pour tous les intégrateurs (sauf celui par
+    défaut)~;
+  \item la température {\tt T} et son incrément {\tt dT} est déclarée
+    automatiquement~;
+  \item pour une variable interne {\tt X}, la variable {\tt dX} est
+    automatiquement défini pour définir l'incrément de la variable
+    {\tt X} sur le pas~:
+    \begin{itemize}
+    \item attention aux substitutions de variables (voir transparents
+      suivants)~;
+    \end{itemize}
+  \item<2-> pour une variable externe {\tt X}, la variable {\tt dX} est
+    automatiquement défini pour définir l'incrément de la variable
+    {\tt X} sur le pas~;
+  \item<3-> attention aux substitutions de variables (voir transparents
+    suivants)~:
+    \begin{itemize}
+    \item pour les intégrateurs explicites, {\tt dX} est remplacée par
+      la valeur de la vitesse dans les parties {\tt @ComputeStress} et
+      {\tt @Derivative}
+    \end{itemize}
+  \item<4-> suivant les intégrateurs, plusieurs variables sont
+    prédéfinies~:
+    \begin{itemize}
+    \item en implicite, les variables {\tt feel}, {\tt dfeel\_ddeel}, ...
+    \end{itemize}
+  \end{itemize}
+}
+
+\titre{Transformation du code}
+\frame{
+  \begin{itemize}
+  \item \mfront{} modifie largement le code fourni par l'utilisateur~:
+    \begin{itemize}
+    \item pour le rendre compatible avec le {\tt C++}~:
+      \begin{itemize}
+      \item \mfront{} utilise des fonctionnalités très avancées {\tt
+          C++} ({\tt template} et {\tt template meta\-programming})
+        dont la syntaxe est difficile ({\em a minima})~;
+      \item ajout du pointeur {\tt this} devant toutes les variables
+        internes~;
+      \item ajout de code de sortie implicite~;
+      \end{itemize}
+    \item pour remplacer les valeurs des variables par les variables
+      actualisées dans le système différentiel~:
+      \begin{center}
+        {\tt exp(-Q/(R*T))} devient \\
+        {\tiny {\tt exp(-Q/(R*(this->T+(Behaviour::Theta)*this->dT)))} en implicite} \\
+        {\tiny {\tt exp(-Q/(R*(this->T\_courant)))} en Runge-Kutta} \\
+      \end{center}
+    \item pour évaluer les contraintes en cours de résolution et en fin du pas \\
+      \begin{center}
+        {\tt sig = D*eel} devient ~:\\
+        {\tt this->sig = } 
+        \begin{tabular}[t]{c}
+          {\tt (this->D)*(this->eel\_courant)} ou \\          
+          {\tt (this->D)*(this->eel\_final)} \\
+        \end{tabular}
+      \end{center}
+    \end{itemize}
+  \end{itemize}
+}
+
+\titre{{\tt @InitLocalVariables}}
+\frame{
+  \begin{itemize}
+  \item Il s'agit d'une partie du code~:
+    \begin{itemize}
+    \item dédiée à l'initialisation de variables locales (données
+      membre de la classe C++)~;
+    \item qui n'est pas \og{}~transformée~\fg{} par les règles
+      précédentes~;
+    \end{itemize}
+  \item Les variables locales permettent d'économiser des calculs
+    coûteux en les effectuant en dehors de l'algorithme
+    d'intégration~;
+  \end{itemize}
+}
+
+\titre{Loi viscoplastique isotrope}
+\frame{
+  \begin{itemize}
+  \item comportement viscoplastique du \(NbZrC\)~:
+    \begin{itemize}
+    \item écoulement thermique~:
+      \[
+      \depsiloneq = A\paren{T}\sigmaeq^{n}
+      \]
+    \item écoulement athermique~:
+      \[
+      \depsiloneq = B\Frac{\dtot D}{\dtot t}\sigmaeq
+      \]
+    \end{itemize}
+  \end{itemize}
+}
+
+\frame{
+
+  \begin{center}
+    \code{
+      \tiny
+      \input{@abs_top_srcdir@/docs/presentations/images/NbZrC_CreepBehaviour-mfront.tex}
+    }
+  \end{center}
+  \begin{itemize}
+  \item<2-> \texttt{\tiny mfront --obuild --interface=umat NbZrC\_CreepBehaviour.mfront}
+  \item<3-> attention à l'incrément de temps qui est nul en cas de
+    convergence forcée
+  \end{itemize}
+}
+
+\titre{Qualification}
+\frame{
+  \begin{center}
+    \resizebox{\textwidth}{!}{
+      \input{@abs_top_srcdir@/docs/presentations/images/resultat_norton_traction_n8.pstricks}
+    }
+  \end{center}
+  \begin{itemize}
+  \item essai de traction à vitesse imposée
+  \end{itemize}
+}
+
+\titre{{\small Loi viscoplastique orthotrope (\nom{Runge-Kutta})}}
+\frame{
+
+  \begin{itemize}
+  \item exemple d'une loi viscoplastique orthotrope~;
+  \item utilisation de l'intégrateur générique \nom{Runge-Kutta}~;
+  \item intégration du système~:
+    \[
+    \left\{
+      \begin{array}{ccc}
+        \tenseur{\dot{\varepsilon}}^{el}  & = & \tenseur{\dot{\varepsilon}}^{to}-\tenseur{\dot{\varepsilon}}^{vis} \\
+        \tenseur{\dot{\varepsilon}}^{vis} & = & f\paren{\sigmaeq}\tenseur{n}
+      \end{array}
+    \right.
+    \]
+  \end{itemize}
+
+}
+
+\frame{
+
+  \begin{center}
+    \code{
+      \tiny
+      \input{@abs_top_srcdir@/docs/presentations/images/gpls-mfront.tex}
+    }
+  \end{center}
+
+}
+
+\frame{
+
+  \begin{center}
+    \code{
+      \tiny
+      \input{@abs_top_srcdir@/docs/presentations/images/gpls-mfront-2.tex}
+    }
+  \end{center}
+
+}
+
+\titre{Intégration implicite}
+\frame{
+  \begin{itemize}
+  \item le système implicite est remplacé par un système non-linéaire~:
+    \[
+    F\paren{\Delta\, Y} = \Delta Y -
+    \Delta\,t\,G\paren{Y_{t}+\theta\Delta{Y},t+\theta\,\Delta t} =
+    0
+    \]
+  \item la jacobienne peut être calculée par blocs~:
+    \[
+    J = \deriv{F}{Y} =
+    \begin{pmatrix}
+      \deriv{f_{y_{1}}}{y_{1}} & \ldots & \ldots & \ldots & \ldots \\
+      \vdots & \vdots & \vdots & \vdots & \vdots \\
+      \vdots & \vdots & \deriv{f_{y_{i}}}{y_{j}} & \vdots & \vdots \\
+      \vdots & \vdots & \vdots & \vdots & \vdots \\
+      \ldots & \ldots & \ldots & \ldots & \deriv{f_{y_{N}}}{y_{N}} \\
+    \end{pmatrix}
+    \]
+  \end{itemize}
+}
+
+\titre{Calcul de la jacobienne}
+\frame{
+  \begin{center}
+    \code{
+      \hlstd{@Integrator}\hlsym{\{}\hlstd{\hspace*{\fill}\\
+        \hlstd{\ \ }...\\
+      }\hlstd{\ \ }\hlstd{}\hlkwb{const\ }\hlstd{real\ sigeq\ }\hlsym{=\ }\hlstd{}\hlkwd{sqrt}\hlstd{}\hlsym{(}\hlstd{sig}\hlsym{\textbar }\hlstd{H}\hlsym{{*}}\hlstd{sig}\hlsym{);}\hlstd{\hspace*{\fill}\\
+      }\hlstd{\ \ }\hlstd{}\hlkwb{const\ }\hlstd{real\ tmp\ }\hlsym{=\ }\hlstd{A}\hlsym{{*}}\hlstd{}\hlkwd{pow}\hlstd{}\hlsym{(}\hlstd{sigeq}\hlsym{,}\hlstd{E}\hlsym{{-}}\hlstd{}\hlnum{1}\hlstd{}\hlsym{.);}\hlstd{\hspace*{\fill}\\
+      }\hlstd{\ \ }\hlstd{real\ }\hlkwd{inv\textunderscore sigeq}\hlstd{}\hlsym{(}\hlstd{}\hlnum{0}\hlstd{}\hlsym{);}\hlstd{\hspace*{\fill}\\
+      }\hlstd{\ \ }\hlstd{Stensor}\hlstd{\ \ }\hlstd{}\hlkwd{n}\hlstd{}\hlsym{(}\hlstd{}\hlnum{0}\hlstd{}\hlsym{.);}\hlstd{\hspace*{\fill}\\
+      }\hlstd{\ \ }\hlstd{}\hlkwa{if}\hlstd{}\hlsym{(}\hlstd{sigeq\ }\hlsym{$>$\ }\hlstd{}\hlnum{1}\hlstd{}\hlsym{.)\{}\hlstd{\hspace*{\fill}\\
+      }\hlstd{\ \ \ \ }\hlstd{inv\textunderscore sigeq\ }\hlsym{=\ }\hlstd{}\hlnum{1}\hlstd{}\hlsym{/}\hlstd{sigeq}\hlsym{;}\hlstd{\hspace*{\fill}\\
+      }\hlstd{\ \ }\hlstd{}\hlsym{\}}\hlstd{\hspace*{\fill}\\
+      }\hlstd{\ \ }\hlstd{n}\hlstd{\ \ }\hlstd{}\hlsym{=\ (}\hlstd{H}\hlsym{{*}}\hlstd{sig}\hlsym{){*}}\hlstd{inv\textunderscore sigeq}\hlsym{;}\hlstd{\hspace*{\fill}\\
+      }\hlstd{\ \ }\hlstd{feel\ }\hlsym{+=\ }\hlstd{dp}\hlsym{{*}}\hlstd{n}\hlsym{{-}}\hlstd{deto}\hlsym{;}\hlstd{\hspace*{\fill}\\
+      }\hlstd{\ \ }\hlstd{fp}\hlstd{\ \ \ }\hlstd{}\hlsym{{-}=\ }\hlstd{tmp}\hlsym{{*}}\hlstd{sigeq}\hlsym{{*}}\hlstd{dt}\hlsym{;}\hlstd{\hspace*{\fill}\\
+      }\hlstd{\ \ }\hlstd{dfeel\textunderscore ddeel\ }\hlsym{+=\ }\hlstd{theta}\hlsym{{*}}\hlstd{dp}\hlsym{{*}(}\hlstd{H}\hlsym{{-}(}\hlstd{n\textasciicircum n}\hlsym{)){*}}\hlstd{D}\hlsym{{*}}\hlstd{inv\textunderscore sigeq}\hlsym{;}\hlstd{\hspace*{\fill}\\
+      }\hlstd{\ \ }\hlstd{dfeel\textunderscore ddp}\hlstd{\ \ \ \ }\hlstd{}\hlsym{=\ }\hlstd{n}\hlsym{;}\hlstd{\hspace*{\fill}\\
+      }\hlstd{\ \ }\hlstd{dfp\textunderscore ddeel}\hlstd{\ \ \ \ }\hlstd{}\hlsym{=\ {-}}\hlstd{theta}\hlsym{{*}}\hlstd{tmp}\hlsym{{*}}\hlstd{E}\hlsym{{*}}\hlstd{dt}\hlsym{{*}(}\hlstd{n}\hlsym{\textbar }\hlstd{D}\hlsym{);}\hlstd{}\hspace*{\fill}\\
+      \hlsym{\}}
+    }
+  \end{center}
+  \begin{itemize}
+  \item les variables {\tt fX} sont des \og{}~images~\fg{} du vecteur
+    inconnu, et les dérivées {\tt dfX\_ddY} des images de la matrice
+    jacobienne~;
+  \end{itemize}
+}
+
+
+\titre{Tableaux de variables internes}
+\frame{
+  \code{
+    \hlstd{
+      @MaterialProperty\ real\ A}\hlsym{{[}}\hlstd{}\hlnum{2}\hlstd{}\hlsym{{]};}\hlstd{\ \ \ \ \ }\hlsym{}\hlstd{}\hlcom{/{*}\ Norton\ coefficient}\hlstd{\ \ \ }\hlcom{{*}/}\hlstd{\hspace*{\fill}\\
+      @MaterialProperty\ real\ E}\hlsym{{[}}\hlstd{}\hlnum{2}\hlstd{}\hlsym{{]};}\hlstd{\ \ \ \ \ }\hlsym{}\hlstd{}\hlcom{/{*}\ Norton\ exponant}\hlstd{\ \ \ \ \ \ }\hlcom{{*}/}\hlstd{\hspace*{\fill}\\
+      \ldots\\
+      \hlstd{
+        @StateVariable\ real\ p}\hlsym{{[}}\hlstd{}\hlnum{2}\hlstd{}\hlsym{{]};}\hlstd{\ \ \ \ \ \ }\hlsym{}\hlstd{}\hlcom{/{*}\ Equivalent\ viscoplastic\ strain\ {*}/}\hlstd{\hspace*{\fill}\\
+        @StateVariable\ Stensor\ evp}\hlsym{{[}}\hlstd{}\hlnum{2}\hlstd{}\hlsym{{]};\ }\hlstd{}\hlcom{/{*}\ Viscoplastic\ strain}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ }\hlcom{{*}/}\hlstd{}\hspace*{\fill}\\
+      \ldots\\
+      \hlstd{
+        @Derivative}\hlsym{\{}\hspace*{\fill}}\\
+    \hlstd{}\hlstd{\ \ }\hlstd{}\ldots\\
+    \hlstd{}\hlstd{\ \ }\hlstd{}\hlkwa{for}\hlstd{}\hlsym{(}\hlstd{}\hlkwb{unsigned\ short\ }\hlstd{i}\hlsym{=}\hlstd{}\hlnum{0}\hlstd{}\hlsym{;}\hlstd{i}\hlsym{!=}\hlstd{}\hlnum{2}\hlstd{}\hlsym{;++}\hlstd{i}\hlsym{)\{}\hspace*{\fill}\\
+    \hlstd{}\hlstd{\ \ \ \ }\hlstd{dp}\hlsym{{[}}\hlstd{i}\hlsym{{]}}\hlstd{\ \ \ \ }\hlsym{=\ }\hlstd{A}\hlsym{{[}}\hlstd{i}\hlsym{{]}{*}}\hlstd{}\hlkwd{pow}\hlstd{}\hlsym{(}\hlstd{sigeq}\hlsym{,}\hlstd{E}\hlsym{{[}}\hlstd{i}\hlsym{{]});}\hspace*{\fill}\\
+    \hlstd{}\hlstd{\ \ \ \ }\hlstd{devp}\hlsym{{[}}\hlstd{i}\hlsym{{]}}\hlstd{\ \ }\hlsym{=\ }\hlstd{dp}\hlsym{{[}}\hlstd{i}\hlsym{{]}{*}}\hlstd{n}\hlsym{;}\hspace*{\fill}\\
+    \hlstd{}\hlstd{\ \ \ \ }\hlstd{deel}\hlstd{\ \ \ \ }\hlstd{}\hlsym{{-}=\ }\hlstd{devp}\hlsym{{[}}\hlstd{i}\hlsym{{]};}\hspace*{\fill}\\
+    \hlstd{}\hlstd{\ \ }\hlstd{}\hlsym{\}}\hspace*{\fill}\\
+    \hlstd{}\hlsym{\}\ }
+  }
+  \begin{itemize}
+  \item regroupement des équations de même formalisme~:
+    \begin{itemize}
+    \item plasticité cristalline, NTFA~;
+    \item aujourd'hui limité aux algorithmes de \nom{Runge-Kutta}~;
+    \end{itemize}
+  \end{itemize}
+}
+
+\titre{Critère de convergence}
+\frame{
+  \begin{itemize}
+  \item la directive {\tt @Epsilon} permet de préciser la valeur du
+    critère utilisé par les différentes méthodes d'intégration~:
+    \begin{itemize}
+    \item par défaut, toutes les variables contribuent de la même
+      manière au calcul de l'erreur~;
+    \item la valeur par défaut est adaptée si toutes les variables
+      internes sont de l'ordre de grandeur des déformations~;
+    \end{itemize}
+  \item<2-> il est possible d'affecter un poids aux différentes
+    variables par la méthodes {\tt
+      set\-Error\-Normalisation\-Factor}~:
+    \begin{center}
+      {\tt p.setErrorNormalisationFactor(young)}
+    \end{center}
+    \begin{itemize}
+    \item disponible pour les intégrateurs génériques (implicites et
+      explicites)~;
+    \item il est préférable de ne pas utiliser cette méthode dans le
+      cas des intégrateurs implicites (normalisation de tous les
+      termes du jacobien associés à la variable \(p\), même ceux qui
+      sont nuls)
+    \end{itemize}
+  \end{itemize}
+}
+
+\titre{L'interface \umat{}}
+\frame{
+  \begin{itemize}
+  \item l'interface umat a pour rôle~:
+    \begin{itemize}
+    \item d'assurer le sous-découpage du pas de temps en cas de non
+      convergence~:
+      \begin{itemize}
+      \item {\tt @UMATUseTimeSubStepping[umat] true;}
+      \item {\tt @UMATMaximumSubStepping[umat] 20;}
+      \end{itemize}
+    \item<2-> d'effectuer les rotations dans le repère matériau pour les
+      lois de comportement orthotrope~:
+      \begin{itemize}
+      \item {\tt @OrthotropicBehaviour;}
+      \end{itemize}
+    \item<3-> de calculer les matrices d'élasticité et de coefficients de
+      dilatation thermique {\em à la demande}~:
+      \begin{itemize}
+      \item {\tt @RequireStiffnessTensor;}
+      \item {\tt @RequireThermalExpansionTensor;}
+      \end{itemize}
+    \item<4-> de traiter la condition de contraintes planes par une
+      variable interne supplémentaire représentant la déformation
+      totale axiale et une boucle externe pour assurer
+      \(\sigma_{z}=0\)~;
+    \end{itemize}
+  \end{itemize}
+}
+
+\titre{Optimisation du code}
+\frame{
+  \begin{itemize}
+  \item la loi de comportement est \og{}~instanciée~\fg{} trois fois
+    (en \(1D\), \(2D\) et \(3D\)~:
+    \begin{itemize}
+    \item les opérations tensorielles sont \og{}~optimisées~\fg{} pour
+      chaque dimension~:
+      \begin{itemize}
+      \item déroulement des boucles à la compilation~;
+      \end{itemize}
+    \item allocation de la mémoire sur la pile~;
+    \end{itemize}
+  \end{itemize}
+}
+
+\titre{Limitations de \mfront{}}
+\frame{
+  \begin{itemize}
+  \item les variables internes sont ou des scalaires ou des tenseurs
+    d'ordre \(2\) symétriques~:
+    \begin{itemize}
+    \item les \og{}~tenseurs d'ordre \(4\)~\fg{} sont utilisables au
+      cours de l'intégration~;
+    \end{itemize}
+  \item<2-> \mfront{} ne supporte (aujourd'hui) que les modélisations
+    \(1D\) (trois composantes du tenseurs des déformations), \(2D\)
+    déformations planes et déformations planes généralisées, et
+    \(3D\)~:
+    \begin{itemize}
+    \item le support des autres modélisations doit être assuré par les
+      interfaces aux codes éléments finis (voir l'interface \umat{}
+      pour les contraintes planes)~;
+    \end{itemize}
+  \item<3-> \mfront{} supporte des lois isotropes et orthotropes
+    (intégrateurs génériques)~:
+    \begin{itemize}
+    \item la rotation dans le repère propre est supposée être faite en
+      amont (interface \umat{})~;
+    \end{itemize}
+  \end{itemize}
+}
+
+\titre{{\tt Appel externe de loi de comportement}}
+\frame{
+
+  \begin{center}
+    \small
+    \code{
+      \textcolor{blue}{* Création d'une table contenant les données relatives }\\
+      \textcolor{blue}{* à la propriété externe : }\\
+      \textcolor{blue}{* - 'MODELE' contient le nom de la fonction appelée }\\
+      \textcolor{blue}{* - 'LIBRAIRIE' contient le nom de la librairie externe }\\
+      Tloi = '\textcolor{green}{TABLE}'; \\
+      Tloi. '\textcolor{red}{MODELE}'    = '\textcolor{red}{NbZrCCreep}' ; \\
+      Tloi. '\textcolor{red}{LIBRAIRIE}' = '\textcolor{red}{libNbZrCBehaviours.so}' ; \\
+      \textcolor{blue}{* Création du modèle mécanique}\\    
+      ModM1 = '\textcolor{green}{MODELISER}' s1 '\textcolor{red}{MECANIQUE}' '\textcolor{red}{ELASTIQUE}'     \\
+      \hspace{7em}'\textcolor{red}{ISOTROPE}' '\textcolor{red}{NON\_LINEAIRE}' '\textcolor{red}{UTILISATEUR}' \\
+      \hspace{7em}'\textcolor{red}{'DESC\_LOI'}  Tloi \\
+      \hspace{7em}'\textcolor{red}{C\_MATERIAU}' CLOI \\
+      \hspace{7em}'\textcolor{red}{C\_VARINTER}' VLOI \\
+      \hspace{7em}'\textcolor{red}{PARA\_LOI}'   PLOI;
+    }
+  \end{center}
+  \begin{itemize}
+  \item<2-> utilisation du mot clé '\texttt{DESC\_LOI}' au lieu de '\texttt{NUME\_LOI}'~;
+  \end{itemize}
+}
+
+\section{Algorithmes numériques}
+
+\titre{Algorithmes de \nom{Broyden}}
+\frame{
+  \begin{itemize}
+  \item Les algorithmes de \nom{Broden} sont des algorithmes de type
+    quasi-\nom{Newton}~:
+    {\tiny
+      \[
+      Y_{n}=Y_{n-1}-\underset{\sim}{J}^{-1}_{n-1}\,.\,F\paren{Y_{n-1}}
+      \]
+    }
+  \item premier algorithme de \nom{Broyden} (mise à jour de rang \(1\))~:
+    {\tiny
+      \[
+      \underset{\sim}{J}_{n} =
+      \underset{\sim}{J}_{n-1}+\Frac{\Delta\,F_{n}-\underset{\sim}{J}_{n-1}\,.\,\Delta\,Y_{n}}{\norm{\Delta\,Y_{n}}^{2}}\otimes\Delta\,Y_{n}
+      \]
+    }
+    \begin{itemize}
+    \item avantage~: on peut donner certains termes du jacobien (les plus
+      faciles à calculer ou les moins coûteux)~;
+    \item avantage~: on peut facilement partir sur une estimation
+      numérique du jacobien ou en calculer une en cours de résolution
+      si la qualité de \(\underset{\sim}{J}_{n}\) se dégrade~;
+    \end{itemize}
+  \item<2-> second algorithme de \nom{Broyden} (formule de \nom{Sherman-Morrison})~:
+    {\tiny
+      \[
+      \underset{\sim}{J}_{n}^{-1} =
+      \underset{\sim}{J}_{n-1}^{-1}+\Frac{\Delta\,Y_{n}-\underset{\sim}{J}_{n-1}^{-1}\,.\,\Delta\,F_{n}}{\Delta\,Y_{n}\,\mid\,\underset{\sim}{J}_{n-1}^{-1}\,.\,\Delta\,F_{n}}\,\otimes\,\paren{\Delta\,Y_{n}\,\mid\,\underset{\sim}{J}_{n-1}^{-1}}    
+      \]
+    }
+    \begin{itemize}
+    \item avantage~: on gagne l'inversion de la matrice~;
+    \end{itemize}
+  \item<3-> Les formules précédentes ont un coût !
+  \end{itemize}
+}
+
+\titre{Initialisation de la jacobienne}
+\frame{
+  \visible<2->{
+    \begin{center}
+      \begin{tabular}{|l|c|c|}
+        \hline
+        \nom{Algorithme}                                   & Coût par rapport à \nom{Newton}\\
+        \hline
+        \hline
+        \nom{Broyden}                                      & \(4,29\)\\
+        \hline
+        \nom{Broyden}, \(\underset{\sim}{J}_{0}\) numérique & \(2,02\)\\
+        \hline
+        \nom{Broyden} II                                   & \(4,15\)\\
+        \hline
+      \end{tabular}
+    \end{center}
+  }
+  \begin{itemize}
+  \item il faut initialiser la jacobienne (ou son inverse)~;
+  \item l'identité, une bonne approximation ?
+    \[
+    \begin{aligned}
+      \dot{Y} = G\paren{Y} &\quad \Rightarrow \quad &\Delta\,Y - \Delta\, t\,G\paren{Y+\theta\,\Delta\,Y} = 0\\
+      &\quad \Rightarrow \quad &J=I-\theta\Delta\,t\Frac{G}{\Delta\,Y}
+    \end{aligned}
+    \]
+  \item choix par défaut dans \mfront{}~;
+  \item<2-> en pratique les résultats peuvent être mitigés~:
+    \begin{itemize}
+    \item il peut être intéressant de démarrer par une approximation
+      numérique du jacobien~;
+    \end{itemize}
+  \end{itemize}
+}
+
+\titre{Jacobienne partielle}
+\frame{
+  \begin{center}
+    {\small
+      \begin{tabular}[htbp]{|c|c|c|}
+        \hline
+        Variante & Nombre de cycles &
+        Ratio par rapport à \textsc{Newton} \\
+        \hline
+        \hline
+        Défaut    & \(20\,197\,423\) & \(4,29\)\\
+        \hline
+        \(J\) exact & \(6\,120\,862\) & \(1,3\)\\
+        \hline
+        \(\deriv{f_{\tepsilonel}}{\Delta\,\tepsilonel}\) exact &
+        \(36\,821\,766\) & \(7,82\)\\
+        \hline
+        \(\deriv{f_{p}}{\Delta\,p}\) exact &
+        \(33\,826\,368\) & \(7,186\)\\
+        \hline
+        \(\deriv{f_{p}}{\Delta\,\tepsilonel}\) exact &
+        \(19\,577\,698\) & \(4,15\)\\
+        \hline
+        \(\deriv{f_{\tepsilonel}}{\Delta\,p}\) exact &
+        \(12\,132\,956\) & \(2,58\)\\
+        \hline
+        \textcolor{red}{\(\deriv{f_{\tepsilonel}}{\Delta\,p}\) et \(\deriv{f_{p}}{\Delta\,\tepsilonel}\) exacts} &
+        \textcolor{red}{\(4\,686\,228\)} &
+        \textcolor{red}{\(0,995\)} \\
+        \hline
+      \end{tabular}
+    }
+  \end{center}
+  \begin{itemize}
+  \item le premier algorithme de \nom{Broyden} laisse la possibilité
+    de donner certains termes du jacobien~;
+    \begin{itemize}
+    \item ça peut être très intéressant !
+    \end{itemize}
+  \end{itemize}
+}
+
+\titre{Amélioration de la robustesse}
+\frame{
+  \begin{itemize}
+  \item déjà testé~:
+    \begin{itemize}
+    \item initialisation par prédiction explicite~:
+      \begin{itemize}
+      \item peu ou pas efficace~;
+      \end{itemize}
+    \item accélération de \castem{}~:
+      \begin{itemize}
+      \item plus stable, très peu efficace (perte de la convergence
+        quadratique)~;
+      \end{itemize}
+    \item relaxation~:
+      \begin{itemize}
+      \item plus stable, peu employé~;
+      \end{itemize}
+    \end{itemize}
+  \item en cours de développement~: méthode de \nom{Powell}~:
+    \begin{itemize}
+    \item méthode à région de confiance avec transition continue entre
+      une minimisation (plus grande pente) et un quasi-\nom{Newton}
+      (convergence locale)~;
+    \end{itemize}
+  \end{itemize}
+}
+
+\titre{Gestion des contraintes planes}
+\frame{
+  \begin{itemize}
+  \item introduction d'une variable interne supplémentaire
+    (déformation axiale totale)~;
+  \item utilisation de la loi \(2D\)~;
+  \item boucle pour trouver un incrément de déformation totale tel que
+    la contrainte soit nulle en fin de pas~:
+    \[
+    \begin{aligned}
+      \left.\Delta\,\epsilontoz\right.^{(0)}&=-\Frac{1}{E}\left.\sigmaz\right.^{(0)}-\nu\paren{\Delta\,\epsilontox+\Delta\,\epsilontoy} \\
+      \left.\Delta\,\epsilontoz\right.^{(1)}&=\left.\Delta\,\epsilontoz\right.^{(0)}-\Frac{1}{E}\left.\Frac{1}{E}\sigmaz\right.^{(1)}    \\
+      \left.\Delta\,\epsilontoz\right.^{(n)}& \text{ donné par la méthode de la sécante}\\
+    \end{aligned}
+    \]
+  \item critère d'arrêt~:
+    \[
+    \left|\left.\sigmaz\right.^{(n)}\right|<E\,\varepsilon \quad \text{avec} \quad \varepsilon=10^{-12}
+    \]
+  \end{itemize}
+}
+
+\section{Perspectives}
+
+\titre{Perspectives}
+\frame{
+  \begin{itemize}
+  \item ajouts de nouveaux analyseurs spécfiques~:
+    \begin{itemize}
+    \item plasticité isotrope à écrouissage linéaire~;
+    \item plasticité/viscoplasticité isotrope compressible~;
+    \end{itemize}
+  \item tableaux de variables internes en implicite~;
+  \item matrice tangente cohérente~:
+    \begin{itemize}
+    \item facile pour algorithmes spécifiques~;
+    \item pour l'intégration explicite~:
+      \begin{itemize}
+      \item matrice tangente ?
+      \end{itemize}
+    \item pour l'intégration implicite par \nom{Newton}~:
+      \begin{itemize}
+      \item calcul automatique~;
+      \item surcharge par l'utilisateur~;
+      \end{itemize}
+    \item pour l'intégration implicite par \nom{Broyden}~:
+      \begin{itemize}
+      \item ???
+      \end{itemize}
+    \end{itemize}
+  \end{itemize}
+}
+
+\titre{Perspectives, robustesse}
+\frame{
+  \begin{itemize}
+  \item algorithme de \nom{Powell}~;
+  \item résolution en contraintes planes optimisée~:
+    \begin{itemize}
+    \item algorithmes spécifiques~;
+    \item prise en compte dans dans les algorithmes génériques~;
+    \end{itemize}
+  \item à terme, support des grandes déformations~:
+    \begin{itemize}
+    \item grandes rotations, petites déformations (facile)
+    \item déformations logarithmiques?
+    \item problème des dilatations libres...
+    \end{itemize}
+  \end{itemize}
+}
+
+\section{Annexes}
+
+
+\titre{\umat{}++}
+\frame{
+  \begin{itemize}
+  \item il est possible de \og~compléter~\fg{} l'interface \umat{}~:
+    \begin{itemize}
+    \item noms et nombre des propriétés matériaux~;
+    \item noms et nombre des variables internes~;
+    \item noms et nombre des variables externes~;
+    \item nom du fichier source~;
+    \end{itemize}
+  \item définition de paramètres qui ne passent pas par l'appel
+    standard~:
+    \begin{itemize}
+    \item paramètres physiques~;
+    \item valeur des critères de convergence~;
+    \item nombre maximal d'itérations~;
+    \item fonctions supplémentaires pour fixer la valeur des
+      paramètres~;
+    \end{itemize}
+  \end{itemize}
+}
+
+\titre{Portabilité}
+\frame{
+  \begin{itemize}
+  \item \tfel{} est développé sous \linux{}~:
+    \begin{itemize}
+    \item pas de problème de portabilité connu~;
+    \item seule plate-forme officielle.
+    \end{itemize}
+  \item \tfel{} a été porté sous \windows{} (Cygwin/mingw)~:
+    \begin{itemize}
+    \item \mfront{} fonctionne sans soucis mais ne gère pas le
+      processus de compilation~;
+    \end{itemize}
+  \item \tfel{} a été porté sous différents \unix{}~:
+    \begin{itemize}
+    \item {\tt freebsd}, {\tt opensolaris}~;
+    \item pas de problèmes particuliers~;
+    \end{itemize}
+  \end{itemize}
+}
+
+\titre{Compilateurs}
+\frame{
+  \begin{itemize}
+  \item \tfel{} est développé et testé en utilisant les compilateurs
+    suivants~:
+    \begin{itemize}
+    \item g++, GNU, libre, versions 3.4 à 4.7)
+    \item clang++, LLVM, libre, versions 3.0 et 3.2)
+    \item ekopath, PathScale, libre (ou pas)
+    \item icpc, Intel  propriétaire
+    \end{itemize}
+  \end{itemize}
+}
+
+\end{document}
+
+%%% Local Variables: 
+%%% mode: latex
+%%% TeX-master: t
+%%% End: 

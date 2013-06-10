@@ -1,2 +1,2 @@
-SUBDIRS=tex tfel mfront mtest
+SUBDIRS=tex tfel mfront mtest presentations
 EXTRA_DIST=CMakeLists.txt

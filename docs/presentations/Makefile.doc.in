@@ -1,0 +1,14 @@
+note=mfront-presentation
+
+all:
+	TEXMFHOME=@abs_top_srcdir@/docs/tex/texmf        latex  $(note).tex
+	TEXMFHOME=@abs_top_srcdir@/docs/tex/texmf        latex  $(note).tex
+	TEXMFHOME=@abs_top_srcdir@/docs/tex/texmf        latex  $(note).tex
+	TEXMFHOME=@abs_top_srcdir@/docs/tex/texmf        dvips -R0 $(note).dvi -o
+	ps2pdf $(note).ps
+
+clean:
+	-$(RM) $(note).aux $(note).log
+	-$(RM) $(note).out $(note).toc
+	-$(RM) $(note).dvi $(note).ps
+	-$(RM) $(note).pdf

@@ -331,6 +331,9 @@ AC_OUTPUT([debug.sh
 	   docs/mfront/InternalNames.tex
 	   docs/mfront/Champs.tex
            docs/mfront/annexe-orthotropie.tex
+	   docs/presentations/Makefile
+	   docs/presentations/Makefile.doc
+	   docs/presentations/mfront-presentation.tex
 	   docs/tex/Makefile
 	   cmake/Makefile
 	   cmake/modules/Makefile
