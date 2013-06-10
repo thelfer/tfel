@@ -242,6 +242,7 @@ docs/mtest/style.ist -text
 docs/rotation_matrix.tm -text
 docs/tex/CMakeLists.txt -text
 docs/tex/Makefile.am -text
+docs/tex/texmf/bibtex/fr-insa.bst -text
 docs/tex/texmf/ls-R -text
 docs/tex/texmf/tex/images/CEABanner2012.eps -text
 docs/tex/texmf/tex/images/CEABanner2012.svg -text
