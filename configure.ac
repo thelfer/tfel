@@ -389,6 +389,7 @@ AC_OUTPUT([debug.sh
            mfront/tests/behaviours/aster/asterchaboche.mtest
            mfront/tests/behaviours/aster/asterchaboche2.mtest
            mfront/tests/behaviours/aster/astermonocristal.mtest
+           mfront/tests/behaviours/aster/astermonocristal_dd_cfc.mtest
            mfront/tests/behaviours/aster/asterpolycristals.mtest
            mfront/tests/behaviours/aster/asterburger.mtest
            mfront/tests/behaviours/castem/Makefile
@@ -426,6 +427,7 @@ AC_OUTPUT([debug.sh
            mfront/tests/behaviours/castem/castemchaboche.mtest
            mfront/tests/behaviours/castem/castemchaboche2.mtest
            mfront/tests/behaviours/castem/castemmonocristal.mtest
+           mfront/tests/behaviours/castem/castemmonocristal_dd_cfc.mtest
            mfront/tests/behaviours/castem/castempolycristals.mtest
            mfront/tests/behaviours/castem/castemhayhurst.mtest
            mfront/tests/behaviours/castem/castemburger.mtest

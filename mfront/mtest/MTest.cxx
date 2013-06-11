@@ -994,7 +994,7 @@ namespace mfront
       throw(runtime_error(msg));
     }
     const string& h = this->readString(p,this->fileTokens.end());
-    this->readSpecifiedToken("MTest::handleTimes",";",p,
+    this->readSpecifiedToken("MTest::handleModellingHypothesis",";",p,
 			     this->fileTokens.end());
     if(h=="AxisymmetricalGeneralisedPlaneStrain"){
       this->dimension=1u;
@@ -1105,9 +1105,21 @@ namespace mfront
       throw(runtime_error(msg));
     }
     vector<real>::const_iterator pt  = times.begin();
+    real mt(0);
+    while(pt!=times.end()){
+      mt = max(mt,abs(*pt));
+      ++pt;
+    }
+    if(mt<100*numeric_limits<real>::min()){
+      string msg("MTest::handleTimes : maximal "
+		 "absolute value of times is too low");
+      throw(runtime_error(msg));
+    }
+    const real eps = 100*mt*numeric_limits<real>::epsilon();
+    pt  = times.begin();
     vector<real>::const_iterator pt2 = pt+1u;
     while(pt2!=times.end()){
-      if((*pt2<=*pt)||abs(*pt2-*pt)<1.e-3){
+      if((*pt2<=*pt)||abs(*pt2-*pt)<eps){
 	ostringstream msg;
 	msg << "MTest::handleTimes : times '" << *pt2 
 	    << "' is lesser than or too close to  time '"

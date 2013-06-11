@@ -32,6 +32,7 @@ set(mfront_tests_SOURCES
   Chaboche
   Chaboche2
   MonoCristal
+  MonoCristal_DD_CFC
   PolyCristals
   Hayhurst
   Burger)
@@ -95,5 +96,6 @@ test_aster(strainhardeningcreep)
 test_aster(chaboche)
 test_aster(chaboche2)
 test_aster(monocristal)
+test_aster(monocristal_dd_cfc)
 test_aster(polycristals)
 test_aster(burger)

@@ -1211,6 +1211,8 @@ mfront/tests/behaviours/Makefile.am -text
 mfront/tests/behaviours/Mazars.mfront -text
 mfront/tests/behaviours/MonoCristal.mfront -text
 mfront/tests/behaviours/MonoCristalNewtonRaphson.mfront -text
+mfront/tests/behaviours/MonoCristal_DD_CFC.mfront -text
+mfront/tests/behaviours/MonoCristal_DD_CFC_InteractionMatrix.mfront -text
 mfront/tests/behaviours/Norton.mfront -text
 mfront/tests/behaviours/NortonRK.mfront -text
 mfront/tests/behaviours/NortonRK2.mfront -text
@@ -1257,6 +1259,7 @@ mfront/tests/behaviours/aster/asterimplicitnorton_broyden2.mtest.in -text
 mfront/tests/behaviours/aster/asterimplicitorthotropiccreep.mtest.in -text
 mfront/tests/behaviours/aster/astermazars.mtest.in -text
 mfront/tests/behaviours/aster/astermonocristal.mtest.in -text
+mfront/tests/behaviours/aster/astermonocristal_dd_cfc.mtest.in -text
 mfront/tests/behaviours/aster/asternorton.mtest.in -text
 mfront/tests/behaviours/aster/asternorton2.mtest.in -text
 mfront/tests/behaviours/aster/asterorthotropiccreep-rk42.mtest.in -text
@@ -1291,6 +1294,7 @@ mfront/tests/behaviours/castem/castemelasticity9.mtest.in -text
 mfront/tests/behaviours/castem/castemhayhurst.mtest.in -text
 mfront/tests/behaviours/castem/castemmazars.mtest.in -text
 mfront/tests/behaviours/castem/castemmonocristal.mtest.in -text
+mfront/tests/behaviours/castem/castemmonocristal_dd_cfc.mtest.in -text
 mfront/tests/behaviours/castem/castemnorton-euler.mtest.in -text
 mfront/tests/behaviours/castem/castemnorton-rk2.mtest.in -text
 mfront/tests/behaviours/castem/castemnorton-rk4.mtest.in -text
@@ -1314,6 +1318,7 @@ mfront/tests/behaviours/references/elasticity15-aster.ref -text
 mfront/tests/behaviours/references/hayhurst.ref -text
 mfront/tests/behaviours/references/mazars-aster.ref -text
 mfront/tests/behaviours/references/monocristal.ref -text
+mfront/tests/behaviours/references/monocristal_dd_cfc.ref -text
 mfront/tests/behaviours/references/plasticity.ref -text
 mfront/tests/behaviours/references/polycristals.ref -text
 mfront/tests/properties/CMakeLists.txt -text

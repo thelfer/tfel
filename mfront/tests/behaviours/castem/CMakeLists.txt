@@ -36,6 +36,7 @@ set(mfront_tests_SOURCES
   Chaboche
   Chaboche2
   MonoCristal
+  MonoCristal_DD_CFC
   PolyCristals
   Hayhurst
   Burger)
@@ -97,6 +98,7 @@ test_castem(plasticity)
 test_castem(chaboche)
 test_castem(chaboche2)
 test_castem(monocristal)
+test_castem(monocristal_dd_cfc)
 test_castem(polycristals)
 test_castem(hayhurst)
 test_castem(burger)
