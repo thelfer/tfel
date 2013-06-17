@@ -285,6 +285,7 @@ namespace mfront
     this->srcFile << "#include<iostream>\n";
     this->srcFile << "#include<sstream>\n";
     this->srcFile << "#include<cmath>\n";
+    this->srcFile << "#include<algorithm>\n";
     this->srcFile << "#include<cstring>\n";
     this->srcFile << "#include<cstdlib>\n";
     this->srcFile << "#include<cstdio>\n";
@@ -295,9 +296,13 @@ namespace mfront
     this->srcFile << "#ifdef __cplusplus\n";
     this->srcFile << "extern \"C\"{\n";
     this->srcFile << "#endif /* __cplusplus */\n\n";
-    this->srcFile << "PyObject *\n"
-		  << name << "_wrapper(";
-    this->srcFile << "PyObject *,PyObject * args)\n{\n";
+    if(!inputs.empty()){
+      this->srcFile << "PyObject *\n" << name << "_wrapper(";
+      this->srcFile << "PyObject *,PyObject * py_args_)\n{\n";
+    } else {
+      this->srcFile << "PyObject *\n" << name << "_wrapper(";
+      this->srcFile << "PyObject *,PyObject*)\n{\n";
+    }
     this->srcFile << "using namespace std;\n";
     this->srcFile << "typedef double real;\n";
     // material laws
@@ -329,7 +334,7 @@ namespace mfront
 	this->srcFile << "#endif /* PYTHON_NO_BOUNDS_CHECK */\n";
       }
 
-      this->srcFile << "if(!PyArg_ParseTuple(args,\"";
+      this->srcFile << "if(!PyArg_ParseTuple(py_args_,\"";
       for(i=0;i!=inputs.size();++i){
 	this->srcFile << "d";
       }

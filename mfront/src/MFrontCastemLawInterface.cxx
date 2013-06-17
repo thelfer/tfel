@@ -329,6 +329,7 @@ namespace mfront
     this->srcFile << " */\n\n";
     this->srcFile << "#include<iostream>\n";
     this->srcFile << "#include<cmath>\n";
+    this->srcFile << "#include<algorithm>\n";
     this->srcFile << "#include<cstring>\n";
     this->srcFile << "#include<cstdlib>\n";
     if(!includes.empty()){

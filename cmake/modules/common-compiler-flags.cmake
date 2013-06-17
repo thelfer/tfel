@@ -1,8 +1,6 @@
 # This files gather compiler flags that are common to g++, clang and
 # pathCC
 
-include(cmake/modules/compiler.cmake)
-
 tfel_enable_cxx_compiler_flag(COMPILER_WARNINGS "Wall" "W" "Wextra" "pedantic" "Wshadow")
 tfel_enable_cxx_compiler_flag(COMPILER_WARNINGS "Wpointer-arith" "Wcast-qual" "Wcast-align")
 tfel_enable_cxx_compiler_flag(COMPILER_WARNINGS "Wwrite-strings" "Wctor-dtor-privacy" "Wnon-virtual-dtor")

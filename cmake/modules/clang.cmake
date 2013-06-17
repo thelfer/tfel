@@ -1,5 +1,3 @@
-include(cmake/modules/compiler.cmake)
-
 tfel_enable_cxx_compiler_flag(COMPILER_WARNINGS  "Wall" "W" "Wextra" "pedantic" "Wshadow")
 tfel_enable_cxx_compiler_flag(COMPILER_WARNINGS  "fvisibility-inlines-hidden")
 tfel_enable_cxx_compiler_flag(COMPILER_WARNINGS  "Wpointer-arith" "Wcast-qual" "Wcast-align")
@@ -16,7 +14,6 @@ tfel_enable_cxx_compiler_flag(OPTIMISATION_FLAGS "march=native")
 set(OPTIMISATION_FLAGS "-DNO_RUNTIME_CHECK_BOUNDS ${OPTIMISATION_FLAGS}")
 
 if((NOT CMAKE_BUILD_TYPE) OR (CMAKE_BUILD_TYPE STREQUAL "Release"))
-  add_definitions("-O2 -DNDEBUG")
   set(OPTIMISATION_FLAGS "-O2 -DNDEBUG ${OPTIMISATION_FLAGS}")
 endif(CMAKE_BUILD_TYPE STREQUAL "Release")
 

@@ -363,37 +363,31 @@ namespace mfront{
 			    "Expected body of function.");
     currentLine = this->current->line;
     newLine=true;
-    if(this->debugMode){
+    if(!this->debugMode){
       this->f.body  +="#line " + toString(currentLine) + " \"" + this->fileName + "\"\n";
-      this->f.cbody +="#line " + toString(currentLine) + " \"" + this->fileName + "\"\n";
     }
     for(;(this->current!=this->fileTokens.end())&&
 	  (openedBrackets!=0);++(this->current)){
       if(this->current->line!=currentLine){
 	currentLine=this->current->line;
 	f.body  += "\n";
-	f.cbody += "\n";
-	if(this->debugMode){
+	if(!this->debugMode){
 	  this->f.body  +="#line " + toString(currentLine) + " \"" + this->fileName + "\"\n";
-	  this->f.cbody +="#line " + toString(currentLine) + " \"" + this->fileName + "\"\n";
 	}
 	newLine = true;
       } 
       if(this->current->value=="{"){
 	++openedBrackets;
 	this->f.body  +="{";
-	this->f.cbody +="{";
 	newInstruction=true;
       } else if(this->current->value=="}"){
 	--openedBrackets;
 	if(openedBrackets!=0){
 	  this->f.body  +="}";
-	  this->f.cbody +="}";
 	}
       } else if(this->current->value=="("){
 	++openedParenthesis;
 	this->f.body  +="(";
-	this->f.cbody +="(";
       } else if(this->current->value==")"){
 	if(openedParenthesis==0){
 	  this->throwRuntimeError("MFrontMaterialLawParser::treatFunction",
@@ -401,15 +395,12 @@ namespace mfront{
 	}
 	--openedParenthesis;
 	this->f.body  += ")";
-	this->f.cbody += ")";
       } else if(this->current->value==";"){
 	this->f.body  += ";";
-	this->f.cbody += ";";
 	newInstruction = true;
       } else {
 	if(!newLine){
 	  this->f.body  += " ";
-	  this->f.cbody += " ";
 	}
 	if(this->varNames.find(this->current->value)!=this->varNames.end()){
 	  treated = false;
@@ -447,7 +438,6 @@ namespace mfront{
 	      }
 	      this->f.modified = true;
 	      this->f.body  += var + " " + op + " ";
-	      this->f.cbody += var + " " + op + " ";
 	      treated = true;
 	    } else {
 	      --(this->current);
@@ -455,11 +445,9 @@ namespace mfront{
 	  }
 	  if(!treated){
 	    this->f.body  += this->current->value;
-	    this->f.cbody += this->current->value;
 	  }
 	} else {
 	  this->f.body  += this->current->value;
-	  this->f.cbody += this->current->value;
 	}
 	newInstruction = false;
       }

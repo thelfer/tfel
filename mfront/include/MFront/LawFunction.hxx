@@ -16,7 +16,6 @@ namespace mfront
   struct TFEL_VISIBILITY_EXPORT LawFunction
   {
     std::string body;
-    std::string cbody;
     unsigned short line;
     bool modified;
   }; // end of struct LawFunction

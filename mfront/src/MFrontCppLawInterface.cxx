@@ -284,6 +284,7 @@ namespace mfront
 
     this->headerFile << "#include<ostream>\n";
     this->headerFile << "#include<cmath>\n";
+    this->headerFile << "#include<algorithm>\n";
     this->headerFile << "#include<stdexcept>\n\n";
     this->headerFile << "#include<functional>\n\n";
     if(!includes.empty()){
@@ -321,9 +322,9 @@ namespace mfront
     if(inputs.empty()){
       this->headerFile << "//! nested typedef to make " << name << " model an adaptable generator (STL compliance)\n\n";
       if(useTemplate){
-	this->headerFile << "typedef real result_type\n\n";
+	this->headerFile << "typedef real result_type;\n\n";
       } else {
-	this->headerFile << "typedef double result_type\n\n";
+	this->headerFile << "typedef double result_type;\n\n";
       }
     } 
     this->headerFile << "//! Default constructor\n";
@@ -1002,7 +1003,11 @@ namespace mfront
     if(useTemplate){
       this->srcFile << "<real>";
     }
-    this->srcFile << "& src){\n";
+    if(!params.empty()){
+      this->srcFile << "& src){\n";
+    } else {
+      this->srcFile << "&){\n";
+    }
     for(p=params.begin();p!=params.end();++p){
       this->srcFile << "os << \"" << *p << " : \" << src.get" << *p << "() << std::endl;\n";
     }

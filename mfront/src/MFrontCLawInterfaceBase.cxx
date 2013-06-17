@@ -263,6 +263,7 @@ namespace mfront
     }
     this->srcFile << " */\n\n";
     this->srcFile << "#include<cmath>\n\n";
+    this->srcFile << "#include<algorithm>\n\n";
     if(!includes.empty()){
       this->srcFile << includes << endl << endl;
     }

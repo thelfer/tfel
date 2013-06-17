@@ -1,5 +1,3 @@
-include(cmake/modules/compiler.cmake)
-
 tfel_enable_cxx_compiler_flag(COMPILER_WARNINGS  "Wall")
 
 # 383 : value copied to temporary, reference to temporary used
@@ -25,7 +23,6 @@ tfel_enable_cxx_compiler_flag(CMAKE_CXX_FLAGS    "ipo")
 set(OPTIMISATION_FLAGS "-DNO_RUNTIME_CHECK_BOUNDS ${OPTIMISATION_FLAGS}")
 
 if((NOT CMAKE_BUILD_TYPE) OR (CMAKE_BUILD_TYPE STREQUAL "Release"))
-  add_definitions("-O3 -DNDEBUG")
   set(OPTIMISATION_FLAGS "-O3 -DNDEBUG ${OPTIMISATION_FLAGS}")
 endif((NOT CMAKE_BUILD_TYPE) OR (CMAKE_BUILD_TYPE STREQUAL "Release"))
 
