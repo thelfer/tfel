@@ -190,20 +190,24 @@ namespace mfront{
 			    "Expected parameter name.");
     parameter = this->current->value;
     ++(this->current);
-    this->readSpecifiedToken("MFrontMaterialLawParser::treatParameter","=");
     this->checkNotEndOfFile("MFrontMaterialLawParser::treatParameter",
-			    "Expected to read value of variable '"+parameter+"'");
-    istringstream tmp(this->current->value);
-    tmp >> value;
-    if(!tmp&&(!tmp.eof())){
-      this->throwRuntimeError("MFrontMaterialLawParser::treatParameter",
-			      "Could not read value of variable '"+parameter+"'.");
+			    "unexpected end of file");
+    if(this->current->value=="="){
+      this->readSpecifiedToken("MFrontMaterialLawParser::treatParameter","=");
+      this->checkNotEndOfFile("MFrontMaterialLawParser::treatParameter",
+			      "Expected to read value of variable '"+parameter+"'");
+      istringstream tmp(this->current->value);
+      tmp >> value;
+      if(!tmp&&(!tmp.eof())){
+	this->throwRuntimeError("MFrontMaterialLawParser::treatParameter",
+				"Could not read value of variable '"+parameter+"'.");
+      }
+      ++(this->current);
+      this->parametersValues.insert(make_pair(parameter,value));
     }
-    ++(this->current);
     this->readSpecifiedToken("MFrontMaterialLawParser::treatParameter",";");
     this->registerVariable(parameter);
     this->parameters.push_back(parameter);
-    this->parametersValues.insert(make_pair(parameter,value));
   } // MFrontMaterialLawParser::treatParameter
 
   void
@@ -518,11 +522,12 @@ namespace mfront{
 			    "Expected method name.");
     methodName = this->current->value;
     if((methodName!="setGlossaryName")&&
-       (methodName!="setEntryName")){
+       (methodName!="setEntryName")&&
+       (methodName!="setDefaultValue")){
       this->throwRuntimeError("MFrontMaterialLawParser::treatMethod",
-			      "unknown method '"+methodName+
-			      "' valid methods for input fields are "
-			      "'setGlossaryName' or 'setEntryName'");
+			      "unknown method '"+methodName+"' "
+			      "valid methods are 'setGlossaryName', "
+			      "'setEntryName' and 'setDefaultValue'");
     }
     ++(this->current);
     this->readSpecifiedToken("MFrontMaterialLawParser::treatMethod","(");
@@ -576,6 +581,24 @@ namespace mfront{
 	this->throwRuntimeError("MFrontMaterialLawParser::treatMethod",
 				"Entry file name for field '"+ this->currentVar +"' already defined.");
       }
+    } else if(methodName=="setDefaultValue"){
+      if(find(this->parameters.begin(),this->parameters.end(),this->currentVar)==this->parameters.end()){
+	this->throwRuntimeError("MFrontMaterialLawParser::treatMethod",
+				"method setDefaultValue is reserved for paramaters.");
+      }
+      double value;
+      this->checkNotEndOfFile("MFrontMaterialLawParser::treatMethod",
+			      "Expected to read value of variable '"+this->currentVar+"'");
+      istringstream tmp(this->current->value);
+      tmp >> value;
+      if(!tmp&&(!tmp.eof())){
+	this->throwRuntimeError("MFrontMaterialLawParser::treatMethod",
+				"Could not read value of variable '"+this->currentVar+"'.");
+      }
+      if(!this->parametersValues.insert(make_pair(this->currentVar,value)).second){
+	this->throwRuntimeError("MFrontMaterialLawParser::treatMethod",
+				"default value already defined for variable '"+this->currentVar+"'.");
+      }
     } else {
       this->throwRuntimeError("MFrontMaterialLawParser::treatMethod",
 			      "Internal error (untreated method '"+ methodName +"'");
@@ -612,7 +635,8 @@ namespace mfront{
     while(this->current != this->fileTokens.end()){
       p = this->callBacks.find(this->current->value);
       if(p==this->callBacks.end()){
-	VarContainer::const_iterator p2;
+	VarContainer::const_iterator   p2;
+	vector<string>::const_iterator p3;
 	bool found = false;
 	if(this->output==this->current->value){
 	  found = true;
@@ -626,6 +650,15 @@ namespace mfront{
 	    handler = &MFrontMaterialLawParser::treatMethod;
 	  } else {
 	    ++p2;
+	  }
+	}
+	for(p3=this->parameters.begin();(p3!=this->parameters.end())&&(!found);){
+	  if(*p3==this->current->value){
+	    found = true;
+	    this->currentVar = this->current->value;
+	    handler = &MFrontMaterialLawParser::treatMethod;
+	  } else {
+	    ++p3;
 	  }
 	}
 	if(!found){
