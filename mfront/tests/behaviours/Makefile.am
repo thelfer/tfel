@@ -26,6 +26,7 @@ EXTRA_DIST=CMakeLists.txt                              \
            OrthotropicElastic.mfront                   \
            StrainHardeningCreep.mfront                 \
            Mazars.mfront                               \
+           Lorentz.mfront                              \
            Chaboche.mfront                             \
            Chaboche2.mfront                            \
 	   MonoCristal.mfront                          \

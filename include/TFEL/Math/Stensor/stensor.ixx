@@ -246,34 +246,38 @@ namespace tfel{
 
     // computeEigenValues
     template<unsigned short N,typename T, template<unsigned short,typename> class Storage>
-    void stensor<N,T,Storage>::computeEigenValues(T& vp1,T& vp2,T& vp3) const 
+    void stensor<N,T,Storage>::computeEigenValues(T& vp1,T& vp2,T& vp3,
+						  const bool b) const 
     {
       TFEL_STATIC_ASSERT(tfel::typetraits::IsFundamentalNumericType<typename tfel::typetraits::BaseType<T>::type>::cond);
       TFEL_STATIC_ASSERT(tfel::typetraits::IsReal<typename tfel::typetraits::BaseType<T>::type>::cond);
       TFEL_STATIC_ASSERT((tfel::typetraits::IsSafelyReinterpretCastableTo<T,typename tfel::typetraits::BaseType<T>::type>::cond));
-      tfel::math::internals::StensorComputeEigenValues_<N>::exe(reinterpret_cast<const typename tfel::typetraits::BaseType<T>::type*>(this->v),reinterpret_cast<typename tfel::typetraits::BaseType<T>::type&>(vp1),reinterpret_cast<typename tfel::typetraits::BaseType<T>::type&>(vp2),reinterpret_cast<typename tfel::typetraits::BaseType<T>::type&>(vp3));
+      tfel::math::internals::StensorComputeEigenValues_<N>::exe(reinterpret_cast<const typename tfel::typetraits::BaseType<T>::type*>(this->v),reinterpret_cast<typename tfel::typetraits::BaseType<T>::type&>(vp1),reinterpret_cast<typename tfel::typetraits::BaseType<T>::type&>(vp2),reinterpret_cast<typename tfel::typetraits::BaseType<T>::type&>(vp3),b);
     }
 
     // computeEigenValues
     template<unsigned short N,typename T, template<unsigned short,typename> class Storage>
-    void stensor<N,T,Storage>::computeEigenValues(tvector<3u,T>& vp) const 
+    void stensor<N,T,Storage>::computeEigenValues(tvector<3u,T>& vp,
+						  const bool b) const 
     {
       TFEL_STATIC_ASSERT(tfel::typetraits::IsFundamentalNumericType<typename tfel::typetraits::BaseType<T>::type>::cond);
       TFEL_STATIC_ASSERT(tfel::typetraits::IsReal<typename tfel::typetraits::BaseType<T>::type>::cond);
       TFEL_STATIC_ASSERT((tfel::typetraits::IsSafelyReinterpretCastableTo<T,typename tfel::typetraits::BaseType<T>::type>::cond));
-      tfel::math::internals::StensorComputeEigenValues_<N>::exe(reinterpret_cast<const typename tfel::typetraits::BaseType<T>::type* const>(this->v),reinterpret_cast<typename tfel::typetraits::BaseType<T>::type&>(vp(0)),reinterpret_cast<typename tfel::typetraits::BaseType<T>::type&>(vp(1)),reinterpret_cast<typename tfel::typetraits::BaseType<T>::type&>(vp(2)));
+      tfel::math::internals::StensorComputeEigenValues_<N>::exe(reinterpret_cast<const typename tfel::typetraits::BaseType<T>::type* const>(this->v),reinterpret_cast<typename tfel::typetraits::BaseType<T>::type&>(vp(0)),reinterpret_cast<typename tfel::typetraits::BaseType<T>::type&>(vp(1)),reinterpret_cast<typename tfel::typetraits::BaseType<T>::type&>(vp(2)),b);
     }
 
 
     // computeEigenVectors
     template<unsigned short N,typename T, 
 	     template<unsigned short,typename> class Storage>
-    bool stensor<N,T,Storage>::computeEigenVectors(tvector<3u,T>& vp,tmatrix<3u,3u,typename tfel::typetraits::BaseType<T>::type>& vec) const 
+    bool stensor<N,T,Storage>::computeEigenVectors(tvector<3u,T>& vp,
+						   tmatrix<3u,3u,typename tfel::typetraits::BaseType<T>::type>& vec,
+						   const bool b) const 
     {
       TFEL_STATIC_ASSERT(tfel::typetraits::IsFundamentalNumericType<typename tfel::typetraits::BaseType<T>::type>::cond);
       TFEL_STATIC_ASSERT(tfel::typetraits::IsReal<typename tfel::typetraits::BaseType<T>::type>::cond);
       TFEL_STATIC_ASSERT((tfel::typetraits::IsSafelyReinterpretCastableTo<T,typename tfel::typetraits::BaseType<T>::type>::cond));
-      return tfel::math::internals::StensorComputeEigenVectors_<N>::exe(reinterpret_cast<const typename tfel::typetraits::BaseType<T>::type*>(this->v),reinterpret_cast<tvector<3u,typename tfel::typetraits::BaseType<T>::type>&>(vp),vec);
+      return tfel::math::internals::StensorComputeEigenVectors_<N>::exe(reinterpret_cast<const typename tfel::typetraits::BaseType<T>::type*>(this->v),reinterpret_cast<tvector<3u,typename tfel::typetraits::BaseType<T>::type>&>(vp),vec,b);
     }
 
     // ChangeBasis
@@ -396,7 +400,8 @@ namespace tfel{
 
     template<typename T,
 	     template<unsigned short,typename> class Storage>
-    T tresca(const stensor<1u,T,Storage>& s)
+    T tresca(const stensor<1u,T,Storage>& s,
+	     const bool)
     {
       using namespace std;
       const T sd1 = abs(s[0]-s[1]);
@@ -410,13 +415,14 @@ namespace tfel{
     template<unsigned short N,
 	     typename T,
 	     template<unsigned short,typename> class Storage>
-    T tresca(const stensor<N,T,Storage>& s)
+    T tresca(const stensor<N,T,Storage>& s,
+	     const bool b)
     {
       using namespace std;
       T s1;
       T s2;
       T s3;
-      s.computeEigenValues(s1,s2,s3);
+      s.computeEigenValues(s1,s2,s3,b);
       const T sd1 = abs(s1-s2);
       const T sd2 = abs(s1-s3);
       const T sd3 = abs(s3-s2);

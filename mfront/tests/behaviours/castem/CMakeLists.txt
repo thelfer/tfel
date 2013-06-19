@@ -32,6 +32,7 @@ set(mfront_tests_SOURCES
   ImplicitOrthotropicCreep
   OrthotropicElastic
   StrainHardeningCreep
+  Lorentz
   Mazars
   Chaboche
   Chaboche2
@@ -80,6 +81,7 @@ test_castem(elasticity13)
 test_castem(elasticity14)
 test_castem(elasticity15)
 test_castem(elasticity16)
+test_castem(lorentz)
 test_castem(mazars)
 test_castem(norton)
 test_castem(norton2)

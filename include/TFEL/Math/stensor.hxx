@@ -302,18 +302,27 @@ namespace tfel{
 
       /*!
        * compute eigenvalues
+       * \param[in] b  : refine eigenvalues
        */
-      void computeEigenValues(T& vp1,T& vp2,T& vp3) const;
+      void computeEigenValues(T&,T&,T&,
+			      const bool = false) const;
 
       /*!
        * compute eigenvalues
+       * \param[in] b  : refine eigenvalues
        */
-      void computeEigenValues(tvector<3u,T>&) const;
+      void computeEigenValues(tvector<3u,T>&,
+			      const bool = false) const;
 
       /*!
        * compute eigenvectors and eigenvalues 
+       * \param[in] vp : eigenvalues
+       * \param[in] m  : rotation matrix
+       * \param[in] b  : refine eigenvalues
        */
-      bool computeEigenVectors(tvector<3u,T>&,tmatrix<3u,3u,typename tfel::typetraits::BaseType<T>::type>&) const;
+      bool computeEigenVectors(tvector<3u,T>&,
+			       tmatrix<3u,3u,typename tfel::typetraits::BaseType<T>::type>&,
+			       const bool = false) const;
     
       /*!
        * change basis
@@ -426,7 +435,8 @@ namespace tfel{
     template<unsigned short N,
 	     typename T,
 	     template<unsigned short,typename> class Storage>
-    T tresca(const stensor<N,T,Storage>&);
+    T tresca(const stensor<N,T,Storage>&,
+	     const bool = false);
     
     /*!
      * compute the tresca stress
@@ -438,7 +448,8 @@ namespace tfel{
      */
     template<typename T,
 	     template<unsigned short,typename> class Storage>
-    T tresca(const stensor<1u,T,Storage>&);
+    T tresca(const stensor<1u,T,Storage>&,
+	     const bool = false);
         
   } // end of namespace math
 

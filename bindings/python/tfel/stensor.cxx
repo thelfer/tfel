@@ -57,14 +57,22 @@ static void declarestensor(const char * const n)
 
 }
 
+template<unsigned short N>
+static double
+stensor_tresca(const tfel::math::stensor<N,double>& s)
+{
+  using namespace tfel::math;
+  return tresca(s);
+}
+
 void
 declarestensor()
 {
   using namespace boost::python;
   using namespace tfel::math;
-  double (*tresca1D)(const stensor<1u,double>&) = tresca;
-  double (*tresca2D)(const stensor<2u,double>&) = tresca;
-  double (*tresca3D)(const stensor<3u,double>&) = tresca;
+  double (*tresca1D)(const stensor<1u,double>&) = stensor_tresca<1u>;
+  double (*tresca2D)(const stensor<2u,double>&) = stensor_tresca<2u>;
+  double (*tresca3D)(const stensor<3u,double>&) = stensor_tresca<3u>;
   double (*sigmaeq1D)(const stensor<1u,double>&) = sigmaeq;
   double (*sigmaeq2D)(const stensor<2u,double>&) = sigmaeq;
   double (*sigmaeq3D)(const stensor<3u,double>&) = sigmaeq;

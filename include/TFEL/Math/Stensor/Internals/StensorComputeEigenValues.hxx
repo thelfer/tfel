@@ -29,7 +29,7 @@ namespace tfel{
       {
 	template<typename T>
 	static TFEL_MATH_INLINE2 void exe(const T* const v,T& vp1,T& vp2,T& vp3,
-					  const bool = false)
+					  const bool)
 	{
 	  TFEL_STATIC_ASSERT(tfel::typetraits::IsFundamentalNumericType<T>::cond);
 	  TFEL_STATIC_ASSERT(tfel::typetraits::IsReal<T>::cond);
@@ -45,7 +45,7 @@ namespace tfel{
 	template<typename T>
 	static TFEL_MATH_INLINE2 void exe(const T* const v,
 					  T& vp1,T& vp2,T& vp3,
-					  const bool = false)
+					  const bool)
 	{
 	  TFEL_STATIC_ASSERT(tfel::typetraits::IsFundamentalNumericType<T>::cond);
 	  TFEL_STATIC_ASSERT(tfel::typetraits::IsReal<T>::cond);
@@ -63,7 +63,7 @@ namespace tfel{
       {
 	template<typename T>
 	static TFEL_MATH_INLINE2 void exe(const T* const v,T& vp1,T& vp2,T& vp3,
-					  const bool b = false)
+					  const bool b)
 	{
 	  TFEL_STATIC_ASSERT(tfel::typetraits::IsFundamentalNumericType<T>::cond);
 	  TFEL_STATIC_ASSERT(tfel::typetraits::IsReal<T>::cond);

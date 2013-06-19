@@ -1207,6 +1207,7 @@ mfront/tests/behaviours/ImplicitNorton2.mfront -text
 mfront/tests/behaviours/ImplicitNorton_Broyden.mfront -text
 mfront/tests/behaviours/ImplicitNorton_Broyden2.mfront -text
 mfront/tests/behaviours/ImplicitOrthotropicCreep.mfront -text
+mfront/tests/behaviours/Lorentz.mfront -text
 mfront/tests/behaviours/Makefile.am -text
 mfront/tests/behaviours/Mazars.mfront -text
 mfront/tests/behaviours/MonoCristal.mfront -text
@@ -1257,6 +1258,7 @@ mfront/tests/behaviours/aster/asterimplicitnorton2.mtest.in -text
 mfront/tests/behaviours/aster/asterimplicitnorton_broyden.mtest.in -text
 mfront/tests/behaviours/aster/asterimplicitnorton_broyden2.mtest.in -text
 mfront/tests/behaviours/aster/asterimplicitorthotropiccreep.mtest.in -text
+mfront/tests/behaviours/aster/asterlorentz.mtest.in -text
 mfront/tests/behaviours/aster/astermazars.mtest.in -text
 mfront/tests/behaviours/aster/astermonocristal.mtest.in -text
 mfront/tests/behaviours/aster/astermonocristal_dd_cfc.mtest.in -text
@@ -1292,6 +1294,7 @@ mfront/tests/behaviours/castem/castemelasticity7.mtest.in -text
 mfront/tests/behaviours/castem/castemelasticity8.mtest.in -text
 mfront/tests/behaviours/castem/castemelasticity9.mtest.in -text
 mfront/tests/behaviours/castem/castemhayhurst.mtest.in -text
+mfront/tests/behaviours/castem/castemlorentz.mtest.in -text
 mfront/tests/behaviours/castem/castemmazars.mtest.in -text
 mfront/tests/behaviours/castem/castemmonocristal.mtest.in -text
 mfront/tests/behaviours/castem/castemmonocristal_dd_cfc.mtest.in -text

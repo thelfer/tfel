@@ -29,6 +29,7 @@ set(mfront_tests_SOURCES
   ImplicitNorton_Broyden2
   StrainHardeningCreep
   Mazars
+  Lorentz
   Chaboche
   Chaboche2
   MonoCristal
@@ -77,6 +78,7 @@ test_aster(elasticity14)
 test_aster(elasticity15)
 test_aster(elasticity16)
 test_aster(mazars)
+test_aster(lorentz)
 test_aster(norton)
 test_aster(norton2)
 test_aster(stressrelaxation)

@@ -373,6 +373,7 @@ AC_OUTPUT([debug.sh
            mfront/tests/behaviours/aster/asterelasticity15.mtest
            mfront/tests/behaviours/aster/asterelasticity16.mtest
            mfront/tests/behaviours/aster/astermazars.mtest
+           mfront/tests/behaviours/aster/asterlorentz.mtest
            mfront/tests/behaviours/aster/asternorton.mtest
            mfront/tests/behaviours/aster/asternorton2.mtest
            mfront/tests/behaviours/aster/asterstressrelaxation.mtest
@@ -410,6 +411,7 @@ AC_OUTPUT([debug.sh
            mfront/tests/behaviours/castem/castemelasticity15.mtest
            mfront/tests/behaviours/castem/castemelasticity16.mtest
            mfront/tests/behaviours/castem/castemmazars.mtest
+           mfront/tests/behaviours/castem/castemlorentz.mtest
            mfront/tests/behaviours/castem/castemnorton.mtest
            mfront/tests/behaviours/castem/castemnorton2.mtest
            mfront/tests/behaviours/castem/castemnortonrk2.mtest

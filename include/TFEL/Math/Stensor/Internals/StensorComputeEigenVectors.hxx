@@ -18,10 +18,6 @@
 #include"TFEL/Math/tmatrix.hxx"
 #include"TFEL/Math/stensor.hxx"
 
-#ifndef M_SQRT2
-#define M_SQRT2 1.41421356237309504880
-#endif
-
 namespace tfel{
 
   namespace math {
@@ -36,7 +32,8 @@ namespace tfel{
       {
       public:
 	template<typename T>
-	static bool exe(const T* const s,tfel::math::tvector<3u,T>& vp,tfel::math::tmatrix<3u,3u,T>& vec)
+	static bool exe(const T* const s,tfel::math::tvector<3u,T>& vp,tfel::math::tmatrix<3u,3u,T>& vec,
+			const bool)
 	{
 	  TFEL_STATIC_ASSERT(tfel::typetraits::IsFundamentalNumericType<T>::cond);
 	  TFEL_STATIC_ASSERT(tfel::typetraits::IsReal<T>::cond);
@@ -59,7 +56,7 @@ namespace tfel{
 	  TFEL_STATIC_ASSERT(tfel::typetraits::IsFundamentalNumericType<T>::cond);
 	  TFEL_STATIC_ASSERT(tfel::typetraits::IsReal<T>::cond);
 
-	  static const T M1_sqrt2  = 1.f/std::sqrt(static_cast<T>(2.)); 
+	  static const T M1_sqrt2  = T(1)/std::sqrt(T(2.)); 
 	  
 	  T tmp;
 	  T y0;
@@ -105,7 +102,6 @@ namespace tfel{
 	{
 	  TFEL_STATIC_ASSERT(tfel::typetraits::IsFundamentalNumericType<T>::cond);
 	  TFEL_STATIC_ASSERT(tfel::typetraits::IsReal<T>::cond);
-
 	  T tr    = s0 + s1;
 	  T tmp   = s0 - s1;
 	  T delta = tmp*tmp*0.25f+0.5f*s3*s3;
@@ -151,7 +147,10 @@ namespace tfel{
 
       public:
 	template<typename T>
-	static bool exe(const T* const s,tfel::math::tvector<3u,T>& vp,tfel::math::tmatrix<3u,3u,T>& vec)
+	static bool exe(const T* const s,
+			tfel::math::tvector<3u,T>& vp,tfel::
+			math::tmatrix<3u,3u,T>& vec,
+			const bool)
 	{
 	  TFEL_STATIC_ASSERT(tfel::typetraits::IsFundamentalNumericType<T>::cond);
 	  TFEL_STATIC_ASSERT(tfel::typetraits::IsReal<T>::cond);
@@ -219,22 +218,6 @@ namespace tfel{
 	    }
 	    return tmp2/tmp;
 	  }
-	}
-
-	template<typename T>
-	static void solve2D(const T a,const T b,const T c,const T u,const T v,T& x,T& y)
-	{
-	  TFEL_STATIC_ASSERT(tfel::typetraits::IsFundamentalNumericType<T>::cond);
-	  TFEL_STATIC_ASSERT(tfel::typetraits::IsReal<T>::cond);
-
-	  assert(std::abs(2.*a*b-c*c)>10*std::numeric_limits<double>::min());
-	  T A       = static_cast<T>(M_SQRT2)*a;
-	  T B       = static_cast<T>(M_SQRT2)*b;
-	  T inv_det = (static_cast<T>(1.))/(A*B-c*c);
-
-	  x = inv_det*(B*u-c*v);
-	  y = inv_det*(A*v-c*u);
-
 	}
 
 	template<typename T>
@@ -383,84 +366,58 @@ namespace tfel{
 	template<typename T>
 	static bool computeEigenVector(const T* const src,const T vp, T& v0, T&v1, T&v2)
 	{
+	  using namespace std;
 	  TFEL_STATIC_ASSERT(tfel::typetraits::IsFundamentalNumericType<T>::cond);
 	  TFEL_STATIC_ASSERT(tfel::typetraits::IsReal<T>::cond);
-
 	  // Assume that vp is a single eigenvalue
-
-	  tfel::math::stensor<3,T,tfel::math::StensorStatic> s;
-	  s(0) = src[0]-vp; 
-	  s(1) = src[1]-vp; 
-	  s(2) = src[2]-vp; 
-	  s(3) = src[3]; 
-	  s(4) = src[4]; 
-	  s(5) = src[5]; 
-	  T tmp;
-
-	  T cond1 = conditionning_number(s(0),s(1),s(3));
-	  T cond2 = conditionning_number(s(0),s(2),s(4));
-	  T cond3 = conditionning_number(s(1),s(2),s(5));
-  
-	  if(cond1<cond2){
-	    if(cond3<cond1){
-	      // cond 3 is min
-	      v0=static_cast<T>(1.);
-	      solve2D(s(1),s(2),s(5),-s(3),-s(4),v1,v2);
-	    } else{
-	      // cond 1 is min
-	      v2=static_cast<T>(1.);
-	      solve2D(s(0),s(1),s(3),-s(4),-s(5),v0,v1);
-	    }
-	  } else if (cond3 > cond2){
-	    // cond2 is min
-	    v1=static_cast<T>(1.);
-	    solve2D(s(0),s(2),s(4),-s(3),-s(5),v0,v2);    
+	  static const T M1_sqrt2  = T(1)/std::sqrt(T(2)); 
+	  const T a = src[0]-vp;
+	  const T b = src[3]*M1_sqrt2;
+	  const T c = src[4]*M1_sqrt2;
+	  const T d = src[1]-vp;
+	  const T e = src[5]*M1_sqrt2;
+	  const T f = src[2]-vp;
+	  const T det3=a*d-b*b;
+	  const T det2=a*f-c*c;
+	  const T det1=d*f-e*e;
+	  if ((abs(det3)>=abs(det1))&&
+	      (abs(det3)>=abs(det2))){
+	    v0=(b*e-c*d)/det3;
+	    v1=(b*c-a*e)/det3;
+	    v2=T(1);
+	  } else if((abs(det1)>=abs(det2))&&
+		    (abs(det1)>=abs(det3))){
+	    v0=T(1);
+	    v1=(c*e-b*f)/det1;
+	    v2=(b*e-c*d)/det1;
 	  } else {
-	    // cond 3 is min
-	    v0=static_cast<T>(1.);
-	    solve2D(s(1),s(2),s(5),-s(3),-s(4),v1,v2);    
+	    v0=(c*e-b*f)/det2;
+	    v1=T(1);
+	    v2=(b*c-a*e)/det2;
 	  }
-
-	  tmp = norm(v0,v1,v2);
-	  v0/=tmp;
-	  v1/=tmp;
-	  v2/=tmp;
-  
-	  return true;
-
+	  const T nr = norm(v0,v1,v2);
+	  v0/=nr;
+	  v1/=nr;
+	  v2/=nr;
+  	  return true;
 	}
 
       public:
 
 
 	template<typename T>
-	static bool exe(const T* const s,tfel::math::tvector<3u,T>& vp,tfel::math::tmatrix<3u,3u,T>& vec)
+	static bool exe(const T* const s,tfel::math::tvector<3u,T>& vp,tfel::math::tmatrix<3u,3u,T>& vec,
+			const bool b)
 	{
+	  using namespace std;
 	  TFEL_STATIC_ASSERT(tfel::typetraits::IsFundamentalNumericType<T>::cond);
 	  TFEL_STATIC_ASSERT(tfel::typetraits::IsReal<T>::cond);
-	  static const T rel_prec = 1000*std::numeric_limits<T>::epsilon();
-
-	  T prec;
-
-	  StensorComputeEigenValues_<3u>::exe(s,vp(0),vp(1),vp(2));
-
-	  if(std::abs(vp(0))>std::abs(vp(1))){
-	    if(std::abs(vp(0))>std::abs(vp(2))){
-	      //vp(0) is max
-	      prec = std::max(std::abs(vp(0))*rel_prec,std::numeric_limits<T>::min());
-	    } else {
-	      //vp(2) is max
-	      prec = std::max(std::abs(vp(2))*rel_prec,std::numeric_limits<T>::min());
-	    }
-	  } else if(vp(1)>vp(2)){
-	    //vp(1) is max
-	    prec = std::max(std::abs(vp(1))*rel_prec,std::numeric_limits<T>::min());
-	  } else{
-	    //vp(2) is max
-	    prec = std::max(std::abs(vp(2))*rel_prec,std::numeric_limits<T>::min());
-	  }
-
-	  if((std::abs(vp(0)-vp(1))<=prec)&&(std::abs(vp(0)-vp(2))<=prec)){
+	  static const T rel_prec = 100*std::numeric_limits<T>::epsilon();
+	  StensorComputeEigenValues_<3u>::exe(s,vp(0),vp(1),vp(2),b);
+	  const T mvp  = max(max(abs(vp(0)),abs(vp(1))),abs(vp(2)));
+	  const T prec = max(mvp*rel_prec,100*std::numeric_limits<T>::min());
+	  if((std::abs(vp(0)-vp(1))<=prec)&&
+	     (std::abs(vp(0)-vp(2))<=prec)){
 	    // all eigenvalues are equal
 	    vec = tmatrix<3u,3u,T>::Id();
 #ifdef PARANOIC_CHECK
@@ -469,13 +426,13 @@ namespace tfel{
 	    return true;
 #endif
 	  }
-
-	  if((std::abs(vp(0)-vp(1))>prec)&&(std::abs(vp(0)-vp(2))>prec)){
+	  if((abs(vp(0)-vp(1))>prec)&&
+	     (abs(vp(0)-vp(2))>prec)){
 	    // vp0 is single
 	    if(computeEigenVector(s,vp(0),vec(0,0),vec(1,0),vec(2,0))==false){
 	      return false;
 	    }
-	    if(std::abs(vp(1)-vp(2))>prec){
+	    if(abs(vp(1)-vp(2))>prec){
 	      //vp1 is single
 	      if(computeEigenVector(s,vp(1),vec(0,1),vec(1,1),vec(2,1))==false){
 		return false;
@@ -495,9 +452,10 @@ namespace tfel{
 #else
 	    return true;
 #endif
-	  } else if((std::abs(vp(1)-vp(0))>prec)&&(std::abs(vp(1)-vp(2))>prec)){
+	  } else if((abs(vp(1)-vp(0))>prec)&&
+		    (abs(vp(1)-vp(2))>prec)){
 	    // vp1 is single, vp0 and vp2 are equal
-	    assert(std::abs(vp(0)-vp(2))<prec);
+	    assert(abs(vp(0)-vp(2))<prec);
 	    if(computeEigenVector(s,vp(1),vec(0,1),vec(1,1),vec(2,1))==false){
 	      return false;
 	    }
@@ -511,9 +469,8 @@ namespace tfel{
 	    return true;
 #endif
 	  } 
-	  // vp2 is single, vp0 and vp1 are equal
-	  assert((std::abs(vp(2)-vp(0))>prec)&&(std::abs(vp(2)-vp(1))>prec));
-	  assert(std::abs(vp(0)-vp(1))<prec);
+	  assert((abs(vp(2)-vp(0))>prec)&&(abs(vp(2)-vp(1))>prec));
+	  assert(abs(vp(0)-vp(1))<prec);
 	  if(computeEigenVector(s,vp(2),vec(0,2),vec(1,2),vec(2,2))==false){
 	    return false;
 	  }
