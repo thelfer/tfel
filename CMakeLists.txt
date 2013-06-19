@@ -15,7 +15,6 @@ else( CMAKE_SIZEOF_VOID_P EQUAL 8 )
   add_definitions("-DTFEL_ARCH32")
 endif( CMAKE_SIZEOF_VOID_P EQUAL 8 )
 
-
 #extraction svn revision
 if(NOT TFEL_SVN_REVISION)
 execute_process(COMMAND svnversion
@@ -29,6 +28,7 @@ endif(NOT TFEL_SVN_REVISION)
 enable_testing()
 add_custom_target(check COMMAND 
   ${CMAKE_CTEST_COMMAND} -T test)
+add_custom_target(tests-install)
 
 # fortran (placed before compiler detection)
 option(enable-fortran "enable fortran support")

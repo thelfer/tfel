@@ -47,3 +47,14 @@ cmake typical usage
 ===================
 
 cmake ../trunk -DCMAKE_BUILD_TYPE=Release -Dlocal-castem-header=ON -Denable-fortran=ON -Denable-python=ON -Denable-python-bindings=ON -Denable-aster=ON -DCMAKE_INSTALL_PREFIX=/home/th202608/codes/tfel/trunk/install
+
+main targets:
+=============
+
+  - all              : build the libraries
+  - install          : install the libraries
+  - doc-pdf-install  : install TFEL pdf documentation (requires LaTeX)
+  - doc-html-install : install TFEL doxygen documentation (requires Doxygen)
+  - doc-install      : install both pdf and doxygen documentations 
+  - check            : build tests and execute them
+  - tests-install    : install tests files

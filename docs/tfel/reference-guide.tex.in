@@ -1362,10 +1362,10 @@ de \TFEL{} peut être lancée par la commande suivante~:
   make check
 }
 
-\paragraph{Installation de la documentation} La
-documentation de \TFEL{} est installée par la commande~:
+\paragraph{Génération de la documentation} La
+documentation de \TFEL{} est générée par la commande~:
 \bash{
-  make doc-install
+  make doc
 }
 
 Cette documentation se décompose en deux parties~:
@@ -1373,12 +1373,36 @@ Cette documentation se décompose en deux parties~:
   \item une documentation informatique générée par \doxygen{} (si
   cet outil est disponible). Cette documentation peut être générée
   indépendamment par la commande~:
-  \bash{ make doc-html}
+  \bash{make doc-html}
   \item la présente documentation, au format \texttt{pdf}, si
   \latex{} est disponible. Cette documentation peut être générée
   indépendamment par la commande~:
-  \bash{ make doc-pdf}
+  \bash{make doc-pdf}
 \end{itemize}
+
+\paragraph{Installation de la documentation} La
+documentation de \TFEL{} est installée par la commande~:
+\bash{
+  make doc-install
+}
+
+La documentation informatique générée par \doxygen{} peut être
+installée par la commande~:
+\bash{
+  make doc-html-install
+}
+
+Les différentes documentations {\tt pdf} peuvent être
+installées par la commande~:
+\bash{
+  make doc-pdf-install
+}
+
+\paragraph{Installation des fichiers de tests} Il est possible
+d'installer les fichiers de tests par la commande suivante~:
+\bash{
+  make tests-install
+}
 
 \paragraph{Génération de paquets RPM} Des paquets
 RPM, utilisés par les distributions \linux{} \redhat{} et \mandriva{}
@@ -1528,6 +1552,9 @@ Le répertoire d'installation contient quatre répertoires~:
   \item le répertoire \texttt{share} contient des tests et des
   fichiers d'exemple.
 \end{itemize}
+
+Le répertoire \texttt{share/mfront/tests/behaviours} contient un
+ensemble de fichiers de tests \mfront{} qui peut servir d'exemple.
 
 \clearpage
 \newpage

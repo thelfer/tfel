@@ -42,6 +42,7 @@ check_PROGRAMS = test-c
 
 test_c_SOURCES = test-c.c
 test_c_LDFLAGS = -L@builddir@ -lMFrontMaterialProperties
+test_c_DEPENDENCIES = libMFrontMaterialProperties.la
 if ! TFEL_WIN
 test_c_LDFLAGS += -lstdc++
 endif
@@ -50,6 +51,7 @@ if HAVE_FORTRAN
 check_PROGRAMS += test-f
 test_f_SOURCES = test-f.c compute.f
 test_f_LDFLAGS = -L@builddir@ -lMFrontMaterialProperties-fortran -lstdc++
+test_f_DEPENDENCIES = libMFrontMaterialProperties-fortran.la
 endif
 
 TESTS=$(check_PROGRAMS)
