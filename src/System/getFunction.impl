@@ -99,6 +99,47 @@ int tfel_checkIfAsterBehaviourRequiresThermalExpansionMaterialPropertiesOffset(L
   return *n;
 }
 
+int tfel_checkIfAsterBehaviourSavesTangentOperator(LibraryHandlerPtr l,
+						   const char * const f)
+{
+  unsigned short * n;
+  size_t len = strlen(f);
+  char *myname = (char *) malloc((len+22u)*sizeof(char));
+  if(myname==0){
+    return -1;
+  }
+  strncpy(myname,f,len);
+  myname[len]='_';
+  myname[len+1u]='s';
+  myname[len+2u]='a';
+  myname[len+3u]='v';
+  myname[len+4u]='e';
+  myname[len+5u]='s';
+  myname[len+6u]='T';
+  myname[len+7u]='a';
+  myname[len+8u]='n';
+  myname[len+9u]='g';
+  myname[len+10u]='e';
+  myname[len+11u]='n';
+  myname[len+12u]='t';
+  myname[len+13u]='O';
+  myname[len+14u]='p';
+  myname[len+15u]='e';
+  myname[len+16u]='r';
+  myname[len+17u]='a';
+  myname[len+18u]='t';
+  myname[len+19u]='o';
+  myname[len+20u]='r';
+  myname[len+21u]='\0';
+  n= (unsigned short *) dlsym(l,myname);
+  free(myname);
+  if(n==0){
+    return -1;
+  }
+  return *n;
+}
+
+
 int tfel_getUnsignedShort(LibraryHandlerPtr lib,
 			  const char * const name){
   unsigned short * n;

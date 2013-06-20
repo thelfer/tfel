@@ -76,6 +76,7 @@ namespace mfront{
     this->compareToNumericalTangentOperator      = false;
     this->strainPerturbationValue                = 1.e-6;
     this->tangentOperatorComparisonCriterium     = 1.e7;
+    this->savesTangentOperator                    = false;
   }
   
   void 
@@ -192,6 +193,34 @@ namespace mfront{
       ++(current);
       if(current==end){
 	string msg("AsterInterface::treatKeyword (@AsterStrainPerturbationValue) : ");
+	msg += "unexpected end of file";
+	throw(runtime_error(msg));
+      }      
+      if(current->value!=";"){
+	string msg("AsterInterface::treatKeyword : expected ';', read ");
+	msg += current->value;
+	throw(runtime_error(msg));
+      }
+      ++(current);
+      return make_pair(true,current);      
+    } else if(key=="@AsterSaveTangentOperator"){
+      if(current==end){
+	string msg("AsterInterface::treatKeyword (@AsterSaveTangentOperator) : ");
+	msg += "unexpected end of file";
+	throw(runtime_error(msg));
+      }
+      if(current->value=="true"){
+	this->savesTangentOperator = true;
+      } else if(current->value=="false"){
+	this->savesTangentOperator = false;
+      } else {
+	string msg("AsterInterface::treatKeyword (@AsterSaveTangentOperator) :");
+	msg += "expected 'true' or 'false'";
+	throw(runtime_error(msg));
+      }
+      ++(current);
+      if(current==end){
+	string msg("AsterInterface::treatKeyword (@AsterSaveTangentOperator) : ");
 	msg += "unexpected end of file";
 	throw(runtime_error(msg));
       }      
@@ -1007,6 +1036,9 @@ namespace mfront{
     if(this->compareToNumericalTangentOperator){
       out << "#include<cmath>\n";
       out << "#include<vector>\n";
+    }
+    if((this->compareToNumericalTangentOperator)||
+       (this->savesTangentOperator)){
       out << "#include<algorithm>\n";
     }
     out << "#include\"TFEL/Material/" << className << ".hxx\"\n";
@@ -1056,6 +1088,16 @@ namespace mfront{
       	<< makeLowerCase(name);
     out << "_teoffset = ";
     if(hasThermalExpansionMaterialPropertiesOffset){
+      out << "1";
+    } else {
+      out << "0";
+    }
+    out << ";\n";
+
+    out << "MFRONT_SHAREDOBJ unsigned short aster"
+      	<< makeLowerCase(name);
+    out << "_savesTangentOperator = ";
+    if(this->savesTangentOperator){
       out << "1";
     } else {
       out << "0";
@@ -1244,8 +1286,12 @@ namespace mfront{
 	<< "aster::AsterInt  *const" /*< sortie d'erreur */
 	<< ")\n";
     out << "{\n";
-    if((this->debugMode)||(this->compareToNumericalTangentOperator)){
+    if((this->debugMode)||
+       (this->compareToNumericalTangentOperator)||
+       (this->savesTangentOperator)){
       out << "using namespace std;\n";
+    }
+    if((this->debugMode)||(this->compareToNumericalTangentOperator)){
       out << "using namespace aster;\n";
       out << "const bool computeTangentOperator = (*DDSOE>0.5);\n";
     }
@@ -1268,12 +1314,28 @@ namespace mfront{
       out << "copy(STRESS,STRESS+*(NTENS),sig0.begin());\n";
       out << "copy(STATEV,STATEV+*(NSTATV),sv0.begin());\n";
     }
-    out << "if(aster::AsterInterface<tfel::material::" << className 
-	<< ">::exe(NTENS,DTIME,DROT,DDSOE,STRAN,DSTRAN,TEMP,DTEMP,PROPS,NPROPS,"
-	<< "PREDEF,DPRED,STATEV,NSTATV,STRESS)!=0){\n";
-    out << "*PNEWDT = -1.;\n";
-    out << "return;\n";
-    out << "}\n";
+    if(!this->savesTangentOperator){
+      out << "if(aster::AsterInterface<tfel::material::" << className 
+	  << ">::exe(NTENS,DTIME,DROT,DDSOE,STRAN,DSTRAN,TEMP,DTEMP,PROPS,NPROPS,"
+	  << "PREDEF,DPRED,STATEV,NSTATV,STRESS)!=0){\n";
+      out << "*PNEWDT = -1.;\n";
+      out << "return;\n";
+      out << "}\n";
+    } else {
+      out << "if(*(NSTATV)<(*NTENS)*(*NTENS)){\n"
+	  << "string msg(\"aster" << makeLowerCase(name) 
+	  << ": invalid number of state variables (can't save tangent operator)\");\n"
+	  << "throw(runtime_error(msg));\n"
+	  << "}\n";
+      out << "aster::AsterInt nNSTATV = max(*(NSTATV)-(*NTENS)*(*NTENS),aster::AsterInt(1));\n";
+      out << "if(aster::AsterInterface<tfel::material::" << className 
+	  << ">::exe(NTENS,DTIME,DROT,DDSOE,STRAN,DSTRAN,TEMP,DTEMP,PROPS,NPROPS,"
+	  << "PREDEF,DPRED,STATEV,&nNSTATV,STRESS)!=0){\n";
+      out << "*PNEWDT = -1.;\n";
+      out << "return;\n";
+      out << "}\n";
+      out << "copy(DDSOE,DDSOE+(*NTENS)*(*NTENS),STATEV+nNSTATV);\n";
+    }
     if(this->debugMode){
       out << "if(computeTangentOperator){\n";
       out << "AsterInt i;\n";

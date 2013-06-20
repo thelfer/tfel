@@ -167,6 +167,8 @@ namespace mfront{
 
     double tangentOperatorComparisonCriterium;
 
+    bool savesTangentOperator;
+
     bool verboseMode;
 
     bool debugMode;

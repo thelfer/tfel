@@ -8,6 +8,7 @@
 
 @UseQt true;
 @ProvidesSymmetricTangentOperator;
+@AsterSaveTangentOperator[aster] true;
 
 @MaterialProperty stress young;
 young.setGlossaryName("YoungModulus");

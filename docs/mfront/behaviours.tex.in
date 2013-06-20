@@ -2416,7 +2416,7 @@ suivante est utilisée~:
     y_{i}^{(a)}-y_{i}^{(b)}\right|}{E_{y_{i}}}
 \end{equation}
 
-Dans ces deux expressions, nous avons noté~:
+Dans ces deux expressions, nous avons noté~:\\
 \begin{minipage}[t]{0.9\linewidth}
   \begin{itemize}
     \item \(N\) est le nombre de variables internes~;

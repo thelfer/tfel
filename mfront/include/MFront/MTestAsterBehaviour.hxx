@@ -31,6 +31,18 @@ namespace mfront
 			const std::string&,
 			const std::string&);
     /*!
+     * \return the size of the array of internal variables
+     * \param[in] d : space dimension
+     */
+    size_t
+    getInternalStateVariablesSize(const unsigned short) const;
+    /*!
+     * \return the descriptions the internal variables
+     * \param[in] d : space dimension
+     */
+    std::vector<std::string>
+    getInternalStateVariablesDescriptions(const unsigned short) const;
+    /*!
      * \brief allocate workspace
      * \param[in] ntens   : number of components of symmetric tensors
      * \param[in] nstatev : size of the internal state variables
@@ -143,6 +155,8 @@ namespace mfront
     mutable tfel::math::vector<real> iv;
     //! internal workspace
     mutable tfel::math::matrix<real> D;
+    //! save tangent operator
+    bool savesTangentOperator;
   }; // end of struct MTestBehaviour
   
 } // end of namespace mfront

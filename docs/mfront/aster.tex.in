@@ -375,4 +375,11 @@ pourcentage relatif de l'erreur\footnote{Ce pourcentage relatif de
 la jacobienne calculée par l'utilisateur et son approximation
 numérique sont affichés.
 
+\subsubsection{Stockage de la matrice de raideur à la suite des variables internes}
+
+Le mot clé \mkey{AsterSaveTangentOperator} qui doit être suivi d'une
+valeur booléenne \varcpp{true} ou \varcpp{false} demande à ce que la
+matrice de raideur soit stockée à la suite des variables internes (ou
+pas).
+
 \end{document}

@@ -59,6 +59,15 @@ extern "C" {
   int tfel_checkIfAsterBehaviourRequiresThermalExpansionMaterialPropertiesOffset(LibraryHandlerPtr,
 										 const char * const);
 
+  /*!
+   * \brief this function returns true if the given behaviour saves the tangent operator
+   * \param l: link to library opened through dlopen
+   * \param f: name of the behaviour to be checked
+   * \return int, 0 if false, 1 if true, -1 if an error occured.
+   */
+  int tfel_checkIfAsterBehaviourSavesTangentOperator(LibraryHandlerPtr,
+						     const char * const);
+
   int tfel_getBool(LibraryHandlerPtr,
 		   const char * const);
 

@@ -23,7 +23,8 @@ namespace mfront
   MTestAsterBehaviour::MTestAsterBehaviour(const tfel::material::ModellingHypothesis::Hypothesis h,
 					   const std::string& l,
 					   const std::string& b)
-    : MTestUmatBehaviourBase(l,b)
+    : MTestUmatBehaviourBase(l,b),
+      savesTangentOperator(false)
   {
     using namespace std;
     using namespace tfel::system;
@@ -34,6 +35,7 @@ namespace mfront
     this->mpnames = elm.getUMATMaterialPropertiesNames(l,b);
     bool eo = elm.checkIfAsterBehaviourRequiresElasticMaterialPropertiesOffset(l,b);
     bool to = elm.checkIfAsterBehaviourRequiresThermalExpansionMaterialPropertiesOffset(l,b);
+    this->savesTangentOperator = elm.checkIfAsterBehaviourSavesTangentOperator(l,b);
     vector<string> tmp;
     if(this->type==0u){
       if(eo){
@@ -106,6 +108,47 @@ namespace mfront
     }
     this->mpnames.insert(this->mpnames.begin(),tmp.begin(),tmp.end());
   }
+
+  size_t
+  MTestAsterBehaviour::getInternalStateVariablesSize(const unsigned short d) const
+  {
+    size_t s(0);
+    if(this->savesTangentOperator){
+      if(d==1){
+	s+=9;
+      } else if(d==2){ 
+	s+=16;
+      } else if(d==3){ 
+	s+=36;
+      }
+    }
+    return s+ MTestUmatBehaviourBase::getInternalStateVariablesSize(d);
+  } // end of MTestAsterBehaviour::getInternalStateVariablesSize() const
+
+  std::vector<std::string>
+  MTestAsterBehaviour::getInternalStateVariablesDescriptions(const unsigned short d) const
+  {
+    using namespace std;
+    vector<string> desc = MTestUmatBehaviourBase::getInternalStateVariablesDescriptions(d);
+    if(this->savesTangentOperator){
+      size_t s(0);
+      if(d==1){
+	s=3;
+      } else if(d==2){ 
+	s=4;
+      } else if(d==3){ 
+	s=6;
+      }
+      for(unsigned short i=0;i!=s;++i){
+	for(unsigned short j=0;j!=s;++j){
+	  ostringstream n;
+	  n << "component (" << j << "," << i << ") of the tangent operator";
+	  desc.push_back(n.str());	  
+	}
+      }
+    }
+    return desc;
+  } // end of MTestAsterBehaviour::getInternalStateVariablesDescriptions
 
   void
   MTestAsterBehaviour::allocate(const size_t ntens,

@@ -77,6 +77,8 @@ void declareExternalLibraryManager(void)
 	 &ELM::checkIfAsterBehaviourRequiresElasticMaterialPropertiesOffset)
     .def("checkIfAsterBehaviourRequiresThermalExpansionMaterialPropertiesOffset",
 	 &ELM::checkIfAsterBehaviourRequiresThermalExpansionMaterialPropertiesOffset)
+    .def("checkIfAsterBehaviourSaveTangentOperator",
+	 &ELM::checkIfAsterBehaviourSavesTangentOperator)
     ;
 
 } // end of declareExternalLibraryManager

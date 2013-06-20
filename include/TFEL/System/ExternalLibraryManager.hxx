@@ -192,6 +192,15 @@ namespace tfel
       checkIfAsterBehaviourRequiresThermalExpansionMaterialPropertiesOffset(const std::string&,
 									    const std::string&);
       /*!
+       * \return true if a behaviour generated throught the aster
+       * interface saves the tangent operator
+       * \param[in] l : name of the library
+       * \param[in] f : law name
+       */
+      bool
+      checkIfAsterBehaviourSavesTangentOperator(const std::string&,
+						const std::string&);
+      /*!
        * \param[in] l : name of the library
        * \param[in] f : function name
        */
