@@ -18,9 +18,11 @@ tfel_doc_LDADD   = -L@top_builddir@/mfront/mtest/ \
 		   -L@top_builddir@/src/System    \
 		   -L@top_builddir@/src/Utilities \
 		   -L@top_builddir@/src/Exception \
+	           -L$(top_builddir)/src/Tests    \
 		   -lTFELMTest                    \
 		   -lTFELSystem                   \
 		   -lTFELUtilities                \
-		   -lTFELException
+		   -lTFELException                \
+		   -lTFELTests
 
 EXTRA_DIST = CMakeLists.txt
