@@ -26,7 +26,7 @@ namespace mfront
      * \param[in] b : behaviour name
      */
     MTestUmatBehaviourBase(const std::string&,
-		       const std::string&);
+			   const std::string&);
     /*!
      * \return the type of the behaviour
      * 0 means that the behaviour is isotropic.
@@ -74,9 +74,37 @@ namespace mfront
      */
     virtual std::vector<std::string>
     getExternalStateVariablesNames(void) const;
+    /*!
+     * \brief set the value of a parameter
+     * \param[in] n : name of the parameter
+     * \param[in] v : value
+     */
+    virtual void
+    setParameter(const std::string&,
+		 const real) const;
+    /*!
+     * \brief set the value of a parameter
+     * \param[in] n : name of the parameter
+     * \param[in] v : value
+     */
+    virtual void
+    setIntegerParameter(const std::string&,
+			const int) const;
+    /*!
+     * \brief set the value of a parameter
+     * \param[in] n : name of the parameter
+     * \param[in] v : value
+     */
+    virtual void
+    setUnsignedIntegerParameter(const std::string&,
+				const unsigned short) const;
     //! destructor
     virtual ~MTestUmatBehaviourBase();
   protected:
+    //! library
+    std::string library;
+    //! function
+    std::string behaviour;
     //! names of the material properties
     std::vector<std::string> mpnames;
     //! names of the internal state variables

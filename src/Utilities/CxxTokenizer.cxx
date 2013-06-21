@@ -1092,6 +1092,26 @@ namespace tfel{
       return res;
     } // end of CxxTokenizer::readDouble
 
+    int
+    CxxTokenizer::readInt(CxxTokenizer::const_iterator& p, 
+			     const CxxTokenizer::const_iterator pe)
+      
+    {
+      using namespace std;
+      int res;
+      CxxTokenizer::checkNotEndOfLine("CxxTokenizer::readInt","expected number",p,pe);
+      istringstream is(p->value);
+      is >> res;
+      if(!is&&(!is.eof())){
+	ostringstream msg;
+	msg << "CxxTokenizer::readInt : ";
+	msg << "could not read value from token '"+p->value+"'.\n";
+	throw(runtime_error(msg.str()));
+      }
+      ++p;
+      return res;
+    } // end of CxxTokenizer::readInt
+
     unsigned int
     CxxTokenizer::readUnsignedInt(CxxTokenizer::const_iterator& p, 
 				  const CxxTokenizer::const_iterator pe)

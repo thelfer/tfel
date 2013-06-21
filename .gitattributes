@@ -183,6 +183,7 @@ docs/mtest/Evolution.txt -text
 docs/mtest/ExternalStateVariable.txt -text
 docs/mtest/ImposedStrain.txt -text
 docs/mtest/ImposedStress.txt -text
+docs/mtest/IntegerParameter.txt -text
 docs/mtest/InternalStateVariable.txt -text
 docs/mtest/Makefile.am -text
 docs/mtest/Makefile.doc.in -text
@@ -192,6 +193,7 @@ docs/mtest/MaximumNumberOfSubSteps.txt -text
 docs/mtest/ModellingHypothesis.txt -text
 docs/mtest/OutputFile.txt -text
 docs/mtest/OutputFilePrecision.txt -text
+docs/mtest/Parameter.txt -text
 docs/mtest/PredictionPolicy.txt -text
 docs/mtest/Real.txt -text
 docs/mtest/RotationMatrix.txt -text
@@ -203,6 +205,7 @@ docs/mtest/Stress.txt -text
 docs/mtest/StressEpsilon.txt -text
 docs/mtest/Test.txt -text
 docs/mtest/Times.txt -text
+docs/mtest/UnsignedIntegerParameter.txt -text
 docs/mtest/UseCastemAccelerationAlgorithm.txt -text
 docs/mtest/images/CastemAccelerationAlgorithm.eps -text
 docs/mtest/images/CastemAccelerationAlgorithm.svg -text
@@ -1230,6 +1233,7 @@ mfront/tests/behaviours/OrthotropicCreep_rkCastem.mfront -text
 mfront/tests/behaviours/OrthotropicElastic.mfront -text
 mfront/tests/behaviours/Plasticity.mfront -text
 mfront/tests/behaviours/PolyCristals.mfront -text
+mfront/tests/behaviours/PolyCristals_DD_CFC.mfront -text
 mfront/tests/behaviours/StrainHardeningCreep.mfront -text
 mfront/tests/behaviours/aster/CMakeLists.txt -text
 mfront/tests/behaviours/aster/Makefile.am -text
@@ -1269,6 +1273,7 @@ mfront/tests/behaviours/aster/asterorthotropiccreep-rkCastem.mtest.in -text
 mfront/tests/behaviours/aster/asterorthotropiccreep.mtest.in -text
 mfront/tests/behaviours/aster/asterplasticity.mtest.in -text
 mfront/tests/behaviours/aster/asterpolycristals.mtest.in -text
+mfront/tests/behaviours/aster/asterpolycristals_dd_cfc.mtest.in -text
 mfront/tests/behaviours/aster/asterstrainhardeningcreep.mtest.in -text
 mfront/tests/behaviours/aster/asterstressrelaxation.mtest.in -text
 mfront/tests/behaviours/aster/strainhardeningcreep.gnuplot -text
@@ -1311,6 +1316,7 @@ mfront/tests/behaviours/castem/castemorthotropiccreep-rkCastem.mtest.in -text
 mfront/tests/behaviours/castem/castemorthotropiccreep.mtest.in -text
 mfront/tests/behaviours/castem/castemplasticity.mtest.in -text
 mfront/tests/behaviours/castem/castempolycristals.mtest.in -text
+mfront/tests/behaviours/castem/castempolycristals_dd_cfc.mtest.in -text
 mfront/tests/behaviours/castem/castemstrainhardeningcreep.mtest.in -text
 mfront/tests/behaviours/castem/castemstressrelaxation.mtest.in -text
 mfront/tests/behaviours/references/PolyCristalsAngles.txt -text
@@ -1324,6 +1330,7 @@ mfront/tests/behaviours/references/monocristal.ref -text
 mfront/tests/behaviours/references/monocristal_dd_cfc.ref -text
 mfront/tests/behaviours/references/plasticity.ref -text
 mfront/tests/behaviours/references/polycristals.ref -text
+mfront/tests/behaviours/references/polycristals_dd_cfc.ref -text
 mfront/tests/properties/CMakeLists.txt -text
 mfront/tests/properties/Inconel600_YoungModulus.mfront -text
 mfront/tests/properties/Makefile.am -text

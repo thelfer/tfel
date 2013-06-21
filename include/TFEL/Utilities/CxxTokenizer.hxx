@@ -208,6 +208,19 @@ namespace tfel{
       static double
       readDouble(const_iterator&, 
 		 const const_iterator);	
+      /*!
+       * \brief an helper method to extract a int from the given
+       * token
+       * \param[in] p  : iterator to the current token
+       * \param[in] pe : iterator pointing after the last token of the
+       * line
+       * \return the extracted value
+       * \throw std::runtime_error if the given iterator is egal to
+       * the second argument
+       */ 
+      static int
+      readInt(const_iterator&, 
+	      const const_iterator);	
 
       /*!
        * \return an iterator to the first token

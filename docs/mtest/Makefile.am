@@ -13,6 +13,9 @@ MTEST_DOCS = Author.txt                         \
 	     MaximumNumberOfIterations.txt      \
 	     MaximumNumberOfSubSteps.txt        \
              ModellingHypothesis.txt            \
+	     Parameter.txt                      \
+	     IntegerParameter.txt               \
+	     UnsignedIntegerParameter.txt       \
 	     OutputFile.txt                     \
 	     OutputFilePrecision.txt            \
 	     PredictionPolicy.txt               \

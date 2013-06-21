@@ -18,7 +18,9 @@ namespace mfront
 {
 
   MTestUmatBehaviourBase::MTestUmatBehaviourBase(const std::string& l,
-					 const std::string& b)
+						 const std::string& b)
+    : library(l),
+      behaviour(b)
   {
     using namespace std;
     using namespace tfel::system;
@@ -220,6 +222,37 @@ namespace mfront
     }
     return s;
   }
+
+  void
+  MTestUmatBehaviourBase::setParameter(const std::string& n,
+				       const real v) const
+  {
+    using namespace tfel::system;
+    typedef ExternalLibraryManager ELM;
+    ELM& elm = ELM::getExternalLibraryManager();
+    elm.setParameter(this->library,this->behaviour,n,v);
+  } // end of MTestUmatBehaviourBase::setParameter
+
+  void
+  MTestUmatBehaviourBase::setIntegerParameter(const std::string& n,
+					      const int v) const
+  {
+    using namespace tfel::system;
+    typedef ExternalLibraryManager ELM;
+    ELM& elm = ELM::getExternalLibraryManager();
+    elm.setParameter(this->library,this->behaviour,n,v);
+  } // end of MTestUmatBehaviourBase::setIntegerParameter
+
+  void
+  MTestUmatBehaviourBase::setUnsignedIntegerParameter(const std::string& n,
+						      const unsigned short v) const
+  {
+    using namespace tfel::system;
+    typedef ExternalLibraryManager ELM;
+    ELM& elm = ELM::getExternalLibraryManager();
+    elm.setParameter(this->library,this->behaviour,n,v);
+  } // end of MTestUmatBehaviourBase::setUnsignedIntegerParameter
+
 
   MTestUmatBehaviourBase::~MTestUmatBehaviourBase()
   {}

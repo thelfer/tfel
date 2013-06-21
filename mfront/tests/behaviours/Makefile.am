@@ -33,21 +33,23 @@ MFRONTS= DDIF2.mfront                                \
 	 MonoCristal_DD_CFC.mfront                   \
 	 MonoCristal_DD_CFC_InteractionMatrix.mfront \
 	 PolyCristals.mfront                         \
+	 PolyCristals_DD_CFC.mfront                  \
 	 Hayhurst.mfront
 
 testsdir = $(pkgdatadir)/mfront/tests/behaviours
 tests_DATA = $(MFRONTS)
 
-EXTRA_DIST=CMakeLists.txt                    \
-	   $(MFRONTS)                        \
-           references/plasticity.ref         \
-	   references/elasticity15-aster.ref \
-	   references/mazars-aster.ref       \
-	   references/chaboche-aster.ref     \
-	   references/chaboche2-aster.ref    \
-	   references/monocristal.ref        \
-	   references/monocristal_dd_cfc.ref \
-	   references/PolyCristalsAngles.txt \
-	   references/polycristals.ref       \
-	   references/hayhurst.ref           \
+EXTRA_DIST=CMakeLists.txt                     \
+	   $(MFRONTS)                         \
+           references/plasticity.ref          \
+	   references/elasticity15-aster.ref  \
+	   references/mazars-aster.ref        \
+	   references/chaboche-aster.ref      \
+	   references/chaboche2-aster.ref     \
+	   references/monocristal.ref         \
+	   references/monocristal_dd_cfc.ref  \
+	   references/PolyCristalsAngles.txt  \
+	   references/polycristals.ref        \
+	   references/polycristals_dd_cfc.ref \
+	   references/hayhurst.ref            \
 	   references/burger.ref

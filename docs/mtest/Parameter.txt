@@ -1,0 +1,5 @@
+The @Parameter keywords specifies the value of a parameter of the behaviour.
+
+Example:
+@Parameter 'espilon' 1.e-8;
+

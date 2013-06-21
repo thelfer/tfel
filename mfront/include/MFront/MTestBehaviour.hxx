@@ -75,6 +75,30 @@ namespace mfront
     virtual std::vector<std::string>
     getExternalStateVariablesNames(void) const  = 0;
     /*!
+     * \brief set the value of a parameter
+     * \param[in] n : name of the parameter
+     * \param[in] v : value
+     */
+    virtual void
+    setParameter(const std::string&,
+		 const real) const  = 0;
+    /*!
+     * \brief set the value of a parameter
+     * \param[in] n : name of the parameter
+     * \param[in] v : value
+     */
+    virtual void
+    setIntegerParameter(const std::string&,
+			const int) const  = 0;
+    /*!
+     * \brief set the value of a parameter
+     * \param[in] n : name of the parameter
+     * \param[in] v : value
+     */
+    virtual void
+    setUnsignedIntegerParameter(const std::string&,
+				const unsigned short) const  = 0;
+    /*!
      * \brief allocate workspace
      * \param[in] ntens   : number of components of symmetric tensors
      * \param[in] nstatev : size of the internal state variables

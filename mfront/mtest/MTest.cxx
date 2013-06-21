@@ -292,6 +292,12 @@ namespace mfront
 			   &MTest::handleDate);
     this->registerCallBack("@Description",
 			   &MTest::handleDescription);
+    this->registerCallBack("@Parameter",
+			   &MTest::handleParameter);
+    this->registerCallBack("@IntegerParameter",
+			   &MTest::handleIntegerParameter);
+    this->registerCallBack("@UnsignedIntegerParameter",
+			   &MTest::handleUnsignedIntegerParameter);
     this->registerCallBack("@OutputFile",
 			   &MTest::handleOutputFile);
     this->registerCallBack("@OutputFilePrecision",
@@ -948,12 +954,57 @@ namespace mfront
   }
 
   void
+  MTest::handleParameter(TokensContainer::const_iterator& p)
+  {
+    using namespace std;
+    if(this->b.get()==0){
+      string msg("MTest::handleParameter : ");
+      msg += "no behaviour defined";
+      throw(runtime_error(msg));
+    }
+    const string& n = this->readString(p,this->fileTokens.end());
+    this->b->setParameter(n,this->readDouble(p));
+    this->readSpecifiedToken("MTest::handleParameter",";",
+			     p,this->fileTokens.end());
+  } // end of MTest::handleParameter
+
+  void
+  MTest::handleIntegerParameter(TokensContainer::const_iterator& p)
+  {
+    using namespace std;
+    if(this->b.get()==0){
+      string msg("MTest::handleIntegerParameter : ");
+      msg += "no behaviour defined";
+      throw(runtime_error(msg));
+    }
+    const string& n = this->readString(p,this->fileTokens.end());
+    this->b->setIntegerParameter(n,this->readInt(p,this->fileTokens.end()));
+    this->readSpecifiedToken("MTest::handleIntegerParameter",";",
+  			     p,this->fileTokens.end());
+  } // end of MTest::handleIntegerParameter
+  
+  void
+  MTest::handleUnsignedIntegerParameter(TokensContainer::const_iterator& p)
+  {
+    using namespace std;
+    if(this->b.get()==0){
+      string msg("MTest::handleUnsignedIntegerParameter : ");
+      msg += "no behaviour defined";
+      throw(runtime_error(msg));
+    }
+    const string& n = this->readString(p,this->fileTokens.end());
+    this->b->setUnsignedIntegerParameter(n,this->readUnsignedInt(p,this->fileTokens.end()));
+    this->readSpecifiedToken("MTest::handleUnsignedIntegerParameter",";",
+			     p,this->fileTokens.end());
+  } // end of MTest::handleUnsignedIntegerParameteru
+
+  void
   MTest::handleOutputFile(TokensContainer::const_iterator& p)
   {
     using namespace std;
     if(this->output.empty()){
       string msg("MTest::handleOutputFile : ");
-      msg += "message already defined";
+      msg += "output file already defined";
       throw(runtime_error(msg));
     }
     this->output = this->readString(p,this->fileTokens.end());

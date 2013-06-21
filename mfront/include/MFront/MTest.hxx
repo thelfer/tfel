@@ -233,6 +233,21 @@ namespace mfront
      */
     void handleStressEpsilon(TokensContainer::const_iterator&);
     /*!
+     * handle the @Parameter keyword
+     * \param[in,out] p : position in the input file
+     */
+    void handleParameter(TokensContainer::const_iterator&);
+    /*!
+     * handle the @IntegerParameter keyword
+     * \param[in,out] p : position in the input file
+     */
+    void handleIntegerParameter(TokensContainer::const_iterator&);
+    /*!
+     * handle the @UnsignedIntegerParameter keyword
+     * \param[in,out] p : position in the input file
+     */
+    void handleUnsignedIntegerParameter(TokensContainer::const_iterator&);
+    /*!
      * handle the @OutputFile keyword
      * \param[in,out] p : position in the input file
      */

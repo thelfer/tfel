@@ -1092,6 +1092,20 @@ Le mot clé \mkey{MaterialProperty} prend deux arguments~:
   \varcpp{castem}~;
 \end{itemize}
 
+\paragraph{Le mot clé \mkey{Parameter}} Le mot clé \mkey{Parameter}
+permet de spécifier la valeur d'un des paramètres réels de la loi. Ce
+mot clé est suivi du nom du paramètre et de sa valeur.
+
+\paragraph{Le mot clé \mkey{IntegerParameter}} Le mot clé
+\mkey{IntegerParameter} permet de spécifier la valeur d'un des
+paramètres entiers de la loi. Ce mot clé est suivi du nom du paramètre
+et de sa valeur.
+
+\paragraph{Le mot clé \mkey{UnsignedIntegerParameter}} Le mot clé
+\mkeyb{UnsignedIntegerParameter}{Unsigned\-Integer\-Parameter} permet
+de spécifier la valeur d'un des paramètres entiers positifs de la
+loi. Ce mot clé est suivi du nom du paramètre et de sa valeur.
+
 \paragraph{Le mot clé \mkey{MaximumNumberOfIterations}}
 
 Le mot clé \mkey{MaximumNumberOfIterations} permet de spécifier le
