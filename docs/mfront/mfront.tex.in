@@ -173,18 +173,13 @@
 
 Cette note donne une vue générale du générateur de code \mfront{} et
 de son application aux propriétés matériau et aux modèles
-physico-chimiques. \mfront{} fait partie d'une librairie mathématique
-généraliste nommée \TFEL{} très utilisée par \mfront{}, mais qui a
-également de nombreuses autres utilisations dans la plate-forme
-\pleiades{}.
-
-Cette note est la première d'un corpus de \(4\) notes. Les trois
-autres notes traitent\footnote{Citons également qu'un guide de
-  référence de la librairie \TFEL{} est également en cours de
-  rédaction. Cette note étant assez ambitieuse, sa rédaction s'étalera
-  dans le temps. Elle est cependant disponible en version projet dans
-  les sources de la librairie. Elle contient en particulier le guide
-  d'installation de la librairie.}~:
+physico-chimiques. Elle est complétée par trois autres notes qui
+traitent\footnote{Citons également qu'un guide de référence de la
+  librairie \TFEL{} est également en cours de rédaction. Cette note
+  étant assez ambitieuse, sa rédaction s'étalera dans le temps. Elle
+  est cependant disponible en version projet dans les sources de la
+  librairie. Elle contient en particulier le guide d'installation de
+  la librairie.}~:
 \begin{itemize}
 \item des lois de comportement
   mécanique~\cite{helfer:mfront:behaviours:2013}~;
@@ -193,7 +188,11 @@ autres notes traitent\footnote{Citons également qu'un guide de
 \item de l'interface utilisée par le codes aux éléments finis
   \aster{}~\cite{helfer:aster:2013}~;
 \end{itemize}
-Ces notes sont intégrées à la gestion de configuration de \TFEL{} et
+
+\mfront{} fait partie d'une librairie mathématique généraliste nommée
+\TFEL{} très utilisée par \mfront{}, mais qui a également de
+nombreuses autres utilisations dans la plate-forme \pleiades{}.  Ces
+notes sont intégrées à la gestion de configuration de \TFEL{} et
 évoluent continûment avec les développement de \TFEL{}\footnote{ La
   version la plus à jour est obtenue dans le répertoire de compilation
   des sources par la commande~:
@@ -245,10 +244,10 @@ développeurs~\cite{michel09,helfer10}~:
     }
   \item l'utilisation du langage \cpp{}, actuellement considéré comme
     l'un des langages les plus utilisés au monde\footnote{Il s'agit du
-      langage plus utilisé si on considère le langage \texttt{C} comme
-      un sous-ensemble du \cpp{}, et du troisième langage si on les
-      distingue.} et qui est particulièrement utilisé dans le monde
-    scientifique~;
+      langage le plus utilisé si on considère le langage \texttt{C}
+      comme un sous-ensemble du \cpp{}, et du troisième ou quatrième
+      langage si on les distingue~\cite{tiobe:13}.} et qui est
+    particulièrement utilisé dans le monde scientifique~;
   \end{itemize}
 \item les performances, en particulier pour les lois de comportement
   mécaniques, sont également assurées par l'utilisation du langage
@@ -345,7 +344,7 @@ glossaire.  Ces noms de glossaire servent à assurer le bon échange
 d'information.
 
 L'annexe~\ref{sec:mfront:glossary} décrit les noms de glossaire les
-plus fréquemment utilisés.
+plus fréquemment utilisés dans le code \licos{}.
 
 \subsubsection{Structure du fichier d'entrée}
 
@@ -405,8 +404,8 @@ génération automatiquement d'une documentation à partir d'un fichier
 \mfront{}.
 
 \paragraph{La directive \mkey{Description}} La directive
-\mkey{Description} permet de donner de documenter le fichier \mfront{}.
-Cette documentation est donnée dans un bloc commençant par une accolade
+\mkey{Description} permet de documenter le fichier \mfront{}.  Cette
+documentation est donnée dans un bloc commençant par une accolade
 ouvrante \texttt{\{} et se terminant par une accolade fermante
 \texttt{\}}. Elle doit idéalement contenir la référence d'où est
 extraite la connaissance matériau traitée, les éventuelles adaptations
@@ -614,8 +613,8 @@ directive \mkey{Includes}.
 \paragraph{La directive \mkey{Link}} La directive \mkey{Link} est
 utilisée pour lier les librairies générées à des librairies externes.
 
-La directive \mkey{Link} est suivie d'une chaîne de caractère (entre
-doubles quotes) contenant des instructions à fournir à l'éditeurs de
+Elle est suivie d'une chaîne de caractère (entre doubles quotes)
+contenant des instructions à fournir à l'éditeurs de
 liens. L'utilisation des doubles quotes permet l'utilisation de
 caractères spéciaux.
 
@@ -851,8 +850,8 @@ s'utilise de manière optimale dans le contexte logiciel cible.
 
 \subsubsection{Interfaces disponibles}
 
-Par exemple, \mfront{} est livré avec différentes interfaces sont
-disponibles pour les propriétés matériau~:
+Par exemple, \mfront{} est livré avec différentes interfaces pour les
+propriétés matériau~:
 \begin{itemize}
 \item les interfaces \texttt{c}, \texttt{fortran}, \cpp{} et
   \texttt{python} pour pouvoir utiliser les propriétés dans les

@@ -146,9 +146,9 @@
   comportement mécanique}
 
 \date{2013}
-% \numero{12-014}
+\numero{13-020}
 \indice{0}
-% \dateversion{09/2012}
+\dateversion{07/2013}
 \numeroaffaire{A-SICOM-A1-01}
 \domaine{DEN/DISN/SIMU}
 % \accords{tripartite}
@@ -196,15 +196,15 @@
   combustibles et absorbants.
 
   Cette note s'intéresse aux lois de comportement mécanique et plus
-  particulièrement à écriture à l'aide du générateur de code
+  particulièrement à leur écriture à l'aide du générateur de code
   \mfront{}. Elle complète la présentation générale de \mfront{} qui
-  traite également comment des propriétés matériau et des modèles
+  traite des propriétés matériau et des modèles
   physico-chimiques~\cite{helfer:mfront:2013}. Une fois écrite, ces
   lois de comportement peuvent être stockés dans la base de données
   \sirius{}.
 
   La variétés des phénomènes traités fait que \mfront{} propose
-  différentes façon décrire des lois de comportement mécaniques.
+  différentes façon d'écrire des lois de comportement mécaniques.
 
   Certaines sont spécifiques à des lois de comportement qui sont
   d'usage courant et pour lesquelles des algorithmes d'intégration
@@ -214,18 +214,18 @@
   Pour les lois les plus complexes, \mfront{} permet d'utiliser
   des méthodes de \nom{Runge-Kutta} ou des méthodes implicites.
 
-  Les différents tests menés avec les codes aux éléments finis
-  \castem{} et \aster{} montrent que les lois de comportement générées
-  sont numériquement très
-  efficaces~\cite{michel09,helfer:opti:2011,proix:mfront:2013,olagnon13:_analy}.
-  Il s'agit d'un outil mature, qui se veut de qualité industrielle et
-  qui intéresse fortement différents départements du
-  \cea{}~\cite{11:dec_semi,arrigo12:_notic_le2s} ainsi que ses
-  partenaires, Areva~\cite{olagnon13:_analy} et
-  ÉDF~\cite{proix:mfront:2013}. Cet intérêt confirme la crédibilité et
-  la rigueur de la gestion des connaissances matériau au sein de la
-  plate-forme. Le partage de cet outil ouvre des perspectives variées
-  et enrichissantes de co-développement et de mutualisation.
+  % Les différents tests menés avec les codes aux éléments finis
+  % \castem{} et \aster{} montrent que les lois de comportement générées
+  % sont numériquement très
+  % efficaces~\cite{michel09,helfer:opti:2011,proix:mfront:2013,olagnon13:_analy}.
+  % Il s'agit d'un outil mature, qui se veut de qualité industrielle et
+  % qui intéresse fortement différents départements du
+  % \cea{}~\cite{11:dec_semi,arrigo12:_notic_le2s} ainsi que ses
+  % partenaires, Areva~\cite{olagnon13:_analy} et
+  % ÉDF~\cite{proix:mfront:2013}. Cet intérêt confirme la crédibilité et
+  % la rigueur de la gestion des connaissances matériau au sein de la
+  % plate-forme. Le partage de cet outil ouvre des perspectives variées
+  % et enrichissantes de co-développement et de mutualisation.
 
 }
 
@@ -284,9 +284,10 @@ phénomènes~\cite{zaoui_95,cha_1996,caill_01}.
 
 \paragraph{Rôle de la loi de comportement} Nous décrivons en
 annexe~\ref{sec:mfront:mechanical_equilibrium} un algorithme simplifié
-de recherche de l'équilibre mécanique qui précise la place de la loi
-de comportement mécanique. Le lecteur intéressé pourra se reporter aux
-documentations des codes éléments finis pour une description plus
+de recherche de l'équilibre mécanique statique non-linéaire qui
+précise la place de la loi de comportement mécanique. Le lecteur
+intéressé pourra se reporter aux documentations des codes éléments
+finis pour une description plus
 précise~\cite{pascal05_increpl,abbas:stat_non_lin:2013,caill_01}.
 
 En résumé, connaissant l'état mécanique du matériau à un instant
@@ -298,7 +299,8 @@ d'intégration~:
 \item l'évolution microstructurelle du matériau, décrit par un
   ensemble de variables internes \(y_{i}\) sur le pas de temps
   \(\Delta\, t\)~;
-  \item la valeur de la contrainte en fin de pas de temps.
+\item la valeur de la contrainte en fin de pas de temps (ou de manière
+  équivalente l'incrément de contraintes \(\Delta\,\tsigma\)).
 \end{itemize}
 
 Si l'algorithme de recherche de l'équilibre mécanique le nécessite, la
@@ -322,8 +324,8 @@ L'écriture de lois de comportement nécessite de prendre à la fois en
 compte les mécanismes physiques décrits (certains algorithmes sont
 plus adaptés à certains phénomènes) et des besoins des codes éléments
 finis (matrice tangente cohérente). La variété des situations
-rencontrées en pratique expliquent la richesse des analyseurs proposés
-par \mfront{}, qui sont actuellement au nombre \(8\)\footnote{La
+rencontrées en pratique expliquent la variété des analyseurs proposés
+par \mfront{}, qui sont actuellement au nombre de \(8\)\footnote{La
   notion d'analyseur est décrite plus en détails dans la première
   partie de la documentation de
   \mfront~\cite{helfer:mfront:2013}.}. La description de ces
@@ -424,12 +426,9 @@ utilités diverses~:
   \item des variables uniquement destinées aux posttraitements.
 \end{itemize}
 
-Les variables sont mises à jour après l'intégration des variables
-internes. Elles peuvent être soit des {\em scalaires} soit des {\em
-  tenseurs}.
-
-Les variables peuvent être ou des {\em scalaires} ou des {\em
-  tenseurs} d'ordre \(2\) symétriques.
+Les variables internes auxiliaires sont mises à jour après
+l'intégration des variables internes. Elles peuvent être soit des {\em
+  scalaires} soit des {\em tenseurs}.
 
 \paragraph{Les variables externes} Les variables externes
 désignent des variables dont l'évolution est donnée par ailleurs et
@@ -457,10 +456,10 @@ les autres méthodes d'intégration.
 
 Il n'y a pas de limite sur le type des variables locales.
 
-La directive \mkey{InitLocalVariables} est dédiée à l'initialisation des
-variables locales a été introduite\footnote{La directive
+La directive \mkey{InitLocalVariables}\footnote{La directive
   \mkey{InitLocalVars} est synonyme de la directive
-  \mkey{InitLocalVariables}.}.
+  \mkey{InitLocalVariables}.} permet d'initialiser ces variables
+locales.
 
 \paragraph{Tableaux de variables internes, de propriétés matériau et
   de variables externes} Afin de pouvoir regrouper des équations dont
@@ -617,12 +616,12 @@ différentes hypothèses de modélisation ajourd'hui supportées~:
 \paragraph{Les directives \mkey{ModellingHypothesis} et
   \mkey{ModellingHypotheses}} Les directives
 \mkeyb{ModellingHypothesis}{Modelling\-Hypothesis} et
-\mkeyb{ModellingHypotheses}{Modelling\-Hypotheses} permettent
+\mkeyb{ModellingHypotheses}{Modelling\-Hypotheses} permettent de
 spécifier les hypothèses de modélisation valides. La première attend
 le nom d'une hypothèse, la seconde un tableau contenant une ou
 plusieurs hypothèses.
 
-Les noms d'hypothèses valides sont les suivants~:
+Les noms d'hypothèses valides sont donc les suivants~:
 \begin{itemize}
 \item AxisymmetricalGeneralisedPlaneStrain~;
 \item Axisymmetrical~;
@@ -648,7 +647,7 @@ Plusieurs stratégies peuvent être mises en place pour éviter d'avoir à
   axiale) est nulle~\cite{besson98:_objec}~;
 \item le code aux éléments finis \aster{} modifie l'algorithme de
   résolution global pour converger vers une solution en contraintes
-  planes~\cite{}.
+  planes~\cite{proix:contraintes_planes}.
 \end{itemize}
 
 Pour le code aux éléments finis \castem{}, si une implantation en
@@ -670,10 +669,10 @@ restrictions imposées par les codes aux éléments finis \castem{} et
 \begin{itemize}
   \item il est nécessaire de gérer la rotation des contraintes
   dans le repère propre au matériau.
-  \item il n'est pas possible de choisir de manière cohérente une
-  convention sur l'ordonnancement des axes valable quelque soit la
+\item il n'est pas possible de choisir de manière cohérente une
+  convention sur l'ordonnancement des axes valable quelle que soit la
   dimension. Le cas des tubes est traité en détail dans
-  l'annexe~\ref{sec:annexe:orthotropie}~;
+  l'annexe~\ref{sec:annexe:orthotropie}.
 \end{itemize}
 
 \subsubsection{Traitement des dilatations libres}
@@ -766,15 +765,15 @@ Des bornes peuvent être posées sur~:
 \end{itemize}
 
 \paragraph{Dépassement des bornes de validité} Le traitement d'une
-violation d'une borne de validité dépend de la politique
-adoptée. Trois politiques sont actuellement implantées~:
+violation d'une borne de validité dépend de l'utilisateur qui peut
+choisir parmi trois \og~politiques\fg{}~:
 \begin{itemize}
 \item ne rien faire~;
 \item afficher un message d'avertissement~;
 \item arrêter le calcul.
 \end{itemize}
 
-La façon préciser cette politique dépend du code cible (voir
+La façon de préciser cette politique dépend du code cible (voir
 paragraphe~\ref{sec:behaviours:interface}).
 
 % Toutes
@@ -1057,12 +1056,12 @@ qui relèvent d'une intégration spécifiques dans {\mfront}:
   0 \quad\quad \dot{p_{i}}\geq 0 \quad\quad
   f_{i}^{\textrm{an}}(\sigmaeq,p_{i})\,\dot{p}_{i} = 0
 \end{equation}
-Il est classique de que la fonction $f_{i}^{\textrm{an}}$ de
-l'écoulement plastique ait la dimension d'une contrainte. {\mfront}
-suppose que l'utilisateur a respecté cette convention, et divise de ce
-fait la fonction $f_{i}^{\textrm{an}}$ par le module d'Young du
-matériau, pour que l'ensemble des inéquations~\eqref{eq:loistype_c}
-aient la dimension d'une déformation.
+Il est classique que la fonction $f_{i}^{\textrm{an}}$ de l'écoulement
+plastique ait la dimension d'une contrainte. {\mfront} suppose que
+l'utilisateur a respecté cette convention, et divise de ce fait la
+fonction $f_{i}^{\textrm{an}}$ par le module d'Young du matériau, pour
+que l'ensemble des inéquations~\eqref{eq:loistype_c} aient la
+dimension d'une déformation.
 \end{itemize}
 \end{subequations}
 La fonction $f_{i}^{\textrm{an}}$, qui définit l'écoulement, peut
@@ -1162,7 +1161,9 @@ f_{i}^{\textrm{an}}(\sigmaeq,p_{i})\,\dot{p}_{i} = 0
 
 Dans {\mfront}, la loi de comportement~\eqref{eq:systemeSpecifique}
 est intégrée par une méthode implicite, une \(\theta\)-méthode,
-semblable à celle présentée au paragraphe~\ref{sec:Implicite}.
+semblable à celle présentée au paragraphe~\ref{sec:Implicite}, à ceci
+près que le système d'équations peut ici être réduit à une unique
+équation scalaire~\cite{proix12:_integ_mises}.
 
 \paragraph{Incrément de temps}
 D'après ce qui précède, les variables internes sont la déformation
@@ -1430,8 +1431,8 @@ viscoplastiques cumulées est inférieur à un certain critère
   p_{i}\right|<\varepsilon
 \end{equation}
 où\(\Delta_{n}\Delta p_{i}\) désigne la différence entre l'estimation
-de l'incrément de la déformation viscoplastique cumulée à l'étape
-\(n+1\) et de l'estimation à l'étape \(n\).
+de l'incrément de la déformation viscoplastique cumulée \(\Delta\,
+p_{i}\) à l'étape \(n+1\) et de l'estimation à l'étape \(n\).
 
 L'algorithme échoue si le nombre d'itérations dépasse une
 borne maximale.
@@ -2206,26 +2207,26 @@ où~:
 \end{minipage}
 
 Une méthode particulière est caractérisée par la donnée du nombre
-d'étape \(n\) et différents coefficients \(a_{ij}\), \(b_{i}\) et
+d'étape \(n\) et des différents coefficients \(a_{ij}\), \(b_{i}\) et
 \(c_{i}\).
 
 L'un des intérêts des méthodes de \nom{Runge-Kutta} est que les
-coefficients \(k_{i}\) d'une méthode d'ordre élevée peuvent parfois être
-utilisés pour construire une méthode d'ordre moins élevée. On obtient
-ainsi deux estimations de la valeur de fin de pas qui peuvent être
-comparées~: si la comparaison entre les deux estimations n'est pas
-satisfaisante, on en déduit que le pas de temps utilisé est trop grand
-et il est possible de mettre en place une stratégie de gestion du pas de
-temps.
+coefficients \(k_{i}\) d'une méthode d'ordre élevée peuvent parfois
+être utilisés pour construire une méthode d'ordre moins élevée. On
+obtient ainsi deux estimations de la valeur de fin de pas qui peuvent
+être comparées~: si la comparaison entre les deux estimations n'est
+pas satisfaisante, on en déduit que le pas de temps utilisé est trop
+grand et il est possible de mettre en place une stratégie de
+redécoupage du pas de temps.
 
-\paragraph{Pas de temps minimal} En cas de convergence forcée, le code
-aux éléments finis \castem{} envoie à la loi de comportement un pas de
-temps nul qui ne permet pas d'écrire les lois de comportement sous la
-forme d'un système différentiel. Il est nécessaire de préciser un pas
-de temps minimal par la directive
-\mkeyb{MinimalTimeStep}{Minimal\-Time\-Step} pour gérer ce cas. À
-l'exécution, la valeur choisie peut être modifiée à l'aide du
-paramètre \varcpp{dtmin}.
+\paragraph{Pas de temps minimal} En cas de convergence
+forcée~\cite{pascal05_increpl}, le code aux éléments finis \castem{}
+envoie à la loi de comportement un pas de temps nul qui ne permet pas
+d'écrire les lois de comportement sous la forme d'un système
+différentiel. Il est nécessaire de préciser un pas de temps minimal
+par la directive \mkeyb{MinimalTimeStep}{Minimal\-Time\-Step} pour
+gérer ce cas. À l'exécution, la valeur choisie peut être modifiée à
+l'aide du paramètre \varcpp{dtmin}.
 
 \subsection{Algorithmes disponibles}
 
@@ -2677,7 +2678,8 @@ par~:
 \[
 \tdepsilonvis = A\,\paren{\sigmaH}^{E}\,\tenseur{n}
 \]
-où le tenseur normal \(\tenseur{n}\) a été défini au
+où \(sigmaH\) désigne la contrainte de \nom{Hill} et \(\tenseur{n}\)
+le tenseur normal. Ils sont définis en annexe au
 paragraphe~\ref{sec:critere-de-nomhill}.
 
 Il est d'usage d'introduire une déformation viscoplastique cumulée
@@ -2748,7 +2750,7 @@ méthodes. Les plus importants sont que~:
 \begin{itemize}
   \item ces méthodes introduisent naturellement la matrice
   tangente cohérente. De plus, dans la plupart des cas, cette matrice
-  est pratiquement gratuite (voir
+  est pratiquement \og{}~gratuite~\fg{} (voir
   paragraphe~\ref{sec:mfront:implicit:tangentOperator})~;
   \item elles permettent de traiter naturellement les lois de
   comportement indépendantes du temps. Un exemple est donné par le
@@ -3109,14 +3111,14 @@ dépendantes du temps (écoulements viscoplastiques notamment) est plus
 délicate en raison justement de ces ordres de convergences plus
 faibles (que les méthodes de type \nom{Runge-Kutta})\footnote{Il ne
   faut pas oublier qu'il ne sert généralement à rien d'utiliser des
-  pas de temps trop grand. En effet, l'algorithme de résolution global
+  pas de temps trop grands. En effet, l'algorithme de résolution global
   (en quasi-statique) utilise une résolution implicite~: sur un pas de
   temps, il faut que l'hypothèse qui permet la linéarisation du
   l'évolution mécanique de la structure soit vérifiée.}.
 
 En pratique, nous avons {\em toujours} constaté des résultats
 extrêmement satisfaisants tant en termes de précision qu'en termes de
-performance numérique avec les méthodes implicites, quelque soit le
+performance numérique avec les méthodes implicites, quel que soit le
 type de loi de comportement.
 
 \begin{table}[htbp]
@@ -3931,9 +3933,9 @@ du système sont initialisés à la valeur des incréments des variables
 correspondantes ({\tt feel} est initialisé à {\tt deel}) et la matrice
 jacobienne est initialisée à l'identité.
 
-Cette implantation tient compte des limitations du code aux
-éléments finis \castem{} qui ne permet pas d'avoir une définition
-homogène des directions d'orthotropie quelque soit l'hypothèse de
+Cette implantation tient compte des limitations du code aux éléments
+finis \castem{} qui ne permet pas d'avoir une définition homogène des
+directions d'orthotropie quelle que soit l'hypothèse de
 modélisation. Les conventions utilisées ici sont conformes à celles
 décrites en annexe~\ref{sec:annexe:orthotropie} pour les tubes.
 
@@ -4079,7 +4081,7 @@ une centaine de lignes.
 
 \subsection{Perspectives}
 
-La diffusion de \mfront{} hors de la plate-forme \pleiades{}, au DMN
+L'utilisation de \mfront{} hors de la plate-forme \pleiades{}, au DMN
 et à EDF notamment, offre des possibilités de qualification de l'outil
 extrêmement intéressantes et des voies de collaboration extrêmement
 riches et enrichissantes.
@@ -4152,13 +4154,13 @@ champ de déplacements.
 
 \subsection{Principe des travaux virtuels}
 
-La méthode présentée repose sur une découpage temporel. Connaissant le
-champ de déplacement et l'état mécanique des matériaux, caractérisé par
-des variables internes \(y_{i}\), à l'instant \(t\), la méthode des
-éléments finis propose de rechercher sur une géométrie discrétisée, un
-champ nodal \(\Delta\discret{\vec{u}}\) telle que la fonction associée
-\(\Delta\vec{u}^{h}\) vérifie une approximation du principe des travaux
-virtuels~:
+La méthode présentée repose sur un découpage temporel. Connaissant le
+champ de déplacement et l'état mécanique des matériaux, caractérisé
+par des variables internes \(y_{i}\), à l'instant \(t\), la méthode
+des éléments finis propose de rechercher sur une géométrie
+discrétisée, un champ nodal \(\Delta\discret{\vec{u}}\) telle que la
+fonction associée \(\Delta\vec{u}^{h}\) vérifie une approximation du
+principe des travaux virtuels~:
 \[
 \forall \vec{v}^{h}\; C.A.^{h},\quad
 \underbrace{\int_{\Omega^{h}}\tsigma_{t+\Delta

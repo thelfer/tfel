@@ -17,9 +17,9 @@
   application aux propriétés matériau et aux modèles}
 
 \date{2013}
-% \numero{12-014}
+\numero{13-019}
 \indice{0}
-% \dateversion{09/2012}
+\dateversion{07/2013}
 \numeroaffaire{A-SICOM-A1-01}
 \domaine{DEN/DISN/SIMU}
 % \accords{tripartite}
@@ -27,7 +27,7 @@
 \programmerecherche{SICOM}
 \classification{DO}
 \motsclefs{
-  \mfront{} - \pleiades{}
+  \mfront{} - \pleiades{} - propriétés matériaux - modèles
 }
 
 % \codebarre{images/code_barre}

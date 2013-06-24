@@ -1,29 +1,34 @@
 configure_file(mfront-presentation.tex.in
                mfront-presentation.tex @ONLY)
 
-ADD_CUSTOM_COMMAND(
-    OUTPUT    mfront-presentation.pdf
-    DEPENDS    ${CMAKE_CURRENT_SOURCE_DIR}/mfront-presentation.tex.in
+macro(latex_presentation doc)
+  ADD_CUSTOM_COMMAND(
+    OUTPUT    ${doc}.pdf
+    DEPENDS    ${CMAKE_CURRENT_SOURCE_DIR}/${doc}.tex.in
     COMMAND   TEXMFHOME=@abs_top_srcdir@/docs/tex/texmf        ${LATEX_COMPILER}
-    ARGS      -interaction=batchmode mfront-presentation.tex
+    ARGS      -interaction=batchmode ${doc}.tex
     COMMAND   TEXMFHOME=@abs_top_srcdir@/docs/tex/texmf        ${LATEX_COMPILER}
-    ARGS      -interaction=batchmode mfront-presentation.tex
+    ARGS      -interaction=batchmode ${doc}.tex
     COMMAND   TEXMFHOME=@abs_top_srcdir@/docs/tex/texmf        ${LATEX_COMPILER}
-    ARGS      -interaction=batchmode mfront-presentation.tex
+    ARGS      -interaction=batchmode ${doc}.tex
     COMMAND   TEXMFHOME=@abs_top_srcdir@/docs/tex/texmf        ${DVIPS_CONVERTER}
-    ARGS      -R0 mfront-presentation.dvi
+    ARGS      -R0 ${doc}.dvi
     COMMAND   ${PS2PDF_CONVERTER}
-    ARGS      mfront-presentation.ps
-    COMMENT   "mfront-presentation.pdf")
+    ARGS      ${doc}.ps
+    COMMENT   "${doc}.pdf")
   
-# Eventually trigger the whole process
-add_custom_target(mfront-presentation-doc-pdf echo DEPENDS mfront-presentation.pdf)
-add_custom_target(mfront-presentation-doc-pdf-install
-                  ${CMAKE_COMMAND} -E copy mfront-presentation.pdf ${CMAKE_INSTALL_PREFIX}/share/doc/mfront-presentation/mfront-presentation.pdf)
-add_dependencies(mfront-presentation-doc-pdf-install mfront-presentation-doc-pdf)
+  # Eventually trigger the whole process
+  add_custom_target(${doc}-doc-pdf echo DEPENDS ${doc}.pdf)
+  add_custom_target(${doc}-doc-pdf-install
+    ${CMAKE_COMMAND} -E copy ${doc}.pdf ${CMAKE_INSTALL_PREFIX}/share/doc/${doc}/${doc}.pdf)
+  add_dependencies(${doc}-doc-pdf-install ${doc}-doc-pdf)
+  
+  add_dependencies(doc-pdf
+    ${doc}-doc-pdf)
+  
+  add_dependencies(doc-pdf-install
+    ${doc}-doc-pdf-install)
+endmacro(latex_presentation doc)
 
-add_dependencies(doc-pdf
-  mfront-presentation-doc-pdf)
-
-add_dependencies(doc-pdf-install
-  mfront-presentation-doc-pdf-install)
+latex_presentation(mfront-presentation)
+#macro(latex_presentation mfront-presentation)
