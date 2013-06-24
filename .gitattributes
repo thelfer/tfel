@@ -625,6 +625,7 @@ include/TFEL/Math/General/ScalarObjectRandomAccessConstIteratorSpecialisation.hx
 include/TFEL/Math/General/StorageTraits.hxx -text
 include/TFEL/Math/General/UnaryResultType.hxx -text
 include/TFEL/Math/General/floating_point_exceptions.hxx -text
+include/TFEL/Math/IntegerEvaluator.hxx -text
 include/TFEL/Math/Kriging.hxx -text
 include/TFEL/Math/Kriging/FactorizedKriging.ixx -text
 include/TFEL/Math/Kriging/Kriging.ixx -text
@@ -725,6 +726,7 @@ include/TFEL/Math/Parser/ExternalFunctionExpr2.hxx -text
 include/TFEL/Math/Parser/ExternalFunctionManager.hxx -text
 include/TFEL/Math/Parser/Function.hxx -text
 include/TFEL/Math/Parser/Function.ixx -text
+include/TFEL/Math/Parser/IntegerEvaluatorTExpr.hxx -text
 include/TFEL/Math/Parser/KrigedFunction.hxx -text
 include/TFEL/Math/Parser/KrigedFunction.ixx -text
 include/TFEL/Math/Parser/LogicalExpr.hxx -text
@@ -1379,6 +1381,8 @@ src/Math/FactorizedKriging1D3D.cxx -text
 src/Math/Function.cxx -text
 src/Math/FunctionTag.cxx -text
 src/Math/Id.cxx -text
+src/Math/IntegerEvaluator.cxx -text
+src/Math/IntegerEvaluatorTExpr.cxx -text
 src/Math/KrigedFunction.cxx -text
 src/Math/Kriging1D.cxx -text
 src/Math/Kriging2D.cxx -text

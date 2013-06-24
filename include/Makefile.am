@@ -115,6 +115,7 @@ nobase_include_HEADERS= TFEL/Macros.hxx                                         
 			TFEL/Math/Parser/EvaluatorTExpr.ixx 					      \
 			TFEL/Math/Parser/EvaluatorProxy.hxx                                           \
 			TFEL/Math/Parser/EvaluatorProxy.ixx                                           \
+			TFEL/Math/Parser/IntegerEvaluatorTExpr.hxx				      \
 			TFEL/Math/Parser/LogicalExpr.hxx                                              \
 			TFEL/Math/Parser/LogicalExpr.ixx                                              \
 			TFEL/Math/Parser/ConditionalExpr.hxx                                          \
@@ -122,6 +123,7 @@ nobase_include_HEADERS= TFEL/Macros.hxx                                         
 			TFEL/Math/Parser/EvaluatorFunction.ixx                                        \
 			TFEL/Math/Evaluator.hxx 						      \
 			TFEL/Math/Evaluator.ixx 						      \
+			TFEL/Math/IntegerEvaluator.hxx 						      \
 			TFEL/Math/CubicSpline.hxx					              \
 			TFEL/Math/CubicSpline.ixx					              \
 			TFEL/Math/Kriging.hxx						              \

@@ -14,6 +14,7 @@
 #if not (defined _WIN32 || defined _WIN64 ||defined __CYGWIN__)
 #include"TFEL/System/ProcessManager.hxx"
 #endif
+#include"TFEL/Math/IntegerEvaluator.hxx"
 
 #include"MFront/MFront.hxx"
 #include"MFront/ParserBase.hxx"
@@ -402,12 +403,50 @@ namespace mfront
     return res;
   } // end of ParserBase::readNextBlock
 
+
+  void
+  ParserBase::treatIntegerConstant()
+  {
+    using namespace std;
+    typedef map<string,int>::value_type MVType;
+    string name;
+    unsigned short line;
+    int value;
+    this->checkNotEndOfFile("ParserBase::treatIntegerConstant",
+			    "Cannot read type of static variable.");
+    name = this->current->value;
+    if(!isValidIdentifier(name)){
+      this->throwRuntimeError("ParserBase::treatIntegerConstant",
+			      "Variable name '"+name+"' is not valid.");
+    }
+    line = this->current->line;
+    ++(this->current);
+    this->readSpecifiedToken("ParserBase::treatIntegerConstant","=");
+    this->checkNotEndOfFile("ParserBase::treatIntegerConstant",
+			    "Expected to read value of variable.");
+    istringstream tmp(this->current->value);
+    tmp >> value;
+    if(!tmp&&(!tmp.eof())){
+      this->throwRuntimeError("ParserBase::treatIntegerConstant",
+			      "Could not read of variable '"+name+"'");
+    }
+    ++(this->current);
+    this->readSpecifiedToken("ParserBase::treatIntegerConstant",";");
+    this->registerStaticVariable(name);
+    if(!this->integerConstants.insert(MVType(name,value)).second){
+      this->throwRuntimeError("ParserBase::treatIntegerConstant",
+			      "variable '"+name+"' already declared");
+    }
+  } // end of ParserBase::treatIntegerConstant
+
   void ParserBase::readVarList(VarContainer& cont,
 			       const std::string& type,
 			       const bool allowArray,
 			       const bool addIncrementVar)
   {
     using namespace std;
+    using namespace tfel::math;
+    using namespace tfel::utilities;
     string varName;
     unsigned short lineNumber;
     unsigned short asize;
@@ -428,20 +467,39 @@ namespace mfront
 	  this->throwRuntimeError("ParserBase::readVarList : ",
 				  "variable '"+varName+"' can't be declared an array");
 	}
+	string array_size;
 	++(this->current);
 	this->checkNotEndOfFile("ParserBase::readVarList");
-	istringstream converter(this->current->value);
-	converter >> asize;
-	if(!converter&&(!converter.eof())){
-	  this->throwRuntimeError("ParserBase::readVarList : ",
-				  "could not read array size for variable '"+varName+"'");
+	while(this->current->value!="]"){
+	  if((this->current->flag!=Token::Standard)||
+	     (this->current->value==";")){
+	    this->throwRuntimeError("ParserBase::readVarList : ",
+				    "invalid array size for '"+varName+"'");
+	  }
+	  array_size += this->current->value;
+	  ++(this->current);
+	  this->checkNotEndOfFile("ParserBase::readVarList");
 	}
-	if(asize==0){
+	if(array_size.empty()){
+	  this->throwRuntimeError("ParserBase::readVarList : ",
+				  "empty array size for '"+varName+"'");
+	}
+	IntegerEvaluator ev(array_size);
+	const vector<string>& vars = ev.getVariablesNames();
+	vector<string>::const_iterator pv;
+	for(pv=vars.begin();pv!=vars.end();++pv){
+	  map<string,int>::const_iterator pvv = this->integerConstants.find(*pv);
+	  if(pvv==this->integerConstants.end()){
+	    this->throwRuntimeError("ParserBase::readVarList : ",
+				    "unknown constant '"+*pv+"'");
+	  }
+	  ev.setVariableValue(*pv,pvv->second);
+	}
+	asize = ev.getValue();
+	if(asize<=0){
 	  this->throwRuntimeError("ParserBase::readVarList : ",
 				  "invalid array size for '"+varName+"'");
 	}
-	++(this->current);
-	this->checkNotEndOfFile("ParserBase::readVarList");
 	this->readSpecifiedToken("ParserBase::readVarList","]");
 	this->checkNotEndOfFile("ParserBase::readVarList");
       }

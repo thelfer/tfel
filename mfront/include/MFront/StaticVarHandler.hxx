@@ -16,14 +16,25 @@
 
 namespace mfront{
 
+  /*!
+   * Class representing a static variable
+   */
   struct TFEL_VISIBILITY_EXPORT StaticVarHandler
     : public VarHandler
   {
+    //! value of the static variable
     long double value;
-        
-    StaticVarHandler(const std::string&,const std::string&,
-		     const unsigned short,const long double);
-
+    /*!
+     * Constructor
+     * \param[in] type_       : variable type
+     * \param[in] name_       : variable name
+     * \param[in] lineNumber_ : if greater than 1, will be considered as an array
+     * \param[in] value_      : value
+     */
+    StaticVarHandler(const std::string&,
+		     const std::string&,
+		     const unsigned short,
+		     const long double);
   }; // end of struct MFrontParserBase<Child>::StaticVarHandler
 
   typedef std::vector<StaticVarHandler>  StaticVarContainer;

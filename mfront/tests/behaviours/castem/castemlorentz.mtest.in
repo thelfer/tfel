@@ -17,7 +17,7 @@
 @Real 'mu'     'young/(2*(1+nu))';
 
 @Real 'smax'   '150e6';
-@Real 'A' '0.5*(lambda*(1-2*nu)**2+2*mu)*(smax/young)**2'; 
+@Real 'A' '0.5*(lambda+2*mu)*(smax/young)**2'; 
 
 @Behaviour<umat> 'libMFrontCastemBehaviours.so' 'umatlorentz';
 @MaterialProperty<constant> 'YoungModulus'     'young';

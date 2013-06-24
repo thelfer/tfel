@@ -56,6 +56,8 @@ set(TFELMathParser_SOURCES
     EvaluatorTExpr.cxx
     EvaluatorFunction.cxx
     Evaluator.cxx
+    IntegerEvaluator.cxx
+    IntegerEvaluatorTExpr.cxx
     Function.cxx
     Negation.cxx
     Number.cxx

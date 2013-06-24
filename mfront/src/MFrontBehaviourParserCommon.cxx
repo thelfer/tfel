@@ -897,7 +897,6 @@ namespace mfront{
       this->throwRuntimeError("MFrontBehaviourParserCommon::treatBounds",
 			      this->current->value+" is not a valid identifier.");
     }
-    
     if (boundsDescription.varType==Stensor){
       ++(this->current);
       this->readSpecifiedToken("MFrontBehaviourParserCommon::treatBounds : ","(");
@@ -1082,6 +1081,18 @@ namespace mfront{
     file << endl;
   }
 
+  void MFrontBehaviourParserCommon::writeIntegerConstants(std::ofstream& file)
+  {
+    using namespace std;
+    map<string,int>::const_iterator p;
+    if(!this->integerConstants.empty()){
+      file << endl;
+    }
+    for(p=this->integerConstants.begin();p!=this->integerConstants.end();++p){
+      file << "static const int " << p->first << " = " << p->second << ";" << endl;
+    }
+  } // end of MFrontBehaviourParserCommon::writeIntegerConstants
+
   void MFrontBehaviourParserCommon::writeStandardTFELTypedefs(std::ofstream& file) 
   {
     using namespace std;
@@ -1241,6 +1252,7 @@ namespace mfront{
     this->checkBehaviourDataFile();
     this->writeStandardTFELTypedefs(this->behaviourDataFile);
     this->behaviourDataFile << endl;
+    this->behaviourDataFile << "static const unsigned short TVectorSize = N;\n";
     this->behaviourDataFile << "typedef tfel::math::StensorDimeToSize<N> StensorDimeToSize;\n";
     this->behaviourDataFile << "static const unsigned short StensorSize = ";
     this->behaviourDataFile << "StensorDimeToSize::value;\n";
@@ -1590,7 +1602,7 @@ namespace mfront{
     this->behaviourDataFile << "TFEL_STATIC_ASSERT(tfel::typetraits::IsReal<Type>::cond);\n\n";
     this->behaviourDataFile << "friend std::ostream& operator<< <>(std::ostream&,const ";
     this->behaviourDataFile << this->className << "BehaviourData&);\n\n";
-    
+    this->writeIntegerConstants(this->behaviourDataFile);    
   }
 
   void MFrontBehaviourParserCommon::writeBehaviourDataClassEnd() {    
@@ -1799,6 +1811,7 @@ namespace mfront{
     this->behaviourFile << "TFEL_STATIC_ASSERT(tfel::typetraits::IsReal<Type>::cond);\n\n";
     this->behaviourFile << "friend std::ostream& operator<< <>(std::ostream&,const ";
     this->behaviourFile << this->className << "&);\n\n";
+    this->writeIntegerConstants(this->behaviourFile);
   }
 
   void MFrontBehaviourParserCommon::writeBehaviourFileHeader(){
@@ -2389,7 +2402,8 @@ namespace mfront{
     using namespace std;
     this->checkBehaviourFile();
     this->writeStandardTFELTypedefs(this->behaviourFile);
-    this->behaviourFile << "\ntypedef tfel::math::StensorDimeToSize<N> StensorDimeToSize;\n";
+    this->behaviourFile << "\nstatic const unsigned short TVectorSize = N;\n";
+    this->behaviourFile << "typedef tfel::math::StensorDimeToSize<N> StensorDimeToSize;\n";
     this->behaviourFile << "static const unsigned short StensorSize = ";
     this->behaviourFile << "StensorDimeToSize::value;\n\n";
     this->behaviourFile << "public :\n\n";
@@ -2522,6 +2536,7 @@ namespace mfront{
       this->behaviourFile << "static const unsigned short N = ModellingHypothesisToSpaceDimension<"
 			  << "ModellingHypothesis::" << MH::HypothesisToString(h) << ">::value;\n";
     }
+    this->behaviourFile << "static const unsigned short TVectorSize = N;\n";
     this->behaviourFile << "typedef tfel::math::StensorDimeToSize<N> StensorDimeToSize;\n";
     this->behaviourFile << "static const unsigned short StensorSize = ";
     this->behaviourFile << "StensorDimeToSize::value;\n";
@@ -3088,7 +3103,7 @@ namespace mfront{
     this->integrationDataFile << "TFEL_STATIC_ASSERT(tfel::typetraits::IsReal<Type>::cond);\n\n";
     this->integrationDataFile << "friend std::ostream& operator<< <>(std::ostream&,const ";
     this->integrationDataFile << this->className << "IntegrationData&);\n\n";
-    
+    this->writeIntegerConstants(this->integrationDataFile);
   }
 
   void MFrontBehaviourParserCommon::writeIntegrationDataOutputOperator(void)

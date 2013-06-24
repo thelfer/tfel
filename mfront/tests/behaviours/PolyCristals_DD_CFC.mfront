@@ -1,6 +1,7 @@
 @Parser RungeKutta;
 @Algorithm rk54;
 @Behaviour PolyCristals_DD_CFC;
+@ModellingHypothesis Tridimensional;
 
 @Author Jean-Michel Proix;
 @Date   21/06/2013;
@@ -8,11 +9,13 @@
   Homégénéisation
 }
 
+// Number of phases
+@IntegerConstant Np  = 30;
+// Number of sliding systems
+@IntegerConstant Nss = 12;
+
 @OrthotropicBehaviour;
 @RequireStiffnessTensor;
-@ModellingHypothesis Tridimensional;
-
-// @Epsilon 1.e-8 ;
 
 @MaterialProperty real tauf;
 @MaterialProperty real y;
@@ -23,8 +26,8 @@
 @MaterialProperty real Mu;
 
 @StateVariable StrainStensor    epsp;
-@StateVariable strain           omega[360];
-@StateVariable StrainStensor    epsg[30];
+@StateVariable strain           omega[Nss*Np];
+@StateVariable StrainStensor    epsg[Np];
 @AuxiliaryStateVariable real    pg;
 omega.setErrorNormalisationFactor(1.e-7);
 
@@ -38,17 +41,13 @@ omega.setErrorNormalisationFactor(1.e-7);
 @Members{
   // Mono cristal  sliding system
   typedef MetallicCFCSlidingSystems<real> MCSlidingSystems;
-  // number of sliding systems
-  static const unsigned short Nss = MCSlidingSystems::Nss;
-  // number of phases (grains)
-  static const unsigned short Np  = 30;
   // Poly cristals sliding system
   typedef PolyCristalsSlidingSystems<Np,MCSlidingSystems,real> PCSlidingSystems;
 }
 
 
 //! fraction volumique
-@LocalVariable real  fv[30];
+@LocalVariable real  fv[Np];
 
 @InitLocalVariables{
   // fractions volumiques
@@ -70,10 +69,10 @@ omega.setErrorNormalisationFactor(1.e-7);
   static const real tmp2   = log(alpha*beta*sqrt(rhoref));
   const PCSlidingSystems& gs =
     PCSlidingSystems::getPolyCristalsSlidingSystems("PolyCristalsAngles.txt");
-  real ppomega[12];
+  real ppomega[Nss];
   real Dp ;
   real h ;
-  const int ng=30;
+  const int ng=Np;
   StressStensor sigg(real(0)) ;
   depsp=Stensor(real(0)) ;
   // boucle sur le nombre de phases (ou grains) 
@@ -86,17 +85,17 @@ omega.setErrorNormalisationFactor(1.e-7);
     }
     real C=1.0;
     real sum=0.0;
-    for(unsigned short i=0;i!=12;++i){
-      ppomega[i]=max(0.,omega[12*k+i]);
+    for(unsigned short i=0;i!=Nss;++i){
+      ppomega[i]=max(0.,omega[Nss*k+i]);
       sum+=ppomega[i];
     }
     if (alpha>0.){
       C=0.2+0.8*(tmp1+0.5*log(sum))/tmp2;
     }     
     depsg[k]=Stensor(real(0)) ;
-    for(unsigned short i=0;i!=12;++i){
+    for(unsigned short i=0;i!=Nss;++i){
       real taufor2=0.0;
-      for(unsigned short j=0;j!=12;++j){
+      for(unsigned short j=0;j!=Nss;++j){
 	taufor2+=mh(i,j)*ppomega[j];
       }
       real taufor=Mu*C*sqrt(taufor2);
@@ -117,7 +116,7 @@ omega.setErrorNormalisationFactor(1.e-7);
 	real ha=0.0; //< forest
 	real hb=0.0;
 	real hc=0.0; //< copla
-	for(unsigned short j=0;j!=12;++j){
+	for(unsigned short j=0;j!=Nss;++j){
 	  hb+=sqrt(mh(i,j)*ppomega[j]);
 	  if (i/3!=j/3){
 	    ha+=sqrt(mh(i,j))*ppomega[j];
@@ -127,7 +126,7 @@ omega.setErrorNormalisationFactor(1.e-7);
 	}
 	h=a*ha/hb+b*C*hc-y/beta*ppomega[i];
       }
-      domega[12*k+i]=Dp*h;
+      domega[Nss*k+i]=Dp*h;
     }
     depsp+=depsg[k]*fv[k] ;
   }

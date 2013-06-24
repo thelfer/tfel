@@ -22,7 +22,7 @@ namespace tfel
     namespace parser
     {
 
-      struct EvaluatorBase
+      struct TFEL_VISIBILITY_EXPORT EvaluatorBase
       {
       protected:
 	void

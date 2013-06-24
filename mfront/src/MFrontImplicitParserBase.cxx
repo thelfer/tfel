@@ -1341,6 +1341,44 @@ namespace mfront{
 	    this->behaviourFile << "}\n";
 	  }
 	  n2 += this->getTypeSize(p2->type,p2->arraySize);
+	} else if(flag==SupportedTypes::TVector){
+	  if(p2->arraySize==1u){
+	    this->behaviourFile << "for(unsigned short idx2=" << n2;
+	    this->behaviourFile << ";idx2!=";
+	    n2 += this->getTypeSize(p2->type,p2->arraySize);
+	    this->behaviourFile << n2 << ";++idx2){" << endl;
+	    this->behaviourFile << "partial_jacobian_" << p2->name << "(idx2,idx)=vect_e(idx2);\n";
+	    this->behaviourFile << "}\n";
+	  } else {
+	    this->behaviourFile << "for(unsigned short idx2=0;idx2!="
+				<< p->arraySize << ";++idx2){" << endl;
+	    this->behaviourFile << "for(unsigned short idx3=" << n2;
+	    this->behaviourFile << ";idx3!=TVectorSize;++idx3){" << endl;
+	    this->behaviourFile << "partial_jacobian_" << p2->name 
+				<< "(idx2)(idx3,idx)=vect_e(" << n2 << "+idx3+idx2*TVectorSize);\n";
+	    this->behaviourFile << "}\n";
+	    this->behaviourFile << "}\n";
+	    n2 += this->getTypeSize(p2->type,p2->arraySize);
+	  }
+	} else if(flag==SupportedTypes::TVector){
+	  if(p2->arraySize==1u){
+	    this->behaviourFile << "for(unsigned short idx2=" << n2;
+	    this->behaviourFile << ";idx2!=";
+	    n2 += this->getTypeSize(p2->type,p2->arraySize);
+	    this->behaviourFile << n2 << ";++idx2){" << endl;
+	    this->behaviourFile << "partial_jacobian_" << p2->name << "(idx2,idx)=vect_e(idx2);\n";
+	    this->behaviourFile << "}\n";
+	  } else {
+	    this->behaviourFile << "for(unsigned short idx2=0;idx2!="
+				<< p->arraySize << ";++idx2){" << endl;
+	    this->behaviourFile << "for(unsigned short idx3=" << n2;
+	    this->behaviourFile << ";idx3!=TVectorSize;++idx3){" << endl;
+	    this->behaviourFile << "partial_jacobian_" << p2->name 
+				<< "(idx2)(idx3,idx)=vect_e(" << n2 << "+idx3+idx2*TVectorSize);\n";
+	    this->behaviourFile << "}\n";
+	    this->behaviourFile << "}\n";
+	    n2 += this->getTypeSize(p2->type,p2->arraySize);
+	  }
 	} else if(flag==SupportedTypes::Stensor){
 	  if(p2->arraySize==1u){
 	    this->behaviourFile << "for(unsigned short idx2=" << n2;

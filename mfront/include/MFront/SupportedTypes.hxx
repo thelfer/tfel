@@ -24,7 +24,7 @@ namespace mfront
 
     static const unsigned short ArraySizeLimit;
 
-    enum TypeFlag{Scalar,Stensor};
+    enum TypeFlag{Scalar,TVector,Stensor,Tensor};
 
     struct TypeSize;
 
@@ -37,45 +37,54 @@ namespace mfront
 
       TypeSize(const TypeSize&);
 
-      TypeSize(const ushort,const ushort);
+      TypeSize(const ushort,const ushort,
+	       const ushort,const ushort);
 
       TypeSize&
-	operator=(const TypeSize&);
+      operator=(const TypeSize&);
     
       TypeSize&
-	operator+=(const TypeSize&);
+      operator+=(const TypeSize&);
     
       ushort
-	getScalarSize() const;
+      getScalarSize() const;
     
       ushort
-	getStensorSize() const;
+      getTVectorSize() const;
+
+      ushort
+      getStensorSize() const;
+
+      ushort
+      getTensorSize() const;
 
     private:
 
       friend std::ostream& 
-	operator<< (std::ostream&, const TypeSize&);
+      operator<< (std::ostream&, const TypeSize&);
 
       ushort scalarSize;
+      ushort tvectorSize;
       ushort stensorSize;
+      ushort tensorSize;
 
     }; // end of class SupportedTypes::TypeSize
 
     SupportedTypes();
 
     TypeFlag
-      getTypeFlag(const std::string&) const;
+    getTypeFlag(const std::string&) const;
 
     /*!
      * \param[in] t : variable type
      * \param[in] a : array size
      */
     TypeSize
-      getTypeSize(const std::string&,
-		  const unsigned short) const;
+    getTypeSize(const std::string&,
+		const unsigned short) const;
 
     std::string
-      getTimeDerivativeType(const std::string&) const;
+    getTimeDerivativeType(const std::string&) const;
 
     /*!
      * \return true of the parser shall declare a dynamically

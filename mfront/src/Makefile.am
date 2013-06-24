@@ -82,9 +82,10 @@ if HAVE_ASTER
 mfront_SOURCES += MFrontAsterInterface.cxx
 endif
 
-mfront_LDADD   = -L$(top_builddir)/src/Material  -lTFELMaterial  \
-		 -L$(top_builddir)/src/System    -lTFELSystem    \
-		 -L$(top_builddir)/src/Utilities -lTFELUtilities \
+mfront_LDADD   = -L$(top_builddir)/src/Material  -lTFELMaterial   \
+		 -L$(top_builddir)/src/Math      -lTFELMathParser \
+		 -L$(top_builddir)/src/System    -lTFELSystem     \
+		 -L$(top_builddir)/src/Utilities -lTFELUtilities  \
 		 -L$(top_builddir)/src/Exception -lTFELException
 
 if !TFEL_WIN

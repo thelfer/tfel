@@ -123,6 +123,7 @@ add_executable(mfront ${mfront_SOURCES})
 if(UNIX)
 target_link_libraries(mfront
                       TFELMaterial
+                      TFELMathParser
                       TFELSystem
 		      TFELUtilities
 		      TFELException
@@ -130,6 +131,7 @@ target_link_libraries(mfront
 else(UNIX)
 target_link_libraries(mfront
                       TFELMaterial
+                      TFELMathParser
                       TFELSystem
 		      TFELUtilities
 		      TFELException)

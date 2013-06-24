@@ -206,6 +206,8 @@ namespace mfront
     virtual void
     treatStaticVar(void);
     virtual void
+    treatIntegerConstant(void);
+    virtual void
     treatDescription(void);
     virtual void
     treatMaterial(void);
@@ -222,6 +224,7 @@ namespace mfront
     double
     readDouble(void);
     std::vector<std::string> librariesDependencies;
+    std::map<std::string,int> integerConstants;
     std::string sources;
     std::string privateCode;
     std::string members;

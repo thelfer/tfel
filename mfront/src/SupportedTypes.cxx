@@ -18,24 +18,35 @@ namespace mfront{
 
   SupportedTypes::TypeSize::TypeSize()
     : scalarSize(0u),
-      stensorSize(0u)
+      tvectorSize(0u),
+      stensorSize(0u),
+      tensorSize(0u)
   {}
   
   SupportedTypes::TypeSize::TypeSize(const SupportedTypes::TypeSize& src)
     : scalarSize(src.scalarSize),
-      stensorSize(src.stensorSize)
+      tvectorSize(src.tvectorSize),
+      stensorSize(src.stensorSize),
+      tensorSize(src.tensorSize)
   {}
   
-  SupportedTypes::TypeSize::TypeSize(const ushort a,const ushort b)
+  SupportedTypes::TypeSize::TypeSize(const ushort a,
+				     const ushort b,
+				     const ushort c,
+				     const ushort d)				     
     : scalarSize(a),
-      stensorSize(b)
+      tvectorSize(b),
+      stensorSize(c),
+      tensorSize(d)
   {}
   
   SupportedTypes::TypeSize&
   SupportedTypes::TypeSize::operator=(const SupportedTypes::TypeSize& src)
   {
     scalarSize  = src.scalarSize;
+    tvectorSize = src.tvectorSize;
     stensorSize = src.stensorSize;
+    tensorSize  = src.tensorSize;
     return *this;
   }
   
@@ -43,32 +54,55 @@ namespace mfront{
   SupportedTypes::TypeSize::operator+=(const SupportedTypes::TypeSize& src)
   {
     scalarSize  = static_cast<unsigned short>(scalarSize+src.scalarSize);
+    tvectorSize = static_cast<unsigned short>(tvectorSize+src.tvectorSize);
     stensorSize = static_cast<unsigned short>(stensorSize+src.stensorSize);
+    tensorSize = static_cast<unsigned short>(tensorSize+src.tensorSize);
     return *this;
   }
 
   std::ostream&
   operator << (std::ostream& os,const SupportedTypes::TypeSize& size)
   {
-    if((size.scalarSize==0u)&&(size.stensorSize==0u)){
-      os << 0u;
-    } else {
-      if(size.scalarSize!=0u){
-	os << size.scalarSize;
-	if(size.stensorSize!=0u){
-	  if(size.stensorSize==1u){
-	    os << "+StensorSize";
-	  } else {
-	    os << "+" << size.stensorSize << "*StensorSize";
-	  }
-	}
-      } else{
-	if(size.stensorSize==1u){
-	  os << "StensorSize";
-	} else {
-	  os << size.stensorSize << "*StensorSize";
-	}
+    bool first = true;
+    if(size.scalarSize!=0u){
+      os << size.scalarSize;
+      first = false;
+    }
+    if(size.tvectorSize!=0u){
+      if(!first){
+	os << "+";
       }
+      if(size.tvectorSize==1u){
+	os << "TVectorSize";
+      } else {
+	os << size.tvectorSize << "*TVectorSize";
+      }
+      first = false;
+    }
+    if(size.stensorSize!=0u){
+      if(!first){
+	os << "+";
+      }
+      if(size.stensorSize==1u){
+	os << "StensorSize";
+      } else {
+	os << size.stensorSize << "*StensorSize";
+      }
+      first = false;
+    }
+    if(size.tensorSize!=0u){
+      if(!first){
+	os << "+";
+      }
+      if(size.tensorSize==1u){
+	os << "TensorSize";
+      } else {
+	os << size.tensorSize << "*TensorSize";
+      }
+      first = false;
+    }
+    if(first){
+      os << "0u";
     }
     return os;
   }
@@ -130,10 +164,16 @@ namespace mfront{
     TypeSize res;
     switch(this->getTypeFlag(type)){
     case Scalar : 
-      res=TypeSize(a,0u);
+      res=TypeSize(a,0u,0u,0u);
+      break;
+    case TVector : 
+      res=TypeSize(0u,a,0u,0u);
       break;
     case Stensor :
-      res=TypeSize(0u,a);
+      res=TypeSize(0u,0u,a,0u);
+      break;
+    case Tensor : 
+      res=TypeSize(0u,0u,0u,a);
       break;
     default : 
       throw(runtime_error("SupportedTypes::getTypeSize : internal error."));
@@ -170,11 +210,23 @@ namespace mfront{
   {
     return this->scalarSize;
   }
+
+  SupportedTypes::TypeSize::ushort
+  SupportedTypes::TypeSize::getTVectorSize(void) const
+  {
+    return this->tvectorSize;
+  }
     
   SupportedTypes::TypeSize::ushort
   SupportedTypes::TypeSize::getStensorSize(void) const
   {
     return this->stensorSize;
+  }
+
+  SupportedTypes::TypeSize::ushort
+  SupportedTypes::TypeSize::getTensorSize(void) const
+  {
+    return this->tensorSize;
   }
 
   SupportedTypes::TypeSize

@@ -416,7 +416,8 @@ namespace mfront{
     // choosing the error evaluation
     if(this->eev==DEFAULTERROREVALUATION){
       SupportedTypes::TypeSize svsize = this->getTotalSize(this->mb.getStateVariables());
-      if(3u*svsize.getStensorSize()+svsize.getScalarSize()>=20){
+      if(svsize.getScalarSize()+svsize.getTVectorSize()+
+	 3u*svsize.getStensorSize()+3u*svsize.getTensorSize()>=20){
 	this->eev = MAXIMUMVALUEERROREVALUATION;
       } else {
 	this->eev = ERRORSUMMATIONEVALUATION;

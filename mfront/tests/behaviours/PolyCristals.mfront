@@ -4,6 +4,11 @@
 @OrthotropicBehaviour;
 @RequireStiffnessTensor;
 
+// Number of phases
+@IntegerConstant Np  = 30;
+// Number of sliding systems
+@IntegerConstant Nss = 12;
+
 @Epsilon 1.e-6 ;
 
 @MaterialProperty real m;
@@ -16,12 +21,12 @@
 @MaterialProperty real d1;
 @MaterialProperty real Mu;
 @StateVariable StrainStensor    epsp;
-@StateVariable StrainStensor    epsg[30];
+@StateVariable StrainStensor    epsg[Np];
 
 // comment declarer 12*ng ?
-@StateVariable strain           g[360];
-@StateVariable strain           a[360];
-@StateVariable strain           p[360];
+@StateVariable strain           g[Nss*Np];
+@StateVariable strain           a[Nss*Np];
+@StateVariable strain           p[Nss*Np];
 @AuxiliaryStateVariable real    pg;
 
 @Includes{
@@ -33,10 +38,6 @@
 @Members{
   // Mono cristal  sliding system
   typedef MetallicCFCSlidingSystems<real> MCSlidingSystems;
-  // number of sliding systems
-  static const unsigned short Nss = MCSlidingSystems::Nss;
-  // number of phases (grains)
-  static const unsigned short Np  = 30;
   // Poly cristals sliding system
   typedef PolyCristalsSlidingSystems<Np,MCSlidingSystems,real> PCSlidingSystems;
   // Interaction matrix
@@ -44,9 +45,9 @@
 }
 
 //! fraction volumique
-@LocalVariable real  fv[30];
+@LocalVariable real  fv[Np];
 //! interaction matrix
-@LocalVariable tfel::math::tmatrix<12,12,real> mh;
+@LocalVariable tfel::math::tmatrix<Nss,Nss,real> mh;
 
 @InitLocalVariables{
   // fractions volumiques
@@ -74,7 +75,7 @@
   StressStensor sigg(real(0)) ;
   depsp=Stensor(real(0)) ;
   // boucle sur le nombre de phases (ou grains) 
-  real pe[12] ;
+  real pe[Nss] ;
   for(unsigned short k=0;k!=Np;++k){  
     // localisation BZ
     real seq=sigmaeq(sig);

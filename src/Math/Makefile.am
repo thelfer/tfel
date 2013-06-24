@@ -72,7 +72,10 @@ libTFELMathParser_la_SOURCES = ExternalCFunction.cxx                         \
 			       Number.cxx                                    \
 			       LevenbergMarquardtEvaluatorWrapper.cxx        \
 			       LevenbergMarquardtExternalFunctionWrapper.cxx \
-			       Variable.cxx
+			       Variable.cxx                                  \
+			       IntegerEvaluator.cxx                          \
+			       IntegerEvaluatorTExpr.cxx
+
 
 if TFEL_WIN
 libTFELMathParser_la_CPPFLAGS = -DTFELMathParser_EXPORTS

@@ -381,7 +381,25 @@ namespace mfront{
     for(pm=mb.getMainVariables().begin();pm!=mb.getMainVariables().end();++pm){
       const DrivingVariable&    v = pm->first;
       const ThermodynamicForce& f = pm->second;
-      if(this->getTypeFlag(f.type)==SupportedTypes::Stensor){
+      if(this->getTypeFlag(f.type)==SupportedTypes::Scalar){
+	if(pm!=mb.getMainVariables().begin()){
+	  behaviourDataFile << f.name << " =  " << f.type << "(Asterstress_+" << of <<");\n";
+	} else {
+	  behaviourDataFile << f.name << " =  " << f.type << "(Asterstress_);\n";
+	}
+      } else if(this->getTypeFlag(f.type)==SupportedTypes::TVector){
+	if(pm!=mb.getMainVariables().begin()){
+	  behaviourDataFile << "copy("
+			    << "static_cast<typename " << f.type << "::value_type *const>(Asterstress_+" << of <<"),\n"
+			    << "static_cast<typename " << f.type << "::value_type *const>(Asterstress_+" << of <<"+TVectorSize),\n"
+			    << f.name << ".begin())\n;";
+	} else {
+	  behaviourDataFile << "copy("
+			    << "static_cast<typename " << f.type << "::value_type *const>(Asterstress_),\n"
+			    << "static_cast<typename " << f.type << "::value_type *const>(Asterstress_+TVectorSize),\n"
+			    << f.name << ".begin())\n;";
+	}
+      } else if(this->getTypeFlag(f.type)==SupportedTypes::Stensor){
 	if(pm!=mb.getMainVariables().begin()){
 	  behaviourDataFile << f.name << ".importTab(Asterstress_+" << of <<");\n";
 	} else {
@@ -392,7 +410,25 @@ namespace mfront{
 	msg += "unsupported forces type";
 	throw(runtime_error(msg));
       }
-      if(this->getTypeFlag(v.type)==SupportedTypes::Stensor){
+      if(this->getTypeFlag(v.type)==SupportedTypes::Scalar){
+	if(pm!=mb.getMainVariables().begin()){
+	  behaviourDataFile << v.name << " = " << v.type << "(Asterstran+" << ov <<");\n";
+	} else {
+	  behaviourDataFile << v.name << " = " << v.type << "(Asterstran);\n";
+	}
+      } else if(this->getTypeFlag(v.type)==SupportedTypes::TVector){
+	if(pm!=mb.getMainVariables().begin()){
+	  behaviourDataFile << "copy("
+			    << "static_cast<typename " << v.type << "::value_type *const>(Asterstran+" << ov <<"),\n"
+			    << "static_cast<typename " << v.type << "::value_type *const>(Asterstran+" << ov <<"+TVectorSize),\n"
+			    << v.name << ".begin())\n;";
+	} else {
+	  behaviourDataFile << "copy("
+			    << "static_cast<typename " << v.type << "::value_type *const>(Asterstran),\n"
+			    << "static_cast<typename " << v.type << "::value_type *const>(Asterstran+TVectorSize),\n"
+			    << v.name << ".begin())\n;";
+	}
+      } else if(this->getTypeFlag(v.type)==SupportedTypes::Stensor){
 	if(pm!=mb.getMainVariables().begin()){
 	  behaviourDataFile << v.name << ".importVoigt(Asterstran+" << ov <<");\n";
 	} else {
@@ -463,7 +499,25 @@ namespace mfront{
 	msg += "unsupported driving variable '"+v.name+"'";
 	throw(runtime_error(msg));
       }
-      if(this->getTypeFlag(v.type)==SupportedTypes::Stensor){
+      if(this->getTypeFlag(v.type)==SupportedTypes::Scalar){
+	if(pm!=mb.getMainVariables().begin()){
+	  behaviourIntegrationFile << "d" << v.name << " = " << v.type << "(Asterdstran+" << ov <<");\n";
+	} else {
+	  behaviourIntegrationFile << "d" << v.name << " = " << v.type << "(Asterdstran);\n";
+	}
+      } else if(this->getTypeFlag(v.type)==SupportedTypes::TVector){
+	if(pm!=mb.getMainVariables().begin()){
+	  behaviourIntegrationFile << "copy("
+				   << "static_cast<typename " << v.type << "::value_type *const>(Asterdstran+" << ov <<"),\n"
+				   << "static_cast<typename " << v.type << "::value_type *const>(Asterdstran+" << ov <<"+TVectorSize),\n"
+				   << "d" << v.name << ".begin())\n;";
+	} else {
+	  behaviourIntegrationFile << "copy("
+				   << "static_cast<typename " << v.type << "::value_type *const>(Asterdstran),\n"
+				   << "static_cast<typename " << v.type << "::value_type *const>(Asterdstran+TVectorSize),\n"
+				   << "d" << v.name << ".begin())\n;";
+	}
+      } else if(this->getTypeFlag(v.type)==SupportedTypes::Stensor){
 	if(pm!=mb.getMainVariables().begin()){
 	  behaviourIntegrationFile << "d" << v.name << ".importVoigt(Asterdstran);\n";
 	} else {
@@ -1296,17 +1350,6 @@ namespace mfront{
       out << "const bool computeTangentOperator = (*DDSOE>0.5);\n";
     }
     if(this->compareToNumericalTangentOperator){
-      const map<DrivingVariable,
-		ThermodynamicForce>& mvariables=mb.getMainVariables();
-      if((mvariables.size()!=1)||
-	 (mvariables.begin()->first.name!="eto")||
-	 (this->getTypeFlag(mvariables.begin()->first.type)!=SupportedTypes::Stensor)||
-	 (mvariables.begin()->second.name!="sig")||
-	 (this->getTypeFlag(mvariables.begin()->second.type)!=SupportedTypes::Stensor)){
-	string msg("MFrontAsterInterface::endTreatement : ");
-	msg += "unsupported case";
-	throw(runtime_error(msg));
-      }
       out << "vector<AsterReal> deto0(*NTENS);\n";
       out << "vector<AsterReal> sig0(*NTENS);\n";
       out << "vector<AsterReal> sv0(*NSTATV);\n";
@@ -1351,17 +1394,6 @@ namespace mfront{
       out << "}\n";
     }
     if(this->compareToNumericalTangentOperator){
-      const map<DrivingVariable,
-		ThermodynamicForce>& mvariables=mb.getMainVariables();
-      if((mvariables.size()!=1)||
-	 (mvariables.begin()->first.name!="eto")||
-	 (this->getTypeFlag(mvariables.begin()->first.type)!=SupportedTypes::Stensor)||
-	 (mvariables.begin()->second.name!="sig")||
-	 (this->getTypeFlag(mvariables.begin()->second.type)!=SupportedTypes::Stensor)){
-	string msg("MFrontAsterInterface::endTreatement : ");
-	msg += "unsupported case";
-	throw(runtime_error(msg));
-      }
       out << "if(computeTangentOperator){\n";
       out << "// computing the tangent operator by pertubation\n";
       out << "AsterInt i;\n";

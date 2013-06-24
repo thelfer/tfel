@@ -166,16 +166,19 @@ namespace mfront{
       treatPhysicalBounds(void);
 
     virtual void
-      treatBounds(BoundsDescription&);
+    treatBounds(BoundsDescription&);
 
     virtual void
-      writeIncludes(std::ofstream&);
+    writeIncludes(std::ofstream&);
 
     virtual void
     writeNamespaceBegin(std::ofstream&);
     
     virtual void
     writeNamespaceEnd(std::ofstream&);
+
+    virtual void
+    writeIntegerConstants(std::ofstream&);
     
     virtual void
     writeStandardTFELTypedefs(std::ofstream&); 

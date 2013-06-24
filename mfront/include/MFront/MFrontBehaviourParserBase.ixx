@@ -61,6 +61,8 @@ namespace mfront{
     this->registerNewCallBack("@Interface",&Child::treatInterface);
     this->registerNewCallBack("@StaticVar",&Child::treatStaticVar);
     this->registerNewCallBack("@StaticVariable",&Child::treatStaticVar);
+    this->registerNewCallBack("@IntegerConstant",
+			      &Child::treatIntegerConstant);
     this->registerNewCallBack("@UseQt",&Child::treatUseQt);
     this->registerNewCallBack("@Description",&Child::treatDescription);
     this->registerNewCallBack("@Bounds",&Child::treatBounds);
