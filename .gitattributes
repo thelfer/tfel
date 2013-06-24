@@ -257,6 +257,7 @@ docs/presentations/images/gpls-mfront-2.tex -text
 docs/presentations/images/gpls-mfront.cxx -text
 docs/presentations/images/gpls-mfront.tex -text
 docs/presentations/images/resultat_norton_traction_n8.pstricks -text
+docs/presentations/mfront-behaviours.tex.in -text
 docs/presentations/mfront-presentation.tex.in -text
 docs/rotation_matrix.tm -text
 docs/tex/CMakeLists.txt -text

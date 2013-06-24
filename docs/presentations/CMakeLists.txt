@@ -1,5 +1,7 @@
 configure_file(mfront-presentation.tex.in
                mfront-presentation.tex @ONLY)
+configure_file(mfront-behaviours.tex.in
+               mfront-behaviours.tex @ONLY)
 
 macro(latex_presentation doc)
   ADD_CUSTOM_COMMAND(
@@ -31,4 +33,4 @@ macro(latex_presentation doc)
 endmacro(latex_presentation doc)
 
 latex_presentation(mfront-presentation)
-#macro(latex_presentation mfront-presentation)
+latex_presentation(mfront-behaviours)
