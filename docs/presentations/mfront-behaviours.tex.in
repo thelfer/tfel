@@ -405,6 +405,33 @@
   \end{itemize}
 }
 
+\titre{Limitations de \mfront{}}
+\frame{
+  \begin{itemize}
+  \item les variables internes sont ou des scalaires ou des tenseurs
+    d'ordre \(2\) symétriques~:
+    \begin{itemize}
+    \item les \og{}~tenseurs d'ordre \(4\)~\fg{} sont utilisables au
+      cours de l'intégration~;
+    \end{itemize}
+  \item<2-> \mfront{} ne supporte (aujourd'hui) que les modélisations
+    \(1D\) (trois composantes du tenseurs des déformations), \(2D\)
+    déformations planes et déformations planes généralisées, et
+    \(3D\)~:
+    \begin{itemize}
+    \item le support des autres modélisations doit être assuré par les
+      interfaces aux codes éléments finis (voir l'interface \umat{}
+      pour les contraintes planes)~;
+    \end{itemize}
+  \item<3-> \mfront{} supporte des lois isotropes et orthotropes
+    (intégrateurs génériques)~:
+    \begin{itemize}
+    \item la rotation dans le repère propre est supposée être faite en
+      amont (rôle des interfaces aux codes E.F.)~;
+    \end{itemize}
+  \end{itemize}
+}
+
 \intercalaire{Analyseurs spécifiques}
 
 \titre{Loi viscoplastique isotrope}
@@ -494,10 +521,12 @@
 
 }
 
+\intercalaire{Intégration implicite}
+
 \titre{Intégration implicite}
 \frame{
   \begin{itemize}
-  \item le système implicite est remplacé par un système non-linéaire~:
+  \item le système différentiel est remplacé par un système non-linéaire~:
     \[
     F\paren{\Delta\, Y} = \Delta Y -
     \Delta\,t\,G\paren{Y_{t}+\theta\Delta{Y},t+\theta\,\Delta t} =
@@ -605,6 +634,8 @@
   \end{itemize}
 }
 
+\intercalaire{L'interface \umat{}}
+
 \titre{L'interface \umat{}}
 \frame{
   \begin{itemize}
@@ -651,33 +682,6 @@
   \end{itemize}
 }
 
-\titre{Limitations de \mfront{}}
-\frame{
-  \begin{itemize}
-  \item les variables internes sont ou des scalaires ou des tenseurs
-    d'ordre \(2\) symétriques~:
-    \begin{itemize}
-    \item les \og{}~tenseurs d'ordre \(4\)~\fg{} sont utilisables au
-      cours de l'intégration~;
-    \end{itemize}
-  \item<2-> \mfront{} ne supporte (aujourd'hui) que les modélisations
-    \(1D\) (trois composantes du tenseurs des déformations), \(2D\)
-    déformations planes et déformations planes généralisées, et
-    \(3D\)~:
-    \begin{itemize}
-    \item le support des autres modélisations doit être assuré par les
-      interfaces aux codes éléments finis (voir l'interface \umat{}
-      pour les contraintes planes)~;
-    \end{itemize}
-  \item<3-> \mfront{} supporte des lois isotropes et orthotropes
-    (intégrateurs génériques)~:
-    \begin{itemize}
-    \item la rotation dans le repère propre est supposée être faite en
-      amont (interface \umat{})~;
-    \end{itemize}
-  \end{itemize}
-}
-
 \titre{{\tt Appel externe de loi de comportement}}
 \frame{
 
@@ -705,7 +709,7 @@
   \end{itemize}
 }
 
-\section{Algorithmes numériques}
+\intercalaire{Algorithmes numériques alternatifs}
 
 \titre{Algorithmes de \nom{Broyden}}
 \frame{

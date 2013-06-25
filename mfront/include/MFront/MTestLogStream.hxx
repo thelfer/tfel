@@ -11,7 +11,7 @@
 #include<string>
 #include<ostream>
 
-#include"TFEL/Config/TFELConfig.hxx"
+#include"MFront/MTestConfig.hxx"
 
 namespace mfront
 {
@@ -33,27 +33,27 @@ namespace mfront
   /*!
    * \return the current verbose level
    */
-  TFEL_VISIBILITY_EXPORT VerboseLevel&
+  MFRONT_MTEST_VISIBILITY_EXPORT VerboseLevel&
   getVerboseMode();
 
   /*!
    * change the verbose level 
    * \param the new verbose level
    */
-  TFEL_VISIBILITY_EXPORT void
+  MFRONT_MTEST_VISIBILITY_EXPORT void
   setVerboseMode(const VerboseLevel = VERBOSE_LEVEL0);
 
   /*!
    * \return the current logging stream
    */
-  TFEL_VISIBILITY_EXPORT std::ostream&
+  MFRONT_MTEST_VISIBILITY_EXPORT std::ostream&
   getLogStream();
 
   /*!
    * set the current logging stream
    * \param f : file name
    */
-  TFEL_VISIBILITY_EXPORT void
+  MFRONT_MTEST_VISIBILITY_EXPORT void
   setLogStream(const std::string& f);
 
   /*!
@@ -62,7 +62,7 @@ namespace mfront
    * \warning the stream is not handled by this function.
    * The user has to take care of it
    */
-  TFEL_VISIBILITY_EXPORT void
+  MFRONT_MTEST_VISIBILITY_EXPORT void
   setLogStream(std::ostream&);
 
 } // end of namespace mfront

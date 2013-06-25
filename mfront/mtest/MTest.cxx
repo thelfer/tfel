@@ -1259,22 +1259,22 @@ namespace mfront
     if(this->hypothesis==MH::UNDEFINEDHYPOTHESIS){
       this->setDefaultHypothesis();
     }
-    string interface;
+    string i;
     this->readSpecifiedToken("MTest::handleBehaviour","<",p,
 			     this->fileTokens.end());
     this->checkNotEndOfLine("MTest::handleBehaviour",p,
 			    this->fileTokens.end());
 #ifdef HAVE_CASTEM
     if(p->value=="umat"){
-      interface = p->value;
+      i = p->value;
     }
 #endif /* HAVE_CASTEM */
 #ifdef HAVE_ASTER
     if(p->value=="aster"){
-      interface = p->value;
+      i = p->value;
     }
 #endif /* HAVE_ASTER */
-    if(interface.empty()){
+    if(i.empty()){
       string msg("MTest::handleBehaviour : ");
       msg += "unknown interface '"+p->value+"'";
       throw(runtime_error(msg));
@@ -1287,18 +1287,18 @@ namespace mfront
     this->readSpecifiedToken("MTest::handleBehaviour",";",p,
 			     this->fileTokens.end());
 #ifdef HAVE_CASTEM
-    if(interface=="umat"){
+    if(i=="umat"){
       this->b = shared_ptr<MTestBehaviour>(new MTestUmatBehaviour(this->hypothesis,l,f));
     }
 #endif
 #ifdef HAVE_ASTER
-    if(interface=="aster"){
+    if(i=="aster"){
       this->b = shared_ptr<MTestBehaviour>(new MTestAsterBehaviour(this->hypothesis,l,f));
     }
 #endif
     if(this->b.get()==0){
       string msg("MTest::handleBehaviour : ");
-      msg += "unknown interface '"+interface+"'";
+      msg += "unknown interface '"+i+"'";
       throw(runtime_error(msg));
     }
     const vector<string>& ivnames = this->b->getInternalStateVariablesNames();
@@ -1311,8 +1311,8 @@ namespace mfront
       if(t==0){
 	this->ivfullnames.push_back(*pn);
       } else if(t==1){
-	for(vector<string>::size_type i=0;i!=this->sexts.size();++i){
-	  const string& vn = *pn+this->sexts[i];
+	for(vector<string>::size_type s=0;s!=this->sexts.size();++s){
+	  const string& vn = *pn+this->sexts[s];
 	  this->declareVariable(vn);
 	  this->ivfullnames.push_back(vn);
 	}
@@ -1329,7 +1329,7 @@ namespace mfront
   {
     using namespace std;
     using namespace tfel::utilities;
-    string interface;
+    string i;
     if(this->b.get()==0){
       string msg("MTest::handleMaterialProperty : ");
       msg += "no behaviour defined";
@@ -1342,10 +1342,10 @@ namespace mfront
     if((p->value=="constant")||
        (p->value=="castem")||
        (p->value=="function")){
-      interface = p->value;
+      i = p->value;
     } else {
       string msg("MTest::handleMaterialProperty : ");
-      msg += "unknown interface '"+interface+"'";
+      msg += "unknown interface '"+i+"'";
       throw(runtime_error(msg));
     }
     ++p;
@@ -1366,17 +1366,17 @@ namespace mfront
       msg += "'"+n+"' already declared";
       throw(runtime_error(msg));
     }
-    if(interface=="constant"){
+    if(i=="constant"){
       shared_ptr<MTestEvolution> mpev;
       const real v = this->readDouble(p);
       mpev = shared_ptr<MTestEvolution>(new MTestConstantEvolution(v));
       (*(this->evs))[n] = mpev;
-    } else if(interface=="function"){
+    } else if(i=="function"){
       shared_ptr<MTestEvolution> mpev;
       const string f = this->readString(p,this->fileTokens.end());
       mpev = shared_ptr<MTestEvolution>(new MTestFunctionEvolution(f,this->evs));
       (*(this->evs))[n] = mpev;
-    } else if(interface=="castem"){
+    } else if(i=="castem"){
       shared_ptr<MTestEvolution> mpev;
       const string l = this->readString(p,this->fileTokens.end());
       const string f = this->readString(p,this->fileTokens.end());
@@ -1384,7 +1384,7 @@ namespace mfront
       (*(this->evs))[n] = mpev;
     } else {
       string msg("MTest::handleMaterialProperty : ");
-      msg += "unknown interface '"+interface+"'";
+      msg += "unknown interface '"+i+"'";
       throw(runtime_error(msg));
     }
     this->readSpecifiedToken("MTest::handleMaterialProperty",";",p,

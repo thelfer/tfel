@@ -10,7 +10,7 @@
 @PredictionPolicy 'ElasticPrediction';
 @UseCastemAccelerationAlgorithm true;
 
-@Behaviour<umat> 'libMFrontCastemBehaviours.so' 'umatnorton_rk4';
+@Behaviour<umat> 'libMFrontCastemBehaviours@CMAKE_SHARED_LIBRARY_SUFFIX@' 'umatnorton_rk4';
 @MaterialProperty<constant> 'YoungModulus'     150.e9;
 @MaterialProperty<constant> 'PoissonRatio'       0.3;
 @MaterialProperty<constant> 'MassDensity'        0.;

@@ -46,12 +46,17 @@ target_link_libraries(MFrontAsterBehaviours
   TFELMath
   TFELUtilities
   TFELException)
+if(WIN32)
+  if(${CMAKE_CXX_COMPILER_ID} STREQUAL "GNU")
+    set_target_properties(MFrontAsterBehaviours PROPERTIES LINK_FLAGS "-Wl,--kill-at")
+  endif(${CMAKE_CXX_COMPILER_ID} STREQUAL "GNU")
+endif(WIN32)
 
 macro(test_aster test_arg)
   configure_file(aster${test_arg}.mtest.in
     aster${test_arg}.mtest @ONLY)
-  add_test(aster${test_arg}_mtest 
-    ${PROJECT_BINARY_DIR}/mfront/mtest/mtest --verbose=level0 aster${test_arg}.mtest)
+  add_test(NAME aster${test_arg}_mtest
+    COMMAND mtest --verbose=level0 aster${test_arg}.mtest)
   set_tests_properties(aster${test_arg}_mtest
     PROPERTIES DEPENDS MFrontAsterBehaviours)
   set_tests_properties(aster${test_arg}_mtest

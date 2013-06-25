@@ -33,13 +33,6 @@
 #include"MFront/Aster/AsterException.hxx"
 #include"MFront/Aster/AsterInterfaceBase.hxx"
 
-// #include"MFront/ASTER/ASTEROutOfBoundsPolicy.hxx"
-// #include"MFront/ASTER/ASTEROrthotropicBehaviour.hxx"
-// #include"MFront/ASTER/ASTERComputeStiffnessTensor.hxx"
-// #include"MFront/ASTER/ASTERComputeThermalExpansionTensor.hxx"
-// #include"MFront/ASTER/ASTERRotationMatrix.hxx"
-// #include"MFront/ASTER/ASTERGetModellingHypothesis.hxx"
-
 namespace aster
 {
 

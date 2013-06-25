@@ -1066,6 +1066,7 @@ mfront/include/MFront/MTestAnalyticalTest.hxx -text
 mfront/include/MFront/MTestAsterBehaviour.hxx -text
 mfront/include/MFront/MTestBehaviour.hxx -text
 mfront/include/MFront/MTestCastemEvolution.hxx -text
+mfront/include/MFront/MTestConfig.hxx -text
 mfront/include/MFront/MTestConstraint.hxx -text
 mfront/include/MFront/MTestEvolution.hxx -text
 mfront/include/MFront/MTestFunctionEvolution.hxx -text

@@ -5,7 +5,7 @@
  * \brief  09 avril 2013
  */
 
-@Behaviour<umat> 'libMFrontCastemBehaviours.so' 'umatorthotropicelastic';
+@Behaviour<umat> 'libMFrontCastemBehaviours@CMAKE_SHARED_LIBRARY_SUFFIX@' 'umatorthotropicelastic';
 @MaterialProperty<constant> 'YoungModulus1'     100.e9;
 @MaterialProperty<constant> 'YoungModulus2'     100.e9;
 @MaterialProperty<constant> 'YoungModulus3'     100.e9;

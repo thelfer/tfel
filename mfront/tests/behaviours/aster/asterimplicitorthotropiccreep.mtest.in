@@ -10,7 +10,7 @@
 
 @Real 'young' 100e9;
 @Real 'nu'    0.3;
-@Behaviour<aster> 'libMFrontAsterBehaviours.so' 'asterimplicitorthotropiccreep';
+@Behaviour<aster> 'libMFrontAsterBehaviours@CMAKE_SHARED_LIBRARY_SUFFIX@' 'asterimplicitorthotropiccreep';
 @MaterialProperty<constant> 'YoungModulus1'     'young';
 @MaterialProperty<constant> 'YoungModulus2'     'young';
 @MaterialProperty<constant> 'YoungModulus3'     'young';

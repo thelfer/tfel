@@ -50,12 +50,17 @@ target_link_libraries(MFrontCastemBehaviours
   TFELMath
   TFELUtilities
   TFELException)
+if(WIN32)
+  if(${CMAKE_CXX_COMPILER_ID} STREQUAL "GNU")
+    set_target_properties(MFrontCastemBehaviours PROPERTIES LINK_FLAGS "-Wl,--kill-at")
+  endif(${CMAKE_CXX_COMPILER_ID} STREQUAL "GNU")
+endif(WIN32)
 
 macro(test_castem test_arg)
   configure_file(castem${test_arg}.mtest.in
     castem${test_arg}.mtest @ONLY)
-  add_test(castem${test_arg}_mtest
-    ${PROJECT_BINARY_DIR}/mfront/mtest/mtest --verbose=level0 castem${test_arg}.mtest)
+  add_test(NAME castem${test_arg}_mtest
+    COMMAND mtest --verbose=level0 castem${test_arg}.mtest)
   set_tests_properties(castem${test_arg}_mtest
     PROPERTIES DEPENDS MFrontCastemBehaviours)
   set_tests_properties(castem${test_arg}_mtest

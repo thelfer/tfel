@@ -7,7 +7,7 @@
 
 @UseCastemAccelerationAlgorithm true;
 
-@Behaviour<umat> 'libMFrontCastemBehaviours.so' 'umathayhurst';
+@Behaviour<umat> 'libMFrontCastemBehaviours@CMAKE_SHARED_LIBRARY_SUFFIX@' 'umathayhurst';
 @MaterialProperty<constant> 'YoungModulus'      1.45000E5;
 @MaterialProperty<constant> 'PoissonRatio'         0.3;
 @MaterialProperty<constant> 'MassDensity'        7800.0;

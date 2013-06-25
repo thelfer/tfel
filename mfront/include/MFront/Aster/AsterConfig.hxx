@@ -11,7 +11,7 @@
 #include"TFEL/Config/TFELConfig.hxx"
 
 #if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
-#  if defined ASTERInterface_EXPORTS
+#  if defined AsterInterface_EXPORTS
 #    define MFRONT_ASTER_VISIBILITY_EXPORT TFEL_VISIBILITY_EXPORT
 #  else
 #    define MFRONT_ASTER_VISIBILITY_EXPORT TFEL_VISIBILITY_IMPORT

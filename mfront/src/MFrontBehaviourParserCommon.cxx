@@ -1085,6 +1085,11 @@ namespace mfront{
   {
     using namespace std;
     map<string,int>::const_iterator p;
+    if((!file)||(!file.good())){
+      string msg("MFrontBehaviourParserCommon::writeIntegerConstants : ");
+      msg += "ouput file is not valid";
+      throw(runtime_error(msg));
+    }
     if(!this->integerConstants.empty()){
       file << endl;
     }
@@ -1101,6 +1106,7 @@ namespace mfront{
       msg += "ouput file is not valid";
       throw(runtime_error(msg));
     }
+    file << "typedef unsigned short ushort;" << endl;
     if(this->mb.useQt()){        
       file << "typedef tfel::config::Types<N,Type,use_qt> Types;\n";
     } else {

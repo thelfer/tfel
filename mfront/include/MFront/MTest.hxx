@@ -23,6 +23,7 @@
 #include"TFEL/Utilities/SmartPtr.hxx"
 #include"TFEL/Utilities/CxxTokenizer.hxx"
 
+#include"MFront/MTestConfig.hxx"
 #include"MFront/MTestTypes.hxx"
 #include"MFront/MTestConstraint.hxx"
 #include"MFront/MTestEvolution.hxx"
@@ -42,7 +43,7 @@ namespace mfront
    * by a number of lagrange
    * multiplier
    */
-  struct TFEL_VISIBILITY_EXPORT MTest
+  struct MFRONT_MTEST_VISIBILITY_EXPORT MTest
     : public tfel::utilities::CxxTokenizer,
       public tfel::tests::Test
   {

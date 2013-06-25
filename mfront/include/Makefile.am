@@ -74,6 +74,7 @@ nobase_noinst_HEADERS += MFront/MFrontCLawInterfaceBase.hxx          \
 nobase_noinst_HEADERS += MFront/MTestTypes.hxx	                      \
 			 MFront/MTestLogStream.hxx	              \
 			 MFront/MTest.hxx	                      \
+			 MFront/MTestConfig.hxx	                      \
 			 MFront/MTestAnalyticalTest.hxx	              \
 			 MFront/MTestReferenceFileComparisonTest.hxx  \
 			 MFront/MTestBehaviour.hxx                    \

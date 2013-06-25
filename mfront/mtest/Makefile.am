@@ -27,6 +27,7 @@ libTFELMTest_la_LIBADD  = -L$(top_builddir)/src/Math                      \
 			  -L$(top_builddir)/src/Utilities -lTFELUtilities \
 			  -L$(top_builddir)/src/Exception -lTFELException \
 			  -L$(top_builddir)/src/Tests     -lTFELTests
+libTFELMTest_la_CPPFLAGS = -DTFELMTest_EXPORTS
 
 mtest_LDADD = -L$(top_builddir)/mfront/mtest              \
 	      -L$(top_builddir)/src/Tests     -lTFELTests \

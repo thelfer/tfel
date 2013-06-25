@@ -5,8 +5,8 @@
  * \brief  09 avril 2013
  */
 
-@Behaviour<aster> 'libMFrontAsterBehaviours.so' 'asterelasticity';
-@MaterialProperty<castem>   'YoungModulus' '@top_builddir@/mfront/tests/properties/libMFrontMaterialProperties-castem.so' 'Inconel600_YoungModulus';
+@Behaviour<aster> 'libMFrontAsterBehaviours@CMAKE_SHARED_LIBRARY_SUFFIX@' 'asterelasticity';
+@MaterialProperty<castem>   'YoungModulus' '@top_builddir@/mfront/tests/properties/libMFrontMaterialProperties-castem@CMAKE_SHARED_LIBRARY_SUFFIX@' 'Inconel600_YoungModulus';
 @MaterialProperty<constant> 'PoissonRatio'       0.3;
 @MaterialProperty<constant> 'MassDensity'        0.;
 @MaterialProperty<constant> 'ThermalExpansion'   0.;

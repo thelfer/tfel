@@ -29,6 +29,7 @@ namespace tfel{
     struct CubicRoots
     {
 
+#if not (defined _WIN32 || defined _WIN64 ||defined __CYGWIN__)
 #if _BSD_SOURCE || _SVID_SOURCE || _XOPEN_SOURCE >= 600 || _ISOC99_SOURCE || _POSIX_C_SOUCE >= 200112L
       static TFEL_MATH_INLINE float
       cbrt(const float x){
@@ -45,6 +46,7 @@ namespace tfel{
 	return ::cbrtl(x);
       }
 #endif
+#endif /* not (defined _WIN32 || defined _WIN64 ||defined __CYGWIN__) */
 
       template<typename T>
       static TFEL_MATH_INLINE T
