@@ -10,6 +10,8 @@
 \usepackage{beamerthemecea2012}
 \usepackage[utf8]{inputenc}
 \usepackage{pstricks}
+\usepackage{array}
+\usepackage{multirow}
 \usepackage{couleurs}
 
 \usepackage{mathematiques}
@@ -18,6 +20,7 @@
 
 \usepackage[frenchb]{babel}
 
+\newcommand{\aster}{\texttt{Aster}}
 \newcommand{\unix}{\texttt{Unix}}
 \newcommand{\linux}{\texttt{LiNuX}}
 \newcommand{\windows}{\texttt{Windows}}
@@ -39,7 +42,7 @@
   }
 }
 
-\Titre{Présentation de \mfront{}}
+\Titre{Lois de comportement mécanique avec \mfront{}}
 \Auteur{T. Helfer}
 %\Evenement{Formation Areva}
 \Date{Avril 2014}
@@ -54,23 +57,179 @@
   \tableofcontents{}
 }
 
-\section{Lois de comportement mécanique}
-
-\titre{}
+\titre{Mécanique non linéaire quasi-statique}
 \frame{
-  \begin{center}
-    {\huge \bf Lois de comportement mécanique}
-  \end{center}
+  \begin{itemize}
+  \item équilibre mécanique, \(\Delta\discret{\vec{u}}\) tel que~:
+    \[
+    \small
+    \residuEF\paren{\Delta\discret{\vec{u}}}=\discret{\vec{O}}\quad\text{
+    avec
+  }\quad\residuEF\paren{\Delta\discret{\vec{u}}}=\forceintEF\paren{\Delta\discret{\vec{u}}}-\forceextEF
+  \]
+  \item<2-> force interne élémentaire~:
+    \alt<-2>{
+      \[
+      \small
+      \begin{aligned}
+        \forceintElem&=\int_{V^{e}}\tsigma_{t+\Delta
+          t}\paren{\Delta\,\tepsilonto,\Delta\, t}\colon\tenseur{B}\;\dtot V \\
+        &=  \sum_{i=1}^{N^{G}} \paren{\psframebox[linecolor=red]{\tsigma_{t+\Delta
+            t}\paren{\Delta\tepsilonto\paren{\vec{\eta}_{i}},\Delta\, t}}\colon\tenseurq{B}\paren{\vec{\eta}_{i}}}w_{i}
+      \end{aligned}
+      \]
+      où \(\tenseur{B}\) permet de calculer \(\Delta\,\tepsilonto\) à partir de \(\Delta\discret{\vec{u}}\)
+    }{
+      \[
+      \small
+      \forceintElem = \sum_{i=1}^{N^{G}} \paren{\psframebox[linecolor=red]{\tsigma_{t+\Delta
+          t}\paren{\Delta\tepsilonto\paren{\vec{\eta}_{i}},\Delta\, t}}\colon\tenseurq{B}\paren{\vec{\eta}_{i}}}w_{i}
+      \]
+    }
+  \item<3-> résolution par \nom{Newton-Raphson}~:
+    \[
+    \small
+    \alt<3>{\Delta\discret{\vec{u}}^{n+1}=\Delta\discret{\vec{u}}^{n}-\paren{\left.\deriv{\residuEF}{\Delta\discret{\vec{u}}}\right|_{\Delta\discret{\vec{u}}^{n}}}^{-1}.\residuEF\paren{\Delta\discret{\vec{u}}^{n}}= \Delta\discret{\vec{u}}^{n}-\tenseurq{\mathbb{K}}^{-1}.\residuEF\paren{\Delta\discret{\vec{u}}^{n}}}{
+      \Delta\discret{\vec{u}}^{n+1}=\Delta\discret{\vec{u}}^{n}-\tenseurq{\mathbb{K}}^{-1}.\residuEF\paren{\Delta\discret{\vec{u}}^{n}}
+    }
+    \]
+    \item<4-> calcul de la raideur élémentaire~:
+      \[
+      \small
+      \tenseurq{\mathbb{K}}^{e}=\displaystyle\sum_{i=1}^{N^{G}}
+      \mbox{}^{t}\tenseurq{B}\paren{\vec{\eta}_{i}}\colon\psframebox[linecolor=red]{\deriv{\Delta\tsigma}{\Delta\tepsilonto}\paren{\vec{\eta}_{i}}}\colon\tenseurq{B}\paren{\vec{\eta}_{i}}w_{i}
+      \]
+      où \(\scriptsize\deriv{\Delta\tsigma}{\Delta\tepsilonto}\) est la {\em matrice tangente cohérente}.
+  \end{itemize}
+
+
 }
+
+\titre{Rôle de la loi de comportement mécanique}
+\frame{
+  \begin{itemize}
+  \item la loi de comportement mécanique doit~:
+    \begin{itemize}
+    \item calculer les contraintes \(\tsigma\) en fin de pas de temps
+      pour un incrément de déformations \(\Delta\,\tepsilonto\)
+      donné~;
+    \item calculer l'évolution de variables d'état (dits variables
+      internes) décrivant l'état microstructural du matériau~;
+    \item fournir une approximation de la matrice tangente cohérente
+      \(\deriv{\Delta\tsigma}{\Delta\tepsilonto}\)~;
+    \end{itemize}
+  \end{itemize}
+}
+
+\intercalaire{Exemples}
+
+\titre{Exemples - hsnv125d}
+\frame{
+  \resizebox{\linewidth}{!}{
+    \begin{tabular}[htbp]{|>{\centering}m{3.cm}|>{\centering}m{3.cm}|>{\centering}m{3.cm}|m{1mm}c|}
+      \cline{2-5}
+      \multicolumn{1}{c|}{}&
+      \mfront{} implicite (\(19\) équations) &
+      {\tt VISC\_CIN1\_CHAB} implicite aster optimisé \\(1 équation) & \vrule width 0mm height 1.4cm&
+      \multirow{3}{*}{\includegraphics[width=6.cm]{@top_srcdir@/docs/mfront/Images/hsnv125d.eps}}\\
+      \cline{1-3}
+      Nombre de pas de temps                 &76          &76      & \vrule width 0mm height 1.4cm&\\
+      \cline{1-3}
+      Nombre d'itérations de \nom{Newton}    &160         &151     & \vrule width 0mm height 1.4cm&\\
+      \cline{1-3}
+      Temps CPU                              &4,67s      &4,19s    & \vrule width 0mm height 1.4cm&\\
+      \hline
+    \end{tabular}
+  }
+  \begin{itemize}
+  \item loi viscoplastique avec deux variables d'écrouissage
+    cinématique non linéaire~;
+  \item cas test très sollicitant~:
+    \begin{itemize}
+    \item chargement cyclique~;
+    \item variations importantes de la température dont dépend la plupart des coefficient~;
+    \end{itemize}
+  \item intégrée dans \mfront{} par une méthode implicite avec jacobienne par perturbation.    
+  \end{itemize}
+}
+
+
+\titre{Exemples - Hayhurst}
+\frame{
+  \begin{minipage}[p]{0.7\linewidth}
+    \resizebox{0.95\linewidth}{!}{
+      \begin{tabular}[htbp]{|>{\centering}m{2.5cm}|>{\centering}m{2.5cm}|>{\centering}m{2.5cm}|>{\centering}m{2.5cm}|c}
+        \cline{2-4}
+        \multicolumn{1}{c|}{}                     &
+        MFRONT Implicite                          &
+        MFRONT implicite avec jacobienne numérique&
+        Aster avec jacobienne numérique& \\
+        \cline{1-4}
+        \cline{1-4}
+        Nombre de pas de temps                 &11          &11            &11& \\
+        \cline{1-4}
+        Nombre d'itérations de \nom{Newton}    &37          &36            &44& \\
+        \cline{1-4}
+        Temps CPU                              &8mn11s      &7mn58s    &17mn43s& \\
+        \cline{1-4}
+        Temps d'intégration de la loi de comportement &2mn26s &2mn21s  &10mn51s& \\
+        \cline{1-4}
+        Temps d'inversion de la matrice               &5mn11s &5mn5s   &6mn11s& \\
+        \cline{1-4}
+      \end{tabular}
+    }
+  \end{minipage}
+  \begin{minipage}[p]{0.25\linewidth}
+    \vspace*{-9.cm}
+    \includegraphics[width=3.25cm]{@top_srcdir@/docs/mfront/Images/hayhurst.eps}
+  \end{minipage}
+  \begin{itemize}
+  \item loi de fluage tertiaire (avec endommagement)
+  \end{itemize}
+}
+
+\titre{Exemples - PolyCristal \(100\) grains}
+\frame{
+  \resizebox{\linewidth}{!}{
+    \begin{tabular}[htbp]{|>{\centering}m{2.cm}|>{\centering}m{2.cm}|>{\centering}m{2.cm}|m{1mm}m{8.cm}|}
+      \cline{2-5}
+      \multicolumn{1}{c|}{}&
+      \mfront{} (RK42)  &
+      \aster{}  & \vrule width 0mm height 2.75cm&
+      \multirow{2}{*}{\includegraphics[width=7.cm]{@top_srcdir@/docs/mfront/Images/polybz.eps}}\\
+      \cline{1-3}
+      Temps CPU                              &90s      &136s    & \vrule width 0mm height 2.75cm&\\
+      \hline
+    \end{tabular}
+  }
+  \begin{itemize}
+  \item \(4200\) variables internes (!)~:
+    \begin{itemize}
+    \item \(12\) systèmes de glissement~;
+    \item \(100\) grains~;
+    \end{itemize}
+  \item l'intégration implicite est inenvisageable~;
+  \item on voit que l'ordre du \nom{Runge-Kutta} a un rôle important~:
+    \begin{itemize}
+    \item l'implantation \aster{} utilise un \nom{Runge-Kutta} d'ordre 2/1
+    \end{itemize}
+  \end{itemize}
+}
+
+\intercalaire{Généralités}
 
 \titre{Définitions}
 \frame{
   \begin{itemize}
-  \item propriété matériau {\tt @MaterialProperty}~;
-  \item propriété matériau {\tt @LocalVariable}~:
+  \item propriété matériau {\tt @MaterialProperty}~:
+    \begin{itemize}
+    \item fournie par le code appelant !
+    \end{itemize}
+  \item variable local {\tt @LocalVariable}~:
     \begin{itemize}
     \item permet de réduire le nombre de calculs en précalculant
-      certains termes avant l'intégration~;
+      certains termes avant l'intégration (exemple de termes
+      d'\nom{Arrhenius})~;
     \end{itemize}
   \item variable interne {\tt @StateVariable}~;
   \item variable interne auxiliaire {\tt @AuxiliaryStateVariable}~:
@@ -87,7 +246,7 @@
   \begin{itemize}
   \item les lois de comportement mécanique sont par nature complexes~:
     \begin{itemize}
-    \item<1-> {\bf intégrer} une équation différentielle~;
+    \item<1-> {\bf intégrer} une équation différentielle ... dans le meilleur des cas !~;
     \item<2-> variables scalaires ou tensorielles~;
     \item<3-> cas très différents~:
       \begin{itemize}
@@ -127,43 +286,6 @@
     \end{itemize}
   \item<4-> un intégrateur par défaut laissant l'utilisateur libre de
     faire ce qu'il veut !
-  \end{itemize}
-}
-
-\titre{Un premier exemple}
-\frame{
-  \begin{center}
-    \code{
-      \tiny
-      \noindent
-      \ttfamily
-      \hlstd{@Parser}\hlstd{\ \ \ \ }\hlstd{DefaultParser}\hlsym{;}\hspace*{\fill}\\
-      \hlstd{@Behaviour OrthotropicElastic}\hlsym{;}\hspace*{\fill}\\
-      \hlstd{@Author}\hlstd{\ \ \ \ }\hlstd{Helfer Thomas}\hlsym{;}\hspace*{\fill}\\
-      \hlstd{@Date}\hlstd{\ \ \ \ \ \ }\hlstd{}\hlnum{10}\hlstd{}\hlsym{/}\hlstd{}\hlnum{03}\hlstd{}\hlsym{/}\hlstd{}\hlnum{11}\hlstd{}\hlsym{;}\hspace*{\fill}\\
-      \hlstd{\hspace*{\fill}\\
-        @OrthotropicBehaviour}\hlsym{;}\hspace*{\fill}\\
-      \hlstd{@RequireStiffnessTensor}\hlsym{;}\hspace*{\fill}\\
-      \hlstd{\hspace*{\fill}\\
-        @Integrator}\hlsym{\{}\hspace*{\fill}\\
-      \hlstd{}\hlstd{\ \ }\hlstd{sig }\hlsym{= }\hlstd{D}\hlsym{{*}(}\hlstd{eto}\hlsym{+}\hlstd{deto}\hlsym{);}\hspace*{\fill}\\
-      \hlstd{}\hlsym{\}}
-    }
-  \end{center}
-  \begin{itemize}
-  \item<2-> principaux fichiers générés~:
-    \begin{itemize}
-    \item {\tt OrthotropicElastic.hxx}, qui contient l'algorithme
-      d'intégration~;
-    \item {\tt OrthotropicElasticBehaviourData.hxx}, qui contient les
-      valeurs des variables en début de pas~;
-    \item {\tt OrthotropicElasticIntegrationData.hxx}, qui contient
-      les valeurs des incréments des différents variables au cours du
-      pas~;
-    \end{itemize}
-  \item<3-> ces trois classes simplifient l'implantation d'un
-    algorithme de sous-découpage du pas de temps en cas de
-    non-convergence.
   \end{itemize}
 }
 
@@ -283,6 +405,8 @@
   \end{itemize}
 }
 
+\intercalaire{Analyseurs spécifiques}
+
 \titre{Loi viscoplastique isotrope}
 \frame{
   \begin{itemize}
@@ -301,7 +425,6 @@
 }
 
 \frame{
-
   \begin{center}
     \code{
       \tiny
@@ -327,7 +450,10 @@
   \end{itemize}
 }
 
-\titre{{\small Loi viscoplastique orthotrope (\nom{Runge-Kutta})}}
+\intercalaire{Intégration par une méthode explicite  (\nom{Runge-Kutta})}
+
+
+\titre{{\small Loi viscoplastique orthotrope}}
 \frame{
 
   \begin{itemize}

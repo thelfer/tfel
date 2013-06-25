@@ -334,6 +334,7 @@ AC_OUTPUT([debug.sh
 	   docs/presentations/Makefile
 	   docs/presentations/Makefile.doc
 	   docs/presentations/mfront-presentation.tex
+	   docs/presentations/mfront-behaviours.tex
 	   docs/tex/Makefile
 	   cmake/Makefile
 	   cmake/modules/Makefile
