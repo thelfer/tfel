@@ -5,7 +5,7 @@ INCLUDES = -I$(top_builddir)/src/TFELConfig \
 lib_LTLIBRARIES = libTFELMTest.la
 
 bin_PROGRAMS  = mtest
-mtest_SOURCES = mtest.cxx
+mtest_SOURCES = MTestMain.cxx
 
 libTFELMTest_la_SOURCES = MTest.cxx                             \
 			  MTestAnalyticalTest.cxx               \

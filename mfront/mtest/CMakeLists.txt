@@ -23,8 +23,6 @@ set(TFELMTest_SOURCES
     MTestConstraint.cxx
     MTestImposedStrain.cxx
     MTestImposedStress.cxx)
-
-set(mtest_SOURCES mtest.cxx)
 set(TFELMTest_LDADD
     TFELMathParser
     TFELMath
@@ -54,6 +52,6 @@ endif(HAVE_ASTER)
 tfel_library(TFELMTest ${TFELMTest_SOURCES})
 target_link_libraries(TFELMTest ${TFELMTest_LDADD})
 
-add_executable(mtest mtest.cxx)
+add_executable(mtest MTestMain.cxx)
 target_link_libraries(mtest TFELMTest)
 install(TARGETS mtest DESTINATION bin)

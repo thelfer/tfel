@@ -1124,12 +1124,12 @@ mfront/mtest/MTestFunctionEvolution.cxx -text
 mfront/mtest/MTestImposedStrain.cxx -text
 mfront/mtest/MTestImposedStress.cxx -text
 mfront/mtest/MTestLogStream.cxx -text
+mfront/mtest/MTestMain.cxx -text
 mfront/mtest/MTestReferenceFileComparisonTest.cxx -text
 mfront/mtest/MTestUmatBehaviour.cxx -text
 mfront/mtest/MTestUmatBehaviourBase.cxx -text
 mfront/mtest/MTestUmatNormaliseTangentOperator.cxx -text
 mfront/mtest/Makefile.am -text
-mfront/mtest/mtest.cxx -text
 mfront/src/AsterChangeBasis.cxx -text
 mfront/src/AsterComputeStiffnessTensor.cxx -text
 mfront/src/AsterComputeThermalExpansionTensor.cxx -text
