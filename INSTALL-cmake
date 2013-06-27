@@ -41,7 +41,7 @@ cmake usefull variables
   CASTEM_INSTALL_PATH  : specify where the castem has been installed
   CMAKE_TOOLCHAIN_FILE : specify a tool chain file
   CMAKE_BUILD_TYPE     : two values are supported 'Release' and 'Debug'
-
+  TFEL_SVN_REVISION    : tfel-svn revision
 
 cmake typical usage
 ===================
