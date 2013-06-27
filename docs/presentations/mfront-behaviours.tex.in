@@ -216,6 +216,28 @@
   \end{itemize}
 }
 
+\titre{Guide des cas tests}
+\frame{
+  \begin{itemize}
+  \item loi de \nom{Norton}~: {\tt *Norton*.mfront}
+  \item loi de \nom{Lemaître}~: {\tt StrainHardeningCreep.mfront}
+  \item endommagement fragile~: {\tt Mazars.mfront}, {\tt
+      Lorentz.mfront}, {\tt DDIF2.mfront}~;
+  \item endommagement ductile (fluage tertiaire)~: {\tt Burger.mfront}
+  \item plasticité avec variables d'écrouissage cinématique n~: {\tt Chaboche.mfront}
+  \item viscoplasticité avec variables d'écrouissage cinématique~: {\tt Chaboche2.mfront}
+  \item lois monocristallines {\tt MonoCristal.mfront} {\tt 	MonoCristal\-Newton\-Raphson.mfront}
+    {\tt MonoCristal\_DD\_CFC.mfront}
+  \item lois polycristallines {\tt PolyCristal.mfront} {\tt
+      PolyCristal\-\_DD\_CFC.mfront}
+  \end{itemize}
+  \visible<2->{
+    \begin{center}
+      {\textbf plus de 35 exemples dans la base de cas test !}
+    \end{center}
+  }
+}
+
 \intercalaire{Généralités}
 
 \titre{Définitions}
@@ -242,7 +264,6 @@
 
 \titre{Généralités}
 \frame{
-
   \begin{itemize}
   \item les lois de comportement mécanique sont par nature complexes~:
     \begin{itemize}
@@ -267,7 +288,6 @@
 
 \titre{Analyseurs disponibles}
 \frame{
-
   \begin{itemize}
   \item quatre intégrateurs spécifiques (\(80\%\) des besoins)~:
     \begin{itemize}
@@ -314,7 +334,7 @@
   \item<3-> utiliser une méthode de \nom{Runge-Kutta} si~:
     \begin{itemize}
     \item {\bf vraiment rien d'autre} n'est possible (impossibilité de
-      calculer la jacobienne)
+      calculer la jacobienne, nombre de variables très grands)~;
     \item si le temps de développement est limité~;
     \item si le temps d'intégration de la loi de comportement ne pose
       pas de problème de performance.
@@ -346,11 +366,6 @@
     \item pour les intégrateurs explicites, {\tt dX} est remplacée par
       la valeur de la vitesse dans les parties {\tt @ComputeStress} et
       {\tt @Derivative}
-    \end{itemize}
-  \item<4-> suivant les intégrateurs, plusieurs variables sont
-    prédéfinies~:
-    \begin{itemize}
-    \item en implicite, les variables {\tt feel}, {\tt dfeel\_ddeel}, ...
     \end{itemize}
   \end{itemize}
 }
@@ -411,6 +426,8 @@
   \item les variables internes sont ou des scalaires ou des tenseurs
     d'ordre \(2\) symétriques~:
     \begin{itemize}
+    \item {\bf il y a un \(\sqrt{2}\) sur les termes extradiagonaux}
+      pour les tenseurs d'ordre \(2\) symétriques~;
     \item les \og{}~tenseurs d'ordre \(4\)~\fg{} sont utilisables au
       cours de l'intégration~;
     \end{itemize}
@@ -432,7 +449,56 @@
   \end{itemize}
 }
 
+\titre{Optimisation du code}
+\frame{
+  \begin{itemize}
+  \item la loi de comportement est \og{}~instanciée~\fg{} une fois par
+    hypothèse de modélisation (voir \texttt{@ModellingHypothesis})~:
+    \begin{itemize}
+    \item les opérations tensorielles sont \og{}~optimisées~\fg{} pour
+      chaque dimension~:
+      \begin{itemize}
+      \item déroulement des boucles à la compilation~;
+      \end{itemize}
+    \item allocation de la mémoire sur la pile~;
+    \end{itemize}
+  \end{itemize}
+}
+
 \intercalaire{Analyseurs spécifiques}
+
+\titre{Généralités}
+\frame{
+  \begin{itemize}
+  \item quatre intégrateurs spécifiques~:
+    \begin{itemize}
+    \item {\tt IsotropicMisesCreep}, écoulement viscoplastique
+      isotrope \(\depsiloneq=f\paren{\sigmaeq}\)~;
+    \item {\tt IsotropicStrainHardeningMisesCreep}, écoulement
+      viscoplastique isotrope avec écrouissage
+      \(\depsiloneq=f\paren{\sigmaeq,\epsiloneq}\)~;
+    \item {\tt IsotropicPlasticMisesFlow}, écoulement plastique
+      isotrope \(f\paren{\sigmaeq,\epsiloneq}<=0\)~;
+    \item {\tt MultipleIsotropicMisesFlows}, une somme des différents
+      écoulements précédents~;
+    \end{itemize}
+  \item<2-> l'élasticité est élastique isotrope~:
+    \begin{itemize}
+    \item les coefficients d'élasticité sont donnés par le code aux
+      éléments finis~;
+    \end{itemize}
+  \item<3-> il suffit de donner la (ou les) fonction(s) \(f\)~;
+  \item<4-> algorithme optimisé avec réduction à une équation scalaire par
+    écoulement~;
+  \item<5-> pour des raisons de performances, il faut penser à précalculer
+    les termes dépendants de la température (ou d'autres variables
+    externes)~:
+    \begin{itemize}
+    \item variables locales et {\tt @InitLocalVariables}
+    \end{itemize}
+  \end{itemize}
+}
+
 
 \titre{Loi viscoplastique isotrope}
 \frame{
@@ -479,6 +545,30 @@
 
 \intercalaire{Intégration par une méthode explicite  (\nom{Runge-Kutta})}
 
+\titre{Généralités}
+\frame{
+  \begin{itemize}
+  \item il faut résumer l'écriture de la loi de comportement à un
+    système différentiel~:
+    \[
+    \dot{Y} = G\paren{Y,t}
+    \]
+    où \(t\) représente symboliquement l'évolution des variables
+    externes et de la déformation totales~;
+  \item<2-> le système différentiel s'écrit dans un bloc {\tt
+      @Derivative}~;
+  \item<3-> pour toute variable interne et externe, {\tt dX} est
+    remplacée par la valeur de la vitesse dans les parties {\tt
+      @ComputeStress} et {\tt @Derivative}
+    \begin{itemize}
+    \item ce n'est pas l'incrément !
+    \end{itemize}
+  \item<4-> le code du bloc {\tt @UpdateAuxiliaryStateVariables} peut
+    être appelé plusieurs fois. Il faut utiliser la variable locale
+    {\tt dt\textunderscore} pour connaître le pas de temps effectivement utilisé
+    ({\tt dt} désigne toujours le pas de temps total)
+  \end{itemize}
+}
 
 \titre{{\small Loi viscoplastique orthotrope}}
 \frame{
@@ -521,7 +611,46 @@
 
 }
 
+\titre{Critère de convergence}
+\frame{
+  \begin{itemize}
+  \item la directive {\tt @Epsilon} permet de préciser la valeur du
+    critère utilisé par les différentes méthodes d'intégration~:
+    \begin{itemize}
+    \item par défaut, toutes les variables contribuent de la même
+      manière au calcul de l'erreur~;
+    \item la valeur par défaut est adaptée si toutes les variables
+      internes sont de l'ordre de grandeur des déformations~;
+    \end{itemize}
+  \item<2-> il est possible d'affecter un poids aux différentes
+    variables par la méthodes {\tt
+      set\-Error\-Normalisation\-Factor}~:
+    \begin{center}
+      {\tt p.setErrorNormalisationFactor(young)}
+    \end{center}
+  \end{itemize}
+}
+
 \intercalaire{Intégration implicite}
+
+\titre{Analyseurs disponibles}
+\frame{
+  \begin{itemize}
+  \item Deux analyseurs~:
+    \begin{itemize}
+    \item {\tt Implicit} qui déclare automatiquement la déformation
+      élastique~;
+    \item {\tt ImplicitII} qui ne déclare pas automatiquement la
+      déformation élastique~;
+    \end{itemize}
+  \item différents algorithmes~:
+    \begin{itemize}
+    \item {\tt NewtonRaphson}
+    \item {\tt NewtonRaphson\_NumericalJacobian}
+    \item {\tt Broyden}
+    \end{itemize}
+  \end{itemize}
+}
 
 \titre{Intégration implicite}
 \frame{
@@ -532,7 +661,13 @@
     \Delta\,t\,G\paren{Y_{t}+\theta\Delta{Y},t+\theta\,\Delta t} =
     0
     \]
-  \item la jacobienne peut être calculée par blocs~:
+  \item<2-> pour les lois indépendantes du temps, on annule
+    directement la surface de charge !
+  \item<3-> on résout ce système par un \nom{Newton-Raphson}
+    \begin{itemize}
+    \item il faut la jacobienne \(J=\deriv{F}{\Delta\,Y}\)
+    \end{itemize}
+  \item<4-> la jacobienne peut être calculée par blocs~:
     \[
     J = \deriv{F}{Y} =
     \begin{pmatrix}
@@ -543,6 +678,7 @@
       \ldots & \ldots & \ldots & \ldots & \deriv{f_{y_{N}}}{y_{N}} \\
     \end{pmatrix}
     \]
+  \item<5-> on peut demander une vérification numérique !
   \end{itemize}
 }
 
@@ -576,64 +712,6 @@
 }
 
 
-\titre{Tableaux de variables internes}
-\frame{
-  \code{
-    \hlstd{
-      @MaterialProperty\ real\ A}\hlsym{{[}}\hlstd{}\hlnum{2}\hlstd{}\hlsym{{]};}\hlstd{\ \ \ \ \ }\hlsym{}\hlstd{}\hlcom{/{*}\ Norton\ coefficient}\hlstd{\ \ \ }\hlcom{{*}/}\hlstd{\hspace*{\fill}\\
-      @MaterialProperty\ real\ E}\hlsym{{[}}\hlstd{}\hlnum{2}\hlstd{}\hlsym{{]};}\hlstd{\ \ \ \ \ }\hlsym{}\hlstd{}\hlcom{/{*}\ Norton\ exponant}\hlstd{\ \ \ \ \ \ }\hlcom{{*}/}\hlstd{\hspace*{\fill}\\
-      \ldots\\
-      \hlstd{
-        @StateVariable\ real\ p}\hlsym{{[}}\hlstd{}\hlnum{2}\hlstd{}\hlsym{{]};}\hlstd{\ \ \ \ \ \ }\hlsym{}\hlstd{}\hlcom{/{*}\ Equivalent\ viscoplastic\ strain\ {*}/}\hlstd{\hspace*{\fill}\\
-        @StateVariable\ Stensor\ evp}\hlsym{{[}}\hlstd{}\hlnum{2}\hlstd{}\hlsym{{]};\ }\hlstd{}\hlcom{/{*}\ Viscoplastic\ strain}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ }\hlcom{{*}/}\hlstd{}\hspace*{\fill}\\
-      \ldots\\
-      \hlstd{
-        @Derivative}\hlsym{\{}\hspace*{\fill}}\\
-    \hlstd{}\hlstd{\ \ }\hlstd{}\ldots\\
-    \hlstd{}\hlstd{\ \ }\hlstd{}\hlkwa{for}\hlstd{}\hlsym{(}\hlstd{}\hlkwb{unsigned\ short\ }\hlstd{i}\hlsym{=}\hlstd{}\hlnum{0}\hlstd{}\hlsym{;}\hlstd{i}\hlsym{!=}\hlstd{}\hlnum{2}\hlstd{}\hlsym{;++}\hlstd{i}\hlsym{)\{}\hspace*{\fill}\\
-    \hlstd{}\hlstd{\ \ \ \ }\hlstd{dp}\hlsym{{[}}\hlstd{i}\hlsym{{]}}\hlstd{\ \ \ \ }\hlsym{=\ }\hlstd{A}\hlsym{{[}}\hlstd{i}\hlsym{{]}{*}}\hlstd{}\hlkwd{pow}\hlstd{}\hlsym{(}\hlstd{sigeq}\hlsym{,}\hlstd{E}\hlsym{{[}}\hlstd{i}\hlsym{{]});}\hspace*{\fill}\\
-    \hlstd{}\hlstd{\ \ \ \ }\hlstd{devp}\hlsym{{[}}\hlstd{i}\hlsym{{]}}\hlstd{\ \ }\hlsym{=\ }\hlstd{dp}\hlsym{{[}}\hlstd{i}\hlsym{{]}{*}}\hlstd{n}\hlsym{;}\hspace*{\fill}\\
-    \hlstd{}\hlstd{\ \ \ \ }\hlstd{deel}\hlstd{\ \ \ \ }\hlstd{}\hlsym{{-}=\ }\hlstd{devp}\hlsym{{[}}\hlstd{i}\hlsym{{]};}\hspace*{\fill}\\
-    \hlstd{}\hlstd{\ \ }\hlstd{}\hlsym{\}}\hspace*{\fill}\\
-    \hlstd{}\hlsym{\}\ }
-  }
-  \begin{itemize}
-  \item regroupement des équations de même formalisme~:
-    \begin{itemize}
-    \item plasticité cristalline, NTFA~;
-    \item aujourd'hui limité aux algorithmes de \nom{Runge-Kutta}~;
-    \end{itemize}
-  \end{itemize}
-}
-
-\titre{Critère de convergence}
-\frame{
-  \begin{itemize}
-  \item la directive {\tt @Epsilon} permet de préciser la valeur du
-    critère utilisé par les différentes méthodes d'intégration~:
-    \begin{itemize}
-    \item par défaut, toutes les variables contribuent de la même
-      manière au calcul de l'erreur~;
-    \item la valeur par défaut est adaptée si toutes les variables
-      internes sont de l'ordre de grandeur des déformations~;
-    \end{itemize}
-  \item<2-> il est possible d'affecter un poids aux différentes
-    variables par la méthodes {\tt
-      set\-Error\-Normalisation\-Factor}~:
-    \begin{center}
-      {\tt p.setErrorNormalisationFactor(young)}
-    \end{center}
-    \begin{itemize}
-    \item disponible pour les intégrateurs génériques (implicites et
-      explicites)~;
-    \item il est préférable de ne pas utiliser cette méthode dans le
-      cas des intégrateurs implicites (normalisation de tous les
-      termes du jacobien associés à la variable \(p\), même ceux qui
-      sont nuls)
-    \end{itemize}
-  \end{itemize}
-}
-
 \intercalaire{L'interface \umat{}}
 
 \titre{L'interface \umat{}}
@@ -666,19 +744,25 @@
   \end{itemize}
 }
 
-\titre{Optimisation du code}
+\titre{Gestion des contraintes planes}
 \frame{
   \begin{itemize}
-  \item la loi de comportement est \og{}~instanciée~\fg{} trois fois
-    (en \(1D\), \(2D\) et \(3D\)~:
-    \begin{itemize}
-    \item les opérations tensorielles sont \og{}~optimisées~\fg{} pour
-      chaque dimension~:
-      \begin{itemize}
-      \item déroulement des boucles à la compilation~;
-      \end{itemize}
-    \item allocation de la mémoire sur la pile~;
-    \end{itemize}
+  \item introduction d'une variable interne supplémentaire
+    (déformation axiale totale)~;
+  \item utilisation de la loi \(2D\)~;
+  \item boucle pour trouver un incrément de déformation totale tel que
+    la contrainte soit nulle en fin de pas~:
+    \[
+    \begin{aligned}
+      \left.\Delta\,\epsilontoz\right.^{(0)}&=-\Frac{1}{E}\left.\sigmaz\right.^{(0)}-\nu\paren{\Delta\,\epsilontox+\Delta\,\epsilontoy} \\
+      \left.\Delta\,\epsilontoz\right.^{(1)}&=\left.\Delta\,\epsilontoz\right.^{(0)}-\Frac{1}{E}\left.\Frac{1}{E}\sigmaz\right.^{(1)}    \\
+      \left.\Delta\,\epsilontoz\right.^{(n)}& \text{ donné par la méthode de la sécante}\\
+    \end{aligned}
+    \]
+  \item critère d'arrêt~:
+    \[
+    \left|\left.\sigmaz\right.^{(n)}\right|<E\,\varepsilon \quad \text{avec} \quad \varepsilon=10^{-12}
+    \]
   \end{itemize}
 }
 
@@ -855,29 +939,18 @@
   \end{itemize}
 }
 
-\titre{Gestion des contraintes planes}
+\intercalaire{MTest}
+
+\titre{MTest}
 \frame{
   \begin{itemize}
-  \item introduction d'une variable interne supplémentaire
-    (déformation axiale totale)~;
-  \item utilisation de la loi \(2D\)~;
-  \item boucle pour trouver un incrément de déformation totale tel que
-    la contrainte soit nulle en fin de pas~:
-    \[
-    \begin{aligned}
-      \left.\Delta\,\epsilontoz\right.^{(0)}&=-\Frac{1}{E}\left.\sigmaz\right.^{(0)}-\nu\paren{\Delta\,\epsilontox+\Delta\,\epsilontoy} \\
-      \left.\Delta\,\epsilontoz\right.^{(1)}&=\left.\Delta\,\epsilontoz\right.^{(0)}-\Frac{1}{E}\left.\Frac{1}{E}\sigmaz\right.^{(1)}    \\
-      \left.\Delta\,\epsilontoz\right.^{(n)}& \text{ donné par la méthode de la sécante}\\
-    \end{aligned}
-    \]
-  \item critère d'arrêt~:
-    \[
-    \left|\left.\sigmaz\right.^{(n)}\right|<E\,\varepsilon \quad \text{avec} \quad \varepsilon=10^{-12}
-    \]
+  \item un outil de test des lois de comportement en un point
+    matériel~;
+  \item voir les exemples~;
   \end{itemize}
 }
 
-\section{Perspectives}
+\intercalaire{Conclusions}
 
 \titre{Perspectives}
 \frame{
@@ -926,11 +999,64 @@
   \end{itemize}
 }
 
-\section{MTest}
+\intercalaire{Annexes}
 
+\titre{Lois de comportement orthotropes}
+\frame{
+  \visible<2->{
+    \begin{center}
+      \begin{minipage}[htbp]{0.9\linewidth}
+        \shorthandoff{:} \code{\tiny
+          \input{@abs_top_srcdir@/docs/mfront/mfront/hillTensor.tex} }
+        \shorthandon{:}
+      \end{minipage}
+    \end{center}
+  }
+  \begin{itemize}
+  \item il n'est pas possible d'assurer une cohérence entre les
+    différentes hypothèses de modélisation~;
+  \item pour les tubes, on choisit~:
+    \begin{itemize}
+    \item pour les modélisations \(1D\), \(2D\paren{r,z}\) et \(3D\),
+      \(r\) est la première direction d'orthotropie, \(z\) la seconde
+      et \(\theta\) la troisième (imposé par le \(1D\))~;
+    \item pour les modélisations \(2D\) planes, \(r\) est la première
+      direction d'orthotropie, \(\theta\) la seconde et \(z\) la
+      troisième~;
+    \item conventions particulières pour le tenseur de \nom{Hill}~;
+    \end{itemize}
+  \end{itemize}
+}
 
-
-\section{Annexes}
+\titre{Tableaux de variables internes}
+\frame{
+  \code{
+    \hlstd{
+      @MaterialProperty\ real\ A}\hlsym{{[}}\hlstd{}\hlnum{2}\hlstd{}\hlsym{{]};}\hlstd{\ \ \ \ \ }\hlsym{}\hlstd{}\hlcom{/{*}\ Norton\ coefficient}\hlstd{\ \ \ }\hlcom{{*}/}\hlstd{\hspace*{\fill}\\
+      @MaterialProperty\ real\ E}\hlsym{{[}}\hlstd{}\hlnum{2}\hlstd{}\hlsym{{]};}\hlstd{\ \ \ \ \ }\hlsym{}\hlstd{}\hlcom{/{*}\ Norton\ exponant}\hlstd{\ \ \ \ \ \ }\hlcom{{*}/}\hlstd{\hspace*{\fill}\\
+      \ldots\\
+      \hlstd{
+        @StateVariable\ real\ p}\hlsym{{[}}\hlstd{}\hlnum{2}\hlstd{}\hlsym{{]};}\hlstd{\ \ \ \ \ \ }\hlsym{}\hlstd{}\hlcom{/{*}\ Equivalent\ viscoplastic\ strain\ {*}/}\hlstd{\hspace*{\fill}\\
+        @StateVariable\ Stensor\ evp}\hlsym{{[}}\hlstd{}\hlnum{2}\hlstd{}\hlsym{{]};\ }\hlstd{}\hlcom{/{*}\ Viscoplastic\ strain}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ }\hlcom{{*}/}\hlstd{}\hspace*{\fill}\\
+      \ldots\\
+      \hlstd{
+        @Derivative}\hlsym{\{}\hspace*{\fill}}\\
+    \hlstd{}\hlstd{\ \ }\hlstd{}\ldots\\
+    \hlstd{}\hlstd{\ \ }\hlstd{}\hlkwa{for}\hlstd{}\hlsym{(}\hlstd{}\hlkwb{unsigned\ short\ }\hlstd{i}\hlsym{=}\hlstd{}\hlnum{0}\hlstd{}\hlsym{;}\hlstd{i}\hlsym{!=}\hlstd{}\hlnum{2}\hlstd{}\hlsym{;++}\hlstd{i}\hlsym{)\{}\hspace*{\fill}\\
+    \hlstd{}\hlstd{\ \ \ \ }\hlstd{dp}\hlsym{{[}}\hlstd{i}\hlsym{{]}}\hlstd{\ \ \ \ }\hlsym{=\ }\hlstd{A}\hlsym{{[}}\hlstd{i}\hlsym{{]}{*}}\hlstd{}\hlkwd{pow}\hlstd{}\hlsym{(}\hlstd{sigeq}\hlsym{,}\hlstd{E}\hlsym{{[}}\hlstd{i}\hlsym{{]});}\hspace*{\fill}\\
+    \hlstd{}\hlstd{\ \ \ \ }\hlstd{devp}\hlsym{{[}}\hlstd{i}\hlsym{{]}}\hlstd{\ \ }\hlsym{=\ }\hlstd{dp}\hlsym{{[}}\hlstd{i}\hlsym{{]}{*}}\hlstd{n}\hlsym{;}\hspace*{\fill}\\
+    \hlstd{}\hlstd{\ \ \ \ }\hlstd{deel}\hlstd{\ \ \ \ }\hlstd{}\hlsym{{-}=\ }\hlstd{devp}\hlsym{{[}}\hlstd{i}\hlsym{{]};}\hspace*{\fill}\\
+    \hlstd{}\hlstd{\ \ }\hlstd{}\hlsym{\}}\hspace*{\fill}\\
+    \hlstd{}\hlsym{\}\ }
+  }
+  \begin{itemize}
+  \item regroupement des équations de même formalisme~:
+    \begin{itemize}
+    \item plasticité cristalline, NTFA~;
+    \item aujourd'hui limité aux algorithmes de \nom{Runge-Kutta}~;
+    \end{itemize}
+  \end{itemize}
+}
 
 \titre{\umat{}++}
 \frame{

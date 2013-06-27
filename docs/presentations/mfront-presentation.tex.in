@@ -15,6 +15,7 @@
 \usepackage{mathematiques}
 \usepackage{mecanique}
 \usepackage{gnuplot}
+\usepackage{array}
 
 \usepackage[frenchb]{babel}
 
@@ -29,6 +30,8 @@
 \newcommand{\pycastem}{\texttt{pyCast3M}}
 \newcommand{\pleiades}{\texttt{pleiades}}
 \newcommand{\sirius}{\texttt{sirius}}
+\newcommand{\germinal}{\texttt{germinal}}
+\newcommand{\licos}{\texttt{licos}}
 \newcommand{\nom}[1]{\textsc{#1}}
 
 \newcommand{\code}[1]{
@@ -92,27 +95,45 @@
   \end{itemize}
 }
 
-\titre{Des situations variées}
-\frame{
-  % \begin{center}
-  %   \includegraphics[width=0.5\paperwidth]{@abs_top_srcdir@/docs/presentations/images/}
-  %   \includegraphics[width=0.5\paperwidth]{@abs_top_srcdir@/docs/presentations/images/}
-  % \end{center}
-  \begin{itemize}
-  \item différents langages (C++,fortran,python)~;
-  \item différents solveurs (FEM,FFT)~;
-  \end{itemize}
-}
-
-
-\section{Propriétés matériaux}
-
-\titre{}
+\titre{Nombre de lignes}
 \frame{
   \begin{center}
-    {\huge \bf Propriétés matériaux}
+    \begin{tabular}[htbp]{|>{\centering}m{3.cm}|>{\centering}m{2.cm}|>{\centering}m{2.cm}|>{\centering}m{2.cm}|c}
+      \cline{2-4}
+      \multicolumn{1}{c|}{} &
+      Propriétés&
+      Loi de comportement &
+      Modèle &\\
+      \cline{1-4}
+      Fichier mfront & 33  &   92 &  22&\\
+      Fichier généré & 130 & 1641 & 556&\\
+      \cline{1-4}
+    \end{tabular}
   \end{center}
 }
+
+\titre{Des contextes logiciels variés}
+\frame{
+  \begin{itemize}
+  \item pour les propriétés matériaux~:
+    \begin{itemize}
+    \item différents langages (C++,fortran,python)~;
+    \end{itemize}
+  \item pour les lois de comportement mécanique~:
+    \begin{itemize}
+    \item différents solveurs (Cast3M,Aster,FFT)~;
+    \end{itemize}
+  \item pour les modèles~:
+    \begin{itemize}
+    \item \germinal{}, \licos{}~;
+    \end{itemize}
+  \end{itemize}
+  \visible<2->{
+    \mfront{} propose la notion d'interface
+  }
+}
+
+\intercalaire{Propriétés matériaux}
 
 \titre{{\small Conductivité thermique du combustible $UPuC$}}
 \frame{
@@ -216,14 +237,14 @@
   \end{itemize}
 }
 
-\section{Modèles}
+\intercalaire{Modèles}
 
 \titre{Modèles}
 \frame{
-
+  voir exemple
 }
 
-\section{Annexes}
+\intercalaire{Annexes}
 
 \titre{Portabilité}
 \frame{
