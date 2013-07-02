@@ -149,7 +149,7 @@ namespace umat
       UMATReal x[2];
       UMATReal f[2];
 
-      dez = -c3*s[2]+c1*DSTRAN[0]+c2*DSTRAN[1];
+      dez = c1*DSTRAN[0]+c2*DSTRAN[1];
       UMATGenericPlaneStressHandler::template iter<GeneralisedPlaneStrainBehaviour>(DTIME,DROT,DDSOE,
 										    TEMP,DTEMP,PROPS,
 										    NPROPS,PREDEF,DPRED,

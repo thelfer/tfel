@@ -37,7 +37,7 @@ namespace mfront
     int execute(void);
 
   protected:
-    friend class tfel::utilities::ArgumentParserBase<MTestMain>;
+    friend struct tfel::utilities::ArgumentParserBase<MTestMain>;
     void
     treatUnknownArgument(void);
     void

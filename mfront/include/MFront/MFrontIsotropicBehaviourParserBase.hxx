@@ -76,7 +76,7 @@ namespace mfront{
 
   private:
 
-    friend class MFrontBehaviourParserBase<MFrontIsotropicBehaviourParserBase>;
+    friend struct MFrontBehaviourParserBase<MFrontIsotropicBehaviourParserBase>;
 
   }; // end of class MFrontIsotropicBehaviourParserBase
 

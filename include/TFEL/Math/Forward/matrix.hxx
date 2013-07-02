@@ -22,7 +22,7 @@ namespace tfel
      * \param typename T, the type hold by the matrix.
      */
     template<typename T>
-    class matrix;
+    struct matrix;
 
   } // end of namespace math
 

@@ -134,7 +134,7 @@ namespace mfront{
 		    const std::string& = "this->jacobian",
 		    const std::string& = "");
 
-    friend class MFrontBehaviourParserBase<MFrontImplicitParserBase>;
+    friend struct MFrontBehaviourParserBase<MFrontImplicitParserBase>;
 
     std::set<std::string> jacobianPartsUsedInIntegrator;
 

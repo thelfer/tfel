@@ -33,7 +33,7 @@ namespace mfront{
 
   private :
 
-    friend class tfel::utilities::ArgumentParserBase<MFront>;
+    friend struct tfel::utilities::ArgumentParserBase<MFront>;
 
     static std::string callingName;
 

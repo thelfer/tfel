@@ -37,6 +37,7 @@ if(enable-static)
  # doesn't hurt):
  set_target_properties(${name}        PROPERTIES CLEAN_DIRECT_OUTPUT 1)
  set_target_properties(${name}-static PROPERTIES CLEAN_DIRECT_OUTPUT 1)
+ set_target_properties(${name}-static PROPERTIES COMPILE_FLAGS "-D${name}_EXPORTS -DTFEL_STATIC_BUILD")
  install(TARGETS ${name}-static DESTINATION lib${LIB_SUFFIX})
 endif(enable-static)
 endmacro(tfel_library)

@@ -52,7 +52,8 @@ target_link_libraries(MFrontCastemBehaviours
   TFELException)
 if(WIN32)
   if(${CMAKE_CXX_COMPILER_ID} STREQUAL "GNU")
-    set_target_properties(MFrontCastemBehaviours PROPERTIES LINK_FLAGS "-Wl,--kill-at")
+    set_target_properties(MFrontCastemBehaviours
+      PROPERTIES LINK_FLAGS "-Wl,--kill-at -Wl,--no-undefined")
   endif(${CMAKE_CXX_COMPILER_ID} STREQUAL "GNU")
 endif(WIN32)
 

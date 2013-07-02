@@ -22,7 +22,7 @@ namespace tfel
     /*!
      * a helper structure defining the Hypothesis enum.
      */
-    struct TFEL_VISIBILITY_EXPORT ModellingHypothesis
+    struct TFELMATERIAL_VISIBILITY_EXPORT ModellingHypothesis
     {
       
       /*!

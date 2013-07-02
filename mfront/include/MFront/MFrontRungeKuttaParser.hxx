@@ -97,7 +97,7 @@ namespace mfront{
     virtual void
     endsInputFileProcessing(void);
 
-    friend class MFrontBehaviourParserBase<MFrontRungeKuttaParser>;
+    friend struct MFrontBehaviourParserBase<MFrontRungeKuttaParser>;
 
     // error normalisation factors
     std::map<std::string,std::string> enf;

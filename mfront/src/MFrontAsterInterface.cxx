@@ -1377,7 +1377,7 @@ namespace mfront{
       out << "*PNEWDT = -1.;\n";
       out << "return;\n";
       out << "}\n";
-      out << "copy(DDSOE,DDSOE+(*NTENS)*(*NTENS),STATEV+nNSTATV);\n";
+      out << "copy(DDSOE,DDSOE+(*NTENS)*(*NTENS),STATEV+*(NSTATV)-(*NTENS)*(*NTENS));\n";
     }
     if(this->debugMode){
       out << "if(computeTangentOperator){\n";
