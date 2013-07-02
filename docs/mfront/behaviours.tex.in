@@ -117,6 +117,8 @@
 \newcommand{\finpas}[1]{\ensuremath{\left.#1\right|_{t+\Delta\, t}}}
 \newcommand{\demipas}[1]{\ensuremath{\left.#1\right|_{t+\frac{\Delta\, t}{2}}}}
 
+\newcommand{\uod}{\ensuremath{UO_{2}}}
+
 \newcommand{\code}[1]{
   \psframebox[linecolor=ceaorange,shadow=true,blur=true]{
     \begin{minipage}[htbp]{1.0\linewidth}
@@ -160,29 +162,78 @@
 }
 
 % \codebarre{images/code_barre}
-% \diffusionexterne{
-% {EDF/R\&D}              & O. Marchand     & 1 & Diffusion par\\
-% {EDF/R\&D}              & P. Vasseur      & 1 & courriel     \\
-% {EDF/R\&D/MMC}          & P. Ollar         & 1 & \\
-% {EDF/R\&D/MMC/CPM}      & N. Prompt       & 1 & \\
-%                         & N. Barnel       & 1 & \\
-% {EDF/R\&D/MMC/CPM}      & G. Thouvenin    & 1 & \\
-%                         & R. Largenton    & 1 & \\
-%                         & C. Petry        & 1 & \\
-% EDF/SEPTEN              & N. Waeckel      & 1 & \\
-%                         & P. Hemmerich    & 1 & \\
-%                         & H. Billat       & 1 & \\
-%                         & C. Bernaudat    & 1 & \\
-% AREVA NP/LA DEFENSE     & L. Catalani     & 1 & \\
-%                         & L. Brunel       & 1 & \\
-% AREVA NP/LYON           & P. Melin        & 1 & \\
-%                         & V. Bessiron     & 1 & \\
-%                         & C. Garnier      & 1 & \\                           
-%                         & V. Garat        & 1 & \\
-%                         & F. Arnoux       & 1 &
-% }
-
+\diffusionexterne{
+{EDF/R\&D}              & O. Marchand     & 1 & Diffusion par\\
+{EDF/R\&D}              & P. Vasseur      & 1 & courriel     \\
+{EDF/R\&D/AMA}          & C. Durand       & 1 & \\
+{EDF/R\&D/AMA}          & É. Lorentz      & 1 & \\
+{EDF/R\&D/AMA/T64}      & J.M. Proix      & 1 & \\
+                        & F. Hammon       & 1 & \\
+                        & N. Sellenet     & 1 & \\
+{EDF/R\&D/MMC}          & P. Ollar        & 1 & \\
+{EDF/R\&D/MMC/MAESTRO}  & N. Rupin        & 1 & \\
+                        & F. Latourte     & 1 & \\
+{EDF/R\&D/MMC/CPM}      & N. Prompt       & 1 & \\
+                        & N. Barnel       & 1 & \\
+{EDF/R\&D/MMC/CPM}      & G. Thouvenin    & 1 & \\
+                        & F. Douchin      & 1 & \\
+                        & R. Largenton    & 1 & \\
+                        & C. Petry        & 1 & \\
+EDF/SEPTEN              & N. Waeckel      & 1 & \\
+                        & C. Chauliac     & 1 & \\
+                        & H. Billat       & 1 & \\
+                        & C. Bernaudat    & 1 & \\
+AREVA NP/LA DEFENSE     & L. Catalani     & 1 & \\
+                        & L. Brunel       & 1 & \\
+AREVA NP/LYON           & P. Melin        & 1 & \\
+                        & V. Bessiron     & 1 & \\
+                        & C. Garnier      & 1 & \\                           
+                        & V. Garat        & 1 & \\
+                        & F. Arnoux       & 1 &
+}
+\CoupeListeDiffusion{}
 \diffusioninterne{
+  DEN/DISN/SIMU       & J.P. Deffain       & 1 & \\ 
+                      & D. Caruge          & 1 & \\ 
+  DEN/DM2S/SEMT       & C. Dellis          & 1 & \\
+  DEN/DM2S/SEMT/LM2S  & J.L. Fayard        & 1 & \\
+                      & S. Pascal          & 1 & \\
+  DEN/DMN             & P. Yvon            & 1 & \\
+                      & J.L. Seran         & 1 & \\
+                      & F. Dalle           & 1 & \\
+  DEN/DMN/SEMI        & C. Poussard        & 1 & \\
+  DEN/DMN/SEMI/LCMI   & A. Courcelle       & 1 & \\
+                      & F. Hure            & 1 & \\
+                      &                    &  & \\
+                      &                    &  & \\
+  DEN/DEC             & P. Brossard        &  &  Document disponible\\
+  DEN/DEC/PROJETS     & P. Obry            &  & sur intradec\\
+  DEN/DEC/SESC        & E. Touron          &  & \\
+                      & M. Casella         &  & \\
+                      & M. Agard           &  & \\
+  DEN/DEC/SESC/LIPA   & C. Nonon-Solaro    &  & \\
+                      & C. Bassi           &  & \\
+                      & O. Bremond         &  & \\
+  DEN/DEC/SESC/LLCC   & V. Basini          &  & \\
+                      & J.-M. Escleine     &  & \\
+  DEN/DEC/SESC/LC2I   & D. Plancq          &  & \\
+                      & S. Bejaoui         &  & \\
+                      & V. Blanc           &  & \\
+                      & T. Beck            &  & \\
+                      & F. Biscara         &  & \\
+                      & D. Lorenzo         &  & \\
+                      & I. Guénot-Delahaie &  & \\
+                      & P. Masoni          &  & \\
+                      & B. Valentin        &  & \\
+                      & M. Zabiego         &  & \\
+  DEN/DEC/SESC/LSC    & R. Masson          &  & \\
+                      & B. Michel          &  & \\
+                      & M. Pelletier       &  & \\
+                      & M. Lainet          &  & \\
+                      & V. Bouineau        &  & \\
+                      & V. Marelle         &  & \\
+                      & T. Helfer          &  & \\
+
 }
 
 % \signatures{-0.}{-39.2}{0.12}{images/signatures.eps}
@@ -246,18 +297,19 @@ avec le générateur de code \mfront{}. Couplé à la base de données
 efficace et évolutive des connaissances matériau dans la plate-forme
 \pleiades{}~\cite{michel09,helfer:opti:2011}. Il permet également à
 des utilisateurs non développeur d'écrire ses propres connaissances
-matériau~\cite{helfer10}.
+matériau~\cite{helfer10}. Cette note intègre des éléments d'une note
+antérieure décrivant un algorithme numérique
+particulier~\cite{blanc11}.
 
-Cette note est la première d'un corpus de \(4\) notes. Les trois
-autres notes traitent\footnote{Citons également qu'un guide de
-  référence de la librairie \TFEL{} est également en cours de
-  rédaction. Cette note étant assez ambitieuse, sa rédaction s'étalera
-  dans le temps. Elle est cependant disponible en version projet dans
-  les sources de la librairie. Elle contient en particulier le guide
-  d'installation de la librairie.}~:
+Elle complète la une présentation générale de
+\mfront{}~\cite{helfer:mfront:2013}. Deux autres notes
+traitent\footnote{Citons également qu'un guide de référence de la
+  librairie \TFEL{} est également en cours de rédaction. Cette note
+  étant assez ambitieuse, sa rédaction s'étalera dans le temps. Elle
+  est cependant disponible en version projet dans les sources de la
+  librairie. Elle contient en particulier le guide d'installation de
+  la librairie.}~:
 \begin{itemize}
-\item une présentation générale de
-  \mfront{}~\cite{helfer:mfront:2013}~;
 \item de l'interface {\tt umat} utilisée par le codes aux éléments
   finis \castem{}~\cite{helfer:umat:2013}~;
 \item de l'interface utilisée par le codes aux éléments finis
@@ -4086,24 +4138,49 @@ et à EDF notamment, offre des possibilités de qualification de l'outil
 extrêmement intéressantes et des voies de collaboration extrêmement
 riches et enrichissantes.
 
-De nombreux points de développement ont été identifiés~:
+\subsection{Développement}
+
+Dans le cadre \pleiades{} différentes perspectives ont été identifiés~:
 \begin{itemize}
 \item un meilleur support des contraintes planes~;
-\item la possibilité d'utiliser d'écrire des lois de comportement qui
-  ne soit pas limités au cas volumique petites déformations. Ceci
-  inclut~:
-  \begin{itemize}
-  \item le cas des poutres qui utilisent des variables généralisées~;
-  \item le cas des modèles de zones cohésives qui travaillent en
-    traction/saut de déplacement~;
-  \item les grandes transformations~;
-  \item les lois à gradients (de déformations ou à variables internes).
-  \end{itemize}
+\item la possibilité d'écrire des lois de comportements poutre~;
 \item l'amélioration de la robustesse de algorithmes implicites, qui
   peuvent diverger si l'estimation initiale est mauvaise. La méthode
   de \nom{Powell} semble particulièrement
   intéressante~\cite{Chen1981143}.
 \end{itemize}
+
+Pour une utilisation dépassant le cadre combustible, différents
+développements sont envisagés. Ces développements se résument
+généralement à la possibilité d'utiliser des lois de comportement qui
+ne soient pas limitées au cas volumique petites déformations. Ceci
+inclut~:
+\begin{itemize}
+\item le cas des poutres qui utilisent des variables généralisées (on
+  retrouve le besoin combustible)~;
+\item les grandes transformations~;
+\item le cas des modèles de zones cohésives qui travaillent en
+  traction/saut de déplacement~;
+\item les lois à gradients (de déformations ou à variables internes).
+\end{itemize}
+
+À moyen terme, ces développements intéressent également nos
+applications combustibles~:
+\begin{itemize}
+\item les grandes transformations semblent intéressantes dans des
+  contextes accidentels (RIA, APRP)~;
+\item les modèles de zones cohésives sont utilisés au DMN/SEMI pour la
+  modélisation de la propagation d'une fissure par corrosion sous
+  contrainte dans la gaine~;
+\item les lois à gradients permettraient une meilleure représentation
+  des phénomènes d'endommagement dans le cadre des travaux des
+  thésards du SESC (modélisation de l'essai de flexion des barreaux
+  \uod{}).
+\end{itemize}
+
+La structure de \mfront{} fait que tous ces développements sont
+informatiquement connexes et peuvent être regroupés dans une même
+action.
 
 \clearpage
 \newpage

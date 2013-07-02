@@ -1838,7 +1838,7 @@ namespace mfront{
   {
     using namespace std;
 #if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
-    const char *const argv[] = {"-C","src",
+    const char *const argv[] = {"make.exe","-C","src",
 				"-f","Makefile.mfront",
 				target.c_str(),0};
     if(_spawnvp(_P_WAIT,"make.exe",argv)!=0){
@@ -1879,7 +1879,7 @@ namespace mfront{
   {
     using namespace std;
 #if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
-    const char *const argv[] = {"-C","src",
+    const char *const argv[] = {"make.exe","-C","src",
 				"-f","Makefile.mfront",
 				"clean",0};
     if(_spawnvp(_P_WAIT,"make.exe",argv)!=0){
