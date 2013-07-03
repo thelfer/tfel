@@ -6,6 +6,8 @@ if(NOT i586-mingw32msvc_COMPILER)
   tfel_enable_cxx_compiler_flag(OPTIMISATION_FLAGS "fvisibility-inlines-hidden")
 endif(NOT i586-mingw32msvc_COMPILER)
 tfel_enable_cxx_compiler_flag(OPTIMISATION_FLAGS "march=native")
+tfel_enable_cxx_compiler_flag(OPTIMISATION_FLAGS "ftree-vectorize")
+tfel_enable_cxx_compiler_flag(OPTIMISATION_FLAGS "ffast-math")
 
 set(OPTIMISATION_FLAGS "-DNO_RUNTIME_CHECK_BOUNDS ${OPTIMISATION_FLAGS}")
 
