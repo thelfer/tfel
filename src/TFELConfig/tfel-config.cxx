@@ -112,16 +112,22 @@ libDir(void)
   static const string execPrefix(EXECPREFIXDIR);
   string lib(LIBDIR);
 
+#if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
+  string ldir("/bin");
+#else 
+  string ldir("/lib");
+#endif
+
   const char * const path = getenv("TFELHOME");
   if(path!=0){
-    return string(path)+"/lib";
+    return string(path)+ldir;
   }
   
   if(lib.substr(0,14)=="${exec_prefix}"){
     if(execPrefix=="${prefix}"){
-      lib = prefix + "/lib";
+      lib = prefix + ldir;
     } else {
-      lib = execPrefix + "/lib";
+      lib = execPrefix + ldir;
     }
   }
   return lib;
