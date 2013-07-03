@@ -28,7 +28,7 @@ namespace tfel
 	virtual ~Function();
       };
       
-      typedef tfel::system::CFunction1Ptr StandardFunctionPtr; 
+      typedef double(* StandardFunctionPtr)(double); 
 
       struct StandardFunctionBase
       {

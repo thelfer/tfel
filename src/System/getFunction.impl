@@ -20,602 +20,602 @@
 extern "C" {
 #endif /* __cplusplus */
 
-int tfel_getCastemFunctionNumberOfVariables(LibraryHandlerPtr lib,
-					    const char * const name){
-  unsigned short * n;
-  size_t len = strlen(name);
-  char *myname = (char *) malloc((len+7u)*sizeof(char));
-  if(myname==0){
-    return -1;
+  int tfel_getCastemFunctionNumberOfVariables(LibraryHandlerPtr lib,
+					      const char * const name){
+    unsigned short * n;
+    size_t len = strlen(name);
+    char *myname = (char *) malloc((len+7u)*sizeof(char));
+    if(myname==0){
+      return -1;
+    }
+    strncpy(myname,name,len);
+    myname[len]='_';
+    myname[len+1u]='n';
+    myname[len+2u]='a';
+    myname[len+3u]='r';
+    myname[len+4u]='g';
+    myname[len+5u]='s';
+    myname[len+6u]='\0';
+    n= (unsigned short *) dlsym(lib,myname);
+    free(myname);
+    if(n==0){
+      return -1;
+    }  
+    return *n;
+  } 
+
+  int tfel_checkIfAsterBehaviourRequiresElasticMaterialPropertiesOffset(LibraryHandlerPtr l,
+									const char * const f)
+  {
+    unsigned short * n;
+    size_t len = strlen(f);
+    char *myname = (char *) malloc((len+9u)*sizeof(char));
+    if(myname==0){
+      return -1;
+    }
+    strncpy(myname,f,len);
+    myname[len]='_';
+    myname[len+1u]='e';
+    myname[len+2u]='o';
+    myname[len+3u]='f';
+    myname[len+4u]='f';
+    myname[len+5u]='s';
+    myname[len+6u]='e';
+    myname[len+7u]='t';
+    myname[len+8u]='\0';
+    n= (unsigned short *) dlsym(l,myname);
+    free(myname);
+    if(n==0){
+      return -1;
+    }  
+    return *n;
   }
-  strncpy(myname,name,len);
-  myname[len]='_';
-  myname[len+1u]='n';
-  myname[len+2u]='a';
-  myname[len+3u]='r';
-  myname[len+4u]='g';
-  myname[len+5u]='s';
-  myname[len+6u]='\0';
-  n= (unsigned short *) dlsym(lib,myname);
-  free(myname);
-  if(n==0){
-    return -1;
-  }  
-  return *n;
-} 
 
-int tfel_checkIfAsterBehaviourRequiresElasticMaterialPropertiesOffset(LibraryHandlerPtr l,
-								      const char * const f)
-{
-  unsigned short * n;
-  size_t len = strlen(f);
-  char *myname = (char *) malloc((len+9u)*sizeof(char));
-  if(myname==0){
-    return -1;
+  int tfel_checkIfAsterBehaviourRequiresThermalExpansionMaterialPropertiesOffset(LibraryHandlerPtr l,
+										 const char * const f)
+  {
+    unsigned short * n;
+    size_t len = strlen(f);
+    char *myname = (char *) malloc((len+10u)*sizeof(char));
+    if(myname==0){
+      return -1;
+    }
+    strncpy(myname,f,len);
+    myname[len]='_';
+    myname[len+1u]='t';
+    myname[len+2u]='e';
+    myname[len+3u]='o';
+    myname[len+4u]='f';
+    myname[len+5u]='f';
+    myname[len+6u]='s';
+    myname[len+7u]='e';
+    myname[len+8u]='t';
+    myname[len+9u]='\0';
+    n= (unsigned short *) dlsym(l,myname);
+    free(myname);
+    if(n==0){
+      return -1;
+    }  
+    return *n;
   }
-  strncpy(myname,f,len);
-  myname[len]='_';
-  myname[len+1u]='e';
-  myname[len+2u]='o';
-  myname[len+3u]='f';
-  myname[len+4u]='f';
-  myname[len+5u]='s';
-  myname[len+6u]='e';
-  myname[len+7u]='t';
-  myname[len+8u]='\0';
-  n= (unsigned short *) dlsym(l,myname);
-  free(myname);
-  if(n==0){
-    return -1;
-  }  
-  return *n;
-}
 
-int tfel_checkIfAsterBehaviourRequiresThermalExpansionMaterialPropertiesOffset(LibraryHandlerPtr l,
-									       const char * const f)
-{
-  unsigned short * n;
-  size_t len = strlen(f);
-  char *myname = (char *) malloc((len+10u)*sizeof(char));
-  if(myname==0){
-    return -1;
+  int tfel_checkIfAsterBehaviourSavesTangentOperator(LibraryHandlerPtr l,
+						     const char * const f)
+  {
+    unsigned short * n;
+    size_t len = strlen(f);
+    char *myname = (char *) malloc((len+22u)*sizeof(char));
+    if(myname==0){
+      return -1;
+    }
+    strncpy(myname,f,len);
+    myname[len]='_';
+    myname[len+1u]='s';
+    myname[len+2u]='a';
+    myname[len+3u]='v';
+    myname[len+4u]='e';
+    myname[len+5u]='s';
+    myname[len+6u]='T';
+    myname[len+7u]='a';
+    myname[len+8u]='n';
+    myname[len+9u]='g';
+    myname[len+10u]='e';
+    myname[len+11u]='n';
+    myname[len+12u]='t';
+    myname[len+13u]='O';
+    myname[len+14u]='p';
+    myname[len+15u]='e';
+    myname[len+16u]='r';
+    myname[len+17u]='a';
+    myname[len+18u]='t';
+    myname[len+19u]='o';
+    myname[len+20u]='r';
+    myname[len+21u]='\0';
+    n= (unsigned short *) dlsym(l,myname);
+    free(myname);
+    if(n==0){
+      return -1;
+    }
+    return *n;
   }
-  strncpy(myname,f,len);
-  myname[len]='_';
-  myname[len+1u]='t';
-  myname[len+2u]='e';
-  myname[len+3u]='o';
-  myname[len+4u]='f';
-  myname[len+5u]='f';
-  myname[len+6u]='s';
-  myname[len+7u]='e';
-  myname[len+8u]='t';
-  myname[len+9u]='\0';
-  n= (unsigned short *) dlsym(l,myname);
-  free(myname);
-  if(n==0){
-    return -1;
-  }  
-  return *n;
-}
 
-int tfel_checkIfAsterBehaviourSavesTangentOperator(LibraryHandlerPtr l,
-						   const char * const f)
-{
-  unsigned short * n;
-  size_t len = strlen(f);
-  char *myname = (char *) malloc((len+22u)*sizeof(char));
-  if(myname==0){
-    return -1;
+
+  int tfel_getUnsignedShort(LibraryHandlerPtr lib,
+			    const char * const name){
+    unsigned short * n;
+    n= (unsigned short *) dlsym(lib,name);
+    if(n==0){
+      return -1;
+    }  
+    return *n;
+  } 
+
+  int tfel_getBool(LibraryHandlerPtr lib,
+		   const char * const name){
+    unsigned short * n;
+    n= (unsigned short *) dlsym(lib,name);
+    if(n==0){
+      return -1;
+    }  
+    return (int) *n;
   }
-  strncpy(myname,f,len);
-  myname[len]='_';
-  myname[len+1u]='s';
-  myname[len+2u]='a';
-  myname[len+3u]='v';
-  myname[len+4u]='e';
-  myname[len+5u]='s';
-  myname[len+6u]='T';
-  myname[len+7u]='a';
-  myname[len+8u]='n';
-  myname[len+9u]='g';
-  myname[len+10u]='e';
-  myname[len+11u]='n';
-  myname[len+12u]='t';
-  myname[len+13u]='O';
-  myname[len+14u]='p';
-  myname[len+15u]='e';
-  myname[len+16u]='r';
-  myname[len+17u]='a';
-  myname[len+18u]='t';
-  myname[len+19u]='o';
-  myname[len+20u]='r';
-  myname[len+21u]='\0';
-  n= (unsigned short *) dlsym(l,myname);
-  free(myname);
-  if(n==0){
-    return -1;
+
+  char **
+  tfel_getArrayOfStrings(LibraryHandlerPtr lib,
+			 const char * const name)
+  {
+    char ** v;
+    v = (char **) dlsym(lib,name);
+    return v;
   }
-  return *n;
-}
 
-
-int tfel_getUnsignedShort(LibraryHandlerPtr lib,
-			  const char * const name){
-  unsigned short * n;
-  n= (unsigned short *) dlsym(lib,name);
-  if(n==0){
-    return -1;
-  }  
-  return *n;
-} 
-
-int tfel_getBool(LibraryHandlerPtr lib,
-		 const char * const name){
-  unsigned short * n;
-  n= (unsigned short *) dlsym(lib,name);
-  if(n==0){
-    return -1;
-  }  
-  return (int) *n;
-}
-
-char **
-tfel_getArrayOfStrings(LibraryHandlerPtr lib,
-		       const char * const name)
-{
-  char ** v;
-  v = (char **) dlsym(lib,name);
-  return v;
-}
-
-int *
-tfel_getArrayOfInt(LibraryHandlerPtr lib,
-		   const char * const name)
-{
-  int * v;
-  v = (int *) dlsym(lib,name);
-  return v;
-}
-
-char **
-tfel_getCastemFunctionVariables(LibraryHandlerPtr lib,
-				const char * const name)
-{
-  char ** v;
-  size_t len = strlen(name);
-  char *myname = (char *) malloc((len+6u)*sizeof(char));
-  if(myname==0){
-    return 0;
+  int *
+  tfel_getArrayOfInt(LibraryHandlerPtr lib,
+		     const char * const name)
+  {
+    int * v;
+    v = (int *) dlsym(lib,name);
+    return v;
   }
-  strncpy(myname,name,len);
-  myname[len]='_';
-  myname[len+1u]='a';
-  myname[len+2u]='r';
-  myname[len+3u]='g';
-  myname[len+4u]='s';
-  myname[len+5u]='\0';
-  v = (char **) dlsym(lib,myname);
-  free(myname);
-  return v;
-}
-
-int (*tfel_getSetParameterFunction(LibraryHandlerPtr lib,const char * const name))(const char* const,
-										   const double){
-  return (int (*)(const char*const,
-		  const double)) dlsym(lib,name);
-} 
-
-int (*tfel_getSetIntegerParameterFunction(LibraryHandlerPtr lib,const char * const name))(const char* const,
-										   const int){
-  return (int (*)(const char*const,
-		  const int)) dlsym(lib,name);
-}
-
-int (*tfel_getSetUnsignedShortParameterFunction(LibraryHandlerPtr lib,const char * const name))(const char* const,
-												const unsigned short){
-  return (int (*)(const char*const,
-		  const unsigned short)) dlsym(lib,name);
-}
-
-double (*tfel_getCastemFunction(LibraryHandlerPtr lib,const char * const name))(const double*const){
-  return (double (*)(const double*const)) dlsym(lib,name);
-} 
-
-void (*tfel_getUMATFunction(LibraryHandlerPtr lib,
-			    const char * const name))(const UMATIntegerType  *const,
-						      const UMATRealType *const,
-						      const UMATRealType *const,
-						      UMATRealType *const,
-						      const UMATRealType *const,
-						      const UMATRealType *const,
-						      const UMATRealType *const,
-						      const UMATRealType *const,
-						      const UMATRealType *const,
-						      const UMATIntegerType  *const,
-						      const UMATRealType *const,
-						      const UMATRealType *const,
-						      UMATRealType *const,
-						      const UMATIntegerType  *const,
-						      UMATRealType *const,
-						      const UMATIntegerType  *const,
-						      UMATIntegerType  *const)
-{
-  return (void (*)(const UMATIntegerType  *const,
-		   const UMATRealType *const,
-		   const UMATRealType *const,
-		   UMATRealType *const,
-		   const UMATRealType *const,
-		   const UMATRealType *const,
-		   const UMATRealType *const,
-		   const UMATRealType *const,
-		   const UMATRealType *const,
-		   const UMATIntegerType  *const,
-		   const UMATRealType *const,
-		   const UMATRealType *const,
-		   UMATRealType *const,
-		   const UMATIntegerType  *const,
-		   UMATRealType *const,
-		   const UMATIntegerType  *const,
-		   UMATIntegerType  *const)) dlsym(lib,name);
-}
-
-
-void (*tfel_getAsterFunction(LibraryHandlerPtr lib,
-			     const char * const name))(AsterRealType *const,
-						       AsterRealType *const,
-						       AsterRealType *const,
-						       AsterRealType *const,
-						       AsterRealType *const,
-						       AsterRealType *const,
-						       AsterRealType *const,
-						       AsterRealType *const,
-						       AsterRealType *const,
-						       AsterRealType *const,
-						       const AsterRealType *const,
-						       const AsterRealType *const,
-						       const AsterRealType *const,
-						       const AsterRealType *const,
-						       const AsterRealType *const,
-						       const AsterRealType *const,
-						       const AsterRealType *const,
-						       const AsterRealType *const,
-						       const char      *const,
-						       const AsterIntegerType  *const,
-						       const AsterIntegerType  *const,
-						       const AsterIntegerType  *const,
-						       const AsterIntegerType  *const,
-						       const AsterRealType *const,
-						       const AsterIntegerType  *const,
-						       const AsterRealType *const,
-						       const AsterRealType *const,
-						       AsterRealType *const,
-						       const AsterRealType *const,
-						       const AsterRealType *const,
-						       const AsterRealType *const,
-						       const AsterIntegerType  *const,
-						       const AsterIntegerType  *const,
-						       const AsterIntegerType  *const,
-						       const AsterIntegerType  *const,
-						       const AsterIntegerType  *const,
-						       AsterIntegerType  *const)
-{
-  return (void (*)(AsterRealType *const,AsterRealType *const,
-		   AsterRealType *const,AsterRealType *const,
-		   AsterRealType *const,AsterRealType *const,
-		   AsterRealType *const,AsterRealType *const,
-		   AsterRealType *const,AsterRealType *const,
-		   const AsterRealType *const,const AsterRealType *const,
-		   const AsterRealType *const,const AsterRealType *const,
-		   const AsterRealType *const,const AsterRealType *const,
-		   const AsterRealType *const,const AsterRealType *const,
-		   const char      *const,const AsterIntegerType  *const,
-		   const AsterIntegerType  *const,const AsterIntegerType  *const,
-		   const AsterIntegerType  *const,const AsterRealType *const,
-		   const AsterIntegerType  *const,const AsterRealType *const,
-		   const AsterRealType *const,AsterRealType *const,
-		   const AsterRealType *const,const AsterRealType *const,
-		   const AsterRealType *const,const AsterIntegerType  *const,
-		   const AsterIntegerType  *const,const AsterIntegerType  *const,
-		   const AsterIntegerType  *const,const AsterIntegerType  *const,
-		   AsterIntegerType  *const))dlsym(lib,name);
-}
-
-double (*tfel_getCFunction0(LibraryHandlerPtr lib,const char * const name))(void){
-  return (double (*)(void)) dlsym(lib,name);
-} 
-
-
-double (*tfel_getCFunction1(LibraryHandlerPtr lib,const char * const name))(double){
-  return (double (*)(double)) dlsym(lib,name);
-}
-
-
-double (*tfel_getCFunction2(LibraryHandlerPtr lib,const char * const name))(double,double){
-  return (double (*)(double,double)) dlsym(lib,name);
-}
-
-
-double (*tfel_getCFunction3(LibraryHandlerPtr lib,const char * const name))(double,double,
-									    double){
-  return (double (*)(double,double,double)) dlsym(lib,name);
-}
-
-
-double (*tfel_getCFunction4(LibraryHandlerPtr lib,const char * const name))(double,double,
-									    double,double){
-  return (double (*)(double,double,double,double)) dlsym(lib,name);
-}
-
-
-double (*tfel_getCFunction5(LibraryHandlerPtr lib,const char * const name))(double,double,
-									    double,double,
-									    double){
-  return (double (*)(double,double,double,double,
-		     double)) dlsym(lib,name);
-}
-
-double (*tfel_getCFunction6(LibraryHandlerPtr lib,const char * const name))(double,double,
-									    double,double,
-									    double,double){
-  return (double (*)(double,double,double,double,
-		     double,double)) dlsym(lib,name);
-}
-
-
-double (*tfel_getCFunction7(LibraryHandlerPtr lib,const char * const name))(double,double,
-									    double,double,
-									    double,double,
-									    double){
-  return (double (*)(double,double,double,double,
-		     double,double,double)) dlsym(lib,name);
-}
-
-
-double (*tfel_getCFunction8(LibraryHandlerPtr lib,const char * const name))(double,double,
-									    double,double,
-									    double,double,
-									    double,double){
-  return (double (*)(double,double,double,double,
-		     double,double,double,double)) dlsym(lib,name);
-}
-
-
-double (*tfel_getCFunction9(LibraryHandlerPtr lib,const char * const name))(double,double,
-									    double,double,
-									    double,double,
-									    double,double,
-									    double){
-  return (double (*)(double,double,double,double,
-		     double,double,double,double,
-		     double)) dlsym(lib,name);
-}
-
-
-double (*tfel_getCFunction10(LibraryHandlerPtr lib,const char * const name))(double,double,
-									     double,double,
-									     double,double,
-									     double,double,
-									     double,double){
-  return (double (*)(double,double,double,double,
-		     double,double,double,double,
-		     double,double)) dlsym(lib,name);
-}
-
-
-double (*tfel_getCFunction11(LibraryHandlerPtr lib,const char * const name))(double,double,
-									     double,double,
-									     double,double,
-									     double,double,
-									     double,double,
-									     double){
-  return (double (*)(double,double,double,double,
-		     double,double,double,double,
-		     double,double,double)) dlsym(lib,name);
-}
-
-
-double (*tfel_getCFunction12(LibraryHandlerPtr lib,const char * const name))(double,double,
-									     double,double,
-									     double,double,
-									     double,double,
-									     double,double,
-									     double,double){
-  return (double (*)(double,double,double,double,
-		     double,double,double,double,
-		     double,double,double,double)) dlsym(lib,name);
-}
-
-
-double (*tfel_getCFunction13(LibraryHandlerPtr lib,const char * const name))(double,double,
-									     double,double,
-									     double,double,
-									     double,double,
-									     double,double,
-									     double,double,
-									     double){
-  return (double (*)(double,double,double,double,
-		     double,double,double,double,
-		     double,double,double,double,
-		     double)) dlsym(lib,name);
-}
-
-
-double (*tfel_getCFunction14(LibraryHandlerPtr lib,const char * const name))(double,double,
-									     double,double,
-									     double,double,
-									     double,double,
-									     double,double,
-									     double,double,
-									     double,double){
-  return (double (*)(double,double,double,double,
-		     double,double,double,double,
-		     double,double,double,double,
-		     double,double)) dlsym(lib,name);
-}
-
-
-double (*tfel_getCFunction15(LibraryHandlerPtr lib,const char * const name))(double,double,
-									     double,double,
-									     double,double,
-									     double,double,
-									     double,double,
-									     double,double,
-									     double,double,
-									     double){
-  return (double (*)(double,double,double,double,
-		     double,double,double,double,
-		     double,double,double,double,
-		     double,double,double)) dlsym(lib,name);
-}
-
-double (*tfel_getFortranFunction0(LibraryHandlerPtr lib,const char * const name))(void){
-  return (double (*)(void)) dlsym(lib,name);
-} 
-
-
-double (*tfel_getFortranFunction1(LibraryHandlerPtr lib,const char * const name))(const double* const){
-  return (double (*)(const double* const)) dlsym(lib,name);
-}
-
-
-double (*tfel_getFortranFunction2(LibraryHandlerPtr lib,const char * const name))(const double* const,const double* const){
-  return (double (*)(const double* const,const double* const)) dlsym(lib,name);
-}
-
-
-double (*tfel_getFortranFunction3(LibraryHandlerPtr lib,const char * const name))(const double* const,const double* const,
-										  const double* const){
-  return (double (*)(const double* const,const double* const,const double* const)) dlsym(lib,name);
-}
-
-
-double (*tfel_getFortranFunction4(LibraryHandlerPtr lib,const char * const name))(const double* const,const double* const,
-										  const double* const,const double* const){
-  return (double (*)(const double* const,const double* const,const double* const,const double* const)) dlsym(lib,name);
-}
-
-
-double (*tfel_getFortranFunction5(LibraryHandlerPtr lib,const char * const name))(const double* const,const double* const,
-										  const double* const,const double* const,
-										  const double* const){
-  return (double (*)(const double* const,const double* const,const double* const,const double* const,
-		     const double* const)) dlsym(lib,name);
-}
-
-double (*tfel_getFortranFunction6(LibraryHandlerPtr lib,const char * const name))(const double* const,const double* const,
-										  const double* const,const double* const,
-										  const double* const,const double* const){
-  return (double (*)(const double* const,const double* const,const double* const,const double* const,
-		     const double* const,const double* const)) dlsym(lib,name);
-}
-
-
-double (*tfel_getFortranFunction7(LibraryHandlerPtr lib,const char * const name))(const double* const,const double* const,
-										  const double* const,const double* const,
-										  const double* const,const double* const,
-										  const double* const){
-  return (double (*)(const double* const,const double* const,const double* const,const double* const,
-		     const double* const,const double* const,const double* const)) dlsym(lib,name);
-}
-
-
-double (*tfel_getFortranFunction8(LibraryHandlerPtr lib,const char * const name))(const double* const,const double* const,
-										  const double* const,const double* const,
-										  const double* const,const double* const,
-										  const double* const,const double* const){
-  return (double (*)(const double* const,const double* const,const double* const,const double* const,
-		     const double* const,const double* const,const double* const,const double* const)) dlsym(lib,name);
-}
-
-
-double (*tfel_getFortranFunction9(LibraryHandlerPtr lib,const char * const name))(const double* const,const double* const,
-										  const double* const,const double* const,
-										  const double* const,const double* const,
-										  const double* const,const double* const,
-										  const double* const){
-  return (double (*)(const double* const,const double* const,const double* const,const double* const,
-		     const double* const,const double* const,const double* const,const double* const,
-		     const double* const)) dlsym(lib,name);
-}
-
-
-double (*tfel_getFortranFunction10(LibraryHandlerPtr lib,const char * const name))(const double* const,const double* const,
-										   const double* const,const double* const,
-										   const double* const,const double* const,
-										   const double* const,const double* const,
-										   const double* const,const double* const){
-  return (double (*)(const double* const,const double* const,const double* const,const double* const,
-		     const double* const,const double* const,const double* const,const double* const,
-		     const double* const,const double* const)) dlsym(lib,name);
-}
-
-
-double (*tfel_getFortranFunction11(LibraryHandlerPtr lib,const char * const name))(const double* const,const double* const,
-										   const double* const,const double* const,
-										   const double* const,const double* const,
-										   const double* const,const double* const,
-										   const double* const,const double* const,
-										   const double* const){
-  return (double (*)(const double* const,const double* const,const double* const,const double* const,
-		     const double* const,const double* const,const double* const,const double* const,
-		     const double* const,const double* const,const double* const)) dlsym(lib,name);
-}
-
-
-double (*tfel_getFortranFunction12(LibraryHandlerPtr lib,const char * const name))(const double* const,const double* const,
-										   const double* const,const double* const,
-										   const double* const,const double* const,
-										   const double* const,const double* const,
-										   const double* const,const double* const,
-										   const double* const,const double* const){
-  return (double (*)(const double* const,const double* const,const double* const,const double* const,
-		     const double* const,const double* const,const double* const,const double* const,
-		     const double* const,const double* const,const double* const,const double* const)) dlsym(lib,name);
-}
-
-
-double (*tfel_getFortranFunction13(LibraryHandlerPtr lib,const char * const name))(const double* const,const double* const,
-										   const double* const,const double* const,
-										   const double* const,const double* const,
-										   const double* const,const double* const,
-										   const double* const,const double* const,
-										   const double* const,const double* const,
-										   const double* const){
-  return (double (*)(const double* const,const double* const,const double* const,const double* const,
-		     const double* const,const double* const,const double* const,const double* const,
-		     const double* const,const double* const,const double* const,const double* const,
-		     const double* const)) dlsym(lib,name);
-}
-
-
-double (*tfel_getFortranFunction14(LibraryHandlerPtr lib,const char * const name))(const double* const,const double* const,
-										   const double* const,const double* const,
-										   const double* const,const double* const,
-										   const double* const,const double* const,
-										   const double* const,const double* const,
-										   const double* const,const double* const,
-										   const double* const,const double* const){
-  return (double (*)(const double* const,const double* const,const double* const,const double* const,
-		     const double* const,const double* const,const double* const,const double* const,
-		     const double* const,const double* const,const double* const,const double* const,
-		     const double* const,const double* const)) dlsym(lib,name);
-}
-
-
-double (*tfel_getFortranFunction15(LibraryHandlerPtr lib,const char * const name))(const double* const,const double* const,
-										   const double* const,const double* const,
-										   const double* const,const double* const,
-										   const double* const,const double* const,
-										   const double* const,const double* const,
-										   const double* const,const double* const,
-										   const double* const,const double* const,
-										   const double* const){
-  return (double (*)(const double* const,const double* const,const double* const,const double* const,
-		     const double* const,const double* const,const double* const,const double* const,
-		     const double* const,const double* const,const double* const,const double* const,
-		     const double* const,const double* const,const double* const)) dlsym(lib,name);
-}
+
+  char **
+  tfel_getCastemFunctionVariables(LibraryHandlerPtr lib,
+				  const char * const name)
+  {
+    char ** v;
+    size_t len = strlen(name);
+    char *myname = (char *) malloc((len+6u)*sizeof(char));
+    if(myname==0){
+      return 0;
+    }
+    strncpy(myname,name,len);
+    myname[len]='_';
+    myname[len+1u]='a';
+    myname[len+2u]='r';
+    myname[len+3u]='g';
+    myname[len+4u]='s';
+    myname[len+5u]='\0';
+    v = (char **) dlsym(lib,myname);
+    free(myname);
+    return v;
+  }
+
+  int (TFEL_ADDCALL_PTR tfel_getSetParameterFunction(LibraryHandlerPtr lib,const char * const name))(const char* const,
+												     const double){
+    return (int (TFEL_ADDCALL_PTR)(const char*const,
+				   const double)) dlsym(lib,name);
+  } 
+
+  int (TFEL_ADDCALL_PTR tfel_getSetIntegerParameterFunction(LibraryHandlerPtr lib,const char * const name))(const char* const,
+													    const int){
+    return (int (TFEL_ADDCALL_PTR)(const char*const,
+				   const int)) dlsym(lib,name);
+  }
+
+  int (TFEL_ADDCALL_PTR tfel_getSetUnsignedShortParameterFunction(LibraryHandlerPtr lib,const char * const name))(const char* const,
+														  const unsigned short){
+    return (int (TFEL_ADDCALL_PTR)(const char*const,
+				   const unsigned short)) dlsym(lib,name);
+  }
+
+  double (TFEL_ADDCALL_PTR tfel_getCastemFunction(LibraryHandlerPtr lib,const char * const name))(const double*const){
+    return (double (TFEL_ADDCALL_PTR)(const double*const)) dlsym(lib,name);
+  } 
+
+  void (TFEL_ADDCALL_PTR tfel_getUMATFunction(LibraryHandlerPtr lib,
+					      const char * const name))(const UMATIntegerType  *const,
+									const UMATRealType *const,
+									const UMATRealType *const,
+									UMATRealType *const,
+									const UMATRealType *const,
+									const UMATRealType *const,
+									const UMATRealType *const,
+									const UMATRealType *const,
+									const UMATRealType *const,
+									const UMATIntegerType  *const,
+									const UMATRealType *const,
+									const UMATRealType *const,
+									UMATRealType *const,
+									const UMATIntegerType  *const,
+									UMATRealType *const,
+									const UMATIntegerType  *const,
+									UMATIntegerType  *const)
+  {
+    return (void (TFEL_ADDCALL_PTR)(const UMATIntegerType  *const,
+				    const UMATRealType *const,
+				    const UMATRealType *const,
+				    UMATRealType *const,
+				    const UMATRealType *const,
+				    const UMATRealType *const,
+				    const UMATRealType *const,
+				    const UMATRealType *const,
+				    const UMATRealType *const,
+				    const UMATIntegerType  *const,
+				    const UMATRealType *const,
+				    const UMATRealType *const,
+				    UMATRealType *const,
+				    const UMATIntegerType  *const,
+				    UMATRealType *const,
+				    const UMATIntegerType  *const,
+				    UMATIntegerType  *const)) dlsym(lib,name);
+  }
+
+
+  void (TFEL_ADDCALL_PTR tfel_getAsterFunction(LibraryHandlerPtr lib,
+					       const char * const name))(AsterRealType *const,
+									 AsterRealType *const,
+									 AsterRealType *const,
+									 AsterRealType *const,
+									 AsterRealType *const,
+									 AsterRealType *const,
+									 AsterRealType *const,
+									 AsterRealType *const,
+									 AsterRealType *const,
+									 AsterRealType *const,
+									 const AsterRealType *const,
+									 const AsterRealType *const,
+									 const AsterRealType *const,
+									 const AsterRealType *const,
+									 const AsterRealType *const,
+									 const AsterRealType *const,
+									 const AsterRealType *const,
+									 const AsterRealType *const,
+									 const char      *const,
+									 const AsterIntegerType  *const,
+									 const AsterIntegerType  *const,
+									 const AsterIntegerType  *const,
+									 const AsterIntegerType  *const,
+									 const AsterRealType *const,
+									 const AsterIntegerType  *const,
+									 const AsterRealType *const,
+									 const AsterRealType *const,
+									 AsterRealType *const,
+									 const AsterRealType *const,
+									 const AsterRealType *const,
+									 const AsterRealType *const,
+									 const AsterIntegerType  *const,
+									 const AsterIntegerType  *const,
+									 const AsterIntegerType  *const,
+									 const AsterIntegerType  *const,
+									 const AsterIntegerType  *const,
+									 AsterIntegerType  *const)
+  {
+    return (void (TFEL_ADDCALL_PTR)(AsterRealType *const,AsterRealType *const,
+				    AsterRealType *const,AsterRealType *const,
+				    AsterRealType *const,AsterRealType *const,
+				    AsterRealType *const,AsterRealType *const,
+				    AsterRealType *const,AsterRealType *const,
+				    const AsterRealType *const,const AsterRealType *const,
+				    const AsterRealType *const,const AsterRealType *const,
+				    const AsterRealType *const,const AsterRealType *const,
+				    const AsterRealType *const,const AsterRealType *const,
+				    const char      *const,const AsterIntegerType  *const,
+				    const AsterIntegerType  *const,const AsterIntegerType  *const,
+				    const AsterIntegerType  *const,const AsterRealType *const,
+				    const AsterIntegerType  *const,const AsterRealType *const,
+				    const AsterRealType *const,AsterRealType *const,
+				    const AsterRealType *const,const AsterRealType *const,
+				    const AsterRealType *const,const AsterIntegerType  *const,
+				    const AsterIntegerType  *const,const AsterIntegerType  *const,
+				    const AsterIntegerType  *const,const AsterIntegerType  *const,
+				    AsterIntegerType  *const))dlsym(lib,name);
+  }
+
+  double (TFEL_ADDCALL_PTR tfel_getCFunction0(LibraryHandlerPtr lib,const char * const name))(void){
+    return (double (TFEL_ADDCALL_PTR)(void)) dlsym(lib,name);
+  } 
+
+
+  double (TFEL_ADDCALL_PTR tfel_getCFunction1(LibraryHandlerPtr lib,const char * const name))(double){
+    return (double (TFEL_ADDCALL_PTR)(double)) dlsym(lib,name);
+  }
+
+
+  double (TFEL_ADDCALL_PTR tfel_getCFunction2(LibraryHandlerPtr lib,const char * const name))(double,double){
+    return (double (TFEL_ADDCALL_PTR)(double,double)) dlsym(lib,name);
+  }
+
+
+  double (TFEL_ADDCALL_PTR tfel_getCFunction3(LibraryHandlerPtr lib,const char * const name))(double,double,
+											      double){
+    return (double (TFEL_ADDCALL_PTR)(double,double,double)) dlsym(lib,name);
+  }
+
+
+  double (TFEL_ADDCALL_PTR tfel_getCFunction4(LibraryHandlerPtr lib,const char * const name))(double,double,
+											      double,double){
+    return (double (TFEL_ADDCALL_PTR)(double,double,double,double)) dlsym(lib,name);
+  }
+
+
+  double (TFEL_ADDCALL_PTR tfel_getCFunction5(LibraryHandlerPtr lib,const char * const name))(double,double,
+											      double,double,
+											      double){
+    return (double (TFEL_ADDCALL_PTR)(double,double,double,double,
+				      double)) dlsym(lib,name);
+  }
+
+  double (TFEL_ADDCALL_PTR tfel_getCFunction6(LibraryHandlerPtr lib,const char * const name))(double,double,
+											      double,double,
+											      double,double){
+    return (double (TFEL_ADDCALL_PTR)(double,double,double,double,
+				      double,double)) dlsym(lib,name);
+  }
+
+
+  double (TFEL_ADDCALL_PTR tfel_getCFunction7(LibraryHandlerPtr lib,const char * const name))(double,double,
+											      double,double,
+											      double,double,
+											      double){
+    return (double (TFEL_ADDCALL_PTR)(double,double,double,double,
+				      double,double,double)) dlsym(lib,name);
+  }
+
+
+  double (TFEL_ADDCALL_PTR tfel_getCFunction8(LibraryHandlerPtr lib,const char * const name))(double,double,
+											      double,double,
+											      double,double,
+											      double,double){
+    return (double (TFEL_ADDCALL_PTR)(double,double,double,double,
+				      double,double,double,double)) dlsym(lib,name);
+  }
+
+
+  double (TFEL_ADDCALL_PTR tfel_getCFunction9(LibraryHandlerPtr lib,const char * const name))(double,double,
+											      double,double,
+											      double,double,
+											      double,double,
+											      double){
+    return (double (TFEL_ADDCALL_PTR)(double,double,double,double,
+				      double,double,double,double,
+				      double)) dlsym(lib,name);
+  }
+
+
+  double (TFEL_ADDCALL_PTR tfel_getCFunction10(LibraryHandlerPtr lib,const char * const name))(double,double,
+											       double,double,
+											       double,double,
+											       double,double,
+											       double,double){
+    return (double (TFEL_ADDCALL_PTR)(double,double,double,double,
+				      double,double,double,double,
+				      double,double)) dlsym(lib,name);
+  }
+
+
+  double (TFEL_ADDCALL_PTR tfel_getCFunction11(LibraryHandlerPtr lib,const char * const name))(double,double,
+											       double,double,
+											       double,double,
+											       double,double,
+											       double,double,
+											       double){
+    return (double (TFEL_ADDCALL_PTR)(double,double,double,double,
+				      double,double,double,double,
+				      double,double,double)) dlsym(lib,name);
+  }
+
+
+  double (TFEL_ADDCALL_PTR tfel_getCFunction12(LibraryHandlerPtr lib,const char * const name))(double,double,
+											       double,double,
+											       double,double,
+											       double,double,
+											       double,double,
+											       double,double){
+    return (double (TFEL_ADDCALL_PTR)(double,double,double,double,
+				      double,double,double,double,
+				      double,double,double,double)) dlsym(lib,name);
+  }
+
+
+  double (TFEL_ADDCALL_PTR tfel_getCFunction13(LibraryHandlerPtr lib,const char * const name))(double,double,
+											       double,double,
+											       double,double,
+											       double,double,
+											       double,double,
+											       double,double,
+											       double){
+    return (double (TFEL_ADDCALL_PTR)(double,double,double,double,
+				      double,double,double,double,
+				      double,double,double,double,
+				      double)) dlsym(lib,name);
+  }
+
+
+  double (TFEL_ADDCALL_PTR tfel_getCFunction14(LibraryHandlerPtr lib,const char * const name))(double,double,
+											       double,double,
+											       double,double,
+											       double,double,
+											       double,double,
+											       double,double,
+											       double,double){
+    return (double (TFEL_ADDCALL_PTR)(double,double,double,double,
+				      double,double,double,double,
+				      double,double,double,double,
+				      double,double)) dlsym(lib,name);
+  }
+
+
+  double (TFEL_ADDCALL_PTR tfel_getCFunction15(LibraryHandlerPtr lib,const char * const name))(double,double,
+											       double,double,
+											       double,double,
+											       double,double,
+											       double,double,
+											       double,double,
+											       double,double,
+											       double){
+    return (double (TFEL_ADDCALL_PTR)(double,double,double,double,
+				      double,double,double,double,
+				      double,double,double,double,
+				      double,double,double)) dlsym(lib,name);
+  }
+
+  double (TFEL_ADDCALL_PTR tfel_getFortranFunction0(LibraryHandlerPtr lib,const char * const name))(void){
+    return (double (TFEL_ADDCALL_PTR)(void)) dlsym(lib,name);
+  } 
+
+
+  double (TFEL_ADDCALL_PTR tfel_getFortranFunction1(LibraryHandlerPtr lib,const char * const name))(const double* const){
+    return (double (TFEL_ADDCALL_PTR)(const double* const)) dlsym(lib,name);
+  }
+
+
+  double (TFEL_ADDCALL_PTR tfel_getFortranFunction2(LibraryHandlerPtr lib,const char * const name))(const double* const,const double* const){
+    return (double (TFEL_ADDCALL_PTR)(const double* const,const double* const)) dlsym(lib,name);
+  }
+
+
+  double (TFEL_ADDCALL_PTR tfel_getFortranFunction3(LibraryHandlerPtr lib,const char * const name))(const double* const,const double* const,
+												    const double* const){
+    return (double (TFEL_ADDCALL_PTR)(const double* const,const double* const,const double* const)) dlsym(lib,name);
+  }
+
+
+  double (TFEL_ADDCALL_PTR tfel_getFortranFunction4(LibraryHandlerPtr lib,const char * const name))(const double* const,const double* const,
+												    const double* const,const double* const){
+    return (double (TFEL_ADDCALL_PTR)(const double* const,const double* const,const double* const,const double* const)) dlsym(lib,name);
+  }
+
+
+  double (TFEL_ADDCALL_PTR tfel_getFortranFunction5(LibraryHandlerPtr lib,const char * const name))(const double* const,const double* const,
+												    const double* const,const double* const,
+												    const double* const){
+    return (double (TFEL_ADDCALL_PTR)(const double* const,const double* const,const double* const,const double* const,
+				      const double* const)) dlsym(lib,name);
+  }
+
+  double (TFEL_ADDCALL_PTR tfel_getFortranFunction6(LibraryHandlerPtr lib,const char * const name))(const double* const,const double* const,
+												    const double* const,const double* const,
+												    const double* const,const double* const){
+    return (double (TFEL_ADDCALL_PTR)(const double* const,const double* const,const double* const,const double* const,
+				      const double* const,const double* const)) dlsym(lib,name);
+  }
+
+
+  double (TFEL_ADDCALL_PTR tfel_getFortranFunction7(LibraryHandlerPtr lib,const char * const name))(const double* const,const double* const,
+												    const double* const,const double* const,
+												    const double* const,const double* const,
+												    const double* const){
+    return (double (TFEL_ADDCALL_PTR)(const double* const,const double* const,const double* const,const double* const,
+				      const double* const,const double* const,const double* const)) dlsym(lib,name);
+  }
+
+
+  double (TFEL_ADDCALL_PTR tfel_getFortranFunction8(LibraryHandlerPtr lib,const char * const name))(const double* const,const double* const,
+												    const double* const,const double* const,
+												    const double* const,const double* const,
+												    const double* const,const double* const){
+    return (double (TFEL_ADDCALL_PTR)(const double* const,const double* const,const double* const,const double* const,
+				      const double* const,const double* const,const double* const,const double* const)) dlsym(lib,name);
+  }
+
+
+  double (TFEL_ADDCALL_PTR tfel_getFortranFunction9(LibraryHandlerPtr lib,const char * const name))(const double* const,const double* const,
+												    const double* const,const double* const,
+												    const double* const,const double* const,
+												    const double* const,const double* const,
+												    const double* const){
+    return (double (TFEL_ADDCALL_PTR)(const double* const,const double* const,const double* const,const double* const,
+				      const double* const,const double* const,const double* const,const double* const,
+				      const double* const)) dlsym(lib,name);
+  }
+
+
+  double (TFEL_ADDCALL_PTR tfel_getFortranFunction10(LibraryHandlerPtr lib,const char * const name))(const double* const,const double* const,
+												     const double* const,const double* const,
+												     const double* const,const double* const,
+												     const double* const,const double* const,
+												     const double* const,const double* const){
+    return (double (TFEL_ADDCALL_PTR)(const double* const,const double* const,const double* const,const double* const,
+				      const double* const,const double* const,const double* const,const double* const,
+				      const double* const,const double* const)) dlsym(lib,name);
+  }
+
+
+  double (TFEL_ADDCALL_PTR tfel_getFortranFunction11(LibraryHandlerPtr lib,const char * const name))(const double* const,const double* const,
+												     const double* const,const double* const,
+												     const double* const,const double* const,
+												     const double* const,const double* const,
+												     const double* const,const double* const,
+												     const double* const){
+    return (double (TFEL_ADDCALL_PTR)(const double* const,const double* const,const double* const,const double* const,
+				      const double* const,const double* const,const double* const,const double* const,
+				      const double* const,const double* const,const double* const)) dlsym(lib,name);
+  }
+
+
+  double (TFEL_ADDCALL_PTR tfel_getFortranFunction12(LibraryHandlerPtr lib,const char * const name))(const double* const,const double* const,
+												     const double* const,const double* const,
+												     const double* const,const double* const,
+												     const double* const,const double* const,
+												     const double* const,const double* const,
+												     const double* const,const double* const){
+    return (double (TFEL_ADDCALL_PTR)(const double* const,const double* const,const double* const,const double* const,
+				      const double* const,const double* const,const double* const,const double* const,
+				      const double* const,const double* const,const double* const,const double* const)) dlsym(lib,name);
+  }
+
+
+  double (TFEL_ADDCALL_PTR tfel_getFortranFunction13(LibraryHandlerPtr lib,const char * const name))(const double* const,const double* const,
+												     const double* const,const double* const,
+												     const double* const,const double* const,
+												     const double* const,const double* const,
+												     const double* const,const double* const,
+												     const double* const,const double* const,
+												     const double* const){
+    return (double (TFEL_ADDCALL_PTR)(const double* const,const double* const,const double* const,const double* const,
+				      const double* const,const double* const,const double* const,const double* const,
+				      const double* const,const double* const,const double* const,const double* const,
+				      const double* const)) dlsym(lib,name);
+  }
+
+
+  double (TFEL_ADDCALL_PTR tfel_getFortranFunction14(LibraryHandlerPtr lib,const char * const name))(const double* const,const double* const,
+												     const double* const,const double* const,
+												     const double* const,const double* const,
+												     const double* const,const double* const,
+												     const double* const,const double* const,
+												     const double* const,const double* const,
+												     const double* const,const double* const){
+    return (double (TFEL_ADDCALL_PTR)(const double* const,const double* const,const double* const,const double* const,
+				      const double* const,const double* const,const double* const,const double* const,
+				      const double* const,const double* const,const double* const,const double* const,
+				      const double* const,const double* const)) dlsym(lib,name);
+  }
+
+
+  double (TFEL_ADDCALL_PTR tfel_getFortranFunction15(LibraryHandlerPtr lib,const char * const name))(const double* const,const double* const,
+												     const double* const,const double* const,
+												     const double* const,const double* const,
+												     const double* const,const double* const,
+												     const double* const,const double* const,
+												     const double* const,const double* const,
+												     const double* const,const double* const,
+												     const double* const){
+    return (double (TFEL_ADDCALL_PTR)(const double* const,const double* const,const double* const,const double* const,
+				      const double* const,const double* const,const double* const,const double* const,
+				      const double* const,const double* const,const double* const,const double* const,
+				      const double* const,const double* const,const double* const)) dlsym(lib,name);
+  }
 
 #ifdef	__cplusplus
 }

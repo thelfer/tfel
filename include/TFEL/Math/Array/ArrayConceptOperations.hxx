@@ -26,15 +26,16 @@
 #include"TFEL/Math/General/ComputeUnaryResult.hxx"
 #include"TFEL/Math/Function/StandardFunctions.hxx"
 
+#include"TFEL/Math/ExpressionTemplates/FctMathObjectExpr.hxx"
+#include"TFEL/Math/ExpressionTemplates/ScalarMathObjectExpr.hxx"
+#include"TFEL/Math/ExpressionTemplates/MathObjectMathObjectExpr.hxx"
+#include"TFEL/Math/ExpressionTemplates/MathObjectNegExpr.hxx"
+#include"TFEL/Math/ExpressionTemplates/FctMathObjectExprWithoutConstIterator.hxx"
+#include"TFEL/Math/ExpressionTemplates/ScalarMathObjectExprWithoutConstIterator.hxx"
+#include"TFEL/Math/ExpressionTemplates/MathObjectMathObjectExprWithoutConstIterator.hxx"
+#include"TFEL/Math/ExpressionTemplates/MathObjectNegExprWithoutConstIterator.hxx"
+
 #include"TFEL/Math/Array/ArrayExpr.hxx"
-#include"TFEL/Math/Array/FctArrayExpr.hxx"
-#include"TFEL/Math/Array/ScalarArrayExpr.hxx"
-#include"TFEL/Math/Array/ArrayArrayExpr.hxx"
-#include"TFEL/Math/Array/ArrayNegExpr.hxx"
-#include"TFEL/Math/Array/FctArrayExprWithoutConstIterator.hxx"
-#include"TFEL/Math/Array/ScalarArrayExprWithoutConstIterator.hxx"
-#include"TFEL/Math/Array/ArrayArrayExprWithoutConstIterator.hxx"
-#include"TFEL/Math/Array/ArrayNegExprWithoutConstIterator.hxx"
 
 namespace tfel{
 
@@ -49,8 +50,8 @@ namespace tfel{
       struct DummyHandle{};
       typedef typename ArrayType<A>::type VectA;
       typedef typename tfel::meta::IF<tfel::meta::HasRandomAccessConstIterator<A>::cond,
-                                      FctArrayExpr<A,Fct>,
-                                      FctArrayExprWithoutConstIterator<A,Fct>
+                                      FctMathObjectExpr<ArrayConcept,ArrayTraits,A,Fct>,
+                                      FctMathObjectExprWithoutConstIterator<ArrayConcept,ArrayTraits,A,Fct>
 				      >::type Expr;
     public:
       typedef typename UnaryResultType<VectA,Fct>::type Result;
@@ -70,8 +71,8 @@ namespace tfel{
       typedef typename ArrayType<B>::type ArrB;
       typedef typename tfel::meta::IF<tfel::meta::HasRandomAccessConstIterator<A>::cond&&
                                       tfel::meta::HasRandomAccessConstIterator<B>::cond,
-				      ArrayArrayExpr<A,B,Op>,
-				      ArrayArrayExprWithoutConstIterator<A,B,Op>
+				      MathObjectMathObjectExpr<ArrayConcept,ArrayTraits,A,B,Op>,
+				      MathObjectMathObjectExprWithoutConstIterator<ArrayConcept,ArrayTraits,A,B,Op>
 				      >::type Expr;			    
     public:
       typedef typename ResultType<ArrA,ArrB,Op>::type Result;
@@ -89,8 +90,8 @@ namespace tfel{
       struct DummyHandle{};
       typedef typename ArrayType<B>::type      ArrB;
       typedef typename tfel::meta::IF<tfel::meta::HasRandomAccessConstIterator<B>::cond,
-				      ScalarArrayExpr<A,B,Op>,
-				      ScalarArrayExprWithoutConstIterator<A,B,Op>
+				      ScalarMathObjectExpr<ArrayConcept,ArrayTraits,A,B,Op>,
+				      ScalarMathObjectExprWithoutConstIterator<ArrayConcept,ArrayTraits,A,B,Op>
                                      >::type Expr;
     public:
       typedef typename ResultType<A,ArrB,Op>::type Result;
@@ -108,8 +109,8 @@ namespace tfel{
       struct DummyHandle{};
       typedef typename ArrayType<A>::type      ArrA;
       typedef typename tfel::meta::IF<tfel::meta::HasRandomAccessConstIterator<A>::cond,
-				      ArrayScalarExpr<A,B,Op>,
-				      ArrayScalarExprWithoutConstIterator<A,B,Op>
+				      MathObjectScalarExpr<ArrayConcept,ArrayTraits,A,B,Op>,
+				      MathObjectScalarExprWithoutConstIterator<ArrayConcept,ArrayTraits,A,B,Op>
                                      >::type Expr;
     public:
       typedef typename ResultType<ArrA,B,Op>::type Result;
@@ -127,8 +128,8 @@ namespace tfel{
       struct DummyHandle{};
       typedef typename ArrayType<A>::type ArrA;
       typedef typename tfel::meta::IF<tfel::meta::HasRandomAccessConstIterator<A>::cond,
-				      ArrayNegExpr<A>,
-				      ArrayNegExprWithoutConstIterator<A>
+				      MathObjectNegExpr<ArrayConcept,ArrayTraits,A>,
+				      MathObjectNegExprWithoutConstIterator<ArrayConcept,ArrayTraits,A>
 				      >::type Expr;
     public:
       typedef typename UnaryResultType<ArrA,OpNeg>::type Result;

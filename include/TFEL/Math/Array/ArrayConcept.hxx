@@ -19,6 +19,7 @@ namespace tfel{
     template<class T>
     struct ArrayTraits{
       typedef tfel::meta::InvalidType NumType;
+      typedef tfel::meta::InvalidType IndexType;
       static const unsigned short dimension = 0; 
     };
 

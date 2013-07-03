@@ -26,18 +26,17 @@
 #include"TFEL/Math/General/ComputeUnaryResult.hxx"
 #include"TFEL/Math/Function/StandardFunctions.hxx"
 
+#include"TFEL/Math/ExpressionTemplates/MathObjectMathObjectExpr.hxx"
+#include"TFEL/Math/ExpressionTemplates/MathObjectMathObjectExprWithoutConstIterator.hxx"
+#include"TFEL/Math/ExpressionTemplates/FctMathObjectExpr.hxx"
+#include"TFEL/Math/ExpressionTemplates/FctMathObjectExprWithoutConstIterator.hxx"
+#include"TFEL/Math/ExpressionTemplates/ScalarMathObjectExpr.hxx"
+#include"TFEL/Math/ExpressionTemplates/ScalarMathObjectExprWithoutConstIterator.hxx"
+#include"TFEL/Math/ExpressionTemplates/MathObjectMathObjectDiadicProductExpr.hxx"
+#include"TFEL/Math/ExpressionTemplates/MathObjectNegExpr.hxx"
+#include"TFEL/Math/ExpressionTemplates/MathObjectNegExprWithoutConstIterator.hxx"
+
 #include"TFEL/Math/Vector/VectorExpr.hxx"
-#include"TFEL/Math/Vector/FctVectorExpr.hxx"
-#include"TFEL/Math/Vector/ScalarVectorExpr.hxx"
-#include"TFEL/Math/Vector/VectorVectorExpr.hxx"
-#include"TFEL/Math/Vector/VectorVectorDotProduct.hxx"
-#include"TFEL/Math/Vector/VectorVectorDiadicProductExpr.hxx"
-#include"TFEL/Math/Vector/VectorNegExpr.hxx"
-#include"TFEL/Math/Vector/VectorExpr.hxx"
-#include"TFEL/Math/Vector/FctVectorExprWithoutConstIterator.hxx"
-#include"TFEL/Math/Vector/ScalarVectorExprWithoutConstIterator.hxx"
-#include"TFEL/Math/Vector/VectorVectorExprWithoutConstIterator.hxx"
-#include"TFEL/Math/Vector/VectorNegExprWithoutConstIterator.hxx"
 #include"TFEL/Math/Vector/VectorVectorDotProduct.hxx"
 #include"TFEL/Math/Matrix/MatrixExpr.hxx"
 
@@ -60,8 +59,9 @@ namespace tfel{
       struct DummyHandle{};
       typedef typename VectorType<A>::type VectA;
       typedef typename tfel::meta::IF<tfel::meta::HasRandomAccessConstIterator<A>::cond,
-                                      FctVectorExpr<A,Fct>,
-                                      FctVectorExprWithoutConstIterator<A,Fct>
+                                      FctMathObjectExpr<VectorConcept,VectorTraits,A,Fct>,
+                                      FctMathObjectExprWithoutConstIterator<VectorConcept,
+									    VectorTraits,A,Fct>
 				      >::type Expr;
     public:
       typedef typename UnaryResultType<VectA,Fct>::type Result;
@@ -81,8 +81,12 @@ namespace tfel{
       typedef typename VectorType<B>::type VecB;
       typedef typename tfel::meta::IF<tfel::meta::HasRandomAccessConstIterator<A>::cond&&
                                       tfel::meta::HasRandomAccessConstIterator<B>::cond,
-				      VectorVectorExpr<A,B,Op>,
-				      VectorVectorExprWithoutConstIterator<A,B,Op>
+				      MathObjectMathObjectExpr<VectorConcept,
+							       VectorTraits,
+							       A,B,Op>,
+				      MathObjectMathObjectExprWithoutConstIterator<VectorConcept,
+										   VectorTraits,
+										   A,B,Op>
 				      >::type Expr;
     public:
       typedef typename ResultType<VecA,VecB,Op>::type Result;
@@ -111,7 +115,7 @@ namespace tfel{
       struct DummyHandle{};
       typedef typename VectorType<A>::type VecA;
       typedef typename VectorType<B>::type VecB;
-      typedef VectorVectorDiadicProductExpr<A,B> Expr;
+      typedef MathObjectMathObjectDiadicProductExpr<VectorConcept,VectorTraits,A,B> Expr;
     public:
       typedef typename ResultType<VecA,VecB,OpDiadicProduct>::type Result;
       typedef typename tfel::meta::IF<tfel::typetraits::IsInvalid<Result>::cond,
@@ -128,8 +132,8 @@ namespace tfel{
       struct DummyHandle{};
       typedef typename VectorType<B>::type      VectB;
       typedef typename tfel::meta::IF<tfel::meta::HasRandomAccessConstIterator<B>::cond,
-				      ScalarVectorExpr<A,B,Op>,
-				      ScalarVectorExprWithoutConstIterator<A,B,Op>
+				      ScalarMathObjectExpr<VectorConcept,VectorTraits,A,B,Op>,
+				      ScalarMathObjectExprWithoutConstIterator<VectorConcept,VectorTraits,A,B,Op>
                                      >::type Expr;
     public:
       typedef typename ResultType<A,VectB,Op>::type Result;
@@ -147,8 +151,8 @@ namespace tfel{
       struct DummyHandle{};
       typedef typename VectorType<A>::type      VectA;
       typedef typename tfel::meta::IF<tfel::meta::HasRandomAccessConstIterator<A>::cond,
-				      VectorScalarExpr<A,B,Op>,
-				      VectorScalarExprWithoutConstIterator<A,B,Op>
+				      MathObjectScalarExpr<VectorConcept,VectorTraits,A,B,Op>,
+				      MathObjectScalarExprWithoutConstIterator<VectorConcept,VectorTraits,A,B,Op>
                                      >::type Expr;
     public:
       typedef typename ResultType<VectA,B,Op>::type Result;
@@ -166,8 +170,8 @@ namespace tfel{
       struct DummyHandle{};
       typedef typename VectorType<A>::type VectA;
       typedef typename tfel::meta::IF<tfel::meta::HasRandomAccessConstIterator<A>::cond,
-				      VectorNegExpr<A>,
-				      VectorNegExprWithoutConstIterator<A>
+				      MathObjectNegExpr<VectorConcept,VectorTraits,A>,
+				      MathObjectNegExprWithoutConstIterator<VectorConcept,VectorTraits,A>
 				      >::type Expr;
     public:
       typedef typename UnaryResultType<VectA,OpNeg>::type Result;

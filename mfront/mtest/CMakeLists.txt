@@ -65,7 +65,7 @@ if(WIN32 AND enable-static)
     UMATInterface-static
     TFELTests-static)
   set_target_properties(mtest PROPERTIES COMPILE_FLAGS "-DTFEL_STATIC_BUILD")
-  set_target_properties(mtest PROPERTIES LINK_FLAGS "-static-libgcc -static-libstdc++ -static") 
+  set_target_properties(mtest PROPERTIES LINK_FLAGS "-static-libgcc -static") 
   set_target_properties(mtest PROPERTIES LINK_SEARCH_END_STATIC ON) 
 else(WIN32 AND enable-static)
   target_link_libraries(mtest TFELMTest)

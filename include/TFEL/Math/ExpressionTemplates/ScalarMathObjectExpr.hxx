@@ -1,39 +1,41 @@
 /*!
- * \file   ScalarMatrixExpr.hxx
+ * \file   ScalarMathObjectExpr.hxx
  * \brief    
  * \author Helfer Thomas
  * \date   05 May 2006  
  */
 
-#ifndef _TFEL_MATH_SCALAR_MATRIX_EXPR_LIB_
-#define _TFEL_MATH_SCALAR_MATRIX_EXPR_LIB_ 1
+#ifndef _MATH_SCALAR_MATHOBJECT_EXPR_LIB_
+#define _MATH_SCALAR_MATHOBJECT_EXPR_LIB_ 1
 
 #include <string>
 #include<cstddef>
 
 #include"TFEL/Config/TFELConfig.hxx"
+
 #include"TFEL/TypeTraits/IsScalar.hxx"
-#include"TFEL/TypeTraits/IsTemporary.hxx"
+
 #include"TFEL/Metaprogramming/StaticAssert.hxx"
 #include"TFEL/Metaprogramming/Implements.hxx"
+#include"TFEL/TypeTraits/IsTemporary.hxx"
 #include"TFEL/Math/General/ResultType.hxx"
 #include"TFEL/Math/General/BasicOperations.hxx"
 #include"TFEL/Math/General/ScalarObjectRandomAccessConstIterator.hxx"
-#include"TFEL/Math/Matrix/MatrixConcept.hxx"
 
 namespace tfel{
 
   namespace math {
     
-    template<typename A, typename B, class Op>
-    class ScalarMatrixExpr
+    template<template<typename> class MathObjectConcept,
+	     template<typename> class MathObjectTraits,
+	     typename A, typename B, class Op>
+    class ScalarMathObjectExpr
     {
       
       TFEL_STATIC_ASSERT((tfel::typetraits::IsScalar<A>::cond));
-      TFEL_STATIC_ASSERT((tfel::meta::Implements<B,MatrixConcept>::cond));
-      
-      typedef typename MatrixTraits<B>::NumType   NumTypeB;
-      typedef typename MatrixTraits<B>::IndexType IndexType;
+      TFEL_STATIC_ASSERT((tfel::meta::Implements<B,MathObjectConcept>::cond));
+  
+      typedef typename MathObjectTraits<B>::NumType   NumTypeB;
       
       static const bool IsBTemporary = tfel::typetraits::IsTemporary<B>::cond;
 
@@ -41,12 +43,13 @@ namespace tfel{
       typename tfel::meta::IF<IsBTemporary,const B,const B&>::type b;
       const typename B::RunTimeProperties RTP;
       
-      ScalarMatrixExpr();
+      ScalarMathObjectExpr();
 
     public:
-
-      typedef typename ComputeBinaryResult<A,NumTypeB,Op>::Handle NumType;
       
+      typedef typename ComputeBinaryResult<A,NumTypeB,Op>::Handle NumType;
+      typedef typename MathObjectTraits<B>::IndexType IndexType;
+
     protected:
 
       typedef A first_arg;
@@ -61,30 +64,45 @@ namespace tfel{
       typedef IndexType      size_type;	    						
       typedef ptrdiff_t      difference_type;
 
-      TFEL_MATH_INLINE ScalarMatrixExpr(const A& l, const B& r)
+      TFEL_MATH_INLINE ScalarMathObjectExpr(const A l, const B& r)
 	: a(l), b(r), RTP(r.getRunTimeProperties())
       {}
 
-      TFEL_MATH_INLINE ScalarMatrixExpr(const ScalarMatrixExpr<A,B,Op>& src)
-	: a(src.a), b(src.b), RTP(src.RTP)
+      TFEL_MATH_INLINE ScalarMathObjectExpr(const ScalarMathObjectExpr& src)
+	: a(src.a), b(src.b),RTP(src.RTP)
       {}
       
-      TFEL_MATH_INLINE const NumType 
-      operator()(const IndexType i,const IndexType j) const 
+      TFEL_MATH_INLINE NumType 
+      operator()(const IndexType i) const 
+      {
+	return Op::apply(a,b(i));
+      }
+
+      TFEL_MATH_INLINE NumType 
+      operator()(const IndexType i,
+		 const IndexType j) const 
       {
 	return Op::apply(a,b(i,j));
-      }      
-           
+      }
+
+      TFEL_MATH_INLINE NumType 
+      operator()(const IndexType i,
+		 const IndexType j,
+		 const IndexType k) const 
+      {
+	return Op::apply(a,b(i,j,k));
+      }
+
     public:
 
       typedef ScalarObjectRandomAccessConstIterator<A,B,Op> const_iterator;
       typedef std::reverse_iterator<const_iterator> const_reverse_iterator;
 
-      TFEL_MATH_INLINE const RunTimeProperties
-      getRunTimeProperties(void) const
-      {
-	return RTP;
-      }
+      TFEL_MATH_INLINE RunTimeProperties 
+      getRunTimeProperties(void) const 
+      {                                                         
+	return RTP;                                             
+      }                                                         
 
       TFEL_MATH_INLINE const_iterator begin(void) const
       {
@@ -105,18 +123,19 @@ namespace tfel{
       {
 	return const_reverse_iterator(begin());
       }
-
+      
     };
 
-    template<typename A, typename B, class Op>
-    class MatrixScalarExpr
+    template<template<typename> class MathObjectConcept,
+	     template<typename> class MathObjectTraits,
+	     typename A, typename B, class Op>
+    class MathObjectScalarExpr
     {
       
-      TFEL_STATIC_ASSERT((tfel::meta::Implements<A,MatrixConcept>::cond));
+      TFEL_STATIC_ASSERT((tfel::meta::Implements<A,MathObjectConcept>::cond));
       TFEL_STATIC_ASSERT((tfel::typetraits::IsScalar<B>::cond));
       
-      typedef typename MatrixTraits<A>::NumType   NumTypeA;
-      typedef typename MatrixTraits<A>::IndexType IndexType;
+      typedef typename MathObjectTraits<A>::NumType   NumTypeA;
       
       static const bool IsATemporary = tfel::typetraits::IsTemporary<A>::cond;
 
@@ -124,12 +143,13 @@ namespace tfel{
       const B b;
 
       const typename A::RunTimeProperties RTP;      
-      
-      MatrixScalarExpr();
+
+      MathObjectScalarExpr();
 
     public:
 
       typedef typename ComputeBinaryResult<NumTypeA,B,Op>::Handle NumType;
+      typedef typename MathObjectTraits<A>::IndexType IndexType;
       
     protected:
 
@@ -145,18 +165,33 @@ namespace tfel{
       typedef IndexType      size_type;	    						
       typedef ptrdiff_t      difference_type;
 
-      TFEL_MATH_INLINE MatrixScalarExpr(const A& l, const B& r)
+      TFEL_MATH_INLINE MathObjectScalarExpr(const A& l, const B r)
 	: a(l), b(r), RTP(l.getRunTimeProperties())
       {}
 
-      TFEL_MATH_INLINE MatrixScalarExpr(const MatrixScalarExpr<A,B,Op>& src)
-	: a(src.a), b(src.b), RTP(src.RTP)
+      TFEL_MATH_INLINE MathObjectScalarExpr(const MathObjectScalarExpr& src)
+	: a(src.a), b(src.b),RTP(src.RTP)
       {}
+      
+      TFEL_MATH_INLINE NumType 
+      operator()(const IndexType i) const 
+      {
+	return Op::apply(a(i),b);
+      }
 
-      TFEL_MATH_INLINE const NumType 
-      operator()(const IndexType i,const IndexType j) const 
+      TFEL_MATH_INLINE NumType 
+      operator()(const IndexType i,
+		 const IndexType j) const 
       {
 	return Op::apply(a(i,j),b);
+      }
+
+      TFEL_MATH_INLINE NumType 
+      operator()(const IndexType i,
+		 const IndexType j,
+		 const IndexType k) const 
+      {
+	return Op::apply(a(i,j,k),b);
       }
       
     public:
@@ -164,12 +199,12 @@ namespace tfel{
       typedef ObjectScalarRandomAccessConstIterator<A,B,Op> const_iterator;
       typedef std::reverse_iterator<const_iterator> const_reverse_iterator;
 
-      TFEL_MATH_INLINE const RunTimeProperties 
-      getRunTimeProperties(void) const
-      {
-	return RTP;
-      }
-
+      TFEL_MATH_INLINE RunTimeProperties 
+      getRunTimeProperties(void) const 
+      {                                                         
+	return RTP;                                             
+      }                                                  
+      
       TFEL_MATH_INLINE const_iterator begin(void) const
       {
 	return const_iterator(a.begin(),b);
@@ -191,13 +226,13 @@ namespace tfel{
       }
 
     };
-        
+      
   } // end of namespace math
 
 } // end of namespace tfel
 
 #ifndef NO_EXPRESSION_TEMPLATE_SPECIALISATION 
-#include"TFEL/Math/Matrix/ScalarMatrixExprSpecialisation.ixx"
+#include"TFEL/Math/ExpressionTemplates/ScalarMathObjectExprSpecialisation.ixx"
 #endif  /* NO_EXPRESSION_TEMPLATE_SPECIALISATION */
 
-#endif /* _TFEL_MATH_SCALAR_MATRIX_EXPR_LIB_ */
+#endif /* _MATH_SCALAR_MATHOBJECT_EXPR_LIB_ */

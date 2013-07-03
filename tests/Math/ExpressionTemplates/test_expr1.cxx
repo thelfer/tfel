@@ -32,12 +32,12 @@ int main(void)
   assert(abs(v3(0)(0)-1.2)<1.e-14);  
   
   assert(name((v1+v2)(0))==
-	 "VectorExpr<tvector<3,double>,VectorVectorExpr<tvector<3,double>,tvector<3,double>,+>>");
+	 "VectorExpr<tvector<3,double>,MathObjectMathObjectExpr<tvector<3,double>,tvector<3,double>,+>>");
   assert(abs(((v1+v2)(0))(1)-4.4)<1.e-14);
   assert(abs((v1(0)+v2(0))(1)-4.4)<1.e-14);
 
   assert(name((v1+v2+v3)(0))==
-	 "VectorExpr<tvector<3,double>,VectorVectorExpr<VectorExpr<tvector<3,double>,VectorVectorExpr<tvector<3,double>,tvector<3,double>,+>>,tvector<3,double>,+>>");
+	 "VectorExpr<tvector<3,double>,MathObjectMathObjectExpr<VectorExpr<tvector<3,double>,MathObjectMathObjectExpr<tvector<3,double>,tvector<3,double>,+>>,tvector<3,double>,+>>");
   assert(abs(((v1+v2+v3)(0))(1)-5.6)<1.e-14);
   assert(abs((v1(0)+v2(0)+v3(0))(1)-5.6)<1.e-14);
 

@@ -18,7 +18,7 @@ namespace tfel{
      * \class EmptyRunTimeProperties
      * \brief This class is aimed to used for mathematical objects whose 
      * size are known at compile-tme.
-     * \see tvector, tmatrix
+     * \see tvector, tmatrix, stensor
      */
     struct EmptyRunTimeProperties
     {

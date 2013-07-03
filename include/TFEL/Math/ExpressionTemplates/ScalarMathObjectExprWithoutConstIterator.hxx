@@ -1,12 +1,12 @@
 /*!
- * \file   ScalarVectorExprWithoutConstIterator.hxx
+ * \file   ScalarMathObjectExprWithoutConstIterator.hxx
  * \brief    
  * \author Helfer Thomas
  * \date   05 May 2006  
  */
 
-#ifndef _MATH_SCALARVECTOREXPRWITHOUTCONSTITERATOR_LIB_
-#define _MATH_SCALARVECTOREXPRWITHOUTCONSTITERATOR_LIB_ 1
+#ifndef _MATH_SCALARMATHOBJECTEXPRWITHOUTCONSTITERATOR_LIB_
+#define _MATH_SCALARMATHOBJECTEXPRWITHOUTCONSTITERATOR_LIB_ 1
 
 #include <string>
 #include<cstddef>
@@ -18,21 +18,21 @@
 #include"TFEL/TypeTraits/IsTemporary.hxx"
 #include"TFEL/Math/General/ResultType.hxx"
 #include"TFEL/Math/General/BasicOperations.hxx"
-#include"TFEL/Math/Vector/VectorConcept.hxx"
 
 namespace tfel{
 
   namespace math {
     
-    template<typename A, typename B, class Op>
-    class ScalarVectorExprWithoutConstIterator
+    template<template<typename> class MathObjectConcept,
+	     template<typename> class MathObjectTraits,
+	     typename A, typename B, class Op>
+    class ScalarMathObjectExprWithoutConstIterator
     {
       
       TFEL_STATIC_ASSERT((tfel::typetraits::IsScalar<A>::cond));
-      TFEL_STATIC_ASSERT((tfel::meta::Implements<B,VectorConcept>::cond));
+      TFEL_STATIC_ASSERT((tfel::meta::Implements<B,MathObjectConcept>::cond));
   
-      typedef typename VectorTraits<B>::NumType   NumTypeB;
-      typedef typename VectorTraits<B>::IndexType IndexType;
+      typedef typename MathObjectTraits<B>::NumType   NumTypeB;
       
       static const bool IsBTemporary = tfel::typetraits::IsTemporary<B>::cond;
 
@@ -40,11 +40,12 @@ namespace tfel{
       typename tfel::meta::IF<IsBTemporary,const B,const B&>::type b;
       const typename B::RunTimeProperties RTP;
       
-      ScalarVectorExprWithoutConstIterator();
+      ScalarMathObjectExprWithoutConstIterator();
 
     public:
       
       typedef typename ComputeBinaryResult<A,NumTypeB,Op>::Handle NumType;
+      typedef typename MathObjectTraits<B>::IndexType IndexType;
 
     protected:
 
@@ -60,24 +61,39 @@ namespace tfel{
       typedef IndexType      size_type;	    						
       typedef ptrdiff_t      difference_type;
 
-      TFEL_MATH_INLINE ScalarVectorExprWithoutConstIterator(const A l, const B& r)
+      TFEL_MATH_INLINE ScalarMathObjectExprWithoutConstIterator(const A l, const B& r)
 	: a(l), b(r), RTP(r.getRunTimeProperties())
       {}
 
       TFEL_MATH_INLINE 
-      ScalarVectorExprWithoutConstIterator(const ScalarVectorExprWithoutConstIterator& src)
+      ScalarMathObjectExprWithoutConstIterator(const ScalarMathObjectExprWithoutConstIterator& src)
 	: a(src.a), b(src.b),RTP(src.RTP)
       {}
       
-      TFEL_MATH_INLINE const NumType 
+      TFEL_MATH_INLINE NumType 
       operator()(const IndexType i) const 
       {
 	return Op::apply(a,b(i));
       }
 
+      TFEL_MATH_INLINE NumType 
+      operator()(const IndexType i,
+		 const IndexType j) const 
+      {
+	return Op::apply(a,b(i,j));
+      }
+
+      TFEL_MATH_INLINE NumType 
+      operator()(const IndexType i,
+		 const IndexType j,
+		 const IndexType k) const 
+      {
+	return Op::apply(a,b(i,j,k));
+      }
+
     public:
 
-      TFEL_MATH_INLINE const RunTimeProperties 
+      TFEL_MATH_INLINE RunTimeProperties 
       getRunTimeProperties(void) const 
       {                                                         
 	return RTP;                                             
@@ -85,15 +101,16 @@ namespace tfel{
       
     };
 
-    template<typename A, typename B, class Op>
-    class VectorScalarExprWithoutConstIterator
+    template<template<typename> class MathObjectConcept,
+	     template<typename> class MathObjectTraits,
+	     typename A, typename B, class Op>
+    class MathObjectScalarExprWithoutConstIterator
     {
       
-      TFEL_STATIC_ASSERT((tfel::meta::Implements<A,VectorConcept>::cond));
+      TFEL_STATIC_ASSERT((tfel::meta::Implements<A,MathObjectConcept>::cond));
       TFEL_STATIC_ASSERT((tfel::typetraits::IsScalar<B>::cond));
       
-      typedef typename VectorTraits<A>::NumType   NumTypeA;
-      typedef typename VectorTraits<A>::IndexType IndexType;
+      typedef typename MathObjectTraits<A>::NumType   NumTypeA;
       
       static const bool IsATemporary = tfel::typetraits::IsTemporary<A>::cond;
 
@@ -102,11 +119,12 @@ namespace tfel{
 
       const typename A::RunTimeProperties RTP;      
 
-      VectorScalarExprWithoutConstIterator();
+      MathObjectScalarExprWithoutConstIterator();
 
     public:
 
       typedef typename ComputeBinaryResult<NumTypeA,B,Op>::Handle NumType;
+      typedef typename MathObjectTraits<A>::IndexType IndexType;
       
     protected:
 
@@ -122,23 +140,38 @@ namespace tfel{
       typedef IndexType      size_type;	    						
       typedef ptrdiff_t      difference_type;
 
-      TFEL_MATH_INLINE VectorScalarExprWithoutConstIterator(const A& l, const B r)
+      TFEL_MATH_INLINE MathObjectScalarExprWithoutConstIterator(const A& l, const B r)
 	: a(l), b(r), RTP(l.getRunTimeProperties())
       {}
 
-      TFEL_MATH_INLINE VectorScalarExprWithoutConstIterator(const VectorScalarExprWithoutConstIterator<A,B,Op>& src)
+      TFEL_MATH_INLINE MathObjectScalarExprWithoutConstIterator(const MathObjectScalarExprWithoutConstIterator& src)
 	: a(src.a), b(src.b),RTP(src.RTP)
       {}
       
-      TFEL_MATH_INLINE const NumType 
+      TFEL_MATH_INLINE NumType 
       operator()(const IndexType i) const 
       {
 	return Op::apply(a(i),b);
       }
+
+      TFEL_MATH_INLINE NumType 
+      operator()(const IndexType i,
+		 const IndexType j) const 
+      {
+	return Op::apply(a(i,j),b);
+      }
+
+      TFEL_MATH_INLINE NumType 
+      operator()(const IndexType i,
+		 const IndexType j,
+		 const IndexType k) const 
+      {
+	return Op::apply(a(i,j,k),b);
+      }
       
     public:
 
-      TFEL_MATH_INLINE const RunTimeProperties 
+      TFEL_MATH_INLINE RunTimeProperties 
       getRunTimeProperties(void) const 
       {                                                         
 	return RTP;                                             
@@ -151,7 +184,7 @@ namespace tfel{
 } // end of namespace tfel
 
 #ifndef NO_EXPRESSION_TEMPLATE_SPECIALISATION 
-#include"TFEL/Math/Vector/ScalarVectorExprWithoutConstIteratorSpecialisation.ixx"
+#include"TFEL/Math/ExpressionTemplates/ScalarMathObjectExprWithoutConstIteratorSpecialisation.ixx"
 #endif  /* NO_EXPRESSION_TEMPLATE_SPECIALISATION */
 
-#endif /* _MATH_SCALARVECTOREXPRWITHOUTCONSTITERATOR_LIB_ */
+#endif /* _MATH_SCALARMATHOBJECTEXPRWITHOUTCONSTITERATOR_LIB_ */

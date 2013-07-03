@@ -1,13 +1,13 @@
 /*!
- * \file   ScalarVectorExprWithoutConstIteratorSpecialisation.ixx
- * \brief  This file partially specialises the ScalarVectorExprWithoutConstIterator and VectorScalarExprWithoutConstIterator classes for usual operations.
+ * \file   ScalarMathObjectExprWithoutConstIteratorSpecialisation.ixx
+ * \brief  This file partially specialises the ScalarMathObjectExprWithoutConstIterator and MathObjectScalarExprWithoutConstIterator classes for usual operations.
  * \see    NO_EXPRESSION_TEMPLATE_SPECIALISATION 
  * \author Helfer Thomas
  * \date   11 Sep 2006
  */
 
-#ifndef _LIB_TFEL_SCALARVECTOREXPRWITHOUTCONSTITERATORSPECIALISATION_I_
-#define _LIB_TFEL_SCALARVECTOREXPRWITHOUTCONSTITERATORSPECIALISATION_I_ 
+#ifndef _LIB_TFEL_SCALARMATHOBJECTEXPRWITHOUTCONSTITERATORSPECIALISATION_I_
+#define _LIB_TFEL_SCALARMATHOBJECTEXPRWITHOUTCONSTITERATORSPECIALISATION_I_ 
 
 namespace tfel{
 
@@ -16,15 +16,16 @@ namespace tfel{
     /*
      * \brief Partial Specialisation for OpMult.
      */
-    template<typename A, typename B>
-    class ScalarVectorExprWithoutConstIterator<A,B,OpMult>
+    template<template<typename> class MathObjectConcept,
+	     template<typename> class MathObjectTraits,
+	     typename A,typename B>
+    class ScalarMathObjectExprWithoutConstIterator<MathObjectConcept,MathObjectTraits,A,B,OpMult>
     {
       
       TFEL_STATIC_ASSERT((tfel::typetraits::IsScalar<A>::cond));
-      TFEL_STATIC_ASSERT((tfel::meta::Implements<B,VectorConcept>::cond));
+      TFEL_STATIC_ASSERT((tfel::meta::Implements<B,MathObjectConcept>::cond));
   
-      typedef typename VectorTraits<B>::NumType   NumTypeB;
-      typedef typename VectorTraits<B>::IndexType IndexType;
+      typedef typename MathObjectTraits<B>::NumType   NumTypeB;
       
       static const bool IsBTemporary = tfel::typetraits::IsTemporary<B>::cond;
 
@@ -32,11 +33,12 @@ namespace tfel{
       typename tfel::meta::IF<IsBTemporary,const B,const B&>::type b;
       const typename B::RunTimeProperties RTP;
       
-      ScalarVectorExprWithoutConstIterator();
+      ScalarMathObjectExprWithoutConstIterator();
 
     public:
       
       typedef typename ComputeBinaryResult<A,NumTypeB,OpMult>::Handle NumType;
+      typedef typename MathObjectTraits<B>::IndexType IndexType;
 
     protected:
 
@@ -52,23 +54,38 @@ namespace tfel{
       typedef IndexType      size_type;	    						
       typedef ptrdiff_t      difference_type;
 
-      TFEL_MATH_INLINE ScalarVectorExprWithoutConstIterator(const A l, const B& r)
+      TFEL_MATH_INLINE ScalarMathObjectExprWithoutConstIterator(const A l, const B& r)
 	: a(l), b(r), RTP(r.getRunTimeProperties())
       {}
 
-      TFEL_MATH_INLINE ScalarVectorExprWithoutConstIterator(const ScalarVectorExprWithoutConstIterator<A,B,OpMult>& src)
+      TFEL_MATH_INLINE ScalarMathObjectExprWithoutConstIterator(const ScalarMathObjectExprWithoutConstIterator& src)
 	: a(src.a), b(src.b),RTP(src.RTP)
       {}
       
-      TFEL_MATH_INLINE const NumType 
+      TFEL_MATH_INLINE NumType 
       operator()(const IndexType i) const 
       {
 	return a*b(i);
       }
 
+      TFEL_MATH_INLINE NumType 
+      operator()(const IndexType i,
+		 const IndexType j) const 
+      {
+	return a*b(i,j);
+      }
+
+      TFEL_MATH_INLINE NumType 
+      operator()(const IndexType i,
+		 const IndexType j,
+		 const IndexType k) const 
+      {
+	return a*b(i,j,k);
+      }
+
     public:
 
-      TFEL_MATH_INLINE const RunTimeProperties 
+      TFEL_MATH_INLINE RunTimeProperties 
       getRunTimeProperties(void) const 
       {                                                         
 	return RTP;                                             
@@ -79,15 +96,16 @@ namespace tfel{
     /*
      * \brief Partial Specialisation for OpMult.
      */
-    template<typename A, typename B>
-    class VectorScalarExprWithoutConstIterator<A,B,OpMult>
+    template<template<typename> class MathObjectConcept,
+	     template<typename> class MathObjectTraits,
+	     typename A,typename B>
+    class MathObjectScalarExprWithoutConstIterator<MathObjectConcept,MathObjectTraits,A,B,OpMult>
     {
       
-      TFEL_STATIC_ASSERT((tfel::meta::Implements<A,VectorConcept>::cond));
+      TFEL_STATIC_ASSERT((tfel::meta::Implements<A,MathObjectConcept>::cond));
       TFEL_STATIC_ASSERT((tfel::typetraits::IsScalar<B>::cond));
       
-      typedef typename VectorTraits<A>::NumType   NumTypeA;
-      typedef typename VectorTraits<A>::IndexType IndexType;
+      typedef typename MathObjectTraits<A>::NumType   NumTypeA;
       
       static const bool IsATemporary = tfel::typetraits::IsTemporary<A>::cond;
 
@@ -96,11 +114,12 @@ namespace tfel{
 
       const typename A::RunTimeProperties RTP;      
 
-      VectorScalarExprWithoutConstIterator();
+      MathObjectScalarExprWithoutConstIterator();
 
     public:
 
       typedef typename ComputeBinaryResult<NumTypeA,B,OpMult>::Handle NumType;
+      typedef typename MathObjectTraits<A>::IndexType IndexType;
       
     protected:
 
@@ -116,23 +135,38 @@ namespace tfel{
       typedef IndexType      size_type;	    						
       typedef ptrdiff_t      difference_type;
 
-      TFEL_MATH_INLINE VectorScalarExprWithoutConstIterator(const A& l, const B r)
+      TFEL_MATH_INLINE MathObjectScalarExprWithoutConstIterator(const A& l, const B r)
 	: a(l), b(r), RTP(l.getRunTimeProperties())
       {}
 
-      TFEL_MATH_INLINE VectorScalarExprWithoutConstIterator(const VectorScalarExprWithoutConstIterator<A,B,OpMult>& src)
+      TFEL_MATH_INLINE MathObjectScalarExprWithoutConstIterator(const MathObjectScalarExprWithoutConstIterator& src)
 	: a(src.a), b(src.b),RTP(src.RTP)
       {}
       
-      TFEL_MATH_INLINE const NumType 
+      TFEL_MATH_INLINE NumType 
       operator()(const IndexType i) const 
       {
 	return a(i)*b;
       }
+
+      TFEL_MATH_INLINE NumType 
+      operator()(const IndexType i,
+		 const IndexType j) const 
+      {
+	return a(i,j)*b;
+      }
+
+      TFEL_MATH_INLINE NumType 
+      operator()(const IndexType i,
+		 const IndexType j,
+		 const IndexType k) const 
+      {
+	return a(i,j,k)*b;
+      }
       
     public:
 
-      TFEL_MATH_INLINE const RunTimeProperties 
+      TFEL_MATH_INLINE RunTimeProperties 
       getRunTimeProperties(void) const 
       {                                                         
 	return RTP;                                             
@@ -143,15 +177,16 @@ namespace tfel{
     /*
      * \brief Partial Specialisation for OpDiv.
      */
-    template<typename A, typename B>
-    class VectorScalarExprWithoutConstIterator<A,B,OpDiv>
+    template<template<typename> class MathObjectConcept,
+	     template<typename> class MathObjectTraits,
+	     typename A,typename B>
+    class MathObjectScalarExprWithoutConstIterator<MathObjectConcept,MathObjectTraits,A,B,OpDiv>
     {
       
-      TFEL_STATIC_ASSERT((tfel::meta::Implements<A,VectorConcept>::cond));
+      TFEL_STATIC_ASSERT((tfel::meta::Implements<A,MathObjectConcept>::cond));
       TFEL_STATIC_ASSERT((tfel::typetraits::IsScalar<B>::cond));
       
-      typedef typename VectorTraits<A>::NumType   NumTypeA;
-      typedef typename VectorTraits<A>::IndexType IndexType;
+      typedef typename MathObjectTraits<A>::NumType   NumTypeA;
       
       static const bool IsATemporary = tfel::typetraits::IsTemporary<A>::cond;
 
@@ -160,11 +195,12 @@ namespace tfel{
 
       const typename A::RunTimeProperties RTP;      
 
-      VectorScalarExprWithoutConstIterator();
+      MathObjectScalarExprWithoutConstIterator();
 
     public:
 
       typedef typename ComputeBinaryResult<NumTypeA,B,OpDiv>::Handle NumType;
+      typedef typename MathObjectTraits<A>::IndexType IndexType;
       
     protected:
 
@@ -180,23 +216,38 @@ namespace tfel{
       typedef IndexType      size_type;	    						
       typedef ptrdiff_t      difference_type;
 
-      TFEL_MATH_INLINE VectorScalarExprWithoutConstIterator(const A& l, const B r)
+      TFEL_MATH_INLINE MathObjectScalarExprWithoutConstIterator(const A& l, const B r)
 	: a(l), b(r), RTP(l.getRunTimeProperties())
       {}
 
-      TFEL_MATH_INLINE VectorScalarExprWithoutConstIterator(const VectorScalarExprWithoutConstIterator<A,B,OpDiv>& src)
+      TFEL_MATH_INLINE MathObjectScalarExprWithoutConstIterator(const MathObjectScalarExprWithoutConstIterator& src)
 	: a(src.a), b(src.b),RTP(src.RTP)
       {}
       
-      TFEL_MATH_INLINE const NumType 
+      TFEL_MATH_INLINE NumType 
       operator()(const IndexType i) const 
       {
 	return a(i)/b;
       }
+
+      TFEL_MATH_INLINE NumType 
+      operator()(const IndexType i,
+		 const IndexType j) const 
+      {
+	return a(i,j)/b;
+      }
+
+      TFEL_MATH_INLINE NumType 
+      operator()(const IndexType i,
+		 const IndexType j,
+		 const IndexType k) const 
+      {
+	return a(i,j,k)/b;
+      }
       
     public:
 
-      TFEL_MATH_INLINE const RunTimeProperties 
+      TFEL_MATH_INLINE RunTimeProperties 
       getRunTimeProperties(void) const 
       {                                                         
 	return RTP;                                             
@@ -209,5 +260,5 @@ namespace tfel{
 } // end of namespace tfel
 
 
-#endif /* _LIB_TFEL_SCALARVECTOREXPRWITHOUTCONSTITERATORSPECIALISATION_I_ */
+#endif /* _LIB_TFEL_SCALARMATHOBJECTEXPRWITHOUTCONSTITERATORSPECIALISATION_I_ */
 

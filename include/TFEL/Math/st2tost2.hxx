@@ -21,7 +21,9 @@
 #include"TFEL/TypeTraits/IsInvalid.hxx"
 #include"TFEL/TypeTraits/IsAssignableTo.hxx"
 #include"TFEL/TypeTraits/IsSafelyReinterpretCastableTo.hxx"
+
 #include"TFEL/Math/General/BasicOperations.hxx"
+#include"TFEL/Math/General/EmptyRunTimeProperties.hxx"
 
 #include"TFEL/Math/Forward/st2tost2.hxx"
 #include"TFEL/Math/Stensor/StensorSizeToDime.hxx"
@@ -38,7 +40,8 @@ namespace tfel{
      */
     template<unsigned short N,typename T>
     struct ST2toST2Traits<st2tost2<N,T> >{
-      typedef T NumType;
+      typedef T              NumType;
+      typedef unsigned short IndexType;
       static const unsigned short dime = N;
     };
 
@@ -46,7 +49,10 @@ namespace tfel{
     struct st2tost2
       : public ST2toST2Concept<st2tost2<N,T> >
     {
-
+      /*!
+       * This is a StensorConcept requirement.
+       */
+      typedef EmptyRunTimeProperties RunTimeProperties;
       typedef T 		value_type;
       typedef value_type* 	pointer;
       typedef const value_type* const_pointer;
@@ -192,6 +198,13 @@ namespace tfel{
       TFEL_MATH_INLINE2 const_reverse_iterator rbegin(void) const;
       TFEL_MATH_INLINE2 reverse_iterator       rend(void);
       TFEL_MATH_INLINE2 const_reverse_iterator rend(void) const;
+
+       /*
+       * Return the RunTimeProperties of the tvector
+       * \return tvector::RunTimeProperties
+       */
+      TFEL_MATH_INLINE RunTimeProperties
+      getRunTimeProperties(void) const;
 
       template<typename InputIterator>
       TFEL_MATH_INLINE2 void copy(const InputIterator src);

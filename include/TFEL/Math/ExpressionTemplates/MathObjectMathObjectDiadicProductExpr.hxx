@@ -1,13 +1,13 @@
 /*!
- * \file   VectorVectorDiadicProductExpr.hxx
+ * \file   MathObjectMathObjectDiadicProductExpr.hxx
  * \brief  
  * 
  * \author Helfer Thomas
  * \date   07 avr 2008
  */
 
-#ifndef _LIB_VECTORVECTORDIADICPRODUCTEXPR_HXX_
-#define _LIB_VECTORVECTORDIADICPRODUCTEXPR_HXX_ 
+#ifndef _LIB_MATHOBJECTMATHOBJECTDIADICPRODUCTEXPR_HXX_
+#define _LIB_MATHOBJECTMATHOBJECTDIADICPRODUCTEXPR_HXX_ 
 
 #include<string>
 #include<cstddef>
@@ -21,39 +21,40 @@
 #include"TFEL/Math/General/ResultType.hxx"
 #include"TFEL/Math/General/BasicOperations.hxx"
 #include"TFEL/Math/General/RunTimeCheck.hxx"
-#include"TFEL/Math/Vector/VectorConcept.hxx"
 #include"TFEL/Math/Matrix/MatrixConcept.hxx"
 
 namespace tfel{
 
   namespace math {
     
-    template<typename A, typename B>
-    class TFEL_VISIBILITY_LOCAL VectorVectorDiadicProductExpr
+    template<template<typename> class MathObjectConcept,
+	     template<typename> class MathObjectTraits,
+	     typename A, typename B>
+    class TFEL_VISIBILITY_LOCAL MathObjectMathObjectDiadicProductExpr
     {
       
-      TFEL_STATIC_ASSERT((tfel::meta::Implements<A,VectorConcept>::cond));
-      TFEL_STATIC_ASSERT((tfel::meta::Implements<B,VectorConcept>::cond));
+      TFEL_STATIC_ASSERT((tfel::meta::Implements<A,MathObjectConcept>::cond));
+      TFEL_STATIC_ASSERT((tfel::meta::Implements<B,MathObjectConcept>::cond));
       
       typedef typename ComputeBinaryResult<A,B,OpDiadicProduct>::Result Result;
 
-      typedef typename VectorTraits<A>::IndexType AIndexType;
-      typedef typename VectorTraits<B>::IndexType BIndexType;
+      typedef typename MathObjectTraits<A>::IndexType AIndexType;
+      typedef typename MathObjectTraits<B>::IndexType BIndexType;
 
-      typedef typename VectorTraits<A>::NumType NumTypeA;
-      typedef typename VectorTraits<B>::NumType NumTypeB;
+      typedef typename MathObjectTraits<A>::NumType NumTypeA;
+      typedef typename MathObjectTraits<B>::NumType NumTypeB;
 
       static const bool IsATemporary = tfel::typetraits::IsTemporary<A>::cond;
       static const bool IsBTemporary = tfel::typetraits::IsTemporary<B>::cond;
 
-      VectorVectorDiadicProductExpr();
+      MathObjectMathObjectDiadicProductExpr();
 
     public:
 
-      typedef typename MatrixTraits<Result>::RunTimeProperties RunTimeProperties; 
-  
+      typedef typename Result::RunTimeProperties RunTimeProperties; 
+      typedef typename MathObjectTraits<Result>::IndexType IndexType;
       typedef typename ComputeBinaryResult<NumTypeA,NumTypeB,OpMult>::Handle NumType;
-      
+	    
     protected:
 
       typedef A first_arg;
@@ -72,17 +73,17 @@ namespace tfel{
       const RunTimeProperties RTP;
 
 #ifndef NO_RUNTIME_CHECK_BOUNDS
-      TFEL_MATH_INLINE VectorVectorDiadicProductExpr(const A& l, const B& r)
+      TFEL_MATH_INLINE MathObjectMathObjectDiadicProductExpr(const A& l, const B& r)
 	: a(l), b(r),
 	  RTP(l.getRunTimeProperties(),r.getRunTimeProperties())
       {}
 #else
-      TFEL_MATH_INLINE VectorVectorDiadicProductExpr(const A& l, const B& r)
+      TFEL_MATH_INLINE MathObjectMathObjectDiadicProductExpr(const A& l, const B& r)
 	: a(l), b(r),RTP()
       {}
 #endif
 
-      TFEL_MATH_INLINE VectorVectorDiadicProductExpr(const VectorVectorDiadicProductExpr<A,B>& src)
+      TFEL_MATH_INLINE MathObjectMathObjectDiadicProductExpr(const MathObjectMathObjectDiadicProductExpr& src)
 	: a(src.a), b(src.b), RTP(src.RTP)
       {}
 
@@ -107,5 +108,5 @@ namespace tfel{
 
 } // end of namespace tfel
 
-#endif /* _LIB_VECTORVECTORDIADICPRODUCTEXPR_HXX */
+#endif /* _LIB_MATHOBJECTMATHOBJECTDIADICPRODUCTEXPR_HXX */
 

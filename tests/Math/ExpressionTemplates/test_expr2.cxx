@@ -24,7 +24,7 @@ int main(void)
 
   tvector<3,tvector<3,short> > v1(tvector<3,short>(1));
 
-  assert(name(2.*v1)=="VectorExpr<tvector<3,tvector<3,double>>,ScalarVectorExpr<double,tvector<3,tvector<3,short>>,*>>");
+  assert(name(2.*v1)=="VectorExpr<tvector<3,tvector<3,double>>,ScalarMathObjectExpr<double,tvector<3,tvector<3,short>>,*>>");
   assert(abs((2.*v1)(0)(0)-2.)<1.e-14);
   assert(abs((2.*v1)(0)(1)-2.)<1.e-14);
   assert(abs((2.*v1)(0)(2)-2.)<1.e-14);

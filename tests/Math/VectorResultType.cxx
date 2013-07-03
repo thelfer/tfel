@@ -28,7 +28,7 @@ int main(void)
   vector<tvector<3> > v(3,tvector<3>(4.));
   vector<tvector<3> > v2(3,tvector<3>(2.));
 
-  assert(name((v+v2)(2))=="VectorExpr<tvector<3,double>,VectorVectorExpr<tvector<3,double>,tvector<3,double>,+>>");
+  assert(name((v+v2)(2))=="VectorExpr<tvector<3,double>,MathObjectMathObjectExpr<tvector<3,double>,tvector<3,double>,+>>");
 
   assert(abs((v+v2)(0)(0)-6.)<1.e-14);
   assert(abs((v+v2)(0)(1)-6.)<1.e-14);

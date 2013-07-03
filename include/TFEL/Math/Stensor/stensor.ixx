@@ -66,10 +66,9 @@ namespace tfel{
     }
 
     template<unsigned short N, typename T, template<unsigned short,typename> class Storage>
-    TFEL_MATH_INLINE
-    unsigned short
-    stensor<N,T,Storage>::size(void) const{
-      return StensorDimeToSize<N>::value;
+    typename stensor<N,T,Storage>::RunTimeProperties
+    stensor<N,T,Storage>::getRunTimeProperties(void) const{
+      return RunTimeProperties();
     }
 
     template<unsigned short N, typename T, template<unsigned short,typename> class Storage>

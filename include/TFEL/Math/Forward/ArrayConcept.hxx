@@ -31,42 +31,6 @@ namespace tfel
     template<typename T_type, typename Expr>
     class ArrayExpr;
 
-    template<typename A>
-    class ArrayNegExpr;
-
-    template<typename A>
-    class ArrayNegExprWithoutConstIterator;
-
-    template<typename A,typename Func>
-    class FctArrayExpr;
-
-    template<typename A, typename Func>
-    class FctArrayExprWithoutConstIterator;
-
-    template<typename A, typename B, class Op>
-    class ArrayScalarExpr;
-
-    template<typename A, typename B, class Op>
-    class ArrayScalarExprWithoutConstIterator;
-
-    template<typename A, typename B, class Op>
-    class ScalarArrayExpr;
-
-    template<typename A, typename B, class Op>
-    class ArrayScalarExprWithoutConstIterator;
-
-    template<typename A, typename B, class Op>
-    class ScalarArrayExprWithoutConstIterator;
-
-    template<typename A, typename B, class Op>
-    class ScalarArrayExprWithoutConstIterator;
-
-    template<typename A, typename B,typename Op>
-    class ArrayArrayExpr;
-
-    template<typename A, typename B,typename Op>
-    class ArrayArrayExprWithoutConstIterator;
-
   } // end of namespace math
 
 } // end of namespace tfel

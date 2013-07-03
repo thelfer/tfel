@@ -1,82 +1,83 @@
 /*!
- * \file   ArrayNegExpr.hxx
+ * \file   MathObjectNegExpr.hxx
  * 
  * \brief    
  * \author Helfer Thomas
  * \date   24 Aug 2006
  */
 
-#ifndef _LIB_TFEL_ARRAY_NEG_EXPR_H_
-#define _LIB_TFEL_ARRAY_NEG_EXPR_H_ 
+#ifndef _LIB_TFEL_MATHOBJECT_NEG_EXPR_H_
+#define _LIB_TFEL_MATHOBJECT_NEG_EXPR_H_ 
 
 #include<cstddef>
 
-#include"TFEL/Metaprogramming/IsSuperClassOf.hxx"
+#include"TFEL/Metaprogramming/StaticAssert.hxx"
+#include"TFEL/Metaprogramming/Implements.hxx"
+#include"TFEL/Metaprogramming/InvalidType.hxx"
+#include"TFEL/TypeTraits/IsInvalid.hxx"
 #include"TFEL/TypeTraits/IsTemporary.hxx"
-#include"TFEL/Math/General/RunTimeCheck.hxx"
 #include"TFEL/Math/General/NegObjectRandomAccessConstIterator.hxx"
-#include"TFEL/Math/Array/ArrayConcept.hxx"
 
 namespace tfel{
 
   namespace math{
 
-    template<typename A>
-    class ArrayNegExpr
+    template<template<typename> class MathObjectConcept,
+	     template<typename> class MathObjectTraits,
+	     typename A>
+    class MathObjectNegExpr
     {
       
-      TFEL_STATIC_ASSERT((tfel::meta::IsSuperClassOf<ArrayConcept<A>,A>::cond));
+      TFEL_STATIC_ASSERT((tfel::meta::Implements<A,MathObjectConcept>::cond));
       static const bool IsATemporary = tfel::typetraits::IsTemporary<A>::cond;
 
       typename tfel::meta::IF<IsATemporary,const A,const A&>::type a;
       const typename A::RunTimeProperties RTP;
 
-      typedef typename ArrayTraits<A>::NumType   NumTypeA;
-
       struct invalid_argument;
+
+      typedef typename MathObjectTraits<A>::NumType   NumTypeA;
 
     public:
 
       typedef typename ComputeUnaryResult<NumTypeA,OpNeg>::Handle NumType;
+      typedef typename MathObjectTraits<A>::IndexType IndexType;
 
     protected:
 
       typedef A first_arg;
       typedef invalid_argument second_arg;
       typedef typename A::RunTimeProperties RunTimeProperties;
+
       typedef NumType        value_type;                                                
       typedef NumType*       pointer;	    						
       typedef const NumType* const_pointer; 						
       typedef NumType&       reference;	    						
       typedef const NumType& const_reference;						
-      typedef unsigned int   size_type;	    						
+      typedef IndexType      size_type;	    						
       typedef ptrdiff_t      difference_type;                                          	
 
-      TFEL_MATH_INLINE ArrayNegExpr(const A& l)
-	: a(l), RTP(l.getRunTimeProperties())
+      TFEL_MATH_INLINE MathObjectNegExpr(const A& l)
+	: a(l),RTP(l.getRunTimeProperties())
       {}
 
-      TFEL_MATH_INLINE ArrayNegExpr(const ArrayNegExpr& src)
-	: a(src.a), RTP(src.RTP)
-      {}
-
-      TFEL_MATH_INLINE const NumType
-      operator()(const unsigned int i) const 
+      TFEL_MATH_INLINE NumType
+      operator()(const IndexType i) const 
       {
 	return -a(i);
       }
 
-      TFEL_MATH_INLINE const NumType
-      operator()(const unsigned int i,
-		 const unsigned int j) const 
+      TFEL_MATH_INLINE NumType
+      operator()(const IndexType i,
+		 const IndexType j) const 
       {
 	return -a(i,j);
       }
 
-      TFEL_MATH_INLINE const NumType
-      operator()(const unsigned int i,
-		 const unsigned int j,
-		 const unsigned int k) const 
+      TFEL_MATH_INLINE NumType
+      operator()(const IndexType i,
+		 const IndexType j,
+		 const IndexType k) const 
       {
 	return -a(i,j,k);
       }
@@ -86,10 +87,11 @@ namespace tfel{
       typedef NegObjectRandomAccessConstIterator<A> const_iterator;
       typedef std::reverse_iterator<const_iterator> const_reverse_iterator;
 
-      TFEL_MATH_INLINE const RunTimeProperties getRunTimeProperties(void) const
-      {
-	return RTP;
-      }
+      TFEL_MATH_INLINE RunTimeProperties 
+      getRunTimeProperties(void) const 
+      {                                                         
+	return RTP;                                             
+      }                                                         
 
       TFEL_MATH_INLINE const_iterator begin(void) const                           	
       {											
@@ -117,5 +119,5 @@ namespace tfel{
 
 } // end of namespace tfel
 
-#endif /* _LIB_TFEL_ARRAY_NEG_EXPR_H */
+#endif /* _LIB_TFEL_MATHOBJECT_NEG_EXPR_H */
 

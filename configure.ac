@@ -1,7 +1,7 @@
 # Process this file with autoconf to produce a configure script.
 # Process this file with automake to produce Makefile.in files.
 
-AC_INIT(tfel,1.2,thomas.helfer@cea.fr)
+AC_INIT(tfel,2.0-dev,thomas.helfer@cea.fr)
 AC_CONFIG_SRCDIR([include/TFEL/Config/TFELConfig.hxx])
 AC_CONFIG_COMMANDS
 AC_CONFIG_MACRO_DIR([m4])
@@ -10,7 +10,7 @@ AC_CANONICAL_HOST
 AC_CANONICAL_TARGET
 
 # Automake specific stuff
-AM_INIT_AUTOMAKE([foreign dist-bzip2])
+AM_INIT_AUTOMAKE([foreign dist-bzip2 tar-ustar])
 m4_ifdef([AM_SILENT_RULES],[AM_SILENT_RULES([yes])])
 
 define([svnrevision],esyscmd([sh -c "svnversion|tr -d '\n'"]))

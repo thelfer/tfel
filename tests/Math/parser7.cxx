@@ -23,7 +23,7 @@
 
 #include"TFEL/Math/Evaluator.hxx"
 
-template<tfel::system::CFunction1Ptr fct>
+template<double (*fct)(double)>
 struct TestFunction
   : public tfel::tests::Test
 {

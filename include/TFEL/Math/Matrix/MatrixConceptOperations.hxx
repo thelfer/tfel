@@ -26,15 +26,16 @@
 #include"TFEL/Math/Function/StandardFunctions.hxx"
 #include"TFEL/Math/Vector/VectorConcept.hxx"
 
+#include"TFEL/Math/ExpressionTemplates/FctMathObjectExpr.hxx"
+#include"TFEL/Math/ExpressionTemplates/ScalarMathObjectExpr.hxx"
+#include"TFEL/Math/ExpressionTemplates/MathObjectMathObjectExpr.hxx"
+#include"TFEL/Math/ExpressionTemplates/MathObjectNegExpr.hxx"
+#include"TFEL/Math/ExpressionTemplates/FctMathObjectExprWithoutConstIterator.hxx"
+#include"TFEL/Math/ExpressionTemplates/ScalarMathObjectExprWithoutConstIterator.hxx"
+#include"TFEL/Math/ExpressionTemplates/MathObjectMathObjectExprWithoutConstIterator.hxx"
+#include"TFEL/Math/ExpressionTemplates/MathObjectNegExprWithoutConstIterator.hxx"
+
 #include"TFEL/Math/Matrix/MatrixExpr.hxx"
-#include"TFEL/Math/Matrix/FctMatrixExpr.hxx"
-#include"TFEL/Math/Matrix/ScalarMatrixExpr.hxx"
-#include"TFEL/Math/Matrix/MatrixMatrixExpr.hxx"
-#include"TFEL/Math/Matrix/MatrixNegExpr.hxx"
-#include"TFEL/Math/Matrix/FctMatrixExprWithoutConstIterator.hxx"
-#include"TFEL/Math/Matrix/ScalarMatrixExprWithoutConstIterator.hxx"
-#include"TFEL/Math/Matrix/MatrixMatrixExprWithoutConstIterator.hxx"
-#include"TFEL/Math/Matrix/MatrixNegExprWithoutConstIterator.hxx"
 
 namespace tfel{
 
@@ -73,8 +74,8 @@ namespace tfel{
       struct DummyHandle{};
       typedef typename MatrixType<A>::type VectA;
       typedef typename tfel::meta::IF<tfel::meta::HasRandomAccessConstIterator<A>::cond,
-                                      FctMatrixExpr<A,Fct>,
-                                      FctMatrixExprWithoutConstIterator<A,Fct>
+                                      FctMathObjectExpr<MatrixConcept,MatrixTraits,A,Fct>,
+                                      FctMathObjectExprWithoutConstIterator<MatrixConcept,MatrixTraits,A,Fct>
 				      >::type Expr;
     public:
       typedef typename UnaryResultType<VectA,Fct>::type Result;
@@ -94,8 +95,8 @@ namespace tfel{
       typedef typename MatrixType<B>::type MatB;
       typedef typename tfel::meta::IF<tfel::meta::HasRandomAccessConstIterator<A>::cond&&
                                       tfel::meta::HasRandomAccessConstIterator<B>::cond,
-				      MatrixMatrixExpr<A,B,Op>,
-				      MatrixMatrixExprWithoutConstIterator<A,B,Op>
+				      MathObjectMathObjectExpr<MatrixConcept,MatrixTraits,A,B,Op>,
+				      MathObjectMathObjectExprWithoutConstIterator<MatrixConcept,MatrixTraits,A,B,Op>
 				      >::type Expr;			    
     public:
       typedef typename ResultType<MatA,MatB,Op>::type Result;
@@ -113,8 +114,8 @@ namespace tfel{
       struct DummyHandle{};
       typedef typename MatrixType<B>::type MatB;
       typedef typename tfel::meta::IF<tfel::meta::HasRandomAccessConstIterator<B>::cond,
-				      ScalarMatrixExpr<A,B,Op>,
-				      ScalarMatrixExprWithoutConstIterator<A,B,Op>
+				      ScalarMathObjectExpr<MatrixConcept,MatrixTraits,A,B,Op>,
+				      ScalarMathObjectExprWithoutConstIterator<MatrixConcept,MatrixTraits,A,B,Op>
                                      >::type Expr;
     public:
       typedef typename ResultType<A,MatB,Op>::type Result;
@@ -132,8 +133,8 @@ namespace tfel{
       struct DummyHandle{};
       typedef typename MatrixType<A>::type MatA;
       typedef typename tfel::meta::IF<tfel::meta::HasRandomAccessConstIterator<A>::cond,
-				      MatrixScalarExpr<A,B,Op>,
-				      MatrixScalarExprWithoutConstIterator<A,B,Op>
+				      MathObjectScalarExpr<MatrixConcept,MatrixTraits,A,B,Op>,
+				      MathObjectScalarExprWithoutConstIterator<MatrixConcept,MatrixTraits,A,B,Op>
                                      >::type Expr;
     public:
       typedef typename ResultType<MatA,B,Op>::type Result;
@@ -185,8 +186,8 @@ namespace tfel{
       struct DummyHandle{};
       typedef typename MatrixType<A>::type MatA;
       typedef typename tfel::meta::IF<tfel::meta::HasRandomAccessConstIterator<A>::cond,
-				      MatrixNegExpr<A>,
-				      MatrixNegExprWithoutConstIterator<A>
+				      MathObjectNegExpr<MatrixConcept,MatrixTraits,A>,
+				      MathObjectNegExprWithoutConstIterator<MatrixConcept,MatrixTraits,A>
       >::type Expr;
     public:
       typedef typename UnaryResultType<MatA,OpNeg>::type Result;

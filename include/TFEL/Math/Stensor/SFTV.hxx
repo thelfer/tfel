@@ -11,6 +11,7 @@
 
 #include"TFEL/Metaprogramming/StaticAssert.hxx"
 
+#include"TFEL/Math/General/EmptyRunTimeProperties.hxx"
 #include"TFEL/Math/Vector/VectorUtilities.hxx"
 #include"TFEL/Math/Stensor/StensorConcept.hxx"
 #include"TFEL/Math/Stensor/StensorExpr.hxx"
@@ -40,6 +41,14 @@ namespace tfel
     struct StensorExpr<stensor<N,T>,SFTVExpr<N,Mn,In,T> >
       : public StensorConcept<StensorExpr<stensor<N,T>,SFTVExpr<N,Mn,In,T> > >
     {
+
+      typedef EmptyRunTimeProperties RunTimeProperties;
+
+      RunTimeProperties
+      getRunTimeProperties() const
+      {
+	return RunTimeProperties();
+      }
 
       StensorExpr(tvector<Mn,T>& v_)
 	: v(v_)

@@ -23,14 +23,15 @@
 #include"TFEL/Math/General/ComputeBinaryResult.hxx"
 #include"TFEL/Math/General/ComputeUnaryResult.hxx"
 
+#include"TFEL/Math/ExpressionTemplates/MathObjectMathObjectExpr.hxx"
+#include"TFEL/Math/ExpressionTemplates/MathObjectMathObjectExprWithoutConstIterator.hxx"
+#include"TFEL/Math/ExpressionTemplates/ScalarMathObjectExpr.hxx"
+#include"TFEL/Math/ExpressionTemplates/ScalarMathObjectExprWithoutConstIterator.hxx"
+#include"TFEL/Math/ExpressionTemplates/MathObjectNegExpr.hxx"
+#include"TFEL/Math/ExpressionTemplates/MathObjectNegExprWithoutConstIterator.hxx"
+#include"TFEL/Math/ExpressionTemplates/MathObjectMathObjectDiadicProductExpr.hxx"
+
 #include"TFEL/Math/Stensor/StensorExpr.hxx"
-#include"TFEL/Math/Stensor/ScalarStensorExpr.hxx"
-#include"TFEL/Math/Stensor/StensorStensorExpr.hxx"
-#include"TFEL/Math/Stensor/StensorNegExpr.hxx"
-#include"TFEL/Math/Stensor/StensorStensorDiadicProductExpr.hxx"
-#include"TFEL/Math/Stensor/ScalarStensorExprWithoutConstIterator.hxx"
-#include"TFEL/Math/Stensor/StensorStensorExprWithoutConstIterator.hxx"
-#include"TFEL/Math/Stensor/StensorNegExprWithoutConstIterator.hxx"
 #include"TFEL/Math/ST2toST2/ST2toST2Expr.hxx"
 
 namespace tfel{
@@ -57,8 +58,11 @@ namespace tfel{
       typedef typename StensorType<B>::type StensB;
       typedef typename tfel::meta::IF<tfel::meta::HasRandomAccessConstIterator<A>::cond&&
                                       tfel::meta::HasRandomAccessConstIterator<B>::cond,
-				      StensorStensorExpr<A,B,Op>,
-				      StensorStensorExprWithoutConstIterator<A,B,Op>
+				      MathObjectMathObjectExpr<StensorConcept,
+							       StensorTraits,A,B,Op>,
+				      MathObjectMathObjectExprWithoutConstIterator<StensorConcept,
+										   StensorTraits,
+										   A,B,Op>
 				      >::type Expr;			    
     public:
       typedef typename ResultType<StensA,StensB,Op>::type Result;
@@ -76,7 +80,7 @@ namespace tfel{
       struct DummyHandle{};
       typedef typename StensorType<A>::type StensA;
       typedef typename StensorType<B>::type StensB;
-      typedef StensorStensorDiadicProductExpr<A,B> Expr;
+      typedef MathObjectMathObjectDiadicProductExpr<StensorConcept,StensorTraits,A,B> Expr;
     public:
       typedef typename ResultType<StensA,StensB,OpDiadicProduct>::type Result;
       typedef typename tfel::meta::IF<tfel::typetraits::IsInvalid<Result>::cond,
@@ -93,8 +97,12 @@ namespace tfel{
       struct DummyHandle{};
       typedef typename StensorType<B>::type StensB;
       typedef typename tfel::meta::IF<tfel::meta::HasRandomAccessConstIterator<B>::cond,
-				      ScalarStensorExpr<A,B,Op>,
-				      ScalarStensorExprWithoutConstIterator<A,B,Op>
+				      ScalarMathObjectExpr<StensorConcept,
+							   StensorTraits,
+							   A,B,Op>,
+				      ScalarMathObjectExprWithoutConstIterator<StensorConcept,
+									       StensorTraits,
+									       A,B,Op>
                                      >::type Expr;
     public:
       typedef typename ResultType<A,StensB,Op>::type Result;
@@ -112,8 +120,8 @@ namespace tfel{
       struct DummyHandle{};
       typedef typename StensorType<A>::type      StensA;
       typedef typename tfel::meta::IF<tfel::meta::HasRandomAccessConstIterator<A>::cond,
-				      StensorScalarExpr<A,B,Op>,
-				      StensorScalarExprWithoutConstIterator<A,B,Op>
+				      MathObjectScalarExpr<StensorConcept,StensorTraits,A,B,Op>,
+				      MathObjectScalarExprWithoutConstIterator<StensorConcept,StensorTraits,A,B,Op>
                                      >::type Expr;
     public:
       typedef typename ResultType<StensA,B,Op>::type Result;
@@ -133,8 +141,8 @@ namespace tfel{
       typedef typename StensorTraits<A>::NumType               NumA;
       typedef typename ComputeUnaryResult<NumA,OpNeg>::Result  NumResult;
       typedef typename tfel::meta::IF<tfel::meta::HasRandomAccessConstIterator<A>::cond,
-				      StensorNegExpr<A>,
-				      StensorNegExprWithoutConstIterator<A>
+				      MathObjectNegExpr<StensorConcept,StensorTraits,A>,
+				      MathObjectNegExprWithoutConstIterator<StensorConcept,StensorTraits,A>
 				      >::type Expr;
     public:
       typedef typename UnaryResultType<StensA,OpNeg>::type Result;

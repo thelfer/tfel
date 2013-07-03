@@ -24,7 +24,8 @@ namespace tfel{
 
     template<typename T_type, typename Expr>
     struct ArrayTraits<ArrayExpr<T_type,Expr> >{
-      typedef typename Expr::NumType NumType;
+      typedef typename Expr::NumType   NumType;
+      typedef typename Expr::IndexType IndexType;
       static const unsigned short dimension = ArrayTraits<T_type>::dimension; 
     };
 

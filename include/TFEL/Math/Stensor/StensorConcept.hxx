@@ -22,6 +22,7 @@ namespace tfel{
     template<class T>
     struct StensorTraits{
       typedef tfel::meta::InvalidType NumType;
+      typedef unsigned short          IndexType;
       static const unsigned short dime = 0u;
     };
 

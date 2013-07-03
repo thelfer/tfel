@@ -320,6 +320,13 @@ namespace tfel{
       tfel::fsalgo::copy<St2tost2Size>::exe(src,*this);
     }
 
+    template<unsigned short N, typename T>
+    typename st2tost2<N,T>::RunTimeProperties
+    st2tost2<N,T>::getRunTimeProperties(void) const
+    {
+      return RunTimeProperties();
+    } // end of st2tost2<N,T>::getRunTimeProperties
+
   } //end of namespace math
 
 } // end of namespace tfel

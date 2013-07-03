@@ -321,7 +321,7 @@ namespace tfel{
        * Return the RunTimeProperties of the tvector
        * \return tvector::RunTimeProperties
        */
-      const RunTimeProperties
+      TFEL_MATH_INLINE RunTimeProperties
       getRunTimeProperties(void) const;
 
       /*

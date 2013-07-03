@@ -34,6 +34,7 @@ namespace tfel{
     struct ArrayTraits<array<N,T,TStorage> >
     {
       typedef T NumType;
+      typedef unsigned int IndexType;
       static const unsigned short dimension = N;
     };
 

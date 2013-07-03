@@ -169,8 +169,7 @@ namespace tfel{
     }
     
     template<unsigned short N, typename T>
-    TFEL_MATH_INLINE
-    const typename tvector<N,T>::RunTimeProperties
+    typename tvector<N,T>::RunTimeProperties
     tvector<N,T>::getRunTimeProperties(void) const
     {
       return RunTimeProperties();

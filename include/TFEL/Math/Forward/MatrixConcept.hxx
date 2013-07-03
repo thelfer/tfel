@@ -20,42 +20,6 @@ namespace tfel
     template<typename T_type, typename Expr>
     struct MatrixExpr;
 
-    template<typename A>
-    class MatrixNegExpr;
-
-    template<typename A>
-    class MatrixNegExprWithoutConstIterator;
-
-    template<typename A,typename Func>
-    class FctMatrixExpr;
-
-    template<typename A, typename Func>
-    class FctMatrixExprWithoutConstIterator;
-
-    template<typename A, typename B, class Op>
-    class MatrixScalarExpr;
-
-    template<typename A, typename B, class Op>
-    class MatrixScalarExprWithoutConstIterator;
-
-    template<typename A, typename B, class Op>
-    class ScalarMatrixExpr;
-
-    template<typename A, typename B, class Op>
-    class MatrixScalarExprWithoutConstIterator;
-
-    template<typename A, typename B, class Op>
-    class ScalarMatrixExprWithoutConstIterator;
-
-    template<typename A, typename B, class Op>
-    class ScalarMatrixExprWithoutConstIterator;
-
-    template<typename A, typename B,typename Op>
-    class MatrixMatrixExpr;
-
-    template<typename A, typename B,typename Op>
-    class MatrixMatrixExprWithoutConstIterator;
-
   } // end of namespace math
 
 } // end of namespace tfel

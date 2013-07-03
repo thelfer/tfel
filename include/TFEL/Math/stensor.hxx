@@ -22,6 +22,7 @@
 #include"TFEL/TypeTraits/IsAssignableTo.hxx"
 
 #include"TFEL/Math/General/BasicOperations.hxx"
+#include"TFEL/Math/General/EmptyRunTimeProperties.hxx"
 
 #include"TFEL/Math/Vector/VectorUtilities.hxx"
 #include"TFEL/Math/Stensor/StensorNullStorage.hxx"
@@ -43,6 +44,7 @@ namespace tfel{
     struct TFEL_VISIBILITY_LOCAL StensorTraits<stensor<N,T,Storage> >
     {
       typedef T NumType;
+      typedef unsigned short IndexType;
       static const unsigned short dime = N;
     };
 
@@ -60,6 +62,10 @@ namespace tfel{
 
     public:
 
+      /*
+       * This is a StensorConcept requirement.
+       */
+      typedef EmptyRunTimeProperties RunTimeProperties;
       /*!
        * type of the stensor's values.
        * (this is a stl requirement).
@@ -343,9 +349,14 @@ namespace tfel{
       /*!
        * return the size of a symmetric tensor
        */
-      size_type
+      TFEL_MATH_INLINE size_type
       size(void) const;
- 
+       /*
+       * Return the RunTimeProperties of the tvector
+       * \return tvector::RunTimeProperties
+       */
+      TFEL_MATH_INLINE RunTimeProperties
+      getRunTimeProperties(void) const;
       /*
        * return an iterator to the first element of the stensor
        * (provided for stl compatibility)

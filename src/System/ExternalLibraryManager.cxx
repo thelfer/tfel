@@ -126,7 +126,7 @@ namespace tfel
 #else
       void * lib = this->loadLibrary(l);
 #endif /* defined _WIN32 || _WIN64 || defined __CYGWIN__ */
-      int (*fct)(const char*const,const double);
+      int (TFEL_ADDCALL_PTR fct)(const char*const,const double);
       fct = ::tfel_getSetParameterFunction(lib,(f+"_setParameter").c_str());
       if(fct==0){
 	string msg("ExternalLibraryManager::setParameter : ");
@@ -158,7 +158,7 @@ namespace tfel
 #else
       void * lib = this->loadLibrary(l);
 #endif /* defined _WIN32 || _WIN64 || defined __CYGWIN__ */
-      int (*fct)(const char*const,const int);
+      int (TFEL_ADDCALL_PTR fct)(const char*const,const int);
       fct = ::tfel_getSetIntegerParameterFunction(lib,(f+"_setIntegerParameter").c_str());
       if(fct==0){
 	string msg("ExternalLibraryManager::setParameter : ");
@@ -190,7 +190,7 @@ namespace tfel
 #else
       void * lib = this->loadLibrary(l);
 #endif /* defined _WIN32 || _WIN64 || defined __CYGWIN__ */
-      int (*fct)(const char*const,const unsigned short);
+      int (TFEL_ADDCALL_PTR fct)(const char*const,const unsigned short);
       fct = ::tfel_getSetUnsignedShortParameterFunction(lib,(f+"_setUnsignedShortParameter").c_str());
       if(fct==0){
 	string msg("ExternalLibraryManager::setParameter : ");

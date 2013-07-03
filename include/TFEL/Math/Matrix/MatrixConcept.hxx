@@ -50,11 +50,6 @@ namespace tfel{
        * \see InvalidType
        */
       typedef tfel::meta::InvalidType IndexType;
-      /*!
-       * Gives access to the runtime properties used by the matrix.
-       * \see InvalidType
-       */
-      typedef tfel::meta::InvalidType RunTimeProperties;
     };
 
     /*!

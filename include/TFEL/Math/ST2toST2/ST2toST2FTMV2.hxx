@@ -11,6 +11,7 @@
 
 #include"TFEL/Metaprogramming/StaticAssert.hxx"
 
+#include"TFEL/Math/General/EmptyRunTimeProperties.hxx"
 #include"TFEL/Math/Matrix/MatrixUtilities.hxx"
 #include"TFEL/Math/ST2toST2/ST2toST2Concept.hxx"
 #include"TFEL/Math/ST2toST2/ST2toST2Expr.hxx"
@@ -46,6 +47,14 @@ namespace tfel
 	: public ST2toST2Concept<ST2toST2Expr<st2tost2<N,T>,
 					      ST2toST2FTMV2Expr<N,Mn,Mm,In,Im,T> > >
     {
+
+      typedef EmptyRunTimeProperties RunTimeProperties;
+
+      RunTimeProperties
+      getRunTimeProperties() const
+      {
+	return RunTimeProperties();
+      }
 
       ST2toST2Expr(tmatrix<Mn,Mm,T>& m_,
 		   const unsigned short i_,

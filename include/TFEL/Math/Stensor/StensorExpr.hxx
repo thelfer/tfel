@@ -24,6 +24,7 @@ namespace tfel{
     template<typename T_type, typename Expr>
     struct StensorTraits<StensorExpr<T_type,Expr> >{
       typedef typename StensorTraits<T_type>::NumType   NumType;
+      typedef typename StensorTraits<T_type>::IndexType IndexType;
       static const unsigned short dime = StensorTraits<T_type>::dime;
     };
 
@@ -33,6 +34,7 @@ namespace tfel{
 	public Expr
     {
 
+      typedef typename Expr::RunTimeProperties RunTimeProperties;
       typedef typename Expr::value_type      value_type;      
       typedef typename Expr::pointer	     pointer;	    
       typedef typename Expr::const_pointer   const_pointer; 

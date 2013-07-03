@@ -25,13 +25,14 @@
 
 #include"TFEL/Math/Stensor/StensorConcept.hxx"
 
+#include"TFEL/Math/ExpressionTemplates/ScalarMathObjectExpr.hxx"
+#include"TFEL/Math/ExpressionTemplates/ScalarMathObjectExprWithoutConstIterator.hxx"
+#include"TFEL/Math/ExpressionTemplates/MathObjectMathObjectExpr.hxx"
+#include"TFEL/Math/ExpressionTemplates/MathObjectMathObjectExprWithoutConstIterator.hxx"
+#include"TFEL/Math/ExpressionTemplates/MathObjectNegExpr.hxx"
+#include"TFEL/Math/ExpressionTemplates/MathObjectNegExprWithoutConstIterator.hxx"
+
 #include"TFEL/Math/ST2toST2/ST2toST2Expr.hxx"
-#include"TFEL/Math/ST2toST2/ScalarST2toST2Expr.hxx"
-#include"TFEL/Math/ST2toST2/ST2toST2ST2toST2Expr.hxx"
-#include"TFEL/Math/ST2toST2/ST2toST2NegExpr.hxx"
-#include"TFEL/Math/ST2toST2/ScalarST2toST2ExprWithoutConstIterator.hxx"
-#include"TFEL/Math/ST2toST2/ST2toST2ST2toST2ExprWithoutConstIterator.hxx"
-#include"TFEL/Math/ST2toST2/ST2toST2NegExprWithoutConstIterator.hxx"
 
 namespace tfel
 {
@@ -185,8 +186,10 @@ namespace tfel
       typedef typename ST2toST2Type<B>::type StensB;
       typedef typename tfel::meta::IF<tfel::meta::HasRandomAccessConstIterator<A>::cond&&
       tfel::meta::HasRandomAccessConstIterator<B>::cond,
-				      ST2toST2ST2toST2Expr<A,B,Op>,
-				      ST2toST2ST2toST2ExprWithoutConstIterator<A,B,Op>
+				      MathObjectMathObjectExpr<ST2toST2Concept,ST2toST2Traits,
+							       A,B,Op>,
+				      MathObjectMathObjectExprWithoutConstIterator<ST2toST2Concept,ST2toST2Traits,
+										   A,B,Op>
       >::type Expr;			    
     public:
       typedef typename ResultType<StensA,StensB,Op>::type Result;
@@ -204,8 +207,10 @@ namespace tfel
       struct DummyHandle{};
       typedef typename ST2toST2Type<B>::type StensB;
       typedef typename tfel::meta::IF<tfel::meta::HasRandomAccessConstIterator<B>::cond,
-				      ScalarST2toST2Expr<A,B,Op>,
-				      ScalarST2toST2ExprWithoutConstIterator<A,B,Op>
+				      ScalarMathObjectExpr<ST2toST2Concept,ST2toST2Traits,
+							   A,B,Op>,
+				      ScalarMathObjectExprWithoutConstIterator<ST2toST2Concept,ST2toST2Traits,
+									       A,B,Op>
       >::type Expr;
     public:
       typedef typename ResultType<A,StensB,Op>::type Result;
@@ -223,8 +228,10 @@ namespace tfel
       struct DummyHandle{};
       typedef typename ST2toST2Type<A>::type      StensA;
       typedef typename tfel::meta::IF<tfel::meta::HasRandomAccessConstIterator<A>::cond,
-				      ST2toST2ScalarExpr<A,B,Op>,
-				      ST2toST2ScalarExprWithoutConstIterator<A,B,Op>
+				      MathObjectScalarExpr<ST2toST2Concept,ST2toST2Traits,
+							   A,B,Op>,
+				      MathObjectScalarExprWithoutConstIterator<ST2toST2Concept,ST2toST2Traits,
+									       A,B,Op>
       >::type Expr;
     public:
       typedef typename ResultType<StensA,B,Op>::type Result;
@@ -290,8 +297,8 @@ namespace tfel
       typedef typename ST2toST2Traits<A>::NumType               NumA;
       typedef typename ComputeUnaryResult<NumA,OpNeg>::Result  NumResult;
       typedef typename tfel::meta::IF<tfel::meta::HasRandomAccessConstIterator<A>::cond,
-				      ST2toST2NegExpr<A>,
-				      ST2toST2NegExprWithoutConstIterator<A>
+				      MathObjectNegExpr<ST2toST2Concept,ST2toST2Traits,A>,
+				      MathObjectNegExprWithoutConstIterator<ST2toST2Concept,ST2toST2Traits,A>
       >::type Expr;
     public:
       typedef typename UnaryResultType<StensA,OpNeg>::type Result;

@@ -1,13 +1,15 @@
 /*!
- * \file   ArrayArrayExprSpecialisation.ixx
- * \brief  This file partially specialises the ArrayArrayExpr classe for usual operations.
+ * \file   MathObjectMathObjectExprSpecialisation.ixx
+ * \brief  This file partially specialises the MathObjectMathObjectExpr class for usual operations.
  * \see    NO_EXPRESSION_TEMPLATE_SPECIALISATION 
  * \author Helfer Thomas
  * \date   11 Sep 2006
  */
 
-#ifndef _LIB_TFEL_MATH_ARRAYARRAYEXPRSPECIALISATION_I_
-#define _LIB_TFEL_MATH_ARRAYARRAYEXPRSPECIALISATION_I_ 
+#ifndef _LIB_TFEL_MATHOBJECTMATHOBJECTEXPRSPECIALISATION_I_
+#define _LIB_TFEL_MATHOBJECTMATHOBJECTEXPRSPECIALISATION_I_ 
+
+#include"TFEL/Math/General/RunTimeCheck.hxx"
 
 namespace tfel{
 
@@ -16,90 +18,93 @@ namespace tfel{
     /*
      * \brief Partial Specialisation for OpPlus.
      */
-    template<typename A, typename B>
-    class ArrayArrayExpr<A,B,OpPlus>
+    template<template<typename> class MathObjectConcept,
+	     template<typename> class MathObjectTraits,
+	     typename A, typename B>
+    class MathObjectMathObjectExpr<MathObjectConcept,MathObjectTraits,A,B,OpPlus>
     {
       
-      TFEL_STATIC_ASSERT((tfel::meta::Implements<A,ArrayConcept>::cond));
-      TFEL_STATIC_ASSERT((tfel::meta::Implements<B,ArrayConcept>::cond));
-      TFEL_STATIC_ASSERT(ArrayTraits<A>::dimension==ArrayTraits<B>::dimension);
-      TFEL_STATIC_ASSERT((tfel::meta::IsSameType<typename A::RunTimeProperties,
-		                            typename B::RunTimeProperties>::cond));
-
+      TFEL_STATIC_ASSERT((tfel::meta::Implements<A,MathObjectConcept>::cond));
+      TFEL_STATIC_ASSERT((tfel::meta::Implements<B,MathObjectConcept>::cond));
+      
       typedef typename ComputeBinaryResult<A,B,OpPlus>::Result Result;
-      typedef ArrayTraits<Result> traits;
+      typedef MathObjectTraits<Result> traits;
 
-      typedef typename ArrayTraits<A>::NumType NumTypeA;
-      typedef typename ArrayTraits<B>::NumType NumTypeB;
+      typedef typename MathObjectTraits<A>::NumType NumTypeA;
+      typedef typename MathObjectTraits<B>::NumType NumTypeB;
   
       static const bool IsATemporary = tfel::typetraits::IsTemporary<A>::cond;
       static const bool IsBTemporary = tfel::typetraits::IsTemporary<B>::cond;
 
       typename tfel::meta::IF<IsATemporary,const A,const A&>::type a;
       typename tfel::meta::IF<IsBTemporary,const B,const B&>::type b;
-      
+
       const typename A::RunTimeProperties RTP;
+
+      MathObjectMathObjectExpr();
 
     public:
 
       typedef typename ComputeBinaryResult<NumTypeA,NumTypeB,OpPlus>::Handle NumType;
-
+      typedef typename traits::IndexType IndexType;
+      
     protected:
 
       typedef A first_arg;
       typedef B second_arg;
 
       typedef typename A::RunTimeProperties RunTimeProperties;
+
       typedef NumType        value_type;                                                
       typedef NumType*       pointer;	    						
       typedef const NumType* const_pointer; 						
       typedef NumType&       reference;	    						
       typedef const NumType& const_reference;						
-      typedef unsigned int   size_type;	    						
+      typedef IndexType      size_type;	    						
       typedef ptrdiff_t      difference_type;                                          	
 
 #ifndef NO_RUNTIME_CHECK_BOUNDS
-      TFEL_MATH_INLINE ArrayArrayExpr(const A& l, const B& r)
-	: a(l), b(r), 
+      TFEL_MATH_INLINE MathObjectMathObjectExpr(const A& l, const B& r)
+	: a(l), b(r),
 	  RTP(RunTimeCheck<RunTimeProperties>::exe(l.getRunTimeProperties(),r.getRunTimeProperties()))
       {}
 #else
-      TFEL_MATH_INLINE ArrayArrayExpr(const A& l, const B& r)
-	: a(l), b(r), RTP(l.getRunTimeProperties())
+      TFEL_MATH_INLINE MathObjectMathObjectExpr(const A& l, const B& r)
+	: a(l), b(r),RTP()
       {}
 #endif
 
-      TFEL_MATH_INLINE ArrayArrayExpr(const ArrayArrayExpr& src)
+      TFEL_MATH_INLINE MathObjectMathObjectExpr(const MathObjectMathObjectExpr& src)
 	: a(src.a), b(src.b), RTP(src.RTP)
       {}
-      
-      TFEL_MATH_INLINE const NumType
-      operator()(const unsigned int i) const 
+
+      TFEL_MATH_INLINE NumType 
+      operator()(const IndexType i) const 
       {
 	return a(i)+b(i);
       }
 
-      TFEL_MATH_INLINE const NumType
-      operator()(const unsigned int i, 
-		 const unsigned int j) const 
+      TFEL_MATH_INLINE NumType 
+      operator()(const IndexType i,
+		 const IndexType j) const 
       {
 	return a(i,j)+b(i,j);
       }
 
-      TFEL_MATH_INLINE const NumType
-      operator()(const unsigned int i,
-		 const unsigned int j,
-		 const unsigned int k) const 
+      TFEL_MATH_INLINE NumType 
+      operator()(const IndexType i,
+		 const IndexType j,
+		 const IndexType k) const 
       {
 	return a(i,j,k)+b(i,j,k);
       }
 
     public:
-
+      
       typedef ObjectObjectRandomAccessConstIterator<A,B,OpPlus> const_iterator;
       typedef std::reverse_iterator<const_iterator> const_reverse_iterator;
-      
-      TFEL_MATH_INLINE const RunTimeProperties 
+
+      TFEL_MATH_INLINE RunTimeProperties
       getRunTimeProperties(void) const
       {
 	return RTP;
@@ -130,34 +135,38 @@ namespace tfel{
     /*
      * \brief Partial Specialisation for OpMinus.
      */
-    template<typename A, typename B>
-    class ArrayArrayExpr<A,B,OpMinus>
+    template<template<typename> class MathObjectConcept,
+	     template<typename> class MathObjectTraits,
+	     typename A, typename B>
+    class MathObjectMathObjectExpr<MathObjectConcept,MathObjectTraits,A,B,OpMinus>
     {
       
-      TFEL_STATIC_ASSERT((tfel::meta::Implements<A,ArrayConcept>::cond));
-      TFEL_STATIC_ASSERT((tfel::meta::Implements<B,ArrayConcept>::cond));
-      TFEL_STATIC_ASSERT(ArrayTraits<A>::dimension==ArrayTraits<B>::dimension);
-      TFEL_STATIC_ASSERT((tfel::meta::IsSameType<typename A::RunTimeProperties,
-		                            typename B::RunTimeProperties>::cond));
-
+    private:
+      
+      TFEL_STATIC_ASSERT((tfel::meta::Implements<A,MathObjectConcept>::cond));
+      TFEL_STATIC_ASSERT((tfel::meta::Implements<B,MathObjectConcept>::cond));
+      
       typedef typename ComputeBinaryResult<A,B,OpMinus>::Result Result;
-      typedef ArrayTraits<Result> traits;
+      typedef MathObjectTraits<Result> traits;
 
-      typedef typename ArrayTraits<A>::NumType NumTypeA;
-      typedef typename ArrayTraits<B>::NumType NumTypeB;
+      typedef typename MathObjectTraits<A>::NumType NumTypeA;
+      typedef typename MathObjectTraits<B>::NumType NumTypeB;
   
       static const bool IsATemporary = tfel::typetraits::IsTemporary<A>::cond;
       static const bool IsBTemporary = tfel::typetraits::IsTemporary<B>::cond;
 
       typename tfel::meta::IF<IsATemporary,const A,const A&>::type a;
       typename tfel::meta::IF<IsBTemporary,const B,const B&>::type b;
-      
+
       const typename A::RunTimeProperties RTP;
+
+      MathObjectMathObjectExpr();
 
     public:
 
       typedef typename ComputeBinaryResult<NumTypeA,NumTypeB,OpMinus>::Handle NumType;
-
+      typedef typename traits::IndexType IndexType;
+      
     protected:
 
       typedef A first_arg;
@@ -169,41 +178,41 @@ namespace tfel{
       typedef const NumType* const_pointer; 						
       typedef NumType&       reference;	    						
       typedef const NumType& const_reference;						
-      typedef unsigned int   size_type;	    						
+      typedef IndexType      size_type;	    						
       typedef ptrdiff_t      difference_type;                                          	
-      
+
 #ifndef NO_RUNTIME_CHECK_BOUNDS
-      TFEL_MATH_INLINE ArrayArrayExpr(const A& l, const B& r)
-	: a(l), b(r), 
+      TFEL_MATH_INLINE MathObjectMathObjectExpr(const A& l, const B& r)
+	: a(l), b(r),
 	  RTP(RunTimeCheck<RunTimeProperties>::exe(l.getRunTimeProperties(),r.getRunTimeProperties()))
       {}
 #else
-      TFEL_MATH_INLINE ArrayArrayExpr(const A& l, const B& r)
-	: a(l), b(r), RTP(l.getRunTimeProperties())
+      TFEL_MATH_INLINE MathObjectMathObjectExpr(const A& l, const B& r)
+	: a(l), b(r),RTP()
       {}
 #endif
 
-      TFEL_MATH_INLINE ArrayArrayExpr(const ArrayArrayExpr& src)
+      TFEL_MATH_INLINE MathObjectMathObjectExpr(const MathObjectMathObjectExpr& src)
 	: a(src.a), b(src.b), RTP(src.RTP)
       {}
-      
-      TFEL_MATH_INLINE const NumType
-      operator()(const unsigned int i) const 
+
+      TFEL_MATH_INLINE NumType 
+      operator()(const IndexType i) const 
       {
 	return a(i)-b(i);
       }
 
-      TFEL_MATH_INLINE const NumType
-      operator()(const unsigned int i, 
-		 const unsigned int j) const 
+      TFEL_MATH_INLINE NumType 
+      operator()(const IndexType i,
+		 const IndexType j) const 
       {
 	return a(i,j)-b(i,j);
       }
 
-      TFEL_MATH_INLINE const NumType
-      operator()(const unsigned int i,
-		 const unsigned int j,
-		 const unsigned int k) const 
+      TFEL_MATH_INLINE NumType 
+      operator()(const IndexType i,
+		 const IndexType j,
+		 const IndexType k) const 
       {
 	return a(i,j,k)-b(i,j,k);
       }
@@ -213,7 +222,7 @@ namespace tfel{
       typedef ObjectObjectRandomAccessConstIterator<A,B,OpMinus> const_iterator;
       typedef std::reverse_iterator<const_iterator> const_reverse_iterator;
 
-      TFEL_MATH_INLINE const RunTimeProperties 
+      TFEL_MATH_INLINE RunTimeProperties
       getRunTimeProperties(void) const
       {
 	return RTP;
@@ -223,7 +232,7 @@ namespace tfel{
       {
 	return const_iterator(a.begin(),b.begin());
       }
- 
+
       TFEL_MATH_INLINE const_iterator end(void) const
       {
 	return const_iterator(a.end(),b.end());
@@ -244,34 +253,38 @@ namespace tfel{
     /*
      * \brief Partial Specialisation for OpMult.
      */
-    template<typename A, typename B>
-    class ArrayArrayExpr<A,B,OpMult>
+    template<template<typename> class MathObjectConcept,
+	     template<typename> class MathObjectTraits,
+	     typename A, typename B>
+    class MathObjectMathObjectExpr<MathObjectConcept,MathObjectTraits,A,B,OpMult>
     {
       
-      TFEL_STATIC_ASSERT((tfel::meta::Implements<A,ArrayConcept>::cond));
-      TFEL_STATIC_ASSERT((tfel::meta::Implements<B,ArrayConcept>::cond));
-      TFEL_STATIC_ASSERT(ArrayTraits<A>::dimension==ArrayTraits<B>::dimension);
-      TFEL_STATIC_ASSERT((tfel::meta::IsSameType<typename A::RunTimeProperties,
-		                            typename B::RunTimeProperties>::cond));
-
+    private:
+      
+      TFEL_STATIC_ASSERT((tfel::meta::Implements<A,MathObjectConcept>::cond));
+      TFEL_STATIC_ASSERT((tfel::meta::Implements<B,MathObjectConcept>::cond));
+      
       typedef typename ComputeBinaryResult<A,B,OpMult>::Result Result;
-      typedef ArrayTraits<Result> traits;
+      typedef MathObjectTraits<Result> traits;
 
-      typedef typename ArrayTraits<A>::NumType NumTypeA;
-      typedef typename ArrayTraits<B>::NumType NumTypeB;
+      typedef typename MathObjectTraits<A>::NumType NumTypeA;
+      typedef typename MathObjectTraits<B>::NumType NumTypeB;
   
       static const bool IsATemporary = tfel::typetraits::IsTemporary<A>::cond;
       static const bool IsBTemporary = tfel::typetraits::IsTemporary<B>::cond;
 
       typename tfel::meta::IF<IsATemporary,const A,const A&>::type a;
       typename tfel::meta::IF<IsBTemporary,const B,const B&>::type b;
-      
+
       const typename A::RunTimeProperties RTP;
+
+      MathObjectMathObjectExpr();
 
     public:
 
       typedef typename ComputeBinaryResult<NumTypeA,NumTypeB,OpMult>::Handle NumType;
-
+      typedef typename traits::IndexType IndexType;
+      
     protected:
 
       typedef A first_arg;
@@ -283,51 +296,51 @@ namespace tfel{
       typedef const NumType* const_pointer; 						
       typedef NumType&       reference;	    						
       typedef const NumType& const_reference;						
-      typedef unsigned int   size_type;	    						
+      typedef IndexType      size_type;	    						
       typedef ptrdiff_t      difference_type;                                          	
 
 #ifndef NO_RUNTIME_CHECK_BOUNDS
-      TFEL_MATH_INLINE ArrayArrayExpr(const A& l, const B& r)
-	: a(l), b(r), 
+      TFEL_MATH_INLINE MathObjectMathObjectExpr(const A& l, const B& r)
+	: a(l), b(r),
 	  RTP(RunTimeCheck<RunTimeProperties>::exe(l.getRunTimeProperties(),r.getRunTimeProperties()))
       {}
 #else
-      TFEL_MATH_INLINE ArrayArrayExpr(const A& l, const B& r)
-	: a(l), b(r), RTP(l.getRunTimeProperties())
+      TFEL_MATH_INLINE MathObjectMathObjectExpr(const A& l, const B& r)
+	: a(l), b(r),RTP()
       {}
 #endif
 
-      TFEL_MATH_INLINE ArrayArrayExpr(const ArrayArrayExpr& src)
+      TFEL_MATH_INLINE MathObjectMathObjectExpr(const MathObjectMathObjectExpr& src)
 	: a(src.a), b(src.b), RTP(src.RTP)
       {}
-      
-      TFEL_MATH_INLINE const NumType
-      operator()(const unsigned int i) const 
+
+      TFEL_MATH_INLINE NumType 
+      operator()(const IndexType i) const 
       {
 	return a(i)*b(i);
       }
 
-      TFEL_MATH_INLINE const NumType
-      operator()(const unsigned int i, 
-		 const unsigned int j) const 
+      TFEL_MATH_INLINE NumType 
+      operator()(const IndexType i,
+		 const IndexType j) const 
       {
 	return a(i,j)*b(i,j);
       }
 
-      TFEL_MATH_INLINE const NumType
-      operator()(const unsigned int i,
-		 const unsigned int j,
-		 const unsigned int k) const 
+      TFEL_MATH_INLINE NumType 
+      operator()(const IndexType i,
+		 const IndexType j,
+		 const IndexType k) const 
       {
 	return a(i,j,k)*b(i,j,k);
       }
 
     public:
-      
+
       typedef ObjectObjectRandomAccessConstIterator<A,B,OpMult> const_iterator;
       typedef std::reverse_iterator<const_iterator> const_reverse_iterator;
       
-      TFEL_MATH_INLINE const RunTimeProperties 
+      TFEL_MATH_INLINE RunTimeProperties
       getRunTimeProperties(void) const
       {
 	return RTP;
@@ -337,7 +350,7 @@ namespace tfel{
       {
 	return const_iterator(a.begin(),b.begin());
       }
- 
+
       TFEL_MATH_INLINE const_iterator end(void) const
       {
 	return const_iterator(a.end(),b.end());
@@ -358,34 +371,38 @@ namespace tfel{
     /*
      * \brief Partial Specialisation for OpDiv.
      */
-    template<typename A, typename B>
-    class ArrayArrayExpr<A,B,OpDiv>
+    template<template<typename> class MathObjectConcept,
+	     template<typename> class MathObjectTraits,
+	     typename A, typename B>
+    class MathObjectMathObjectExpr<MathObjectConcept,MathObjectTraits,A,B,OpDiv>
     {
       
-      TFEL_STATIC_ASSERT((tfel::meta::Implements<A,ArrayConcept>::cond));
-      TFEL_STATIC_ASSERT((tfel::meta::Implements<B,ArrayConcept>::cond));
-      TFEL_STATIC_ASSERT(ArrayTraits<A>::dimension==ArrayTraits<B>::dimension);
-      TFEL_STATIC_ASSERT((tfel::meta::IsSameType<typename A::RunTimeProperties,
-		                            typename B::RunTimeProperties>::cond));
-
+    private:
+      
+      TFEL_STATIC_ASSERT((tfel::meta::Implements<A,MathObjectConcept>::cond));
+      TFEL_STATIC_ASSERT((tfel::meta::Implements<B,MathObjectConcept>::cond));
+      
       typedef typename ComputeBinaryResult<A,B,OpDiv>::Result Result;
-      typedef ArrayTraits<Result> traits;
+      typedef MathObjectTraits<Result> traits;
 
-      typedef typename ArrayTraits<A>::NumType NumTypeA;
-      typedef typename ArrayTraits<B>::NumType NumTypeB;
+      typedef typename MathObjectTraits<A>::NumType NumTypeA;
+      typedef typename MathObjectTraits<B>::NumType NumTypeB;
   
       static const bool IsATemporary = tfel::typetraits::IsTemporary<A>::cond;
       static const bool IsBTemporary = tfel::typetraits::IsTemporary<B>::cond;
 
       typename tfel::meta::IF<IsATemporary,const A,const A&>::type a;
       typename tfel::meta::IF<IsBTemporary,const B,const B&>::type b;
-      
+
       const typename A::RunTimeProperties RTP;
+
+      MathObjectMathObjectExpr();
 
     public:
 
       typedef typename ComputeBinaryResult<NumTypeA,NumTypeB,OpDiv>::Handle NumType;
-
+      typedef typename traits::IndexType IndexType;
+      
     protected:
 
       typedef A first_arg;
@@ -397,51 +414,51 @@ namespace tfel{
       typedef const NumType* const_pointer; 						
       typedef NumType&       reference;	    						
       typedef const NumType& const_reference;						
-      typedef unsigned int   size_type;	    						
+      typedef IndexType      size_type;	    						
       typedef ptrdiff_t      difference_type;                                          	
-      
+
 #ifndef NO_RUNTIME_CHECK_BOUNDS
-      TFEL_MATH_INLINE ArrayArrayExpr(const A& l, const B& r)
-	: a(l), b(r), 
+      TFEL_MATH_INLINE MathObjectMathObjectExpr(const A& l, const B& r)
+	: a(l), b(r),
 	  RTP(RunTimeCheck<RunTimeProperties>::exe(l.getRunTimeProperties(),r.getRunTimeProperties()))
       {}
 #else
-      TFEL_MATH_INLINE ArrayArrayExpr(const A& l, const B& r)
-	: a(l), b(r), RTP(l.getRunTimeProperties())
+      TFEL_MATH_INLINE MathObjectMathObjectExpr(const A& l, const B& r)
+	: a(l), b(r),RTP()
       {}
 #endif
 
-      TFEL_MATH_INLINE ArrayArrayExpr(const ArrayArrayExpr& src)
+      TFEL_MATH_INLINE MathObjectMathObjectExpr(const MathObjectMathObjectExpr& src)
 	: a(src.a), b(src.b), RTP(src.RTP)
       {}
-      
-      TFEL_MATH_INLINE const NumType
-      operator()(const unsigned int i) const 
+
+      TFEL_MATH_INLINE NumType 
+      operator()(const IndexType i) const 
       {
 	return a(i)/b(i);
       }
 
-      TFEL_MATH_INLINE const NumType
-      operator()(const unsigned int i, 
-		 const unsigned int j) const 
+      TFEL_MATH_INLINE NumType 
+      operator()(const IndexType i,
+		 const IndexType j) const 
       {
 	return a(i,j)/b(i,j);
       }
 
-      TFEL_MATH_INLINE const NumType
-      operator()(const unsigned int i,
-		 const unsigned int j,
-		 const unsigned int k) const 
+      TFEL_MATH_INLINE NumType 
+      operator()(const IndexType i,
+		 const IndexType j,
+		 const IndexType k) const 
       {
 	return a(i,j,k)/b(i,j,k);
       }
 
     public:
-      
+
       typedef ObjectObjectRandomAccessConstIterator<A,B,OpDiv> const_iterator;
       typedef std::reverse_iterator<const_iterator> const_reverse_iterator;
-
-      TFEL_MATH_INLINE const RunTimeProperties 
+      
+      TFEL_MATH_INLINE RunTimeProperties
       getRunTimeProperties(void) const
       {
 	return RTP;
@@ -451,7 +468,7 @@ namespace tfel{
       {
 	return const_iterator(a.begin(),b.begin());
       }
- 
+
       TFEL_MATH_INLINE const_iterator end(void) const
       {
 	return const_iterator(a.end(),b.end());
@@ -473,5 +490,5 @@ namespace tfel{
 
 } // end of namespace tfel
 
-#endif /* _LIB_TFEL_MATH_ARRAYARRAYEXPRSPECIALISATION_I_ */
+#endif /* _LIB_TFEL_MATHOBJECTMATHOBJECTEXPRSPECIALISATION_I_ */
 

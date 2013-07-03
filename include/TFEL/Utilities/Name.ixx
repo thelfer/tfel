@@ -35,8 +35,10 @@
 #include"TFEL/Math/Forward/StensorConcept.hxx"
 #include"TFEL/Math/Forward/ST2toST2Concept.hxx"
 #include"TFEL/Math/Forward/CompositeConcept.hxx"
+
 #include"TFEL/Math/Forward/TinyNewtonRaphson.hxx"
 #include"TFEL/Math/General/Forward/General.hxx"
+#include"TFEL/Math/Forward/ExpressionTemplates.hxx"
 
 /*!
  * \def    TFEL_UTILITIES_NAME
@@ -446,141 +448,6 @@ namespace tfel
       }
     };
 
-    template<typename A,
-	     typename B,
-	     typename Op>
-    struct Name<tfel::math::ScalarArrayExpr<A,B,Op> >
-    {
-      static std::string getName(void){
-	using namespace tfel::utilities;
-	using namespace std;
-	return string("ScalarArrayExpr<")+
-	  Name<A>::getName()+
-	  string(",")+
-	  Name<B>::getName()+
-	  string(",")+
-	  Name<Op>::getName()+
-	  string(">");
-      }
-    };
-
-    template<typename A,
-	     typename B,
-	     typename Op>
-    struct Name<tfel::math::ArrayScalarExpr<A,B,Op> >
-    {
-      static std::string getName(void){
-      	using namespace std;
-      	using namespace tfel::utilities;
-      	return string("ArrayScalarExpr<")+
-	  Name<A>::getName()+string(",")+
-	  Name<B>::getName()+string(",")+
-	  Name<Op>::getName()+string(">");
-      }
-    }; // end of struct Name<tfel::math::ArrayScalarExpr<A,B,Op> >
-
-    template<typename A,
-	     typename B,
-	     typename Op>
-    struct Name<tfel::math::ScalarArrayExprWithoutConstIterator<A,B,Op> >
-    {
-      static std::string getName(void){
-	using namespace tfel::utilities;
-	using namespace std;
-	return string("ScalarArrayExprWithoutConstIterator<")+
-	  Name<A>::getName()+
-	  string(",")+
-	  Name<B>::getName()+
-	  string(",")+
-	  Name<Op>::getName()+
-	  string(">");
-      }
-    };
-
-    template<typename A,
-	     typename B,
-	     typename Op>
-    struct Name<tfel::math::ArrayScalarExprWithoutConstIterator<A,B,Op> >
-    {
-      static std::string getName(void){
-      	using namespace std;
-      	using namespace tfel::utilities;
-      	return string("ArrayScalarExprWithoutConstIterator<")+
-	  Name<A>::getName()+string(",")+
-	  Name<B>::getName()+string(",")+
-	  Name<Op>::getName()+string(">");
-      }
-    }; // end of struct Name<tfel::math::ArrayScalarExprWithoutConstIterator<A,B,Op> >
-
-    template<typename A, typename B,typename Op>
-    struct Name<tfel::math::ArrayArrayExpr<A,B,Op> >
-    {
-      static std::string getName(void){
-      	using namespace std;
-      	using namespace tfel::utilities;
-      	return string("ArrayArrayExpr<")+
-	  Name<A>::getName()+string(",")+
-	  Name<B>::getName()+string(",")+
-	  Name<Op>::getName()+string(">");
-      }
-    }; // end of struct Name<tfel::math::ArrayArrayExpr<A,B,Op> >
-
-    template<typename A,
-	     typename B,
-	     typename Op>
-    struct TFEL_VISIBILITY_LOCAL Name<tfel::math::ArrayArrayExprWithoutConstIterator<A,B,Op> >
-    {
-      static std::string getName(void){
-      	using namespace std;
-      	using namespace tfel::utilities;
-      	return string("ArrayArrayExprWithoutConstIterator<")+
-	  Name<A>::getName()+
-	  string(",")+
-	  Name<B>::getName()+
-	  string(",")+
-	  Name<Op>::getName()+
-	  string(">");
-      }
-    };
-
-    template<typename F>
-    struct Name<tfel::math::ArrayNegExpr<F> >
-    {
-      static std::string 
-      getName(void){
-	using namespace std;
-	using namespace tfel::utilities;
-	return string("ArrayNegExpr<")+Name<F>::getName()+string(">");
-      }
-    };
-
-    template<typename A,typename Func>
-    struct Name<tfel::math::FctArrayExpr<A,Func> >
-    {
-      static std::string 
-      getName(void){ 
-	using namespace std;
-	using namespace tfel::utilities;
-	return string("FctArrayExpr<")
-	  +Name<A>::getName()+string(",")
-	  +Name<Func>::getName()+string(">");        
-      }
-    };
-
-    template<typename A,
-	     typename Func>
-    struct Name<tfel::math::FctArrayExprWithoutConstIterator<A,Func> >
-    {
-      static std::string 
-      getName(void){ 
-      	using namespace std;
-      	using namespace tfel::utilities;
-      	return string("FctArrayExprWithoutConstIterator<")
-      	  +Name<A>::getName()+string(",")
-      	  +Name<Func>::getName()+string(">");
-      }
-    };
-
     template<typename T,
 	     typename Ordering,
 	     typename TAllocator>
@@ -644,24 +511,6 @@ namespace tfel
 
     };
 
-    template<typename A,
-	     typename B,
-	     typename Op>
-    struct TFEL_VISIBILITY_LOCAL Name<tfel::math::VectorVectorExprWithoutConstIterator<A,B,Op> >
-    {
-      static std::string getName(void){
-      	using namespace std;
-      	using namespace tfel::utilities;
-      	return string("VectorVectorExprWithoutConstIterator<")+
-	  Name<A>::getName()+
-	  string(",")+
-	  Name<B>::getName()+
-	  string(",")+
-	  Name<Op>::getName()+
-	  string(">");
-      }
-    };
-
     template<typename T_type, typename Expr>
     struct TFEL_VISIBILITY_LOCAL Name<tfel::math::VectorExpr<T_type,Expr> >
     {
@@ -677,81 +526,6 @@ namespace tfel
 	return string("VectorExpr<")
 	  +Name<T_type>::getName()+string(",")
 	  +Name<Expr>::getName()+string(">");
-      }
-    };
-
-    template<typename A, typename B,typename Op>
-    struct TFEL_VISIBILITY_LOCAL Name<tfel::math::VectorVectorExpr<A,B,Op> >
-    {
-      static std::string getName(void){
-      	using namespace std;
-      	using namespace tfel::utilities;
-      	return string("VectorVectorExpr<")+
-	  Name<A>::getName()+string(",")+
-	  Name<B>::getName()+string(",")+
-	  Name<Op>::getName()+string(">");
-      }
-    }; // end of struct TFEL_VISIBILITY_LOCAL Name<tfel::math::VectorVectorExpr<A,B,Op> >
-
-    template<typename A,typename Func>
-    struct TFEL_VISIBILITY_LOCAL Name<tfel::math::FctVectorExpr<A,Func> >
-    {
-      static std::string 
-      getName(void){ 
-	using namespace std;
-	using namespace tfel::utilities;
-	return string("FctVectorExpr<")
-	  +Name<A>::getName()+string(",")
-	  +Name<Func>::getName()+string(">");        
-      }
-    };
-
-    template<typename F>
-    struct TFEL_VISIBILITY_LOCAL Name<tfel::math::VectorNegExpr<F> >
-    {
-      static std::string 
-      getName(void){
-	using namespace std;
-	using namespace tfel::utilities;
-	return string("VectorNegExpr<")+Name<F>::getName()+string(">");
-      }
-    };
-
-    template<typename F>
-    struct TFEL_VISIBILITY_LOCAL Name<tfel::math::VectorNegExprWithoutConstIterator<F> >
-    {
-      static std::string 
-      getName(void){
-	using namespace std;
-	using namespace tfel::utilities;
-	return string("VectorNegExprWithoutConstIterator<")+Name<F>::getName()+string(">");
-      }
-    };
-
-    template<typename A,
-	     typename Func>
-    struct TFEL_VISIBILITY_LOCAL Name<tfel::math::FctVectorExprWithoutConstIterator<A,Func> >
-    {
-      static std::string 
-      getName(void){ 
-      	using namespace std;
-      	using namespace tfel::utilities;
-      	return string("FctVectorExprWithoutConstIterator<")
-      	  +Name<A>::getName()+string(",")
-      	  +Name<Func>::getName()+string(">");
-      }
-    };
-
-    template<typename A,
-	     typename B>
-    struct TFEL_VISIBILITY_LOCAL Name<tfel::math::VectorVectorDiadicProductExpr<A,B> >
-    {
-      static std::string getName(void){
-      	using namespace std;
-      	using namespace tfel::utilities;
-      	return string("VectorVectorDiadicProductExpr<")+
-      	  Name<A>::getName()+string(",")+
-      	  Name<B>::getName()+string(">");
       }
     };
 
@@ -907,138 +681,6 @@ namespace tfel
 	return string("StensorExpr<")
 	  +Name<T_type>::getName()+string(",")
 	  +Name<Expr>::getName()+string(">");
-      }
-    };
-
-    template<typename A, typename B,typename Op>
-    struct TFEL_VISIBILITY_LOCAL Name<tfel::math::StensorStensorExpr<A,B,Op> >
-    {
-      static std::string getName(void){
-      	using namespace std;
-      	using namespace tfel::utilities;
-      	return string("StensorStensorExpr<")+
-	  Name<A>::getName()+string(",")+
-	  Name<B>::getName()+string(",")+
-	  Name<Op>::getName()+string(">");
-      }
-    }; // end of struct TFEL_VISIBILITY_LOCAL Name<tfel::math::StensorStensorExpr<A,B,Op> >
-
-    template<typename A,
-	     typename B,
-	     typename Op>
-    struct TFEL_VISIBILITY_LOCAL Name<tfel::math::StensorStensorExprWithoutConstIterator<A,B,Op> >
-    {
-      static std::string getName(void){
-      	using namespace std;
-      	using namespace tfel::utilities;
-      	return string("StensorStensorExprWithoutConstIterator<")+
-	  Name<A>::getName()+
-	  string(",")+
-	  Name<B>::getName()+
-	  string(",")+
-	  Name<Op>::getName()+
-	  string(">");
-      }
-    };
-
-    template<typename A,
-	     typename B,
-	     typename Op>
-    struct TFEL_VISIBILITY_LOCAL Name<tfel::math::ScalarStensorExpr<A,B,Op> >
-    {
-      static std::string getName(void){
-	using namespace tfel::utilities;
-	using namespace std;
-	return string("ScalarStensorExpr<")+
-	  Name<A>::getName()+
-	  string(",")+
-	  Name<B>::getName()+
-	  string(",")+
-	  Name<Op>::getName()+
-	  string(">");
-      }
-    };
-
-    template<typename A,
-	     typename B,
-	     typename Op>
-    struct TFEL_VISIBILITY_LOCAL Name<tfel::math::StensorScalarExpr<A,B,Op> >
-    {
-      static std::string getName(void){
-      	using namespace std;
-      	using namespace tfel::utilities;
-      	return string("StensorScalarExpr<")+
-	  Name<A>::getName()+string(",")+
-	  Name<B>::getName()+string(",")+
-	  Name<Op>::getName()+string(">");
-      }
-    }; // end of struct TFEL_VISIBILITY_LOCAL Name<tfel::math::StensorScalarExpr<A,B,Op> >
-
-    template<typename A,
-	     typename B,
-	     typename Op>
-    struct Name<tfel::math::ScalarStensorExprWithoutConstIterator<A,B,Op> >
-    {
-      static std::string getName(void){
-	using namespace tfel::utilities;
-	using namespace std;
-	return string("ScalarStensorExprWithoutConstIterator<")+
-	  Name<A>::getName()+
-	  string(",")+
-	  Name<B>::getName()+
-	  string(",")+
-	  Name<Op>::getName()+
-	  string(">");
-      }
-    };
-
-    template<typename A,
-	     typename B,
-	     typename Op>
-    struct Name<tfel::math::StensorScalarExprWithoutConstIterator<A,B,Op> >
-    {
-      static std::string getName(void){
-      	using namespace std;
-      	using namespace tfel::utilities;
-      	return string("StensorScalarExprWithoutConstIterator<")+
-	  Name<A>::getName()+string(",")+
-	  Name<B>::getName()+string(",")+
-	  Name<Op>::getName()+string(">");
-      }
-    }; // end of struct Name<tfel::math::StensorScalarExprWithoutConstIterator<A,B,Op> >
-
-    template<typename F>
-    struct TFEL_VISIBILITY_LOCAL Name<tfel::math::StensorNegExpr<F> >
-    {
-      static std::string 
-      getName(void){
-	using namespace std;
-	using namespace tfel::utilities;
-	return string("StensorNegExpr<")+Name<F>::getName()+string(">");
-      }
-    };
-
-    template<typename F>
-    struct TFEL_VISIBILITY_LOCAL Name<tfel::math::StensorNegExprWithoutConstIterator<F> >
-    {
-      static std::string 
-      getName(void){
-	using namespace std;
-	using namespace tfel::utilities;
-	return string("StensorNegExprWithoutConstIterator<")+Name<F>::getName()+string(">");
-      }
-    };
-
-    template<typename A,
-	     typename B>
-    struct TFEL_VISIBILITY_LOCAL Name<tfel::math::StensorStensorDiadicProductExpr<A,B> >
-    {
-      static std::string getName(void){
-      	using namespace std;
-      	using namespace tfel::utilities;
-      	return string("StensorStensorDiadicProductExpr<")+
-      	  Name<A>::getName()+string(",")+
-      	  Name<B>::getName()+string(">");
       }
     };
 
@@ -1257,72 +899,6 @@ namespace tfel
 	  +Name<Op>::getName()+string(">");
       }
     };
-
-    template<typename A,
-	     typename B,
-	     typename Op>
-    struct TFEL_VISIBILITY_LOCAL Name<tfel::math::ScalarVectorExpr<A,B,Op> >
-    {
-      static std::string getName(void){
-	using namespace tfel::utilities;
-	using namespace std;
-	return string("ScalarVectorExpr<")+
-	  Name<A>::getName()+
-	  string(",")+
-	  Name<B>::getName()+
-	  string(",")+
-	  Name<Op>::getName()+
-	  string(">");
-      }
-    };
-
-    template<typename A,
-	     typename B,
-	     typename Op>
-    struct TFEL_VISIBILITY_LOCAL Name<tfel::math::VectorScalarExpr<A,B,Op> >
-    {
-      static std::string getName(void){
-      	using namespace std;
-      	using namespace tfel::utilities;
-      	return string("VectorScalarExpr<")+
-	  Name<A>::getName()+string(",")+
-	  Name<B>::getName()+string(",")+
-	  Name<Op>::getName()+string(">");
-      }
-    }; // end of struct TFEL_VISIBILITY_LOCAL Name<tfel::math::VectorScalarExpr<A,B,Op> >
-
-    template<typename A,
-	     typename B,
-	     typename Op>
-    struct Name<tfel::math::ScalarVectorExprWithoutConstIterator<A,B,Op> >
-    {
-      static std::string getName(void){
-	using namespace tfel::utilities;
-	using namespace std;
-	return string("ScalarVectorExprWithoutConstIterator<")+
-	  Name<A>::getName()+
-	  string(",")+
-	  Name<B>::getName()+
-	  string(",")+
-	  Name<Op>::getName()+
-	  string(">");
-      }
-    };
-
-    template<typename A,
-	     typename B,
-	     typename Op>
-    struct Name<tfel::math::VectorScalarExprWithoutConstIterator<A,B,Op> >
-    {
-      static std::string getName(void){
-      	using namespace std;
-      	using namespace tfel::utilities;
-      	return string("VectorScalarExprWithoutConstIterator<")+
-	  Name<A>::getName()+string(",")+
-	  Name<B>::getName()+string(",")+
-	  Name<Op>::getName()+string(">");
-      }
-    }; // end of struct Name<tfel::math::VectorScalarExprWithoutConstIterator<A,B,Op> >
 
     template<typename A>
     struct TFEL_VISIBILITY_LOCAL Name<tfel::math::NegObjectRandomAccessConstIterator<A> >
@@ -1695,141 +1271,6 @@ namespace tfel
       }
     };
 
-    template<typename A,
-	     typename B,
-	     typename Op>
-    struct Name<tfel::math::ScalarMatrixExpr<A,B,Op> >
-    {
-      static std::string getName(void){
-	using namespace tfel::utilities;
-	using namespace std;
-	return string("ScalarMatrixExpr<")+
-	  Name<A>::getName()+
-	  string(",")+
-	  Name<B>::getName()+
-	  string(",")+
-	  Name<Op>::getName()+
-	  string(">");
-      }
-    };
-
-    template<typename A,
-	     typename B,
-	     typename Op>
-    struct Name<tfel::math::MatrixScalarExpr<A,B,Op> >
-    {
-      static std::string getName(void){
-      	using namespace std;
-      	using namespace tfel::utilities;
-      	return string("MatrixScalarExpr<")+
-	  Name<A>::getName()+string(",")+
-	  Name<B>::getName()+string(",")+
-	  Name<Op>::getName()+string(">");
-      }
-    }; // end of struct Name<tfel::math::MatrixScalarExpr<A,B,Op> >
-
-    template<typename A,
-	     typename B,
-	     typename Op>
-    struct Name<tfel::math::ScalarMatrixExprWithoutConstIterator<A,B,Op> >
-    {
-      static std::string getName(void){
-	using namespace tfel::utilities;
-	using namespace std;
-	return string("ScalarMatrixExprWithoutConstIterator<")+
-	  Name<A>::getName()+
-	  string(",")+
-	  Name<B>::getName()+
-	  string(",")+
-	  Name<Op>::getName()+
-	  string(">");
-      }
-    };
-
-    template<typename A,
-	     typename B,
-	     typename Op>
-    struct Name<tfel::math::MatrixScalarExprWithoutConstIterator<A,B,Op> >
-    {
-      static std::string getName(void){
-      	using namespace std;
-      	using namespace tfel::utilities;
-      	return string("MatrixScalarExprWithoutConstIterator<")+
-	  Name<A>::getName()+string(",")+
-	  Name<B>::getName()+string(",")+
-	  Name<Op>::getName()+string(">");
-      }
-    }; // end of struct Name<tfel::math::MatrixScalarExprWithoutConstIterator<A,B,Op> >
-
-    template<typename A, typename B,typename Op>
-    struct Name<tfel::math::MatrixMatrixExpr<A,B,Op> >
-    {
-      static std::string getName(void){
-      	using namespace std;
-      	using namespace tfel::utilities;
-      	return string("MatrixMatrixExpr<")+
-	  Name<A>::getName()+string(",")+
-	  Name<B>::getName()+string(",")+
-	  Name<Op>::getName()+string(">");
-      }
-    }; // end of struct Name<tfel::math::MatrixMatrixExpr<A,B,Op> >
-
-    template<typename A,
-	     typename B,
-	     typename Op>
-    struct TFEL_VISIBILITY_LOCAL Name<tfel::math::MatrixMatrixExprWithoutConstIterator<A,B,Op> >
-    {
-      static std::string getName(void){
-      	using namespace std;
-      	using namespace tfel::utilities;
-      	return string("MatrixMatrixExprWithoutConstIterator<")+
-	  Name<A>::getName()+
-	  string(",")+
-	  Name<B>::getName()+
-	  string(",")+
-	  Name<Op>::getName()+
-	  string(">");
-      }
-    };
-
-    template<typename F>
-    struct Name<tfel::math::MatrixNegExpr<F> >
-    {
-      static std::string 
-      getName(void){
-	using namespace std;
-	using namespace tfel::utilities;
-	return string("MatrixNegExpr<")+Name<F>::getName()+string(">");
-      }
-    };
-
-    template<typename A,typename Func>
-    struct Name<tfel::math::FctMatrixExpr<A,Func> >
-    {
-      static std::string 
-      getName(void){ 
-	using namespace std;
-	using namespace tfel::utilities;
-	return string("FctMatrixExpr<")
-	  +Name<A>::getName()+string(",")
-	  +Name<Func>::getName()+string(">");        
-      }
-    };
-
-    template<typename A,
-	     typename Func>
-    struct Name<tfel::math::FctMatrixExprWithoutConstIterator<A,Func> >
-    {
-      static std::string 
-      getName(void){ 
-      	using namespace std;
-      	using namespace tfel::utilities;
-      	return string("FctMatrixExprWithoutConstIterator<")
-      	  +Name<A>::getName()+string(",")
-      	  +Name<Func>::getName()+string(">");
-      }
-    };
-
     template<unsigned short N,
 	     unsigned short M,
 	     typename A, typename B>
@@ -1856,111 +1297,6 @@ namespace tfel
       	return string("TVectorTMatrixExpr<")+
 	  Name<A>::getName()+string(",")+
       	  Name<B>::getName()+string(">");
-      }
-    };
-
-    template<typename A>
-    struct Name<tfel::math::ST2toST2Concept<A> >
-    {
-      static std::string 
-      getName(void){ 
-	using namespace std;
-	using namespace tfel::utilities;
-	return string("ST2toST2Concept<")
-	  +Name<A>::getName()+string(">");        
-      }
-    };
-
-    template<typename T_type, typename Expr>
-    struct Name<tfel::math::ST2toST2Expr<T_type,Expr> >
-    {
-      /*!
-       * \brief  Return the name of the class.
-       * \return the name of the class.
-       * \see    Name.
-       */
-      static std::string
-      getName(void){
-	using namespace std;
-	using namespace tfel::utilities;
-	return string("ST2toST2Expr<")
-	  +Name<T_type>::getName()+string(",")
-	  +Name<Expr>::getName()+string(">");
-      }
-    };
-
-    template<typename A,
-	     typename B,
-	     typename Op>
-    struct Name<tfel::math::ScalarST2toST2Expr<A,B,Op> >
-    {
-      static std::string getName(void){
-	using namespace tfel::utilities;
-	using namespace std;
-	return string("ScalarST2toST2Expr<")+
-	  Name<A>::getName()+
-	  string(",")+
-	  Name<B>::getName()+
-	  string(",")+
-	  Name<Op>::getName()+
-	  string(">");
-      }
-    };
-
-    template<typename A,
-	     typename B,
-	     typename Op>
-    struct Name<tfel::math::ST2toST2ScalarExpr<A,B,Op> >
-    {
-      static std::string getName(void){
-      	using namespace std;
-      	using namespace tfel::utilities;
-      	return string("ST2toST2ScalarExpr<")+
-	  Name<A>::getName()+string(",")+
-	  Name<B>::getName()+string(",")+
-	  Name<Op>::getName()+string(">");
-      }
-    }; // end of struct Name<tfel::math::ST2toST2ScalarExpr<A,B,Op> >
-
-    template<typename A, typename B,typename Op>
-    struct Name<tfel::math::ST2toST2ST2toST2Expr<A,B,Op> >
-    {
-      static std::string getName(void){
-      	using namespace std;
-      	using namespace tfel::utilities;
-      	return string("ST2toST2ST2toST2Expr<")+
-	  Name<A>::getName()+string(",")+
-	  Name<B>::getName()+string(",")+
-	  Name<Op>::getName()+string(">");
-      }
-    }; // end of struct Name<tfel::math::ST2toST2ST2toST2Expr<A,B,Op> >
-
-    template<typename A,
-	     typename B,
-	     typename Op>
-    struct TFEL_VISIBILITY_LOCAL Name<tfel::math::ST2toST2ST2toST2ExprWithoutConstIterator<A,B,Op> >
-    {
-      static std::string getName(void){
-      	using namespace std;
-      	using namespace tfel::utilities;
-      	return string("ST2toST2ST2toST2ExprWithoutConstIterator<")+
-	  Name<A>::getName()+
-	  string(",")+
-	  Name<B>::getName()+
-	  string(",")+
-	  Name<Op>::getName()+
-	  string(">");
-      }
-    };
-
-    template<typename F>
-    struct Name<tfel::math::ST2toST2NegExpr<F> >
-    {
-      static std::string 
-      getName(void){
-	using namespace std;
-	using namespace tfel::utilities;
-	return string("ST2toST2NegExpr<")+Name<F>::getName()+string(">");
       }
     };
 
@@ -2027,6 +1363,135 @@ namespace tfel
 	using namespace std;
 	using namespace tfel::utilities;
 	return string("CompositeNegExpr<")+Name<F>::getName()+string(">");
+      }
+    };
+
+    template<template<typename> class Concept, template<typename> class Traits,
+	     typename A, typename B>
+    struct TFEL_VISIBILITY_LOCAL Name<tfel::math::FctMathObjectExpr<Concept,Traits,A,B> >
+    {
+      static std::string getName(void){
+      	using namespace std;
+      	using namespace tfel::utilities;
+      	return string("FctMathObjectExpr<")+
+	  Name<A>::getName()+string(",")+
+	  Name<B>::getName()+string(">");
+      }
+    }; // end of struct TFEL_VISIBILITY_LOCAL Name<tfel::math::FctMathObjectExpr<Concept,Traits,A,B,Op> >
+
+    template<template<typename> class Concept, template<typename> class Traits,
+	     typename A, typename B>
+    struct TFEL_VISIBILITY_LOCAL Name<tfel::math::FctMathObjectExprWithoutConstIterator<Concept,Traits,A,B> >
+    {
+      static std::string getName(void){
+      	using namespace std;
+      	using namespace tfel::utilities;
+      	return string("FctMathObjectExprWithoutConstIterator<")+
+	  Name<A>::getName()+string(",")+
+	  Name<B>::getName()+string(">");
+      }
+    }; // end of struct TFEL_VISIBILITY_LOCAL Name<tfel::math::FctMathObjectExprWithoutConstIterator<Concept,Traits,A,B,Op> >
+
+    template<template<typename> class Concept, template<typename> class Traits,
+	     typename A, typename B,typename Op>
+    struct TFEL_VISIBILITY_LOCAL Name<tfel::math::MathObjectMathObjectExpr<Concept,Traits,A,B,Op> >
+    {
+      static std::string getName(void){
+      	using namespace std;
+      	using namespace tfel::utilities;
+      	return string("MathObjectMathObjectExpr<")+
+	  Name<A>::getName()+string(",")+
+	  Name<B>::getName()+string(",")+
+	  Name<Op>::getName()+string(">");
+      }
+    }; // end of struct TFEL_VISIBILITY_LOCAL Name<tfel::math::MathObjectMathObjectExpr<Concept,Traits,A,B,Op> >
+
+    template<template<typename> class Concept, template<typename> class Traits,
+	     typename A, typename B,typename Op>
+    struct TFEL_VISIBILITY_LOCAL Name<tfel::math::MathObjectMathObjectExprWithoutConstIterator<Concept,Traits,A,B,Op> >
+    {
+      static std::string getName(void){
+      	using namespace std;
+      	using namespace tfel::utilities;
+      	return string("MathObjectMathObjectExprWithoutConstIterator<")+
+	  Name<A>::getName()+string(",")+
+	  Name<B>::getName()+string(",")+
+	  Name<Op>::getName()+string(">");
+      }
+    }; // end of struct TFEL_VISIBILITY_LOCAL Name<tfel::math::MathObjectMathObjectExprWithoutConstIterator<Concept,Traits,A,B,Op> >
+
+    template<template<typename> class Concept, template<typename> class Traits,
+	     typename A,typename B,typename Op>
+    struct TFEL_VISIBILITY_LOCAL Name<tfel::math::ScalarMathObjectExpr<Concept,Traits,A,B,Op> >
+    {
+      static std::string getName(void){
+	using namespace tfel::utilities;
+	using namespace std;
+	return string("ScalarMathObjectExpr<")+
+	  Name<A>::getName()+
+	  string(",")+
+	  Name<B>::getName()+
+	  string(",")+
+	  Name<Op>::getName()+
+	  string(">");
+      }
+    };
+
+    template<template<typename> class Concept, template<typename> class Traits,
+	     typename A,typename B,typename Op>
+    struct TFEL_VISIBILITY_LOCAL
+    Name<tfel::math::MathObjectScalarExpr<Concept,Traits,A,B,Op> >
+    {
+      static std::string getName(void){
+      	using namespace std;
+      	using namespace tfel::utilities;
+      	return string("MathObjectScalarExpr<")+
+	  Name<A>::getName()+string(",")+
+	  Name<B>::getName()+string(",")+
+	  Name<Op>::getName()+string(">");
+      }
+    }; // end of struct TFEL_VISIBILITY_LOCAL Name<tfel::math::MathObjectScalarExpr<A,B,Op> >
+
+    template<template<typename> class Concept, template<typename> class Traits,
+	     typename A,typename B,typename Op>
+    struct Name<tfel::math::ScalarMathObjectExprWithoutConstIterator<Concept,Traits,A,B,Op> >
+    {
+      static std::string getName(void){
+	using namespace tfel::utilities;
+	using namespace std;
+	return string("ScalarMathObjectExprWithoutConstIterator<")+
+	  Name<A>::getName()+
+	  string(",")+
+	  Name<B>::getName()+
+	  string(",")+
+	  Name<Op>::getName()+
+	  string(">");
+      }
+    };
+
+    template<template<typename> class Concept, template<typename> class Traits,
+	     typename A,typename B,typename Op>
+    struct Name<tfel::math::MathObjectScalarExprWithoutConstIterator<Concept,Traits,A,B,Op> >
+    {
+      static std::string getName(void){
+      	using namespace std;
+      	using namespace tfel::utilities;
+      	return string("MathObjectScalarExprWithoutConstIterator<")+
+	  Name<A>::getName()+string(",")+
+	  Name<B>::getName()+string(",")+
+	  Name<Op>::getName()+string(">");
+      }
+    }; // end of struct Name<tfel::math::MathObjectScalarExprWithoutConstIterator<A,B,Op> >
+
+    template<template<typename> class Concept, template<typename> class Traits,
+	     typename F>
+    struct Name<tfel::math::MathObjectNegExpr<Concept,Traits,F> >
+    {
+      static std::string 
+      getName(void){
+	using namespace std;
+	using namespace tfel::utilities;
+	return string("MathObjectNegExpr<")+Name<F>::getName()+string(">");
       }
     };
 

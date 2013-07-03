@@ -28,10 +28,10 @@ int main(void)
   tvector<3,tvector<3,double> > v2(tvector<3,double>(1));
 
   assert(name(v1+sin(v1))==
-	 "VectorExpr<tvector<3,double>,VectorVectorExpr<tvector<3,double>,VectorExpr<tvector<3,double>,FctVectorExpr<tvector<3,double>,FctSin>>,+>>");
+	 "VectorExpr<tvector<3,double>,MathObjectMathObjectExpr<tvector<3,double>,VectorExpr<tvector<3,double>,FctMathObjectExpr<tvector<3,double>,FctSin>>,+>>");
   assert(abs((v1+sin(v1))(0)-(1.+sin(1.)))<1.e-14);
 
-  assert(name(sin(v2))=="VectorExpr<tvector<3,tvector<3,double>>,FctVectorExpr<tvector<3,tvector<3,double>>,FctSin>>");
+  assert(name(sin(v2))=="VectorExpr<tvector<3,tvector<3,double>>,FctMathObjectExpr<tvector<3,tvector<3,double>>,FctSin>>");
   assert(abs(sin(v2)(0)(0)-sin(1.))<1.e-14);
   assert(abs(sin(v2)(0)(1)-sin(1.))<1.e-14);
   assert(abs(sin(v2)(0)(2)-sin(1.))<1.e-14);
@@ -42,7 +42,7 @@ int main(void)
   assert(abs(sin(v2)(2)(1)-sin(1.))<1.e-14);
   assert(abs(sin(v2)(2)(2)-sin(1.))<1.e-14);
 
-  assert(name(v2+sin(v2))=="VectorExpr<tvector<3,tvector<3,double>>,VectorVectorExpr<tvector<3,tvector<3,double>>,VectorExpr<tvector<3,tvector<3,double>>,FctVectorExpr<tvector<3,tvector<3,double>>,FctSin>>,+>>");
+  assert(name(v2+sin(v2))=="VectorExpr<tvector<3,tvector<3,double>>,MathObjectMathObjectExpr<tvector<3,tvector<3,double>>,VectorExpr<tvector<3,tvector<3,double>>,FctMathObjectExpr<tvector<3,tvector<3,double>>,FctSin>>,+>>");
   assert(abs((v2+sin(v2))(0)(0)-(1.+sin(1.)))<1.e-14);
   assert(abs((v2+sin(v2))(0)(1)-(1.+sin(1.)))<1.e-14);
   assert(abs((v2+sin(v2))(0)(2)-(1.+sin(1.)))<1.e-14);
@@ -53,7 +53,7 @@ int main(void)
   assert(abs((v2+sin(v2))(2)(1)-(1.+sin(1.)))<1.e-14);
   assert(abs((v2+sin(v2))(2)(2)-(1.+sin(1.)))<1.e-14);
   
-  assert(name(sin(v2)+v2)=="VectorExpr<tvector<3,tvector<3,double>>,VectorVectorExpr<VectorExpr<tvector<3,tvector<3,double>>,FctVectorExpr<tvector<3,tvector<3,double>>,FctSin>>,tvector<3,tvector<3,double>>,+>>");
+  assert(name(sin(v2)+v2)=="VectorExpr<tvector<3,tvector<3,double>>,MathObjectMathObjectExpr<VectorExpr<tvector<3,tvector<3,double>>,FctMathObjectExpr<tvector<3,tvector<3,double>>,FctSin>>,tvector<3,tvector<3,double>>,+>>");
 
   assert(abs((sin(v2)+v2)(0)(0)-(1.+sin(1.)))<1.e-14);
   assert(abs((sin(v2)+v2)(0)(1)-(1.+sin(1.)))<1.e-14);

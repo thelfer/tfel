@@ -20,41 +20,6 @@ namespace tfel
     template<typename T_type, typename Expr>
     class VectorExpr;
 
-    template<typename A,typename Func>
-    class FctVectorExpr;
-
-    template<typename A>
-    class VectorNegExpr;
-
-    template<typename A>
-    class VectorNegExprWithoutConstIterator;
-
-    template<typename A, typename B, class Op>
-    class VectorScalarExpr;
-
-    template<typename A, typename B, class Op>
-    class VectorScalarExprWithoutConstIterator;
-
-    template<typename A, typename B, class Op>
-    class ScalarVectorExpr;
-
-    template<typename A, typename B, class Op>
-    class ScalarVectorExprWithoutConstIterator;
-
-    template<typename A, typename B,typename Op>
-    class VectorVectorExpr;
-
-    template<typename A, typename B,typename Op>
-    class VectorVectorExprWithoutConstIterator;
-
-    template<typename A,
-	     typename B>
-    class VectorVectorDiadicProductExpr;
-
-    template<typename A,
-	     typename Func>
-    class FctVectorExprWithoutConstIterator;
-
     template<unsigned short N,
 	     unsigned short M,
 	     typename A, typename B>

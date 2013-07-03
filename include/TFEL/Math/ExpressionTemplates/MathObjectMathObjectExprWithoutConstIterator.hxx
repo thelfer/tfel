@@ -1,12 +1,12 @@
 /*!
- * \file   VectorVectorExpr.hxx
+ * \file   MathObjectMathObjectExprWithoutConstIterator.hxx
  * \brief    
  * \author Helfer Thomas
  * \date   05 May 2006  
  */
 
-#ifndef _LIB_TFEL_MATH_VECTOR_VECTOR_EXPR_LIB_
-#define _LIB_TFEL_MATH_VECTOR_VECTOR_EXPR_LIB_ 1
+#ifndef _MATH_MATHOBJECTMATHOBJECTEXPRWITHOUTCONSTITERATOR_LIB_
+#define _MATH_MATHOBJECTMATHOBJECTEXPRWITHOUTCONSTITERATOR_LIB_ 1
 
 #include<string>
 #include<cstddef>
@@ -20,26 +20,27 @@
 #include"TFEL/Math/General/ResultType.hxx"
 #include"TFEL/Math/General/BasicOperations.hxx"
 #include"TFEL/Math/General/RunTimeCheck.hxx"
-#include"TFEL/Math/General/ObjectObjectRandomAccessConstIterator.hxx"
-#include"TFEL/Math/Vector/VectorConcept.hxx"
 
 namespace tfel{
 
   namespace math {
     
-    template<typename A, typename B, class Op>
-    class VectorVectorExpr
+    template<template<typename> class MathObjectConcept,
+	     template<typename> class MathObjectTraits,
+	     typename A, typename B, class Op>
+    class MathObjectMathObjectExprWithoutConstIterator
     {
       
-      TFEL_STATIC_ASSERT((tfel::meta::Implements<A,VectorConcept>::cond));
-      TFEL_STATIC_ASSERT((tfel::meta::Implements<B,VectorConcept>::cond));
+    private:
+      
+      TFEL_STATIC_ASSERT((tfel::meta::Implements<A,MathObjectConcept>::cond));
+      TFEL_STATIC_ASSERT((tfel::meta::Implements<B,MathObjectConcept>::cond));
       
       typedef typename ComputeBinaryResult<A,B,Op>::Result Result;
-      typedef VectorTraits<Result> traits;
-      typedef typename traits::IndexType IndexType;
+      typedef MathObjectTraits<Result> traits;
 
-      typedef typename VectorTraits<A>::NumType NumTypeA;
-      typedef typename VectorTraits<B>::NumType NumTypeB;
+      typedef typename MathObjectTraits<A>::NumType NumTypeA;
+      typedef typename MathObjectTraits<B>::NumType NumTypeB;
   
       static const bool IsATemporary = tfel::typetraits::IsTemporary<A>::cond;
       static const bool IsBTemporary = tfel::typetraits::IsTemporary<B>::cond;
@@ -49,11 +50,12 @@ namespace tfel{
 
       const typename A::RunTimeProperties RTP;
 
-      VectorVectorExpr();
+      MathObjectMathObjectExprWithoutConstIterator();
 
     public:
 
       typedef typename ComputeBinaryResult<NumTypeA,NumTypeB,Op>::Handle NumType;
+      typedef typename traits::IndexType IndexType;
       
     protected:
 
@@ -70,64 +72,47 @@ namespace tfel{
       typedef ptrdiff_t      difference_type;                                          	
 
 #ifndef NO_RUNTIME_CHECK_BOUNDS
-      TFEL_MATH_INLINE VectorVectorExpr(const A& l, const B& r)
+      TFEL_MATH_INLINE MathObjectMathObjectExprWithoutConstIterator(const A& l, const B& r)
 	: a(l), b(r),
 	  RTP(RunTimeCheck<RunTimeProperties>::exe(l.getRunTimeProperties(),r.getRunTimeProperties()))
       {}
 #else
-      TFEL_MATH_INLINE VectorVectorExpr(const A& l, const B& r)
+      TFEL_MATH_INLINE MathObjectMathObjectExprWithoutConstIterator(const A& l, const B& r)
 	: a(l), b(r),RTP()
       {}
 #endif
 
-      TFEL_MATH_INLINE VectorVectorExpr(const VectorVectorExpr<A,B,Op>& src)
+      TFEL_MATH_INLINE MathObjectMathObjectExprWithoutConstIterator(const MathObjectMathObjectExprWithoutConstIterator& src)
 	: a(src.a), b(src.b), RTP(src.RTP)
       {}
 
-      TFEL_MATH_INLINE NumType 
+      TFEL_MATH_INLINE NumType
       operator()(const IndexType i) const 
       {
 	return Op::apply(a(i),b(i));
       }
 
-    public:
-      
-      typedef ObjectObjectRandomAccessConstIterator<A,B,Op> const_iterator;
-      typedef std::reverse_iterator<const_iterator> const_reverse_iterator;
+      TFEL_MATH_INLINE NumType
+      operator()(const IndexType i, 
+		 const IndexType j) const 
+      {
+	return Op::apply(a(i,j),b(i,j));
+      }
 
-      TFEL_MATH_INLINE
-      const RunTimeProperties
+      TFEL_MATH_INLINE NumType
+      operator()(const IndexType i,
+		 const IndexType j,
+		 const IndexType k) const 
+      {
+	return Op::apply(a(i,j,k),b(i,j,k));
+      }
+
+    public:
+
+      TFEL_MATH_INLINE RunTimeProperties
       getRunTimeProperties(void) const
       {
 	return RTP;
-      }
-
-      TFEL_MATH_INLINE
-      const_iterator
-      begin(void) const
-      {
-	return const_iterator(a.begin(),b);
-      }
-
-      TFEL_MATH_INLINE
-      const_iterator
-      end(void) const
-      {
-	return const_iterator(a.end(),b);
-      }
-
-      TFEL_MATH_INLINE
-      const_reverse_iterator
-      rbegin(void) const
-      {
-	return const_reverse_iterator(end());
-      }
-
-      TFEL_MATH_INLINE
-      const_reverse_iterator
-      rend(void) const
-      {
-	return const_reverse_iterator(begin());
       }
 
     };
@@ -137,7 +122,7 @@ namespace tfel{
 } // end of namespace tfel
 
 #ifndef NO_EXPRESSION_TEMPLATE_SPECIALISATION 
-#include"TFEL/Math/Vector/VectorVectorExprSpecialisation.ixx"
+#include"TFEL/Math/ExpressionTemplates/MathObjectMathObjectExprWithoutConstIteratorSpecialisation.ixx"
 #endif  /* NO_EXPRESSION_TEMPLATE_SPECIALISATION */
 
-#endif /* _LIB_TFEL_MATH_VECTOR_VECTOR_EXPR_LIB_ */
+#endif /* _MATH_MATHOBJECTMATHOBJECTEXPRWITHOUTCONSTITERATOR_LIB_ */
