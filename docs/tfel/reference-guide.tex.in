@@ -114,6 +114,7 @@
 \newcommand{\redhat}{\href{http://www.redhat.com}{\texttt{Red Hat}}}
 \newcommand{\mandriva}{\href{http://www.mandriva.com}{\texttt{Mandriva}}}
 \newcommand{\excel}{\href{http://www.microsoft.com/france/office/2007/programs/excel/overview.mspx}{\texttt{Microsoft Office Excel}}}
+\newcommand{\nsis}{\href{http://nsis.sourceforge.net/Main_Page}{NSIS}}
 
 \newcommand{\debutpas}[1]{\ensuremath{\left.#1\right|_{t}}}
 \newcommand{\milieupas}[1]{\ensuremath{\left.#1\right|_{t+\theta\, \Delta\, t}}}
@@ -1413,6 +1414,16 @@ RPM, utilisés par les distributions \linux{} \redhat{} et \mandriva{}
 DEB, utilisés par les distributions \linux{} \debian{} et \ubuntu{}
 (entre autres) peuvent être générés par la commande~:
 \bash{cpack -G DEB}
+
+\paragraph{Génération d'installateur \windows{}} Il est possible de
+créer un installateur pour \windows{} à l'aide de l'outil
+\nsis{}\footnote{\texttt{Nullsoft Scriptable Install System} est un
+  produit open-source disponible à l'adresse~:
+  \begin{center}
+    \url{http://nsis.sourceforge.net/}    
+  \end{center}
+}~:
+\bash{cpack -G NSIS}
 
 \subsection{Compilation, installation et
   génération de binaires à l'aide des \autotools{}}

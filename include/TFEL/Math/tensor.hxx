@@ -1,12 +1,12 @@
 /*!
- * \file   stensor.hxx  
+ * \file   tensor.hxx  
  * \brief    
  * \author Helfer Thomas
  * \date   04 May 2006
  */
 
-#ifndef _LIB_TFEL_STENSOR_H_
-#define _LIB_TFEL_STENSOR_H_ 
+#ifndef _LIB_TFEL_TENSOR_H_
+#define _LIB_TFEL_TENSOR_H_ 
 
 #include<string>
 #include<cassert>
@@ -22,38 +22,36 @@
 #include"TFEL/TypeTraits/IsAssignableTo.hxx"
 #include"TFEL/TypeTraits/IsSafelyReinterpretCastableTo.hxx"
 
+#include"TFEL/FSAlgorithm/FSAlgorithm.hxx"
+
 #include"TFEL/Math/General/BasicOperations.hxx"
 #include"TFEL/Math/General/EmptyRunTimeProperties.hxx"
 
 #include"TFEL/Math/Vector/VectorUtilities.hxx"
-#include"TFEL/Math/Stensor/StensorNullStorage.hxx"
-#include"TFEL/Math/Stensor/StensorConcept.hxx"
-#include"TFEL/Math/Stensor/StensorConceptOperations.hxx"
-#include"TFEL/Math/Stensor/StensorStaticStorage.hxx"
-#include"TFEL/Math/Stensor/StensorExpr.hxx"
+#include"TFEL/Math/Tensor/TensorSizeToDime.hxx"
+#include"TFEL/Math/Tensor/TensorConcept.hxx"
+#include"TFEL/Math/Tensor/TensorConceptOperations.hxx"
+#include"TFEL/Math/Tensor/TensorExpr.hxx"
 
 #include"TFEL/Math/Forward/tvector.hxx"
 #include"TFEL/Math/Forward/tmatrix.hxx"
-#include"TFEL/Math/Forward/stensor.hxx"
+#include"TFEL/Math/Forward/tensor.hxx"
 
 namespace tfel{
   
   namespace math {
 
-    template<unsigned short N, typename T,
-	     template<unsigned short,typename> class Storage>
-    struct TFEL_VISIBILITY_LOCAL StensorTraits<stensor<N,T,Storage> >
+    template<unsigned short N, typename T>
+    struct TFEL_VISIBILITY_LOCAL TensorTraits<tensor<N,T> >
     {
       typedef T NumType;
       typedef unsigned short IndexType;
       static const unsigned short dime = N;
     };
 
-    template<unsigned short N,typename T,
-	     template<unsigned short,typename> class Storage>
-    class stensor
-      : public StensorConcept<stensor<N,T,Storage> >,
-	public Storage<StensorDimeToSize<N>::value,T>
+    template<unsigned short N,typename T>
+    class tensor
+      : public TensorConcept<tensor<N,T> >
     {
       
       /*!
@@ -64,11 +62,11 @@ namespace tfel{
     public:
 
       /*
-       * This is a StensorConcept requirement.
+       * This is a TensorConcept requirement.
        */
       typedef EmptyRunTimeProperties RunTimeProperties;
       /*!
-       * type of the stensor's values.
+       * type of the tensor's values.
        * (this is a stl requirement).
        */
       typedef T value_type;
@@ -83,17 +81,17 @@ namespace tfel{
        */
       typedef const value_type* const_pointer;
       /*!
-       * type of the stensor's iterator.
+       * type of the tensor's iterator.
        * (provided for stl compatibility).
        */
       typedef pointer iterator;
       /*!
-       * type of the stensor's const iterator.
+       * type of the tensor's const iterator.
        * (provided for stl compatibility).
        */
       typedef const_pointer const_iterator;
       /*!
-       * type of the stensor's reverse iterator.
+       * type of the tensor's reverse iterator.
        * (provided for stl compatibility).
        */
 #ifndef __SUNPRO_CC
@@ -104,7 +102,7 @@ namespace tfel{
       				    difference_type> reverse_iterator;
 #endif
       /*!
-       * type of the stensor's const reverse iterator.
+       * type of the tensor's const reverse iterator.
        * (provided for stl compatibility).
        */
 #ifndef __SUNPRO_CC
@@ -139,77 +137,44 @@ namespace tfel{
        * \brief Default Constructor 
        * \warning enabled only if storage is static
        */
-      explicit stensor()
+      explicit tensor()
       {};
 
       /*!
        * \brief Default Constructor 
-       * \param T, value used to initialise the components of the stensor 
+       * \param T, value used to initialise the components of the tensor 
        * \warning enabled only if storage is static
        */
-      explicit stensor(const T);
+      explicit tensor(const T);
 
       /*!
        * \brief Default Constructor.
        * \param const typename tfel::typetraits::BaseType<T>::type*
        * const, pointer to a tabular used to initialise the components
-       * of the stensor. This tabular is left unchanged.
+       * of the tensor. This tabular is left unchanged.
        */
-      explicit stensor(const typename tfel::typetraits::BaseType<T>::type* const init)
-	: Storage<StensorDimeToSize<N>::value,T>(init)
-      {}
-
-      /*!
-       * \brief Default Constructor.
-       * \param typename tfel::typetraits::BaseType<T>::type* const,
-       * pointer to a tabular used to initialise the components of the stensor. 
-       */
-      explicit stensor(typename tfel::typetraits::BaseType<T>::type* const init)
-	: Storage<StensorDimeToSize<N>::value,T>(init)
-      {}
+      explicit tensor(const typename tfel::typetraits::BaseType<T>::type* const init)
+      {
+	typedef typename tfel::typetraits::BaseType<T>::type base;
+	TFEL_STATIC_ASSERT((tfel::typetraits::IsSafelyReinterpretCastableTo<T,base>::cond));
+	tfel::fsalgo::copy<TensorDimeToSize<N>::value>::exe(init,reinterpret_cast<base*>(this->v));
+      }
 
       /*!
        * \brief Copy Constructor
        */
-      stensor(const stensor<N,T,Storage>& src)
-	: Storage<StensorDimeToSize<N>::value,T>(src) 
-      {}
-
-      // Copy Constructor
-      template<typename T2,template<unsigned short,typename> class Storage2,typename Expr>
-      stensor(const StensorExpr<stensor<N,T2,Storage2>,Expr>& src)
+      tensor(const tensor<N,T>& src)
       {
-	TFEL_STATIC_ASSERT((tfel::typetraits::IsSafelyReinterpretCastableTo<T2,T>::cond));
-	vectorToTab<StensorDimeToSize<N>::value>::exe(src,this->v);
+	tfel::fsalgo::copy<TensorDimeToSize<N>::value>::exe(src.v,this->v);
       }
 
-      /*!
-       * \brief Import from Voigt
-       */
-      template<typename T2>
-      typename tfel::meta::EnableIf<
-	tfel::typetraits::IsSafelyReinterpretCastableTo<T2,typename tfel::typetraits::BaseType<T>::type>::cond,
-	void
-	>::type
-      importVoigt(const T2* const);
-
-      /*!
-       * Import from Tab (Voigt notations for stresses)
-       */
-    template<typename T2>
-    typename tfel::meta::EnableIf<
-      tfel::typetraits::IsSafelyReinterpretCastableTo<T2,typename tfel::typetraits::BaseType<T>::type>::cond,
-      void>::type
-    importTab(const T2* const);
-
-      /*!
-       * Export to Tab (Voigt notations for stresses)
-       */
-      template<typename T2>
-      typename tfel::meta::EnableIf<
-	tfel::typetraits::IsSafelyReinterpretCastableTo<T2,typename tfel::typetraits::BaseType<T>::type>::cond,
-	void>::type
-      exportTab(T2* const) const;
+      // Copy Constructor
+      template<typename T2,typename Expr>
+      tensor(const TensorExpr<tensor<N,T2>,Expr>& src)
+      {
+	TFEL_STATIC_ASSERT((tfel::typetraits::IsSafelyReinterpretCastableTo<T2,T>::cond));
+	vectorToTab<TensorDimeToSize<TensorDimeToSize<N>::value>::value>::exe(src,this->v);
+      }
 
       /*!
        * Write to Tab
@@ -228,60 +193,59 @@ namespace tfel{
       /*!
        * Assignement operator
        */
-      template<template<unsigned short,typename> class Storage2>
-      stensor<N,T,Storage>&
-      operator=(const stensor<N,T,Storage2>&);
+      tensor<N,T>&
+      operator=(const tensor<N,T>&);
 
       /*!
        * Assignement operator
        */
-      template<typename T2,template<unsigned short,typename> class Storage2>
+      template<typename T2>
       typename tfel::meta::EnableIf<
 	tfel::typetraits::IsAssignableTo<T2,T>::cond,
-	stensor<N,T,Storage>&>::type
-      operator=(const stensor<N,T2,Storage2>&);
+	tensor<N,T>&>::type
+      operator=(const tensor<N,T2>&);
 
       /*!
        * Assignement operator
        */
-      template<typename T2,template<unsigned short,typename> class Storage2,typename Expr>
+      template<typename T2,typename Expr>
       typename tfel::meta::EnableIf<
 	tfel::typetraits::IsAssignableTo<T2,T>::cond,
-	stensor<N,T,Storage>&
+	tensor<N,T>&
       >::type
-      operator=(const StensorExpr<stensor<N,T2,Storage2>,Expr>&);
+      operator=(const TensorExpr<tensor<N,T2>,Expr>&);
 
       // Assignement operator
-      template<typename T2,template<unsigned short,typename> class Storage2>
+      template<typename T2>
       TFEL_MATH_INLINE typename tfel::meta::EnableIf<
 	tfel::typetraits::IsAssignableTo<T2,T>::cond,
-	stensor<N,T,Storage>&
+	tensor<N,T>&
       >::type
-      operator+=(const stensor<N,T2,Storage2>&);
+      operator+=(const tensor<N,T2>&);
     
       // Assignement operator
-      template<typename T2,template<unsigned short,typename> class Storage2,typename Expr>
+      template<typename T2,typename Expr>
       TFEL_MATH_INLINE typename tfel::meta::EnableIf<
 	tfel::typetraits::IsAssignableTo<T2,T>::cond,
-	stensor<N,T,Storage>&
+	tensor<N,T>&
       >::type
-      operator+=(const StensorExpr<stensor<N,T2,Storage2>,Expr>&);
+      operator+=(const TensorExpr<tensor<N,T2>,Expr>&);
 
       // Assignement operator
-      template<typename T2,template<unsigned short,typename> class Storage2>
+      template<typename T2>
       TFEL_MATH_INLINE typename tfel::meta::EnableIf<
 	tfel::typetraits::IsAssignableTo<T2,T>::cond,
-	stensor<N,T,Storage>&
+	tensor<N,T>&
       >::type
-      operator-=(const stensor<N,T2,Storage2>&);
+      operator-=(const tensor<N,T2>&);
     
       // Assignement operator
-      template<typename T2,template<unsigned short,typename> class Storage2,typename Expr>
+      template<typename T2,typename Expr>
       TFEL_MATH_INLINE typename tfel::meta::EnableIf<
 	tfel::typetraits::IsAssignableTo<T2,T>::cond,
-	stensor<N,T,Storage>&
+	tensor<N,T>&
       >::type
-      operator-=(const StensorExpr<stensor<N,T2,Storage2>,Expr>&);
+      operator-=(const TensorExpr<tensor<N,T2>,Expr>&);
 
       /*!
        * operator*=
@@ -291,7 +255,7 @@ namespace tfel{
       typename tfel::meta::EnableIf<
 	tfel::typetraits::IsScalar<T2>::cond&&
       tfel::meta::IsSameType<typename ResultType<T,T2,OpMult>::type,T>::cond,
-	stensor<N,T,Storage>&
+	tensor<N,T>&
       >::type
       operator*=(const T2);
 
@@ -303,34 +267,10 @@ namespace tfel{
       typename tfel::meta::EnableIf<
 	tfel::typetraits::IsScalar<T2>::cond&&
         tfel::meta::IsSameType<typename ResultType<T,T2,OpMult>::type,T>::cond,
-	stensor<N,T,Storage>&
+	tensor<N,T>&
       >::type
       operator/=(const T2);
 
-      /*!
-       * compute eigenvalues
-       * \param[in] b  : refine eigenvalues
-       */
-      void computeEigenValues(T&,T&,T&,
-			      const bool = false) const;
-
-      /*!
-       * compute eigenvalues
-       * \param[in] b  : refine eigenvalues
-       */
-      void computeEigenValues(tvector<3u,T>&,
-			      const bool = false) const;
-
-      /*!
-       * compute eigenvectors and eigenvalues 
-       * \param[in] vp : eigenvalues
-       * \param[in] m  : rotation matrix
-       * \param[in] b  : refine eigenvalues
-       */
-      bool computeEigenVectors(tvector<3u,T>&,
-			       tmatrix<3u,3u,typename tfel::typetraits::BaseType<T>::type>&,
-			       const bool = false) const;
-    
       /*!
        * change basis
        */
@@ -339,7 +279,7 @@ namespace tfel{
       /*!
        * Return Identity
        */
-      TFEL_MATH_INLINE static const stensor<N,T,Storage>& Id(void);
+      TFEL_MATH_INLINE static const tensor<N,T>& Id(void);
 
       TFEL_MATH_INLINE const T& operator()(const unsigned short) const;      
       TFEL_MATH_INLINE       T& operator()(const unsigned short);
@@ -359,7 +299,7 @@ namespace tfel{
       TFEL_MATH_INLINE RunTimeProperties
       getRunTimeProperties(void) const;
       /*
-       * return an iterator to the first element of the stensor
+       * return an iterator to the first element of the tensor
        * (provided for stl compatibility)
        * \return iterator, an iterator to the first element
        */
@@ -368,7 +308,7 @@ namespace tfel{
       begin(void);
       
       /*
-       * return an const iterator to the first element of the stensor
+       * return an const iterator to the first element of the tensor
        * (provided for stl compatibility)
        * \return const_iterator, a const iterator to the first element
        */
@@ -377,7 +317,7 @@ namespace tfel{
       begin(void) const;
 
       /*
-       * return an iterator after the last element of the stensor
+       * return an iterator after the last element of the tensor
        * (provided for stl compatibility)
        * \return iterator, an iterator after the last element
        */
@@ -386,7 +326,7 @@ namespace tfel{
       end(void);
       
       /*
-       * return an const iterator after the last element of the stensor
+       * return an const iterator after the last element of the tensor
        * (provided for stl compatibility)
        * \return const_iterator, a const iterator after the last element
        */
@@ -395,7 +335,7 @@ namespace tfel{
       end(void) const;
 
       /*
-       * return an reverse iterator to the last element of the stensor
+       * return an reverse iterator to the last element of the tensor
        * (provided for stl compatibility)
        * \return reverse_iterator, a reverse iterator to the last element
        */
@@ -404,7 +344,7 @@ namespace tfel{
       rbegin(void);
       
       /*
-       * return an const reverse iterator to the last element of the stensor
+       * return an const reverse iterator to the last element of the tensor
        * (provided for stl compatibility)
        * \return const_reverse_iterator, a const reverse iterator to the last element
        */
@@ -413,7 +353,7 @@ namespace tfel{
       rbegin(void) const;
       
       /*
-       * return an  reverse iterator before the first element of the stensor
+       * return an  reverse iterator before the first element of the tensor
        * (provided for stl compatibility)
        * \return reverse_iterator, a reverse iterator before the first element
        */
@@ -422,7 +362,7 @@ namespace tfel{
       rend(void);
       
       /*
-       * return an const reverse iterator before the first element of the stensor
+       * return an const reverse iterator before the first element of the tensor
        * (provided for stl compatibility)
        * \return const_reverse_iterator, a const reverse iterator before the first element
        */
@@ -436,42 +376,19 @@ namespace tfel{
       void 
       copy(const InputIterator src);
 
-    }; // end of class stensor
+    protected:
+      
+      T v[TensorDimeToSize<N>::value];
 
-    /*!
-     * compute the tresca stress
-     * for a symmetric tensor
-     *
-     * \param s : symmetric tensor
-     */
-    template<unsigned short N,
-	     typename T,
-	     template<unsigned short,typename> class Storage>
-    T tresca(const stensor<N,T,Storage>&,
-	     const bool = false);
-    
-    /*!
-     * compute the tresca stress
-     * for a symmetric tensor.
-     *
-     * Partial specialisation in 1D
-     *
-     * \param s : symmetric tensor
-     */
-    template<typename T,
-	     template<unsigned short,typename> class Storage>
-    T tresca(const stensor<1u,T,Storage>&,
-	     const bool = false);
+    }; // end of class tensor
         
   } // end of namespace math
 
   namespace typetraits{
     
-    template<unsigned short N,typename T2,
-	     template<unsigned short,typename> class Storage2,
-	     typename T,template<unsigned short,typename> class Storage >
-    struct IsAssignableTo<tfel::math::stensor<N,T2,Storage2>,
-			  tfel::math::stensor<N,T,Storage> >
+    template<unsigned short N,typename T2,typename T>
+    struct IsAssignableTo<tfel::math::tensor<N,T2>,
+			  tfel::math::tensor<N,T> >
     {
       /*!
        *  Result
@@ -483,9 +400,9 @@ namespace tfel{
 
 } // end of namespace tfel
 
-#include"TFEL/Math/Stensor/StensorSizeToDime.hxx"
-#include"TFEL/Math/Stensor/stensor.ixx"
-#include"TFEL/Math/Stensor/stensorResultType.hxx"
+#include"TFEL/Math/Tensor/TensorSizeToDime.hxx"
+#include"TFEL/Math/Tensor/tensor.ixx"
+#include"TFEL/Math/Tensor/tensorResultType.hxx"
 
-#endif /* _LIB_TFEL_STENSOR_H */
+#endif /* _LIB_TFEL_TENSOR_H */
 

@@ -33,11 +33,12 @@ test_PROGRAMS = hill                  \
 		krigeage2D            \
 		newton_raphson        \
 		solve                 \
+		tensor                \
+		stensor               \
 		stensor2              \
 		stensor3              \
 		stensor4              \
 		stensor5              \
-		stensor               \
 		stensor_changeBasis   \
 		stensor_changeBasis2  \
 		stensor_changeBasis3  \

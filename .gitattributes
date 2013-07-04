@@ -259,7 +259,8 @@ docs/presentations/images/gpls-mfront.tex -text
 docs/presentations/images/resultat_norton_traction_n8.pstricks -text
 docs/presentations/mfront-behaviours.tex.in -text
 docs/presentations/mfront-presentation.tex.in -text
-docs/rotation_matrix.tm -text
+docs/stensor_rotation_matrix.tm -text
+docs/tensor_rotation_matrix.tm -text
 docs/tex/CMakeLists.txt -text
 docs/tex/Makefile.am -text
 docs/tex/texmf/bibtex/fr-insa.bst -text
@@ -575,6 +576,7 @@ include/TFEL/Math/Forward/matrix.hxx -text
 include/TFEL/Math/Forward/qt.hxx -text
 include/TFEL/Math/Forward/st2tost2.hxx -text
 include/TFEL/Math/Forward/stensor.hxx -text
+include/TFEL/Math/Forward/tensor.hxx -text
 include/TFEL/Math/Forward/tmatrix.hxx -text
 include/TFEL/Math/Forward/tvector.hxx -text
 include/TFEL/Math/Forward/vector.hxx -text
@@ -778,6 +780,20 @@ include/TFEL/Math/Stensor/StensorSizeToDime.hxx -text
 include/TFEL/Math/Stensor/StensorStaticStorage.hxx -text
 include/TFEL/Math/Stensor/stensor.ixx -text
 include/TFEL/Math/Stensor/stensorResultType.hxx -text
+include/TFEL/Math/Tensor/TFTMCV.hxx -text
+include/TFEL/Math/Tensor/TFTMCV2.hxx -text
+include/TFEL/Math/Tensor/TFTMRV.hxx -text
+include/TFEL/Math/Tensor/TFTMRV2.hxx -text
+include/TFEL/Math/Tensor/TFTV.hxx -text
+include/TFEL/Math/Tensor/TensorChangeBasis.hxx -text
+include/TFEL/Math/Tensor/TensorConcept.hxx -text
+include/TFEL/Math/Tensor/TensorConcept.ixx -text
+include/TFEL/Math/Tensor/TensorConceptOperations.hxx -text
+include/TFEL/Math/Tensor/TensorConceptOperations.ixx -text
+include/TFEL/Math/Tensor/TensorExpr.hxx -text
+include/TFEL/Math/Tensor/TensorSizeToDime.hxx -text
+include/TFEL/Math/Tensor/tensor.ixx -text
+include/TFEL/Math/Tensor/tensorResultType.hxx -text
 include/TFEL/Math/TinyMatrixInvert.hxx -text
 include/TFEL/Math/TinyMatrixSolve.hxx -text
 include/TFEL/Math/TinyNewtonRaphson.hxx -text
@@ -805,6 +821,7 @@ include/TFEL/Math/power.ixx -text
 include/TFEL/Math/qt.hxx -text
 include/TFEL/Math/st2tost2.hxx -text
 include/TFEL/Math/stensor.hxx -text
+include/TFEL/Math/tensor.hxx -text
 include/TFEL/Math/tmatrix.hxx -text
 include/TFEL/Math/tvector.hxx -text
 include/TFEL/Math/vector.hxx -text
@@ -1542,6 +1559,7 @@ tests/Math/stensor_changeBasis4.cxx -text
 tests/Math/stensor_eigenvalues.cxx -text
 tests/Math/stensor_eigenvectors.cxx -text
 tests/Math/stensor_eigenvectors2.cxx -text
+tests/Math/tensor.cxx -text
 tests/Math/tinymatrixsolve.cxx -text
 tests/Math/tinymatrixsolve2.cxx -text
 tests/Math/tmatrix.cxx -text
