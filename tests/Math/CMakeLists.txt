@@ -16,7 +16,7 @@ macro(tests_math test_arg)
   add_executable(${test_arg} EXCLUDE_FROM_ALL ${test_arg}.cxx)
   add_test(NAME ${test_arg} COMMAND ${test_arg})
   add_dependencies(check ${test_arg})
-  target_link_libraries(${test_arg}  TFELMath TFELUtilities TFELException TFELTests)
+  target_link_libraries(${test_arg} TFELMath TFELUtilities TFELException TFELTests)
 endmacro(tests_math)
 
 macro(tests_math2 test_arg)

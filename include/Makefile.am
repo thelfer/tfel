@@ -162,6 +162,7 @@ nobase_include_HEADERS= TFEL/Macros.hxx                                         
 			TFEL/Math/RungeKutta/RungeKutta4.ixx		                                             \
 			TFEL/Math/RungeKutta/RungeKutta42.ixx		                                             \
 			TFEL/Math/RungeKutta/RungeKutta54.ixx		                                             \
+			TFEL/Math/Tensor/TVFS.hxx                                                                    \
 			TFEL/Math/Stensor/Internals/StensorChangeBasis.hxx                                           \
 			TFEL/Math/Stensor/Internals/StensorExport.hxx                                                \
 			TFEL/Math/Stensor/Internals/StensorExport.ixx                                                \

@@ -10,7 +10,12 @@
 #include"TFEL/Tests/TestProxy.hxx"
 #include"TFEL/Tests/TestManager.hxx"
 
+#include"TFEL/Utilities/Name.hxx"
+#include"TFEL/Utilities/ToString.hxx"
+
 #include"TFEL/Math/tensor.hxx"
+#include"TFEL/Math/stensor.hxx"
+#include"TFEL/Math/Tensor/TVFS.hxx"
 #include"TFEL/Math/General/Complex.hxx"
 
 struct TensorTest
@@ -72,8 +77,303 @@ struct TensorTest2
   } // end of execute
 };
 
+template<typename real>
+struct TensorTest3_1D
+  : public tfel::tests::TestCase
+{
+  TensorTest3_1D()
+    : tfel::tests::TestCase("TFEL/Math",
+			    "TensorTest3<1D,"+
+			    tfel::utilities::Name<real>::getName()+">")
+  {} // end of TensorTest3
+  tfel::tests::TestResult
+  execute()
+  {
+    using namespace std;
+    using namespace tfel::math;
+    const real eps = 10.*numeric_limits<real>::epsilon();
+    stensor<1u,real> s;
+    tensor<1u,real> t;
+    for(unsigned short i=0;i!=t.size();++i){
+      t[i] = exp(cos(real(i)));
+    }
+    s = syme(t);
+    TFEL_TESTS_ASSERT((abs(s(0)-exp(cos(real(0))))<eps));
+    TFEL_TESTS_ASSERT((abs(s(1)-exp(cos(real(1))))<eps));
+    TFEL_TESTS_ASSERT((abs(s(2)-exp(cos(real(2))))<eps));
+    return this->result;
+  } // end of execute
+};
+
+template<typename real>
+struct TensorTest3_2D
+  : public tfel::tests::TestCase
+{
+  TensorTest3_2D()
+    : tfel::tests::TestCase("TFEL/Math",
+			    "TensorTest3<2D,"+
+			    tfel::utilities::Name<real>::getName()+">")
+  {} // end of TensorTest3
+  tfel::tests::TestResult
+  execute()
+  {
+    using namespace std;
+    using namespace tfel::math;
+    const real eps = 10.*numeric_limits<real>::epsilon();
+    const real cste = sqrt(real(2))/real(2);
+    stensor<2u,real> s;
+    tensor<2u,real> t;
+    for(unsigned short i=0;i!=t.size();++i){
+      t[i] = exp(cos(real(i)));
+    }
+    s = syme(t);
+    TFEL_TESTS_ASSERT((abs(s(0)-exp(cos(real(0))))<eps));
+    TFEL_TESTS_ASSERT((abs(s(1)-exp(cos(real(1))))<eps));
+    TFEL_TESTS_ASSERT((abs(s(2)-exp(cos(real(2))))<eps));
+    TFEL_TESTS_ASSERT((abs(s(3)-cste*(exp(cos(real(3)))+exp(cos(real(4)))))<eps));
+    return this->result;
+  } // end of execute
+};
+
+template<typename real>
+struct TensorTest3_3D
+  : public tfel::tests::TestCase
+{
+  TensorTest3_3D()
+    : tfel::tests::TestCase("TFEL/Math",
+			    "TensorTest3<3D,"+
+			    tfel::utilities::Name<real>::getName()+">")
+  {} // end of TensorTest3
+  tfel::tests::TestResult
+  execute()
+  {
+    using namespace std;
+    using namespace tfel::math;
+    const real eps = 10.*numeric_limits<real>::epsilon();
+    const real cste = sqrt(real(2))/real(2);
+    stensor<3u,real> s;
+    tensor<3u,real> t;
+    for(unsigned short i=0;i!=t.size();++i){
+      t[i] = exp(cos(real(i)));
+    }
+    s = syme(t);
+    TFEL_TESTS_ASSERT((abs(s(0)-exp(cos(real(0))))<eps));
+    TFEL_TESTS_ASSERT((abs(s(1)-exp(cos(real(1))))<eps));
+    TFEL_TESTS_ASSERT((abs(s(2)-exp(cos(real(2))))<eps));
+    TFEL_TESTS_ASSERT((abs(s(3)-cste*(exp(cos(real(3)))+exp(cos(real(4)))))<eps));
+    TFEL_TESTS_ASSERT((abs(s(4)-cste*(exp(cos(real(5)))+exp(cos(real(6)))))<eps));
+    TFEL_TESTS_ASSERT((abs(s(5)-cste*(exp(cos(real(7)))+exp(cos(real(8)))))<eps));
+    return this->result;
+  } // end of execute
+};
+
+struct TensorTest4
+  : public tfel::tests::TestCase
+{
+  TensorTest4()
+    : tfel::tests::TestCase("TFEL/Math","TensorTest4")
+  {} // end of TensorTest4
+  tfel::tests::TestResult
+  execute()
+  {
+    using namespace std;
+    using namespace tfel::math;
+    typedef double real;
+    const real eps = 10.*numeric_limits<real>::epsilon();
+    tensor<3u,real> t;
+    for(unsigned short i=0;i!=t.size();++i){
+      t[i] = exp(cos(real(i)));
+    }
+    TFEL_TESTS_ASSERT((abs(trace(t)-exp(cos(real(0)))
+			   -exp(cos(real(1)))-exp(cos(real(2))))<eps));
+    return this->result;
+  } // end of execute
+};
+
+struct TensorTest5_1D
+  : public tfel::tests::TestCase
+{
+  TensorTest5_1D()
+    : tfel::tests::TestCase("TFEL/Math","TensorTest5_3D")
+  {} // end of TensorTest5
+  tfel::tests::TestResult
+  execute(void)
+  {
+    using namespace std;
+    using namespace tfel::math;
+    typedef double real;
+    const real eps = 10.*numeric_limits<real>::epsilon();
+    tensor<1u,real> t;
+    for(unsigned short i=0;i!=t.size();++i){
+      t[i] = exp(cos(real(i)));
+    }
+    const TensorConcept<tensor<1u,real> >& t_c = t;
+    TFEL_TESTS_ASSERT((abs(t_c(0,0)-exp(cos(real(0))))<eps));
+    TFEL_TESTS_ASSERT((abs(t_c(1,1)-exp(cos(real(1))))<eps));
+    TFEL_TESTS_ASSERT((abs(t_c(2,2)-exp(cos(real(2))))<eps));
+    TFEL_TESTS_ASSERT((abs(t_c(0,1)-real(0))<eps));
+    TFEL_TESTS_ASSERT((abs(t_c(1,0)-real(0))<eps));
+    TFEL_TESTS_ASSERT((abs(t_c(0,2)-real(0))<eps));
+    TFEL_TESTS_ASSERT((abs(t_c(2,0)-real(0))<eps));
+    TFEL_TESTS_ASSERT((abs(t_c(1,2)-real(0))<eps));
+    TFEL_TESTS_ASSERT((abs(t_c(2,1)-real(0))<eps));
+    return this->result;
+  } // end of execute
+};
+
+struct TensorTest5_2D
+  : public tfel::tests::TestCase
+{
+  TensorTest5_2D()
+    : tfel::tests::TestCase("TFEL/Math","TensorTest5_2D")
+  {} // end of TensorTest5
+  tfel::tests::TestResult
+  execute(void)
+  {
+    using namespace std;
+    using namespace tfel::math;
+    typedef double real;
+    const real eps = 10.*numeric_limits<real>::epsilon();
+    tensor<2u,real> t;
+    for(unsigned short i=0;i!=t.size();++i){
+      t[i] = exp(cos(real(i)));
+    }
+    const TensorConcept<tensor<2u,real> >& t_c = t;
+    TFEL_TESTS_ASSERT((abs(t_c(0,0)-exp(cos(real(0))))<eps));
+    TFEL_TESTS_ASSERT((abs(t_c(1,1)-exp(cos(real(1))))<eps));
+    TFEL_TESTS_ASSERT((abs(t_c(2,2)-exp(cos(real(2))))<eps));
+    TFEL_TESTS_ASSERT((abs(t_c(0,1)-exp(cos(real(3))))<eps));
+    TFEL_TESTS_ASSERT((abs(t_c(1,0)-exp(cos(real(4))))<eps));
+    TFEL_TESTS_ASSERT((abs(t_c(0,2)-real(0))<eps));
+    TFEL_TESTS_ASSERT((abs(t_c(2,0)-real(0))<eps));
+    TFEL_TESTS_ASSERT((abs(t_c(1,2)-real(0))<eps));
+    TFEL_TESTS_ASSERT((abs(t_c(2,1)-real(0))<eps));
+    return this->result;
+  } // end of execute
+};
+
+struct TensorTest5_3D
+  : public tfel::tests::TestCase
+{
+  TensorTest5_3D()
+    : tfel::tests::TestCase("TFEL/Math","TensorTest5_3D")
+  {} // end of TensorTest5
+  tfel::tests::TestResult
+  execute(void)
+  {
+    using namespace std;
+    using namespace tfel::math;
+    typedef double real;
+    const real eps = 10.*numeric_limits<real>::epsilon();
+    tensor<3u,real> t;
+    for(unsigned short i=0;i!=t.size();++i){
+      t[i] = exp(cos(real(i)));
+    }
+    const TensorConcept<tensor<3u,real> >& t_c = t;
+    TFEL_TESTS_ASSERT((abs(t_c(0,0)-exp(cos(real(0))))<eps));
+    TFEL_TESTS_ASSERT((abs(t_c(1,1)-exp(cos(real(1))))<eps));
+    TFEL_TESTS_ASSERT((abs(t_c(2,2)-exp(cos(real(2))))<eps));
+    TFEL_TESTS_ASSERT((abs(t_c(0,1)-exp(cos(real(3))))<eps));
+    TFEL_TESTS_ASSERT((abs(t_c(1,0)-exp(cos(real(4))))<eps));
+    TFEL_TESTS_ASSERT((abs(t_c(0,2)-exp(cos(real(5))))<eps));
+    TFEL_TESTS_ASSERT((abs(t_c(2,0)-exp(cos(real(6))))<eps));
+    TFEL_TESTS_ASSERT((abs(t_c(1,2)-exp(cos(real(7))))<eps));
+    TFEL_TESTS_ASSERT((abs(t_c(2,1)-exp(cos(real(8))))<eps));
+    return this->result;
+  } // end of execute
+};
+
+struct TensorTest6
+  : public tfel::tests::TestCase
+{
+  TensorTest6()
+    : tfel::tests::TestCase("TFEL/Math","TensorTest6")
+  {} // end of TensorTest5
+  tfel::tests::TestResult
+  execute(void)
+  {
+    using namespace std;
+    using namespace tfel::math;
+    typedef double real;
+    const real eps = 10.*numeric_limits<real>::epsilon();
+    tensor<3u,real> t;
+    for(unsigned short i=0;i!=t.size();++i){
+      t[i] = exp(cos(real(i)));
+    }
+    const TensorConcept<tensor<3u,real> >& t_c = t;
+    TFEL_TESTS_ASSERT((abs(t_c(0,0)-exp(cos(real(0))))<eps));
+    TFEL_TESTS_ASSERT((abs(t_c(1,1)-exp(cos(real(1))))<eps));
+    TFEL_TESTS_ASSERT((abs(t_c(2,2)-exp(cos(real(2))))<eps));
+    TFEL_TESTS_ASSERT((abs(t_c(0,1)-exp(cos(real(3))))<eps));
+    TFEL_TESTS_ASSERT((abs(t_c(1,0)-exp(cos(real(4))))<eps));
+    TFEL_TESTS_ASSERT((abs(t_c(0,2)-exp(cos(real(5))))<eps));
+    TFEL_TESTS_ASSERT((abs(t_c(2,0)-exp(cos(real(6))))<eps));
+    TFEL_TESTS_ASSERT((abs(t_c(1,2)-exp(cos(real(7))))<eps));
+    TFEL_TESTS_ASSERT((abs(t_c(2,1)-exp(cos(real(8))))<eps));
+    return this->result;
+  } // end of execute
+};
+
+struct TensorTest7
+  : public tfel::tests::TestCase
+{
+  TensorTest7()
+    : tfel::tests::TestCase("TFEL/Math","TensorTest7")
+  {} // end of TensorTest7
+  tfel::tests::TestResult
+  execute(void)
+  {
+    using namespace std;
+    using namespace tfel::math;
+    typedef double real;
+    const real cste = real(1)/sqrt(real(2));
+    const real eps  = 10.*numeric_limits<real>::epsilon();
+    typedef TVFS<stensor<3u,real> >::type TensorView;
+    stensor<3u,real> s;
+    for(unsigned short i=0;i!=s.size();++i){
+      s[i] = exp(cos(real(i)));
+    }
+    const TensorView t(s);
+    TFEL_TESTS_ASSERT((abs(t(0)-exp(cos(real(0))))<eps));
+    TFEL_TESTS_ASSERT((abs(t(1)-exp(cos(real(1))))<eps));
+    TFEL_TESTS_ASSERT((abs(t(2)-exp(cos(real(2))))<eps));
+    TFEL_TESTS_ASSERT((abs(t(3)-cste*exp(cos(real(3))))<eps));
+    TFEL_TESTS_ASSERT((abs(t(4)-cste*exp(cos(real(3))))<eps));
+    TFEL_TESTS_ASSERT((abs(t(5)-cste*exp(cos(real(4))))<eps));
+    TFEL_TESTS_ASSERT((abs(t(6)-cste*exp(cos(real(4))))<eps));
+    TFEL_TESTS_ASSERT((abs(t(7)-cste*exp(cos(real(5))))<eps));
+    TFEL_TESTS_ASSERT((abs(t(8)-cste*exp(cos(real(5))))<eps));
+    return this->result;
+  } // end of execute
+};
+
 TFEL_TESTS_GENERATE_PROXY(TensorTest,"TensorTest");
 TFEL_TESTS_GENERATE_PROXY(TensorTest2,"TensorTest2");
+
+typedef TensorTest3_1D<float>  TensorTest3Float1D;
+typedef TensorTest3_1D<double> TensorTest3Double1D;
+typedef TensorTest3_1D<long double> TensorTest3LongDouble1D;
+typedef TensorTest3_2D<float>  TensorTest3Float2D;
+typedef TensorTest3_2D<double> TensorTest3Double2D;
+typedef TensorTest3_2D<long double> TensorTest3LongDouble2D;
+typedef TensorTest3_3D<float>  TensorTest3Float3D;
+typedef TensorTest3_3D<double> TensorTest3Double3D;
+typedef TensorTest3_3D<long double> TensorTest3LongDouble3D;
+TFEL_TESTS_GENERATE_PROXY(TensorTest3Float1D,"TensorTest3<1u,float>");
+TFEL_TESTS_GENERATE_PROXY(TensorTest3Double1D,"TensorTest3<1u,double>");
+TFEL_TESTS_GENERATE_PROXY(TensorTest3LongDouble1D,"TensorTest3<1u,long double>");
+TFEL_TESTS_GENERATE_PROXY(TensorTest3Float2D,"TensorTest3<2u,float>");
+TFEL_TESTS_GENERATE_PROXY(TensorTest3Double2D,"TensorTest3<2u,double>");
+TFEL_TESTS_GENERATE_PROXY(TensorTest3LongDouble2D,"TensorTest3<2u,long double>");
+TFEL_TESTS_GENERATE_PROXY(TensorTest3Float3D,"TensorTest3<3u,float>");
+TFEL_TESTS_GENERATE_PROXY(TensorTest3Double3D,"TensorTest3<3u,double>");
+TFEL_TESTS_GENERATE_PROXY(TensorTest3LongDouble3D,"TensorTest3<3u,long double>");
+TFEL_TESTS_GENERATE_PROXY(TensorTest4,"TensorTest4");
+TFEL_TESTS_GENERATE_PROXY(TensorTest5_1D,"TensorTest5_1D");
+TFEL_TESTS_GENERATE_PROXY(TensorTest5_2D,"TensorTest5_2D");
+TFEL_TESTS_GENERATE_PROXY(TensorTest5_3D,"TensorTest5_3D");
+TFEL_TESTS_GENERATE_PROXY(TensorTest6,"TensorTest6");
+TFEL_TESTS_GENERATE_PROXY(TensorTest7,"TensorTest7");
 
 int main(void){
   using namespace std;

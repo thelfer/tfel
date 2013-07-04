@@ -25,13 +25,12 @@ namespace tfel{
 #ifndef DOXYGENSPECIFIC
 
     template<unsigned short N, typename T>
-    TFEL_MATH_INLINE tensor<N,T>::tensor(const T init)
+    tensor<N,T>::tensor(const T init)
     {
       tfel::fsalgo::fill<TensorDimeToSize<N>::value>::exe(this->v,init);
     }
 
     template<unsigned short N, typename T>
-    TFEL_MATH_INLINE
     T& 
     tensor<N,T>::operator()(const unsigned short i){
       assert(i<TensorDimeToSize<N>::value);
@@ -39,7 +38,6 @@ namespace tfel{
     }
 
     template<unsigned short N, typename T>
-    TFEL_MATH_INLINE
     const T& 
     tensor<N,T>::operator()(const unsigned short i) const{
       assert(i<TensorDimeToSize<N>::value);
@@ -47,7 +45,6 @@ namespace tfel{
     }
 
     template<unsigned short N, typename T>
-    TFEL_MATH_INLINE
     T& 
     tensor<N,T>::operator[](const unsigned short i){
       assert(i<TensorDimeToSize<N>::value);
@@ -61,7 +58,6 @@ namespace tfel{
     }
 
     template<unsigned short N, typename T>
-    TFEL_MATH_INLINE
     const T& 
     tensor<N,T>::operator[](const unsigned short i) const{
       assert(i<TensorDimeToSize<N>::value);
@@ -70,7 +66,7 @@ namespace tfel{
 
     template<unsigned short N,typename T>
     template<typename T2,typename Expr>
-    TFEL_MATH_INLINE typename tfel::meta::EnableIf<
+    typename tfel::meta::EnableIf<
       tfel::typetraits::IsAssignableTo<T2,T>::cond,
       tensor<N,T>&
     >::type 
@@ -82,7 +78,7 @@ namespace tfel{
     // Assignement operator
     template<unsigned short N,typename T>
     template<typename T2>
-    TFEL_MATH_INLINE typename tfel::meta::EnableIf<
+    typename tfel::meta::EnableIf<
       tfel::typetraits::IsAssignableTo<T2,T>::cond,
       tensor<N,T>&
     >::type 
@@ -95,7 +91,7 @@ namespace tfel{
     // Assignement operator
     template<unsigned short N,typename T>
     template<typename T2,typename Expr>
-    TFEL_MATH_INLINE typename tfel::meta::EnableIf<
+    typename tfel::meta::EnableIf<
       tfel::typetraits::IsAssignableTo<T2,T>::cond,
       tensor<N,T>&
     >::type
@@ -108,7 +104,7 @@ namespace tfel{
     // Assignement operator
     template<unsigned short N,typename T>
     template<typename T2>
-    TFEL_MATH_INLINE typename tfel::meta::EnableIf<
+    typename tfel::meta::EnableIf<
       tfel::typetraits::IsAssignableTo<T2,T>::cond,
       tensor<N,T>&
     >::type
@@ -121,7 +117,7 @@ namespace tfel{
     // Assignement operator
     template<unsigned short N,typename T>
     template<typename T2,typename Expr>
-    TFEL_MATH_INLINE typename tfel::meta::EnableIf<
+    typename tfel::meta::EnableIf<
       tfel::typetraits::IsAssignableTo<T2,T>::cond,
       tensor<N,T>&
     >::type
@@ -134,7 +130,6 @@ namespace tfel{
     // *= operator
     template<unsigned short N,typename T>
     template<typename T2>
-    TFEL_MATH_INLINE 
     typename tfel::meta::EnableIf<
       tfel::typetraits::IsScalar<T2>::cond&&
       tfel::meta::IsSameType<typename ResultType<T,T2,OpMult>::type,T>::cond,
@@ -149,7 +144,6 @@ namespace tfel{
     // /= operator
     template<unsigned short N,typename T>
     template<typename T2>
-    TFEL_MATH_INLINE 
     typename tfel::meta::EnableIf<
       tfel::typetraits::IsScalar<T2>::cond&&
       tfel::meta::IsSameType<typename ResultType<T,T2,OpMult>::type,T>::cond,
@@ -164,7 +158,7 @@ namespace tfel{
     // Import from values
     template<unsigned short N,typename T>
     template<typename T2>
-    TFEL_MATH_INLINE2 typename tfel::meta::EnableIf<
+    typename tfel::meta::EnableIf<
       tfel::typetraits::IsSafelyReinterpretCastableTo<T2,typename tfel::typetraits::BaseType<T>::type>::cond,
       void>::type
     tensor<N,T>::import(const T2 * const src)
@@ -177,7 +171,7 @@ namespace tfel{
 
     // Write to Tab
     template<unsigned short N, typename T>
-    TFEL_MATH_INLINE2 void tensor<N,T>::write(typename tfel::typetraits::BaseType<T>::type* const t) const
+    void tensor<N,T>::write(typename tfel::typetraits::BaseType<T>::type* const t) const
     {
       typedef typename tfel::typetraits::BaseType<T>::type base;
       typedef tfel::fsalgo::copy<TensorDimeToSize<N>::value> Copy;
@@ -196,7 +190,6 @@ namespace tfel{
     // Assignement operator
     template<unsigned short N,typename T>
     template<typename T2>
-    TFEL_MATH_INLINE 
     typename tfel::meta::EnableIf<
       tfel::typetraits::IsAssignableTo<T2,T>::cond,
       tensor<N,T>&
@@ -209,20 +202,27 @@ namespace tfel{
 
     // Return Id
     template<unsigned short N,typename T>
-    TFEL_MATH_INLINE
     const tensor<N,T>&
     tensor<N,T>::Id(void)
     {
       typedef typename tfel::typetraits::BaseType<T>::type base;
       static const base zero = static_cast<base>(0);
       static const base one  = static_cast<base>(1);
-      static const base IdCoef[]  = {one,one,one,zero,zero,zero};
+      static const base IdCoef[]  = {one,one,one,
+				     zero,zero,zero,
+				     zero,zero,zero};
       static const tensor<N,T> id(IdCoef);
       return id;
     } // end of tensor<N,T>::Id
 
     template<unsigned short N, typename T>
-    TFEL_MATH_INLINE2 
+    typename tensor<N,T>::size_type 
+    tensor<N,T>::size(void) const
+    {
+      return TensorDimeToSize<N>::value;
+    } // end of tensor<N,T>::size(void) const
+
+    template<unsigned short N, typename T>
     typename tensor<N,T>::iterator 
     tensor<N,T>::begin(void)
     {
@@ -230,7 +230,6 @@ namespace tfel{
     }
 
     template<unsigned short N, typename T>
-    TFEL_MATH_INLINE2 
     typename tensor<N,T>::const_iterator 
     tensor<N,T>::begin(void) const
     {
@@ -238,14 +237,14 @@ namespace tfel{
     }
 
     template<unsigned short N, typename T>
-    TFEL_MATH_INLINE2 typename tensor<N,T>::iterator
+    typename tensor<N,T>::iterator
     tensor<N,T>::end(void)
     {
       return this->v+TensorDimeToSize<N>::value;
     }
 
     template<unsigned short N, typename T>
-    TFEL_MATH_INLINE2 
+    
     typename tensor<N,T>::const_iterator
     tensor<N,T>::end(void) const
     {
@@ -253,7 +252,7 @@ namespace tfel{
     }
 
     template<unsigned short N, typename T>
-    TFEL_MATH_INLINE2 
+    
     typename tensor<N,T>::reverse_iterator
     tensor<N,T>::rbegin(void)
     {
@@ -261,7 +260,7 @@ namespace tfel{
     }
 
     template<unsigned short N, typename T>
-    TFEL_MATH_INLINE2 
+    
     typename tensor<N,T>::const_reverse_iterator 
     tensor<N,T>::rbegin(void) const
     {
@@ -269,7 +268,6 @@ namespace tfel{
     }
 
     template<unsigned short N, typename T>
-    TFEL_MATH_INLINE2
     typename tensor<N,T>::reverse_iterator
     tensor<N,T>::rend(void)
     {
@@ -277,7 +275,6 @@ namespace tfel{
     }
 
     template<unsigned short N, typename T>
-    TFEL_MATH_INLINE2
     typename tensor<N,T>::const_reverse_iterator
     tensor<N,T>::rend(void) const
     {
@@ -286,7 +283,6 @@ namespace tfel{
 
     template<unsigned short N, typename T>
     template<typename InputIterator>
-    TFEL_MATH_INLINE2 
     void 
     tensor<N,T>::copy(const InputIterator src)
     {

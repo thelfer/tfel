@@ -26,6 +26,5 @@ namespace tfel{
 
 } // end of namespace tfel
 
-
 #endif /* _LIB_TFEL_TOSTRING_IXX */
 

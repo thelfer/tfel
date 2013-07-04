@@ -319,6 +319,14 @@ namespace tfel{
 
     template<unsigned short N, typename T,
 	     template<unsigned short,typename> class Storage>
+    typename stensor<N,T,Storage>::size_type 
+    stensor<N,T,Storage>::size(void) const
+    {
+      return StensorDimeToSize<N>::value;
+    } // end of stensor<N,T,Storage>::size(void) const
+
+    template<unsigned short N, typename T,
+	     template<unsigned short,typename> class Storage>
     TFEL_MATH_INLINE2 
     typename stensor<N,T,Storage>::iterator 
     stensor<N,T,Storage>::begin(void)

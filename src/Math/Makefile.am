@@ -28,6 +28,8 @@ libTFELMath_la_SOURCES = MathException.cxx              \
 		         FunctionTag.cxx                \
 		         MatrixTag.cxx                  \
 		         StensorTag.cxx                 \
+		         TensorTag.cxx                  \
+		         TensorConcept.cxx              \
 			 StandardFunctions.cxx
 if TFEL_WIN
 libTFELMath_la_CPPFLAGS = -DTFELMath_EXPORTS

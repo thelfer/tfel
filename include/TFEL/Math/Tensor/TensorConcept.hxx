@@ -1,6 +1,7 @@
-#ifndef _TENSOR_CONCEPT_LIB_
-#define _TENSOR_CONCEPT_LIB_ 1
+#ifndef _TFEL_MATH_TENSOR_CONCEPT_LIB_
+#define _TFEL_MATH_TENSOR_CONCEPT_LIB_ 1
 
+#include <stdexcept>
 #include <ostream>
 #include <string>
 
@@ -14,6 +15,7 @@
 #include"TFEL/TypeTraits/BaseType.hxx"
 
 #include"TFEL/Math/General/Abs.hxx"
+#include"TFEL/Math/Forward/stensor.hxx"
 
 namespace tfel{
 
@@ -41,16 +43,59 @@ namespace tfel{
       static std::string 
       getName(void);
     }; // end of TensorTag
+
+    /*!
+     * exception thrown if invalid index is given
+     */
+    struct TFELMATH_VISIBILITY_EXPORT TensorInvalidIndexException
+      : public std::runtime_error
+    {
+      /*!
+       * constructor
+       * \param[in] i : index
+       */
+      TensorInvalidIndexException(const unsigned short);
+    private:
+      /*!
+       * format the error message
+       * \param[in] i : index
+       */
+      static std::string
+      getErrorMessage(const unsigned short);
+    }; // end of struct TensorInvalidIndexException
     
+    /*!
+     * exception thrown if invalid indexes were given
+     */
+    struct TFELMATH_VISIBILITY_EXPORT TensorInvalidIndexesException
+      : public std::runtime_error
+    {
+      /*!
+       * constructor
+       * \param[in] i : line index
+       * \param[in] j : column index
+       */
+      TensorInvalidIndexesException(const unsigned short,
+				    const unsigned short);
+    private:
+      /*!
+       * format the error message
+       * \param[in] i : line index
+       * \param[in] j : column index
+       */
+      static std::string
+      getErrorMessage(const unsigned short,
+		      const unsigned short);
+    }; // end of struct TensorInvalidIndexesException
+
     template<class T>
     class TensorConcept 
     {
       
       typedef TensorTraits<T> traits;
       static const bool isTemporary = tfel::typetraits::IsTemporary<T>::cond;
-      typedef typename tfel::meta::IF<isTemporary,
-				      typename traits::NumType,
-				      const typename traits::NumType&>::type ValueType;
+      typedef typename traits::NumType NumType;
+      typedef typename tfel::meta::IF<isTemporary,NumType,NumType&>::type ValueType;
       
     protected:
       ~TensorConcept(){};
@@ -58,6 +103,10 @@ namespace tfel{
     public:
 
       typedef TensorTag ConceptTag;
+
+      NumType 
+      operator()(const unsigned short,
+		 const unsigned short) const;
       
       ValueType 
       operator()(const unsigned short) const;
@@ -88,27 +137,32 @@ namespace tfel{
     trace(const T& s);
 
     template<class T>
-    TFEL_MATH_INLINE2
+    TFEL_MATH_INLINE 
     typename tfel::meta::EnableIf<
-      tfel::meta::Implements<T,TensorConcept>::cond,
-      typename TensorTraits<T>::NumType
-    >::type
-    sigmaeq(const T& s);
+      ((tfel::meta::Implements<T,TensorConcept>::cond) &&
+       (TensorTraits<T>::dime==1u)),
+      stensor<1u,typename TensorTraits<T>::NumType>
+      >::type
+    syme(const T& t);
 
     template<class T>
-    TFEL_MATH_INLINE2
+    TFEL_MATH_INLINE 
     typename tfel::meta::EnableIf<
-      tfel::meta::Implements<T,TensorConcept>::cond,
-      typename TensorType<T>::type
-    >::type
-    deviator(const T& s)
-    {
-      typedef typename TensorType<T>::type Res;
-      typedef typename TensorTraits<T>::NumType NumType;
-      typedef typename tfel::typetraits::BaseType<NumType>::type Base;
-      return Res(s-(Base(1)/Base(3))*trace(s)*Res::Id());
-    }
+      ((tfel::meta::Implements<T,TensorConcept>::cond) &&
+       (TensorTraits<T>::dime==2u)),
+      stensor<2u,typename TensorTraits<T>::NumType>
+      >::type
+    syme(const T& t);
 
+    template<class T>
+    TFEL_MATH_INLINE 
+    typename tfel::meta::EnableIf<
+      ((tfel::meta::Implements<T,TensorConcept>::cond) &&
+       (TensorTraits<T>::dime==3u)),
+      stensor<3u,typename TensorTraits<T>::NumType>
+      >::type
+    syme(const T& t);
+    
     // Serialisation operator
     template<typename T>
     std::ostream&
@@ -120,4 +174,4 @@ namespace tfel{
 
 #include"TFEL/Math/Tensor/TensorConcept.ixx"
 
-#endif /* _TENSOR_CONCEPT_LIB_ */
+#endif /* _TFEL_MATH_TENSOR_CONCEPT_LIB_ */

@@ -23,6 +23,8 @@ set(TFELMath_SOURCES
     FunctionTag.cxx
     MatrixTag.cxx
     StensorTag.cxx
+    TensorTag.cxx
+    TensorConcept.cxx
     StandardFunctions.cxx)
 
 set(TFELMathCubicSpline_SOURCES

@@ -137,7 +137,8 @@ namespace tfel{
        * \brief Default Constructor 
        * \warning enabled only if storage is static
        */
-      explicit tensor()
+      TFEL_MATH_INLINE explicit
+      tensor()
       {};
 
       /*!
@@ -145,7 +146,8 @@ namespace tfel{
        * \param T, value used to initialise the components of the tensor 
        * \warning enabled only if storage is static
        */
-      explicit tensor(const T);
+      TFEL_MATH_INLINE explicit
+      tensor(const T);
 
       /*!
        * \brief Default Constructor.
@@ -153,7 +155,8 @@ namespace tfel{
        * const, pointer to a tabular used to initialise the components
        * of the tensor. This tabular is left unchanged.
        */
-      explicit tensor(const typename tfel::typetraits::BaseType<T>::type* const init)
+      TFEL_MATH_INLINE explicit
+      tensor(const typename tfel::typetraits::BaseType<T>::type* const init)
       {
 	typedef typename tfel::typetraits::BaseType<T>::type base;
 	TFEL_STATIC_ASSERT((tfel::typetraits::IsSafelyReinterpretCastableTo<T,base>::cond));
@@ -163,14 +166,14 @@ namespace tfel{
       /*!
        * \brief Copy Constructor
        */
-      tensor(const tensor<N,T>& src)
+      TFEL_MATH_INLINE tensor(const tensor<N,T>& src)
       {
 	tfel::fsalgo::copy<TensorDimeToSize<N>::value>::exe(src.v,this->v);
       }
 
       // Copy Constructor
       template<typename T2,typename Expr>
-      tensor(const TensorExpr<tensor<N,T2>,Expr>& src)
+      TFEL_MATH_INLINE tensor(const TensorExpr<tensor<N,T2>,Expr>& src)
       {
 	TFEL_STATIC_ASSERT((tfel::typetraits::IsSafelyReinterpretCastableTo<T2,T>::cond));
 	vectorToTab<TensorDimeToSize<TensorDimeToSize<N>::value>::value>::exe(src,this->v);
@@ -179,12 +182,14 @@ namespace tfel{
       /*!
        * Write to Tab
        */
-      void write(typename tfel::typetraits::BaseType<T>::type* const) const;
+      TFEL_MATH_INLINE2 void
+      write(typename tfel::typetraits::BaseType<T>::type* const) const;
 
       /*!
        * Import values
        */
       template<typename T2>
+      TFEL_MATH_INLINE2
       typename tfel::meta::EnableIf<
 	tfel::typetraits::IsSafelyReinterpretCastableTo<T2,typename tfel::typetraits::BaseType<T>::type>::cond,
 	void>::type
@@ -193,7 +198,7 @@ namespace tfel{
       /*!
        * Assignement operator
        */
-      tensor<N,T>&
+      TFEL_MATH_INLINE tensor<N,T>&
       operator=(const tensor<N,T>&);
 
       /*!
@@ -209,6 +214,7 @@ namespace tfel{
        * Assignement operator
        */
       template<typename T2,typename Expr>
+      TFEL_MATH_INLINE
       typename tfel::meta::EnableIf<
 	tfel::typetraits::IsAssignableTo<T2,T>::cond,
 	tensor<N,T>&
@@ -217,7 +223,8 @@ namespace tfel{
 
       // Assignement operator
       template<typename T2>
-      TFEL_MATH_INLINE typename tfel::meta::EnableIf<
+      TFEL_MATH_INLINE
+      typename tfel::meta::EnableIf<
 	tfel::typetraits::IsAssignableTo<T2,T>::cond,
 	tensor<N,T>&
       >::type
@@ -225,7 +232,8 @@ namespace tfel{
     
       // Assignement operator
       template<typename T2,typename Expr>
-      TFEL_MATH_INLINE typename tfel::meta::EnableIf<
+      TFEL_MATH_INLINE
+      typename tfel::meta::EnableIf<
 	tfel::typetraits::IsAssignableTo<T2,T>::cond,
 	tensor<N,T>&
       >::type
@@ -233,7 +241,8 @@ namespace tfel{
 
       // Assignement operator
       template<typename T2>
-      TFEL_MATH_INLINE typename tfel::meta::EnableIf<
+      TFEL_MATH_INLINE
+      typename tfel::meta::EnableIf<
 	tfel::typetraits::IsAssignableTo<T2,T>::cond,
 	tensor<N,T>&
       >::type
@@ -241,7 +250,8 @@ namespace tfel{
     
       // Assignement operator
       template<typename T2,typename Expr>
-      TFEL_MATH_INLINE typename tfel::meta::EnableIf<
+      TFEL_MATH_INLINE
+      typename tfel::meta::EnableIf<
 	tfel::typetraits::IsAssignableTo<T2,T>::cond,
 	tensor<N,T>&
       >::type
@@ -274,18 +284,23 @@ namespace tfel{
       /*!
        * change basis
        */
-      void changeBasis(const tmatrix<3u,3u,typename tfel::typetraits::BaseType<T>::type>&);
+      TFEL_MATH_INLINE2 void
+      changeBasis(const tmatrix<3u,3u,typename tfel::typetraits::BaseType<T>::type>&);
 
       /*!
        * Return Identity
        */
       TFEL_MATH_INLINE static const tensor<N,T>& Id(void);
 
-      TFEL_MATH_INLINE const T& operator()(const unsigned short) const;      
-      TFEL_MATH_INLINE       T& operator()(const unsigned short);
+      TFEL_MATH_INLINE const T&
+      operator()(const unsigned short) const;      
+      TFEL_MATH_INLINE       T&
+      operator()(const unsigned short);
 
-      TFEL_MATH_INLINE const T& operator[](const unsigned short) const;      
-      TFEL_MATH_INLINE       T& operator[](const unsigned short);
+      TFEL_MATH_INLINE const T&
+      operator[](const unsigned short) const;      
+      TFEL_MATH_INLINE       T&
+      operator[](const unsigned short);
 
       /*!
        * return the size of a symmetric tensor
@@ -372,8 +387,7 @@ namespace tfel{
 
       
       template<typename InputIterator>
-      TFEL_MATH_INLINE2 
-      void 
+      TFEL_MATH_INLINE2 void 
       copy(const InputIterator src);
 
     protected:

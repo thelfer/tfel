@@ -785,6 +785,7 @@ include/TFEL/Math/Tensor/TFTMCV2.hxx -text
 include/TFEL/Math/Tensor/TFTMRV.hxx -text
 include/TFEL/Math/Tensor/TFTMRV2.hxx -text
 include/TFEL/Math/Tensor/TFTV.hxx -text
+include/TFEL/Math/Tensor/TVFS.hxx -text
 include/TFEL/Math/Tensor/TensorChangeBasis.hxx -text
 include/TFEL/Math/Tensor/TensorConcept.hxx -text
 include/TFEL/Math/Tensor/TensorConcept.ixx -text
@@ -1382,6 +1383,8 @@ src/Math/Sqrt.cxx -text
 src/Math/St2toSt2Tag.cxx -text
 src/Math/StandardFunctions.cxx -text
 src/Math/StensorTag.cxx -text
+src/Math/TensorConcept.cxx -text
+src/Math/TensorTag.cxx -text
 src/Math/Variable.cxx -text
 src/Math/VectorTag.cxx -text
 src/Math/power.cxx -text
