@@ -103,6 +103,42 @@ namespace mfront{
     this->areDynamicallyAllocatedVectorsAllowed_ = b;
   } // end of MFrontUMATInterface::allowDynamicallyAllocatedArrays
 
+  bool
+  MFrontUMATInterface::readBooleanValue(const std::string& key,
+					tfel::utilities::CxxTokenizer::TokensContainer::const_iterator& current,
+					const tfel::utilities::CxxTokenizer::TokensContainer::const_iterator end) const
+  {
+    using namespace std;
+    bool b = true;
+    if(current==end){
+      string msg("UmatInterface::treatKeyword ("+key+") : ");
+      msg += "unexpected end of file";
+      throw(runtime_error(msg));
+    }
+    if(current->value=="true"){
+      b = true;
+    } else if(current->value=="false"){
+      b = false;
+    } else {
+      string msg("UmatInterface::treatKeyword ("+key+") :");
+      msg += "expected 'true' or 'false'";
+      throw(runtime_error(msg));
+    }
+    ++(current); 
+    if(current==end){
+      string msg("UmatInterface::treatKeyword ("+key+") : ");
+      msg += "unexpected end of file";
+      throw(runtime_error(msg));
+    }    
+    if(current->value!=";"){
+      string msg("UmatInterface::treatKeyword : expected ';', read ");
+      msg += current->value;
+      throw(runtime_error(msg));
+    }
+    ++(current);
+    return b;
+  }
+
   std::pair<bool,tfel::utilities::CxxTokenizer::TokensContainer::const_iterator>
   MFrontUMATInterface::treatKeyword(const std::string& key,
 				    tfel::utilities::CxxTokenizer::TokensContainer::const_iterator current,
@@ -110,32 +146,7 @@ namespace mfront{
   {
     using namespace std;
     if(key=="@UMATUseTimeSubStepping"){
-      if(current==end){
-	string msg("UmatInterface::treatKeyword (@UMATUseTimeSubStepping) : ");
-	msg += "unexpected end of file";
-	throw(runtime_error(msg));
-      }
-      if(current->value=="true"){
-	this->useTimeSubStepping = true;
-      } else if(current->value=="false"){
-	this->useTimeSubStepping = false;
-      } else {
-	string msg("UmatInterface::treatKeyword (@UMATUseTimeSubStepping) :");
-	msg += "expected 'true' or 'false'";
-	throw(runtime_error(msg));
-      }
-      ++(current); 
-      if(current==end){
-	string msg("UmatInterface::treatKeyword (@UMATUseTimeSubStepping) : ");
-	msg += "unexpected end of file";
-	throw(runtime_error(msg));
-      }    
-      if(current->value!=";"){
-	string msg("UmatInterface::treatKeyword : expected ';', read ");
-	msg += current->value;
-	throw(runtime_error(msg));
-      }
-      ++(current);
+      this->useTimeSubStepping = this->readBooleanValue(key,current,end);
       return make_pair(true,current);      
     } else if (key=="@UMATMaximumSubStepping"){
       if(!this->useTimeSubStepping){
@@ -178,32 +189,7 @@ namespace mfront{
 	msg += "@UMATMaximumSubStepping";
 	throw(runtime_error(msg));
       }
-      if(current==end){
-	string msg("UmatInterface::treatKeyword (@UMATDoSubSteppingOnInvalidResults) : ");
-	msg += "unexpected end of file";
-	throw(runtime_error(msg));
-      }
-      if(current->value=="true"){
-	this->doSubSteppingOnInvalidResults = true;
-      } else if(current->value=="false"){
-	this->doSubSteppingOnInvalidResults = false;
-      } else {
-	string msg("UmatInterface::treatKeyword (@UMATDoSubSteppingOnInvalidResults) :");
-	msg += "expected 'true' or 'false'";
-	throw(runtime_error(msg));
-      }
-      ++(current);
-      if(current==end){
-	string msg("UmatInterface::treatKeyword (@UMATDoSubSteppingOnInvalidResults) : ");
-	msg += "unexpected end of file";
-	throw(runtime_error(msg));
-      }
-      if(current->value!=";"){
-	string msg("UmatInterface::treatKeyword : expected ';', read ");
-	msg += current->value;
-	throw(runtime_error(msg));
-      }
-      ++(current);
+      this->doSubSteppingOnInvalidResults = this->readBooleanValue(key,current,end);
       return make_pair(true,current);      
     } else if (key=="@UMATFiniteStrainStrategy"){
       if(this->finiteStrainStrategy!=NONE){

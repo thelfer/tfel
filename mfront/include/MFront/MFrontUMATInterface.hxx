@@ -137,6 +137,11 @@ namespace mfront{
     
   protected:
 
+    bool
+    readBooleanValue(const std::string&,
+		     tfel::utilities::CxxTokenizer::TokensContainer::const_iterator&,
+		     const tfel::utilities::CxxTokenizer::TokensContainer::const_iterator) const;
+
     static std::string
     getLibraryName(const std::string&,
 		   const std::string&);
