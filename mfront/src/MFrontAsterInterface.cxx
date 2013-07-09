@@ -73,10 +73,11 @@ namespace mfront{
   MFrontAsterInterface::reset(void)
   {
     SupportedTypes::reset();
-    this->compareToNumericalTangentOperator      = false;
-    this->strainPerturbationValue                = 1.e-6;
-    this->tangentOperatorComparisonCriterium     = 1.e7;
-    this->savesTangentOperator                    = false;
+    this->compareToNumericalTangentOperator  = false;
+    this->strainPerturbationValue            = 1.e-6;
+    this->tangentOperatorComparisonCriterium = 1.e7;
+    this->savesTangentOperator               = false;
+    this->errorReport                        = true;
   }
   
   void 
@@ -221,6 +222,34 @@ namespace mfront{
       ++(current);
       if(current==end){
 	string msg("AsterInterface::treatKeyword (@AsterSaveTangentOperator) : ");
+	msg += "unexpected end of file";
+	throw(runtime_error(msg));
+      }      
+      if(current->value!=";"){
+	string msg("AsterInterface::treatKeyword : expected ';', read ");
+	msg += current->value;
+	throw(runtime_error(msg));
+      }
+      ++(current);
+      return make_pair(true,current);      
+    } else if(key=="@AsterErrorReport"){
+      if(current==end){
+	string msg("AsterInterface::treatKeyword (@AsterErrorReport) : ");
+	msg += "unexpected end of file";
+	throw(runtime_error(msg));
+      }
+      if(current->value=="true"){
+	this->errorReport = true;
+      } else if(current->value=="false"){
+	this->errorReport = false;
+      } else {
+	string msg("AsterInterface::treatKeyword (@AsterErrorReport) :");
+	msg += "expected 'true' or 'false'";
+	throw(runtime_error(msg));
+      }
+      ++(current);
+      if(current==end){
+	string msg("AsterInterface::treatKeyword (@AsterErrorReport) : ");
 	msg += "unexpected end of file";
 	throw(runtime_error(msg));
       }      
@@ -785,6 +814,11 @@ namespace mfront{
       out << "false";
     }
     out << "> >{\n";
+    if(this->errorReport){
+      out << "static const AsterErrorReportPolicy errorReportPolicy = ASTER_WRITEONSTDOUT;\n";
+    } else {
+      out << "static const AsterErrorReportPolicy errorReportPolicy = ASTER_NOERRORREPORT;\n";
+    }
     if(mb.requiresStiffnessTensor()){
       out << "static const bool requiresStiffnessTensor = true;\n";
     } else {

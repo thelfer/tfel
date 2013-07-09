@@ -169,6 +169,8 @@ namespace mfront{
 
     bool savesTangentOperator;
 
+    bool errorReport;
+
     bool verboseMode;
 
     bool debugMode;

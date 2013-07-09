@@ -382,4 +382,13 @@ valeur booléenne \varcpp{true} ou \varcpp{false} demande à ce que la
 matrice de raideur soit stockée à la suite des variables internes (ou
 pas).
 
+\subsubsection{Affichage des erreurs d'intégration}
+
+Par défaut, \mfront{} affiche sur la sortie standard des messages en
+cas d'erreur d'intégration.
+
+Le mot clé \mkey{AsterErrorReport}, qui doit être suivi d'une valeur
+booléenne \varcpp{true} ou \varcpp{false}, permet de modifier ce
+comportement.
+
 \end{document}

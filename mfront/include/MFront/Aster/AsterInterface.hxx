@@ -135,8 +135,8 @@ namespace aster
 	using namespace tfel::meta;
 	using namespace tfel::utilities;
 	typedef Behaviour<AsterModellingHypothesis<N>::value,AsterReal,false> BV;
+	typedef AsterTraits<BV> Traits;
 	try {
-	  typedef AsterTraits<BV> Traits;
 	  typedef typename IF<Traits::type==aster::ISOTROPIC,
 			      AsterIsotropicBehaviourHandler<N,Behaviour>,
 			      AsterOrthotropicBehaviourHandler<N,Behaviour> >::type Handler;
@@ -145,23 +145,33 @@ namespace aster
 		       STRESS);
 	} 
 	catch(const AsterException& e){
-	  AsterInterfaceBase::treatAsterException(Name<BV>::getName(),e);
+	  if(Traits::errorReportPolicy!=ASTER_NOERRORREPORT){
+	    AsterInterfaceBase::treatAsterException(Name<BV>::getName(),e);
+	  }
 	  return -2;
 	}
 	catch(const tfel::material::MaterialException& e){
-	  AsterInterfaceBase::treatMaterialException(Name<BV>::getName(),e);
+	  if(Traits::errorReportPolicy!=ASTER_NOERRORREPORT){
+	    AsterInterfaceBase::treatMaterialException(Name<BV>::getName(),e);
+	  }
 	  return -3;
 	}
 	catch(const tfel::exception::TFELException& e){
-	  AsterInterfaceBase::treatTFELException(Name<BV>::getName(),e);
+	  if(Traits::errorReportPolicy!=ASTER_NOERRORREPORT){
+	    AsterInterfaceBase::treatTFELException(Name<BV>::getName(),e);
+	  }
 	  return -4;
 	}
 	catch(const std::exception& e){
-	  AsterInterfaceBase::treatStandardException(Name<BV>::getName(),e);
+	  if(Traits::errorReportPolicy!=ASTER_NOERRORREPORT){
+	    AsterInterfaceBase::treatStandardException(Name<BV>::getName(),e);
+	  }
 	  return -5;
 	}
 	catch(...){
-	  AsterInterfaceBase::treatUnknownException(Name<BV>::getName());
+	  if(Traits::errorReportPolicy!=ASTER_NOERRORREPORT){
+	    AsterInterfaceBase::treatUnknownException(Name<BV>::getName());
+	  }
 	  return -6;
 	}
 	return 0;
