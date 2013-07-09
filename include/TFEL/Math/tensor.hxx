@@ -176,7 +176,7 @@ namespace tfel{
       TFEL_MATH_INLINE tensor(const TensorExpr<tensor<N,T2>,Expr>& src)
       {
 	TFEL_STATIC_ASSERT((tfel::typetraits::IsSafelyReinterpretCastableTo<T2,T>::cond));
-	vectorToTab<TensorDimeToSize<TensorDimeToSize<N>::value>::value>::exe(src,this->v);
+	vectorToTab<TensorDimeToSize<N>::value>::exe(src,this->v);
       }
 
       /*!

@@ -146,6 +146,66 @@ namespace tfel{
     //   typedef DotProduct<TensorDimeToSize<N>::value,0u> type;
     // };
 
+    /*!
+     * \brief Partial specialisation for tensor
+     * \see   ResultType
+     */
+    template<unsigned short N,typename T,typename T2,
+	     template<unsigned short,typename> class Storage>
+    class ResultType<tensor<N,T>,stensor<N,T2,Storage>,OpPlus>
+    {
+      typedef typename ResultType<T,T2,OpPlus>::type ResBase_;
+    public:
+      typedef typename tfel::meta::IF<tfel::typetraits::IsInvalid<ResBase_>::cond,
+				      tfel::meta::InvalidType,
+				      tensor<N,ResBase_> >::type type;
+    };
+
+    /*!
+     * \brief Partial specialisation for tensor
+     * \see   ResultType
+     */
+    template<unsigned short N,typename T,typename T2,
+	     template<unsigned short,typename> class Storage>
+    class ResultType<stensor<N,T2,Storage>,tensor<N,T>,OpPlus>
+    {
+      typedef typename ResultType<T,T2,OpPlus>::type ResBase_;
+    public:
+      typedef typename tfel::meta::IF<tfel::typetraits::IsInvalid<ResBase_>::cond,
+				      tfel::meta::InvalidType,
+				      tensor<N,ResBase_> >::type type;
+    };
+
+    /*!
+     * \brief Partial specialisation for tensor
+     * \see   ResultType
+     */
+    template<unsigned short N,typename T,typename T2,
+	     template<unsigned short,typename> class Storage>
+    class ResultType<tensor<N,T>,stensor<N,T2,Storage>,OpMinus>
+    {
+      typedef typename ResultType<T,T2,OpMinus>::type ResBase_;
+    public:
+      typedef typename tfel::meta::IF<tfel::typetraits::IsInvalid<ResBase_>::cond,
+				      tfel::meta::InvalidType,
+				      tensor<N,ResBase_> >::type type;
+    };
+
+    /*!
+     * \brief Partial specialisation for tensor
+     * \see   ResultType
+     */
+    template<unsigned short N,typename T,typename T2,
+	     template<unsigned short,typename> class Storage>
+    class ResultType<stensor<N,T2,Storage>,tensor<N,T>,OpMinus>
+    {
+      typedef typename ResultType<T,T2,OpMinus>::type ResBase_;
+    public:
+      typedef typename tfel::meta::IF<tfel::typetraits::IsInvalid<ResBase_>::cond,
+				      tfel::meta::InvalidType,
+				      tensor<N,ResBase_> >::type type;
+    };
+
   } // end of namespace math
 
 } // end of namespace tfel

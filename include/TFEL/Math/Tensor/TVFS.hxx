@@ -16,7 +16,7 @@
 #include"TFEL/Math/Tensor/TensorConcept.hxx"
 #include"TFEL/Math/Tensor/TensorExpr.hxx"
 #include"TFEL/Math/Stensor/StensorConcept.hxx"
-#include"TFEL/Math/tensor.hxx"
+#include"TFEL/Math/Forward/tensor.hxx"
 
 namespace tfel
 {
