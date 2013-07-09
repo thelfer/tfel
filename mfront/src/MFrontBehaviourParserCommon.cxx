@@ -2719,13 +2719,22 @@ namespace mfront{
 
   void MFrontBehaviourParserCommon::writeBehaviourComputePredictionOperator(void)
   {
-    this->behaviourFile << "IntegrationResult computePredictionOperator(const SMType){\n";
-    this->behaviourFile << "using namespace std;\n";
-    this->behaviourFile << "string msg(\"" << this->className<< "::computePredictionOperator : \");\n";
-    this->behaviourFile << "msg +=\"unimplemented feature\";\n";
-    this->behaviourFile << "throw(runtime_error(msg));\n";
-    this->behaviourFile << "return FAILURE;\n";
-    this->behaviourFile << "}\n\n";
+    if(!this->predictionOperator.empty()){
+      this->behaviourFile << "IntegrationResult computePredictionOperator(const SMType smt){\n";
+      this->behaviourFile << "using namespace std;\n";
+      this->behaviourFile << "using namespace tfel::math;\n";
+      this->behaviourFile << this->predictionOperator;
+      this->behaviourFile << "return SUCCESS;\n";
+      this->behaviourFile << "}\n\n";
+    } else {
+      this->behaviourFile << "IntegrationResult computePredictionOperator(const SMType){\n";
+      this->behaviourFile << "using namespace std;\n";
+      this->behaviourFile << "string msg(\"" << this->className<< "::computePredictionOperator : \");\n";
+      this->behaviourFile << "msg +=\"unimplemented feature\";\n";
+      this->behaviourFile << "throw(runtime_error(msg));\n";
+      this->behaviourFile << "return FAILURE;\n";
+      this->behaviourFile << "}\n\n";
+    }
   } // end of MFrontBehaviourParserCommon::writeBehaviourComputePredictionOperator(void)
 
   void MFrontBehaviourParserCommon::writeBehaviourComputeTangentOperator(void)
@@ -3611,6 +3620,34 @@ namespace mfront{
     }
     return this->sourcesLibrairiesDependencies;
   } // end of MFrontBehaviourParserCommon::getLibrariesDependencies
+
+  std::string
+  MFrontBehaviourParserCommon::predictionOperatorVariableModifier(const std::string& var,
+							       const bool addThisPtr)
+  {
+    if(this->mb.isInternalStateVariableIncrementName(var)){
+      this->throwRuntimeError("MFrontBehaviourParserCommon::predictionOperatorVariableModifier : ",
+			      "state variable increment '"+var+"' can't be used in @PredictionOperator");
+    }
+    if(addThisPtr){
+      return "(this->"+var+")";
+    } else {
+      return var;
+    }
+  } // end of MFrontBehaviourParserCommon::predictionOperatorVariableModifier
+
+  void MFrontBehaviourParserCommon::treatPredictionOperator(void)
+  {
+    using namespace std;
+    if(!this->predictionOperator.empty()){
+      this->throwRuntimeError("MFrontBehaviourParserCommon::treatPredictionOperator",
+			      "@PredictionOperator already used.");
+    }
+    this->predictionOperator = this->readNextBlock(makeVariableModifier(*this,&MFrontBehaviourParserCommon::predictionOperatorVariableModifier),
+						   true);
+    this->predictionOperator += "\n";
+    this->hasPredictionOperator = true;
+  } // end of MFrontBehaviourParserCommon::treatPredictionOperator
 
   void
   MFrontBehaviourParserCommon::treatLocalVar(void)

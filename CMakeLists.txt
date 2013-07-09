@@ -5,7 +5,7 @@ include(cmake/modules/tfel.cmake)
 include(cmake/modules/autotools.cmake)
 
 #major and minor version
-tfel_project(2 0-dev)
+tfel_project(2 0 dev)
 set(PACKAGE_BUGREPORT "thomas.helfer@cea.fr")
 
 # type of architecture
@@ -172,7 +172,7 @@ endif(LATEX_COMPILER)
 #set (CPACK_PACKAGE_EXECUTABLES         "mfront;mfront")
 set (CPACK_PACKAGE_INSTALL_DIRECTORY   "${PACKAGE_NAME}-${VERSION}")
 set (CPACK_PACKAGE_NAME                "${PACKAGE_NAME}")
-set (CPACK_PACKAGE_VERSION_PATCH       "0")
+set (CPACK_PACKAGE_VERSION_PATCH       "${TFEL_VERSION_PATCH}")
 set (CPACK_PACKAGE_VERSION_MAJOR       "${TFEL_VERSION_MAJOR}")
 set (CPACK_PACKAGE_VERSION_MINOR       "${TFEL_VERSION_MINOR}")
 set (CPACK_PACKAGE_VENDOR              "CEA")

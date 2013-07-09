@@ -1,10 +1,11 @@
-macro(tfel_project tfel_version_major tfel_version_minor)
+macro(tfel_project tfel_version_major tfel_version_minor tfel_version_path)
   project("tfel")
   set(PACKAGE_NAME "tfel")
   set(VERSION "${tfel_version_major}.${tfel_version_minor}")
   # the version number.
   set(TFEL_VERSION_MAJOR "${tfel_version_major}")
   set(TFEL_VERSION_MINOR "${tfel_version_minor}")
+  set(TFEL_VERSION_PATCH "${tfel_version_patch}")
 endmacro(tfel_project)
 
 macro(install_header dir file)

@@ -84,6 +84,9 @@ namespace mfront{
     virtual std::string
     standardModifier(const std::string&,const bool);
     
+    virtual std::string
+    predictionOperatorVariableModifier(const std::string&,const bool);
+
     virtual void
     readStringList(std::vector<std::string>&);
     
@@ -164,6 +167,9 @@ namespace mfront{
 
     virtual void
       treatPhysicalBounds(void);
+
+    virtual void
+    treatPredictionOperator(void);
 
     virtual void
     treatBounds(BoundsDescription&);
@@ -530,6 +536,7 @@ namespace mfront{
     bool isConsistantTangentOperatorSymmetric;
     bool hasPredictionOperator;
     bool hasTimeStepScalingFactor;
+    std::string predictionOperator;
 
     MechanicalBehaviourDescription mb;
 

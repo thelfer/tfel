@@ -43,7 +43,6 @@ namespace mfront{
     this->mb.getLocalVariables().push_back(VarHandler("stress","seq",1u,0u));
     this->mb.getLocalVariables().push_back(VarHandler("stress","seq_e",1u,0u));
     this->mb.getLocalVariables().push_back(VarHandler("StrainStensor","n",1u,0u));
-    //    this->hasPredictionOperator = true;
     this->hasConsistantTangentOperator = true;
     this->isConsistantTangentOperatorSymmetric = true;
   }

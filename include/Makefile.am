@@ -76,6 +76,7 @@ nobase_include_HEADERS= TFEL/Macros.hxx                                         
 			TFEL/Math/Forward/Complex.hxx                                                                \
 			TFEL/Math/Forward/tvector.hxx                                                                \
 			TFEL/Math/Forward/tmatrix.hxx                                                                \
+			TFEL/Math/Forward/tensor.hxx                                                                 \
 			TFEL/Math/Forward/stensor.hxx                                                                \
 			TFEL/Math/Forward/st2tost2.hxx                                                               \
 			TFEL/Math/Forward/Function.hxx                                                               \
@@ -162,7 +163,21 @@ nobase_include_HEADERS= TFEL/Macros.hxx                                         
 			TFEL/Math/RungeKutta/RungeKutta4.ixx		                                             \
 			TFEL/Math/RungeKutta/RungeKutta42.ixx		                                             \
 			TFEL/Math/RungeKutta/RungeKutta54.ixx		                                             \
-			TFEL/Math/Tensor/TVFS.hxx                                                                    \
+			TFEL/Math/Tensor/tensor.ixx								     \
+			TFEL/Math/Tensor/tensorResultType.hxx							     \
+			TFEL/Math/Tensor/TensorChangeBasis.hxx							     \
+			TFEL/Math/Tensor/TensorExpr.hxx								     \
+			TFEL/Math/Tensor/TensorConcept.hxx							     \
+			TFEL/Math/Tensor/TensorConcept.ixx							     \
+			TFEL/Math/Tensor/TensorSizeToDime.hxx							     \
+			TFEL/Math/Tensor/TensorConceptOperations.hxx						     \
+			TFEL/Math/Tensor/TensorConceptOperations.ixx						     \
+			TFEL/Math/Tensor/TVFS.hxx								     \
+			TFEL/Math/Tensor/TFTV.hxx								     \
+			TFEL/Math/Tensor/TFTMRV.hxx								     \
+			TFEL/Math/Tensor/TFTMRV2.hxx								     \
+			TFEL/Math/Tensor/TFTMCV2.hxx								     \
+			TFEL/Math/Tensor/TFTMCV.hxx								     \
 			TFEL/Math/Stensor/Internals/StensorChangeBasis.hxx                                           \
 			TFEL/Math/Stensor/Internals/StensorExport.hxx                                                \
 			TFEL/Math/Stensor/Internals/StensorExport.ixx                                                \
@@ -297,6 +312,7 @@ nobase_include_HEADERS= TFEL/Macros.hxx                                         
 			TFEL/Math/tvector.hxx			                                                     \
 			TFEL/Math/tmatrix.hxx			                                                     \
 			TFEL/Math/stensor.hxx			                                                     \
+			TFEL/Math/tensor.hxx			                                                     \
 			TFEL/Math/vector.hxx				                                             \
 			TFEL/Math/MathException.hxx			                                             \
 			TFEL/Math/Function/Id.hxx                                                                    \

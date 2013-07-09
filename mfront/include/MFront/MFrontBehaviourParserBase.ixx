@@ -72,6 +72,7 @@ namespace mfront{
     this->registerNewCallBack("@OrthotropicBehaviour",&Child::treatOrthotropicBehaviour);
     this->registerNewCallBack("@IsotropicElasticBehaviour",&Child::treatIsotropicElasticBehaviour);
     this->registerNewCallBack("@IsotropicBehaviour",&Child::treatIsotropicBehaviour);
+    this->registerNewCallBack("@PredictionOperator",&Child::treatPredictionOperator);
     this->registerNewCallBack("@Private",&Child::treatPrivate);
     this->registerNewCallBack("@Sources",&Child::treatSources);
     this->registerNewCallBack("@UpdateAuxiliaryStateVars",

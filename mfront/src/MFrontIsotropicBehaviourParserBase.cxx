@@ -233,17 +233,21 @@ namespace mfront{
 
   void MFrontIsotropicBehaviourParserBase::writeBehaviourComputePredictionOperator(void)
   {
-    this->behaviourFile << "IntegrationResult computePredictionOperator(const SMType smt){\n";
-    this->behaviourFile << "using namespace std;\n";
-    this->behaviourFile << "if((smt==ELASTIC)||(smt==SECANTOPERATOR)){\n";
-    this->behaviourFile << "Dt = (this->lambda)*Stensor4::IxI()+2*(this->mu)*Stensor4::Id();\n";
-    this->behaviourFile << "} else {";
-    this->behaviourFile << "string msg(\"" << this->className<< "::computePredictionOperator : \");\n";
-    this->behaviourFile << "msg +=\"unimplemented feature\";\n";
-    this->behaviourFile << "throw(runtime_error(msg));\n";
-    this->behaviourFile << "}\n\n";
-    this->behaviourFile << "return SUCCESS;\n";
-    this->behaviourFile << "}\n\n";
+    if(this->predictionOperator.empty()){
+      this->behaviourFile << "IntegrationResult computePredictionOperator(const SMType smt){\n";
+      this->behaviourFile << "using namespace std;\n";
+      this->behaviourFile << "if((smt==ELASTIC)||(smt==SECANTOPERATOR)){\n";
+      this->behaviourFile << "Dt = (this->lambda)*Stensor4::IxI()+2*(this->mu)*Stensor4::Id();\n";
+      this->behaviourFile << "} else {\n";
+      this->behaviourFile << "string msg(\"" << this->className<< "::computePredictionOperator : \");\n";
+      this->behaviourFile << "msg +=\"unimplemented feature\";\n";
+      this->behaviourFile << "throw(runtime_error(msg));\n";
+      this->behaviourFile << "}\n\n";
+      this->behaviourFile << "return SUCCESS;\n";
+      this->behaviourFile << "}\n\n";
+    } else {
+      MFrontBehaviourParserCommon::writeBehaviourComputePredictionOperator();
+    }
   } // end of MFrontIsotropicBehaviourParserBase::writeBehaviourComputePredictionOperator(void)
 
   void 
