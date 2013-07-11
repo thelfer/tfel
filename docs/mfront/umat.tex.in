@@ -335,6 +335,15 @@ où \(E\) est le module d'\nom{Young} du matériau et où \(\varepsilon\)
 est choisi égal à \(10^{-12}\)\footnote{Cette valeur n'est aujourd'hui
   pas modifiable}.
 
+\section{Génération automatique d'un fichier {\tt mtest} en cas d'échec}
+
+Le mot clé
+\mkeyb{UMATGenerateMTestFileOnFailure}{UMAT\-Generate\-MTest\-File\-On\-Failure}
+est suivi d'une valeur booléenne. Si cette valeur est vraie, un
+fichier {\tt mtest} sera généré automatiquement en cas d'échec de
+l'intégration.
+
+
 \clearpage
 \newpage
 \section{Utilisation des lois écrites en petites

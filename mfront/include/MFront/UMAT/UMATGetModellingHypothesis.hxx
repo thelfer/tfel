@@ -8,8 +8,9 @@
 #ifndef _LIB_MFRONT_UMAT_UMATGETMODELLINGHYPOTHESIS_H_
 #define _LIB_MFRONT_UMAT_UMATGETMODELLINGHYPOTHESIS_H_ 
 
-#include"MFront/UMAT/UMATConfig.hxx"
 #include"TFEL/Material/ModellingHypothesis.hxx"
+
+#include"MFront/UMAT/UMATConfig.hxx"
 #include"MFront/UMAT/UMAT.hxx"
 
 namespace umat

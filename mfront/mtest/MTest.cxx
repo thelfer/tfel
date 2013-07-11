@@ -1345,7 +1345,7 @@ namespace mfront
       i = p->value;
     } else {
       string msg("MTest::handleMaterialProperty : ");
-      msg += "unknown interface '"+i+"'";
+      msg += "unknown interface '"+p->value+"'";
       throw(runtime_error(msg));
     }
     ++p;

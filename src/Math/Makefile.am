@@ -83,7 +83,6 @@ if TFEL_WIN
 libTFELMathParser_la_CPPFLAGS = -DTFELMathParser_EXPORTS
 endif
 
-
 libTFELMathCubicSpline_la_DEPENDENCIES = libTFELMath.la
 libTFELMathKriging_la_DEPENDENCIES     = libTFELMath.la
 libTFELMathParser_la_DEPENDENCIES      = libTFELMath.la \

@@ -59,6 +59,7 @@ set(mfront_SOURCES
     MFrontCppTestLawInterface.cxx
     MFrontExcelLawInterface.cxx
     MFrontLaTeXLawInterface.cxx
+    MFrontUMATInterfaceBase.cxx
     VariableModifier.cxx
     WordAnalyser.cxx
     ${PROJECT_BINARY_DIR}/mfront/src/MFrontHeader.cxx)
@@ -81,6 +82,11 @@ if(HAVE_FORTRAN)
 	${mfront_SOURCES})
 endif(HAVE_FORTRAN)
 
+tfel_library(MTestFileGenerator
+  MTestFileGeneratorBase.cxx
+  UMATSmallStrainMTestFileGenerator.cxx)
+target_link_libraries(MTestFileGenerator)
+
 if(HAVE_CASTEM)
     set(mfront_SOURCES
 	MFrontUMATInterface.cxx
@@ -97,8 +103,9 @@ if(HAVE_CASTEM)
 	UMATException.cxx)
     tfel_library(UMATInterface ${UMATInterface_SOURCES})
     target_link_libraries(UMATInterface
-	                  TFELUtilities
-			  TFELException)
+      MTestFileGenerator
+      TFELUtilities
+      TFELException)
 endif(HAVE_CASTEM)
 
 if(HAVE_ASTER)
@@ -114,6 +121,7 @@ if(HAVE_ASTER)
     AsterTangentOperator.cxx)
   tfel_library(AsterInterface ${AsterInterface_SOURCES})
   target_link_libraries(AsterInterface
+    MTestFileGenerator
     TFELUtilities
     TFELException)
 endif(HAVE_ASTER)

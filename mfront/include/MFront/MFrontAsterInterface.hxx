@@ -12,38 +12,18 @@
 #include<fstream>
 
 #include"TFEL/Utilities/CxxTokenizer.hxx"
-#include"MFront/SupportedTypes.hxx"
-#include"MFront/VarHandler.hxx"
-#include"MFront/MechanicalBehaviourDescription.hxx"
-#include"MFront/MFrontBehaviourVirtualInterface.hxx"
+#include"MFront/MFrontUMATInterfaceBase.hxx"
 
 namespace mfront{
 
   struct MFrontAsterInterface
-    : public SupportedTypes,
-      public MFrontBehaviourVirtualInterface
+    : public MFrontUMATInterfaceBase
   {
     static std::string 
     getName(void);
     
     MFrontAsterInterface();
     
-    virtual void
-    setVerboseMode(void);
-
-    virtual void
-    setDebugMode(void);
-
-    virtual void
-    setWarningMode(void);
-
-    /*!
-     * set if dynamically allocated arrays are allowed
-     * \param[in] b : boolean
-     */
-    virtual void
-    allowDynamicallyAllocatedArrays(const bool);
-
     /*!
      * \param const std::string&, library
      * \param const std::string&, material
@@ -53,16 +33,6 @@ namespace mfront{
     getGlobalIncludes(const std::string&,
 		      const std::string&,
 		      const std::string&);
-
-    /*!
-     * \param const std::string&, library
-     * \param const std::string&, material
-     * \param const std::string&, class
-     */
-    virtual std::map<std::string,std::vector<std::string> >
-    getGlobalDependencies(const std::string&,
-			  const std::string&,
-			  const std::string&);
 
     /*!
      * \param const std::string&, library
@@ -94,31 +64,10 @@ namespace mfront{
 			     const std::string&,
 			     const std::string&);
 
-    std::pair<bool,tfel::utilities::CxxTokenizer::TokensContainer::const_iterator>
+    virtual std::pair<bool,tfel::utilities::CxxTokenizer::TokensContainer::const_iterator>
     treatKeyword(const std::string&,
 		 tfel::utilities::CxxTokenizer::TokensContainer::const_iterator,
 		 const tfel::utilities::CxxTokenizer::TokensContainer::const_iterator);
-    
-    virtual void 
-    exportMechanicalData(std::ofstream&,
-			      const std::string&,
-			      const MechanicalBehaviourDescription&);
-    
-    virtual void
-    writeBehaviourConstructor(std::ofstream&,
-			      const std::string&,
-			      const MechanicalBehaviourDescription&,
-			      const std::string&);
-    
-    virtual void
-    writeBehaviourDataConstructor(std::ofstream&,
-				  const std::string&,
-				  const MechanicalBehaviourDescription&);
-    
-    virtual void
-    writeIntegrationDataConstructor(std::ofstream&,
-				    const std::string&,
-				    const MechanicalBehaviourDescription&);
 
     virtual void
     endTreatement(const std::string&,
@@ -131,35 +80,25 @@ namespace mfront{
 		  const std::map<std::string,std::string>&,
 		  const MechanicalBehaviourDescription&);
 
-    void
+    virtual void
     reset(void);
 
-    ~MFrontAsterInterface();
+    virtual ~MFrontAsterInterface();
     
   protected:
 
-    static std::string
+    virtual std::string
     getLibraryName(const std::string&,
-		   const std::string&);
+		   const std::string&) const;
 
-    std::vector<std::string>
-    getGlossaryNames(const VarContainer&,
-		     const std::map<std::string,std::string>&,
-		     const std::map<std::string,std::string>&);
+    virtual std::string
+    getInterfaceName(void) const;
 
-    void
-    appendGlossaryNames(std::vector<std::string>&,
-			const VarContainer&,
-			const std::map<std::string,std::string>&,
-			const std::map<std::string,std::string>&);
+    virtual std::string
+    getFunctionName(const std::string&) const;
 
-
-    void
-    writeGlossaryNames(std::ostream&,
-		       const std::vector<std::string>&,
-		       const std::string&,
-		       const std::string&,
-		       const unsigned short = 0u);
+    virtual void
+    writeMTestFileGeneratorSetModellingHypothesis(std::ostream&) const;
 
     bool   compareToNumericalTangentOperator;
 
@@ -170,12 +109,6 @@ namespace mfront{
     bool savesTangentOperator;
 
     bool errorReport;
-
-    bool verboseMode;
-
-    bool debugMode;
-
-    bool warningMode;
 
   }; // end of MFrontAsterInterface
 

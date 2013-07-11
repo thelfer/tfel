@@ -178,7 +178,7 @@ namespace aster
 	  }
 	}
 	this->behaviour.checkBounds();
-	this->behaviour.AsterExportStateData(STRESS,STATEV);
+	this->behaviour.ASTERexportStateData(STRESS,STATEV);
 	if((*DDSOE>0.5)||(*DDSOE<-0.5)){
 	  ConsistantTangentOperatorHandler::exe(this->behaviour,DDSOE);
 	}

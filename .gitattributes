@@ -993,6 +993,7 @@ mfront/include/MFront/MFrontBehaviourVirtualInterface.hxx -text
 mfront/include/MFront/MFrontCLawInterface.hxx -text
 mfront/include/MFront/MFrontCLawInterfaceBase.hxx -text
 mfront/include/MFront/MFrontCastemLawInterface.hxx -text
+mfront/include/MFront/MFrontConfig.hxx -text
 mfront/include/MFront/MFrontCppLawInterface.hxx -text
 mfront/include/MFront/MFrontCppTestLawInterface.hxx -text
 mfront/include/MFront/MFrontDefaultParser.hxx -text
@@ -1035,6 +1036,7 @@ mfront/include/MFront/MFrontPythonLawInterface.hxx -text
 mfront/include/MFront/MFrontRungeKuttaParser.hxx -text
 mfront/include/MFront/MFrontSearchFile.hxx -text
 mfront/include/MFront/MFrontUMATInterface.hxx -text
+mfront/include/MFront/MFrontUMATInterfaceBase.hxx -text
 mfront/include/MFront/MFrontVirtualParser.hxx -text
 mfront/include/MFront/MTest.hxx -text
 mfront/include/MFront/MTestAnalyticalTest.hxx -text
@@ -1044,6 +1046,7 @@ mfront/include/MFront/MTestCastemEvolution.hxx -text
 mfront/include/MFront/MTestConfig.hxx -text
 mfront/include/MFront/MTestConstraint.hxx -text
 mfront/include/MFront/MTestEvolution.hxx -text
+mfront/include/MFront/MTestFileGeneratorBase.hxx -text
 mfront/include/MFront/MTestFunctionEvolution.hxx -text
 mfront/include/MFront/MTestImposedStrain.hxx -text
 mfront/include/MFront/MTestImposedStress.hxx -text
@@ -1076,6 +1079,7 @@ mfront/include/MFront/UMAT/UMATOrthotropicBehaviourHandler.hxx -text
 mfront/include/MFront/UMAT/UMATOutOfBoundsPolicy.hxx -text
 mfront/include/MFront/UMAT/UMATRotationMatrix.hxx -text
 mfront/include/MFront/UMAT/UMATTraits.hxx -text
+mfront/include/MFront/UMATSmallStrainMTestFileGenerator.hxx -text
 mfront/include/MFront/VarHandler.hxx -text
 mfront/include/MFront/VariableBoundsDescription.hxx -text
 mfront/include/MFront/VariableModifier.hxx -text
@@ -1157,6 +1161,8 @@ mfront/src/MFrontPythonLawInterface.cxx -text
 mfront/src/MFrontRungeKuttaParser.cxx -text
 mfront/src/MFrontSearchFile.cxx -text
 mfront/src/MFrontUMATInterface.cxx -text
+mfront/src/MFrontUMATInterfaceBase.cxx -text
+mfront/src/MTestFileGeneratorBase.cxx -text
 mfront/src/Makefile.am -text
 mfront/src/MechanicalBehaviourDescription.cxx -text
 mfront/src/ParserBase.cxx -text
@@ -1171,6 +1177,7 @@ mfront/src/UMATGetModellingHypothesis.cxx -text
 mfront/src/UMATInterfaceBase.cxx -text
 mfront/src/UMATOutOfBoundsPolicy.cxx -text
 mfront/src/UMATRotationMatrix.cxx -text
+mfront/src/UMATSmallStrainMTestFileGenerator.cxx -text
 mfront/src/VarHandler.cxx -text
 mfront/src/VariableModifier.cxx -text
 mfront/src/WordAnalyser.cxx -text

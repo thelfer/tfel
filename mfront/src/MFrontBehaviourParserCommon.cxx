@@ -107,6 +107,16 @@ namespace mfront{
 	}
       }
     }
+    for(ps=this->mb.getExternalStateVariables().begin();
+	(ps!=this->mb.getExternalStateVariables().end())&&(!(b1&&b2));++ps){
+      if(ps->arraySize>1){
+	if(this->useDynamicallyAllocatedVector(ps->arraySize)){
+	  b2 = true;
+	} else {
+	  b1 = true;
+	}
+      }
+    }
   } // end of MFrontBehaviourParserCommon::requiresTVectorOrVectorIncludes
 
   void MFrontBehaviourParserCommon::setVerboseMode(void)

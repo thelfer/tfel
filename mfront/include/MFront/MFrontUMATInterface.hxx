@@ -11,17 +11,12 @@
 #include<string>
 #include<fstream>
 
-#include"TFEL/Utilities/CxxTokenizer.hxx"
-#include"MFront/SupportedTypes.hxx"
-#include"MFront/VarHandler.hxx"
-#include"MFront/MechanicalBehaviourDescription.hxx"
-#include"MFront/MFrontBehaviourVirtualInterface.hxx"
+#include"MFront/MFrontUMATInterfaceBase.hxx"
 
 namespace mfront{
 
   struct MFrontUMATInterface
-    : public SupportedTypes,
-      public MFrontBehaviourVirtualInterface
+    : public MFrontUMATInterfaceBase
   {
     
     enum FiniteStrainStrategy{
@@ -33,19 +28,6 @@ namespace mfront{
     getName(void);
     
     MFrontUMATInterface();
-    
-    void setVerboseMode(void);
-
-    void setDebugMode(void);
-
-    void setWarningMode(void);
-
-    /*!
-     * set if dynamically allocated arrays are allowed
-     * \param[in] b : boolean
-     */
-    virtual void
-    allowDynamicallyAllocatedArrays(const bool);
 
     /*!
      * \param const std::string&, library
@@ -56,16 +38,6 @@ namespace mfront{
     getGlobalIncludes(const std::string&,
 		      const std::string&,
 		      const std::string&);
-
-    /*!
-     * \param const std::string&, library
-     * \param const std::string&, material
-     * \param const std::string&, class
-     */
-    virtual std::map<std::string,std::vector<std::string> >
-    getGlobalDependencies(const std::string&,
-			  const std::string&,
-			  const std::string&);
 
     /*!
      * \param const std::string&, library
@@ -96,30 +68,13 @@ namespace mfront{
     getLibrariesDependencies(const std::string&,
 			     const std::string&,
 			     const std::string&);
-
-    std::pair<bool,tfel::utilities::CxxTokenizer::TokensContainer::const_iterator>
+    
+    virtual std::pair<bool,tfel::utilities::CxxTokenizer::TokensContainer::const_iterator>
     treatKeyword(const std::string&,
 		 tfel::utilities::CxxTokenizer::TokensContainer::const_iterator,
 		 const tfel::utilities::CxxTokenizer::TokensContainer::const_iterator);
     
-    void exportMechanicalData(std::ofstream&,
-			      const std::string&,
-			      const MechanicalBehaviourDescription&);
-    
-    void writeBehaviourConstructor(std::ofstream&,
-				   const std::string&,
-				   const MechanicalBehaviourDescription&,
-				   const std::string&);
-    
-    void writeBehaviourDataConstructor(std::ofstream&,
-				       const std::string&,
-				       const MechanicalBehaviourDescription&);
-    
-    void writeIntegrationDataConstructor(std::ofstream&,
-					 const std::string&,
-					 const MechanicalBehaviourDescription&);
-
-    void
+    virtual void
     endTreatement(const std::string&,
 		  const std::string&,
 		  const std::string&,
@@ -130,21 +85,16 @@ namespace mfront{
 		  const std::map<std::string,std::string>&,
 		  const MechanicalBehaviourDescription&);
 
-    void
+    virtual void
     reset(void);
 
     ~MFrontUMATInterface();
     
   protected:
 
-    bool
-    readBooleanValue(const std::string&,
-		     tfel::utilities::CxxTokenizer::TokensContainer::const_iterator&,
-		     const tfel::utilities::CxxTokenizer::TokensContainer::const_iterator) const;
-
-    static std::string
+    virtual std::string
     getLibraryName(const std::string&,
-		   const std::string&);
+		   const std::string&) const;
 
     static std::string
     treatScalar(const std::string& s);
@@ -164,37 +114,21 @@ namespace mfront{
     static std::string
     treatStateVarStensor(const std::string& s,const unsigned short);
 
-    std::vector<std::string>
-    getGlossaryNames(const VarContainer&,
-		     const std::map<std::string,std::string>&,
-		     const std::map<std::string,std::string>&);
+    virtual std::string
+    getInterfaceName(void) const;
 
-    void
-    appendGlossaryNames(std::vector<std::string>&,
-			const VarContainer&,
-			const std::map<std::string,std::string>&,
-			const std::map<std::string,std::string>&);
+    virtual std::string
+    getFunctionName(const std::string&) const;
 
-
-    void
-    writeGlossaryNames(std::ostream&,
-		       const std::vector<std::string>&,
-		       const std::string&,
-		       const std::string&,
-		       const unsigned short = 0u);
+    virtual void
+    writeMTestFileGeneratorSetModellingHypothesis(std::ostream&) const;
 
     FiniteStrainStrategy finiteStrainStrategy;
-
-    bool verboseMode;
-
-    bool debugMode;
-
-    bool warningMode;
 
     bool useTimeSubStepping;
 
     bool doSubSteppingOnInvalidResults;
-    
+
     unsigned short maximumSubStepping;
 
   }; // end of MFrontUMATInterface

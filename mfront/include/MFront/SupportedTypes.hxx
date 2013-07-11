@@ -26,8 +26,6 @@ namespace mfront
 
     enum TypeFlag{Scalar,TVector,Stensor,Tensor};
 
-    struct TypeSize;
-
     struct TFEL_VISIBILITY_EXPORT TypeSize
     {
 
@@ -58,6 +56,8 @@ namespace mfront
       ushort
       getTensorSize() const;
 
+      bool isNull(void) const;
+      
     private:
 
       friend std::ostream& 

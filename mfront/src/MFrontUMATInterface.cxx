@@ -21,22 +21,6 @@
 
 namespace mfront{
 
-  static const std::string&
-  MFrontUMATInterfaceGetName(const std::map<std::string,std::string>& glossaryNames,
-			     const std::map<std::string,std::string>& entryNames,
-			     const std::string& v)
-  {
-    using namespace std;
-    map<string,string>::const_iterator p2;
-    map<string,string>::const_iterator p3;
-    if((p2=glossaryNames.find(v))!=glossaryNames.end()){
-      return p2->second;
-    } else if((p3=entryNames.find(v))!=entryNames.end()){
-      return p3->second;
-    }
-    return v;
-  } // end of MFrontUMATInterfaceGetName
-
   std::string
   MFrontUMATInterface::getName(void)
   {
@@ -45,7 +29,7 @@ namespace mfront{
 
   std::string
   MFrontUMATInterface::getLibraryName(const std::string& library,
-				      const std::string& material)
+				      const std::string& material) const
   {
     using namespace std;
     string lib;
@@ -61,10 +45,19 @@ namespace mfront{
     return lib;
   } // end of MFrontUMATInterface::getLibraryName
 
+  std::string
+  MFrontUMATInterface::getInterfaceName(void) const
+  {
+    return "Umat";
+  } // end of MFrontUMATInterface::getInterfaceName
+
+  std::string
+  MFrontUMATInterface::getFunctionName(const std::string& name) const
+  {
+    return "umat"+makeLowerCase(name);
+  } // end of MFrontUMATInterface::getLibraryName
+
   MFrontUMATInterface::MFrontUMATInterface()
-    : verboseMode(false),
-      debugMode(false),
-      warningMode(false)
   {
     this->reset();
   }
@@ -72,71 +65,11 @@ namespace mfront{
   void
   MFrontUMATInterface::reset(void)
   {
-    SupportedTypes::reset();
-    this->finiteStrainStrategy = NONE;
-    this->useTimeSubStepping   = false;
-    this->maximumSubStepping   = 0u;
+    MFrontUMATInterfaceBase::reset();
+    this->finiteStrainStrategy          = NONE;
+    this->useTimeSubStepping            = false;
+    this->maximumSubStepping            = 0u;
     this->doSubSteppingOnInvalidResults = false;
-  }
-  
-  void 
-  MFrontUMATInterface::setVerboseMode(void)
-  {
-    this->verboseMode = true;
-  }
-
-  void 
-  MFrontUMATInterface::setWarningMode(void)
-  {
-    this->warningMode = true;
-  }
-
-  void 
-  MFrontUMATInterface::setDebugMode(void)
-  {
-    this->debugMode = true;
-  }
-
-  void
-  MFrontUMATInterface::allowDynamicallyAllocatedArrays(const bool b)
-  {
-    this->areDynamicallyAllocatedVectorsAllowed_ = b;
-  } // end of MFrontUMATInterface::allowDynamicallyAllocatedArrays
-
-  bool
-  MFrontUMATInterface::readBooleanValue(const std::string& key,
-					tfel::utilities::CxxTokenizer::TokensContainer::const_iterator& current,
-					const tfel::utilities::CxxTokenizer::TokensContainer::const_iterator end) const
-  {
-    using namespace std;
-    bool b = true;
-    if(current==end){
-      string msg("UmatInterface::treatKeyword ("+key+") : ");
-      msg += "unexpected end of file";
-      throw(runtime_error(msg));
-    }
-    if(current->value=="true"){
-      b = true;
-    } else if(current->value=="false"){
-      b = false;
-    } else {
-      string msg("UmatInterface::treatKeyword ("+key+") :");
-      msg += "expected 'true' or 'false'";
-      throw(runtime_error(msg));
-    }
-    ++(current); 
-    if(current==end){
-      string msg("UmatInterface::treatKeyword ("+key+") : ");
-      msg += "unexpected end of file";
-      throw(runtime_error(msg));
-    }    
-    if(current->value!=";"){
-      string msg("UmatInterface::treatKeyword : expected ';', read ");
-      msg += current->value;
-      throw(runtime_error(msg));
-    }
-    ++(current);
-    return b;
   }
 
   std::pair<bool,tfel::utilities::CxxTokenizer::TokensContainer::const_iterator>
@@ -145,7 +78,10 @@ namespace mfront{
 				    const tfel::utilities::CxxTokenizer::TokensContainer::const_iterator end)
   {
     using namespace std;
-    if(key=="@UMATUseTimeSubStepping"){
+    if (key=="@UMATGenerateMTestFileOnFailure"){
+      this->generateMTestFile = this->readBooleanValue(key,current,end);
+      return make_pair(true,current);      
+    } else if(key=="@UMATUseTimeSubStepping"){
       this->useTimeSubStepping = this->readBooleanValue(key,current,end);
       return make_pair(true,current);      
     } else if (key=="@UMATMaximumSubStepping"){
@@ -228,255 +164,6 @@ namespace mfront{
     return make_pair(false,current);
 
   } // end of treatKeyword
-
-  void 
-  MFrontUMATInterface::exportMechanicalData(std::ofstream& behaviourDataFile,
-					    const std::string&,
-					    const MechanicalBehaviourDescription& mb)
-  {
-    using namespace std;
-    const VarContainer& stateVarsHolder          = mb.getStateVariables();
-    const VarContainer& auxiliaryStateVarsHolder = mb.getAuxiliaryStateVariables();
-    VarContainer::const_iterator p;
-    if((!stateVarsHolder.empty())||
-       (!auxiliaryStateVarsHolder.empty())){
-      behaviourDataFile << "void\n"
-			<< "UMATexportStateData("
-			<< "Type * const UMATstress_,Type * const UMATstatev) const\n";
-    } else {
-      behaviourDataFile << "void\n"
-			<< "UMATexportStateData("
-			<< "Type * const UMATstress_,Type * const) const\n";
-    }
-    behaviourDataFile << "{\n";
-    behaviourDataFile << "using namespace tfel::math;\n";
-    behaviourDataFile << "this->sig.exportTab(UMATstress_);\n";
-    if((!stateVarsHolder.empty())||
-       (!auxiliaryStateVarsHolder.empty())){
-      SupportedTypes::TypeSize o;
-      o = this->exportResults(behaviourDataFile,
-			      stateVarsHolder,
-			      "UMATstatev",
-			      mb.useQt());
-      this->exportResults(behaviourDataFile,
-			  auxiliaryStateVarsHolder,
-			  "UMATstatev",
-			  mb.useQt(),o);
-    }
-    behaviourDataFile << "} // end of UMATExportStateData\n";
-    behaviourDataFile << endl;
-  }
-  
-  void
-  MFrontUMATInterface::writeBehaviourConstructor(std::ofstream& behaviourFile,
-						 const std::string& className,
-						 const MechanicalBehaviourDescription& mb,
-						 const std::string& initStateVarsIncrements)
-  {
-    using namespace std;
-    VarContainer::const_iterator p;
-    behaviourFile << "/*\n";
-    behaviourFile << " * \\brief constructor for the umat interface\n";
-    behaviourFile << " *\n";
-    behaviourFile << " * \\param const Type *const UMATdt_, time increment\n";
-    behaviourFile << " * \\param const Type *const UMATstress_, stress tensor\n";
-    behaviourFile << " * \\param const Type *const UMATstran, strain tensor\n";
-    behaviourFile << " * \\param const Type *const UMATdstran, strain increment tensor\n";
-    behaviourFile << " * \\param const Type *const UMATT_, temperature\n";
-    behaviourFile << " * \\param const Type *const UMATdT_, temperature increment\n";
-    behaviourFile << " * \\param const Type *const UMATmat, material properties\n";
-    behaviourFile << " * \\param const Type *const UMATint_vars, state variables\n"; 
-    behaviourFile << " * \\param const Type *const UMAText_vars, external state variables\n";
-    behaviourFile << " * \\param const Type *const UMATdext_vars,";
-    behaviourFile << " external state variables increments\n";
-    behaviourFile << " */\n";
-    behaviourFile << className 
-		  << "(const Type* const UMATdt_,const Type* const UMATstress_,\n"
-		  <<  "const Type* const UMATstran, const Type* const UMATdstran,\n" 
-		  <<  "const Type* const UMATT_,const Type* const UMATdT_,\n"
-		  <<  "const Type* const UMATmat,const Type* const UMATint_vars,\n"
-		  <<  "const Type* const UMAText_vars,const Type* const UMATdext_vars)\n";
-    if(mb.useQt()){
-      behaviourFile << ": " << className 
-		    << "BehaviourData<N,Type,use_qt>(UMATstress_,UMATstran,UMATT_,UMATmat,\n"
-		    << "UMATint_vars,UMAText_vars),\n";
-      behaviourFile << className 
-		    << "IntegrationData<N,Type,use_qt>(UMATdt_,UMATdstran,UMATdT_,UMATdext_vars)";
-    } else {
-      behaviourFile << ": " << className 
-		    << "BehaviourData<N,Type,false>(UMATstress_,UMATstran,UMATT_,UMATmat,\n"
-		    << "UMATint_vars,UMAText_vars),\n";
-      behaviourFile << className 
-		    << "IntegrationData<N,Type,false>(UMATdt_,UMATdstran,UMATdT_,UMATdext_vars)";
-    }
-    behaviourFile << initStateVarsIncrements;
-  }
-  
-  void 
-  MFrontUMATInterface::writeBehaviourDataConstructor(std::ofstream& behaviourDataFile,
-						     const std::string& className,
-						     const MechanicalBehaviourDescription& mb)
-  {
-    using namespace std;
-    const VarContainer& coefsHolder              = mb.getMaterialProperties();
-    const VarContainer& stateVarsHolder          = mb.getStateVariables();
-    const VarContainer& auxiliaryStateVarsHolder = mb.getAuxiliaryStateVariables();
-    const VarContainer& externalStateVarsHolder  = mb.getExternalStateVariables();
-    VarContainer::const_iterator p;
-    behaviourDataFile << "/*\n";
-    behaviourDataFile << " * \\brief constructor for the umat interface\n";
-    behaviourDataFile << " *\n";
-    behaviourDataFile << " * \\param const Type *const UMATstress_, stress tensor\n";
-    behaviourDataFile << " * \\param const Type *const UMATstran, strain tensor\n";
-    behaviourDataFile << " * \\param const Type *const UMATT_, temperature\n";
-    behaviourDataFile << " * \\param const Type *const UMATmat, material properties\n";
-    behaviourDataFile << " * \\param const Type *const UMATint_vars, state variables\n"; 
-    behaviourDataFile << " * \\param const Type *const UMAText_vars, external state variables\n";
-    behaviourDataFile << " */\n";
-    behaviourDataFile << className << "BehaviourData"
-		      << "(const Type* const UMATstress_,const Type* const UMATstran,\n" 
-		      <<  "const Type* const UMATT_,const Type* const";
-    if(!coefsHolder.empty()){
-      behaviourDataFile << " UMATmat,\n";
-    } else {
-      behaviourDataFile << ",\n";
-    }
-    behaviourDataFile <<  "const Type* const";
-    if((!stateVarsHolder.empty())||
-       (!auxiliaryStateVarsHolder.empty())){
-      behaviourDataFile << " UMATint_vars,\n";
-    } else {
-      behaviourDataFile << ",\n";
-    }
-    behaviourDataFile << "const Type* const";
-    if(!externalStateVarsHolder.empty()){
-      behaviourDataFile << " UMAText_vars";
-    }
-    behaviourDataFile << ")\n";
-    behaviourDataFile << ": T(*UMATT_)";
-    SupportedTypes::TypeSize o;
-    this->writeVariableInitializersInBehaviourDataConstructorI(behaviourDataFile,
-							       coefsHolder,
-							       "UMATmat","","");
-    o = this->writeVariableInitializersInBehaviourDataConstructorI(behaviourDataFile,
-								   stateVarsHolder,
-								   "UMATint_vars","","");
-    this->writeVariableInitializersInBehaviourDataConstructorI(behaviourDataFile,
-							       auxiliaryStateVarsHolder,
-							       "UMATint_vars","","",o);
-    this->writeVariableInitializersInBehaviourDataConstructorI(behaviourDataFile,
-							       externalStateVarsHolder,
-							       "UMAText_vars","","");
-    behaviourDataFile << "\n{\n";
-    map<DrivingVariable,
-	ThermodynamicForce>::const_iterator pm;
-    SupportedTypes::TypeSize ov;
-    SupportedTypes::TypeSize of;
-    for(pm=mb.getMainVariables().begin();pm!=mb.getMainVariables().end();++pm){
-      const DrivingVariable&    v = pm->first;
-      const ThermodynamicForce& f = pm->second;
-      if(this->getTypeFlag(f.type)==SupportedTypes::Stensor){
-	if(pm!=mb.getMainVariables().begin()){
-	  behaviourDataFile << f.name << ".importTab(UMATstress_+" << of <<");\n";
-	} else {
-	  behaviourDataFile << f.name << ".importTab(UMATstress_);\n";
-	}
-      } else {
-	string msg("MFrontUMATInterface::writeBehaviourDataConstructor : ");
-	msg += "unsupported forces type";
-	throw(runtime_error(msg));
-      }
-      if(this->getTypeFlag(v.type)==SupportedTypes::Stensor){
-	if(pm!=mb.getMainVariables().begin()){
-	  behaviourDataFile << v.name << ".importVoigt(UMATstran+" << ov <<");\n";
-	} else {
-	  behaviourDataFile << v.name << ".importVoigt(UMATstran);\n";
-	}
-      } else {
-	string msg("MFrontUMATInterface::writeBehaviourDataConstructor : ");
-	msg += "unsupported forces type";
-	throw(runtime_error(msg));
-      }
-      ov += this->getTypeSize(v.type,1u);
-      of += this->getTypeSize(f.type,1u);
-    }
-    this->writeVariableInitializersInBehaviourDataConstructorII(behaviourDataFile,
-								coefsHolder,
-								"UMATmat","","");
-    o = this->writeVariableInitializersInBehaviourDataConstructorII(behaviourDataFile,
-								    stateVarsHolder,
-								    "UMATint_vars","","");
-    this->writeVariableInitializersInBehaviourDataConstructorII(behaviourDataFile,
-								auxiliaryStateVarsHolder,
-								"UMATint_vars","","",o);
-    this->writeVariableInitializersInBehaviourDataConstructorII(behaviourDataFile,
-								externalStateVarsHolder,
-								"UMAText_vars","","");
-    behaviourDataFile << "}\n\n";
-  }
-  
-  void 
-  MFrontUMATInterface::writeIntegrationDataConstructor(std::ofstream& behaviourIntegrationFile,
-						       const std::string& className,
-						       const MechanicalBehaviourDescription& mb)
-  {
-    using namespace std;
-    const VarContainer& externalStateVarsHolder  = mb.getExternalStateVariables();
-    VarContainer::const_iterator p;
-    behaviourIntegrationFile << "/*\n";
-    behaviourIntegrationFile << " * \\brief constructor for the umat interface\n";
-    behaviourIntegrationFile << " * \\param const Type *const UMATdt_, time increment\n";
-    behaviourIntegrationFile << " * \\param const Type *const UMATdstran, strain increment tensor\n";
-    behaviourIntegrationFile << " * \\param const Type *const UMATdT_, temperature increment\n";
-    behaviourIntegrationFile << " * \\param const Type *const UMATdext_vars,";
-    behaviourIntegrationFile << " external state variables increments\n";
-    behaviourIntegrationFile << " *\n";
-    behaviourIntegrationFile << " */\n";
-    behaviourIntegrationFile << className << "IntegrationData"
-			     << "(const Type* const UMATdt_,const Type* const UMATdstran,\n" 
-			     <<  "const Type* const UMATdT_,const Type* const";
-    if(!externalStateVarsHolder.empty()){
-      behaviourIntegrationFile << " UMATdext_vars)\n";
-    } else {
-      behaviourIntegrationFile << ")\n";
-    }
-    behaviourIntegrationFile << ": dt(*UMATdt_),dT(*UMATdT_)";
-    if(!externalStateVarsHolder.empty()){
-      this->writeVariableInitializersInBehaviourDataConstructorI(behaviourIntegrationFile,
-								 externalStateVarsHolder,
-								 "UMATdext_vars","d","");
-    }
-    behaviourIntegrationFile << "\n{\n";
-    map<DrivingVariable,
-	ThermodynamicForce>::const_iterator pm;
-    SupportedTypes::TypeSize ov;
-    for(pm=mb.getMainVariables().begin();pm!=mb.getMainVariables().end();++pm){
-      const DrivingVariable&    v = pm->first;
-      if(!v.increment_known){
-	string msg("MFrontUMATInterface::writeIntegrationDataConstructor : ");
-	msg += "unsupported driving variable '"+v.name+"'";
-	throw(runtime_error(msg));
-      }
-      if(this->getTypeFlag(v.type)==SupportedTypes::Stensor){
-	if(pm!=mb.getMainVariables().begin()){
-	  behaviourIntegrationFile << "d" << v.name << ".importVoigt(UMATdstran);\n";
-	} else {
-	  behaviourIntegrationFile << "d" << v.name << ".importVoigt(UMATdstran+" << ov << ");\n";
-	}
-      } else {
-	string msg("MFrontUMATInterface::writeIntegrationDataConstructor : ");
-	msg += "unsupported driving variable '"+v.name+"'";
-	throw(runtime_error(msg));
-      }
-      ov += this->getTypeSize(v.type,1u);
-    }
-    if(!externalStateVarsHolder.empty()){
-      this->writeVariableInitializersInBehaviourDataConstructorII(behaviourIntegrationFile,
-								  externalStateVarsHolder,
-								  "UMATdext_vars","d","");
-    }
-    behaviourIntegrationFile << "}\n\n";
-  }
 
   std::string
   MFrontUMATInterface::treatScalar(const std::string& s)
@@ -583,77 +270,6 @@ namespace mfront{
     return res;
   }
 
-  std::vector<std::string>
-  MFrontUMATInterface::getGlossaryNames(const VarContainer& v,
-					const std::map<std::string,std::string>& glossaryNames,
-					const std::map<std::string,std::string>& entryNames)
-  {
-    using namespace std;
-    vector<string> n;
-    this->appendGlossaryNames(n,v,glossaryNames,entryNames);
-    return n;
-  }
-
-  void
-  MFrontUMATInterface::appendGlossaryNames(std::vector<std::string>& n,
-					   const VarContainer& v,
-					   const std::map<std::string,std::string>& glossaryNames,
-					   const std::map<std::string,std::string>& entryNames)
-  {
-    using namespace std;
-    VarContainer::const_iterator p;
-    for(p=v.begin();p!=v.end();++p){
-      const string name = MFrontUMATInterfaceGetName(glossaryNames,entryNames,p->name);
-      if(p->arraySize==1u){
-	n.push_back(name);
-      } else {
-	for(unsigned short i=0;i!=p->arraySize;++i){
-	  ostringstream nb;
-	  nb << '[' << i << ']';
-	  n.push_back(name+nb.str());
-	}
-      }
-    }
-  } // end of MFrontUMATInterface::appendGlossaryNames
-
-
-  void
-  MFrontUMATInterface::writeGlossaryNames(std::ostream& f,
-					  const std::vector<std::string>& n,
-					  const std::string& name,
-					  const std::string& array,
-					  const unsigned short o)
-  {
-    using namespace std;
-    if(o>n.size()){
-      string msg("MFrontUMATInterface::writeGlossaryNames : ");
-      msg += "number of names given is lesser than the offset";
-      throw(runtime_error(msg));
-    }
-    if(n.size()!=o){
-      vector<string>::size_type s = 0u;
-      vector<string>::const_iterator p = n.begin()+o;      
-      f << "MFRONT_SHAREDOBJ const char * umat"
-	<< makeLowerCase(name)
-	<< "_" << array << "[" << n.size()-o <<  "] = {";
-      while(p!=n.end()){
-	f << '"' << *p << '"';
-	if(++p!=n.end()){
-	  if(s%5==0){
-	    f << ",\n";
-	  } else {
-	    f << ",";
-	  }
-	}
-      }
-      f << "};\n";
-    } else {
-      f << "MFRONT_SHAREDOBJ const char * const * umat"
-	<< makeLowerCase(name)
-	<< "_" << array << " = 0;\n\n";
-    }      
-  } // end of MFrontUMATInterface::writeGlossaryNames
-
   void
   MFrontUMATInterface::endTreatement(const std::string& file,
 				     const std::string& library,
@@ -673,7 +289,6 @@ namespace mfront{
     const VarContainer& auxiliaryStateVarsHolder = mb.getAuxiliaryStateVariables();
     const VarContainer& externalStateVarsHolder  = mb.getExternalStateVariables();
     const VarContainer& parametersHolder         = mb.getParameters();
-    string header = "UMAT";
     string name;
     string umatFctName;
     string tmp;
@@ -695,17 +310,6 @@ namespace mfront{
       msg += "- an orthotropic behaviour must have an orthotropic elastic behaviour";
       throw(runtime_error(msg));
     }
-
-    if(!library.empty()){
-      header += "_";
-      header += makeUpperCase(library);
-    }
-    if(!material.empty()){
-      header += "_";
-      header += makeUpperCase(material);
-    }
-    header += "_";
-    header += makeUpperCase(className);
 
     if(!library.empty()){
       name += library;
@@ -792,8 +396,11 @@ namespace mfront{
     out << "* \\date   "  << date       << endl;
     out << "*/\n\n";
 
-    out << "#ifndef _LIB_"+header+"_HXX_\n";
-    out << "#define _LIB_"+header+"_HXX_\n\n";
+    const string header = this->getHeaderDefine(library,
+						material,
+						className);
+    out << "#ifndef " << header << "\n";
+    out << "#define " << header << "\n\n";
     
     out << "#include\"castem.h\"\n";
     out << "#ifdef umat" << endl;
@@ -811,19 +418,7 @@ namespace mfront{
     out << "#include\"TFEL/Material/" << className << ".hxx\"\n";
     out << "#endif /* __cplusplus */\n\n";
 
-    out << "#ifdef WIN32\n";
-    out << "#include <windows.h>\n";
-    out << "#ifndef MFRONT_STDCALL\n";
-    out << "#define MFRONT_STDCALL __stdcall\n"; 
-    out << "#endif /* MFRONT_STDCALL */\n"; 
-    out << "#else\n";
-    out << "#ifndef MFRONT_STDCALL\n";
-    out << "#define MFRONT_STDCALL\n"; 
-    out << "#endif /* MFRONT_STDCALL */\n"; 
-    out << "#endif /* WIN32 */\n\n";
-    out << "#ifndef MFRONT_SHAREDOBJ\n";
-    out << "#define MFRONT_SHAREDOBJ TFEL_VISIBILITY_EXPORT\n"; 
-    out << "#endif /* MFRONT_SHAREDOBJ */\n\n"; 
+    this->writeVisibilityDefines(out);
 
     out << "#define umat" 
 	<< makeUpperCase(name)
@@ -919,39 +514,7 @@ namespace mfront{
 	<< tokenize(file,dirSeparator()).back()
 	<< "\";\n\n";
 
-    bool rp = false;
-    bool ip = false;
-    bool up = false;
-    if(!parametersHolder.empty()){
-      for(pp=parametersHolder.begin();pp!=parametersHolder.end();++pp){
-	if(pp->type=="real"){
-	  rp = true;
-	} else if(pp->type=="int"){
-	  ip = true;
-	} else if(pp->type=="ushort"){
-	  up = true;
-	} else {
-	  string msg("MFrontUMATInterface::endTreatement : ");
-	  msg += "unsupport parameter type '"+p->type+"'.\n";
-	  throw(runtime_error(msg));
-	} 
-      }
-      if(rp){
-	out << "MFRONT_SHAREDOBJ int MFRONT_STDCALL\numat"
-	    << makeLowerCase(name)
-	    << "_setParameter(const char *const,const double);\n\n";
-      }
-      if(ip){
-	out << "MFRONT_SHAREDOBJ int MFRONT_STDCALL\numat"
-	    << makeLowerCase(name)
-	    << "_setIntegerParameter(const char *const,const int);\n\n";
-      }
-      if(up){
-	out << "MFRONT_SHAREDOBJ int MFRONT_STDCALL\numat"
-	    << makeLowerCase(name)
-	    << "_setIntegerParameter(const char *const,const unsigned short);\n\n";
-      }
-    }
+    this->writeSetParametersFunctionsDeclarations(out,name,parametersHolder);
 
     out << "MFRONT_SHAREDOBJ void MFRONT_STDCALL\numat"
 	<< makeLowerCase(name)
@@ -980,7 +543,7 @@ namespace mfront{
     out << "}\n";
     out << "#endif /* __cplusplus */\n\n";
 
-    out << "#endif /* __LIB_"+header+"_HXX_ */\n";
+    out << "#endif /* " << header << " */\n";
 
     out.close();
 
@@ -1004,24 +567,26 @@ namespace mfront{
     out << "* \\date   "  << date       << endl;
     out << "*/\n\n";
 
-    if(!parametersHolder.empty()){
-      out << "#include<iostream>\n";
-      out << "#include<stdexcept>\n";
+    this->getExtraSrcIncludes(out,mb);
+    if(this->generateMTestFile){
+      if(this->finiteStrainStrategy==NONE){
+	out << "#include\"MFront/UMAT/UMATGetModellingHypothesis.hxx\"\n";
+      } else {
+	if(this->generateMTestFile){
+	  string msg("MFrontUMATInterface::endTreatement : "
+		     "generating mtest file is not supported "
+		     "upon large strains");
+	  throw(runtime_error(msg));
+	}
+      }
     }
-
-    out << "#include\"TFEL/Material/" << className << ".hxx\"\n";
     if(this->finiteStrainStrategy==FINITEROTATIONSMALLSTRAIN){
       out << "#include\"MFront/UMAT/UMATFiniteStrain.hxx\"\n\n";
     }
     out << "#include\"MFront/UMAT/UMATInterface.hxx\"\n\n";
+    out << "#include\"TFEL/Material/" << className << ".hxx\"\n";
     out << "#include\"MFront/UMAT/umat" << name << ".hxx\"\n\n";
-
     out << "extern \"C\"{\n\n";
-
-    // this->srcFile << "MFRONT_SHAREDOBJ const char *\n";
-    // this->srcFile << name << "_src = \""
-    // 		  << tokenize(file,systemCall::dirSeparator()).back()
-    // 		  << "\";\n\n";
 
     out << "MFRONT_SHAREDOBJ unsigned short umat"
       	<< makeLowerCase(name)
@@ -1149,54 +714,8 @@ namespace mfront{
 							entryNames),
 			     name,"ExternalStateVariables");
     
-    if(rp){
-      out << "MFRONT_SHAREDOBJ int MFRONT_STDCALL\numat"
-	  << makeLowerCase(name)
-	  << "_setParameter(const char *const key,const double value){\n"
-	  << "using namespace std;\n"
-	  << "using namespace tfel::material;\n"
-	  << className << "ParametersInitializer& i = " << className << "ParametersInitializer::get();\n"
-	  << "try{\n"
-	  << "i.set(key,value);\n"
-	  << "} catch(runtime_error& e){"
-	  << "cerr << e.what() << endl;\n"
-	  << "return 0;\n"
-	  << "}\n"
-	  << "return 1;\n"
-	  << "}\n\n";
-    }
-    if(ip){
-      out << "MFRONT_SHAREDOBJ int MFRONT_STDCALL\numat"
-	  << makeLowerCase(name)
-	  << "_setIntegerParameter(const char *const key,const int value){\n"
-	  << "using namespace std;\n"
-	  << "using namespace tfel::material;\n"
-	  << className << "ParametersInitializer& i = " << className << "ParametersInitializer::get();\n"
-	  << "try{\n"
-	  << "i.set(key,value);\n"
-	  << "} catch(runtime_error& e){"
-	  << "cerr << e.what() << endl;\n"
-	  << "return 0;\n"
-	  << "}\n"
-	  << "return 1;\n"
-	  << "}\n\n";
-    }
-    if(up){
-      out << "MFRONT_SHAREDOBJ int MFRONT_STDCALL\numat"
-	  << makeLowerCase(name)
-	  << "_setUnsignedShortParameter(const char *const key,const unsigned short value){\n"
-	  << "using namespace std;\n"
-	  << "using namespace tfel::material;\n"
-	  << className << "ParametersInitializer& i = " << className << "ParametersInitializer::get();\n"
-	  << "try{\n"
-	  << "i.set(key,value);\n"
-	  << "} catch(runtime_error& e){"
-	  << "cerr << e.what() << endl;\n"
-	  << "return 0;\n"
-	  << "}\n"
-	  << "return 1;\n"
-	  << "}\n\n";
-    }
+    this->writeSetParametersFunctionsImplantations(out,name,className,
+						   parametersHolder);
     
     if(this->finiteStrainStrategy==FINITEROTATIONSMALLSTRAIN){
       out << "MFRONT_SHAREDOBJ unsigned short umat"
@@ -1207,6 +726,12 @@ namespace mfront{
     }
 
     if(this->finiteStrainStrategy==FINITEROTATIONSMALLSTRAIN){
+      if(this->generateMTestFile){
+	string msg("MFrontUMATInterface::endTreatement : "
+		   "generating mtest file is not supported "
+		   "upon large strains");
+	throw(runtime_error(msg));
+      }
       out << "MFRONT_SHAREDOBJ void MFRONT_STDCALL\numat"
 	  << makeLowerCase(name)
 	  << "(const umat::UMATInt *const NTENS, const umat::UMATReal *const DTIME,\n"
@@ -1266,11 +791,17 @@ namespace mfront{
 	  << "umat::UMATReal *const STRESS,const umat::UMATInt    *const NDI,\n"
 	  << "umat::UMATInt    *const KINC)\n";
       out << "{\n";
+      this->generateMTestFile1(out);
       out << "umat::UMATInterface<tfel::material::" << className 
 	  << ">::exe(NTENS,DTIME,DROT,DDSOE,STRAN,DSTRAN,TEMP,DTEMP,PROPS,NPROPS,"
 	  << "PREDEF,DPRED,STATEV,NSTATV,STRESS,NDI,KINC);\n";
+      if(this->generateMTestFile){
+	out << "if(*KINC!=0){\n";
+	this->generateMTestFile2(out,library,material,name,mb,
+				 glossaryNames,entryNames);
+	out << "}\n";
+      }
       out << "}\n\n";
-      
       out << "MFRONT_SHAREDOBJ void MFRONT_STDCALL\n" << umatFctName
 	  << "(const umat::UMATInt *const NTENS, const umat::UMATReal *const DTIME,\n"
 	  << "const umat::UMATReal *const DROT,  umat::UMATReal *const DDSOE,\n"
@@ -1818,18 +1349,15 @@ namespace mfront{
     out.close();
 
   } // end of MFrontUMATInterface::endTreatement
+
+  void
+  MFrontUMATInterface::writeMTestFileGeneratorSetModellingHypothesis(std::ostream& out) const
+  {
+    out << "mg.setModellingHypothesis(umat::getModellingHypothesis(*NDI));\n";
+  }
   
   MFrontUMATInterface::~MFrontUMATInterface()
   {}
-
-  std::map<std::string,std::vector<std::string> >
-  MFrontUMATInterface::getGlobalDependencies(const std::string&,
-					     const std::string&,
-					     const std::string&)
-  {
-    using namespace std;
-    return map<string,vector<string> >();
-  } // end of MFrontUMATInterface::getGlobalDependencies
 
   std::map<std::string,std::vector<std::string> >
   MFrontUMATInterface::getGlobalIncludes(const std::string& library,

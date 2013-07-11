@@ -57,6 +57,7 @@ mfront_SOURCES = main.cxx                                             \
 		 MFrontCppTestLawInterface.cxx                        \
 		 MFrontExcelLawInterface.cxx                          \
 		 MFrontLaTeXLawInterface.cxx                          \
+		 MFrontUMATInterfaceBase.cxx                          \
 		 VariableModifier.cxx                                 \
 		 WordAnalyser.cxx
 
@@ -91,12 +92,21 @@ mfront_LDADD   = -L$(top_builddir)/src/Material  -lTFELMaterial   \
 if !TFEL_WIN
 mfront_LDADD   += -ldl -lpthread
 mfront_LDFLAGS  = -export-dynamic
-endif
+endif # !TFEL_WIN
 
-# UMAT Interfaces
+lib_LTLIBRARIES = libMTestFileGenerator.la
+libMTestFileGenerator_la_SOURCES = MTestFileGeneratorBase.cxx            \
+				   UMATSmallStrainMTestFileGenerator.cxx
+libMTestFileGenerator_la_LIBADD  = -L$(top_builddir)/src/Utilities -lTFELUtilities \
+				       -L$(top_builddir)/src/Exception -lTFELException
+libMTestFileGenerator_la_CPPFLAGS = -DMTestFileGenerator_EXPORTS
+if TFEL_WIN
+libMTestFileGenerator_la_LDFLAGS  = -no-undefined -avoid-version -Wl,--add-stdcall-alias -Wl,--kill-at
+endif # TFEL_WIN
 
+# UMAT Interface
 if HAVE_CASTEM
-lib_LTLIBRARIES = libUMATInterface.la
+lib_LTLIBRARIES += libUMATInterface.la
 libUMATInterface_la_SOURCES = UMATInterfaceBase.cxx                 \
 			      UMATFiniteStrain.cxx                  \
 			      UMATComputeStiffnessTensor.cxx        \
@@ -105,21 +115,19 @@ libUMATInterface_la_SOURCES = UMATInterfaceBase.cxx                 \
 		              UMATOutOfBoundsPolicy.cxx             \
 		              UMATGetModellingHypothesis.cxx        \
 		              UMATException.cxx
-libUMATInterface_la_LIBADD  = -L$(top_builddir)/src/Utilities -lTFELUtilities \
-			      -L$(top_builddir)/src/Exception -lTFELException
+libUMATInterface_la_LIBADD  = -L$(top_builddir)/src/Utilities -lTFELUtilities          \
+			      -L$(top_builddir)/src/Exception -lTFELException          \
+			      -L$(top_builddir)/mfront/src    -lMTestFileGenerator
+libUMATInterface_la_DEPENDENCIES = libMTestFileGenerator.la
 libUMATInterface_la_CPPFLAGS = -DUMATInterface_EXPORTS
 if TFEL_WIN
 libUMATInterface_la_LDFLAGS  = -no-undefined -avoid-version -Wl,--add-stdcall-alias -Wl,--kill-at
-endif
+endif # TFEL_WIN
+endif # HAVE_CASTEM
 
-endif
-
+# Aster Interface
 if HAVE_ASTER
-if HAVE_CASTEM
-    lib_LTLIBRARIES += libAsterInterface.la
-else
-    lib_LTLIBRARIES  = libAsterInterface.la
-endif
+lib_LTLIBRARIES += libAsterInterface.la
 libAsterInterface_la_SOURCES = AsterInterfaceBase.cxx                 \
 		               AsterException.cxx                     \
 		               AsterTangentOperator.cxx               \
@@ -127,16 +135,15 @@ libAsterInterface_la_SOURCES = AsterInterfaceBase.cxx                 \
 			       AsterComputeStiffnessTensor.cxx        \
 			       AsterComputeThermalExpansionTensor.cxx
 
-# AsterOutOfBoundsPolicy.cxx             \
-# AsterGetModellingHypothesis.cxx
-libAsterInterface_la_LIBADD  = -L$(top_builddir)/src/Utilities -lTFELUtilities \
-			      -L$(top_builddir)/src/Exception -lTFELException
-libAsterInterface_la_CPPFLAGS = -DAsterInterface_EXPORTS
+libAsterInterface_la_LIBADD  = -L$(top_builddir)/src/Utilities -lTFELUtilities          \
+			       -L$(top_builddir)/src/Exception -lTFELException          \
+			       -L$(top_builddir)/mfront/src    -lMTestFileGenerator
+libAsterInterface_la_DEPENDENCIES = libMTestFileGenerator.la
+libAsterInterface_la_CPPFLAGS     = -DAsterInterface_EXPORTS
 if TFEL_WIN
 libAsterInterface_la_LDFLAGS  = -no-undefined -avoid-version -Wl,--add-stdcall-alias -Wl,--kill-at
-endif
-
-endif
+endif # TFEL_WIN
+endif # HAVE_ASTER
 
 
 EXTRA_DIST = CMakeLists.txt

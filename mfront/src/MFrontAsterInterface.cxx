@@ -21,22 +21,6 @@
 
 namespace mfront{
 
-  static const std::string&
-  MFrontAsterInterfaceGetName(const std::map<std::string,std::string>& glossaryNames,
-			      const std::map<std::string,std::string>& entryNames,
-			      const std::string& v)
-  {
-    using namespace std;
-    map<string,string>::const_iterator p2;
-    map<string,string>::const_iterator p3;
-    if((p2=glossaryNames.find(v))!=glossaryNames.end()){
-      return p2->second;
-    } else if((p3=entryNames.find(v))!=entryNames.end()){
-      return p3->second;
-    }
-    return v;
-  } // end of MFrontAsterInterfaceGetName
-
   std::string
   MFrontAsterInterface::getName(void)
   {
@@ -45,7 +29,7 @@ namespace mfront{
 
   std::string
   MFrontAsterInterface::getLibraryName(const std::string& library,
-				      const std::string& material)
+				      const std::string& material) const
   {
     using namespace std;
     string lib;
@@ -61,10 +45,19 @@ namespace mfront{
     return lib;
   } // end of MFrontAsterInterface::getLibraryName
 
+  std::string
+  MFrontAsterInterface::getInterfaceName(void) const
+  {
+    return "Aster";
+  } // end of MFrontAsterInterface::getInterfaceName
+
+  std::string
+  MFrontAsterInterface::getFunctionName(const std::string& name) const
+  {
+    return "aster"+makeLowerCase(name);
+  } // end of MFrontAsterInterface::getLibraryName
+
   MFrontAsterInterface::MFrontAsterInterface()
-    : verboseMode(false),
-      debugMode(false),
-      warningMode(false)
   {
     this->reset();
   }
@@ -72,37 +65,13 @@ namespace mfront{
   void
   MFrontAsterInterface::reset(void)
   {
-    SupportedTypes::reset();
+    MFrontUMATInterfaceBase::reset();
     this->compareToNumericalTangentOperator  = false;
     this->strainPerturbationValue            = 1.e-6;
     this->tangentOperatorComparisonCriterium = 1.e7;
     this->savesTangentOperator               = false;
     this->errorReport                        = true;
   }
-  
-  void 
-  MFrontAsterInterface::setVerboseMode(void)
-  {
-    this->verboseMode = true;
-  }
-
-  void 
-  MFrontAsterInterface::setWarningMode(void)
-  {
-    this->warningMode = true;
-  }
-
-  void 
-  MFrontAsterInterface::setDebugMode(void)
-  {
-    this->debugMode = true;
-  }
-
-  void
-  MFrontAsterInterface::allowDynamicallyAllocatedArrays(const bool b)
-  {
-    this->areDynamicallyAllocatedVectorsAllowed_ = b;
-  } // end of MFrontAsterInterface::allowDynamicallyAllocatedArrays
 
   std::pair<bool,tfel::utilities::CxxTokenizer::TokensContainer::const_iterator>
   MFrontAsterInterface::treatKeyword(const std::string& key,
@@ -110,7 +79,10 @@ namespace mfront{
 				    const tfel::utilities::CxxTokenizer::TokensContainer::const_iterator end)
   {
     using namespace std;
-    if(key=="@AsterCompareToNumericalTangentOperator"){
+    if (key=="@AsterGenerateMTestFileOnFailure"){
+      this->generateMTestFile = this->readBooleanValue(key,current,end);
+      return make_pair(true,current);      
+    } else if(key=="@AsterCompareToNumericalTangentOperator"){
       if(current==end){
 	string msg("AsterInterface::treatKeyword (@AsterCompareToNumericalTangentOperator) : ");
 	msg += "unexpected end of file";
@@ -264,380 +236,6 @@ namespace mfront{
     return make_pair(false,current);
   } // end of treatKeyword
 
-  void 
-  MFrontAsterInterface::exportMechanicalData(std::ofstream& behaviourDataFile,
-					    const std::string&,
-					    const MechanicalBehaviourDescription& mb)
-  {
-    using namespace std;
-    const VarContainer&   stateVarsHolder        = mb.getStateVariables();
-    const VarContainer& auxiliaryStateVarsHolder = mb.getAuxiliaryStateVariables();
-    VarContainer::const_iterator p;
-    if((!stateVarsHolder.empty())||
-       (!auxiliaryStateVarsHolder.empty())){
-      behaviourDataFile << "void\n"
-			<< "AsterExportStateData("
-			<< "Type * const Asterstress_,Type * const Asterstatev) const\n";
-    } else {
-      behaviourDataFile << "void\n"
-			<< "AsterExportStateData("
-			<< "Type * const Asterstress_,Type * const) const\n";
-    }
-    behaviourDataFile << "{\n";
-    behaviourDataFile << "using namespace tfel::math;\n";
-    behaviourDataFile << "this->sig.exportTab(Asterstress_);\n";
-    if((!stateVarsHolder.empty())||
-       (!auxiliaryStateVarsHolder.empty())){
-      SupportedTypes::TypeSize o;
-      o = this->exportResults(behaviourDataFile,
-			      stateVarsHolder,
-			      "Asterstatev",
-			      mb.useQt());
-      this->exportResults(behaviourDataFile,
-			  auxiliaryStateVarsHolder,
-			  "Asterstatev",
-			  mb.useQt(),o);
-    }
-    behaviourDataFile << "} // end of AsterExportStateData\n";
-    behaviourDataFile << endl;
-  }
-  
-  void
-  MFrontAsterInterface::writeBehaviourConstructor(std::ofstream& behaviourFile,
-						 const std::string& className,
-						 const MechanicalBehaviourDescription& characteristic,
-						 const std::string& initStateVarsIncrements)
-  {
-    using namespace std;
-    VarContainer::const_iterator p;
-    behaviourFile << "/*\n";
-    behaviourFile << " * \\brief constructor for the aster interface\n";
-    behaviourFile << " *\n";
-    behaviourFile << " * \\param const Type *const Asterdt_, time increment\n";
-    behaviourFile << " * \\param const Type *const Asterstress_, stress tensor\n";
-    behaviourFile << " * \\param const Type *const Asterstran, strain tensor\n";
-    behaviourFile << " * \\param const Type *const Asterdstran, strain increment tensor\n";
-    behaviourFile << " * \\param const Type *const AsterT_, temperature\n";
-    behaviourFile << " * \\param const Type *const AsterdT_, temperature increment\n";
-    behaviourFile << " * \\param const Type *const Astermat, material properties\n";
-    behaviourFile << " * \\param const Type *const Asterint_vars, state variables\n"; 
-    behaviourFile << " * \\param const Type *const Asterext_vars, external state variables\n";
-    behaviourFile << " * \\param const Type *const Asterdext_vars,";
-    behaviourFile << " external state variables increments\n";
-    behaviourFile << " */\n";
-    behaviourFile << className 
-		  << "(const Type* const Asterdt_,const Type* const Asterstress_,\n"
-		  <<  "const Type* const Asterstran, const Type* const Asterdstran,\n" 
-		  <<  "const Type* const AsterT_,const Type* const AsterdT_,\n"
-		  <<  "const Type* const Astermat,const Type* const Asterint_vars,\n"
-		  <<  "const Type* const Asterext_vars,const Type* const Asterdext_vars)\n";
-    if(characteristic.useQt()){
-      behaviourFile << ": " << className 
-		    << "BehaviourData<N,Type,use_qt>(Asterstress_,Asterstran,AsterT_,Astermat,\n"
-		    << "Asterint_vars,Asterext_vars),\n";
-      behaviourFile << className 
-		    << "IntegrationData<N,Type,use_qt>(Asterdt_,Asterdstran,AsterdT_,Asterdext_vars)";
-    } else {
-      behaviourFile << ": " << className 
-		    << "BehaviourData<N,Type,false>(Asterstress_,Asterstran,AsterT_,Astermat,\n"
-		    << "Asterint_vars,Asterext_vars),\n";
-      behaviourFile << className 
-		    << "IntegrationData<N,Type,false>(Asterdt_,Asterdstran,AsterdT_,Asterdext_vars)";
-    }
-    behaviourFile << initStateVarsIncrements;
-  }
-  
-  void 
-  MFrontAsterInterface::writeBehaviourDataConstructor(std::ofstream& behaviourDataFile,
-						      const std::string& className,
-						      const MechanicalBehaviourDescription& mb)
-  {
-    using namespace std;
-    const VarContainer& coefsHolder              = mb.getMaterialProperties();
-    const VarContainer& stateVarsHolder          = mb.getStateVariables();
-    const VarContainer& auxiliaryStateVarsHolder = mb.getAuxiliaryStateVariables();
-    const VarContainer& externalStateVarsHolder  = mb.getExternalStateVariables();
-    VarContainer::const_iterator p;
-    map<DrivingVariable,
-	ThermodynamicForce>::const_iterator pm;
-    behaviourDataFile << "/*\n";
-    behaviourDataFile << " * \\brief constructor for the aster interface\n";
-    behaviourDataFile << " *\n";
-    behaviourDataFile << " * \\param const Type *const Asterstress_, stress tensor\n";
-    behaviourDataFile << " * \\param const Type *const Asterstran, strain tensor\n";
-    behaviourDataFile << " * \\param const Type *const AsterT_, temperature\n";
-    behaviourDataFile << " * \\param const Type *const Astermat, material properties\n";
-    behaviourDataFile << " * \\param const Type *const Asterint_vars, state variables\n"; 
-    behaviourDataFile << " * \\param const Type *const Asterext_vars, external state variables\n";
-    behaviourDataFile << " */\n";
-    behaviourDataFile << className << "BehaviourData"
-		      << "(const Type* const Asterstress_,const Type* const Asterstran,\n" 
-		      <<  "const Type* const AsterT_,const Type* const";
-    if(!coefsHolder.empty()){
-      behaviourDataFile << " Astermat,\n";
-    } else {
-      behaviourDataFile << ",\n";
-    }
-    behaviourDataFile <<  "const Type* const";
-    if((!stateVarsHolder.empty())||
-       (!auxiliaryStateVarsHolder.empty())){
-      behaviourDataFile << " Asterint_vars,\n";
-    } else {
-      behaviourDataFile << ",\n";
-    }
-    behaviourDataFile << "const Type* const";
-    if(!externalStateVarsHolder.empty()){
-      behaviourDataFile << " Asterext_vars";
-    }
-    behaviourDataFile << ")\n";
-    behaviourDataFile << ": T(*AsterT_)";
-    SupportedTypes::TypeSize o;
-    this->writeVariableInitializersInBehaviourDataConstructorI(behaviourDataFile,
-							       coefsHolder,
-							       "Astermat","","");
-    o = this->writeVariableInitializersInBehaviourDataConstructorI(behaviourDataFile,
-								   stateVarsHolder,
-								   "Asterint_vars","","");
-    this->writeVariableInitializersInBehaviourDataConstructorI(behaviourDataFile,
-							       auxiliaryStateVarsHolder,
-							       "Asterint_vars","","",o);
-    this->writeVariableInitializersInBehaviourDataConstructorI(behaviourDataFile,
-							       externalStateVarsHolder,
-							       "Asterext_vars","","");
-    behaviourDataFile << "\n{\n";
-    SupportedTypes::TypeSize ov;
-    SupportedTypes::TypeSize of;
-    for(pm=mb.getMainVariables().begin();pm!=mb.getMainVariables().end();++pm){
-      const DrivingVariable&    v = pm->first;
-      const ThermodynamicForce& f = pm->second;
-      if(this->getTypeFlag(f.type)==SupportedTypes::Scalar){
-	if(pm!=mb.getMainVariables().begin()){
-	  behaviourDataFile << f.name << " =  " << f.type << "(Asterstress_+" << of <<");\n";
-	} else {
-	  behaviourDataFile << f.name << " =  " << f.type << "(Asterstress_);\n";
-	}
-      } else if(this->getTypeFlag(f.type)==SupportedTypes::TVector){
-	if(pm!=mb.getMainVariables().begin()){
-	  behaviourDataFile << "copy("
-			    << "static_cast<typename " << f.type << "::value_type *const>(Asterstress_+" << of <<"),\n"
-			    << "static_cast<typename " << f.type << "::value_type *const>(Asterstress_+" << of <<"+TVectorSize),\n"
-			    << f.name << ".begin())\n;";
-	} else {
-	  behaviourDataFile << "copy("
-			    << "static_cast<typename " << f.type << "::value_type *const>(Asterstress_),\n"
-			    << "static_cast<typename " << f.type << "::value_type *const>(Asterstress_+TVectorSize),\n"
-			    << f.name << ".begin())\n;";
-	}
-      } else if(this->getTypeFlag(f.type)==SupportedTypes::Stensor){
-	if(pm!=mb.getMainVariables().begin()){
-	  behaviourDataFile << f.name << ".importTab(Asterstress_+" << of <<");\n";
-	} else {
-	  behaviourDataFile << f.name << ".importTab(Asterstress_);\n";
-	}
-      } else {
-	string msg("MFrontAsterInterface::writeBehaviourDataConstructor : ");
-	msg += "unsupported forces type";
-	throw(runtime_error(msg));
-      }
-      if(this->getTypeFlag(v.type)==SupportedTypes::Scalar){
-	if(pm!=mb.getMainVariables().begin()){
-	  behaviourDataFile << v.name << " = " << v.type << "(Asterstran+" << ov <<");\n";
-	} else {
-	  behaviourDataFile << v.name << " = " << v.type << "(Asterstran);\n";
-	}
-      } else if(this->getTypeFlag(v.type)==SupportedTypes::TVector){
-	if(pm!=mb.getMainVariables().begin()){
-	  behaviourDataFile << "copy("
-			    << "static_cast<typename " << v.type << "::value_type *const>(Asterstran+" << ov <<"),\n"
-			    << "static_cast<typename " << v.type << "::value_type *const>(Asterstran+" << ov <<"+TVectorSize),\n"
-			    << v.name << ".begin())\n;";
-	} else {
-	  behaviourDataFile << "copy("
-			    << "static_cast<typename " << v.type << "::value_type *const>(Asterstran),\n"
-			    << "static_cast<typename " << v.type << "::value_type *const>(Asterstran+TVectorSize),\n"
-			    << v.name << ".begin())\n;";
-	}
-      } else if(this->getTypeFlag(v.type)==SupportedTypes::Stensor){
-	if(pm!=mb.getMainVariables().begin()){
-	  behaviourDataFile << v.name << ".importVoigt(Asterstran+" << ov <<");\n";
-	} else {
-	  behaviourDataFile << v.name << ".importVoigt(Asterstran);\n";
-	}
-      } else {
-	string msg("MFrontAsterInterface::writeBehaviourDataConstructor : ");
-	msg += "unsupported forces type";
-	throw(runtime_error(msg));
-      }
-      ov += this->getTypeSize(v.type,1u);
-      of += this->getTypeSize(f.type,1u);
-    }
-    this->writeVariableInitializersInBehaviourDataConstructorII(behaviourDataFile,
-								coefsHolder,
-								"Astermat","","");
-    o = this->writeVariableInitializersInBehaviourDataConstructorII(behaviourDataFile,
-								    stateVarsHolder,
-								    "Asterint_vars","","");
-    this->writeVariableInitializersInBehaviourDataConstructorII(behaviourDataFile,
-								auxiliaryStateVarsHolder,
-								"Asterint_vars","","",o);
-    this->writeVariableInitializersInBehaviourDataConstructorII(behaviourDataFile,
-								externalStateVarsHolder,
-								"Asterext_vars","","");
-    behaviourDataFile << "}\n\n";
-  }
-  
-  void 
-  MFrontAsterInterface::writeIntegrationDataConstructor(std::ofstream& behaviourIntegrationFile,
-							const std::string& className,
-							const MechanicalBehaviourDescription& mb)
-  {
-    using namespace std;
-    const VarContainer& externalStateVarsHolder = mb.getExternalStateVariables();
-    VarContainer::const_iterator p;
-    behaviourIntegrationFile << "/*\n";
-    behaviourIntegrationFile << " * \\brief constructor for the aster interface\n";
-    behaviourIntegrationFile << " * \\param const Type *const Asterdt_, time increment\n";
-    behaviourIntegrationFile << " * \\param const Type *const Asterdstran, strain increment tensor\n";
-    behaviourIntegrationFile << " * \\param const Type *const AsterdT_, temperature increment\n";
-    behaviourIntegrationFile << " * \\param const Type *const Asterdext_vars,";
-    behaviourIntegrationFile << " external state variables increments\n";
-    behaviourIntegrationFile << " *\n";
-    behaviourIntegrationFile << " */\n";
-    behaviourIntegrationFile << className << "IntegrationData"
-			     << "(const Type* const Asterdt_,const Type* const Asterdstran,\n" 
-			     <<  "const Type* const AsterdT_,const Type* const";
-    if(!externalStateVarsHolder.empty()){
-      behaviourIntegrationFile << " Asterdext_vars)\n";
-    } else {
-      behaviourIntegrationFile << ")\n";
-    }
-    behaviourIntegrationFile << ": dt(*Asterdt_),dT(*AsterdT_)";
-    if(!externalStateVarsHolder.empty()){
-      this->writeVariableInitializersInBehaviourDataConstructorI(behaviourIntegrationFile,
-								 externalStateVarsHolder,
-								 "Asterdext_vars","d","");
-    }
-    behaviourIntegrationFile << "\n{\n";
-    map<DrivingVariable,
-	ThermodynamicForce>::const_iterator pm;
-    SupportedTypes::TypeSize ov;
-    for(pm=mb.getMainVariables().begin();pm!=mb.getMainVariables().end();++pm){
-      const DrivingVariable&    v = pm->first;
-      if(!v.increment_known){
-	string msg("MFrontAsterInterface::writeIntegrationDataConstructor : ");
-	msg += "unsupported driving variable '"+v.name+"'";
-	throw(runtime_error(msg));
-      }
-      if(this->getTypeFlag(v.type)==SupportedTypes::Scalar){
-	if(pm!=mb.getMainVariables().begin()){
-	  behaviourIntegrationFile << "d" << v.name << " = " << v.type << "(Asterdstran+" << ov <<");\n";
-	} else {
-	  behaviourIntegrationFile << "d" << v.name << " = " << v.type << "(Asterdstran);\n";
-	}
-      } else if(this->getTypeFlag(v.type)==SupportedTypes::TVector){
-	if(pm!=mb.getMainVariables().begin()){
-	  behaviourIntegrationFile << "copy("
-				   << "static_cast<typename " << v.type << "::value_type *const>(Asterdstran+" << ov <<"),\n"
-				   << "static_cast<typename " << v.type << "::value_type *const>(Asterdstran+" << ov <<"+TVectorSize),\n"
-				   << "d" << v.name << ".begin())\n;";
-	} else {
-	  behaviourIntegrationFile << "copy("
-				   << "static_cast<typename " << v.type << "::value_type *const>(Asterdstran),\n"
-				   << "static_cast<typename " << v.type << "::value_type *const>(Asterdstran+TVectorSize),\n"
-				   << "d" << v.name << ".begin())\n;";
-	}
-      } else if(this->getTypeFlag(v.type)==SupportedTypes::Stensor){
-	if(pm!=mb.getMainVariables().begin()){
-	  behaviourIntegrationFile << "d" << v.name << ".importVoigt(Asterdstran);\n";
-	} else {
-	  behaviourIntegrationFile << "d" << v.name << ".importVoigt(Asterdstran+" << ov << ");\n";
-	}
-      } else {
-	string msg("MFrontAsterInterface::writeIntegrationDataConstructor : ");
-	msg += "unsupported driving variable '"+v.name+"'";
-	throw(runtime_error(msg));
-      }
-      ov += this->getTypeSize(v.type,1u);
-    }
-    if(!externalStateVarsHolder.empty()){
-      this->writeVariableInitializersInBehaviourDataConstructorII(behaviourIntegrationFile,
-								  externalStateVarsHolder,
-								  "Asterdext_vars","d","");
-    }
-    behaviourIntegrationFile << "}\n\n";
-  }
-
-  std::vector<std::string>
-  MFrontAsterInterface::getGlossaryNames(const VarContainer& v,
-					const std::map<std::string,std::string>& glossaryNames,
-					const std::map<std::string,std::string>& entryNames)
-  {
-    using namespace std;
-    vector<string> n;
-    this->appendGlossaryNames(n,v,glossaryNames,entryNames);
-    return n;
-  }
-
-  void
-  MFrontAsterInterface::appendGlossaryNames(std::vector<std::string>& n,
-					   const VarContainer& v,
-					   const std::map<std::string,std::string>& glossaryNames,
-					   const std::map<std::string,std::string>& entryNames)
-  {
-    using namespace std;
-    VarContainer::const_iterator p;
-    for(p=v.begin();p!=v.end();++p){
-      const string name = MFrontAsterInterfaceGetName(glossaryNames,entryNames,p->name);
-      if(p->arraySize==1u){
-	n.push_back(name);
-      } else {
-	for(unsigned short i=0;i!=p->arraySize;++i){
-	  ostringstream nb;
-	  nb << '[' << i << ']';
-	  n.push_back(name+nb.str());
-	}
-      }
-    }
-  } // end of MFrontAsterInterface::appendGlossaryNames
-
-  void
-  MFrontAsterInterface::writeGlossaryNames(std::ostream& f,
-					  const std::vector<std::string>& n,
-					  const std::string& name,
-					  const std::string& array,
-					  const unsigned short o)
-  {
-    using namespace std;
-    if(o>n.size()){
-      string msg("MFrontAsterInterface::writeGlossaryNames : ");
-      msg += "number of names given is lesser than the offset";
-      throw(runtime_error(msg));
-    }
-    if(n.size()!=o){
-      vector<string>::size_type s = 0u;
-      vector<string>::const_iterator p = n.begin()+o;      
-      f << "MFRONT_SHAREDOBJ const char * aster"
-	<< makeLowerCase(name)
-	<< "_" << array << "[" << n.size()-o <<  "] = {";
-      while(p!=n.end()){
-	f << '"' << *p << '"';
-	if(++p!=n.end()){
-	  if(s%5==0){
-	    f << ",\n";
-	  } else {
-	    f << ",";
-	  }
-	}
-	++s;
-      }
-      f << "};\n";
-    } else {
-      f << "MFRONT_SHAREDOBJ const char * const * aster"
-	<< makeLowerCase(name)
-	<< "_" << array << " = 0;\n\n";
-    }      
-  } // end of MFrontAsterInterface::writeGlossaryNames
-
   void
   MFrontAsterInterface::endTreatement(const std::string& file,
 				     const std::string& library,
@@ -657,7 +255,6 @@ namespace mfront{
     const VarContainer& auxiliaryStateVarsHolder = mb.getAuxiliaryStateVariables();
     const VarContainer& externalStateVarsHolder  = mb.getExternalStateVariables();
     const VarContainer& parametersHolder         = mb.getParameters();
-    string header = "Aster";
     string name;
     string asterFctName;
     string tmp;
@@ -666,17 +263,6 @@ namespace mfront{
 
     systemCall::mkdir("include/MFront");
     systemCall::mkdir("include/MFront/Aster");
-
-    if(!library.empty()){
-      header += "_";
-      header += makeUpperCase(library);
-    }
-    if(!material.empty()){
-      header += "_";
-      header += makeUpperCase(material);
-    }
-    header += "_";
-    header += makeUpperCase(className);
 
     if(!library.empty()){
       name += library;
@@ -757,12 +343,11 @@ namespace mfront{
     out << "* \\date   "  << date       << endl;
     out << "*/\n\n";
 
-    out << "#ifndef _LIB_"+header+"_HXX_\n";
-    out << "#define _LIB_"+header+"_HXX_\n\n";
-    
-    out << "#ifdef aster" << endl;
-    out << "#undef aster" << endl;
-    out << "#endif /* aster */" << endl << endl;
+    const string header = this->getHeaderDefine(library,
+						material,
+						className);
+    out << "#ifndef "<< header << "\n";
+    out << "#define "<< header << "\n\n";
 
     out << "#include\"TFEL/Config/TFELConfig.hxx\"\n\n";
     out << "#include\"MFront/Aster/Aster.hxx\"\n\n";
@@ -775,19 +360,7 @@ namespace mfront{
     out << "#include\"TFEL/Material/" << className << ".hxx\"\n";
     out << "#endif /* __cplusplus */\n\n";
 
-    out << "#ifdef WIN32\n";
-    out << "#include <windows.h>\n";
-    out << "#ifndef MFRONT_STDCALL\n";
-    out << "#define MFRONT_STDCALL __stdcall\n"; 
-    out << "#endif /* MFRONT_STDCALL */\n"; 
-    out << "#else\n";
-    out << "#ifndef MFRONT_STDCALL\n";
-    out << "#define MFRONT_STDCALL\n"; 
-    out << "#endif /* MFRONT_STDCALL */\n"; 
-    out << "#endif /* WIN32 */\n\n";
-    out << "#ifndef MFRONT_SHAREDOBJ\n";
-    out << "#define MFRONT_SHAREDOBJ TFEL_VISIBILITY_EXPORT\n"; 
-    out << "#endif /* MFRONT_SHAREDOBJ */\n\n"; 
+    this->writeVisibilityDefines(out);
 
     out << "#define aster" 
 	<< makeUpperCase(name)
@@ -1006,39 +579,8 @@ namespace mfront{
 	<< tokenize(file,dirSeparator()).back()
 	<< "\";\n\n";
 
-    bool rp = false;
-    bool ip = false;
-    bool up = false;
-    if(!parametersHolder.empty()){
-      for(pp=parametersHolder.begin();pp!=parametersHolder.end();++pp){
-	if(pp->type=="real"){
-	  rp = true;
-	} else if(pp->type=="int"){
-	  ip = true;
-	} else if(pp->type=="ushort"){
-	  up = true;
-	} else {
-	  string msg("MFrontAsterInterface::endTreatement : ");
-	  msg += "unsupport parameter type '"+p->type+"'.\n";
-	  throw(runtime_error(msg));
-	} 
-      }
-      if(rp){
-	out << "MFRONT_SHAREDOBJ int MFRONT_STDCALL\naster"
-	    << makeLowerCase(name)
-	    << "_setParameter(const char *const,const double);\n\n";
-      }
-      if(ip){
-	out << "MFRONT_SHAREDOBJ int MFRONT_STDCALL\naster"
-	    << makeLowerCase(name)
-	    << "_setIntegerParameter(const char *const,const int);\n\n";
-      }
-      if(up){
-	out << "MFRONT_SHAREDOBJ int MFRONT_STDCALL\naster"
-	    << makeLowerCase(name)
-	    << "_setIntegerParameter(const char *const,const unsigned short);\n\n";
-      }
-    }
+    this->writeSetParametersFunctionsDeclarations(out,name,
+						  parametersHolder);
 
     out << "MFRONT_SHAREDOBJ void MFRONT_STDCALL\naster"
 	<< makeLowerCase(name) << "("
@@ -1089,7 +631,7 @@ namespace mfront{
     out << "}\n";
     out << "#endif /* __cplusplus */\n\n";
 
-    out << "#endif /* __LIB_"+header+"_HXX_ */\n";
+    out << "#endif /* " << header << " */\n";
 
     out.close();
 
@@ -1113,13 +655,7 @@ namespace mfront{
     out << "* \\date   "  << date       << endl;
     out << "*/\n\n";
 
-    if((!parametersHolder.empty())||(this->debugMode)){
-      out << "#include<iostream>\n";
-    }
-
-    if(!parametersHolder.empty()){
-      out << "#include<stdexcept>\n";
-    }
+    this->getExtraSrcIncludes(out,mb);
 
     if(this->compareToNumericalTangentOperator){
       out << "#include<cmath>\n";
@@ -1280,54 +816,8 @@ namespace mfront{
 							entryNames),
 			     name,"ExternalStateVariables");
     
-    if(rp){
-      out << "MFRONT_SHAREDOBJ int MFRONT_STDCALL\naster"
-	  << makeLowerCase(name)
-	  << "_setParameter(const char *const key,const double value){\n"
-	  << "using namespace std;\n"
-	  << "using namespace tfel::material;\n"
-	  << className << "ParametersInitializer& i = " << className << "ParametersInitializer::get();\n"
-	  << "try{\n"
-	  << "i.set(key,value);\n"
-	  << "} catch(runtime_error& e){"
-	  << "cerr << e.what() << endl;\n"
-	  << "return 0;\n"
-	  << "}\n"
-	  << "return 1;\n"
-	  << "}\n\n";
-    }
-    if(ip){
-      out << "MFRONT_SHAREDOBJ int MFRONT_STDCALL\naster"
-	  << makeLowerCase(name)
-	  << "_setIntegerParameter(const char *const key,const int value){\n"
-	  << "using namespace std;\n"
-	  << "using namespace tfel::material;\n"
-	  << className << "ParametersInitializer& i = " << className << "ParametersInitializer::get();\n"
-	  << "try{\n"
-	  << "i.set(key,value);\n"
-	  << "} catch(runtime_error& e){"
-	  << "cerr << e.what() << endl;\n"
-	  << "return 0;\n"
-	  << "}\n"
-	  << "return 1;\n"
-	  << "}\n\n";
-    }
-    if(up){
-      out << "MFRONT_SHAREDOBJ int MFRONT_STDCALL\naster"
-	  << makeLowerCase(name)
-	  << "_setUnsignedShortParameter(const char *const key,const unsigned short value){\n"
-	  << "using namespace std;\n"
-	  << "using namespace tfel::material;\n"
-	  << className << "ParametersInitializer& i = " << className << "ParametersInitializer::get();\n"
-	  << "try{\n"
-	  << "i.set(key,value);\n"
-	  << "} catch(runtime_error& e){"
-	  << "cerr << e.what() << endl;\n"
-	  << "return 0;\n"
-	  << "}\n"
-	  << "return 1;\n"
-	  << "}\n\n";
-    }
+    this->writeSetParametersFunctionsImplantations(out,name,className,
+						   parametersHolder);
     
     out << "MFRONT_SHAREDOBJ void MFRONT_STDCALL\naster"
 	<< makeLowerCase(name) << "("
@@ -1374,19 +864,18 @@ namespace mfront{
 	<< "aster::AsterInt  *const" /*< sortie d'erreur */
 	<< ")\n";
     out << "{\n";
-    if((this->debugMode)||
-       (this->compareToNumericalTangentOperator)||
-       (this->savesTangentOperator)){
+    if(((this->debugMode)||(this->compareToNumericalTangentOperator)||
+	(this->savesTangentOperator))&&(!this->generateMTestFile)){
       out << "using namespace std;\n";
     }
+    this->generateMTestFile1(out);
     if((this->debugMode)||(this->compareToNumericalTangentOperator)){
-      out << "using namespace aster;\n";
       out << "const bool computeTangentOperator = (*DDSOE>0.5);\n";
     }
     if(this->compareToNumericalTangentOperator){
-      out << "vector<AsterReal> deto0(*NTENS);\n";
-      out << "vector<AsterReal> sig0(*NTENS);\n";
-      out << "vector<AsterReal> sv0(*NSTATV);\n";
+      out << "vector<aster::AsterReal> deto0(*NTENS);\n";
+      out << "vector<aster::AsterReal> sig0(*NTENS);\n";
+      out << "vector<aster::AsterReal> sv0(*NSTATV);\n";
       out << "copy(DSTRAN,DSTRAN+*(NTENS),deto0.begin());\n";
       out << "copy(STRESS,STRESS+*(NTENS),sig0.begin());\n";
       out << "copy(STATEV,STATEV+*(NSTATV),sv0.begin());\n";
@@ -1395,6 +884,8 @@ namespace mfront{
       out << "if(aster::AsterInterface<tfel::material::" << className 
 	  << ">::exe(NTENS,DTIME,DROT,DDSOE,STRAN,DSTRAN,TEMP,DTEMP,PROPS,NPROPS,"
 	  << "PREDEF,DPRED,STATEV,NSTATV,STRESS)!=0){\n";
+      this->generateMTestFile2(out,library,material,name,mb,
+			       glossaryNames,entryNames);
       out << "*PNEWDT = -1.;\n";
       out << "return;\n";
       out << "}\n";
@@ -1408,6 +899,8 @@ namespace mfront{
       out << "if(aster::AsterInterface<tfel::material::" << className 
 	  << ">::exe(NTENS,DTIME,DROT,DDSOE,STRAN,DSTRAN,TEMP,DTEMP,PROPS,NPROPS,"
 	  << "PREDEF,DPRED,STATEV,&nNSTATV,STRESS)!=0){\n";
+      this->generateMTestFile2(out,library,material,name,mb,
+			       glossaryNames,entryNames);
       out << "*PNEWDT = -1.;\n";
       out << "return;\n";
       out << "}\n";
@@ -1415,8 +908,8 @@ namespace mfront{
     }
     if(this->debugMode){
       out << "if(computeTangentOperator){\n";
-      out << "AsterInt i;\n";
-      out << "AsterInt j;\n";
+      out << "aster::AsterInt i;\n";
+      out << "aster::AsterInt j;\n";
       out << "cout << \"Dt :\" << endl;\n";
       out << "for(i=0;i!=*NTENS;++i){\n";
       out << "for(j=0;j!=*NTENS;++j){\n";
@@ -1430,26 +923,32 @@ namespace mfront{
     if(this->compareToNumericalTangentOperator){
       out << "if(computeTangentOperator){\n";
       out << "// computing the tangent operator by pertubation\n";
-      out << "AsterInt i;\n";
-      out << "AsterInt j;\n";
-      out << "vector<AsterReal> nD((*NTENS)*(*NTENS));\n";
-      out << "vector<AsterReal> deto(*NTENS);\n";
-      out << "vector<AsterReal> sigf(*NTENS);\n";
-      out << "vector<AsterReal> sigb(*NTENS);\n";
-      out << "vector<AsterReal> sv(*NSTATV);\n";
-      out << "vector<AsterReal> D((*NTENS)*(*NTENS));\n";
-      out << "AsterReal m;\n";
-      out << "AsterReal mDt;\n";
-      out << "AsterReal mnDt;\n";
+      out << "aster::AsterInt i;\n";
+      out << "aster::AsterInt j;\n";
+      out << "vector<aster::AsterReal> nD((*NTENS)*(*NTENS));\n";
+      out << "vector<aster::AsterReal> deto(*NTENS);\n";
+      out << "vector<aster::AsterReal> sigf(*NTENS);\n";
+      out << "vector<aster::AsterReal> sigb(*NTENS);\n";
+      out << "vector<aster::AsterReal> sv(*NSTATV);\n";
+      out << "vector<aster::AsterReal> D((*NTENS)*(*NTENS));\n";
+      out << "aster::AsterReal m;\n";
+      out << "aster::AsterReal mDt;\n";
+      out << "aster::AsterReal mnDt;\n";
       out << "for(i=0;i!=*NTENS;++i){\n";
       out << "copy(deto0.begin(),deto0.end(),deto.begin());\n";
       out << "copy(sig0.begin(),sig0.end(),sigf.begin());\n";
       out << "copy(sv0.begin(),sv0.end(),sv.begin());\n";
       out << "deto[i] += " << this->strainPerturbationValue << ";\n";
       out << "D[0] = 0.;\n";
-      out << "if(aster::AsterInterface<tfel::material::" << className 
-	  << ">::exe(NTENS,DTIME,DROT,&D[0],STRAN,&deto[0],TEMP,DTEMP,PROPS,NPROPS,"
-	  << "PREDEF,DPRED,&sv[0],NSTATV,&sigf[0])!=0){\n";
+      if(!this->savesTangentOperator){
+	out << "if(aster::AsterInterface<tfel::material::" << className 
+	    << ">::exe(NTENS,DTIME,DROT,&D[0],STRAN,&deto[0],TEMP,DTEMP,PROPS,NPROPS,"
+	    << "PREDEF,DPRED,&sv[0],NSTATV,&sigf[0])!=0){\n";
+      } else {
+	out << "if(aster::AsterInterface<tfel::material::" << className 
+	    << ">::exe(NTENS,DTIME,DROT,&D[0],STRAN,&deto[0],TEMP,DTEMP,PROPS,NPROPS,"
+	    << "PREDEF,DPRED,&sv[0],&nNSTATV,&sigf[0])!=0){\n";
+      }
       out << "return;\n";
       out << "}\n";
       out << "copy(deto0.begin(),deto0.end(),deto.begin());\n";
@@ -1457,9 +956,15 @@ namespace mfront{
       out << "copy(sv0.begin(),sv0.end(),sv.begin());\n";
       out << "deto[i] -= " << this->strainPerturbationValue << ";\n";
       out << "D[0] = 0.;\n";
-      out << "if(aster::AsterInterface<tfel::material::" << className 
-	  << ">::exe(NTENS,DTIME,DROT,&D[0],STRAN,&deto[0],TEMP,DTEMP,PROPS,NPROPS,"
-	  << "PREDEF,DPRED,&sv[0],NSTATV,&sigb[0])!=0){\n";
+      if(!this->savesTangentOperator){
+	out << "if(aster::AsterInterface<tfel::material::" << className 
+	    << ">::exe(NTENS,DTIME,DROT,&D[0],STRAN,&deto[0],TEMP,DTEMP,PROPS,NPROPS,"
+	    << "PREDEF,DPRED,&sv[0],NSTATV,&sigb[0])!=0){\n";
+      } else {
+	out << "if(aster::AsterInterface<tfel::material::" << className 
+	    << ">::exe(NTENS,DTIME,DROT,&D[0],STRAN,&deto[0],TEMP,DTEMP,PROPS,NPROPS,"
+	    << "PREDEF,DPRED,&sv[0],&nNSTATV,&sigb[0])!=0){\n";
+      }
       out << "return;\n";
       out << "}\n";
       out << "for(j=0;j!=*NTENS;++j){\n";
@@ -1498,21 +1003,26 @@ namespace mfront{
     out << "}\n\n";
     out << "} // end of extern \"C\"\n";
     out.close();
-
-
   } // end of MFrontAsterInterface::endTreatement
+
+  void
+  MFrontAsterInterface::writeMTestFileGeneratorSetModellingHypothesis(std::ostream& out) const
+  {
+    out << "ModellingHypothesis::Hypothesis h;\n";
+    out << "if(*NTENS==3u){\n";
+    out << "  h = ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN;\n";
+    out << "} else if(*NTENS==4){\n";
+    out << "  h = ModellingHypothesis::GENERALISEDPLANESTRAIN;\n";
+    out << "} else if(*NTENS==6){\n";
+    out << "  h = ModellingHypothesis::TRIDIMENSIONAL;\n";
+    out << "} else {\n";
+    out << "  return;\n";
+    out << "}\n";
+    out << "mg.setModellingHypothesis(h);\n";
+  } // end of MFrontAsterInterface::writeMTestFileGeneratorSetModellingHypothesis
   
   MFrontAsterInterface::~MFrontAsterInterface()
   {}
-
-  std::map<std::string,std::vector<std::string> >
-  MFrontAsterInterface::getGlobalDependencies(const std::string&,
-					     const std::string&,
-					     const std::string&)
-  {
-    using namespace std;
-    return map<string,vector<string> >();
-  } // end of MFrontAsterInterface::getGlobalDependencies
 
   std::map<std::string,std::vector<std::string> >
   MFrontAsterInterface::getGlobalIncludes(const std::string& library,

@@ -229,6 +229,15 @@ namespace mfront{
     return this->tensorSize;
   }
 
+  bool
+  SupportedTypes::TypeSize::isNull(void) const
+  {
+    return ((this->getScalarSize()==0)&&
+	    (this->getStensorSize()==0)&&
+	    (this->getTVectorSize()==0)&&
+	    (this->getTensorSize()==0));
+  } // end of SupportedTypes::TypeSize::isNull
+
   SupportedTypes::TypeSize
   SupportedTypes::writeVariableInitializersInBehaviourDataConstructorI(std::ostream& f,
 								       const VarContainer& v,
