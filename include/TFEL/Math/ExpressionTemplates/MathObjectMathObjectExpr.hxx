@@ -62,8 +62,8 @@ namespace tfel{
       
     protected:
 
-      typedef A first_arg;
-      typedef B second_arg;
+      typedef const A first_arg;
+      typedef const B second_arg;
 
       typedef typename A::RunTimeProperties RunTimeProperties;
       typedef NumType        value_type;                                                

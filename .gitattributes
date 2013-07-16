@@ -754,7 +754,6 @@ include/TFEL/Math/ST2toST2/ST2toST2ConceptOperations.hxx -text
 include/TFEL/Math/ST2toST2/ST2toST2Expr.hxx -text
 include/TFEL/Math/ST2toST2/ST2toST2FTMV.hxx -text
 include/TFEL/Math/ST2toST2/ST2toST2FTMV2.hxx -text
-include/TFEL/Math/ST2toST2/ScalarST2toST2Expr.hxx -text
 include/TFEL/Math/ST2toST2/st2tost2.ixx -text
 include/TFEL/Math/ST2toST2/st2tost2ResultType.hxx -text
 include/TFEL/Math/Stensor/Internals/StensorChangeBasis.hxx -text
@@ -799,8 +798,8 @@ include/TFEL/Math/TinyMatrixInvert.hxx -text
 include/TFEL/Math/TinyMatrixSolve.hxx -text
 include/TFEL/Math/TinyNewtonRaphson.hxx -text
 include/TFEL/Math/Vector/Range.hxx -text
-include/TFEL/Math/Vector/TFTV.hxx -text
 include/TFEL/Math/Vector/TSFTV.hxx -text
+include/TFEL/Math/Vector/TVFTV.hxx -text
 include/TFEL/Math/Vector/VectorConcept.hxx -text
 include/TFEL/Math/Vector/VectorConcept.ixx -text
 include/TFEL/Math/Vector/VectorConceptOperations.hxx -text

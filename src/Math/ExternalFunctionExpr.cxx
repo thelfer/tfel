@@ -72,7 +72,6 @@ namespace tfel
 	vector<string> pnames;
 	vector<shared_ptr<Expr> >::const_iterator p;
 	ExternalFunctionManager::const_iterator p2;
-	vector<string>::const_iterator p3;
 	if(find(names.begin(),names.end(),this->name)!=names.end()){
 	  string msg("ExternalFunctionExpr::checkCyclicDependency : ");
 	  msg += "cyclic dependency found on function '"+this->name+"'";

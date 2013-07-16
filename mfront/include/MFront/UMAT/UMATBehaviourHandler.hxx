@@ -162,9 +162,11 @@ namespace umat
 	  try{
 	    result = behaviour.integrate(BV::NOSTIFFNESSREQUESTED);
 	  }
-	  catch(const tfel::material::DivergenceException& e){
 #ifdef MFRONT_UMAT_VERBOSE
+	  catch(const tfel::material::DivergenceException& e){
 	    std::cerr << "no convergence : " << e.what() << std::endl;
+#else
+	  catch(const tfel::material::DivergenceException&){
 #endif
 	    result = BV::FAILURE;
 	  }

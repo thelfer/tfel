@@ -45,17 +45,18 @@ namespace tfel{
 	: Expr()
       {}
 
-      explicit TFEL_MATH_INLINE MatrixExpr(const typename Expr::first_arg& a_)
+      explicit TFEL_MATH_INLINE MatrixExpr(typename Expr::first_arg& a_)
 	: Expr(a_)
       {}
 
-      explicit TFEL_MATH_INLINE MatrixExpr(const typename Expr::first_arg& a_, 
-					   const typename Expr::second_arg& b_)
+      explicit TFEL_MATH_INLINE MatrixExpr(typename Expr::first_arg& a_, 
+					   typename Expr::second_arg& b_)
 	: Expr(a_,b_)
       {}
       
       using Expr::operator();
 
+      using Expr::operator=;
     };
     
     template<typename T_type, typename Expr>

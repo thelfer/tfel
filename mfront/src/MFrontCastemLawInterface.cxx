@@ -190,7 +190,6 @@ namespace mfront
   {
     using namespace std;
     using namespace tfel::system;
-    vector<string>::const_iterator p;
     map<string,string>::const_iterator p2;
     map<string,string>::const_iterator p3;
     string name          = this->getCastemFunctionName(material,className);
@@ -230,11 +229,6 @@ namespace mfront
 					    const std::vector<std::string>& params)
   {
     using namespace std;
-    VarContainer::const_iterator p;
-    StaticVarContainer::const_iterator p2;
-    vector<string>::const_iterator p3;
-    VarContainer::const_iterator p4;
-
     this->headerFile << "/*!" << endl;
     this->headerFile << "* \\file   " << this->headerFileName  << endl;
     this->headerFile << "* \\brief  " << "this file declares the " 
@@ -305,7 +299,6 @@ namespace mfront
     using namespace tfel::system;
     using namespace tfel::utilities;
     vector<string>::const_iterator p;
-    StaticVarContainer::const_iterator p2;
     VarContainer::const_iterator p3;
     map<string,string>::const_iterator p4;
     vector<VariableBoundsDescription>::const_iterator p5;
@@ -345,7 +338,7 @@ namespace mfront
 	p6 = paramValues.find(*pp);
 	if(p6==paramValues.end()){
 	  string msg("MFrontCastemLawInterface::writeOutputFile : ");
-	  msg += "internal error (can't find value of parameter " + *p + ")";
+	  msg += "internal error (can't find value of parameter " + *pp + ")";
 	  throw(runtime_error(msg));
 	}
 	this->srcFile << "static double " << *pp << " = " << p6->second << ";\n";

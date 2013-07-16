@@ -155,9 +155,6 @@ namespace mfront
 					   const std::vector<VariableBoundsDescription>& physicalBounds)
   {
     using namespace std;
-    VarContainer::const_iterator p;
-    vector<string>::const_iterator p3;
-
     this->headerFile << "/*!" << endl;
     this->headerFile << "* \\file   " << this->headerFileName  << endl;
     this->headerFile << "* \\brief  " << "this file declares the " 
@@ -242,7 +239,6 @@ namespace mfront
     using namespace std;
     string header;
     vector<string>::const_iterator p;
-    StaticVarContainer::const_iterator p2;
     map<string,string>::const_iterator p4;
     std::vector<VariableBoundsDescription>::const_iterator p5;
     map<string,double>::const_iterator p6;

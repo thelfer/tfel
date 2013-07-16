@@ -189,7 +189,6 @@ namespace mfront
     using namespace std;
     using namespace tfel::system;
     vector<string>::const_iterator p;
-    StaticVarContainer::const_iterator p2;
     VarContainer::const_iterator p3;
     map<string,string>::const_iterator p4;
     vector<VariableBoundsDescription>::const_iterator p5;

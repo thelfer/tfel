@@ -43,12 +43,12 @@ namespace tfel{
 	: Expr(src)	
       {}
 
-      explicit TFEL_MATH_INLINE CompositeExpr(const typename Expr::first_arg& a_)
+      explicit TFEL_MATH_INLINE CompositeExpr(typename Expr::first_arg& a_)
 	: Expr(a_)
       {}
 
-      explicit TFEL_MATH_INLINE CompositeExpr(const typename Expr::first_arg&  a_, 
-					      const typename Expr::second_arg& b_)
+      explicit TFEL_MATH_INLINE CompositeExpr(typename Expr::first_arg&  a_, 
+					      typename Expr::second_arg& b_)
 	: Expr(a_,b_)
       {}
 

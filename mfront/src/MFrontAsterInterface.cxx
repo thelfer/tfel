@@ -259,7 +259,6 @@ namespace mfront{
     string asterFctName;
     string tmp;
     VarContainer::const_iterator p;
-    VarContainer::const_iterator pp;
 
     systemCall::mkdir("include/MFront");
     systemCall::mkdir("include/MFront/Aster");

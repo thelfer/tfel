@@ -1,12 +1,12 @@
 /*!
- * \file   TFTV.hxx
+ * \file   TVFTV.hxx
  * \brief  TinyVectorFromTVectorView
  * \author Helfer Thomas
  * \date   16 oct 2008
  */
 
-#ifndef _LIB_TFEL_MATH_TFTV_HXX_
-#define _LIB_TFEL_MATH_TFTV_HXX_ 
+#ifndef _LIB_TFEL_MATH_TVFTV_HXX_
+#define _LIB_TFEL_MATH_TVFTV_HXX_ 
 
 #include"TFEL/Metaprogramming/StaticAssert.hxx"
 
@@ -24,35 +24,35 @@ namespace tfel
 
     /*!
      *  Tiny vector from Tiny Vector view expression
+     * \param[in] N  : number of object holed
      * \param[in] Mn : dimension of the underlying vector
      * \param[in] In : Index of the beginning in the underlying vector
-     * \param[in] Nn : number of object holed
      * \param[in] T  : underlying type
      */
-    template<unsigned short Mn,
+    template<unsigned short N,
+	     unsigned short Mn,
 	     unsigned short In,
-	     unsigned short Nn,
 	     typename T>
-    struct TFTVExpr
+    struct TVFTVExpr
     {
       /*!
        * numerical type holded by the expression
        */
       typedef T NumType;
-    }; // end of struct TFTVExpr
+    }; // end of struct TVFTVExpr
 
     /*!
+     * \param[in] N : size of the tvector holed
      * \param[in] Mn : dimension of the underlying vector
      * \param[in] In : Index of the beginning in the underlying vector
-     * \param[in] Nn : number of stensor holed
      * \param[in] T  : underlying type
      */
-    template<unsigned short Mn,
+    template<unsigned short N,
+	     unsigned short Mn,
 	     unsigned short In,
-	     unsigned short Nn,
 	     typename T>
-    struct VectorExpr<tvector<Nn,T>,TFTVExpr<Mn,In,Nn,T> >
-      : public VectorConcept<VectorExpr<tvector<Nn,T>,TFTVExpr<Mn,In,Nn,T> > >
+    struct VectorExpr<tvector<N,T>,TVFTVExpr<N,Mn,In,T> >
+      : public VectorConcept<VectorExpr<tvector<N,T>,TVFTVExpr<N,Mn,In,T> > >
     {
 
       typedef EmptyRunTimeProperties RunTimeProperties;
@@ -74,45 +74,25 @@ namespace tfel
       const T&
       operator[](const unsigned short i) const
       {
-	union{
-	  const T * t_ptr;
-	  const T * s_ptr;
-	} ptr;
-	ptr.t_ptr = this->v.begin()+In+i;
-	return *(ptr.s_ptr);
+	return this->v[In+i];
       } // end of operator[] const
 
       T&
       operator[](const unsigned short i)
       {
-	union{
-	  T * t_ptr;
-	  T * s_ptr;
-	} ptr;
-	ptr.t_ptr = this->v.begin()+In+i;
-	return *(ptr.s_ptr);
+	return this->v[In+i];
       } // end of operator[]
 
       const T&
       operator()(const unsigned short i) const
       {
-	union{
-	  const T * t_ptr;
-	  const T * s_ptr;
-	} ptr;
-	ptr.t_ptr = this->v.begin()+In+i;
-	return *(ptr.s_ptr);
+	return this->v[In+i];
       } // end of operator() const
 
       T&
       operator()(const unsigned short i)
       {
-	union{
-	  T * t_ptr;
-	  T * s_ptr;
-	} ptr;
-	ptr.t_ptr = this->v.begin()+In+i;
-	return *(ptr.s_ptr);
+	return this->v[In+i];
       } // end of operator()
 
       /*!
@@ -122,8 +102,8 @@ namespace tfel
       typename tfel::meta::EnableIf<
 	tfel::typetraits::IsAssignableTo<T2,T>::cond,
 	VectorExpr&>::type
-      operator=(const tvector<Nn,T2 >& s){
-	VectorUtilities<Nn>::copy(s,*this);
+      operator=(const tvector<N,T2 >& s){
+	VectorUtilities<N>::copy(s,*this);
 	return *this;
       }
       
@@ -135,9 +115,9 @@ namespace tfel
 	tfel::typetraits::IsAssignableTo<T2,T>::cond,
 	VectorExpr&
       >::type
-      operator=(const VectorExpr<tvector<Nn,T2 >,Expr>& s)
+      operator=(const VectorExpr<tvector<N,T2 >,Expr>& s)
       {
-	VectorUtilities<Nn>::copy(s,*this);
+	VectorUtilities<N>::copy(s,*this);
 	return *this;
       }
 
@@ -147,8 +127,8 @@ namespace tfel
 	tfel::typetraits::IsAssignableTo<T2,T>::cond,
 	VectorExpr&
       >::type
-      operator+=(const tvector<Nn,T2 >& s){
-	VectorUtilities<Nn>::PlusEqual(*this,s);
+      operator+=(const tvector<N,T2 >& s){
+	VectorUtilities<N>::PlusEqual(*this,s);
 	return *this;
       }
     
@@ -158,8 +138,8 @@ namespace tfel
 	tfel::typetraits::IsAssignableTo<T2,T>::cond,
 	VectorExpr&
       >::type
-      operator+=(const VectorExpr<tvector<Nn,T2 >,Expr>& s){
-	VectorUtilities<Nn>::PlusEqual(*this,s);
+      operator+=(const VectorExpr<tvector<N,T2 >,Expr>& s){
+	VectorUtilities<N>::PlusEqual(*this,s);
 	return *this;
       }
 
@@ -169,8 +149,8 @@ namespace tfel
 	tfel::typetraits::IsAssignableTo<T2,T>::cond,
 	VectorExpr&
       >::type
-      operator-=(const tvector<Nn,T2 >& s){
-	VectorUtilities<Nn>::MinusEqual(*this,s);
+      operator-=(const tvector<N,T2 >& s){
+	VectorUtilities<N>::MinusEqual(*this,s);
 	return *this;
       }
     
@@ -180,8 +160,8 @@ namespace tfel
 	tfel::typetraits::IsAssignableTo<T2,T>::cond,
 	VectorExpr&
       >::type
-      operator-=(const VectorExpr<tvector<Nn,T2 >,Expr>& s){
-	VectorUtilities<Nn>::MinusEqual(*this,s);
+      operator-=(const VectorExpr<tvector<N,T2 >,Expr>& s){
+	VectorUtilities<N>::MinusEqual(*this,s);
 	return *this;
       }
 
@@ -195,7 +175,7 @@ namespace tfel
 	VectorExpr&
       >::type
       operator*=(const T2 a){
-	VectorUtilities<Nn>::scale(*this,a);
+	VectorUtilities<N>::scale(*this,a);
 	return *this;
       }
 
@@ -209,7 +189,7 @@ namespace tfel
 	VectorExpr&
 	>::type
 	operator/=(const T2 a){
-	VectorUtilities<Nn>::scale(*this,1/a);
+	VectorUtilities<N>::scale(*this,1/a);
 	return *this;
       }
       
@@ -223,31 +203,31 @@ namespace tfel
        * Simple checks
        */
       TFEL_STATIC_ASSERT((In<Mn));
-      TFEL_STATIC_ASSERT((Nn<=Mn-In));
+      TFEL_STATIC_ASSERT((N<=Mn-In));
 
     }; // end of struct VectorExpr
 
 
-    template<unsigned short Mn,
+    template<unsigned short N,
+	     unsigned short Mn,
 	     unsigned short In,
-	     unsigned short Nn,
 	     typename T = double>
-    struct TFTV
+    struct TVFTV
     {
-      typedef VectorExpr<tvector<Nn,T >,TFTVExpr<Mn,In,Nn,T> > type;
-    }; // end of struct TFTV
+      typedef VectorExpr<tvector<N,T>,TVFTVExpr<N,Mn,In,T> > type;
+    }; // end of struct TVFTV
 
     // Serialisation operator
-    template<unsigned short Mn,
+    template<unsigned short N,
+	     unsigned short Mn,
 	     unsigned short In,
-	     unsigned short Nn,
 	     typename T>
     std::ostream&
     operator << (std::ostream & os,
-		 const VectorExpr<tvector<Nn,T >,TFTVExpr<Mn,In,Nn,T> >& s)
+		 const VectorExpr<tvector<N,T>,TVFTVExpr<N,Mn,In,T> >& s)
     {
       os << "[ ";
-      for(unsigned short i=0;i<Nn;++i){
+      for(unsigned short i=0;i<N;++i){
 	os << s(i) << " ";
       }
       os << "]";
@@ -258,12 +238,12 @@ namespace tfel
 
   namespace typetraits{
 
-    template<unsigned short Mn,
+    template<unsigned short N,
+  	     unsigned short Mn,
   	     unsigned short In,
-  	     unsigned short Nn,
   	     typename T>
-    struct IsTemporary<tfel::math::VectorExpr<tfel::math::tvector<Nn,T >,
-					      tfel::math::TFTVExpr<Mn,In,Nn,T> > >
+    struct IsTemporary<tfel::math::VectorExpr<tfel::math::tvector<N,T>,
+					      tfel::math::TVFTVExpr<N,Mn,In,T> > >
     {
       static const bool cond = false;
     };
@@ -272,5 +252,5 @@ namespace tfel
 
 } // end of namespace tfel
 
-#endif /* _LIB_TFEL_MATH_TFTV_HXX */
+#endif /* _LIB_TFEL_MATH_TVFTV_HXX */
 

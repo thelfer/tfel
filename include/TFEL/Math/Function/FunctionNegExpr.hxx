@@ -52,7 +52,7 @@ namespace tfel{
 
     protected:
 
-      typedef F first_arg;
+      typedef const F first_arg;
       typedef invalid_argument second_arg;
 
     public:

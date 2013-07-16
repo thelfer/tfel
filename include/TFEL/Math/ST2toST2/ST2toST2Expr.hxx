@@ -58,6 +58,7 @@ namespace tfel{
 
       using Expr::operator();
 
+      using Expr::operator=;
     };
 
     template<typename T_type, typename Expr>

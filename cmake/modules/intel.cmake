@@ -5,11 +5,12 @@ tfel_enable_cxx_compiler_flag(COMPILER_WARNINGS  "Wall")
 # 810 : conversion from "long double" to "double" may lose significant bits
 # 1418: external function definition with no prior declaration
 # 444 : destructor for base class is not virtual
+# 1565: attributes are ignored on a class declaration that is not also a definition
 tfel_check_cxx_compiler_flag("-diag-disable 981"
                              DIAG_DISABLE_FLAG_AVAILABLE)
 if(${DIAG_DISABLE_FLAG_AVAILABLE})
   message(STATUS "enabling flag '-diag-disable'")
-  set(COMPILER_WARNINGS "-diag-disable 981,383,810,1418,444 ${COMPILER_WARNINGS}")
+  set(COMPILER_WARNINGS "-diag-disable 981,383,810,1418,444,2259,1565 ${COMPILER_WARNINGS}")
 else(${DIAG_DISABLE_FLAG_AVAILABLE})
   message(STATUS "flag '-diag-disable' disabled")
 endif(${DIAG_DISABLE_FLAG_AVAILABLE})
@@ -31,14 +32,10 @@ if(CMAKE_BUILD_TYPE STREQUAL "Debug")
 endif(CMAKE_BUILD_TYPE STREQUAL "Debug")
 
 if(HAVE_FORTRAN)
-  get_filename_component (Fortran_COMPILER_NAME ${CMAKE_Fortran_COMPILER} NAME)
-  if ("${Fortran_COMPILER_NAME}" MATCHES "^ifort.*")
+  if("${CMAKE_Fortran_COMPILER_ID}" STREQUAL "Intel")
     set(INTEL_FORTRAN_COMPILER ON)
     add_definitions("-D'F77_FUNC(X,Y)=X\\#\\#_' -D'F77_FUNC_(X,Y)=X\\#\\#_'")
-  elseif ("${Fortran_COMPILER_NAME}" MATCHES "^gfortran.*")
-    set(INTEL_FORTRAN_COMPILER ON)
-    add_definitions("-D'F77_FUNC(X,Y)=X\\#\\#_' -D'F77_FUNC_(X,Y)=X\\#\\#_'")
-  else("${Fortran_COMPILER_NAME}" MATCHES "^ifort.*")
-    message(FATAL_ERROR "unsupported fortran compiler ${CMAKE_Fortran_COMPILER_NAME}")
-  endif("${Fortran_COMPILER_NAME}" MATCHES "^ifort.*")
+  else("${CMAKE_Fortran_COMPILER_ID}" STREQUAL "Intel")
+    include(cmake/modules/gnu-fortran-compiler.cmake)
+  endif("${CMAKE_Fortran_COMPILER_ID}" STREQUAL "Intel")
 endif(HAVE_FORTRAN)

@@ -1774,11 +1774,21 @@ namespace mfront
 	// evaluations of the materials properties at the end of the
 	// time step
 	for(i=0,p=mpnames.begin();p!=mpnames.end();++p,++i){
-	  const MTestEvolution& ev = *(this->evs->at(*p));
+	  pev = this->evs->find(*p);
+	  if(pev==this->evs->end()){
+	    string msg("MTest::execute : no evoluation named '"+*p+"'");
+	    throw(runtime_error(msg));
+	  }
+	  const MTestEvolution& ev = *(pev->second);
 	  mprops1[i] = ev(t+dt);
 	}
 	for(i=0,p=esvnames.begin();p!=esvnames.end();++p,++i){
-	  const MTestEvolution& ev = *(this->evs->at(*p));
+	  pev = this->evs->find(*p);
+	  if(pev==this->evs->end()){
+	    string msg("MTest::execute : no evoluation named '"+*p+"'");
+	    throw(runtime_error(msg));
+	  }
+	  const MTestEvolution& ev = *(pev->second);
 	  const real evt = ev(t);
 	  esv0[i] = evt;
 	  desv[i] = ev(t+dt)-evt;
@@ -1870,7 +1880,12 @@ namespace mfront
 	  // evaluations of the materials properties at the beginning
 	  // of the time step
 	  for(i=0,p=mpnames.begin();p!=mpnames.end();++p,++i){
-	    const MTestEvolution& ev = *(this->evs->at(*p));
+	    pev = this->evs->find(*p);
+	    if(pev==this->evs->end()){
+	      string msg("MTest::execute : no evoluation named '"+*p+"'");
+	      throw(runtime_error(msg));
+	    }
+	    const MTestEvolution& ev = *(pev->second);
 	    mprops0[i] = ev(t);
 	  }
 	  fill(Kp.begin(),Kp.end(),0.);

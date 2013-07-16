@@ -45,7 +45,7 @@ namespace tfel{
 
     protected:
 
-      typedef A first_arg;
+      typedef const A first_arg;
       typedef invalid_argument second_arg;
       typedef typename A::RunTimeProperties RunTimeProperties;
 

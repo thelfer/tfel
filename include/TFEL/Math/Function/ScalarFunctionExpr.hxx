@@ -141,8 +141,8 @@ namespace tfel{
 
     protected:
 
-      typedef S first_arg;
-      typedef F second_arg;
+      typedef const S first_arg;
+      typedef const F second_arg;
 
     public:
 

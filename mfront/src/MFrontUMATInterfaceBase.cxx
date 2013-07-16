@@ -85,7 +85,6 @@ namespace mfront
     const VarContainer& stateVarsHolder          = mb.getStateVariables();
     const VarContainer& auxiliaryStateVarsHolder = mb.getAuxiliaryStateVariables();
     const std::string iprefix = makeUpperCase(this->getInterfaceName());
-    VarContainer::const_iterator p;
     if((!stateVarsHolder.empty())||
        (!auxiliaryStateVarsHolder.empty())){
       behaviourDataFile << "void\n"
@@ -123,7 +122,6 @@ namespace mfront
   {
     using namespace std;
     const std::string iprefix = makeUpperCase(this->getInterfaceName());
-    VarContainer::const_iterator p;
     behaviourFile << "/*\n";
     behaviourFile << " * \\brief constructor for the umat interface\n";
     behaviourFile << " *\n";
@@ -172,7 +170,6 @@ namespace mfront
     const VarContainer& stateVarsHolder          = mb.getStateVariables();
     const VarContainer& auxiliaryStateVarsHolder = mb.getAuxiliaryStateVariables();
     const VarContainer& externalStateVarsHolder  = mb.getExternalStateVariables();
-    VarContainer::const_iterator p;
     behaviourDataFile << "/*\n";
     behaviourDataFile << " * \\brief constructor for the umat interface\n";
     behaviourDataFile << " *\n";
@@ -273,7 +270,6 @@ namespace mfront
     using namespace std;
     const std::string iprefix = makeUpperCase(this->getInterfaceName());
     const VarContainer& externalStateVarsHolder  = mb.getExternalStateVariables();
-    VarContainer::const_iterator p;
     behaviourIntegrationFile << "/*\n";
     behaviourIntegrationFile << " * \\brief constructor for the umat interface\n";
     behaviourIntegrationFile << " * \\param const Type *const "+iprefix+"dt_, time increment\n";
@@ -632,7 +628,6 @@ namespace mfront
       const VarContainer& auxiliaryStateVarsHolder = mb.getAuxiliaryStateVariables();
       const VarContainer& externalStateVarsHolder  = mb.getExternalStateVariables();
       VarContainer::const_iterator p;
-      VarContainer::const_iterator pp;
       unsigned short i;
       unsigned int offset;
       out << "mfront::UMATSmallStrainMTestFileGenerator mg(\""

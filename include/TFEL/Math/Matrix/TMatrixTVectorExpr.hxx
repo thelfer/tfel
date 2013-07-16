@@ -62,7 +62,7 @@ namespace tfel{
 					const A&>::type MType;
 
 	typedef typename MatrixTraits<A>::NumType NumType;
-	TFEL_MATH_INLINE RowConstIterator(const MType m_,
+	TFEL_MATH_INLINE RowConstIterator(const A& m_,
 					  const unsigned short i_)
 	  : m(m_),i(i_),j(0)
 	{}
@@ -90,7 +90,7 @@ namespace tfel{
       {	
 	typedef typename tfel::meta::IF<IsBTemporary,const B,const B&>::type VType;
 	typedef typename VectorTraits<B>::NumType NumType;
-	TFEL_MATH_INLINE VectorConstIterator(const VType v_)
+	TFEL_MATH_INLINE VectorConstIterator(const B& v_)
 	  : v(v_),i(0)
 	{}
 	TFEL_MATH_INLINE VectorConstIterator& operator++ ()
@@ -115,8 +115,8 @@ namespace tfel{
 
     protected:
 
-      typedef A first_arg;
-      typedef B second_arg;
+      typedef const A first_arg;
+      typedef const B second_arg;
 
       typedef NumType        value_type;                                                
       typedef NumType*       pointer;	    						

@@ -213,7 +213,7 @@ nobase_include_HEADERS= TFEL/Macros.hxx                                         
 			TFEL/Math/Vector/vectorResultType.hxx	                                                     \
 			TFEL/Math/Vector/Range.hxx			                                             \
 			TFEL/Math/Vector/VectorVectorDotProduct.hxx                                                  \
-			TFEL/Math/Vector/TFTV.hxx                                                                    \
+			TFEL/Math/Vector/TVFTV.hxx                                                                   \
 			TFEL/Math/Vector/TSFTV.hxx                                                                   \
 			TFEL/Math/matrix.hxx                 	                                                     \
 			TFEL/Math/Matrix/TinyMatrixInvert.ixx	                                                     \

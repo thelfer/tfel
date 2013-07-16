@@ -125,7 +125,44 @@ namespace mfront{
     virtual void
     treatUnknownKeyword(void);
 
-    std::string
+    /*!
+     * \return a type able to do the mapping of a variable with the
+     * vector used by the root-finding algorithm.
+     * \param[in] v : variable
+     */
+    virtual std::string
+    getVectorMappingClass(const VarHandler&) const;
+
+    // /*!
+    //  * \return a type able to do the mapping of the derivate of a
+    //  * variable with respect to a scalar with the jacobian matrix used
+    //  * by the root-finding algorithm.
+    //  * \param[in] v : variable
+    //  */
+    // virtual std::string
+    // getMathObjectDerivateByScalarMappingClass(const VarHandler&) const;
+
+    // /*!
+    //  * \return a type able to do the mapping of the derivate of a
+    //  * scalar with respect to the variable with the jacobian matrix
+    //  * used by the root-finding algorithm.
+    //  * \param[in] v : variable
+    //  */
+    // virtual std::string
+    // getScalarDerivateByMathObjectMappingClass(const VarHandler&) const;
+
+    // /*!
+    //  * \return a type able to do the mapping of the derivate of the
+    //  * first variable with respect to the second variable with the
+    //  * jacobian matrix used by the root-finding algorithm.
+    //  * \param[in] v1 : variable
+    //  * \param[in] v2 : variable
+    //  */
+    // virtual std::string
+    // getMathObjectDerivateByMathObjectMappingClass(const VarHandler&,
+    // 						  const VarHandler&) const;
+
+    virtual std::string
     getJacobianPart(const VarHandler&,
 		    const VarHandler&,
 		    const SupportedTypes::TypeSize&,

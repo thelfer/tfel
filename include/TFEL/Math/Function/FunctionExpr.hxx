@@ -41,13 +41,13 @@ namespace tfel{
       {}
 
       explicit TFEL_MATH_INLINE 
-      FunctionExpr(const typename Expr::first_arg& a_)
+      FunctionExpr(typename Expr::first_arg& a_)
 	: Expr(a_)
       {}
 
       explicit TFEL_MATH_INLINE 
-      FunctionExpr(const typename Expr::first_arg&  a_, 
-		   const typename Expr::second_arg& b_)
+      FunctionExpr(typename Expr::first_arg&  a_, 
+		   typename Expr::second_arg& b_)
 	: Expr(a_,b_)
       {}
       

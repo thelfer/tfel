@@ -149,8 +149,8 @@ namespace tfel{
 
     protected:
 
-      typedef Func1 first_arg;
-      typedef Func2 second_arg;
+      typedef const Func1 first_arg;
+      typedef const Func2 second_arg;
 
     public:
 

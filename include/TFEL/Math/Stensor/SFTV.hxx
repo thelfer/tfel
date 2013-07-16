@@ -32,17 +32,17 @@ namespace tfel
 	     unsigned short In,
 	     typename T>
     struct SFTVExpr
-    {}; // end of struct SFTVExpr
-
-    template<unsigned short N,
-	     unsigned short Mn,
-	     unsigned short In,
-	     typename T>
-    struct StensorExpr<stensor<N,T>,SFTVExpr<N,Mn,In,T> >
-      : public StensorConcept<StensorExpr<stensor<N,T>,SFTVExpr<N,Mn,In,T> > >
     {
-
       typedef EmptyRunTimeProperties RunTimeProperties;
+      typedef typename stensor<N,T,StensorStatic>::value_type      value_type;      
+      typedef typename stensor<N,T,StensorStatic>::pointer	   pointer;	    
+      typedef typename stensor<N,T,StensorStatic>::const_pointer   const_pointer; 
+      typedef typename stensor<N,T,StensorStatic>::reference	   reference;	    
+      typedef typename stensor<N,T,StensorStatic>::const_reference const_reference;
+      typedef typename stensor<N,T,StensorStatic>::size_type 	   size_type;	    
+      typedef typename stensor<N,T,StensorStatic>::difference_type difference_type;
+      typedef tvector<Mn,T>           first_arg;
+      typedef tfel::meta::InvalidType second_arg;
 
       RunTimeProperties
       getRunTimeProperties() const
@@ -50,7 +50,7 @@ namespace tfel
 	return RunTimeProperties();
       }
 
-      StensorExpr(tvector<Mn,T>& v_)
+      SFTVExpr(tvector<Mn,T>& v_)
 	: v(v_)
       {} // end of StensorExpr
 
@@ -72,7 +72,7 @@ namespace tfel
       template<typename T2,template<unsigned short,typename> class Storage2>
       typename tfel::meta::EnableIf<
 	tfel::typetraits::IsAssignableTo<T2,T>::cond,
-	StensorExpr&>::type
+	void>::type
       operator=(const stensor<N,T2,Storage2>& s){
 	VectorUtilities<StensorDimeToSize<N>::value>::copy(s,*this);
 	return *this;
@@ -84,56 +84,46 @@ namespace tfel
       template<typename T2,template<unsigned short,typename> class Storage2,typename Expr>
       typename tfel::meta::EnableIf<
 	tfel::typetraits::IsAssignableTo<T2,T>::cond,
-	StensorExpr&
-      >::type
+	void>::type
       operator=(const StensorExpr<stensor<N,T2,Storage2>,Expr>& s)
       {
 	VectorUtilities<StensorDimeToSize<N>::value>::copy(s,*this);
-	return *this;
       }
 
       // Assignement operator
       template<typename T2,template<unsigned short,typename> class Storage2>
       typename tfel::meta::EnableIf<
 	tfel::typetraits::IsAssignableTo<T2,T>::cond,
-	StensorExpr&
-      >::type
+	void>::type
       operator+=(const stensor<N,T2,Storage2>& s){
 	VectorUtilities<StensorDimeToSize<N>::value>::PlusEqual(*this,s);
-	return *this;
       }
     
       // Assignement operator
       template<typename T2,template<unsigned short,typename> class Storage2,typename Expr>
       typename tfel::meta::EnableIf<
 	tfel::typetraits::IsAssignableTo<T2,T>::cond,
-	StensorExpr&
-      >::type
+	void>::type
       operator+=(const StensorExpr<stensor<N,T2,Storage2>,Expr>& s){
 	VectorUtilities<StensorDimeToSize<N>::value>::PlusEqual(*this,s);
-	return *this;
       }
 
       // Assignement operator
       template<typename T2,template<unsigned short,typename> class Storage2>
       typename tfel::meta::EnableIf<
 	tfel::typetraits::IsAssignableTo<T2,T>::cond,
-	StensorExpr&
-      >::type
+	void>::type
       operator-=(const stensor<N,T2,Storage2>& s){
 	VectorUtilities<StensorDimeToSize<N>::value>::MinusEqual(*this,s);
-	return *this;
       }
     
       // Assignement operator
       template<typename T2,template<unsigned short,typename> class Storage2,typename Expr>
       typename tfel::meta::EnableIf<
 	tfel::typetraits::IsAssignableTo<T2,T>::cond,
-	StensorExpr&
-      >::type
+	void>::type
       operator-=(const StensorExpr<stensor<N,T2,Storage2>,Expr>& s){
 	VectorUtilities<StensorDimeToSize<N>::value>::MinusEqual(*this,s);
-	return *this;
       }
 
       /*!
@@ -143,11 +133,9 @@ namespace tfel
       typename tfel::meta::EnableIf<
 	tfel::typetraits::IsScalar<T2>::cond&&
       tfel::meta::IsSameType<typename ResultType<T,T2,OpMult>::type,T>::cond,
-	StensorExpr&
-      >::type
+	void>::type
       operator*=(const T2 a){
 	VectorUtilities<N>::scale(*this,a);
-	return *this;
       }
 
       /*!
@@ -157,11 +145,9 @@ namespace tfel
       typename tfel::meta::EnableIf<
 	tfel::typetraits::IsScalar<T2>::cond&&
         tfel::meta::IsSameType<typename ResultType<T,T2,OpMult>::type,T>::cond,
-	StensorExpr&
-      >::type
+	void>::type
       operator/=(const T2 a){
 	VectorUtilities<N>::scale(*this,1/a);
-	return *this;
       }
 
     protected:

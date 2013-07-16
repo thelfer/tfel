@@ -293,7 +293,6 @@ namespace mfront{
     string umatFctName;
     string tmp;
     VarContainer::const_iterator p;
-    VarContainer::const_iterator pp;
     unsigned short i;
     bool found;
     

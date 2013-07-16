@@ -67,8 +67,8 @@ namespace tfel{
 
     protected:
 
-      typedef A first_arg;
-      typedef B second_arg;
+      typedef const A first_arg;
+      typedef const B second_arg;
 
       TFEL_MATH_INLINE
       CompositeScalarExpr(const A& l, const B& r)

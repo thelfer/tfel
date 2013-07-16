@@ -834,7 +834,7 @@ namespace mfront{
     this->behaviourFile << "#include\"TFEL/Math/tmatrix.hxx\"\n";
     this->behaviourFile << "#include\"TFEL/Math/tvector.hxx\"\n";
     this->behaviourFile << "#include\"TFEL/Math/TinyMatrixSolve.hxx\"\n";
-    this->behaviourFile << "#include\"TFEL/Math/Vector/TFTV.hxx\"\n";
+    this->behaviourFile << "#include\"TFEL/Math/Vector/TVFTV.hxx\"\n";
     this->behaviourFile << "#include\"TFEL/Math/Vector/TSFTV.hxx\"\n";
     this->behaviourFile << "#include\"TFEL/Math/Stensor/SFTMCV.hxx\"\n";
     this->behaviourFile << "#include\"TFEL/Math/Stensor/SFTMRV.hxx\"\n";
@@ -1417,7 +1417,6 @@ namespace mfront{
   void MFrontImplicitParserBase::writeComputeNumericalJacobian(){
     using namespace std;
     VarContainer::const_iterator p;
-    VarContainer::const_iterator p2;
     SupportedTypes::TypeSize n;
     for(p=this->mb.getStateVariables().begin();p!=this->mb.getStateVariables().end();++p){
       n += this->getTypeSize(p->type,p->arraySize);
@@ -1456,6 +1455,24 @@ namespace mfront{
     this->behaviourFile << "}\n";
     this->behaviourFile << "}\n\n";
   }
+
+  std::string
+  MFrontImplicitParserBase::getVectorMappingClass(const VarHandler& v) const
+  {
+    using namespace std;
+    const SupportedTypes::TypeFlag f = this->getTypeFlag(v.type);
+    if(f==SupportedTypes::Stensor){
+      if(v.arraySize==1u){
+	return "SFTV";
+      } else {
+	return "TSFTV";
+      }
+    }
+    string msg("MFrontImplicitParserBase::getVectorMappingClass : "
+	       "unsupported type for variable '"+v.name+"'");
+    throw(runtime_error(msg));
+    return "";
+  } // end of MFrontImplicitParserBase::getVectorMappingClass
 
   void MFrontImplicitParserBase::writeBehaviourIntegrator(){
     using namespace std;
@@ -1776,28 +1793,26 @@ namespace mfront{
 	msg += "' is reserved.\n";
 	throw(runtime_error(msg));
       }
-      if(this->getTypeFlag(p->type)==SupportedTypes::Stensor){
-	if(p->arraySize==1u){
-	  this->behaviourFile << "typename tfel::math::SFTV<N," 
-			      << n2 << "," << n << ",real>::type"
-			      << " f" << p->name << "(this->fzeros);\n";
-	} else {
-	  this->behaviourFile << "typename tfel::math::TSFTV<N," 
-			      << n2 << "," << n << "," << p-> arraySize << ",real>::type"
-			      << " f" << p->name << "(this->fzeros);\n";
-	}
-      } else if(this->getTypeFlag(p->type)==SupportedTypes::Scalar){
+      if(this->getTypeFlag(p->type)==SupportedTypes::Scalar){
 	if(p->arraySize==1u){
 	  this->behaviourFile << "real& f" << p->name << "(this->fzeros(" << n << "));\n";
 	} else {
-	  this->behaviourFile << "typename tfel::math::TFTV<" 
-			      << n2 << "," << n << "," << p->arraySize << ",real>::type"
+	  this->behaviourFile << "typename tfel::math::TVFTV<" 
+			      << p->arraySize << "," << n2 << "," << n << ",real>::type"
 			      << " f" << p->name << "(this->fzeros);\n";
 	}
       } else {
-	string msg("MFrontImplicitParserBase::writeBehaviourStateVarsIncrements :");
-	msg += "unsupported type '"+p->type+"'";
-	throw(runtime_error(msg));
+	if(p->arraySize==1u){
+	  this->behaviourFile << "typename tfel::math::"
+			      << this->getVectorMappingClass(*p)
+			      << "<N," << n2 << "," << n << ",real>::type"
+			      << " f" << p->name << "(this->fzeros);\n";
+	} else {
+	  this->behaviourFile << "typename tfel::math::"
+			      << this->getVectorMappingClass(*p)
+			      << "<N," << n2 << "," << n << "," << p-> arraySize << ",real>::type"
+			      << " f" << p->name << "(this->fzeros);\n";
+	}
       }
       n += this->getTypeSize(p->type,p->arraySize);
     }
@@ -2039,28 +2054,26 @@ namespace mfront{
 	this->behaviourFile << "#line " << p->lineNumber << " \"" 
 			    << this->fileName << "\"\n";
       }
-      if(this->getTypeFlag(p->type)==SupportedTypes::Stensor){
-	if(p->arraySize==1u){
-	  this->behaviourFile << "typename tfel::math::SFTV<N," 
-			      << n2 << "," << n << ",real>::type"
-			      << " d" << p->name << ";\n";
-	} else {
-	  this->behaviourFile << "typename tfel::math::TSFTV<N," 
-			      << n2 << "," << n << "," << p-> arraySize << ",real>::type"
-			      << " d" << p->name << ";\n";
-	}
-      } else if(this->getTypeFlag(p->type)==SupportedTypes::Scalar){
+      if(this->getTypeFlag(p->type)==SupportedTypes::Scalar){
 	if(p->arraySize==1u){
 	  this->behaviourFile << "real& d" << p->name << ";\n";
 	} else {
-	  this->behaviourFile << "typename tfel::math::TFTV<" 
-			      << n2 << "," << n << "," << p->arraySize << ",real>::type"
+	  this->behaviourFile << "typename tfel::math::TVFTV<" 
+			      <<  p->arraySize << "," << n2 << "," << n << ",real>::type"
 			      << " d" << p->name << ";\n";
 	}
       } else {
-	string msg("MFrontImplicitParserBase::writeBehaviourStateVarsIncrements :");
-	msg += "unsupported type '"+p->type+"'";
-	throw(runtime_error(msg));
+	if(p->arraySize==1u){
+	  this->behaviourFile << "typename tfel::math::"
+			      << this->getVectorMappingClass(*p)    
+			      << "<N," << n2 << "," << n << ",real>::type"
+			      << " d" << p->name << ";\n";
+	} else {
+	  this->behaviourFile << "typename tfel::math::"
+			      << this->getVectorMappingClass(*p)    
+			      << "<N," << n2 << "," << n << "," << p-> arraySize << ",real>::type"
+			      << " d" << p->name << ";\n";
+	}
       }
       n += this->getTypeSize(p->type,p->arraySize);
     }
@@ -2106,7 +2119,7 @@ namespace mfront{
       this->mb.getParameters().push_back(VarHandler("real",nje,1u,0u));
       if(this->mb.getParametersDefaultValues().find(nje)==
 	 this->mb.getParametersDefaultValues().end()){
-	const double eps = 0.1*this->mb.getParametersDefaultValues().at("epsilon");
+	const double eps = 0.1*this->mb.getParametersDefaultValues()["epsilon"];
 	this->mb.getParametersDefaultValues().insert(MVType(nje,eps));
       }
     }

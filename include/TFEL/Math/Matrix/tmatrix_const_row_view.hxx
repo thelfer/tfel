@@ -28,7 +28,7 @@ namespace tfel
       /*!
        * an alias defined for the constructor of the VectorExpr
        */
-      typedef tmatrix<N,M,T> first_arg;
+      typedef const tmatrix<N,M,T> first_arg;
       //! a dummy structure
       struct invalid_argument;
       /*!

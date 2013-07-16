@@ -23,12 +23,14 @@ namespace tfel{
     {
       using namespace std;
       typedef map<string,vector<TestDocumentation> >::value_type MVType;
+      map<string,vector<TestDocumentation> >::iterator pdoc;
       const string c("Mechanical behaviour unary testing");
+      pdoc = docs.find(c);
       if(docs.find(c)==docs.end()){
-	docs.insert(MVType(c,vector<TestDocumentation>()));
+	pdoc = docs.insert(MVType(c,vector<TestDocumentation>())).first;
       }
-      docs.at(c).push_back(TestDocumentation());
-      TestDocumentation& t = docs.at(c).back();
+      pdoc->second.push_back(TestDocumentation());
+      TestDocumentation& t = pdoc->second.back();
       t.name    = this->file;
       t.date    = this->date;
       t.author  = this->author;

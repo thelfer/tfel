@@ -370,7 +370,7 @@ struct TensorTest8<1u>
       s[i] = exp(real(i*i)/(s.size()*s.size()));
     }
     for(unsigned short i=0;i!=t.size();++i){
-      t[i] = exp(sin(i*i+1));
+      t[i] = exp(sin(real(i*i+1)));
     }
     const tensor<1u,real> t2(0.62*(0.45*s+2.3*t));
     TFEL_TESTS_ASSERT((abs(t2(0)-(0.62*(0.45*s(0)+2.3*t(0))))<eps));
@@ -401,7 +401,7 @@ struct TensorTest8<2u>
       s[i] = exp(real(i*i)/(s.size()/s.size()));
     }
     for(unsigned short i=0;i!=t.size();++i){
-      t[i] = exp(sin(i*i+1));
+      t[i] = exp(sin(real(i*i+1)));
     }
     const tensor<2u,real> t2(0.62*(0.45*s+2.3*t));
     TFEL_TESTS_ASSERT((abs(t2(0)-(0.62*(0.45*s(0)+2.3*t(0))))<eps));
@@ -434,7 +434,7 @@ struct TensorTest8<3u>
       s[i] = exp(real(i*i)/(s.size()*s.size()));
     }
     for(unsigned short i=0;i!=t.size();++i){
-      t[i] = exp(sin(i*i+1));
+      t[i] = exp(sin(real(i*i+1)));
     }
     const tensor<3u,real> t2(0.62*(0.45*s+2.3*t));
 
@@ -474,7 +474,7 @@ struct TensorTest9<1u>
       s[i] = exp(real(i*i)/(s.size()*s.size()));
     }
     for(unsigned short i=0;i!=t.size();++i){
-      t[i] = exp(sin(i*i+1));
+      t[i] = exp(sin(real(i*i+1)));
     }
     const tensor<1u,real> t2(0.62*(2.3*t+0.45*s));
     TFEL_TESTS_ASSERT((abs(t2(0)-(0.62*(0.45*s(0)+2.3*t(0))))<eps));
@@ -505,7 +505,7 @@ struct TensorTest9<2u>
       s[i] = exp(real(i*i)/(s.size()/s.size()));
     }
     for(unsigned short i=0;i!=t.size();++i){
-      t[i] = exp(sin(i*i+1));
+      t[i] = exp(sin(real(i*i+1)));
     }
     const tensor<2u,real> t2(0.62*(2.3*t+0.45*s));
     TFEL_TESTS_ASSERT((abs(t2(0)-(0.62*(0.45*s(0)+2.3*t(0))))<eps));
@@ -538,7 +538,7 @@ struct TensorTest9<3u>
       s[i] = exp(real(i*i)/(s.size()*s.size()));
     }
     for(unsigned short i=0;i!=t.size();++i){
-      t[i] = exp(sin(i*i+1));
+      t[i] = exp(sin(real(i*i+1)));
     }
     const tensor<3u,real> t2(0.62*(2.3*t+0.45*s));
     TFEL_TESTS_ASSERT((abs(t2(0)-(0.62*(0.45*s(0)+2.3*t(0))))<eps));

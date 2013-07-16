@@ -234,10 +234,7 @@ namespace mfront
 					 const std::vector<std::string>& namespaces)
   {
     using namespace std;
-    VarContainer::const_iterator p;
-    StaticVarContainer::const_iterator p2;
     vector<string>::const_iterator p3;
-    vector<string>::const_iterator p3e;
     VarContainer::const_iterator p4;
     vector<string>::const_reverse_iterator p5;
     vector<string>::const_reverse_iterator p5e;
@@ -498,8 +495,6 @@ namespace mfront
   {
     using namespace std;
     vector<string>::const_iterator p;
-    vector<string>::const_iterator pe;
-    StaticVarContainer::const_iterator p2;
     VarContainer::const_iterator p3;
     map<string,string>::const_iterator p4;
     vector<string>::const_reverse_iterator p5;

@@ -41,7 +41,7 @@ namespace tfel{
 
     protected:
 
-      typedef RangeData               first_arg;
+      typedef const RangeData         first_arg;
       typedef tfel::meta::InvalidType second_arg;
 
       typedef tfel::meta::EmptyClass RunTimeProperties;
@@ -59,7 +59,7 @@ namespace tfel{
 
     protected:
 
-      Range(const RangeData src)
+      Range(const RangeData& src)
 	: start_(src.start_),delta_(src.delta_),stepNumber_(src.stepNumber_)
       {}
 

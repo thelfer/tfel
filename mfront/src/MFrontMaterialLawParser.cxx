@@ -328,7 +328,6 @@ namespace mfront{
   MFrontMaterialLawParser::treatFunction(void)
   {
     using namespace std;
-    VarContainer::iterator p;
     set<string>::const_iterator p2;
     set<string>::iterator p3;
     unsigned short openedBrackets = 0;
@@ -891,7 +890,6 @@ namespace mfront{
     set<string>::const_iterator i;
     map<string,vector<string> >::const_iterator p;
     vector<string>::const_iterator p2;
-    vector<string>::const_iterator p3;
     for(i  = this->interfaces.begin();
 	i != this->interfaces.end();++i){
       MFrontLawVirtualInterface *interface = mlif.getInterfacePtr(*i);

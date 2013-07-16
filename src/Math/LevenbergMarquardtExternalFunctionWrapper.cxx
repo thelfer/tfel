@@ -28,7 +28,6 @@ namespace tfel
       using namespace tfel::math;
       using namespace tfel::math::parser;
       using tfel::math::vector;
-      vector<double>::const_iterator p;
       vector<double>::size_type i;
       if(this->ev->getNumberOfVariables()!=this->getNumberOfVariables()+this->getNumberOfParameters()){
 	string msg("LevenbergMarquardtExternalFunctionWrapper::LevenbergMarquardtExternalFunctionWrapper : ");

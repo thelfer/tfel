@@ -71,35 +71,17 @@ namespace tfel{
       if((i==j)&&(i<3)){
 	return static_cast<const T&>(*this).operator()(i);
       } else if((i==0)&&(j==1)){
-	if(TensorTraits<T>::dime<2){
-	  return NumType(0);
-	}
-	return static_cast<const T&>(*this).operator()(3);
+	return (TensorTraits<T>::dime<2) ? NumType(0) : static_cast<const T&>(*this).operator()(3);
       } else if((i==1)&&(j==0)){
-	if(TensorTraits<T>::dime<2){
-	  return NumType(0);
-	}
-	return static_cast<const T&>(*this).operator()(4);
+	return (TensorTraits<T>::dime<2) ? NumType(0) : static_cast<const T&>(*this).operator()(4);
       } else if((i==0)&&(j==2)){
-	if(TensorTraits<T>::dime<3){
-	  return NumType(0);
-	}
-	return static_cast<const T&>(*this).operator()(5);
+	return (TensorTraits<T>::dime<3) ? NumType(0) : static_cast<const T&>(*this).operator()(5);
       } else if((i==2)&&(j==0)){
-	if(TensorTraits<T>::dime<3){
-	  return NumType(0);
-	}
-	return static_cast<const T&>(*this).operator()(6);
+	return (TensorTraits<T>::dime<3) ? NumType(0) : static_cast<const T&>(*this).operator()(6);
       } else if((i==1)&&(j==2)){
-	if(TensorTraits<T>::dime<3){
-	  return NumType(0);
-	}
-	return static_cast<const T&>(*this).operator()(7);
+	return (TensorTraits<T>::dime<3) ? NumType(0) : static_cast<const T&>(*this).operator()(7);
       } else if((i==2)&&(j==1)){
-	if(TensorTraits<T>::dime<3){
-	  return NumType(0);
-	}
-	return static_cast<const T&>(*this).operator()(8);
+	return (TensorTraits<T>::dime<3) ? NumType(0) : static_cast<const T&>(*this).operator()(8);
       }
       throw(TensorInvalidIndexesException(i,j));
       return NumType(0);

@@ -777,7 +777,6 @@ namespace mfront{
     string object;
     set<string>::iterator p;
     set<string>::iterator p2;
-    vector<string>::iterator p3;
     bool hasValidExtension;
     bool erased = false;
     fName = "src"+dirStringSeparator()+ name;
@@ -1456,7 +1455,6 @@ namespace mfront{
     using namespace tfel::system;
     set<string> cppSources;
     set<string> cSources;
-    vector<string>::const_iterator p;
     map<string,set<string> >::const_iterator p2;
     map<string,set<string> >::const_iterator p3;
     set<string>::const_iterator p4;

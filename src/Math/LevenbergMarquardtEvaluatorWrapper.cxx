@@ -27,7 +27,6 @@ namespace tfel
       using namespace std;
       using namespace tfel::math;
       using tfel::math::vector;
-      vector<double>::const_iterator p;
       vector<double>::size_type i;
       if(this->ev->getNumberOfVariables()!=this->getNumberOfVariables()+this->getNumberOfParameters()){
 	string msg("LevenbergMarquardtEvaluatorWrapper::LevenbergMarquardtEvaluatorWrapper : ");

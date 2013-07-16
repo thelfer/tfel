@@ -758,9 +758,9 @@ namespace tfel
 	using namespace tfel::utilities;
 	return string("TLNode<")
 	  +Name<T>::getName()+string(",")
-	  +Name<U>::getName()+string(">");
+	  +Name<U>::getName()+string(">"); 
       }
-    }; // end of struct TFEL_VISIBILITY_LOCAL Name<tfel::meta::TLNode<T,U> >
+    }; // end of struct Name<tfel::meta::TLNode<T,U> >
     
     template<>
     struct TFELUTILITIES_VISIBILITY_EXPORT Name<tfel::meta::TLE>
@@ -1494,127 +1494,6 @@ namespace tfel
 	return string("MathObjectNegExpr<")+Name<F>::getName()+string(">");
       }
     };
-
-
-      // static std::string 
-      // getName(void){
-      // 	using namespace std;
-      // 	using namespace tfel::utilities;
-      // 	return string("StensorConcept<")+Name<T>::getName()+string(">");
-      // }
-
-      // static std::string getName(void){
-      // 	using namespace std;
-      // 	using namespace tfel::utilities;
-      // 	return string("StensorExpr<")+Name<T_type>::getName()
-      // 	  +string(",")+Name<Expr>::getName()+string(">");
-      // }
-
-      // static std::string getName(void){
-      // 	using namespace std;
-      // 	using namespace tfel::utilities;
-      // 	return string("ScalarStensorExpr<")+Name<A>::getName()+string(",")
-      // 	  +Name<B>::getName()+string(",")+Name<Op>::getName()+string(">");
-      // }
-
-
-      // static std::string getName(void){
-      // 	using namespace std;
-      // 	using namespace tfel::utilities;
-      // 	return string("StensorScalarExpr<")+Name<A>::getName()+string(",")
-      // 	  +Name<B>::getName()+string(",")+Name<Op>::getName()+string(">");
-      // }
-
-
-      // static std::string getName(void){
-      // 	using namespace std;
-      // 	using namespace tfel::utilities;
-      // 	return string("StensorScalarExpr<")+Name<A>::getName()+string(",")
-      // 	  +Name<B>::getName()+string(",")+Name<OpDiv>::getName()+string(">");
-      // }
-
-      // static std::string 
-      // getName(void){ 
-      // 	using namespace std;
-      // 	using namespace tfel::utilities;
-      // 	return string("FctMatrixExpr<")
-      // 	  +Name<A>::getName()
-      // 	  +Name<Func>::getName()
-      // 	  +string(">");        
-      // }
-
-      // static std::string getName(void){
-      // 	using namespace std;
-      // 	using namespace tfel::utilities;
-      // 	return string("StensorStensorExpr<")+Name<A>::getName()+string(",")
-      // 	  +Name<B>::getName()+string(",")+Name<Op>::getName()+string(">");
-      // }
-
-      // static std::string getName(void){
-      // 	using namespace std;
-      // 	using namespace tfel::utilities;
-      // 	return string("StensorNegExpr<")+Name<A>::getName()+string(">");
-      // }
-
-      // static std::string getName(void){
-      // 	using namespace std;
-      // 	using namespace tfel::utilities;
-      // 	return string("StensorStensorDiadicProductExpr<")+
-      // 	  Name<A>::getName()+string(",")+
-      // 	  Name<B>::getName()+string(",")+
-      // 	  Name<OpDiadicProduct>::getName()+string(">");
-      // }
-
-
-      // static std::string getName(void){
-      // 	using namespace std;
-      // 	using namespace tfel::utilities;
-      // 	return string("ScalarStensorExprWithoutConstIterator<")+Name<A>::getName()+string(",")
-      // 	  +Name<B>::getName()+string(",")+Name<Op>::getName()+string(">");
-      // }
-
-      // static std::string getName(void){
-      // 	using namespace std;
-      // 	using namespace tfel::utilities;
-      // 	return string("StensorScalarExprWithoutConstIterator<")+Name<A>::getName()+string(",")
-      // 	  +Name<B>::getName()+string(",")+Name<Op>::getName()+string(">");
-      // }
-
-      // static std::string getName(void){
-      // 	using namespace std;
-      // 	using namespace tfel::utilities;
-      // 	return string("StensorStensorExprWithoutConstIterator<")+Name<A>::getName()+string(",")
-      // 	  +Name<B>::getName()+string(",")+Name<Op>::getName()+string(">");
-      // }
-
-      // static std::string getName(void){
-      // 	using namespace std;
-      // 	using namespace tfel::utilities;
-      // 	return string("StensorStensorExprWithoutConstIterator<")+Name<A>::getName()+string(",")
-      // 	  +Name<B>::getName()+string(",")+Name<OpMinus>::getName()+string(">");
-      // }
-
-      // static std::string getName(void){
-      // 	using namespace std;
-      // 	using namespace tfel::utilities;
-      // 	return string("StensorNegExprWithoutConstIterator<")+Name<A>::getName()+string(">");
-      // }
-
-      // static std::string getName(void){
-      // 	using namespace std;
-      // 	using namespace tfel::utilities;
-      // 	return string("ST2toST2Expr<")+Name<T_type>::getName()
-      // 	  +string(",")+Name<Expr>::getName()+string(">");
-      // }
-    // 
-    // template<class T>
-    // std::string
-    // ST2toST2Concept<T>::getName(void)
-    // {
-    //   using namespace std;
-    //   using namespace tfel::utilities;
-    //   return string("ST2toST2Concept<")+Name<T>::getName()+string(">");
-    // } // end of ST2toST2Concept<T>::getName(void)
 
     template<unsigned int N>
     struct TFEL_VISIBILITY_LOCAL Name<tfel::meta::Int2Type<N> >

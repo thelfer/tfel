@@ -22,10 +22,10 @@ namespace tfel{
     {
       using namespace std;
       const T rmax = static_cast<T>(RAND_MAX);
-      const T pi = real(4)* atan(real(1));  
+      const T pi = T(4)* atan(T(1));  
       tmatrix<3u,3u,T> drot;
       T psi=T(2)*pi*(static_cast<T>(rand())/rmax);
-      T cthe=T(2)*((static_cast<T>(rand())/rmax)-0.5);
+      T cthe=T(2)*((static_cast<T>(rand())/rmax)-T(1)/T(2));
       T the=acos(cthe);
       T phi=T(2)*pi*(static_cast<T>(rand())/rmax);
       T cospsi=cos(psi);

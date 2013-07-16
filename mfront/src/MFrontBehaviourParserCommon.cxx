@@ -1470,9 +1470,8 @@ namespace mfront{
     using namespace std;
     typedef MFrontBehaviourInterfaceFactory MBIF;
     MBIF& mbif = MBIF::getMFrontBehaviourInterfaceFactory();
-    VarContainer::const_iterator p;
     map<DrivingVariable,
-	ThermodynamicForce>::const_iterator p2;
+	ThermodynamicForce>::const_iterator p;
     this->checkBehaviourDataFile();
     this->behaviourDataFile << "void\n"
 			    << "exportBehaviourData(const ";
@@ -1483,13 +1482,13 @@ namespace mfront{
     }
     this->behaviourDataFile << "{\n";
     this->behaviourDataFile << "using namespace tfel::math;\n";
-    for(p2=this->mb.getMainVariables().begin();p2!=this->mb.getMainVariables().end();++p2){
-      if(p2->first.increment_known){
-	this->behaviourDataFile << "res." << p2->first.name  << " = this->" << p2->first.name << ";\n\n";
+    for(p=this->mb.getMainVariables().begin();p!=this->mb.getMainVariables().end();++p){
+      if(p->first.increment_known){
+	this->behaviourDataFile << "res." << p->first.name  << " = this->" << p->first.name << ";\n\n";
       } else {
-	this->behaviourDataFile << "res." << p2->first.name  << "0 = this->" << p2->first.name << "0;\n\n";
+	this->behaviourDataFile << "res." << p->first.name  << "0 = this->" << p->first.name << "0;\n\n";
       }
-      this->behaviourDataFile << "res." << p2->second.name << " = this->" << p2->second.name << ";\n\n";
+      this->behaviourDataFile << "res." << p->second.name << " = this->" << p->second.name << ";\n\n";
     }
     if(!this->mb.getMaterialProperties().empty()){
       this->writeResultsArrayResize(this->behaviourDataFile,
@@ -2031,7 +2030,6 @@ namespace mfront{
     using namespace std;
     typedef MFrontBehaviourInterfaceFactory MBIF;
     MBIF& mbif = MBIF::getMFrontBehaviourInterfaceFactory();
-    VarContainer::const_iterator p;
     this->checkBehaviourFile();
     this->behaviourFile << "/*!\n";
     this->behaviourFile << "* \\brief Constructor\n";
@@ -3189,28 +3187,11 @@ namespace mfront{
 
   void MFrontBehaviourParserCommon::writeIntegrationDataExternalStateVars() {
     using namespace std;
-    VarContainer::const_iterator p;
     this->checkIntegrationDataFile();
     this->writeVariablesDeclarations(this->integrationDataFile,
 				     this->mb.getExternalStateVariables(),
 				     "d","",this->fileName,
 				     false,this->debugMode);
-    // this->writeVariablesIncrementsDeclaration(std::ostream& f,
-    // 					      const VarContainer& v,
-    // 					     const std::string& prefix,
-    // 					     const std::string& suffix,
-    // 					     const std::string& fileName,
-    // 					     const bool useTimeDerivative,
-    // 					     const bool b)
-    // for(p =this->mb.getExternalStateVariables().begin();
-    // 	p!=this->mb.getExternalStateVariables().end();++p){
-    //   if((!this->debugMode)&&(p->lineNumber!=0u)){
-    // 	this->integrationDataFile << "#line " << p->lineNumber << " \"" 
-    // 				  << this->fileName << "\"\n";
-    //   }
-    //   this->integrationDataFile << p->type << " d" << p->name << ";\n";  
-    // }
-    // this->integrationDataFile << endl;
   }
 
 
@@ -3611,7 +3592,6 @@ namespace mfront{
     vector<string>::const_iterator i;
     map<string,vector<string> >::const_iterator p;
     vector<string>::const_iterator p2;
-    vector<string>::const_iterator p3;
     for(i  = this->interfaces.begin();
 	i != this->interfaces.end();++i){
       MFrontBehaviourVirtualInterface *interface = mbif.getInterfacePtr(*i);
