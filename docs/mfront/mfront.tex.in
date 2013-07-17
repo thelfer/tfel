@@ -72,6 +72,9 @@
 
 \newcommand{\bigO}[1]{\ensuremath{\mathop{}\mathopen{}O\mathopen{}\left(#1\right)}}
 
+\newcommand{\bqc}{\ensuremath{B_{4}C}}
+\newcommand{\bd}{\ensuremath{\mbox{}^{10}B}}
+
 %c from texinfo.tex
 \def\ifmonospace{\ifdim\fontdimen3\font=0pt }
 
@@ -147,8 +150,8 @@
   gestion pérenne, robuste, efficace et évolutive des connaissances
   matériau dans la plate-forme
   \pleiades{}~\cite{michel09,helfer:opti:2011}. Il permet également à
-  des utilisateurs non développeur d'écrire ses propres connaissances
-  matériau~\cite{helfer10}.
+  des utilisateurs non développeur d'écrire leurs propres
+  connaissances matériau~\cite{helfer10}.
 
   Il s'agit d'un outil mature, qui se veut de qualité industrielle et
   qui intéresse fortement différents départements du
@@ -174,18 +177,17 @@
 Cette note donne une vue générale du générateur de code \mfront{} et
 de son application aux propriétés matériau et aux modèles
 physico-chimiques. Elle est complétée par trois autres notes qui
-traitent\footnote{Citons également qu'un guide de référence de la
-  librairie \TFEL{} est également en cours de rédaction. Cette note
-  étant assez ambitieuse, sa rédaction s'étalera dans le temps. Elle
-  est cependant disponible en version projet dans les sources de la
-  librairie. Elle contient en particulier le guide d'installation de
-  la librairie.}~:
+traitent\footnote{Un guide de référence de la librairie \TFEL{} est
+  également en cours de rédaction. Cette note étant assez ambitieuse,
+  sa rédaction s'étalera dans le temps. Elle est cependant disponible
+  en version projet dans les sources de la librairie. Elle contient en
+  particulier le guide d'installation de la librairie.}~:
 \begin{itemize}
 \item des lois de comportement
   mécanique~\cite{helfer:mfront:behaviours:2013}~;
-\item de l'interface {\tt umat} utilisée par le codes aux éléments
+\item de l'interface {\tt umat} utilisée par le code aux éléments
   finis \castem{}~\cite{helfer:umat:2013}~;
-\item de l'interface utilisée par le codes aux éléments finis
+\item de l'interface utilisée par le code aux éléments finis
   \aster{}~\cite{helfer:aster:2013}~;
 \end{itemize}
 
@@ -193,7 +195,7 @@ traitent\footnote{Citons également qu'un guide de référence de la
 \TFEL{} très utilisée par \mfront{}, mais qui a également de
 nombreuses autres utilisations dans la plate-forme \pleiades{}.  Ces
 notes sont intégrées à la gestion de configuration de \TFEL{} et
-évoluent continûment avec les développement de \TFEL{}\footnote{ La
+évoluent continûment avec les développements de \TFEL{}\footnote{ La
   version la plus à jour est obtenue dans le répertoire de compilation
   des sources par la commande~:
 \begin{center}
@@ -225,7 +227,7 @@ développeurs~\cite{michel09,helfer10}~:
       \begin{itemize}
       \item l'architecture \(V2.0\) fournit une interface aux
         propriétés matériau qui a permis de porter l'ensemble de
-        propriétés matériau de {\tt MAYA}. Le temps de développement
+        propriétés matériau de {\tt MAIA}. Le temps de développement
         de l'interface est de l'ordre de l'heure~;
       \item toutes les lois de comportement mécanique écrites avec
         \mfront{} peuvent être utilisées ou dans le code aux éléments
@@ -292,9 +294,9 @@ Les annexes traitent des questions suivantes~:
 \section{Présentation générale de \mfront{}}
 \label{sec:pres-gener-de}
 
-\mfront{} est un générateur de code dédiés aux connaissances
-matériau~: partant d'un fichier contenant les informations physiques
-et numériques utiles, \mfront{} génère un ou plusieurs fichiers \cpp{}
+\mfront{} est un générateur de code dédié aux connaissances matériau~:
+partant d'un fichier contenant les informations physiques et
+numériques utiles, \mfront{} génère un ou plusieurs fichiers \cpp{}
 utilisables dans différents contextes logiciels, ce qui englobe des
 codes de calculs ou des langages de programmation. \mfront{} peut
 éventuellement gérer leurs compilations.
@@ -351,7 +353,7 @@ plus fréquemment utilisés dans le code \licos{}.
 Un fichier d'entrée de \mfront{} représente une unique connaissance
 matériau (une propriété matériau, une loi de comportement, un modèle).
 
-Il se présente sous la forme d'une liste de mots clés, appelées
+Il se présente sous la forme d'une liste de mots clés, appelés
 également directives dans la suite du document, commençant par une
 arobase \texttt{@}. Dans la mesure du possible, nous avons recherché à
 nous rapprocher le plus possible de la syntaxe utilisée par le langage
@@ -400,7 +402,7 @@ Nous décrivons dans ce paragraphe quatre directives optionnelles dont
 le but est uniquement informatif. Elles sont utilisées lors de
 l'insertion d'un fichier \mfront{} dans la base de données
 \sirius{}. Elles devraient également servir à terme lors de la
-génération automatiquement d'une documentation à partir d'un fichier
+génération automatique d'une documentation à partir d'un fichier
 \mfront{}.
 
 \paragraph{La directive \mkey{Description}} La directive
@@ -507,9 +509,9 @@ figure~\ref{fig:mfront_a316tihy_creepexp}. Elles sont utilisées en
 figure~\ref{fig:mfront_materiallaw} pour initialiser des variables
 dans un bloc commençant par la directive \mkey{InitLocalVariables}.
 
-\paragraph{Note} Il est important de noter que le nom du
-fichier \mfront{} n'intervient pas dans le nom des fonctions générés. Il
-est cependant souhaitable et pratique de garder une certaine cohérence
+\paragraph{Note} Il est important de noter que le nom du fichier
+\mfront{} n'intervient pas dans le nom des fonctions générées. Il est
+cependant souhaitable et pratique de garder une certaine cohérence
 entre le nom du fichier et le nom des fonctions générées.
 
 \subsubsection{Inclusion d'autres fichiers {\tt mfront}}
@@ -613,8 +615,8 @@ directive \mkey{Includes}.
 \paragraph{La directive \mkey{Link}} La directive \mkey{Link} est
 utilisée pour lier les librairies générées à des librairies externes.
 
-Elle est suivie d'une chaîne de caractère (entre doubles quotes)
-contenant des instructions à fournir à l'éditeurs de
+Elle est suivie d'une chaîne de caractères (entre doubles quotes)
+contenant des instructions à fournir à l'éditeur de
 liens. L'utilisation des doubles quotes permet l'utilisation de
 caractères spéciaux.
 
@@ -653,9 +655,9 @@ différentes variables d'entrée. Le traitement du dépassement d'une de
 ces bornes dépend de l'interface utilisée.
 
 \paragraph{Le mot clé \texttt{@Physical\-Bounds}} Le mot clé
-\mkeyb{PhysicalBounds}{Physical\-Bounds} définit les valeurs admissibles
-des différents variables d'entrée. Le dépassement d'une de ces bornes
-doit arrêter le calcul.
+\mkeyb{PhysicalBounds}{Physical\-Bounds} définit les valeurs
+admissibles des différentes variables d'entrée. Le dépassement d'une
+de ces bornes doit arrêter le calcul.
 
 La figure~\ref{fig:mfront:Bounds} donne un exemple d'utilisation des
 directives \mkey{Bounds} et \mkeyb{PhysicalBounds}{Physical\-Bounds}.
@@ -728,13 +730,23 @@ Cette solution corrige les défauts de la première approche. En
 particulier, l'accès aux valeurs des paramètres n'a pratiquement aucun
 coût numérique. Cette solution introduit cependant un inconvénient~:
 tous les matériaux utilisant cette connaissance sont affectés alors
-que dans la première solution tous les matériaux pouvaient être
-paramétrés de manière indépendante. Dans les applications filières,
-les matériaux n'ont aucune propriété, loi de comportement ou modèle
-commun et de ce fait, cet inconvénient ne se rencontre pas en
-pratique\footnote{Signalons un dernier cas impossible à traiter de
-  cette manière~: celui de calculs multi-tranches dans lesquels
-  l'utilisateur voudrait paramétrer chaque tranche indépendamment.}.
+que dans la première solution la modification pouvait être faite
+matériau par matériau. Nous pouvons donner deux cas pouvant poser
+problème~:
+\begin{itemize}
+\item dans le cas d'une aiguille absorbante, il arrive que la partie
+  inférieure de la colonne absorbante soit constituée de \(\bqc\) à un
+  enrichissement en \(\bd\) donné tandis que la partie supérieure soit
+  constituée de \(\bqc\) à un enrichissement différent. Il est naturel
+  de définir deux matériaux distincts pour décrire cette situation que
+  l'ont décrira à l'aide des mêmes propriétés matériaux. Dans ce cas
+  la notion de paramètre ne permet pas distinguer les parties basses
+  et hautes.
+\item pour de crayons combustibles mélangeant des parties oxydes
+  \(UO_{2}\) et \(MOX\), la notion de paramètre ne permet pas de
+  modifier une propriété ou un modèle sur le combustible oxyde
+  uniquement~;
+\end{itemize}
 
 Dans le cas du code \licos{}, l'utilisateur pourra choisir la
 solution la plus adaptée à son besoin. Dans \castem{}, seule la première
@@ -800,8 +812,8 @@ disponibles~:
   \item l'analyseur \texttt{MultipleIsotropicMisesFlows} qui gère
   une combinaison arbitraire d'écoulements des trois types précédents.
   Les différents écoulements sont alors supposés non couplés~;
-  \item les analyseurs \texttt{Implicit} et \texttt{ImplicitII}
-  qui simplifie la résolution d'une loi de comportement mécanique
+\item les analyseurs \texttt{Implicit} et \texttt{ImplicitII} qui
+  simplifient la résolution d'une loi de comportement mécanique
   quelconque à l'aide d'une intégration implicite~;
 \item l'analyseur \texttt{Model} qui permet de traiter des
   modèles. Cet analyseur fait l'objet de la

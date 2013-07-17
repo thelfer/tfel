@@ -16,14 +16,14 @@
 \titre{Le générateur de code \mfront{}~: présentation générale et
   application aux propriétés matériau et aux modèles}
 
-\date{2013}
+\date{Juillet 2013}
 \numero{13-019}
 \indice{0}
 \dateversion{07/2013}
 \numeroaffaire{A-SICOM-A1-01}
 \domaine{DEN/DISN/SIMU}
-% \accords{tripartite}
-% \clients{AREVA - EDF}
+\accords{tripartite}
+\clients{AREVA - EDF}
 \programmerecherche{SICOM}
 \classification{DO}
 \motsclefs{
@@ -62,8 +62,8 @@ AREVA NP/LYON           & P. Melin        & 1 & \\
 }
 \CoupeListeDiffusion{}
 \diffusioninterne{
-  DEN/DISN/SIMU       & J.P. Deffain       & 1 & \\ 
-                      & D. Caruge          & 1 & \\ 
+  DEN/DISN/SIMU       & J.P. Deffain       & 1 & Diffusion par\\ 
+                      & D. Caruge          & 1 & courriel     \\ 
   DEN/DM2S/SEMT       & C. Dellis          & 1 & \\
   DEN/DM2S/SEMT/LM2S  & J.L. Fayard        & 1 & \\
                       & S. Pascal          & 1 & \\
@@ -89,7 +89,7 @@ AREVA NP/LYON           & P. Melin        & 1 & \\
                       & S. Bejaoui         &  & \\
                       & V. Blanc           &  & \\
                       & T. Beck            &  & \\
-                      & F. Biscara         &  & \\
+                      & F. Biscarrat       &  & \\
                       & D. Lorenzo         &  & \\
                       & I. Guénot-Delahaie &  & \\
                       & P. Masoni          &  & \\
