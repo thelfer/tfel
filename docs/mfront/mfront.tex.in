@@ -1047,7 +1047,7 @@ compilation optimisées et lance la commande~:
 \paragraph{L'option \moption{search-path}} Un fichier \mfront{} peut
 inclure d'autres fichiers grâce à la directive {\tt @Import}. L'option
 \moption{search-path} permet d'ajouter un ou plusieurs chemins de
-recherche pour ses fichiers. Plusieurs chemins peuvent être précisés
+recherche pour ces fichiers. Plusieurs chemins peuvent être précisés
 en les séparant par le caractère {\tt ':'}.
 
 \paragraph{L'option \moption{include}} L'option \moption{include} est
@@ -1081,7 +1081,7 @@ La ligne de commande suivante~:
 \begin{center}
   {\tt mfront --@AsterCompareToNumericalTangentOperator=true implicit.mfront}
 \end{center}
-donnera le même résultat que si on avait rajouter la ligne suivant en
+donnera le même résultat que si on avait rajouter la ligne suivante en
 tête du fichier {\tt implicit.mfront}~:
 \begin{center}
   @AsterCompareToNumericalTangentOperator true;
@@ -1156,17 +1156,17 @@ l'interface \cpp{}.
 défaut pour les propriétés matériaux sont~:
 \begin{itemize}
 \item l'interface \texttt{c} pour une utilisation dans des codes
-  écrits dans ce language. Cette interface est décrite en
+  écrits dans ce langage. Cette interface est décrite en
   annexe~\ref{sec:linterface-textttc}~;
   \item l'interface \texttt{fortran} pour une utilisation dans des codes
-  écrits dans ce language~;
+  écrits dans ce langage~;
   \item l'interface \texttt{c++} pour une utilisation dans des codes
-  écrits dans ce language~;
+  écrits dans ce langage~;
 \item l'interface \texttt{castem} pour une utilisation dans le code
   aux éléments finis \castem{}. Cette interface est décrite en
   annexe~\ref{sec:lint-textttcastem}~;
 \item l'interface \texttt{python} pour une utilisation dans des codes
-  écrits dans ce language. Cette interface est décrite en
+  écrits dans ce langage. Cette interface est décrite en
   annexe~\ref{sec:lint-textttpyth}~;
   \item l'interface \texttt{gnuplot} pour une visualisation des courbes
   d'évolution des propriétés matériau en fonction de leur paramètres~;
@@ -1228,14 +1228,14 @@ d'où la corrélation est extraite ou tout commentaire sur son origine.
 change le nom de la propriété matériau calculée. Par défaut, celle-ci
 s'appelle \texttt{res}.
 
-\paragraph{Le mot clé \mkey{Input}} Le mot clé \mkey{Input}
-donne la liste des variables d'état dont dépend la propriété. Les
-variables peuvent être déclarées en une fois ou par plusieurs
-utilisations consécutives du mot clé \mkey{Input}. L'ordre de
-déclaration des variables peut être important suivant l'interface
-utilisé~: ainsi la fonction générée par les interface \texttt{c} ou
-\texttt{castem} prendront leur arguments dans l'ordre de déclaration
-utilisé dans le fichier \mfront{}.
+\paragraph{Le mot clé \mkey{Input}} Le mot clé \mkey{Input} donne la
+liste des variables d'état dont dépend la propriété. Les variables
+peuvent être déclarées en une fois ou par plusieurs utilisations
+consécutives du mot clé \mkey{Input}. L'ordre de déclaration des
+variables peut être important suivant l'interface utilisé~: ainsi la
+fonction générée par les interfaces \texttt{c} ou \texttt{castem}
+prendront leurs arguments dans l'ordre de déclaration utilisé dans le
+fichier \mfront{}.
 
 \paragraph{La méthode \texttt{setGlossaryName}} La méthode
 \texttt{setGlossaryName}, non utilisée ici, permet de préciser un nom
