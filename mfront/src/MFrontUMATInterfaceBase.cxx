@@ -328,7 +328,7 @@ namespace mfront
   std::vector<std::string>
   MFrontUMATInterfaceBase::getGlossaryNames(const VarContainer& v,
 					    const std::map<std::string,std::string>& glossaryNames,
-					    const std::map<std::string,std::string>& entryNames)
+					    const std::map<std::string,std::string>& entryNames) const
   {
     using namespace std;
     vector<string> n;
@@ -340,7 +340,7 @@ namespace mfront
   MFrontUMATInterfaceBase::appendGlossaryNames(std::vector<std::string>& n,
 					       const VarContainer& v,
 					       const std::map<std::string,std::string>& glossaryNames,
-					       const std::map<std::string,std::string>& entryNames)
+					       const std::map<std::string,std::string>& entryNames) const
   {
     using namespace std;
     VarContainer::const_iterator p;
@@ -363,7 +363,7 @@ namespace mfront
 					      const std::vector<std::string>& n,
 					      const std::string& name,
 					      const std::string& array,
-					      const unsigned short o)
+					      const unsigned short o) const
   {
     using namespace std;
     if(o>n.size()){
@@ -628,6 +628,7 @@ namespace mfront
       const VarContainer& auxiliaryStateVarsHolder = mb.getAuxiliaryStateVariables();
       const VarContainer& externalStateVarsHolder  = mb.getExternalStateVariables();
       VarContainer::const_iterator p;
+      const bool mpoffset = this->hasMaterialPropertiesOffset(mb);
       unsigned short i;
       unsigned int offset;
       out << "mfront::UMATSmallStrainMTestFileGenerator mg(\""
@@ -641,11 +642,15 @@ namespace mfront
       out << "static_cast<void>(TVectorSize); // remove gcc warning\n";
       out << "static_cast<void>(StensorSize); // remove gcc warning\n";
       out << "static_cast<void>(TensorSize);  // remove gcc warning\n";
+      if(mpoffset){
+	out << "unsigned short mg_mpoffset;" << endl;
+      }
       out << "mg.addTime(0.);\n";
       out << "mg.addTime(*DTIME);\n";
       out << "mg.setStrainTensor(STRAN);\n";
       out << "mg.setStrainTensorIncrement(DSTRAN);\n";
       out << "mg.setStressTensor(&mg_STRESS[0]);\n";
+      this->writeMTestFileGeneratorAdditionalMaterialPropertiesInitialisation(out,mb);
       for(p=coefsHolder.begin(),offset=0;p!=coefsHolder.end();++p){
 	SupportedTypes::TypeFlag flag = this->getTypeFlag(p->type);
 	if(flag!=SupportedTypes::Scalar){
@@ -656,10 +661,18 @@ namespace mfront
 	}
 	const string mpname = MFrontUMATInterfaceBase::getGlossaryName(glossaryNames,entryNames,p->name);
 	if(p->arraySize==1u){
-	  if(offset==0){
-	    out << "mg.addMaterialProperty(\"" << mpname << "\",*PROPS);\n";
+	  if(mpoffset){
+	    if(offset==0){
+	      out << "mg.addMaterialProperty(\"" << mpname << "\",*(PROPS+mg_mpoffset));\n";
+	    } else {
+	      out << "mg.addMaterialProperty(\"" << mpname << "\",*(PROPS+mg_mpoffset+" << offset<< "));\n";
+	    }
 	  } else {
-	    out << "mg.addMaterialProperty(\"" << mpname << "\",*(PROPS+" << offset<< "));\n";
+	    if(offset==0){
+	      out << "mg.addMaterialProperty(\"" << mpname << "\",*PROPS);\n";
+	    } else {
+	      out << "mg.addMaterialProperty(\"" << mpname << "\",*(PROPS+" << offset<< "));\n";
+	    }
 	  }
 	  ++offset;
 	} else {
@@ -667,22 +680,41 @@ namespace mfront
 	    out << "for(unsigned short i=0;i!=" << p->arraySize << ";++i){\n";
 	    out << "ostringstream name;\n";
 	    out << "name << \"" << mpname << "[\" << i << \"]\";\n";
-	    if(offset==0){
-	      out << "mg.addMaterialProperty(name.str(),*(PROPS+i));\n";
+	    if(mpoffset){
+	      if(offset==0){
+		out << "mg.addMaterialProperty(name.str(),*(PROPS+mg_mpoffset+i));\n";
+	      } else {
+		out << "mg.addMaterialProperty(name.str(),*(PROPS+mg_mpoffset+" << offset<< "+i));\n";
+	      }
+	      out << "}\n";
 	    } else {
-	      out << "mg.addMaterialProperty(name.str(),*(PROPS+" << offset<< "+i));\n";
+	      if(offset==0){
+		out << "mg.addMaterialProperty(name.str(),*(PROPS+i));\n";
+	      } else {
+		out << "mg.addMaterialProperty(name.str(),*(PROPS+" << offset<< "+i));\n";
+	      }
+	      out << "}\n";
 	    }
-	    out << "}\n";
 	    offset += p->arraySize;
 	  } else {
 	    for(i=0;i!=p->arraySize;++i,++offset){
-	      if(offset==0){
-		out << "mg.addMaterialProperty(\"" << mpname
-		    << "[" << i << "]\",*PROPS);\n";
-	      } else {
-		out << "mg.addMaterialProperty(\""
-		    << mpname << "[" << i << "]\",*(PROPS+" << offset<< "));\n";
-	      }
+	       if(mpoffset){
+		 if(offset==0){
+		   out << "mg.addMaterialProperty(\"" << mpname
+		       << "[" << i << "]\",*(PROPS+mg_mpoffset));\n";
+		 } else {
+		   out << "mg.addMaterialProperty(\""
+		       << mpname << "[" << i << "]\",*(PROPS+mg_mpoffset+" << offset<< "));\n";
+		 }
+	       } else {
+		 if(offset==0){
+		   out << "mg.addMaterialProperty(\"" << mpname
+		       << "[" << i << "]\",*PROPS);\n";
+		 } else {
+		   out << "mg.addMaterialProperty(\""
+		       << mpname << "[" << i << "]\",*(PROPS+" << offset<< "));\n";
+		 }
+	       }
 	    }
 	  }
 	}
@@ -894,6 +926,18 @@ namespace mfront
       }
       out << "mg.generate(\""+name+"\");\n";
     }
+  }
+
+  void
+  MFrontUMATInterfaceBase::generateUMATxxSymbols(std::ostream& out,
+						 const std::string& name,
+						 const MechanicalBehaviourDescription& mb,
+						 const std::map<std::string,std::string>& glossaryNames,
+						 const std::map<std::string,std::string>& entryNames) const
+  {
+    this->writeUMATxxMaterialPropertiesSymbols(out,name,mb,glossaryNames,entryNames);
+    
+    
   }
 
   MFrontUMATInterfaceBase::~MFrontUMATInterfaceBase()

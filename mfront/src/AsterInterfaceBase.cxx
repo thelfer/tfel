@@ -23,7 +23,7 @@ namespace aster{
     msg << "AsterInterfaceBase::throwUnMatchedNumberOfMaterialProperties : "
 	<< "the number of material properties does not match. The behaviour '" 
 	<< b  << "' requires " << n1 << " material properties, and "
-	<< n2 << " material properties where declared";
+	<< n2 << " material properties were declared";
     throw(AsterException(msg.str()));
   } // end of throwUnMatchedNumberOfMaterialProperties
     
@@ -37,7 +37,7 @@ namespace aster{
     msg << "AsterInterfaceBase::throwUnMatchedNumberOfStateVariables : "
 	<< "the number of internal state variables does not match. The behaviour '" 
 	<< b  << "' requires " << n1 << " state variables, and "
-	<< n2 << " state variables where declared";
+	<< n2 << " state variables were declared";
     throw(AsterException(msg.str()));
   } // end of throwUnMatchedNumberOfStateVariables
 

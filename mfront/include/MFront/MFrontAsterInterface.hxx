@@ -97,8 +97,38 @@ namespace mfront{
     virtual std::string
     getFunctionName(const std::string&) const;
 
+    virtual bool
+    hasMaterialPropertiesOffset(const MechanicalBehaviourDescription&) const;
+
+    /*!
+     * \param[in] out : output file
+     */
     virtual void
     writeMTestFileGeneratorSetModellingHypothesis(std::ostream&) const;
+
+    virtual void
+    writeMTestFileGeneratorAdditionalMaterialPropertiesInitialisation(std::ostream&,
+								      const MechanicalBehaviourDescription&) const;
+
+    /*!
+     * \param[in] out : output file
+     */
+    virtual void
+    writeUMATxxMaterialPropertiesSymbols(std::ostream&,
+					 const std::string&,
+					 const MechanicalBehaviourDescription&,
+					 const std::map<std::string,std::string>&,
+					 const std::map<std::string,std::string>&) const;
+
+    /*!
+     * \param[out] hasElasticMaterialPropertiesOffset          : true if an offset is required for elastic properties
+     * \param[out] hasThermalExpansionMaterialPropertiesOffset : true if an offset is required for thermal expansion
+     * \param[out] massDensityOffsetForThermalExpansion        : true if an offset is required for mass density
+     * \param[in] mb                                           : mechanical description
+     */
+    void
+    getMaterialPropertiesOffset(bool&,bool&,bool&,
+				const MechanicalBehaviourDescription&) const;
 
     bool   compareToNumericalTangentOperator;
 

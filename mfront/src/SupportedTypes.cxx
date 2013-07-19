@@ -244,7 +244,7 @@ namespace mfront{
 								       const std::string& src,
 								       const std::string& prefix,
 								       const std::string& suffix,
-								       const SupportedTypes::TypeSize& o)
+								       const SupportedTypes::TypeSize& o) const
   {
     using namespace std;
     VarContainer::const_iterator p;
@@ -295,7 +295,7 @@ namespace mfront{
 									const std::string& src,
 									const std::string& prefix,
 									const std::string& suffix,
-									const SupportedTypes::TypeSize& o)
+									const SupportedTypes::TypeSize& o) const
   {
     using namespace std;
     VarContainer::const_iterator p;
@@ -356,7 +356,7 @@ namespace mfront{
   void
   SupportedTypes::writeStateVariableIncrementsInitializers(std::ostream& f,
 							   const VarContainer& v,
-							   const bool useStateVarTimeDerivative)
+							   const bool useStateVarTimeDerivative) const 
   {
     using namespace std;
     VarContainer::const_iterator p;
@@ -402,7 +402,7 @@ namespace mfront{
   } // end of SupportedTypes::writeStateVariableIncrementsInitializers
 
   SupportedTypes::TypeSize
-  SupportedTypes::getTotalSize(const VarContainer& v)
+  SupportedTypes::getTotalSize(const VarContainer& v) const
   {
     SupportedTypes::TypeSize s;
     VarContainer::const_iterator p;
@@ -413,7 +413,7 @@ namespace mfront{
   } // end of SupportedTypes::getTotalSize
 
   unsigned short
-  SupportedTypes::getNumberOfVariables(const VarContainer& v)
+  SupportedTypes::getNumberOfVariables(const VarContainer& v) const
   {
     unsigned short n = 0u;
     VarContainer::const_iterator p;
@@ -426,7 +426,7 @@ namespace mfront{
   void
   SupportedTypes::writeResultsArrayResize(std::ostream& f,
 					  const std::string& dest,
-					  const VarContainer& v)
+					  const VarContainer& v) const
   {
     this->writeResultsArrayResize(f,dest,this->getTotalSize(v));
   } // end of SupportedTypes::writeResultsArrayResize
@@ -434,7 +434,7 @@ namespace mfront{
   void
   SupportedTypes::writeResultsArrayResize(std::ostream& f,
 					  const std::string& dest,
-					  const SupportedTypes::TypeSize& s)
+					  const SupportedTypes::TypeSize& s) const
   {
     f << "if(" << dest << "!=" << s << "){\n";
     f << dest+".resize(" << s <<");\n";
@@ -446,7 +446,7 @@ namespace mfront{
 				const VarContainer& v,
 				const std::string& dest,
 				const bool useQt,
-				const SupportedTypes::TypeSize& o)
+				const SupportedTypes::TypeSize& o) const
   {
     using namespace std;
     VarContainer::const_iterator p;
@@ -546,7 +546,7 @@ namespace mfront{
 					     const std::string& suffix,
 					     const std::string& fileName,
 					     const bool useTimeDerivative,
-					     const bool b)
+					     const bool b) const
   {
     using namespace std;
     VarContainer::const_iterator p;

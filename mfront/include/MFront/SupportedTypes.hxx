@@ -108,14 +108,14 @@ namespace mfront
      * \param[in]  useTimeDerivative : declare time derivative of the variables
      * \param[in]  b                 : debug mode
      */
-    void
+    virtual void
     writeVariablesDeclarations(std::ostream&,
 			       const VarContainer&,
 			       const std::string&,
 			       const std::string&,
 			       const std::string&,
 			       const bool,
-			       const bool);
+			       const bool) const;
     
     /*!
      * \param[out] f      : output file
@@ -131,7 +131,7 @@ namespace mfront
 							 const std::string&,
 							 const std::string&,
 							 const std::string&,
-							 const TypeSize&  = TypeSize());
+							 const TypeSize&  = TypeSize()) const;
     
     /*!
      * \param[out] f      : output file
@@ -147,7 +147,7 @@ namespace mfront
 							  const std::string&,
 							  const std::string&,
 							  const std::string&,
-							  const TypeSize& = TypeSize());
+							  const TypeSize& = TypeSize()) const;
 
 
     /*!
@@ -155,10 +155,10 @@ namespace mfront
      * \param[in]  v                 : variables to be initialized
      * \param[in]  useTimeDerivative : declare time derivative of the variables
      */
-    void
+    virtual void
     writeStateVariableIncrementsInitializers(std::ostream&,
 					     const VarContainer&,
-					     const bool);
+					     const bool) const;
 
     /*!
      * \param[out] f     : output file
@@ -172,29 +172,29 @@ namespace mfront
 		  const VarContainer&,
 		  const std::string&,
 		  const bool,
-		  const TypeSize&  = TypeSize());
+		  const TypeSize&  = TypeSize()) const;
     
     /*!
      * \param[in]  v   : variables
      */
     TypeSize
-    getTotalSize(const VarContainer&);
+    getTotalSize(const VarContainer&) const;
 
     /*!
      * \param[in]  v   : variables
      */
     unsigned short
-    getNumberOfVariables(const VarContainer&);
+    getNumberOfVariables(const VarContainer&) const;
 
     void
     writeResultsArrayResize(std::ostream&,
 			    const std::string&,
-			    const VarContainer&);
+			    const VarContainer&) const;
     
     void
     writeResultsArrayResize(std::ostream&,
 			    const std::string&,
-			    const SupportedTypes::TypeSize&);
+			    const SupportedTypes::TypeSize&) const;
     
     virtual ~SupportedTypes();
 

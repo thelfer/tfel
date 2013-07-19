@@ -270,65 +270,13 @@ namespace mfront{
     return res;
   }
 
-  void
-  MFrontUMATInterface::endTreatement(const std::string& file,
-				     const std::string& library,
-				     const std::string& material,
-				     const std::string& className,
-				     const std::string& authorName,
-				     const std::string& date,
-				     const std::map<std::string,std::string>& glossaryNames,
-				     const std::map<std::string,std::string>& entryNames,
-				     const MechanicalBehaviourDescription& mb)
+  bool
+  MFrontUMATInterface::checkIfElasticPropertiesAreDeclared(const MechanicalBehaviourDescription& mb) const
   {
     using namespace std;
-    using namespace tfel::system;
-    using namespace tfel::utilities;
     const VarContainer& coefsHolder              = mb.getMaterialProperties();
-    const VarContainer& stateVarsHolder          = mb.getStateVariables();
-    const VarContainer& auxiliaryStateVarsHolder = mb.getAuxiliaryStateVariables();
-    const VarContainer& externalStateVarsHolder  = mb.getExternalStateVariables();
-    const VarContainer& parametersHolder         = mb.getParameters();
-    string name;
-    string umatFctName;
-    string tmp;
     VarContainer::const_iterator p;
-    unsigned short i;
-    bool found;
-    
-    systemCall::mkdir("include/MFront");
-    systemCall::mkdir("include/MFront/UMAT");
-
-    if(mb.getBehaviourType()!=
-       mb.getElasticBehaviourType()){
-      string msg("MFrontUMATInterface::endTreatement : ");
-      msg += "the type of the behaviour (isotropic or orthotropic) does not ";
-      msg += "match the the type of its elastic behaviour.\n";
-      msg += "This is not allowed here :\n";
-      msg += "- an isotropic behaviour must have an isotropic elastic behaviour\n";
-      msg += "- an orthotropic behaviour must have an orthotropic elastic behaviour";
-      throw(runtime_error(msg));
-    }
-
-    if(!library.empty()){
-      name += library;
-    }
-    name += className;
-
-    string fileName("umat");
-    fileName += name;
-    fileName += ".hxx";
-
-    ofstream out(("include/MFront/UMAT/"+fileName).c_str());
-
-    if(!out){
-      string msg("MFrontUMATInterface::endTreatement : ");
-      msg += "could not open file ";
-      msg += fileName;
-      throw(runtime_error(msg));
-    }
-
-    found = false;
+    bool found = false;
     // specific treatment for isotropic behaviour
     if(mb.getBehaviourType()==mfront::ISOTROPIC){
       for(p=coefsHolder.begin();(p!=coefsHolder.end())&&(!found);++p){
@@ -377,6 +325,66 @@ namespace mfront{
 	}
       }
     }
+    return found;
+  } // end of MFrontUMATInterface::checkIfElasticPropertiesAreDeclared
+
+  void
+  MFrontUMATInterface::endTreatement(const std::string& file,
+				     const std::string& library,
+				     const std::string& material,
+				     const std::string& className,
+				     const std::string& authorName,
+				     const std::string& date,
+				     const std::map<std::string,std::string>& glossaryNames,
+				     const std::map<std::string,std::string>& entryNames,
+				     const MechanicalBehaviourDescription& mb)
+  {
+    using namespace std;
+    using namespace tfel::system;
+    using namespace tfel::utilities;
+    const VarContainer& coefsHolder              = mb.getMaterialProperties();
+    const VarContainer& stateVarsHolder          = mb.getStateVariables();
+    const VarContainer& auxiliaryStateVarsHolder = mb.getAuxiliaryStateVariables();
+    const VarContainer& externalStateVarsHolder  = mb.getExternalStateVariables();
+    const VarContainer& parametersHolder         = mb.getParameters();
+    string name;
+    string umatFctName;
+    string tmp;
+    VarContainer::const_iterator p;
+    unsigned short i;
+    
+    systemCall::mkdir("include/MFront");
+    systemCall::mkdir("include/MFront/UMAT");
+
+    if(mb.getBehaviourType()!=
+       mb.getElasticBehaviourType()){
+      string msg("MFrontUMATInterface::endTreatement : ");
+      msg += "the type of the behaviour (isotropic or orthotropic) does not ";
+      msg += "match the the type of its elastic behaviour.\n";
+      msg += "This is not allowed here :\n";
+      msg += "- an isotropic behaviour must have an isotropic elastic behaviour\n";
+      msg += "- an orthotropic behaviour must have an orthotropic elastic behaviour";
+      throw(runtime_error(msg));
+    }
+
+    if(!library.empty()){
+      name += library;
+    }
+    name += className;
+
+    string fileName("umat");
+    fileName += name;
+    fileName += ".hxx";
+
+    ofstream out(("include/MFront/UMAT/"+fileName).c_str());
+
+    if(!out){
+      string msg("MFrontUMATInterface::endTreatement : ");
+      msg += "could not open file ";
+      msg += fileName;
+      throw(runtime_error(msg));
+    }
+
   
     if(this->useTimeSubStepping){
       if(this->maximumSubStepping==0u){
@@ -473,7 +481,7 @@ namespace mfront{
       out << "static const bool requiresThermalExpansionTensor = false;\n";
     }
     if(mb.getBehaviourType()==mfront::ISOTROPIC){
-      if(!found){
+      if(!this->checkIfElasticPropertiesAreDeclared(mb)){
 	out << "static const unsigned short propertiesOffset = 4u;\n";
       } else {
 	out << "static const unsigned short propertiesOffset = 0u;\n";
@@ -604,31 +612,7 @@ namespace mfront{
       out << "1u;" << endl << endl;
     }
 
-    out << "MFRONT_SHAREDOBJ unsigned short umat"
-      	<< makeLowerCase(name);
-    unsigned short cs = this->getNumberOfVariables(coefsHolder);
-    if(mb.getBehaviourType()==mfront::ISOTROPIC){
-      // skipping the fourth first material properties
-      if(found){
-	out << "_nMaterialProperties = " << cs-4 << ";\n";
-      } else {
-	out << "_nMaterialProperties = " << cs << ";\n";
-      }
-    } else {
-      out << "_nMaterialProperties = " << cs << ";\n";
-    }
-
-    if((mb.getBehaviourType()==mfront::ISOTROPIC)&&(found)){
-      this->writeGlossaryNames(out,this->getGlossaryNames(coefsHolder,
-							  glossaryNames,
-							  entryNames),
-			       name,"MaterialProperties",4u);
-    } else {
-      this->writeGlossaryNames(out,this->getGlossaryNames(coefsHolder,
-							  glossaryNames,
-							  entryNames),
-			       name,"MaterialProperties");
-    }
+    this->generateUMATxxSymbols(out,name,mb,glossaryNames,entryNames);
 
     const unsigned short nStateVariables = static_cast<unsigned short>(this->getNumberOfVariables(stateVarsHolder) + 
 								       this->getNumberOfVariables(auxiliaryStateVarsHolder));
@@ -657,6 +641,12 @@ namespace mfront{
 	    break;
 	  case SupportedTypes::Stensor :
 	    out << 1;
+	    break;
+	  case SupportedTypes::TVector :
+	    out << 2;
+	    break;
+	  case SupportedTypes::Tensor :
+	    out << 3;
 	    break;
 	  default :
 	    string msg("MFrontUMATInterface::endTreatement : ");
@@ -848,7 +838,7 @@ namespace mfront{
     out << "coel1D = 'MOTS'";
     i=0;
     if(mb.getBehaviourType()==mfront::ISOTROPIC){
-      if(!found){
+      if(!this->checkIfElasticPropertiesAreDeclared(mb)){
 	out << "'YOUN' 'NU' 'RHO' 'ALPH' ";
 	i=4u;
       }
@@ -974,7 +964,7 @@ namespace mfront{
     out << "MATR1D = 'MATERIAU' MODL1D";
     i=6;
     if((mb.getBehaviourType()==mfront::ISOTROPIC)){
-      if(!found){
+      if(!this->checkIfElasticPropertiesAreDeclared(mb)){
 	out << "'YOUN' xyoung 'NU' xnu 'RHO' xrho 'ALPH' xalpha ";
 	i=9u;
       }
@@ -1013,7 +1003,7 @@ namespace mfront{
     out << "coel2D = 'MOTS'";
     i=0;
     if((mb.getBehaviourType()==mfront::ISOTROPIC)){
-      if(!found){
+      if(!this->checkIfElasticPropertiesAreDeclared(mb)){
 	out << "'YOUN' 'NU' 'RHO' 'ALPH' ";
 	i=3u;
       }
@@ -1138,7 +1128,7 @@ namespace mfront{
     out << "MATR2D = 'MATERIAU' MODL2D";
     i=6;
     if((mb.getBehaviourType()==mfront::ISOTROPIC)){
-      if(!found){
+      if(!this->checkIfElasticPropertiesAreDeclared(mb)){
 	out << "'YOUN' xyoung 'NU' xnu 'RHO' xrho 'ALPH' xalpha";
 	i=9u;
       }
@@ -1180,7 +1170,7 @@ namespace mfront{
     out << "coel3D = 'MOTS'";
     i=0;
     if(mb.getBehaviourType()==mfront::ISOTROPIC){
-      if(!found){
+      if(!this->checkIfElasticPropertiesAreDeclared(mb)){
 	out << "'YOUN' 'NU' 'RHO' 'ALPH'";
 	i=3u;
       }
@@ -1307,7 +1297,7 @@ namespace mfront{
     out << "MATR3D = 'MATERIAU' MODL3D";
     i=6;
     if(mb.getBehaviourType()==mfront::ISOTROPIC){
-      if(!found){
+      if(!this->checkIfElasticPropertiesAreDeclared(mb)){
 	out << "'YOUN' xyoung 'NU' xnu 'ALPH' xalpha";
 	i=9u;
       }
@@ -1430,5 +1420,138 @@ namespace mfront{
     deps[lib].push_back("`tfel-config --libs --material`");
     return deps;
   } // end of MFrontUMATInterface::getLibrariesDependencies()
+
+  bool
+  MFrontUMATInterface::hasMaterialPropertiesOffset(const MechanicalBehaviourDescription& mb) const
+  {
+    using namespace std;
+    if(mb.getBehaviourType()==mfront::ISOTROPIC){
+      return !this->checkIfElasticPropertiesAreDeclared(mb);
+    } else if (mb.getBehaviourType()==mfront::ORTHOTROPIC){
+      return true;
+    } else {
+      string msg("MFrontUMATInterface::hasMaterialPropertiesOffset : ");
+      msg += "unsupported behaviour type.\n";
+      msg += "The umat interface only support isotropic or orthotropic behaviour at this time.";
+      throw(runtime_error(msg));
+    }
+    return false;
+  } // end of MFrontUMATInterface::hasMaterialPropertiesOffset
+
+  void
+  MFrontUMATInterface::writeMTestFileGeneratorAdditionalMaterialPropertiesInitialisation(std::ostream& out,
+											 const MechanicalBehaviourDescription& mb) const
+  {
+    using namespace std;
+    if(!this->hasMaterialPropertiesOffset(mb)){
+      return;
+    }
+    if(mb.getBehaviourType()==mfront::ISOTROPIC){
+      out << "mg.addMaterialProperty(\"YoungModulus\",*PROPS);\n"
+	  << "mg.addMaterialProperty(\"PoissonRatio\",*(PROPS+1));\n"
+	  << "mg.addMaterialProperty(\"MassDensity\",*(PROPS+2));\n"
+	  << "mg.addMaterialProperty(\"ThermalExpansion\",*(PROPS+3));\n";
+    } else if (mb.getBehaviourType()==mfront::ORTHOTROPIC){
+      out << "if(*NDI==-1){\n"
+	  << "mg.addMaterialProperty(\"YoungModulus1\",*PROPS);\n"
+	  << "mg.addMaterialProperty(\"YoungModulus2\",*(PROPS+1));\n"
+	  << "mg.addMaterialProperty(\"YoungModulus3\",*(PROPS+2));\n"
+	  << "mg.addMaterialProperty(\"PoissonRatio12\",*(PROPS+3));\n"
+	  << "mg.addMaterialProperty(\"PoissonRatio13\",*(PROPS+4));\n"
+	  << "mg.addMaterialProperty(\"PoissonRatio23\",*(PROPS+5));\n"
+	  << "mg.addMaterialProperty(\"MassDensity\",*(PROPS+6));\n"
+	  << "mg.addMaterialProperty(\"ThermalExpansion1\",*(PROPS+7));\n"
+	  << "mg.addMaterialProperty(\"ThermalExpansion2\",*(PROPS+8));\n"
+	  << "mg.addMaterialProperty(\"ThermalExpansion3\",*(PROPS+9));\n"
+	  << "} else if(*NDI==-2){\n"
+	  << "mg.addMaterialProperty(\"YoungModulus1\",*PROPS);\n"
+	  << "mg.addMaterialProperty(\"YoungModulus2\",*(PROPS+1));\n"
+	  << "mg.addMaterialProperty(\"PoissonRatio12\",*(PROPS+2));\n"
+	  << "mg.addMaterialProperty(\"ShearModulus12\",*(PROPS+3));\n"
+	  << "mg.addMaterialProperty(\"V1X\",*(PROPS+4));\n"
+	  << "mg.addMaterialProperty(\"V1Y\",*(PROPS+5));\n"
+	  << "mg.addMaterialProperty(\"YoungModulus3\",*(PROPS+6));\n"
+	  << "mg.addMaterialProperty(\"PoissonRatio23\",*(PROPS+7));\n"
+	  << "mg.addMaterialProperty(\"PoissonRatio13\",*(PROPS+8));\n"
+	  << "mg.addMaterialProperty(\"MassDensity\",*(PROPS+9));\n"
+	  << "mg.addMaterialProperty(\"ThermalExpansion1\",*(PROPS+10));\n"
+	  << "mg.addMaterialProperty(\"ThermalExpansion2\",*(PROPS+11));\n"
+	  << "mg.addMaterialProperty(\"PlateWidth\",*(PROPS+12));\n"
+	  << "} else if((*NDI==0)||(*NDI==-1)||(*NDI==-3)){\n"
+	  << "mg.addMaterialProperty(\"YoungModulus1\",*PROPS);\n"
+	  << "mg.addMaterialProperty(\"YoungModulus2\",*(PROPS+1));\n"
+	  << "mg.addMaterialProperty(\"YoungModulus3\",*(PROPS+2));\n"
+	  << "mg.addMaterialProperty(\"PoissonRatio12\",*(PROPS+3));\n"
+	  << "mg.addMaterialProperty(\"PoissonRatio23\",*(PROPS+4));\n"
+	  << "mg.addMaterialProperty(\"PoissonRatio13\",*(PROPS+5));\n"
+	  << "mg.addMaterialProperty(\"ShearModulus12\",*(PROPS+6));\n"
+	  << "mg.addMaterialProperty(\"V1X\",*(PROPS+7));\n"
+	  << "mg.addMaterialProperty(\"V1Y\",*(PROPS+8));\n"
+	  << "mg.addMaterialProperty(\"MassDensity\",*(PROPS+9));\n"
+	  << "mg.addMaterialProperty(\"ThermalExpansion1\",*(PROPS+10));\n"
+	  << "mg.addMaterialProperty(\"ThermalExpansion2\",*(PROPS+11));\n"
+	  << "mg.addMaterialProperty(\"ThermalExpansion3\",*(PROPS+12));\n"
+	  << "} else if(*NDI==2){\n"
+	  << "mg.addMaterialProperty(\"YoungModulus1\",*PROPS);\n"
+	  << "mg.addMaterialProperty(\"YoungModulus2\",*(PROPS+1));\n"
+	  << "mg.addMaterialProperty(\"YoungModulus3\",*(PROPS+2));\n"
+	  << "mg.addMaterialProperty(\"PoissonRatio12\",*(PROPS+3));\n"
+	  << "mg.addMaterialProperty(\"PoissonRatio23\",*(PROPS+4));\n"
+	  << "mg.addMaterialProperty(\"PoissonRatio13\",*(PROPS+5));\n"
+	  << "mg.addMaterialProperty(\"ShearModulus12\",*(PROPS+6));\n"
+	  << "mg.addMaterialProperty(\"ShearModulus23\",*(PROPS+7));\n"
+	  << "mg.addMaterialProperty(\"ShearModulus13\",*(PROPS+8));\n"
+	  << "mg.addMaterialProperty(\"V1X\",*(PROPS+9));\n"
+	  << "mg.addMaterialProperty(\"V1Y\",*(PROPS+10));\n"
+	  << "mg.addMaterialProperty(\"V1Z\",*(PROPS+11));\n"
+	  << "mg.addMaterialProperty(\"V2X\",*(PROPS+12));\n"
+	  << "mg.addMaterialProperty(\"V2Y\",*(PROPS+13));\n"
+	  << "mg.addMaterialProperty(\"V2Z\",*(PROPS+14));\n"
+	  << "mg.addMaterialProperty(\"MassDensity\",*(PROPS+15));\n"
+	  << "mg.addMaterialProperty(\"ThermalExpansion1\",*(PROPS+16));\n"
+	  << "mg.addMaterialProperty(\"ThermalExpansion2\",*(PROPS+17));\n"
+	  << "mg.addMaterialProperty(\"ThermalExpansion3\",*(PROPS+18));\n"
+	  << "}\n";
+    } else {
+      string msg("MFrontUMATInterface::writeMTestFileGeneratorAdditionalMaterialPropertiesInitialisation : ");
+      msg += "unsupported behaviour type.\n";
+      msg += "The umat interface only support isotropic or orthotropic behaviour at this time.";
+      throw(runtime_error(msg));
+    }
+  } // end of MFrontUMATInterface::writeMTestFileGeneratorAdditionalMaterialPropertiesInitialisation
+
+  void
+  MFrontUMATInterface::writeUMATxxMaterialPropertiesSymbols(std::ostream& out,
+							    const std::string& name,
+							    const MechanicalBehaviourDescription& mb,
+							    const std::map<std::string,std::string>& glossaryNames,
+							    const std::map<std::string,std::string>& entryNames) const
+  {
+    const VarContainer& coefsHolder = mb.getMaterialProperties();
+    const unsigned short cs = this->getNumberOfVariables(coefsHolder);
+    const bool found        = this->checkIfElasticPropertiesAreDeclared(mb);
+    out << "MFRONT_SHAREDOBJ unsigned short " << this->getFunctionName(name);
+    if(mb.getBehaviourType()==mfront::ISOTROPIC){
+      // skipping the fourth first material properties
+      if(found){
+	out << "_nMaterialProperties = " << cs-4 << ";\n";
+      } else {
+	out << "_nMaterialProperties = " << cs << ";\n";
+      }
+    } else {
+      out << "_nMaterialProperties = " << cs << ";\n";
+    }
+    if((mb.getBehaviourType()==mfront::ISOTROPIC)&&(found)){
+      this->writeGlossaryNames(out,this->getGlossaryNames(coefsHolder,
+							  glossaryNames,
+							  entryNames),
+			       name,"MaterialProperties",4u);
+    } else {
+      this->writeGlossaryNames(out,this->getGlossaryNames(coefsHolder,
+							  glossaryNames,
+							  entryNames),
+			       name,"MaterialProperties");
+    }
+  } // end of MFrontUMATInterface::writeUMATxxMaterialPropertiesSymbol
 
 } // end of namespace mfront

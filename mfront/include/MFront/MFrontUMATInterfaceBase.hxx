@@ -97,6 +97,9 @@ namespace mfront{
 		     tfel::utilities::CxxTokenizer::TokensContainer::const_iterator&,
 		     const tfel::utilities::CxxTokenizer::TokensContainer::const_iterator) const;
 
+    virtual bool
+    hasMaterialPropertiesOffset(const MechanicalBehaviourDescription&) const = 0;
+
     virtual std::string
     getInterfaceName(void) const = 0;
 
@@ -106,13 +109,13 @@ namespace mfront{
     virtual std::vector<std::string>
     getGlossaryNames(const VarContainer&,
 		     const std::map<std::string,std::string>&,
-		     const std::map<std::string,std::string>&);
+		     const std::map<std::string,std::string>&) const;
 
     virtual void
     appendGlossaryNames(std::vector<std::string>&,
 			const VarContainer&,
 			const std::map<std::string,std::string>&,
-			const std::map<std::string,std::string>&);
+			const std::map<std::string,std::string>&) const;
 
 
     virtual void
@@ -120,7 +123,7 @@ namespace mfront{
 		       const std::vector<std::string>&,
 		       const std::string&,
 		       const std::string&,
-		       const unsigned short = 0u);
+		       const unsigned short = 0u) const;
 
     virtual void
     checkParametersType(bool&,
@@ -163,6 +166,42 @@ namespace mfront{
 		       const std::map<std::string,std::string>&,
 		       const std::map<std::string,std::string>&) const;
 
+    virtual void
+    writeMTestFileGeneratorAdditionalMaterialPropertiesInitialisation(std::ostream&,
+								      const MechanicalBehaviourDescription&) const = 0;
+
+    /*!
+     * \param[in] out           : output file
+     * \param[in] name          : name of the behaviour 
+     * \param[in] mb            : behaviour description
+     * \param[in] glossaryNames : glossary names
+     * \param[in] entrNames     : entry    names
+     */
+    virtual void
+    generateUMATxxSymbols(std::ostream& out,
+			  const std::string& name,
+			  const MechanicalBehaviourDescription& mb,
+			  const std::map<std::string,std::string>& glossaryNames,
+			  const std::map<std::string,std::string>& entryNames) const;
+
+    
+    /*!
+     * \param[in] out           : output file
+     * \param[in] name          : name of the behaviour 
+     * \param[in] mb            : behaviour description
+     * \param[in] glossaryNames : glossary names
+     * \param[in] entrNames     : entry    names
+     */
+    virtual void
+    writeUMATxxMaterialPropertiesSymbols(std::ostream&,
+					 const std::string&,
+					 const MechanicalBehaviourDescription&,
+					 const std::map<std::string,std::string>&,
+					 const std::map<std::string,std::string>&) const = 0;
+
+    /*!
+     * \param[in] out : output file
+     */
     virtual void
     writeMTestFileGeneratorSetModellingHypothesis(std::ostream&) const = 0;
 

@@ -120,8 +120,32 @@ namespace mfront{
     virtual std::string
     getFunctionName(const std::string&) const;
 
+    virtual bool
+    hasMaterialPropertiesOffset(const MechanicalBehaviourDescription&) const;
+
     virtual void
     writeMTestFileGeneratorSetModellingHypothesis(std::ostream&) const;
+
+    virtual void
+    writeMTestFileGeneratorAdditionalMaterialPropertiesInitialisation(std::ostream&,
+								      const MechanicalBehaviourDescription&) const;
+
+    /*!
+     * \param[in] out : output file
+     */
+    virtual void
+    writeUMATxxMaterialPropertiesSymbols(std::ostream&,
+					 const std::string&,
+					 const MechanicalBehaviourDescription&,
+					 const std::map<std::string,std::string>&,
+					 const std::map<std::string,std::string>&) const;
+
+    /*!
+     * \param[in] mb : behaviour description
+     */
+    virtual bool
+    checkIfElasticPropertiesAreDeclared(const MechanicalBehaviourDescription&) const;
+
 
     FiniteStrainStrategy finiteStrainStrategy;
 
