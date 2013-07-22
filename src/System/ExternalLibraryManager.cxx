@@ -522,6 +522,33 @@ namespace tfel
       return static_cast<unsigned short>(u);
     } // end of ExternalLibraryManager::getUMATBehaviourType
 
+    unsigned short
+    ExternalLibraryManager::getUMATElasticBehaviourType(const std::string& l,
+							const std::string& f)
+    {
+      using namespace std;
+      vector<int> types;
+#if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
+      HINSTANCE__* lib = this->loadLibrary(l);
+#else
+      void * lib = this->loadLibrary(l);
+#endif /* defined _WIN32 || _WIN64 || defined __CYGWIN__ */
+
+      int u = ::tfel_getUnsignedShort(lib,(f+"_ElasticBehaviourType").c_str());
+      if(u==-1){
+	string msg("ExternalLibraryManager::getUMATElasticBehaviourType : ");
+	msg += " behavour type could not be read (";
+#if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
+	  msg += ::GetLastError();
+#else
+	  msg += ::dlerror();
+#endif /* defined _WIN32 || _WIN64 || defined __CYGWIN__ */
+	msg += ")";
+	throw(runtime_error(msg));
+      }
+      return static_cast<unsigned short>(u);
+    } // end of ExternalLibraryManager::getUMATElasticBehaviourType
+
     std::vector<int>
     ExternalLibraryManager::getUMATInternalStateVariablesTypes(const std::string& l,
 							       const std::string& f)

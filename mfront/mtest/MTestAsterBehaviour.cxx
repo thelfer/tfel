@@ -35,9 +35,10 @@ namespace mfront
     this->mpnames = elm.getUMATMaterialPropertiesNames(l,b);
     bool eo = elm.checkIfAsterBehaviourRequiresElasticMaterialPropertiesOffset(l,b);
     bool to = elm.checkIfAsterBehaviourRequiresThermalExpansionMaterialPropertiesOffset(l,b);
+    unsigned short etype = elm.getUMATElasticBehaviourType(l,b);
     this->savesTangentOperator = elm.checkIfAsterBehaviourSavesTangentOperator(l,b);
     vector<string> tmp;
-    if(this->type==0u){
+    if(etype==0u){
       if(eo){
 	tmp.push_back("YoungModulus");
 	tmp.push_back("PoissonRatio");
@@ -45,7 +46,7 @@ namespace mfront
       if(to){
 	tmp.push_back("ThermalExpansion");
       }
-    } else if(this->type==1u){
+    } else if(etype==1u){
       if(h==ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN){
 	if(eo){
 	  tmp.push_back("YoungModulus1");

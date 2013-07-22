@@ -29,7 +29,7 @@ namespace mfront{
 
   std::string
   MFrontAsterInterface::getLibraryName(const std::string& library,
-				      const std::string& material) const
+				       const std::string& material) const
   {
     using namespace std;
     string lib;
@@ -75,8 +75,8 @@ namespace mfront{
 
   std::pair<bool,tfel::utilities::CxxTokenizer::TokensContainer::const_iterator>
   MFrontAsterInterface::treatKeyword(const std::string& key,
-				    tfel::utilities::CxxTokenizer::TokensContainer::const_iterator current,
-				    const tfel::utilities::CxxTokenizer::TokensContainer::const_iterator end)
+				     tfel::utilities::CxxTokenizer::TokensContainer::const_iterator current,
+				     const tfel::utilities::CxxTokenizer::TokensContainer::const_iterator end)
   {
     using namespace std;
     if (key=="@AsterGenerateMTestFileOnFailure"){
@@ -238,23 +238,19 @@ namespace mfront{
 
   void
   MFrontAsterInterface::endTreatement(const std::string& file,
-				     const std::string& library,
-				     const std::string& material,
-				     const std::string& className,
-				     const std::string& authorName,
-				     const std::string& date,
-				     const std::map<std::string,std::string>& glossaryNames,
-				     const std::map<std::string,std::string>& entryNames,
-				     const MechanicalBehaviourDescription& mb)
+				      const std::string& library,
+				      const std::string& material,
+				      const std::string& className,
+				      const std::string& authorName,
+				      const std::string& date,
+				      const std::map<std::string,std::string>& glossaryNames,
+				      const std::map<std::string,std::string>& entryNames,
+				      const MechanicalBehaviourDescription& mb)
   {
     using namespace std;
     using namespace tfel::system;
     using namespace tfel::utilities;
     const VarContainer& coefsHolder              = mb.getMaterialProperties();
-    const VarContainer& stateVarsHolder          = mb.getStateVariables();
-    const VarContainer& auxiliaryStateVarsHolder = mb.getAuxiliaryStateVariables();
-    const VarContainer& externalStateVarsHolder  = mb.getExternalStateVariables();
-    const VarContainer& parametersHolder         = mb.getParameters();
     string name;
     string asterFctName;
     string tmp;
@@ -470,8 +466,7 @@ namespace mfront{
 	<< tokenize(file,dirSeparator()).back()
 	<< "\";\n\n";
 
-    this->writeSetParametersFunctionsDeclarations(out,name,
-						  parametersHolder);
+    this->writeSetParametersFunctionsDeclarations(out,name,mb);
 
     out << "MFRONT_SHAREDOBJ void MFRONT_STDCALL\naster"
 	<< makeLowerCase(name) << "("
@@ -502,8 +497,8 @@ namespace mfront{
 	<< "const aster::AsterInt  *const," /*< nombre de propriétés matériaux */
 	<< "const aster::AsterReal *const," /*< coordonnées du point d'intégration */
 	<< "const aster::AsterReal *const," /*< matrice de passage du repère local  
-						   de l'élement fini massif au repère géneral
-						   du maillage */
+					      de l'élement fini massif au repère géneral
+					      du maillage */
 	<< "aster::AsterReal *const," /*< rapport entre le nouveau pas de temps 
 					suggeré et le pas de temps donné en entrée */
 	<< "const aster::AsterReal *const," /*< longueur caractéristique de l'élément */
@@ -590,6 +585,19 @@ namespace mfront{
     }
 
     out << "MFRONT_SHAREDOBJ unsigned short aster"
+      	<< makeLowerCase(name) << "_ElasticBehaviourType = " ;
+    if(mb.getElasticBehaviourType()==mfront::ISOTROPIC){
+      out << "0u;" << endl << endl;
+    } else if(mb.getElasticBehaviourType()==mfront::ORTHOTROPIC){
+      out << "1u;" << endl << endl;
+    } else {
+      string msg("MFrontAsterInterface::endTreatement : ");
+      msg += "unsupported behaviour type.\n";
+      msg += "The aster interface only support isotropic or orthotropic behaviour at this time.";
+      throw(runtime_error(msg));
+    }
+
+    out << "MFRONT_SHAREDOBJ unsigned short aster"
       	<< makeLowerCase(name);
     out << "_savesTangentOperator = ";
     if(this->savesTangentOperator){
@@ -598,101 +606,10 @@ namespace mfront{
       out << "0";
     }
     out << ";\n";
-
  
     this->generateUMATxxSymbols(out,name,mb,glossaryNames,entryNames);
-
-    const unsigned short nStateVariables = static_cast<unsigned short>(this->getNumberOfVariables(stateVarsHolder) + 
-								       this->getNumberOfVariables(auxiliaryStateVarsHolder));
-    out << "MFRONT_SHAREDOBJ unsigned short aster"
-      	<< makeLowerCase(name)
-	<< "_nInternalStateVariables = " << nStateVariables
-	<< ";\n";
-    vector<string> stateVariablesNames = this->getGlossaryNames(stateVarsHolder,
-								glossaryNames,
-								entryNames);
-    this->appendGlossaryNames(stateVariablesNames,auxiliaryStateVarsHolder,
-			      glossaryNames,entryNames);
-    this->writeGlossaryNames(out,stateVariablesNames,name,"InternalStateVariables");
-
-    if((stateVarsHolder.size()!=0)||
-       (auxiliaryStateVarsHolder.size()!=0)){
-      out << "MFRONT_SHAREDOBJ int aster"
-	  << makeLowerCase(name)
-	  << "_InternalStateVariablesTypes [] = {";
-      for(p=stateVarsHolder.begin();p!=stateVarsHolder.end();){
-	SupportedTypes::TypeFlag flag = this->getTypeFlag(p->type);
-	for(unsigned short is=0;is!=p->arraySize;){
-	  switch(flag){
-	  case SupportedTypes::Scalar : 
-	    out << 0;
-	    break;
-	  case SupportedTypes::Stensor :
-	    out << 1;
-	    break;
-	  case SupportedTypes::TVector :
-	    out << 2;
-	    break;
-	  case SupportedTypes::Tensor :
-	    out << 3;
-	    break;
-	  default :
-	    string msg("MFrontAsterInterface::endTreatement : ");
-	    msg += "internal error, tag unsupported";
-	    throw(runtime_error(msg));
-	  }
-	  if(++is!=p->arraySize){
-	    out << ",";
-	  }
-	}
-	if(++p!=stateVarsHolder.end()){
-	  out << ",";
-	}
-      }
-      if((!stateVarsHolder.empty())&&
-	 (auxiliaryStateVarsHolder.size()!=0)){
-	out << ",";
-      }
-      for(p=auxiliaryStateVarsHolder.begin();p!=auxiliaryStateVarsHolder.end();){
-	SupportedTypes::TypeFlag flag = this->getTypeFlag(p->type);
-	for(unsigned short is=0;is!=p->arraySize;){
-	  switch(flag){
-	  case SupportedTypes::Scalar : 
-	    out << 0;
-	    break;
-	  case SupportedTypes::Stensor :
-	    out << 1;
-	    break;
-	  default :
-	    string msg("MFrontAsterInterface::endTreatement : ");
-	    msg += "internal error, tag unsupported";
-	    throw(runtime_error(msg));
-	  }
-	  if(++is!=p->arraySize){
-	    out << ",";
-	  }
-	}
-	if(++p!=auxiliaryStateVarsHolder.end()){
-	  out << ",";
-	}
-      }
-      out << "};\n\n";
-    } else {
-      out << "MFRONT_SHAREDOBJ const int * aster"
-	  << makeLowerCase(name)
-	  << "_InternalStateVariablesTypes = 0;\n\n";
-    }
-
-    out << "MFRONT_SHAREDOBJ unsigned short aster"
-      	<< makeLowerCase(name)
-	<< "_nExternalStateVariables = " << this->getNumberOfVariables(externalStateVarsHolder) << ";\n";
-    this->writeGlossaryNames(out,this->getGlossaryNames(externalStateVarsHolder,
-							glossaryNames,
-							entryNames),
-			     name,"ExternalStateVariables");
     
-    this->writeSetParametersFunctionsImplantations(out,name,className,
-						   parametersHolder);
+    this->writeSetParametersFunctionsImplantations(out,name,className,mb);
     
     out << "MFRONT_SHAREDOBJ void MFRONT_STDCALL\naster"
 	<< makeLowerCase(name) << "("
@@ -901,8 +818,8 @@ namespace mfront{
 
   std::map<std::string,std::vector<std::string> >
   MFrontAsterInterface::getGlobalIncludes(const std::string& library,
-					 const std::string& material,
-					 const std::string&)
+					  const std::string& material,
+					  const std::string&)
   {
     using namespace std;
     map<string,vector<string> > incs;
@@ -920,8 +837,8 @@ namespace mfront{
 
   std::map<std::string,std::vector<std::string> >
   MFrontAsterInterface::getGeneratedSources(const std::string& library,
-					   const std::string& material,
-					   const std::string& className)
+					    const std::string& material,
+					    const std::string& className)
   {
     using namespace std;
     map<string,vector<string> > src;
@@ -936,8 +853,8 @@ namespace mfront{
 
   std::vector<std::string>
   MFrontAsterInterface::getGeneratedIncludes(const std::string& library,
-					    const std::string&,
-					    const std::string& className)
+					     const std::string&,
+					     const std::string& className)
   {
     using namespace std;
     vector<string> incs;
@@ -951,8 +868,8 @@ namespace mfront{
 
   std::map<std::string,std::vector<std::string> >
   MFrontAsterInterface::getLibrariesDependencies(const std::string& library,
-						const std::string& material,
-						const std::string&)
+						 const std::string& material,
+						 const std::string&)
   {
     using namespace std;
     map<string,vector<string> > deps;
@@ -1117,87 +1034,113 @@ namespace mfront{
   MFrontAsterInterface::writeMTestFileGeneratorAdditionalMaterialPropertiesInitialisation(std::ostream& out,
 											  const MechanicalBehaviourDescription& mb) const
   {
-    // if(!this->hasMaterialPropertiesOffset(mb)){
-    //   return;
-    // }
-    // bool hasElasticMaterialPropertiesOffset;
-    // bool hasThermalExpansionMaterialPropertiesOffset;
-    // bool hasMassDensityOffsetForThermalExpansion;
-    // this->getMaterialPropertiesOffset(hasElasticMaterialPropertiesOffset,
-    // 				      hasThermalExpansionMaterialPropertiesOffset,
-    // 				      hasMassDensityOffsetForThermalExpansion,mb);
-    // if(mb.getElasticBehaviourType()==mfront::ISOTROPIC){
-    //   if(eo){
-    // 	tmp.push_back("YoungModulus");
-    // 	tmp.push_back("PoissonRatio");
-    //   }
-    //   if(to){
-    // 	tmp.push_back("ThermalExpansion");
-    //   }
-    // } else if(this->type==1u){
-    //   if(h==ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN){
-    // 	if(eo){
-    // 	  tmp.push_back("YoungModulus1");
-    // 	  tmp.push_back("YoungModulus2");
-    // 	  tmp.push_back("YoungModulus3");
-    // 	  tmp.push_back("PoissonRatio12");
-    // 	  tmp.push_back("PoissonRatio13");
-    // 	  tmp.push_back("PoissonRatio23");
-    // 	}
-    // 	if(to){
-    // 	  tmp.push_back("ThermalExpansion1");
-    // 	  tmp.push_back("ThermalExpansion2");
-    // 	  tmp.push_back("ThermalExpansion3");
-    // 	}
-    //   } else if((h==ModellingHypothesis::PLANESTRESS)||
-    // 		(h==ModellingHypothesis::PLANESTRAIN)||
-    // 		(h==ModellingHypothesis::AXISYMMETRICAL)||
-    // 		(h==ModellingHypothesis::GENERALISEDPLANESTRAIN)){
-    // 	if(eo){
-    // 	  tmp.push_back("YoungModulus1");
-    // 	  tmp.push_back("YoungModulus2");
-    // 	  tmp.push_back("YoungModulus3");
-    // 	  tmp.push_back("PoissonRatio12");
-    // 	  tmp.push_back("PoissonRatio23");
-    // 	  tmp.push_back("PoissonRatio13");
-    // 	  tmp.push_back("ShearModulus12");
-    // 	}
-    // 	if(to){
-    // 	  tmp.push_back("ThermalExpansion1");
-    // 	  tmp.push_back("ThermalExpansion2");
-    // 	  tmp.push_back("ThermalExpansion3");
-    // 	}
-    //   } else if(h==ModellingHypothesis::TRIDIMENSIONAL){
-    // 	if(eo){
-    // 	  tmp.push_back("YoungModulus1");
-    // 	  tmp.push_back("YoungModulus2");
-    // 	  tmp.push_back("YoungModulus3");
-    // 	  tmp.push_back("PoissonRatio12");
-    // 	  tmp.push_back("PoissonRatio23");
-    // 	  tmp.push_back("PoissonRatio13");
-    // 	  tmp.push_back("ShearModulus12");
-    // 	  tmp.push_back("ShearModulus23");
-    // 	  tmp.push_back("ShearModulus13");
-    // 	}
-    // 	if(to){
-    // 	  tmp.push_back("ThermalExpansion1");
-    // 	  tmp.push_back("ThermalExpansion2");
-    // 	  tmp.push_back("ThermalExpansion3");
-    // 	}
-    //   } else { 
-    // 	string msg("MTestUmatBehaviourBase::MTestUmatBehaviourBase : "
-    // 		   "unsupported modelling hypothesis");
-    // 	throw(runtime_error(msg));
-    //   }
-    // } else {
-    //   string msg("MTestUmatBehaviourBase::MTestUmatBehaviourBase : "
-    // 		 "unsupported behaviour type "
-    // 		 "(neither isotropic nor orthotropic)");
-    //   throw(runtime_error(msg));
-    // }
-    
+    using namespace std;
+    if(!this->hasMaterialPropertiesOffset(mb)){
+      return;
+    }
+    bool hasElasticMaterialPropertiesOffset;
+    bool hasThermalExpansionMaterialPropertiesOffset;
+    bool hasMassDensityOffsetForThermalExpansion;
+    this->getMaterialPropertiesOffset(hasElasticMaterialPropertiesOffset,
+    				      hasThermalExpansionMaterialPropertiesOffset,
+    				      hasMassDensityOffsetForThermalExpansion,mb);
+    if(mb.getElasticBehaviourType()==mfront::ISOTROPIC){
+      if(hasElasticMaterialPropertiesOffset){
+	out << "mg.addMaterialProperty(\"YoungModulus\",*PROPS);\n"
+	    << "mg.addMaterialProperty(\"PoissonRatio\",*(PROPS+1));\n";
+      }
+      if(hasThermalExpansionMaterialPropertiesOffset){
+	if(hasElasticMaterialPropertiesOffset){
+	  if(hasMassDensityOffsetForThermalExpansion){
+	    out << "mg.addMaterialProperty(\"MassDensity\",*(PROPS+2));\n"
+		<< "mg.addMaterialProperty(\"ThermalExpansion\",*(PROPS+3));\n";
+	  } else {
+	    out << "mg.addMaterialProperty(\"ThermalExpansion\",*(PROPS+2));\n";
+	  }
+	} else {
+	  if(hasMassDensityOffsetForThermalExpansion){
+	    out << "mg.addMaterialProperty(\"MassDensity\",*PROPS));\n"
+		<< "mg.addMaterialProperty(\"ThermalExpansion\",*(PROPS+1));\n";
+	  } else {
+	    out << "mg.addMaterialProperty(\"ThermalExpansion\",*PROPS);\n";
+	  }
+	}
+      }
+    } else if(mb.getElasticBehaviourType()==mfront::ORTHOTROPIC){
+      out << "if(*NTENS==3u){\n";
+      if(hasElasticMaterialPropertiesOffset){
+	out << "mg.addMaterialProperty(\"YoungModulus1\",*PROPS);\n"
+	    << "mg.addMaterialProperty(\"YoungModulus2\",*(PROPS+1));\n"
+	    << "mg.addMaterialProperty(\"YoungModulus3\",*(PROPS+2));\n"
+	    << "mg.addMaterialProperty(\"PoissonRatio12\",*(PROPS+3));\n"
+	    << "mg.addMaterialProperty(\"PoissonRatio13\",*(PROPS+4));\n"
+	    << "mg.addMaterialProperty(\"PoissonRatio23\",*(PROPS+5));\n";
+      }
+      if(hasThermalExpansionMaterialPropertiesOffset){
+	if(hasElasticMaterialPropertiesOffset){
+	  out << "mg.addMaterialProperty(\"ThermalExpansion1\",*(PROPS+6));\n"
+	      << "mg.addMaterialProperty(\"ThermalExpansion2\",*(PROPS+7));\n"
+	      << "mg.addMaterialProperty(\"ThermalExpansion3\",*(PROPS+8));\n";
+	} else {
+	  out << "mg.addMaterialProperty(\"ThermalExpansion1\",*PROPS);\n"
+	      << "mg.addMaterialProperty(\"ThermalExpansion2\",*(PROPS+1));\n"
+	      << "mg.addMaterialProperty(\"ThermalExpansion3\",*(PROPS+2));\n";
+	}
+      }
+      out << "} else if(*NTENS==4){\n";
+      if(hasElasticMaterialPropertiesOffset){
+	out  << "mg.addMaterialProperty(\"YoungModulus1\",*PROPS);\n"
+	     << "mg.addMaterialProperty(\"YoungModulus2\",*(PROPS+1));\n"
+	     << "mg.addMaterialProperty(\"YoungModulus3\",*(PROPS+2));\n"
+	     << "mg.addMaterialProperty(\"PoissonRatio12\",*(PROPS+3));\n"
+	     << "mg.addMaterialProperty(\"PoissonRatio23\",*(PROPS+4));\n"
+	     << "mg.addMaterialProperty(\"PoissonRatio13\",*(PROPS+5));\n"
+	     << "mg.addMaterialProperty(\"ShearModulus12\",*(PROPS+6));\n";
+	if(hasThermalExpansionMaterialPropertiesOffset){
+	  if(hasElasticMaterialPropertiesOffset){
+	    out << "mg.addMaterialProperty(\"ThermalExpansion1\",*(PROPS+7));\n"
+		<< "mg.addMaterialProperty(\"ThermalExpansion2\",*(PROPS+8));\n"
+		<< "mg.addMaterialProperty(\"ThermalExpansion3\",*(PROPS+9));\n";
+	  } else {
+	    out << "mg.addMaterialProperty(\"ThermalExpansion1\",*PROPS);\n"
+		<< "mg.addMaterialProperty(\"ThermalExpansion2\",*(PROPS+1));\n"
+		<< "mg.addMaterialProperty(\"ThermalExpansion3\",*(PROPS+2));\n";
+	  }
+	}
+      }
+      out << "} else if(*NTENS==6){\n";
+      if(hasElasticMaterialPropertiesOffset){
+	out  << "mg.addMaterialProperty(\"YoungModulus1\",*PROPS);\n"
+	     << "mg.addMaterialProperty(\"YoungModulus2\",*(PROPS+1));\n"
+	     << "mg.addMaterialProperty(\"YoungModulus3\",*(PROPS+2));\n"
+	     << "mg.addMaterialProperty(\"PoissonRatio12\",*(PROPS+3));\n"
+	     << "mg.addMaterialProperty(\"PoissonRatio23\",*(PROPS+4));\n"
+	     << "mg.addMaterialProperty(\"PoissonRatio13\",*(PROPS+5));\n"
+	     << "mg.addMaterialProperty(\"ShearModulus12\",*(PROPS+6));\n"
+	     << "mg.addMaterialProperty(\"ShearModulus23\",*(PROPS+7));\n"
+	     << "mg.addMaterialProperty(\"ShearModulus13\",*(PROPS+8));\n";
+      }
+      if(hasThermalExpansionMaterialPropertiesOffset){
+	if(hasElasticMaterialPropertiesOffset){
+	  out << "mg.addMaterialProperty(\"ThermalExpansion1\",*(PROPS+9));\n"
+	      << "mg.addMaterialProperty(\"ThermalExpansion2\",*(PROPS+10));\n"
+	      << "mg.addMaterialProperty(\"ThermalExpansion3\",*(PROPS+11));\n";
+	} else {
+	  out << "mg.addMaterialProperty(\"ThermalExpansion1\",*PROPS);\n"
+	      << "mg.addMaterialProperty(\"ThermalExpansion2\",*(PROPS+1));\n"
+	      << "mg.addMaterialProperty(\"ThermalExpansion3\",*(PROPS+2));\n";
+	}
+      }
+      out << "}\n";
+    } else {
+      string msg("MFrontAsterInterface::"
+		 "writeMTestFileGeneratorAdditionalMaterialPropertiesInitialisation : ");
+      msg += "unsupported elastic behaviour type.\n";
+      msg += "The aster interface only support isotropic or orthotropic behaviour at this time.";
+      throw(runtime_error(msg));
+    }
   } // end of MFrontAsterInterface::writeMTestFileGeneratorAdditionalMaterialPropertiesInitialisation
-
+    
   void
   MFrontAsterInterface::writeUMATxxMaterialPropertiesSymbols(std::ostream& out,
 							     const std::string& name,

@@ -78,7 +78,8 @@ namespace aster
 
   /*!
    * \class  AsterInterface
-   * \brief  This class create an interface between Behaviour and Aster
+   * \brief This class create an interface between a behaviour class
+   * and the aster finite element code
    * \author Helfer Thomas
    * \date   28 Jul 2006
    */

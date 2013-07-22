@@ -198,7 +198,7 @@ namespace mfront{
     this->behaviourFile << "if(this->seq_e>(0.01*(this->young))*std::numeric_limits<stress>::epsilon()){\n";
     this->behaviourFile << "const real ccto_tmp_1 =  this->dp/this->seq_e;\n";
     this->behaviourFile << "const st2tost2<N,Type>& M = st2tost2<N,Type>::M();\n";
-    this->behaviourFile << "this->Dt += -4*(this->mu)*(this->mu)*(this->theta)*(ccto_tmp_1*M-(ccto_tmp_1-this->df_dseq*(this->dt)/(1+(this->theta)*(this->dt)*(3*(this->mu)*this->df_dseq-(this->df_dp))))*((this->n)^(this->n)));\n";
+    this->behaviourFile << "this->Dt += -Type(4)*(this->mu)*(this->mu)*(this->theta)*(ccto_tmp_1*M-(ccto_tmp_1-this->df_dseq*(this->dt)/(Type(1)+(this->theta)*(this->dt)*(Type(3)*(this->mu)*this->df_dseq-(this->df_dp))))*((this->n)^(this->n)));\n";
     this->behaviourFile << "}\n";
     this->behaviourFile << "} else if((smt==ELASTIC)||(smt==SECANTOPERATOR)){\n";
     this->behaviourFile << "computeElasticStiffness<N,Type>::exe(this->Dt,this->lambda,this->mu);\n";

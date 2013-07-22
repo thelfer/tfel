@@ -907,7 +907,9 @@ namespace mfront{
       this->throwRuntimeError("MFrontBehaviourParserCommon::treatBounds",
 			      this->current->value+" is not a valid identifier.");
     }
-    if (boundsDescription.varType==Stensor){
+    if ((boundsDescription.varType==SupportedTypes::TVector)||
+	(boundsDescription.varType==SupportedTypes::Stensor)||
+	(boundsDescription.varType==SupportedTypes::Tensor)){
       ++(this->current);
       this->readSpecifiedToken("MFrontBehaviourParserCommon::treatBounds : ","(");
       this->checkNotEndOfFile("MFrontBehaviourParserCommon::treatBounds : ");
@@ -1272,6 +1274,9 @@ namespace mfront{
     this->behaviourDataFile << "typedef tfel::math::StensorDimeToSize<N> StensorDimeToSize;\n";
     this->behaviourDataFile << "static const unsigned short StensorSize = ";
     this->behaviourDataFile << "StensorDimeToSize::value;\n";
+    this->behaviourDataFile << "typedef tfel::math::TensorDimeToSize<N> TensorDimeToSize;\n";
+    this->behaviourDataFile << "static const unsigned short TensorSize = ";
+    this->behaviourDataFile << "TensorDimeToSize::value;\n";
     this->behaviourDataFile << endl;
   }
 
@@ -2554,6 +2559,9 @@ namespace mfront{
     this->behaviourFile << "typedef tfel::math::StensorDimeToSize<N> StensorDimeToSize;\n";
     this->behaviourFile << "static const unsigned short StensorSize = ";
     this->behaviourFile << "StensorDimeToSize::value;\n";
+    this->behaviourFile << "typedef tfel::math::TensorDimeToSize<N> TensorDimeToSize;\n";
+    this->behaviourFile << "static const unsigned short TensorSize = ";
+    this->behaviourFile << "TensorDimeToSize::value;\n";
     this->behaviourFile << "public:\n";
     if(b){
       this->behaviourFile << "static const bool is_defined = true;\n";
@@ -2903,9 +2911,13 @@ namespace mfront{
     this->checkIntegrationDataFile();
     this->writeStandardTFELTypedefs(this->integrationDataFile);
     this->integrationDataFile << endl;
+    this->integrationDataFile << "static const unsigned short TVectorSize = N;\n";
     this->integrationDataFile << "typedef tfel::math::StensorDimeToSize<N> StensorDimeToSize;\n";
     this->integrationDataFile << "static const unsigned short StensorSize = ";
     this->integrationDataFile << "StensorDimeToSize::value;\n";
+    this->integrationDataFile << "typedef tfel::math::TensorDimeToSize<N> TensorDimeToSize;\n";
+    this->integrationDataFile << "static const unsigned short TensorSize = ";
+    this->integrationDataFile << "TensorDimeToSize::value;\n";
     this->integrationDataFile << endl;
   }
 

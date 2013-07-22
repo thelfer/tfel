@@ -521,7 +521,7 @@ namespace mfront{
 	<< tokenize(file,dirSeparator()).back()
 	<< "\";\n\n";
 
-    this->writeSetParametersFunctionsDeclarations(out,name,parametersHolder);
+    this->writeSetParametersFunctionsDeclarations(out,name,mb);
 
     out << "MFRONT_SHAREDOBJ void MFRONT_STDCALL\numat"
 	<< makeLowerCase(name)
@@ -612,99 +612,17 @@ namespace mfront{
       out << "1u;" << endl << endl;
     }
 
-    this->generateUMATxxSymbols(out,name,mb,glossaryNames,entryNames);
-
-    const unsigned short nStateVariables = static_cast<unsigned short>(this->getNumberOfVariables(stateVarsHolder) + 
-								       this->getNumberOfVariables(auxiliaryStateVarsHolder));
     out << "MFRONT_SHAREDOBJ unsigned short umat"
-      	<< makeLowerCase(name)
-	<< "_nInternalStateVariables = " << nStateVariables
-	<< ";\n";
-    vector<string> stateVariablesNames = this->getGlossaryNames(stateVarsHolder,
-								glossaryNames,
-								entryNames);
-    this->appendGlossaryNames(stateVariablesNames,auxiliaryStateVarsHolder,
-			      glossaryNames,entryNames);
-    this->writeGlossaryNames(out,stateVariablesNames,name,"InternalStateVariables");
-
-    if((stateVarsHolder.size()!=0)||
-       (auxiliaryStateVarsHolder.size()!=0)){
-      out << "MFRONT_SHAREDOBJ int umat"
-	  << makeLowerCase(name)
-	  << "_InternalStateVariablesTypes [] = {";
-      for(p=stateVarsHolder.begin();p!=stateVarsHolder.end();){
-	SupportedTypes::TypeFlag flag = this->getTypeFlag(p->type);
-	for(unsigned short is=0;is!=p->arraySize;){
-	  switch(flag){
-	  case SupportedTypes::Scalar : 
-	    out << 0;
-	    break;
-	  case SupportedTypes::Stensor :
-	    out << 1;
-	    break;
-	  case SupportedTypes::TVector :
-	    out << 2;
-	    break;
-	  case SupportedTypes::Tensor :
-	    out << 3;
-	    break;
-	  default :
-	    string msg("MFrontUMATInterface::endTreatement : ");
-	    msg += "internal error, tag unsupported";
-	    throw(runtime_error(msg));
-	  }
-	  if(++is!=p->arraySize){
-	    out << ",";
-	  }
-	}
-	if(++p!=stateVarsHolder.end()){
-	  out << ",";
-	}
-      }
-      if((!stateVarsHolder.empty())&&
-	 (auxiliaryStateVarsHolder.size()!=0)){
-	out << ",";
-      }
-      for(p=auxiliaryStateVarsHolder.begin();p!=auxiliaryStateVarsHolder.end();){
-	SupportedTypes::TypeFlag flag = this->getTypeFlag(p->type);
-	for(unsigned short is=0;is!=p->arraySize;){
-	  switch(flag){
-	  case SupportedTypes::Scalar : 
-	    out << 0;
-	    break;
-	  case SupportedTypes::Stensor :
-	    out << 1;
-	    break;
-	  default :
-	    string msg("MFrontUMATInterface::endTreatement : ");
-	    msg += "internal error, tag unsupported";
-	    throw(runtime_error(msg));
-	  }
-	  if(++is!=p->arraySize){
-	    out << ",";
-	  }
-	}
-	if(++p!=auxiliaryStateVarsHolder.end()){
-	  out << ",";
-	}
-      }
-      out << "};\n\n";
+      	<< makeLowerCase(name) << "_ElasticBehaviourType = " ;
+    if(mb.getBehaviourType()==mfront::ISOTROPIC){
+      out << "0u;" << endl << endl;
     } else {
-      out << "MFRONT_SHAREDOBJ const int * umat"
-	  << makeLowerCase(name)
-	  << "_InternalStateVariablesTypes = 0;\n\n";
+      out << "1u;" << endl << endl;
     }
 
-    out << "MFRONT_SHAREDOBJ unsigned short umat"
-      	<< makeLowerCase(name)
-	<< "_nExternalStateVariables = " << this->getNumberOfVariables(externalStateVarsHolder) << ";\n";
-    this->writeGlossaryNames(out,this->getGlossaryNames(externalStateVarsHolder,
-							glossaryNames,
-							entryNames),
-			     name,"ExternalStateVariables");
+    this->generateUMATxxSymbols(out,name,mb,glossaryNames,entryNames);
     
-    this->writeSetParametersFunctionsImplantations(out,name,className,
-						   parametersHolder);
+    this->writeSetParametersFunctionsImplantations(out,name,className,mb);
     
     if(this->finiteStrainStrategy==FINITEROTATIONSMALLSTRAIN){
       out << "MFRONT_SHAREDOBJ unsigned short umat"

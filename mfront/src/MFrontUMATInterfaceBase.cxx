@@ -222,22 +222,46 @@ namespace mfront
     for(pm=mb.getMainVariables().begin();pm!=mb.getMainVariables().end();++pm){
       const DrivingVariable&    v = pm->first;
       const ThermodynamicForce& f = pm->second;
-      if(this->getTypeFlag(f.type)==SupportedTypes::Stensor){
+      if(this->getTypeFlag(f.type)==SupportedTypes::TVector){
 	if(pm!=mb.getMainVariables().begin()){
-	  behaviourDataFile << f.name << ".importTab("+iprefix+"stress_+" << of <<");\n";
+	  behaviourDataFile << "tfel::fsalgo::copy<N>("+iprefix+"stress_+" << of <<",this->" << f.name << ".begin());\n";
 	} else {
-	  behaviourDataFile << f.name << ".importTab("+iprefix+"stress_);\n";
+	  behaviourDataFile << "tfel::fsalgo::copy<N>("+iprefix+"stress_,this->" << f.name << ".begin());\n";
+	}
+      } else if(this->getTypeFlag(f.type)==SupportedTypes::Stensor){
+	if(pm!=mb.getMainVariables().begin()){
+	  behaviourDataFile << "this->" << f.name << ".importTab("+iprefix+"stress_+" << of <<");\n";
+	} else {
+	  behaviourDataFile << "this->" << f.name << ".importTab("+iprefix+"stress_);\n";
+	}
+      } else if(this->getTypeFlag(f.type)==SupportedTypes::Tensor){
+	if(pm!=mb.getMainVariables().begin()){
+	  behaviourDataFile << "tfel::fsalgo::copy<TensorSize>("+iprefix+"stress_+" << of <<",this->" << f.name << ".begin());\n";
+	} else {
+	  behaviourDataFile << "tfel::fsalgo::copy<TensorSize>("+iprefix+"stress_,this->" << f.name << ".begin());\n";
 	}
       } else {
 	string msg("MFrontUMATInterfaceBase::writeBehaviourDataConstructor : ");
 	msg += "unsupported forces type";
 	throw(runtime_error(msg));
       }
-      if(this->getTypeFlag(v.type)==SupportedTypes::Stensor){
+      if(this->getTypeFlag(f.type)==SupportedTypes::TVector){
 	if(pm!=mb.getMainVariables().begin()){
-	  behaviourDataFile << v.name << ".importVoigt("+iprefix+"stran+" << ov <<");\n";
+	  behaviourDataFile << "tfel::fsalgo::copy<N>("+iprefix+"stran_+" << ov <<",this->" << v.name << ".begin());\n";
 	} else {
-	  behaviourDataFile << v.name << ".importVoigt("+iprefix+"stran);\n";
+	  behaviourDataFile << "tfel::fsalgo::copy<N>("+iprefix+"stran_,this->" << v.name << ".begin());\n";
+	}
+      } else if(this->getTypeFlag(v.type)==SupportedTypes::Stensor){
+	if(pm!=mb.getMainVariables().begin()){
+	  behaviourDataFile << "this->" << v.name << ".importVoigt("+iprefix+"stran+" << ov <<");\n";
+	} else {
+	  behaviourDataFile << "this->" << v.name << ".importVoigt("+iprefix+"stran);\n";
+	}
+      } else if(this->getTypeFlag(v.type)==SupportedTypes::Tensor){
+	if(pm!=mb.getMainVariables().begin()){
+	  behaviourDataFile << "tfel::fsalgo::copy<TensorSize>("+iprefix+"stran_+" << ov <<",this->" << v.name << ".begin());\n";
+	} else {
+	  behaviourDataFile << "tfel::fsalgo::copy<TensorSize>("+iprefix+"stran_,this->" << v.name << ".begin());\n";
 	}
       } else {
 	string msg("MFrontUMATInterfaceBase::writeBehaviourDataConstructor : ");
@@ -304,11 +328,23 @@ namespace mfront
 	msg += "unsupported driving variable '"+v.name+"'";
 	throw(runtime_error(msg));
       }
-      if(this->getTypeFlag(v.type)==SupportedTypes::Stensor){
+      if(this->getTypeFlag(v.type)==SupportedTypes::TVector){
+	if(pm!=mb.getMainVariables().begin()){
+	  behaviourIntegrationFile << "tfel::fsalgo::copy<N>("+iprefix+"dstran+" << ov <<",this->" << v.name << ".begin());\n";
+	} else {
+	  behaviourIntegrationFile << "tfel::fsalgo::copy<N>("+iprefix+"dstran,this->" << v.name << ".begin());\n";
+	}
+      } else if(this->getTypeFlag(v.type)==SupportedTypes::Stensor){
 	if(pm!=mb.getMainVariables().begin()){
 	  behaviourIntegrationFile << "d" << v.name << ".importVoigt("+iprefix+"dstran);\n";
 	} else {
 	  behaviourIntegrationFile << "d" << v.name << ".importVoigt("+iprefix+"dstran+" << ov << ");\n";
+	}
+      } else if(this->getTypeFlag(v.type)==SupportedTypes::Tensor){
+	if(pm!=mb.getMainVariables().begin()){
+	  behaviourIntegrationFile << "tfel::fsalgo::copy<TensorSize>("+iprefix+"dstran+" << ov <<",this->" << v.name << ".begin());\n";
+	} else {
+	  behaviourIntegrationFile << "tfel::fsalgo::copy<TensorSize>("+iprefix+"dstran,this->" << v.name << ".begin());\n";
 	}
       } else {
 	string msg("MFrontUMATInterfaceBase::writeIntegrationDataConstructor : ");
@@ -477,8 +513,9 @@ namespace mfront
   void
   MFrontUMATInterfaceBase::writeSetParametersFunctionsDeclarations(std::ostream& out,
 								   const std::string& name,
-								   const VarContainer& pc) const
+								   const MechanicalBehaviourDescription& mb) const
   {
+    const VarContainer& pc = mb.getParameters();
     bool rp,ip,up;
     this->checkParametersType(rp,ip,up,pc);
     if(rp){
@@ -502,8 +539,9 @@ namespace mfront
   MFrontUMATInterfaceBase::writeSetParametersFunctionsImplantations(std::ostream& out,
 								    const std::string& name,
 								    const std::string& className,
-								    const VarContainer& pc) const
+								    const MechanicalBehaviourDescription& mb) const
   {
+    const VarContainer& pc = mb.getParameters();
     bool rp,ip,up;
     this->checkParametersType(rp,ip,up,pc);
     if(rp){
@@ -936,9 +974,115 @@ namespace mfront
 						 const std::map<std::string,std::string>& entryNames) const
   {
     this->writeUMATxxMaterialPropertiesSymbols(out,name,mb,glossaryNames,entryNames);
-    
-    
+    this->writeUMATxxStateVariablesSymbols(out,name,mb,glossaryNames,entryNames);
+    this->writeUMATxxExternalStateVariablesSymbols(out,name,mb,glossaryNames,entryNames);
   }
+
+  void
+  MFrontUMATInterfaceBase::writeUMATxxStateVariablesSymbols(std::ostream& out,
+							    const std::string& name,
+							    const MechanicalBehaviourDescription& mb,
+							    const std::map<std::string,std::string>& glossaryNames,
+							    const std::map<std::string,std::string>& entryNames) const
+  {
+    using namespace std;
+    const VarContainer& stateVarsHolder          = mb.getStateVariables();
+    const VarContainer& auxiliaryStateVarsHolder = mb.getAuxiliaryStateVariables();
+    const unsigned short nStateVariables = static_cast<unsigned short>(this->getNumberOfVariables(stateVarsHolder) + 
+								       this->getNumberOfVariables(auxiliaryStateVarsHolder));
+    VarContainer::const_iterator p;
+    out << "MFRONT_SHAREDOBJ unsigned short " << this->getFunctionName(name)
+	<< "_nInternalStateVariables = " << nStateVariables
+	<< ";\n";
+    vector<string> stateVariablesNames = this->getGlossaryNames(stateVarsHolder,
+								glossaryNames,
+								entryNames);
+    this->appendGlossaryNames(stateVariablesNames,auxiliaryStateVarsHolder,
+			      glossaryNames,entryNames);
+    this->writeGlossaryNames(out,stateVariablesNames,name,"InternalStateVariables");
+
+    if((stateVarsHolder.size()!=0)||
+       (auxiliaryStateVarsHolder.size()!=0)){
+      out << "MFRONT_SHAREDOBJ int " << this->getFunctionName(name)
+	  << "_InternalStateVariablesTypes [] = {";
+      for(p=stateVarsHolder.begin();p!=stateVarsHolder.end();){
+	const SupportedTypes::TypeFlag flag = this->getTypeFlag(p->type);
+	for(unsigned short is=0;is!=p->arraySize;){
+	  switch(flag){
+	  case SupportedTypes::Scalar : 
+	    out << 0;
+	    break;
+	  case SupportedTypes::Stensor :
+	    out << 1;
+	    break;
+	  case SupportedTypes::TVector :
+	    out << 2;
+	    break;
+	  case SupportedTypes::Tensor :
+	    out << 3;
+	    break;
+	  default :
+	    string msg("MFrontUMATInterfaceBase::writeUMATxxStateVariablesSymbols : ");
+	    msg += "internal error, tag unsupported";
+	    throw(runtime_error(msg));
+	  }
+	  if(++is!=p->arraySize){
+	    out << ",";
+	  }
+	}
+	if(++p!=stateVarsHolder.end()){
+	  out << ",";
+	}
+      }
+      if((!stateVarsHolder.empty())&&
+	 (auxiliaryStateVarsHolder.size()!=0)){
+	out << ",";
+      }
+      for(p=auxiliaryStateVarsHolder.begin();p!=auxiliaryStateVarsHolder.end();){
+	const SupportedTypes::TypeFlag flag = this->getTypeFlag(p->type);
+	for(unsigned short is=0;is!=p->arraySize;){
+	  switch(flag){
+	  case SupportedTypes::Scalar : 
+	    out << 0;
+	    break;
+	  case SupportedTypes::Stensor :
+	    out << 1;
+	    break;
+	  default :
+	    string msg("MFrontUMATInterfaceBase::writeUMATxxStateVariablesSymbols : ");
+	    msg += "internal error, tag unsupported";
+	    throw(runtime_error(msg));
+	  }
+	  if(++is!=p->arraySize){
+	    out << ",";
+	  }
+	}
+	if(++p!=auxiliaryStateVarsHolder.end()){
+	  out << ",";
+	}
+      }
+      out << "};\n\n";
+    } else {
+      out << "MFRONT_SHAREDOBJ const int * " << this->getFunctionName(name)
+	  << "_InternalStateVariablesTypes = 0;\n\n";
+    }
+  } // end of 
+  
+  void
+  MFrontUMATInterfaceBase::writeUMATxxExternalStateVariablesSymbols(std::ostream& out,
+								    const std::string& name,
+								    const MechanicalBehaviourDescription& mb,
+								    const std::map<std::string,std::string>& glossaryNames,
+								    const std::map<std::string,std::string>& entryNames) const
+  {
+    const VarContainer& externalStateVarsHolder  = mb.getExternalStateVariables();
+    out << "MFRONT_SHAREDOBJ unsigned short " << this->getFunctionName(name)
+	<< "_nExternalStateVariables = " << this->getNumberOfVariables(externalStateVarsHolder) << ";\n";
+    this->writeGlossaryNames(out,this->getGlossaryNames(externalStateVarsHolder,
+							glossaryNames,
+							entryNames),
+			     name,"ExternalStateVariables");
+  } // end of MFrontUMATInterfaceBase::writeUMATxxExternalStateVariablesSymbols
 
   MFrontUMATInterfaceBase::~MFrontUMATInterfaceBase()
   {}

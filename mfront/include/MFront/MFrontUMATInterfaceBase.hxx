@@ -146,13 +146,13 @@ namespace mfront{
     virtual void
     writeSetParametersFunctionsDeclarations(std::ostream&,
 					    const std::string&,
-					    const VarContainer&) const;
+					    const MechanicalBehaviourDescription&) const;
 
     virtual void
     writeSetParametersFunctionsImplantations(std::ostream&,
 					     const std::string&,
 					     const std::string&,
-					     const VarContainer&) const;
+					     const MechanicalBehaviourDescription&) const;
 
     virtual void
     generateMTestFile1(std::ostream& out) const;
@@ -198,6 +198,35 @@ namespace mfront{
 					 const MechanicalBehaviourDescription&,
 					 const std::map<std::string,std::string>&,
 					 const std::map<std::string,std::string>&) const = 0;
+
+    /*!
+     * \param[in] out           : output file
+     * \param[in] name          : name of the behaviour 
+     * \param[in] mb            : behaviour description
+     * \param[in] glossaryNames : glossary names
+     * \param[in] entrNames     : entry    names
+     */
+    virtual void
+    writeUMATxxStateVariablesSymbols(std::ostream&,
+				      const std::string&,
+				      const MechanicalBehaviourDescription&,
+				      const std::map<std::string,std::string>&,
+				      const std::map<std::string,std::string>&) const;
+
+
+    /*!
+     * \param[in] out           : output file
+     * \param[in] name          : name of the behaviour 
+     * \param[in] mb            : behaviour description
+     * \param[in] glossaryNames : glossary names
+     * \param[in] entrNames     : entry    names
+     */
+    virtual void
+    writeUMATxxExternalStateVariablesSymbols(std::ostream&,
+					     const std::string&,
+					     const MechanicalBehaviourDescription&,
+					     const std::map<std::string,std::string>&,
+					     const std::map<std::string,std::string>&) const;
 
     /*!
      * \param[in] out : output file

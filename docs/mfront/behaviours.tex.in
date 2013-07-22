@@ -1552,7 +1552,7 @@ incrément de déformation $\Delta\tepsilonto$ sur un pas de temps
 $\Delta t$. La matrice tangente cohérente est définie comme le
 tenseur:
 \begin{equation}
-\tenseurq{D}^{\mathit{tangent}}
+\tenseurq{L}^{\mathit{tc}}
 =\deriv{\Delta\tsigma}{\Delta\tepsilonto}
 .\label{eq:defTangent}
 \end{equation}
@@ -1568,9 +1568,9 @@ contrainte:
 }
 \end{equation*}
 et d'en déduire par dérivation~\eqref{eq:defTangent} la matrice
-tangente:
+tangente cohérente~:
 \begin{equation}
-\tenseurq{D}^{\mathit{tangent}}
+\tenseurq{L}^{\mathit{tc}}
 =\tenseurq{D}-\tenseurq{D}\colon\paren{\milieupas{\tenseur{n}}\otimes
 \sum_i\deriv{\Delta p_{i}}{\Delta\tepsilonto}
 +\sum_i\Delta p_{i}\deriv{\milieupas{\tenseur{n}}}{\Delta\tepsilonto}}
@@ -1709,8 +1709,8 @@ où les composantes $d_i$ sont les solutions du
 système~\eqref{eq:dfpidDetoc}.
 
 \paragraph{Matrice tangente cohérente}
-Finalement, la matrice tangente peut être reconstituée à partir des
-expressions~\eqref{eq:tang1}, \eqref{eq:dndDeto} et
+Finalement, la matrice tangente cohérente peut être reconstituée à
+partir des expressions~\eqref{eq:tang1}, \eqref{eq:dndDeto} et
 \eqref{eq:dDpdDeto}, et en notant que:
 \begin{equation*}
 \tenseurq{D}\colon\tenseurq{K}=2\,\mu\,\tenseurq{K}
@@ -1719,7 +1719,7 @@ expressions~\eqref{eq:tang1}, \eqref{eq:dndDeto} et
 .\end{equation*}
 Elle vaut ainsi:
 \begin{equation}
-\tenseurq{D}^{\mathit{tangent}}
+\tenseurq{L}^{\mathit{tc}}
 =\tenseurq{D}-2\,\mu\,\left(
 \frac{3\,\theta\,\sum_i\Delta p_i}
 {\sqrt{6\,\tenseur{B}\colon\tenseur{B}}}
@@ -1734,28 +1734,30 @@ Elle vaut ainsi:
 \end{equation}
 avec les composantes $d_i$ solutions du système~\eqref{eq:dfpidDetoc}.
 
-\subsubsection{Cas particuliers}
+\subsubsection{Expression de la matrice tangente cohérente pour un
+  mécanisme unique}
 
 Dans le cas où le système se limite à un mécanisme unique,
-l'expression de la matrice tangente se simplifie.
+l'expression de la matrice tangente cohérente se simplifie.
 
 \paragraph{Écoulement viscoplastique}
 Dans le cas d'un seul écoulement viscoplastique~\eqref{eq:fpivis},
 d'incrément $\Delta p$, le système~\eqref{eq:dfpidDetoc} se réduit à
 une équation d'inconnue $d$:
 \begin{equation*}
-\left(
-1
--\Delta t\,\theta\,\deriv{f^{\textrm{an}}}{p}
-+3\,\mu\,\Delta t\,\theta\,\deriv{f^{\textrm{an}}}{\sigmaeq}
-\right)\,d
-=\deriv{f^{\textrm{an}}}{\sigmaeq}
-\,3\,\mu\,\Delta t\,\theta
-.\end{equation*}
-L'expression~\eqref{eq:tang2} de la matrice tangente se simplifie
+  \left(
+    1
+    -\Delta t\,\theta\,\deriv{f^{\textrm{an}}}{p}
+    +3\,\mu\,\Delta t\,\theta\,\deriv{f^{\textrm{an}}}{\sigmaeq}
+  \right)\,d
+  =\deriv{f^{\textrm{an}}}{\sigmaeq}
+  \,3\,\mu\,\Delta t\,\theta
+  .\end{equation*}
+L'expression~\eqref{eq:tang2} de la matrice tangente cohérente se simplifie
 alors en:
-\begin{equation*}
-\tenseurq{D}^{\mathit{tangent}}
+\begin{equation}
+\label{eq:mfront:Dt:visco}
+\tenseurq{L}^{\mathit{tc}}
 =\tenseurq{D}-2\,\mu\,\theta\,\left(
 \Frac{3\,\Delta p}
 {\sqrt{6\,\tenseur{B}\colon\tenseur{B}}}
@@ -1772,7 +1774,7 @@ alors en:
 \right)
 \,\milieupas{\tenseur{n}}\otimes\milieupas{\tenseur{n}}
 \right)
-.\end{equation*}
+\end{equation}
 
 \paragraph{Écoulement plastique}
 Dans le cas d'un seul écoulement viscoplastique,
@@ -1780,17 +1782,18 @@ d'incrément $\Delta p$, le système~\eqref{eq:dfpidDetoc} se réduit à
 une équation d'inconnue $d$. Si l'écoulement plastique est
 activé~\eqref{eq:fpiplas}, cette équation devient:
 \begin{equation*}
-\left(
-\theta\,\deriv{f^{\textrm{an}}}{p}
--3\,\mu\,\theta\,\deriv{f^{\textrm{an}}}{\sigmaeq}
-\right)\,d
-=-\deriv{f^{\textrm{an}}}{\sigmaeq}
-\,3\,\mu\,\theta
-.\end{equation*}
-L'expression~\eqref{eq:tang2} de la matrice tangente se simplifie
+  \left(
+    \theta\,\deriv{f^{\textrm{an}}}{p}
+    -3\,\mu\,\theta\,\deriv{f^{\textrm{an}}}{\sigmaeq}
+  \right)\,d
+  =-\deriv{f^{\textrm{an}}}{\sigmaeq}
+  \,3\,\mu\,\theta
+  .\end{equation*}
+L'expression~\eqref{eq:tang2} de la matrice tangente cohérente se simplifie
 alors en:
-\begin{equation*}
-\tenseurq{D}^{\mathit{tangent}}
+\begin{equation}
+\label{eq:mfront:Dt:plasti}
+\tenseurq{L}^{\mathit{tc}}
 =\tenseurq{D}-2\,\mu\,\theta\,\left(
 \Frac{3\,\Delta p}
 {\sqrt{6\,\tenseur{B}\colon\tenseur{B}}}
@@ -1805,7 +1808,7 @@ alors en:
 \right)
 \,\milieupas{\tenseur{n}}\otimes\milieupas{\tenseur{n}}
 \right)
-.\end{equation*}
+\end{equation}
 
 Lorsque l'écoulement plastique n'est pas activé, l'équation d'écoulement~\eqref{eq:fpiplas} et
 le système~\eqref{eq:dfpidDetoc} se réduisent respectivement à:
@@ -1814,12 +1817,66 @@ le système~\eqref{eq:dfpidDetoc} se réduisent respectivement à:
 ,\quad\text{et}\quad
 d=0
 ,\end{equation*}
-et la matrice tangente au tenseur d'élasticité:
+et la matrice tangente cohérente au tenseur d'élasticité:
 \begin{equation*}
-\tenseurq{D}^{\mathit{tangent}}
+\tenseurq{L}^{\mathit{tc}}
 =\tenseurq{D}
 .\end{equation*}
 
+\subsubsection{Matrice tangente}
+
+La matrice tangente définie par la relation en vitesse~:
+\[
+\tdsigma = \tenseurq{L}\,\colon\,\tdepsilonto
+\]
+
+Sans chercher à justifier cette affirmation, la matrice tangente peut
+être calculée comme la limite de la matrice tangente cohérente lorsque
+le pas de temps \(\Delta \,t\) et l'incrément de déformation plastique
+cumulée \(\Delta \,p\) tendent vers \(0\) et en posant \(\theta=1\)~:
+\[
+\tenseurq{L} = \lim_{
+  \tiny
+  \begin{aligned}
+    \Delta\,t\,&\rightarrow\,0\\
+    \Delta\,p\,&\rightarrow\,0\\
+    \theta&=1
+  \end{aligned}
+}\tenseurq{L}^{\mathit{tc}}
+\]
+
+Les expressions précédentes peuvent donc être réutilisées en prenant
+garde à l'instant où l'on veut calculer la matrice tangente (en début
+ou fin de pas de temps).
+
+\subsubsection{Expression de la matrice tangente pour un mécanisme
+  unique}
+
+Dans le cas où le système se limite à un mécanisme unique,
+l'expression de la matrice tangente cohérente se simplifie.
+
+\paragraph{Écoulement viscoplastique}
+Dans le cas d'un seul écoulement viscoplastique,
+l'expression~\eqref{eq:mfront:Dt:visco} de la matrice tangente
+cohérente se réduit à la matrice d'élasticité.
+
+\paragraph{Écoulement plastique}
+Dans le cas d'un écoulement plastique, deux cas se présentent suivant
+que l'on soit en charge ou pas.
+
+En cas de charge plastique, l'expression~\eqref{eq:mfront:Dt:plasti}
+de la matrice tangente cohérente conduit à~:
+\[
+\tenseurq{L}
+=\tenseurq{D}-\Frac{4\,\mu^{2}\,\deriv{f^{\textrm{an}}}{\sigmaeq}}
+{3\,\mu\,\deriv{f^{\textrm{an}}}{\sigmaeq}
+  -\deriv{f^{\textrm{an}}}{p}
+}
+\tenseur{n}\otimes\tenseur{n}
+\]
+
+Dans le domaine élastique ou en cas de décharge, la matrice tangente
+se réduit à la matrice d'élasticité.
 
 \subsection{Utilisation des analyseurs spécifiques}
 
