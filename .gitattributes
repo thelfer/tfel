@@ -994,7 +994,9 @@ mfront/include/MFront/MFrontCastemLawInterface.hxx -text
 mfront/include/MFront/MFrontConfig.hxx -text
 mfront/include/MFront/MFrontCppLawInterface.hxx -text
 mfront/include/MFront/MFrontCppTestLawInterface.hxx -text
+mfront/include/MFront/MFrontDefaultCZMParser.hxx -text
 mfront/include/MFront/MFrontDefaultParser.hxx -text
+mfront/include/MFront/MFrontDefaultParserBase.hxx -text
 mfront/include/MFront/MFrontExcelLawInterface.hxx -text
 mfront/include/MFront/MFrontFortranLawInterface.hxx -text
 mfront/include/MFront/MFrontGenericData.hxx -text

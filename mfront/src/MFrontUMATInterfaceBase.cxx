@@ -1151,7 +1151,7 @@ namespace mfront
   MFrontUMATInterfaceBase::writeUMATxxSourceFileSymbols(std::ostream& out,
 							const std::string& name,
 							const std::string& file,
-							const MechanicalBehaviourDescription& mb) const
+							const MechanicalBehaviourDescription&) const
   {
     using namespace tfel::system;
     using namespace tfel::utilities;

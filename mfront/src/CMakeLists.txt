@@ -41,7 +41,9 @@ set(mfront_SOURCES
     MFrontLawInterfaceFactory.cxx
     MFrontBehaviourInterfaceFactory.cxx
     MFrontModelInterfaceFactory.cxx
+    MFrontDefaultParserBase.cxx
     MFrontDefaultParser.cxx
+    MFrontDefaultCZMParser.cxx
     MFrontMaterialLawParser.cxx
     MFrontIsotropicMisesCreepParser.cxx
     MFrontIsotropicStrainHardeningMisesCreepParser.cxx

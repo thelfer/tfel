@@ -1130,7 +1130,7 @@ namespace mfront{
   MFrontAsterInterface::writeUMATxxAdditionalSymbols(std::ostream& out,
 						     const std::string& name,
 						     const std::string&,
-						     const MechanicalBehaviourDescription& mb,
+						     const MechanicalBehaviourDescription&,
 						     const std::map<std::string,std::string>&,
 						     const std::map<std::string,std::string>&) const
   {

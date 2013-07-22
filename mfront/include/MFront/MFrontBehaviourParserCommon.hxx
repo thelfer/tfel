@@ -480,6 +480,12 @@ namespace mfront{
     virtual void
     defineSmallStrainInputVariables(void);
 
+    /*!
+     * an helper method for Cohesive Zones Models
+     */
+    virtual void
+    defineCZMInputVariables(void);
+
     virtual ~MFrontBehaviourParserCommon();
 
     /*!

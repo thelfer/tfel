@@ -3689,6 +3689,24 @@ namespace mfront{
     this->mb.getMainVariables().insert(MVType(eto,sig));
   }
 
+  void
+  MFrontBehaviourParserCommon::defineCZMInputVariables(void)
+  {
+    using namespace std;
+    typedef map<DrivingVariable,ThermodynamicForce>::value_type MVType;
+    DrivingVariable u;
+    u.name = "u";
+    u.type = "DisplacementTVector";
+    u.increment_known = true;
+    ThermodynamicForce F;
+    F.name = "F";
+    F.type = "ForceTVector";
+    this->registerVariable("u");
+    this->registerVariable("du");
+    this->registerVariable("F");
+    this->mb.getMainVariables().insert(MVType(u,F));
+  }
+
   std::map<std::string,
 	   std::pair<std::vector<std::string>,
 		     std::vector<std::string> > >

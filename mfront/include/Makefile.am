@@ -43,7 +43,9 @@ nobase_include_HEADERS= MFront/MFrontConfig.hxx                      \
 			MFront/VariableBoundsDescription.hxx         \
 			MFront/VarHandler.hxx                        \
 			MFront/LawFunction.hxx                       \
+			MFront/MFrontDefaultParserBase.hxx           \
 			MFront/MFrontDefaultParser.hxx               \
+			MFront/MFrontDefaultCZMParser.hxx            \
 			MFront/MFrontMaterialLawParser.hxx           \
 			MFront/MFrontModelParser.hxx                 \
 			MFront/VariableModifier.hxx                  \

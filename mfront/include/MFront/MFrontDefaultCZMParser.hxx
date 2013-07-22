@@ -1,5 +1,5 @@
 /*!
- * \file   MFrontDefaultParser.hxx
+ * \file   MFrontDefaultCZMParser.hxx
  * \brief  
  * \author Helfer Thomas
  * \date   08 nov 2006
@@ -13,7 +13,7 @@
 
 namespace mfront{
 
-  struct MFrontDefaultParser
+  struct MFrontDefaultCZMParser
     : public MFrontDefaultParserBase
   {
 
@@ -23,11 +23,11 @@ namespace mfront{
     static std::string 
     getDescription(void);
 
-    MFrontDefaultParser();
+    MFrontDefaultCZMParser();
 
-    ~MFrontDefaultParser();
+    ~MFrontDefaultCZMParser();
 
-  }; // end of struct MFrontDefaultParser
+  }; // end of struct MFrontDefaultCZMParser
 
 } // end of namespace mfront  
 
