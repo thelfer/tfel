@@ -274,7 +274,7 @@ namespace mfront{
   MFrontUMATInterface::checkIfElasticPropertiesAreDeclared(const MechanicalBehaviourDescription& mb) const
   {
     using namespace std;
-    const VarContainer& coefsHolder              = mb.getMaterialProperties();
+    const VarContainer& coefsHolder = mb.getMaterialProperties();
     VarContainer::const_iterator p;
     bool found = false;
     // specific treatment for isotropic behaviour
@@ -297,30 +297,30 @@ namespace mfront{
 	  msg += "(currently only ";
 	  msg += toString(static_cast<unsigned short>(coefsHolder.size()));
 	  msg += " defined):\n";
-	  msg += "- the young modulus     (use @Coef stress           young)\n";
-	  msg += "- the poisson ratio     (use @Coef real             nu)\n";
-	  msg += "- the density           (use @Coef density rho)";
-	  msg += "- the thermal expansion (use @Coef thermalexpansion alpha)\n";
+	  msg += "- the young modulus     (use @MaterialProperty stress           young)\n";
+	  msg += "- the poisson ratio     (use @MaterialProperty real             nu)\n";
+	  msg += "- the density           (use @MaterialProperty density rho)";
+	  msg += "- the thermal expansion (use @MaterialProperty thermalexpansion alpha)\n";
 	  throw(runtime_error(msg));
 	}
 	if(coefsHolder[0].name!="young"){
 	  string msg("MFrontUMATInterface::endTreatement : the umat interface requires the ");
-	  msg += "first material property to be the young modulus (use @Coef stress young)";
+	  msg += "first material property to be the young modulus (use @MaterialProperty stress young)";
 	  throw(runtime_error(msg));
 	}
 	if(coefsHolder[1].name!="nu"){
 	  string msg("MFrontUMATInterface::endTreatement : the umat interface requires the ");
-	  msg += "second material property to be the poisson ratio (use @Coef real nu)";
+	  msg += "second material property to be the poisson ratio (use @MaterialProperty real nu)";
 	  throw(runtime_error(msg));
 	}
 	if(coefsHolder[2].name!="rho"){
 	  string msg("MFrontUMATInterface::endTreatement : the umat interface requires the " );
-	  msg += "third material property to be the density (use @Coef density rho)";
+	  msg += "third material property to be the density (use @MaterialProperty density rho)";
 	  throw(runtime_error(msg));
 	}
 	if(coefsHolder[3].name!="alpha"){
 	  string msg("MFrontUMATInterface::endTreatement : the umat interface requires the" );
-	  msg += "fourth material property to be the thermal expansion (use @Coef thermalexpansion alpha)";
+	  msg += "fourth material property to be the thermal expansion (use @MaterialProperty thermalexpansion alpha)";
 	  throw(runtime_error(msg));
 	}
       }
@@ -342,17 +342,10 @@ namespace mfront{
     using namespace std;
     using namespace tfel::system;
     using namespace tfel::utilities;
-    const VarContainer& coefsHolder              = mb.getMaterialProperties();
-    const VarContainer& stateVarsHolder          = mb.getStateVariables();
-    const VarContainer& auxiliaryStateVarsHolder = mb.getAuxiliaryStateVariables();
-    const VarContainer& externalStateVarsHolder  = mb.getExternalStateVariables();
-    const VarContainer& parametersHolder         = mb.getParameters();
+
     string name;
     string umatFctName;
-    string tmp;
-    VarContainer::const_iterator p;
-    unsigned short i;
-    
+    VarContainer::const_iterator p;    
     systemCall::mkdir("include/MFront");
     systemCall::mkdir("include/MFront/UMAT");
 
@@ -516,11 +509,6 @@ namespace mfront{
     out << "extern \"C\"{\n";
     out << "#endif /* __cplusplus */\n\n";
 
-    out << "MFRONT_SHAREDOBJ const char *\numat";
-    out << makeLowerCase(name) << "_src = \""
-	<< tokenize(file,dirSeparator()).back()
-	<< "\";\n\n";
-
     this->writeSetParametersFunctionsDeclarations(out,name,mb);
 
     out << "MFRONT_SHAREDOBJ void MFRONT_STDCALL\numat"
@@ -595,43 +583,9 @@ namespace mfront{
     out << "#include\"MFront/UMAT/umat" << name << ".hxx\"\n\n";
     out << "extern \"C\"{\n\n";
 
-    out << "MFRONT_SHAREDOBJ unsigned short umat"
-      	<< makeLowerCase(name)
-	<< "_UsableInPurelyImplicitResolution = ";
-    if(mb.isUsableInPurelyImplicitResolution()){
-      out << "1;\n\n";
-    } else {
-      out << "0;\n\n";
-    }
-
-    out << "MFRONT_SHAREDOBJ unsigned short umat"
-      	<< makeLowerCase(name) << "_BehaviourType = " ;
-    if(mb.getBehaviourType()==mfront::ISOTROPIC){
-      out << "0u;" << endl << endl;
-    } else {
-      out << "1u;" << endl << endl;
-    }
-
-    out << "MFRONT_SHAREDOBJ unsigned short umat"
-      	<< makeLowerCase(name) << "_ElasticBehaviourType = " ;
-    if(mb.getBehaviourType()==mfront::ISOTROPIC){
-      out << "0u;" << endl << endl;
-    } else {
-      out << "1u;" << endl << endl;
-    }
-
-    this->generateUMATxxSymbols(out,name,mb,glossaryNames,entryNames);
-    
+    this->generateUMATxxSymbols(out,name,file,mb,glossaryNames,entryNames);
     this->writeSetParametersFunctionsImplantations(out,name,className,mb);
     
-    if(this->finiteStrainStrategy==FINITEROTATIONSMALLSTRAIN){
-      out << "MFRONT_SHAREDOBJ unsigned short umat"
-	  << makeLowerCase(name) << "_Interface = 2u;\n";
-    } else {
-      out << "MFRONT_SHAREDOBJ unsigned short umat"
-	  << makeLowerCase(name) << "_Interface = 1u;\n";
-    }
-
     if(this->finiteStrainStrategy==FINITEROTATIONSMALLSTRAIN){
       if(this->generateMTestFile){
 	string msg("MFrontUMATInterface::endTreatement : "
@@ -727,23 +681,37 @@ namespace mfront{
       out << "}\n\n";
     }
     out << "} // end of extern \"C\"\n";
-
     out.close();
+    this->generateGibianeDeclaration(library,className,authorName,date,mb);
+  } // end of MFrontUMATInterface::endTreatement
 
+  void
+  MFrontUMATInterface::generateGibianeDeclaration(const std::string& library,
+						  const std::string& className,
+						  const std::string& authorName,
+						  const std::string& date,
+						  const MechanicalBehaviourDescription& mb)
+  {
+    using namespace std;
+    using namespace tfel::system;
+    const VarContainer& coefsHolder              = mb.getMaterialProperties();
+    const VarContainer& stateVarsHolder          = mb.getStateVariables();
+    const VarContainer& auxiliaryStateVarsHolder = mb.getAuxiliaryStateVariables();
+    const VarContainer& externalStateVarsHolder  = mb.getExternalStateVariables();
+    const string name((!library.empty())?library+className:className);
+    const string fileName("castem/"+name+".dgibi");
+    string tmp;
+    VarContainer::const_iterator p;
+    unsigned short i;
+    ofstream out;
     systemCall::mkdir("castem");
-
-    fileName  = "castem/";
-    fileName += name;
-    fileName += ".dgibi";
-
     out.open(fileName.c_str());
     if(!out){
-      string msg("MFrontUMATInterface::endTreatement : ");
+      string msg("MFrontUMATInterface::generateGibianeDeclaration : ");
       msg += "could not open file ";
       msg += fileName;
       throw(runtime_error(msg));
     }
-
     out << "*\n";
     out << "* \\file   "  << fileName << endl;
     out << "* \\brief  example of how to use the " << className << " behaviour law\n"
@@ -776,7 +744,7 @@ namespace mfront{
 	i=static_cast<unsigned short>(i+3u);
 	break;
       default :
-	string msg("MFrontUMATInterface::endTreatement : ");
+	string msg("MFrontUMATInterface::generateGibianeDeclaration : ");
 	msg += "internal error, tag unsupported";
 	throw(runtime_error(msg));
       }
@@ -804,7 +772,7 @@ namespace mfront{
 	i=static_cast<unsigned short>(i+3u);
 	break;
       default :
-	string msg("MFrontUMATInterface::endTreatement : ");
+	string msg("MFrontUMATInterface::generateGibianeDeclaration : ");
 	msg += "internal error, tag unsupported";
 	throw(runtime_error(msg));
       }
@@ -831,7 +799,7 @@ namespace mfront{
 	i=static_cast<unsigned short>(i+3u);
 	break;
       default :
-	string msg("MFrontUMATInterface::endTreatement : ");
+	string msg("MFrontUMATInterface::generateGibianeDeclaration : ");
 	msg += "internal error, tag unsupported";
 	throw(runtime_error(msg));
       }
@@ -859,7 +827,7 @@ namespace mfront{
 	i=static_cast<unsigned short>(i+3u);
 	break;
       default :
-	string msg("MFrontUMATInterface::endTreatement : ");
+	string msg("MFrontUMATInterface::generateGibianeDeclaration : ");
 	msg += "internal error, tag unsupported";
 	throw(runtime_error(msg));
       }
@@ -903,7 +871,7 @@ namespace mfront{
 	i=static_cast<unsigned short>(i+3u);
 	break;
       default :
-	string msg("MFrontUMATInterface::endTreatement : ");
+	string msg("MFrontUMATInterface::generateGibianeDeclaration : ");
 	msg += "internal error, tag unsupported";
 	throw(runtime_error(msg));
       }
@@ -942,7 +910,7 @@ namespace mfront{
 	i=static_cast<unsigned short>(i+3u);
 	break;
       default :
-	string msg("MFrontUMATInterface::endTreatement : ");
+	string msg("MFrontUMATInterface::generateGibianeDeclaration : ");
 	msg += "internal error, tag unsupported";
 	throw(runtime_error(msg));
       }
@@ -970,7 +938,7 @@ namespace mfront{
 	i=static_cast<unsigned short>(i+4u);
 	break;
       default :
-	string msg("MFrontUMATInterface::endTreatement : ");
+	string msg("MFrontUMATInterface::generateGibianeDeclaration : ");
 	msg += "internal error, tag unsupported";
 	throw(runtime_error(msg));
       }
@@ -995,7 +963,7 @@ namespace mfront{
 	i=static_cast<unsigned short>(i+4u);
 	break;
       default :
-	string msg("MFrontUMATInterface::endTreatement : ");
+	string msg("MFrontUMATInterface::generateGibianeDeclaration : ");
 	msg += "internal error, tag unsupported";
 	throw(runtime_error(msg));
       }
@@ -1023,7 +991,7 @@ namespace mfront{
 	i=static_cast<unsigned short>(i+3u);
 	break;
       default :
-	string msg("MFrontUMATInterface::endTreatement : ");
+	string msg("MFrontUMATInterface::generateGibianeDeclaration : ");
 	msg += "internal error, tag unsupported";
 	throw(runtime_error(msg));
       }
@@ -1067,7 +1035,7 @@ namespace mfront{
 	i=static_cast<unsigned short>(i+3u);
 	break;
       default :
-	string msg("MFrontUMATInterface::endTreatement : ");
+	string msg("MFrontUMATInterface::generateGibianeDeclaration : ");
 	msg += "internal error, tag unsupported";
 	throw(runtime_error(msg));
       }
@@ -1110,7 +1078,7 @@ namespace mfront{
 	i=static_cast<unsigned short>(i+6u);
 	break;
       default :
-	string msg("MFrontUMATInterface::endTreatement : ");
+	string msg("MFrontUMATInterface::generateGibianeDeclaration : ");
 	msg += "internal error, tag unsupported";
 	throw(runtime_error(msg));
       }
@@ -1138,7 +1106,7 @@ namespace mfront{
 	i=static_cast<unsigned short>(i+3u);
 	break;
       default :
-	string msg("MFrontUMATInterface::endTreatement : ");
+	string msg("MFrontUMATInterface::generateGibianeDeclaration : ");
 	msg += "internal error, tag unsupported";
 	throw(runtime_error(msg));
       }
@@ -1163,7 +1131,7 @@ namespace mfront{
 	i=static_cast<unsigned short>(i+3u);
 	break;
       default :
-	string msg("MFrontUMATInterface::endTreatement : ");
+	string msg("MFrontUMATInterface::generateGibianeDeclaration : ");
 	msg += "internal error, tag unsupported";
 	throw(runtime_error(msg));
       }
@@ -1192,7 +1160,7 @@ namespace mfront{
 	i=static_cast<unsigned short>(i+3u);
 	break;
       default :
-	string msg("MFrontUMATInterface::endTreatement : ");
+	string msg("MFrontUMATInterface::generateGibianeDeclaration : ");
 	msg += "internal error, tag unsupported";
 	throw(runtime_error(msg));
       }
@@ -1236,7 +1204,7 @@ namespace mfront{
 	i=static_cast<unsigned short>(i+3u);
 	break;
       default :
-	string msg("MFrontUMATInterface::endTreatement : ");
+	string msg("MFrontUMATInterface::generateGibianeDeclaration : ");
 	msg += "internal error, tag unsupported";
 	throw(runtime_error(msg));
       }
@@ -1255,7 +1223,7 @@ namespace mfront{
 
     out.close();
 
-  } // end of MFrontUMATInterface::endTreatement
+  } // end of MFrontUMATInterface::generateGibianeDeclaration
 
   void
   MFrontUMATInterface::writeMTestFileGeneratorSetModellingHypothesis(std::ostream& out) const
@@ -1471,5 +1439,22 @@ namespace mfront{
 			       name,"MaterialProperties");
     }
   } // end of MFrontUMATInterface::writeUMATxxMaterialPropertiesSymbol
+
+  void
+  MFrontUMATInterface::writeUMATxxAdditionalSymbols(std::ostream& out,
+						    const std::string& name,
+						    const std::string&,
+						    const MechanicalBehaviourDescription&,
+						    const std::map<std::string,std::string>&,
+						    const std::map<std::string,std::string>&) const
+  {
+    if(this->finiteStrainStrategy==FINITEROTATIONSMALLSTRAIN){
+      out << "MFRONT_SHAREDOBJ unsigned short umat"
+	  << makeLowerCase(name) << "_Interface = 2u;\n";
+    } else {
+      out << "MFRONT_SHAREDOBJ unsigned short umat"
+	  << makeLowerCase(name) << "_Interface = 1u;\n";
+    }
+  } // end of MFrontUMATInterface::writeUMATxxAdditionalSymbols
 
 } // end of namespace mfront

@@ -122,7 +122,9 @@ namespace mfront{
     this->flags.insert(MVType("energy_density",Scalar));
     this->flags.insert(MVType("thermalexpansion",Scalar));
     this->flags.insert(MVType("density",Scalar));
+    this->flags.insert(MVType("TVector",TVector));
     this->flags.insert(MVType("Stensor",Stensor));
+    this->flags.insert(MVType("Tensor",Tensor));
     this->flags.insert(MVType("StressStensor",Stensor));
     this->flags.insert(MVType("StressRateStensor",Stensor));
     this->flags.insert(MVType("StrainStensor",Stensor));
@@ -255,16 +257,15 @@ namespace mfront{
 	  const string n = prefix+p->name+suffix;
 	  f << ",\n";
 	  SupportedTypes::TypeFlag flag = this->getTypeFlag(p->type);
-	  switch(flag){
-	  case SupportedTypes::Scalar : 
+	  if(flag==SupportedTypes::Scalar){
 	    f << n << "("+src+"[" 
 	      << currentOffset << "])";  
-	    break;
-	  case SupportedTypes::Stensor :
+	  } else if((flag==SupportedTypes::TVector)||
+		    (flag==SupportedTypes::Stensor)||
+		    (flag==SupportedTypes::Tensor)){
 	    f << n << "(&"+src+"[" 
 	      << currentOffset << "])";  
-	    break;
-	  default : 
+	  } else {
 	    string msg("SupportedTypes::");
 	    msg += "writeVariableInitializersInBehaviourDataConstructorI : ";
 	    msg += "internal error, tag unsupported";
@@ -315,9 +316,19 @@ namespace mfront{
 	      f << n << "[idx] = "+src+"[" 
 		<< currentOffset << "+idx];\n";  
 	      break;
+	    case SupportedTypes::TVector :
+	      f << "tfel::fsalgo<TVectorSize>(&"+src+"[" 
+		<< currentOffset << "+idx*TVectorSize],"
+		<< n << "[idx].begin());\n";  
+	      break;
 	    case SupportedTypes::Stensor :
 	      f << n << "[idx].import(&"+src+"[" 
 		  << currentOffset << "+idx*StensorSize]);\n";  
+	      break;
+	    case SupportedTypes::Tensor :
+	      f << "tfel::fsalgo<TensorSize>(&"+src+"[" 
+		<< currentOffset << "+idx*TensorSize],"
+		<< n << "[idx].begin());\n";  
 	      break;
 	    default : 
 	      string msg("SupportedTypes::");
@@ -334,9 +345,17 @@ namespace mfront{
 		f << n << "[" << i << "] = "+src+"[" 
 		  << currentOffset << "];\n";  
 		break;
+	      case SupportedTypes::TVector :
+		f << "tfel::fsalgo<TVectorSize>(&"+src+"[" 
+		  << currentOffset << "]," << n << "[" << i << "].begin());\n";  
+		break;
 	      case SupportedTypes::Stensor :
 		f << n << "["<< i << "].import(&"+src+"[" 
 		  << currentOffset << "]);\n";  
+		break;
+	      case SupportedTypes::Tensor :
+		f << "tfel::fsalgo<TensorSize>(&"+src+"[" 
+		  << currentOffset << "]," << n << "[" << i << "].begin());\n";  
 		break;
 	      default : 
 		string msg("SupportedTypes::");
@@ -366,32 +385,43 @@ namespace mfront{
 	const string n = p->name;
 	const string t = (!useStateVarTimeDerivative) ? p->type : this->getTimeDerivativeType(p->type);
 	f << ",\n";
-	switch(flag){
-	case SupportedTypes::Scalar : 
+	if(flag==SupportedTypes::Scalar){
 	  if(this->useDynamicallyAllocatedVector(p->arraySize)){
 	    f << "d" << n << "(" << p->arraySize << "," << t <<"(0))";
 	  } else {
 	    f << "d" << n << "(" << t <<"(0))";
 	  }
-	  break;
-	case SupportedTypes::Stensor :
+	} else if ((flag==SupportedTypes::TVector)||
+		   (flag==SupportedTypes::Stensor)||
+		   (flag==SupportedTypes::Tensor)){
+	  string traits;
+	  if(flag==SupportedTypes::TVector){
+	    traits = "VectorTraits";
+	  } else if(flag==SupportedTypes::Stensor){
+	    traits = "StensorTraits";
+	  } else if(flag==SupportedTypes::Tensor){
+	    traits = "TensorTraits";
+	  } else {
+	    string msg("SupportedTypes::writeStateVariableIncrementsInitializers : ");
+	    msg += "internal error, tag unsupported";
+	    throw(runtime_error(msg));
+	  }
 	  if(p->arraySize==1u){
 	    f << "d" << n 
-	      << "(typename tfel::math::StensorTraits<" 
+	      << "(typename tfel::math::"+traits+"<" 
 	      << t << ">::NumType(0))";
 	  } else {
 	    if(this->useDynamicallyAllocatedVector(p->arraySize)){
 	      f << "d" << n 
-		<< "(" << p->arraySize << "," << t << "(typename tfel::math::StensorTraits<" 
+		<< "(" << p->arraySize << "," << t << "(typename tfel::math::"+traits+"<" 
 		<< t << ">::NumType(0)))";
 	    } else {
 	      f << "d" << n 
-		<< "(" << t << "(typename tfel::math::StensorTraits<" 
+		<< "(" << t << "(typename tfel::math::"+traits+"<" 
 		<< t << ">::NumType(0)))";
 	    }
 	  }
-	  break;
-	default :
+	} else {
 	  string msg("SupportedTypes::writeStateVariableIncrementsInitializers : ");
 	  msg += "internal error, tag unsupported";
 	  throw(runtime_error(msg));
@@ -455,8 +485,7 @@ namespace mfront{
       for(p=v.begin();p!=v.end();++p){
 	SupportedTypes::TypeFlag flag = this->getTypeFlag(p->type);
 	if(p->arraySize==1u){
-	  switch(flag){
-	  case SupportedTypes::Scalar : 
+	  if(flag==SupportedTypes::Scalar){
 	    if(useQt){
 	      f << dest << "[" 
 		<< currentOffset << "] = common_cast(this->"
@@ -466,13 +495,13 @@ namespace mfront{
 		<< currentOffset << "] = this->"
 		<< p->name << ";\n"; 
 	    } 
-	    break;
-	  case SupportedTypes::Stensor :
+	  } else if((flag==SupportedTypes::TVector)||
+		    (flag==SupportedTypes::Stensor)||
+		    (flag==SupportedTypes::Tensor)){
 	    f << "this->" << p->name 
 	      << ".write(&" << dest << "[" 
 	      << currentOffset << "]);\n";  
-	    break;
-	  default :
+	  } else {
 	    string msg("SupportedTypes::exportResults : ");
 	    msg += "internal error, tag unsupported";
 	    throw(runtime_error(msg));
@@ -481,8 +510,7 @@ namespace mfront{
 	} else {
 	  if(this->useDynamicallyAllocatedVector(p->arraySize)){
 	    f << "for(unsigned short idx=0;idx!=" << p->arraySize << ";++idx){" << endl;
-	    switch(flag){
-	    case SupportedTypes::Scalar : 
+	    if(flag==SupportedTypes::Scalar){ 
 	      if(useQt){
 		f << dest << "[" 
 		  << currentOffset << "+idx] = common_cast(this->"
@@ -491,14 +519,14 @@ namespace mfront{
 		f << dest << "[" 
 		  << currentOffset << "+idx] = this->"
 		  << p->name << "[idx];\n"; 
-	      } 
-	      break;
-	    case SupportedTypes::Stensor :
+	      }
+	    } else if((flag==SupportedTypes::TVector)||
+		      (flag==SupportedTypes::Stensor)||
+		      (flag==SupportedTypes::Tensor)){
 	      f << "this->" << p->name
 		<< "[idx].write(&" << dest << "[" 
 		<< currentOffset << "+idx*StensorSize]);\n";  
-	      break;
-	    default :
+	    } else {
 	      string msg("SupportedTypes::exportResults : ");
 	      msg += "internal error, tag unsupported";
 	      throw(runtime_error(msg));
@@ -507,8 +535,7 @@ namespace mfront{
 	    currentOffset+=this->getTypeSize(p->type,p->arraySize);
 	  } else {
 	    for(unsigned short i=0;i!=p->arraySize;++i){
-	      switch(flag){
-	      case SupportedTypes::Scalar : 
+	      if(flag==SupportedTypes::Scalar){
 		if(useQt){
 		  f << dest << "[" 
 		    << currentOffset << "] = common_cast(this->"
@@ -518,14 +545,14 @@ namespace mfront{
 		    << currentOffset << "] = this->"
 		    << p->name << "[" << i << "];\n"; 
 		} 
-		break;
-	      case SupportedTypes::Stensor :
+	      } else if((flag==SupportedTypes::TVector)||
+			(flag==SupportedTypes::Stensor)||
+			(flag==SupportedTypes::Tensor)){
 		f << "this->" << p->name
 		  << "[" << i << "]" 
 		  << ".write(&" << dest << "[" 
 		  << currentOffset << "]);\n";  
-		break;
-	      default :
+	      } else {
 		string msg("SupportedTypes::exportResults : ");
 		msg += "internal error, tag unsupported";
 		throw(runtime_error(msg));

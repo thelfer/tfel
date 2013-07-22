@@ -479,6 +479,20 @@ namespace tfel{
       static const bool cond = IsAssignableTo<T2,T>::cond;
     };
 
+    /*!
+     * \brief Partial specialisation for tvectors
+     * \see   BaseType
+     */
+    template<unsigned short N,typename T,
+	     template<unsigned short,typename> class Storage>
+    struct BaseType<tfel::math::stensor<N,T,Storage> >
+    {
+      /*!
+       *  Result
+       */
+      typedef tfel::math::stensor<N,typename BaseType<T>::type,Storage> type;
+    };
+
   } // end of namespace typetraits
 
 } // end of namespace tfel

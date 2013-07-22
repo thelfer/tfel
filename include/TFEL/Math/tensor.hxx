@@ -409,6 +409,19 @@ namespace tfel{
        */
       static const bool cond = IsAssignableTo<T2,T>::cond;
     };
+    
+    /*!
+     * \brief Partial specialisation for tvectors
+     * \see   BaseType
+     */
+    template<unsigned short N,typename T>
+    struct BaseType<tfel::math::tensor<N,T> >
+    {
+      /*!
+       *  Result
+       */
+      typedef tfel::math::tensor<N,typename BaseType<T>::type> type;
+    };
 
   } // end of namespace typetraits
 

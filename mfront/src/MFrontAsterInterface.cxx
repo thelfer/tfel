@@ -297,33 +297,33 @@ namespace mfront{
 		     "tensor to be computed for you. Thus,"
 		     "the aster interface requires the ");
 	  msg += "following material propertys to be defined (in the right order) ";
-	  msg += "- the young modulus     (use @Coef stress           young)\n";
-	  msg += "- the poisson ratio     (use @Coef real             nu)\n";
+	  msg += "- the young modulus     (use @MaterialProperty stress           young)\n";
+	  msg += "- the poisson ratio     (use @MaterialProperty real             nu)\n";
 	  if(mb.requiresThermalExpansionTensor()){
-	    msg += "- the density           (use @Coef density rho)";
-	    msg += "- the thermal expansion (use @Coef thermalexpansion alpha)\n";
+	    msg += "- the density           (use @MaterialProperty density rho)";
+	    msg += "- the thermal expansion (use @MaterialProperty thermalexpansion alpha)\n";
 	  }
 	  throw(runtime_error(msg));
 	}
 	if(coefsHolder[0].name!="young"){
 	  string msg("MFrontASTERInterface::endTreatement : the aster interface requires the ");
-	  msg += "first material property to be the young modulus (use @Coef stress young)";
+	  msg += "first material property to be the young modulus (use @MaterialProperty stress young)";
 	  throw(runtime_error(msg));
 	}
 	if(coefsHolder[1].name!="nu"){
 	  string msg("MFrontASTERInterface::endTreatement : the aster interface requires the ");
-	  msg += "second material property to be the poisson ratio (use @Coef real nu)";
+	  msg += "second material property to be the poisson ratio (use @MaterialProperty real nu)";
 	  throw(runtime_error(msg));
 	}
 	if(mb.requiresThermalExpansionTensor()){
 	  if(coefsHolder[2].name!="rho"){
 	    string msg("MFrontASTERInterface::endTreatement : the aster interface requires the " );
-	    msg += "third material property to be the density (use @Coef density rho)";
+	    msg += "third material property to be the density (use @MaterialProperty density rho)";
 	    throw(runtime_error(msg));
 	  }
 	  if(coefsHolder[3].name!="alpha"){
 	    string msg("MFrontASTERInterface::endTreatement : the aster interface requires the" );
-	    msg += "fourth material property to be the thermal expansion (use @Coef thermalexpansion alpha)";
+	    msg += "fourth material property to be the thermal expansion (use @MaterialProperty thermalexpansion alpha)";
 	    throw(runtime_error(msg));
 	  }
 	}
@@ -461,11 +461,6 @@ namespace mfront{
     out << "extern \"C\"{\n";
     out << "#endif /* __cplusplus */\n\n";
 
-    out << "MFRONT_SHAREDOBJ const char *\naster";
-    out << makeLowerCase(name) << "_src = \""
-	<< tokenize(file,dirSeparator()).back()
-	<< "\";\n\n";
-
     this->writeSetParametersFunctionsDeclarations(out,name,mb);
 
     out << "MFRONT_SHAREDOBJ void MFRONT_STDCALL\naster"
@@ -556,58 +551,8 @@ namespace mfront{
     out << "#include\"MFront/Aster/aster" << name << ".hxx\"\n\n";
 
     out << "extern \"C\"{\n\n";
-
-    // this->srcFile << "MFRONT_SHAREDOBJ const char *\n";
-    // this->srcFile << name << "_src = \""
-    // 		  << tokenize(file,systemCall::dirSeparator()).back()
-    // 		  << "\";\n\n";
-
-    out << "MFRONT_SHAREDOBJ unsigned short aster"
-      	<< makeLowerCase(name)
-	<< "_UsableInPurelyImplicitResolution = ";
-    if(mb.isUsableInPurelyImplicitResolution()){
-      out << "1;\n\n";
-    } else {
-      out << "0;\n\n";
-    }
-
-    out << "MFRONT_SHAREDOBJ unsigned short aster"
-      	<< makeLowerCase(name) << "_BehaviourType = " ;
-    if(mb.getBehaviourType()==mfront::ISOTROPIC){
-      out << "0u;" << endl << endl;
-    } else if(mb.getBehaviourType()==mfront::ORTHOTROPIC){
-      out << "1u;" << endl << endl;
-    } else {
-      string msg("MFrontAsterInterface::endTreatement : ");
-      msg += "unsupported behaviour type.\n";
-      msg += "The aster interface only support isotropic or orthotropic behaviour at this time.";
-      throw(runtime_error(msg));
-    }
-
-    out << "MFRONT_SHAREDOBJ unsigned short aster"
-      	<< makeLowerCase(name) << "_ElasticBehaviourType = " ;
-    if(mb.getElasticBehaviourType()==mfront::ISOTROPIC){
-      out << "0u;" << endl << endl;
-    } else if(mb.getElasticBehaviourType()==mfront::ORTHOTROPIC){
-      out << "1u;" << endl << endl;
-    } else {
-      string msg("MFrontAsterInterface::endTreatement : ");
-      msg += "unsupported behaviour type.\n";
-      msg += "The aster interface only support isotropic or orthotropic behaviour at this time.";
-      throw(runtime_error(msg));
-    }
-
-    out << "MFRONT_SHAREDOBJ unsigned short aster"
-      	<< makeLowerCase(name);
-    out << "_savesTangentOperator = ";
-    if(this->savesTangentOperator){
-      out << "1";
-    } else {
-      out << "0";
-    }
-    out << ";\n";
  
-    this->generateUMATxxSymbols(out,name,mb,glossaryNames,entryNames);
+    this->generateUMATxxSymbols(out,name,file,mb,glossaryNames,entryNames);
     
     this->writeSetParametersFunctionsImplantations(out,name,className,mb);
     
@@ -916,18 +861,18 @@ namespace mfront{
 	    msg += "(currently only ";
 	    msg += toString(static_cast<unsigned short>(coefsHolder.size()));
 	    msg += " defined):\n";
-	    msg += "- the young modulus     (use @Coef stress young)\n";
-	    msg += "- the poisson ratio     (use @Coef real   nu)\n";
+	    msg += "- the young modulus     (use @MaterialProperty stress young)\n";
+	    msg += "- the poisson ratio     (use @MaterialProperty real   nu)\n";
 	    throw(runtime_error(msg));
 	  }
 	  if(coefsHolder[0].name!="young"){
 	    string msg("MFrontAsterInterface::getMaterialPropertiesOffset : the aster interface requires the ");
-	    msg += "first material property to be the young modulus (use @Coef stress young)";
+	    msg += "first material property to be the young modulus (use @MaterialProperty stress young)";
 	    throw(runtime_error(msg));
 	  }
 	  if(coefsHolder[1].name!="nu"){
 	    string msg("MFrontAsterInterface::getMaterialPropertiesOffset : the aster interface requires the ");
-	    msg += "second material property to be the poisson ratio (use @Coef real nu)";
+	    msg += "second material property to be the poisson ratio (use @MaterialProperty real nu)";
 	    throw(runtime_error(msg));
 	  }
 	} else {
@@ -949,10 +894,10 @@ namespace mfront{
 	      msg += "(currently only ";
 	      msg += toString(static_cast<unsigned short>(coefsHolder.size()));
 	      msg += " defined):\n";
-	      msg += "- the young modulus     (use @Coef stress young)\n";
-	      msg += "- the poisson ratio     (use @Coef real   nu)\n";
-	      msg += "[- the mass density     (use @Coef density rho)]\n";
-	      msg += "- the thermal expansion (use @Coef thermalexpansion alpha)\n";
+	      msg += "- the young modulus     (use @MaterialProperty stress young)\n";
+	      msg += "- the poisson ratio     (use @MaterialProperty real   nu)\n";
+	      msg += "[- the mass density     (use @MaterialProperty density rho)]\n";
+	      msg += "- the thermal expansion (use @MaterialProperty thermalexpansion alpha)\n";
 	      msg += "(the mass density is optionnal and shall be used only if the law ";
 	      msg += "has to be compatible with Cast3M.)";
 	      throw(runtime_error(msg));
@@ -972,10 +917,10 @@ namespace mfront{
 		msg += "(currently only ";
 		msg += toString(static_cast<unsigned short>(coefsHolder.size()));
 		msg += " defined):\n";
-		msg += "- the young modulus     (use @Coef stress young)\n";
-		msg += "- the poisson ratio     (use @Coef real   nu)\n";
-		msg += "[- the mass density     (use @Coef density rho)]\n";
-		msg += "- the thermal expansion (use @Coef thermalexpansion alpha)\n";
+		msg += "- the young modulus     (use @MaterialProperty stress young)\n";
+		msg += "- the poisson ratio     (use @MaterialProperty real   nu)\n";
+		msg += "[- the mass density     (use @MaterialProperty density rho)]\n";
+		msg += "- the thermal expansion (use @MaterialProperty thermalexpansion alpha)\n";
 		msg += "(the mass density is optionnal and shall be used only if the law ";
 		msg += "has to be compatible with Cast3M.)";
 		throw(runtime_error(msg));
@@ -1180,5 +1125,23 @@ namespace mfront{
 							entryNames),
 			     name,"MaterialProperties");
   } // end of MFrontUMATInterface::writeUMATxxMaterialPropertiesSymbol
+
+  void
+  MFrontAsterInterface::writeUMATxxAdditionalSymbols(std::ostream& out,
+						     const std::string& name,
+						     const std::string&,
+						     const MechanicalBehaviourDescription& mb,
+						     const std::map<std::string,std::string>&,
+						     const std::map<std::string,std::string>&) const
+  {
+    out << "MFRONT_SHAREDOBJ unsigned short " << this->getFunctionName(name);
+    out << "_savesTangentOperator = ";
+    if(this->savesTangentOperator){
+      out << "1";
+    } else {
+      out << "0";
+    }
+    out << ";\n";
+  } // end of MFrontAsterInterface::writeUMATxxAdditionalSymbols
 
 } // end of namespace mfront

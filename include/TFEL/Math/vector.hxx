@@ -14,6 +14,7 @@
 #include<string>
 
 #include"TFEL/Metaprogramming/EnableIf.hxx"
+#include"TFEL/TypeTraits/BaseType.hxx"
 #include"TFEL/TypeTraits/IsAssignableTo.hxx"
 
 #include"TFEL/Math/Forward/vector.hxx"
@@ -359,6 +360,23 @@ namespace tfel{
     norm(const vector<T>&);
 
   } // end of namespace math
+
+  namespace typetraits{
+    
+    /*!
+     * \brief Partial specialisation for tvectors
+     * \see   BaseType
+     */
+    template<typename T>
+    struct BaseType<tfel::math::vector<T> >
+    {
+      /*!
+       *  Result
+       */
+      typedef tfel::math::vector<typename BaseType<T>::type> type;
+    };
+
+  } // end of namespace typetraits
 
 } // end of namespace tfel  
 

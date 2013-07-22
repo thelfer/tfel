@@ -17,7 +17,10 @@
 #include"TFEL/Metaprogramming/StaticAssert.hxx"
 
 #include"TFEL/TypeTraits/IsAssignableTo.hxx"
+#include"TFEL/TypeTraits/BaseType.hxx"
 #include"TFEL/TypeTraits/RealPartType.hxx"
+#include"TFEL/TypeTraits/IsSafelyReinterpretCastableTo.hxx"
+
 #include"TFEL/FSAlgorithm/copy.hxx"
 
 #include"TFEL/Math/General/Abs.hxx"
@@ -408,6 +411,11 @@ namespace tfel{
       unsigned short
       size(void) const;
 
+      /*!
+       * Write to Tab
+       */
+      void write(typename tfel::typetraits::BaseType<T>::type* const) const;
+
     };
 
     template<unsigned short N, typename T>
@@ -464,6 +472,20 @@ namespace tfel{
        *  Result
        */
       static const bool cond = IsAssignableTo<T2,T>::cond;
+    };
+
+    /*!
+     * \brief Partial specialisation for tvectors
+     * \see   BaseType
+     */
+    template<unsigned short N,
+	     typename T>
+    struct BaseType<tfel::math::tvector<N,T> >
+    {
+      /*!
+       *  Result
+       */
+      typedef tfel::math::tvector<N,typename BaseType<T>::type > type;
     };
 
   } // end of namespace typetraits

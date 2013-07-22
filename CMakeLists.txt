@@ -176,7 +176,7 @@ set (CPACK_PACKAGE_VERSION_PATCH       "${TFEL_VERSION_PATCH}")
 set (CPACK_PACKAGE_VERSION_MAJOR       "${TFEL_VERSION_MAJOR}")
 set (CPACK_PACKAGE_VERSION_MINOR       "${TFEL_VERSION_MINOR}")
 set (CPACK_PACKAGE_VENDOR              "CEA")
-set (CPACK_SOURCE_IGNORE_FILES         "/\\\\.svn")
+set (CPACK_SOURCE_IGNORE_FILES         "build;/\\\\.svn/;.*~")
 set (CPACK_PACKAGE_DESCRIPTION_SUMMARY "tfel is a mathematical library")
 set (CPACK_PACKAGE_DESCRIPTION 	       "tfel is a mathematical library")
 

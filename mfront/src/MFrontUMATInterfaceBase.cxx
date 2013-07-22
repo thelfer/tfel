@@ -8,6 +8,9 @@
 #include<sstream>
 #include<stdexcept>
 
+#include"TFEL/System/System.hxx"
+#include"TFEL/Utilities/StringAlgorithms.hxx"
+
 #include"MFront/ParserUtilities.hxx"
 #include"MFront/MFrontUMATInterfaceBase.hxx"
 
@@ -969,13 +972,19 @@ namespace mfront
   void
   MFrontUMATInterfaceBase::generateUMATxxSymbols(std::ostream& out,
 						 const std::string& name,
+						 const std::string& file,
 						 const MechanicalBehaviourDescription& mb,
 						 const std::map<std::string,std::string>& glossaryNames,
 						 const std::map<std::string,std::string>& entryNames) const
   {
+    this->writeUMATxxSourceFileSymbols(out,name,file,mb);
     this->writeUMATxxMaterialPropertiesSymbols(out,name,mb,glossaryNames,entryNames);
     this->writeUMATxxStateVariablesSymbols(out,name,mb,glossaryNames,entryNames);
     this->writeUMATxxExternalStateVariablesSymbols(out,name,mb,glossaryNames,entryNames);
+    this->writeUMATxxIsUsableInPurelyImplicitResolutionSymbols(out,name,mb);
+    this->writeUMATxxBehaviourTypeSymbols(out,name,mb);
+    this->writeUMATxxElasticBehaviourTypeSymbols(out,name,mb);
+    this->writeUMATxxAdditionalSymbols(out,name,file,mb,glossaryNames,entryNames);
   }
 
   void
@@ -1083,6 +1092,74 @@ namespace mfront
 							entryNames),
 			     name,"ExternalStateVariables");
   } // end of MFrontUMATInterfaceBase::writeUMATxxExternalStateVariablesSymbols
+
+  void
+  MFrontUMATInterfaceBase::writeUMATxxIsUsableInPurelyImplicitResolutionSymbols(std::ostream& out,
+										const std::string& name,
+										const MechanicalBehaviourDescription& mb) const
+  {
+    out << "MFRONT_SHAREDOBJ unsigned short " << this->getFunctionName(name)
+	<< "_UsableInPurelyImplicitResolution = ";
+    if(mb.isUsableInPurelyImplicitResolution()){
+      out << "1;\n\n";
+    } else {
+      out << "0;\n\n";
+    }
+  } // end of MFrontUMATInterfaceBase::writeUMATxxIsUsableInPurelyImplicitResolution
+
+  void
+  MFrontUMATInterfaceBase::writeUMATxxBehaviourTypeSymbols(std::ostream& out,
+						    const std::string& name,
+						    const MechanicalBehaviourDescription& mb) const
+  {
+    using namespace std;
+    out << "MFRONT_SHAREDOBJ unsigned short " << this->getFunctionName(name) 
+	<< "_BehaviourType = " ;
+    if(mb.getBehaviourType()==mfront::ISOTROPIC){
+      out << "0u;" << endl << endl;
+    } else if(mb.getBehaviourType()==mfront::ORTHOTROPIC){
+      out << "1u;" << endl << endl;
+    } else {
+      string msg("MFrontUMATInterfaceBase::writeUMATxxBehaviourTypeSymbols : ");
+      msg += "unsupported behaviour type.\n";
+      msg += "only isotropic or orthotropic behaviours are supported at this time.";
+      throw(runtime_error(msg));
+    }
+  } // end of MFrontUMATInterfaceBase::writeUMATxxBehaviourTypeSymbols
+
+  void
+  MFrontUMATInterfaceBase::writeUMATxxElasticBehaviourTypeSymbols(std::ostream& out,
+								  const std::string& name,
+								  const MechanicalBehaviourDescription& mb) const
+  {
+    using namespace std;
+    out << "MFRONT_SHAREDOBJ unsigned short " << this->getFunctionName(name)
+	<< "_ElasticBehaviourType = " ;
+    if(mb.getElasticBehaviourType()==mfront::ISOTROPIC){
+      out << "0u;" << endl << endl;
+    } else if(mb.getElasticBehaviourType()==mfront::ORTHOTROPIC){
+      out << "1u;" << endl << endl;
+    } else {
+      string msg("MFrontUMATInterfaceBase::writeUMATxxElasticBehaviourTypeSymbols : ");
+      msg += "unsupported behaviour type.\n";
+      msg += "only isotropic or orthotropic behaviours are supported at this time.";
+      throw(runtime_error(msg));
+    }
+  } // end of MFrontUMATInterfaceBase::writeUMATxxElasticBehaviourTypeSymbols
+
+  void
+  MFrontUMATInterfaceBase::writeUMATxxSourceFileSymbols(std::ostream& out,
+							const std::string& name,
+							const std::string& file,
+							const MechanicalBehaviourDescription& mb) const
+  {
+    using namespace tfel::system;
+    using namespace tfel::utilities;
+    out << "MFRONT_SHAREDOBJ const char *\n" 
+	<< this->getFunctionName(name) << "_src = \""
+	<< tokenize(file,dirSeparator()).back()
+	<< "\";\n\n";
+  }
 
   MFrontUMATInterfaceBase::~MFrontUMATInterfaceBase()
   {}

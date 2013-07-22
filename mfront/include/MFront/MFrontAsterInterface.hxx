@@ -129,6 +129,21 @@ namespace mfront{
     void
     getMaterialPropertiesOffset(bool&,bool&,bool&,
 				const MechanicalBehaviourDescription&) const;
+    /*!
+     * \param[in] out           : output file
+     * \param[in] name          : name of the behaviour 
+     * \param[in] file          : source file
+     * \param[in] mb            : behaviour description
+     * \param[in] glossaryNames : glossary names
+     * \param[in] entrNames     : entry    names
+     */
+    virtual void
+    writeUMATxxAdditionalSymbols(std::ostream&,
+				 const std::string&,
+				 const std::string&,
+				 const MechanicalBehaviourDescription&,
+				 const std::map<std::string,std::string>&,
+				 const std::map<std::string,std::string>&) const;
 
     bool   compareToNumericalTangentOperator;
 

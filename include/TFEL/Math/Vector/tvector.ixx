@@ -246,6 +246,16 @@ namespace tfel{
       return N;
     }
 
+    // Write to Tab
+    template<unsigned short N, typename T>
+    void tvector<N,T>::write(typename tfel::typetraits::BaseType<T>::type* const t) const
+    {
+      typedef tfel::fsalgo::copy<N> Copy;
+      typedef typename tfel::typetraits::BaseType<T>::type base;
+      TFEL_STATIC_ASSERT((tfel::typetraits::IsSafelyReinterpretCastableTo<T,base>::cond));
+      Copy::exe(reinterpret_cast<const base*>(this->v),t);
+    }
+
     // Norm2
     template<unsigned short N,typename T>
     typename tfel::meta::EnableIf<

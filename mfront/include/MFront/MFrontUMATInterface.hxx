@@ -126,6 +126,10 @@ namespace mfront{
     virtual void
     writeMTestFileGeneratorSetModellingHypothesis(std::ostream&) const;
 
+    /*!
+     * \param[in] out : output file
+     * \param[in] mb  : behaviour description
+     */
     virtual void
     writeMTestFileGeneratorAdditionalMaterialPropertiesInitialisation(std::ostream&,
 								      const MechanicalBehaviourDescription&) const;
@@ -139,13 +143,33 @@ namespace mfront{
 					 const MechanicalBehaviourDescription&,
 					 const std::map<std::string,std::string>&,
 					 const std::map<std::string,std::string>&) const;
-
+    /*!
+     * \param[in] out           : output file
+     * \param[in] name          : name of the behaviour 
+     * \param[in] file          : source file
+     * \param[in] mb            : behaviour description
+     * \param[in] glossaryNames : glossary names
+     * \param[in] entrNames     : entry    names
+     */
+    virtual void
+    writeUMATxxAdditionalSymbols(std::ostream&,
+				 const std::string&,
+				 const std::string&,
+				 const MechanicalBehaviourDescription&,
+				 const std::map<std::string,std::string>&,
+				 const std::map<std::string,std::string>&) const;
     /*!
      * \param[in] mb : behaviour description
      */
     virtual bool
     checkIfElasticPropertiesAreDeclared(const MechanicalBehaviourDescription&) const;
 
+    virtual void
+    generateGibianeDeclaration(const std::string&,
+			       const std::string&,
+			       const std::string&,
+			       const std::string&,
+			       const MechanicalBehaviourDescription&);
 
     FiniteStrainStrategy finiteStrainStrategy;
 
