@@ -1131,7 +1131,9 @@ mfront/src/MFrontCLawInterfaceBase.cxx -text
 mfront/src/MFrontCastemLawInterface.cxx -text
 mfront/src/MFrontCppLawInterface.cxx -text
 mfront/src/MFrontCppTestLawInterface.cxx -text
+mfront/src/MFrontDefaultCZMParser.cxx -text
 mfront/src/MFrontDefaultParser.cxx -text
+mfront/src/MFrontDefaultParserBase.cxx -text
 mfront/src/MFrontExcelLawInterface.cxx -text
 mfront/src/MFrontFortranLawInterface.cxx -text
 mfront/src/MFrontGnuplotLawInterface.cxx -text
