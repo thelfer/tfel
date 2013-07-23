@@ -2083,6 +2083,7 @@ namespace mfront{
       this->behaviourFile << "bool computeConsistantTangentOperator(const SMType smt){\n";
       this->behaviourFile << "using namespace std;\n";
       this->behaviourFile << "using namespace tfel::math;\n";
+      this->behaviourFile << "using std::vector;\n";
       writeMaterialLaws("MFrontImplicitParserBase::writeBehaviourIntegrator",
 			this->behaviourFile,this->materialLaws);
       this->behaviourFile << this->tangentOperator;

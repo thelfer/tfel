@@ -106,6 +106,7 @@ namespace mfront{
       this->behaviourFile << "using namespace std;\n";
       this->behaviourFile << "using namespace tfel::math;\n";
       this->behaviourFile << "using namespace tfel::material;\n";
+      this->behaviourFile << "using std::vector;\n";
       writeMaterialLaws("MFrontMultipleIsotropicMisesFlowsParser::writeBehaviourParserSpecificMembers",
 			this->behaviourFile,this->materialLaws);
       this->behaviourFile << p->flowRule << endl;

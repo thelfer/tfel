@@ -1193,6 +1193,7 @@ namespace mfront{
     this->behaviourFile << "void\ncomputeStress(void){\n";
     this->behaviourFile << "using namespace std;\n";
     this->behaviourFile << "using namespace tfel::math;\n";
+    this->behaviourFile << "using std::vector;\n";
     writeMaterialLaws("MFrontImplicitParserBase::writeBehaviourParserSpecificMembers",
 		      this->behaviourFile,this->materialLaws);
     this->behaviourFile << this->computeStress << endl;
@@ -1200,6 +1201,7 @@ namespace mfront{
     this->behaviourFile << "void\ncomputeFinalStress(void){\n";
     this->behaviourFile << "using namespace std;\n";
     this->behaviourFile << "using namespace tfel::math;\n";
+    this->behaviourFile << "using std::vector;\n";
     writeMaterialLaws("MFrontImplicitParserBase::writeBehaviourParserSpecificMembers",
 		      this->behaviourFile,this->materialLaws);
     this->behaviourFile << this->computeFinalStress << endl;
@@ -1783,6 +1785,7 @@ namespace mfront{
     this->behaviourFile << "computeFdF(void){\n";
     this->behaviourFile << "using namespace std;\n";
     this->behaviourFile << "using namespace tfel::math;\n";
+    this->behaviourFile << "using std::vector;\n";
     writeMaterialLaws("MFrontImplicitParserBase::writeBehaviourParserSpecificMembers",
 		      this->behaviourFile,this->materialLaws);
     n = SupportedTypes::TypeSize();
@@ -1978,6 +1981,7 @@ namespace mfront{
       this->behaviourFile << "bool computeConsistantTangentOperator(const SMType smt){\n";
       this->behaviourFile << "using namespace std;\n";
       this->behaviourFile << "using namespace tfel::math;\n";
+      this->behaviourFile << "using std::vector;\n";
       writeMaterialLaws("MFrontImplicitParserBase::writeBehaviourIntegrator",
 			this->behaviourFile,this->materialLaws);
       this->behaviourFile << this->tangentOperator;

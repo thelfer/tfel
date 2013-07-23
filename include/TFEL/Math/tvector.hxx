@@ -414,7 +414,12 @@ namespace tfel{
       /*!
        * Write to Tab
        */
-      void write(typename tfel::typetraits::BaseType<T>::type* const) const;
+      template<typename T2>
+      typename tfel::meta::EnableIf<
+	tfel::meta::IsSameType<typename tfel::typetraits::BaseType<T>::type,T2>::cond,
+	void
+	>::type
+      write(T2* const) const;
 
     };
 

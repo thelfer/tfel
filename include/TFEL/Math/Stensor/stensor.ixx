@@ -183,7 +183,7 @@ namespace tfel{
     // Import from Voigt
     template<unsigned short N,typename T, template<unsigned short,typename> class Storage>
     template<typename T2>
-    TFEL_MATH_INLINE2 typename tfel::meta::EnableIf<
+    typename tfel::meta::EnableIf<
       tfel::typetraits::IsSafelyReinterpretCastableTo<T2,typename tfel::typetraits::BaseType<T>::type>::cond,
       void>::type
     stensor<N,T,Storage>::importVoigt(const T2 * const src)
@@ -194,7 +194,7 @@ namespace tfel{
     // Import from Tab
     template<unsigned short N,typename T, template<unsigned short,typename> class Storage>
     template<typename T2>
-    TFEL_MATH_INLINE2 typename tfel::meta::EnableIf<
+    typename tfel::meta::EnableIf<
       tfel::typetraits::IsSafelyReinterpretCastableTo<T2,typename tfel::typetraits::BaseType<T>::type>::cond,
       void>::type
     stensor<N,T,Storage>::importTab(const T2* const src)
@@ -208,7 +208,7 @@ namespace tfel{
     // Import from values
     template<unsigned short N,typename T, template<unsigned short,typename> class Storage>
     template<typename T2>
-    TFEL_MATH_INLINE2 typename tfel::meta::EnableIf<
+    typename tfel::meta::EnableIf<
       tfel::typetraits::IsSafelyReinterpretCastableTo<T2,typename tfel::typetraits::BaseType<T>::type>::cond,
       void>::type
     stensor<N,T,Storage>::import(const T2 * const src)
@@ -222,7 +222,7 @@ namespace tfel{
     // Export to Tab
     template<unsigned short N,typename T, template<unsigned short,typename> class Storage>
     template<typename T2>
-    TFEL_MATH_INLINE2 typename tfel::meta::EnableIf<
+    typename tfel::meta::EnableIf<
       tfel::typetraits::IsSafelyReinterpretCastableTo<T2,typename tfel::typetraits::BaseType<T>::type>::cond,
       void>::type
     stensor<N,T,Storage>::exportTab(T2* const src) const
@@ -235,7 +235,12 @@ namespace tfel{
 
     // Write to Tab
     template<unsigned short N, typename T, template<unsigned short,typename> class Storage>
-    TFEL_MATH_INLINE2 void stensor<N,T,Storage>::write(typename tfel::typetraits::BaseType<T>::type* const t) const
+    template<typename T2>
+    typename tfel::meta::EnableIf<
+      tfel::typetraits::IsSafelyReinterpretCastableTo<T2,typename tfel::typetraits::BaseType<T>::type>::cond,
+      void
+      >::type
+    stensor<N,T,Storage>::write(T2* const t) const
     {
       typedef typename tfel::typetraits::BaseType<T>::type base;
       typedef tfel::fsalgo::copy<StensorDimeToSize<N>::value> Copy;
@@ -327,7 +332,6 @@ namespace tfel{
 
     template<unsigned short N, typename T,
 	     template<unsigned short,typename> class Storage>
-    TFEL_MATH_INLINE2 
     typename stensor<N,T,Storage>::iterator 
     stensor<N,T,Storage>::begin(void)
     {
@@ -336,7 +340,6 @@ namespace tfel{
 
     template<unsigned short N, typename T,
 	     template<unsigned short,typename> class Storage>
-    TFEL_MATH_INLINE2 
     typename stensor<N,T,Storage>::const_iterator 
     stensor<N,T,Storage>::begin(void) const
     {
@@ -345,14 +348,13 @@ namespace tfel{
 
     template<unsigned short N, typename T, 
 	     template<unsigned short,typename> class Storage>
-    TFEL_MATH_INLINE2 typename stensor<N,T,Storage>::iterator stensor<N,T,Storage>::end(void)
+    typename stensor<N,T,Storage>::iterator stensor<N,T,Storage>::end(void)
     {
       return this->v+StensorDimeToSize<N>::value;
     }
 
     template<unsigned short N, typename T, 
 	     template<unsigned short,typename> class Storage>
-    TFEL_MATH_INLINE2 
     typename stensor<N,T,Storage>::const_iterator
     stensor<N,T,Storage>::end(void) const
     {
@@ -361,7 +363,6 @@ namespace tfel{
 
     template<unsigned short N, typename T,
 	     template<unsigned short,typename> class Storage>
-    TFEL_MATH_INLINE2 
     typename stensor<N,T,Storage>::reverse_iterator
     stensor<N,T,Storage>::rbegin(void)
     {
@@ -370,7 +371,6 @@ namespace tfel{
 
     template<unsigned short N, typename T,
 	     template<unsigned short,typename> class Storage>
-    TFEL_MATH_INLINE2 
     typename stensor<N,T,Storage>::const_reverse_iterator 
     stensor<N,T,Storage>::rbegin(void) const
     {
@@ -379,7 +379,6 @@ namespace tfel{
 
     template<unsigned short N, typename T,
 	     template<unsigned short,typename> class Storage>
-    TFEL_MATH_INLINE2
     typename stensor<N,T,Storage>::reverse_iterator
     stensor<N,T,Storage>::rend(void)
     {
@@ -388,7 +387,6 @@ namespace tfel{
 
     template<unsigned short N, typename T,
 	     template<unsigned short,typename> class Storage>
-    TFEL_MATH_INLINE2
     typename stensor<N,T,Storage>::const_reverse_iterator
     stensor<N,T,Storage>::rend(void) const
     {
@@ -398,7 +396,6 @@ namespace tfel{
     template<unsigned short N, typename T,
 	     template<unsigned short,typename> class Storage>
     template<typename InputIterator>
-    TFEL_MATH_INLINE2 
     void 
     stensor<N,T,Storage>::copy(const InputIterator src)
     {

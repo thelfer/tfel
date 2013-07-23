@@ -187,6 +187,7 @@ namespace tfel{
        * \brief Import from Voigt
        */
       template<typename T2>
+      TFEL_MATH_INLINE2 
       typename tfel::meta::EnableIf<
 	tfel::typetraits::IsSafelyReinterpretCastableTo<T2,typename tfel::typetraits::BaseType<T>::type>::cond,
 	void
@@ -196,16 +197,18 @@ namespace tfel{
       /*!
        * Import from Tab (Voigt notations for stresses)
        */
-    template<typename T2>
-    typename tfel::meta::EnableIf<
-      tfel::typetraits::IsSafelyReinterpretCastableTo<T2,typename tfel::typetraits::BaseType<T>::type>::cond,
-      void>::type
-    importTab(const T2* const);
-
+      template<typename T2>
+      TFEL_MATH_INLINE2 
+      typename tfel::meta::EnableIf<
+	tfel::typetraits::IsSafelyReinterpretCastableTo<T2,typename tfel::typetraits::BaseType<T>::type>::cond,
+	void>::type
+      importTab(const T2* const);
+    
       /*!
        * Export to Tab (Voigt notations for stresses)
        */
       template<typename T2>
+      TFEL_MATH_INLINE2 
       typename tfel::meta::EnableIf<
 	tfel::typetraits::IsSafelyReinterpretCastableTo<T2,typename tfel::typetraits::BaseType<T>::type>::cond,
 	void>::type
@@ -214,12 +217,19 @@ namespace tfel{
       /*!
        * Write to Tab
        */
-      void write(typename tfel::typetraits::BaseType<T>::type* const) const;
+      template<typename T2>
+      TFEL_MATH_INLINE2 
+      typename tfel::meta::EnableIf<
+	tfel::typetraits::IsSafelyReinterpretCastableTo<T2,typename tfel::typetraits::BaseType<T>::type>::cond,
+	void
+	>::type
+      write(T2* const) const;
 
       /*!
        * Import values
        */
       template<typename T2>
+      TFEL_MATH_INLINE2 
       typename tfel::meta::EnableIf<
 	tfel::typetraits::IsSafelyReinterpretCastableTo<T2,typename tfel::typetraits::BaseType<T>::type>::cond,
 	void>::type

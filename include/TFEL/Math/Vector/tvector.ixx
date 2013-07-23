@@ -248,7 +248,12 @@ namespace tfel{
 
     // Write to Tab
     template<unsigned short N, typename T>
-    void tvector<N,T>::write(typename tfel::typetraits::BaseType<T>::type* const t) const
+    template<typename T2>
+    typename tfel::meta::EnableIf<
+      tfel::meta::IsSameType<typename tfel::typetraits::BaseType<T>::type,T2>::cond,
+      void
+      >::type
+    tvector<N,T>::write(T2* const t) const
     {
       typedef tfel::fsalgo::copy<N> Copy;
       typedef typename tfel::typetraits::BaseType<T>::type base;
