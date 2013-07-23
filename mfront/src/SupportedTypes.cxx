@@ -129,6 +129,11 @@ namespace mfront{
     this->flags.insert(MVType("StressRateStensor",Stensor));
     this->flags.insert(MVType("StrainStensor",Stensor));
     this->flags.insert(MVType("StrainRateStensor",Stensor));
+    // CZM
+    this->flags.insert(MVType("DisplacementTVector",
+			      TVector));
+    this->flags.insert(MVType("ForceTVector",
+			      TVector));
   }
 
   SupportedTypes::SupportedTypes()
@@ -498,8 +503,8 @@ namespace mfront{
 	  } else if((flag==SupportedTypes::TVector)||
 		    (flag==SupportedTypes::Stensor)||
 		    (flag==SupportedTypes::Tensor)){
-	    f << "this->" << p->name 
-	      << ".write(&" << dest << "[" 
+	    f << "exportToBaseTypeArray(" << p->name 
+	      << ",&" << dest << "[" 
 	      << currentOffset << "]);\n";  
 	  } else {
 	    string msg("SupportedTypes::exportResults : ");
@@ -523,8 +528,8 @@ namespace mfront{
 	    } else if((flag==SupportedTypes::TVector)||
 		      (flag==SupportedTypes::Stensor)||
 		      (flag==SupportedTypes::Tensor)){
-	      f << "this->" << p->name
-		<< "[idx].write(&" << dest << "[" 
+	      f << "exportToBaseTypeArray(this->" << p->name
+		<< "[idx],&" << dest << "[" 
 		<< currentOffset << "+idx*StensorSize]);\n";  
 	    } else {
 	      string msg("SupportedTypes::exportResults : ");
@@ -548,9 +553,8 @@ namespace mfront{
 	      } else if((flag==SupportedTypes::TVector)||
 			(flag==SupportedTypes::Stensor)||
 			(flag==SupportedTypes::Tensor)){
-		f << "this->" << p->name
-		  << "[" << i << "]" 
-		  << ".write(&" << dest << "[" 
+		f << "exportToBaseTypeArray(this->" << p->name
+		  << "[" << i << "],&" << dest << "[" 
 		  << currentOffset << "]);\n";  
 	      } else {
 		string msg("SupportedTypes::exportResults : ");

@@ -9,6 +9,7 @@
 #include"MFront/MFrontParserProxy.hxx"
 
 #include"MFront/MFrontDefaultParser.hxx"
+#include"MFront/MFrontDefaultCZMParser.hxx"
 #include"MFront/MFrontIsotropicMisesCreepParser.hxx"
 #include"MFront/MFrontIsotropicMisesPlasticFlowParser.hxx"
 #include"MFront/MFrontIsotropicStrainHardeningMisesCreepParser.hxx"
@@ -36,6 +37,8 @@ namespace mfront
     MFrontParserProxy<MFrontImplicitParser>    proxy8;
     MFrontParserProxy<MFrontImplicitParserII>  proxy9;
     MFrontParserProxy<MFrontModelParser>       proxy10;
+    // CZM
+    MFrontParserProxy<MFrontDefaultCZMParser> proxy100;
   } // end of initParsers 
 
 } // end of namespace mfront

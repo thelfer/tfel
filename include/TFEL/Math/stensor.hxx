@@ -449,6 +449,19 @@ namespace tfel{
     }; // end of class stensor
 
     /*!
+     * export the given vector to an array of the 
+     */
+    template<unsigned short N,typename T,
+	     template<unsigned short,typename> class Storage,
+	     typename OutputIterator>
+    TFEL_MATH_INLINE2
+    typename tfel::meta::EnableIf<
+      tfel::typetraits::IsScalar<T>::cond,
+      void>::type
+    exportToBaseTypeArray(const stensor<N,T,Storage>&,
+			  OutputIterator);
+
+    /*!
      * compute the tresca stress
      * for a symmetric tensor
      *

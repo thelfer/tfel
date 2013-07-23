@@ -246,19 +246,19 @@ namespace tfel{
       return N;
     }
 
-    // Write to Tab
-    template<unsigned short N, typename T,typename T2>
+    template<unsigned short N, typename T,
+	     typename OutputIterator>
     typename tfel::meta::EnableIf<
-      ((tfel::typetraits::IsScalar<T>::cond) &&
-       (tfel::typetraits::IsSafelyReinterpretCastableTo<T2,typename tfel::typetraits::BaseType<T>::type>::cond)),
+      tfel::typetraits::IsScalar<T>::cond,
       void>::type
-    write(const tvector<N,T>& v,T2* const t)
+    exportToBaseTypePointer(const tvector<N,T>& v,
+			    OutputIterator p)
     {
       typedef tfel::fsalgo::copy<N> Copy;
       typedef typename tfel::typetraits::BaseType<T>::type base;
       TFEL_STATIC_ASSERT((tfel::typetraits::IsSafelyReinterpretCastableTo<T,base>::cond));
-      Copy::exe(reinterpret_cast<const base*>(&v[0]),t);
-    }
+      Copy::exe(reinterpret_cast<const base*>(&v[0]),p);
+    } // end of exportToBaseTypePointer
 
     // Norm2
     template<unsigned short N,typename T>

@@ -288,6 +288,22 @@ namespace tfel{
     {
       tfel::fsalgo::copy<TensorDimeToSize<N>::value>::exe(src,*this);
     }
+
+    template<unsigned short N, typename T,
+	     typename OutputIterator>
+    TFEL_MATH_INLINE2
+    typename tfel::meta::EnableIf<
+      tfel::typetraits::IsScalar<T>::cond,
+      void>::type
+    exportToBaseTypeArray(const tensor<N,T>& t,
+			  OutputIterator p)
+    {    
+      typedef typename tfel::typetraits::BaseType<T>::type base;
+      typedef tfel::fsalgo::copy<StensorDimeToSize<N>::value> Copy;
+      TFEL_STATIC_ASSERT((tfel::typetraits::IsSafelyReinterpretCastableTo<T,base>::cond));
+      Copy::exe(reinterpret_cast<const base*>(&t[0]),p);
+    }
+
 #endif
 
   } //end of namespace math

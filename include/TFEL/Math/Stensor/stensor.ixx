@@ -402,6 +402,22 @@ namespace tfel{
       tfel::fsalgo::copy<StensorDimeToSize<N>::value>::exe(src,*this);
     }
 
+    template<unsigned short N, typename T,
+	     template<unsigned short,typename> class Storage,
+	     typename OutputIterator>
+    TFEL_MATH_INLINE2
+    typename tfel::meta::EnableIf<
+      tfel::typetraits::IsScalar<T>::cond,
+      void>::type
+    exportToBaseTypeArray(const stensor<N,T,Storage>& s,
+			  OutputIterator p)
+    {    
+      typedef typename tfel::typetraits::BaseType<T>::type base;
+      typedef tfel::fsalgo::copy<StensorDimeToSize<N>::value> Copy;
+      TFEL_STATIC_ASSERT((tfel::typetraits::IsSafelyReinterpretCastableTo<T,base>::cond));
+      Copy::exe(reinterpret_cast<const base*>(&s[0]),p);
+    }
+
     template<typename T,
 	     template<unsigned short,typename> class Storage>
     T tresca(const stensor<1u,T,Storage>& s,

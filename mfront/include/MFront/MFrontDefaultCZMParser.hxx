@@ -5,8 +5,8 @@
  * \date   08 nov 2006
  */
 
-#ifndef _LIB_MFRONTPARSER_HXX_
-#define _LIB_MFRONTPARSER_HXX_ 
+#ifndef _LIB_MFRONT_MFRONTDEFAULTCZMPARSER_HXX_
+#define _LIB_MFRONT_MFRONTDEFAULTCZMPARSER_HXX_ 
 
 #include<string>
 #include"MFront/MFrontDefaultParserBase.hxx"
@@ -31,5 +31,5 @@ namespace mfront{
 
 } // end of namespace mfront  
 
-#endif /* _LIB_MFRONTPARSER_HXX */
+#endif /* _LIB_MFRONT_MFRONTDEFAULTCZMPARSER_HXX_ */
 

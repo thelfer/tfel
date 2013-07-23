@@ -395,6 +395,15 @@ namespace tfel{
       T v[TensorDimeToSize<N>::value];
 
     }; // end of class tensor
+
+    template<unsigned short N, typename T,
+	     typename OutputIterator>
+    TFEL_MATH_INLINE2
+    typename tfel::meta::EnableIf<
+      tfel::typetraits::IsScalar<T>::cond,
+      void>::type
+    exportToBaseTypeArray(const tensor<N,T>&,
+			  OutputIterator);
         
   } // end of namespace math
 

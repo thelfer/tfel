@@ -42,9 +42,11 @@ namespace tfel
       typedef tfel::math::qt<tfel::math::Time,T>           time;
       typedef tfel::math::qt<tfel::math::Frequency,T>      frequency;
       typedef tfel::math::qt<tfel::math::Length,T>         length;
+      typedef tfel::math::qt<tfel::math::Length,T>         displacement;
       typedef tfel::math::qt<tfel::math::InvLength,T>      inv_length;
       typedef tfel::math::qt<tfel::math::NoUnit,T>         strain;
       typedef tfel::math::qt<tfel::math::Frequency,T>      strainrate;
+      typedef tfel::math::qt<tfel::math::Force,T>         force;
       typedef tfel::math::qt<tfel::math::Stress,T>         stress;
       typedef tfel::math::qt<tfel::math::StressRate,T>     stressrate;
       typedef tfel::math::qt<tfel::math::Temperature,T>    temperature;
@@ -53,8 +55,10 @@ namespace tfel
       typedef tfel::math::qt<tfel::math::EnergyDensity,T>  energy_density;
       typedef tfel::math::stensor<N,real>                  Stensor;
       typedef tfel::math::stensor<N,frequency>             FrequencyStensor;
+      typedef tfel::math::tvector<N,force>                 ForceTVector;
       typedef tfel::math::stensor<N,stress>                StressStensor;
       typedef tfel::math::stensor<N,stressrate>            StressRateStensor;
+      typedef tfel::math::tvector<N,length>                DisplacementTVector;
       typedef tfel::math::stensor<N,tfel::math::qt<tfel::math::NoUnit,T> >    StrainStensor;
       typedef tfel::math::stensor<N,tfel::math::qt<tfel::math::Frequency,T> > StrainRateStensor;
       typedef tfel::math::stensor<N,thermalexpansion>      ThermalExpansionTensor;
@@ -83,8 +87,10 @@ namespace tfel
       typedef T frequency;
       typedef T length;
       typedef T inv_length;
+      typedef T displacement;
       typedef T strain;
       typedef T strainrate;
+      typedef T force;
       typedef T stress;
       typedef T stressrate;
       typedef T temperature;
@@ -93,10 +99,12 @@ namespace tfel
       typedef T energy_density;
       typedef tfel::math::stensor<N,T> Stensor;
       typedef tfel::math::stensor<N,T> FrequencyStensor;
+      typedef tfel::math::tvector<N,T> ForceTVector;
       typedef tfel::math::stensor<N,T> StressStensor;
+      typedef tfel::math::stensor<N,T> StressRateStensor;
+      typedef tfel::math::tvector<N,T> DisplacementTVector;
       typedef tfel::math::stensor<N,T> StrainStensor;
       typedef tfel::math::stensor<N,T> StrainRateStensor;
-      typedef tfel::math::stensor<N,T> StressRateStensor;
       typedef tfel::math::stensor<N,T> ThermalExpansionTensor;
       typedef tfel::math::st2tost2<N,T> Stensor4;
       typedef tfel::math::st2tost2<N,T> StiffnessTensor;

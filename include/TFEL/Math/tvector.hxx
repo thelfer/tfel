@@ -414,15 +414,16 @@ namespace tfel{
     };
 
     /*!
-     * Write to Tab
+     * export the given vector to an array of the 
      */
-    template<unsigned short N, typename T,typename T2>
+    template<unsigned short N, typename T,
+	     typename OutputIterator>
     TFEL_MATH_INLINE2
-   typename tfel::meta::EnableIf<
-      ((tfel::typetraits::IsScalar<T>::cond) &&
-       (tfel::typetraits::IsSafelyReinterpretCastableTo<T2,typename tfel::typetraits::BaseType<T>::type>::cond)),
+    typename tfel::meta::EnableIf<
+      tfel::typetraits::IsScalar<T>::cond,
       void>::type
-    write(const tvector<N,T>,T2* const);
+    exportToBaseTypeArray(const tvector<N,T>&,
+			  OutputIterator);
 
     template<unsigned short N, typename T>
     TFEL_MATH_INLINE2

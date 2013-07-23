@@ -1143,6 +1143,7 @@ namespace mfront{
     file << "typedef typename Types::StrainRateStensor      StressRateStensor;\n";
     file << "typedef typename Types::StiffnessTensor        StiffnessTensor;\n";
     file << "typedef typename Types::ThermalExpansionTensor ThermalExpansionTensor;\n";
+    file << "typedef typename Types::DisplacementTVector    DisplacementTVector;\n";
   } // end of MFrontBehaviourParserCommon::writeStandardTFELTypedefs
 
   MFrontBehaviourParserCommon::~MFrontBehaviourParserCommon()
