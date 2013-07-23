@@ -247,18 +247,17 @@ namespace tfel{
     }
 
     // Write to Tab
-    template<unsigned short N, typename T>
-    template<typename T2>
+    template<unsigned short N, typename T,typename T2>
     typename tfel::meta::EnableIf<
-      tfel::meta::IsSameType<typename tfel::typetraits::BaseType<T>::type,T2>::cond,
-      void
-      >::type
-    tvector<N,T>::write(T2* const t) const
+      ((tfel::typetraits::IsScalar<T>::cond) &&
+       (tfel::typetraits::IsSafelyReinterpretCastableTo<T2,typename tfel::typetraits::BaseType<T>::type>::cond)),
+      void>::type
+    write(const tvector<N,T>& v,T2* const t)
     {
       typedef tfel::fsalgo::copy<N> Copy;
       typedef typename tfel::typetraits::BaseType<T>::type base;
       TFEL_STATIC_ASSERT((tfel::typetraits::IsSafelyReinterpretCastableTo<T,base>::cond));
-      Copy::exe(reinterpret_cast<const base*>(this->v),t);
+      Copy::exe(reinterpret_cast<const base*>(&v[0]),t);
     }
 
     // Norm2

@@ -361,23 +361,6 @@ namespace tfel{
 
   } // end of namespace math
 
-  namespace typetraits{
-    
-    /*!
-     * \brief Partial specialisation for tvectors
-     * \see   BaseType
-     */
-    template<typename T>
-    struct BaseType<tfel::math::vector<T> >
-    {
-      /*!
-       *  Result
-       */
-      typedef tfel::math::vector<typename BaseType<T>::type> type;
-    };
-
-  } // end of namespace typetraits
-
 } // end of namespace tfel  
 
 #include"TFEL/Math/Vector/vector.ixx"

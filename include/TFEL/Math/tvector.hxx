@@ -411,17 +411,18 @@ namespace tfel{
       unsigned short
       size(void) const;
 
-      /*!
-       * Write to Tab
-       */
-      template<typename T2>
-      typename tfel::meta::EnableIf<
-	tfel::meta::IsSameType<typename tfel::typetraits::BaseType<T>::type,T2>::cond,
-	void
-	>::type
-      write(T2* const) const;
-
     };
+
+    /*!
+     * Write to Tab
+     */
+    template<unsigned short N, typename T,typename T2>
+    TFEL_MATH_INLINE2
+   typename tfel::meta::EnableIf<
+      ((tfel::typetraits::IsScalar<T>::cond) &&
+       (tfel::typetraits::IsSafelyReinterpretCastableTo<T2,typename tfel::typetraits::BaseType<T>::type>::cond)),
+      void>::type
+    write(const tvector<N,T>,T2* const);
 
     template<unsigned short N, typename T>
     TFEL_MATH_INLINE2
@@ -477,20 +478,6 @@ namespace tfel{
        *  Result
        */
       static const bool cond = IsAssignableTo<T2,T>::cond;
-    };
-
-    /*!
-     * \brief Partial specialisation for tvectors
-     * \see   BaseType
-     */
-    template<unsigned short N,
-	     typename T>
-    struct BaseType<tfel::math::tvector<N,T> >
-    {
-      /*!
-       *  Result
-       */
-      typedef tfel::math::tvector<N,typename BaseType<T>::type > type;
     };
 
   } // end of namespace typetraits
