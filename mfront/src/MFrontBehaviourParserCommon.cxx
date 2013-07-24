@@ -2067,6 +2067,7 @@ namespace mfront{
     this->behaviourFile << "\n{\n";
     this->behaviourFile << "using namespace std;\n";
     this->behaviourFile << "using namespace tfel::math;\n";
+    this->behaviourFile << "using std::vector;\n";
     writeMaterialLaws("MFrontBehaviourParserCommon::writeBehaviourConstructors",
 		      this->behaviourFile,this->materialLaws);
     this->writeBehaviourParameterInitialisation();
@@ -2103,6 +2104,7 @@ namespace mfront{
     this->behaviourFile << "\n{\n";
     this->behaviourFile << "using namespace std;\n";
     this->behaviourFile << "using namespace tfel::math;\n";
+    this->behaviourFile << "using std::vector;\n";
     writeMaterialLaws("MFrontBehaviourParserCommon::writeBehaviourConstructors",
 		      this->behaviourFile,this->materialLaws);		      
     this->writeBehaviourParameterInitialisation();
@@ -2127,6 +2129,7 @@ namespace mfront{
       this->behaviourFile << "\n{\n";
       this->behaviourFile << "using namespace std;\n";
       this->behaviourFile << "using namespace tfel::math;\n";
+      this->behaviourFile << "using std::vector;\n";
       writeMaterialLaws("MFrontBehaviourParserCommon::writeBehaviourConstructors",
 			this->behaviourFile,this->materialLaws);		      
       this->writeBehaviourParameterInitialisation();
