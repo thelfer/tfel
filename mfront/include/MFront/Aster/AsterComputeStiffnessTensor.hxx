@@ -19,7 +19,7 @@ namespace aster
 {
 
   template<unsigned short N,
-	   AsterBehaviourType>
+	   AsterSymmetryType>
   struct AsterComputeStiffnessTensor;
 
   template<>

@@ -35,7 +35,7 @@ namespace mfront
     this->mpnames = elm.getUMATMaterialPropertiesNames(l,b);
     bool eo = elm.checkIfAsterBehaviourRequiresElasticMaterialPropertiesOffset(l,b);
     bool to = elm.checkIfAsterBehaviourRequiresThermalExpansionMaterialPropertiesOffset(l,b);
-    unsigned short etype = elm.getUMATElasticBehaviourType(l,b);
+    unsigned short etype = elm.getUMATElasticSymmetryType(l,b);
     this->savesTangentOperator = elm.checkIfAsterBehaviourSavesTangentOperator(l,b);
     vector<string> tmp;
     if(etype==0u){

@@ -473,19 +473,6 @@ namespace mfront{
     virtual void
     treatUnknownVariableMethod(const std::string&);
 
-    /*!
-     * an helper method used to defined the total strain as the main
-     * variable
-     */
-    virtual void
-    defineSmallStrainInputVariables(void);
-
-    /*!
-     * an helper method for Cohesive Zones Models
-     */
-    virtual void
-    defineCZMInputVariables(void);
-
     virtual ~MFrontBehaviourParserCommon();
 
     /*!

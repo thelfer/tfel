@@ -9,6 +9,7 @@
 #include<sstream>
 #include<iostream>
 
+#include "TFEL/Utilities/ToString.hxx"
 #include "MFront/UMAT/UMATInterfaceBase.hxx"
 
 namespace umat{
@@ -128,20 +129,15 @@ namespace umat{
 
   void
   UMATInterfaceBase::checkNTENSValue(const UMATInt NTENS,
-				     const unsigned short N)
+				     const unsigned short s)
   {
     using namespace std;
-    bool ok = false;
-    if(NTENS==3){
-      ok = (N==1u);
-    } else if (NTENS==4){
-      ok = (N==2u);
-    } else if (NTENS==6){
-      ok = (N==3u);
-    }
-    if(!ok){
-      string msg("UMATInterfaceBase::checkNTENSValue : ");
-      msg += "invalid value for the NTENS parameter";
+    using namespace tfel::utilities;
+    if(NTENS!=s){
+      string msg("UMATInterfaceBase::checkNTENSValue : "
+		 "invalid value for the NTENS parameter "
+		 "(got '"+ToString(NTENS)+"', "
+		 "expected '"+ToString(s)+"')");
       throw(runtime_error(msg));  
     }
   } // end of UMATInterfaceBase::checkNTENSValue

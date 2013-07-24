@@ -18,7 +18,10 @@ namespace mfront{
   MFrontDefaultParser::MFrontDefaultParser()
     : MFrontDefaultParserBase()
   {
-    this->defineSmallStrainInputVariables();
+    this->registerVariable("eto");
+    this->registerVariable("deto");
+    this->registerVariable("sig");
+    this->mb.declareAsASmallStrainStandardBehaviour();
   }
 
   std::string

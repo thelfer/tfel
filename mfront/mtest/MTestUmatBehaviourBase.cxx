@@ -26,7 +26,7 @@ namespace mfront
     using namespace tfel::system;
     typedef ExternalLibraryManager ELM;
     ELM& elm = ELM::getExternalLibraryManager();
-    this->type = elm.getUMATBehaviourType(l,b);
+    this->type = elm.getUMATSymmetryType(l,b);
     if(this->type>=2u){
       string msg("MTestUmatBehaviourBase::MTestUmatBehaviourBase : "
 		 "unsupported behaviour type "
@@ -40,7 +40,7 @@ namespace mfront
   }
 
   unsigned short
-  MTestUmatBehaviourBase::getBehaviourType(void) const
+  MTestUmatBehaviourBase::getSymmetryType(void) const
   {
     using namespace std;
     if(this->type==0){
@@ -53,7 +53,7 @@ namespace mfront
 	       "(neither isotropic nor orthotropic)");
     throw(runtime_error(msg));
     return 0u;
-  } // end of MTestUmatBehaviourBase::getBehaviourType
+  } // end of MTestUmatBehaviourBase::getSymmetryType
 
   std::vector<std::string>
   MTestUmatBehaviourBase::getMaterialPropertiesNames(void) const

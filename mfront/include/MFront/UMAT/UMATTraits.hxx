@@ -12,19 +12,25 @@
 namespace umat{
 
   enum UMATBehaviourType{
+    SMALLSTRAINSTANDARDBEHAVIOUR,
+    COHESIVEZONEMODEL
+  }; // end of enum UMATBehaviourType
+
+  enum UMATSymmetryType{
     ISOTROPIC,
     ORTHOTROPIC
-  }; // end of enum UMATBehaviourType
+  }; // end of enum UMATSymmetryType
 
   template<typename Behaviour>
   struct UMATTraits{
+    static const UMATBehaviourType btype = umat::SMALLSTRAINSTANDARDBEHAVIOUR;
     static const bool useTimeSubStepping = false;
     static const bool doSubSteppingOnInvalidResults  = false;
     static const unsigned short maximumSubStepping   = 0u;
     static const bool requiresStiffnessTensor        = false;
     static const bool requiresThermalExpansionTensor = false;
     static const unsigned short propertiesOffset     = 0u;
-    static const UMATBehaviourType type = umat::ISOTROPIC;
+    static const UMATSymmetryType stype = umat::ISOTROPIC;
   }; // end of class UMATTraits
 
 } // end of namespace umat  

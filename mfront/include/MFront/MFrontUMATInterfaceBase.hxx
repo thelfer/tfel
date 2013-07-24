@@ -249,7 +249,7 @@ namespace mfront{
      * \param[in] mb   : behaviour description
      */
     virtual void
-    writeUMATxxBehaviourTypeSymbols(std::ostream&,
+    writeUMATxxSymmetryTypeSymbols(std::ostream&,
 				    const std::string&,
 				    const MechanicalBehaviourDescription&) const;
     /*!
@@ -258,7 +258,7 @@ namespace mfront{
      * \param[in] mb   : behaviour description
      */
     virtual void
-    writeUMATxxElasticBehaviourTypeSymbols(std::ostream&,
+    writeUMATxxElasticSymmetryTypeSymbols(std::ostream&,
 					   const std::string&,
 					   const MechanicalBehaviourDescription&) const;
     /*!

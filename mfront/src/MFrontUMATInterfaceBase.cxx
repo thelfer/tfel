@@ -1014,8 +1014,8 @@ namespace mfront
     this->writeUMATxxStateVariablesSymbols(out,name,mb,glossaryNames,entryNames);
     this->writeUMATxxExternalStateVariablesSymbols(out,name,mb,glossaryNames,entryNames);
     this->writeUMATxxIsUsableInPurelyImplicitResolutionSymbols(out,name,mb);
-    this->writeUMATxxBehaviourTypeSymbols(out,name,mb);
-    this->writeUMATxxElasticBehaviourTypeSymbols(out,name,mb);
+    this->writeUMATxxSymmetryTypeSymbols(out,name,mb);
+    this->writeUMATxxElasticSymmetryTypeSymbols(out,name,mb);
     this->writeUMATxxAdditionalSymbols(out,name,file,mb,glossaryNames,entryNames);
   }
 
@@ -1140,44 +1140,44 @@ namespace mfront
   } // end of MFrontUMATInterfaceBase::writeUMATxxIsUsableInPurelyImplicitResolution
 
   void
-  MFrontUMATInterfaceBase::writeUMATxxBehaviourTypeSymbols(std::ostream& out,
+  MFrontUMATInterfaceBase::writeUMATxxSymmetryTypeSymbols(std::ostream& out,
 						    const std::string& name,
 						    const MechanicalBehaviourDescription& mb) const
   {
     using namespace std;
     out << "MFRONT_SHAREDOBJ unsigned short " << this->getFunctionName(name) 
-	<< "_BehaviourType = " ;
-    if(mb.getBehaviourType()==mfront::ISOTROPIC){
+	<< "_SymmetryType = " ;
+    if(mb.getSymmetryType()==mfront::ISOTROPIC){
       out << "0u;" << endl << endl;
-    } else if(mb.getBehaviourType()==mfront::ORTHOTROPIC){
+    } else if(mb.getSymmetryType()==mfront::ORTHOTROPIC){
       out << "1u;" << endl << endl;
     } else {
-      string msg("MFrontUMATInterfaceBase::writeUMATxxBehaviourTypeSymbols : ");
+      string msg("MFrontUMATInterfaceBase::writeUMATxxSymmetryTypeSymbols : ");
       msg += "unsupported behaviour type.\n";
       msg += "only isotropic or orthotropic behaviours are supported at this time.";
       throw(runtime_error(msg));
     }
-  } // end of MFrontUMATInterfaceBase::writeUMATxxBehaviourTypeSymbols
+  } // end of MFrontUMATInterfaceBase::writeUMATxxSymmetryTypeSymbols
 
   void
-  MFrontUMATInterfaceBase::writeUMATxxElasticBehaviourTypeSymbols(std::ostream& out,
+  MFrontUMATInterfaceBase::writeUMATxxElasticSymmetryTypeSymbols(std::ostream& out,
 								  const std::string& name,
 								  const MechanicalBehaviourDescription& mb) const
   {
     using namespace std;
     out << "MFRONT_SHAREDOBJ unsigned short " << this->getFunctionName(name)
-	<< "_ElasticBehaviourType = " ;
-    if(mb.getElasticBehaviourType()==mfront::ISOTROPIC){
+	<< "_ElasticSymmetryType = " ;
+    if(mb.getElasticSymmetryType()==mfront::ISOTROPIC){
       out << "0u;" << endl << endl;
-    } else if(mb.getElasticBehaviourType()==mfront::ORTHOTROPIC){
+    } else if(mb.getElasticSymmetryType()==mfront::ORTHOTROPIC){
       out << "1u;" << endl << endl;
     } else {
-      string msg("MFrontUMATInterfaceBase::writeUMATxxElasticBehaviourTypeSymbols : ");
+      string msg("MFrontUMATInterfaceBase::writeUMATxxElasticSymmetryTypeSymbols : ");
       msg += "unsupported behaviour type.\n";
       msg += "only isotropic or orthotropic behaviours are supported at this time.";
       throw(runtime_error(msg));
     }
-  } // end of MFrontUMATInterfaceBase::writeUMATxxElasticBehaviourTypeSymbols
+  } // end of MFrontUMATInterfaceBase::writeUMATxxElasticSymmetryTypeSymbols
 
   void
   MFrontUMATInterfaceBase::writeUMATxxSourceFileSymbols(std::ostream& out,

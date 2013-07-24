@@ -18,7 +18,10 @@ namespace mfront{
   MFrontDefaultCZMParser::MFrontDefaultCZMParser()
     : MFrontDefaultParserBase()
   {
-    this->defineCZMInputVariables();
+    this->registerVariable("u");
+    this->registerVariable("du");
+    this->registerVariable("t");
+    this->mb.declareAsACohesiveZoneModel();
   }
 
   std::string

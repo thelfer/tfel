@@ -151,14 +151,12 @@ namespace umat{
 	typedef Behaviour<H,UMATReal,false> BV;
 	//! a simple alias
 	typedef tfel::material::ModellingHypothesisToSpaceDimension<H> ModellingHypothesisToSpaceDimension;
-	// spatial dimension
-	static const unsigned short N = ModellingHypothesisToSpaceDimension::value;
 	try {
 	  typedef UMATTraits<BV> Traits;
-	  typedef typename IF<Traits::type==umat::ISOTROPIC,
+	  typedef typename IF<Traits::stype==umat::ISOTROPIC,
 			      UMATIsotropicBehaviourHandler<H,Behaviour>,
 			      UMATOrthotropicBehaviourHandler<H,Behaviour> >::type Handler;
-	  UMATInterfaceBase::checkNTENSValue(*NTENS,N);
+	  UMATInterfaceBase::checkNTENSValue(*NTENS,Traits::DrivingVariableSize);
 	  Handler::exe(DTIME,DROT,DDSOE,STRAN,DSTRAN,TEMP,DTEMP,
 		       PROPS,NPROPS,PREDEF,DPRED,STATEV,NSTATV,
 		       STRESS);

@@ -33,7 +33,7 @@ namespace mfront
      * 1 means that the behaviour is orthotropic.
      */
     virtual unsigned short
-    getBehaviourType(void) const = 0;
+    getSymmetryType(void) const = 0;
     /*!
      * \return the number of material properties
      */

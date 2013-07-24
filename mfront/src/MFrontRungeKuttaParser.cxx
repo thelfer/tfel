@@ -27,7 +27,11 @@ namespace mfront{
     this->registerVariable("epsilon");
     this->mb.getParameters().push_back(VarHandler("real","epsilon",1u,0u));
     this->registerVariable("dtmin");
-    this->defineSmallStrainInputVariables();
+    // main variables
+    this->registerVariable("eto");
+    this->registerVariable("deto");
+    this->registerVariable("sig");
+    this->mb.declareAsASmallStrainStandardBehaviour();
     // driving variables
     map<DrivingVariable,
 	ThermodynamicForce>::const_iterator pm;

@@ -163,6 +163,13 @@ namespace mfront{
      */
     virtual bool
     checkIfElasticPropertiesAreDeclared(const MechanicalBehaviourDescription&) const;
+    /*!
+     * \param[in] mb  : behaviour description
+     * \param[in] mps : required materials properties
+     */
+    virtual bool
+    doElasticPropertiesCheck(const MechanicalBehaviourDescription&,
+			     const std::vector<std::string>&) const;
 
     virtual void
     generateGibianeDeclaration(const std::string&,

@@ -625,7 +625,7 @@ namespace mfront{
   MFrontBehaviourParserCommon::treatIsotropicBehaviour(void)
   {
     using namespace std;
-    if(this->mb.getBehaviourType()!=mfront::ISOTROPIC){
+    if(this->mb.getSymmetryType()!=mfront::ISOTROPIC){
       string msg("MFrontBehaviourParserCommon::treatIsotropicBehaviour  : ");
       msg += "this behaviour has been declared orthotropic";
       throw(runtime_error(msg));
@@ -638,9 +638,9 @@ namespace mfront{
   {
     using namespace std;
     this->readSpecifiedToken("MFrontBehaviourParserCommon::treatOrthotropicBehaviour",";");
-    this->mb.setBehaviourType(mfront::ORTHOTROPIC);
+    this->mb.setSymmetryType(mfront::ORTHOTROPIC);
     // by defaut the elastic behaviour is also orthotropic
-    this->mb.setElasticBehaviourType(mfront::ORTHOTROPIC);
+    this->mb.setElasticSymmetryType(mfront::ORTHOTROPIC);
   } // end of MFrontBehaviourParserCommon::treatOrthotropicBehaviour
 
   void
@@ -648,17 +648,17 @@ namespace mfront{
   {
     using namespace std;
     this->readSpecifiedToken("MFrontBehaviourParserCommon::treatIsotropicElasticBehaviour",";");
-    if(this->mb.getBehaviourType()!=mfront::ORTHOTROPIC){
+    if(this->mb.getSymmetryType()!=mfront::ORTHOTROPIC){
       string msg("MFrontBehaviourParserCommon::treatIsotropicElasticBehaviour  : ");
       msg += "this behaviour has not been declared orthotropic";
       throw(runtime_error(msg));
     }
-    if(this->mb.getElasticBehaviourType()!=mfront::ORTHOTROPIC){
+    if(this->mb.getElasticSymmetryType()!=mfront::ORTHOTROPIC){
       string msg("MFrontBehaviourParserCommon::treatIsotropicElasticBehaviour  : ");
       msg += "the elastic behaviour has already been declared isotropic";
       throw(runtime_error(msg));
     }
-    this->mb.setElasticBehaviourType(mfront::ISOTROPIC);
+    this->mb.setElasticSymmetryType(mfront::ISOTROPIC);
   } // end of MFrontBehaviourParserCommon::treatIsotropicElasticBehaviour
 
   void
@@ -1045,10 +1045,6 @@ namespace mfront{
     this->registerDefaultVarNames();
     // By default disable use of quantities
     this->mb.setUseQt(false);
-    // By default, a behaviour is isotropic 
-    this->mb.setBehaviourType(mfront::ISOTROPIC);
-    // By default, a behaviour is isotropic 
-    this->mb.setElasticBehaviourType(mfront::ISOTROPIC);
     // By default, a behaviour can be used in a purely implicit resolution
     this->mb.setUsableInPurelyImplicitResolution(true);
   } // end of MFrontBehaviourParserCommon::MFrontParserCommon
@@ -3675,42 +3671,6 @@ namespace mfront{
 					       true);
     this->initLocalVars += "\n";
   } // end of MFrontBehaviourParserCommon::treatInitLocalVars
-
-  void
-  MFrontBehaviourParserCommon::defineSmallStrainInputVariables(void)
-  {
-    using namespace std;
-    typedef map<DrivingVariable,ThermodynamicForce>::value_type MVType;
-    DrivingVariable eto;
-    eto.name = "eto";
-    eto.type = "StrainStensor";
-    eto.increment_known = true;
-    ThermodynamicForce sig;
-    sig.name = "sig";
-    sig.type = "StressStensor";
-    this->registerVariable("eto");
-    this->registerVariable("deto");
-    this->registerVariable("sig");
-    this->mb.getMainVariables().insert(MVType(eto,sig));
-  }
-
-  void
-  MFrontBehaviourParserCommon::defineCZMInputVariables(void)
-  {
-    using namespace std;
-    typedef map<DrivingVariable,ThermodynamicForce>::value_type MVType;
-    DrivingVariable u;
-    u.name = "u";
-    u.type = "DisplacementTVector";
-    u.increment_known = true;
-    ThermodynamicForce t;
-    t.name = "t";
-    t.type = "ForceTVector";
-    this->registerVariable("u");
-    this->registerVariable("du");
-    this->registerVariable("t");
-    this->mb.getMainVariables().insert(MVType(u,t));
-  }
 
   std::map<std::string,
 	   std::pair<std::vector<std::string>,

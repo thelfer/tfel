@@ -17,6 +17,7 @@
 #include"MFront/DrivingVariable.hxx"
 #include"MFront/BoundsDescription.hxx"
 #include"MFront/ThermodynamicForce.hxx"
+#include"MFront/SupportedTypes.hxx"
 
 namespace mfront{
 
@@ -25,44 +26,84 @@ namespace mfront{
    * writing this comment), its is mandatory to distinguish isotropic
    * and orthotropic behaviours
    */
-  enum BehaviourType{
+  enum SymmetryType{
     ISOTROPIC,
     ORTHOTROPIC
-  }; // end of enum BehaviourType
+  }; // end of enum SymmetryType
 
   /*!
    * This structure gathers various behaviour characteristic
    */
   struct TFEL_VISIBILITY_EXPORT MechanicalBehaviourDescription
+    : private SupportedTypes
   {
-
-    MechanicalBehaviourDescription();
-
     /*!
-     * \return the main variables of the behaviour
+     * An indication of the type of the behaviour treated
+     * If the behaviour is a small strain standard behaviour, then:
+     * - the only driving variable is the total strain 'eto' (symmetric tensor)
+     * - the only thermodynamic force is the stress    'sig' (symmetric tensor)
+     * If the behaviour is a cohesive zone model, then:
+     * - the only driving variable is the opening displacement (tvector)
+     * - the only thermodynamic force is the traction (tvector)
      */
-    std::map<DrivingVariable,
-	     ThermodynamicForce>&
-    getMainVariables(void);
-    
+    enum BehaviourType {
+      GENERALBEHAVIOUR              = -1,
+      SMALLSTRAINSTANDARDBEHAVIOUR  =  0,
+      FINITESTRAINSTANDARDBEHAVIOUR =  1,
+      COHESIVEZONEMODEL             =  2
+    }; // end of enum MFrontBehaviourType
+    /*!
+     * constructor
+     */
+    MechanicalBehaviourDescription();
+    /*!
+     * \return the size of the main variables
+     */
+    std::pair<SupportedTypes::TypeSize,
+	      SupportedTypes::TypeSize>
+    getMainVariablesSize(void) const;
+    /*!
+     * \brief add a new main variable
+     * \note using this method means that the behaviour type is always
+     * 'GENERALBEHAVIOUR'. This can't be changed afterwards.
+     */
+    void
+    addMainVariable(const DrivingVariable&,
+		    const ThermodynamicForce&);
     /*!
      * \return the main variables of the behaviour
      */
     const std::map<DrivingVariable,
 		   ThermodynamicForce>&
     getMainVariables(void) const;
-
+    /*!
+     * \return the behaviour type
+     */
     BehaviourType
-    getBehaviourType() const;
+    getBehaviourType(void) const;
+    /*!
+     * \brief set the behaviour to be a small strain standard
+     * behaviour
+     */
+    void declareAsASmallStrainStandardBehaviour(void);
+    /*!
+     * \brief set the behaviour to be a cohesive zone model
+     */
+    void declareAsACohesiveZoneModel(void);
+    /*!
+     * \return the symmetry type of the behaviour
+     */
+    SymmetryType
+    getSymmetryType() const;
 
     void
-    setBehaviourType(const BehaviourType);
+    setSymmetryType(const SymmetryType);
 
-    BehaviourType
-    getElasticBehaviourType() const;
+    SymmetryType
+    getElasticSymmetryType() const;
 
     void
-    setElasticBehaviourType(const BehaviourType);
+    setElasticSymmetryType(const SymmetryType);
 
     void setUseQt(const bool);
 
@@ -258,9 +299,13 @@ namespace mfront{
      */
     BehaviourType type;
     /*!
-     * type of elastic behaviour (isotropic or orthotropic)
+     * symmetry of behaviour (isotropic or orthotropic)
      */
-    BehaviourType etype;
+    SymmetryType stype;
+    /*!
+     * symmetry of elastic behaviour (isotropic or orthotropic)
+     */
+    SymmetryType estype;
     /*!
      * main variables, association of a driving variable and a
      * thermodynamicforce

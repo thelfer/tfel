@@ -63,8 +63,8 @@ void declareExternalLibraryManager(void)
     .def("setDoubleParameter",ELM_setDoubleParameter)
     .def("setParameter",ELM_setDoubleParameter)
     .def("contains",&ELM::contains)
-    .def("getUMATBehaviourType",
-	 &ELM::getUMATBehaviourType)
+    .def("getUMATSymmetryType",
+	 &ELM::getUMATSymmetryType)
     .def("getUMATMaterialPropertiesNames",
 	 &ELM::getUMATMaterialPropertiesNames)
     .def("getUMATInternalStateVariablesNames",

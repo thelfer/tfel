@@ -140,8 +140,8 @@ namespace tfel
        * \param[in] f : law name
        */
       unsigned short
-      getUMATBehaviourType(const std::string&,
-			   const std::string&);
+      getUMATSymmetryType(const std::string&,
+			  const std::string&);
       /*!
        * \return the type of the elastic behaviour
        * (isotropic or orthotropic)
@@ -153,8 +153,8 @@ namespace tfel
        * \param[in] f : law name
        */
       unsigned short
-      getUMATElasticBehaviourType(const std::string&,
-				  const std::string&);
+      getUMATElasticSymmetryType(const std::string&,
+				 const std::string&);
       /*!
        * \param[in] l : name of the library
        * \param[in] f : law name

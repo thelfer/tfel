@@ -278,8 +278,8 @@ namespace mfront{
     }
 
     // specific treatment for isotropic behaviour
-    if(mb.getBehaviourType()==mfront::ISOTROPIC){
-      if(mb.getElasticBehaviourType()!=mfront::ISOTROPIC){
+    if(mb.getSymmetryType()==mfront::ISOTROPIC){
+      if(mb.getElasticSymmetryType()!=mfront::ISOTROPIC){
 	string msg("MFrontAsterInterface::endTreatement : ");
 	msg += "an isotropic behaviour must have an isotropic elastic behaviour";
 	throw(runtime_error(msg));
@@ -349,7 +349,7 @@ namespace mfront{
 
     out << "#ifdef __cplusplus\n";
     out << "#include\"MFront/Aster/AsterTraits.hxx\"\n";
-    if (mb.getBehaviourType()==mfront::ORTHOTROPIC){
+    if (mb.getSymmetryType()==mfront::ORTHOTROPIC){
       out << "#include\"MFront/Aster/AsterOrthotropicBehaviour.hxx\"\n";
     }
     out << "#include\"TFEL/Material/" << className << ".hxx\"\n";
@@ -397,10 +397,10 @@ namespace mfront{
     } else {
       out << "static const bool requiresThermalExpansionTensor = false;\n";
     }
-    if(mb.getBehaviourType()==mfront::ISOTROPIC){
-      out << "static const AsterBehaviourType type = aster::ISOTROPIC;\n";
-    } else if (mb.getBehaviourType()==mfront::ORTHOTROPIC){
-      out << "static const AsterBehaviourType type = aster::ORTHOTROPIC;\n";
+    if(mb.getSymmetryType()==mfront::ISOTROPIC){
+      out << "static const AsterSymmetryType type = aster::ISOTROPIC;\n";
+    } else if (mb.getSymmetryType()==mfront::ORTHOTROPIC){
+      out << "static const AsterSymmetryType type = aster::ORTHOTROPIC;\n";
     } else {
       string msg("MFrontAsterInterface::endTreatement : ");
       msg += "unsupported behaviour type.\n";
@@ -413,8 +413,8 @@ namespace mfront{
     this->getMaterialPropertiesOffset(hasElasticMaterialPropertiesOffset,
 				      hasThermalExpansionMaterialPropertiesOffset,
 				      hasMassDensityOffsetForThermalExpansion,mb);
-    if(mb.getElasticBehaviourType()==mfront::ISOTROPIC){
-      out << "static const AsterBehaviourType etype = aster::ISOTROPIC;\n";
+    if(mb.getElasticSymmetryType()==mfront::ISOTROPIC){
+      out << "static const AsterSymmetryType etype = aster::ISOTROPIC;\n";
       if(hasElasticMaterialPropertiesOffset){
 	out << "static const unsigned short elasticPropertiesOffset = 2u;\n";
       } else {
@@ -430,8 +430,8 @@ namespace mfront{
       } else {
 	out << "static const unsigned short thermalExpansionPropertiesOffset = 0u;\n"; 
       }
-    } else if (mb.getElasticBehaviourType()==mfront::ORTHOTROPIC){
-      out << "static const AsterBehaviourType etype = aster::ORTHOTROPIC;\n";
+    } else if (mb.getElasticSymmetryType()==mfront::ORTHOTROPIC){
+      out << "static const AsterSymmetryType etype = aster::ORTHOTROPIC;\n";
       out << "static const unsigned short N = tfel::material::ModellingHypothesisToSpaceDimension<H>::value;\n";
       if(hasElasticMaterialPropertiesOffset){
 	out << "static const unsigned short elasticPropertiesOffset "
@@ -842,7 +842,7 @@ namespace mfront{
     // this indicates that the material properties required to compute
     // the thermal expansion tensor are part of the material properties
     bool foundt = false;
-    if(mb.getElasticBehaviourType()==mfront::ISOTROPIC){
+    if(mb.getElasticSymmetryType()==mfront::ISOTROPIC){
       if(mb.requiresStiffnessTensor()){
 	for(p=coefsHolder.begin();(p!=coefsHolder.end())&&(!founde);++p){
 	  if((p->name=="young")||
@@ -948,7 +948,7 @@ namespace mfront{
 	  hasThermalExpansionMaterialPropertiesOffset = true;
 	}
       }
-    } else if (mb.getElasticBehaviourType()==mfront::ORTHOTROPIC){
+    } else if (mb.getElasticSymmetryType()==mfront::ORTHOTROPIC){
       if(mb.requiresStiffnessTensor()){
 	hasElasticMaterialPropertiesOffset = true;
       }
@@ -989,7 +989,7 @@ namespace mfront{
     this->getMaterialPropertiesOffset(hasElasticMaterialPropertiesOffset,
     				      hasThermalExpansionMaterialPropertiesOffset,
     				      hasMassDensityOffsetForThermalExpansion,mb);
-    if(mb.getElasticBehaviourType()==mfront::ISOTROPIC){
+    if(mb.getElasticSymmetryType()==mfront::ISOTROPIC){
       if(hasElasticMaterialPropertiesOffset){
 	out << "mg.addMaterialProperty(\"YoungModulus\",*PROPS);\n"
 	    << "mg.addMaterialProperty(\"PoissonRatio\",*(PROPS+1));\n";
@@ -1011,7 +1011,7 @@ namespace mfront{
 	  }
 	}
       }
-    } else if(mb.getElasticBehaviourType()==mfront::ORTHOTROPIC){
+    } else if(mb.getElasticSymmetryType()==mfront::ORTHOTROPIC){
       out << "if(*NTENS==3u){\n";
       if(hasElasticMaterialPropertiesOffset){
 	out << "mg.addMaterialProperty(\"YoungModulus1\",*PROPS);\n"

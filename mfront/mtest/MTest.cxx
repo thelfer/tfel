@@ -869,7 +869,7 @@ namespace mfront
       msg += "no behaviour defined";
       throw(runtime_error(msg));
     }
-    if(this->b->getBehaviourType()!=1){
+    if(this->b->getSymmetryType()!=1){
       string msg("MTest::handleRotationMatrix : "
 		 "rotation matrix may only be defined "
 		 "for orthotropic behaviours");

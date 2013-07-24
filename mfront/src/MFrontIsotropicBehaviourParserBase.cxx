@@ -18,8 +18,13 @@ namespace mfront{
   {
     using namespace std;
     typedef map<string,string>::value_type MVType;
-    this->defineSmallStrainInputVariables();
     this->reserveName("NewtonIntegration");
+    // main variables
+    this->registerVariable("eto");
+    this->registerVariable("deto");
+    this->registerVariable("sig");
+    this->mb.declareAsASmallStrainStandardBehaviour();
+    // parameters
     this->registerVariable("theta");
     this->mb.getParameters().push_back(VarHandler("real","theta",1u,0u));
     this->registerVariable("epsilon");

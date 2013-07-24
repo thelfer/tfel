@@ -16,7 +16,12 @@ namespace mfront{
     : usableInPurelyImplicitResolution(false),
       sTensor(false),
       aTensor(false),
-      use_qt(false)      
+      use_qt(false),
+      type(MechanicalBehaviourDescription::GENERALBEHAVIOUR),
+      // By default, a behaviour is isotropic 
+      stype(mfront::ISOTROPIC),
+      // By default, a behaviour is isotropic 
+      estype(mfront::ISOTROPIC)
   {} // end of MechanicalBehaviourDescription::MechanicalBehaviourDescription()
 
   std::vector<BoundsDescription>&
@@ -39,7 +44,7 @@ namespace mfront{
 
   const VarHandler&
   MechanicalBehaviourDescription::getVariableHandler(const VarContainer& cont,
-						  const std::string& v) const
+						     const std::string& v) const
   {
     using namespace std;
     VarContainer::const_iterator p;
@@ -85,6 +90,22 @@ namespace mfront{
     }
     return false;
   } // end of MechanicalBehaviourDescription::isDrivingVariableIncrementName
+
+  std::pair<SupportedTypes::TypeSize,
+	    SupportedTypes::TypeSize>
+  MechanicalBehaviourDescription::getMainVariablesSize(void) const
+  {
+    using namespace std;
+    map<DrivingVariable,
+	ThermodynamicForce>::const_iterator pm;
+    SupportedTypes::TypeSize ov;
+    SupportedTypes::TypeSize of;
+    for(pm=this->getMainVariables().begin();pm!=this->getMainVariables().end();++pm){
+      ov += this->getTypeSize(pm->first.type,1u);
+      of += this->getTypeSize(pm->second.type,1u);
+    }
+    return make_pair(ov,of);
+  } // end of MechanicalBehaviourDescription::getMainVariablesSize
 
   bool
   MechanicalBehaviourDescription::isMaterialPropertyName(const std::string& n) const
@@ -267,37 +288,66 @@ namespace mfront{
     return this->uParametersDefaultValues;
   } // end of MechanicalBehaviourDescription::getUnsignedShortParametersDefaultValues
 
-  // MechanicalBehaviourDescription::MechanicalBehaviourDescription(const MechanicalBehaviourDescription& src)
-  //   : pupirv(src.pupirv),
-  //     usableInPurelyImplicitResolution(src.usableInPurelyImplicitResolution),
-  //     sTensor(src.sTensor),
-  //     aTensor(src.aTensor),
-  //     use_qt(src.use_qt),
-  //     type(src.type),
-  //     etype(src.etype)
-  // {} // end of MechanicalBehaviourDescription::MechanicalBehaviourDescription()
-
-  // MechanicalBehaviourDescription&
-  // MechanicalBehaviourDescription::operator = (const MechanicalBehaviourDescription& src)
-  // {
-  //   if(this!=&src){
-  //     this->pupirv  = src.pupirv;
-  //     this->use_qt  = src.use_qt;
-  //     this->type    = src.type;
-  //     this->etype    = src.etype;
-  //     this->sTensor = src.sTensor;
-  //     this->aTensor = src.aTensor;
-  //     this->usableInPurelyImplicitResolution = src.usableInPurelyImplicitResolution;
-  //   }
-  //   return *this;
-  // } // end of MechanicalBehaviourDescription::MechanicalBehaviourDescription()
-
-  std::map<DrivingVariable,
-	   ThermodynamicForce>&
-  MechanicalBehaviourDescription::getMainVariables(void)
+  void
+  MechanicalBehaviourDescription::declareAsASmallStrainStandardBehaviour(void)
   {
-    return this->mvariables;
-  } // end of MechanicalBehaviourDescription::getMainVariables
+    using namespace std;
+    typedef map<DrivingVariable,ThermodynamicForce>::value_type MVType;
+    if(!this->mvariables.empty()){
+      string msg("MechanicalBehaviourDescription::declareAsASmallStrainStandardBehaviour : ");
+      msg += "some driving variables are already declared";
+      throw(runtime_error(msg));
+    }
+    DrivingVariable eto;
+    eto.name = "eto";
+    eto.type = "StrainStensor";
+    eto.increment_known = true;
+    ThermodynamicForce sig;
+    sig.name = "sig";
+    sig.type = "StressStensor";
+    this->mvariables.insert(MVType(eto,sig));
+    this->type = MechanicalBehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR;
+  }
+    
+  void
+  MechanicalBehaviourDescription::declareAsACohesiveZoneModel(void)
+  {
+    using namespace std;
+    typedef map<DrivingVariable,ThermodynamicForce>::value_type MVType;
+    if(!this->mvariables.empty()){
+      string msg("MechanicalBehaviourDescription::declareAsACohesiveZoneModel : ");
+      msg += "some driving variables are already declared";
+      throw(runtime_error(msg));
+    }
+    DrivingVariable u;
+    u.name = "u";
+    u.type = "DisplacementTVector";
+    u.increment_known = true;
+    ThermodynamicForce t;
+    t.name = "t";
+    t.type = "ForceTVector";
+    this->mvariables.insert(MVType(u,t));
+    this->type = MechanicalBehaviourDescription::COHESIVEZONEMODEL;
+  }
+
+  void
+  MechanicalBehaviourDescription::addMainVariable(const DrivingVariable&    v,
+						  const ThermodynamicForce& f)
+  {
+    using namespace std;
+    typedef map<DrivingVariable,ThermodynamicForce>::value_type MVType;
+    if(this->type!=MechanicalBehaviourDescription::GENERALBEHAVIOUR){
+      string msg("MechanicalBehaviourDescription::addMainVariables : "
+		 "one can not add a main variable if the behaviour "
+		 "don't have a general behaviour type");
+      throw(runtime_error(msg));
+    }
+    if(!this->mvariables.insert(MVType(v,f)).second){
+      string msg("MechanicalBehaviourDescription::addMainVariables : "
+		 "a driving variable '"+v.name+"' has already been declared");
+      throw(runtime_error(msg));
+    }
+  } // end of MechanicalBehaviourDescription::addMainVariables
 
   const std::map<DrivingVariable,
 		 ThermodynamicForce>&
@@ -318,29 +368,35 @@ namespace mfront{
     return this->use_qt;
   } // end of MechanicalBehaviourDescription::useQt
 
-  BehaviourType
-  MechanicalBehaviourDescription::getElasticBehaviourType() const
-  {
-    return this->etype;
-  } // end of MechanicalBehaviourDescription::getElasticBehaviourType
-
-  void
-  MechanicalBehaviourDescription::setElasticBehaviourType(const BehaviourType t)
-  {
-    this->etype = t;
-  } // end of MechanicalBehaviourDescription::setElasticBehaviourType
-
-  BehaviourType
+  MechanicalBehaviourDescription::BehaviourType
   MechanicalBehaviourDescription::getBehaviourType() const
   {
     return this->type;
   } // end of MechanicalBehaviourDescription::getBehaviourType
 
-  void
-  MechanicalBehaviourDescription::setBehaviourType(const BehaviourType t)
+  SymmetryType
+  MechanicalBehaviourDescription::getElasticSymmetryType() const
   {
-    this->type = t;
-  } // end of MechanicalBehaviourDescription::setBehaviourType
+    return this->estype;
+  } // end of MechanicalBehaviourDescription::getElasticSymmetryType
+
+  void
+  MechanicalBehaviourDescription::setElasticSymmetryType(const SymmetryType t)
+  {
+    this->estype = t;
+  } // end of MechanicalBehaviourDescription::setElasticSymmetryType
+
+  SymmetryType
+  MechanicalBehaviourDescription::getSymmetryType() const
+  {
+    return this->stype;
+  } // end of MechanicalBehaviourDescription::getSymmetryType
+
+  void
+  MechanicalBehaviourDescription::setSymmetryType(const SymmetryType t)
+  {
+    this->stype = t;
+  } // end of MechanicalBehaviourDescription::setSymmetryType
 
   bool
   MechanicalBehaviourDescription::requiresStiffnessTensor(void) const

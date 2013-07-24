@@ -19,7 +19,7 @@ namespace umat
 {
 
   template<tfel::material::ModellingHypothesis::Hypothesis H,
-	   UMATBehaviourType>
+	   UMATSymmetryType>
   struct UMATComputeStiffnessTensor;
 
   template<>

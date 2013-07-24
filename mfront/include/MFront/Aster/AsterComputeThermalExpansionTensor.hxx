@@ -20,7 +20,7 @@ namespace aster
 {
 
   template<unsigned short N,
-	   AsterBehaviourType>
+	   AsterSymmetryType>
   struct AsterComputeThermalExpansionTensor;
 
   template<>

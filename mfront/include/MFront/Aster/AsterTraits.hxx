@@ -11,10 +11,10 @@
 
 namespace aster{
 
-  enum AsterBehaviourType{
+  enum AsterSymmetryType{
     ISOTROPIC,
     ORTHOTROPIC
-  }; // end of enum AsterBehaviourType
+  }; // end of enum AsterSymmetryType
 
   enum AsterErrorReportPolicy{
     ASTER_WRITEONSTDOUT,
@@ -28,9 +28,9 @@ namespace aster{
     static const bool requiresThermalExpansionTensor      = false;
     static const unsigned short propertiesOffset          = 0u;
     // Type of the behaviour of the material (isotropic or orthotropic)
-    static const AsterBehaviourType type   = aster::ISOTROPIC;
+    static const AsterSymmetryType type   = aster::ISOTROPIC;
     // Type of the elastic behaviour of the material (isotropic or orthotropic)
-    static const AsterBehaviourType  etype = aster::ISOTROPIC;
+    static const AsterSymmetryType  etype = aster::ISOTROPIC;
   }; // end of class ASTERTraits
 
 } // end of namespace aster  

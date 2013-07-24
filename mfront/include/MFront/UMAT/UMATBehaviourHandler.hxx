@@ -37,8 +37,8 @@ namespace umat
       typedef typename BV::BehaviourData  BData;
       TFEL_UMAT_INLINE static void
       exe(BData& data,const UMATReal * const props){
-	UMATComputeStiffnessTensor<H,UMATTraits<BV>::type>::exe(props,
-								data.getStiffnessTensor());
+	UMATComputeStiffnessTensor<H,UMATTraits<BV>::stype>::exe(props,
+								 data.getStiffnessTensor());
       } // end of exe
     }; // end of struct StiffnessTensorInitializer
     
@@ -52,8 +52,8 @@ namespace umat
       typedef typename BV::BehaviourData  BData;
       TFEL_UMAT_INLINE static void
 	exe(BData& data,const UMATReal * const props){
-	UMATComputeThermalExpansionTensor<H,UMATTraits<BV>::type>::exe(props,
-								       data.getThermalExpansionTensor());
+	UMATComputeThermalExpansionTensor<H,UMATTraits<BV>::stype>::exe(props,
+									data.getThermalExpansionTensor());
       } // end of exe
     }; // end of struct ThermalExpansionTensorInitializer
     

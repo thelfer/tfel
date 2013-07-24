@@ -496,7 +496,7 @@ namespace tfel
     } // end of ExternalLibraryManager::isUMATBehaviourUsableInPurelyImplicitResolution
 
     unsigned short
-    ExternalLibraryManager::getUMATBehaviourType(const std::string& l,
+    ExternalLibraryManager::getUMATSymmetryType(const std::string& l,
 						 const std::string& f)
     {
       using namespace std;
@@ -507,9 +507,9 @@ namespace tfel
       void * lib = this->loadLibrary(l);
 #endif /* defined _WIN32 || _WIN64 || defined __CYGWIN__ */
 
-      int u = ::tfel_getUnsignedShort(lib,(f+"_BehaviourType").c_str());
+      int u = ::tfel_getUnsignedShort(lib,(f+"_SymmetryType").c_str());
       if(u==-1){
-	string msg("ExternalLibraryManager::getUMATBehaviourType : ");
+	string msg("ExternalLibraryManager::getUMATSymmetryType : ");
 	msg += " behavour type could not be read (";
 #if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
 	  msg += ::GetLastError();
@@ -520,10 +520,10 @@ namespace tfel
 	throw(runtime_error(msg));
       }
       return static_cast<unsigned short>(u);
-    } // end of ExternalLibraryManager::getUMATBehaviourType
+    } // end of ExternalLibraryManager::getUMATSymmetryType
 
     unsigned short
-    ExternalLibraryManager::getUMATElasticBehaviourType(const std::string& l,
+    ExternalLibraryManager::getUMATElasticSymmetryType(const std::string& l,
 							const std::string& f)
     {
       using namespace std;
@@ -534,9 +534,9 @@ namespace tfel
       void * lib = this->loadLibrary(l);
 #endif /* defined _WIN32 || _WIN64 || defined __CYGWIN__ */
 
-      int u = ::tfel_getUnsignedShort(lib,(f+"_ElasticBehaviourType").c_str());
+      int u = ::tfel_getUnsignedShort(lib,(f+"_ElasticSymmetryType").c_str());
       if(u==-1){
-	string msg("ExternalLibraryManager::getUMATElasticBehaviourType : ");
+	string msg("ExternalLibraryManager::getUMATElasticSymmetryType : ");
 	msg += " behavour type could not be read (";
 #if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
 	  msg += ::GetLastError();
@@ -547,7 +547,7 @@ namespace tfel
 	throw(runtime_error(msg));
       }
       return static_cast<unsigned short>(u);
-    } // end of ExternalLibraryManager::getUMATElasticBehaviourType
+    } // end of ExternalLibraryManager::getUMATElasticSymmetryType
 
     std::vector<int>
     ExternalLibraryManager::getUMATInternalStateVariablesTypes(const std::string& l,

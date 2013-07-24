@@ -28,8 +28,12 @@ namespace mfront{
     // dynamically allocated vectors are not yet allowed in implicit
     // parsers
     this->areDynamicallyAllocatedVectorsAllowed_ = false;
+    // input variables
+    this->registerVariable("eto");
+    this->registerVariable("deto");
+    this->registerVariable("sig");
+    this->mb.declareAsASmallStrainStandardBehaviour();
     // parameters
-    this->defineSmallStrainInputVariables();
     this->registerVariable("theta");
     this->mb.getParameters().push_back(VarHandler("real","theta",1u,0u));
     this->registerVariable("epsilon");

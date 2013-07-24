@@ -138,7 +138,7 @@ namespace umat{
      * \brief throw an error message if the value of the NTENS
      * parameter is not valid
      * \param[in] NTENS : NTENS value
-     * \param[in] N     : space dimension
+     * \param[in] s     : expected size
      */
     static void
     checkNTENSValue(const UMATInt,const unsigned short);
