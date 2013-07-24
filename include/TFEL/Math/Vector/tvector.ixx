@@ -251,7 +251,7 @@ namespace tfel{
     typename tfel::meta::EnableIf<
       tfel::typetraits::IsScalar<T>::cond,
       void>::type
-    exportToBaseTypePointer(const tvector<N,T>& v,
+    exportToBaseTypeArray(const tvector<N,T>& v,
 			    OutputIterator p)
     {
       typedef tfel::fsalgo::copy<N> Copy;

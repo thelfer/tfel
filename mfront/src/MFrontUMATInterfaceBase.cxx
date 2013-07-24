@@ -100,7 +100,39 @@ namespace mfront
     }
     behaviourDataFile << "{\n";
     behaviourDataFile << "using namespace tfel::math;\n";
-    behaviourDataFile << "this->sig.exportTab("+iprefix+"stress_);\n";
+    map<DrivingVariable,
+      ThermodynamicForce>::const_iterator pm;
+    SupportedTypes::TypeSize of;
+    for(pm=mb.getMainVariables().begin();pm!=mb.getMainVariables().end();++pm){
+      const ThermodynamicForce& f = pm->second;
+      const SupportedTypes::TypeFlag flag = this->getTypeFlag(f.type);
+      if(flag==SupportedTypes::Scalar){
+	if(pm!=mb.getMainVariables().begin()){
+	  behaviourDataFile << "*("+iprefix+"stress_+" << of << ") = this->" << f.name << ";\n";
+	} else {
+	  behaviourDataFile << "*("+iprefix+"stress_) = this->" << f.name << ";\n";
+	}
+      } else if(flag==SupportedTypes::Stensor){
+	if(pm!=mb.getMainVariables().begin()){
+	  behaviourDataFile << "this->sig.exportTab("+iprefix+"stress_+" << of << ");\n";
+	} else {
+	  behaviourDataFile << "this->sig.exportTab("+iprefix+"stress_"");\n";
+	}
+      } else if((flag==SupportedTypes::TVector)||
+		(flag==SupportedTypes::Tensor)){
+	if(pm!=mb.getMainVariables().begin()){
+	  behaviourDataFile << "exportToBaseTypeArray(this->" << f.name << ","+iprefix+"stress_+"
+			    << of << ");\n";	
+	} else {
+	  behaviourDataFile << "exportToBaseTypeArray(this->" << f.name << ","+iprefix+"stress_);\n";	
+	}
+      } else {
+	string msg("MFrontUMATInterfaceBase::writeBehaviourDataConstructor : ");
+	msg += "unsupported forces type";
+	throw(runtime_error(msg));
+      }
+      of += this->getTypeSize(f.type,1u);
+    }
     if((!stateVarsHolder.empty())||
        (!auxiliaryStateVarsHolder.empty())){
       SupportedTypes::TypeSize o;
@@ -227,9 +259,9 @@ namespace mfront
       const ThermodynamicForce& f = pm->second;
       if(this->getTypeFlag(f.type)==SupportedTypes::TVector){
 	if(pm!=mb.getMainVariables().begin()){
-	  behaviourDataFile << "tfel::fsalgo::copy<N>("+iprefix+"stress_+" << of <<",this->" << f.name << ".begin());\n";
+	  behaviourDataFile << "tfel::fsalgo::copy<N>::exe("+iprefix+"stress_+" << of <<",this->" << f.name << ".begin());\n";
 	} else {
-	  behaviourDataFile << "tfel::fsalgo::copy<N>("+iprefix+"stress_,this->" << f.name << ".begin());\n";
+	  behaviourDataFile << "tfel::fsalgo::copy<N>::exe("+iprefix+"stress_,this->" << f.name << ".begin());\n";
 	}
       } else if(this->getTypeFlag(f.type)==SupportedTypes::Stensor){
 	if(pm!=mb.getMainVariables().begin()){
@@ -250,9 +282,9 @@ namespace mfront
       }
       if(this->getTypeFlag(f.type)==SupportedTypes::TVector){
 	if(pm!=mb.getMainVariables().begin()){
-	  behaviourDataFile << "tfel::fsalgo::copy<N>("+iprefix+"stran_+" << ov <<",this->" << v.name << ".begin());\n";
+	  behaviourDataFile << "tfel::fsalgo::copy<N>::exe("+iprefix+"stran+" << ov <<",this->" << v.name << ".begin());\n";
 	} else {
-	  behaviourDataFile << "tfel::fsalgo::copy<N>("+iprefix+"stran_,this->" << v.name << ".begin());\n";
+	  behaviourDataFile << "tfel::fsalgo::copy<N>::exe("+iprefix+"stran,this->" << v.name << ".begin());\n";
 	}
       } else if(this->getTypeFlag(v.type)==SupportedTypes::Stensor){
 	if(pm!=mb.getMainVariables().begin()){
@@ -262,9 +294,9 @@ namespace mfront
 	}
       } else if(this->getTypeFlag(v.type)==SupportedTypes::Tensor){
 	if(pm!=mb.getMainVariables().begin()){
-	  behaviourDataFile << "tfel::fsalgo::copy<TensorSize>("+iprefix+"stran_+" << ov <<",this->" << v.name << ".begin());\n";
+	  behaviourDataFile << "tfel::fsalgo::copy<TensorSize>("+iprefix+"stran+" << ov <<",this->" << v.name << ".begin());\n";
 	} else {
-	  behaviourDataFile << "tfel::fsalgo::copy<TensorSize>("+iprefix+"stran_,this->" << v.name << ".begin());\n";
+	  behaviourDataFile << "tfel::fsalgo::copy<TensorSize>("+iprefix+"stran,this->" << v.name << ".begin());\n";
 	}
       } else {
 	string msg("MFrontUMATInterfaceBase::writeBehaviourDataConstructor : ");
@@ -333,9 +365,9 @@ namespace mfront
       }
       if(this->getTypeFlag(v.type)==SupportedTypes::TVector){
 	if(pm!=mb.getMainVariables().begin()){
-	  behaviourIntegrationFile << "tfel::fsalgo::copy<N>("+iprefix+"dstran+" << ov <<",this->" << v.name << ".begin());\n";
+	  behaviourIntegrationFile << "tfel::fsalgo::copy<N>::exe("+iprefix+"dstran+" << ov <<",this->d" << v.name << ".begin());\n";
 	} else {
-	  behaviourIntegrationFile << "tfel::fsalgo::copy<N>("+iprefix+"dstran,this->" << v.name << ".begin());\n";
+	  behaviourIntegrationFile << "tfel::fsalgo::copy<N>::exe("+iprefix+"dstran,this->d" << v.name << ".begin());\n";
 	}
       } else if(this->getTypeFlag(v.type)==SupportedTypes::Stensor){
 	if(pm!=mb.getMainVariables().begin()){
@@ -345,9 +377,9 @@ namespace mfront
 	}
       } else if(this->getTypeFlag(v.type)==SupportedTypes::Tensor){
 	if(pm!=mb.getMainVariables().begin()){
-	  behaviourIntegrationFile << "tfel::fsalgo::copy<TensorSize>("+iprefix+"dstran+" << ov <<",this->" << v.name << ".begin());\n";
+	  behaviourIntegrationFile << "tfel::fsalgo::copy<TensorSize>("+iprefix+"dstran+" << ov <<",this->d" << v.name << ".begin());\n";
 	} else {
-	  behaviourIntegrationFile << "tfel::fsalgo::copy<TensorSize>("+iprefix+"dstran,this->" << v.name << ".begin());\n";
+	  behaviourIntegrationFile << "tfel::fsalgo::copy<TensorSize>("+iprefix+"dstran,this->d" << v.name << ".begin());\n";
 	}
       } else {
 	string msg("MFrontUMATInterfaceBase::writeIntegrationDataConstructor : ");

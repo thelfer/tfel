@@ -1137,13 +1137,14 @@ namespace mfront{
     file << "typedef typename Types::Stensor                Stensor;\n";
     file << "typedef typename Types::Stensor4               Stensor4;\n";
     file << "typedef typename Types::FrequencyStensor       FrequencyStensor;\n";
+    file << "typedef typename Types::ForceTVector           ForceTVector;\n";
     file << "typedef typename Types::StressStensor          StressStensor;\n";
+    file << "typedef typename Types::StrainRateStensor      StressRateStensor;\n";
+    file << "typedef typename Types::DisplacementTVector    DisplacementTVector;\n";
     file << "typedef typename Types::StrainStensor          StrainStensor;\n";
     file << "typedef typename Types::StrainRateStensor      StrainRateStensor;\n";
-    file << "typedef typename Types::StrainRateStensor      StressRateStensor;\n";
     file << "typedef typename Types::StiffnessTensor        StiffnessTensor;\n";
     file << "typedef typename Types::ThermalExpansionTensor ThermalExpansionTensor;\n";
-    file << "typedef typename Types::DisplacementTVector    DisplacementTVector;\n";
   } // end of MFrontBehaviourParserCommon::writeStandardTFELTypedefs
 
   MFrontBehaviourParserCommon::~MFrontBehaviourParserCommon()
@@ -3702,13 +3703,13 @@ namespace mfront{
     u.name = "u";
     u.type = "DisplacementTVector";
     u.increment_known = true;
-    ThermodynamicForce F;
-    F.name = "F";
-    F.type = "ForceTVector";
+    ThermodynamicForce t;
+    t.name = "t";
+    t.type = "ForceTVector";
     this->registerVariable("u");
     this->registerVariable("du");
-    this->registerVariable("F");
-    this->mb.getMainVariables().insert(MVType(u,F));
+    this->registerVariable("t");
+    this->mb.getMainVariables().insert(MVType(u,t));
   }
 
   std::map<std::string,
