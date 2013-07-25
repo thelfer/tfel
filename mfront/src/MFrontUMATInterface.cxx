@@ -452,6 +452,15 @@ namespace mfront{
       out << "false";
     }
     out << "> >{\n";
+    if(mb.getBehaviourType()==MechanicalBehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR){
+      out << "static const UMATBehaviourType btype  = SMALLSTRAINSTANDARDBEHAVIOUR;\n";
+    } else if(mb.getBehaviourType()==MechanicalBehaviourDescription::COHESIVEZONEMODEL){
+      out << "static const UMATBehaviourType btype  = COHESIVEZONEMODEL;\n";
+    } else {
+      string msg("MFrontUMATInterface::endTreatement : "
+		 "unsupported behaviour type");
+      throw(runtime_error(msg));
+    }
     out << "// space dimension\n";
     out << "static const unsigned short N           = tfel::material::ModellingHypothesisToSpaceDimension<H>::value;\n";
     out << "// tiny vector size\n";

@@ -150,4 +150,37 @@ namespace umat{
 	 << "invalid value for the NDI parameter" << endl;    
   }
 
+  void
+  UMATInterfaceBase::throwInvalidBehaviourTypeAndModellingHypothesis(const UMATBehaviourType,
+								     const std::string& h)
+  {
+    using namespace std;
+    string msg("UMATInterfaceBase::throwInvalidBehaviourTypeAndModellingHypothesis : "
+	       "behaviour can't be used in '"+h+"'");
+    throw(runtime_error(msg));  
+  } // end of UMATInterfaceBase::throwInvalidBehaviourTypeAndModellingHypothesis
+
+  void
+  UMATUnSupportedCaseHandler::exe(const UMATReal *const ,
+				  const UMATReal *const,
+				  const UMATReal *const,
+				  const UMATReal *const,
+				  const UMATReal *const,
+				  const UMATReal *const,
+				  const UMATReal *const,
+				  const UMATReal *const,
+				  const UMATInt  *const,
+				  const UMATReal *const,
+				  const UMATReal *const,
+				  UMATReal *const,
+				  const UMATInt  *const,
+				  UMATReal *const)
+  {
+    using namespace std;
+    string msg("UMATUnSupportedCaseHandler::exe : "
+	       "we fall in a case that the umat interface "
+	       "is not able to handle.");
+    throw(runtime_error(msg));  
+  } // end of exe
+
 } // end of namespace umat 

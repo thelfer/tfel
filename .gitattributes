@@ -1073,6 +1073,7 @@ mfront/include/MFront/UMAT/UMATGenericPlaneStressHandler.hxx -text
 mfront/include/MFront/UMAT/UMATGetModellingHypothesis.hxx -text
 mfront/include/MFront/UMAT/UMATInterface.hxx -text
 mfront/include/MFront/UMAT/UMATInterfaceBase.hxx -text
+mfront/include/MFront/UMAT/UMATInterfaceDispatch.hxx -text
 mfront/include/MFront/UMAT/UMATIsotropicBehaviourHandler.hxx -text
 mfront/include/MFront/UMAT/UMATOrthotropicBehaviour.hxx -text
 mfront/include/MFront/UMAT/UMATOrthotropicBehaviourHandler.hxx -text

@@ -81,8 +81,10 @@ namespace umat
   } // end of struct UMATComputeStiffnessTensor
 
   void
-  UMATComputeStiffnessTensor<tfel::material::ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN,ISOTROPIC>::exe(const UMATReal* const props,
-										 tfel::config::Types<1u,UMATReal,false>::StiffnessTensor& C)
+  UMATComputeStiffnessTensor<umat::SMALLSTRAINSTANDARDBEHAVIOUR,
+			     tfel::material::ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN,
+			     ISOTROPIC>::exe(const UMATReal* const props,
+					     tfel::config::Types<1u,UMATReal,false>::StiffnessTensor& C)
   {
     using namespace std;
     const UMATReal E = props[0];
@@ -102,40 +104,52 @@ namespace umat
   } // end of struct UMATComputeStiffnessTensor
 
   void
-  UMATComputeStiffnessTensor<tfel::material::ModellingHypothesis::PLANESTRESS,ISOTROPIC>::exe(const UMATReal* const,
-											      tfel::config::Types<2u,UMATReal,false>::StiffnessTensor&)
+  UMATComputeStiffnessTensor<umat::SMALLSTRAINSTANDARDBEHAVIOUR,
+			     tfel::material::ModellingHypothesis::PLANESTRESS,
+			     ISOTROPIC>::exe(const UMATReal* const,
+					     tfel::config::Types<2u,UMATReal,false>::StiffnessTensor&)
   {
     using namespace std;
 #warning "something needs to be done HERE"
-    string msg("UMATComputeStiffnessTensor<tfel::material::ModellingHypothesis::PLANESTRESS,ISOTROPIC>::exe : ");
+    string msg("UMATComputeStiffnessTensor<umat::SMALLSTRAINSTANDARDBEHAVIOUR,"
+	       "tfel::material::ModellingHypothesis::PLANESTRESS"
+	       ",ISOTROPIC>::exe : ");
     msg += "unimplemented feature";
     throw(runtime_error(msg));
   } // end of struct UMATComputeStiffnessTensor
 
   void
-  UMATComputeStiffnessTensor<tfel::material::ModellingHypothesis::AXISYMMETRICAL,ISOTROPIC>::exe(const UMATReal* const props,
-							   tfel::config::Types<2u,UMATReal,false>::StiffnessTensor& C)
+  UMATComputeStiffnessTensor<umat::SMALLSTRAINSTANDARDBEHAVIOUR,
+			     tfel::material::ModellingHypothesis::AXISYMMETRICAL,
+			     ISOTROPIC>::exe(const UMATReal* const props,
+					     tfel::config::Types<2u,UMATReal,false>::StiffnessTensor& C)
   {
     UMATComputeIsotropicStiffnessTensor2D(props,C);
   } // end of struct UMATComputeStiffnessTensor
 
   void
-  UMATComputeStiffnessTensor<tfel::material::ModellingHypothesis::PLANESTRAIN,ISOTROPIC>::exe(const UMATReal* const props,
-							 tfel::config::Types<2u,UMATReal,false>::StiffnessTensor& C)
+  UMATComputeStiffnessTensor<umat::SMALLSTRAINSTANDARDBEHAVIOUR,
+			     tfel::material::ModellingHypothesis::PLANESTRAIN,
+			     ISOTROPIC>::exe(const UMATReal* const props,
+					     tfel::config::Types<2u,UMATReal,false>::StiffnessTensor& C)
   {
     UMATComputeIsotropicStiffnessTensor2D(props,C);
   } // end of struct UMATComputeStiffnessTensor
 
   void
-  UMATComputeStiffnessTensor<tfel::material::ModellingHypothesis::GENERALISEDPLANESTRAIN,ISOTROPIC>::exe(const UMATReal* const props,
-								    tfel::config::Types<2u,UMATReal,false>::StiffnessTensor& C)
+  UMATComputeStiffnessTensor<umat::SMALLSTRAINSTANDARDBEHAVIOUR,
+			     tfel::material::ModellingHypothesis::GENERALISEDPLANESTRAIN,
+			     ISOTROPIC>::exe(const UMATReal* const props,
+					     tfel::config::Types<2u,UMATReal,false>::StiffnessTensor& C)
   {
     UMATComputeIsotropicStiffnessTensor2D(props,C);
   } // end of struct UMATComputeStiffnessTensor
 
   void
-  UMATComputeStiffnessTensor<tfel::material::ModellingHypothesis::TRIDIMENSIONAL,ISOTROPIC>::exe(const UMATReal* const props,
-							    tfel::config::Types<3u,UMATReal,false>::StiffnessTensor& C)
+  UMATComputeStiffnessTensor<umat::SMALLSTRAINSTANDARDBEHAVIOUR,
+			     tfel::material::ModellingHypothesis::TRIDIMENSIONAL,
+			     ISOTROPIC>::exe(const UMATReal* const props,
+					     tfel::config::Types<3u,UMATReal,false>::StiffnessTensor& C)
   {
     const UMATReal E = props[0];
     const UMATReal n = props[1];
@@ -181,8 +195,10 @@ namespace umat
   } // end of struct UMATComputeStiffnessTensor
 
   void
-  UMATComputeStiffnessTensor<tfel::material::ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN,ORTHOTROPIC>::exe(const UMATReal* const props,
-										       tfel::config::Types<1u,UMATReal,false>::StiffnessTensor& C)
+  UMATComputeStiffnessTensor<umat::SMALLSTRAINSTANDARDBEHAVIOUR,
+			     tfel::material::ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN,
+			     ORTHOTROPIC>::exe(const UMATReal* const props,
+					       tfel::config::Types<1u,UMATReal,false>::StiffnessTensor& C)
   {
     using namespace std;
     using namespace std;
@@ -220,40 +236,52 @@ namespace umat
   } // end of struct UMATComputeStiffnessTensor
 
   void
-  UMATComputeStiffnessTensor<tfel::material::ModellingHypothesis::PLANESTRESS,ORTHOTROPIC>::exe(const UMATReal* const,
-												tfel::config::Types<2u,UMATReal,false>::StiffnessTensor&)
+  UMATComputeStiffnessTensor<umat::SMALLSTRAINSTANDARDBEHAVIOUR,
+			     tfel::material::ModellingHypothesis::PLANESTRESS,
+			     ORTHOTROPIC>::exe(const UMATReal* const,
+					       tfel::config::Types<2u,UMATReal,false>::StiffnessTensor&)
   {
     using namespace std;
 #warning "something needs to be done HERE"
-    string msg("UMATComputeStiffnessTensor<tfel::material::ModellingHypothesis::PLANESTRESS,ORTHOTROPIC>::exe : ");
+    string msg("UMATComputeStiffnessTensor<umat::SMALLSTRAINSTANDARDBEHAVIOUR,"
+	       "tfel::material::ModellingHypothesis::PLANESTRESS"
+	       ",ORTHOTROPIC>::exe : ");
     msg += "unimplemented feature";
     throw(runtime_error(msg));
   } // end of struct UMATComputeStiffnessTensor
 
   void
-  UMATComputeStiffnessTensor<tfel::material::ModellingHypothesis::AXISYMMETRICAL,ORTHOTROPIC>::exe(const UMATReal* const props,
-							   tfel::config::Types<2u,UMATReal,false>::StiffnessTensor& C)
+  UMATComputeStiffnessTensor<umat::SMALLSTRAINSTANDARDBEHAVIOUR,
+			     tfel::material::ModellingHypothesis::AXISYMMETRICAL,
+			     ORTHOTROPIC>::exe(const UMATReal* const props,
+					       tfel::config::Types<2u,UMATReal,false>::StiffnessTensor& C)
   {
     UMATComputeOrthotropicStiffnessTensor2D(props,C);
   } // end of struct UMATComputeStiffnessTensor
 
   void
-  UMATComputeStiffnessTensor<tfel::material::ModellingHypothesis::PLANESTRAIN,ORTHOTROPIC>::exe(const UMATReal* const props,
-							 tfel::config::Types<2u,UMATReal,false>::StiffnessTensor& C)
+  UMATComputeStiffnessTensor<umat::SMALLSTRAINSTANDARDBEHAVIOUR,
+			     tfel::material::ModellingHypothesis::PLANESTRAIN,
+			     ORTHOTROPIC>::exe(const UMATReal* const props,
+					       tfel::config::Types<2u,UMATReal,false>::StiffnessTensor& C)
   {
     UMATComputeOrthotropicStiffnessTensor2D(props,C);
   } // end of struct UMATComputeStiffnessTensor
 
   void
-  UMATComputeStiffnessTensor<tfel::material::ModellingHypothesis::GENERALISEDPLANESTRAIN,ORTHOTROPIC>::exe(const UMATReal* const props,
-								    tfel::config::Types<2u,UMATReal,false>::StiffnessTensor& C)
+  UMATComputeStiffnessTensor<umat::SMALLSTRAINSTANDARDBEHAVIOUR,
+			     tfel::material::ModellingHypothesis::GENERALISEDPLANESTRAIN,
+			     ORTHOTROPIC>::exe(const UMATReal* const props,
+					       tfel::config::Types<2u,UMATReal,false>::StiffnessTensor& C)
   {
     UMATComputeOrthotropicStiffnessTensor2D(props,C);
   } // end of struct UMATComputeStiffnessTensor
 
   void
-  UMATComputeStiffnessTensor<tfel::material::ModellingHypothesis::TRIDIMENSIONAL,ORTHOTROPIC>::exe(const UMATReal* const props,
-										       tfel::config::Types<3u,UMATReal,false>::StiffnessTensor& C)
+  UMATComputeStiffnessTensor<umat::SMALLSTRAINSTANDARDBEHAVIOUR,
+			     tfel::material::ModellingHypothesis::TRIDIMENSIONAL,
+			     ORTHOTROPIC>::exe(const UMATReal* const props,
+					       tfel::config::Types<3u,UMATReal,false>::StiffnessTensor& C)
   {
     // props[0] :'YG1'
     // props[1] :'YG2'

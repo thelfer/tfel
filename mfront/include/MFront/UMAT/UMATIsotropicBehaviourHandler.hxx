@@ -15,10 +15,11 @@
 namespace umat
 {
 
-  template<tfel::material::ModellingHypothesis::Hypothesis H,
+  template<UMATBehaviourType type,
+	   tfel::material::ModellingHypothesis::Hypothesis H,
 	   template<tfel::material::ModellingHypothesis::Hypothesis,typename,bool> class Behaviour>
   struct TFEL_VISIBILITY_LOCAL UMATIsotropicBehaviourHandler
-    : public UMATBehaviourHandler<H,Behaviour>
+    : public UMATBehaviourHandler<type,H,Behaviour>
   {
     TFEL_UMAT_INLINE static
       void exe(const UMATReal *const DTIME ,
@@ -40,7 +41,7 @@ namespace umat
       using namespace tfel::material;
       typedef MechanicalBehaviourTraits<Behaviour<H,UMATReal,false> > MTraits;
       typedef UMATTraits<Behaviour<H,UMATReal,false> > Traits;
-      typedef UMATBehaviourHandler<H,Behaviour> UMATBehaviourHandler;
+      typedef UMATBehaviourHandler<type,H,Behaviour> UMATBehaviourHandler;
       const bool is_defined_ = MTraits::is_defined;
       const bool bs = Traits::requiresStiffnessTensor;
       const bool ba = Traits::requiresThermalExpansionTensor;

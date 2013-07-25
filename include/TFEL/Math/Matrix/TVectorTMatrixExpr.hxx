@@ -83,7 +83,7 @@ namespace tfel{
       {	
 	typedef typename tfel::meta::IF<IsBTemporary,const A,const A&>::type VType;
 	typedef typename VectorTraits<A>::NumType NumType;
-	TFEL_MATH_INLINE VectorConstIterator(const VType v_)
+	TFEL_MATH_INLINE VectorConstIterator(VType v_)
 	  : v(v_),i(0)
 	{}
 	TFEL_MATH_INLINE VectorConstIterator& operator++ ()

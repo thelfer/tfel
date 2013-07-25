@@ -14,10 +14,39 @@
 #include"TFEL/Material/MaterialException.hxx"
 
 #include"MFront/UMAT/UMAT.hxx"
+#include"MFront/UMAT/UMATTraits.hxx"
 #include"MFront/UMAT/UMATConfig.hxx"
 #include"MFront/UMAT/UMATException.hxx"
 
 namespace umat{
+
+  /*!
+   * This structure is called when we fall in a case that the umat
+   * interface is not able to handle. Normally, this case shall have
+   * been handled during the code generation (see the
+   * MFrontUMATInterface class).
+   */
+  struct MFRONT_UMAT_VISIBILITY_EXPORT UMATUnSupportedCaseHandler
+  {
+    /*!
+     * \brief throw an exception
+     */
+    static void
+    exe(const UMATReal *const ,
+	const UMATReal *const,
+	const UMATReal *const,
+	const UMATReal *const,
+	const UMATReal *const,
+	const UMATReal *const,
+	const UMATReal *const,
+	const UMATReal *const,
+	const UMATInt  *const,
+	const UMATReal *const,
+	const UMATReal *const,
+	UMATReal *const,
+	const UMATInt  *const,
+	UMATReal *const); // end of exe
+  }; // end of struct UMATUnSupportedCaseHandler
 
   /*!
    * \class  UMATInterfaceBase
@@ -27,7 +56,6 @@ namespace umat{
    */
   struct MFRONT_UMAT_VISIBILITY_EXPORT UMATInterfaceBase
   {
-
     /*!
      * \brief throw an UMATException. This method shall be called when
      * the number of materials properties declared by the beahviour and the
@@ -142,7 +170,14 @@ namespace umat{
      */
     static void
     checkNTENSValue(const UMATInt,const unsigned short);
-
+    /*!
+     * \brief throw an error message if the behaviour type is not supported for the given hypothesis
+     * \param[in] type : behaviour type
+     * \param[in] H    : hypothesis
+     */
+    static void
+    throwInvalidBehaviourTypeAndModellingHypothesis(const UMATBehaviourType,
+						    const std::string&);
     /*!
      * \brief display an error message if the value of the NDI
      * parameter is not valid

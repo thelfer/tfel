@@ -38,7 +38,7 @@ namespace mfront
     real MN[6][6];
   }; // end of struct MTestUmatRotationMatrix3D
 
-    // Constructeur
+  // Constructeur
   // drot : Matrice de passage élement/global
   MTestUmatRotationMatrix2D::MTestUmatRotationMatrix2D(const real *const drot)
   {
@@ -481,7 +481,8 @@ namespace mfront
     if(this->type==0u){
       if(h==MH::AXISYMMETRICALGENERALISEDPLANESTRAIN){
 	st2tost2<1u,real> De;
-	UMATComputeStiffnessTensor<MH::AXISYMMETRICALGENERALISEDPLANESTRAIN,
+	UMATComputeStiffnessTensor<umat::SMALLSTRAINSTANDARDBEHAVIOUR,
+				   MH::AXISYMMETRICALGENERALISEDPLANESTRAIN,
 				   umat::ISOTROPIC>::exe(&mp(0),De);
 	for(i=0;i!=3u;++i){
 	  for(j=0;j!=3u;++j){
@@ -490,7 +491,8 @@ namespace mfront
 	}
       } else if (h==MH::AXISYMMETRICAL){
 	st2tost2<2u,real> De;
-	UMATComputeStiffnessTensor<MH::AXISYMMETRICAL,
+	UMATComputeStiffnessTensor<umat::SMALLSTRAINSTANDARDBEHAVIOUR,
+				   MH::AXISYMMETRICAL,
 				   umat::ISOTROPIC>::exe(&mp(0),De);
 	for(i=0;i!=4u;++i){
 	  for(j=0;j!=4u;++j){
@@ -499,7 +501,8 @@ namespace mfront
 	}
       } else if (h==MH::PLANESTRESS){
 	st2tost2<2u,real> De;
-	UMATComputeStiffnessTensor<MH::PLANESTRESS,
+	UMATComputeStiffnessTensor<umat::SMALLSTRAINSTANDARDBEHAVIOUR,
+				   MH::PLANESTRESS,
 				   umat::ISOTROPIC>::exe(&mp(0),De);
 	for(i=0;i!=4u;++i){
 	  for(j=0;j!=4u;++j){
@@ -508,7 +511,8 @@ namespace mfront
 	}
       } else if (h==MH::PLANESTRAIN){
 	st2tost2<2u,real> De;
-	UMATComputeStiffnessTensor<MH::PLANESTRAIN,
+	UMATComputeStiffnessTensor<umat::SMALLSTRAINSTANDARDBEHAVIOUR,
+				   MH::PLANESTRAIN,
 				   umat::ISOTROPIC>::exe(&mp(0),De);
 	for(i=0;i!=4u;++i){
 	  for(j=0;j!=4u;++j){
@@ -517,7 +521,8 @@ namespace mfront
 	}
       } else if (h==MH::GENERALISEDPLANESTRAIN){
 	st2tost2<2u,real> De;
-	UMATComputeStiffnessTensor<MH::GENERALISEDPLANESTRAIN,
+	UMATComputeStiffnessTensor<umat::SMALLSTRAINSTANDARDBEHAVIOUR,
+				   MH::GENERALISEDPLANESTRAIN,
 				   umat::ISOTROPIC>::exe(&mp(0),De);
 	for(i=0;i!=4u;++i){
 	  for(j=0;j!=4u;++j){
@@ -526,7 +531,8 @@ namespace mfront
 	}
       } else if (h==MH::TRIDIMENSIONAL){
 	st2tost2<3u,real> De;
-	UMATComputeStiffnessTensor<MH::TRIDIMENSIONAL,
+	UMATComputeStiffnessTensor<umat::SMALLSTRAINSTANDARDBEHAVIOUR,
+				   MH::TRIDIMENSIONAL,
 				   umat::ISOTROPIC>::exe(&mp(0),De);
 	for(i=0;i!=6u;++i){
 	  for(j=0;j!=6u;++j){
@@ -541,7 +547,8 @@ namespace mfront
     } else if(this->type==1u){
       if(h==MH::AXISYMMETRICALGENERALISEDPLANESTRAIN){
 	st2tost2<1u,real> De;
-	UMATComputeStiffnessTensor<MH::AXISYMMETRICALGENERALISEDPLANESTRAIN,
+	UMATComputeStiffnessTensor<umat::SMALLSTRAINSTANDARDBEHAVIOUR,
+				   MH::AXISYMMETRICALGENERALISEDPLANESTRAIN,
 				   umat::ORTHOTROPIC>::exe(&mp(0),De);
 	for(i=0;i!=3u;++i){
 	  for(j=0;j!=3u;++j){
@@ -550,7 +557,8 @@ namespace mfront
 	}
       } else if (h==MH::AXISYMMETRICAL){
 	st2tost2<2u,real> De;
-	UMATComputeStiffnessTensor<MH::AXISYMMETRICAL,
+	UMATComputeStiffnessTensor<umat::SMALLSTRAINSTANDARDBEHAVIOUR,
+				   MH::AXISYMMETRICAL,
 				   umat::ORTHOTROPIC>::exe(&mp(0),De);
 	MTestUmatRotationMatrix2D m(&drot(0,0));
 	m.rotateStiffnessMatrixBackward(&De(0,0));
@@ -561,7 +569,8 @@ namespace mfront
 	}
       } else if (h==MH::PLANESTRESS){
 	st2tost2<2u,real> De;
-	UMATComputeStiffnessTensor<MH::PLANESTRESS,
+	UMATComputeStiffnessTensor<umat::SMALLSTRAINSTANDARDBEHAVIOUR,
+				   MH::PLANESTRESS,
 				   umat::ORTHOTROPIC>::exe(&mp(0),De);
 	MTestUmatRotationMatrix2D m(&drot(0,0));
 	m.rotateStiffnessMatrixBackward(&De(0,0));
@@ -572,7 +581,8 @@ namespace mfront
 	}
       } else if (h==MH::PLANESTRAIN){
 	st2tost2<2u,real> De;
-	UMATComputeStiffnessTensor<MH::PLANESTRAIN,
+	UMATComputeStiffnessTensor<umat::SMALLSTRAINSTANDARDBEHAVIOUR,
+				   MH::PLANESTRAIN,
 				   umat::ORTHOTROPIC>::exe(&mp(0),De);
 	MTestUmatRotationMatrix2D m(&drot(0,0));
 	m.rotateStiffnessMatrixBackward(&De(0,0));
@@ -583,7 +593,8 @@ namespace mfront
 	}
       } else if (h==MH::GENERALISEDPLANESTRAIN){
 	st2tost2<2u,real> De;
-	UMATComputeStiffnessTensor<MH::GENERALISEDPLANESTRAIN,
+	UMATComputeStiffnessTensor<umat::SMALLSTRAINSTANDARDBEHAVIOUR,
+				   MH::GENERALISEDPLANESTRAIN,
 				   umat::ORTHOTROPIC>::exe(&mp(0),De);
 	MTestUmatRotationMatrix2D m(&drot(0,0));
 	m.rotateStiffnessMatrixBackward(&De(0,0));
@@ -594,7 +605,8 @@ namespace mfront
 	}
       } else if (h==MH::TRIDIMENSIONAL){
 	st2tost2<3u,real> De;
-	UMATComputeStiffnessTensor<MH::TRIDIMENSIONAL,
+	UMATComputeStiffnessTensor<umat::SMALLSTRAINSTANDARDBEHAVIOUR,
+				   MH::TRIDIMENSIONAL,
 				   umat::ORTHOTROPIC>::exe(&mp(0),De);
 	MTestUmatRotationMatrix3D m(&drot(0,0));
 	m.rotateStiffnessMatrixBackward(&De(0,0));
@@ -615,7 +627,7 @@ namespace mfront
       throw(runtime_error(msg));
     }
 
-    }
+  }
       
   MTestUmatBehaviour::~MTestUmatBehaviour()
   {}

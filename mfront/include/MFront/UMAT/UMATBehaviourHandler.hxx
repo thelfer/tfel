@@ -12,6 +12,8 @@
 #error "This header shall not be called directly"
 #endif
 
+#include"TFEL/Utilities/Name.hxx"
+
 namespace umat
 {
   
@@ -20,7 +22,8 @@ namespace umat
    * This structure handles two cases wether or not we shall handle
    * local substepping.
    */
-  template<tfel::material::ModellingHypothesis::Hypothesis H,
+  template<UMATBehaviourType type,
+	   tfel::material::ModellingHypothesis::Hypothesis H,
 	   template<tfel::material::ModellingHypothesis::Hypothesis,
 		    typename,bool> class Behaviour>
   struct TFEL_VISIBILITY_LOCAL UMATBehaviourHandler
@@ -37,8 +40,8 @@ namespace umat
       typedef typename BV::BehaviourData  BData;
       TFEL_UMAT_INLINE static void
       exe(BData& data,const UMATReal * const props){
-	UMATComputeStiffnessTensor<H,UMATTraits<BV>::stype>::exe(props,
-								 data.getStiffnessTensor());
+	UMATComputeStiffnessTensor<type,H,UMATTraits<BV>::stype>::exe(props,
+								      data.getStiffnessTensor());
       } // end of exe
     }; // end of struct StiffnessTensorInitializer
     
@@ -52,8 +55,8 @@ namespace umat
       typedef typename BV::BehaviourData  BData;
       TFEL_UMAT_INLINE static void
 	exe(BData& data,const UMATReal * const props){
-	UMATComputeThermalExpansionTensor<H,UMATTraits<BV>::stype>::exe(props,
-									data.getThermalExpansionTensor());
+	UMATComputeThermalExpansionTensor<type,H,UMATTraits<BV>::stype>::exe(props,
+									     data.getThermalExpansionTensor());
       } // end of exe
     }; // end of struct ThermalExpansionTensorInitializer
     

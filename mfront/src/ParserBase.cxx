@@ -63,7 +63,8 @@ namespace mfront
 	t.parseString(*p);
       } catch(exception& e){
 	string msg("ParserBase::openFile : ");
-	msg += "error while parsing external command '"+*p+"'";
+	msg += "error while parsing external command "
+	  "'"+*p+"' ('"+e.what()+"')";
 	throw(runtime_error(msg));
       }
       this->fileTokens.insert(this->fileTokens.begin(),
@@ -410,7 +411,6 @@ namespace mfront
     using namespace std;
     typedef map<string,int>::value_type MVType;
     string name;
-    unsigned short line;
     int value;
     this->checkNotEndOfFile("ParserBase::treatIntegerConstant",
 			    "Cannot read type of static variable.");
@@ -419,7 +419,6 @@ namespace mfront
       this->throwRuntimeError("ParserBase::treatIntegerConstant",
 			      "Variable name '"+name+"' is not valid.");
     }
-    line = this->current->line;
     ++(this->current);
     this->readSpecifiedToken("ParserBase::treatIntegerConstant","=");
     this->checkNotEndOfFile("ParserBase::treatIntegerConstant",

@@ -45,7 +45,7 @@ namespace umat
 	     const UMATReal *const PROPS, const UMATInt  *const NPROPS,
 	     const UMATReal *const PREDEF,const UMATReal *const DPRED,
 	     UMATReal *const STATEV,const UMATInt  *const NSTATV,
-	     UMATReal *const STRESS,      UMATInt  *const KINC)
+	     UMATReal *const STRESS)
     {
       using namespace tfel::meta;
       using namespace tfel::utilities;
@@ -59,35 +59,9 @@ namespace umat
 			  TreatPlaneStressIsotropicBehaviour,
 			  TreatPlaneStressOrthotropicBehaviour>::type Handler;
       UMATInterfaceBase::checkNTENSValue(*NTENS,Traits::DrivingVariableSize);
-      try {
-	Handler::exe(DTIME,DROT,DDSOE,STRAN,DSTRAN,TEMP,DTEMP,
-		     PROPS,NPROPS,PREDEF,DPRED,STATEV,NSTATV,
-		     STRESS);
-      }
-      catch(const UMATIntegrationFailed& e){
-	UMATInterfaceBase::treatUmatException(Name<BV>::getName(),e);
-	*KINC = -1;
-      }
-      catch(const UMATException& e){
-	UMATInterfaceBase::treatUmatException(Name<BV>::getName(),e);
-	*KINC = -2;
-      }
-      catch(const tfel::material::MaterialException& e){
-	UMATInterfaceBase::treatMaterialException(Name<BV>::getName(),e);
-	*KINC = -3;
-      }
-      catch(const tfel::exception::TFELException& e){
-	UMATInterfaceBase::treatTFELException(Name<BV>::getName(),e);
-	*KINC = -4;
-      }
-      catch(const std::exception& e){
-	UMATInterfaceBase::treatStandardException(Name<BV>::getName(),e);
-	*KINC = -5;
-      }
-      catch(...){
-	UMATInterfaceBase::treatUnknownException(Name<BV>::getName());
-	*KINC = -6;
-      }
+      Handler::exe(DTIME,DROT,DDSOE,STRAN,DSTRAN,TEMP,DTEMP,
+		   PROPS,NPROPS,PREDEF,DPRED,STATEV,NSTATV,
+		   STRESS);
     } // end of exe
     
   private:
@@ -262,7 +236,7 @@ namespace umat
       {
 	using namespace tfel::material;
 	const ModellingHypothesis::Hypothesis H = ModellingHypothesis::GENERALISEDPLANESTRAIN;
-	typedef UMATIsotropicBehaviourHandler<H,Behaviour> BehaviourHandler;
+	typedef UMATIsotropicBehaviourHandler<SMALLSTRAINSTANDARDBEHAVIOUR,H,Behaviour> BehaviourHandler;
 	const UMATReal y = PROPS[0]; // Young Modulus
 	const UMATReal n = PROPS[1]; // Poisson ratio
 	const UMATReal c1 = -n/(1-n);
@@ -294,7 +268,7 @@ namespace umat
 	using tfel::fsalgo::copy;
 	typedef Behaviour<H,UMATReal,false> BV;
 	typedef MechanicalBehaviourTraits<BV> Traits;
-	typedef UMATOrthotropicBehaviourHandler<H,Behaviour> BehaviourHandler;
+	typedef UMATOrthotropicBehaviourHandler<SMALLSTRAINSTANDARDBEHAVIOUR,H,Behaviour> BehaviourHandler;
 	const unsigned short offset  = UMATTraits<BV>::propertiesOffset;
 	const unsigned short nprops  = Traits::material_properties_nb;
 	const unsigned short NPROPS_ = offset+nprops == 0 ? 1u : offset+nprops; 

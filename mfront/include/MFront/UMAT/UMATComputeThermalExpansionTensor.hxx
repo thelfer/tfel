@@ -19,13 +19,15 @@
 namespace umat
 {
 
-  template<tfel::material::ModellingHypothesis::Hypothesis H,
+  template<UMATBehaviourType,
+	   tfel::material::ModellingHypothesis::Hypothesis H,
 	   UMATSymmetryType>
   struct UMATComputeThermalExpansionTensor;
 
   template<>
   struct MFRONT_UMAT_VISIBILITY_EXPORT
-  UMATComputeThermalExpansionTensor<tfel::material::ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN,ISOTROPIC>
+  UMATComputeThermalExpansionTensor<umat::SMALLSTRAINSTANDARDBEHAVIOUR,
+				    tfel::material::ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN,ISOTROPIC>
   {
     static void
       exe(const UMATReal* const,
@@ -34,7 +36,8 @@ namespace umat
 
   template<>
   struct MFRONT_UMAT_VISIBILITY_EXPORT
-  UMATComputeThermalExpansionTensor<tfel::material::ModellingHypothesis::AXISYMMETRICAL,ISOTROPIC>
+  UMATComputeThermalExpansionTensor<umat::SMALLSTRAINSTANDARDBEHAVIOUR,
+				    tfel::material::ModellingHypothesis::AXISYMMETRICAL,ISOTROPIC>
   {
     static void
       exe(const UMATReal* const,
@@ -43,7 +46,8 @@ namespace umat
 
   template<>
   struct MFRONT_UMAT_VISIBILITY_EXPORT
-  UMATComputeThermalExpansionTensor<tfel::material::ModellingHypothesis::PLANESTRESS,ISOTROPIC>
+  UMATComputeThermalExpansionTensor<umat::SMALLSTRAINSTANDARDBEHAVIOUR,
+				    tfel::material::ModellingHypothesis::PLANESTRESS,ISOTROPIC>
   {
     static void
       exe(const UMATReal* const,
@@ -51,87 +55,96 @@ namespace umat
   }; // end of struct UMATComputeThermalExpansionTensor
 
 
-  template<>
-  struct MFRONT_UMAT_VISIBILITY_EXPORT
-  UMATComputeThermalExpansionTensor<tfel::material::ModellingHypothesis::PLANESTRAIN,ISOTROPIC>
+template<>
+struct MFRONT_UMAT_VISIBILITY_EXPORT
+UMATComputeThermalExpansionTensor<umat::SMALLSTRAINSTANDARDBEHAVIOUR,
+				  tfel::material::ModellingHypothesis::PLANESTRAIN,ISOTROPIC>
   {
     static void
       exe(const UMATReal* const,
 	  tfel::config::Types<2u,UMATReal,false>::ThermalExpansionTensor&);
   }; // end of struct UMATComputeThermalExpansionTensor
 
-  template<>
-  struct MFRONT_UMAT_VISIBILITY_EXPORT
-  UMATComputeThermalExpansionTensor<tfel::material::ModellingHypothesis::GENERALISEDPLANESTRAIN,ISOTROPIC>
-  {
-    static void
-      exe(const UMATReal* const,
-	  tfel::config::Types<2u,UMATReal,false>::ThermalExpansionTensor&);
-  }; // end of struct UMATComputeThermalExpansionTensor
+template<>
+struct MFRONT_UMAT_VISIBILITY_EXPORT
+UMATComputeThermalExpansionTensor<umat::SMALLSTRAINSTANDARDBEHAVIOUR,
+				  tfel::material::ModellingHypothesis::GENERALISEDPLANESTRAIN,ISOTROPIC>
+{
+  static void
+    exe(const UMATReal* const,
+	tfel::config::Types<2u,UMATReal,false>::ThermalExpansionTensor&);
+}; // end of struct UMATComputeThermalExpansionTensor
 
-  template<>
-  struct MFRONT_UMAT_VISIBILITY_EXPORT
-  UMATComputeThermalExpansionTensor<tfel::material::ModellingHypothesis::TRIDIMENSIONAL,ISOTROPIC>
-  {
-    static void
-      exe(const UMATReal* const,
-	  tfel::config::Types<3u,UMATReal,false>::ThermalExpansionTensor&);
-  }; // end of struct UMATComputeThermalExpansionTensor
+template<>
+struct MFRONT_UMAT_VISIBILITY_EXPORT
+UMATComputeThermalExpansionTensor<umat::SMALLSTRAINSTANDARDBEHAVIOUR,
+				  tfel::material::ModellingHypothesis::TRIDIMENSIONAL,ISOTROPIC>
+{
+  static void
+    exe(const UMATReal* const,
+	tfel::config::Types<3u,UMATReal,false>::ThermalExpansionTensor&);
+}; // end of struct UMATComputeThermalExpansionTensor
 
-  template<>
-  struct MFRONT_UMAT_VISIBILITY_EXPORT
-  UMATComputeThermalExpansionTensor<tfel::material::ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN,ORTHOTROPIC>
+template<>
+struct MFRONT_UMAT_VISIBILITY_EXPORT
+UMATComputeThermalExpansionTensor<umat::SMALLSTRAINSTANDARDBEHAVIOUR,
+				  tfel::material::ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN,ORTHOTROPIC>
   {
     static void
       exe(const UMATReal* const,
 	  tfel::config::Types<1u,UMATReal,false>::ThermalExpansionTensor&);
   }; // end of struct UMATComputeThermalExpansionTensor
 
-  template<>
-  struct MFRONT_UMAT_VISIBILITY_EXPORT
-  UMATComputeThermalExpansionTensor<tfel::material::ModellingHypothesis::AXISYMMETRICAL,ORTHOTROPIC>
+template<>
+struct MFRONT_UMAT_VISIBILITY_EXPORT
+UMATComputeThermalExpansionTensor<umat::SMALLSTRAINSTANDARDBEHAVIOUR,
+				  tfel::material::ModellingHypothesis::AXISYMMETRICAL,ORTHOTROPIC>
   {
     static void
       exe(const UMATReal* const,
 	  tfel::config::Types<2u,UMATReal,false>::ThermalExpansionTensor&);
   }; // end of struct UMATComputeThermalExpansionTensor
 
-  template<>
-  struct MFRONT_UMAT_VISIBILITY_EXPORT
-  UMATComputeThermalExpansionTensor<tfel::material::ModellingHypothesis::PLANESTRESS,ORTHOTROPIC>
-  {
-    static void
-      exe(const UMATReal* const,
-	  tfel::config::Types<2u,UMATReal,false>::ThermalExpansionTensor&);
-  }; // end of struct UMATComputeThermalExpansionTensor
+template<>
+struct MFRONT_UMAT_VISIBILITY_EXPORT
+UMATComputeThermalExpansionTensor<umat::SMALLSTRAINSTANDARDBEHAVIOUR,
+				  tfel::material::ModellingHypothesis::PLANESTRESS,ORTHOTROPIC>
+{
+  static void
+    exe(const UMATReal* const,
+	tfel::config::Types<2u,UMATReal,false>::ThermalExpansionTensor&);
+}; // end of struct UMATComputeThermalExpansionTensor
 
 
-  template<>
-  struct MFRONT_UMAT_VISIBILITY_EXPORT
-  UMATComputeThermalExpansionTensor<tfel::material::ModellingHypothesis::PLANESTRAIN,ORTHOTROPIC>
-  {
-    static void
-      exe(const UMATReal* const,
-	  tfel::config::Types<2u,UMATReal,false>::ThermalExpansionTensor&);
-  }; // end of struct UMATComputeThermalExpansionTensor
+template<>
+struct MFRONT_UMAT_VISIBILITY_EXPORT
+UMATComputeThermalExpansionTensor<umat::SMALLSTRAINSTANDARDBEHAVIOUR,
+				  tfel::material::ModellingHypothesis::PLANESTRAIN,ORTHOTROPIC>
+{
+  static void
+    exe(const UMATReal* const,
+	tfel::config::Types<2u,UMATReal,false>::ThermalExpansionTensor&);
+}; // end of struct UMATComputeThermalExpansionTensor
 
-  template<>
-  struct MFRONT_UMAT_VISIBILITY_EXPORT
-  UMATComputeThermalExpansionTensor<tfel::material::ModellingHypothesis::GENERALISEDPLANESTRAIN,ORTHOTROPIC>
-  {
-    static void
-      exe(const UMATReal* const,
-	  tfel::config::Types<2u,UMATReal,false>::ThermalExpansionTensor&);
-  }; // end of struct UMATComputeThermalExpansionTensor
+template<>
+struct MFRONT_UMAT_VISIBILITY_EXPORT
+UMATComputeThermalExpansionTensor<umat::SMALLSTRAINSTANDARDBEHAVIOUR,
+				  tfel::material::ModellingHypothesis::GENERALISEDPLANESTRAIN,ORTHOTROPIC>
+{
+  static void
+    exe(const UMATReal* const,
+	tfel::config::Types<2u,UMATReal,false>::ThermalExpansionTensor&);
+}; // end of struct UMATComputeThermalExpansionTensor
 
-  template<>
-  struct MFRONT_UMAT_VISIBILITY_EXPORT
-  UMATComputeThermalExpansionTensor<tfel::material::ModellingHypothesis::TRIDIMENSIONAL,ORTHOTROPIC>
-  {
-    static void
-      exe(const UMATReal* const,
-	  tfel::config::Types<3u,UMATReal,false>::ThermalExpansionTensor&);
-  }; // end of struct UMATComputeThermalExpansionTensor
+template<>
+struct MFRONT_UMAT_VISIBILITY_EXPORT
+UMATComputeThermalExpansionTensor<umat::SMALLSTRAINSTANDARDBEHAVIOUR,
+				  tfel::material::ModellingHypothesis::TRIDIMENSIONAL,ORTHOTROPIC>
+{
+  static void
+    exe(const UMATReal* const,
+	tfel::config::Types<3u,UMATReal,false>::ThermalExpansionTensor&);
+}; // end of struct UMATComputeThermalExpansionTensor
 
 } // end of namespace umat
 
