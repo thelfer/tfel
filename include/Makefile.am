@@ -25,8 +25,6 @@ nobase_include_HEADERS= TFEL/Macros.hxx                                         
 			TFEL/Material/MechanicalBehaviourTraits.hxx                                                  \
 			TFEL/Material/ThermalBehaviour.hxx	                                                     \
 			TFEL/Material/ModellingHypothesis.hxx                                                        \
-			TFEL/Material/MechanicalBehaviourData.hxx	                                             \
-			TFEL/Material/MechanicalIntegrationData.hxx                                                  \
 			TFEL/Material/IsotropicLinearFourierLaw.hxx                                                  \
 			TFEL/Material/ThermoMechanicalBehaviour.hxx                                                  \
 			TFEL/Material/BoundsCheck.hxx                                                                \

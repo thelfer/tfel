@@ -115,7 +115,7 @@ nobase_include_HEADERS += MFront/UMAT/UMATException.hxx                     \
 			  MFront/UMAT/UMATGenericPlaneStressHandler.hxx     \
 			  MFront/UMAT/UMATRotationMatrix.hxx                \
 			  MFront/UMAT/UMATOrthotropicBehaviour.hxx          \
-			  MFront/UMAT/UMATComputeStiffnessTensor.hxx        \
+			  MFront/UMAT/UMATComputeStiffnessOperator.hxx      \
 			  MFront/UMAT/UMATComputeThermalExpansionTensor.hxx \
 			  MFront/UMAT/UMATTraits.hxx                        \
 			  MFront/UMAT/UMAT.hxx                              \
@@ -135,7 +135,7 @@ nobase_include_HEADERS += MFront/Aster/Aster.hxx                              \
 			  MFront/Aster/AsterOrthotropicBehaviourHandler.hxx   \
 			  MFront/Aster/AsterRotationMatrix.hxx                \
 			  MFront/Aster/AsterOrthotropicBehaviour.hxx          \
-			  MFront/Aster/AsterComputeStiffnessTensor.hxx        \
+			  MFront/Aster/AsterComputeStiffnessOperator.hxx      \
 			  MFront/Aster/AsterComputeThermalExpansionTensor.hxx \
 			  MFront/Aster/AsterTangentOperator.hxx
 endif

@@ -13,7 +13,7 @@
 #endif
 
 #include"MFront/Aster/AsterTangentOperator.hxx"
-#include"MFront/Aster/AsterComputeStiffnessTensor.hxx"
+#include"MFront/Aster/AsterComputeStiffnessOperator.hxx"
 #include"MFront/Aster/AsterComputeThermalExpansionTensor.hxx"
 
 namespace aster
@@ -25,16 +25,16 @@ namespace aster
     : public AsterInterfaceBase
   {
 
-    struct TFEL_VISIBILITY_LOCAL StiffnessTensorInitializer
+    struct TFEL_VISIBILITY_LOCAL StiffnessOperatorInitializer
     {
       typedef Behaviour<AsterModellingHypothesis<N>::value,AsterReal,false> BV;
       typedef typename BV::BehaviourData  BData;
       TFEL_ASTER_INLINE static void
 	exe(BData& data,const AsterReal * const props){
-	AsterComputeStiffnessTensor<N,AsterTraits<BV>::etype>::exe(props,
-								   data.getStiffnessTensor());
+	AsterComputeStiffnessOperator<N,AsterTraits<BV>::etype>::exe(props,
+								   data.getStiffnessOperator());
       } // end of exe
-    }; // end of struct StiffnessTensorInitializer
+    }; // end of struct StiffnessOperatorInitializer
 
     struct TFEL_VISIBILITY_LOCAL ThermalExpansionTensorInitializer
     {
@@ -89,12 +89,12 @@ namespace aster
 	
     }; // end of struct Error
 
-    template<const bool bs,     // requires StiffnessTensor
+    template<const bool bs,     // requires StiffnessOperator
 	     const bool ba>     // requires ThermalExpansionTensor
       struct TFEL_VISIBILITY_LOCAL Integrator
     {
       typedef typename tfel::meta::IF<bs,
-				      StiffnessTensorInitializer,
+				      StiffnessOperatorInitializer,
 				      DoNothingInitializer>::type SInitializer;
 
       typedef typename tfel::meta::IF<ba,

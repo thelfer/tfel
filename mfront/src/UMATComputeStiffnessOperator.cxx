@@ -1,5 +1,5 @@
 /*!
- * \file   UMATComputeStiffnessTensor.cxx
+ * \file   UMATComputeStiffnessOperator.cxx
  * \brief    
  * \author Helfer Thomas
  * \date   18 mar 2008
@@ -8,13 +8,13 @@
 #include<algorithm>
 
 #include"TFEL/Math/st2tost2.hxx"
-#include"MFront/UMAT/UMATComputeStiffnessTensor.hxx"
+#include"MFront/UMAT/UMATComputeStiffnessOperator.hxx"
 
 namespace umat
 {
  
   static void
-  UMATComputeIsotropicStiffnessTensor2D(const UMATReal* const props,
+  UMATComputeIsotropicStiffnessOperator2D(const UMATReal* const props,
 					tfel::config::Types<2u,UMATReal,false>::StiffnessTensor& C)
   {
     const UMATReal E   = props[0];
@@ -41,7 +41,7 @@ namespace umat
   }
 
   static void
-  UMATComputeOrthotropicStiffnessTensor2D(const UMATReal* const props,
+  UMATComputeOrthotropicStiffnessOperator2D(const UMATReal* const props,
 					  tfel::config::Types<2u,UMATReal,false>::StiffnessTensor& C)
   {
     using namespace std;
@@ -78,10 +78,10 @@ namespace umat
     C(2,1)=(S12*S13-S11*S23)/detS;
     C(2,2)=(S11*S22-S12*S12)/detS;
     C(3,3)=2.*props[6];
-  } // end of struct UMATComputeStiffnessTensor
+  } // end of struct UMATComputeStiffnessOperator
 
   void
-  UMATComputeStiffnessTensor<umat::SMALLSTRAINSTANDARDBEHAVIOUR,
+  UMATComputeStiffnessOperator<umat::SMALLSTRAINSTANDARDBEHAVIOUR,
 			     tfel::material::ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN,
 			     ISOTROPIC>::exe(const UMATReal* const props,
 					     tfel::config::Types<1u,UMATReal,false>::StiffnessTensor& C)
@@ -101,52 +101,52 @@ namespace umat
     C(2,0)=l;
     C(2,1)=l;
     C(2,2)=C11;
-  } // end of struct UMATComputeStiffnessTensor
+  } // end of struct UMATComputeStiffnessOperator
 
   void
-  UMATComputeStiffnessTensor<umat::SMALLSTRAINSTANDARDBEHAVIOUR,
+  UMATComputeStiffnessOperator<umat::SMALLSTRAINSTANDARDBEHAVIOUR,
 			     tfel::material::ModellingHypothesis::PLANESTRESS,
 			     ISOTROPIC>::exe(const UMATReal* const,
 					     tfel::config::Types<2u,UMATReal,false>::StiffnessTensor&)
   {
     using namespace std;
 #warning "something needs to be done HERE"
-    string msg("UMATComputeStiffnessTensor<umat::SMALLSTRAINSTANDARDBEHAVIOUR,"
+    string msg("UMATComputeStiffnessOperator<umat::SMALLSTRAINSTANDARDBEHAVIOUR,"
 	       "tfel::material::ModellingHypothesis::PLANESTRESS"
 	       ",ISOTROPIC>::exe : ");
     msg += "unimplemented feature";
     throw(runtime_error(msg));
-  } // end of struct UMATComputeStiffnessTensor
+  } // end of struct UMATComputeStiffnessOperator
 
   void
-  UMATComputeStiffnessTensor<umat::SMALLSTRAINSTANDARDBEHAVIOUR,
+  UMATComputeStiffnessOperator<umat::SMALLSTRAINSTANDARDBEHAVIOUR,
 			     tfel::material::ModellingHypothesis::AXISYMMETRICAL,
 			     ISOTROPIC>::exe(const UMATReal* const props,
 					     tfel::config::Types<2u,UMATReal,false>::StiffnessTensor& C)
   {
-    UMATComputeIsotropicStiffnessTensor2D(props,C);
-  } // end of struct UMATComputeStiffnessTensor
+    UMATComputeIsotropicStiffnessOperator2D(props,C);
+  } // end of struct UMATComputeStiffnessOperator
 
   void
-  UMATComputeStiffnessTensor<umat::SMALLSTRAINSTANDARDBEHAVIOUR,
+  UMATComputeStiffnessOperator<umat::SMALLSTRAINSTANDARDBEHAVIOUR,
 			     tfel::material::ModellingHypothesis::PLANESTRAIN,
 			     ISOTROPIC>::exe(const UMATReal* const props,
 					     tfel::config::Types<2u,UMATReal,false>::StiffnessTensor& C)
   {
-    UMATComputeIsotropicStiffnessTensor2D(props,C);
-  } // end of struct UMATComputeStiffnessTensor
+    UMATComputeIsotropicStiffnessOperator2D(props,C);
+  } // end of struct UMATComputeStiffnessOperator
 
   void
-  UMATComputeStiffnessTensor<umat::SMALLSTRAINSTANDARDBEHAVIOUR,
+  UMATComputeStiffnessOperator<umat::SMALLSTRAINSTANDARDBEHAVIOUR,
 			     tfel::material::ModellingHypothesis::GENERALISEDPLANESTRAIN,
 			     ISOTROPIC>::exe(const UMATReal* const props,
 					     tfel::config::Types<2u,UMATReal,false>::StiffnessTensor& C)
   {
-    UMATComputeIsotropicStiffnessTensor2D(props,C);
-  } // end of struct UMATComputeStiffnessTensor
+    UMATComputeIsotropicStiffnessOperator2D(props,C);
+  } // end of struct UMATComputeStiffnessOperator
 
   void
-  UMATComputeStiffnessTensor<umat::SMALLSTRAINSTANDARDBEHAVIOUR,
+  UMATComputeStiffnessOperator<umat::SMALLSTRAINSTANDARDBEHAVIOUR,
 			     tfel::material::ModellingHypothesis::TRIDIMENSIONAL,
 			     ISOTROPIC>::exe(const UMATReal* const props,
 					     tfel::config::Types<3u,UMATReal,false>::StiffnessTensor& C)
@@ -192,10 +192,10 @@ namespace umat
     C(5,3)=0.;
     C(5,4)=0.;
     C(5,5)=G;
-  } // end of struct UMATComputeStiffnessTensor
+  } // end of struct UMATComputeStiffnessOperator
 
   void
-  UMATComputeStiffnessTensor<umat::SMALLSTRAINSTANDARDBEHAVIOUR,
+  UMATComputeStiffnessOperator<umat::SMALLSTRAINSTANDARDBEHAVIOUR,
 			     tfel::material::ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN,
 			     ORTHOTROPIC>::exe(const UMATReal* const props,
 					       tfel::config::Types<1u,UMATReal,false>::StiffnessTensor& C)
@@ -233,52 +233,52 @@ namespace umat
     C(2,0)=(S12*S23-S13*S22)/detS;
     C(2,1)=(S12*S13-S11*S23)/detS;
     C(2,2)=(S11*S22-S12*S12)/detS;
-  } // end of struct UMATComputeStiffnessTensor
+  } // end of struct UMATComputeStiffnessOperator
 
   void
-  UMATComputeStiffnessTensor<umat::SMALLSTRAINSTANDARDBEHAVIOUR,
+  UMATComputeStiffnessOperator<umat::SMALLSTRAINSTANDARDBEHAVIOUR,
 			     tfel::material::ModellingHypothesis::PLANESTRESS,
 			     ORTHOTROPIC>::exe(const UMATReal* const,
 					       tfel::config::Types<2u,UMATReal,false>::StiffnessTensor&)
   {
     using namespace std;
 #warning "something needs to be done HERE"
-    string msg("UMATComputeStiffnessTensor<umat::SMALLSTRAINSTANDARDBEHAVIOUR,"
+    string msg("UMATComputeStiffnessOperator<umat::SMALLSTRAINSTANDARDBEHAVIOUR,"
 	       "tfel::material::ModellingHypothesis::PLANESTRESS"
 	       ",ORTHOTROPIC>::exe : ");
     msg += "unimplemented feature";
     throw(runtime_error(msg));
-  } // end of struct UMATComputeStiffnessTensor
+  } // end of struct UMATComputeStiffnessOperator
 
   void
-  UMATComputeStiffnessTensor<umat::SMALLSTRAINSTANDARDBEHAVIOUR,
+  UMATComputeStiffnessOperator<umat::SMALLSTRAINSTANDARDBEHAVIOUR,
 			     tfel::material::ModellingHypothesis::AXISYMMETRICAL,
 			     ORTHOTROPIC>::exe(const UMATReal* const props,
 					       tfel::config::Types<2u,UMATReal,false>::StiffnessTensor& C)
   {
-    UMATComputeOrthotropicStiffnessTensor2D(props,C);
-  } // end of struct UMATComputeStiffnessTensor
+    UMATComputeOrthotropicStiffnessOperator2D(props,C);
+  } // end of struct UMATComputeStiffnessOperator
 
   void
-  UMATComputeStiffnessTensor<umat::SMALLSTRAINSTANDARDBEHAVIOUR,
+  UMATComputeStiffnessOperator<umat::SMALLSTRAINSTANDARDBEHAVIOUR,
 			     tfel::material::ModellingHypothesis::PLANESTRAIN,
 			     ORTHOTROPIC>::exe(const UMATReal* const props,
 					       tfel::config::Types<2u,UMATReal,false>::StiffnessTensor& C)
   {
-    UMATComputeOrthotropicStiffnessTensor2D(props,C);
-  } // end of struct UMATComputeStiffnessTensor
+    UMATComputeOrthotropicStiffnessOperator2D(props,C);
+  } // end of struct UMATComputeStiffnessOperator
 
   void
-  UMATComputeStiffnessTensor<umat::SMALLSTRAINSTANDARDBEHAVIOUR,
+  UMATComputeStiffnessOperator<umat::SMALLSTRAINSTANDARDBEHAVIOUR,
 			     tfel::material::ModellingHypothesis::GENERALISEDPLANESTRAIN,
 			     ORTHOTROPIC>::exe(const UMATReal* const props,
 					       tfel::config::Types<2u,UMATReal,false>::StiffnessTensor& C)
   {
-    UMATComputeOrthotropicStiffnessTensor2D(props,C);
-  } // end of struct UMATComputeStiffnessTensor
+    UMATComputeOrthotropicStiffnessOperator2D(props,C);
+  } // end of struct UMATComputeStiffnessOperator
 
   void
-  UMATComputeStiffnessTensor<umat::SMALLSTRAINSTANDARDBEHAVIOUR,
+  UMATComputeStiffnessOperator<umat::SMALLSTRAINSTANDARDBEHAVIOUR,
 			     tfel::material::ModellingHypothesis::TRIDIMENSIONAL,
 			     ORTHOTROPIC>::exe(const UMATReal* const props,
 					       tfel::config::Types<3u,UMATReal,false>::StiffnessTensor& C)
@@ -317,6 +317,6 @@ namespace umat
     C(3,3)=2.*props[6];
     C(4,4)=2.*props[8];
     C(5,5)=2.*props[7];
-  } // end of struct UMATComputeStiffnessTensor
+  } // end of struct UMATComputeStiffnessOperator
 
 } // end of namespace umat

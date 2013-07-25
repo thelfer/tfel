@@ -27,7 +27,7 @@ namespace umat{
     static const bool useTimeSubStepping = false;
     static const bool doSubSteppingOnInvalidResults  = false;
     static const unsigned short maximumSubStepping   = 0u;
-    static const bool requiresStiffnessTensor        = false;
+    static const bool requiresStiffnessOperator      = false;
     static const bool requiresThermalExpansionTensor = false;
     static const unsigned short propertiesOffset     = 0u;
     static const UMATSymmetryType stype = umat::ISOTROPIC;

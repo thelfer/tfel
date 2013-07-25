@@ -111,7 +111,7 @@ if HAVE_CASTEM
 lib_LTLIBRARIES += libUMATInterface.la
 libUMATInterface_la_SOURCES = UMATInterfaceBase.cxx                 \
 			      UMATFiniteStrain.cxx                  \
-			      UMATComputeStiffnessTensor.cxx        \
+			      UMATComputeStiffnessOperator.cxx      \
 			      UMATComputeThermalExpansionTensor.cxx \
 			      UMATRotationMatrix.cxx                \
 		              UMATOutOfBoundsPolicy.cxx             \
@@ -134,7 +134,7 @@ libAsterInterface_la_SOURCES = AsterInterfaceBase.cxx                 \
 		               AsterException.cxx                     \
 		               AsterTangentOperator.cxx               \
 			       AsterRotationMatrix.cxx                \
-			       AsterComputeStiffnessTensor.cxx        \
+			       AsterComputeStiffnessOperator.cxx      \
 			       AsterComputeThermalExpansionTensor.cxx
 
 libAsterInterface_la_LIBADD  = -L$(top_builddir)/src/Utilities -lTFELUtilities          \

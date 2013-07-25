@@ -10,7 +10,6 @@
 
 #include"TFEL/Metaprogramming/IF.hxx"
 #include"TFEL/Material/MechanicalBehaviourTraits.hxx"
-#include"TFEL/Material/MechanicalBehaviourData.hxx"
 
 #include"MFront/UMAT/UMAT.hxx"
 #include"MFront/UMAT/UMATTraits.hxx"
@@ -18,7 +17,7 @@
 
 #include"MFront/UMAT/UMATOutOfBoundsPolicy.hxx"
 #include"MFront/UMAT/UMATOrthotropicBehaviour.hxx"
-#include"MFront/UMAT/UMATComputeStiffnessTensor.hxx"
+#include"MFront/UMAT/UMATComputeStiffnessOperator.hxx"
 #include"MFront/UMAT/UMATComputeThermalExpansionTensor.hxx"
 #include"MFront/UMAT/UMATRotationMatrix.hxx"
 #include"MFront/UMAT/UMATGetModellingHypothesis.hxx"
@@ -50,7 +49,7 @@ namespace umat{
 	     const UMATReal *const, const UMATInt  *const,
 	     const UMATReal *const, const UMATReal *const,
 	     UMATReal *const,const UMATInt  *const,
-	     UMATReal *const,UMATInt  *const)
+	     UMATReal *const)
     {
       typedef tfel::material::ModellingHypothesis MH;
       UMATInterfaceBase::throwInvalidBehaviourTypeAndModellingHypothesis(type,MH::HypothesisToString(H));

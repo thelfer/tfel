@@ -23,7 +23,6 @@
 #include"TFEL/Utilities/Name.hxx"
 
 #include"TFEL/Material/MechanicalBehaviourTraits.hxx"
-#include"TFEL/Material/MechanicalBehaviourData.hxx"
 #include"TFEL/Material/MaterialException.hxx"
 #include"TFEL/Material/ModellingHypothesis.hxx"
 

@@ -662,12 +662,12 @@ namespace mfront{
   } // end of MFrontBehaviourParserCommon::treatIsotropicElasticBehaviour
 
   void
-  MFrontBehaviourParserCommon::treatRequireStiffnessTensor(void)
+  MFrontBehaviourParserCommon::treatRequireStiffnessOperator(void)
   {
     using namespace std;
-    this->readSpecifiedToken("MFrontBehaviourParserCommon::treatRequireStiffnessTensor",";");
-    this->mb.setRequireStiffnessTensor(true);
-  } // end of MFrontBehaviourParserCommon::treatRequireStiffnessTensor
+    this->readSpecifiedToken("MFrontBehaviourParserCommon::treatRequireStiffnessOperator",";");
+    this->mb.setRequireStiffnessOperator(true);
+  } // end of MFrontBehaviourParserCommon::treatRequireStiffnessOperator
 
   void
   MFrontBehaviourParserCommon::treatRequireThermalExpansionTensor(void)
@@ -1141,6 +1141,8 @@ namespace mfront{
     file << "typedef typename Types::StrainRateStensor      StrainRateStensor;\n";
     file << "typedef typename Types::StiffnessTensor        StiffnessTensor;\n";
     file << "typedef typename Types::ThermalExpansionTensor ThermalExpansionTensor;\n";
+    // tangent operator
+    file << "typedef " << this->mb.getStiffnessOperatorType() << " StiffnessOperator;\n";
   } // end of MFrontBehaviourParserCommon::writeStandardTFELTypedefs
 
   MFrontBehaviourParserCommon::~MFrontBehaviourParserCommon()
@@ -1232,7 +1234,7 @@ namespace mfront{
     if(b2){
       this->behaviourDataFile << "#include\"TFEL/Math/vector.hxx\"\n";
     }
-    this->behaviourDataFile << "#include\"TFEL/Material/MechanicalBehaviourData.hxx\"" << endl;
+    //    this->behaviourDataFile << "#include\"TFEL/Material/MechanicalBehaviourData.hxx\"" << endl;
     this->behaviourDataFile << "#include\"TFEL/Material/ModellingHypothesis.hxx\"" << endl;
     this->behaviourDataFile << endl;
   }
@@ -1244,8 +1246,8 @@ namespace mfront{
 	ThermodynamicForce>::const_iterator p3;
     this->checkBehaviourDataFile();
     this->behaviourDataFile << "protected: \n\n";
-    if(this->mb.requiresStiffnessTensor()){
-      this->behaviourDataFile << "StiffnessTensor D;\n";
+    if(this->mb.requiresStiffnessOperator()){
+      this->behaviourDataFile << "StiffnessOperator D;\n";
     }
     if(this->mb.requiresThermalExpansionTensor()){
       this->behaviourDataFile << "ThermalExpansionTensor A;\n";
@@ -1322,7 +1324,7 @@ namespace mfront{
     this->behaviourDataFile << this->className << "BehaviourData(const ";
     this->behaviourDataFile << this->className << "BehaviourData& src)\n";
     this->behaviourDataFile << ": " << endl;
-    if(this->mb.requiresStiffnessTensor()){
+    if(this->mb.requiresStiffnessOperator()){
       this->behaviourDataFile << "D(src.D),\n";
     }
     if(this->mb.requiresThermalExpansionTensor()){
@@ -1364,54 +1366,54 @@ namespace mfront{
     }
     this->behaviourDataFile << "\n";
     this->behaviourDataFile << "{}\n\n" << endl;
-    this->behaviourDataFile << "/*!\n";
-    this->behaviourDataFile << "* \\brief Constructor\n";
-    this->behaviourDataFile << "*/\n";
-    this->behaviourDataFile << this->className 
-			    << "BehaviourData(const ";
-    if(this->mb.useQt()){
-      this->behaviourDataFile << "MechanicalBehaviourData<N,Type,use_qt>& src)\n";
-    } else {
-      this->behaviourDataFile << "MechanicalBehaviourData<N,Type,false>& src)\n";
-    }
-    this->behaviourDataFile << ":";
-    for(p3=this->mb.getMainVariables().begin();p3!=this->mb.getMainVariables().end();++p3){
-      if(p3->first.increment_known){
-	this->behaviourDataFile << p3->first.name  << "(src." << p3->first.name << "),\n";
-      } else {
-	this->behaviourDataFile << p3->first.name  << "0(src." << p3->first.name << "0),\n";
-      }
-      this->behaviourDataFile << p3->second.name << "(src." << p3->second.name << "),\n";
-    }
-    this->behaviourDataFile << "T(src.T)";
-    SupportedTypes::TypeSize o;
-    this->writeVariableInitializersInBehaviourDataConstructorI(this->behaviourDataFile,
-							       this->mb.getMaterialProperties(),
-							       "src.material_properties","","");
-    o = this->writeVariableInitializersInBehaviourDataConstructorI(this->behaviourDataFile,
-								   this->mb.getStateVariables(),
-								   "src.internal_variables","","");
-    this->writeVariableInitializersInBehaviourDataConstructorI(this->behaviourDataFile,
-							       this->mb.getAuxiliaryStateVariables(),
-							       "src.internal_variables","","",o);
-    this->writeVariableInitializersInBehaviourDataConstructorI(this->behaviourDataFile,
-							       this->mb.getExternalStateVariables(),
-							       "src.external_variables","","");
-    this->behaviourDataFile << "\n";
-    this->behaviourDataFile << "{\n";
-    this->writeVariableInitializersInBehaviourDataConstructorII(this->behaviourDataFile,
-								this->mb.getMaterialProperties(),
-								"src.material_properties","","");
-    o = this->writeVariableInitializersInBehaviourDataConstructorII(this->behaviourDataFile,
-								    this->mb.getStateVariables(),
-								    "src.internal_variables","","");
-    this->writeVariableInitializersInBehaviourDataConstructorII(this->behaviourDataFile,
-								this->mb.getAuxiliaryStateVariables(),
-								"src.internal_variables","","",o);
-    this->writeVariableInitializersInBehaviourDataConstructorII(this->behaviourDataFile,
-								this->mb.getExternalStateVariables(),
-								"src.external_variables","","");
-    this->behaviourDataFile << "}\n\n";
+    // this->behaviourDataFile << "/*!\n";
+    // this->behaviourDataFile << "* \\brief Constructor\n";
+    // this->behaviourDataFile << "*/\n";
+    // this->behaviourDataFile << this->className 
+    // 			    << "BehaviourData(const ";
+    // if(this->mb.useQt()){
+    //   this->behaviourDataFile << "MechanicalBehaviourData<N,Type,use_qt>& src)\n";
+    // } else {
+    //   this->behaviourDataFile << "MechanicalBehaviourData<N,Type,false>& src)\n";
+    // }
+    // this->behaviourDataFile << ":";
+    // for(p3=this->mb.getMainVariables().begin();p3!=this->mb.getMainVariables().end();++p3){
+    //   if(p3->first.increment_known){
+    // 	this->behaviourDataFile << p3->first.name  << "(src." << p3->first.name << "),\n";
+    //   } else {
+    // 	this->behaviourDataFile << p3->first.name  << "0(src." << p3->first.name << "0),\n";
+    //   }
+    //   this->behaviourDataFile << p3->second.name << "(src." << p3->second.name << "),\n";
+    // }
+    // this->behaviourDataFile << "T(src.T)";
+    // SupportedTypes::TypeSize o;
+    // this->writeVariableInitializersInBehaviourDataConstructorI(this->behaviourDataFile,
+    // 							       this->mb.getMaterialProperties(),
+    // 							       "src.material_properties","","");
+    // o = this->writeVariableInitializersInBehaviourDataConstructorI(this->behaviourDataFile,
+    // 								   this->mb.getStateVariables(),
+    // 								   "src.internal_variables","","");
+    // this->writeVariableInitializersInBehaviourDataConstructorI(this->behaviourDataFile,
+    // 							       this->mb.getAuxiliaryStateVariables(),
+    // 							       "src.internal_variables","","",o);
+    // this->writeVariableInitializersInBehaviourDataConstructorI(this->behaviourDataFile,
+    // 							       this->mb.getExternalStateVariables(),
+    // 							       "src.external_variables","","");
+    // this->behaviourDataFile << "\n";
+    // this->behaviourDataFile << "{\n";
+    // this->writeVariableInitializersInBehaviourDataConstructorII(this->behaviourDataFile,
+    // 								this->mb.getMaterialProperties(),
+    // 								"src.material_properties","","");
+    // o = this->writeVariableInitializersInBehaviourDataConstructorII(this->behaviourDataFile,
+    // 								    this->mb.getStateVariables(),
+    // 								    "src.internal_variables","","");
+    // this->writeVariableInitializersInBehaviourDataConstructorII(this->behaviourDataFile,
+    // 								this->mb.getAuxiliaryStateVariables(),
+    // 								"src.internal_variables","","",o);
+    // this->writeVariableInitializersInBehaviourDataConstructorII(this->behaviourDataFile,
+    // 								this->mb.getExternalStateVariables(),
+    // 								"src.external_variables","","");
+    // this->behaviourDataFile << "}\n\n";
     // Creating constructor for external interfaces
     vector<string>::const_iterator i;
     for(i  = this->interfaces.begin(); i != this->interfaces.end();++i){
@@ -1475,61 +1477,61 @@ namespace mfront{
     MBIF& mbif = MBIF::getMFrontBehaviourInterfaceFactory();
     map<DrivingVariable,
 	ThermodynamicForce>::const_iterator p;
-    this->checkBehaviourDataFile();
-    this->behaviourDataFile << "void\n"
-			    << "exportBehaviourData(const ";
-    if(this->mb.useQt()){
-      this->behaviourDataFile << "MechanicalBehaviourData<N,Type,use_qt>& res) const\n";
-    } else {
-      this->behaviourDataFile << "MechanicalBehaviourData<N,Type,false>& res) const\n";
-    }
-    this->behaviourDataFile << "{\n";
-    this->behaviourDataFile << "using namespace tfel::math;\n";
-    for(p=this->mb.getMainVariables().begin();p!=this->mb.getMainVariables().end();++p){
-      if(p->first.increment_known){
-	this->behaviourDataFile << "res." << p->first.name  << " = this->" << p->first.name << ";\n\n";
-      } else {
-	this->behaviourDataFile << "res." << p->first.name  << "0 = this->" << p->first.name << "0;\n\n";
-      }
-      this->behaviourDataFile << "res." << p->second.name << " = this->" << p->second.name << ";\n\n";
-    }
-    if(!this->mb.getMaterialProperties().empty()){
-      this->writeResultsArrayResize(this->behaviourDataFile,
-				    "res.material_properties",
-				    this->mb.getMaterialProperties());
-      this->exportResults(this->behaviourDataFile,
-			  this->mb.getMaterialProperties(),
-			  "res.material_properties",
-			  this->mb.useQt());
-    }
-    if((!this->mb.getStateVariables().empty())||
-       (!this->mb.getAuxiliaryStateVariables().empty())){
-      SupportedTypes::TypeSize s = this->getTotalSize(this->mb.getStateVariables());
-      s += this->getTotalSize(this->mb.getAuxiliaryStateVariables());
-      this->writeResultsArrayResize(this->behaviourDataFile,
-				    "res.internal_variables",s);
-      SupportedTypes::TypeSize o;
-      o = this->exportResults(this->behaviourDataFile,
-			  this->mb.getStateVariables(),
-			  "res.internal_variables",
-			  this->mb.useQt());
-      this->exportResults(this->behaviourDataFile,
-			  this->mb.getAuxiliaryStateVariables(),
-			  "res.internal_variables",
-			  this->mb.useQt(),o);
-    }
-    if(!this->mb.getExternalStateVariables().empty()){
-      this->writeResultsArrayResize(this->behaviourDataFile,
-				    "res.external_variables",
-				    this->mb.getExternalStateVariables());
-      this->exportResults(this->behaviourDataFile,
-			  this->mb.getExternalStateVariables(),
-			  "res.external_variables",
-			  this->mb.useQt());
-    }
-    this->behaviourDataFile << "} // end of exportBehaviourData\n";
-    this->behaviourDataFile << endl;
+    // this->behaviourDataFile << "void\n"
+    // 			    << "exportBehaviourData(const ";
+    // if(this->mb.useQt()){
+    //   this->behaviourDataFile << "MechanicalBehaviourData<N,Type,use_qt>& res) const\n";
+    // } else {
+    //   this->behaviourDataFile << "MechanicalBehaviourData<N,Type,false>& res) const\n";
+    // }
+    // this->behaviourDataFile << "{\n";
+    // this->behaviourDataFile << "using namespace tfel::math;\n";
+    // for(p=this->mb.getMainVariables().begin();p!=this->mb.getMainVariables().end();++p){
+    //   if(p->first.increment_known){
+    // 	this->behaviourDataFile << "res." << p->first.name  << " = this->" << p->first.name << ";\n\n";
+    //   } else {
+    // 	this->behaviourDataFile << "res." << p->first.name  << "0 = this->" << p->first.name << "0;\n\n";
+    //   }
+    //   this->behaviourDataFile << "res." << p->second.name << " = this->" << p->second.name << ";\n\n";
+    // }
+    // if(!this->mb.getMaterialProperties().empty()){
+    //   this->writeResultsArrayResize(this->behaviourDataFile,
+    // 				    "res.material_properties",
+    // 				    this->mb.getMaterialProperties());
+    //   this->exportResults(this->behaviourDataFile,
+    // 			  this->mb.getMaterialProperties(),
+    // 			  "res.material_properties",
+    // 			  this->mb.useQt());
+    // }
+    // if((!this->mb.getStateVariables().empty())||
+    //    (!this->mb.getAuxiliaryStateVariables().empty())){
+    //   SupportedTypes::TypeSize s = this->getTotalSize(this->mb.getStateVariables());
+    //   s += this->getTotalSize(this->mb.getAuxiliaryStateVariables());
+    //   this->writeResultsArrayResize(this->behaviourDataFile,
+    // 				    "res.internal_variables",s);
+    //   SupportedTypes::TypeSize o;
+    //   o = this->exportResults(this->behaviourDataFile,
+    // 			  this->mb.getStateVariables(),
+    // 			  "res.internal_variables",
+    // 			  this->mb.useQt());
+    //   this->exportResults(this->behaviourDataFile,
+    // 			  this->mb.getAuxiliaryStateVariables(),
+    // 			  "res.internal_variables",
+    // 			  this->mb.useQt(),o);
+    // }
+    // if(!this->mb.getExternalStateVariables().empty()){
+    //   this->writeResultsArrayResize(this->behaviourDataFile,
+    // 				    "res.external_variables",
+    // 				    this->mb.getExternalStateVariables());
+    //   this->exportResults(this->behaviourDataFile,
+    // 			  this->mb.getExternalStateVariables(),
+    // 			  "res.external_variables",
+    // 			  this->mb.useQt());
+    // }
+    // this->behaviourDataFile << "} // end of exportBehaviourData\n";
+    // this->behaviourDataFile << endl;
     // Creating constructor for external interfaces
+    this->checkBehaviourDataFile();
     vector<string>::const_iterator i;
     for(i  = this->interfaces.begin();
 	i != this->interfaces.end();++i){
@@ -1544,12 +1546,12 @@ namespace mfront{
   {
     using namespace std;
     this->checkBehaviourDataFile();
-    if(this->mb.requiresStiffnessTensor()){
-      this->behaviourDataFile << "StiffnessTensor&\n";
-      this->behaviourDataFile << "getStiffnessTensor(void)\n";
+    if(this->mb.requiresStiffnessOperator()){
+      this->behaviourDataFile << "StiffnessOperator&\n";
+      this->behaviourDataFile << "getStiffnessOperator(void)\n";
       this->behaviourDataFile << "{\nreturn this->D;\n}\n\n";
-      this->behaviourDataFile << "const StiffnessTensor&\n";
-      this->behaviourDataFile << "getStiffnessTensor(void) const\n";
+      this->behaviourDataFile << "const StiffnessOperator&\n";
+      this->behaviourDataFile << "getStiffnessOperator(void) const\n";
       this->behaviourDataFile << "{\nreturn this->D;\n}\n\n";
     }
     if(this->mb.requiresThermalExpansionTensor()){
@@ -2077,43 +2079,43 @@ namespace mfront{
     }
     this->writeBehaviourParserSpecificConstructorPart();
     this->behaviourFile << "}\n\n";
-    this->behaviourFile << "/*!\n";
-    this->behaviourFile << "* \\brief Constructor\n";
-    this->behaviourFile << "*/\n";
-    if(this->mb.useQt()){        
-      this->behaviourFile << this->className << "("
-			  << "const MechanicalBehaviourData<N,Type,use_qt>& src1,\n"
-			  << "const MechanicalIntegrationData<N,Type,use_qt>& src2)\n";
-      this->behaviourFile << ": " << this->className 
-			  << "BehaviourData<N,Type,use_qt>(src1),\n";
-      this->behaviourFile << this->className 
-			  << "IntegrationData<N,Type,use_qt>(src2)";
-    } else {
-      this->behaviourFile << this->className << "("
-			  << "const MechanicalBehaviourData<N,Type,false>& src1,\n"
-			  << "const MechanicalIntegrationData<N,Type,false>& src2)\n";
-      this->behaviourFile << ": " << this->className 
-			  << "BehaviourData<N,Type,false>(src1),\n";
-      this->behaviourFile << this->className 
-			  << "IntegrationData<N,Type,false>(src2)";
-    }
-    this->behaviourFile << initStateVarsIncrements;
-    this->behaviourFile << "\n{\n";
-    this->behaviourFile << "using namespace std;\n";
-    this->behaviourFile << "using namespace tfel::math;\n";
-    this->behaviourFile << "using std::vector;\n";
-    writeMaterialLaws("MFrontBehaviourParserCommon::writeBehaviourConstructors",
-		      this->behaviourFile,this->materialLaws);		      
-    this->writeBehaviourParameterInitialisation();
-    this->writeBehaviourLocalVariablesInitialisation();
-    if(!this->initLocalVars.empty()){
-      this->behaviourFile << this->initLocalVars;
-    } 
-    if(!predictor.empty()){
-      this->behaviourFile << predictor;
-    }
-    this->writeBehaviourParserSpecificConstructorPart();
-    this->behaviourFile << "}\n\n";
+    // this->behaviourFile << "/*!\n";
+    // this->behaviourFile << "* \\brief Constructor\n";
+    // this->behaviourFile << "*/\n";
+    // if(this->mb.useQt()){        
+    //   this->behaviourFile << this->className << "("
+    // 			  << "const MechanicalBehaviourData<N,Type,use_qt>& src1,\n"
+    // 			  << "const MechanicalIntegrationData<N,Type,use_qt>& src2)\n";
+    //   this->behaviourFile << ": " << this->className 
+    // 			  << "BehaviourData<N,Type,use_qt>(src1),\n";
+    //   this->behaviourFile << this->className 
+    // 			  << "IntegrationData<N,Type,use_qt>(src2)";
+    // } else {
+    //   this->behaviourFile << this->className << "("
+    // 			  << "const MechanicalBehaviourData<N,Type,false>& src1,\n"
+    // 			  << "const MechanicalIntegrationData<N,Type,false>& src2)\n";
+    //   this->behaviourFile << ": " << this->className 
+    // 			  << "BehaviourData<N,Type,false>(src1),\n";
+    //   this->behaviourFile << this->className 
+    // 			  << "IntegrationData<N,Type,false>(src2)";
+    // }
+    // this->behaviourFile << initStateVarsIncrements;
+    // this->behaviourFile << "\n{\n";
+    // this->behaviourFile << "using namespace std;\n";
+    // this->behaviourFile << "using namespace tfel::math;\n";
+    // this->behaviourFile << "using std::vector;\n";
+    // writeMaterialLaws("MFrontBehaviourParserCommon::writeBehaviourConstructors",
+    // 		      this->behaviourFile,this->materialLaws);		      
+    // this->writeBehaviourParameterInitialisation();
+    // this->writeBehaviourLocalVariablesInitialisation();
+    // if(!this->initLocalVars.empty()){
+    //   this->behaviourFile << this->initLocalVars;
+    // } 
+    // if(!predictor.empty()){
+    //   this->behaviourFile << predictor;
+    // }
+    // this->writeBehaviourParserSpecificConstructorPart();
+    // this->behaviourFile << "}\n\n";
     // Creating constructor for external interfaces
     vector<string>::const_iterator i;
     for(i  = this->interfaces.begin();
@@ -2768,7 +2770,7 @@ namespace mfront{
   void MFrontBehaviourParserCommon::writeBehaviourGetTangentOperator()
   {
     this->checkBehaviourFile();
-    this->behaviourFile << "const StiffnessTensor&\n";
+    this->behaviourFile << "const StiffnessOperator&\n";
     this->behaviourFile << "getTangentOperator(void) const{\n";
     this->behaviourFile << "return this->Dt;\n";
     this->behaviourFile << "}\n\n";
@@ -2787,7 +2789,7 @@ namespace mfront{
   {
     this->checkBehaviourFile();
     this->behaviourFile << "//! Tangent operator;\n";
-    this->behaviourFile << "StiffnessTensor Dt;\n";
+    this->behaviourFile << "StiffnessOperator Dt;\n";
   } // end of MFrontBehaviourParserCommon::writeBehaviourTangentStiffnessOperator()
 
   void MFrontBehaviourParserCommon::checkIntegrationDataFile() const {
@@ -2872,7 +2874,7 @@ namespace mfront{
     if(b2){
       this->integrationDataFile << "#include\"TFEL/Math/vector.hxx\"\n";
     }
-    this->integrationDataFile << "#include\"TFEL/Material/MechanicalIntegrationData.hxx\"\n\n";
+    //    this->integrationDataFile << "#include\"TFEL/Material/MechanicalIntegrationData.hxx\"\n\n";
   }
 
   void MFrontBehaviourParserCommon::writeIntegrationDataDefaultMembers(void)
@@ -2983,36 +2985,36 @@ namespace mfront{
       }
     }
     this->integrationDataFile << "\n{}\n\n";
-    this->integrationDataFile << "/*!\n";
-    this->integrationDataFile << "* \\brief Constructor\n";
-    this->integrationDataFile << "*/\n";
-    this->integrationDataFile << this->className 
-			      << "IntegrationData(const ";
-    if(this->mb.useQt()){
-      this->integrationDataFile << "MechanicalIntegrationData<N,Type,use_qt>& src)\n";
-    } else {
-      this->integrationDataFile << "MechanicalIntegrationData<N,Type,false>& src)\n";
-    }
-    this->integrationDataFile << ": \n";
-    for(p2=this->mb.getMainVariables().begin();p2!=this->mb.getMainVariables().end();++p2){
-      if(p2->first.increment_known){
-	this->integrationDataFile << "d" <<p2->first.name  << "(src.d" << p2->first.name << "),\n";
-      } else {
-	this->integrationDataFile << p2->first.name  << "1(src." << p2->first.name << "1),\n";
-      }
-    }
-    this->integrationDataFile << "dt(src.dt),\n";
-    this->integrationDataFile << "dT(src.dT)";
-    if(!this->mb.getExternalStateVariables().empty()){
-      this->writeVariableInitializersInBehaviourDataConstructorI(this->integrationDataFile,
-								 this->mb.getExternalStateVariables(),
-								 "src.dexternal_variables","d","");
-    }
-    this->integrationDataFile << "\n{\n";
-    this->writeVariableInitializersInBehaviourDataConstructorII(this->integrationDataFile,
-								this->mb.getExternalStateVariables(),
-								"src.dexternal_variables","d","");
-    this->integrationDataFile << "}\n\n";
+    // this->integrationDataFile << "/*!\n";
+    // this->integrationDataFile << "* \\brief Constructor\n";
+    // this->integrationDataFile << "*/\n";
+    // this->integrationDataFile << this->className 
+    // 			      << "IntegrationData(const ";
+    // if(this->mb.useQt()){
+    //   this->integrationDataFile << "MechanicalIntegrationData<N,Type,use_qt>& src)\n";
+    // } else {
+    //   this->integrationDataFile << "MechanicalIntegrationData<N,Type,false>& src)\n";
+    // }
+    // this->integrationDataFile << ": \n";
+    // for(p2=this->mb.getMainVariables().begin();p2!=this->mb.getMainVariables().end();++p2){
+    //   if(p2->first.increment_known){
+    // 	this->integrationDataFile << "d" <<p2->first.name  << "(src.d" << p2->first.name << "),\n";
+    //   } else {
+    // 	this->integrationDataFile << p2->first.name  << "1(src." << p2->first.name << "1),\n";
+    //   }
+    // }
+    // this->integrationDataFile << "dt(src.dt),\n";
+    // this->integrationDataFile << "dT(src.dT)";
+    // if(!this->mb.getExternalStateVariables().empty()){
+    //   this->writeVariableInitializersInBehaviourDataConstructorI(this->integrationDataFile,
+    // 								 this->mb.getExternalStateVariables(),
+    // 								 "src.dexternal_variables","d","");
+    // }
+    // this->integrationDataFile << "\n{\n";
+    // this->writeVariableInitializersInBehaviourDataConstructorII(this->integrationDataFile,
+    // 								this->mb.getExternalStateVariables(),
+    // 								"src.dexternal_variables","d","");
+    // this->integrationDataFile << "}\n\n";
     // Creating constructor for external interfaces
     vector<string>::const_iterator i;
     for(i  = this->interfaces.begin(); i != this->interfaces.end();++i){

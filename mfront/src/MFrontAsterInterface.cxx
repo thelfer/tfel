@@ -284,7 +284,7 @@ namespace mfront{
 	msg += "an isotropic behaviour must have an isotropic elastic behaviour";
 	throw(runtime_error(msg));
       }
-      if((mb.requiresStiffnessTensor())||
+      if((mb.requiresStiffnessOperator())||
 	 (mb.requiresThermalExpansionTensor())){
 	unsigned short min_nprops = 2u;
 	if(mb.requiresThermalExpansionTensor()){
@@ -387,10 +387,10 @@ namespace mfront{
     } else {
       out << "static const AsterErrorReportPolicy errorReportPolicy = ASTER_NOERRORREPORT;\n";
     }
-    if(mb.requiresStiffnessTensor()){
-      out << "static const bool requiresStiffnessTensor = true;\n";
+    if(mb.requiresStiffnessOperator()){
+      out << "static const bool requiresStiffnessOperator = true;\n";
     } else {
-      out << "static const bool requiresStiffnessTensor = false;\n";
+      out << "static const bool requiresStiffnessOperator = false;\n";
     }
     if(mb.requiresThermalExpansionTensor()){
       out << "static const bool requiresThermalExpansionTensor = true;\n";
@@ -843,7 +843,7 @@ namespace mfront{
     // the thermal expansion tensor are part of the material properties
     bool foundt = false;
     if(mb.getElasticSymmetryType()==mfront::ISOTROPIC){
-      if(mb.requiresStiffnessTensor()){
+      if(mb.requiresStiffnessOperator()){
 	for(p=coefsHolder.begin();(p!=coefsHolder.end())&&(!founde);++p){
 	  if((p->name=="young")||
 	     (p->name=="nu")){
@@ -886,7 +886,7 @@ namespace mfront{
 	  }
 	}
 	if(foundt){
-	  if(mb.requiresStiffnessTensor()){
+	  if(mb.requiresStiffnessOperator()){
 	    if(coefsHolder.size()<3){
 	      string msg("MFrontAsterInterface::getMaterialPropertiesOffset : the aster interface requires the ");
 	      msg += "following three or four material propertys to be defined (in the right order) when the ";
@@ -949,7 +949,7 @@ namespace mfront{
 	}
       }
     } else if (mb.getElasticSymmetryType()==mfront::ORTHOTROPIC){
-      if(mb.requiresStiffnessTensor()){
+      if(mb.requiresStiffnessOperator()){
 	hasElasticMaterialPropertiesOffset = true;
       }
       if(mb.requiresThermalExpansionTensor()){

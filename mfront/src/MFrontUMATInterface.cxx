@@ -491,10 +491,10 @@ namespace mfront{
     } else {
       out << "0u;\n";
     }
-    if(mb.requiresStiffnessTensor()){
-      out << "static const bool requiresStiffnessTensor = true;\n";
+    if(mb.requiresStiffnessOperator()){
+      out << "static const bool requiresStiffnessOperator = true;\n";
     } else {
-      out << "static const bool requiresStiffnessTensor = false;\n";
+      out << "static const bool requiresStiffnessOperator = false;\n";
     }
     if(mb.requiresThermalExpansionTensor()){
       out << "static const bool requiresThermalExpansionTensor = true;\n";

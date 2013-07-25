@@ -12,7 +12,7 @@
 #include"TFEL/System/ExternalLibraryManager.hxx"
 #include"MFront/UMAT/UMAT.hxx"
 #include"MFront/MTestUmatBehaviourBase.hxx"
-#include"MFront/UMAT/UMATComputeStiffnessTensor.hxx"
+#include"MFront/UMAT/UMATComputeStiffnessOperator.hxx"
 
 namespace mfront
 {

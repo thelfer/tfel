@@ -491,9 +491,7 @@ include/TFEL/Material/IsotropicLinearFourierLaw.hxx -text
 include/TFEL/Material/Lame.hxx -text
 include/TFEL/Material/MaterialException.hxx -text
 include/TFEL/Material/MechanicalBehaviour.hxx -text
-include/TFEL/Material/MechanicalBehaviourData.hxx -text
 include/TFEL/Material/MechanicalBehaviourTraits.hxx -text
-include/TFEL/Material/MechanicalIntegrationData.hxx -text
 include/TFEL/Material/MetallicCFCGenericSlidingSystemsInteractionMatrix.hxx -text
 include/TFEL/Material/MetallicCFCGenericSlidingSystemsInteractionMatrix.ixx -text
 include/TFEL/Material/MetallicCFCSlidingSystems.hxx -text
@@ -963,7 +961,7 @@ mfront/Makefile.am -text
 mfront/include/CMakeLists.txt -text
 mfront/include/MFront/Aster/Aster.hxx -text
 mfront/include/MFront/Aster/AsterBehaviourHandler.hxx -text
-mfront/include/MFront/Aster/AsterComputeStiffnessTensor.hxx -text
+mfront/include/MFront/Aster/AsterComputeStiffnessOperator.hxx -text
 mfront/include/MFront/Aster/AsterComputeThermalExpansionTensor.hxx -text
 mfront/include/MFront/Aster/AsterConfig.hxx -text
 mfront/include/MFront/Aster/AsterException.hxx -text
@@ -1064,7 +1062,7 @@ mfront/include/MFront/SupportedTypes.hxx -text
 mfront/include/MFront/ThermodynamicForce.hxx -text
 mfront/include/MFront/UMAT/UMAT.hxx -text
 mfront/include/MFront/UMAT/UMATBehaviourHandler.hxx -text
-mfront/include/MFront/UMAT/UMATComputeStiffnessTensor.hxx -text
+mfront/include/MFront/UMAT/UMATComputeStiffnessOperator.hxx -text
 mfront/include/MFront/UMAT/UMATComputeThermalExpansionTensor.hxx -text
 mfront/include/MFront/UMAT/UMATConfig.hxx -text
 mfront/include/MFront/UMAT/UMATException.hxx -text
@@ -1111,7 +1109,7 @@ mfront/mtest/MTestUmatBehaviourBase.cxx -text
 mfront/mtest/MTestUmatNormaliseTangentOperator.cxx -text
 mfront/mtest/Makefile.am -text
 mfront/src/AsterChangeBasis.cxx -text
-mfront/src/AsterComputeStiffnessTensor.cxx -text
+mfront/src/AsterComputeStiffnessOperator.cxx -text
 mfront/src/AsterComputeThermalExpansionTensor.cxx -text
 mfront/src/AsterException.cxx -text
 mfront/src/AsterInterfaceBase.cxx -text
@@ -1172,7 +1170,7 @@ mfront/src/ParserBase.cxx -text
 mfront/src/ParserUtilities.cxx -text
 mfront/src/StaticVarHandler.cxx -text
 mfront/src/SupportedTypes.cxx -text
-mfront/src/UMATComputeStiffnessTensor.cxx -text
+mfront/src/UMATComputeStiffnessOperator.cxx -text
 mfront/src/UMATComputeThermalExpansionTensor.cxx -text
 mfront/src/UMATException.cxx -text
 mfront/src/UMATFiniteStrain.cxx -text

@@ -133,7 +133,7 @@ namespace mfront{
       treatIsotropicBehaviour(void);
 
     virtual void
-      treatRequireStiffnessTensor(void);
+    treatRequireStiffnessOperator(void);
 
     virtual void
       treatRequireThermalExpansionTensor(void);

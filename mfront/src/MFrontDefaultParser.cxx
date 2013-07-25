@@ -21,6 +21,8 @@ namespace mfront{
     this->registerVariable("eto");
     this->registerVariable("deto");
     this->registerVariable("sig");
+    this->registerNewCallBack("@RequireStiffnessTensor",
+			      &MFrontDefaultParser::treatRequireStiffnessOperator);
     this->mb.declareAsASmallStrainStandardBehaviour();
   }
 

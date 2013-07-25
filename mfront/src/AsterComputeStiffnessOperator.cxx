@@ -1,5 +1,5 @@
 /*!
- * \file   AsterComputeStiffnessTensor.cxx
+ * \file   AsterComputeStiffnessOperator.cxx
  * \brief    
  * \author Helfer Thomas
  * \date   18 mar 2008
@@ -8,13 +8,13 @@
 #include<algorithm>
 
 #include"TFEL/Math/st2tost2.hxx"
-#include"MFront/Aster/AsterComputeStiffnessTensor.hxx"
+#include"MFront/Aster/AsterComputeStiffnessOperator.hxx"
 
 namespace aster
 {
  
   static void
-  AsterComputeIsotropicStiffnessTensor2D(const AsterReal* const props,
+  AsterComputeIsotropicStiffnessOperator2D(const AsterReal* const props,
 					 tfel::config::Types<2u,AsterReal,false>::StiffnessTensor& C)
   {
     const AsterReal E   = props[0];
@@ -41,7 +41,7 @@ namespace aster
   }
 
   static void
-  AsterComputeOrthotropicStiffnessTensor2D(const AsterReal* const props,
+  AsterComputeOrthotropicStiffnessOperator2D(const AsterReal* const props,
 					  tfel::config::Types<2u,AsterReal,false>::StiffnessTensor& C)
   {
     using namespace std;
@@ -78,10 +78,10 @@ namespace aster
     C(2,1)=(S12*S13-S11*S23)/detS;
     C(2,2)=(S11*S22-S12*S12)/detS;
     C(3,3)=2.*props[6];
-  } // end of struct AsterComputeStiffnessTensor
+  } // end of struct AsterComputeStiffnessOperator
 
   void
-  AsterComputeStiffnessTensor<1u,ISOTROPIC>::exe(const AsterReal* const props,
+  AsterComputeStiffnessOperator<1u,ISOTROPIC>::exe(const AsterReal* const props,
 						 tfel::config::Types<1u,AsterReal,false>::StiffnessTensor& C)
   {
     using namespace std;
@@ -99,17 +99,17 @@ namespace aster
     C(2,0)=l;
     C(2,1)=l;
     C(2,2)=C11;
-  } // end of struct AsterComputeStiffnessTensor
+  } // end of struct AsterComputeStiffnessOperator
 
   void
-  AsterComputeStiffnessTensor<2u,ISOTROPIC>::exe(const AsterReal* const props,
+  AsterComputeStiffnessOperator<2u,ISOTROPIC>::exe(const AsterReal* const props,
 						 tfel::config::Types<2u,AsterReal,false>::StiffnessTensor& C)
   {
-    AsterComputeIsotropicStiffnessTensor2D(props,C);
-  } // end of struct AsterComputeStiffnessTensor
+    AsterComputeIsotropicStiffnessOperator2D(props,C);
+  } // end of struct AsterComputeStiffnessOperator
 
   void
-  AsterComputeStiffnessTensor<3u,ISOTROPIC>::exe(const AsterReal* const props,
+  AsterComputeStiffnessOperator<3u,ISOTROPIC>::exe(const AsterReal* const props,
 						 tfel::config::Types<3u,AsterReal,false>::StiffnessTensor& C)
   {
     const AsterReal E = props[0];
@@ -153,10 +153,10 @@ namespace aster
     C(5,3)=0.;
     C(5,4)=0.;
     C(5,5)=G;
-  } // end of struct AsterComputeStiffnessTensor
+  } // end of struct AsterComputeStiffnessOperator
 
   void
-  AsterComputeStiffnessTensor<1u,ORTHOTROPIC>::exe(const AsterReal* const props,
+  AsterComputeStiffnessOperator<1u,ORTHOTROPIC>::exe(const AsterReal* const props,
 						   tfel::config::Types<1u,AsterReal,false>::StiffnessTensor& C)
   {
     using namespace std;
@@ -192,18 +192,18 @@ namespace aster
     C(2,0)=(S12*S23-S13*S22)/detS;
     C(2,1)=(S12*S13-S11*S23)/detS;
     C(2,2)=(S11*S22-S12*S12)/detS;
-  } // end of struct AsterComputeStiffnessTensor
+  } // end of struct AsterComputeStiffnessOperator
 
   void
-  AsterComputeStiffnessTensor<2u,ORTHOTROPIC>::exe(const AsterReal* const props,
-						   tfel::config::Types<2u,AsterReal,false>::StiffnessTensor& C)
+  AsterComputeStiffnessOperator<2u,ORTHOTROPIC>::exe(const AsterReal* const props,
+						     tfel::config::Types<2u,AsterReal,false>::StiffnessTensor& C)
   {
-    AsterComputeOrthotropicStiffnessTensor2D(props,C);
-  } // end of struct AsterComputeStiffnessTensor
+    AsterComputeOrthotropicStiffnessOperator2D(props,C);
+  } // end of struct AsterComputeStiffnessOperator
 
   void
-  AsterComputeStiffnessTensor<3u,ORTHOTROPIC>::exe(const AsterReal* const props,
-						   tfel::config::Types<3u,AsterReal,false>::StiffnessTensor& C)
+  AsterComputeStiffnessOperator<3u,ORTHOTROPIC>::exe(const AsterReal* const props,
+						     tfel::config::Types<3u,AsterReal,false>::StiffnessTensor& C)
   {
     // props[0] :'YG1'
     // props[1] :'YG2'
@@ -239,6 +239,6 @@ namespace aster
     C(3,3)=2.*props[6];
     C(4,4)=2.*props[8];
     C(5,5)=2.*props[7];
-  } // end of struct AsterComputeStiffnessTensor
+  } // end of struct AsterComputeStiffnessOperator
 
 } // end of namespace aster

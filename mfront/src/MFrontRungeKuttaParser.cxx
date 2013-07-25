@@ -72,6 +72,8 @@ namespace mfront{
     this->registerNewCallBack("@Epsilon",&MFrontRungeKuttaParser::treatEpsilon);
     this->registerNewCallBack("@MinimalTimeStep",
 			      &MFrontRungeKuttaParser::treatMinimalTimeStep);
+    this->registerNewCallBack("@RequireStiffnessTensor",
+			      &MFrontRungeKuttaParser::treatRequireStiffnessOperator);
     this->disableCallBack("@Integrator");
     this->disableCallBack("@ComputedVar");
   }
@@ -506,7 +508,7 @@ namespace mfront{
     }
     // minimal tangent operator
     if(!this->hasConsistantTangentOperator){
-      if(this->mb.requiresStiffnessTensor()){
+      if(this->mb.requiresStiffnessOperator()){
 	this->hasConsistantTangentOperator = true;
 	this->tangentOperator = "if(smt==ELASTIC){\n"
 	                        "this->Dt = this->D;"

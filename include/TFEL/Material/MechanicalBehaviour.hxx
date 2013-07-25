@@ -9,7 +9,6 @@
 #define _LIB_TFEL_MECHANICALBEHAVIOUR_H_ 
 
 #include"TFEL/Material/ModellingHypothesis.hxx"
-#include"TFEL/Material/MechanicalBehaviourData.hxx"
 
 namespace tfel{
 
@@ -78,24 +77,6 @@ namespace tfel{
        */
       virtual IntegrationResult
       integrate(const SMType) = 0;
-      /*!
-       * \return the tangent operator This shall be called afer the
-       * integration.  Normally this operator has been computed at the
-       * end of the integration or after a call to the
-       * getTangentOperator, this is a why we return a reference.
-       *
-       * Interfaces to behaviour law shall use the
-       * hasConsistantTangentOperator of the traits class
-       * MechanicalBehaviourTraits to know if the behaviour provides a
-       * consistent tangent operator. If not, behaviours shall throw
-       * an exception.
-       *
-       * The behaviour indicates wheter the constistent operator is
-       * symmetric through the isConsistantTangentOperatorSymmetric
-       * member of the traits class MechanicalBehaviourTraits
-       */
-      virtual const typename tfel::config::Types<N,NumType,use_qt>::StiffnessTensor&
-      getTangentOperator(void) const = 0;
       /*!
        * This method returns a scaling factor that can be used to:
        * - increase the time step if the integration was successfull

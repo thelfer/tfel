@@ -114,6 +114,8 @@ namespace mfront{
 			      &MFrontImplicitParserBase::treatCompareToNumericalJacobian);
     this->registerNewCallBack("@JacobianComparisonCriterium",
 			      &MFrontImplicitParserBase::treatJacobianComparisonCriterium);
+    this->registerNewCallBack("@RequireStiffnessTensor",
+			      &MFrontImplicitParserBase::treatRequireStiffnessOperator);
     //    this->disableCallBack("@Integrator");
     this->disableCallBack("@ComputedVar");
     this->disableCallBack("@UseQt");
@@ -2182,7 +2184,7 @@ namespace mfront{
     }
     // minimal tangent operator
     if(!this->hasConsistantTangentOperator){
-      if(this->mb.requiresStiffnessTensor()){
+      if(this->mb.requiresStiffnessOperator()){
 	this->hasConsistantTangentOperator = true;
 	this->tangentOperator = "if(smt==ELASTIC){\n"
 	                        "this->Dt = this->D;"

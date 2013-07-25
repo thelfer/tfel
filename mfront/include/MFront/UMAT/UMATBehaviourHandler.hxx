@@ -34,16 +34,16 @@ namespace umat
      * An helper structure which is used to compute the stiffness
      * tensor for the behaviour that requires it.
      */
-    struct TFEL_VISIBILITY_LOCAL StiffnessTensorInitializer
+    struct TFEL_VISIBILITY_LOCAL StiffnessOperatorInitializer
     {
       typedef Behaviour<H,UMATReal,false> BV;
       typedef typename BV::BehaviourData  BData;
       TFEL_UMAT_INLINE static void
       exe(BData& data,const UMATReal * const props){
-	UMATComputeStiffnessTensor<type,H,UMATTraits<BV>::stype>::exe(props,
-								      data.getStiffnessTensor());
+	UMATComputeStiffnessOperator<type,H,UMATTraits<BV>::stype>::exe(props,
+								      data.getStiffnessOperator());
       } // end of exe
-    }; // end of struct StiffnessTensorInitializer
+    }; // end of struct StiffnessOperatorInitializer
     
     /*!
      * An helper structure which is used to compute the thermal
@@ -109,13 +109,13 @@ namespace umat
       
     }; // end of struct Error
 
-    template<const bool bs,     // requires StiffnessTensor
+    template<const bool bs,     // requires StiffnessOperator
 	     const bool ba>     // requires ThermalExpansionTensor
       struct TFEL_VISIBILITY_LOCAL IntegratorWithTimeStepping
     {
       //! A simple alias
       typedef typename tfel::meta::IF<bs,
-				      StiffnessTensorInitializer,
+				      StiffnessOperatorInitializer,
 				      DoNothingInitializer>::type SInitializer;
       //! A simple alias
       typedef typename tfel::meta::IF<ba,
@@ -208,12 +208,12 @@ namespace umat
 	
     }; // end of struct IntegratorWithTimeStepping
 
-    template<const bool bs,     // requires StiffnessTensor
+    template<const bool bs,     // requires StiffnessOperator
 	     const bool ba>     // requires ThermalExpansionTensor
       struct TFEL_VISIBILITY_LOCAL Integrator
     {
       typedef typename tfel::meta::IF<bs,
-				      StiffnessTensorInitializer,
+				      StiffnessOperatorInitializer,
 				      DoNothingInitializer>::type SInitializer;
 
       typedef typename tfel::meta::IF<ba,

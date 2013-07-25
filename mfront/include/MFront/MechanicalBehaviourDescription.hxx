@@ -106,10 +106,15 @@ namespace mfront{
     setElasticSymmetryType(const SymmetryType);
 
     void setUseQt(const bool);
+    /*!
+     * \return the type of the stiffness operator
+     */
+    std::string
+    getStiffnessOperatorType(void) const;
 
-    bool requiresStiffnessTensor(void) const;
+    bool requiresStiffnessOperator(void) const;
 
-    void setRequireStiffnessTensor(const bool);
+    void setRequireStiffnessOperator(const bool);
 
     bool requiresThermalExpansionTensor(void) const;
 
@@ -285,7 +290,7 @@ namespace mfront{
     /*!
      * requires stiffness tensor
      */
-    bool sTensor;
+    bool sOperator;
     /*!
      * requires thermal expansion tensor
      */

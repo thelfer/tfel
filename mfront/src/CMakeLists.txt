@@ -97,7 +97,7 @@ if(HAVE_CASTEM)
     set(UMATInterface_SOURCES
 	UMATInterfaceBase.cxx
 	UMATFiniteStrain.cxx
-	UMATComputeStiffnessTensor.cxx
+	UMATComputeStiffnessOperator.cxx
 	UMATComputeThermalExpansionTensor.cxx
 	UMATRotationMatrix.cxx
 	UMATOutOfBoundsPolicy.cxx
@@ -118,7 +118,7 @@ if(HAVE_ASTER)
     AsterInterfaceBase.cxx
     AsterException.cxx
     AsterRotationMatrix.cxx
-    AsterComputeStiffnessTensor.cxx
+    AsterComputeStiffnessOperator.cxx
     AsterComputeThermalExpansionTensor.cxx
     AsterTangentOperator.cxx)
   tfel_library(AsterInterface ${AsterInterface_SOURCES})

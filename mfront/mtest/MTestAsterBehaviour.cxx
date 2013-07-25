@@ -12,7 +12,7 @@
 #include"TFEL/Math/st2tost2.hxx"
 #include"TFEL/System/ExternalLibraryManager.hxx"
 #include"MFront/Aster/Aster.hxx"
-#include"MFront/Aster/AsterComputeStiffnessTensor.hxx"
+#include"MFront/Aster/AsterComputeStiffnessOperator.hxx"
 
 #include"MFront/MTestUmatNormaliseTangentOperator.hxx"
 #include"MFront/MTestAsterBehaviour.hxx"
@@ -234,7 +234,7 @@ namespace mfront
     typedef tfel::material::ModellingHypothesis MH;
     using tfel::math::vector;
     static const real sqrt2 = sqrt(real(2));
-    AsterInt dimension;
+    unsigned short dimension;
     AsterInt ntens;
     AsterInt nprops = static_cast<AsterInt>(mp.size());
     AsterInt nstatv;

@@ -6,6 +6,7 @@
  * \date   18 Jan 2007
  */
 
+#include<sstream>
 #include<stdexcept>
 
 #include"MFront/MechanicalBehaviourDescription.hxx"
@@ -14,7 +15,7 @@ namespace mfront{
 
   MechanicalBehaviourDescription::MechanicalBehaviourDescription()
     : usableInPurelyImplicitResolution(false),
-      sTensor(false),
+      sOperator(false),
       aTensor(false),
       use_qt(false),
       type(MechanicalBehaviourDescription::GENERALBEHAVIOUR),
@@ -398,17 +399,41 @@ namespace mfront{
     this->stype = t;
   } // end of MechanicalBehaviourDescription::setSymmetryType
 
-  bool
-  MechanicalBehaviourDescription::requiresStiffnessTensor(void) const
+  std::string
+  MechanicalBehaviourDescription::getStiffnessOperatorType(void) const
   {
-    return this->sTensor; 
-  } // end of MechanicalBehaviourDescription::requiresStiffnessTensor
+    using namespace std;
+    if(this->type==GENERALBEHAVIOUR){
+      pair<SupportedTypes::TypeSize,
+	   SupportedTypes::TypeSize> msizes = this->getMainVariablesSize();
+      ostringstream t;
+      t << "tfel::math::tmatrix<"
+	<< msizes.first  << "," 
+	<< msizes.second << ",real>";
+      return t.str();
+    } else if(this->type==SMALLSTRAINSTANDARDBEHAVIOUR){
+      return "StiffnessTensor";
+    } else if(this->type==COHESIVEZONEMODEL){
+      return "tfel::math::tmatrix<N,N,real>";
+    }
+    string msg("MechanicalBehaviourDescription::getStiffnessOperatorType : "
+	       "internal error (unsupported behaviour type)");
+    throw(runtime_error(msg));
+    return "";
+  } // end of MechanicalBehaviourDescription::getStiffnessOperatorType
+
+
+  bool
+  MechanicalBehaviourDescription::requiresStiffnessOperator(void) const
+  {
+    return this->sOperator; 
+  } // end of MechanicalBehaviourDescription::requiresStiffnessOperator
   
   void
-  MechanicalBehaviourDescription::setRequireStiffnessTensor(const bool b)
+  MechanicalBehaviourDescription::setRequireStiffnessOperator(const bool b)
   {
-    this->sTensor = b;
-  } // end of MechanicalBehaviourDescription::setRequireStiffnessTensor
+    this->sOperator = b;
+  } // end of MechanicalBehaviourDescription::setRequireStiffnessOperator
 
   bool
   MechanicalBehaviourDescription::requiresThermalExpansionTensor(void) const

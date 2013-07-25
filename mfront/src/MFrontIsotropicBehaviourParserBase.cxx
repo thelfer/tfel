@@ -65,6 +65,8 @@ namespace mfront{
     this->disableCallBack("@OrthotropicBehaviour");
     this->disableCallBack("@IsotropicElasticBehaviour");
     this->disableCallBack("@IsotropicBehaviour");
+    this->disableCallBack("@RequireStiffnessOperator");
+    this->disableCallBack("@RequireThermalExpansionTensor");
     this->hasPredictionOperator = true;
   } // end of MFrontIsotropicBehaviourParserBase::MFrontIsotropicBehaviourParserBase
 
