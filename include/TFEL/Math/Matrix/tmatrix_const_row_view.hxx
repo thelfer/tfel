@@ -17,6 +17,8 @@ namespace tfel
     template<unsigned short N,
 	     unsigned short M,
 	     unsigned short I,
+	     unsigned short J,
+	     unsigned short K,
 	     typename T>
     struct tmatrix_const_row_view_expr
     {
@@ -119,9 +121,11 @@ namespace tfel
     template<unsigned short N,
 	     unsigned short M,
 	     unsigned short I,
+	     unsigned short J,
+	     unsigned short K,
 	     typename T>
     struct tmatrix_const_row_view
-      : public VectorExpr<tvector<M,T>, tmatrix_const_row_view_expr<N,M,I,T> >
+      : public VectorExpr<tvector<K,T>, tmatrix_const_row_view_expr<N,M,I,J,K,T> >
     {
       /*!
        * constructor

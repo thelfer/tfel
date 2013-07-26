@@ -58,6 +58,7 @@ test_PROGRAMS = hill                  \
 		tvector4              \
 		tvector5              \
 		tvector6              \
+		tvector7              \
 		VectorResultType      \
 		vector1               \
 		parser                \
@@ -132,6 +133,7 @@ tvector3_SOURCES              = tvector3.cxx
 tvector4_SOURCES              = tvector4.cxx
 tvector5_SOURCES              = tvector5.cxx
 tvector6_SOURCES              = tvector6.cxx
+tvector7_SOURCES              = tvector7.cxx
 vector1_SOURCES               = vector1.cxx   
 VectorResultType_SOURCES      = VectorResultType.cxx
 Range_SOURCES                 = Range.cxx

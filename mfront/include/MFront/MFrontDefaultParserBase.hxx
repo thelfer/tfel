@@ -23,6 +23,9 @@ namespace mfront{
   protected:
 
     virtual void
+    writeBehaviourParserSpecificIncludes(void);
+    
+    virtual void
     treatProvidesTangentOperator(void);
 
     virtual void

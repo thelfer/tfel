@@ -22,17 +22,19 @@ namespace tfel
 	     unsigned short N,
 	     unsigned short M,
 	     unsigned short I,
+	     unsigned short J,
+	     unsigned short K,
 	     typename T>
-    class VectorExpr<T_type,tmatrix_column_view_expr<N,M,I,T> >
-      : public VectorConcept<VectorExpr<T_type,tmatrix_column_view_expr<N,M,I,T> > >,
-	public tmatrix_column_view_expr<N,M,I,T>
+    class VectorExpr<T_type,tmatrix_column_view_expr<N,M,I,J,K,T> >
+      : public VectorConcept<VectorExpr<T_type,tmatrix_column_view_expr<N,M,I,J,K,T> > >,
+	public tmatrix_column_view_expr<N,M,I,J,K,T>
     {
 
       VectorExpr& operator=(const VectorExpr&);
 
     public:
       
-      typedef tmatrix_column_view_expr<N,M,I,T>   Expr;
+      typedef tmatrix_column_view_expr<N,M,I,J,K,T>   Expr;
       typedef typename Expr::RunTimeProperties RunTimeProperties;
       typedef typename Expr::value_type      value_type;      
       typedef typename Expr::pointer	     pointer;	    
@@ -62,34 +64,42 @@ namespace tfel
     template<unsigned short N,
 	     unsigned short M,
 	     unsigned short I,
+	     unsigned short J,
+	     unsigned short K,
 	     typename T>
-    T& tmatrix_column_view_expr<N,M,I,T>::operator[](const unsigned short i)
+    T& tmatrix_column_view_expr<N,M,I,J,K,T>::operator[](const unsigned short i)
     {
-      return m(i,I);
+      return m(static_cast<unsigned short>(J+i),I);
     }
 
     template<unsigned short N,
 	     unsigned short M,
 	     unsigned short I,
+	     unsigned short J,
+	     unsigned short K,
 	     typename T>
-    tmatrix_column_view<N,M,I,T>::tmatrix_column_view(tmatrix<N,M,T>& m_)
-      : VectorExpr<tvector<M,T>, tmatrix_column_view_expr<N,M,I,T> >(m_)
+    tmatrix_column_view<N,M,I,J,K,T>::tmatrix_column_view(tmatrix<N,M,T>& m_)
+      : VectorExpr<tvector<K,T>, tmatrix_column_view_expr<N,M,I,J,K,T> >(m_)
     {}
 
     template<unsigned short N,
 	     unsigned short M,
 	     unsigned short I,
+	     unsigned short J,
+	     unsigned short K,
 	     typename T>
-    tmatrix_column_view_expr<N,M,I,T>::tmatrix_column_view_expr(tmatrix<N,M,T>& m_)
+    tmatrix_column_view_expr<N,M,I,J,K,T>::tmatrix_column_view_expr(tmatrix<N,M,T>& m_)
       : m(m_)
     {} // end of tmatrix_column_view_expr
     
     template<unsigned short N,
 	     unsigned short M,
 	     unsigned short I,
+	     unsigned short J,
+	     unsigned short K,
 	     typename T>
-    typename tmatrix_column_view_expr<N,M,I,T>::RunTimeProperties
-    tmatrix_column_view_expr<N,M,I,T>::getRunTimeProperties(void) const
+    typename tmatrix_column_view_expr<N,M,I,J,K,T>::RunTimeProperties
+    tmatrix_column_view_expr<N,M,I,J,K,T>::getRunTimeProperties(void) const
     {
       return RunTimeProperties();
     }
@@ -97,31 +107,37 @@ namespace tfel
     template<unsigned short N,
 	     unsigned short M,
 	     unsigned short I,
+	     unsigned short J,
+	     unsigned short K,
 	     typename T>
     const T& 
-    tmatrix_column_view_expr<N,M,I,T>::operator()(const unsigned short i) const
+    tmatrix_column_view_expr<N,M,I,J,K,T>::operator()(const unsigned short i) const
     {
-      return m(i,I);
+      return m(static_cast<unsigned short>(J+i),I);
     }
 
     template<unsigned short N,
 	     unsigned short M,
 	     unsigned short I,
+	     unsigned short J,
+	     unsigned short K,
 	     typename T>
     T&
-    tmatrix_column_view_expr<N,M,I,T>::operator()(const unsigned short i)
+    tmatrix_column_view_expr<N,M,I,J,K,T>::operator()(const unsigned short i)
     {
-      return m(i,I);
+      return m(static_cast<unsigned short>(J+i),I);
     }
 
     template<unsigned short N,
 	     unsigned short M,
 	     unsigned short I,
+	     unsigned short J,
+	     unsigned short K,
 	     typename T>
     const T& 
-    tmatrix_column_view_expr<N,M,I,T>::operator[](const unsigned short i) const
+    tmatrix_column_view_expr<N,M,I,J,K,T>::operator[](const unsigned short i) const
     {
-      return m(i,I);
+      return m(static_cast<unsigned short>(J+i),I);
     }
 
   } // end of namespace math

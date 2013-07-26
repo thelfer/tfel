@@ -1130,6 +1130,7 @@ namespace mfront{
     file << "typedef typename Types::temperature            temperature;\n";
     file << "typedef typename Types::thermalexpansion       thermalexpansion;\n";
     file << "typedef typename Types::density                density;\n";
+    file << "typedef typename Types::TVector                TVector;\n";
     file << "typedef typename Types::Stensor                Stensor;\n";
     file << "typedef typename Types::Stensor4               Stensor4;\n";
     file << "typedef typename Types::FrequencyStensor       FrequencyStensor;\n";
@@ -1366,54 +1367,6 @@ namespace mfront{
     }
     this->behaviourDataFile << "\n";
     this->behaviourDataFile << "{}\n\n" << endl;
-    // this->behaviourDataFile << "/*!\n";
-    // this->behaviourDataFile << "* \\brief Constructor\n";
-    // this->behaviourDataFile << "*/\n";
-    // this->behaviourDataFile << this->className 
-    // 			    << "BehaviourData(const ";
-    // if(this->mb.useQt()){
-    //   this->behaviourDataFile << "MechanicalBehaviourData<N,Type,use_qt>& src)\n";
-    // } else {
-    //   this->behaviourDataFile << "MechanicalBehaviourData<N,Type,false>& src)\n";
-    // }
-    // this->behaviourDataFile << ":";
-    // for(p3=this->mb.getMainVariables().begin();p3!=this->mb.getMainVariables().end();++p3){
-    //   if(p3->first.increment_known){
-    // 	this->behaviourDataFile << p3->first.name  << "(src." << p3->first.name << "),\n";
-    //   } else {
-    // 	this->behaviourDataFile << p3->first.name  << "0(src." << p3->first.name << "0),\n";
-    //   }
-    //   this->behaviourDataFile << p3->second.name << "(src." << p3->second.name << "),\n";
-    // }
-    // this->behaviourDataFile << "T(src.T)";
-    // SupportedTypes::TypeSize o;
-    // this->writeVariableInitializersInBehaviourDataConstructorI(this->behaviourDataFile,
-    // 							       this->mb.getMaterialProperties(),
-    // 							       "src.material_properties","","");
-    // o = this->writeVariableInitializersInBehaviourDataConstructorI(this->behaviourDataFile,
-    // 								   this->mb.getStateVariables(),
-    // 								   "src.internal_variables","","");
-    // this->writeVariableInitializersInBehaviourDataConstructorI(this->behaviourDataFile,
-    // 							       this->mb.getAuxiliaryStateVariables(),
-    // 							       "src.internal_variables","","",o);
-    // this->writeVariableInitializersInBehaviourDataConstructorI(this->behaviourDataFile,
-    // 							       this->mb.getExternalStateVariables(),
-    // 							       "src.external_variables","","");
-    // this->behaviourDataFile << "\n";
-    // this->behaviourDataFile << "{\n";
-    // this->writeVariableInitializersInBehaviourDataConstructorII(this->behaviourDataFile,
-    // 								this->mb.getMaterialProperties(),
-    // 								"src.material_properties","","");
-    // o = this->writeVariableInitializersInBehaviourDataConstructorII(this->behaviourDataFile,
-    // 								    this->mb.getStateVariables(),
-    // 								    "src.internal_variables","","");
-    // this->writeVariableInitializersInBehaviourDataConstructorII(this->behaviourDataFile,
-    // 								this->mb.getAuxiliaryStateVariables(),
-    // 								"src.internal_variables","","",o);
-    // this->writeVariableInitializersInBehaviourDataConstructorII(this->behaviourDataFile,
-    // 								this->mb.getExternalStateVariables(),
-    // 								"src.external_variables","","");
-    // this->behaviourDataFile << "}\n\n";
     // Creating constructor for external interfaces
     vector<string>::const_iterator i;
     for(i  = this->interfaces.begin(); i != this->interfaces.end();++i){
@@ -2022,14 +1975,16 @@ namespace mfront{
   void MFrontBehaviourParserCommon::writeBehaviourConstructors(void)
   {    
     using namespace std;
-    ostringstream initStateVarsIncrements;
-    this->writeStateVariableIncrementsInitializers(initStateVarsIncrements,
-						   this->mb.getStateVariables(),
+    ostringstream init;
+    if(!this->localVariablesInitializers.empty()){
+      init << ",\n" << this->localVariablesInitializers;
+    }
+    this->writeStateVariableIncrementsInitializers(init,this->mb.getStateVariables(),
 						   this->useStateVarTimeDerivative);
-    this->writeBehaviourConstructors(initStateVarsIncrements.str());
+    this->writeBehaviourConstructors(init.str());
   }
 
-  void MFrontBehaviourParserCommon::writeBehaviourConstructors(const std::string& initStateVarsIncrements,
+  void MFrontBehaviourParserCommon::writeBehaviourConstructors(const std::string& init,
 							       const std::string& predictor)
   {    
     using namespace std;
@@ -2062,7 +2017,7 @@ namespace mfront{
       this->behaviourFile << this->className 
 			  << "IntegrationData<N,Type,false>(src2)";
     }
-    this->behaviourFile << initStateVarsIncrements;
+    this->behaviourFile << init;
     this->behaviourFile << "\n{\n";
     this->behaviourFile << "using namespace std;\n";
     this->behaviourFile << "using namespace tfel::math;\n";
@@ -2099,7 +2054,7 @@ namespace mfront{
     //   this->behaviourFile << this->className 
     // 			  << "IntegrationData<N,Type,false>(src2)";
     // }
-    // this->behaviourFile << initStateVarsIncrements;
+    // this->behaviourFile << init;
     // this->behaviourFile << "\n{\n";
     // this->behaviourFile << "using namespace std;\n";
     // this->behaviourFile << "using namespace tfel::math;\n";
@@ -2123,8 +2078,7 @@ namespace mfront{
       MFrontBehaviourVirtualInterface *interface = mbif.getInterfacePtr(*i);
       interface->writeBehaviourConstructor(this->behaviourFile,
 					   this->className,
-					   this->mb,
-					   initStateVarsIncrements);
+					   this->mb,init);
       this->behaviourFile << "\n{\n";
       this->behaviourFile << "using namespace std;\n";
       this->behaviourFile << "using namespace tfel::math;\n";

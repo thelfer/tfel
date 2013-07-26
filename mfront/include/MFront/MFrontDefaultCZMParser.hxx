@@ -27,6 +27,11 @@ namespace mfront{
 
     ~MFrontDefaultCZMParser();
 
+  protected:
+
+    virtual void
+    writeBehaviourParserSpecificIncludes(void);
+
   }; // end of struct MFrontDefaultCZMParser
 
 } // end of namespace mfront  

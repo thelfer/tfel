@@ -1585,6 +1585,7 @@ tests/Math/tvector3.cxx -text
 tests/Math/tvector4.cxx -text
 tests/Math/tvector5.cxx -text
 tests/Math/tvector6.cxx -text
+tests/Math/tvector7.cxx -text
 tests/Math/vector1.cxx -text
 tests/MetaProgramming/CMakeLists.txt -text
 tests/MetaProgramming/ConceptCheck.cxx -text

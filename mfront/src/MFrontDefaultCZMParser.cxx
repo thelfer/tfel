@@ -22,6 +22,10 @@ namespace mfront{
     this->registerVariable("du");
     this->registerVariable("t");
     this->mb.declareAsACohesiveZoneModel();
+    this->mb.getLocalVariables().push_back(VarHandler("real&","Dt_nn",1u,0u));
+    this->mb.getLocalVariables().push_back(VarHandler("tfel::math::tmatrix_row_view<N,N,0,1,N-1,real>","Dt_nt",1u,0u));
+    this->mb.getLocalVariables().push_back(VarHandler("tfel::math::tmatrix_column_view<N,N,0,1,N-1,real>","Dt_tn",1u,0u));
+    this->localVariablesInitializers += "Dt_nn(this->Dt(0,0)),\nDt_nt(this->Dt),\nDt_tn(this->Dt)";
   }
 
   std::string
@@ -36,6 +40,13 @@ namespace mfront{
   {
     return "DefaultCZMParser";
   }
+
+  void MFrontDefaultCZMParser::writeBehaviourParserSpecificIncludes(void)
+  {
+    MFrontDefaultParserBase::writeBehaviourParserSpecificIncludes();
+    this->behaviourFile << "#include\"TFEL/Math/tmatrix.hxx\"\n";
+    this->behaviourFile << "#include\"TFEL/Math/tvector.hxx\"\n";
+  } // end of MFrontDefaultCZMParser::writeBehaviourParserSpecificIncludes
 
   MFrontDefaultCZMParser::~MFrontDefaultCZMParser()
   {} // end of MFrontDefaultCZMParser::~MFrontDefaultCZMParser

@@ -30,6 +30,7 @@
 #include"TFEL/Math/Vector/VectorConcept.hxx"
 #include"TFEL/Math/Vector/VectorConceptOperations.hxx"
 #include"TFEL/Math/Vector/VectorExpr.hxx"
+#include"TFEL/Math/Vector/TVFTV.hxx"
 
 #include"TFEL/Math/Forward/tmatrix.hxx"
 #include"TFEL/Math/Forward/tvector.hxx"
@@ -39,7 +40,7 @@ namespace tfel{
   namespace math{
 
     //! Partial specialisation for tvectors.
-    /*
+    /*!
      * This is a VectorConcept requirement.
      * \see VectorTraits.
      */
@@ -74,7 +75,7 @@ namespace tfel{
     struct tvector_base
     {
       //! Assignement operator
-      /*
+      /*!
        * \param const VectorExpr<tvector<N,T2>,Expr>&, a vector expression.
        * \return a reference to this.
        * \rec T2 must be assignable to a T.
@@ -86,6 +87,15 @@ namespace tfel{
 	Child&
 	>::type
       operator=(const VectorExpr<tvector<N,T2>,Expr>&);
+      
+      // Assignement operator
+      template<typename T2>
+      TFEL_MATH_INLINE
+      typename tfel::meta::EnableIf<
+	tfel::typetraits::IsAssignableTo<T2,T>::cond,
+	Child&
+	>::type
+      operator=(const tvector<N,T2>&);
 
       // Assignement operator
       template<typename T2,typename Expr>
@@ -97,24 +107,6 @@ namespace tfel{
       operator+=(const VectorExpr<tvector<N,T2>,Expr>&);
 
       // Assignement operator
-      template<typename T2,typename Expr>
-      TFEL_MATH_INLINE
-      typename tfel::meta::EnableIf<
-	tfel::typetraits::IsAssignableTo<T2,T>::cond,
-	Child&
-	>::type
-      operator-=(const VectorExpr<tvector<N,T2>,Expr>&);
-      
-      // Assignement operator
-      template<typename T2>
-      TFEL_MATH_INLINE
-      typename tfel::meta::EnableIf<
-	tfel::typetraits::IsAssignableTo<T2,T>::cond,
-	Child&
-	>::type
-      operator=(const tvector<N,T2>&);
-    
-      // Assignement operator
       template<typename T2>
       TFEL_MATH_INLINE
       typename tfel::meta::EnableIf<
@@ -122,6 +114,15 @@ namespace tfel{
 	Child&
 	>::type
       operator+=(const tvector<N,T2>&);
+    
+      // Assignement operator
+      template<typename T2,typename Expr>
+      TFEL_MATH_INLINE
+      typename tfel::meta::EnableIf<
+	tfel::typetraits::IsAssignableTo<T2,T>::cond,
+	Child&
+	>::type
+      operator-=(const VectorExpr<tvector<N,T2>,Expr>&);
     
       // Assignement operator
       template<typename T2>
@@ -157,22 +158,13 @@ namespace tfel{
     };    
 
     template<unsigned short N, typename T = double>
-    class tvector
+    struct tvector
       : public VectorConcept<tvector<N,T> >,
 	public tvector_base<tvector<N,T>,N,T>
     {
 
-      //! a simple assertion stating that the dimension is valid.
-      TFEL_STATIC_ASSERT(N!=0);
-      
-    protected:
-      // values hold by the tvector.
-      T v[N];
-      
-    public:
-
       //! a simple typedef to the tvector runtime properties
-      /*
+      /*!
        * This is a VectorConcept requirement.
        */
       typedef EmptyRunTimeProperties RunTimeProperties;
@@ -245,19 +237,19 @@ namespace tfel{
       				    difference_type> reverse_iterator;
 #endif
 
-      /*
+      /*!
        * Default constructor.
        */
       tvector();
       
-      /*
+      /*!
        * Constructor from a scalar.
        * \param const T : initial value.
        */
       explicit
       tvector(const T);
 
-      /*
+      /*!
        * Constructor from a pointer.
        * \param const T* : initial values.
        */
@@ -265,7 +257,7 @@ namespace tfel{
       tvector(const T*const);
 
       //! Assignement operator
-      /*
+      /*!
        * \param const VectorExpr<tvector<N,T2>,Expr>&, a vector expression.
        * \return tvector<N,T>& a reference to this.
        * \rec T2 must be assignable to a T.
@@ -320,14 +312,14 @@ namespace tfel{
       TFEL_MATH_INLINE
       T& operator[](const unsigned short);
       
-      /*
+      /*!
        * Return the RunTimeProperties of the tvector
        * \return tvector::RunTimeProperties
        */
       TFEL_MATH_INLINE RunTimeProperties
       getRunTimeProperties(void) const;
 
-      /*
+      /*!
        * return an iterator to the first element of the vector
        * (provided for stl compatibility)
        * \return iterator, an iterator to the first element
@@ -336,7 +328,7 @@ namespace tfel{
       iterator
       begin(void);
       
-      /*
+      /*!
        * return an const iterator to the first element of the vector
        * (provided for stl compatibility)
        * \return const_iterator, a const iterator to the first element
@@ -345,7 +337,7 @@ namespace tfel{
       const_iterator 
       begin(void) const;
 
-      /*
+      /*!
        * return an iterator after the last element of the vector
        * (provided for stl compatibility)
        * \return iterator, an iterator after the last element
@@ -354,7 +346,7 @@ namespace tfel{
       iterator
       end(void);
       
-      /*
+      /*!
        * return an const iterator after the last element of the vector
        * (provided for stl compatibility)
        * \return const_iterator, a const iterator after the last element
@@ -363,7 +355,7 @@ namespace tfel{
       const_iterator
       end(void) const;
 
-      /*
+      /*!
        * return an reverse iterator to the last element of the vector
        * (provided for stl compatibility)
        * \return reverse_iterator, a reverse iterator to the last element
@@ -372,7 +364,7 @@ namespace tfel{
       reverse_iterator
       rbegin(void);
       
-      /*
+      /*!
        * return an const reverse iterator to the last element of the vector
        * (provided for stl compatibility)
        * \return const_reverse_iterator, a const reverse iterator to the last element
@@ -381,7 +373,7 @@ namespace tfel{
       const_reverse_iterator
       rbegin(void) const;
       
-      /*
+      /*!
        * return an  reverse iterator before the first element of the vector
        * (provided for stl compatibility)
        * \return reverse_iterator, a reverse iterator before the first element
@@ -389,8 +381,7 @@ namespace tfel{
       TFEL_MATH_INLINE
       reverse_iterator
       rend(void);
-      
-      /*
+      /*!
        * return an const reverse iterator before the first element of the vector
        * (provided for stl compatibility)
        * \return const_reverse_iterator, a const reverse iterator before the first element
@@ -398,19 +389,65 @@ namespace tfel{
       TFEL_MATH_INLINE
       const_reverse_iterator
       rend(void) const;
-
-      /*
+      /*!
        * copy the Nth elements following this argument.
        * \param const InputIterator, an iterator to the first element
        * to be copied.
        */
       template<typename InputIterator>
-      void 
+      TFEL_MATH_INLINE void 
       copy(const InputIterator src);
-
-      unsigned short
+      /*!
+       * size of the tiny vector
+       * (compatibility with vector)
+       */
+      TFEL_MATH_INLINE unsigned short
       size(void) const;
+      /*!
+       * \brief create a slice
+       * \param[in] I : the starting index
+       */
+      template<unsigned short I>
+      VectorExpr<tvector<N-I,T>,TVFTVExpr<N-I,N,I,T,false> >
+      slice(void);
+      /*!
+       * \brief create a slice
+       * \param[in] I : the starting index
+       * \param[in] J : the size of the slice
+       * \note : the slice object contains a reference to the source
+       * vector, so this vector shall not be destroyed before the slice
+       */
+      template<unsigned short I,
+	       unsigned short J>
+      VectorExpr<tvector<J-I,T>,TVFTVExpr<J-I,N,I,T,false> >
+      slice(void);
+      /*!
+       * \brief create a slice (const version)
+       * \param[in] I : the starting index
+       * \note : the slice object contains a reference to the source
+       * vector, so this vector shall not be destroyed before the slice
+       */
+      template<unsigned short I>
+      VectorExpr<tvector<N-I,T>,TVFTVExpr<N-I,N,I,T,true> >
+      slice(void) const;
+      /*!
+       * \brief create a slice (const version)
+       * \param[in] I : the starting index
+       * \param[in] J : the size of the slice
+       * \note : the slice object contains a reference to the source
+       * vector, so this vector shall not be destroyed before the slice
+       */
+      template<unsigned short I,
+	       unsigned short J>
+      VectorExpr<tvector<J-I,T>,TVFTVExpr<J-I,N,I,T,true> >
+      slice(void) const;
 
+    protected:
+      // values hold by the tvector.
+      T v[N];
+    private:
+      //! a simple assertion stating that the dimension is valid.
+      TFEL_STATIC_ASSERT(N!=0);
     };
 
     /*!
@@ -431,7 +468,7 @@ namespace tfel{
     abs(const tvector<N,T>& v);
 
     //! Serialisation operator
-    /*
+    /*!
      * \param  std::ostream&, stream to which the vector is serialized.
      * \param  const tvector<N,T>&, the tvector serialized.
      * \return std::ostream&, stream to which the vector has been serialized.
@@ -464,12 +501,50 @@ namespace tfel{
     tvector<3u,T>
     cross_product(const tvector<3u,T>&,
 		  const tvector<3u,T>&);
+    /*!
+     * \brief create a slice from a tiny vector
+     * \param[in] v : vector
+     * \note : the slice object contains a reference to the source
+     * vector, so this vector shall not be destroyed before the slice
+     */
+    template<unsigned short I,unsigned short N,typename T>
+    VectorExpr<tvector<N-I,T>,TVFTVExpr<N-I,N,I,T,false> >
+    slice(tvector<N,T>&);
+    /*!
+     * \brief create a slice from a tiny vector
+     * \param[in] v : vector
+     * \note : the slice object contains a reference to the source
+     * vector, so this vector shall not be destroyed before the slice
+     */
+    template<unsigned short I,unsigned short J,
+	     unsigned short N,typename T>
+    VectorExpr<tvector<J-I,T>,TVFTVExpr<J-I,N,I,T,false> >
+    slice(tvector<N,T>&);
+    /*!
+     * \brief create a slice from a tiny vector
+     * \param[in] v : vector
+     * \note : the slice object contains a reference to the source
+     * vector, so this vector shall not be destroyed before the slice
+     */
+    template<unsigned short I,unsigned short N,typename T>
+    VectorExpr<tvector<N-I,T>,TVFTVExpr<N-I,N,I,T,true> >
+    slice(const tvector<N,T>&);
+    /*!
+     * \brief create a slice from a tiny vector (const version)
+     * \param[in] v : vector
+     * \note : the slice object contains a reference to the source
+     * vector, so this vector shall not be destroyed before the slice
+     */
+    template<unsigned short I,unsigned short J,
+	     unsigned short N,typename T>
+    VectorExpr<tvector<J-I,T>,TVFTVExpr<J-I,N,I,T,true> >
+    slice(const tvector<N,T>&);
 
   } // end of namespace math
 
   namespace typetraits{
     
-    /*
+    /*!
      * Partial specialisation for tvectors
      */
     template<unsigned short N,typename T2,typename T>

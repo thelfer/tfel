@@ -38,7 +38,7 @@ namespace umat{
      */
     TFEL_UMAT_INLINE2 static
       void exe(const UMATInt  *const NTENS, const UMATReal *const DTIME,
-	       const UMATReal *const DROT,  const UMATReal *const DDSOE,
+	       const UMATReal *const DROT,  UMATReal *const DDSOE,
 	       const UMATReal *const STRAN, const UMATReal *const DSTRAN,
 	       const UMATReal *const TEMP,  const UMATReal *const DTEMP,
 	       const UMATReal *const PROPS, const UMATInt  *const NPROPS,
@@ -83,7 +83,7 @@ namespace umat{
     template<tfel::material::ModellingHypothesis::Hypothesis H>
     TFEL_UMAT_INLINE2 static void
     callBehaviour(const UMATInt  *const NTENS, const UMATReal *const DTIME,
-		  const UMATReal *const DROT,  const UMATReal *const DDSOE,
+		  const UMATReal *const DROT,  UMATReal *const DDSOE,
 		  const UMATReal *const STRAN, const UMATReal *const DSTRAN,
 		  const UMATReal *const TEMP,  const UMATReal *const DTEMP,
 		  const UMATReal *const PROPS, const UMATInt  *const NPROPS,

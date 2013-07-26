@@ -502,7 +502,9 @@ namespace mfront{
 
     std::vector<std::string> interfaces;
 
+    std::string localVariablesInitializers;
     std::string initLocalVars;
+
     std::string integrator;
     std::string updateAuxiliaryStateVars;
 

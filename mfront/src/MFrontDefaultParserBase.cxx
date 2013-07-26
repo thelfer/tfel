@@ -25,6 +25,12 @@ namespace mfront{
   }
 
   void
+  MFrontDefaultParserBase::writeBehaviourParserSpecificIncludes()
+  {
+    MFrontBehaviourParserCommon::writeBehaviourParserSpecificIncludes();
+  } // end of MFrontDefaultParserBase::writeBehaviourParserSpecificIncludes
+
+  void
   MFrontDefaultParserBase::treatProvidesTangentOperator()
   {
     using namespace std;

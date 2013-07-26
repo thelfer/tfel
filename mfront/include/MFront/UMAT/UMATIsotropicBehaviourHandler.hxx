@@ -24,7 +24,7 @@ namespace umat
     TFEL_UMAT_INLINE static
       void exe(const UMATReal *const DTIME ,
 	       const UMATReal *const,
-	       const UMATReal *const DDSOE,
+	       UMATReal *const DDSOE,
 	       const UMATReal *const STRAN ,
 	       const UMATReal *const DSTRAN,
 	       const UMATReal *const TEMP  ,

@@ -70,7 +70,7 @@ namespace umat{
   {
     TFEL_UMAT_INLINE2 static
     void exe(const UMATInt  *const NTENS, const UMATReal *const DTIME,
-	     const UMATReal *const DROT,  const UMATReal *const DDSOE,
+	     const UMATReal *const DROT,  UMATReal *const DDSOE,
 	     const UMATReal *const STRAN, const UMATReal *const DSTRAN,
 	     const UMATReal *const TEMP,  const UMATReal *const DTEMP,
 	     const UMATReal *const PROPS, const UMATInt  *const NPROPS,
@@ -111,7 +111,7 @@ namespace umat{
   {
     TFEL_UMAT_INLINE2 static
     void exe(const UMATInt  *const NTENS, const UMATReal *const DTIME,
-	     const UMATReal *const DROT,  const UMATReal *const DDSOE,
+	     const UMATReal *const DROT,  UMATReal *const DDSOE,
 	     const UMATReal *const STRAN, const UMATReal *const DSTRAN,
 	     const UMATReal *const TEMP,  const UMATReal *const DTEMP,
 	     const UMATReal *const PROPS, const UMATInt  *const NPROPS,
@@ -150,7 +150,7 @@ namespace umat{
   {
     TFEL_UMAT_INLINE2 static
     void exe(const UMATInt  *const NTENS, const UMATReal *const DTIME,
-	     const UMATReal *const DROT,  const UMATReal *const DDSOE,
+	     const UMATReal *const DROT,  UMATReal *const DDSOE,
 	     const UMATReal *const STRAN, const UMATReal *const DSTRAN,
 	     const UMATReal *const TEMP,  const UMATReal *const DTEMP,
 	     const UMATReal *const PROPS, const UMATInt  *const NPROPS,
@@ -169,9 +169,18 @@ namespace umat{
 							MH::PLANESTRAIN,Behaviour>,
 			  UMATUnSupportedCaseHandler>::type Handler;
       UMATInterfaceBase::checkNTENSValue(*NTENS,Traits::DrivingVariableSize);
-      Handler::exe(DTIME,DROT,DDSOE,STRAN,DSTRAN,TEMP,DTEMP,
-		   PROPS,NPROPS,PREDEF,DPRED,STATEV,NSTATV,
-		   STRESS);
+      UMATReal D[4];
+      UMATReal u[2],du[2],t[2];
+      u[0]  = STRAN[1];  u[1]  = STRAN[0];
+      du[0] = DSTRAN[1]; du[1] = DSTRAN[0];
+      t[0]  = STRESS[1]; t[1]  = STRESS[0];
+      Handler::exe(DTIME,DROT,DDSOE,u,du,TEMP,DTEMP,
+		   PROPS,NPROPS,PREDEF,DPRED,STATEV,NSTATV,t);
+      D[0] = DDSOE[0]; D[1] = DDSOE[1];
+      D[2] = DDSOE[2]; D[3] = DDSOE[3];
+      DDSOE[0] = D[3]; DDSOE[1] = D[2];
+      DDSOE[2] = D[1]; DDSOE[3] = D[0];
+      STRESS[0] = t[1]; STRESS[1] = t[0];
     } // end of exe
   }; // end of struct UMATInterfaceDispatch
 
@@ -183,7 +192,7 @@ namespace umat{
   {
     TFEL_UMAT_INLINE2 static
     void exe(const UMATInt  *const NTENS, const UMATReal *const DTIME,
-	     const UMATReal *const DROT,  const UMATReal *const DDSOE,
+	     const UMATReal *const DROT,  UMATReal *const DDSOE,
 	     const UMATReal *const STRAN, const UMATReal *const DSTRAN,
 	     const UMATReal *const TEMP,  const UMATReal *const DTEMP,
 	     const UMATReal *const PROPS, const UMATInt  *const NPROPS,
@@ -202,9 +211,20 @@ namespace umat{
 							MH::TRIDIMENSIONAL,Behaviour>,
 			  UMATUnSupportedCaseHandler>::type Handler;
       UMATInterfaceBase::checkNTENSValue(*NTENS,Traits::DrivingVariableSize);
-      Handler::exe(DTIME,DROT,DDSOE,STRAN,DSTRAN,TEMP,DTEMP,
-		   PROPS,NPROPS,PREDEF,DPRED,STATEV,NSTATV,
-		   STRESS);
+      UMATReal D[9];
+      UMATReal u[3],du[3],t[3];
+      u[0]  = STRAN[2];  u[1]  = STRAN[0];  u[2]  = STRAN[1]; 
+      du[0] = DSTRAN[2]; du[1] = DSTRAN[0]; du[2] = DSTRAN[1];
+      t[0]  = STRESS[2]; t[1]  = STRESS[0]; t[2]  = STRESS[1];
+      Handler::exe(DTIME,DROT,DDSOE,u,du,TEMP,DTEMP,
+		   PROPS,NPROPS,PREDEF,DPRED,STATEV,NSTATV,t);
+      D[0] = DDSOE[0]; D[1] = DDSOE[1]; D[2] = DDSOE[2];
+      D[3] = DDSOE[3]; D[4] = DDSOE[4]; D[5] = DDSOE[5]; 
+      D[6] = DDSOE[6]; D[7] = DDSOE[7]; D[8] = DDSOE[8]; 
+      DDSOE[0] = D[4]; DDSOE[1] = D[5]; DDSOE[2] = D[3];
+      DDSOE[3] = D[7]; DDSOE[4] = D[8]; DDSOE[5] = D[6]; 
+      DDSOE[6] = D[1]; DDSOE[7] = D[2]; DDSOE[8] = D[0]; 
+      STRESS[0] = t[1]; STRESS[1] = t[2]; STRESS[2] = t[0];
     } // end of exe
   }; // end of struct UMATInterfaceDispatch
 

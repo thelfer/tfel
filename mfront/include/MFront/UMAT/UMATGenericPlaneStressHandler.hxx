@@ -39,7 +39,7 @@ namespace umat
      */
     TFEL_UMAT_INLINE2 static
     void exe(const UMATInt  *const NTENS, const UMATReal *const DTIME,
-	     const UMATReal *const DROT,  const UMATReal *const DDSOE,
+	     const UMATReal *const DROT,  UMATReal *const DDSOE,
 	     const UMATReal *const STRAN, const UMATReal *const DSTRAN,
 	     const UMATReal *const TEMP,  const UMATReal *const DTEMP,
 	     const UMATReal *const PROPS, const UMATInt  *const NPROPS,
@@ -88,7 +88,7 @@ namespace umat
 	     const UMATReal c2,
 	     const UMATReal c3,
 	     const UMATReal *const DTIME,
-	     const UMATReal *const DROT,  const UMATReal *const DDSOE,
+	     const UMATReal *const DROT,  UMATReal *const DDSOE,
 	     const UMATReal *const STRAN, const UMATReal *const DSTRAN,
 	     const UMATReal *const TEMP,  const UMATReal *const DTEMP,
 	     const UMATReal *const PROPS, const UMATInt  *const NPROPS,
@@ -184,7 +184,7 @@ namespace umat
     TFEL_UMAT_INLINE2 static
     void iter(const UMATReal *const DTIME,
 	      const UMATReal *const DROT,
-	      const UMATReal *const DDSOE,
+	      UMATReal *const DDSOE,
 	      const UMATReal *const TEMP,
 	      const UMATReal *const DTEMP,
 	      const UMATReal *const PROPS,
@@ -226,7 +226,7 @@ namespace umat
 	
       TFEL_UMAT_INLINE2 static
       void exe(const UMATReal *const DTIME,
-	       const UMATReal *const DROT,  const UMATReal *const DDSOE,
+	       const UMATReal *const DROT,  UMATReal *const DDSOE,
 	       const UMATReal *const STRAN, const UMATReal *const DSTRAN,
 	       const UMATReal *const TEMP,  const UMATReal *const DTEMP,
 	       const UMATReal *const PROPS, const UMATInt  *const NPROPS,
@@ -254,7 +254,7 @@ namespace umat
     {
       TFEL_UMAT_INLINE2 static
       void exe(const UMATReal *const DTIME,
-	       const UMATReal *const DROT,  const UMATReal *const DDSOE,
+	       const UMATReal *const DROT,  UMATReal *const DDSOE,
 	       const UMATReal *const STRAN, const UMATReal *const DSTRAN,
 	       const UMATReal *const TEMP,  const UMATReal *const DTEMP,
 	       const UMATReal *const PROPS, const UMATInt  *const NPROPS,

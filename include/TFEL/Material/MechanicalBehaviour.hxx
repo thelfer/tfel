@@ -28,6 +28,11 @@ namespace tfel{
     struct MechanicalBehaviour
     {
       /*!
+       * dimension of the space for the the given modelling hypothesis
+       */
+      static const unsigned short N =
+	ModellingHypothesisToSpaceDimension<H>::value;
+      /*!
        * \brief return values of the integrate method
        */
       enum IntegrationResult{
@@ -47,19 +52,6 @@ namespace tfel{
 	CONSISTANTTANGENTOPERATOR,
 	NOSTIFFNESSREQUESTED
       }; // end of enum StiffnessMatrixType
-      /*!
-       * dimension of the space for the the given modelling hypothesis
-       */
-      static const unsigned short N = ModellingHypothesisToSpaceDimension<H>::value;
-      /*!
-       * \brief  Return the name of the class.
-       * \param  void.
-       * \return std::string, the name of the class.
-       * \see    Name.
-       */
-      static std::string getName(void){
-	return std::string("MechanicalBehaviour");
-      }
       /*!
        * \brief only compute a prediction stiffness matrix.
        * The result shall be retrieved through the "

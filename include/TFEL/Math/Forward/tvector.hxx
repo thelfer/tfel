@@ -17,11 +17,15 @@ namespace tfel
   {
 
     /*
-     * \class tvector.
-     * \brief a class representing tiny vectors of fixed size.
-     * \param unsigned short, the number of values hold by the
-     * tvector.
-     * \param typename T, the type hold by the tvector.
+     * a base for tvector or classes acting like tvector.
+     */
+    template<typename Child,
+	     unsigned short N,
+	     typename T>
+    struct tvector_base;
+
+    /*
+     * a class representing tiny vectors of fixed size.
      */
     template<unsigned short N, typename T>
     class tvector;

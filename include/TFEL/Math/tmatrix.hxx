@@ -48,6 +48,8 @@ namespace tfel{
     template<unsigned short N,
 	     unsigned short M,
 	     unsigned short I,
+	     unsigned short J,
+	     unsigned short K,
 	     typename T>
     struct tmatrix_row_view;
 
@@ -55,6 +57,8 @@ namespace tfel{
     template<unsigned short N,
 	     unsigned short M,
 	     unsigned short I,
+	     unsigned short J,
+	     unsigned short K,
 	     typename T>
     struct tmatrix_const_row_view;
 
@@ -62,6 +66,8 @@ namespace tfel{
     template<unsigned short N,
 	     unsigned short M,
 	     unsigned short I,
+	     unsigned short J,
+	     unsigned short K,
 	     typename T>
     struct tmatrix_column_view;
 
@@ -69,6 +75,8 @@ namespace tfel{
     template<unsigned short N,
 	     unsigned short M,
 	     unsigned short I,
+	     unsigned short J,
+	     unsigned short K,
 	     typename T>
     struct tmatrix_const_column_view;
 
@@ -317,19 +325,39 @@ namespace tfel{
       unsigned short getNbRows(void) const ;
 
       template<unsigned short I>
-      tmatrix_row_view<N,M,I,T>
+      tmatrix_row_view<N,M,I,0,M,T>
+      row_view();
+
+      template<unsigned short I,unsigned short J,unsigned short K>
+      tmatrix_row_view<N,M,I,J,K,T>
       row_view();
 
       template<unsigned short I>
-      tmatrix_const_row_view<N,M,I,T>
+      tmatrix_const_row_view<N,M,I,0,M,T>
+      row_view() const;
+
+      template<unsigned short I,unsigned short J,unsigned short K>
+      tmatrix_const_row_view<N,M,I,J,K,T>
       row_view() const;
 
       template<unsigned short I>
-      tmatrix_column_view<N,M,I,T>
+      tmatrix_column_view<N,M,I,0,N,T>
+      column_view();
+
+      template<unsigned short I,
+	       unsigned short J,
+	       unsigned short K>
+      tmatrix_column_view<N,M,I,J,K,T>
       column_view();
 
       template<unsigned short I>
-      tmatrix_const_column_view<N,M,I,T>
+      tmatrix_const_column_view<N,M,I,0,N,T>
+      column_view() const;
+
+      template<unsigned short I,
+	       unsigned short J,
+	       unsigned short K>
+      tmatrix_const_column_view<N,M,I,J,K,T>
       column_view() const;
 
       TFEL_MATH_INLINE2

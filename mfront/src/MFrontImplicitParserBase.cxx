@@ -1807,7 +1807,8 @@ namespace mfront{
 	  this->behaviourFile << "real& f" << p->name << "(this->fzeros(" << n << "));\n";
 	} else {
 	  this->behaviourFile << "typename tfel::math::TVFTV<" 
-			      << p->arraySize << "," << n2 << "," << n << ",real>::type"
+			      << p->arraySize << "," << n2 << "," << n
+			      << ",real,false>::type"
 			      << " f" << p->name << "(this->fzeros);\n";
 	}
       } else {
@@ -2003,11 +2004,13 @@ namespace mfront{
     using namespace std;
     VarContainer::const_iterator p;
     SupportedTypes::TypeSize n;
-    ostringstream initStateVars;
-    ostringstream initComputedVars;
+    ostringstream init;
+    if(!this->localVariablesInitializers.empty()){
+      init << ",\n" << this->localVariablesInitializers;
+    }
     for(p=this->mb.getStateVariables().begin();p!=this->mb.getStateVariables().end();++p){
       SupportedTypes::TypeFlag flag = getTypeFlag(p->type);
-      initStateVars << ",\n";
+      init << ",\n";
       if((flag!=SupportedTypes::Scalar)&&
 	 (flag!=SupportedTypes::Stensor)){
 	string msg("MFrontImplicitParserBase::writeBehaviourConstructors : ");
@@ -2015,15 +2018,15 @@ namespace mfront{
 	throw(runtime_error(msg));
       }
       if((flag==SupportedTypes::Scalar)&&(p->arraySize==1u)){
-	initStateVars << "d" << p->name << "(this->zeros(" << n << "))";
+	init << "d" << p->name << "(this->zeros(" << n << "))";
       } else {
-	initStateVars << "d" << p->name 
+	init << "d" << p->name 
 		      << "(this->zeros)";
       }
       n += this->getTypeSize(p->type,p->arraySize);
     }
-    initStateVars << ",\nzeros(real(0)),\nfzeros(real(0))";
-    MFrontBehaviourParserCommon::writeBehaviourConstructors(initStateVars.str(),
+    init << ",\nzeros(real(0)),\nfzeros(real(0))";
+    MFrontBehaviourParserCommon::writeBehaviourConstructors(init.str(),
 							    this->predictor);
   }
 
@@ -2069,7 +2072,8 @@ namespace mfront{
 	  this->behaviourFile << "real& d" << p->name << ";\n";
 	} else {
 	  this->behaviourFile << "typename tfel::math::TVFTV<" 
-			      <<  p->arraySize << "," << n2 << "," << n << ",real>::type"
+			      <<  p->arraySize << "," << n2 << "," << n
+			      << ",real,false>::type"
 			      << " d" << p->name << ";\n";
 	}
       } else {

@@ -14,6 +14,7 @@
 #include"TFEL/Math/Vector/VectorConcept.hxx"
 #include"TFEL/Math/Vector/VectorExpr.hxx"
 #include"TFEL/Math/General/EmptyRunTimeProperties.hxx"
+#include"TFEL/Math/Forward/tvector.hxx"
 #include"TFEL/Math/tvector.hxx"
 
 namespace tfel
@@ -32,7 +33,7 @@ namespace tfel
     template<unsigned short N,
 	     unsigned short Mn,
 	     unsigned short In,
-	     typename T>
+	     typename T,bool b>
     struct TVFTVExpr
     {
       /*!
@@ -46,22 +47,28 @@ namespace tfel
      * \param[in] Mn : dimension of the underlying vector
      * \param[in] In : Index of the beginning in the underlying vector
      * \param[in] T  : underlying type
+     * \param[in] b  : if true the underlying tvector is const
      */
     template<unsigned short N,
 	     unsigned short Mn,
 	     unsigned short In,
-	     typename T>
-    struct VectorExpr<tvector<N,T>,TVFTVExpr<N,Mn,In,T> >
-      : public VectorConcept<VectorExpr<tvector<N,T>,TVFTVExpr<N,Mn,In,T> > >
+	     typename T,bool b>
+    struct VectorExpr<tvector<N,T>,TVFTVExpr<N,Mn,In,T,b> >
+      : public VectorConcept<VectorExpr<tvector<N,T>,TVFTVExpr<N,Mn,In,T,b> > >,
+	public tvector_base<VectorExpr<tvector<N,T>,TVFTVExpr<N,Mn,In,T,b> >,N,T>
     {
+      typedef typename tfel::meta::IF<b,const tvector<Mn,T>&,
+				      tvector<Mn,T>&>::type ref_type;
 
+      //! a simple alias
       typedef EmptyRunTimeProperties RunTimeProperties;
-
-      VectorExpr(tvector<Mn,T>& v_)
+      /*!
+       * constructor
+       */
+      VectorExpr(ref_type v_)
 	: v(v_)
       {} // end of VectorExpr
-
-      /*
+      /*!
        * Return the RunTimeProperties of the tvector
        * \return tvector::RunTimeProperties
        */
@@ -74,157 +81,70 @@ namespace tfel
       const T&
       operator[](const unsigned short i) const
       {
-	return this->v[In+i];
+	return this->v[static_cast<unsigned short>(In+i)];
       } // end of operator[] const
 
       T&
       operator[](const unsigned short i)
       {
-	return this->v[In+i];
+	return this->v[static_cast<unsigned short>(In+i)];
       } // end of operator[]
 
       const T&
       operator()(const unsigned short i) const
       {
-	return this->v[In+i];
+	return this->v[static_cast<unsigned short>(In+i)];
       } // end of operator() const
 
       T&
       operator()(const unsigned short i)
       {
-	return this->v[In+i];
+	return this->v[static_cast<unsigned short>(In+i)];
       } // end of operator()
 
-      /*!
-       * Assignement operator
-       */
-      template<typename T2>
-      typename tfel::meta::EnableIf<
-	tfel::typetraits::IsAssignableTo<T2,T>::cond,
-	VectorExpr&>::type
-      operator=(const tvector<N,T2 >& s){
-	VectorUtilities<N>::copy(s,*this);
-	return *this;
-      }
-      
-      /*!
-       * Assignement operator
-       */
-      template<typename T2,typename Expr>
-      typename tfel::meta::EnableIf<
-	tfel::typetraits::IsAssignableTo<T2,T>::cond,
-	VectorExpr&
-      >::type
-      operator=(const VectorExpr<tvector<N,T2 >,Expr>& s)
-      {
-	VectorUtilities<N>::copy(s,*this);
-	return *this;
-      }
-
-      // Assignement operator
-      template<typename T2>
-      typename tfel::meta::EnableIf<
-	tfel::typetraits::IsAssignableTo<T2,T>::cond,
-	VectorExpr&
-      >::type
-      operator+=(const tvector<N,T2 >& s){
-	VectorUtilities<N>::PlusEqual(*this,s);
-	return *this;
-      }
-    
-      // Assignement operator
-      template<typename T2,typename Expr>
-      typename tfel::meta::EnableIf<
-	tfel::typetraits::IsAssignableTo<T2,T>::cond,
-	VectorExpr&
-      >::type
-      operator+=(const VectorExpr<tvector<N,T2 >,Expr>& s){
-	VectorUtilities<N>::PlusEqual(*this,s);
-	return *this;
-      }
-
-      // Assignement operator
-      template<typename T2>
-      typename tfel::meta::EnableIf<
-	tfel::typetraits::IsAssignableTo<T2,T>::cond,
-	VectorExpr&
-      >::type
-      operator-=(const tvector<N,T2 >& s){
-	VectorUtilities<N>::MinusEqual(*this,s);
-	return *this;
-      }
-    
-      // Assignement operator
-      template<typename T2,typename Expr>
-      typename tfel::meta::EnableIf<
-	tfel::typetraits::IsAssignableTo<T2,T>::cond,
-	VectorExpr&
-      >::type
-      operator-=(const VectorExpr<tvector<N,T2 >,Expr>& s){
-	VectorUtilities<N>::MinusEqual(*this,s);
-	return *this;
-      }
-
-      /*!
-       * operator*=
-       */
-      template<typename T2>
-      typename tfel::meta::EnableIf<
-	tfel::typetraits::IsScalar<T2>::cond&&
-      tfel::meta::IsSameType<typename ResultType<T,T2,OpMult>::type,T>::cond,
-	VectorExpr&
-      >::type
-      operator*=(const T2 a){
-	VectorUtilities<N>::scale(*this,a);
-	return *this;
-      }
-
-      /*!
-       * operator/=
-       */
-      template<typename T2>
-      typename tfel::meta::EnableIf<
-      tfel::typetraits::IsScalar<T2>::cond&&
-      tfel::meta::IsSameType<typename ResultType<T,T2,OpMult>::type,T>::cond,
-	VectorExpr&
-	>::type
-	operator/=(const T2 a){
-	VectorUtilities<N>::scale(*this,1/a);
-	return *this;
-      }
-      
+    private:
+      //! a simple alias
+      typedef tvector_base<VectorExpr<tvector<N,T>,TVFTVExpr<N,Mn,In,T,b> >,N,T> base;
+    public:
+      //! using tvector_base::operator=
+      using base::operator=;
+      //! using tvector_base::operator+=
+      using base::operator+=;
+      //! using tvector_base::operator-=
+      using base::operator-=;
+      //! using tvector_base::operator*=
+      using base::operator*=;
+      //! using tvector_base::operator/=
+      using base::operator/=;
     protected:
-	
-      tvector<Mn,T>& v;
-
-      private:
-	
-	/*!
+      //! underlying vector
+      ref_type v;
+    private:
+      /*!
        * Simple checks
        */
       TFEL_STATIC_ASSERT((In<Mn));
       TFEL_STATIC_ASSERT((N<=Mn-In));
-
     }; // end of struct VectorExpr
 
 
     template<unsigned short N,
 	     unsigned short Mn,
 	     unsigned short In,
-	     typename T = double>
+	     typename T,bool b>
     struct TVFTV
     {
-      typedef VectorExpr<tvector<N,T>,TVFTVExpr<N,Mn,In,T> > type;
+      typedef VectorExpr<tvector<N,T>,TVFTVExpr<N,Mn,In,T,b> > type;
     }; // end of struct TVFTV
 
     // Serialisation operator
     template<unsigned short N,
 	     unsigned short Mn,
 	     unsigned short In,
-	     typename T>
+	     typename T,bool b>
     std::ostream&
     operator << (std::ostream & os,
-		 const VectorExpr<tvector<N,T>,TVFTVExpr<N,Mn,In,T> >& s)
+		 const VectorExpr<tvector<N,T>,TVFTVExpr<N,Mn,In,T,b> >& s)
     {
       os << "[ ";
       for(unsigned short i=0;i<N;++i){
@@ -241,9 +161,9 @@ namespace tfel
     template<unsigned short N,
   	     unsigned short Mn,
   	     unsigned short In,
-  	     typename T>
+  	     typename T,bool b>
     struct IsTemporary<tfel::math::VectorExpr<tfel::math::tvector<N,T>,
-					      tfel::math::TVFTVExpr<N,Mn,In,T> > >
+					      tfel::math::TVFTVExpr<N,Mn,In,T,b> > >
     {
       static const bool cond = false;
     };

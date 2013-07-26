@@ -267,34 +267,66 @@ namespace tfel{
 
     template<unsigned short N,unsigned short M, typename T>
     template<unsigned short I>
-    tmatrix_row_view<N,M,I,T>
+    tmatrix_row_view<N,M,I,0,M,T>
     tmatrix<N,M,T>::row_view()
     {
-      return tmatrix_row_view<N,M,I,T>(*this);
+      return tmatrix_row_view<N,M,I,0,M,T>(*this);
+    }
+
+    template<unsigned short N,unsigned short M, typename T>
+    template<unsigned short I,unsigned short J,unsigned short K>
+    tmatrix_row_view<N,M,I,J,K,T>
+    tmatrix<N,M,T>::row_view()
+    {
+      return tmatrix_row_view<N,M,I,J,K,T>(*this);
     }
 
     template<unsigned short N,unsigned short M, typename T>
     template<unsigned short I>
-    tmatrix_const_row_view<N,M,I,T>
+    tmatrix_const_row_view<N,M,I,0,M,T>
     tmatrix<N,M,T>::row_view() const
     {
-      return tmatrix_const_row_view<N,M,I,T>(*this);
+      return tmatrix_const_row_view<N,M,I,0,M,T>(*this);
+    }
+
+    template<unsigned short N,unsigned short M, typename T>
+    template<unsigned short I,unsigned short J,unsigned short K>
+    tmatrix_const_row_view<N,M,I,J,K,T>
+    tmatrix<N,M,T>::row_view() const
+    {
+      return tmatrix_const_row_view<N,M,I,J,K,T>(*this);
     }
 
     template<unsigned short N,unsigned short M, typename T>
     template<unsigned short I>
-    tmatrix_column_view<N,M,I,T>
+    tmatrix_column_view<N,M,I,0,N,T>
     tmatrix<N,M,T>::column_view()
     {
-      return tmatrix_column_view<N,M,I,T>(*this);
+      return tmatrix_column_view<N,M,I,0,N,T>(*this);
+    }
+
+    template<unsigned short N,unsigned short M, typename T>
+    template<unsigned short I,unsigned short J,unsigned short K>
+    tmatrix_column_view<N,M,I,J,K,T>
+    tmatrix<N,M,T>::column_view()
+    {
+      return tmatrix_column_view<N,M,I,J,K,T>(*this);
     }
 
     template<unsigned short N,unsigned short M, typename T>
     template<unsigned short I>
-    tmatrix_const_column_view<N,M,I,T>
+    tmatrix_const_column_view<N,M,I,0,N,T>
     tmatrix<N,M,T>::column_view() const
     {
-      return tmatrix_const_column_view<N,M,I,T>(*this);
+      return tmatrix_const_column_view<N,M,I,0,N,T>(*this);
+    }
+
+    template<unsigned short N,unsigned short M, typename T>
+    template<unsigned short I,unsigned short J,unsigned short K>
+    tmatrix_const_column_view<N,M,I,J,K,T>
+    tmatrix<N,M,T>::column_view() const
+    {
+      return tmatrix_const_column_view<N,M,I,J,K,T>(*this);
     }
 
     //template<unsigned short N,unsigned short M,typename T>
