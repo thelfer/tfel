@@ -225,6 +225,10 @@ nobase_include_HEADERS= TFEL/Macros.hxx                                         
 			TFEL/Math/Matrix/tmatrix_const_row_view.ixx				                     \
 			TFEL/Math/Matrix/tmatrix_row_view.hxx					                     \
 			TFEL/Math/Matrix/tmatrix_row_view.ixx					                     \
+			TFEL/Math/Matrix/tmatrix_submatrix_view.hxx				                     \
+			TFEL/Math/Matrix/tmatrix_submatrix_view.ixx				                     \
+			TFEL/Math/Matrix/tmatrix_const_submatrix_view.hxx				             \
+			TFEL/Math/Matrix/tmatrix_const_submatrix_view.ixx				             \
 			TFEL/Math/Matrix/matrix.ixx			                                             \
 			TFEL/Math/Matrix/MatrixConcept.hxx		                                             \
 			TFEL/Math/Matrix/MatrixUtilities.hxx		                                             \

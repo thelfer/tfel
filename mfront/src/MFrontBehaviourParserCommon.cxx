@@ -1225,6 +1225,7 @@ namespace mfront{
     this->behaviourDataFile << "#include\"TFEL/Metaprogramming/StaticAssert.hxx\"" << endl;
     this->behaviourDataFile << "#include\"TFEL/TypeTraits/IsFundamentalNumericType.hxx\"" << endl;
     this->behaviourDataFile << "#include\"TFEL/TypeTraits/IsReal.hxx\"" << endl;
+    this->behaviourDataFile << "#include\"TFEL/Utilities/Name.hxx\"" << endl;
     if(this->mb.useQt()){
       this->behaviourDataFile << "#include\"TFEL/Math/General/BaseCast.hxx\"" << endl;
     }
@@ -1284,12 +1285,20 @@ namespace mfront{
   void MFrontBehaviourParserCommon::writeBehaviourDataGetName(void){    
     using namespace std;
     this->checkBehaviourDataFile();
-    this->behaviourDataFile << "public:\n";
-    this->behaviourDataFile << endl;
+    this->behaviourDataFile << "namespace tfel{\n";
+    this->behaviourDataFile << "namespace utilities{\n";
+    this->behaviourDataFile << "//! Partial specialisation of the Name class\n";
+    if(this->mb.useQt()){        
+      this->behaviourDataFile << "template<unsigned short N,typename Type,bool use_qt>" << endl;
+      this->behaviourDataFile << "struct Name<tfel::material::" << this->className << "BehaviourData<N,Type,use_qt> >\n";
+    } else {
+      this->behaviourDataFile << "template<unsigned short N,typename Type>" << endl;
+      this->behaviourDataFile << "struct Name<tfel::material::" << this->className << "BehaviourData<N,Type,false> >\n";
+    }
+    this->behaviourDataFile << "{\n";
     this->behaviourDataFile << "/*!\n";
     this->behaviourDataFile << "* \\brief  Return the name of the class.\n";
-    this->behaviourDataFile << "* \\param  void.\n";
-    this->behaviourDataFile << "* \\return const std::string, the name of the class.\n";
+    this->behaviourDataFile << "* \\return the name of the class.\n";
     this->behaviourDataFile << "* \\see    Name.\n";
     this->behaviourDataFile << "*/\n";
     this->behaviourDataFile << "static std::string\n";
@@ -1297,6 +1306,9 @@ namespace mfront{
     this->behaviourDataFile << "return std::string(\"";
     this->behaviourDataFile << this->className << "BehaviourData\");\n";
     this->behaviourDataFile << "}\n\n";
+    this->behaviourDataFile << "}; // end of struct Name\n";
+    this->behaviourDataFile << "} // end of namespace utilities\n";
+    this->behaviourDataFile << "} // end of namespace tfel\n\n";
   }
 
   void MFrontBehaviourParserCommon::writeBehaviourDataDisabledConstructors(void)
@@ -1639,12 +1651,13 @@ namespace mfront{
     }
     this->behaviourDataFile << "{" << endl;
     this->behaviourDataFile << "using namespace std;" << endl;
+    this->behaviourDataFile << "using namespace tfel::utilities;" << endl;
     if(this->mb.useQt()){        
-      this->behaviourDataFile << "os << " << this->className 
-			      << "BehaviourData<N,Type,use_qt>::getName() << endl;\n";
+      this->behaviourDataFile << "os << Name<" << this->className 
+			      << "BehaviourData<N,Type,use_qt> >::getName() << endl;\n";
     } else {
-      this->behaviourDataFile << "os << " << this->className 
-			      << "BehaviourData<N,Type,false>::getName() << endl;\n";
+      this->behaviourDataFile << "os << Name<" << this->className 
+			      << "BehaviourData<N,Type,false> >::getName() << endl;\n";
     }
     for(p2=this->mb.getMainVariables().begin();p2!=this->mb.getMainVariables().end();++p2){
       if(p2->first.increment_known){
@@ -1692,13 +1705,16 @@ namespace mfront{
     this->writeBehaviourDataDefaultMembers();
     this->writeBehaviourDataCoefs();
     this->writeBehaviourDataStateVars();
+    this->behaviourDataFile << "public:" << endl << endl;
     this->writeBehaviourDataDisabledConstructors();
-    this->writeBehaviourDataGetName();
     this->writeBehaviourDataConstructors();
     this->writeBehaviourDataPublicMembers();
     this->writeBehaviourDataAssignementOperator();
     this->writeBehaviourDataExport();
     this->writeBehaviourDataClassEnd();
+    this->writeNamespaceEnd(this->behaviourDataFile);
+    this->writeBehaviourDataGetName();
+    this->writeNamespaceBegin(this->behaviourDataFile);
     this->writeBehaviourDataOutputOperator();
     this->writeNamespaceEnd(this->behaviourDataFile);
     this->writeBehaviourDataFileHeaderEnd();
@@ -1976,11 +1992,11 @@ namespace mfront{
   {    
     using namespace std;
     ostringstream init;
+    this->writeStateVariableIncrementsInitializers(init,this->mb.getStateVariables(),
+						   this->useStateVarTimeDerivative);
     if(!this->localVariablesInitializers.empty()){
       init << ",\n" << this->localVariablesInitializers;
     }
-    this->writeStateVariableIncrementsInitializers(init,this->mb.getStateVariables(),
-						   this->useStateVarTimeDerivative);
     this->writeBehaviourConstructors(init.str());
   }
 
@@ -2222,12 +2238,13 @@ namespace mfront{
     }
     this->behaviourFile << "{" << endl;
     this->behaviourFile << "using namespace std;" << endl;
+    this->behaviourFile << "using namespace tfel::utilities;" << endl;
     if(this->mb.useQt()){        
-      this->behaviourFile << "os << " << this->className 
-			  << "<hypothesis,Type,use_qt>::getName() << endl;\n";
+      this->behaviourFile << "os << Name<" << this->className 
+			  << "<hypothesis,Type,use_qt> >::getName() << endl;\n";
     } else {
-      this->behaviourFile << "os << " << this->className 
-			  << "<hypothesis,Type,false>::getName() << endl;\n";
+      this->behaviourFile << "os << Name<" << this->className 
+			  << "<hypothesis,Type,false> >::getName() << endl;\n";
     }
     for(p2=this->mb.getMainVariables().begin();p2!=this->mb.getMainVariables().end();++p2){
       if(p2->first.increment_known){
@@ -2359,18 +2376,30 @@ namespace mfront{
   void MFrontBehaviourParserCommon::writeBehaviourGetName(void){    
     using namespace std;
     this->checkBehaviourFile();
-    this->behaviourFile << "public:\n\n";
+    this->behaviourFile << "namespace tfel{\n";
+    this->behaviourFile << "namespace utilities{\n";
+    this->behaviourFile << "//! Partial specialisation of the Name class\n";
+    if(this->mb.useQt()){        
+      this->behaviourFile << "template<tfel::material::ModellingHypothesis::Hypothesis hypothesis,typename Type,bool use_qt>" << endl;
+      this->behaviourFile << "struct Name<tfel::material::" << this->className << "<hypothesis,Type,use_qt> >\n";
+    } else {
+      this->behaviourFile << "template<tfel::material::ModellingHypothesis::Hypothesis hypothesis,typename Type>" << endl;
+      this->behaviourFile << "struct Name<tfel::material::" << this->className << "<hypothesis,Type,false> >\n";
+    }
+    this->behaviourFile << "{\n";
     this->behaviourFile << "/*!\n";
     this->behaviourFile << "* \\brief  Return the name of the class.\n";
-    this->behaviourFile << "* \\param  void.\n";
-    this->behaviourFile << "* \\return const std::string, the name of the class.\n";
+    this->behaviourFile << "* \\return the name of the class.\n";
     this->behaviourFile << "* \\see    Name.\n";
     this->behaviourFile << "*/\n";
     this->behaviourFile << "static std::string\n";
     this->behaviourFile << "getName(void){\n";
     this->behaviourFile << "return std::string(\"";
     this->behaviourFile << this->className << "\");\n";
-    this->behaviourFile << "}\n\n";
+    this->behaviourFile << "}\n";
+    this->behaviourFile << "}; // end of struct Name\n";
+    this->behaviourFile << "} // end of namespace utilities\n";
+    this->behaviourFile << "} // end of namespace tfel\n\n";
   }
 
   void MFrontBehaviourParserCommon::writeBehaviourStandardTFELTypedefs(void)
@@ -2667,7 +2696,7 @@ namespace mfront{
     this->writeBehaviourPrivate();
     this->writeBehaviourDisabledConstructors();
     // from this point, all is public
-    this->writeBehaviourGetName();
+    this->behaviourFile << "public:" << endl << endl;
     this->writeBehaviourConstructors();
     this->writeBehaviourSetOutOfBoundsPolicy();
     this->writeBehaviourGetModellingHypothesis();
@@ -2684,8 +2713,11 @@ namespace mfront{
     this->writeBehaviourTangentStiffnessOperator();
     this->writeBehaviourPolicyVariable();
     this->writeBehaviourClassEnd();
-    this->writeBehaviourOutputOperator();
     this->writeBehaviourTraits();
+    this->writeNamespaceEnd(this->behaviourFile);
+    this->writeBehaviourGetName();
+    this->writeNamespaceBegin(this->behaviourFile);
+    this->writeBehaviourOutputOperator();
     this->writeNamespaceEnd(this->behaviourFile);
     this->writeBehaviourFileHeaderEnd();
   }
@@ -2821,6 +2853,7 @@ namespace mfront{
     this->integrationDataFile << "#include\"TFEL/TypeTraits/IsScalar.hxx\"\n";
     this->integrationDataFile << "#include\"TFEL/TypeTraits/IsReal.hxx\"\n";
     this->integrationDataFile << "#include\"TFEL/TypeTraits/Promote.hxx\"\n";
+    this->integrationDataFile << "#include\"TFEL/Utilities/Name.hxx\"" << endl;
     this->requiresTVectorOrVectorIncludes(b1,b2);
     if(b1){
       this->integrationDataFile << "#include\"TFEL/Math/tvector.hxx\"\n";
@@ -2881,12 +2914,20 @@ namespace mfront{
   void MFrontBehaviourParserCommon::writeIntegrationDataGetName(void){    
     using namespace std;
     this->checkIntegrationDataFile();
-    this->integrationDataFile << "public:\n";
-    this->integrationDataFile << endl;
+    this->integrationDataFile << "namespace tfel{\n";
+    this->integrationDataFile << "namespace utilities{\n";
+    this->integrationDataFile << "//! Partial specialisation of the Name class\n";
+    if(this->mb.useQt()){        
+      this->integrationDataFile << "template<unsigned short N,typename Type,bool use_qt>" << endl;
+      this->integrationDataFile << "struct Name<tfel::material::" << this->className << "IntegrationData<N,Type,use_qt> >\n";
+    } else {
+      this->integrationDataFile << "template<unsigned short N,typename Type>" << endl;
+      this->integrationDataFile << "struct Name<tfel::material::" << this->className << "IntegrationData<N,Type,false> >\n";
+    }
+    this->integrationDataFile << "{\n";
     this->integrationDataFile << "/*!\n";
     this->integrationDataFile << "* \\brief  Return the name of the class.\n";
-    this->integrationDataFile << "* \\param  void.\n";
-    this->integrationDataFile << "* \\return const std::string, the name of the class.\n";
+    this->integrationDataFile << "* \\return the name of the class.\n";
     this->integrationDataFile << "* \\see    Name.\n";
     this->integrationDataFile << "*/\n";
     this->integrationDataFile << "static std::string\n";
@@ -2894,6 +2935,9 @@ namespace mfront{
     this->integrationDataFile << "return std::string(\"";
     this->integrationDataFile << this->className << "IntegrationData\");\n";
     this->integrationDataFile << "}\n\n";
+    this->integrationDataFile << "}; // end of struct Name\n";
+    this->integrationDataFile << "} // end of namespace utilities\n";
+    this->integrationDataFile << "} // end of namespace tfel\n\n";
   }
 
   void MFrontBehaviourParserCommon::writeIntegrationDataDisabledConstructors(void)
@@ -3120,12 +3164,13 @@ namespace mfront{
     }
     this->integrationDataFile << "{" << endl;
     this->integrationDataFile << "using namespace std;" << endl;
+    this->integrationDataFile << "using namespace tfel::utilities;" << endl;
     if(this->mb.useQt()){        
-      this->integrationDataFile << "os << " << this->className 
-				<< "IntegrationData<N,Type,use_qt>::getName() << endl;\n";
+      this->integrationDataFile << "os << Name<" << this->className 
+				<< "IntegrationData<N,Type,use_qt> >::getName() << endl;\n";
     } else {
-      this->integrationDataFile << "os << " << this->className 
-				<< "IntegrationData<N,Type,false>::getName() << endl;\n";
+      this->integrationDataFile << "os << Name<" << this->className 
+				<< "IntegrationData<N,Type,false> >::getName() << endl;\n";
     }
     for(p2=this->mb.getMainVariables().begin();p2!=this->mb.getMainVariables().end();++p2){
       if(p2->first.increment_known){
@@ -3146,9 +3191,7 @@ namespace mfront{
 
   void MFrontBehaviourParserCommon::writeIntegrationDataClassEnd() {    
     using namespace std;
-
     this->checkIntegrationDataFile();
-
     this->integrationDataFile << "}; // end of " << this->className << "IntegrationData" 
 			      << "class" << endl;
     this->integrationDataFile << endl;
@@ -3179,10 +3222,13 @@ namespace mfront{
     this->writeIntegrationDataDefaultMembers();
     this->writeIntegrationDataExternalStateVars();
     this->writeIntegrationDataDisabledConstructors();
-    this->writeIntegrationDataGetName();
+    this->integrationDataFile << "public:" << endl << endl;
     this->writeIntegrationDataConstructors();
     this->writeIntegrationDataScaleOperators();
     this->writeIntegrationDataClassEnd();
+    this->writeNamespaceEnd(this->integrationDataFile);
+    this->writeIntegrationDataGetName();
+    this->writeNamespaceBegin(this->integrationDataFile);
     this->writeIntegrationDataOutputOperator();
     this->writeNamespaceEnd(this->integrationDataFile);
     this->writeIntegrationDataFileHeaderEnd();

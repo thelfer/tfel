@@ -1226,6 +1226,7 @@ mfront/tests/behaviours/Plasticity.mfront -text
 mfront/tests/behaviours/PolyCristals.mfront -text
 mfront/tests/behaviours/PolyCristals_DD_CFC.mfront -text
 mfront/tests/behaviours/StrainHardeningCreep.mfront -text
+mfront/tests/behaviours/Tvergaard.mfront -text
 mfront/tests/behaviours/aster/CMakeLists.txt -text
 mfront/tests/behaviours/aster/Makefile.am -text
 mfront/tests/behaviours/aster/asterIsotropicHomogeneousPipe.mtest.in -text

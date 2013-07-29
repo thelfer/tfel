@@ -41,7 +41,8 @@ set(mfront_tests_SOURCES
   PolyCristals
   PolyCristals_DD_CFC
   Hayhurst
-  Burger)
+  Burger
+  Tvergaard)
   
 mfront_behaviour_check_library(MFrontCastemBehaviours umat  ${mfront_tests_SOURCES})
 target_link_libraries(MFrontCastemBehaviours

@@ -34,7 +34,8 @@ MFRONTS= DDIF2.mfront                                \
 	 MonoCristal_DD_CFC_InteractionMatrix.mfront \
 	 PolyCristals.mfront                         \
 	 PolyCristals_DD_CFC.mfront                  \
-	 Hayhurst.mfront
+	 Hayhurst.mfront                             \
+	 Tvergaard.mfront
 
 testsdir = $(pkgdatadir)/mfront/tests/behaviours
 tests_DATA = $(MFRONTS)

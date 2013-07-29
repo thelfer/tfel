@@ -41,4 +41,5 @@ install_data(mfront/tests/behaviours Plasticity.mfront)
 install_data(mfront/tests/behaviours PolyCristals.mfront)
 install_data(mfront/tests/behaviours PolyCristals_DD_CFC.mfront)
 install_data(mfront/tests/behaviours StrainHardeningCreep.mfront)
+install_data(mfront/tests/behaviours Tvergaard.mfront)
 
