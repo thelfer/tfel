@@ -1,23 +1,24 @@
 /*! 
- * \file  tmatrix_column_view.hxx
+ * \file  tmatrix_const_submatrix_view.hxx
  * \brief
  * \author Helfer Thomas
  * \brief 27 déc. 2012
  */
 
-#ifndef _LIB_TFEL_MATH_TMATRIX_COLUMN_VIEW_H_
-#define _LIB_TFEL_MATH_TMATRIX_COLUMN_VIEW_H_ 
+#ifndef _LIB_TFEL_MATH_TMATRIX_CONST_SUBMATRIX_VIEW_H_
+#define _LIB_TFEL_MATH_TMATRIX_CONST_SUBMATRIX_VIEW_H_ 
 
 namespace tfel
 {
 
   namespace math
   {
-    
+
     template<unsigned short N,unsigned short M,
 	     unsigned short I,unsigned short J,
-	     unsigned short K,typename T>
-    struct tmatrix_column_view_expr
+	     unsigned short R,unsigned short C,
+	     typename T>
+    struct tmatrix_const_submatrix_view_expr
     {
       //! a simple typedef to the tmatrix runtime properties
       /*
@@ -25,18 +26,18 @@ namespace tfel
        */
       typedef EmptyRunTimeProperties RunTimeProperties;
       /*!
-       * an alias defined for the constructor of the VectorExpr
+       * an alias defined for the constructor of the MatrixExpr
        */
-      typedef tmatrix<N,M,T> first_arg;
+      typedef const tmatrix<N,M,T> first_arg;
       //! a dummy structure
       struct invalid_argument;
       /*!
-       * an alias defined for the constructor of the VectorExpr
+       * an alias defined for the constructor of the MatrixExpr
        */
       typedef invalid_argument second_arg;
       /*!
        * type of the tmatrix's values.
-       * (this is a VectorConcept requirement).
+       * (this is a MatrixConcept requirement).
        */
       typedef T NumType;
       /*!
@@ -79,10 +80,10 @@ namespace tfel
        * \param[in] m_ : the underlying matrix
        */      
       TFEL_MATH_INLINE
-      tmatrix_column_view_expr(tmatrix<N,M,T>&);
+      tmatrix_const_submatrix_view_expr(const tmatrix<N,M,T>&);
       //! Return the RunTimeProperties of the tmatrix.
       /*
-       * This is a VectorConcept requirement.
+       * This is a MatrixConcept requirement.
        * \return const RunTimeProperties, the runtime properties of
        * the tmatrix
        */
@@ -91,75 +92,43 @@ namespace tfel
       getRunTimeProperties(void) const;
       /*!
        * \brief index operator.
-       * This is a vector concept requirement.
+       * This is a matrix concept requirement.
        * \param[in] i : index.
-       * \return a reference to the ith element of the column.
+       * \param[in] j : column index.
+       * \return a reference to the ith element of the submatrix.
        */
       TFEL_MATH_INLINE
       const T& 
-      operator()(const unsigned short i) const;
-      /*!
-       * \brief index operator.
-       * \param[in] i : index.
-       * \return a reference to the ith element of the column.
-       */
-      TFEL_MATH_INLINE
-      T& operator()(const unsigned short);
-
-      /*!
-       * \brief index operator.
-       * This is a vector concept requirement.
-       * \param[in] i : index.
-       * \return a reference to the ith element of the column.
-       */
-      TFEL_MATH_INLINE
-      const T& 
-      operator[](const unsigned short) const;
-      /*!
-       * \brief index operator.
-       * \param[in] i : index.
-       * \return a reference to the ith element of the column.
-       */
-      TFEL_MATH_INLINE
-      T& operator[](const unsigned short);
+      operator()(const unsigned short,
+		 const unsigned short) const;
 
     private:
       
       //! reference to the underlying matrix
-      tmatrix<N,M,T>& m;
+      const tmatrix<N,M,T>& m;
 
     };
 
     template<unsigned short N,unsigned short M,
 	     unsigned short I,unsigned short J,
-	     unsigned short K,typename T>
-    struct tmatrix_column_view
-      : public VectorExpr<tvector<K,T>,tmatrix_column_view_expr<N,M,I,J,K,T> >,
-	public tvector_base<tmatrix_column_view<N,M,I,J,K,T>,K,T>
+	     unsigned short R,unsigned short C,
+	     typename T>
+    struct tmatrix_const_submatrix_view
+      : public MatrixExpr<tmatrix<R,C,T>, tmatrix_const_submatrix_view_expr<N,M,I,J,R,C,T> >
     {
       /*!
        * constructor
        * \param[in] m_ : the underlying matrix
        */      
       TFEL_MATH_INLINE
-      tmatrix_column_view(tmatrix<N,M,T>&);
-      //! using tvector_base::operator=
-      using tvector_base<tmatrix_column_view,K,T>::operator=;
-      //! using tvector_base::operator+=
-      using tvector_base<tmatrix_column_view,K,T>::operator+=;
-      //! using tvector_base::operator-=
-      using tvector_base<tmatrix_column_view,K,T>::operator-=;
-      //! using tvector_base::operator*=
-      using tvector_base<tmatrix_column_view,K,T>::operator*=;
-      //! using tvector_base::operator/=
-      using tvector_base<tmatrix_column_view,K,T>::operator/=;
+      tmatrix_const_submatrix_view(const tmatrix<N,M,T>&);
     };
 
   } // end of namespace math
   
 } // end of namespace tfel
 
-#include"TFEL/Math/Matrix/tmatrix_column_view.ixx"
+#include"TFEL/Math/Matrix/tmatrix_const_submatrix_view.ixx"
 
-#endif /* _LIB_TFEL_MATH_TMATRIX_COLUMN_VIEW_H */
+#endif /* _LIB_TFEL_MATH_TMATRIX_CONST_SUBMATRIX_VIEW_H */
 

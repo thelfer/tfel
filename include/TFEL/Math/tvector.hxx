@@ -71,7 +71,7 @@ namespace tfel{
      */
     template<typename Child,
 	     unsigned short N,
-	     typename T = double>
+	     typename T>
     struct tvector_base
     {
       //! Assignement operator

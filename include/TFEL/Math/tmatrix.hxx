@@ -27,7 +27,6 @@
 namespace tfel{
   
   namespace math{
-    
 
     //! Partial specialisation for tmatrixs.
     /*
@@ -45,46 +44,144 @@ namespace tfel{
     };
     
     // forward declaration
-    template<unsigned short N,
-	     unsigned short M,
-	     unsigned short I,
-	     unsigned short J,
-	     unsigned short K,
-	     typename T>
+    template<unsigned short N,unsigned short M,
+	     unsigned short I,unsigned short J,
+	     unsigned short K,typename T>
     struct tmatrix_row_view;
 
     // forward declaration
-    template<unsigned short N,
-	     unsigned short M,
-	     unsigned short I,
-	     unsigned short J,
-	     unsigned short K,
-	     typename T>
+    template<unsigned short N,unsigned short M,
+	     unsigned short I,unsigned short J,
+	     unsigned short K,typename T>
     struct tmatrix_const_row_view;
 
     // forward declaration
-    template<unsigned short N,
-	     unsigned short M,
-	     unsigned short I,
-	     unsigned short J,
-	     unsigned short K,
-	     typename T>
+    template<unsigned short N,unsigned short M,
+	     unsigned short I,unsigned short J,
+	     unsigned short K,typename T>
     struct tmatrix_column_view;
 
     // forward declaration
-    template<unsigned short N,
-	     unsigned short M,
-	     unsigned short I,
-	     unsigned short J,
-	     unsigned short K,
-	     typename T>
+    template<unsigned short N,unsigned short M,
+	     unsigned short I,unsigned short J,
+	     unsigned short K,typename T>
     struct tmatrix_const_column_view;
 
-    template<unsigned short N,
+    // forward declaration
+    template<unsigned short N,unsigned short M,
+	     unsigned short I,unsigned short J,
+	     unsigned short R,unsigned short C,
+	     typename T>
+    struct tmatrix_submatrix_view;
+
+    // forward declaration
+    template<unsigned short N,unsigned short M,
+	     unsigned short I,unsigned short J,
+	     unsigned short R,unsigned short C,
+	     typename T>
+    struct tmatrix_const_submatrix_view;
+
+    /*!
+     * \brief a base for tmatrix or classes acting like tmatrix.
+     */
+    template<typename Child,
+	     unsigned short N,
 	     unsigned short M,
+	     typename T>
+    struct tmatrix_base
+    {
+      // Assignement operator
+      /*
+       * \param const MatrixExpr<tmatrix<N,T2>,Expr>&, a matrix expression.
+       * \return Child& a reference to this.
+       * \pre T2 must be assignable to a T.
+       */
+      template<typename T2,typename Expr>
+      TFEL_MATH_INLINE 
+      typename tfel::meta::EnableIf<
+	tfel::typetraits::IsAssignableTo<T2,T>::cond,
+	Child&
+      >::type
+      operator=(const MatrixExpr<tmatrix<N,M,T2>,Expr>&);
+      // Assignement operator
+      template<typename T2>
+      TFEL_MATH_INLINE
+      typename tfel::meta::EnableIf<
+	tfel::typetraits::IsAssignableTo<T2,T>::cond,
+	Child&
+      >::type
+      operator=(const tmatrix<N,M,T2>&);
+      // Assignement operator
+      /*
+       * \param const MatrixExpr<tmatrix<N,T2>,Expr>&, a matrix expression.
+       * \return Child& a reference to this.
+       * \pre T2 must be assignable to a T.
+       */
+      template<typename T2,typename Expr>
+      TFEL_MATH_INLINE 
+      typename tfel::meta::EnableIf<
+	tfel::typetraits::IsAssignableTo<T2,T>::cond,
+	Child&
+      >::type
+      operator+=(const MatrixExpr<tmatrix<N,M,T2>,Expr>&);
+      // Assignement operator
+      template<typename T2>
+      TFEL_MATH_INLINE
+      typename tfel::meta::EnableIf<
+	tfel::typetraits::IsAssignableTo<T2,T>::cond,
+	Child&
+      >::type
+      operator+=(const tmatrix<N,M,T2>&);
+      // Assignement operator
+      /*
+       * \param const MatrixExpr<tmatrix<N,T2>,Expr>&, a matrix expression.
+       * \return Child& a reference to this.
+       * \pre T2 must be assignable to a T.
+       */
+      template<typename T2,typename Expr>
+      TFEL_MATH_INLINE 
+      typename tfel::meta::EnableIf<
+	tfel::typetraits::IsAssignableTo<T2,T>::cond,
+	Child&
+      >::type
+      operator-=(const MatrixExpr<tmatrix<N,M,T2>,Expr>&);
+      // Assignement operator
+      template<typename T2>
+      TFEL_MATH_INLINE
+      typename tfel::meta::EnableIf<
+	tfel::typetraits::IsAssignableTo<T2,T>::cond,
+	Child&
+      >::type
+      operator-=(const tmatrix<N,M,T2>&);
+      /*!
+       * operator*=
+       */
+      template<typename T2>
+      TFEL_MATH_INLINE 
+      typename tfel::meta::EnableIf<
+	tfel::typetraits::IsScalar<T2>::cond&&
+      tfel::meta::IsSameType<typename ResultType<T,T2,OpMult>::type,T>::cond,
+	Child&
+      >::type
+      operator*=(const T2);
+      /*!
+       * operator/=
+       */
+      template<typename T2>
+      TFEL_MATH_INLINE 
+      typename tfel::meta::EnableIf<
+	tfel::typetraits::IsScalar<T2>::cond&&
+        tfel::meta::IsSameType<typename ResultType<T,T2,OpMult>::type,T>::cond,
+	Child&
+      >::type
+      operator/=(const T2);
+    };
+
+    template<unsigned short N,unsigned short M,
 	     typename T = double>
     class tmatrix
-      : public MatrixConcept<tmatrix<N,M,T> >
+      : public MatrixConcept<tmatrix<N,M,T> >,
+	public tmatrix_base<tmatrix<N,M,T>,N,M,T>
     {
       //! a simple assertion stating that the number of row is valid.
       TFEL_STATIC_ASSERT(N!=0);
@@ -212,99 +309,6 @@ namespace tfel{
       T&
       operator()(const unsigned short,const unsigned short);
       
-      // Assignement operator
-      /*
-       * \param const MatrixExpr<tmatrix<N,T2>,Expr>&, a matrix expression.
-       * \return tmatrix<N,M,T>& a reference to this.
-       * \pre T2 must be assignable to a T.
-       */
-      template<typename T2,typename Expr>
-      TFEL_MATH_INLINE2 
-      typename tfel::meta::EnableIf<
-	tfel::typetraits::IsAssignableTo<T2,T>::cond,
-	tmatrix<N,M,T>&
-      >::type
-      operator=(const MatrixExpr<tmatrix<N,M,T2>,Expr>&);
-
-      // Assignement operator
-      template<typename T2>
-      TFEL_MATH_INLINE2
-      typename tfel::meta::EnableIf<
-	tfel::typetraits::IsAssignableTo<T2,T>::cond,
-	tmatrix<N,M,T>&
-      >::type
-      operator=(const tmatrix<N,M,T2>&);
-
-      // Assignement operator
-      /*
-       * \param const MatrixExpr<tmatrix<N,T2>,Expr>&, a matrix expression.
-       * \return tmatrix<N,M,T>& a reference to this.
-       * \pre T2 must be assignable to a T.
-       */
-      template<typename T2,typename Expr>
-      TFEL_MATH_INLINE2 
-      typename tfel::meta::EnableIf<
-	tfel::typetraits::IsAssignableTo<T2,T>::cond,
-	tmatrix<N,M,T>&
-      >::type
-      operator+=(const MatrixExpr<tmatrix<N,M,T2>,Expr>&);
-
-      // Assignement operator
-      template<typename T2>
-      TFEL_MATH_INLINE2
-      typename tfel::meta::EnableIf<
-	tfel::typetraits::IsAssignableTo<T2,T>::cond,
-	tmatrix<N,M,T>&
-      >::type
-      operator+=(const tmatrix<N,M,T2>&);
-
-      // Assignement operator
-      /*
-       * \param const MatrixExpr<tmatrix<N,T2>,Expr>&, a matrix expression.
-       * \return tmatrix<N,M,T>& a reference to this.
-       * \pre T2 must be assignable to a T.
-       */
-      template<typename T2,typename Expr>
-      TFEL_MATH_INLINE2 
-      typename tfel::meta::EnableIf<
-	tfel::typetraits::IsAssignableTo<T2,T>::cond,
-	tmatrix<N,M,T>&
-      >::type
-      operator-=(const MatrixExpr<tmatrix<N,M,T2>,Expr>&);
-
-      // Assignement operator
-      template<typename T2>
-      TFEL_MATH_INLINE2
-      typename tfel::meta::EnableIf<
-	tfel::typetraits::IsAssignableTo<T2,T>::cond,
-	tmatrix<N,M,T>&
-      >::type
-      operator-=(const tmatrix<N,M,T2>&);
-
-      /*!
-       * operator*=
-       */
-      template<typename T2>
-      TFEL_MATH_INLINE 
-      typename tfel::meta::EnableIf<
-	tfel::typetraits::IsScalar<T2>::cond&&
-      tfel::meta::IsSameType<typename ResultType<T,T2,OpMult>::type,T>::cond,
-	tmatrix<N,M,T>&
-      >::type
-      operator*=(const T2);
-
-      /*!
-       * operator/=
-       */
-      template<typename T2>
-      TFEL_MATH_INLINE 
-      typename tfel::meta::EnableIf<
-	tfel::typetraits::IsScalar<T2>::cond&&
-        tfel::meta::IsSameType<typename ResultType<T,T2,OpMult>::type,T>::cond,
-	tmatrix<N,M,T>&
-      >::type
-      operator/=(const T2);
-
       //! Return the RunTimeProperties of the tmatrix.
       /*
        * This is a MatrixConcept requirement.
@@ -323,42 +327,96 @@ namespace tfel{
 
       TFEL_MATH_INLINE2
       unsigned short getNbRows(void) const ;
-
+      /*!
+       * \return a view of a row of this matrix
+       * \param[in] I : row index
+       */
       template<unsigned short I>
       tmatrix_row_view<N,M,I,0,M,T>
       row_view();
-
+      /*!
+       * \return a view of a slice of row of this matrix
+       * \param[in] I : row index
+       * \param[in] J : starting index in the row
+       * \param[in] K : size of the slice
+       */
       template<unsigned short I,unsigned short J,unsigned short K>
       tmatrix_row_view<N,M,I,J,K,T>
       row_view();
-
+      /*!
+       * \return a view of a row of this matrix
+       * \param[in] I : row index
+       */
       template<unsigned short I>
       tmatrix_const_row_view<N,M,I,0,M,T>
       row_view() const;
-
+      /*!
+       * \return a view of a slice of row of this matrix
+       * \param[in] I : row index
+       * \param[in] J : starting index in the row
+       * \param[in] K : size of the slice
+       */
       template<unsigned short I,unsigned short J,unsigned short K>
       tmatrix_const_row_view<N,M,I,J,K,T>
       row_view() const;
-
+      /*!
+       * \return a view of a column of this matrix
+       * \param[in] I : column index
+       */
       template<unsigned short I>
       tmatrix_column_view<N,M,I,0,N,T>
       column_view();
-
+      /*!
+       * \return a view of a slice of column of this matrix
+       * \param[in] I : column index
+       * \param[in] J : starting index in the column
+       * \param[in] K : size of the slice
+       */
       template<unsigned short I,
 	       unsigned short J,
 	       unsigned short K>
       tmatrix_column_view<N,M,I,J,K,T>
       column_view();
-
-      template<unsigned short I>
-      tmatrix_const_column_view<N,M,I,0,N,T>
-      column_view() const;
-
+      /*!
+       * \return a view of a slice of column of this matrix
+       * \param[in] I : column index
+       * \param[in] J : starting index in the column
+       * \param[in] K : size of the slice
+       */
       template<unsigned short I,
 	       unsigned short J,
 	       unsigned short K>
       tmatrix_const_column_view<N,M,I,J,K,T>
       column_view() const;
+      /*!
+       * \return a view of a column of this matrix
+       * \param[in] I : column index
+       */
+      template<unsigned short I>
+      tmatrix_const_column_view<N,M,I,0,N,T>
+      column_view() const;
+      /*!
+       * \return a view of a sub matrix of this matrix
+       * \param[in] I : submatrix row    starting index
+       * \param[in] J : submatrix column starting index
+       * \param[in] R : number of rows
+       * \param[in] C : number of columns
+       */
+      template<unsigned short I,unsigned short J,
+	       unsigned short R,unsigned short C>
+      tmatrix_submatrix_view<N,M,I,J,R,C,T>
+      submatrix_view();
+      /*!
+       * \return a view of a sub matrix of this matrix
+       * \param[in] I : submatrix row    starting index
+       * \param[in] J : submatrix column starting index
+       * \param[in] R : number of rows
+       * \param[in] C : number of columns
+       */
+      template<unsigned short I,unsigned short J,
+	       unsigned short R,unsigned short C>
+      tmatrix_const_submatrix_view<N,M,I,J,R,C,T>
+      submatrix_view() const;
 
       TFEL_MATH_INLINE2
       T max(void) const ;
@@ -372,7 +430,7 @@ namespace tfel{
       static tmatrix<N,N,T> Id(void);
 
       /*
-       * return an iterator to the first element of the matrix
+       * return an iterator to the first element of this matrix
        * (provided for stl compatibility)
        * \return iterator, an iterator to the first element
        */
@@ -381,7 +439,7 @@ namespace tfel{
       begin(void);
       
       /*
-       * return an const iterator to the first element of the matrix
+       * return an const iterator to the first element of this matrix
        * (provided for stl compatibility)
        * \return const_iterator, a const iterator to the first element
        */
@@ -390,7 +448,7 @@ namespace tfel{
       begin(void) const;
       
       /*
-       * return an iterator after the last element of the matrix
+       * return an iterator after the last element of this matrix
        * (provided for stl compatibility)
        * \return iterator, an iterator after the last element
        */
@@ -399,7 +457,7 @@ namespace tfel{
       end(void);
       
       /*
-       * return an const iterator after the last element of the matrix
+       * return an const iterator after the last element of this matrix
        * (provided for stl compatibility)
        * \return const_iterator, a const iterator after the last element
        */
@@ -408,7 +466,7 @@ namespace tfel{
       end(void) const;
 
       /*
-       * return an reverse iterator to the last element of the matrix
+       * return an reverse iterator to the last element of this matrix
        * (provided for stl compatibility)
        * \return reverse_iterator, a reverse iterator to the last element
        */
@@ -417,7 +475,7 @@ namespace tfel{
       rbegin(void);
 
       /*
-       * return an const reverse iterator to the last element of the matrix
+       * return an const reverse iterator to the last element of this matrix
        * (provided for stl compatibility)
        * \return const_reverse_iterator, a const reverse iterator to the last element
        */
@@ -426,7 +484,7 @@ namespace tfel{
       rbegin(void) const;
       
       /*
-       * return an  reverse iterator before the first element of the matrix
+       * return an  reverse iterator before the first element of this matrix
        * (provided for stl compatibility)
        * \return reverse_iterator, a reverse iterator before the first element
        */
@@ -435,7 +493,7 @@ namespace tfel{
       rend(void);
       
       /*
-       * return an const reverse iterator before the first element of the matrix
+       * return an const reverse iterator before the first element of this matrix
        * (provided for stl compatibility)
        * \return const_reverse_iterator, a const reverse iterator before the first element
        */
@@ -451,6 +509,17 @@ namespace tfel{
       template<typename InputIterator>
       TFEL_MATH_INLINE2 void
       copy(const InputIterator);
+
+      //! using tmatrix_base::operator=
+      using tmatrix_base<tmatrix,N,M,T>::operator=;
+      //! using tmatrix_base::operator+=
+      using tmatrix_base<tmatrix,N,M,T>::operator+=;
+      //! using tmatrix_base::operator-=
+      using tmatrix_base<tmatrix,N,M,T>::operator-=;
+      //! using tmatrix_base::operator*=
+      using tmatrix_base<tmatrix,N,M,T>::operator*=;
+      //! using tmatrix_base::operator/=
+      using tmatrix_base<tmatrix,N,M,T>::operator/=;
 
     };
 
@@ -503,6 +572,8 @@ namespace tfel{
 #include"TFEL/Math/Matrix/tmatrix_const_row_view.hxx"
 #include"TFEL/Math/Matrix/tmatrix_column_view.hxx"
 #include"TFEL/Math/Matrix/tmatrix_const_column_view.hxx"
+#include"TFEL/Math/Matrix/tmatrix_submatrix_view.hxx"
+#include"TFEL/Math/Matrix/tmatrix_const_submatrix_view.hxx"
 #include"TFEL/Math/Matrix/tmatrix.ixx"
 #include"TFEL/Math/Matrix/tmatrixResultType.hxx"
 

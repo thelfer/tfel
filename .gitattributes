@@ -690,8 +690,12 @@ include/TFEL/Math/Matrix/tmatrix_const_column_view.hxx -text
 include/TFEL/Math/Matrix/tmatrix_const_column_view.ixx -text
 include/TFEL/Math/Matrix/tmatrix_const_row_view.hxx -text
 include/TFEL/Math/Matrix/tmatrix_const_row_view.ixx -text
+include/TFEL/Math/Matrix/tmatrix_const_submatrix_view.hxx -text
+include/TFEL/Math/Matrix/tmatrix_const_submatrix_view.ixx -text
 include/TFEL/Math/Matrix/tmatrix_row_view.hxx -text
 include/TFEL/Math/Matrix/tmatrix_row_view.ixx -text
+include/TFEL/Math/Matrix/tmatrix_submatrix_view.hxx -text
+include/TFEL/Math/Matrix/tmatrix_submatrix_view.ixx -text
 include/TFEL/Math/Newton-Raphson/TinyNewtonRaphson.ixx -text
 include/TFEL/Math/Parser/BinaryFunction.hxx -text
 include/TFEL/Math/Parser/BinaryFunction.ixx -text
@@ -1579,6 +1583,7 @@ tests/Math/tmatrix2.cxx -text
 tests/Math/tmatrix3.cxx -text
 tests/Math/tmatrix4.cxx -text
 tests/Math/tmatrix5.cxx -text
+tests/Math/tmatrix6.cxx -text
 tests/Math/tvector.cxx -text
 tests/Math/tvector2.cxx -text
 tests/Math/tvector3.cxx -text

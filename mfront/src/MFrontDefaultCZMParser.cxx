@@ -25,7 +25,8 @@ namespace mfront{
     this->mb.getLocalVariables().push_back(VarHandler("real&","Dt_nn",1u,0u));
     this->mb.getLocalVariables().push_back(VarHandler("tfel::math::tmatrix_row_view<N,N,0,1,N-1,real>","Dt_nt",1u,0u));
     this->mb.getLocalVariables().push_back(VarHandler("tfel::math::tmatrix_column_view<N,N,0,1,N-1,real>","Dt_tn",1u,0u));
-    this->localVariablesInitializers += "Dt_nn(this->Dt(0,0)),\nDt_nt(this->Dt),\nDt_tn(this->Dt)";
+    this->mb.getLocalVariables().push_back(VarHandler("tfel::math::tmatrix_submatrix_view<N,N,1,1,N-1,N-1,real>","Dt_tt",1u,0u));
+    this->localVariablesInitializers += "Dt_nn(this->Dt(0,0)),\nDt_nt(this->Dt),\nDt_tn(this->Dt),\nDt_tt(this->Dt)";
   }
 
   std::string
