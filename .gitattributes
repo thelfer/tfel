@@ -1042,7 +1042,7 @@ mfront/include/MFront/MFrontUMATInterfaceBase.hxx -text
 mfront/include/MFront/MFrontVirtualParser.hxx -text
 mfront/include/MFront/MTest.hxx -text
 mfront/include/MFront/MTestAnalyticalTest.hxx -text
-mfront/include/MFront/MTestAsterBehaviour.hxx -text
+mfront/include/MFront/MTestAsterSmallStrainBehaviour.hxx -text
 mfront/include/MFront/MTestBehaviour.hxx -text
 mfront/include/MFront/MTestCastemEvolution.hxx -text
 mfront/include/MFront/MTestConfig.hxx -text
@@ -1055,9 +1055,9 @@ mfront/include/MFront/MTestImposedStress.hxx -text
 mfront/include/MFront/MTestLogStream.hxx -text
 mfront/include/MFront/MTestReferenceFileComparisonTest.hxx -text
 mfront/include/MFront/MTestTypes.hxx -text
-mfront/include/MFront/MTestUmatBehaviour.hxx -text
 mfront/include/MFront/MTestUmatBehaviourBase.hxx -text
 mfront/include/MFront/MTestUmatNormaliseTangentOperator.hxx -text
+mfront/include/MFront/MTestUmatSmallStrainBehaviour.hxx -text
 mfront/include/MFront/MechanicalBehaviourDescription.hxx -text
 mfront/include/MFront/ParserBase.hxx -text
 mfront/include/MFront/ParserUtilities.hxx -text
@@ -1097,7 +1097,7 @@ mfront/lisp/mfront.el -text
 mfront/mtest/CMakeLists.txt -text
 mfront/mtest/MTest.cxx -text
 mfront/mtest/MTestAnalyticalTest.cxx -text
-mfront/mtest/MTestAsterBehaviour.cxx -text
+mfront/mtest/MTestAsterSmallStrainBehaviour.cxx -text
 mfront/mtest/MTestBehaviour.cxx -text
 mfront/mtest/MTestCastemEvolution.cxx -text
 mfront/mtest/MTestConstraint.cxx -text
@@ -1108,9 +1108,9 @@ mfront/mtest/MTestImposedStress.cxx -text
 mfront/mtest/MTestLogStream.cxx -text
 mfront/mtest/MTestMain.cxx -text
 mfront/mtest/MTestReferenceFileComparisonTest.cxx -text
-mfront/mtest/MTestUmatBehaviour.cxx -text
 mfront/mtest/MTestUmatBehaviourBase.cxx -text
 mfront/mtest/MTestUmatNormaliseTangentOperator.cxx -text
+mfront/mtest/MTestUmatSmallStrainBehaviour.cxx -text
 mfront/mtest/Makefile.am -text
 mfront/src/AsterChangeBasis.cxx -text
 mfront/src/AsterComputeStiffnessOperator.cxx -text

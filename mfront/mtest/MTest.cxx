@@ -34,10 +34,10 @@
 #include"MFront/MTestLogStream.hxx"
 #include"MFront/MTestBehaviour.hxx"
 #ifdef HAVE_CASTEM
-#include"MFront/MTestUmatBehaviour.hxx"
+#include"MFront/MTestUmatSmallStrainBehaviour.hxx"
 #endif /* HAVE_CASTEM */
 #ifdef HAVE_ASTER
-#include"MFront/MTestAsterBehaviour.hxx"
+#include"MFront/MTestAsterSmallStrainBehaviour.hxx"
 #endif /* HAVE_ASTER  */
 
 #include"MFront/MTestAnalyticalTest.hxx"
@@ -1288,12 +1288,12 @@ namespace mfront
 			     this->fileTokens.end());
 #ifdef HAVE_CASTEM
     if(i=="umat"){
-      this->b = shared_ptr<MTestBehaviour>(new MTestUmatBehaviour(this->hypothesis,l,f));
+      this->b = shared_ptr<MTestBehaviour>(new MTestUmatSmallStrainBehaviour(this->hypothesis,l,f));
     }
 #endif
 #ifdef HAVE_ASTER
     if(i=="aster"){
-      this->b = shared_ptr<MTestBehaviour>(new MTestAsterBehaviour(this->hypothesis,l,f));
+      this->b = shared_ptr<MTestBehaviour>(new MTestAsterSmallStrainBehaviour(this->hypothesis,l,f));
     }
 #endif
     if(this->b.get()==0){

@@ -85,9 +85,9 @@ nobase_noinst_HEADERS += MFront/MTestTypes.hxx	                      \
 			 MFront/MTestReferenceFileComparisonTest.hxx  \
 			 MFront/MTestBehaviour.hxx                    \
 			 MFront/MTestUmatBehaviourBase.hxx            \
-			 MFront/MTestUmatBehaviour.hxx                \
+			 MFront/MTestUmatSmallStrainBehaviour.hxx     \
 			 MFront/MTestUmatNormaliseTangentOperator.hxx \
-			 MFront/MTestAsterBehaviour.hxx               \
+			 MFront/MTestAsterSmallStrainBehaviour.hxx    \
 			 MFront/MTestEvolution.hxx                    \
 			 MFront/MTestCastemEvolution.hxx              \
 			 MFront/MTestFunctionEvolution.hxx            \

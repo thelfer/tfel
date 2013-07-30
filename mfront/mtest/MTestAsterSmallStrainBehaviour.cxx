@@ -15,14 +15,14 @@
 #include"MFront/Aster/AsterComputeStiffnessOperator.hxx"
 
 #include"MFront/MTestUmatNormaliseTangentOperator.hxx"
-#include"MFront/MTestAsterBehaviour.hxx"
+#include"MFront/MTestAsterSmallStrainBehaviour.hxx"
 
 namespace mfront
 {
 
-  MTestAsterBehaviour::MTestAsterBehaviour(const tfel::material::ModellingHypothesis::Hypothesis h,
-					   const std::string& l,
-					   const std::string& b)
+  MTestAsterSmallStrainBehaviour::MTestAsterSmallStrainBehaviour(const tfel::material::ModellingHypothesis::Hypothesis h,
+								 const std::string& l,
+								 const std::string& b)
     : MTestUmatBehaviourBase(l,b),
       savesTangentOperator(false)
   {
@@ -111,7 +111,7 @@ namespace mfront
   }
 
   size_t
-  MTestAsterBehaviour::getInternalStateVariablesSize(const unsigned short d) const
+  MTestAsterSmallStrainBehaviour::getInternalStateVariablesSize(const unsigned short d) const
   {
     size_t s(0);
     if(this->savesTangentOperator){
@@ -124,10 +124,10 @@ namespace mfront
       }
     }
     return s+ MTestUmatBehaviourBase::getInternalStateVariablesSize(d);
-  } // end of MTestAsterBehaviour::getInternalStateVariablesSize() const
+  } // end of MTestAsterSmallStrainBehaviour::getInternalStateVariablesSize() const
 
   std::vector<std::string>
-  MTestAsterBehaviour::getInternalStateVariablesDescriptions(const unsigned short d) const
+  MTestAsterSmallStrainBehaviour::getInternalStateVariablesDescriptions(const unsigned short d) const
   {
     using namespace std;
     vector<string> desc = MTestUmatBehaviourBase::getInternalStateVariablesDescriptions(d);
@@ -149,11 +149,11 @@ namespace mfront
       }
     }
     return desc;
-  } // end of MTestAsterBehaviour::getInternalStateVariablesDescriptions
+  } // end of MTestAsterSmallStrainBehaviour::getInternalStateVariablesDescriptions
 
   void
-  MTestAsterBehaviour::allocate(const size_t ntens,
-				const size_t nstatev)
+  MTestAsterSmallStrainBehaviour::allocate(const size_t ntens,
+					   const size_t nstatev)
   {
     this->D.resize(ntens,ntens);
     if(nstatev==0){
@@ -161,24 +161,24 @@ namespace mfront
     } else {
       this->iv.resize(nstatev);
     }
-  } // end of MTestAsterBehaviour::allocate
+  } // end of MTestAsterSmallStrainBehaviour::allocate
 
   MTestStiffnessMatrixType::mtype
-  MTestAsterBehaviour::getDefaultStiffnessMatrixType(void) const
+  MTestAsterSmallStrainBehaviour::getDefaultStiffnessMatrixType(void) const
   {
     return MTestStiffnessMatrixType::CONSISTANTTANGENTOPERATOR;
   }
   
   bool
-  MTestAsterBehaviour::computePredictionOperator(tfel::math::matrix<real>& Kt,
-						 const tfel::math::tmatrix<3u,3u,real>& r,
-						 const tfel::math::stensor<3u,real>& e0,
-						 const tfel::math::stensor<3u,real>& s0,
-						 const tfel::math::vector<real>& mprops0,
-						 const tfel::math::vector<real>& iv0,
-						 const tfel::math::vector<real>& esv0,
-						 const tfel::material::ModellingHypothesis::Hypothesis h,
-						 const MTestStiffnessMatrixType::mtype ktype) const
+  MTestAsterSmallStrainBehaviour::computePredictionOperator(tfel::math::matrix<real>& Kt,
+							    const tfel::math::tmatrix<3u,3u,real>& r,
+							    const tfel::math::stensor<3u,real>& e0,
+							    const tfel::math::stensor<3u,real>& s0,
+							    const tfel::math::vector<real>& mprops0,
+							    const tfel::math::vector<real>& iv0,
+							    const tfel::math::vector<real>& esv0,
+							    const tfel::material::ModellingHypothesis::Hypothesis h,
+							    const MTestStiffnessMatrixType::mtype ktype) const
   {
     using namespace tfel::math;
     stensor<3u,real> s1(s0);
@@ -191,42 +191,42 @@ namespace mfront
   }
 
   bool
-  MTestAsterBehaviour::integrate(tfel::math::matrix<real>& Kt,
-				 tfel::math::stensor<3u,real>& s1,
-				 tfel::math::vector<real>& iv1,
-				 const tfel::math::tmatrix<3u,3u,real>& r,
-				 const tfel::math::stensor<3u,real>& e0,
-				 const tfel::math::stensor<3u,real>& de,
-				 const tfel::math::stensor<3u,real>& s0,
-				 const tfel::math::vector<real>& mp,
-				 const tfel::math::vector<real>& iv0,
-				 const tfel::math::vector<real>& ev0,
-				 const tfel::math::vector<real>& dev,
-				 const tfel::material::ModellingHypothesis::Hypothesis h,
-				 const real dt,
-				 const MTestStiffnessMatrixType::mtype ktype) const
+  MTestAsterSmallStrainBehaviour::integrate(tfel::math::matrix<real>& Kt,
+					    tfel::math::stensor<3u,real>& s1,
+					    tfel::math::vector<real>& iv1,
+					    const tfel::math::tmatrix<3u,3u,real>& r,
+					    const tfel::math::stensor<3u,real>& e0,
+					    const tfel::math::stensor<3u,real>& de,
+					    const tfel::math::stensor<3u,real>& s0,
+					    const tfel::math::vector<real>& mp,
+					    const tfel::math::vector<real>& iv0,
+					    const tfel::math::vector<real>& ev0,
+					    const tfel::math::vector<real>& dev,
+					    const tfel::material::ModellingHypothesis::Hypothesis h,
+					    const real dt,
+					    const MTestStiffnessMatrixType::mtype ktype) const
   {
     return this->call_behaviour(Kt,s1,iv1,r,e0,de,s0,
 				mp,iv0,ev0,dev,h,dt,
 				ktype,true);
-  } // end of MTestAsterBehaviour::integrate
+  } // end of MTestAsterSmallStrainBehaviour::integrate
 
   bool
-  MTestAsterBehaviour::call_behaviour(tfel::math::matrix<real>& Kt,
-				      tfel::math::stensor<3u,real>& s1,
-				      tfel::math::vector<real>& iv1,
-				      const tfel::math::tmatrix<3u,3u,real>& r,
-				      const tfel::math::stensor<3u,real>& e0,
-				      const tfel::math::stensor<3u,real>& de,
-				      const tfel::math::stensor<3u,real>& s0,
-				      const tfel::math::vector<real>& mp,
-				      const tfel::math::vector<real>& iv0,
-				      const tfel::math::vector<real>& ev0,
-				      const tfel::math::vector<real>& dev,
-				      const tfel::material::ModellingHypothesis::Hypothesis h,
-				      const real dt,
-				      const MTestStiffnessMatrixType::mtype ktype,
-				      const bool b) const
+  MTestAsterSmallStrainBehaviour::call_behaviour(tfel::math::matrix<real>& Kt,
+						 tfel::math::stensor<3u,real>& s1,
+						 tfel::math::vector<real>& iv1,
+						 const tfel::math::tmatrix<3u,3u,real>& r,
+						 const tfel::math::stensor<3u,real>& e0,
+						 const tfel::math::stensor<3u,real>& de,
+						 const tfel::math::stensor<3u,real>& s0,
+						 const tfel::math::vector<real>& mp,
+						 const tfel::math::vector<real>& iv0,
+						 const tfel::math::vector<real>& ev0,
+						 const tfel::math::vector<real>& dev,
+						 const tfel::material::ModellingHypothesis::Hypothesis h,
+						 const real dt,
+						 const MTestStiffnessMatrixType::mtype ktype,
+						 const bool b) const
   {
     using namespace std;
     using namespace tfel::math;
@@ -257,7 +257,7 @@ namespace mfront
       ntens = 6;
       dimension = 3u;
     } else {
-      string msg("MTestAsterBehaviour::call_beahviour : ");
+      string msg("MTestAsterSmallStrainBehaviour::call_beahviour : ");
       msg += "unsupported hypothesis";
       throw(runtime_error(msg));
     }
@@ -275,7 +275,7 @@ namespace mfront
       } else if(ktype==MTestStiffnessMatrixType::CONSISTANTTANGENTOPERATOR){
 	D(0,0) = real(4);
       } else {
-	string msg("MTestAsterBehaviour::call_behaviour : "
+	string msg("MTestAsterSmallStrainBehaviour::call_behaviour : "
 		   "invalid or unspecified stiffness matrix type");
 	throw(runtime_error(msg));
       }
@@ -287,7 +287,7 @@ namespace mfront
       } else if(ktype==MTestStiffnessMatrixType::TANGENTOPERATOR){
 	D(0,0) = real(-3);
       } else {
-	string msg("MTestAsterBehaviour::call_behaviour : "
+	string msg("MTestAsterSmallStrainBehaviour::call_behaviour : "
 		   "invalid or unspecified stiffness matrix type");
 	throw(runtime_error(msg));
       }
@@ -343,7 +343,7 @@ namespace mfront
   }
 
 
-  MTestAsterBehaviour::~MTestAsterBehaviour()
+  MTestAsterSmallStrainBehaviour::~MTestAsterSmallStrainBehaviour()
   {}
   
 } // end of namespace mfront

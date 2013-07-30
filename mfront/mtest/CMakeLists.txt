@@ -33,7 +33,7 @@ set(TFELMTest_LDADD
 
 if(HAVE_CASTEM)
 set(TFELMTest_SOURCES
-    MTestUmatBehaviour.cxx
+    MTestUmatSmallStrainBehaviour.cxx
     ${TFELMTest_SOURCES})
 set(TFELMTest_LDADD
     UMATInterface
@@ -42,7 +42,7 @@ endif(HAVE_CASTEM)
 
 if(HAVE_ASTER)
 set(TFELMTest_SOURCES
-    MTestAsterBehaviour.cxx
+    MTestAsterSmallStrainBehaviour.cxx
     ${TFELMTest_SOURCES})
 set(TFELMTest_LDADD
     AsterInterface

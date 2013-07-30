@@ -12,7 +12,7 @@
 #include"TFEL/Math/st2tost2.hxx"
 #include"TFEL/System/ExternalLibraryManager.hxx"
 #include"MFront/UMAT/UMAT.hxx"
-#include"MFront/MTestUmatBehaviour.hxx"
+#include"MFront/MTestUmatSmallStrainBehaviour.hxx"
 #include"MFront/MTestUmatNormaliseTangentOperator.hxx"
 #include"MFront/UMAT/UMATComputeStiffnessOperator.hxx"
 
@@ -214,7 +214,7 @@ namespace mfront
     }
   } // end of MTestUmatRotationMatrix3D::rotateStiffnessMatrixBackward
 
-  MTestUmatBehaviour::MTestUmatBehaviour(const tfel::material::ModellingHypothesis::Hypothesis h,
+  MTestUmatSmallStrainBehaviour::MTestUmatSmallStrainBehaviour(const tfel::material::ModellingHypothesis::Hypothesis h,
 					 const std::string& l,
 					 const std::string& b)
     : MTestUmatBehaviourBase(l,b)
@@ -295,7 +295,7 @@ namespace mfront
 	tmp.push_back("ThermalExpansion2");
 	tmp.push_back("ThermalExpansion3");
       } else {
-	string msg("MTestUmatBehaviour::MTestUmatBehaviour : ");
+	string msg("MTestUmatSmallStrainBehaviour::MTestUmatBehaviour : ");
 	msg += "unsupported hypothesis";
 	throw(runtime_error(msg));
       }
@@ -304,7 +304,7 @@ namespace mfront
   }
 
   void
-  MTestUmatBehaviour::allocate(size_t ntens,
+  MTestUmatSmallStrainBehaviour::allocate(size_t ntens,
 			       size_t nstatev)
   {
     this->D.resize(ntens,ntens);
@@ -315,13 +315,13 @@ namespace mfront
   }
 
   MTestStiffnessMatrixType::mtype
-  MTestUmatBehaviour::getDefaultStiffnessMatrixType(void) const
+  MTestUmatSmallStrainBehaviour::getDefaultStiffnessMatrixType(void) const
   {
     return MTestStiffnessMatrixType::ELASTIC;
   }
   
   bool
-  MTestUmatBehaviour::computePredictionOperator(tfel::math::matrix<real>& Kt,
+  MTestUmatSmallStrainBehaviour::computePredictionOperator(tfel::math::matrix<real>& Kt,
 						const tfel::math::tmatrix<3u,3u,real>& r,
 						const tfel::math::stensor<3u,real>&,
 						const tfel::math::stensor<3u,real>&,
@@ -345,16 +345,16 @@ namespace mfront
       this->computeElasticStiffness(Kt,mp,drot,h);
       return true;
     } else {
-      string msg("MTestUmatBehaviour::computePredictionOperator : "
+      string msg("MTestUmatSmallStrainBehaviour::computePredictionOperator : "
 		 "computation of the tangent operator "
 		 "is not supported");
       throw(runtime_error(msg));
     }
     return false;
-  } // end of MTestUmatBehaviour::computePredictionOperator
+  } // end of MTestUmatSmallStrainBehaviour::computePredictionOperator
 
   bool
-  MTestUmatBehaviour::integrate(tfel::math::matrix<real>& Kt,
+  MTestUmatSmallStrainBehaviour::integrate(tfel::math::matrix<real>& Kt,
 				tfel::math::stensor<3u,real>& s1,
 				tfel::math::vector<real>& iv1,
 				const tfel::math::tmatrix<3u,3u,real>& r,
@@ -399,19 +399,19 @@ namespace mfront
       ndi = 2;
       ntens = 6;
     } else {
-      string msg("MTestUmatBehaviour::integrate : ");
+      string msg("MTestUmatSmallStrainBehaviour::integrate : ");
       msg += "unsupported hypothesis";
       throw(runtime_error(msg));
     }
     if((this->D.getNbRows()!=Kt.getNbRows())||
        (this->D.getNbCols()!=Kt.getNbCols())){
-      string msg("MTestUmatBehaviour::integrate : ");
+      string msg("MTestUmatSmallStrainBehaviour::integrate : ");
       msg += "the memory has not been allocated correctly";
       throw(runtime_error(msg));
     }
     if(((iv0.size()==0)&&(this->iv.size()!=1u))||
        ((iv0.size()!=0)&&(iv0.size()!=this->iv.size()))){
-      string msg("MTestUmatBehaviour::integrate : ");
+      string msg("MTestUmatSmallStrainBehaviour::integrate : ");
       msg += "the memory has not been allocated correctly";
       throw(runtime_error(msg));
     }
@@ -455,7 +455,7 @@ namespace mfront
     if(ktype==MTestStiffnessMatrixType::ELASTIC){
       this->computeElasticStiffness(Kt,mp,drot,h);
     } else {
-      string msg("MTestUmatBehaviour::integrate : "
+      string msg("MTestUmatSmallStrainBehaviour::integrate : "
 		 "computation of the tangent operator "
 		 "is not supported");
       throw(runtime_error(msg));
@@ -465,10 +465,10 @@ namespace mfront
       s1(i) *= sqrt2;
     }
     return true;
-  } // end of MTestUmatBehaviour::integrate
+  } // end of MTestUmatSmallStrainBehaviour::integrate
 
   void
-  MTestUmatBehaviour::computeElasticStiffness(tfel::math::matrix<real>& Kt,
+  MTestUmatSmallStrainBehaviour::computeElasticStiffness(tfel::math::matrix<real>& Kt,
 					      const tfel::math::vector<real>& mp,
 					      const tfel::math::tmatrix<3u,3u,real>& drot,
 					      const tfel::material::ModellingHypothesis::Hypothesis h) const
@@ -540,7 +540,7 @@ namespace mfront
 	  }
 	}
       } else {
-	string msg("MTestUmatBehaviour::integrate : ");
+	string msg("MTestUmatSmallStrainBehaviour::integrate : ");
 	msg += "unsupported hypothesis";
 	throw(runtime_error(msg));
       }
@@ -616,12 +616,12 @@ namespace mfront
 	  }
 	}
       } else {
-	string msg("MTestUmatBehaviour::integrate : ");
+	string msg("MTestUmatSmallStrainBehaviour::integrate : ");
 	msg += "unsupported hypothesis";
 	throw(runtime_error(msg));
       }
     } else {
-      string msg("MTestUmatBehaviour::integrate : ");
+      string msg("MTestUmatSmallStrainBehaviour::integrate : ");
       msg += "invalid behaviour type (neither "
 	"isotropic or orthotropic)";
       throw(runtime_error(msg));
@@ -629,7 +629,7 @@ namespace mfront
 
   }
       
-  MTestUmatBehaviour::~MTestUmatBehaviour()
+  MTestUmatSmallStrainBehaviour::~MTestUmatSmallStrainBehaviour()
   {}
   
 } // end of namespace mfront

@@ -36,12 +36,12 @@ mtest_LDADD = -L$(top_builddir)/mfront/mtest              \
 mtest_DEPENDENCIES = libTFELMTest.la
 
 if HAVE_CASTEM
-libTFELMTest_la_SOURCES += MTestUmatBehaviour.cxx
+libTFELMTest_la_SOURCES += MTestUmatSmallStrainBehaviour.cxx
 libTFELMTest_la_LIBADD  += -L$(top_builddir)/mfront/src -lUMATInterface
 endif
 
 if HAVE_ASTER
-libTFELMTest_la_SOURCES += MTestAsterBehaviour.cxx
+libTFELMTest_la_SOURCES += MTestAsterSmallStrainBehaviour.cxx
 libTFELMTest_la_LIBADD  += -L$(top_builddir)/mfront/src -lAsterInterface
 endif
 
