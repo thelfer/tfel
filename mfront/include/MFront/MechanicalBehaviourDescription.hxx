@@ -13,6 +13,8 @@
 #include<string>
 
 #include"TFEL/Config/TFELConfig.hxx"
+#include"TFEL/Material/MechanicalBehaviour.hxx"
+
 #include"MFront/VarHandler.hxx"
 #include"MFront/DrivingVariable.hxx"
 #include"MFront/BoundsDescription.hxx"
@@ -35,23 +37,9 @@ namespace mfront{
    * This structure gathers various behaviour characteristic
    */
   struct TFEL_VISIBILITY_EXPORT MechanicalBehaviourDescription
-    : private SupportedTypes
+    : private SupportedTypes,
+      public tfel::material::MechanicalBehaviourBase
   {
-    /*!
-     * An indication of the type of the behaviour treated
-     * If the behaviour is a small strain standard behaviour, then:
-     * - the only driving variable is the total strain 'eto' (symmetric tensor)
-     * - the only thermodynamic force is the stress    'sig' (symmetric tensor)
-     * If the behaviour is a cohesive zone model, then:
-     * - the only driving variable is the opening displacement (tvector)
-     * - the only thermodynamic force is the traction (tvector)
-     */
-    enum BehaviourType {
-      GENERALBEHAVIOUR              = -1,
-      SMALLSTRAINSTANDARDBEHAVIOUR  =  0,
-      FINITESTRAINSTANDARDBEHAVIOUR =  1,
-      COHESIVEZONEMODEL             =  2
-    }; // end of enum MFrontBehaviourType
     /*!
      * constructor
      */

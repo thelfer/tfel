@@ -15,23 +15,28 @@ namespace tfel{
   namespace material{
 
     /*!
-     * \class MechanicalBehaviour
-     * \brief This class declares an interface for mechanical behaviours.
-     * \param H, modelling hypothesis
-     * \param NumType, numerical type.
-     * \param bool use_qt, says if one shall use quantities.
+     * \class MechanicalBehaviourBase
+     * \brief This class declares enums for mechanical behaviours.
      * \author Helfer Thomas
-     * \date   28 Jul 2006
+     * \date   30 Juillet 2013
      */
-    template<ModellingHypothesis::Hypothesis H,
-	     typename NumType, bool use_qt>
-    struct MechanicalBehaviour
+    struct MechanicalBehaviourBase
     {
       /*!
-       * dimension of the space for the the given modelling hypothesis
+       * An indication of the type of the behaviour treated
+       * If the behaviour is a small strain standard behaviour, then:
+       * - the only driving variable is the total strain 'eto' (symmetric tensor)
+       * - the only thermodynamic force is the stress    'sig' (symmetric tensor)
+       * If the behaviour is a cohesive zone model, then:
+       * - the only driving variable is the opening displacement (tvector)
+       * - the only thermodynamic force is the traction (tvector)
        */
-      static const unsigned short N =
-	ModellingHypothesisToSpaceDimension<H>::value;
+      enum BehaviourType {
+	GENERALBEHAVIOUR              = -1,
+	SMALLSTRAINSTANDARDBEHAVIOUR  =  0,
+	FINITESTRAINSTANDARDBEHAVIOUR =  1,
+	COHESIVEZONEMODEL             =  2
+      }; // end of enum MFrontBehaviourType
       /*!
        * \brief return values of the integrate method
        */
@@ -52,6 +57,27 @@ namespace tfel{
 	CONSISTANTTANGENTOPERATOR,
 	NOSTIFFNESSREQUESTED
       }; // end of enum StiffnessMatrixType
+    }; // end of struct MechanicalBehaviourBase
+
+    /*!
+     * \class MechanicalBehaviour
+     * \brief This class declares an interface for mechanical behaviours.
+     * \param H, modelling hypothesis
+     * \param NumType, numerical type.
+     * \param bool use_qt, says if one shall use quantities.
+     * \author Helfer Thomas
+     * \date   28 Jul 2006
+     */
+    template<ModellingHypothesis::Hypothesis H,
+	     typename NumType, bool use_qt>
+    struct MechanicalBehaviour
+      : public MechanicalBehaviourBase
+    {
+      /*!
+       * dimension of the space for the the given modelling hypothesis
+       */
+      static const unsigned short N =
+	ModellingHypothesisToSpaceDimension<H>::value;
       /*!
        * \brief only compute a prediction stiffness matrix.
        * The result shall be retrieved through the "
