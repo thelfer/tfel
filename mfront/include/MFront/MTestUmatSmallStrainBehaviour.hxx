@@ -59,8 +59,8 @@ namespace mfront
     virtual bool
     computePredictionOperator(tfel::math::matrix<real>&,
 			      const tfel::math::tmatrix<3u,3u,real>&,
-			      const tfel::math::stensor<3u,real>&,
-			      const tfel::math::stensor<3u,real>&,
+			      const tfel::math::vector<real>&,
+			      const tfel::math::vector<real>&,
 			      const tfel::math::vector<real>&,
 			      const tfel::math::vector<real>&,
 			      const tfel::math::vector<real>&,
@@ -86,12 +86,12 @@ namespace mfront
      */
     virtual bool
     integrate(tfel::math::matrix<real>&,
-	      tfel::math::stensor<3u,real>&,
+	      tfel::math::vector<real>&,
 	      tfel::math::vector<real>&,
 	      const tfel::math::tmatrix<3u,3u,real>&,
-	      const tfel::math::stensor<3u,real>&,
-	      const tfel::math::stensor<3u,real>&,
-	      const tfel::math::stensor<3u,real>&,
+	      const tfel::math::vector<real>&,
+	      const tfel::math::vector<real>&,
+	      const tfel::math::vector<real>&,
 	      const tfel::math::vector<real>&,
 	      const tfel::math::vector<real>&,
 	      const tfel::math::vector<real>&,

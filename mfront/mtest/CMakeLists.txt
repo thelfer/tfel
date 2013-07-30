@@ -21,8 +21,8 @@ set(TFELMTest_SOURCES
     MTestUmatBehaviourBase.cxx
     MTestUmatNormaliseTangentOperator.cxx
     MTestConstraint.cxx
-    MTestImposedStrain.cxx
-    MTestImposedStress.cxx)
+    MTestImposedDrivingVariable.cxx
+    MTestImposedThermodynamicForce.cxx)
 set(TFELMTest_LDADD
     TFELMathParser
     TFELMath
@@ -34,6 +34,7 @@ set(TFELMTest_LDADD
 if(HAVE_CASTEM)
 set(TFELMTest_SOURCES
     MTestUmatSmallStrainBehaviour.cxx
+    MTestUmatCohesiveZoneModelBehaviour.cxx
     ${TFELMTest_SOURCES})
 set(TFELMTest_LDADD
     UMATInterface

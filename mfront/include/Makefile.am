@@ -92,8 +92,8 @@ nobase_noinst_HEADERS += MFront/MTestTypes.hxx	                      \
 			 MFront/MTestCastemEvolution.hxx              \
 			 MFront/MTestFunctionEvolution.hxx            \
 			 MFront/MTestConstraint.hxx                   \
-			 MFront/MTestImposedStrain.hxx                \
-			 MFront/MTestImposedStress.hxx
+			 MFront/MTestImposedDrivingVariable.hxx       \
+			 MFront/MTestImposedThermodynamicForce.hxx
 
 if HAVE_CASTEM
 nobase_include_HEADERS += MFront/MFrontCastemLawInterface.hxx   \

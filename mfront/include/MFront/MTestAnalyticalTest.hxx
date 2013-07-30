@@ -52,7 +52,7 @@ namespace mfront{
      */
     void
     check(const tfel::math::vector<real>&,
-	  const tfel::math::stensor<3u,real>&,
+	  const tfel::math::vector<real>&,
 	  const tfel::math::vector<real>&,
 	  const real,
 	  const real,

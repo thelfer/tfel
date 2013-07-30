@@ -187,6 +187,15 @@ namespace mfront{
     /*!
      * \param[in] out  : output file
      * \param[in] name : behaviour name
+     * \param[in] mb   : behaviour description
+     */
+    void
+    writeUMATxxBehaviourTypeSymbols(std::ostream&,
+				    const std::string&,
+				    const MechanicalBehaviourDescription&) const;
+    /*!
+     * \param[in] out  : output file
+     * \param[in] name : behaviour name
      * \param[in] file : source file
      * \param[in] mb   : behaviour description
      */

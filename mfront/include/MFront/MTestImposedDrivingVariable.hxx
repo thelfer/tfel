@@ -1,12 +1,12 @@
 /*! 
- * \file  MTestImposedStress.hxx
+ * \file  MTestImposedDrivingVariable.hxx
  * \brief
  * \author Helfer Thomas
  * \brief 05 avril 2013
  */
 
-#ifndef _LIB_MFRONT_MTESTIMPOSEDSTRESS_H_
-#define _LIB_MFRONT_MTESTIMPOSEDSTRESS_H_ 
+#ifndef _LIB_MFRONT_MTESTIMPOSEDDRIVINGVARIABLE_H_
+#define _LIB_MFRONT_MTESTIMPOSEDDRIVINGVARIABLE_H_ 
 
 #include"TFEL/Math/matrix.hxx"
 #include"TFEL/Math/vector.hxx"
@@ -20,28 +20,33 @@
 namespace mfront
 {
 
+  // forward declaration
+  struct MTestBehaviour;
+
   /*!
-   * Impose the value of a stress component
+   * Impose the value of a driving variable component
    */
-  struct MTestImposedStress
+  struct MTestImposedDrivingVariable
     : public MTestConstraint
   {
     /*!
      * constructor
+     * \param[in] b : behaviour
      * \param[in] h : modelling hypothesis
-     * \param[in] c : stress component
-     * \param[in] s : stress evolution
+     * \param[in] c : driving variable component
+     * \param[in] s : driving variable evolution
      */
-    MTestImposedStress(const tfel::material::ModellingHypothesis::Hypothesis,
-		       const std::string&,
-		       const tfel::utilities::shared_ptr<MTestEvolution>);
+    MTestImposedDrivingVariable(const MTestBehaviour&,
+				const tfel::material::ModellingHypothesis::Hypothesis,
+				const std::string&,
+				const tfel::utilities::shared_ptr<MTestEvolution>);
     /*!
      * constructor
-     * \param[in] c : stress component
-     * \param[in] s : stress evolution
+     * \param[in] c : component
+     * \param[in] s : driving variable evolution
      */
-    MTestImposedStress(const unsigned short,
-		       const tfel::utilities::shared_ptr<MTestEvolution>);
+    MTestImposedDrivingVariable(const unsigned short c,
+				const tfel::utilities::shared_ptr<MTestEvolution>);
     /*!
      * \return the number of Lagrange Multipliers
      * associated with this contraint
@@ -74,9 +79,9 @@ namespace mfront
 	      const real) const;
     /*!
      * \param[in]  N    : number of components of tensors
-     * \param[in]  e    : strains
+     * \param[in]  e    : driving variables
      * \param[in]  s    : stresses
-     * \param[in]  eeps : criterium value for strains
+     * \param[in]  eeps : criterium value for driving variables
      * \param[in]  seps : criterium value for stresses
      * \param[in]  t    : beginning of the time step
      * \param[in]  dt   : time increment
@@ -84,28 +89,21 @@ namespace mfront
     virtual bool
     checkConvergence(const unsigned short,
 		     const tfel::math::vector<real>&,
-		     const tfel::math::stensor<3u,real>&,
+		     const tfel::math::vector<real>&,
 		     const real,
 		     const real,
 		     const real,
 		     const real) const;
     //! destructor
-    virtual ~MTestImposedStress();
+    virtual ~MTestImposedDrivingVariable();
   protected:
-    /*!
-     * \param[in] h : modelling hypothesis
-     * \param[in] c : stress component
-     */
-    unsigned short
-    getComponentPosition(const tfel::material::ModellingHypothesis::Hypothesis,
-			 const std::string&) const;
-    //! stress value
-    const tfel::utilities::shared_ptr<MTestEvolution> sev;
+    //! driving variable evolution
+    const tfel::utilities::shared_ptr<MTestEvolution> eev;
     //! component value
     unsigned short c;
-  }; // end of struct MTestImposedStress
+  }; // end of struct MTestImposedDrivingVariable
   
 } // end of namespace mfront
 
-#endif /* _LIB_MFRONT_MTESTIMPOSEDSTRESS_H */
+#endif /* _LIB_MFRONT_MTESTIMPOSEDDRIVINGVARIABLE_H */
 

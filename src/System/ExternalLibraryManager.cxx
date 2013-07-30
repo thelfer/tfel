@@ -478,7 +478,6 @@ namespace tfel
 									    const std::string& f)
     {
       using namespace std;
-      vector<int> types;
       #if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
       HINSTANCE__* lib = this->loadLibrary(l);
 #else
@@ -496,11 +495,36 @@ namespace tfel
     } // end of ExternalLibraryManager::isUMATBehaviourUsableInPurelyImplicitResolution
 
     unsigned short
+    ExternalLibraryManager::getUMATBehaviourType(const std::string& l,
+						 const std::string& f)
+    {
+      using namespace std;
+#if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
+      HINSTANCE__* lib = this->loadLibrary(l);
+#else
+      void * lib = this->loadLibrary(l);
+#endif /* defined _WIN32 || _WIN64 || defined __CYGWIN__ */
+
+      int u = ::tfel_getUnsignedShort(lib,(f+"_BehaviourType").c_str());
+      if(u==-1){
+	string msg("ExternalLibraryManager::getUMATBehaviourType : ");
+	msg += " behavour type could not be read (";
+#if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
+	  msg += ::GetLastError();
+#else
+	  msg += ::dlerror();
+#endif /* defined _WIN32 || _WIN64 || defined __CYGWIN__ */
+	msg += ")";
+	throw(runtime_error(msg));
+      }
+      return static_cast<unsigned short>(u);
+    } // end of ExternalLibraryManager::getUMATBehaviourType
+
+    unsigned short
     ExternalLibraryManager::getUMATSymmetryType(const std::string& l,
 						 const std::string& f)
     {
       using namespace std;
-      vector<int> types;
 #if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
       HINSTANCE__* lib = this->loadLibrary(l);
 #else
@@ -527,7 +551,6 @@ namespace tfel
 							const std::string& f)
     {
       using namespace std;
-      vector<int> types;
 #if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
       HINSTANCE__* lib = this->loadLibrary(l);
 #else

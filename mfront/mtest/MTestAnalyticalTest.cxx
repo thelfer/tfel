@@ -31,8 +31,8 @@ namespace mfront
   } // MTestAnalyticalTest::MTestAnalyticalTest
 
   void
-  MTestAnalyticalTest::check(const tfel::math::vector<real>&     e,
-			     const tfel::math::stensor<3u,real>& s,
+  MTestAnalyticalTest::check(const tfel::math::vector<real>& e,
+			     const tfel::math::vector<real>& s,
 			     const tfel::math::vector<real>& iv,
 			     const real t,
 			     const real dt,

@@ -131,11 +131,23 @@ namespace tfel
 		      const std::string&);
       /*!
        * \return the type of the behaviour
-       * (isotropic or orthotropic)
-       * If the returned value is 0,
-       * the beahviour is isotropic.
-       * If the returned value is 1,
-       * the beahviour is orthotropic.
+       * \see MechanicalBehaviourBase::BehaviourType
+       * The value returned are the following
+       * 0 : general behaviour
+       * 1 : small strain behaviour
+       * 2 : finite strain behaviour
+       * 3 : cohesive zone model
+       * \param[in] l : name of the library
+       * \param[in] f : law name
+       */
+      unsigned short
+      getUMATBehaviourType(const std::string&,
+			   const std::string&);
+      /*!
+       * \return the symmetry of the behaviour (isotropic or
+       * orthotropic) If the returned value is 0, the beahviour is
+       * isotropic. If the returned value is 1, the beahviour is
+       * orthotropic.
        * \param[in] l : name of the library
        * \param[in] f : law name
        */
@@ -143,12 +155,10 @@ namespace tfel
       getUMATSymmetryType(const std::string&,
 			  const std::string&);
       /*!
-       * \return the type of the elastic behaviour
-       * (isotropic or orthotropic)
-       * If the returned value is 0,
-       * the beahviour is isotropic.
-       * If the returned value is 1,
-       * the beahviour is orthotropic.
+       * \return the symmetry of the elastic behaviour (isotropic or
+       * orthotropic) If the returned value is 0, the beahviour is
+       * isotropic. If the returned value is 1, the beahviour is
+       * orthotropic.
        * \param[in] l : name of the library
        * \param[in] f : law name
        */

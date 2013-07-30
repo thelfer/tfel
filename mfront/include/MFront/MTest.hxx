@@ -106,7 +106,7 @@ namespace mfront
        */
       virtual void
       check(const tfel::math::vector<real>&,
-	    const tfel::math::stensor<3u,real>&,
+	    const tfel::math::vector<real>&,
 	    const tfel::math::vector<real>&,
 	    const real,
 	    const real,
@@ -385,7 +385,7 @@ namespace mfront
     void printOutput(const real,
 		     const unsigned short,
 		     const tfel::math::vector<real>&,
-		     const tfel::math::stensor<3u,real>&,
+		     const tfel::math::vector<real>&,
 		     const tfel::math::vector<real>&);
     /*!
      * \brief parse an evolution
@@ -445,12 +445,6 @@ namespace mfront
     unsigned short dimension;
     //! modelling hypothesis
     tfel::material::ModellingHypothesis::Hypothesis hypothesis;
-    //! suffixes of stensor components
-    std::vector<std::string> sexts;
-    //! list of strains components
-    std::vector<std::string> enames;
-    //! list of stresses components
-    std::vector<std::string> snames;
     //! list of internal variable names, including their suffixes
     std::vector<std::string> ivfullnames;
     // inital values of the strains

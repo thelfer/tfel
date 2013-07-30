@@ -215,8 +215,8 @@ namespace mfront
   } // end of MTestUmatRotationMatrix3D::rotateStiffnessMatrixBackward
 
   MTestUmatSmallStrainBehaviour::MTestUmatSmallStrainBehaviour(const tfel::material::ModellingHypothesis::Hypothesis h,
-					 const std::string& l,
-					 const std::string& b)
+							       const std::string& l,
+							       const std::string& b)
     : MTestUmatBehaviourBase(l,b)
   {
     using namespace std;
@@ -226,7 +226,12 @@ namespace mfront
     ELM& elm = ELM::getExternalLibraryManager();
     this->fct = elm.getUMATFunction(l,b);
     this->mpnames = elm.getUMATMaterialPropertiesNames(l,b);
-    if(this->type==0){
+    if(this->type!=1u){
+      string msg("MTestUmatSmallStrainBehaviour::MTestUmatSmallStrainBehaviour : ");
+      msg += "unsupported hypothesis";
+      throw(runtime_error(msg));
+    }
+    if(this->stype==0){
       this->mpnames.insert(this->mpnames.begin(),"ThermalExpansion");
       this->mpnames.insert(this->mpnames.begin(),"MassDensity");
       this->mpnames.insert(this->mpnames.begin(),"PoissonRatio");
@@ -295,7 +300,7 @@ namespace mfront
 	tmp.push_back("ThermalExpansion2");
 	tmp.push_back("ThermalExpansion3");
       } else {
-	string msg("MTestUmatSmallStrainBehaviour::MTestUmatBehaviour : ");
+	string msg("MTestUmatSmallStrainBehaviour::MTestUmatSmallStrainBehaviour : ");
 	msg += "unsupported hypothesis";
 	throw(runtime_error(msg));
       }
@@ -305,7 +310,7 @@ namespace mfront
 
   void
   MTestUmatSmallStrainBehaviour::allocate(size_t ntens,
-			       size_t nstatev)
+					  size_t nstatev)
   {
     this->D.resize(ntens,ntens);
     this->iv.resize(nstatev);
@@ -322,14 +327,14 @@ namespace mfront
   
   bool
   MTestUmatSmallStrainBehaviour::computePredictionOperator(tfel::math::matrix<real>& Kt,
-						const tfel::math::tmatrix<3u,3u,real>& r,
-						const tfel::math::stensor<3u,real>&,
-						const tfel::math::stensor<3u,real>&,
-						const tfel::math::vector<real>& mp,
-						const tfel::math::vector<real>&,
-						const tfel::math::vector<real>&,
-						const tfel::material::ModellingHypothesis::Hypothesis h,
-						const MTestStiffnessMatrixType::mtype ktype) const
+							   const tfel::math::tmatrix<3u,3u,real>& r,
+							   const tfel::math::vector<real>&,
+							   const tfel::math::vector<real>&,
+							   const tfel::math::vector<real>& mp,
+							   const tfel::math::vector<real>&,
+							   const tfel::math::vector<real>&,
+							   const tfel::material::ModellingHypothesis::Hypothesis h,
+							   const MTestStiffnessMatrixType::mtype ktype) const
   {
     using namespace std;
     using namespace tfel::math;
@@ -355,19 +360,19 @@ namespace mfront
 
   bool
   MTestUmatSmallStrainBehaviour::integrate(tfel::math::matrix<real>& Kt,
-				tfel::math::stensor<3u,real>& s1,
-				tfel::math::vector<real>& iv1,
-				const tfel::math::tmatrix<3u,3u,real>& r,
-				const tfel::math::stensor<3u,real>& e0,
-				const tfel::math::stensor<3u,real>& de,
-				const tfel::math::stensor<3u,real>& s0,
-				const tfel::math::vector<real>& mp,
-				const tfel::math::vector<real>& iv0,
-				const tfel::math::vector<real>& ev0,
-				const tfel::math::vector<real>& dev,
-				const tfel::material::ModellingHypothesis::Hypothesis h,
-				const real dt,
-				const MTestStiffnessMatrixType::mtype ktype) const
+					   tfel::math::vector<real>& s1,
+					   tfel::math::vector<real>& iv1,
+					   const tfel::math::tmatrix<3u,3u,real>& r,
+					   const tfel::math::vector<real>& e0,
+					   const tfel::math::vector<real>& de,
+					   const tfel::math::vector<real>& s0,
+					   const tfel::math::vector<real>& mp,
+					   const tfel::math::vector<real>& iv0,
+					   const tfel::math::vector<real>& ev0,
+					   const tfel::math::vector<real>& dev,
+					   const tfel::material::ModellingHypothesis::Hypothesis h,
+					   const real dt,
+					   const MTestStiffnessMatrixType::mtype ktype) const
   {
     using namespace std;
     using namespace tfel::math;
@@ -430,8 +435,10 @@ namespace mfront
       }
     }
     UMATInt kinc(0);
-    stensor<3u,real> ue0(e0);
-    stensor<3u,real> ude(de);
+    stensor<3u,real> ue0(real(0));
+    stensor<3u,real> ude(real(0));
+    copy(e0.begin(),e0.end(),ue0.begin());
+    copy(de.begin(),de.end(),ude.begin());
     copy(s0.begin(),s0.end(),s1.begin());
     for(i=3;i!=static_cast<unsigned short>(ntens);++i){
       s1(i)  /= sqrt2;
@@ -469,16 +476,16 @@ namespace mfront
 
   void
   MTestUmatSmallStrainBehaviour::computeElasticStiffness(tfel::math::matrix<real>& Kt,
-					      const tfel::math::vector<real>& mp,
-					      const tfel::math::tmatrix<3u,3u,real>& drot,
-					      const tfel::material::ModellingHypothesis::Hypothesis h) const
+							 const tfel::math::vector<real>& mp,
+							 const tfel::math::tmatrix<3u,3u,real>& drot,
+							 const tfel::material::ModellingHypothesis::Hypothesis h) const
   {
     using namespace std;
     using namespace tfel::math;
     using umat::UMATComputeStiffnessOperator;
     typedef tfel::material::ModellingHypothesis MH;
     tmatrix<3u,3u,real>::size_type i,j;
-    if(this->type==0u){
+    if(this->stype==0u){
       if(h==MH::AXISYMMETRICALGENERALISEDPLANESTRAIN){
 	st2tost2<1u,real> De;
 	UMATComputeStiffnessOperator<umat::SMALLSTRAINSTANDARDBEHAVIOUR,
@@ -544,7 +551,7 @@ namespace mfront
 	msg += "unsupported hypothesis";
 	throw(runtime_error(msg));
       }
-    } else if(this->type==1u){
+    } else if(this->stype==1u){
       if(h==MH::AXISYMMETRICALGENERALISEDPLANESTRAIN){
 	st2tost2<1u,real> De;
 	UMATComputeStiffnessOperator<umat::SMALLSTRAINSTANDARDBEHAVIOUR,

@@ -1,12 +1,12 @@
 /*! 
- * \file  MTestImposedStrain.hxx
+ * \file  MTestImposedThermodynamicForce.hxx
  * \brief
  * \author Helfer Thomas
  * \brief 05 avril 2013
  */
 
-#ifndef _LIB_MFRONT_MTESTIMPOSEDSTRAIN_H_
-#define _LIB_MFRONT_MTESTIMPOSEDSTRAIN_H_ 
+#ifndef _LIB_MFRONT_MTESTIMPOSEDTHERMODYNAMICFORCE_H_
+#define _LIB_MFRONT_MTESTIMPOSEDTHERMODYNAMICFORCE_H_ 
 
 #include"TFEL/Math/matrix.hxx"
 #include"TFEL/Math/vector.hxx"
@@ -20,35 +20,33 @@
 namespace mfront
 {
 
+  // forward declaration
+  struct MTestBehaviour;
+
   /*!
-   * Impose the value of a strain component
+   * Impose the value of a thermodynamic force component
    */
-  struct MTestImposedStrain
+  struct MTestImposedThermodynamicForce
     : public MTestConstraint
   {
     /*!
      * constructor
+     * \param[in] b : behaviour
      * \param[in] h : modelling hypothesis
-     * \param[in] c : strain component
-     * \param[in] s : strain evolution
+     * \param[in] c : thermodynamic force component
+     * \param[in] s : thermodynamic force evolution
      */
-    MTestImposedStrain(const tfel::material::ModellingHypothesis::Hypothesis,
-		       const std::string&,
-		       const tfel::utilities::shared_ptr<MTestEvolution>);
+    MTestImposedThermodynamicForce(const MTestBehaviour&,
+				   const tfel::material::ModellingHypothesis::Hypothesis,
+				   const std::string&,
+				   const tfel::utilities::shared_ptr<MTestEvolution>);
     /*!
      * constructor
-     * \param[in] c : component
-     * \param[in] s : strain evolution
+     * \param[in] c : thermodynamic force component
+     * \param[in] s : thermodynamic force evolution
      */
-    MTestImposedStrain(const unsigned short c,
-		       const tfel::utilities::shared_ptr<MTestEvolution>);
-    // /*!
-    //  * constructor
-    //  * \param[in] h : modelling hypothesis
-    //  * \param[in] s : strain evolutions
-    //  */
-    // MTestImposedStrain(const tfel::material::ModellingHypothesis::Hypothesis,
-    // 		       const std::vector<tfel::utilities::shared_ptr<MTestEvolution> >&);
+    MTestImposedThermodynamicForce(const unsigned short,
+				   const tfel::utilities::shared_ptr<MTestEvolution>);
     /*!
      * \return the number of Lagrange Multipliers
      * associated with this contraint
@@ -82,37 +80,30 @@ namespace mfront
     /*!
      * \param[in]  N    : number of components of tensors
      * \param[in]  e    : strains
-     * \param[in]  s    : stresses
+     * \param[in]  s    : ThermodynamicForcees
      * \param[in]  eeps : criterium value for strains
-     * \param[in]  seps : criterium value for stresses
+     * \param[in]  seps : criterium value for ThermodynamicForcees
      * \param[in]  t    : beginning of the time step
      * \param[in]  dt   : time increment
      */
     virtual bool
     checkConvergence(const unsigned short,
 		     const tfel::math::vector<real>&,
-		     const tfel::math::stensor<3u,real>&,
+		     const tfel::math::vector<real>&,
 		     const real,
 		     const real,
 		     const real,
 		     const real) const;
     //! destructor
-    virtual ~MTestImposedStrain();
+    virtual ~MTestImposedThermodynamicForce();
   protected:
-    /*!
-     * \param[in] h : modelling hypothesis
-     * \param[in] c : strain component
-     */
-    unsigned short
-    getComponentPosition(const tfel::material::ModellingHypothesis::Hypothesis,
-			 const std::string&) const;
-    //! strain value
-    const tfel::utilities::shared_ptr<MTestEvolution> eev;
+    //! thermodynamic force evolution
+    const tfel::utilities::shared_ptr<MTestEvolution> sev;
     //! component value
     unsigned short c;
-  }; // end of struct MTestImposedStrain
+  }; // end of struct MTestImposedThermodynamicForce
   
 } // end of namespace mfront
 
-#endif /* _LIB_MFRONT_MTESTIMPOSEDSTRAIN_H */
+#endif /* _LIB_MFRONT_MTESTIMPOSEDTHERMODYNAMICFORCE_H */
 

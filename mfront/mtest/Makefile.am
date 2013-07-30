@@ -18,8 +18,8 @@ libTFELMTest_la_SOURCES = MTest.cxx                             \
 			  MTestUmatBehaviourBase.cxx            \
 			  MTestUmatNormaliseTangentOperator.cxx \
 			  MTestConstraint.cxx                   \
-			  MTestImposedStrain.cxx                \
-			  MTestImposedStress.cxx
+			  MTestImposedDrivingVariable.cxx       \
+			  MTestImposedThermodynamicForce.cxx
 
 libTFELMTest_la_LIBADD  = -L$(top_builddir)/src/Math                      \
 			  -lTFELMathParser -lTFELMath                     \
@@ -36,7 +36,8 @@ mtest_LDADD = -L$(top_builddir)/mfront/mtest              \
 mtest_DEPENDENCIES = libTFELMTest.la
 
 if HAVE_CASTEM
-libTFELMTest_la_SOURCES += MTestUmatSmallStrainBehaviour.cxx
+libTFELMTest_la_SOURCES += MTestUmatSmallStrainBehaviour.cxx       \
+			   MTestUmatCohesiveZoneModelBehaviour.cxx
 libTFELMTest_la_LIBADD  += -L$(top_builddir)/mfront/src -lUMATInterface
 endif
 

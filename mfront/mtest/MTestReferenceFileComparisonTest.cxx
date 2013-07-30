@@ -26,8 +26,8 @@ namespace mfront{
   {} // MTestReferenceFileComparisonTest::MTestReferenceFileComparisonTest
 
   void
-  MTestReferenceFileComparisonTest::check(const tfel::math::vector<real>&     e,
-					  const tfel::math::stensor<3u,real>& s,
+  MTestReferenceFileComparisonTest::check(const tfel::math::vector<real>& e,
+					  const tfel::math::vector<real>& s,
 					  const tfel::math::vector<real>& iv,
 					  const real t,
 					  const real dt,

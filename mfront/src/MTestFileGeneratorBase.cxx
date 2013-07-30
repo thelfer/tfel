@@ -124,8 +124,8 @@ namespace mfront{
 		 "can't open file '"+n+".mtest'");
       throw(runtime_error(msg));
     }
-    this->writeModellingHypothesis(file);
     this->writeBehaviourDeclaration(file);
+    this->writeModellingHypothesis(file);
     this->writeMaterialProperties(file);
     this->writeInternalStateVariables(file);
     this->writeExternalStateVariables(file);

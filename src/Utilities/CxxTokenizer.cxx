@@ -1123,7 +1123,7 @@ namespace tfel{
       is >> res;
       if(!is&&(!is.eof())){
 	ostringstream msg;
-	msg << "CxxTokenizer::readDouble : ";
+	msg << "CxxTokenizer::readUnsignedInt : ";
 	msg << "could not read value from token '"+p->value+"'.\n";
 	throw(runtime_error(msg.str()));
       }

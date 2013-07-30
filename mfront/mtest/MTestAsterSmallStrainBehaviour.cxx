@@ -38,73 +38,79 @@ namespace mfront
     unsigned short etype = elm.getUMATElasticSymmetryType(l,b);
     this->savesTangentOperator = elm.checkIfAsterBehaviourSavesTangentOperator(l,b);
     vector<string> tmp;
-    if(etype==0u){
-      if(eo){
-	tmp.push_back("YoungModulus");
-	tmp.push_back("PoissonRatio");
-      }
-      if(to){
-	tmp.push_back("ThermalExpansion");
-      }
-    } else if(etype==1u){
-      if(h==ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN){
+    if(this->type==1u){
+      if(etype==0u){
 	if(eo){
-	  tmp.push_back("YoungModulus1");
-	  tmp.push_back("YoungModulus2");
-	  tmp.push_back("YoungModulus3");
-	  tmp.push_back("PoissonRatio12");
-	  tmp.push_back("PoissonRatio13");
-	  tmp.push_back("PoissonRatio23");
+	  tmp.push_back("YoungModulus");
+	  tmp.push_back("PoissonRatio");
 	}
 	if(to){
-	  tmp.push_back("ThermalExpansion1");
-	  tmp.push_back("ThermalExpansion2");
-	  tmp.push_back("ThermalExpansion3");
+	  tmp.push_back("ThermalExpansion");
 	}
-      } else if((h==ModellingHypothesis::PLANESTRESS)||
-		(h==ModellingHypothesis::PLANESTRAIN)||
-		(h==ModellingHypothesis::AXISYMMETRICAL)||
-		(h==ModellingHypothesis::GENERALISEDPLANESTRAIN)){
-	if(eo){
-	  tmp.push_back("YoungModulus1");
-	  tmp.push_back("YoungModulus2");
-	  tmp.push_back("YoungModulus3");
-	  tmp.push_back("PoissonRatio12");
-	  tmp.push_back("PoissonRatio23");
-	  tmp.push_back("PoissonRatio13");
-	  tmp.push_back("ShearModulus12");
+      } else if(etype==1u){
+	if(h==ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN){
+	  if(eo){
+	    tmp.push_back("YoungModulus1");
+	    tmp.push_back("YoungModulus2");
+	    tmp.push_back("YoungModulus3");
+	    tmp.push_back("PoissonRatio12");
+	    tmp.push_back("PoissonRatio13");
+	    tmp.push_back("PoissonRatio23");
+	  }
+	  if(to){
+	    tmp.push_back("ThermalExpansion1");
+	    tmp.push_back("ThermalExpansion2");
+	    tmp.push_back("ThermalExpansion3");
+	  }
+	} else if((h==ModellingHypothesis::PLANESTRESS)||
+		  (h==ModellingHypothesis::PLANESTRAIN)||
+		  (h==ModellingHypothesis::AXISYMMETRICAL)||
+		  (h==ModellingHypothesis::GENERALISEDPLANESTRAIN)){
+	  if(eo){
+	    tmp.push_back("YoungModulus1");
+	    tmp.push_back("YoungModulus2");
+	    tmp.push_back("YoungModulus3");
+	    tmp.push_back("PoissonRatio12");
+	    tmp.push_back("PoissonRatio23");
+	    tmp.push_back("PoissonRatio13");
+	    tmp.push_back("ShearModulus12");
+	  }
+	  if(to){
+	    tmp.push_back("ThermalExpansion1");
+	    tmp.push_back("ThermalExpansion2");
+	    tmp.push_back("ThermalExpansion3");
+	  }
+	} else if(h==ModellingHypothesis::TRIDIMENSIONAL){
+	  if(eo){
+	    tmp.push_back("YoungModulus1");
+	    tmp.push_back("YoungModulus2");
+	    tmp.push_back("YoungModulus3");
+	    tmp.push_back("PoissonRatio12");
+	    tmp.push_back("PoissonRatio23");
+	    tmp.push_back("PoissonRatio13");
+	    tmp.push_back("ShearModulus12");
+	    tmp.push_back("ShearModulus23");
+	    tmp.push_back("ShearModulus13");
+	  }
+	  if(to){
+	    tmp.push_back("ThermalExpansion1");
+	    tmp.push_back("ThermalExpansion2");
+	    tmp.push_back("ThermalExpansion3");
+	  }
+	} else { 
+	  string msg("MTestAsterSmallStrainBehaviour::MTestAsterSmallStrainBehaviour : "
+		     "unsupported modelling hypothesis");
+	  throw(runtime_error(msg));
 	}
-	if(to){
-	  tmp.push_back("ThermalExpansion1");
-	  tmp.push_back("ThermalExpansion2");
-	  tmp.push_back("ThermalExpansion3");
-	}
-      } else if(h==ModellingHypothesis::TRIDIMENSIONAL){
-	if(eo){
-	  tmp.push_back("YoungModulus1");
-	  tmp.push_back("YoungModulus2");
-	  tmp.push_back("YoungModulus3");
-	  tmp.push_back("PoissonRatio12");
-	  tmp.push_back("PoissonRatio23");
-	  tmp.push_back("PoissonRatio13");
-	  tmp.push_back("ShearModulus12");
-	  tmp.push_back("ShearModulus23");
-	  tmp.push_back("ShearModulus13");
-	}
-	if(to){
-	  tmp.push_back("ThermalExpansion1");
-	  tmp.push_back("ThermalExpansion2");
-	  tmp.push_back("ThermalExpansion3");
-	}
-      } else { 
-	string msg("MTestUmatBehaviourBase::MTestUmatBehaviourBase : "
-		   "unsupported modelling hypothesis");
+      } else {
+	string msg("MTestAsterSmallStrainBehaviour::MTestAsterSmallStrainBehaviour : "
+		   "unsupported behaviour type "
+		   "(neither isotropic nor orthotropic)");
 	throw(runtime_error(msg));
       }
     } else {
-      string msg("MTestUmatBehaviourBase::MTestUmatBehaviourBase : "
-		 "unsupported behaviour type "
-		 "(neither isotropic nor orthotropic)");
+      string msg("MTestAsterSmallStrainBehaviour::MTestAsterSmallStrainBehaviour : ");
+      msg += "unsupported behaviour type";
       throw(runtime_error(msg));
     }
     this->mpnames.insert(this->mpnames.begin(),tmp.begin(),tmp.end());
@@ -172,8 +178,8 @@ namespace mfront
   bool
   MTestAsterSmallStrainBehaviour::computePredictionOperator(tfel::math::matrix<real>& Kt,
 							    const tfel::math::tmatrix<3u,3u,real>& r,
-							    const tfel::math::stensor<3u,real>& e0,
-							    const tfel::math::stensor<3u,real>& s0,
+							    const tfel::math::vector<real>& e0,
+							    const tfel::math::vector<real>& s0,
 							    const tfel::math::vector<real>& mprops0,
 							    const tfel::math::vector<real>& iv0,
 							    const tfel::math::vector<real>& esv0,
@@ -181,8 +187,8 @@ namespace mfront
 							    const MTestStiffnessMatrixType::mtype ktype) const
   {
     using namespace tfel::math;
-    stensor<3u,real> s1(s0);
-    stensor<3u,real> de(real(0));
+    vector<real> s1(s0);
+    vector<real> de(real(0));
     vector<real> iv1(iv0);
     vector<real> desv(esv0.size(),real(0));
     return this->call_behaviour(Kt,s1,iv1,r,e0,de,s0,
@@ -192,12 +198,12 @@ namespace mfront
 
   bool
   MTestAsterSmallStrainBehaviour::integrate(tfel::math::matrix<real>& Kt,
-					    tfel::math::stensor<3u,real>& s1,
+					    tfel::math::vector<real>& s1,
 					    tfel::math::vector<real>& iv1,
 					    const tfel::math::tmatrix<3u,3u,real>& r,
-					    const tfel::math::stensor<3u,real>& e0,
-					    const tfel::math::stensor<3u,real>& de,
-					    const tfel::math::stensor<3u,real>& s0,
+					    const tfel::math::vector<real>& e0,
+					    const tfel::math::vector<real>& de,
+					    const tfel::math::vector<real>& s0,
 					    const tfel::math::vector<real>& mp,
 					    const tfel::math::vector<real>& iv0,
 					    const tfel::math::vector<real>& ev0,
@@ -213,12 +219,12 @@ namespace mfront
 
   bool
   MTestAsterSmallStrainBehaviour::call_behaviour(tfel::math::matrix<real>& Kt,
-						 tfel::math::stensor<3u,real>& s1,
+						 tfel::math::vector<real>& s1,
 						 tfel::math::vector<real>& iv1,
 						 const tfel::math::tmatrix<3u,3u,real>& r,
-						 const tfel::math::stensor<3u,real>& e0,
-						 const tfel::math::stensor<3u,real>& de,
-						 const tfel::math::stensor<3u,real>& s0,
+						 const tfel::math::vector<real>& e0,
+						 const tfel::math::vector<real>& de,
+						 const tfel::math::vector<real>& s0,
 						 const tfel::math::vector<real>& mp,
 						 const tfel::math::vector<real>& iv0,
 						 const tfel::math::vector<real>& ev0,
@@ -307,13 +313,17 @@ namespace mfront
 	drot(i,j) = r(j,i);
       }
     }
-    stensor<3u,real> ue0(e0);
-    stensor<3u,real> ude(de);
+    stensor<3u,real> ue0(real(0));
+    stensor<3u,real> ude(real(0));
+    copy(e0.begin(),e0.end(),ue0.begin());
+    copy(de.begin(),de.end(),ude.begin());
     copy(s0.begin(),s0.end(),s1.begin());
-    for(i=3;i!=static_cast<unsigned short>(ntens);++i){
-      s1(i)  /= sqrt2;
-      ue0(i) *= sqrt2;
-      ude(i) *= sqrt2;
+    if(this->type==1u){
+      for(i=3;i!=static_cast<unsigned short>(ntens);++i){
+	s1(i)  /= sqrt2;
+	ue0(i) *= sqrt2;
+	ude(i) *= sqrt2;
+      }
     }
     AsterReal ndt(1.);
     (this->fct)(&s1(0),&iv(0),&D(0,0),
@@ -335,13 +345,14 @@ namespace mfront
 	copy(iv.begin(),iv.end(),iv1.begin());
       }
       // turning things in standard conventions
-      for(i=3;i!=static_cast<unsigned short>(ntens);++i){
-	s1(i) *= sqrt2;
+      if(this->type==1u){
+	for(i=3;i!=static_cast<unsigned short>(ntens);++i){
+	  s1(i) *= sqrt2;
+	}
       }
     }
     return true;
   }
-
 
   MTestAsterSmallStrainBehaviour::~MTestAsterSmallStrainBehaviour()
   {}

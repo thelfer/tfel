@@ -35,6 +35,7 @@
 #include"MFront/MTestBehaviour.hxx"
 #ifdef HAVE_CASTEM
 #include"MFront/MTestUmatSmallStrainBehaviour.hxx"
+#include"MFront/MTestUmatCohesiveZoneModelBehaviour.hxx"
 #endif /* HAVE_CASTEM */
 #ifdef HAVE_ASTER
 #include"MFront/MTestAsterSmallStrainBehaviour.hxx"
@@ -48,8 +49,8 @@
 #include"MFront/MTestCastemEvolution.hxx"
 
 #include"MFront/MTestConstraint.hxx"
-#include"MFront/MTestImposedStress.hxx"
-#include"MFront/MTestImposedStrain.hxx"
+#include"MFront/MTestImposedThermodynamicForce.hxx"
+#include"MFront/MTestImposedDrivingVariable.hxx"
 
 namespace mfront
 {
@@ -185,12 +186,12 @@ namespace mfront
     // additional constraints
     if(this->hypothesis==MH::PLANESTRAIN){
       shared_ptr<MTestEvolution>  eev(new MTestConstantEvolution(0.));
-      shared_ptr<MTestConstraint> ec(new MTestImposedStrain(3,eev));
+      shared_ptr<MTestConstraint> ec(new MTestImposedDrivingVariable(3,eev));
       this->constraints.push_back(ec);
     }
     if(this->hypothesis==MH::PLANESTRESS){
       shared_ptr<MTestEvolution>  sev(new MTestConstantEvolution(0.));
-      shared_ptr<MTestConstraint> sc(new MTestImposedStress(3,sev));
+      shared_ptr<MTestConstraint> sc(new MTestImposedThermodynamicForce(3,sev));
       this->constraints.push_back(sc);
     }
     if(!this->isRmDefined){
@@ -222,8 +223,12 @@ namespace mfront
       this->ktype = this->b->getDefaultStiffnessMatrixType();
     }
     // declaring behaviour variables
-    this->declareVariables(this->enames);
-    this->declareVariables(this->snames);
+    vector<string> enames;
+    vector<string> snames;
+    this->b->getDrivingVariablesComponents(enames,this->hypothesis);
+    this->b->getThermodynamicForcesComponents(snames,this->hypothesis);
+    this->declareVariables(enames);
+    this->declareVariables(snames);
   } // end of MTest::MTest
 
   MTest::MTest()
@@ -768,15 +773,24 @@ namespace mfront
   {
     using namespace std;
     vector<string>::const_iterator p;
-    p=find(this->enames.begin(),this->enames.end(),n);
-    if(p!=this->enames.end()){
-      pos  = static_cast<unsigned short>(p-this->enames.begin());
+    if(this->b.get()==0){
+      string msg("MTest::getVariableTypeAndPosition : ");
+      msg += "no behaviour defined";
+      throw(runtime_error(msg));
+    }
+    vector<string> enames;
+    vector<string> snames;
+    this->b->getDrivingVariablesComponents(enames,this->hypothesis);
+    this->b->getThermodynamicForcesComponents(snames,this->hypothesis);
+    p=find(enames.begin(),enames.end(),n);
+    if(p!=enames.end()){
+      pos  = static_cast<unsigned short>(p-enames.begin());
       type = MTest::UTest::STRAINS;
       return;
     } 
-    p=find(this->snames.begin(),this->snames.end(),n);
-    if(p!=this->snames.end()){
-      pos  = static_cast<unsigned short>(p-this->snames.begin());
+    p=find(snames.begin(),snames.end(),n);
+    if(p!=snames.end()){
+      pos  = static_cast<unsigned short>(p-snames.begin());
       type = MTest::UTest::STRESSES;
       return;
     } 
@@ -1036,9 +1050,6 @@ namespace mfront
   {
     using namespace std;
     typedef tfel::material::ModellingHypothesis MH;
-    static const string exts[6u]  = {"XX","YY","ZZ",
-				     "XY","XZ","YZ"};
-    static const string aexts[4u] = {"RR","ZZ","TT","RZ"};  
     if(this->dimension!=0){
       string msg("MTest::handleModellingHypothesis : ");
       msg += "the modelling hypothesis is already defined";
@@ -1050,41 +1061,25 @@ namespace mfront
     if(h=="AxisymmetricalGeneralisedPlaneStrain"){
       this->dimension=1u;
       this->hypothesis = MH::AXISYMMETRICALGENERALISEDPLANESTRAIN;
-      copy(aexts,aexts+3u,
-	   back_inserter(this->sexts));
     } else if(h=="Axisymmetrical"){
       this->dimension  = 2u;
       this->hypothesis = MH::AXISYMMETRICAL;
-      copy(aexts,aexts+4u,
-	   back_inserter(this->sexts));
     } else if(h=="PlaneStress"){
       this->dimension  = 2u;
       this->hypothesis = MH::PLANESTRESS;
-      copy(exts,exts+4u,
-	   back_inserter(this->sexts));
     } else if(h=="PlaneStrain"){
       this->dimension  = 2u;
       this->hypothesis = MH::PLANESTRAIN;
-      copy(exts,exts+4u,
-	   back_inserter(this->sexts));
     } else if(h=="GeneralisedPlaneStrain"){
       this->dimension  = 2u;
       this->hypothesis = MH::GENERALISEDPLANESTRAIN;
-      copy(exts,exts+4u,
-	   back_inserter(this->sexts));
     } else if(h=="Tridimensional"){
       this->dimension  = 3u;
       this->hypothesis = MH::TRIDIMENSIONAL;
-      copy(exts,exts+6u,
-	   back_inserter(this->sexts));
     } else {
       string msg("MTest::handleModellingHypothesis : ");
       msg += "unsupported hypothesis '"+h+"'";
       throw(runtime_error(msg));
-    }
-    for(vector<string>::size_type i=0;i!=this->sexts.size();++i){
-      this->enames.push_back("E"+sexts[i]);
-      this->snames.push_back("S"+sexts[i]);
     }
   }
 
@@ -1187,25 +1182,23 @@ namespace mfront
   {
     using namespace std;
     typedef tfel::material::ModellingHypothesis MH;
-    if(getVerboseMode()>=VERBOSE_LEVEL1){
-      ostream& log = getLogStream();
-      log << "No hypothesis defined, using default" << endl;
-    }
     if(this->hypothesis!=MH::UNDEFINEDHYPOTHESIS){
       string msg("MTest::setDefaultHypothesis : "
 		 "internal error : the modelling "
 		 "hypothesis is already defined");
       throw(runtime_error(msg));
     }
+    if(this->b.get()!=0){
+      string msg("MTest::setDefaultHypothesis : ");
+      msg += "behaviour already defined";
+      throw(runtime_error(msg));
+    }
+    if(getVerboseMode()>=VERBOSE_LEVEL1){
+      ostream& log = getLogStream();
+      log << "No hypothesis defined, using default" << endl;
+    }
     this->hypothesis = MH::TRIDIMENSIONAL;
     this->dimension  = 3u;
-    this->sexts.resize(6u);
-    this->sexts[0] = "XX";this->sexts[1] = "YY";this->sexts[2] = "ZZ";
-    this->sexts[3] = "XY";this->sexts[4] = "XZ";this->sexts[5] = "YZ";
-    for(vector<string>::size_type i=0;i!=this->sexts.size();++i){
-      this->enames.push_back("E"+sexts[i]);
-      this->snames.push_back("S"+sexts[i]);
-    }
   }
   
   void
@@ -1222,7 +1215,7 @@ namespace mfront
     this->checkNotEndOfLine("MTest::handleImposedStress",p,
 			    this->fileTokens.end());
     shared_ptr<MTestEvolution> sev = this->parseEvolution(evt,p);
-    shared_ptr<MTestConstraint> sc(new MTestImposedStress(this->hypothesis,c,sev));
+    shared_ptr<MTestConstraint> sc(new MTestImposedThermodynamicForce(*(this->b),this->hypothesis,c,sev));
     this->constraints.push_back(sc);
     (*(this->evs))[c] = sev;
     this->readSpecifiedToken("MTest::handleImposedStress",";",
@@ -1243,7 +1236,7 @@ namespace mfront
     this->checkNotEndOfLine("MTest::handleImposedStrain",p,
 			    this->fileTokens.end());
     shared_ptr<MTestEvolution> sev = this->parseEvolution(evt,p);
-    shared_ptr<MTestConstraint> sc(new MTestImposedStrain(this->hypothesis,c,sev));
+    shared_ptr<MTestConstraint> sc(new MTestImposedDrivingVariable(*(this->b),this->hypothesis,c,sev));
     (*(this->evs))[c] = sev;
     this->constraints.push_back(sc);
     this->readSpecifiedToken("MTest::handleImposedStrain",";",
@@ -1255,6 +1248,8 @@ namespace mfront
   {
     using namespace std;
     using namespace tfel::utilities;
+    using namespace tfel::system;
+    typedef ExternalLibraryManager ELM;
     typedef tfel::material::ModellingHypothesis MH;
     if(this->hypothesis==MH::UNDEFINEDHYPOTHESIS){
       this->setDefaultHypothesis();
@@ -1288,7 +1283,17 @@ namespace mfront
 			     this->fileTokens.end());
 #ifdef HAVE_CASTEM
     if(i=="umat"){
-      this->b = shared_ptr<MTestBehaviour>(new MTestUmatSmallStrainBehaviour(this->hypothesis,l,f));
+      ELM& elm = ELM::getExternalLibraryManager();
+      const unsigned short type = elm.getUMATBehaviourType(l,f);
+      if(type==1u){
+	this->b = shared_ptr<MTestBehaviour>(new MTestUmatSmallStrainBehaviour(this->hypothesis,l,f));
+      } else if(type==3u){
+	this->b = shared_ptr<MTestBehaviour>(new MTestUmatCohesiveZoneModelBehaviour(this->hypothesis,l,f));
+      } else {
+	string msg("MTest::handleBehaviour : ");
+	msg += "unsupported behaviour type";
+	throw(runtime_error(msg));
+      }
     }
 #endif
 #ifdef HAVE_ASTER
@@ -1311,8 +1316,11 @@ namespace mfront
       if(t==0){
 	this->ivfullnames.push_back(*pn);
       } else if(t==1){
-	for(vector<string>::size_type s=0;s!=this->sexts.size();++s){
-	  const string& vn = *pn+this->sexts[s];
+	//! suffixes of stensor components
+	vector<string> sexts;
+	this->b->getStensorComponentsSuffixes(sexts,this->hypothesis);
+	for(vector<string>::size_type s=0;s!=sexts.size();++s){
+	  const string& vn = *pn+sexts[s];
 	  this->declareVariable(vn);
 	  this->ivfullnames.push_back(vn);
 	}
@@ -1368,6 +1376,8 @@ namespace mfront
     }
     if(i=="constant"){
       shared_ptr<MTestEvolution> mpev;
+      this->checkNotEndOfLine("MTest::handleMaterialProperty",p,
+			      this->fileTokens.end());
       const real v = this->readDouble(p);
       mpev = shared_ptr<MTestEvolution>(new MTestConstantEvolution(v));
       (*(this->evs))[n] = mpev;
@@ -1409,7 +1419,7 @@ namespace mfront
       msg += "the initial values of the strains have already been declared";
       throw(runtime_error(msg));
     }
-    const unsigned short N = getSTensorSize(this->dimension);
+    const unsigned short N = this->b->getProblemSize(this->hypothesis);
     this->e_t0.resize(N,0);
     this->readArrayOfSpecifiedSize(this->e_t0,p);
     this->readSpecifiedToken("MTest::handleStrain",
@@ -1434,7 +1444,7 @@ namespace mfront
       msg += "the initial values of the stresses have already been declared";
       throw(runtime_error(msg));
     }
-    const unsigned short N = getSTensorSize(this->dimension);
+    const unsigned short N = this->b->getProblemSize(this->hypothesis);
     this->s_t0.resize(N,0);
     this->readArrayOfSpecifiedSize(this->s_t0,p);
     this->readSpecifiedToken("MTest::handleStress",
@@ -1541,6 +1551,7 @@ namespace mfront
     using namespace std;
     using namespace tfel::utilities;
     using namespace tfel::math;
+    using namespace tfel::material;
     using tfel::tests::TestResult;
     using tfel::math::vector;
     vector<shared_ptr<MTestConstraint> >::const_iterator pc;
@@ -1549,7 +1560,6 @@ namespace mfront
     vector<real>::const_iterator pt2;
     vector<shared_ptr<UTest> >::iterator ptest;
     TestResult tr;
-    const unsigned short N = getSTensorSize(this->dimension);
     map<string,shared_ptr<MTestEvolution> >::const_iterator pev;
     map<string,shared_ptr<MTestEvolution> >::const_iterator pev2;
     map<string,shared_ptr<MTestEvolution> >::const_iterator pev3;
@@ -1596,14 +1606,12 @@ namespace mfront
     vector<real> esv0;
     // external variables increments
     vector<real> desv;
+    // problem size
+    const unsigned short N = this->b->getProblemSize(this->hypothesis);
     // stresses at the previous of the time step
-    stensor<3u,real> s_1(0.);
+    vector<real> s_1(N,0.);
     // stresses at the beginning of the time step
-    stensor<3u,real> s0(0.);
-    // stiffness tensor
-    matrix<real> Kt(N,N);
-    // prediction tensor
-    matrix<real> Kp(N,N);
+    vector<real> s0(N,0.);
     // getting the names of the materials properties
     std::vector<string> mpnames;
     if(this->b.get()==0){
@@ -1611,6 +1619,11 @@ namespace mfront
       msg += "no behaviour defined";
       throw(runtime_error(msg));
     }
+    // stiffness tensor
+    matrix<real> Kt(N,N);
+    // prediction tensor
+    matrix<real> Kp(N,N);
+    // material properties
     mpnames = this->b->getMaterialPropertiesNames();
     checkIfDeclared(mpnames,*(this->evs),"material property");
     // getting the names of the internal state variables
@@ -1752,25 +1765,31 @@ namespace mfront
     unsigned short period = 1u;
     // previous time step
     real dt_1(real(0));
+    // stresses at the end of the time step
+    vector<real> s1(N);
+    // strain at the beginning of the time step
+    vector<real> e0(N);
+    // thermal expansion at the beginning of the time step
+    vector<real> e_th0(N);
+    // thermal expansion at the end of the time step
+    vector<real> e_th1(N);
+    // strain increment
+    vector<real> de(N);
+    // real work begins here
     while(pt2!=this->times.end()){
       // allowing subdivisions of the time step
       const real te = *pt2;
       real t  = *pt;
       real dt = te-t;
       unsigned short subStep = 0;
+      fill(s1.begin(),s1.end(),real(0));
+      fill(e0.begin(),e0.end(),real(0));
+      fill(e_th0.begin(),e_th0.end(),real(0));
+      fill(e_th1.begin(),e_th1.end(),real(0));
+      fill(de.begin(),de.end(),real(0));
       while((abs(te-t)>0.5*dt)&&
 	    (subStep!=this->mSubSteps)){
 	unsigned short i,j;
-	// stresses at the end of the time step
-	stensor<3u,real> s1(real(0));
-	// strain at the beginning of the time step
-	stensor<3u,real> e0(real(0));
-	// thermal expansion at the beginning of the time step
-	stensor<3u,real> e_th0(real(0));
-	// thermal expansion at the end of the time step
-	stensor<3u,real> e_th1(real(0));
-	// strain increment
-	stensor<3u,real> de(real(0));
 	// evaluations of the materials properties at the end of the
 	// time step
 	for(i=0,p=mpnames.begin();p!=mpnames.end();++p,++i){
@@ -1793,62 +1812,67 @@ namespace mfront
 	  esv0[i] = evt;
 	  desv[i] = ev(t+dt)-evt;
 	}
-	// thermal expansion (isotropic case)
-	pev   = this->evs->find("Temperature");
-	pev2  = this->evs->find("ThermalExpansion");
-	if((pev!=this->evs->end())&&
-	   (pev2!=this->evs->end())){
-	  const MTestEvolution& T_ev = *(pev->second);
-	  const MTestEvolution& a_ev = *(pev2->second);
-	  const real eth0 = a_ev(t)*(T_ev(t)-Tref);
-	  const real eth1 = a_ev(t+dt)*(T_ev(t+dt)-Tref);
-	  for(i=0;i!=3;++i){
-	    e_th0[i] = eth0;
-	    e_th1[i] = eth1;
+	if(this->b->getBehaviourType()==MechanicalBehaviourBase::SMALLSTRAINSTANDARDBEHAVIOUR){
+	  // thermal expansion (isotropic case)
+	  pev   = this->evs->find("Temperature");
+	  pev2  = this->evs->find("ThermalExpansion");
+	  if((pev!=this->evs->end())&&(pev2!=this->evs->end())){
+	    const MTestEvolution& T_ev = *(pev->second);
+	    const MTestEvolution& a_ev = *(pev2->second);
+	    const real eth0 = a_ev(t)*(T_ev(t)-Tref);
+	    const real eth1 = a_ev(t+dt)*(T_ev(t+dt)-Tref);
+	    for(i=0;i!=3;++i){
+	      e_th0[i] = eth0;
+	      e_th1[i] = eth1;
+	    }
 	  }
-	}
-	pev2  = this->evs->find("ThermalExpansion1");
-	pev3  = this->evs->find("ThermalExpansion2");
-	pev4  = this->evs->find("ThermalExpansion3");
-	if((pev!=this->evs->end())&&
-	   ((pev2!=this->evs->end())||
-	    (pev3!=this->evs->end())||
-	    (pev4!=this->evs->end()))){
-	  if((pev2==this->evs->end())||
-	     (pev3==this->evs->end())||
-	     (pev4==this->evs->end())){
-	    string msg("MTest::execute : at least one of the three "
-		       "thermal expansion coefficient is defined and "
-		       "at least one is not");
-	    throw(runtime_error(msg));
-	  }
-	  const MTestEvolution& T_ev  = *(pev->second);
-	  const MTestEvolution& a1_ev = *(pev2->second);
-	  const MTestEvolution& a2_ev = *(pev3->second);
-	  const MTestEvolution& a3_ev = *(pev4->second);
-	  if(this->dimension==1u){
-	    e_th0[0u] = a1_ev(t)*(T_ev(t)-Tref);
-	    e_th1[0u] = a1_ev(t+dt)*(T_ev(t+dt)-Tref);
-	    e_th0[1u] = a2_ev(t)*(T_ev(t)-Tref);
-	    e_th1[1u] = a2_ev(t+dt)*(T_ev(t+dt)-Tref);
-	    e_th0[2u] = a3_ev(t)*(T_ev(t)-Tref);
-	    e_th1[2u] = a3_ev(t+dt)*(T_ev(t+dt)-Tref);
-	  } else if((this->dimension==2u)||
-		    (this->dimension==3u)){
-	    // thermal expansion tensors in the material referential
-	    e_th0[0u] = a1_ev(t)*(T_ev(t)-Tref);
-	    e_th1[0u] = a1_ev(t+dt)*(T_ev(t+dt)-Tref);
-	    e_th0[1u] = a2_ev(t)*(T_ev(t)-Tref);
-	    e_th1[1u] = a2_ev(t+dt)*(T_ev(t+dt)-Tref);
-	    e_th0[2u] = a3_ev(t)*(T_ev(t)-Tref);
-	    e_th1[2u] = a3_ev(t+dt)*(T_ev(t+dt)-Tref);
-	    // backward rotation matrix
-	    tmatrix<3u,3u,real> brm = transpose(this->rm);
-	    e_th0.changeBasis(brm);
-	    e_th1.changeBasis(brm);
-	  } else {
-	    string msg("MTest::execute : invalid dimension");
-	    throw(runtime_error(msg));
+	  pev2  = this->evs->find("ThermalExpansion1");
+	  pev3  = this->evs->find("ThermalExpansion2");
+	  pev4  = this->evs->find("ThermalExpansion3");
+	  if((pev!=this->evs->end())&&
+	     ((pev2!=this->evs->end())||
+	      (pev3!=this->evs->end())||
+	      (pev4!=this->evs->end()))){
+	    if((pev2==this->evs->end())||
+	       (pev3==this->evs->end())||
+	       (pev4==this->evs->end())){
+	      string msg("MTest::execute : at least one of the three "
+			 "thermal expansion coefficient is defined and "
+			 "at least one is not");
+	      throw(runtime_error(msg));
+	    }
+	    const MTestEvolution& T_ev  = *(pev->second);
+	    const MTestEvolution& a1_ev = *(pev2->second);
+	    const MTestEvolution& a2_ev = *(pev3->second);
+	    const MTestEvolution& a3_ev = *(pev4->second);
+	    if(this->dimension==1u){
+	      e_th0[0u] = a1_ev(t)*(T_ev(t)-Tref);
+	      e_th1[0u] = a1_ev(t+dt)*(T_ev(t+dt)-Tref);
+	      e_th0[1u] = a2_ev(t)*(T_ev(t)-Tref);
+	      e_th1[1u] = a2_ev(t+dt)*(T_ev(t+dt)-Tref);
+	      e_th0[2u] = a3_ev(t)*(T_ev(t)-Tref);
+	      e_th1[2u] = a3_ev(t+dt)*(T_ev(t+dt)-Tref);
+	    } else if((this->dimension==2u)||
+		      (this->dimension==3u)){
+	      // thermal expansion tensors in the material referential
+	      stensor<3u,real> se_th0(real(0));
+	      stensor<3u,real> se_th1(real(0));
+	      se_th0[0u] = a1_ev(t)*(T_ev(t)-Tref);
+	      se_th1[0u] = a1_ev(t+dt)*(T_ev(t+dt)-Tref);
+	      se_th0[1u] = a2_ev(t)*(T_ev(t)-Tref);
+	      se_th1[1u] = a2_ev(t+dt)*(T_ev(t+dt)-Tref);
+	      se_th0[2u] = a3_ev(t)*(T_ev(t)-Tref);
+	      se_th1[2u] = a3_ev(t+dt)*(T_ev(t+dt)-Tref);
+	      // backward rotation matrix
+	      tmatrix<3u,3u,real> brm = transpose(this->rm);
+	      se_th0.changeBasis(brm);
+	      se_th1.changeBasis(brm);
+	      copy(se_th0.begin(),se_th0.begin()+getSTensorSize(this->dimension),e_th0.begin());
+	      copy(se_th1.begin(),se_th1.begin()+getSTensorSize(this->dimension),e_th1.begin());
+	    } else {
+	      string msg("MTest::execute : invalid dimension");
+	      throw(runtime_error(msg));
+	    }
 	  }
 	}
 	// strain at the beginning of the time step
@@ -1969,6 +1993,7 @@ namespace mfront
 					     this->hypothesis,dt,
 					     this->ktype);
 	  if(bi){
+	    // behaviour integration is a success
 	    for(i=0;i!=N;++i){
 	      r(i) += s1(i);
 	      for(j=0;j!=N;++j){
@@ -2225,7 +2250,7 @@ namespace mfront
   MTest::printOutput(const real t,
 		     const unsigned short N,
 		     const tfel::math::vector<real>& u,
-		     const tfel::math::stensor<3u,real>& s,
+		     const tfel::math::vector<real>& s,
 		     const tfel::math::vector<real>& iv)
   {
     using namespace std;

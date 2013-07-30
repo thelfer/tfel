@@ -32,10 +32,10 @@ namespace tfel{
        * - the only thermodynamic force is the traction (tvector)
        */
       enum BehaviourType {
-	GENERALBEHAVIOUR              = -1,
-	SMALLSTRAINSTANDARDBEHAVIOUR  =  0,
-	FINITESTRAINSTANDARDBEHAVIOUR =  1,
-	COHESIVEZONEMODEL             =  2
+	GENERALBEHAVIOUR              =  0,
+	SMALLSTRAINSTANDARDBEHAVIOUR  =  1,
+	FINITESTRAINSTANDARDBEHAVIOUR =  2,
+	COHESIVEZONEMODEL             =  3
       }; // end of enum MFrontBehaviourType
       /*!
        * \brief return values of the integrate method

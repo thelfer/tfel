@@ -12,10 +12,11 @@
 #include<string>
 
 #include"TFEL/Math/matrix.hxx"
+#include"TFEL/Math/tmatrix.hxx"
 #include"TFEL/Math/vector.hxx"
-#include"TFEL/Math/stensor.hxx"
-#include"TFEL/Math/tvector.hxx"
+
 #include"TFEL/Material/ModellingHypothesis.hxx"
+#include"TFEL/Material/MechanicalBehaviour.hxx"
 
 #include"MFront/MTestTypes.hxx"
 
@@ -27,6 +28,51 @@ namespace mfront
    */
   struct MTestBehaviour
   {
+    /*!
+     * \return the type of the behaviour
+     */
+    virtual tfel::material::MechanicalBehaviourBase::BehaviourType
+    getBehaviourType(void) const = 0;
+    /*!
+     * \param[in] h : modelling hypothesis
+     */
+    virtual unsigned short
+    getProblemSize(const tfel::material::ModellingHypothesis::Hypothesis) const = 0;
+    /*!
+     * \param[in] c : components
+     * \param[in] h : modelling hypothesis
+     */
+    virtual void
+    getStensorComponentsSuffixes(std::vector<std::string>&,
+				 const tfel::material::ModellingHypothesis::Hypothesis) const = 0;
+    /*!
+     * \param[in] c : components
+     * \param[in] h : modelling hypothesis
+     */
+    virtual void
+    getDrivingVariablesComponents(std::vector<std::string>&,
+				  const tfel::material::ModellingHypothesis::Hypothesis) const = 0;
+    /*!
+     * \param[in] c : components
+     * \param[in] h : modelling hypothesis
+     */
+    virtual void
+    getThermodynamicForcesComponents(std::vector<std::string>&,
+				     const tfel::material::ModellingHypothesis::Hypothesis) const = 0;
+    /*!
+     * \param[in] h : modelling hypothesis
+     * \param[in] c : component
+     */
+    virtual unsigned short
+    getDrivingVariableComponentPosition(const tfel::material::ModellingHypothesis::Hypothesis,
+					const std::string&) const = 0;
+    /*!
+     * \param[in] h : modelling hypothesis
+     * \param[in] c : component
+     */
+    virtual unsigned short
+    getThermodynamicForceComponentPosition(const tfel::material::ModellingHypothesis::Hypothesis,
+					   const std::string&) const = 0;
     /*!
      * \return the type of the behaviour
      * 0 means that the behaviour is isotropic.
@@ -128,8 +174,8 @@ namespace mfront
     virtual bool
     computePredictionOperator(tfel::math::matrix<real>&,
 			      const tfel::math::tmatrix<3u,3u,real>&,
-			      const tfel::math::stensor<3u,real>&,
-			      const tfel::math::stensor<3u,real>&,
+			      const tfel::math::vector<real>&,
+			      const tfel::math::vector<real>&,
 			      const tfel::math::vector<real>&,
 			      const tfel::math::vector<real>&,
 			      const tfel::math::vector<real>&,
@@ -155,12 +201,12 @@ namespace mfront
      */
     virtual bool
     integrate(tfel::math::matrix<real>&,
-	      tfel::math::stensor<3u,real>&,
+	      tfel::math::vector<real>&,
 	      tfel::math::vector<real>&,
 	      const tfel::math::tmatrix<3u,3u,real>&,
-	      const tfel::math::stensor<3u,real>&,
-	      const tfel::math::stensor<3u,real>&,
-	      const tfel::math::stensor<3u,real>&,
+	      const tfel::math::vector<real>&,
+	      const tfel::math::vector<real>&,
+	      const tfel::math::vector<real>&,
 	      const tfel::math::vector<real>&,
 	      const tfel::math::vector<real>&,
 	      const tfel::math::vector<real>&,

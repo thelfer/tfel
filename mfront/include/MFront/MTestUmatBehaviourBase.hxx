@@ -29,6 +29,51 @@ namespace mfront
 			   const std::string&);
     /*!
      * \return the type of the behaviour
+     */
+    virtual tfel::material::MechanicalBehaviourBase::BehaviourType
+    getBehaviourType(void) const;
+    /*!
+     * \param[in] h : modelling hypothesis
+     */
+    virtual unsigned short
+    getProblemSize(const tfel::material::ModellingHypothesis::Hypothesis) const;
+    /*!
+     * \param[in] c : components
+     * \param[in] h : modelling hypothesis
+     */
+    virtual void
+    getStensorComponentsSuffixes(std::vector<std::string>&,
+				 const tfel::material::ModellingHypothesis::Hypothesis) const;
+    /*!
+     * \param[in] c : components
+     * \param[in] h : modelling hypothesis
+     */
+    virtual void
+    getDrivingVariablesComponents(std::vector<std::string>&,
+				  const tfel::material::ModellingHypothesis::Hypothesis) const;
+    /*!
+     * \param[in] c : components
+     * \param[in] h : modelling hypothesis
+     */
+    virtual void
+    getThermodynamicForcesComponents(std::vector<std::string>&,
+				     const tfel::material::ModellingHypothesis::Hypothesis) const;
+    /*!
+     * \param[in] h     : modelling hypothesis
+     * \param[in] cname : component name
+     */
+    virtual unsigned short
+    getDrivingVariableComponentPosition(const tfel::material::ModellingHypothesis::Hypothesis,
+					const std::string&) const;
+    /*!
+     * \param[in] h     : modelling hypothesis
+     * \param[in] cname : component name
+     */
+    virtual unsigned short
+    getThermodynamicForceComponentPosition(const tfel::material::ModellingHypothesis::Hypothesis,
+					   const std::string&) const;
+    /*!
+     * \return the type of the behaviour
      * 0 means that the behaviour is isotropic.
      * 1 means that the behaviour is orthotropic.
      */
@@ -113,8 +158,10 @@ namespace mfront
     std::vector<int> ivtypes;
     //! names of the external state variables
     std::vector<std::string> evnames;
-    //! type of of law (isotropic or orthotropic)
+    //! type of of law 
     unsigned short type;
+    //! symmetry of of behaviour (isotropic or orthotropic)
+    unsigned short stype;
   }; // end of struct MTestBehaviour
   
 } // end of namespace mfront

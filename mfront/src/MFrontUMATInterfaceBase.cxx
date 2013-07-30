@@ -1010,6 +1010,7 @@ namespace mfront
 						 const std::map<std::string,std::string>& entryNames) const
   {
     this->writeUMATxxSourceFileSymbols(out,name,file,mb);
+    this->writeUMATxxBehaviourTypeSymbols(out,name,mb);
     this->writeUMATxxMaterialPropertiesSymbols(out,name,mb,glossaryNames,entryNames);
     this->writeUMATxxStateVariablesSymbols(out,name,mb,glossaryNames,entryNames);
     this->writeUMATxxExternalStateVariablesSymbols(out,name,mb,glossaryNames,entryNames);
@@ -1018,6 +1019,29 @@ namespace mfront
     this->writeUMATxxElasticSymmetryTypeSymbols(out,name,mb);
     this->writeUMATxxAdditionalSymbols(out,name,file,mb,glossaryNames,entryNames);
   }
+
+  void
+  MFrontUMATInterfaceBase::writeUMATxxBehaviourTypeSymbols(std::ostream& out,
+							   const std::string& name,
+							   const MechanicalBehaviourDescription& mb) const
+  {
+    using namespace std;
+    out << "MFRONT_SHAREDOBJ unsigned short " << this->getFunctionName(name) 
+	<< "_BehaviourType = " ;
+    if(mb.getBehaviourType()==MechanicalBehaviourDescription::GENERALBEHAVIOUR){
+      out << "0u;" << endl << endl;
+    } else if(mb.getBehaviourType()==MechanicalBehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR){
+      out << "1u;" << endl << endl;
+    } else if(mb.getBehaviourType()==MechanicalBehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR){
+      out << "2u;" << endl << endl;
+    } else if(mb.getBehaviourType()==MechanicalBehaviourDescription::COHESIVEZONEMODEL){
+      out << "3u;" << endl << endl;
+    } else {
+      string msg("MFrontUMATInterfaceBase::writeUMATxxBehaviourTypeSymbols : ");
+      msg += "unsupported behaviour type.\n";
+      throw(runtime_error(msg));
+    }
+  } // end of MFrontUMATInterfaceBase::writeUMATxxBehaviourTypeSymbols
 
   void
   MFrontUMATInterfaceBase::writeUMATxxStateVariablesSymbols(std::ostream& out,
