@@ -53,4 +53,5 @@ EXTRA_DIST=CMakeLists.txt                     \
 	   references/polycristals.ref        \
 	   references/polycristals_dd_cfc.ref \
 	   references/hayhurst.ref            \
-	   references/burger.ref
+	   references/burger.ref              \
+	   references/tvergaard.ref

@@ -321,12 +321,24 @@ namespace mfront
 			   &MTest::handleMaximumNumberOfSubSteps);
     this->registerCallBack("@StrainEpsilon",
 			   &MTest::handleStrainEpsilon);
+    this->registerCallBack("@OpeningDisplacementEpsilon",
+			   &MTest::handleOpeningDisplacementEpsilon);
+    this->registerCallBack("@DrivingVariableEpsilon",
+			   &MTest::handleDrivingVariableEpsilon);
     this->registerCallBack("@StressEpsilon",
 			   &MTest::handleStressEpsilon);
+    this->registerCallBack("@CohesiveForceEpsilon",
+			   &MTest::handleCohesiveForceEpsilon);
+    this->registerCallBack("@ThermodynamicForceEpsilon",
+			   &MTest::handleThermodynamicForceEpsilon);
     this->registerCallBack("@ModellingHypothesis",
 			   &MTest::handleModellingHypothesis);
     this->registerCallBack("@Strain",&MTest::handleStrain);
+    this->registerCallBack("@OpeningDisplacement",&MTest::handleOpeningDisplacement);
+    this->registerCallBack("@DrivingVariable",&MTest::handleDrivingVariable);
     this->registerCallBack("@Stress",&MTest::handleStress);
+    this->registerCallBack("@CohesiveForce",&MTest::handleCohesiveForce);
+    this->registerCallBack("@ThermodynamicForce",&MTest::handleThermodynamicForce);
     this->registerCallBack("@Times",&MTest::handleTimes);
     this->registerCallBack("@Behaviour",&MTest::handleBehaviour);
     this->registerCallBack("@MaterialProperty",
@@ -337,8 +349,16 @@ namespace mfront
 			   &MTest::handleExternalStateVariable);
     this->registerCallBack("@ImposedStrain",
 			   &MTest::handleImposedStrain);
+    this->registerCallBack("@ImposedOpeningDisplacement",
+			   &MTest::handleImposedOpeningDisplacement);
+    this->registerCallBack("@ImposedDrivingVariable",
+			   &MTest::handleImposedDrivingVariable);
     this->registerCallBack("@ImposedStress",
 			   &MTest::handleImposedStress);
+    this->registerCallBack("@ImposedCohesiveForce",
+			   &MTest::handleImposedCohesiveForce);
+    this->registerCallBack("@ImposedThermodynamicForce",
+			   &MTest::handleImposedThermodynamicForce);
   }
 
   void
@@ -553,7 +573,7 @@ namespace mfront
     if(p->value=="true"){
       this->useCastemAcceleration = true;
     } else if(p->value=="false"){
-            this->useCastemAcceleration = false;
+      this->useCastemAcceleration = false;
     } else {
       string msg("MTest::handleUseCastemAccelerationAlgorithm : "
 		 "unexpected token '"+p->value+"'");
@@ -785,19 +805,19 @@ namespace mfront
     p=find(enames.begin(),enames.end(),n);
     if(p!=enames.end()){
       pos  = static_cast<unsigned short>(p-enames.begin());
-      type = MTest::UTest::STRAINS;
+      type = MTest::UTest::DRIVINGVARIABLE;
       return;
     } 
     p=find(snames.begin(),snames.end(),n);
     if(p!=snames.end()){
       pos  = static_cast<unsigned short>(p-snames.begin());
-      type = MTest::UTest::STRESSES;
+      type = MTest::UTest::THERMODYNAMICFORCE;
       return;
     } 
     p=find(this->ivfullnames.begin(),this->ivfullnames.end(),n);
     if(p!=this->ivfullnames.end()){
       pos  = static_cast<unsigned short>(p-this->ivfullnames.begin());
-      type = MTest::UTest::INTERNAL_STATE_VARIABLES;
+      type = MTest::UTest::INTERNALSTATEVARIABLE;
       return;
     } 
     string msg("MTest::getVariableTypeAndPosition : "
@@ -935,35 +955,111 @@ namespace mfront
   MTest::handleStrainEpsilon(TokensContainer::const_iterator& p)
   {
     using namespace std;
+    using namespace tfel::material;
+    if(this->b.get()==0){
+      string msg("MTest::StrainEpsilon : ");
+      msg += "behaviour not defined";
+      throw(runtime_error(msg));
+    }
+    if(this->b->getBehaviourType()!=MechanicalBehaviourBase::SMALLSTRAINSTANDARDBEHAVIOUR){
+      string msg("MTest::handleStrainEpsilon : "
+		 "the @StrainEpsilon keyword is only valid "
+		 "for small strain behaviours");
+      throw(runtime_error(msg));
+    }
+    this->handleDrivingVariableEpsilon(p);
+  }
+
+  void
+  MTest::handleOpeningDisplacementEpsilon(TokensContainer::const_iterator& p)
+  {
+    using namespace std;
+    using namespace tfel::material;
+    if(this->b.get()==0){
+      string msg("MTest::OpeningDisplacementEpsilon : ");
+      msg += "behaviour not defined";
+      throw(runtime_error(msg));
+    }
+    if(this->b->getBehaviourType()!=MechanicalBehaviourBase::COHESIVEZONEMODEL){
+      string msg("MTest::handleOpeningDisplacementEpsilon : "
+		 "the @OpeningDisplacementEpsilon keyword is only valid "
+		 "for cohesive zone model behaviours");
+      throw(runtime_error(msg));
+    }
+    this->handleDrivingVariableEpsilon(p);
+  }
+
+  void
+  MTest::handleDrivingVariableEpsilon(TokensContainer::const_iterator& p)
+  {
+    using namespace std;
     if(this->eeps>0){
-      string msg("MTest::handleStrainEpsilon : the epsilon "
+      string msg("MTest::handleDrivingVariableEpsilon : the epsilon "
 		 "value has already been declared");
       throw(runtime_error(msg));
     }
     this->eeps = this->readDouble(p);
     if(this->eeps < 100*numeric_limits<real>::min()){
-      string msg("MTest::handleStrainEpsilon : invalid value");
+      string msg("MTest::handleDrivingVariableEpsilon : invalid value");
       throw(runtime_error(msg));
     }
-    this->readSpecifiedToken("MTest::handleStrainEpsilon",";",
+    this->readSpecifiedToken("MTest::handleDrivingVariableEpsilon",";",
 			     p,this->fileTokens.end());
-  }
+  } // end of MTest::handleDrivingVariableEpsilon
 
   void
   MTest::handleStressEpsilon(TokensContainer::const_iterator& p)
   {
     using namespace std;
+    using namespace tfel::material;
+    if(this->b.get()==0){
+      string msg("MTest::StressEpsilon : ");
+      msg += "behaviour not defined";
+      throw(runtime_error(msg));
+    }
+    if(this->b->getBehaviourType()!=MechanicalBehaviourBase::SMALLSTRAINSTANDARDBEHAVIOUR){
+      string msg("MTest::handleStressEpsilon : "
+		 "the @StressEpsilon keyword is only valid "
+		 "for cohesive zone model behaviours");
+      throw(runtime_error(msg));
+    }
+    this->handleThermodynamicForceEpsilon(p);
+  }
+
+  void
+  MTest::handleCohesiveForceEpsilon(TokensContainer::const_iterator& p)
+  {
+    using namespace std;
+    using namespace tfel::material;
+    if(this->b.get()==0){
+      string msg("MTest::CohesiveForceEpsilon : ");
+      msg += "behaviour not defined";
+      throw(runtime_error(msg));
+    }
+    if(this->b->getBehaviourType()!=MechanicalBehaviourBase::COHESIVEZONEMODEL){
+      string msg("MTest::handleCohesiveForceEpsilon : "
+		 "the @CohesiveForceEpsilon keyword is only valid "
+		 "for cohesive zone model behaviours");
+      throw(runtime_error(msg));
+    }
+    this->handleThermodynamicForceEpsilon(p);
+  }
+
+  void
+  MTest::handleThermodynamicForceEpsilon(TokensContainer::const_iterator& p)
+  {
+    using namespace std;
     if(this->seps>0){
-      string msg("MTest::handleStressEpsilon : the epsilon "
+      string msg("MTest::handleThermodynamicForceEpsilon : the epsilon "
 		 "value has already been declared");
       throw(runtime_error(msg));
     }
     this->seps = this->readDouble(p);
     if(this->seps < 100*numeric_limits<real>::min()){
-      string msg("MTest::handleStressEpsilon : invalid value");
+      string msg("MTest::handleThermodynamicForceEpsilon : invalid value");
       throw(runtime_error(msg));
     }
-    this->readSpecifiedToken("MTest::handleStressEpsilon",";",
+    this->readSpecifiedToken("MTest::handleThermodynamicForceEpsilon",";",
 			     p,this->fileTokens.end());
   }
 
@@ -1206,19 +1302,60 @@ namespace mfront
   {
     using namespace std;
     using namespace tfel::utilities;
-    typedef tfel::material::ModellingHypothesis MH;
-    if(this->hypothesis==MH::UNDEFINEDHYPOTHESIS){
-      this->setDefaultHypothesis();
+    using namespace tfel::material;
+    if(this->b.get()==0){
+      string msg("MTest::ImposedStress : ");
+      msg += "behaviour not defined";
+      throw(runtime_error(msg));
+    }
+    if(this->b->getBehaviourType()!=MechanicalBehaviourBase::SMALLSTRAINSTANDARDBEHAVIOUR){
+      string msg("MTest::handleImposedStress : "
+		 "the @ImposedStress keyword is only valid "
+		 "for small strain behaviours");
+      throw(runtime_error(msg));
+    }
+    this->handleImposedThermodynamicForce(p);
+  } // end of MTest::handleImposedStress
+
+  void
+  MTest::handleImposedCohesiveForce(TokensContainer::const_iterator& p)
+  {
+    using namespace std;
+    using namespace tfel::utilities;
+    using namespace tfel::material;
+    if(this->b.get()==0){
+      string msg("MTest::ImposedCohesiveForce : ");
+      msg += "behaviour not defined";
+      throw(runtime_error(msg));
+    }
+    if(this->b->getBehaviourType()!=MechanicalBehaviourBase::COHESIVEZONEMODEL){
+      string msg("MTest::handleImposedCohesiveForce : "
+		 "the @ImposedCohesiveForce keyword is only valid "
+		 "for cohesive zone model behaviours");
+      throw(runtime_error(msg));
+    }
+    this->handleImposedThermodynamicForce(p);
+  } // end of MTest::handleImposedCohesiveForce
+
+  void
+  MTest::handleImposedThermodynamicForce(TokensContainer::const_iterator& p)
+  {
+    using namespace std;
+    using namespace tfel::utilities;
+    if(this->b.get()==0){
+      string msg("MTest::ImposedThermodynamicForce : ");
+      msg += "behaviour not defined";
+      throw(runtime_error(msg));
     }
     const string& evt = this->readEvolutionType(p);
     const string& c   = this->readString(p,this->fileTokens.end());
-    this->checkNotEndOfLine("MTest::handleImposedStress",p,
+    this->checkNotEndOfLine("MTest::handleImposedThermodynamicForce",p,
 			    this->fileTokens.end());
     shared_ptr<MTestEvolution> sev = this->parseEvolution(evt,p);
     shared_ptr<MTestConstraint> sc(new MTestImposedThermodynamicForce(*(this->b),this->hypothesis,c,sev));
     this->constraints.push_back(sc);
     (*(this->evs))[c] = sev;
-    this->readSpecifiedToken("MTest::handleImposedStress",";",
+    this->readSpecifiedToken("MTest::handleImposedThermodynamicForce",";",
 			     p,this->fileTokens.end());
   } // end of MTest::handleImposedStress
 
@@ -1226,22 +1363,63 @@ namespace mfront
   MTest::handleImposedStrain(TokensContainer::const_iterator& p)
   {
     using namespace std;
+    using namespace tfel::material;
     using namespace tfel::utilities;
-    typedef tfel::material::ModellingHypothesis MH;
-    if(this->hypothesis==MH::UNDEFINEDHYPOTHESIS){
-      this->setDefaultHypothesis();
+    if(this->b.get()==0){
+      string msg("MTest::ImposedStrain : ");
+      msg += "behaviour not defined";
+      throw(runtime_error(msg));
+    }
+    if(this->b->getBehaviourType()!=MechanicalBehaviourBase::SMALLSTRAINSTANDARDBEHAVIOUR){
+      string msg("MTest::handleImposedStrain : "
+		 "the @ImposedStrain keyword is only valid "
+		 "for small strain behaviours");
+      throw(runtime_error(msg));
+    }
+    this->handleImposedDrivingVariable(p);
+  }
+
+  void
+  MTest::handleImposedOpeningDisplacement(TokensContainer::const_iterator& p)
+  {
+    using namespace std;
+    using namespace tfel::utilities;
+    using namespace tfel::material;
+    if(this->b.get()==0){
+      string msg("MTest::ImposedCohesiveForce : ");
+      msg += "behaviour not defined";
+      throw(runtime_error(msg));
+    }
+    if(this->b->getBehaviourType()!=MechanicalBehaviourBase::COHESIVEZONEMODEL){
+      string msg("MTest::ImposedOpeningDisplacement : "
+		 "the @ImposedOpeningDisplacement keyword is only valid "
+		 "for cohesive zone model behaviours");
+      throw(runtime_error(msg));
+    }
+    this->handleImposedDrivingVariable(p);
+  }
+
+  void
+  MTest::handleImposedDrivingVariable(TokensContainer::const_iterator& p)
+  {
+    using namespace std;
+    using namespace tfel::utilities;
+    if(this->b.get()==0){
+      string msg("MTest::ImposedDrivingVariable : ");
+      msg += "behaviour not defined";
+      throw(runtime_error(msg));
     }
     const string& evt = this->readEvolutionType(p);
     const string& c   = this->readString(p,this->fileTokens.end());
-    this->checkNotEndOfLine("MTest::handleImposedStrain",p,
+    this->checkNotEndOfLine("MTest::handleImposedDrivingVariable",p,
 			    this->fileTokens.end());
     shared_ptr<MTestEvolution> sev = this->parseEvolution(evt,p);
     shared_ptr<MTestConstraint> sc(new MTestImposedDrivingVariable(*(this->b),this->hypothesis,c,sev));
     (*(this->evs))[c] = sev;
     this->constraints.push_back(sc);
-    this->readSpecifiedToken("MTest::handleImposedStrain",";",
+    this->readSpecifiedToken("MTest::handleImposedDrivingVariable",";",
 			     p,this->fileTokens.end());
-  } // end of MTest::handleImposedStrain
+  } // end of MTest::handleImposedDrivingVariable
 
   void
   MTest::handleBehaviour(TokensContainer::const_iterator& p)
@@ -1364,10 +1542,16 @@ namespace mfront
     if((find(mpnames.begin(),mpnames.end(),n)==mpnames.end())&&
        (n!="ThermalExpansion") &&(n!="ThermalExpansion1")&&
        (n!="ThermalExpansion2")&&(n!="ThermalExpansion3")){
-      string msg("MTest::handleMaterialProperty : ");
-      msg += "the behaviour don't declare a material property '";
-      msg += n+"'";
-      throw(runtime_error(msg));
+      ostringstream msg;
+      msg << "MTest::handleMaterialProperty : "
+	  << "the behaviour don't declare a material property '" << n+"'.";
+      if(!mpnames.empty()){
+	msg << "\nThe behaviour declares:";
+	for(vector<string>::const_iterator pn=mpnames.begin();pn!=mpnames.end();++pn){
+	  msg << "\n- '" << *pn << "'";
+	}
+      }
+      throw(runtime_error(msg.str()));
     }
     if(this->evs->find(n)!=this->evs->end()){
       string msg("MTest::handleMaterialProperty : ");
@@ -1405,52 +1589,122 @@ namespace mfront
   MTest::handleStrain(TokensContainer::const_iterator& p)
   {
     using namespace std;
+    using namespace tfel::material;
     typedef tfel::material::ModellingHypothesis MH;
-    if(this->hypothesis==MH::UNDEFINEDHYPOTHESIS){
-      this->setDefaultHypothesis();
-    }
     if(this->b.get()==0){
       string msg("MTest::handleStrain : ");
       msg += "no behaviour defined";
       throw(runtime_error(msg));
     }
+    if(this->b->getBehaviourType()!=MechanicalBehaviourBase::SMALLSTRAINSTANDARDBEHAVIOUR){
+      string msg("MTest::handleStrain : "
+		 "the @Strain keyword is only valid "
+		 "for small strain behaviours");
+      throw(runtime_error(msg));
+    }
+    this->handleDrivingVariable(p);
+  }
+
+  void
+  MTest::handleOpeningDisplacement(TokensContainer::const_iterator& p)
+  {
+    using namespace std;
+    using namespace tfel::material;
+    typedef tfel::material::ModellingHypothesis MH;
+    if(this->b.get()==0){
+      string msg("MTest::handleOpeningDisplacement : ");
+      msg += "no behaviour defined";
+      throw(runtime_error(msg));
+    }
+    if(this->b->getBehaviourType()!=MechanicalBehaviourBase::COHESIVEZONEMODEL){
+      string msg("MTest::handleOpeningDisplacement : "
+		 "the @OpeningDisplacement keyword is only valid "
+		 "for cohesive zone models behaviours");
+      throw(runtime_error(msg));
+    }
+    this->handleDrivingVariable(p);
+  }
+      
+  void
+  MTest::handleDrivingVariable(TokensContainer::const_iterator& p)
+  {
+    using namespace std;
+    if(this->b.get()==0){
+      string msg("MTest::handleDrivingVariable : ");
+      msg += "no behaviour defined";
+      throw(runtime_error(msg));
+    }
     if(!this->e_t0.empty()){
-      string msg("MTest::handleStrain : ");
+      string msg("MTest::handleDrivingVariable : ");
       msg += "the initial values of the strains have already been declared";
       throw(runtime_error(msg));
     }
     const unsigned short N = this->b->getProblemSize(this->hypothesis);
     this->e_t0.resize(N,0);
     this->readArrayOfSpecifiedSize(this->e_t0,p);
-    this->readSpecifiedToken("MTest::handleStrain",
+    this->readSpecifiedToken("MTest::handleDrivingVariable",
 			     ";",p,this->fileTokens.end());
-  }
+  } // end of MTest::handleDrivingVariable
 
   void
   MTest::handleStress(TokensContainer::const_iterator& p)
   {
     using namespace std;
-    typedef tfel::material::ModellingHypothesis MH;
-    if(this->hypothesis==MH::UNDEFINEDHYPOTHESIS){
-      this->setDefaultHypothesis();
-    }
+    using namespace tfel::material;
     if(this->b.get()==0){
       string msg("MTest::handleStress : ");
       msg += "no behaviour defined";
       throw(runtime_error(msg));
     }
+    if(this->b->getBehaviourType()!=MechanicalBehaviourBase::SMALLSTRAINSTANDARDBEHAVIOUR){
+      string msg("MTest::handleStress : "
+		 "the @Stress keyword is only valid "
+		 "for small strain behaviours");
+      throw(runtime_error(msg));
+    }
+    this->handleThermodynamicForce(p);
+  }
+
+  void
+  MTest::handleCohesiveForce(TokensContainer::const_iterator& p)
+  {
+    using namespace std;
+    using namespace tfel::material;
+    if(this->b.get()==0){
+      string msg("MTest::handleCohesiveForce : ");
+      msg += "no behaviour defined";
+      throw(runtime_error(msg));
+    }
+    if(this->b->getBehaviourType()!=MechanicalBehaviourBase::COHESIVEZONEMODEL){
+      string msg("MTest::handleCohesiveForce : "
+		 "the @CohesiveForce keyword is only valid "
+		 "for cohesive zone model behaviours");
+      throw(runtime_error(msg));
+    }
+    this->handleThermodynamicForce(p);
+  }
+
+  void
+  MTest::handleThermodynamicForce(TokensContainer::const_iterator& p)
+  {
+    using namespace std;
+    if(this->b.get()==0){
+      string msg("MTest::handleThermodynamicForce : ");
+      msg += "no behaviour defined";
+      throw(runtime_error(msg));
+    }
     if(!this->s_t0.empty()){
-      string msg("MTest::handleStress : ");
-      msg += "the initial values of the stresses have already been declared";
+      string msg("MTest::handleThermodynamicForce : ");
+      msg += "the initial values of the strains have already been declared";
       throw(runtime_error(msg));
     }
     const unsigned short N = this->b->getProblemSize(this->hypothesis);
     this->s_t0.resize(N,0);
     this->readArrayOfSpecifiedSize(this->s_t0,p);
-    this->readSpecifiedToken("MTest::handleStress",
+    this->readSpecifiedToken("MTest::handleThermodynamicForce",
 			     ";",p,this->fileTokens.end());
-  }
-
+  } // end of MTest::handleThermodynamicForce
+  
   void
   MTest::handleInternalStateVariable(TokensContainer::const_iterator& p)
   {
@@ -1739,11 +1993,11 @@ namespace mfront
     unsigned short cnbr = 2;
     this->out << "# first column : time" << endl;
     for(unsigned short i=0;i!=N;++i){
-      this->out << "# " << cnbr << " column : " << i+1 << "th component of the total strain" << endl;
+      this->out << "# " << cnbr << " column : " << i+1 << "th component of the driving variables" << endl;
       ++cnbr;
     }
     for(unsigned short i=0;i!=N;++i){
-      this->out << "# " << cnbr << " column : " << i+1 << "th component of the stresses" << endl;
+      this->out << "# " << cnbr << " column : " << i+1 << "th component of the thermodynamic forces" << endl;
       ++cnbr;
     }
     const std::vector<string>& ivdes =
@@ -1888,9 +2142,9 @@ namespace mfront
 	}
 	real ne  = 0.;  // norm of the increment of the strains
 	real nep = 0.;  // norm of the increment of the strains at the
-		        // previous iteration
+	// previous iteration
 	real nep2 = 0.; // norm of the increment of the strains two
-		        // iterations before...
+	// iterations before...
 	/* prediction */
 	if(this->ppolicy==LINEARPREDICTION){
 	  if(period>1){

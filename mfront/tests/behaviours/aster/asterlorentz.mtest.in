@@ -5,11 +5,12 @@
  * \brief  18 juin 2013
  */
 
-@UseCastemAccelerationAlgorithm true;
-@StiffnessMatrixType 'Elastic';
+@Behaviour<aster> 'libMFrontAsterBehaviours@CMAKE_SHARED_LIBRARY_SUFFIX@' 'asterlorentz';
 
 @StrainEpsilon 1.e-11;
 @StressEpsilon 1.e-1;
+@UseCastemAccelerationAlgorithm true;
+@StiffnessMatrixType 'Elastic';
 
 @Real 'young'  3.2e10;
 @Real 'nu'     0.2;
@@ -19,7 +20,6 @@
 @Real 'smax'   '150e6';
 @Real 'A' '0.5*(lambda+2*mu)*(smax/young)**2'; 
 
-@Behaviour<aster> 'libMFrontAsterBehaviours@CMAKE_SHARED_LIBRARY_SUFFIX@' 'asterlorentz';
 @MaterialProperty<constant> 'YoungModulus'     'young';
 @MaterialProperty<constant> 'PoissonRatio'     'nu';
 @MaterialProperty<constant> 'ThermalExpansion' 0.;   

@@ -320,8 +320,8 @@ namespace mfront{
       }
     } else if(mb.getBehaviourType()==MechanicalBehaviourDescription::COHESIVEZONEMODEL){
       vector<string> mps;
-      mps.push_back("ks");
       mps.push_back("kn");
+      mps.push_back("ks");
       mps.push_back("rho");
       mps.push_back("alpha");
       return MFrontUMATInterface::doElasticPropertiesCheck(mb,mps);

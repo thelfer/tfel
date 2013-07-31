@@ -92,9 +92,9 @@ namespace mfront
        * Type of variable tested
        */
       enum TestedVariable{
-	INTERNAL_STATE_VARIABLES,
-	STRAINS,
-	STRESSES
+	INTERNALSTATEVARIABLE,
+	DRIVINGVARIABLE,
+	THERMODYNAMICFORCE
       };
       /*!
        * \param[in] e  : strains
@@ -229,10 +229,30 @@ namespace mfront
      */
     void handleStrainEpsilon(TokensContainer::const_iterator&);
     /*!
+     * handle the @OpeningDisplacementEpsilon keyword
+     * \param[in,out] p : position in the input file
+     */
+    void handleOpeningDisplacementEpsilon(TokensContainer::const_iterator&);
+    /*!
+     * handle the @DrivingVariableEpsilon keyword
+     * \param[in,out] p : position in the input file
+     */
+    void handleDrivingVariableEpsilon(TokensContainer::const_iterator&);
+    /*!
      * handle the @StressEpsilon keyword
      * \param[in,out] p : position in the input file
      */
     void handleStressEpsilon(TokensContainer::const_iterator&);
+    /*!
+     * handle the @CohesiveForceEpsilon keyword
+     * \param[in,out] p : position in the input file
+     */
+    void handleCohesiveForceEpsilon(TokensContainer::const_iterator&);
+    /*!
+     * handle the @ThermodynamicForceEpsilon keyword
+     * \param[in,out] p : position in the input file
+     */
+    void handleThermodynamicForceEpsilon(TokensContainer::const_iterator&);
     /*!
      * handle the @Parameter keyword
      * \param[in,out] p : position in the input file
@@ -274,10 +294,30 @@ namespace mfront
      */
     void handleStrain(TokensContainer::const_iterator&);
     /*!
+     * handle the @OpeningDisplacement keyword
+     * \param[in,out] p : position in the input file
+     */
+    void handleOpeningDisplacement(TokensContainer::const_iterator&);
+    /*!
+     * handle the @DrivingVariable keyword
+     * \param[in,out] p : position in the input file
+     */
+    void handleDrivingVariable(TokensContainer::const_iterator&);
+    /*!
      * handle the @Stress keyword
      * \param[in,out] p : position in the input file
      */
     void handleStress(TokensContainer::const_iterator&);
+    /*!
+     * handle the @CohesiveForce keyword
+     * \param[in,out] p : position in the input file
+     */
+    void handleCohesiveForce(TokensContainer::const_iterator&);
+    /*!
+     * handle the @ThermodynamicForce keyword
+     * \param[in,out] p : position in the input file
+     */
+    void handleThermodynamicForce(TokensContainer::const_iterator&);
     /*!
      * handle the @Behaviour keyword
      * \param[in,out] p : position in the input file
@@ -304,10 +344,30 @@ namespace mfront
      */
     void handleImposedStress(TokensContainer::const_iterator&);
     /*!
+     * handle the @ImposedCohesiveForce keyword
+     * \param[in,out] p : position in the input file
+     */
+    void handleImposedCohesiveForce(TokensContainer::const_iterator&);
+    /*!
+     * handle the @ImposedThermodynamicForce keyword
+     * \param[in,out] p : position in the input file
+     */
+    void handleImposedThermodynamicForce(TokensContainer::const_iterator&);
+    /*!
      * handle the @ImposedStrain keyword
      * \param[in,out] p : position in the input file
      */
     void handleImposedStrain(TokensContainer::const_iterator&);
+    /*!
+     * handle the @ImposedOpeningDisplacement keyword
+     * \param[in,out] p : position in the input file
+     */
+    void handleImposedOpeningDisplacement(TokensContainer::const_iterator&);
+    /*!
+     * handle the @ImposedDrivingVariable keyword
+     * \param[in,out] p : position in the input file
+     */
+    void handleImposedDrivingVariable(TokensContainer::const_iterator&);
     /*!
      * handle the @Author keyword
      * \param[in,out] p : position in the input file

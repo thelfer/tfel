@@ -36,10 +36,13 @@ namespace mfront
       throw(runtime_error(msg));
     }
     if(this->stype==0){
-      this->mpnames.insert(this->mpnames.begin(),"alpha");
-      this->mpnames.insert(this->mpnames.begin(),"rho");
-      this->mpnames.insert(this->mpnames.begin(),"kn");
-      this->mpnames.insert(this->mpnames.begin(),"ks");
+      this->mpnames.insert(this->mpnames.begin(),"NormalThermalExpansion");
+      this->mpnames.insert(this->mpnames.begin(),"MassDensity");
+      // Those are the conventions used by Cast3M. The UMATInterface
+      // exchanges the 'NormalStiffness' and the 'TangentialStiffness'
+      // material properties to match MFront conventions
+      this->mpnames.insert(this->mpnames.begin(),"NormalStiffness");
+      this->mpnames.insert(this->mpnames.begin(),"TangentialStiffness");
     } else {
       string msg("MTestUmatCohesiveZoneModelBehaviour::MTestUmatCohesiveZoneModelBehaviour : "
 		 "unsupported symmetry type");
@@ -174,15 +177,15 @@ namespace mfront
     UMATInt kinc(0);
     tvector<3u,real> ue0(real(0));
     tvector<3u,real> ude(real(0));
-    if(ntens==2u){
+    if(ntens==2){
       ue0[0] = e0[1]; ue0[1] = e0[0];
       ude[0] = de[1]; ude[1] = de[0];
       s1[0]  = s0[1]; s1[1]  = s0[0];
     }
-    if(ntens==3u){
-      ue0[0] = e0[2]; ue0[1] = e0[0]; ue0[2] = e0[1];
-      ude[0] = de[2]; ude[1] = de[0]; ude[2] = de[1];
-      s1[0]  = s0[2]; s1[1]  = s0[0]; s1[2]  = s0[1];
+    if(ntens==3){
+      ue0[0] = e0[1]; ue0[1] = e0[2]; ue0[2] = e0[0];
+      ude[0] = de[1]; ude[1] = de[2]; ude[2] = de[0];
+      s1[0]  = s0[1]; s1[1]  = s0[2]; s1[2]  = s0[0];
     }
     (this->fct)(&ntens,&dt,&drot(0,0),
 		&D(0,0),&ue0(0),&ude(0),
@@ -207,14 +210,14 @@ namespace mfront
       throw(runtime_error(msg));
     }
     // turning things in standard conventions
-    if(ntens==2u){
+    if(ntens==2){
       swap(s1[0],s1[1]);
     }
-    if(ntens==3u){
+    if(ntens==3){
       const real tmp = s1[0];
-      s1[0] = s1[1];
-      s1[1] = s1[2];
-      s1[2] = tmp;
+      s1[0] = s1[2];
+      s1[2] = s1[1];
+      s1[1] = tmp;
     }
     return true;
   } // end of MTestUmatCohesiveZoneModelBehaviour::integrate

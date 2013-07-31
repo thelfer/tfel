@@ -436,6 +436,7 @@ AC_OUTPUT([debug.sh
            mfront/tests/behaviours/castem/castempolycristals_dd_cfc.mtest
            mfront/tests/behaviours/castem/castemhayhurst.mtest
            mfront/tests/behaviours/castem/castemburger.mtest
+           mfront/tests/behaviours/castem/castemtvergaard.mtest
 	   mfront/Examples/Makefile
 	   tfel-doc/Makefile
 	   tfel-doc/src/Makefile

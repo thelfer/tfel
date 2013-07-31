@@ -58,11 +58,11 @@ namespace mfront
       }
     }
     real v(0);
-    if(this->type==MTest::UTest::INTERNAL_STATE_VARIABLES){
+    if(this->type==MTest::UTest::INTERNALSTATEVARIABLE){
       v = iv(pos);
-    } else if(this->type==MTest::UTest::STRAINS){
+    } else if(this->type==MTest::UTest::DRIVINGVARIABLE){
       v = e(pos);
-    } else if(this->type==MTest::UTest::STRESSES){
+    } else if(this->type==MTest::UTest::THERMODYNAMICFORCE){
       v = s(pos);
     } else {
       string msg("MTestAnalyticalTest::check : "

@@ -10,25 +10,67 @@
 
 @ModellingHypothesis Tridimensional;
 
-@MaterialProperty real ks;
 @MaterialProperty real kn;
-@MaterialProperty real rho;
+kn.setGlossaryName("NormalStiffness");
+@MaterialProperty real ks;
+ks.setGlossaryName("TangentialStiffness");
+
+//! unused, mandatory for Cast3M
+@MaterialProperty real rho; 
+rho.setGlossaryName("MassDensity");
+//! unused, mandatory for Cast3M
 @MaterialProperty real alpha;
+alpha.setGlossaryName("NormalThermalExpansion");
+
 @MaterialProperty real smax;
+smax.setGlossaryName("MaximumStress");
 @MaterialProperty real delta;
+delta.setGlossaryName("MaximumOpeningDisplacement");
 
 @StateVariable real d;
 d.setGlossaryName("Damage");
+@StateVariable real di;
+di.setGlossaryName("DamageIndicator");
+
+@PredictionOperator{
+  const real C        = real(27)/real(4);
+  // initial stiffness
+  const real K1 = C*smax/delta;
+  Dt_tn = Dt_nt = tvector<N-1,real>(real(0));
+  Dt_tt = ks*tmatrix<N-1,N-1,real>::Id();
+  if((smt==ELASTIC)||(smt==SECANTOPERATOR)||(smt==TANGENTOPERATOR)){
+    if(u_n<0){
+      Dt_nn = kn;
+    } else {
+      if(smt==ELASTIC){
+	Dt_nn= K1;
+      } else if(smt==SECANTOPERATOR){
+	Dt_nn = K1*(1-d)*(1-d);
+      } else {
+	// tangent operator
+	if((di>0.5)&&(d<=0.99)){
+	  Dt_nn = K1*(1-d)*(1-3*d);
+	} else {
+	  Dt_nn = K1*(1-d)*(1-d);
+	}
+      }
+    }
+  } else {
+    // unsupported case
+    return FAILURE;
+  }
+}
 
 @Integrator{
   const real C        = real(27)/real(4);
   // tagential behaviour
   t_t = ks*(u_t+du_t);
   if(computeTangentOperator_){
+    Dt_tt = ks*tmatrix<N-1,N-1,real>::Id();
     Dt_tn = Dt_nt = tvector<N-1,real>(real(0));
   }
   // normal behaviour
-  if(u_n+du_n<=0){
+  if(u_n+du_n<0){
     // compression
     t_n = kn*(u_n+du_n);
     if(computeTangentOperator_){
@@ -38,8 +80,11 @@ d.setGlossaryName("Damage");
     // traction
     // reduced opening displacement
     const real rod = (u_n+du_n)/delta;
-    // damage
+    // previous damage
+    const real d_1 = d;
     d   = min(max(d,rod),0.99);
+    // damage indicator
+    di  = ((d_1>d)&&(du_n>0)) ? 1. : 0.;
     // initial stiffness
     const real K1 = C*smax/delta;
     // secant stiffness

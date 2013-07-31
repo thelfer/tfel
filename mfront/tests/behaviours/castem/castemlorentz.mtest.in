@@ -8,6 +8,8 @@
 @UseCastemAccelerationAlgorithm true;
 @StiffnessMatrixType 'Elastic';
 
+@Behaviour<umat> 'libMFrontCastemBehaviours@CMAKE_SHARED_LIBRARY_SUFFIX@' 'umatlorentz';
+
 @StrainEpsilon 1.e-11;
 @StressEpsilon 1.e-1;
 
@@ -19,7 +21,6 @@
 @Real 'smax'   '150e6';
 @Real 'A' '0.5*(lambda+2*mu)*(smax/young)**2'; 
 
-@Behaviour<umat> 'libMFrontCastemBehaviours@CMAKE_SHARED_LIBRARY_SUFFIX@' 'umatlorentz';
 @MaterialProperty<constant> 'YoungModulus'     'young';
 @MaterialProperty<constant> 'PoissonRatio'     'nu';
 @MaterialProperty<constant> 'ThermalExpansion' 0.;   
