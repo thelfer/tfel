@@ -1,12 +1,14 @@
-
-if WITH_TESTS
-
 mfronts = VanadiumAlloy_YoungModulus_SRMA.mfront        \
 	  VanadiumAlloy_PoissonRatio_SRMA.mfront        \
 	  VanadiumAlloy_SpecificHeat_SRMA.mfront        \
 	  VanadiumAlloy_ThermalExpansion_SRMA.mfront    \
 	  VanadiumAlloy_ThermalConductivity_SRMA.mfront \
 	  Inconel600_YoungModulus.mfront
+
+EXTRA_DIST = $(mfronts)      \
+	     CMakeLists.txt
+
+if WITH_TESTS
 
 INCLUDES = -I@builddir@/include
 
@@ -85,6 +87,3 @@ clean-local:
 	-rm -fr src include
 
 endif
-
-EXTRA_DIST = $(mfronts)      \
-	     CMakeLists.txt

@@ -149,7 +149,6 @@ namespace umat
       {
 	using namespace tfel::utilities;
 	using namespace tfel::material;
-	typedef unsigned short ushort;
 	const UMATOutOfBoundsPolicy& up = UMATOutOfBoundsPolicy::getUMATOutOfBoundsPolicy();
 	unsigned short subSteps   = 0u;
 	unsigned short iterations = 1u;
@@ -182,11 +181,11 @@ namespace umat
 	    this->bData = static_cast<const BData&>(behaviour);
 	  } else if ((result==BV::UNRELIABLE_RESULTS)&&
 		     (UMATTraits<BV>::doSubSteppingOnInvalidResults)){
-	    iterations = ushort(iterations*2u);
+	    iterations = static_cast<unsigned short>(iterations*2u);
 	    this->iData *= 0.5;
 	  } else {
 	    ++subSteps;
-	    iterations = ushort(iterations*2u);
+	    iterations = static_cast<unsigned short>(iterations*2u);
 	    this->iData *= 0.5;
 	  }
 	}

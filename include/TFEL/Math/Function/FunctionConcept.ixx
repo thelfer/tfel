@@ -53,7 +53,7 @@ namespace tfel{
     }; // end of OpDiff
 
     namespace stdfunctions{
-      extern TFELMATH_VISIBILITY_EXPORT OpDiff D;
+      extern TFELMATH_VISIBILITY_EXPORT OpDiff D TFEL_UNUSED_ATTRIBUTE;
     } // end of namespace stdfunctions
 
     /*

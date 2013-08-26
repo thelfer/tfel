@@ -27,13 +27,13 @@ namespace tfel
       exe(const T1& v1,
 	  const T2& v2)
       {
-	typedef typename T1::RunTimeProperties RunTimeProperties;
-	typedef typename T1::size_type size_type;
-	size_type i;
 #ifndef NO_RUNTIME_CHECK_BOUNDS
+	typedef typename T1::RunTimeProperties RunTimeProperties;
 	RunTimeCheck<RunTimeProperties>::exe(v1.getRunTimeProperties(),
 					     v2.getRunTimeProperties());
 #endif
+	typedef typename T1::size_type size_type;
+	size_type i;
 	Result r(0);
 	for(i=0;i!=v1.size();++i){
 	  r += v1(i)*v2(i);

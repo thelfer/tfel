@@ -19,14 +19,18 @@
 namespace aster{
 
 #if ASTER_ARCH == 64
+#if WIN64
+  typedef long long   AsterInt;
+#else
   typedef long   AsterInt;
-  typedef double AsterReal;
+#endif
 #elif ASTER_ARCH == 32
   typedef int    AsterInt;
-  typedef double AsterReal;
 #else
   #error "aster : unsupported machine type"
 #endif
+
+  typedef double AsterReal;
 
 } // end of namespace aster
 

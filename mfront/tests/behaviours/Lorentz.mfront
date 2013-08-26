@@ -32,6 +32,10 @@ alpha.setGlossaryName("ThermalExpansion");
 @StateVariable real d;
 @StateVariable real y;
 
+@InitLocalVariables{
+  Dt = StiffnessTensor(real(0));
+}
+
 @Integrator{
   using namespace tfel::material::lame;
   tmatrix<3u,3u,real> m;
@@ -69,11 +73,9 @@ alpha.setGlossaryName("ThermalExpansion");
   const tmatrix<3u,3u,real> m2 = transpose(m);
   sig.changeBasis(m2);
   if(computeTangentOperator_){
-    if(smt==ELASTIC){
-      computeElasticStiffness<N,Type>::exe(Dt,lambda,mu);
-    } else {
-      string msg("Lorentz : unsupported stiffness matrix type");
-      throw(runtime_error(msg));
+    if(smt!=ELASTIC){
+      return FAILURE;
     }
+    computeElasticStiffness<N,Type>::exe(Dt,lambda,mu);
   }
 }

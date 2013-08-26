@@ -180,8 +180,6 @@ namespace tfel
     ProcessManager::sigChildHandler(const int)
     {
       using namespace std;
-      typedef map<ProcessId,bool>::value_type MVType;
-      typedef map<ProcessId,int>::value_type  MVType2;
       int ret;
       int status;
       vector<Process>::iterator p;

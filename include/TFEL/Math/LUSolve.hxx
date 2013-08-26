@@ -45,7 +45,6 @@ namespace tfel{
 	       Permutation<typename MatrixTraits<MatrixType>::IndexType>& p)
       {
 	using namespace std;
-	typedef typename MatrixTraits<MatrixType>::IndexType IndexType;
 	if(m.getNbRows()!=m.getNbCols()){
 	  throw(LUException("matrix is not square"));
 	}

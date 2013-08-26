@@ -243,7 +243,11 @@ namespace mfront
       name = mat+"_"+className;
     }
     target = name+"CppTest";
+#if defined _WIN32 || defined _WIN64
+    res[target].first.push_back("lib"+cpplib+".dll");
+#else
     res[target].first.push_back("lib"+cpplib+".so");
+#endif
     res[target].first.push_back(name+"-CppTest.o");
     res[target].second.push_back("@$(CXX) $(LDFLAGS) -L. -l"+cpplib+" $^ -o $@");
     res["check"].first.push_back(target);

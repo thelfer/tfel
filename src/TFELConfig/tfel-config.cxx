@@ -16,10 +16,10 @@
 typedef void (*FuncPtr)(void);
 typedef std::map<std::string,std::pair<FuncPtr,std::string> > CallBacksContainer;
 
-const std::string
+std::string
 libDir(void);
 
-const std::string
+std::string
 includeDir(void);
 
 static void
@@ -104,7 +104,7 @@ static bool lsystem         = false;
 static bool graphics        = false;
 #endif /* USE_GRAPHICS */
 
-const std::string
+std::string
 libDir(void)
 {
   using namespace std;
@@ -133,7 +133,7 @@ libDir(void)
   return lib;
 } // end of libDir
 
-const std::string
+std::string
 includeDir(void)
 {
   using namespace std;

@@ -3,6 +3,7 @@
  * \brief  This file defines the TFEL_STATIC_ASSERT macro.
  * \author Helfer Thomas
  * \date   28 Aug 2006
+ * modified 11/08/2013: add  __attribute__ ((__used__)) for gcc
  */
 
 #ifndef _LIB_TFEL_STATICASSERT_H_
@@ -79,7 +80,7 @@ namespace tfel{
  * \author Helfer Thomas
  * \date   28 Aug 2006
  */
-#define TFEL_STATIC_ASSERT(x) typedef tfel::meta::internals::Dummy<sizeof(tfel::meta::internals::StaticTest<static_cast<bool>(x)>)> TFEL_PP_JOIN(static_assert_typedef_,__LINE__)
+#define TFEL_STATIC_ASSERT(x) typedef tfel::meta::internals::Dummy<sizeof(tfel::meta::internals::StaticTest<static_cast<bool>(x)>)> TFEL_PP_JOIN(static_assert_typedef_,__LINE__) TFEL_UNUSED_ATTRIBUTE
 #else
 #define TFEL_STATIC_ASSERT(x)
 #endif

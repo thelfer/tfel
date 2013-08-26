@@ -51,9 +51,7 @@ namespace umat
       using namespace tfel::utilities;
       using namespace tfel::material;
       const ModellingHypothesis::Hypothesis H = ModellingHypothesis::PLANESTRESS;
-      typedef Behaviour<H,UMATReal,false> BV;
       //! a simple alias
-      typedef tfel::material::ModellingHypothesisToSpaceDimension<H> ModellingHypothesisToSpaceDimension;
       typedef UMATTraits<Behaviour<H,UMATReal,false> > Traits;
       typedef typename IF<Traits::stype==umat::ISOTROPIC,
 			  TreatPlaneStressIsotropicBehaviour,

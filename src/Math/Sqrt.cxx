@@ -17,7 +17,7 @@ namespace tfel{
 
     namespace stdfunctions{
 
-      TFELMATH_VISIBILITY_EXPORT tfel::math::FctSqrt sqrt;
+      TFELMATH_VISIBILITY_EXPORT tfel::math::FctSqrt sqrt TFEL_UNUSED_ATTRIBUTE;
 
     } // end of namespace stdfunctions
 

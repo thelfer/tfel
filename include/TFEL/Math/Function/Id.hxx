@@ -81,7 +81,7 @@ namespace tfel{
     derivate(const FctId);
 
     namespace stdfunctions{
-      extern TFELMATH_VISIBILITY_EXPORT tfel::math::FctId   id;
+      extern TFELMATH_VISIBILITY_EXPORT tfel::math::FctId id TFEL_UNUSED_ATTRIBUTE;
     }
 
   } // end of namespace math

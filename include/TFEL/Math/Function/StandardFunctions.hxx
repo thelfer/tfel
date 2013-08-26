@@ -84,7 +84,7 @@
     const Z derivate(const Fct##X);                                                       \
                                                                                           \
     namespace stdfunctions{                                                               \
-      extern TFELMATH_VISIBILITY_EXPORT Fct##X Y;                                                                    \
+      extern TFELMATH_VISIBILITY_EXPORT Fct##X Y TFEL_UNUSED_ATTRIBUTE;                   \
     }
 
 
@@ -134,7 +134,7 @@
     const Z derivate(const Fct##X);                                                       \
                                                                                           \
     namespace stdfunctions{                                                               \
-      extern TFELMATH_VISIBILITY_EXPORT Fct##X Y;                                         \
+      extern TFELMATH_VISIBILITY_EXPORT Fct##X Y TFEL_UNUSED_ATTRIBUTE;                   \
     }
 
 #define TFEL_MATH_UNARY_FUNCTION_RESULT_I_(X,Y)                  \

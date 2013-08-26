@@ -20,16 +20,19 @@ extern "C" {
 
 #ifdef TFEL_ARCH32
   typedef int    UMATIntegerType;
-  typedef double UMATRealType;
   typedef int    AsterIntegerType;
-  typedef double AsterRealType;
 #endif 
 #ifdef TFEL_ARCH64
+#ifdef WIN64
+  typedef long long   UMATIntegerType;
+  typedef long long   AsterIntegerType;
+#else
   typedef long   UMATIntegerType;
-  typedef double UMATRealType;
   typedef long   AsterIntegerType;
-  typedef double AsterRealType;
 #endif
+#endif
+  typedef double UMATRealType;
+  typedef double AsterRealType;
 
 #ifdef	__cplusplus
 }
