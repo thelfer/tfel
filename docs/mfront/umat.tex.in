@@ -215,6 +215,73 @@ décrite en détail par ailleurs~\cite{helfer:mfront:behaviours:2013}.
 
 \clearpage
 \newpage
+\section{Utilisation des lois générées par \mfront{} dans \castem{}}
+
+Cette section suppose que l'utilisateur sait comment introduire une
+loi \umat{} dans \castem{} et est familier avec la syntaxe \gibiane{}
+associée.
+
+\subsection{Utilisation dans la version \pleiades{}}
+
+Le projet \pleiades{} maintient pour ses propres besoins une version
+modifiée de \castem{} qui permet de charger dynamiquement des
+bibliothèques matériaux.
+
+\begin{figure}[htbp]
+  \centering
+  \code{
+    \textcolor{blue}{* Création d'une table contenant les données relatives }\\
+    \textcolor{blue}{* à la propriété externe : }\\
+    \textcolor{blue}{* - 'MODELE' contient le nom de la fonction appelée }\\
+    \textcolor{blue}{* - 'LIBRAIRIE' contient le nom de la librairie externe }\\
+    Tloi = '\textcolor{green}{TABLE}'; \\
+    Tloi. '\textcolor{red}{MODELE}'    = '\textcolor{red}{NbZrCCreep}' ; \\
+    Tloi. '\textcolor{red}{LIBRAIRIE}' = '\textcolor{red}{libNbZrCBehaviours.so}' ; \\
+    \textcolor{blue}{* Création du modèle mécanique}\\    
+    ModM1 = '\textcolor{green}{MODELISER}' s1 '\textcolor{red}{MECANIQUE}' '\textcolor{red}{ELASTIQUE}'     \\
+    \hspace{7em}'\textcolor{red}{ISOTROPE}' '\textcolor{red}{NON\_LINEAIRE}' '\textcolor{red}{UTILISATEUR}' \\
+    \hspace{7em}'\textcolor{red}{'DESC\_LOI'}  Tloi \\
+    \hspace{7em}'\textcolor{red}{C\_MATERIAU}' CLOI \\
+    \hspace{7em}'\textcolor{red}{C\_VARINTER}' VLOI \\
+    \hspace{7em}'\textcolor{red}{PARA\_LOI}'   PLOI;
+  }
+  \caption{Appel d'une loi \mfront{} dans la version \pleiades{} de \castem{}.}
+  \label{fig:umat:desc_loi}
+\end{figure}
+
+L'appel, illustré en figure~\ref{fig:umat:desc_loi}, se fait en deux étapes~:
+\begin{itemize}
+\item la définition d'un tableau contenant les deux indices
+  \texttt{LIBRAIRIE} et \texttt{MODELE}. L'indice \texttt{LIBRAIRIE}
+  désigne le nom de la librairie dynamique qui contient la loi de
+  comportement. L'extension de la librairie dépend du système~:
+  \texttt{so} sous \unix{}, \texttt{dll} sous \windows{}. Il est
+  possible de donner le chemin, absolu ou relatif, vers cette
+  librairie, mais cette manière de faire est déconseillée. Il est
+  préférable de modifier la variable d'environnement
+  \texttt{LD\_LIBRARY\_PATH} sous \unix{}, ou {\tt PATH} sous
+  \windows{}. L'indice \texttt{MODELE} contient le nom de la fonction
+  à appeler~;
+\item la définition du modèle. Par rapport à une syntaxe classique qui
+  utilise le mot clé \texttt{NUME\_LOI}, nous utilisons ici le mot clé
+  \texttt{DESC\_LOI} qui prend en argument la table construite
+  précédemment.
+\end{itemize}
+
+\subsection{Utilisation de la version standard de \castem{}}
+
+L'utilisation des lois \mfront{} dans la version standard de \castem{}
+est moins aisée~:
+\begin{itemize}
+\item l'utilisateur doit écrire une fonction chapeau nommée
+  \umat{}. Cette fonction chapeau sert à ~;
+\item l'utilisateur doit recompiler une version locale de l'exécutable
+  \castem{} qui inclut cette fonction chapeau et qui est liée avec la
+  ou les librairies \mfront{}~;
+\end{itemize}
+
+\clearpage
+\newpage
 \section{Sous-découpage automatique du pas de temps}
 
 L'intégration d'une loi de comportement peut échouer. La
@@ -373,9 +440,10 @@ admet pour arguments {\tt Finite\-Rotation\-Small\-Strain} et {\tt
 
 \clearpage
 \newpage
-\section{Traitements des matériaux orthotropes}
+\section{Traitements de matériaux orthotropes}
 
-L'interface {\tt umat} gère plusieurs aspects du calcul~:
+Dans le cas des matériaux orthotropes, l'interface {\tt umat} peut
+être amenée à gérer plusieurs aspects du calcul~:
 \begin{itemize}
 \item dans le cas de matériaux orthotropes, l'interface \umat{} se
   charge des changements de repère. Ils sont assurés par la classe
@@ -387,7 +455,7 @@ L'interface {\tt umat} gère plusieurs aspects du calcul~:
   matrice d'élasticité {\em après} l'appel au constructeur de la loi
   de comportement, ce qui signifie qu'elle ne peut être utilisée dans
   la phase d'initialisation introduite par le mot-clé {\tt
-    Init\-Local\-Vars}. Le calcul de la matrice d'élasticité est
+    Init\-Local\-Variables}. Le calcul de la matrice d'élasticité est
   décrit en annexe~\ref{sec:calcul-de-la}.
 \item l'interface se charge du calcul du tenseur des coefficients de
   dilatation thermique, si l'utilisateur le demande via la directive

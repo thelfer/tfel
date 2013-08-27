@@ -64,7 +64,7 @@
 #define TFEL_UNUSED_ATTRIBUTE 
 #endif
 #else /* (defined __GNUC__) && (! defined __INTEL_COMPILER) */
-#define TFEL_UNUSED_ATTRIBUTE 
+#define TFEL_UNUSED_ATTRIBUTE
 #endif
 
 /*!

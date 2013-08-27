@@ -435,9 +435,11 @@ namespace mfront
 	this->srcFile<< "set output '"<< name << "_" << inputs.begin()->name << ".eps'" << endl;
 	this->srcFile<< "plot '" << csvFileName << "' u 1:2 notitle" ;
 	//adding experimental data if any
-	for(multimap< string, dataFile >::const_iterator it=experimentalData.upper_bound(inputs[0].name);
-	    it==experimentalData.lower_bound(inputs[0].name);++it)
-	  this->srcFile<<"\\\n'../"<< base + it->second.name <<"' u 1:2 t '"<<it->second.legend<<"'" ;
+	for(multimap< string, dataFile >::const_iterator it=experimentalData.begin();it!=experimentalData.end();++it){
+	  if (inputs[0].name == (*it).first){
+	    this->srcFile<<",\\\n'../"<< base + it->second.name <<"' u 1:2 t '"<<it->second.legend<<"'" ;
+	  }
+	}
 	this->srcFile<<endl;
       } else {
 	for(p3=inputs.begin();p3!=inputs.end();p3++){

@@ -5,7 +5,7 @@
  * \brief  09 avril 2013
  */
 
-@Behaviour<umat> 'libMFrontCastemBehaviours.so' 'umattvergaard';
+@Behaviour<umat> 'libMFrontCastemBehaviours@CMAKE_SHARED_LIBRARY_SUFFIX@' 'umattvergaard';
 @MaterialProperty<constant> 'NormalStiffness'              2.e16;
 @MaterialProperty<constant> 'TangentialStiffness'          2.e16;
 @MaterialProperty<constant> 'MassDensity'                  0.;

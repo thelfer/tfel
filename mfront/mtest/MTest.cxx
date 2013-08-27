@@ -114,7 +114,6 @@ namespace mfront
     using namespace std;
     using namespace tfel::utilities;
     typedef tfel::material::ModellingHypothesis MH;
-    typedef map<string,CallBack>::value_type MVType;
     map<string,CallBack>::const_iterator pc;
     // declare some variables
     this->declareVariable("t");
@@ -830,7 +829,6 @@ namespace mfront
   {
     using namespace std;
     using namespace tfel::utilities;
-    typedef map<string,real>::value_type MVType;
     const string& v = this->readString(p,this->fileTokens.end());
     if(!this->isValidIdentifier(v)){
       string msg("MTest::handleReal : '"+
@@ -1590,7 +1588,6 @@ namespace mfront
   {
     using namespace std;
     using namespace tfel::material;
-    typedef tfel::material::ModellingHypothesis MH;
     if(this->b.get()==0){
       string msg("MTest::handleStrain : ");
       msg += "no behaviour defined";
@@ -1610,7 +1607,6 @@ namespace mfront
   {
     using namespace std;
     using namespace tfel::material;
-    typedef tfel::material::ModellingHypothesis MH;
     if(this->b.get()==0){
       string msg("MTest::handleOpeningDisplacement : ");
       msg += "no behaviour defined";

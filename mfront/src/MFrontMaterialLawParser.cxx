@@ -503,7 +503,6 @@ namespace mfront{
     using namespace tfel::utilities;
     string methodName;
     typedef map<string,string>::value_type MVType;
-    typedef map<string,unsigned short>::value_type MVType2;
     this->readSpecifiedToken("MFrontMaterialLawParser::treatMethod",".");
     this->checkNotEndOfFile("MFrontMaterialLawParser::treatMethod",
 			    "Expected method name.");

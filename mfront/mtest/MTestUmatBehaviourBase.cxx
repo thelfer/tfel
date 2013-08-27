@@ -214,7 +214,6 @@ namespace mfront
 							      const std::string& cname) const
   {
     using namespace std;
-    typedef tfel::material::ModellingHypothesis MH;
     vector<string> c;
     vector<string>::const_iterator p;
     this->getDrivingVariablesComponents(c,h);
@@ -234,7 +233,6 @@ namespace mfront
 								 const std::string& cname) const
   {
     using namespace std;
-    typedef tfel::material::ModellingHypothesis MH;
     vector<string> c;
     vector<string>::const_iterator p;
     this->getThermodynamicForcesComponents(c,h);

@@ -1,5 +1,6 @@
 EXTRA_DIST = autotools.cmake             \
 	     compiler.cmake              \
+	     clang.cmake                 \
 	     gcc.cmake                   \
 	     intel.cmake                 \
 	     aster.cmake                 \

@@ -261,7 +261,6 @@ docs/presentations/mfront-behaviours.tex.in -text
 docs/presentations/mfront-presentation.tex.in -text
 docs/stensor_rotation_matrix.tm -text
 docs/tensor_rotation_matrix.tm -text
-docs/tex/CMakeLists.txt -text
 docs/tex/Makefile.am -text
 docs/tex/texmf/bibtex/fr-insa.bst -text
 docs/tex/texmf/ls-R -text
@@ -427,15 +426,6 @@ docs/tex/texmf/tex/latex/beamer/themes/theme/beamerthemeSzeged.sty -text
 docs/tex/texmf/tex/latex/beamer/themes/theme/beamerthemeWarsaw.sty -text
 docs/tex/texmf/tex/latex/beamer/themes/theme/beamerthemeboxes.sty -text
 docs/tex/texmf/tex/latex/beamer/themes/theme/beamerthemedefault.sty -text
-docs/tex/texmf/tex/latex/beamer/themes/theme/compatibility/beamerthemebars.sty -text
-docs/tex/texmf/tex/latex/beamer/themes/theme/compatibility/beamerthemeclassic.sty -text
-docs/tex/texmf/tex/latex/beamer/themes/theme/compatibility/beamerthemecompatibility.sty -text
-docs/tex/texmf/tex/latex/beamer/themes/theme/compatibility/beamerthemelined.sty -text
-docs/tex/texmf/tex/latex/beamer/themes/theme/compatibility/beamerthemeplain.sty -text
-docs/tex/texmf/tex/latex/beamer/themes/theme/compatibility/beamerthemeshadow.sty -text
-docs/tex/texmf/tex/latex/beamer/themes/theme/compatibility/beamerthemesidebar.sty -text
-docs/tex/texmf/tex/latex/beamer/themes/theme/compatibility/beamerthemesplit.sty -text
-docs/tex/texmf/tex/latex/beamer/themes/theme/compatibility/beamerthemetree.sty -text
 docs/tex/texmf/tex/latex/couleurs.sty -text
 docs/tex/texmf/tex/latex/gnuplot.sty -text
 docs/tex/texmf/tex/latex/helvetCEA.sty -text
@@ -1114,7 +1104,6 @@ mfront/mtest/MTestUmatCohesiveZoneModelBehaviour.cxx -text
 mfront/mtest/MTestUmatNormaliseTangentOperator.cxx -text
 mfront/mtest/MTestUmatSmallStrainBehaviour.cxx -text
 mfront/mtest/Makefile.am -text
-mfront/src/AsterChangeBasis.cxx -text
 mfront/src/AsterComputeStiffnessOperator.cxx -text
 mfront/src/AsterComputeThermalExpansionTensor.cxx -text
 mfront/src/AsterException.cxx -text
