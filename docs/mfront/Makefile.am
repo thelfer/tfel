@@ -20,6 +20,10 @@ EXTRA_DIST=CMakeLists.txt                                \
 	   Images/polybz.png				 \
 	   Images/hsnv125d.eps				 \
 	   Images/hsnv125d.png				 \
+	   Images/Makefile.castem.win.tex		 \
+	   Images/Makefile.castem.win			 \
+	   Images/Makefile.castem.linux.tex		 \
+	   Images/Makefile.castem.linux			 \
 	   annexe-orthotropie.tex		         \
 	   style.ist				         \
 	   mfront/A316TiHyperTrempe_CreepExponent.mfront \

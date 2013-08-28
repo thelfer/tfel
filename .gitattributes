@@ -74,6 +74,10 @@ docs/mfront/Images/2norton-rk.mfront.tex -text
 docs/mfront/Images/2norton-rk.tex -text
 docs/mfront/Images/Algo_temps.eps -text
 docs/mfront/Images/CompSeq.eps -text
+docs/mfront/Images/Makefile.castem.linux -text
+docs/mfront/Images/Makefile.castem.linux.tex -text
+docs/mfront/Images/Makefile.castem.win -text
+docs/mfront/Images/Makefile.castem.win.tex -text
 docs/mfront/Images/Methode_Newton.pstricks -text
 docs/mfront/Images/NortonRK.eps -text
 docs/mfront/Images/hayhurst.eps -text

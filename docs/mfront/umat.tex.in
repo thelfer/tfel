@@ -270,15 +270,50 @@ L'appel, illustré en figure~\ref{fig:umat:desc_loi}, se fait en deux étapes~:
 
 \subsection{Utilisation de la version standard de \castem{}}
 
+\subsubsection{Sous \unix{}}
+
 L'utilisation des lois \mfront{} dans la version standard de \castem{}
 est moins aisée~:
 \begin{itemize}
 \item l'utilisateur doit écrire une fonction chapeau nommée
-  \umat{}. Cette fonction chapeau sert à ~;
+  \umat{}. Cette fonction chapeau sert à appeler la bonne loi de
+  comportement~;
 \item l'utilisateur doit recompiler une version locale de l'exécutable
   \castem{} qui inclut cette fonction chapeau et qui est liée avec la
   ou les librairies \mfront{}~;
 \end{itemize}
+
+Pour cela, \castem{} fournit les utilitaires {\tt essaicast} et {\tt
+  compilcast}. Ces scripts {\tt shell} sont prévus pour compiler des
+fichiers {\tt esope} et ne sont pas prévus pour gérer des fichiers
+\mfront{}. Ils contiennent cependant les directives de compilation
+nécessaires à la construction de l'exécutable \castem{}.
+
+\begin{figure}[htbp]
+  \centering
+  \code{{\ttfamily \input{@abs_top_srcdir@/docs/mfront/Images/Makefile.castem.linux.tex}}}  
+  \caption{Exemple de fichier {\tt Makefile} utilisable sous \linux{}}
+  \label{fig:umat:Makfile:linux}
+\end{figure}
+
+L'utilisateur doit ensuite déplacer l'utilitaire créé.
+
+\section{Sous \windows{}}
+
+Il faut tout d'abord disposer d'un environnement de compilation
+adapté. Le seul supporté actuellement est {\tt MSYS}.
+
+\paragraph{Utilisation sous \windows{}}
+
+De plus, dans le cas d'un système \(64\) bits, il faut télécharger
+{\tt mingw64}.
+
+\begin{figure}[htbp]
+  \centering
+  \code{{\ttfamily \input{@abs_top_srcdir@/docs/mfront/Images/Makefile.castem.win.tex}}}  
+  \caption{Exemple de fichier {\tt Makefile} utilisable sous \windows{}}
+  \label{fig:umat:Makfile:win}
+\end{figure}
 
 \clearpage
 \newpage
