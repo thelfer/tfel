@@ -5,16 +5,30 @@
  * \date   27 aoû 2007
  */
 
-#include<cstdlib>
-#include<iostream>
-#include<cstdlib>
 #include<map>
 #include<string>
+#include<cstdlib>
+#include<iostream>
+#include<algorithm>
 
 #include"tfel-config.hxx"
 
+#if defined _WIN32 || defined _WIN64
+#include<windows.h>
+#endif
+
 typedef void (*FuncPtr)(void);
 typedef std::map<std::string,std::pair<FuncPtr,std::string> > CallBacksContainer;
+
+static std::string
+handleSpace(const std::string& p)
+{
+  using namespace std;
+  if(find(p.begin(),p.end(),' ')!=p.end()){
+    return '"'+p+'"';
+  }
+  return p;
+}
 
 std::string
 libDir(void);
@@ -104,6 +118,30 @@ static bool lsystem         = false;
 static bool graphics        = false;
 #endif /* USE_GRAPHICS */
 
+#if defined _WIN32 || defined _WIN64
+static bool
+getValueInRegistry(std::string &value,
+		   const std::string& path,
+		   const std::string &name)
+{
+  HKEY  hKey;
+  char  szBuffer[512];
+  DWORD dwBufferSize = sizeof(szBuffer);
+  LONG  nError;
+  LONG  lRes = RegOpenKeyEx(HKEY_LOCAL_MACHINE,path.c_str(),0,KEY_READ,&hKey);
+  if(ERROR_SUCCESS != lRes){
+    return false;
+  }
+  nError = RegQueryValueEx(hKey, name.c_str(), 0, NULL, (LPBYTE)szBuffer, &dwBufferSize);
+  RegCloseKey(hKey);
+  if (ERROR_SUCCESS == nError){
+    value = szBuffer;
+    return true;
+  }
+  return false;
+}
+#endif
+
 std::string
 libDir(void)
 {
@@ -118,9 +156,17 @@ libDir(void)
   string ldir("/lib");
 #endif
 
+#if defined _WIN32 || defined _WIN64
+  // check in the registry (installation through NSIS)
+  string rpath;
+  if(getValueInRegistry(rpath,string("Software\\CEA\\tfel-")+VERSION,"")){
+    return rpath+ldir;
+  }
+#endif
+
   const char * const path = getenv("TFELHOME");
   if(path!=0){
-    return string(path)+ldir;
+    return handleSpace(string(path)+ldir);
   }
   
   if(lib.substr(0,14)=="${exec_prefix}"){
@@ -130,7 +176,7 @@ libDir(void)
       lib = execPrefix + ldir;
     }
   }
-  return lib;
+  return handleSpace(lib);
 } // end of libDir
 
 std::string
@@ -139,12 +185,24 @@ includeDir(void)
   using namespace std;
   static const string prefix(PREFIXDIR);
   string inc(INCLUDEDIR);
+#if defined _WIN32 || defined _WIN64
+  // check in the registry (installation through NSIS)
+  string rpath;
+  if(getValueInRegistry(rpath,string("Software\\CEA\\tfel-")+VERSION,"")){
+    inc = handleSpace(rpath+"/include");
+#ifdef COMPILER_SPECIFIC_OPTIONS
+    inc += ' ';
+    inc += COMPILER_SPECIFIC_OPTIONS;
+#endif
+    return inc;
+  }
+#endif
   const char * const path = getenv("TFELHOME");
   if(path!=0){
-    inc =  string(path)+"/include";
+    inc =  handleSpace(string(path)+"/include");
   } else {
     if(inc.substr(0,9)=="${prefix}"){
-      inc = prefix + "/include";
+      inc = handleSpace(prefix + "/include");
     }
   }
 #ifdef COMPILER_SPECIFIC_OPTIONS

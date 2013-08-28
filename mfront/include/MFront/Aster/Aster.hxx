@@ -19,7 +19,7 @@
 namespace aster{
 
 #if ASTER_ARCH == 64
-#if WIN64
+#ifdef WIN64
   typedef long long   AsterInt;
 #else
   typedef long   AsterInt;

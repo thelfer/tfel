@@ -54,7 +54,11 @@ namespace mfront
     using namespace std;
     using namespace tfel::utilities;
     MFrontSearchFile& msf = MFrontSearchFile::getMFrontSearchFile();
+#if defined _WIN32 || defined _WIN64
+    vector<string> npaths(tokenize(p,';'));
+#else
     vector<string> npaths(tokenize(p,':'));
+#endif
     msf.paths.insert(msf.paths.begin(),
 		     npaths.begin(),npaths.end());
   } // end of MFrontSearchFile::addSearchPaths
@@ -71,7 +75,11 @@ namespace mfront
     using namespace tfel::utilities;
     const char * const p = ::getenv("MFRONT_INCLUDE_PATH");
     if(p!=0){
-      vector<string> npaths(tokenize(p,':'));
+#if defined _WIN32 || defined _WIN64
+    vector<string> npaths(tokenize(p,';'));
+#else
+    vector<string> npaths(tokenize(p,':'));
+#endif
       this->paths.insert(this->paths.begin(),
 			 npaths.begin(),npaths.end());
     }

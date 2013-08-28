@@ -27,7 +27,9 @@ test_PROGRAMS = test_expr1   \
 LDADD = -L$(top_builddir)/src/Math                 \
 	-L$(top_builddir)/src/Utilities            \
 	-L$(top_builddir)/src/Exception            \
-	-lTFELMath -lTFELUtilities -lTFELException
+	-L$(top_builddir)/src/Tests                \
+	-lTFELMath -lTFELUtilities -lTFELException \
+	-lTFELTests
 
 test_expr1_SOURCES   = test_expr1.cxx    
 test_expr2_SOURCES   = test_expr2.cxx   
