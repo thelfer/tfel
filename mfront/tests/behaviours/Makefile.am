@@ -26,6 +26,8 @@ MFRONTS= DDIF2.mfront                                \
          StrainHardeningCreep.mfront                 \
          Mazars.mfront                               \
          Lorentz.mfront                              \
+	 PlasIsoCin.mfront                           \
+	 ViscoPlasIsoCin.mfront                      \
          Chaboche.mfront                             \
          Chaboche2.mfront                            \
 	 MonoCristal.mfront                          \
@@ -45,6 +47,9 @@ EXTRA_DIST=CMakeLists.txt                     \
            references/plasticity.ref          \
 	   references/elasticity15-aster.ref  \
 	   references/mazars-aster.ref        \
+	   references/plasisocin.ref          \
+	   references/viscoplasisocin.ref     \
+	   references/chaboche2-aster.ref     \
 	   references/chaboche-aster.ref      \
 	   references/chaboche2-aster.ref     \
 	   references/monocristal.ref         \

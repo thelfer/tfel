@@ -388,6 +388,8 @@ AC_OUTPUT([debug.sh
            mfront/tests/behaviours/aster/asterimplicitorthotropiccreep.mtest
            mfront/tests/behaviours/aster/asterplasticity.mtest
            mfront/tests/behaviours/aster/asterstrainhardeningcreep.mtest
+           mfront/tests/behaviours/aster/asterplasisocin.mtest
+           mfront/tests/behaviours/aster/asterviscoplasisocin.mtest
            mfront/tests/behaviours/aster/asterchaboche.mtest
            mfront/tests/behaviours/aster/asterchaboche2.mtest
            mfront/tests/behaviours/aster/astermonocristal.mtest
@@ -428,6 +430,8 @@ AC_OUTPUT([debug.sh
            mfront/tests/behaviours/castem/castemorthotropiccreep-rkCastem.mtest
            mfront/tests/behaviours/castem/castemplasticity.mtest
            mfront/tests/behaviours/castem/castemstrainhardeningcreep.mtest
+           mfront/tests/behaviours/castem/castemplasisocin.mtest
+           mfront/tests/behaviours/castem/castemviscoplasisocin.mtest
            mfront/tests/behaviours/castem/castemchaboche.mtest
            mfront/tests/behaviours/castem/castemchaboche2.mtest
            mfront/tests/behaviours/castem/castemmonocristal.mtest

@@ -30,6 +30,8 @@ set(mfront_tests_SOURCES
   StrainHardeningCreep
   Mazars
   Lorentz
+  PlasIsoCin
+  ViscoPlasIsoCin
   Chaboche
   Chaboche2
   MonoCristal
@@ -107,6 +109,8 @@ test_aster(implicitnorton_broyden2)
 test_aster(implicitorthotropiccreep)
 test_aster(plasticity)
 test_aster(strainhardeningcreep)
+test_aster(plasisocin)
+test_aster(viscoplasisocin)
 test_aster(chaboche)
 test_aster(chaboche2)
 test_aster(monocristal)

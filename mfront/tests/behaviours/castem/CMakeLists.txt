@@ -35,6 +35,8 @@ set(mfront_tests_SOURCES
   Lorentz
   Mazars
   Chaboche
+  PlasIsoCin
+  ViscoPlasIsoCin
   Chaboche2
   MonoCristal
   MonoCristal_DD_CFC
@@ -110,6 +112,8 @@ test_castem(orthotropiccreep-rk42)
 test_castem(orthotropiccreep-rkCastem)
 test_castem(strainhardeningcreep)
 test_castem(plasticity)
+test_castem(plasisocin)
+test_castem(viscoplasisocin)
 test_castem(chaboche)
 test_castem(chaboche2)
 test_castem(monocristal)

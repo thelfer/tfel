@@ -70,7 +70,7 @@ namespace tfel{
 	  const T a0,
 	  const bool b = false)
       {	
-      	static const T C_PI       = T(2)*atan(T(1));
+      	static const T C_PI       = T(2)*std::atan(T(1));
 	static const T C_1_3      = T(1)/3;
 	static const T C_2_3      = T(2)*C_1_3;
 	static const T C_2_27     = T(2)/T(27);

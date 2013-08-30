@@ -1,0 +1,108 @@
+@Parser		Implicit;
+@Behaviour	ViscoPlasIsoCin;
+@Author 	Jeremy Hure;
+@Date 		08 Aout 2013;
+@Description{
+  "B. Tanguy"
+  "Modélisation de l'essai Charpy ..."
+  "Thèse ENSMP,2001"
+}
+
+@Algorithm NewtonRaphson;
+@RequireStiffnessTensor;
+@Epsilon 1.e-12;
+
+@MaterialProperty real young; /* mandatory for castem */
+young.setGlossaryName("YoungModulus");
+@MaterialProperty real nu;    /* mandatory for castem */
+nu.setGlossaryName("PoissonRatio");
+@MaterialProperty real rho;   /* mandatory for castem */
+rho.setGlossaryName("MassDensity");
+@MaterialProperty real alpha; /* mandatory for castem */
+alpha.setGlossaryName("ThermalExpansion");
+@MaterialProperty real R0;
+@MaterialProperty real Q1;
+@MaterialProperty real b1;
+@MaterialProperty real Q2;
+@MaterialProperty real b2;
+@MaterialProperty real C1;
+@MaterialProperty real D1;
+@MaterialProperty real C2;
+@MaterialProperty real D2;
+@MaterialProperty real k1;
+@MaterialProperty real n1;
+@MaterialProperty real k2;
+@MaterialProperty real n2;
+
+@StateVariable real    p;
+@StateVariable Stensor X1;
+@StateVariable Stensor X2;
+
+@LocalVariable Stensor s0;
+@LocalVariable real Rpel;
+@LocalVariable real sel;
+@LocalVariable real Fel;
+
+@InitLocalVars{
+  s0 = D*(eel+deto);
+  Rpel = R0 + Q1*(1-exp(-b1*p)) +  Q2*(1-exp(-b2*p));
+  sel  = sigmaeq(s0-X1-X2);
+  Fel  = sel - Rpel;
+}
+
+@ComputeStress{
+  sig = D*eel;
+}
+
+@TangentOperator{
+  if((smt==ELASTIC)||(smt==SECANTOPERATOR)){
+    Dt=D;
+  } else if (smt==CONSISTANTTANGENTOPERATOR){
+    Stensor4 Je;
+    getPartialJacobianInvert(Je);
+    Dt = D*Je;
+  } else {
+    return false;
+  }
+}
+
+@Integrator{
+  if (Fel>0){
+    const Stensor X1t	= X1+theta*dX1;
+    const Stensor X2t 	= X2+theta*dX2;
+    const real pt 	= p+theta*dp;
+    const real Rpt 	= R0 + Q1*(1-exp(-b1*pt)) +  Q2*(1-exp(-b2*pt));
+    const real H 	= Q1*b1*exp(-b1*pt)  + Q2*b2*exp(-b2*pt);
+    const real seq 	= sigmaeq(sig-X1t-X2t);
+    const real F 	= seq - Rpt;
+    const real inv_seq	= 1./seq;
+    const Stensor n 	= 1.5*deviator(sig-X1t-X2t)*inv_seq;
+    const Stensor4 J	= Stensor4::M() - (n^n);
+    const real P1 = pow(F/k1,n1+1);
+    const real P2 = pow(F/k2,n2+1);
+    const real FP = 1./((1./(P1/(F/k1)))+(1./(P2/(F/k2))));
+    const real FPP = ((FP*FP)*((n1/k1)*(1./P1) + (n2/k2)*(1./P2)));
+    feel	 = deel + dp*n - deto;
+    fp           = dp - FP*dt;
+    fX1 	 = (dX1 - C1*dp*n + D1*X1t*dp)/young;
+    fX2 	 = (dX2 - C2*dp*n + D2*X2t*dp)/young; 
+    dfeel_ddeel += theta*dp*inv_seq*J*D;
+    dfeel_ddp    = n;
+    dfeel_ddX1   = -theta*dp*inv_seq*J;
+    dfeel_ddX2   = -theta*dp*inv_seq*J;
+    dfp_ddeel    = -theta*dt*FPP*(n|D);
+    dfp_ddp      = 1+theta*dt*H*FPP;
+    dfp_ddX1     = theta*dt*FPP*n;
+    dfp_ddX2     = theta*dt*FPP*n;
+    dfX1_ddeel   = (-theta*C1*dp*inv_seq*J*D)/young;
+    dfX1_ddp     = (-C1*n + D1*X1t)/young;
+    dfX1_ddX1    = (Stensor4::Id() + theta*dp*(C1*inv_seq*J + D1*Stensor4::Id()))/young;
+    dfX2_ddeel   = (-theta*C2*dp*inv_seq*J*D)/young;
+    dfX2_ddp     = (-C2*n + D1*X2t)/young;
+    dfX2_ddX2    = (Stensor4::Id() + theta*dp*(C2*inv_seq*J + D2*Stensor4::Id()))/young;
+  } else {
+    feel	= deel - deto;
+  }
+}
+
+
