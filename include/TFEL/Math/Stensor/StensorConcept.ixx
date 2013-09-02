@@ -168,7 +168,7 @@ namespace tfel{
     {
       typedef tfel::math::internals::SigmaEqImpl<StensorTraits<T>::dime> Impl;
       return Impl::exe(s);
-    }
+    }    
 
     template<typename T>
     std::ostream&

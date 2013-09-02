@@ -24,7 +24,7 @@ namespace tfel
     template<unsigned short N,
 	     unsigned short M,
 	     typename T>
-    class tmatrix;
+    struct tmatrix;
 
   } // end of namespace math
 

@@ -23,6 +23,7 @@
 
 #include"TFEL/FSAlgorithm/copy.hxx"
 
+#include"TFEL/Math/fsarray.hxx"
 #include"TFEL/Math/General/Abs.hxx"
 #include"TFEL/Math/General/BasicOperations.hxx"
 #include"TFEL/Math/General/EmptyRunTimeProperties.hxx"
@@ -160,88 +161,18 @@ namespace tfel{
     template<unsigned short N, typename T = double>
     struct tvector
       : public VectorConcept<tvector<N,T> >,
-	public tvector_base<tvector<N,T>,N,T>
+	public tvector_base<tvector<N,T>,N,T>,
+	public fsarray<N,T>
     {
-
       //! a simple typedef to the tvector runtime properties
       /*!
        * This is a VectorConcept requirement.
        */
       typedef EmptyRunTimeProperties RunTimeProperties;
-
-      /*!
-       * type of the tvector's values.
-       * (this is a stl requirement).
-       */
-      typedef T value_type;
-      /*!
-       * type of a pointer to the value contained.
-       * (this is a stl requirement).
-       */
-      typedef value_type* pointer;
-      /*!
-       * type of a const pointer to the value contained.
-       * (this is a stl requirement).
-       */
-      typedef const value_type* const_pointer;
-      /*!
-       * type of a reference to the value contained.
-       * (this is a stl requirement).
-       */
-      typedef value_type& reference;
-      /*!
-       * type of a const reference to the value contained.
-       * (this is a stl requirement).
-       */
-      typedef const value_type& const_reference;
-      /*!
-       * type of the size of the container.
-       * (this is a stl requirement).
-       */
-      typedef unsigned short size_type;
-      /*!
-       * type of the difference between two iterators.
-       * (this is a stl requirement).
-       */
-      typedef ptrdiff_t difference_type;
-      /*!
-       * type of the tvector's iterator.
-       * (provided for stl compatibility).
-       */
-      typedef pointer iterator;
-      /*!
-       * type of the tvector's const iterator.
-       * (provided for stl compatibility).
-       */
-      typedef const_pointer const_iterator;
-      /*!
-       * type of the tvector's reverse iterator.
-       * (provided for stl compatibility).
-       */
-#ifndef __SUNPRO_CC
-      typedef std::reverse_iterator<const_iterator> const_reverse_iterator; 
-#else
-      typedef std::reverse_iterator<const_iterator,T,
-      				    const_reference,
-      				    difference_type> const_reverse_iterator;
-#endif
-      /*!
-       * type of the tvector's const reverse iterator.
-       * (provided for stl compatibility).
-       */
-#ifndef __SUNPRO_CC
-      typedef std::reverse_iterator<iterator> reverse_iterator;
-#else
-      typedef std::reverse_iterator<iterator,T,
-      				    reference,
-      				    difference_type> reverse_iterator;
-#endif
-
       /*!
        * Default constructor.
        */
       tvector();
-      
       /*!
        * Constructor from a scalar.
        * \param const T : initial value.
@@ -293,7 +224,6 @@ namespace tfel{
        */
       TFEL_MATH_INLINE
       T& operator()(const unsigned short);
-
       /*!
        * \brief index operator.
        * This is a vector concept requirement.
@@ -303,7 +233,6 @@ namespace tfel{
       TFEL_MATH_INLINE
       const T& 
       operator[](const unsigned short) const;
-      
       /*!
        * \brief index operator.
        * \param const unsigned short, index.
@@ -311,84 +240,12 @@ namespace tfel{
        */
       TFEL_MATH_INLINE
       T& operator[](const unsigned short);
-      
       /*!
        * Return the RunTimeProperties of the tvector
        * \return tvector::RunTimeProperties
        */
       TFEL_MATH_INLINE RunTimeProperties
       getRunTimeProperties(void) const;
-
-      /*!
-       * return an iterator to the first element of the vector
-       * (provided for stl compatibility)
-       * \return iterator, an iterator to the first element
-       */
-      TFEL_MATH_INLINE
-      iterator
-      begin(void);
-      
-      /*!
-       * return an const iterator to the first element of the vector
-       * (provided for stl compatibility)
-       * \return const_iterator, a const iterator to the first element
-       */
-      TFEL_MATH_INLINE
-      const_iterator 
-      begin(void) const;
-
-      /*!
-       * return an iterator after the last element of the vector
-       * (provided for stl compatibility)
-       * \return iterator, an iterator after the last element
-       */
-      TFEL_MATH_INLINE
-      iterator
-      end(void);
-      
-      /*!
-       * return an const iterator after the last element of the vector
-       * (provided for stl compatibility)
-       * \return const_iterator, a const iterator after the last element
-       */
-      TFEL_MATH_INLINE
-      const_iterator
-      end(void) const;
-
-      /*!
-       * return an reverse iterator to the last element of the vector
-       * (provided for stl compatibility)
-       * \return reverse_iterator, a reverse iterator to the last element
-       */
-      TFEL_MATH_INLINE
-      reverse_iterator
-      rbegin(void);
-      
-      /*!
-       * return an const reverse iterator to the last element of the vector
-       * (provided for stl compatibility)
-       * \return const_reverse_iterator, a const reverse iterator to the last element
-       */
-      TFEL_MATH_INLINE
-      const_reverse_iterator
-      rbegin(void) const;
-      
-      /*!
-       * return an  reverse iterator before the first element of the vector
-       * (provided for stl compatibility)
-       * \return reverse_iterator, a reverse iterator before the first element
-       */
-      TFEL_MATH_INLINE
-      reverse_iterator
-      rend(void);
-      /*!
-       * return an const reverse iterator before the first element of the vector
-       * (provided for stl compatibility)
-       * \return const_reverse_iterator, a const reverse iterator before the first element
-       */
-      TFEL_MATH_INLINE
-      const_reverse_iterator
-      rend(void) const;
       /*!
        * copy the Nth elements following this argument.
        * \param const InputIterator, an iterator to the first element
@@ -397,12 +254,6 @@ namespace tfel{
       template<typename InputIterator>
       TFEL_MATH_INLINE void 
       copy(const InputIterator src);
-      /*!
-       * size of the tiny vector
-       * (compatibility with vector)
-       */
-      TFEL_MATH_INLINE unsigned short
-      size(void) const;
       /*!
        * \brief create a slice
        * \param[in] I : the starting index
@@ -441,10 +292,6 @@ namespace tfel{
 	       unsigned short J>
       VectorExpr<tvector<J-I,T>,TVFTVExpr<J-I,N,I,T,true> >
       slice(void) const;
-
-    protected:
-      // values hold by the tvector.
-      T v[N];
     private:
       //! a simple assertion stating that the dimension is valid.
       TFEL_STATIC_ASSERT(N!=0);

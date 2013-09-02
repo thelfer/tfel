@@ -28,7 +28,7 @@ namespace tfel
      * a class representing tiny vectors of fixed size.
      */
     template<unsigned short N, typename T>
-    class tvector;
+    struct tvector;
 
   } // end of namespace math
 

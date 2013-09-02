@@ -30,13 +30,13 @@ namespace tfel{
     template<unsigned short N,unsigned short M, typename T>
     tmatrix<N,M,T>::tmatrix(const T init)
     {
-      tfel::fsalgo::fill<N*M>::exe(this->m,init);
+      tfel::fsalgo::fill<N*M>::exe(this->v,init);
     }
 
     template<unsigned short N,unsigned short M, typename T>
     tmatrix<N,M,T>::tmatrix(const T * const init)
     {
-      tfel::fsalgo::copy<N*M>::exe(init,this->m);
+      tfel::fsalgo::copy<N*M>::exe(init,this->v);
     }
     
     template<unsigned short N,unsigned short M, typename T>
@@ -45,7 +45,7 @@ namespace tfel{
     {
       assert(i<N);
       assert(j<M);
-      return this->m[i*M+j];
+      return this->v[i*M+j];
     }
 
     template<unsigned short N,unsigned short M, typename T>
@@ -54,7 +54,7 @@ namespace tfel{
     {
       assert(i<N);
       assert(j<M);
-      return this->m[i*M+j];
+      return this->v[i*M+j];
     }
 
     template<typename Child,unsigned short N,unsigned short M, typename T>
@@ -169,13 +169,13 @@ namespace tfel{
     template<unsigned short N,unsigned short M, typename T>
     T tmatrix<N,M,T>::max(void) const
     {
-      return *tfel::fsalgo::max_element<N*M>::exe(this->m);
+      return *tfel::fsalgo::max_element<N*M>::exe(this->v);
     }
 
     template<unsigned short N,unsigned short M, typename T>
     T tmatrix<N,M,T>::abs_max(void) const
     {
-      return std::abs(*tfel::fsalgo::max_element<N*M>::exe(this->m,absCompare<T>()));
+      return std::abs(*tfel::fsalgo::max_element<N*M>::exe(this->v,absCompare<T>()));
     }
 
     template<unsigned short N,unsigned short M, typename T>
@@ -183,7 +183,7 @@ namespace tfel{
     tmatrix<N,M,T>::swap_rows(const unsigned short i,const unsigned short j){
       assert(i<N);
       assert(j<N);
-      tfel::fsalgo::swap_ranges<M>::exe(this->m+M*i,this->m+M*j);
+      tfel::fsalgo::swap_ranges<M>::exe(this->v+M*i,this->v+M*j);
     }
     
 
@@ -201,58 +201,10 @@ namespace tfel{
     }
 
     template<unsigned short N,unsigned short M, typename T>
-    typename tmatrix<N,M,T>::iterator tmatrix<N,M,T>::begin(void)
-    {
-      return this->m;
-    }
-
-    template<unsigned short N,unsigned short M, typename T>
-    typename tmatrix<N,M,T>::const_iterator tmatrix<N,M,T>::begin(void) const
-    {
-      return this->m;
-    }
-
-    template<unsigned short N,unsigned short M, typename T>
-    typename tmatrix<N,M,T>::iterator tmatrix<N,M,T>::end(void)
-    {
-      return this->m+N*M;
-    }
-
-    template<unsigned short N,unsigned short M, typename T>
-    typename tmatrix<N,M,T>::const_iterator tmatrix<N,M,T>::end(void) const
-    {
-      return this->m+N*M;
-    }
-
-    template<unsigned short N,unsigned short M, typename T>
-    typename tmatrix<N,M,T>::reverse_iterator tmatrix<N,M,T>::rbegin(void)
-    {
-      return reverse_iterator(this->m+N*M);
-    }
-
-    template<unsigned short N,unsigned short M, typename T>
-    typename tmatrix<N,M,T>::const_reverse_iterator tmatrix<N,M,T>::rbegin(void) const
-    {
-      return const_reverse_iterator(this->m+N*M);
-    }
-
-    template<unsigned short N,unsigned short M, typename T>
-    typename tmatrix<N,M,T>::reverse_iterator tmatrix<N,M,T>::rend(void)
-    {
-      return reverse_iterator(this->m);
-    }
-
-    template<unsigned short N,unsigned short M, typename T>
-    typename tmatrix<N,M,T>::const_reverse_iterator tmatrix<N,M,T>::rend(void) const
-    {
-      return const_reverse_iterator(this->m);
-    }
-
-    template<unsigned short N,unsigned short M, typename T>
     template<typename InputIterator>
     void tmatrix<N,M,T>::copy(const InputIterator src)
     {
-      tfel::fsalgo::copy<N*M>::exe(src,this->m);
+      tfel::fsalgo::copy<N*M>::exe(src,this->v);
     }
 
     template<unsigned short N,unsigned short M, typename T>
@@ -375,19 +327,26 @@ namespace tfel{
     namespace internals
     {
 
-      template<typename T,
-	       typename Matrix>
-      T
+      template<typename Matrix>
+      TFEL_MATH_INLINE
+      typename tfel::meta::EnableIf<
+	tfel::meta::Implements<Matrix,MatrixConcept>::cond,
+	typename ComputeUnaryResult<typename MatrixTraits<Matrix>::NumType,Power<3> >::Result
+	>::type
       det2(const Matrix& m)
       {
 	return m(0,0)*m(1,1)-m(1,0)*m(0,1);
       }
 
-      template<typename T,
-	       typename Matrix>
-      T
+      template<typename Matrix>
+      TFEL_MATH_INLINE
+      typename tfel::meta::EnableIf<
+	tfel::meta::Implements<Matrix,MatrixConcept>::cond,
+	typename ComputeUnaryResult<typename MatrixTraits<Matrix>::NumType,Power<3> >::Result
+	>::type
       det3(const Matrix& m)
       {
+	typedef typename MatrixTraits<Matrix>::NumType T;
 	const T a = m(0,0);
 	const T b = m(0,1);
 	const T c = m(0,2);
@@ -404,32 +363,32 @@ namespace tfel{
     
     template<typename T,
 	     typename Expr>
-    T
+    typename ComputeUnaryResult<T,Power<3> >::Result
     det(const MatrixExpr<tmatrix<2,2,T>,Expr>& m)
     {
-      return tfel::math::internals::det2<T>(m);
+      return tfel::math::internals::det2(m);
     }
     
     template<typename T>
-    T
+    typename ComputeUnaryResult<T,Power<3> >::Result
     det(const tmatrix<2,2,T>& m)
     {
-      return tfel::math::internals::det2<T>(m);
+      return tfel::math::internals::det2(m);
     }
     
     template<typename T,
 	     typename Expr>
-    T
+    typename ComputeUnaryResult<T,Power<3> >::Result
     det(const MatrixExpr<tmatrix<3,3,T>,Expr>& m)
     {
-      return tfel::math::internals::det3<T>(m);
+      return tfel::math::internals::det3(m);
     }
     
     template<typename T>
-    T
+    typename ComputeUnaryResult<T,Power<3> >::Result
     det(const tmatrix<3,3,T>& m)
     {
-      return tfel::math::internals::det3<T>(m);
+      return tfel::math::internals::det3(m);
     }
 
 #endif

@@ -27,6 +27,7 @@
 #include"TFEL/Math/General/BasicOperations.hxx"
 #include"TFEL/Math/General/EmptyRunTimeProperties.hxx"
 
+#include"TFEL/Math/fsarray.hxx"
 #include"TFEL/Math/Vector/VectorUtilities.hxx"
 #include"TFEL/Math/Tensor/TensorSizeToDime.hxx"
 #include"TFEL/Math/Tensor/TensorConcept.hxx"
@@ -50,89 +51,15 @@ namespace tfel{
     };
 
     template<unsigned short N,typename T>
-    class tensor
-      : public TensorConcept<tensor<N,T> >
+    struct tensor
+      : public TensorConcept<tensor<N,T> >,
+	public fsarray<TensorDimeToSize<N>::value,T>
     {
       
-      /*!
-       * A simple check
-       */
-      TFEL_STATIC_ASSERT((N==1u)||(N==2u)||(N==3u));
-
-    public:
-
       /*
        * This is a TensorConcept requirement.
        */
       typedef EmptyRunTimeProperties RunTimeProperties;
-      /*!
-       * type of the tensor's values.
-       * (this is a stl requirement).
-       */
-      typedef T value_type;
-      /*!
-       * type of a pointer to the value contained.
-       * (this is a stl requirement).
-       */
-      typedef value_type* pointer;
-      /*!
-       * type of a const pointer to the value contained.
-       * (this is a stl requirement).
-       */
-      typedef const value_type* const_pointer;
-      /*!
-       * type of the tensor's iterator.
-       * (provided for stl compatibility).
-       */
-      typedef pointer iterator;
-      /*!
-       * type of the tensor's const iterator.
-       * (provided for stl compatibility).
-       */
-      typedef const_pointer const_iterator;
-      /*!
-       * type of the tensor's reverse iterator.
-       * (provided for stl compatibility).
-       */
-#ifndef __SUNPRO_CC
-      typedef std::reverse_iterator<iterator> reverse_iterator; 
-#else
-      typedef std::reverse_iterator<iterator,T,
-      				    reference,
-      				    difference_type> reverse_iterator;
-#endif
-      /*!
-       * type of the tensor's const reverse iterator.
-       * (provided for stl compatibility).
-       */
-#ifndef __SUNPRO_CC
-      typedef std::reverse_iterator<const_iterator> const_reverse_iterator; 
-#else
-      typedef std::reverse_iterator<const_iterator,T,
-      				    const_reference,
-      				    difference_type> const_reverse_iterator;
-#endif
-      /*!
-       * type of a reference to the value contained.
-       * (this is a stl requirement).
-       */
-      typedef value_type& reference;
-      /*!
-       * type of a const reference to the value contained.
-       * (this is a stl requirement).
-       */
-      typedef const value_type& const_reference;
-      /*!
-       * type of the size of the container.
-       * (this is a stl requirement).
-       */
-      typedef unsigned short size_type;
-      /*!
-       * type of the difference between two iterators.
-       * (this is a stl requirement).
-       */
-      typedef ptrdiff_t difference_type;
-
       /*!
        * \brief Default Constructor 
        * \warning enabled only if storage is static
@@ -140,7 +67,6 @@ namespace tfel{
       TFEL_MATH_INLINE explicit
       tensor()
       {};
-
       /*!
        * \brief Default Constructor 
        * \param T, value used to initialise the components of the tensor 
@@ -148,7 +74,6 @@ namespace tfel{
        */
       TFEL_MATH_INLINE explicit
       tensor(const T);
-
       /*!
        * \brief Default Constructor.
        * \param const typename tfel::typetraits::BaseType<T>::type*
@@ -303,97 +228,19 @@ namespace tfel{
       operator[](const unsigned short);
 
       /*!
-       * return the size of a symmetric tensor
-       */
-      TFEL_MATH_INLINE size_type
-      size(void) const;
-       /*
        * Return the RunTimeProperties of the tvector
        * \return tvector::RunTimeProperties
        */
       TFEL_MATH_INLINE RunTimeProperties
       getRunTimeProperties(void) const;
-      /*
-       * return an iterator to the first element of the tensor
-       * (provided for stl compatibility)
-       * \return iterator, an iterator to the first element
-       */
-      TFEL_MATH_INLINE2 
-      iterator
-      begin(void);
-      
-      /*
-       * return an const iterator to the first element of the tensor
-       * (provided for stl compatibility)
-       * \return const_iterator, a const iterator to the first element
-       */
-      TFEL_MATH_INLINE2
-      const_iterator 
-      begin(void) const;
 
-      /*
-       * return an iterator after the last element of the tensor
-       * (provided for stl compatibility)
-       * \return iterator, an iterator after the last element
-       */
-      TFEL_MATH_INLINE2
-      iterator
-      end(void);
-      
-      /*
-       * return an const iterator after the last element of the tensor
-       * (provided for stl compatibility)
-       * \return const_iterator, a const iterator after the last element
-       */
-      TFEL_MATH_INLINE2
-      const_iterator
-      end(void) const;
-
-      /*
-       * return an reverse iterator to the last element of the tensor
-       * (provided for stl compatibility)
-       * \return reverse_iterator, a reverse iterator to the last element
-       */
-      TFEL_MATH_INLINE2
-      reverse_iterator
-      rbegin(void);
-      
-      /*
-       * return an const reverse iterator to the last element of the tensor
-       * (provided for stl compatibility)
-       * \return const_reverse_iterator, a const reverse iterator to the last element
-       */
-      TFEL_MATH_INLINE2
-      const_reverse_iterator
-      rbegin(void) const;
-      
-      /*
-       * return an  reverse iterator before the first element of the tensor
-       * (provided for stl compatibility)
-       * \return reverse_iterator, a reverse iterator before the first element
-       */
-      TFEL_MATH_INLINE2
-      reverse_iterator
-      rend(void);
-      
-      /*
-       * return an const reverse iterator before the first element of the tensor
-       * (provided for stl compatibility)
-       * \return const_reverse_iterator, a const reverse iterator before the first element
-       */
-      TFEL_MATH_INLINE2
-      const_reverse_iterator
-      rend(void) const;
-
-      
       template<typename InputIterator>
       TFEL_MATH_INLINE2 void 
       copy(const InputIterator src);
 
-    protected:
-      
-      T v[TensorDimeToSize<N>::value];
-
+    private:
+      //! a simple check
+      TFEL_STATIC_ASSERT((N==1u)||(N==2u)||(N==3u));
     }; // end of class tensor
 
     template<unsigned short N, typename T,
@@ -404,7 +251,7 @@ namespace tfel{
       void>::type
     exportToBaseTypeArray(const tensor<N,T>&,
 			  OutputIterator);
-        
+
   } // end of namespace math
 
   namespace typetraits{

@@ -141,7 +141,7 @@ namespace tfel{
     tvector<N,T>::operator()(const unsigned short i) const
     {
       assert(i<N);
-      return v[i];
+      return this->v[i];
     }
 
     template<unsigned short N, typename T>
@@ -149,7 +149,7 @@ namespace tfel{
     tvector<N,T>::operator()(const unsigned short i)
     {
       assert(i<N);
-      return v[i];
+      return this->v[i];
     }
 
     template<unsigned short N, typename T>
@@ -157,7 +157,7 @@ namespace tfel{
     tvector<N,T>::operator[](const unsigned short i) const
     {
       assert(i<N);
-      return v[i];
+      return this->v[i];
     }
 
     template<unsigned short N, typename T>
@@ -165,7 +165,7 @@ namespace tfel{
     tvector<N,T>::operator[](const unsigned short i)
     {
       assert(i<N);
-      return v[i];
+      return this->v[i];
     }
     
     template<unsigned short N, typename T>
@@ -176,74 +176,11 @@ namespace tfel{
     }
     
     template<unsigned short N, typename T>
-    typename tvector<N,T>::iterator 
-    tvector<N,T>::begin(void)
-    {
-      return this->v;
-    }
-
-    template<unsigned short N, typename T>
-    typename tvector<N,T>::const_iterator 
-    tvector<N,T>::begin(void) const
-    {
-      return this->v;
-    }
-
-    template<unsigned short N, typename T>
-    typename tvector<N,T>::iterator 
-    tvector<N,T>::end(void)
-    {
-      return this->v+N;
-    }
-
-    template<unsigned short N, typename T>
-    typename tvector<N,T>::const_iterator 
-    tvector<N,T>::end(void) const
-    {
-      return this->v+N;
-    }
-
-    template<unsigned short N, typename T>
-    typename tvector<N,T>::reverse_iterator 
-    tvector<N,T>::rbegin(void)
-    {
-      return reverse_iterator(this->v+N);
-    }
-
-    template<unsigned short N, typename T>
-    typename tvector<N,T>::const_reverse_iterator 
-    tvector<N,T>::rbegin(void) const
-    {
-      return const_reverse_iterator(this->v+N);
-    }
-
-    template<unsigned short N, typename T>
-    typename tvector<N,T>::reverse_iterator 
-    tvector<N,T>::rend(void)
-    {
-      return reverse_iterator(this->v);
-    }
-
-    template<unsigned short N, typename T>
-    typename tvector<N,T>::const_reverse_iterator 
-    tvector<N,T>::rend(void) const
-    {
-      return const_reverse_iterator(this->v);
-    }
-
-    template<unsigned short N, typename T>
     template<typename InputIterator>
     void
     tvector<N,T>::copy(const InputIterator src)
     {
       tfel::fsalgo::copy<N>::exe(src,this->v);
-    }
-
-    template<unsigned short N, typename T>
-    unsigned short
-    tvector<N,T>::size(void) const
-    {
-      return N;
     }
 
     template<unsigned short N, typename T>

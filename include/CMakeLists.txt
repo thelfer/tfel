@@ -154,9 +154,12 @@ install_header(TFEL/Math/Forward Function.hxx)
 install_header(TFEL/Math/Forward VectorConcept.hxx)
 install_header(TFEL/Math/Forward MatrixConcept.hxx)
 install_header(TFEL/Math/Forward ExpressionTemplates.hxx)
-install_header(TFEL/Math/General/Forward General.hxx)
+
 
 install_header(TFEL/Math/Bindings atlas.hxx)
+install_header(TFEL/Math/General/Forward General.hxx)
+install_header(TFEL/Math         fsarray.hxx)
+install_header(TFEL/Math/General fsarray.ixx)
 install_header(TFEL/Math         power.hxx)
 install_header(TFEL/Math         power.ixx)
 install_header(TFEL/Math         Discretization1D.hxx)

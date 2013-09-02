@@ -14,8 +14,11 @@
 #include"TFEL/Config/TFELConfig.hxx"
 #include"TFEL/Metaprogramming/StaticAssert.hxx"
 #include"TFEL/TypeTraits/IsAssignableTo.hxx"
+
+#include"TFEL/Math/fsarray.hxx"
 #include"TFEL/Math/General/BasicOperations.hxx"
 #include"TFEL/Math/General/EmptyRunTimeProperties.hxx"
+#include"TFEL/Math/Function/Power.hxx"
 
 #include"TFEL/Math/Matrix/MatrixConcept.hxx"
 #include"TFEL/Math/Matrix/MatrixConceptOperations.hxx"
@@ -179,115 +182,34 @@ namespace tfel{
 
     template<unsigned short N,unsigned short M,
 	     typename T = double>
-    class tmatrix
+    struct tmatrix
       : public MatrixConcept<tmatrix<N,M,T> >,
-	public tmatrix_base<tmatrix<N,M,T>,N,M,T>
+	public tmatrix_base<tmatrix<N,M,T>,N,M,T>,
+	public fsarray<N*M,T>
     {
-      //! a simple assertion stating that the number of row is valid.
-      TFEL_STATIC_ASSERT(N!=0);
-      //! a simple assertion stating that the number of column is valid.
-      TFEL_STATIC_ASSERT(M!=0);
-      // values hold by the tmatrix.
-      T m[N*M];
-      
-    public:
-      
       //! a simple typedef to the tmatrix runtime properties
       /*
        * This is a MatrixConcept requirement.
        */
       typedef EmptyRunTimeProperties RunTimeProperties;
-
       /*!
-       * type of the tmatrix's values.
-       * (this is a stl requirement).
-       */
-      typedef T value_type;
-      /*!
-       * type of a pointer to the value contained.
-       * (this is a stl requirement).
-       */
-      typedef value_type* pointer;
-      /*!
-       * type of a const pointer to the value contained.
-       * (this is a stl requirement).
-       */
-      typedef const value_type* const_pointer;
-      /*!
-       * type of the tmatrix's iterator.
-       * (provided for stl compatibility).
-       */
-      typedef pointer iterator;
-      /*!
-       * type of the tmatrix's const iterator.
-       * (provided for stl compatibility).
-       */
-      typedef const_pointer const_iterator;
-      /*!
-       * type of the tmatrix's reverse iterator.
-       * (provided for stl compatibility).
-       */
-#ifndef __SUNPRO_CC
-      typedef std::reverse_iterator<iterator> reverse_iterator; 
-#else
-      typedef std::reverse_iterator<iterator,T,
-      				    reference,
-      				    difference_type> reverse_iterator;
-#endif
-      /*!
-       * type of the tmatrix's const reverse iterator.
-       * (provided for stl compatibility).
-       */
-#ifndef __SUNPRO_CC
-      typedef std::reverse_iterator<const_iterator> const_reverse_iterator; 
-#else
-      typedef std::reverse_iterator<const_iterator,T,
-      				    const_reference,
-      				    difference_type> const_reverse_iterator;
-#endif
-      /*!
-       * type of a reference to the value contained.
-       * (this is a stl requirement).
-       */
-      typedef value_type& reference;
-      /*!
-       * type of a const reference to the value contained.
-       * (this is a stl requirement).
-       */
-      typedef const value_type& const_reference;
-      /*!
-       * type of the size of the container.
-       * (this is a stl requirement).
-       */
-      typedef unsigned short size_type;
-      /*!
-       * type of the difference between two iterators.
-       * (this is a stl requirement).
-       */
-      typedef ptrdiff_t difference_type;
-
-      /*
        * Default constructor.
        */
       TFEL_MATH_INLINE
       tmatrix();
-
-      /*
+      /*!
        * Constructor from a scalar.
        * \param const T : initial value.
        */
       explicit
       TFEL_MATH_INLINE
       tmatrix(const T);
-
       /*
        * Constructor from a pointer.
        * \param const T* : initial values.
        */
-      explicit
-      TFEL_MATH_INLINE
+      explicit TFEL_MATH_INLINE
       tmatrix(const T* const);
-
       /*!
        * \brief index operator (const version).
        * This is a matrix concept requirement.
@@ -298,7 +220,6 @@ namespace tfel{
       TFEL_MATH_INLINE
       const T&
       operator()(const unsigned short,const unsigned short) const;
-      
       /*!
        * \brief index operator.
        * \param const unsigned short, row index.
@@ -308,7 +229,6 @@ namespace tfel{
       TFEL_MATH_INLINE
       T&
       operator()(const unsigned short,const unsigned short);
-      
       //! Return the RunTimeProperties of the tmatrix.
       /*
        * This is a MatrixConcept requirement.
@@ -428,80 +348,7 @@ namespace tfel{
       void swap_rows(const unsigned short i,const unsigned short j);
       
       static tmatrix<N,N,T> Id(void);
-
-      /*
-       * return an iterator to the first element of this matrix
-       * (provided for stl compatibility)
-       * \return iterator, an iterator to the first element
-       */
-      TFEL_MATH_INLINE2
-      iterator
-      begin(void);
-      
-      /*
-       * return an const iterator to the first element of this matrix
-       * (provided for stl compatibility)
-       * \return const_iterator, a const iterator to the first element
-       */
-      TFEL_MATH_INLINE2
-      const_iterator
-      begin(void) const;
-      
-      /*
-       * return an iterator after the last element of this matrix
-       * (provided for stl compatibility)
-       * \return iterator, an iterator after the last element
-       */
-      TFEL_MATH_INLINE2
-      iterator 
-      end(void);
-      
-      /*
-       * return an const iterator after the last element of this matrix
-       * (provided for stl compatibility)
-       * \return const_iterator, a const iterator after the last element
-       */
-      TFEL_MATH_INLINE2
-      const_iterator
-      end(void) const;
-
-      /*
-       * return an reverse iterator to the last element of this matrix
-       * (provided for stl compatibility)
-       * \return reverse_iterator, a reverse iterator to the last element
-       */
-      TFEL_MATH_INLINE2
-      reverse_iterator
-      rbegin(void);
-
-      /*
-       * return an const reverse iterator to the last element of this matrix
-       * (provided for stl compatibility)
-       * \return const_reverse_iterator, a const reverse iterator to the last element
-       */
-      TFEL_MATH_INLINE2
-      const_reverse_iterator
-      rbegin(void) const;
-      
-      /*
-       * return an  reverse iterator before the first element of this matrix
-       * (provided for stl compatibility)
-       * \return reverse_iterator, a reverse iterator before the first element
-       */
-      TFEL_MATH_INLINE2
-      reverse_iterator
-      rend(void);
-      
-      /*
-       * return an const reverse iterator before the first element of this matrix
-       * (provided for stl compatibility)
-       * \return const_reverse_iterator, a const reverse iterator before the first element
-       */
-      TFEL_MATH_INLINE2
-      const_reverse_iterator
-      rend(void) const;
-
-      /*
+      /*!
        * copy the N*Mth elements following this argument.
        * \param const InputIterator, an iterator to the first element
        * to be copied.
@@ -520,7 +367,11 @@ namespace tfel{
       using tmatrix_base<tmatrix,N,M,T>::operator*=;
       //! using tmatrix_base::operator/=
       using tmatrix_base<tmatrix,N,M,T>::operator/=;
-
+    private:
+      //! a simple assertion stating that the number of row is valid.
+      TFEL_STATIC_ASSERT(N!=0);
+      //! a simple assertion stating that the number of column is valid.
+      TFEL_STATIC_ASSERT(M!=0);
     };
 
     // Transpose
@@ -530,20 +381,24 @@ namespace tfel{
 
     template<typename T,
 	     typename Expr>
-    T
+    TFEL_MATH_INLINE
+    typename ComputeUnaryResult<T,Power<3> >::Result
     det(const MatrixExpr<tmatrix<2,2,T>,Expr>&);
     
     template<typename T>
-    T
+    TFEL_MATH_INLINE
+    typename ComputeUnaryResult<T,Power<3> >::Result
     det(const tmatrix<2,2,T>&);
 
     template<typename T,
 	     typename Expr>
-    T
+    TFEL_MATH_INLINE
+    typename ComputeUnaryResult<T,Power<3> >::Result
     det(const MatrixExpr<tmatrix<3,3,T>,Expr>&);
     
     template<typename T>
-    T
+    TFEL_MATH_INLINE
+    typename ComputeUnaryResult<T,Power<3> >::Result
     det(const tmatrix<3,3,T>&);
 
     // Serialisation operator

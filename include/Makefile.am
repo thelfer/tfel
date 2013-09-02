@@ -62,6 +62,8 @@ nobase_include_HEADERS= TFEL/Macros.hxx                                         
 			TFEL/TypeTraits/IsInvalid.hxx		                                                     \
 			TFEL/TypeTraits/IsTemporary.hxx		                                                     \
 			TFEL/TypeTraits/IsRandomAccessIterator.hxx	                                             \
+			TFEL/Math/fsarray.hxx                                                                        \
+			TFEL/Math/General/fsarray.ixx                                                                \
 			TFEL/Math/power.hxx                                                                          \
 			TFEL/Math/power.ixx                                                                          \
 			TFEL/Math/Discretization1D.hxx                                                               \

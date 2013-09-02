@@ -8,10 +8,6 @@
 #ifndef _LIB_TFEL_ST2TOST2_IXX_
 #define _LIB_TFEL_ST2TOST2_IXX_ 
 
-#ifdef NDEBUG
-#undef NDEBUG
-#endif /* NDEBUG */
-
 #include <cmath>
 #include <iterator>
 #include <algorithm>
@@ -32,13 +28,15 @@ namespace tfel{
     template<unsigned short N, typename T>
     TFEL_MATH_INLINE st2tost2<N,T>::st2tost2(const T init)
     {
-      tfel::fsalgo::fill<St2tost2Size>::exe(this->v,init);
+      tfel::fsalgo::fill<StensorDimeToSize<N>::value*StensorDimeToSize<N>::value>::exe(this->v,init);
     }
 
     template<unsigned short N, typename T>
     TFEL_MATH_INLINE st2tost2<N,T>::st2tost2(const st2tost2<N,T>& src)
     {
-      matrix_utilities<StensorSize,StensorSize,StensorSize>::copy(src,*this);
+      matrix_utilities<StensorDimeToSize<N>::value,
+		       StensorDimeToSize<N>::value,
+		       StensorDimeToSize<N>::value>::copy(src,*this);
     }
 
     template<unsigned short N, typename T>
@@ -80,16 +78,18 @@ namespace tfel{
     template<typename T2,typename Expr>
     TFEL_MATH_INLINE 
     st2tost2<N,T>::st2tost2(const ST2toST2Expr<st2tost2<N,T2>,Expr>& src){
-      matrix_utilities<StensorSize,StensorSize,StensorSize>::copy(src,*this);
+      matrix_utilities<StensorDimeToSize<N>::value,
+		       StensorDimeToSize<N>::value,
+		       StensorDimeToSize<N>::value>::copy(src,*this);
     }
 
     template<unsigned short N,typename T>
     st2tost2<N,T>::st2tost2(const st2tost2<N,T>::ParticularSt2toSt2 id){
       using namespace std;
       unsigned short i,j;
-      std::fill(this->v,this->v+St2tost2Size,T(0));
+      std::fill(this->v,this->v+StensorDimeToSize<N>::value*StensorDimeToSize<N>::value,T(0));
       if(id==ST2TOST2_IDENTITY){
-	for(i=0;i!=StensorSize;++i){
+	for(i=0;i!=StensorDimeToSize<N>::value;++i){
 	  this->operator()(i,i)=T(1);
 	}
       } else if (id==ST2TOST2_J){
@@ -114,7 +114,7 @@ namespace tfel{
 	    }
 	  }
 	}
-	for(i=3;i!=StensorSize;++i){
+	for(i=3;i!=StensorDimeToSize<N>::value;++i){
 	  this->operator()(i,i)=T(1);
 	}
       }
@@ -123,17 +123,17 @@ namespace tfel{
     template<unsigned short N, typename T>
     TFEL_MATH_INLINE T& 
     st2tost2<N,T>::operator()(const unsigned short i,const unsigned short j){
-      assert(i<StensorSize);
-      assert(j<StensorSize);
-      return this->v[StensorSize*i+j];
+      assert(i<StensorDimeToSize<N>::value);
+      assert(j<StensorDimeToSize<N>::value);
+      return this->v[StensorDimeToSize<N>::value*i+j];
     }
 
     template<unsigned short N, typename T>
     TFEL_MATH_INLINE const T& 
     st2tost2<N,T>::operator()(const unsigned short i,const unsigned short j) const{
-      assert(i<StensorSize);
-      assert(j<StensorSize);
-      return this->v[StensorSize*i+j];
+      assert(i<StensorDimeToSize<N>::value);
+      assert(j<StensorDimeToSize<N>::value);
+      return this->v[StensorDimeToSize<N>::value*i+j];
     }
 
     template<unsigned short N,typename T>
@@ -143,14 +143,16 @@ namespace tfel{
       st2tost2<N,T>&
     >::type 
     st2tost2<N,T>::operator=(const ST2toST2Expr<st2tost2<N,T2>, Expr>& src){
-      matrix_utilities<StensorSize,StensorSize,StensorSize>::copy(src,*this);
+      matrix_utilities<StensorDimeToSize<N>::value,
+		       StensorDimeToSize<N>::value,
+		       StensorDimeToSize<N>::value>::copy(src,*this);
       return *this;
     }
 
     template<unsigned short N,typename T>
     st2tost2<N,T>&
     st2tost2<N,T>::operator=(const st2tost2<N,T>& src){
-      tfel::fsalgo::copy<St2tost2Size>::exe(src.v,this->v);
+      tfel::fsalgo::copy<StensorDimeToSize<N>::value*StensorDimeToSize<N>::value>::exe(src.v,this->v);
       return *this;
     }
 
@@ -163,7 +165,9 @@ namespace tfel{
     >::type 
     st2tost2<N,T>::operator+=(const st2tost2<N,T2>& src)
     {
-      matrix_utilities<StensorSize,StensorSize,StensorSize>::plusEqual(*this,src);
+      matrix_utilities<StensorDimeToSize<N>::value,
+		       StensorDimeToSize<N>::value,
+		       StensorDimeToSize<N>::value>::plusEqual(*this,src);
       return *this;
     }
 
@@ -176,7 +180,9 @@ namespace tfel{
     >::type
     st2tost2<N,T>::operator+=(const ST2toST2Expr<st2tost2<N,T2>,Expr>& src)
     {
-      matrix_utilities<StensorSize,StensorSize,StensorSize>::plusEqual(*this,src);
+      matrix_utilities<StensorDimeToSize<N>::value,
+		       StensorDimeToSize<N>::value,
+		       StensorDimeToSize<N>::value>::plusEqual(*this,src);
       return *this;
     }
 
@@ -189,7 +195,9 @@ namespace tfel{
     >::type
     st2tost2<N,T>::operator-=(const st2tost2<N,T2>& src)
     {
-      matrix_utilities<StensorSize,StensorSize,StensorSize>::minusEqual(*this,src);
+      matrix_utilities<StensorDimeToSize<N>::value,
+		       StensorDimeToSize<N>::value,
+		       StensorDimeToSize<N>::value>::minusEqual(*this,src);
       return *this;
     }
 
@@ -202,7 +210,9 @@ namespace tfel{
     >::type
     st2tost2<N,T>::operator-=(const ST2toST2Expr<st2tost2<N,T2>,Expr>& src)
     {
-      matrix_utilities<StensorSize,StensorSize,StensorSize>::minusEqual(*this,src);
+      matrix_utilities<StensorDimeToSize<N>::value,
+		       StensorDimeToSize<N>::value,
+		       StensorDimeToSize<N>::value>::minusEqual(*this,src);
       return *this;
     }
 
@@ -217,7 +227,9 @@ namespace tfel{
     >::type
     st2tost2<N,T>::operator*=(const T2 s)
     {
-      matrix_utilities<StensorSize,StensorSize,StensorSize>::multByScalar(*this,s);
+      matrix_utilities<StensorDimeToSize<N>::value,
+		       StensorDimeToSize<N>::value,
+		       StensorDimeToSize<N>::value>::multByScalar(*this,s);
       return *this;
     }
 
@@ -232,7 +244,9 @@ namespace tfel{
     >::type
     st2tost2<N,T>::operator/=(const T2 s)
     {
-      matrix_utilities<StensorSize,StensorSize,StensorSize>::divByScalar(*this,s);
+      matrix_utilities<StensorDimeToSize<N>::value,
+		       StensorDimeToSize<N>::value,
+		       StensorDimeToSize<N>::value>::divByScalar(*this,s);
       return *this;
     }
 
@@ -245,79 +259,15 @@ namespace tfel{
     >::type
     st2tost2<N,T>::operator=(const st2tost2<N,T2>& src)
     {
-      tfel::fsalgo::copy<St2tost2Size>::exe(src,*this);
+      tfel::fsalgo::copy<StensorDimeToSize<N>::value*StensorDimeToSize<N>::value>::exe(src,*this);
       return *this;
-    }
-
-    template<unsigned short N, typename T>
-    TFEL_MATH_INLINE2 
-    typename st2tost2<N,T>::iterator 
-    st2tost2<N,T>::begin(void)
-    {
-      return this->v;
-    }
-
-    template<unsigned short N, typename T>
-    TFEL_MATH_INLINE2 
-    typename st2tost2<N,T>::const_iterator 
-    st2tost2<N,T>::begin(void) const
-    {
-      return this->v;
-    }
-
-    template<unsigned short N, typename T>
-    TFEL_MATH_INLINE2 typename 
-    st2tost2<N,T>::iterator 
-    st2tost2<N,T>::end(void)
-    {
-      return this->v+St2tost2Size;
-    }
-
-    template<unsigned short N, typename T>
-    TFEL_MATH_INLINE2 
-    typename st2tost2<N,T>::const_iterator 
-    st2tost2<N,T>::end(void) const
-    {
-      return this->v+St2tost2Size;
-    }
-
-    template<unsigned short N, typename T>
-    TFEL_MATH_INLINE2 
-    typename st2tost2<N,T>::reverse_iterator 
-    st2tost2<N,T>::rbegin(void)
-    {
-      return reverse_iterator(this->v+St2tost2Size);
-    }
-
-    template<unsigned short N, typename T>
-    TFEL_MATH_INLINE2 
-    typename st2tost2<N,T>::const_reverse_iterator 
-    st2tost2<N,T>::rbegin(void) const
-    {
-      return const_reverse_iterator(this->v+St2tost2Size);
-    }
-
-    template<unsigned short N, typename T>
-    TFEL_MATH_INLINE2
-    typename st2tost2<N,T>::reverse_iterator 
-    st2tost2<N,T>::rend(void)
-    {
-      return reverse_iterator(this->v);
-    }
-
-    template<unsigned short N, typename T>
-    TFEL_MATH_INLINE2 
-    typename st2tost2<N,T>::const_reverse_iterator 
-    st2tost2<N,T>::rend(void) const
-    {
-      return const_reverse_iterator(this->v);
     }
 
     template<unsigned short N, typename T>
     template<typename InputIterator>
     TFEL_MATH_INLINE2 void st2tost2<N,T>::copy(const InputIterator src)
     {
-      tfel::fsalgo::copy<St2tost2Size>::exe(src,*this);
+      tfel::fsalgo::copy<StensorDimeToSize<N>::value*StensorDimeToSize<N>::value>::exe(src,*this);
     }
 
     template<unsigned short N, typename T>

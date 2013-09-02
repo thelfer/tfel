@@ -28,12 +28,123 @@ namespace tfel{
 
   namespace math {
 
+
+#ifndef DOXYGENSPECIFIC
+
     namespace internals{
       template<unsigned short N>
       class StensorComputeEigenVectors_;
-    }
 
-#ifndef DOXYGENSPECIFIC
+      template<unsigned short N>
+      struct StensorDeterminant;
+
+      template<>
+      struct StensorDeterminant<1u>
+      {
+	template<typename T>
+	static typename ComputeUnaryResult<T,Power<3> >::Result
+	exe(const tfel::math::stensor<1u,T>& s)
+	{
+	  return s(0)*s(1)*s(2);
+	}
+      }; // end of struct StensorDeterminant
+
+      template<>
+      struct StensorDeterminant<2u>
+      {
+	template<typename T>
+	static TFEL_MATH_INLINE typename ComputeUnaryResult<T,Power<3> >::Result
+	exe(const tfel::math::stensor<2u,T>& s)
+	{
+	  typedef typename tfel::typetraits::BaseType<T>::type base;
+	  return s(2)*(s(0)*s(1)-s(3)*s(3)/base(2));
+	}
+      }; // end of struct StensorDeterminant
+
+      template<>
+      struct StensorDeterminant<3u>
+      {
+	template<typename T>
+	static TFEL_MATH_INLINE typename ComputeUnaryResult<T,Power<3> >::Result
+	exe(const tfel::math::stensor<3u,T>& s)
+	{
+	  typedef typename tfel::typetraits::BaseType<T>::type base;
+	  static const base cste = std::sqrt(base(2));
+	  return (T(2)*s(0)*s(1)*s(2)+cste*s(3)*s(4)*s(5)-s(2)*s(3)*s(3)-s(1)*s(4)*s(4)-s(0)*s(5)*s(5))/base(2);
+	}
+      }; // end of struct StensorDeterminant
+
+      template<unsigned short N>
+      struct StensorInvert;
+      
+      template<>
+      struct StensorInvert<1u>
+      {
+	template<typename T>
+	static TFEL_MATH_INLINE
+	stensor<1u,typename ComputeBinaryResult<typename tfel::typetraits::BaseType<T>::type,T,OpDiv>::Result>
+	exe(const stensor<1u,T>& s)
+	{
+	  typedef typename tfel::typetraits::BaseType<T>::type base;
+	  typedef typename ComputeBinaryResult<base,T,OpDiv>::Result T2;
+	  stensor<1u,T2> inv;
+	  inv(0)=base(1)/s(0);
+	  inv(1)=base(1)/s(1);
+	  inv(2)=base(1)/s(2);
+	  return inv;
+	}
+      };
+
+      template<>
+      struct StensorInvert<2u>
+      {
+	template<typename T>
+	static TFEL_MATH_INLINE
+	stensor<2u,typename ComputeBinaryResult<typename tfel::typetraits::BaseType<T>::type,T,OpDiv>::Result>
+	exe(const stensor<2u,T>& s)
+	{
+	  typedef typename tfel::typetraits::BaseType<T>::type base;
+	  typedef typename ComputeBinaryResult<base,T,OpDiv>::Result T2;
+	  typedef typename ComputeUnaryResult<T,Power<3> >::Result T3;
+	  typedef typename ComputeBinaryResult<base,T3,OpDiv>::Result T4;
+	  stensor<2u,T2> inv;
+	  const T3 inv_det = base(1)/det(s);
+	  inv(0)=s(1)*s(2)*inv_det;
+	  inv(1)=s(0)*s(2)*inv_det;
+	  inv(2)=base(1)/s(2);
+	  inv(3)=-s(2)*s(3)*inv_det;
+	  return inv;
+	}
+      };
+
+      template<>
+      struct StensorInvert<3u>
+      {
+	template<typename T>
+	static TFEL_MATH_INLINE
+	stensor<3u,typename ComputeBinaryResult<typename tfel::typetraits::BaseType<T>::type,T,OpDiv>::Result>
+	exe(const stensor<3u,T>& s)
+	{
+	  typedef typename tfel::typetraits::BaseType<T>::type base;
+	  typedef typename ComputeBinaryResult<base,T,OpDiv>::Result T2;
+	  typedef typename ComputeUnaryResult<T,Power<3> >::Result T3;
+	  typedef typename ComputeBinaryResult<base,T3,OpDiv>::Result T4;
+	  static const base two          = base(2);
+	  static const base inv_sqrt_two = base(1)/std::sqrt(two);
+	  static const base one_half     = base(1)/two;
+	  stensor<3u,T2> inv;
+	  const T3 inv_det = base(1)/det(s);
+	  inv(0)=(s(1)*s(2)-s(5)*s(5)*one_half)*inv_det;
+	  inv(1)=(s(0)*s(2)-s(4)*s(4)*one_half)*inv_det;
+	  inv(2)=(s(0)*s(1)-s(3)*s(3)*one_half)*inv_det;
+	  inv(3)=(inv_sqrt_two*s(4)*s(5)-s(2)*s(3))*inv_det;
+	  inv(4)=(inv_sqrt_two*s(3)*s(5)-s(1)*s(4))*inv_det;
+	  inv(5)=(inv_sqrt_two*s(3)*s(4)-s(0)*s(5))*inv_det;
+	  return inv;
+	}
+      };
+      
+    }
 
     template<unsigned short N, typename T, template<unsigned short,typename> class Storage>
     TFEL_MATH_INLINE stensor<N,T,Storage>::stensor(const T init)
@@ -324,77 +435,6 @@ namespace tfel{
 
     template<unsigned short N, typename T,
 	     template<unsigned short,typename> class Storage>
-    typename stensor<N,T,Storage>::size_type 
-    stensor<N,T,Storage>::size(void) const
-    {
-      return StensorDimeToSize<N>::value;
-    } // end of stensor<N,T,Storage>::size(void) const
-
-    template<unsigned short N, typename T,
-	     template<unsigned short,typename> class Storage>
-    typename stensor<N,T,Storage>::iterator 
-    stensor<N,T,Storage>::begin(void)
-    {
-      return this->v;
-    }
-
-    template<unsigned short N, typename T,
-	     template<unsigned short,typename> class Storage>
-    typename stensor<N,T,Storage>::const_iterator 
-    stensor<N,T,Storage>::begin(void) const
-    {
-      return this->v;
-    }
-
-    template<unsigned short N, typename T, 
-	     template<unsigned short,typename> class Storage>
-    typename stensor<N,T,Storage>::iterator stensor<N,T,Storage>::end(void)
-    {
-      return this->v+StensorDimeToSize<N>::value;
-    }
-
-    template<unsigned short N, typename T, 
-	     template<unsigned short,typename> class Storage>
-    typename stensor<N,T,Storage>::const_iterator
-    stensor<N,T,Storage>::end(void) const
-    {
-      return this->v+StensorDimeToSize<N>::value;
-    }
-
-    template<unsigned short N, typename T,
-	     template<unsigned short,typename> class Storage>
-    typename stensor<N,T,Storage>::reverse_iterator
-    stensor<N,T,Storage>::rbegin(void)
-    {
-      return reverse_iterator(this->v+StensorDimeToSize<N>::value);
-    }
-
-    template<unsigned short N, typename T,
-	     template<unsigned short,typename> class Storage>
-    typename stensor<N,T,Storage>::const_reverse_iterator 
-    stensor<N,T,Storage>::rbegin(void) const
-    {
-      return const_reverse_iterator(this->v+StensorDimeToSize<N>::value);
-    }
-
-    template<unsigned short N, typename T,
-	     template<unsigned short,typename> class Storage>
-    typename stensor<N,T,Storage>::reverse_iterator
-    stensor<N,T,Storage>::rend(void)
-    {
-      return reverse_iterator(this->v);
-    }
-
-    template<unsigned short N, typename T,
-	     template<unsigned short,typename> class Storage>
-    typename stensor<N,T,Storage>::const_reverse_iterator
-    stensor<N,T,Storage>::rend(void) const
-    {
-      return const_reverse_iterator(this->v);
-    }
-
-    template<unsigned short N, typename T,
-	     template<unsigned short,typename> class Storage>
     template<typename InputIterator>
     void 
     stensor<N,T,Storage>::copy(const InputIterator src)
@@ -450,6 +490,55 @@ namespace tfel{
       const T tmp2 = sd3 > tmp  ? sd3 : tmp;
       return tmp2;
     } // end of tresca
+
+    template<typename StensorType>
+    typename tfel::meta::EnableIf<
+      tfel::meta::Implements<StensorType,StensorConcept>::cond,
+      stensor<StensorTraits<StensorType>::dime,
+	      typename StensorTraits<StensorType>::NumType>
+    >::type
+    square_root(const StensorType& s)
+    {
+      using tfel::fsalgo::copy;
+      typedef typename StensorTraits<StensorType>::NumType T;
+      typedef typename tfel::typetraits::BaseType<T>::type real;
+      stensor<StensorTraits<StensorType>::dime,T> tmp(s);
+      stensor<StensorTraits<StensorType>::dime,T> r(T(0));
+      tmatrix<3u,3u,real> vec;
+      tvector<3u,T> vp;
+      tmp.computeEigenVectors(vp,vec);
+      r[0] = std::sqrt(vp[0]);
+      r[1] = std::sqrt(vp[1]);
+      r[2] = std::sqrt(vp[2]);
+      r.changeBasis(transpose(vec));
+      return r;
+    } // end of square_root
+
+    template<typename StensorType>
+    typename tfel::meta::EnableIf<
+      tfel::meta::Implements<StensorType,StensorConcept>::cond,
+      typename ComputeUnaryResult<typename StensorTraits<StensorType>::NumType,Power<3> >::Result
+      >::type
+    det(const StensorType& s)
+    {
+      const stensor<StensorTraits<StensorType>::dime,
+		    typename StensorTraits<StensorType>::NumType> tmp(s);
+      return tfel::math::internals::StensorDeterminant<StensorTraits<StensorType>::dime>::exe(tmp);
+    }
+
+    template<typename StensorType>
+    typename tfel::meta::EnableIf<
+      tfel::meta::Implements<StensorType,StensorConcept>::cond,
+      stensor<StensorTraits<StensorType>::dime,
+	      typename ComputeBinaryResult<typename tfel::typetraits::BaseType<typename StensorTraits<StensorType>::NumType>::type,
+					   typename StensorTraits<StensorType>::NumType,OpDiv>::Result>
+      >::type
+    invert(const StensorType& s)
+    {
+      const stensor<StensorTraits<StensorType>::dime,
+    		    typename StensorTraits<StensorType>::NumType> tmp(s);
+      return tfel::math::internals::StensorInvert<StensorTraits<StensorType>::dime>::exe(tmp);
+    }
     
 #endif
 

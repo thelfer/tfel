@@ -17,6 +17,7 @@
 #include"TFEL/TypeTraits/BaseType.hxx"
 #include"TFEL/TypeTraits/IsSafelyReinterpretCastableTo.hxx"
 
+#include"TFEL/Math/fsarray.hxx"
 #include"TFEL/Math/General/StorageTraits.hxx"
 
 namespace tfel{
@@ -24,12 +25,10 @@ namespace tfel{
   namespace math {
 
     template<unsigned short N, typename T>
-    class StensorStatic{
+    struct StensorStatic
+      : public fsarray<N,T>
+    {
 
-    protected:
-      
-      T v[N];
-      
     public:
 
       //Default Constructor

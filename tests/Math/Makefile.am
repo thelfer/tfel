@@ -34,11 +34,14 @@ test_PROGRAMS = hill                  \
 		newton_raphson        \
 		solve                 \
 		tensor                \
+		tensor2               \
+		tensor3               \
 		stensor               \
 		stensor2              \
 		stensor3              \
 		stensor4              \
 		stensor5              \
+		stensor6              \
 		stensor_changeBasis   \
 		stensor_changeBasis2  \
 		stensor_changeBasis3  \
@@ -110,11 +113,14 @@ tinymatrixsolve2_SOURCES      = tinymatrixsolve2.cxx
 newton_raphson_SOURCES        = newton_raphson.cxx       
 solve_SOURCES                 = solve.cxx                
 tensor_SOURCES                = tensor.cxx
+tensor2_SOURCES               = tensor2.cxx
+tensor3_SOURCES               = tensor3.cxx
 stensor_SOURCES               = stensor.cxx              
 stensor2_SOURCES              = stensor2.cxx
 stensor3_SOURCES              = stensor3.cxx
 stensor4_SOURCES              = stensor4.cxx
 stensor5_SOURCES              = stensor5.cxx
+stensor6_SOURCES              = stensor6.cxx
 stensor_changeBasis_SOURCES   = stensor_changeBasis.cxx
 stensor_changeBasis2_SOURCES  = stensor_changeBasis2.cxx
 stensor_changeBasis3_SOURCES  = stensor_changeBasis3.cxx

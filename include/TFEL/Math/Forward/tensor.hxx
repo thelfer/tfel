@@ -23,7 +23,7 @@ namespace tfel
      * \see   TensorDimeToSize and TensorSizeToDime. 
      */
     template<unsigned short N,typename T=double>
-    class tensor;
+    struct tensor;
 
   } // end of namespace math
 

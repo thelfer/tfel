@@ -556,7 +556,7 @@ namespace mfront{
 	<< "      umat::UMATReal *const,const umat::UMATInt  *const,\n"
 	<< "      umat::UMATInt *const);\n\n";
 
-    out << "MFRONT_SHAREDOBJ void MFRONT_STDCALL\n" << umatFctName
+    out << "MFRONT_SHAREDOBJ void\n" << umatFctName
 	<< "(const umat::UMATInt *const,const umat::UMATReal *const,\n"
 	<< "const umat::UMATReal *const,      umat::UMATReal *const,\n"
 	<< "const umat::UMATReal *const,const umat::UMATReal *const,\n"
@@ -660,7 +660,7 @@ namespace mfront{
       out << "}\n";
       out << "}\n\n";
       
-      out << "MFRONT_SHAREDOBJ void MFRONT_STDCALL\n" << umatFctName
+      out << "MFRONT_SHAREDOBJ void\n" << umatFctName
 	  << "(const umat::UMATInt *const NTENS, const umat::UMATReal *const DTIME,\n"
 	  << "const umat::UMATReal *const DROT,  umat::UMATReal *const DDSOE,\n"
 	  << "const umat::UMATReal *const F0, const umat::UMATReal *const F1,\n"
@@ -700,7 +700,7 @@ namespace mfront{
 	out << "}\n";
       }
       out << "}\n\n";
-      out << "MFRONT_SHAREDOBJ void MFRONT_STDCALL\n" << umatFctName
+      out << "MFRONT_SHAREDOBJ void\n" << umatFctName
 	  << "(const umat::UMATInt *const NTENS, const umat::UMATReal *const DTIME,\n"
 	  << "const umat::UMATReal *const DROT,  umat::UMATReal *const DDSOE,\n"
 	  << "const umat::UMATReal *const STRAN, const umat::UMATReal *const DSTRAN,\n"

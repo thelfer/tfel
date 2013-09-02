@@ -25,6 +25,8 @@
 #include"TFEL/Math/General/BasicOperations.hxx"
 #include"TFEL/Math/General/EmptyRunTimeProperties.hxx"
 
+#include"TFEL/Math/Function/Power.hxx"
+
 #include"TFEL/Math/Vector/VectorUtilities.hxx"
 #include"TFEL/Math/Stensor/StensorNullStorage.hxx"
 #include"TFEL/Math/Stensor/StensorConcept.hxx"
@@ -51,104 +53,26 @@ namespace tfel{
 
     template<unsigned short N,typename T,
 	     template<unsigned short,typename> class Storage>
-    class stensor
+    struct stensor
       : public StensorConcept<stensor<N,T,Storage> >,
 	public Storage<StensorDimeToSize<N>::value,T>
     {
-      
-      /*!
-       * A simple check
-       */
-      TFEL_STATIC_ASSERT((N==1u)||(N==2u)||(N==3u));
-
-    public:
-
       /*
        * This is a StensorConcept requirement.
        */
       typedef EmptyRunTimeProperties RunTimeProperties;
       /*!
-       * type of the stensor's values.
-       * (this is a stl requirement).
-       */
-      typedef T value_type;
-      /*!
-       * type of a pointer to the value contained.
-       * (this is a stl requirement).
-       */
-      typedef value_type* pointer;
-      /*!
-       * type of a const pointer to the value contained.
-       * (this is a stl requirement).
-       */
-      typedef const value_type* const_pointer;
-      /*!
-       * type of the stensor's iterator.
-       * (provided for stl compatibility).
-       */
-      typedef pointer iterator;
-      /*!
-       * type of the stensor's const iterator.
-       * (provided for stl compatibility).
-       */
-      typedef const_pointer const_iterator;
-      /*!
-       * type of the stensor's reverse iterator.
-       * (provided for stl compatibility).
-       */
-#ifndef __SUNPRO_CC
-      typedef std::reverse_iterator<iterator> reverse_iterator; 
-#else
-      typedef std::reverse_iterator<iterator,T,
-      				    reference,
-      				    difference_type> reverse_iterator;
-#endif
-      /*!
-       * type of the stensor's const reverse iterator.
-       * (provided for stl compatibility).
-       */
-#ifndef __SUNPRO_CC
-      typedef std::reverse_iterator<const_iterator> const_reverse_iterator; 
-#else
-      typedef std::reverse_iterator<const_iterator,T,
-      				    const_reference,
-      				    difference_type> const_reverse_iterator;
-#endif
-      /*!
-       * type of a reference to the value contained.
-       * (this is a stl requirement).
-       */
-      typedef value_type& reference;
-      /*!
-       * type of a const reference to the value contained.
-       * (this is a stl requirement).
-       */
-      typedef const value_type& const_reference;
-      /*!
-       * type of the size of the container.
-       * (this is a stl requirement).
-       */
-      typedef unsigned short size_type;
-      /*!
-       * type of the difference between two iterators.
-       * (this is a stl requirement).
-       */
-      typedef ptrdiff_t difference_type;
-
-      /*!
        * \brief Default Constructor 
        * \warning enabled only if storage is static
        */
       explicit stensor()
-      {};
-
+      {}
       /*!
        * \brief Default Constructor 
        * \param T, value used to initialise the components of the stensor 
        * \warning enabled only if storage is static
        */
       explicit stensor(const T);
-
       /*!
        * \brief Default Constructor.
        * \param const typename tfel::typetraits::BaseType<T>::type*
@@ -167,22 +91,21 @@ namespace tfel{
       explicit stensor(typename tfel::typetraits::BaseType<T>::type* const init)
 	: Storage<StensorDimeToSize<N>::value,T>(init)
       {}
-
       /*!
        * \brief Copy Constructor
        */
       stensor(const stensor<N,T,Storage>& src)
 	: Storage<StensorDimeToSize<N>::value,T>(src) 
       {}
-
-      // Copy Constructor
+      /*!
+       * copy from stensor expression template object
+       */
       template<typename T2,template<unsigned short,typename> class Storage2,typename Expr>
       stensor(const StensorExpr<stensor<N,T2,Storage2>,Expr>& src)
       {
 	TFEL_STATIC_ASSERT((tfel::typetraits::IsSafelyReinterpretCastableTo<T2,T>::cond));
 	vectorToTab<StensorDimeToSize<N>::value>::exe(src,this->v);
       }
-
       /*!
        * \brief Import from Voigt
        */
@@ -193,7 +116,6 @@ namespace tfel{
 	void
 	>::type
       importVoigt(const T2* const);
-
       /*!
        * Import from Tab (Voigt notations for stresses)
        */
@@ -203,7 +125,6 @@ namespace tfel{
 	tfel::typetraits::IsSafelyReinterpretCastableTo<T2,typename tfel::typetraits::BaseType<T>::type>::cond,
 	void>::type
       importTab(const T2* const);
-    
       /*!
        * Export to Tab (Voigt notations for stresses)
        */
@@ -213,7 +134,6 @@ namespace tfel{
 	tfel::typetraits::IsSafelyReinterpretCastableTo<T2,typename tfel::typetraits::BaseType<T>::type>::cond,
 	void>::type
       exportTab(T2* const) const;
-
       /*!
        * Write to Tab
        */
@@ -224,7 +144,6 @@ namespace tfel{
 	void
 	>::type
       write(T2* const) const;
-
       /*!
        * Import values
        */
@@ -234,14 +153,12 @@ namespace tfel{
 	tfel::typetraits::IsSafelyReinterpretCastableTo<T2,typename tfel::typetraits::BaseType<T>::type>::cond,
 	void>::type
       import(const T2* const);
-
       /*!
        * Assignement operator
        */
       template<template<unsigned short,typename> class Storage2>
       stensor<N,T,Storage>&
       operator=(const stensor<N,T,Storage2>&);
-
       /*!
        * Assignement operator
        */
@@ -250,7 +167,6 @@ namespace tfel{
 	tfel::typetraits::IsAssignableTo<T2,T>::cond,
 	stensor<N,T,Storage>&>::type
       operator=(const stensor<N,T2,Storage2>&);
-
       /*!
        * Assignement operator
        */
@@ -260,39 +176,34 @@ namespace tfel{
 	stensor<N,T,Storage>&
       >::type
       operator=(const StensorExpr<stensor<N,T2,Storage2>,Expr>&);
-
-      // Assignement operator
+      //! Assignement operator
       template<typename T2,template<unsigned short,typename> class Storage2>
       TFEL_MATH_INLINE typename tfel::meta::EnableIf<
 	tfel::typetraits::IsAssignableTo<T2,T>::cond,
 	stensor<N,T,Storage>&
       >::type
       operator+=(const stensor<N,T2,Storage2>&);
-    
-      // Assignement operator
+      //! Assignement operator
       template<typename T2,template<unsigned short,typename> class Storage2,typename Expr>
       TFEL_MATH_INLINE typename tfel::meta::EnableIf<
 	tfel::typetraits::IsAssignableTo<T2,T>::cond,
 	stensor<N,T,Storage>&
       >::type
       operator+=(const StensorExpr<stensor<N,T2,Storage2>,Expr>&);
-
-      // Assignement operator
+      //! Assignement operator
       template<typename T2,template<unsigned short,typename> class Storage2>
       TFEL_MATH_INLINE typename tfel::meta::EnableIf<
 	tfel::typetraits::IsAssignableTo<T2,T>::cond,
 	stensor<N,T,Storage>&
       >::type
       operator-=(const stensor<N,T2,Storage2>&);
-    
-      // Assignement operator
+      //! Assignement operator
       template<typename T2,template<unsigned short,typename> class Storage2,typename Expr>
       TFEL_MATH_INLINE typename tfel::meta::EnableIf<
 	tfel::typetraits::IsAssignableTo<T2,T>::cond,
 	stensor<N,T,Storage>&
       >::type
       operator-=(const StensorExpr<stensor<N,T2,Storage2>,Expr>&);
-
       /*!
        * operator*=
        */
@@ -304,7 +215,6 @@ namespace tfel{
 	stensor<N,T,Storage>&
       >::type
       operator*=(const T2);
-
       /*!
        * operator/=
        */
@@ -316,21 +226,18 @@ namespace tfel{
 	stensor<N,T,Storage>&
       >::type
       operator/=(const T2);
-
       /*!
        * compute eigenvalues
        * \param[in] b  : refine eigenvalues
        */
       void computeEigenValues(T&,T&,T&,
 			      const bool = false) const;
-
       /*!
        * compute eigenvalues
        * \param[in] b  : refine eigenvalues
        */
       void computeEigenValues(tvector<3u,T>&,
 			      const bool = false) const;
-
       /*!
        * compute eigenvectors and eigenvalues 
        * \param[in] vp : eigenvalues
@@ -340,12 +247,10 @@ namespace tfel{
       bool computeEigenVectors(tvector<3u,T>&,
 			       tmatrix<3u,3u,typename tfel::typetraits::BaseType<T>::type>&,
 			       const bool = false) const;
-    
       /*!
        * change basis
        */
       void changeBasis(const tmatrix<3u,3u,typename tfel::typetraits::BaseType<T>::type>&);
-
       /*!
        * Return Identity
        */
@@ -356,96 +261,21 @@ namespace tfel{
 
       TFEL_MATH_INLINE const T& operator[](const unsigned short) const;      
       TFEL_MATH_INLINE       T& operator[](const unsigned short);
-
-      /*!
-       * return the size of a symmetric tensor
-       */
-      TFEL_MATH_INLINE size_type
-      size(void) const;
        /*
        * Return the RunTimeProperties of the tvector
        * \return tvector::RunTimeProperties
        */
       TFEL_MATH_INLINE RunTimeProperties
       getRunTimeProperties(void) const;
-      /*
-       * return an iterator to the first element of the stensor
-       * (provided for stl compatibility)
-       * \return iterator, an iterator to the first element
+      /*!
+       * copy the value from a container
        */
-      TFEL_MATH_INLINE2 
-      iterator
-      begin(void);
-      
-      /*
-       * return an const iterator to the first element of the stensor
-       * (provided for stl compatibility)
-       * \return const_iterator, a const iterator to the first element
-       */
-      TFEL_MATH_INLINE2
-      const_iterator 
-      begin(void) const;
-
-      /*
-       * return an iterator after the last element of the stensor
-       * (provided for stl compatibility)
-       * \return iterator, an iterator after the last element
-       */
-      TFEL_MATH_INLINE2
-      iterator
-      end(void);
-      
-      /*
-       * return an const iterator after the last element of the stensor
-       * (provided for stl compatibility)
-       * \return const_iterator, a const iterator after the last element
-       */
-      TFEL_MATH_INLINE2
-      const_iterator
-      end(void) const;
-
-      /*
-       * return an reverse iterator to the last element of the stensor
-       * (provided for stl compatibility)
-       * \return reverse_iterator, a reverse iterator to the last element
-       */
-      TFEL_MATH_INLINE2
-      reverse_iterator
-      rbegin(void);
-      
-      /*
-       * return an const reverse iterator to the last element of the stensor
-       * (provided for stl compatibility)
-       * \return const_reverse_iterator, a const reverse iterator to the last element
-       */
-      TFEL_MATH_INLINE2
-      const_reverse_iterator
-      rbegin(void) const;
-      
-      /*
-       * return an  reverse iterator before the first element of the stensor
-       * (provided for stl compatibility)
-       * \return reverse_iterator, a reverse iterator before the first element
-       */
-      TFEL_MATH_INLINE2
-      reverse_iterator
-      rend(void);
-      
-      /*
-       * return an const reverse iterator before the first element of the stensor
-       * (provided for stl compatibility)
-       * \return const_reverse_iterator, a const reverse iterator before the first element
-       */
-      TFEL_MATH_INLINE2
-      const_reverse_iterator
-      rend(void) const;
-
-      
       template<typename InputIterator>
-      TFEL_MATH_INLINE2 
-      void 
+      TFEL_MATH_INLINE2 void 
       copy(const InputIterator src);
-
+    private:      
+      //! a simple check
+      TFEL_STATIC_ASSERT((N==1u)||(N==2u)||(N==3u));
     }; // end of class stensor
 
     /*!
@@ -485,7 +315,31 @@ namespace tfel{
 	     template<unsigned short,typename> class Storage>
     T tresca(const stensor<1u,T,Storage>&,
 	     const bool = false);
-        
+
+    template<typename StensorType>
+    typename tfel::meta::EnableIf<
+      tfel::meta::Implements<StensorType,StensorConcept>::cond,
+      stensor<StensorTraits<StensorType>::dime,
+	      typename StensorTraits<StensorType>::NumType>
+    >::type
+    square_root(const StensorType&);
+
+    template<typename StensorType>
+    typename tfel::meta::EnableIf<
+      tfel::meta::Implements<StensorType,StensorConcept>::cond,
+      typename ComputeUnaryResult<typename StensorTraits<StensorType>::NumType,Power<3> >::Result
+    >::type
+    det(const StensorType&);
+  
+    template<typename StensorType>
+    typename tfel::meta::EnableIf<
+      tfel::meta::Implements<StensorType,StensorConcept>::cond,
+      stensor<StensorTraits<StensorType>::dime,
+	      typename ComputeBinaryResult<typename tfel::typetraits::BaseType<typename StensorTraits<StensorType>::NumType>::type,
+					   typename StensorTraits<StensorType>::NumType,OpDiv>::Result>
+      >::type
+    invert(const StensorType&);
+    
   } // end of namespace math
 
   namespace typetraits{

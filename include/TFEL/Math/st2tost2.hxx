@@ -22,6 +22,7 @@
 #include"TFEL/TypeTraits/IsAssignableTo.hxx"
 #include"TFEL/TypeTraits/IsSafelyReinterpretCastableTo.hxx"
 
+#include"TFEL/Math/fsarray.hxx"
 #include"TFEL/Math/General/BasicOperations.hxx"
 #include"TFEL/Math/General/EmptyRunTimeProperties.hxx"
 
@@ -47,30 +48,18 @@ namespace tfel{
 
     template<unsigned short N,typename T>
     struct st2tost2
-      : public ST2toST2Concept<st2tost2<N,T> >
+      : public ST2toST2Concept<st2tost2<N,T> >,
+	public fsarray<StensorDimeToSize<N>::value*StensorDimeToSize<N>::value,T>
     {
       /*!
        * This is a StensorConcept requirement.
        */
       typedef EmptyRunTimeProperties RunTimeProperties;
-      typedef T 		value_type;
-      typedef value_type* 	pointer;
-      typedef const value_type* const_pointer;
-      typedef pointer           iterator;
-      typedef const_pointer     const_iterator;
-      typedef std::reverse_iterator<const_iterator> const_reverse_iterator;
-      typedef std::reverse_iterator<iterator>       reverse_iterator;
-      typedef value_type& 	reference;
-      typedef const value_type& const_reference;
-      typedef size_t 		size_type;
-      typedef ptrdiff_t 	difference_type;
-
       /*!
        * \brief Default Constructor 
        */
       explicit st2tost2()
       {};
-
       /*!
        * \brief Default Constructor 
        * \param T, value used to initialise the components of the st2tost2 
@@ -188,18 +177,7 @@ namespace tfel{
 
       TFEL_MATH_INLINE const T& operator()(const unsigned short,const unsigned short) const;      
       TFEL_MATH_INLINE       T& operator()(const unsigned short,const unsigned short);
-
-      TFEL_MATH_INLINE2 iterator       begin(void);
-      TFEL_MATH_INLINE2 const_iterator begin(void) const;
-      TFEL_MATH_INLINE2 iterator       end(void);
-      TFEL_MATH_INLINE2 const_iterator end(void) const;
-
-      TFEL_MATH_INLINE2 reverse_iterator       rbegin(void);
-      TFEL_MATH_INLINE2 const_reverse_iterator rbegin(void) const;
-      TFEL_MATH_INLINE2 reverse_iterator       rend(void);
-      TFEL_MATH_INLINE2 const_reverse_iterator rend(void) const;
-
-       /*
+      /*!
        * Return the RunTimeProperties of the tvector
        * \return tvector::RunTimeProperties
        */
@@ -221,11 +199,6 @@ namespace tfel{
        * A simple check
        */
       TFEL_STATIC_ASSERT((N==1u)||(N==2u)||(N==3u));
-
-      static const unsigned short StensorSize  = StensorDimeToSize<N>::value;
-      static const unsigned short St2tost2Size = StensorSize*StensorSize;
-
-      T v[St2tost2Size];
 
       enum ParticularSt2toSt2{
 	ST2TOST2_IDENTITY,

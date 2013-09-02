@@ -38,7 +38,7 @@ namespace tfel
      */
     template<unsigned short N,typename T=double,
 	     template<unsigned short,typename> class Storage=StensorStatic>
-    class stensor;
+    struct stensor;
 
   } // end of namespace math
 

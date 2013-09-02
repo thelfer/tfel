@@ -15,6 +15,7 @@
 #include"TFEL/TypeTraits/BaseType.hxx"
 
 #include"TFEL/Math/General/Abs.hxx"
+#include"TFEL/Math/Function/Power.hxx"
 #include"TFEL/Math/Forward/stensor.hxx"
 
 namespace tfel{
@@ -163,6 +164,66 @@ namespace tfel{
       >::type
     syme(const T& t);
     
+    template<class T>
+    TFEL_MATH_INLINE 
+    typename tfel::meta::EnableIf<
+      ((tfel::meta::Implements<T,TensorConcept>::cond) &&
+       (TensorTraits<T>::dime==1u)&&
+       (tfel::typetraits::IsFundamentalNumericType<typename TensorTraits<T>::NumType>::cond)),
+      stensor<1u,typename TensorTraits<T>::NumType>
+      >::type
+    computeCauchyGreenTensor(const T& t);
+  
+    template<class T>
+    TFEL_MATH_INLINE 
+    typename tfel::meta::EnableIf<
+      ((tfel::meta::Implements<T,TensorConcept>::cond) &&
+       (TensorTraits<T>::dime==2u)&&
+       (tfel::typetraits::IsFundamentalNumericType<typename TensorTraits<T>::NumType>::cond)),
+      stensor<2u,typename TensorTraits<T>::NumType>
+      >::type
+    computeCauchyGreenTensor(const T& t);
+
+    template<class T>
+    TFEL_MATH_INLINE 
+    typename tfel::meta::EnableIf<
+      ((tfel::meta::Implements<T,TensorConcept>::cond) &&
+       (TensorTraits<T>::dime==3u)&&
+      (tfel::typetraits::IsFundamentalNumericType<typename TensorTraits<T>::NumType>::cond)),
+      stensor<3u,typename TensorTraits<T>::NumType>
+      >::type
+    computeCauchyGreenTensor(const T& t);
+
+    template<typename TensorType>
+    TFEL_MATH_INLINE 
+    typename tfel::meta::EnableIf<
+      tfel::meta::Implements<TensorType,TensorConcept>::cond &&
+      TensorTraits<TensorType>::dime == 1u,
+      typename ComputeUnaryResult<typename TensorTraits<TensorType>::NumType,
+				  Power<3> >::Result
+    >::type
+    det(const TensorType&);
+
+    template<typename TensorType>
+    TFEL_MATH_INLINE 
+    typename tfel::meta::EnableIf<
+      tfel::meta::Implements<TensorType,TensorConcept>::cond &&
+      TensorTraits<TensorType>::dime == 2u,
+      typename ComputeUnaryResult<typename TensorTraits<TensorType>::NumType,
+				  Power<3> >::Result
+    >::type
+    det(const TensorType&);
+
+    template<typename TensorType>
+    TFEL_MATH_INLINE 
+    typename tfel::meta::EnableIf<
+      tfel::meta::Implements<TensorType,TensorConcept>::cond &&
+      TensorTraits<TensorType>::dime == 3u,
+      typename ComputeUnaryResult<typename TensorTraits<TensorType>::NumType,
+				  Power<3> >::Result
+    >::type
+    det(const TensorType&);
+
     // Serialisation operator
     template<typename T>
     std::ostream&
