@@ -39,7 +39,17 @@ struct Tensor3Test
     t(6) = 4;
     t(8) = 5;
     t(2) = 6;
+    tensor<3,double> t2 = invert(t);
     TFEL_TESTS_ASSERT(abs(det(t)+6)<eps);
+    TFEL_TESTS_ASSERT(abs(t2(0)-0.5)<eps);
+    TFEL_TESTS_ASSERT(abs(t2(1))<eps);
+    TFEL_TESTS_ASSERT(abs(t2(2)-0.5)<eps);
+    TFEL_TESTS_ASSERT(abs(t2(3)-1.)<eps);
+    TFEL_TESTS_ASSERT(abs(t2(4)-1.)<eps);
+    TFEL_TESTS_ASSERT(abs(t2(5)+0.5)<eps);
+    TFEL_TESTS_ASSERT(abs(t2(6)+7./6.)<eps);
+    TFEL_TESTS_ASSERT(abs(t2(7))<eps);
+    TFEL_TESTS_ASSERT(abs(t2(8)+2./3.)<eps);
     return this->result;
   } // end of execute
 };

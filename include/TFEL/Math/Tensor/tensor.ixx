@@ -238,6 +238,75 @@ namespace tfel{
       Copy::exe(reinterpret_cast<const base*>(&t[0]),p);
     }
 
+    template<typename TensorType>
+    typename tfel::meta::EnableIf<
+      tfel::meta::Implements<TensorType,TensorConcept>::cond &&
+      TensorTraits<TensorType>::dime == 1u,
+      tensor<1u,typename ComputeBinaryResult<typename tfel::typetraits::BaseType<typename TensorTraits<TensorType>::NumType>::type,
+					     typename TensorTraits<TensorType>::NumType,OpDiv>::Result>
+      >::type
+    invert(const TensorType& t){
+      typedef typename TensorTraits<TensorType>::NumType T;
+      typedef typename tfel::typetraits::BaseType<T>::type base;
+      typedef typename ComputeBinaryResult<base,T,OpDiv>::Result T2;
+      tensor<1u,T2> t2;
+      t2(0) = base(1)/t(0);
+      t2(1) = base(1)/t(1);
+      t2(2) = base(1)/t(2);
+      return t2;
+    }
+    
+    template<typename TensorType>
+    typename tfel::meta::EnableIf<
+      tfel::meta::Implements<TensorType,TensorConcept>::cond &&
+      TensorTraits<TensorType>::dime == 2u,
+      tensor<2u,typename ComputeBinaryResult<typename tfel::typetraits::BaseType<typename TensorTraits<TensorType>::NumType>::type,
+					     typename TensorTraits<TensorType>::NumType,OpDiv>::Result>
+      >::type
+    invert(const TensorType& t){
+      typedef typename TensorTraits<TensorType>::NumType T;
+      typedef typename tfel::typetraits::BaseType<T>::type base;
+      typedef typename ComputeUnaryResult<typename TensorTraits<TensorType>::NumType,
+					  Power<2> >::Result T2;
+      typedef typename ComputeBinaryResult<base,T,OpDiv>::Result T3;
+      tensor<2u,T3> t2;
+      T2 det = t(0)*t(1)-t(3)*t(4);
+      t2(0) = t(1)/det;
+      t2(1) = t(0)/det;
+      t2(3) = -t(3)/det;
+      t2(4) = -t(4)/det;
+      t2(2) = base(1)/t(2);
+      return t2;
+    }
+
+    template<typename TensorType>
+    typename tfel::meta::EnableIf<
+      tfel::meta::Implements<TensorType,TensorConcept>::cond &&
+      TensorTraits<TensorType>::dime == 3u,
+      tensor<3u,typename ComputeBinaryResult<typename tfel::typetraits::BaseType<typename TensorTraits<TensorType>::NumType>::type,
+    					     typename TensorTraits<TensorType>::NumType,OpDiv>::Result>
+      >::type
+    invert(const TensorType& t){
+      typedef typename TensorTraits<TensorType>::NumType T;
+      typedef typename tfel::typetraits::BaseType<T>::type base;
+      typedef typename ComputeUnaryResult<typename TensorTraits<TensorType>::NumType,
+					  Power<3> >::Result T2;
+      typedef typename ComputeBinaryResult<base,T2,OpDiv>::Result T3;
+      typedef typename ComputeBinaryResult<base,T,OpDiv>::Result  T4;
+      tensor<3u,T4> t2;
+      const T3 id = base(1)/det(t);
+      t2(0) = (t(1)*t(2)-t(7)*t(8))*id;
+      t2(1) = (t(0)*t(2)-t(5)*t(6))*id;
+      t2(2) = (t(0)*t(1)-t(3)*t(4))*id;
+      t2(3) = (t(5)*t(8)-t(2)*t(3))*id;
+      t2(4) = (t(6)*t(7)-t(2)*t(4))*id;
+      t2(5) = (t(3)*t(7)-t(1)*t(5))*id;
+      t2(6) = (t(4)*t(8)-t(1)*t(6))*id;
+      t2(7) = (t(4)*t(5)-t(0)*t(7))*id;
+      t2(8) = (t(3)*t(6)-t(0)*t(8))*id;
+      return t2;
+    }
+    
 #endif
 
   } //end of namespace math

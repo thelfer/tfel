@@ -251,6 +251,45 @@ namespace tfel{
       void>::type
     exportToBaseTypeArray(const tensor<N,T>&,
 			  OutputIterator);
+    /*!
+     * \return the invert of a 1D tensor
+     * \param[in] t : tensor to be inverted
+     */
+    template<typename TensorType>
+    TFEL_MATH_INLINE2
+    typename tfel::meta::EnableIf<
+      tfel::meta::Implements<TensorType,TensorConcept>::cond &&
+      TensorTraits<TensorType>::dime == 1u,
+      tensor<1u,typename ComputeBinaryResult<typename tfel::typetraits::BaseType<typename TensorTraits<TensorType>::NumType>::type,
+					     typename TensorTraits<TensorType>::NumType,OpDiv>::Result>
+    >::type
+    invert(const TensorType&);
+    /*!
+     * \return the invert of a 2D tensor
+     * \param[in] t : tensor to be inverted
+     */
+    template<typename TensorType>
+    TFEL_MATH_INLINE2
+    typename tfel::meta::EnableIf<
+      tfel::meta::Implements<TensorType,TensorConcept>::cond &&
+      TensorTraits<TensorType>::dime == 2u,
+      tensor<2u,typename ComputeBinaryResult<typename tfel::typetraits::BaseType<typename TensorTraits<TensorType>::NumType>::type,
+					     typename TensorTraits<TensorType>::NumType,OpDiv>::Result>
+    >::type
+    invert(const TensorType&);
+    /*!
+     * \return the invert of a 3D tensor
+     * \param[in] t : tensor to be inverted
+     */
+    template<typename TensorType>
+    TFEL_MATH_INLINE2
+    typename tfel::meta::EnableIf<
+      tfel::meta::Implements<TensorType,TensorConcept>::cond &&
+      TensorTraits<TensorType>::dime == 3u,
+      tensor<3u,typename ComputeBinaryResult<typename tfel::typetraits::BaseType<typename TensorTraits<TensorType>::NumType>::type,
+					     typename TensorTraits<TensorType>::NumType,OpDiv>::Result>
+    >::type
+    invert(const TensorType&);
 
   } // end of namespace math
 

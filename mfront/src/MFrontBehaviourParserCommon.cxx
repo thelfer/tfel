@@ -1917,6 +1917,8 @@ namespace mfront{
     this->behaviourFile << "integrate(const SMType smt){\n";
     this->behaviourFile << "using namespace std;" << endl;
     this->behaviourFile << "using namespace tfel::math;" << endl;
+    writeMaterialLaws("MFrontBehaviourParserCommon::writeBehaviourIntegrator",
+		      this->behaviourFile,this->materialLaws);		      
     this->behaviourFile << "bool computeTangentOperator_ = smt!=NOSTIFFNESSREQUESTED;\n";
     writeMaterialLaws("MFrontBehaviourParserCommon::writeBehaviourIntegrator",
 		      this->behaviourFile,this->materialLaws);

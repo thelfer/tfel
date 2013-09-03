@@ -22,6 +22,8 @@ namespace mfront{
 			      &MFrontDefaultParserBase::treatProvidesTangentOperator);
     this->registerNewCallBack("@ProvidesSymmetricTangentOperator",
 			      &MFrontDefaultParserBase::treatProvidesSymmetricTangentOperator);
+    this->registerNewCallBack("@MaterialLaw",
+			      &MFrontDefaultParserBase::treatMaterialLaw);
   }
 
   void

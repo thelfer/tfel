@@ -9,7 +9,15 @@
 }
 
 @Algorithm NewtonRaphson;
+/*
+ * Using @RequireStiffnessTensor is not recommended for isotropic
+ * behaviours as it induces some extra work in the interfaces.
+ * We keep it for testing purposes.
+ */
 @RequireStiffnessTensor;
+/*
+ * Low precision is mandatory for the consistent tangent operator.
+ */
 @Epsilon 1.e-12;
 @Theta 1.;
 
