@@ -113,6 +113,7 @@ namespace mfront
   {
     using namespace std;
     using namespace tfel::utilities;
+    using tfel::utilities::shared_ptr;
     typedef tfel::material::ModellingHypothesis MH;
     map<string,CallBack>::const_iterator pc;
     // declare some variables
@@ -653,6 +654,7 @@ namespace mfront
   {
     using namespace std;
     using namespace tfel::utilities;
+    using tfel::utilities::shared_ptr;
     typedef map<string,string>::value_type MVType;
     typedef map<string,unsigned int>::value_type MVType2;
     this->readSpecifiedToken("MTest::handleTest","<",
@@ -829,6 +831,7 @@ namespace mfront
   {
     using namespace std;
     using namespace tfel::utilities;
+    using tfel::utilities::shared_ptr;
     const string& v = this->readString(p,this->fileTokens.end());
     if(!this->isValidIdentifier(v)){
       string msg("MTest::handleReal : '"+
@@ -1340,6 +1343,7 @@ namespace mfront
   {
     using namespace std;
     using namespace tfel::utilities;
+    using tfel::utilities::shared_ptr;
     if(this->b.get()==0){
       string msg("MTest::ImposedThermodynamicForce : ");
       msg += "behaviour not defined";
@@ -1402,6 +1406,7 @@ namespace mfront
   {
     using namespace std;
     using namespace tfel::utilities;
+    using tfel::utilities::shared_ptr;
     if(this->b.get()==0){
       string msg("MTest::ImposedDrivingVariable : ");
       msg += "behaviour not defined";
@@ -1425,6 +1430,7 @@ namespace mfront
     using namespace std;
     using namespace tfel::utilities;
     using namespace tfel::system;
+    using tfel::utilities::shared_ptr;
     typedef ExternalLibraryManager ELM;
     typedef tfel::material::ModellingHypothesis MH;
     if(this->hypothesis==MH::UNDEFINEDHYPOTHESIS){
@@ -1513,6 +1519,7 @@ namespace mfront
   {
     using namespace std;
     using namespace tfel::utilities;
+    using tfel::utilities::shared_ptr;
     string i;
     if(this->b.get()==0){
       string msg("MTest::handleMaterialProperty : ");
@@ -1802,6 +1809,7 @@ namespace mfront
     using namespace tfel::utilities;
     using namespace tfel::math;
     using namespace tfel::material;
+    using tfel::utilities::shared_ptr;
     using tfel::tests::TestResult;
     using tfel::math::vector;
     vector<shared_ptr<MTestConstraint> >::const_iterator pc;
@@ -2523,6 +2531,7 @@ namespace mfront
   {
     using namespace std;
     using namespace tfel::utilities;
+    using tfel::utilities::shared_ptr;
     shared_ptr<MTestEvolution> ev;
     this->checkNotEndOfLine("MTest::parseEvolution",p,
 			    this->fileTokens.end());

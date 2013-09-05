@@ -41,6 +41,7 @@ namespace mfront
   {
     using namespace std;
     using namespace tfel::utilities;
+    using tfel::utilities::shared_ptr;
     if(this->ps.get()!=0){
       this->ps->close();
     }
@@ -53,6 +54,7 @@ namespace mfront
   {
     using namespace std;
     using namespace tfel::utilities;
+    using tfel::utilities::shared_ptr;
     if(this->ps.get()!=0){
       this->ps->close();
     }

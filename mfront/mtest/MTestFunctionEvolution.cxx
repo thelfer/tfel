@@ -23,6 +23,7 @@ namespace mfront{
   {
     using namespace std;
     using namespace tfel::utilities;
+    using tfel::utilities::shared_ptr;
     const vector<string>& args = this->f.getVariablesNames();
     vector<string>::size_type i;
     for(i=0;i!=args.size();++i){
@@ -49,6 +50,7 @@ namespace mfront{
   {
     using namespace std;
     using namespace tfel::utilities;
+    using tfel::utilities::shared_ptr;
     const vector<string>& args = this->f.getVariablesNames();
     vector<string>::size_type i;
     for(i=0;i!=args.size();++i){

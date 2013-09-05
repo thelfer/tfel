@@ -41,6 +41,7 @@ namespace mfront
     using namespace std;
     using namespace tfel::utilities;
     using tfel::tests::TestResult;
+    using tfel::utilities::shared_ptr;
     vector<string>::const_iterator p;
     for(p=this->vnames.begin();p!=this->vnames.end();++p){
       if(*p=="t"){

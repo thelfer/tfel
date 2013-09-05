@@ -239,7 +239,7 @@ namespace tfel{
     >::type
     det(const TensorType& t)
     {
-      return (t(0)*t(1)-t(3)*tm(4))*t(2);
+      return (t(0)*t(1)-t(3)*t(4))*t(2);
     }
 
     template<typename TensorType>

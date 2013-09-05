@@ -226,6 +226,7 @@ namespace mfront
     using namespace std;
     using namespace tfel::tests;
     using namespace tfel::utilities;
+    using tfel::utilities::shared_ptr;
     TestManager& tm = TestManager::getTestManager();
     vector<string>::const_iterator p;
     for(p=this->inputs.begin();

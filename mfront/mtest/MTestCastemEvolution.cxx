@@ -30,6 +30,7 @@ namespace mfront{
   {
     using namespace std;
     using namespace tfel::utilities;
+    using tfel::utilities::shared_ptr;
     vector<string>::size_type i;
     for(i=0;i!=this->vnames.size();++i){
       map<string,shared_ptr<MTestEvolution> >::const_iterator pev;
@@ -51,6 +52,7 @@ namespace mfront{
   {
     using namespace std;
     using namespace tfel::utilities;
+    using tfel::utilities::shared_ptr;
     vector<string>::size_type i;
     for(i=0;i!=this->vnames.size();++i){
       map<string,shared_ptr<MTestEvolution> >::const_iterator pev;

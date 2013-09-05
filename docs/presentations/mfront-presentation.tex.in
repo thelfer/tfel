@@ -51,6 +51,7 @@
 
 \PageTitre{}
 
+\section{Sommaire}
 \titre{Sommaire}
 \frame{
   \setcounter{tocdepth}{1}
