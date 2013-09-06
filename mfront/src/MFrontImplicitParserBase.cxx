@@ -179,19 +179,13 @@ namespace mfront{
     if((this->mb.isInternalStateVariableName(n))||
        ((n[0]=='f')&&(this->mb.isInternalStateVariableName(n.substr(1))))){
       if(this->current->value=="setNormalisationFactor"){
+	string var;
 	string v;
 	if(this->mb.isInternalStateVariableName(n)){
 	  v = n;
 	} else {
 	  v = n.substr(1);
 	}
-	// const VarHandler& s = this->getStateVariableHandler(v);
-	// if(s.arraySize!=1u){
-	//   string msg("MFrontImplicitParserBase::treatUnknownVariableMethod : ");
-	//   msg += "can't set a normalisation factor on an array of state variables";
-	//   throw(runtime_error(msg));
-	// }
-	string var;
 	++(this->current);
 	this->checkNotEndOfFile("MFrontImplicitParserBase::treatUnknowVariableMethod");
 	this->readSpecifiedToken("MFrontImplicitParserBase::treatUnknowVariableMethod","(");
@@ -842,11 +836,11 @@ namespace mfront{
     this->behaviourFile << "#include\"TFEL/Math/TinyMatrixSolve.hxx\"\n";
     this->behaviourFile << "#include\"TFEL/Math/Vector/TVFTV.hxx\"\n";
     this->behaviourFile << "#include\"TFEL/Math/Vector/TSFTV.hxx\"\n";
-    this->behaviourFile << "#include\"TFEL/Math/Stensor/SFTMCV.hxx\"\n";
-    this->behaviourFile << "#include\"TFEL/Math/Stensor/SFTMRV.hxx\"\n";
-    this->behaviourFile << "#include\"TFEL/Math/Stensor/SFTMCV2.hxx\"\n";
-    this->behaviourFile << "#include\"TFEL/Math/Stensor/SFTMRV2.hxx\"\n";
-    this->behaviourFile << "#include\"TFEL/Math/Stensor/SFTV.hxx\"\n";
+    this->behaviourFile << "#include\"TFEL/Math/Stensor/StensorFromTinyMatrixColumnView.hxx\"\n";
+    this->behaviourFile << "#include\"TFEL/Math/Stensor/StensorFromTinyMatrixRowView.hxx\"\n";
+    this->behaviourFile << "#include\"TFEL/Math/Stensor/StensorFromTinyMatrixColumnView2.hxx\"\n";
+    this->behaviourFile << "#include\"TFEL/Math/Stensor/StensorFromTinyMatrixRowView2.hxx\"\n";
+    this->behaviourFile << "#include\"TFEL/Math/Stensor/StensorFromTinyVectorView.hxx\"\n";
     this->behaviourFile << "#include\"TFEL/Math/ST2toST2/ST2toST2FTMV.hxx\"\n\n";
     this->behaviourFile << "#include\"TFEL/Math/ST2toST2/ST2toST2FTMV2.hxx\"\n\n";
   } // end of MFrontImplicitParserBase::writeBehaviourParserSpecificIncludes(void)
@@ -897,38 +891,38 @@ namespace mfront{
 				  << "}\n\n";
 	    } else {
 	      // Le résultat est un tenseur, une ligne dans la matrice jacobienne
-	      this->behaviourFile << "typename tfel::math::SFTMRV2<N," << n3 << "," << n3 << "," << n << "," << n2 << ",real>::type\n"
+	      this->behaviourFile << "typename tfel::math::StensorFromTinyMatrixRowView2<N," << n3 << "," << n3 << "," << n << "," << n2 << ",real>::type\n"
 				  << "df" << p->name << "_dd" << p2->name 
 				  << "(tfel::math::tmatrix<" << n3 << "," << n3 << ">& tjacobian,\n"
 				  << "const unsigned short idx){\n"
 				  << "using namespace tfel::math;\n"
-				  << "return typename SFTMRV2<N,"
+				  << "return typename StensorFromTinyMatrixRowView2<N,"
 				  << n3 << "," << n3 << "," << n << "," << n2 << ",real>::type(tjacobian,idx,0);\n"
 				  << "}\n\n";
-	      this->behaviourFile << "typename tfel::math::SFTMRV2<N," << n3 << "," << n3 << "," << n << "," << n2 << ",real>::type\n"
+	      this->behaviourFile << "typename tfel::math::StensorFromTinyMatrixRowView2<N," << n3 << "," << n3 << "," << n << "," << n2 << ",real>::type\n"
 				  << "df" << p->name << "_dd" << p2->name 
 				  << "(const unsigned short idx){\n"
 				  << "using namespace tfel::math;\n"
-				  << "return typename SFTMRV2<N,"
+				  << "return typename StensorFromTinyMatrixRowView2<N,"
 				  << n3 << "," << n3 << "," << n << "," << n2 << ",real>::type(this->jacobian,idx,0);\n"
 				  << "}\n\n";
 	    }
 	  } else {
 	    if(flag2==SupportedTypes::Scalar){
 	      // Le résultat est un tenseur, une colonne dans la matrice jacobienne
-	      this->behaviourFile << "typename tfel::math::SFTMCV2<N," << n3 << "," << n3 << "," << n << "," << n2 << ",real>::type\n"
+	      this->behaviourFile << "typename tfel::math::StensorFromTinyMatrixColumnView2<N," << n3 << "," << n3 << "," << n << "," << n2 << ",real>::type\n"
 				  << "df" << p->name << "_dd" << p2->name 
 				  << "(tfel::math::tmatrix<" << n3 << "," << n3 << ">& tjacobian,\n"
 				  << "const unsigned short idx){\n"
 				  << "using namespace tfel::math;\n"
-				  << "return typename SFTMCV2<N,"
+				  << "return typename StensorFromTinyMatrixColumnView2<N,"
 				  << n3 << "," << n3 << "," << n << "," << n2 << ",real>::type(tjacobian,idx,0);\n"
 				  << "}\n\n";
-	      this->behaviourFile << "typename tfel::math::SFTMCV2<N," << n3 << "," << n3 << "," << n << "," << n2 << ",real>::type\n"
+	      this->behaviourFile << "typename tfel::math::StensorFromTinyMatrixColumnView2<N," << n3 << "," << n3 << "," << n << "," << n2 << ",real>::type\n"
 				  << "df" << p->name << "_dd" << p2->name 
 				  << "(const unsigned short idx){\n"
 				  << "using namespace tfel::math;\n"
-				  << "return typename SFTMCV2<N,"
+				  << "return typename StensorFromTinyMatrixColumnView2<N,"
 				  << n3 << "," << n3 << "," << n << "," << n2 << ",real>::type(this->jacobian,idx,0);\n"
 				  << "}\n\n";
 	    } else {
@@ -966,38 +960,38 @@ namespace mfront{
 				  << "}\n\n";
 	    } else {
 	      // Le résultat est un tenseur, une ligne dans la matrice jacobienne
-	      this->behaviourFile << "typename tfel::math::SFTMRV2<N," << n3 << "," << n3 << "," << n << "," << n2 << ",real>::type\n"
+	      this->behaviourFile << "typename tfel::math::StensorFromTinyMatrixRowView2<N," << n3 << "," << n3 << "," << n << "," << n2 << ",real>::type\n"
 				  << "df" << p->name << "_dd" << p2->name 
 				  << "(tfel::math::tmatrix<" << n3 << "," << n3 << ">& tjacobian,\n"
 				  << "const unsigned short idx){\n"
 				  << "using namespace tfel::math;\n"
-				  << "return typename SFTMRV2<N,"
+				  << "return typename StensorFromTinyMatrixRowView2<N,"
 				  << n3 << "," << n3 << "," << n << "," << n2 << ",real>::type(tjacobian,0,idx);\n"
 				  << "}\n\n";
-	      this->behaviourFile << "typename tfel::math::SFTMRV2<N," << n3 << "," << n3 << "," << n << "," << n2 << ",real>::type\n"
+	      this->behaviourFile << "typename tfel::math::StensorFromTinyMatrixRowView2<N," << n3 << "," << n3 << "," << n << "," << n2 << ",real>::type\n"
 				  << "df" << p->name << "_dd" << p2->name 
 				  << "(const unsigned short idx){\n"
 				  << "using namespace tfel::math;\n"
-				  << "return typename SFTMRV2<N,"
+				  << "return typename StensorFromTinyMatrixRowView2<N,"
 				  << n3 << "," << n3 << "," << n << "," << n2 << ",real>::type(this->jacobian,0,idx);\n"
 				  << "}\n\n";
 	    }
 	  } else {
 	    if(flag2==SupportedTypes::Scalar){
 	      // Le résultat est un tenseur, une colonne dans la matrice jacobienne
-	      this->behaviourFile << "typename tfel::math::SFTMCV2<N," << n3 << "," << n3 << "," << n << "," << n2 << ",real>::type\n"
+	      this->behaviourFile << "typename tfel::math::StensorFromTinyMatrixColumnView2<N," << n3 << "," << n3 << "," << n << "," << n2 << ",real>::type\n"
 				  << "df" << p->name << "_dd" << p2->name 
 				  << "(tfel::math::tmatrix<" << n3 << "," << n3 << ">& tjacobian,\n"
 				  << "const unsigned short idx){\n"
 				  << "using namespace tfel::math;\n"
-				  << "return typename SFTMCV2<N,"
+				  << "return typename StensorFromTinyMatrixColumnView2<N,"
 				  << n3 << "," << n3 << "," << n << "," << n2 << ",real>::type(tjacobian,0,idx);\n"
 				  << "}\n\n";
-	      this->behaviourFile << "typename tfel::math::SFTMCV2<N," << n3 << "," << n3 << "," << n << "," << n2 << ",real>::type\n"
+	      this->behaviourFile << "typename tfel::math::StensorFromTinyMatrixColumnView2<N," << n3 << "," << n3 << "," << n << "," << n2 << ",real>::type\n"
 				  << "df" << p->name << "_dd" << p2->name 
 				  << "(const unsigned short idx){\n"
 				  << "using namespace tfel::math;\n"
-				  << "return typename SFTMCV2<N,"
+				  << "return typename StensorFromTinyMatrixColumnView2<N,"
 				  << n3 << "," << n3 << "," << n << "," << n2 << ",real>::type(this->jacobian,0,idx);\n"
 				  << "}\n\n";
 	    } else {
@@ -1036,42 +1030,42 @@ namespace mfront{
 				  << "}\n\n";
 	    } else {
 	      // Le résultat est un tenseur, une ligne dans la matrice jacobienne
-	      this->behaviourFile << "typename tfel::math::SFTMRV2<N," << n3 << "," << n3 << "," << n << "," << n2 << ",real>::type\n"
+	      this->behaviourFile << "typename tfel::math::StensorFromTinyMatrixRowView2<N," << n3 << "," << n3 << "," << n << "," << n2 << ",real>::type\n"
 				  << "df" << p->name << "_dd" << p2->name 
 				  << "(tfel::math::tmatrix<" << n3 << "," << n3 << ">& tjacobian,\n"
 				  << "const unsigned short idx,"
 				  << " const unsigned short idx2){\n"
 				  << "using namespace tfel::math;\n"
-				  << "return typename SFTMRV2<N,"
+				  << "return typename StensorFromTinyMatrixRowView2<N,"
 				  << n3 << "," << n3 << "," << n << "," << n2 << ",real>::type(tjacobian,idx,idx2);\n"
 				  << "}\n\n";
-	      this->behaviourFile << "typename tfel::math::SFTMRV2<N," << n3 << "," << n3 << "," << n << "," << n2 << ",real>::type\n"
+	      this->behaviourFile << "typename tfel::math::StensorFromTinyMatrixRowView2<N," << n3 << "," << n3 << "," << n << "," << n2 << ",real>::type\n"
 				  << "df" << p->name << "_dd" << p2->name 
 				  << "(const unsigned short idx,"
 				  << " const unsigned short idx2){\n"
 				  << "using namespace tfel::math;\n"
-				  << "return typename SFTMRV2<N,"
+				  << "return typename StensorFromTinyMatrixRowView2<N,"
 				  << n3 << "," << n3 << "," << n << "," << n2 << ",real>::type(this->jacobian,idx,idx2);\n"
 				  << "}\n\n";
 	    }
 	  } else {
 	    if(flag2==SupportedTypes::Scalar){
 	      // Le résultat est un tenseur, une colonne dans la matrice jacobienne
-	      this->behaviourFile << "typename tfel::math::SFTMCV2<N," << n3 << "," << n3 << "," << n << "," << n2 << ",real>::type\n"
+	      this->behaviourFile << "typename tfel::math::StensorFromTinyMatrixColumnView2<N," << n3 << "," << n3 << "," << n << "," << n2 << ",real>::type\n"
 				  << "df" << p->name << "_dd" << p2->name 
 				  << "(tfel::math::tmatrix<" << n3 << "," << n3 << ">& tjacobian,\n"
 				  << "const unsigned short idx,"
 				  << " const unsigned short idx2){\n"
 				  << "using namespace tfel::math;\n"
-				  << "return typename SFTMCV2<N,"
+				  << "return typename StensorFromTinyMatrixColumnView2<N,"
 				  << n3 << "," << n3 << "," << n << "," << n2 << ",real>::type(tjacobian,idx,idx2);\n"
 				  << "}\n\n";
-	      this->behaviourFile << "typename tfel::math::SFTMCV2<N," << n3 << "," << n3 << "," << n << "," << n2 << ",real>::type\n"
+	      this->behaviourFile << "typename tfel::math::StensorFromTinyMatrixColumnView2<N," << n3 << "," << n3 << "," << n << "," << n2 << ",real>::type\n"
 				  << "df" << p->name << "_dd" << p2->name 
 				  << "(const unsigned short idx,"
 				  << " const unsigned short idx2){\n"
 				  << "using namespace tfel::math;\n"
-				  << "return typename SFTMCV2<N,"
+				  << "return typename StensorFromTinyMatrixColumnView2<N,"
 				  << n3 << "," << n3 << "," << n << "," << n2 << ",real>::type(this->jacobian,idx,idx2);\n"
 				  << "}\n\n";
 	    } else {
@@ -1239,7 +1233,7 @@ namespace mfront{
 	  << n  << "," << n3
 	  << ",real>::type "+p+"df" << v1.name << "_dd" << v2.name << "("+j+");\n";
       } else if(this->getTypeFlag(v2.type)==SupportedTypes::Scalar){
-	d << "typename tfel::math::SFTMCV<N," 
+	d << "typename tfel::math::StensorFromTinyMatrixColumnView<N," 
 	  << n2 << "," << n2 << ",\n"
 	  << n  << "," << n3
 	  << ",real>::type "+p+"df" << v1.name << "_dd" << v2.name << "("+j+");\n";
@@ -1251,7 +1245,7 @@ namespace mfront{
       }
     } else if(this->getTypeFlag(v1.type)==SupportedTypes::Scalar){
       if(this->getTypeFlag(v2.type)==SupportedTypes::Stensor){
-	d << "typename tfel::math::SFTMRV<N,"
+	d << "typename tfel::math::StensorFromTinyMatrixRowView<N,"
 	  << n2 << "," << n2 << ",\n"
 	  << n  << "," << n3
 	  << ",real>::type "+p+"df" << v1.name 
@@ -1471,7 +1465,7 @@ namespace mfront{
     const SupportedTypes::TypeFlag f = this->getTypeFlag(v.type);
     if(f==SupportedTypes::Stensor){
       if(v.arraySize==1u){
-	return "SFTV";
+	return "StensorFromTinyVectorView";
       } else {
 	return "TSFTV";
       }

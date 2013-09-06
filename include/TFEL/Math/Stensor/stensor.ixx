@@ -28,7 +28,6 @@ namespace tfel{
 
   namespace math {
 
-
 #ifndef DOXYGENSPECIFIC
 
     namespace internals{
@@ -146,8 +145,82 @@ namespace tfel{
       
     }
 
+    template<typename Child>
+    template<typename StensorType>
+    typename tfel::meta::EnableIf<
+      tfel::meta::Implements<StensorType,StensorConcept>::cond &&
+      StensorTraits<Child>::dime==StensorTraits<StensorType>::dime &&
+      tfel::typetraits::IsAssignableTo<typename StensorTraits<StensorType>::NumType,
+				       typename StensorTraits<Child>::NumType>::cond,
+      Child&>::type
+    stensor_base<Child>::operator=(const StensorType& src){
+      Child& child = static_cast<Child&>(*this);
+      vectorToTab<StensorDimeToSize<StensorTraits<Child>::dime>::value>::exe(src,child);
+      return child;
+    }
+
+    template<typename Child>
+    template<typename StensorType>
+    typename tfel::meta::EnableIf<
+      tfel::meta::Implements<StensorType,StensorConcept>::cond &&
+      StensorTraits<Child>::dime==StensorTraits<StensorType>::dime &&
+      tfel::typetraits::IsAssignableTo<typename StensorTraits<StensorType>::NumType,
+				       typename StensorTraits<Child>::NumType>::cond,
+      Child&>::type
+    stensor_base<Child>::operator+=(const StensorType& src){
+      Child& child = static_cast<Child&>(*this);
+      VectorUtilities<StensorDimeToSize<StensorTraits<Child>::dime>::value>::PlusEqual(child,src);
+      return child;
+    }
+
+    template<typename Child>
+    template<typename StensorType>
+    typename tfel::meta::EnableIf<
+      tfel::meta::Implements<StensorType,StensorConcept>::cond &&
+      StensorTraits<Child>::dime==StensorTraits<StensorType>::dime &&
+      tfel::typetraits::IsAssignableTo<typename StensorTraits<StensorType>::NumType,
+				       typename StensorTraits<Child>::NumType>::cond,
+      Child&>::type
+    stensor_base<Child>::operator-=(const StensorType& src){
+      Child& child = static_cast<Child&>(*this);
+      VectorUtilities<StensorDimeToSize<StensorTraits<Child>::dime>::value>::MinusEqual(child,src);
+      return child;
+    }
+
+    // *= operator
+    template<typename Child>
+    template<typename T2>
+    typename tfel::meta::EnableIf<
+      tfel::typetraits::IsScalar<T2>::cond&&
+      tfel::meta::IsSameType<typename ResultType<typename StensorTraits<Child>::NumType,
+						 T2,OpMult>::type,
+			     typename StensorTraits<Child>::NumType>::cond,
+      Child&>::type
+    stensor_base<Child>::operator*=(const T2 s)
+    {
+      Child& child = static_cast<Child&>(*this);
+      VectorUtilities<StensorDimeToSize<StensorTraits<Child>::dime>::value>::scale(child,s);
+      return child;
+    }
+
+    // /= operator
+    template<typename Child>
+    template<typename T2>
+    typename tfel::meta::EnableIf<
+      tfel::typetraits::IsScalar<T2>::cond&&
+      tfel::meta::IsSameType<typename ResultType<typename StensorTraits<Child>::NumType,
+						 T2,OpDiv>::type,
+			     typename StensorTraits<Child>::NumType>::cond,
+      Child&>::type
+    stensor_base<Child>::operator/=(const T2 s)
+    {
+      Child& child = static_cast<Child&>(*this);
+      VectorUtilities<StensorDimeToSize<StensorTraits<Child>::dime>::value>::scale(child,(static_cast<typename tfel::typetraits::BaseType<T2>::type>(1u))/s);
+      return child;
+    }
+
     template<unsigned short N, typename T, template<unsigned short,typename> class Storage>
-    TFEL_MATH_INLINE stensor<N,T,Storage>::stensor(const T init)
+    stensor<N,T,Storage>::stensor(const T init)
     {
       tfel::fsalgo::fill<StensorDimeToSize<N>::value>::exe(this->v,init);
     }
@@ -188,107 +261,6 @@ namespace tfel{
     stensor<N,T,Storage>::operator[](const unsigned short i) const{
       assert(i<StensorDimeToSize<N>::value);
       return this->v[i];
-    }
-
-    template<unsigned short N,typename T, template<unsigned short,typename> class Storage>
-    template<typename T2,template<unsigned short,typename> class Storage2,typename Expr>
-    TFEL_MATH_INLINE typename tfel::meta::EnableIf<
-      tfel::typetraits::IsAssignableTo<T2,T>::cond,
-      stensor<N,T,Storage>&
-    >::type 
-    stensor<N,T,Storage>::operator=(const StensorExpr<stensor<N,T2,Storage2>, Expr>& src){
-      vectorToTab<StensorDimeToSize<N>::value>::exe(src,this->v);
-      return *this;
-    }
-
-    template<unsigned short N,typename T, template<unsigned short,typename> class Storage>
-    template<template<unsigned short,typename> class Storage2>
-    stensor<N,T,Storage>&
-    stensor<N,T,Storage>::operator=(const stensor<N,T,Storage2>& src){
-      tfel::fsalgo::copy<StensorDimeToSize<N>::value>::exe(src.v,this->v);
-      return *this;
-    }
-
-    // Assignement operator
-    template<unsigned short N,typename T, template<unsigned short,typename> class Storage>
-    template<typename T2,template<unsigned short,typename> class Storage2>
-    TFEL_MATH_INLINE typename tfel::meta::EnableIf<
-      tfel::typetraits::IsAssignableTo<T2,T>::cond,
-      stensor<N,T,Storage>&
-    >::type 
-    stensor<N,T,Storage>::operator+=(const stensor<N,T2,Storage2>& src)
-    {
-      VectorUtilities<StensorDimeToSize<N>::value>::PlusEqual(*this,src);
-      return *this;
-    }
-
-    // Assignement operator
-    template<unsigned short N,typename T, template<unsigned short,typename> class Storage>
-    template<typename T2,template<unsigned short,typename> class Storage2,typename Expr>
-    TFEL_MATH_INLINE typename tfel::meta::EnableIf<
-      tfel::typetraits::IsAssignableTo<T2,T>::cond,
-      stensor<N,T,Storage>&
-    >::type
-    stensor<N,T,Storage>::operator+=(const StensorExpr<stensor<N,T2,Storage2>,Expr>& src)
-    {
-      VectorUtilities<StensorDimeToSize<N>::value>::PlusEqual(*this,src);
-      return *this;
-    }
-
-    // Assignement operator
-    template<unsigned short N,typename T, template<unsigned short,typename> class Storage>
-    template<typename T2,template<unsigned short,typename> class Storage2>
-    TFEL_MATH_INLINE typename tfel::meta::EnableIf<
-      tfel::typetraits::IsAssignableTo<T2,T>::cond,
-      stensor<N,T,Storage>&
-    >::type
-    stensor<N,T,Storage>::operator-=(const stensor<N,T2,Storage2>& src)
-    {
-      VectorUtilities<StensorDimeToSize<N>::value>::MinusEqual(*this,src);
-      return *this;
-    }
-
-    // Assignement operator
-    template<unsigned short N,typename T, template<unsigned short,typename> class Storage>
-    template<typename T2,template<unsigned short,typename> class Storage2,typename Expr>
-    TFEL_MATH_INLINE typename tfel::meta::EnableIf<
-      tfel::typetraits::IsAssignableTo<T2,T>::cond,
-      stensor<N,T,Storage>&
-    >::type
-    stensor<N,T,Storage>::operator-=(const StensorExpr<stensor<N,T2,Storage2>,Expr>& src)
-    {
-      VectorUtilities<StensorDimeToSize<N>::value>::MinusEqual(*this,src);
-      return *this;
-    }
-
-    // *= operator
-    template<unsigned short N,typename T, template<unsigned short,typename> class Storage>
-    template<typename T2>
-    TFEL_MATH_INLINE 
-    typename tfel::meta::EnableIf<
-      tfel::typetraits::IsScalar<T2>::cond&&
-      tfel::meta::IsSameType<typename ResultType<T,T2,OpMult>::type,T>::cond,
-      stensor<N,T,Storage>&
-    >::type
-    stensor<N,T,Storage>::operator*=(const T2 s)
-    {
-      VectorUtilities<StensorDimeToSize<N>::value>::scale(*this,s);
-      return *this;
-    }
-
-    // /= operator
-    template<unsigned short N,typename T, template<unsigned short,typename> class Storage>
-    template<typename T2>
-    TFEL_MATH_INLINE 
-    typename tfel::meta::EnableIf<
-      tfel::typetraits::IsScalar<T2>::cond&&
-      tfel::meta::IsSameType<typename ResultType<T,T2,OpMult>::type,T>::cond,
-      stensor<N,T,Storage>&
-    >::type
-    stensor<N,T,Storage>::operator/=(const T2 s)
-    {
-      VectorUtilities<StensorDimeToSize<N>::value>::scale(*this,(static_cast<typename tfel::typetraits::BaseType<T2>::type>(1u))/s);
-      return *this;
     }
 
     // Import from Voigt
@@ -401,21 +373,6 @@ namespace tfel{
     stensor<N,T,Storage>::changeBasis(const tmatrix<3u,3u,typename tfel::typetraits::BaseType<T>::type>& m)
     {
       return tfel::math::internals::StensorChangeBasis<N>::exe(this->v,m);
-    }
-
-    // Assignement operator
-    template<unsigned short N,typename T,
-	     template<unsigned short,typename> class Storage>
-    template<typename T2,template<unsigned short,typename> class Storage2>
-    TFEL_MATH_INLINE 
-    typename tfel::meta::EnableIf<
-      tfel::typetraits::IsAssignableTo<T2,T>::cond,
-      stensor<N,T,Storage>&
-    >::type
-    stensor<N,T,Storage>::operator=(const stensor<N,T2,Storage2>& src)
-    {
-      vectorToTab<StensorDimeToSize<N>::value>::exe(src,this->v);
-      return *this;
     }
 
     // Return Id

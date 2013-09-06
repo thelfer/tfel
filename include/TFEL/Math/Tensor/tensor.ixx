@@ -24,6 +24,80 @@ namespace tfel{
 
 #ifndef DOXYGENSPECIFIC
 
+    template<typename Child>
+    template<typename TensorType>
+    typename tfel::meta::EnableIf<
+      tfel::meta::Implements<TensorType,TensorConcept>::cond &&
+      TensorTraits<Child>::dime==TensorTraits<TensorType>::dime &&
+      tfel::typetraits::IsAssignableTo<typename TensorTraits<TensorType>::NumType,
+				       typename TensorTraits<Child>::NumType>::cond,
+      Child&>::type
+    tensor_base<Child>::operator=(const TensorType& src){
+      Child& child = static_cast<Child&>(*this);
+      vectorToTab<TensorDimeToSize<TensorTraits<Child>::dime>::value>::exe(src,child);
+      return child;
+    }
+
+    template<typename Child>
+    template<typename TensorType>
+    typename tfel::meta::EnableIf<
+      tfel::meta::Implements<TensorType,TensorConcept>::cond &&
+      TensorTraits<Child>::dime==TensorTraits<TensorType>::dime &&
+      tfel::typetraits::IsAssignableTo<typename TensorTraits<TensorType>::NumType,
+				       typename TensorTraits<Child>::NumType>::cond,
+      Child&>::type
+    tensor_base<Child>::operator+=(const TensorType& src){
+      Child& child = static_cast<Child&>(*this);
+      VectorUtilities<TensorDimeToSize<TensorTraits<Child>::dime>::value>::PlusEqual(child,src);
+      return child;
+    }
+
+    template<typename Child>
+    template<typename TensorType>
+    typename tfel::meta::EnableIf<
+      tfel::meta::Implements<TensorType,TensorConcept>::cond &&
+      TensorTraits<Child>::dime==TensorTraits<TensorType>::dime &&
+      tfel::typetraits::IsAssignableTo<typename TensorTraits<TensorType>::NumType,
+				       typename TensorTraits<Child>::NumType>::cond,
+      Child&>::type
+    tensor_base<Child>::operator-=(const TensorType& src){
+      Child& child = static_cast<Child&>(*this);
+      VectorUtilities<TensorDimeToSize<TensorTraits<Child>::dime>::value>::MinusEqual(child,src);
+      return child;
+    }
+
+    // *= operator
+    template<typename Child>
+    template<typename T2>
+    typename tfel::meta::EnableIf<
+      tfel::typetraits::IsScalar<T2>::cond&&
+      tfel::meta::IsSameType<typename ResultType<typename TensorTraits<Child>::NumType,
+						 T2,OpMult>::type,
+			     typename TensorTraits<Child>::NumType>::cond,
+      Child&>::type
+    tensor_base<Child>::operator*=(const T2 s)
+    {
+      Child& child = static_cast<Child&>(*this);
+      VectorUtilities<TensorDimeToSize<TensorTraits<Child>::dime>::value>::scale(child,s);
+      return child;
+    }
+
+    // /= operator
+    template<typename Child>
+    template<typename T2>
+    typename tfel::meta::EnableIf<
+      tfel::typetraits::IsScalar<T2>::cond&&
+      tfel::meta::IsSameType<typename ResultType<typename TensorTraits<Child>::NumType,
+						 T2,OpDiv>::type,
+			     typename TensorTraits<Child>::NumType>::cond,
+      Child&>::type
+    tensor_base<Child>::operator/=(const T2 s)
+    {
+      Child& child = static_cast<Child&>(*this);
+      VectorUtilities<TensorDimeToSize<TensorTraits<Child>::dime>::value>::scale(child,(static_cast<typename tfel::typetraits::BaseType<T2>::type>(1u))/s);
+      return child;
+    }
+
     template<unsigned short N, typename T>
     tensor<N,T>::tensor(const T init)
     {
@@ -64,97 +138,6 @@ namespace tfel{
       return this->v[i];
     }
 
-    template<unsigned short N,typename T>
-    template<typename T2,typename Expr>
-    typename tfel::meta::EnableIf<
-      tfel::typetraits::IsAssignableTo<T2,T>::cond,
-      tensor<N,T>&
-    >::type 
-    tensor<N,T>::operator=(const TensorExpr<tensor<N,T2>, Expr>& src){
-      vectorToTab<TensorDimeToSize<N>::value>::exe(src,this->v);
-      return *this;
-    }
-
-    // Assignement operator
-    template<unsigned short N,typename T>
-    template<typename T2>
-    typename tfel::meta::EnableIf<
-      tfel::typetraits::IsAssignableTo<T2,T>::cond,
-      tensor<N,T>&
-    >::type 
-    tensor<N,T>::operator+=(const tensor<N,T2>& src)
-    {
-      VectorUtilities<TensorDimeToSize<N>::value>::PlusEqual(*this,src);
-      return *this;
-    }
-
-    // Assignement operator
-    template<unsigned short N,typename T>
-    template<typename T2,typename Expr>
-    typename tfel::meta::EnableIf<
-      tfel::typetraits::IsAssignableTo<T2,T>::cond,
-      tensor<N,T>&
-    >::type
-    tensor<N,T>::operator+=(const TensorExpr<tensor<N,T2>,Expr>& src)
-    {
-      VectorUtilities<TensorDimeToSize<N>::value>::PlusEqual(*this,src);
-      return *this;
-    }
-
-    // Assignement operator
-    template<unsigned short N,typename T>
-    template<typename T2>
-    typename tfel::meta::EnableIf<
-      tfel::typetraits::IsAssignableTo<T2,T>::cond,
-      tensor<N,T>&
-    >::type
-    tensor<N,T>::operator-=(const tensor<N,T2>& src)
-    {
-      VectorUtilities<TensorDimeToSize<N>::value>::MinusEqual(*this,src);
-      return *this;
-    }
-
-    // Assignement operator
-    template<unsigned short N,typename T>
-    template<typename T2,typename Expr>
-    typename tfel::meta::EnableIf<
-      tfel::typetraits::IsAssignableTo<T2,T>::cond,
-      tensor<N,T>&
-    >::type
-    tensor<N,T>::operator-=(const TensorExpr<tensor<N,T2>,Expr>& src)
-    {
-      VectorUtilities<TensorDimeToSize<N>::value>::MinusEqual(*this,src);
-      return *this;
-    }
-
-    // *= operator
-    template<unsigned short N,typename T>
-    template<typename T2>
-    typename tfel::meta::EnableIf<
-      tfel::typetraits::IsScalar<T2>::cond&&
-      tfel::meta::IsSameType<typename ResultType<T,T2,OpMult>::type,T>::cond,
-      tensor<N,T>&
-    >::type
-    tensor<N,T>::operator*=(const T2 s)
-    {
-      VectorUtilities<TensorDimeToSize<N>::value>::scale(*this,s);
-      return *this;
-    }
-
-    // /= operator
-    template<unsigned short N,typename T>
-    template<typename T2>
-    typename tfel::meta::EnableIf<
-      tfel::typetraits::IsScalar<T2>::cond&&
-      tfel::meta::IsSameType<typename ResultType<T,T2,OpMult>::type,T>::cond,
-      tensor<N,T>&
-    >::type
-    tensor<N,T>::operator/=(const T2 s)
-    {
-      VectorUtilities<TensorDimeToSize<N>::value>::scale(*this,(static_cast<typename tfel::typetraits::BaseType<T2>::type>(1u))/s);
-      return *this;
-    }
-
     // Import from values
     template<unsigned short N,typename T>
     template<typename T2>
@@ -185,19 +168,6 @@ namespace tfel{
     tensor<N,T>::changeBasis(const tmatrix<3u,3u,typename tfel::typetraits::BaseType<T>::type>& m)
     {
       TensorChangeBasis<N,T>::exe(this->v,m);
-    }
-
-    // Assignement operator
-    template<unsigned short N,typename T>
-    template<typename T2>
-    typename tfel::meta::EnableIf<
-      tfel::typetraits::IsAssignableTo<T2,T>::cond,
-      tensor<N,T>&
-    >::type
-    tensor<N,T>::operator=(const tensor<N,T2>& src)
-    {
-      vectorToTab<TensorDimeToSize<N>::value>::exe(src,this->v);
-      return *this;
     }
 
     // Return Id

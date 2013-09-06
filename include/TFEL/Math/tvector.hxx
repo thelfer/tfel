@@ -198,15 +198,6 @@ namespace tfel{
 
       //! using tvector_base::operator=
       using tvector_base<tvector,N,T>::operator=;
-      //! using tvector_base::operator+=
-      using tvector_base<tvector,N,T>::operator+=;
-      //! using tvector_base::operator-=
-      using tvector_base<tvector,N,T>::operator-=;
-      //! using tvector_base::operator*=
-      using tvector_base<tvector,N,T>::operator*=;
-      //! using tvector_base::operator/=
-      using tvector_base<tvector,N,T>::operator/=;
-      
       /*!
        * \brief index operator.
        * This is a vector concept requirement.

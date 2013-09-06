@@ -1,5 +1,5 @@
 /*!
- * \file   SFTMCV.cxx
+ * \file   StensorFromTinyMatrixColumnView.cxx
  * \brief  
  * 
  * \author Helfer Thomas
@@ -12,8 +12,8 @@
 
 #include<cstdlib>
 
-#include"TFEL/Math/Stensor/SFTMCV.hxx"
-#include"TFEL/Math/Stensor/SFTMRV.hxx"
+#include"TFEL/Math/Stensor/StensorFromTinyMatrixColumnView.hxx"
+#include"TFEL/Math/Stensor/StensorFromTinyMatrixRowView.hxx"
 
 int
 main(void)
@@ -21,8 +21,8 @@ main(void)
   using namespace std;
   using namespace tfel::math;
   tmatrix<3,2> m(0.);
-  SFTMCV<1,3,2,0,0>::type ms(m);
-  SFTMCV<1,3,2,0,1>::type ms2(m);
+  StensorFromTinyMatrixColumnView<1,3,2,0,0>::type ms(m);
+  StensorFromTinyMatrixColumnView<1,3,2,0,1>::type ms2(m);
   stensor<1> s(1.);
   ms(0) = 1.;
   ms(1) = 2.;

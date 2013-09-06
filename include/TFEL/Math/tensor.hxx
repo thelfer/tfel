@@ -50,9 +50,77 @@ namespace tfel{
       static const unsigned short dime = N;
     };
 
+    /*!
+     * \brief a base for tensor or classes acting like tensor.
+     * \param Child : child class
+     * \param N     : spatial dimension
+     * \param T     : numerical type
+     */
+    template<typename Child>
+    struct tensor_base
+    {
+      /*!
+       * Assignement operator
+       */
+      template<typename TensorType>
+      TFEL_MATH_INLINE 
+      typename tfel::meta::EnableIf<
+	tfel::meta::Implements<TensorType,TensorConcept>::cond &&
+	TensorTraits<Child>::dime==TensorTraits<TensorType>::dime &&
+	tfel::typetraits::IsAssignableTo<typename TensorTraits<TensorType>::NumType,
+					 typename TensorTraits<Child>::NumType>::cond,
+	Child&>::type
+      operator=(const TensorType&);
+      //! Assignement operator
+      template<typename TensorType>
+      TFEL_MATH_INLINE 
+      typename tfel::meta::EnableIf<
+	tfel::meta::Implements<TensorType,TensorConcept>::cond &&
+	TensorTraits<Child>::dime==TensorTraits<TensorType>::dime &&
+	tfel::typetraits::IsAssignableTo<typename TensorTraits<TensorType>::NumType,
+					 typename TensorTraits<Child>::NumType>::cond,
+	Child&>::type
+      operator+=(const TensorType&);
+      //! Assignement operator
+      template<typename TensorType>
+      TFEL_MATH_INLINE 
+      typename tfel::meta::EnableIf<
+	tfel::meta::Implements<TensorType,TensorConcept>::cond &&
+	TensorTraits<Child>::dime==TensorTraits<TensorType>::dime &&
+	tfel::typetraits::IsAssignableTo<typename TensorTraits<TensorType>::NumType,
+					 typename TensorTraits<Child>::NumType>::cond,
+	Child&>::type
+      operator-=(const TensorType&);
+      /*!
+       * operator*=
+       */
+      template<typename T2>
+      TFEL_MATH_INLINE 
+      typename tfel::meta::EnableIf<
+	tfel::typetraits::IsScalar<T2>::cond&&
+	tfel::meta::IsSameType<typename ResultType<typename TensorTraits<Child>::NumType,
+						   T2,OpMult>::type,
+			       typename TensorTraits<Child>::NumType>::cond,
+				 Child&>::type
+      operator*=(const T2);
+      /*!
+       * operator/=
+       */
+      template<typename T2>
+      TFEL_MATH_INLINE 
+      typename tfel::meta::EnableIf<
+	tfel::typetraits::IsScalar<T2>::cond&&
+        tfel::meta::IsSameType<typename ResultType<typename TensorTraits<Child>::NumType,
+						   T2,OpDiv>::type,
+			       typename TensorTraits<Child>::NumType>::cond,
+	Child&>::type
+      operator/=(const T2);
+    }; // end of struct tensor_base
+
     template<unsigned short N,typename T>
     struct tensor
       : public TensorConcept<tensor<N,T> >,
+	public tensor_base<tensor<N,T> >,
 	public fsarray<TensorDimeToSize<N>::value,T>
     {
       
@@ -119,92 +187,9 @@ namespace tfel{
 	tfel::typetraits::IsSafelyReinterpretCastableTo<T2,typename tfel::typetraits::BaseType<T>::type>::cond,
 	void>::type
       import(const T2* const);
-
-      /*!
-       * Assignement operator
-       */
-      TFEL_MATH_INLINE tensor<N,T>&
-      operator=(const tensor<N,T>&);
-
-      /*!
-       * Assignement operator
-       */
-      template<typename T2>
-      typename tfel::meta::EnableIf<
-	tfel::typetraits::IsAssignableTo<T2,T>::cond,
-	tensor<N,T>&>::type
-      operator=(const tensor<N,T2>&);
-
-      /*!
-       * Assignement operator
-       */
-      template<typename T2,typename Expr>
-      TFEL_MATH_INLINE
-      typename tfel::meta::EnableIf<
-	tfel::typetraits::IsAssignableTo<T2,T>::cond,
-	tensor<N,T>&
-      >::type
-      operator=(const TensorExpr<tensor<N,T2>,Expr>&);
-
-      // Assignement operator
-      template<typename T2>
-      TFEL_MATH_INLINE
-      typename tfel::meta::EnableIf<
-	tfel::typetraits::IsAssignableTo<T2,T>::cond,
-	tensor<N,T>&
-      >::type
-      operator+=(const tensor<N,T2>&);
-    
-      // Assignement operator
-      template<typename T2,typename Expr>
-      TFEL_MATH_INLINE
-      typename tfel::meta::EnableIf<
-	tfel::typetraits::IsAssignableTo<T2,T>::cond,
-	tensor<N,T>&
-      >::type
-      operator+=(const TensorExpr<tensor<N,T2>,Expr>&);
-
-      // Assignement operator
-      template<typename T2>
-      TFEL_MATH_INLINE
-      typename tfel::meta::EnableIf<
-	tfel::typetraits::IsAssignableTo<T2,T>::cond,
-	tensor<N,T>&
-      >::type
-      operator-=(const tensor<N,T2>&);
-    
-      // Assignement operator
-      template<typename T2,typename Expr>
-      TFEL_MATH_INLINE
-      typename tfel::meta::EnableIf<
-	tfel::typetraits::IsAssignableTo<T2,T>::cond,
-	tensor<N,T>&
-      >::type
-      operator-=(const TensorExpr<tensor<N,T2>,Expr>&);
-
-      /*!
-       * operator*=
-       */
-      template<typename T2>
-      TFEL_MATH_INLINE 
-      typename tfel::meta::EnableIf<
-	tfel::typetraits::IsScalar<T2>::cond&&
-      tfel::meta::IsSameType<typename ResultType<T,T2,OpMult>::type,T>::cond,
-	tensor<N,T>&
-      >::type
-      operator*=(const T2);
-
-      /*!
-       * operator/=
-       */
-      template<typename T2>
-      TFEL_MATH_INLINE 
-      typename tfel::meta::EnableIf<
-	tfel::typetraits::IsScalar<T2>::cond&&
-        tfel::meta::IsSameType<typename ResultType<T,T2,OpMult>::type,T>::cond,
-	tensor<N,T>&
-      >::type
-      operator/=(const T2);
+      
+      //! assignement operator
+      using tensor_base<tensor<N,T> >::operator=;
 
       /*!
        * change basis

@@ -173,11 +173,11 @@ nobase_include_HEADERS= TFEL/Macros.hxx                                         
 			TFEL/Math/Tensor/TensorConceptOperations.hxx						     \
 			TFEL/Math/Tensor/TensorConceptOperations.ixx						     \
 			TFEL/Math/Tensor/TVFS.hxx								     \
-			TFEL/Math/Tensor/TFTV.hxx								     \
-			TFEL/Math/Tensor/TFTMRV.hxx								     \
-			TFEL/Math/Tensor/TFTMRV2.hxx								     \
-			TFEL/Math/Tensor/TFTMCV2.hxx								     \
-			TFEL/Math/Tensor/TFTMCV.hxx								     \
+			TFEL/Math/Tensor/TensorFromTinyVectorView.hxx						     \
+			TFEL/Math/Tensor/TensorFromTinyMatrixRowView.hxx					     \
+			TFEL/Math/Tensor/TensorFromTinyMatrixRowView2.hxx					     \
+			TFEL/Math/Tensor/TensorFromTinyMatrixColumnView.hxx					     \
+			TFEL/Math/Tensor/TensorFromTinyMatrixColumnView2.hxx					     \
 			TFEL/Math/Stensor/Internals/StensorChangeBasis.hxx                                           \
 			TFEL/Math/Stensor/Internals/StensorExport.hxx                                                \
 			TFEL/Math/Stensor/Internals/StensorExport.ixx                                                \
@@ -196,11 +196,11 @@ nobase_include_HEADERS= TFEL/Macros.hxx                                         
 			TFEL/Math/Stensor/StensorExpr.hxx		                                             \
 			TFEL/Math/Stensor/StensorExternalVoigtStorage.hxx                                            \
 			TFEL/Math/Stensor/stensorResultType.hxx	                                                     \
-			TFEL/Math/Stensor/SFTMCV.hxx                                                                 \
-			TFEL/Math/Stensor/SFTMCV2.hxx                                                                \
-			TFEL/Math/Stensor/SFTMRV.hxx                                                                 \
-			TFEL/Math/Stensor/SFTMRV2.hxx                                                                \
-			TFEL/Math/Stensor/SFTV.hxx                                                                   \
+			TFEL/Math/Stensor/StensorFromTinyMatrixColumnView.hxx                                        \
+			TFEL/Math/Stensor/StensorFromTinyMatrixColumnView2.hxx                                       \
+			TFEL/Math/Stensor/StensorFromTinyMatrixRowView.hxx                                           \
+			TFEL/Math/Stensor/StensorFromTinyMatrixRowView2.hxx                                          \
+			TFEL/Math/Stensor/StensorFromTinyVectorView.hxx                                              \
 			TFEL/Math/Vector/tvectorResultType.hxx	                                                     \
 			TFEL/Math/Vector/tvector.ixx			                                             \
 			TFEL/Math/Vector/VectorConcept.hxx		                                             \

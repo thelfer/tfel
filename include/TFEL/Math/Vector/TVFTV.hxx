@@ -102,20 +102,8 @@ namespace tfel
 	return this->v[static_cast<unsigned short>(In+i)];
       } // end of operator()
 
-    private:
-      //! a simple alias
-      typedef tvector_base<VectorExpr<tvector<N,T>,TVFTVExpr<N,Mn,In,T,b> >,N,T> base;
-    public:
-      //! using tvector_base::operator=
-      using base::operator=;
-      //! using tvector_base::operator+=
-      using base::operator+=;
-      //! using tvector_base::operator-=
-      using base::operator-=;
-      //! using tvector_base::operator*=
-      using base::operator*=;
-      //! using tvector_base::operator/=
-      using base::operator/=;
+      using tvector_base<VectorExpr,N,T>::operator=;
+
     protected:
       //! underlying vector
       ref_type v;
