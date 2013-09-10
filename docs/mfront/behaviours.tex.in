@@ -2177,11 +2177,11 @@ conventions suivantes s'appliquent~:
   \item {\tt sig} représente la contrainte qu'il faut calculer~;
   \item {\tt eto} représente la déformation totale en début de
   pas~;
-  \item {\tt deto} représente la vitesse de déformation totale
+  \item {\tt deto} représente l'incrément de déformation totale
   (constante sur le pas)~;
   \item {\tt T} représente la valeur de la température en début
   de pas~;
-  \item {\tt dT} représente la vitesse de changement de
+  \item {\tt dT} représente l'incrément de changement de
   température (constante sur le pas)~;
   \item pour toute variable interne {\tt Y}, {\tt Y} représente
   sa valeur en début de pas~;
@@ -2191,7 +2191,7 @@ conventions suivantes s'appliquent~:
   \item pour toute variable externe {\tt V}, {\tt V} représente
   sa valeur en début de pas~;
   \item pour toute variable externe {\tt V}, {\tt dV} représente
-  sa vitesse de variation sur le pas de temps (constante sur le pas).
+    son incrément de variation sur le pas de temps (constante sur le pas).
 \end{itemize}
 
 \paragraph{Calcul d'une matrice de raideur} La loi de comportement
