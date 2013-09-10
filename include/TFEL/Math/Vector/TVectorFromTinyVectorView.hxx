@@ -1,21 +1,21 @@
 /*!
- * \file   TensorFromTinyVectorView.hxx
- * \brief  TensorFromTVectorView
+ * \file   TVectorFromTinyVectorView.hxx
+ * \brief  TVectorFromTVectorView
  * 
  * \author Helfer Thomas
  * \date   16 oct 2008
  */
 
-#ifndef _LIB_TFEL_MATH_TENSORFROMTINYVECTORVIEW_HXX_
-#define _LIB_TFEL_MATH_TENSORFROMTINYVECTORVIEW_HXX_ 
+#ifndef _LIB_TFEL_MATH_TVECTORFROMTINYVECTORVIEW_HXX_
+#define _LIB_TFEL_MATH_TVECTORFROMTINYVECTORVIEW_HXX_ 
 
 #include"TFEL/Metaprogramming/StaticAssert.hxx"
 
 #include"TFEL/Math/General/EmptyRunTimeProperties.hxx"
 #include"TFEL/Math/Vector/VectorUtilities.hxx"
-#include"TFEL/Math/Tensor/TensorConcept.hxx"
-#include"TFEL/Math/Tensor/TensorExpr.hxx"
-#include"TFEL/Math/tensor.hxx"
+#include"TFEL/Math/Vector/VectorConcept.hxx"
+#include"TFEL/Math/Vector/VectorExpr.hxx"
+#include"TFEL/Math/tvector.hxx"
 #include"TFEL/Math/tmatrix.hxx"
 
 namespace tfel
@@ -25,21 +25,7 @@ namespace tfel
   {
 
     /*!
-     *  Tensor From Tiny Vector
-     * \param N  : space dimension
-     * \param Mn : underlying tiny vector size
-     * \param In : starting index in the underlying tiny vector
-     * \param T  : value type
-     */
-    template<unsigned short N,
-	     unsigned short Mn,
-	     unsigned short In,
-	     typename T>
-    struct TensorFromTinyVectorViewExpr
-    {}; // end of struct TensorFromTinyMatrixColumnViewExpr
-
-    /*!
-     *  Tensor From Tiny Vector expression
+     *  TVector From Tiny Vector
      * \param N  : space dimension
      * \param Mn : underlying tiny vector size
      * \param In : starting index in the underlying tiny vector
@@ -47,18 +33,30 @@ namespace tfel
      */
     template<unsigned short N, unsigned short Mn,
 	     unsigned short In,typename T>
-    struct TensorExpr<tensor<N,T>,TensorFromTinyVectorViewExpr<N,Mn,In,T> >
-      : public TensorConcept<TensorExpr<tensor<N,T>,TensorFromTinyVectorViewExpr<N,Mn,In,T> > >,
-	public tensor_base<TensorExpr<tensor<N,T>,TensorFromTinyVectorViewExpr<N,Mn,In,T> > >
+    struct TVectorFromTinyVectorViewExpr
+    {}; // end of struct TVectorFromTinyMatrixColumnViewExpr
+
+    /*!
+     *  TVector From Tiny Vector expression
+     * \param N  : space dimension
+     * \param Mn : underlying tiny vector size
+     * \param In : starting index in the underlying tiny vector
+     * \param T  : value type
+     */
+    template<unsigned short N, unsigned short Mn,
+	     unsigned short In,typename T>
+    struct TvectorExpr<tvector<N,T>,TVectorFromTinyVectorViewExpr<N,Mn,In,T> >
+      : public TvectorConcept<TvectorExpr<tvector<N,T>,TVectorFromTinyVectorViewExpr<N,Mn,In,T> > >,
+	public tvector_base<TvectorExpr<tvector<N,T>,TVectorFromTinyVectorViewExpr<N,Mn,In,T> >,N,T>
     {
       typedef EmptyRunTimeProperties RunTimeProperties;
-      typedef typename tensor<N,T>::value_type      value_type;      
-      typedef typename tensor<N,T>::pointer	   pointer;	    
-      typedef typename tensor<N,T>::const_pointer   const_pointer; 
-      typedef typename tensor<N,T>::reference	   reference;	    
-      typedef typename tensor<N,T>::const_reference const_reference;
-      typedef typename tensor<N,T>::size_type 	   size_type;	    
-      typedef typename tensor<N,T>::difference_type difference_type;
+      typedef typename tvector<N,T>::value_type      value_type;      
+      typedef typename tvector<N,T>::pointer	   pointer;	    
+      typedef typename tvector<N,T>::const_pointer   const_pointer; 
+      typedef typename tvector<N,T>::reference	   reference;	    
+      typedef typename tvector<N,T>::const_reference const_reference;
+      typedef typename tvector<N,T>::size_type 	   size_type;	    
+      typedef typename tvector<N,T>::difference_type difference_type;
 
       typedef tvector<Mn,T>           first_arg;
       typedef tfel::meta::InvalidType second_arg;
@@ -69,9 +67,9 @@ namespace tfel
 	return RunTimeProperties();
       }
 
-      TensorExpr(tvector<Mn,T>& v_)
+      TvectorExpr(tvector<Mn,T>& v_)
 	: v(v_)
-      {} // end of TensorExpr
+      {} // end of TvectorExpr
 
       const T&
       operator()(const unsigned short i) const
@@ -97,8 +95,8 @@ namespace tfel
 	return this->v(In+i);
       } // end of operator[]
 
-      //! using tensor_base::operator=
-      using tensor_base<TensorExpr>::operator=;
+      //! using tvector_base::operator=
+      using tvector_base<TVectorExpr,N,T>::operator=;
 
     protected:
 
@@ -111,22 +109,22 @@ namespace tfel
        */
       TFEL_STATIC_ASSERT((N==1u)||(N==2u)||(N==3u));
       TFEL_STATIC_ASSERT((In<Mn));
-      TFEL_STATIC_ASSERT((TensorDimeToSize<N>::value<=Mn-In));
+      TFEL_STATIC_ASSERT((N<=Mn-In));
 
-    }; // end of struct TensorExpr
+    }; // end of struct TVectorExpr
 
     template<unsigned short N,
 	     unsigned short Mn,
 	     unsigned short In,
 	     typename T = double>
-    struct TensorFromTinyVectorView
+    struct TVectorFromTinyVectorView
     {
-      typedef TensorExpr<tensor<N,T>,TensorFromTinyVectorViewExpr<N,Mn,In,T> > type;
-    }; // end of struct TensorFromTinyVectorView
+      typedef TvectorExpr<tvector<N,T>,TVectorFromTinyVectorViewExpr<N,Mn,In,T> > type;
+    }; // end of struct TVectorFromTinyVectorView
     
   } // end of namespace math
 
 } // end of namespace tfel
 
-#endif /* _LIB_TFEL_MATH_TENSORFROMTINYVECTORVIEW_HXX */
+#endif /* _LIB_TFEL_MATH_TVECTORFROMTINYVECTORVIEW_HXX */
 

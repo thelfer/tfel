@@ -652,6 +652,11 @@ include/TFEL/Math/TinyNewtonRaphson.hxx -text
 include/TFEL/Math/Vector/Range.hxx -text
 include/TFEL/Math/Vector/TSFTV.hxx -text
 include/TFEL/Math/Vector/TVFTV.hxx -text
+include/TFEL/Math/Vector/TVectorFromTinyMatrixColumnView.hxx -text
+include/TFEL/Math/Vector/TVectorFromTinyMatrixColumnView2.hxx -text
+include/TFEL/Math/Vector/TVectorFromTinyMatrixRowView.hxx -text
+include/TFEL/Math/Vector/TVectorFromTinyMatrixRowView2.hxx -text
+include/TFEL/Math/Vector/TVectorFromTinyVectorView.hxx -text
 include/TFEL/Math/Vector/VectorConcept.hxx -text
 include/TFEL/Math/Vector/VectorConcept.ixx -text
 include/TFEL/Math/Vector/VectorConceptOperations.hxx -text

@@ -215,6 +215,11 @@ nobase_include_HEADERS= TFEL/Macros.hxx                                         
 			TFEL/Math/Vector/VectorVectorDotProduct.hxx                                                  \
 			TFEL/Math/Vector/TVFTV.hxx                                                                   \
 			TFEL/Math/Vector/TSFTV.hxx                                                                   \
+			TFEL/Math/Vector/TVectorFromTinyVectorView.hxx						     \
+			TFEL/Math/Vector/TVectorFromTinyMatrixRowView.hxx					     \
+			TFEL/Math/Vector/TVectorFromTinyMatrixRowView2.hxx					     \
+			TFEL/Math/Vector/TVectorFromTinyMatrixColumnView.hxx					     \
+			TFEL/Math/Vector/TVectorFromTinyMatrixColumnView2.hxx					     \
 			TFEL/Math/matrix.hxx                 	                                                     \
 			TFEL/Math/Matrix/TinyMatrixInvert.ixx	                                                     \
 			TFEL/Math/Matrix/tmatrixResultType.hxx	                                                     \

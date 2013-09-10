@@ -159,7 +159,7 @@ namespace tfel{
     };    
 
     template<unsigned short N, typename T = double>
-    struct tvector
+    struct TFEL_VISIBILITY_LOCAL tvector
       : public VectorConcept<tvector<N,T> >,
 	public tvector_base<tvector<N,T>,N,T>,
 	public fsarray<N,T>
