@@ -1,5 +1,5 @@
 /*!
- * \file   ST2toST2FTMV2.cxx
+ * \file   ST2toST2FromTinyMatrixView2.cxx
  * \brief  
  * 
  * \author Helfer Thomas
@@ -20,16 +20,16 @@
 #include"TFEL/Tests/TestProxy.hxx"
 #include"TFEL/Tests/TestManager.hxx"
 
-#include"TFEL/Math/ST2toST2/ST2toST2FTMV2.hxx"
+#include"TFEL/Math/ST2toST2/ST2toST2FromTinyMatrixView2.hxx"
 
-struct ST2toST2FTMV2Test
+struct ST2toST2FromTinyMatrixView2Test
   : public tfel::tests::TestCase
 {
   
-  ST2toST2FTMV2Test()
+  ST2toST2FromTinyMatrixView2Test()
     : tfel::tests::TestCase("TFEL/Math",
-			    "ST2toST2FTMV2")
-  {} // end of ST2toST2FTMV2
+			    "ST2toST2FromTinyMatrixView2")
+  {} // end of ST2toST2FromTinyMatrixView2
   
   tfel::tests::TestResult
   execute()
@@ -40,10 +40,10 @@ struct ST2toST2FTMV2Test
     const double C_1_3 = double(1)/double(3); 
 
     tmatrix<6,6> m(0.);
-    ST2toST2FTMV2<1,6,6,0,0>::type ms1(m,0,0);
-    ST2toST2FTMV2<1,6,6,0,0>::type ms2(m,0,1);
-    ST2toST2FTMV2<1,6,6,0,0>::type ms3(m,1,0);
-    ST2toST2FTMV2<1,6,6,0,0>::type ms4(m,1,1);
+    ST2toST2FromTinyMatrixView2<1,6,6,0,0>::type ms1(m,0,0);
+    ST2toST2FromTinyMatrixView2<1,6,6,0,0>::type ms2(m,0,1);
+    ST2toST2FromTinyMatrixView2<1,6,6,0,0>::type ms3(m,1,0);
+    ST2toST2FromTinyMatrixView2<1,6,6,0,0>::type ms4(m,1,1);
 
     stensor<1> n(2.);
 
@@ -97,10 +97,10 @@ struct ST2toST2FTMV2Test
 
   } // end of execute
 
-}; // end of ST2toST2FTMV2Test
+}; // end of ST2toST2FromTinyMatrixView2Test
 
-TFEL_TESTS_GENERATE_PROXY(ST2toST2FTMV2Test,
-			  "ST2toST2FTMV2Test");
+TFEL_TESTS_GENERATE_PROXY(ST2toST2FromTinyMatrixView2Test,
+			  "ST2toST2FromTinyMatrixView2Test");
 
 int main(void)
 {
@@ -109,7 +109,7 @@ int main(void)
   using namespace tfel::utilities;
   TestManager& manager = TestManager::getTestManager();
   manager.addTestOutput(cout);
-  manager.addXMLTestOutput("ST2toST2FTMV2.xml");
+  manager.addXMLTestOutput("ST2toST2FromTinyMatrixView2.xml");
   TestResult r = manager.execute();
   if(!r.success()){
     return EXIT_FAILURE;

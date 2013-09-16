@@ -1,13 +1,13 @@
 /*!
- * \file   ST2toST2FTMV.hxx
+ * \file   ST2toST2FromTinyMatrixView2.hxx
  * \brief  ST2toST2FromTMatrixView
  * 
  * \author Helfer Thomas
  * \date   16 oct 2008
  */
 
-#ifndef _LIB_TFEL_MATH_ST2toST2FTMV_HXX_
-#define _LIB_TFEL_MATH_ST2toST2FTMV_HXX_ 
+#ifndef _LIB_TFEL_MATH_ST2toST2FromTinyMatrixView2_HXX_
+#define _LIB_TFEL_MATH_ST2toST2FromTinyMatrixView2_HXX_ 
 
 #include"TFEL/Metaprogramming/StaticAssert.hxx"
 
@@ -33,8 +33,8 @@ namespace tfel
 	     unsigned short In,
 	     unsigned short Im,
 	     typename T>
-    struct ST2toST2FTMVExpr
-    {}; // end of struct ST2toST2FTMVExpr
+    struct ST2toST2FromTinyMatrixView2Expr
+    {}; // end of struct ST2toST2FromTinyMatrixView2Expr
 
     template<unsigned short N,
 	     unsigned short Mn,
@@ -43,9 +43,9 @@ namespace tfel
 	     unsigned short Im,
 	     typename T>
     struct ST2toST2Expr<st2tost2<N,T>,
-			ST2toST2FTMVExpr<N,Mn,Mm,In,Im,T> >
+			ST2toST2FromTinyMatrixView2Expr<N,Mn,Mm,In,Im,T> >
 	: public ST2toST2Concept<ST2toST2Expr<st2tost2<N,T>,
-					      ST2toST2FTMVExpr<N,Mn,Mm,In,Im,T> > >
+					      ST2toST2FromTinyMatrixView2Expr<N,Mn,Mm,In,Im,T> > >
     {
 
       typedef EmptyRunTimeProperties RunTimeProperties;
@@ -56,8 +56,12 @@ namespace tfel
 	return RunTimeProperties();
       }
 
-      ST2toST2Expr(tmatrix<Mn,Mm,T>& m_)
-	: m(m_)
+      ST2toST2Expr(tmatrix<Mn,Mm,T>& m_,
+		   const unsigned short i_,
+		   const unsigned short j_)
+	: m(m_),
+	  oi(i_),
+	  oj(j_)
       {} // end of ST2toST2Expr
 
       const T&
@@ -66,7 +70,8 @@ namespace tfel
       {
 	assert(i<StensorDimeToSize<N>::value);
 	assert(j<StensorDimeToSize<N>::value);
-	return this->m(In+i,Im+j);
+	return this->m(In+this->oi*StensorDimeToSize<N>::value+i,
+		       Im+this->oj*StensorDimeToSize<N>::value+j);
       } // end of operator() const
 
       T&
@@ -75,7 +80,8 @@ namespace tfel
       {
 	assert(i<StensorDimeToSize<N>::value);
 	assert(j<StensorDimeToSize<N>::value);
-	return this->m(In+i,Im+j);
+	return this->m(In+this->oi*StensorDimeToSize<N>::value+i,
+		       Im+this->oj*StensorDimeToSize<N>::value+j);
       } // end of operator()
 
       /*!
@@ -195,7 +201,9 @@ namespace tfel
     protected:
 
       tmatrix<Mn,Mm,T>& m;
-      
+      unsigned short oi;
+      unsigned short oj;
+
     private:
       
       /*!
@@ -207,17 +215,16 @@ namespace tfel
       
     }; // end of struct ST2toST2Expr
     
-    
     template<unsigned short N,
 	     unsigned short Mn,
 	     unsigned short Mm,
 	     unsigned short In,
 	     unsigned short Im,
 	     typename T = double>
-    struct ST2toST2FTMV
+    struct ST2toST2FromTinyMatrixView2
     {
-      typedef ST2toST2Expr<st2tost2<N,T>,ST2toST2FTMVExpr<N,Mn,Mm,In,Im,T> > type;
-    }; // end of struct ST2toST2FTMV
+      typedef ST2toST2Expr<st2tost2<N,T>,ST2toST2FromTinyMatrixView2Expr<N,Mn,Mm,In,Im,T> > type;
+    }; // end of struct ST2toST2FromTinyMatrixView2
     
     // Serialisation operator
     template<unsigned short N,
@@ -228,7 +235,7 @@ namespace tfel
 	     typename T>
     std::ostream&
     operator << (std::ostream & os,
-		 const ST2toST2Expr<st2tost2<N,T>,ST2toST2FTMVExpr<N,Mn,Mm,In,Im,T> >& s)
+		 const ST2toST2Expr<st2tost2<N,T>,ST2toST2FromTinyMatrixView2Expr<N,Mn,Mm,In,Im,T> >& s)
     {
       unsigned short i;
       unsigned short j;
@@ -259,5 +266,5 @@ namespace tfel
   
 } // end of namespace tfel
 
-#endif /* _LIB_TFEL_MATH_ST2toST2FTMV_HXX */
+#endif /* _LIB_TFEL_MATH_ST2toST2FromTinyMatrixView2_HXX */
 

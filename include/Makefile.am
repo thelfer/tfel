@@ -366,8 +366,8 @@ nobase_include_HEADERS= TFEL/Macros.hxx                                         
 			TFEL/Math/ST2toST2/ST2toST2ConceptOperations.hxx                                             \
 			TFEL/Math/ST2toST2/ST2toST2Expr.hxx                                                          \
 			TFEL/Math/ST2toST2/st2tost2ResultType.hxx                                                    \
-			TFEL/Math/ST2toST2/ST2toST2FTMV.hxx                                                          \
-			TFEL/Math/ST2toST2/ST2toST2FTMV2.hxx                                                         \
+			TFEL/Math/ST2toST2/ST2toST2FromTinyMatrixView.hxx                                                          \
+			TFEL/Math/ST2toST2/ST2toST2FromTinyMatrixView2.hxx                                                         \
 			TFEL/Math/composite.hxx                                                                      \
 			TFEL/Math/Composite/CompositeCompositeExpr.hxx                                               \
 			TFEL/Math/Composite/CompositeConceptOperations.ixx                                           \

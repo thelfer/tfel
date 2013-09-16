@@ -841,8 +841,8 @@ namespace mfront{
     this->behaviourFile << "#include\"TFEL/Math/Stensor/StensorFromTinyMatrixColumnView2.hxx\"\n";
     this->behaviourFile << "#include\"TFEL/Math/Stensor/StensorFromTinyMatrixRowView2.hxx\"\n";
     this->behaviourFile << "#include\"TFEL/Math/Stensor/StensorFromTinyVectorView.hxx\"\n";
-    this->behaviourFile << "#include\"TFEL/Math/ST2toST2/ST2toST2FTMV.hxx\"\n\n";
-    this->behaviourFile << "#include\"TFEL/Math/ST2toST2/ST2toST2FTMV2.hxx\"\n\n";
+    this->behaviourFile << "#include\"TFEL/Math/ST2toST2/ST2toST2FromTinyMatrixView.hxx\"\n\n";
+    this->behaviourFile << "#include\"TFEL/Math/ST2toST2/ST2toST2FromTinyMatrixView2.hxx\"\n\n";
   } // end of MFrontImplicitParserBase::writeBehaviourParserSpecificIncludes(void)
 
   void MFrontImplicitParserBase::writeBehaviourParserSpecificTypedefs(void)
@@ -927,19 +927,19 @@ namespace mfront{
 				  << "}\n\n";
 	    } else {
 	      // Le résultat est un tenseur d'ordre 4
-	      this->behaviourFile << "typename tfel::math::ST2toST2FTMV2<N," << n3 << "," << n3 << "," << n << "," << n2 << ",real>::type\n"
+	      this->behaviourFile << "typename tfel::math::ST2toST2FromTinyMatrixView2<N," << n3 << "," << n3 << "," << n << "," << n2 << ",real>::type\n"
 				  << "df" << p->name << "_dd" << p2->name 
 				  << "(tfel::math::tmatrix<" << n3 << "," << n3 << ">& tjacobian,\n"
 				  << "const unsigned short idx){\n"
 				  << "using namespace tfel::math;\n"
-				  << "return typename ST2toST2FTMV2<N,"
+				  << "return typename ST2toST2FromTinyMatrixView2<N,"
 				  << n3 << "," << n3 << "," << n << "," << n2 << ",real>::type(tjacobian,idx,0u);\n"
 				  << "}\n\n";
-	      this->behaviourFile << "typename tfel::math::ST2toST2FTMV2<N," << n3 << "," << n3 << "," << n << "," << n2 << ",real>::type\n"
+	      this->behaviourFile << "typename tfel::math::ST2toST2FromTinyMatrixView2<N," << n3 << "," << n3 << "," << n << "," << n2 << ",real>::type\n"
 				  << "df" << p->name << "_dd" << p2->name 
 				  << "(const unsigned short idx){\n"
 				  << "using namespace tfel::math;\n"
-				  << "return typename ST2toST2FTMV2<N,"
+				  << "return typename ST2toST2FromTinyMatrixView2<N,"
 				  << n3 << "," << n3 << "," << n << "," << n2 << ",real>::type(this->jacobian,idx,0u);\n"
 				  << "}\n\n";
 	    }
@@ -995,19 +995,19 @@ namespace mfront{
 				  << n3 << "," << n3 << "," << n << "," << n2 << ",real>::type(this->jacobian,0,idx);\n"
 				  << "}\n\n";
 	    } else {
-	      this->behaviourFile << "typename tfel::math::ST2toST2FTMV2<N," << n3 << "," << n3 << "," << n << "," << n2 << ",real>::type\n"
+	      this->behaviourFile << "typename tfel::math::ST2toST2FromTinyMatrixView2<N," << n3 << "," << n3 << "," << n << "," << n2 << ",real>::type\n"
 				  << "df" << p->name << "_dd" << p2->name 
 				  << "(tfel::math::tmatrix<" << n3 << "," << n3 << ">& tjacobian,\n"
 				  << "const unsigned short idx){\n"
 				  << "using namespace tfel::math;\n"
-				  << "return typename ST2toST2FTMV2<N,"
+				  << "return typename ST2toST2FromTinyMatrixView2<N,"
 				  << n3 << "," << n3 << "," << n << "," << n2 << ",real>::type(tjacobian,0,idx);\n"
 				  << "}\n\n";
-	      this->behaviourFile << "typename tfel::math::ST2toST2FTMV2<N," << n3 << "," << n3 << "," << n << "," << n2 << ",real>::type\n"
+	      this->behaviourFile << "typename tfel::math::ST2toST2FromTinyMatrixView2<N," << n3 << "," << n3 << "," << n << "," << n2 << ",real>::type\n"
 				  << "df" << p->name << "_dd" << p2->name 
 				  << "(const unsigned short idx){\n"
 				  << "using namespace tfel::math;\n"
-				  << "return typename ST2toST2FTMV2<N,"
+				  << "return typename ST2toST2FromTinyMatrixView2<N,"
 				  << n3 << "," << n3 << "," << n << "," << n2 << ",real>::type(this->jacobian,0,idx);\n"
 				  << "}\n\n";
 	    }
@@ -1069,21 +1069,21 @@ namespace mfront{
 				  << n3 << "," << n3 << "," << n << "," << n2 << ",real>::type(this->jacobian,idx,idx2);\n"
 				  << "}\n\n";
 	    } else {
-	      this->behaviourFile << "typename tfel::math::ST2toST2FTMV2<N," << n3 << "," << n3 << "," << n << "," << n2 << ",real>::type\n"
+	      this->behaviourFile << "typename tfel::math::ST2toST2FromTinyMatrixView2<N," << n3 << "," << n3 << "," << n << "," << n2 << ",real>::type\n"
 				  << "df" << p->name << "_dd" << p2->name 
 				  << "(tfel::math::tmatrix<" << n3 << "," << n3 << ">& tjacobian,\n"
 				  << "const unsigned short idx,"
 				  << " const unsigned short idx2){\n"
 				  << "using namespace tfel::math;\n"
-				  << "return typename ST2toST2FTMV2<N,"
+				  << "return typename ST2toST2FromTinyMatrixView2<N,"
 				  << n3 << "," << n3 << "," << n << "," << n2 << ",real>::type(tjacobian,idx,idx2);\n"
 				  << "}\n\n";
-	      this->behaviourFile << "typename tfel::math::ST2toST2FTMV2<N," << n3 << "," << n3 << "," << n << "," << n2 << ",real>::type\n"
+	      this->behaviourFile << "typename tfel::math::ST2toST2FromTinyMatrixView2<N," << n3 << "," << n3 << "," << n << "," << n2 << ",real>::type\n"
 				  << "df" << p->name << "_dd" << p2->name 
 				  << "(const unsigned short idx,"
 				  << " const unsigned short idx2){\n"
 				  << "using namespace tfel::math;\n"
-				  << "return typename ST2toST2FTMV2<N,"
+				  << "return typename ST2toST2FromTinyMatrixView2<N,"
 				  << n3 << "," << n3 << "," << n << "," << n2 << ",real>::type(this->jacobian,idx,idx2);\n"
 				  << "}\n\n";
 	    }
@@ -1228,7 +1228,7 @@ namespace mfront{
     }
     if(this->getTypeFlag(v1.type)==SupportedTypes::Stensor){
       if(this->getTypeFlag(v2.type)==SupportedTypes::Stensor){
-	d << "typename tfel::math::ST2toST2FTMV<N,"
+	d << "typename tfel::math::ST2toST2FromTinyMatrixView<N,"
 	  << n2 << "," << n2 << ",\n"
 	  << n  << "," << n3
 	  << ",real>::type "+p+"df" << v1.name << "_dd" << v2.name << "("+j+");\n";

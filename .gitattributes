@@ -604,8 +604,8 @@ include/TFEL/Math/ST2toST2/ST2toST2Concept.hxx -text
 include/TFEL/Math/ST2toST2/ST2toST2Concept.ixx -text
 include/TFEL/Math/ST2toST2/ST2toST2ConceptOperations.hxx -text
 include/TFEL/Math/ST2toST2/ST2toST2Expr.hxx -text
-include/TFEL/Math/ST2toST2/ST2toST2FTMV.hxx -text
-include/TFEL/Math/ST2toST2/ST2toST2FTMV2.hxx -text
+include/TFEL/Math/ST2toST2/ST2toST2FromTinyMatrixView.hxx -text
+include/TFEL/Math/ST2toST2/ST2toST2FromTinyMatrixView2.hxx -text
 include/TFEL/Math/ST2toST2/st2tost2.ixx -text
 include/TFEL/Math/ST2toST2/st2tost2ResultType.hxx -text
 include/TFEL/Math/Stensor/Internals/StensorChangeBasis.hxx -text
@@ -1379,8 +1379,8 @@ tests/Math/RungeKutta/runge_kutta2.cxx -text
 tests/Math/RungeKutta/runge_kutta4.cxx -text
 tests/Math/St2toSt2/CMakeLists.txt -text
 tests/Math/St2toSt2/Makefile.am -text
-tests/Math/St2toSt2/ST2toST2FTMV.cxx -text
-tests/Math/St2toSt2/ST2toST2FTMV2.cxx -text
+tests/Math/St2toSt2/ST2toST2FromTinyMatrixView.cxx -text
+tests/Math/St2toSt2/ST2toST2FromTinyMatrixView2.cxx -text
 tests/Math/St2toSt2/st2tost2-2.cxx -text
 tests/Math/St2toSt2/st2tost2-3.cxx -text
 tests/Math/St2toSt2/st2tost2.cxx -text
