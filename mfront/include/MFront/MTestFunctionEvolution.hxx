@@ -10,13 +10,14 @@
 
 #include"TFEL/Math/Evaluator.hxx"
 
+#include"MFront/MTestConfig.hxx"
 #include"MFront/MTestTypes.hxx"
 #include"MFront/MTestEvolution.hxx"
 
 namespace mfront
 {
 
-  struct MTestFunctionEvolution
+  struct MFRONT_MTEST_VISIBILITY_EXPORT MTestFunctionEvolution
     : public MTestEvolution
   {
     /*!
@@ -37,6 +38,13 @@ namespace mfront
      */
     virtual bool
     isConstant(void) const;
+    /*!
+     * \brief set the evolution value for a given date
+     * \param[in] t  : time
+     * \param[in] v  : value
+     */
+    virtual void setValue(const real,
+			  const real);
     //! destructor
     virtual ~MTestFunctionEvolution();
   private:

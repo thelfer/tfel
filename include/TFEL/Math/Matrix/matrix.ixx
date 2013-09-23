@@ -42,10 +42,19 @@ namespace tfel{
     template<typename T>
     void
     matrix<T>::resize(const typename matrix<T>::size_type n,
-		      const typename matrix<T>::size_type m)
+		      const typename matrix<T>::size_type m,
+		      const T& v)
     {
-      vector<T>::resize(n*m);
+      vector<T>::resize(n*m,v);
       MatrixProperties<T>::operator=(MatrixProperties<T>(n,m));
+    } // end of matrix<T>::resize
+
+    template<typename T>
+    void matrix<T>::clear(void)
+    {
+      const typename matrix<T>::size_type n(0);
+      vector<T>::clear();
+      MatrixProperties<T>::operator=(MatrixProperties<T>(n,n));
     } // end of matrix<T>::resize
 
     template<typename T>

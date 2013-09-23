@@ -16,6 +16,7 @@
 #endif
 
 #include"MFront/MTest.hxx"
+#include"MFront/MTestParser.hxx"
 #include"MFront/MTestLogStream.hxx"
 #include"MFront/MTestConstraint.hxx"
 #include"MFront/MTestEvolution.hxx"
@@ -167,8 +168,8 @@ namespace mfront
   void
   MTestMain::treatHelpCommandList(void)
   {
-    MTest t;
-    t.displayKeyWordsList();
+    MTestParser p;
+    p.displayKeyWordsList();
     ::exit(EXIT_SUCCESS);
   } // end of MTestMain::treatHelpCommandList
 
@@ -182,8 +183,8 @@ namespace mfront
       msg += "no command specified";
       throw(runtime_error(msg));
     }
-    MTest t;
-    t.displayKeyWordDescription(k);
+    MTestParser p;
+    p.displayKeyWordDescription(k);
     ::exit(EXIT_SUCCESS);
   }
 
@@ -231,7 +232,9 @@ namespace mfront
     vector<string>::const_iterator p;
     for(p=this->inputs.begin();
 	p!=this->inputs.end();++p){
-      shared_ptr<Test> t(new MTest(*p));
+      shared_ptr<Test> t(new MTest());
+      MTestParser parser;
+      parser.execute(static_cast<MTest&>(*(t.get())),*p);
       string tname;
       string::size_type pos = p->rfind('.');
       if(pos!=string::npos){

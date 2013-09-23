@@ -73,6 +73,15 @@ namespace mfront{
     }
     return true;
   } // end of MTestFunctionEvolution::isConstant
+
+  void  MTestFunctionEvolution::setValue(const real,
+					 const real)
+  {
+    using namespace std;
+    string msg("MTestFunctionEvolution::setValue : "
+	       "this method does not makes sense for function evolution");
+    throw(runtime_error(msg));
+  }
   
   MTestFunctionEvolution::~MTestFunctionEvolution()
   {} // end of MTestFunctionEvolution::~MTestFunctionEvolution

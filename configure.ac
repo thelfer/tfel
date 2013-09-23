@@ -449,6 +449,7 @@ AC_OUTPUT([debug.sh
 	   bindings/python/Makefile
 	   bindings/python/std/Makefile
 	   bindings/python/tfel/Makefile
+	   bindings/python/mfront/Makefile
 	   bindings/python/include/Makefile
 	   tests/Makefile
 	   tests/Tests/Makefile

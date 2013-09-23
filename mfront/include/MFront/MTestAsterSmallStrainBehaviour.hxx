@@ -35,21 +35,19 @@ namespace mfront
      * \param[in] d : space dimension
      */
     size_t
-    getInternalStateVariablesSize(const unsigned short) const;
+    getInternalStateVariablesSize(const tfel::material::ModellingHypothesis::Hypothesis h) const;
     /*!
      * \return the descriptions the internal variables
      * \param[in] d : space dimension
      */
     std::vector<std::string>
-    getInternalStateVariablesDescriptions(const unsigned short) const;
+    getInternalStateVariablesDescriptions(const tfel::material::ModellingHypothesis::Hypothesis) const;
     /*!
-     * \brief allocate workspace
-     * \param[in] ntens   : number of components of symmetric tensors
-     * \param[in] nstatev : size of the internal state variables
+     * \brief allocate internal workspace
+     * \param[in] h : modelling hypothesis
      */
     virtual void
-    allocate(const size_t,
-	     const size_t);
+    allocate(const tfel::material::ModellingHypothesis::Hypothesis);
     /*!
      * \return the default type of stiffness matrix used by the behaviour
      */

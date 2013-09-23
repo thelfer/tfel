@@ -51,9 +51,10 @@ namespace mfront
   }
 
   void
-  MTestUmatCohesiveZoneModelBehaviour::allocate(size_t ntens,
-						size_t nstatev)
+  MTestUmatCohesiveZoneModelBehaviour::allocate(const tfel::material::ModellingHypothesis::Hypothesis h)
   {
+    const unsigned short ntens   = this->getProblemSize(h);
+    const unsigned short nstatev = this->getInternalStateVariablesSize(h);
     this->D.resize(ntens,ntens);
     this->iv.resize(nstatev);
     if(iv.size()==0){

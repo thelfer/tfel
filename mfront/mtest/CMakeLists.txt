@@ -11,6 +11,7 @@ link_directories("${PROJECT_BINARY_DIR}/src/Math"
 
 set(TFELMTest_SOURCES
     MTest.cxx
+    MTestParser.cxx
     MTestAnalyticalTest.cxx
     MTestReferenceFileComparisonTest.cxx
     MTestLogStream.cxx

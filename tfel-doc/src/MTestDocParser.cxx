@@ -7,6 +7,7 @@
 
 #include<iostream>
 
+#include"MFront/MTestParser.hxx"
 #include"TFEL/Utilities/MTestDocParser.hxx"
 
 namespace tfel{
@@ -14,8 +15,13 @@ namespace tfel{
   namespace utilities {
   
     MTestDocParser::MTestDocParser(const std::string& f)
-      : MTest(f)
-    {} // end of MTestDocParser::MTestDocParser
+      : MTest(),
+	file(f)
+    {
+      using namespace mfront;
+      MTestParser parser;
+      parser.execute(*this,f);
+    } // end of MTestDocParser::MTestDocParser
     
     void
     MTestDocParser::addDocumentation(std::map<std::string,

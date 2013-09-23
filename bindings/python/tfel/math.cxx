@@ -7,6 +7,7 @@
 
 #include<boost/python.hpp>
 
+void declareTFELMathVector(void);
 void declaretvector(void);
 void declarestensor(void);
 
@@ -14,4 +15,5 @@ BOOST_PYTHON_MODULE(math)
 {
   declaretvector();
   declarestensor();
+  declareTFELMathVector();
 }

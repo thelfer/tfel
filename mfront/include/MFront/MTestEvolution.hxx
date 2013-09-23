@@ -11,6 +11,7 @@
 #include<map>
 #include<vector>
 
+#include"MFront/MTestConfig.hxx"
 #include"MFront/MTestTypes.hxx"
 
 namespace mfront
@@ -19,7 +20,7 @@ namespace mfront
   /*!
    * Base class for evolutions of external variables
    */
-  struct MTestEvolution
+  struct MFRONT_MTEST_VISIBILITY_EXPORT MTestEvolution
   {
     /*!
      * \return the value of the evolution
@@ -32,6 +33,15 @@ namespace mfront
      * is constant
      */
     virtual bool isConstant(void) const = 0;
+    /*!
+     * \brief set the evolution value for a given date
+     * \param[in] t  : time
+     * \param[in] v  : value
+     * \note most evolution will throw an exception (for example, this
+     * method does not makes sense for constant evolutions)
+     */
+    virtual void setValue(const real,
+			  const real) = 0;
     //! destructor
     virtual ~MTestEvolution();
   };
@@ -39,7 +49,7 @@ namespace mfront
   /*!
    * a constant evolution
    */
-  struct MTestConstantEvolution
+  struct MFRONT_MTEST_VISIBILITY_EXPORT MTestConstantEvolution
     : public MTestEvolution
   {
     /*!
@@ -58,6 +68,14 @@ namespace mfront
      * is constant
      */
     virtual bool isConstant(void) const;
+    /*!
+     * \brief set the evolution value for a given date
+     * \param[in] t  : time
+     * \param[in] v  : value
+     */
+    virtual void
+    setValue(const real,
+	     const real);
     //! destructor
     virtual ~MTestConstantEvolution();
   protected:
@@ -67,7 +85,7 @@ namespace mfront
   /*!
    * a linear per interval evolution
    */
-  struct MTestLPIEvolution
+  struct MFRONT_MTEST_VISIBILITY_EXPORT MTestLPIEvolution
     : public MTestEvolution
   {
     /*!
@@ -88,6 +106,13 @@ namespace mfront
      * is constant
      */
     virtual bool isConstant(void) const;
+    /*!
+     * \brief set the evolution value for a given date
+     * \param[in] t  : time
+     * \param[in] v  : value
+     */
+    virtual void setValue(const real,
+			  const real);
     //! destructor
     virtual ~MTestLPIEvolution();
   private:

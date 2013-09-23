@@ -32,6 +32,15 @@ namespace mfront
     return true;
   } // end of MTestConstantEvolution::isConstant
 
+  void  MTestConstantEvolution::setValue(const real,
+				       const real)
+  {
+    using namespace std;
+    string msg("MTestConstantEvolution::setValue : "
+	       "this method does not makes sense for constant evolution");
+    throw(runtime_error(msg));
+  }
+
   MTestConstantEvolution::~MTestConstantEvolution()
   {} // end of MTestConstantEvolution::~MTestConstantEvolution
 
@@ -55,6 +64,12 @@ namespace mfront
       ++pt;
       ++pv;
     }
+  }
+
+  void  MTestLPIEvolution::setValue(const real t,
+					 const real v)
+  {
+    this->values[t] = v;
   }
 
   real

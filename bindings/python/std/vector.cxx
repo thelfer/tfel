@@ -1,5 +1,5 @@
 /*! 
- * \file  stl.cxx
+ * \file   vector.cxx
  * \brief
  * \author Helfer Thomas
  * \brief 30 avr 2010
@@ -28,7 +28,7 @@ struct DeclareProcessIdVector
   {
     using namespace tfel::system;
     using namespace tfel::python;
-    initializeVectorConverter<ProcessManager::ProcessId>();
+    initializeVectorConverter<std::vector<ProcessManager::ProcessId> >();
   }
 };
 
@@ -39,22 +39,23 @@ BOOST_PYTHON_MODULE(_stl_vector)
   using namespace tfel::math;
   using namespace tfel::system;
   using namespace tfel::python;
+  using std::vector;
 
-  initializeVectorConverter<int>();
   initializeVectorConverter<vector<int> >();
-  initializeVectorConverter<double>();
+  initializeVectorConverter<vector<vector<int> > >();
   initializeVectorConverter<vector<double> >();
+  initializeVectorConverter<vector<vector<double> > >();
 
-  initializeVectorConverter<tvector<1u,double> >();
-  initializeVectorConverter<tvector<2u,double> >();
-  initializeVectorConverter<tvector<3u,double> >();
-  initializeVectorConverter<stensor<1u,double> >();
-  initializeVectorConverter<stensor<2u,double> >();
-  initializeVectorConverter<stensor<3u,double> >();
+  initializeVectorConverter<vector<tvector<1u,double> > >();
+  initializeVectorConverter<vector<tvector<2u,double> > >();
+  initializeVectorConverter<vector<tvector<3u,double> > >();
+  initializeVectorConverter<vector<stensor<1u,double> > >();
+  initializeVectorConverter<vector<stensor<2u,double> > >();
+  initializeVectorConverter<vector<stensor<3u,double> > >();
 
-  initializeVectorConverter<string>();
   initializeVectorConverter<vector<string> >();
-  initializeVectorConverter<pair<string,string> >();
+  initializeVectorConverter<vector<vector<string> > >();
+  initializeVectorConverter<vector<pair<string,string> > >();
   
   IF<IsSameType<ProcessManager::ProcessId,
 		int>::cond,

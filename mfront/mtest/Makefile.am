@@ -8,6 +8,7 @@ bin_PROGRAMS  = mtest
 mtest_SOURCES = MTestMain.cxx
 
 libTFELMTest_la_SOURCES = MTest.cxx                             \
+			  MTestParser.cxx                       \
 			  MTestAnalyticalTest.cxx               \
 			  MTestReferenceFileComparisonTest.cxx  \
 			  MTestLogStream.cxx                    \

@@ -14,6 +14,7 @@
 #include"TFEL/Utilities/SmartPtr.hxx"
 
 #include"MFront/MTestTypes.hxx"
+#include"MFront/MTestConfig.hxx"
 #include"MFront/MTestEvolution.hxx"
 #include"MFront/MTestConstraint.hxx"
 
@@ -26,7 +27,7 @@ namespace mfront
   /*!
    * Impose the value of a thermodynamic force component
    */
-  struct MTestImposedThermodynamicForce
+  struct MFRONT_MTEST_VISIBILITY_EXPORT MTestImposedThermodynamicForce
     : public MTestConstraint
   {
     /*!

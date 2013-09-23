@@ -161,10 +161,17 @@ namespace tfel
        * resize the matrix
        * \param[in] n : number of rows
        * \param[in] m : number of columns
+       * \param[in] v : values of the newly inserted elements
        */
       void
       resize(const size_type,
-	     const size_type);
+	     const size_type,
+	     const T& = T());
+
+      /*!
+       * clear the matrix
+       */
+      void clear();
 
       TFEL_MATH_INLINE T&
       operator()(const size_type,

@@ -13,6 +13,7 @@
 #include"TFEL/Math/stensor.hxx"
 #include"TFEL/Math/tvector.hxx"
 
+#include"MFront/MTestConfig.hxx"
 #include"MFront/MTestTypes.hxx"
 
 namespace mfront
@@ -22,7 +23,7 @@ namespace mfront
    * Base class for all the constraints
    * imposed to the point
    */
-  struct MTestConstraint
+  struct MFRONT_MTEST_VISIBILITY_EXPORT MTestConstraint
   {
     /*!
      * \return the number of Lagrange Multipliers

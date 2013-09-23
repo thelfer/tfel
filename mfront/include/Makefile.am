@@ -77,24 +77,25 @@ nobase_noinst_HEADERS += MFront/MFrontCLawInterfaceBase.hxx          \
 			 MFront/MFrontLaTeXLawInterface.hxx          \
 			 MFront/MFrontPythonLawInterface.hxx
 
-nobase_noinst_HEADERS += MFront/MTestTypes.hxx	                        \
-			 MFront/MTestLogStream.hxx	                \
-			 MFront/MTest.hxx	                        \
-			 MFront/MTestConfig.hxx	                        \
-			 MFront/MTestAnalyticalTest.hxx	                \
-			 MFront/MTestReferenceFileComparisonTest.hxx    \
-			 MFront/MTestBehaviour.hxx                      \
-			 MFront/MTestUmatBehaviourBase.hxx              \
-			 MFront/MTestUmatSmallStrainBehaviour.hxx       \
-			 MFront/MTestUmatCohesiveZoneModelBehaviour.hxx \
-			 MFront/MTestUmatNormaliseTangentOperator.hxx   \
-			 MFront/MTestAsterSmallStrainBehaviour.hxx      \
-			 MFront/MTestEvolution.hxx                      \
-			 MFront/MTestCastemEvolution.hxx                \
-			 MFront/MTestFunctionEvolution.hxx              \
-			 MFront/MTestConstraint.hxx                     \
-			 MFront/MTestImposedDrivingVariable.hxx         \
-			 MFront/MTestImposedThermodynamicForce.hxx
+nobase_include_HEADERS += MFront/MTestTypes.hxx	                         \
+			  MFront/MTestLogStream.hxx	                 \
+			  MFront/MTest.hxx	                         \
+			  MFront/MTestParser.hxx	                 \
+			  MFront/MTestConfig.hxx	                 \
+			  MFront/MTestAnalyticalTest.hxx	         \
+			  MFront/MTestReferenceFileComparisonTest.hxx    \
+			  MFront/MTestBehaviour.hxx                      \
+			  MFront/MTestUmatBehaviourBase.hxx              \
+			  MFront/MTestUmatSmallStrainBehaviour.hxx       \
+			  MFront/MTestUmatCohesiveZoneModelBehaviour.hxx \
+			  MFront/MTestUmatNormaliseTangentOperator.hxx   \
+			  MFront/MTestAsterSmallStrainBehaviour.hxx      \
+			  MFront/MTestEvolution.hxx                      \
+			  MFront/MTestCastemEvolution.hxx                \
+			  MFront/MTestFunctionEvolution.hxx              \
+			  MFront/MTestConstraint.hxx                     \
+			  MFront/MTestImposedDrivingVariable.hxx         \
+			  MFront/MTestImposedThermodynamicForce.hxx
 
 if HAVE_CASTEM
 nobase_include_HEADERS += MFront/MFrontCastemLawInterface.hxx   \

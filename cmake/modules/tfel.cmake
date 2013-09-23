@@ -103,6 +103,10 @@ macro(tfel_python_module name)
   python_lib_module(${name} tfel ${ARGN})
 endmacro(tfel_python_module)
 
+macro(mfront_python_module name)
+  python_lib_module(${name} mfront ${ARGN})
+endmacro(mfront_python_module)
+
 macro(tfel_python_script dir)
   if(${ARGC} LESS 1)
     message(FATAL_ERROR "tfel_python_script : no script specified")

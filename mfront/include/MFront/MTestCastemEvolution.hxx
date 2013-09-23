@@ -15,6 +15,7 @@
 #include"TFEL/Utilities/SmartPtr.hxx"
 #include"TFEL/System/ExternalLibraryManager.hxx"
 
+#include"MFront/MTestConfig.hxx"
 #include"MFront/MTestTypes.hxx"
 #include"MFront/MTestEvolution.hxx"
 
@@ -24,7 +25,7 @@ namespace mfront
   /*!
    * An evolution defined by a castem fonction
    */
-  struct MTestCastemEvolution
+  struct MFRONT_MTEST_VISIBILITY_EXPORT MTestCastemEvolution
     : public MTestEvolution
   {
     /*!
@@ -49,6 +50,13 @@ namespace mfront
      * is constant
      */
     virtual bool isConstant(void) const;
+    /*!
+     * \brief set the evolution value for a given date
+     * \param[in] t  : time
+     * \param[in] v  : value
+     */
+    virtual void setValue(const real,
+			  const real);
     //! destructor
     virtual ~MTestCastemEvolution();
   protected:

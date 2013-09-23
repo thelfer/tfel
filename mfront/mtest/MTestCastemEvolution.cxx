@@ -70,6 +70,15 @@ namespace mfront{
     }
     return true;
   } // end of MTestCastemEvolution::isConstant
+
+  void  MTestCastemEvolution::setValue(const real,
+					 const real)
+  {
+    using namespace std;
+    string msg("MTestCastemEvolution::setValue : "
+	       "this method does not makes sense for castem evolution");
+    throw(runtime_error(msg));
+  }
   
   MTestCastemEvolution::~MTestCastemEvolution()
   {} // end of MTestCastemEvolution::~MTestCastemEvolution

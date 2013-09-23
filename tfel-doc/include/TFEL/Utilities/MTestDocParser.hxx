@@ -36,6 +36,8 @@ namespace tfel{
        * destructor
        */
       ~MTestDocParser();
+    private:
+      const std::string file;
     }; // end of struct MTestDocParser
 
   } // end of namespace utilities

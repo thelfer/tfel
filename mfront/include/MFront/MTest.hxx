@@ -19,9 +19,9 @@
 #include"TFEL/Math/tvector.hxx"
 #include"TFEL/Math/stensor.hxx"
 #include"TFEL/Math/vector.hxx"
+#include"TFEL/Math/LUSolve.hxx"
 #include"TFEL/Material/ModellingHypothesis.hxx"
 #include"TFEL/Utilities/SmartPtr.hxx"
-#include"TFEL/Utilities/CxxTokenizer.hxx"
 
 #include"MFront/MTestConfig.hxx"
 #include"MFront/MTestTypes.hxx"
@@ -33,7 +33,7 @@
 
 namespace mfront
 {
-
+  
   /*!
    * MTest is a simple class 
    * to test mfront behaviours
@@ -44,9 +44,127 @@ namespace mfront
    * multiplier
    */
   struct MFRONT_MTEST_VISIBILITY_EXPORT MTest
-    : public tfel::utilities::CxxTokenizer,
-      public tfel::tests::Test
+    : public tfel::tests::Test
   {
+    /*!
+     * structure containing the state of the material.
+     * This structure is used internally and is declared public only
+     * for the python bindings. In particular, the description of the
+     * variables given here is only valid during the computations.
+     */
+    struct MTestCurrentState
+    {
+      /*!
+       * default constructor
+       */
+      MTestCurrentState();
+      /*!
+       * copy constructor
+       */
+      MTestCurrentState(const MTestCurrentState&);
+      // vector of unknows at 
+      // the beginning of the
+      // previous time step.
+      tfel::math::vector<real> u_1;
+      // vector of unknows at 
+      // the beginning of the
+      // time step.
+      tfel::math::vector<real> u0;
+      // vector of unknows at 
+      // the end of the
+      // time step
+      tfel::math::vector<real> u1;
+      // stresses at the beginning of the previous of the time step
+      tfel::math::vector<real> s_1;
+      // stresses at the beginning of the time step
+      tfel::math::vector<real> s0;
+      // stresses at the end of the time step
+      tfel::math::vector<real> s1;
+      // strain at the beginning of the time step
+      tfel::math::vector<real> e0;
+      // thermal expansion at the beginning of the time step
+      tfel::math::vector<real> e_th0;
+      // thermal expansion at the end of the time step
+      tfel::math::vector<real> e_th1;
+      // strain increment
+      tfel::math::vector<real> de;
+      // material properties at
+      // the beginning of the
+      // time step
+      tfel::math::vector<real> mprops0;
+      // material properties at
+      // the end of the
+      // time step
+      tfel::math::vector<real> mprops1;
+      // internal variables at
+      // the beginning of the
+      // previous time step
+      tfel::math::vector<real> iv_1;
+      // internal variables at
+      // the beginning of the
+      // time step
+      tfel::math::vector<real> iv0;
+      // internal variables at
+      // the end of the
+      // time step
+      tfel::math::vector<real> iv1;
+      // external variables at
+      // the beginning of the
+      // time step
+      tfel::math::vector<real> esv0;
+      // external variables increments
+      tfel::math::vector<real> desv;
+      // current period number
+      unsigned int period;
+      // previous time step
+      real dt_1;
+      // reference Temperature
+      real Tref;
+    private:
+      MTestCurrentState&
+      operator=(const MTestCurrentState&);
+    };
+    /*!
+     * structure where usefull variables for the computations are
+     * defined.
+     * This structure is used internally and is declared
+     * public only for the python bindings.
+     */
+    struct MTestWorkSpace
+    {
+      MTestWorkSpace();
+      // stiffness tensor
+      tfel::math::matrix<real> Kt;
+      // prediction tensor
+      tfel::math::matrix<real> Kp;
+      //! stiffness matrix
+      tfel::math::matrix<real> K;
+      // residual
+      tfel::math::vector<real> r;
+      // permuation matrix
+      tfel::math::Permutation<tfel::math::matrix<real>::size_type> p_lu;
+      // temporary vector used by the LUSolve::exe function
+      tfel::math::vector<real> x;
+      // castem acceleration algorithm
+      tfel::math::vector<real> ca_u0;
+      tfel::math::vector<real> ca_u1;
+      tfel::math::vector<real> ca_u2;
+      tfel::math::vector<real> ca_r0;
+      tfel::math::vector<real> ca_r1;
+      tfel::math::vector<real> ca_r2;
+      tfel::math::vector<real> ca_r;
+      tfel::math::vector<real> ca_n0;
+      tfel::math::vector<real> ca_n1;
+      tfel::math::vector<real> ca_tmp0;
+      tfel::math::vector<real> ca_tmp1;
+      //
+      bool first;
+      real a;
+    private:
+      MTestWorkSpace(const MTestWorkSpace&);
+      MTestWorkSpace&
+      operator=(const MTestWorkSpace&);
+    };
     /*!
      * \brief possible algorithms used for global convergence to
      * update the stiffness matrix
@@ -123,11 +241,6 @@ namespace mfront
      * default constructor
      */
     MTest(void);
-    /*!
-     * read the input file
-     * \param[in] f : file
-     */
-    MTest(const std::string&);
     /*! 
      * \return the name of the test
      */
@@ -139,291 +252,155 @@ namespace mfront
     virtual std::string
     classname(void) const;
     /*!
+     * complete the initialisation. This method must be called once.
+     * \note this method is called automatically by the execute method.
+     */ 
+    virtual void
+    completeInitialisation(void);
+    /*!
+     * \brief initialize the current state
+     * \param[in] s : current state
+     */
+    virtual void
+    initializeCurrentState(MTestCurrentState&) const;
+    /*!
+     * \brief initialize the workspace
+     * \param[in] wk : workspace
+     */
+    virtual void
+    initializeWorkSpace(MTestWorkSpace&) const;
+    /*!
      * integrate the behaviour
      * along the loading path
      */ 
     virtual tfel::tests::TestResult
     execute(void);
     /*!
-     * display the list of keywords
+     * integrate the behaviour over one step
+     */ 
+    virtual void
+    execute(MTestCurrentState&,
+	    MTestWorkSpace&,
+	    const real,
+	    const real);
+    /*!
+     * \brief set the description
+     * \param[in] d : description
+     */
+    virtual void setDescription(const std::string&);
+    /*!
+     * \brief set the author
+     * \param[in] a : author
+     */
+    virtual void setAuthor(const std::string&);
+    /*!
+     * \brief set the date
+     * \param[in] d : date
+     */
+    virtual void setDate(const std::string&);
+    /*!
+     * \brief set the prediction policy
+     * \param[in] p : prediction policy
+     */
+    virtual void setPredictionPolicy(const MTest::PredictionPolicy);
+    /*!
+     * \brief set the stiffness matrix
+     * \param[in] k : stiffness matrix
+     */
+    virtual void setStiffnessMatrixType(const MTestStiffnessMatrixType::mtype);
+    /*!
+     * \brief set the stiffness updating policy
+     * \param[in] b : boolean
      */
     virtual void
-    displayKeyWordsList() const;
+    setStiffnessUpdatingPolicy(const StiffnessUpdatingPolicy);
     /*!
-     * display the description of a keyword
+     * \brief set the use of the castem acceleration algorithm
+     * \param[in] b : boolean
+     */
+    virtual void setUseCastemAccelerationAlgorithm(const bool);
+    /*!
+     * \brief set at which iteration the use of the castem
+     * acceleration algorithm  will begin
+     * \param[in] i : iteration number
+     */
+    virtual void setCastemAccelerationTrigger(const int);
+    /*!
+     * \brief set at which period the use of the castem
+     * acceleration algorithm  will take place
+     * \param[in] p : period
+     */
+    virtual void setCastemAccelerationPeriod(const int);
+    virtual void setMaximumNumberOfIterations(const unsigned int);
+    virtual void setMaximumNumberOfSubSteps(const unsigned int);
+    virtual void setRotationMatrix(const tfel::math::tmatrix<3u,3u,real>&);
+    /*!
+     * \brief set the behaviour
+     * \param[in] i : interface
+     * \param[in] l : library name
+     * \param[in] f : function
      */
     virtual void
-    displayKeyWordDescription(const std::string&) const;
-  protected:
-    //! a simple alias
-    typedef void (MTest::* CallBack)(TokensContainer::const_iterator&);
+    setBehaviour(const std::string&,
+		 const std::string&,
+		 const std::string&);
     /*!
-     * register a call back
-     * \param[in] k : key word
-     * \param[in] p : pointer to a member function
+     * \brief set the output file
+     * \param[in] f : file name
      */
-    void
-    registerCallBack(const std::string&,
-		     const CallBack&);
+    virtual void
+    setOutputFileName(const std::string&);
     /*!
-     * register the call backs associated with each command
+     * \brief set the output file precision
+     * \param[in] p : precision
      */
-    void
-    registerCallBacks(void);
+    virtual void
+    setOutputFilePrecision(const unsigned int);
     /*!
-     * handle the @Real keyword
-     * \param[in,out] p : position in the input file
+     * \brief set criterium value for the convergence test on the on
+     * the driving variable
+     * \param[in] e : criterium
      */
-    void handleReal(TokensContainer::const_iterator&);
+    virtual void
+    setDrivingVariableEpsilon(const double);
     /*!
-     * handle the @StiffnessMatrixType keyword
-     * \param[in,out] p : position in the input file
+     * \brief set criterium value for the convergence test on the
+     * thermodynamic forces
+     * \param[in] e : criterium
      */
-    void handleStiffnessMatrixType(TokensContainer::const_iterator&);
+    virtual void
+    setThermodynamicForceEpsilon(const double);
     /*!
-     * handle the @StiffnessUpdatePolicy keyword
-     * \param[in,out] p : position in the input file
+     * \param[in] n : parameter name
+     * \param[in] v : parameter value
      */
-    void handleStiffnessUpdatePolicy(TokensContainer::const_iterator&);
+    virtual void
+    setParameter(const std::string&,
+		 const double);
     /*!
-     * handle the @seCastemAccelerationAlgorithm keyword
-     * \param[in,out] p : position in the input file
+     * \param[in] n : parameter name
+     * \param[in] v : parameter value
      */
-    void
-    handleUseCastemAccelerationAlgorithm(TokensContainer::const_iterator&);
+    virtual void
+    setIntegerParameter(const std::string&,
+			const int);
     /*!
-     * handle the @CastemAccelerationTrigger keyword
-     * \param[in,out] p : position in the input file
+     * \param[in] n : parameter name
+     * \param[in] v : parameter value
      */
-    void
-    handleCastemAccelerationTrigger(TokensContainer::const_iterator&);
+    virtual void
+    setUnsignedIntegerParameter(const std::string&,
+				const unsigned int);
     /*!
-     * handle the @CastemAccelerationAlgorithm keyword
-     * \param[in,out] p : position in the input file
+     * \param[in] h : modelling hypothesis
      */
-    void
-    handleCastemAccelerationPeriod(TokensContainer::const_iterator&);
+    virtual void
+    setModellingHypothesis(const std::string&);
     /*!
-     * handle the @Test keyword
-     * \param[in,out] p : position in the input file
+     * \param[in] t : times
      */
-    void handleTest(TokensContainer::const_iterator&);
-    /*!
-     * handle the @RotationMatrix keyword
-     * \param[in,out] p : position in the input file
-     */
-    void handleRotationMatrix(TokensContainer::const_iterator&);
-    /*!
-     * handle the @MaximumNumberOfIterations keyword
-     * \param[in,out] p : position in the input file
-     */
-    void handleMaximumNumberOfIterations(TokensContainer::const_iterator&);
-    /*!
-     * handle the @MaximumNumberOfSubSteps keyword
-     * \param[in,out] p : position in the input file
-     */
-    void handleMaximumNumberOfSubSteps(TokensContainer::const_iterator&);
-    /*!
-     * handle the @StrainEpsilon keyword
-     * \param[in,out] p : position in the input file
-     */
-    void handleStrainEpsilon(TokensContainer::const_iterator&);
-    /*!
-     * handle the @OpeningDisplacementEpsilon keyword
-     * \param[in,out] p : position in the input file
-     */
-    void handleOpeningDisplacementEpsilon(TokensContainer::const_iterator&);
-    /*!
-     * handle the @DrivingVariableEpsilon keyword
-     * \param[in,out] p : position in the input file
-     */
-    void handleDrivingVariableEpsilon(TokensContainer::const_iterator&);
-    /*!
-     * handle the @StressEpsilon keyword
-     * \param[in,out] p : position in the input file
-     */
-    void handleStressEpsilon(TokensContainer::const_iterator&);
-    /*!
-     * handle the @CohesiveForceEpsilon keyword
-     * \param[in,out] p : position in the input file
-     */
-    void handleCohesiveForceEpsilon(TokensContainer::const_iterator&);
-    /*!
-     * handle the @ThermodynamicForceEpsilon keyword
-     * \param[in,out] p : position in the input file
-     */
-    void handleThermodynamicForceEpsilon(TokensContainer::const_iterator&);
-    /*!
-     * handle the @Parameter keyword
-     * \param[in,out] p : position in the input file
-     */
-    void handleParameter(TokensContainer::const_iterator&);
-    /*!
-     * handle the @IntegerParameter keyword
-     * \param[in,out] p : position in the input file
-     */
-    void handleIntegerParameter(TokensContainer::const_iterator&);
-    /*!
-     * handle the @UnsignedIntegerParameter keyword
-     * \param[in,out] p : position in the input file
-     */
-    void handleUnsignedIntegerParameter(TokensContainer::const_iterator&);
-    /*!
-     * handle the @OutputFile keyword
-     * \param[in,out] p : position in the input file
-     */
-    void handleOutputFile(TokensContainer::const_iterator&);
-    /*!
-     * handle the @OutputFilePrecision keyword
-     * \param[in,out] p : position in the input file
-     */
-    void handleOutputFilePrecision(TokensContainer::const_iterator&);
-    /*!
-     * handle the @ModellingHypothesis keyword
-     * \param[in,out] p : position in the input file
-     */
-    void handleModellingHypothesis(TokensContainer::const_iterator&);
-    /*!
-     * handle the @Times keyword
-     * \param[in,out] p : position in the input file
-     */
-    void handleTimes(TokensContainer::const_iterator&);
-    /*!
-     * handle the @Strain keyword
-     * \param[in,out] p : position in the input file
-     */
-    void handleStrain(TokensContainer::const_iterator&);
-    /*!
-     * handle the @OpeningDisplacement keyword
-     * \param[in,out] p : position in the input file
-     */
-    void handleOpeningDisplacement(TokensContainer::const_iterator&);
-    /*!
-     * handle the @DrivingVariable keyword
-     * \param[in,out] p : position in the input file
-     */
-    void handleDrivingVariable(TokensContainer::const_iterator&);
-    /*!
-     * handle the @Stress keyword
-     * \param[in,out] p : position in the input file
-     */
-    void handleStress(TokensContainer::const_iterator&);
-    /*!
-     * handle the @CohesiveForce keyword
-     * \param[in,out] p : position in the input file
-     */
-    void handleCohesiveForce(TokensContainer::const_iterator&);
-    /*!
-     * handle the @ThermodynamicForce keyword
-     * \param[in,out] p : position in the input file
-     */
-    void handleThermodynamicForce(TokensContainer::const_iterator&);
-    /*!
-     * handle the @Behaviour keyword
-     * \param[in,out] p : position in the input file
-     */
-    void handleBehaviour(TokensContainer::const_iterator&);
-    /*!
-     * handle the @MaterialProperty keyword
-     * \param[in,out] p : position in the input file
-     */
-    void handleMaterialProperty(TokensContainer::const_iterator&);
-    /*!
-     * handle the @InternalStateVariable keyword
-     * \param[in,out] p : position in the input file
-     */
-    void handleInternalStateVariable(TokensContainer::const_iterator&);
-    /*!
-     * handle the @ExternalStateVariable keyword
-     * \param[in,out] p : position in the input file
-     */
-    void handleExternalStateVariable(TokensContainer::const_iterator&);
-    /*!
-     * handle the @ImposedStress keyword
-     * \param[in,out] p : position in the input file
-     */
-    void handleImposedStress(TokensContainer::const_iterator&);
-    /*!
-     * handle the @ImposedCohesiveForce keyword
-     * \param[in,out] p : position in the input file
-     */
-    void handleImposedCohesiveForce(TokensContainer::const_iterator&);
-    /*!
-     * handle the @ImposedThermodynamicForce keyword
-     * \param[in,out] p : position in the input file
-     */
-    void handleImposedThermodynamicForce(TokensContainer::const_iterator&);
-    /*!
-     * handle the @ImposedStrain keyword
-     * \param[in,out] p : position in the input file
-     */
-    void handleImposedStrain(TokensContainer::const_iterator&);
-    /*!
-     * handle the @ImposedOpeningDisplacement keyword
-     * \param[in,out] p : position in the input file
-     */
-    void handleImposedOpeningDisplacement(TokensContainer::const_iterator&);
-    /*!
-     * handle the @ImposedDrivingVariable keyword
-     * \param[in,out] p : position in the input file
-     */
-    void handleImposedDrivingVariable(TokensContainer::const_iterator&);
-    /*!
-     * handle the @Author keyword
-     * \param[in,out] p : position in the input file
-     */
-    void handleAuthor(TokensContainer::const_iterator&);
-    /*!
-     * handle the @Date keyword
-     * \param[in,out] p : position in the input file
-     */
-    void handleDate(TokensContainer::const_iterator&);
-    /*!
-     * handle the @Description keyword
-     * \param[in,out] p : position in the input file
-     */
-    void handleDescription(TokensContainer::const_iterator&);
-    /*!
-     * handle the @PredictionPolicy keyword
-     * \param[in,out] p : position in the input file
-     */
-    void 
-    handlePredictionPolicy(TokensContainer::const_iterator&);
-    /*!
-     * handle the @Evolution keyword
-     * \param[in,out] p : position in the input file
-     */
-    void 
-    handleEvolution(TokensContainer::const_iterator&);
-    /*!
-     * \brief declare a new variable
-     * \param[in] v : variable name
-     */
-    void declareVariable(const std::string&);
-    /*!
-     * \brief declare a list of new variables
-     * \param[in] v : variable names
-     */
-    void declareVariables(const std::vector<std::string>&);
-    /*!
-     * \return everything from the given starting point up to the next
-     * semi-colon.
-     * \param[in,out] p : position in the input file
-     */
-    std::string
-    readUntilEndOfInstruction(TokensContainer::const_iterator&);
-    /*!
-     * \return a real value
-     * \param[in,out] p : position in the input file
-     */
-    real
-    readDouble(TokensContainer::const_iterator&);
-    /*!
-     * read a time
-     * \param[in,out] p : position in the input file
-     */
-    real
-    readTime(TokensContainer::const_iterator&);
+    virtual void
+    setTimes(const std::vector<real>&);
     /*!
      * \return the type and the position of the given variable
      * \param[out] type : type of the variable
@@ -435,53 +412,160 @@ namespace mfront
 			       unsigned short&,
 			       const std::string&);
     /*!
-     * output the results
+     * \return the list of evolutions
+     */
+    tfel::utilities::shared_ptr<std::map<std::string,	
+					 tfel::utilities::shared_ptr<MTestEvolution> > >
+    getEvolutions() const;
+    /*!
+     * \brief add a new test
+     * \param[in] t : test to be added
+     */
+    virtual void
+    addTest(tfel::utilities::shared_ptr<UTest>);
+    /*!
+     * \brief add a new evolution
+     * \param[in] n  : evolution name
+     * \param[in] p  : evolution pointer
+     * \param[in] b1 : declare the variable.
+     * \param[in] b2 : check if the evolution already exists.
+     * \note if b1 is false, we check that the variable is already
+     * declared. Otherwise, an exeception is thrown.
+     * \note if b2 is true and the evolution already exists, an
+     * exeception is thrown.
+     */
+    virtual void
+    addEvolution(const std::string&,
+		 const tfel::utilities::shared_ptr<MTestEvolution>,
+		 const bool,
+		 const bool);
+    /*!
+     * \brief set evolution value for a given time
+     * \param[in] n  : evolution name
      * \param[in] t  : time
-     * \param[in] N  : tensor size
-     * \param[in] u  : unknowns
-     * \param[in] s  : stresses
+     * \param[in] v  : value
+     *
+     * \note the evolution *must* be of type MTestLPIEvolution
+     */
+    virtual void
+    setEvolutionValue(const std::string&,
+		      const real,
+		      const real);
+    /*!
+     * \brief define a material property
+     * \param[in] n     : evolution name
+     * \param[in] p     : evolution pointer
+     * \param[in] check : check if the evolution already exists.
+     * \note if check is true and the evolution already exists, an
+     * exeception is thrown.
+     */
+    virtual void
+    setMaterialProperty(const std::string&,
+			const tfel::utilities::shared_ptr<MTestEvolution>,
+			const bool);
+    /*!
+     * \brief define an external state variable
+     * \param[in] n     : evolution name
+     * \param[in] p     : evolution pointer
+     * \param[in] check : check if the evolution already exists.
+     * \note if check is true and the evolution already exists, an
+     * exeception is thrown.
+     */
+    virtual void
+    setExternalStateVariable(const std::string&,
+			     const tfel::utilities::shared_ptr<MTestEvolution>,
+			     const bool);
+    /*!
+     * \brief set the inital values of the driving variable
+     * \param[in] v : values
+     */
+    virtual void
+    setDrivingVariablesInitialValues(const std::vector<real>&);
+    /*!
+     * \brief set the inital values of the thermodynamic forces
+     * \param[in] v : values
+     */
+    virtual void
+    setThermodynamicForcesInitialValues(const std::vector<real>&);
+    /*!
+     * \brief set the inital value of a scalar variable
+     * \param[in] v : value
+     */
+    virtual void
+    setScalarInternalStateVariableInitialValue(const std::string&,
+					       const real);
+    /*!
+     * \brief set the inital values of a symetric tensor variable
+     * \param[in] v : values
+     */
+    virtual void
+    setStensorInternalStateVariableInitialValues(const std::string&,
+						 const std::vector<real>&);
+    /*!
+     * \brief add a new constraint
+     * \param[in] c     : constraint
+     */
+    virtual void
+    addConstraint(const tfel::utilities::shared_ptr<MTestConstraint>);
+    /*!
+     * \return the behaviour type
+     */
+    virtual tfel::material::MechanicalBehaviourBase::BehaviourType
+    getBehaviourType(void) const;
+    /*!
+     * \return the behaviour
+     */
+    virtual tfel::utilities::shared_ptr<MTestBehaviour>
+    getBehaviour(void);
+    /*!
+     * \return the modelling hypothesis
+     */
+    virtual tfel::material::ModellingHypothesis::Hypothesis
+    getModellingHypothesis(void) const;
+    /*!
+     * \return the dimension
+     */
+    virtual unsigned short
+    getDimension(void) const;
+    /*!
+     * \brief print the driving variable, 
+     * \param[in] t  : time
+     * \param[in] u  : unknowns (driving variable)
+     * \param[in] s  : thermodynamic forces
      * \param[in] iv : internal state variables
      */
-    void printOutput(const real,
-		     const unsigned short,
-		     const tfel::math::vector<real>&,
-		     const tfel::math::vector<real>&,
-		     const tfel::math::vector<real>&);
+    virtual void
+    printOutput(const real,const MTestCurrentState&);
     /*!
-     * \brief parse an evolution
-     * \param[in]     t : evolution type
-     * \param[in,out] p : position in the input file
+     * destructor
      */
-    tfel::utilities::shared_ptr<MTestEvolution>
-    parseEvolution(const std::string&,
-		   TokensContainer::const_iterator&);
+    ~MTest();
+  protected:
     /*!
-     * \brief try to read the type of an evolution
-     * \param[in,out] p : position in the input file
+     * \brief declare a new variable
+     * \param[in] v : variable name
      */
-    std::string
-    readEvolutionType(TokensContainer::const_iterator&);
+    void declareVariable(const std::string&,
+			 const bool);
     /*!
-     * read an array
-     * The expected size of the array is given by the output vector
-     * \param[out]    v : array to be read
-     * \param[in,out] p : position in the input file
+     * \brief declare a list of new variables
+     * \param[in] v : variable names
      */
-    void
-    readArrayOfSpecifiedSize(std::vector<real>&,
-			     TokensContainer::const_iterator&);
+    void declareVariables(const std::vector<std::string>&,
+			  const bool);
     /*!
-     * \brief set the hypothesis to the default one
+     * \brief set the modelling hypothesis to the default one
      */
     void setDefaultHypothesis(void);
-    //! input file
-    const std::string file;
+    /*!
+     * \return the number of unknowns (size of driving variables plus
+     * the number of lagrangian multipliers)
+     */
+    size_t getProblemSize() const;
     //! output file precision
     int oprec;
     //! list of tests
     std::vector<tfel::utilities::shared_ptr<UTest> > tests;
-    //! callbacks
-    std::map<std::string,CallBack> callbacks;
     //! declared variable names
     std::vector<std::string> vnames;
     //! the mechanical behaviour
@@ -548,6 +632,10 @@ namespace mfront
     std::string author;
     //! date
     std::string date;
+    //! test name
+    std::string tname;
+    //! initilisation stage
+    bool initialisationFinished;
   }; // end of struct MTest
 
 } // end of namespace mfront

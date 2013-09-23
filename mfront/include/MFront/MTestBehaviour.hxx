@@ -92,16 +92,16 @@ namespace mfront
     getInternalStateVariablesNames(void) const  = 0;
     /*!
      * \return the size of the array of internal variables
-     * \param[in] d : space dimension
+     * \param[in] h : modelling hypothesis
      */
     virtual size_t
-    getInternalStateVariablesSize(const unsigned short) const = 0;
+    getInternalStateVariablesSize(const tfel::material::ModellingHypothesis::Hypothesis) const = 0;
     /*!
      * \return the descriptions the internal variables
-     * \param[in] d : space dimension
+     * \param[in] h : modelling hypothesis
      */
     virtual std::vector<std::string>
-    getInternalStateVariablesDescriptions(const unsigned short) const = 0;
+    getInternalStateVariablesDescriptions(const tfel::material::ModellingHypothesis::Hypothesis) const = 0;
     /*!
      * \return the type of an internal variable
      * \param[in] n : internal variable name
@@ -110,10 +110,11 @@ namespace mfront
     getInternalStateVariableType(const std::string&) const = 0;
     /*!
      * \return the position of an internal variable
+     * \param[in] h : modelling hypothesis
      * \param[in] n : internal variable name
      */
     virtual unsigned short
-    getInternalStateVariablePosition(const unsigned short,
+    getInternalStateVariablePosition(const tfel::material::ModellingHypothesis::Hypothesis,
 				     const std::string&) const = 0;
     /*!
      * \return the number of external variables
@@ -145,13 +146,11 @@ namespace mfront
     setUnsignedIntegerParameter(const std::string&,
 				const unsigned short) const  = 0;
     /*!
-     * \brief allocate workspace
-     * \param[in] ntens   : number of components of symmetric tensors
-     * \param[in] nstatev : size of the internal state variables
+     * \brief allocate internal workspace
+     * \param[in] h : modelling hypothesis
      */
     virtual void
-    allocate(const size_t,
-	     const size_t) = 0;
+    allocate(const tfel::material::ModellingHypothesis::Hypothesis) = 0;
     /*!
      * \return the default type of stiffness matrix used by the behaviour
      */

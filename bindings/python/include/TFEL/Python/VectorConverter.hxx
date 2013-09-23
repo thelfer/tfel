@@ -26,12 +26,12 @@ namespace tfel
     template<typename T>
     struct vector_to_python_list
     {
-      static PyObject* convert(const std::vector<T>& v)
+      static PyObject* convert(const T& v)
       {
 	using namespace std;
 	using namespace boost::python;
 	using boost::python::iterator;
-	typename vector<T>::const_iterator p;
+	typename T::const_iterator p;
 	list l;
 	for(p=v.begin();p!=v.end();++p){
 	  l.append(*p);
@@ -49,7 +49,7 @@ namespace tfel
 	using boost::python::type_id;
 	using namespace boost::python::converter;
 	registry::push_back(&convertible,&construct,
-			    type_id<std::vector<T> > ());
+			    type_id<T> ());
       }
 
       static void* convertible(PyObject * ptr)
@@ -63,7 +63,7 @@ namespace tfel
 	stl_input_iterator<object> p(l);
 	stl_input_iterator<object> pe;
 	while(p!=pe){
-	  extract<T> e(*p);
+	  extract<typename T::value_type> e(*p);
 	  if(!e.check()){
 	    return 0;
 	  }
@@ -77,21 +77,20 @@ namespace tfel
       {
 	using namespace boost::python;
 	using namespace boost::python::converter;
-	typedef rvalue_from_python_storage<std::vector<T> > py_storage;
-	using std::vector;
+	typedef rvalue_from_python_storage<T> py_storage;
 	assert(PyList_Check(ptr));
 	handle<> h(borrowed(ptr));
 	list l(h);
 	stl_input_iterator<object> p(l);
 	stl_input_iterator<object> pe;
-	// Grab pointer to memory into which to construct the new vector<T>
+	// Grab pointer to memory into which to construct the new T
 	void* storage = reinterpret_cast<py_storage *>(data)->storage.bytes;
-	// in-place construct the new vector<T> using the character data
+	// in-place construct the new T using the character data
 	// extraced from the python object
-	new (storage) vector<T>();
-	vector<T>& v = *(static_cast<vector<T> *>(storage));
+	new (storage) T();
+	T& v = *(static_cast<T*>(storage));
 	while(p!=pe){
-	  extract<T> e(*p);
+	  extract<typename T::value_type> e(*p);
 	  assert(e.check());
 	  v.push_back(e());
 	  ++p;
@@ -106,9 +105,8 @@ namespace tfel
     static void initializeVectorConverter()
     {
       using namespace boost::python;
-      using std::vector;
       // register the to-python converter
-      to_python_converter<vector<T>,vector_to_python_list<T> >();
+      to_python_converter<T,vector_to_python_list<T> >();
       // register the from-python converter
       vector_from_python_list<T>();
     }

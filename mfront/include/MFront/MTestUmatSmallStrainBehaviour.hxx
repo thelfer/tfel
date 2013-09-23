@@ -30,13 +30,11 @@ namespace mfront
 				  const std::string&,
 				  const std::string&);
     /*!
-     * \brief allocate workspace
-     * \param[in] ntens   : number of components of symmetric tensors
-     * \param[in] nstatev : size of the internal state variables
+     * \brief allocate internal workspace
+     * \param[in] h : modelling hypothesis
      */
     virtual void
-    allocate(const size_t,
-	     const size_t);
+    allocate(const tfel::material::ModellingHypothesis::Hypothesis);
     /*!
      * \return the default type of stiffness matrix used by the behaviour
      */

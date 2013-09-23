@@ -117,34 +117,47 @@ namespace mfront
   }
 
   size_t
-  MTestAsterSmallStrainBehaviour::getInternalStateVariablesSize(const unsigned short d) const
+  MTestAsterSmallStrainBehaviour::getInternalStateVariablesSize(const tfel::material::ModellingHypothesis::Hypothesis h) const
   {
+    using namespace std;
+    using namespace tfel::material;
     size_t s(0);
     if(this->savesTangentOperator){
-      if(d==1){
-	s+=9;
-      } else if(d==2){ 
-	s+=16;
-      } else if(d==3){ 
-	s+=36;
-      }
+      if(h==ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN){
+	s=9;
+      } else if((h==ModellingHypothesis::AXISYMMETRICAL)||(h==ModellingHypothesis::PLANESTRESS)||
+		(h==ModellingHypothesis::PLANESTRAIN)||(h==ModellingHypothesis::GENERALISEDPLANESTRAIN)){
+	s=16;
+      } else if(h==ModellingHypothesis::TRIDIMENSIONAL){
+	s=36;
+      } else {
+	string msg("MTestAsterSmallStrainBehaviour::getInternalStateVariablesSize : "
+		   "invalid modelling hypothesis");
+	throw(runtime_error(msg));
+      }	
     }
-    return s+ MTestUmatBehaviourBase::getInternalStateVariablesSize(d);
+    return s+ MTestUmatBehaviourBase::getInternalStateVariablesSize(h);
   } // end of MTestAsterSmallStrainBehaviour::getInternalStateVariablesSize() const
 
   std::vector<std::string>
-  MTestAsterSmallStrainBehaviour::getInternalStateVariablesDescriptions(const unsigned short d) const
+  MTestAsterSmallStrainBehaviour::getInternalStateVariablesDescriptions(const tfel::material::ModellingHypothesis::Hypothesis h) const
   {
     using namespace std;
-    vector<string> desc = MTestUmatBehaviourBase::getInternalStateVariablesDescriptions(d);
+    using namespace tfel::material;
+    vector<string> desc = MTestUmatBehaviourBase::getInternalStateVariablesDescriptions(h);
     if(this->savesTangentOperator){
       size_t s(0);
-      if(d==1){
+      if(h==ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN){
 	s=3;
-      } else if(d==2){ 
+      } else if((h==ModellingHypothesis::AXISYMMETRICAL)||(h==ModellingHypothesis::PLANESTRESS)||
+		(h==ModellingHypothesis::PLANESTRAIN)||(h==ModellingHypothesis::GENERALISEDPLANESTRAIN)){
 	s=4;
-      } else if(d==3){ 
+      } else if(h==ModellingHypothesis::TRIDIMENSIONAL){
 	s=6;
+      } else {
+	string msg("MTestAsterSmallStrainBehaviour::getInternalStateVariablesDescriptions : "
+		   "invalid modelling hypothesis");
+	throw(runtime_error(msg));
       }
       for(unsigned short i=0;i!=s;++i){
 	for(unsigned short j=0;j!=s;++j){
@@ -158,9 +171,10 @@ namespace mfront
   } // end of MTestAsterSmallStrainBehaviour::getInternalStateVariablesDescriptions
 
   void
-  MTestAsterSmallStrainBehaviour::allocate(const size_t ntens,
-					   const size_t nstatev)
+  MTestAsterSmallStrainBehaviour::allocate(const tfel::material::ModellingHypothesis::Hypothesis h)
   {
+    const unsigned short ntens   = this->getProblemSize(h);
+    const unsigned short nstatev = this->getInternalStateVariablesSize(h);
     this->D.resize(ntens,ntens);
     if(nstatev==0){
       this->iv.resize(1u,real(0));

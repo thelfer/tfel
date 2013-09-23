@@ -28,7 +28,6 @@
 #include"TFEL/Math/tvector.hxx"
 #include"TFEL/Math/stensor.hxx"
 #include"TFEL/Math/tmatrix.hxx"
-#include"TFEL/Math/LUSolve.hxx"
 
 #include"MFront/MTest.hxx"
 #include"MFront/MTestLogStream.hxx"
@@ -88,12 +87,40 @@ namespace mfront
     return 0;
   }
 
+  MTest::MTestCurrentState::MTestCurrentState()
+  {}
+
+  MTest::MTestCurrentState::MTestCurrentState(const MTest::MTestCurrentState& src)
+    : u_1(src.u_1),
+      u0(src.u0),
+      u1(src.u1),
+      s_1(src.s_1),
+      s0(src.s0),
+      s1(src.s1),
+      e0(src.e0),
+      e_th0(src.e_th0),
+      e_th1(src.e_th1),
+      de(src.de),
+      mprops0(src.mprops0),
+      mprops1(src.mprops1),
+      iv_1(src.iv_1),
+      iv0(src.iv0),
+      iv1(src.iv1),
+      esv0(src.esv0),
+      desv(src.desv),
+      period(src.period),
+      dt_1(src.dt_1),
+      Tref(src.Tref)
+  {} // end of MTest::MTestCurrentState::MTestCurrentState
+
+  MTest::MTestWorkSpace::MTestWorkSpace()
+  {}
+
   MTest::UTest::~UTest()
   {}
 
-  MTest::MTest(const std::string& f)
-    : file(f),
-      oprec(-1),
+  MTest::MTest()
+    : oprec(-1),
       rm(real(0)),
       isRmDefined(false),
       evs(new std::map<std::string,
@@ -109,77 +136,851 @@ namespace mfront
       ppolicy(MTest::UNSPECIFIEDPREDICTIONPOLICY),
       useCastemAcceleration(false),
       cat(-1),
-      cap(-1)
+      cap(-1),
+      initialisationFinished(false)
+  {
+    // declare time variable
+    this->declareVariable("t",true);
+  }
+
+  void
+  MTest::setEvolutionValue(const std::string& n,
+			   const real t,
+			   const real v)
+  {
+    using namespace std;
+    using tfel::utilities::shared_ptr;
+    map<string,shared_ptr<MTestEvolution> >::iterator pev;
+    pev = this->evs->find(n);
+    if(pev==this->evs->end()){
+      string msg("MTest::setEvolutionValue : no evolution '"+
+		 n+"' declared");
+      throw(runtime_error(msg));
+    }
+    MTestEvolution& ev = *(pev->second);
+    ev.setValue(t,v);
+  } // end of MTest::setEvolutionValue
+
+  void
+  MTest::setDescription(const std::string& d)
+  {
+    using namespace std;
+    if(!this->description.empty()){
+      string msg("MTest::setDescription : ");
+      msg += "description already set.";
+      throw(runtime_error(msg));
+    }
+    this->description = d;
+  } // end of MTest::setDescription
+
+  void
+  MTest::setAuthor(const std::string& a)
+  {
+    using namespace std;
+    if(!this->author.empty()){
+      string msg("MTest::setAuthor : ");
+      msg += "author already set.";
+      throw(runtime_error(msg));
+    }
+    this->author = a;
+  } // end of MTest::setAuthor
+
+  void
+  MTest::setDate(const std::string& d)
+  {
+    using namespace std;
+    if(!this->date.empty()){
+      string msg("MTest::setDate : ");
+      msg += "date already set.";
+      throw(runtime_error(msg));
+    }
+    this->date = d;
+  } // end of MTest::setDate
+
+  void
+  MTest::setPredictionPolicy(const MTest::PredictionPolicy p)
+  {
+    using namespace std;
+    if(this->ppolicy!=UNSPECIFIEDPREDICTIONPOLICY){
+      string msg("MTest::setPredictionPolicy : "
+		 "prediction policy already declared");
+      throw(runtime_error(msg));
+    }
+    this->ppolicy = p;
+  } // end of MTest::setPredictionPolicy
+
+  void
+  MTest::setStiffnessMatrixType(const MTestStiffnessMatrixType::mtype k)
+  {
+    using namespace std;
+    if(this->ktype!=MTestStiffnessMatrixType::UNSPECIFIEDSTIFFNESSMATRIXTYPE){
+      string msg("MTest::setStiffnessMatrixType : "
+		 "stiffness matrix type already specificed");
+      throw(runtime_error(msg));
+    }
+    this->ktype = k;
+  }
+
+  void
+  MTest::setUseCastemAccelerationAlgorithm(const bool ucaa)
+  {
+    using namespace std;
+    if(this->useCastemAcceleration){
+      string msg("MTest::setUseCastemAccelerationAlgorithm : "
+		 "useCastemAcceleration already set");
+      throw(runtime_error(msg));
+    }
+    this->useCastemAcceleration = ucaa;
+  }
+  
+  void
+  MTest::setCastemAccelerationTrigger(const int i)
+  {
+    using namespace std;
+    if(i!=-1){
+      string msg("MTest::setCastemAccelerationTrigger : "
+		 "the castem acceleration trigger has already "
+		 "been defined");
+      throw(runtime_error(msg));
+    }
+    if(i<3){
+      string msg("MTest::setCastemAccelerationTrigger",
+		 "invalid acceleration trigger value.");
+      throw(runtime_error(msg));
+    }
+    this->cat = i;
+  }
+
+  void
+  MTest::setCastemAccelerationPeriod(const int p)
+  {
+    using namespace std;
+    if(p!=-1){
+      string msg("MTest::setCastemAccelerationPeriod : "
+		 "the castem acceleration period has already "
+		 "been defined");
+      throw(runtime_error(msg));
+    }
+    if(p==0){
+      string msg("MTest::setCastemAccelerationPeriod",
+		 "invalid acceleration period value.");
+      throw(runtime_error(msg));
+    }
+    this->cap = p;
+  }
+
+  void
+  MTest::setStiffnessUpdatingPolicy(const MTest::StiffnessUpdatingPolicy p)
+  {
+    using namespace std;
+    if(this->ks!=MTest::UNSPECIFIEDSTIFFNESSUPDATINGPOLICY){
+      string msg("MTest::setStiffnessUpdatePolicy : "
+		 "stiffness matrix type already specificed");
+      throw(runtime_error(msg));
+    }
+    this->ks = p;
+  } // end of MTest::setStiffnessUpdatingPolicy
+
+  std::string
+  MTest::name(void) const
+  {
+    if(this->tname.empty()){
+      return "unit behaviour test";
+    }
+    return this->tname;
+  } // end of MTest::name
+  
+  std::string
+  MTest::classname(void) const
+  {
+    return "MTest";
+  }
+
+  void
+  MTest::addEvolution(const std::string& n,
+		      const tfel::utilities::shared_ptr<MTestEvolution> p,
+		      const bool b1,
+		      const bool b2)
+  {
+    using namespace std;
+    if(b1){
+      this->declareVariable(n,b1);
+    } else {
+      if(find(this->vnames.begin(),this->vnames.end(),n)==this->vnames.end()){
+	string msg("MTest::addEvolution : "
+		   "variable '"+n+"' is not defined");
+	throw(runtime_error(msg));
+      }
+    }
+    if(b2){
+      if(this->evs->find(n)!=this->evs->end()){
+	string msg("MTest::addEvolution : "
+		   "evolution '"+n+"' already defined");
+	throw(runtime_error(msg));
+      }
+    }
+    (*(this->evs))[n] = p;
+  }
+
+  void
+  MTest::setMaterialProperty(const std::string& n,
+			     const tfel::utilities::shared_ptr<MTestEvolution> p,
+			     const bool check)
+  {
+    using namespace std;
+    if(this->b.get()==0){
+      string msg("MTest::setMaterialProperty : ");
+      msg += "no behaviour defined";
+      throw(runtime_error(msg));
+    }
+    const vector<string>& mpnames = this->b->getMaterialPropertiesNames();
+    bool is_mp = find(mpnames.begin(),mpnames.end(),n)==mpnames.end();
+    if((is_mp)&&(n!="ThermalExpansion") &&(n!="ThermalExpansion1")&&
+       (n!="ThermalExpansion2")&&(n!="ThermalExpansion3")){
+      ostringstream msg;
+      msg << "MTest::setMaterialProperty : "
+	  << "the behaviour don't declare a material property '" << n+"'.";
+      if(!mpnames.empty()){
+	msg << "\nThe behaviour declares:";
+	for(vector<string>::const_iterator pn=mpnames.begin();pn!=mpnames.end();++pn){
+	  msg << "\n- '" << *pn << "'";
+	}
+      }
+      throw(runtime_error(msg.str()));
+    }
+    if((n=="ThermalExpansion") ||(n=="ThermalExpansion1")||
+       (n=="ThermalExpansion2")||(n=="ThermalExpansion3")){
+      if(is_mp){
+	this->addEvolution(n,p,true,check);
+      } else {
+	this->addEvolution(n,p,false,check);
+      }
+    } else {
+      this->addEvolution(n,p,false,check);
+    }
+  }
+
+  void
+  MTest::setExternalStateVariable(const std::string& n,
+				  const tfel::utilities::shared_ptr<MTestEvolution> p,
+				  const bool check)
+  {
+    using namespace std;
+    if(this->b.get()==0){
+      string msg("MTest::setExternalStateVariable : ");
+      msg += "no behaviour defined";
+      throw(runtime_error(msg));
+    }
+    const vector<string>& evsnames = this->b->getExternalStateVariablesNames();
+    if(find(evsnames.begin(),evsnames.end(),n)==evsnames.end()){
+      string msg("MTestParser::setExternalStateVariable : ");
+      msg += "the behaviour don't declare an external state variable '";
+      msg += n+"'";
+      throw(runtime_error(msg));
+    }
+    this->addEvolution(n,p,false,check);
+  }
+
+  void
+  MTest::addConstraint(const tfel::utilities::shared_ptr<MTestConstraint> c)
+  {
+    this->constraints.push_back(c);
+  }
+
+  void
+  MTest::setMaximumNumberOfIterations(const unsigned int i)
+  {
+    using namespace std;
+    if(this->iterMax!=-1){
+      string msg("MTest::setMaximumNumberOfIterations : "
+		 "the maximum number of iterations "
+		 "has already been declared");
+      throw(runtime_error(msg));
+    }
+    if(i==0){
+      string msg("MTest::setMaximumNumberOfIterations : ");
+      msg += "invalid number of iterations";
+      throw(runtime_error(msg));
+    }
+    this->iterMax = static_cast<int>(i);
+  }
+
+  void
+  MTest::setDrivingVariableEpsilon(const double e)
+  {
+    using namespace std;
+    if(this->eeps>0){
+      string msg("MTest::setDrivingVariableEpsilon : the epsilon "
+    		 "value has already been declared");
+      throw(runtime_error(msg));
+    }
+    if(e < 100*numeric_limits<real>::min()){
+      string msg("MTest::setDrivingVariableEpsilon : invalid value");
+      throw(runtime_error(msg));
+    }
+    this->eeps = e;
+  }
+
+  void
+  MTest::setThermodynamicForceEpsilon(const double s)
+  {
+    using namespace std;
+      if(this->seps>0){
+      string msg("MTest::setThermodynamicForceEpsilon : the epsilon "
+    		 "value has already been declared");
+      throw(runtime_error(msg));
+    }
+    if(s < 100*numeric_limits<real>::min()){
+      string msg("MTest::setThermodynamicForceEpsilon : invalid value");
+      throw(runtime_error(msg));
+    }
+    this->seps = s;
+  }
+
+  void
+  MTest::setParameter(const std::string& n,
+		      const double v)
+  {
+    using namespace std;
+    if(this->b.get()==0){
+      string msg("MTest::setParameter : ");
+      msg += "no behaviour defined";
+      throw(runtime_error(msg));
+    }
+    this->b->setParameter(n,v);
+  }
+
+  void
+  MTest::setIntegerParameter(const std::string& n,
+			     const int v)
+  {
+    using namespace std;
+    if(this->b.get()==0){
+      string msg("MTest::setIntegerParameter : ");
+      msg += "no behaviour defined";
+      throw(runtime_error(msg));
+    }
+    this->b->setIntegerParameter(n,v);
+  }
+
+  void
+  MTest::setUnsignedIntegerParameter(const std::string& n,
+				     const unsigned int v)
+  {
+    using namespace std;
+    if(this->b.get()==0){
+      string msg("MTest::setUnsignedIntegerParameter : ");
+      msg += "no behaviour defined";
+      throw(runtime_error(msg));
+    }
+    this->b->setUnsignedIntegerParameter(n,v);
+  }
+
+  void
+  MTest::setModellingHypothesis(const std::string& h)
+  {
+    using namespace std;
+    typedef tfel::material::ModellingHypothesis MH;
+    if(this->dimension!=0){
+      string msg("MTestParser::setModellingHypothesis : ");
+      msg += "the modelling hypothesis is already defined";
+      throw(runtime_error(msg));
+    }
+    if(h=="AxisymmetricalGeneralisedPlaneStrain"){
+      this->dimension=1u;
+      this->hypothesis = MH::AXISYMMETRICALGENERALISEDPLANESTRAIN;
+    } else if(h=="Axisymmetrical"){
+      this->dimension  = 2u;
+      this->hypothesis = MH::AXISYMMETRICAL;
+    } else if(h=="PlaneStress"){
+      this->dimension  = 2u;
+      this->hypothesis = MH::PLANESTRESS;
+    } else if(h=="PlaneStrain"){
+      this->dimension  = 2u;
+      this->hypothesis = MH::PLANESTRAIN;
+    } else if(h=="GeneralisedPlaneStrain"){
+      this->dimension  = 2u;
+      this->hypothesis = MH::GENERALISEDPLANESTRAIN;
+    } else if(h=="Tridimensional"){
+      this->dimension  = 3u;
+      this->hypothesis = MH::TRIDIMENSIONAL;
+    } else {
+      string msg("MTestParser::setModellingHypothesis : ");
+      msg += "unsupported hypothesis '"+h+"'";
+      throw(runtime_error(msg));
+    }
+  } // end of MTest::setModellingHypothesis
+
+  tfel::material::ModellingHypothesis::Hypothesis
+  MTest::getModellingHypothesis() const
+  {
+    using namespace std;
+    if(this->dimension==0){
+      string msg("MTest::getModellingHypothesis : ");
+      msg += "the modelling hypothesis is not defined";
+      throw(runtime_error(msg));
+    }
+    return this->hypothesis;
+  }
+
+  unsigned short
+  MTest::getDimension(void) const
+  {
+    using namespace std;
+    if(this->dimension==0){
+      string msg("MTest::getDimension : ");
+      msg += "the modelling hypothesis is not defined";
+      throw(runtime_error(msg));
+    }
+    return this->dimension;
+  }
+
+  tfel::material::MechanicalBehaviourBase::BehaviourType
+  MTest::getBehaviourType() const{
+    using namespace std;
+    if(this->b.get()==0){
+      string msg("MTest::getBehaviourType : ");
+      msg += "no behaviour defined";
+      throw(runtime_error(msg));
+    }
+    return this->b->getBehaviourType();
+  }
+
+  tfel::utilities::shared_ptr<MTestBehaviour>
+  MTest::getBehaviour(void){
+    using namespace std;
+    if(this->b.get()==0){
+      string msg("MTest::getBehaviour : ");
+      msg += "no behaviour defined";
+      throw(runtime_error(msg));
+    }
+    return this->b;
+  }
+
+  void
+  MTest::setMaximumNumberOfSubSteps(const unsigned int i)
+  {
+    using namespace std;
+    if(this->mSubSteps!=-1){
+      string msg("MTest::setMaximumNumberOfSubSteps : "
+		 "the maximum number of sub steps "
+		 "has already been declared");
+      throw(runtime_error(msg));
+    }
+    if(i==0){
+      string msg("MTest::setMaximumNumberOfSubSteps : ");
+      msg += "invalid number of sub steps";
+      throw(runtime_error(msg));
+    }
+    this->mSubSteps = static_cast<int>(i);
+  }
+
+  void
+  MTest::setRotationMatrix(const tfel::math::tmatrix<3u,3u,real>& r)
+  {
+    using namespace std;
+    using namespace tfel::math;
+    if(this->isRmDefined){
+      string msg("MTest::setRotationMatrix : "
+		 "rotation matrix already defined");
+      throw(runtime_error(msg));
+    }
+    if(this->b.get()==0){
+      string msg("MTest::setRotationMatrix : ");
+      msg += "no behaviour defined";
+      throw(runtime_error(msg));
+    }
+    if(this->b->getSymmetryType()!=1){
+      string msg("MTest::setRotationMatrix : "
+		 "rotation matrix may only be defined "
+		 "for orthotropic behaviours");
+      throw(runtime_error(msg));
+    }
+    this->isRmDefined = true;
+    // checking that the given matrix is a rotation one
+    tvector<3u,real> c0 = r.column_view<0>();
+    tvector<3u,real> c1 = r.column_view<1>();
+    tvector<3u,real> c2 = r.column_view<2>();
+    if((abs(norm(c0)-real(1))>100*numeric_limits<real>::epsilon())||
+       (abs(norm(c1)-real(1))>100*numeric_limits<real>::epsilon())||
+       (abs(norm(c2)-real(1))>100*numeric_limits<real>::epsilon())){
+      string msg("MTest::setRotationMatrix : "
+		 "at least one column is not normalised");
+      throw(runtime_error(msg));
+    }
+    if((abs(c0|c1)>100*numeric_limits<real>::epsilon())||
+       (abs(c0|c2)>100*numeric_limits<real>::epsilon())||
+       (abs(c1|c2)>100*numeric_limits<real>::epsilon())){
+      string msg("MTest::setRotationMatrix : "
+		 "at least two columns are not orthogonals");
+      throw(runtime_error(msg));
+    }
+    this->rm = r;
+  }
+
+  void
+  MTest::getVariableTypeAndPosition(UTest::TestedVariable& type,
+				    unsigned short& pos,
+				    const std::string& n)
+  {
+    using namespace std;
+    vector<string>::const_iterator p;
+    if(this->b.get()==0){
+      string msg("MTest::getVariableTypeAndPosition : ");
+      msg += "no behaviour defined";
+      throw(runtime_error(msg));
+    }
+    vector<string> enames;
+    vector<string> snames;
+    this->b->getDrivingVariablesComponents(enames,this->hypothesis);
+    this->b->getThermodynamicForcesComponents(snames,this->hypothesis);
+    p=find(enames.begin(),enames.end(),n);
+    if(p!=enames.end()){
+      pos  = static_cast<unsigned short>(p-enames.begin());
+      type = MTest::UTest::DRIVINGVARIABLE;
+      return;
+    } 
+    p=find(snames.begin(),snames.end(),n);
+    if(p!=snames.end()){
+      pos  = static_cast<unsigned short>(p-snames.begin());
+      type = MTest::UTest::THERMODYNAMICFORCE;
+      return;
+    } 
+    p=find(this->ivfullnames.begin(),this->ivfullnames.end(),n);
+    if(p!=this->ivfullnames.end()){
+      pos  = static_cast<unsigned short>(p-this->ivfullnames.begin());
+      type = MTest::UTest::INTERNALSTATEVARIABLE;
+      return;
+    } 
+    string msg("MTest::getVariableTypeAndPosition : "
+	       "no variable name '"+n+"'");
+    throw(runtime_error(msg));
+  } // end of MTest::getVariableTypeAndPosition
+
+  void
+  MTest::setDefaultHypothesis(void)
+  {
+    using namespace std;
+    typedef tfel::material::ModellingHypothesis MH;
+    if(this->hypothesis!=MH::UNDEFINEDHYPOTHESIS){
+      string msg("MTest::setDefaultHypothesis : "
+		 "internal error : the modelling "
+		 "hypothesis is already defined");
+      throw(runtime_error(msg));
+    }
+    if(this->b.get()!=0){
+      string msg("MTest::setDefaultHypothesis : ");
+      msg += "behaviour already defined";
+      throw(runtime_error(msg));
+    }
+    if(getVerboseMode()>=VERBOSE_LEVEL1){
+      ostream& log = getLogStream();
+      log << "No hypothesis defined, using default" << endl;
+    }
+    this->hypothesis = MH::TRIDIMENSIONAL;
+    this->dimension  = 3u;
+  }
+
+  void
+  MTest::setOutputFileName(const std::string& o)
+  {
+    using namespace std;
+    if(!this->output.empty()){
+      string msg("MTest::setOutputFileName : ");
+      msg += "output file name already defined";
+      throw(runtime_error(msg));
+    }
+    this->output = o;
+  }
+
+  void
+  MTest::setOutputFilePrecision(const unsigned int p)
+  {
+    using namespace std;
+    if(this->oprec!=-1){
+      string msg("MTest::setOutputFileName : ");
+      msg += "output file precision already defined";
+      throw(runtime_error(msg));
+    }
+    this->oprec = static_cast<int>(p);
+  }
+
+  void
+  MTest::addTest(const tfel::utilities::shared_ptr<mfront::MTest::UTest> t)
+  {
+    this->tests.push_back(t);
+  }
+
+  void
+  MTest::setDrivingVariablesInitialValues(const std::vector<real>& v)
+  {
+    using namespace std;
+    if(!this->e_t0.empty()){
+      string msg("MTest::setDrivingVariablesInitialValues : ");
+      msg += "the initial values of the strains have already been declared";
+      throw(runtime_error(msg));
+    }
+    const unsigned short N = this->b->getProblemSize(this->hypothesis);
+    if(v.size()!=N){
+      string msg("MTest::setDrivingVariablesInitialValues : ");
+      msg += "invalid initial values size";
+      throw(runtime_error(msg));
+    }
+    this->e_t0.resize(N,0);
+    copy(v.begin(),v.end(),this->e_t0.begin());
+  }
+  
+  void
+  MTest::setThermodynamicForcesInitialValues(const std::vector<real>& v)
+  {
+    using namespace std;
+    if(!this->s_t0.empty()){
+      string msg("MTest::setThermodynamicForcesInitialValues : ");
+      msg += "the initial values of the strains have already been declared";
+      throw(runtime_error(msg));
+    }
+    const unsigned short N = this->b->getProblemSize(this->hypothesis);
+    if(v.size()!=N){
+      string msg("MTest::setThermodynamicForcesInitialValues : ");
+      msg += "invalid initial values size";
+      throw(runtime_error(msg));
+    }
+    this->s_t0.resize(N,0);
+    copy(v.begin(),v.end(),this->s_t0.begin());
+  } // end of MTest::setThermodynamicForcesInitialValues
+  
+  void
+  MTest::setScalarInternalStateVariableInitialValue(const std::string& n,
+						    const real v)
+  {
+    using namespace std;
+    if(this->b.get()==0){
+      string msg("MTest::setScalarInternalStateVariableInitialValue : ");
+      msg += "no behaviour defined";
+      throw(runtime_error(msg));
+    }
+    const vector<string>& ivsnames = this->b->getInternalStateVariablesNames();
+    if(find(ivsnames.begin(),ivsnames.end(),n)==ivsnames.end()){
+      string msg("MTest::setScalarInternalStateVariableInitialValue : ");
+      msg += "the behaviour don't declare an internal state variable named '";
+      msg += n+"'";
+      throw(runtime_error(msg));
+    }
+    const int type           = this->b->getInternalStateVariableType(n);
+    const unsigned short pos = this->b->getInternalStateVariablePosition(this->hypothesis,n);
+    if(type!=0){
+      string msg("MTest::setScalarInternalStateVariableInitialValue : ");
+      msg += "internal state variable '"+n+"' is not defined";
+      throw(runtime_error(msg));
+    }
+    if(this->iv_t0.size()<=pos){
+      this->iv_t0.resize(pos+1,0.);
+    }
+    this->iv_t0[pos] = v;
+  }
+
+  void
+  MTest::setStensorInternalStateVariableInitialValues(const std::string& n,
+						      const std::vector<real>& v)
+  {
+    using namespace std;
+    if(this->b.get()==0){
+      string msg("MTest::setStensorInternalStateVariableInitialValue : ");
+      msg += "no behaviour defined";
+      throw(runtime_error(msg));
+    }
+    const vector<string>& ivsnames = this->b->getInternalStateVariablesNames();
+    if(find(ivsnames.begin(),ivsnames.end(),n)==ivsnames.end()){
+      string msg("MTest::setStensorInternalStateVariableInitialValue : ");
+      msg += "the behaviour don't declare an internal state variable named '";
+      msg += n+"'";
+      throw(runtime_error(msg));
+    }
+    const int type           = this->b->getInternalStateVariableType(n);
+    const unsigned short pos = this->b->getInternalStateVariablePosition(this->hypothesis,n);
+    if(type!=1){
+      string msg("MTest::setStensorInternalStateVariableInitialValue : ");
+      msg += "internal state variable '"+n+"' is not defined";
+      throw(runtime_error(msg));
+    }
+    const unsigned short N = getSTensorSize(this->dimension);
+    if(v.size()!=N){
+      string msg("MTest::setStensorInternalStateVariableInitialValues : "
+		 "invalid values size");
+      throw(runtime_error(msg));
+    }
+    if(this->iv_t0.size()<pos+N){
+      this->iv_t0.resize(pos+N,0.);
+    }
+    copy(v.begin(),v.end(),
+	 this->iv_t0.begin()+pos);
+  } // end of MTest::setStensorInternalStateVariableInitialValue
+
+  void
+  MTest::setTimes(const std::vector<real>& t)
+  {
+    using namespace std;
+    if(!this->times.empty()){
+      string msg("MTest::setTimes : "
+		 "times already defined");
+      throw(runtime_error(msg));
+    }
+    this->times=t;
+  } // end of MTest::setTimes
+
+  tfel::utilities::shared_ptr<std::map<std::string,	
+				       tfel::utilities::shared_ptr<MTestEvolution> > >
+  MTest::getEvolutions() const
+  {
+    return this->evs;
+  } // end of MTest::getEvolutions() const
+
+  void
+  MTest::setBehaviour(const std::string& i,
+		      const std::string& l,
+		      const std::string& f)
   {
     using namespace std;
     using namespace tfel::utilities;
+    using namespace tfel::system;
     using tfel::utilities::shared_ptr;
+    typedef ExternalLibraryManager ELM;
     typedef tfel::material::ModellingHypothesis MH;
-    map<string,CallBack>::const_iterator pc;
-    // declare some variables
-    this->declareVariable("t");
-    this->registerCallBacks();
-    this->treatCharAsString(true);
-    this->openFile(f);
-    this->stripComments();
-    TokensContainer::const_iterator p;
-    p = this->fileTokens.begin();
-    while(p!=fileTokens.end()){
-      pc=this->callbacks.find(p->value);
-      if(pc==this->callbacks.end()){
-	ostringstream msg;
-	msg << "MTest::MTest : invalid keyword '"
-	    << p->value << "'. Error at line " 
-	    << p->line<< ".";
-	throw(runtime_error(msg.str()));
-      }
-      ++p;
-      unsigned int line = p->line;
-      try{
-	(this->*(pc->second))(p);
-      } catch(exception& e){
-	ostringstream msg;
-	msg << "MTest::MTest : error while "
-	    << "parsing file '" << f << "' at line '"
-	    << line << "'.\n" << e.what();
-	throw(runtime_error(msg.str()));
+    if(this->hypothesis==MH::UNDEFINEDHYPOTHESIS){
+      this->setDefaultHypothesis();
+    }
+    if(this->b.get()!=0){
+      string msg("MTest::setBehaviour : "
+		 "behaviour already defined");
+      throw(runtime_error(msg));
+    }
+#ifdef HAVE_CASTEM
+    if(i=="umat"){
+      ELM& elm = ELM::getExternalLibraryManager();
+      const unsigned short type = elm.getUMATBehaviourType(l,f);
+      if(type==1u){
+	this->b = shared_ptr<MTestBehaviour>(new MTestUmatSmallStrainBehaviour(this->hypothesis,l,f));
+      } else if(type==3u){
+	this->b = shared_ptr<MTestBehaviour>(new MTestUmatCohesiveZoneModelBehaviour(this->hypothesis,l,f));
+      } else {
+	string msg("MTest::setBehaviour : ");
+	msg += "unsupported behaviour type";
+	throw(runtime_error(msg));
       }
     }
-    // some checks
-    if(times.empty()){
-      string msg("MTest::MTest : no times defined");
+#endif
+#ifdef HAVE_ASTER
+    if(i=="aster"){
+      this->b = shared_ptr<MTestBehaviour>(new MTestAsterSmallStrainBehaviour(this->hypothesis,l,f));
+    }
+#endif
+    if(this->b.get()==0){
+      string msg("MTest::setBehaviour : ");
+      msg += "unknown interface '"+i+"'";
+      throw(runtime_error(msg));
+    }
+    const vector<string>& ivnames = this->b->getInternalStateVariablesNames();
+    this->declareVariables(this->b->getMaterialPropertiesNames(),true);
+    this->declareVariables(ivnames,true);
+    this->declareVariables(this->b->getExternalStateVariablesNames(),true);
+    vector<string>::const_iterator pn;
+    for(pn=ivnames.begin();pn!=ivnames.end();++pn){
+      unsigned short t = this->b->getInternalStateVariableType(*pn);
+      if(t==0){
+	this->ivfullnames.push_back(*pn);
+      } else if(t==1){
+	//! suffixes of stensor components
+	vector<string> sexts;
+	this->b->getStensorComponentsSuffixes(sexts,this->hypothesis);
+	for(vector<string>::size_type s=0;s!=sexts.size();++s){
+	  const string& vn = *pn+sexts[s];
+	  this->declareVariable(vn,true);
+	  this->ivfullnames.push_back(vn);
+	}
+      } else {
+	string msg("MTest::setBehaviour : "
+		   "unsupported variable type for variable '"+*pn+"'");
+	throw(runtime_error(msg));
+      }
+    }
+    // declaring behaviour variables
+    std::vector<string> enames;
+    std::vector<string> snames;
+    this->b->getDrivingVariablesComponents(enames,this->hypothesis);
+    this->b->getThermodynamicForcesComponents(snames,this->hypothesis);
+    this->declareVariables(enames,true);
+    this->declareVariables(snames,true);
+  } // end of MTest::setBehaviour
+
+  void
+  MTest::completeInitialisation()
+  {
+    using namespace std;
+    using tfel::utilities::shared_ptr;
+    typedef tfel::material::ModellingHypothesis MH;
+    map<string,shared_ptr<MTestEvolution> >::const_iterator pev;
+    if(this->initialisationFinished){
+      string msg("MTest::completeInitialisation : "
+		 "object already initialised");
       throw(runtime_error(msg));
     }
     if(this->dimension==0u){
       this->setDefaultHypothesis();
     }
     if(this->b.get()==0){
-      string msg("MTest::MTest : ");
+      string msg("MTest::completeInitialisation : ");
       msg += "no behaviour defined";
       throw(runtime_error(msg));
     }
-    if(this->output.empty()){
-      string::size_type pos = f.rfind('.');
-      if(pos!=string::npos){
-	this->output = f.substr(0,pos);
-      } else {
-	this->output = f;
+    // number of components of the driving variables and the thermodynamic forces
+    const unsigned short N = this->b->getProblemSize(this->hypothesis);
+    // check if material properties and external state variables are declared
+    vector<string> mpnames(this->b->getMaterialPropertiesNames());
+    vector<string> esvnames(this->b->getExternalStateVariablesNames());
+    checkIfDeclared(mpnames,*(this->evs),"material property");
+    checkIfDeclared(esvnames,*(this->evs),"external state variable");
+    // output
+    if(!this->output.empty()){
+      this->out.open(this->output.c_str());
+      if(!this->out){
+	string msg("MTest::completeInitialisation : ");
+	msg += "can't open file '"+this->output+"'";
+	throw(runtime_error(msg));
       }
-      this->output += ".res";
+      this->out.exceptions(ofstream::failbit|ofstream::badbit);
+      if(this->oprec!=-1){
+	this->out.precision(static_cast<streamsize>(this->oprec));
+      }
     }
-    this->out.open(this->output.c_str());
-    if(!this->out){
-      string msg("MTest::MTest : ");
-      msg += "can't open file '"+this->output+"'";
+    // post-processing
+    unsigned short cnbr = 2;
+    this->out << "# first column : time" << endl;
+    for(unsigned short i=0;i!=N;++i){
+      this->out << "# " << cnbr << " column : " << i+1 << "th component of the driving variables" << endl;
+      ++cnbr;
+    }
+    for(unsigned short i=0;i!=N;++i){
+      this->out << "# " << cnbr << " column : " << i+1 << "th component of the thermodynamic forces" << endl;
+      ++cnbr;
+    }
+    const std::vector<string>& ivdes =
+      this->b->getInternalStateVariablesDescriptions(this->hypothesis);
+    if(ivdes.size()!=this->b->getInternalStateVariablesSize(this->hypothesis)){
+      string msg("MTest::completeInitialisation : internal error "
+		 "(the number of descriptions given by "
+		 "the mechanical behaviour don't match "
+		 "the number of internal state variables)");
       throw(runtime_error(msg));
     }
-    this->out.exceptions(ofstream::failbit|ofstream::badbit);
-    if(this->oprec!=-1){
-      this->out.precision(static_cast<streamsize>(this->oprec));
+    for(std::vector<string>::size_type i=0;i!=ivdes.size();++i){
+      this->out << "# " << cnbr << " column : " << ivdes[i] << endl;
+      ++cnbr;
     }
+    // convergence criterium value for driving variables
     if(this->eeps<0){
       this->eeps = 1.e-12;
     }
+    // convergence criterium value for thermodynamic forces
     if(this->seps<0){
       this->seps = 1.e-3;
     }
@@ -222,1754 +1023,15 @@ namespace mfront
     if(this->ktype==MTestStiffnessMatrixType::UNSPECIFIEDSTIFFNESSMATRIXTYPE){
       this->ktype = this->b->getDefaultStiffnessMatrixType();
     }
-    // declaring behaviour variables
-    vector<string> enames;
-    vector<string> snames;
-    this->b->getDrivingVariablesComponents(enames,this->hypothesis);
-    this->b->getThermodynamicForcesComponents(snames,this->hypothesis);
-    this->declareVariables(enames);
-    this->declareVariables(snames);
-  } // end of MTest::MTest
-
-  MTest::MTest()
-  {
-    this->registerCallBacks();
-  }
-
-  void
-  MTest::displayKeyWordsList(void) const
-  {
-    using namespace std;
-    using namespace tfel::utilities;
-    map<string,CallBack>::const_iterator pk;
-    string::size_type msize = 0;
-    for(pk=this->callbacks.begin();
-	pk!=this->callbacks.end();++pk){
-      msize = max(msize,pk->first.size());
-    }
-    for(pk=this->callbacks.begin();pk!=this->callbacks.end();++pk){
-      string root;
-      const char * const path = getenv("TFELHOME");
-      if(path!=0){
-	root = string(path);
-      } else {
-	root = PREFIXDIR;
-      }
-      const string f = root+"/share/doc/mtest/"+pk->first.substr(1)+".txt";
-      ifstream desc(f.c_str());
-      bool exists(true);
-      if(!desc){
-	exists = false;
-      }
-      string key = pk->first;
-      key.resize(msize,' ');
-      cout << key << "  ";
-      if(exists){
-	cout.write(TerminalColors::Green,sizeof(TerminalColors::Green));
-	cout << "(documented)";
-      } else {
-	cout.write(TerminalColors::Red,sizeof(TerminalColors::Red));
-	cout << "(undocumented)";
-      }
-      cout.write(TerminalColors::Reset,sizeof(TerminalColors::Reset));
-      cout << endl;
-    }
-  } // end of MTest::displayKeywordsList
-
-  void
-  MTest::registerCallBacks()
-  {
-    this->registerCallBack("@UseCastemAccelerationAlgorithm",
-			   &MTest::handleUseCastemAccelerationAlgorithm);
-    this->registerCallBack("@CastemAccelerationPeriod",
-			   &MTest::handleCastemAccelerationPeriod);
-    this->registerCallBack("@CastemAccelerationTrigger",
-			   &MTest::handleCastemAccelerationTrigger);
-    this->registerCallBack("@StiffnessMatrixType",
-			   &MTest::handleStiffnessMatrixType);
-    this->registerCallBack("@StiffnessUpdatePolicy",
-			   &MTest::handleStiffnessUpdatePolicy);
-    this->registerCallBack("@PredictionPolicy",
-			   &MTest::handlePredictionPolicy);
-    this->registerCallBack("@Author",
-			   &MTest::handleAuthor);
-    this->registerCallBack("@Date",
-			   &MTest::handleDate);
-    this->registerCallBack("@Description",
-			   &MTest::handleDescription);
-    this->registerCallBack("@Parameter",
-			   &MTest::handleParameter);
-    this->registerCallBack("@IntegerParameter",
-			   &MTest::handleIntegerParameter);
-    this->registerCallBack("@UnsignedIntegerParameter",
-			   &MTest::handleUnsignedIntegerParameter);
-    this->registerCallBack("@OutputFile",
-			   &MTest::handleOutputFile);
-    this->registerCallBack("@OutputFilePrecision",
-			   &MTest::handleOutputFilePrecision);
-    this->registerCallBack("@Test",
-			   &MTest::handleTest);
-    this->registerCallBack("@Real",
-			   &MTest::handleReal);
-    this->registerCallBack("@Evolution",
-			   &MTest::handleEvolution);
-    this->registerCallBack("@RotationMatrix",
-			   &MTest::handleRotationMatrix);
-    this->registerCallBack("@MaximumNumberOfIterations",
-			   &MTest::handleMaximumNumberOfIterations);
-    this->registerCallBack("@MaximumNumberOfSubSteps",
-			   &MTest::handleMaximumNumberOfSubSteps);
-    this->registerCallBack("@StrainEpsilon",
-			   &MTest::handleStrainEpsilon);
-    this->registerCallBack("@OpeningDisplacementEpsilon",
-			   &MTest::handleOpeningDisplacementEpsilon);
-    this->registerCallBack("@DrivingVariableEpsilon",
-			   &MTest::handleDrivingVariableEpsilon);
-    this->registerCallBack("@StressEpsilon",
-			   &MTest::handleStressEpsilon);
-    this->registerCallBack("@CohesiveForceEpsilon",
-			   &MTest::handleCohesiveForceEpsilon);
-    this->registerCallBack("@ThermodynamicForceEpsilon",
-			   &MTest::handleThermodynamicForceEpsilon);
-    this->registerCallBack("@ModellingHypothesis",
-			   &MTest::handleModellingHypothesis);
-    this->registerCallBack("@Strain",&MTest::handleStrain);
-    this->registerCallBack("@OpeningDisplacement",&MTest::handleOpeningDisplacement);
-    this->registerCallBack("@DrivingVariable",&MTest::handleDrivingVariable);
-    this->registerCallBack("@Stress",&MTest::handleStress);
-    this->registerCallBack("@CohesiveForce",&MTest::handleCohesiveForce);
-    this->registerCallBack("@ThermodynamicForce",&MTest::handleThermodynamicForce);
-    this->registerCallBack("@Times",&MTest::handleTimes);
-    this->registerCallBack("@Behaviour",&MTest::handleBehaviour);
-    this->registerCallBack("@MaterialProperty",
-			   &MTest::handleMaterialProperty);
-    this->registerCallBack("@InternalStateVariable",
-			   &MTest::handleInternalStateVariable);
-    this->registerCallBack("@ExternalStateVariable",
-			   &MTest::handleExternalStateVariable);
-    this->registerCallBack("@ImposedStrain",
-			   &MTest::handleImposedStrain);
-    this->registerCallBack("@ImposedOpeningDisplacement",
-			   &MTest::handleImposedOpeningDisplacement);
-    this->registerCallBack("@ImposedDrivingVariable",
-			   &MTest::handleImposedDrivingVariable);
-    this->registerCallBack("@ImposedStress",
-			   &MTest::handleImposedStress);
-    this->registerCallBack("@ImposedCohesiveForce",
-			   &MTest::handleImposedCohesiveForce);
-    this->registerCallBack("@ImposedThermodynamicForce",
-			   &MTest::handleImposedThermodynamicForce);
-  }
-
-  void
-  MTest::registerCallBack(const std::string& k,
-			  const MTest::CallBack& p)
-  {
-    using namespace std;
-    typedef map<string,CallBack>::value_type MVType;
-    this->callbacks.insert(MVType(k,p));
-  }
-
-  void
-  MTest::displayKeyWordDescription(const std::string& k) const
-  {
-    using namespace std;
-    if(this->callbacks.find(k)==this->callbacks.end()){
-      string msg("MTest::displayKeyWordDescription : "
-		 "unknowns keyword '"+k+"'");
-      throw(runtime_error(msg));
-    }
-    string root;
-    const char * const path = getenv("TFELHOME");
-    if(path!=0){
-      root = string(path);
-    } else {
-      root = PREFIXDIR;
-    }
-    const string f = root+"/share/doc/mtest/"+k.substr(1)+".txt";
-    ifstream desc(f.c_str());
-    if(!desc){
-      cout << "no description available for keyword '"
-	   << k << "'" << endl;
-    }
-    cout << desc.rdbuf();
-  }
-
-  std::string
-  MTest::name(void) const
-  {
-    return this->file;
-  } // end of MTest::name
-  
-  std::string
-  MTest::classname(void) const
-  {
-    return "MTest";
-  }
-
-  std::string
-  MTest::readUntilEndOfInstruction(TokensContainer::const_iterator& p)
-  {
-    using namespace std;
-    string res;
-    this->checkNotEndOfLine("MTest::readUntilEndOfInstruction",
-			    p,this->fileTokens.end());
-    while((p!=this->fileTokens.end())&&
-	  (p->value != ";")){
-      if(!p->value.empty()){
-	if(p->value[0]=='@'){
-	  string msg("MTest::readUntilEndOfInstruction : ");
-	  msg += "no word beginning with '@' are allowed here";
-	  throw(runtime_error(msg));
-	}
-	res+=p->value;
-	res+=" ";
-      }
-      ++p;
-    }
-    this->readSpecifiedToken("MTest::readUntilEndOfInstruction",";",
-			     p,this->fileTokens.end());
-    return res;
-  }
-
-  void
-  MTest::handleDescription(TokensContainer::const_iterator& p)
-  {
-    using namespace std;
-    using namespace tfel::utilities;
-    unsigned short currentLine;
-    unsigned short openedBrackets;
-    if(!this->description.empty()){
-      string msg("MTest::handleDescription : ");
-      msg += "@Description shall only be called once.";
-      throw(runtime_error(msg));
-    }
-    this->readSpecifiedToken("MTest::handleDescription","{",
-			     p,this->fileTokens.end());
-    this->checkNotEndOfLine("MTest::handleDescription",
-			    p,this->fileTokens.end());
-    currentLine = p->line;
-    openedBrackets = 1u;
-    while((!((p->value=="}")&&
-	     (openedBrackets==1u)))&&
-	  (p!=this->fileTokens.end())){
-      if(p->value=="{"){
-	TokensContainer::const_iterator previous = p;
-	--previous;
-	if((previous->value.size()>0)&&
-	   (previous->value[previous->value.size()-1]!='\\')){
-	  ++openedBrackets;
-	}
-      }
-      if(p->value=="}"){
-	TokensContainer::const_iterator previous = p;
-	--previous;
-	if((previous->value.size()>0)&&
-	   (previous->value[previous->value.size()-1]!='\\')){
-	  --openedBrackets;
-	}
-      }
-      if(currentLine!=p->line){
-	this->description+="\n";
-	currentLine=p->line;
-      }
-      if(p->flag==Token::String){
-	this->description+=p->value.substr(1,p->value.size()-2);
-      } else {
-	this->description+=p->value;
-      }
-      this->description+=" ";
-      ++p;
-    }
-    if(p==this->fileTokens.end()){
-      --p;
-      string msg("MTest::handleDescription",
-		 "File ended before the end of description.");
-      throw(runtime_error(msg));
-    }
-    ++p;
-    this->readSpecifiedToken("MTest::handleDescription",";",
-			     p,this->fileTokens.end());
-  } // end of MTest::Description
-
-  void MTest::handleAuthor(TokensContainer::const_iterator& p)
-  {
-    this->author = this->readUntilEndOfInstruction(p);
-  } // end of MTest::handleAuthor
-
-  void MTest::handlePredictionPolicy(TokensContainer::const_iterator& p)
-  {
-    using namespace std;
-    if(this->ppolicy!=UNSPECIFIEDPREDICTIONPOLICY){
-      string msg("MTest::handlePredictionPolicy : "
-		 "prediction policy already declared");
-      throw(runtime_error(msg));
-    }
-    this->checkNotEndOfLine("handlePredictionPolicy",
-			    p,this->fileTokens.end());
-    const string& s = this->readString(p,this->fileTokens.end());
-    this->readSpecifiedToken("MTest::handlePredictionPolicy",";",
-			     p,this->fileTokens.end());
-    if(s=="NoPrediction"){
-      this->ppolicy = NOPREDICTION;
-    } else if(s=="LinearPrediction"){
-      this->ppolicy = LINEARPREDICTION;
-    } else if(s=="ElasticPrediction"){
-      this->ppolicy = ELASTICPREDICTION;
-    } else if(s=="SecantOperatorPrediction"){
-      this->ppolicy = SECANTOPERATORPREDICTION;
-    } else if(s=="TangentOperatorPrediction"){
-      this->ppolicy = TANGENTOPERATORPREDICTION;
-    } else {
-      string msg("MTest::handlePredictionPolicy : "
-		 "unsupported prediction policy '"+s+"'");
-      throw(runtime_error(msg));
-    }
-  }
-
-  void MTest::handleDate(TokensContainer::const_iterator& p)
-  {
-    this->date = this->readUntilEndOfInstruction(p);
-  } // end of MTest::handleDate
-
-  void
-  MTest::handleStiffnessMatrixType(TokensContainer::const_iterator& p)
-  {
-    using namespace std;
-    if(this->ktype!=MTestStiffnessMatrixType::UNSPECIFIEDSTIFFNESSMATRIXTYPE){
-      string msg("MTest::handleStiffnessMatrixType : "
-		 "stiffness matrix type already specificed");
-      throw(runtime_error(msg));
-    }
-    const string& type = this->readString(p,this->fileTokens.end());
-    if(type=="Elastic"){
-      this->ktype=MTestStiffnessMatrixType::ELASTIC;
-    } else if(type=="SecantOperator"){
-      this->ktype=MTestStiffnessMatrixType::SECANTOPERATOR;
-    } else if(type=="TangentOperator"){
-      this->ktype=MTestStiffnessMatrixType::TANGENTOPERATOR;
-    } else if(type=="ConsistantTangentOperator"){
-      this->ktype=MTestStiffnessMatrixType::CONSISTANTTANGENTOPERATOR;
-    } else {
-      string msg("MTest::handleStiffnessMatrixType : "
-		 "unsupported stiffness matrix type '"+type+"'");
-      throw(runtime_error(msg));
-    }
-    this->readSpecifiedToken("MTest::handleStiffnessMatrixType",";",
-			     p,this->fileTokens.end());
-  }
-
-  void
-  MTest::handleUseCastemAccelerationAlgorithm(TokensContainer::const_iterator& p)
-  {
-    using namespace std;
-    if(this->useCastemAcceleration){
-      string msg("MTest::handleUseCastemAccelerationAlgorithm : "
-		 "@UseCastemAcceleration already called");
-      throw(runtime_error(msg));
-    }
-    this->checkNotEndOfLine("MTest::handleUseCastemAccelerationAlgorithm",
-			    p,this->fileTokens.end());
-    if(p->value=="true"){
-      this->useCastemAcceleration = true;
-    } else if(p->value=="false"){
-      this->useCastemAcceleration = false;
-    } else {
-      string msg("MTest::handleUseCastemAccelerationAlgorithm : "
-		 "unexpected token '"+p->value+"'");
-      throw(runtime_error(msg));
-    }
-    ++p;
-    this->readSpecifiedToken("MTest::handleUseCastemAccelerationAlgorithm",
-			     ";",p,this->fileTokens.end());
-  }
-
-  void
-  MTest::handleCastemAccelerationTrigger(TokensContainer::const_iterator& p)
-  {
-    using namespace std;
-    if(this->cat!=-1){
-      string msg("MTest::handleCastemAccelerationTrigger : "
-		 "the castem acceleration trigger has already "
-		 "been defined");
-      throw(runtime_error(msg));
-    }
-    this->cat = static_cast<int>(this->readUnsignedInt(p,this->fileTokens.end()));
-    if(this->cat<3){
-      string msg("MTest::handleCastemAccelerationTrigger",
-		 "invalid acceleration trigger value.");
-      throw(runtime_error(msg));
-    }
-    this->readSpecifiedToken("MTest::handleCastemAccelerationTrigger",";",
-			     p,this->fileTokens.end());
-  } // end of MTest::handleCastemAccelerationTrigger
-
-  void
-  MTest::handleCastemAccelerationPeriod(TokensContainer::const_iterator& p)
-  {
-    using namespace std;
-    if(this->cap!=-1){
-      string msg("MTest::handleCastemAccelerationPeriod : "
-		 "the castem acceleration period has already "
-		 "been defined");
-      throw(runtime_error(msg));
-    }
-    this->cap = static_cast<int>(this->readUnsignedInt(p,this->fileTokens.end()));
-    if(this->cap==0){
-      string msg("MTest::handleCastemAccelerationPeriod",
-		 "invalid acceleration period value.");
-      throw(runtime_error(msg));
-    }
-    this->readSpecifiedToken("MTest::handleCastemAccelerationPeriod",";",
-			     p,this->fileTokens.end());
-  } // end of MTest::handleCastemAccelerationPeriod
-
-  void
-  MTest::handleStiffnessUpdatePolicy(TokensContainer::const_iterator& p)
-  {
-    using namespace std;
-    if(this->ks!=MTest::UNSPECIFIEDSTIFFNESSUPDATINGPOLICY){
-      string msg("MTest::handleStiffnessUpdatePolicy : "
-		 "stiffness matrix type already specificed");
-      throw(runtime_error(msg));
-    }
-    const string& type = this->readString(p,this->fileTokens.end());
-    if(type=="ConstantStiffness"){
-      this->ks=CONSTANTSTIFFNESS;
-    } else if(type=="SecantOperator"){
-      this->ks=CONSTANTSTIFFNESSBYPERIOD;
-    } else if(type=="TangentOperator"){
-      this->ks=UPDATEDSTIFFNESSMATRIX;
-    } else {
-      string msg("MTest::handleStiffnessUpdatePolicy : "
-		 "unsupported stiffness matrix policy '"+type+"'");
-      throw(runtime_error(msg));
-    }
-    this->readSpecifiedToken("MTest::handleStiffnessUpdatePolicy",";",
-			     p,this->fileTokens.end());
-  }
-
-  void
-  MTest::handleTest(TokensContainer::const_iterator& p)
-  {
-    using namespace std;
-    using namespace tfel::utilities;
-    using tfel::utilities::shared_ptr;
-    typedef map<string,string>::value_type MVType;
-    typedef map<string,unsigned int>::value_type MVType2;
-    this->readSpecifiedToken("MTest::handleTest","<",
-			     p,this->fileTokens.end());
-    this->checkNotEndOfLine("MTest::handleTest",p,
-			    this->fileTokens.end());
-    const string& t = p->value;
-    if((t!="function")&&
-       (t!="file")){
-      string msg("MTest::handleTest : "
-		 "invalid test type '"+t+"'");
-      throw(runtime_error(msg));
-    }
-    ++p;
-    this->readSpecifiedToken("MTest::handleTest",">",
-			     p,this->fileTokens.end());
-    if(t=="function"){
-      this->checkNotEndOfLine("MTest::handleTest",p,
-			      this->fileTokens.end());
-      map<string,string> functions; 
-      if(p->flag==Token::String){
-	const string& v = this->readString(p,this->fileTokens.end());
-	const string& f = this->readString(p,this->fileTokens.end());
-	functions.insert(MVType(v,f));
-      } else {
-	this->readSpecifiedToken("MTest::handleTest","{",
-				 p,this->fileTokens.end());
-	this->checkNotEndOfLine("MTest::handleTest",p,
-				this->fileTokens.end());
-	while(p->value!="}"){
-	  const string& v = this->readString(p,this->fileTokens.end());
-	  this->readSpecifiedToken("MTest::handleTest",":",
-				   p,this->fileTokens.end());
-	  const string& f = this->readString(p,this->fileTokens.end());
-	  functions.insert(MVType(v,f));
-	  this->checkNotEndOfLine("MTest::handleTest",p,
-				  this->fileTokens.end());
-	  if(p->value!="}"){
-	    this->readSpecifiedToken("MTest::handleTest",",",
-				     p,this->fileTokens.end());	
-	    this->checkNotEndOfLine("MTest::handleTest",p,
-				    this->fileTokens.end());
-	    if(p->value=="}"){
-	      string msg("MTest::handleTest : "
-			 "unexpected token '}'");
-	      throw(runtime_error(msg));
-	    }
-	  }
-	}
-	this->readSpecifiedToken("MTest::handleTest","}",
-				 p,this->fileTokens.end());	
-      }
-      const real eps = this->readDouble(p);
-      if(eps<0){
-	string msg("MTest::handleTest : "
-		   "invalid criterium value");
-	throw(runtime_error(msg));
-      }
-      map<string,string>::const_iterator pf;
-      for(pf=functions.begin();pf!=functions.end();++pf){
-	UTest::TestedVariable type;
-	unsigned short pos;
-	this->getVariableTypeAndPosition(type,pos,pf->first);
-	shared_ptr<UTest> test;
-	test = shared_ptr<UTest>(new MTestAnalyticalTest(pf->second,pf->first,
-							 type,pos,this->evs,eps));
-	this->tests.push_back(test);
-      }
-    } else if (t=="file"){
-      const string& f = this->readString(p,this->fileTokens.end());
-      this->checkNotEndOfLine("MTest::handleTest",p,
-			      this->fileTokens.end());
-      map<string,unsigned int> columns; 
-      if(p->flag==Token::String){
-	const string& v      = this->readString(p,this->fileTokens.end());
-	const unsigned int c = this->readUnsignedInt(p,this->fileTokens.end());
-	columns.insert(MVType2(v,c));
-      } else {
-	this->readSpecifiedToken("MTest::handleTest","{",
-				 p,this->fileTokens.end());
-	this->checkNotEndOfLine("MTest::handleTest",p,
-				this->fileTokens.end());
-	while(p->value!="}"){
-	  const string& v = this->readString(p,this->fileTokens.end());
-	  this->readSpecifiedToken("MTest::handleTest",":",
-				   p,this->fileTokens.end());
-	  const unsigned int c = this->readUnsignedInt(p,this->fileTokens.end());
-	  columns.insert(MVType2(v,c));
-	  this->checkNotEndOfLine("MTest::handleTest",p,
-				  this->fileTokens.end());
-	  if(p->value!="}"){
-	    this->readSpecifiedToken("MTest::handleTest",",",
-				     p,this->fileTokens.end());	
-	    this->checkNotEndOfLine("MTest::handleTest",p,
-				    this->fileTokens.end());
-	    if(p->value=="}"){
-	      string msg("MTest::handleTest : "
-			 "unexpected token '}'");
-	      throw(runtime_error(msg));
-	    }
-	  }
-	}
-	this->readSpecifiedToken("MTest::handleTest","}",
-				 p,this->fileTokens.end());	
-      }
-      const real eps = this->readDouble(p);
-      if(eps<0){
-	string msg("MTest::handleTest : "
-		   "invalid criterium value");
-	throw(runtime_error(msg));
-      }
-      map<string,unsigned int>::const_iterator pf;
-      shared_ptr<TextData> data(new TextData(f));
-      for(pf=columns.begin();pf!=columns.end();++pf){
-	UTest::TestedVariable type;
-	unsigned short pos;
-	this->getVariableTypeAndPosition(type,pos,pf->first);
-	shared_ptr<UTest> test;
-	test = shared_ptr<UTest>(new MTestReferenceFileComparisonTest(data,pf->first,
-								      pf->second,
-								      type,pos,eps));
-	this->tests.push_back(test);
-      }
-    } else {
-      string msg("MTest::handleTest : "
-		 "invalid test type '"+t+"'");
-      throw(runtime_error(msg));
-    }
-    this->readSpecifiedToken("MTest::handleTest",";",
-			     p,this->fileTokens.end());
-  } // end of MTest::handleTest
-
-  void
-  MTest::getVariableTypeAndPosition(UTest::TestedVariable& type,
-				    unsigned short& pos,
-				    const std::string& n)
-  {
-    using namespace std;
-    vector<string>::const_iterator p;
-    if(this->b.get()==0){
-      string msg("MTest::getVariableTypeAndPosition : ");
-      msg += "no behaviour defined";
-      throw(runtime_error(msg));
-    }
-    vector<string> enames;
-    vector<string> snames;
-    this->b->getDrivingVariablesComponents(enames,this->hypothesis);
-    this->b->getThermodynamicForcesComponents(snames,this->hypothesis);
-    p=find(enames.begin(),enames.end(),n);
-    if(p!=enames.end()){
-      pos  = static_cast<unsigned short>(p-enames.begin());
-      type = MTest::UTest::DRIVINGVARIABLE;
-      return;
-    } 
-    p=find(snames.begin(),snames.end(),n);
-    if(p!=snames.end()){
-      pos  = static_cast<unsigned short>(p-snames.begin());
-      type = MTest::UTest::THERMODYNAMICFORCE;
-      return;
-    } 
-    p=find(this->ivfullnames.begin(),this->ivfullnames.end(),n);
-    if(p!=this->ivfullnames.end()){
-      pos  = static_cast<unsigned short>(p-this->ivfullnames.begin());
-      type = MTest::UTest::INTERNALSTATEVARIABLE;
-      return;
-    } 
-    string msg("MTest::getVariableTypeAndPosition : "
-	       "no variable name '"+n+"'");
-    throw(runtime_error(msg));
-  } // end of MTest::getVariableTypeAndPosition
-
-  void
-  MTest::handleReal(TokensContainer::const_iterator& p)
-  {
-    using namespace std;
-    using namespace tfel::utilities;
-    using tfel::utilities::shared_ptr;
-    const string& v = this->readString(p,this->fileTokens.end());
-    if(!this->isValidIdentifier(v)){
-      string msg("MTest::handleReal : '"+
-		 v+"' is not a valid identifier");
-      throw(runtime_error(msg));
-    }
-    this->declareVariable(v);
-    const real value =
-      this->readDouble(p);
-    shared_ptr<MTestEvolution> mpev;
-    mpev = shared_ptr<MTestEvolution>(new MTestConstantEvolution(value));
-    (*(this->evs))[v] = mpev;
-    this->readSpecifiedToken("MTest::handleReal",";",
-			     p,this->fileTokens.end());
-  }
-
-  void
-  MTest::handleMaximumNumberOfIterations(TokensContainer::const_iterator& p)
-  {
-    using namespace std;
-    if(this->iterMax!=-1){
-      string msg("MTest::handleMaximumNumberOfIterations : "
-		 "the maximum number of sub steps "
-		 "has already been declared");
-      throw(runtime_error(msg));
-    }
-    this->iterMax = this->readUnsignedInt(p,this->fileTokens.end());
-    if(this->iterMax==0){
-      string msg("MTest::handleMaximumNumberOfIterations : ");
-      msg += "invalid number of intervals";
-      throw(runtime_error(msg));
-    }
-    this->readSpecifiedToken("MTest::handleMaximumNumberOfIterations",";",
-			     p,this->fileTokens.end());
-  } // end of MTest::handleMaximumNumberOfIterations
-
-  void
-  MTest::handleMaximumNumberOfSubSteps(TokensContainer::const_iterator& p)
-  {
-    using namespace std;
-    if(this->mSubSteps!=-1){
-      string msg("MTest::handleMaximumNumberOfSubSteps : "
-		 "the maximum number of sub steps "
-		 "has already been declared");
-      throw(runtime_error(msg));
-    }
-    this->mSubSteps = this->readUnsignedInt(p,this->fileTokens.end());
-    if(this->mSubSteps==0){
-      string msg("MTest::handleMaximumNumberOfSubSteps : ");
-      msg += "invalid number of intervals";
-      throw(runtime_error(msg));
-    }
-    this->readSpecifiedToken("MTest::handleMaximumNumberOfSubSteps",";",
-			     p,this->fileTokens.end());
-  } // end of MTest::handleMaximumNumberOfSubSteps
-
-  void
-  MTest::handleRotationMatrix(TokensContainer::const_iterator& p)
-  {
-    using namespace std;
-    using namespace tfel::math;
-    using std::vector;
-    if(this->isRmDefined){
-      string msg("MTest::handleRotationMatrix : "
-		 "rotation matrix already defined");
-      throw(runtime_error(msg));
-    }
-    if(this->b.get()==0){
-      string msg("MTest::handleRotationMatrix : ");
-      msg += "no behaviour defined";
-      throw(runtime_error(msg));
-    }
-    if(this->b->getSymmetryType()!=1){
-      string msg("MTest::handleRotationMatrix : "
-		 "rotation matrix may only be defined "
-		 "for orthotropic behaviours");
-      throw(runtime_error(msg));
-    }
-    this->isRmDefined = true;
-    this->readSpecifiedToken("MTest::handleRotationMatrix","{",
-			     p,this->fileTokens.end());
-    vector<vector<real> > v(3);
-    for(unsigned short i=0;i!=3;){
-      v[i].resize(3);
-      this->readArrayOfSpecifiedSize(v[i],p);
-      if(++i!=3){
-	this->readSpecifiedToken("MTest::handleRotationMatrix",",",
-				 p,this->fileTokens.end());
-      }
-    }
-    this->readSpecifiedToken("MTest::handleRotationMatrix","}",
-			     p,this->fileTokens.end());
-    this->readSpecifiedToken("MTest::handleRotationMatrix",";",
-			     p,this->fileTokens.end());
-    // saving the read values
-    for(unsigned short i=0;i!=3;++i){
-      for(unsigned short j=0;j!=3;++j){
-	this->rm(i,j)=v[i][j];
-      }
-    }
-    // checking that the given matrix is a rotation one
-    tvector<3u,real> c0 = rm.column_view<0>();
-    tvector<3u,real> c1 = rm.column_view<1>();
-    tvector<3u,real> c2 = rm.column_view<2>();
-    if((abs(norm(c0)-real(1))>100*numeric_limits<real>::epsilon())||
-       (abs(norm(c1)-real(1))>100*numeric_limits<real>::epsilon())||
-       (abs(norm(c2)-real(1))>100*numeric_limits<real>::epsilon())){
-      string msg("MTest::handleRotationMatrix : "
-		 "at least one column is not normalised");
-      throw(runtime_error(msg));
-    }
-    if((abs(c0|c1)>100*numeric_limits<real>::epsilon())||
-       (abs(c0|c2)>100*numeric_limits<real>::epsilon())||
-       (abs(c1|c2)>100*numeric_limits<real>::epsilon())){
-      string msg("MTest::handleRotationMatrix : "
-		 "at least two columns are not orthogonals");
-      throw(runtime_error(msg));
-    }
-  } // end of MTest::handleRotationMatrix
-
-  void
-  MTest::handleStrainEpsilon(TokensContainer::const_iterator& p)
-  {
-    using namespace std;
-    using namespace tfel::material;
-    if(this->b.get()==0){
-      string msg("MTest::StrainEpsilon : ");
-      msg += "behaviour not defined";
-      throw(runtime_error(msg));
-    }
-    if(this->b->getBehaviourType()!=MechanicalBehaviourBase::SMALLSTRAINSTANDARDBEHAVIOUR){
-      string msg("MTest::handleStrainEpsilon : "
-		 "the @StrainEpsilon keyword is only valid "
-		 "for small strain behaviours");
-      throw(runtime_error(msg));
-    }
-    this->handleDrivingVariableEpsilon(p);
-  }
-
-  void
-  MTest::handleOpeningDisplacementEpsilon(TokensContainer::const_iterator& p)
-  {
-    using namespace std;
-    using namespace tfel::material;
-    if(this->b.get()==0){
-      string msg("MTest::OpeningDisplacementEpsilon : ");
-      msg += "behaviour not defined";
-      throw(runtime_error(msg));
-    }
-    if(this->b->getBehaviourType()!=MechanicalBehaviourBase::COHESIVEZONEMODEL){
-      string msg("MTest::handleOpeningDisplacementEpsilon : "
-		 "the @OpeningDisplacementEpsilon keyword is only valid "
-		 "for cohesive zone model behaviours");
-      throw(runtime_error(msg));
-    }
-    this->handleDrivingVariableEpsilon(p);
-  }
-
-  void
-  MTest::handleDrivingVariableEpsilon(TokensContainer::const_iterator& p)
-  {
-    using namespace std;
-    if(this->eeps>0){
-      string msg("MTest::handleDrivingVariableEpsilon : the epsilon "
-		 "value has already been declared");
-      throw(runtime_error(msg));
-    }
-    this->eeps = this->readDouble(p);
-    if(this->eeps < 100*numeric_limits<real>::min()){
-      string msg("MTest::handleDrivingVariableEpsilon : invalid value");
-      throw(runtime_error(msg));
-    }
-    this->readSpecifiedToken("MTest::handleDrivingVariableEpsilon",";",
-			     p,this->fileTokens.end());
-  } // end of MTest::handleDrivingVariableEpsilon
-
-  void
-  MTest::handleStressEpsilon(TokensContainer::const_iterator& p)
-  {
-    using namespace std;
-    using namespace tfel::material;
-    if(this->b.get()==0){
-      string msg("MTest::StressEpsilon : ");
-      msg += "behaviour not defined";
-      throw(runtime_error(msg));
-    }
-    if(this->b->getBehaviourType()!=MechanicalBehaviourBase::SMALLSTRAINSTANDARDBEHAVIOUR){
-      string msg("MTest::handleStressEpsilon : "
-		 "the @StressEpsilon keyword is only valid "
-		 "for cohesive zone model behaviours");
-      throw(runtime_error(msg));
-    }
-    this->handleThermodynamicForceEpsilon(p);
-  }
-
-  void
-  MTest::handleCohesiveForceEpsilon(TokensContainer::const_iterator& p)
-  {
-    using namespace std;
-    using namespace tfel::material;
-    if(this->b.get()==0){
-      string msg("MTest::CohesiveForceEpsilon : ");
-      msg += "behaviour not defined";
-      throw(runtime_error(msg));
-    }
-    if(this->b->getBehaviourType()!=MechanicalBehaviourBase::COHESIVEZONEMODEL){
-      string msg("MTest::handleCohesiveForceEpsilon : "
-		 "the @CohesiveForceEpsilon keyword is only valid "
-		 "for cohesive zone model behaviours");
-      throw(runtime_error(msg));
-    }
-    this->handleThermodynamicForceEpsilon(p);
-  }
-
-  void
-  MTest::handleThermodynamicForceEpsilon(TokensContainer::const_iterator& p)
-  {
-    using namespace std;
-    if(this->seps>0){
-      string msg("MTest::handleThermodynamicForceEpsilon : the epsilon "
-		 "value has already been declared");
-      throw(runtime_error(msg));
-    }
-    this->seps = this->readDouble(p);
-    if(this->seps < 100*numeric_limits<real>::min()){
-      string msg("MTest::handleThermodynamicForceEpsilon : invalid value");
-      throw(runtime_error(msg));
-    }
-    this->readSpecifiedToken("MTest::handleThermodynamicForceEpsilon",";",
-			     p,this->fileTokens.end());
-  }
-
-  void
-  MTest::handleParameter(TokensContainer::const_iterator& p)
-  {
-    using namespace std;
-    if(this->b.get()==0){
-      string msg("MTest::handleParameter : ");
-      msg += "no behaviour defined";
-      throw(runtime_error(msg));
-    }
-    const string& n = this->readString(p,this->fileTokens.end());
-    this->b->setParameter(n,this->readDouble(p));
-    this->readSpecifiedToken("MTest::handleParameter",";",
-			     p,this->fileTokens.end());
-  } // end of MTest::handleParameter
-
-  void
-  MTest::handleIntegerParameter(TokensContainer::const_iterator& p)
-  {
-    using namespace std;
-    if(this->b.get()==0){
-      string msg("MTest::handleIntegerParameter : ");
-      msg += "no behaviour defined";
-      throw(runtime_error(msg));
-    }
-    const string& n = this->readString(p,this->fileTokens.end());
-    this->b->setIntegerParameter(n,this->readInt(p,this->fileTokens.end()));
-    this->readSpecifiedToken("MTest::handleIntegerParameter",";",
-  			     p,this->fileTokens.end());
-  } // end of MTest::handleIntegerParameter
-  
-  void
-  MTest::handleUnsignedIntegerParameter(TokensContainer::const_iterator& p)
-  {
-    using namespace std;
-    if(this->b.get()==0){
-      string msg("MTest::handleUnsignedIntegerParameter : ");
-      msg += "no behaviour defined";
-      throw(runtime_error(msg));
-    }
-    const string& n = this->readString(p,this->fileTokens.end());
-    this->b->setUnsignedIntegerParameter(n,this->readUnsignedInt(p,this->fileTokens.end()));
-    this->readSpecifiedToken("MTest::handleUnsignedIntegerParameter",";",
-			     p,this->fileTokens.end());
-  } // end of MTest::handleUnsignedIntegerParameteru
-
-  void
-  MTest::handleOutputFile(TokensContainer::const_iterator& p)
-  {
-    using namespace std;
-    if(this->output.empty()){
-      string msg("MTest::handleOutputFile : ");
-      msg += "output file already defined";
-      throw(runtime_error(msg));
-    }
-    this->output = this->readString(p,this->fileTokens.end());
-    this->readSpecifiedToken("MTest::handleOutputFiles",";",
-			     p,this->fileTokens.end());
-  } // end of MTest::handleOutputFile
-
-  void
-  MTest::handleOutputFilePrecision(TokensContainer::const_iterator& p)
-  {
-    using namespace std;
-    if(this->oprec!=-1){
-      string msg("MTest::handleOutputFilePrecision : ");
-      msg += "output file precision already defined";
-      throw(runtime_error(msg));
-    }
-    this->oprec = static_cast<int>(this->readUnsignedInt(p,this->fileTokens.end()));
-    if(this->oprec<=0){
-      string msg("MTest::handleOutputFilePrecision : ");
-      msg += "invalid value for the output file precision";
-      throw(runtime_error(msg));
-    }
-    this->readSpecifiedToken("MTest::handleOutputFilePrecisions",";",
-			     p,this->fileTokens.end());
-  } // end of MTest::handleOutputFilePrecision
-
-  void
-  MTest::handleModellingHypothesis(TokensContainer::const_iterator& p)
-  {
-    using namespace std;
-    typedef tfel::material::ModellingHypothesis MH;
-    if(this->dimension!=0){
-      string msg("MTest::handleModellingHypothesis : ");
-      msg += "the modelling hypothesis is already defined";
-      throw(runtime_error(msg));
-    }
-    const string& h = this->readString(p,this->fileTokens.end());
-    this->readSpecifiedToken("MTest::handleModellingHypothesis",";",p,
-			     this->fileTokens.end());
-    if(h=="AxisymmetricalGeneralisedPlaneStrain"){
-      this->dimension=1u;
-      this->hypothesis = MH::AXISYMMETRICALGENERALISEDPLANESTRAIN;
-    } else if(h=="Axisymmetrical"){
-      this->dimension  = 2u;
-      this->hypothesis = MH::AXISYMMETRICAL;
-    } else if(h=="PlaneStress"){
-      this->dimension  = 2u;
-      this->hypothesis = MH::PLANESTRESS;
-    } else if(h=="PlaneStrain"){
-      this->dimension  = 2u;
-      this->hypothesis = MH::PLANESTRAIN;
-    } else if(h=="GeneralisedPlaneStrain"){
-      this->dimension  = 2u;
-      this->hypothesis = MH::GENERALISEDPLANESTRAIN;
-    } else if(h=="Tridimensional"){
-      this->dimension  = 3u;
-      this->hypothesis = MH::TRIDIMENSIONAL;
-    } else {
-      string msg("MTest::handleModellingHypothesis : ");
-      msg += "unsupported hypothesis '"+h+"'";
-      throw(runtime_error(msg));
-    }
-  }
-
-  void
-  MTest::handleTimes(TokensContainer::const_iterator& p)
-  {
-    using namespace std;
-    if(!times.empty()){
-      string msg("MTest::handleTimes : ");
-      msg += "times already defined";
-      throw(runtime_error(msg));
-    }
-    this->readSpecifiedToken("MTest::handleTimes","{",p,
-			     this->fileTokens.end());
-    this->checkNotEndOfLine("MTest::handleTimes",p,
-			    this->fileTokens.end());
-    while(p->value!="}"){
-      const real t_dt = this->readTime(p);
-      this->checkNotEndOfLine("MTest::handleTimes",p,
-			      this->fileTokens.end());
-      if(!this->times.empty()){
-	if(p->value=="in"){
-	  ++p;
-	  unsigned int n = this->readUnsignedInt(p,this->fileTokens.end());
-	  if(n==0){
-	    string msg("MTest::handleTimes : ");
-	    msg += "invalid number of intervals";
-	    throw(runtime_error(msg));
-	  }
-	  const real t = this->times.back();
-	  real dt = (t_dt-t)/(static_cast<real>(n));
-	  for(unsigned int i=1;i!=n;++i){
-	    this->times.push_back(t+i*dt);
-	  }
-	}
-	this->checkNotEndOfLine("MTest::handleTimes",p,
-				this->fileTokens.end());
-      }
-      this->times.push_back(t_dt);
-      if(p->value==","){
-	++p;
-	this->checkNotEndOfLine("MTest::handleTimes",p,
-				this->fileTokens.end());
-	if(p->value=="}"){
-	  string msg("MTest::handleTimes : ");
-	  msg += "unexpected token '}'";
-	  throw(runtime_error(msg));
-	}
-      } else {
-	if(p->value!="}"){
-	  string msg("MTest::handleTimes : ");
-	  msg += "unexpected token '"+p->value+"', expected ',' or '}'";
-	  throw(runtime_error(msg));
-	}
-      }
-    }
-    this->readSpecifiedToken("MTest::handleTimes","}",p,
-			     this->fileTokens.end());
-    this->readSpecifiedToken("MTest::handleTimes",";",p,
-			     this->fileTokens.end());
-    if(times.empty()){
-      string msg("MTest::handleTimes : ");
-      msg += "no time defined";
-      throw(runtime_error(msg));
-    }
-    if(times.size()==1){
-      string msg("MTest::handleTimes : ");
-      msg += "at least two different times must be defined";
-      throw(runtime_error(msg));
-    }
-    vector<real>::const_iterator pt  = times.begin();
-    real mt(0);
-    while(pt!=times.end()){
-      mt = max(mt,abs(*pt));
-      ++pt;
-    }
-    if(mt<100*numeric_limits<real>::min()){
-      string msg("MTest::handleTimes : maximal "
-		 "absolute value of times is too low");
-      throw(runtime_error(msg));
-    }
-    const real eps = 100*mt*numeric_limits<real>::epsilon();
-    pt  = times.begin();
-    vector<real>::const_iterator pt2 = pt+1u;
-    while(pt2!=times.end()){
-      if((*pt2<=*pt)||abs(*pt2-*pt)<eps){
-	ostringstream msg;
-	msg << "MTest::handleTimes : times '" << *pt2 
-	    << "' is lesser than or too close to  time '"
-	    << *pt << "'";
-	throw(runtime_error(msg.str()));
-      }
-      ++pt2;
-      ++pt;
-    }
-  }
-
-  void
-  MTest::setDefaultHypothesis(void)
-  {
-    using namespace std;
-    typedef tfel::material::ModellingHypothesis MH;
-    if(this->hypothesis!=MH::UNDEFINEDHYPOTHESIS){
-      string msg("MTest::setDefaultHypothesis : "
-		 "internal error : the modelling "
-		 "hypothesis is already defined");
-      throw(runtime_error(msg));
-    }
-    if(this->b.get()!=0){
-      string msg("MTest::setDefaultHypothesis : ");
-      msg += "behaviour already defined";
-      throw(runtime_error(msg));
-    }
-    if(getVerboseMode()>=VERBOSE_LEVEL1){
-      ostream& log = getLogStream();
-      log << "No hypothesis defined, using default" << endl;
-    }
-    this->hypothesis = MH::TRIDIMENSIONAL;
-    this->dimension  = 3u;
-  }
-  
-  void
-  MTest::handleImposedStress(TokensContainer::const_iterator& p)
-  {
-    using namespace std;
-    using namespace tfel::utilities;
-    using namespace tfel::material;
-    if(this->b.get()==0){
-      string msg("MTest::ImposedStress : ");
-      msg += "behaviour not defined";
-      throw(runtime_error(msg));
-    }
-    if(this->b->getBehaviourType()!=MechanicalBehaviourBase::SMALLSTRAINSTANDARDBEHAVIOUR){
-      string msg("MTest::handleImposedStress : "
-		 "the @ImposedStress keyword is only valid "
-		 "for small strain behaviours");
-      throw(runtime_error(msg));
-    }
-    this->handleImposedThermodynamicForce(p);
-  } // end of MTest::handleImposedStress
-
-  void
-  MTest::handleImposedCohesiveForce(TokensContainer::const_iterator& p)
-  {
-    using namespace std;
-    using namespace tfel::utilities;
-    using namespace tfel::material;
-    if(this->b.get()==0){
-      string msg("MTest::ImposedCohesiveForce : ");
-      msg += "behaviour not defined";
-      throw(runtime_error(msg));
-    }
-    if(this->b->getBehaviourType()!=MechanicalBehaviourBase::COHESIVEZONEMODEL){
-      string msg("MTest::handleImposedCohesiveForce : "
-		 "the @ImposedCohesiveForce keyword is only valid "
-		 "for cohesive zone model behaviours");
-      throw(runtime_error(msg));
-    }
-    this->handleImposedThermodynamicForce(p);
-  } // end of MTest::handleImposedCohesiveForce
-
-  void
-  MTest::handleImposedThermodynamicForce(TokensContainer::const_iterator& p)
-  {
-    using namespace std;
-    using namespace tfel::utilities;
-    using tfel::utilities::shared_ptr;
-    if(this->b.get()==0){
-      string msg("MTest::ImposedThermodynamicForce : ");
-      msg += "behaviour not defined";
-      throw(runtime_error(msg));
-    }
-    const string& evt = this->readEvolutionType(p);
-    const string& c   = this->readString(p,this->fileTokens.end());
-    this->checkNotEndOfLine("MTest::handleImposedThermodynamicForce",p,
-			    this->fileTokens.end());
-    shared_ptr<MTestEvolution> sev = this->parseEvolution(evt,p);
-    shared_ptr<MTestConstraint> sc(new MTestImposedThermodynamicForce(*(this->b),this->hypothesis,c,sev));
-    this->constraints.push_back(sc);
-    (*(this->evs))[c] = sev;
-    this->readSpecifiedToken("MTest::handleImposedThermodynamicForce",";",
-			     p,this->fileTokens.end());
-  } // end of MTest::handleImposedStress
-
-  void
-  MTest::handleImposedStrain(TokensContainer::const_iterator& p)
-  {
-    using namespace std;
-    using namespace tfel::material;
-    using namespace tfel::utilities;
-    if(this->b.get()==0){
-      string msg("MTest::ImposedStrain : ");
-      msg += "behaviour not defined";
-      throw(runtime_error(msg));
-    }
-    if(this->b->getBehaviourType()!=MechanicalBehaviourBase::SMALLSTRAINSTANDARDBEHAVIOUR){
-      string msg("MTest::handleImposedStrain : "
-		 "the @ImposedStrain keyword is only valid "
-		 "for small strain behaviours");
-      throw(runtime_error(msg));
-    }
-    this->handleImposedDrivingVariable(p);
-  }
-
-  void
-  MTest::handleImposedOpeningDisplacement(TokensContainer::const_iterator& p)
-  {
-    using namespace std;
-    using namespace tfel::utilities;
-    using namespace tfel::material;
-    if(this->b.get()==0){
-      string msg("MTest::ImposedCohesiveForce : ");
-      msg += "behaviour not defined";
-      throw(runtime_error(msg));
-    }
-    if(this->b->getBehaviourType()!=MechanicalBehaviourBase::COHESIVEZONEMODEL){
-      string msg("MTest::ImposedOpeningDisplacement : "
-		 "the @ImposedOpeningDisplacement keyword is only valid "
-		 "for cohesive zone model behaviours");
-      throw(runtime_error(msg));
-    }
-    this->handleImposedDrivingVariable(p);
-  }
-
-  void
-  MTest::handleImposedDrivingVariable(TokensContainer::const_iterator& p)
-  {
-    using namespace std;
-    using namespace tfel::utilities;
-    using tfel::utilities::shared_ptr;
-    if(this->b.get()==0){
-      string msg("MTest::ImposedDrivingVariable : ");
-      msg += "behaviour not defined";
-      throw(runtime_error(msg));
-    }
-    const string& evt = this->readEvolutionType(p);
-    const string& c   = this->readString(p,this->fileTokens.end());
-    this->checkNotEndOfLine("MTest::handleImposedDrivingVariable",p,
-			    this->fileTokens.end());
-    shared_ptr<MTestEvolution> sev = this->parseEvolution(evt,p);
-    shared_ptr<MTestConstraint> sc(new MTestImposedDrivingVariable(*(this->b),this->hypothesis,c,sev));
-    (*(this->evs))[c] = sev;
-    this->constraints.push_back(sc);
-    this->readSpecifiedToken("MTest::handleImposedDrivingVariable",";",
-			     p,this->fileTokens.end());
-  } // end of MTest::handleImposedDrivingVariable
-
-  void
-  MTest::handleBehaviour(TokensContainer::const_iterator& p)
-  {
-    using namespace std;
-    using namespace tfel::utilities;
-    using namespace tfel::system;
-    using tfel::utilities::shared_ptr;
-    typedef ExternalLibraryManager ELM;
-    typedef tfel::material::ModellingHypothesis MH;
-    if(this->hypothesis==MH::UNDEFINEDHYPOTHESIS){
-      this->setDefaultHypothesis();
-    }
-    string i;
-    this->readSpecifiedToken("MTest::handleBehaviour","<",p,
-			     this->fileTokens.end());
-    this->checkNotEndOfLine("MTest::handleBehaviour",p,
-			    this->fileTokens.end());
-#ifdef HAVE_CASTEM
-    if(p->value=="umat"){
-      i = p->value;
-    }
-#endif /* HAVE_CASTEM */
-#ifdef HAVE_ASTER
-    if(p->value=="aster"){
-      i = p->value;
-    }
-#endif /* HAVE_ASTER */
-    if(i.empty()){
-      string msg("MTest::handleBehaviour : ");
-      msg += "unknown interface '"+p->value+"'";
-      throw(runtime_error(msg));
-    }
-    ++p;
-    this->readSpecifiedToken("MTest::handleBehaviour",">",p,
-			     this->fileTokens.end());
-    const string& l = this->readString(p,this->fileTokens.end());
-    const string& f = this->readString(p,this->fileTokens.end());
-    this->readSpecifiedToken("MTest::handleBehaviour",";",p,
-			     this->fileTokens.end());
-#ifdef HAVE_CASTEM
-    if(i=="umat"){
-      ELM& elm = ELM::getExternalLibraryManager();
-      const unsigned short type = elm.getUMATBehaviourType(l,f);
-      if(type==1u){
-	this->b = shared_ptr<MTestBehaviour>(new MTestUmatSmallStrainBehaviour(this->hypothesis,l,f));
-      } else if(type==3u){
-	this->b = shared_ptr<MTestBehaviour>(new MTestUmatCohesiveZoneModelBehaviour(this->hypothesis,l,f));
-      } else {
-	string msg("MTest::handleBehaviour : ");
-	msg += "unsupported behaviour type";
-	throw(runtime_error(msg));
-      }
-    }
-#endif
-#ifdef HAVE_ASTER
-    if(i=="aster"){
-      this->b = shared_ptr<MTestBehaviour>(new MTestAsterSmallStrainBehaviour(this->hypothesis,l,f));
-    }
-#endif
-    if(this->b.get()==0){
-      string msg("MTest::handleBehaviour : ");
-      msg += "unknown interface '"+i+"'";
-      throw(runtime_error(msg));
-    }
-    const vector<string>& ivnames = this->b->getInternalStateVariablesNames();
-    this->declareVariables(this->b->getMaterialPropertiesNames());
-    this->declareVariables(ivnames);
-    this->declareVariables(this->b->getExternalStateVariablesNames());
-    vector<string>::const_iterator pn;
-    for(pn=ivnames.begin();pn!=ivnames.end();++pn){
-      unsigned short t = this->b->getInternalStateVariableType(*pn);
-      if(t==0){
-	this->ivfullnames.push_back(*pn);
-      } else if(t==1){
-	//! suffixes of stensor components
-	vector<string> sexts;
-	this->b->getStensorComponentsSuffixes(sexts,this->hypothesis);
-	for(vector<string>::size_type s=0;s!=sexts.size();++s){
-	  const string& vn = *pn+sexts[s];
-	  this->declareVariable(vn);
-	  this->ivfullnames.push_back(vn);
-	}
-      } else {
-	string msg("MTest::handleBehaviour : "
-		   "unsupported variable type for variable '"+*pn+"'");
-	throw(runtime_error(msg));
-      }
-    }
-  } // end of MTest::handleBehaviour
-
-  void
-  MTest::handleMaterialProperty(TokensContainer::const_iterator& p)
-  {
-    using namespace std;
-    using namespace tfel::utilities;
-    using tfel::utilities::shared_ptr;
-    string i;
-    if(this->b.get()==0){
-      string msg("MTest::handleMaterialProperty : ");
-      msg += "no behaviour defined";
-      throw(runtime_error(msg));
-    }
-    this->readSpecifiedToken("MTest::handleMaterialProperty","<",p,
-			     this->fileTokens.end());
-    this->checkNotEndOfLine("MTest::handleMaterialProperty",p,
-			    this->fileTokens.end());
-    if((p->value=="constant")||
-       (p->value=="castem")||
-       (p->value=="function")){
-      i = p->value;
-    } else {
-      string msg("MTest::handleMaterialProperty : ");
-      msg += "unknown interface '"+p->value+"'";
-      throw(runtime_error(msg));
-    }
-    ++p;
-    this->readSpecifiedToken("MTest::handleMaterialProperty",">",p,
-			     this->fileTokens.end());
-    const string& n = this->readString(p,this->fileTokens.end());
-    const vector<string>& mpnames = this->b->getMaterialPropertiesNames();
-    if((find(mpnames.begin(),mpnames.end(),n)==mpnames.end())&&
-       (n!="ThermalExpansion") &&(n!="ThermalExpansion1")&&
-       (n!="ThermalExpansion2")&&(n!="ThermalExpansion3")){
-      ostringstream msg;
-      msg << "MTest::handleMaterialProperty : "
-	  << "the behaviour don't declare a material property '" << n+"'.";
-      if(!mpnames.empty()){
-	msg << "\nThe behaviour declares:";
-	for(vector<string>::const_iterator pn=mpnames.begin();pn!=mpnames.end();++pn){
-	  msg << "\n- '" << *pn << "'";
-	}
-      }
-      throw(runtime_error(msg.str()));
-    }
-    if(this->evs->find(n)!=this->evs->end()){
-      string msg("MTest::handleMaterialProperty : ");
-      msg += "'"+n+"' already declared";
-      throw(runtime_error(msg));
-    }
-    if(i=="constant"){
-      shared_ptr<MTestEvolution> mpev;
-      this->checkNotEndOfLine("MTest::handleMaterialProperty",p,
-			      this->fileTokens.end());
-      const real v = this->readDouble(p);
-      mpev = shared_ptr<MTestEvolution>(new MTestConstantEvolution(v));
-      (*(this->evs))[n] = mpev;
-    } else if(i=="function"){
-      shared_ptr<MTestEvolution> mpev;
-      const string f = this->readString(p,this->fileTokens.end());
-      mpev = shared_ptr<MTestEvolution>(new MTestFunctionEvolution(f,this->evs));
-      (*(this->evs))[n] = mpev;
-    } else if(i=="castem"){
-      shared_ptr<MTestEvolution> mpev;
-      const string l = this->readString(p,this->fileTokens.end());
-      const string f = this->readString(p,this->fileTokens.end());
-      mpev = shared_ptr<MTestEvolution>(new MTestCastemEvolution(l,f,this->evs));
-      (*(this->evs))[n] = mpev;
-    } else {
-      string msg("MTest::handleMaterialProperty : ");
-      msg += "unknown interface '"+i+"'";
-      throw(runtime_error(msg));
-    }
-    this->readSpecifiedToken("MTest::handleMaterialProperty",";",p,
-			     this->fileTokens.end());
-  }
-    
-  void
-  MTest::handleStrain(TokensContainer::const_iterator& p)
-  {
-    using namespace std;
-    using namespace tfel::material;
-    if(this->b.get()==0){
-      string msg("MTest::handleStrain : ");
-      msg += "no behaviour defined";
-      throw(runtime_error(msg));
-    }
-    if(this->b->getBehaviourType()!=MechanicalBehaviourBase::SMALLSTRAINSTANDARDBEHAVIOUR){
-      string msg("MTest::handleStrain : "
-		 "the @Strain keyword is only valid "
-		 "for small strain behaviours");
-      throw(runtime_error(msg));
-    }
-    this->handleDrivingVariable(p);
-  }
-
-  void
-  MTest::handleOpeningDisplacement(TokensContainer::const_iterator& p)
-  {
-    using namespace std;
-    using namespace tfel::material;
-    if(this->b.get()==0){
-      string msg("MTest::handleOpeningDisplacement : ");
-      msg += "no behaviour defined";
-      throw(runtime_error(msg));
-    }
-    if(this->b->getBehaviourType()!=MechanicalBehaviourBase::COHESIVEZONEMODEL){
-      string msg("MTest::handleOpeningDisplacement : "
-		 "the @OpeningDisplacement keyword is only valid "
-		 "for cohesive zone models behaviours");
-      throw(runtime_error(msg));
-    }
-    this->handleDrivingVariable(p);
-  }
-      
-  void
-  MTest::handleDrivingVariable(TokensContainer::const_iterator& p)
-  {
-    using namespace std;
-    if(this->b.get()==0){
-      string msg("MTest::handleDrivingVariable : ");
-      msg += "no behaviour defined";
-      throw(runtime_error(msg));
-    }
-    if(!this->e_t0.empty()){
-      string msg("MTest::handleDrivingVariable : ");
-      msg += "the initial values of the strains have already been declared";
-      throw(runtime_error(msg));
-    }
-    const unsigned short N = this->b->getProblemSize(this->hypothesis);
-    this->e_t0.resize(N,0);
-    this->readArrayOfSpecifiedSize(this->e_t0,p);
-    this->readSpecifiedToken("MTest::handleDrivingVariable",
-			     ";",p,this->fileTokens.end());
-  } // end of MTest::handleDrivingVariable
-
-  void
-  MTest::handleStress(TokensContainer::const_iterator& p)
-  {
-    using namespace std;
-    using namespace tfel::material;
-    if(this->b.get()==0){
-      string msg("MTest::handleStress : ");
-      msg += "no behaviour defined";
-      throw(runtime_error(msg));
-    }
-    if(this->b->getBehaviourType()!=MechanicalBehaviourBase::SMALLSTRAINSTANDARDBEHAVIOUR){
-      string msg("MTest::handleStress : "
-		 "the @Stress keyword is only valid "
-		 "for small strain behaviours");
-      throw(runtime_error(msg));
-    }
-    this->handleThermodynamicForce(p);
-  }
-
-  void
-  MTest::handleCohesiveForce(TokensContainer::const_iterator& p)
-  {
-    using namespace std;
-    using namespace tfel::material;
-    if(this->b.get()==0){
-      string msg("MTest::handleCohesiveForce : ");
-      msg += "no behaviour defined";
-      throw(runtime_error(msg));
-    }
-    if(this->b->getBehaviourType()!=MechanicalBehaviourBase::COHESIVEZONEMODEL){
-      string msg("MTest::handleCohesiveForce : "
-		 "the @CohesiveForce keyword is only valid "
-		 "for cohesive zone model behaviours");
-      throw(runtime_error(msg));
-    }
-    this->handleThermodynamicForce(p);
-  }
-
-  void
-  MTest::handleThermodynamicForce(TokensContainer::const_iterator& p)
-  {
-    using namespace std;
-    if(this->b.get()==0){
-      string msg("MTest::handleThermodynamicForce : ");
-      msg += "no behaviour defined";
-      throw(runtime_error(msg));
-    }
-    if(!this->s_t0.empty()){
-      string msg("MTest::handleThermodynamicForce : ");
-      msg += "the initial values of the strains have already been declared";
-      throw(runtime_error(msg));
-    }
-    const unsigned short N = this->b->getProblemSize(this->hypothesis);
-    this->s_t0.resize(N,0);
-    this->readArrayOfSpecifiedSize(this->s_t0,p);
-    this->readSpecifiedToken("MTest::handleThermodynamicForce",
-			     ";",p,this->fileTokens.end());
-  } // end of MTest::handleThermodynamicForce
-  
-  void
-  MTest::handleInternalStateVariable(TokensContainer::const_iterator& p)
-  {
-    using namespace std;
-    typedef tfel::material::ModellingHypothesis MH;
-    if(this->hypothesis==MH::UNDEFINEDHYPOTHESIS){
-      this->setDefaultHypothesis();
-    }
-    if(this->b.get()==0){
-      string msg("MTest::handleInternalStateVariable : ");
-      msg += "no behaviour defined";
-      throw(runtime_error(msg));
-    }
-    const string& n = this->readString(p,this->fileTokens.end());
-    const vector<string>& ivsnames = this->b->getInternalStateVariablesNames();
-    if(find(ivsnames.begin(),ivsnames.end(),n)==ivsnames.end()){
-      string msg("MTest::handleInternalStateVariable : ");
-      msg += "the behaviour don't declare an internal state variable named '";
-      msg += n+"'";
-      throw(runtime_error(msg));
-    }
-    const int type           = b->getInternalStateVariableType(n);
-    const unsigned short pos = b->getInternalStateVariablePosition(this->dimension,n);
-    if(type==0){
-      const real v = this->readDouble(p);
-      if(this->iv_t0.size()<=pos){
-	this->iv_t0.resize(pos+1,0.);
-      }
-      this->iv_t0[pos] = v;
-    } else if(type==1){
-      const unsigned short N = getSTensorSize(this->dimension);
-      vector<real> v(N);
-      this->readArrayOfSpecifiedSize(v,p);
-      if(this->iv_t0.size()<pos+N){
-	this->iv_t0.resize(pos+N,0.);
-      }
-      copy(v.begin(),v.end(),
-	   this->iv_t0.begin()+pos);
-    } else {
-      string msg("MTest::handleInternalStateVariable : "
-		 "unsupported state variable type for "
-		 "internal state variable '"+n+"'");
-      throw(runtime_error(msg));
-    }
-    this->readSpecifiedToken("MTest::handleInternalStateVariable",
-			     ";",p,this->fileTokens.end());
-  }
-
-  void
-  MTest::handleExternalStateVariable(TokensContainer::const_iterator& p)
-  {
-    using namespace std;
-    using namespace tfel::utilities;
-    if(this->b.get()==0){
-      string msg("MTest::handleExternalStateVariable : ");
-      msg += "no behaviour defined";
-      throw(runtime_error(msg));
-    }
-    const string& evt = this->readEvolutionType(p);
-    const string& n   = this->readString(p,this->fileTokens.end());
-    const vector<string>& evsnames = this->b->getExternalStateVariablesNames();
-    if(find(evsnames.begin(),evsnames.end(),n)==evsnames.end()){
-      string msg("MTest::handleExternalStateVariable : ");
-      msg += "the behaviour don't declare an external state variable '";
-      msg += n+"'";
-      throw(runtime_error(msg));
-    }
-    if(this->evs->find(n)!=this->evs->end()){
-      string msg("MTest::handleExternalStateVariable : ");
-      msg += "'"+n+"' already declared";
-      throw(runtime_error(msg));
-    }
-    (*(this->evs))[n] = this->parseEvolution(evt,p);
-    this->readSpecifiedToken("MTest::handleExternalStateVariable",";",p,
-			     this->fileTokens.end());
-  }
-
-  void
-  MTest::handleEvolution(TokensContainer::const_iterator& p)
-  {
-    using namespace std;
-    using namespace tfel::utilities;
-    const string& evt = this->readEvolutionType(p);
-    const string& n   = this->readString(p,this->fileTokens.end());
-    if(this->evs->find(n)!=this->evs->end()){
-      string msg("MTest::handleEvolution : ");
-      msg += "'"+n+"' already declared";
-      throw(runtime_error(msg));
-    }
-    (*(this->evs))[n] = this->parseEvolution(evt,p);
-    this->readSpecifiedToken("MTest::handleEvolution",";",p,
-			     this->fileTokens.end());
-  }
-
-  tfel::tests::TestResult
-  MTest::execute(void)
-  {
-    using namespace std;
-    using namespace tfel::utilities;
-    using namespace tfel::math;
-    using namespace tfel::material;
-    using tfel::utilities::shared_ptr;
-    using tfel::tests::TestResult;
-    using tfel::math::vector;
-    vector<shared_ptr<MTestConstraint> >::const_iterator pc;
-    vector<string>::const_iterator p;
-    vector<real>::const_iterator pt;
-    vector<real>::const_iterator pt2;
-    vector<shared_ptr<UTest> >::iterator ptest;
-    TestResult tr;
-    map<string,shared_ptr<MTestEvolution> >::const_iterator pev;
-    map<string,shared_ptr<MTestEvolution> >::const_iterator pev2;
-    map<string,shared_ptr<MTestEvolution> >::const_iterator pev3;
-    map<string,shared_ptr<MTestEvolution> >::const_iterator pev4;
-    //! stiffness matrix
-    matrix<real> K;
-    // residual
-    vector<real> r;
-    // vector of unknows at 
-    // the beginning of the
-    // previous time step.
-    vector<real> u_1;
-    // vector of unknows at 
-    // the beginning of the
-    // time step.
-    vector<real> u0;
-    // vector of unknows at 
-    // the end of the
-    // time step
-    vector<real> u1;
-    // material properties at
-    // the beginning of the
-    // time step
-    vector<real> mprops0;
-    // material properties at
-    // the end of the
-    // time step
-    vector<real> mprops1;
-    // internal variables at
-    // the beginning of the
-    // previous time step
-    vector<real> iv_1;
-    // internal variables at
-    // the beginning of the
-    // time step
-    vector<real> iv0;
-    // internal variables at
-    // the end of the
-    // time step
-    vector<real> iv1;
-    // external variables at
-    // the beginning of the
-    // time step
-    vector<real> esv0;
-    // external variables increments
-    vector<real> desv;
-    // problem size
-    const unsigned short N = this->b->getProblemSize(this->hypothesis);
-    // stresses at the previous of the time step
-    vector<real> s_1(N,0.);
-    // stresses at the beginning of the time step
-    vector<real> s0(N,0.);
-    // getting the names of the materials properties
-    std::vector<string> mpnames;
-    if(this->b.get()==0){
-      string msg("MTest::execute : ");
-      msg += "no behaviour defined";
-      throw(runtime_error(msg));
-    }
-    // stiffness tensor
-    matrix<real> Kt(N,N);
-    // prediction tensor
-    matrix<real> Kp(N,N);
-    // material properties
-    mpnames = this->b->getMaterialPropertiesNames();
-    checkIfDeclared(mpnames,*(this->evs),"material property");
-    // getting the names of the internal state variables
-    std::vector<string> ivnames;
-    ivnames = this->b->getInternalStateVariablesNames();
-    // getting the names of the external state variables
-    std::vector<string> esvnames;
-    esvnames = this->b->getExternalStateVariablesNames();
-    checkIfDeclared(esvnames,*(this->evs),"external state variable");
-    // getting the total number of unknowns
-    size_t s = N;
-    for(pc =this->constraints.begin();
-	pc!=this->constraints.end();++pc){
-      const MTestConstraint& c = *(*pc);
-      s += c.getNumberOfLagrangeMultipliers();
-    }
-    // permuation matrix
-    Permutation<matrix<real>::size_type> p_lu(s);
-    // temporary vector used by the LUSolve::exe function
-    vector<real> x(s);
-    // castem acceleration algorithm
-    vector<real> ca_u0;
-    vector<real> ca_u1;
-    vector<real> ca_u2;
-    vector<real> ca_r0;
-    vector<real> ca_r1;
-    vector<real> ca_r2;
-    vector<real> ca_r;
-    vector<real> ca_n0;
-    vector<real> ca_n1;
-    vector<real> ca_tmp0;
-    vector<real> ca_tmp1;
-    // allocating memory
-    if(this->useCastemAcceleration){
-      ca_u0.resize(s,0.);      
-      ca_u1.resize(s,0.);
-      ca_u2.resize(s,0.);
-      ca_r0.resize(s,0.);
-      ca_r1.resize(s,0.);
-      ca_r2.resize(s,0.);
-      ca_n0.resize(s,0.);
-      ca_n1.resize(s,0.);
-      ca_tmp0.resize(s,0.);
-      ca_tmp1.resize(s,0.);
-      ca_r.resize(s,0.);
-    }
-    u_1.resize(s,0.);
-    u0.resize(s,0.);
-    u1.resize(s);
-    r.resize(s);
-    K.resize(s,s);
-    mprops0.resize(mpnames.size());
-    mprops1.resize(mpnames.size());
-    iv_1.resize(this->b->getInternalStateVariablesSize(this->dimension),0.);
-    iv0.resize(iv_1.size());
-    iv1.resize(iv0.size());
-    esv0.resize(esvnames.size());
-    desv.resize(esvnames.size());
-    this->b->allocate(N,iv0.size());
-    // setting the intial  values of strains
-    copy(this->e_t0.begin(),this->e_t0.end(),u_1.begin());
-    u0 = u_1;
-    // setting the intial  values of stresses
-    copy(this->s_t0.begin(),this->s_t0.end(),s0.begin());
-    // getting the initial values of internal state variables
-    if(this->iv_t0.size()>iv0.size()){
-      string msg("MTest::execute : the number of initial values declared "
-		 "by the user for the internal state variables exceeds the "
-		 "number of internal state variables declared by the behaviour");
-      throw(runtime_error(msg));
-    }
-    copy(this->iv_t0.begin(),this->iv_t0.end(),iv_1.begin());
-    copy(iv_1.begin(),iv_1.end(),iv0.begin());
-    this->iv_t0.clear();
-    // integrating over the loading path
-    pt  = this->times.begin();
-    pt2 = pt+1;
     // thermal expansion reference temperature
-    real Tref(293.15);
     pev = this->evs->find("ThermalExpansionReferenceTemperature");
     if(pev!=this->evs->end()){
       const MTestEvolution& ev = *(pev->second);
       if(!ev.isConstant()){
-	string msg("MTest::execute : 'ThermalExpansionReferenceTemperature' "
+	string msg("MTest::completeInitialisation : 'ThermalExpansionReferenceTemperature' "
 		   "must be a constant evolution");
 	throw(runtime_error(msg));
       }
-      Tref = ev(0);
     }
     // options selected
     if(getVerboseMode()>=VERBOSE_LEVEL1){
@@ -1985,7 +1047,7 @@ namespace mfront
 	log << "mtest : prediction using tangent operator" << endl;
       } else {
 	if(this->ppolicy!=NOPREDICTION){
-	  string msg("MTest::execute : "
+	  string msg("MTest::completeInitialisation : "
 		     "internal error, unsupported "
 		     "prediction policy");
 	  throw(runtime_error(msg));
@@ -1993,442 +1055,195 @@ namespace mfront
 	log << "mtest : no prediction" << endl;
       }
     }
-    // post-processing
-    unsigned short cnbr = 2;
-    this->out << "# first column : time" << endl;
-    for(unsigned short i=0;i!=N;++i){
-      this->out << "# " << cnbr << " column : " << i+1 << "th component of the driving variables" << endl;
-      ++cnbr;
-    }
-    for(unsigned short i=0;i!=N;++i){
-      this->out << "# " << cnbr << " column : " << i+1 << "th component of the thermodynamic forces" << endl;
-      ++cnbr;
-    }
-    const std::vector<string>& ivdes =
-      this->b->getInternalStateVariablesDescriptions(this->dimension);
-    if(ivdes.size()!=iv0.size()){
-      string msg("MTest::execute : internal error "
-		 "(the number of descriptions given by "
-		 "the mechanical behaviour don't match "
-		 "the number of internal state variables)");
+    // allocating behaviour workspace
+    this->b->allocate(this->hypothesis);
+    // the end
+    this->initialisationFinished = true;
+  }
+
+  void
+  MTest::initializeCurrentState(MTestCurrentState& s) const
+  {
+    using namespace std;
+    using tfel::utilities::shared_ptr;
+    // getting the names of the materials properties
+    vector<string> mpnames(this->b->getMaterialPropertiesNames());
+    vector<string> esvnames(this->b->getExternalStateVariablesNames());
+    unsigned short psz = this->getProblemSize();
+    // clear
+    s.s_1.clear();
+    s.s0.clear();
+    s.s1.clear();
+    s.e0.clear();
+    s.e_th0.clear();
+    s.e_th1.clear();
+    s.de.clear();
+    s.u_1.clear();
+    s.u0.clear();
+    s.u1.clear();
+    s.mprops0.clear();
+    s.mprops1.clear();
+    s.iv_1.clear();
+    s.iv0.clear();
+    s.iv1.clear();
+    s.esv0.clear();
+    s.desv.clear();
+    // resizing
+    const unsigned short N = this->b->getProblemSize(this->hypothesis);
+    s.s_1.resize(N,0.);
+    s.s0.resize(N,0.);
+    s.s1.resize(N,0.);
+    s.e0.resize(N,0.);
+    s.e_th0.resize(N,0.);
+    s.e_th1.resize(N,0.);
+    s.de.resize(N,0.);
+    s.u_1.resize(psz,0.);
+    s.u0.resize(psz,0.);
+    s.u1.resize(psz,0.);
+    s.mprops0.resize(mpnames.size());
+    s.mprops1.resize(mpnames.size());
+    s.iv_1.resize(this->b->getInternalStateVariablesSize(this->hypothesis),0.);
+    s.iv0.resize(s.iv_1.size(),0.);
+    s.iv1.resize(s.iv0.size(),0.);
+    s.esv0.resize(esvnames.size(),0.);
+    s.desv.resize(esvnames.size(),0.);
+    // setting the intial  values of strains
+    copy(this->e_t0.begin(),this->e_t0.end(),s.u_1.begin());
+    s.u0 = s.u_1;
+    // setting the intial  values of stresses
+    copy(this->s_t0.begin(),this->s_t0.end(),s.s0.begin());
+    // getting the initial values of internal state variables
+    if(this->iv_t0.size()>s.iv0.size()){
+      string msg("MTest::initializeCurrentState : the number of initial values declared "
+		 "by the user for the internal state variables exceeds the "
+		 "number of internal state variables declared by the behaviour");
       throw(runtime_error(msg));
     }
-    for(std::vector<string>::size_type i=0;i!=ivdes.size();++i){
-      this->out << "# " << cnbr << " column : " << ivdes[i] << endl;
-      ++cnbr;
+    copy(this->iv_t0.begin(),this->iv_t0.end(),s.iv_1.begin());
+    copy(this->iv_t0.begin(),this->iv_t0.end(),s.iv0.begin());
+    // mandatory for time step management
+    s.period = 1u;
+    s.dt_1   = 0.;
+    // reference temperature
+    map<string,shared_ptr<MTestEvolution> >::const_iterator pev;
+    pev = this->evs->find("ThermalExpansionReferenceTemperature");
+    if(pev!=this->evs->end()){
+      const MTestEvolution& ev = *(pev->second);
+      if(!ev.isConstant()){
+	string msg("MTest::initializeCurrentState : "
+		   "'ThermalExpansionReferenceTemperature' "
+		   "must be a constant evolution");
+	throw(runtime_error(msg));
+      }
+      s.Tref = ev(0);
+    } else {
+      s.Tref = real(293.15);
     }
-    this->printOutput(*pt,N,u0,s0,iv0);
-    bool first = true;
-    real a(0);
-    unsigned short period = 1u;
-    // previous time step
-    real dt_1(real(0));
-    // stresses at the end of the time step
-    vector<real> s1(N);
-    // strain at the beginning of the time step
-    vector<real> e0(N);
-    // thermal expansion at the beginning of the time step
-    vector<real> e_th0(N);
-    // thermal expansion at the end of the time step
-    vector<real> e_th1(N);
-    // strain increment
-    vector<real> de(N);
+  } // end of MTest::initializeCurrentState
+
+  void
+  MTest::initializeWorkSpace(MTestWorkSpace& wk) const
+  {
+    const unsigned short psz = this->getProblemSize();
+    const unsigned short N   = this->b->getProblemSize(this->hypothesis);
+    // clear
+    wk.K.clear();
+    wk.Kt.clear();
+    wk.Kp.clear();
+    wk.p_lu.clear();
+    wk.x.clear();
+    wk.r.clear();
+    wk.ca_u0.clear();      
+    wk.ca_u1.clear();
+    wk.ca_u2.clear();
+    wk.ca_r0.clear();
+    wk.ca_r1.clear();
+    wk.ca_r2.clear();
+    wk.ca_n0.clear();
+    wk.ca_n1.clear();
+    wk.ca_tmp0.clear();
+    wk.ca_tmp1.clear();
+    wk.ca_r.clear();
+    //resizing
+    wk.K.resize(psz,psz);
+    wk.Kt.resize(N,N);
+    wk.Kp.resize(N,N);
+    wk.p_lu.resize(psz);
+    wk.x.resize(psz);
+    wk.r.resize(psz,0.);
+    // allocating memory
+    if(this->useCastemAcceleration){
+      wk.ca_u0.resize(psz,0.);      
+      wk.ca_u1.resize(psz,0.);
+      wk.ca_u2.resize(psz,0.);
+      wk.ca_r0.resize(psz,0.);
+      wk.ca_r1.resize(psz,0.);
+      wk.ca_r2.resize(psz,0.);
+      wk.ca_n0.resize(psz,0.);
+      wk.ca_n1.resize(psz,0.);
+      wk.ca_tmp0.resize(psz,0.);
+      wk.ca_tmp1.resize(psz,0.);
+      wk.ca_r.resize(psz,0.);
+    }
+    wk.first = true;
+    wk.a = 0;
+  } // end of MTest::initializeWorkSpace
+  
+  size_t
+  MTest::getProblemSize() const
+  {
+    using tfel::utilities::shared_ptr;
+    using tfel::math::vector;
+    vector<shared_ptr<MTestConstraint> >::const_iterator pc;
+    // number of components of the driving variables and the thermodynamic forces
+    const unsigned short N = this->b->getProblemSize(this->hypothesis);
+    // getting the total number of unknowns
+    size_t s = N;
+    for(pc =this->constraints.begin();
+	pc!=this->constraints.end();++pc){
+      const MTestConstraint& c = *(*pc);
+      s += c.getNumberOfLagrangeMultipliers();
+    }
+    return s;
+  } // end of MTest::getProblemSize
+
+  tfel::tests::TestResult
+  MTest::execute(void)
+  {
+    using namespace std;
+    using namespace tfel::tests;
+    using tfel::math::vector;
+    using tfel::utilities::shared_ptr;
+    TestResult tr;
+    vector<real>::const_iterator pt;
+    vector<real>::const_iterator pt2;
+    vector<shared_ptr<UTest> >::iterator ptest;
+    // some checks
+    if(times.empty()){
+      string msg("MTest::execute : no times defined");
+      throw(runtime_error(msg));
+    }
+    if(times.size()<2){
+      string msg("MTest::execute :"
+		 "invalid number of times defined");
+      throw(runtime_error(msg));
+    }
+    // finish initialization
+    this->completeInitialisation();
+    // initialize current state and work space
+    MTestCurrentState state;
+    MTestWorkSpace    wk;
+    this->initializeCurrentState(state);
+    this->initializeWorkSpace(wk);
+    // integrating over the loading path
+    pt  = this->times.begin();
+    pt2 = pt+1;
+    this->printOutput(*pt,state);
     // real work begins here
     while(pt2!=this->times.end()){
       // allowing subdivisions of the time step
-      const real te = *pt2;
-      real t  = *pt;
-      real dt = te-t;
-      unsigned short subStep = 0;
-      fill(s1.begin(),s1.end(),real(0));
-      fill(e0.begin(),e0.end(),real(0));
-      fill(e_th0.begin(),e_th0.end(),real(0));
-      fill(e_th1.begin(),e_th1.end(),real(0));
-      fill(de.begin(),de.end(),real(0));
-      while((abs(te-t)>0.5*dt)&&
-	    (subStep!=this->mSubSteps)){
-	unsigned short i,j;
-	// evaluations of the materials properties at the end of the
-	// time step
-	for(i=0,p=mpnames.begin();p!=mpnames.end();++p,++i){
-	  pev = this->evs->find(*p);
-	  if(pev==this->evs->end()){
-	    string msg("MTest::execute : no evoluation named '"+*p+"'");
-	    throw(runtime_error(msg));
-	  }
-	  const MTestEvolution& ev = *(pev->second);
-	  mprops1[i] = ev(t+dt);
-	}
-	for(i=0,p=esvnames.begin();p!=esvnames.end();++p,++i){
-	  pev = this->evs->find(*p);
-	  if(pev==this->evs->end()){
-	    string msg("MTest::execute : no evoluation named '"+*p+"'");
-	    throw(runtime_error(msg));
-	  }
-	  const MTestEvolution& ev = *(pev->second);
-	  const real evt = ev(t);
-	  esv0[i] = evt;
-	  desv[i] = ev(t+dt)-evt;
-	}
-	if(this->b->getBehaviourType()==MechanicalBehaviourBase::SMALLSTRAINSTANDARDBEHAVIOUR){
-	  // thermal expansion (isotropic case)
-	  pev   = this->evs->find("Temperature");
-	  pev2  = this->evs->find("ThermalExpansion");
-	  if((pev!=this->evs->end())&&(pev2!=this->evs->end())){
-	    const MTestEvolution& T_ev = *(pev->second);
-	    const MTestEvolution& a_ev = *(pev2->second);
-	    const real eth0 = a_ev(t)*(T_ev(t)-Tref);
-	    const real eth1 = a_ev(t+dt)*(T_ev(t+dt)-Tref);
-	    for(i=0;i!=3;++i){
-	      e_th0[i] = eth0;
-	      e_th1[i] = eth1;
-	    }
-	  }
-	  pev2  = this->evs->find("ThermalExpansion1");
-	  pev3  = this->evs->find("ThermalExpansion2");
-	  pev4  = this->evs->find("ThermalExpansion3");
-	  if((pev!=this->evs->end())&&
-	     ((pev2!=this->evs->end())||
-	      (pev3!=this->evs->end())||
-	      (pev4!=this->evs->end()))){
-	    if((pev2==this->evs->end())||
-	       (pev3==this->evs->end())||
-	       (pev4==this->evs->end())){
-	      string msg("MTest::execute : at least one of the three "
-			 "thermal expansion coefficient is defined and "
-			 "at least one is not");
-	      throw(runtime_error(msg));
-	    }
-	    const MTestEvolution& T_ev  = *(pev->second);
-	    const MTestEvolution& a1_ev = *(pev2->second);
-	    const MTestEvolution& a2_ev = *(pev3->second);
-	    const MTestEvolution& a3_ev = *(pev4->second);
-	    if(this->dimension==1u){
-	      e_th0[0u] = a1_ev(t)*(T_ev(t)-Tref);
-	      e_th1[0u] = a1_ev(t+dt)*(T_ev(t+dt)-Tref);
-	      e_th0[1u] = a2_ev(t)*(T_ev(t)-Tref);
-	      e_th1[1u] = a2_ev(t+dt)*(T_ev(t+dt)-Tref);
-	      e_th0[2u] = a3_ev(t)*(T_ev(t)-Tref);
-	      e_th1[2u] = a3_ev(t+dt)*(T_ev(t+dt)-Tref);
-	    } else if((this->dimension==2u)||
-		      (this->dimension==3u)){
-	      // thermal expansion tensors in the material referential
-	      stensor<3u,real> se_th0(real(0));
-	      stensor<3u,real> se_th1(real(0));
-	      se_th0[0u] = a1_ev(t)*(T_ev(t)-Tref);
-	      se_th1[0u] = a1_ev(t+dt)*(T_ev(t+dt)-Tref);
-	      se_th0[1u] = a2_ev(t)*(T_ev(t)-Tref);
-	      se_th1[1u] = a2_ev(t+dt)*(T_ev(t+dt)-Tref);
-	      se_th0[2u] = a3_ev(t)*(T_ev(t)-Tref);
-	      se_th1[2u] = a3_ev(t+dt)*(T_ev(t+dt)-Tref);
-	      // backward rotation matrix
-	      tmatrix<3u,3u,real> brm = transpose(this->rm);
-	      se_th0.changeBasis(brm);
-	      se_th1.changeBasis(brm);
-	      copy(se_th0.begin(),se_th0.begin()+getSTensorSize(this->dimension),e_th0.begin());
-	      copy(se_th1.begin(),se_th1.begin()+getSTensorSize(this->dimension),e_th1.begin());
-	    } else {
-	      string msg("MTest::execute : invalid dimension");
-	      throw(runtime_error(msg));
-	    }
-	  }
-	}
-	// strain at the beginning of the time step
-	for(i=0;i!=N;++i){
-	  e0[i] = u0[i]-e_th0[i];
-	}
-	// resolution
-	bool converged = false;
-	unsigned short iter = 0;
-	if(getVerboseMode()>=VERBOSE_LEVEL1){
-	  ostream& log = getLogStream();
-	  log << "resolution from " << t << " to " << t+dt << endl;
-	}
-	real ne  = 0.;  // norm of the increment of the strains
-	real nep = 0.;  // norm of the increment of the strains at the
-	// previous iteration
-	real nep2 = 0.; // norm of the increment of the strains two
-	// iterations before...
-	/* prediction */
-	if(this->ppolicy==LINEARPREDICTION){
-	  if(period>1){
-	    u1  = u0+(u0-u_1)*dt/dt_1;
-	    iv1 = iv0+(iv0-iv_1)*dt/dt_1;
-	    s1  = s0+(s0-s_1)*dt/dt_1;
-	  }
-	} else if((this->ppolicy==ELASTICPREDICTION)||
-		  (this->ppolicy==SECANTOPERATORPREDICTION)||
-		  (this->ppolicy==TANGENTOPERATORPREDICTION)){
-	  // evaluations of the materials properties at the beginning
-	  // of the time step
-	  for(i=0,p=mpnames.begin();p!=mpnames.end();++p,++i){
-	    pev = this->evs->find(*p);
-	    if(pev==this->evs->end()){
-	      string msg("MTest::execute : no evoluation named '"+*p+"'");
-	      throw(runtime_error(msg));
-	    }
-	    const MTestEvolution& ev = *(pev->second);
-	    mprops0[i] = ev(t);
-	  }
-	  fill(Kp.begin(),Kp.end(),0.);
-	  bool sp(true);
-	  if(this->ppolicy==ELASTICPREDICTION){
-	    sp = this->b->computePredictionOperator(Kp,this->rm,e0,
-						    s0,mprops0,iv0,esv0,
-						    this->hypothesis,
-						    MTestStiffnessMatrixType::ELASTIC);
-	  } else if (this->ppolicy==SECANTOPERATORPREDICTION){
-	    sp = this->b->computePredictionOperator(Kp,this->rm,e0,
-						    s0,mprops0,iv0,esv0,
-						    this->hypothesis,
-						    MTestStiffnessMatrixType::SECANTOPERATOR);
-	  } else if (this->ppolicy==TANGENTOPERATORPREDICTION){
-	    sp = this->b->computePredictionOperator(Kp,this->rm,e0,
-						    s0,mprops0,iv0,esv0,
-						    this->hypothesis,
-						    MTestStiffnessMatrixType::TANGENTOPERATOR);
-	  }
-	  if(sp){
-	    fill(K.begin(),K.end(),0.);
-	    fill(r.begin(),r.end(),0.);
-	    u1 = u0;
-	    for(i=0;i!=N;++i){
-	      r(i) += s0(i);
-	      for(j=0;j!=N;++j){
-		K(i,j)+=Kp(i,j);
-		// free dilatation treatment
-		r(i) -= Kp(i,j)*(e_th1[j]-e_th0[j]);
-	      }
-	    }
-	    if(first){
-	      a = *(max_element(K.begin(),K.end()));
-	      first = false;
-	    }
-	    unsigned short pos = N;
-	    for(pc =this->constraints.begin();
-		pc!=this->constraints.end();++pc){
-	      const MTestConstraint& c = *(*pc);
-	      c.setValues(K,r,u0,u1,pos,
-			  this->dimension,t,dt,a);
-	      pos = static_cast<unsigned short>(pos+c.getNumberOfLagrangeMultipliers());
-	    }
-	    LUSolve::exe(K,r,x,p_lu);
-	    u1 -= r;
-	  } else {
-	    if(getVerboseMode()>VERBOSE_QUIET){
-	      ostream& log = getLogStream();
-	      log << "MTest::execute : behaviour compute prediction matrix failed" << endl;
-	    }
-	    u1  = u0;
-	    s1  = s0;
-	    iv1 = iv0;
-	  }
-	} else {
-	  if(this->ppolicy != NOPREDICTION){
-	    string msg("MTest::execute : "
-		       "internal error, unsupported "
-		       "prediction policy");
-	    throw(runtime_error(msg));
-	  }	    
-	  u1  = u0;
-	  s1  = s0;
-	  iv1 = iv0;
-	}
-	/* resolution */
-	bool cont = true;
-	while((!converged)&&(iter!=this->iterMax)&&(cont)){
-	  ++iter;
-	  nep2 = nep;
-	  nep  = ne;
-	  fill(K.begin(),K.end(),0.);
-	  fill(Kt.begin(),Kt.end(),0.);
-	  fill(r.begin(),r.end(),0.);
-	  for(i=0;i!=N;++i){
-	    de[i] = u1[i]-e_th1[i]-u0[i]+e_th0[i];
-	  }
-	  const bool bi = this->b->integrate(Kt,s1,iv1,this->rm,e0,
-					     de,s0,mprops1,iv0,esv0,desv,
-					     this->hypothesis,dt,
-					     this->ktype);
-	  if(bi){
-	    // behaviour integration is a success
-	    for(i=0;i!=N;++i){
-	      r(i) += s1(i);
-	      for(j=0;j!=N;++j){
-		K(i,j)+=Kt(i,j);
-	      }
-	    }
-	    if(first){
-	      a = *(max_element(K.begin(),K.end()));
-	      first = false;
-	    }
-	    unsigned short pos = N;
-	    for(pc =this->constraints.begin();
-		pc!=this->constraints.end();++pc){
-	      const MTestConstraint& c = *(*pc);
-	      c.setValues(K,r,u0,u1,pos,
-			  this->dimension,t,dt,a);
-	      pos = static_cast<unsigned short>(pos+c.getNumberOfLagrangeMultipliers());
-	    }
-	    if(getVerboseMode()>=VERBOSE_DEBUG){
-	      ostream& log = getLogStream();
-	      for(i=0;i!=K.getNbRows();++i){
-		for(j=0;j!=K.getNbCols();++j){
-		  log << K(i,j) << " ";
-		}
-		log << endl;
-	      }
-	      log << endl;
-	    }
-	    if(this->useCastemAcceleration){
-	      ca_r = r;
-	    }
-	    real nr = 0.;
-	    for(i=0;i!=N;++i){
-	      nr += abs(r(i));
-	    }
-	    LUSolve::exe(K,r,x,p_lu);
-	    u1 -= r;
-	    ne = 0;
-	    for(i=0;i!=N;++i){
-	      ne += abs(r(i));
-	    }
-	    if(getVerboseMode()>=VERBOSE_LEVEL2){
-	      ostream& log = getLogStream();
-	      log << "iteration " << iter << " : " << ne << " " 
-		  << nr << " (";
-	      for(i=0;i!=N;){
-		log << u1(i);
-		if(++i!=N){
-		  log << " ";
-		}
-	      }
-	      log << ")" << endl;
-	    }
-	    converged = (ne<this->eeps)&&(nr<this->seps);
-	    for(pc =this->constraints.begin();
-		(pc!=this->constraints.end())&&(converged);++pc){
-	      const MTestConstraint& c = *(*pc);
-	      converged = c.checkConvergence(N,u1,s1,
-					     this->eeps,
-					     this->seps,
-					     t,dt);
-	    }
-	    if(this->ppolicy == NOPREDICTION){
-	      converged = (converged) && (iter>1);
-	    }
-	    if((!converged)&&(this->useCastemAcceleration)){
-	      const real ca_eps = 100*(this->seps*numeric_limits<real>::epsilon());
-	      ca_u0.swap(ca_u1);
-	      ca_u1.swap(ca_u2);
-	      ca_r0.swap(ca_r1);
-	      ca_r1.swap(ca_r2);
-	      ca_u2 = u1;
-	      ca_r2 = ca_r;
-	      if((iter>=this->cat)&&((iter-this->cat)%this->cap==0)){
-		if(getVerboseMode()>=VERBOSE_LEVEL1){
-		  ostream& log = getLogStream();
-		  log << "castem acceleration convergence" << endl;
-		}
-		bool c  = true;
-		ca_tmp0 = ca_r1-ca_r0;
-		ca_tmp1 = ca_r2-ca_r0;
-		const real nr0 = norm(ca_tmp0);
-		c = nr0>ca_eps;
-		if(c){
-		  ca_n0   = ca_tmp0/nr0;
-		  const real ntmp1  = ca_tmp1|ca_n0;
-		  ca_tmp1          -= ntmp1*ca_n0;
-		  const real nr1    = norm(ca_tmp1);
-		  c = nr1>0.1*abs(ntmp1);
-		  if(c){
-		    ca_n1      =   ca_tmp1/nr1;
-		    const real ca_p0 = -(ca_r0|ca_n0);
-		    const real ca_p1 = -(ca_r0|ca_n1);
-		    // La projection du vecteur nul est
-		    // donnée par
-		    // (1-ca_c0-ca_c1)*r0+ca_c0*ca_r1+ca_c1*r2;
-		    // avec - ca_c0 = (ca_p0/nr0-ca_p1/nr1)
-		    //      - ca_c1 = ca_p1/nr1
-		    // maintenant on applique la même relation
-		    // linéaire
-		    // aux inconnues..
-		    const real ca_c0 = (ca_p0/nr0-ca_p1/nr1);
-		    const real ca_c1 = ca_p1/nr1;
-		    u1 = (1-ca_c0-ca_c1)*ca_u0+ca_c0*ca_u1+ca_c1*ca_u2;
-		  } else {
-		    // the previous iterations were (almost) colinear
-		    const real ca_c0 = -(ca_r0|ca_n0)/nr0;
-		    u1 = (1-ca_c0)*ca_u0+ca_c0*ca_u1;
-		  }
-		}
-	      }
-	    }
-	  } else {
-	    if(getVerboseMode()>VERBOSE_QUIET){
-	      ostream& log = getLogStream();
-	      log << "MTest::execute : behaviour intregration failed" << endl;
-	    }
-	    cont = false;
-	  }
-	}
-	if((iter==this->iterMax)||(!cont)){
-	  // no convergence
-	  ++subStep;
-	  if(subStep==this->mSubSteps){
-	    string msg("MTest::execute : behaviour "
-		       "maximum number of sub stepping reached");
-	    throw(runtime_error(msg));
-	  }
-	  if(getVerboseMode()>=VERBOSE_LEVEL1){
-	    ostream& log = getLogStream();
-	    log << "non convergence, dividing time "
-		<< "step by two" << endl << endl;
-	  }
-	  dt *= 0.5;
-	  u1  = u0;
-	  s1  = s0;
-	  iv1 = iv0;
-	} else {
-	  if(getVerboseMode()>=VERBOSE_LEVEL1){
-	    if(iter==1u){
-	      ostream& log = getLogStream();
-	      log << "convergence, after one iteration "
-		  << endl << endl;
-	    } else {
-	      ostream& log = getLogStream();
-	      if((iter>=3)&&
-		 (nep >100*numeric_limits<real>::min())&&
-		 (nep2>100*numeric_limits<real>::min())){
-		log << "convergence, after " << iter << " iterations, "
-		    << "order " << std::log(ne/nep)/std::log(nep/nep2)
-		    << endl << endl;
-	      } else {
-		log << "convergence, after " << iter << " iterations, "
-		    << "order undefined"
-		    << endl << endl;
-	      }
-	    }
-	  }
-	  // testing
-	  for(ptest=this->tests.begin();ptest!=this->tests.end();++ptest){
-	    UTest& test = *(*ptest);
-	    test.check(u1,s1,iv1,t,dt,period);
-	  }
-	  // post-processing
-	  this->printOutput(t+dt,N,u1,s1,iv1);
-	  // update variables
-	  u_1  = u0;
-	  s_1  = s0;
-	  iv_1 = iv0;
-	  dt_1 = dt;
-	  u0   = u1;
-	  s0   = s1;
-	  iv0  = iv1;
-	  t+=dt;
-	  ++period;
-	}
-      }
+      this->execute(state,wk,*pt,*pt2);
+      this->printOutput(*pt2,state);
       ++pt;
       ++pt2;
     }
@@ -2436,196 +1251,477 @@ namespace mfront
       const UTest& test = *(*ptest);
       tr.append(test.getResults());
     }
-    return tr;
+    return tr; 
   }
 
-  real
-  MTest::readDouble(TokensContainer::const_iterator& p)
-  {
-    using namespace std;
-    using tfel::utilities::Token;
-    using tfel::utilities::shared_ptr;
-    using tfel::math::Evaluator;
-    this->checkNotEndOfLine("MTest::readDouble",p,
-			    this->fileTokens.end());
-    real v(0);
-    if(p->flag==Token::String){
-      const string&f = this->readString(p,this->fileTokens.end());
-      Evaluator ev(f);
-      const vector<string>& vn = ev.getVariablesNames();
-      vector<string>::const_iterator pv;
-      for(pv=vn.begin();pv!=vn.end();++pv){
-	map<string,shared_ptr<MTestEvolution> >::const_iterator pev;
-	pev = this->evs->find(*pv);
-	if(pev==this->evs->end()){
-	  string msg("MTest::readDouble : "
-		     "no evolution named '"+*pv+"' defined");
-	  throw(runtime_error(msg));
-	}
-	const MTestEvolution& e = *(pev->second);
-	if(!e.isConstant()){
-	  string msg("MTest::readDouble : formulae '"+f+"' shall "
-		     "only depend on constant evolutions "
-		     "(evolution '"+*pv+"' is not constant");
-	  throw(runtime_error(msg));
-	}
-	ev.setVariableValue(*pv,e(0));
-      }
-      v = ev.getValue();
-    } else {
-      v = CxxTokenizer::readDouble(p,this->fileTokens.end());
-    }
-    return v;
-  } // end of MTest::readDouble
-
-  real
-  MTest::readTime(TokensContainer::const_iterator& p)
-  {
-    using namespace std;
-    return this->readDouble(p);
-  } // end of MTest::readTime
-
   void
-  MTest::readArrayOfSpecifiedSize(std::vector<real>& v,
-				  TokensContainer::const_iterator& p)
-  {
-    using namespace std;
-    vector<real>::size_type i = 0;
-    this->readSpecifiedToken("MTest::readArrayOfSpecifiedSize","{",p,
-			     this->fileTokens.end());
-    while(i!=v.size()){
-      v[i] = this->readDouble(p);
-      if(++i!=v.size()){
-	this->readSpecifiedToken("MTest::readArrayOfSpecifiedSize",",",p,
-				 this->fileTokens.end());
-      }
-    }
-    this->readSpecifiedToken("MTest::readArrayOfSpecifiedSize","}",p,
-			     this->fileTokens.end());
-  } // end of MTest::readArrayOfSpecifiedSize
-
-  void
-  MTest::printOutput(const real t,
-		     const unsigned short N,
-		     const tfel::math::vector<real>& u,
-		     const tfel::math::vector<real>& s,
-		     const tfel::math::vector<real>& iv)
-  {
-    using namespace std;
-    unsigned short i;
-    this->out << t << " ";
-    for(i=0;i!=N;++i){
-      this->out << u(i) << " ";
-    }
-    for(i=0;i!=N;++i){
-      this->out << s(i) << " ";
-    }
-    copy(iv.begin(),iv.end(),
-	 ostream_iterator<real>(this->out," "));
-    this->out << endl;
-  }
-  
-  tfel::utilities::shared_ptr<MTestEvolution>
-  MTest::parseEvolution(const std::string& t,
-			TokensContainer::const_iterator& p)
+  MTest::execute(MTestCurrentState& state,
+		 MTestWorkSpace& wk,
+		 const real ti,
+		 const real te)
   {
     using namespace std;
     using namespace tfel::utilities;
+    using namespace tfel::math;
+    using namespace tfel::material;
+    typedef tfel::material::ModellingHypothesis MH;
     using tfel::utilities::shared_ptr;
-    shared_ptr<MTestEvolution> ev;
-    this->checkNotEndOfLine("MTest::parseEvolution",p,
-			    this->fileTokens.end());
-    if(t.empty()||t=="evolution"){
-      if(p->value=="{"){
-	vector<real> tvalues;
-	vector<real> values;
-	this->readSpecifiedToken("MTest::parseEvolution","{",p,
-				 this->fileTokens.end());
-	this->checkNotEndOfLine("MTest::parseEvolution",p,
-				this->fileTokens.end());
-	while(p->value!="}"){
-	  tvalues.push_back(this->readTime(p));
-	  this->readSpecifiedToken("MTest::parseEvolution",":",p,
-				   this->fileTokens.end());
-	  values.push_back(this->readDouble(p));
-	  this->checkNotEndOfLine("MTest::parseEvolution",p,
-				  this->fileTokens.end());
-	  if(p->value==","){
-	    ++p;
-	    this->checkNotEndOfLine("MTest::parseEvolution",p,
-				    this->fileTokens.end());
-	    if(p->value=="}"){
-	      string msg("MTest::parseEvolution : ");
-	      msg += "unexpected token '}'";
-	      throw(runtime_error(msg));
-	    }
+    using tfel::tests::TestResult;
+    using tfel::math::vector;
+    vector<string>::const_iterator p;
+    vector<shared_ptr<MTestConstraint> >::const_iterator pc;
+    map<string,shared_ptr<MTestEvolution> >::const_iterator pev;
+    map<string,shared_ptr<MTestEvolution> >::const_iterator pev2;
+    map<string,shared_ptr<MTestEvolution> >::const_iterator pev3;
+    map<string,shared_ptr<MTestEvolution> >::const_iterator pev4;
+    vector<shared_ptr<UTest> >::iterator ptest;
+    // getting the names of the materials properties
+    std::vector<string> mpnames(this->b->getMaterialPropertiesNames());
+    // getting the names of the external state variables
+    std::vector<string> esvnames(this->b->getExternalStateVariablesNames());
+    unsigned short subStep = 0;
+    // // number of components of the driving variables and the thermodynamic forces
+    const unsigned short N = this->b->getProblemSize(this->hypothesis);
+    real t  = ti;
+    real dt = te-ti;
+    while((abs(te-t)>0.5*dt)&&
+	  (subStep!=this->mSubSteps)){
+      unsigned short i,j;
+      // evaluations of the materials properties at the end of the
+      // time step
+      for(i=0,p=mpnames.begin();p!=mpnames.end();++p,++i){
+	pev = this->evs->find(*p);
+	if(pev==this->evs->end()){
+	  string msg("MTest::execute : no evoluation named '"+*p+"'");
+	  throw(runtime_error(msg));
+	}
+	const MTestEvolution& ev = *(pev->second);
+	state.mprops1[i] = ev(t+dt);
+      }
+      for(i=0,p=esvnames.begin();p!=esvnames.end();++p,++i){
+	pev = this->evs->find(*p);
+	if(pev==this->evs->end()){
+	  string msg("MTest::execute : no evoluation named '"+*p+"'");
+	  throw(runtime_error(msg));
+	}
+	const MTestEvolution& ev = *(pev->second);
+	const real evt = ev(t);
+	state.esv0[i] = evt;
+	state.desv[i] = ev(t+dt)-evt;
+      }
+      if(this->b->getBehaviourType()==MechanicalBehaviourBase::SMALLSTRAINSTANDARDBEHAVIOUR){
+	// thermal expansion (isotropic case)
+	pev   = this->evs->find("Temperature");
+	pev2  = this->evs->find("ThermalExpansion");
+	if((pev!=this->evs->end())&&(pev2!=this->evs->end())){
+	  const MTestEvolution& T_ev = *(pev->second);
+	  const MTestEvolution& a_ev = *(pev2->second);
+	  const real eth0 = a_ev(t)*(T_ev(t)-state.Tref);
+	  const real eth1 = a_ev(t+dt)*(T_ev(t+dt)-state.Tref);
+	  for(i=0;i!=3;++i){
+	    state.e_th0[i] = eth0;
+	    state.e_th1[i] = eth1;
+	  }
+	}
+	pev2  = this->evs->find("ThermalExpansion1");
+	pev3  = this->evs->find("ThermalExpansion2");
+	pev4  = this->evs->find("ThermalExpansion3");
+	if((pev!=this->evs->end())&&
+	   ((pev2!=this->evs->end())||
+	    (pev3!=this->evs->end())||
+	    (pev4!=this->evs->end()))){
+	  if((pev2==this->evs->end())||
+	     (pev3==this->evs->end())||
+	     (pev4==this->evs->end())){
+	    string msg("MTest::execute : at least one of the three "
+		       "thermal expansion coefficient is defined and "
+		       "at least one is not");
+	    throw(runtime_error(msg));
+	  }
+	  const MTestEvolution& T_ev  = *(pev->second);
+	  const MTestEvolution& a1_ev = *(pev2->second);
+	  const MTestEvolution& a2_ev = *(pev3->second);
+	  const MTestEvolution& a3_ev = *(pev4->second);
+	  if(this->dimension==1u){
+	    state.e_th0[0u] = a1_ev(t)*(T_ev(t)-state.Tref);
+	    state.e_th1[0u] = a1_ev(t+dt)*(T_ev(t+dt)-state.Tref);
+	    state.e_th0[1u] = a2_ev(t)*(T_ev(t)-state.Tref);
+	    state.e_th1[1u] = a2_ev(t+dt)*(T_ev(t+dt)-state.Tref);
+	    state.e_th0[2u] = a3_ev(t)*(T_ev(t)-state.Tref);
+	    state.e_th1[2u] = a3_ev(t+dt)*(T_ev(t+dt)-state.Tref);
+	  } else if((this->dimension==2u)||
+		    (this->dimension==3u)){
+	    // thermal expansion tensors in the material referential
+	    stensor<3u,real> se_th0(real(0));
+	    stensor<3u,real> se_th1(real(0));
+	    se_th0[0u] = a1_ev(t)*(T_ev(t)-state.Tref);
+	    se_th1[0u] = a1_ev(t+dt)*(T_ev(t+dt)-state.Tref);
+	    se_th0[1u] = a2_ev(t)*(T_ev(t)-state.Tref);
+	    se_th1[1u] = a2_ev(t+dt)*(T_ev(t+dt)-state.Tref);
+	    se_th0[2u] = a3_ev(t)*(T_ev(t)-state.Tref);
+	    se_th1[2u] = a3_ev(t+dt)*(T_ev(t+dt)-state.Tref);
+	    // backward rotation matrix
+	    tmatrix<3u,3u,real> brm = transpose(this->rm);
+	    se_th0.changeBasis(brm);
+	    se_th1.changeBasis(brm);
+	    copy(se_th0.begin(),se_th0.begin()+getSTensorSize(this->dimension),state.e_th0.begin());
+	    copy(se_th1.begin(),se_th1.begin()+getSTensorSize(this->dimension),state.e_th1.begin());
 	  } else {
-	    if(p->value!="}"){
-	      string msg("MTest::parseEvolution : ");
-	      msg += "unexpected token '"+p->value+"', expected ',' or '}'";
-	      throw(runtime_error(msg));
+	    string msg("MTest::execute : invalid dimension");
+	    throw(runtime_error(msg));
+	  }
+	}
+      }
+      // strain at the beginning of the time step
+      for(i=0;i!=N;++i){
+	state.e0[i] = state.u0[i]-state.e_th0[i];
+      }
+      // resolution
+      bool converged = false;
+      unsigned short iter = 0;
+      if(getVerboseMode()>=VERBOSE_LEVEL1){
+	ostream& log = getLogStream();
+	log << "resolution from " << ti << " to " << t+dt << endl;
+      }
+      real ne  = 0.;  // norm of the increment of the strains
+      real nep = 0.;  // norm of the increment of the strains at the
+      // previous iteration
+      real nep2 = 0.; // norm of the increment of the strains two
+      // iterations before...
+      /* prediction */
+      if(this->ppolicy==LINEARPREDICTION){
+	if(state.period>1){
+	  state.u1  = state.u0 +(state.u0 -state.u_1)*dt/state.dt_1;
+	  state.iv1 = state.iv0+(state.iv0-state.iv_1)*dt/state.dt_1;
+	  state.s1  = state.s0 +(state.s0 -state.s_1)*dt/state.dt_1;
+	}
+      } else if((this->ppolicy==ELASTICPREDICTION)||
+		(this->ppolicy==SECANTOPERATORPREDICTION)||
+		(this->ppolicy==TANGENTOPERATORPREDICTION)){
+	// evaluations of the materials properties at the beginning
+	// of the time step
+	for(i=0,p=mpnames.begin();p!=mpnames.end();++p,++i){
+	  pev = this->evs->find(*p);
+	  if(pev==this->evs->end()){
+	    string msg("MTest::execute : no evoluation named '"+*p+"'");
+	    throw(runtime_error(msg));
+	  }
+	  const MTestEvolution& ev = *(pev->second);
+	  state.mprops0[i] = ev(t);
+	}
+	fill(wk.Kp.begin(),wk.Kp.end(),0.);
+	bool sp(true);
+	if(this->ppolicy==ELASTICPREDICTION){
+	  sp = this->b->computePredictionOperator(wk.Kp,this->rm,state.e0,
+						  state.s0,state.mprops0,
+						  state.iv0,state.esv0,
+						  this->hypothesis,
+						  MTestStiffnessMatrixType::ELASTIC);
+	} else if (this->ppolicy==SECANTOPERATORPREDICTION){
+	  sp = this->b->computePredictionOperator(wk.Kp,this->rm,state.e0,
+						  state.s0,state.mprops0,
+						  state.iv0,state.esv0,
+						  this->hypothesis,
+						  MTestStiffnessMatrixType::SECANTOPERATOR);
+	} else if (this->ppolicy==TANGENTOPERATORPREDICTION){
+	  sp = this->b->computePredictionOperator(wk.Kp,this->rm,state.e0,
+						  state.s0,state.mprops0,
+						  state.iv0,state.esv0,
+						  this->hypothesis,
+						  MTestStiffnessMatrixType::TANGENTOPERATOR);
+	}
+	if(sp){
+	  fill(wk.K.begin(),wk.K.end(),0.);
+	  fill(wk.r.begin(),wk.r.end(),0.);
+	  state.u1 = state.u0;
+	  for(i=0;i!=N;++i){
+	    wk.r(i) += state.s0(i);
+	    for(j=0;j!=N;++j){
+	      wk.K(i,j)+=wk.Kp(i,j);
+	      // free dilatation treatment
+	      wk.r(i) -= wk.Kp(i,j)*(state.e_th1[j]-state.e_th0[j]);
+	    }
+	  }
+	  if(wk.first){
+	    wk.a = *(max_element(wk.K.begin(),wk.K.end()));
+	    wk.first = false;
+	  }
+	  unsigned short pos = N;
+	  for(pc =this->constraints.begin();
+	      pc!=this->constraints.end();++pc){
+	    const MTestConstraint& c = *(*pc);
+	    c.setValues(wk.K,wk.r,state.u0,state.u1,pos,
+			this->dimension,t,dt,wk.a);
+	    pos = static_cast<unsigned short>(pos+c.getNumberOfLagrangeMultipliers());
+	  }
+	  LUSolve::exe(wk.K,wk.r,wk.x,wk.p_lu);
+	  state.u1 -= wk.r;
+	} else {
+	  if(getVerboseMode()>VERBOSE_QUIET){
+	    ostream& log = getLogStream();
+	    log << "MTest::execute : behaviour compute prediction matrix failed" << endl;
+	  }
+	  state.u1  = state.u0;
+	  state.s1  = state.s0;
+	  state.iv1 = state.iv0;
+	}
+      } else {
+	if(this->ppolicy != NOPREDICTION){
+	  string msg("MTest::execute : "
+		     "internal error, unsupported "
+		     "prediction policy");
+	  throw(runtime_error(msg));
+	}	    
+	state.u1  = state.u0;
+	state.s1  = state.s0;
+	state.iv1 = state.iv0;
+      }
+      /* resolution */
+      bool cont = true;
+      while((!converged)&&(iter!=this->iterMax)&&(cont)){
+	++iter;
+	nep2 = nep;
+	nep  = ne;
+	fill(wk.K.begin(), wk.K.end(),0.);
+	fill(wk.Kt.begin(),wk.Kt.end(),0.);
+	fill(wk.r.begin(), wk.r.end(),0.);
+	for(i=0;i!=N;++i){
+	  state.de[i] = state.u1[i]-state.e_th1[i]-state.u0[i]+state.e_th0[i];
+	}
+	const bool bi = this->b->integrate(wk.Kt,state.s1,state.iv1,this->rm,
+					   state.e0,state.de,state.s0,
+					   state.mprops1,state.iv0,
+					   state.esv0,state.desv,
+					   this->hypothesis,dt,
+					   this->ktype);
+	if(bi){
+	  // behaviour integration is a success
+	  for(i=0;i!=N;++i){
+	    wk.r(i) += state.s1(i);
+	    for(j=0;j!=N;++j){
+	      wk.K(i,j) += wk.Kt(i,j);
+	    }
+	  }
+	  if(wk.first){
+	    wk.a = *(max_element(wk.K.begin(),wk.K.end()));
+	    wk.first = false;
+	  }
+	  unsigned short pos = N;
+	  for(pc =this->constraints.begin();
+	      pc!=this->constraints.end();++pc){
+	    const MTestConstraint& c = *(*pc);
+	    c.setValues(wk.K,wk.r,state.u0,state.u1,pos,
+			this->dimension,t,dt,wk.a);
+	    pos = static_cast<unsigned short>(pos+c.getNumberOfLagrangeMultipliers());
+	  }
+	  if(getVerboseMode()>=VERBOSE_DEBUG){
+	    ostream& log = getLogStream();
+	    for(i=0;i!=wk.K.getNbRows();++i){
+	      for(j=0;j!=wk.K.getNbCols();++j){
+		log << wk.K(i,j) << " ";
+	      }
+	      log << endl;
+	    }
+	    log << endl;
+	  }
+	  if(this->useCastemAcceleration){
+	    wk.ca_r = wk.r;
+	  }
+	  real nr = 0.;
+	  for(i=0;i!=N;++i){
+	    nr += abs(wk.r(i));
+	  }
+	  LUSolve::exe(wk.K,wk.r,wk.x,wk.p_lu);
+	  state.u1 -= wk.r;
+	  ne = 0;
+	  for(i=0;i!=N;++i){
+	    ne += abs(wk.r(i));
+	  }
+	  if(getVerboseMode()>=VERBOSE_LEVEL2){
+	    ostream& log = getLogStream();
+	    log << "iteration " << iter << " : " << ne << " " 
+		<< nr << " (";
+	    for(i=0;i!=N;){
+	      log << state.u1(i);
+	      if(++i!=N){
+		log << " ";
+	      }
+	    }
+	    log << ")" << endl;
+	  }
+	  converged = (ne<this->eeps)&&(nr<this->seps);
+	  for(pc =this->constraints.begin();
+	      (pc!=this->constraints.end())&&(converged);++pc){
+	    const MTestConstraint& c = *(*pc);
+	    converged = c.checkConvergence(N,state.u1,state.s1,
+					   this->eeps,this->seps,
+					   t,dt);
+	  }
+	  if(this->ppolicy == NOPREDICTION){
+	    converged = (converged) && (iter>1);
+	  }
+	  if((!converged)&&(this->useCastemAcceleration)){
+	    const real ca_eps = 100*(this->seps*numeric_limits<real>::epsilon());
+	    wk.ca_u0.swap(wk.ca_u1);
+	    wk.ca_u1.swap(wk.ca_u2);
+	    wk.ca_r0.swap(wk.ca_r1);
+	    wk.ca_r1.swap(wk.ca_r2);
+	    wk.ca_u2 = state.u1;
+	    wk.ca_r2 = wk.ca_r;
+	    if((iter>=this->cat)&&((iter-this->cat)%this->cap==0)){
+	      if(getVerboseMode()>=VERBOSE_LEVEL1){
+		ostream& log = getLogStream();
+		log << "castem acceleration convergence" << endl;
+	      }
+	      bool c  = true;
+	      wk.ca_tmp0 = wk.ca_r1-wk.ca_r0;
+	      wk.ca_tmp1 = wk.ca_r2-wk.ca_r0;
+	      const real nr0 = norm(wk.ca_tmp0);
+	      c = nr0>ca_eps;
+	      if(c){
+		wk.ca_n0   = wk.ca_tmp0/nr0;
+		const real ntmp1  = wk.ca_tmp1|wk.ca_n0;
+		wk.ca_tmp1          -= ntmp1*wk.ca_n0;
+		const real nr1    = norm(wk.ca_tmp1);
+		c = nr1>0.1*abs(ntmp1);
+		if(c){
+		  wk.ca_n1      =   wk.ca_tmp1/nr1;
+		  const real ca_p0 = -(wk.ca_r0|wk.ca_n0);
+		  const real ca_p1 = -(wk.ca_r0|wk.ca_n1);
+		  // La projection du vecteur nul est
+		  // donnée par
+		  // (1-ca_c0-ca_c1)*r0+ca_c0*ca_r1+ca_c1*r2;
+		  // avec - ca_c0 = (ca_p0/nr0-ca_p1/nr1)
+		  //      - ca_c1 = ca_p1/nr1
+		  // maintenant on applique la même relation
+		  // linéaire
+		  // aux inconnues..
+		  const real ca_c0 = (ca_p0/nr0-ca_p1/nr1);
+		  const real ca_c1 = ca_p1/nr1;
+		  state.u1 = (1-ca_c0-ca_c1)*wk.ca_u0+ca_c0*wk.ca_u1+ca_c1*wk.ca_u2;
+		} else {
+		  // the previous iterations were (almost) colinear
+		  const real ca_c0 = -(wk.ca_r0|wk.ca_n0)/nr0;
+		  state.u1 = (1-ca_c0)*wk.ca_u0+ca_c0*wk.ca_u1;
+		}
+	      }
+	    }
+	  }
+	} else {
+	  if(getVerboseMode()>VERBOSE_QUIET){
+	    ostream& log = getLogStream();
+	    log << "MTest::execute : behaviour intregration failed" << endl;
+	  }
+	  cont = false;
+	}
+      }
+      if((iter==this->iterMax)||(!cont)){
+	// no convergence
+	++subStep;
+	if(subStep==this->mSubSteps){
+	  string msg("MTest::execute : behaviour "
+		     "maximum number of sub stepping reached");
+	  throw(runtime_error(msg));
+	}
+	if(getVerboseMode()>=VERBOSE_LEVEL1){
+	  ostream& log = getLogStream();
+	  log << "non convergence, dividing time "
+	      << "step by two" << endl << endl;
+	}
+	dt *= 0.5;
+	state.u1  = state.u0;
+	state.s1  = state.s0;
+	state.iv1 = state.iv0;
+      } else {
+	if(getVerboseMode()>=VERBOSE_LEVEL1){
+	  if(iter==1u){
+	    ostream& log = getLogStream();
+	    log << "convergence, after one iteration "
+		<< endl << endl;
+	  } else {
+	    ostream& log = getLogStream();
+	    if((iter>=3)&&
+	       (nep >100*numeric_limits<real>::min())&&
+	       (nep2>100*numeric_limits<real>::min())){
+	      log << "convergence, after " << iter << " iterations, "
+		  << "order " << std::log(ne/nep)/std::log(nep/nep2)
+		  << endl << endl;
+	    } else {
+	      log << "convergence, after " << iter << " iterations, "
+		  << "order undefined"
+		  << endl << endl;
 	    }
 	  }
 	}
-	this->readSpecifiedToken("MTest::parseEvolution","}",p,
-				 this->fileTokens.end());
-	ev = shared_ptr<MTestEvolution>(new MTestLPIEvolution(tvalues,values));
-      } else {
-	const real s = this->readDouble(p);
-	ev = shared_ptr<MTestEvolution>(new MTestConstantEvolution(s));
+	// testing
+	for(ptest=this->tests.begin();ptest!=this->tests.end();++ptest){
+	  UTest& test = *(*ptest);
+	  test.check(state.u1,state.s1,state.iv1,t,dt,state.period);
+	}
+	// update variables
+	state.u_1  = state.u0;
+	state.s_1  = state.s0;
+	state.iv_1 = state.iv0;
+	state.dt_1 = dt;
+	state.u0   = state.u1;
+	state.s0   = state.s1;
+	state.iv0  = state.iv1;
+	t+=dt;
+	++state.period;
       }
-    } else if(t=="function"){
-      const string& f = this->readString(p,this->fileTokens.end());
-      ev = shared_ptr<MTestEvolution>(new MTestFunctionEvolution(f,this->evs));
-    } else {
-      string msg("MTest::parseEvolution : ");
-      msg += "invalid evolution type '"+t+"'";
-      throw(runtime_error(msg));
     }
-    return ev;
-  } // end of MTest::parseEvolution
-
-  std::string
-  MTest::readEvolutionType(TokensContainer::const_iterator& p)
-  {
-    using namespace std;
-    this->checkNotEndOfLine("MTest::readEvolutionType",p,
-			    this->fileTokens.end());
-    if(p->value!="<"){
-      return "";
-    }
-    this->readSpecifiedToken("MTest::parseEvolution","<",p,
-			     this->fileTokens.end());
-    this->checkNotEndOfLine("MTest::readEvolutionType",p,
-			    this->fileTokens.end());
-    string evt = p->value;
-    ++p;
-    this->readSpecifiedToken("MTest::parseEvolution",">",p,
-			     this->fileTokens.end());
-    return evt;
-  } // end of MTest::readEvolutionType
-
-  void
-  MTest::declareVariable(const std::string& v)
-  {
-    using namespace std;
-    if(find(this->vnames.begin(),
-	    this->vnames.end(),v)!=this->vnames.end()){
-      string msg("MTest::declareVariable : ");
-      msg += "variable '"+v+"' already declared";
-      throw(runtime_error(msg));
-    }
-    this->vnames.push_back(v);
   }
-  
+
   void
-  MTest::declareVariables(const std::vector<std::string>& v)
+  MTest::printOutput(const real t,const MTestCurrentState& s)
+  {
+    using namespace std;
+    if(this->out){
+      // number of components of the driving variables and the thermodynamic forces
+      const unsigned short N = this->b->getProblemSize(this->hypothesis);
+      unsigned short i;
+      this->out << t << " ";
+      for(i=0;i!=N;++i){
+	this->out << s.u0[i] << " ";
+      }
+      for(i=0;i!=N;++i){
+	this->out << s.s0[i] << " ";
+      }
+      copy(s.iv0.begin(),s.iv0.end(),
+	   ostream_iterator<real>(this->out," "));
+      this->out << endl;
+    }
+  }
+
+  void
+  MTest::declareVariable(const std::string& v,
+			 const bool check)
+  {
+    using namespace std;
+    if(find(this->vnames.begin(),this->vnames.end(),v)!=
+       this->vnames.end()){
+      if(check){
+	string msg("MTest::declareVariable : ");
+	msg += "variable '"+v+"' already declared";
+	throw(runtime_error(msg));
+      }
+    } else {
+      this->vnames.push_back(v);
+    }
+  }
+
+void
+  MTest::declareVariables(const std::vector<std::string>& v,
+			  const bool check)
   {
     using namespace std;
     vector<string>::const_iterator p;
     for(p=v.begin();p!=v.end();++p){
-      this->declareVariable(*p);
+      this->declareVariable(*p,check);
     }
   }
+
+MTest::~MTest()
+{}
 
 } // end namespace mfront

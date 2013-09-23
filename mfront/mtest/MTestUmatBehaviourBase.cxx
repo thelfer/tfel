@@ -282,24 +282,26 @@ namespace mfront
   }
 
   size_t
-  MTestUmatBehaviourBase::getInternalStateVariablesSize(const unsigned short d) const
+  MTestUmatBehaviourBase::getInternalStateVariablesSize(const tfel::material::ModellingHypothesis::Hypothesis h) const
   {
     using namespace std;
+    typedef tfel::material::ModellingHypothesis MH;
     vector<int>::const_iterator p;
     size_t s = 0;
     for(p=this->ivtypes.begin();p!=this->ivtypes.end();++p){
       if(*p==0){
 	s+=1;
       } else if(*p==1){
-	if(d==1){
+	if(h==MH::AXISYMMETRICALGENERALISEDPLANESTRAIN){
 	  s+=3;
-	} else if(d==2){ 
+	} else if((h==MH::AXISYMMETRICAL)||(h==MH::PLANESTRESS)||
+		  (h==MH::PLANESTRAIN)||(h==MH::GENERALISEDPLANESTRAIN)){
 	  s+=4;
-	} else if(d==3){ 
+	} else if(h==MH::TRIDIMENSIONAL){
 	  s+=6;
 	} else {
 	  string msg("MTestUmatBehaviourBase::getInternalStateVariablesSize : "
-		     "invalid space dimension");
+		     "unsupported modelling hypothesis");
 	  throw(runtime_error(msg));
 	}
       } else {
@@ -312,9 +314,10 @@ namespace mfront
   } // end of MTestUmatBehaviourBase::getInternalStateVariablesSize
 
   std::vector<std::string>
-  MTestUmatBehaviourBase::getInternalStateVariablesDescriptions(const unsigned short d) const
+  MTestUmatBehaviourBase::getInternalStateVariablesDescriptions(const tfel::material::ModellingHypothesis::Hypothesis h) const
   {
     using namespace std;
+    typedef tfel::material::ModellingHypothesis MH;
     vector<string> desc;
     vector<int>::const_iterator p;
     vector<string>::const_iterator pn;
@@ -332,16 +335,17 @@ namespace mfront
 	desc.push_back("first  component of internal variable '"+*pn+"'");
 	desc.push_back("second component of internal variable '"+*pn+"'");
 	desc.push_back("third  component of internal variable '"+*pn+"'");
-	if(d!=1){
-	  if(d==2){ 
+	if(h!=MH::AXISYMMETRICALGENERALISEDPLANESTRAIN){
+	  if((h==MH::AXISYMMETRICAL)||(h==MH::PLANESTRESS)||
+	     (h==MH::PLANESTRAIN)||(h==MH::GENERALISEDPLANESTRAIN)){
 	    desc.push_back("fourth  component of internal variable '"+*pn+"'");
-	  } else if(d==3){ 
+	  } else if(h==MH::TRIDIMENSIONAL){
 	    desc.push_back("fourth  component of internal variable '"+*pn+"'");
 	    desc.push_back("fifth   component of internal variable '"+*pn+"'");
 	    desc.push_back("sixth   component of internal variable '"+*pn+"'");
 	  } else {
 	    string msg("MTestUmatBehaviourBase::getInternalStateVariablesDescriptions : "
-		       "invalid space dimension");
+		       "invalid modelling hypothesis");
 	    throw(runtime_error(msg));
 	  }
 	}
@@ -385,10 +389,11 @@ namespace mfront
   }
   
   unsigned short
-  MTestUmatBehaviourBase::getInternalStateVariablePosition(const unsigned short d,
+  MTestUmatBehaviourBase::getInternalStateVariablePosition(const tfel::material::ModellingHypothesis::Hypothesis h,
 							   const std::string& n) const
   {
     using namespace std;
+    typedef tfel::material::ModellingHypothesis MH;
     vector<string>::const_iterator p;
     p=find(this->ivnames.begin(),this->ivnames.end(),n);
     if(p==this->ivnames.end()){
@@ -410,12 +415,13 @@ namespace mfront
       if(t==0){
 	s += 1;
       } else if(t==1){
-	if(d==1u){
-	  s += 3u;
-	} else if(d==2u){
-	  s += 4u;
-	} else if(d==3u){
-	  s += 6u;
+	if(h==MH::AXISYMMETRICALGENERALISEDPLANESTRAIN){
+	  s+=3;
+	} else if((h==MH::AXISYMMETRICAL)||(h==MH::PLANESTRESS)||
+		  (h==MH::PLANESTRAIN)||(h==MH::GENERALISEDPLANESTRAIN)){
+	  s+=4;
+	} else if(h==MH::TRIDIMENSIONAL){
+	  s+=6;
 	} else {
 	  string msg("MTestUmatBehaviourBase::getInternalStateVariablePosition : "
 		     "invalid dimension");

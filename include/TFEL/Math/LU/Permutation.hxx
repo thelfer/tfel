@@ -26,6 +26,12 @@ namespace tfel{
        * default constructor
        */
       TFEL_MATH_INLINE
+      Permutation();
+
+      /*!
+       * default constructor
+       */
+      TFEL_MATH_INLINE
       Permutation(const typename vector<T>::size_type);
 
       /*!
@@ -34,6 +40,18 @@ namespace tfel{
        */
       TFEL_MATH_INLINE
       void reset(void);
+
+      /*!
+       * free the memory associated with the permutation
+       */
+      using vector<T>::clear;
+
+      /*!
+       * \brief resize the permutation
+       * This automatically calls the reset method
+       */
+      TFEL_MATH_INLINE
+      void resize(const typename vector<T>::size_type);
 
     private:
 
