@@ -333,6 +333,7 @@ AC_OUTPUT([debug.sh
            docs/mfront/annexe-orthotropie.tex
 	   docs/presentations/Makefile
 	   docs/presentations/Makefile.doc
+	   docs/presentations/mtest-presentation.tex
 	   docs/presentations/mfront-presentation.tex
 	   docs/presentations/mfront-behaviours.tex
 	   docs/tex/Makefile

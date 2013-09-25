@@ -45,7 +45,7 @@
 \Titre{Lois de comportement mécanique avec \mfront{}}
 \Auteur{T. Helfer}
 %\Evenement{Formation Areva}
-\Date{Avril 2014}
+%\Date{Avril 2014}
 
 \begin{document}
 
@@ -215,6 +215,28 @@
     \item l'implantation \aster{} utilise un \nom{Runge-Kutta} d'ordre 2/1
     \end{itemize}
   \end{itemize}
+}
+
+\titre{Modèles de zones cohésives}
+\frame{
+  \rput[l](0,-0.8){
+    \resizebox{!}{0.017\paperheight}{
+      \code{
+        \input{@abs_top_srcdir@/docs/presentations/images/Tvergaard.tex}
+      }}}
+  \rput[l](6.,1){
+    \includegraphics[width=0.45\linewidth]{@top_srcdir@/docs/presentations/images/tvergaard.eps}
+  }
+  \rput[l](6.,-2.8){
+    \begin{minipage}{0.45\linewidth}
+      \begin{itemize}
+      \item modèle de {\nom Tvergaard}~;
+      \item distinction explicite entre le comportement normal et
+        tangentiel~;
+      \item utilisable uniquement avec l'analyseur par défaut~;
+      \end{itemize}
+    \end{minipage}
+  }
 }
 
 \titre{Guide des cas tests}
@@ -527,8 +549,8 @@
   \end{center}
   \begin{itemize}
   \item<2-> \texttt{\tiny mfront --obuild --interface=umat NbZrC\_CreepBehaviour.mfront}
-  \item<3-> attention à l'incrément de temps qui est nul en cas de
-    convergence forcée
+  \item<3-> sous {\bf \castem{}}~: attention à l'incrément de temps
+    qui est nul en cas de convergence forcée !
   \end{itemize}
 }
 
@@ -646,9 +668,11 @@
     \end{itemize}
   \item différents algorithmes~:
     \begin{itemize}
-    \item {\tt NewtonRaphson}
-    \item {\tt NewtonRaphson\_NumericalJacobian}
-    \item {\tt Broyden}
+    \item {\tt NewtonRaphson} (jacobienne calculée par
+      l'utilisateur)~;
+    \item {\tt NewtonRaphson\_NumericalJacobian} (jacobienne calculée
+      par différence finie centrée)~;
+    \item {\tt Broyden} (jacobienne partielle)~;
     \end{itemize}
   \end{itemize}
 }
@@ -670,7 +694,7 @@
     \end{itemize}
   \item<4-> la jacobienne peut être calculée par blocs~:
     \[
-    J = \deriv{F}{Y} =
+    \tiny J = \deriv{F}{Y} =
     \begin{pmatrix}
       \deriv{f_{y_{1}}}{y_{1}} & \ldots & \ldots & \ldots & \ldots \\
       \vdots & \vdots & \vdots & \vdots & \vdots \\
@@ -940,17 +964,6 @@
   \end{itemize}
 }
 
-\intercalaire{MTest}
-
-\titre{MTest}
-\frame{
-  \begin{itemize}
-  \item un outil de test des lois de comportement en un point
-    matériel~;
-  \item voir les exemples~;
-  \end{itemize}
-}
-
 \intercalaire{Conclusions}
 
 \titre{Perspectives}
@@ -961,7 +974,6 @@
     \item plasticité isotrope à écrouissage linéaire~;
     \item plasticité/viscoplasticité isotrope compressible~;
     \end{itemize}
-  \item tableaux de variables internes en implicite~;
   \item matrice tangente cohérente~:
     \begin{itemize}
     \item facile pour algorithmes spécifiques~;
@@ -982,7 +994,7 @@
   \end{itemize}
 }
 
-\titre{Perspectives, robustesse}
+\titre{Perspectives}
 \frame{
   \begin{itemize}
   \item algorithme de \nom{Powell}~;
@@ -991,11 +1003,18 @@
     \item algorithmes spécifiques~;
     \item prise en compte dans dans les algorithmes génériques~;
     \end{itemize}
-  \item à terme, support des grandes déformations~:
+  \item support de lois mécaniques générales~:
+    \begin{itemize}
+    \item transformations finies~;
+    \item modèles de zones cohésives (intégration implicite)~;
+    \item lois à gradient~;
+    \end{itemize}
+  \item à terme, réutilisation du formalisme \og{}~petites
+    déformations\fg{} en grandes déformations (interface \umat{})~:
     \begin{itemize}
     \item grandes rotations, petites déformations (facile)
     \item déformations logarithmiques?
-    \item problème des dilatations libres...
+    \item corotationnel ?
     \end{itemize}
   \end{itemize}
 }

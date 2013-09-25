@@ -45,7 +45,7 @@
 \Titre{Présentation de \mfront{}}
 \Auteur{T. Helfer}
 %\Evenement{Formation Areva}
-\Date{Avril 2014}
+%\Date{Avril 2014}
 
 \begin{document}
 
@@ -64,8 +64,7 @@
 \frame{
 
   \begin{itemize}
-  \item \textbf{gérer} les connaissances matériau (+ de 100 matériaux
-    différents dans \sirius{})~:
+  \item \textbf{permettre} l'écriture de connaissances matériau~:
     \begin{itemize}
     \item les propriétés matériau (module d'\nom{Young}, etc...)~;
     \item les lois de comportement mécanique (viscoplasticité,
@@ -79,8 +78,9 @@
       \begin{itemize}
       \item toutes les lois de comportement de la plate-forme vont
         être ré-écrites en \mfront{} dès cette année~; 
-      \item la base de données \sirius{} a été adaptée pour supporter
-        \mfront{}~;
+      \item la plate-forme \pleiades{} a crée une base de données
+        nommée \sirius{} qui a été adaptée pour utiliser des fichiers
+        \mfront{} en interne (+ de 100 matériaux différents)~;
       \end{itemize}
     \item avec d'autres codes~:
       \begin{itemize}
@@ -106,11 +106,21 @@
       Loi de comportement &
       Modèle &\\
       \cline{1-4}
-      Fichier mfront & 33  &   92 &  22&\\
-      Fichier généré & 130 & 1641 & 556&\\
+      Fichier mfront & 33  &   {\bf 92} &  22&\\
+      Fichier généré & 130 & {\bf 1641} & 556&\\
       \cline{1-4}
     \end{tabular}
   \end{center}
+  \begin{itemize}
+  \item le gain, pour l'utilisateur, peut être conséquent~;
+  \item on \og{}~automatise\fg{} au maximum pour réduire le risque
+    d'erreurs en ce qui concerne la partie purement informatique de
+    l'implantation~;
+  \item ces \og~détails\fg{} informatiques peuvent avoir de nombreuses
+    conséquences (portabilité, performancees, etc..)~;
+  \item une partie du code est de la \og{}~glue\fg{} pour s'adapter au
+    code/langage cible.
+  \end{itemize}
 }
 
 \titre{Des contextes logiciels variés}
@@ -122,7 +132,7 @@
     \end{itemize}
   \item pour les lois de comportement mécanique~:
     \begin{itemize}
-    \item différents solveurs (Cast3M,Aster,FFT)~;
+    \item différents solveurs (Cast3M,Aster,TMFFT, mtests,...)~;
     \end{itemize}
   \item pour les modèles~:
     \begin{itemize}
@@ -130,7 +140,9 @@
     \end{itemize}
   \end{itemize}
   \visible<2->{
-    \mfront{} propose la notion d'interface
+    \begin{center}
+      \mfront{} propose la notion d'{\bf interface}      
+    \end{center}
   }
 }
 
@@ -179,7 +191,6 @@
 
 \titre{Commentaires}
 \frame{
-
   \begin{itemize}
   \item un fichier clair (avis subjectif)~;
   \item<2-> interfaces disponibles~:
@@ -242,7 +253,15 @@
 
 \titre{Modèles}
 \frame{
-  voir exemple
+  \begin{center}
+    \code{
+      \tiny
+      \input{@abs_top_srcdir@/docs/presentations/images/UPuC_SolidSwellingModel.tex}
+    }
+  \end{center}
+  \begin{itemize}
+  \item aujourd'hui surtout utilisé dans les applications \pleiades{}~;
+  \end{itemize}
 }
 
 \intercalaire{Annexes}
@@ -253,12 +272,14 @@
   \item \tfel{} est développé sous \linux{}~:
     \begin{itemize}
     \item pas de problème de portabilité connu~;
-    \item seule plate-forme officielle.
+    \item seule plate-forme \og~officielle\fg{}.
     \end{itemize}
-  \item \tfel{} a été porté sous \windows{} (Cygwin/mingw)~:
+  \item \tfel{} a été porté sous \windows{} (mingw)~:
     \begin{itemize}
-    \item \mfront{} fonctionne sans soucis mais ne gère pas le
-      processus de compilation~;
+    \item \mfront{} fonctionne sans soucis~;
+    \item \mfront{} ne gère le processus de compilation sauf dans
+      l'environnement MSYS~;
+    \item ne fonctionne pas avec Visual Studio... pour l'instant !
     \end{itemize}
   \item \tfel{} a été porté sous différents \unix{}~:
     \begin{itemize}

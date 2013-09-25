@@ -1,9 +1,5 @@
-configure_file(mfront-presentation.tex.in
-               mfront-presentation.tex @ONLY)
-configure_file(mfront-behaviours.tex.in
-               mfront-behaviours.tex @ONLY)
-
 macro(latex_presentation doc)
+  configure_file(${doc}.tex.in ${doc}.tex @ONLY)
   ADD_CUSTOM_COMMAND(
     OUTPUT    ${doc}.pdf
     DEPENDS    ${CMAKE_CURRENT_SOURCE_DIR}/${doc}.tex.in
@@ -34,3 +30,4 @@ endmacro(latex_presentation doc)
 
 latex_presentation(mfront-presentation)
 latex_presentation(mfront-behaviours)
+latex_presentation(mtest-presentation)

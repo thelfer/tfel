@@ -1,8 +1,7 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % File      : mfront.tex
-% Author    : th202608@pleiades068.intra.cea.fr
+% Author    : Helfer Thomas
 % Date      : 15 oct. 2012
-% Directory : /home/th202608/codes/tfel/tests/Broyden/
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \documentclass[rectoverso,pleiades,pstricks,leqno,anti]{note_technique_2010}

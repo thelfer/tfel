@@ -9,5 +9,14 @@ EXTRA_DIST=CMakeLists.txt                               \
 	   images/UPuC_ThermalConductivity-mfront.cxx   \
 	   images/UPuC_ThermalConductivity-mfront.tex   \
 	   images/UPuC_ThermalConductivity-mfront2.tex  \
+	   images/castemtvergaard.tex			\
+	   images/castemtvergaard.mtest			\
+	   images/Tvergaard.tex				\
+	   images/Tvergaard.mfront			\
+	   images/castemtvergaard3.py			\
+	   images/castemtvergaard-py.tex		\
+	   images/UPuC_SolidSwellingModel.tex           \
+	   images/UPuC_SolidSwellingModel.mfront        \
+	   images/tvergaard.eps                         \
 	   images/gpls-mfront.cxx			\
 	   images/gpls-mfront.tex
