@@ -1,0 +1,36 @@
+@Parser    Implicit;
+@Behaviour MonoCristal;
+@Algorithm NewtonRaphson_NumericalJacobian;
+
+@StateVariable          strain  g[12];
+@AuxiliaryStateVariable real    p[12];
+@AuxiliaryStateVariable real    a[12];
+
+@Includes{
+#include"TFEL/Material/MetallicCFCSlidingSystems.hxx"
+#include"TFEL/Material/MetallicCFCGenericSlidingSystemsInteractionMatrix.hxx"
+}
+
+@Members{
+  // Mono cristal gliding system
+  typedef MetallicCFCSlidingSystems<real> SlidingSystems;
+  // Interaction matrix
+  typedef MetallicCFCGenericSlidingSystemsInteractionMatrix<real> InteractionMatrix;
+  // number of sliding systems
+  static const unsigned short Nss = SlidingSystems::Nss;
+}
+
+//! interaction matrix
+@LocalVariable tfel::math::tmatrix<12,12,real> mh;
+@InitLocalVariables{
+  const real h1 = 1.  ;
+  const real h2 = 1.  ;
+  const real h3 = 0.6 ;
+  const real h4 = 12.3;
+  const real h5 = 1.6 ;
+  const real h6 = 1.8 ;
+  mh = InteractionMatrix::getInteractionMatrix(h1,h2,h3,
+					       h4,h5,h6);
+}
+
+@Import "MonoCristalNewtonRaphson.mfront";

@@ -1,0 +1,2033 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% File      : mfront.tex
+% Author    : Helfer Thomas
+% Date      : 15 oct. 2012
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\documentclass[rectoverso,pleiades,pstricks,leqno,anti]{note_technique_2010}
+% \documentclass[rectoverso,pleiades,pstricks,leqno,anti,projet]{note_technique_2010}
+
+% \usepackage{draftcopy}
+% \draftcopySetGrey{0.8}
+% \draftcopyName{Version provisoire}{80}
+
+\usepackage[dvips]{graphicx}
+\usepackage[dvips,breaklinks]{hyperref}
+
+\usepackage{mathematiques}
+\usepackage{mecanique}
+\usepackage{couleurs}
+\usepackage{presentation}
+
+\usepackage{pst-plot}
+\usepackage{array}
+\usepackage{subfigure}
+\usepackage{relsize}
+\usepackage{multind}
+
+% one column index
+\makeatletter
+\def\printindex#1#2{\section*{#2}
+\addcontentsline{toc}{section}{#2}
+\@input{#1.ind}}
+\makeatother
+
+\usepackage[frenchb]{babel}
+
+\newcommand{\pleiades}{\texttt{pleiades}}
+\newcommand{\TFEL}{\texttt{tfel}}
+\newcommand{\mfront}{\texttt{mfront}}
+\newcommand{\licos}{\texttt{licos}}
+\newcommand{\cyrano}{\texttt{cyrano}}
+\newcommand{\alcyone}{\texttt{alcyone}}
+\newcommand{\germinal}{\texttt{germinal}}
+\newcommand{\celaeno}{\texttt{celaeno}}
+\newcommand{\galileo}{\texttt{galileo}}
+\newcommand{\castem}{\texttt{Cast3M}}
+\newcommand{\gibiane}{\texttt{gibiane}}
+\newcommand{\tmfft}{\texttt{TMFFT}}
+\newcommand{\aster}{\href{http://www.code-aster.org/}{\texttt{Aster}}}
+\newcommand{\pycastem}{\texttt{pyCast3M}}
+\newcommand{\umat}{\texttt{umat}}
+\newcommand{\sirius}{\texttt{sirius}}
+\newcommand{\fortran}{\texttt{fortran}}
+
+\newcommand{\cmake}{\href{http://www.cmake.org/}{\texttt{cmake}}}
+\newcommand{\autotools}{\href{http://fr.wikipedia.org/wiki/Autotools}{\texttt{autotools}}}
+\newcommand{\python}{\href{http://python.org}{\texttt{python}}}
+\newcommand{\gnuplot}{\href{http://www.gnuplot.info}{\texttt{gnuplot}}}
+\newcommand{\latex}{\href{http://www.latex-project.org}{\LaTeX2e{}}}
+\newcommand{\make}{\href{http://www.gnu.org/software/make/}{\texttt{make}}}
+\newcommand{\doxygen}{\href{http://www.stack.nl/~dimitri/doxygen/}{\texttt{doxygen}}}
+\newcommand{\valgrind}{\href{http://www.valgrind.org/}{\texttt{valgrind}}}
+
+\newcommand{\mkey}[1]{\index{mkeys}{#1@\symbol{64}#1}{\texttt{@#1}}}
+\newcommand{\mkeyb}[2]{\index{mkeys}{#1@\symbol{64}#1}{\texttt{@#2}}}
+
+\newcommand{\env}[1]{\index{env}{#1}{\texttt{#1}}}
+\newcommand{\envb}[2]{\index{env}{#1}{\texttt{#2}}}
+
+\newcommand{\moption}[1]{\texttt{-{}-#1}}
+
+\newcommand{\bigO}[1]{\ensuremath{\mathop{}\mathopen{}O\mathopen{}\left(#1\right)}}
+
+\newcommand{\bqc}{\ensuremath{B_{4}C}}
+\newcommand{\bd}{\ensuremath{\mbox{}^{10}B}}
+
+%c from texinfo.tex
+\def\ifmonospace{\ifdim\fontdimen3\font=0pt }
+
+%c C plus plus
+\def\cpp{%
+\ifmonospace%
+    C++%
+\else%
+    C\kern.1em\raise.20ex\hbox{\smaller{++}}%
+\fi%
+\spacefactor1000 }
+
+\newcommand{\varcpp}[1]{\texttt{#1}}
+
+\newcommand{\sigmaH}{\ensuremath{\sigma_{H}}}
+
+\newcommand{\nbzrc}{$NbZrC$}
+\newcommand{\upuc}{$\paren{U,Pu}C$}
+\newcommand{\sic}{$SiC$}
+
+\newcommand{\cea}{CEA}
+\newcommand{\windows}{\href{http://www.microsoft.com/france/windows/default.mspx}{\texttt{Windows}}}
+\newcommand{\unix}{\href{http://www.kernel.org/}{\texttt{unix}}}
+\newcommand{\msys}{\href{http://www.mingw.org/wiki/MSYS}{\texttt{msys}}}
+\newcommand{\cygwin}{\href{http://www.cygwin.com/}{\texttt{cygwin}}}
+\newcommand{\linux}{\href{http://www.kernel.org/}{\texttt{linux}}}
+\newcommand{\debian}{\href{http://www.debian.org/}{\texttt{Debian}}}
+\newcommand{\ubuntu}{\href{http://www.ubuntu.com}{\texttt{Ubuntu}}}
+\newcommand{\redhat}{\href{http://www.redhat.com}{\texttt{Red Hat}}}
+\newcommand{\mandriva}{\href{http://www.mandriva.com}{\texttt{Mandriva}}}
+\newcommand{\excel}{\href{http://www.microsoft.com/france/office/2007/programs/excel/overview.mspx}{\texttt{Microsoft Office Excel}}}
+
+\newcommand{\debutpas}[1]{\ensuremath{\left.#1\right|_{t}}}
+\newcommand{\milieupas}[1]{\ensuremath{\left.#1\right|_{t+\theta\, \Delta\, t}}}
+\newcommand{\finpas}[1]{\ensuremath{\left.#1\right|_{t+\Delta\, t}}}
+\newcommand{\demipas}[1]{\ensuremath{\left.#1\right|_{t+\frac{\Delta\, t}{2}}}}
+
+\newcommand{\code}[1]{
+  \psframebox[linecolor=ceaorange]{
+    \begin{minipage}[htbp]{1.0\linewidth}
+      \ttfamily #1
+    \end{minipage}
+  }
+}
+
+\newcommand{\bash}[1]{
+  \begin{center}
+    \begin{minipage}{0.8\linewidth}
+      \footnotesize{}
+      \texttt{\$#1}
+    \end{minipage}
+  \end{center}
+}
+
+\include{Champs}
+
+\resumecea{
+  L'une des missions de la plate-forme \pleiades{} est de capitaliser
+  les connaissances matériau utilisées pour la simulation des éléments
+  combustibles et absorbants.
+
+  \mfront{} est un générateur de code dédié aux connaissances
+  matériau. Son domaine d'application couvre~:
+  \begin{itemize}
+    \item les propriétés matériau~;
+    \item les lois de comportement~;
+    \item les modèles,
+  \end{itemize} 
+  pour lesquels il rassemble un important savoir-faire
+  physique, numérique et informatique.
+
+  Couplé à la base de données \sirius{}, \mfront{} vise à garantir une
+  gestion pérenne, robuste, efficace et évolutive des connaissances
+  matériau dans la plate-forme
+  \pleiades{}~\cite{michel09,helfer:opti:2011}. Il permet également à
+  des utilisateurs non développeur d'écrire leurs propres
+  connaissances matériau~\cite{helfer10}.
+
+  Il s'agit d'un outil mature, qui se veut de qualité industrielle et
+  qui intéresse fortement différents départements du
+  \cea{}~\cite{11:dec_semi,arrigo12:_notic_le2s} ainsi que ses
+  partenaires, Areva~\cite{olagnon13:_analy} et
+  ÉDF~\cite{proix:mfront:2013}.
+
+  Nous décrivons dans cette note l'utilisation de \mfront{} et
+  détaillons comment écrire des propriétés matériau et des
+  modèles. Les lois de comportement mécaniques sont détaillées dans
+  une note à part~\cite{helfer:mfront:behaviours:2013}.
+}
+
+\makeindex{env}
+\makeindex{mkeys}
+
+\begin{document}
+
+\clearpage
+\newpage
+\section{Introduction}
+
+Cette note donne une vue générale du générateur de code \mfront{} et
+de son application aux propriétés matériau et aux modèles
+physico-chimiques. Elle est complétée par trois autres notes qui
+traitent\footnote{Un guide de référence de la librairie \TFEL{} est
+  également en cours de rédaction. Cette note étant assez ambitieuse,
+  sa rédaction s'étalera dans le temps. Elle est cependant disponible
+  en version projet dans les sources de la librairie. Elle contient en
+  particulier le guide d'installation de la librairie.}~:
+\begin{itemize}
+\item des lois de comportement
+  mécanique~\cite{helfer:mfront:behaviours:2013}~;
+\item de l'interface {\tt umat} utilisée par le code aux éléments
+  finis \castem{}~\cite{helfer:umat:2013}~;
+\item de l'interface utilisée par le code aux éléments finis
+  \aster{}~\cite{helfer:aster:2013}~;
+\end{itemize}
+
+\mfront{} fait partie d'une librairie mathématique généraliste nommée
+\TFEL{} très utilisée par \mfront{}, mais qui a également de
+nombreuses autres utilisations dans la plate-forme \pleiades{}.  Ces
+notes sont intégrées à la gestion de configuration de \TFEL{} et
+évoluent continûment avec les développements de \TFEL{}\footnote{ La
+  version la plus à jour est obtenue dans le répertoire de compilation
+  des sources par la commande~:
+\begin{center}
+  {\tt make doc-pdf}
+\end{center}}. Le présent document a été généré à partir de la
+révision @TFEL_SVN_REVISION@.
+
+\subsection{Objectif de \mfront{}}
+
+Couplé à la base de données \sirius{}, \mfront{} vise à garantir une
+gestion pérenne, robuste, efficace et évolutive (au sens du suivi des
+évolutions logicielles) des connaissances matériau dans la plateforme
+\pleiades{} et à faciliter leurs écritures par des utilisateurs non
+développeurs~\cite{michel09,helfer10}~:
+\begin{itemize}
+\item la pérennisation et le caractère évolutif des connaissances
+  matériau est assuré par~:
+  \begin{itemize}
+  \item l'écriture des connaissances matériau dans un fichier
+    indépendant du contexte logiciel cible (code ou langage de
+    programmation). Ce fichier contient uniquement l'information
+    physique et, éventuellement, des informations numériques. Ce
+    fichier sert à générer des sources \cpp{} qui sont adaptées au
+    contexte par l'utilisation de la notion d'interface (voir
+    section~\ref{sec:mfront:interface}). Si le code ou le langage
+    cible évolue, il suffit de faire évoluer l'interface, sans
+    modifier le fichier \mfront{}\footnote{Pour illustrer notre
+      propos, donnons quelques exemples~:
+      \begin{itemize}
+      \item l'architecture \(V2.0\) fournit une interface aux
+        propriétés matériau qui a permis de porter l'ensemble de
+        propriétés matériau de {\tt MAIA}. Le temps de développement
+        de l'interface est de l'ordre de l'heure~;
+      \item toutes les lois de comportement mécanique écrites avec
+        \mfront{} peuvent être utilisées ou dans le code aux éléments
+        finis \castem{}~\cite{12:castemcea} ou dans le code
+        \aster{}~\cite{aster:13}. Le support d'autres codes est
+        envisageable~;
+      \item certains modèles utilisés dans \licos{} sont restés
+        inchangés depuis leur écriture pour l'application \celaeno{}
+        (les deux codes n'ont plus grand chose de commun)~;
+      \item Les modèles \mfront{} sont interchangeables entre les
+        \licos{} et \germinal{}, ce qui n'est pas le cas des modèles
+        écrits en \cpp{}~;
+      \item Les modèles \mfront{} utilisés dans \germinal{} ne seront
+        pas modifiés par le passage à l'architecture \(2.0\).
+      \end{itemize}
+    }
+  \item l'utilisation du langage \cpp{}, actuellement considéré comme
+    l'un des langages les plus utilisés au monde\footnote{Il s'agit du
+      langage le plus utilisé si on considère le langage \texttt{C}
+      comme un sous-ensemble du \cpp{}, et du troisième ou quatrième
+      langage si on les distingue~\cite{tiobe:13}.} et qui est
+    particulièrement utilisé dans le monde scientifique~;
+  \end{itemize}
+\item les performances, en particulier pour les lois de comportement
+  mécaniques, sont également assurées par l'utilisation du langage
+  \cpp{} qui permet d'utiliser des techniques de programmation
+  extrêmement efficaces. Ces bonnes performances ont été constatées à
+  plusieurs
+  reprises~\cite{michel09,helfer:opti:2011,olagnon13:_analy,proix:mfront:2013}~;
+\item la simplicité d'utilisation est liée à l'utilisation de la
+  génération de code, qui permet de masquer la plupart des détails
+  informatiques. Dans le cas des lois de comportement mécanique,
+  l'écriture d'une bibliothèque de calcul tensorielle permet de
+  décrire les équations régissant l'évolution des variables internes
+  sous une forme quasi-symbolique.
+\end{itemize}
+
+\subsection{Plan de la note}
+
+La première partie constitue une présentation générale de
+\mfront{} et de son utilisation.
+
+La seconde partie décrit comment écrire des propriétés matériau.
+
+La troisième partie est dédiée à l'écriture des modèles
+physico-chimiques.
+
+Les annexes traitent des questions suivantes~:
+\begin{itemize}
+\item le contrôle de la compilation des fichiers \mfront{} en
+  librairies dynamiques~;
+\item l'interface {\tt C} aux propriétés matériau~;
+\item l'interface \castem{} aux propriétés matériau~;
+\item l'interface \python{} aux propriétés matériau~;
+\item l'appel de propriétés matériaux externes dans \castem{} et des
+  modifications qui ont été effectuées à ce code pour permettre cet
+  appel~;
+\item l'utilisation des propriétés matériau dans le tableur \excel{}
+  via l'interface \castem{}.
+\end{itemize}
+
+\clearpage
+\newpage
+\section{Présentation générale de \mfront{}}
+\label{sec:pres-gener-de}
+
+\mfront{} est un générateur de code dédié aux connaissances matériau~:
+partant d'un fichier contenant les informations physiques et
+numériques utiles, \mfront{} génère un ou plusieurs fichiers \cpp{}
+utilisables dans différents contextes logiciels, ce qui englobe des
+codes de calculs ou des langages de programmation. \mfront{} peut
+éventuellement gérer leurs compilations.
+
+Pour proposer une solution adaptée aux différentes situations,
+plusieurs analyseurs syntaxiques sont disponibles. Pour chaque
+analyseur, différentes interfaces sont disponibles qui permettent
+d'adapter le code généré au contexte logiciel cible.
+
+Nous commençons par présenter la structure du fichier de donnée
+(paragraphe~\ref{sec:fichiers-dentree}) et les directives communes à
+tous les analyseurs (paragraphe~\ref{sec:mfront:pres:common}).
+
+Puis, nous décrivons les {\em analyseurs}
+(paragraphe~\ref{sec:mfront:parser}) et les interfaces
+(paragraphe~\ref{sec:mfront:interface}) disponibles.
+
+\subsection{Fichiers d'entrée}
+\label{sec:fichiers-dentree}
+
+\begin{figure}[htbp]
+  \centering
+  \code{{\ttfamily \input{@abs_top_srcdir@/docs/mfront/mfront/SICCreepBehaviour.tex}}}  
+  \caption{Implantation de la loi de comportement viscoplastique
+    du \sic{} en \mfront{}.}
+  \label{fig:mfront_sic_behaviour}
+\end{figure}
+
+La figure~\ref{fig:mfront_sic_behaviour} donne un premier exemple de
+fichier \mfront{}. Nous décrivons en détail cet exemple dans la note
+dédiée aux lois de comportement
+mécanique~\cite{helfer:mfront:behaviours:2013} et nous insistons ici
+sur sa structure, puis nous décrivons certains mots clés communs à
+l'ensemble des analyseurs.
+
+\paragraph{Le type {\tt real}} Pour représenter les nombres flottants,
+nous avons introduit un type nommé {\tt real}. Les interfaces doivent
+définir ce type pour la cible visée. Les connaissances matériaux
+écrites en \mfront{} peuvent ainsi être utilisée en simple, double ou
+quadruple précision.
+
+\paragraph{Noms de glossaire}
+Pour l'intégration des fichiers générés dans les applications de la
+plateforme \pleiades{}, il est possible d'affecter aux variables
+d'entrée et de sortie des connaissances matériau des noms de
+glossaire.  Ces noms de glossaire servent à assurer le bon échange
+d'information.
+
+L'annexe~\ref{sec:mfront:glossary} décrit les noms de glossaire les
+plus fréquemment utilisés dans le code \licos{}.
+
+\subsubsection{Structure du fichier d'entrée}
+
+Un fichier d'entrée de \mfront{} représente une unique connaissance
+matériau (une propriété matériau, une loi de comportement, un modèle).
+
+Il se présente sous la forme d'une liste de mots clés, appelés
+également directives dans la suite du document, commençant par une
+arobase \texttt{@}. Dans la mesure du possible, nous avons recherché à
+nous rapprocher le plus possible de la syntaxe utilisée par le langage
+C++ et certaines parties du fichier sont directement écrites en
+C++. La surcouche apportée par \mfront{} a cependant été créée pour
+minimiser les détails propres à ce langage. Le retour d'expérience
+montre que l'écriture d'un fichier \mfront{} est accessible, dans les
+cas usuels, à des personnes n'ayant pas ou peu de compétences en
+développement informatique.
+
+\paragraph{Ordre des directives} L'ordre des directives n'est pas
+imposé. Il faut cependant souligner que \mfront{} analyse le fichier
+de manière séquentielle et n'autorisera pas qu'une variable soit
+utilisée avant d'avoir été déclarée.
+
+Par exemple, il est impossible de préciser la plage de validité en
+température d'une propriété de matériau avant de déclarer que la
+propriété dépend de la température.
+
+\paragraph{Commentaires} Les deux types de commentaires introduits par
+le langage C++ sont supportés~:
+\begin{itemize}
+\item les commentaires commençant par les caractères \texttt{/*} et
+  finissant par les caractères \texttt{*/}. Ces commentaires peuvent
+  s'étendre sur plusieurs lignes~;
+\item les commentaires commençant par les caractères \texttt{//}
+  s'étendent jusqu'à la fin de la ligne courante~;
+\end{itemize}
+
+\subsection{Directives communes à l'ensemble des analyseurs}
+\label{sec:mfront:pres:common}
+
+Nous décrivons dans ce paragraphe différentes directives communes à
+l'ensemble des analyseurs.
+
+\paragraph{La directive \mkey{Parser}} La directive \mkey{Parser}
+permet de préciser l'analyseur utilisé. Cette directive est suivie du
+nom de l'analyseur à utiliser et d'un point virgule. La liste des
+analyseurs disponible est donnée au
+paragraphe~\ref{sec:mfront:parser}. Par défaut, l'analyseur {\tt
+  Default\-Parser} est utilisé.
+
+\subsubsection{Directives informatives}
+
+Nous décrivons dans ce paragraphe quatre directives optionnelles dont
+le but est uniquement informatif. Elles sont utilisées lors de
+l'insertion d'un fichier \mfront{} dans la base de données
+\sirius{}. Elles devraient également servir à terme lors de la
+génération automatique d'une documentation à partir d'un fichier
+\mfront{}.
+
+\paragraph{La directive \mkey{Description}} La directive
+\mkey{Description} permet de documenter le fichier \mfront{}.  Cette
+documentation est donnée dans un bloc commençant par une accolade
+ouvrante \texttt{\{} et se terminant par une accolade fermante
+\texttt{\}}. Elle doit idéalement contenir la référence d'où est
+extraite la connaissance matériau traitée, les éventuelles adaptations
+faites et le cadre d'utilisation.
+
+\paragraph{La directive \mkey{Author}} Le mot clé \mkey{Author} donne le
+nom de la personne qui a écrit le fichier \mfront{}. Ce mot clé est
+suivi du nom jusqu'à ce qu'un point virgule soit rencontré.
+
+\paragraph{La directive \mkey{Date}} Le mot clé \mkey{Date} donne la
+date d'écriture du fichier \mfront{}. Ce mot clé est suivi de cette
+date jusqu'à ce qu'un point virgule soit rencontré.
+
+\paragraph{La directive \mkey{Material}} La directive \mkey{Material}
+précise le nom du matériau auquel se réfère la connaissance matériau. Ce
+mot clé est suivi du nom du matériau et d'un point virgule.
+
+Ce nom de matériau est généralement utilisé pour construire le nom des
+fonctions ou des classes générées, il est donc soumis à certaines
+restrictions~: un nom de matériau ne peut commencer par un chiffre et
+ne peut contenir que des lettres alphabétiques ou des chiffres. Le nom
+du matériau peut également être utilisé pour construire le nom de la
+librairie générée.
+
+\subsubsection{Appel aux propriétés matériau écrites en \mfront{}}
+
+Afin de minimiser la duplication du code (et donc le risque d'erreur),
+il est naturel que les différentes connaissances matériau puissent
+utiliser des propriétés matériau définies par ailleurs\footnote{Les
+  propriétés matériau ont un statut particulier~:
+\begin{itemize}
+\item elles n'ont de sens que relativement à une loi de comportement
+  ou à un modèle. Ainsi, un module d'\nom{Young} n'a de sens que si le
+  comportement élastique du matériau est supposé représenté par une
+  loi de \nom{Hooke}.
+\item les propriétés matériau peuvent être liées. Par exemple, pour un
+  matériau dont le comportement mécanique est basé sur une loi
+  d'élasticité linéaire isotrope, le module d'\nom{Young} \(E\), le
+  coefficient de \nom{Poisson} \(\nu\) et le module de cisaillement
+  \(G\) sont reliés par~:
+  \[
+  \nu=\Frac{E}{2\,G}-1
+  \]
+\end{itemize}
+}.
+
+Nous avons introduit la directive \mkey{MaterialLaw} pour traiter ces
+cas. Cette directive est suivie d'un tableau de chaînes de caractères
+désignant des fichiers \mfront{} et d'un point virgule.
+
+Les fichiers désignés sont analysés par \mfront{} avec deux effets~:
+\begin{itemize}
+\item ces fichiers vont être analysés par une interface spéciale
+  nommée \mfront{}\footnote{L'utilisation de cette interface évite
+    d'éventuels conflits de nom.} et les fichiers générés vont être
+  ajoutés à la liste des fichiers à compiler\footnote{La gestion de la
+    compilation des fichiers est décrite en
+    annexe~\ref{sec:mfront:compilation}.}~;
+  \item l'interface \mfront{} rend disponibles des fonctions dont le nom
+  est donné par~:
+  \begin{itemize}
+  \item le nom du matériau, suivi du caractère tiret-bas (underscore)
+    \texttt{\textunderscore} et par le nom de la propriété, donné par
+    la directive \mkey{Law}, si le nom du matériau est défini par la
+    directive \mkey{Material} (voir
+    section~\ref{sec:MaterialProperty})~;
+    \item le nom de la propriété, donné par la directive \mkey{Law}, si
+    le nom du matériau n'est pas défini.
+  \end{itemize}
+\end{itemize}
+
+Ces différentes fonctions sont accessibles dans les différents blocs
+de code définis par l'utilisateur. Les arguments de ces fonctions sont
+ceux déclarés dans le fichier par la directive \mkey{Input} (voir
+section~\ref{sec:MaterialProperty}) et doivent être fournis dans
+l'ordre de déclaration.
+
+\begin{figure}[htbp]
+  \centering \code{{\ttfamily
+      \input{@abs_top_srcdir@/docs/mfront/mfront/A316TiHyperTrempe_CreepExponent.tex}}}
+  \caption{Exemple de définition d'une propriété matériau.}
+  \label{fig:mfront_a316tihy_creepexp}
+\end{figure}
+
+\begin{figure}[htbp]
+  \centering
+  \code{{\ttfamily \input{@abs_top_srcdir@/docs/mfront/mfront/MaterialLaw.tex}}}  
+  \caption{Exemple d'utilisation de la directive
+    \texttt{MaterialLaw}. Utilisation de la propriété matériau définie
+    en figure~\ref{fig:mfront_a316tihy_creepexp}.}
+  \label{fig:mfront_materiallaw}
+\end{figure}
+
+Un exemple d'utilisation de la directive \mkey{MaterialLaw} est
+illustrée par les figures~\ref{fig:mfront_a316tihy_creepexp}
+et~\ref{fig:mfront_materiallaw}. Deux propriétés matériau externes
+sont déclarées. Le code de la première d'entre elles est donné en
+figure~\ref{fig:mfront_a316tihy_creepexp}. Elles sont utilisées en
+figure~\ref{fig:mfront_materiallaw} pour initialiser des variables
+dans un bloc commençant par la directive \mkey{InitLocalVariables}.
+
+\paragraph{Note} Il est important de noter que le nom du fichier
+\mfront{} n'intervient pas dans le nom des fonctions générées. Il est
+cependant souhaitable et pratique de garder une certaine cohérence
+entre le nom du fichier et le nom des fonctions générées.
+
+\subsubsection{Inclusion d'autres fichiers {\tt mfront}}
+
+La directive \mkey{Import} permet d'inclure un fichier {\tt mfront}
+dans le fichier courant.
+
+Cette directive présente un intérêt particulier pour les lois de
+comportement mécanique\footnote{Pour comprendre ce paragraphe, une
+  lecture préalable de la note dédiée aux lois de comportement
+  mécanique peut s'avérer
+  nécessaire~\cite{helfer:mfront:behaviours:2013}.}. En effet,
+beaucoup de lois de comportement utilisent le même formalisme et ne se
+différencient que par leurs coefficients. Une solution classique
+consiste à rajouter des propriétés matériau à la liste d'appel de la
+loi de comportement. Cette solution présente plusieurs inconvénients~:
+\begin{itemize}
+\item on s'éloigne du choix \pleiades{} de proposer des lois de
+  comportement mécanique spécifiques aux matériaux~;
+\item il augmente le risque d'erreur de la part de l'utilisateur, qui
+  doit correctement renseigné son jeu de données dans le code
+  appelant~;
+\item il est difficile de passer d'un coefficient indépendant de la
+  température à un coefficient dépendant de la
+  température\footnote{Les propriétés matériau fournies par le code
+    appelant sont constantes sur le pas de temps et l'instant auquel
+    elles sont évaluées n'est pas nécessairement cohérent avec le
+    schéma d'intégration utilisé par la loi de comportement.} alors
+  que cela se fait naturellement dans les schémas d'intégration
+  implicite\footnote{Pour des raisons intrinsèques à ces schémas
+    d'intégration, il est possible de substituer une propriété
+    matériau variable dans le temps par sa valeur \og~en milieu de pas
+    de temps~\fg{}. Cette remarque n'est absolument pas valable pour
+    les schémas d'intégration explicite de type \nom{Runge-Kutta}.}.
+\item dans la plupart des codes appelant, la gestion des propriétés
+  matériau a un coût non négligeable.
+\end{itemize}
+
+La solution qu'apporte la directive \mkey{Import} est la suivante~:
+\begin{itemize}
+\item on écrit un fichier maître définissant les différents
+  coefficients. La façon de définir ces coefficients (propriété
+  matériau\footnote{Voir le mot clé \mkey{MaterialProperty}.},
+  variable locale\footnote{Voir le mot clé \mkey{LocalVariable}.},
+  etc..) et éventuellement la façon de les initialiser\footnote{Voir
+    le mot clé \mkey{InitLocalVariable}.} dépend du cas traité.
+\item ce fichier maître inclut un fichier patron (\og~\tt
+  template~\fg{} en anglais) contenant tout le détail de
+l'intégration.
+\end{itemize}
+
+\paragraph{Chemins de recherche} La directive \mkey{Import} recherche
+le fichier à inclure~:
+\begin{itemize}
+\item dans le répertoire courant~;
+\item dans les répertoires précisés en ligne de commandes par l'option
+  \moption{search-path} (voir la section~\ref{sec:mfront:using})~;
+\item dans les répertoires pointés par la variable d'environnement
+  \envb{MFRONT\_INCLUDE\_PATH}{MFRONT\_\-INCLUDE\_\-PATH}. Cette
+  variable fournit une liste de chemins séparés par le caractère {\tt
+    ':'}.
+\end{itemize}
+
+\paragraph{Une limitation} Il est aujourd'hui nécessaire de préciser
+l'analyseur à utiliser dans le fichier principal\footnote{Voir le mot
+  clé \mkey{Parser}.}.
+
+\subsubsection{Directives de compilation}
+
+Trois directives sont liées à la compilation des sources. Les
+directives \mkey{Includes} et \mkey{Link} ont une importance
+particulière pour une utilisation avancée de \mfront{}~: ces
+directives permettent d'utiliser des fonctionnalités définies dans des
+librairies \cpp{} externes.
+
+\paragraph{La directive \mkey{Library}} La directive spécifie le nom de
+la librairie générée.
+
+Cette information est optionnelle.
+
+\paragraph{La directive \mkey{Includes}} La directive \mkey{Includes}
+permet de déclarer des lignes de codes \cpp{} introduites en tête des
+fichiers générés. Ces lignes sont données dans un bloc commençant par
+une accolade ouvrante \texttt{\{} et se terminant par une accolade
+fermante \texttt{\}}.
+
+Le nom de cette directive est due au fait que ces instructions se
+résument généralement à une suite d'inclusions de fichiers d'entête par
+le mot clé \texttt{\#include} du préprocesseur \cpp{}.
+
+\begin{figure}[htbp]
+  \centering
+  \code{{\ttfamily \input{@abs_top_srcdir@/docs/mfront/mfront/Includes.tex}}}  
+  \caption{Exemple d'utilisation de la directive {\tt Includes}.}
+  \label{fig:mfront:Includes}
+\end{figure}
+
+La figure~\ref{fig:mfront:Includes} donne un exemple d'utilisation de la
+directive \mkey{Includes}.
+
+\paragraph{La directive \mkey{Link}} La directive \mkey{Link} est
+utilisée pour lier les librairies générées à des librairies externes.
+
+Elle est suivie d'une chaîne de caractères (entre doubles quotes)
+contenant des instructions à fournir à l'éditeur de
+liens. L'utilisation des doubles quotes permet l'utilisation de
+caractères spéciaux.
+
+\begin{figure}[htbp]
+  \centering
+  \code{{\ttfamily \input{@abs_top_srcdir@/docs/mfront/mfront/Link.tex}}}  
+  \caption{Exemple d'utilisation de la directive {\tt Link}.}
+  \label{fig:mfront:Link}
+\end{figure}
+
+La figure~\ref{fig:mfront:Link} donne un exemple d'utilisation de la
+directive \mkey{Link}.
+
+\subsubsection{Gestion des bornes}
+\label{sec:mfront:bounds}
+
+Les variables d'états peuvent posséder des bornes intrinsèques~: une
+température ne peut être négative, une porosité supérieure à
+\(1\). Ces bornes intrinsèques sont dénommées dans la suite \og~bornes
+physiques~\fg. Par ailleurs, la corrélation définissant la propriété
+matériau a souvent été établie sur un certain domaine~: les limites de
+ce domaine expérimental seront dénommées \og~bornes de validité~\fg
+(de la corrélation).
+
+\begin{figure}[htbp]
+  \centering
+  \code{{\ttfamily \input{@abs_top_srcdir@/docs/mfront/mfront/Bounds.tex}}}  
+  \caption{Exemple d'utilisation des directives {\tt Bounds} et
+    \texttt{@Physical\-Bounds}.}
+  \label{fig:mfront:Bounds}
+\end{figure}
+
+\paragraph{Le mot clé \texttt{@Bounds}} Le mot clé \mkey{Bounds} définit
+les bornes de validité de la corrélation utilisée pour chacune des
+différentes variables d'entrée. Le traitement du dépassement d'une de
+ces bornes dépend de l'interface utilisée.
+
+\paragraph{Le mot clé \texttt{@Physical\-Bounds}} Le mot clé
+\mkeyb{PhysicalBounds}{Physical\-Bounds} définit les valeurs
+admissibles des différentes variables d'entrée. Le dépassement d'une
+de ces bornes doit arrêter le calcul.
+
+La figure~\ref{fig:mfront:Bounds} donne un exemple d'utilisation des
+directives \mkey{Bounds} et \mkeyb{PhysicalBounds}{Physical\-Bounds}.
+
+\subsubsection{Notion de paramètre}
+\label{sec:mfront:parameters}
+
+Les études réalisées dans le cadre de la plate-forme \pleiades{} sont
+souvent paramétriques~: il s'agit de mesurer l'impact d'une incertitude
+sur une quantité (conductivité thermique, coefficient d'échange) ou
+l'impact d'une valeur numérique (critère de convergence) sur les
+résultats du code.
+
+Il est donc intéressant de pourvoir paramétrer une connaissance
+matériau. Plusieurs solutions sont possibles.
+
+La plus évidente est de prévoir une ou plusieurs entrées
+supplémentaire. Par exemple, si l'on veut introduire un coefficient
+d'incertitude sur une conductivité thermique, il est toujours possible
+de passer ce coefficient comme un argument supplémentaire de la
+fonction qui réalise le calcul de cette conductivité.
+
+Cette approche est très utilisée dans le code \licos{}~: une
+connaissance matériau livrée avec le code est reprise par
+l'utilisateur qui rajoute le ou les paramètres d'intérêts, recompile
+sa connaissance matériau dans une bibliothèque qui lui est propre et
+relance son calcul en utilisant cette bibliothèque. Cette même
+approche est utilisée par les utilisateurs du code \castem{}.
+
+Cette approche ne peut que difficilement être utilisée dans les
+applications filières qui n'ont pas l'algorithme de gestion de
+dépendances de \licos{}~: en plus des étapes précédentes, il faudrait
+que l'utilisateur fasse les \og~branchements~\fg{} à la main dans le
+code source de l'application, ce qui peut s'avérer complexe.
+
+Le second désavantage de cette méthode est d'alourdir l'appel aux
+connaissances matériau, ce qui peut avoir un coût non
+négligeable\footnote{Dans le cas de l'application \licos{}, ce surcoût
+  est généralement négligeable, mais il peut être nettement sensible sur
+  des calculs \(1D\).}.
+
+Pour contourner ces difficultés, \mfront{} introduit une notion de
+{\em paramètre}, c'est à dire une valeur, considérée comme constante au
+cours d'un calcul, mais pouvant être modifiée par l'utilisateur au
+moment de l'initialisation. Pour les propriétés, les paramètres sont des
+valeurs réelles. Pour les lois de comportements, les paramètres peuvent
+être des valeurs réelles ou entières\footnote{Nous avons distingué deux
+  types d'entier correspondant respectivement aux types C {\tt int} et
+  {\tt unsigned short} (entiers positifs).}. Pour les modèles, les
+paramètres peuvent avoir différents types (valeurs réelles ou entières,
+tableaux, etc..).
+
+Les interfaces qui le souhaitent peuvent mettre en place une gestion
+appropriée de ces paramètres\footnote{Par défaut, la plupart des
+  interfaces décrites plus bas se contentent de traiter les paramètres
+  de la même manière que des valeurs constantes.}. Par exemple,
+l'interface \castem{} aux propriétés matériau et l'interface \umat{}
+aux loi de comportement créent automatiquement une fonction permettant
+de modifier les différents paramètres qui sont stockés dans des
+variables globales. Il est facile de mettre en place un mécanisme
+générique, c'est à dire indépendant de toute connaissance matériau,
+permettant la modification des valeurs des paramètres depuis le jeu de
+données\footnote{Par exemple, dans \licos{}, le mot clé {\tt
+    Parameter} a été introduit. Ce mot clé est suivi du nom de la
+  bibliothèque matériau, du nom de la connaissance matériau, du nom du
+  paramètre et de sa valeur. Cette solution devrait être généralisée à
+  toutes les applications de la plate-forme.}.
+
+Cette solution corrige les défauts de la première approche. En
+particulier, l'accès aux valeurs des paramètres n'a pratiquement aucun
+coût numérique. Cette solution introduit cependant un inconvénient~:
+tous les matériaux utilisant cette connaissance sont affectés alors
+que dans la première solution la modification pouvait être faite
+matériau par matériau. Nous pouvons donner deux cas pouvant poser
+problème~:
+\begin{itemize}
+\item dans le cas d'une aiguille absorbante, il arrive que la partie
+  inférieure de la colonne absorbante soit constituée de \(\bqc\) à un
+  enrichissement en \(\bd\) donné tandis que la partie supérieure soit
+  constituée de \(\bqc\) à un enrichissement différent. Il est naturel
+  de définir deux matériaux distincts pour décrire cette situation que
+  l'ont décrira à l'aide des mêmes propriétés matériaux. Dans ce cas
+  la notion de paramètre ne permet pas distinguer les parties basses
+  et hautes.
+\item pour de crayons combustibles mélangeant des parties oxydes
+  \(UO_{2}\) et \(MOX\), la notion de paramètre ne permet pas de
+  modifier une propriété ou un modèle sur le combustible oxyde
+  uniquement~;
+\end{itemize}
+
+Dans le cas du code \licos{}, l'utilisateur pourra choisir la
+solution la plus adaptée à son besoin. Dans \castem{}, seule la première
+solution est possible.
+
+\paragraph{Définition de paramètres}
+Pour les propriétés et les lois de comportements, la directive
+\mkey{Parameter} a été définie. Elle est suivie du nom du paramètre,
+du signe égal, de sa valeur par défaut et d'un point-virgule.
+
+Pour les modèles, les paramètres propres aux modèles, utilisés pour
+leur spécialisation\footnote{Nous renvoyons à la documentation des
+  codes de la plate-forme \pleiades{} pour une utilisation concrète de
+  ces paramètres.}, sont distingués des paramètres dits globaux qui
+peuvent être mis en commun avec plusieurs modèles. Les premiers sont
+définis par la directive \mkey{LocalParameter}, les seconds par la
+directive \mkey{GlobalParameter}. Ces mots clés sont suivis du type du
+paramètre, de son nom et d'un point-virgule. Une valeur par défaut
+peut être fournie par la méthode {\tt setDefaultValue}.
+
+\paragraph{Paramètres automatiquement déclarés}
+
+Les lois de comportement mécaniques introduites par \mfront{} peuvent
+déclarer automatiquement un certain nombre de paramètres. La valeur du
+critère de convergence ou le nombre maximum d'itération sont des
+exemples de tels paramètres.
+
+Nous détaillerons dans la documentation propre à chaque analyseur
+les paramètres déclarés automatiquement.
+
+\subsection{Analyseurs disponibles}
+\label{sec:mfront:parser}
+
+Les connaissances matériaux supportées par \mfront{} sont classées en
+trois catégories~:
+\begin{itemize}
+  \item les propriétés matériau~;
+  \item les lois de comportement mécanique~;
+  \item les modèles.
+\end{itemize}
+
+Pour traiter ces connaissances, différents analyseurs sont
+disponibles~:
+\begin{itemize}
+  \item l'analyseur {\tt Material\-Law} qui traite de propriétés
+  matériau. La section~\ref{sec:MaterialProperty} lui est consacrée~;
+  \item l'analyseur \texttt{DefaultParser} qui permet de traiter
+  tous types de lois de comportements~;
+  \item l'analyseur \texttt{RungeKutta} qui propose la résolution
+  d'une loi de comportement mécanique quelconque à l'aide de l'une des
+  méthodes de \nom{Runge-Kutta}~;
+\item l'analyseur \texttt{IsotropicMisesCreep} qui gère exclusivement
+  des lois de type \nom{Norton}, c'est à dire des comportements
+  viscoplastiques incompressibles sans écrouissage de matériaux
+  isotropes~;
+\item l'analyseur \texttt{IsotropicStrainHardeningMisesCreep} qui gère
+  exclusivement les lois de type \nom{Lemaître} \cite{cha_1996}, c'est
+  à dire des comportements mécaniques viscoplastiques incompressibles
+  avec écrouissage des matériaux isotropes~;
+  \item l'analyseur \texttt{IsotropicPlasticMisesFlow} qui gère
+  exclusivement les lois de comportement mécanique plastique
+  incompressible des matériaux isotropes~;
+  \item l'analyseur \texttt{MultipleIsotropicMisesFlows} qui gère
+  une combinaison arbitraire d'écoulements des trois types précédents.
+  Les différents écoulements sont alors supposés non couplés~;
+\item les analyseurs \texttt{Implicit} et \texttt{ImplicitII} qui
+  simplifient la résolution d'une loi de comportement mécanique
+  quelconque à l'aide d'une intégration implicite~;
+\item l'analyseur \texttt{Model} qui permet de traiter des
+  modèles. Cet analyseur fait l'objet de la
+  section~\ref{sec:mfront:models}.
+\end{itemize}
+
+Les analyseurs dédiés aux lois de comportement mécaniques sont
+largement majoritaires. Ils sont décrits dans une note
+spécifique~\cite{helfer:mfront:behaviours:2013}, mais la lecture de la
+présente section est nécessaire pour l'aborder.
+
+L'écriture de propriétés matériau est décrite en
+section~\ref{sec:MaterialProperty}, celle des modèles
+physico-chimiques en section~\ref{sec:mfront:models}.
+
+La directive \mkey{Parser} (voir
+figure~\ref{fig:mfront_sic_behaviour}) est utilisée pour préciser quel
+analyseur doit être utilisé pour interpréter le fichier
+considéré\footnote{Cette directive est traditionnellement placée en
+  tête du fichier \mfront{} bien que cela ne soit pas nécessaire.}.
+
+\subsection{Interfaces}
+\label{sec:mfront:interface}
+
+\mfront{} permet d'écrire les connaissances matériau de manière
+indépendante du code ou du langage cible\footnote{Précisons enfin si
+  une interface vise à fournir un code utilisable dans un langage de
+  programmation particulier, {\em le code généré est toujours du
+    C++}. Il est ainsi possible d'utiliser toute la richesse de ce
+  langage.}.
+
+Pour que celles-ci soit utilisables dans un code particulier,
+\mfront{} introduit la notion d'{\em interface}~: le code source
+généré dépend de l'interface choisie par l'utilisateur et cherche à
+s'intégrer au mieux dans le contexte du code cible et à en tirer le
+meilleur parti.
+
+Insistons sur l'originalité de cette démarche. Dans des solutions plus
+habituelles, un code source fixe est généré puis une couche d'enrobage
+permet d'utiliser ce code dans des cibles distinctes. Cette solution
+conduit souvent à des conversions de données et des allocations
+mémoires inutiles. Dans l'approche \mfront{}, le code source fixe est
+limité au maximum~: il se limite souvent au code fourni par
+l'utilisateur (s'il n'est pas transformé) afin de créer un code qui
+s'utilise de manière optimale dans le contexte logiciel cible.
+
+\subsubsection{Interfaces disponibles}
+
+Par exemple, \mfront{} est livré avec différentes interfaces pour les
+propriétés matériau~:
+\begin{itemize}
+\item les interfaces \texttt{c}, \texttt{fortran}, \cpp{} et
+  \texttt{python} pour pouvoir utiliser les propriétés dans les
+  langages du même nom~;
+\item l'interface \texttt{castem} pour pouvoir utiliser les propriétés
+  dans le code aux éléments finis \castem{}~;
+  \item l'interface \texttt{gnuplot} pour une visualisation des
+  courbes d'évolution des propriétés matériau~;
+\end{itemize}
+
+Pour les lois de comportement, deux interfaces sont actuellement
+disponibles~:
+\begin{itemize}
+\item l'interface {\tt umat} pour une utilisation des lois générées
+  dans le code aux éléments finis \castem{}~\cite{12:castemcea}. Cette
+  interface est décrite dans une note dédiée~\cite{helfer:umat:2013}~;
+\item l'interface {\tt aster} pour une utilisation des lois générées
+  dans le code aux éléments finis \aster{}~\cite{aster:13}. Cette
+  interface est décrite dans une note dédiée~\cite{helfer:aster:2013}.
+\end{itemize}
+
+\subsubsection{Ajout d'interfaces}
+
+Il est possible de rajouter dynamiquement de nouvelles interfaces par
+l'utilisation de la variable d'environnement {\tt
+  MFRONT\textunderscore{}\-ADDITIONAL\textunderscore{}\-LIBRARIES} qui
+doit désigner une liste de librairies automatiquement chargées au
+démarrage de \mfront{} \footnote{Ce mécanisme est utilisé par exemple
+  par l'architecture \pleiades{} pour générer l'interface {\tt
+    pleiades} aux propriétés matériau, interface qui évolue avec les
+  versions de l'architecture.}.
+
+Ce mécanisme permet donc de créer des interfaces sans modifier
+\mfront{}. Il est principalement utilisé par les applications de la
+plate-forme \pleiades{} pour que \TFEL{} puisse être considéré comme un
+pré-recquis.
+
+\clearpage
+\newpage
+\section{Utilisation de \mfront{} en ligne de commande}
+\label{sec:mfront:using}
+
+Nous décrivons dans ce paragraphe l'utilisation de \mfront{} sous
+ \unix{}. Les commandes présentées restent valides sous \windows{} à
+condition d'utiliser l'un des environnements \msys{} ou \cygwin{}.
+
+\subsection{Appel à \mfront{} en ligne de commande}
+
+\mfront{} s'utilise ainsi~:
+\begin{center}
+  {\tt mfront [options] fichier1.mfront fichier2.mfront \ldots}
+\end{center}
+
+L'option la plus utilisée est \moption{interface} qui permet de
+choisir la cible de la compilation.
+
+Les fichiers générés se trouvent généralement dans un sous-répertoire
+nommé {\tt src} pour les fichiers source et {\tt include} pour les
+fichiers d'entête.
+
+Cette commande conduit à la génération~:
+\begin{itemize}
+  \item de fichiers sources~;
+  \item de fichiers de dépendances~;
+  \item de fichiers de cibles.
+\end{itemize}
+Ces derniers fichiers permettent d'utiliser \mfront{} de manière
+séquentielle. \mfront{} peut d'abord être appelé sur plusieurs fichiers
+pour générer les fichiers sources puis lancer la compilation des
+librairies ainsi~:
+\begin{center}
+  \begin{minipage}{0.6\textwidth}
+    \textcolor{ceagrisclair}{\tt \# Génération des fichiers sources}\\
+    {\tt mfront --interface=?? fichier1.mfront} \\
+    {\tt mfront --interface=?? fichier2.mfront} \\
+    {\tt \ldots} \\
+    \textcolor{ceagrisclair}{\tt \# Génération d'un fichier Makefile et lancement de la compilation}\\
+    {\tt mfront --obuild} \\
+  \end{minipage}
+\end{center}
+
+Dans une utilisation avancée, l'utilisateur peut avoir un contrôle
+assez fin sur le processus de compilation. Nous renvoyons le lecteur à
+l'annexe~\ref{sec:mfront:compilation} pour plus de détails.
+
+\paragraph{Note sur la génération des fichiers en
+  parallèle} La génération de fichiers \mfront{} en parallèle est
+possible. Pour cela, un verrou global est posé au moment de l'écriture
+des fichiers afin que les différents processus \mfront{} ne modifient
+pas les mêmes fichiers en même temps (fichiers cibles et fichiers de
+dépendances notamment).
+
+Cela pourrait conduire à des blocages si \mfront{} se termine sans
+libérer ce verrou\footnote{Nous devons cependant préciser que ce
+  problème ne s'est présenté qu'une unique fois.}. Dans ce cas, il est
+nécessaire de retirer ce verrou global à la main. Sous \linux{}, il
+s'agit de supprimer le fichier~:
+\begin{center}
+ \texttt{/dev/shm/sem-mfront.\${UID}}
+\end{center}
+
+Un moyen plus brutal consiste à redémarrer la machine.
+
+\subsection{Options de la ligne de commande}
+
+\paragraph{L'option \moption{help}} L'option \moption{help} liste
+l'ensemble des options disponibles et quitte le programme.
+
+\paragraph{L'option \moption{list-parsers}} L'option
+\moption{list-parsers} affiche la liste des analyseurs disponibles et
+quitte le programme.
+
+\paragraph{L'option \moption{help-keywords-list}} L'option
+\moption{help-\-key\-words-\-list} liste l'ensemble des mots clés
+d'une interface et quitte le programme. Par exemple~:
+\begin{center}
+  {\tt mfront -{}-help-keywords-list=MaterialLaw}
+\end{center}
+
+\paragraph{L'option \moption{help-keyword}} L'option
+\moption{help-\-key\-word} affiche la documentation d'un des mots clés
+d'une interface et quitte le programme. Par exemple~:
+\begin{center}
+  {\tt mfront -{}-help-keyword=MaterialLaw:@Function}
+\end{center}
+
+\paragraph{L'option \moption{version}} L'option \moption{version}
+affiche la version de \mfront{} utilisée et quitte le programme.
+
+\paragraph{L'option \moption{interface}} L'option \moption{interface}
+spécifie la ou les interfaces à utiliser pour générer les fichiers
+sources. Les différentes interfaces sont séparées par une virgule.
+
+\paragraph{L'option \moption{verbose}} L'option \moption{verbose}
+demande l'affichage de messages supplémentaires.
+
+\paragraph{L'option \moption{warning}} L'option \moption{warning}
+demande l'affichage de messages d'avertissement supplémentaires.
+
+\paragraph{L'option \moption{debug}} L'option \moption{debug} modifie
+la génération des fichiers de compilation et son effet dépend de
+l'analyseur choisi.\footnote{Dans un mode de fonctionnement normal de
+  \mfront{} insère des directives \texttt{\#line} pour repérer la
+  position des erreurs dans le fichier \mfront{} d'origine (le
+  compilateur indique l'erreur dans le fichier \mfront{} d'origine et
+  non dans le fichier généré). L'option \moption{debug} désactive
+  l'insertion de ces directives \texttt{\#line}.}.
+
+\paragraph{L'option \moption{make}} L'option \moption{make} conduit à la
+génération d'un fichier {\tt Makefile.mfront}.
+
+\paragraph{L'option \moption{omake}} L'option \moption{omake} conduit à la
+génération d'un fichier {\tt Makefile.mfront} avec des directives de
+compilation optimisées.
+
+Les options de compilation optimisées sont données par le résultat de la
+commande~
+\begin{center}
+  {\tt tfel-config -{}-oflags}
+\end{center}
+
+\paragraph{L'option \moption{clean}} L'option \moption{clean} conduit à la
+génération d'un fichier {\tt Makefile.mfront} et lance la commande~:
+\begin{center}
+  {\tt make -C src -f Makefile.mfront clean}
+\end{center}
+
+\paragraph{L'option \moption{build}} L'option \moption{build} conduit à la
+génération d'un fichier {\tt Makefile.mfront} et lance la commande~:
+\begin{center}
+  {\tt make -C src -f Makefile.mfront}
+\end{center}
+
+\paragraph{L'option \moption{obuild}} L'option \moption{obuild} conduit à la
+génération d'un fichier {\tt Makefile.mfront} avec des directives de
+compilation optimisées et lance la commande~:
+\begin{center}
+  {\tt make -C src -f Makefile.mfront}
+\end{center}
+
+\paragraph{L'option \moption{search-path}} Un fichier \mfront{} peut
+inclure d'autres fichiers grâce à la directive {\tt @Import}. L'option
+\moption{search-path} permet d'ajouter un ou plusieurs chemins de
+recherche pour ces fichiers. Plusieurs chemins peuvent être précisés
+en les séparant par le caractère {\tt ':'}.
+
+\paragraph{L'option \moption{include}} L'option \moption{include} est
+synonyme de l'option \moption{search-path}.
+
+\paragraph{L'option \moption{nodeps}} L'option \moption{nodeps}
+empêche l'inclusion des règles de dépendances dans le fichier {\tt
+  Make\-file\-.mfront} généré. Cette option a été introduite pour
+éviter certains problèmes sous \windows{}.
+
+\paragraph{L'option \moption{silent-build}}
+L'option \moption{silent-build} est spécifiée avec l'option {\tt
+  false}, les lignes de compilation utilisées seront affichées.
+
+\paragraph{L'option \moption{otarget}} L'option
+\moption{otarget} permet de ne compiler qu'une des librairies de manière
+optimisée. Cette option est suivie du nom de la cible.
+
+\paragraph{L'option \moption{target}} L'option
+\moption{target} permet de ne compiler qu'une des librairies.
+
+\paragraph{L'option \moption{win32}} L'option \moption{win32} est
+utilisée pour permettre la compilation croisée sous \linux{} de
+librairies dynamiques pour \windows{}. Cette possibilité est décrite
+en annexe~\ref{sec:mfront:comp_croisee_lib_windows_linux}.
+
+\paragraph{Ajout de directives} Il est possible d'ajouter des
+directives à un fichier depuis la ligne de commande.
+
+La ligne de commande suivante~:
+\begin{center}
+  {\tt mfront --@AsterCompareToNumericalTangentOperator=true implicit.mfront}
+\end{center}
+donnera le même résultat que si on avait rajouter la ligne suivante en
+tête du fichier {\tt implicit.mfront}~:
+\begin{center}
+  @AsterCompareToNumericalTangentOperator true;
+\end{center}
+
+La règle générale est la suivante~: toute option de la ligne de
+commande commençant par une arobase est interprétée comme une
+directive à ajouter en début de l'analyse du fichier.
+
+\clearpage
+\newpage
+\section{Propriétés matériaux}
+\label{sec:MaterialProperty}
+
+Les propriétés matériau sont l'un des éléments de connaissance
+essentiel des matériaux. Une propriété matériau est une fonction d'un
+ensemble de variables d'état thermodynamique du matériau.
+
+\subsection{Les différents types de variables}
+
+Ce paragraphe décrit les différents types de variables manipulés
+lorsque l'on écrit des propriétés matériau.
+
+\subsubsection{Variable de sortie}
+
+La variable de sortie est par défaut nommée \texttt{res}. Ce nom peut
+être changé par la directive \mkey{Output}.
+
+\subsubsection{Variables d'entrée}
+
+Les variables d'entrée des propriétés matériau sont définies par la
+directive \mkey{Input}.
+
+Ces variables d'entrée peuvent utiliser la méthode {\tt
+  set\-Glossary\-Name} pour définir son nom de glossaire. Si aucun nom
+de glossaire adapté n'existe, ces variables peuvent utiliser la méthode
+{\tt set\-Entry\-Name} pour être utilisable dans l'architecture
+\pleiades{}.
+
+Nous avons vu au paragraphe~\ref{sec:mfront:bounds} comment affecter
+des bornes aux variables d'entrée.
+
+\subsubsection{Variables statiques}
+
+La directive \mkey{StaticVariable} permet d'introduire une variable
+statique au sens du langage \cpp{}.
+
+\subsubsection{Paramètres}
+
+La directive \mkey{Parameter} a été décrite au
+paragraphe~\ref{sec:mfront:parameters}.
+
+\subsubsection{Constantes}
+
+La directive \mkey{Constant} est synonyme de la directive
+\mkey{StaticVariable} pour des variables réelles.
+
+\subsection{Mots clés spécifiques}
+
+La directive \mkey{Namespaces} a été introduite pour inclure les
+fonctions ou les classes générées dans un espace de nom distinct. Ce
+mot clé n'est utilisé que par l'interface \cpp{} et peut
+éventuellement être utilisée par l'interface \pleiades{}.
+
+La directive \mkey{UseTemplate} demande la génération de fonctions ou
+de classes paramétrées par le type numérique utilisé (par défaut, les
+interfaces utilisent généralement des valeurs réelles en double
+précision). Cette directive n'est pour l'instant utilisée que par
+l'interface \cpp{}.
+
+\subsection{Interfaces disponibles} Les interfaces disponibles par
+défaut pour les propriétés matériaux sont~:
+\begin{itemize}
+\item l'interface \texttt{c} pour une utilisation dans des codes
+  écrits dans ce langage. Cette interface est décrite en
+  annexe~\ref{sec:linterface-textttc}~;
+  \item l'interface \texttt{fortran} pour une utilisation dans des codes
+  écrits dans ce langage~;
+  \item l'interface \texttt{c++} pour une utilisation dans des codes
+  écrits dans ce langage~;
+\item l'interface \texttt{castem} pour une utilisation dans le code
+  aux éléments finis \castem{}. Cette interface est décrite en
+  annexe~\ref{sec:lint-textttcastem}~;
+\item l'interface \texttt{python} pour une utilisation dans des codes
+  écrits dans ce langage. Cette interface est décrite en
+  annexe~\ref{sec:lint-textttpyth}~;
+  \item l'interface \texttt{gnuplot} pour une visualisation des courbes
+  d'évolution des propriétés matériau en fonction de leur paramètres~;
+\end{itemize}
+
+\subsection{Exemple du module d'\nom{Young} du \sic{}}
+\label{sec:module-dnomyoung-du}
+
+\nom{Snead} a proposé une corrélation donnant le module
+d'\nom{Young} du \sic{} en fonction de la température et de la porosité
+sous la forme~:
+\begin{equation}
+  \label{eq:youngmodulussnead}
+  E\paren{T,p} =
+  \paren{E_{0}-B\,T\,\exp\paren{-\Frac{T_{0}}{T}}}\exp\paren{-C\,p}
+\end{equation}
+où~:
+\begin{minipage}[t]{0.75\linewidth}
+  \begin{itemize}
+    \item \(T\) est la température~;
+    \item \(p\) est la porosité~;
+    \item \(E_{0}\), \(B\), \(T_{0}\) \(C\) sont des
+    coefficients.
+  \end{itemize}
+\end{minipage}
+
+\begin{figure}[htbp]
+  \centering
+  \code{{\ttfamily \input{@abs_top_srcdir@/docs/mfront/mfront/SIC_YoungModulus_SNEAD.tex}}}  
+  \caption{Implantation du module d'\nom{Young} du \sic{} en \mfront{}.}
+  \label{fig:mfront_sic_youngmodulus}
+\end{figure}
+
+La figure~\ref{fig:mfront_sic_youngmodulus} reproduit le fichier
+\mfront{} implémentant cette corrélation.
+
+\paragraph{Le mot clé \mkey{Parser}} La première ligne, commençant
+par le mot clé \mkey{Parser}, décrit le type d'analyseur utilisé,
+ici \texttt{MaterialLaw}.
+
+\paragraph{Le mot clé \mkey{Law}} La second ligne, commençant par
+le mot clé \mkey{Law}, donne le nom de la propriété matériau. Ce
+nom sera utilisé pour l'appel à la propriété matériau (nom de la
+fonction ou de la classe générée suivant l'interface utilisée).
+
+\paragraph{Le mot clé \mkey{Material}} Le mot clé \mkey{Material}, non
+utilisé ici, sert à regrouper plusieurs propriétés d'un même matériau
+dans une même bibliothèque.
+
+\paragraph{Les mots clé \mkey{Author} et \mkey{Date}} La troisième et
+la quatrième ligne renseignent respectivement l'auteur du fichier et la
+date de création à l'aide des mots clés \mkey{Author} et \mkey{Date}.
+
+\paragraph{Le mot clé \mkey{Description}} Le mot clé
+\mkey{Description} permet de donner les références bibliographiques
+d'où la corrélation est extraite ou tout commentaire sur son origine.
+
+\paragraph{Le mot clé \mkey{Output}} Le mot clé \mkey{Output}
+change le nom de la propriété matériau calculée. Par défaut, celle-ci
+s'appelle \texttt{res}.
+
+\paragraph{Le mot clé \mkey{Input}} Le mot clé \mkey{Input} donne la
+liste des variables d'état dont dépend la propriété. Les variables
+peuvent être déclarées en une fois ou par plusieurs utilisations
+consécutives du mot clé \mkey{Input}. L'ordre de déclaration des
+variables peut être important suivant l'interface utilisé~: ainsi la
+fonction générée par les interfaces \texttt{c} ou \texttt{castem}
+prendront leurs arguments dans l'ordre de déclaration utilisé dans le
+fichier \mfront{}.
+
+\paragraph{La méthode \texttt{setGlossaryName}} La méthode
+\texttt{setGlossaryName}, non utilisée ici, permet de préciser un nom
+associé à une variable d'entrée. Ce nom est utilisé par les
+applications de la plateforme \pleiades{} pour assurer l'échange
+d'informations.
+
+\paragraph{Le mot clé \mkey{PhysicalBounds}} Le mot clé
+\mkey{PhysicalBounds} définit les bornes physiques des variables
+d'état définies plus haut. Ici nous indiquons qu'une température ne
+peut être négative et qu'une porosité est comprise entre \(0\) et
+\(1\). Les cas de dépassement de ces bornes sont très souvent liés à
+des problèmes graves des codes (erreur de programmation, solutions
+inacceptables). Pour ces raisons, la plupart des interfaces
+signaleront une erreur au code appelant, conduisant généralement à son
+arrêt.
+
+\paragraph{Le mot clé \mkey{Function}} Le mot clé
+\mkey{Function} permet de définir le code (en \texttt{c++}) utilisé
+pour définir la propriété matériau. Le fait que le code soit en fait
+du \texttt{c++} est ici anecdotique tant le code est proche de
+l'équation~\eqref{eq:youngmodulussnead}.
+
+% \subsection{Exemple de propriétés dont seules des mesures sont connues}
+
+\clearpage
+\newpage
+\section{Modèles}
+\label{sec:mfront:models}
+
+Deux types de modèles sont usuellement distingués~:
+\begin{itemize}
+\item les modèles demandant une résolution globale sur l'ensemble du
+  domaine considéré. Ces modèles concernent généralement la diffusion
+  (thermique ou chimique) et l'équilibre mécanique. Ce type de modèle
+  étant coûteux à développer, nécessitant le recours à des techniques
+  de discrétisation telles que les éléments finis, ils sont
+  généralement écrits de manière générique, la spécialisation au
+  problème concret à traiter se faisant en renseignant ou des
+  propriétés matériau ou des lois de comportement~;
+\item les modèles dits \og~point~\fg décrivant l'évolution locale du
+  matériau en fonction de son état thermodynamique local. Ce type de modèle
+  regroupe les modèles de production de gaz de fission, de concentration
+  isotopique (en l'absence de diffusion), de corrosion, de gonflement, etc..~;
+\end{itemize}
+
+\mfront{} ne permet pas de traiter les modèles demandant une
+résolution globale. Nous nous intéresserons uniquement aux modèles
+\og~point~\fg.
+
+Pour traiter ces modèles, \mfront{} propose l'analyseur \texttt{Model}.
+
+\subsection{Généralités sur les modèles \og~points~\fg}
+
+Les modèles \og~point~\fg{} s'appuient sur un ou plusieurs domaines.
+Les valeurs des différentes variables d'états du matériau sont
+représentées par des champs aux points de discrétisation du ou des
+domaines considérés.
+
+Comme les lois de comportement, les modèles nécessitent
+\textit{a priori} le recours à des méthodes d'intégration.
+En pratique, pour les modèles courants, notamment les modèles
+de gonflement, une estimation par une méthode des
+trapèzes (les valeurs des champs d'entrée étant prises en
+milieu de pas de temps) est généralement suffisante.
+
+\subsection{Modèle de gonflement solide de l'\upuc{}}
+
+Nous décrivons ici l'introduction du modèle de gonflement
+solide de l'\upuc{}~\cite{pelletier04:_recueil}.
+
+\begin{figure}[htbp]
+  \centering
+  \code{{\ttfamily \input{@abs_top_srcdir@/docs/mfront/mfront/UPuC_SolidSwellingModel.tex}}}  
+  \caption{Implantation du modèle de gonflement solide
+    de l'\upuc{} en \mfront{}.}
+  \label{fig:mfront_upuc_solid_swelling}
+\end{figure}
+
+Le code source est donné en figure~\ref{fig:mfront_upuc_solid_swelling}.
+
+\paragraph{Le mot clé \mkey{Parser}} La première ligne, commençant
+par le mot clé \mkey{Parser}, décrit le type d'analyseur utilisé,
+ici \texttt{Model}.
+
+\paragraph{Le mot clé \mkey{Model}} La second ligne, commençant par
+le mot clé \mkey{Model}, donne le nom du modèle.
+
+\paragraph{Les mots clé \mkey{Author} et \mkey{Date}} La
+troisième et la quatrième ligne renseignent respectivement l'auteur du
+fichier et la date de création à l'aide des mots clés \mkey{Author}
+et \mkey{Date}.
+
+\paragraph{Le mot clé \mkey{Description}} Le mot clé
+\mkey{Description} permet de donner les références bibliographiques
+d'où le modèle est extrait.
+
+\paragraph{Le mot clé \mkey{LocalParameter}} Le mot clé
+\mkey{LocalParameter} permet de déclarer une variable
+locale, propre au modèle.
+
+\paragraph{Le mot clé \mkey{GlobalParameter}}
+De la même manière, le mot clé \mkey{GlobalParameter}
+permet de déclarer un paramètre dont la valeur sera
+lue dans le fichier d'entrée.
+
+% \paragraph{La méthode \texttt{setDefaultValue}}
+% La méthode {\tt setDefaultValue} permet de préciser
+% la valeur par défaut de la variable \texttt{domains}.
+
+% \paragraph{Le mot clé \mkey{Domain}} 
+% Le mot clé \mkey{Domain} permet de préciser le domaine
+% d'application du modèle. Sa valeur peut être une expression
+% rationnelle. Le mot clé \mkey{Domains} permet quand à lui de
+% définir une liste de domaines.
+
+\paragraph{Le mot clé \mkey{Output}} Le mot clé \mkey{Output}
+permet de préciser un des champs de sortie du modèle.
+
+\paragraph{Le mot clé \mkey{Input}} Le mot clé \mkey{Input} permet de
+préciser un des champs d'entrée du modèle.
+
+\paragraph{La méthode \texttt{setDepth}} La méthode \texttt{setDepth}
+permet de préciser la profondeur d'un champ, c'est à dire le nombre de
+pas de temps antérieurs auquel l'on a accès. Une profondeur de $1$
+permet d'avoir accès à la valeur courante (en fin de pas de temps) du
+champ et à sa valeur au début du pas.
+
+\paragraph{La méthode \texttt{setGlossaryName}} La méthode
+\texttt{setGlossaryName} permet de préciser le nom
+d'un champ dans \pleiades{}.
+
+\paragraph{Le mot clé \mkey{Function}} Le mot clé \mkey{Function}
+permet d'introduire l'implantation du modèle. Un même modèle pouvant
+avoir plusieurs fonctions, un identifiant, ici \texttt{compute}, doit
+être précisé. L'implantation du modèle est faite en C++. Dans le code
+présenté, la variable \texttt{s\textunderscore{}1} représente la
+valeur du champ $s$ au début du pas de temps et la variable $s$ sa
+valeur en fin de pas de temps.
+
+\subsection{Interface disponible} À ce jour, aucune interface pour les
+modèles n'est disponible par défaut. Certaines applications de la
+plateforme \pleiades{} fournissent leurs propres interfaces dédiées
+(\licos{}, \germinal{}).
+
+\clearpage
+\newpage
+\referencecea
+%\listetableaux
+\listefigures
+
+\appendix
+
+\clearpage
+\newpage
+\include{glossary}
+
+\clearpage
+\newpage
+\section{Gestion de la compilation}
+\label{sec:mfront:compilation}
+
+En plus de générer des fichiers source, \mfront{} peut gérer leurs
+compilations sous forme de librairies dynamiques. Cette compilation se
+fait en plusieurs étapes~:
+\begin{itemize}
+\item génération d'un fichier {\tt Makefile.mfront} dans le
+  sous-répertoire des sources {\tt src}. La génération du fichier
+  Makefile se fait en analysant le répertoire {\tt src} qui contient
+  (après la phase de génération des sources) différents fichiers
+  précisant les noms des libraires à générer, la liste de leurs
+  sources et de leurs dépendances, etc..~;
+  \item le lancement du processus de compilation. Il s'agit
+  essentiellement d'un appel à l'utilitaire {\tt make}.
+\end{itemize}
+
+\subsection{Variables affectant le processus de compilation}
+
+Bien que cela ne soit généralement pas nécessaire, l'utilisateur
+\mfront{} peut affecter le processus de compilation à l'aide de
+variables d'environnement. Cela est utile dans les situations
+suivantes~:
+\begin{itemize}
+  \item utilisation d'une librairie tierce (variables
+  \env{INCLUDES} et \env{LDFLAGS})~;
+  \item utilisation d'un compilateur différent du compilateur
+  système (variables \env{CC} et \env{CXX})~;
+  \item utiliser des options de compilation particulières
+  (variables \env{CFLAGS} et \env{CXXFLAGS})~;
+\item génération de binaire pour un système différent
+  (cross-compilation) (variables \env{CC}, \env{CXX} \env{RANLIB},
+  \env{DLLTOOL} et \env{AR})~;
+\end{itemize}
+
+Le fichier {\tt Makefile.mfront} suit les règles des fichiers {\tt
+  Makefile}~: il est sensible aux variables d'environnement suivantes~:
+\begin{itemize}
+  \item \env{CC} qui désigne le compilateur {\tt C} à utiliser~;
+  \item \env{CXX} qui désigne le compilateur \cpp à utiliser. Ce
+    compilateur est également utilisé pour l'édition de liens~;
+  \item \env{INCLUDES} qui désigne des directives de
+  préprocesseur à utiliser en plus des directives définies par les
+  sources~;
+\item \env{CFLAGS} qui désigne les directives de compilation à
+  utiliser pour les sources {\texttt c}. Si cette variable n'est pas
+  définie, \mfront{} utilisera les valeurs suivantes~:
+  \begin{itemize}
+    \item la sortie de la commande {\tt tfel-config -{}-oflags}
+    si l'une des options {\tt -{}-obuild} ou {\tt -{}-omake} a été
+    utilisée~;
+    \item {\tt -O2} sinon.
+  \end{itemize}
+  \item \env{CXXFLAGS} qui désigne les directives de compilation
+  à utiliser pour les source \cpp. Si cette variable n'est pas définie,
+  \mfront{} utilisera les valeurs suivantes~:
+  \begin{itemize}
+    \item la sortie de la commande {\tt tfel-config -{}-oflags}
+    si l'une des options {\tt -{}-obuild} ou {\tt -{}-omake} a été
+    utilisée~;
+    \item {\tt -O2} sinon.
+  \end{itemize}
+  \item \env{LDFLAGS} qui désigne des directives à passer à
+  l'éditeur de liens~;
+  \item \env{RANLIB}, \env{DLLTOOL} et \env{AR} qui ont été
+  introduits pour la compilation croisée de librairies dynamiques pour
+  \windows{} depuis \linux{}.
+\end{itemize}
+
+\subsection{Compilation croisée de
+  librairies dynamiques pour \windows{} depuis \linux{}}
+\label{sec:mfront:comp_croisee_lib_windows_linux}
+
+À partir d'une version \linux{} de \mfront{}, il est possible de
+générer des librairies dynamiques pour \windows{} dans le cas des
+propriétés matériau. Il faut cependant que ces propriétés ne fassent pas
+appel à des librairies externes, ou, si tel est le cas de disposer des
+versions \windows{} de ces librairies\footnote{Pour compiler des lois de
+  comportements, il serait nécessaire de disposer des librairies
+  mathématiques de TFEL pour \windows{}~: il faut donc compiler
+  l'ensemble de {\tt TFEL} et \mfront{} en cross-compilation et utiliser
+  la version \windows{} de \mfront{}. Ceci est effectivement possible
+  via l'émulateur {\tt wine}, mais cette manière de procéder sort du
+  cadre de ce paragraphe.}.
+
+Pour générer des librairies dynamiques pour \windows{} depuis
+\linux{}, il est tout d'abord nécessaire de disposer d'un
+cross-compilateur. Sous \debian{}, l'utilisateur pourra installer les
+paquets {\tt mingw32} (\windows{} 32 bits) ou {\tt mingw64} (\windows{}
+32 et 64 bits).
+
+Il est alors nécessaire de définir les variables d'environnement
+\env{CC}, \env{CXX} \env{RANLIB}, \env{DLLTOOL} et \env{AR} et
+d'utiliser l'option \moption{win32}.
+
+Voici un exemple de génération de librairie dynamique pour
+\windows{} depuis \linux{}~:
+\begin{flushleft}
+{\tt AR=i586-mingw32msvc-ar RANLIB=i586-mingw32msvc-ranlib
+DLLTOOL=i586-mingw32msvc-dlltool CXX=i586-mingw32msvc-g++
+../../src/mfront --win32 --obuild --interface=c
+YoungModulus.mfront}
+\end{flushleft}
+
+\clearpage
+\newpage
+\section{L'interface \texttt{c}}
+\label{sec:linterface-textttc}
+
+Cette annexe est dédiée à l'interface \texttt{c} aux propriétés
+matériau.
+
+\subsection{Noms des fonctions générées} Par propriété matériau, une ou
+deux fonctions sont générées.
+
+La première calcule effectivement la valeur de la propriété matériau
+en reprenant le code fourni après la directive \mkey{Function}. Un nom
+de propriété doit nécessairement avoir été défini par la directive
+\mkey{Law}.  Deux cas se présentent alors~:
+\begin{itemize}
+  \item si un nom de matériau a été spécifié, le nom de la fonction sera
+  {\texttt{mat\textunderscore{}law}}, où \texttt{mat} est le nom du
+  matériau et \texttt{law} le nom de la propriété~;
+  \item si aucun nom de matériau n'a été spécifié, le nom de la fonction
+  sera {\texttt{law}}, où \texttt{law} est le nom de la propriété.
+\end{itemize}
+
+Cette fonction prend des réels en double précision en arguments, dans
+l'ordre de déclaration des entrées de la propriété matériau, introduites
+par la directive \mkey{Input}.
+
+\subsection{Gestion des bornes} Une deuxième fonction est générée si des
+bornes ont été fournies. Cette deuxième fonction renvoie~:
+\begin{itemize}
+\item un nombre positif si une borne de validité de la loi est
+  violée~;
+  \item un nombre négatif si une borne physique l'est~;
+  \item \texttt{0} si aucune borne n'est violée.
+\end{itemize}
+La valeur absolue du nombre est l'ordre de déclaration de la variable
+mise en cause.
+
+Cette fonction a le nom de la première fonction suivi de
+\texttt{\textunderscore{}checkBounds}. Elle prend les mêmes arguments,
+donnés dans le même ordre, que la première fonction.
+
+\subsection{Noms de la librairie générée} Différents cas se présentent~:
+\begin{itemize}
+  \item si un nom de librairie a été défini par la directive
+  \mkey{Library}, le nom de la librairie sera {\tt libXXX.so} où
+  \texttt{XXX} est le nom fourni par l'utilisateur~;
+  \item si aucun nom de librairie n'est spécifié mais qu'un nom de
+  matériau a été fourni, le nom de la librairie sera {\tt libMMM.so} où
+  \texttt{MMM} est le nom du matériau fourni par l'utilisateur~;
+  \item si aucun nom de librairie ni aucun nom de matériau n'ont été
+  spécifiés, la librairie s'appellera {\tt lib\-Material\-Law.so}.
+\end{itemize}
+
+\clearpage
+\newpage
+\section{L'interface \texttt{castem}}
+\label{sec:lint-textttcastem}
+
+Cette annexe est dédiée à l'interface \texttt{castem} aux propriétés
+matériau. L'utilisation de cette interface est décrite dans
+l'annexe~\ref{sec:castem:materialproperties}. Une utilisation directe de
+la librairie générée nécessite une version modifiée de \castem{}
+utilisée et maintenue au sein de la plateforme \pleiades{}.
+L'utilisation dans la version officielle est possible, mais il faut
+passer par une modification de la méthode {\tt compute} et une
+recompilation partielle de \castem{}.
+
+\subsection{Nom de la fonction générée} Par propriété matériau, une
+fonction est générée en reprenant le code fourni après la directive
+\mkey{Function}.
+
+Un nom de propriété doit nécessairement avoir été
+défini par la directive \mkey{Law}. Deux cas se présentent alors~:
+\begin{itemize}
+  \item si un nom de matériau a été spécifié, le nom de la fonction sera
+  {\texttt{mat\textunderscore{}law}}, où \texttt{mat} est le nom du
+  matériau et \texttt{law} le nom de la propriété~;
+  \item si aucun nom de matériau n'a été spécifié, le nom de la fonction
+  sera {\texttt{law}}, où \texttt{law} est le nom de la propriété.
+\end{itemize}
+
+Cette fonction prend un tableau de réels en double précision en
+argument. Dans ce tableau, les valeurs des entrées de la propriété
+matériau, introduites par la directive \mkey{Input}, doivent être
+fournies dans l'ordre de déclaration.
+
+\subsection{Gestion des bornes} Si une borne physique est violée, la
+fonction renvoie la valeur spéciale \texttt{NaN} (pour \texttt{not a
+  number}), définie dans la norme IEEE 754. Cette valeur de retour
+conduit à un arrêt des calculs.
+
+Le traitement d'une violation des bornes de validité expérimentale
+dépend de la politique définie par l'utilisateur à l'aide de la
+variable d'environnement
+\envb{CASTEM\_OUT\_OF\_BOUND\_POLICY}{CASTEM\_\-OUT\_\-OF\_\-BOUND\_\-POLICY}.
+Trois politiques sont sont possibles~:
+\begin{itemize}
+  \item \texttt{STRICT}, qui traite un dépassement comme une erreur,
+  avec un traitement similaire à ce qui est fait pour les bornes
+  physiques~;
+  \item \texttt{WARNING}, qui conduit à afficher un message
+  d'avertissement sans génération d'erreur~;
+  \item \texttt{NONE}, qui ignore le dépassement~;
+\end{itemize}
+
+Si la variable
+\envb{CASTEM\_OUT\_OF\_BOUND\_POLICY}{CASTEM\_\-OUT\_\-OF\_\-BOUND\_\-POLICY}
+n'est pas définie, les dépassements sont ignorés.
+
+\subsection{Noms de la librairie générée} Différents cas se présentent~:
+\begin{itemize}
+  \item si un nom de librairie a été défini par la directive
+  \mkey{Library}, le nom de la librairie sera {\tt libCastemXXX.so} où
+  \texttt{XXX} est le nom fourni par l'utilisateur~;
+  \item si aucun nom de librairie n'est spécifié mais qu'un nom de
+  matériau a été fourni, le nom de la librairie sera {\tt
+    libCastemMMM.so} où \texttt{MMM} est le nom du matériau fourni par
+  l'utilisateur~;
+  \item si aucun nom de librairie ni aucun nom de matériau n'ont été
+  spécifiés, la librairie s'appellera {\tt lib\-Castem\-Material\-Law.so}.
+\end{itemize}
+
+\clearpage
+\newpage
+\section{L'interface \texttt{python}}
+\label{sec:lint-textttpyth}
+
+Cette annexe est dédiée à l'interface \texttt{python} aux propriétés
+matériau.
+
+Par propriété matériau, deux fonctions sont générées~:
+\begin{itemize}
+  \item la première implante effectivement la propriété matériau~;
+  \item la seconde fonction est en fait propre à la librairie générée
+    et déclare les différentes informations implantées dans cette
+    librairie.  Elle ne sera pas décrite plus avant dans cette annexe.
+\end{itemize}
+
+\subsection{Nom de la fonction générée} La première fonction générée
+reprend le code fourni après la directive \mkey{Function}.
+
+Un nom de propriété doit nécessairement avoir été
+défini par la directive \mkey{Law}. Deux cas se présentent alors~:
+\begin{itemize}
+  \item si un nom de matériau a été spécifié, le nom de la fonction sera
+  {\texttt{mat\textunderscore{}law}}, où \texttt{mat} est le nom du
+  matériau et \texttt{law} le nom de la propriété~;
+  \item si aucun nom de matériau n'a été spécifié, le nom de la fonction
+  sera {\texttt{law}}, où \texttt{law} est le nom de la propriété.
+\end{itemize}
+
+Cette fonction prend un tableau de réels en double précision en
+argument. Dans ce tableau, les valeurs des entrées de la propriété
+matériau, introduites par la directive \mkey{Input}, doivent être
+fournies dans l'ordre de déclaration.
+
+\subsection{Gestion des bornes} Si une borne physique est violée, la
+fonction renvoie une exception du type \texttt{Runtime\-Error}.
+
+Le traitement d'une violation des bornes de validité expérimentale
+dépend de la politique définie par l'utilisateur à l'aide de la
+variable d'environnement
+\envb{PYTHON\_OUT\_OF\_BOUND\_POLICY}{PYTHON\_\-OUT\_\-OF\_\-BOUND\_\-POLICY}.
+Trois politiques sont possibles~:
+\begin{itemize}
+  \item \texttt{STRICT}, qui traite un dépassement comme une erreur,
+  avec un traitement similaire à ce qui est fait pour les bornes
+  physiques~;
+  \item \texttt{WARNING}, qui conduit à afficher un message
+  d'avertissement sans génération d'erreur~;
+  \item \texttt{NONE}, qui ignore le dépassement~;
+\end{itemize}
+
+Si la variable
+\envb{PYTHON\_OUT\_OF\_BOUND\_POLICY}{PYTHON\_\-OUT\_\-OF\_\-BOUND\_\-POLICY}
+n'est pas définie, les dépassements sont ignorés.
+
+\subsection{Noms de la librairie générée} Différents cas se présentent~:
+\begin{itemize}
+  \item si un nom de librairie a été défini par la directive
+  \mkey{Library}, le nom de la librairie sera {\tt XXX.so} où
+  \texttt{XXX} est le nom fourni par l'utilisateur~;
+  \item si aucun nom de librairie n'est spécifié mais qu'un nom de
+  matériau a été fourni, le nom de la librairie sera {\tt MMM.so} où
+  \texttt{MMM} est le nom du matériau fourni par l'utilisateur~;
+  \item si aucun nom de librairie ni aucun nom de matériau n'ont été
+  spécifiés, la librairie s'appellera {\tt MaterialLaw.so}.
+\end{itemize}
+
+\clearpage
+\newpage
+\section{Appel de propriétés matériaux externes dans \castem{}}
+\label{sec:castem:materialproperties}
+
+Pour les besoins du projet \pleiades{}, nous avons modifié le code aux
+éléments finis \castem{} pour pouvoir appeler des propriétés matériau
+définies dans des librairies externes. Cette section décrit les
+modifications faites au code aux éléments finis \castem{} et
+l'utilisation de librairies externes depuis le {\tt gibiane}.
+
+\subsection{Fichiers modifiés et implémentation}
+
+\paragraph{Modification des sources de \castem{}} L'évolution proposée
+demande de modifier deux fichiers source du code \castem{}~:
+\begin{itemize}
+  \item {\tt varinu.eso}, implémentation {\tt esope} de l'opérateur {\tt
+    VARI} chargé de l'appel aux lois externes~;
+  \item {\tt excha1.eso}, implémentation {\tt esope} de l'opérateur {\tt
+    EXTR} pour l'extraction des composantes variables d'un champ par
+  élément et des paramètres dont dépendent les composantes variables.
+  Cette fonctionnalité est utilisée par les procédures {\tt TRANSNON} et
+  {\tt PASAPAS}~;
+\end{itemize}
+Ces modifications ont pour objet de pouvoir définir une propriété de
+matériau à partir d'une table. La syntaxe utilisée est décrite au
+paragraphe suivant.
+
+\paragraph{Portabilité de la solution proposée} L'appel aux fonctions
+externes se fait par l'appel aux fonctions {\tt dlopen}, {\tt dlsym} et
+{\tt dlclose} déclarées dans le fichier d'entête {\tt dlfcn.h}. Ces
+fonctions ont été définies dans la norme POSIX\footnote{POSIX est
+  l'acronyme de Portable Operating System Interface for uniX. Cette
+  norme a pour objet d'établir une interface de programmation supportée
+  par l'ensemble des systèmes d'exploitation dérivés d'UNIX.} et sont de
+ce fait utilisables sur la plupart des systèmes dérivés d'UNIX actuels.
+Sous \windows{}, les fonctions système {\tt Load\-Library} et {\tt
+  Get\-Proc\-Address} sont utilisées.
+
+Nous faisons également trois hypothèses qui peuvent limiter la portabilité de la solution
+proposée~:
+\begin{itemize}
+\item nous supposons que le type double précision du fortran ({\tt REAL*8}) 
+  et le type double précision du C/\cpp ({\tt double}) correspondent.
+\item nous supposons que le type entier du fortran ({\tt INTEGER}) correspond au type 
+  entier du C/\cpp ({\tt int})~;
+\item nous supposons que la taille d'une variable entière de type ({\tt int}) est plus 
+grande que la taille d'un pointeur~;
+\end{itemize}
+
+Les deux premières hypothèses sont généralement vérifiées, mais aucune
+norme ne l'impose à notre connaissance. La dernière hypothèse est sans
+doute la plus restrictive~: cette pratique de transférer des pointeurs
+par des entiers a longtemps été utilisée en C, mais il semble que cela
+ne soit plus le cas sur les architectures 64 bits
+actuelles~\cite{foundation06:_gnu}. Il est intéressant de noter qu'une
+hypothèse similaire est faite en python pour l'implémentation de l'appel
+aux fonctions externes via le module {\tt
+  dl}~\cite{python_librar_refer}.
+
+La nécessité de convertir un pointeur en entier est liée à un échange
+nécessaire entre le fortran et le \cpp. Cette restriction peut {\it a
+  priori} être levée en échangeant entre le fortran et le \cpp non plus
+un entier mais un tableau de taille adéquate et de recopier
+\og~caractère par caratère~\fg le pointeur dans ce tableau et effectuer
+l'opération inverse lorsque le pointeur doit être récupéré\footnote{Ceci
+  se base sur le fait que toute structure C à une taille multiple de la
+  taille d'un caractère.}.
+
+\paragraph{Coût de la solution proposée} L'utilisation de la solution
+proposée peut avoir un coût car les bibliothèques externes sont chargées
+et déchargées pour chaque évaluation d'une propriété de matériau sur un
+domaine géométrique. {\it A priori}, ce coût est faible, sauf pour des
+domaines petits. Nous avons prévu la possibilité de \og~pré-lier~\fg la
+bibliothèque \castem{} avec une bibliothèque de propriétés de matériau,
+ce qui éviterait le chargement et le déchargement de cette bibliothèque.
+
+\subsection{Utilisation dans \castem{}}
+\label{sec:util-dans-cast}
+
+Nous détaillons ici comment déclarer un modèle et un matériau utilisant
+une propriété définie dans une fonction externe. Nous avons choisi de
+prendre pour exemple un modèle thermique isotrope dont la conductivité
+thermique est évaluée par une fonction externe.
+
+Le code {\tt gibiane} utilisé est décrit en figure
+\ref{fig:delaration_modele_materiau}.
+
+\begin{figure}[htbp]
+  \centering
+  \code{
+    \textcolor{blue}{* Création d'un modèle thermique isotrope}\\    
+    ModT1 = '\textcolor{green}{MODELISER}' s1 '\textcolor{red}{THERMIQUE}' '\textcolor{red}{ISOTROPE}' ; \\
+    \\
+    \textcolor{blue}{* Création d'une table contenant les données relatives }\\
+    \textcolor{blue}{* à la loi externe : }\\
+    \textcolor{blue}{* - 'LOI' contient le nom de la fonction appelée }\\
+    \textcolor{blue}{* - 'LIBRAIRIE' contient le nom de la librairie externe }\\
+    \textcolor{blue}{*   dans laquelle cette fonction est définie }\\
+    \textcolor{blue}{* - 'PARAMETRES' contient la liste des paramètres dont dépend }\\
+    \textcolor{blue}{*   la fonction appelée  }\\
+    Tmat = '\textcolor{green}{TABLE}'; \\
+    Tmat. '\textcolor{red}{LOI}' = '\textcolor{red}{UO2\_THERMALCONDUCTIVITY\_METEOR}' ; \\
+    Tmat. '\textcolor{red}{LIBRAIRIE}' = '\textcolor{red}{libinterface.so}' ; \\
+    Tmat. '\textcolor{red}{PARAMETRES}' = '\textcolor{green}{MOTS}' '\textcolor{red}{T}' '\textcolor{red}{FIMA}' '\textcolor{red}{PORO}'; \\
+    \\
+    \textcolor{blue}{* Création du matériau associé. }\\
+    \textcolor{blue}{* La propriété de matériau 'K' (diffusivité thermique) est évaluée }\\
+    \textcolor{blue}{* par appel à la fonction 'UO2\_THERMALCONDUCTIVITY\_METEOR' de }\\
+    \textcolor{blue}{* la librairie 'libinterface.so' }\\
+    MatT1 = '\textcolor{green}{MATERIAU}' ModT1 '\textcolor{red}{K}' Tmat;
+  }
+  \caption{Déclaration d'un modèle et d'un matériau utilisant une propriété de matériau externe.}
+  \label{fig:delaration_modele_materiau}
+\end{figure}
+
+Nous commençons par déclarer un modèle thermique isotrope. Nous
+déclarons ensuite une table contenant trois indices~:
+\begin{itemize}
+  \item {\tt 'LOI'}, nom du symbole appelé dans la bibliothèque
+  externe~;
+  \item {\tt 'LIBRAIRIE'}, nom de la bibliothèque externe~;
+  \item {\tt 'PARAMETRES'}, liste des paramètres dont dépend la
+  fonction.
+\end{itemize}
+Les noms des ces indices ont été choisis en cohérence avec les
+conventions usuelles du code \castem{}.
+
+La fonction externe utilisée ici dépend de la température 'T', du taux
+de combustion 'FIMA' et de la porosité 'PORO'. Conformément aux
+limitations de \castem{}, ces noms de variables ne peuvent avoir plus
+de quatre caractères.
+
+Le matériau associé est alors défini. La conductivité thermique est
+initialisée par le tableau précédent.
+
+\paragraph{Chargements externes associés aux paramètres de la loi} Les
+objets modèle et matériau définis précédemment s'utilisent de manière
+classique. Il est cependant nécessaire de définir l'évolution au cours
+du pas de temps des paramètres externes à la résolution, dans notre cas
+les paramètres 'FIMA' et 'PORO'. Si l'on utilise les procédures {\tt
+  PASAPAS} ou {\tt TRANSNON}, ceci est fait en définissant des
+chargements associés à ces paramètres contenant leur évolution sur le
+pas de temps et en passant ces chargements à l'indice {\tt
+  'CHARGEMENTS'} de la table utilisée en entrée de ces procédures.
+
+\paragraph{Précautions relatives au "name mangling" des symboles}
+L'indice 'LOI' doit faire l'objet d'une attention particulière~: il
+correspond au nom du symbole de la bibliothèque et peut être différent
+du nom de la fonction défini dans le fichier source ayant servi à
+générer la bibliothèque.
+
+Le langage C est le seul pour lequel le nom de la fonction et le nom du
+symbole sont identiques.
+
+En \cpp, des fonctions ayant des arguments différents peuvent porter le
+même nom. Or un symbole ne peut faire référence qu'à une fonction aux
+arguments déterminés. Le \cpp utilise alors une technique appelée "name
+mangling" pour résoudre les conflits et assurer une relation biunivoque
+entre le symbole et une fonction~\cite{name_mangling_wikipedia}. La même
+technique est également utilisée pour distinguer des fonctions portant
+le même nom mais définies dans des espaces de noms différents. Le
+langage a cependant prévu cette difficulté et a introduit une syntaxe
+particulière pour éviter le "name mangling"~: une fonction déclarée dans
+un bloc commençant par la directive {\tt extern "C"} est soumise aux
+règles du langage C et se voit associée un symbole du même nom qu'elle.
+
+Le "name mangling" des fonctions est également nécessaire en fortran,
+mais pour des raisons différentes~: le fortran a une syntaxe insensible
+à la casse (les lettres majuscules et miniscules ne sont pas
+distinguées) alors que les symboles font cette distinction. Il n'y a
+jamais eu de consensus entre les vendeurs de compilateur fortran autour
+d'un choix unique de "name mangling". Ceci constitue un souci de
+portabilité majeur des codes mélangeant des sources fortran et des
+sources C ou \cpp~: les appels aux fonctions fortran dépendent du
+compilateur utilisé\footnote{Voir \cite{docum_autoc} pour plus de
+  détails.}. En pratique, le symbole associé à une fonction fortran peut
+être le nom de cette fonction écrit uniquement en majuscules ou en
+minuscules, éventuellement suivi du caractère '\_' ({\em underscore}).
+Dans le cas du compilateur gnu fortran (g77 ou gfortran suivant la
+version utilisée), utilisé en général par les applications de la
+plateforme {\tt Pléiades}, une fonction appelée {\tt
+  THERMALCONDUCTIVITY} dans le fichier source aura un symbole associé du
+nom {\tt thermalconductivity\_}. Ces difficultés nous ont amenés à {\it
+  exclure} la possibilité de définir des lois externes en fortran.
+
+Dans la suite, nous supposerons que les noms de fonctions et les noms de
+symboles associés sont identiques, c'est à dire que la fonction externe
+a été écrite en C ou en \cpp à l'intérieur d'un bloc {\tt extern "C"}.
+
+\paragraph{Précautions relatives aux déclarations de paramètres} La
+déclaration des paramètres dans l'indice 'PARAMETRES' doit également
+faire l'objet d'une attention particulière. L'ordre de leur déclaration
+doit correspondre à l'ordre des arguments de la fonction. Le nombre des
+arguments est vérifié automatiquement (voir paragraphe suivant).
+
+Notons enfin qu'il est impossible dans l'opérateur {\tt PASAPAS}
+d'utiliser des propriétés de matériau externes ne dépendent d'aucun
+paramètre externe (propriétés constantes). En effet, la procédure
+teste s'il est nécessaire d'utiliser l'opérateur {\tt VARI} en
+comptabilisant le nombre de dépendances à des paramètres des
+propriétés du matériau~: si ce nombre est nul, l'opérateur {\tt VARI}
+n'est pas appelé et l'appel à {\tt PASAPAS} échoue avec un message
+d'erreur peu explicite. En fait, une tel cas n'a pas été prévu car la
+déclaration de propriété constante peut et doit se faire explicitement
+dans l'opérateur {\tt 'MATE'}.
+
+\subsection{Une procédure de tracé des propriétés matériau dans
+  \castem{}}
+
+L'usage a montré qu'il était très pratique de pouvoir tracer les
+propriétés matériau dans \castem{}, pour vérification. Nous nous
+basons sur l'exemple du module d'\nom{Young} du \sic{}, détaillé au
+paragraphe~\ref{sec:module-dnomyoung-du} pour illustrer notre propos.
+
+La procédure \texttt{GETEVOL}, reproduite en figure~\ref{fig:getEvol} a
+été écrite dans ce but.
+
+\begin{figure}[htbp]
+  \centering
+  \code{
+    \input{@abs_top_srcdir@/docs/mfront/mfront/TestGetEvol.tex}
+  }
+  \caption{Utilisation de la procédure \texttt{GETEVOL}.}
+  \label{fig:TestGetEvol}
+\end{figure}
+
+Un exemple d'utilisation de cette procédure est donnée en
+figure~\ref{fig:TestGetEvol} où est tracée la dépendance du module
+d'\nom{Young} du \sic{} en fonction de la température entre \(300\) et
+\(1500\) Kelvins pour une porosité de \(0,1\) avec un échantillonnage
+de \(100\) valeurs. La tableau \texttt{val} contient ici les valeurs
+de toutes les variables autres que celle servant au tracé.
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=9cm,angle=90]{@abs_top_srcdir@/docs/mfront/mfront/GetEvol.eps}
+  \caption{Résultat de la procédure \texttt{GETEVOL}.}
+  \label{fig:TestGetEvol2}
+\end{figure}
+
+La courbe résultante est représentée en figure~\ref{fig:TestGetEvol2}.
+
+\clearpage
+\newpage
+\section{Utilisation des propriétés matériau dans \excel{} via
+  l'interface \castem{}}
+\label{sec:inter-avec-excel}
+
+% \excel{} apparaît comme un logiciel particulièrement apprécié par les
+% utilisateurs \celaeno{}. Nous montrons ici que \mfront{} permet
+% simplement d'interagir avec lui. 
+
+Bien qu'il existe une interface \excel{} dédiée, il est pratique de
+réutiliser dans ce logiciel des librairies matériau générées par
+\mfront{} en utilisant l'interface \castem{} (cela évite la génération
+de deux librairies distinctes).
+
+Nous détaillons dans cette annexe comment procéder. Nous nous basons sur
+l'exemple du module d'\nom{Young} du \sic{}, détaillé au
+paragraphe~\ref{sec:module-dnomyoung-du} pour illustrer notre propos.
+
+\subsection{De \mfront{} à \excel{}}
+
+En premier lieu, les librairies de propriétés matériau générées par
+\mfront{} avec l'interface \castem{} peuvent être directement appelées
+depuis \excel{}.
+
+\begin{figure}[htbp]
+  \centering
+  \code{
+    \input{@abs_top_srcdir@/docs/mfront/mfront/loimat.tex}
+  }
+  \caption{Appel d'une loi externe depuis \excel{}.}
+  \label{fig:excelvba}
+\end{figure}
+
+La figure~\ref{fig:excelvba} représente une macro
+\texttt{Visual Basic} permettant cet appel. Elle déclare une fonction
+\texttt{LoiMat} qui peut être directement utilisée dans un classeur
+sous la forme~:
+\begin{center}
+  \begin{minipage}[htbp]{0.9\linewidth}
+    \small
+    \texttt{=LoiMat(\$A\$1,A3)}
+  \end{minipage}
+\end{center}
+qui calculera dans cet exemple le module d'\nom{Young} du \sic{} en
+fonction de la valeur de la température, lue dans la cellule
+\texttt{\$A\$1} et de la valeur de la porosité, lue dans la cellule
+\texttt{A3}. 
+
+Le passage par la macro \texttt{Visual Basic} décrite en
+figure~\ref{fig:excelvba} est assez lourd et nous pensons être en
+mesure de nous en passer prochainement, rendant encore plus simple
+l'utilisation des librairies matériau issue de \mfront{} dans
+\excel{}.
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=9cm]{@top_srcdir@/docs/mfront/Images/mfrontexcel.eps}
+  \caption{Graphique \excel{} réalisé à partir d'une
+    bibliothèque dynamique généré par \mfront{}.}
+  \label{fig:mfrontexcel}
+\end{figure}
+
+La figure~\ref{fig:mfrontexcel} montre la dépendance du module
+d'\nom{Young} du \sic{} en fonction de la porosité en se basant
+sur l'exemple traité au paragraphe~\ref{sec:module-dnomyoung-du}.
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=6cm]{@top_srcdir@/docs/mfront/Images/mfront.eps}
+  \caption{Export d'une formule \excel{} en \mfront{}.}
+  \label{fig:exceltomfront}
+\end{figure}
+
+\subsection{De \excel{} à \mfront{}} De plus il est apparu utile (et
+relativement facile à mettre en \oe{}uvre) de pouvoir directement généré
+des fichiers \mfront{} depuis des formules \excel{}. Une macro
+\texttt{Visual Basic} a été écrite par \nom{É. Gohier} dans ce but. La
+figure~\ref{fig:exceltomfront} montre un exemple de son utilisation.
+
+\begin{figure}[htbp]
+  \centering
+  \code{
+    \input{@abs_top_srcdir@/docs/mfront/mfront/GetEvol.tex}
+  }
+  \caption[Code de la procédure \texttt{GETEVOL}]{Procédure utilisée
+    pour tracer les valeurs d'une fonction en fonction d'une de ces
+    variables (les autres étant fixées).}
+  \label{fig:getEvol}
+\end{figure}
+
+\clearpage
+\newpage
+\printindex{env}{Index des variables d'environnement}
+
+\clearpage
+\newpage
+\printindex{mkeys}{Index des directives}
+
+\end{document}

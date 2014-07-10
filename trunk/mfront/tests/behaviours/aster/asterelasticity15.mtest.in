@@ -1,0 +1,48 @@
+/*! 
+ * \file   elasticity15.mtest
+ * \brief  Cas test thermo-élastique 
+ * \author Jean Michel Proix (eDF AMA)
+ * \brief  25 avril 2013
+ */
+
+@Behaviour<aster> 'libMFrontAsterBehaviours@CMAKE_SHARED_LIBRARY_SUFFIX@' 'asterelasticity';
+@MaterialProperty<function> 'YoungModulus' '2.e5 - (1.e5*((TC - 100.)/960.)**2)';
+@MaterialProperty<constant> 'PoissonRatio'  0.3 ;    
+@MaterialProperty<constant> 'MassDensity'   0. ;   
+@MaterialProperty<function> 'ThermalExpansion' '1.e-5 + (1.e-5  * ((TC - 100.)/960.) ** 4)'; 
+@Real 'ThermalExpansionReferenceTemperature' 0.;
+
+@ExternalStateVariable 'Temperature' {0.0:0.0,
+                                      0.1:1060.,
+                                       1.:1060.,
+                                      61.:100.,
+                                      121.:1060.,
+                                      181.:100.,
+                                      241.:1060.,
+                                      301.:100.,
+                                      361.:1060.,
+                                      421.:100.,
+                                      481.:1060.};
+
+@Evolution<function> 'TC' 'Temperature';
+
+@Real 'DY1' -0.0208 ;
+@Real 'DY2' -0.0008 ;
+
+@ImposedStrain 'EXX' { 0.: 0.0, 0.1 :'DY1', 1.0:'DY1', 
+                      61.:'DY2',121.:'DY1',181.:'DY2',241.:'DY1',
+                     301.:'DY2',361.:'DY1',421.:'DY2',481.:'DY1'};
+                     
+@ImposedStress 'SXY' {0.0: 0.0, 0.1 : 0.0 , 1.0: '100.0*sqrt(2.0)', 1000. : '100.0*sqrt(2.0)'};
+@ImposedStress 'SYY' 0.0;
+@ImposedStress 'SZZ' 0.0;
+
+@Times { 0, 0.1, 
+          1.  in 60,   61.  in 60,  121.  in 60, 181.  in 60,
+        241.  in 60,  301.  in 60,  361.  in 60, 421.  in 60,
+       449.8  in 29, 465.4  in 15, 473.8  in 9,  481.  in 45 };
+
+@Test<file> '@top_srcdir@/mfront/tests/behaviours/references/elasticity15-aster.ref'
+            {'EXX':2,'EYY':3}  1.e-7; 
+@Test<file> '@top_srcdir@/mfront/tests/behaviours/references/elasticity15-aster.ref'
+            {'SXX':8,'SXY':24} 1.e-2; 

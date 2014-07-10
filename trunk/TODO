@@ -1,0 +1,17 @@
+- matrice tangente cohérente pour l'analyseur MultipleIsotropicMisesFlows
+- matrice de prédiction pour l'analyseur MultipleIsotropicMisesFlows
+- matrice tangente pour l'analyseur IsotropicMisesPlasticFlow
+- meilleur support des contraintes planes dans les lois
+- support des contraintes planes dans mtest
+- support des zones cohésives
+- zones cohésives dans mtest
+- support des grandes déformations
+- support des lois non locales (plusieurs variables de pilotages)
+- support des grandes déformations
+- grandes déformations dans mtest
+- grandes déformations logarithmiques dans l'interface umat
+- algorithme de Powell
+- contrôle du pas de temps (non-radialité du chargement)
+- pour la génération de fichiers mtest, gérer les calculs MPI
+
+- passage à C++ 11

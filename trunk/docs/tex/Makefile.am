@@ -1,0 +1,30 @@
+EXTRA_DIST = ./texmf/tex/images/CEAIntercalaire.eps					     \
+	     ./texmf/tex/images/CEA_puce1.eps						     \
+	     ./texmf/tex/images/CEABanner2012.svg					     \
+	     ./texmf/tex/images/ceaeaDEC.eps						     \
+	     ./texmf/tex/images/CEA_puces.svg						     \
+	     ./texmf/tex/images/CEA_logo_quadri-sur-fond-rouge.eps			     \
+	     ./texmf/tex/images/CEATitleBanner2012.eps					     \
+	     ./texmf/tex/images/CEABannerLight2012.eps					     \
+	     ./texmf/tex/images/CEA_logo_quadri-sur-fond-rouge.pdf			     \
+	     ./texmf/tex/images/CEABanner2012.eps					     \
+	     ./texmf/tex/images/Energie2010.eps						     \
+	     ./texmf/tex/images/CEA_logo_quadri-sur-fond-rouge.svg			     \
+	     ./texmf/tex/images/CEA_puce2.eps						     \
+	     ./texmf/tex/latex/SESC.tex							     \
+	     ./texmf/tex/latex/couleurs.sty						     \
+	     ./texmf/tex/latex/mecanique.sty						     \
+	     ./texmf/tex/latex/LSC.tex							     \
+	     ./texmf/tex/latex/note_technique_2010.cls					     \
+	     ./texmf/tex/latex/beamer/themes/beamerthemecea.sty				     \
+	     ./texmf/tex/latex/beamer/themes/beamerthemepleiades.sty			     \
+	     ./texmf/tex/latex/beamer/themes/beamerthemecea2012.sty			     \
+	     ./texmf/tex/latex/mise_en_page_2010.tex                                         \
+	     ./texmf/tex/latex/helvetCEA.sty						     \
+	     ./texmf/tex/latex/mathematiques.sty					     \
+	     ./texmf/tex/latex/variables_2010.tex					     \
+	     ./texmf/tex/latex/gnuplot.sty						     \
+	     ./texmf/tex/latex/presentation.sty						     \
+	     ./texmf/tex/latex/mise_en_page_2010.tex					     \
+	     ./texmf/ls-R								     \
+	     ./texmf/bibtex/fr-insa.bst

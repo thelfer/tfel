@@ -1,0 +1,20 @@
+note=reference-guide
+
+all:
+	TEXMFHOME=@abs_top_srcdir@/docs/tex/texmf        latex  $(note).tex
+	TEXMFHOME=@abs_top_srcdir@/docs/tex/texmf        latex  $(note).tex
+	BSTINPUTS=@abs_top_srcdir@/docs/tex/texmf/bibtex bibtex $(note)
+	-makeindex -s @srcdir@/style.ist env.idx
+	-makeindex -s @srcdir@/style.ist tfel.idx
+	-makeindex -s @srcdir@/style.ist headers.idx
+	-makeindex -s @srcdir@/style.ist mkeys.idx
+	TEXMFHOME=@abs_top_srcdir@/docs/tex/texmf        latex  $(note).tex
+	TEXMFHOME=@abs_top_srcdir@/docs/tex/texmf        latex  $(note).tex
+	TEXMFHOME=@abs_top_srcdir@/docs/tex/texmf        dvips -R0 $(note).dvi -o
+	ps2pdf $(note).ps
+
+clean:
+	-$(RM) $(note).aux $(note).log
+	-$(RM) $(note).out $(note).toc
+	-$(RM) $(note).dvi $(note).ps
+	-$(RM) $(note).pdf

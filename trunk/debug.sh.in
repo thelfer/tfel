@@ -1,0 +1,17 @@
+#!/bin/sh
+##
+## debug.sh
+## 
+## Made by Helfer Thomas
+## Login   <tom@asus-laptop>
+## 
+## Started on  Sun Nov 11 09:32:54 2007 Helfer Thomas
+## Last update Sun Nov 11 09:32:54 2007 Helfer Thomas
+##
+
+export LD_LIBRARY_PATH=@abs_top_builddir@/src/Exception/.libs/:$LD_LIBRARY_PATH
+export LD_LIBRARY_PATH=@abs_top_builddir@/src/Math/.libs/:$LD_LIBRARY_PATH
+export LD_LIBRARY_PATH=@abs_top_builddir@/src/MaterialLaw/.libs/:$LD_LIBRARY_PATH
+export LD_LIBRARY_PATH=@abs_top_builddir@/src/FiniteElement/.libs/:$LD_LIBRARY_PATH
+export LD_LIBRARY_PATH=@abs_top_builddir@/src/Utilities/.libs/:$LD_LIBRARY_PATH
+export LD_LIBRARY_PATH=@abs_top_builddir@/src/System/.libs/:$LD_LIBRARY_PATH

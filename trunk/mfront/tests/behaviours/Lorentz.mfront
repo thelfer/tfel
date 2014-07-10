@@ -1,0 +1,81 @@
+/*!
+ * \file   Lorentz.mfront
+ */
+
+@Author Helfer Thomas;
+@Date   18/06/2013;
+@Description {
+  "Loi de Lorentz modifié pour prendre en compte "
+  "le caractère unilatéral de l'endommagement"
+}
+
+@Behaviour Lorentz;
+
+@MaterialProperty real young; /* mandatory for castem */
+young.setGlossaryName("YoungModulus");
+@MaterialProperty real nu;    /* mandatory for castem */
+nu.setGlossaryName("PoissonRatio");
+@MaterialProperty real rho;   /* mandatory for castem */
+rho.setGlossaryName("MassDensity");
+@MaterialProperty real alpha; /* mandatory for castem */
+alpha.setGlossaryName("ThermalExpansion");
+
+@MaterialProperty real k;
+@MaterialProperty real g;
+
+@ProvidesSymmetricTangentOperator;
+
+@Includes{
+#include"TFEL/Material/Lame.hxx"
+}
+
+@StateVariable real d;
+@StateVariable real y;
+
+@InitLocalVariables{
+  Dt = StiffnessTensor(real(0));
+}
+
+@Integrator{
+  using namespace tfel::material::lame;
+  tmatrix<3u,3u,real> m;
+  tvector<3u,real>    vp;
+  const real lambda = computeLambda(young,nu);
+  const real  mu    = computeMu(young,nu);
+  const Stensor e  = eto+deto;
+  // valeurs propres, parties positives et négatives
+  e.computeEigenVectors(vp,m,true);
+  const real e0p = max(vp(0),real(0));
+  const real e1p = max(vp(1),real(0));
+  const real e2p = max(vp(2),real(0));
+  const real e0n = min(vp(0),real(0));
+  const real e1n = min(vp(1),real(0));
+  const real e2n = min(vp(2),real(0));
+  // partie positive de la trace
+  const real trp = e0p+e1p+e2p;
+  const real trn = e0n+e1n+e2n;
+  // force thermodynamique associé à l'endommagement
+  y = max(0.5*(2*mu*(e0p*e0p+e1p*e1p+e2p*e2p)+lambda*trp*trp),y);
+  if((y>=k*g/(1+g))&&
+     (y<=k*(1+g)/g)){
+    d = max(1. + g - sqrt(k*g*(1+g)/y),d);
+  } else {
+    if(y>=k*(1+g)/g){
+      d = real(1);
+    }
+  }
+  d = min(d,real(0.99));
+  // eigen values of s0
+  sig = StressStensor(real(0));
+  sig(0) = (1-d)*(lambda*trp+2*mu*e0p)+lambda*trn+2*mu*e0n;
+  sig(1) = (1-d)*(lambda*trp+2*mu*e1p)+lambda*trn+2*mu*e1n;
+  sig(2) = (1-d)*(lambda*trp+2*mu*e2p)+lambda*trn+2*mu*e2n;
+  const tmatrix<3u,3u,real> m2 = transpose(m);
+  sig.changeBasis(m2);
+  if(computeTangentOperator_){
+    if(smt!=ELASTIC){
+      return FAILURE;
+    }
+    computeElasticStiffness<N,Type>::exe(Dt,lambda,mu);
+  }
+}

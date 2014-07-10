@@ -1,0 +1,52 @@
+@Parser    RungeKutta;
+@Behaviour OrthotropicCreep;
+@Author    Helfer Thomas;
+@Algorithm rk54;
+@Date      8/03/11;
+
+@OrthotropicBehaviour;
+@RequireStiffnessTensor;
+
+@StateVariable Stensor evp; /* Viscoplastic strain            */
+evp.setGlossaryName("ViscoplasticStrain");
+@StateVariable real p;      /* Equivalent viscoplastic strain */
+p.setGlossaryName("EquivalentViscoplasticStrain");
+
+@Includes{
+#include<TFEL/Material/Lame.hxx>
+#include<TFEL/Material/Hill.hxx>
+}
+
+@ComputeStress{
+  sig = D*eel;
+}
+
+@Derivative{
+  const real H_rr = 0.371;
+  const real H_tt = 1-H_F;
+  const real H_zz = 4.052;
+  const real H_rt = 1.5;
+  const real H_rz = 1.5;
+  const real H_tz = 1.5;
+  st2tost2<N,real> H;
+  if((getModellingHypothesis()==ModellingHypothesis::PLANESTRESS)||
+     (getModellingHypothesis()==ModellingHypothesis::PLANESTRAIN)||
+     (getModellingHypothesis()==ModellingHypothesis::GENERALISEDPLANESTRAIN)){
+    H = hillTensor<N,real>(Hzz,Hrr,Htt,
+			   Hrt,Hrz,Htz);
+  } else {
+    H = hillTensor<N,real>(Htt,Hrr,Hzz,
+			   Hrz,Hrt,Htz);
+  }
+  const real sigeq = sqrt(sig|H*sig);
+  if(sigeq>1e9){
+    return false;
+  }
+  Stensor  n(0.);
+  if(sigeq > 10.e-7){
+    n    = H*sig/sigeq;
+  }
+  dp   = 8.e-67*pow(sigeq,8.2);
+  devp = dp*n;
+  deel = deto - devp;
+}

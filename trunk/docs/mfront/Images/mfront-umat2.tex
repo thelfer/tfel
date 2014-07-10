@@ -1,0 +1,21 @@
+\noindent
+\ttfamily
+\hlstd{}\hlcom{/{*}\ Prototype\ des\ fonctions\ mfront\ {*}/}\hlstd{}\hspace*{\fill}\\
+\hlkwc{typedef\ }\hlstd{}\hlkwb{void\ }\hlstd{}\hlsym{({*}}\hlstd{UMATFctPtr}\hlsym{)(}\hlstd{}\hlkwb{const\ }\hlstd{UMATInt}\hlstd{\ \ }\hlstd{}\hlsym{{*}}\hlstd{}\hlkwb{const}\hlstd{}\hlsym{,\ }\hlstd{}\hlcom{/{*}\ nombre\ de\ composantes\ des\ contraintes}\hlstd{\ \ }\hlcom{{*}/}\hlstd{\hspace*{\fill}\\
+}\hlstd{\ \ \ \ \ \ }\hlstd{}\hlkwb{const\ }\hlstd{UMATReal\ }\hlsym{{*}}\hlstd{}\hlkwb{const}\hlstd{}\hlsym{,\ }\hlstd{}\hlcom{/{*}\ incrément\ de\ temps}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlcom{{*}/}\hlstd{\hspace*{\fill}\\
+}\hlstd{\ \ \ \ \ \ }\hlstd{}\hlkwb{const\ }\hlstd{UMATReal\ }\hlsym{{*}}\hlstd{}\hlkwb{const}\hlstd{}\hlsym{,\ }\hlstd{}\hlcom{/{*}\ matrice\ de\ passage\ du\ repère\ de\ l'élément}\hspace*{\fill}\\
+\hlcom{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ }\hlcom{au\ repère\ global}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlcom{{*}/}\hlstd{\hspace*{\fill}\\
+}\hlstd{\ \ \ \ \ \ }\hlstd{UMATReal\ }\hlsym{{*}}\hlstd{}\hlkwb{const}\hlstd{}\hlsym{,\ }\hlstd{}\hlcom{/{*}\ matrice\ tangente}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlcom{{*}/}\hlstd{\hspace*{\fill}\\
+}\hlstd{\ \ \ \ \ \ }\hlstd{}\hlkwb{const\ }\hlstd{UMATReal\ }\hlsym{{*}}\hlstd{}\hlkwb{const}\hlstd{}\hlsym{,\ }\hlstd{}\hlcom{/{*}\ gradient\ de\ la \ transformation\ au\ début\ du\ pas}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlcom{{*}/}\hlstd{\hspace*{\fill}\\
+}\hlstd{\ \ \ \ \ \ }\hlstd{}\hlkwb{const\ }\hlstd{UMATReal\ }\hlsym{{*}}\hlstd{}\hlkwb{const}\hlstd{}\hlsym{,\ }\hlstd{}\hlcom{/{*}\ gradient\ de\ la \ transformation\ au\ début\ du\ pas}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlcom{{*}/}\hlstd{\hspace*{\fill}\\
+}\hlstd{\ \ \ \ \ \ }\hlstd{}\hlkwb{const\ }\hlstd{UMATReal\ }\hlsym{{*}}\hlstd{}\hlkwb{const}\hlstd{}\hlsym{,\ }\hlstd{}\hlcom{/{*}\ temprature\ au\ début\ du\ pas}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ }\hlcom{{*}/}\hlstd{\hspace*{\fill}\\
+}\hlstd{\ \ \ \ \ \ }\hlstd{}\hlkwb{const\ }\hlstd{UMATReal\ }\hlsym{{*}}\hlstd{}\hlkwb{const}\hlstd{}\hlsym{,\ }\hlstd{}\hlcom{/{*}\ incrément\ de\ température}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlcom{{*}/}\hlstd{\hspace*{\fill}\\
+}\hlstd{\ \ \ \ \ \ }\hlstd{}\hlkwb{const\ }\hlstd{UMATReal\ }\hlsym{{*}}\hlstd{}\hlkwb{const}\hlstd{}\hlsym{,\ }\hlstd{}\hlcom{/{*}\ proprités\ matériau}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlcom{{*}/}\hlstd{\hspace*{\fill}\\
+}\hlstd{\ \ \ \ \ \ }\hlstd{}\hlkwb{const\ }\hlstd{UMATInt}\hlstd{\ \ }\hlstd{}\hlsym{{*}}\hlstd{}\hlkwb{const}\hlstd{}\hlsym{,\ }\hlstd{}\hlcom{/{*}\ nombre\ de\ proprités\ matériau}\hlstd{\ \ \ \ \ \ \ \ \ \ }\hlcom{{*}/}\hlstd{\hspace*{\fill}\\
+}\hlstd{\ \ \ \ \ \ }\hlstd{}\hlkwb{const\ }\hlstd{UMATReal\ }\hlsym{{*}}\hlstd{}\hlkwb{const}\hlstd{}\hlsym{,\ }\hlstd{}\hlcom{/{*}\ variables\ externes\ {*}/}\hlstd{\hspace*{\fill}\\
+}\hlstd{\ \ \ \ \ \ }\hlstd{}\hlkwb{const\ }\hlstd{UMATReal\ }\hlsym{{*}}\hlstd{}\hlkwb{const}\hlstd{}\hlsym{,\ }\hlstd{}\hlcom{/{*}\ incréments\ des\ variables\ externes\ {*}/}\hlstd{\hspace*{\fill}\\
+}\hlstd{\ \ \ \ \ \ }\hlstd{UMATReal\ }\hlsym{{*}}\hlstd{}\hlkwb{const}\hlstd{}\hlsym{,\ }\hlstd{}\hlcom{/{*}\ variables\ internes}\hlstd{\ \ \ }\hlcom{{*}/}\hlstd{\hspace*{\fill}\\
+}\hlstd{\ \ \ \ \ \ }\hlstd{}\hlkwb{const\ }\hlstd{UMATInt}\hlstd{\ \ }\hlstd{}\hlsym{{*}}\hlstd{}\hlkwb{const}\hlstd{}\hlsym{,\ }\hlstd{}\hlcom{/{*}\ nombre\ de\ variables\ internes\ {*}/}\hlstd{\hspace*{\fill}\\
+}\hlstd{\ \ \ \ \ \ }\hlstd{UMATReal\ }\hlsym{{*}}\hlstd{}\hlkwb{const}\hlstd{}\hlsym{,\ }\hlstd{}\hlcom{/{*}\ tenseur\ des\ contraintes\ {*}/}\hlstd{\hspace*{\fill}\\
+}\hlstd{\ \ \ \ \ \ }\hlstd{}\hlkwb{const\ }\hlstd{UMATInt}\hlstd{\ \ }\hlstd{}\hlsym{{*}}\hlstd{}\hlkwb{const}\hlstd{}\hlsym{,\ }\hlstd{}\hlcom{/{*}\ entier\ définissant\ le\ type\ de\ calcul}\hlstd{\ \ }\hlcom{{*}/}\hlstd{\hspace*{\fill}\\
+}\hlstd{\ \ \ \ \ \ }\hlstd{UMATInt}\hlstd{\ \ }\hlstd{}\hlsym{{*}}\hlstd{}\hlkwb{const}\hlstd{}\hlsym{);}\hlstd{}\hlcom{/{*}\ code\ sortie\ {*}/}

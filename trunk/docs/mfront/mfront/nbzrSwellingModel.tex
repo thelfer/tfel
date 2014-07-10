@@ -1,0 +1,34 @@
+\noindent
+\ttfamily
+\hlstd{@Parser PleiadesModel}\hlsym{;}\hspace*{\fill}\\
+\hlstd{@Model}\hlstd{\ \ }\hlstd{NbZrCSwellingModelTest}\hlsym{;}\hspace*{\fill}\\
+\hlstd{@Author Helfer Thomas}\hlsym{;}\hspace*{\fill}\\
+\hlstd{@Date}\hlstd{\ \ \ }\hlstd{}\hlnum{23 }\hlstd{Nov }\hlnum{2007}\hlstd{}\hlsym{;}\hspace*{\fill}\\
+\hlstd{\hspace*{\fill}\\
+@LocalParameter TabString domains}\hlsym{;}\hspace*{\fill}\\
+\hlstd{domains}\hlsym{.}\hlstd{}\hlkwd{setDefaultValue}\hlstd{}\hlsym{(}\hlstd{}\hlstr{"MATRIX"}\hlstd{}\hlsym{,}\hlstd{}\hlstr{"RING"}\hlstd{}\hlsym{);}\hspace*{\fill}\\
+\hlstd{\hspace*{\fill}\\
+@BindDomainToParameter }\hlstr{"domains"}\hlstd{}\hlsym{;}\hspace*{\fill}\\
+\hlstd{\hspace*{\fill}\\
+@Output s}\hlsym{;}\hspace*{\fill}\\
+\hlstd{s}\hlsym{.}\hlstd{}\hlkwd{setGlossaryName}\hlstd{}\hlsym{(}\hlstd{}\hlstr{"SolidSwelling"}\hlstd{}\hlsym{);}\hspace*{\fill}\\
+\hlstd{s}\hlsym{.}\hlstd{}\hlkwd{setDepth}\hlstd{}\hlsym{(}\hlstd{}\hlnum{1}\hlstd{}\hlsym{);}\hspace*{\fill}\\
+\hlstd{\hspace*{\fill}\\
+@LoadingVariable dpaEv}\hlsym{;}\hspace*{\fill}\\
+\hlstd{dpaEv}\hlsym{.}\hlstd{}\hlkwd{setEntryName}\hlstd{}\hlsym{(}\hlstd{}\hlstr{"DisplacementPerAtome"}\hlstd{}\hlsym{);}\hspace*{\fill}\\
+\hlstd{dpaEv}\hlsym{.}\hlstd{}\hlkwd{setDepth}\hlstd{}\hlsym{(}\hlstd{}\hlnum{1}\hlstd{}\hlsym{);}\hspace*{\fill}\\
+\hlstd{\hspace*{\fill}\\
+@Input T}\hlsym{;}\hspace*{\fill}\\
+\hlstd{T}\hlsym{.}\hlstd{}\hlkwd{setGlossaryName}\hlstd{}\hlsym{(}\hlstd{}\hlstr{"Temperature"}\hlstd{}\hlsym{);}\hspace*{\fill}\\
+\hlstd{T}\hlsym{.}\hlstd{}\hlkwd{setDepth}\hlstd{}\hlsym{(}\hlstd{}\hlnum{1}\hlstd{}\hlsym{);}\hspace*{\fill}\\
+\hlstd{\hspace*{\fill}\\
+@Function compute}\hspace*{\fill}\\
+\hlsym{\{}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ }\hlstd{}\hlkwb{const double }\hlstd{ddpa }\hlsym{= }\hlstd{dpaEv}\hlsym{{-}}\hlstd{dpaEv\textunderscore 1}\hlsym{;}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ }\hlstd{}\hlkwb{const double }\hlstd{dpa}\hlstd{\ \ }\hlstd{}\hlsym{= }\hlstd{}\hlnum{0.5}\hlstd{}\hlsym{{*}(}\hlstd{dpaEv\textunderscore 1}\hlsym{+}\hlstd{dpaEv}\hlsym{);}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ }\hlstd{}\hlkwb{const double }\hlstd{tmp}\hlstd{\ \ }\hlstd{}\hlsym{= }\hlstd{}\hlkwd{max}\hlstd{}\hlsym{(}\hlstd{}\hlnum{400}\hlstd{}\hlsym{.,}\hlstd{}\hlnum{370.56}\hlstd{}\hlsym{{*}}\hlstd{dpa}\hlsym{);}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ }\hlstd{}\hlkwb{const double }\hlstd{theta }\hlsym{= }\hlstd{}\hlnum{0.5}\hlstd{}\hlsym{{*}(}\hlstd{T\textunderscore 1}\hlsym{+}\hlstd{T}\hlsym{){-}}\hlstd{}\hlnum{273.15}\hlstd{}\hlsym{;}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ }\hlstd{s }\hlsym{= }\hlstd{s\textunderscore 1 }\hlsym{+ }\hlstd{}\hlnum{1.824e{-}3}\hlstd{}\hlsym{{*}}\hlstd{}\hlkwd{exp}\hlstd{}\hlsym{({-}(}\hlstd{theta}\hlsym{{-}}\hlstd{}\hlnum{800}\hlstd{}\hlsym{.){*}(}\hlstd{theta}\hlsym{{-}}\hlstd{}\hlnum{800}\hlstd{}\hlsym{.)/}\hlstd{tmp}\hlsym{){*}}\hlstd{ddpa}\hlsym{;}\hspace*{\fill}\\
+\hlstd{}\hlsym{\} }\hlstd{}\hlslc{// end of function compute}\hlstd{}\hspace*{\fill}\\
+\mbox{}
+\normalfont

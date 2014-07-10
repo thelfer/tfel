@@ -1,0 +1,15 @@
+@Parser    DefaultParser;
+@Behaviour OrthotropicElastic;
+@Author    Helfer Thomas;
+@Date      10/03/11;
+
+@OrthotropicBehaviour;
+@RequireStiffnessTensor;
+@ProvidesSymmetricTangentOperator;
+
+@Integrator{
+  sig = D*(eto+deto);
+  if(computeTangentOperator_){
+    Dt = D;
+  }
+}

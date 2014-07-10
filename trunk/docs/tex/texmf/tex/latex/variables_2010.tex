@@ -1,0 +1,138 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%% Definition des differents champs de la note technique %%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newcommand{\codebarre}[1]{\def\Procodebarre{#1}}
+\newcommand{\signatures}[4]{\def\Prosignatures{
+        \put(#1,#2){\includegraphics[scale=#3]{#4}}}}
+\newcommand{\dates}[4]{\def\Prodates{
+        \put(#1,#2){\includegraphics[scale=#3]{#4}}}}
+
+\newcommand{\centre}[1]{\def\Procentre{#1}}
+\newcommand{\centretitre}[1]{\def\Procentretitre{#1}}
+\newcommand{\centrenom}[1]{\def\Procentretitre{#1}}
+\newcommand{\direction}[1]{\def\Prodirection{#1}}
+\newcommand{\directionnom}[1]{\def\Prodirectiontitre{#1}}
+\newcommand{\departement}[1]{\def\Prodepartement{#1}}
+\newcommand{\departementnom}[1]{\def\Prodepartementtitre{#1}}
+
+\def\Proservice{}
+\newcommand{\service}[1]{\def\Proservice{#1}}
+\newcommand{\servicenom}[1]{\def\Proservicetitre{#1}}
+\def\Prolaboratoire{}
+\newcommand{\laboratoire}[1]{\def\Prolaboratoire{#1}}
+\newcommand{\laboratoiretitre}[1]{\def\Prolaboratoiretitre{#1}}
+
+% compatibilite modele 2005
+\newcommand{\directiontitre}[1]{\def\Prodirectiontitre{#1}}
+\newcommand{\departementtitre}[1]{\def\Prodepartementtitre{#1}}
+\newcommand{\servicetitre}[1]{\def\Proservicetitre{#1}}
+
+%cahier des charges
+\newcommand{\cdc}[1]{\def\Procdc{#1}}
+
+\def\Protitre{Titre non d\'efini~!}
+\newcommand{\titre}[1]{\def\Protitre{#1}}
+
+\newcommand{\titrecourt}[1]{\def\Protitrecourt{#1}}
+
+\def\Proauteurs{Auteurs non d\'efinis}
+\newcommand{\auteurs}[1]{\def\Proauteurs{#1}}
+\newcommand{\affiliation}[1]{\def\Proaffiliation{#1}}
+
+\def\Proredacteur{}
+\newcommand{\redacteur}[1]{\def\Proredacteur{#1}}
+\newcommand{\redacteura}[1]{\def\Proredacteura{#1}}
+\newcommand{\redacteurb}[1]{\def\Proredacteurb{#1}}
+
+\def\Proverificateur{}
+\newcommand{\verificateur}[1]{\def\Proverificateur{#1}}
+\newcommand{\verificateura}[1]{\def\Proverificateura{#1}}
+
+\newcommand{\sujet}[1]{\def\Prosujet{#1}}
+
+\def\Prodate{}
+\renewcommand{\date}[1]{\def\Prodate{#1}}
+\def\Prodateversion{---}
+\newcommand{\dateversion}[1]{\def\Prodateversion{#1}}
+\newcommand{\version}[1]{\def\Proversion{#1}}
+
+\def\Pronumero{}
+\newcommand{\numero}[1]{\def\Pronumero{#1}}
+\def\Proindice{}
+\newcommand{\indice}[1]{\def\Proindice{#1}}
+
+\def\Probatiment{??}
+\newcommand{\batiment}[1]{\def\Probatiment{#1}}
+\def\Protelephone{?? ??}
+\newcommand{\telephone}[1]{\def\Protelephone{#1}}
+\def\Profax{?? ??}
+\newcommand{\fax}[1]{\def\Profax{#1}}
+% \Promail is undefined by default :
+\newcommand{\mail}[1]{\def\Promail{#1}}
+
+\def\Proclients{---}
+\newcommand{\clients}[1]{\def\Proclients{#1}}
+\def\Proaccords{---}
+\newcommand{\accords}[1]{\def\Proaccords{#1}}
+\def\Protypeaction{---}
+\newcommand{\typeaction}[1]{\def\Protypeaction{#1}}
+\def\Prodob{DISN}
+\newcommand{\dob}[1]{\def\Prodob{#1}}
+\def\Prodomaine{\`a renseigner}
+\newcommand{\domaine}[1]{\def\Prodomaine{#1}}
+\def\Procadre{\`a renseigner}
+\newcommand{\programmerecherche}[1]{\def\Procadre{#1}}
+\def\Pronumeroaffaire{\`a renseigner}
+\newcommand{\numeroaffaire}[1]{\def\Pronumeroaffaire{#1}}
+\newcommand{\jalon}[2][X]{\def\Projalon{#1}\def\Projalonintitule{#2}}
+%\newcommand{\jalonintitule}[1]{\def\Projalonintitule{#1}}
+\def\Prodelai{Permanent}
+\newcommand{\delai}[1]{\def\Prodelai{#1}}
+\def\Procahierlaboratoire{---}
+\newcommand{\cahierlaboratoire}[1]{\def\Procahierlaboratoire{#1}}
+\def\Proevolution{\'Emission initiale}
+\newcommand{\evolution}[1]{\def\Proevolution{#1}}
+
+\def\Proapprobateur{}
+\newcommand{\approbateur}[1]{\def\Proapprobateur{#1}}
+\def\Proemetteur{}
+\newcommand{\emetteur}[1]{\def\Proemetteur{#1}}
+
+\newcommand{\motsclefs}[1]{\def\Promotsclefs{#1}}
+\newcommand{\resumecea}[1]{\def\Proresumecea{#1}}
+
+%%\newcommand{\datereunion}[1]{\def\Prodatereunion{#1}}
+%%\newcommand{\lieureunion}[1]{\def\Prolieureunion{#1}}
+%%\newcommand{\objetreunion}[1]{\def\Proobjetreunion{#1}}
+%%\newcommand{\parcitipant}[1]{\def\Proparcitipant{#1}}
+%%\newcommand{\listediffusion}[1]{\def\Prolistediffusion{#1}}
+%%\newcommand{\organisateur}[1]{\def\Proorganisateur{#1}}
+%%\newcommand{\mailorganisateur}[1]{\def\Promailorganisateur{#1}}
+%%\newcommand{\ordredujour}[1]{\def\Proordredujour{#1}}
+%%\newcommand{\copies}[1]{\def\Procopies{#1}}
+
+\newcommand{\stylebib}[1]{\def\Prostylebib{#1}}
+\newcommand{\fichierbib}[1]{\def\Profichierbib{#1}}
+
+\newcommand{\signature}[1]{\def\Prosignature{#1}}
+\newcommand{\sigappro}[1]{\def\Prosigappro{#1}}
+\newcommand{\sigverif}[1]{\def\Prosigverif{#1}}
+\newcommand{\sigemetteur}[1]{\def\Prosigemetteur{#1}}
+
+\newcommand{\dateredac}[1]{\def\Prodateredac{#1}}
+\newcommand{\dateverif}[1]{\def\Prodateverif{#1}}
+\newcommand{\dateappro}[1]{\def\Prodateappro{#1}}
+\newcommand{\dateemett}[1]{\def\Prodateemett{#1}}
+
+\def\Proclassification{DO}
+\newcommand{\classification}[1]{\def\Proclassification{#1}}
+
+\newcommand{\diffusionexternecomment}[1]{\def\Prodiffusionexternecomment{#1}}
+\newcommand{\diffusionexterne}[1]{\def\Prodiffusionexterne{#1}}
+\newcommand{\diffusioninterne}[1]{\def\Prodiffusioninterne{#1}}
+\newboolean{coupe}
+\newcommand{\CoupeListeDiffusion}{\setboolean{coupe}{true}}
+
+% Emissions
+%\def\Proemission{{\scshape\Prodate} \vspace{30mm} & {\scshape \'Emission initiale} & 0 \\}
+%\newcommand{\emission}[1]{\def\Proemission{#1}}

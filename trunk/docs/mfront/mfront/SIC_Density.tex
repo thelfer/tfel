@@ -1,0 +1,27 @@
+\noindent
+\ttfamily
+\hlstd{@Parser MaterialLaw}\hlsym{;}\hspace*{\fill}\\
+\hlstd{@Law}\hlstd{\ \ \ \ }\hlstd{SIC\textunderscore DENSITY}\hlsym{;}\hspace*{\fill}\\
+\hlstd{@Author Éric Brunon}\hlsym{;}\hspace*{\fill}\\
+\hlstd{@Date}\hlstd{\ \ \ }\hlstd{}\hlnum{2007}\hlstd{}\hlsym{{-}}\hlstd{}\hlnum{12}\hlstd{}\hlsym{{-}}\hlstd{}\hlnum{06}\hlstd{}\hlsym{;}\hspace*{\fill}\\
+\hlstd{\hspace*{\fill}\\
+@Description}\hlsym{\{}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ }\hlstd{Origine inconnue}\hspace*{\fill}\\
+\hlsym{\}}\hspace*{\fill}\\
+\hlstd{}\hspace*{\fill}\\
+\hlslc{// changing the name of output}\hspace*{\fill}\\
+\hlstd{@Output r}\hlsym{;}\hspace*{\fill}\\
+\hlstd{}\hspace*{\fill}\\
+\hlslc{// input of the law}\hspace*{\fill}\\
+\hlstd{@Input p}\hlsym{;}\hspace*{\fill}\\
+\hlstd{p}\hlsym{.}\hlstd{}\hlkwd{setGlossaryName}\hlstd{}\hlsym{(}\hlstd{}\hlstr{"Porosity"}\hlstd{}\hlsym{);}\hspace*{\fill}\\
+\hlstd{}\hspace*{\fill}\\
+\hlslc{// porosity bounds}\hspace*{\fill}\\
+\hlstd{@PhysicalBounds p in }\hlsym{{[}}\hlstd{}\hlnum{0}\hlstd{}\hlsym{:}\hlstd{}\hlnum{1}\hlstd{}\hlsym{{]};}\hspace*{\fill}\\
+\hlstd{\hspace*{\fill}\\
+@Function}\hlsym{\{}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ }\hlstd{}\hlkwb{static const double }\hlstd{a }\hlsym{=}\hlstd{\ \ }\hlsym{}\hlstd{}\hlnum{3215}\hlstd{}\hlsym{. ;}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ }\hlstd{r}\hlsym{=}\hlstd{a}\hlsym{{*}(}\hlstd{}\hlnum{1}\hlstd{}\hlsym{.{-}}\hlstd{p}\hlsym{);}\hspace*{\fill}\\
+\hlstd{}\hlsym{\} }\hlstd{}\hlslc{// end of function}\hlstd{}\hspace*{\fill}\\
+\mbox{}
+\normalfont

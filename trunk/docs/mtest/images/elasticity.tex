@@ -1,0 +1,40 @@
+\noindent
+\ttfamily
+\hlstd{@Author\ Helfer\ Thomas}\hlsym{;}\hspace*{\fill}\\
+\hlstd{@Date}\hlstd{\ \ \ }\hlstd{}\hlnum{09\ }\hlstd{avril\ }\hlnum{2013}\hlstd{}\hlsym{;}\hspace*{\fill}\\
+\hlstd{@Description}\hlsym{\{}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ }\hlstd{}\hlstr{"Test\ simple\ en\ traction\ uniaxiale\ imposant\ que\ la\ composante\ EXX}\hspace*{\fill}\\
+\hlstr{}\hlstd{\ \ }\hlstr{de\ la\ déformation\ varie\ dans\ le\ temps\ de\ manière\ sinusoïdale.\ La}\hspace*{\fill}\\
+\hlstr{}\hlstd{\ \ }\hlstr{contrainte\ SXX\ est\ égale\ à\ cette\ déformation\ multipliée\ par\ le}\hspace*{\fill}\\
+\hlstr{}\hlstd{\ \ }\hlstr{module\ d'Young.\ Les\ déformations\ EYY\ et\ EZZ\ sont\ égales\ à\ cette}\hspace*{\fill}\\
+\hlstr{}\hlstd{\ \ }\hlstr{déformation\ multipliée\ par\ l'opposé\ du\ coefficient\ de\ Poisson."}\hlstd{}\hspace*{\fill}\\
+\hlsym{\};}\hspace*{\fill}\\
+\hlstd{\hspace*{\fill}\\
+@Behaviour}\hlsym{$<$}\hlstd{aster}\hlsym{$>$\ }\hlstd{}\hlstr{'libMFrontAsterBehaviours.so'}\hlstd{\ }\hlstr{'asterelasticity'}\hlstd{}\hlsym{;}\hspace*{\fill}\\
+\hlstd{@MaterialProperty}\hlsym{$<$}\hlstd{constant}\hlsym{$>$\ }\hlstd{}\hlstr{'YoungModulus'}\hlstd{}\hlstd{\ \ \ \ \ }\hlstd{}\hlnum{150}\hlstd{}\hlsym{.}\hlstd{e9}\hlsym{;}\hspace*{\fill}\\
+\hlstd{@MaterialProperty}\hlsym{$<$}\hlstd{constant}\hlsym{$>$\ }\hlstd{}\hlstr{'PoissonRatio'}\hlstd{}\hlstd{\ \ \ \ \ \ \ }\hlstd{}\hlnum{0.3}\hlstd{}\hlsym{;}\hspace*{\fill}\\
+\hlstd{@MaterialProperty}\hlsym{$<$}\hlstd{constant}\hlsym{$>$\ }\hlstd{}\hlstr{'MassDensity'}\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{}\hlnum{0}\hlstd{}\hlsym{.;}\hspace*{\fill}\\
+\hlstd{@MaterialProperty}\hlsym{$<$}\hlstd{constant}\hlsym{$>$\ }\hlstd{}\hlstr{'ThermalExpansion'}\hlstd{}\hlstd{\ \ \ }\hlstd{}\hlnum{0}\hlstd{}\hlsym{.;}\hspace*{\fill}\\
+\hlstd{\hspace*{\fill}\\
+@ExternalStateVariable\ }\hlstr{'Temperature'}\hlstd{\ }\hlsym{\{}\hlstd{}\hlnum{0}\hlstd{}\hlsym{:}\hlstd{}\hlnum{293.15}\hlstd{}\hlsym{,}\hlstd{}\hlnum{3600}\hlstd{}\hlsym{.:}\hlstd{}\hlnum{800}\hlstd{}\hlsym{\};}\hspace*{\fill}\\
+\hlstd{\hspace*{\fill}\\
+@Real\ }\hlstr{'e0'}\hlstd{\ }\hlnum{1}\hlstd{}\hlsym{.}\hlstd{e}\hlsym{{-}}\hlstd{}\hlnum{3}\hlstd{}\hlsym{;}\hspace*{\fill}\\
+\hlstd{@ImposedStrain}\hlsym{$<$}\hlstd{function}\hlsym{$>$\ }\hlstd{}\hlstr{'EXX'}\hlstd{\ }\hlstr{'e0{*}sin(t/900.)'}\hlstd{}\hlsym{;}\hspace*{\fill}\\
+\hlstd{\hspace*{\fill}\\
+@Times\ }\hlsym{\{}\hlstd{}\hlnum{0}\hlstd{}\hlsym{.,}\hlstd{}\hlnum{3600\ }\hlstd{in\ }\hlnum{20}\hlstd{}\hlsym{\};}\hspace*{\fill}\\
+\hlstd{}\hspace*{\fill}\\
+\hlslc{//\ stresses}\hspace*{\fill}\\
+\hlstd{@Test}\hlsym{$<$}\hlstd{function}\hlsym{$>$\ }\hlstd{}\hlstr{'SXX'}\hlstd{\ }\hlstr{'YoungModulus{*}EXX'}\hlstd{}\hlstd{\ \ }\hlstd{}\hlnum{1}\hlstd{}\hlsym{.}\hlstd{e}\hlsym{{-}}\hlstd{}\hlnum{3}\hlstd{}\hlsym{;}\hspace*{\fill}\\
+\hlstd{@Test}\hlsym{$<$}\hlstd{function}\hlsym{$>$\ }\hlstd{}\hlstr{'SYY'}\hlstd{\ }\hlstr{'0.'}\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlnum{1}\hlstd{}\hlsym{.}\hlstd{e}\hlsym{{-}}\hlstd{}\hlnum{3}\hlstd{}\hlsym{;}\hspace*{\fill}\\
+\hlstd{@Test}\hlsym{$<$}\hlstd{function}\hlsym{$>$\ }\hlstd{}\hlstr{'SZZ'}\hlstd{\ }\hlstr{'0.'}\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlnum{1}\hlstd{}\hlsym{.}\hlstd{e}\hlsym{{-}}\hlstd{}\hlnum{3}\hlstd{}\hlsym{;}\hspace*{\fill}\\
+\hlstd{@Test}\hlsym{$<$}\hlstd{function}\hlsym{$>$\ }\hlstd{}\hlstr{'SXY'}\hlstd{\ }\hlstr{'0.'}\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlnum{1}\hlstd{}\hlsym{.}\hlstd{e}\hlsym{{-}}\hlstd{}\hlnum{3}\hlstd{}\hlsym{;}\hspace*{\fill}\\
+\hlstd{@Test}\hlsym{$<$}\hlstd{function}\hlsym{$>$\ }\hlstd{}\hlstr{'SXZ'}\hlstd{\ }\hlstr{'0.'}\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlnum{1}\hlstd{}\hlsym{.}\hlstd{e}\hlsym{{-}}\hlstd{}\hlnum{3}\hlstd{}\hlsym{;}\hspace*{\fill}\\
+\hlstd{@Test}\hlsym{$<$}\hlstd{function}\hlsym{$>$\ }\hlstd{}\hlstr{'SYZ'}\hlstd{\ }\hlstr{'0.'}\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlnum{1}\hlstd{}\hlsym{.}\hlstd{e}\hlsym{{-}}\hlstd{}\hlnum{3}\hlstd{}\hlsym{;}\hspace*{\fill}\\
+\hlstd{}\hlslc{//\ strains}\hspace*{\fill}\\
+\hlstd{@Test}\hlsym{$<$}\hlstd{function}\hlsym{$>$\ }\hlstd{}\hlstr{'EYY'}\hlstd{\ }\hlstr{'{-}PoissonRatio{*}EXX'}\hlstd{\ }\hlnum{1}\hlstd{}\hlsym{.}\hlstd{e}\hlsym{{-}}\hlstd{}\hlnum{3}\hlstd{}\hlsym{;}\hspace*{\fill}\\
+\hlstd{@Test}\hlsym{$<$}\hlstd{function}\hlsym{$>$\ }\hlstd{}\hlstr{'EZZ'}\hlstd{\ }\hlstr{'{-}PoissonRatio{*}EXX'}\hlstd{\ }\hlnum{1}\hlstd{}\hlsym{.}\hlstd{e}\hlsym{{-}}\hlstd{}\hlnum{3}\hlstd{}\hlsym{;}\hspace*{\fill}\\
+\hlstd{@Test}\hlsym{$<$}\hlstd{function}\hlsym{$>$\ }\hlstd{}\hlstr{'EXY'}\hlstd{\ }\hlstr{'0.'}\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlnum{1}\hlstd{}\hlsym{.}\hlstd{e}\hlsym{{-}}\hlstd{}\hlnum{3}\hlstd{}\hlsym{;}\hspace*{\fill}\\
+\hlstd{@Test}\hlsym{$<$}\hlstd{function}\hlsym{$>$\ }\hlstd{}\hlstr{'EXZ'}\hlstd{\ }\hlstr{'0.'}\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlnum{1}\hlstd{}\hlsym{.}\hlstd{e}\hlsym{{-}}\hlstd{}\hlnum{3}\hlstd{}\hlsym{;}\hspace*{\fill}\\
+\hlstd{@Test}\hlsym{$<$}\hlstd{function}\hlsym{$>$\ }\hlstd{}\hlstr{'EYZ'}\hlstd{\ }\hlstr{'0.'}\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlnum{1}\hlstd{}\hlsym{.}\hlstd{e}\hlsym{{-}}\hlstd{}\hlnum{3}\hlstd{}\hlsym{;}\hlstd{}\hspace*{\fill}\\
+\mbox{}
+\normalfont

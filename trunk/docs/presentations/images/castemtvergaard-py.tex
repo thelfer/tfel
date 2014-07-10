@@ -1,0 +1,41 @@
+\noindent
+\ttfamily
+\hlstd{}\hlkwa{import\ }\hlstd{std}\hspace*{\fill}\\
+\hlkwa{import\ }\hlstd{tfel}\hlopt{.}\hlstd{tests}\hspace*{\fill}\\
+\hlkwa{import\ }\hlstd{tfel}\hlopt{.}\hlstd{math}\hspace*{\fill}\\
+\hlkwa{from\ }\hlstd{mfront}\hlopt{.}\hlstd{mtest\ }\hlkwa{import\ }\hlstd{}\hlopt{{*}}\hspace*{\fill}\\
+\hlstd{\hspace*{\fill}\\
+m\ }\hlopt{=\ }\hlstd{}\hlkwd{MTest}\hlstd{}\hlopt{()}\hspace*{\fill}\\
+\hlstd{\hspace*{\fill}\\
+umax\ }\hlopt{=\ }\hlstd{}\hlnum{3}\hlstd{}\hlopt{.}\hlstd{e}\hlopt{{-}}\hlstd{}\hlnum{6}\hspace*{\fill}\\
+\hlstd{m}\hlopt{.}\hlstd{}\hlkwd{setBehaviour}\hlstd{}\hlopt{(}\hlstd{}\hlstr{"umat"}\hlstd{}\hlopt{,}\hlstd{}\hlstr{"src/libUmatBehaviour.so"}\hlstd{}\hlopt{,}\hlstd{}\hlstr{"umattvergaard"}\hlstd{}\hlopt{)}\hspace*{\fill}\\
+\hlstd{m}\hlopt{.}\hlstd{}\hlkwd{setMaterialProperty}\hlstd{}\hlopt{(}\hlstd{}\hlstr{'NormalStiffness'}\hlstd{}\hlopt{,}\hlstd{}\hlnum{2}\hlstd{}\hlopt{.}\hlstd{e16}\hlopt{)}\hspace*{\fill}\\
+\hlstd{m}\hlopt{.}\hlstd{}\hlkwd{setMaterialProperty}\hlstd{}\hlopt{(}\hlstd{}\hlstr{'TangentialStiffness'}\hlstd{}\hlopt{,}\hlstd{}\hlnum{2}\hlstd{}\hlopt{.}\hlstd{e16}\hlopt{)}\hspace*{\fill}\\
+\hlstd{m}\hlopt{.}\hlstd{}\hlkwd{setMaterialProperty}\hlstd{}\hlopt{(}\hlstd{}\hlstr{'MassDensity'}\hlstd{}\hlopt{,}\hlstd{}\hlnum{0}\hlstd{}\hlopt{.)}\hspace*{\fill}\\
+\hlstd{m}\hlopt{.}\hlstd{}\hlkwd{setMaterialProperty}\hlstd{}\hlopt{(}\hlstd{}\hlstr{'NormalThermalExpansion'}\hlstd{}\hlopt{,}\hlstd{}\hlnum{0}\hlstd{}\hlopt{.)}\hspace*{\fill}\\
+\hlstd{m}\hlopt{.}\hlstd{}\hlkwd{setMaterialProperty}\hlstd{}\hlopt{(}\hlstd{}\hlstr{'MaximumStress'}\hlstd{}\hlopt{,}\hlstd{}\hlnum{200}\hlstd{}\hlopt{.}\hlstd{e6}\hlopt{)}\hspace*{\fill}\\
+\hlstd{m}\hlopt{.}\hlstd{}\hlkwd{setMaterialProperty}\hlstd{}\hlopt{(}\hlstd{}\hlstr{'MaximumOpeningDisplacement'}\hlstd{}\hlopt{,}\hlstd{}\hlnum{3}\hlstd{}\hlopt{.}\hlstd{e}\hlopt{{-}}\hlstd{}\hlnum{6}\hlstd{}\hlopt{)}\hspace*{\fill}\\
+\hlstd{\hspace*{\fill}\\
+m}\hlopt{.}\hlstd{}\hlkwd{setExternalStateVariable}\hlstd{}\hlopt{(}\hlstd{}\hlstr{"Temperature"}\hlstd{}\hlopt{,}\hlstd{}\hlnum{293.15}\hlstd{}\hlopt{)}\hspace*{\fill}\\
+\hlstd{}\hspace*{\fill}\\
+\hlslc{\#\ Attention,\ pour\ pouvoir\ modifier\ l'evolution\ du\ chargement,\ il\ faut}\hspace*{\fill}\\
+\hlstd{}\hlslc{\#\ le\ declarer\ avec\ un\ dictionnaire\ !}\hspace*{\fill}\\
+\hlstd{m}\hlopt{.}\hlstd{}\hlkwd{setImposedOpeningDisplacement}\hlstd{}\hlopt{(}\hlstd{}\hlstr{'Un'}\hlstd{}\hlopt{,\{}\hlstd{}\hlnum{0}\hlstd{}\hlopt{.:}\hlstd{}\hlnum{0}\hlstd{}\hlopt{.\})}\hspace*{\fill}\\
+\hlstd{\hspace*{\fill}\\
+s}\hlstd{\ \ }\hlstd{}\hlopt{=\ }\hlstd{}\hlkwd{MTestCurrentState}\hlstd{}\hlopt{()}\hspace*{\fill}\\
+\hlstd{wk\ }\hlopt{=\ }\hlstd{}\hlkwd{MTestWorkSpace}\hlstd{}\hlopt{()}\hspace*{\fill}\\
+\hlstd{\hspace*{\fill}\\
+m}\hlopt{.}\hlstd{}\hlkwd{setOutputFileName}\hlstd{}\hlopt{(}\hlstd{}\hlstr{"castemtvergaard3.res"}\hlstd{}\hlopt{)}\hspace*{\fill}\\
+\hlstd{m}\hlopt{.}\hlstd{}\hlkwd{completeInitialisation}\hlstd{}\hlopt{()}\hspace*{\fill}\\
+\hlstd{m}\hlopt{.}\hlstd{}\hlkwd{initializeCurrentState}\hlstd{}\hlopt{(}\hlstd{s}\hlopt{)}\hspace*{\fill}\\
+\hlstd{m}\hlopt{.}\hlstd{}\hlkwd{initializeWorkSpace}\hlstd{}\hlopt{(}\hlstd{wk}\hlopt{)}\hspace*{\fill}\\
+\hlstd{\hspace*{\fill}\\
+t\ }\hlopt{=\ {[}}\hlstd{}\hlnum{3.6}\hlstd{}\hlopt{{*}}\hlstd{i\ }\hlkwa{for\ }\hlstd{i\ }\hlkwa{in\ }\hlstd{}\hlkwb{range}\hlstd{}\hlopt{(}\hlstd{}\hlnum{0}\hlstd{}\hlopt{,}\hlstd{}\hlnum{1001}\hlstd{}\hlopt{){]}}\hspace*{\fill}\\
+\hlstd{m}\hlopt{.}\hlstd{}\hlkwd{printOutput}\hlstd{}\hlopt{(}\hlstd{t}\hlopt{{[}}\hlstd{}\hlnum{0}\hlstd{}\hlopt{{]},}\hlstd{s}\hlopt{)}\hspace*{\fill}\\
+\hlstd{}\hspace*{\fill}\\
+\hlslc{\#\ do\ the\ job}\hspace*{\fill}\\
+\hlstd{}\hlkwa{for\ }\hlstd{i\ }\hlkwa{in\ }\hlstd{}\hlkwb{range}\hlstd{}\hlopt{(}\hlstd{}\hlnum{0}\hlstd{}\hlopt{,}\hlstd{}\hlkwb{len}\hlstd{}\hlopt{(}\hlstd{t}\hlopt{){-}}\hlstd{}\hlnum{1}\hlstd{}\hlopt{):}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ \ \ }\hlstd{m}\hlopt{.}\hlstd{}\hlkwd{setEvolutionValue}\hlstd{}\hlopt{(}\hlstd{}\hlstr{'Un'}\hlstd{}\hlopt{,}\hlstd{t}\hlopt{{[}}\hlstd{i}\hlopt{+}\hlstd{}\hlnum{1}\hlstd{}\hlopt{{]},}\hlstd{umax}\hlopt{{*}}\hlstd{t}\hlopt{{[}}\hlstd{i}\hlopt{+}\hlstd{}\hlnum{1}\hlstd{}\hlopt{{]}/}\hlstd{t}\hlopt{{[}{-}}\hlstd{}\hlnum{1}\hlstd{}\hlopt{{]})}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ \ \ }\hlstd{m}\hlopt{.}\hlstd{}\hlkwd{execute}\hlstd{}\hlopt{(}\hlstd{s}\hlopt{,}\hlstd{wk}\hlopt{,}\hlstd{t}\hlopt{{[}}\hlstd{i}\hlopt{{]},}\hlstd{t}\hlopt{{[}}\hlstd{i}\hlopt{+}\hlstd{}\hlnum{1}\hlstd{}\hlopt{{]})}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlkwa{print\ }\hlstd{s}\hlopt{.}\hlstd{s0\hspace*{\fill}\\
+}\hlstd{\ \ \ \ }\hlstd{m}\hlopt{.}\hlstd{}\hlkwd{printOutput}\hlstd{}\hlopt{(}\hlstd{t}\hlopt{{[}}\hlstd{i}\hlopt{+}\hlstd{}\hlnum{1}\hlstd{}\hlopt{{]},}\hlstd{s}\hlopt{)}

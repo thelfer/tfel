@@ -1,0 +1,55 @@
+mfront:
+	TEXMFHOME=@abs_top_srcdir@/docs/tex/texmf        latex  mfront.tex
+	TEXMFHOME=@abs_top_srcdir@/docs/tex/texmf        latex  mfront.tex
+	BSTINPUTS=@abs_top_srcdir@/docs/tex/texmf/bibtex bibtex mfront
+	-makeindex -s @srcdir@/style.ist env.idx
+	-makeindex -s @srcdir@/style.ist mkeys.idx
+	TEXMFHOME=@abs_top_srcdir@/docs/tex/texmf        latex  mfront.tex
+	TEXMFHOME=@abs_top_srcdir@/docs/tex/texmf        latex  mfront.tex
+	TEXMFHOME=@abs_top_srcdir@/docs/tex/texmf        dvips -R0 mfront.dvi -o
+	ps2pdf mfront.ps
+
+behaviours:
+	TEXMFHOME=@abs_top_srcdir@/docs/tex/texmf        latex  behaviours.tex
+	TEXMFHOME=@abs_top_srcdir@/docs/tex/texmf        latex  behaviours.tex
+	BSTINPUTS=@abs_top_srcdir@/docs/tex/texmf/bibtex bibtex behaviours
+	-makeindex -s @srcdir@/style.ist env.idx
+	-makeindex -s @srcdir@/style.ist headers.idx
+	-makeindex -s @srcdir@/style.ist tfel.idx
+	-makeindex -s @srcdir@/style.ist mkeys.idx
+	TEXMFHOME=@abs_top_srcdir@/docs/tex/texmf        latex  behaviours.tex
+	TEXMFHOME=@abs_top_srcdir@/docs/tex/texmf        latex  behaviours.tex
+	TEXMFHOME=@abs_top_srcdir@/docs/tex/texmf        dvips -R0 behaviours.dvi -o
+	ps2pdf behaviours.ps
+
+aster:
+	TEXMFHOME=@abs_top_srcdir@/docs/tex/texmf        latex  aster.tex
+	TEXMFHOME=@abs_top_srcdir@/docs/tex/texmf        latex  aster.tex
+#	BSTINPUTS=@abs_top_srcdir@/docs/tex/texmf/bibtex bibtex aster
+	-makeindex -s @srcdir@/style.ist env.idx
+	-makeindex -s @srcdir@/style.ist headers.idx
+	-makeindex -s @srcdir@/style.ist tfel.idx
+	-makeindex -s @srcdir@/style.ist mkeys.idx
+	TEXMFHOME=@abs_top_srcdir@/docs/tex/texmf        latex  aster.tex
+	TEXMFHOME=@abs_top_srcdir@/docs/tex/texmf        latex  aster.tex
+	TEXMFHOME=@abs_top_srcdir@/docs/tex/texmf        dvips -R0 aster.dvi -o
+	ps2pdf aster.ps
+
+umat:
+	TEXMFHOME=@abs_top_srcdir@/docs/tex/texmf        latex  umat.tex
+	TEXMFHOME=@abs_top_srcdir@/docs/tex/texmf        latex  umat.tex
+	BSTINPUTS=@abs_top_srcdir@/docs/tex/texmf/bibtex bibtex umat
+	-makeindex -s @srcdir@/style.ist env.idx
+	-makeindex -s @srcdir@/style.ist headers.idx
+	-makeindex -s @srcdir@/style.ist tfel.idx
+	-makeindex -s @srcdir@/style.ist mkeys.idx
+	TEXMFHOME=@abs_top_srcdir@/docs/tex/texmf        latex  umat.tex
+	TEXMFHOME=@abs_top_srcdir@/docs/tex/texmf        latex  umat.tex
+	TEXMFHOME=@abs_top_srcdir@/docs/tex/texmf        dvips -R0 umat.dvi -o
+	ps2pdf umat.ps
+
+clean:
+	-$(RM) *.aux *.log
+	-$(RM) *.out *.toc
+	-$(RM) *.dvi *.ps
+	-$(RM) *.pdf

@@ -1,0 +1,34 @@
+@Parser MaterialLaw;
+@Material VanadiumAlloy;
+@Law      SpecificHeat_SRMA;
+@Author   T. Helfer;
+@Date     2008-11-17;
+
+
+@Description
+{
+  Corrélation établie sur la nuance V-5Cr-5Ti.
+  Valable à l état vierge et à l état irradié.
+
+  Propriétés extraites du document :
+
+  Propriétés et comportement mécanique d alliages
+    de Vanadium avant, après et sous irradiation
+    
+  Marion Le Flem, Jean-Luc Bechade, Annick Bougault,
+  Aurore Michaux, Lionel Gosmain, Jean-Louis Seran
+  DMN/SRMA/LA2M/NT/2008-2967/A
+}
+
+@Output Cp;
+
+@Input T;
+T.setGlossaryName("Temperature");
+
+@PhysicalBounds T in [0:*[;
+@Bounds T in [373.15:873.15];
+
+@Function
+{
+  Cp = 575.57-(21094./T);
+}

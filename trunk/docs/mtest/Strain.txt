@@ -1,0 +1,12 @@
+The @Strain let the user specifiy the inital value of the strains.
+
+This keyword is followed by an array. The size of this array must be
+equal to the number of components of symmetric tensors for the
+modelling hypothesis considered (see the @ModellingHypothesis
+keyword).
+
+Example:
+@Strain {0.000239466253465591,
+         -7.18398760396772e-05,
+         -7.18398760396772e-05,
+         0.,0.,0.};

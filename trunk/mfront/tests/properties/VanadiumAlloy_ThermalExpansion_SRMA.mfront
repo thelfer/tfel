@@ -1,0 +1,38 @@
+@Parser   MaterialLaw;
+@Material VanadiumAlloy;
+@Law      ThermalExpansion_SRMA;
+@Author   T. Helfer;
+@Date     2008-11-17;
+
+@Description
+{
+  Corrélation établie sur la nuance V-5Cr-5Ti.
+  Aucune indication n est donnée sur la validité
+  de la corrélation après irradiation.
+
+  Propriétés extraites du document :
+
+  Propriétés et comportement mécanique d alliages
+    de Vanadium avant, après et sous irradiation
+
+  Marion Le Flem, Jean-Luc Bechade, Annick Bougault,
+  Aurore Michaux, Lionel Gosmain, Jean-Louis Seran
+  DMN/SRMA/LA2M/NT/2008-2967/A
+}
+
+@Output alpha;
+
+@Input TK;
+TK.setGlossaryName("Temperature");
+
+@PhysicalBounds TK in [0:*[;
+@Bounds TK in [293.15:873.15];
+
+@Function
+{
+  const real a0 = 9.038;
+  const real a1 = 3.014e-3;
+  const real a2 = 4.959e-7;
+  const real TC = TK - 273.15 ;
+  alpha = 1e-6 * (((a2*TC + a1 ) * TC ) + a0 ) ;
+}

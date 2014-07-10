@@ -1,0 +1,85 @@
+\noindent
+\ttfamily
+\hlstd{@Author\ jmp}\hlsym{;}\hspace*{\fill}\\
+\hlstd{@Date}\hlstd{\ \ \ }\hlstd{}\hlnum{13\ 02\ 2013}\hlstd{}\hlsym{;}\hspace*{\fill}\\
+\hlstd{\hspace*{\fill}\\
+@Parser}\hlstd{\ \ \ \ }\hlstd{Implicit}\hlsym{;}\hspace*{\fill}\\
+\hlstd{@Behaviour\ Chaboche2}\hlsym{;}\hspace*{\fill}\\
+\hlstd{\hspace*{\fill}\\
+@Algorithm\ NewtonRaphson\textunderscore NumericalJacobian}\hlsym{;}\hspace*{\fill}\\
+\hlstd{@Theta\ }\hlnum{1.0\ }\hlstd{}\hlsym{;}\hspace*{\fill}\\
+\hlstd{@Epsilon\ }\hlnum{1}\hlstd{}\hlsym{.}\hlstd{e}\hlsym{{-}}\hlstd{}\hlnum{12\ }\hlstd{}\hlsym{;}\hspace*{\fill}\\
+\hlstd{@IterMax\ }\hlnum{200\ }\hlstd{}\hlsym{;}\hspace*{\fill}\\
+\hlstd{\hspace*{\fill}\\
+@MaterialProperty\ real\ young}\hlsym{;\ }\hlstd{}\hlcom{/{*}\ mandatory\ for\ castem\ {*}/}\hlstd{\hspace*{\fill}\\
+young}\hlsym{.}\hlstd{}\hlkwd{setGlossaryName}\hlstd{}\hlsym{(}\hlstd{}\hlstr{"YoungModulus"}\hlstd{}\hlsym{);}\hspace*{\fill}\\
+\hlstd{@MaterialProperty\ real\ nu}\hlsym{;}\hlstd{\ \ \ \ }\hlsym{}\hlstd{}\hlcom{/{*}\ mandatory\ for\ castem\ {*}/}\hlstd{\hspace*{\fill}\\
+nu}\hlsym{.}\hlstd{}\hlkwd{setGlossaryName}\hlstd{}\hlsym{(}\hlstd{}\hlstr{"PoissonRatio"}\hlstd{}\hlsym{);}\hspace*{\fill}\\
+\hlstd{@MaterialProperty\ real\ rho}\hlsym{;}\hlstd{\ \ \ }\hlsym{}\hlstd{}\hlcom{/{*}\ mandatory\ for\ castem\ {*}/}\hlstd{\hspace*{\fill}\\
+rho}\hlsym{.}\hlstd{}\hlkwd{setGlossaryName}\hlstd{}\hlsym{(}\hlstd{}\hlstr{"MassDensity"}\hlstd{}\hlsym{);}\hspace*{\fill}\\
+\hlstd{@MaterialProperty\ real\ alpha}\hlsym{;\ }\hlstd{}\hlcom{/{*}\ mandatory\ for\ castem\ {*}/}\hlstd{\hspace*{\fill}\\
+alpha}\hlsym{.}\hlstd{}\hlkwd{setGlossaryName}\hlstd{}\hlsym{(}\hlstd{}\hlstr{"ThermalExpansion"}\hlstd{}\hlsym{);}\hspace*{\fill}\\
+\hlstd{@MaterialProperty\ real\ Rinf}\hlsym{,}\hlstd{R0}\hlsym{,}\hlstd{b}\hlsym{,}\hlstd{k}\hlsym{,}\hlstd{w}\hlsym{;}\hspace*{\fill}\\
+\hlstd{@MaterialProperty\ real\ C1inf}\hlsym{,}\hlstd{g1}\hlsym{;}\hspace*{\fill}\\
+\hlstd{@MaterialProperty\ real\ C2inf}\hlsym{,}\hlstd{g2}\hlsym{,}\hlstd{E}\hlsym{,}\hlstd{NsurK}\hlsym{;}\hspace*{\fill}\\
+\hlstd{\hspace*{\fill}\\
+@Includes}\hlsym{\{}\hspace*{\fill}\\
+\hlstd{}\hldir{\#include}\hldstr{"TFEL/Material/Lame.hxx"}\hldir{}\hspace*{\fill}\\
+\hlstd{}\hlsym{\}}\hspace*{\fill}\\
+\hlstd{\hspace*{\fill}\\
+@StateVariable\ real}\hlstd{\ \ \ \ }\hlstd{p}\hlsym{;}\hspace*{\fill}\\
+\hlstd{@StateVariable\ Stensor\ a1}\hlsym{,}\hlstd{a2}\hlsym{;\ }\hspace*{\fill}\\
+\hlstd{@LocalVariable\ real}\hlstd{\ \ \ \ }\hlstd{lambda}\hlsym{,}\hlstd{mu}\hlsym{;}\hspace*{\fill}\\
+\hlstd{}\hspace*{\fill}\\
+\hlcom{/{*}\ Initialize\ Lame\ coefficients\ {*}/}\hlstd{\hspace*{\fill}\\
+@InitLocalVars}\hlsym{\{}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ }\hlstd{}\hlkwa{using\ namespace\ }\hlstd{tfel}\hlsym{::}\hlstd{material}\hlsym{::}\hlstd{lame}\hlsym{;}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ }\hlstd{lambda\ }\hlsym{=\ }\hlstd{}\hlkwd{computeLambda}\hlstd{}\hlsym{(}\hlstd{young}\hlsym{,}\hlstd{nu}\hlsym{);}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ }\hlstd{mu\ }\hlsym{=\ }\hlstd{}\hlkwd{computeMu}\hlstd{}\hlsym{(}\hlstd{young}\hlsym{,}\hlstd{nu}\hlsym{);}\hspace*{\fill}\\
+\hlstd{}\hlsym{\}\ }\hspace*{\fill}\\
+\hlstd{\hspace*{\fill}\\
+@TangentOperator}\hlsym{\{}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ }\hlstd{}\hlkwa{using\ namespace\ }\hlstd{tfel}\hlsym{::}\hlstd{material}\hlsym{::}\hlstd{lame}\hlsym{;}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ }\hlstd{}\hlkwa{if}\hlstd{}\hlsym{((}\hlstd{smt}\hlsym{==}\hlstd{ELASTIC}\hlsym{)\textbar \textbar (}\hlstd{smt}\hlsym{==}\hlstd{SECANTOPERATOR}\hlsym{))\{}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ \ \ }\hlstd{computeElasticStiffness}\hlsym{$<$}\hlstd{N}\hlsym{,}\hlstd{Type}\hlsym{$>$::}\hlstd{}\hlkwd{exe}\hlstd{}\hlsym{(}\hlstd{Dt}\hlsym{,}\hlstd{lambda}\hlsym{,}\hlstd{mu}\hlsym{);}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ }\hlstd{}\hlsym{\}\ }\hlstd{}\hlkwa{else\ if\ }\hlstd{}\hlsym{(}\hlstd{smt}\hlsym{==}\hlstd{CONSISTANTTANGENTOPERATOR}\hlsym{)\{}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ \ \ }\hlstd{StiffnessTensor\ De}\hlsym{;}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ \ \ }\hlstd{Stensor4\ Je}\hlsym{;}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ \ \ }\hlstd{computeElasticStiffness}\hlsym{$<$}\hlstd{N}\hlsym{,}\hlstd{Type}\hlsym{$>$::}\hlstd{}\hlkwd{exe}\hlstd{}\hlsym{(}\hlstd{De}\hlsym{,}\hlstd{lambda}\hlsym{,}\hlstd{mu}\hlsym{);}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlkwd{getPartialJacobianInvert}\hlstd{}\hlsym{(}\hlstd{Je}\hlsym{);}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ \ \ }\hlstd{Dt\ }\hlsym{=\ }\hlstd{De}\hlsym{{*}}\hlstd{Je}\hlsym{;}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ }\hlstd{}\hlsym{\}\ }\hlstd{}\hlkwa{else\ }\hlstd{}\hlsym{\{}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlkwa{return\ false}\hlstd{}\hlsym{;}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ }\hlstd{}\hlsym{\}}\hspace*{\fill}\\
+\hlstd{}\hlsym{\}}\hspace*{\fill}\\
+\hlstd{\hspace*{\fill}\\
+@ComputeStress}\hlsym{\{}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ }\hlstd{sig\ }\hlsym{=\ }\hlstd{lambda}\hlsym{{*}}\hlstd{}\hlkwd{trace}\hlstd{}\hlsym{(}\hlstd{eel}\hlsym{){*}}\hlstd{Stensor}\hlsym{::}\hlstd{}\hlkwd{Id}\hlstd{}\hlsym{()+}\hlstd{}\hlnum{2}\hlstd{}\hlsym{{*}}\hlstd{mu}\hlsym{{*}}\hlstd{eel}\hlsym{;}\hspace*{\fill}\\
+\hlstd{}\hlsym{\}\ }\hspace*{\fill}\\
+\hlstd{\hspace*{\fill}\\
+@Integrator}\hlsym{\{}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ }\hlstd{Stensor\ n\ }\hlsym{=\ }\hlstd{}\hlkwd{Stensor}\hlstd{}\hlsym{(}\hlstd{}\hlnum{0}\hlstd{}\hlsym{.);}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ }\hlstd{}\hlkwb{const\ }\hlstd{Stensor\ a1\textunderscore \ }\hlsym{=\ (}\hlstd{a1}\hlsym{+}\hlstd{theta}\hlsym{{*}}\hlstd{da1}\hlsym{)\ ;\ }\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ }\hlstd{}\hlkwb{const\ }\hlstd{Stensor\ a2\textunderscore \ }\hlsym{=\ (}\hlstd{a2}\hlsym{+}\hlstd{theta}\hlsym{{*}}\hlstd{da2}\hlsym{)\ ;\ }\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ }\hlstd{}\hlkwb{const\ }\hlstd{Stensor\ X1\textunderscore \ }\hlsym{=\ }\hlstd{C1inf}\hlsym{{*}(}\hlstd{a1\textunderscore }\hlsym{)/}\hlstd{}\hlnum{1.5\ }\hlstd{}\hlsym{;\ }\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ }\hlstd{}\hlkwb{const\ }\hlstd{Stensor\ X2\textunderscore \ }\hlsym{=\ }\hlstd{C2inf}\hlsym{{*}(}\hlstd{a2\textunderscore }\hlsym{)/}\hlstd{}\hlnum{1.5\ }\hlstd{}\hlsym{;\ }\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ }\hlstd{}\hlkwb{const\ }\hlstd{real\ p\textunderscore \ }\hlsym{=\ (}\hlstd{p\ }\hlsym{+}\hlstd{theta}\hlsym{{*}}\hlstd{dp}\hlsym{)\ ;}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ }\hlstd{}\hlkwb{const\ }\hlstd{Stensor\ scin\ }\hlsym{=\ }\hlstd{sig\ }\hlsym{{-}\ }\hlstd{X1\textunderscore \ }\hlsym{{-}\ }\hlstd{X2\textunderscore \ }\hlsym{;}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ }\hlstd{}\hlkwb{const\ }\hlstd{real\ seq\ }\hlsym{=\ }\hlstd{}\hlkwd{sigmaeq}\hlstd{}\hlsym{(}\hlstd{scin}\hlsym{);}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ }\hlstd{}\hlkwb{const\ }\hlstd{real\ Rp\ }\hlsym{=\ }\hlstd{Rinf\ }\hlsym{+\ (}\hlstd{R0}\hlsym{{-}}\hlstd{Rinf}\hlsym{){*}}\hlstd{}\hlkwd{exp}\hlstd{}\hlsym{({-}}\hlstd{b}\hlsym{{*}}\hlstd{p\textunderscore }\hlsym{)\ ;}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ }\hlstd{}\hlkwb{const\ }\hlstd{real\ F\ }\hlsym{=\ }\hlstd{seq\ }\hlsym{{-}\ }\hlstd{Rp\ }\hlsym{;}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ }\hlstd{real\ vp}\hlsym{=}\hlstd{}\hlnum{0}\hlstd{}\hlsym{.;}\hlstd{\ \ }\hlsym{}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ }\hlstd{}\hlkwa{if}\hlstd{}\hlsym{(}\hlstd{F\ }\hlsym{$>$\ }\hlstd{}\hlnum{0}\hlstd{}\hlsym{)\{}\hlstd{\ \ }\hlsym{}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ \ \ \ }\hlstd{vp}\hlstd{\ \ }\hlstd{}\hlsym{=\ }\hlstd{}\hlkwd{pow}\hlstd{}\hlsym{(}\hlstd{F}\hlsym{{*}}\hlstd{UNsurK}\hlsym{,}\hlstd{E}\hlsym{)\ ;}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ \ \ \ }\hlstd{}\hlkwb{const\ }\hlstd{real\ inv\textunderscore seq\ }\hlsym{=\ }\hlstd{}\hlnum{1}\hlstd{}\hlsym{/}\hlstd{seq}\hlsym{;}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ \ \ \ }\hlstd{n}\hlstd{\ \ \ \ \ \ \ }\hlstd{}\hlsym{=\ }\hlstd{}\hlnum{1.5}\hlstd{}\hlsym{{*}}\hlstd{}\hlkwd{deviator}\hlstd{}\hlsym{(}\hlstd{scin}\hlsym{){*}}\hlstd{inv\textunderscore seq}\hlsym{;}\hlstd{\ \ \ \ \ }\hlsym{}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ \ \ \ }\hlstd{feel\ }\hlsym{+=\ }\hlstd{vp}\hlsym{{*}}\hlstd{dt}\hlsym{{*}}\hlstd{n}\hlsym{{-}}\hlstd{deto}\hlsym{;}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ \ \ \ }\hlstd{fp}\hlstd{\ \ \ }\hlstd{}\hlsym{{-}=\ }\hlstd{vp}\hlsym{{*}}\hlstd{dt}\hlsym{;}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ \ \ \ }\hlstd{fa1}\hlstd{\ \ }\hlstd{}\hlsym{=\ }\hlstd{da1\ }\hlsym{{-}}\hlstd{vp}\hlsym{{*}}\hlstd{dt}\hlsym{{*}}\hlstd{n\ }\hlsym{+\ }\hlstd{g1}\hlsym{{*}}\hlstd{vp}\hlsym{{*}}\hlstd{dt}\hlsym{{*}}\hlstd{a1\textunderscore }\hlsym{;}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ \ \ \ }\hlstd{fa2}\hlstd{\ \ }\hlstd{}\hlsym{=\ }\hlstd{da2\ }\hlsym{{-}}\hlstd{vp}\hlsym{{*}}\hlstd{dt}\hlsym{{*}}\hlstd{n\ }\hlsym{+\ }\hlstd{g2}\hlsym{{*}}\hlstd{vp}\hlsym{{*}}\hlstd{dt}\hlsym{{*}}\hlstd{a2\textunderscore }\hlsym{;}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ }\hlstd{}\hlsym{\}\ }\hlstd{}\hlkwa{else\ }\hlstd{}\hlsym{\{}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ \ \ }\hlstd{feel\ }\hlsym{{-}=\ }\hlstd{deto}\hlsym{;}\hlstd{\ \ \ \ }\hlsym{}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ }\hlstd{}\hlsym{\}}\hspace*{\fill}\\
+\hlstd{}\hlsym{\}\ }\hlstd{}\hspace*{\fill}\\
+\mbox{}
+\normalfont

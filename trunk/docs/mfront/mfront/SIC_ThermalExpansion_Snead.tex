@@ -1,0 +1,67 @@
+\noindent
+\ttfamily
+\hlstd{@Parser MaterialLaw}\hlsym{;}\hspace*{\fill}\\
+\hlstd{@Law}\hlstd{\ \ \ \ }\hlstd{SIC\textunderscore THERMALEXPANSION\textunderscore SNEAD}\hlsym{;}\hspace*{\fill}\\
+\hlstd{@Author Éric Brunon}\hlsym{;}\hspace*{\fill}\\
+\hlstd{@Date}\hlstd{\ \ \ }\hlstd{}\hlnum{2007}\hlstd{}\hlsym{{-}}\hlstd{}\hlnum{12}\hlstd{}\hlsym{{-}}\hlstd{}\hlnum{06}\hlstd{}\hlsym{;}\hspace*{\fill}\\
+\hlstd{\hspace*{\fill}\\
+@Description}\hlsym{\{}\hspace*{\fill}\\
+\hlstd{ Journal of Nuclear Materials }\hlkwd{371 }\hlstd{}\hlsym{( }\hlstd{}\hlnum{2007 }\hlstd{}\hlsym{) }\hlstd{}\hlnum{329}\hlstd{}\hlsym{{-}}\hlstd{}\hlnum{377}\hspace*{\fill}\\
+\hlstd{ Handbook of SiC properties }\hlkwa{for }\hlstd{fuel performance modeling\hspace*{\fill}\\
+ L}\hlsym{.}\hlstd{L}\hlsym{. }\hlstd{SNEAD et al}\hlsym{.}\hspace*{\fill}\\
+\hlstd{ Pages }\hlnum{338 }\hlstd{et }\hlnum{339 }\hlstd{}\hlsym{{-} }\hlstd{É}\hlkwd{quation }\hlstd{}\hlsym{(}\hlstd{}\hlnum{16}\hlstd{}\hlsym{)}\hspace*{\fill}\\
+\hlstd{\hspace*{\fill}\\
+ Attention }\hlsym{: }\hlstd{L é}\hlkwd{quation }\hlstd{}\hlsym{(}\hlstd{}\hlnum{16}\hlstd{}\hlsym{) }\hlstd{donne le coefficient de\hspace*{\fill}\\
+}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{dilatation instantanée}\hlsym{. }\hlstd{La loi donnée ici\hspace*{\fill}\\
+}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{donne la dilatation moyenne par rapport à une\hspace*{\fill}\\
+}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{température de référence de }\hlnum{20}\hlstd{°C}\hspace*{\fill}\\
+\hlsym{\}}\hspace*{\fill}\\
+\hlstd{}\hspace*{\fill}\\
+\hlslc{// changing the name of output}\hspace*{\fill}\\
+\hlstd{@Output a}\hlsym{;}\hspace*{\fill}\\
+\hlstd{}\hspace*{\fill}\\
+\hlslc{// input of the law}\hspace*{\fill}\\
+\hlstd{@Input T}\hlsym{;}\hspace*{\fill}\\
+\hlstd{T}\hlsym{.}\hlstd{}\hlkwd{setGlossaryName}\hlstd{}\hlsym{(}\hlstd{}\hlstr{"Temperature"}\hlstd{}\hlsym{);}\hspace*{\fill}\\
+\hlstd{}\hspace*{\fill}\\
+\hlslc{// temperature bounds}\hspace*{\fill}\\
+\hlstd{@PhysicalBounds T in }\hlsym{{[}}\hlstd{}\hlnum{0}\hlstd{}\hlsym{:{*}{[};}\hspace*{\fill}\\
+\hlstd{\hspace*{\fill}\\
+@Function}\hlsym{\{}\hspace*{\fill}\\
+\hlstd{\hspace*{\fill}\\
+}\hlstd{\ \ }\hlstd{}\hlslc{// coefficients constants}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ }\hlstd{}\hlkwb{static const double }\hlstd{T0}\hlstd{\ \ }\hlstd{}\hlsym{= }\hlstd{}\hlnum{293.15}\hlstd{}\hlsym{;}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ }\hlstd{}\hlkwb{static const double }\hlstd{T02 }\hlsym{= }\hlstd{}\hlnum{85936.9225}\hlstd{}\hlsym{;}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ }\hlstd{}\hlkwb{static const double }\hlstd{T03 }\hlsym{= }\hlstd{}\hlnum{25192408.830875}\hlstd{}\hlsym{;}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ }\hlstd{}\hlkwb{static const double }\hlstd{T04 }\hlsym{= }\hlstd{}\hlnum{7385154648.77100}\hlstd{}\hlsym{;}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ }\hlstd{}\hlkwb{static const double }\hlstd{T1}\hlstd{\ \ }\hlstd{}\hlsym{= }\hlstd{}\hlnum{1273}\hlstd{}\hlsym{.;}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ }\hlstd{}\hlkwb{static const double }\hlstd{T12 }\hlsym{= }\hlstd{}\hlnum{1620529}\hlstd{}\hlsym{.;}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ }\hlstd{}\hlkwb{static const double }\hlstd{T13 }\hlsym{= }\hlstd{}\hlnum{2062933417}\hlstd{}\hlsym{.;}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ }\hlstd{}\hlkwb{static const double }\hlstd{T14 }\hlsym{= }\hlstd{}\hlnum{2626114239841}\hlstd{}\hlsym{.;}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ }\hlstd{}\hlkwb{static const double }\hlstd{a0 }\hlsym{=}\hlstd{\ \ }\hlsym{{-}}\hlstd{}\hlnum{1.8276}\hlstd{}\hlsym{;}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ }\hlstd{}\hlkwb{static const double }\hlstd{a1 }\hlsym{=}\hlstd{\ \ \ }\hlsym{}\hlstd{}\hlnum{0.0178}\hlstd{}\hlsym{;}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ }\hlstd{}\hlkwb{static const double }\hlstd{a2 }\hlsym{=}\hlstd{\ \ }\hlsym{{-}}\hlstd{}\hlnum{1.5544e{-}5}\hlstd{}\hlsym{;}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ }\hlstd{}\hlkwb{static const double }\hlstd{a3 }\hlsym{=}\hlstd{\ \ \ }\hlsym{}\hlstd{}\hlnum{4.5246e{-}9}\hlstd{}\hlsym{;}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ }\hlstd{}\hlkwb{static const double }\hlstd{a4 }\hlsym{=}\hlstd{\ \ \ }\hlsym{}\hlstd{}\hlnum{5.0e{-}6}\hlstd{}\hlsym{;}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ }\hlstd{}\hlkwb{static const double }\hlstd{M1\textunderscore 3 }\hlsym{= }\hlstd{}\hlnum{1}\hlstd{}\hlsym{./}\hlstd{}\hlnum{3}\hlstd{}\hlsym{.;}\hspace*{\fill}\\
+\hlstd{\hspace*{\fill}\\
+}\hlstd{\ \ }\hlstd{}\hlkwb{const double }\hlstd{T2 }\hlsym{= }\hlstd{T}\hlsym{{*}}\hlstd{T}\hlsym{;}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ }\hlstd{}\hlkwb{const double }\hlstd{T3 }\hlsym{= }\hlstd{T2}\hlsym{{*}}\hlstd{T}\hlsym{;}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ }\hlstd{}\hlkwb{const double }\hlstd{T4 }\hlsym{= }\hlstd{T3}\hlsym{{*}}\hlstd{T}\hlsym{;}\hspace*{\fill}\\
+\hlstd{\hspace*{\fill}\\
+}\hlstd{\ \ }\hlstd{}\hlkwb{double }\hlstd{tmp}\hlsym{;}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ }\hlstd{}\hlkwa{if }\hlstd{}\hlsym{(}\hlstd{T}\hlsym{$<$}\hlstd{T1}\hlsym{)\{}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ \ \ }\hlstd{tmp}\hlstd{\ \ }\hlstd{}\hlsym{= }\hlstd{a0}\hlsym{{*}(}\hlstd{T}\hlsym{{-}}\hlstd{T0}\hlsym{)+}\hlstd{}\hlnum{0.5}\hlstd{}\hlsym{{*}}\hlstd{a1}\hlsym{{*}(}\hlstd{T2}\hlsym{{-}}\hlstd{T02}\hlsym{);}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ \ \ }\hlstd{tmp }\hlsym{+= }\hlstd{M1\textunderscore 3}\hlsym{{*}}\hlstd{a2}\hlsym{{*}(}\hlstd{T3}\hlsym{{-}}\hlstd{T03}\hlsym{)+}\hlstd{}\hlnum{0.25}\hlstd{}\hlsym{{*}}\hlstd{a3}\hlsym{{*}(}\hlstd{T4}\hlsym{{-}}\hlstd{T04}\hlsym{);}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ \ \ }\hlstd{tmp }\hlsym{{*}= }\hlstd{}\hlnum{1e{-}6}\hlstd{}\hlsym{;}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ \ \ }\hlstd{a}\hlsym{=(}\hlstd{}\hlkwd{exp}\hlstd{}\hlsym{(}\hlstd{tmp}\hlsym{){-}}\hlstd{}\hlnum{1}\hlstd{}\hlsym{)/(}\hlstd{T}\hlsym{{-}}\hlstd{T0}\hlsym{);}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ }\hlstd{}\hlsym{\} }\hlstd{}\hlkwa{else }\hlstd{}\hlsym{\{}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ \ \ }\hlstd{tmp}\hlstd{\ \ }\hlstd{}\hlsym{= }\hlstd{a0}\hlsym{{*}(}\hlstd{T1}\hlsym{{-}}\hlstd{T0}\hlsym{)+}\hlstd{}\hlnum{0.5}\hlstd{}\hlsym{{*}}\hlstd{a1}\hlsym{{*}(}\hlstd{T12}\hlsym{{-}}\hlstd{T02}\hlsym{);}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ \ \ }\hlstd{tmp }\hlsym{+= }\hlstd{M1\textunderscore 3}\hlsym{{*}}\hlstd{a2}\hlsym{{*}(}\hlstd{T13}\hlsym{{-}}\hlstd{T03}\hlsym{)+}\hlstd{}\hlnum{0.25}\hlstd{}\hlsym{{*}}\hlstd{a3}\hlsym{{*}(}\hlstd{T14}\hlsym{{-}}\hlstd{T04}\hlsym{);}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ \ \ }\hlstd{tmp }\hlsym{{*}= }\hlstd{}\hlnum{1e{-}6}\hlstd{}\hlsym{;}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ \ \ }\hlstd{tmp }\hlsym{+= }\hlstd{a4}\hlsym{{*}(}\hlstd{T}\hlsym{{-}}\hlstd{T1}\hlsym{);}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ \ \ }\hlstd{a}\hlsym{= (}\hlstd{}\hlkwd{exp}\hlstd{}\hlsym{(}\hlstd{tmp}\hlsym{){-}}\hlstd{}\hlnum{1}\hlstd{}\hlsym{.)/(}\hlstd{T}\hlsym{{-}}\hlstd{T0}\hlsym{);}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ }\hlstd{}\hlsym{\}}\hspace*{\fill}\\
+\hlstd{}\hlsym{\} }\hlstd{}\hlslc{// end of function}\hlstd{}\hspace*{\fill}\\
+\mbox{}
+\normalfont

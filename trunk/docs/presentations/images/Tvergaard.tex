@@ -1,0 +1,46 @@
+\noindent
+\ttfamily
+\hlstd{@Integrator}\hlopt{\{}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ }\hlstd{}\hlkwb{const\ }\hlstd{real\ C}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{}\hlopt{=\ }\hlstd{}\hlkwd{real}\hlstd{}\hlopt{(}\hlstd{}\hlnum{27}\hlstd{}\hlopt{)/}\hlstd{}\hlkwd{real}\hlstd{}\hlopt{(}\hlstd{}\hlnum{4}\hlstd{}\hlopt{);}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ }\hlstd{}\hlslc{//\ tagential\ behaviour}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ }\hlstd{t\textunderscore t\ }\hlopt{=\ }\hlstd{ks}\hlopt{{*}(}\hlstd{u\textunderscore t}\hlopt{+}\hlstd{du\textunderscore t}\hlopt{);}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ }\hlstd{}\hlkwa{if}\hlstd{}\hlopt{(}\hlstd{computeTangentOperator\textunderscore }\hlopt{)\{}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ \ \ }\hlstd{Dt\textunderscore tt\ }\hlopt{=\ }\hlstd{ks}\hlopt{{*}}\hlstd{tmatrix}\hlopt{$<$}\hlstd{N}\hlopt{{-}}\hlstd{}\hlnum{1}\hlstd{}\hlopt{,}\hlstd{N}\hlopt{{-}}\hlstd{}\hlnum{1}\hlstd{}\hlopt{,}\hlstd{real}\hlopt{$>$::}\hlstd{}\hlkwd{Id}\hlstd{}\hlopt{();}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ \ \ }\hlstd{Dt\textunderscore tn\ }\hlopt{=\ }\hlstd{Dt\textunderscore nt\ }\hlopt{=\ }\hlstd{tvector}\hlopt{$<$}\hlstd{N}\hlopt{{-}}\hlstd{}\hlnum{1}\hlstd{}\hlopt{,}\hlstd{real}\hlopt{$>$(}\hlstd{}\hlkwd{real}\hlstd{}\hlopt{(}\hlstd{}\hlnum{0}\hlstd{}\hlopt{));}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ }\hlstd{}\hlopt{\}}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ }\hlstd{}\hlslc{//\ normal\ behaviour}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ }\hlstd{}\hlkwa{if}\hlstd{}\hlopt{(}\hlstd{u\textunderscore n}\hlopt{+}\hlstd{du\textunderscore n}\hlopt{$<$}\hlstd{}\hlnum{0}\hlstd{}\hlopt{)\{}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlslc{//\ compression}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ \ \ }\hlstd{t\textunderscore n\ }\hlopt{=\ }\hlstd{kn}\hlopt{{*}(}\hlstd{u\textunderscore n}\hlopt{+}\hlstd{du\textunderscore n}\hlopt{);}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlkwa{if}\hlstd{}\hlopt{(}\hlstd{computeTangentOperator\textunderscore }\hlopt{)\{}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ \ \ \ \ }\hlstd{Dt\textunderscore nn\ }\hlopt{=\ }\hlstd{kn}\hlopt{;}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlopt{\}}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ }\hlstd{}\hlopt{\}\ }\hlstd{}\hlkwa{else\ }\hlstd{}\hlopt{\{}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlslc{//\ traction}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlslc{//\ reduced\ opening\ displacement}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlkwb{const\ }\hlstd{real\ rod\ }\hlopt{=\ (}\hlstd{u\textunderscore n}\hlopt{+}\hlstd{du\textunderscore n}\hlopt{)/}\hlstd{delta}\hlopt{;}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlslc{//\ previous\ damage}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlkwb{const\ }\hlstd{real\ d\textunderscore 1\ }\hlopt{=\ }\hlstd{d}\hlopt{;}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ \ \ }\hlstd{d}\hlstd{\ \ \ }\hlstd{}\hlopt{=\ }\hlstd{}\hlkwd{min}\hlstd{}\hlopt{(}\hlstd{}\hlkwd{max}\hlstd{}\hlopt{(}\hlstd{d}\hlopt{,}\hlstd{rod}\hlopt{),}\hlstd{}\hlnum{0.99}\hlstd{}\hlopt{);}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlslc{//\ damage\ indicator}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ \ \ }\hlstd{di}\hlstd{\ \ }\hlstd{}\hlopt{=\ ((}\hlstd{d\textunderscore 1}\hlopt{$>$}\hlstd{d}\hlopt{)\&\&(}\hlstd{du\textunderscore n}\hlopt{$>$}\hlstd{}\hlnum{0}\hlstd{}\hlopt{))\ }\hlstd{?\ }\hlnum{1}\hlstd{}\hlopt{.\ :\ }\hlstd{}\hlnum{0}\hlstd{}\hlopt{.;}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlslc{//\ initial\ stiffness}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlkwb{const\ }\hlstd{real\ K1\ }\hlopt{=\ }\hlstd{C}\hlopt{{*}}\hlstd{smax}\hlopt{/}\hlstd{delta}\hlopt{;}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlslc{//\ secant\ stiffness}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlkwb{const\ }\hlstd{real\ K}\hlstd{\ \ }\hlstd{}\hlopt{=\ }\hlstd{K1}\hlopt{{*}(}\hlstd{}\hlnum{1}\hlstd{}\hlopt{{-}}\hlstd{d}\hlopt{){*}(}\hlstd{}\hlnum{1}\hlstd{}\hlopt{{-}}\hlstd{d}\hlopt{);}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ \ \ }\hlstd{t\textunderscore n\ }\hlopt{=\ }\hlstd{K}\hlopt{{*}(}\hlstd{u\textunderscore n}\hlopt{+}\hlstd{du\textunderscore n}\hlopt{);}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlkwa{if}\hlstd{}\hlopt{(}\hlstd{computeTangentOperator\textunderscore }\hlopt{)\{}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ \ \ \ \ }\hlstd{}\hlkwa{if}\hlstd{}\hlopt{(}\hlstd{smt}\hlopt{==}\hlstd{ELASTIC}\hlopt{)\{}\hspace*{\fill}\\
+\hlstd{\ Dt\textunderscore nn\ }\hlopt{=\ }\hlstd{K1}\hlopt{;}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ \ \ \ \ }\hlstd{}\hlopt{\}\ }\hlstd{}\hlkwa{else\ if}\hlstd{}\hlopt{(}\hlstd{smt}\hlopt{==}\hlstd{SECANTOPERATOR}\hlopt{)\{}\hspace*{\fill}\\
+\hlstd{\ Dt\textunderscore nn\ }\hlopt{=\ }\hlstd{K}\hlopt{;}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ \ \ \ \ }\hlstd{}\hlopt{\}\ }\hlstd{}\hlkwa{else\ if}\hlstd{}\hlopt{(}\hlstd{smt}\hlopt{==}\hlstd{CONSISTANTTANGENTOPERATOR}\hlopt{)\{}\hspace*{\fill}\\
+\hlstd{\ }\hlkwa{if}\hlstd{}\hlopt{(}\hlstd{d}\hlopt{$>$=}\hlstd{}\hlnum{0.99}\hlstd{}\hlopt{)\{}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ \ }\hlstd{Dt\textunderscore nn\ }\hlopt{=\ }\hlstd{K1}\hlopt{{*}(}\hlstd{}\hlnum{1}\hlstd{}\hlopt{{-}}\hlstd{d}\hlopt{){*}(}\hlstd{}\hlnum{1}\hlstd{}\hlopt{{-}}\hlstd{}\hlnum{3}\hlstd{}\hlopt{{*}}\hlstd{d}\hlopt{);}\hspace*{\fill}\\
+\hlstd{\ }\hlopt{\}\ }\hlstd{}\hlkwa{else\ }\hlstd{}\hlopt{\{}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ \ }\hlstd{Dt\textunderscore nn\ }\hlopt{=\ }\hlstd{K}\hlopt{;}\hspace*{\fill}\\
+\hlstd{\ }\hlopt{\}}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ \ \ \ \ }\hlstd{}\hlopt{\}}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlopt{\}}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ }\hlstd{}\hlopt{\}}\hspace*{\fill}\\
+\hlstd{}\hlopt{\}\ }\hlstd{}\hlslc{//\ end\ of\ @Integrator}

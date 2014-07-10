@@ -1,0 +1,60 @@
+Basic Installation
+==================
+
+  These are generic installation instructions.
+
+  cmake attempts to guess correct values for various system-dependent
+  variables used during compilation.  It uses those values to create 
+  a `Makefile' in each directory of the package.  It may also create one
+  or more `.h' files containing system-dependent definitions..
+
+  The simplest way to compile this package is:
+
+  1. `cd' to the directory containing the package's source code and type
+     `cmake' to configure the package for your system.
+
+     Running `cmake' takes awhile.  While running, it prints some
+     messages telling which features it is checking for.
+
+  2. Type `make' to compile the package.
+
+  3. Optionally, type `make check' to run any self-tests that come with
+     the package.
+
+  4. Type `make install' to install the programs and any data files and
+     documentation.
+
+  5. You can remove the program binaries and object files from the
+     source code directory by typing `make clean'.
+
+Options
+=======
+
+  enable-static  : compiles static libraries
+  enable-fortran : enables fortran support
+  enable-python  : enables python support
+  enable-aster   : enables aster support
+
+cmake usefull variables
+=======================
+
+  CASTEM_INSTALL_PATH  : specify where the castem has been installed
+  CMAKE_TOOLCHAIN_FILE : specify a tool chain file
+  CMAKE_BUILD_TYPE     : two values are supported 'Release' and 'Debug'
+  TFEL_SVN_REVISION    : tfel-svn revision
+
+cmake typical usage
+===================
+
+cmake ../trunk -DCMAKE_BUILD_TYPE=Release -Dlocal-castem-header=ON -Denable-fortran=ON -Denable-python=ON -Denable-python-bindings=ON -Denable-aster=ON -DCMAKE_INSTALL_PREFIX=/home/th202608/codes/tfel/trunk/install
+
+main targets:
+=============
+
+  - all              : build the libraries
+  - install          : install the libraries
+  - doc-pdf-install  : install TFEL pdf documentation (requires LaTeX)
+  - doc-html-install : install TFEL doxygen documentation (requires Doxygen)
+  - doc-install      : install both pdf and doxygen documentations 
+  - check            : build tests and execute them
+  - tests-install    : install tests files

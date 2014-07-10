@@ -1,0 +1,33 @@
+\noindent
+\ttfamily
+\hlstd{}\hlslc{\#\#\#\ Makefile.castem.linux\ {-}{-}{-}\ }\hspace*{\fill}\\
+\hlstd{}\hlslc{\#\#\ Auteur:\ th202608@pleiades068.intra.cea.fr}\hspace*{\fill}\\
+\hlstd{}\hlslc{\#\#\ Version:\ \$Id:\ Makefile,v\ 0.0\ 2013/05/02\ 14:33:49\ th202608\ Exp\ \$}\hspace*{\fill}\\
+\hlstd{}\hlslc{\#\#\ Mots{-}cles:\ }\hspace*{\fill}\\
+\hlstd{}\hlslc{\#\#\ URL:\ }\hspace*{\fill}\\
+\hlstd{\hspace*{\fill}\\
+CASTEMDIR}\hlsym{=/}\hlstd{home}\hlsym{/}\hlstd{th202608}\hlsym{/}\hlstd{codes}\hlsym{/}\hlstd{castem}\hlsym{/}\hlstd{current}\hlsym{/}\hlstd{Castem2010{-}SEMT\hspace*{\fill}\\
+CASTEMINC}\hlsym{=\$(}\hlstd{CASTEMDIR}\hlsym{)/}\hlstd{inc\hspace*{\fill}\\
+CASTEMLIB}\hlsym{=\$(}\hlstd{CASTEMDIR}\hlsym{)/}\hlstd{lib\hspace*{\fill}\\
+\hspace*{\fill}\\
+MFRONT\textunderscore SOURCES}\hlstd{\ \ }\hlstd{}\hlsym{=\ }\hlstd{Lorentz.mfront}\hlstd{\ \ \ \ }\hlstd{$\backslash$\hspace*{\fill}\\
+}\hlstd{\ \ \ \ \ \ \ \ \ \ \ }\hlstd{Elasticity.mfront\hspace*{\fill}\\
+MFRONT\textunderscore LDFLAGS}\hlstd{\ \ }\hlstd{}\hlsym{=\ {-}}\hlstd{Lsrc\ }\hlsym{{-}}\hlstd{lUmatBehaviour\hspace*{\fill}\\
+\hspace*{\fill}\\
+CXXFLAGS}\hlsym{={-}}\hlstd{D}\hlstr{'F77\textunderscore FUNC(X,Y)=X$\backslash$\#$\backslash$\#\textunderscore '}\hlstd{\ }\hlsym{{-}}\hlstd{D}\hlstr{'F77\textunderscore FUNC\textunderscore (X,Y)=X$\backslash$\#$\backslash$\#\textunderscore '}\hlstd{}\hspace*{\fill}\\
+\hspace*{\fill}\\
+\hlkwa{all}\hlstd{}\hlsym{:}\hlstd{cast\hspace*{\fill}\\
+\hspace*{\fill}\\
+cast}\hlsym{:}\hlstd{umat.o\ src}\hlsym{/}\hlstd{libUmatBehaviour.so\hspace*{\fill}\\
+\ gfortran\ }\hlsym{{-}}\hlstd{O\ }\hlsym{{-}}\hlstd{o\ cast\ umat.o\ }\hlsym{\$(}\hlstd{CASTEMLIB}\hlsym{)/}\hlstd{main.o\ }\hlsym{\$(}\hlstd{CASTEMLIB}\hlsym{)/}\hlstd{depmac.o\ }\hlsym{\$(}\hlstd{CASTEMLIB}\hlsym{)/}\hlstd{bdata.o\ }\hlsym{\$(}\hlstd{CASTEMLIB}\hlsym{)/}\hlstd{castem.a\ }\hlsym{\$(}\hlstd{CASTEMLIB}\hlsym{)/}\hlstd{esope.a\ }\hlsym{\$(}\hlstd{CASTEMLIB}\hlsym{)/}\hlstd{libfreeglut.a\ }\hlsym{\$(}\hlstd{CASTEMLIB}\hlsym{)/}\hlstd{libjpeg.so\ }\hlsym{\$(}\hlstd{CASTEMLIB}\hlsym{)/}\hlstd{libGL.so\ }\hlsym{\$(}\hlstd{CASTEMLIB}\hlsym{)/}\hlstd{libGLU.so}\hlnum{.1\ }\hlstd{}\hlsym{\$(}\hlstd{CASTEMLIB}\hlsym{)/}\hlstd{libfxdr.a\ }\hlsym{\$(}\hlstd{CASTEMLIB}\hlsym{)/}\hlstd{libX11.so\ }\hlsym{\$(}\hlstd{CASTEMLIB}\hlsym{)/}\hlstd{libXmu.so\ }\hlsym{{-}}\hlstd{L}\hlsym{\$(}\hlstd{CASTEMLIB}\hlsym{)/\ {-}}\hlstd{lgfortran\ }\hlsym{{-}}\hlstd{pthread\ }\hlsym{{-}}\hlstd{lrt\ }\hlsym{{-}}\hlstd{Wl}\hlsym{,{-}}\hlstd{R}\hlsym{\$(}\hlstd{CASTEMLIB}\hlsym{)/\ \$(}\hlstd{MFRONT\textunderscore LDFLAGS}\hlsym{)}\hspace*{\fill}\\
+\hlstd{\hspace*{\fill}\\
+src}\hlsym{/}\hlstd{libUmatBehaviour.so}\hlsym{:\ \$(}\hlstd{MFRONTS\textunderscore SOURCES}\hlsym{)}\hspace*{\fill}\\
+\hlstd{\ mfront\ }\hlsym{{-}{-}}\hlstd{interface}\hlsym{=}\hlstd{umat\ }\hlsym{\$(}\hlstd{MFRONTS}\hlsym{)}\hspace*{\fill}\\
+\hlstd{\ mfront\ }\hlsym{{-}{-}}\hlstd{obuild\hspace*{\fill}\\
+\hspace*{\fill}\\
+umat.o}\hlsym{:}\hlstd{umat.}\hlkwa{cxx}\hspace*{\fill}\\
+\hlstd{\ g}\hlsym{++\ {-}}\hlstd{I\ }\hlsym{\$(}\hlstd{CASTEMINC}\hlsym{)\ \$(}\hlstd{CXXFLAGS}\hlsym{)\ {-}}\hlstd{Iinclude\ }\hlstr{`tfel{-}config\ {-}{-}castem\ {-}{-}oflags`}\hlstd{\ umat.}\hlkwa{cxx\ }\hlstd{}\hlsym{{-}}\hlstd{o\ umat.o\ }\hlsym{{-}}\hlstd{c}\hspace*{\fill}\\
+\hspace*{\fill}\\
+\hlslc{\#\#\#\ Makefile\ ends\ here}\hlstd{}\hspace*{\fill}\\
+\mbox{}
+\normalfont

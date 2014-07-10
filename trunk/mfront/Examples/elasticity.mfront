@@ -1,0 +1,35 @@
+@Behaviour Elasticity;
+@Author Helfer Thomas;
+@Date 23/11/06;
+@Description{
+ A very first test 
+ (the most simple one in fact).
+}
+
+@UseQt true;
+@ProvidesSymmetricTangentOperator;
+
+@MaterialProperty stress young;
+@MaterialProperty real   nu;
+@MaterialProperty real   rho;
+@MaterialProperty real   alpha;
+
+@LocalVariable stress lambda;
+@LocalVariable stress mu;
+
+@Includes{
+#include"TFEL/Material/Lame.hxx"
+}
+
+@InitLocalVars{
+  using namespace tfel::material::lame;
+  lambda = computeLambda(young,nu);
+  mu = computeMu(young,nu);
+}
+
+@Integrator{
+  sig = lambda*trace(eto+deto)*StrainStensor::Id()+2*mu*(eto+deto);
+  if(computeTangentOperator_){
+    Dt = lambda*Stensor4::IxI()+2*mu*Stensor4::Id();
+  }
+}

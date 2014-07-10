@@ -1,0 +1,66 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%	Fichier	   : Champs
+%%	Auteur     : th202608@pleiades052.intra.cea.fr
+%%	Date       : 13 dc 2010
+%%	Rpertoire : /home/th202608/documents/notes/2011/LicosPresentation/
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\input{LSC}
+
+\auteurs{T.~Helfer}
+\redacteur{T.~Helfer}
+\verificateur{}
+\approbateur{R.~Masson}
+\emetteur{E.~Touron}
+
+\titre{La librairie \TFEL{}~: guide de référence}
+
+\date{2013}
+% \numero{12-014}
+\indice{0}
+% \dateversion{09/2012}
+\numeroaffaire{A-SICOM-A1-01}
+\domaine{DEN/DISN/SIMU}
+% \accords{tripartite}
+% \clients{AREVA - EDF}
+\programmerecherche{SICOM}
+\classification{DO}
+\motsclefs{
+  \TFEL{} - \mfront{} - \pleiades{}
+}
+
+% \codebarre{images/code_barre}
+% \diffusionexterne{
+% {EDF/R\&D}              & O. Marchand     & 1 & Diffusion par\\
+% {EDF/R\&D}              & P. Vasseur      & 1 & courriel     \\
+% {EDF/R\&D/MMC}          & P. Ollar         & 1 & \\
+% {EDF/R\&D/MMC/CPM}      & N. Prompt       & 1 & \\
+%                         & N. Barnel       & 1 & \\
+% {EDF/R\&D/MMC/CPM}      & G. Thouvenin    & 1 & \\
+%                         & R. Largenton    & 1 & \\
+%                         & C. Petry        & 1 & \\
+% EDF/SEPTEN              & N. Waeckel      & 1 & \\
+%                         & P. Hemmerich    & 1 & \\
+%                         & H. Billat       & 1 & \\
+%                         & C. Bernaudat    & 1 & \\
+% AREVA NP/LA DEFENSE     & L. Catalani     & 1 & \\
+%                         & L. Brunel       & 1 & \\
+% AREVA NP/LYON           & P. Melin        & 1 & \\
+%                         & V. Bessiron     & 1 & \\
+%                         & C. Garnier      & 1 & \\                           
+%                         & V. Garat        & 1 & \\
+%                         & F. Arnoux       & 1 &
+% }
+
+\diffusioninterne{
+}
+
+% \signatures{-0.}{-39.2}{0.12}{images/signatures.eps}
+
+\stylebib{@abs_top_srcdir@/docs/tex/texmf/bibtex/fr-insa}
+\fichierbib{@abs_top_srcdir@/docs/tfel/Bibliographie}
+
+%%% Local Variables: 
+%%% mode: latex
+%%% TeX-master: "utilisation."
+%%% End: 
