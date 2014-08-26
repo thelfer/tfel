@@ -30,8 +30,8 @@ EXTRA_DIST=CMakeLists.txt                                           \
 	   Images/Makefile.castem.linux			            \
 	   annexe-orthotropie.tex		                    \
 	   style.ist				                    \
-	   docs/mfront/mfront/SaintVenantKirchhoffElasticity.tex    \
-	   docs/mfront/mfront/ImplicitSimoMieheElastoPlasticity.tex \
+	   mfront/SaintVenantKirchhoffElasticity.tex                \
+	   mfront/ImplicitSimoMieheElastoPlasticity.tex             \
 	   mfront/A316TiHyperTrempe_CreepExponent.mfront            \
 	   mfront/A316TiHyperTrempe_CreepExponent.tex               \
 	   mfront/Includes.tex	                                    \

@@ -265,21 +265,72 @@ AREVA NP/LYON           & P. Melin        & 1 & \\
 \newpage
 \section{Introduction}
 
+Les éléments nécessaire pour ce texte sont repris dans la première
+section.
+
 Pour traiter les grandes transformations, les approches de la
 littérature se classent grossièrement en deux catégories~:
 \begin{enumerate}[-]
 \item l'adoption explicite d'un des nombreux formalismes \og~grandes
-  transformations~\fg{}. La principale difficulté est que ces
-  formalismes introduisent de nombreuses notions qui peuvent rebuter
-  les ingénieurs~;
-\item une réutilisation {\em ad hoc} des lois en petites
-  déformations. Nous retrouvons dans cette catégorie les approches
-  incrémentales de la plasticité basées sur la décomposition additive
-  du taux déformation eulérien et sur l'utilisation d'une dérivée
-  objective des contraintes. Malgré de nombreux défauts théoriques,
-  ces approches ont été et sont encore très
-  utilisées.
+  transformations~\fg{}.
+\item une réutilisation {\em ad hoc} des lois écrites dans le
+  formalisme des petites déformations. Nous proposerons plusieurs
+  stratégies pour cela. Insistons sur le fait que nous cherchons
+  uniquement à réutiliser le formalisme des lois petites déformations
+  et que dans la plupart des cas nous ne pourrons pas étendre le
+  domaine de validité d'une loi particulière~: on ne pourra pas se
+  passer d'une étape d'identification des paramètres de la loi une
+  fois une \og~stratégie grandes transformations~\fg{} choisie.
 \end{enumerate}
+
+\subsection{Écritures de lois en grandes transformations}
+
+La principale difficulté de la première approche est que ces
+formalismes introduisent de nombreuses notions spécifiques aux grandes
+déformations, ce qui peut rebuter les ingénieurs non spécialistes de
+ce sujet. Dans ce document, nous étudierons les lois suivantes~:
+\begin{enumerate}[-]
+\item la loi de \nom{Saint-Venant Kirchhoff} au
+  paragraphe~\ref{sec:loi-hyper-de-1}~;
+\item les lois de comportement hyperélastiques néo-hookéen au
+  paragraphe~\ref{sec:loi-hyperl-neo}~;
+\item la loi plastique et/ou plastique de \nom{Simo-Miehe} au
+  paragraphe~\ref{sec:loi-plastique-de}.
+\end{enumerate}
+L'étude de ces modèles vise à démontrer les capacités de \mfront{} à
+implanter des modèles écrits en grandes transformations et nous
+insisterons plus sur l'implantation de la loi et les cas tests de
+qualification, renvoyant aux éléments bibliographiques pour une
+présentation de la physique.
+
+\subsection{Stratégies de réutilisations des lois en petites
+  transformations}
+
+Pour la plupart des applications pratiques, il nous semble plus
+judicieux de chercher à étendre les lois écrites en petites
+déformations. L'utilisateur final pourra ainsi piocher dans les
+nombreuses lois déjà écrites et dont le sens physique est souvent bien
+connu.
+
+Après une rapide bibliographie au
+paragraphe~\ref{sec:bibl-meth-class}, nous retiendrons deux types
+d'approches~:
+\begin{itemize}
+\item les approches lagrangiennes. Parmi celle-ci, nous présenterons
+  en détails l'approche \og~grandes rotations, petites
+  déformations\fg{} et l'approches par les déformations logarithmiques
+  qui nous paraissent particulièrement adaptées aux applications
+  combustibles~;
+\item les approches eulériennes et en particulier l'écriture des lois
+  de comportements dans un référentiel local objectif.
+\end{itemize}
+
+% verrons dans cette catégorie les approches incrémentales
+% de la plasticité basées sur la décomposition additive du taux
+% déformation eulérien et sur l'utilisation d'une dérivée objective des
+% contraintes. Malgré de nombreux défauts théoriques, ces approches ont
+% été et sont encore très utilisées.
+
 
 \clearpage
 \newpage
@@ -564,9 +615,6 @@ reliée à celui dans la configuration initiale par la relation~:
   \label{eq:finitestrain:C2}
   \norm{\dtot\,\vec{x}}^{2} = \transpose{\dtot\,\vec{X}}\,.\,\transpose{\tns{F}}\,.\,\tns{F}\,.\,\dtot\,\vec{X} = \transpose{\dtot\,\vec{X}}\,.\tenseur{C}\,.\,\dtot\,\vec{X}  
 \end{equation}
-\[
-
-\]
 
 De manière symétrique~:
 \begin{equation}
@@ -664,6 +712,9 @@ où~:
   \item {\tt Z} la dimension de l'espace.
   \end{itemize}
 \end{minipage}
+
+\subsection{Lois hyperléastiques néo-hookéene}
+\label{sec:loi-hyperl-neo}
 
 \subsection{Loi plastique de
   \nom{Simo-Miehe}~\cite{simo_associative_1992}}
@@ -775,7 +826,7 @@ déformations logarithmiques nous a été vivement recommandée par
 l'équipe \aster{} (formalisme {\tt
   GDEF\_LOG}~\cite{bargellini_modeles_2013}).
 
-\subsection{Bibliographie, méthodes classiques}
+\subsection{Éléments de bibliographie, méthodes classiques}
 \label{sec:bibl-meth-class}
 
 Il nous a paru intéressant faire une revue bibliographique des
