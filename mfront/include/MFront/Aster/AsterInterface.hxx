@@ -196,6 +196,49 @@ namespace aster
     };
 
     template<unsigned short N>
+    struct BehaviourWrapper<aster::FINITESTRAINSTANDARDBEHAVIOUR,N>
+    {
+      TFEL_ASTER_INLINE2 static
+      int exe(const AsterInt  *const, const AsterReal *const DTIME,
+	      const AsterReal *const DROT,  AsterReal *const DDSOE,
+	      const AsterReal *const STRAN, const AsterReal *const DSTRAN,
+	      const AsterReal *const TEMP,  const AsterReal *const DTEMP,
+	      const AsterReal *const PROPS, const AsterInt  *const NPROPS,
+	      const AsterReal *const PREDEF,const AsterReal *const DPRED,
+	      AsterReal *const STATEV,const AsterInt  *const NSTATV,
+	      AsterReal *const STRESS,
+	      const StressFreeExpansionHandler& sfeh)
+      {
+	using namespace tfel::meta;
+	using namespace tfel::math;
+	using namespace tfel::utilities;
+	using namespace tfel::fsalgo;
+	AsterInt NTENS   = 6u;
+	AsterReal s[6u]  = {0.,0.,0.,0.,0.,0.};
+	AsterReal F0[9u] = {0.,0.,0.,0.,0.,0.,0.,0.,0.};
+	AsterReal F1[9u] = {0.,0.,0.,0.,0.,0.,0.,0.,0.};
+	AsterReal K[36u] = {0.,0.,0.,0.,0.,0.,
+			    0.,0.,0.,0.,0.,0.,
+			    0.,0.,0.,0.,0.,0.,
+			    0.,0.,0.,0.,0.,0.,
+			    0.,0.,0.,0.,0.,0.,
+			    0.,0.,0.,0.,0.,0.};
+	K[0u] = DDSOE[0];
+	copy<StensorDimeToSize<N>::value>::exe(STRESS,s);
+	copy<TensorDimeToSize<N>::value>::exe(STRAN,F0);
+	copy<TensorDimeToSize<N>::value>::exe(DSTRAN,F1);
+	int r = DimensionDispatch<3u>::exe(&NTENS,DTIME,DROT,K,F0,F1,
+					   TEMP,DTEMP,PROPS,NPROPS,PREDEF,DPRED,
+					   STATEV,NSTATV,s,sfeh);
+	if(r==0){
+	  //	  AsterReduceTangentOperator<N>::exe(DDSOE,K);
+	  copy<StensorDimeToSize<N>::value>::exe(s,STRESS);
+	}
+	return r;
+      }
+    };
+
+    template<unsigned short N>
     struct DimensionDispatch
     {
       TFEL_ASTER_INLINE2 static

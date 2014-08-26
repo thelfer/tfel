@@ -317,7 +317,7 @@ namespace mfront
   MTest::setCastemAccelerationPeriod(const int p)
   {
     using namespace std;
-    if(p!=-1){
+    if(this->cap!=-1){
       string msg("MTest::setCastemAccelerationPeriod : "
 		 "the castem acceleration period has already "
 		 "been defined");

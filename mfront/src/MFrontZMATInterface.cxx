@@ -408,7 +408,7 @@ namespace mfront
 	if(pv->arraySize==1u){
 	  switch(flag){
 	  case SupportedTypes::Scalar : 	  
-	    out << n << " = ZMATstate[" << o << "];" << endl;
+	    out << n << " = ZMATstatev[" << o << "];" << endl;
 	    break;
 	  case SupportedTypes::Stensor :
 	  case SupportedTypes::Tensor  :
@@ -798,6 +798,7 @@ namespace mfront
       }
     }
     out << "//! external state variables" << endl;
+    out << "LIST<EXTERNAL_PARAM*> local_ep_list;" << endl;
     out << "LIST<EXTERNAL_PARAM*>* zbb_keep_ep;" << endl;
     out << "//! external state variables positions" << endl;
     out << "ARRAY<int> evs_positions;" << endl;
@@ -839,7 +840,13 @@ namespace mfront
     out << "Z_START_NAMESPACE;" << endl;
     out << endl;
     out << "ZMAT" << mb.getClassName() << "::ZMAT" << mb.getClassName() << "()" << endl;
-    out << "{} // end of ZMAT" << mb.getClassName() << "::ZMAT" << mb.getClassName() << "()" << endl;     
+    out << "{" << endl
+	<< "this->zbb_keep_ep = &this->local_ep_list;" << endl 
+	<< "#ifdef _WIN64" << endl
+	<< "ZMAT_GLOBAL_STORAGE::zmat_once();" << endl
+	<< "ZMAT_GLOBAL_STORAGE& zmat_globals = *thread_zmat_globals;" << endl
+	<< "#endif" << endl
+	<< "} // end of ZMAT" << mb.getClassName() << "::ZMAT" << mb.getClassName() << "()" << endl;     
     out << endl;
     out << "void" << endl;
     out << "ZMAT" << mb.getClassName()
@@ -866,11 +873,14 @@ namespace mfront
     out << "ERROR(\"Invalid tensor size\");" << endl;
     out << "}" << endl;
     out << "this->temperature_position = EXTERNAL_PARAM::rank_of_nodal_ip(\"temperature\");" << endl;
+    out << "if(this->temperature_position==-1){;" << endl;
+    out << "INPUT_ERROR(\"temperature is not defined\");" << endl;
+    out << "}" << endl;
     if(!all_mp_names.empty()){
       out << "// check that all material properties were initialised" << endl;
       out << "for(int pc=0;pc!=this->mprops.size();++pc){" << endl
 	  << "if(!this->mprops[pc].ok()){" << endl
-	  << "ERROR(\"Some material properties were not initialised\");" << endl
+	  << "INPUT_ERROR(\"Some material properties were not initialised\");" << endl
 	  << "}" << endl
 	  << "}" << endl;
     }
@@ -892,13 +902,14 @@ namespace mfront
 	<< "int flags){" << endl
 	<< "int keep_verbose  = ZSET::Verbose; " << endl
 	<< "CLOCK* keep_clock = ZSET::stored_thread_zbase_globals->ptr()->active_clock; " << endl
+	<< "tg_matrix = &(this->tg_mat);" << endl
 	<< "this->set_var_aux_to_var_aux_ini();" << endl
 	<< "this->set_var_int_to_var_int_ini();" << endl
 	<< "LIST<EXTERNAL_PARAM*>* ep_save = &EXTERNAL_PARAM::Get_EP_list();" << endl
-	<< "EXTERNAL_PARAM::set_EP_list(zbb_keep_ep);" << endl
-	// << "if(!this->curr_ext_param){" << endl
-	// << "this->curr_ext_param = *mdat.param_set();" << endl
-	// << "}" << endl
+	<< "EXTERNAL_PARAM::set_EP_list(this->zbb_keep_ep);" << endl
+	<< "if(!this->curr_ext_param){" << endl
+	<< "this->curr_ext_param = *mdat.param_set();" << endl
+	<< "}" << endl
 	<< "this->calc_local_coefs();" << endl
 	<< "INTEGRATION_RESULT* r = NULL;" << endl
 	<< "try{" << endl;
@@ -957,12 +968,12 @@ namespace mfront
 	this->writeCallMFrontBehaviour(out,mb,*ph);
       }
     }
+    out << endl;
+    out << "ZMAT" << mb.getClassName() << "::~ZMAT" << mb.getClassName() << "(){" << endl;
+    out << "} // end of ZMAT" << mb.getClassName() << "::~ZMAT" << mb.getClassName() << endl << endl;
+    out << "BEHAVIOR_READER(ZMAT" << mb.getClassName() << "," << mb.getClassName() << ")" << endl << endl;
     out << "Z_END_NAMESPACE;" << endl;
   } // end of MFrontZMATInterface::endTreatement
-
-  // ZEBU_PATH
-  // libZMATBase.so
-  // 
 
   void
   MFrontZMATInterface::writeBehaviourInitialisation(std::ostream& out,
@@ -1039,12 +1050,18 @@ namespace mfront
 	if(v.arraySize==1u){
 	  out << "this->evs_positions[" << i << "] = " 
 	      << "EXTERNAL_PARAM::rank_of_nodal_ip(\"" << name << "\");" << endl;
+	  out << "if(this->evs_positions[" << i << "]=-1){;" << endl;
+	  out << "INPUT_ERROR(\"'" << name << "' is not defined\");" << endl;
+	  out << "}" << endl;
 	  ++i;
 	} else {
 	  for(unsigned short n=0;n!=v.arraySize;++n,++i){
 	    out << "this->evs_positions[" << i << "] = " 
 		<< "EXTERNAL_PARAM::rank_of_nodal_ip(\"" << name
 		<< "[" << n << "]\");" << endl;
+	    out << "if(this->evs_positions[" << i << "]=-1){;" << endl;
+	    out << "INPUT_ERROR(\"'" << name << "[" << n << "]' is not defined\");" << endl;
+	    out << "}" << endl;
 	  }
 	}
       }
@@ -1172,6 +1189,7 @@ namespace mfront
 		 "unsupported behaviour type");
       throw(runtime_error(msg));
     }
+    out << "b.initialize();" << endl;
     out << "if(b.integrate(smtype)!=" << mb.getClassName() << "::SUCCESS){" << endl
 	<< "static INTEGRATION_RESULT bad_result;" << endl
 	<< "bad_result.set_error(INTEGRATION_RESULT::UNDEFINED_BEHAVIOR);" << endl
