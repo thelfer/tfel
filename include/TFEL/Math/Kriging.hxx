@@ -23,7 +23,7 @@ namespace tfel
     template<unsigned short N,
 	     typename T = double,
 	     typename Model = KrigingDefaultModel<N,T> >
-    struct Kriging
+    struct TFEL_VISIBILITY_LOCAL Kriging
       : public Model
     {
 

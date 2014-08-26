@@ -47,7 +47,7 @@ namespace tfel{
     
     
     template<typename T>
-    class vector
+    class TFEL_VISIBILITY_LOCAL vector
       : public VectorConcept<vector<T> >,
 	protected std::vector<T>
     {

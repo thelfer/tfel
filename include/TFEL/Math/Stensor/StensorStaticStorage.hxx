@@ -25,7 +25,7 @@ namespace tfel{
   namespace math {
 
     template<unsigned short N, typename T>
-    struct StensorStatic
+    struct TFEL_VISIBILITY_LOCAL StensorStatic
       : public fsarray<N,T>
     {
 
