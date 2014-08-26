@@ -696,7 +696,7 @@ namespace mfront{
 	msg += "unsupported driving variable '"+dv.name+"'";
 	throw(runtime_error(msg));
       }
-      this->behaviourFile << "this->"+dv.name+"_ +=this->"+dv.name+"+(this->d"+dv.name+")*(t/this->dt);\n";
+      this->behaviourFile << "this->"+dv.name+"_ = this->"+dv.name+"+(this->d"+dv.name+")*(t/this->dt);\n";
     }
     this->behaviourFile << "this->T_   = this->T+(this->dT)*(t/this->dt);" << endl;
     for(p =this->mb.getExternalStateVariables().begin();p!=this->mb.getExternalStateVariables().end();++p){
