@@ -162,7 +162,7 @@
   \begin{itemize}
   \item la contrainte \nom{Cauchy} permet le calcul des forces sur la
     configuration déformée~;
-  \item la puissance mécanique est~:
+  \item la puissance mécanique est (sur la configuration initiale)~:
     \[
     \mathcal{P}=\det\paren{J}\,\sigma\,\colon\,\tenseur{d}
     \]
@@ -330,9 +330,32 @@
     \begin{itemize}
     \item la rotation du repère est choisie telle que la loi obtenue
       est objective~;
+    \item on obtient (presque toujours) une loi hypoélastique...
+    \item pas encore implantée...
     \end{itemize}
   \end{itemize}
 }
 
+\section{Conclusions}
+
+\titre{Conclusions}
+\frame{
+  \begin{itemize}
+  \item deux nouveaux mots clés~:
+    \begin{itemize}
+    \item {\tt UMATFiniteStrainStrategy}
+    \item {\tt UMATFiniteStrainStrategies}
+    \end{itemize}
+  \item les lois {\tt MFrontMaterials} seront compilées en trois
+    versions~:
+    \begin{itemize}
+    \item petites déformations~;
+    \item \og~grandes rotations, petites déformations\fg{} (le défaut
+      en grands déplacements ?)~;
+    \item déformations logarithmiques~;
+    \end{itemize}
+  \item test sur l'essai d'écrasement de plaquettes~;
+  \end{itemize}
+}
 
 \end{document}

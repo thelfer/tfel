@@ -131,9 +131,9 @@ OK = VRAI;
 'FINSI' ;
 'SAUTER' 1 'LIGNE' ;
 
-d    = tab1. 'DEPLACEMENTS'. (nb '-' 1);
-def0 = 'DEFORME' stot 0. d;
-def1 = 'DEFORME' stot 1. d 'ROUGE';
-'TRACER' (def0 'ET' def1);
+* d    = tab1. 'DEPLACEMENTS'. (nb '-' 1);
+* def0 = 'DEFORME' stot 0. d;
+* def1 = 'DEFORME' stot 1. d 'ROUGE';
+* 'TRACER' (def0 'ET' def1);
 
 'FIN';
