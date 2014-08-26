@@ -1,0 +1,19 @@
+@StateVariable<AxisymmetricalGeneralisedPlaneStress> real etozz;
+AxisymmetricalGeneralisedPlaneStress::etozz.setGlossaryName("AxialStrain");
+@ExternalStateVariable<AxisymmetricalGeneralisedPlaneStress> stress sigzz;
+AxisymmetricalGeneralisedPlaneStress::sigzz.setGlossaryName("AxialStress");
+
+@Integrator<AxisymmetricalGeneralisedPlaneStress,Append,AtEnd>{
+  // the plane stress equation is satisfied at the end of the time
+  // step
+  const stress szz = (lambda+2*mu)*(eel(1)+deel(1))+lambda*(eel(0)+deel(0)+eel(2)+deel(2));
+  fetozz   = (szz-sigzz-dsigzz)/young;
+  // modification of the partition of strain
+  feel(1) -= detozz;
+  // jacobian
+  dfeel_ddetozz(1)=-1;
+  dfetozz_ddetozz  = real(0);
+  dfetozz_ddeel(1) = (lambda+2*mu)/young;
+  dfetozz_ddeel(0) = lambda/young;
+  dfetozz_ddeel(2) = lambda/young;
+}

@@ -6,11 +6,8 @@
  */
 
 @Description{
-  "Test the generic plane stress"
-  "algorithm of the umat interface."
-  "This is much less efficient than"
-  "directly supporting plane stress"
-  "within the behaviour."
+  "Test the axisymmetric generalised plane"
+  " stress modelling hypothesis"
  };
 
 @MaximumNumberOfSubSteps   1;

@@ -120,7 +120,7 @@ else(GNUPLOT_FOUND)
 endif(GNUPLOT_FOUND)
 
 #python
-option(enable-python "enable python support" ON)
+option(enable-python "enable python support" OFF)
 option(enable-python-bindings "enable  python bindings support" OFF)
 if(enable-python OR enable-python-bindings)
   include(FindPythonInterp)

@@ -1,4 +1,4 @@
-\documentclass[rectoverso,pleiades,pstricks,leqno,anti,projet]{note_technique_2010}
+\documentclass[rectoverso,pleiades,pstricks,leqno,anti]{note_technique_2010}
 
 \usepackage[dvips]{graphicx}
 \usepackage[dvips,breaklinks]{hyperref}
@@ -8,7 +8,7 @@
 \usepackage{couleurs}
 \usepackage{presentation}
 
-\usepackage{multicol}
+\usepackage{listings}
 
 \usepackage{pst-plot}
 \usepackage{array}
@@ -29,10 +29,11 @@
 \newcommand{\mfm}{\texttt{MFront\-Materials}}
 \newcommand{\cyrano}{\texttt{cyrano}}
 \newcommand{\galileo}{\texttt{galileo}}
-\newcommand{\castem}{\texttt{Cast3M}}
+\newcommand{\castem}{\href{http://www-cast3m.cea.fr}{\texttt{Cast3M}}}
 \newcommand{\gibiane}{\texttt{gibiane}}
 \newcommand{\tmfft}{\texttt{TMFFT}}
-\newcommand{\aster}{\href{http://www.code-aster.org/}{\texttt{Aster}}}
+\newcommand{\aster}{\href{http://www.code-aster.org}{\texttt{Aster}}}
+\newcommand{\zebulon}{\href{http://www.zset-software.com/products/zebulon}{\texttt{ZeBuLoN}}}
 \newcommand{\pycastem}{\texttt{pyCast3M}}
 \newcommand{\umat}{\texttt{umat}}
 \newcommand{\sirius}{\texttt{sirius}}
@@ -53,6 +54,7 @@
 \newcommand{\eln}[0]{\ensuremath{\tepsilonto_{\ln{}}}}
 
 \newcommand{\tns}[1]{\ensuremath{\underset{\tilde{}}{\mathbf{#1}}}}
+
 \newcommand{\bts}[1]{\ensuremath{\left.#1\right|_{t}}}
 \newcommand{\mts}[1]{\ensuremath{\left.#1\right|_{t+\theta\,\Delta\,t}}}
 \newcommand{\ets}[1]{\ensuremath{\left.#1\right|_{t+\Delta\,t}}}
@@ -80,6 +82,7 @@
 \newcommand{\sic}{$SiC$}
 
 \newcommand{\cea}{CEA}
+\newcommand{\edf}{ÉDF}
 \newcommand{\windows}{\href{http://www.microsoft.com/france/windows/default.mspx}{\texttt{Windows}}}
 \newcommand{\unix}{\href{http://www.kernel.org/}{\texttt{unix}}}
 \newcommand{\msys}{\href{http://www.mingw.org/wiki/MSYS}{\texttt{msys}}}
@@ -91,28 +94,29 @@
 \newcommand{\mandriva}{\href{http://www.mandriva.com}{\texttt{Mandriva}}}
 \newcommand{\excel}{\href{http://www.microsoft.com/france/office/2007/programs/excel/overview.mspx}{\texttt{Microsoft Office Excel}}}
 
-\newcommand{\debutpas}[1]{\ensuremath{\left.#1\right|_{t}}}
-\newcommand{\milieupas}[1]{\ensuremath{\left.#1\right|_{t+\theta\, \Delta\, t}}}
-\newcommand{\finpas}[1]{\ensuremath{\left.#1\right|_{t+\Delta\, t}}}
-\newcommand{\demipas}[1]{\ensuremath{\left.#1\right|_{t+\frac{\Delta\, t}{2}}}}
-
 \newcommand{\uod}{\ensuremath{UO_{2}}}
 
-\newcommand{\code}[1]{
-  \psframebox[linecolor=ceaorange,shadow=true,blur=true]{
-    \begin{minipage}[htbp]{1.0\linewidth}
-      \ttfamily\small#1
-    \end{minipage}
-  }
-}
-
-\newcommand{\bash}[1]{
-  \begin{center}
-    \begin{minipage}{0.8\linewidth}
-      \footnotesize{}
-      \texttt{\$#1}
-    \end{minipage}
-  \end{center}
+\lstset{ %
+  backgroundcolor=\color{white},   % choose the background color; you must add \usepackage{color} or \usepackage{xcolor}
+  basicstyle=\footnotesize,        % the size of the fonts that are used for the code
+  breakatwhitespace=false,         % sets if automatic breaks should only happen at whitespace
+  breaklines=true,                 % sets automatic line breaking
+  captionpos=b,                    % sets the caption-position to bottom
+  commentstyle=\color{red},        % comment style
+  deletekeywords={...},            % if you want to delete keywords from the given language
+  frame=single,                    % adds a frame around the code
+  keepspaces=true,                 % keeps spaces in text, useful for keeping indentation of code (possibly needs columns=flexible)
+  keywordstyle=\color{blue},       % keyword style
+  language=C++,                    % the language of the code
+  morekeywords={Output Author Input Date},            % if you want to add more keywords to the set
+  numbers=left,                    % where to put the line-numbers; possible values are (none, left, right)
+  rulecolor=\color{orange},         % if not set, the frame-color may be changed on line-breaks within not-black text (e.g. comments (green here))
+  showspaces=false,                % show spaces everywhere adding particular underscores; it overrides 'showstringspaces'
+  showstringspaces=false,          % underline spaces within strings only
+  showtabs=false,                  % show tabs within strings adding particular underscores
+  stepnumber=1,                    % the step between two line-numbers. If it's 1, each line will be numbered
+  stringstyle=\color{green},       % string literal style
+  tabsize=2,                       % sets default tabsize to 2 spaces
 }
 
 \input{LSC}
@@ -150,7 +154,75 @@
 % \signatures{-0.}{-39.2}{0.12}{images/signatures.eps}
 
 \resumecea{
-toto
+
+  Le support des hypothèses de contraintes planes (généralisées ou
+  non) a pour but de permettre une utilisation efficace des lois
+  générées par \mfront{} dans l'application combustible industrielle
+  \cyrano{}, développée par \edf{} au sein du projet \pleiades{}.
+
+  En effet, pour réduire la description d'une tranche de crayon
+  combustible à un problème \(1D\), \cyrano{} fait deux hypothèses de
+  modélisation. La première est l'hypothèse d'axisymétrie.
+
+  La seconde concerne le traitement de la quasi-invariance du problème
+  le long de l'axe du crayon. \cyrano{} permet de faire l'une des deux
+  hypothèses suivantes~:
+  \begin{itemize}
+  \item la contrainte est homogène dans le combustible d'une part et
+    dans la gaine d'autre part. Cette hypothèse de \og~contraintes
+    planes généralisées~\fg{} est spécifique à \cyrano{}. Il s'agit de
+    l'hypothèse utilisée par défaut.
+  \item la déformation est homogène dans le combustible d'une part et
+    dans la gaine d'autre part. C'est l'hypothèse classique de
+    déformations planes généralisées.
+  \end{itemize}
+
+  De multiples solutions sont possibles en \mfront{} pour implanter
+  une loi de comportement utilisable en contraintes planes. La plupart
+  de ces solutions conduisent à une implantation spécifique~: les
+  implantations qui en découlent ne peuvent être réutilisées pour les
+  hypothèses standard (axisymétrie en déformations planes
+  généralisées, déformations planes, déformations planes généralisées,
+  axisymétrie, \(3D\)) utilisées par les autres applications
+  combustibles de la plate-forme.
+
+  Cette note décrit une méthode, applicable aux implantations basées
+  sur une intégration implicite et pour des lois écrites en petites
+  déformations, qui consiste à~:
+  \begin{itemize}
+  \item écrire les équations constitutives dans un bloc,
+    indépendamment de l'hypothèse de modélisation~;
+  \item prendre en compte l'hypothèse de contraintes planes par une
+    équation additionnelle, décrite dans un bloc spécifique. Cette
+    équation ne dépend que de la forme de la loi d'élasticité. Cette
+    équation permet de calculer l'évolution d'un degré de liberté
+    supplémentaire, la déformation axiale.
+  \end{itemize}
+  Cette méthode présente de nombreux avantages~:
+  \begin{itemize}
+  \item l'implantation obtenue reste utilisable avec les hypothèses de
+    modélisation classique.
+  \item l'implantation obtenue est compatible avec les stratégies
+    \og~grandes transformations~\fg{} disponibles dans \mfront{}
+    (déformations logarithmiques notamment) qui nécessitent de
+    connaître la déformation axiale~;
+  \item le calcul automatique de la matrice tangente cohérente à
+    partir de la jacobienne du système implicite reste valide sans
+    aucune modification.
+  \end{itemize}
+  Son principal désavantage est d'introduire une variable interne
+  supplémentaire (la déformation axiale) ce qui induit un coût mémoire
+  et un coût CPU lié d'une part à la gestion par le code appelant de
+  cette variable supplémentaire et d'autre part au fait que la
+  résolution implicite doit prendre en compte une équation
+  supplémentaire. Nous montrerons cependant que les implantations
+  obtenues ont des performances numériques meilleures en moyenne que
+  celles obtenues avec les lois internes de \cyrano{} (optimisées pour
+  l'hypothèse de contraintes planes généralisées).
+
+  Cette méthode permet d'écrire une implantation d'une loi utilisable
+  à la fois dans le code \cyrano{} et dans les applications
+  combustible \cea{}.
 }
 
 \stylebib{@abs_top_srcdir@/docs/tex/texmf/bibtex/fr-insa}
@@ -162,39 +234,280 @@ toto
 
 Connaissant l'état du matériau à un instant \(t\), caractérisé par les
 valeurs d'un certain nombre de variables internes
-\(\debutpas{Z_{i}}\), et l'incrément de déformation totale
+\(\bts{Z_{i}}\), et l'incrément de déformation totale
 \(\Delta\tepsilonto\) entre cet instant et l'instant \(t+\Delta\,t\),
 le principal rôle des lois de comportement mécanique est de permettre
-le calcul de la contrainte \(\finpas{\tsigma}\) et des variables
-internes \(\finpas{Z_{i}}\).
-
-
-
-\section{Modification du système d'intégration~: cas des lois
-  isotropes}
-
-Simo décrit une modification de la loi de comportement qui introduit
-un opérateur de projection sur l'espace des contraintes
-planes~\cite{simo_computational_1998}.
-
-\section{Ajout d'une variable supplémentaire~: la déformation axiale}
-
-Une manière relativement générique de procéder est d'introduire la
-déformation axiale comme une variable interne dont l'équation
-implicite associée est la nullité de la contrainte plane.
-
-\subsection{Un cas commun}
-
-L'équation associée à la déformation élastique se déduit de la
-partition des déformations~:
+le calcul de la contrainte \(\ets{\tsigma}\) et des variables
+internes \(\ets{Z_{i}}\)~:
 \[
-f_{\epsilonel}=\Delta\,\tepsilonel-\Delta\,\tepsilonto-\Delta\,\epsilonto_{zz}\,\vec{e}_{z}\otimes\vec{e}_{z}+\ldots
+\paren{\bts{Z_{i}},\bts{\tepsilonto},\bts{\sigma}}
+\rightarrow \paren{\ets{Z_{i}},\ets{\sigma}}
 \]
 
-La dérivée de cet équation par rapport à la déformation axiale est
+\subsection{Hypothèses de contraintes planes}
+
+L'hypothèse de contraintes planes, utilisée classiquement pour décrire
+des structures minces, se traduit par la condition~:
+\[
+\ets{\sigmaz}=0
+\]
+
+L'hypothèse de contraintes planes généralisées, utilisée par le code
+combustible \cyrano{} s'écrit~:
+\[
+\ets{\sigmaz}=\sigmaz^{\text{équilibre}}\paren{t+\Delta\,t}
+\]
+où \(\sigmaz^{\text{équilibre}}\paren{t+\Delta\,t}\) est une valeur imposée
+qui résulte de l'équilibre axial du crayon.
+
+Dans les deux cas, la résolution de l'équilibre mécanique ne permet
+plus de déterminer la déformation axiale totale \(\epsilontoz\)
+qui devient un degré de liberté supplémentaire en chaque point de
+\nom{Gauss}. 
+
+Pour simplifier la présentation, nous ne traiterons généralement que
+l'hypothèse de contraintes planes, le traitement des contraintes
+planes généralisées ne présentant pas de difficulté supplémentaire.
+
+\subsection{Quelques traitements de la condition de contraintes
+  planes}
+
+Nous présentons ici quelques traitements classiques de l'hypothèse de
+contraintes planes.
+
+\subsubsection{Prise en compte explicite}
+
+Une façon classique de traiter l'hypothèse de contraintes planes est
+de la traiter explicitement dans l'implantation de la loi de
+comportement. Par exemple, l'élasticité isotrope s'écrit~:
+\[
+\begin{pmatrix}
+  \sigma_{xx} \\
+  \sigma_{yy} \\
+  \sqrt{2}\sigma_{xy} \\
+\end{pmatrix}
+=
+\Frac{E}{\paren{1-\nu^{2}}}
+\begin{pmatrix}
+  1   & \nu & 0     \\
+  \nu &   1 & 0     \\
+  0   &   0 & 1-\nu \\
+\end{pmatrix}
+\begin{pmatrix}
+  \epsilonto_{xx} \\
+  \epsilonto_{yy} \\
+  \sqrt{2}\epsilonto_{xy} \\
+\end{pmatrix}
+\]
+
+La prise en compte explicite de l'hypothèse de contraintes planes est
+sans doute la solution la plus efficace numériquement.
+
+Un des désavantages de cette méthode est qu'elle utilise un formalisme
+tensoriel particulier dans lequel la composante axiale est
+omise. Cette représentation tensorielle réduite n'est aujourd'hui pas
+supportée dans \TFEL{} (la librairie mathématique sur laquelle
+s'appuie \mfront{}) et ne le sera probablement jamais.
+
+L'autre désavantage de cette méthode est qu'elle conduit à
+proposer plusieurs implantations d'une même loi de comportement~:
+l'une gérant l'hypothèse de contraintes planes, l'autre gérant les
+autres hypothèses de modélisation (axisymétrie en déformations planes
+généralisées, déformations planes, déformations planes généralisées,
+axisymétrie, \(3D\)). Le temps de développement est ainsi
+considérablement accru. Du point de vue de l'assurance qualité, la
+duplication d'une même information physique dans différentes
+implantations nous semble peu souhaitable.
+
+\paragraph{Cas des lois de comportement isotropes}
+Les lois de comportement isotropes, pour lesquels \mfront{} propose
+des analyseurs spécifiques~\cite{helfer_generateur_2013}, forment une
+exception notable pour deux raisons~:
+\begin{itemize}
+\item des algorithmes efficaces pour traiter ce type de lois ont été
+  proposés dans la
+  littérature~\cite{simo_computational_1998,doghri_mechanics_2000}. Ces
+  algorithmes n'utilisent pas de formalisme tensoriel particulier car
+  l'intégration de la loi de comportement peu être réduite à une
+  équation scalaire~\cite{simo_computational_1998} ou un système de
+  deux équations~\cite{doghri_mechanics_2000} (le formalisme tensoriel
+  réduit est un intermédiaire de calcul permettant d'obtenir cette
+  équation scalaire)~;
+\item ces analyseurs réduisent la loi de comportement aux écoulements
+  plastiques et viscoplastiques qui les définissent. \mfront{} masque
+  les détails liés à l'algorithme d'intégration et il est donc
+  possible de prendre en charge l'hypothèse de contraintes planes sans
+  que l'utilisateur n'ait à dupliquer l'information physique.
+\end{itemize}
+Ces lois ne seront pas traitées dans cette note et l'implantation de
+ces algorithmes reste pour l'instant une perspective intéressante.
+
+\subsubsection{Traitement au niveau du point de \nom{Gauss} par une
+  boucle externe}
+
+Dans le cas de l'interface \umat{} et que la loi de comportement ne
+gère pas l'hypothèse de contraintes planes mais est utilisable en
+déformations planes généralisées, \mfront{} propose un algorithme
+générique de traitement de l'hypothèse de contraintes
+planes~\cite{helfer_interface_2013}.
+
+Pour cela, une variable, la déformation axiale \(\epsilontoz\) est
+déclarée et l'algorithme cherche à déterminer sa valeur en fin de pas
+de temps.
+
+Cet algorithme se décompose ainsi~:
+\begin{itemize}
+  \item l'incrément de déformation axiale
+  \(\left.\Delta\,\epsilontoz\right.^{(0)}\) est initialisé par une
+  estimation élastique. Dans le cas d'un comportement élastique
+  isotrope, cela se traduit par~:
+  \[
+  \left.\Delta\,\epsilontoz\right.^{(0)}=-\Frac{1}{E}\left.\sigmaz\right.^{(0)}-\nu\paren{\Delta\,\epsilontox+\Delta\,\epsilontoy}
+  \]
+  La présence du terme \(\left.\Frac{1}{E}\sigmaz\right.^{(0)}\)
+  permet de prendre en corriger le fait que la condition de contraintes
+  planes n'est pas vérifiée de manière exacte. La loi de comportement en
+  déformations planes généralisées est alors appelée.
+  \item si la contrainte axiale obtenue n'est pas nulle, au
+  critère près, une nouvelle correction élastique est effectuée~:
+  \[
+  \left.\Delta\,\epsilontoz\right.^{(1)}=\left.\Delta\,\epsilontoz\right.^{(0)}-\Frac{1}{E}\left.\Frac{1}{E}\sigmaz\right.^{(1)}
+  \]
+  La loi de comportement en déformations planes généralisées est
+  appelée une seconde fois.
+\item si la contrainte axiale obtenue n'est pas nulle (à une précision
+  donnée près), la méthode itérative de la sécante est utilisée pour
+  estimer un incrément convenable. À chaque itération, la loi de
+  comportement déformations planes généralisées est appelée.
+\end{itemize}
+
+Cette méthode a un coût numérique important~: pour les lois les plus
+simples, il faut en général \(4\) à \(5\) itérations pour que la
+méthode de la sécante, ce qui multiplie d'autant le coût d'intégration
+de la loi (par rapport à l'intégration de la loi en déformations
+planes). Ce surcoût est rédhibitoire pour un code industriel tel que
+\cyrano{}.
+
+\subsubsection{Traitement par le code appelant}
+
+Il est possible de traiter la condition de contraintes planes au
+niveau du code appelant, ce qui évite de développer une implantation
+spécifique. Deux approches sont particulièrement intéressantes~:
+\begin{itemize}
+\item dans le code \zebulon{}, chaque élément fini \(\Omega^{e}\)
+  possède des degrés de liberté supplémentaire correspondant aux
+  déformations axiales en chacun des \(N_{g}\) points de
+  \nom{Gauss}~\cite{besson_large_1997}. Les forces internes nodales
+  s'écrivent alors~:
+  \[
+  \vec{R} = \int_{\Omega^{e}}\left[
+    \begin{aligned}
+      \mbox{}^{t}B\,\sigma \\
+      \mbox{}^{t}I\,\sigma 
+    \end{aligned}
+  \right]\,\dtot\,V
+  \]
+  où \(I\) est une matrice possédant \(4\) lignes et \(N_{g}\)
+  colonnes telles que. Le terme \(\mbox{}^{t}I\,\sigma\) est, en
+  chaque point de \nom{Gauss}, proportionnel à \(\sigma_{33}\), de
+  sorte qu'en l'absence de force imposée associée aux déformations
+  axiales, l'équilibre de la structure satisfait naturellement
+  l'hypothèse de contraintes planes. Cette méthode augmente la largeur
+  de front de la matrice de raideur par le nombre de points de
+  \nom{Gauss} de l'élément. Il n'est pas mentionné si le nombre
+  d'itérations nécessaires pour atteindre l'équilibre est augmenté par
+  rapport au cas où la loi de comportement gère l'hypothèse de
+  contraintes planes.
+\item \aster{} propose un algorithme dû à \nom{De
+    Borst}~\cite{proix_prise_2012} qui utilise la convergence de
+  l'équilibre global pour assurer la condition de contraintes
+  planes. \cyrano{} semble utiliser un algorithme équivalent quand la
+  loi de comportement ne renvoie pas une solution vérifiant
+  l'hypothèse de contrainte planes généralisées. Dans les deux cas, le
+  nombre d'itérations nécessaire pour atteindre l'équilibre mécanique
+  nous a semblé significativement plus important que quand l'hypothèse
+  de contraintes planes est gérée par la loi de comportement.
+\end{itemize}
+
+Le principal défaut de ces méthodes est donc d'induire un coût
+supplémentaire.
+
+Si nous ne pouvons juger de l'efficacité de la méthode proposée dans
+\zebulon{}, nous avons l'expérience directe des algorithmes utilisés
+dans \aster{} et dans \cyrano{}.
+
+Dans le cas de ce dernier, le surcoût induit est incompatible avec les
+exigences de l'application en termes de performances~: lors des
+premiers tests de lois \mfront{} dans \cyrano{}, qui ne portait que
+sur la loi de comportement de la gaine, le nombre d'itérations
+mécaniques supplémentaires conduisait à un temps de calcul plus de
+deux fois plus important qu'avec les lois natives de l'application
+(qui gèrent l'hypothèse de contraintes planes généralisées en interne)
+alors même que le temps d'intégration de la loi de comportement
+semblait équivalent. C'est ce constat qui a motivé le travail présenté
+ici.
+
+\subsection{Plan de la note}
+
+Le paragraphe précédent conclut que seules les implantations traitant
+explicitement l'hypothèse de contraintes planes généralisées sont
+compatibles avec les besoins de performances numériques de
+l'application \cyrano{}. Cela semble obliger à réaliser deux
+implantations différentes d'une même loi de comportement. Nous
+proposons dans cette note un compromis acceptable.
+
+Nous proposons en section~\ref{sec:trait-gener-de} une modification de
+l'algorithme implicite qui permet de prendre en compte l'hypothèse de
+contraintes planes généralisées. Cette modification s'inspire des
+techniques présentées au paragraphe précédent et peut être utilisée
+dans la plupart des lois de comportement intégrées en implicite.
+
+Nous montrerons alors que l'implantation de la loi de comportement
+peut se scinder en deux blocs de code distincts~:
+\begin{itemize}
+\item l'un décrit les équations constitutives de la loi et est utilisé
+  quelle que soit l'hypothèse de modélisation~;
+\item l'autre, de quelques dizaines de lignes et qui ne dépend que de
+  la loi d'élasticité, permet la prise en compte de l'hypothèse de
+  contraintes planes et n'est utilisé que si nécessaire.
+\end{itemize}
+
+Nous arrivons ainsi à une implantation qui peut être utilisée dans
+toutes les hypothèses de modélisation.
+
+Nous démontrerons en section~\ref{sec:application-la-loi} que cette
+implantation est numériquement efficace.
+
+\newpage
+\clearpage
+\section{Traitement générique de l'hypothèse de contraintes planes
+  dans un algorithme implicite}
+\label{sec:trait-gener-de}
+
+\subsection{Description de la solution proposée}
+
+L'hypothèse de contraintes planes est traitée en introduisant la
+déformation axiale comme une variable interne supplémentaire. La méthode présentée n'est valide que si les hypothèses suivantes sont vérifiées~:
+\begin{enumerate}
+\item la loi de comportement utilise la déformation élastique
+  \(\tepsilonel\) comme variable interne~;
+\item la déformation totale n'intervient que dans l'équation implicite
+  \(f_{\tepsilonel}\)associée à la déformation élastique~;
+\end{enumerate}
+
+\subsubsection{Modification des équations du système implicite}
+
+Nous supposons que l'équation associée à la déformation élastique est
+la partition des déformations~:
+\begin{equation}
+  \label{eq:mfront:planestress:feelzz}
+  f_{\tepsilonel}=\Delta\,\tepsilonel-\Delta\,\tepsilonto-\underbrace{\Delta\,\epsilontoz\,\vec{e}_{z}\otimes\vec{e}_{z}}_{\text{Incrément de déformation axiale}}+\ldots
+\end{equation}
+
+La dérivée de cette équation par rapport à la déformation axiale est
 donnée par~:
 \[
-\deriv{f_{\epsilonel}}{\epsilonto_{zz}}=\vec{e}_{z}\otimes\vec{e}_{z}=
+\deriv{f_{\tepsilonel}}{\epsilontoz}=\vec{e}_{z}\otimes\vec{e}_{z}=
 \begin{pmatrix}
   0 \\
   0 \\
@@ -203,16 +516,33 @@ donnée par~:
 \end{pmatrix}
 \]
 
-Dans le cas où la contrainte axiale est donnée par la loi de
-\nom{Hooke}, nous avons~:
+Le point important de la méthode est {\em qu'aucune des autres
+  équations du système implicite n'est modifiée.}
+
+\subsection{Équation associée à la déformation axiale}
+
+L'équation associée à la déformation axiale \(\epsilonz\) est la
+nullité de la contrainte axiale \(\sigmaz\)~:
+\begin{equation}
+  \label{eq:mfront:planestress:fetozz}
+  f_{\epsilontoz}=\Frac{1}{E^{\prime}}\sigmaz  
+\end{equation}
+où \(E^{\prime}\) est un facteur de normalisation tel que
+\(f_{\epsilontoz}\) soit de l'ordre de grandeur des déformations.
+
+Cette équation est écrite de manière {\em purement implicite} afin
+d'assurer la vérification de la condition de contraintes planes en fin
+de pas de temps.
+
+Dans le cas où l'élasticité est linéaire et isotrope (loi de
+\nom{Hooke}), nous écrirons~:
 \[
-f_{\epsilonto_{zz}}=\paren{1-\nu}\,\paren{\epsilonel_{zz}+\Delta\,\epsilonel_{zz}}+\nu\,\left[\epsilonel_{xx}+\Delta\,\epsilonel_{xx}+\epsilonel_{yy}+\Delta\,\epsilonel_{yy}\right]
+f_{\epsilontoz}=\paren{1-\nu}\,\paren{\epsilonel_{zz}+\Delta\,\epsilonel_{zz}}+\nu\,\left[\epsilonel_{xx}+\Delta\,\epsilonel_{xx}+\epsilonel_{yy}+\Delta\,\epsilonel_{yy}\right]
 \]
-Cette équation est écrite de manière purement implicite.
 
 La seule dérivée non nulle de cette équation est~:
 \[
-\deriv{f_{\epsilonto_{zz}}}{\tepsilonel}=
+\deriv{f_{\epsilontoz}}{\tepsilonel}=
 \begin{pmatrix}
   \nu   \\
   \nu   \\
@@ -221,8 +551,249 @@ La seule dérivée non nulle de cette équation est~:
 \end{pmatrix}
 \]
 
-\section{Une autre méthode}
+\paragraph{Contraintes planes généralisées} Pour les contraintes
+planes généralisées, l'équation~\eqref{eq:mfront:planestress:fetozz}
+devient~:
+\[
+f_{\epsilontoz}=\Frac{1}{E^{\prime}}\paren{\sigmaz-\ets{\sigmaz^{\text{équilibre}}}}
+\]
 
+
+\subsection{Principe de la méthode}
+
+Les équations~\eqref{eq:mfront:planestress:feelzz}
+et~\eqref{eq:mfront:planestress:fetozz} sont les seules modifications
+à apporter à la loi de comportement pour que celle-ci soit valide en
+contraintes planes (généralisée ou non).
+
+Deux caractéristiques de cette méthode sont particulièrement
+intéressantes~:
+\begin{enumerate}
+\item la modification portée par
+  l'équation~\eqref{eq:mfront:planestress:feelzz} est linéaire. On
+  peut donc calculer \(f_{\tepsilonel}\) sans tenir de compte du terme
+  supplémentaire
+  \(\Delta\,\epsilontoz\,\vec{e}_{z}\otimes\vec{e}_{z}\). Celui-ci
+  peut être ajouté si nécessaire~;
+\item l'équation \(f_{\epsilontoz}\) qui assure la condition de
+  contraintes planes ne fait intervenir que les déformations
+  élastiques et ne dépend que de la loi d'élasticité utilisée. Deux
+  cas se rencontrent en pratique~: la loi de \nom{Hooke} isotrope et
+  la loi de \nom{Hooke} orthotrope. D'autres lois d'élasticité sont
+  plus rares.
+\end{enumerate}
+
+Ces caractéristiques permettent de scinder l'implantation de la loi en
+deux parties~:
+\begin{itemize}
+\item le premier décrit la loi de comportement sans prendre en compte
+  l'hypothèse de contraintes planes. Ce bloc définit de fait une
+  implantation qui est valide pour toutes les hypothèses de
+  modélisation classiques (axisymétrie en déformations planes
+  généralisées, déformations planes, déformations planes généralisées,
+  axisymétrie, \(3D\)).
+\item le second est spécifique aux contraintes planes.
+\end{itemize}
+
+Voyons maintenant comment cela se traduit en pratique.
+
+\newpage
+\clearpage
+\section{Application à la loi de \nom{Norton}}
+\label{sec:application-la-loi}
+
+Nous traitons dans cette section la loi non-linéaire la plus simple,
+la loi de \nom{Norton}.
+
+\subsection{Implantation à l'aide de \mfront{}}
+
+La première partie de l'implantation déclare que nous allons intégrer
+la loi en implicite et nous donnons son nom~:
+\begin{flushleft}
+  \lstinputlisting[lastline=2]{@abs_top_srcdir@/docs/mfront/mfront/ImplicitNorton.mfront}  
+\end{flushleft}
+
+Par défaut, la loi ne sera pas disponible en contraintes planes ou en
+contraintes planes généralisées. La ligne suivante précises que la loi
+supporte toutes les hypothèses de modélisation~:
+\begin{flushleft}
+  \lstinputlisting[firstline=4,lastline=4,firstnumber=4]{@abs_top_srcdir@/docs/mfront/mfront/ImplicitNorton.mfront}
+\end{flushleft}
+
+L'hypothèse de contraintes planes étant vérifiée à la précision de
+l'algorithme implicite près, il est conseillé d'utiliser une précision
+relativement basse. Dans nos tests, une valeur du critère d'arrêt de
+\(10^{-11}\) nous a semblé satisfaisante (par défaut, cette valeur de
+\(10^{-8}\). Nous le précisons ainsi~:
+\begin{flushleft}
+  \lstinputlisting[firstline=5,lastline=5,firstnumber=5]{@abs_top_srcdir@/docs/mfront/mfront/ImplicitNorton.mfront}
+\end{flushleft}
+
+Les lignes suivantes déclarent les propriétés matériau, les variables
+locales et la variable interne de la loi~:
+\begin{flushleft}
+  \lstinputlisting[firstline=11,lastline=30,firstnumber=11]{@abs_top_srcdir@/docs/mfront/mfront/ImplicitNorton.mfront}
+\end{flushleft}
+
+Nous déclarons ensuite la déformation axiale \(\epsilontoz\), qui est
+spécifique aux hypothèses de contraintes planes. Pour l'hypothèse de
+contraintes planes généralisées, nous déclarons également la
+contrainte imposée comme une variable externe dont l'évolution est
+fournie par le code appelant~:
+\begin{flushleft}
+  \lstinputlisting[firstline=32,lastline=38,firstnumber=32]{@abs_top_srcdir@/docs/mfront/mfront/ImplicitNorton.mfront}
+\end{flushleft}
+
+Deux syntaxes particulières sont utilisées ici~:
+\begin{itemize}
+\item après un mot clé, les chevrons {\tt '<'} et fermant {\tt '>'}
+  permettent de restreindre l'action de ce mot clé à certaines
+  hypothèses de modélisation. Ici la déformation axiale ne sera
+  définie que pour les hypothèses de contraintes planes~;
+\item pour appeler une méthode (ici {\tt set\-Glossary\-Name}) pour
+  une variable qui n'est définie que pour une hypothèse de
+  modélisation particulière, le nom de la variable est préfixée par le
+  nom de l'hypothèse. Ainsi, {\tt PlaneStress::etozz} désigne la
+  déformation axiale associée à l'hypothèse de contraintes planes.
+\end{itemize}
+
+Le fait d'associer à la déformation axiale le nom de glossaire {\tt
+  Axial\-Strain} est particulièrement important. Ceci permet à
+\mfront{} d'identifier quelle variable interne porte la déformation
+axiale et \mfront{} pourra l'utiliser dans les stratégies
+\og{}~grandes transformations~\fg{} pour un calcul correct de la
+contrainte de \nom{Cauchy}~\cite{helfer_ecriture_2014}.
+
+De même, le fait d'associer à la contrainte axiale imposée {\tt sigzz}
+le nom de glossaire {\tt Axial\-Stress} permettra à \cyrano{} de
+savoir comment remplir les champs d'entrée de la loi de comportement.
+
+Les variables locales sont ensuite initialisées~:
+\begin{flushleft}
+  \lstinputlisting[firstline=40,lastline=45,firstnumber=40]{@abs_top_srcdir@/docs/mfront/mfront/ImplicitNorton.mfront}
+\end{flushleft}
+ 
+La loi d'élasticité est ensuite précisée~:
+\begin{flushleft}
+  \lstinputlisting[firstline=47,lastline=49,firstnumber=47]{@abs_top_srcdir@/docs/mfront/mfront/ImplicitNorton.mfront}
+\end{flushleft}
+
+Notons bien que la loi d'élasticité est écrite sans référence à une
+hypothèse de modélisation~: pour les hypothèses de contraintes planes,
+la condition de contraintes planes est imposée par la résolution et
+non dans la loi d'élasticité.
+
+La partie commune à toutes les hypothèses de modélisation,
+l'intégration de la loi de comportement, détaillée par
+ailleurs~\cite{helfer_generateur_2013}, est ensuite donnée~:
+\begin{flushleft}
+  \lstinputlisting[firstline=51,lastline=69,firstnumber=51]{@abs_top_srcdir@/docs/mfront/mfront/ImplicitNorton.mfront}
+\end{flushleft}
+
+La partie spécifique à l'hypothèse de contraintes planes est alors
+donné~:
+\begin{flushleft}
+  \lstinputlisting[firstline=71,lastline=84,firstnumber=71]{@abs_top_srcdir@/docs/mfront/mfront/ImplicitNorton.mfront}
+\end{flushleft}
+
+De même, la partie spécifique à l'hypothèse de contraintes planes
+généralisées est donnée~:
+\begin{flushleft}
+  \lstinputlisting[firstline=86,lastline=99,firstnumber=86]{@abs_top_srcdir@/docs/mfront/mfront/ImplicitNorton.mfront}
+\end{flushleft}
+
+Enfin, nous effectuons le calcul de matrice tangente cohérente~:
+\begin{flushleft}
+  \lstinputlisting[firstline=101,lastline=116,firstnumber=101]{@abs_top_srcdir@/docs/mfront/mfront/ImplicitNorton.mfront}
+\end{flushleft}
+
+Ce calcul fait intervenir une petite subtilité~:
+\begin{itemize}
+\item la matrice élastique est la matrice \og{}~altérée~\fg{}, c'est à
+  dire qu'elle prend l'hypothèse de modélisation en compte. Pour cela,
+  \mfront{} met à disposition la fonction {\tt
+    compute\-Altered\-Elastic\-Stiffness}~;
+\item pour un calcul de la matrice tangente cohérente par une méthode
+  quasi-automatique~\cite{helfer_generateur_2013}, il est nécessaire
+  d'utiliser la matrice d'élasticité non altérée. Celle-ci est
+  calculée par la fonction {\tt compute\-Elastic\-Stiffness} qui prend
+  en argument la dimension de l'espace mais pas l'hypothèse de
+  modelisation.
+\end{itemize}
+
+\subsection{Test à l'aide de \mtest{}}
+
+Nous pouvons tester notre implantation à l'aide de
+\mtest{}~\cite{helfer_mtest_2014}. Pour cela, nous commençons par
+compiler la loi avec l'interface \cyrano{}~:
+\begin{flushleft}
+  {\tt
+    \$ mfront -{}-obuild -interface=cyrano norton.mfront
+  }
+\end{flushleft}
+
+Nous choisissons de modéliser un essai de fluage dans la direction
+radiale. Les contraintes orthoradiales et axiales sont donc nulles.
+
+Le fichier d'entrée du test est le suivant~:
+\begin{flushleft}
+  \lstinputlisting{@abs_top_srcdir@/docs/mfront/mtest/cyranonorton.mtest}
+\end{flushleft}
+
+En ligne \(15\), la déformation totale axiale à l'instant initiale est
+imposée nulle, puisque cette valeur est ici portée par la variable
+interne {\tt Axial\-Strain}.
+
+La contrainte axiale d'équilibre est imposée via la variable externe
+{\tt Axial\-Stress}.
+
+L'exécution du cas test permet de vérifier la bonne convergence de
+l'équilibre. Ainsi, la convergence au dernier pas de temps est la
+suivante~:
+\begin{flushleft}
+  {\tt
+    iteration 1 : 0.000111943 5.74196e+06 (0.00222946 0 -0.00108729)\\
+    iteration 2 : 4.37109e-05 1.35551e+06 (0.00225815 0 -0.0011023)\\
+    iteration 3 : 3.87204e-06 104347 (0.00226066 0 -0.00110366)\\
+    iteration 4 : 2.50326e-08 673.864 (0.00226068 0 -0.00110367)\\
+    iteration 5 : 1.05845e-12 0.0299959 (0.00226068 0 -0.00110367)\\
+    iteration 6 : 3.34299e-14 0.00587752 (0.00226068 0 -0.00110367)\\
+  }
+\end{flushleft}
+
+Nous voyons que chaque itération permet de gagner deux ordres de
+grandeurs, ce qui est caractéristique d'une convergence quadratique~:
+la matrice tangente cohérente est de bonne qualité.
+
+Une exécution de \mtest{} dans un mode plus verbeux affiche la valeur
+de la matrice tangente cohérente ressortie par la loi (par simplicité,
+nous avons omis les termes liés aux multiplicateurs de
+\nom{Lagrange}~:
+\begin{verbatim}
+    5.99688e+10 -2.28882e-05 5.48282e+10
+          0            0           0    
+    5.48282e+10  7.62939e-06 1.20988e+11
+\end{verbatim}
+
+Rappelons que la composante axiale est la seconde composante des
+tenseurs en contraintes planes généralisées. Nous voyons que la
+seconde ligne est nulle. La seconde colonne est numériquement nulle.
+
+Nous pouvons comparer l'opérateur tangent cohérent une approximation
+numérique. Pour cela, ajoutons les lignes suivantes au fichier mtest~:
+\begin{lstlisting}
+  @CompareToNumericalTangentOperator true;
+  @TangentOperatorComparisonCriterium 3e6;
+  @NumericalTangentOperatorPerturbationValue 1.e-8;
+\end{lstlisting}
+
+Nous vérifions ainsi numériquement la qualité de matrice tangente
+cohérente.
+
+\newpage
+\clearpage
+\section{Application au code \cyrano{}}
+\label{sec:application-au-code}
 
 
 \clearpage

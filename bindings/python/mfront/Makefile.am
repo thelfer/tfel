@@ -1,3 +1,5 @@
+SUBDIRS = umatxx
+
 INCLUDES= -I@top_srcdir@/include/                       \
 	  -I@top_srcdir@/mfront/include/                \
 	  @BOOST_CPPFLAGS@                              \

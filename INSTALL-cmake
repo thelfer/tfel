@@ -49,6 +49,12 @@ cmake typical usage
 
 cmake ../trunk -DCMAKE_BUILD_TYPE=Release -Dlocal-castem-header=ON -Denable-fortran=ON -Denable-python=ON -Denable-python-bindings=ON -Denable-aster=ON -Denable-cyrano=ON -DCMAKE_INSTALL_PREFIX=/home/th202608/codes/tfel/trunk/install
 
+debug and valgrind
+==================
+
+cmake ../trunk -DCMAKE_BUILD_TYPE=Debug -DCTEST_MEMORYCHECK_COMMAND=valgrind -DCTEST_MEMORYCHECK_COMMAND_OPTIONS="--trace-children=yes --leak-check=full" -Dlocal-castem-header=ON -Denable-fortran=ON -Denable-python=ON -Denable-python-bindings=ON -Denable-aster=ON -Denable-cyrano=ON -DCMAKE_INSTALL_PREFIX=/tmp/tfel-debug
+
+
 cmake for PLEIADES users
 ========================
 

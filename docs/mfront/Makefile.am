@@ -105,7 +105,10 @@ EXTRA_DIST=CMakeLists.txt                                           \
 	   mfront/loimat.vba			                    \
 	   mfront/hillTensor.cxx		                    \
 	   mfront/highlight.sty			                    \
-	   Author.txt				                    \
+	   mfront/ImplicitNorton.mfront		                    \
+           mfront/ImplicitNorton2.mfront		            \
+	   mtest/cyranonorton.mtest                                 \
+           Author.txt				                    \
 	   Bounds.txt				                    \
 	   Date.txt				                    \
 	   Description.txt                                          \

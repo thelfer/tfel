@@ -1,3 +1,5 @@
+add_subdirectory(umatxx)
+
 include_directories("${PROJECT_SOURCE_DIR}/bindings/python/include")
 include_directories("${PROJECT_SOURCE_DIR}/include")
 include_directories("${PROJECT_SOURCE_DIR}/mfront/include")

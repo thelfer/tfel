@@ -131,7 +131,14 @@ macro(tfel_python_script dir)
     message(FATAL_ERROR "tfel_python_script : no script specified")
   endif(${ARGC} LESS 1)
   foreach(pyscript ${ARGN})
-    install(PROGRAMS ${pyscript}
+    if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/${pyscript}.in")
+      configure_file("${CMAKE_CURRENT_SOURCE_DIR}/${pyscript}.in"
+	"${CMAKE_CURRENT_BINARY_DIR}/${pyscript}" @ONLY)
+      set(python_script "${CMAKE_CURRENT_BINARY_DIR}/${pyscript}")
+    else(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/${pyscript}.in")
+      set(python_script "${CMAKE_CURRENT_SOURCE_DIR}/${pyscript}")
+    endif(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/${pyscript}.in")
+    install(PROGRAMS ${python_script}
       DESTINATION lib/${PYTHON_LIBRARY}/site-packages/${dir}/)
   endforeach(pyscript ${ARGN})
 endmacro(tfel_python_script)

@@ -23,11 +23,15 @@ bindings/python/mfront/MFrontLogStream.cxx -text
 bindings/python/mfront/MTest.cxx -text
 bindings/python/mfront/MTestParser.cxx -text
 bindings/python/mfront/Makefile.am -text
-bindings/python/mfront/__init__.py -text
+bindings/python/mfront/__init__.py.in -text
 bindings/python/mfront/pymtest.cxx -text
+bindings/python/mfront/umatxx/Behaviour.py.in -text
+bindings/python/mfront/umatxx/CMakeLists.txt -text
+bindings/python/mfront/umatxx/Makefile.am -text
+bindings/python/mfront/umatxx/__init__.py.in -text
 bindings/python/std/CMakeLists.txt -text
 bindings/python/std/Makefile.am -text
-bindings/python/std/__init__.py -text
+bindings/python/std/__init__.py.in -text
 bindings/python/std/map.cxx -text
 bindings/python/std/pair.cxx -text
 bindings/python/std/vector.cxx -text
@@ -40,7 +44,7 @@ bindings/python/tfel/ModellingHypothesis.cxx -text
 bindings/python/tfel/ProcessManagerCommand.cxx -text
 bindings/python/tfel/TestResult.cxx -text
 bindings/python/tfel/TextData.cxx -text
-bindings/python/tfel/__init__.py -text
+bindings/python/tfel/__init__.py.in -text
 bindings/python/tfel/glossary.cxx -text
 bindings/python/tfel/math.cxx -text
 bindings/python/tfel/stensor.cxx -text
@@ -140,6 +144,8 @@ docs/mfront/mfront/GetEvol.dgibi -text
 docs/mfront/mfront/GetEvol.eps -text
 docs/mfront/mfront/GetEvol.ps -text
 docs/mfront/mfront/GetEvol.tex -text
+docs/mfront/mfront/ImplicitNorton.mfront -text
+docs/mfront/mfront/ImplicitNorton2.mfront -text
 docs/mfront/mfront/ImplicitOrthotropicCreep.mfront -text
 docs/mfront/mfront/ImplicitOrthotropicCreep.tex -text
 docs/mfront/mfront/ImplicitSimoMieheElastoPlasticity.tex -text
@@ -200,6 +206,7 @@ docs/mfront/mfront/test-T.cxx -text
 docs/mfront/mfront/test-T.ple -text
 docs/mfront/mfront/test-T.tex -text
 docs/mfront/mfront/vba.tex -text
+docs/mfront/mtest/cyranonorton.mtest -text
 docs/mfront/planestress.tex.in -text
 docs/mfront/style.ist -text
 docs/mfront/umat.tex.in -text
@@ -1406,6 +1413,7 @@ mfront/tests/behaviours/aster/asterstressrelaxation.mtest.in -text
 mfront/tests/behaviours/aster/asterviscochaboche-memo-nrad.py.in -text
 mfront/tests/behaviours/aster/asterviscochaboche.mtest.in -text
 mfront/tests/behaviours/aster/asterviscoplasisocin.mtest.in -text
+mfront/tests/behaviours/aster/asterxx.py.in -text
 mfront/tests/behaviours/aster/strainhardeningcreep.gnuplot -text
 mfront/tests/behaviours/castem/CMakeLists.txt -text
 mfront/tests/behaviours/castem/Makefile.am -text

@@ -389,10 +389,10 @@ namespace umat
        const st2tost2<2u,UMATReal> iP(invert(*(reinterpret_cast<const st2tost2<2u,UMATReal>* const>(P))));
        *(reinterpret_cast<stensor<2u,UMATReal>*>(s)) = (*(reinterpret_cast<const stensor<2u,UMATReal>* const>(sk2)))|iP;
        s[3] *= icste;
-     } else {
-       sk2[3]  *= cste;
-       sk2[4]  *= cste;
-       sk2[5]   *= cste;
+     } else if(NTENS==6u){
+       sk2[3] *= cste;
+       sk2[4] *= cste;
+       sk2[5] *= cste;
        const st2tost2<3u,UMATReal> iP(invert(*(reinterpret_cast<const st2tost2<3u,UMATReal>* const>(P))));
        *(reinterpret_cast<stensor<3u,UMATReal>*>(s)) = (*(reinterpret_cast<const stensor<3u,UMATReal>* const>(sk2)))|iP;
        s[3] *= icste;

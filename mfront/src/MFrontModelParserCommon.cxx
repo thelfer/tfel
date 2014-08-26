@@ -373,7 +373,6 @@ namespace mfront{
     bool newLine;
     bool newInstruction;
     bool found = false;
-    bool treated;
     f.useTimeIncrement = false;
     this->registerVariable("functor"+toString(static_cast<unsigned short>(this->functions.size())),false);
     this->checkNotEndOfFile("MFrontModelParserCommon::treatFunction");
@@ -450,10 +449,9 @@ namespace mfront{
 				    this->current->value+"' in the body of function "+
 				    f.name+"'");
 	  }
-	  treated = true;
 	  f.body  += "(" + this->className + ":: "+ this->current->value + ")";
 	} else if(this->varNames.find(this->current->value)!=this->varNames.end()){
-	  treated = false;
+	  bool treated = false;
 	  if(newInstruction){
 	    string var = this->current->value;
 	    string op;

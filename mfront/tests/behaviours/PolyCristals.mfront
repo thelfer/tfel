@@ -118,6 +118,3 @@
   static const real INV_SQRT_3_2 = real(1)/sqrt(real(3)/real(2));
   pg+=dt_*sqrt(depsp|depsp)*INV_SQRT_3_2;
 }
-
-
-

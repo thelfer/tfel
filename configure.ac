@@ -708,6 +708,7 @@ AC_OUTPUT([debug.sh
            mfront/tests/behaviours/cyrano/cyranoorthotropiccreep.mtest
            mfront/tests/behaviours/cyrano/cyranoimplicitnorton.mtest
            mfront/tests/behaviours/cyrano/cyranoimplicitnorton2.mtest
+           mfront/tests/behaviours/cyrano/cyranoimplicitnorton3.mtest
            mfront/tests/models/Makefile
            mfront/tests/models/include/Makefile
            mfront/tests/models/src/Makefile
@@ -718,8 +719,14 @@ AC_OUTPUT([debug.sh
 	   bindings/Makefile
 	   bindings/python/Makefile
 	   bindings/python/std/Makefile
+	   bindings/python/std/__init__.py
 	   bindings/python/tfel/Makefile
+	   bindings/python/tfel/__init__.py
 	   bindings/python/mfront/Makefile
+	   bindings/python/mfront/__init__.py
+	   bindings/python/mfront/umatxx/Makefile
+	   bindings/python/mfront/umatxx/__init__.py
+	   bindings/python/mfront/umatxx/Behaviour.py
 	   bindings/python/include/Makefile
 	   tests/Makefile
 	   tests/Tests/Makefile
