@@ -1,0 +1,338 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
+%%	Fichier	   : ces
+%%	Auteur     : th202608@pleiades043.intra.cea.fr
+%%	Date       : 26 mai 2009
+%%	Répertoire : /home/th202608/documents/presentations/2009/CES/
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
+
+\documentclass{beamer}
+
+\usepackage{beamerthemecea2012}
+\usepackage[utf8]{inputenc}
+\usepackage{pstricks}
+\usepackage{array}
+\usepackage{multirow}
+\usepackage{couleurs}
+
+\usepackage{mathematiques}
+\usepackage{mecanique}
+\usepackage{gnuplot}
+
+\usepackage[frenchb]{babel}
+
+\newcommand{\aster}{\texttt{Aster}}
+\newcommand{\unix}{\texttt{Unix}}
+\newcommand{\linux}{\texttt{LiNuX}}
+\newcommand{\windows}{\texttt{Windows}}
+
+\newcommand{\tfel}{\texttt{tfel}}
+\newcommand{\mfront}{\texttt{mfront}}
+\newcommand{\mtest}{\texttt{mtest}}
+\newcommand{\umat}{\texttt{umat}}
+\newcommand{\castem}{\texttt{Cast3M}}
+\newcommand{\pycastem}{\texttt{pyCast3M}}
+\newcommand{\pleiades}{\texttt{pleiades}}
+\newcommand{\sirius}{\texttt{sirius}}
+\newcommand{\nom}[1]{\textsc{#1}}
+
+\newcommand{\code}[1]{
+  \psframebox[linecolor=ceaorange,fillcolor=ceabluecurve,fillstyle=solid]{
+    \begin{minipage}[t]{0.9\linewidth}
+      \scriptsize\tt #1
+    \end{minipage}
+  }
+}
+
+\Titre{Lois de comportement mécanique en grandes transformations avec \mfront{} \\
+  \begin{center}
+    \includegraphics[height=4cm,angle=-90]{@abs_top_srcdir@/docs/presentations/images/mfront.eps}    
+  \end{center}
+}
+\Auteur{T. Helfer}
+%\Evenement{Formation Areva}
+%\Date{Avril 2014}
+
+\newcommand{\egl}[0]{\ensuremath{\tepsilonto_{GL}}}
+\newcommand{\degl}[0]{\ensuremath{\tdepsilonto_{GL}}}
+\newcommand{\tns}[1]{\ensuremath{\underset{\tilde{}}{\mathbf{#1}}}}
+\newcommand{\bts}[1]{\ensuremath{\left.#1\right|_{t}}}
+\newcommand{\mts}[1]{\ensuremath{\left.#1\right|_{t+\theta\,\Delta\,t}}}
+\newcommand{\ets}[1]{\ensuremath{\left.#1\right|_{t+\Delta\,t}}}
+
+\begin{document}
+
+\section{Introduction}
+
+\PageTitre{}
+
+\titre{Sommaire}
+\frame{
+  \setcounter{tocdepth}{1}
+  \tableofcontents{}
+}
+
+\section{Notions préliminaires}
+
+\titre{Les grandes transformations}
+\frame{
+  \begin{itemize}
+  \item la structure est caractérisée par sa forme
+    \(\mathcal{C}_{t}\) (souvent appelée {\em configuration}) à
+    l'instant \(t\)~;
+  \item le mouvement est décrit par une famille de transformation
+    \(\phi_{t}\) qui associe à une point \(\vec{X}\) de
+    \(\mathcal{C}_{0}\) sa position \(\vec{x}\)~:
+    \[
+    \vec{x}=\phi_{t}\paren{\vec{X}}=\vec{X}+\vec{u}_{t}\paren{\vec{X}}
+    \]
+    où \(\vec{u}_{t}\) est le champ de déplacement.
+  \item localement, on caractérise la transformation par le gradient \(\tns{F}\)
+    de \(\phi\)~:
+    \[
+    \tns{F}=\deriv{\vec{x}}{\vec{X}}
+    \]
+  \item le changement de volume est le déterminant de \(\tns{F}\)~:
+    \[
+    \Frac{\dtot\,v}{\dtot\,V}=J=\det\,\tns{F}
+    \]
+  \end{itemize}
+}
+
+\titre{Décomposition polaire de $\tns{F}$}
+\frame{
+  \rput(10.2,0.){
+    \includegraphics[width=0.3\linewidth]{@top_srcdir@/docs/mfront/Images/Polar_decomposition_of_F.eps}
+  }
+  \begin{minipage}[htbp]{0.65\linewidth}
+  \begin{itemize}
+  \item décomposition polaire de \(\tns{F}\)~:
+    \[
+    \quad\quad\tns{F}=\tns{R}\,.\tenseur{U}=\tenseur{V}\,.\tns{R}
+    \]
+    où \(\tns{R}\) est une rotation et où \(\tenseur{U}\) et
+    \(\tenseur{V}\) représentent la dilatation de la matière~;
+  \end{itemize}
+  \end{minipage}
+  \begin{itemize}
+  \item Grossièrement, les grandes transformations, c'est gérer~:
+    \begin{itemize}
+    \item le fait que le matériau a tourné localement~;
+    \item le fait que le matériau a subit une dilatation
+      \(\tenseur{U}\) ou \(\tenseur{V}\) qui peut être très grande
+      (limite HPP entre \(5\) et \(10\, \%\))~;
+    \end{itemize}
+  \item la rotation est la plus problématique, elle nécessite
+    d'assurer l'objectivité des lois de comportement mécanique~:
+    \begin{center}
+      il y a autant de solution que d'auteurs (que d'article !)
+    \end{center}
+  \item mais peu de solutions sont applicables à nos calculs~:
+    \begin{itemize}
+    \item formalisme HPP, anisotropie, dilatation libre,
+      hyperélasticité, calculs anisothermes, etc..
+    \end{itemize}
+  \end{itemize}
+}
+
+\titre{Quantifier la déformation}
+\frame{
+  \begin{itemize}
+  \item les tenseurs suivant sont symétriques définis positifs et ne
+    contiennent pas d'information relative à la rotation~:
+    \begin{itemize}
+    \item \(\tenseur{U}\) (\textcolor{green}{langragien}) et \(\tenseur{V}\) (\textcolor{red}{eulérieun})~;
+    \item tenseur de \nom{Cauchy-Green} droit \(\tenseur{C}\) (\textcolor{green}{langragien})~:
+      \[
+	\tenseur{C}=\tenseur{U}^{2}=\transpose{\tns{F}}\,.\,\tns{F}
+      \]
+    \item tenseur de \nom{Green-Lagrange} (\textcolor{green}{langragien})~:
+      \[
+      \egl=\Frac{1}{2}\paren{\tenseur{C}-\tenseur{I}}=\Frac{1}{2}\paren{\tenseur{U}^{2}-\tenseur{I}}=\Frac{1}{2}\paren{\transpose{\tns{F}}\,.\,\tns{F}-\tenseur{I}}
+      \]
+    \item tenseur de \nom{Hencky} (\textcolor{green}{langragien})~:
+      \[
+      \tenseur{\varepsilon}_{\ln{}}=\Frac{1}{2}\ln\paren{C}=\ln\paren{U}
+      \]
+    \end{itemize}
+  \end{itemize}
+}
+
+\titre{Et les contraintes}
+\frame{
+  \begin{itemize}
+  \item la contrainte \nom{Cauchy} permet le calcul des forces sur la
+    configuration déformée~;
+  \item la puissance mécanique est~:
+    \[
+    \mathcal{P}=\det\paren{J}\,\sigma\,\colon\,\tenseur{d}
+    \]
+    où \(\tenseur{d}\) est le taux de déformation eulérien
+  \item beaucoup d'autres tenseurs de contraintes par dualité~:
+    \[
+    \begin{aligned}
+      \mathcal{P} = \det\paren{J}\,\sigma\,\colon\,\tenseur{d}=\Frac{1}{2}\tenseur{S}\,\colon\,\dot{\tenseur{C}}
+      =\tenseur{S}\,\colon\,\degl=\tenseur{T}\,\colon\,\tenseur{\dot{\varepsilon}}_{\ln{}} \\
+    \end{aligned}
+    \]
+    où \(\tenseur{S}\) est le second tenseur de \nom{Piola-Kirchhoff}.
+  \item cette relation de dualité permet de passer d'une contrainte à
+    une autre~;
+  \end{itemize}
+}
+
+
+\section{Que propose \castem{} ?}
+
+\titre{Que propose \castem{} ?}
+\frame{
+  \begin{itemize}
+  \item l'option \og~grands déplacements~\fg{} permet le calcul de
+    l'équilibre sur la configuration déformée~;
+  \item par défaut, on est en \og~lagrangien réactualisé~\fg{}. Dans
+    {\tt INCREPL}, on calcule l'incrément de déformation linéarisé sur
+    la configuration en milieu de pas et on transporte le résultat de
+    la loi de comportement sur la configuration de fin de pas~;
+  \item il y a un \og~bug\fg{} dans les versions inférieures à
+    \(2012\)~: la contrainte n'est pas réactualisée pour les lois
+    utilisateur. On est alors proche de la formulation {\tt
+      PETIT\_REAC} de {\tt Code-Aster}~:
+    {\small \begin{itemize}
+      \item \og{}~très petits incréments [de temps]~;
+      \item très petites rotations (ce qui implique un chargement
+        quasi-radial)~;
+      \item déformation élastiques petites devant les déformations
+        plastiques~;
+      \item comportement isotrope.~\fg{}
+      \end{itemize}
+    }
+  \item \castem{} propose deux dérivées objectives, mais ces approches
+    ont leurs propres défauts~;
+  \item dans tous les cas, on peut mieux faire~:
+    \begin{center}
+      {\bf mais on doit le faire soi-même !}
+    \end{center}
+  \end{itemize}
+}
+
+\section{Que propose \mfront{} ?}
+
+\titre{Que propose \mfront{} ?}
+\frame
+{
+  \begin{itemize}
+  \item une loi de comportement en grandes transformations prend en
+    entrée~:
+    \begin{itemize}
+    \item \(\bts{\tns{F}}\) est le gradient de la déformation en début de pas~;
+    \item \(\ets{\tns{F}}\) est le gradient de la déformation en fin de pas~;
+    \end{itemize}
+  \item une loi de comportement en grandes transformations ressort~:
+    \begin{itemize}
+    \item la contrainte de \nom{Cauchy}~;
+    \end{itemize}
+  \item on peut écrire des lois de comportent avec ces ingrédients,
+    mais on a souvent de nombreuses difficultés liées à l'objectivité,
+    l'introduction de nouveaux concepts (configuration relâchée), le
+    traitement de l'anisotropie ou des déformations libres~;
+    \begin{itemize}
+    \item on peut le faire en \mfront{} !
+    \item voir les exemples (modèles néo-hookéens, lois plastiques de
+      \nom{Simo-Miehe}, etc...)
+    \end{itemize}
+  \item le mieux est de cacher ces détails aux ingénieurs et faire ne
+    sorte que l'utilisateur \mfront{} ne voit qu'une loi HPP, et ça
+    peut être assez facile !
+    \begin{itemize}
+    \item {\bf on garde le formalisme, mais il faut ré-identifier les lois !}
+    \end{itemize}
+  \end{itemize}
+}
+
+\section{Approches lagrangiennes}
+
+\titre{Approches lagrangiennes}
+\frame{
+  \begin{itemize}
+  \item Les stratégies lagrangiennes calculent à partir de
+    \(\bts{\tns{F}}\) et \(\ets{\tns{F}}\) un incrément de déformation
+    \(\Delta\tenseur{\varepsilon}\) lagrangiens~:
+    \[
+    \Delta\tenseur{\varepsilon} = f\paren{\tenseur{C}}
+    \]
+  \item on appelle la loi de comportement HPP~;
+  \item on interprète la sortie de la loi de comportement comme la
+    contrainte duale du tenseur de déformation choisi, puis on calcule
+    la contrainte de \nom{Cauchy} ~;
+  \item avantages~:
+    \begin{itemize}
+    \item lois hyperélastiques~;
+    \item pas de restriction sur la loi (anisotropie, écrouissage
+      cinématique, etc...)~;
+    \item si la loi HPP dérive d'une formulation thermodynamique, la
+      loi obtenue aussi~;
+    \end{itemize}
+  \item restriction~:
+    \begin{itemize}
+    \item le matériau garde la trace de son état initial~;
+    \item la contrainte manipulée n'a pas de sens physique direct~;
+    \item si on doit remailler...~;
+    \end{itemize}
+  \end{itemize}
+}
+
+\titre{Grandes rotations, petites déformations}
+\frame{
+  \begin{itemize}
+  \item On choisit la contrainte de \nom{Green-Lagrange}, la sortie
+    est le second tenseur de \nom{Piola-Kirchhoff}, \(\tenseur{S}\)~;
+  \item La transformation du second tenseur de \nom{Piola-Kirchhoff}
+    en contrainte de \nom{Cauchy} s'écrit, pour des petites déformations~:
+    \[
+    \tsigma=\Frac{1}{J}\transpose{\tns{F}}\,.\,\tenseur{S}\,.\,\tns{F}\approx\transpose{\tns{R}}\,.\,\tenseur{S}\,.\,\tns{R}
+    \]
+  \item avantages~:
+    \begin{itemize}
+      \item pas besoin de réidentifier la loi !
+    \end{itemize}
+  \item défauts~:
+    \begin{itemize}
+    \item n'est pas adapté aux grandes déformations !
+    \item les conditions d'incompressibilité plastique ne sont pas
+      vérifiées exactement
+    \end{itemize}
+  \end{itemize}
+}
+
+\titre{Déformations logarithmiques}
+\frame{
+  \rput(12,1){
+    \includegraphics[height=5cm,angle=-90]{@top_srcdir@/docs/mfront/Images/ImplicitSimoMieheElastoPlasticity-ssna303.eps}
+  }
+  \begin{itemize}
+  \item introduit par \nom{Miehe}, \nom{Apel} et {Lambrecht}~;
+  \item une forme de Graal pour l'équipe de {\tt Code-Aster}~;
+  \item les résultats sont très proches de formulations grandes
+    transformations classiques de type \(F^{e}\,F^{p}\), mais en
+    tellement plus simple !
+  \item il faut identifier la loi avec cette formulation~;
+  \item en cours de test à DMN sur des aciers de cuve !
+  \end{itemize}
+}
+
+
+\section{Approches eulériennes}
+
+\titre{Référentiel local objectif}
+\frame{
+  \begin{itemize}
+  \item on décrit le comportement dans un repère qui tourne avec le
+    matériau~:
+    \begin{itemize}
+    \item la rotation du repère est choisie telle que la loi obtenue
+      est objective~;
+    \end{itemize}
+  \end{itemize}
+}
+
+
+\end{document}

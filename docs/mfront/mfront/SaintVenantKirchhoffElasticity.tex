@@ -1,0 +1,43 @@
+\noindent
+\ttfamily
+\hlstd{@Parser\ DefaultFiniteStrainParser}\hlopt{;}\hspace*{\fill}\\
+\hlstd{@Behaviour\ SaintVenantKirchhoffElasticity}\hlopt{;}\hspace*{\fill}\\
+\hlstd{@Author\ T}\hlopt{.\ }\hlstd{Helfer}\hlopt{;}\hspace*{\fill}\\
+\hlstd{@Date\ }\hlnum{19}\hlstd{}\hlopt{/}\hlstd{}\hlnum{10}\hlstd{}\hlopt{/}\hlstd{}\hlnum{2013}\hlstd{}\hlopt{;}\hspace*{\fill}\\
+\hlstd{\hspace*{\fill}\\
+@MaterialProperty\ stress\ young}\hlopt{;}\hspace*{\fill}\\
+\hlstd{young}\hlopt{.}\hlstd{}\hlkwd{setGlossaryName}\hlstd{}\hlopt{(}\hlstd{}\hlstr{"YoungModulus"}\hlstd{}\hlopt{);}\hspace*{\fill}\\
+\hlstd{@MaterialProperty\ real\ nu}\hlopt{;}\hspace*{\fill}\\
+\hlstd{nu}\hlopt{.}\hlstd{}\hlkwd{setGlossaryName}\hlstd{}\hlopt{(}\hlstd{}\hlstr{"PoissonRatio"}\hlstd{}\hlopt{);}\hspace*{\fill}\\
+\hlstd{@MaterialProperty\ real\ rho}\hlopt{;}\hspace*{\fill}\\
+\hlstd{rho}\hlopt{.}\hlstd{}\hlkwd{setGlossaryName}\hlstd{}\hlopt{(}\hlstd{}\hlstr{"MassDensity"}\hlstd{}\hlopt{);}\hspace*{\fill}\\
+\hlstd{@MaterialProperty\ real\ alpha}\hlopt{;}\hspace*{\fill}\\
+\hlstd{alpha}\hlopt{.}\hlstd{}\hlkwd{setGlossaryName}\hlstd{}\hlopt{(}\hlstd{}\hlstr{"ThermalExpansion"}\hlstd{}\hlopt{);}\hspace*{\fill}\\
+\hlstd{\hspace*{\fill}\\
+@LocalVariable\ stress\ lambda}\hlopt{;}\hspace*{\fill}\\
+\hlstd{@LocalVariable\ stress\ mu}\hlopt{;}\hspace*{\fill}\\
+\hlstd{\hspace*{\fill}\\
+@Includes}\hlopt{\{}\hspace*{\fill}\\
+\hlstd{}\hlppc{\#include}\hlpps{"TFEL/Material/Lame.hxx"}\hlppc{}\hspace*{\fill}\\
+\hlstd{}\hlopt{\}}\hspace*{\fill}\\
+\hlstd{\hspace*{\fill}\\
+@Integrator}\hlopt{\{}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ }\hlstd{}\hlkwa{using\ namespace\ }\hlstd{tfel}\hlopt{::}\hlstd{material}\hlopt{::}\hlstd{lame}\hlopt{;}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ }\hlstd{}\hlslc{//\ Lame\ coefficients}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ }\hlstd{lambda\ }\hlopt{=\ }\hlstd{}\hlkwd{computeLambda}\hlstd{}\hlopt{(}\hlstd{young}\hlopt{,}\hlstd{nu}\hlopt{);}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ }\hlstd{mu}\hlstd{\ \ \ \ \ }\hlstd{}\hlopt{=\ }\hlstd{}\hlkwd{computeMu}\hlstd{}\hlopt{(}\hlstd{young}\hlopt{,}\hlstd{nu}\hlopt{);}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ }\hlstd{}\hlslc{//\ Green{-}Lagrange\ tensor}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ }\hlstd{}\hlkwb{const\ }\hlstd{StrainStensor\ e\ }\hlopt{=\ }\hlstd{}\hlkwd{computeGreenLagrangeTensor}\hlstd{}\hlopt{(}\hlstd{F1}\hlopt{);}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ }\hlstd{}\hlslc{//\ second\ Piola–Kirchhoff\ stress}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ }\hlstd{}\hlkwb{const\ }\hlstd{StressStensor\ s\ }\hlopt{=\ }\hspace*{\fill}\\
+\hlstd{lambda}\hlopt{{*}}\hlstd{}\hlkwd{trace}\hlstd{}\hlopt{(}\hlstd{e}\hlopt{){*}}\hlstd{StrainStensor}\hlopt{::}\hlstd{}\hlkwd{Id}\hlstd{}\hlopt{()+}\hlnum{2}\hlstd{}\hlopt{{*}}\hlstd{mu}\hlopt{{*}}\hlstd{e}\hlopt{;}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ }\hlstd{}\hlslc{//\ convertion\ to\ Cauchy\ stress\ tensor}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ }\hlstd{sig\ }\hlopt{=\ }\hlstd{}\hlkwd{convertSecondPiolaKirchhoffStressToCauchyStress}\hlstd{}\hlopt{(}\hlstd{s}\hlopt{,}\hlstd{F1}\hlopt{);}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ }\hlstd{}\hlkwa{if}\hlstd{}\hlopt{(}\hlstd{computeTangentOperator\textunderscore }\hlopt{)\{}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ \ \ }\hlstd{string\ }\hlkwd{msg}\hlstd{}\hlopt{(}\hlstd{}\hlstr{"tangent\ operator\ not\ yet\ available"}\hlstd{}\hlopt{);}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlkwa{throw}\hlstd{}\hlopt{(}\hlstd{}\hlkwd{runtime\textunderscore error}\hlstd{}\hlopt{(}\hlstd{msg}\hlopt{));}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ }\hlstd{}\hlopt{\}}\hspace*{\fill}\\
+\hlstd{}\hlopt{\}}\hlstd{}\hspace*{\fill}\\
+\mbox{}
+\normalfont
+\normalsize

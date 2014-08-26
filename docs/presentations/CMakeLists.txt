@@ -30,4 +30,5 @@ endmacro(latex_presentation doc)
 
 latex_presentation(mfront-presentation)
 latex_presentation(mfront-behaviours)
+latex_presentation(mfront-finitestrain)
 latex_presentation(mtest-presentation)

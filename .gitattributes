@@ -81,13 +81,17 @@ docs/mfront/Images/2norton-rk.mfront.tex -text
 docs/mfront/Images/2norton-rk.tex -text
 docs/mfront/Images/Algo_temps.eps -text
 docs/mfront/Images/CompSeq.eps -text
+docs/mfront/Images/ConfigurationIsocline.eps -text
 docs/mfront/Images/FeFth.eps -text
+docs/mfront/Images/ImplicitSimoMieheElastoPlasticity-ssna303.eps -text
 docs/mfront/Images/Makefile.castem.linux -text
 docs/mfront/Images/Makefile.castem.linux.tex -text
 docs/mfront/Images/Makefile.castem.win -text
 docs/mfront/Images/Makefile.castem.win.tex -text
 docs/mfront/Images/Methode_Newton.pstricks -text
 docs/mfront/Images/NortonRK.eps -text
+docs/mfront/Images/Polar_decomposition_of_F.eps -text
+docs/mfront/Images/Polar_decomposition_of_F.png -text
 docs/mfront/Images/hayhurst.eps -text
 docs/mfront/Images/hsnv125d.eps -text
 docs/mfront/Images/hsnv125d.png -text
@@ -124,6 +128,7 @@ docs/mfront/mfront/GetEvol.ps -text
 docs/mfront/mfront/GetEvol.tex -text
 docs/mfront/mfront/ImplicitOrthotropicCreep.mfront -text
 docs/mfront/mfront/ImplicitOrthotropicCreep.tex -text
+docs/mfront/mfront/ImplicitSimoMieheElastoPlasticity.tex -text
 docs/mfront/mfront/Includes.mfront -text
 docs/mfront/mfront/Includes.tex -text
 docs/mfront/mfront/Link.mfront -text
@@ -158,6 +163,7 @@ docs/mfront/mfront/SIC_ThermalExpansion_Snead.tex -text
 docs/mfront/mfront/SIC_YoungModulus_SNEAD.cxx -text
 docs/mfront/mfront/SIC_YoungModulus_SNEAD.mfront -text
 docs/mfront/mfront/SIC_YoungModulus_SNEAD.tex -text
+docs/mfront/mfront/SaintVenantKirchhoffElasticity.tex -text
 docs/mfront/mfront/TestGetEvol.tex -text
 docs/mfront/mfront/UPuC_SolidSwellingModel.mfront -text
 docs/mfront/mfront/UPuC_SolidSwellingModel.tex -text
@@ -285,6 +291,7 @@ docs/presentations/images/mfront.svg -text
 docs/presentations/images/resultat_norton_traction_n8.pstricks -text
 docs/presentations/images/tvergaard.eps -text
 docs/presentations/mfront-behaviours.tex.in -text
+docs/presentations/mfront-finitestrain.tex.in -text
 docs/presentations/mfront-presentation.tex.in -text
 docs/presentations/mtest-presentation.tex.in -text
 docs/references/matrixcookbook.pdf -text svneol=unset#unset

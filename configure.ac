@@ -342,6 +342,7 @@ AC_OUTPUT([debug.sh
 	   docs/presentations/mtest-presentation.tex
 	   docs/presentations/mfront-presentation.tex
 	   docs/presentations/mfront-behaviours.tex
+	   docs/presentations/mfront-finitestrain.tex
 	   docs/tex/Makefile
 	   cmake/Makefile
 	   cmake/modules/Makefile
