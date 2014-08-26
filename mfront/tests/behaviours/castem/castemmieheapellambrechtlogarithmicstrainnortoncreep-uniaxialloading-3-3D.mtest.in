@@ -9,8 +9,8 @@
 @MaximumNumberOfSubSteps 1;
 
 @Behaviour<umat> '@TFEL_LOCAL_LIBRARY_PREFIX@libMFrontCastemBehaviours@CMAKE_SHARED_LIBRARY_SUFFIX@' 'umatlogarithmicstrainnortoncreep';
-@DrivingVariableEpsilon 1.e-8;
-@StressEpsilon 1.e3;
+@DrivingVariableEpsilon 2.e-8;
+@StressEpsilon          2.e3;
 
 @MaterialProperty<constant> 'YoungModulus'      80.e9;
 @MaterialProperty<constant> 'PoissonRatio'       0.35;
@@ -32,10 +32,10 @@
 @Times {0.,1 in 500};
 
 @Test<file> '@top_srcdir@/mfront/tests/behaviours/references/logarithmicstrainnortoncreepuniaxialtesting.ref' {'FZZ':2,'FXX':3,'FYY':3} 1e-5;
-@Test<file> '@top_srcdir@/mfront/tests/behaviours/references/logarithmicstrainnortoncreepuniaxialtesting.ref' {'SZZ':4} 1e3;
+@Test<file> '@top_srcdir@/mfront/tests/behaviours/references/logarithmicstrainnortoncreepuniaxialtesting.ref' {'SZZ':4} 3e3;
 @Test<file> '@top_srcdir@/mfront/tests/behaviours/references/logarithmicstrainnortoncreepuniaxialtesting.ref' {'EquivalentViscoplasticStrain':5} 1e-4;
-@Test<function> {'SXX':'0','SYY':'0'}           1.e3;
-@Test<function> {'SXY':'0','SXZ':'0','SYZ':'0'} 1.e3;
+@Test<function> {'SXX':'0','SYY':'0'}           3.e3;
+@Test<function> {'SXY':'0','SXZ':'0','SYZ':'0'} 3.e3;
 @Test<function> {'FXY': '0', 'FZY':'0'} 1.e-10;
 @Test<function> {'FXZ': '0', 'FZX':'0'} 1.e-10;
 @Test<function> {'FYZ': '0', 'FZY':'0'} 1.e-10;

@@ -10,8 +10,8 @@
 @MaximumNumberOfSubSteps 1;
 
 @Behaviour<umat> '@TFEL_LOCAL_LIBRARY_PREFIX@libMFrontCastemBehaviours@CMAKE_SHARED_LIBRARY_SUFFIX@' 'umatlogarithmicstrainnortoncreep';
-@DrivingVariableEpsilon 1.e-8;
-@StressEpsilon 1.e3;
+@DrivingVariableEpsilon 2.e-8;
+@StressEpsilon          2.e3;
 
 @MaterialProperty<constant> 'YoungModulus'      80.e9;
 @MaterialProperty<constant> 'PoissonRatio'       0.35;
