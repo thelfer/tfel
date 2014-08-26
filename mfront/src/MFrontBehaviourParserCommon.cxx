@@ -3320,8 +3320,8 @@ namespace mfront{
       this->integrationDataFile << "#include\"TFEL/Math/vector.hxx\"\n";
     }
     if(this->mb.getBehaviourType()==MechanicalBehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR){
-      this->behaviourDataFile << "#include\"TFEL/Math/tensor.hxx\"\n";
-      this->behaviourDataFile << "#include\"TFEL/Math/t2tost2.hxx\"\n";
+      this->integrationDataFile << "#include\"TFEL/Math/tensor.hxx\"\n";
+      this->integrationDataFile << "#include\"TFEL/Math/t2tost2.hxx\"\n";
     }
   }
 
