@@ -40,7 +40,7 @@ MFRONTS= DDIF2.mfront                                            \
 	 MonoCristal.mfront                                      \
 	 MonoCristalNewtonRaphson.mfront                         \
 	 MonoCristal_DD_CFC.mfront                               \
-	 MonoCristal_DD_CFC-NumericalJacobian.mfront.mfront      \
+	 MonoCristal_DD_CFC_NumericalJacobian.mfront.mfront      \
 	 MonoCristal_DD_CFC_InteractionMatrix.mfront             \
 	 PolyCristals.mfront                                     \
 	 PolyCristals_DD_CFC.mfront                              \
