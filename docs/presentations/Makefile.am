@@ -1,22 +1,29 @@
-EXTRA_DIST=CMakeLists.txt                               \
-	   images/UPuC_ThermalConductivity-cxx.tex      \
-	   images/gpls-mfront-2.cxx		        \
-	   images/NbZrC_CreepBehaviour-mfront.tex	\
-	   images/resultat_norton_traction_n8.pstricks  \
-	   images/UPuC_ThermalConductivity.cxx	        \
-	   images/gpls-mfront-2.tex		        \
-	   images/NbZrC_CreepBehaviour-mfront.cxx	\
-	   images/UPuC_ThermalConductivity-mfront.cxx   \
-	   images/UPuC_ThermalConductivity-mfront.tex   \
-	   images/UPuC_ThermalConductivity-mfront2.tex  \
-	   images/castemtvergaard.tex			\
-	   images/castemtvergaard.mtest			\
-	   images/Tvergaard.tex				\
-	   images/Tvergaard.mfront			\
-	   images/castemtvergaard3.py			\
-	   images/castemtvergaard-py.tex		\
-	   images/UPuC_SolidSwellingModel.tex           \
-	   images/UPuC_SolidSwellingModel.mfront        \
-	   images/tvergaard.eps                         \
-	   images/gpls-mfront.cxx			\
-	   images/gpls-mfront.tex
+EXTRA_DIST=CMakeLists.txt                                                   \
+	   images/mfront.eps                                                \
+	   images/mfront.pdf                                                \
+	   images/mfront.svg                                                \
+	   images/UPuC_ThermalConductivity-cxx.tex                          \
+	   images/gpls-mfront-2.cxx		                            \
+	   images/NbZrC_CreepBehaviour-mfront.tex	                    \
+	   images/resultat_norton_traction_n8.pstricks                      \
+	   images/UPuC_ThermalConductivity.cxx	                            \
+	   images/gpls-mfront-2.tex		                            \
+	   images/NbZrC_CreepBehaviour-mfront.cxx	                    \
+	   images/UPuC_ThermalConductivity-mfront.cxx                       \
+	   images/UPuC_ThermalConductivity-mfront.tex                       \
+	   images/UPuC_ThermalConductivity-mfront2.tex                      \
+	   images/castemtvergaard.tex			                    \
+	   images/castemtvergaard.mtest			                    \
+	   images/Tvergaard.tex				                    \
+	   images/Tvergaard.mfront			                    \
+	   images/castemtvergaard3.py			                    \
+	   images/castemtvergaard-py.tex		                    \
+	   images/UPuC_SolidSwellingModel.tex                               \
+	   images/UPuC_SolidSwellingModel.mfront                            \
+	   images/tvergaard.eps                                             \
+	   images/gpls-mfront.cxx			                    \
+	   images/gpls-mfront.tex                                           \
+	   images/IncompressiblePlaneStressMooneyRivlinBehaviour.mfront     \
+	   images/IncompressiblePlaneStressMooneyRivlinBehaviour-shear1.eps \
+	   images/IncompressiblePlaneStressMooneyRivlinBehaviour.tex        \
+	   images/IncompressiblePlaneStressMooneyRivlin-shear2.eps

@@ -315,6 +315,127 @@ namespace tfel{
 	stensor<N,T,StensorStatic> >::type
        buildFromVectorDiadicProduct(const VectorType&);
 
+      /*!
+       * build a symmetric tensor from its eigen values and vectors
+       * \param[in] v1 : first  eigen value
+       * \param[in] v2 : second eigen value
+       * \param[in] v2 : third  eigen value
+       * \param[in] m  : matrix containing the eigen vectors
+       */
+      static TFEL_MATH_INLINE2
+      stensor<N,T,StensorStatic>
+      buildFromEigenValuesAndVectors(const T&,const T&,const T&,
+				     const tmatrix<3u,3u,
+				     typename tfel::typetraits::BaseType<T>::type>&);
+
+      /*!
+       * build a symmetric tensor from its eigen values and vectors
+       * \param[in] vp : eigen values
+       * \param[in] m  : matrix containing the eigen vectors
+       */
+      static TFEL_MATH_INLINE2
+      stensor<N,T,StensorStatic>
+      buildFromEigenValuesAndVectors(const tvector<3u,T>&,
+				     const tmatrix<3u,3u,
+				     typename tfel::typetraits::BaseType<T>::type>&);
+
+      
+      /*!
+       * build the logarithm of a symmetric tensor given through its eigen values and vectors
+       * \param[in] v1 : first  eigen value
+       * \param[in] v2 : second eigen value
+       * \param[in] v2 : third  eigen value
+       * \param[in] m  : matrix containing the eigen vectors
+       */
+      static TFEL_MATH_INLINE2
+      stensor<N,T,StensorStatic>
+      buildLogarithmFromEigenValuesAndVectors(const T&,const T&,const T&,
+					      const tmatrix<3u,3u,
+					      typename tfel::typetraits::BaseType<T>::type>&);
+
+      /*!
+       * build the logarithm of a symmetric tensor given through its eigen values and vectors
+       * \param[in] vp : eigen values
+       * \param[in] m  : matrix containing the eigen vectors
+       */
+      static TFEL_MATH_INLINE2
+      stensor<N,T,StensorStatic>
+      buildLogarithmFromEigenValuesAndVectors(const tvector<3u,T>&,
+					      const tmatrix<3u,3u,
+					      typename tfel::typetraits::BaseType<T>::type>&);
+
+      /*!
+       * build the absolute value of a symmetric tensor given through its eigen values and vectors
+       * \param[in] v1 : first  eigen value
+       * \param[in] v2 : second eigen value
+       * \param[in] v2 : third  eigen value
+       * \param[in] m  : matrix containing the eigen vectors
+       */
+      static TFEL_MATH_INLINE2
+      stensor<N,T,StensorStatic>
+      buildAbsoluteValueFromEigenValuesAndVectors(const T&,const T&,const T&,
+						  const tmatrix<3u,3u,
+						  typename tfel::typetraits::BaseType<T>::type>&);
+
+      /*!
+       * build the absolute value of a symmetric tensor given through its eigen values and vectors
+       * \param[in] vp : eigen values
+       * \param[in] m  : matrix containing the eigen vectors
+       */
+      static TFEL_MATH_INLINE2
+      stensor<N,T,StensorStatic>
+      buildAbsoluteValueFromEigenValuesAndVectors(const tvector<3u,T>&,
+						  const tmatrix<3u,3u,
+						  typename tfel::typetraits::BaseType<T>::type>&);
+
+      /*!
+       * build the positive part of a symmetric tensor given through its eigen values and vectors
+       * \param[in] v1 : first  eigen value
+       * \param[in] v2 : second eigen value
+       * \param[in] v2 : third  eigen value
+       * \param[in] m  : matrix containing the eigen vectors
+       */
+      static TFEL_MATH_INLINE2
+      stensor<N,T,StensorStatic>
+      buildPositivePartFromEigenValuesAndVectors(const T&,const T&,const T&,
+						 const tmatrix<3u,3u,
+						 typename tfel::typetraits::BaseType<T>::type>&);
+
+      /*!
+       * build the positive part of a symmetric tensor given through its eigen values and vectors
+       * \param[in] vp : eigen values
+       * \param[in] m  : matrix containing the eigen vectors
+       */
+      static TFEL_MATH_INLINE2
+      stensor<N,T,StensorStatic>
+      buildPositivePartFromEigenValuesAndVectors(const tvector<3u,T>&,
+						 const tmatrix<3u,3u,
+						 typename tfel::typetraits::BaseType<T>::type>&);
+
+      /*!
+       * build the positive part of a symmetric tensor given through its eigen values and vectors
+       * \param[in] v1 : first  eigen value
+       * \param[in] v2 : second eigen value
+       * \param[in] v2 : third  eigen value
+       * \param[in] m  : matrix containing the eigen vectors
+       */
+      static TFEL_MATH_INLINE2
+      stensor<N,T,StensorStatic>
+      buildNegativePartFromEigenValuesAndVectors(const T&,const T&,const T&,
+						 const tmatrix<3u,3u,
+						 typename tfel::typetraits::BaseType<T>::type>&);
+
+      /*!
+       * build the negative part of a symmetric tensor given through its eigen values and vectors
+       * \param[in] vp : eigen values
+       * \param[in] m  : matrix containing the eigen vectors
+       */
+      static TFEL_MATH_INLINE2
+      stensor<N,T,StensorStatic>
+      buildNegativePartFromEigenValuesAndVectors(const tvector<3u,T>&,
+						 const tmatrix<3u,3u,
+						 typename tfel::typetraits::BaseType<T>::type>&);
+
     private:      
       //! a simple check
       TFEL_STATIC_ASSERT((N==1u)||(N==2u)||(N==3u));
@@ -407,15 +528,16 @@ namespace tfel{
     TFEL_MATH_INLINE2
     typename tfel::meta::EnableIf<
       ((tfel::meta::Implements<StensorType,StensorConcept>::cond)&&
-       (StensorTraits<StensorType>::dime==2u) &&
+       ((StensorTraits<StensorType>::dime==2u)||
+	(StensorTraits<StensorType>::dime==3u))&&
        (tfel::typetraits::IsFundamentalNumericType<typename StensorTraits<StensorType>::NumType>::cond)),
-      stensor<2u,typename StensorTraits<StensorType>::NumType>
+      stensor<StensorTraits<StensorType>::dime,typename StensorTraits<StensorType>::NumType>
     >::type
     logarithm(const StensorType&,
 	      const bool = false);
 
     /*!
-     * \brief compute the logarithm of a symmetric tensor
+     * \brief compute the absolute value of a symmetric tensor
      * \param s : tensor
      * \param b : if true, refinement of eigen values is performed
      */
@@ -423,12 +545,95 @@ namespace tfel{
     TFEL_MATH_INLINE2
     typename tfel::meta::EnableIf<
       ((tfel::meta::Implements<StensorType,StensorConcept>::cond)&&
-       (StensorTraits<StensorType>::dime==3u) &&
+       (StensorTraits<StensorType>::dime==1u) &&
        (tfel::typetraits::IsFundamentalNumericType<typename StensorTraits<StensorType>::NumType>::cond)),
-      stensor<3u,typename StensorTraits<StensorType>::NumType>
+      stensor<1u,typename StensorTraits<StensorType>::NumType>
     >::type
-    logarithm(const StensorType&,
-	      const bool = false);
+    absolute_value(const StensorType&,
+		   const bool = false);
+
+    /*!
+     * \brief compute the absolute value of a symmetric tensor
+     * \param s : tensor
+     * \param b : if true, refinement of eigen values is performed
+     */
+    template<typename StensorType>
+    TFEL_MATH_INLINE2
+    typename tfel::meta::EnableIf<
+      ((tfel::meta::Implements<StensorType,StensorConcept>::cond)&&
+       ((StensorTraits<StensorType>::dime==2u)||
+	(StensorTraits<StensorType>::dime==3u))&&
+       (tfel::typetraits::IsFundamentalNumericType<typename StensorTraits<StensorType>::NumType>::cond)),
+      stensor<StensorTraits<StensorType>::dime,typename StensorTraits<StensorType>::NumType>
+    >::type
+    absolute_value(const StensorType&,
+		   const bool = false);
+
+    /*!
+     * \brief compute the positive part of a symmetric tensor
+     * \param s : tensor
+     * \param b : if true, refinement of eigen values is performed
+     */
+    template<typename StensorType>
+    TFEL_MATH_INLINE2
+    typename tfel::meta::EnableIf<
+      ((tfel::meta::Implements<StensorType,StensorConcept>::cond)&&
+       (StensorTraits<StensorType>::dime==1u) &&
+       (tfel::typetraits::IsFundamentalNumericType<typename StensorTraits<StensorType>::NumType>::cond)),
+      stensor<1u,typename StensorTraits<StensorType>::NumType>
+    >::type
+    positive_part(const StensorType&,
+		  const bool = false);
+
+    /*!
+     * \brief compute the positive part of a symmetric tensor
+     * \param s : tensor
+     * \param b : if true, refinement of eigen values is performed
+     */
+    template<typename StensorType>
+    TFEL_MATH_INLINE2
+    typename tfel::meta::EnableIf<
+      ((tfel::meta::Implements<StensorType,StensorConcept>::cond)&&
+       ((StensorTraits<StensorType>::dime==2u)||
+	(StensorTraits<StensorType>::dime==3u))&&
+       (tfel::typetraits::IsFundamentalNumericType<typename StensorTraits<StensorType>::NumType>::cond)),
+      stensor<StensorTraits<StensorType>::dime,typename StensorTraits<StensorType>::NumType>
+    >::type
+    positive_part(const StensorType&,
+		  const bool = false);
+    
+    /*!
+     * \brief compute the negative part of a symmetric tensor
+     * \param s : tensor
+     * \param b : if true, refinement of eigen values is performed
+     */
+    template<typename StensorType>
+    TFEL_MATH_INLINE2
+    typename tfel::meta::EnableIf<
+      ((tfel::meta::Implements<StensorType,StensorConcept>::cond)&&
+       (StensorTraits<StensorType>::dime==1u) &&
+       (tfel::typetraits::IsFundamentalNumericType<typename StensorTraits<StensorType>::NumType>::cond)),
+      stensor<1u,typename StensorTraits<StensorType>::NumType>
+    >::type
+    negative_part(const StensorType&,
+		  const bool = false);
+    
+    /*!
+     * \brief compute the negative part of a symmetric tensor
+     * \param s : tensor
+     * \param b : if true, refinement of eigen values is performed
+     */
+    template<typename StensorType>
+    TFEL_MATH_INLINE2
+    typename tfel::meta::EnableIf<
+      ((tfel::meta::Implements<StensorType,StensorConcept>::cond)&&
+       ((StensorTraits<StensorType>::dime==2u)||
+	(StensorTraits<StensorType>::dime==3u))&&
+       (tfel::typetraits::IsFundamentalNumericType<typename StensorTraits<StensorType>::NumType>::cond)),
+      stensor<StensorTraits<StensorType>::dime,typename StensorTraits<StensorType>::NumType>
+    >::type
+    negative_part(const StensorType&,
+		  const bool = false);
     
   } // end of namespace math
 

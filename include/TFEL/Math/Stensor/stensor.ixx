@@ -268,6 +268,70 @@ namespace tfel{
 	  s[5] = v(1)*v(2)*cste;
 	}
       };
+
+      template<unsigned short N>
+      struct BuildStensorFromEigenValuesAndVectors;
+      
+      template<>
+      struct BuildStensorFromEigenValuesAndVectors<1u>
+      {
+	template<typename T>
+	static TFEL_MATH_INLINE2 TFEL_VISIBILITY_LOCAL void
+	exe(stensor<1u,T,StensorStatic>& s,
+	    const T& v1,
+	    const T& v2,
+	    const T& v3,
+	    const tmatrix<3u,3u,typename tfel::typetraits::BaseType<T>::type>&){
+	  using namespace std;
+	  s[0] = v1;
+	  s[1] = v2;
+	  s[2] = v3;
+	}
+      };
+    
+      template<>
+      struct BuildStensorFromEigenValuesAndVectors<2u>
+      {
+	template<typename T>
+	static TFEL_MATH_INLINE2 TFEL_VISIBILITY_LOCAL void
+	exe(stensor<2u,T,StensorStatic>& s,
+	    const T& v1,
+	    const T& v2,
+	    const T& v3,
+	    const tmatrix<3u,3u,typename tfel::typetraits::BaseType<T>::type>& m){
+	  using namespace std;
+	  using namespace tfel::typetraits;
+	  typedef typename BaseType<T>::type real;
+	  static const real cste = sqrt(real(2));
+	  s[0] = v1*m(0,0)*m(0,0)+v2*m(0,1)*m(0,1);
+	  s[1] = v1*m(1,0)*m(1,0)+v2*m(1,1)*m(1,1);
+	  s[2] = v3;
+	  s[3] = (v1*m(0,0)*m(1,0)+v2*m(0,1)*m(1,1))*cste;
+	}
+      };
+      
+      template<>
+      struct BuildStensorFromEigenValuesAndVectors<3u>
+      {
+	template<typename T>
+	static TFEL_MATH_INLINE2 TFEL_VISIBILITY_LOCAL void
+	exe(stensor<3u,T,StensorStatic>& s,
+	    const T& v1,
+	    const T& v2,
+	    const T& v3,
+	    const tmatrix<3u,3u,typename tfel::typetraits::BaseType<T>::type>& m){
+	  using namespace std;
+	  using namespace tfel::typetraits;
+	  typedef typename BaseType<T>::type real;
+	  static const real cste = sqrt(real(2));
+	  s[0] =  v1*m(0,0)*m(0,0)+v2*m(0,1)*m(0,1)+v3*m(0,2)*m(0,2);
+	  s[1] =  v1*m(1,0)*m(1,0)+v2*m(1,1)*m(1,1)+v3*m(1,2)*m(1,2);
+	  s[2] =  v1*m(2,0)*m(2,0)+v2*m(2,1)*m(2,1)+v3*m(2,2)*m(2,2);
+	  s[3] = (v1*m(0,0)*m(1,0)+v2*m(0,1)*m(1,1)+v3*m(0,2)*m(1,2))*cste;
+	  s[4] = (v1*m(0,0)*m(2,0)+v2*m(0,1)*m(2,1)+v3*m(0,2)*m(2,2))*cste;
+	  s[5] = (v1*m(1,0)*m(2,0)+v2*m(1,1)*m(2,1)+v3*m(1,2)*m(2,2))*cste;
+	}
+      };
       
     } // end of namespace internals
 
@@ -663,6 +727,104 @@ namespace tfel{
       return s;
     }
 
+    template<unsigned short N,typename T,template<unsigned short,typename> class Storage>
+    stensor<N,T,StensorStatic>
+    stensor<N,T,Storage>::buildFromEigenValuesAndVectors(const T& v1,const T& v2,const T& v3,
+							 const tmatrix<3u,3u,
+								       typename tfel::typetraits::BaseType<T>::type>& m)
+    {
+      stensor<N,T,Storage> s;
+      tfel::math::internals::BuildStensorFromEigenValuesAndVectors<N>::exe(s,v1,v2,v3,m);
+      return s;
+    }
+
+    template<unsigned short N,typename T,template<unsigned short,typename> class Storage>
+    stensor<N,T,StensorStatic>
+    stensor<N,T,Storage>::buildFromEigenValuesAndVectors(const tvector<3u,T>& vp,
+							 const tmatrix<3u,3u,
+								       typename tfel::typetraits::BaseType<T>::type>& m)
+    {
+      stensor<N,T,Storage> s;
+      tfel::math::internals::BuildStensorFromEigenValuesAndVectors<N>::exe(s,vp(0),vp(1),vp(2),m);
+      return s;
+    }
+
+    template<unsigned short N,typename T,template<unsigned short,typename> class Storage>
+    stensor<N,T,StensorStatic>
+    stensor<N,T,Storage>::buildLogarithmFromEigenValuesAndVectors(const T& v1,const T& v2,const T& v3,
+								  const tmatrix<3u,3u,
+								  typename tfel::typetraits::BaseType<T>::type>& m)
+    {
+      stensor<N,T,Storage> s;
+      tfel::math::internals::BuildStensorFromEigenValuesAndVectors<N>::exe(s,std::log(v1),std::log(v2),std::log(v3),m);
+      return s;
+    }
+
+    template<unsigned short N,typename T,template<unsigned short,typename> class Storage>
+    stensor<N,T,StensorStatic>
+    stensor<N,T,Storage>::buildLogarithmFromEigenValuesAndVectors(const tvector<3u,T>& vp,
+								  const tmatrix<3u,3u,
+								  typename tfel::typetraits::BaseType<T>::type>& m)
+    {
+      stensor<N,T,Storage> s;
+      tfel::math::internals::BuildStensorFromEigenValuesAndVectors<N>::exe(s,std::log(vp(0)),
+									   std::log(vp(1)),
+									   std::log(vp(2)),m);
+      return s;
+    }
+
+    template<unsigned short N,typename T,template<unsigned short,typename> class Storage>
+    stensor<N,T,StensorStatic>
+    stensor<N,T,Storage>::buildPositivePartFromEigenValuesAndVectors(const T& v1,const T& v2,const T& v3,
+								  const tmatrix<3u,3u,
+								  typename tfel::typetraits::BaseType<T>::type>& m)
+    {
+      stensor<N,T,Storage> s;
+      tfel::math::internals::BuildStensorFromEigenValuesAndVectors<N>::exe(s,std::max(T(0),v1),
+									   std::max(T(0),v2),
+									   std::max(T(0),v3),m);
+      return s;
+    }
+
+    template<unsigned short N,typename T,template<unsigned short,typename> class Storage>
+    stensor<N,T,StensorStatic>
+    stensor<N,T,Storage>::buildPositivePartFromEigenValuesAndVectors(const tvector<3u,T>& vp,
+								     const tmatrix<3u,3u,
+										   typename tfel::typetraits::BaseType<T>::type>& m)
+    {
+      stensor<N,T,Storage> s;
+      tfel::math::internals::BuildStensorFromEigenValuesAndVectors<N>::exe(s,std::max(T(0),vp(0)),
+									   std::max(T(0),vp(1)),
+									   std::max(T(0),vp(2)),m);
+      return s;
+    }
+
+    template<unsigned short N,typename T,template<unsigned short,typename> class Storage>
+    stensor<N,T,StensorStatic>
+    stensor<N,T,Storage>::buildNegativePartFromEigenValuesAndVectors(const T& v1,const T& v2,const T& v3,
+								     const tmatrix<3u,3u,
+								     typename tfel::typetraits::BaseType<T>::type>& m)
+    {
+      stensor<N,T,Storage> s;
+      tfel::math::internals::BuildStensorFromEigenValuesAndVectors<N>::exe(s,std::min(T(0),v1),
+									   std::min(T(0),v2),
+									   std::min(T(0),v3),m);
+      return s;
+    }
+
+    template<unsigned short N,typename T,template<unsigned short,typename> class Storage>
+    stensor<N,T,StensorStatic>
+    stensor<N,T,Storage>::buildNegativePartFromEigenValuesAndVectors(const tvector<3u,T>& vp,
+								     const tmatrix<3u,3u,
+								     typename tfel::typetraits::BaseType<T>::type>& m)
+    {
+      stensor<N,T,Storage> s;
+      tfel::math::internals::BuildStensorFromEigenValuesAndVectors<N>::exe(s,std::min(T(0),vp(0)),
+									   std::min(T(0),vp(1)),
+									   std::min(T(0),vp(2)),m);
+      return s;
+    }
+
     template<typename StensorType>
     typename tfel::meta::EnableIf<
       ((tfel::meta::Implements<StensorType,StensorConcept>::cond)&&
@@ -673,8 +835,8 @@ namespace tfel{
     logarithm(const StensorType& s,
 	      const bool)
     {
-      typedef typename StensorTraits<StensorType>::NumType real;
-      stensor<1u,real> l;
+      typedef typename StensorTraits<StensorType>::NumType NumType;
+      stensor<1u,NumType> l;
       l(0) = std::log(s(0));
       l(1) = std::log(s(1));
       l(2) = std::log(s(2));
@@ -684,57 +846,147 @@ namespace tfel{
     template<typename StensorType>
     typename tfel::meta::EnableIf<
       ((tfel::meta::Implements<StensorType,StensorConcept>::cond)&&
-       (StensorTraits<StensorType>::dime==2u) &&
+       ((StensorTraits<StensorType>::dime==2u)||
+	(StensorTraits<StensorType>::dime==3u))&&
        (tfel::typetraits::IsFundamentalNumericType<typename StensorTraits<StensorType>::NumType>::cond)),
-      stensor<2u,typename StensorTraits<StensorType>::NumType>
+      stensor<StensorTraits<StensorType>::dime,typename StensorTraits<StensorType>::NumType>
     >::type
     logarithm(const StensorType& s_,
-    	const bool b)
+	      const bool b)
     {
-      typedef typename StensorTraits<StensorType>::NumType real;
-      typedef typename tfel::typetraits::BaseType<real>::type base;
-      static const base cste = std::sqrt(2);
-      tvector<3u,real> vp;
+      typedef typename StensorTraits<StensorType>::NumType NumType;
+      typedef typename tfel::typetraits::BaseType<NumType>::type base;
+      typedef stensor<StensorTraits<StensorType>::dime,NumType> Stensor;
+      tvector<3u,NumType> vp;
       tmatrix<3u,3u,base> m;
-      stensor<2u,real> s(s_);
+      stensor<StensorTraits<StensorType>::dime,NumType> s(s_);
       s.computeEigenVectors(vp,m,b);
-      const real l0 = std::log(vp(0));
-      const real l1 = std::log(vp(1));
-      const real l2 = std::log(vp(2));
-      const stensor<2u,real> n0 = stensor<2u,real>::buildFromVectorDiadicProduct(m.template column_view<0,0>());
-      const stensor<2u,real> n1 = stensor<2u,real>::buildFromVectorDiadicProduct(m.template column_view<1,0>());
-      stensor<2u> l;
-      l(0)=l0*n0(0)+l1*n1(0);
-      l(1)=l0*n0(1)+l1*n1(1);
-      l(2) = l2;
-      l(3)=l0*n0(3)+l1*n1(3);
+      return Stensor::buildFromEigenValuesAndVectors(std::log(vp(0)),
+						     std::log(vp(1)),
+						     std::log(vp(2)),m);
+    }
+
+    template<typename StensorType>
+    typename tfel::meta::EnableIf<
+      ((tfel::meta::Implements<StensorType,StensorConcept>::cond)&&
+       (StensorTraits<StensorType>::dime==1u) &&
+       (tfel::typetraits::IsFundamentalNumericType<typename StensorTraits<StensorType>::NumType>::cond)),
+      stensor<1u,typename StensorTraits<StensorType>::NumType>
+    >::type
+    absolute_value(const StensorType& s,
+		  const bool)
+    {
+      typedef typename StensorTraits<StensorType>::NumType NumType;
+      stensor<1u,NumType> l;
+      l(0) = std::abs(s(0));
+      l(1) = std::abs(s(1));
+      l(2) = std::abs(s(2));
       return l;
     }
 
     template<typename StensorType>
     typename tfel::meta::EnableIf<
       ((tfel::meta::Implements<StensorType,StensorConcept>::cond)&&
-       (StensorTraits<StensorType>::dime==3u) &&
+       ((StensorTraits<StensorType>::dime==2u)||
+	(StensorTraits<StensorType>::dime==3u))&&
        (tfel::typetraits::IsFundamentalNumericType<typename StensorTraits<StensorType>::NumType>::cond)),
-      stensor<3u,typename StensorTraits<StensorType>::NumType>
+      stensor<StensorTraits<StensorType>::dime,typename StensorTraits<StensorType>::NumType>
     >::type
-    logarithm(const StensorType& s_,
-    	const bool b)
+    absolute_value(const StensorType& s_,
+		   const bool b)
     {
-      typedef typename StensorTraits<StensorType>::NumType real;
-      typedef typename tfel::typetraits::BaseType<real>::type base;
-      static const base cste = std::sqrt(2);
-      tvector<3u,real> vp;
+      typedef typename StensorTraits<StensorType>::NumType NumType;
+      typedef typename tfel::typetraits::BaseType<NumType>::type base;
+      typedef stensor<StensorTraits<StensorType>::dime,NumType> Stensor;
+      tvector<3u,NumType> vp;
       tmatrix<3u,3u,base> m;
-      stensor<2u,real> s(s_);
+      stensor<StensorTraits<StensorType>::dime,NumType> s(s_);
       s.computeEigenVectors(vp,m,b);
-      const real l0 = std::log(vp(0));
-      const real l1 = std::log(vp(1));
-      const real l2 = std::log(vp(2));
-      const stensor<3u,real> n0 = stensor<3u,real>::buildFromVectorDiadicProduct(m.template column_view<0,0>());
-      const stensor<3u,real> n1 = stensor<3u,real>::buildFromVectorDiadicProduct(m.template column_view<1,0>());
-      const stensor<3u,real> n2 = stensor<3u,real>::buildFromVectorDiadicProduct(m.template column_view<2,0>());
-      return l0*n0+l1*n1+l2*n2;
+      return Stensor::buildFromEigenValuesAndVectors(std::abs(vp(0)),
+						     std::abs(vp(1)),
+						     std::abs(vp(2)),m);
+    }
+
+    template<typename StensorType>
+    typename tfel::meta::EnableIf<
+      ((tfel::meta::Implements<StensorType,StensorConcept>::cond)&&
+       (StensorTraits<StensorType>::dime==1u) &&
+       (tfel::typetraits::IsFundamentalNumericType<typename StensorTraits<StensorType>::NumType>::cond)),
+      stensor<1u,typename StensorTraits<StensorType>::NumType>
+    >::type
+    positive_part(const StensorType& s,
+		  const bool)
+    {
+      typedef typename StensorTraits<StensorType>::NumType NumType;
+      stensor<1u,NumType> l;
+      l(0) = std::max(s(0),NumType(0));
+      l(1) = std::max(s(1),NumType(0));
+      l(2) = std::max(s(2),NumType(0));
+      return l;
+    }
+
+    template<typename StensorType>
+    typename tfel::meta::EnableIf<
+      ((tfel::meta::Implements<StensorType,StensorConcept>::cond)&&
+       ((StensorTraits<StensorType>::dime==2u)||
+	(StensorTraits<StensorType>::dime==3u))&&
+       (tfel::typetraits::IsFundamentalNumericType<typename StensorTraits<StensorType>::NumType>::cond)),
+      stensor<StensorTraits<StensorType>::dime,typename StensorTraits<StensorType>::NumType>
+    >::type
+    positive_part(const StensorType& s_,
+		  const bool b)
+    {
+      typedef typename StensorTraits<StensorType>::NumType NumType;
+      typedef typename tfel::typetraits::BaseType<NumType>::type base;
+      typedef stensor<StensorTraits<StensorType>::dime,NumType> Stensor;
+      tvector<3u,NumType> vp;
+      tmatrix<3u,3u,base> m;
+      stensor<StensorTraits<StensorType>::dime,NumType> s(s_);
+      s.computeEigenVectors(vp,m,b);
+      return Stensor::buildFromEigenValuesAndVectors(std::max(vp(0),NumType(0)),
+						     std::max(vp(1),NumType(0)),
+						     std::max(vp(2),NumType(0)),m);
+    }
+
+    template<typename StensorType>
+    typename tfel::meta::EnableIf<
+      ((tfel::meta::Implements<StensorType,StensorConcept>::cond)&&
+       (StensorTraits<StensorType>::dime==1u) &&
+       (tfel::typetraits::IsFundamentalNumericType<typename StensorTraits<StensorType>::NumType>::cond)),
+      stensor<1u,typename StensorTraits<StensorType>::NumType>
+    >::type
+    negative_part(const StensorType& s,
+		  const bool)
+    {
+      typedef typename StensorTraits<StensorType>::NumType NumType;
+      stensor<1u,NumType> l;
+      l(0) = std::min(s(0),NumType(0));
+      l(1) = std::min(s(1),NumType(0));
+      l(2) = std::min(s(2),NumType(0));
+      return l;
+    }
+
+    template<typename StensorType>
+    typename tfel::meta::EnableIf<
+      ((tfel::meta::Implements<StensorType,StensorConcept>::cond)&&
+       ((StensorTraits<StensorType>::dime==2u)||
+	(StensorTraits<StensorType>::dime==3u))&&
+       (tfel::typetraits::IsFundamentalNumericType<typename StensorTraits<StensorType>::NumType>::cond)),
+      stensor<StensorTraits<StensorType>::dime,typename StensorTraits<StensorType>::NumType>
+    >::type
+    negative_part(const StensorType& s_,
+		  const bool b)
+    {
+      typedef typename StensorTraits<StensorType>::NumType NumType;
+      typedef typename tfel::typetraits::BaseType<NumType>::type base;
+      typedef stensor<StensorTraits<StensorType>::dime,NumType> Stensor;
+      tvector<3u,NumType> vp;
+      tmatrix<3u,3u,base> m;
+      stensor<StensorTraits<StensorType>::dime,NumType> s(s_);
+      s.computeEigenVectors(vp,m,b);
+      return Stensor::buildFromEigenValuesAndVectors(std::min(vp(0),NumType(0)),
+						     std::min(vp(1),NumType(0)),
+						     std::min(vp(2),NumType(0)),m);
     }
     
 #endif
@@ -744,4 +996,3 @@ namespace tfel{
 } // end of namespace tfel
 
 #endif /* _LIB_TFEL_STENSOR_IXX */
-

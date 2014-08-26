@@ -209,20 +209,11 @@ namespace tfel{
 	  T prec;
 
 	  vp(2)=s[2];
-	  vec(2,0)=static_cast<T>(0.);
-	  vec(2,1)=static_cast<T>(0.);
-	  vec(0,2)=static_cast<T>(0.);
-	  vec(1,2)=static_cast<T>(0.);
-	  vec(2,2)=static_cast<T>(1.);
-	  StensorComputeEigenVectors_<2u>::computeEigenValues(s[0],s[1],s[3],vp(0),vp(1));
+	  vec = tmatrix<3u,3u,T>::Id();
 
+	  StensorComputeEigenVectors_<2u>::computeEigenValues(s[0],s[1],s[3],vp(0),vp(1));
 	  prec = 10*std::max(vp(0),vp(1))*std::numeric_limits<T>::epsilon();
 	  if(std::abs(vp(0)-vp(1))<=prec){
-	    // The two eigenvalues are equal
-	    vec(0,0)=static_cast<T>(1.);
-	    vec(0,1)=static_cast<T>(0.);
-	    vec(1,0)=static_cast<T>(0.);
-	    vec(1,1)=static_cast<T>(1.);
 	    return true;
 	  }
 

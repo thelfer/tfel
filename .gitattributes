@@ -290,6 +290,7 @@ docs/presentations/images/tvergaard.eps -text
 docs/presentations/mfront-behaviours.tex.in -text
 docs/presentations/mfront-presentation.tex.in -text
 docs/presentations/mtest-presentation.tex.in -text
+docs/references/matrixcookbook.pdf -text svneol=unset#unset
 docs/tex/Makefile.am -text
 docs/tex/texmf/bibtex/fr-insa.bst -text
 docs/tex/texmf/ls-R -text
