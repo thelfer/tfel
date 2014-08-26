@@ -157,7 +157,7 @@ namespace mfront{
     map<string,double>::const_iterator p3;
     this->srcFile << "bool\n"
 		  << mdata.className
-		  << ":initializeParameters(const Pleiades::PMetier::IArgumentMetier& arg)";
+		  << "::initializeParameters(const Pleiades::PMetier::IArgumentMetier& arg)";
     this->srcFile << "{\n";
     this->srcFile << "using namespace std;\n";
     this->srcFile << "using namespace Pleiades::PUtilitaires;\n";

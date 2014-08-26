@@ -135,9 +135,6 @@ namespace mfront{
     virtual void
     writeInitializeParametersMethod(const MFrontModelData&);
 
-    virtual void
-    xwriteInitializeMethod(const MFrontModelData&);
-
     virtual bool
     initializeDefaultDomainListInConstrutor(const MFrontModelData&) const;
 
