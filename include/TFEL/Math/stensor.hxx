@@ -382,6 +382,11 @@ namespace tfel{
       >::type
     invert(const StensorType&);
 
+    /*!
+     * \brief compute the logarithm of a symmetric tensor
+     * \param s : tensor
+     * \param b : if true, refinement of eigen values is performed
+     */
     template<typename StensorType>
     TFEL_MATH_INLINE2
     typename tfel::meta::EnableIf<
@@ -393,6 +398,11 @@ namespace tfel{
     logarithm(const StensorType&,
 	      const bool = false);
 
+    /*!
+     * \brief compute the logarithm of a symmetric tensor
+     * \param s : tensor
+     * \param b : if true, refinement of eigen values is performed
+     */
     template<typename StensorType>
     TFEL_MATH_INLINE2
     typename tfel::meta::EnableIf<
@@ -404,6 +414,11 @@ namespace tfel{
     logarithm(const StensorType&,
 	      const bool = false);
 
+    /*!
+     * \brief compute the logarithm of a symmetric tensor
+     * \param s : tensor
+     * \param b : if true, refinement of eigen values is performed
+     */
     template<typename StensorType>
     TFEL_MATH_INLINE2
     typename tfel::meta::EnableIf<

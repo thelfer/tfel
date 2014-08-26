@@ -44,6 +44,9 @@ registerCallBack(const std::string&,
 static void
 treatOFlags(void);
 
+static void
+treatOFlags2(void);
+
 #ifdef HAVE_CASTEM
 static void
 treatCastem(void);
@@ -96,6 +99,7 @@ treatHelp(void);
 
 static CallBacksContainer callBacksContainer;
 static bool oflags          = false;
+static bool oflags2         = false;
 static bool warning         = false;
 static bool incs            = false;
 static bool cppflags        = false;
@@ -226,6 +230,12 @@ treatOFlags(void)
 {
   oflags = true;
 } // end of treatOFlags
+
+static void
+treatOFlags2(void)
+{
+  oflags2 = true;
+} // end of treatOFlags2
 
 static void
 treatWarning(void)
@@ -421,6 +431,7 @@ main(const int argc,
   const char * const * p2;
 
   registerCallBack("--oflags",&treatOFlags,"return tfel recommended optimisation flags.");
+  registerCallBack("--oflags2",&treatOFlags2,"return some aggressive optimisation flags, possibly at the expense of precision.");
   registerCallBack("--warning",&treatWarning,"return tfel recommended warnings.");
   registerCallBack("--includes",&treatIncludes,"return tfel include path.");
   registerCallBack("--cppflags",&treatCppFlags,"return preprocessor flags.");
@@ -533,6 +544,10 @@ main(const int argc,
 
   if(oflags){
     cout << OPTIMISATION_FLAGS << " ";
+  }
+
+  if(oflags2){
+    cout << OPTIMISATION_FLAGS2 << " ";
   }
 
   if(warning){

@@ -6,6 +6,7 @@ macro(tfel_project tfel_version_major tfel_version_minor tfel_version_path)
   set(TFEL_VERSION_MAJOR "${tfel_version_major}")
   set(TFEL_VERSION_MINOR "${tfel_version_minor}")
   set(TFEL_VERSION_PATCH "${tfel_version_patch}")
+  add_definitions("-DVERSION=\\\"\"${TFEL_VERSION_MAJOR}.${TFEL_VERSION_MINOR}\"\\\"")
 endmacro(tfel_project)
 
 macro(install_header dir file)

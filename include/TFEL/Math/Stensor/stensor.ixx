@@ -105,7 +105,6 @@ namespace tfel{
 	  typedef typename tfel::typetraits::BaseType<T>::type base;
 	  typedef typename ComputeBinaryResult<base,T,OpDiv>::Result T2;
 	  typedef typename ComputeUnaryResult<T,Power<3> >::Result T3;
-	  typedef typename ComputeBinaryResult<base,T3,OpDiv>::Result T4;
 	  stensor<2u,T2> inv;
 	  const T3 inv_det = base(1)/det(s);
 	  inv(0)=s(1)*s(2)*inv_det;
@@ -127,7 +126,6 @@ namespace tfel{
 	  typedef typename tfel::typetraits::BaseType<T>::type base;
 	  typedef typename ComputeBinaryResult<base,T,OpDiv>::Result T2;
 	  typedef typename ComputeUnaryResult<T,Power<3> >::Result T3;
-	  typedef typename ComputeBinaryResult<base,T3,OpDiv>::Result T4;
 	  static const base two          = base(2);
 	  static const base inv_sqrt_two = base(1)/std::sqrt(two);
 	  static const base one_half     = base(1)/two;
@@ -673,7 +671,7 @@ namespace tfel{
       stensor<1u,typename StensorTraits<StensorType>::NumType>
     >::type
     logarithm(const StensorType& s,
-    	const bool b)
+	      const bool)
     {
       typedef typename StensorTraits<StensorType>::NumType real;
       stensor<1u,real> l;

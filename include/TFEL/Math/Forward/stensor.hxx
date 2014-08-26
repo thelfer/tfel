@@ -18,7 +18,7 @@ namespace tfel
     class StensorConcept ;
 
     template<class T>
-    class StensorTraits;
+    struct StensorTraits;
 
     template<unsigned short N, typename T>
     struct StensorNullStorage;

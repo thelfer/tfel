@@ -28,7 +28,6 @@ bool QRDecompTest()
   using namespace std;
   using namespace tfel::math;
   using tfel::math::vector;
-  typedef typename matrix<T>::size_type IndexType;
   matrix<T> m(3,3);
   vector<T> rdiag(3);
   vector<T> beta(3);

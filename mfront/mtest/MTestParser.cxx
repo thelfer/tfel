@@ -67,7 +67,6 @@ namespace mfront
     using namespace std;
     using namespace tfel::utilities;
     using tfel::utilities::shared_ptr;
-    typedef tfel::material::ModellingHypothesis MH;
     map<string,CallBack>::const_iterator pc;
     this->file = f;
     this->treatCharAsString(true);
@@ -1008,8 +1007,6 @@ namespace mfront
     using namespace tfel::utilities;
     using namespace tfel::system;
     using tfel::utilities::shared_ptr;
-    typedef ExternalLibraryManager ELM;
-    typedef tfel::material::ModellingHypothesis MH;
     string i;
     this->readSpecifiedToken("MTestParser::handleBehaviour","<",p,
 			     this->fileTokens.end());
@@ -1177,7 +1174,6 @@ namespace mfront
   MTestParser::handleInternalStateVariable(MTest& t,TokensContainer::const_iterator& p)
   {
     using namespace std;
-    typedef tfel::material::ModellingHypothesis MH;
     tfel::utilities::shared_ptr<MTestBehaviour> b(t.getBehaviour());
     const string& n = this->readString(p,this->fileTokens.end());
     const vector<string>& ivsnames = b->getInternalStateVariablesNames();

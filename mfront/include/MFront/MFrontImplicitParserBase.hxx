@@ -58,6 +58,9 @@ namespace mfront{
     virtual void
     treatIntegrator(void);
 
+    virtual void
+    treatComputeFinalStress(void);
+
     virtual void endsInputFileProcessing(void);
 
     virtual void writeBehaviourIntegrator(void);
@@ -192,6 +195,8 @@ namespace mfront{
 
     Algorithm algorithm;
 
+    bool hasUserDefinedComputeFinalStress;
+    
     bool compareToNumericalJacobian;
 
     bool isConsistantTangentOperatorSymmetricDefined;

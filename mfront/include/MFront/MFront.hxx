@@ -174,6 +174,8 @@ namespace mfront{
 
     bool oflags;
 
+    bool oflags2;
+
     bool genMake;
 
     bool buildLibs;

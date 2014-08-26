@@ -345,9 +345,8 @@ namespace tfel{
     leftMultiplyByTensorAndRightMultiplyByTransposedTensor(const T&  p,
 						    const T2& F)
     {
-      typedef typename StensorTraits<T>::NumType stress;
-      typedef typename tfel::typetraits::BaseType<stress>::type real;
-      stensor<1u,stress> s;
+      typedef typename StensorTraits<T>::NumType NumType;
+      stensor<1u,NumType> s;
       s[0] = p[0]*F[0]*F[0];
       s[1] = p[1]*F[1]*F[1];
       s[2] = p[2]*F[2]*F[2];
@@ -367,10 +366,10 @@ namespace tfel{
     leftMultiplyByTensorAndRightMultiplyByTransposedTensor(const T&  p,
 						    const T2& F)
     {
-      typedef typename StensorTraits<T>::NumType stress;
-      typedef typename tfel::typetraits::BaseType<stress>::type real;
+      typedef typename StensorTraits<T>::NumType NumType;
+      typedef typename tfel::typetraits::BaseType<NumType>::type real;
       static const real cste = sqrt(real(2));
-      stensor<2u,stress> s;
+      stensor<2u,NumType> s;
       s[0] = p[1]*F[3]*F[3]+cste*p[3]*F[0]*F[3]+p[0]*F[0]*F[0];
       s[1] = p[0]*F[4]*F[4]+cste*p[3]*F[1]*F[4]+p[1]*F[1]*F[1];
       s[2] = p[2]*F[2]*F[2];
@@ -391,10 +390,10 @@ namespace tfel{
     leftMultiplyByTensorAndRightMultiplyByTransposedTensor(const T&  p,
 							   const T2& F)
     {
-      typedef typename StensorTraits<T>::NumType stress;
-      typedef typename tfel::typetraits::BaseType<stress>::type real;
+      typedef typename StensorTraits<T>::NumType NumType;
+      typedef typename tfel::typetraits::BaseType<NumType>::type real;
       static const real cste = sqrt(real(2));
-      stensor<3u,stress> s;
+      stensor<3u,NumType> s;
       s[0] = p[2]*F[5]*F[5]+(cste*p[5]*F[3]+cste*p[4]*F[0])*F[5]+p[1]*F[3]*F[3]+cste*p[3]*F[0]*F[3]+p[0]*F[0]*F[0];
       s[1] = p[2]*F[7]*F[7]+(cste*p[4]*F[4]+cste*p[5]*F[1])*F[7]+p[0]*F[4]*F[4]+cste*p[3]*F[1]*F[4]+p[1]*F[1]*F[1];
       s[2] = p[1]*F[8]*F[8]+(cste*p[3]*F[6]+cste*p[5]*F[2])*F[8]+p[0]*F[6]*F[6]+cste*p[4]*F[2]*F[6]+p[2]*F[2]*F[2];

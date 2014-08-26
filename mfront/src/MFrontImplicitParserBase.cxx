@@ -19,6 +19,7 @@ namespace mfront{
   MFrontImplicitParserBase::MFrontImplicitParserBase()
     : MFrontBehaviourParserBase<MFrontImplicitParserBase>(),
       algorithm(MFrontImplicitParserBase::DEFAULT),
+      hasUserDefinedComputeFinalStress(false),
       compareToNumericalJacobian(false),
       isConsistantTangentOperatorSymmetricDefined(false),
       useRelaxation(false),
@@ -85,6 +86,7 @@ namespace mfront{
 			      &MFrontImplicitParserBase::treatUsableInPurelyImplicitResolution);
     this->registerNewCallBack("@MaterialLaw",&MFrontImplicitParserBase::treatMaterialLaw);
     this->registerNewCallBack("@ComputeStress",&MFrontImplicitParserBase::treatComputeStress);
+    this->registerNewCallBack("@ComputeFinalStress",&MFrontImplicitParserBase::treatComputeFinalStress);
     this->registerNewCallBack("@Predictor",&MFrontImplicitParserBase::treatPredictor);
     this->registerNewCallBack("@Theta",&MFrontImplicitParserBase::treatTheta);
     this->registerNewCallBack("@Epsilon",&MFrontImplicitParserBase::treatEpsilon);
@@ -813,12 +815,28 @@ namespace mfront{
       msg += "computeStress already defined";
       throw(runtime_error(msg));
     }
-    this->readNextBlock(this->computeStress,
-			this->computeFinalStress,
+    string fs;
+    this->readNextBlock(this->computeStress,fs,
 			makeVariableModifier(*this,&MFrontImplicitParserBase::computeStressVariableModifier1),
 			makeVariableModifier(*this,&MFrontImplicitParserBase::computeStressVariableModifier2),
 			true);
+    if(this->computeFinalStress.empty()){
+      this->computeFinalStress = fs;
+    }
   } // end of MFrontImplicitParserBase::treatComputeStress
+
+  void
+  MFrontImplicitParserBase::treatComputeFinalStress(void)
+  {
+    using namespace std;
+    if(this->hasUserDefinedComputeFinalStress){
+      string msg("MFrontImplicitParserBase::treatComputeFinalStress : ");
+      msg += "final stress computation already defined";
+      throw(runtime_error(msg));
+    }
+    this->computeFinalStress = this->readNextBlock(makeVariableModifier(*this,&MFrontImplicitParserBase::computeStressVariableModifier2),true);
+    this->hasUserDefinedComputeFinalStress = true;
+  } // end of MFrontImplicitParserBase::treatComputeFinalStress
 
   void MFrontImplicitParserBase::writeBehaviourParserSpecificIncludes(void)
   {
@@ -1301,23 +1319,27 @@ namespace mfront{
       this->writeGetPartialJacobianInvert();
     }
     // compute stress
-    this->behaviourFile << "void\ncomputeStress(void){\n";
-    this->behaviourFile << "using namespace std;\n";
-    this->behaviourFile << "using namespace tfel::math;\n";
-    this->behaviourFile << "using std::vector;\n";
-    writeMaterialLaws("MFrontImplicitParserBase::writeBehaviourParserSpecificMembers",
-		      this->behaviourFile,this->materialLaws);
-    this->behaviourFile << this->computeStress << endl;
-    this->behaviourFile << "} // end of " << this->className << "::computeStress\n\n";
-    this->behaviourFile << "void\ncomputeFinalStress(void){\n";
-    this->behaviourFile << "using namespace std;\n";
-    this->behaviourFile << "using namespace tfel::math;\n";
-    this->behaviourFile << "using std::vector;\n";
-    writeMaterialLaws("MFrontImplicitParserBase::writeBehaviourParserSpecificMembers",
-		      this->behaviourFile,this->materialLaws);
-    this->behaviourFile << this->computeFinalStress << endl;
-    this->behaviourFile << "} // end of " << this->className << "::computeStress\n\n";
-    this->behaviourFile << endl;
+    if(!this->computeStress.empty()){
+      this->behaviourFile << "void\ncomputeStress(void){\n";
+      this->behaviourFile << "using namespace std;\n";
+      this->behaviourFile << "using namespace tfel::math;\n";
+      this->behaviourFile << "using std::vector;\n";
+      writeMaterialLaws("MFrontImplicitParserBase::writeBehaviourParserSpecificMembers",
+			this->behaviourFile,this->materialLaws);
+      this->behaviourFile << this->computeStress << endl;
+      this->behaviourFile << "} // end of " << this->className << "::computeStress\n\n";
+    }
+    if(!this->computeFinalStress.empty()){
+      this->behaviourFile << "void\ncomputeFinalStress(void){\n";
+      this->behaviourFile << "using namespace std;\n";
+      this->behaviourFile << "using namespace tfel::math;\n";
+      this->behaviourFile << "using std::vector;\n";
+      writeMaterialLaws("MFrontImplicitParserBase::writeBehaviourParserSpecificMembers",
+			this->behaviourFile,this->materialLaws);
+      this->behaviourFile << this->computeFinalStress << endl;
+      this->behaviourFile << "} // end of " << this->className << "::computeStress\n\n";
+      this->behaviourFile << endl;
+    }
   } // end of MFrontImplicitParserBase::writeBehaviourParserSpecificMembers
 
   std::string
@@ -1544,7 +1566,9 @@ namespace mfront{
     this->behaviourFile << "tmatrix<" << n << "," << n << ",real> tjacobian(this->jacobian);\n";
     this->behaviourFile << "for(unsigned short idx = 0; idx!= "<< n<<  ";++idx){\n";
     this->behaviourFile << "this->zeros(idx) -= this->numerical_jacobian_epsilon;\n";
-    this->behaviourFile << "this->computeStress();\n";
+    if(!this->computeStress.empty()){
+      this->behaviourFile << "this->computeStress();\n";
+    }
     this->behaviourFile << "this->computeFdF();\n";
     this->behaviourFile << "this->zeros = tzeros;\n";
     this->behaviourFile << "tvector<" << n << ",real> tfzeros2(this->fzeros);\n";
@@ -1554,7 +1578,9 @@ namespace mfront{
     //   this->behaviourFile << "}\n";
     // }
     this->behaviourFile << "this->zeros(idx) += this->numerical_jacobian_epsilon;\n";
-    this->behaviourFile << "this->computeStress();\n";
+    if(!this->computeStress.empty()){
+      this->behaviourFile << "this->computeStress();\n";
+    }
     this->behaviourFile << "this->computeFdF();\n";
     this->behaviourFile << "this->fzeros = (this->fzeros-tfzeros2)/(real(2)*(this->numerical_jacobian_epsilon));\n";
     this->behaviourFile << "for(unsigned short idx2 = 0; idx2!= "<< n <<  ";++idx2){\n";
@@ -1626,7 +1652,9 @@ namespace mfront{
     this->behaviourFile << "bool converge=false;\n";
     if((this->algorithm==MFrontImplicitParserBase::BROYDEN)||
        (this->algorithm==MFrontImplicitParserBase::BROYDEN2)){
-      this->behaviourFile << "this->computeStress();\n";
+      if(!this->computeStress.empty()){
+	this->behaviourFile << "this->computeStress();\n";
+      }
       this->behaviourFile << "this->computeFdF();\n";
     }
     this->behaviourFile << "this->iter=0;\n";
@@ -1639,11 +1667,15 @@ namespace mfront{
     this->behaviourFile << "++(this->iter);\n";
     this->behaviourFile << "this->zeros_1  = this->zeros;\n";
     if(this->algorithm==MFrontImplicitParserBase::NEWTONRAPHSON){
-      this->behaviourFile << "this->computeStress();\n";
+      if(!this->computeStress.empty()){
+	this->behaviourFile << "this->computeStress();\n";
+      }
       this->behaviourFile << "this->computeFdF();\n";
     }
     if(this->algorithm==MFrontImplicitParserBase::NEWTONRAPHSON_NR){
-      this->behaviourFile << "this->computeStress();\n";
+      if(!this->computeStress.empty()){
+	this->behaviourFile << "this->computeStress();\n";
+      }
       this->behaviourFile << "this->computeFdF();\n";
     }
     if(this->algorithm==MFrontImplicitParserBase::BROYDEN){
@@ -1663,14 +1695,18 @@ namespace mfront{
       this->behaviourFile << "jacobian2 = this->jacobian;\n";
       this->behaviourFile << "this->zeros  += Dzeros;\n";
       this->behaviourFile << "fzeros2 = this->fzeros;\n";
-      this->behaviourFile << "this->computeStress();\n";
+      if(!this->computeStress.empty()){
+	this->behaviourFile << "this->computeStress();\n";
+      }
       this->behaviourFile << "this->computeFdF();\n";
     }
     if(this->algorithm==MFrontImplicitParserBase::BROYDEN2){
       this->behaviourFile << "Dzeros   = -(this->jacobian)*(this->fzeros);\n";
       this->behaviourFile << "this->zeros  += Dzeros;\n";
       this->behaviourFile << "fzeros2 = this->fzeros;\n";
-      this->behaviourFile << "this->computeStress();\n";
+      if(!this->computeStress.empty()){
+	this->behaviourFile << "this->computeStress();\n";
+      }
       this->behaviourFile << "this->computeFdF();\n";
     }
     if(this->compareToNumericalJacobian){
@@ -2204,25 +2240,17 @@ namespace mfront{
   {
     using namespace std;
     using namespace tfel::utilities;
-    // VarContainer::const_iterator p;
-    // for(p=this->mb.getStateVariables().begin();p!=this->mb.getStateVariables().end();++p){
-    //   if(p->arraySize>=SupportedTypes::ArraySizeLimit){
-    // 	string msg("MFrontImplicitParserBase::endsInputFileProcessing : ");
-    // 	msg += "array size greater than '"+toString(SupportedTypes::ArraySizeLimit)+"' are not supported";	
-    // 	throw(runtime_error(msg));
-    //   }
-    // }
     MFrontBehaviourParserCommon::endsInputFileProcessing();
     if(this->integrator.empty()){
       string msg("MFrontImplicitParserBase::endsInputFileProcessing : ");
       msg += "definining the @Integrator block is required";
       throw(runtime_error(msg));
     }
-    if(this->computeStress.empty()){
-      string msg("MFrontImplicitParserBase::endsInputFileProcessing : ");
-      msg += "definining the @ComputeStress block is required";
-      throw(runtime_error(msg));
-    }
+    // if(this->computeStress.empty()){
+    //   string msg("MFrontImplicitParserBase::endsInputFileProcessing : ");
+    //   msg += "definining the @ComputeStress block is required";
+    //   throw(runtime_error(msg));
+    // }
     typedef map<string,double>::value_type MVType;
     typedef map<string,unsigned short>::value_type MVType2;
     if(this->mb.getParametersDefaultValues().find("theta")==this->mb.getParametersDefaultValues().end()){

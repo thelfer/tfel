@@ -35,6 +35,7 @@ execute_process(COMMAND svnversion
                 OUTPUT_VARIABLE TFEL_SVN_REVISION 
 		OUTPUT_STRIP_TRAILING_WHITESPACE)
 endif(NOT TFEL_SVN_REVISION)
+add_definitions("-DTFEL_SVN_REVISION=\\\"\"${TFEL_SVN_REVISION}\"\\\"")
 
 # testing
 # (must be placed *before* any add_subdirectory, cmake bug ?)
@@ -143,7 +144,7 @@ if(enable-python-bindings)
     message(STATUS "Boost library python found (${Boost_PYTHON_LIBRARY}).")
   else(Boost_FOUND)
     message(FATAL_ERROR "Boost libraries not found.\n"
-      "Required packages are :"${BOOST_MANDATORY_COMPONENTS})
+      "Required packages are :" ${BOOST_MANDATORY_COMPONENTS})
   endif(Boost_FOUND)
 endif(enable-python-bindings)
 
@@ -199,6 +200,9 @@ set (CPACK_PACKAGE_DESCRIPTION 	       "tfel is a mathematical library")
 # debian  packaging
 set (CPACK_DEBIAN_PACKAGE_MAINTAINER   "Helfer Thomas ${PACKAGE_BUGREPORT}")
 set (CPACK_DEBIAN_PACKAGE_SECTION      "Science")
+
+#NSIS
+set (CPACK_NSIS_MODIFY_PATH ON)
 
 # if(UNIX)
 #   add_custom_target(dist-bzip2

@@ -22,8 +22,13 @@ namespace mfront{
   struct TFEL_VISIBILITY_EXPORT StaticVarHandler
     : public VarHandler
   {
+#if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
+    typedef double StaticVariableValueType;
+#else 
+    typedef long double StaticVariableValueType;
+#endif /* defined _WIN32 || defined _WIN64 ||defined __CYGWIN__ */
     //! value of the static variable
-    long double value;
+    StaticVariableValueType value;
     /*!
      * Constructor
      * \param[in] type_       : variable type
@@ -34,7 +39,7 @@ namespace mfront{
     StaticVarHandler(const std::string&,
 		     const std::string&,
 		     const unsigned short,
-		     const long double);
+		     const StaticVariableValueType);
   }; // end of struct MFrontParserBase<Child>::StaticVarHandler
 
   typedef std::vector<StaticVarHandler>  StaticVarContainer;

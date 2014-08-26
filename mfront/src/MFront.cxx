@@ -246,16 +246,40 @@ namespace mfront{
   void
   MFront::treatOMake(void)
   {
+    using namespace std;
     this->oflags  = true;
     this->genMake = true;
+    string level = this->currentArgument->getOption();
+    if(!level.empty()){
+      if(level=="level2"){
+	this->oflags2   = true;
+      } else if(level!="level1"){
+	string msg("MFront::treatOBuild : ");
+	msg += "unsupported value '"+level+
+	  "' for the --obuild option";
+	throw(runtime_error(msg));
+      }
+    }
   } // end of MFront::treatOMake
 
   void
   MFront::treatOBuild(void)
   {
+    using namespace std;
     this->oflags    = true;
     this->genMake   = true;
     this->buildLibs = true;
+    string level = this->currentArgument->getOption();
+    if(!level.empty()){
+      if(level=="level2"){
+	this->oflags2   = true;
+      } else if(level!="level1"){
+	string msg("MFront::treatOBuild : ");
+	msg += "unsupported value '"+level+
+	  "' for the --obuild option";
+	throw(runtime_error(msg));
+      }
+    }
   } // end of MFront::treatOBuild
 
   void
@@ -406,9 +430,9 @@ namespace mfront{
     this->registerNewCallBack("--build",&MFront::treatBuild,
 			      "generate MakeFile and build libraries");
     this->registerNewCallBack("--omake","-m",&MFront::treatOMake,
-			      "generate MakeFile with optimized compilations flags (see also --obuild)");
+			      "generate MakeFile with optimized compilations flags (see also --obuild)",true);
     this->registerNewCallBack("--obuild","-b",&MFront::treatOBuild,
-			      "generate MakeFile with optimized compilations flags and build libraries");
+			      "generate MakeFile with optimized compilations flags and build libraries",true);
     this->registerNewCallBack("--target","-t",&MFront::treatTarget,
 			      "generate MakeFile and build the specified target",true);
     this->registerNewCallBack("--otarget",&MFront::treatOTarget,
@@ -442,6 +466,7 @@ namespace mfront{
       warningMode(false),
       debugMode(false),
       oflags(false),
+      oflags2(false),
       genMake(false),
       buildLibs(false),
       cleanLibs(false),
@@ -1561,7 +1586,11 @@ namespace mfront{
 	if(cxxflags!=0){
 	  this->makeFile << cxxflags << " ";
 	} else if(this->oflags){
-	  this->makeFile << "`tfel-config --oflags` ";
+	  if(this->oflags2){
+	    this->makeFile << "`tfel-config --oflags --oflags2` ";
+	  } else {
+	    this->makeFile << "`tfel-config --oflags` ";
+	  }
 	} else {
 	  this->makeFile << "-O2 ";
 	}
@@ -1580,7 +1609,11 @@ namespace mfront{
 	if(cflags!=0){
 	  this->makeFile << cflags << " ";
 	} else if(this->oflags){
-	  this->makeFile << "`tfel-config --oflags` ";
+	  if(this->oflags2){
+	    this->makeFile << "`tfel-config --oflags --oflags2` ";
+	  } else {
+	    this->makeFile << "`tfel-config --oflags` ";
+	  }
 	} else {
 	  this->makeFile << "-O2 ";
 	}

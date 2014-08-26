@@ -1268,7 +1268,6 @@ namespace mfront
     using namespace tfel::utilities;
     using namespace tfel::math;
     using namespace tfel::material;
-    typedef tfel::material::ModellingHypothesis MH;
     using tfel::utilities::shared_ptr;
     using tfel::tests::TestResult;
     using tfel::math::vector;
