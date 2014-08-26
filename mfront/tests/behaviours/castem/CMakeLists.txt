@@ -45,6 +45,7 @@ set(mfront_tests_SOURCES
   PlasIsoCin
   ViscoPlasIsoCin
   Chaboche2
+  ImplicitMonoCristal
   MonoCristal
   MonoCristal_DD_CFC
   PolyCristals

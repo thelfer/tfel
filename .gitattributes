@@ -1109,6 +1109,7 @@ mfront/tests/behaviours/EllipticCreep.mfront -text
 mfront/tests/behaviours/Hayhurst.mfront -text
 mfront/tests/behaviours/ImplicitFiniteStrainNorton.mfront -text
 mfront/tests/behaviours/ImplicitHayhurst.mfront -text
+mfront/tests/behaviours/ImplicitMonoCristal.mfront -text
 mfront/tests/behaviours/ImplicitNorton.mfront -text
 mfront/tests/behaviours/ImplicitNorton2.mfront -text
 mfront/tests/behaviours/ImplicitNortonGeneralisedPlaneStress.mfront -text

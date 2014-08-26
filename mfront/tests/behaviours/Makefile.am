@@ -35,6 +35,7 @@ MFRONTS= DDIF2.mfront                                            \
 	 ViscoPlasIsoCin.mfront                                  \
          Chaboche.mfront                                         \
          Chaboche2.mfront                                        \
+	 ImplicitMonoCristal.mfront                              \
 	 MonoCristal.mfront                                      \
 	 MonoCristalNewtonRaphson.mfront                         \
 	 MonoCristal_DD_CFC.mfront                               \
