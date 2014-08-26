@@ -19,6 +19,28 @@
 
 namespace umat
 {
+
+  template<UMATBehaviourType btype,
+	   unsigned short N>
+  struct UMATTangentOperatorType;
+
+  template<unsigned short N>
+  struct UMATTangentOperatorType<umat::SMALLSTRAINSTANDARDBEHAVIOUR,N>
+  {
+    typedef tfel::math::st2tost2<N,UMATReal> type;
+  };
+
+  template<unsigned short N>
+  struct UMATTangentOperatorType<umat::FINITESTRAINSTANDARDBEHAVIOUR,N>
+  {
+    typedef tfel::math::t2tost2<N,UMATReal> type;
+  };
+
+  template<unsigned short N>
+  struct UMATTangentOperatorType<umat::COHESIVEZONEMODEL,N>
+  {
+    typedef tfel::math::tmatrix<N,N,UMATReal> type;
+  };
   
   /*!
    * structure in charge of calling the behaviour integrate method.
@@ -595,8 +617,8 @@ namespace umat
 	tfel::material::ModellingHypothesisToSpaceDimension<H>::value;
       static void exe(const BV& bv,UMATReal *const DDSOE)
       {
-	using namespace tfel::math;
-	st2tost2<N,UMATReal>& Dt = *(reinterpret_cast<st2tost2<N,UMATReal>*>(DDSOE));
+	typedef typename UMATTangentOperatorType<UMATTraits<BV>::btype,N>::type TangentOperatorType;
+	TangentOperatorType& Dt = *(reinterpret_cast<TangentOperatorType*>(DDSOE));
 	Dt = bv.getTangentOperator();
 	// l'opérateur tangent contient des sqrt(2)...
 	UMATTangentOperator::normalize(Dt);
@@ -622,8 +644,9 @@ namespace umat
       static void exe(const BV& bv,UMATReal *const DDSOE)
       {
 	using namespace tfel::math;
+	typedef typename UMATTangentOperatorType<UMATTraits<BV>::btype,N>::type TangentOperatorType;
 	ConsistentTangentOperatorComputer::exe(bv,DDSOE);
-	st2tost2<N,UMATReal>& Dt = *(reinterpret_cast<st2tost2<N,UMATReal>*>(DDSOE));
+	TangentOperatorType& Dt = *(reinterpret_cast<TangentOperatorType*>(DDSOE));
 	// les conventions fortran....
 	UMATTangentOperator::transpose(Dt);
       } // end of exe	  

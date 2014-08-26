@@ -49,6 +49,7 @@ MFRONTS= DDIF2.mfront                                                      \
 	 MonoCristal_DD_CFC_InteractionMatrix.mfront                       \
 	 MonoCristal_DD_CC.mfront                                          \
 	 MonoCristal_DD_CC_NumericalJacobian.mfront                        \
+	 MonoCristal_DD_CC_Irradiation.mfront                              \
 	 MonoCristal_DD_CC_Irradiation_NumericalJacobian.mfront            \
 	 MonoCristal_DD_CC_InteractionMatrix.mfront                        \
 	 MonoCristal_DD_CC_SlidingSystems.mfront                           \

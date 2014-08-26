@@ -19,6 +19,28 @@
 namespace aster
 {
 
+  template<AsterBehaviourType btype,
+	   unsigned short N>
+  struct AsterTangentOperatorType;
+
+  template<unsigned short N>
+  struct AsterTangentOperatorType<aster::SMALLSTRAINSTANDARDBEHAVIOUR,N>
+  {
+    typedef tfel::math::st2tost2<N,AsterReal> type;
+  };
+
+  template<unsigned short N>
+  struct AsterTangentOperatorType<aster::FINITESTRAINSTANDARDBEHAVIOUR,N>
+  {
+    typedef tfel::math::t2tost2<N,AsterReal> type;
+  };
+
+  template<unsigned short N>
+  struct AsterTangentOperatorType<aster::COHESIVEZONEMODEL,N>
+  {
+    typedef tfel::math::tmatrix<N,N,AsterReal> type;
+  };
+
   template<unsigned short N,
 	   template<tfel::material::ModellingHypothesis::Hypothesis,typename,bool> class Behaviour>
   struct TFEL_VISIBILITY_LOCAL AsterBehaviourHandler
@@ -306,8 +328,8 @@ namespace aster
 	typedef Behaviour<AsterModellingHypothesis<N>::value,AsterReal,false> BV;
 	static void exe(const BV& bv,AsterReal *const DDSOE)
 	{
-	  using namespace tfel::math;
-	  st2tost2<N,AsterReal>& Dt = *(reinterpret_cast<st2tost2<N,AsterReal>*>(DDSOE));
+	  typedef typename AsterTangentOperatorType<AsterTraits<BV>::btype,N>::type TangentOperatorType;
+	  TangentOperatorType& Dt = *(reinterpret_cast<TangentOperatorType*>(DDSOE));
 	  Dt = bv.getTangentOperator();
 	  // l'opérateur tangent contient des sqrt(2)...
 	  AsterTangentOperator::normalize(Dt);
@@ -328,9 +350,9 @@ namespace aster
 	typedef Behaviour<AsterModellingHypothesis<N>::value,AsterReal,false> BV;
 	static void exe(const BV& bv,AsterReal *const DDSOE)
 	{
-	  using namespace tfel::math;
+	  typedef typename AsterTangentOperatorType<AsterTraits<BV>::btype,N>::type TangentOperatorType;
 	  ConsistentTangentOperatorComputer::exe(bv,DDSOE);
-	  st2tost2<N,AsterReal>& Dt = *(reinterpret_cast<st2tost2<N,AsterReal>*>(DDSOE));
+	  TangentOperatorType&  Dt = *(reinterpret_cast<TangentOperatorType*>(DDSOE));
 	  // les conventions fortran....
 	  AsterTangentOperator::transpose(Dt);
 	} // end of exe	  

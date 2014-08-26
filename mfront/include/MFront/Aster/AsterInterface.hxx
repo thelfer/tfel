@@ -209,10 +209,11 @@ namespace aster
 	      AsterReal *const STRESS,
 	      const StressFreeExpansionHandler& sfeh)
       {
+	using namespace std;
 	using namespace tfel::meta;
 	using namespace tfel::math;
 	using namespace tfel::utilities;
-	using namespace tfel::fsalgo;
+	using tfel::fsalgo::copy;
 	AsterInt NTENS   = 6u;
 	AsterReal s[6u]  = {0.,0.,0.,0.,0.,0.};
 	AsterReal F0[9u] = {0.,0.,0.,0.,0.,0.,0.,0.,0.};
@@ -231,12 +232,34 @@ namespace aster
 					   TEMP,DTEMP,PROPS,NPROPS,PREDEF,DPRED,
 					   STATEV,NSTATV,s,sfeh);
 	if(r==0){
+	  throw(runtime_error("BehaviourWrapper<aster::FINITESTRAINSTANDARDBEHAVIOUR,N> : "
+			      "unimplemented feature"));
 	  //	  AsterReduceTangentOperator<N>::exe(DDSOE,K);
 	  copy<StensorDimeToSize<N>::value>::exe(s,STRESS);
 	}
 	return r;
       }
     };
+
+    template<unsigned short N>
+    struct BehaviourWrapper<aster::COHESIVEZONEMODEL,N>
+    {
+      TFEL_ASTER_INLINE2 static
+      int exe(const AsterInt  *const NTENS, const AsterReal *const DTIME,
+	      const AsterReal *const DROT,  AsterReal *const DDSOE,
+	      const AsterReal *const STRAN, const AsterReal *const DSTRAN,
+	      const AsterReal *const TEMP,  const AsterReal *const DTEMP,
+	      const AsterReal *const PROPS, const AsterInt  *const NPROPS,
+	      const AsterReal *const PREDEF,const AsterReal *const DPRED,
+	      AsterReal *const STATEV,const AsterInt  *const NSTATV,
+	      AsterReal *const STRESS,
+	      const StressFreeExpansionHandler& sfeh)
+      {
+	return DimensionDispatch<N>::exe(NTENS,DTIME,DROT,DDSOE,STRAN,DSTRAN,
+					 TEMP,DTEMP,PROPS,NPROPS,PREDEF,DPRED,
+					 STATEV,NSTATV,STRESS,sfeh);
+      }
+    }; // end of BehaviourWrapper<aster::COHESIVEZONEMODEL,N>
 
     template<unsigned short N>
     struct DimensionDispatch

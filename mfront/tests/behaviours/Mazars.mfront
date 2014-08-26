@@ -94,10 +94,10 @@ nu.setGlossaryName("PoissonRatio");
   sig = (1.-d)*s0;
   if(computeTangentOperator_){
     if(smt==ELASTIC){
-      computeUnalteredElasticStiffness<N,Type>::exe(Dt,lambda,mu);
+      computeAlteredElasticStiffness<hypothesis,Type>::exe(Dt,lambda,mu);
     } else if(smt==SECANTOPERATOR){
       StiffnessTensor Hooke;
-      computeUnalteredElasticStiffness<N,Type>::exe(Hooke,lambda,mu);
+      computeAlteredElasticStiffness<hypothesis,Type>::exe(Hooke,lambda,mu);
       Dt = (1.-d)*Hooke;
     } else {
       string msg("Mazars : unsupported stiffness matrix type");

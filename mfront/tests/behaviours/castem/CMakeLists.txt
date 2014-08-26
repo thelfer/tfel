@@ -61,6 +61,7 @@ set(mfront_tests_SOURCES
   MonoCristal_DD_CFC_Irradiation
   MonoCristal_DD_CC
   MonoCristal_DD_CC_NumericalJacobian
+  MonoCristal_DD_CC_Irradiation
   MonoCristal_DD_CC_Irradiation_NumericalJacobian
   FiniteStrainMonoCristal
   PolyCristals
@@ -221,6 +222,7 @@ test_castem(monocristal_dd_cfc_numericaljacobian)
 test_castem(monocristal_dd_cfc_irradiation)
 test_castem(monocristal_dd_cc)
 test_castem(monocristal_dd_cc_numericaljacobian)
+test_castem(monocristal_dd_cc_irradiation)
 test_castem(monocristal_dd_cc_irradiation_numericaljacobian)
 test_castem(polycristals)
 test_castem(polycristals_dd_cfc)

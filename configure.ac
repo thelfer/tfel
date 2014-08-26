@@ -477,6 +477,7 @@ AC_OUTPUT([debug.sh
            mfront/tests/behaviours/aster/astermonocristal_dd_cfc_irradiation.mtest
            mfront/tests/behaviours/aster/astermonocristal_dd_cc.mtest
            mfront/tests/behaviours/aster/astermonocristal_dd_cc_numericaljacobian.mtest
+           mfront/tests/behaviours/aster/astermonocristal_dd_cc_irradiation.mtest
            mfront/tests/behaviours/aster/astermonocristal_dd_cc_irradiation_numericaljacobian.mtest
            mfront/tests/behaviours/aster/asterpolycristals.mtest
            mfront/tests/behaviours/aster/asterpolycristals_dd_cfc.mtest
@@ -485,6 +486,7 @@ AC_OUTPUT([debug.sh
 	   mfront/tests/behaviours/aster/astergursontvergaardneedlemanplasticflow.mtest
 	   mfront/tests/behaviours/aster/astergursontvergaardneedlemanviscoplasticflow.mtest
            mfront/tests/behaviours/aster/asteranistropiclemaitreviscoplasticbehaviour.mtest
+           mfront/tests/behaviours/aster/astertvergaard.mtest
            mfront/tests/behaviours/castem/Makefile
            mfront/tests/behaviours/castem/castemelasticity.mtest
            mfront/tests/behaviours/castem/castemelasticity2.mtest
@@ -557,6 +559,7 @@ AC_OUTPUT([debug.sh
            mfront/tests/behaviours/castem/castemmonocristal_dd_cfc_irradiation.mtest
            mfront/tests/behaviours/castem/castemmonocristal_dd_cc.mtest
            mfront/tests/behaviours/castem/castemmonocristal_dd_cc_numericaljacobian.mtest
+           mfront/tests/behaviours/castem/castemmonocristal_dd_cc_irradiation.mtest
            mfront/tests/behaviours/castem/castemmonocristal_dd_cc_irradiation_numericaljacobian.mtest
            mfront/tests/behaviours/castem/castempolycristals.mtest
            mfront/tests/behaviours/castem/castempolycristals_dd_cfc.mtest

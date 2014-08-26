@@ -12,6 +12,7 @@ configure_file("${PROJECT_SOURCE_DIR}/mfront/tests/behaviours/references/PolyCri
     PolyCristalsAngles.txt @ONLY)
 
 set(mfront_tests_SOURCES
+  Tvergaard
   Elasticity
   Elasticity2
   Elasticity3
@@ -48,6 +49,7 @@ set(mfront_tests_SOURCES
   MonoCristal_DD_CFC_Irradiation
   MonoCristal_DD_CC
   MonoCristal_DD_CC_NumericalJacobian
+  MonoCristal_DD_CC_Irradiation
   MonoCristal_DD_CC_Irradiation_NumericalJacobian
   PolyCristals
   PolyCristals_DD_CFC
@@ -178,6 +180,7 @@ test_aster(monocristal_dd_cfc_numericaljacobian)
 test_aster(monocristal_dd_cfc_irradiation)
 test_aster(monocristal_dd_cc)
 test_aster(monocristal_dd_cc_numericaljacobian)
+test_aster(monocristal_dd_cc_irradiation)
 test_aster(monocristal_dd_cc_irradiation_numericaljacobian)
 test_aster(polycristals)
 test_aster(polycristals_dd_cfc)
@@ -186,6 +189,7 @@ test_aster(burger)
 test_aster(gursontvergaardneedlemanplasticflow)
 test_aster(gursontvergaardneedlemanviscoplasticflow)
 test_aster(anistropiclemaitreviscoplasticbehaviour)
+test_aster(tvergaard)
 
 if(enable-python-bindings)
   test_aster_python(xx)

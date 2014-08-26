@@ -1,12 +1,12 @@
 /*! 
- * \file  MTestUmatCohesiveZoneModelBehaviour.hxx
+ * \file  MTestUmatCohesiveZoneModel.hxx
  * \brief
  * \author Helfer Thomas
  * \brief 07 avril 2013
  */
 
-#ifndef _LIB_MFRONT_MTESTUMATCOHESIVEZONEMODELBEHAVIOUR_H_
-#define _LIB_MFRONT_MTESTUMATCOHESIVEZONEMODELBEHAVIOUR_H_ 
+#ifndef _LIB_MFRONT_MTESTUMATCOHESIVEZONEMODEL_H_
+#define _LIB_MFRONT_MTESTUMATCOHESIVEZONEMODEL_H_ 
 
 #include"TFEL/System/ExternalFunctionsPrototypes.hxx"
 #include"MFront/MTestUmatBehaviourBase.hxx"
@@ -18,7 +18,7 @@ namespace mfront
    * A class to handle mechanical beheaviours written using the umat
    * interface
    */
-  struct TFEL_VISIBILITY_LOCAL MTestUmatCohesiveZoneModelBehaviour
+  struct TFEL_VISIBILITY_LOCAL MTestUmatCohesiveZoneModel
     : public MTestUmatBehaviourBase
   {
     /*!
@@ -26,7 +26,7 @@ namespace mfront
      * \param[in] l : library name
      * \param[in] b : behaviour name
      */
-    MTestUmatCohesiveZoneModelBehaviour(const tfel::material::ModellingHypothesis::Hypothesis,
+    MTestUmatCohesiveZoneModel(const tfel::material::ModellingHypothesis::Hypothesis,
 					const std::string&,
 					const std::string&);
     /*!
@@ -126,7 +126,7 @@ namespace mfront
     setOptionalMaterialPropertiesDefaultValues(MTestEvolutionManager&,
 					       const MTestEvolutionManager&) const;
     //! destructor
-    virtual ~MTestUmatCohesiveZoneModelBehaviour();
+    virtual ~MTestUmatCohesiveZoneModel();
   protected:
     /*!
      * \brief compute the elastic stiffness
@@ -146,9 +146,9 @@ namespace mfront
     mutable tfel::math::matrix<real> D;
     //! temporary vector
     mutable tfel::math::vector<real> iv;
-  }; // end of struct MTestBehaviour
+  }; // end of struct MTest
   
 } // end of namespace mfront
 
-#endif /* _LIB_MFRONT_MTESTUMATCOHESIVEZONEMODELBEHAVIOUR_H */
+#endif /* _LIB_MFRONT_MTESTUMATCOHESIVEZONEMODEL_H */
 

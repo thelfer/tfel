@@ -108,5 +108,35 @@ namespace umat
     std::swap(Dt(3,5),Dt(5,3));
     std::swap(Dt(4,5),Dt(5,4));
   }
+
+  void
+  UMATTangentOperator::normalize(tfel::math::tmatrix<1u,1u,UMATReal>&)
+  {} // end of UMATTangentOperator::normalize
+
+  void
+  UMATTangentOperator::normalize(tfel::math::tmatrix<2u,2u,UMATReal>&)
+  {} // end of UMATTangentOperator::normalize
+  
+  void
+  UMATTangentOperator::normalize(tfel::math::tmatrix<3u,3u,UMATReal>&)
+  {} // end of struct UMATTangentOperator
+
+  void
+  UMATTangentOperator::transpose(tfel::math::tmatrix<1u,1u,UMATReal>&)
+  {}
+
+  void
+  UMATTangentOperator::transpose(tfel::math::tmatrix<2u,2u,UMATReal>& Dt)
+  {
+    std::swap(Dt(0,1),Dt(1,0));
+  }
+
+  void
+  UMATTangentOperator::transpose(tfel::math::tmatrix<3u,3u,UMATReal>& Dt)
+  {
+    std::swap(Dt(0,1),Dt(1,0));
+    std::swap(Dt(0,2),Dt(2,0));
+    std::swap(Dt(0,3),Dt(3,0));
+  }
   
 } // end of namespace umat

@@ -49,12 +49,13 @@ if HAVE_CASTEM
 libTFELMTest_la_SOURCES += MTestUmatStandardBehaviour.cxx          \
 			   MTestUmatSmallStrainBehaviour.cxx       \
 			   MTestUmatFiniteStrainBehaviour.cxx      \
-			   MTestUmatCohesiveZoneModelBehaviour.cxx
+			   MTestUmatCohesiveZoneModel.cxx
 libTFELMTest_la_LIBADD  += -L$(top_builddir)/mfront/src -lUMATInterface
 endif
 
 if HAVE_ASTER
-libTFELMTest_la_SOURCES += MTestAsterSmallStrainBehaviour.cxx
+libTFELMTest_la_SOURCES += MTestAsterSmallStrainBehaviour.cxx \
+			   MTestAsterCohesiveZoneModel.cxx
 libTFELMTest_la_LIBADD  += -L$(top_builddir)/mfront/src -lAsterInterface
 endif
 

@@ -46,7 +46,7 @@ set(TFELMTest_SOURCES
     MTestUmatStandardBehaviour.cxx
     MTestUmatSmallStrainBehaviour.cxx
     MTestUmatFiniteStrainBehaviour.cxx
-    MTestUmatCohesiveZoneModelBehaviour.cxx
+    MTestUmatCohesiveZoneModel.cxx
     ${TFELMTest_SOURCES})
 set(TFELMTest_LDADD
     UMATInterface
@@ -56,6 +56,7 @@ endif(HAVE_CASTEM)
 if(HAVE_ASTER)
 set(TFELMTest_SOURCES
     MTestAsterSmallStrainBehaviour.cxx
+    MTestAsterCohesiveZoneModel.cxx
     ${TFELMTest_SOURCES})
 set(TFELMTest_LDADD
     AsterInterface

@@ -58,6 +58,42 @@ namespace umat
      */
     static void
     transpose(tfel::math::st2tost2<3u,UMATReal>&);
+    /*!
+     * \brief normalize the tangent operator in 1D
+     * \param[in] Dt : tangent operator
+     */
+    static void
+    normalize(tfel::math::tmatrix<1u,1u,UMATReal>&);
+    /*!
+     * \brief normalize the tangent operator in 2D
+     * \param[in] Dt : tangent operator
+     */
+    static void
+    normalize(tfel::math::tmatrix<2u,2u,UMATReal>&);
+    /*!
+     * \brief normalize the tangent operator in 3D
+     * \param[in] Dt : tangent operator
+     */
+    static void
+    normalize(tfel::math::tmatrix<3u,3u,UMATReal>&);
+    /*!
+     * \brief transpose the tangent operator in 1D
+     * \param[in] Dt : tangent operator
+     */
+    static void
+    transpose(tfel::math::tmatrix<1u,1u,UMATReal>&);
+    /*!
+     * \brief transpose the tangent operator in 2D
+     * \param[in] Dt : tangent operator
+     */
+    static void
+    transpose(tfel::math::tmatrix<2u,2u,UMATReal>&);
+    /*!
+     * \brief transpose the tangent operator in 3D
+     * \param[in] Dt : tangent operator
+     */
+    static void
+    transpose(tfel::math::tmatrix<3u,3u,UMATReal>&);
   }; // end of struct UMATTangentOperator
 
 } // end of namespace umat

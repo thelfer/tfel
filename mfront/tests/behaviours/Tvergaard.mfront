@@ -9,6 +9,7 @@
 }
 
 @ModellingHypothesis Tridimensional;
+@ProvidesSymmetricTangentOperator;
 
 @MaterialProperty real kn;
 kn.setGlossaryName("NormalStiffness");

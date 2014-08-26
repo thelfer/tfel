@@ -1197,6 +1197,7 @@ mfront/include/MFront/MTestAccelerationAlgorithm.hxx -text
 mfront/include/MFront/MTestAccelerationAlgorithmFactory.hxx -text
 mfront/include/MFront/MTestAlgorithmFactory.hxx -text
 mfront/include/MFront/MTestAnalyticalTest.hxx -text
+mfront/include/MFront/MTestAsterCohesiveZoneModel.hxx -text
 mfront/include/MFront/MTestAsterSmallStrainBehaviour.hxx -text
 mfront/include/MFront/MTestBehaviour.hxx -text
 mfront/include/MFront/MTestCastemAccelerationAlgorithm.hxx -text
@@ -1216,7 +1217,7 @@ mfront/include/MFront/MTestSecantAccelerationAlgorithm.hxx -text
 mfront/include/MFront/MTestSteffensenAccelerationAlgorithm.hxx -text
 mfront/include/MFront/MTestTypes.hxx -text
 mfront/include/MFront/MTestUmatBehaviourBase.hxx -text
-mfront/include/MFront/MTestUmatCohesiveZoneModelBehaviour.hxx -text
+mfront/include/MFront/MTestUmatCohesiveZoneModel.hxx -text
 mfront/include/MFront/MTestUmatFiniteStrainBehaviour.hxx -text
 mfront/include/MFront/MTestUmatNormaliseTangentOperator.hxx -text
 mfront/include/MFront/MTestUmatSmallStrainBehaviour.hxx -text
@@ -1274,6 +1275,7 @@ mfront/mtest/MTest.cxx -text
 mfront/mtest/MTestAccelerationAlgorithm.cxx -text
 mfront/mtest/MTestAccelerationAlgorithmFactory.cxx -text
 mfront/mtest/MTestAnalyticalTest.cxx -text
+mfront/mtest/MTestAsterCohesiveZoneModel.cxx -text
 mfront/mtest/MTestAsterSmallStrainBehaviour.cxx -text
 mfront/mtest/MTestBehaviour.cxx -text
 mfront/mtest/MTestCastemAccelerationAlgorithm.cxx -text
@@ -1291,7 +1293,7 @@ mfront/mtest/MTestReferenceFileComparisonTest.cxx -text
 mfront/mtest/MTestSecantAccelerationAlgorithm.cxx -text
 mfront/mtest/MTestSteffensenAccelerationAlgorithm.cxx -text
 mfront/mtest/MTestUmatBehaviourBase.cxx -text
-mfront/mtest/MTestUmatCohesiveZoneModelBehaviour.cxx -text
+mfront/mtest/MTestUmatCohesiveZoneModel.cxx -text
 mfront/mtest/MTestUmatFiniteStrainBehaviour.cxx -text
 mfront/mtest/MTestUmatNormaliseTangentOperator.cxx -text
 mfront/mtest/MTestUmatSmallStrainBehaviour.cxx -text
@@ -1439,6 +1441,7 @@ mfront/tests/behaviours/MonoCristal.mfront -text
 mfront/tests/behaviours/MonoCristalNewtonRaphson.mfront -text
 mfront/tests/behaviours/MonoCristal_DD_CC.mfront -text
 mfront/tests/behaviours/MonoCristal_DD_CC_InteractionMatrix.mfront -text
+mfront/tests/behaviours/MonoCristal_DD_CC_Irradiation.mfront -text
 mfront/tests/behaviours/MonoCristal_DD_CC_Irradiation_NumericalJacobian.mfront -text
 mfront/tests/behaviours/MonoCristal_DD_CC_NumericalJacobian.mfront -text
 mfront/tests/behaviours/MonoCristal_DD_CC_SlidingSystems.mfront -text
@@ -1518,6 +1521,7 @@ mfront/tests/behaviours/aster/astermazars.mtest.in -text
 mfront/tests/behaviours/aster/astermonocristal-2.mtest.in -text
 mfront/tests/behaviours/aster/astermonocristal.mtest.in -text
 mfront/tests/behaviours/aster/astermonocristal_dd_cc.mtest.in -text
+mfront/tests/behaviours/aster/astermonocristal_dd_cc_irradiation.mtest.in -text
 mfront/tests/behaviours/aster/astermonocristal_dd_cc_irradiation_numericaljacobian.mtest.in -text
 mfront/tests/behaviours/aster/astermonocristal_dd_cc_numericaljacobian.mtest.in -text
 mfront/tests/behaviours/aster/astermonocristal_dd_cfc.mtest.in -text
@@ -1534,6 +1538,7 @@ mfront/tests/behaviours/aster/asterpolycristals.mtest.in -text
 mfront/tests/behaviours/aster/asterpolycristals_dd_cfc.mtest.in -text
 mfront/tests/behaviours/aster/asterstrainhardeningcreep.mtest.in -text
 mfront/tests/behaviours/aster/asterstressrelaxation.mtest.in -text
+mfront/tests/behaviours/aster/astertvergaard.mtest.in -text
 mfront/tests/behaviours/aster/asterviscochaboche-memo-nrad.py.in -text
 mfront/tests/behaviours/aster/asterviscochaboche.mtest.in -text
 mfront/tests/behaviours/aster/asterviscoplasisocin.mtest.in -text
@@ -1699,6 +1704,7 @@ mfront/tests/behaviours/castem/castemmieheapellambrechtlogarithmicstrainnortoncr
 mfront/tests/behaviours/castem/castemmonocristal-2.mtest.in -text
 mfront/tests/behaviours/castem/castemmonocristal.mtest.in -text
 mfront/tests/behaviours/castem/castemmonocristal_dd_cc.mtest.in -text
+mfront/tests/behaviours/castem/castemmonocristal_dd_cc_irradiation.mtest.in -text
 mfront/tests/behaviours/castem/castemmonocristal_dd_cc_irradiation_numericaljacobian.mtest.in -text
 mfront/tests/behaviours/castem/castemmonocristal_dd_cc_numericaljacobian.mtest.in -text
 mfront/tests/behaviours/castem/castemmonocristal_dd_cfc.mtest.in -text

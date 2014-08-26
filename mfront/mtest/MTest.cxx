@@ -35,10 +35,11 @@
 #ifdef HAVE_CASTEM
 #include"MFront/MTestUmatSmallStrainBehaviour.hxx"
 #include"MFront/MTestUmatFiniteStrainBehaviour.hxx"
-#include"MFront/MTestUmatCohesiveZoneModelBehaviour.hxx"
+#include"MFront/MTestUmatCohesiveZoneModel.hxx"
 #endif /* HAVE_CASTEM */
 #ifdef HAVE_ASTER
 #include"MFront/MTestAsterSmallStrainBehaviour.hxx"
+#include"MFront/MTestAsterCohesiveZoneModel.hxx"
 #endif /* HAVE_ASTER  */
 #ifdef HAVE_CYRANO
 #include"MFront/MTestCyranoBehaviour.hxx"
@@ -1023,7 +1024,7 @@ namespace mfront
       } else if(type==2u){
 	this->b = shared_ptr<MTestBehaviour>(new MTestUmatFiniteStrainBehaviour(this->hypothesis,l,f));
       } else if(type==3u){
-	this->b = shared_ptr<MTestBehaviour>(new MTestUmatCohesiveZoneModelBehaviour(this->hypothesis,l,f));
+	this->b = shared_ptr<MTestBehaviour>(new MTestUmatCohesiveZoneModel(this->hypothesis,l,f));
       } else {
 	ostringstream msg;
 	msg << "MTest::setBehaviour : "
@@ -1034,7 +1035,18 @@ namespace mfront
 #endif
 #ifdef HAVE_ASTER
     if(i=="aster"){
+      ELM& elm = ELM::getExternalLibraryManager();
+      const unsigned short type = elm.getUMATBehaviourType(l,f);
+      if(type==1u){
       this->b = shared_ptr<MTestBehaviour>(new MTestAsterSmallStrainBehaviour(this->hypothesis,l,f));
+      } else if(type==3u){
+	this->b = shared_ptr<MTestBehaviour>(new MTestAsterCohesiveZoneModel(this->hypothesis,l,f));
+      } else {
+	ostringstream msg;
+	msg << "MTest::setBehaviour : "
+	  "unsupported behaviour type (" << type << ")";
+	throw(runtime_error(msg.str()));
+      }
     }
 #endif
 #ifdef HAVE_CYRANO

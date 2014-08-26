@@ -1,5 +1,5 @@
 /*! 
- * \file  MTestUmatCohesiveZoneModelBehaviour.cxx
+ * \file  MTestUmatCohesiveZoneModel.cxx
  * \brief
  * \author Helfer Thomas
  * \brief 07 avril 2013
@@ -11,12 +11,12 @@
 #include"TFEL/Math/tmatrix.hxx"
 #include"TFEL/System/ExternalLibraryManager.hxx"
 #include"MFront/UMAT/UMAT.hxx"
-#include"MFront/MTestUmatCohesiveZoneModelBehaviour.hxx"
+#include"MFront/MTestUmatCohesiveZoneModel.hxx"
 
 namespace mfront
 {
 
-  MTestUmatCohesiveZoneModelBehaviour::MTestUmatCohesiveZoneModelBehaviour(const tfel::material::ModellingHypothesis::Hypothesis h,
+  MTestUmatCohesiveZoneModel::MTestUmatCohesiveZoneModel(const tfel::material::ModellingHypothesis::Hypothesis h,
 									   const std::string& l,
 									   const std::string& b)
     : MTestUmatBehaviourBase(h,l,b)
@@ -30,7 +30,7 @@ namespace mfront
     this->fct = elm.getUMATFunction(l,b);
     this->mpnames = elm.getUMATMaterialPropertiesNames(l,b,nh);
     if(this->type!=3u){
-      string msg("MTestUmatCohesiveZoneModelBehaviour::MTestUmatCohesiveZoneModelBehaviour : ");
+      string msg("MTestUmatCohesiveZoneModel::MTestUmatCohesiveZoneModel : ");
       msg += "unsupported hypothesis";
       throw(runtime_error(msg));
     }
@@ -43,25 +43,25 @@ namespace mfront
       this->mpnames.insert(this->mpnames.begin(),"NormalStiffness");
       this->mpnames.insert(this->mpnames.begin(),"TangentialStiffness");
     } else {
-      string msg("MTestUmatCohesiveZoneModelBehaviour::MTestUmatCohesiveZoneModelBehaviour : "
+      string msg("MTestUmatCohesiveZoneModel::MTestUmatCohesiveZoneModel : "
 		 "unsupported symmetry type");
       throw(runtime_error(msg));
     }
   }
 
   tfel::math::tmatrix<3u,3u,real>
-  MTestUmatCohesiveZoneModelBehaviour::getRotationMatrix(const tfel::math::vector<real>&,
+  MTestUmatCohesiveZoneModel::getRotationMatrix(const tfel::math::vector<real>&,
 							 const tfel::math::tmatrix<3u,3u,real>& r) const
   {
     using namespace std;
-    string msg("MTestUmatCohesiveZoneModelBehaviour::getRotationMatrix : "
+    string msg("MTestUmatCohesiveZoneModel::getRotationMatrix : "
 	       "invalid call");
     throw(runtime_error(msg));
     return r;
-  } // end of MTestUmatCohesiveZoneModelBehaviour::getRotationMatrix
+  } // end of MTestUmatCohesiveZoneModel::getRotationMatrix
 
   void
-  MTestUmatCohesiveZoneModelBehaviour::allocate(const tfel::material::ModellingHypothesis::Hypothesis h)
+  MTestUmatCohesiveZoneModel::allocate(const tfel::material::ModellingHypothesis::Hypothesis h)
   {
     const unsigned short ndv     = this->getDrivingVariablesSize(h);
     const unsigned short nth     = this->getThermodynamicForcesSize(h);
@@ -74,20 +74,20 @@ namespace mfront
   }
 
   void
-  MTestUmatCohesiveZoneModelBehaviour::getDrivingVariablesDefaultInitialValues(tfel::math::vector<real>& v) const
+  MTestUmatCohesiveZoneModel::getDrivingVariablesDefaultInitialValues(tfel::math::vector<real>& v) const
   {
     using namespace std;
     fill(v.begin(),v.end(),real(0));
-  } // end of MTestUmatCohesiveZoneModelBehaviour::setDrivingVariablesDefaultInitialValue  
+  } // end of MTestUmatCohesiveZoneModel::setDrivingVariablesDefaultInitialValue  
 
   MTestStiffnessMatrixType::mtype
-  MTestUmatCohesiveZoneModelBehaviour::getDefaultStiffnessMatrixType(void) const
+  MTestUmatCohesiveZoneModel::getDefaultStiffnessMatrixType(void) const
   {
     return MTestStiffnessMatrixType::ELASTICSTIFNESSFROMMATERIALPROPERTIES;
   }
   
   bool
-  MTestUmatCohesiveZoneModelBehaviour::computePredictionOperator(tfel::math::matrix<real>& Kt,
+  MTestUmatCohesiveZoneModel::computePredictionOperator(tfel::math::matrix<real>& Kt,
 								 const tfel::math::tmatrix<3u,3u,real>& r,
 								 const tfel::math::vector<real>&,
 								 const tfel::math::vector<real>&,
@@ -111,16 +111,16 @@ namespace mfront
       this->computeElasticStiffness(Kt,mp,drot,h);
       return true;
     } else {
-      string msg("MTestUmatCohesiveZoneModelBehaviour::computePredictionOperator : "
+      string msg("MTestUmatCohesiveZoneModel::computePredictionOperator : "
 		 "computation of the tangent operator "
 		 "is not supported");
       throw(runtime_error(msg));
     }
     return false;
-  } // end of MTestUmatCohesiveZoneModelBehaviour::computePredictionOperator
+  } // end of MTestUmatCohesiveZoneModel::computePredictionOperator
 
   bool
-  MTestUmatCohesiveZoneModelBehaviour::integrate(tfel::math::matrix<real>& Kt,
+  MTestUmatCohesiveZoneModel::integrate(tfel::math::matrix<real>& Kt,
 						 tfel::math::vector<real>& s1,
 						 tfel::math::vector<real>& iv1,
 						 const tfel::math::tmatrix<3u,3u,real>& r,
@@ -147,7 +147,7 @@ namespace mfront
     if((h==MH::AXISYMMETRICALGENERALISEDPLANESTRAIN)||
        (h==MH::AXISYMMETRICALGENERALISEDPLANESTRESS)||
        (h==MH::AXISYMMETRICAL)){
-      string msg(" MTestUmatCohesiveZoneModelBehaviour::integrate : ");
+      string msg(" MTestUmatCohesiveZoneModel::integrate : ");
       msg += "unsupported modelling hypothesis";
       throw(runtime_error(msg));
     } else if (h==MH::PLANESTRESS){
@@ -163,19 +163,19 @@ namespace mfront
       ndi = 2;
       ntens = 3;
     } else {
-      string msg("MTestUmatCohesiveZoneModelBehaviour::integrate : ");
+      string msg("MTestUmatCohesiveZoneModel::integrate : ");
       msg += "unsupported hypothesis";
       throw(runtime_error(msg));
     }
     if((this->D.getNbRows()!=Kt.getNbRows())||
        (this->D.getNbCols()!=Kt.getNbCols())){
-      string msg("MTestUmatCohesiveZoneModelBehaviour::integrate : ");
+      string msg("MTestUmatCohesiveZoneModel::integrate : ");
       msg += "the memory has not been allocated correctly";
       throw(runtime_error(msg));
     }
     if(((iv0.size()==0)&&(this->iv.size()!=1u))||
        ((iv0.size()!=0)&&(iv0.size()!=this->iv.size()))){
-      string msg("MTestUmatCohesiveZoneModelBehaviour::integrate : ");
+      string msg("MTestUmatCohesiveZoneModel::integrate : ");
       msg += "the memory has not been allocated correctly";
       throw(runtime_error(msg));
     }
@@ -224,7 +224,7 @@ namespace mfront
       if(ktype==MTestStiffnessMatrixType::ELASTICSTIFNESSFROMMATERIALPROPERTIES){
 	this->computeElasticStiffness(Kt,mp,drot,h);
       } else {
-	string msg("MTestUmatCohesiveZoneModelBehaviour::integrate : "
+	string msg("MTestUmatCohesiveZoneModel::integrate : "
 		   "computation of the tangent operator "
 		   "is not supported");
 	throw(runtime_error(msg));
@@ -241,10 +241,10 @@ namespace mfront
       s1[1] = tmp;
     }
     return true;
-  } // end of MTestUmatCohesiveZoneModelBehaviour::integrate
+  } // end of MTestUmatCohesiveZoneModel::integrate
 
   void
-  MTestUmatCohesiveZoneModelBehaviour::computeElasticStiffness(tfel::math::matrix<real>& Kt,
+  MTestUmatCohesiveZoneModel::computeElasticStiffness(tfel::math::matrix<real>& Kt,
 							       const tfel::math::vector<real>& mp,
 							       const tfel::math::tmatrix<3u,3u,real>&,
 							       const tfel::material::ModellingHypothesis::Hypothesis h) const
@@ -267,16 +267,16 @@ namespace mfront
 	Kt(1,0) = Kt(1,2) = real(0);
 	Kt(2,0) = Kt(2,1) = real(0);
       } else {
-	string msg("MTestUmatCohesiveZoneModelBehaviour::integrate : ");
+	string msg("MTestUmatCohesiveZoneModel::integrate : ");
 	msg += "unsupported hypothesis";
 	throw(runtime_error(msg));
       }
     } else if(this->stype==1u){
-      string msg("MTestUmatCohesiveZoneModelBehaviour::integrate : ");
+      string msg("MTestUmatCohesiveZoneModel::integrate : ");
       msg += "invalid behaviour type (orthotropic type is not supported yet)";
       throw(runtime_error(msg));
     } else {
-      string msg("MTestUmatCohesiveZoneModelBehaviour::integrate : ");
+      string msg("MTestUmatCohesiveZoneModel::integrate : ");
       msg += "invalid behaviour type (neither "
 	"isotropic or orthotropic)";
       throw(runtime_error(msg));
@@ -284,7 +284,7 @@ namespace mfront
   }
 
   void
-  MTestUmatCohesiveZoneModelBehaviour::setOptionalMaterialPropertiesDefaultValues(MTestEvolutionManager& mp,
+  MTestUmatCohesiveZoneModel::setOptionalMaterialPropertiesDefaultValues(MTestEvolutionManager& mp,
 										  const MTestEvolutionManager& evm) const
   {
     using namespace std;
@@ -292,13 +292,13 @@ namespace mfront
     if(this->stype==0){
       MTestBehaviour::setOptionalMaterialPropertyDefaultValue(mp,evm,"NormalThermalExpansion",0.);
     } else {
-      string msg("MTestUmatCohesiveZoneModelBehaviour::MTestUmatCohesiveZoneModelBehaviour : "
+      string msg("MTestUmatCohesiveZoneModel::MTestUmatCohesiveZoneModel : "
 		 "unsupported symmetry type");
       throw(runtime_error(msg));
     }
-  } // end of MTestUmatCohesiveZoneModelBehaviour::setOptionalMaterialPropertiesDefaultValues
+  } // end of MTestUmatCohesiveZoneModel::setOptionalMaterialPropertiesDefaultValues
       
-  MTestUmatCohesiveZoneModelBehaviour::~MTestUmatCohesiveZoneModelBehaviour()
+  MTestUmatCohesiveZoneModel::~MTestUmatCohesiveZoneModel()
   {}
   
 } // end of namespace mfront

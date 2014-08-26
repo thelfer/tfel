@@ -33,9 +33,6 @@ namespace aster
     Dt(3,3) *= 0.5;
   } // end of AsterTangentOperator::normalize
   
-  /*!
-   * \brief normalize the tangent operator in 3D
-   */
   void
   AsterTangentOperator::normalize(tfel::math::st2tost2<3u,AsterReal>& Dt)
   {
@@ -107,6 +104,36 @@ namespace aster
     std::swap(Dt(3,4),Dt(4,3));
     std::swap(Dt(3,5),Dt(5,3));
     std::swap(Dt(4,5),Dt(5,4));
+  }
+
+  void
+  AsterTangentOperator::normalize(tfel::math::tmatrix<1u,1u,AsterReal>&)
+  {} // end of AsterTangentOperator::normalize
+
+  void
+  AsterTangentOperator::normalize(tfel::math::tmatrix<2u,2u,AsterReal>&)
+  {} // end of AsterTangentOperator::normalize
+  
+  void
+  AsterTangentOperator::normalize(tfel::math::tmatrix<3u,3u,AsterReal>&)
+  {} // end of struct AsterTangentOperator
+
+  void
+  AsterTangentOperator::transpose(tfel::math::tmatrix<1u,1u,AsterReal>&)
+  {}
+
+  void
+  AsterTangentOperator::transpose(tfel::math::tmatrix<2u,2u,AsterReal>& Dt)
+  {
+    std::swap(Dt(0,1),Dt(1,0));
+  }
+
+  void
+  AsterTangentOperator::transpose(tfel::math::tmatrix<3u,3u,AsterReal>& Dt)
+  {
+    std::swap(Dt(0,1),Dt(1,0));
+    std::swap(Dt(0,2),Dt(2,0));
+    std::swap(Dt(0,3),Dt(3,0));
   }
   
 } // end of namespace aster

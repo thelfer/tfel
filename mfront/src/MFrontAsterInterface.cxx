@@ -276,7 +276,8 @@ namespace mfront{
     string tmp;
 
     if(!((mb.getBehaviourType()==MechanicalBehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR)||
-	 (mb.getBehaviourType()==MechanicalBehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR))){
+	 (mb.getBehaviourType()==MechanicalBehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR)||
+	 (mb.getBehaviourType()==MechanicalBehaviourDescription::COHESIVEZONEMODEL))){
       string msg("MFrontAsterInterface::endTreatement : "
 		 "the aster interface only supports small and finite strain behaviours");
       throw(runtime_error(msg));
@@ -442,6 +443,8 @@ namespace mfront{
     if(mb.getBehaviourType()==MechanicalBehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR){
       sfeh = "aster::AsterStandardSmallStrainStressFreeExpansionHandler";
     } else if (mb.getBehaviourType()==MechanicalBehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR){
+      sfeh = "0";
+    } else if (mb.getBehaviourType()==MechanicalBehaviourDescription::COHESIVEZONEMODEL){
       sfeh = "0";
     } else {
       string msg("MFrontAsterInterface::endTreatement : "
@@ -949,6 +952,8 @@ namespace mfront{
       out << "static const AsterBehaviourType btype = aster::SMALLSTRAINSTANDARDBEHAVIOUR;"  << endl;
     } else if(mb.getBehaviourType()==MechanicalBehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR){
       out << "static const AsterBehaviourType btype = aster::FINITESTRAINSTANDARDBEHAVIOUR;" << endl;
+    } else if(mb.getBehaviourType()==MechanicalBehaviourDescription::COHESIVEZONEMODEL){
+      out << "static const AsterBehaviourType btype = aster::COHESIVEZONEMODEL;" << endl;
     } else {
       string msg("MFrontAsterInterface::writeAsterBehaviourTraits : "
 		 "unsupported behaviour type");
