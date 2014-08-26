@@ -24,7 +24,6 @@ mfront_SOURCES = main.cxx                                             \
 		 VariableDescription.cxx                              \
 		 StaticVariableDescription.cxx                        \
 		 MechanicalVariableDescription.cxx                    \
-		 MechanicalVariableDescription.cxx                    \
 		 MFrontBehaviourParserCommon.cxx                      \
 		 MFrontModelParserCommon.cxx                          \
 		 MFrontBehaviourVirtualParser.cxx                     \
