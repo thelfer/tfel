@@ -11,12 +11,23 @@
 #include<string>
 #include<fstream>
 
+#include"MFront/InterfaceBase.hxx"
 #include"MFront/MFrontUMATInterfaceBase.hxx"
 
 namespace mfront{
 
+  /*!
+   * Interface for behaviours for use in the Cast3M finite element
+   * code.
+   * 
+   * The name of this interface comes to the fact that the Cast3M
+   * choose to use an interface for user defined behaviours closed to
+   * the umat interface of the Abaqus finite element solver. However,
+   * conventions of Cast3M makes those two interfaces incompatibles.
+   */
   struct MFrontUMATInterface
-    : public MFrontUMATInterfaceBase
+    : public MFrontUMATInterfaceBase,
+      protected InterfaceBase
   {
     
     /*!

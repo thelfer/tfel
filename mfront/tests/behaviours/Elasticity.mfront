@@ -9,7 +9,8 @@
 @UseQt true;
 @ProvidesSymmetricTangentOperator;
 
-@UMATGenerateMTestFileOnFailure[umat]   true;
+@UMATFiniteStrainStrategies[umat] {None,FiniteRotationSmallStrain,
+                                   MieheApelLambrechtLogarithmicStrain};
 
 @AsterSaveTangentOperator[aster]        true;
 @AsterGenerateMTestFileOnFailure[aster] true;

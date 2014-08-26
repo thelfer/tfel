@@ -146,9 +146,6 @@ namespace umat
     stensor<2u,UMATReal>  n0;
     stensor<2u,UMATReal>  n1;
     stensor<2u,UMATReal>  n2;
-    st2tost2<2u,UMATReal> dn0_dC;
-    st2tost2<2u,UMATReal> dn1_dC;
-    st2tost2<2u,UMATReal> dn2_dC;
     tensor<2u,UMATReal> f;
     tensor<2u,UMATReal>::buildFromFortranMatrix(f,F);
     if(NDI==-2){
@@ -160,13 +157,20 @@ namespace umat
     log_vp(1) = log(vp(1));
     log_vp(2) = log(vp(2));
     stensor<2u,UMATReal>::computeEigenTensors(n0,n1,n2,m);
-    stensor<2u,UMATReal>::computeEigenTensorsDerivatives(dn0_dC,dn1_dC,dn2_dC,vp,m,1.e-12);
     *(reinterpret_cast<stensor<2u,UMATReal>*>(E)) = (log_vp(0)*n0+log_vp(1)*n1)/2;
     E[2]  = log_vp(2)/2;
     E[3] *= cste;
     // computing P
-    *(reinterpret_cast<st2tost2<2u,UMATReal>*>(P)) =
-      (n0^n0)/vp(0)+log_vp(0)*dn0_dC+(n1^n1)/vp(1)+log_vp(1)*dn1_dC+(n2^n2)/vp(2);
+    const tvector<3u,UMATReal> v0 = m.column_view<0u>();
+    const tvector<3u,UMATReal> v1 = m.column_view<1u>();
+    const stensor<2u,UMATReal> n01 = stensor<2u,UMATReal>::buildFromVectorsSymmetricDiadicProduct(v0,v1)/cste;
+    if(abs(vp(0)-vp(1))>1.e-12){
+      *(reinterpret_cast<st2tost2<2u,UMATReal>*>(P)) =
+	(n0^n0)/vp(0)+(n1^n1)/vp(1)+(n2^n2)/vp(2)+(log_vp(0)-log_vp(1))/(vp(0)-vp(1))*(n01^n01);
+    } else {
+      *(reinterpret_cast<st2tost2<2u,UMATReal>*>(P)) =
+	(n0^n0)/vp(0)+(n1^n1)/vp(1)+(n2^n2)/vp(2)+(n01^n01)/vp(0);
+    }
   } // end of UMATFiniteStrainComputeLogarithmicStrainAndDerivative2D
 
   static void
@@ -183,9 +187,6 @@ namespace umat
     stensor<3u,UMATReal>  n0;
     stensor<3u,UMATReal>  n1;
     stensor<3u,UMATReal>  n2;
-    st2tost2<3u,UMATReal> dn0_dC;
-    st2tost2<3u,UMATReal> dn1_dC;
-    st2tost2<3u,UMATReal> dn2_dC;
     tensor<3u,UMATReal>  f;
     tensor<3u,UMATReal>::buildFromFortranMatrix(f,F);
     const stensor<3u,UMATReal> C = computeRightCauchyGreenTensor(f);
@@ -194,14 +195,57 @@ namespace umat
     log_vp(1) = log(vp(1));
     log_vp(2) = log(vp(2));
     stensor<3u,UMATReal>::computeEigenTensors(n0,n1,n2,m);
-    stensor<3u,UMATReal>::computeEigenTensorsDerivatives(dn0_dC,dn1_dC,dn2_dC,vp,m,1.e-12);
-    // computing P
+    // logarithmic strain
     *(reinterpret_cast<stensor<3u,UMATReal>*>(E)) = (log_vp(0)*n0+log_vp(1)*n1+log_vp(2)*n2)/2;
     E[3] *= cste;
     E[4] *= cste;
     E[5] *= cste;
-    *(reinterpret_cast<st2tost2<3u,UMATReal>*>(P)) =
-      (n0^n0)/vp(0)+log_vp(0)*dn0_dC+(n1^n1)/vp(1)+log_vp(1)*dn1_dC+(n2^n2)/vp(2)+log_vp(2)*dn2_dC;
+    // computing P
+    if((abs(vp(0)-vp(1))<1.e-12)&&(abs(vp(0)-vp(2))<1.e-12)){
+      UMATReal vpm = (vp(0)+vp(1)+vp(2))/3;
+      *(reinterpret_cast<st2tost2<3u,UMATReal>*>(P)) =
+	st2tost2<3u,UMATReal>::Id()/vpm;
+    } else if(abs(vp(0)-vp(1))<1.e-12){
+      const tvector<3u,UMATReal> v0 = m.column_view<0u>();
+      const tvector<3u,UMATReal> v1 = m.column_view<1u>();
+      const tvector<3u,UMATReal> v2 = m.column_view<2u>();
+      const stensor<3u,UMATReal> n01 = stensor<3u,UMATReal>::buildFromVectorsSymmetricDiadicProduct(v0,v1)/cste;
+      const stensor<3u,UMATReal> n02 = stensor<3u,UMATReal>::buildFromVectorsSymmetricDiadicProduct(v0,v2)/cste;
+      const stensor<3u,UMATReal> n12 = stensor<3u,UMATReal>::buildFromVectorsSymmetricDiadicProduct(v1,v2)/cste;
+      UMATReal vpm = (vp(0)+vp(1))/2;
+      *(reinterpret_cast<st2tost2<3u,UMATReal>*>(P)) =
+	((n0^n0)+(n1^n1)+(n01^n01))/vpm+(n2^n2)/vp(2)+
+	(log_vp(0)-log_vp(2))/(vpm-vp(2))*((n02^n02)+(n12^n12));
+    } else if(abs(vp(0)-vp(2))<1.e-12){
+      const tvector<3u,UMATReal> v0 = m.column_view<0u>();
+      const tvector<3u,UMATReal> v1 = m.column_view<1u>();
+      const tvector<3u,UMATReal> v2 = m.column_view<2u>();
+      const stensor<3u,UMATReal> n01 = stensor<3u,UMATReal>::buildFromVectorsSymmetricDiadicProduct(v0,v1)/cste;
+      const stensor<3u,UMATReal> n02 = stensor<3u,UMATReal>::buildFromVectorsSymmetricDiadicProduct(v0,v2)/cste;
+      const stensor<3u,UMATReal> n12 = stensor<3u,UMATReal>::buildFromVectorsSymmetricDiadicProduct(v1,v2)/cste;
+      UMATReal vpm = (vp(0)+vp(2))/2;
+      *(reinterpret_cast<st2tost2<3u,UMATReal>*>(P)) =
+	((n0^n0)+(n2^n2)+(n02^n02))/vpm+(n1^n1)/vp(1)+
+	(log_vp(0)-log_vp(1))/(vpm-vp(1))*((n01^n01)+(n12^n12));
+    } else if(abs(vp(1)-vp(2))<1.e-12){
+      const tvector<3u,UMATReal> v0 = m.column_view<0u>();
+      const tvector<3u,UMATReal> v1 = m.column_view<1u>();
+      const tvector<3u,UMATReal> v2 = m.column_view<2u>();
+      const stensor<3u,UMATReal> n01 = stensor<3u,UMATReal>::buildFromVectorsSymmetricDiadicProduct(v0,v1)/cste;
+      const stensor<3u,UMATReal> n02 = stensor<3u,UMATReal>::buildFromVectorsSymmetricDiadicProduct(v0,v2)/cste;
+      const stensor<3u,UMATReal> n12 = stensor<3u,UMATReal>::buildFromVectorsSymmetricDiadicProduct(v1,v2)/cste;
+      UMATReal vpm = (vp(1)+vp(2))/2;
+      *(reinterpret_cast<st2tost2<3u,UMATReal>*>(P)) =
+	(n0^n0)/vp(0)+((n1^n1)+(n2^n2)+(n12^n12))/vpm+
+	((log_vp(0)-log_vp(1))/(vp(0)-vpm))*((n01^n01)+(n02^n02));
+    } else {
+      st2tost2<3u,UMATReal> dn0_dC;
+      st2tost2<3u,UMATReal> dn1_dC;
+      st2tost2<3u,UMATReal> dn2_dC;
+      stensor<3u,UMATReal>::computeEigenTensorsDerivatives(dn0_dC,dn1_dC,dn2_dC,vp,m,1.e-12);
+      *(reinterpret_cast<st2tost2<3u,UMATReal>*>(P)) =
+	(n0^n0)/vp(0)+log_vp(0)*dn0_dC+(n1^n1)/vp(1)+log_vp(1)*dn1_dC+(n2^n2)/vp(2)+log_vp(2)*dn2_dC;
+    }
   }
 
    void

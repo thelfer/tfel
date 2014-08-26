@@ -591,7 +591,7 @@ namespace tfel{
 	  using namespace tfel::typetraits;
 	  typedef typename BaseType<NumType>::type base;
 	  typedef typename ComputeBinaryResult<base,NumType,OpDiv>::Result InvNumType;
-	  const base cste = 1/sqrt(2.);
+	  const base cste = base(1)/sqrt(base(2));
 	  const tvector<3u,base> v0 = m.template column_view<0u>();
 	  const tvector<3u,base> v1 = m.template column_view<1u>();
 	  const stensor<2u,base> n01 = stensor<2u,base>::buildFromVectorsSymmetricDiadicProduct(v0,v1)*cste;
@@ -625,7 +625,7 @@ namespace tfel{
 	  using namespace tfel::math;
 	  using namespace tfel::typetraits;
 	  typedef typename BaseType<NumType>::type base;
-	  const base cste = 1/sqrt(2.);
+	  const base cste = base(1)/sqrt(base(2));
 	  const tvector<3u,base> v0 = m.template column_view<0u>();
 	  const tvector<3u,base> v1 = m.template column_view<1u>();
 	  const tvector<3u,base> v2 = m.template column_view<2u>();

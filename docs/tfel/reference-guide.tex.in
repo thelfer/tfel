@@ -1659,12 +1659,12 @@ En particulier~:
 \deriv{\lambda_{i}}{\tenseur{s}}=\deriv{\tenseur{s}}{\tenseur{s}}\,\colon\,\tenseur{n}_{ii}=\tenseur{n}_{ii}
 \]
 
-Nous nous intéressons maintenant aux termes \(\deriv{n_{ii}}{\tenseur{s}}\).
+Nous nous intéressons maintenant aux termes \(\deriv{\tenseur{n}_{ii}}{\tenseur{s}}\).
 
 On montre que~:
 \begin{equation}
   \label{eq:tfel:reference_guide:n_derivate}
-  \deriv{n_{11}}{\tenseur{s}} = \Frac{1}{\lambda_{1}-\lambda_{2}}n_{12}\,\otimes\,n_{12}+\Frac{1}{\lambda_{1}-\lambda_{3}}n_{13}\,\otimes\,n_{13}
+  \deriv{\tenseur{n}_{11}}{\tenseur{s}} = \Frac{1}{\lambda_{1}-\lambda_{2}}\tenseur{n}_{12}\,\otimes\,\tenseur{n}_{12}+\Frac{1}{\lambda_{1}-\lambda_{3}}\tenseur{n}_{13}\,\otimes\,\tenseur{n}_{13}
 \end{equation}
 
 \subsection{Régularisation}
@@ -1712,6 +1712,72 @@ Les fonctions sont telles que~:
 \item \(\displaystyle\lim_{x\rightarrow 0} \Frac{r_{\epsilon}\paren{x}}{x}=0\)
 \item \(\displaystyle\max_{x\in\mathbb{R}}\Frac{r_{\epsilon}\paren{x}}{x}\,\approx\,1,1\,\epsilon\)
 \end{enumerate}
+
+\subsection{Application aux fonctions isotropes de tenseurs symétriques}
+
+Une fonction \(\tenseur{f}\) de tenseur d'ordre \(2\) symétrique est dite {\em
+  isotrope} si elle vérifie~:
+\[
+\tenseur{f}\paren{\tilde{\tenseur{s}}}=\widetilde{\tenseur{f}\paren{\tenseur{s}}}
+\]
+pour changement de base représenté par \(\tilde{\mbox{}}\).
+
+Toute fonction définie par une série entière est isotrope. Ainsi les
+fonctions logarithme \(\log\) et exponentielle \(\exp\) sont des
+fonctions isotropes. Dans ce cas, \(f\) désigne à la fois une fonction
+réelle et une fonction de tenseur d'ordre \(2\) symétrique.
+
+Une telle fonction peut être évaluée à l'aide des vecteurs propres et
+des tenseurs propres~:
+\[
+f\paren{\tenseur{s}}=\sum_{i=1}^{3}f\paren{\lambda_{i}}\tenseur{n}_{i}
+\]
+
+La dérivée de \(f\) par rapport à son argument est alors~:
+\[
+\begin{aligned}
+\deriv{f}{\tenseur{s}}&=\sum_{i=1}^{3}f\primeexp\paren{\lambda_{i}}\tenseur{n}_{i}\,\otimes\,\tenseur{n}_{i}+\sum_{i=1}^{3}f\paren{\lambda_{i}}\deriv{\tenseur{n}_{i}}{\tenseur{s}}\\
+&= \sum_{i=1}^{3}f\primeexp\paren{\lambda_{i}}\tenseur{n}_{i}\,\otimes\,\tenseur{n}_{i}
++ \Frac{f\paren{\lambda_{1}}-f\paren{\lambda_{2}}}{\lambda_{1}-\lambda_{2}}\tenseur{n}_{12}\,\otimes\,\tenseur{n}_{12}
++ \Frac{f\paren{\lambda_{1}}-f\paren{\lambda_{3}}}{\lambda_{1}-\lambda_{3}}\tenseur{n}_{13}\,\otimes\,\tenseur{n}_{13}
++ \Frac{f\paren{\lambda_{2}}-f\paren{\lambda_{3}}}{\lambda_{2}-\lambda_{3}}\tenseur{n}_{23}\,\otimes\,\tenseur{n}_{23}
+\end{aligned}
+\]
+
+\paragraph{Cas où deux valeurs propres sont égales}
+
+Supposons que les valeurs propres \(\lambda_{1}\) et \(\lambda_{2}\)
+sont égales. Nous avons alors~:
+\[
+\begin{aligned}
+\deriv{f}{\tenseur{s}}&= \sum_{i=1}^{3}f\primeexp\paren{\lambda_{i}}\tenseur{n}_{i}\,\otimes\,\tenseur{n}_{i}
++ f\primeexp\paren{\lambda_{1}}\tenseur{n}_{12}\,\otimes\,\tenseur{n}_{12}
++ \Frac{f\paren{\lambda_{1}}-f\paren{\lambda_{3}}}{\lambda_{1}-\lambda_{3}}
+\left[\tenseur{n}_{13}\,\otimes\,\tenseur{n}_{13}+\tenseur{n}_{23}\,\otimes\,\tenseur{n}_{23}\right]
+\end{aligned}
+\]
+
+\paragraph{Cas où trois valeurs propres sont égales}
+
+Supposons que les trois propres \(\lambda_{1}\), \(\lambda_{2}\) et
+\(\lambda_{3}\) sont égales. Nous avons alors~:
+\[
+\begin{aligned}
+\deriv{f}{\tenseur{s}}&= f\primeexp\paren{\lambda_{1}}\left[
+\sum_{i=1}^{3}\tenseur{n}_{i}\,\otimes\,\tenseur{n}_{i}
++\tenseur{n}_{12}\,\otimes\,\tenseur{n}_{12}
++\tenseur{n}_{13}\,\otimes\,\tenseur{n}_{13}+\tenseur{n}_{23}\,\otimes\,\tenseur{n}_{23}\right]
+\end{aligned}
+\]
+
+Finalement,
+\[
+\begin{aligned}
+\deriv{f}{\tenseur{s}}&= f\primeexp\paren{\lambda_{1}}\tenseurq{I}
+\end{aligned}
+\]
+
+
 
 \clearpage
 \newpage

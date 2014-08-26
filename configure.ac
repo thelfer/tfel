@@ -511,6 +511,23 @@ AC_OUTPUT([debug.sh
            mfront/tests/behaviours/castem/castemfiniterotationsmallstrainelasticity-shear-4-3D.mtest
            mfront/tests/behaviours/castem/castemfiniterotationsmallstrainelasticity-shear-5-3D.mtest
            mfront/tests/behaviours/castem/castemfiniterotationsmallstrainelasticity-shear-6-3D.mtest
+           mfront/tests/behaviours/castem/castemelasticity_frst-uniaxialloading-1-1D.mtest
+           mfront/tests/behaviours/castem/castemelasticity_frst-uniaxialloading-2-1D.mtest
+           mfront/tests/behaviours/castem/castemelasticity_frst-uniaxialloading-3-1D.mtest
+           mfront/tests/behaviours/castem/castemelasticity_frst-uniaxialloading-1-2D.mtest
+           mfront/tests/behaviours/castem/castemelasticity_frst-uniaxialloading-2-2D.mtest
+           mfront/tests/behaviours/castem/castemelasticity_frst-uniaxialloading-3-2D.mtest
+           mfront/tests/behaviours/castem/castemelasticity_frst-shear-1-2D.mtest
+           mfront/tests/behaviours/castem/castemelasticity_frst-shear-2-2D.mtest
+           mfront/tests/behaviours/castem/castemelasticity_frst-uniaxialloading-1-3D.mtest
+           mfront/tests/behaviours/castem/castemelasticity_frst-uniaxialloading-2-3D.mtest
+           mfront/tests/behaviours/castem/castemelasticity_frst-uniaxialloading-3-3D.mtest
+           mfront/tests/behaviours/castem/castemelasticity_frst-shear-1-3D.mtest
+           mfront/tests/behaviours/castem/castemelasticity_frst-shear-2-3D.mtest
+           mfront/tests/behaviours/castem/castemelasticity_frst-shear-3-3D.mtest
+           mfront/tests/behaviours/castem/castemelasticity_frst-shear-4-3D.mtest
+           mfront/tests/behaviours/castem/castemelasticity_frst-shear-5-3D.mtest
+           mfront/tests/behaviours/castem/castemelasticity_frst-shear-6-3D.mtest
            mfront/tests/behaviours/castem/castemmieheapellambrechtlogarithmicstrainelasticity-uniaxialloading-1-1D.mtest
            mfront/tests/behaviours/castem/castemmieheapellambrechtlogarithmicstrainelasticity-uniaxialloading-1-2D.mtest
            mfront/tests/behaviours/castem/castemmieheapellambrechtlogarithmicstrainelasticity-uniaxialloading-1-3D.mtest
@@ -520,6 +537,15 @@ AC_OUTPUT([debug.sh
            mfront/tests/behaviours/castem/castemmieheapellambrechtlogarithmicstrainelasticity-uniaxialloading-3-1D.mtest
            mfront/tests/behaviours/castem/castemmieheapellambrechtlogarithmicstrainelasticity-uniaxialloading-3-2D.mtest
            mfront/tests/behaviours/castem/castemmieheapellambrechtlogarithmicstrainelasticity-uniaxialloading-3-3D.mtest
+           mfront/tests/behaviours/castem/castemelasticity_malls-uniaxialloading-1-1D.mtest
+           mfront/tests/behaviours/castem/castemelasticity_malls-uniaxialloading-1-2D.mtest
+           mfront/tests/behaviours/castem/castemelasticity_malls-uniaxialloading-1-3D.mtest
+           mfront/tests/behaviours/castem/castemelasticity_malls-uniaxialloading-2-1D.mtest
+           mfront/tests/behaviours/castem/castemelasticity_malls-uniaxialloading-2-2D.mtest
+           mfront/tests/behaviours/castem/castemelasticity_malls-uniaxialloading-2-3D.mtest
+           mfront/tests/behaviours/castem/castemelasticity_malls-uniaxialloading-3-1D.mtest
+           mfront/tests/behaviours/castem/castemelasticity_malls-uniaxialloading-3-2D.mtest
+           mfront/tests/behaviours/castem/castemelasticity_malls-uniaxialloading-3-3D.mtest
            mfront/tests/behaviours/castem/castemmieheapellambrechtlogarithmicstrainnortoncreep-uniaxialloading-1-1D.mtest
            mfront/tests/behaviours/castem/castemmieheapellambrechtlogarithmicstrainnortoncreep-uniaxialloading-2-1D.mtest
            mfront/tests/behaviours/castem/castemmieheapellambrechtlogarithmicstrainnortoncreep-uniaxialloading-3-1D.mtest

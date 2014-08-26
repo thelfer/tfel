@@ -1046,6 +1046,13 @@ namespace mfront
 	  --openedBrackets;
 	}
       }
+      TokensContainer::const_iterator next = this->current;
+      ++next;
+      if(next!=this->fileTokens.end()){
+	if(next->value==";"){
+	  current = next;
+	}
+      }
     }
     ++(this->current);
   } // end of ParserBase::ignoreKeyWord
