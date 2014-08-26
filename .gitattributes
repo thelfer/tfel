@@ -1046,9 +1046,11 @@ mfront/include/MFront/MTestUmatNormaliseTangentOperator.hxx -text
 mfront/include/MFront/MTestUmatSmallStrainBehaviour.hxx -text
 mfront/include/MFront/MTestUmatStandardBehaviour.hxx -text
 mfront/include/MFront/MechanicalBehaviourDescription.hxx -text
+mfront/include/MFront/MechanicalVariableDescription.hxx -text
 mfront/include/MFront/ParserBase.hxx -text
 mfront/include/MFront/ParserUtilities.hxx -text
 mfront/include/MFront/StaticVarHandler.hxx -text
+mfront/include/MFront/StaticVariableDescription.hxx -text
 mfront/include/MFront/SupportedTypes.hxx -text
 mfront/include/MFront/ThermodynamicForce.hxx -text
 mfront/include/MFront/UMAT/UMAT.hxx -text
@@ -1074,6 +1076,7 @@ mfront/include/MFront/UMATFiniteStrainMTestFileGenerator.hxx -text
 mfront/include/MFront/UMATSmallStrainMTestFileGenerator.hxx -text
 mfront/include/MFront/VarHandler.hxx -text
 mfront/include/MFront/VariableBoundsDescription.hxx -text
+mfront/include/MFront/VariableDescription.hxx -text
 mfront/include/MFront/VariableModifier.hxx -text
 mfront/include/MFront/VariableModifier.ixx -text
 mfront/include/MFront/WordAnalyser.hxx -text
@@ -1172,6 +1175,7 @@ mfront/src/MFrontUMATInterfaceBase.cxx -text
 mfront/src/MTestFileGeneratorBase.cxx -text
 mfront/src/Makefile.am -text
 mfront/src/MechanicalBehaviourDescription.cxx -text
+mfront/src/MechanicalVariableDescription.cxx -text
 mfront/src/ParserBase.cxx -text
 mfront/src/ParserUtilities.cxx -text
 mfront/src/StaticVariableDescription.cxx -text

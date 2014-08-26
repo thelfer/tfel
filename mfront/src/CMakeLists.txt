@@ -27,6 +27,7 @@ set(mfront_SOURCES
     BoundsDescription.cxx
     VariableDescription.cxx
     StaticVariableDescription.cxx
+    MechanicalVariableDescription.cxx
     MFrontBehaviourParserCommon.cxx
     MFrontModelParserCommon.cxx
     MFrontModelParser.cxx
