@@ -163,4 +163,42 @@ namespace aster{
 	 << "invalid value for the NTENS paramater" << endl;    
   }
 
+
+  void
+  AsterReduceTangentOperator<1u>::exe(AsterReal * const DDSOE,
+				      const AsterReal* const K)
+  {
+    DDSOE[0] = K[0];
+    DDSOE[1] = K[1];
+    DDSOE[2] = K[2];
+    DDSOE[3] = K[6];
+    DDSOE[4] = K[7];
+    DDSOE[5] = K[8];
+    DDSOE[6] = K[12];
+    DDSOE[7] = K[13];
+    DDSOE[8] = K[14];
+  } // end of AsterReduceTangentOperator<1u>::exe
+
+  void
+  AsterReduceTangentOperator<2u>::exe(AsterReal * const DDSOE,
+				      const AsterReal* const K)
+  {
+    DDSOE[0] = K[0];
+    DDSOE[1] = K[1];
+    DDSOE[2] = K[2];
+    DDSOE[3] = K[3];
+    DDSOE[4] = K[6];
+    DDSOE[5] = K[7];
+    DDSOE[6] = K[8];
+    DDSOE[7] = K[9];
+    DDSOE[8]  = K[12];
+    DDSOE[9]  = K[13];
+    DDSOE[10] = K[14];
+    DDSOE[11] = K[15];
+    DDSOE[12] = K[18];
+    DDSOE[13] = K[19];
+    DDSOE[14] = K[20];
+    DDSOE[15] = K[21];
+  } // end of AsterReduceTangentOperator<1u>::exe
+
 } // end of namespace aster 

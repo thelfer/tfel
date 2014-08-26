@@ -22,6 +22,8 @@
 #include"TFEL/Utilities/Info.hxx"
 #include"TFEL/Utilities/Name.hxx"
 
+#include"TFEL/Math/stensor.hxx"
+
 #include"TFEL/Material/MechanicalBehaviourTraits.hxx"
 #include"TFEL/Material/MaterialException.hxx"
 #include"TFEL/Material/ModellingHypothesis.hxx"
@@ -90,22 +92,36 @@ namespace aster
 
     TFEL_ASTER_INLINE2 static
      int exe(const AsterInt  *const NTENS, const AsterReal *const DTIME,
-	       const AsterReal *const DROT,  AsterReal *const DDSOE,
-	       const AsterReal *const STRAN, const AsterReal *const DSTRAN,
-	       const AsterReal *const TEMP,  const AsterReal *const DTEMP,
-	       const AsterReal *const PROPS, const AsterInt  *const NPROPS,
-	       const AsterReal *const PREDEF,const AsterReal *const DPRED,
-	       AsterReal *const STATEV,const AsterInt  *const NSTATV,
-	       AsterReal *const STRESS)
+	     const AsterReal *const DROT,  AsterReal *const DDSOE,
+	     const AsterReal *const STRAN, const AsterReal *const DSTRAN,
+	     const AsterReal *const TEMP,  const AsterReal *const DTEMP,
+	     const AsterReal *const PROPS, const AsterInt  *const NPROPS,
+	     const AsterReal *const PREDEF,const AsterReal *const DPRED,
+	     AsterReal *const STATEV,const AsterInt  *const NSTATV,
+	     AsterReal *const STRESS)
     {
+      using namespace tfel::meta;
+      using namespace tfel::material;
       if(*NTENS==3u){
-	return DimensionDispatch<1u>::exe(NTENS,DTIME,DROT,DDSOE,STRAN,DSTRAN,
-					  TEMP,DTEMP,PROPS,NPROPS,PREDEF,DPRED,
-					  STATEV,NSTATV,STRESS);
+	typedef Behaviour<AsterModellingHypothesis<1u>::value,AsterReal,false> BV;
+	typedef MechanicalBehaviourTraits<BV> MTraits;
+	const bool is_defined_ = MTraits::is_defined;
+	typedef typename IF<is_defined_,
+			    DimensionDispatch<1u>,
+			    BehaviourWrapper<1u> >::type Handler;
+	return Handler::exe(NTENS,DTIME,DROT,DDSOE,STRAN,DSTRAN,
+			    TEMP,DTEMP,PROPS,NPROPS,PREDEF,DPRED,
+			    STATEV,NSTATV,STRESS);
       } else if(*NTENS==4){
-	return DimensionDispatch<2u>::exe(NTENS,DTIME,DROT,DDSOE,STRAN,DSTRAN,
-					  TEMP,DTEMP,PROPS,NPROPS,PREDEF,DPRED,
-					  STATEV,NSTATV,STRESS);
+	typedef Behaviour<AsterModellingHypothesis<2u>::value,AsterReal,false> BV;
+	typedef MechanicalBehaviourTraits<BV> MTraits;
+	const bool is_defined_ = MTraits::is_defined;
+	typedef typename IF<is_defined_,
+			    DimensionDispatch<2u>,
+			    BehaviourWrapper<2u> >::type Handler;
+	return Handler::exe(NTENS,DTIME,DROT,DDSOE,STRAN,DSTRAN,
+			    TEMP,DTEMP,PROPS,NPROPS,PREDEF,DPRED,
+			    STATEV,NSTATV,STRESS);
       } else if(*NTENS==6){
 	return DimensionDispatch<3u>::exe(NTENS,DTIME,DROT,DDSOE,STRAN,DSTRAN,
 					  TEMP,DTEMP,PROPS,NPROPS,PREDEF,DPRED,
@@ -117,6 +133,48 @@ namespace aster
     }
 
   private:
+
+    template<unsigned short N>
+    struct BehaviourWrapper
+    {
+      TFEL_ASTER_INLINE2 static
+      int exe(const AsterInt  *const, const AsterReal *const DTIME,
+	      const AsterReal *const DROT,  AsterReal *const DDSOE,
+	      const AsterReal *const STRAN, const AsterReal *const DSTRAN,
+	      const AsterReal *const TEMP,  const AsterReal *const DTEMP,
+	      const AsterReal *const PROPS, const AsterInt  *const NPROPS,
+	      const AsterReal *const PREDEF,const AsterReal *const DPRED,
+	      AsterReal *const STATEV,const AsterInt  *const NSTATV,
+	      AsterReal *const STRESS)
+      {
+	using namespace tfel::meta;
+	using namespace tfel::math;
+	using namespace tfel::utilities;
+	using namespace tfel::fsalgo;
+	AsterInt NTENS   = 6u;
+	AsterReal s[6u]  = {0.,0.,0.,0.,0.,0.};
+	AsterReal e[6u]  = {0.,0.,0.,0.,0.,0.};
+	AsterReal de[6u] = {0.,0.,0.,0.,0.,0.};
+	AsterReal K[36u] = {0.,0.,0.,0.,0.,0.,
+			    0.,0.,0.,0.,0.,0.,
+			    0.,0.,0.,0.,0.,0.,
+			    0.,0.,0.,0.,0.,0.,
+			    0.,0.,0.,0.,0.,0.,
+			    0.,0.,0.,0.,0.,0.};
+	K[0u] = DDSOE[0];
+	copy<StensorDimeToSize<N>::value>::exe(STRESS,s);
+	copy<StensorDimeToSize<N>::value>::exe(STRAN,e);
+	copy<StensorDimeToSize<N>::value>::exe(DSTRAN,de);
+	int r = DimensionDispatch<3u>::exe(&NTENS,DTIME,DROT,K,e,de,
+					   TEMP,DTEMP,PROPS,NPROPS,PREDEF,DPRED,
+					   STATEV,NSTATV,s);
+	if(r==0){
+	  AsterReduceTangentOperator<N>::exe(DDSOE,K);
+	  copy<StensorDimeToSize<N>::value>::exe(s,STRESS);
+	}
+	return r;
+      }
+    };
 
     template<unsigned short N>
     struct DimensionDispatch

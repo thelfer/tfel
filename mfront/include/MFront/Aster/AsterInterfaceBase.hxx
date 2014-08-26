@@ -156,6 +156,29 @@ namespace aster{
     
   }; // end of struct AsterInterfaceBase
 
+  /*!
+   * \brief an helper class used to reduce the tangent operator from
+   * 3D to a lower dimension
+   */
+  template<unsigned short N>
+  struct AsterReduceTangentOperator;
+
+  template<>
+  struct MFRONT_ASTER_VISIBILITY_EXPORT AsterReduceTangentOperator<1u>
+  {
+    static void
+    exe(AsterReal * const,
+	const AsterReal* const);
+  };
+
+  template<>
+  struct MFRONT_ASTER_VISIBILITY_EXPORT AsterReduceTangentOperator<2u>
+  {
+    static void
+    exe(AsterReal * const,
+	const AsterReal* const);
+  };
+
 } // end of namespace aster
 
 #endif /* _LIB_MFRONT_ASTER_ASTERINTERFACEBASE_H */
