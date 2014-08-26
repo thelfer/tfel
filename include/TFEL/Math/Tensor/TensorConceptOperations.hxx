@@ -32,6 +32,7 @@
 #include"TFEL/Math/ExpressionTemplates/MathObjectMathObjectDiadicProductExpr.hxx"
 #include"TFEL/Math/Stensor/StensorConcept.hxx"
 #include"TFEL/Math/Tensor/TensorExpr.hxx"
+#include"TFEL/Math/Tensor/TensorProduct.hxx"
 #include"TFEL/Math/Tensor/TVFS.hxx"
 
 namespace tfel{
@@ -66,6 +67,28 @@ namespace tfel{
 				      >::type Expr;			    
     public:
       typedef typename ResultType<TensA,TensB,Op>::type Result;
+      typedef typename tfel::meta::IF<tfel::typetraits::IsInvalid<Result>::cond,
+				      DummyHandle,
+				      TensorExpr<Result,Expr> >::type Handle;
+    };
+
+    /*
+     * Partial Specialisation of ComputeBinaryResult_ for tensor's multiplication
+     */
+    template<typename A, typename B>
+    class ComputeBinaryResult_<TensorTag,TensorTag,A,B,OpMult>
+    {
+      struct DummyHandle{};
+      typedef typename TensorType<A>::type StensA;
+      typedef typename TensorType<B>::type StensB;
+      typedef typename tfel::meta::IF<TensorTraits<A>::dime==1u,
+				      TensorProductExpr1D<A,B>,
+				      typename tfel::meta::IF<TensorTraits<A>::dime==2u,
+							      TensorProductExpr2D<A,B>,
+							      TensorProductExpr3D<A,B> >::type
+				      >::type Expr;
+    public:
+      typedef typename ResultType<StensA,StensB,OpMult>::type Result;
       typedef typename tfel::meta::IF<tfel::typetraits::IsInvalid<Result>::cond,
 				      DummyHandle,
 				      TensorExpr<Result,Expr> >::type Handle;
@@ -231,6 +254,16 @@ namespace tfel{
       typename ComputeBinaryResult<T1,T2,OpMinus>::Handle
     >::type
     operator - (const T1&,const T2&);
+
+    template<typename T1,typename T2>
+    TFEL_MATH_INLINE 
+    typename tfel::meta::EnableIf<
+      tfel::meta::Implements<T1,TensorConcept>::cond&&
+      tfel::meta::Implements<T2,TensorConcept>::cond&&
+      !tfel::typetraits::IsInvalid<typename ComputeBinaryResult<T1,T2,OpMult>::Result>::cond,
+      typename ComputeBinaryResult<T1,T2,OpMult>::Handle
+    >::type
+    operator * (const T1&,const T2&);
 
     template<typename T1,typename T2>
     TFEL_MATH_INLINE 

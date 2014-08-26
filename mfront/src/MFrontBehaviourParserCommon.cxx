@@ -1127,6 +1127,7 @@ namespace mfront{
     file << "typedef typename Types::StrainStensor             StrainStensor;\n";
     file << "typedef typename Types::StrainRateStensor         StrainRateStensor;\n";
     file << "typedef typename Types::StiffnessTensor           StiffnessTensor;\n";
+    file << "typedef typename Types::Tensor                    Tensor;\n";
     file << "typedef typename Types::ThermalExpansionTensor    ThermalExpansionTensor;\n";
     file << "typedef typename Types::DeformationGradientTensor DeformationGradientTensor;\n";
     // tangent operator

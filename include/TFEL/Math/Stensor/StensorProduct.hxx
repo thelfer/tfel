@@ -185,7 +185,6 @@ namespace tfel{
 
     };
 
-
   } // end of namespace math
 
 } // end of namespace tfel

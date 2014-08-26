@@ -42,7 +42,10 @@
   }
 }
 
-\Titre{Présentation de \mfront{}}
+\Titre{Présentation de \mfront{} \\
+  \begin{center}
+    \includegraphics[height=4cm,angle=-90]{@abs_top_srcdir@/docs/presentations/images/mfront.eps}    
+  \end{center}}
 \Auteur{T. Helfer}
 %\Evenement{Formation Areva}
 %\Date{Avril 2014}
@@ -142,6 +145,12 @@
   \visible<2->{
     \begin{center}
       \mfront{} propose la notion d'{\bf interface}      
+    \end{center}
+  }
+  \visible<3->{
+    \begin{center}
+      Le code généré dépend de l'interface choisie ! (on veut être
+      performant !)
     \end{center}
   }
 }

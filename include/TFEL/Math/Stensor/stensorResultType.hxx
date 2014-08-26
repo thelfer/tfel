@@ -147,7 +147,6 @@ namespace tfel{
 				      st2tost2<N,ResBase_> >::type type;
     };
 
-
     /*!
      * \brief Partial specialisation for stensor
      * \see   ResultType

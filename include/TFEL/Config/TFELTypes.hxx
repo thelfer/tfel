@@ -62,8 +62,9 @@ namespace tfel
       typedef tfel::math::tvector<N,length>                DisplacementTVector;
       typedef tfel::math::stensor<N,tfel::math::qt<tfel::math::NoUnit,T> >    StrainStensor;
       typedef tfel::math::stensor<N,tfel::math::qt<tfel::math::Frequency,T> > StrainRateStensor;
-      typedef tfel::math::tensor<N,tfel::math::qt<tfel::math::NoUnit,T> >     DeformationGradientTensor;
       typedef tfel::math::stensor<N,thermalexpansion>      ThermalExpansionTensor;
+      typedef tfel::math::tensor<N,tfel::math::qt<tfel::math::NoUnit,T> > Tensor;
+      typedef tfel::math::tensor<N,tfel::math::qt<tfel::math::NoUnit,T> > DeformationGradientTensor;
       typedef tfel::math::st2tost2<N,real>                 Stensor4;
       typedef tfel::math::st2tost2<N,stress>               StiffnessTensor;
       typedef typename tfel::config::internals::PositionType<N,T,true>::type PositionType;
@@ -108,8 +109,9 @@ namespace tfel
       typedef tfel::math::tvector<N,T> DisplacementTVector;
       typedef tfel::math::stensor<N,T> StrainStensor;
       typedef tfel::math::stensor<N,T> StrainRateStensor;
-      typedef tfel::math::tensor<N,T>  DeformationGradientTensor;
       typedef tfel::math::stensor<N,T> ThermalExpansionTensor;
+      typedef tfel::math::tensor<N,T>  Tensor;
+      typedef tfel::math::tensor<N,T>  DeformationGradientTensor;
       typedef tfel::math::st2tost2<N,T> Stensor4;
       typedef tfel::math::st2tost2<N,T> StiffnessTensor;
       typedef typename tfel::config::internals::PositionType<N,T,false>::type  PositionType;

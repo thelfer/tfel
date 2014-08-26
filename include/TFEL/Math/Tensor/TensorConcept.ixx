@@ -342,21 +342,91 @@ namespace tfel{
        (tfel::typetraits::IsFundamentalNumericType<typename TensorTraits<T2>::NumType>::cond)),
       stensor<1u,typename StensorTraits<T>::NumType>
       >::type
+    leftMultiplyByTensorAndRightMultiplyByTransposedTensor(const T&  p,
+						    const T2& F)
+    {
+      typedef typename StensorTraits<T>::NumType stress;
+      typedef typename tfel::typetraits::BaseType<stress>::type real;
+      stensor<1u,stress> s;
+      s[0] = p[0]*F[0]*F[0];
+      s[1] = p[1]*F[1]*F[1];
+      s[2] = p[2]*F[2]*F[2];
+      return s;
+    } // end of leftMultiplyByTensorAndRightMultiplyByTransposedTensor
+
+    template<typename T,typename T2>
+    TFEL_MATH_INLINE2 
+    typename tfel::meta::EnableIf<
+      ((tfel::meta::Implements<T,StensorConcept>::cond) &&
+       (StensorTraits<T>::dime==2u)&&
+       (tfel::meta::Implements<T2,TensorConcept>::cond) &&
+       (TensorTraits<T2>::dime==2u)&&
+       (tfel::typetraits::IsFundamentalNumericType<typename TensorTraits<T2>::NumType>::cond)),
+      stensor<2u,typename StensorTraits<T>::NumType>
+      >::type
+    leftMultiplyByTensorAndRightMultiplyByTransposedTensor(const T&  p,
+						    const T2& F)
+    {
+      typedef typename StensorTraits<T>::NumType stress;
+      typedef typename tfel::typetraits::BaseType<stress>::type real;
+      static const real cste = sqrt(real(2));
+      stensor<2u,stress> s;
+      s[0] = p[1]*F[3]*F[3]+cste*p[3]*F[0]*F[3]+p[0]*F[0]*F[0];
+      s[1] = p[0]*F[4]*F[4]+cste*p[3]*F[1]*F[4]+p[1]*F[1]*F[1];
+      s[2] = p[2]*F[2]*F[2];
+      s[3] = (p[3]*F[3]+cste*p[0]*F[0])*F[4]+cste*p[1]*F[1]*F[3]+p[3]*F[0]*F[1];
+      return s;
+    } // end of leftMultiplyByTensorAndRightMultiplyByTransposedTensor
+
+    template<typename T,typename T2>
+    TFEL_MATH_INLINE2 
+    typename tfel::meta::EnableIf<
+      ((tfel::meta::Implements<T,StensorConcept>::cond) &&
+       (StensorTraits<T>::dime==3u)&&
+       (tfel::meta::Implements<T2,TensorConcept>::cond) &&
+       (TensorTraits<T2>::dime==3u)&&
+       (tfel::typetraits::IsFundamentalNumericType<typename TensorTraits<T2>::NumType>::cond)),
+      stensor<3u,typename StensorTraits<T>::NumType>
+      >::type
+    leftMultiplyByTensorAndRightMultiplyByTransposedTensor(const T&  p,
+							   const T2& F)
+    {
+      typedef typename StensorTraits<T>::NumType stress;
+      typedef typename tfel::typetraits::BaseType<stress>::type real;
+      static const real cste = sqrt(real(2));
+      stensor<3u,stress> s;
+      s[0] = p[2]*F[5]*F[5]+(cste*p[5]*F[3]+cste*p[4]*F[0])*F[5]+p[1]*F[3]*F[3]+cste*p[3]*F[0]*F[3]+p[0]*F[0]*F[0];
+      s[1] = p[2]*F[7]*F[7]+(cste*p[4]*F[4]+cste*p[5]*F[1])*F[7]+p[0]*F[4]*F[4]+cste*p[3]*F[1]*F[4]+p[1]*F[1]*F[1];
+      s[2] = p[1]*F[8]*F[8]+(cste*p[3]*F[6]+cste*p[5]*F[2])*F[8]+p[0]*F[6]*F[6]+cste*p[4]*F[2]*F[6]+p[2]*F[2]*F[2];
+      s[3] = (cste*p[2]*F[5]+p[5]*F[3]+p[4]*F[0])*F[7]+(p[4]*F[4]+p[5]*F[1])*F[5]+(p[3]*F[3]+cste*p[0]*F[0])*F[4]+cste*p[1]*F[1]*F[3]+p[3]*F[0]*F[1];
+      s[4] = (p[5]*F[5]+cste*p[1]*F[3]+p[3]*F[0])*F[8]+(p[4]*F[5]+p[3]*F[3]+cste*p[0]*F[0])*F[6]+cste*p[2]*F[2]*F[5]+p[5]*F[2]*F[3]+p[4]*F[0]*F[2];
+      s[5] = (p[5]*F[7]+p[3]*F[4]+cste*p[1]*F[1])*F[8]+(p[4]*F[6]+cste*p[2]*F[2])*F[7]+(cste*p[0]*F[4]+p[3]*F[1])*F[6]+p[4]*F[2]*F[4]+p[5]*F[1]*F[2];
+      return s;
+    } // end of leftMultiplyByTensorAndRightMultiplyByTransposedTensor
+
+    template<typename T,typename T2>
+    typename tfel::meta::EnableIf<
+      ((tfel::meta::Implements<T,StensorConcept>::cond) &&
+       (StensorTraits<T>::dime==1u)&&
+       (tfel::meta::Implements<T2,TensorConcept>::cond) &&
+       (TensorTraits<T2>::dime==1u)&&
+       (tfel::typetraits::IsFundamentalNumericType<typename TensorTraits<T2>::NumType>::cond)),
+      stensor<1u,typename StensorTraits<T>::NumType>
+      >::type
     convertSecondPiolaKirchhoffStressToCauchyStress(const T&  p,
 						    const T2& F)
     {
       typedef typename StensorTraits<T>::NumType stress;
       typedef typename tfel::typetraits::BaseType<stress>::type real;
       stensor<1u,stress> s;
-      const real J = F[0]*F[1]*F[2];
-      s[0] = p[0]*F[0]*F[0];
-      s[1] = p[1]*F[1]*F[1];
-      s[2] = p[2]*F[2]*F[2];
+      const real inv_J = F[0]*F[1]*F[2];
+      s[0] = p[0]*F[0]*F[0]*inv_J;
+      s[1] = p[1]*F[1]*F[1]*inv_J;
+      s[2] = p[2]*F[2]*F[2]*inv_J;
       return s;
     } // end of convertSecondPiolaKirchhoffStressToCauchyStress
 
     template<typename T,typename T2>
-    TFEL_MATH_INLINE2 
     typename tfel::meta::EnableIf<
       ((tfel::meta::Implements<T,StensorConcept>::cond) &&
        (StensorTraits<T>::dime==2u)&&
@@ -372,16 +442,15 @@ namespace tfel{
       typedef typename tfel::typetraits::BaseType<stress>::type real;
       static const real cste = sqrt(real(2));
       stensor<2u,stress> s;
-      const real J = det(F);
-      s[0] = p[1]*F[3]*F[3]+cste*p[3]*F[0]*F[3]+p[0]*F[0]*F[0];
-      s[1] = p[0]*F[4]*F[4]+cste*p[3]*F[1]*F[4]+p[1]*F[1]*F[1];
-      s[2] = p[2]*F[2]*F[2];
-      s[3] = (p[3]*F[3]+cste*p[0]*F[0])*F[4]+cste*p[1]*F[1]*F[3]+p[3]*F[0]*F[1];
+      const real inv_J = 1/det(F);
+      s[0] = (p[1]*F[3]*F[3]+cste*p[3]*F[0]*F[3]+p[0]*F[0]*F[0])*inv_J;
+      s[1] = (p[0]*F[4]*F[4]+cste*p[3]*F[1]*F[4]+p[1]*F[1]*F[1])*inv_J;
+      s[2] = p[2]*F[2]*F[2]*inv_J;
+      s[3] = ((p[3]*F[3]+cste*p[0]*F[0])*F[4]+cste*p[1]*F[1]*F[3]+p[3]*F[0]*F[1])*inv_J;
       return s;
     } // end of convertSecondPiolaKirchhoffStressToCauchyStress
 
     template<typename T,typename T2>
-    TFEL_MATH_INLINE2 
     typename tfel::meta::EnableIf<
       ((tfel::meta::Implements<T,StensorConcept>::cond) &&
        (StensorTraits<T>::dime==3u)&&
@@ -397,13 +466,13 @@ namespace tfel{
       typedef typename tfel::typetraits::BaseType<stress>::type real;
       static const real cste = sqrt(real(2));
       stensor<3u,stress> s;
-      const real J = det(F);
-      s[0] = p[2]*F[5]*F[5]+(cste*p[5]*F[3]+cste*p[4]*F[0])*F[5]+p[1]*F[3]*F[3]+cste*p[3]*F[0]*F[3]+p[0]*F[0]*F[0];
-      s[1] = p[2]*F[7]*F[7]+(cste*p[4]*F[4]+cste*p[5]*F[1])*F[7]+p[0]*F[4]*F[4]+cste*p[3]*F[1]*F[4]+p[1]*F[1]*F[1];
-      s[2] = p[1]*F[8]*F[8]+(cste*p[3]*F[6]+cste*p[5]*F[2])*F[8]+p[0]*F[6]*F[6]+cste*p[4]*F[2]*F[6]+p[2]*F[2]*F[2];
-      s[3] = (cste*p[2]*F[5]+p[5]*F[3]+p[4]*F[0])*F[7]+(p[4]*F[4]+p[5]*F[1])*F[5]+(p[3]*F[3]+cste*p[0]*F[0])*F[4]+cste*p[1]*F[1]*F[3]+p[3]*F[0]*F[1];
-      s[4] = (p[5]*F[5]+cste*p[1]*F[3]+p[3]*F[0])*F[8]+(p[4]*F[5]+p[3]*F[3]+cste*p[0]*F[0])*F[6]+cste*p[2]*F[2]*F[5]+p[5]*F[2]*F[3]+p[4]*F[0]*F[2];
-      s[5] = (p[5]*F[7]+p[3]*F[4]+cste*p[1]*F[1])*F[8]+(p[4]*F[6]+cste*p[2]*F[2])*F[7]+(cste*p[0]*F[4]+p[3]*F[1])*F[6]+p[4]*F[2]*F[4]+p[5]*F[1]*F[2];
+      const real inv_J = 1/det(F);
+      s[0] = (p[2]*F[5]*F[5]+(cste*p[5]*F[3]+cste*p[4]*F[0])*F[5]+p[1]*F[3]*F[3]+cste*p[3]*F[0]*F[3]+p[0]*F[0]*F[0])*inv_J;
+      s[1] = (p[2]*F[7]*F[7]+(cste*p[4]*F[4]+cste*p[5]*F[1])*F[7]+p[0]*F[4]*F[4]+cste*p[3]*F[1]*F[4]+p[1]*F[1]*F[1])*inv_J;
+      s[2] = (p[1]*F[8]*F[8]+(cste*p[3]*F[6]+cste*p[5]*F[2])*F[8]+p[0]*F[6]*F[6]+cste*p[4]*F[2]*F[6]+p[2]*F[2]*F[2])*inv_J;
+      s[3] = ((cste*p[2]*F[5]+p[5]*F[3]+p[4]*F[0])*F[7]+(p[4]*F[4]+p[5]*F[1])*F[5]+(p[3]*F[3]+cste*p[0]*F[0])*F[4]+cste*p[1]*F[1]*F[3]+p[3]*F[0]*F[1])*inv_J;
+      s[4] = ((p[5]*F[5]+cste*p[1]*F[3]+p[3]*F[0])*F[8]+(p[4]*F[5]+p[3]*F[3]+cste*p[0]*F[0])*F[6]+cste*p[2]*F[2]*F[5]+p[5]*F[2]*F[3]+p[4]*F[0]*F[2])*inv_J;
+      s[5] = ((p[5]*F[7]+p[3]*F[4]+cste*p[1]*F[1])*F[8]+(p[4]*F[6]+cste*p[2]*F[2])*F[7]+(cste*p[0]*F[4]+p[3]*F[1])*F[6]+p[4]*F[2]*F[4]+p[5]*F[1]*F[2])*inv_J;
       return s;
     } // end of convertSecondPiolaKirchhoffStressToCauchyStress
 

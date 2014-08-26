@@ -282,13 +282,14 @@ docs/presentations/images/gpls-mfront-2.cxx -text
 docs/presentations/images/gpls-mfront-2.tex -text
 docs/presentations/images/gpls-mfront.cxx -text
 docs/presentations/images/gpls-mfront.tex -text
+docs/presentations/images/mfront.eps -text
+docs/presentations/images/mfront.pdf -text svneol=unset#unset
+docs/presentations/images/mfront.svg -text
 docs/presentations/images/resultat_norton_traction_n8.pstricks -text
 docs/presentations/images/tvergaard.eps -text
 docs/presentations/mfront-behaviours.tex.in -text
 docs/presentations/mfront-presentation.tex.in -text
 docs/presentations/mtest-presentation.tex.in -text
-docs/stensor_rotation_matrix.tm -text
-docs/tensor_rotation_matrix.tm -text
 docs/tex/Makefile.am -text
 docs/tex/texmf/bibtex/fr-insa.bst -text
 docs/tex/texmf/ls-R -text
@@ -328,6 +329,11 @@ docs/texmacs/FiniteStrain2D.tm -text
 docs/texmacs/FiniteStrain3D.tm -text
 docs/texmacs/Stensor2D.tm -text
 docs/texmacs/Stensor3D.tm -text
+docs/texmacs/Tensor2D.tm -text
+docs/texmacs/Tensor3D.tm -text
+docs/texmacs/UMATFiniteStrain.tm -text
+docs/texmacs/stensor_rotation_matrix.tm -text
+docs/texmacs/tensor_rotation_matrix.tm -text
 docs/tfel/Bibliographie.bib -text
 docs/tfel/CMakeLists.txt -text
 docs/tfel/Champs.tex.in -text
@@ -677,6 +683,7 @@ include/TFEL/Math/Tensor/TensorFromTinyMatrixColumnView2.hxx -text
 include/TFEL/Math/Tensor/TensorFromTinyMatrixRowView.hxx -text
 include/TFEL/Math/Tensor/TensorFromTinyMatrixRowView2.hxx -text
 include/TFEL/Math/Tensor/TensorFromTinyVectorView.hxx -text
+include/TFEL/Math/Tensor/TensorProduct.hxx -text
 include/TFEL/Math/Tensor/TensorSizeToDime.hxx -text
 include/TFEL/Math/Tensor/tensor.ixx -text
 include/TFEL/Math/Tensor/tensorResultType.hxx -text

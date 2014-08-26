@@ -172,6 +172,7 @@ nobase_include_HEADERS= TFEL/Macros.hxx                                         
 			TFEL/Math/Tensor/TensorSizeToDime.hxx							     \
 			TFEL/Math/Tensor/TensorConceptOperations.hxx						     \
 			TFEL/Math/Tensor/TensorConceptOperations.ixx						     \
+			TFEL/Math/Tensor/TensorProduct.hxx						             \
 			TFEL/Math/Tensor/TVFS.hxx								     \
 			TFEL/Math/Tensor/TensorFromTinyVectorView.hxx						     \
 			TFEL/Math/Tensor/TensorFromTinyMatrixRowView.hxx					     \

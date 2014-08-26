@@ -14,7 +14,6 @@ namespace tfel{
   namespace math{
 
     template<typename T1,typename T2>
-    TFEL_MATH_INLINE 
     typename tfel::meta::EnableIf<
       tfel::meta::Implements<T1,StensorConcept>::cond&&
       tfel::meta::Implements<T2,StensorConcept>::cond&&
@@ -28,7 +27,6 @@ namespace tfel{
     }
 
     template<typename T1,typename T2>
-    TFEL_MATH_INLINE 
     typename tfel::meta::EnableIf<
       tfel::meta::Implements<T1,StensorConcept>::cond&&
       tfel::meta::Implements<T2,StensorConcept>::cond&&
@@ -42,7 +40,6 @@ namespace tfel{
     }
 
     template<typename T1,typename T2>
-    TFEL_MATH_INLINE 
     typename tfel::meta::EnableIf<
       tfel::meta::Implements<T1,StensorConcept>::cond&&
       tfel::meta::Implements<T2,StensorConcept>::cond&&
@@ -56,7 +53,6 @@ namespace tfel{
     }
 
     template<typename T1,typename T2>
-    TFEL_MATH_INLINE 
     typename tfel::meta::EnableIf<
       tfel::meta::Implements<T1,StensorConcept>::cond&&
       tfel::meta::Implements<T2,StensorConcept>::cond&&
@@ -70,7 +66,6 @@ namespace tfel{
     }
 
     template<typename T1,typename T2>
-    TFEL_MATH_INLINE 
     typename tfel::meta::EnableIf<
       tfel::typetraits::IsScalar<T1>::cond&&
       tfel::meta::Implements<T2,StensorConcept>::cond&&
@@ -84,7 +79,6 @@ namespace tfel{
     }
 
     template<typename T1,typename T2>
-    TFEL_MATH_INLINE 
     typename tfel::meta::EnableIf<
       tfel::meta::Implements<T1,StensorConcept>::cond&&
       tfel::typetraits::IsScalar<T2>::cond&&
@@ -98,7 +92,6 @@ namespace tfel{
     }
 
     template<typename T1,typename T2>
-    TFEL_MATH_INLINE 
     typename tfel::meta::EnableIf<
       tfel::meta::Implements<T1,StensorConcept>::cond&&
       tfel::typetraits::IsScalar<T2>::cond&&

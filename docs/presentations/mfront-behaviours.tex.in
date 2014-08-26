@@ -43,7 +43,11 @@
   }
 }
 
-\Titre{Lois de comportement mécanique avec \mfront{}}
+\Titre{Lois de comportement mécanique avec \mfront{} \\
+  \begin{center}
+    \includegraphics[height=4cm,angle=-90]{@abs_top_srcdir@/docs/presentations/images/mfront.eps}    
+  \end{center}
+}
 \Auteur{T. Helfer}
 %\Evenement{Formation Areva}
 %\Date{Avril 2014}
@@ -371,12 +375,13 @@
     \item l'équation différentielle pour la plasticité ou
       l'endommagement doit être remplacée par la nullité du critère en
       fin de pas de temps~;
-    \item il est nécessaire de savoir calculer la jacobienne~:
+    \item il vaut mieux savoir calculer la jacobienne~:
       \begin{itemize}
       \item la bibliothèque tensorielle livrée avec \mfront{} est
         alors très utile~;
       \end{itemize}
     \item les temps de calculs sont souvent {\bf très} avantageux~;
+    \item on a (plus facilement) la {\bf tangente cohérente}~;
     \end{itemize}
   \item<3-> utiliser une méthode de \nom{Runge-Kutta} si~:
     \begin{itemize}
@@ -480,18 +485,22 @@
     \item les \og{}~tenseurs d'ordre \(4\)~\fg{} sont utilisables au
       cours de l'intégration et permettent de définir certains blocs
       de la jacobienne en implicite~;
-    \item la possibilité d'utiliser des vecteurs comme variables
-      internes (modèles de zones cohésives) est partiellement
-      implantée~;
     \end{itemize}
+  \item la possibilité d'utiliser des vecteurs comme variables
+    internes (modèles de zones cohésives) est partiellement
+    implantée~;
+  \item la possibilité d'utiliser des tenseurs non symétriques comme
+    variables internes (grandes transformations) est partiellement
+    implantée~;
   \item<2-> \mfront{} ne supporte (aujourd'hui) que les modélisations
     \(1D\) (trois composantes du tenseurs des déformations), \(2D\)
-    déformations planes et déformations planes généralisées, et
-    \(3D\)~:
+    axisyimétriques, déformations planes (généralisées ou non) et
+    contraintes planes, et \(3D\)~:
     \begin{itemize}
-    \item le support des autres modélisations doit être assuré par les
-      interfaces aux codes éléments finis (voir l'interface \umat{}
-      pour les contraintes planes)~;
+    \item le support des contraintes planes (généralisées ou non) est
+      partiel (on doit écrire une implantation spécifique ou laisser
+      l'interface au code éléments finis faire, voir l'interface
+      \umat{})~;
     \end{itemize}
   \item<3-> \mfront{} supporte des lois isotropes et orthotropes
     (intégrateurs génériques)~:
@@ -734,6 +743,9 @@
     \end{pmatrix}
     \]
   \item<5-> on peut demander une vérification numérique !
+    \begin{center}
+      {\tt @CompareToNumericalJacobian true;}
+    \end{center}
   \end{itemize}
 }
 
@@ -791,7 +803,12 @@
       \item {\tt @RequireStiffnessTensor;}
       \item {\tt @RequireThermalExpansionTensor;}
       \end{itemize}
-    \item<4-> de traiter la condition de contraintes planes par une
+    \item<4-> de générer des fichiers {\tt mtest} en cas d'échec pour
+      analyse~:
+      \begin{itemize}
+      \item {\tt @UMATGenerateMTestFileOnFailure[umat] true;}
+      \end{itemize}
+    \item<5-> de traiter la condition de contraintes planes par une
       variable interne supplémentaire représentant la déformation
       totale axiale et une boucle externe pour assurer
       \(\sigma_{z}=0\)~;
@@ -1021,6 +1038,11 @@
       \begin{itemize}
       \item ???
       \end{itemize}
+    \end{itemize}
+  \item retourner un estimation du pas de temps~:
+    \begin{itemize}
+    \item validation de l'hypothèse de linéarité du chargement~;
+    \item pas de temps adaptatif~;
     \end{itemize}
   \end{itemize}
 }

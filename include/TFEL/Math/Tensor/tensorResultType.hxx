@@ -106,6 +106,19 @@ namespace tfel{
 				      tensor<N,ResBase_> >::type type;
     };
 
+    /*!
+     * \brief Partial specialisation for tensor
+     * \see   ResultType
+     */
+    template<unsigned short N,typename T,typename T2>
+    class ResultType<tensor<N,T>,tensor<N,T2>,OpMult>
+    {
+      typedef typename ResultType<T,T2,OpMult>::type ResBase_;
+    public:
+      typedef typename tfel::meta::IF<tfel::typetraits::IsInvalid<ResBase_>::cond,
+				      tfel::meta::InvalidType,
+				      tensor<N,ResBase_> >::type type;
+    };
 
     // /*!
     //  * \brief Partial specialisation for tensor
