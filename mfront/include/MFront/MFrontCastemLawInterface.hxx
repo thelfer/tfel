@@ -28,15 +28,6 @@ namespace mfront{
     
     MFrontCastemLawInterface();
     
-    virtual void
-    setVerboseMode(void);
-
-    virtual void
-    setDebugMode(void);
-
-    virtual void
-    setWarningMode(void);
-
     /*!
      * \param const std::string&, library
      * \param const std::string&, material
@@ -143,7 +134,7 @@ namespace mfront{
 		     const std::vector<std::string>&,
 		     const std::map<std::string,std::string>&,
 		     const std::map<std::string,std::string>&,
-		     const StaticVariableDescriptionContainer& staticVars,
+		     const StaticVariableDescriptionContainer&,
 		     const std::vector<std::string>&,
 		     const std::map<std::string,double>&,
 		     const LawFunction&,
@@ -233,12 +224,6 @@ namespace mfront{
 
     std::string srcFileName;
     
-    bool verboseMode;
-
-    bool debugMode;
-
-    bool warningMode;
-
   }; // end of MfrontCastemLawInterface
 
 } // end of namespace mfront

@@ -1,0 +1,25 @@
+@Parser   MaterialLaw ;
+@Material T91AusteniticSteel;
+@Law      b_ROUX2007 ;
+@Author   F. Milliard ;
+@Date     11/12/2013 ;
+@Description{
+  // Coefficient d'écrouissage b austenite T91
+  // [Roux 07]
+}
+
+// Input of law
+@Input T ;
+T.setGlossaryName("Temperature") ;
+
+// Output of law
+@Output b ;
+
+@PhysicalBounds T in [0.:*[;
+
+// Function
+@Function{
+  const real TC = T-273.15;
+  const real TC2 = TC  * TC  ;
+  b = max( 8.3642857143e-04 * TC2 -8.9810000000e-01 * TC +2.5293142857e+02 ,122.);
+} // end of Function

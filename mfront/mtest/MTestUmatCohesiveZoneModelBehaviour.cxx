@@ -12,23 +12,23 @@
 #include"TFEL/System/ExternalLibraryManager.hxx"
 #include"MFront/UMAT/UMAT.hxx"
 #include"MFront/MTestUmatCohesiveZoneModelBehaviour.hxx"
-#include"MFront/UMAT/UMATComputeStiffnessOperator.hxx"
 
 namespace mfront
 {
 
-  MTestUmatCohesiveZoneModelBehaviour::MTestUmatCohesiveZoneModelBehaviour(const tfel::material::ModellingHypothesis::Hypothesis,
+  MTestUmatCohesiveZoneModelBehaviour::MTestUmatCohesiveZoneModelBehaviour(const tfel::material::ModellingHypothesis::Hypothesis h,
 									   const std::string& l,
 									   const std::string& b)
-    : MTestUmatBehaviourBase(l,b)
+    : MTestUmatBehaviourBase(h,l,b)
   {
     using namespace std;
     using namespace tfel::system;
     using namespace tfel::material;
     typedef ExternalLibraryManager ELM;
+    const string& nh = ModellingHypothesis::toString(h);
     ELM& elm = ELM::getExternalLibraryManager();
     this->fct = elm.getUMATFunction(l,b);
-    this->mpnames = elm.getUMATMaterialPropertiesNames(l,b);
+    this->mpnames = elm.getUMATMaterialPropertiesNames(l,b,nh);
     if(this->type!=3u){
       string msg("MTestUmatCohesiveZoneModelBehaviour::MTestUmatCohesiveZoneModelBehaviour : ");
       msg += "unsupported hypothesis";
@@ -48,6 +48,17 @@ namespace mfront
       throw(runtime_error(msg));
     }
   }
+
+  tfel::math::tmatrix<3u,3u,real>
+  MTestUmatCohesiveZoneModelBehaviour::getRotationMatrix(const tfel::math::vector<real>&,
+							 const tfel::math::tmatrix<3u,3u,real>& r) const
+  {
+    using namespace std;
+    string msg("MTestUmatCohesiveZoneModelBehaviour::getRotationMatrix : "
+	       "invalid call");
+    throw(runtime_error(msg));
+    return r;
+  } // end of MTestUmatCohesiveZoneModelBehaviour::getRotationMatrix
 
   void
   MTestUmatCohesiveZoneModelBehaviour::allocate(const tfel::material::ModellingHypothesis::Hypothesis h)
@@ -129,12 +140,12 @@ namespace mfront
     using namespace umat;
     typedef tfel::material::ModellingHypothesis MH;
     using tfel::math::vector;
-    using umat::UMATComputeStiffnessOperator;
     UMATInt ntens;
     UMATInt ndi;
     UMATInt nprops = static_cast<UMATInt>(mp.size());
     UMATInt nstatv;
     if((h==MH::AXISYMMETRICALGENERALISEDPLANESTRAIN)||
+       (h==MH::AXISYMMETRICALGENERALISEDPLANESTRESS)||
        (h==MH::AXISYMMETRICAL)){
       string msg(" MTestUmatCohesiveZoneModelBehaviour::integrate : ");
       msg += "unsupported modelling hypothesis";
@@ -240,7 +251,6 @@ namespace mfront
   {
     using namespace std;
     using namespace tfel::math;
-    using umat::UMATComputeStiffnessOperator;
     typedef tfel::material::ModellingHypothesis MH;
     if(this->stype==0u){
       if((h==MH::PLANESTRESS)||(h==MH::PLANESTRAIN)||
@@ -272,6 +282,21 @@ namespace mfront
       throw(runtime_error(msg));
     }
   }
+
+  void
+  MTestUmatCohesiveZoneModelBehaviour::setOptionalMaterialPropertiesDefaultValues(MTestEvolutionManager& mp,
+										  const MTestEvolutionManager& evm) const
+  {
+    using namespace std;
+    MTestBehaviour::setOptionalMaterialPropertyDefaultValue(mp,evm,"MassDensity",0.);
+    if(this->stype==0){
+      MTestBehaviour::setOptionalMaterialPropertyDefaultValue(mp,evm,"NormalThermalExpansion",0.);
+    } else {
+      string msg("MTestUmatCohesiveZoneModelBehaviour::MTestUmatCohesiveZoneModelBehaviour : "
+		 "unsupported symmetry type");
+      throw(runtime_error(msg));
+    }
+  } // end of MTestUmatCohesiveZoneModelBehaviour::setOptionalMaterialPropertiesDefaultValues
       
   MTestUmatCohesiveZoneModelBehaviour::~MTestUmatCohesiveZoneModelBehaviour()
   {}

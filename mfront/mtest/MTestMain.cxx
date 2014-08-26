@@ -15,12 +15,12 @@
 #include"TFEL/System/SignalManager.hxx"
 #endif
 
+#include"MFront/MFrontLogStream.hxx"
+
 #include"MFront/MTest.hxx"
 #include"MFront/MTestParser.hxx"
-#include"MFront/MTestLogStream.hxx"
 #include"MFront/MTestConstraint.hxx"
 #include"MFront/MTestEvolution.hxx"
-#include"MFront/MTestLogStream.hxx"
 
 #include"TFEL/Tests/TestManager.hxx"
 #include"TFEL/Tests/XMLTestOutput.hxx"

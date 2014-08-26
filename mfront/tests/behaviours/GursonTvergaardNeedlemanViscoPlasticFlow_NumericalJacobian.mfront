@@ -13,14 +13,10 @@
 }
 
 /* Paramètres matériau */
-@MaterialProperty real young;
+@MaterialProperty stress young;
 young.setGlossaryName("YoungModulus");
 @MaterialProperty real nu;
 nu.setGlossaryName("PoissonRatio");
-@MaterialProperty real rho;
-rho.setGlossaryName("MassDensity");
-@MaterialProperty real alpha;
-alpha.setGlossaryName("ThermalExpansion");
 
 /* Variables d'état
  * p      : déformation plastique cumulée
@@ -59,7 +55,7 @@ Temp.setGlossaryName("LocalTemperature");
 @LocalVariable real  lambda;
 @LocalVariable real  mu;
 
-@InitLocalVars{ 
+@InitLocalVariables{ 
   using namespace tfel::material::lame;
   /* Calcul des paramètres matériaux */
   lambda = computeLambda(young,nu);
@@ -105,11 +101,11 @@ Temp.setGlossaryName("LocalTemperature");
 @TangentOperator{
   using namespace tfel::material::lame;
   if((smt==ELASTIC)||(smt==SECANTOPERATOR)){
-    computeElasticStiffness<N,Type>::exe(Dt,lambda,mu);
+    computeAlteredElasticStiffness<hypothesis,Type>::exe(Dt,lambda,mu);
   } else if (smt==CONSISTANTTANGENTOPERATOR){
     StiffnessTensor De;
     Stensor4 Je;
-    computeElasticStiffness<N,Type>::exe(De,lambda,mu);
+    computeUnalteredElasticStiffness<N,Type>::exe(De,lambda,mu);
     getPartialJacobianInvert(Je);
     Dt = De*Je;
   } else {

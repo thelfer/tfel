@@ -14,76 +14,70 @@
 #include"TFEL/Utilities/ToString.hxx"
 
 #include"MFront/ParserUtilities.hxx"
+#include"MFront/MFrontDebugMode.hxx"
 #include"MFront/MFrontImplicitParserBase.hxx"
 
 namespace mfront{
 
   MFrontImplicitParserBase::MFrontImplicitParserBase()
     : MFrontBehaviourParserBase<MFrontImplicitParserBase>(),
-      algorithm(MFrontImplicitParserBase::DEFAULT),
-      hasUserDefinedComputeFinalStress(false),
-      compareToNumericalJacobian(false),
-      isConsistantTangentOperatorSymmetricDefined(false),
-      useRelaxation(false),
-      useAcceleration(false)
+      algorithm(MFrontImplicitParserBase::DEFAULT)
   {
     using namespace std;
     // dynamically allocated vectors are not yet allowed in implicit
     // parsers
     this->areDynamicallyAllocatedVectorsAllowed_ = false;
     // parameters
-    this->registerVariable("theta");
-    this->mb.getParameters().push_back(VariableDescription("real","theta",1u,0u));
-    this->registerVariable("epsilon");
-    this->mb.getParameters().push_back(VariableDescription("real","epsilon",1u,0u));
-    this->registerVariable("numerical_jacobian_epsilon");
-    this->registerVariable("iterMax");
-    this->mb.getParameters().push_back(VariableDescription("ushort","iterMax",1u,0u));
-    this->registerVariable("maximum_increment_value_per_iteration");
-    this->registerVariable("jacobianComparisonCriterium");
-    this->registerVariable("relaxationTrigger");
-    this->registerVariable("accelerationTrigger");
-    this->registerVariable("accelerationPeriod");
-    this->registerVariable("relaxationCoefficient");
-    this->registerVariable("previous_zeros");
-    this->registerVariable("vect_e");
-    this->registerVariable("zeros");
-    this->registerVariable("tzeros");
-    this->registerVariable("zeros_1");
-    this->registerVariable("fzeros");
-    this->registerVariable("tfzeros");
-    this->registerVariable("zeros2");
-    this->registerVariable("fzeros2");
-    this->registerVariable("Dzeros");
-    this->registerVariable("Dfzeros");
-    this->registerVariable("jacobian");
-    this->registerVariable("tjacobian");
-    this->registerVariable("njacobian");
-    this->registerVariable("partial_jacobian");
-    this->registerVariable("jacobian2");
-    this->registerVariable("t");
-    this->registerVariable("dt_");
-    this->registerVariable("error");
-    this->registerVariable("idx");
-    this->registerVariable("idx2");
-    this->registerVariable("idx3");
-    this->reserveName("schmidt");
-    this->reserveName("computeNumericalJacobian");
-    this->reserveName("TinyMatrixSolve");
-    this->reserveName("accelerate");
-    this->reserveName("accelerate_k0");
-    this->reserveName("accelerate_k1");
-    this->reserveName("accelerate_k2");
-    this->reserveName("accelerate_c0");
-    this->reserveName("accelerate_c1");
-    this->reserveName("accelerate_re0");
-    this->reserveName("accelerate_re1");
-    this->reserveName("accelerate_r0");
-    this->reserveName("accelerate_r1");
-    this->reserveName("accelerate_r2");
-    this->reserveName("iter");
-    this->reserveName("converge");
-    this->reserveName("broyden_inv");
+    this->registerVariable("theta",false);
+    this->registerVariable("epsilon",false);
+    this->registerVariable("iterMax",false);
+    this->registerVariable("powell_dogleg_trust_region_size",false);
+    this->registerVariable("numerical_jacobian_epsilon",false);
+    this->registerVariable("maximum_increment_value_per_iteration",false);
+    this->registerVariable("jacobianComparisonCriterium",false);
+    this->registerVariable("relaxationTrigger",false);
+    this->registerVariable("accelerationTrigger",false);
+    this->registerVariable("accelerationPeriod",false);
+    this->registerVariable("relaxationCoefficient",false);
+    this->registerVariable("previous_zeros",false);
+    this->registerVariable("vect_e",false);
+    this->registerVariable("zeros",false);
+    this->registerVariable("tzeros",false);
+    this->registerVariable("zeros_1",false);
+    this->registerVariable("fzeros",false);
+    this->registerVariable("tfzeros",false);
+    this->registerVariable("zeros2",false);
+    this->registerVariable("fzeros2",false);
+    this->registerVariable("Dzeros",false);
+    this->registerVariable("Dfzeros",false);
+    this->registerVariable("jacobian",false);
+    this->registerVariable("tjacobian",false);
+    this->registerVariable("njacobian",false);
+    this->registerVariable("partial_jacobian",false);
+    this->registerVariable("jacobian2",false);
+    this->registerVariable("t",false);
+    this->registerVariable("dt_",false);
+    this->registerVariable("error",false);
+    this->registerVariable("idx",false);
+    this->registerVariable("idx2",false);
+    this->registerVariable("idx3",false);
+    this->reserveName("schmidt",false);
+    this->reserveName("computeNumericalJacobian",false);
+    this->reserveName("TinyMatrixSolve",false);
+    this->reserveName("accelerate",false);
+    this->reserveName("accelerate_k0",false);
+    this->reserveName("accelerate_k1",false);
+    this->reserveName("accelerate_k2",false);
+    this->reserveName("accelerate_c0",false);
+    this->reserveName("accelerate_c1",false);
+    this->reserveName("accelerate_re0",false);
+    this->reserveName("accelerate_re1",false);
+    this->reserveName("accelerate_r0",false);
+    this->reserveName("accelerate_r1",false);
+    this->reserveName("accelerate_r2",false);
+    this->reserveName("iter",false);
+    this->reserveName("converge",false);
+    this->reserveName("broyden_inv",false);
     // CallBacks
     this->registerNewCallBack("@UsableInPurelyImplicitResolution",
 			      &MFrontImplicitParserBase::treatUsableInPurelyImplicitResolution);
@@ -93,8 +87,8 @@ namespace mfront{
     this->registerNewCallBack("@Predictor",&MFrontImplicitParserBase::treatPredictor);
     this->registerNewCallBack("@Theta",&MFrontImplicitParserBase::treatTheta);
     this->registerNewCallBack("@Epsilon",&MFrontImplicitParserBase::treatEpsilon);
-    this->registerNewCallBack("@PertubationValueForNumericalJacobianComputation",
-			      &MFrontImplicitParserBase::treatPertubationValueForNumericalJacobianComputation);
+    this->registerNewCallBack("@PerturbationValueForNumericalJacobianComputation",
+			      &MFrontImplicitParserBase::treatPerturbationValueForNumericalJacobianComputation);
     this->registerNewCallBack("@IterMax",&MFrontImplicitParserBase::treatIterMax);
     this->registerNewCallBack("@PowellDogLegTrustRegionSize",
 			      &MFrontImplicitParserBase::treatPowellDogLegTrustRegionSize);
@@ -125,6 +119,14 @@ namespace mfront{
     this->disableCallBack("@UseQt");
   } // end of MFrontImplicitParserBase::MFrontImplicitParserBase
 
+  void MFrontImplicitParserBase::treatStateVariables(void)
+  {
+    using namespace std;
+    VarContainer v;
+    set<Hypothesis> h;
+    this->readVariableList(v,h,&MechanicalBehaviourDescription::addStateVariables,true,true,false);
+  }
+
   void MFrontImplicitParserBase::treatInitJacobian(void)
   {
     using namespace std;
@@ -133,169 +135,148 @@ namespace mfront{
 			      "@InitJacobian can only be used with "
 			      "the broyden algorithm.");
     }
-    if(!this->initJacobian.empty()){
-      this->throwRuntimeError("MFrontImplicitParserBase::treatInitJacobian",
-			      "@InitJacobian already used.");
-    }
-    this->initJacobian += this->readNextBlock(makeVariableModifier(*this,&MFrontImplicitParserBase::standardModifier),
-					      true);
-    this->initJacobian += "\n";
+    this->readCodeBlock(*this,MechanicalBehaviourData::InitializeJacobian,
+			&MFrontImplicitParserBase::standardModifier,true,true);
   } // end of MFrontImplicitParserBase::treatInitJacobian
 
   void MFrontImplicitParserBase::treatTangentOperator(void)
   {
     using namespace std;
-    if(!this->tangentOperator.empty()){
-      this->throwRuntimeError("MFrontImplicitParserBase::treatTangentOperator",
-			      "@TangentOperator already used.");
+    const CodeBlockOptions& o = this->readCodeBlock(*this,MechanicalBehaviourData::ComputeTangentOperator,
+						    &MFrontImplicitParserBase::tangentOperatorVariableModifier,
+						    true,true);
+    for(set<Hypothesis>::const_iterator p=o.hypotheses.begin();p!=o.hypotheses.end();++p){
+      this->mb.setAttribute(*p,MechanicalBehaviourData::hasConsistantTangentOperator,true);
     }
-    this->tangentOperator = this->readNextBlock(makeVariableModifier(*this,&MFrontImplicitParserBase::tangentOperatorVariableModifier),
-						true);
-    this->tangentOperator += "\n";
-    this->hasConsistantTangentOperator = true;
   } // end of MFrontImplicitParserBase::treatTangentOperator
 
   void MFrontImplicitParserBase::treatIsTangentOperatorSymmetric(void)
   {
     using namespace std;
-    if(this->isConsistantTangentOperatorSymmetricDefined){
-      this->throwRuntimeError("MFrontImplicitParserBase::treatIsTangentOperatorSymmetric",
-			      "@IsTangentOperatorSymmetric already used.");
-    }
-    this->isConsistantTangentOperatorSymmetricDefined = true;
+    set<Hypothesis> h;
+    this->readHypothesesList(h);
+    bool b = false;
     this->checkNotEndOfFile("MFrontBehaviourParserCommon::treatIsTangentOperatorSymmetric : ",
 			    "Expected 'true' or 'false'.");
     if(this->current->value=="true"){
-      this->isConsistantTangentOperatorSymmetric = true;
+      b = true;
     } else if(this->current->value=="false"){
-      this->isConsistantTangentOperatorSymmetric = false;
+      b = false;
     } else {
       this->throwRuntimeError("MFrontBehaviourParserCommon::treatIsTangentOperatorSymmetric",
 			      "Expected to read 'true' or 'false' instead of '"+this->current->value+".");
     }
     ++(this->current);
     this->readSpecifiedToken("MFrontBehaviourParserCommon::treatIsTangentOperatorSymmetric",";");
-  } // end of MFrontImplicitParserBase::treatTangentOperator
+    for(set<Hypothesis>::const_iterator p=h.begin();p!=h.end();++p){
+      this->mb.setAttribute(*p,MechanicalBehaviourData::isConsistantTangentOperatorSymmetric,b);
+    }
+  } // end of MFrontImplicitParserBase::treatIsTangentOperatorSymmetric
   
-  void MFrontImplicitParserBase::treatUnknownVariableMethod(const std::string& n)
+  void MFrontImplicitParserBase::treatUnknownVariableMethod(const Hypothesis h,
+							    const std::string& n)
   {
     using namespace std;
     typedef map<string,double>::value_type MVType;
-    if((this->mb.isInternalStateVariableName(n))||
-       ((n[0]=='f')&&(this->mb.isInternalStateVariableName(n.substr(1))))){
+    if((this->mb.isInternalStateVariableName(h,n))||
+       ((n[0]=='f')&&(this->mb.isInternalStateVariableName(h,n.substr(1))))){
       if(this->current->value=="setNormalisationFactor"){
-	string var;
-	string v;
-	if(this->mb.isInternalStateVariableName(n)){
-	  v = n;
-	} else {
-	  v = n.substr(1);
-	}
-	++(this->current);
-	this->checkNotEndOfFile("MFrontImplicitParserBase::treatUnknowVariableMethod");
-	this->readSpecifiedToken("MFrontImplicitParserBase::treatUnknowVariableMethod","(");
-	this->checkNotEndOfFile("MFrontImplicitParserBase::treatUnknowVariableMethod");
-	var = this->current->value;
-	if((this->mb.isMaterialPropertyName(var))||
-	   (this->mb.isLocalVariableName(var))){
-	  var = "this->" + var;
-	} else {
-	  // var shall be a number
-	  double value;
-	  istringstream flux(var);
-	  flux >> value;
-	  if(flux.fail()){
-	    this->throwRuntimeError("MFrontImplicitParserBase::treatUnknowVariableMethod",
-				    "Failed to read normalisation factor.");
-	  }
-	  if(value<=0.){
-	    this->throwRuntimeError("MFrontImplicitParserBase::treatUnknowVariableMethod",
-				    "invalid normalisation factor.");
-	  }
-	}
-	if(!this->nf.insert(make_pair(n,var)).second){
-	  this->throwRuntimeError("MFrontImplicitParserBase::treatUnknowVariableMethod",
-				  "Normalisation factor already defined for variable '"+n+"'.");
-	}
-	++(this->current);
-	return;
+    	string var;
+    	string v;
+    	if(this->mb.isInternalStateVariableName(h,n)){
+    	  v = n;
+    	} else {
+    	  v = n.substr(1);
+    	}
+    	++(this->current);
+    	this->checkNotEndOfFile("MFrontImplicitParserBase::treatUnknowVariableMethod");
+    	this->readSpecifiedToken("MFrontImplicitParserBase::treatUnknowVariableMethod","(");
+    	this->checkNotEndOfFile("MFrontImplicitParserBase::treatUnknowVariableMethod");
+    	var = this->current->value;
+    	if((this->mb.isMaterialPropertyName(h,var))||
+    	   (this->mb.isLocalVariableName(h,var))){
+    	  var = "this->" + var;
+    	} else {
+    	  // var shall be a number
+    	  double value;
+    	  istringstream flux(var);
+    	  flux >> value;
+    	  if(flux.fail()){
+    	    this->throwRuntimeError("MFrontImplicitParserBase::treatUnknowVariableMethod",
+    				    "Failed to read normalisation factor.");
+    	  }
+    	  if(value<=0.){
+    	    this->throwRuntimeError("MFrontImplicitParserBase::treatUnknowVariableMethod",
+    				    "invalid normalisation factor.");
+    	  }
+    	}
+    	if(!this->nf.insert(make_pair(n,var)).second){
+    	  this->throwRuntimeError("MFrontImplicitParserBase::treatUnknowVariableMethod",
+    				  "Normalisation factor already defined for variable '"+n+"'.");
+    	}
+    	++(this->current);
+    	return;
       } else if(this->current->value=="setMaximumIncrementValuePerIteration"){
-	string v;
-	if(this->mb.isInternalStateVariableName(n)){
-	  v = n;
-	} else {
-	  v = n.substr(1);
-	}
-	++(this->current);
-	this->checkNotEndOfFile("MFrontImplicitParserBase::treatUnknowVariableMethod");
-	this->readSpecifiedToken("MFrontImplicitParserBase::treatUnknowVariableMethod","(");
-	this->checkNotEndOfFile("MFrontImplicitParserBase::treatUnknowVariableMethod");
-	const string var =  this->current->value;
-	double value;
-	istringstream flux(var);
-	flux >> value;
-	if(flux.fail()){
-	  this->throwRuntimeError("MFrontImplicitParserBase::treatUnknowVariableMethod",
-				  "Failed to read maximum increment value per iteration from '"+var+"'.");
-	}
-	if(value<=0.){
-	  this->throwRuntimeError("MFrontImplicitParserBase::treatUnknowVariableMethod",
-				  "invalid maximum increment value per iteration.");
-	}
-	if(!this->mb.getParametersDefaultValues().insert(MVType(n+"_maximum_increment_value_per_iteration",value)).second){
-	  this->throwRuntimeError("MFrontImplicitParserBase::treatMaximumIncrementValuePerIteration",
-				  "default value already defined for parameter '"+n+"'_maximum_increment_value_per_iteration'");
-	}
-	this->mb.getParameters().push_back(VariableDescription("real",n+"_maximum_increment_value_per_iteration",1u,0u));
-	++(this->current);
-	return;
+    	string v;
+    	if(this->mb.isInternalStateVariableName(h,n)){
+    	  v = n;
+    	} else {
+    	  v = n.substr(1);
+    	}
+    	++(this->current);
+    	this->checkNotEndOfFile("MFrontImplicitParserBase::treatUnknowVariableMethod");
+    	this->readSpecifiedToken("MFrontImplicitParserBase::treatUnknowVariableMethod","(");
+    	this->checkNotEndOfFile("MFrontImplicitParserBase::treatUnknowVariableMethod");
+    	const string var =  this->current->value;
+    	double value;
+    	istringstream flux(var);
+    	flux >> value;
+    	if(flux.fail()){
+    	  this->throwRuntimeError("MFrontImplicitParserBase::treatUnknowVariableMethod",
+    				  "Failed to read maximum increment value per iteration from '"+var+"'.");
+    	}
+    	if(value<=0.){
+    	  this->throwRuntimeError("MFrontImplicitParserBase::treatUnknowVariableMethod",
+    				  "invalid maximum increment value per iteration.");
+    	}
+	this->registerVariable(n+"_maximum_increment_value_per_iteration",false);
+    	this->mb.addParameter(h,VariableDescription("real",n+"_maximum_increment_value_per_iteration",1u,0u));
+	this->mb.setParameterDefaultValue(h,n+"_maximum_increment_value_per_iteration",value);
+    	++(this->current);
+    	return;
       }
     }
-    MFrontBehaviourParserCommon::treatUnknownVariableMethod(n);
+    MFrontBehaviourParserCommon::treatUnknownVariableMethod(h,n);
   } // end of MFrontImplicitParserBase::treatUnknowVariableMethod
   
-  void
-  MFrontImplicitParserBase::treatUnknownKeyword(void)
-  {
-    using namespace std;
-    --(this->current);
-    const string& n = this->current->value;
-    if((n[0]=='f')&&(this->mb.isInternalStateVariableName(n.substr(1)))){
-      ++(this->current);
-      this->checkNotEndOfFile("MFrontImplicitParserBase::treatUnknownKeyword");
-      if(this->current->value=="."){
-	++(this->current);
-	this->checkNotEndOfFile("MFrontImplicitParserBase::treatUnknownKeyword");
-	this->treatUnknownVariableMethod(n);
-	this->checkNotEndOfFile("MFrontImplicitParserBase::treatUnknowKeyword");
-	this->readSpecifiedToken("MFrontImplicitParserBase::treatUnknowKeyword",")");
-	this->checkNotEndOfFile("MFrontImplicitParserBase::treatUnknowKeyword");
-	this->readSpecifiedToken("MFrontImplicitParserBase::treatUnknowKeyword",";");
-	return;
-      } else {
-	--(this->current);
-      }
-    }
-    ++(this->current);
-    MFrontBehaviourParserCommon::treatUnknownKeyword();
-  } // end of MFrontImplicitParserBase::treatUnknownKeyword
+  bool
+  MFrontImplicitParserBase::isCallableVariable(const Hypothesis h,
+					       const std::string& n) const
 
+  {
+     using namespace std;
+     if(n.empty()){
+       string msg("MFrontImplicitParserBase::isCallableVariable : "
+		  "empty variable name '"+n+"'");
+       throw(runtime_error(msg));
+     }
+     if((n[0]=='f')&&(this->mb.isInternalStateVariableName(h,n.substr(1)))){
+       return true;
+     }
+     return MFrontBehaviourParserCommon::isCallableVariable(h,n);
+  } // end of MFrontImplicitParserBase::isCallableVariable
+  
   void
   MFrontImplicitParserBase::treatUseAcceleration(void)
   {
     using namespace std;
+    const Hypothesis h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
     this->checkNotEndOfFile("MFrontImplicitParserBase::treatUseAcceleration : ",
 			    "Expected 'true' or 'false'.");
-    if(this->useAcceleration){
-      this->throwRuntimeError("MFrontImplicitParserBase::treatUseAcceleration",
-			      "@UseAcceleration already specified");
-    }
     if(this->current->value=="true"){
-      this->useAcceleration = true;
-      this->mb.getParameters().push_back(VariableDescription("ushort","accelerationTrigger",1u,0u));
-      this->mb.getParameters().push_back(VariableDescription("ushort","accelerationPeriod",1u,0u));
+      this->mb.setAttribute(h,MechanicalBehaviourData::useCast3MAccelerationAlgorithm,true);
     } else if(this->current->value=="false"){
-      this->useAcceleration = false;
+      this->mb.setAttribute(h,MechanicalBehaviourData::useCast3MAccelerationAlgorithm,false);
     } else {
       this->throwRuntimeError("MFrontImplicitParserBase::treatUseAcceleration",
 			      "Expected to read 'true' or 'false' instead of '"+this->current->value+".");
@@ -307,36 +288,29 @@ namespace mfront{
   void
   MFrontImplicitParserBase::treatAccelerationTrigger(void)
   {
-    using namespace std;
-    typedef map<string,unsigned short>::value_type MVType;
-    unsigned short accelerationTrigger;
-    accelerationTrigger = this->readUnsignedShort("MFrontImplicitParserBase::treatAccelerationTrigger");
+    const Hypothesis h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
+    unsigned short accelerationTrigger = this->readUnsignedShort("MFrontImplicitParserBase::treatAccelerationTrigger");
     if(accelerationTrigger<3){
       this->throwRuntimeError("MFrontImplicitParserBase::treatAccelerationTrigger",
 			      "invalid acceleration trigger value.");
     }
-    if(!this->mb.getUnsignedShortParametersDefaultValues().insert(MVType("accelerationTrigger",accelerationTrigger)).second){
-      this->throwRuntimeError("MFrontImplicitParserBase::treatAccelerationTrigger",
-			      "default value already defined for parameter 'accelerationTrigger'");
-    }
+    this->mb.addParameter(h,VariableDescription("ushort","accelerationTrigger",1u,0u));
+    this->mb.setParameterDefaultValue(h,"accelerationTrigger",accelerationTrigger);
     this->readSpecifiedToken("MFrontImplicitParserBase::treatAccelerationTrigger",";");
   } // end of MFrontImplicitParserBase::treatAccelerationTrigger
 
   void
   MFrontImplicitParserBase::treatAccelerationPeriod(void)
   {
-    using namespace std;
-    typedef map<string,unsigned short>::value_type MVType;
+    const Hypothesis h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
     unsigned short accelerationPeriod;
     accelerationPeriod = this->readUnsignedShort("MFrontImplicitParserBase::treatAccelerationPeriod");
     if(accelerationPeriod==0){
       this->throwRuntimeError("MFrontImplicitParserBase::treatAccelerationPeriod",
 			      "invalid acceleration period value.");
     }
-    if(!this->mb.getUnsignedShortParametersDefaultValues().insert(MVType("accelerationPeriod",accelerationPeriod)).second){
-      this->throwRuntimeError("MFrontImplicitParserBase::treatAccelerationPeriod",
-			      "default value already defined for parameter 'accelerationPeriod'");
-    }
+    this->mb.addParameter(h,VariableDescription("ushort","accelerationPeriod",1u,0u));
+    this->mb.setParameterDefaultValue(h,"accelerationPeriod",accelerationPeriod);
     this->readSpecifiedToken("MFrontImplicitParserBase::treatAccelerationPeriod",";");
   } // end of MFrontImplicitParserBase::treatAccelerationPeriod
 
@@ -344,18 +318,13 @@ namespace mfront{
   MFrontImplicitParserBase::treatUseRelaxation(void)
   {
     using namespace std;
+    const Hypothesis h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
     this->checkNotEndOfFile("MFrontImplicitParserBase::treatUseRelaxation : ",
 			    "Expected 'true' or 'false'.");
-    if(this->useRelaxation){
-      this->throwRuntimeError("MFrontImplicitParserBase::treatUseRelaxation",
-			      "@UseRelaxation already specified");
-    }
     if(this->current->value=="true"){
-      this->useRelaxation = true;
-      this->mb.getParameters().push_back(VariableDescription("real","relaxationCoefficient",1u,0u));
-      this->mb.getParameters().push_back(VariableDescription("ushort","relaxationTrigger",1u,0u));
+      this->mb.setAttribute(h,MechanicalBehaviourData::useRelaxationAlgorithm,true);
     } else if(this->current->value=="false"){
-      this->useRelaxation = false;
+      this->mb.setAttribute(h,MechanicalBehaviourData::useRelaxationAlgorithm,false);
     } else {
       this->throwRuntimeError("MFrontImplicitParserBase::treatUseRelaxation",
 			      "Expected to read 'true' or 'false' instead of '"+this->current->value+".");
@@ -368,17 +337,13 @@ namespace mfront{
   MFrontImplicitParserBase::treatCompareToNumericalJacobian(void)
   {
     using namespace std;
+    const Hypothesis h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
     this->checkNotEndOfFile("MFrontImplicitParserBase::treatCompareToNumericalJacobian : ",
 			    "Expected 'true' or 'false'.");
-    if(this->compareToNumericalJacobian){
-      this->throwRuntimeError("MFrontImplicitParserBase::treatCompareToNumericalJacobian",
-			      "@CompareToNumericalJacobian already specified");
-    }
     if(this->current->value=="true"){
-      this->compareToNumericalJacobian = true;
-      this->mb.getParameters().push_back(VariableDescription("real","jacobianComparisonCriterium",1u,0u));
+      this->mb.setAttribute(h,MechanicalBehaviourData::compareToNumericalJacobian,true);
     } else if(this->current->value=="false"){
-      this->compareToNumericalJacobian = false;
+      this->mb.setAttribute(h,MechanicalBehaviourData::compareToNumericalJacobian,false);
     } else {
       this->throwRuntimeError("MFrontImplicitParserBase::treatCompareToNumericalJacobian",
 			      "Expected to read 'true' or 'false' instead of '"+this->current->value+".");
@@ -391,8 +356,8 @@ namespace mfront{
   MFrontImplicitParserBase::treatJacobianComparisonCriterium(void)
   {
     using namespace std;
-    typedef map<string,double>::value_type MVType;
-    if(!this->compareToNumericalJacobian){
+    const Hypothesis h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
+    if(!this->mb.getAttribute(h,MechanicalBehaviourData::compareToNumericalJacobian,false)){
       this->throwRuntimeError("MFrontImplicitParserBase::treatJacobianComparisonCriterium",
 			      "must call '@CompareToNumericalJacobian' first");
     }
@@ -409,58 +374,50 @@ namespace mfront{
       this->throwRuntimeError("MFrontImplicitParserBase::treatJacobianComparisonCriterium",
 			      "JacobianComparisonCriterium value must be positive.");
     }
-    if(!this->mb.getParametersDefaultValues().insert(MVType("jacobianComparisonCriterium",
-						    jacobianComparisonCriterium)).second){
-      this->throwRuntimeError("MFrontImplicitParserBase::treatJacobianComparisonCriterium",
-			      "default value already defined for parameter 'jacobianComparisonCriterium'");
-    }
     ++(this->current);
     this->readSpecifiedToken("MFrontImplicitParserBase::treatJacobianComparisonCriterium",";");
+    this->mb.addParameter(h,VariableDescription("real","jacobianComparisonCriterium",1u,0u));
+    this->mb.setParameterDefaultValue(h,"jacobianComparisonCriterium",
+				      jacobianComparisonCriterium);
   } // MFrontImplicitParserBase::treatJacobianComparisonCriterium
 
   void
   MFrontImplicitParserBase::treatRelaxationTrigger(void)
   {
-    using namespace std;
-    typedef map<string,unsigned short>::value_type MVType;
+    const Hypothesis h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
     unsigned short relaxationTrigger;
     relaxationTrigger = this->readUnsignedShort("MFrontImplicitParserBase::treatRelaxationTrigger");
-    if(!this->mb.getUnsignedShortParametersDefaultValues().insert(MVType("relaxationTrigger",relaxationTrigger)).second){
-      this->throwRuntimeError("MFrontImplicitParserBase::treatRelaxationTrigger",
-			      "default value already defined for parameter 'relaxationTrigger'");
-    }
     this->readSpecifiedToken("MFrontImplicitParserBase::treatRelaxationTrigger",";");
+    this->mb.addParameter(h,VariableDescription("ushort","relaxationTrigger",1u,0u));
+    this->mb.setParameterDefaultValue(h,"relaxationTrigger",relaxationTrigger);
   } // end of MFrontImplicitParserBase::treatRelaxationTrigger
   
   void
   MFrontImplicitParserBase::treatRelaxationCoefficient(void)
   {
     using namespace std;
-    typedef map<string,double>::value_type MVType;
-    this->checkNotEndOfFile("MFrontImplicitParserBase::treatRelaxationCoefficient",
-			    "Cannot read relaxation coefficient value.");
-    if(!this->useRelaxation){
+    const Hypothesis h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
+    if(!this->mb.getAttribute(h,MechanicalBehaviourData::useRelaxationAlgorithm,false)){
       this->throwRuntimeError("MFrontImplicitParserBase::treatRelaxationCoefficient",
 			      "relaxation unused");
     }
+    this->checkNotEndOfFile("MFrontImplicitParserBase::treatRelaxationCoefficient",
+			    "Cannot read relaxation coefficient value.");
     istringstream flux(current->value);
-    double relaxationCoefficient;
-    flux >> relaxationCoefficient;
+    double w;
+    flux >> w;
     if((flux.fail())||(!flux.eof())){
       this->throwRuntimeError("MFrontImplicitParserBase::treatRelaxationCoefficient",
 			      "Failed to read relaxation coefficient value.");
     }
-    if(relaxationCoefficient<0){
+    if(w<0){
       this->throwRuntimeError("MFrontImplicitParserBase::treatRelaxationCoefficient",
 			      "relaxation coefficient value must be positive.");
     }
-    if(!this->mb.getParametersDefaultValues().insert(MVType("relaxationCoefficient",
-						    relaxationCoefficient)).second){
-      this->throwRuntimeError("MFrontImplicitParserBase::treatRelaxationCoefficient",
-			      "default value already defined for parameter 'relaxationCoefficient'");
-    }
     ++(this->current);
     this->readSpecifiedToken("MFrontImplicitParserBase::treatRelaxationCoefficient",";");    
+    this->mb.addParameter(h,VariableDescription("real","relaxationCoefficient",1u,0u));
+    this->mb.setParameterDefaultValue(h,"relaxationCoefficient",w);
   } // end of MFrontImplicitParserBase::treatRelaxationCoefficient
 
   void MFrontImplicitParserBase::treatAlgorithm(void)
@@ -495,12 +452,6 @@ namespace mfront{
 			      "PowellDogLeg_NewtonRaphson, PowellDogLeg_NewtonRaphson_NumericalJacobian, "
 			      "PowellDogLeg_Broyden.");
     }
-    if((this->algorithm==MFrontImplicitParserBase::POWELLDOGLEG_NEWTONRAPHSON)||
-       (this->algorithm==MFrontImplicitParserBase::POWELLDOGLEG_NEWTONRAPHSON_NJ)||
-       (this->algorithm==MFrontImplicitParserBase::POWELLDOGLEG_BROYDEN)){
-      this->registerVariable("powell_dogleg_trust_region_size");
-      this->mb.getParameters().push_back(VariableDescription("real","powell_dogleg_trust_region_size",1u,0u));
-    }
     ++this->current;
     this->readSpecifiedToken("MFrontImplicitParserBase::treatAlgorithm",";");
   } // end of MFrontImplicitParserBase::treatAlgorithm
@@ -509,7 +460,7 @@ namespace mfront{
   MFrontImplicitParserBase::treatTheta(void)
   {
     using namespace std;
-    typedef map<string,double>::value_type MVType;
+    const Hypothesis h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
     double theta;
     this->checkNotEndOfFile("MFrontImplicitParserBase::treatTheta",
 			    "Cannot read theta value.");
@@ -523,19 +474,17 @@ namespace mfront{
       this->throwRuntimeError("MFrontImplicitParserBase::treatTheta",
 			      "Theta value must be positive and smaller than 1.");
     }
-    if(!this->mb.getParametersDefaultValues().insert(MVType("theta",theta)).second){
-      this->throwRuntimeError("MFrontImplicitParserBase::treatTheta",
-			      "default value already defined for parameter 'theta'");
-    }
     ++(this->current);
     this->readSpecifiedToken("MFrontImplicitParserBase::treatTheta",";");
+    this->mb.addParameter(h,VariableDescription("real","theta",1u,0u));
+    this->mb.setParameterDefaultValue(h,"theta",theta);
   } // end of MFrontImplicitParserBase::treatTheta
 
   void
   MFrontImplicitParserBase::treatEpsilon(void)
   {
     using namespace std;
-    typedef map<string,double>::value_type MVType;
+    const Hypothesis h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
     double epsilon;
     this->checkNotEndOfFile("MFrontImplicitParserBase::treatEpsilon",
 			    "Cannot read epsilon value.");
@@ -549,45 +498,41 @@ namespace mfront{
       this->throwRuntimeError("MFrontImplicitParserBase::treatEpsilon",
 			      "Epsilon value must be positive.");
     }
-    if(!this->mb.getParametersDefaultValues().insert(MVType("epsilon",epsilon)).second){
-      this->throwRuntimeError("MFrontImplicitParserBase::treatEpsilon",
-			      "default value already defined for parameter 'epsilon'");
-    }
     ++(this->current);
     this->readSpecifiedToken("MFrontImplicitParserBase::treatEpsilon",";");
+    this->mb.addParameter(h,VariableDescription("real","epsilon",1u,0u));
+    this->mb.setParameterDefaultValue(h,"epsilon",epsilon);
   } // MFrontImplicitParserBase::treatEpsilon
 
   void
-  MFrontImplicitParserBase::treatPertubationValueForNumericalJacobianComputation(void)
+  MFrontImplicitParserBase::treatPerturbationValueForNumericalJacobianComputation(void)
   {
     using namespace std;
-    typedef map<string,double>::value_type MVType;
+    const Hypothesis h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
     double epsilon;
-    this->checkNotEndOfFile("MFrontImplicitParserBase::treatPertubationValueForNumericalJacobianComputation",
+    this->checkNotEndOfFile("MFrontImplicitParserBase::treatPerturbationValueForNumericalJacobianComputation",
 			    "Cannot read epsilon value.");
     istringstream flux(current->value);
     flux >> epsilon;
     if((flux.fail())||(!flux.eof())){
-      this->throwRuntimeError("MFrontImplicitParserBase::treatPertubationValueForNumericalJacobianComputation",
+      this->throwRuntimeError("MFrontImplicitParserBase::treatPerturbationValueForNumericalJacobianComputation",
 			      "Failed to read epsilon value.");
     }
     if(epsilon<0){
-      this->throwRuntimeError("MFrontImplicitParserBase::treatPertubationValueForNumericalJacobianComputation",
+      this->throwRuntimeError("MFrontImplicitParserBase::treatPerturbationValueForNumericalJacobianComputation",
 			      "Epsilon value must be positive.");
     }
-    if(!this->mb.getParametersDefaultValues().insert(MVType("numerical_jacobian_epsilon",epsilon)).second){
-      this->throwRuntimeError("MFrontImplicitParserBase::treatPertubationValueForNumericalJacobianComputation",
-			      "default value already defined for parameter 'numerical_jacobian_epsilon'");
-    }
     ++(this->current);
-    this->readSpecifiedToken("MFrontImplicitParserBase::treatPertubationValueForNumericalJacobianComputation",";");
+    this->readSpecifiedToken("MFrontImplicitParserBase::treatPerturbationValueForNumericalJacobianComputation",";");
+    this->mb.addParameter(h,VariableDescription("real","numerical_jacobian_epsilon",1u,0u));
+    this->mb.setParameterDefaultValue(h,"numerical_jacobian_epsilon",epsilon);
   } // MFrontImplicitParserBase::treatEpsilon
 
   void
   MFrontImplicitParserBase::treatPowellDogLegTrustRegionSize(void)
   {
     using namespace std;
-    typedef map<string,double>::value_type MVType;
+    const Hypothesis h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
     double pdl_trs;
     this->checkNotEndOfFile("MFrontImplicitParserBase::treatPowellDogLegTrustRegionSize",
 			    "Cannot read pdl_trs value.");
@@ -601,56 +546,37 @@ namespace mfront{
       this->throwRuntimeError("MFrontImplicitParserBase::treatPowellDogLegTrustRegionSize",
 			      "Region size must be positive.");
     }
-    if(!this->mb.getParametersDefaultValues().insert(MVType("powell_dogleg_trust_region_size",pdl_trs)).second){
-      this->throwRuntimeError("MFrontImplicitParserBase::treatPowellDogLegTrustRegionSize",
-			      "default value already defined for parameter 'powell_dogleg_trust_region_size'");
-    }
     ++(this->current);
     this->readSpecifiedToken("MFrontImplicitParserBase::treatPowellDogLegTrustRegionSize",";");
+    this->mb.addParameter(h,VariableDescription("real","powell_dogleg_trust_region_size",1u,0u));
+    this->mb.setParameterDefaultValue(h,"powell_dogleg_trust_region_size",pdl_trs);
   } // MFrontImplicitParserBase::treatPowellDogLegTrustRegionSize
 
   void
   MFrontImplicitParserBase::treatIterMax(void)
   {
     using namespace std;
-    typedef map<string,unsigned short>::value_type MVType;
+    const Hypothesis h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
     unsigned short iterMax;
     iterMax = this->readUnsignedShort("MFrontImplicitParserBase::treatIterMax");
     if(iterMax==0){
       this->throwRuntimeError("MFrontImplicitParserBase::treatIterMax",
 			      "invalid value for parameter 'iterMax'");
     }
-    if(!this->mb.getUnsignedShortParametersDefaultValues().insert(MVType("iterMax",iterMax)).second){
-      this->throwRuntimeError("MFrontImplicitParserBase::treatIterMax",
-			      "default value already defined for parameter 'iterMax'");
-    }
     this->readSpecifiedToken("MFrontImplicitParserBase::treatIterMax",";");
+    this->mb.addParameter(h,VariableDescription("ushort","iterMax",1u,0u));
+    this->mb.setParameterDefaultValue(h,"iterMax",iterMax);
   } // end of MFrontImplicitParserBase::treatIterMax
 
-  void
-  MFrontImplicitParserBase::treatStateVariables(void)
-  {
-    using namespace std;
-    if((!this->integrator.empty())||
-       (!this->computeStress.empty())||
-       (!this->predictor.empty())||
-       (!this->initJacobian.empty())||
-       (!this->tangentOperator.empty())){
-      string msg("MFrontImplicitParserBase::treatStateVariables : ");
-      msg += "state variables shall be defined before any of the @Integrator "
-	"@ComputeStress, @InitJacobian and @TangentOperator blocks";
-      throw(runtime_error(msg));
-    }
-    this->readVarList(this->mb.getStateVariables(),true,true);
-  } // end of MFrontImplicitParserBase::treatStateVariables
-
   std::string
-  MFrontImplicitParserBase::tangentOperatorVariableModifier(const std::string& var,
-						   const bool addThisPtr)
+  MFrontImplicitParserBase::tangentOperatorVariableModifier(const Hypothesis h,
+							    const std::string& var,
+							    const bool addThisPtr)
   {
-    if(this->mb.isInternalStateVariableIncrementName(var)){
+    const MechanicalBehaviourData& d = this->mb.getMechanicalBehaviourData(h);
+    if(d.isInternalStateVariableIncrementName(var)){
       if(nf.find(var.substr(1))!=nf.end()){
-	const VariableDescription& s = this->mb.getStateVariableHandler(var.substr(1));
+	const VariableDescription& s = d.getStateVariableHandler(var.substr(1));
 	if(s.arraySize==1u){
 	  if(addThisPtr){
 	    return "(("+nf.find(var.substr(1))->second+")*(this->"+var+"))";
@@ -674,12 +600,14 @@ namespace mfront{
   } // end of MFrontImplicitParserBase::tangentOperatorVariableModifier
 
   std::string
-  MFrontImplicitParserBase::integratorVariableModifier(const std::string& var,
+  MFrontImplicitParserBase::integratorVariableModifier(const Hypothesis h,
+						       const std::string& var,
 						       const bool addThisPtr)
   {
-    if(this->mb.isInternalStateVariableIncrementName(var)){
+    const MechanicalBehaviourData& d = this->mb.getMechanicalBehaviourData(h);
+    if(d.isInternalStateVariableIncrementName(var)){
       if(nf.find(var.substr(1))!=nf.end()){
-	const VariableDescription& s = this->mb.getStateVariableHandler(var.substr(1));
+	const VariableDescription& s = d.getStateVariableHandler(var.substr(1));
 	if(s.arraySize==1u){
 	  if(addThisPtr){
 	    return "(("+nf.find(var.substr(1))->second+")*(this->"+var+"))";
@@ -703,21 +631,23 @@ namespace mfront{
   } // end of MFrontImplicitParserBase::integratorVariableModifier
 
   std::string
-  MFrontImplicitParserBase::computeStressVariableModifier1(const std::string& var,
-						       const bool addThisPtr)
+  MFrontImplicitParserBase::computeStressVariableModifier1(const Hypothesis h,
+							   const std::string& var,
+							   const bool addThisPtr)
   {
     using namespace std;
+    const MechanicalBehaviourData& d = this->mb.getMechanicalBehaviourData(h);
     if(this->mb.isDrivingVariableName(var)||(var=="T")|
-       (this->mb.isExternalStateVariableName(var))){
+       (d.isExternalStateVariableName(var))){
       if(addThisPtr){
 	return "(this->"+var+"+(this->theta)*(this->d"+var+"))";
       } else {
 	return "("+var+"+(this->theta)*d"+var+")";
       }
     }
-    if(this->mb.isInternalStateVariableName(var)){
+    if(d.isInternalStateVariableName(var)){
       if(this->nf.find(var)!=nf.end()){
-	const VariableDescription& s = this->mb.getStateVariableHandler(var);
+	const VariableDescription& s = d.getStateVariableHandler(var);
 	if(s.arraySize==1u){
 	  if(addThisPtr){
 	    return "(this->"+var+"+(this->theta)*(("+this->nf.find(var)->second+")*(this->d"+var+")))";
@@ -739,8 +669,8 @@ namespace mfront{
 	}
       }
     }
-    if((this->mb.isExternalStateVariableIncrementName(var))||(var=="dT")){
-      this->declareExternalStateVariableProbablyUnusableInPurelyImplicitResolution(var.substr(1));
+    if((d.isExternalStateVariableIncrementName(var))||(var=="dT")){
+      this->mb.declareExternalStateVariableProbablyUnusableInPurelyImplicitResolution(h,var.substr(1));
     }
     if(addThisPtr){
       return "this->"+var;
@@ -749,19 +679,21 @@ namespace mfront{
   } // end of MFrontImplicitParserBase::computeStressVariableModifier1
 
   std::string
-  MFrontImplicitParserBase::computeStressVariableModifier2(const std::string& var,
-						       const bool addThisPtr)
+  MFrontImplicitParserBase::computeStressVariableModifier2(const Hypothesis h,
+							   const std::string& var,
+							   const bool addThisPtr)
   {
+    const MechanicalBehaviourData& d = this->mb.getMechanicalBehaviourData(h);
     if((this->mb.isDrivingVariableName(var))||(var=="T")||
-       (this->mb.isExternalStateVariableName(var))){
+       (d.isExternalStateVariableName(var))){
       if(addThisPtr){
 	return "(this->"+var+"+this->d"+var+")";
       } else {
 	return "("+var+"+d"+var+")";
       }
     }
-    if((this->mb.isExternalStateVariableIncrementName(var))||(var=="dT")){
-      this->declareExternalStateVariableProbablyUnusableInPurelyImplicitResolution(var.substr(1));
+    if((d.isExternalStateVariableIncrementName(var))||(var=="dT")){
+      this->mb.declareExternalStateVariableProbablyUnusableInPurelyImplicitResolution(h,var.substr(1));
     }
     if(addThisPtr){
       return "this->"+var;
@@ -770,13 +702,15 @@ namespace mfront{
   } // end of MFrontImplicitParserBase::computeStressVariableModifier2
 
   bool
-  MFrontImplicitParserBase::isJacobianPart(const std::string& w)
+  MFrontImplicitParserBase::isJacobianPart(const Hypothesis h,
+					   const std::string& w)
   {
+    const MechanicalBehaviourData& d = this->mb.getMechanicalBehaviourData(h);
     TokensContainer::const_iterator previous;
     VariableDescriptionContainer::const_iterator p;
     VariableDescriptionContainer::const_iterator p2;
-    for(p=this->mb.getStateVariables().begin();p!=this->mb.getStateVariables().end();++p){
-      for(p2=this->mb.getStateVariables().begin();p2!=this->mb.getStateVariables().end();++p2){
+    for(p=d.getStateVariables().begin();p!=d.getStateVariables().end();++p){
+      for(p2=d.getStateVariables().begin();p2!=d.getStateVariables().end();++p2){
 	if(w=="df"+p->name+"_dd"+p2->name){
 	  previous = this->current;
 	  if(previous==this->begin()){
@@ -800,7 +734,7 @@ namespace mfront{
 	      return false;
 	    }
 	    --previous;
-	    if(previous->value==this->className){
+	    if(previous->value==this->mb.getClassName()){
 	      return true;
 	    } else {
 	      return false;
@@ -814,17 +748,20 @@ namespace mfront{
   } // end of MFrontImplicitParserBase::isJacobianPart
 
   void
-  MFrontImplicitParserBase::integratorAnalyser(const std::string& w)
+  MFrontImplicitParserBase::integratorAnalyser(const Hypothesis h,
+					       const std::string& w)
   {
-    if(this->isJacobianPart(w)){
+    if(this->isJacobianPart(h,w)){
       this->jacobianPartsUsedInIntegrator.insert(w);
     }
   } // end of MFrontImplicitParserBase::integratorAnalyser
 
   void
-  MFrontImplicitParserBase::predictorAnalyser(const std::string& w)
+  MFrontImplicitParserBase::predictorAnalyser(const Hypothesis h,
+					      const std::string& w)
   {
-    if(this->mb.isInternalStateVariableIncrementName(w)){
+    const MechanicalBehaviourData& d = this->mb.getMechanicalBehaviourData(h);
+    if(d.isInternalStateVariableIncrementName(w)){
       this->internalStateVariableIncrementsUsedInPredictor.insert(w);
     }
   } // end of MFrontImplicitParserBase::predictorAnalyser
@@ -832,80 +769,51 @@ namespace mfront{
   void
   MFrontImplicitParserBase::treatIntegrator(void)
   {
-    using namespace std;
-    using namespace tfel::utilities;
-    if(!this->integrator.empty()){
-      string msg("MFrontImplicitParserBase::treatIntegrator : ");
-      msg += "integrator already defined";
-      throw(runtime_error(msg));
-    }
-    this->integrator = this->readNextBlock(true,"{","}",true,true,
-					   makeVariableModifier(*this,&MFrontImplicitParserBase::integratorVariableModifier),
-					   makeWordAnalyser(*this,&MFrontImplicitParserBase::integratorAnalyser));
+    this->readCodeBlock(*this,MechanicalBehaviourData::Integrator,
+			&MFrontImplicitParserBase::integratorVariableModifier,
+			&MFrontImplicitParserBase::integratorAnalyser,true);
   } // end of MFrontImplicitParserBase::treatIntegrator
 
   void
   MFrontImplicitParserBase::treatPredictor(void)
   {
     using namespace std;
-    using namespace tfel::utilities;
-    if(!this->predictor.empty()){
-      string msg("MFrontImplicitParserBase::treatPredictor : ");
-      msg += "@Predictor already called";
-      throw(runtime_error(msg));
-    }
-    this->predictor  = this->readNextBlock(true,"{","}",true,true,
-					   shared_ptr<VariableModifier>(),
-					   makeWordAnalyser(*this,&MFrontImplicitParserBase::predictorAnalyser));
-    this->predictor += "\n";
-    VariableDescriptionContainer::const_iterator p;
-    for(p=this->mb.getStateVariables().begin();p!=this->mb.getStateVariables().end();++p){
-      if(this->internalStateVariableIncrementsUsedInPredictor.find('d'+p->name)!=
-	 this->internalStateVariableIncrementsUsedInPredictor.end()){
-	if(nf.find(p->name)!=nf.end()){
-	  this->predictor += "this->d"+p->name + " /= " + nf.find(p->name)->second + ";\n";
-	}
-      }
-    }
+    this->readCodeBlock(*this,MechanicalBehaviourData::ComputePredictor,
+			&MFrontImplicitParserBase::standardModifier,
+			&MFrontImplicitParserBase::predictorAnalyser,true);
   } // end of MFrontImplicitParserBase::treatPredictor
 
   void
   MFrontImplicitParserBase::treatComputeStress(void)
   {
-    using namespace std;
-    if(!this->computeStress.empty()){
-      string msg("MFrontImplicitParserBase::treatComputeStress : ");
-      msg += "computeStress already defined";
-      throw(runtime_error(msg));
-    }
-    string fs;
-    this->readNextBlock(this->computeStress,fs,
-			makeVariableModifier(*this,&MFrontImplicitParserBase::computeStressVariableModifier1),
-			makeVariableModifier(*this,&MFrontImplicitParserBase::computeStressVariableModifier2),
-			true);
-    if(this->computeFinalStress.empty()){
-      this->computeFinalStress = fs;
-    }
+    /*
+     * Most behaviours will only rely the @ComputeStress keyword to
+     * estimate stresses at the middle of the time step and at the
+     * end.  However, some finite strains behaviours must compute a
+     * stress measure during the iterations which is not the Cauchy
+     * stress. Thus, @ComputeStress also defines an
+     * ComputeFinalStressCandidate code block which will be used if
+     * the user does not provide an alternative through the
+     * @ComputeFinalStress
+     */
+    this->readCodeBlock(*this,MechanicalBehaviourData::ComputeStress,
+			MechanicalBehaviourData::ComputeFinalStressCandidate,
+			&MFrontImplicitParserBase::computeStressVariableModifier1,
+			&MFrontImplicitParserBase::computeStressVariableModifier2,true,true);
   } // end of MFrontImplicitParserBase::treatComputeStress
 
   void
   MFrontImplicitParserBase::treatComputeFinalStress(void)
   {
-    using namespace std;
-    if(this->hasUserDefinedComputeFinalStress){
-      string msg("MFrontImplicitParserBase::treatComputeFinalStress : ");
-      msg += "final stress computation already defined";
-      throw(runtime_error(msg));
-    }
-    this->computeFinalStress = this->readNextBlock(makeVariableModifier(*this,&MFrontImplicitParserBase::computeStressVariableModifier2),true);
-    this->hasUserDefinedComputeFinalStress = true;
+    this->readCodeBlock(*this,MechanicalBehaviourData::ComputeFinalStress,
+			&MFrontImplicitParserBase::computeStressVariableModifier2,true,true);
   } // end of MFrontImplicitParserBase::treatComputeFinalStress
 
   void
   MFrontImplicitParserBase::treatMaximumIncrementValuePerIteration(void)
   {
     using namespace std;
-    typedef map<string,double>::value_type MVType;
+    const Hypothesis h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
     double value;
     this->checkNotEndOfFile("MFrontImplicitParserBase::treatMaximumIncrementValuePerIteration",
 			    "Cannot read value value.");
@@ -919,13 +827,10 @@ namespace mfront{
       this->throwRuntimeError("MFrontImplicitParserBase::treatMaximumIncrementValuePerIteration",
 			      "Value must be positive.");
     }
-    if(!this->mb.getParametersDefaultValues().insert(MVType("maximum_increment_value_per_iteration",value)).second){
-      this->throwRuntimeError("MFrontImplicitParserBase::treatMaximumIncrementValuePerIteration",
-			      "default value already defined for parameter 'maximum_increment_value_per_iteration'");
-    }
-    this->mb.getParameters().push_back(VariableDescription("real","maximum_increment_value_per_iteration",1u,0u));
     ++(this->current);
     this->readSpecifiedToken("MFrontImplicitParserBase::MaximumIncrementValuePerIteration",";");
+    this->mb.addParameter(h,VariableDescription("real","maximum_increment_value_per_iteration",1u,0u));
+    this->mb.setParameterDefaultValue(h,"maximum_increment_value_per_iteration",value);
   } // end of MFrontImplicitParserBase::treatMaximumIncrementValuePerIteration
 
   void MFrontImplicitParserBase::writeBehaviourParserSpecificIncludes(void)
@@ -939,24 +844,29 @@ namespace mfront{
     bool has_stensor = false;
     bool has_stensor_array = false;
     // checks
-    for(p=this->mb.getStateVariables().begin();p!=this->mb.getStateVariables().end();++p){
-      SupportedTypes::TypeFlag flag  = this->getTypeFlag(p->type);
-      if(flag==SupportedTypes::Scalar){
-	has_scalar = true;
-	if(p->arraySize>=1){
-	  has_scalar_array = true;
+    const set<Hypothesis>& h = this->mb.getModellingHypotheses();
+    for(set<Hypothesis>::const_iterator ph=h.begin();ph!=h.end();++ph){
+      const MechanicalBehaviourData& d = this->mb.getMechanicalBehaviourData(*ph);
+      const VariableDescriptionContainer& sv = d.getStateVariables();
+      for(p=sv.begin();p!=sv.end();++p){
+	SupportedTypes::TypeFlag flag  = this->getTypeFlag(p->type);
+	if(flag==SupportedTypes::Scalar){
+	  has_scalar = true;
+	  if(p->arraySize>=1){
+	    has_scalar_array = true;
+	  }
 	}
-      }
-      if(flag==SupportedTypes::Stensor){
-	has_stensor = true;
-	if(p->arraySize>=1){
-	  has_stensor_array = true;
+	if(flag==SupportedTypes::Stensor){
+	  has_stensor = true;
+	  if(p->arraySize>=1){
+	    has_stensor_array = true;
+	  }
 	}
-      }
-      if(flag==SupportedTypes::TVector){
-	has_tvector = true;
-	if(p->arraySize>=1){
-	  has_tvector_array = true;
+	if(flag==SupportedTypes::TVector){
+	  has_tvector = true;
+	  if(p->arraySize>=1){
+	    has_tvector_array = true;
+	  }
 	}
       }
     }
@@ -1002,7 +912,7 @@ namespace mfront{
       this->behaviourFile << "#include\"TFEL/Math/Vector/TinyVectorOfStensorFromTinyVectorView.hxx\"\n";
     }
   } // end of MFrontImplicitParserBase::writeBehaviourParserSpecificIncludes(void)
-
+  
   void MFrontImplicitParserBase::writeBehaviourParserSpecificTypedefs(void)
   {
     this->checkBehaviourFile();
@@ -1010,20 +920,21 @@ namespace mfront{
   } // end of MFrontImplicitParserBase::writeBehaviourParserSpecificTypedefs(void)
 
   void
-  MFrontImplicitParserBase::writeBehaviourParserSpecificMembers(void)
+  MFrontImplicitParserBase::writeBehaviourParserSpecificMembers(const Hypothesis h)
   {
     using namespace std;
+    const MechanicalBehaviourData& d = this->mb.getMechanicalBehaviourData(h);
     VariableDescriptionContainer::const_iterator p;
     VariableDescriptionContainer::const_iterator p2;
     SupportedTypes::TypeSize n;
     SupportedTypes::TypeSize n3;
     // size of linear system
-    for(p=this->mb.getStateVariables().begin();p!=this->mb.getStateVariables().end();++p){
+    for(p=d.getStateVariables().begin();p!=d.getStateVariables().end();++p){
       n3 += this->getTypeSize(p->type,p->arraySize);
     }
-    for(p=this->mb.getStateVariables().begin();p!=this->mb.getStateVariables().end();++p){
+    for(p=d.getStateVariables().begin();p!=d.getStateVariables().end();++p){
       SupportedTypes::TypeSize n2;
-      for(p2=this->mb.getStateVariables().begin();p2!=this->mb.getStateVariables().end();++p2){
+      for(p2=d.getStateVariables().begin();p2!=d.getStateVariables().end();++p2){
 	SupportedTypes::TypeFlag flag  = this->getTypeFlag(p->type);
 	SupportedTypes::TypeFlag flag2 = this->getTypeFlag(p2->type);
 	if((p->arraySize!=1u)||(p2->arraySize!=1u)){
@@ -1322,7 +1233,7 @@ namespace mfront{
     this->behaviourFile << "tfel::math::tvector<" << n << ",Type> zeros_1;\n\n";
     this->behaviourFile << "// function\n";
     this->behaviourFile << "tfel::math::tvector<" << n << ",Type> fzeros;\n\n";
-    if(this->useAcceleration){
+    if(this->mb.getAttribute(h,MechanicalBehaviourData::useCast3MAccelerationAlgorithm,false)){
       this->behaviourFile << "// previous results (used for acceleration)\n";
       this->behaviourFile << "tfel::math::tvector<" << n << ",Type> previous_fzeros[3];\n\n";
       this->behaviourFile << "// previous zeros (used for acceleration)\n";
@@ -1331,7 +1242,7 @@ namespace mfront{
     this->behaviourFile << "// number of iterations\n";
     this->behaviourFile << "unsigned int iter;\n\n";
     // castem acceleration
-    if(this->useAcceleration){
+    if(this->mb.getAttribute(h,MechanicalBehaviourData::useCast3MAccelerationAlgorithm,false)){
       this->behaviourFile << "static bool\n";
       this->behaviourFile << "schmidt(";
       this->behaviourFile << "Type& k0,\n";
@@ -1399,12 +1310,12 @@ namespace mfront{
       this->behaviourFile << "} // end of accelate\n\n";
     }
     // compute the numerical part of the jacobian
-    if((this->compareToNumericalJacobian)||
+    if((this->mb.getAttribute(h,MechanicalBehaviourData::compareToNumericalJacobian,false))||
        (this->algorithm==MFrontImplicitParserBase::BROYDEN)||
        (this->algorithm==MFrontImplicitParserBase::POWELLDOGLEG_BROYDEN)||
        (this->algorithm==MFrontImplicitParserBase::NEWTONRAPHSON_NJ)||
        (this->algorithm==MFrontImplicitParserBase::POWELLDOGLEG_NEWTONRAPHSON_NJ)){
-      this->writeComputeNumericalJacobian();
+      this->writeComputeNumericalJacobian(h);
     }
     if((this->algorithm==MFrontImplicitParserBase::NEWTONRAPHSON)||
        (this->algorithm==MFrontImplicitParserBase::POWELLDOGLEG_NEWTONRAPHSON)||
@@ -1412,28 +1323,28 @@ namespace mfront{
        (this->algorithm==MFrontImplicitParserBase::POWELLDOGLEG_NEWTONRAPHSON_NJ)||
        (this->algorithm==MFrontImplicitParserBase::BROYDEN)||
        (this->algorithm==MFrontImplicitParserBase::POWELLDOGLEG_BROYDEN)){
-      this->writeGetPartialJacobianInvert();
+      this->writeGetPartialJacobianInvert(h);
     }
     // compute stress
-    if(!this->computeStress.empty()){
+    if(this->mb.hasCode(h,MechanicalBehaviourData::ComputeStress)){
       this->behaviourFile << "void\ncomputeStress(void){\n";
       this->behaviourFile << "using namespace std;\n";
       this->behaviourFile << "using namespace tfel::math;\n";
       this->behaviourFile << "using std::vector;\n";
       writeMaterialLaws("MFrontImplicitParserBase::writeBehaviourParserSpecificMembers",
-			this->behaviourFile,this->materialLaws);
-      this->behaviourFile << this->computeStress << endl;
-      this->behaviourFile << "} // end of " << this->className << "::computeStress\n\n";
+			this->behaviourFile,this->mb.getMaterialLaws());
+      this->behaviourFile << this->mb.getCode(h,MechanicalBehaviourData::ComputeStress) << endl;
+      this->behaviourFile << "} // end of " << this->mb.getClassName() << "::computeStress\n\n";
     }
-    if(!this->computeFinalStress.empty()){
+    if(this->mb.hasCode(h,MechanicalBehaviourData::ComputeFinalStress)){
       this->behaviourFile << "void\ncomputeFinalStress(void){\n";
       this->behaviourFile << "using namespace std;\n";
       this->behaviourFile << "using namespace tfel::math;\n";
       this->behaviourFile << "using std::vector;\n";
       writeMaterialLaws("MFrontImplicitParserBase::writeBehaviourParserSpecificMembers",
-			this->behaviourFile,this->materialLaws);
-      this->behaviourFile << this->computeFinalStress << endl;
-      this->behaviourFile << "} // end of " << this->className << "::computeStress\n\n";
+			this->behaviourFile,this->mb.getMaterialLaws());
+      this->behaviourFile << this->mb.getCode(h,MechanicalBehaviourData::ComputeFinalStress) << endl;
+      this->behaviourFile << "} // end of " << this->mb.getClassName() << "::computeStress\n\n";
       this->behaviourFile << endl;
     }
   } // end of MFrontImplicitParserBase::writeBehaviourParserSpecificMembers
@@ -1498,22 +1409,23 @@ namespace mfront{
   } // void MFrontImplicitParserBase::getJacobianPart
 
   void
-  MFrontImplicitParserBase::writeGetPartialJacobianInvert(void)
+  MFrontImplicitParserBase::writeGetPartialJacobianInvert(const Hypothesis h)
   {
     using namespace std;
+    const MechanicalBehaviourData& d = this->mb.getMechanicalBehaviourData(h);
     this->checkBehaviourFile();
     SupportedTypes::TypeSize n;
     VariableDescriptionContainer::size_type i;
     VariableDescriptionContainer::const_iterator p;
     VariableDescriptionContainer::const_iterator p2;
-    for(p=this->mb.getStateVariables().begin();p!=this->mb.getStateVariables().end();++p){
+    for(p=d.getStateVariables().begin();p!=d.getStateVariables().end();++p){
       n += this->getTypeSize(p->type,p->arraySize);
     }
-    p=this->mb.getStateVariables().begin();
+    p=d.getStateVariables().begin();
     ++p;
-    for(i=0;i!=this->mb.getStateVariables().size();++p,++i){
+    for(i=0;i!=d.getStateVariables().size();++p,++i){
       this->behaviourFile << "void\ngetPartialJacobianInvert(";
-      for(p2=this->mb.getStateVariables().begin();p2!=p;){
+      for(p2=d.getStateVariables().begin();p2!=p;){
 	SupportedTypes::TypeFlag flag = this->getTypeFlag(p2->type);
 	if(p2->arraySize==1u){
 	  switch(flag){
@@ -1561,7 +1473,7 @@ namespace mfront{
       this->behaviourFile << "vect_e(idx) = real(1);" << endl;
       this->behaviourFile << "TinyMatrixSolve<" << n << ",real>::back_substitute(this->jacobian,permuation,vect_e);" << endl;
       SupportedTypes::TypeSize n2;
-      for(p2=this->mb.getStateVariables().begin();p2!=p;++p2){
+      for(p2=d.getStateVariables().begin();p2!=p;++p2){
 	SupportedTypes::TypeFlag flag = this->getTypeFlag(p2->type);
 	if(flag==SupportedTypes::Scalar){
 	  if(p2->arraySize==1u){
@@ -1637,7 +1549,7 @@ namespace mfront{
 	}
       }
       this->behaviourFile << "}\n";
-      for(p2=this->mb.getStateVariables().begin();p2!=p;++p2){
+      for(p2=d.getStateVariables().begin();p2!=p;++p2){
 	if(nf.find(p2->name)!=nf.end()){
 	  this->behaviourFile << "partial_jacobian_" << p2->name << " /= " << nf.find(p2->name)->second << ";\n";
 	}
@@ -1647,16 +1559,17 @@ namespace mfront{
   } // end of MFrontImplicitParserBase::writeGetPartialJacobianInvert
   
   void
-  MFrontImplicitParserBase::writeLimitsOnIncrementValues(const std::string& v)
+  MFrontImplicitParserBase::writeLimitsOnIncrementValues(const Hypothesis h,
+							 const std::string& v)
   {
     using namespace std;
+    const MechanicalBehaviourData& d = this->mb.getMechanicalBehaviourData(h);
     this->checkBehaviourFile();
     VariableDescriptionContainer::const_iterator p;
     SupportedTypes::TypeSize n;
-    for(p=this->mb.getStateVariables().begin();p!=this->mb.getStateVariables().end();++p){
+    for(p=d.getStateVariables().begin();p!=d.getStateVariables().end();++p){
       SupportedTypes::TypeSize nv = this->getTypeSize(p->type,p->arraySize);
-      if(this->mb.getParametersDefaultValues().find(p->name+"_maximum_increment_value_per_iteration")!=
-	 this->mb.getParametersDefaultValues().end()){
+      if(this->mb.hasParameter(h,p->name+"_maximum_increment_value_per_iteration")){
 	this->behaviourFile << "for(unsigned short idx = 0; idx!=" << nv << ";++idx){\n";
 	if(this->nf.find(p->name)!=this->nf.end()){
 	  this->behaviourFile << "if(std::abs(" << v << "[" << n 
@@ -1684,8 +1597,7 @@ namespace mfront{
 	this->behaviourFile << "}\n";
 	this->behaviourFile << "}\n";
 	this->behaviourFile << "}\n";
-      } else if(this->mb.getParametersDefaultValues().find("maximum_increment_value_per_iteration")!=
-		this->mb.getParametersDefaultValues().end()){
+      } else if(this->mb.hasParameter(h,"maximum_increment_value_per_iteration")){
 	this->behaviourFile << "for(unsigned short idx = 0; idx!=" << nv << ";++idx){\n";
 	this->behaviourFile << "if(std::abs(" << v << "[" << n 
 			    << "+idx])>this->maximum_increment_value_per_iteration){\n";
@@ -1703,11 +1615,12 @@ namespace mfront{
     }
   }
 
-  void MFrontImplicitParserBase::writeComputeNumericalJacobian(){
+  void MFrontImplicitParserBase::writeComputeNumericalJacobian(const Hypothesis h){
     using namespace std;
+    const MechanicalBehaviourData& d = this->mb.getMechanicalBehaviourData(h);
     VariableDescriptionContainer::const_iterator p;
     SupportedTypes::TypeSize n;
-    for(p=this->mb.getStateVariables().begin();p!=this->mb.getStateVariables().end();++p){
+    for(p=d.getStateVariables().begin();p!=d.getStateVariables().end();++p){
       n += this->getTypeSize(p->type,p->arraySize);
     }
     this->checkBehaviourFile();
@@ -1720,7 +1633,7 @@ namespace mfront{
     this->behaviourFile << "tmatrix<" << n << "," << n << ",real> tjacobian(this->jacobian);\n";
     this->behaviourFile << "for(unsigned short idx = 0; idx!= "<< n<<  ";++idx){\n";
     this->behaviourFile << "this->zeros(idx) -= this->numerical_jacobian_epsilon;\n";
-    if(!this->computeStress.empty()){
+    if(this->mb.hasCode(h,MechanicalBehaviourData::ComputeStress)){
       this->behaviourFile << "this->computeStress();\n";
     }
     this->behaviourFile << "this->computeFdF();\n";
@@ -1732,7 +1645,7 @@ namespace mfront{
     //   this->behaviourFile << "}\n";
     // }
     this->behaviourFile << "this->zeros(idx) += this->numerical_jacobian_epsilon;\n";
-    if(!this->computeStress.empty()){
+    if(this->mb.hasCode(h,MechanicalBehaviourData::ComputeStress)){
       this->behaviourFile << "this->computeStress();\n";
     }
     this->behaviourFile << "this->computeFdF();\n";
@@ -1767,15 +1680,16 @@ namespace mfront{
     return "";
   } // end of MFrontImplicitParserBase::getVectorMappingClass
 
-  void MFrontImplicitParserBase::writeBehaviourIntegrator(){
+  void MFrontImplicitParserBase::writeBehaviourIntegrator(const Hypothesis h){
     using namespace std;
+    const MechanicalBehaviourData& d = this->mb.getMechanicalBehaviourData(h);
     VariableDescriptionContainer::const_iterator p;
     VariableDescriptionContainer::const_iterator p2;
     vector<BoundsDescription>::const_iterator p3;
     SupportedTypes::TypeSize n;
     SupportedTypes::TypeSize n2;
     SupportedTypes::TypeSize n3;
-    for(p=this->mb.getStateVariables().begin();p!=this->mb.getStateVariables().end();++p){
+    for(p=d.getStateVariables().begin();p!=d.getStateVariables().end();++p){
       n2 += this->getTypeSize(p->type,p->arraySize);
     }
     this->checkBehaviourFile();
@@ -1786,7 +1700,7 @@ namespace mfront{
     this->behaviourFile << "integrate(const SMType smt){\n";
     this->behaviourFile << "using namespace std;\n";
     this->behaviourFile << "using namespace tfel::math;\n";
-    if(this->compareToNumericalJacobian){
+    if(this->mb.hasAttribute(h,MechanicalBehaviourData::compareToNumericalJacobian)){
       this->behaviourFile << "tmatrix<" << n2 << "," << n2 << ",real> njacobian;\n";
     }
     if((this->algorithm==MFrontImplicitParserBase::BROYDEN)||
@@ -1807,26 +1721,26 @@ namespace mfront{
     this->behaviourFile << "real error;\n";
     this->behaviourFile << "bool converge=false;\n";
     this->behaviourFile << "this->iter=0;\n";
-    if(this->debugMode){
-      this->behaviourFile << "cout << endl << \"" << this->className
+    if(getDebugMode()){
+      this->behaviourFile << "cout << endl << \"" << this->mb.getClassName()
 			  << "::integrate() : beginning of resolution\" << endl;\n";
     }
     this->behaviourFile << "while((converge==false)&&\n";
-    this->behaviourFile << "(this->iter<" << this->className << "::iterMax)){\n";
+    this->behaviourFile << "(this->iter<" << this->mb.getClassName() << "::iterMax)){\n";
     this->behaviourFile << "++(this->iter);\n";
     if((this->algorithm==MFrontImplicitParserBase::BROYDEN)||
        (this->algorithm==MFrontImplicitParserBase::POWELLDOGLEG_BROYDEN)||
        (this->algorithm==MFrontImplicitParserBase::BROYDEN2)){
       this->behaviourFile << "fzeros2 = this->fzeros;\n";
     }
-    if(!this->computeStress.empty()){
+    if(this->mb.hasCode(h,MechanicalBehaviourData::ComputeStress)){
       this->behaviourFile << "this->computeStress();\n";
     }
     this->behaviourFile << "const bool computeFdF_ok = this->computeFdF();\n";
     this->behaviourFile << "if(!computeFdF_ok){\n";
     this->behaviourFile << "if(this->iter==1){\n";
-    if(this->debugMode){
-      this->behaviourFile << "cout << endl << \"" << this->className
+    if(getDebugMode()){
+      this->behaviourFile << "cout << endl << \"" << this->mb.getClassName()
 			  << "::integrate() : computFdF returned false on first iteration, abording...\" << endl;\n";
     }
     if(this->mb.useQt()){        
@@ -1835,8 +1749,8 @@ namespace mfront{
       this->behaviourFile << "return MechanicalBehaviour<hypothesis,Type,false>::FAILURE;\n";
     }
     this->behaviourFile << "} else {\n";
-    if(this->debugMode){
-      this->behaviourFile << "cout << endl << \"" << this->className
+    if(getDebugMode()){
+      this->behaviourFile << "cout << endl << \"" << this->mb.getClassName()
 			  << "::integrate() : computFdF returned false, dividing increment by two...\" << endl;\n";
     }
     this->behaviourFile << "const real integrate_one_half = real(1)/real(2);\n";
@@ -1844,13 +1758,13 @@ namespace mfront{
     this->behaviourFile << "}\n";
     this->behaviourFile << "} else {\n";
     this->behaviourFile << "this->zeros_1  = this->zeros;\n";
-    if(this->compareToNumericalJacobian){
+    if(this->mb.getAttribute(h,MechanicalBehaviourData::compareToNumericalJacobian,false)){
       this->behaviourFile << "this->computeNumericalJacobian(njacobian);\n";
       n = SupportedTypes::TypeSize();
-      for(p=this->mb.getStateVariables().begin();p!=this->mb.getStateVariables().end();++p){
+      for(p=d.getStateVariables().begin();p!=d.getStateVariables().end();++p){
 	if(p->arraySize==1){
 	  n3 = SupportedTypes::TypeSize();
-	  for(p2=this->mb.getStateVariables().begin();p2!=this->mb.getStateVariables().end();++p2){
+	  for(p2=d.getStateVariables().begin();p2!=d.getStateVariables().end();++p2){
 	    if((p->arraySize==1)&&(p2->arraySize==1)){
 	      this->behaviourFile << "// derivative of variable f" << p->name 
 				  << " by variable " << p2->name << "\n";
@@ -1865,8 +1779,8 @@ namespace mfront{
 	}
 	n += this->getTypeSize(p->type,p->arraySize);
       }
-      for(p=this->mb.getStateVariables().begin();p!=this->mb.getStateVariables().end();++p){
-	for(p2=this->mb.getStateVariables().begin();p2!=this->mb.getStateVariables().end();++p2){
+      for(p=d.getStateVariables().begin();p!=d.getStateVariables().end();++p){
+	for(p2=d.getStateVariables().begin();p2!=d.getStateVariables().end();++p2){
 	  const VariableDescription& v1 = *p;
 	  const VariableDescription& v2 = *p2;
 	  SupportedTypes::TypeSize nv1 = this->getTypeSize(v1.type,1u);
@@ -1947,8 +1861,8 @@ namespace mfront{
     this->behaviourFile << "error=norm(this->fzeros);\n";
     this->behaviourFile << "converge = ((error)/(real(" << n2 << "))<";
     this->behaviourFile << "(this->epsilon));\n";
-    if(this->debugMode){
-      this->behaviourFile << "cout << \"" << this->className
+    if(getDebugMode()){
+      this->behaviourFile << "cout << \"" << this->mb.getClassName()
 			  << "::integrate() : iteration \" "
 			  << "<< this->iter << \" : \" << (error)/(real(" << n2 << ")) << endl;\n";
     }
@@ -1979,9 +1893,9 @@ namespace mfront{
       this->behaviourFile << "}" << endl;
       if((this->algorithm==MFrontImplicitParserBase::POWELLDOGLEG_NEWTONRAPHSON)||
 	 (this->algorithm==MFrontImplicitParserBase::POWELLDOGLEG_NEWTONRAPHSON_NJ)){
-	this->writePowellDogLegStep("tjacobian","tfzeros","fzeros");
+	this->writePowellDogLegStep(h,"tjacobian","tfzeros","fzeros");
       } else {
-	this->writeLimitsOnIncrementValues("fzeros");
+	this->writeLimitsOnIncrementValues(h,"fzeros");
 	this->behaviourFile << "this->zeros -= this->fzeros;\n";
       }
     }
@@ -2002,9 +1916,9 @@ namespace mfront{
       this->behaviourFile << "}" << endl;
       this->behaviourFile << "jacobian2 = this->jacobian;\n";
       if(this->algorithm==MFrontImplicitParserBase::POWELLDOGLEG_BROYDEN){
-	this->writePowellDogLegStep("this->jacobian","fzeros","Dzeros");
+	this->writePowellDogLegStep(h,"this->jacobian","fzeros","Dzeros");
       } else {
-	this->writeLimitsOnIncrementValues("Dzeros");
+	this->writeLimitsOnIncrementValues(h,"Dzeros");
 	this->behaviourFile << "this->zeros -= Dzeros;\n";
       }
       this->behaviourFile << "if(this->iter>1){\n";
@@ -2017,7 +1931,7 @@ namespace mfront{
     }
     if(this->algorithm==MFrontImplicitParserBase::BROYDEN2){
       this->behaviourFile << "Dzeros   = -(this->jacobian)*(this->fzeros);\n";
-      this->writeLimitsOnIncrementValues("Dzeros");
+      this->writeLimitsOnIncrementValues(h,"Dzeros");
       this->behaviourFile << "this->zeros  += Dzeros;\n";
       this->behaviourFile << "if(this->iter>1){\n";
       this->behaviourFile << "Dfzeros   = (this->fzeros)-fzeros2;\n";
@@ -2029,7 +1943,7 @@ namespace mfront{
       this->behaviourFile << "}\n";
       this->behaviourFile << "}\n";
     }
-    if(this->useAcceleration){
+    if(this->mb.getAttribute(h,MechanicalBehaviourData::useCast3MAccelerationAlgorithm,false)){
       this->behaviourFile << "this->previous_fzeros[this->iter%3] = this->fzeros;\n";
       this->behaviourFile << "this->previous_zeros[this->iter%3]  = this->zeros;\n";
       this->behaviourFile << "if((this->iter>this->accelerationTrigger" << ")&&\n"
@@ -2038,19 +1952,19 @@ namespace mfront{
       this->behaviourFile << "this->accelerate(this->zeros);\n";
       this->behaviourFile << "}\n";
     }
-    if(this->useRelaxation){
+    if(this->mb.getAttribute(h,MechanicalBehaviourData::useRelaxationAlgorithm,false)){
       this->behaviourFile << "if(this->iter>=this->relaxationTrigger" << "){\n";
       this->behaviourFile << "this->zeros   -= (1-this->relaxationCoefficient) * (this->zeros-this->zeros_1);\n";
       this->behaviourFile << "}\n";
     }
-    this->writeLimitsOnIncrementValuesBasedOnStateVariablesPhysicalBounds();
-    this->writeLimitsOnIncrementValuesBasedOnStateVariablesIncrementsPhysicalBounds();
+    this->writeLimitsOnIncrementValuesBasedOnStateVariablesPhysicalBounds(h);
+    this->writeLimitsOnIncrementValuesBasedOnStateVariablesIncrementsPhysicalBounds(h);
     this->behaviourFile << "}\n";
     this->behaviourFile << "}\n";
     this->behaviourFile << "}\n";
     this->behaviourFile << "if(this->iter==this->iterMax){\n";
-    if(this->debugMode){
-      this->behaviourFile << "cout << \"" << this->className
+    if(getDebugMode()){
+      this->behaviourFile << "cout << \"" << this->mb.getClassName()
 			  << "::integrate() : no convergence after \" "
 			  << "<< this->iter << \" iterations\"<< endl << endl;\n";
       this->behaviourFile << "cout << *this << endl;\n";
@@ -2061,33 +1975,39 @@ namespace mfront{
       this->behaviourFile << "return MechanicalBehaviour<hypothesis,Type,false>::FAILURE;\n";
     }
     this->behaviourFile << "}\n";
-    this->writeLimitsOnIncrementValuesBasedOnStateVariablesPhysicalBounds();
-    if(this->debugMode){
-      this->behaviourFile << "cout << \"" << this->className
+    this->writeLimitsOnIncrementValuesBasedOnStateVariablesPhysicalBounds(h);
+    if(getDebugMode()){
+      this->behaviourFile << "cout << \"" << this->mb.getClassName()
 			  << "::integrate() : convergence after \" "
 			  << "<< this->iter << \" iterations\"<< endl << endl;\n";
     }
     this->behaviourFile << "if(smt!=NOSTIFFNESSREQUESTED){\n";
-    this->behaviourFile << "if(!this->computeConsistantTangentOperator(smt)){\n";
-    if(this->mb.useQt()){        
-      this->behaviourFile << "return MechanicalBehaviour<hypothesis,Type,use_qt>::FAILURE;\n";
+    if(this->mb.hasAttribute(h,MechanicalBehaviourData::hasConsistantTangentOperator)){
+      this->behaviourFile << "if(!this->computeConsistantTangentOperator(smt)){\n";
+      if(this->mb.useQt()){        
+	this->behaviourFile << "return MechanicalBehaviour<hypothesis,Type,use_qt>::FAILURE;\n";
+      } else {
+	this->behaviourFile << "return MechanicalBehaviour<hypothesis,Type,false>::FAILURE;\n";
+      }
+      this->behaviourFile << "}\n";
     } else {
-      this->behaviourFile << "return MechanicalBehaviour<hypothesis,Type,false>::FAILURE;\n";
+      this->behaviourFile << "string msg(\"" << this->mb.getClassName() << "::integrate : \");\n";
+      this->behaviourFile << "msg +=\"unimplemented feature\";\n";
+      this->behaviourFile << "throw(runtime_error(msg));\n";
     }
     this->behaviourFile << "}\n";
-    this->behaviourFile << "}\n";
-    for(p=this->mb.getStateVariables().begin();p!=this->mb.getStateVariables().end();++p){
+    for(p=d.getStateVariables().begin();p!=d.getStateVariables().end();++p){
       if(this->nf.find(p->name)!=this->nf.end()){
 	this->behaviourFile << "this->d" << p->name << " *= " << this->nf.find(p->name)->second << ";\n";
       }
     }
-    this->behaviourFile << "this->updateStateVars();\n";
-    if(!this->computeFinalStress.empty()){
+    this->behaviourFile << "this->updateStateVariables();\n";
+    if(this->mb.hasCode(h,MechanicalBehaviourData::ComputeFinalStress)){
       this->behaviourFile << "this->computeFinalStress();\n";
     }
-    this->behaviourFile << "this->updateAuxiliaryStateVars();\n";
-    for(p3  = this->mb.getBounds().begin();
-	p3 != this->mb.getBounds().end();++p3){
+    this->behaviourFile << "this->updateAuxiliaryStateVariables();\n";
+    for(p3  = d.getBounds().begin();
+	p3 != d.getBounds().end();++p3){
       if(p3->varCategory==BoundsDescription::StateVariable){
 	p3->writeBoundsChecks(this->behaviourFile);
       }
@@ -2097,7 +2017,7 @@ namespace mfront{
     } else {
       this->behaviourFile << "return MechanicalBehaviour<hypothesis,Type,false>::SUCCESS;\n";
     }
-    this->behaviourFile << "} // end of " << this->className << "::integrate\n\n";
+    this->behaviourFile << "} // end of " << this->mb.getClassName() << "::integrate\n\n";
     this->behaviourFile << "/*!\n";
     this->behaviourFile << "* \\brief compute fzeros and jacobian\n";
     this->behaviourFile << "*/\n";
@@ -2107,9 +2027,9 @@ namespace mfront{
     this->behaviourFile << "using namespace tfel::math;\n";
     this->behaviourFile << "using std::vector;\n";
     writeMaterialLaws("MFrontImplicitParserBase::writeBehaviourParserSpecificMembers",
-		      this->behaviourFile,this->materialLaws);
+		      this->behaviourFile,this->mb.getMaterialLaws());
     n = SupportedTypes::TypeSize();
-    for(p=this->mb.getStateVariables().begin();p!=this->mb.getStateVariables().end();++p){
+    for(p=d.getStateVariables().begin();p!=d.getStateVariables().end();++p){
       if(this->varNames.find("f"+p->name)!=this->varNames.end()){
 	string msg("MFrontImplicitParserBase::writeBehaviourIntegrator : ");
 	msg += "variable name 'f"+p->name;
@@ -2145,9 +2065,9 @@ namespace mfront{
        (this->algorithm==MFrontImplicitParserBase::BROYDEN)||
        (this->algorithm==MFrontImplicitParserBase::POWELLDOGLEG_BROYDEN)){
       n = SupportedTypes::TypeSize();
-      for(p=this->mb.getStateVariables().begin();p!=this->mb.getStateVariables().end();++p){
+      for(p=d.getStateVariables().begin();p!=d.getStateVariables().end();++p){
 	n3 = SupportedTypes::TypeSize();
-	for(p2=this->mb.getStateVariables().begin();p2!=this->mb.getStateVariables().end();++p2){
+	for(p2=d.getStateVariables().begin();p2!=d.getStateVariables().end();++p2){
 	  if((p->arraySize==1u)&&
 	     (p2->arraySize==1u)){
 	    this->behaviourFile << "// derivative of variable f" << p->name 
@@ -2161,7 +2081,7 @@ namespace mfront{
     }
     if((this->algorithm==MFrontImplicitParserBase::NEWTONRAPHSON)||
        (this->algorithm==MFrontImplicitParserBase::POWELLDOGLEG_NEWTONRAPHSON)){
-      for(p=this->mb.getStateVariables().begin();p!=this->mb.getStateVariables().end();++p){
+      for(p=d.getStateVariables().begin();p!=d.getStateVariables().end();++p){
 	this->jacobianPartsUsedInIntegrator.insert("df"+p->name+"_dd"+p->name);
       }
       this->behaviourFile << "// setting jacobian to identity\n";
@@ -2172,14 +2092,13 @@ namespace mfront{
     }
     this->behaviourFile << "// setting f values to zeros\n";
     this->behaviourFile << "this->fzeros = this->zeros;\n";
-    for(p=this->mb.getStateVariables().begin();p!=this->mb.getStateVariables().end();++p){
+    for(p=d.getStateVariables().begin();p!=d.getStateVariables().end();++p){
       if(this->nf.find(p->name)!=this->nf.end()){
     	this->behaviourFile << "f" << p->name << " *= " << this->nf.find(p->name)->second << ";" << endl;
       }
     }
-    this->behaviourFile << this->integrator;
-    this->behaviourFile << "\n";
-    for(p=this->mb.getStateVariables().begin();p!=this->mb.getStateVariables().end();++p){
+    this->behaviourFile << this->mb.getCode(h,MechanicalBehaviourData::Integrator) << "\n";
+    for(p=d.getStateVariables().begin();p!=d.getStateVariables().end();++p){
       if(this->nf.find('f'+p->name)!=this->nf.end()){
     	this->behaviourFile << "f" << p->name << "*= real(1)/(" << this->nf.find('f'+p->name)->second << ");" << endl;
       }
@@ -2188,8 +2107,8 @@ namespace mfront{
        (this->algorithm==MFrontImplicitParserBase::POWELLDOGLEG_NEWTONRAPHSON)||
        (this->algorithm==MFrontImplicitParserBase::BROYDEN)||
        (this->algorithm==MFrontImplicitParserBase::POWELLDOGLEG_BROYDEN)){
-      for(p=this->mb.getStateVariables().begin();p!=this->mb.getStateVariables().end();++p){
-	for(p2=this->mb.getStateVariables().begin();p2!=this->mb.getStateVariables().end();++p2){
+      for(p=d.getStateVariables().begin();p!=d.getStateVariables().end();++p){
+	for(p2=d.getStateVariables().begin();p2!=d.getStateVariables().end();++p2){
 	  if((p->arraySize==1u)&&(p2->arraySize==1u)){
 	    this->behaviourFile << "static_cast<void>(df"
 				<< p->name << "_dd" << p2->name
@@ -2303,14 +2222,15 @@ namespace mfront{
   } // end of MFrontImplicitParserBase::writeBehaviourIntegrator
 
   void
-  MFrontImplicitParserBase::writeLimitsOnIncrementValuesBasedOnStateVariablesPhysicalBounds(void)
+  MFrontImplicitParserBase::writeLimitsOnIncrementValuesBasedOnStateVariablesPhysicalBounds(const Hypothesis h)
   {
     using namespace std;
+    const MechanicalBehaviourData& d = this->mb.getMechanicalBehaviourData(h);
     SupportedTypes::TypeSize n;
     VariableDescriptionContainer::const_iterator p;
     vector<BoundsDescription>::const_iterator p2;
-    for(p=this->mb.getStateVariables().begin();p!=this->mb.getStateVariables().end();++p){
-      for(p2  = this->mb.getBounds().begin();p2 != this->mb.getBounds().end();++p2){
+    for(p=d.getStateVariables().begin();p!=d.getStateVariables().end();++p){
+      for(p2  = d.getBounds().begin();p2 != d.getBounds().end();++p2){
 	if(p2->name==p->name){
 	  // treating lower bounds
 	  if(((p2->boundsType==BoundsDescription::Lower)||(p2->boundsType==BoundsDescription::LowerAndUpper))&&
@@ -2603,26 +2523,28 @@ namespace mfront{
   } // end of MFrontImplicitParserBase::writeLimitsOnIncrementValuesBasedOnStateVariablesPhysicalBounds
 
   void
-  MFrontImplicitParserBase::writeLimitsOnIncrementValuesBasedOnStateVariablesIncrementsPhysicalBounds(void)
+  MFrontImplicitParserBase::writeLimitsOnIncrementValuesBasedOnStateVariablesIncrementsPhysicalBounds(const Hypothesis)
   {
     
 
   } // end of MFrontImplicitParserBase::writeLimitsOnIncrementValuesBasedOnStateVariablesIncrementsPhysicalBounds
 
   void
-  MFrontImplicitParserBase::writePowellDogLegStep(const std::string& B,
+  MFrontImplicitParserBase::writePowellDogLegStep(const Hypothesis   h,
+						  const std::string& B,
 						  const std::string& f,
 						  const std::string& pn)
   {
     using namespace std;
+    const MechanicalBehaviourData& d = this->mb.getMechanicalBehaviourData(h);
     VariableDescriptionContainer::const_iterator p;
     SupportedTypes::TypeSize n;
-    for(p=this->mb.getStateVariables().begin();p!=this->mb.getStateVariables().end();++p){
+    for(p=d.getStateVariables().begin();p!=d.getStateVariables().end();++p){
       n += this->getTypeSize(p->type,p->arraySize);
     }
     this->behaviourFile << "if(abs(" << pn<< ")<(" << n << ")*(this->powell_dogleg_trust_region_size)){" << endl;
     this->behaviourFile << "// using the newton method only" << endl;
-    this->writeLimitsOnIncrementValues(pn);
+    this->writeLimitsOnIncrementValues(h,pn);
     this->behaviourFile << "this->zeros -= " << pn<< ";\n";
     this->behaviourFile << "} else { " << endl;
     this->behaviourFile << "// computing the steepest descent step\n";
@@ -2653,40 +2575,40 @@ namespace mfront{
     this->behaviourFile << "const real pdl_alpha = (this->powell_dogleg_trust_region_size)/(norm(pdl_g));" << endl;
     this->behaviourFile << "pdl_g *= pdl_alpha;" << endl;
     this->behaviourFile << "}" << endl;
-    this->writeLimitsOnIncrementValues("pdl_g");
+    this->writeLimitsOnIncrementValues(h,"pdl_g");
     this->behaviourFile << "this->zeros -= pdl_g;\n";
     this->behaviourFile << "}" << endl;
   } // end of MFrontImplicitParserBase::writePowellDogLegStep
 
 
-  void MFrontImplicitParserBase::writeBehaviourComputeTangentOperator(void)
+  void MFrontImplicitParserBase::writeBehaviourComputeTangentOperator(const Hypothesis h)
   {
-    if(this->hasConsistantTangentOperator){
+    if(this->mb.hasCode(h,MechanicalBehaviourData::ComputeTangentOperator)){
       this->behaviourFile << "bool computeConsistantTangentOperator(const SMType smt){\n";
       this->behaviourFile << "using namespace std;\n";
       this->behaviourFile << "using namespace tfel::math;\n";
       this->behaviourFile << "using std::vector;\n";
       writeMaterialLaws("MFrontImplicitParserBase::writeBehaviourIntegrator",
-			this->behaviourFile,this->materialLaws);
-      this->behaviourFile << this->tangentOperator;
+			this->behaviourFile,this->mb.getMaterialLaws());
+      this->behaviourFile << this->mb.getCode(h,MechanicalBehaviourData::ComputeTangentOperator);
       this->behaviourFile << "return true;\n";
       this->behaviourFile << "}\n\n";
     } else {
-      MFrontBehaviourParserCommon::writeBehaviourComputeTangentOperator();
+      MFrontBehaviourParserCommon::writeBehaviourComputeTangentOperator(h);
     }
   }
 
   std::string
-  MFrontImplicitParserBase::getStateVariableIncrementsInitializers(const VariableDescriptionContainer&,
+  MFrontImplicitParserBase::getStateVariableIncrementsInitializers(const VariableDescriptionContainer& v,
 								   const bool) const
   {
     using namespace std;
     VariableDescriptionContainer::const_iterator p;
     SupportedTypes::TypeSize n;
     ostringstream init;
-    for(p=this->mb.getStateVariables().begin();p!=this->mb.getStateVariables().end();++p){
+    for(p=v.begin();p!=v.end();++p){
       SupportedTypes::TypeFlag flag = getTypeFlag(p->type);
-      if(p!=this->mb.getStateVariables().begin()){
+      if(p!=v.begin()){
 	init << ",\n";
       }
       if((flag!=SupportedTypes::Scalar)&&
@@ -2707,10 +2629,10 @@ namespace mfront{
   } // end of MFrontImplicitParserBase::getStateVariableIncrementsInitializers
 
   std::string
-  MFrontImplicitParserBase::getBehaviourConstructorsInitializers(void)
+  MFrontImplicitParserBase::getBehaviourConstructorsInitializers(const Hypothesis h)
   {    
     using namespace std;
-    string init = MFrontBehaviourParserCommon::getBehaviourConstructorsInitializers();
+    string init = MFrontBehaviourParserCommon::getBehaviourConstructorsInitializers(h);
     if(!init.empty()){
       init += ",\n";
     }
@@ -2718,16 +2640,17 @@ namespace mfront{
     return init;
   }
 
-  void MFrontImplicitParserBase::writeBehaviourParserSpecificInitializeMethodPart(void)
+  void MFrontImplicitParserBase::writeBehaviourParserSpecificInitializeMethodPart(const Hypothesis h)
   {
+    const MechanicalBehaviourData& d = this->mb.getMechanicalBehaviourData(h);
     VariableDescriptionContainer::const_iterator p;
     SupportedTypes::TypeSize n;
     this->checkBehaviourFile();
-    for(p=this->mb.getStateVariables().begin();p!=this->mb.getStateVariables().end();++p){
+    for(p=d.getStateVariables().begin();p!=d.getStateVariables().end();++p){
       n += this->getTypeSize(p->type,p->arraySize);
     }
-    if(!this->initJacobian.empty()){
-      this->behaviourFile << this->initJacobian;
+    if(this->mb.hasCode(h,MechanicalBehaviourData::InitializeJacobian)){
+      this->behaviourFile << this->mb.getCode(h,MechanicalBehaviourData::InitializeJacobian);
     } else {
       if((this->algorithm==MFrontImplicitParserBase::BROYDEN)||
 	 (this->algorithm==MFrontImplicitParserBase::POWELLDOGLEG_BROYDEN)||
@@ -2741,18 +2664,19 @@ namespace mfront{
     }
   }
 
-  void MFrontImplicitParserBase::writeBehaviourStateVarsIncrements(void)
+  void MFrontImplicitParserBase::writeBehaviourStateVariablesIncrements(const Hypothesis h)
   {    
     using namespace std;
+    const MechanicalBehaviourData& d = this->mb.getMechanicalBehaviourData(h);
     this->checkBehaviourFile();
     VariableDescriptionContainer::const_iterator p;
     SupportedTypes::TypeSize n;
     SupportedTypes::TypeSize n2;
-    for(p=this->mb.getStateVariables().begin();p!=this->mb.getStateVariables().end();++p){
+    for(p=d.getStateVariables().begin();p!=d.getStateVariables().end();++p){
       n2 += this->getTypeSize(p->type,p->arraySize);
     }
-    for(p=this->mb.getStateVariables().begin();p!=this->mb.getStateVariables().end();++p){
-      if((!this->debugMode)&&(p->lineNumber!=0u)){
+    for(p=d.getStateVariables().begin();p!=d.getStateVariables().end();++p){
+      if((!getDebugMode())&&(p->lineNumber!=0u)){
 	this->behaviourFile << "#line " << p->lineNumber << " \"" 
 			    << this->fileName << "\"\n";
       }
@@ -2790,71 +2714,82 @@ namespace mfront{
     using namespace tfel::utilities;
     typedef map<string,double>::value_type MVType;
     typedef map<string,unsigned short>::value_type MVType2;
+    typedef unsigned short ushort;
     MFrontBehaviourParserCommon::endsInputFileProcessing();
-    if(this->integrator.empty()){
-      string msg("MFrontImplicitParserBase::endsInputFileProcessing : ");
-      msg += "definining the @Integrator block is required";
-      throw(runtime_error(msg));
+    // create the compute final stress code is necessary
+    this->setComputeFinalStressFromComputeFinalStressCandidateIfNecessary();
+    // creating default parameters if not explicitely specified by the user
+    const Hypothesis h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
+    if(!this->mb.hasParameter(h,"epsilon")){
+      this->mb.addParameter(h,VariableDescription("real","epsilon",1u,0u));
+      this->mb.setParameterDefaultValue(h,"epsilon",1.e-8);
     }
-    if(this->mb.getParametersDefaultValues().find("theta")==this->mb.getParametersDefaultValues().end()){
-      this->mb.getParametersDefaultValues().insert(MVType("theta",0.5));
-    }
-    if(this->mb.getParametersDefaultValues().find("epsilon")==
-       this->mb.getParametersDefaultValues().end()){
-      this->mb.getParametersDefaultValues().insert(MVType("epsilon",1.e-8));
+    if(!this->mb.hasParameter(h,"theta")){
+      this->mb.addParameter(h,VariableDescription("real","theta",1u,0u));
+      this->mb.setParameterDefaultValue(h,"theta",0.5);
     }
     if((this->algorithm==MFrontImplicitParserBase::POWELLDOGLEG_NEWTONRAPHSON)||
        (this->algorithm==MFrontImplicitParserBase::POWELLDOGLEG_NEWTONRAPHSON_NJ)||
        (this->algorithm==MFrontImplicitParserBase::POWELLDOGLEG_BROYDEN)){
-      if(this->mb.getParametersDefaultValues().find("powell_dogleg_trust_region_size")==this->mb.getParametersDefaultValues().end()){
-	this->mb.getParametersDefaultValues().insert(MVType("powell_dogleg_trust_region_size",1.e-4));
+      if(!this->mb.hasParameter(h,"powell_dogleg_trust_region_size")){
+	this->mb.addParameter(h,VariableDescription("real","powell_dogleg_trust_region_size",1u,0u));
+	this->mb.setParameterDefaultValue(h,"powell_dogleg_trust_region_size",1.e-4);
       }
     }
-    if((this->compareToNumericalJacobian)||
+    if((this->mb.getAttribute(h,MechanicalBehaviourData::compareToNumericalJacobian,false))||
        (this->algorithm==MFrontImplicitParserBase::BROYDEN)||
        (this->algorithm==MFrontImplicitParserBase::POWELLDOGLEG_BROYDEN)||
        (this->algorithm==MFrontImplicitParserBase::POWELLDOGLEG_NEWTONRAPHSON_NJ)||
        (this->algorithm==MFrontImplicitParserBase::NEWTONRAPHSON_NJ)){
       const string nje = "numerical_jacobian_epsilon";
-      this->mb.getParameters().push_back(VariableDescription("real",nje,1u,0u));
-      if(this->mb.getParametersDefaultValues().find(nje)==
-	 this->mb.getParametersDefaultValues().end()){
-	const double eps = 0.1*this->mb.getParametersDefaultValues()["epsilon"];
-	this->mb.getParametersDefaultValues().insert(MVType(nje,eps));
+      if(!this->mb.hasParameter(h,nje)){
+	const double eps = 0.1*this->mb.getFloattingPointParameterDefaultValue(h,"epsilon");
+	this->mb.addParameter(h,VariableDescription("real",nje,1u,0u));
+	this->mb.setParameterDefaultValue(h,nje,eps);
       }
     }
-    if(this->mb.getUnsignedShortParametersDefaultValues().find("iterMax")==this->mb.getUnsignedShortParametersDefaultValues().end()){
-      this->mb.getUnsignedShortParametersDefaultValues().insert(MVType2("iterMax",100u));
+    if(!this->mb.hasParameter(h,"iterMax")){
+      unsigned short iterMax = 100u;
+      this->mb.addParameter(h,VariableDescription("ushort","iterMax",1u,0u));
+      this->mb.setParameterDefaultValue(h,"iterMax",iterMax);
     }
-    unsigned short iterMax = this->mb.getUnsignedShortParametersDefaultValues()["iterMax"];
-    if(this->compareToNumericalJacobian){
-      if(this->mb.getParametersDefaultValues().find("jacobianComparisonCriterium")==this->mb.getParametersDefaultValues().end()){
-	double epsilon = this->mb.getParametersDefaultValues()["epsilon"];
-	this->mb.getParametersDefaultValues().insert(MVType("jacobianComparisonCriterium",epsilon));
+    if(this->mb.getAttribute(h,MechanicalBehaviourData::compareToNumericalJacobian,false)){
+      if(!this->mb.hasParameter(h,"jacobianComparisonCriterium")){
+	this->mb.addParameter(h,VariableDescription("real","jacobianComparisonCriterium",1u,0u));
+	this->mb.setParameterDefaultValue(h,"jacobianComparisonCriterium",
+					  this->mb.getFloattingPointParameterDefaultValue(h,"epsilon"));
       }
     }
-    if(this->useRelaxation){
-      if(this->mb.getParametersDefaultValues().find("relaxationCoefficient")==this->mb.getParametersDefaultValues().end()){
-	this->mb.getParametersDefaultValues().insert(MVType("relaxationCoefficient",0.5));
+    if(this->mb.getAttribute(h,MechanicalBehaviourData::useRelaxationAlgorithm,false)){
+      if(!this->mb.hasParameter(h,"relaxationCoefficient")){
+	this->mb.addParameter(h,VariableDescription("real","relaxationCoefficient",1u,0u));
+	this->mb.setParameterDefaultValue(h,"relaxationCoefficient",0.5);
       }
-      if(this->mb.getUnsignedShortParametersDefaultValues().find("relaxationTrigger")==this->mb.getUnsignedShortParametersDefaultValues().end()){
-	this->mb.getUnsignedShortParametersDefaultValues().insert(MVType2("relaxationTrigger",10u));
+      if(!this->mb.hasParameter(h,"relaxationTrigger")){
+	this->mb.addParameter(h,VariableDescription("ushort","relaxationTrigger",1u,0u));
+	this->mb.setParameterDefaultValue(h,"relaxationTrigger",ushort(10u));
       }
-      unsigned short relaxationTrigger = this->mb.getUnsignedShortParametersDefaultValues()["relaxationTrigger"];
+      const unsigned short iterMax           = this->mb.getUnsignedShortParameterDefaultValue(h,"iterMax");
+      const unsigned short relaxationTrigger = this->mb.getUnsignedShortParameterDefaultValue(h,"relaxationTrigger");
       if(relaxationTrigger+1>=iterMax){
 	string msg("MFrontImplicitParserBase::endsInputFileProcessing :");
 	msg += "relaxation can never take place (relaxationTrigger>=iterMax-1)'";
 	throw(runtime_error(msg));
       }
     }
-    if(this->useAcceleration){
-      if(this->mb.getUnsignedShortParametersDefaultValues().find("accelerationTrigger")==this->mb.getUnsignedShortParametersDefaultValues().end()){
-	this->mb.getUnsignedShortParametersDefaultValues().insert(MVType2("accelerationTrigger",10u));
+    if(this->mb.getAttribute(h,MechanicalBehaviourData::useCast3MAccelerationAlgorithm,false)){
+      if(!this->mb.hasParameter(h,"accelerationTrigger")){
+	this->mb.addParameter(h,VariableDescription("ushort","accelerationTrigger",1u,0u));
+	this->mb.setParameterDefaultValue(h,"accelerationTrigger",ushort(10u));
       }
-      if(this->mb.getUnsignedShortParametersDefaultValues().find("accelerationPeriod")==this->mb.getUnsignedShortParametersDefaultValues().end()){
-	this->mb.getUnsignedShortParametersDefaultValues().insert(MVType2("accelerationPeriod",3u));
+      if(!this->mb.hasParameter(h,"accelerationPeriod")){
+	this->mb.addParameter(h,VariableDescription("ushort","accelerationPeriod",1u,0u));
+	this->mb.setParameterDefaultValue(h,"accelerationPeriod",ushort(3u));
       }
-      unsigned short accelerationTrigger = this->mb.getUnsignedShortParametersDefaultValues()["accelerationTrigger"];
+      const unsigned short iterMax             =
+	this->mb.getUnsignedShortParameterDefaultValue(h,"iterMax");
+      const unsigned short accelerationTrigger =
+	this->mb.getUnsignedShortParameterDefaultValue(h,"accelerationTrigger");
       if(accelerationTrigger+1>=iterMax){
 	string msg("MFrontImplicitParserBase::endsInputFileProcessing :");
 	msg += "acceleration can never take place (accelerationTrigger>=iterMax-1)'";
@@ -2864,7 +2799,7 @@ namespace mfront{
     if(this->algorithm==MFrontImplicitParserBase::DEFAULT){
       this->algorithm=MFrontImplicitParserBase::NEWTONRAPHSON;
     }
-    if(this->compareToNumericalJacobian){
+    if(this->mb.getAttribute(h,MechanicalBehaviourData::compareToNumericalJacobian,false)){
       if((this->algorithm!=MFrontImplicitParserBase::NEWTONRAPHSON)&&
 	 (this->algorithm!=MFrontImplicitParserBase::POWELLDOGLEG_NEWTONRAPHSON)){
 	string msg("MFrontImplicitParserBase::endsInputFileProcessing :");
@@ -2873,24 +2808,54 @@ namespace mfront{
 
       }
     }
-    // minimal tangent operator
-    if(!this->hasConsistantTangentOperator){
-      if(this->mb.requiresStiffnessOperator()){
-	this->hasConsistantTangentOperator = true;
-	this->tangentOperator = "if(smt==ELASTIC){\n"
-	                        "this->Dt = this->D;"
- 	                        "} else {\n"
-	                        "return false;\n"
-	                        "}\n";
+    // correct prediction to take into account normalisation factors
+    const set<Hypothesis> mh(this->mb.getDistinctModellingHypotheses());
+    for(set<Hypothesis>::const_iterator ph=mh.begin();ph!=mh.end();++ph){
+      if(*ph!=ModellingHypothesis::UNDEFINEDHYPOTHESIS){
+	if(this->mb.hasCode(*ph,MechanicalBehaviourData::ComputePredictor)){
+	  string predictor;
+	  VariableDescriptionContainer::const_iterator p;
+	  const MechanicalBehaviourData& d = this->mb.getMechanicalBehaviourData(*ph);
+	  const VariableDescriptionContainer& sv = d.getStateVariables();
+	  for(p=sv.begin();p!=sv.end();++p){
+	    if(this->internalStateVariableIncrementsUsedInPredictor.find('d'+p->name)!=
+	       this->internalStateVariableIncrementsUsedInPredictor.end()){
+	      if(nf.find(p->name)!=nf.end()){
+		predictor += "this->d"+p->name + " /= " + nf.find(p->name)->second + ";\n";
+	      }
+	    }
+	  }
+	  this->mb.setCode(*ph,MechanicalBehaviourData::ComputePredictor,predictor,
+			   MechanicalBehaviourData::CREATEORAPPEND,
+			   MechanicalBehaviourData::AT_END);
+	}
       }
     }
+    if(!this->mb.areAllMechanicalDataSpecialised()){
+      if(this->mb.hasCode(ModellingHypothesis::UNDEFINEDHYPOTHESIS,
+			  MechanicalBehaviourData::ComputePredictor)){
+	string predictor;
+	VariableDescriptionContainer::const_iterator p;
+	const MechanicalBehaviourData& d =
+	  this->mb.getMechanicalBehaviourData(ModellingHypothesis::UNDEFINEDHYPOTHESIS);
+	const VariableDescriptionContainer& sv = d.getStateVariables();
+	for(p=sv.begin();p!=sv.end();++p){
+	  if(this->internalStateVariableIncrementsUsedInPredictor.find('d'+p->name)!=
+	     this->internalStateVariableIncrementsUsedInPredictor.end()){
+	    if(nf.find(p->name)!=nf.end()){
+	      predictor += "this->d"+p->name + " /= " + nf.find(p->name)->second + ";\n";
+	    }
+	  }
+	}
+	this->mb.setCode(ModellingHypothesis::UNDEFINEDHYPOTHESIS,
+			 MechanicalBehaviourData::ComputePredictor,predictor,
+			 MechanicalBehaviourData::CREATEORAPPEND,
+			 MechanicalBehaviourData::AT_END);
+      }
+    }
+    // minimal tangent operator
+    this->setMinimalTangentOperator();
   } // end of MFrontImplicitParserBase::endsInputFileProcessing(void)
-
-  void 
-  MFrontImplicitParserBase::writeBehaviourStaticVars(void)
-  {
-    MFrontBehaviourParserBase<MFrontImplicitParserBase>::writeBehaviourStaticVars();
-  } // end of MFrontImplicitParserBase::writeBehaviourStaticVars
 
   MFrontImplicitParserBase::~MFrontImplicitParserBase()
   {} // end of ~MFrontImplicitParserBase

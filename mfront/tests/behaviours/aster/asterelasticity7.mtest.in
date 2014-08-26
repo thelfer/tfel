@@ -12,8 +12,7 @@
 @Real 'a'    2.e-5;
 @MaterialProperty<constant> 'YoungModulus'     'E';
 @MaterialProperty<constant> 'PoissonRatio'     'nu';
-@MaterialProperty<constant> 'MassDensity'       0.;
-@MaterialProperty<constant> 'ThermalExpansion'  'a';
+@MaterialProperty<constant> 'ThermalExpansion' 'a';
 
 @ExternalStateVariable 'Temperature' {0:293.15,3600.:800};
 @Real 'ThermalExpansionReferenceTemperature' 293.15;

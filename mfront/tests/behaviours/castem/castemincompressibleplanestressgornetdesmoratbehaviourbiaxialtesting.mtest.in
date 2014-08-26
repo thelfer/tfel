@@ -15,8 +15,6 @@
 
 @MaterialProperty<constant> 'YoungModulus'    '20000*E';
 @MaterialProperty<constant> 'PoissonRatio'     0.49999;
-@MaterialProperty<constant> 'MassDensity'        0.;
-@MaterialProperty<constant> 'ThermalExpansion'   0.;
 @MaterialProperty<constant> 'H1' '0.142236';
 @MaterialProperty<constant> 'H2' '1.5854659e-2';
 @MaterialProperty<constant> 'H3' '3.4946541e-4';

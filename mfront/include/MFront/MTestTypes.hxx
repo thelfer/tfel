@@ -8,15 +8,26 @@
 #ifndef _LIB_MFRONT_MTESTTYPES_H_
 #define _LIB_MFRONT_MTESTTYPES_H_ 
 
+#include<map>
+#include<string>
+#include"TFEL/Utilities/SmartPtr.hxx"
+
 namespace mfront
 {
   
   //! a simple alias
   typedef double real;
+  
+  //! forward declaration
+  struct MTestEvolution;
+  // ! a simple alias
+  typedef tfel::utilities::shared_ptr<MTestEvolution> MTestEvolutionPtr;
+  // ! a simple alias
+  typedef std::map<std::string,MTestEvolutionPtr> MTestEvolutionManager;
 
-      /*!
-     * \brief possible type of stiffness matrix
-     */
+  /*!
+   * \brief possible type of stiffness matrix
+   */
   struct MTestStiffnessMatrixType
   {
     //! list of possible matrix type

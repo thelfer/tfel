@@ -37,6 +37,8 @@
 
 #include"MFront/SupportedTypes.hxx"
 #include"MFront/MFront.hxx"
+#include"MFront/MFrontDebugMode.hxx"
+#include"MFront/MFrontLogStream.hxx"
 #include"MFront/MFrontHeader.hxx"
 #include"MFront/MFrontSearchFile.hxx"
 #include"MFront/MFrontParserFactory.hxx"
@@ -184,13 +186,31 @@ namespace mfront{
     typedef MFrontLawInterfaceFactory       MLIF;
     typedef MFrontBehaviourInterfaceFactory MBIF;
     typedef MFrontModelInterfaceFactory     MMIF;
-    MLIF& mlif = MLIF::getMFrontLawInterfaceFactory();
-    MBIF& mbif = MBIF::getMFrontBehaviourInterfaceFactory();
-    MMIF& mmif = MMIF::getMFrontModelInterfaceFactory();
-    this->verboseMode = true;
-    mlif.setVerboseMode();
-    mbif.setVerboseMode();
-    mmif.setVerboseMode();
+    using namespace std;
+    if(this->currentArgument->getOption().empty()){
+      setVerboseMode(VERBOSE_LEVEL1);
+    } else {
+      const std::string& option = this->currentArgument->getOption();
+      if(option=="quiet"){
+	setVerboseMode(VERBOSE_QUIET);
+      } else if(option=="level0"){
+	setVerboseMode(VERBOSE_LEVEL0);
+      } else if(option=="level1"){
+	setVerboseMode(VERBOSE_LEVEL1);
+      } else if (option=="level2"){
+	setVerboseMode(VERBOSE_LEVEL2);
+      } else if (option=="level3"){
+	setVerboseMode(VERBOSE_LEVEL3);
+      } else if (option=="debug"){
+	setVerboseMode(VERBOSE_DEBUG);
+      } else if (option=="full"){
+	setVerboseMode(VERBOSE_FULL);
+      } else {
+	string msg("MTestMain::treatVerbose : ");
+	msg += "unknown option '"+option+"'";
+	throw(runtime_error(msg));
+      }
+    }
   }
 
   void
@@ -199,28 +219,22 @@ namespace mfront{
     typedef MFrontLawInterfaceFactory       MLIF;
     typedef MFrontBehaviourInterfaceFactory MBIF;
     typedef MFrontModelInterfaceFactory     MMIF;
-    MLIF& mlif = MLIF::getMFrontLawInterfaceFactory();
-    MBIF& mbif = MBIF::getMFrontBehaviourInterfaceFactory();
-    MMIF& mmif = MMIF::getMFrontModelInterfaceFactory();
-    this->debugMode = true;
-    mlif.setDebugMode();
-    mbif.setDebugMode();
-    mmif.setDebugMode();
+    setDebugMode(true);
   }
 
   void
   MFront::treatWarning(void)
   {
-    typedef MFrontLawInterfaceFactory       MLIF;
-    typedef MFrontBehaviourInterfaceFactory MBIF;
-    typedef MFrontModelInterfaceFactory     MMIF;
-    MLIF& mlif = MLIF::getMFrontLawInterfaceFactory();
-    MBIF& mbif = MBIF::getMFrontBehaviourInterfaceFactory();
-    MMIF& mmif = MMIF::getMFrontModelInterfaceFactory();
-    this->warningMode = true;
-    mlif.setWarningMode();
-    mbif.setWarningMode();
-    mmif.setWarningMode();
+    // typedef MFrontLawInterfaceFactory       MLIF;
+    // typedef MFrontBehaviourInterfaceFactory MBIF;
+    // typedef MFrontModelInterfaceFactory     MMIF;
+    // MLIF& mlif = MLIF::getMFrontLawInterfaceFactory();
+    // MBIF& mbif = MBIF::getMFrontBehaviourInterfaceFactory();
+    // MMIF& mmif = MMIF::getMFrontModelInterfaceFactory();
+    // this->warningMode = true;
+    // mlif.setWarningMode();
+    // mbif.setWarningMode();
+    // mmif.setWarningMode();
   }
 
   void
@@ -406,7 +420,8 @@ namespace mfront{
   void 
   MFront::registerArgumentCallBacks(void)
   {
-    this->registerNewCallBack("--verbose",&MFront::treatVerbose,"set verbose output");
+    this->registerNewCallBack("--verbose",&MFront::treatVerbose,
+			      "set verbose output",true);
     this->registerNewCallBack("--list-parsers",&MFront::treatListParsers,"list all available parsers");
     this->registerNewCallBack("--help-commands-list",&MFront::treatHelpCommandsList,
 			      "list all keywords for the given parser and exits",true);
@@ -462,7 +477,6 @@ namespace mfront{
 #else
       sys("default"),
 #endif /* __CYGWIN__ */
-      verboseMode(false),
       warningMode(false),
       debugMode(false),
       oflags(false),
@@ -629,8 +643,9 @@ namespace mfront{
     Target::const_iterator p3;
     vector<string>::const_iterator p4;
     bool found;
-    if(this->verboseMode){
-      cout << "Treating file : " << this->fileName << endl;
+    if(getVerboseMode()>=VERBOSE_LEVEL2){
+      ostream& log = getLogStream();
+      log << "Treating file : " << this->fileName << endl;
     }
     file.openFile(this->fileName);
     file.stripComments();
@@ -712,20 +727,11 @@ namespace mfront{
 	throw(runtime_error(msg.str()));
       }
     } else {
-      if(this->verboseMode){
-	cout << "MFront::treatFile : no parser specified, using default" << endl;
+      if(getVerboseMode()>=VERBOSE_LEVEL2){
+	ostream& log = getLogStream();
+	log << "MFront::treatFile : no parser specified, using default" << endl;
       }
       parser = auto_ptr<MFrontVirtualParser>(parserFactory.createNewParser());
-    }
-
-    if(this->verboseMode){
-      parser->setVerboseMode();
-    }
-    if(this->debugMode){
-      parser->setDebugMode();
-    }
-    if(this->warningMode){
-      parser->setWarningMode();
     }
     if(!this->interfaces.empty()){
       parser->setInterfaces(this->interfaces);
@@ -894,11 +900,12 @@ namespace mfront{
       f.close();
     }
     if(!files.empty()){
-      if(this->verboseMode){
-	cout << "inserting library " << name.substr(0,name.size()-3) << "so "
+      if(getVerboseMode()>=VERBOSE_LEVEL2){
+	ostream& log = getLogStream();
+	log << "inserting library " << name.substr(0,name.size()-3) << "so "
 	     << "sources : \n";
-	copy(files.begin(),files.end(),ostream_iterator<string>(cout," "));
-	cout << endl;
+	copy(files.begin(),files.end(),ostream_iterator<string>(log," "));
+	log << endl;
       }
       this->sources[name.substr(0,name.size()-4)].insert(files.begin(),files.end());
     }
@@ -938,11 +945,12 @@ namespace mfront{
       return;
     }
     if(!libs.empty()){
-      if(this->verboseMode){
-	cout << "inserting library " << name.substr(0,name.size()-4) << "so "
+      if(getVerboseMode()>=VERBOSE_LEVEL2){
+	ostream& log = getLogStream();
+	log << "inserting library " << name.substr(0,name.size()-4) << "so "
 	     << "dependencies : \n";
-	copy(libs.begin(),libs.end(),ostream_iterator<string>(cout," "));
-	cout << endl;
+	copy(libs.begin(),libs.end(),ostream_iterator<string>(log," "));
+	log << endl;
       }
       this->dependencies.insert(MVType(name.substr(0,name.size()-5),libs));
     }
@@ -1085,8 +1093,9 @@ namespace mfront{
       ::FindClose(hFile);
       for(p=files.begin();p!=files.end();++p){
 	if(p->substr(p->size()-4)==".src"){
-	  if(this->verboseMode){
-	      cout << "treating library " << p->substr(0,p->size()-4) << ".dll sources.\n";
+	  if(getVerboseMode()>=VERBOSE_LEVEL2){
+	    ostream& log = getLogStream();
+	    log << "treating library " << p->substr(0,p->size()-4) << ".dll sources.\n";
 	  }
 	  this->analyseSources(*p);
 	}
@@ -1116,8 +1125,9 @@ namespace mfront{
       for(p=files.begin();p!=files.end();++p){
 	if(p->size()>5){
 	  if(p->substr(p->size()-5)==".deps"){
-	    if(this->verboseMode){
-	      cout << "treating library " << p->substr(0,p->size()-5) << " dependencies.\n";
+	    if(getVerboseMode()>=VERBOSE_LEVEL2){
+	      ostream& log = getLogStream();
+	      log << "treating library " << p->substr(0,p->size()-5) << " dependencies.\n";
 	    }
 	    this->analyseDependencies(*p);
 	  }
@@ -1163,11 +1173,12 @@ namespace mfront{
       closedir(directory);
       for(p=files.begin();p!=files.end();++p){
 	if(p->substr(p->size()-4)==".src"){
-	  if(this->verboseMode){
+	  if(getVerboseMode()>=VERBOSE_LEVEL2){
+	    ostream& log = getLogStream();
 	    if(this->sys=="win32"){
-	      cout << "treating library " << p->substr(0,p->size()-4) << ".dll sources.\n";
+	      log << "treating library " << p->substr(0,p->size()-4) << ".dll sources.\n";
 	    } else {
-	      cout << "treating library " << p->substr(0,p->size()-4) << ".so sources.\n";
+	      log << "treating library " << p->substr(0,p->size()-4) << ".so sources.\n";
 	    }
 	  }
 	  this->analyseSources(*p);
@@ -1205,8 +1216,9 @@ namespace mfront{
       for(p=files.begin();p!=files.end();++p){
 	if(p->size()>5){
 	  if(p->substr(p->size()-5)==".deps"){
-	    if(this->verboseMode){
-	      cout << "treating library " << p->substr(0,p->size()-5) << " dependencies.\n";
+	    if(getVerboseMode()>=VERBOSE_LEVEL2){
+	      ostream& log = getLogStream();
+	      log << "treating library " << p->substr(0,p->size()-5) << " dependencies.\n";
 	    }
 	    this->analyseDependencies(*p);
 	  }
@@ -1232,11 +1244,12 @@ namespace mfront{
     try{
       map<string,set<string> >::const_iterator p;
       for(p=this->sources.begin();p!=this->sources.end();++p){
-	if(this->verboseMode){
+	if(getVerboseMode()>=VERBOSE_LEVEL2){
+	  ostream& log = getLogStream();
 	  if(this->sys=="win32"){
-	    cout << "writing sources list for library " << p->first << ".dll\n";
+	    log << "writing sources list for library " << p->first << ".dll\n";
 	  } else {
-	    cout << "writing sources list for library " << p->first << ".so\n";
+	    log << "writing sources list for library " << p->first << ".so\n";
 	  }
 	}
 	file.open(("src"+dirStringSeparator()+p->first+".src").c_str());
@@ -1267,11 +1280,12 @@ namespace mfront{
     try{
       map<string,vector<string> >::const_iterator p;
       for(p=this->dependencies.begin();p!=this->dependencies.end();++p){
-	if(this->verboseMode){
+	if(getVerboseMode()>=VERBOSE_LEVEL2){
+	  ostream& log = getLogStream();
 	  if(this->sys=="win32"){
-	    cout << "writing dependencies list for library " << p->first << ".dll\n";
+	    log << "writing dependencies list for library " << p->first << ".dll\n";
 	  } else {
-	    cout << "writing dependencies list for library " << p->first << ".so\n";
+	    log << "writing dependencies list for library " << p->first << ".so\n";
 	  }
 	}
 	file.open(("src"+dirStringSeparator()+p->first+".deps").c_str());
@@ -1498,8 +1512,9 @@ namespace mfront{
     if(this->silentBuild){
       sb = "@"; 
     }
-    if(this->verboseMode){
-      cout << "generating Makefile\n";
+    if(getVerboseMode()>=VERBOSE_LEVEL2){
+      ostream& log = getLogStream();
+      log << "generating Makefile\n";
     }
     if(env_cxx==0){
       cxx = "$(CXX)";

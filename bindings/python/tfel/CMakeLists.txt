@@ -7,6 +7,7 @@ link_directories("${PROJECT_BINARY_DIR}/src/Exception")
 link_directories("${PROJECT_BINARY_DIR}/src/Utilities")
 link_directories("${PROJECT_BINARY_DIR}/src/Math")
 link_directories("${PROJECT_BINARY_DIR}/src/System")
+link_directories("${PROJECT_BINARY_DIR}/src/Glossary")
 link_directories("${PROJECT_BINARY_DIR}/src/Tests")
 link_directories("${Boost_LIBRARY_DIRS}")
 link_directories("${PYTHON_LIBRARY_PATH}")
@@ -18,6 +19,12 @@ target_link_libraries(py_tfel_tests TFELTests)
 tfel_python_module(utilities utilities.cxx
   TextData.cxx)
 target_link_libraries(py_tfel_utilities TFELUtilities)
+
+tfel_python_module(glossary
+  glossary.cxx
+  Glossary.cxx
+  GlossaryEntry.cxx)
+target_link_libraries(py_tfel_glossary TFELGlossary)
 
 tfel_python_module(math math.cxx
   vector.cxx

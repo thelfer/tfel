@@ -11,18 +11,17 @@ namespace mfront{
 
   MFrontImplicitParser::MFrontImplicitParser()
   {
-    using namespace std;
-    typedef map<string,string>::value_type MVType;
+    const Hypothesis h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
     // input variables
-    this->registerVariable("eto");
-    this->registerVariable("deto");
-    this->registerVariable("sig");
+    this->registerVariable("eto",false);
+    this->registerVariable("deto",false);
+    this->registerVariable("sig",false);
     this->mb.declareAsASmallStrainStandardBehaviour();
     // Default state variable
-    this->registerVariable("eel");
-    this->registerVariable("deel");
-    this->mb.getStateVariables().push_back(VariableDescription("StrainStensor","eel",1u,0u));
-    this->glossaryNames.insert(MVType("eel","ElasticStrain"));
+    this->registerVariable("eel",false);
+    this->registerVariable("deel",false);
+    this->mb.addStateVariable(h,VariableDescription("StrainStensor","eel",1u,0u));
+    this->mb.setGlossaryName(h,"eel","ElasticStrain");
   } // end of MFrontImplicitParser::MFrontImplicitParser
 
   std::string

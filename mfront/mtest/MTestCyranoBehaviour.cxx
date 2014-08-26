@@ -14,16 +14,16 @@
 #include"MFront/Cyrano/Cyrano.hxx"
 #include"MFront/MTestCyranoBehaviour.hxx"
 #include"MFront/MTestUmatNormaliseTangentOperator.hxx"
-#include"MFront/Cyrano/CyranoComputeStiffnessOperator.hxx"
+#include"MFront/Cyrano/CyranoComputeStiffnessTensor.hxx"
 
 
 namespace mfront
 {
 
   MTestCyranoBehaviour::MTestCyranoBehaviour(const tfel::material::ModellingHypothesis::Hypothesis h,
-							       const std::string& l,
-							       const std::string& b)
-    : MTestUmatBehaviourBase(l,b)
+					     const std::string& l,
+					     const std::string& b)
+    : MTestUmatBehaviourBase(h,l,b)
   {
     using namespace std;
     using namespace tfel::system;
@@ -31,31 +31,39 @@ namespace mfront
     typedef ExternalLibraryManager ELM;
     ELM& elm = ELM::getExternalLibraryManager();
     this->fct = elm.getUMATFunction(l,b);
-    this->mpnames = elm.getUMATMaterialPropertiesNames(l,b);
+    this->mpnames = elm.getUMATMaterialPropertiesNames(l,b,this->hypothesis);
+    const bool b1 = elm.getUMATRequiresStiffnessTensor(l,b,this->hypothesis);
+    const bool b2 = elm.getUMATRequiresThermalExpansionCoefficientTensor(l,b,this->hypothesis);
     if(this->stype==0){
-      this->mpnames.insert(this->mpnames.begin(),"ThermalExpansion");
-      this->mpnames.insert(this->mpnames.begin(),"MassDensity");
-      this->mpnames.insert(this->mpnames.begin(),"PoissonRatio");
-      this->mpnames.insert(this->mpnames.begin(),"YoungModulus");
+      if(b1){
+	this->mpnames.push_back("YoungModulus");
+	this->mpnames.push_back("PoissonRatio");
+      }
+      if(b2){
+	this->mpnames.push_back("ThermalExpansion");
+      }
     } else {
       vector<string> tmp;
-      if(h==ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN){
-	tmp.push_back("YoungModulus1");
-	tmp.push_back("YoungModulus2");
-	tmp.push_back("YoungModulus3");
-	tmp.push_back("PoissonRatio12");
-	tmp.push_back("PoissonRatio23");
-	tmp.push_back("PoissonRatio13");
-	tmp.push_back("MassDensity");
-	tmp.push_back("ThermalExpansion1");
-	tmp.push_back("ThermalExpansion2");
-	tmp.push_back("ThermalExpansion3");
+      if((h==ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN)||
+    	 (h==ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRESS)){
+    	if(b1){
+	  tmp.push_back("YoungModulus1");
+	  tmp.push_back("YoungModulus2");
+	  tmp.push_back("YoungModulus3");
+	  tmp.push_back("PoissonRatio12");
+	  tmp.push_back("PoissonRatio23");
+	  tmp.push_back("PoissonRatio13");
+	}
+	if(b2){
+	  tmp.push_back("ThermalExpansion1");
+	  tmp.push_back("ThermalExpansion2");
+	  tmp.push_back("ThermalExpansion3");
+	}
       } else {
-	string msg("MTestUmatStandardBehaviour::MTestUmatStandardBehaviour : ");
-	msg += "unsupported hypothesis";
-	throw(runtime_error(msg));
+    	string msg("MTestUmatStandardBehaviour::MTestUmatStandardBehaviour : ");
+    	msg += "unsupported hypothesis";
+    	throw(runtime_error(msg));
       }
-
       this->mpnames.insert(this->mpnames.begin(),tmp.begin(),tmp.end());
     }
     // if(h==ModellingHypothesis::PLANESTRESS){
@@ -76,6 +84,13 @@ namespace mfront
       iv.push_back(0.);
     }
   }
+
+  tfel::math::tmatrix<3u,3u,real>
+  MTestCyranoBehaviour::getRotationMatrix(const tfel::math::vector<real>&,
+					  const tfel::math::tmatrix<3u,3u,real>& r) const
+  {
+    return r;
+  } // end of MTestCyranoBehaviour::getRotationMatrix
 
   MTestStiffnessMatrixType::mtype
   MTestCyranoBehaviour::getDefaultStiffnessMatrixType(void) const
@@ -157,13 +172,16 @@ namespace mfront
     using namespace cyrano;
     typedef tfel::material::ModellingHypothesis MH;
     using tfel::math::vector;
-    using cyrano::CyranoComputeStiffnessOperator;
+    using cyrano::CyranoComputeStiffnessTensor;
     CyranoInt ntens;
     CyranoInt ndi;
     CyranoInt nprops = static_cast<CyranoInt>(mp.size());
     CyranoInt nstatv;
     if(h==MH::AXISYMMETRICALGENERALISEDPLANESTRAIN){
-      ndi   = 14;
+      ndi   = 1;
+      ntens = 3;
+    } else if(h==MH::AXISYMMETRICALGENERALISEDPLANESTRESS){
+      ndi   = 2;
       ntens = 3;
     } else {
       string msg("MTestCyranoBehaviour::integrate : ");
@@ -288,14 +306,23 @@ namespace mfront
   {
     using namespace std;
     using namespace tfel::math;
-    using cyrano::CyranoComputeStiffnessOperator;
+    using cyrano::CyranoComputeStiffnessTensor;
     typedef tfel::material::ModellingHypothesis MH;
     tmatrix<3u,3u,real>::size_type i,j;
     if(this->stype==0u){
       if(h==MH::AXISYMMETRICALGENERALISEDPLANESTRAIN){
 	st2tost2<1u,real> De;
-	CyranoComputeStiffnessOperator<MH::AXISYMMETRICALGENERALISEDPLANESTRAIN,
-				       cyrano::ISOTROPIC>::exe(&mp(0),De);
+	CyranoComputeStiffnessTensor<MH::AXISYMMETRICALGENERALISEDPLANESTRAIN,
+				     cyrano::ISOTROPIC,false>::exe(De,&mp(0));
+	for(i=0;i!=3u;++i){
+	  for(j=0;j!=3u;++j){
+	    Kt(i,j) = De(i,j);
+	  }
+	}
+      } else if(h==MH::AXISYMMETRICALGENERALISEDPLANESTRESS){
+	st2tost2<1u,real> De;
+	CyranoComputeStiffnessTensor<MH::AXISYMMETRICALGENERALISEDPLANESTRESS,
+				     cyrano::ISOTROPIC,false>::exe(De,&mp(0));
 	for(i=0;i!=3u;++i){
 	  for(j=0;j!=3u;++j){
 	    Kt(i,j) = De(i,j);
@@ -309,8 +336,17 @@ namespace mfront
     } else if(this->stype==1u){
       if(h==MH::AXISYMMETRICALGENERALISEDPLANESTRAIN){
 	st2tost2<1u,real> De;
-	CyranoComputeStiffnessOperator<MH::AXISYMMETRICALGENERALISEDPLANESTRAIN,
-				       cyrano::ORTHOTROPIC>::exe(&mp(0),De);
+	CyranoComputeStiffnessTensor<MH::AXISYMMETRICALGENERALISEDPLANESTRAIN,
+				     cyrano::ORTHOTROPIC,false>::exe(De,&mp(0));
+	for(i=0;i!=3u;++i){
+	  for(j=0;j!=3u;++j){
+	    Kt(i,j) = De(i,j);
+	  }
+	}
+      } else if(h==MH::AXISYMMETRICALGENERALISEDPLANESTRESS){
+	st2tost2<1u,real> De;
+	CyranoComputeStiffnessTensor<MH::AXISYMMETRICALGENERALISEDPLANESTRESS,
+				     cyrano::ORTHOTROPIC,false>::exe(De,&mp(0));
 	for(i=0;i!=3u;++i){
 	  for(j=0;j!=3u;++j){
 	    Kt(i,j) = De(i,j);

@@ -513,6 +513,13 @@ namespace tfel{
 	ptr.c = this->container.buffer;
 	return *(ptr.ptr);
       }
+      /*!
+       * \return the type index of the object 
+       */
+      TFEL_INLINE unsigned short
+      getTypeIndex(void) const{
+	return this->index;
+      }
       /*
        * Destructor
        */

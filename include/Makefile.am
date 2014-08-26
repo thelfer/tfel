@@ -14,6 +14,8 @@ nobase_include_HEADERS= TFEL/Macros.hxx                                         
 			TFEL/FSAlgorithm/fill.hxx			                                             \
 			TFEL/FSAlgorithm/for_each.hxx		                                                     \
 			TFEL/FSAlgorithm/equal.hxx			                                             \
+			TFEL/Glossary/Glossary.hxx	                                                             \
+			TFEL/Glossary/GlossaryEntry.hxx	                                                             \
 			TFEL/Material/OutOfBoundsPolicy.hxx	                                                     \
 			TFEL/Material/MechanicalBehaviour.hxx	                                                     \
 			TFEL/Material/Lame.hxx			                                                     \

@@ -29,6 +29,18 @@ namespace mfront
   struct MTestBehaviour
   {
     /*!
+     * \brief This function set a material property to its default value if it not already declared
+     * \param[out] mp  : evolution manager where 
+     * \param[in]  evm : evolution manager
+     * \param[in]  n   : material property name
+     * \param[in]  v   : default value
+     */
+    static void
+    setOptionalMaterialPropertyDefaultValue(MTestEvolutionManager&,
+					    const MTestEvolutionManager&,
+					    const std::string&,
+					    const real);
+    /*!
      * \return the type of the behaviour
      */
     virtual tfel::material::MechanicalBehaviourBase::BehaviourType
@@ -58,6 +70,13 @@ namespace mfront
     virtual void
     getStensorComponentsSuffixes(std::vector<std::string>&,
 				 const tfel::material::ModellingHypothesis::Hypothesis) const = 0;
+    /*!
+     * \param[in] c : components
+     * \param[in] h : modelling hypothesis
+     */
+    virtual void
+    getTensorComponentsSuffixes(std::vector<std::string>&,
+				const tfel::material::ModellingHypothesis::Hypothesis) const = 0;
     /*!
      * \param[in] c : components
      * \param[in] h : modelling hypothesis
@@ -98,6 +117,19 @@ namespace mfront
      */
     virtual std::vector<std::string>
     getMaterialPropertiesNames(void) const = 0;
+    /*!
+     * \brief some interfaces requires dummy material properties to be
+     * declared. For example, the Cast3M finite element solver
+     * requires the mass density and some extra material properties
+     * describing orthotropic axes to be declared.  This method is
+     * meant to automatically declare those if they are not defined by
+     * the user.
+     * \param[out] mp  : evolution manager where 
+     * \param[in]  evm : evolution manager
+     */
+    virtual void
+    setOptionalMaterialPropertiesDefaultValues(MTestEvolutionManager&,
+					       const MTestEvolutionManager&) const = 0;
     /*!
      * \return the number of internal variables
      */
@@ -169,6 +201,16 @@ namespace mfront
      */
     virtual MTestStiffnessMatrixType::mtype
     getDefaultStiffnessMatrixType(void) const = 0;
+    /*!
+     * \brief compute the *real* rotation matrix
+     * \param[in] mp : material properties
+     * \param[in] r  : rotation matrix defined by the user
+     * \note this method is only meaningfull for the umat (Cast3M)
+     * interface
+     */
+    virtual tfel::math::tmatrix<3u,3u,real>
+    getRotationMatrix(const tfel::math::vector<real>&,
+		      const tfel::math::tmatrix<3u,3u,real>&) const = 0;
     /*!
      * \brief integrate the mechanical behaviour over the time step
      * \return true if the integration was successfull, false otherwise

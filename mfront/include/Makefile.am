@@ -1,7 +1,9 @@
 ## Makefile.am -- Process this file with automake to produce a Makefile.in file.
 
-nobase_include_HEADERS= MFront/MFrontConfig.hxx                       \
-			MFront/MFront.hxx                             \
+nobase_include_HEADERS= MFront/MFront.hxx                             \
+			MFront/MFrontConfig.hxx	                      \
+			MFront/MFrontDebugMode.hxx	              \
+			MFront/MFrontLogStream.hxx                    \
 			MFront/MFrontGenericData.hxx                  \
 			MFront/MFrontFileDescription.hxx              \
 			MFront/MFrontLock.hxx                         \
@@ -10,6 +12,7 @@ nobase_include_HEADERS= MFront/MFrontConfig.hxx                       \
 			MFront/MFrontHeader.hxx                       \
 			MFront/MFrontVirtualParser.hxx                \
 			MFront/MFrontBehaviourParserCommon.hxx        \
+			MFront/MFrontBehaviourParserCommon.ixx        \
 			MFront/MFrontBehaviourParserBase.hxx          \
 			MFront/MFrontBehaviourParserBase.ixx          \
 			MFront/MFrontParserFactory.hxx                \
@@ -32,8 +35,14 @@ nobase_include_HEADERS= MFront/MFrontConfig.hxx                       \
 			MFront/MFrontModelParserBase.hxx              \
 			MFront/MFrontModelParserBase.ixx              \
 			MFront/MaterialPropertyDescription.hxx        \
+			MFront/MechanicalBehaviourAttribute.hxx       \
+			MFront/MechanicalBehaviourData.hxx            \
+			MFront/MechanicalBehaviourData.ixx            \
 			MFront/MechanicalBehaviourDescription.hxx     \
+			MFront/MechanicalBehaviourDescription.ixx     \
+			MFront/MechanicalBehaviourSymmetryType.hxx    \
 			MFront/ParserBase.hxx                         \
+			MFront/ParserBase.ixx                         \
 			MFront/InterfaceBase.hxx                      \
 			MFront/ParserUtilities.hxx                    \
 			MFront/SupportedTypes.hxx                     \
@@ -45,7 +54,6 @@ nobase_include_HEADERS= MFront/MFrontConfig.hxx                       \
 			MFront/VarHandler.hxx                         \
 			MFront/StaticVarHandler.hxx                   \
 			MFront/VariableDescription.hxx                \
-			MFront/MechanicalVariableDescription.hxx      \
 			MFront/StaticVariableDescription.hxx          \
 			MFront/LawFunction.hxx                        \
 			MFront/MFrontDefaultParserBase.hxx            \
@@ -54,10 +62,6 @@ nobase_include_HEADERS= MFront/MFrontConfig.hxx                       \
 			MFront/MFrontDefaultFiniteStrainParser.hxx    \
 			MFront/MFrontMaterialLawParser.hxx            \
 			MFront/MFrontModelParser.hxx                  \
-			MFront/VariableModifier.hxx                   \
-			MFront/VariableModifier.ixx                   \
-			MFront/WordAnalyser.hxx                       \
-			MFront/WordAnalyser.ixx                       \
 			MFront/MFrontUMATInterfaceBase.hxx            \
 			MFront/MTestFileGeneratorBase.hxx             \
 			MFront/UMATSmallStrainMTestFileGenerator.hxx  \
@@ -86,7 +90,6 @@ nobase_noinst_HEADERS += MFront/MFrontCLawInterfaceBase.hxx          \
 			 MFront/MFrontPythonLawInterface.hxx
 
 nobase_include_HEADERS += MFront/MTestTypes.hxx	                         \
-			  MFront/MTestLogStream.hxx	                 \
 			  MFront/MTest.hxx	                         \
 			  MFront/MTestParser.hxx	                 \
 			  MFront/MTestConfig.hxx	                 \
@@ -130,8 +133,9 @@ nobase_include_HEADERS += MFront/UMAT/UMAT.hxx                                  
 			  MFront/UMAT/UMATOrthotropicBehaviourHandler.hxx              \
 			  MFront/UMAT/UMATGenericPlaneStressHandler.hxx                \
 			  MFront/UMAT/UMATRotationMatrix.hxx                           \
+			  MFront/UMAT/UMATFiniteStrainRotationMatrix.hxx               \
 			  MFront/UMAT/UMATOrthotropicBehaviour.hxx                     \
-			  MFront/UMAT/UMATComputeStiffnessOperator.hxx                 \
+			  MFront/UMAT/UMATComputeStiffnessTensor.hxx                   \
 			  MFront/UMAT/UMATComputeThermalExpansionCoefficientTensor.hxx \
 			  MFront/UMAT/UMATStressFreeExpansionHandler.hxx               \
 			  MFront/UMAT/UMATTangentOperator.hxx
@@ -151,8 +155,7 @@ nobase_include_HEADERS += MFront/Cyrano/Cyrano.hxx 				           \
 			  MFront/Cyrano/CyranoOrthotropicBehaviourHandler.hxx 	           \
 			  MFront/Cyrano/CyranoGenericPlaneStressHandler.hxx 	           \
 			  MFront/Cyrano/CyranoOutOfBoundsPolicy.hxx 		           \
-			  MFront/Cyrano/CyranoOrthotropicBehaviour.hxx 		           \
-			  MFront/Cyrano/CyranoComputeStiffnessOperator.hxx 	           \
+			  MFront/Cyrano/CyranoComputeStiffnessTensor.hxx 	           \
 			  MFront/Cyrano/CyranoGetModellingHypothesis.hxx 	           \
 			  MFront/Cyrano/CyranoComputeThermalExpansionCoefficientTensor.hxx \
 			  MFront/MFrontCyranoInterface.hxx
@@ -171,7 +174,7 @@ nobase_include_HEADERS += MFront/Aster/Aster.hxx                                
 			  MFront/Aster/AsterOrthotropicBehaviourHandler.hxx              \
 			  MFront/Aster/AsterRotationMatrix.hxx                           \
 			  MFront/Aster/AsterOrthotropicBehaviour.hxx                     \
-			  MFront/Aster/AsterComputeStiffnessOperator.hxx                 \
+			  MFront/Aster/AsterComputeStiffnessTensor.hxx                   \
 			  MFront/Aster/AsterComputeThermalExpansionCoefficientTensor.hxx \
 			  MFront/Aster/AsterStressFreeExpansionHandler.hxx               \
 			  MFront/Aster/AsterTangentOperator.hxx                          \

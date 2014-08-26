@@ -36,7 +36,7 @@ namespace tfel{
       public:
 
 	template<typename T>
-	static bool test(const T* const s,
+	static bool test(const T* const,
 			 const tfel::math::tvector<3u,T>&,
 			 const tfel::math::tmatrix<3u,3u,T>&)
 	{

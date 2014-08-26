@@ -19,6 +19,30 @@ namespace tfel
 {
   namespace system
   {
+
+    static void
+    ExternalLibraryManagerCheckModellingHypothesisName(const std::string& h)
+    {
+      using namespace std;
+      if(!((h=="AxisymmetricalGeneralisedPlaneStrain")||
+	   (h=="AxisymmetricalGeneralisedPlaneStress")||
+	   (h=="Axisymmetrical")||
+	   (h=="PlaneStress")||
+	   (h=="PlaneStrain")||
+	   (h=="GeneralisedPlaneStrain")||
+	   (h=="Tridimensional"))){
+	string msg("ExternalLibraryManagerCheckModellingHypothesisName : "
+		   "invalid or unsupported hypothesis '"+h+"'. The following "
+		   "hypotheses are supported:\n"
+		   "- AxisymmetricalGeneralisedPlaneStrain\n"
+		   "- Axisymmetrical\n"
+		   "- PlaneStress\n"
+		   "- PlaneStrain\n"
+		   "- GeneralisedPlaneStrain\n"
+		   "- Tridimensional");
+	throw(runtime_error(msg));
+      }
+    } // end of ExternalLibraryManagerCheckModellingHypothesisName
     
     ExternalLibraryManager&
     ExternalLibraryManager::getExternalLibraryManager()
@@ -113,7 +137,7 @@ namespace tfel
       }
       return s;
     } // end of ExternalLibraryManager::getSource
-        
+
     void
     ExternalLibraryManager::setParameter(const std::string& l,
 					 const std::string& f,
@@ -209,6 +233,114 @@ namespace tfel
 	throw(runtime_error(msg));
       }
     } // end of ExternalLibraryManager::setParameter
+        
+    void
+    ExternalLibraryManager::setParameter(const std::string& l,
+					 const std::string& f,
+					 const std::string& h,
+					 const std::string& p,
+					 const double v)
+    {
+      using namespace std;
+#if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
+      HINSTANCE__* lib = this->loadLibrary(l);
+#else
+      void * lib = this->loadLibrary(l);
+#endif /* defined _WIN32 || _WIN64 || defined __CYGWIN__ */
+      int (TFEL_ADDCALL_PTR fct)(const char*const,const double);
+      fct = ::tfel_getSetParameterFunction(lib,(f+"_"+h+"_setParameter").c_str());
+      if(fct==0){
+	fct = ::tfel_getSetParameterFunction(lib,(f+"_setParameter").c_str());
+      }
+      if(fct==0){
+	string msg("ExternalLibraryManager::setParameter : ");
+	msg += " can't get the '"+f+"_setParameter' function (";
+#if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
+	  msg += ::GetLastError();
+#else
+	  msg += ::dlerror();
+#endif /* defined _WIN32 || _WIN64 || defined __CYGWIN__ */
+	msg += ")";
+	throw(runtime_error(msg));
+      }
+      if(!fct(p.c_str(),v)){
+	string msg("ExternalLibraryManager::setParameter : ");
+	msg += " call to the '"+f+"_setParameter' function failed";
+	throw(runtime_error(msg));
+      }
+    } // end of ExternalLibraryManager::setParameter
+
+    void
+    ExternalLibraryManager::setParameter(const std::string& l,
+					 const std::string& f,
+					 const std::string& h,
+					 const std::string& p,
+					 const int v)
+    {
+      using namespace std;
+#if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
+      HINSTANCE__* lib = this->loadLibrary(l);
+#else
+      void * lib = this->loadLibrary(l);
+#endif /* defined _WIN32 || _WIN64 || defined __CYGWIN__ */
+      int (TFEL_ADDCALL_PTR fct)(const char*const,const int);
+      fct = ::tfel_getSetIntegerParameterFunction(lib,(f+"_"+h+"_setIntegerParameter").c_str());
+      if(fct==0){
+	fct = ::tfel_getSetIntegerParameterFunction(lib,(f+"_setIntegerParameter").c_str());
+      }
+      if(fct==0){
+	string msg("ExternalLibraryManager::setParameter : ");
+	msg += " can't get the '"+f+"_setParameter' function (";
+#if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
+	  msg += ::GetLastError();
+#else
+	  msg += ::dlerror();
+#endif /* defined _WIN32 || _WIN64 || defined __CYGWIN__ */
+	msg += ")";
+	throw(runtime_error(msg));
+      }
+      if(!fct(p.c_str(),v)){
+	string msg("ExternalLibraryManager::setParameter : ");
+	msg += " call to the '"+f+"_setParameter' function failed";
+	throw(runtime_error(msg));
+      }
+    } // end of ExternalLibraryManager::setParameter
+    
+    void
+    ExternalLibraryManager::setParameter(const std::string& l,
+					 const std::string& f,
+					 const std::string& h,
+					 const std::string& p,
+					 const unsigned short v)
+    {
+      using namespace std;
+#if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
+      HINSTANCE__* lib = this->loadLibrary(l);
+#else
+      void * lib = this->loadLibrary(l);
+#endif /* defined _WIN32 || _WIN64 || defined __CYGWIN__ */
+      int (TFEL_ADDCALL_PTR fct)(const char*const,const unsigned short);
+      fct = ::tfel_getSetUnsignedShortParameterFunction(lib,(f+"_"+h+"_setUnsignedShortParameter").c_str());
+      if(fct==0){
+	fct = ::tfel_getSetUnsignedShortParameterFunction(lib,(f+"_setUnsignedShortParameter").c_str());
+      }
+      if(fct==0){
+	string msg("ExternalLibraryManager::setParameter : ");
+	msg += " can't get the '"+f+"_setParameter' function (";
+#if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
+	  msg += ::GetLastError();
+#else
+	  msg += ::dlerror();
+#endif /* defined _WIN32 || _WIN64 || defined __CYGWIN__ */
+	msg += ")";
+	throw(runtime_error(msg));
+      }
+      if(!fct(p.c_str(),v)){
+	string msg("ExternalLibraryManager::setParameter : ");
+	msg += " call to the '"+f+"_setParameter' function failed";
+	throw(runtime_error(msg));
+      }
+    } // end of ExternalLibraryManager::setParameter
     
     unsigned short
     ExternalLibraryManager::getCastemFunctionNumberOfVariables(const std::string& l,
@@ -238,20 +370,24 @@ namespace tfel
     }
 
     bool
-    ExternalLibraryManager::checkIfAsterBehaviourRequiresElasticMaterialPropertiesOffset(const std::string& l,
-											 const std::string& f)
+    ExternalLibraryManager::getUMATRequiresStiffnessTensor(const std::string& l,
+							   const std::string& f,
+							   const std::string& h)
     {
       using namespace std;
+      ExternalLibraryManagerCheckModellingHypothesisName(h);
       int res;
-      #if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
+#if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
       HINSTANCE__* lib = this->loadLibrary(l);
 #else
       void * lib = this->loadLibrary(l);
 #endif /* defined _WIN32 || _WIN64 || defined __CYGWIN__ */
-
-      res = ::tfel_checkIfAsterBehaviourRequiresElasticMaterialPropertiesOffset(lib,f.c_str());
+      res = ::tfel_getUMATRequiresStiffnessTensor(lib,(f+"_"+h).c_str());
       if(res<0){
-	string msg("ExternalLibraryManager::checkIfAsterBehaviourRequiresElasticMaterialPropertiesOffset : ");
+	res = ::tfel_getUMATRequiresStiffnessTensor(lib,f.c_str());
+      }
+      if(res<0){
+	string msg("ExternalLibraryManager::getUMATRequiresStiffnessTensor : ");
 	msg += "information could not be read (";
 #if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
 	  msg += ::GetLastError();
@@ -265,47 +401,51 @@ namespace tfel
 	return true;
       }
       if(res!=0){
-	string msg("ExternalLibraryManager::checkIfAsterBehaviourRequiresElasticMaterialPropertiesOffset : ");
+	string msg("ExternalLibraryManager::getUMATRequiresStiffnessTensor : ");
 	msg += "invalid returned value";
 	throw(runtime_error(msg));
       }
       return false;
-    } // end of ExternalLibraryManager::checkIfAsterBehaviourRequiresElasticMaterialPropertiesOffset
+    } // end of ExternalLibraryManager::getUMATRequiresStiffnessTensor
  
-    bool
-    ExternalLibraryManager::checkIfAsterBehaviourRequiresThermalExpansionMaterialPropertiesOffset(const std::string& l,
-												  const std::string& f)
-    {
-      using namespace std;
-      int res;
-      #if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
-      HINSTANCE__* lib = this->loadLibrary(l);
-#else
-      void * lib = this->loadLibrary(l);
-#endif /* defined _WIN32 || _WIN64 || defined __CYGWIN__ */
-
-      res = ::tfel_checkIfAsterBehaviourRequiresThermalExpansionMaterialPropertiesOffset(lib,f.c_str());
-      if(res<0){
-	string msg("ExternalLibraryManager::checkIfAsterBehaviourRequiresThermalExpansionMaterialPropertiesOffset : ");
-	msg += "information could not be read (";
+   bool
+   ExternalLibraryManager::getUMATRequiresThermalExpansionCoefficientTensor(const std::string& l,
+									    const std::string& f,
+									    const std::string& h)
+   {
+     using namespace std;
+     ExternalLibraryManagerCheckModellingHypothesisName(h);
+     int res;
 #if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
-	  msg += ::GetLastError();
+     HINSTANCE__* lib = this->loadLibrary(l);
 #else
-	  msg += ::dlerror();
+     void * lib = this->loadLibrary(l);
 #endif /* defined _WIN32 || _WIN64 || defined __CYGWIN__ */
-	msg += ")";
-	throw(runtime_error(msg));
-      }
-      if(res==1){
-	return true;
-      }
-      if(res!=0){
-	string msg("ExternalLibraryManager::checkIfAsterBehaviourRequiresThermalExpansionMaterialPropertiesOffset : ");
-	msg += "invalid returned value";
-	throw(runtime_error(msg));
-      }
-      return false;
-    } // end of ExternalLibraryManager::checkIfAsterBehaviourRequiresThermalExpansionMaterialPropertiesOffset
+     res = ::tfel_getUMATRequiresThermalExpansionCoefficientTensor(lib,(f+"_"+h).c_str());
+     if(res<0){
+       res = ::tfel_getUMATRequiresThermalExpansionCoefficientTensor(lib,f.c_str());
+     }
+     if(res<0){
+       string msg("ExternalLibraryManager::getUMATRequiresThermalExpansionCoefficientTensor : ");
+       msg += "information could not be read (";
+#if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
+       msg += ::GetLastError();
+#else
+       msg += ::dlerror();
+#endif /* defined _WIN32 || _WIN64 || defined __CYGWIN__ */
+       msg += ")";
+       throw(runtime_error(msg));
+     }
+     if(res==1){
+       return true;
+     }
+     if(res!=0){
+       string msg("ExternalLibraryManager::getUMATRequiresThermalExpansionCoefficientTensor : ");
+       msg += "invalid returned value";
+       throw(runtime_error(msg));
+     }
+     return false;
+   } // end of ExternalLibraryManager::getUMATRequiresThermalExpansionCoefficientTensor
 
     bool
     ExternalLibraryManager::checkIfAsterBehaviourSavesTangentOperator(const std::string& l,
@@ -436,16 +576,21 @@ namespace tfel
     ExternalLibraryManager::getUMATNames(std::vector<std::string>& vars,
 					 const std::string& l,
 					 const std::string& f,
+					 const std::string& h,
 					 const std::string& n)
     {
       using namespace std;
-      #if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
+      ExternalLibraryManagerCheckModellingHypothesisName(h);
+#if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
       HINSTANCE__* lib = this->loadLibrary(l);
 #else
       void * lib = this->loadLibrary(l);
 #endif /* defined _WIN32 || _WIN64 || defined __CYGWIN__ */
-
-      int nb = ::tfel_getUnsignedShort(lib,(f+"_n"+n).c_str());
+      ExternalLibraryManagerCheckModellingHypothesisName(h);
+      int nb = ::tfel_getUnsignedShort(lib,(f+"_"+h+"_n"+n).c_str());
+      if(nb==-1){
+	nb = ::tfel_getUnsignedShort(lib,(f+"_n"+n).c_str());
+      }
       char ** res;
       if(nb==-1){
 	string msg("ExternalLibraryManager::getUMATNames : ");
@@ -458,7 +603,10 @@ namespace tfel
 	msg += ")";
 	throw(runtime_error(msg));
       }
-      res = ::tfel_getArrayOfStrings(lib,(f+'_'+n).c_str());
+      res = ::tfel_getArrayOfStrings(lib,(f+"_"+h+'_'+n).c_str());
+      if(res==0){
+	res = ::tfel_getArrayOfStrings(lib,(f+'_'+n).c_str());
+      }
       if(res==0){
 	string msg("ExternalLibraryManager::getUMATNames : ");
 	msg += "variables names could not be read (";
@@ -475,16 +623,21 @@ namespace tfel
 
     bool
     ExternalLibraryManager::isUMATBehaviourUsableInPurelyImplicitResolution(const std::string& l,
-									    const std::string& f)
+									    const std::string& f,
+									    const std::string& h)
     {
       using namespace std;
+      ExternalLibraryManagerCheckModellingHypothesisName(h);
       #if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
       HINSTANCE__* lib = this->loadLibrary(l);
 #else
       void * lib = this->loadLibrary(l);
 #endif /* defined _WIN32 || _WIN64 || defined __CYGWIN__ */
 
-      int b = ::tfel_getBool(lib,(f+"_UsableInPurelyImplicitResolution").c_str());
+      int b = ::tfel_getBool(lib,(f+"_"+h+"_UsableInPurelyImplicitResolution").c_str());
+      if(b==-1){
+	b = ::tfel_getBool(lib,(f+"_UsableInPurelyImplicitResolution").c_str());
+      }
       if(b==-1){
 	return false;
       }
@@ -544,7 +697,7 @@ namespace tfel
 
     unsigned short
     ExternalLibraryManager::getUMATSymmetryType(const std::string& l,
-						 const std::string& f)
+						const std::string& f)
     {
       using namespace std;
 #if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
@@ -570,7 +723,7 @@ namespace tfel
 
     unsigned short
     ExternalLibraryManager::getUMATElasticSymmetryType(const std::string& l,
-							const std::string& f)
+						       const std::string& f)
     {
       using namespace std;
 #if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
@@ -596,9 +749,11 @@ namespace tfel
 
     std::vector<int>
     ExternalLibraryManager::getUMATInternalStateVariablesTypes(const std::string& l,
-							       const std::string& f)
+							       const std::string& f,
+							       const std::string& h)
     {
       using namespace std;
+      ExternalLibraryManagerCheckModellingHypothesisName(h);
       vector<int> types;
 #if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
       HINSTANCE__* lib = this->loadLibrary(l);
@@ -606,7 +761,10 @@ namespace tfel
       void * lib = this->loadLibrary(l);
 #endif /* defined _WIN32 || _WIN64 || defined __CYGWIN__ */
 
-      int nb = ::tfel_getUnsignedShort(lib,(f+"_nInternalStateVariables").c_str());
+      int nb = ::tfel_getUnsignedShort(lib,(f+"_"+h+"_nInternalStateVariables").c_str());
+      if(nb==-1){
+	nb = ::tfel_getUnsignedShort(lib,(f+"_nInternalStateVariables").c_str());
+      }
       int * res;
       if(nb==-1){
 	string msg("ExternalLibraryManager::getUMATInternalStateVariablesTypes : ");
@@ -619,7 +777,10 @@ namespace tfel
 	msg += ")";
 	throw(runtime_error(msg));
       }
-      res = ::tfel_getArrayOfInt(lib,(f+"_InternalStateVariablesTypes").c_str());
+      res = ::tfel_getArrayOfInt(lib,(f+"_"+h+"_InternalStateVariablesTypes").c_str());
+      if(res==0){
+	res = ::tfel_getArrayOfInt(lib,(f+"_InternalStateVariablesTypes").c_str());
+      }
       if(res==0){
 	string msg("ExternalLibraryManager::getUMATInternalStateVariablesTypes : ");
 	msg += "internal state variables types could not be read (";
@@ -637,32 +798,35 @@ namespace tfel
 
     std::vector<std::string>
     ExternalLibraryManager::getUMATMaterialPropertiesNames(const std::string& l,
-							   const std::string& f)
+							   const std::string& f,
+							   const std::string& h)
     {
       using namespace std;
       vector<string> vars;
-      this->getUMATNames(vars,l,f,"MaterialProperties");
+      this->getUMATNames(vars,l,f,h,"MaterialProperties");
       return vars;
     } // end of ExternalLibraryManager::getUMATMaterialPropertiesNames
 
 
     std::vector<std::string>
     ExternalLibraryManager::getUMATInternalStateVariablesNames(const std::string& l,
-							       const std::string& f)
+							       const std::string& f,
+							       const std::string& h)
     {
       using namespace std;
       vector<string> vars;
-      this->getUMATNames(vars,l,f,"InternalStateVariables");
+      this->getUMATNames(vars,l,f,h,"InternalStateVariables");
       return vars;
     } // end of ExternalLibraryManager::getUMATMaterialPropertiesNames
 
     std::vector<std::string>
     ExternalLibraryManager::getUMATExternalStateVariablesNames(const std::string& l,
-							       const std::string& f)
+							       const std::string& f,
+							       const std::string& h)
     {
       using namespace std;
       vector<string> vars;
-      this->getUMATNames(vars,l,f,"ExternalStateVariables");
+      this->getUMATNames(vars,l,f,h,"ExternalStateVariables");
       return vars;
     } // end of ExternalLibraryManager::getUMATMaterialPropertiesNames
   

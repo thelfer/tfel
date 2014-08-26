@@ -13,7 +13,7 @@
 #endif
 
 #include"MFront/Aster/AsterTangentOperator.hxx"
-#include"MFront/Aster/AsterComputeStiffnessOperator.hxx"
+#include"MFront/Aster/AsterComputeStiffnessTensor.hxx"
 #include"MFront/Aster/AsterComputeThermalExpansionCoefficientTensor.hxx"
 
 namespace aster
@@ -104,8 +104,8 @@ namespace aster
       typedef typename BV::BehaviourData  BData;
       TFEL_ASTER_INLINE static void
 	exe(BData& data,const AsterReal * const props){
-	AsterComputeStiffnessOperator<N,AsterTraits<BV>::etype>::exe(props,
-								   data.getStiffnessOperator());
+	AsterComputeStiffnessTensor<N,AsterTraits<BV>::etype>::exe(props,
+								   data.getStiffnessTensor());
       } // end of exe
     }; // end of struct StiffnessOperatorInitializer
 
@@ -116,10 +116,9 @@ namespace aster
       TFEL_ASTER_INLINE static void
 	exe(BData& data,const AsterReal * const props){
 	const unsigned short o =
-	  AsterTraits<BV>::elasticPropertiesOffset+
-	  AsterTraits<BV>::massDensityOffsetForThermalExpansion;
+	  AsterTraits<BV>::elasticPropertiesOffset;
 	AsterComputeThermalExpansionCoefficientTensor<N,AsterTraits<BV>::etype>::exe(props+o,
-									  data.getThermalExpansionCoefficientTensor());
+										     data.getThermalExpansionCoefficientTensor());
       } // end of exe
     }; // end of struct ThermalExpansionCoefficientTensorInitializer
 
@@ -352,7 +351,7 @@ namespace aster
       typedef MechanicalBehaviourTraits<BV> Traits;
       const unsigned short offset  = (AsterTraits<BV>::elasticPropertiesOffset+
 				      AsterTraits<BV>::thermalExpansionPropertiesOffset);
-      const unsigned short nprops  = Traits::material_properties_nb;
+      const unsigned short nprops  = AsterTraits<BV>::material_properties_nb;
       const unsigned short NPROPS_ = offset+nprops == 0 ? 1u : offset+nprops; 
       const bool is_defined_       = Traits::is_defined;
       //Test if the nb of properties matches Behaviour requirements

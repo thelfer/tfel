@@ -26,6 +26,14 @@ namespace cyrano
   MFRONT_CYRANO_VISIBILITY_EXPORT
   tfel::material::ModellingHypothesis::Hypothesis
   getModellingHypothesis(const CyranoInt);
+
+  /*!
+   * \return the identifier associted with the given modelling hypothesis
+   *
+   * \param[in] h : modelling hypothesis
+   */
+  MFRONT_CYRANO_VISIBILITY_EXPORT CyranoInt
+  getModellingHypothesisIdentifier(const tfel::material::ModellingHypothesis::Hypothesis&);
   
 } // end of namespace cyrano
 

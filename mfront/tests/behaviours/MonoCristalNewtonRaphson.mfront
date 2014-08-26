@@ -59,11 +59,9 @@
       vp[i]=0.;
     }
     vepsp+=vp[i]*ss.mus[i] ;
+    fg[i]  -= vp[i];
   }
   feel += vepsp-deto;
-  for(unsigned short i=0;i!=Nss;++i){
-    fg[i]  -= vp[i];
-  }  
 } 
 
 @UpdateAuxiliaryStateVars{

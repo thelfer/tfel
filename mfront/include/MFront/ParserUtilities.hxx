@@ -25,8 +25,7 @@ namespace mfront{
   writeStaticVariables(const std::string&,
 		       std::ofstream&,
 		       const StaticVariableDescriptionContainer&,
-		       const std::string&,
-		       const bool);
+		       const std::string&);
   
   TFEL_VISIBILITY_EXPORT std::string
   getMaterialLawLibraryNameBase(const std::string&,

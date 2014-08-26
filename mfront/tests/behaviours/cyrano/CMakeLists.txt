@@ -15,6 +15,7 @@ set(mfront_tests_SOURCES
   OrthotropicElastic
   OrthotropicElastic2
   Norton
+  ImplicitNorton
   OrthotropicCreep
   EllipticCreep)
 mfront_dependencies(MFrontCyranoBehaviours
@@ -67,3 +68,5 @@ test_cyrano(norton)
 test_cyrano(norton2)
 test_cyrano(orthotropiccreep)
 test_cyrano(ellipticcreep)
+test_cyrano(implicitnorton)
+test_cyrano(implicitnorton2)

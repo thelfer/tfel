@@ -8,7 +8,6 @@
 @Behaviour<umat> '@MFrontCastemBehavioursBuildPath@' 'umatburger';
 @MaterialProperty<constant> 'YoungModulus' 31000. ; 
 @MaterialProperty<constant> 'PoissonRatio'     0.3 ;    
-@MaterialProperty<constant> 'MassDensity'      0.; 
 @MaterialProperty<constant> 'ThermalExpansion' 0.;    
 @MaterialProperty<constant> 'KRS'   2.0E5 ;   
 @MaterialProperty<constant> 'NRS'   4.0E10 ; 

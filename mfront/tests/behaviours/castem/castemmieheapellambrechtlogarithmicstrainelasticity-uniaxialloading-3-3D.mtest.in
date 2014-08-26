@@ -1,5 +1,5 @@
 /*! 
- * \file   castemmieheapellambrechtlogarithmicstrain-uniaxialloading-2-3D.mtest
+ * \file   castemmieheapellambrechtlogarithmicstrain-uniaxialloading-3-3D.mtest
  * \brief
  * \author Helfer Thomas
  * \brief  4 dec. 2013
@@ -9,8 +9,6 @@
 @Behaviour<umat> '@MFrontCastemBehavioursBuildPath@' 'umatlogarithmicstrainelasticity';
 @MaterialProperty<constant> 'YoungModulus'     215.e9;
 @MaterialProperty<constant> 'PoissonRatio'       0.3;
-@MaterialProperty<constant> 'MassDensity'        0.;
-@MaterialProperty<constant> 'ThermalExpansion'   0.;
 
 @ImposedDrivingVariable 'FYY' {0:1.,1.:1.8};
 @ImposedDrivingVariable 'FXY' 0.;

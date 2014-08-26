@@ -32,9 +32,9 @@ namespace umat{
      * \brief throw an exception
      */
     static void
-    exe(const UMATReal *const ,
+    exe(const UMATReal *const,
 	const UMATReal *const,
-	const UMATReal *const,
+	UMATReal *const,
 	const UMATReal *const,
 	const UMATReal *const,
 	const UMATReal *const,
@@ -45,7 +45,8 @@ namespace umat{
 	const UMATReal *const,
 	UMATReal *const,
 	const UMATInt  *const,
-	UMATReal *const); // end of exe
+	UMATReal *const,
+	const StressFreeExpansionHandler&);
   }; // end of struct UMATUnSupportedCaseHandler
 
   /*!

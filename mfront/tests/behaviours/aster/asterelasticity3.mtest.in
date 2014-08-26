@@ -8,8 +8,6 @@
 @Behaviour<aster> '@MFrontAsterBehavioursBuildPath@' 'asterelasticity';
 @MaterialProperty<castem>   'YoungModulus' '@MFrontMaterialPropertiesCastemBuildPath@' 'Inconel600_YoungModulus';
 @MaterialProperty<constant> 'PoissonRatio'       0.3;
-@MaterialProperty<constant> 'MassDensity'        0.;
-@MaterialProperty<constant> 'ThermalExpansion'   0.;
 
 @Real 'T0' 400.;
 @Real 'T1' 523.;

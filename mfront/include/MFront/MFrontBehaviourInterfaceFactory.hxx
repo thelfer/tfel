@@ -24,12 +24,6 @@ namespace mfront{
     static MFrontBehaviourInterfaceFactory&
     getMFrontBehaviourInterfaceFactory();
 
-    void setVerboseMode(void);
-
-    void setDebugMode(void);
-
-    void setWarningMode(void);
-
     std::vector<std::string>
     getRegistredInterfaces(void);
 
@@ -62,10 +56,6 @@ namespace mfront{
     TFEL_VISIBILITY_LOCAL
     InterfaceContainer&
     getInterfacesMap(void);
-
-    bool verboseMode;
-    bool debugMode;
-    bool warningMode;
 
   };
 

@@ -17,8 +17,6 @@
 
 @MaterialProperty<constant> 'YoungModulus'     'E';
 @MaterialProperty<constant> 'PoissonRatio'     'nu';
-@MaterialProperty<constant> 'MassDensity'       0.;
-@MaterialProperty<constant> 'ThermalExpansion'  0.;
 
 @ExternalStateVariable<function> 'Temperature' 'T';
 

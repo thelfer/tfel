@@ -19,10 +19,6 @@
 @MaterialProperty<constant> 'PoissonRatio12'       'nu';
 @MaterialProperty<constant> 'PoissonRatio13'       'nu';
 @MaterialProperty<constant> 'PoissonRatio23'       'nu';
-@MaterialProperty<constant> 'MassDensity' 0.;
-@MaterialProperty<constant> 'ThermalExpansion1' 0.;
-@MaterialProperty<constant> 'ThermalExpansion2' 0.;
-@MaterialProperty<constant> 'ThermalExpansion3' 0.;
 
 @ExternalStateVariable 'Temperature' 293.15;
 

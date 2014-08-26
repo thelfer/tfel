@@ -41,6 +41,24 @@ namespace cyrano
 	  tfel::config::Types<1u,CyranoReal,false>::ThermalExpansionCoefficientTensor&);
   }; // end of struct CyranoComputeThermalExpansionCoefficientTensor
 
+  template<>
+  struct MFRONT_CYRANO_VISIBILITY_EXPORT
+  CyranoComputeThermalExpansionCoefficientTensor<tfel::material::ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRESS,ISOTROPIC>
+  {
+    static void
+      exe(const CyranoReal* const,
+	  tfel::config::Types<1u,CyranoReal,false>::ThermalExpansionCoefficientTensor&);
+  }; // end of struct CyranoComputeThermalExpansionCoefficientTensor
+
+  template<>
+  struct MFRONT_CYRANO_VISIBILITY_EXPORT
+  CyranoComputeThermalExpansionCoefficientTensor<tfel::material::ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRESS,ORTHOTROPIC>
+  {
+    static void
+      exe(const CyranoReal* const,
+	  tfel::config::Types<1u,CyranoReal,false>::ThermalExpansionCoefficientTensor&);
+  }; // end of struct CyranoComputeThermalExpansionCoefficientTensor
+
 } // end of namespace cyrano
 
 #endif /* _LIB_MFRONT_CYRANOCOMPUTETHERMALEXPANSIONTENSOR_HXX */

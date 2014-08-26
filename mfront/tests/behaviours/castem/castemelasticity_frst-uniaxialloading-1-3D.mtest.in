@@ -8,8 +8,6 @@
 @Behaviour<umat> '@MFrontCastemBehavioursBuildPath@' 'umatelasticity_frst';
 @MaterialProperty<constant> 'YoungModulus'     215.e9;
 @MaterialProperty<constant> 'PoissonRatio'       0.3;
-@MaterialProperty<constant> 'MassDensity'        0.;
-@MaterialProperty<constant> 'ThermalExpansion'   0.;
 
 @ImposedDrivingVariable 'FXX' 1.;
 @ImposedDrivingVariable 'FYY' {0:1.,1.:1.2};

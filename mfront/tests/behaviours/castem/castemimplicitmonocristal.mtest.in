@@ -20,16 +20,6 @@
 @MaterialProperty<constant> 'ShearModulus12'    'young';
 @MaterialProperty<constant> 'ShearModulus13'    'young';
 @MaterialProperty<constant> 'ShearModulus23'    'young';
-@MaterialProperty<constant> 'ThermalExpansion1' 0.;
-@MaterialProperty<constant> 'ThermalExpansion2' 0.;
-@MaterialProperty<constant> 'ThermalExpansion3' 0.;
-@MaterialProperty<constant> 'MassDensity'       0.;
-@MaterialProperty<constant> 'V1X'   1.;
-@MaterialProperty<constant> 'V1Y'   0.;
-@MaterialProperty<constant> 'V1Z'   0.;
-@MaterialProperty<constant> 'V2X'   0.;
-@MaterialProperty<constant> 'V2Y'   1.;
-@MaterialProperty<constant> 'V2Z'   0.;
 @MaterialProperty<constant> 'm'      10.0;
 @MaterialProperty<constant> 'K'      25.0;
 @MaterialProperty<constant> 'C'      14363.;

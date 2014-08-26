@@ -44,15 +44,6 @@ namespace mfront{
     MFrontMaterialLawParser();
 
     virtual void
-    setVerboseMode(void);
-
-    virtual void
-    setWarningMode(void);
-
-    virtual void
-    setDebugMode(void);
-    
-    virtual void
     getKeywordsList(std::vector<std::string>&) const;
 
     virtual void
@@ -105,7 +96,31 @@ namespace mfront{
 
     typedef void (MFrontMaterialLawParser::* MemberFuncPtr)(void);
     typedef std::map<std::string,MemberFuncPtr> CallBackContainer;
-
+    /*!
+     * \return the name of the generated class
+     */
+    virtual std::string getClassName(void) const;
+    /*!
+     * \brief add a material law
+     * \param[in] m : added material law name
+     */
+    virtual void addMaterialLaw(const std::string&);
+    /*!
+     * \brief append the given code to the includes
+     */
+    virtual void appendToIncludes(const std::string&);
+    /*!
+     * \brief append the given code to the members
+     */
+    virtual void appendToMembers(const std::string&);
+    /*!
+     * \brief append the given code to the private code
+     */
+    virtual void appendToPrivateCode(const std::string&);
+    /*!
+     * \brief append the given code to the sources
+     */
+    virtual void appendToSources(const std::string&);
     /*!
      * \brief write the output files.
      * \note this shall be called after the analyseFile method.
@@ -121,12 +136,16 @@ namespace mfront{
 
     void
     addInterface(const std::string&);
-
     /*!
      * treat the material keyword
      */
     virtual void
     treatMaterial(void);
+    /*!
+     * treat the library keyword
+     */
+    virtual void
+    treatLibrary(void);
 
     void
     treatNamespace(void);

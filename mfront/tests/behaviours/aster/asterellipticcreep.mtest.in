@@ -12,8 +12,7 @@
 @Behaviour<aster> '@MFrontAsterBehavioursBuildPath@' 'asterellipticcreep';
 @MaterialProperty<constant> 'YoungModulus'     150.e9;
 @MaterialProperty<constant> 'PoissonRatio'       0.3;
-@MaterialProperty<constant> 'MassDensity'        0.;
-@MaterialProperty<constant> 'ThermalExpansion'   0.;
+
 @InternalStateVariable 'Porosity' 0.;
 
 @Real 'srr' -20.e6;

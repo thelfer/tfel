@@ -51,10 +51,14 @@ namespace cyrano{
       using namespace tfel::utilities;
       typedef ModellingHypothesis MH;
       CyranoInterfaceBase::checkNTENSValue(*NTENS,3u);
-      if(*NDI==14){
+      if(*NDI==1){
 	CyranoInterface::template callBehaviour<MH::AXISYMMETRICALGENERALISEDPLANESTRAIN>(DTIME,DROT,DDSOE,STRAN,DSTRAN,
 											  TEMP,DTEMP,PROPS,NPROPS,PREDEF,DPRED,
 											  STATEV,NSTATV,STRESS,KINC);
+      } else if (*NDI==2){
+	  CyranoInterface::template callBehaviour<MH::AXISYMMETRICALGENERALISEDPLANESTRESS>(DTIME,DROT,DDSOE,STRAN,DSTRAN,
+											    TEMP,DTEMP,PROPS,NPROPS,PREDEF,DPRED,
+											    STATEV,NSTATV,STRESS,KINC);
       } else {
 	CyranoInterfaceBase::displayInvalidModellingHypothesisErrorMessage();
 	*KINC = -7;

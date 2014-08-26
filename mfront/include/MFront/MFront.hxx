@@ -166,8 +166,6 @@ namespace mfront{
 
     std::string sys;
 
-    bool verboseMode;
-
     bool warningMode;
 
     bool debugMode;

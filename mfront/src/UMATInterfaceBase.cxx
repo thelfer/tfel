@@ -228,9 +228,9 @@ namespace umat{
   } // end of UMATInterfaceBase::throwInvalidDDSOEException
 
   void
-  UMATUnSupportedCaseHandler::exe(const UMATReal *const ,
+  UMATUnSupportedCaseHandler::exe(const UMATReal *const,
 				  const UMATReal *const,
-				  const UMATReal *const,
+				  UMATReal *const,
 				  const UMATReal *const,
 				  const UMATReal *const,
 				  const UMATReal *const,
@@ -241,7 +241,8 @@ namespace umat{
 				  const UMATReal *const,
 				  UMATReal *const,
 				  const UMATInt  *const,
-				  UMATReal *const)
+				  UMATReal *const,
+				  const StressFreeExpansionHandler&)
   {
     using namespace std;
     string msg("UMATUnSupportedCaseHandler::exe : "

@@ -5,8 +5,6 @@
  * \date   10 Nov 2006
  */
 
-#include<iostream>
-
 #include<string>
 #include<stdexcept>
 #include<sstream>
@@ -19,7 +17,10 @@
 #include"TFEL/System/System.hxx"
 
 #include"MFront/MFrontHeader.hxx"
+#include"MFront/MFrontLogStream.hxx"
 #include"MFront/ParserUtilities.hxx"
+#include"MFront/MFrontDebugMode.hxx"
+#include"MFront/MFrontLogStream.hxx"
 #include"MFront/MFrontParserFactory.hxx"
 #include"MFront/MFrontMaterialLawParser.hxx"
 #include"MFront/MFrontLawInterfaceFactory.hxx"
@@ -62,7 +63,7 @@ namespace mfront{
 			      &MFrontMaterialLawParser::treatPhysicalBounds);
     this->registerNewCallBack("@UseTemplate",
 			      &MFrontMaterialLawParser::treatUseTemplate);
-    this->reserveName("params");
+    this->reserveName("params",false);
   } // end of MFrontMaterialLawParser::MFrontMaterialLawParser()
 
   void
@@ -83,11 +84,16 @@ namespace mfront{
     }
   }
 
+  std::string
+  MFrontMaterialLawParser::getClassName(void) const
+  {
+    return this->className;
+  } // end of MFrontMaterialLawParser::getClassName
+
   void
   MFrontMaterialLawParser::addStaticVariableDescription(const StaticVariableDescription& v)
   {
-    MaterialPropertyDescription::staticVars.push_back(v);
-    MFrontFileDescription::staticVars.push_back(v);
+    this->staticVars.push_back(v);
   } // end of MFrontMaterialLawParser::addStaticVariableDescription
 
   std::string
@@ -122,19 +128,30 @@ namespace mfront{
   MFrontMaterialLawParser::treatMaterial(void)
   {
     using namespace std;
-    if(!MaterialPropertyDescription::material.empty()){
+    if(!this->material.empty()){
       string msg("MFrontMaterialLawParser::treatMaterial : ");
       msg += "material name alreay defined";
       throw(runtime_error(msg));
     }
-    MaterialPropertyDescription::material = this->readOnlyOneToken();
-    MFrontFileDescription::material       = MaterialPropertyDescription::material;
-    if(!CxxTokenizer::isValidIdentifier(MaterialPropertyDescription::material,true)){
+    this->material = this->readOnlyOneToken();
+    if(!CxxTokenizer::isValidIdentifier(this->material,true)){
       string msg("MFrontMaterialLawParser::treatMaterial : ");
-      msg += "invalid material name '"+MaterialPropertyDescription::material+"'";
+      msg += "invalid material name '"+this->material+"'";
       throw(runtime_error(msg));
     }
   } // end of MFrontMaterialLawParser::treatMaterial
+
+  void
+  MFrontMaterialLawParser::treatLibrary(void)
+  {
+    using namespace std;
+    if(!this->material.empty()){
+      string msg("MFrontMaterialLawParser::treatLibrary : ");
+      msg += "material name alreay defined";
+      throw(runtime_error(msg));
+    }
+    this->library = this->readOnlyOneToken();
+  } // end of MFrontLibraryLawParser::treatLibrary
 
   void
   MFrontMaterialLawParser::treatUseTemplate(void)
@@ -184,33 +201,19 @@ namespace mfront{
     string type;
     string name;
     unsigned short line;
-    long double value;
     this->checkNotEndOfFile("MFrontMaterialLawParser::treatConstant",
 			    "Cannot read variable name.");
     name = this->current->value;
+    if(!isValidIdentifier(name)){
+      this->throwRuntimeError("ParserBase::treatConstant",
+			      "constant name '"+name+"' is not valid.");
+    }
     line = this->current->line;
     ++(this->current);
-    if(this->current->value=="="){
-      if(this->warningMode){
-	cout << "MFrontMaterialLawParser::treatConstant : "
-	     << "deprecated syntax at line '" 
-	     << this->current->line << "'" 
-	     << " of file '" << this->fileName << "'" << endl;
-      }
-      this->readSpecifiedToken("ParserBase::treatConstant","=");
-    }
-    this->checkNotEndOfFile("MFrontMaterialLawParser::treatConstant",
-			    "Expected to read value of variable '"+name+"'");
-    istringstream tmp(this->current->value);
-    tmp >> value;
-    if(!tmp&&(!tmp.eof())){
-      this->throwRuntimeError("MFrontMaterialLawParser::treatConstant",
-			      "Could not read value of variable '"+name+"'");
-    }
-    ++(this->current);
+    const pair<bool,long double> value = this->readInitialisationValue<long double>(name,true);
     this->readSpecifiedToken("MFrontMaterialLawParser::treatConstant",";");
     this->registerStaticVariable(name);
-    this->addStaticVariableDescription(StaticVariableDescription("real",name,line,value));
+    this->addStaticVariableDescription(StaticVariableDescription("real",name,line,value.second));
   } // end of MFrontMaterialLawParser::treatConstant
 
   void
@@ -219,40 +222,20 @@ namespace mfront{
     using namespace std;
     // note : we shall use the ParserBase::handleParameter method
     string parameter;
-    double value;
     this->checkNotEndOfFile("MFrontMaterialLawParser::treatParameter",
 			    "Expected parameter name.");
     parameter = this->current->value;
+    if(!isValidIdentifier(parameter)){
+      this->throwRuntimeError("ParserBase::treatParameter",
+			      "parameter name '"+parameter+"' is not valid.");
+    }
     ++(this->current);
-    this->checkNotEndOfFile("MFrontMaterialLawParser::treatParameter",
-			    "unexpected end of file");
-    if((this->current->value=="=")||
-       (this->current->value=="{")||
-       (this->current->value=="(")){
-      string ci; // closing initializer
-      if(this->current->value=="{"){
-	ci="}";
-      }
-      if(this->current->value=="("){
-	ci=")";
-      }
-      this->readSpecifiedToken("MFrontMaterialLawParser::treatParameter","=");
-      this->checkNotEndOfFile("MFrontMaterialLawParser::treatParameter",
-			      "Expected to read value of variable '"+parameter+"'");
-      istringstream tmp(this->current->value);
-      tmp >> value;
-      if(!tmp&&(!tmp.eof())){
-	this->throwRuntimeError("MFrontMaterialLawParser::treatParameter",
-				"Could not read value of variable '"+parameter+"'.");
-      }
-      ++(this->current);
-      this->parametersValues.insert(make_pair(parameter,value));
-      if(!ci.empty()){
-	this->readSpecifiedToken("ParserBase::handleParameter",ci);
-      }
+    const pair<bool,double> value = this->readInitialisationValue<double>(parameter,false);
+    if(value.first){
+      this->parametersValues.insert(make_pair(parameter,value.second));
     }
     this->readSpecifiedToken("MFrontMaterialLawParser::treatParameter",";");
-    this->registerVariable(parameter);
+    this->registerVariable(parameter,false);
     this->parameters.push_back(parameter);
   } // MFrontMaterialLawParser::treatParameter
 
@@ -276,24 +259,6 @@ namespace mfront{
 			      this->className+"is not a valid law name");
     }
   } // end of MFrontMaterialLawParser::treatLaw
-
-  void
-  MFrontMaterialLawParser::setVerboseMode(void) 
-  {
-    this->verboseMode = true;
-  } // MFrontMaterialLawParser::setVerboseMode(void)
-
-  void
-  MFrontMaterialLawParser::setWarningMode(void) 
-  {
-    this->warningMode = true;
-  } // MFrontMaterialLawParser::setVerboseMode(void)
-
-  void
-  MFrontMaterialLawParser::setDebugMode(void) 
-  {
-    this->debugMode = true;
-  }
 
   void
   MFrontMaterialLawParser::addInterface(const std::string& i)
@@ -393,7 +358,7 @@ namespace mfront{
       throw(runtime_error(msg));
     }
     if(this->output.empty()){
-      this->registerVariable("res");
+      this->registerVariable("res",false);
       this->output = "res";
     }
     this->f.modified = false;
@@ -413,7 +378,7 @@ namespace mfront{
 			    "Expected body of function.");
     currentLine = this->current->line;
     newLine=true;
-    if(!this->debugMode){
+    if(!getDebugMode()){
       this->f.body  +="#line " + toString(currentLine) + " \"" + this->fileName + "\"\n";
     }
     for(;(this->current!=this->fileTokens.end())&&
@@ -421,7 +386,7 @@ namespace mfront{
       if(this->current->line!=currentLine){
 	currentLine=this->current->line;
 	f.body  += "\n";
-	if(!this->debugMode){
+	if(!getDebugMode()){
 	  this->f.body  +="#line " + toString(currentLine) + " \"" + this->fileName + "\"\n";
 	}
 	newLine = true;
@@ -777,26 +742,13 @@ namespace mfront{
     systemCall::mkdir("src");
     // calling interfaces
     for(p=this->interfaces.begin();p!=this->interfaces.end();++p){
-
-      if(this->verboseMode){
-	cout << "calling interface " << *p << endl;
+      if(getVerboseMode()>=VERBOSE_LEVEL2){
+	getLogStream() << "calling interface " << *p << endl;
       }
-
       MFrontLawVirtualInterface *interface = mlif.getInterfacePtr(*p);
-
-      if(this->verboseMode){
-	interface->setVerboseMode();
-      }
-      if(this->debugMode){
-	interface->setDebugMode();
-      }
-      if(this->warningMode){
-	interface->setWarningMode();
-      }
-
       interface->writeOutputFiles(this->fileName,
 				  this->library,
-				  MaterialPropertyDescription::material,
+				  this->material,
 				  this->className,
 				  this->authorName,this->date,
 				  this->description,
@@ -818,7 +770,8 @@ namespace mfront{
   void
   MFrontMaterialLawParser::treatInput(void)
   {
-    this->readVarList(this->inputs,"real",false,false);
+    this->readVarList(this->inputs,"real",
+		      false,false,false);
   } // end of MFrontMaterialLawParser::treatInput
 
   void
@@ -830,7 +783,7 @@ namespace mfront{
 			      "Output already defined.");
     }
     this->output = this->readOnlyOneToken();
-    this->registerVariable(this->output);
+    this->registerVariable(this->output,false);
   } // end of MFrontMaterialLawParser::treatOutput
 
   std::map<std::string,std::vector<std::string> >
@@ -848,7 +801,7 @@ namespace mfront{
 	i != this->interfaces.end();++i){
       MFrontLawVirtualInterface *interface = mlif.getInterfacePtr(*i);
       const Map& isources = interface->getGeneratedSources(this->library,
-							   MaterialPropertyDescription::material,
+							   this->material,
 							   this->className);
       for(p=isources.begin();p!=isources.end();++p){
 	copy(p->second.begin(),p->second.end(),back_inserter(osources[p->first]));
@@ -877,7 +830,7 @@ namespace mfront{
 	i != this->interfaces.end();++i){
       MFrontLawVirtualInterface *interface = mlif.getInterfacePtr(*i);
       const vector<string>& iincs = interface->getGeneratedIncludes(this->library,
-								    MaterialPropertyDescription::material,
+								    this->material,
 								    this->className);
       copy(iincs.begin(),iincs.end(),back_inserter(incs));
     }
@@ -898,7 +851,7 @@ namespace mfront{
 	i != this->interfaces.end();++i){
       MFrontLawVirtualInterface *interface = mlif.getInterfacePtr(*i);
       const Map& iincs = interface->getGlobalIncludes(this->library,
-						      MaterialPropertyDescription::material,
+						      this->material,
 						      this->className);
       for(p=iincs.begin();p!=iincs.end();++p){
 	copy(p->second.begin(),p->second.end(),back_inserter(incs[p->first]));
@@ -921,7 +874,7 @@ namespace mfront{
 	i != this->interfaces.end();++i){
       MFrontLawVirtualInterface *interface = mlif.getInterfacePtr(*i);
       const Map& ideps = interface->getGlobalDependencies(this->library,
-							  MaterialPropertyDescription::material,
+							  this->material,
 							  this->className);
       for(p=ideps.begin();p!=ideps.end();++p){
 	copy(p->second.begin(),p->second.end(),back_inserter(deps[p->first]));
@@ -945,7 +898,7 @@ namespace mfront{
 	i != this->interfaces.end();++i){
       MFrontLawVirtualInterface *interface = mlif.getInterfacePtr(*i);
       const Map& ideps = interface->getLibrariesDependencies(this->library,
-							     MaterialPropertyDescription::material,
+							     this->material,
 							     this->className);
       for(p=ideps.begin();p!=ideps.end();++p){
 	for(p2=p->second.begin();p2!=p->second.end();++p2){
@@ -1095,7 +1048,7 @@ namespace mfront{
     for(p=this->interfaces.begin();p!=this->interfaces.end();++p){
       MFrontLawVirtualInterface *i = mlif.getInterfacePtr(*p);
       const Target& targets = i->getSpecificTargets(this->library,
-						    MaterialPropertyDescription::material,
+						    this->material,
 						    this->className,
 						    this->librariesDependencies);
       for(p2=targets.begin();p2!=targets.end();++p2){
@@ -1206,6 +1159,60 @@ namespace mfront{
   {
     return *this;
   } // end of MFrontMaterialLawParser::getMaterialPropertyDescription
+
+  void
+  MFrontMaterialLawParser::appendToIncludes(const std::string& c)
+  {
+    this->includes+=c;
+    if(!this->includes.empty()){
+      if(*(this->includes.rbegin())!='\n'){
+	this->includes+='\n';
+      }
+    }
+  } // end of MFrontMaterialLawParser::appendToIncludes
+
+  void
+  MFrontMaterialLawParser::appendToMembers(const std::string& c)
+  {
+    this->members+=c;
+    if(!this->members.empty()){
+      if(*(this->members.rbegin())!='\n'){
+	this->members+='\n';
+      }
+    }
+  } // end of MFrontMaterialLawParser::appendToMembers
+
+  void
+  MFrontMaterialLawParser::appendToPrivateCode(const std::string& c)
+  {
+    this->privateCode+=c;
+    if(!this->privateCode.empty()){
+      if(*(this->privateCode.rbegin())!='\n'){
+	this->privateCode+='\n';
+      }
+    }
+  } // end of MFrontMaterialLawParser::appendToPrivateCode
+
+  void
+  MFrontMaterialLawParser::appendToSources(const std::string& c)
+  {
+    this->sources+=c;
+    if(!this->sources.empty()){
+      if(*(this->sources.rbegin())!='\n'){
+	this->sources+='\n';
+      }
+    }
+  } // end of MFrontMaterialLawParser::appendToSources
+
+  void
+  MFrontMaterialLawParser::addMaterialLaw(const std::string& m)
+  {
+    using namespace std;
+    if(find(this->materialLaws.begin(),
+	    this->materialLaws.end(),m)==this->materialLaws.end()){
+      this->materialLaws.push_back(m);
+    }
+  } // end of MFrontMaterialLawParser::addMaterialLaw
 
 } // end of namespace mfront  
 

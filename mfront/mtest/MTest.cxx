@@ -28,8 +28,9 @@
 #include"TFEL/Math/stensor.hxx"
 #include"TFEL/Math/tmatrix.hxx"
 
+#include"MFront/MFrontLogStream.hxx"
+
 #include"MFront/MTest.hxx"
-#include"MFront/MTestLogStream.hxx"
 #include"MFront/MTestBehaviour.hxx"
 #ifdef HAVE_CASTEM
 #include"MFront/MTestUmatSmallStrainBehaviour.hxx"
@@ -59,8 +60,7 @@ namespace mfront
 
   static void
   checkIfDeclared(const std::vector<std::string>& n,
-		  const std::map<std::string,
-				 tfel::utilities::shared_ptr<MTestEvolution> > m,
+		  const MTestEvolutionManager& m,
 		  const std::string& type)
   {
     using namespace std;
@@ -69,6 +69,24 @@ namespace mfront
       if(m.find(*p)==m.end()){
 	string msg("no '"+type+"' named '"+*p+"' declared");
 	throw(runtime_error(msg));
+      }
+    }
+  }
+
+  static void
+  checkIfDeclared(const std::vector<std::string>& n,
+		  const MTestEvolutionManager& evm1,
+		  const MTestEvolutionManager& evm2,
+		  const std::string& type)
+  {
+    using namespace std;
+    vector<string>::const_iterator p;
+    for(p=n.begin();p!=n.end();++p){
+      if(evm1.find(*p)==evm1.end()){
+	if(evm2.find(*p)==evm2.end()){
+	  string msg("no '"+type+"' named '"+*p+"' declared");
+	  throw(runtime_error(msg));
+	}
       }
     }
   }
@@ -90,22 +108,22 @@ namespace mfront
     return 0;
   }
 
-  // static unsigned short
-  // getTensorSize(const unsigned short d)
-  // {
-  //   using namespace std;
-  //   if(d==1){
-  //     return 3;
-  //   } else if(d==2){
-  //     return 5;
-  //   } else if(d==3){
-  //     return 9;
-  //   }
-  //   string msg("mfront::getTensorSize : ");
-  //   msg += "";
-  //   throw(runtime_error(msg));
-  //   return 0;
-  // }
+  static unsigned short
+  getTensorSize(const unsigned short d)
+  {
+    using namespace std;
+    if(d==1){
+      return 3;
+    } else if(d==2){
+      return 5;
+    } else if(d==3){
+      return 9;
+    }
+    string msg("mfront::getTensorSize : ");
+    msg += "";
+    throw(runtime_error(msg));
+    return 0;
+  }
 
   MTest::MTestCurrentState::MTestCurrentState()
   {}
@@ -143,8 +161,8 @@ namespace mfront
     : oprec(-1),
       rm(real(0)),
       isRmDefined(false),
-      evs(new std::map<std::string,
-		       tfel::utilities::shared_ptr<MTestEvolution> >()),
+      evm(new MTestEvolutionManager()),
+      defaultMaterialPropertiesValues(new MTestEvolutionManager()),
       dimension(0u),
       hypothesis(tfel::material::ModellingHypothesis::UNDEFINEDHYPOTHESIS),
       eeps(-1.),
@@ -154,6 +172,7 @@ namespace mfront
       ks(MTest::UNSPECIFIEDSTIFFNESSUPDATINGPOLICY),
       ktype(MTestStiffnessMatrixType::UNSPECIFIEDSTIFFNESSMATRIXTYPE),
       ppolicy(MTest::UNSPECIFIEDPREDICTIONPOLICY),
+      handleThermalExpansion(true),
       useCastemAcceleration(false),
       cat(-1),
       cap(-1),
@@ -172,10 +191,9 @@ namespace mfront
 			   const real v)
   {
     using namespace std;
-    using tfel::utilities::shared_ptr;
-    map<string,shared_ptr<MTestEvolution> >::iterator pev;
-    pev = this->evs->find(n);
-    if(pev==this->evs->end()){
+    MTestEvolutionManager::iterator pev;
+    pev = this->evm->find(n);
+    if(pev==this->evm->end()){
       string msg("MTest::setEvolutionValue : no evolution '"+
 		 n+"' declared");
       throw(runtime_error(msg));
@@ -242,6 +260,18 @@ namespace mfront
       throw(runtime_error(msg));
     }
     this->ktype = k;
+  }
+
+  void
+  MTest::setHandleThermalExpansion(const bool b1)
+  {
+    using namespace std;
+    if(!this->handleThermalExpansion){
+      string msg("MTest::setUseCastemAccelerationAlgorithm : "
+		 "useCastemAcceleration already set");
+      throw(runtime_error(msg));
+    }
+    this->handleThermalExpansion = b1;
   }
 
   void
@@ -321,7 +351,7 @@ namespace mfront
 
   void
   MTest::addEvolution(const std::string& n,
-		      const tfel::utilities::shared_ptr<MTestEvolution> p,
+		      const MTestEvolutionPtr p,
 		      const bool b1,
 		      const bool b2)
   {
@@ -336,18 +366,18 @@ namespace mfront
       }
     }
     if(b2){
-      if(this->evs->find(n)!=this->evs->end()){
+      if(this->evm->find(n)!=this->evm->end()){
 	string msg("MTest::addEvolution : "
 		   "evolution '"+n+"' already defined");
 	throw(runtime_error(msg));
       }
     }
-    (*(this->evs))[n] = p;
+    (*(this->evm))[n] = p;
   }
 
   void
   MTest::setMaterialProperty(const std::string& n,
-			     const tfel::utilities::shared_ptr<MTestEvolution> p,
+			     const MTestEvolutionPtr p,
 			     const bool check)
   {
     using namespace std;
@@ -385,7 +415,7 @@ namespace mfront
 
   void
   MTest::setExternalStateVariable(const std::string& n,
-				  const tfel::utilities::shared_ptr<MTestEvolution> p,
+				  const MTestEvolutionPtr p,
 				  const bool check)
   {
     using namespace std;
@@ -843,6 +873,43 @@ namespace mfront
   } // end of MTest::setStensorInternalStateVariableInitialValue
 
   void
+  MTest::setTensorInternalStateVariableInitialValues(const std::string& n,
+						      const std::vector<real>& v)
+  {
+    using namespace std;
+    if(this->b.get()==0){
+      string msg("MTest::setTensorInternalStateVariableInitialValue : ");
+      msg += "no behaviour defined";
+      throw(runtime_error(msg));
+    }
+    const vector<string>& ivsnames = this->b->getInternalStateVariablesNames();
+    if(find(ivsnames.begin(),ivsnames.end(),n)==ivsnames.end()){
+      string msg("MTest::setTensorInternalStateVariableInitialValue : ");
+      msg += "the behaviour don't declare an internal state variable named '";
+      msg += n+"'";
+      throw(runtime_error(msg));
+    }
+    const int type           = this->b->getInternalStateVariableType(n);
+    const unsigned short pos = this->b->getInternalStateVariablePosition(this->hypothesis,n);
+    if(type!=3){
+      string msg("MTest::setTensorInternalStateVariableInitialValue : ");
+      msg += "internal state variable '"+n+"' is not defined";
+      throw(runtime_error(msg));
+    }
+    const unsigned short N = getTensorSize(this->dimension);
+    if(v.size()!=N){
+      string msg("MTest::setTensorInternalStateVariableInitialValues : "
+		 "invalid values size");
+      throw(runtime_error(msg));
+    }
+    if(this->iv_t0.size()<pos+N){
+      this->iv_t0.resize(pos+N,0.);
+    }
+    copy(v.begin(),v.end(),
+	 this->iv_t0.begin()+pos);
+  } // end of MTest::setTensorInternalStateVariableInitialValue
+
+  void
   MTest::setTimes(const std::vector<real>& t)
   {
     using namespace std;
@@ -854,11 +921,10 @@ namespace mfront
     this->times=t;
   } // end of MTest::setTimes
 
-  tfel::utilities::shared_ptr<std::map<std::string,	
-				       tfel::utilities::shared_ptr<MTestEvolution> > >
+  tfel::utilities::shared_ptr<MTestEvolutionManager>
   MTest::getEvolutions() const
   {
-    return this->evs;
+    return this->evm;
   } // end of MTest::getEvolutions() const
 
   void
@@ -931,6 +997,15 @@ namespace mfront
 	  this->declareVariable(vn,true);
 	  this->ivfullnames.push_back(vn);
 	}
+      } else if(t==3){
+	//! suffixes f stensor components
+	vector<string> sexts;
+	this->b->getTensorComponentsSuffixes(sexts,this->hypothesis);
+	for(vector<string>::size_type s=0;s!=sexts.size();++s){
+	  const string& vn = *pn+sexts[s];
+	  this->declareVariable(vn,true);
+	  this->ivfullnames.push_back(vn);
+	}
       } else {
 	string msg("MTest::setBehaviour : "
 		   "unsupported variable type for variable '"+*pn+"'");
@@ -953,7 +1028,7 @@ namespace mfront
     using namespace tfel::material;
     using tfel::utilities::shared_ptr;
     typedef tfel::material::ModellingHypothesis MH;
-    map<string,shared_ptr<MTestEvolution> >::const_iterator pev;
+    MTestEvolutionManager::const_iterator pev;
     if(this->initialisationFinished){
       string msg("MTest::completeInitialisation : "
 		 "object already initialised");
@@ -973,8 +1048,9 @@ namespace mfront
     // check if material properties and external state variables are declared
     vector<string> mpnames(this->b->getMaterialPropertiesNames());
     vector<string> esvnames(this->b->getExternalStateVariablesNames());
-    checkIfDeclared(mpnames,*(this->evs),"material property");
-    checkIfDeclared(esvnames,*(this->evs),"external state variable");
+    this->b->setOptionalMaterialPropertiesDefaultValues(*(this->defaultMaterialPropertiesValues),*(this->evm));
+    checkIfDeclared(mpnames,*(this->evm),*(this->defaultMaterialPropertiesValues),"material property");
+    checkIfDeclared(esvnames,*(this->evm),"external state variable");
     // output
     if(!this->output.empty()){
       this->out.open(this->output.c_str());
@@ -1041,8 +1117,8 @@ namespace mfront
 	shared_ptr<MTestEvolution>  eev(new MTestConstantEvolution(0.));
 	shared_ptr<MTestConstraint> ec(new MTestImposedDrivingVariable(1,eev));
 	shared_ptr<MTestEvolution>  sev;
-	pev = this->evs->find("AxialPlaneStress");
-	if(pev!=this->evs->end()){
+	pev = this->evm->find("AxialStress");
+	if(pev!=this->evm->end()){
 	  sev = pev->second;
 	} else {
 	  sev = shared_ptr<MTestEvolution>(new MTestConstantEvolution(0.));
@@ -1052,7 +1128,8 @@ namespace mfront
 	this->constraints.push_back(sc);
       } else {
 	string msg("MTest::completeInitialisation : "
-		   "plane stress is only handled for small and finite strain behaviours");
+		   "generalised plane stress is only "
+		   "handled for small and finite strain behaviours");
 	throw(runtime_error(msg));
       }
     }
@@ -1101,8 +1178,8 @@ namespace mfront
       this->ktype = this->b->getDefaultStiffnessMatrixType();
     }
     // thermal expansion reference temperature
-    pev = this->evs->find("ThermalExpansionReferenceTemperature");
-    if(pev!=this->evs->end()){
+    pev = this->evm->find("ThermalExpansionReferenceTemperature");
+    if(pev!=this->evm->end()){
       const MTestEvolution& ev = *(pev->second);
       if(!ev.isConstant()){
 	string msg("MTest::completeInitialisation : 'ThermalExpansionReferenceTemperature' "
@@ -1206,9 +1283,9 @@ namespace mfront
     s.period = 1u;
     s.dt_1   = 0.;
     // reference temperature
-    map<string,shared_ptr<MTestEvolution> >::const_iterator pev;
-    pev = this->evs->find("ThermalExpansionReferenceTemperature");
-    if(pev!=this->evs->end()){
+    MTestEvolutionManager::const_iterator pev;
+    pev = this->evm->find("ThermalExpansionReferenceTemperature");
+    if(pev!=this->evm->end()){
       const MTestEvolution& ev = *(pev->second);
       if(!ev.isConstant()){
 	string msg("MTest::initializeCurrentState : "
@@ -1361,16 +1438,16 @@ namespace mfront
   } // end of MTest::handleTangentOperatorComparisonCriterium
 
   void
-  MTest::setNumericalTangentOperatorPertubationValue(const real v)
+  MTest::setNumericalTangentOperatorPerturbationValue(const real v)
   {
     using namespace std;
     if(v<100*numeric_limits<real>::min()){
-      string msg("MTest::setNumericalTangentOperatorPertubationValue : " );
+      string msg("MTest::setNumericalTangentOperatorPerturbationValue : " );
       msg += "invalid perturbation value";
       throw(runtime_error(msg));
     }
     this->pv=v;
-  } // end of MTest::setNumericalTangentOperatorPertubationValue
+  } // end of MTest::setNumericalTangentOperatorPerturbationValue
 
   void
   MTest::execute(MTestCurrentState& state,
@@ -1387,10 +1464,10 @@ namespace mfront
     using tfel::math::vector;
     vector<string>::const_iterator p;
     vector<shared_ptr<MTestConstraint> >::const_iterator pc;
-    map<string,shared_ptr<MTestEvolution> >::const_iterator pev;
-    map<string,shared_ptr<MTestEvolution> >::const_iterator pev2;
-    map<string,shared_ptr<MTestEvolution> >::const_iterator pev3;
-    map<string,shared_ptr<MTestEvolution> >::const_iterator pev4;
+    MTestEvolutionManager::const_iterator pev;
+    MTestEvolutionManager::const_iterator pev2;
+    MTestEvolutionManager::const_iterator pev3;
+    MTestEvolutionManager::const_iterator pev4;
     vector<shared_ptr<UTest> >::iterator ptest;
     // getting the names of the materials properties
     std::vector<string> mpnames(this->b->getMaterialPropertiesNames());
@@ -1414,18 +1491,25 @@ namespace mfront
       // evaluations of the materials properties at the end of the
       // time step
       for(i=0,p=mpnames.begin();p!=mpnames.end();++p,++i){
-	pev = this->evs->find(*p);
-	if(pev==this->evs->end()){
-	  string msg("MTest::execute : no evoluation named '"+*p+"'");
-	  throw(runtime_error(msg));
+	pev = this->evm->find(*p);
+	if(pev!=this->evm->end()){
+	  const MTestEvolution& ev = *(pev->second);
+	  state.mprops1[i] = ev(t+dt);
+	} else {
+	  pev = this->defaultMaterialPropertiesValues->find(*p);
+	  if(pev!=this->evm->end()){
+	    const MTestEvolution& ev = *(pev->second);
+	    state.mprops1[i] = ev(t+dt);
+	  } else {
+	    string msg("MTest::execute : no evolution named '"+*p+"'");
+	    throw(runtime_error(msg));
+	  }
 	}
-	const MTestEvolution& ev = *(pev->second);
-	state.mprops1[i] = ev(t+dt);
       }
       for(i=0,p=esvnames.begin();p!=esvnames.end();++p,++i){
-	pev = this->evs->find(*p);
-	if(pev==this->evs->end()){
-	  string msg("MTest::execute : no evoluation named '"+*p+"'");
+	pev = this->evm->find(*p);
+	if(pev==this->evm->end()){
+	  string msg("MTest::execute : no evolution named '"+*p+"'");
 	  throw(runtime_error(msg));
 	}
 	const MTestEvolution& ev = *(pev->second);
@@ -1433,72 +1517,74 @@ namespace mfront
 	state.esv0[i] = evt;
 	state.desv[i] = ev(t+dt)-evt;
       }
-      if(this->b->getBehaviourType()==MechanicalBehaviourBase::SMALLSTRAINSTANDARDBEHAVIOUR){
-	// thermal expansion (isotropic case)
-	pev   = this->evs->find("Temperature");
-	pev2  = this->evs->find("ThermalExpansion");
-	if((pev!=this->evs->end())&&(pev2!=this->evs->end())){
-	  const MTestEvolution& T_ev = *(pev->second);
-	  const MTestEvolution& a_ev = *(pev2->second);
-	  const real eth0 = a_ev(t)*(T_ev(t)-state.Tref);
-	  const real eth1 = a_ev(t+dt)*(T_ev(t+dt)-state.Tref);
-	  for(i=0;i!=3;++i){
-	    state.e_th0[i] = eth0;
-	    state.e_th1[i] = eth1;
+      if(this->handleThermalExpansion){
+	if(this->b->getBehaviourType()==MechanicalBehaviourBase::SMALLSTRAINSTANDARDBEHAVIOUR){
+	  // thermal expansion (isotropic case)
+	  pev   = this->evm->find("Temperature");
+	  pev2  = this->evm->find("ThermalExpansion");
+	  if((pev!=this->evm->end())&&(pev2!=this->evm->end())){
+	    const MTestEvolution& T_ev = *(pev->second);
+	    const MTestEvolution& a_ev = *(pev2->second);
+	    const real eth0 = a_ev(t)*(T_ev(t)-state.Tref);
+	    const real eth1 = a_ev(t+dt)*(T_ev(t+dt)-state.Tref);
+	    for(i=0;i!=3;++i){
+	      state.e_th0[i] = eth0;
+	      state.e_th1[i] = eth1;
+	    }
+	  }
+	  pev2  = this->evm->find("ThermalExpansion1");
+	  pev3  = this->evm->find("ThermalExpansion2");
+	  pev4  = this->evm->find("ThermalExpansion3");
+	  if((pev!=this->evm->end())&&
+	     ((pev2!=this->evm->end())||
+	      (pev3!=this->evm->end())||
+	      (pev4!=this->evm->end()))){
+	    if((pev2==this->evm->end())||
+	       (pev3==this->evm->end())||
+	       (pev4==this->evm->end())){
+	      string msg("MTest::execute : at least one of the three "
+			 "thermal expansion coefficient is defined and "
+			 "at least one is not");
+	      throw(runtime_error(msg));
+	    }
+	    const MTestEvolution& T_ev  = *(pev->second);
+	    const MTestEvolution& a1_ev = *(pev2->second);
+	    const MTestEvolution& a2_ev = *(pev3->second);
+	    const MTestEvolution& a3_ev = *(pev4->second);
+	    if(this->dimension==1u){
+	      state.e_th0[0u] = a1_ev(t)*(T_ev(t)-state.Tref);
+	      state.e_th1[0u] = a1_ev(t+dt)*(T_ev(t+dt)-state.Tref);
+	      state.e_th0[1u] = a2_ev(t)*(T_ev(t)-state.Tref);
+	      state.e_th1[1u] = a2_ev(t+dt)*(T_ev(t+dt)-state.Tref);
+	      state.e_th0[2u] = a3_ev(t)*(T_ev(t)-state.Tref);
+	      state.e_th1[2u] = a3_ev(t+dt)*(T_ev(t+dt)-state.Tref);
+	    } else if((this->dimension==2u)||
+		      (this->dimension==3u)){
+	      // thermal expansion tensors in the material referential
+	      stensor<3u,real> se_th0(real(0));
+	      stensor<3u,real> se_th1(real(0));
+	      se_th0[0u] = a1_ev(t)*(T_ev(t)-state.Tref);
+	      se_th1[0u] = a1_ev(t+dt)*(T_ev(t+dt)-state.Tref);
+	      se_th0[1u] = a2_ev(t)*(T_ev(t)-state.Tref);
+	      se_th1[1u] = a2_ev(t+dt)*(T_ev(t+dt)-state.Tref);
+	      se_th0[2u] = a3_ev(t)*(T_ev(t)-state.Tref);
+	      se_th1[2u] = a3_ev(t+dt)*(T_ev(t+dt)-state.Tref);
+	      // backward rotation matrix
+	      tmatrix<3u,3u,real> brm = transpose(this->b->getRotationMatrix(state.mprops1,this->rm));
+	      se_th0.changeBasis(brm);
+	      se_th1.changeBasis(brm);
+	      copy(se_th0.begin(),se_th0.begin()+getStensorSize(this->dimension),state.e_th0.begin());
+	      copy(se_th1.begin(),se_th1.begin()+getStensorSize(this->dimension),state.e_th1.begin());
+	    } else {
+	      string msg("MTest::execute : invalid dimension");
+	      throw(runtime_error(msg));
+	    }
 	  }
 	}
-	pev2  = this->evs->find("ThermalExpansion1");
-	pev3  = this->evs->find("ThermalExpansion2");
-	pev4  = this->evs->find("ThermalExpansion3");
-	if((pev!=this->evs->end())&&
-	   ((pev2!=this->evs->end())||
-	    (pev3!=this->evs->end())||
-	    (pev4!=this->evs->end()))){
-	  if((pev2==this->evs->end())||
-	     (pev3==this->evs->end())||
-	     (pev4==this->evs->end())){
-	    string msg("MTest::execute : at least one of the three "
-		       "thermal expansion coefficient is defined and "
-		       "at least one is not");
-	    throw(runtime_error(msg));
-	  }
-	  const MTestEvolution& T_ev  = *(pev->second);
-	  const MTestEvolution& a1_ev = *(pev2->second);
-	  const MTestEvolution& a2_ev = *(pev3->second);
-	  const MTestEvolution& a3_ev = *(pev4->second);
-	  if(this->dimension==1u){
-	    state.e_th0[0u] = a1_ev(t)*(T_ev(t)-state.Tref);
-	    state.e_th1[0u] = a1_ev(t+dt)*(T_ev(t+dt)-state.Tref);
-	    state.e_th0[1u] = a2_ev(t)*(T_ev(t)-state.Tref);
-	    state.e_th1[1u] = a2_ev(t+dt)*(T_ev(t+dt)-state.Tref);
-	    state.e_th0[2u] = a3_ev(t)*(T_ev(t)-state.Tref);
-	    state.e_th1[2u] = a3_ev(t+dt)*(T_ev(t+dt)-state.Tref);
-	  } else if((this->dimension==2u)||
-		    (this->dimension==3u)){
-	    // thermal expansion tensors in the material referential
-	    stensor<3u,real> se_th0(real(0));
-	    stensor<3u,real> se_th1(real(0));
-	    se_th0[0u] = a1_ev(t)*(T_ev(t)-state.Tref);
-	    se_th1[0u] = a1_ev(t+dt)*(T_ev(t+dt)-state.Tref);
-	    se_th0[1u] = a2_ev(t)*(T_ev(t)-state.Tref);
-	    se_th1[1u] = a2_ev(t+dt)*(T_ev(t+dt)-state.Tref);
-	    se_th0[2u] = a3_ev(t)*(T_ev(t)-state.Tref);
-	    se_th1[2u] = a3_ev(t+dt)*(T_ev(t+dt)-state.Tref);
-	    // backward rotation matrix
-	    tmatrix<3u,3u,real> brm = transpose(this->rm);
-	    se_th0.changeBasis(brm);
-	    se_th1.changeBasis(brm);
-	    copy(se_th0.begin(),se_th0.begin()+getStensorSize(this->dimension),state.e_th0.begin());
-	    copy(se_th1.begin(),se_th1.begin()+getStensorSize(this->dimension),state.e_th1.begin());
-	  } else {
-	    string msg("MTest::execute : invalid dimension");
-	    throw(runtime_error(msg));
-	  }
+	// driving variables at the beginning of the time step
+	for(i=0;i!=ndv;++i){
+	  state.e0[i] = state.u0[i]-state.e_th0[i];
 	}
-      }
-      // driving variables at the beginning of the time step
-      for(i=0;i!=ndv;++i){
-	state.e0[i] = state.u0[i]-state.e_th0[i];
       }
       // resolution
       bool converged = false;
@@ -1530,13 +1616,20 @@ namespace mfront
 	// evaluations of the materials properties at the beginning
 	// of the time step
 	for(i=0,p=mpnames.begin();p!=mpnames.end();++p,++i){
-	  pev = this->evs->find(*p);
-	  if(pev==this->evs->end()){
-	    string msg("MTest::execute : no evoluation named '"+*p+"'");
-	    throw(runtime_error(msg));
+	  pev = this->evm->find(*p);
+	  if(pev!=this->evm->end()){
+	    const MTestEvolution& ev = *(pev->second);
+	    state.mprops0[i] = ev(t);
+	  } else {
+	    pev = this->defaultMaterialPropertiesValues->find(*p);
+	    if(pev!=this->evm->end()){
+	      const MTestEvolution& ev = *(pev->second);
+	      state.mprops0[i] = ev(t);
+	    } else {
+	      string msg("MTest::execute : no evolution named '"+*p+"'");
+	      throw(runtime_error(msg));
+	    }
 	  }
-	  const MTestEvolution& ev = *(pev->second);
-	  state.mprops0[i] = ev(t);
 	}
 	fill(wk.Kp.begin(),wk.Kp.end(),0.);
 	bool sp(true);
@@ -1740,7 +1833,7 @@ namespace mfront
 	  for(i=0;i!=ndv;++i){
 	    ne += abs(wk.r(i));
 	  }
-	  if(getVerboseMode()>=VERBOSE_LEVEL2){
+	  if(getVerboseMode()>=VERBOSE_LEVEL1){
 	    ostream& log = getLogStream();
 	    log << "iteration " << iter << " : " << ne << " " 
 		<< nr << " (";

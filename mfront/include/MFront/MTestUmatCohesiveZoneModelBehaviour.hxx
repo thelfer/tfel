@@ -30,6 +30,16 @@ namespace mfront
 					const std::string&,
 					const std::string&);
     /*!
+     * \brief compute the *real* rotation matrix
+     * \param[in] mp : material properties
+     * \param[in] r  : rotation matrix defined by the user
+     * \note this method is only meaningfull for the umat (Cast3M)
+     * interface
+     */
+    virtual tfel::math::tmatrix<3u,3u,real>
+    getRotationMatrix(const tfel::math::vector<real>&,
+		      const tfel::math::tmatrix<3u,3u,real>&) const;
+    /*!
      * \param[out] v : initial values of the driving variables
      */
     virtual void
@@ -102,6 +112,19 @@ namespace mfront
 	      const tfel::material::ModellingHypothesis::Hypothesis,
 	      const real,
 	      const MTestStiffnessMatrixType::mtype) const;
+    /*!
+     * \brief some interfaces requires dummy material properties to be
+     * declared. For example, the Cast3M finite element solver
+     * requires the mass density and some extra material properties
+     * describing orthotropic axes to be declared.  This method is
+     * meant to automatically declare those if they are not defined by
+     * the user.
+     * \param[out] mp  : evolution manager where 
+     * \param[in]  evm : evolution manager
+     */
+    virtual void
+    setOptionalMaterialPropertiesDefaultValues(MTestEvolutionManager&,
+					       const MTestEvolutionManager&) const;
     //! destructor
     virtual ~MTestUmatCohesiveZoneModelBehaviour();
   protected:

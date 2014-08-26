@@ -3,8 +3,10 @@
 @Author    Helfer Thomas;
 @Date      10/03/11;
 
+@ModellingHypotheses {".+"};
+
 @OrthotropicBehaviour;
-@RequireStiffnessTensor;
+@RequireStiffnessTensor<Altered>;
 @ProvidesSymmetricTangentOperator;
 
 @PredictionOperator{

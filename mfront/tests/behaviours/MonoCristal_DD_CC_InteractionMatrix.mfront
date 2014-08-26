@@ -8,7 +8,7 @@
 @LocalVariable tfel::math::tmatrix<3,3,real> A4;
 @LocalVariable tfel::math::tmatrix<3,3,real> A5;
       
-@InitLocalVariables{
+@InitLocalVariables<Append>{
   
   //const real h0 = 0.1024 ;  
   //const real h1 = 0.7 ;

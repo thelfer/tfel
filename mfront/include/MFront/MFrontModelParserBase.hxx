@@ -53,8 +53,6 @@ namespace mfront{
     
     std::set<std::string> registredKeyWords;
 
-    bool verboseMode;
-
   };
 
 } // end of namespace mfront

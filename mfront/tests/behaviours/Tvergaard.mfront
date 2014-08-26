@@ -15,14 +15,7 @@ kn.setGlossaryName("NormalStiffness");
 @MaterialProperty real ks;
 ks.setGlossaryName("TangentialStiffness");
 
-//! unused, mandatory for Cast3M
-@MaterialProperty real rho; 
-rho.setGlossaryName("MassDensity");
-//! unused, mandatory for Cast3M
-@MaterialProperty real alpha;
-alpha.setGlossaryName("NormalThermalExpansion");
-
-@MaterialProperty real smax;
+@MaterialProperty stress smax;
 smax.setGlossaryName("MaximumStress");
 @MaterialProperty real delta;
 delta.setGlossaryName("MaximumOpeningDisplacement");

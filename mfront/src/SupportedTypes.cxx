@@ -10,18 +10,19 @@
 #include<sstream>
 #include<stdexcept>
 
+#include"MFront/MFrontDebugMode.hxx"
 #include"MFront/SupportedTypes.hxx"
 
 namespace mfront{
 
 
-  const unsigned short SupportedTypes::ArraySizeLimit = 10u;
+  const int SupportedTypes::ArraySizeLimit = 10u;
 
   SupportedTypes::TypeSize::TypeSize()
-    : scalarSize(0u),
-      tvectorSize(0u),
-      stensorSize(0u),
-      tensorSize(0u)
+    : scalarSize(0),
+      tvectorSize(0),
+      stensorSize(0),
+      tensorSize(0)
   {}
   
   SupportedTypes::TypeSize::TypeSize(const SupportedTypes::TypeSize& src)
@@ -31,10 +32,10 @@ namespace mfront{
       tensorSize(src.tensorSize)
   {}
   
-  SupportedTypes::TypeSize::TypeSize(const ushort a,
-				     const ushort b,
-				     const ushort c,
-				     const ushort d)				     
+  SupportedTypes::TypeSize::TypeSize(const int a,
+				     const int b,
+				     const int c,
+				     const int d)				     
     : scalarSize(a),
       tvectorSize(b),
       stensorSize(c),
@@ -50,52 +51,85 @@ namespace mfront{
     tensorSize  = src.tensorSize;
     return *this;
   }
-  
+
   SupportedTypes::TypeSize&
   SupportedTypes::TypeSize::operator+=(const SupportedTypes::TypeSize& src)
   {
-    scalarSize  = static_cast<unsigned short>(scalarSize+src.scalarSize);
-    tvectorSize = static_cast<unsigned short>(tvectorSize+src.tvectorSize);
-    stensorSize = static_cast<unsigned short>(stensorSize+src.stensorSize);
-    tensorSize = static_cast<unsigned short>(tensorSize+src.tensorSize);
+    scalarSize  = scalarSize+src.scalarSize;
+    tvectorSize = tvectorSize+src.tvectorSize;
+    stensorSize = stensorSize+src.stensorSize;
+    tensorSize  = tensorSize+src.tensorSize;
     return *this;
   }
+  
+  SupportedTypes::TypeSize&
+  SupportedTypes::TypeSize::operator-=(const SupportedTypes::TypeSize& src)
+  {
+    scalarSize  = scalarSize-src.scalarSize;
+    tvectorSize = tvectorSize-src.tvectorSize;
+    stensorSize = stensorSize-src.stensorSize;
+    tensorSize  = tensorSize-src.tensorSize;
+    return *this;
+  }
+
+  int
+  SupportedTypes::TypeSize::getValueForDimension(const unsigned short d) const
+  {
+    using namespace std;
+    switch(d){
+    case 1:
+      return scalarSize+tvectorSize+3*(stensorSize+tensorSize);
+      break;
+    case 2:
+      return scalarSize+2*tvectorSize+4*stensorSize+5*tensorSize;
+      break;
+    case 3:
+      return scalarSize+3*tvectorSize+6*stensorSize+9*tensorSize;
+      break;
+    default:
+      break;
+    }
+    string msg("SupportedTypes::TypeSize::getValueForDimension : "
+	       "invalid type size");
+    throw(runtime_error(msg));
+    return 0;
+  } // end of SupportedTypes::TypeSize::getValueForDimension
 
   std::ostream&
   operator << (std::ostream& os,const SupportedTypes::TypeSize& size)
   {
     bool first = true;
-    if(size.scalarSize!=0u){
+    if(size.scalarSize!=0){
       os << size.scalarSize;
       first = false;
     }
-    if(size.tvectorSize!=0u){
-      if(!first){
+    if(size.tvectorSize!=0){
+      if((!first)&&(size.tvectorSize>=0)){
 	os << "+";
       }
-      if(size.tvectorSize==1u){
+      if(size.tvectorSize==1){
 	os << "TVectorSize";
       } else {
 	os << size.tvectorSize << "*TVectorSize";
       }
       first = false;
     }
-    if(size.stensorSize!=0u){
-      if(!first){
+    if(size.stensorSize!=0){
+      if((!first)&&(size.stensorSize>=0)){
 	os << "+";
       }
-      if(size.stensorSize==1u){
+      if(size.stensorSize==1){
 	os << "StensorSize";
       } else {
 	os << size.stensorSize << "*StensorSize";
       }
       first = false;
     }
-    if(size.tensorSize!=0u){
-      if(!first){
+    if(size.tensorSize!=0){
+      if((!first)&&(size.tensorSize>=0)){
 	os << "+";
       }
-      if(size.tensorSize==1u){
+      if(size.tensorSize==1){
 	os << "TensorSize";
       } else {
 	os << size.tensorSize << "*TensorSize";
@@ -103,7 +137,7 @@ namespace mfront{
       first = false;
     }
     if(first){
-      os << "0u";
+      os << "0";
     }
     return os;
   }
@@ -116,13 +150,15 @@ namespace mfront{
     this->flags.insert(MVType("real",Scalar));
     this->flags.insert(MVType("frequency",Scalar));
     this->flags.insert(MVType("stress",Scalar));
+    this->flags.insert(MVType("length",Scalar));
+    this->flags.insert(MVType("time",Scalar));
     //    this->flags.insert(MVType("stressrate",Scalar));
     this->flags.insert(MVType("strain",Scalar));
     this->flags.insert(MVType("strainrate",Scalar));
     this->flags.insert(MVType("temperature",Scalar));
     this->flags.insert(MVType("energy_density",Scalar));
     this->flags.insert(MVType("thermalexpansion",Scalar));
-    this->flags.insert(MVType("density",Scalar));
+    this->flags.insert(MVType("massdensity",Scalar));
     this->flags.insert(MVType("TVector",TVector));
     this->flags.insert(MVType("Stensor",Stensor));
     this->flags.insert(MVType("Tensor",Tensor));
@@ -215,29 +251,47 @@ namespace mfront{
     }
   }
 
-  SupportedTypes::TypeSize::ushort
+  int
   SupportedTypes::TypeSize::getScalarSize(void) const
   {
     return this->scalarSize;
   }
 
-  SupportedTypes::TypeSize::ushort
+  int
   SupportedTypes::TypeSize::getTVectorSize(void) const
   {
     return this->tvectorSize;
   }
     
-  SupportedTypes::TypeSize::ushort
+  int
   SupportedTypes::TypeSize::getStensorSize(void) const
   {
     return this->stensorSize;
   }
 
-  SupportedTypes::TypeSize::ushort
+  int
   SupportedTypes::TypeSize::getTensorSize(void) const
   {
     return this->tensorSize;
   }
+
+  bool
+  SupportedTypes::TypeSize::operator==(const SupportedTypes::TypeSize& src) const
+  {
+    return ((this->getScalarSize()==src.getScalarSize())&&
+	    (this->getStensorSize()==src.getStensorSize())&&
+	    (this->getTVectorSize()==src.getTVectorSize())&&
+	    (this->getTensorSize()==src.getTensorSize()));
+  } // end of SupportedTypes::TypeSize::operator==
+
+  bool
+  SupportedTypes::TypeSize::operator!=(const SupportedTypes::TypeSize& src) const
+  {
+    return ((this->getScalarSize()!=src.getScalarSize())||
+	    (this->getStensorSize()!=src.getStensorSize())||
+	    (this->getTVectorSize()!=src.getTVectorSize())||
+	    (this->getTensorSize()!=src.getTensorSize()));
+  } // end of SupportedTypes::TypeSize::operator!=
 
   bool
   SupportedTypes::TypeSize::isNull(void) const
@@ -581,15 +635,14 @@ namespace mfront{
 					     const std::string& prefix,
 					     const std::string& suffix,
 					     const std::string& fileName,
-					     const bool useTimeDerivative,
-					     const bool b) const
+					     const bool useTimeDerivative) const
   {
     using namespace std;
     VariableDescriptionContainer::const_iterator p;
     for(p=v.begin();p!=v.end();++p){
       const string n = prefix+p->name+suffix;
       const string t = (!useTimeDerivative) ? p->type :  this->getTimeDerivativeType(p->type);
-      if((!b)&&(p->lineNumber!=0u)){
+      if((!getDebugMode())&&(p->lineNumber!=0u)){
 	f << "#line " << p->lineNumber << " \"" 
 	  << fileName << "\"\n";
       }

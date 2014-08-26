@@ -32,13 +32,6 @@
 @MaterialProperty<constant> 'ThermalExpansion1' 'a1';
 @MaterialProperty<constant> 'ThermalExpansion2' 'a2';
 @MaterialProperty<constant> 'ThermalExpansion3' 'a3';
-@MaterialProperty<constant> 'MassDensity'       0.;
-@MaterialProperty<constant> 'V1X'   1.;
-@MaterialProperty<constant> 'V1Y'   0.;
-@MaterialProperty<constant> 'V1Z'   0.;
-@MaterialProperty<constant> 'V2X'   0.;
-@MaterialProperty<constant> 'V2Y'   1.;
-@MaterialProperty<constant> 'V2Z'   0.;
 
 @ExternalStateVariable 'Temperature' {0:293.15,3600.:800};
 @Real 'ThermalExpansionReferenceTemperature' 293.15;

@@ -22,8 +22,6 @@
 
 @MaterialProperty<constant> 'YoungModulus'     'young';
 @MaterialProperty<constant> 'PoissonRatio'     'nu';
-@MaterialProperty<constant> 'ThermalExpansion' 0.;   
-@MaterialProperty<constant> 'MassDensity'      0.;    
 @MaterialProperty<constant> 'k' '2*A';
 @MaterialProperty<constant> 'g' 'A/(k-A)';
 

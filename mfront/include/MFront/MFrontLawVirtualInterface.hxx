@@ -26,15 +26,6 @@ namespace mfront{
   struct TFEL_VISIBILITY_EXPORT MFrontLawVirtualInterface
   {
 
-    virtual void 
-    setVerboseMode() = 0;
-
-    virtual void 
-    setDebugMode() = 0;
-
-    virtual void 
-    setWarningMode() = 0;
-
     virtual std::pair<bool,tfel::utilities::CxxTokenizer::TokensContainer::const_iterator>
     treatKeyword(const std::string&,
 		 tfel::utilities::CxxTokenizer::TokensContainer::const_iterator,
@@ -77,7 +68,7 @@ namespace mfront{
 				  const std::vector<std::string>&,
 				  const std::map<std::string,std::string>&,
 				  const std::map<std::string,std::string>&,
-				  const StaticVariableDescriptionContainer& staticVars,
+				  const StaticVariableDescriptionContainer&,
 				  const std::vector<std::string>&,
 				  const std::map<std::string,double>&,
 				  const LawFunction&,

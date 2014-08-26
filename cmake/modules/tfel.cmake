@@ -68,7 +68,7 @@ macro(add_mfront_behaviour_generated_source lib interface file)
     ARGS    "--interface=${interface}" "${mfront_file}"
     DEPENDS "${PROJECT_BINARY_DIR}/mfront/src/mfront"
     DEPENDS "${mfront_file}"
-    COMMENT "mfront source")
+    COMMENT "treating mfront source ${file}.mfront")
   set(${lib}_SOURCES "src/${file}.cxx" "src/${interface}${file}.cxx"
     ${${lib}_SOURCES})
 endmacro(add_mfront_behaviour_generated_source)
@@ -84,7 +84,7 @@ macro(mfront_dependencies lib)
       ARGS    "--interface=mfront" "${PROJECT_SOURCE_DIR}/mfront/tests/properties/${source}.mfront"
       DEPENDS "${PROJECT_BINARY_DIR}/mfront/src/mfront"
       DEPENDS "${mfront_file}"
-      COMMENT "mfront source")
+      COMMENT "treating mfront source ${source}.mfront")
     set(${lib}_ADDITIONAL_SOURCES "src/${source}-mfront.cxx" ${${lib}_ADDITIONAL_SOURCES})
   endforeach(source)
 endmacro(mfront_dependencies)

@@ -15,6 +15,7 @@
 #include"TFEL/Utilities/Name.hxx"
 #include"TFEL/Math/stensor.hxx"
 #include"MFront/UMAT/UMATTangentOperator.hxx"
+#include"MFront/UMAT/UMATComputeStiffnessTensor.hxx"
 
 namespace umat
 {
@@ -217,16 +218,18 @@ namespace umat
      * An helper structure which is used to compute the stiffness
      * tensor for the behaviour that requires it.
      */
-    struct TFEL_VISIBILITY_LOCAL StiffnessOperatorInitializer
+    struct TFEL_VISIBILITY_LOCAL StiffnessTensorInitializer
     {
       typedef Behaviour<H,UMATReal,false> BV;
       typedef typename BV::BehaviourData  BData;
       TFEL_UMAT_INLINE static void
       exe(BData& data,const UMATReal * const props){
-	UMATComputeStiffnessOperator<type,H,UMATTraits<BV>::stype>::exe(props,
-								      data.getStiffnessOperator());
+	typedef UMATTraits<BV> Traits;
+	const bool buas = Traits::requiresUnAlteredStiffnessTensor;
+	UMATComputeStiffnessTensor<type,H,Traits::stype,buas>::exe(data.getStiffnessTensor(),
+								   props);
       } // end of exe
-    }; // end of struct StiffnessOperatorInitializer
+    }; // end of struct StiffnessTensorInitializer
     
     /*!
      * An helper structure which is used to compute the thermal
@@ -292,13 +295,13 @@ namespace umat
       
     }; // end of struct Error
 
-    template<const bool bs,     // requires StiffnessOperator
+    template<const bool bs,     // requires StiffnessTensor
 	     const bool ba>     // requires ThermalExpansionCoefficientTensor
       struct TFEL_VISIBILITY_LOCAL IntegratorWithTimeStepping
     {
       //! A simple alias
       typedef typename tfel::meta::IF<bs,
-				      StiffnessOperatorInitializer,
+				      StiffnessTensorInitializer,
 				      DoNothingInitializer>::type SInitializer;
       //! A simple alias
       typedef typename tfel::meta::IF<ba,
@@ -439,12 +442,12 @@ namespace umat
 	
     }; // end of struct IntegratorWithTimeStepping
 
-    template<const bool bs,     // requires StiffnessOperator
+    template<const bool bs,     // requires StiffnessTensor
 	     const bool ba>     // requires ThermalExpansionCoefficientTensor
       struct TFEL_VISIBILITY_LOCAL Integrator
     {
       typedef typename tfel::meta::IF<bs,
-				      StiffnessOperatorInitializer,
+				      StiffnessTensorInitializer,
 				      DoNothingInitializer>::type SInitializer;
 
       typedef typename tfel::meta::IF<ba,
@@ -635,13 +638,13 @@ namespace umat
       typedef Behaviour<H,UMATReal,false> BV;
       typedef MechanicalBehaviourTraits<BV> Traits;
       const unsigned short offset  = UMATTraits<BV>::propertiesOffset;
-      const unsigned short nprops  = Traits::material_properties_nb;
+      const unsigned short nprops  = UMATTraits<BV>::material_properties_nb;
       const unsigned short NPROPS_ = offset+nprops == 0 ? 1u : offset+nprops; 
       const bool is_defined_       = Traits::is_defined;
-      //Test if the nb of properties matches Behaviour requirements
+      // Test if the nb of properties matches Behaviour requirements
       if((NPROPS!=NPROPS_)&&is_defined_){
-	throwUnMatchedNumberOfMaterialProperties(Name<Behaviour<H,UMATReal,false> >::getName(),
-						 NPROPS_,NPROPS);
+      	throwUnMatchedNumberOfMaterialProperties(Name<Behaviour<H,UMATReal,false> >::getName(),
+      						 NPROPS_,NPROPS);
       }
     } // end of checkNPROPS
       

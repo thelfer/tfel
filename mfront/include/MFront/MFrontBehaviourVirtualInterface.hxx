@@ -9,32 +9,34 @@
 #ifndef _LIB_MFRONTBEHAVIOURVIRTUALINTERFACE_HXX_
 #define _LIB_MFRONTBEHAVIOURVIRTUALINTERFACE_HXX_ 
 
+#include<map>
+#include<set>
 #include<utility>
 #include<string>
-#include<map>
 #include<vector>
 
 #include"TFEL/Config/TFELConfig.hxx"
 #include"TFEL/Utilities/CxxTokenizer.hxx"
-
-#include"MFront/MechanicalBehaviourDescription.hxx"
+#include"TFEL/Material/ModellingHypothesis.hxx"
 
 namespace mfront{
   
+  // forward declaration
+  struct MechanicalBehaviourDescription;
+
+  // forward declaration
+  struct MFrontFileDescription;
+
   /*!
    * This is the abstract base class of all behaviour interfaces
    */
   struct TFEL_VISIBILITY_EXPORT MFrontBehaviourVirtualInterface
   {
 
-    virtual void 
-    setVerboseMode() = 0;
-
-    virtual void 
-    setDebugMode() = 0;
-
-    virtual void 
-    setWarningMode() = 0;
+    //! a simple alias
+    typedef tfel::material::ModellingHypothesis ModellingHypothesis;
+    //! a simple alias
+    typedef ModellingHypothesis::Hypothesis Hypothesis;
 
     /*!
      * set if dynamically allocated arrays are allowed
@@ -47,15 +49,25 @@ namespace mfront{
     treatKeyword(const std::string&,
 		 tfel::utilities::CxxTokenizer::TokensContainer::const_iterator,
 		 const tfel::utilities::CxxTokenizer::TokensContainer::const_iterator) = 0;
+    /*!
+     * \return true if the interface handles the given modelling hypothesis
+     * \param[in] h  : modelling hypothesis
+     * \param[in] mb : mechanical behaviour description
+     */
+    virtual bool
+    isModellingHypothesisHandled(const Hypothesis,
+				 const MechanicalBehaviourDescription&) = 0;
+    
+    virtual std::set<Hypothesis>
+    getModellingHypothesesToBeTreated(const MechanicalBehaviourDescription&) const = 0;
 
     virtual void 
     exportMechanicalData(std::ofstream&,
-			 const std::string&,
+			 const Hypothesis,
 			 const MechanicalBehaviourDescription&) = 0;
     /*!
      * write the behaviour constructor associated with the law
      * \param[in] behaviourFile           : output file
-     * \param[in] className               : behaviour class name
      * \param[in] mb                      : mechanical behaviour description
      * \param[in] initStateVarsIncrements : constructor part assigning
      *                                      default value (zero) to state
@@ -63,13 +75,12 @@ namespace mfront{
      */
     virtual void 
     writeBehaviourConstructor(std::ofstream&,
-			      const std::string&,
 			      const MechanicalBehaviourDescription&,
 			      const std::string&) = 0;
     
     virtual void
     writeBehaviourDataConstructor(std::ofstream&,
-				  const std::string&,
+				  const Hypothesis,
 				  const MechanicalBehaviourDescription&) = 0;
     /*!
      * write the behaviour constructor associated with the law
@@ -82,7 +93,7 @@ namespace mfront{
     
     virtual void 
     writeIntegrationDataConstructor(std::ofstream&,
-				    const std::string&,
+				    const Hypothesis,
 				    const MechanicalBehaviourDescription&) = 0;
     /*!
      * write the behaviour constructor associated with the law
@@ -92,70 +103,49 @@ namespace mfront{
     virtual void 
     writeIntegrationDataMainVariablesSetters(std::ofstream&,
 					     const MechanicalBehaviourDescription&) = 0;
-
+    /*!
+     * \brief write output files
+     * \param[in] mb        : mechanical behaviour description
+     * \param[in] fd        : mfront file description
+     */
     virtual void
-    endTreatement(const std::string&,
-		  const std::string&,
-		  const std::string&,
-		  const std::string&,
-		  const std::string&,
-		  const std::string&,
-		  const std::map<std::string,std::string>&,
-		  const std::map<std::string,std::string>&,
-		  const MechanicalBehaviourDescription&) = 0;
-
+    endTreatement(const MechanicalBehaviourDescription&,
+		  const MFrontFileDescription&) const = 0;
+    /*!
+     * \brief reset the interface
+     */
     virtual void
     reset(void) = 0;
 
     /*!
-     * \param const std::string&, library
-     * \param const std::string&, material
-     * \param const std::string&, class
+     * \param[in] mb : mechanical behaviour description
      */
     virtual std::map<std::string,std::vector<std::string> >
-    getGlobalIncludes(const std::string&,
-		      const std::string&,
-		      const std::string&) = 0;
+    getGlobalIncludes(const MechanicalBehaviourDescription&) = 0;
 
     /*!
-     * \param const std::string&, library
-     * \param const std::string&, material
-     * \param const std::string&, class
+     * \param[in] mb : mechanical behaviour description
      */
     virtual std::map<std::string,std::vector<std::string> >
-    getGlobalDependencies(const std::string&,
-			  const std::string&,
-			  const std::string&) = 0;
+    getGlobalDependencies(const MechanicalBehaviourDescription&) = 0;
 
     /*!
-     * \param const std::string&, library
-     * \param const std::string&, material
-     * \param const std::string&, class
+     * \param[in] mb : mechanical behaviour description
      */
     virtual std::map<std::string,std::vector<std::string> >
-    getGeneratedSources(const std::string&,
-			const std::string&,
-			const std::string&) = 0;
+    getGeneratedSources(const MechanicalBehaviourDescription&) = 0;
 
     /*!
-     * \param const std::string&, library
-     * \param const std::string&, material
-     * \param const std::string&, class
+     * \param[in] mb : mechanical behaviour description
      */
     virtual std::vector<std::string>
-    getGeneratedIncludes(const std::string&,
-			 const std::string&,
-			 const std::string&) = 0;
+    getGeneratedIncludes(const MechanicalBehaviourDescription&) = 0;
 
     /*!
-     * \param const std::string&, library
-     * \param const std::string&, material
-     * \param const std::string&, class
+     * \param[in] mb : mechanical behaviour description
      */
     virtual std::map<std::string,std::vector<std::string> >
-    getLibrariesDependencies(const std::string&,
-			     const std::string&,
-			     const std::string&) = 0;
+    getLibrariesDependencies(const MechanicalBehaviourDescription&) = 0;
 
     virtual ~MFrontBehaviourVirtualInterface();
 

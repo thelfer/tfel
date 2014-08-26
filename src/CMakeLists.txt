@@ -1,6 +1,7 @@
 add_subdirectory(Tests)
 add_subdirectory(Exception)
 add_subdirectory(Utilities)
+add_subdirectory(Glossary)
 add_subdirectory(System)
 add_subdirectory(Math)
 add_subdirectory(Material)

@@ -44,13 +44,18 @@ namespace mfront
      * \param[in] h : modelling hypothesis
      */
     virtual void
-    setModellingHypothesis(tfel::material::ModellingHypothesis::Hypothesis);
+    setModellingHypothesis(const tfel::material::ModellingHypothesis::Hypothesis);
     /*!
      * \brief add a computed time
      * \param[in] t : time
      */
     virtual void
     addTime(const real);
+    /*!
+     * \param[in] b : boolean
+     */
+    virtual void
+    setHandleThermalExpansion(const bool);
     /*!
      * \brief set the rotation matrix
      * \param[in] m00 : m(0,0)
@@ -204,6 +209,8 @@ namespace mfront
     //! values of the external state variables
     std::map<std::string,
 	     std::map<real,real> > evs;
+    //! if true handles thermal expansion
+    bool handleThermalExpansion;
     //! flag true if the rotation matrix is defined
     bool hasRotationMatrix;
     //! rotation matrix

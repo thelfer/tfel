@@ -75,8 +75,10 @@ namespace mfront
     using std::vector<VariableDescription>::begin;
     using std::vector<VariableDescription>::end;
     using std::vector<VariableDescription>::empty;
+    using std::vector<VariableDescription>::insert;
     using std::vector<VariableDescription>::front;
     using std::vector<VariableDescription>::back;
+    using std::vector<VariableDescription>::clear;
     using std::vector<VariableDescription>::size;
     using std::vector<VariableDescription>::operator[];
     /*!
@@ -93,6 +95,17 @@ namespace mfront
      */
     std::vector<std::string>
     getGlossaryNames(const std::map<std::string,std::string>&,
+		     const std::map<std::string,std::string>&) const;
+    /*!
+     * get the glossary names associated with this
+     * container
+     * \param[out] names         : glossary names of the function
+     * \param[in]  glossaryNames : glossary names
+     * \param[in]  entryNames    : entry names
+     */
+    void
+    getGlossaryNames(std::vector<std::string>&,
+		     const std::map<std::string,std::string>&,
 		     const std::map<std::string,std::string>&) const;
     /*!
      * append the list of glossary names associated with this

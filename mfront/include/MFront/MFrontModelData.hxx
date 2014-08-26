@@ -54,6 +54,24 @@ namespace mfront
      * material name
      */
     std::string material;
+    std::string library;
+    std::string className;
+    /*!
+     * included header files
+     */
+    std::string includes;
+    /*!
+     * specific sources
+     */
+    std::string sources;
+    /*!
+     * private code
+     */
+    std::string privateCode;
+    /*!
+     * class member
+     */
+    std::string members;
     std::set<std::string> domains;
     std::set<std::string> fieldNames;
     std::set<std::string> functionNames;
@@ -64,7 +82,10 @@ namespace mfront
     std::vector<VariableBoundsDescription> boundsDescriptions;
     std::vector<VariableBoundsDescription> physicalBoundsDescriptions;
     std::map<std::string,unsigned short> depths;
-
+    /*!
+     * list of material laws used
+     */
+    std::vector<std::string> materialLaws;
   }; // end of struct MFrontModelData
 
 } // end of namespace mfront

@@ -22,10 +22,12 @@ namespace mfront
     : public MTestBehaviour
   {
     /*!
+     * \param[in] h : modelling hypothesis
      * \param[in] l : library name
      * \param[in] b : behaviour name
      */
-    MTestUmatBehaviourBase(const std::string&,
+    MTestUmatBehaviourBase(const tfel::material::ModellingHypothesis::Hypothesis,
+			   const std::string&,
 			   const std::string&);
     /*!
      * \return the type of the behaviour
@@ -158,13 +160,28 @@ namespace mfront
     virtual void
     setUnsignedIntegerParameter(const std::string&,
 				const unsigned short) const;
+    /*!
+     * \brief some interfaces requires dummy material properties to be
+     * declared. For example, the Cast3M finite element solver
+     * requires the mass density and some extra material properties
+     * describing orthotropic axes to be declared.  This method is
+     * meant to automatically declare those if they are not defined by
+     * the user.
+     * \param[out] mp  : evolution manager where 
+     * \param[in]  evm : evolution manager
+     */
+    virtual void
+    setOptionalMaterialPropertiesDefaultValues(MTestEvolutionManager&,
+					       const MTestEvolutionManager&) const;
     //! destructor
     virtual ~MTestUmatBehaviourBase();
   protected:
+    //! hypothesis
+    const std::string hypothesis;
     //! library
-    std::string library;
+    const std::string library;
     //! function
-    std::string behaviour;
+    const std::string behaviour;
     //! names of the material properties
     std::vector<std::string> mpnames;
     //! names of the internal state variables

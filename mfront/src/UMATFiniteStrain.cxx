@@ -68,7 +68,8 @@ namespace umat
   UMATFiniteStrain::computeSecondPiolaKirchhoffStressFromCauchyStress(UMATReal* const STRESS,
   								      const UMATReal* const F,
   								      const UMATInt NTENS,
-  								      const UMATInt NDI)
+  								      const UMATInt NDI,
+								      const UMATReal Fzz)
   {
     UMATCheckNDIValue(NDI);
     // warning F is given in the fortran convention
@@ -83,7 +84,7 @@ namespace umat
     const UMATReal F5 = F[5];
     const UMATReal F6 = F[6];
     const UMATReal F7 = F[7];
-    const UMATReal F8 = F[8];
+    const UMATReal F8 = NDI!=-2 ? F[8] : Fzz;
     // determinant
     const UMATReal J  = F0*(F4*F8-F5*F7)-F3*(F1*F8-F2*F7)+(F1*F5-F2*F4)*F6;
     // inverse of the determinant
@@ -134,7 +135,8 @@ namespace umat
 								      const UMATReal* const STRESS,
   								      const UMATReal* const F,
   								      const UMATInt NTENS,
-  								      const UMATInt NDI)
+  								      const UMATInt NDI,
+								      const UMATReal Fzz)
   {
     sk2[0] = STRESS[0];
     sk2[1] = STRESS[1];
@@ -146,14 +148,15 @@ namespace umat
       sk2[4] = STRESS[4];
       sk2[5] = STRESS[5];
     }
-    UMATFiniteStrain::computeSecondPiolaKirchhoffStressFromCauchyStress(sk2,F,NTENS,NDI);
+    UMATFiniteStrain::computeSecondPiolaKirchhoffStressFromCauchyStress(sk2,F,NTENS,NDI,Fzz);
   } // end of UMATFiniteStrain::computeSecondPiolaKirchhoffStressFromCauchyStress
 
   void
   UMATFiniteStrain::computeCauchyStressFromSecondPiolaKirchhoffStress(UMATReal* const s,
 								      const UMATReal* const F,
 								      const UMATInt NTENS,
-  								      const UMATInt NDI)
+  								      const UMATInt NDI,
+								      const UMATReal Fzz)
   {
     UMATCheckNDIValue(NDI);
     // warning F is given in the fortran convention
@@ -168,7 +171,7 @@ namespace umat
     const UMATReal F5 = F[5];
     const UMATReal F6 = F[6];
     const UMATReal F7 = F[7];
-    const UMATReal F8 = F[8];
+    const UMATReal F8 = NDI!=-2 ? F[8] : Fzz;
     // determinant
     const UMATReal inv_J = 1/(F0*(F4*F8-F5*F7)-F3*(F1*F8-F2*F7)+(F1*F5-F2*F4)*F6);
     const UMATReal p0 = s[0];
@@ -241,10 +244,18 @@ namespace umat
     C.computeEigenVectors(vp,m);
     log_vp(0) = log(vp(0));
     log_vp(1) = log(vp(1));
-    log_vp(2) = log(vp(2));
+    if(NDI!=-2){
+      log_vp(2) = log(vp(2));
+    } else {
+      log_vp(2) = 0.;
+    }
     stensor<2u,UMATReal>::computeEigenTensors(n0,n1,n2,m);
     *(reinterpret_cast<stensor<2u,UMATReal>*>(E)) = (log_vp(0)*n0+log_vp(1)*n1)/2;
-    E[2]  = log_vp(2)/2;
+    if(NDI==-2){
+      E[2]  = 0;
+    } else {
+      E[2]  = log_vp(2)/2;
+    }
     E[3] *= cste;
     // computing P
     const tvector<3u,UMATReal> v0 = m.column_view<0u>();
@@ -357,7 +368,8 @@ namespace umat
 									  const UMATReal* const P,
 									  const UMATReal* const F,
 									  const UMATInt NTENS,
-									  const UMATInt NDI)
+									  const UMATInt NDI,
+									  const UMATReal Fzz)
    {
      using namespace tfel::math;
      using std::sqrt;
@@ -366,7 +378,7 @@ namespace umat
      // now, we compute the second Piolay Kirchoff stress
      UMATReal sk2[6u];
      // first we compute the second Piola-Kirchhoff stress
-     UMATFiniteStrain::computeSecondPiolaKirchhoffStressFromCauchyStress(sk2,STRESS,F,NTENS,NDI);
+     UMATFiniteStrain::computeSecondPiolaKirchhoffStressFromCauchyStress(sk2,STRESS,F,NTENS,NDI,Fzz);
      // now the dual stress of the strain tensor
      if(NTENS==3u){
        s[0] = sk2[0] / P[0];
@@ -395,7 +407,8 @@ namespace umat
 									  const UMATReal* const P,
 									  const UMATReal* const F,
 									  const UMATInt NTENS,
-									  const UMATInt NDI)
+									  const UMATInt NDI,
+									  const UMATReal Fzz)
    {
      using namespace tfel::math;
      using std::sqrt;
@@ -419,7 +432,7 @@ namespace umat
        STRESS[5] *= cste;
      }
      // now, we compute the cauchy stress
-     UMATFiniteStrain::computeCauchyStressFromSecondPiolaKirchhoffStress(STRESS,F,NTENS,NDI);
+     UMATFiniteStrain::computeCauchyStressFromSecondPiolaKirchhoffStress(STRESS,F,NTENS,NDI,Fzz);
    }
 
 } // end of namespace umat

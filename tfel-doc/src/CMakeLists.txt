@@ -4,6 +4,7 @@ include_directories("${PROJECT_SOURCE_DIR}/include"
 
 link_directories("${PROJECT_BINARY_DIR}/mfront/mtest"
                  "${PROJECT_BINARY_DIR}/mfront/src"
+                 "${PROJECT_BINARY_DIR}/src/Material"
                  "${PROJECT_BINARY_DIR}/src/Math"
                  "${PROJECT_BINARY_DIR}/src/System"
                  "${PROJECT_BINARY_DIR}/src/Utilities"

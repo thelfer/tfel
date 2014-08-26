@@ -42,22 +42,22 @@ extern "C" {
 					      const char * const);
   /*!
    * \brief this function returns true if the given behaviour requires
-   * an offset for the elastic properties
+   * an offset for the elastic properties.
    * \param l: link to library opened through dlopen
    * \param f: name of the behaviour to be checked
    * \return int, 0 if false, 1 if true, -1 if an error occured.
    */
-  int tfel_checkIfAsterBehaviourRequiresElasticMaterialPropertiesOffset(LibraryHandlerPtr,
-									const char * const);
+  int tfel_getUMATRequiresStiffnessTensor(LibraryHandlerPtr,
+					  const char * const);
   /*!
    * \brief this function returns true if the given behaviour requires
-   * an offset of the thermal expansions
+   * an offset of the thermal expansions coefficients.
    * \param l: link to library opened through dlopen
    * \param f: name of the behaviour to be checked
    * \return int, 0 if false, 1 if true, -1 if an error occured.
    */
-  int tfel_checkIfAsterBehaviourRequiresThermalExpansionMaterialPropertiesOffset(LibraryHandlerPtr,
-										 const char * const);
+  int tfel_getUMATRequiresThermalExpansionCoefficientTensor(LibraryHandlerPtr,
+							    const char * const);
 
   /*!
    * \brief this function returns true if the given behaviour saves the tangent operator

@@ -38,9 +38,6 @@ namespace mfront
   }
 
   MFrontCppTestLawInterface::MFrontCppTestLawInterface()
-    : verboseMode(false),
-      debugMode(false),
-      warningMode(false)
   {}
 
   MFrontCppTestLawInterface::~MFrontCppTestLawInterface()
@@ -49,24 +46,6 @@ namespace mfront
   void
   MFrontCppTestLawInterface::reset(void)
   {} // end of MFrontCppTestLawInterface::reset(void)
-  
-  void 
-  MFrontCppTestLawInterface::setVerboseMode(void)
-  {
-    this->verboseMode = true;
-  }
-
-  void 
-  MFrontCppTestLawInterface::setWarningMode(void)
-  {
-    this->warningMode = true;
-  }
-
-  void 
-  MFrontCppTestLawInterface::setDebugMode(void)
-  {
-    this->debugMode = true;
-  }
 
   std::pair<bool,tfel::utilities::CxxTokenizer::TokensContainer::const_iterator>
   MFrontCppTestLawInterface::treatKeyword(const std::string& key,

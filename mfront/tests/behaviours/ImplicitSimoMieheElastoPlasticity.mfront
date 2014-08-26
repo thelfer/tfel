@@ -34,10 +34,9 @@
 young.setGlossaryName("YoungModulus");
 @MaterialProperty real nu;    /* mandatory for castem */
 nu.setGlossaryName("PoissonRatio");
-@MaterialProperty density rho;   /* mandatory for castem */
-rho.setGlossaryName("MassDensity");
-@MaterialProperty thermalexpansion alpha; /* mandatory for castem */
+@MaterialProperty thermalexpansion alpha;    /* mandatory for castem */
 alpha.setGlossaryName("ThermalExpansion");
+
 @MaterialProperty stress s_y;
 @MaterialProperty stress ET;
 

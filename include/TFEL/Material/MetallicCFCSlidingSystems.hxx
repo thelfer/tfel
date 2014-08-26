@@ -31,6 +31,7 @@ namespace tfel
       //! number of sliding systems
       static const unsigned short Nss = 12;
       //! tensor of directional sense
+      //! tensor of directional sense
       tfel::math::tvector<Nss,tfel::math::tensor<3u,real> >  mu;
       //! symmetric tensor of directional sense
       tfel::math::tvector<Nss,tfel::math::stensor<3u,real> > mus;

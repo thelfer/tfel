@@ -26,6 +26,26 @@ namespace mfront{
 
   protected:
 
+    /*!
+     * \return true if the given modelling hypothesis is handled by
+     * the parser
+     *
+     * Some parsers have restrictions on the modelling hypotheses
+     * supported. For example, the isotropic behaviours were not able
+     * to handle plane stress hypotheses when this comment was
+     * written(but it was planned, so this comment may be outdated
+     * now).
+     *
+     * The fact that this method returns true means that the user
+     * *can* provide code to support this modelling hypothesis. For
+     * example, to support plane stress in RungeKutta and Implicit
+     * parsers, the user must provide some hand-crafted code. He must
+     * enable this modelling hypothesis by calling explicitely
+     * @ModellingHypothesis or @ModellingHypotheses keywords.
+     */
+    virtual bool
+    isModellingHypothesisSupported(const Hypothesis) const;
+
     virtual void
     writeBehaviourParserSpecificIncludes(void);
 
@@ -33,43 +53,38 @@ namespace mfront{
     writeBehaviourParserSpecificTypedefs(void);
 
     virtual void
-    writeBehaviourParserSpecificInitializeMethodPart(void) = 0;
+    writeBehaviourParserSpecificInitializeMethodPart(const Hypothesis) = 0;
 
     virtual void
-    writeBehaviourParserSpecificMembers(void) = 0;
+    writeBehaviourParserSpecificMembers(const Hypothesis) = 0;
 
     virtual void
-    writeBehaviourIntegrator(void) = 0;
+    writeBehaviourIntegrator(const Hypothesis) = 0;
 
     virtual void
-    writeBehaviourComputePredictionOperator(void);
+    writeBehaviourComputePredictionOperator(const Hypothesis);
 
-    std::string
-    flowRuleVariableModifier(const std::string&,const bool);
+    virtual std::string
+    flowRuleVariableModifier(const Hypothesis,
+			     const std::string&,const bool);
 
-    void
-    treatFlowRuleBase(std::string&);
+    virtual void
+    treatExternalStateVariables(void);
 
-    virtual
-    void
+    virtual void
     treatFlowRule(void);
 
-    void
+    virtual void
     treatTheta(void);
 
-    void
+    virtual void
     treatEpsilon(void);
 
-    void
+    virtual void
     treatIterMax(void);
 
-    void
+    virtual void
     endsInputFileProcessing(void);
-
-    void
-    writeBehaviourStaticVars(void);
-
-    std::string flowRule;
 
     //! default value
     double theta;

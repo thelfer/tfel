@@ -42,12 +42,14 @@ namespace umat
      * as a fortran matrix
      * \param[in]     NTENS : number of components of the strain tensor
      * \param[in]     NDI   : modelling hypothesis
+     * \param[in]     Fzz   : axial deformation gradient if mandatory
      */    
     static void
     computeCauchyStressFromSecondPiolaKirchhoffStress(UMATReal* const,
 						      const UMATReal* const,
 						      const UMATInt,
-						      const UMATInt);
+						      const UMATInt,
+						      const UMATReal);
     /*!
      * \brief compute the second Piola Kirchoff stress from the Cauchy stress.
      * \param[out] sk2    : second Piola Kirchoff stress expressed using umat conventions
@@ -56,13 +58,15 @@ namespace umat
      * as a fortran matrix
      * \param[in]  NTENS  : number of components of the strain tensor
      * \param[in]  NDI    : modelling hypothesis
+     * \param[in]  Fzz    : axial deformation gradient if mandatory
      */    
     static void
     computeSecondPiolaKirchhoffStressFromCauchyStress(UMATReal* const,
 						      const UMATReal* const,
 						      const UMATReal* const,
 						      const UMATInt,
-						      const UMATInt);
+						      const UMATInt,
+						      const UMATReal);
     /*!
      * \brief compute the second Piola Kirchoff stress from the Cauchy stress.
      * \param[out] STRESS : second Piola Kirchoff stress expressed using umat conventions
@@ -70,12 +74,14 @@ namespace umat
      * as a fortran matrix
      * \param[in]  NTENS  : number of components of the strain tensor
      * \param[in]  NDI    : modelling hypothesis
+     * \param[in]  Fzz    : axial deformation gradient if mandatory
      */    
     static void
     computeSecondPiolaKirchhoffStressFromCauchyStress(UMATReal* const,
 						      const UMATReal* const,
 						      const UMATInt,
-						      const UMATInt);
+						      const UMATInt,
+						      const UMATReal);
     /*!
      * \brief compoute the logarithmic strain and its derivatives
      * \param[out] P     : derivative of the logarithmic strain with
@@ -85,6 +91,8 @@ namespace umat
      * as a fortran matrix
      * \param[in]  NTENS : number of components of the strain tensor
      * \param[in]  NDI   : modelling hypothesis
+     * \note this works in plane stress even though the axial
+     * deformation gradient is not known
      */
     static void
     computeLogarithmicStrainAndDerivative(UMATReal* const,
@@ -101,6 +109,7 @@ namespace umat
      * as a fortran matrix
      * \param[in]  NTENS  : number of components of the strain tensor
      * \param[in]  NDI    : modelling hypothesis
+     * \param[in]  Fzz    : axial deformation gradient if mandatory
      */    
     static void
     computeDualStressOfLogarithmicStrainFromCauchyStress(UMATReal* const,
@@ -108,7 +117,8 @@ namespace umat
 							 const UMATReal* const,
 							 const UMATReal* const,
 							 const UMATInt,
-							 const UMATInt);
+							 const UMATInt,
+							 const UMATReal);
     /*!
      * \brief compute the Cauchy stress from the stress dual to the logarithmic strain.
      * \param[out] STRESS : Cauchy stress expressed using the umat conventions
@@ -118,6 +128,7 @@ namespace umat
      * as a fortran matrix
      * \param[in]  NTENS  : number of components of the strain tensor
      * \param[in]  NDI    : modelling hypothesis
+     * \param[in]  Fzz    : axial deformation gradient if mandatory
      */    
     static void
     computeCauchyStressFromDualStressOfLogarithmicStrain(UMATReal* const,
@@ -125,7 +136,8 @@ namespace umat
 							 const UMATReal* const,
 							 const UMATReal* const,
 							 const UMATInt,
-							 const UMATInt);
+							 const UMATInt,
+							 const UMATReal);
 
   }; // end of struct UMATFiniteStrain
 

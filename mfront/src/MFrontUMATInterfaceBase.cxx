@@ -5,41 +5,79 @@
  * \brief 10 juil. 2013
  */
 
+#include<iostream>
+
 #include<sstream>
 #include<stdexcept>
+#include<algorithm>
 
 #include"TFEL/System/System.hxx"
 #include"TFEL/Utilities/StringAlgorithms.hxx"
 
 #include"MFront/ParserUtilities.hxx"
+#include"MFront/MFrontLogStream.hxx"
+#include"MFront/MFrontFileDescription.hxx"
 #include"MFront/MFrontUMATInterfaceBase.hxx"
 
 namespace mfront
 {
 
+  MFrontUMATInterfaceBase::UMATMaterialProperty::UMATMaterialProperty(const std::string& t,
+								      const std::string& n,
+								      const std::string& v,
+								      const unsigned short a,
+								      const SupportedTypes::TypeSize o,
+								      const bool d)
+    : type(t),
+      name(n),
+      var_name(v),
+      arraySize(a),
+      offset(o),
+      dummy(d)
+  {} // end olf UMATMaterialProperty::UMATMaterialProperty
+
+  const MFrontUMATInterfaceBase::UMATMaterialProperty&
+  MFrontUMATInterfaceBase::findUMATMaterialProperty(const std::vector<UMATMaterialProperty>& mprops,
+						    const std::string& n)
+  {
+    using namespace std;
+    vector<UMATMaterialProperty>::const_iterator pm;
+    for(pm=mprops.begin();pm!=mprops.end();++pm){
+      if((pm->name==n)&&(!pm->dummy)){
+	return *pm;
+      }
+    }
+    string msg("MFrontUMATInterfaceBase::findUMATMaterialProperty : "
+	       "no material property associated with the glossary name '"+n+"'");
+    throw(runtime_error(msg));
+    return *(static_cast<const UMATMaterialProperty*>(0));
+  } // end of MFrontUMATInterfaceBase::findUMATMaterialProperty
+
+
   MFrontUMATInterfaceBase::MFrontUMATInterfaceBase()
-    : verboseMode(false),
-      debugMode(false),
-      warningMode(false)
   {} // end of MFrontUMATInterfaceBase::MFrontUMATInterfaceBase
 
-  void 
-  MFrontUMATInterfaceBase::setVerboseMode(void)
+  bool
+  MFrontUMATInterfaceBase::isModellingHypothesisHandled(const Hypothesis h,
+							const MechanicalBehaviourDescription& mb)
   {
-    this->verboseMode = true;
+    using namespace std;
+    set<Hypothesis> ih(this->getModellingHypothesesToBeTreated(mb));
+    if(h==ModellingHypothesis::UNDEFINEDHYPOTHESIS){
+      return !mb.areAllMechanicalDataSpecialised(ih);
+    }
+    return ih.find(h)!=ih.end();
   }
 
-  void 
-  MFrontUMATInterfaceBase::setWarningMode(void)
+  std::string
+  MFrontUMATInterfaceBase::getSymbolName(const std::string& n,
+					 const Hypothesis h) const
   {
-    this->warningMode = true;
-  }
-
-  void 
-  MFrontUMATInterfaceBase::setDebugMode(void)
-  {
-    this->debugMode = true;
-  }
+    if(h!=ModellingHypothesis::UNDEFINEDHYPOTHESIS){
+      return this->getFunctionName(n)+"_"+ModellingHypothesis::toString(h);
+    }
+    return this->getFunctionName(n);
+  } // end of MFrontUMATInterfaceBase::getLibraryName
 
   void
   MFrontUMATInterfaceBase::allowDynamicallyAllocatedArrays(const bool b)
@@ -48,9 +86,7 @@ namespace mfront
   } // end of MFrontUMATInterfaceBase::allowDynamicallyAllocatedArrays
 
   std::map<std::string,std::vector<std::string> >
-  MFrontUMATInterfaceBase::getGlobalDependencies(const std::string&,
-						 const std::string&,
-						 const std::string&)
+  MFrontUMATInterfaceBase::getGlobalDependencies(const MechanicalBehaviourDescription&)
   {
     using namespace std;
     return map<string,vector<string> >();
@@ -63,14 +99,107 @@ namespace mfront
     this->generateMTestFile = false;
   } // end of MFrontUMATInterfaceBase::reset
 
+  void
+  MFrontUMATInterfaceBase::appendToMaterialPropertiesList(std::vector<UMATMaterialProperty>& l,
+							  const std::string& t,
+							  const std::string& n,
+							  const std::string& v,
+							  const bool b) const
+  {
+    using namespace std;
+    const SupportedTypes::TypeFlag flag = this->getTypeFlag(t);
+    if(flag!=SupportedTypes::Scalar){
+      string msg("UMATMaterialProperty::UMATMaterialProperty : "
+		 "material properties shall be scalars");
+      throw(runtime_error(msg));
+    }
+    SupportedTypes::TypeSize o;
+    if(!l.empty()){
+      const UMATMaterialProperty& m = l.back();
+      o  = m.offset;
+      o += this->getTypeSize(t,1u);
+    }
+    l.push_back(UMATMaterialProperty(t,n,v,1u,o,b));
+  } // end of MFrontUMATInterfaceBase::appendToMaterialPropertiesList
+
+  void
+  MFrontUMATInterfaceBase::completeMaterialPropertiesList(std::vector<UMATMaterialProperty>& mprops,
+							  const MechanicalBehaviourDescription& mb,
+							  const Hypothesis h) const
+  {
+    using namespace std;
+    const MechanicalBehaviourData& d   = mb.getMechanicalBehaviourData(h);
+    const VariableDescriptionContainer& mp = d.getMaterialProperties();
+    VariableDescriptionContainer::const_iterator p;
+    for(p=mp.begin();p!=mp.end();++p){
+      const string& n =  mb.getGlossaryName(h,p->name);
+      vector<UMATMaterialProperty>::const_iterator pum;
+      bool found = false;
+      const SupportedTypes::TypeFlag flag = this->getTypeFlag(p->type);
+      if(flag!=SupportedTypes::Scalar){
+	string msg("UMATMaterialProperty::UMATMaterialProperty : "
+		   "Invalid type for material property '"+p->name+"' ("+p->type+").\n"
+		   "Material properties shall be scalars");
+	throw(runtime_error(msg));
+      }
+      for(pum=mprops.begin();(pum!=mprops.end())&&(!found);++pum){
+	if(!pum->dummy){
+	  if(pum->name==n){
+	    // type check
+	    if(mb.useQt()){
+	      if(p->type!=pum->type){
+		string msg("MFrontUMATInterfaceBase::completeMaterialPropertiesList : "
+			   "incompatible type for variable '"+n+
+			   "' ('"+p->type+"' vs '"+pum->type+"')");
+		throw(runtime_error(msg));
+	      }
+	    } else {
+	      // don't use quantity
+	      if(this->getTypeFlag(p->type)!=this->getTypeFlag(pum->type)){;
+		string msg("MFrontUMATInterfaceBase::completeMaterialPropertiesList : "
+			   "incompatible type for variable '"+n+
+			   "' ('"+p->type+"' vs '"+pum->type+"')");
+		throw(runtime_error(msg));
+	      }
+	      if(p->type!=pum->type){
+		ostream& log = getLogStream();
+		log << "MFrontUMATInterfaceBase::completeMaterialPropertiesList : "
+		    << "inconsistent type for variable '" << n
+		    << "' ('" << p->type << "' vs '" << pum->type << "')" << endl;
+	      }
+	    }
+	    if(p->arraySize!=pum->arraySize){
+	      string msg("MFrontUMATInterfaceBase::completeMaterialPropertiesList : "
+			 "incompatible array size for variable '"+n+
+			 "' ('"+p->type+"' vs '"+pum->type+"')");
+	      throw(runtime_error(msg));
+	    }
+	    found = true;
+	  }
+	}
+      }
+      if(!found){
+	SupportedTypes::TypeSize o;
+	if(!mprops.empty()){
+	  const UMATMaterialProperty& m = mprops.back();
+	  o  = m.offset;
+	  o += this->getTypeSize(m.type,m.arraySize);
+	}
+	mprops.push_back(UMATMaterialProperty(p->type,n,p->name,
+					      p->arraySize,o,false));
+      }
+    }
+  } // end of MFrontUMATInterfaceBase::completeMaterialPropertiesList
+
   void 
   MFrontUMATInterfaceBase::exportMechanicalData(std::ofstream& behaviourDataFile,
-						const std::string&,
+						const Hypothesis h,
 						const MechanicalBehaviourDescription& mb)
   {
     using namespace std;
-    const VariableDescriptionContainer& stateVarsHolder          = mb.getStateVariables();
-    const VariableDescriptionContainer& auxiliaryStateVarsHolder = mb.getAuxiliaryStateVariables();
+    const MechanicalBehaviourData& d = mb.getMechanicalBehaviourData(h);
+    const VariableDescriptionContainer& stateVarsHolder          = d.getStateVariables();
+    const VariableDescriptionContainer& auxiliaryStateVarsHolder = d.getAuxiliaryStateVariables();
     const std::string iprefix = makeUpperCase(this->getInterfaceName());
     if((!stateVarsHolder.empty())||
        (!auxiliaryStateVarsHolder.empty())){
@@ -111,7 +240,7 @@ namespace mfront
 	  behaviourDataFile << "exportToBaseTypeArray(this->" << f.name << ","+iprefix+"stress_);\n";	
 	}
       } else {
-	string msg("MFrontUMATInterfaceBase::writeBehaviourDataConstructor : ");
+	string msg("MFrontUMATInterfaceBase::exportMechanicalData : ");
 	msg += "unsupported forces type";
 	throw(runtime_error(msg));
       }
@@ -135,7 +264,6 @@ namespace mfront
   
   void
   MFrontUMATInterfaceBase::writeBehaviourConstructor(std::ofstream& behaviourFile,
-						     const std::string& className,
 						     const MechanicalBehaviourDescription& mb,
 						     const std::string& initStateVarsIncrements)
   {
@@ -153,40 +281,172 @@ namespace mfront
     behaviourFile << " * \\param const Type *const "+iprefix+"dext_vars,";
     behaviourFile << " external state variables increments\n";
     behaviourFile << " */\n";
-    behaviourFile << className 
+    behaviourFile << mb.getClassName() 
 		  << "(const Type* const "+iprefix+"dt_,\n" 
 		  <<  "const Type* const "+iprefix+"T_,const Type* const "+iprefix+"dT_,\n"
 		  <<  "const Type* const "+iprefix+"mat,const Type* const "+iprefix+"int_vars,\n"
 		  <<  "const Type* const "+iprefix+"ext_vars,const Type* const "+iprefix+"dext_vars)\n";
     if(mb.useQt()){
-      behaviourFile << ": " << className 
-		    << "BehaviourData<N,Type,use_qt>("+iprefix+"T_,"+iprefix+"mat,\n"
+      behaviourFile << ": " << mb.getClassName() 
+		    << "BehaviourData<hypothesis,Type,use_qt>("+iprefix+"T_,"+iprefix+"mat,\n"
 		    << iprefix+"int_vars,"+iprefix+"ext_vars),\n";
-      behaviourFile << className 
-		    << "IntegrationData<N,Type,use_qt>("+iprefix+"dt_,"+iprefix+"dT_,"+iprefix+"dext_vars)";
+      behaviourFile << mb.getClassName() 
+		    << "IntegrationData<hypothesis,Type,use_qt>("+iprefix+"dt_,"+iprefix+"dT_,"+iprefix+"dext_vars)";
     } else {
-      behaviourFile << ": " << className 
-		    << "BehaviourData<N,Type,false>("+iprefix+"T_,"+iprefix+"mat,\n"
+      behaviourFile << ": " << mb.getClassName() 
+		    << "BehaviourData<hypothesis,Type,false>("+iprefix+"T_,"+iprefix+"mat,\n"
 		    << iprefix+"int_vars,"+iprefix+"ext_vars),\n";
-      behaviourFile << className 
-		    << "IntegrationData<N,Type,false>("+iprefix+"dt_,"+iprefix+"dT_,"+iprefix+"dext_vars)";
+      behaviourFile << mb.getClassName() 
+		    << "IntegrationData<hypothesis,Type,false>("+iprefix+"dt_,"+iprefix+"dT_,"+iprefix+"dext_vars)";
     }
     if(!initStateVarsIncrements.empty()){
       behaviourFile << ",\n" << initStateVarsIncrements;
     }
   }
+
+  void
+  MFrontUMATInterfaceBase::writeMaterialPropertiesInitializersInBehaviourDataConstructorI(std::ostream& f,
+											  const Hypothesis h,
+											  const MechanicalBehaviourDescription& mb,
+											  const std::vector<UMATMaterialProperty>& i,
+											  const SupportedTypes::TypeSize ioffset,
+											  const std::string& src,
+											  const std::string& prefix,
+											  const std::string& suffix) const
+  {
+    using namespace std;
+    const MechanicalBehaviourData&      d = mb.getMechanicalBehaviourData(h);
+    const VariableDescriptionContainer& v = d.getMaterialProperties();
+    VariableDescriptionContainer::const_iterator p;
+    if(!v.empty()){
+      for(p=v.begin();p!=v.end();++p){
+	if(p->arraySize==1u){
+	  const string n = prefix+p->name+suffix;
+	  const UMATMaterialProperty& m = 
+	    MFrontUMATInterfaceBase::findUMATMaterialProperty(i,mb.getGlossaryName(h,p->name));
+	  SupportedTypes::TypeSize offset = m.offset;
+	  offset -= ioffset;
+	  f << ",\n";
+	  SupportedTypes::TypeFlag flag = this->getTypeFlag(p->type);
+	  if(flag==SupportedTypes::Scalar){
+	    f << n << "("+src+"[" 
+	      << offset << "])";  
+	  } else if((flag==SupportedTypes::TVector)||
+		    (flag==SupportedTypes::Stensor)||
+		    (flag==SupportedTypes::Tensor)){
+	    f << n << "(&"+src+"[" 
+	      << offset << "])";  
+	  } else {
+	    string msg("SupportedTypes::");
+	    msg += "writeVariableInitializersInBehaviourDataConstructorI : ";
+	    msg += "internal error, tag unsupported";
+	    throw(runtime_error(msg));
+	  }
+	}
+      }
+    }
+    
+  } // end of MFrontUMATInterfaceBase::writeVariableInitializersInBehaviourDataConstructorI
+
+  void
+  MFrontUMATInterfaceBase::writeMaterialPropertiesInitializersInBehaviourDataConstructorII(std::ostream& f,
+											   const Hypothesis h,
+											   const MechanicalBehaviourDescription& mb,
+											   const std::vector<UMATMaterialProperty>& i,
+											   const SupportedTypes::TypeSize ioffset,
+											   const std::string& src,
+											   const std::string& prefix,
+											   const std::string& suffix) const
+  {
+    using namespace std;
+    const MechanicalBehaviourData&      d = mb.getMechanicalBehaviourData(h);
+    const VariableDescriptionContainer& v = d.getMaterialProperties();
+    VariableDescriptionContainer::const_iterator p;
+    if(!v.empty()){
+      for(p=v.begin();p!=v.end();++p){
+	if(p->arraySize!=1u){
+	  const UMATMaterialProperty& m =
+	    MFrontUMATInterfaceBase::findUMATMaterialProperty(i,mb.getGlossaryName(h,p->name));	  
+	  const SupportedTypes::TypeFlag flag = this->getTypeFlag(p->type);
+	  SupportedTypes::TypeSize offset = m.offset;
+	  offset -= ioffset;
+	  const string n = prefix+p->name+suffix;
+	  if(this->useDynamicallyAllocatedVector(p->arraySize)){
+	    f << n << ".resize(" << p->arraySize << ");" << endl;
+	    f << "for(unsigned short idx=0;idx!=" << p->arraySize << ";++idx){" << endl;
+	    switch(flag){
+	    case SupportedTypes::Scalar : 
+	      f << n << "[idx] = "+src+"[" 
+		<< offset << "+idx];\n";  
+	      break;
+	    case SupportedTypes::TVector :
+	      f << "tfel::fsalgo<TVectorSize>(&"+src+"[" 
+		<< offset << "+idx*TVectorSize],"
+		<< n << "[idx].begin());\n";  
+	      break;
+	    case SupportedTypes::Stensor :
+	      f << n << "[idx].import(&"+src+"[" 
+		  << offset << "+idx*StensorSize]);\n";  
+	      break;
+	    case SupportedTypes::Tensor :
+	      f << "tfel::fsalgo<TensorSize>(&"+src+"[" 
+		<< offset << "+idx*TensorSize],"
+		<< n << "[idx].begin());\n";  
+	      break;
+	    default : 
+	      string msg("SupportedTypes::");
+	      msg += "writeVariableInitializersInBehaviourDataConstructorII : ";
+	      msg += "internal error, tag unsupported";
+	      throw(runtime_error(msg));
+	    }
+	    f << "}" << endl;
+	  } else {
+	    for(int index=0;index!=p->arraySize;++index){
+	      switch(flag){
+	      case SupportedTypes::Scalar : 
+		f << n << "[" << index << "] = "+src+"[" 
+		  << offset << "];\n";  
+		break;
+	      case SupportedTypes::TVector :
+		f << "tfel::fsalgo<TVectorSize>(&"+src+"[" 
+		  << offset << "]," << n << "[" << index << "].begin());\n";  
+		break;
+	      case SupportedTypes::Stensor :
+		f << n << "["<< index << "].import(&"+src+"[" 
+		  << offset << "]);\n";  
+		break;
+	      case SupportedTypes::Tensor :
+		f << "tfel::fsalgo<TensorSize>(&"+src+"[" 
+		  << offset << "]," << n << "[" << index << "].begin());\n";  
+		break;
+	      default : 
+		string msg("SupportedTypes::");
+		msg += "writeVariableInitializersInBehaviourDataConstructorII : ";
+		msg += "internal error, tag unsupported";
+		throw(runtime_error(msg));
+	      }
+	      offset+=this->getTypeSize(p->type,1u);
+	    }
+	  }
+	}
+      }
+    }
+  } // end of MFrontUMATInterfaceBase::writeVariableInitializersInBehaviourDataConstructorII
   
   void 
   MFrontUMATInterfaceBase::writeBehaviourDataConstructor(std::ofstream& behaviourDataFile,
-							 const std::string& className,
+							 const Hypothesis h,
 							 const MechanicalBehaviourDescription& mb)
   {
     using namespace std;
+    const MechanicalBehaviourData& d = mb.getMechanicalBehaviourData(h);
     const std::string iprefix = makeUpperCase(this->getInterfaceName());
-    const VariableDescriptionContainer& coefsHolder              = mb.getMaterialProperties();
-    const VariableDescriptionContainer& stateVarsHolder          = mb.getStateVariables();
-    const VariableDescriptionContainer& auxiliaryStateVarsHolder = mb.getAuxiliaryStateVariables();
-    const VariableDescriptionContainer& externalStateVarsHolder  = mb.getExternalStateVariables();
+    pair<vector<UMATMaterialProperty>,
+	 SupportedTypes::TypeSize> mprops = this->buildMaterialPropertiesList(mb,h);
+    const VariableDescriptionContainer& mp                       = d.getMaterialProperties();
+    const VariableDescriptionContainer& stateVarsHolder          = d.getStateVariables();
+    const VariableDescriptionContainer& auxiliaryStateVarsHolder = d.getAuxiliaryStateVariables();
+    const VariableDescriptionContainer& externalStateVarsHolder  = d.getExternalStateVariables();
     behaviourDataFile << "/*\n";
     behaviourDataFile << " * \\brief constructor for the umat interface\n";
     behaviourDataFile << " *\n";
@@ -195,9 +455,9 @@ namespace mfront
     behaviourDataFile << " * \\param const Type *const "+iprefix+"int_vars, state variables\n"; 
     behaviourDataFile << " * \\param const Type *const "+iprefix+"ext_vars, external state variables\n";
     behaviourDataFile << " */\n";
-    behaviourDataFile << className << "BehaviourData"
+    behaviourDataFile << mb.getClassName() << "BehaviourData"
 		      << "(const Type* const "+iprefix+"T_,const Type* const";
-    if(!coefsHolder.empty()){
+    if(!mp.empty()){
       behaviourDataFile << " "+iprefix+"mat,\n";
     } else {
       behaviourDataFile << ",\n";
@@ -216,9 +476,10 @@ namespace mfront
     behaviourDataFile << ")\n";
     behaviourDataFile << ": T(*"+iprefix+"T_)";
     SupportedTypes::TypeSize o;
-    this->writeVariableInitializersInBehaviourDataConstructorI(behaviourDataFile,
-							       coefsHolder,
-							       iprefix+"mat","","");
+    this->writeMaterialPropertiesInitializersInBehaviourDataConstructorI(behaviourDataFile,
+									 h,mb,mprops.first,
+									 mprops.second,
+									 iprefix+"mat","","");
     o = this->writeVariableInitializersInBehaviourDataConstructorI(behaviourDataFile,
 								   stateVarsHolder,
 								   iprefix+"int_vars","","");
@@ -229,9 +490,10 @@ namespace mfront
 							       externalStateVarsHolder,
 							       iprefix+"ext_vars","","");
     behaviourDataFile << "\n{\n";
-    this->writeVariableInitializersInBehaviourDataConstructorII(behaviourDataFile,
-								coefsHolder,
-								iprefix+"mat","","");
+    this->writeMaterialPropertiesInitializersInBehaviourDataConstructorII(behaviourDataFile,
+									  h,mb,mprops.first,
+									  mprops.second,
+									  iprefix+"mat","","");
     o = this->writeVariableInitializersInBehaviourDataConstructorII(behaviourDataFile,
 								    stateVarsHolder,
 								    iprefix+"int_vars","","");
@@ -246,12 +508,13 @@ namespace mfront
   
   void 
   MFrontUMATInterfaceBase::writeIntegrationDataConstructor(std::ofstream& behaviourIntegrationFile,
-							   const std::string& className,
+							   const Hypothesis h,
 							   const MechanicalBehaviourDescription& mb)
   {
     using namespace std;
+    const MechanicalBehaviourData& d = mb.getMechanicalBehaviourData(h);
     const std::string iprefix = makeUpperCase(this->getInterfaceName());
-    const VariableDescriptionContainer& externalStateVarsHolder  = mb.getExternalStateVariables();
+    const VariableDescriptionContainer& externalStateVarsHolder  = d.getExternalStateVariables();
     behaviourIntegrationFile << "/*\n";
     behaviourIntegrationFile << " * \\brief constructor for the umat interface\n";
     behaviourIntegrationFile << " * \\param const Type *const "+iprefix+"dt_, time increment\n";
@@ -260,7 +523,7 @@ namespace mfront
     behaviourIntegrationFile << " external state variables increments\n";
     behaviourIntegrationFile << " *\n";
     behaviourIntegrationFile << " */\n";
-    behaviourIntegrationFile << className << "IntegrationData"
+    behaviourIntegrationFile << mb.getClassName() << "IntegrationData"
 			     << "(const Type* const "+iprefix+"dt_,\n" 
 			     <<  "const Type* const "+iprefix+"dT_,const Type* const";
     if(!externalStateVarsHolder.empty()){
@@ -460,8 +723,9 @@ namespace mfront
 
   void
   MFrontUMATInterfaceBase::writeGlossaryNames(std::ostream& f,
-					      const std::vector<std::string>& n,
 					      const std::string& name,
+					      const Hypothesis& h,
+					      const std::vector<std::string>& n,
 					      const std::string& array,
 					      const unsigned short o) const
   {
@@ -474,7 +738,7 @@ namespace mfront
     if(n.size()!=o){
       vector<string>::size_type s = 0u;
       vector<string>::const_iterator p = n.begin()+o;      
-      f << "MFRONT_SHAREDOBJ const char * " << this->getFunctionName(name)
+      f << "MFRONT_SHAREDOBJ const char * " << this->getSymbolName(name,h)
 	<< "_" << array << "[" << n.size()-o <<  "] = {";
       while(p!=n.end()){
 	f << '"' << *p << '"';
@@ -489,7 +753,7 @@ namespace mfront
       }
       f << "};\n";
     } else {
-      f << "MFRONT_SHAREDOBJ const char * const * "  << this->getFunctionName(name)
+      f << "MFRONT_SHAREDOBJ const char * const * "  << this->getSymbolName(name,h)
 	<< "_" << array << " = 0;\n\n";
     }      
   } // end of MFrontUMATInterfaceBase::writeGlossaryNames
@@ -579,115 +843,139 @@ namespace mfront
 								   const std::string& name,
 								   const MechanicalBehaviourDescription& mb) const
   {
-    const VariableDescriptionContainer& pc = mb.getParameters();
-    bool rp,ip,up;
-    this->checkParametersType(rp,ip,up,pc);
-    if(rp){
-      out << "MFRONT_SHAREDOBJ int MFRONT_STDCALL\n"
-	  << this->getFunctionName(name)
-	  << "_setParameter(const char *const,const double);\n\n";
+    using namespace std;
+    set<Hypothesis> h  = mb.getDistinctModellingHypotheses();
+    set<Hypothesis> h2 = this->getModellingHypothesesToBeTreated(mb);
+    set<Hypothesis>::const_iterator p;
+    for(p=h.begin();p!=h.end();++p){
+      if((*p==ModellingHypothesis::UNDEFINEDHYPOTHESIS)||
+	 (h2.find(*p)!=h2.end())){
+	bool rp,ip,up;
+	const MechanicalBehaviourData& d = mb.getMechanicalBehaviourData(*p);
+	const VariableDescriptionContainer& pc = d.getParameters();
+	this->checkParametersType(rp,ip,up,pc);
+	string suffix;
+	if(*p!=ModellingHypothesis::UNDEFINEDHYPOTHESIS){
+	  suffix += ModellingHypothesis::toString(*p);
+	}
+	if(rp){
+	  out << "MFRONT_SHAREDOBJ int MFRONT_STDCALL\n"
+	      << this->getFunctionName(name) << suffix
+	      << "_setParameter(const char *const,const double);\n\n";
+	}
+	if(ip){
+	  out << "MFRONT_SHAREDOBJ int MFRONT_STDCALL\n"
+	      << this->getFunctionName(name) << suffix
+	      << "_setIntegerParameter(const char *const,const int);\n\n";
+	}
+	if(up){
+	  out << "MFRONT_SHAREDOBJ int MFRONT_STDCALL\n"
+	      << this->getFunctionName(name) << suffix
+	      << "_setUnsignedShortParameter(const char *const,const unsigned short);\n\n";
+	}
+      }
     }
-    if(ip){
-      out << "MFRONT_SHAREDOBJ int MFRONT_STDCALL\n"
-	  << this->getFunctionName(name)
-	  << "_setIntegerParameter(const char *const,const int);\n\n";
-    }
-    if(up){
-      out << "MFRONT_SHAREDOBJ int MFRONT_STDCALL\n"
-	  << this->getFunctionName(name)
-	  << "_setIntegerParameter(const char *const,const unsigned short);\n\n";
-    }
-  }
+  } // end of MFrontUMATInterfaceBase::writeSetParametersFunctionsDeclarations
 
   void
   MFrontUMATInterfaceBase::writeSetParametersFunctionsImplementations(std::ostream& out,
 								      const std::string& name,
-								      const std::string& className,
 								      const MechanicalBehaviourDescription& mb) const
   {
-    const VariableDescriptionContainer& pc = mb.getParameters();
-    bool rp,ip,up;
-    this->checkParametersType(rp,ip,up,pc);
-    if(rp){
-      out << "MFRONT_SHAREDOBJ int MFRONT_STDCALL\n"
-	  << this->getFunctionName(name)
-	  << "_setParameter(const char *const key,const double value){\n"
-	  << "using namespace std;\n"
-	  << "using namespace tfel::material;\n"
-	  << className << "ParametersInitializer& i = " << className << "ParametersInitializer::get();\n"
-	  << "try{\n"
-	  << "i.set(key,value);\n"
-	  << "} catch(runtime_error& e){\n"
-	  << "cerr << e.what() << endl;\n"
-	  << "return 0;\n"
-	  << "}\n"
-	  << "return 1;\n"
-	  << "}\n\n";
-    }
-    if(ip){
-      out << "MFRONT_SHAREDOBJ int MFRONT_STDCALL\n"
-	  << this->getFunctionName(name)
-	  << "_setIntegerParameter(const char *const key,const int value){\n"
-	  << "using namespace std;\n"
-	  << "using namespace tfel::material;\n"
-	  << className << "ParametersInitializer& i = " << className << "ParametersInitializer::get();\n"
-	  << "try{\n"
-	  << "i.set(key,value);\n"
-	  << "} catch(runtime_error& e){\n"
-	  << "cerr << e.what() << endl;\n"
-	  << "return 0;\n"
-	  << "}\n"
-	  << "return 1;\n"
-	  << "}\n\n";
-    }
-    if(up){
-      out << "MFRONT_SHAREDOBJ int MFRONT_STDCALL\n"
-	  << this->getFunctionName(name)
-	  << "_setUnsignedShortParameter(const char *const key,const unsigned short value){\n"
-	  << "using namespace std;\n"
-	  << "using namespace tfel::material;\n"
-	  << className << "ParametersInitializer& i = " << className << "ParametersInitializer::get();\n"
-	  << "try{\n"
-	  << "i.set(key,value);\n"
-	  << "} catch(runtime_error& e){\n"
-	  << "cerr << e.what() << endl;\n"
-	  << "return 0;\n"
-	  << "}\n"
-	  << "return 1;\n"
-	  << "}\n\n";
+    using namespace std;
+    set<Hypothesis> h  = mb.getDistinctModellingHypotheses();
+    set<Hypothesis> h2 = this->getModellingHypothesesToBeTreated(mb);
+    set<Hypothesis>::const_iterator p;
+    for(p=h.begin();p!=h.end();++p){
+      if((*p==ModellingHypothesis::UNDEFINEDHYPOTHESIS)||
+	 (h2.find(*p)!=h2.end())){
+	const MechanicalBehaviourData& d = mb.getMechanicalBehaviourData(*p);
+	const VariableDescriptionContainer& pc = d.getParameters();
+	bool rp,ip,up;
+	this->checkParametersType(rp,ip,up,pc);
+	string suffix;
+	if(*p!=ModellingHypothesis::UNDEFINEDHYPOTHESIS){
+	  suffix += ModellingHypothesis::toString(*p);
+	}
+	string cname = mb.getClassName() + suffix + "ParametersInitializer";
+	if(rp){
+	  out << "MFRONT_SHAREDOBJ int MFRONT_STDCALL\n"
+	      << this->getFunctionName(name) << suffix
+	      << "_setParameter(const char *const key,const double value){\n"
+	      << "using namespace std;\n"
+	      << "using namespace tfel::material;\n"
+	      << cname << "& i = " << cname << "::get();\n"
+	      << "try{\n"
+	      << "i.set(key,value);\n"
+	      << "} catch(runtime_error& e){\n"
+	      << "cerr << e.what() << endl;\n"
+	      << "return 0;\n"
+	      << "}\n"
+	      << "return 1;\n"
+	      << "}\n\n";
+	}
+	if(ip){
+	  out << "MFRONT_SHAREDOBJ int MFRONT_STDCALL\n"
+	      << this->getFunctionName(name) << suffix
+	      << "_setIntegerParameter(const char *const key,const int value){\n"
+	      << "using namespace std;\n"
+	      << "using namespace tfel::material;\n"
+	      << cname << "& i = " << cname << "::get();\n"
+	      << "try{\n"
+	      << "i.set(key,value);\n"
+	      << "} catch(runtime_error& e){\n"
+	      << "cerr << e.what() << endl;\n"
+	      << "return 0;\n"
+	      << "}\n"
+	      << "return 1;\n"
+	      << "}\n\n";
+	}
+	if(up){
+	  out << "MFRONT_SHAREDOBJ int MFRONT_STDCALL\n"
+	      << this->getFunctionName(name) << suffix
+	      << "_setUnsignedShortParameter(const char *const key,const unsigned short value){\n"
+	      << "using namespace std;\n"
+	      << "using namespace tfel::material;\n"
+	      << cname << "& i = " << cname << "::get();\n"
+	      << "try{\n"
+	      << "i.set(key,value);\n"
+	      << "} catch(runtime_error& e){\n"
+	      << "cerr << e.what() << endl;\n"
+	      << "return 0;\n"
+	      << "}\n"
+	      << "return 1;\n"
+	      << "}\n\n";
+	}
+      }
     }
   }
 
   std::string
-  MFrontUMATInterfaceBase::getHeaderDefine(const std::string& library,
-					   const std::string& material,
-					   const std::string& className) const
+  MFrontUMATInterfaceBase::getHeaderDefine(const MechanicalBehaviourDescription& mb) const
   {
     using namespace std;
+    const string & m = mb.getMaterialName();
     string header = "_LIB_"+makeUpperCase(this->getInterfaceName());
-    if(!library.empty()){
+    if(!mb.getLibrary().empty()){
       header += "_";
-      header += makeUpperCase(library);
+      header += makeUpperCase(mb.getLibrary());
     }
-    if(!material.empty()){
+    if(!m.empty()){
       header += "_";
-      header += makeUpperCase(material);
+      header += makeUpperCase(m);
     }
     header += "_";
-    header += makeUpperCase(className);
+    header += makeUpperCase(mb.getClassName());
     header += "_HXX";
     return header;
   }
 
   void
   MFrontUMATInterfaceBase::getExtraSrcIncludes(std::ostream& out,
-					       const MechanicalBehaviourDescription& mb)
+					       const MechanicalBehaviourDescription& mb) const
   {
-    const VariableDescriptionContainer& parametersHolder         = mb.getParameters();
-    if((!parametersHolder.empty())||(this->debugMode)){
+    if(mb.hasParameters()){
       out << "#include<iostream>\n";
-    }
-    if(!parametersHolder.empty()){
       out << "#include<stdexcept>\n";
     }
     if(this->generateMTestFile){
@@ -718,347 +1006,303 @@ namespace mfront
   void
   MFrontUMATInterfaceBase::generateMTestFile2(std::ostream& out,
 					      const MechanicalBehaviourDescription::BehaviourType type,
-					      const std::string& library,
-					      const std::string& material,
 					      const std::string& name,
 					      const std::string& suffix,
-					      const MechanicalBehaviourDescription& mb,
-					      const std::map<std::string,std::string>& glossaryNames,
-					      const std::map<std::string,std::string>& entryNames) const
+					      const MechanicalBehaviourDescription& mb) const
   {
     using namespace std;
     if(this->generateMTestFile){
-      const VariableDescriptionContainer& coefsHolder              = mb.getMaterialProperties();
-      const VariableDescriptionContainer& stateVarsHolder          = mb.getStateVariables();
-      const VariableDescriptionContainer& auxiliaryStateVarsHolder = mb.getAuxiliaryStateVariables();
-      const VariableDescriptionContainer& externalStateVarsHolder  = mb.getExternalStateVariables();
-      VariableDescriptionContainer::const_iterator p;
-      const bool mpoffset = this->hasMaterialPropertiesOffset(mb);
-      unsigned short i;
-      unsigned int offset;
+      set<Hypothesis> h = mb.getDistinctModellingHypotheses();
       string fname = name;
       if(!suffix.empty()){
-	fname += "_"+suffix;
+    	fname += "_"+suffix;
       }
       if(type==MechanicalBehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR){
-	out << "mfront::UMATSmallStrainMTestFileGenerator mg(\""
-	    << makeLowerCase(this->getInterfaceName()) << "\",\""
-	    << this->getLibraryName(library,material) <<"\",\"" << this->getFunctionName(fname)
-	    <<  "\");\n";
+    	out << "mfront::UMATSmallStrainMTestFileGenerator mg(\""
+    	    << makeLowerCase(this->getInterfaceName()) << "\",\""
+    	    << this->getLibraryName(mb) <<"\",\"" << this->getFunctionName(fname)
+    	    <<  "\");\n";
       } else if(type==MechanicalBehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR){
-	out << "mfront::UMATFiniteStrainMTestFileGenerator mg(\""
-	    << makeLowerCase(this->getInterfaceName()) << "\",\""
-	    << this->getLibraryName(library,material) <<"\",\"" << this->getFunctionName(fname)
-	    <<  "\");\n";
+    	out << "mfront::UMATFiniteStrainMTestFileGenerator mg(\""
+    	    << makeLowerCase(this->getInterfaceName()) << "\",\""
+    	    << this->getLibraryName(mb) <<"\",\"" << this->getFunctionName(fname)
+    	    <<  "\");\n";
       } else {
-	string msg("MFrontUMATInterfaceBase::generateMTestFile2 : ");
-	msg += "only small strain or finite strain behaviours are supported";
-	throw(runtime_error(msg));
+    	string msg("MFrontUMATInterfaceBase::generateMTestFile2 : ");
+    	msg += "only small strain or finite strain behaviours are supported";
+    	throw(runtime_error(msg));
       }
       this->writeMTestFileGeneratorSetModellingHypothesis(out);
+      this->writeMTestFileGeneratorSetRotationMatrix(out,mb);
       out << "const unsigned short TVectorSize = mg.getTVectorSize();\n";
       out << "const unsigned short StensorSize = mg.getStensorSize();\n";
       out << "const unsigned short TensorSize  = mg.getTensorSize();\n";
-      out << "static_cast<void>(TVectorSize); // remove gcc warning\n";
-      out << "static_cast<void>(StensorSize); // remove gcc warning\n";
-      out << "static_cast<void>(TensorSize);  // remove gcc warning\n";
-      if(mpoffset){
-	out << "unsigned short mg_mpoffset = 0u;" << endl;
-      }
-      this->writeMTestFileGeneratorSetRotationMatrix(out,mb);
+      out << "mg.setHandleThermalExpansion(false);\n";
       out << "mg.addTime(0.);\n";
       out << "mg.addTime(*DTIME);\n";
       if(type==MechanicalBehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR){
-	out << "mg.setStrainTensor(STRAN);\n";
-	out << "mg.setStrainTensorIncrement(DSTRAN);\n";
-	out << "mg.setStressTensor(&mg_STRESS[0]);\n";
+    	out << "mg.setStrainTensor(STRAN);\n";
+    	out << "mg.setStrainTensorIncrement(DSTRAN);\n";
+    	out << "mg.setStressTensor(&mg_STRESS[0]);\n";
       } else if(type==MechanicalBehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR){
-	out << "mg.setDeformationGradientAtTheBeginningOfTheStimeStep(F0);\n";
-	out << "mg.setDeformationGradientAtTheEndOfTheStimeStep(F1);\n";
-	out << "mg.setStressTensor(&mg_STRESS[0]);\n";
+    	out << "mg.setDeformationGradientAtTheBeginningOfTheStimeStep(F0);\n";
+    	out << "mg.setDeformationGradientAtTheEndOfTheStimeStep(F1);\n";
+    	out << "mg.setStressTensor(&mg_STRESS[0]);\n";
       } else {
-	string msg("MFrontUMATInterfaceBase::generateMTestFile2 : ");
-	msg += "only small strain or finite strain behaviours are supported";
-	throw(runtime_error(msg));
+    	string msg("MFrontUMATInterfaceBase::generateMTestFile2 : ");
+    	msg += "only small strain or finite strain behaviours are supported";
+    	throw(runtime_error(msg));
       }
-      this->writeMTestFileGeneratorAdditionalMaterialPropertiesInitialisation(out,mb);
-      if(coefsHolder.empty()){
-	out << "static_cast<void>(mg_mpoffset);\n";
-      }
-      for(p=coefsHolder.begin(),offset=0;p!=coefsHolder.end();++p){
-	SupportedTypes::TypeFlag flag = this->getTypeFlag(p->type);
-	if(flag!=SupportedTypes::Scalar){
-	  string msg("MFrontUMATInterfaceBase::generateFile2 : "
-		     "unsupported external state variable type "
-		     "in mtest file generation");
-	  throw(runtime_error(msg));
-	}
-	const string& mpname = p->getGlossaryName(glossaryNames,entryNames);
-	if(p->arraySize==1u){
-	  if(mpoffset){
-	    if(offset==0){
-	      out << "mg.addMaterialProperty(\"" << mpname << "\",*(PROPS+mg_mpoffset));\n";
-	    } else {
-	      out << "mg.addMaterialProperty(\"" << mpname << "\",*(PROPS+mg_mpoffset+" << offset<< "));\n";
-	    }
-	  } else {
-	    if(offset==0){
-	      out << "mg.addMaterialProperty(\"" << mpname << "\",*PROPS);\n";
-	    } else {
-	      out << "mg.addMaterialProperty(\"" << mpname << "\",*(PROPS+" << offset<< "));\n";
-	    }
+      const map<Hypothesis,string>& gh = this->gatherModellingHypothesesAndTests(mb);
+      for(map<Hypothesis,string>::const_iterator ph=gh.begin();ph!=gh.end();++ph){
+	const MechanicalBehaviourData& d = mb.getMechanicalBehaviourData(ph->first);
+	const VariableDescriptionContainer& stateVarsHolder          = d.getStateVariables();
+	const VariableDescriptionContainer& auxiliaryStateVarsHolder = d.getAuxiliaryStateVariables();
+	const VariableDescriptionContainer& externalStateVarsHolder  = d.getExternalStateVariables();
+	pair<vector<UMATMaterialProperty>,
+	     SupportedTypes::TypeSize> mprops = this->buildMaterialPropertiesList(mb,ph->first);
+	VariableDescriptionContainer::const_iterator p;
+	unsigned short i;
+	unsigned int offset;
+	out << "if(" << ph->second << "){" << endl;
+	offset=0;
+	for(vector<UMATMaterialProperty>::const_iterator pm=mprops.first.begin();
+	    pm!=mprops.first.end();++pm){
+	  SupportedTypes::TypeFlag flag = this->getTypeFlag(pm->type);
+	  if(flag!=SupportedTypes::Scalar){
+	    string msg("MFrontUMATInterfaceBase::generateFile2 : "
+		       "unsupported external state variable type "
+		       "in mtest file generation");
+	    throw(runtime_error(msg));
 	  }
-	  ++offset;
-	} else {
-	  if(p->arraySize>=SupportedTypes::ArraySizeLimit){
-	    out << "for(unsigned short i=0;i!=" << p->arraySize << ";++i){\n";
-	    out << "ostringstream name;\n";
-	    out << "name << \"" << mpname << "[\" << i << \"]\";\n";
-	    if(mpoffset){
-	      if(offset==0){
-		out << "mg.addMaterialProperty(name.str(),*(PROPS+mg_mpoffset+i));\n";
-	      } else {
-		out << "mg.addMaterialProperty(name.str(),*(PROPS+mg_mpoffset+" << offset<< "+i));\n";
-	      }
-	      out << "}\n";
+	  if(pm->arraySize==1u){
+	    if(offset==0){
+	      out << "mg.addMaterialProperty(\"" << pm->name << "\",*(PROPS));\n";	    
 	    } else {
-	      if(offset==0){
-		out << "mg.addMaterialProperty(name.str(),*(PROPS+i));\n";
-	      } else {
-		out << "mg.addMaterialProperty(name.str(),*(PROPS+" << offset<< "+i));\n";
-	      }
-	      out << "}\n";
+	      out << "mg.addMaterialProperty(\"" << pm->name << "\",*(PROPS+" << offset << "));\n";	    
 	    }
-	    offset += p->arraySize;
 	  } else {
-	    for(i=0;i!=p->arraySize;++i,++offset){
-	       if(mpoffset){
-		 if(offset==0){
-		   out << "mg.addMaterialProperty(\"" << mpname
-		       << "[" << i << "]\",*(PROPS+mg_mpoffset));\n";
-		 } else {
-		   out << "mg.addMaterialProperty(\""
-		       << mpname << "[" << i << "]\",*(PROPS+mg_mpoffset+" << offset<< "));\n";
-		 }
-	       } else {
-		 if(offset==0){
-		   out << "mg.addMaterialProperty(\"" << mpname
-		       << "[" << i << "]\",*PROPS);\n";
-		 } else {
-		   out << "mg.addMaterialProperty(\""
-		       << mpname << "[" << i << "]\",*(PROPS+" << offset<< "));\n";
-		 }
-	       }
+	    for(unsigned short s=0;s!=pm->arraySize;++s,++offset){
+	      if(offset==0){
+		out << "mg.addMaterialProperty(\"" << pm->name << "[" << s << "]\",*(PROPS));\n";	    
+	      } else {
+		out << "mg.addMaterialProperty(\"" << pm->name << "[" << s << "]\","
+		    << "*(PROPS+" << offset << "));\n";	    
+	      }
 	    }
 	  }
 	}
-      }
-      SupportedTypes::TypeSize ivoffset;
-      for(p=stateVarsHolder.begin();p!=stateVarsHolder.end();++p){
-	SupportedTypes::TypeFlag flag = this->getTypeFlag(p->type);
-	const string& ivname = p->getGlossaryName(glossaryNames,entryNames);
-	if(p->arraySize==1u){
-	  if(ivoffset.isNull()){
-	    if(flag==SupportedTypes::Scalar){
-	      out << "mg.addInternalStateVariable(\"" << ivname << "\",SupportedTypes::Scalar,STATEV);\n";
-	      ivoffset += SupportedTypes::TypeSize(1u,0u,0u,0u);
-	    } else {
-	      ivoffset += SupportedTypes::TypeSize(0u,0u,1u,0u);
-	      out << "mg.addInternalStateVariable(\"" << ivname << "\",SupportedTypes::Stensor,STATEV);\n";
-	    }
-	  } else {
-	    if(flag==SupportedTypes::Scalar){
-	      out << "mg.addInternalStateVariable(\"" << ivname << "\",SupportedTypes::Scalar,STATEV+" << ivoffset<< ");\n";
-	      ivoffset += SupportedTypes::TypeSize(1u,0u,0u,0u);
-	    } else {
-	      out << "mg.addInternalStateVariable(\"" << ivname << "\",SupportedTypes::Stensor,STATEV+" << ivoffset<< ");\n";
-	      ivoffset += SupportedTypes::TypeSize(0u,0u,1u,0u);
-	    }
-	  }
-	} else {
-	  if(p->arraySize>=SupportedTypes::ArraySizeLimit){
-	    out << "for(unsigned short i=0;i!=" << p->arraySize << ";++i){\n";
-	    out << "ostringstream name;\n";
-	    out << "name << \"" << ivname << "[\" << i << \"]\";\n";
+	SupportedTypes::TypeSize ivoffset;
+	for(p=stateVarsHolder.begin();p!=stateVarsHolder.end();++p){
+	  SupportedTypes::TypeFlag flag = this->getTypeFlag(p->type);
+	  const string& ivname = d.getGlossaryName(p->name);
+	  if(p->arraySize==1u){
 	    if(ivoffset.isNull()){
 	      if(flag==SupportedTypes::Scalar){
-		out << "mg.addInternalStateVariable(name.str(),SupportedTypes::Scalar,STATEV+i);\n";
+		out << "mg.addInternalStateVariable(\"" << ivname << "\",SupportedTypes::Scalar,STATEV);\n";
+		ivoffset += SupportedTypes::TypeSize(1u,0u,0u,0u);
 	      } else {
-		out << "mg.addInternalStateVariable(name.str(),SupportedTypes::Stensor,STATEV+i);\n";
+		ivoffset += SupportedTypes::TypeSize(0u,0u,1u,0u);
+		out << "mg.addInternalStateVariable(\"" << ivname << "\",SupportedTypes::Stensor,STATEV);\n";
 	      }
 	    } else {
 	      if(flag==SupportedTypes::Scalar){
-		out << "mg.addInternalStateVariable(name.str(),SupportedTypes::Scalar,STATEV+" << ivoffset<< "+i);\n";
+		out << "mg.addInternalStateVariable(\"" << ivname << "\",SupportedTypes::Scalar,STATEV+" << ivoffset<< ");\n";
+		ivoffset += SupportedTypes::TypeSize(1u,0u,0u,0u);
 	      } else {
-		out << "mg.addInternalStateVariable(name.str(),SupportedTypes::Stensor,STATEV+" << ivoffset<< "+i);\n";
+		out << "mg.addInternalStateVariable(\"" << ivname << "\",SupportedTypes::Stensor,STATEV+" << ivoffset<< ");\n";
+		ivoffset += SupportedTypes::TypeSize(0u,0u,1u,0u);
 	      }
 	    }
-	    out << "}\n";
-	    if(flag==SupportedTypes::Scalar){
-	      ivoffset += SupportedTypes::TypeSize(p->arraySize,0u,0u,0u);
-	    } else {
-	      ivoffset += SupportedTypes::TypeSize(0u,0u,p->arraySize,0u);
-	    }
 	  } else {
-	    for(i=0;i!=p->arraySize;++i){
+	    if(p->arraySize>=SupportedTypes::ArraySizeLimit){
+	      out << "for(unsigned short i=0;i!=" << p->arraySize << ";++i){\n";
+	      out << "ostringstream name;\n";
+	      out << "name << \"" << ivname << "[\" << i << \"]\";\n";
 	      if(ivoffset.isNull()){
 		if(flag==SupportedTypes::Scalar){
-		  out << "mg.addInternalStateVariable(\"" << ivname
-		      << "[" << i << "]\",SupportedTypes::Scalar,STATEV);\n";
-		  ivoffset += SupportedTypes::TypeSize(1u,0u,0u,0u);
+		  out << "mg.addInternalStateVariable(name.str(),SupportedTypes::Scalar,STATEV+i);\n";
 		} else {
-		  out << "mg.addInternalStateVariable(\"" << ivname
-		      << "[" << i << "]\",SupportedTypes::Stensor,STATEV);\n";
-		  ivoffset += SupportedTypes::TypeSize(0u,0u,1u,0u);
+		  out << "mg.addInternalStateVariable(name.str(),SupportedTypes::Stensor,STATEV+i);\n";
 		}
 	      } else {
 		if(flag==SupportedTypes::Scalar){
-		  out << "mg.addInternalStateVariable(\""
-		      << ivname << "[" << i << "]\",SupportedTypes::Scalar,STATEV+" << ivoffset<< ");\n";
-		  ivoffset += SupportedTypes::TypeSize(1u,0u,0u,0u);
+		  out << "mg.addInternalStateVariable(name.str(),SupportedTypes::Scalar,STATEV+" << ivoffset<< "+i);\n";
 		} else {
-		  out << "mg.addInternalStateVariable(\""
-		      << ivname << "[" << i << "]\",SupportedTypes::Stensor,STATEV+" << ivoffset<< ");\n";
-		  ivoffset += SupportedTypes::TypeSize(0u,0u,1u,0u);
+		  out << "mg.addInternalStateVariable(name.str(),SupportedTypes::Stensor,STATEV+" << ivoffset<< "+i);\n";
+		}
+	      }
+	      out << "}\n";
+	      if(flag==SupportedTypes::Scalar){
+		ivoffset += SupportedTypes::TypeSize(p->arraySize,0u,0u,0u);
+	      } else {
+		ivoffset += SupportedTypes::TypeSize(0u,0u,p->arraySize,0u);
+	      }
+	    } else {
+	      for(i=0;i!=p->arraySize;++i){
+		if(ivoffset.isNull()){
+		  if(flag==SupportedTypes::Scalar){
+		    out << "mg.addInternalStateVariable(\"" << ivname
+			<< "[" << i << "]\",SupportedTypes::Scalar,STATEV);\n";
+		    ivoffset += SupportedTypes::TypeSize(1u,0u,0u,0u);
+		  } else {
+		    out << "mg.addInternalStateVariable(\"" << ivname
+			<< "[" << i << "]\",SupportedTypes::Stensor,STATEV);\n";
+		    ivoffset += SupportedTypes::TypeSize(0u,0u,1u,0u);
+		  }
+		} else {
+		  if(flag==SupportedTypes::Scalar){
+		    out << "mg.addInternalStateVariable(\""
+			<< ivname << "[" << i << "]\",SupportedTypes::Scalar,STATEV+" << ivoffset<< ");\n";
+		    ivoffset += SupportedTypes::TypeSize(1u,0u,0u,0u);
+		  } else {
+		    out << "mg.addInternalStateVariable(\""
+			<< ivname << "[" << i << "]\",SupportedTypes::Stensor,STATEV+" << ivoffset<< ");\n";
+		    ivoffset += SupportedTypes::TypeSize(0u,0u,1u,0u);
+		  }
 		}
 	      }
 	    }
 	  }
 	}
-      }
-      for(p=auxiliaryStateVarsHolder.begin();p!=auxiliaryStateVarsHolder.end();++p){
-	SupportedTypes::TypeFlag flag = this->getTypeFlag(p->type);
-	const string& ivname = p->getGlossaryName(glossaryNames,entryNames);
-	if(p->arraySize==1u){
-	  if(ivoffset.isNull()){
-	    if(flag==SupportedTypes::Scalar){
-	      out << "mg.addInternalStateVariable(\"" << ivname << "\",SupportedTypes::Scalar,STATEV);\n";
-	      ivoffset += SupportedTypes::TypeSize(1u,0u,0u,0u);
-	    } else {
-	      ivoffset += SupportedTypes::TypeSize(0u,0u,1u,0u);
-	      out << "mg.addInternalStateVariable(\"" << ivname << "\",SupportedTypes::Stensor,STATEV);\n";
-	    }
-	  } else {
-	    if(flag==SupportedTypes::Scalar){
-	      out << "mg.addInternalStateVariable(\"" << ivname << "\",SupportedTypes::Scalar,STATEV+" << ivoffset<< ");\n";
-	      ivoffset += SupportedTypes::TypeSize(1u,0u,0u,0u);
-	    } else {
-	      out << "mg.addInternalStateVariable(\"" << ivname << "\",SupportedTypes::Stensor,STATEV+" << ivoffset<< ");\n";
-	      ivoffset += SupportedTypes::TypeSize(0u,0u,1u,0u);
-	    }
-	  }
-	} else {
-	  if(p->arraySize>=SupportedTypes::ArraySizeLimit){
-	    out << "for(unsigned short i=0;i!=" << p->arraySize << ";++i){\n";
-	    out << "ostringstream name;\n";
-	    out << "name << \"" << ivname << "[\" << i << \"]\";\n";
+	for(p=auxiliaryStateVarsHolder.begin();p!=auxiliaryStateVarsHolder.end();++p){
+	  SupportedTypes::TypeFlag flag = this->getTypeFlag(p->type);
+	  const string& ivname = d.getGlossaryName(p->name);
+	  if(p->arraySize==1u){
 	    if(ivoffset.isNull()){
 	      if(flag==SupportedTypes::Scalar){
-		out << "mg.addInternalStateVariable(name.str(),SupportedTypes::Scalar,STATEV+i);\n";
+		out << "mg.addInternalStateVariable(\"" << ivname << "\",SupportedTypes::Scalar,STATEV);\n";
+		ivoffset += SupportedTypes::TypeSize(1u,0u,0u,0u);
 	      } else {
-		out << "mg.addInternalStateVariable(name.str(),SupportedTypes::Stensor,STATEV+i);\n";
+		ivoffset += SupportedTypes::TypeSize(0u,0u,1u,0u);
+		out << "mg.addInternalStateVariable(\"" << ivname << "\",SupportedTypes::Stensor,STATEV);\n";
 	      }
 	    } else {
 	      if(flag==SupportedTypes::Scalar){
-		out << "mg.addInternalStateVariable(name.str(),SupportedTypes::Scalar,STATEV+" << ivoffset<< "+i);\n";
+		out << "mg.addInternalStateVariable(\"" << ivname << "\",SupportedTypes::Scalar,STATEV+" << ivoffset<< ");\n";
+		ivoffset += SupportedTypes::TypeSize(1u,0u,0u,0u);
 	      } else {
-		out << "mg.addInternalStateVariable(name.str(),SupportedTypes::Stensor,STATEV+" << ivoffset<< "+i);\n";
+		out << "mg.addInternalStateVariable(\"" << ivname << "\",SupportedTypes::Stensor,STATEV+" << ivoffset<< ");\n";
+		ivoffset += SupportedTypes::TypeSize(0u,0u,1u,0u);
 	      }
 	    }
-	    out << "}\n";
-	    if(flag==SupportedTypes::Scalar){
-	      ivoffset += SupportedTypes::TypeSize(p->arraySize,0u,0u,0u);
-	    } else {
-	      ivoffset += SupportedTypes::TypeSize(0u,0u,p->arraySize,0u);
-	    }
 	  } else {
-	    for(i=0;i!=p->arraySize;++i){
+	    if(p->arraySize>=SupportedTypes::ArraySizeLimit){
+	      out << "for(unsigned short i=0;i!=" << p->arraySize << ";++i){\n";
+	      out << "ostringstream name;\n";
+	      out << "name << \"" << ivname << "[\" << i << \"]\";\n";
 	      if(ivoffset.isNull()){
 		if(flag==SupportedTypes::Scalar){
-		  out << "mg.addInternalStateVariable(\"" << ivname
-		      << "[" << i << "]\",SupportedTypes::Scalar,STATEV);\n";
-		  ivoffset += SupportedTypes::TypeSize(1u,0u,0u,0u);
+		  out << "mg.addInternalStateVariable(name.str(),SupportedTypes::Scalar,STATEV+i);\n";
 		} else {
-		  out << "mg.addInternalStateVariable(\"" << ivname
-		      << "[" << i << "]\",SupportedTypes::Stensor,STATEV);\n";
-		  ivoffset += SupportedTypes::TypeSize(0u,0u,1u,0u);
+		  out << "mg.addInternalStateVariable(name.str(),SupportedTypes::Stensor,STATEV+i);\n";
 		}
 	      } else {
 		if(flag==SupportedTypes::Scalar){
-		  out << "mg.addInternalStateVariable(\""
-		      << ivname << "[" << i << "]\",SupportedTypes::Scalar,STATEV+" << ivoffset<< ");\n";
-		  ivoffset += SupportedTypes::TypeSize(1u,0u,0u,0u);
+		  out << "mg.addInternalStateVariable(name.str(),SupportedTypes::Scalar,STATEV+" << ivoffset<< "+i);\n";
 		} else {
-		  out << "mg.addInternalStateVariable(\""
-		      << ivname << "[" << i << "]\",SupportedTypes::Stensor,STATEV+" << ivoffset<< ");\n";
-		  ivoffset += SupportedTypes::TypeSize(0u,0u,1u,0u);
+		  out << "mg.addInternalStateVariable(name.str(),SupportedTypes::Stensor,STATEV+" << ivoffset<< "+i);\n";
+		}
+	      }
+	      out << "}\n";
+	      if(flag==SupportedTypes::Scalar){
+		ivoffset += SupportedTypes::TypeSize(p->arraySize,0u,0u,0u);
+	      } else {
+		ivoffset += SupportedTypes::TypeSize(0u,0u,p->arraySize,0u);
+	      }
+	    } else {
+	      for(i=0;i!=p->arraySize;++i){
+		if(ivoffset.isNull()){
+		  if(flag==SupportedTypes::Scalar){
+		    out << "mg.addInternalStateVariable(\"" << ivname
+			<< "[" << i << "]\",SupportedTypes::Scalar,STATEV);\n";
+		    ivoffset += SupportedTypes::TypeSize(1u,0u,0u,0u);
+		  } else {
+		    out << "mg.addInternalStateVariable(\"" << ivname
+			<< "[" << i << "]\",SupportedTypes::Stensor,STATEV);\n";
+		    ivoffset += SupportedTypes::TypeSize(0u,0u,1u,0u);
+		  }
+		} else {
+		  if(flag==SupportedTypes::Scalar){
+		    out << "mg.addInternalStateVariable(\""
+			<< ivname << "[" << i << "]\",SupportedTypes::Scalar,STATEV+" << ivoffset<< ");\n";
+		    ivoffset += SupportedTypes::TypeSize(1u,0u,0u,0u);
+		  } else {
+		    out << "mg.addInternalStateVariable(\""
+			<< ivname << "[" << i << "]\",SupportedTypes::Stensor,STATEV+" << ivoffset<< ");\n";
+		    ivoffset += SupportedTypes::TypeSize(0u,0u,1u,0u);
+		  }
 		}
 	      }
 	    }
 	  }
 	}
-      }
-      out << "mg.addExternalStateVariableValue(\"Temperature\",0.,*TEMP);\n";
-      out << "mg.addExternalStateVariableValue(\"Temperature\",*DTIME,*TEMP+*DTEMP);\n";
-      for(p=externalStateVarsHolder.begin(),offset=0;p!=externalStateVarsHolder.end();++p){
-	SupportedTypes::TypeFlag flag = this->getTypeFlag(p->type);
-	if(flag!=SupportedTypes::Scalar){
-	  string msg("MFrontUMATInterfaceBase::generateFile2 : "
-		     "unsupported external state variable type "
-		     "in mtest file generation");
-	  throw(runtime_error(msg));
-	}
-	const string& evname = p->getGlossaryName(glossaryNames,entryNames);
-	if(p->arraySize==1u){
-	  if(offset==0){
-	    out << "mg.addExternalStateVariableValue(\"" << evname 
-		<< "\",0,*PREDEF);\n";
-	    out << "mg.addExternalStateVariableValue(\"" << evname 
-		<< "\",*DTIME,*PREDEF+*DPRED);\n";
-	  } else {
-	    out << "mg.addExternalStateVariableValue(\"" << evname 
-		<< "\",0,*(PREDEF+" << offset<< "));\n";
-	    out << "mg.addExternalStateVariableValue(\"" << evname 
-		<< "\",*DTIME,*(PREDEF+" << offset<< ")+*(DPRED+" << offset<< "));\n";
+	out << "mg.addExternalStateVariableValue(\"Temperature\",0.,*TEMP);\n";
+	out << "mg.addExternalStateVariableValue(\"Temperature\",*DTIME,*TEMP+*DTEMP);\n";
+	for(p=externalStateVarsHolder.begin(),offset=0;p!=externalStateVarsHolder.end();++p){
+	  SupportedTypes::TypeFlag flag = this->getTypeFlag(p->type);
+	  if(flag!=SupportedTypes::Scalar){
+	    string msg("MFrontUMATInterfaceBase::generateFile2 : "
+		       "unsupported external state variable type "
+		       "in mtest file generation");
+	    throw(runtime_error(msg));
 	  }
-	  ++offset;
-	} else {
-	  if(p->arraySize>=SupportedTypes::ArraySizeLimit){
-	    out << "for(unsigned short i=0;i!=" << p->arraySize << ";++i){\n";
-	    out << "ostringstream name;\n";
-	    out << "name << \"" << evname << "[\" << i << \"]\";\n";
+	  const string& evname = d.getGlossaryName(p->name);
+	  if(p->arraySize==1u){
 	    if(offset==0){
-	      out << "mg.addExternalStateVariableValue(name.str(),0,*(PREDEF+i));\n";
-	      out << "mg.addExternalStateVariableValue(name.str(),"
-		"*DTIME,*(PREDEF+i)+*(DPRED+i));\n";
+	      out << "mg.addExternalStateVariableValue(\"" << evname 
+		  << "\",0,*PREDEF);\n";
+	      out << "mg.addExternalStateVariableValue(\"" << evname 
+		  << "\",*DTIME,*PREDEF+*DPRED);\n";
 	    } else {
-	      out << "mg.addExternalStateVariableValue(name.str(),"
-		"0,*(PREDEF+" << offset<< "+i));\n";
-	      out << "mg.addExternalStateVariableValue(name.str(),"
-		"*DTIME,*(PREDEF+" << offset << "+i)+*(DPRED+" << offset<< "+i));\n";
+	      out << "mg.addExternalStateVariableValue(\"" << evname 
+		  << "\",0,*(PREDEF+" << offset<< "));\n";
+	      out << "mg.addExternalStateVariableValue(\"" << evname 
+		  << "\",*DTIME,*(PREDEF+" << offset<< ")+*(DPRED+" << offset<< "));\n";
 	    }
-	    out << "}\n";
-	    offset += p->arraySize;
+	    ++offset;
 	  } else {
-	    for(i=0;i!=p->arraySize;++i,++offset){
+	    if(p->arraySize>=SupportedTypes::ArraySizeLimit){
+	      out << "for(unsigned short i=0;i!=" << p->arraySize << ";++i){\n";
+	      out << "ostringstream name;\n";
+	      out << "name << \"" << evname << "[\" << i << \"]\";\n";
 	      if(offset==0){
-		out << "mg.addExternalStateVariableValue(\"" << evname
-		    << "[" << i << "]\",0,*PREDEF);\n";
-		out << "mg.addExternalStateVariableValue(\"" << evname
-		    << "[" << i << "]\",*DTIME,*PREDEF+*DPRED);\n";
+		out << "mg.addExternalStateVariableValue(name.str(),0,*(PREDEF+i));\n";
+		out << "mg.addExternalStateVariableValue(name.str(),"
+		  "*DTIME,*(PREDEF+i)+*(DPRED+i));\n";
 	      } else {
-		out << "mg.addExternalStateVariableValue(\""
-		    << evname << "[" << i << "]\","
-		  "0,*(PREDEF+" << offset<< "));\n";
-		out << "mg.addExternalStateVariableValue(\""
-		    << evname << "[" << i << "]\","
-		  "*DTIME,*(PREDEF+" << offset<< ")+*(DPRED+" << offset<< "));\n";
+		out << "mg.addExternalStateVariableValue(name.str(),"
+		  "0,*(PREDEF+" << offset<< "+i));\n";
+		out << "mg.addExternalStateVariableValue(name.str(),"
+		  "*DTIME,*(PREDEF+" << offset << "+i)+*(DPRED+" << offset<< "+i));\n";
+	      }
+	      out << "}\n";
+	      offset += p->arraySize;
+	    } else {
+	      for(i=0;i!=p->arraySize;++i,++offset){
+		if(offset==0){
+		  out << "mg.addExternalStateVariableValue(\"" << evname
+		      << "[" << i << "]\",0,*PREDEF);\n";
+		  out << "mg.addExternalStateVariableValue(\"" << evname
+		      << "[" << i << "]\",*DTIME,*PREDEF+*DPRED);\n";
+		} else {
+		  out << "mg.addExternalStateVariableValue(\""
+		      << evname << "[" << i << "]\","
+		    "0,*(PREDEF+" << offset<< "));\n";
+		  out << "mg.addExternalStateVariableValue(\""
+		      << evname << "[" << i << "]\","
+		    "*DTIME,*(PREDEF+" << offset<< ")+*(DPRED+" << offset<< "));\n";
+		}
 	      }
 	    }
 	  }
 	}
+	out << "}" << endl;
       }
       out << "mg.generate(\""+name+"\");\n";
+      out << "static_cast<void>(TVectorSize); // remove gcc warning\n";
+      out << "static_cast<void>(StensorSize); // remove gcc warning\n";
+      out << "static_cast<void>(TensorSize);  // remove gcc warning\n";
     }
   }
 
@@ -1075,23 +1319,41 @@ namespace mfront
   } // end of MFrontUMATInterfaceBase::writeMTestFileGeneratorSetRotationMatrix
 
   void
-  MFrontUMATInterfaceBase::generateUMATxxSymbols(std::ostream& out,
-						 const std::string& name,
-						 const std::string& file,
-						 const MechanicalBehaviourDescription& mb,
-						 const std::map<std::string,std::string>& glossaryNames,
-						 const std::map<std::string,std::string>& entryNames) const
+  MFrontUMATInterfaceBase::generateUMATxxGeneralSymbols(std::ostream& out,
+							const std::string& name,
+							const MechanicalBehaviourDescription& mb,
+							const MFrontFileDescription & fd) const
   {
-    this->writeUMATxxSourceFileSymbols(out,name,file,mb);
+    this->writeUMATxxSourceFileSymbols(out,name,mb,fd);
     this->writeUMATxxBehaviourTypeSymbols(out,name,mb);
-    this->writeUMATxxMaterialPropertiesSymbols(out,name,mb,glossaryNames,entryNames);
-    this->writeUMATxxStateVariablesSymbols(out,name,mb,glossaryNames,entryNames);
-    this->writeUMATxxExternalStateVariablesSymbols(out,name,mb,glossaryNames,entryNames);
-    this->writeUMATxxIsUsableInPurelyImplicitResolutionSymbols(out,name,mb);
     this->writeUMATxxSymmetryTypeSymbols(out,name,mb);
     this->writeUMATxxElasticSymmetryTypeSymbols(out,name,mb);
-    this->writeUMATxxAdditionalSymbols(out,name,file,mb,glossaryNames,entryNames);
+    this->writeUMATxxSpecificSymbols(out,name,mb,fd);
   }
+
+  void
+  MFrontUMATInterfaceBase::generateUMATxxSymbols(std::ostream& out,
+						 const std::string& name,
+						 const Hypothesis h,
+						 const MechanicalBehaviourDescription& mb,
+						 const MFrontFileDescription & fd) const
+  {
+    if(h==ModellingHypothesis::UNDEFINEDHYPOTHESIS){
+    }
+    this->writeUMATxxIsUsableInPurelyImplicitResolutionSymbols(out,name,h,mb);
+    this->writeUMATxxMaterialPropertiesSymbols(out,name,h,mb);
+    this->writeUMATxxStateVariablesSymbols(out,name,h,mb);
+    this->writeUMATxxExternalStateVariablesSymbols(out,name,h,mb);
+    this->writeUMATxxRequirementsSymbols(out,name,h,mb);
+    this->writeUMATxxAdditionalSymbols(out,name,h,mb,fd);
+  }
+
+  void
+  MFrontUMATInterfaceBase::writeUMATxxSpecificSymbols(std::ostream&,
+						      const std::string&,
+						      const MechanicalBehaviourDescription&,
+						      const MFrontFileDescription&) const
+  {} // end of MFrontUMATInterfaceBase::writeUMATxxSpecificSymbols
 
   void
   MFrontUMATInterfaceBase::writeUMATxxBehaviourTypeSymbols(std::ostream& out,
@@ -1117,116 +1379,230 @@ namespace mfront
   } // end of MFrontUMATInterfaceBase::writeUMATxxBehaviourTypeSymbols
 
   void
-  MFrontUMATInterfaceBase::writeUMATxxStateVariablesSymbols(std::ostream& out,
-							    const std::string& name,
-							    const MechanicalBehaviourDescription& mb,
-							    const std::map<std::string,std::string>& glossaryNames,
-							    const std::map<std::string,std::string>& entryNames) const
+  MFrontUMATInterfaceBase::writeUMATxxMaterialPropertiesSymbols(std::ostream& out,
+								const std::string& name,
+								const Hypothesis h,
+								const MechanicalBehaviourDescription& mb) const
   {
     using namespace std;
-    const VariableDescriptionContainer& stateVarsHolder          = mb.getStateVariables();
-    const VariableDescriptionContainer& auxiliaryStateVarsHolder = mb.getAuxiliaryStateVariables();
+    pair<vector<UMATMaterialProperty>,
+	 SupportedTypes::TypeSize> mprops = this->buildMaterialPropertiesList(mb,h);
+    if(mprops.first.empty()){
+      out << "MFRONT_SHAREDOBJ unsigned short "  << this->getSymbolName(name,h)
+	  << "_nMaterialProperties = 0u;\n\n";
+      out << "MFRONT_SHAREDOBJ const char * const *"  << this->getSymbolName(name,h)
+	  << "_MaterialProperties = 0;\n\n";
+    } else {
+      const UMATMaterialProperty& last = mprops.first.back();
+      SupportedTypes::TypeSize s;
+      if((mprops.second.getTensorSize()!=0)||(mprops.second.getStensorSize()!=0)||
+	 (mprops.second.getTVectorSize()!=0)){
+	string msg("MFrontUMATInterface::writeUMATxxMaterialPropertiesSymbols : "
+		   "internal error : the material properties shall all be scalars");
+	throw(runtime_error(msg));
+      }
+      s  = last.offset;
+      s += this->getTypeSize(last.type,last.arraySize);
+      s -= mprops.second;
+      if((s.getTensorSize()!=0)||(s.getStensorSize()!=0)||(s.getTVectorSize()!=0)){
+	string msg("MFrontUMATInterface::writeUMATxxMaterialPropertiesSymbols : "
+		   "internal error : the material properties shall all be scalars");
+	throw(runtime_error(msg));
+      }
+      if(s.getScalarSize()<0){
+	string msg("MFrontUMATInterface::writeUMATxxMaterialPropertiesSymbols : "
+		   "internal error : negative number of the material properties");
+	throw(runtime_error(msg));
+      }
+      vector<UMATMaterialProperty>::size_type ib=0; /* index of the first element which
+						     * is not imposed by the material properties */
+      bool found = false;
+      for(vector<UMATMaterialProperty>::size_type i=0;(i!=mprops.first.size())&&(!found);++i){
+	if(mprops.first[i].offset==mprops.second){
+	  ib = i;
+	  found = true;
+	}
+      }
+      if(!found){
+	if(s.getScalarSize()!=0){
+	  string msg("MFrontUMATInterface::writeUMATxxMaterialPropertiesSymbols : "
+		     "internal error : inconsistent offset declaration");
+	  throw(runtime_error(msg));
+	}
+	out << "MFRONT_SHAREDOBJ unsigned short "  << this->getSymbolName(name,h)
+	    << "_nMaterialProperties = 0u;\n\n";
+	out << "MFRONT_SHAREDOBJ const char * const *"  << this->getSymbolName(name,h)
+	    << "_MaterialProperties = 0;\n\n";
+      } else {
+	out << "MFRONT_SHAREDOBJ unsigned short "  << this->getSymbolName(name,h)
+	    << "_nMaterialProperties = " << s.getScalarSize() << "u;\n\n";
+	out << "MFRONT_SHAREDOBJ const char *"  << this->getSymbolName(name,h)
+	    << "_MaterialProperties[" <<  s.getScalarSize() << "u] = {";
+        for(vector<UMATMaterialProperty>::size_type i=ib;i!=mprops.first.size();){
+	  const UMATMaterialProperty& m = mprops.first[i];
+	  if(m.arraySize==1u){
+	    out << "\"" << m.name << "\"";
+	  } else {
+	    for(unsigned short j=0;j!=m.arraySize;){
+	      out << "\"" << m.name << "[" << j << "]\"";
+	      if(++j!=m.arraySize){
+		out << ",\n";
+	      }
+	    }
+	  }
+	  if(++i!=mprops.first.size()){
+	    out << ",\n";
+	  }
+	}
+	out << "};" << endl << endl;
+      }
+    }
+  } // end of MFrontUMATInterface::writeUMATxxMaterialPropertiesSymbol
+
+
+  void
+  MFrontUMATInterfaceBase::writeUMATxxStateVariablesSymbols(std::ostream& out,
+  							    const std::string& name,
+  							    const Hypothesis h,
+  							    const MechanicalBehaviourDescription& mb) const
+  {
+    using namespace std;
+    const MechanicalBehaviourData& d = mb.getMechanicalBehaviourData(h);
+    const VariableDescriptionContainer& stateVarsHolder          = d.getStateVariables();
+    const VariableDescriptionContainer& auxiliaryStateVarsHolder = d.getAuxiliaryStateVariables();
     const unsigned short nStateVariables = static_cast<unsigned short>(this->getNumberOfVariables(stateVarsHolder) + 
-								       this->getNumberOfVariables(auxiliaryStateVarsHolder));
+  								       this->getNumberOfVariables(auxiliaryStateVarsHolder));
     VariableDescriptionContainer::const_iterator p;
-    out << "MFRONT_SHAREDOBJ unsigned short " << this->getFunctionName(name)
-	<< "_nInternalStateVariables = " << nStateVariables
-	<< ";\n";
-    vector<string> stateVariablesNames = stateVarsHolder.getGlossaryNames(glossaryNames,
-									  entryNames);
-    auxiliaryStateVarsHolder.appendGlossaryNames(stateVariablesNames,
-						 glossaryNames,entryNames);
-    this->writeGlossaryNames(out,stateVariablesNames,name,"InternalStateVariables");
+    out << "MFRONT_SHAREDOBJ unsigned short " << this->getSymbolName(name,h)
+  	<< "_nInternalStateVariables = " << nStateVariables
+  	<< ";\n";
+    vector<string> stateVariablesNames;
+    mb.getGlossaryNames(stateVariablesNames,h,stateVarsHolder);
+    mb.appendGlossaryNames(stateVariablesNames,h,auxiliaryStateVarsHolder);
+    this->writeGlossaryNames(out,name,h,stateVariablesNames,"InternalStateVariables");
 
     if((stateVarsHolder.size()!=0)||
        (auxiliaryStateVarsHolder.size()!=0)){
-      out << "MFRONT_SHAREDOBJ int " << this->getFunctionName(name)
-	  << "_InternalStateVariablesTypes [] = {";
+      out << "MFRONT_SHAREDOBJ int " << this->getSymbolName(name,h)
+  	  << "_InternalStateVariablesTypes [] = {";
       for(p=stateVarsHolder.begin();p!=stateVarsHolder.end();){
-	const SupportedTypes::TypeFlag flag = this->getTypeFlag(p->type);
-	for(unsigned short is=0;is!=p->arraySize;){
-	  switch(flag){
-	  case SupportedTypes::Scalar : 
-	    out << 0;
-	    break;
-	  case SupportedTypes::Stensor :
-	    out << 1;
-	    break;
-	  case SupportedTypes::TVector :
-	    out << 2;
-	    break;
-	  case SupportedTypes::Tensor :
-	    out << 3;
-	    break;
-	  default :
-	    string msg("MFrontUMATInterfaceBase::writeUMATxxStateVariablesSymbols : ");
-	    msg += "internal error, tag unsupported";
-	    throw(runtime_error(msg));
-	  }
-	  if(++is!=p->arraySize){
-	    out << ",";
-	  }
-	}
-	if(++p!=stateVarsHolder.end()){
-	  out << ",";
-	}
+  	const SupportedTypes::TypeFlag flag = this->getTypeFlag(p->type);
+  	for(unsigned short is=0;is!=p->arraySize;){
+  	  switch(flag){
+  	  case SupportedTypes::Scalar : 
+  	    out << 0;
+  	    break;
+  	  case SupportedTypes::Stensor :
+  	    out << 1;
+  	    break;
+  	  case SupportedTypes::TVector :
+  	    out << 2;
+  	    break;
+  	  case SupportedTypes::Tensor :
+  	    out << 3;
+  	    break;
+  	  default :
+  	    string msg("MFrontUMATInterfaceBase::writeUMATxxStateVariablesSymbols : ");
+  	    msg += "internal error, tag unsupported for variable '"+p->name+"'";
+  	    throw(runtime_error(msg));
+  	  }
+  	  if(++is!=p->arraySize){
+  	    out << ",";
+  	  }
+  	}
+  	if(++p!=stateVarsHolder.end()){
+  	  out << ",";
+  	}
       }
       if((!stateVarsHolder.empty())&&
-	 (auxiliaryStateVarsHolder.size()!=0)){
-	out << ",";
+  	 (auxiliaryStateVarsHolder.size()!=0)){
+  	out << ",";
       }
       for(p=auxiliaryStateVarsHolder.begin();p!=auxiliaryStateVarsHolder.end();){
-	const SupportedTypes::TypeFlag flag = this->getTypeFlag(p->type);
-	for(unsigned short is=0;is!=p->arraySize;){
-	  switch(flag){
-	  case SupportedTypes::Scalar : 
-	    out << 0;
-	    break;
-	  case SupportedTypes::Stensor :
-	    out << 1;
-	    break;
-	  default :
-	    string msg("MFrontUMATInterfaceBase::writeUMATxxStateVariablesSymbols : ");
-	    msg += "internal error, tag unsupported";
-	    throw(runtime_error(msg));
-	  }
-	  if(++is!=p->arraySize){
-	    out << ",";
-	  }
-	}
-	if(++p!=auxiliaryStateVarsHolder.end()){
-	  out << ",";
-	}
+  	const SupportedTypes::TypeFlag flag = this->getTypeFlag(p->type);
+  	for(unsigned short is=0;is!=p->arraySize;){
+  	  switch(flag){
+  	  case SupportedTypes::Scalar : 
+  	    out << 0;
+  	    break;
+  	  case SupportedTypes::Stensor :
+  	    out << 1;
+  	    break;
+  	  case SupportedTypes::TVector :
+  	    out << 2;
+  	    break;
+  	  case SupportedTypes::Tensor :
+  	    out << 3;
+  	    break;
+  	  default :
+  	    string msg("MFrontUMATInterfaceBase::writeUMATxxStateVariablesSymbols : ");
+  	    msg += "internal error, tag unsupported for variable '"+p->name+"'";
+  	    throw(runtime_error(msg));
+  	  }
+  	  if(++is!=p->arraySize){
+  	    out << ",";
+  	  }
+  	}
+  	if(++p!=auxiliaryStateVarsHolder.end()){
+  	  out << ",";
+  	}
       }
       out << "};\n\n";
     } else {
-      out << "MFRONT_SHAREDOBJ const int * " << this->getFunctionName(name)
-	  << "_InternalStateVariablesTypes = 0;\n\n";
+      out << "MFRONT_SHAREDOBJ const int * " << this->getSymbolName(name,h)
+  	  << "_InternalStateVariablesTypes = 0;\n\n";
     }
-  } // end of 
+  } // end of MFrontUMATInterfaceBase::writeUMATxxStateVariablesSymbols
   
   void
   MFrontUMATInterfaceBase::writeUMATxxExternalStateVariablesSymbols(std::ostream& out,
-								    const std::string& name,
-								    const MechanicalBehaviourDescription& mb,
-								    const std::map<std::string,std::string>& glossaryNames,
-								    const std::map<std::string,std::string>& entryNames) const
+  								    const std::string& name,
+  								    const Hypothesis h,
+  								    const MechanicalBehaviourDescription& mb) const
   {
-    const VariableDescriptionContainer& externalStateVarsHolder  = mb.getExternalStateVariables();
-    out << "MFRONT_SHAREDOBJ unsigned short " << this->getFunctionName(name)
-	<< "_nExternalStateVariables = " << this->getNumberOfVariables(externalStateVarsHolder) << ";\n";
-    this->writeGlossaryNames(out,externalStateVarsHolder.getGlossaryNames(glossaryNames,entryNames),
-			     name,"ExternalStateVariables");
+    const MechanicalBehaviourData& d = mb.getMechanicalBehaviourData(h);
+    const VariableDescriptionContainer& externalStateVarsHolder  = d.getExternalStateVariables();
+    out << "MFRONT_SHAREDOBJ unsigned short " << this->getSymbolName(name,h)
+  	<< "_nExternalStateVariables = " << this->getNumberOfVariables(externalStateVarsHolder) << ";\n";
+    this->writeGlossaryNames(out,name,h,mb.getGlossaryNames(h,externalStateVarsHolder),
+  			     "ExternalStateVariables",0u);
   } // end of MFrontUMATInterfaceBase::writeUMATxxExternalStateVariablesSymbols
 
   void
-  MFrontUMATInterfaceBase::writeUMATxxIsUsableInPurelyImplicitResolutionSymbols(std::ostream& out,
-										const std::string& name,
-										const MechanicalBehaviourDescription& mb) const
+  MFrontUMATInterfaceBase::writeUMATxxRequirementsSymbols(std::ostream& out,
+							  const std::string& name,
+							  const Hypothesis h,
+							  const MechanicalBehaviourDescription& mb) const
   {
-    out << "MFRONT_SHAREDOBJ unsigned short " << this->getFunctionName(name)
-	<< "_UsableInPurelyImplicitResolution = ";
-    if(mb.isUsableInPurelyImplicitResolution()){
+    out << "MFRONT_SHAREDOBJ unsigned short " << this->getSymbolName(name,h);
+    out << "_requiresStiffnessTensor = ";
+    if(mb.getAttribute(MechanicalBehaviourDescription::requiresStiffnessTensor,false)){
+      out << "1";
+    } else {
+      out << "0";
+    }
+    out << ";\n";
+    out << "MFRONT_SHAREDOBJ unsigned short " << this->getSymbolName(name,h);
+    out << "_requiresThermalExpansionCoefficientTensor = ";
+    if(mb.getAttribute(MechanicalBehaviourDescription::requiresThermalExpansionCoefficientTensor,false)){
+      out << "1";
+    } else {
+      out << "0";
+    }
+    out << ";\n";
+
+  } // end of MFrontUMATInterfaceBase::writeUMATxxRequirementsSymbols
+
+  void
+  MFrontUMATInterfaceBase::writeUMATxxIsUsableInPurelyImplicitResolutionSymbols(std::ostream& out,
+  										const std::string& name,
+										const Hypothesis h,
+  										const MechanicalBehaviourDescription& mb) const
+  {
+    const MechanicalBehaviourData& d = mb.getMechanicalBehaviourData(h);
+    out << "MFRONT_SHAREDOBJ unsigned short " << this->getSymbolName(name,h)
+  	<< "_UsableInPurelyImplicitResolution = ";
+    if(d.isUsableInPurelyImplicitResolution()){
       out << "1;\n\n";
     } else {
       out << "0;\n\n";
@@ -1235,12 +1611,12 @@ namespace mfront
 
   void
   MFrontUMATInterfaceBase::writeUMATxxSymmetryTypeSymbols(std::ostream& out,
-						    const std::string& name,
-						    const MechanicalBehaviourDescription& mb) const
+  						    const std::string& name,
+  						    const MechanicalBehaviourDescription& mb) const
   {
     using namespace std;
     out << "MFRONT_SHAREDOBJ unsigned short " << this->getFunctionName(name) 
-	<< "_SymmetryType = " ;
+  	<< "_SymmetryType = " ;
     if(mb.getSymmetryType()==mfront::ISOTROPIC){
       out << "0u;" << endl << endl;
     } else if(mb.getSymmetryType()==mfront::ORTHOTROPIC){
@@ -1255,12 +1631,12 @@ namespace mfront
 
   void
   MFrontUMATInterfaceBase::writeUMATxxElasticSymmetryTypeSymbols(std::ostream& out,
-								  const std::string& name,
-								  const MechanicalBehaviourDescription& mb) const
+  								  const std::string& name,
+  								  const MechanicalBehaviourDescription& mb) const
   {
     using namespace std;
     out << "MFRONT_SHAREDOBJ unsigned short " << this->getFunctionName(name)
-	<< "_ElasticSymmetryType = " ;
+  	<< "_ElasticSymmetryType = " ;
     if(mb.getElasticSymmetryType()==mfront::ISOTROPIC){
       out << "0u;" << endl << endl;
     } else if(mb.getElasticSymmetryType()==mfront::ORTHOTROPIC){
@@ -1275,17 +1651,53 @@ namespace mfront
 
   void
   MFrontUMATInterfaceBase::writeUMATxxSourceFileSymbols(std::ostream& out,
-							const std::string& name,
-							const std::string& file,
-							const MechanicalBehaviourDescription&) const
+  							const std::string& name,
+  							const MechanicalBehaviourDescription&,
+							const mfront::MFrontFileDescription& fd) const
   {
     using namespace tfel::system;
     using namespace tfel::utilities;
     out << "MFRONT_SHAREDOBJ const char *\n" 
-	<< this->getFunctionName(name) << "_src = \""
-	<< tokenize(file,dirSeparator()).back()
-	<< "\";\n\n";
+  	<< this->getFunctionName(name) << "_src = \""
+  	<< tokenize(fd.fileName,dirSeparator()).back()
+  	<< "\";\n\n";
   }
+
+  std::map<MFrontUMATInterfaceBase::Hypothesis,std::string>
+  MFrontUMATInterfaceBase::gatherModellingHypothesesAndTests(const MechanicalBehaviourDescription& mb) const
+  {
+    using namespace std;
+    typedef map<Hypothesis,string>::value_type MVType;
+    map<Hypothesis,string> res;
+    set<Hypothesis> h = this->getModellingHypothesesToBeTreated(mb);
+    set<Hypothesis> h1;
+    set<Hypothesis> h2;
+    for(set<Hypothesis>::const_iterator p=h.begin();p!=h.end();++p){
+      if(!mb.hasSpecialisedMechanicalData(*p)){
+	h1.insert(*p);
+      } else {
+	h2.insert(*p);
+      }
+    }
+    if(!h1.empty()){
+      if(h1.size()==1u){
+	res.insert(MVType(ModellingHypothesis::UNDEFINEDHYPOTHESIS,
+			  this->getModellingHypothesisTest(*(h1.begin()))));
+      } else {
+	set<Hypothesis>::const_iterator p = h1.begin();
+	string r = "("+this->getModellingHypothesisTest(*(h1.begin()))+")";
+	++p;
+	for(;p!=h1.end();++p){
+	  r += "||("+this->getModellingHypothesisTest(*p)+")";
+	}
+	res.insert(MVType(ModellingHypothesis::UNDEFINEDHYPOTHESIS,r));
+      }
+    }
+    for(set<Hypothesis>::const_iterator p=h2.begin();p!=h2.end();++p){
+      res.insert(MVType(*p,this->getModellingHypothesisTest(*p)));
+    }
+    return res;
+  } // end of MFrontUMATInterface::gatherModellingHypothesesAndTests
 
   MFrontUMATInterfaceBase::~MFrontUMATInterfaceBase()
   {}

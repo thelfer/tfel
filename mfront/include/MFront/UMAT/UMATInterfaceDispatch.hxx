@@ -17,9 +17,7 @@
 
 #include"MFront/UMAT/UMATOutOfBoundsPolicy.hxx"
 #include"MFront/UMAT/UMATOrthotropicBehaviour.hxx"
-#include"MFront/UMAT/UMATComputeStiffnessOperator.hxx"
 #include"MFront/UMAT/UMATComputeThermalExpansionCoefficientTensor.hxx"
-#include"MFront/UMAT/UMATRotationMatrix.hxx"
 #include"MFront/UMAT/UMATGetModellingHypothesis.hxx"
 #include"MFront/UMAT/UMATBehaviourHandler.hxx"
 #include"MFront/UMAT/UMATIsotropicBehaviourHandler.hxx"
@@ -53,7 +51,7 @@ namespace umat{
 	     const StressFreeExpansionHandler&)
     {
       typedef tfel::material::ModellingHypothesis MH;
-      UMATInterfaceBase::throwInvalidBehaviourTypeAndModellingHypothesis(type,MH::HypothesisToString(H));
+      UMATInterfaceBase::throwInvalidBehaviourTypeAndModellingHypothesis(type,MH::toString(H));
     } // end of exe
   }; // end of struct UMATInterfaceDispatch
 

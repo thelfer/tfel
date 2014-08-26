@@ -5,7 +5,6 @@
  * \date   17 Jan 2007
  */
 
-#include<iostream>
 #include<iterator>
 #include<algorithm>
 
@@ -17,6 +16,7 @@
 #include"TFEL/System/System.hxx"
 
 #include"MFront/ParserUtilities.hxx"
+#include"MFront/MFrontFileDescription.hxx"
 #include"MFront/MFrontCyranoInterface.hxx"
 
 namespace mfront{
@@ -27,20 +27,42 @@ namespace mfront{
     return "cyrano";
   }
 
+  int
+  MFrontCyranoInterface::getModellingHypothesisIdentifier(const Hypothesis h)
+  {
+    using namespace std;
+    switch(h){
+    case ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN:
+      return 1;
+    case ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRESS:
+      return 2;
+    default:
+      ostringstream msg;
+      msg << "MFrontCyranoInterface::getModellingHypothesisIdentifier : "
+	  << "unsupported hypothesis";
+      if(h==ModellingHypothesis::UNDEFINEDHYPOTHESIS){
+	msg << " (default)";
+      } else {
+	msg << " (" << ModellingHypothesis::toString(h) << "')";
+      }
+      throw(runtime_error(msg.str()));
+    }
+    return 0;
+  }
+
   std::string
-  MFrontCyranoInterface::getLibraryName(const std::string& library,
-					const std::string& material) const
+  MFrontCyranoInterface::getLibraryName(const MechanicalBehaviourDescription& mb) const
   {
     using namespace std;
     string lib;
-    if(library.empty()){
-      if(!material.empty()){
-	lib = "libCyrano"+material;
+    if(mb.getLibrary().empty()){
+      if(!mb.getMaterialName().empty()){
+	lib = "libCyrano"+mb.getMaterialName();
       } else {
 	lib = "libCyranoBehaviour";
       }
     } else {
-      lib = "libCyrano"+library;
+      lib = "libCyrano"+mb.getLibrary();
     }
     return lib;
   } // end of MFrontCyranoInterface::getLibraryName
@@ -52,14 +74,14 @@ namespace mfront{
   } // end of MFrontCyranoInterface::getInterfaceName
 
   std::string
-  MFrontCyranoInterface::getFunctionName(const std::string& name) const
+  MFrontCyranoInterface::getFunctionName(const std::string& n) const
   {
-    return "cyrano"+makeLowerCase(name);
+    return "cyrano"+makeLowerCase(n);
   } // end of MFrontCyranoInterface::getLibraryName
 
   std::string
   MFrontCyranoInterface::getBehaviourName(const std::string& library,
-					const std::string& className) const
+					  const std::string& className) const
   {
     using namespace std;
     string name;
@@ -155,85 +177,122 @@ namespace mfront{
     return make_pair(false,current);
   } // end of treatKeyword
 
-  bool
-  MFrontCyranoInterface::doElasticPropertiesCheck(const MechanicalBehaviourDescription& mb,
-						const std::vector<std::string>& mps) const
+  std::pair<std::vector<MFrontUMATInterfaceBase::UMATMaterialProperty>,
+	    SupportedTypes::TypeSize>
+  MFrontCyranoInterface::buildMaterialPropertiesList(const MechanicalBehaviourDescription& mb,
+						     const Hypothesis h) const
   {
     using namespace std;
-    const VariableDescriptionContainer& coefsHolder = mb.getMaterialProperties();
-    bool found = false;
-    // specific treatment for isotropic behaviour
-    for(VariableDescriptionContainer::const_iterator p=coefsHolder.begin();
-	(p!=coefsHolder.end())&&(!found);++p){
-      found = (find(mps.begin(),mps.end(),p->name)!=mps.end());
+    pair<vector<UMATMaterialProperty>,
+	 SupportedTypes::TypeSize> res;
+    vector<UMATMaterialProperty>& mprops = res.first;
+    if((h!=ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN)&&
+       (h!=ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRESS)&&
+       (h!=ModellingHypothesis::UNDEFINEDHYPOTHESIS)){
+      string msg("MFrontCyranoInterface::buildMaterialPropertiesList : "
+		 "unsupported modelling hypothesis ");
+      throw(runtime_error(msg));
     }
-    if(found){
-      /*
-       * Check Cyrano requirements
-       */
-      if(coefsHolder.size()<mps.size()){
-	string msg("MFrontCyranoInterface::checkIfElasticPropertiesAreDeclared : "
-		   "the cyrano interface requires the '"+toString(mps.size())+
-		   "' material properties to be defined "
-		   "(currently only "+toString(coefsHolder.size())+" defined)\n");
+    if(mb.getAttribute(MechanicalBehaviourDescription::requiresStiffnessTensor,false)){
+      if(mb.getSymmetryType()==mfront::ISOTROPIC){
+	this->appendToMaterialPropertiesList(mprops,"stress","YoungModulus","youn",false);
+	this->appendToMaterialPropertiesList(mprops,"real","PoissonRatio","nu",false);
+      } else if (mb.getSymmetryType()==mfront::ORTHOTROPIC){
+	this->appendToMaterialPropertiesList(mprops,"stress","YoungModulus1","yg1",false);
+	this->appendToMaterialPropertiesList(mprops,"stress","YoungModulus2","yg2",false);
+	this->appendToMaterialPropertiesList(mprops,"stress","YoungModulus3","yg3",false);
+	this->appendToMaterialPropertiesList(mprops,"real","PoissonRatio12","nu12",false);
+	this->appendToMaterialPropertiesList(mprops,"real","PoissonRatio23","nu23",false);
+	this->appendToMaterialPropertiesList(mprops,"real","PoissonRatio13","nu13",false);
+      } else {
+	string msg("MFrontCyranoInterface::buildMaterialPropertiesList : "
+		   "unsupported behaviour symmetry type");
 	throw(runtime_error(msg));
       }
-      for(VariableDescriptionContainer::size_type i=0;i!=mps.size();++i){
-	if(coefsHolder[i].name!=mps[i]){
-	  string msg("MFrontCyranoInterface::checkIfElasticPropertiesAreDeclared : "
-		     "the cyrano interface requires the '"+toString(i)+
-		     "' material property to be '"+mps[i]+"'");
-	  throw(runtime_error(msg));
-	}
+    }
+    if(mb.getAttribute(MechanicalBehaviourDescription::requiresThermalExpansionCoefficientTensor,false)){
+      if(mb.getSymmetryType()==mfront::ISOTROPIC){
+	this->appendToMaterialPropertiesList(mprops,"thermalexpansion","ThermalExpansion","alph",false);
+      } else if (mb.getSymmetryType()==mfront::ORTHOTROPIC){
+	this->appendToMaterialPropertiesList(mprops,"thermalexpansion","ThermalExpansion1","alp1",false);
+	this->appendToMaterialPropertiesList(mprops,"thermalexpansion","ThermalExpansion2","alp2",false);
+	this->appendToMaterialPropertiesList(mprops,"thermalexpansion","ThermalExpansion3","alp3",false);
+      } else {
+	string msg("MFrontCyranoInterface::buildMaterialPropertiesList : "
+		   "unsupported behaviour symmetry type");
+	throw(runtime_error(msg));
       }
     }
-    return found;
-  } // end of MFrontCyranoInterface::doElasticPropertiesCheck
+    if(!mprops.empty()){
+      const UMATMaterialProperty& m = mprops.back();
+      res.second  = m.offset;
+      res.second += this->getTypeSize(m.type,m.arraySize);
+    }
+    this->completeMaterialPropertiesList(mprops,mb,h);
+    return res;
+  } // end of MFrontCyranoInterface::buildMaterialPropertiesList
 
-  bool
-  MFrontCyranoInterface::checkIfElasticPropertiesAreDeclared(const MechanicalBehaviourDescription& mb) const
+  std::set<tfel::material::ModellingHypothesis::Hypothesis>
+  MFrontCyranoInterface::getModellingHypothesesToBeTreated(const MechanicalBehaviourDescription& mb) const
   {
     using namespace std;
-    if(mb.getSymmetryType()==mfront::ISOTROPIC){
-      vector<string> mps;
-      mps.push_back("young");
-      mps.push_back("nu");
-      mps.push_back("rho");
-      mps.push_back("alpha");
-      return MFrontCyranoInterface::doElasticPropertiesCheck(mb,mps);
+    using tfel::material::ModellingHypothesis;
+    typedef ModellingHypothesis::Hypothesis Hypothesis;
+    // treatment 
+    set<Hypothesis> h;
+    // modelling hypotheses handled by the behaviour
+    const set<Hypothesis>& bh = mb.getModellingHypotheses();
+    // cyrano only supports the AxisymmetricalGeneralisedPlaneStrain
+    // and the AxisymmetricalGeneralisedPlaneStress hypotheses
+    if(bh.find(ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN)!=bh.end()){
+      h.insert(ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN);
     }
-    return false;
-  } // end of MFrontCyranoInterface::checkIfElasticPropertiesAreDeclared
+    if(bh.find(ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRESS)!=bh.end()){
+      h.insert(ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRESS);
+    }
+    if(h.empty()){
+      string msg("MFrontCyranoInterface::getModellingHypothesesToBeTreated : "
+		 "no hypotheses selected. This means that the given beahviour "
+		 "can't be used neither in 'AxisymmetricalGeneralisedPlaneStrain' "
+		 "nor in 'AxisymmetricalGeneralisedPlaneStress', so it does not "
+		 "make sense to use the Cyrano interface");
+      throw(runtime_error(msg));
+    }
+    return h;
+  } // end of MFrontCyranoInterface::getModellingHypothesesToBeTreated
 
   void
-  MFrontCyranoInterface::endTreatement(const std::string& file,
-				       const std::string& library,
-				       const std::string& material,
-				       const std::string& className,
-				       const std::string& authorName,
-				       const std::string& date,
-				       const std::map<std::string,std::string>& glossaryNames,
-				       const std::map<std::string,std::string>& entryNames,
-				       const MechanicalBehaviourDescription& mb)
+  MFrontCyranoInterface::endTreatement(const MechanicalBehaviourDescription& mb,
+				       const MFrontFileDescription& fd) const
   {
     using namespace std;
     using namespace tfel::system;
     using namespace tfel::utilities;
+    using tfel::material::ModellingHypothesis;
+    typedef ModellingHypothesis::Hypothesis Hypothesis;
+    // check
+    if(mb.getBehaviourType()!=MechanicalBehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR){
+      string msg("MFrontCyranoInterface::endTreatement : "
+		 "the aster interface only supports small strain behaviours");
+      throw(runtime_error(msg));
+    }
+    // get the modelling hypotheses to be treated
+    const set<Hypothesis>& h = this->getModellingHypothesesToBeTreated(mb);
 
     string name;
-    VariableDescriptionContainer::const_iterator p;    
+    if(!mb.getLibrary().empty()){
+      name += mb.getLibrary();
+    }
+    name += mb.getClassName();
 
-    systemCall::mkdir("include/MFront");
-    systemCall::mkdir("include/MFront/Cyrano");
-
+    // some checks
     if(mb.getBehaviourType()!=MechanicalBehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR){
       string msg("MFrontCyranoInterface::endTreatement : ");
       msg += "only small strain behaviours are supported.\n";
       throw(runtime_error(msg));
     }
 
-    if(mb.getSymmetryType()!=
-       mb.getElasticSymmetryType()){
+    if(mb.getSymmetryType()!=mb.getElasticSymmetryType()){
       string msg("MFrontCyranoInterface::endTreatement : ");
       msg += "the type of the behaviour (isotropic or orthotropic) does not ";
       msg += "match the the type of its elastic behaviour.\n";
@@ -242,15 +301,20 @@ namespace mfront{
       msg += "- an orthotropic behaviour must have an orthotropic elastic behaviour";
       throw(runtime_error(msg));
     }
-
-    pair<SupportedTypes::TypeSize,
-      SupportedTypes::TypeSize> mvs = mb.getMainVariablesSize();
-    
-    if(!library.empty()){
-      name += library;
+    if(this->useTimeSubStepping){
+      if(this->maximumSubStepping==0u){
+	string msg("MFrontCyranoInterface::endTreatement : ");
+	msg += "use of time sub stepping requested but MaximumSubStepping is zero.\n";
+	msg += "Please use the @CyranoMaximumSubStepping directive";
+	throw(runtime_error(msg));
+      }
     }
-    name += className;
 
+    // create the output directories
+    systemCall::mkdir("include/MFront");
+    systemCall::mkdir("include/MFront/Cyrano");
+
+    // opening header file
     string fileName("cyrano");
     fileName += name;
     fileName += ".hxx";
@@ -263,26 +327,15 @@ namespace mfront{
       throw(runtime_error(msg));
     }
   
-    if(this->useTimeSubStepping){
-      if(this->maximumSubStepping==0u){
-	string msg("MFrontCyranoInterface::endTreatement : ");
-	msg += "use of time sub stepping requested but MaximumSubStepping is zero.\n";
-	msg += "Please use the @CyranoMaximumSubStepping directive";
-	throw(runtime_error(msg));
-      }
-    }
-
     out << "/*!\n";
     out << "* \\file   "  << fileName << endl;
     out << "* \\brief  This file declares the cyrano interface for the " 
-	<< className << " behaviour law\n";
-    out << "* \\author "  << authorName << endl;
-    out << "* \\date   "  << date       << endl;
+	<< mb.getClassName() << " behaviour law\n";
+    out << "* \\author "  << fd.authorName << endl;
+    out << "* \\date   "  << fd.date       << endl;
     out << "*/\n\n";
 
-    const string header = this->getHeaderDefine(library,
-						material,
-						className);
+    const string header = this->getHeaderDefine(mb);
     out << "#ifndef " << header << "\n";
     out << "#define " << header << "\n\n";
 
@@ -291,10 +344,7 @@ namespace mfront{
 
     out << "#ifdef __cplusplus\n";
     out << "#include\"MFront/Cyrano/CyranoTraits.hxx\"\n";
-    if (mb.getSymmetryType()==mfront::ORTHOTROPIC){
-      out << "#include\"MFront/Cyrano/CyranoOrthotropicBehaviour.hxx\"\n";
-    }
-    out << "#include\"TFEL/Material/" << className << ".hxx\"\n";
+    out << "#include\"TFEL/Material/" << mb.getClassName() << ".hxx\"\n";
     out << "#endif /* __cplusplus */\n\n";
 
     this->writeVisibilityDefines(out);
@@ -305,83 +355,14 @@ namespace mfront{
 
     out << "namespace cyrano{\n\n";
 
-    if(mb.useQt()){
-      out << "template<tfel::material::ModellingHypothesis::Hypothesis H,typename Type,bool use_qt>\n";
-    } else {
-      out << "template<tfel::material::ModellingHypothesis::Hypothesis H,typename Type>\n";
-    } 
-    out << "struct CyranoTraits<tfel::material::" << className << "<H,Type,";
-    if(mb.useQt()){
-      out << "use_qt";
-    } else {
-      out << "false";
+    if(!mb.areAllMechanicalDataSpecialised(h)){
+      this->writeCyranoBehaviourTraits(out,mb,ModellingHypothesis::UNDEFINEDHYPOTHESIS);
     }
-    out << "> >{\n";
-    out << "// space dimension\n";
-    out << "static const unsigned short N           = tfel::material::ModellingHypothesisToSpaceDimension<H>::value;\n";
-    out << "// tiny vector size\n";
-    out << "static const unsigned short TVectorSize = N;\n";
-    out << "// symmetric tensor size\n";
-    out << "static const unsigned short StensorSize = tfel::math::StensorDimeToSize<N>::value;\n";
-    out << "// tensor size\n";
-    out << "static const unsigned short TensorSize  = tfel::math::TensorDimeToSize<N>::value;\n";
-    out << "// size of the driving variable array (STRAN)\n";
-    out << "static const unsigned short DrivingVariableSize  = " << mvs.first <<  ";\n";
-    out << "// size of the thermodynamic force variable array (STRAN)\n";
-    out << "static const unsigned short ThermodynamicForceVariableSize  = " << mvs.second <<  ";\n";
-    out << "static const bool useTimeSubStepping = ";
-    if(this->useTimeSubStepping){
-      out << "true;\n";
-    } else {
-      out << "false;\n";
-    }
-    out << "static const bool doSubSteppingOnInvalidResults = ";
-    if(this->doSubSteppingOnInvalidResults){
-      out << "true;\n";
-    } else {
-      out << "false;\n";
-    }
-    out << "static const unsigned short maximumSubStepping = ";
-    if(this->useTimeSubStepping){
-      out << this->maximumSubStepping << ";\n";
-    } else {
-      out << "0u;\n";
-    }
-    if(mb.requiresStiffnessOperator()){
-      out << "static const bool requiresStiffnessOperator = true;\n";
-    } else {
-      out << "static const bool requiresStiffnessOperator = false;\n";
-    }
-    if(mb.requiresThermalExpansionCoefficientTensor()){
-      out << "static const bool requiresThermalExpansionCoefficientTensor = true;\n";
-    } else {
-      out << "static const bool requiresThermalExpansionCoefficientTensor = false;\n";
-    }
-    if(mb.getSymmetryType()==mfront::ISOTROPIC){
-      if(!this->checkIfElasticPropertiesAreDeclared(mb)){
-	out << "static const unsigned short propertiesOffset = 4u;\n";
-      } else {
-	out << "static const unsigned short propertiesOffset = 0u;\n";
+    for(set<Hypothesis>::const_iterator ph = h.begin();ph!=h.end();++ph){
+      if(mb.hasSpecialisedMechanicalData(*ph)){
+	this->writeCyranoBehaviourTraits(out,mb,*ph);
       }
-    } else if (mb.getSymmetryType()==mfront::ORTHOTROPIC){
-      out << "static const unsigned short propertiesOffset = CyranoOrthotropicOffset::value;\n";
-    } else {
-      string msg("MFrontCyranoInterface::endTreatement : ");
-      msg += "unsupported behaviour symmetry type.\n";
-      msg += "The cyrano interface only support isotropic or orthotropic behaviour at this time.";
-      throw(runtime_error(msg));
     }
-    if(mb.getSymmetryType()==mfront::ISOTROPIC){
-      out << "static const CyranoSymmetryType stype = cyrano::ISOTROPIC;\n";
-    } else if (mb.getSymmetryType()==mfront::ORTHOTROPIC){
-      out << "static const CyranoSymmetryType stype = cyrano::ORTHOTROPIC;\n";
-    } else {
-      string msg("MFrontCyranoInterface::endTreatement : ");
-      msg += "unsupported behaviour symmetry type.\n";
-      msg += "The cyrano interface only support isotropic or orthotropic behaviour at this time.";
-      throw(runtime_error(msg));
-    }
-    out << "}; // end of class CyranoTraits\n\n";
 
     out << "} // end of namespace cyrano\n\n";
 
@@ -417,9 +398,9 @@ namespace mfront{
     out << "/*!\n";
     out << "* \\file   "  << fileName << endl;
     out << "* \\brief  This file implements the cyrano interface for the " 
-	<< className << " behaviour law\n";
-    out << "* \\author "  << authorName << endl;
-    out << "* \\date   "  << date       << endl;
+	<< mb.getClassName() << " behaviour law\n";
+    out << "* \\author "  << fd.authorName << endl;
+    out << "* \\date   "  << fd.date       << endl;
     out << "*/\n\n";
 
     this->getExtraSrcIncludes(out,mb);
@@ -428,39 +409,27 @@ namespace mfront{
     }
 
     out << "#include\"MFront/Cyrano/CyranoInterface.hxx\"\n\n";
-    out << "#include\"TFEL/Material/" << className << ".hxx\"\n";
+    out << "#include\"TFEL/Material/" << mb.getClassName() << ".hxx\"\n";
     out << "#include\"MFront/Cyrano/cyrano" << name << ".hxx\"\n\n";
     out << "extern \"C\"{\n\n";
 
-    this->generateUMATxxSymbols(out,name,file,mb,glossaryNames,entryNames);
+    this->generateUMATxxGeneralSymbols(out,name,mb,fd);
+    if(!mb.areAllMechanicalDataSpecialised(h)){
+      const Hypothesis uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
+      this->generateUMATxxSymbols(out,name,uh,mb,fd);
+    }
+    for(set<Hypothesis>::const_iterator ph = h.begin();ph!=h.end();++ph){
+      if(mb.hasSpecialisedMechanicalData(*ph)){
+	this->generateUMATxxSymbols(out,name,*ph,mb,fd);
+      }
+    }
 
-    out << "MFRONT_SHAREDOBJ unsigned short " << this->getFunctionName(name) 
-	<< "_BehaviourType = 1u;\n\n";
     out << "MFRONT_SHAREDOBJ unsigned short cyrano"
 	<< makeLowerCase(name) << "_Interface = 1u;\n\n";
 
-    this->writeSetParametersFunctionsImplementations(out,name,className,mb);
+    this->writeSetParametersFunctionsImplementations(out,name,mb);
 
-    out << "static void \ncyrano"
-	<< makeLowerCase(name) << "_base" 
-	<< "(const cyrano::CyranoInt *const NTENS, const cyrano::CyranoReal *const DTIME,\n"
-	<< "const cyrano::CyranoReal *const DROT,  cyrano::CyranoReal *const DDSOE,\n"
-	<< "const cyrano::CyranoReal *const STRAN, const cyrano::CyranoReal *const DSTRAN,\n"
-	<< "const cyrano::CyranoReal *const TEMP,  const cyrano::CyranoReal *const DTEMP,\n"
-	<< "const cyrano::CyranoReal *const PROPS, const cyrano::CyranoInt    *const NPROPS,\n"
-	<< "const cyrano::CyranoReal *const PREDEF,const cyrano::CyranoReal *const DPRED,\n"
-	<< "cyrano::CyranoReal *const STATEV,const cyrano::CyranoInt    *const NSTATV,\n"
-	<< "cyrano::CyranoReal *const STRESS,const cyrano::CyranoInt    *const NDI,\n"
-	<< "cyrano::CyranoInt    *const KINC)\n";
-    out << "{\n";
-    out << "cyrano::CyranoInterface<tfel::material::" << className 
-	<< ">::exe(NTENS,DTIME,DROT,DDSOE,STRAN,DSTRAN,TEMP,DTEMP,PROPS,NPROPS,"
-	<< "PREDEF,DPRED,STATEV,NSTATV,STRESS,NDI,KINC);\n";
-    out << "}\n\n";
-
-    
-    this->writeStandardCyranoFunction(out,name,library,material,"",
-				      glossaryNames,entryNames,mb);
+    this->writeStandardCyranoFunction(out,name,mb);
 
     out << "} // end of extern \"C\"\n";
     out.close();
@@ -476,13 +445,11 @@ namespace mfront{
   {}
 
   std::map<std::string,std::vector<std::string> >
-  MFrontCyranoInterface::getGlobalIncludes(const std::string& library,
-					   const std::string& material,
-					   const std::string&)
+  MFrontCyranoInterface::getGlobalIncludes(const MechanicalBehaviourDescription& mb)
   {
     using namespace std;
     map<string,vector<string> > incs;
-    string lib = MFrontCyranoInterface::getLibraryName(library,material);
+    string lib = MFrontCyranoInterface::getLibraryName(mb);
     incs[lib].push_back("`tfel-config --includes`");
 #if CYRANO_ARCH == 64
     incs[lib].push_back("-DCYRANO_ARCH=64");
@@ -495,167 +462,75 @@ namespace mfront{
   } // end of MFrontCyranoInterface::getGeneratedSources
 
   std::map<std::string,std::vector<std::string> >
-  MFrontCyranoInterface::getGeneratedSources(const std::string& library,
-					   const std::string& material,
-					   const std::string& className)
+  MFrontCyranoInterface::getGeneratedSources(const MechanicalBehaviourDescription& mb)
   {
     using namespace std;
     map<string,vector<string> > src;
-    string lib = MFrontCyranoInterface::getLibraryName(library,material);
-    if(!library.empty()){
-      src[lib].push_back("cyrano"+library+className+".cxx");
+    string lib = MFrontCyranoInterface::getLibraryName(mb);
+    if(!mb.getLibrary().empty()){
+      src[lib].push_back("cyrano"+mb.getLibrary()+mb.getClassName()+".cxx");
     } else {
-      src[lib].push_back("cyrano"+className+".cxx");
+      src[lib].push_back("cyrano"+mb.getClassName()+".cxx");
     }
     return src;
   } // end of MFrontCyranoInterface::getGeneratedSources
 
   std::vector<std::string>
-  MFrontCyranoInterface::getGeneratedIncludes(const std::string& library,
-					    const std::string&,
-					    const std::string& className)
+  MFrontCyranoInterface::getGeneratedIncludes(const MechanicalBehaviourDescription& mb)
   {
     using namespace std;
     vector<string> incs;
-    if(!library.empty()){
-      incs.push_back("MFront/Cyrano/cyrano"+library+className+".hxx");
+    if(!mb.getLibrary().empty()){
+      incs.push_back("MFront/Cyrano/cyrano"+mb.getLibrary()+mb.getClassName()+".hxx");
     } else {
-      incs.push_back("MFront/Cyrano/cyrano"+className+".hxx");
+      incs.push_back("MFront/Cyrano/cyrano"+mb.getClassName()+".hxx");
     }
     return incs;
   } // end of MFrontCyranoInterface::getGeneratedIncludes
 
   std::map<std::string,std::vector<std::string> >
-  MFrontCyranoInterface::getLibrariesDependencies(const std::string& library,
-						const std::string& material,
-						const std::string&)
+  MFrontCyranoInterface::getLibrariesDependencies(const MechanicalBehaviourDescription& mb)
   {
     using namespace std;
     map<string,vector<string> > deps;
-    string lib = MFrontCyranoInterface::getLibraryName(library,material);
+    string lib = MFrontCyranoInterface::getLibraryName(mb);
     deps[lib].push_back("-lCyranoInterface");
     deps[lib].push_back("`tfel-config --libs --material`");
     return deps;
   } // end of MFrontCyranoInterface::getLibrariesDependencies()
 
-  bool
-  MFrontCyranoInterface::hasMaterialPropertiesOffset(const MechanicalBehaviourDescription& mb) const
-  {
-    using namespace std;
-    if(mb.getSymmetryType()==mfront::ISOTROPIC){
-      return !this->checkIfElasticPropertiesAreDeclared(mb);
-    } else if (mb.getSymmetryType()==mfront::ORTHOTROPIC){
-      return true;
-    } else {
-      string msg("MFrontCyranoInterface::hasMaterialPropertiesOffset : ");
-      msg += "unsupported behaviour symmetry type.\n";
-      msg += "The cyrano interface only support isotropic or orthotropic behaviour at this time.";
-      throw(runtime_error(msg));
-    }
-    return false;
-  } // end of MFrontCyranoInterface::hasMaterialPropertiesOffset
-
   void
-  MFrontCyranoInterface::writeMTestFileGeneratorAdditionalMaterialPropertiesInitialisation(std::ostream& out,
-											 const MechanicalBehaviourDescription& mb) const
-  {
-    using namespace std;
-    if(!this->hasMaterialPropertiesOffset(mb)){
-      return;
-    }
-    if(mb.getBehaviourType()==MechanicalBehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR){
-      if(mb.getSymmetryType()==mfront::ISOTROPIC){
-	out << "mg.addMaterialProperty(\"YoungModulus\",*PROPS);\n"
-	    << "mg.addMaterialProperty(\"PoissonRatio\",*(PROPS+1));\n"
-	    << "mg.addMaterialProperty(\"MassDensity\",*(PROPS+2));\n"
-	    << "mg.addMaterialProperty(\"ThermalExpansion\",*(PROPS+3));\n";
-	out << "mg_mpoffset = 4u;\n";
-      } else if (mb.getSymmetryType()==mfront::ORTHOTROPIC){
-	out << "if(*NDI==14){\n" // axisymmetrical generalized plane strain
-	    << "mg.addMaterialProperty(\"YoungModulus1\",*PROPS);\n"
-	    << "mg.addMaterialProperty(\"YoungModulus2\",*(PROPS+1));\n"
-	    << "mg.addMaterialProperty(\"YoungModulus3\",*(PROPS+2));\n"
-	    << "mg.addMaterialProperty(\"PoissonRatio12\",*(PROPS+3));\n"
-	    << "mg.addMaterialProperty(\"PoissonRatio13\",*(PROPS+4));\n"
-	    << "mg.addMaterialProperty(\"PoissonRatio23\",*(PROPS+5));\n"
-	    << "mg.addMaterialProperty(\"MassDensity\",*(PROPS+6));\n"
-	    << "mg.addMaterialProperty(\"ThermalExpansion1\",*(PROPS+7));\n"
-	    << "mg.addMaterialProperty(\"ThermalExpansion2\",*(PROPS+8));\n"
-	    << "mg.addMaterialProperty(\"ThermalExpansion3\",*(PROPS+9));\n"
-	    << "mg_mpoffset = 10u;\n"
-	    << "}\n";
-      } else {
-	string msg("MFrontCyranoInterface::writeMTestFileGeneratorAdditionalMaterialPropertiesInitialisation : ");
-	msg += "unsupported behaviour symmetry type.\n";
-	msg += "The cyrano interface only support isotropic or orthotropic behaviour at this time.";
-	throw(runtime_error(msg));
-      }
-    } else {
-      string msg("MFrontCyranoInterface::writeMTestFileGeneratorAdditionalMaterialPropertiesInitialisation : "
-		 "unsupported behaviour type");
-      throw(runtime_error(msg));
-    }
-  } // end of MFrontCyranoInterface::writeMTestFileGeneratorAdditionalMaterialPropertiesInitialisation
-
-  void
-  MFrontCyranoInterface::writeUMATxxBehaviourTypeSymbols(std::ostream&,
-						       const std::string&,
-						       const MechanicalBehaviourDescription&) const
-  {} // end of MFrontCyranoInterface::writeUMATxxBehaviourTypeSymbols
-
-  void
-  MFrontCyranoInterface::writeUMATxxMaterialPropertiesSymbols(std::ostream& out,
-							    const std::string& name,
-							    const MechanicalBehaviourDescription& mb,
-							    const std::map<std::string,std::string>& glossaryNames,
-							    const std::map<std::string,std::string>& entryNames) const
-  {
-    const VariableDescriptionContainer& coefsHolder = mb.getMaterialProperties();
-    const unsigned short cs = this->getNumberOfVariables(coefsHolder);
-    const bool found        = this->checkIfElasticPropertiesAreDeclared(mb);
-    out << "MFRONT_SHAREDOBJ unsigned short " << this->getFunctionName(name);
-    if(mb.getSymmetryType()==mfront::ISOTROPIC){
-      // skipping the fourth first material properties
-      if(found){
-	out << "_nMaterialProperties = " << cs-4 << ";\n";
-      } else {
-	out << "_nMaterialProperties = " << cs << ";\n";
-      }
-    } else {
-      out << "_nMaterialProperties = " << cs << ";\n";
-    }
-    if((mb.getSymmetryType()==mfront::ISOTROPIC)&&(found)){
-      this->writeGlossaryNames(out,coefsHolder.getGlossaryNames(glossaryNames,
-								entryNames),
-			       name,"MaterialProperties",4u);
-    } else {
-      this->writeGlossaryNames(out,coefsHolder.getGlossaryNames(glossaryNames,
-								entryNames),
-			       name,"MaterialProperties");
-    }
-  } // end of MFrontCyranoInterface::writeUMATxxMaterialPropertiesSymbol
-
-  void
-  MFrontCyranoInterface::writeUMATxxAdditionalSymbols(std::ostream&,// out,
-						      const std::string&,// name,
+  MFrontCyranoInterface::writeUMATxxAdditionalSymbols(std::ostream&,
 						      const std::string&,
-						      const MechanicalBehaviourDescription&,// mb,
-						      const std::map<std::string,std::string>&,
-						      const std::map<std::string,std::string>&) const
-  {
-    // typedef MechanicalBehaviourDescription::ModellingHypothesis MH;
-    // // check if plane stress hypothesis is supported through the generic plane stress algorithm
-    // if(mb.getHypotheses().find(MH::PLANESTRESS)==mb.getHypotheses().end()){
-    //   if(mb.getHypotheses().find(MH::AXISYMMETRICALGENERALISEDPLANESTRAIN)!=mb.getHypotheses().end()){
-    // 	out << "MFRONT_SHAREDOBJ unsigned short " << this->getFunctionName(name)
-    // 	    << "_UsesGenericPlaneStressAlgorithm = 1u;\n\n";
-    //   }
-    // }
-  } // end of MFrontCyranoInterface::writeUMATxxAdditionalSymbols
+						      const Hypothesis,
+						      const MechanicalBehaviourDescription&,
+						      const MFrontFileDescription&) const
+  {} // end of MFrontCyranoInterface::writeUMATxxAdditionalSymbols
+  
+  // void
+  // MFrontCyranoInterface::writeUMATxxSpecificSymbols(std::ostream& out,
+  // 						    const std::string& name,
+  // 						    const MechanicalBehaviourDescription& mb,
+  // 						    const MFrontFileDescription&) const
+  // {
+  //   if(!mb.isModellingHypothesisSupported(ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN)){
+  // 	out << "MFRONT_SHAREDOBJ unsigned short " << this->getFunctionName(name)
+  // 	    << "_UsesGenericPlaneStressAlgorithm = 0u;\n\n";    
+  //   } else {
+  //     if(!mb.isModellingHypothesisSupported(ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRESS)){
+  // 	out << "MFRONT_SHAREDOBJ unsigned short " << this->getFunctionName(name)
+  // 	    << "_UsesGenericPlaneStressAlgorithm = 1u;\n\n";    
+  //     } else {
+  // 	out << "MFRONT_SHAREDOBJ unsigned short " << this->getFunctionName(name)
+  // 	    << "_UsesGenericPlaneStressAlgorithm = 0u;\n\n";    
+  //     }
+  //   }
+  // }
+
 
   void
   MFrontCyranoInterface::writeCyranoFortranFunctionDefine(std::ostream& out,
-							  const std::string& name)
+							  const std::string& name) const
   {
     out << "#define cyrano" << makeUpperCase(name) <<"_F77" << " F77_FUNC(cyrano"
 	<< makeLowerCase(name) << ",Cyrano"
@@ -664,7 +539,7 @@ namespace mfront{
 
   void
   MFrontCyranoInterface::writeCyranoFunctionDeclaration(std::ostream& out,
-						    const std::string& name)
+							const std::string& name) const
   {
     using namespace std;
     out << "MFRONT_SHAREDOBJ void MFRONT_STDCALL\ncyrano"
@@ -693,22 +568,13 @@ namespace mfront{
 
   void
   MFrontCyranoInterface::writeStandardCyranoFunction(std::ostream& out,
-						 const std::string& name,
-						 const std::string& library,
-						 const std::string& material,
-						 const std::string& suffix,
-						 const std::map<std::string,std::string>& glossaryNames,
-						 const std::map<std::string,std::string>& entryNames,
-						 const MechanicalBehaviourDescription& mb) const
+						     const std::string& n,
+						     const MechanicalBehaviourDescription& mb) const
   {
     using namespace std;
-    string fname = name;
-    if(!suffix.empty()){
-      fname += "_"+suffix;
-    }
-    const string cyranoFortranFunctionName = "cyrano"+makeUpperCase(fname)+"_F77";
-    out << "MFRONT_SHAREDOBJ void MFRONT_STDCALL\ncyrano"
-	<< makeLowerCase(fname)
+    const string cyranoFortranFunctionName = this->getFunctionName(n)+"_F77";
+    out << "MFRONT_SHAREDOBJ void MFRONT_STDCALL\n"
+	<< this->getFunctionName(n)
 	<< "(const cyrano::CyranoInt *const NTENS, const cyrano::CyranoReal *const DTIME,\n"
 	<< "const cyrano::CyranoReal *const DROT,  cyrano::CyranoReal *const DDSOE,\n"
 	<< "const cyrano::CyranoReal *const STRAN, const cyrano::CyranoReal *const DSTRAN,\n"
@@ -720,14 +586,13 @@ namespace mfront{
 	<< "cyrano::CyranoInt    *const KINC)\n";
     out << "{\n";
     this->generateMTestFile1(out);
-    out << "cyrano" << makeLowerCase(name)
-	<< "_base(NTENS, DTIME,DROT,DDSOE,STRAN,DSTRAN,TEMP,DTEMP,\n"
-	<< "PROPS,NPROPS,PREDEF,DPRED,STATEV,NSTATV,\n"
-	<< "STRESS,NDI,KINC);\n";
+    out << "cyrano::CyranoInterface<tfel::material::" << mb.getClassName() 
+	<< ">::exe(NTENS,DTIME,DROT,DDSOE,STRAN,DSTRAN,TEMP,DTEMP,PROPS,NPROPS,"
+	<< "PREDEF,DPRED,STATEV,NSTATV,STRESS,NDI,KINC);\n";
     if(this->generateMTestFile){
       out << "if(*KINC!=1){\n";
       this->generateMTestFile2(out,MechanicalBehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR,
-			       library,material,name,suffix,mb,glossaryNames,entryNames);
+       			       n,"",mb);
       out << "}\n";
     }
     out << "}\n\n";
@@ -740,13 +605,172 @@ namespace mfront{
 	<< "const cyrano::CyranoReal *const PREDEF,const cyrano::CyranoReal *const DPRED,\n"
 	<< "cyrano::CyranoReal *const STATEV,const cyrano::CyranoInt    *const NSTATV,\n"
 	<< "cyrano::CyranoReal *const STRESS,const cyrano::CyranoInt    *const NDI,\n"
-	<< "cyrano::CyranoInt    *const KINC)\n";
-    out << "{\n";
-    out << "cyrano" << makeLowerCase(fname)
+	<< "cyrano::CyranoInt    *const KINC)\n"
+	<< "{\n"
+	<< this->getFunctionName(n)
 	<< "(NTENS, DTIME,DROT,DDSOE,STRAN,DSTRAN,TEMP,DTEMP,\n"
 	<< "PROPS,NPROPS,PREDEF,DPRED,STATEV,NSTATV,\n"
 	<< "STRESS,NDI,KINC);\n";
     out << "}\n\n";
+  }
+
+  void
+  MFrontCyranoInterface::writeCyranoBehaviourTraits(std::ostream& out,
+						    const MechanicalBehaviourDescription& mb,
+						    const Hypothesis h) const
+  {
+    using namespace std;
+    using namespace tfel::material;
+    const pair<SupportedTypes::TypeSize,
+	       SupportedTypes::TypeSize> mvs = mb.getMainVariablesSize();
+    pair<vector<UMATMaterialProperty>,
+	 SupportedTypes::TypeSize> mprops = this->buildMaterialPropertiesList(mb,h);
+     if(h==ModellingHypothesis::UNDEFINEDHYPOTHESIS){
+      out << "template<tfel::material::ModellingHypothesis::Hypothesis H,typename Type";
+      if(mb.useQt()){
+	out << ",bool use_qt";
+      }
+    } else {
+      out << "template<typename Type";
+      if(mb.useQt()){
+	out << ",bool use_qt";
+      }
+    }
+    out << ">\n";
+    if(h==ModellingHypothesis::UNDEFINEDHYPOTHESIS){
+      out << "struct CyranoTraits<tfel::material::" << mb.getClassName() << "<H,Type,";
+    } else {
+      out << "struct CyranoTraits<tfel::material::"
+	  << mb.getClassName() << "<tfel::material::ModellingHypothesis::" << ModellingHypothesis::toUpperCaseString(h) << ",Type,";
+    }
+    if(mb.useQt()){
+      out << "use_qt";
+    } else {
+      out << "false";
+    }
+    out << "> >{\n";
+    if(h!=ModellingHypothesis::UNDEFINEDHYPOTHESIS){
+      out << "// modelling hypothesis\n";
+      out << "static const tfel::material::ModellingHypothesis::Hypothesis H = "
+	  << "tfel::material::ModellingHypothesis::"
+	  << ModellingHypothesis::toUpperCaseString(h) << ";" << endl;
+    }
+    out << "// space dimension\n";
+    out << "static const unsigned short N           = tfel::material::ModellingHypothesisToSpaceDimension<H>::value;\n";
+    out << "// tiny vector size\n";
+    out << "static const unsigned short TVectorSize = N;\n";
+    out << "// symmetric tensor size\n";
+    out << "static const unsigned short StensorSize = tfel::math::StensorDimeToSize<N>::value;\n";
+    out << "// tensor size\n";
+    out << "static const unsigned short TensorSize  = tfel::math::TensorDimeToSize<N>::value;\n";
+    out << "// size of the driving variable array (STRAN)\n";
+    out << "static const unsigned short DrivingVariableSize  = " << mvs.first <<  ";\n";
+    out << "// size of the thermodynamic force variable array (STRAN)\n";
+    out << "static const unsigned short ThermodynamicForceVariableSize  = " << mvs.second <<  ";\n";
+    out << "static const bool useTimeSubStepping = ";
+    if(this->useTimeSubStepping){
+      out << "true;\n";
+    } else {
+      out << "false;\n";
+    }
+    out << "static const bool doSubSteppingOnInvalidResults = ";
+    if(this->doSubSteppingOnInvalidResults){
+      out << "true;\n";
+    } else {
+      out << "false;\n";
+    }
+    out << "static const unsigned short maximumSubStepping = ";
+    if(this->useTimeSubStepping){
+      out << this->maximumSubStepping << ";\n";
+    } else {
+      out << "0u;\n";
+    }
+    if(mb.getAttribute(MechanicalBehaviourDescription::requiresStiffnessTensor,false)){
+      out << "static const bool requiresStiffnessTensor = true;\n";
+      if(mb.getAttribute(MechanicalBehaviourDescription::requiresUnAlteredStiffnessTensor,false)){
+	out << "static const bool requiresUnAlteredStiffnessTensor = true;\n";
+      } else {
+	out << "static const bool requiresUnAlteredStiffnessTensor = false;\n";
+      }
+    } else {
+      out << "static const bool requiresStiffnessTensor = false;\n";
+    }
+    if(mb.getAttribute(MechanicalBehaviourDescription::requiresThermalExpansionCoefficientTensor,false)){
+      out << "static const bool requiresThermalExpansionCoefficientTensor = true;\n";
+    } else {
+      out << "static const bool requiresThermalExpansionCoefficientTensor = false;\n";
+    }
+    // computing material properties size
+    SupportedTypes::TypeSize msize;
+    if(!mprops.first.empty()){
+      const UMATMaterialProperty& m = mprops.first.back();
+      msize  = m.offset;
+      msize += this->getTypeSize(m.type,m.arraySize);
+      msize -= mprops.second;
+    }
+    out << "static const unsigned short material_properties_nb = " << msize << ";\n";
+    if(mb.getSymmetryType()==mfront::ISOTROPIC){
+      if(mb.getAttribute(MechanicalBehaviourDescription::requiresStiffnessTensor,false)){
+	if(mb.getAttribute(MechanicalBehaviourDescription::requiresThermalExpansionCoefficientTensor,false)){
+	  out << "static const unsigned short propertiesOffset        = 3u;\n";
+	  out << "static const unsigned short elasticPropertiesOffset = 2u;\n";
+	} else {
+	  out << "static const unsigned short propertiesOffset        = 2u;\n";
+	  out << "static const unsigned short elasticPropertiesOffset = 2u;\n";
+	}
+      } else {
+	if(mb.getAttribute(MechanicalBehaviourDescription::requiresThermalExpansionCoefficientTensor,false)){
+	  out << "static const unsigned short propertiesOffset        = 1u;\n";
+	  out << "static const unsigned short elasticPropertiesOffset = 0u;\n";
+	} else {
+	  out << "static const unsigned short propertiesOffset        = 0u;\n";
+	  out << "static const unsigned short elasticPropertiesOffset = 0u;\n";
+	}
+      }
+    } else if(mb.getSymmetryType()==mfront::ORTHOTROPIC){
+      if(mb.getAttribute(MechanicalBehaviourDescription::requiresStiffnessTensor,false)){
+	if(mb.getAttribute(MechanicalBehaviourDescription::requiresThermalExpansionCoefficientTensor,false)){
+	  out << "static const unsigned short propertiesOffset        = 9u;\n";
+	  out << "static const unsigned short elasticPropertiesOffset = 6u;\n";
+	} else {
+	  out << "static const unsigned short propertiesOffset        = 6u;\n";
+	  out << "static const unsigned short elasticPropertiesOffset = 6u;\n";
+	}
+      } else {
+	if(mb.getAttribute(MechanicalBehaviourDescription::requiresThermalExpansionCoefficientTensor,false)){
+	  out << "static const unsigned short propertiesOffset        = 3u;\n";
+	  out << "static const unsigned short elasticPropertiesOffset = 0u;\n";
+	} else {
+	  out << "static const unsigned short propertiesOffset = 0u;\n";
+	  out << "static const unsigned short elasticPropertiesOffset = 0u;\n";
+	}
+      }
+    } else {
+      string msg("MFrontCyranoInterface::writeCyranoBehaviourTraits : ");
+      msg += "unsupported behaviour symmetry type.\n";
+      msg += "The cyrano interface only support isotropic or orthotropic behaviour at this time.";
+      throw(runtime_error(msg));
+    }
+    if(mb.getSymmetryType()==mfront::ISOTROPIC){
+      out << "static const CyranoSymmetryType stype = cyrano::ISOTROPIC;\n";
+    } else if (mb.getSymmetryType()==mfront::ORTHOTROPIC){
+      out << "static const CyranoSymmetryType stype = cyrano::ORTHOTROPIC;\n";
+    } else {
+      string msg("MFrontCyranoInterface::writeCyranoBehaviourTraits : ");
+      msg += "unsupported behaviour symmetry type.\n";
+      msg += "The cyrano interface only support isotropic or orthotropic behaviour at this time.";
+      throw(runtime_error(msg));
+    }
+    out << "}; // end of class CyranoTraits\n\n";
+  } // end of MFrontCyranoInterface::writeCyranoBehaviourTraits
+
+  std::string
+  MFrontCyranoInterface::getModellingHypothesisTest(const Hypothesis h) const
+  {
+    using namespace std;
+    ostringstream test;
+    test << "*NDI==" << this->getModellingHypothesisIdentifier(h);
+    return test.str();
   }
 
 } // end of namespace mfront

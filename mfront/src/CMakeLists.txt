@@ -5,9 +5,11 @@ if(HAVE_CASTEM)
 include_directories("${CASTEMHOME}/include")
 endif(HAVE_CASTEM)
 
-link_directories("${PROJECT_BINARY_DIR}/src/Material"
+link_directories("${PROJECT_BINARY_DIR}/mfront/src"
+                 "${PROJECT_BINARY_DIR}/src/Material"
                  "${PROJECT_BINARY_DIR}/src/Math"
                  "${PROJECT_BINARY_DIR}/src/System"
+                 "${PROJECT_BINARY_DIR}/src/Glossary"
                  "${PROJECT_BINARY_DIR}/src/Utilities"
                  "${PROJECT_BINARY_DIR}/src/Exception")
 
@@ -17,6 +19,7 @@ configure_file(${PROJECT_SOURCE_DIR}/mfront/src/MFrontHeader.cxx.in
 set(mfront_SOURCES
     main.cxx
     MFront.cxx
+    MFrontDebugMode.cxx
     MFrontLock.cxx
     MFrontSearchFile.cxx
     MFrontInitInterfaces.cxx
@@ -24,11 +27,11 @@ set(mfront_SOURCES
     MFrontParserFactory.cxx
     DrivingVariable.cxx
     MaterialPropertyDescription.cxx
+    MechanicalBehaviourData.cxx
     MechanicalBehaviourDescription.cxx
     BoundsDescription.cxx
     VariableDescription.cxx
     StaticVariableDescription.cxx
-    MechanicalVariableDescription.cxx
     MFrontBehaviourParserCommon.cxx
     MFrontModelParserCommon.cxx
     MFrontModelParser.cxx
@@ -66,8 +69,6 @@ set(mfront_SOURCES
     MFrontExcelLawInterface.cxx
     MFrontLaTeXLawInterface.cxx
     MFrontUMATInterfaceBase.cxx
-    VariableModifier.cxx
-    WordAnalyser.cxx
     ${PROJECT_BINARY_DIR}/mfront/src/MFrontHeader.cxx)
 
 if(HAVE_GNUPLOT)
@@ -88,11 +89,18 @@ if(HAVE_FORTRAN)
 	${mfront_SOURCES})
 endif(HAVE_FORTRAN)
 
+tfel_library(MFrontLogStream
+  MFrontLogStream.cxx)
+
 tfel_library(MTestFileGenerator
   MTestFileGeneratorBase.cxx
   UMATSmallStrainMTestFileGenerator.cxx
   UMATFiniteStrainMTestFileGenerator.cxx)
-target_link_libraries(MTestFileGenerator)
+target_link_libraries(MTestFileGenerator
+  TFELMaterial
+  TFELMath
+  TFELUtilities
+  TFELException)
 
 if(HAVE_CASTEM)
     set(mfront_SOURCES
@@ -102,9 +110,10 @@ if(HAVE_CASTEM)
     set(UMATInterface_SOURCES
 	UMATInterfaceBase.cxx
 	UMATFiniteStrain.cxx
-	UMATComputeStiffnessOperator.cxx
+	UMATComputeStiffnessTensor.cxx
 	UMATComputeThermalExpansionCoefficientTensor.cxx
 	UMATRotationMatrix.cxx
+	UMATFiniteStrainRotationMatrix.cxx
 	UMATTangentOperator.cxx
 	UMATOutOfBoundsPolicy.cxx
 	UMATGetModellingHypothesis.cxx
@@ -125,7 +134,7 @@ if(HAVE_ASTER)
     AsterInterfaceBase.cxx
     AsterException.cxx
     AsterRotationMatrix.cxx
-    AsterComputeStiffnessOperator.cxx
+    AsterComputeStiffnessTensor.cxx
     AsterStressFreeExpansionHandler.cxx
     AsterComputeThermalExpansionCoefficientTensor.cxx
     AsterTangentOperator.cxx)
@@ -143,7 +152,7 @@ if(HAVE_CYRANO)
     set(CyranoInterface_SOURCES
         CyranoException.cxx
         CyranoInterfaceBase.cxx
-	CyranoComputeStiffnessOperator.cxx
+	CyranoComputeStiffnessTensor.cxx
 	CyranoComputeThermalExpansionCoefficientTensor.cxx
 	CyranoOutOfBoundsPolicy.cxx
 	CyranoGetModellingHypothesis.cxx)
@@ -158,15 +167,19 @@ add_executable(mfront ${mfront_SOURCES})
 
 if(UNIX)
   target_link_libraries(mfront
-    TFELMaterial  TFELMathParser
-    TFELSystem    TFELUtilities
-    TFELException -pthread @TFEL_DL_LIBRARY@)
+    MFrontLogStream
+    TFELMaterial TFELMathParser
+    TFELSystem   TFELUtilities
+    TFELGlossary TFELException
+    -pthread @TFEL_DL_LIBRARY@)
 else(UNIX)
 target_link_libraries(mfront
+                      MFrontLogStream
                       TFELMaterial
                       TFELMathParser
                       TFELSystem
 		      TFELUtilities
+                      TFELGlossary
 		      TFELException)
 endif(UNIX)
 

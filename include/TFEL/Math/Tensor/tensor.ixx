@@ -438,7 +438,7 @@ namespace tfel{
 			  OutputIterator p)
     {    
       typedef typename tfel::typetraits::BaseType<T>::type base;
-      typedef tfel::fsalgo::copy<StensorDimeToSize<N>::value> Copy;
+      typedef tfel::fsalgo::copy<TensorDimeToSize<N>::value> Copy;
       TFEL_STATIC_ASSERT((tfel::typetraits::IsSafelyReinterpretCastableTo<T,base>::cond));
       Copy::exe(reinterpret_cast<const base*>(&t[0]),p);
     }

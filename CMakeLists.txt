@@ -8,6 +8,13 @@ include(cmake/modules/autotools.cmake)
 tfel_project(2 0 dev)
 set(PACKAGE_BUGREPORT "thomas.helfer@cea.fr")
 
+# check for the fenv package
+include(CheckIncludeFiles)
+check_include_files(fenv.h HAVE_FENV_H)
+if(HAVE_FENV_H)
+  add_definitions("-DHAVE_FENV")
+endif(HAVE_FENV_H)
+
 if(UNIX)
   # This is used in mtest tests files
   set(TFEL_LOCAL_LIBRARY_PREFIX "./")

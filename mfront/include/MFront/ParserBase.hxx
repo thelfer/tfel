@@ -14,10 +14,9 @@
 #include<string>
 
 #include"TFEL/Config/TFELConfig.hxx"
+#include"TFEL/Utilities/SmartPtr.hxx"
 #include"TFEL/Utilities/CxxTokenizer.hxx"
 
-#include"MFront/VariableModifier.hxx"
-#include"MFront/WordAnalyser.hxx"
 #include"MFront/VariableDescription.hxx"
 #include"MFront/MFrontFileDescription.hxx"
 #include"MFront/MaterialPropertyDescription.hxx"
@@ -52,9 +51,73 @@ namespace mfront
   protected:
 
     /*!
+     * \brief An helper structure used by the
+     * MFrontBehaviourParserCommon class to modify the code provided
+     * by the user.
+     * 
+     * These modifiers are called when the parser encounters variables.
+     */
+    struct TFEL_VISIBILITY_EXPORT VariableModifier
+    {
+      /*!
+       * \param[in] v : the variable name
+       * \param[in] b : true if "this" shall be added
+       */
+      virtual std::string
+      exe(const std::string&,
+	  const bool) = 0;
+      /*!
+       * destructor
+       */
+      virtual ~VariableModifier() = 0;
+    }; // end of struct VariableModifier
+    /*!
+     * \brief An helper structure used by the ParserBase class to modify the
+     * code provided by the user.
+     * 
+     * These modifiers are called when the parser encounters variables.
+     */
+    struct TFEL_VISIBILITY_EXPORT WordAnalyser
+    {
+      /*!
+       * \param[in] k : the current word
+       */
+      virtual void
+      exe(const std::string&) = 0;
+      /*!
+       * destructor
+       */
+      virtual ~WordAnalyser() = 0;
+    }; // end of struct WordAnalyser
+    /*!
      * constructor
      */
     ParserBase();
+    /*!
+     * \return the name of the generated class
+     */
+    virtual std::string getClassName(void) const = 0;
+    /*!
+     * \brief add a material law
+     * \param[in] m : added material law name
+     */
+    virtual void addMaterialLaw(const std::string&) = 0;
+    /*!
+     * \brief append the given code to the includes
+     */
+    virtual void appendToIncludes(const std::string&) = 0;
+    /*!
+     * \brief append the given code to the members
+     */
+    virtual void appendToMembers(const std::string&) = 0;
+    /*!
+     * \brief append the given code to the private code
+     */
+    virtual void appendToPrivateCode(const std::string&) = 0;
+    /*!
+     * \brief append the given code to the sources
+     */
+    virtual void appendToSources(const std::string&) = 0;
     /*!
      * \brief analyse a file
      * \param[in] f     : file name
@@ -71,6 +134,7 @@ namespace mfront
      */
     virtual void
     addStaticVariableDescription(const StaticVariableDescription&) = 0;
+
     /*!
      * destructor
      */
@@ -78,7 +142,7 @@ namespace mfront
 
     void
     checkNotEndOfFile(const std::string&,
-		      const std::string& = "");
+		      const std::string& = "") const;
 
     void
     readSpecifiedToken(const std::string&,
@@ -86,7 +150,7 @@ namespace mfront
 
     void
     throwRuntimeError(const std::string&,
-		      const std::string&);
+		      const std::string&) const;
 
     std::string
     readUntilEndOfInstruction(void);
@@ -158,9 +222,18 @@ namespace mfront
 		  tfel::utilities::shared_ptr<VariableModifier>(),
 		  tfel::utilities::shared_ptr<WordAnalyser> =
 		  tfel::utilities::shared_ptr<WordAnalyser>());
-
+    /*!
+     * \brief read one token and increment "current"
+     */
     std::string
     readOnlyOneToken(void);
+    /*!
+     *
+     */
+    template<typename T>
+    std::pair<bool,T>
+    readInitialisationValue(const std::string&,
+			    const bool);
     /*!
      * \param[in] cont : variable container to wich variables are
      * added
@@ -168,10 +241,13 @@ namespace mfront
      * \param[in] allowArray      : allow arrays of variables to be defined
      * \param[in] addIncrementVar : for each variable read, add
      * another variable standing for the first variable increment
+     * \param[in] b : accept that a variable with the same name was
+     * already declared
      */
     void
     readVarList(VariableDescriptionContainer&,
 		const std::string&,
+		const bool,
 		const bool,
 		const bool);
     /*!
@@ -180,11 +256,22 @@ namespace mfront
      * \param[in] allowArray      : allow arrays of variables to be defined
      * \param[in] addIncrementVar : for each variable read, add
      * another variable standing for the first variable increment
+     * \param[in] b : accept that a variable with the same name was
+     * already declared
      */
     void
     readVarList(VariableDescriptionContainer&,
 		const bool,
+		const bool,
 		const bool);
+    /*!
+     * extract a boolean value from the current token and go the next
+     * token
+     * \param[in] m : calling method name (used for error message)
+     * \return the boolean value read
+     */
+    bool
+    readBooleanValue(const std::string&);
     /*!
      * extract a string from the current token and go the next token
      * \param[in] m : calling method name (used for error message)
@@ -209,7 +296,23 @@ namespace mfront
      */
     std::vector<std::string>
     readStringOrArrayOfString(const std::string&);
-
+    /*!
+     * extract a list of token
+     * \param[out] l  : list read
+     * \param[in]  m  : calling method name (used for error message)
+     * \param[in]  db : beginning delimiter
+     * \param[in]  de : end delimiter
+     * \param[in] b   : if the current value is not the beginning
+     * delimiter (or is past the end of the file), nothing is returned
+     * if this parameter is true. An exception is thrown otherwise
+     */
+    void
+    readList(std::vector<tfel::utilities::Token>&,
+	     const std::string&,
+	     const std::string&,
+	     const std::string&,
+	     const bool);
+    
     std::string
     readSpecifiedValue(const std::string&,
 		       const std::string&);
@@ -280,22 +383,34 @@ namespace mfront
     virtual void
     treatDescription(void);
     virtual void
-    treatLibrary(void);
-    virtual void
     ignoreKeyWord(const std::string&);
+    /*!
+     * \brief register a variable name.
+     * \param[in] v : variable name
+     * \param[in] b : if false, don't check if variable has already
+     * been reserved yet. If true, check if the variable has alredy
+     * been registred and throws an exception if it does, register it
+     * otherwise
+     */
     virtual void
-    registerVariable(const std::string&);
+    registerVariable(const std::string&,
+		     const bool);
     virtual void
     registerStaticVariable(const std::string&);
     /*!
-     * \brief check if the given name has not been reserved yet and
-     * throw an exception if it does, register it otherwise.
+     * \brief register a name.
      * \param[in] w : name
+     * \param[in] b : if false, don't check if variable has already
+     * been reserved yet. If true, check if the variable has alredy
+     * been registred and throws an exception if it does, register it
+     * otherwise
+
      * \note this method is called internally by the registerVariable
      *       and registerStaticVariable methods.
      */
     virtual void
-    reserveName(const std::string&);
+    reserveName(const std::string&,
+		const bool);
     /*!
      * \return true if the given name has been reserved
      * \param[in] n : name 
@@ -315,16 +430,17 @@ namespace mfront
     
     std::vector<std::string> librariesDependencies;
     std::map<std::string,int> integerConstants;
-    std::string sources;
-    std::string privateCode;
-    std::string members;
+    std::set<std::string> varNames;
+    std::set<std::string> staticVarNames;
+    std::set<std::string> reservedNames;
+
     TokensContainer::const_iterator current;
-    bool debugMode;
-    bool verboseMode;
-    bool warningMode;
+
   }; // end of class ParserBase
 
 } // end of namespace mfront  
+
+#include"MFront/ParserBase.ixx"
 
 #endif /* _LIB_MFRONT_PARSERBASE_HXX */
 

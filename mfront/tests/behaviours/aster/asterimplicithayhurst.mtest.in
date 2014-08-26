@@ -8,7 +8,6 @@
 @Behaviour<aster> '@MFrontAsterBehavioursBuildPath@' 'asterimplicithayhurst';
 @MaterialProperty<constant> 'YoungModulus'      1.45000E5;
 @MaterialProperty<constant> 'PoissonRatio'         0.3;
-@MaterialProperty<constant> 'MassDensity'        7800.0;
 @MaterialProperty<constant> 'ThermalExpansion'   1.E-05;
 @MaterialProperty<constant> 'K'          9.691              ;
 @MaterialProperty<constant> 'epsi0'      5.82514751E-11     ;

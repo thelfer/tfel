@@ -51,6 +51,30 @@ namespace mfront
      */
     std::string material;
     /*!
+     * library name
+     */
+    std::string library;
+    /*!
+     * class name
+     */
+    std::string className;
+    /*!
+     * included header files
+     */
+    std::string includes;
+    /*!
+     * specific sources
+     */
+    std::string sources;
+    /*!
+     * private code
+     */
+    std::string privateCode;
+    /*!
+     * class member
+     */
+    std::string members;
+    /*!
      * bounds description
      */
     std::vector<VariableBoundsDescription> boundsDescriptions;
@@ -74,6 +98,10 @@ namespace mfront
      * parameters default value
      */
     std::map<std::string,double> parametersValues;
+    /*!
+     * list of material laws used
+     */
+    std::vector<std::string> materialLaws;
     /*!
      * static variables
      */

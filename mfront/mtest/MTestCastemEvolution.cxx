@@ -21,8 +21,10 @@ namespace mfront{
     typedef ExternalLibraryManager ELM;
     ELM& elm = ELM::getExternalLibraryManager();
     this->f = elm.getCastemFunction(l,fn);
-    elm.getCastemFunctionVariables(this->vnames,l,fn);
-    this->args.resize(this->vnames.size());
+    if(elm.getCastemFunctionNumberOfVariables(l,fn)!=0u){
+      elm.getCastemFunctionVariables(this->vnames,l,fn);
+      this->args.resize(this->vnames.size());
+    }
   } // end of MTestCastemEvolution::MTestCastemEvolution
 
   real

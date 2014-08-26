@@ -9,6 +9,7 @@
 #include<stdexcept>
 
 #include"MFront/ParserUtilities.hxx"
+#include"MFront/MFrontDebugMode.hxx"
 #include"MFront/MFrontParserFactory.hxx"
 #include"MFront/MFrontIsotropicMisesCreepParser.hxx"
 
@@ -16,35 +17,34 @@ namespace mfront{
 
   MFrontIsotropicMisesCreepParser::MFrontIsotropicMisesCreepParser()
   {
-    using namespace std;
-    typedef map<string,string>::value_type MVType;
+    const Hypothesis h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
     // Default state vars
-    this->reserveName("ccto_tmp_1");
-    this->reserveName("inv_sqrt2");
-    this->registerVariable("p");
-    this->registerVariable("dp");
-    this->registerVariable("eel");
-    this->registerVariable("deel");
-    this->mb.getStateVariables().push_back(VariableDescription("StrainStensor","eel",1u,0u));
-    this->mb.getStateVariables().push_back(VariableDescription("strain","p",1u,0u));
-    this->glossaryNames.insert(MVType("eel","ElasticStrain"));
-    this->glossaryNames.insert(MVType("p","EquivalentViscoplasticStrain"));
+    this->reserveName("ccto_tmp_1",false);
+    this->reserveName("inv_sqrt2",false);
+    this->registerVariable("p",false);
+    this->registerVariable("dp",false);
+    this->registerVariable("eel",false);
+    this->registerVariable("deel",false);
+    this->mb.addStateVariable(h,VariableDescription("StrainStensor","eel",1u,0u));
+    this->mb.addStateVariable(h,VariableDescription("strain","p",1u,0u));
+    this->mb.setGlossaryName(h,"eel","ElasticStrain");
+    this->mb.setGlossaryName(h,"p","EquivalentViscoplasticStrain");
     // default local vars
-    this->registerVariable("f");
-    this->registerVariable("df_dseq");
-    this->registerVariable("se");
-    this->registerVariable("seq");
-    this->registerVariable("seq_e");
-    this->registerVariable("n");
-    this->registerVariable("mu_3_theta");
-    this->mb.getLocalVariables().push_back(VariableDescription("DstrainDt","f",1u,0u));
-    this->mb.getLocalVariables().push_back(VariableDescription("DF_DSEQ_TYPE","df_dseq",1u,0u));
-    this->mb.getLocalVariables().push_back(VariableDescription("StressStensor","se",1u,0u));
-    this->mb.getLocalVariables().push_back(VariableDescription("stress","seq",1u,0u));
-    this->mb.getLocalVariables().push_back(VariableDescription("stress","seq_e",1u,0u));
-    this->mb.getLocalVariables().push_back(VariableDescription("StrainStensor","n",1u,0u));
-    this->hasConsistantTangentOperator = true;
-    this->isConsistantTangentOperatorSymmetric = true;
+    this->registerVariable("f",false);
+    this->registerVariable("df_dseq",false);
+    this->registerVariable("se",false);
+    this->registerVariable("seq",false);
+    this->registerVariable("seq_e",false);
+    this->registerVariable("n",false);
+    this->registerVariable("mu_3_theta",false);
+    this->mb.addLocalVariable(h,VariableDescription("DstrainDt","f",1u,0u));
+    this->mb.addLocalVariable(h,VariableDescription("DF_DSEQ_TYPE","df_dseq",1u,0u));
+    this->mb.addLocalVariable(h,VariableDescription("StressStensor","se",1u,0u));
+    this->mb.addLocalVariable(h,VariableDescription("stress","seq",1u,0u));
+    this->mb.addLocalVariable(h,VariableDescription("stress","seq_e",1u,0u));
+    this->mb.addLocalVariable(h,VariableDescription("StrainStensor","n",1u,0u));
+    this->mb.setAttribute(h,MechanicalBehaviourData::hasConsistantTangentOperator,true);
+    this->mb.setAttribute(h,MechanicalBehaviourData::isConsistantTangentOperatorSymmetric,true);
   }
 
   std::string
@@ -62,28 +62,37 @@ namespace mfront{
   }
 
   void
-  MFrontIsotropicMisesCreepParser::writeBehaviourParserSpecificMembers(void)
+  MFrontIsotropicMisesCreepParser::endsInputFileProcessing(void)
   {
     using namespace std;
+    MFrontIsotropicBehaviourParserBase::endsInputFileProcessing();
+    const Hypothesis h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
+    if(!this->mb.hasCode(h,MechanicalBehaviourData::FlowRule)){
+      string msg("MFrontIsotropicMisesCreepParser::endsInputFileProcessing : ");
+      msg += "no flow rule defined";
+      throw(runtime_error(msg));
+    }
+  } // end of MFrontIsotropicMisesCreepParser::endsInputFileProcessing
 
+  void
+  MFrontIsotropicMisesCreepParser::writeBehaviourParserSpecificMembers(const Hypothesis h)
+  {
+    using namespace std;
     this->checkBehaviourFile();
-
-    if(this->flowRule.empty()){
+    if(!this->mb.hasCode(h,MechanicalBehaviourData::FlowRule)){
       string msg("MFrontIsotropicMisesCreepParser::writeBehaviourParserSpecificMembers : ");
       msg += "no flow rule declared (use the @FlowRule directive)";
       throw(runtime_error(msg));
     }
-
     this->behaviourFile << "void computeFlow(void){\n";
     this->behaviourFile << "using namespace std;\n";
     this->behaviourFile << "using namespace tfel::math;\n";
     this->behaviourFile << "using namespace tfel::material;\n";
     this->behaviourFile << "using std::vector;\n";
     writeMaterialLaws("MFrontIsotropicMisesCreepParser::writeBehaviourParserSpecificMembers",
-		      this->behaviourFile,this->materialLaws);
-    this->behaviourFile << this->flowRule << endl;
+		      this->behaviourFile,this->mb.getMaterialLaws());
+    this->behaviourFile << this->mb.getCode(h,MechanicalBehaviourData::FlowRule) << endl;
     this->behaviourFile << "}\n\n";
-
     this->behaviourFile << "bool NewtonIntegration(void){\n";
     this->behaviourFile << "using namespace std;\n";
     this->behaviourFile << "using namespace tfel::math;\n";
@@ -107,8 +116,8 @@ namespace mfront{
     this->behaviourFile << ">newton_epsilon){\n";
     this->behaviourFile << "this->dp -= newton_f/newton_df;\n";
     this->behaviourFile << "iter+=1;\n";
-    if(this->debugMode){
-      this->behaviourFile << "cout << \"" << this->className
+    if(getDebugMode()){
+      this->behaviourFile << "cout << \"" << this->mb.getClassName()
 			  << "::NewtonIntegration() : iteration \" "
 			  << "<< iter << \" : \" << std::abs(tfel::math::base_cast(newton_f)) << endl;\n";
     }
@@ -122,16 +131,16 @@ namespace mfront{
     this->behaviourFile << "return false;\n";
     this->behaviourFile << "}\n\n";
     this->behaviourFile << "if(iter==this->iterMax){\n";
-    if(this->debugMode){
-      this->behaviourFile << "cout << \"" << this->className
+    if(getDebugMode()){
+      this->behaviourFile << "cout << \"" << this->mb.getClassName()
 			  << "::NewtonIntegration() : no convergence after \" "
 			  << "<< iter << \" iterations\"<< endl << endl;\n";
       this->behaviourFile << "cout << *this << endl;\n";
     }
     this->behaviourFile << "return false;\n";
     this->behaviourFile << "}\n\n";
-    if(this->debugMode){
-      this->behaviourFile << "cout << \"" << this->className
+    if(getDebugMode()){
+      this->behaviourFile << "cout << \"" << this->mb.getClassName()
 			  << "::NewtonIntegration() : convergence after \" "
 			  << "<< iter << \" iterations\"<< endl << endl;\n";
     }
@@ -139,10 +148,10 @@ namespace mfront{
     this->behaviourFile << "}\n\n";
   } // end of writeBehaviourParserSpecificMembers
 
-  void MFrontIsotropicMisesCreepParser::writeBehaviourIntegrator(void)
+  void MFrontIsotropicMisesCreepParser::writeBehaviourIntegrator(const Hypothesis h)
   {
     using namespace std;
-    std::vector<BoundsDescription>::const_iterator p;
+    const MechanicalBehaviourData& d = this->mb.getMechanicalBehaviourData(h);
     this->checkBehaviourFile();
     this->behaviourFile << "/*!\n";
     this->behaviourFile << "* \\brief Integrate behaviour law over the time step\n";
@@ -166,11 +175,11 @@ namespace mfront{
     this->behaviourFile << "}\n";
     this->behaviourFile << "}\n";
     this->behaviourFile << "this->deel = this->deto-(this->dp)*(this->n);\n";
-    this->behaviourFile << "this->updateStateVars();\n";
+    this->behaviourFile << "this->updateStateVariables();\n";
     this->behaviourFile << "this->sig  = (this->lambda)*trace(this->eel)*StrainStensor::Id()+2*(this->mu)*(this->eel);\n";
-    this->behaviourFile << "this->updateAuxiliaryStateVars();\n";
-    for(p  = this->mb.getBounds().begin();
-	p != this->mb.getBounds().end();++p){
+    this->behaviourFile << "this->updateAuxiliaryStateVariables();\n";
+    for(vector<BoundsDescription>::const_iterator p  = d.getBounds().begin();
+	p != d.getBounds().end();++p){
       if(p->varCategory==BoundsDescription::StateVariable){
 	p->writeBoundsChecks(this->behaviourFile);
       }
@@ -184,7 +193,7 @@ namespace mfront{
   }
 
   void
-  MFrontIsotropicMisesCreepParser::writeBehaviourComputeTangentOperator(void)
+  MFrontIsotropicMisesCreepParser::writeBehaviourComputeTangentOperator(const Hypothesis)
   {
     this->behaviourFile << "bool computeConsistantTangentOperator(const SMType smt){\n";
     this->behaviourFile << "using namespace std;\n";
@@ -207,7 +216,7 @@ namespace mfront{
   }
 
   void
-  MFrontIsotropicMisesCreepParser::writeBehaviourParserSpecificInitializeMethodPart(void)
+  MFrontIsotropicMisesCreepParser::writeBehaviourParserSpecificInitializeMethodPart(const Hypothesis)
   {
     using namespace std;
     this->checkBehaviourFile();

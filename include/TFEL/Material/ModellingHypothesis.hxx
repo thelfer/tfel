@@ -24,7 +24,6 @@ namespace tfel
      */
     struct TFELMATERIAL_VISIBILITY_EXPORT ModellingHypothesis
     {
-      
       /*!
        * the list of supported modelling hypothesis
        */
@@ -42,8 +41,37 @@ namespace tfel
       static const std::vector<Hypothesis>&
       getModellingHypotheses(void);
 
+      /*!
+       * convert a string to a modelling hypothesis
+       * 
+       * AXISYMMETRICALGENERALISEDPLANESTRAIN <=> AxisymmetricalGeneralisedPlaneStrain
+       * AXISYMMETRICALGENERALISEDPLANESTRESS <=> AxisymmetricalGeneralisedPlaneStress,
+       * AXISYMMETRICAL                       <=> Axisymmetrical
+       * PLANESTRESS                          <=> PlaneStress			     
+       * PLANESTRAIN                          <=> PlaneStrain
+       * GENERALISEDPLANESTRAIN               <=> GeneralisedPlaneStrain		     
+       * TRIDIMENSIONAL                       <=> Tridimensional
+       */
+      static Hypothesis
+      fromString(const std::string&);
+      /*!
+       * \return a string correpsonding to the modelling hypothesis
+       * AXISYMMETRICALGENERALISEDPLANESTRAIN <=> AxisymmetricalGeneralisedPlaneStrain
+       * AXISYMMETRICALGENERALISEDPLANESTRESS <=> AxisymmetricalGeneralisedPlaneStress,
+       * AXISYMMETRICAL                       <=> Axisymmetrical
+       * PLANESTRESS                          <=> PlaneStress			     
+       * PLANESTRAIN                          <=> PlaneStrain
+       * GENERALISEDPLANESTRAIN               <=> GeneralisedPlaneStrain		     
+       * TRIDIMENSIONAL                       <=> Tridimensional
+       */
       static std::string
-      HypothesisToString(const Hypothesis);
+      toString(const Hypothesis);
+      /*!
+       * \return an upper case string correpsonding to the modelling
+       * hypothesis
+       */
+      static std::string
+      toUpperCaseString(const Hypothesis);
 
     }; // end of struct ModellingHypothesis
 

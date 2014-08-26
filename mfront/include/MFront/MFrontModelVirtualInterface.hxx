@@ -25,15 +25,6 @@ namespace mfront{
   struct TFEL_VISIBILITY_EXPORT MFrontModelVirtualInterface
   {
 
-    virtual void 
-    setVerboseMode() = 0;
-
-    virtual void 
-    setDebugMode() = 0;
-
-    virtual void 
-    setWarningMode() = 0;
-
     virtual std::pair<bool,tfel::utilities::CxxTokenizer::TokensContainer::const_iterator>
     treatKeyword(const std::string&,
 		 tfel::utilities::CxxTokenizer::TokensContainer::const_iterator,
@@ -57,31 +48,31 @@ namespace mfront{
      * \param pdata : generic data
      */
     virtual std::map<std::string,std::vector<std::string> >
-    getGlobalIncludes(const MFrontFileDescription&) = 0;
+    getGlobalIncludes(const MFrontModelData&) = 0;
 
     /*!
      * \param pdata : generic data
      */
     virtual std::map<std::string,std::vector<std::string> >
-    getGlobalDependencies(const MFrontFileDescription&) = 0;
+    getGlobalDependencies(const MFrontModelData&) = 0;
 
     /*!
      * \param pdata : generic data
      */
     virtual std::map<std::string,std::vector<std::string> >
-    getGeneratedSources(const MFrontFileDescription&) = 0;
+    getGeneratedSources(const MFrontModelData&) = 0;
 
     /*!
      * \param pdata : generic data
      */
     virtual std::vector<std::string>
-    getGeneratedIncludes(const MFrontFileDescription&) = 0;
+    getGeneratedIncludes(const MFrontModelData&) = 0;
 
     /*!
      * \param pdata : generic data
      */
     virtual std::map<std::string,std::vector<std::string> >
-    getLibrariesDependencies(const MFrontFileDescription&) = 0;
+    getLibrariesDependencies(const MFrontModelData&) = 0;
 
     virtual ~MFrontModelVirtualInterface();
 

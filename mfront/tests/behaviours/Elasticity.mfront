@@ -6,6 +6,8 @@
  (the most simple one in fact).
 }
 
+@ModellingHypotheses {".+"};
+
 @UseQt true;
 @ProvidesSymmetricTangentOperator;
 
@@ -15,33 +17,31 @@
 @AsterSaveTangentOperator[aster]        true;
 @AsterGenerateMTestFileOnFailure[aster] true;
 
+// Material properties
+// rho and alpha are mandatory
+// for the Cast3M finite element solver
 @MaterialProperty stress young;
+@MaterialProperty real   nu;
 young.setGlossaryName("YoungModulus");
-@MaterialProperty real nu;
 nu.setGlossaryName("PoissonRatio");
-@MaterialProperty real rho;
-rho.setGlossaryName("MassDensity");
-@MaterialProperty real alpha;
-alpha.setGlossaryName("ThermalExpansion");
 
-@LocalVariable stress lambda;
-@LocalVariable stress mu;
+// Lame Coefficients
+@LocalVariable stress lambda,mu;
 
 @Includes{
 #include"TFEL/Material/Lame.hxx"
 }
 
-@InitLocalVars{
+@InitLocalVariables{
   using namespace tfel::material::lame;
   lambda = computeLambda(young,nu);
   mu = computeMu(young,nu);
 }
 
 @PredictionOperator{
-  if(!((smt==ELASTIC)||(smt==SECANTOPERATOR)||(smt==TANGENTOPERATOR))){
-    return FAILURE;
-  }
-  Dt=lambda*Stensor4::IxI()+2*mu*Stensor4::Id();
+  using namespace tfel::material::lame;
+  static_cast<void>(smt); // remove unused variable warning
+  computeAlteredElasticStiffness<hypothesis,real>::exe(Dt,lambda,mu);
 }
 
 @Integrator{
@@ -49,4 +49,12 @@ alpha.setGlossaryName("ThermalExpansion");
   if(computeTangentOperator_){
     Dt = lambda*Stensor4::IxI()+2*mu*Stensor4::Id();
   }
+}
+
+@Integrator<PlaneStress,AxisymmetricalGeneralisedPlaneStress,Replace>{
+  using namespace tfel::material::lame;
+  // here we compute the tangent operator even if we don't need too
+  static_cast<void>(computeTangentOperator_);
+  computeAlteredElasticStiffness<hypothesis,real>::exe(Dt,lambda,mu);
+  sig = Dt*(eto+deto);
 }

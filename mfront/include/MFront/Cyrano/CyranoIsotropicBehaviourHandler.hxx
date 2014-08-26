@@ -44,7 +44,7 @@ namespace cyrano
       typedef CyranoTraits<Behaviour<H,CyranoReal,false> > Traits;
       typedef CyranoBehaviourHandler<H,Behaviour> CyranoBehaviourHandler;
       const bool is_defined_ = MTraits::is_defined;
-      const bool bs = Traits::requiresStiffnessOperator;
+      const bool bs = Traits::requiresStiffnessTensor;
       const bool ba = Traits::requiresThermalExpansionCoefficientTensor;
       typedef typename IF<
 	is_defined_,

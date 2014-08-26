@@ -5,8 +5,6 @@
  * \date   06 mai 2008
  */
 
-#include<iostream>
-
 #include<algorithm>
 #include<fstream>
 #include<sstream>
@@ -47,32 +45,11 @@ namespace mfront
   }
 
   MFrontLaTeXLawInterface::MFrontLaTeXLawInterface()
-    : verboseMode(false),
-      debugMode(false),
-      warningMode(false)
   {}
 
   void
   MFrontLaTeXLawInterface::reset(void)
   {} // end of MFrontLaTeXLawInterface::reset(void)
-  
-  void 
-  MFrontLaTeXLawInterface::setVerboseMode(void)
-  {
-    this->verboseMode = true;
-  }
-
-  void 
-  MFrontLaTeXLawInterface::setWarningMode(void)
-  {
-    this->warningMode = true;
-  }
-
-  void 
-  MFrontLaTeXLawInterface::setDebugMode(void)
-  {
-    this->debugMode = true;
-  }
 
   std::pair<bool,tfel::utilities::CxxTokenizer::TokensContainer::const_iterator>
   MFrontLaTeXLawInterface::treatKeyword(const std::string&,
@@ -246,7 +223,7 @@ namespace mfront
       d = replace_all(d,"~ :","~:");
       out << "\\subsubsection{Description}" << endl << endl;
       if(!d.empty()){
-	cout << "Description1 : '" << d << "'" << endl;
+	out << "Description1 : '" << d << "'" << endl;
 	out << d << endl;
       } else {
 	out << "Aucune description disponible" << endl;

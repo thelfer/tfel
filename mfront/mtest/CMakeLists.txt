@@ -1,7 +1,8 @@
 include_directories("${PROJECT_BINARY_DIR}/src/TFELConfig"
                     "${PROJECT_SOURCE_DIR}/include"
                     "${PROJECT_SOURCE_DIR}/mfront/include")
-link_directories("${PROJECT_BINARY_DIR}/src/Math"
+link_directories("${PROJECT_BINARY_DIR}/src/Material"
+                 "${PROJECT_BINARY_DIR}/src/Math"
                  "${PROJECT_BINARY_DIR}/src/System"
                  "${PROJECT_BINARY_DIR}/src/Utilities"
                  "${PROJECT_BINARY_DIR}/src/Exception"
@@ -14,7 +15,6 @@ set(TFELMTest_SOURCES
     MTestParser.cxx
     MTestAnalyticalTest.cxx
     MTestReferenceFileComparisonTest.cxx
-    MTestLogStream.cxx
     MTestEvolution.cxx
     MTestCastemEvolution.cxx
     MTestFunctionEvolution.cxx
@@ -25,6 +25,8 @@ set(TFELMTest_SOURCES
     MTestImposedDrivingVariable.cxx
     MTestImposedThermodynamicForce.cxx)
 set(TFELMTest_LDADD
+    MFrontLogStream
+    TFELMaterial
     TFELMathParser
     TFELMath
     TFELSystem
@@ -69,6 +71,7 @@ add_executable(mtest MTestMain.cxx)
 if(WIN32 AND enable-static)
   target_link_libraries(mtest
     TFELMTest-static
+    MFrontLogStream-static    
     TFELMathParser-static
     TFELMath-static
     TFELSystem-static

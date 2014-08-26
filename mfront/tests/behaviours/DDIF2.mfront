@@ -15,14 +15,10 @@
 #include"TFEL/Material/DDIF2Base.hxx"
 }
 
-@MaterialProperty real young; /* mandatory for castem */
+@MaterialProperty stress young; /* mandatory for castem */
 young.setGlossaryName("YoungModulus");
 @MaterialProperty real nu;    /* mandatory for castem */
 nu.setGlossaryName("PoissonRatio");
-@MaterialProperty real rho;   /* mandatory for castem */
-rho.setGlossaryName("MassDensity");
-@MaterialProperty real alpha; /* mandatory for castem */
-alpha.setGlossaryName("ThermalExpansion");
 
 @MaterialProperty real A;
 A.setGlossaryName("NortonCoefficient");
@@ -47,7 +43,7 @@ sigr.setGlossaryName("FractureStress");
 @LocalVar Stensor n2;
 
 /* Initialize Lame coefficients */
-@InitLocalVars{
+@InitLocalVariables{
   using namespace tfel::material::lame;
   lambda = computeLambda(young,nu);
   mu = computeMu(young,nu);
@@ -60,7 +56,7 @@ sigr.setGlossaryName("FractureStress");
   n2(2) = real(1.);
   // change to cylindrical coordinates
   DDIF2Base::cart2cyl(deto,0.);
-} // end of @InitLocalVars
+} // end of @InitLocalVariables
 
 @ComputeStress{
   sig = lambda*trace(eel)*Stensor::Id()+2*mu*eel;

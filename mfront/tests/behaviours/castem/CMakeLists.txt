@@ -37,8 +37,6 @@ set(mfront_tests_SOURCES
   NortonRK4
   ImplicitNorton
   ImplicitFiniteStrainNorton
-  ImplicitNortonPlaneStress
-  ImplicitNortonGeneralisedPlaneStress
   ImplicitNorton2
   ImplicitNorton_Broyden
   ImplicitNorton_Broyden2
@@ -63,6 +61,7 @@ set(mfront_tests_SOURCES
   MonoCristal_DD_CC
   MonoCristal_DD_CC_NumericalJacobian
   MonoCristal_DD_CC_Irradiation_NumericalJacobian
+  FiniteStrainMonoCristal
   PolyCristals
   PolyCristals_DD_CFC
   GursonTvergaardNeedlemanPlasticFlow_NumericalJacobian
@@ -76,14 +75,37 @@ set(mfront_tests_SOURCES
   IncompressibleMooneyRivlinBehaviour
   IncompressiblePlaneStressMooneyRivlinBehaviour
   IncompressiblePlaneStressGornetDesmoratBehaviour
-  ImplicitSimoMieheElastoPlasticity)
+  ImplicitSimoMieheElastoPlasticity
+  T91ViscoplasticBehaviour
+  AnistropicLemaitreViscoplasticBehaviour)
 
 mfront_dependencies(MFrontCastemBehaviours
   ThermalExpansionCoefficientTest
   ThermalExpansionCoefficientTest2
   ThermalExpansionCoefficientTest_1
   ThermalExpansionCoefficientTest_2
-  ThermalExpansionCoefficientTest_3)
+  ThermalExpansionCoefficientTest_3
+  T91AusteniticSteel_ThermalExpansion_ROUX2007
+  T91AusteniticSteel_b_ROUX2007
+  T91AusteniticSteel_F_ROUX2007
+  T91AusteniticSteel_Kvisc_ROUX2007
+  T91AusteniticSteel_Nexp_ROUX2007
+  T91AusteniticSteel_Rinf_ROUX2007
+  T91AusteniticSteel_ThermalExpansion_ROUX2007
+  T91AusteniticSteel_YieldStress_ROUX2007
+  T91AusteniticSteel_YoungModulus_ROUX2007
+  T91MartensiticSteel_b_ROUX2007
+  T91MartensiticSteel_C1_ROUX2007
+  T91MartensiticSteel_C2_ROUX2007
+  T91MartensiticSteel_F_ROUX2007
+  T91MartensiticSteel_gamma1_ROUX2007
+  T91MartensiticSteel_growth_ROUX2007
+  T91MartensiticSteel_Kvisc_ROUX2007
+  T91MartensiticSteel_Nexp_ROUX2007
+  T91MartensiticSteel_Rinf_ROUX2007
+  T91MartensiticSteel_ThermalExpansion_ROUX2007
+  T91MartensiticSteel_YieldStress_ROUX2007
+  T91MartensiticSteel_YoungModulus_ROUX2007)
   
 mfront_behaviour_check_library(MFrontCastemBehaviours umat  ${mfront_tests_SOURCES})
 
@@ -146,6 +168,15 @@ test_castem(elasticity20)
 test_castem(elasticity21)
 test_castem(elasticity22)
 test_castem(elasticity23)
+test_castem(elasticity24)
+test_castem(elasticity25)
+test_castem(elasticity26)
+test_castem(elasticity27)
+test_castem(elasticity28)
+test_castem(elasticity29)
+test_castem(elasticity30)
+test_castem(elasticity31)
+test_castem(elasticity32)
 test_castem(ddif2)
 test_castem(ddif2-2)
 test_castem(ddif2-3)
@@ -161,7 +192,6 @@ test_castem(nortonrk3)
 test_castem(nortonrk4)
 test_castem(implicitnorton-planestress)
 test_castem(implicitnorton-planestress2)
-test_castem(implicitnorton-generalisedplanestress)
 test_castem(stressrelaxation)
 test_castem(norton-euler)
 test_castem(norton-rk2)
@@ -271,6 +301,8 @@ test_castem(mieheapellambrechtlogarithmicstrainelasticity-uniaxialloading-2-3D)
 test_castem(mieheapellambrechtlogarithmicstrainelasticity-uniaxialloading-3-1D)
 test_castem(mieheapellambrechtlogarithmicstrainelasticity-uniaxialloading-3-2D)
 test_castem(mieheapellambrechtlogarithmicstrainelasticity-uniaxialloading-3-3D)
+test_castem(mieheapellambrechtlogarithmicstrainelasticity-uniaxialloading-1-planestress)
+test_castem(mieheapellambrechtlogarithmicstrainelasticity-uniaxialloading-3-planestress)
 test_castem(mieheapellambrechtlogarithmicstrainelasticity2-uniaxialloading-1-1D)
 test_castem(mieheapellambrechtlogarithmicstrainelasticity2-uniaxialloading-1-2D)
 test_castem(mieheapellambrechtlogarithmicstrainelasticity2-uniaxialloading-1-3D)
@@ -305,3 +337,10 @@ test_castem(compressibleneohookeanbehaviour)
 test_castem(incompressibleplanestressmooneyrivlinbehaviouruniaxialtesting)
 test_castem(incompressibleplanestressgornetdesmoratbehaviourbiaxialtesting)
 test_castem(implicitsimomieheelastoplasticity)
+test_castem(T91-satohtest)
+test_castem(T91-viscositytest)
+test_castem(finitestrainmonocristal-001)
+test_castem(finitestrainmonocristal-012)
+test_castem(finitestrainmonocristal-012-2)
+test_castem(finitestrainmonocristal-159)
+test_castem(anistropiclemaitreviscoplasticbehaviour)

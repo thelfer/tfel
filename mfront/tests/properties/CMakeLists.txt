@@ -1,3 +1,5 @@
+add_subdirectory(interfaces)
+
 include_directories("${CMAKE_CURRENT_BINARY_DIR}/include")
 
 macro(add_mfront_generated_source lib interface ext file)
@@ -49,7 +51,28 @@ set(mfront_SOURCES
     VanadiumAlloy_SpecificHeat_SRMA
     VanadiumAlloy_ThermalExpansion_SRMA
     VanadiumAlloy_ThermalConductivity_SRMA
-    Inconel600_YoungModulus)
+    Inconel600_YoungModulus
+    T91AusteniticSteel_ThermalExpansion_ROUX2007
+    T91AusteniticSteel_b_ROUX2007
+    T91AusteniticSteel_F_ROUX2007
+    T91AusteniticSteel_Kvisc_ROUX2007
+    T91AusteniticSteel_Nexp_ROUX2007
+    T91AusteniticSteel_Rinf_ROUX2007
+    T91AusteniticSteel_ThermalExpansion_ROUX2007
+    T91AusteniticSteel_YieldStress_ROUX2007
+    T91AusteniticSteel_YoungModulus_ROUX2007
+    T91MartensiticSteel_b_ROUX2007
+    T91MartensiticSteel_C1_ROUX2007
+    T91MartensiticSteel_C2_ROUX2007
+    T91MartensiticSteel_F_ROUX2007
+    T91MartensiticSteel_gamma1_ROUX2007
+    T91MartensiticSteel_growth_ROUX2007
+    T91MartensiticSteel_Kvisc_ROUX2007
+    T91MartensiticSteel_Nexp_ROUX2007
+    T91MartensiticSteel_Rinf_ROUX2007
+    T91MartensiticSteel_ThermalExpansion_ROUX2007
+    T91MartensiticSteel_YieldStress_ROUX2007
+    T91MartensiticSteel_YoungModulus_ROUX2007)
 
 mfront_check_library(MFrontMaterialProperties c "" ${mfront_SOURCES})
 

@@ -1,19 +1,19 @@
 /*! 
- * \file  system.cxx
+ * \file   pymtest.cxx
  * \brief
  * \author Helfer Thomas
- * \brief 31 aoû 2010
+ * \brief  10 avril 2014
  */
 
 #include<boost/python.hpp>
 
 void declareMTestParser(void);
 void declareMTest(void);
-void declareMTestLogStream(void);
+void declareMFrontLogStream(void);
 
 BOOST_PYTHON_MODULE(mtest)
 {
   declareMTestParser();
   declareMTest();
-  declareMTestLogStream();
+  declareMFrontLogStream();
 }

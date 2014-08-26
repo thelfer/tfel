@@ -6,10 +6,9 @@
  */
 
 @Behaviour<aster> '@MFrontAsterBehavioursBuildPath@' 'asterburger';
-@MaterialProperty<constant> 'young' 31000. ; 
-@MaterialProperty<constant> 'nu'    0.3 ;    
-@MaterialProperty<constant> 'rho'   0.; 
-@MaterialProperty<constant> 'alpha' 0.;    
+@MaterialProperty<constant> 'YoungModulus'  31000. ; 
+@MaterialProperty<constant> 'PoissonRatio'   0.3 ;    
+
 @MaterialProperty<constant> 'KRS'   2.0E5 ;   
 @MaterialProperty<constant> 'NRS'   4.0E10 ; 
 @MaterialProperty<constant> 'KAPPA' 3.E-3 ;

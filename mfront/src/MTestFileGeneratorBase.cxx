@@ -22,11 +22,18 @@ namespace mfront{
 
   MTestFileGeneratorBase::MTestFileGeneratorBase()
     : hypothesis(tfel::material::ModellingHypothesis::UNDEFINEDHYPOTHESIS),
+      handleThermalExpansion(false),
       hasRotationMatrix(false)
   {} // end of MTestFileGeneratorBase::MTestFileGeneratorBase
 
   void
-  MTestFileGeneratorBase::setModellingHypothesis(tfel::material::ModellingHypothesis::Hypothesis h)
+  MTestFileGeneratorBase::setHandleThermalExpansion(const bool b)
+  {
+    this->handleThermalExpansion = b;
+  }
+
+  void
+  MTestFileGeneratorBase::setModellingHypothesis(const tfel::material::ModellingHypothesis::Hypothesis h)
   {
     using namespace std;
     using namespace tfel::material;
@@ -142,6 +149,11 @@ namespace mfront{
 		 "can't open file '"+n+".mtest'");
       throw(runtime_error(msg));
     }
+    if(this->handleThermalExpansion){
+      file << "@HandleThermalExpansion true;";
+    } else {
+      file << "@HandleThermalExpansion false;";
+    }
     this->writeModellingHypothesis(file);
     this->writeBehaviourDeclaration(file);
     this->writeRotationMatrix(file);
@@ -175,35 +187,9 @@ namespace mfront{
       msg += "undefined modelling hypothesis";
       throw(runtime_error(msg));
     }
-    os << "@ModellingHypothesis '";
-    switch(this->hypothesis){
-    case ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN:
-      os << "AxisymmetricalGeneralisedPlaneStrain";
-      break;
-    case ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRESS:
-      os << "AxisymmetricalGeneralisedPlaneStress";
-      break;
-    case ModellingHypothesis::AXISYMMETRICAL:
-      os << "Axisymmetrical";
-      break;
-    case ModellingHypothesis::PLANESTRESS:
-      os << "PlaneStress";
-      break;
-    case ModellingHypothesis::PLANESTRAIN:
-      os << "PlaneStrain";
-      break;
-    case ModellingHypothesis::GENERALISEDPLANESTRAIN:
-      os << "GeneralisedPlaneStrain";
-      break;
-    case ModellingHypothesis::TRIDIMENSIONAL:
-      os << "Tridimensional";
-      break;
-    default:
-      string msg("MTestFileGeneratorBase::writeModellingHypothesis : "
-		 "unsupported hypothesis'");
-      throw(runtime_error(msg));
-    }
-    os << "';" << endl;
+    os << "@ModellingHypothesis '"
+       << ModellingHypothesis::toString(this->hypothesis)
+       << "';" << endl;
   }
 
   void

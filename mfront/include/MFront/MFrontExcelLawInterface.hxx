@@ -27,12 +27,6 @@ namespace mfront{
     
     MFrontExcelLawInterface();
     
-    void setVerboseMode(void);
-
-    void setDebugMode(void);
-
-    void setWarningMode(void);
-
     /*!
      * \param const std::string&, library
      * \param const std::string&, material
@@ -137,7 +131,7 @@ namespace mfront{
 			  const std::vector<std::string>&,
 			  const std::map<std::string,std::string>&,
 			  const std::map<std::string,std::string>&,
-			  const StaticVariableDescriptionContainer& staticVars,
+			  const StaticVariableDescriptionContainer&,
 			  const std::vector<std::string>&,
 			  const std::map<std::string,double>&,
 			  const LawFunction&,
@@ -158,12 +152,6 @@ namespace mfront{
     void
     readExcelInterface(std::vector<ExcelInterface>&,
 		       const std::string&);
-
-    bool verboseMode;
-
-    bool debugMode;
-
-    bool warningMode;
 
   }; // end of MfrontExcelLawInterface
 

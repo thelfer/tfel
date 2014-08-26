@@ -15,8 +15,6 @@
 
 @MaterialProperty<constant> 'YoungModulus'      80.e9;
 @MaterialProperty<constant> 'PoissonRatio'       0.35;
-@MaterialProperty<constant> 'MassDensity'        0.;
-@MaterialProperty<constant> 'ThermalExpansion'   0.;
 @MaterialProperty<constant> 'A'   '0.003944e-6**4.39';
 @MaterialProperty<constant> 'E'   4.39;
 

@@ -138,7 +138,7 @@ namespace umat
   // Calcul de la déformation dans le repère global
   // D^g=tN:D^m:N
   void
-  UMATRotationMatrix2D::rotateStiffnessMatrixBackward(UMATReal *const D) const
+  UMATRotationMatrix2D::rotateTangentOperatorBackward(UMATReal *const D) const
   {
     // matrice N
     UMATReal N[4][4];
@@ -182,7 +182,7 @@ namespace umat
 	}
       }
     }
-  } // end of UMATRotationMatrix2D::rotateStiffnessMatrixBackward
+  } // end of UMATRotationMatrix2D::rotateTangentOperatorBackward
 
   // Constructeur
   // V : Matrice de passage matériau/élement
@@ -346,7 +346,7 @@ namespace umat
 
   // compute the stiffness matrix in the global space
   void
-  UMATRotationMatrix3D::rotateStiffnessMatrixBackward(UMATReal *const D) const
+  UMATRotationMatrix3D::rotateTangentOperatorBackward(UMATReal *const D) const
   {
     // matrice N
     UMATReal N[6][6];
@@ -383,6 +383,6 @@ namespace umat
 	}
       }
     }
-  } // end of UMATRotationMatrix3D::rotateStiffnessMatrixBackward
+  } // end of UMATRotationMatrix3D::rotateTangentOperatorBackward
 
 } // end of namespace umat

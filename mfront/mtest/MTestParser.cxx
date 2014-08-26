@@ -22,6 +22,7 @@
 #include"TFEL/Utilities/SmartPtr.hxx"
 #include"TFEL/Utilities/TerminalColors.hxx"
 
+#include"MFront/MFrontLogStream.hxx"
 #include"MFront/MTestParser.hxx"
 
 #include"MFront/MTestAnalyticalTest.hxx"
@@ -55,6 +56,23 @@ namespace mfront
     return 0;
   }
 
+  static unsigned short
+  getTensorSize(const unsigned short d)
+  {
+    using namespace std;
+    if(d==1){
+      return 3;
+    } else if(d==2){
+      return 5;
+    } else if(d==3){
+      return 9;
+    }
+    string msg("mfront::getTensorSize : ");
+    msg += "";
+    throw(runtime_error(msg));
+    return 0;
+  }
+
   MTestParser::MTestParser()
   {
     this->registerCallBacks();
@@ -78,10 +96,15 @@ namespace mfront
       pc=this->callbacks.find(p->value);
       if(pc==this->callbacks.end()){
 	ostringstream msg;
-	msg << "MTestParser::MTest : invalid keyword '"
+	msg << "MTestParser::execute : invalid keyword '"
 	    << p->value << "'. Error at line " 
 	    << p->line<< ".";
 	throw(runtime_error(msg.str()));
+      }
+      if(getVerboseMode()>=VERBOSE_DEBUG){
+	ostream& log = getLogStream();
+	log << "MTestParser::execute : treating keyword '" << p->value
+	    << "' at line '" << p->line << "'" << endl;
       }
       ++p;
       unsigned int line = p->line;
@@ -229,8 +252,10 @@ namespace mfront
 			   &MTestParser::handleCompareToNumericalTangentOperator);
     this->registerCallBack("@TangentOperatorComparisonCriterium",
 			   &MTestParser::handleTangentOperatorComparisonCriterium);
-    this->registerCallBack("@NumericalTangentOperatorPertubationValue",
-			   &MTestParser::handleNumericalTangentOperatorPertubationValue);
+    this->registerCallBack("@NumericalTangentOperatorPerturbationValue",
+			   &MTestParser::handleNumericalTangentOperatorPerturbationValue);
+    this->registerCallBack("@HandleThermalExpansion",
+			   &MTestParser::handleHandleThermalExpansion);
   }
 
   void
@@ -381,16 +406,16 @@ namespace mfront
 			     p,this->fileTokens.end());
   } // end of MTestParser::handleTangentOperatorComparisonCriterium
 
-  void MTestParser::handleNumericalTangentOperatorPertubationValue(MTest& t,TokensContainer::const_iterator& p)
+  void MTestParser::handleNumericalTangentOperatorPerturbationValue(MTest& t,TokensContainer::const_iterator& p)
   {
-    this->checkNotEndOfLine("handleNumericalTangentOperatorPertubationValue",
+    this->checkNotEndOfLine("handleNumericalTangentOperatorPerturbationValue",
 			    p,this->fileTokens.end());
-    t.setNumericalTangentOperatorPertubationValue(this->readDouble(t,p));
-    this->checkNotEndOfLine("handleNumericalTangentOperatorPertubationValue",
+    t.setNumericalTangentOperatorPerturbationValue(this->readDouble(t,p));
+    this->checkNotEndOfLine("handleNumericalTangentOperatorPerturbationValue",
 			    p,this->fileTokens.end());
-    this->readSpecifiedToken("MTestParser::handleNumericalTangentOperatorPertubationValue",";",
+    this->readSpecifiedToken("MTestParser::handleNumericalTangentOperatorPerturbationValue",";",
 			     p,this->fileTokens.end());
-  } // end of MTestParser::handleNumericalTangentOperatorPertubationValue
+  } // end of MTestParser::handleNumericalTangentOperatorPerturbationValue
 
   void MTestParser::handleAuthor(MTest& t,TokensContainer::const_iterator& p)
   {
@@ -453,6 +478,28 @@ namespace mfront
     this->readSpecifiedToken("MTestParser::handleStiffnessMatrixType",";",
 			     p,this->fileTokens.end());
     t.setStiffnessMatrixType(ktype);
+  }
+
+  void
+  MTestParser::handleHandleThermalExpansion(MTest& t,TokensContainer::const_iterator& p)
+  {
+    using namespace std;
+    bool b;
+    this->checkNotEndOfLine("MTestParser::handleHandleThermalExpansion",
+			    p,this->fileTokens.end());
+    if(p->value=="true"){
+      b = true;
+    } else if(p->value=="false"){
+      b = false;
+    } else {
+      string msg("MTestParser::handleHandleThermalExpansion : "
+		 "unexpected token '"+p->value+"'");
+      throw(runtime_error(msg));
+    }
+    ++p;
+    this->readSpecifiedToken("MTestParser::handleHandleThermalExpansion",
+			     ";",p,this->fileTokens.end());
+    t.setHandleThermalExpansion(b);
   }
 
   void
@@ -1288,6 +1335,11 @@ namespace mfront
       vector<real> v(N);
       this->readArrayOfSpecifiedSize(v,t,p);
       t.setStensorInternalStateVariableInitialValues(n,v);
+    } else if(type==3){
+      const unsigned short N = getTensorSize(t.getDimension());
+      vector<real> v(N);
+      this->readArrayOfSpecifiedSize(v,t,p);
+      t.setTensorInternalStateVariableInitialValues(n,v);
     } else {
       string msg("MTestParser::handleInternalStateVariable : "
 		 "unsupported state variable type for "

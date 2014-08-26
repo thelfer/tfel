@@ -31,6 +31,16 @@ namespace mfront
 				   const std::string&,
 				   const std::string&);
     /*!
+     * \brief compute the *real* rotation matrix
+     * \param[in] mp : material properties
+     * \param[in] r  : rotation matrix defined by the user
+     * \note this method is only meaningfull for the umat (Cast3M)
+     * interface
+     */
+    virtual tfel::math::tmatrix<3u,3u,real>
+    getRotationMatrix(const tfel::math::vector<real>&,
+		      const tfel::math::tmatrix<3u,3u,real>&) const;
+    /*!
      * \param[out] v : initial values of the driving variables
      */
     virtual void

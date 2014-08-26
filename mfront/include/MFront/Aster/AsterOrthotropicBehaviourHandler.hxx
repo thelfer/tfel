@@ -54,7 +54,7 @@ namespace aster
       typedef AsterTraits<BV> Traits;
       typedef AsterBehaviourHandler<1u,Behaviour> AsterBehaviourHandler;
       const bool is_defined_ = MTraits::is_defined;
-      const bool bs = Traits::requiresStiffnessOperator;
+      const bool bs = Traits::requiresStiffnessTensor;
       const bool ba = Traits::requiresThermalExpansionCoefficientTensor;
       typedef typename IF<
 	is_defined_,
@@ -97,7 +97,7 @@ struct TFEL_VISIBILITY_LOCAL AsterOrthotropicBehaviourHandler<2u,Behaviour>
     typedef AsterTraits<BV> Traits;
     typedef AsterBehaviourHandler<2u,Behaviour> AsterBehaviourHandler;
     const bool is_defined_ = MTraits::is_defined;
-    const bool bs = Traits::requiresStiffnessOperator;
+    const bool bs = Traits::requiresStiffnessTensor;
     const bool ba = Traits::requiresThermalExpansionCoefficientTensor;
     typedef typename IF<
       is_defined_,
@@ -152,7 +152,7 @@ struct TFEL_VISIBILITY_LOCAL AsterOrthotropicBehaviourHandler<2u,Behaviour>
       typedef AsterTraits<BV> Traits;
       typedef AsterBehaviourHandler<3u,Behaviour> AsterBehaviourHandler;
       const bool is_defined_ = MTraits::is_defined;
-      const bool bs = Traits::requiresStiffnessOperator;
+      const bool bs = Traits::requiresStiffnessTensor;
       const bool ba = Traits::requiresThermalExpansionCoefficientTensor;
       typedef typename IF<
 	is_defined_,

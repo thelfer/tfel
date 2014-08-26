@@ -11,6 +11,7 @@
 #include<sstream>
 
 #include"MFront/ParserUtilities.hxx"
+#include"MFront/MFrontDebugMode.hxx"
 #include"MFront/MFrontParserFactory.hxx"
 #include"MFront/MFrontMultipleIsotropicMisesFlowsParser.hxx"
 
@@ -19,31 +20,30 @@ namespace mfront{
   MFrontMultipleIsotropicMisesFlowsParser::MFrontMultipleIsotropicMisesFlowsParser()
   {
     using namespace std;
-    typedef map<string,string>::value_type MVType;
+    const Hypothesis h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
     // Default state vars
-    this->registerVariable("eel");
-    this->registerVariable("deel");
-    this->registerVariable("p");
-    this->mb.getStateVariables().push_back(VariableDescription("StrainStensor","eel",1u,0u));
-    this->mb.getStateVariables().push_back(VariableDescription("strain","p",1u,0u));
-    this->glossaryNames.insert(MVType("eel","ElasticStrain"));
-    this->glossaryNames.insert(MVType("p","EquivalentStrain"));
+    this->registerVariable("eel",false);
+    this->registerVariable("deel",false);
+    this->registerVariable("p",false);
+    this->mb.addStateVariable(h,VariableDescription("StrainStensor","eel",1u,0u));
+    this->mb.addStateVariable(h,VariableDescription("strain","p",1u,0u));
+    this->mb.setGlossaryName(h,"eel","ElasticStrain");
+    this->mb.setGlossaryName(h,"p","EquivalentStrain");
     // default local vars
-    this->registerVariable("se");
-    this->registerVariable("seq");
-    this->registerVariable("seq_e");
-    this->registerVariable("n");
-    this->registerVariable("mu_3_theta");
-    this->registerVariable("surf");
-    this->registerVariable("error");
-    this->registerVariable("iter");
-    this->registerVariable("p_");
-    this->mb.getLocalVariables().push_back(VariableDescription("StressStensor","se",1u,0u));
-    this->mb.getLocalVariables().push_back(VariableDescription("stress","seq",1u,0u));
-    this->mb.getLocalVariables().push_back(VariableDescription("stress","seq_e",1u,0u));
-    this->mb.getLocalVariables().push_back(VariableDescription("StrainStensor","n",1u,0u));
-    this->mb.getLocalVariables().push_back(VariableDescription("strain","p_",1u,0u));
-    this->flowRule = "unused";
+    this->registerVariable("se",false);
+    this->registerVariable("seq",false);
+    this->registerVariable("seq_e",false);
+    this->registerVariable("n",false);
+    this->registerVariable("mu_3_theta",false);
+    this->registerVariable("surf",false);
+    this->registerVariable("error",false);
+    this->registerVariable("iter",false);
+    this->registerVariable("p_",false);
+    this->mb.addLocalVariable(h,VariableDescription("StressStensor","se",1u,0u));
+    this->mb.addLocalVariable(h,VariableDescription("stress","seq",1u,0u));
+    this->mb.addLocalVariable(h,VariableDescription("stress","seq_e",1u,0u));
+    this->mb.addLocalVariable(h,VariableDescription("StrainStensor","n",1u,0u));
+    this->mb.addLocalVariable(h,VariableDescription("strain","p_",1u,0u));
   }
 
   std::string
@@ -72,7 +72,7 @@ namespace mfront{
   }
 
   void
-  MFrontMultipleIsotropicMisesFlowsParser::writeBehaviourParserSpecificMembers(void)
+  MFrontMultipleIsotropicMisesFlowsParser::writeBehaviourParserSpecificMembers(const Hypothesis)
   {
     using namespace std;
     vector<FlowHandler>::const_iterator p;
@@ -81,15 +81,12 @@ namespace mfront{
     unsigned short n;
     unsigned short n2;
     bool genericTheta;
-
     this->checkBehaviourFile();
-
-    if(this->flowRule.empty()){
-      string msg("MFrontMultipleIsotropicMisesFlowsParser::writeBehaviourParserSpecificMembers : ");
-      msg += "no flow rule declared (use the @FlowRule directive)";
+    if(this->flows.empty()){
+      string msg("MFrontMultipleIsotropicMisesFlowsParser::writeBehaviourParserSpecificMembers : "
+		 "no flow rule defined");
       throw(runtime_error(msg));
     }
-
     for(p=this->flows.begin(),n=0;p!=this->flows.end();++p,++n){    
       if(p->flow==FlowHandler::PlasticFlow){
 	this->behaviourFile << "void computeFlow" << n << "(stress& f,\n"
@@ -108,7 +105,7 @@ namespace mfront{
       this->behaviourFile << "using namespace tfel::material;\n";
       this->behaviourFile << "using std::vector;\n";
       writeMaterialLaws("MFrontMultipleIsotropicMisesFlowsParser::writeBehaviourParserSpecificMembers",
-			this->behaviourFile,this->materialLaws);
+			this->behaviourFile,this->mb.getMaterialLaws());
       this->behaviourFile << p->flowRule << endl;
       this->behaviourFile << "}\n\n";
     }
@@ -138,7 +135,7 @@ namespace mfront{
 
     if(genericTheta){
       this->behaviourFile << "stress mu_3_theta = 3*(";
-      this->behaviourFile << this->className << "::theta)*(this->mu);\n";
+      this->behaviourFile << this->mb.getClassName() << "::theta)*(this->mu);\n";
     }
 
     found=false;
@@ -151,13 +148,13 @@ namespace mfront{
     }
     this->behaviourFile << "iter=0;\n";
     this->behaviourFile << "while((converge==false)&&\n";
-    this->behaviourFile << "(iter<(" << this->className << "::iterMax))){\n";
+    this->behaviourFile << "(iter<(" << this->mb.getClassName() << "::iterMax))){\n";
     for(p=this->flows.begin(),n=0;p!=this->flows.end();++p,++n){
       this->behaviourFile << "this->p_  = this->p" << n << " + (";
       if(p->hasSpecificTheta){
 	this->behaviourFile << "real(" << p->theta << ")";
       } else {
-	this->behaviourFile << this->className << "::theta";
+	this->behaviourFile << this->mb.getClassName() << "::theta";
       }
       this->behaviourFile << ")*(vdp(" << n << "));\n";
       if(p->hasSpecificTheta){
@@ -197,7 +194,7 @@ namespace mfront{
 	      this->behaviourFile << " = ((real("<< p->theta << "))*(this->df_dp" << n << ")"
 				  << "-mu_3_theta" << n << "*(this->df_dseq" << n <<"))/(this->young);\n";
 	    } else {
-	      this->behaviourFile << " = (("<< this->className << "::theta)*(this->df_dp" << n << ")"
+	      this->behaviourFile << " = (("<< this->mb.getClassName() << "::theta)*(this->df_dp" << n << ")"
 				  << "-mu_3_theta*(this->df_dseq" << n <<"))/(this->young);\n";
 	    }
 	  } else {
@@ -252,7 +249,7 @@ namespace mfront{
 	if(p->hasSpecificTheta){
 	  this->behaviourFile <<  "(real(" << p->theta << "))";
 	} else {
-	  this->behaviourFile <<  "(" << this->className << "::theta)";
+	  this->behaviourFile <<  "(" << this->mb.getClassName() << "::theta)";
 	}
 	this->behaviourFile << "*(this->df_dp" << n << ")-";
 	if(p->hasSpecificTheta){
@@ -285,17 +282,17 @@ namespace mfront{
     this->behaviourFile << "}" << endl;
     this->behaviourFile << "vdp -= newton_f;\n";
     this->behaviourFile << "iter+=1;\n";
-    if(this->debugMode){
-      this->behaviourFile << "cout << \"" << this->className
+    if(getDebugMode()){
+      this->behaviourFile << "cout << \"" << this->mb.getClassName()
 			  << "::NewtonIntegration() : iteration \" "
 			  << "<< iter << \" : \" << (error/(real(" << this->flows.size() << "))) << endl;\n";
     }
     this->behaviourFile << "converge = ((error)/(real(" << this->flows.size() << "))<";
-    this->behaviourFile << "(" << this->className << "::epsilon));\n";
+    this->behaviourFile << "(" << this->mb.getClassName() << "::epsilon));\n";
     this->behaviourFile << "}\n\n";
-    this->behaviourFile << "if(iter==" << this->className << "::iterMax){\n";
-    if(this->debugMode){
-      this->behaviourFile << "cout << \"" << this->className
+    this->behaviourFile << "if(iter==" << this->mb.getClassName() << "::iterMax){\n";
+    if(getDebugMode()){
+      this->behaviourFile << "cout << \"" << this->mb.getClassName()
 			  << "::NewtonIntegration() : no convergence after \" "
 			  << "<< iter << \" iterations\"<< endl << endl;\n";
       this->behaviourFile << "cout << *this << endl;\n";
@@ -305,8 +302,8 @@ namespace mfront{
     for(p=this->flows.begin(),n=0;p!=this->flows.end();++p,++n){
       this->behaviourFile << "this->dp"<< n << " = " << "vdp(" << n<< ");\n";
     }
-    if(this->debugMode){
-      this->behaviourFile << "cout << \"" << this->className
+    if(getDebugMode()){
+      this->behaviourFile << "cout << \"" << this->mb.getClassName()
 			  << "::NewtonIntegration() : convergence after \" "
 			  << "<< iter << \" iterations\"<< endl << endl;\n";
     }
@@ -314,9 +311,10 @@ namespace mfront{
     this->behaviourFile << "\n}\n\n";
   } // end of writeBehaviourParserSpecificMembers
 
-  void MFrontMultipleIsotropicMisesFlowsParser::writeBehaviourIntegrator(void)
+  void MFrontMultipleIsotropicMisesFlowsParser::writeBehaviourIntegrator(const Hypothesis h)
   {
     using namespace std;
+    const MechanicalBehaviourData& d = this->mb.getMechanicalBehaviourData(h);
     vector<BoundsDescription>::const_iterator p;
     vector<FlowHandler>::const_iterator p2;
     unsigned short n;
@@ -355,11 +353,11 @@ namespace mfront{
     this->behaviourFile << "}\n";
     this->behaviourFile << "}\n";
     this->behaviourFile << "this->deel = this->deto-dp*(this->n);\n";
-    this->behaviourFile << "this->updateStateVars();\n";
+    this->behaviourFile << "this->updateStateVariables();\n";
     this->behaviourFile << "this->sig  = (this->lambda)*trace(this->eel)*StrainStensor::Id()+2*(this->mu)*(this->eel);\n";
-    this->behaviourFile << "this->updateAuxiliaryStateVars();\n";
-    for(p  = this->mb.getBounds().begin();
-	p != this->mb.getBounds().end();++p){
+    this->behaviourFile << "this->updateAuxiliaryStateVariables();\n";
+    for(p  = d.getBounds().begin();
+	p != d.getBounds().end();++p){
       if(p->varCategory==BoundsDescription::StateVariable){
 	p->writeBoundsChecks(this->behaviourFile);
       }
@@ -376,9 +374,10 @@ namespace mfront{
   MFrontMultipleIsotropicMisesFlowsParser::treatFlowRule(void)
   {
     using namespace std;
+    const Hypothesis h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
     FlowHandler flow;
     this->checkNotEndOfFile("MFrontMultipleIsotropicMisesFlowsParser::treatFlowRule",
-			    "Expected flow rule name.");
+    			    "Expected flow rule name.");
     if(this->current->value=="Plasticity"){
       ostringstream p;
       ostringstream f;
@@ -388,15 +387,15 @@ namespace mfront{
       f       << "f"       << this->flows.size();
       df_dseq << "df_dseq" << this->flows.size();
       df_dp   << "df_dp"   << this->flows.size();
-      this->registerVariable(p.str());
-      this->registerVariable("d"+p.str());
-      this->registerVariable(f.str());
-      this->registerVariable(df_dseq.str());
-      this->registerVariable(df_dp.str());
-      this->mb.getStateVariables().push_back(VariableDescription("strain",p.str(),1u,0u));
-      this->mb.getLocalVariables().push_back(VariableDescription("stress",f.str(),1u,0u));
-      this->mb.getLocalVariables().push_back(VariableDescription("real",df_dseq.str(),1u,0u));
-      this->mb.getLocalVariables().push_back(VariableDescription("stress",df_dp.str(),1u,0u));
+      this->registerVariable(p.str(),false);
+      this->registerVariable("d"+p.str(),false);
+      this->registerVariable(f.str(),false);
+      this->registerVariable(df_dseq.str(),false);
+      this->registerVariable(df_dp.str(),false);
+      this->mb.addStateVariable(h,VariableDescription("strain",p.str(),1u,0u));
+      this->mb.addLocalVariable(h,VariableDescription("stress",f.str(),1u,0u));
+      this->mb.addLocalVariable(h,VariableDescription("real",df_dseq.str(),1u,0u));
+      this->mb.addLocalVariable(h,VariableDescription("stress",df_dp.str(),1u,0u));
       flow.flow = FlowHandler::PlasticFlow;
     } else if(this->current->value=="Creep"){
       ostringstream p;
@@ -405,12 +404,12 @@ namespace mfront{
       p       << "p"       << this->flows.size();
       f       << "f"       << this->flows.size();
       df_dseq << "df_dseq" << this->flows.size();
-      this->mb.getStateVariables().push_back(VariableDescription("strain",p.str(),1u,0u));
-      this->mb.getLocalVariables().push_back(VariableDescription("DstrainDt",f.str(),1u,0u));
-      this->mb.getLocalVariables().push_back(VariableDescription("DF_DSEQ_TYPE",df_dseq.str(),1u,0u));
-      this->registerVariable(p.str());
-      this->registerVariable(f.str());
-      this->registerVariable(df_dseq.str());
+      this->mb.addStateVariable(h,VariableDescription("strain",p.str(),1u,0u));
+      this->mb.addLocalVariable(h,VariableDescription("DstrainDt",f.str(),1u,0u));
+      this->mb.addLocalVariable(h,VariableDescription("DF_DSEQ_TYPE",df_dseq.str(),1u,0u));
+      this->registerVariable(p.str(),false);
+      this->registerVariable(f.str(),false);
+      this->registerVariable(df_dseq.str(),false);
       flow.flow = FlowHandler::CreepFlow;
     } else if(this->current->value=="StrainHardeningCreep"){
       ostringstream p;
@@ -421,23 +420,23 @@ namespace mfront{
       f       << "f"       << this->flows.size();
       df_dseq << "df_dseq" << this->flows.size();
       df_dp   << "df_dp"   << this->flows.size();
-      this->mb.getStateVariables().push_back(VariableDescription("strain",p.str(),1u,0u));
-      this->mb.getLocalVariables().push_back(VariableDescription("DstrainDt",f.str(),1u,0u));
-      this->mb.getLocalVariables().push_back(VariableDescription("DF_DSEQ_TYPE",df_dseq.str(),1u,0u));
-      this->mb.getLocalVariables().push_back(VariableDescription("DstrainDt",df_dp.str(),1u,0u));
-      this->registerVariable(p.str());
-      this->registerVariable(f.str());
-      this->registerVariable(df_dseq.str());
-      this->registerVariable(df_dp.str());
+      this->mb.addStateVariable(h,VariableDescription("strain",p.str(),1u,0u));
+      this->mb.addLocalVariable(h,VariableDescription("DstrainDt",f.str(),1u,0u));
+      this->mb.addLocalVariable(h,VariableDescription("DF_DSEQ_TYPE",df_dseq.str(),1u,0u));
+      this->mb.addLocalVariable(h,VariableDescription("DstrainDt",df_dp.str(),1u,0u));
+      this->registerVariable(p.str(),false);
+      this->registerVariable(f.str(),false);
+      this->registerVariable(df_dseq.str(),false);
+      this->registerVariable(df_dp.str(),false);
       flow.flow = FlowHandler::StrainHardeningCreepFlow;
     } else {
       this->throwRuntimeError("MFrontMultipleIsotropicMisesFlowsParser::treatFlowRule",
-			      "Unknown flow rule (read '"+this->current->value+
-			      "').Valid flow rules are 'Plasticity', 'Creep' and 'StrainHardeningCreep'.");
+    			      "Unknown flow rule (read '"+this->current->value+
+    			      "').Valid flow rules are 'Plasticity', 'Creep' and 'StrainHardeningCreep'.");
     }
     ++(this->current);
     this->checkNotEndOfFile("MFrontMultipleIsotropicMisesFlowsParser::treatFlowRule",
-			    "Expected the beginning of a block or a specific theta value.");
+    			    "Expected the beginning of a block or a specific theta value.");
     if(this->current->value!="{"){
       istringstream converter(this->current->value);
       ostringstream otheta;
@@ -446,26 +445,30 @@ namespace mfront{
       flow.hasSpecificTheta = true;
       converter >> flow.theta;
       if(!converter&&(!converter.eof())){
-	this->throwRuntimeError("MFrontMultipleIsotropicMisesFlowsParser::treatFlowRule",
-				"Could not read theta value (read '"+this->current->value+"').");
+    	this->throwRuntimeError("MFrontMultipleIsotropicMisesFlowsParser::treatFlowRule",
+    				"Could not read theta value (read '"+this->current->value+"').");
       }
       otheta << "mu_3_theta" << this->flows.size();
       ose    << "se"         << this->flows.size();
       oseq_e << "seq_e"      << this->flows.size();
-      this->reserveName(ose.str());
-      this->registerVariable(otheta.str());
-      this->registerVariable(oseq_e.str());
-      this->mb.getLocalVariables().push_back(VariableDescription("stress",oseq_e.str(),1u,0u));
+      this->reserveName(ose.str(),false);
+      this->registerVariable(otheta.str(),false);
+      this->registerVariable(oseq_e.str(),false);
+      this->mb.addLocalVariable(h,VariableDescription("stress",oseq_e.str(),1u,0u));
       ++(this->current);
     } else {
       flow.hasSpecificTheta = false;
     }
-    MFrontIsotropicBehaviourParserBase::treatFlowRuleBase(flow.flowRule);
+    ostringstream cname;
+    cname << MechanicalBehaviourData::FlowRule << flows.size() << endl;
+    this->readCodeBlock(*this,cname.str(),
+			&MFrontMultipleIsotropicMisesFlowsParser::flowRuleVariableModifier,true,false);
+    flow.flowRule = this->mb.getCode(ModellingHypothesis::UNDEFINEDHYPOTHESIS,cname.str());
     this->flows.push_back(flow);
   } // end of MFrontMultipleIsotropicMisesFlowsParser::treatFlowRule
 
   void
-  MFrontMultipleIsotropicMisesFlowsParser::writeBehaviourParserSpecificInitializeMethodPart(void)
+  MFrontMultipleIsotropicMisesFlowsParser::writeBehaviourParserSpecificInitializeMethodPart(const Hypothesis)
   {
     using namespace std;
     this->checkBehaviourFile();
@@ -484,7 +487,7 @@ namespace mfront{
       throw(runtime_error(msg));
     }
     this->behaviourFile << "this->se=2*(this->mu)*(tfel::math::deviator(this->eel+(";
-    this->behaviourFile << this->className;
+    this->behaviourFile << this->mb.getClassName();
     this->behaviourFile << "::theta)*(this->deto)));\n";
     this->behaviourFile << "this->seq_e = sigmaeq(this->se);\n";
     for(p=this->flows.begin(),n=0;p!=this->flows.end();++p,++n){
@@ -500,6 +503,20 @@ namespace mfront{
     this->behaviourFile << "this->n = StrainStensor(strain(0));\n";
     this->behaviourFile << "}\n";
   } // end of MFrontMultipleIsotropicMisesFlowsParser::writeBehaviourParserSpecificInitializeMethodPart
+
+  void
+  MFrontMultipleIsotropicMisesFlowsParser::writeBehaviourComputeTangentOperator(const Hypothesis)
+  {
+    this->behaviourFile << "bool computeConsistantTangentOperator(const SMType smt){\n";
+    this->behaviourFile << "using namespace std;\n";
+    this->behaviourFile << "using tfel::material::lame::computeElasticStiffness;\n";
+    this->behaviourFile << "if((smt==ELASTIC)||(smt==SECANTOPERATOR)){\n";
+    this->behaviourFile << "computeElasticStiffness<N,Type>::exe(this->Dt,this->lambda,this->mu);\n";
+    this->behaviourFile << "return true;\n";
+    this->behaviourFile << "}\n";
+    this->behaviourFile << "return false;\n";
+    this->behaviourFile << "}\n\n";
+  }
 
   MFrontMultipleIsotropicMisesFlowsParser::~MFrontMultipleIsotropicMisesFlowsParser()
   {} // end of ~MFrontMultipleIsotropicMisesFlowsParser

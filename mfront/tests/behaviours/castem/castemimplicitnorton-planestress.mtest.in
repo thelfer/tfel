@@ -1,20 +1,26 @@
 /*! 
- * \file   elasticity.mtest
+ * \file   castemimplicitnorton-planestress.mtest
  * \brief
  * \author Helfer Thomas
  * \brief  09 avril 2013
  */
 
+@Description{
+  "Test the generic plane stress"
+  "algorithm of the umat interface."
+  "This is much less efficient than"
+  "directly supporting plane stress"
+  "within the behaviour."
+ };
+
 @MaximumNumberOfSubSteps   1;
 @UseCastemAccelerationAlgorithm true;
 
 @ModellingHypothesis 'PlaneStress';
-@Behaviour<umat> '@MFrontCastemBehavioursBuildPath@' 'umatimplicitnorton';
+@Behaviour<umat> '@MFrontCastemBehavioursBuildPath@' 'umatimplicitnorton2';
 
 @MaterialProperty<constant> 'YoungModulus'     150.e9;
 @MaterialProperty<constant> 'PoissonRatio'       0.3;
-@MaterialProperty<constant> 'MassDensity'        0.;
-@MaterialProperty<constant> 'ThermalExpansion'   0.;
 
 @Real 'srr' 20.e6;
 @ImposedStress 'SXX' 'srr';
@@ -49,7 +55,8 @@
 @Test<function> 'ElasticStrainYY' 'EELZZ0'  1.e-12;
 @Test<function> 'ElasticStrainZZ' 'EELZZ0'  1.e-12;
 @Test<function> 'ElasticStrainXY' '0.'      1.e-12;
-@Test<function> 'p' 'A*SXX**E*t' 1.e-12;
+@Test<function> 'EquivalentViscoplasticStrain[0]' 'A*SXX**E*t/2' 1.e-12;
+@Test<function> 'EquivalentViscoplasticStrain[1]' 'A*SXX**E*t/2' 1.e-12;
 // this test is a bit paranoiac since SXX is imposed
 @Test<function> 'SXX' 'SXX'     1.e-3;
 // check that the mechanical equilibrium is satisfied

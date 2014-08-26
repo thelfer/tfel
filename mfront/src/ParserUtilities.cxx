@@ -10,6 +10,7 @@
 #include<sstream>
 
 #include"TFEL/Config/TFELConfig.hxx"
+#include"MFront/MFrontDebugMode.hxx"
 #include"MFront/ParserUtilities.hxx"
 
 namespace mfront
@@ -32,15 +33,14 @@ namespace mfront
   writeStaticVariables(const std::string& method,
 		       std::ofstream& srcFile,
 		       const StaticVariableDescriptionContainer& staticVars,
-		       const std::string& file,
-		       const bool debugMode)
+		       const std::string& file)
   {
     using namespace std;
     StaticVariableDescriptionContainer::const_iterator p;
     // static variables
     if(!staticVars.empty()){
       for(p=staticVars.begin();p!=staticVars.end();++p){
-	if(debugMode){
+	if(getDebugMode()){
 	  srcFile << "#line " << p->lineNumber << " \"" 
 		  << file << "\"\n";
 	}

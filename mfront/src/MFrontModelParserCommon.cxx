@@ -10,6 +10,7 @@
 #include<algorithm>
 
 #include"MFront/ParserUtilities.hxx"
+#include"MFront/MFrontDebugMode.hxx"
 #include"MFront/MFrontModelParserCommon.hxx"
 #include"MFront/MFrontModelInterfaceFactory.hxx"
 
@@ -44,11 +45,16 @@ namespace mfront{
     return false;
   } // end of MFrontModelParserCommon::is(void)
 
+  std::string
+  MFrontModelParserCommon::getClassName(void) const
+  {
+    return this->className;
+  } // end of MFrontModelParserCommon::getClassName
+
   void
   MFrontModelParserCommon::addStaticVariableDescription(const StaticVariableDescription& v)
   {
-    MFrontModelData::staticVars.push_back(v);
-    MFrontFileDescription::staticVars.push_back(v); //< this is for compatibility reasons
+    this->staticVars.push_back(v);
   } // end of MFrontModelParserCommon::addStaticVariableDescription
 
   void
@@ -60,8 +66,7 @@ namespace mfront{
       msg += "material name alreay defined";
       throw(runtime_error(msg));
     }
-    MFrontModelData::material       = this->readOnlyOneToken();
-    MFrontFileDescription::material = MFrontModelData::material;  //< this is for compatibility reasons
+    this->material       = this->readOnlyOneToken();
     if(!CxxTokenizer::isValidIdentifier(MFrontModelData::material,true)){
       string msg("MFrontModelParserCommon::treatMaterial : ");
       msg += "invalid material name '"+MFrontModelData::material+"'";
@@ -71,6 +76,19 @@ namespace mfront{
       this->className = MFrontModelData::material+"_"+this->className;
     }
   } // end of MFrontModelParserCommon::treatMaterial
+
+  void
+  MFrontModelParserCommon::treatLibrary(void)
+  {
+    using namespace std;
+    const string& l = this->readOnlyOneToken();
+    if(!CxxTokenizer::isValidIdentifier(l,true)){
+      string msg("MFrontModelParserCommon::treatLibrary : ");
+      msg += "invalid library name '"+l+"'";
+      throw(runtime_error(msg));
+    }
+    this->library = l;
+  } // end of MFrontModelParserCommon::treatLibrary
 
   void MFrontModelParserCommon::treatModel(void)
   {
@@ -102,7 +120,6 @@ namespace mfront{
     using namespace std;
     typedef MFrontModelInterfaceFactory MMIF;
     MMIF& mmif = MMIF::getMFrontModelInterfaceFactory();
-    this->verboseMode = true;
     vector<string>::const_iterator i;
     for(i  = this->interfaces.begin();
 	i != this->interfaces.end();++i){
@@ -110,48 +127,6 @@ namespace mfront{
       interface->writeOutputFiles(*this,*this);
     }
   } // end of MFrontModelParserCommon::writeOutputFiles
-
-  void MFrontModelParserCommon::setVerboseMode(void)
-  {
-    using namespace std;
-    typedef MFrontModelInterfaceFactory MMIF;
-    MMIF& mmif = MMIF::getMFrontModelInterfaceFactory();
-    this->verboseMode = true;
-    vector<string>::const_iterator i;
-    for(i  = this->interfaces.begin();
-	i != this->interfaces.end();++i){
-      MFrontModelVirtualInterface *interface = mmif.getInterfacePtr(*i);
-      interface->setVerboseMode();
-    }
-  }
-
-  void MFrontModelParserCommon::setDebugMode(void)
-  {
-    using namespace std;
-    typedef MFrontModelInterfaceFactory MMIF;
-    MMIF& mmif = MMIF::getMFrontModelInterfaceFactory();
-    this->debugMode = true;
-    vector<string>::const_iterator i;
-    for(i  = this->interfaces.begin();
-	i != this->interfaces.end();++i){
-      MFrontModelVirtualInterface *interface = mmif.getInterfacePtr(*i);
-      interface->setDebugMode();
-    }
-  }
-
-  void MFrontModelParserCommon::setWarningMode(void)
-  {
-    using namespace std;
-    typedef MFrontModelInterfaceFactory MMIF;
-    MMIF& mmif = MMIF::getMFrontModelInterfaceFactory();
-    this->warningMode = true;
-    vector<string>::const_iterator i;
-    for(i  = this->interfaces.begin();
-	i != this->interfaces.end();++i){
-      MFrontModelVirtualInterface *interface = mmif.getInterfacePtr(*i);
-      interface->setWarningMode();
-    }
-  }
 
   void
   MFrontModelParserCommon::treatUnknownKeyword(void)
@@ -400,7 +375,7 @@ namespace mfront{
     bool found = false;
     bool treated;
     f.useTimeIncrement = false;
-    this->registerVariable("functor"+toString(static_cast<unsigned short>(this->functions.size())));
+    this->registerVariable("functor"+toString(static_cast<unsigned short>(this->functions.size())),false);
     this->checkNotEndOfFile("MFrontModelParserCommon::treatFunction");
     f.name = this->current->value;
     if(!this->isValidIdentifier(f.name)){
@@ -408,9 +383,9 @@ namespace mfront{
       msg += "function name '"+f.name+"' is not valid";
       throw(runtime_error(msg));
     }
-    this->registerVariable(f.name);
-    this->reserveName(f.name+".Domain");
-    this->reserveName(f.name+".Domains");
+    this->registerVariable(f.name,false);
+    this->reserveName(f.name+".Domain",false);
+    this->reserveName(f.name+".Domains",false);
     f.line = this->current->line;
     ++(this->current);
     this->readSpecifiedToken("MFrontModelParserCommon::treatFunction","{");
@@ -420,7 +395,7 @@ namespace mfront{
 			    "Expected body of function '"+f.name+"'.");
     currentLine = this->current->line;
     newLine=true;
-    if(this->debugMode){
+    if(getDebugMode()){
       f.body  +="#line " + toString(currentLine) + " \"" + this->fileName + "\"\n";
     }
     for(;(this->current!=this->fileTokens.end())&&
@@ -428,7 +403,7 @@ namespace mfront{
       if(this->current->line!=currentLine){
 	currentLine=this->current->line;
 	f.body  += "\n";
-	if(this->debugMode){
+	if(getDebugMode()){
 	  f.body  +="#line " + toString(currentLine) + " \"" + this->fileName + "\"\n";
 	}
 	newLine = true;
@@ -638,11 +613,28 @@ namespace mfront{
       throw(runtime_error(msg));
     }
     VariableDescriptionContainer::const_iterator p;
-    this->readVarList(this->outputs,"Field",false,false);
+    this->readVarList(this->outputs,string("Field"),false,false,false);
     for(p=this->outputs.begin();p!=this->outputs.end();++p){
       this->fieldNames.insert(p->name);
     }
   } // end of MFrontModelParserCommon::treatOutput(void)
+
+
+  void
+  MFrontModelParserCommon::treatInput(void)
+  {
+    using namespace std;
+    if(!this->functions.empty()){
+      string msg("MFrontModelParserCommon::treatInput : ");
+      msg += "inputs must be declared before declaring functions";
+      throw(runtime_error(msg));
+    }
+    VariableDescriptionContainer::const_iterator p;
+    this->readVarList(this->inputs,string("Field"),false,false,false);
+    for(p=this->inputs.begin();p!=this->inputs.end();++p){
+      this->fieldNames.insert(p->name);
+    }
+  } // end of MFrontModelParserCommon::treatInput(void)
 
   static void
   MFrontModelParserCommonCheckIfNameIsAnEntryNameOrAGlossaryName(const std::map<std::string,std::string>& g,
@@ -777,9 +769,9 @@ namespace mfront{
 				"depth value for field '"+this->currentVar+"' already defined.");
       }
       for(i=1;i<=value;++i){
-	this->registerVariable(this->currentVar+"_"+toString(i));
-	this->registerVariable("f_"+this->currentVar+"_"+toString(i));
-	this->registerVariable("ff_"+this->currentVar+"_"+toString(i));
+	this->registerVariable(this->currentVar+"_"+toString(i),false);
+	this->registerVariable("f_"+this->currentVar+"_"+toString(i),false);
+	this->registerVariable("ff_"+this->currentVar+"_"+toString(i),false);
 	if(!this->fieldNames.insert(this->currentVar+"_"+toString(i)).second){
 	  this->throwRuntimeError("MFrontModelParserCommon::treatOutputMethod",
 				  "Field '"+this->currentVar+"_"+toString(i)+"' has already been declared "
@@ -794,22 +786,6 @@ namespace mfront{
     this->readSpecifiedToken("MFrontModelParserCommon::treatOutputMethod",")");
     this->readSpecifiedToken("MFrontModelParserCommon::treatOutputMethod",";");
   } // end of MFrontModelParserCommon::treatOutputMethod
-
-  void
-  MFrontModelParserCommon::treatInput(void)
-  {
-    using namespace std;
-    if(!this->functions.empty()){
-      string msg("MFrontModelParserCommon::treatInput : ");
-      msg += "inputs must be declared before declaring functions";
-      throw(runtime_error(msg));
-    }
-    VariableDescriptionContainer::const_iterator p;
-    this->readVarList(this->inputs,"Field",false,false);
-    for(p=this->inputs.begin();p!=this->inputs.end();++p){
-      this->fieldNames.insert(p->name);
-    }
-  } // end of MFrontModelParserCommon::treatInput(void)
 
   void
   MFrontModelParserCommon::treatInputMethod(void) 
@@ -904,9 +880,9 @@ namespace mfront{
 				"Initial value for field '"+this->currentVar+"' already defined.");
       }
       for(i=1;i<=value;++i){
-	this->registerVariable(this->currentVar+"_"+toString(i));
-	this->registerVariable("f_"+this->currentVar+"_"+toString(i));
-	this->registerVariable("ff_"+this->currentVar+"_"+toString(i));
+	this->registerVariable(this->currentVar+"_"+toString(i),false);
+	this->registerVariable("f_"+this->currentVar+"_"+toString(i),false);
+	this->registerVariable("ff_"+this->currentVar+"_"+toString(i),false);
 	if(!this->fieldNames.insert(this->currentVar+"_"+toString(i)).second){
 	  this->throwRuntimeError("MFrontModelParserCommon::treatInputMethod",
 				  "Field '"+this->currentVar+"_"+toString(i)+"' has already been declared "
@@ -925,7 +901,7 @@ namespace mfront{
   void
   MFrontModelParserCommon::treatGlobalParameter(void)
   {
-    this->readVarList(this->globalParameters,false,false);
+    this->readVarList(this->globalParameters,false,false,false);
   } // end of MFrontModelParserCommon::treatGlobalParameter(void)
 
   void
@@ -998,7 +974,7 @@ namespace mfront{
   void
   MFrontModelParserCommon::treatLocalParameter(void)
   {
-    this->readVarList(this->localParameters,false,false);
+    this->readVarList(this->localParameters,false,false,false);
   } // end of MFrontModelParserCommon::treatLocalParameter(void)
 
   void
@@ -1071,7 +1047,7 @@ namespace mfront{
   void
   MFrontModelParserCommon::treatConstantMaterialProperty(void)
   {
-    this->readVarList(this->constantMaterialProperties,"real",false,false);
+    this->readVarList(this->constantMaterialProperties,"real",false,false,false);
   } // end of MFrontModelParserCommon::treatConstantMaterialProperty(void)
 
   void
@@ -1496,5 +1472,59 @@ namespace mfront{
     using namespace std;
     return map<string,pair<vector<string>,vector<string> > >();
   } // end of MFrontModelParserCommon::getSpecificTargets(void)
+
+  void
+  MFrontModelParserCommon::addMaterialLaw(const std::string& m)
+  {
+    using namespace std;
+    if(find(this->materialLaws.begin(),
+	    this->materialLaws.end(),m)==this->materialLaws.end()){
+      this->materialLaws.push_back(m);
+    }
+  } // end of MFrontModelParserCommon::addMaterialLaw
+
+  void
+  MFrontModelParserCommon::appendToIncludes(const std::string& c)
+  {
+    this->includes+=c;
+    if(!this->includes.empty()){
+      if(*(this->includes.rbegin())!='\n'){
+	this->includes+='\n';
+      }
+    }
+  } // end of MFrontModelParserCommon::appendToIncludes
+
+  void
+  MFrontModelParserCommon::appendToMembers(const std::string& c)
+  {
+    this->members+=c;
+    if(!this->members.empty()){
+      if(*(this->members.rbegin())!='\n'){
+	this->members+='\n';
+      }
+    }
+  } // end of MFrontModelParserCommon::appendToMembers
+
+  void
+  MFrontModelParserCommon::appendToPrivateCode(const std::string& c)
+  {
+    this->privateCode+=c;
+    if(!this->privateCode.empty()){
+      if(*(this->privateCode.rbegin())!='\n'){
+	this->privateCode+='\n';
+      }
+    }
+  } // end of MFrontModelParserCommon::appendToPrivateCode
+
+  void
+  MFrontModelParserCommon::appendToSources(const std::string& c)
+  {
+    this->sources+=c;
+    if(!this->sources.empty()){
+      if(*(this->sources.rbegin())!='\n'){
+	this->sources+='\n';
+      }
+    }
+  } // end of MFrontModelParserCommon::appendToSources
 
 } // end of mfront

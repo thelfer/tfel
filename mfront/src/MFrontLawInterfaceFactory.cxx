@@ -9,7 +9,6 @@
 #include<stdexcept>
 #include<algorithm>
 #include<cassert>
-#include<iostream>
 
 #include"MFront/MFrontLawInterfaceFactory.hxx"
 
@@ -51,23 +50,7 @@ namespace mfront{
   } // end of MFrontLawInterfaceFactory::getAliasesMap
 
   MFrontLawInterfaceFactory::MFrontLawInterfaceFactory()
-    : verboseMode(false)
   {}
-
-  void MFrontLawInterfaceFactory::setVerboseMode(void)
-  {
-    this->verboseMode = true;
-  }
-
-  void MFrontLawInterfaceFactory::setDebugMode(void)
-  {
-    this->debugMode = true;
-  }
-
-  void MFrontLawInterfaceFactory::setWarningMode(void)
-  {
-    this->warningMode = true;
-  }
 
   std::vector<std::string>
   MFrontLawInterfaceFactory::getRegistredInterfaces(void)
@@ -172,15 +155,6 @@ namespace mfront{
       assert(p!=this->getInterfaceCreatorsMap().end());
       InterfaceCreator c = p->second;
       i = c();
-      if(this->verboseMode){
-	i->setVerboseMode();
-      }
-      if(this->debugMode){
-	i->setDebugMode();
-      }
-      if(this->warningMode){
-	i->setWarningMode();
-      }
       this->getInterfacesMap().insert(make_pair(interfaceName,i));
     } else {
       i = m->second;

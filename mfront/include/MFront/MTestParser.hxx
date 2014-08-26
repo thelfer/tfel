@@ -98,10 +98,10 @@ namespace mfront
      */
     void handleTangentOperatorComparisonCriterium(MTest&,TokensContainer::const_iterator&);
     /*!
-     * handle the @NumericalTangentOperatorPertubationValue keyword
+     * handle the @NumericalTangentOperatorPerturbationValue keyword
      * \param[in,out] p : position in the input file
      */
-    void handleNumericalTangentOperatorPertubationValue(MTest&,TokensContainer::const_iterator&);
+    void handleNumericalTangentOperatorPerturbationValue(MTest&,TokensContainer::const_iterator&);
     /*!
      * handle the @StiffnessMatrixType keyword
      * \param[in,out] p : position in the input file
@@ -337,6 +337,12 @@ namespace mfront
      */
     void 
     handleEvolution(MTest&,TokensContainer::const_iterator&);
+    /*!
+     * handle the @HandleThermalExpansion keyword
+     * \param[in,out] p : position in the input file
+     */
+    void 
+    handleHandleThermalExpansion(MTest&,TokensContainer::const_iterator&);
     /*!
      * \return everything from the given starting point up to the next
      * semi-colon.

@@ -47,7 +47,7 @@ namespace umat
       typedef UMATTraits<Behaviour<H,UMATReal,false> > Traits;
       typedef UMATBehaviourHandler<type,H,Behaviour> UMATBehaviourHandler;
       const bool is_defined_ = MTraits::is_defined;
-      const bool bs = Traits::requiresStiffnessOperator;
+      const bool bs = Traits::requiresStiffnessTensor;
       const bool ba = Traits::requiresThermalExpansionCoefficientTensor;
       typedef typename IF<
 	is_defined_,

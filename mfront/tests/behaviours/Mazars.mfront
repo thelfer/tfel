@@ -8,14 +8,10 @@
 
 @Behaviour Mazars;
 
-@MaterialProperty real young; /* mandatory for castem */
+@MaterialProperty stress young; /* mandatory for castem */
 young.setGlossaryName("YoungModulus");
 @MaterialProperty real nu;    /* mandatory for castem */
 nu.setGlossaryName("PoissonRatio");
-@MaterialProperty real rho;   /* mandatory for castem */
-rho.setGlossaryName("MassDensity");
-@MaterialProperty real alpha; /* mandatory for castem */
-alpha.setGlossaryName("ThermalExpansion");
 
 @MaterialProperty real Ac;
 @MaterialProperty real At;
@@ -98,10 +94,10 @@ alpha.setGlossaryName("ThermalExpansion");
   sig = (1.-d)*s0;
   if(computeTangentOperator_){
     if(smt==ELASTIC){
-      computeElasticStiffness<N,Type>::exe(Dt,lambda,mu);
+      computeUnalteredElasticStiffness<N,Type>::exe(Dt,lambda,mu);
     } else if(smt==SECANTOPERATOR){
       StiffnessTensor Hooke;
-      computeElasticStiffness<N,Type>::exe(Hooke,lambda,mu);
+      computeUnalteredElasticStiffness<N,Type>::exe(Hooke,lambda,mu);
       Dt = (1.-d)*Hooke;
     } else {
       string msg("Mazars : unsupported stiffness matrix type");

@@ -170,14 +170,14 @@ namespace cyrano{
     throwInvalidDDSOEException(const std::string&,
 			       const CyranoReal);
     /*!
-     * \brief throw an AsterException if the prediction computation
+     * \brief throw an CyranoException if the prediction computation
      * failed
      * \param[in] b : behaviour name
      */
     static void
     throwPredictionComputationFailedException(const std::string&);
     /*!
-     * \brief throw an AsterException if the a consistant tangent
+     * \brief throw an CyranoException if the a consistant tangent
      * operator has to been requested and that the behaviour does not
      * provide one.
      * \param[in] b : behaviour name
@@ -185,7 +185,7 @@ namespace cyrano{
     static void
     throwConsistantTangentOperatorIsNotAvalaible(const std::string&);
     /*!
-     * \brief throw an AsterException if the a prediction operator has
+     * \brief throw an CyranoException if the a prediction operator has
      * to been requested and that the behaviour does not provide one.
      * \param[in] b : behaviour name
      */
@@ -193,7 +193,7 @@ namespace cyrano{
     throwPredictionOperatorIsNotAvalaible(const std::string&);
     /*!
      * \brief display an error message if the behaviour shall handle
-     * stress free expansion and that the umat interface can't
+     * stress free expansion and that the cyrano interface can't
      * \param[in] b : behaviour name
      */
     static void

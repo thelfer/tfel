@@ -9,6 +9,7 @@
 #define _LIB_MFRONTPARSERBASE_IXX_ 
 
 #include<stdexcept>
+#include<algorithm>
 
 namespace mfront{
 
@@ -55,8 +56,10 @@ namespace mfront{
     this->registerNewCallBack("@ExternalStateVar",&Child::treatExternalStateVariables);
     this->registerNewCallBack("@ExternalStateVariable",
 			      &Child::treatExternalStateVariables);
-    this->registerNewCallBack("@InitLocalVars",&Child::treatInitLocalVars);
-    this->registerNewCallBack("@InitLocalVariables",&Child::treatInitLocalVars);
+    this->registerNewCallBack("@InitLocalVars",
+			      &Child::treatInitLocalVariables);
+    this->registerNewCallBack("@InitLocalVariables",
+			      &Child::treatInitLocalVariables);
     this->registerNewCallBack("@Integrator",&Child::treatIntegrator);
     this->registerNewCallBack("@Interface",&Child::treatInterface);
     this->registerNewCallBack("@StaticVar",&Child::treatStaticVar);
@@ -69,6 +72,8 @@ namespace mfront{
     this->registerNewCallBack("@PhysicalBounds",&Child::treatPhysicalBounds);
     this->registerNewCallBack("@RequireStiffnessOperator",
 			      &Child::treatRequireStiffnessOperator);
+    this->registerNewCallBack("@RequireStiffnessTensor",
+			      &Child::treatRequireStiffnessTensor);
     this->registerNewCallBack("@RequireThermalExpansionCoefficientTensor",
 			      &Child::treatRequireThermalExpansionCoefficientTensor);
     this->registerNewCallBack("@OrthotropicBehaviour",&Child::treatOrthotropicBehaviour);
@@ -78,9 +83,9 @@ namespace mfront{
     this->registerNewCallBack("@Private",&Child::treatPrivate);
     this->registerNewCallBack("@Sources",&Child::treatSources);
     this->registerNewCallBack("@UpdateAuxiliaryStateVars",
-			      &Child::treatUpdateAuxiliaryStateVars);
+			      &Child::treatUpdateAuxiliaryStateVariables);
     this->registerNewCallBack("@UpdateAuxiliaryStateVariables",
-			      &Child::treatUpdateAuxiliaryStateVars);
+			      &Child::treatUpdateAuxiliaryStateVariables);
     this->registerNewCallBack("@ComputeThermalExpansion",
 			      &Child::treatComputeThermalExpansion);
   } // end of MFrontBehaviourParserBase<Child>::registerDefaultCallBacks
@@ -141,6 +146,13 @@ namespace mfront{
   {
     using namespace std;
     typename CallBackContainer::const_iterator p;
+    const vector<Hypothesis>& mh = ModellingHypothesis::getModellingHypotheses();
+    vector<string> hn(mh.size());
+    vector<Hypothesis>::const_iterator pmh;
+    vector<string>::iterator phn;      
+    for(pmh=mh.begin(),phn=hn.begin();pmh!=mh.end();++pmh,++phn){
+      *phn = ModellingHypothesis::toString(*pmh);
+    }
     MemberFuncPtr handler;
     // opening file
     this->fileName = fileName_;
@@ -150,22 +162,40 @@ namespace mfront{
     // begin treatement
     this->current = this->fileTokens.begin();
     while(this->current != this->fileTokens.end()){
-      if((this->mb.isMaterialPropertyName(this->current->value))||
-	 (this->mb.isInternalStateVariableName(this->current->value))||
-	 (this->mb.isAuxiliaryInternalStateVariableName(this->current->value))||
-	 (this->mb.isExternalStateVariableName(this->current->value))){
-	this->treatVariableMethod();
-      } else if (this->mb.isParameterName(this->current->value)){
-	this->treatParameterMethod();
-      } else {
-	p = this->callBacks.find(this->current->value);
-	if(p==this->callBacks.end()){
-	  handler = &Child::treatUnknownKeyword;
-	} else {
-	  handler = p->second;
-	}
+      if(find(hn.begin(),hn.end(),this->current->value)!=hn.end()){
+	const Hypothesis h = ModellingHypothesis::fromString(this->current->value);
 	++(this->current);
-	((static_cast<Child *>(this))->*handler)();
+	this->checkNotEndOfFile("MFrontBehaviourParserBase<Child>::analyseFile");
+	this->readSpecifiedToken("MFrontBehaviourParserBase<Child>::analyseFile","::");
+	if(!this->isCallableVariable(h,this->current->value)){
+	  string msg("MFrontBehaviourParserBase<Child>::analyseFile : "
+		     "no variable named '"+this->current->value+"' "
+		     "for hypothesis '"+ModellingHypothesis::toString(h)+"'");
+	  throw(runtime_error(msg));
+	}
+	if(this->mb.isParameterName(h,this->current->value)){
+	  this->treatParameterMethod(h);
+	} else {
+	  this->treatVariableMethod(h);
+	}
+      } else { 
+	const Hypothesis h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
+	if(this->isCallableVariable(h,this->current->value)){
+	  if(this->mb.isParameterName(h,this->current->value)){
+	    this->treatParameterMethod(h);
+	  } else {
+	    this->treatVariableMethod(h);
+	  }
+	} else {
+	  p = this->callBacks.find(this->current->value);
+	  if(p==this->callBacks.end()){
+	    handler = &Child::treatUnknownKeyword;
+	  } else {
+	    handler = p->second;
+	  }
+	  ++(this->current);
+	  ((static_cast<Child *>(this))->*handler)();
+	}
       }
     }
   } // end of MFrontBehaviourParserBase<Child>::analyseFile

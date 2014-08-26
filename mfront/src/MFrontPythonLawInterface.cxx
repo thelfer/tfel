@@ -34,32 +34,11 @@ namespace mfront
   }
 
   MFrontPythonLawInterface::MFrontPythonLawInterface()
-    : verboseMode(false),
-      debugMode(false),
-      warningMode(false)
   {}
 
   void
   MFrontPythonLawInterface::reset(void)
   {} // end of MFrontPythonLawInterface::reset(void)
-  
-  void 
-  MFrontPythonLawInterface::setVerboseMode(void)
-  {
-    this->verboseMode = true;
-  }
-
-  void 
-  MFrontPythonLawInterface::setWarningMode(void)
-  {
-    this->warningMode = true;
-  }
-
-  void 
-  MFrontPythonLawInterface::setDebugMode(void)
-  {
-    this->debugMode = true;
-  }
 
   std::pair<bool,tfel::utilities::CxxTokenizer::TokensContainer::const_iterator>
   MFrontPythonLawInterface::treatKeyword(const std::string&,
@@ -309,7 +288,7 @@ namespace mfront
 		      this->srcFile,materialLaws);
     // static variables
     writeStaticVariables("MFrontPythonLawInterface::writeOutputFile",
-			 this->srcFile,staticVars,file,debugMode);
+			 this->srcFile,staticVars,file);
     // parameters
     if(!params.empty()){
       for(p=params.begin();p!=params.end();++p){

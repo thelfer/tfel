@@ -14,17 +14,18 @@ endif
 bin_PROGRAMS = mfront
 mfront_SOURCES = main.cxx                                             \
 		 MFront.cxx                                           \
+	 	 MFrontDebugMode.cxx                                  \
 		 MFrontLock.cxx                                       \
 		 MFrontInitInterfaces.cxx                             \
 		 MFrontInitParsers.cxx                                \
 		 MFrontParserFactory.cxx                              \
 		 DrivingVariable.cxx                                  \
 		 MaterialPropertyDescription.cxx                      \
+		 MechanicalBehaviourData.cxx                          \
 		 MechanicalBehaviourDescription.cxx                   \
 		 BoundsDescription.cxx                                \
 		 VariableDescription.cxx                              \
 		 StaticVariableDescription.cxx                        \
-		 MechanicalVariableDescription.cxx                    \
 		 MFrontBehaviourParserCommon.cxx                      \
 		 MFrontModelParserCommon.cxx                          \
 		 MFrontBehaviourVirtualParser.cxx                     \
@@ -63,9 +64,7 @@ mfront_SOURCES = main.cxx                                             \
 		 MFrontCppTestLawInterface.cxx                        \
 		 MFrontExcelLawInterface.cxx                          \
 		 MFrontLaTeXLawInterface.cxx                          \
-		 MFrontUMATInterfaceBase.cxx                          \
-		 VariableModifier.cxx                                 \
-		 WordAnalyser.cxx
+		 MFrontUMATInterfaceBase.cxx
 
 
 if HAVE_GNUPLOT
@@ -93,10 +92,12 @@ if HAVE_CYRANO
 mfront_SOURCES += MFrontCyranoInterface.cxx
 endif
 
-mfront_LDADD   = -L$(top_builddir)/src/Material  -lTFELMaterial   \
-		 -L$(top_builddir)/src/Math      -lTFELMathParser \
-		 -L$(top_builddir)/src/System    -lTFELSystem     \
-		 -L$(top_builddir)/src/Utilities -lTFELUtilities  \
+mfront_LDADD   = -L$(top_builddir)/mfront/src    -lMFrontLogStream \
+	   	 -L$(top_builddir)/src/Material  -lTFELMaterial    \
+		 -L$(top_builddir)/src/Math      -lTFELMathParser  \
+		 -L$(top_builddir)/src/System    -lTFELSystem      \
+		 -L$(top_builddir)/src/Glossary  -lTFELGlossary    \
+		 -L$(top_builddir)/src/Utilities -lTFELUtilities   \
 		 -L$(top_builddir)/src/Exception -lTFELException
 
 if !TFEL_WIN
@@ -107,13 +108,22 @@ endif
 mfront_LDFLAGS  = -export-dynamic
 endif # !TFEL_WIN
 
-lib_LTLIBRARIES = libMTestFileGenerator.la
+lib_LTLIBRARIES = libMFrontLogStream.la libMTestFileGenerator.la
+
+libMFrontLogStream_la_SOURCES  = MFrontLogStream.cxx
+libMFrontLogStream_la_CPPFLAGS = -DMFrontLogStream_EXPORTS
+if TFEL_WIN
+libMFrontLogStream_la_LDFLAGS  = -no-undefined -avoid-version -Wl,--add-stdcall-alias -Wl,--kill-at
+endif # TFEL_WIN
+
 libMTestFileGenerator_la_SOURCES = MTestFileGeneratorBase.cxx             \
 				   UMATSmallStrainMTestFileGenerator.cxx  \
 				   UMATFiniteStrainMTestFileGenerator.cxx
 
 libMTestFileGenerator_la_LIBADD  = -L$(top_builddir)/src/Utilities -lTFELUtilities \
-				       -L$(top_builddir)/src/Exception -lTFELException
+				   -L$(top_builddir)/src/Material  -lTFELMaterial  \
+				   -L$(top_builddir)/src/Math      -lTFELMath      \
+				   -L$(top_builddir)/src/Exception -lTFELException
 libMTestFileGenerator_la_CPPFLAGS = -DMTestFileGenerator_EXPORTS
 if TFEL_WIN
 libMTestFileGenerator_la_LDFLAGS  = -no-undefined -avoid-version -Wl,--add-stdcall-alias -Wl,--kill-at
@@ -124,9 +134,10 @@ if HAVE_CASTEM
 lib_LTLIBRARIES += libUMATInterface.la
 libUMATInterface_la_SOURCES = UMATInterfaceBase.cxx                            \
 			      UMATFiniteStrain.cxx                             \
-			      UMATComputeStiffnessOperator.cxx                 \
+			      UMATComputeStiffnessTensor.cxx                   \
 			      UMATComputeThermalExpansionCoefficientTensor.cxx \
 			      UMATRotationMatrix.cxx                           \
+			      UMATFiniteStrainRotationMatrix.cxx               \
 			      UMATTangentOperator.cxx                          \
 		              UMATOutOfBoundsPolicy.cxx                        \
 		              UMATGetModellingHypothesis.cxx                   \
@@ -145,7 +156,7 @@ endif # HAVE_CASTEM
 if HAVE_CYRANO
 lib_LTLIBRARIES += libCyranoInterface.la
 libCyranoInterface_la_SOURCES = CyranoInterfaceBase.cxx                            \
-			        CyranoComputeStiffnessOperator.cxx                 \
+			        CyranoComputeStiffnessTensor.cxx                   \
 			        CyranoComputeThermalExpansionCoefficientTensor.cxx \
 		                CyranoOutOfBoundsPolicy.cxx                        \
 		                CyranoGetModellingHypothesis.cxx                   \
@@ -167,7 +178,7 @@ libAsterInterface_la_SOURCES = AsterInterfaceBase.cxx                           
 		               AsterException.cxx                                \
 		               AsterTangentOperator.cxx                          \
 			       AsterRotationMatrix.cxx                           \
-			       AsterComputeStiffnessOperator.cxx                 \
+			       AsterComputeStiffnessTensor.cxx                   \
 			       AsterStressFreeExpansionHandler.cxx               \
 			       AsterComputeThermalExpansionCoefficientTensor.cxx
 

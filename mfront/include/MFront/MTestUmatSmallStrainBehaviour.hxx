@@ -91,6 +91,19 @@ namespace mfront
 	      const tfel::material::ModellingHypothesis::Hypothesis,
 	      const real,
 	      const MTestStiffnessMatrixType::mtype) const;
+    /*!
+     * \brief some interfaces requires dummy material properties to be
+     * declared. For example, the Cast3M finite element solver
+     * requires the mass density and some extra material properties
+     * describing orthotropic axes to be declared.  This method is
+     * meant to automatically declare those if they are not defined by
+     * the user.
+     * \param[out] mp  : evolution manager where 
+     * \param[in]  evm : evolution manager
+     */
+    virtual void
+    setOptionalMaterialPropertiesDefaultValues(MTestEvolutionManager&,
+					       const MTestEvolutionManager&) const;
     //! destructor
     virtual ~MTestUmatSmallStrainBehaviour();
   protected:

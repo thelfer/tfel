@@ -46,6 +46,39 @@ ELM_setDoubleParameter(tfel::system::ExternalLibraryManager& elm,
   elm.setParameter(l,n,p,v);
 }
 
+static void
+ELM_setUShortParameter2(tfel::system::ExternalLibraryManager& elm,
+		       const std::string& l,
+		       const std::string& n,
+		       const std::string& h,
+		       const std::string& p,
+		       const unsigned short v)
+{
+  elm.setParameter(l,n,h,p,v);
+}
+
+static void
+ELM_setIntParameter2(tfel::system::ExternalLibraryManager& elm,
+		    const std::string& l,
+		    const std::string& n,
+		    const std::string& h,
+		    const std::string& p,
+		    const int v)
+{
+  elm.setParameter(l,n,h,p,v);
+}
+
+static void
+ELM_setDoubleParameter2(tfel::system::ExternalLibraryManager& elm,
+		       const std::string& l,
+		       const std::string& n,
+		       const std::string& h,
+		       const std::string& p,
+		       const double v)
+{
+  elm.setParameter(l,n,h,p,v);
+}
+
 void declareExternalLibraryManager(void)
 {
   using namespace boost;
@@ -62,6 +95,10 @@ void declareExternalLibraryManager(void)
     .def("setIntParameter",ELM_setIntParameter)
     .def("setDoubleParameter",ELM_setDoubleParameter)
     .def("setParameter",ELM_setDoubleParameter)
+    .def("setUShortParameter",ELM_setUShortParameter2)
+    .def("setIntParameter",ELM_setIntParameter2)
+    .def("setDoubleParameter",ELM_setDoubleParameter2)
+    .def("setParameter",ELM_setDoubleParameter2)
     .def("contains",&ELM::contains)
     .def("getUMATBehaviourType",
 	 &ELM::getUMATBehaviourType)
@@ -75,10 +112,10 @@ void declareExternalLibraryManager(void)
 	 &ELM::getUMATInternalStateVariablesTypes)
     .def("getUMATExternalStateVariablesNames",
 	 &ELM::getUMATExternalStateVariablesNames)
-    .def("checkIfAsterBehaviourRequiresElasticMaterialPropertiesOffset",
-	 &ELM::checkIfAsterBehaviourRequiresElasticMaterialPropertiesOffset)
-    .def("checkIfAsterBehaviourRequiresThermalExpansionMaterialPropertiesOffset",
-	 &ELM::checkIfAsterBehaviourRequiresThermalExpansionMaterialPropertiesOffset)
+    .def("getUMATRequiresStiffnessTensor",
+	 &ELM::getUMATRequiresStiffnessTensor)
+    .def("getUMATRequiresThermalExpansionCoefficientTensor",
+	 &ELM::getUMATRequiresThermalExpansionCoefficientTensor)
     .def("checkIfAsterBehaviourSaveTangentOperator",
 	 &ELM::checkIfAsterBehaviourSavesTangentOperator)
     ;

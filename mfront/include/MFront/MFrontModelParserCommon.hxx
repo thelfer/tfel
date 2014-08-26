@@ -29,15 +29,6 @@ namespace mfront{
   {
 
     virtual void
-    setVerboseMode(void);
-
-    virtual void
-    setWarningMode(void);
-
-    virtual void
-    setDebugMode(void);
-
-    virtual void
     writeOutputFiles(void);
 
     virtual void
@@ -71,17 +62,46 @@ namespace mfront{
   protected:
 
     /*!
+     * \return the name of the generated class
+     */
+    virtual std::string getClassName(void) const;
+    /*!
+     * \brief add a material law
+     * \param[in] m : added material law name
+     */
+    virtual void addMaterialLaw(const std::string&);
+    /*!
+     * \brief append the given code to the includes
+     */
+    virtual void appendToIncludes(const std::string&);
+    /*!
+     * \brief append the given code to the members
+     */
+    virtual void appendToMembers(const std::string&);
+    /*!
+     * \brief append the given code to the private code
+     */
+    virtual void appendToPrivateCode(const std::string&);
+    /*!
+     * \brief append the given code to the sources
+     */
+    virtual void appendToSources(const std::string&);
+    /*!
      * \brief add a static variable description
      * \param[in] v : variable description
      */
     virtual void
     addStaticVariableDescription(const StaticVariableDescription&);
-
     /*!
      * treat the material keyword
      */
     virtual void
     treatMaterial(void);
+    /*!
+     * treat the library keyword
+     */
+    virtual void
+    treatLibrary(void);
 
     void
     treatModel(void);
@@ -151,8 +171,10 @@ namespace mfront{
 
     std::vector<std::string> interfaces;
     
+    std::map<std::string,
+	     std::vector<std::string> > sourcesLibrairiesDependencies;
+
     std::string currentVar;
-    std::map<std::string,std::vector<std::string> > sourcesLibrairiesDependencies;
 
   }; // end of class MFrontModelParserCommon
 

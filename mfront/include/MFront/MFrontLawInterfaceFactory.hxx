@@ -25,12 +25,6 @@ namespace mfront{
     static MFrontLawInterfaceFactory&
     getMFrontLawInterfaceFactory();
 
-    void setVerboseMode(void);
-
-    void setDebugMode(void);
-
-    void setWarningMode(void);
-
     std::vector<std::string>
     getRegistredInterfaces(void);
 
@@ -85,10 +79,6 @@ namespace mfront{
     TFEL_VISIBILITY_LOCAL
     AliasContainer&
     getAliasesMap(void);
-
-    bool verboseMode;
-    bool debugMode;
-    bool warningMode;
 
   };
 

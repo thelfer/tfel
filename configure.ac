@@ -361,6 +361,7 @@ AC_OUTPUT([debug.sh
 	   docs/presentations/mfront-presentation.tex
 	   docs/presentations/mfront-behaviours.tex
 	   docs/presentations/mfront-finitestrain.tex
+	   docs/tutorial/Makefile
 	   docs/tex/Makefile
 	   cmake/Makefile
 	   cmake/modules/Makefile
@@ -369,6 +370,7 @@ AC_OUTPUT([debug.sh
 	   src/Tests/Makefile
 	   src/Exception/Makefile
 	   src/Utilities/Makefile
+	   src/Glossary/Makefile
 	   src/Math/Makefile
 	   src/Material/Makefile
 	   src/System/Makefile
@@ -381,6 +383,9 @@ AC_OUTPUT([debug.sh
            mfront/mtest/Makefile
            mfront/tests/Makefile
            mfront/tests/properties/Makefile
+           mfront/tests/properties/interfaces/Makefile
+           mfront/tests/properties/interfaces/include/Makefile
+           mfront/tests/properties/interfaces/src/Makefile
            mfront/tests/behaviours/Makefile
            mfront/tests/behaviours/aster/Makefile
            mfront/tests/behaviours/aster/asterelasticity.mtest
@@ -415,7 +420,6 @@ AC_OUTPUT([debug.sh
            mfront/tests/behaviours/aster/asterorthotropiccreep-rk42.mtest
            mfront/tests/behaviours/aster/asterorthotropiccreep-rkCastem.mtest
            mfront/tests/behaviours/aster/asterimplicitnorton.mtest
-	   mfront/tests/behaviours/aster/asterimplicitnorton-generalisedplanestress.mtest
            mfront/tests/behaviours/aster/asterimplicitnorton2.mtest
            mfront/tests/behaviours/aster/asterimplicitnorton_broyden.mtest
            mfront/tests/behaviours/aster/asterimplicitnorton_broyden2.mtest
@@ -443,6 +447,7 @@ AC_OUTPUT([debug.sh
            mfront/tests/behaviours/aster/asterburger.mtest
 	   mfront/tests/behaviours/aster/astergursontvergaardneedlemanplasticflow.mtest
 	   mfront/tests/behaviours/aster/astergursontvergaardneedlemanviscoplasticflow.mtest
+           mfront/tests/behaviours/aster/asteranistropiclemaitreviscoplasticbehaviour.mtest
            mfront/tests/behaviours/castem/Makefile
            mfront/tests/behaviours/castem/castemelasticity.mtest
            mfront/tests/behaviours/castem/castemelasticity2.mtest
@@ -467,6 +472,15 @@ AC_OUTPUT([debug.sh
            mfront/tests/behaviours/castem/castemelasticity21.mtest
            mfront/tests/behaviours/castem/castemelasticity22.mtest
            mfront/tests/behaviours/castem/castemelasticity23.mtest
+           mfront/tests/behaviours/castem/castemelasticity24.mtest
+           mfront/tests/behaviours/castem/castemelasticity25.mtest
+           mfront/tests/behaviours/castem/castemelasticity26.mtest
+           mfront/tests/behaviours/castem/castemelasticity27.mtest
+           mfront/tests/behaviours/castem/castemelasticity28.mtest
+           mfront/tests/behaviours/castem/castemelasticity29.mtest
+           mfront/tests/behaviours/castem/castemelasticity30.mtest
+           mfront/tests/behaviours/castem/castemelasticity31.mtest
+           mfront/tests/behaviours/castem/castemelasticity32.mtest
            mfront/tests/behaviours/castem/castemddif2.mtest
            mfront/tests/behaviours/castem/castemddif2-2.mtest
            mfront/tests/behaviours/castem/castemddif2-3.mtest
@@ -482,7 +496,6 @@ AC_OUTPUT([debug.sh
            mfront/tests/behaviours/castem/castemnortonrk4.mtest
            mfront/tests/behaviours/castem/castemimplicitnorton-planestress.mtest
            mfront/tests/behaviours/castem/castemimplicitnorton-planestress2.mtest
-           mfront/tests/behaviours/castem/castemimplicitnorton-generalisedplanestress.mtest
            mfront/tests/behaviours/castem/castemnorton-euler.mtest
            mfront/tests/behaviours/castem/castemnorton-rk2.mtest
            mfront/tests/behaviours/castem/castemnorton-rk4.mtest
@@ -592,6 +605,8 @@ AC_OUTPUT([debug.sh
            mfront/tests/behaviours/castem/castemmieheapellambrechtlogarithmicstrainelasticity-uniaxialloading-3-1D.mtest
            mfront/tests/behaviours/castem/castemmieheapellambrechtlogarithmicstrainelasticity-uniaxialloading-3-2D.mtest
            mfront/tests/behaviours/castem/castemmieheapellambrechtlogarithmicstrainelasticity-uniaxialloading-3-3D.mtest
+           mfront/tests/behaviours/castem/castemmieheapellambrechtlogarithmicstrainelasticity-uniaxialloading-1-planestress.mtest
+           mfront/tests/behaviours/castem/castemmieheapellambrechtlogarithmicstrainelasticity-uniaxialloading-3-planestress.mtest
            mfront/tests/behaviours/castem/castemmieheapellambrechtlogarithmicstrainelasticity2-uniaxialloading-1-1D.mtest
            mfront/tests/behaviours/castem/castemmieheapellambrechtlogarithmicstrainelasticity2-uniaxialloading-1-2D.mtest
            mfront/tests/behaviours/castem/castemmieheapellambrechtlogarithmicstrainelasticity2-uniaxialloading-1-3D.mtest
@@ -626,6 +641,13 @@ AC_OUTPUT([debug.sh
            mfront/tests/behaviours/castem/castemincompressibleplanestressmooneyrivlinbehaviouruniaxialtesting.mtest
            mfront/tests/behaviours/castem/castemincompressibleplanestressgornetdesmoratbehaviourbiaxialtesting.mtest
            mfront/tests/behaviours/castem/castemimplicitsimomieheelastoplasticity.mtest
+           mfront/tests/behaviours/castem/castemT91-satohtest.mtest
+           mfront/tests/behaviours/castem/castemT91-viscositytest.mtest
+           mfront/tests/behaviours/castem/castemfinitestrainmonocristal-001.mtest
+           mfront/tests/behaviours/castem/castemfinitestrainmonocristal-012.mtest
+           mfront/tests/behaviours/castem/castemfinitestrainmonocristal-012-2.mtest
+           mfront/tests/behaviours/castem/castemfinitestrainmonocristal-159.mtest
+           mfront/tests/behaviours/castem/castemanistropiclemaitreviscoplasticbehaviour.mtest
            mfront/tests/behaviours/castem/dgibi/Makefile
            mfront/tests/behaviours/castem2/Makefile   
            mfront/tests/behaviours/castem2/castem2burger.mtest
@@ -681,6 +703,11 @@ AC_OUTPUT([debug.sh
            mfront/tests/behaviours/cyrano/cyranonorton2.mtest
            mfront/tests/behaviours/cyrano/cyranoellipticcreep.mtest
            mfront/tests/behaviours/cyrano/cyranoorthotropiccreep.mtest
+           mfront/tests/behaviours/cyrano/cyranoimplicitnorton.mtest
+           mfront/tests/behaviours/cyrano/cyranoimplicitnorton2.mtest
+           mfront/tests/models/Makefile
+           mfront/tests/models/include/Makefile
+           mfront/tests/models/src/Makefile
 	   mfront/Examples/Makefile
 	   tfel-doc/Makefile
 	   tfel-doc/src/Makefile

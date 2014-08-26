@@ -24,9 +24,6 @@ namespace mfront
   }
 
   MFrontCppLawInterface::MFrontCppLawInterface()
-    : verboseMode(false),
-      debugMode(false),
-      warningMode(false)
   {}
 
   void
@@ -39,24 +36,6 @@ namespace mfront
       this->srcFile.close();
     }
   } // end of MFrontCppLawInterface::reset(void)
-  
-  void 
-  MFrontCppLawInterface::setVerboseMode(void)
-  {
-    this->verboseMode = true;
-  }
-
-  void 
-  MFrontCppLawInterface::setWarningMode(void)
-  {
-    this->warningMode = true;
-  }
-
-  void 
-  MFrontCppLawInterface::setDebugMode(void)
-  {
-    this->debugMode = true;
-  }
 
   std::pair<bool,tfel::utilities::CxxTokenizer::TokensContainer::const_iterator>
   MFrontCppLawInterface::treatKeyword(const std::string&,
@@ -703,7 +682,7 @@ namespace mfront
 		      this->srcFile,materialLaws);
     // static variables
     writeStaticVariables("MFrontMaterialLawParser::writeCppSrcFile",
-			 srcFile,staticVars,file,debugMode);
+			 srcFile,staticVars,file);
     // parameters
     if(!params.empty()){
       for(p=params.begin();p!=params.end();++p){
@@ -771,7 +750,7 @@ namespace mfront
       this->srcFile << "typedef double real;\n";
     }
     writeStaticVariables("MFrontMaterialLawParser::writeSrcFile",
-			 srcFile,staticVars,file,debugMode);
+			 srcFile,staticVars,file);
     if(useTemplate){
       this->srcFile << "real " << output << ";\n";
     } else {
@@ -821,7 +800,7 @@ namespace mfront
       this->srcFile << "typedef double real;\n";
     }
     writeStaticVariables("MFrontMaterialLawParser::writeSrcFile",
-			 srcFile,staticVars,file,debugMode);
+			 srcFile,staticVars,file);
     if(useTemplate){
       this->srcFile << "real " << output << ";\n";
     } else {

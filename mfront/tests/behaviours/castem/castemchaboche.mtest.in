@@ -10,7 +10,6 @@
 @Behaviour<umat> '@MFrontCastemBehavioursBuildPath@' 'umatchaboche';
 @MaterialProperty<constant> 'YoungModulus' 145200. ; 
 @MaterialProperty<constant> 'PoissonRatio'  0.3 ;    
-@MaterialProperty<constant> 'MassDensity' 0. ;   
 @MaterialProperty<constant> 'ThermalExpansion' 0. ; 
 @MaterialProperty<constant> 'R_inf' 151. ;
 @MaterialProperty<constant> 'R_0' 87. ;

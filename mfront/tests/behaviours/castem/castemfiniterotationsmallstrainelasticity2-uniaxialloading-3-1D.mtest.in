@@ -9,8 +9,6 @@
 @Behaviour<umat> '@MFrontCastemBehavioursBuildPath@' 'umatfiniterotationsmallstrainelasticity2';
 @MaterialProperty<constant> 'YoungModulus'     215.e9;
 @MaterialProperty<constant> 'PoissonRatio'       0.3;
-@MaterialProperty<constant> 'MassDensity'        0.;
-@MaterialProperty<constant> 'ThermalExpansion'   0.;
 
 @ImposedDrivingVariable 'FRR' 1.;
 @ImposedDrivingVariable 'FZZ' 1.;

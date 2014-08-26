@@ -6,7 +6,7 @@
 // output of law
 @Output a ;
 
-@Constant ReferenceTemperature = 293.15;
+@Constant ReferenceTemperature =  293.15;
 
 @Function{
   a = 2.e-5;

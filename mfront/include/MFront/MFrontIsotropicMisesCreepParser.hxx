@@ -23,17 +23,24 @@ namespace mfront{
     static std::string
     getDescription(void);
 
-    void writeBehaviourParserSpecificInitializeMethodPart(void);
+    virtual void
+    endsInputFileProcessing(void);
 
-    void writeBehaviourParserSpecificMembers(void);
+    virtual void
+    writeBehaviourParserSpecificInitializeMethodPart(const Hypothesis);
 
-    void writeBehaviourIntegrator(void);
+    virtual void
+    writeBehaviourParserSpecificMembers(const Hypothesis);
 
-    void writeBehaviourComputeTangentOperator(void);
+    virtual void
+    writeBehaviourIntegrator(const Hypothesis);
+
+    virtual void
+    writeBehaviourComputeTangentOperator(const Hypothesis);
 
     MFrontIsotropicMisesCreepParser();
 
-    ~MFrontIsotropicMisesCreepParser();
+    virtual ~MFrontIsotropicMisesCreepParser();
   };
 
 } // end of namespace mfront  

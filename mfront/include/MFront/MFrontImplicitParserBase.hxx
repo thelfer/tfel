@@ -35,28 +35,48 @@ namespace mfront{
     };
 
     virtual bool
-    isJacobianPart(const std::string&);
+    isJacobianPart(const Hypothesis,
+		   const std::string&);
 
     virtual void
-    predictorAnalyser(const std::string&);
+    predictorAnalyser(const Hypothesis,
+		      const std::string&);
     
     virtual void
-    integratorAnalyser(const std::string&);
+    integratorAnalyser(const Hypothesis,
+		       const std::string&);
 
     virtual std::string
-    tangentOperatorVariableModifier(const std::string&,const bool);
+    tangentOperatorVariableModifier(const Hypothesis,
+				    const std::string&,
+				    const bool);
 
     virtual std::string
-    integratorVariableModifier(const std::string&,const bool);
+    integratorVariableModifier(const Hypothesis,
+			       const std::string&,
+			       const bool);
 
     virtual std::string
-    computeStressVariableModifier1(const std::string&,const bool);
+    computeStressVariableModifier1(const Hypothesis,
+				   const std::string&,
+				   const bool);
 
     virtual std::string
-    computeStressVariableModifier2(const std::string&,const bool);
-
+    computeStressVariableModifier2(const Hypothesis,
+				   const std::string&,
+				   const bool);
+    /*!
+     * \param[in] h : modelling hypothesis
+     * \param[in] n : variable name
+     */
     virtual void
-    treatUnknownVariableMethod(const std::string&);
+    treatUnknownVariableMethod(const Hypothesis,
+			       const std::string&);
+    /*!
+     *
+     */
+    virtual void
+      treatStateVariables(void);
 
     virtual void
     treatIntegrator(void);
@@ -66,46 +86,47 @@ namespace mfront{
 
     virtual void endsInputFileProcessing(void);
 
-    virtual void writeBehaviourIntegrator(void);
+    virtual void writeBehaviourIntegrator(const Hypothesis);
 
     virtual void writeBehaviourParserSpecificIncludes(void);
 
     virtual void writeBehaviourParserSpecificTypedefs(void);
 
-    virtual void writeBehaviourParserSpecificMembers(void);
+    virtual void writeBehaviourParserSpecificMembers(const Hypothesis);
 
-    virtual void writeBehaviourStateVarsIncrements(void);
+    virtual void writeBehaviourStateVariablesIncrements(const Hypothesis);
     
     virtual std::string
-    getBehaviourConstructorsInitializers(void);
+    getBehaviourConstructorsInitializers(const Hypothesis);
 
     virtual std::string
     getStateVariableIncrementsInitializers(const VariableDescriptionContainer&,
 					   const bool) const;
 
-    virtual void writeBehaviourParserSpecificInitializeMethodPart(void);
+    virtual void writeBehaviourParserSpecificInitializeMethodPart(const Hypothesis);
 
-    virtual void writeBehaviourStaticVars(void);
+    virtual void writeComputeNumericalJacobian(const Hypothesis);
 
-    virtual void writeComputeNumericalJacobian(void);
+    virtual void writeBehaviourComputeTangentOperator(const Hypothesis);
 
-    virtual void writeBehaviourComputeTangentOperator(void);
+    virtual void writeGetPartialJacobianInvert(const Hypothesis);
 
-    virtual void writeGetPartialJacobianInvert(void);
+    virtual void writeLimitsOnIncrementValues(const Hypothesis,
+					      const std::string&);
 
-    virtual void writeLimitsOnIncrementValues(const std::string&);
+    virtual void writeLimitsOnIncrementValuesBasedOnStateVariablesPhysicalBounds(const Hypothesis);
 
-    virtual void writeLimitsOnIncrementValuesBasedOnStateVariablesPhysicalBounds(void);
-
-    virtual void writeLimitsOnIncrementValuesBasedOnStateVariablesIncrementsPhysicalBounds(void);
+    virtual void writeLimitsOnIncrementValuesBasedOnStateVariablesIncrementsPhysicalBounds(const Hypothesis);
 
     /*!
      * write a step of the Powell dogleg method
+     * \param[in] h  : modelling hypothesis
      * \param[in] B  : name of the jacobian
      * \param[in] f  : name of values of f
      * \param[in] pn : Newton step
      */
-    virtual void writePowellDogLegStep(const std::string&,
+    virtual void writePowellDogLegStep(const Hypothesis,
+				       const std::string&,
 				       const std::string&,
 				       const std::string&);
 
@@ -118,15 +139,13 @@ namespace mfront{
 
     virtual void treatPowellDogLegTrustRegionSize(void);
 
-    virtual void treatPertubationValueForNumericalJacobianComputation(void);
+    virtual void treatPerturbationValueForNumericalJacobianComputation(void);
 
     virtual void treatAlgorithm(void);
 
     virtual void treatPredictor(void);
 
     virtual void treatComputeStress(void);
-
-    virtual void treatStateVariables(void);
 
     virtual void treatCompareToNumericalJacobian(void);
 
@@ -151,10 +170,14 @@ namespace mfront{
     virtual void treatIsTangentOperatorSymmetric(void);
 
     virtual void treatMaximumIncrementValuePerIteration(void);
-
-    virtual void
-    treatUnknownKeyword(void);
-
+    /*!
+     * \return true if the the given variable may have methods
+     * \param[in] h : modelling hypothesis
+     * \param[in] n : name
+     */
+    virtual bool
+    isCallableVariable(const Hypothesis,
+		       const std::string&) const;
     /*!
      * \return a type able to do the mapping of a variable with the
      * vector used by the root-finding algorithm.
@@ -210,29 +233,10 @@ namespace mfront{
     // normalisation factors
     std::map<std::string,std::string> nf;
 
-    std::string computeStress;
-
-    std::string computeFinalStress;
-
-    std::string initJacobian;
-
-    std::string tangentOperator;
-
     Algorithm algorithm;
-
-    bool hasUserDefinedComputeFinalStress;
-    
-    bool compareToNumericalJacobian;
-
-    bool isConsistantTangentOperatorSymmetricDefined;
-
-    bool useRelaxation;
-
-    bool useAcceleration;
 
   }; // end of struct MFrontImplicitParserBase
 
 } // end of namespace mfront  
 
 #endif /* _LIB_MFRONTIMPLICITPARSERBASE_H */
-

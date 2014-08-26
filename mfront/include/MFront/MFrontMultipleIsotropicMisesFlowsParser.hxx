@@ -26,17 +26,24 @@ namespace mfront{
     static std::string
     getDescription(void);
 
-    void writeBehaviourParserSpecificInitializeMethodPart(void);
+    virtual void
+    writeBehaviourParserSpecificInitializeMethodPart(const Hypothesis);
 
-    void writeBehaviourParserSpecificMembers(void);
+    virtual void
+    writeBehaviourParserSpecificMembers(const Hypothesis);
 
-    void writeBehaviourParserSpecificIncludes(void);
+    virtual void
+    writeBehaviourParserSpecificIncludes(void);
 
-    void writeBehaviourIntegrator(void);
+    virtual void
+    writeBehaviourIntegrator(const Hypothesis);
+
+    virtual void
+    writeBehaviourComputeTangentOperator(const Hypothesis);
 
     MFrontMultipleIsotropicMisesFlowsParser();
 
-    ~MFrontMultipleIsotropicMisesFlowsParser();
+    virtual ~MFrontMultipleIsotropicMisesFlowsParser();
 
   private:
 

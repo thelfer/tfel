@@ -12,6 +12,7 @@
 
 #include"TFEL/Config/TFELConfig.hxx"
 #include"TFEL/Config/TFELTypes.hxx"
+#include"TFEL/Material/ModellingHypothesis.hxx"
 
 namespace tfel{
   
@@ -27,7 +28,7 @@ namespace tfel{
       const T 
       computeLambda(const T young, const T nu)
       {
-	return nu*young/((1.f+nu)*(1.f-2.f*nu));
+	return nu*young/((1+nu)*(1-2*nu));
       }
    
       /*
@@ -38,7 +39,7 @@ namespace tfel{
       const tfel::math::qt<tfel::math::Stress,T> 
       computeLambda(const tfel::math::qt<tfel::math::Stress,T> young, const tfel::math::qt<tfel::math::NoUnit,T> nu)
       {
-	return nu*young/((1.f+nu)*(1.f-2.f*nu));
+	return nu*young/((1+nu)*(1-2*nu));
       }
 
       /*
@@ -48,7 +49,7 @@ namespace tfel{
       TFEL_MATERIAL_INLINE const T 
       computeMu(const T young, const T nu)
       {
-	return young/(2.f*(1.f+nu));
+	return young/(2*(1+nu));
       }
 
       /*
@@ -60,20 +61,22 @@ namespace tfel{
       computeMu(const tfel::math::qt<tfel::math::Stress,T> young, 
 		const tfel::math::qt<tfel::math::NoUnit,T> nu)
       {
-	return young/(2.f*(1.f+nu));
+	return young/(2*(1+nu));
       }
 
       /*!
        * \class computeElasticStiffness
        * \brief compute the elastic stiffness given Lame's coefficients
+       * \param N : space dimension
+       * \param T : numerical type
        * \author Helfer Thomas
        * \date   12 Sep 2006
        */
-      template<unsigned short N,typename T>
+      template<unsigned short,typename>
       struct computeElasticStiffness;
 
       /*
-       * Partial specialisation in 2D
+       * Partial specialisation in 1D
        */
       template<typename T>
       struct computeElasticStiffness<1u,T>
@@ -113,10 +116,9 @@ namespace tfel{
 			const typename tfel::config::Types<2u,T,true>::stress mu)
 	{
 	  typedef typename tfel::config::Types<2u,T,true>::stress stress;
-	  stress G    = 2*mu;
-	  stress tmp  = lambda+G;
-	  stress zero(T(0));
-
+	  const stress G    = 2*mu;
+	  const stress tmp  = lambda+G;
+	  const stress zero(T(0));
 	  D(0,0)=D(1,1)=D(2,2)=tmp;
 	  D(0,1)=D(0,2)=D(1,2)=lambda;
 	  D(1,0)=D(2,0)=D(2,1)=lambda;
@@ -131,10 +133,9 @@ namespace tfel{
 			const typename tfel::config::Types<2u,T,false>::stress mu)
 	{
 	  typedef typename tfel::config::Types<2u,T,false>::stress stress;
-	  stress G    = 2*mu;
-	  stress tmp  = lambda+G;
-	  stress zero(T(0));
-
+	  const stress G    = 2*mu;
+	  const stress tmp  = lambda+G;
+	  const stress zero(T(0));
 	  D(0,0)=D(1,1)=D(2,2)=tmp;
 	  D(0,1)=D(0,2)=D(1,2)=lambda;
 	  D(1,0)=D(2,0)=D(2,1)=lambda;
@@ -157,10 +158,9 @@ namespace tfel{
 			const typename tfel::config::Types<3u,T,true>::stress mu)
 	{
 	  typedef typename tfel::config::Types<3u,T,true>::stress stress;
-	  stress G   = 2*mu;
-	  stress tmp = lambda+G;
-	  stress zero(T(0));
-
+	  const stress G   = 2*mu;
+	  const stress tmp = lambda+G;
+	  const stress zero(T(0));
 	  D(0,0)=D(1,1)=D(2,2)=tmp;
 	  D(0,1)=D(0,2)=D(1,2)=lambda;
 	  D(1,0)=D(2,0)=D(2,1)=lambda;
@@ -182,10 +182,9 @@ namespace tfel{
 			const typename tfel::config::Types<3u,T,false>::stress mu)
 	{
 	  typedef typename tfel::config::Types<3u,T,false>::stress stress;
-	  stress G   = 2*mu;
-	  stress tmp = lambda+G;
-	  stress zero(T(0));
-
+	  const stress G   = 2*mu;
+	  const stress tmp = lambda+G;
+	  const stress zero(T(0));
 	  D(0,0)=D(1,1)=D(2,2)=tmp;
 	  D(0,1)=D(0,2)=D(1,2)=lambda;
 	  D(1,0)=D(2,0)=D(2,1)=lambda;
@@ -203,6 +202,125 @@ namespace tfel{
 	}
 
       };
+
+      /*!
+       * \class computeUnalteredElasticStiffness
+       * \brief compute the elastic stiffness given Lame's coefficients
+       * \param N : space dimension
+       * \param T : numerical type
+       * \author Helfer Thomas
+       * \date   12 Sep 2006
+       */
+      template<unsigned short N,typename T>
+      struct computeUnalteredElasticStiffness
+      {
+	static void exe(typename tfel::config::Types<N,T,true>::StiffnessTensor& D,
+			const typename tfel::config::Types<N,T,true>::stress lambda, 
+			const typename tfel::config::Types<N,T,true>::stress mu)
+	{
+	  computeElasticStiffness<N,T>::exe(D,lambda,mu);
+	}
+	static void exe(typename tfel::config::Types<N,T,false>::StiffnessTensor& D,
+			const typename tfel::config::Types<N,T,false>::stress lambda, 
+			const typename tfel::config::Types<N,T,false>::stress mu)
+	{
+	  computeElasticStiffness<N,T>::exe(D,lambda,mu);
+	}
+      };
+
+      /*!
+       * \class computeUnalteredElasticStiffness
+       * \brief compute the elastic stiffness given Lame's coefficients
+       * \param H : modelling hypothesis
+       * \param T : numerical type
+       * \author Helfer Thomas
+       * \date   12 Sep 2006
+       */
+      template<ModellingHypothesis::Hypothesis H,
+	       typename T>
+      struct computeAlteredElasticStiffness
+      {
+	static const unsigned short N =
+	  ModellingHypothesisToSpaceDimension<H>::value;
+	static void exe(typename tfel::config::Types<N,T,true>::StiffnessTensor& D,
+			const typename tfel::config::Types<N,T,true>::stress lambda, 
+			const typename tfel::config::Types<N,T,true>::stress mu)
+	{
+	  computeElasticStiffness<N,T>::exe(D,lambda,mu);
+	}
+	static void exe(typename tfel::config::Types<N,T,false>::StiffnessTensor& D,
+			const typename tfel::config::Types<N,T,false>::stress lambda, 
+			const typename tfel::config::Types<N,T,false>::stress mu)
+	{
+	  computeElasticStiffness<N,T>::exe(D,lambda,mu);
+	}
+      }; // end of struct computeAlteredElasticStiffness
+      
+      template<typename T>
+      struct computeAlteredElasticStiffness<ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRESS,T>
+      {
+	static void exe(typename tfel::config::Types<1u,T,true>::StiffnessTensor& D,
+			const typename tfel::config::Types<1u,T,true>::stress lambda, 
+			const typename tfel::config::Types<1u,T,true>::stress mu)
+	{
+	  typedef typename tfel::config::Types<1u,T,true>::stress stress;
+	  const stress D1 = lambda*(lambda+4*mu)/(lambda+2*mu);
+	  const stress D2 = 2*mu*lambda/(lambda+2*mu);
+	  D(0,0)=D1;
+	  D(0,1)=D2;
+	  D(1,0)=D2;
+	  D(1,1)=D1;
+	  D(2,2)=D(0,2)=D(1,2)=D(2,0)=D(2,1)=stress(T(0));
+	}
+	static void exe(typename tfel::config::Types<1u,T,false>::StiffnessTensor& D,
+			const typename tfel::config::Types<1u,T,false>::stress lambda, 
+			const typename tfel::config::Types<1u,T,false>::stress mu)
+	{
+	  typedef typename tfel::config::Types<1u,T,false>::stress stress;
+	  const stress D1 = lambda*(lambda+4*mu)/(lambda+2*mu);
+	  const stress D2 = 2*mu*lambda/(lambda+2*mu);
+	  D(0,0)=D1;
+	  D(0,1)=D2;
+	  D(1,0)=D2;
+	  D(1,1)=D1;
+	  D(2,2)=D(0,2)=D(1,2)=D(2,0)=D(2,1)=stress(T(0));
+	}
+      }; // end of struct computeAlteredElasticStiffness
+
+      template<typename T>
+      struct computeAlteredElasticStiffness<ModellingHypothesis::PLANESTRESS,T>
+      {
+	static void exe(typename tfel::config::Types<2u,T,true>::StiffnessTensor& D,
+			const typename tfel::config::Types<2u,T,true>::stress lambda, 
+			const typename tfel::config::Types<2u,T,true>::stress mu)
+	{
+	  typedef typename tfel::config::Types<2u,T,true>::stress stress;
+	  const stress D1 = lambda*(lambda+4*mu)/(lambda+2*mu);
+	  const stress D2 = 2*mu*lambda/(lambda+2*mu);
+	  D(0,0)=D1;
+	  D(0,1)=D2;
+	  D(1,0)=D2;
+	  D(1,1)=D1;
+	  D(3,3)=2*mu;    
+	  D(0,2)=D(0,3)=D(1,2)=D(1,3)=D(2,0)=D(2,1)=stress(T(0));
+	  D(2,2)=D(2,3)=D(3,0)=D(3,1)=D(3,2)=stress(T(0));
+	}
+	static void exe(typename tfel::config::Types<2u,T,false>::StiffnessTensor& D,
+			const typename tfel::config::Types<2u,T,false>::stress lambda, 
+			const typename tfel::config::Types<2u,T,false>::stress mu)
+	{
+	  typedef typename tfel::config::Types<2u,T,false>::stress stress;
+	  const stress D1 = lambda*(lambda+4*mu)/(lambda+2*mu);
+	  const stress D2 = 2*mu*lambda/(lambda+2*mu);
+	  D(0,0)=D1;
+	  D(0,1)=D2;
+	  D(1,0)=D2;
+	  D(1,1)=D1;
+	  D(3,3)=2*mu;    
+	  D(0,2)=D(0,3)=D(1,2)=D(1,3)=D(2,0)=D(2,1)=stress(T(0));
+	  D(2,2)=D(2,3)=D(3,0)=D(3,1)=D(3,2)=stress(T(0));
+	}
+      }; // end of struct computeAlteredElasticStiffness
 
     } // end of namespace lame
 

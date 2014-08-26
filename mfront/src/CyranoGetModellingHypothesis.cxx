@@ -24,6 +24,8 @@ namespace cyrano
 // C                       =  3 a 11 : unidimensionnel plan (massif 1D)
 // C                       = 12 a 14 : unidimensionnel axisymetrique (massif 1D)
 // C                       = 15 : unidimensionnel spherique (massif 1D)
+    default:
+      ;
     }
     ostringstream msg;
     msg << "cyrano::getModellingHypothesis : "

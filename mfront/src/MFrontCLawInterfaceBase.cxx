@@ -16,9 +16,6 @@ namespace mfront
 {
 
   MFrontCLawInterfaceBase::MFrontCLawInterfaceBase()
-    : verboseMode(false),
-      debugMode(false),
-      warningMode(false)
   {}
 
   void
@@ -32,24 +29,6 @@ namespace mfront
     }
   } // end of MFrontCLawInterfaceBase::reset(void)
   
-  void 
-  MFrontCLawInterfaceBase::setVerboseMode(void)
-  {
-    this->verboseMode = true;
-  }
-
-  void 
-  MFrontCLawInterfaceBase::setWarningMode(void)
-  {
-    this->warningMode = true;
-  }
-
-  void 
-  MFrontCLawInterfaceBase::setDebugMode(void)
-  {
-    this->debugMode = true;
-  }
-
   std::pair<bool,tfel::utilities::CxxTokenizer::TokensContainer::const_iterator>
   MFrontCLawInterfaceBase::treatKeyword(const std::string&,
 					tfel::utilities::CxxTokenizer::TokensContainer::const_iterator current,
@@ -280,7 +259,7 @@ namespace mfront
 		      this->srcFile,materialLaws);
     // static variables
     writeStaticVariables("MFrontCLawInterfaceBase::writeSrcFile",
-			 srcFile,staticVars,file,debugMode);
+			 srcFile,staticVars,file);
     // parameters
     if(!params.empty()){
       for(p=params.begin();p!=params.end();++p){

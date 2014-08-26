@@ -15,6 +15,7 @@
 #include<algorithm>
 #include"TFEL/Math/st2tost2.hxx"
 #include"TFEL/Utilities/Name.hxx"
+#include"MFront/Cyrano/CyranoComputeStiffnessTensor.hxx"
 
 namespace cyrano
 {
@@ -227,8 +228,10 @@ namespace cyrano
       typedef typename BV::BehaviourData  BData;
       TFEL_CYRANO_INLINE static void
 	exe(BData& data,const CyranoReal * const props){
-	CyranoComputeStiffnessOperator<H,CyranoTraits<BV>::stype>::exe(props,
-								       data.getStiffnessOperator());
+	typedef CyranoTraits<BV> Traits;
+	const bool buas = Traits::requiresUnAlteredStiffnessTensor;
+	CyranoComputeStiffnessTensor<H,Traits::stype,buas>::exe(data.getStiffnessTensor(),
+								props);
       } // end of exe
     }; // end of struct StiffnessOperatorInitializer
     
@@ -242,8 +245,11 @@ namespace cyrano
       typedef typename BV::BehaviourData  BData;
       TFEL_CYRANO_INLINE static void
 	exe(BData& data,const CyranoReal * const props){
-	CyranoComputeThermalExpansionCoefficientTensor<H,CyranoTraits<BV>::stype>::exe(props,
-										       data.getThermalExpansionCoefficientTensor());
+	typedef CyranoTraits<BV> Traits;
+	const unsigned short o =
+	  CyranoTraits<BV>::elasticPropertiesOffset;
+	CyranoComputeThermalExpansionCoefficientTensor<H,Traits::stype>::exe(props+o,
+									     data.getThermalExpansionCoefficientTensor());
       } // end of exe
     }; // end of struct ThermalExpansionCoefficientTensorInitializer
     
@@ -665,7 +671,7 @@ namespace cyrano
       typedef Behaviour<H,CyranoReal,false> BV;
       typedef MechanicalBehaviourTraits<BV> Traits;
       const unsigned short offset  = CyranoTraits<BV>::propertiesOffset;
-      const unsigned short nprops  = Traits::material_properties_nb;
+      const unsigned short nprops  = CyranoTraits<BV>::material_properties_nb;
       const unsigned short NPROPS_ = offset+nprops == 0 ? 1u : offset+nprops; 
       const bool is_defined_       = Traits::is_defined;
       //Test if the nb of properties matches Behaviour requirements

@@ -20,16 +20,6 @@
 @MaterialProperty<constant> 'YoungModulus1' 233705;
 @MaterialProperty<constant> 'YoungModulus2' 233705;
 @MaterialProperty<constant> 'YoungModulus3' 233705;
-@MaterialProperty<constant> 'ThermalExpansion1' 0.;
-@MaterialProperty<constant> 'ThermalExpansion2' 0.;
-@MaterialProperty<constant> 'ThermalExpansion3' 0.;
-@MaterialProperty<constant> 'MassDensity' 0.;
-@MaterialProperty<constant> 'V1X'   1.;
-@MaterialProperty<constant> 'V1Y'   0.;
-@MaterialProperty<constant> 'V1Z'   0.;
-@MaterialProperty<constant> 'V2X'   0.;
-@MaterialProperty<constant> 'V2Y'   1.;
-@MaterialProperty<constant> 'V2Z'   0.;
 @MaterialProperty<constant> 'DeltaG_0' 0.84;
 @MaterialProperty<constant> 'H' 100000000000;
 @MaterialProperty<constant> 'K_f' 75;

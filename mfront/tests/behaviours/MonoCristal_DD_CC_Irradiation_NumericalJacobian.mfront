@@ -50,6 +50,9 @@
 @LocalVariable real Dg[12];
 @LocalVariable real Lc ;
 
+@Import "MonoCristal_DD_CC_InteractionMatrix.mfront";
+@Import "MonoCristal_DD_CC_SlidingSystems.mfront";
+
 @TangentOperator{
   if((smt==ELASTIC)||(smt==SECANTOPERATOR)){
     Dt = D;
@@ -62,14 +65,11 @@
   }
 }
 
-@Import "MonoCristal_DD_CC_InteractionMatrix.mfront";
-@Import "MonoCristal_DD_CC_SlidingSystems.mfront";
-
 @ComputeStress{
   sig = D*eel;
 }
 
-@InitLocalVars{
+@InitLocalVariables<Append>{
   Lc = 500.*b* (T/300.)*(T/300.);
 } 
 

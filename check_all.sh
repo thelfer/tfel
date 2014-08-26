@@ -54,9 +54,8 @@ $src/configure --enable-python --enable-python-bindings --enable-fortran --enabl
 $make_exec
 $make_exec check
 $make_exec distcheck
-$make_exec doc
+$make_exec doc-pdf
 $make_exec install
-$make_exec doc-install
 popd # from build-autotools
 mkdir build-autotools-debug
 pushd build-autotools-debug
@@ -64,11 +63,11 @@ $src/configure --enable-python --enable-python-bindings --enable-fortran --enabl
 $make_exec
 $make_exec check
 $make_exec distcheck
-$make_exec doc
+$make_exec doc-pdf
 $make_exec install
-$make_exec doc-install
 popd # from build-autotools-debug
 popd # from autotools
+
 mkdir cmake
 pushd cmake
 tar -xvjf $build/build-check/autotools/build-autotools/tfel-$pkg_name.tar.bz2
@@ -88,7 +87,7 @@ else
     $make_exec check 
 fi
 $make_exec install
-$make_exec doc-install
+$make_exec doc-pdf-install
 $make_exec tests-install
 popd #from build-cmake
 pushd build-cmake-release
@@ -101,7 +100,7 @@ else
     $make_exec check 
 fi
 $make_exec install
-$make_exec doc-install
+$make_exec doc-pdf-install
 $make_exec tests-install
 popd #from build-cmake-release
 pushd build-cmake-debug
@@ -114,8 +113,52 @@ else
     $make_exec check 
 fi
 $make_exec install
-$make_exec doc-install
+$make_exec doc-pdf-install
 $make_exec tests-install
 popd #from build-cmake-debug
+
+if [ "x$(which i686-w64-mingw32-gcc)" != "x" ];
+then
+  mkdir build-cmake-i686-w64-mingw32
+  pushd build-cmake-i686-w64-mingw32
+  cmake ../tfel-$pkg_name/ -Dlocal-castem-header=ON -Denable-fortran=ON -Denable-python=OFF -Denable-python-bindings=OFF -Denable-aster=ON -Denable-cyrano=ON -DCMAKE_INSTALL_PREFIX=$build/build-check/cmake/install-cmake-i686-w64-mingw32 -DCMAKE_TOOLCHAIN_FILE=../tfel-$pkg_name/cmake/ToolChain-i686-w64-mingw32.cmake
+  $make_exec
+  if [ "x$(which wine)" != "x" ];
+  then
+      if [ test "x$pbuild" == "xyes" ];
+      then
+	  make check ARGS="-j $nbproc"
+      else
+	  $make_exec check 
+      fi
+  fi
+  $make_exec install
+  $make_exec doc-pdf-install
+  $make_exec tests-install
+  popd #from build-cmake-i686-w64-mingw32
+fi
+
+if [ "x$(which i586-mingw32msvc-gcc)" != "x" ];
+then
+  mkdir build-cmake-i586-mingw32msvc
+  pushd build-cmake-i586-mingw32msvc
+  cmake ../tfel-$pkg_name/ -Dlocal-castem-header=ON -Denable-fortran=ON -Denable-python=OFF -Denable-python-bindings=OFF -Denable-aster=ON -Denable-cyrano=ON -DCMAKE_INSTALL_PREFIX=$build/build-check/cmake/install-cmake-i586-mingw32msvc -DCMAKE_TOOLCHAIN_FILE=../tfel-$pkg_name/cmake/ToolChain-i586-mingw32msvc.cmake
+  $make_exec
+  if [ "x$(which wine)" != "x" ];
+  then
+      if [ test "x$pbuild" == "xyes" ];
+      then
+	  make check ARGS="-j $nbproc"
+      else
+	  $make_exec check 
+      fi
+  fi
+  $make_exec install
+  $make_exec doc-pdf-install
+  $make_exec tests-install
+  popd #from build-cmake-i586-mingw32msvc
+fi
+
 popd #from cmake
 popd #from build-check
+

@@ -49,7 +49,7 @@ namespace tfel
       typedef tfel::math::qt<tfel::math::StressRate,T>     stressrate;
       typedef tfel::math::qt<tfel::math::Temperature,T>    temperature;
       typedef tfel::math::qt<tfel::math::InvTemperature,T> thermalexpansion;
-      typedef tfel::math::qt<tfel::math::Density,T>        density;
+      typedef tfel::math::qt<tfel::math::Density,T>        massdensity;
       typedef tfel::math::qt<tfel::math::EnergyDensity,T>  energy_density;
       typedef tfel::math::tvector<N,real>                  TVector;
       typedef tfel::math::stensor<N,real>                  Stensor;
@@ -95,7 +95,7 @@ namespace tfel
       typedef T stressrate;
       typedef T temperature;
       typedef T thermalexpansion;
-      typedef T density;
+      typedef T massdensity;
       typedef T energy_density;
       typedef tfel::math::tvector<N,T>  TVector;
       typedef tfel::math::stensor<N,T>  Stensor;

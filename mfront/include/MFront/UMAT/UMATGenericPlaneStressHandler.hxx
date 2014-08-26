@@ -210,7 +210,7 @@ namespace umat
       const ModellingHypothesis::Hypothesis H = ModellingHypothesis::GENERALISEDPLANESTRAIN;
       typedef Behaviour<H,UMATReal,false> BV;
       typedef tfel::material::MechanicalBehaviourTraits<BV> Traits;
-      const UMATInt nNSTATV = Traits::internal_variables_nb;
+      const UMATInt nNSTATV =  Traits::internal_variables_nb == 0 ? 1 : Traits::internal_variables_nb;
       const unsigned short NSTATV_  = Traits::internal_variables_nb+1u;
 	
       copy<4>::exe(STRESS,s);

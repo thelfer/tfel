@@ -10,10 +10,11 @@
 #include"TFEL/Material/Lame.hxx"
 }
 
-@MaterialProperty real young;  /* mandatory for castem */
-@MaterialProperty real nu;     /* mandatory for castem */
-@MaterialProperty real rho;    /* mandatory for castem */
-@MaterialProperty real alpha;  /* mandatory for castem */
+@MaterialProperty stress young;
+young.setGlossaryName("YoungModulus");
+@MaterialProperty real nu;
+nu.setGlossaryName("PoissonRatio");
+
 @MaterialProperty real E[100]; /* Norton exponant      */
 
 @LocalVariable real lambda; /* first  Lame coefficient  */

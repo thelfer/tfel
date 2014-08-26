@@ -20,9 +20,12 @@
   static const unsigned short Nss = SlidingSystems::Nss;
 }
 
+
+@Import "MonoCristalNewtonRaphson.mfront";
+
 //! interaction matrix
 @LocalVariable tfel::math::tmatrix<12,12,real> mh;
-@InitLocalVariables{
+@InitLocalVariables<Append>{
   const real h1 = 1.  ;
   const real h2 = 1.  ;
   const real h3 = 0.6 ;
@@ -32,5 +35,3 @@
   mh = InteractionMatrix::getInteractionMatrix(h1,h2,h3,
 					       h4,h5,h6);
 }
-
-@Import "MonoCristalNewtonRaphson.mfront";

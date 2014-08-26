@@ -12,8 +12,6 @@
 @Behaviour<umat> '@MFrontCastemBehavioursBuildPath@' 'umatimplicitsimomieheelastoplasticity';
 @MaterialProperty<constant> 'YoungModulus'     200.e9;
 @MaterialProperty<constant> 'PoissonRatio'       0.3;
-@MaterialProperty<constant> 'MassDensity'        0.;
-@MaterialProperty<constant> 'ThermalExpansion'   0.;
 @MaterialProperty<constant> 's_y' 200e6;
 @MaterialProperty<constant> 'ET'  20e9;
 

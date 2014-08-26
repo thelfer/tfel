@@ -11,7 +11,6 @@
 @Behaviour<umat> '@MFrontCastemBehavioursBuildPath@' 'umatddif2';
 @MaterialProperty<constant> 'YoungModulus'     150.e9;
 @MaterialProperty<constant> 'PoissonRatio'       0.3;
-@MaterialProperty<constant> 'MassDensity'        0.;
 @MaterialProperty<constant> 'ThermalExpansion'   0.;
 @MaterialProperty<constant> 'FractureStress' 150e6; /* rupture stress */  
 @MaterialProperty<constant> 'NortonCoefficient'  0.;

@@ -35,17 +35,22 @@ namespace mfront{
     }; // end of ErrorEvaluation
 
     std::string
-    computeStressVariableModifier1(const std::string&,
+    computeStressVariableModifier1(const Hypothesis,
+				   const std::string&,
 				   const bool);
 
     std::string
-    computeStressVariableModifier2(const std::string&,
+    computeStressVariableModifier2(const Hypothesis,
+				   const std::string&,
 				   const bool);
 
     virtual void
-    treatUnknownVariableMethod(const std::string&);
+    treatUnknownVariableMethod(const Hypothesis,
+			       const std::string&);
 
     virtual void treatStateVariables(void);
+
+    virtual void treatExternalStateVariables(void);
 
     virtual void treatEpsilon(void);
 
@@ -56,7 +61,7 @@ namespace mfront{
     virtual void treatComputeStress(void);
 
     void
-    treatUpdateAuxiliaryStateVars(void);
+    treatUpdateAuxiliaryStateVariables(void);
 
     virtual void treatTangentOperator(void);
 
@@ -68,54 +73,42 @@ namespace mfront{
 
     virtual void writeBehaviourParserSpecificTypedefs(void);
 
-    virtual void writeBehaviourParserSpecificMembers(void);
+    virtual void writeBehaviourParserSpecificMembers(const Hypothesis);
 
-    virtual void writeBehaviourEulerIntegrator(void);
+    virtual void writeBehaviourEulerIntegrator(const Hypothesis);
 
-    virtual void writeBehaviourRK2Integrator(void);
+    virtual void writeBehaviourRK2Integrator(const Hypothesis);
 
-    virtual void writeBehaviourRK4Integrator(void);
+    virtual void writeBehaviourRK4Integrator(const Hypothesis);
 
-    virtual void writeBehaviourRK42Integrator(void);
+    virtual void writeBehaviourRK42Integrator(const Hypothesis);
 
-    virtual void writeBehaviourRK54Integrator(void);
+    virtual void writeBehaviourRK54Integrator(const Hypothesis);
 
-    virtual void writeBehaviourRKCastemIntegrator(void);
+    virtual void writeBehaviourRKCastemIntegrator(const Hypothesis);
 
-    virtual void writeBehaviourUpdateStateVars(void);
-
-    virtual void
-    writeBehaviourUpdateAuxiliaryStateVars(void);
+    virtual void writeBehaviourUpdateStateVariables(const Hypothesis);
 
     virtual void
-    writeBehaviourStaticVars(void);
+    writeBehaviourUpdateAuxiliaryStateVariables(const Hypothesis);
 
     virtual void
-    writeBehaviourIntegrator(void);
+    writeBehaviourIntegrator(const Hypothesis);
 
     virtual void
-    writeBehaviourComputeTangentOperator(void);
+    writeBehaviourComputeTangentOperator(const Hypothesis);
 
     virtual void
     endsInputFileProcessing(void);
+
+    virtual void
+    setDefaultAlgorithm(void);
 
     friend struct MFrontBehaviourParserBase<MFrontRungeKuttaParser>;
 
     // error normalisation factors
     std::map<std::string,std::string> enf;
 
-    std::string algorithm;
-    std::string computeFinalStress;
-    std::string computeStress;
-    std::string derivative;
-    std::string tangentOperator;
-    //! how the integration error is evaluated for the RK54 and RK42
-    //! integrators
-    ErrorEvaluation eev;
-    //! number of evaluations used by the algorithm
-    unsigned short nbrOfEvaluation;
-    
-    bool isConsistantTangentOperatorSymmetricDefined;
   };
 
 } // end of namespace mfront  

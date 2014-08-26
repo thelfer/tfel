@@ -10,8 +10,7 @@
 @Behaviour<aster> '@MFrontAsterBehavioursBuildPath@' 'astermazars';
 @MaterialProperty<constant> 'YoungModulus'     3.2e10; 
 @MaterialProperty<constant> 'PoissonRatio'     0.2;    
-@MaterialProperty<constant> 'ThermalExpansion' 0.;    
-@MaterialProperty<constant> 'MassDensity'      0.;    
+
 @MaterialProperty<constant> 'Ac' 1.15;
 @MaterialProperty<constant> 'At' 0.8;
 @MaterialProperty<constant> 'Bc' 1391.3;

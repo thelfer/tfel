@@ -14,10 +14,7 @@
 young.setGlossaryName("YoungModulus");
 @MaterialProperty real nu;
 nu.setGlossaryName("PoissonRatio");
-@MaterialProperty real rho;
-rho.setGlossaryName("MassDensity");
-@MaterialProperty thermalexpansion alpha; 
-alpha.setGlossaryName("ThermalExpansion");
+
 @MaterialProperty real K;
 @MaterialProperty real epsi0;
 @MaterialProperty real sigma0;
@@ -48,7 +45,7 @@ alpha.setGlossaryName("ThermalExpansion");
 @LocalVariable real    trsigplus;
 
 /* Initialize Lame coefficients */
-@InitLocalVars{
+@InitLocalVariables{
   using namespace tfel::material::lame;
   lambda = computeLambda(young,nu);
   mu = computeMu(young,nu);

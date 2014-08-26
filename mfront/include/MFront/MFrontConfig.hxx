@@ -11,6 +11,20 @@
 #include"TFEL/Config/TFELConfig.hxx"
 
 #if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
+#  if defined MFrontLogStream_EXPORTS
+#    define MFRONTLOGSTREAM_VISIBILITY_EXPORT TFEL_VISIBILITY_EXPORT
+#  else
+#  if not defined TFEL_STATIC_BUILD
+#    define MFRONTLOGSTREAM_VISIBILITY_EXPORT TFEL_VISIBILITY_IMPORT
+#  else 
+#    define MFRONTLOGSTREAM_VISIBILITY_EXPORT 
+#  endif
+#  endif
+#else
+#  define MFRONTLOGSTREAM_VISIBILITY_EXPORT TFEL_VISIBILITY_EXPORT
+#endif
+
+#if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
 #  if defined MTestFileGenerator_EXPORTS
 #    define MTESTFILEGENERATOR_VISIBILITY_EXPORT TFEL_VISIBILITY_EXPORT
 #  else

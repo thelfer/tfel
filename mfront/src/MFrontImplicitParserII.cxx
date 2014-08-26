@@ -12,9 +12,9 @@ namespace mfront{
   MFrontImplicitParserII::MFrontImplicitParserII()
   {
     // input variables
-    this->registerVariable("eto");
-    this->registerVariable("deto");
-    this->registerVariable("sig");
+    this->registerVariable("eto",false);
+    this->registerVariable("deto",false);
+    this->registerVariable("sig",false);
     this->mb.declareAsASmallStrainStandardBehaviour();
   } // end of MFrontImplicitParserII::MFrontImplicitParserII
 

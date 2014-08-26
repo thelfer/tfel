@@ -15,10 +15,6 @@
 young.setGlossaryName("YoungModulus");
 @MaterialProperty real nu;
 nu.setGlossaryName("PoissonRatio");
-@MaterialProperty real rho;
-rho.setGlossaryName("MassDensity");
-@MaterialProperty real alpha;
-alpha.setGlossaryName("ThermalExpansion");
 
 // ratio between the stress limit in traction and compression
 @MaterialProperty stress tau;
@@ -40,7 +36,7 @@ p.setGlossaryName("EquivalentPlasticStrain");
 }
 
 /* Initialize Lame coefficients */
-@InitLocalVars{
+@InitLocalVariables{
   using namespace tfel::material::lame;
   lambda = computeLambda(young,nu);
   mu     = computeMu(young,nu);
@@ -79,7 +75,7 @@ p.setGlossaryName("EquivalentPlasticStrain");
 @TangentOperator{
   using namespace tfel::material::lame;
   if((smt==ELASTIC)||(smt==SECANTOPERATOR)){
-    computeElasticStiffness<N,Type>::exe(Dt,lambda,mu);
+    computeAlteredElasticStiffness<hypothesis,Type>::exe(Dt,lambda,mu);
   } else if (smt==CONSISTANTTANGENTOPERATOR){
     StiffnessTensor De;
     Stensor4 Je;

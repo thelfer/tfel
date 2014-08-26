@@ -16,12 +16,15 @@
 namespace mfront
 {
 
-  MTestUmatBehaviourBase::MTestUmatBehaviourBase(const std::string& l,
+  MTestUmatBehaviourBase::MTestUmatBehaviourBase(const tfel::material::ModellingHypothesis::Hypothesis h,
+						 const std::string& l,
 						 const std::string& b)
-    : library(l),
+    : hypothesis(tfel::material::ModellingHypothesis::toString(h)),
+      library(l),
       behaviour(b)
   {
     using namespace std;
+    using namespace tfel::material;
     using namespace tfel::system;
     typedef ExternalLibraryManager ELM;
     ELM& elm = ELM::getExternalLibraryManager();
@@ -33,9 +36,9 @@ namespace mfront
 		 "(neither isotropic nor orthotropic)");
       throw(runtime_error(msg));
     }
-    this->ivnames = elm.getUMATInternalStateVariablesNames(l,b);
-    this->ivtypes = elm.getUMATInternalStateVariablesTypes(l,b);
-    this->evnames = elm.getUMATExternalStateVariablesNames(l,b);
+    this->ivnames = elm.getUMATInternalStateVariablesNames(l,b,this->hypothesis);
+    this->ivtypes = elm.getUMATInternalStateVariablesTypes(l,b,this->hypothesis);
+    this->evnames = elm.getUMATExternalStateVariablesNames(l,b,this->hypothesis);
     this->evnames.insert(this->evnames.begin(),"Temperature");
   }
 
@@ -66,7 +69,8 @@ namespace mfront
     typedef tfel::material::ModellingHypothesis MH;
     if(this->type==1){
       // small strain behaviours
-      if (h==MH::AXISYMMETRICALGENERALISEDPLANESTRAIN){
+      if((h==MH::AXISYMMETRICALGENERALISEDPLANESTRAIN)||
+	 (h==MH::AXISYMMETRICALGENERALISEDPLANESTRESS)){
 	return 3u;
       } else if((h==MH::PLANESTRAIN)||(h==MH::PLANESTRESS)||
 		(h==MH::GENERALISEDPLANESTRAIN)||(h==MH::AXISYMMETRICAL)){
@@ -80,7 +84,8 @@ namespace mfront
       }
     } else if(this->type==2){
       // finite strain behaviours
-      if (h==MH::AXISYMMETRICALGENERALISEDPLANESTRAIN){
+      if((h==MH::AXISYMMETRICALGENERALISEDPLANESTRAIN)||
+	 (h==MH::AXISYMMETRICALGENERALISEDPLANESTRESS)){
 	return 3u;
       } else if((h==MH::PLANESTRAIN)||(h==MH::PLANESTRESS)||
 		(h==MH::GENERALISEDPLANESTRAIN)||(h==MH::AXISYMMETRICAL)){
@@ -119,7 +124,8 @@ namespace mfront
     typedef tfel::material::ModellingHypothesis MH;
     if(this->type==1){
       // small strain behaviours
-      if (h==MH::AXISYMMETRICALGENERALISEDPLANESTRAIN){
+      if ((h==MH::AXISYMMETRICALGENERALISEDPLANESTRAIN)||
+	  (h==MH::AXISYMMETRICALGENERALISEDPLANESTRESS)){
 	return 3u;
       } else if((h==MH::PLANESTRAIN)||(h==MH::PLANESTRESS)||
 		(h==MH::GENERALISEDPLANESTRAIN)||(h==MH::AXISYMMETRICAL)){
@@ -133,7 +139,8 @@ namespace mfront
       }
     } else if(this->type==2){
       // finite strain behaviours
-      if (h==MH::AXISYMMETRICALGENERALISEDPLANESTRAIN){
+      if ((h==MH::AXISYMMETRICALGENERALISEDPLANESTRAIN)||
+	  (h==MH::AXISYMMETRICALGENERALISEDPLANESTRESS)){
 	return 3u;
       } else if((h==MH::PLANESTRAIN)||(h==MH::PLANESTRESS)||
 		(h==MH::GENERALISEDPLANESTRAIN)||(h==MH::AXISYMMETRICAL)){
@@ -185,7 +192,8 @@ namespace mfront
 	c.push_back("YZ");
       }
     } else if ((h==MH::AXISYMMETRICAL)||
-	       (h==MH::AXISYMMETRICALGENERALISEDPLANESTRAIN)){
+	       (h==MH::AXISYMMETRICALGENERALISEDPLANESTRAIN)||
+	       (h==MH::AXISYMMETRICALGENERALISEDPLANESTRESS)){
       c.push_back("RR");
       c.push_back("ZZ");
       c.push_back("TT");
@@ -201,7 +209,7 @@ namespace mfront
 
   void
   MTestUmatBehaviourBase::getTensorComponentsSuffixes(std::vector<std::string>& c,
-						       const tfel::material::ModellingHypothesis::Hypothesis h) const
+						      const tfel::material::ModellingHypothesis::Hypothesis h) const
   {
     using namespace std;
     typedef tfel::material::ModellingHypothesis MH;
@@ -222,7 +230,8 @@ namespace mfront
 	c.push_back("ZY");
       }
     } else if ((h==MH::AXISYMMETRICAL)||
-	       (h==MH::AXISYMMETRICALGENERALISEDPLANESTRAIN)){
+	       (h==MH::AXISYMMETRICALGENERALISEDPLANESTRAIN)||
+	       (h==MH::AXISYMMETRICALGENERALISEDPLANESTRESS)){
       c.push_back("RR");
       c.push_back("ZZ");
       c.push_back("TT");
@@ -404,13 +413,28 @@ namespace mfront
       if(*p==0){
 	s+=1;
       } else if(*p==1){
-	if(h==MH::AXISYMMETRICALGENERALISEDPLANESTRAIN){
+	if((h==MH::AXISYMMETRICALGENERALISEDPLANESTRAIN)||
+	   (h==MH::AXISYMMETRICALGENERALISEDPLANESTRESS)){
 	  s+=3;
 	} else if((h==MH::AXISYMMETRICAL)||(h==MH::PLANESTRESS)||
 		  (h==MH::PLANESTRAIN)||(h==MH::GENERALISEDPLANESTRAIN)){
 	  s+=4;
 	} else if(h==MH::TRIDIMENSIONAL){
 	  s+=6;
+	} else {
+	  string msg("MTestUmatBehaviourBase::getInternalStateVariablesSize : "
+		     "unsupported modelling hypothesis");
+	  throw(runtime_error(msg));
+	}
+      } else if(*p==3){
+	if((h==MH::AXISYMMETRICALGENERALISEDPLANESTRAIN)||
+	   (h==MH::AXISYMMETRICALGENERALISEDPLANESTRESS)){
+	  s+=3;
+	} else if((h==MH::AXISYMMETRICAL)||(h==MH::PLANESTRESS)||
+		  (h==MH::PLANESTRAIN)||(h==MH::GENERALISEDPLANESTRAIN)){
+	  s+=5;
+	} else if(h==MH::TRIDIMENSIONAL){
+	  s+=9;
 	} else {
 	  string msg("MTestUmatBehaviourBase::getInternalStateVariablesSize : "
 		     "unsupported modelling hypothesis");
@@ -444,10 +468,12 @@ namespace mfront
       if(*p==0){
 	desc.push_back(*pn);
       } else if(*p==1){
+	// symmetric tensor
 	desc.push_back("first  component of internal variable '"+*pn+"'");
 	desc.push_back("second component of internal variable '"+*pn+"'");
 	desc.push_back("third  component of internal variable '"+*pn+"'");
-	if(h!=MH::AXISYMMETRICALGENERALISEDPLANESTRAIN){
+	if(!((h==MH::AXISYMMETRICALGENERALISEDPLANESTRAIN)||
+	     (h==MH::AXISYMMETRICALGENERALISEDPLANESTRESS))){
 	  if((h==MH::AXISYMMETRICAL)||(h==MH::PLANESTRESS)||
 	     (h==MH::PLANESTRAIN)||(h==MH::GENERALISEDPLANESTRAIN)){
 	    desc.push_back("fourth  component of internal variable '"+*pn+"'");
@@ -455,6 +481,30 @@ namespace mfront
 	    desc.push_back("fourth  component of internal variable '"+*pn+"'");
 	    desc.push_back("fifth   component of internal variable '"+*pn+"'");
 	    desc.push_back("sixth   component of internal variable '"+*pn+"'");
+	  } else {
+	    string msg("MTestUmatBehaviourBase::getInternalStateVariablesDescriptions : "
+		       "invalid modelling hypothesis");
+	    throw(runtime_error(msg));
+	  }
+	}
+      } else if(*p==3){
+	// unsymmetric tensor
+	desc.push_back("first  component of internal variable '"+*pn+"'");
+	desc.push_back("second component of internal variable '"+*pn+"'");
+	desc.push_back("third  component of internal variable '"+*pn+"'");
+	if(!((h==MH::AXISYMMETRICALGENERALISEDPLANESTRAIN)||
+	     (h==MH::AXISYMMETRICALGENERALISEDPLANESTRESS))){
+	  if((h==MH::AXISYMMETRICAL)||(h==MH::PLANESTRESS)||
+	     (h==MH::PLANESTRAIN)||(h==MH::GENERALISEDPLANESTRAIN)){
+	    desc.push_back("fourth  component of internal variable '"+*pn+"'");
+	    desc.push_back("fifth   component of internal variable '"+*pn+"'");
+	  } else if(h==MH::TRIDIMENSIONAL){
+	    desc.push_back("fourth  component of internal variable '"+*pn+"'");
+	    desc.push_back("fifth   component of internal variable '"+*pn+"'");
+	    desc.push_back("sixth   component of internal variable '"+*pn+"'");
+	    desc.push_back("seventh component of internal variable '"+*pn+"'");
+	    desc.push_back("eighth  component of internal variable '"+*pn+"'");
+	    desc.push_back("ninth   component of internal variable '"+*pn+"'");
 	  } else {
 	    string msg("MTestUmatBehaviourBase::getInternalStateVariablesDescriptions : "
 		       "invalid modelling hypothesis");
@@ -492,6 +542,8 @@ namespace mfront
       return 0u;
     } else if(t==1){
       return 1u;
+    } else if(t==3){
+      return 3u;
     } else {
       string msg("MTestUmatBehaviourBase::getInternalStateVariableType : ");
       msg += "unsupported internal variable type";
@@ -527,13 +579,28 @@ namespace mfront
       if(t==0){
 	s += 1;
       } else if(t==1){
-	if(h==MH::AXISYMMETRICALGENERALISEDPLANESTRAIN){
+	if((h==MH::AXISYMMETRICALGENERALISEDPLANESTRAIN)||
+	   (h==MH::AXISYMMETRICALGENERALISEDPLANESTRESS)){
 	  s+=3;
 	} else if((h==MH::AXISYMMETRICAL)||(h==MH::PLANESTRESS)||
 		  (h==MH::PLANESTRAIN)||(h==MH::GENERALISEDPLANESTRAIN)){
 	  s+=4;
 	} else if(h==MH::TRIDIMENSIONAL){
 	  s+=6;
+	} else {
+	  string msg("MTestUmatBehaviourBase::getInternalStateVariablePosition : "
+		     "invalid dimension");
+	  throw(runtime_error(msg));
+	}
+      } else if(t==3){
+	if((h==MH::AXISYMMETRICALGENERALISEDPLANESTRAIN)||
+	   (h==MH::AXISYMMETRICALGENERALISEDPLANESTRESS)){
+	  s+=3;
+	} else if((h==MH::AXISYMMETRICAL)||(h==MH::PLANESTRESS)||
+		  (h==MH::PLANESTRAIN)||(h==MH::GENERALISEDPLANESTRAIN)){
+	  s+=5;
+	} else if(h==MH::TRIDIMENSIONAL){
+	  s+=9;
 	} else {
 	  string msg("MTestUmatBehaviourBase::getInternalStateVariablePosition : "
 		     "invalid dimension");
@@ -556,7 +623,7 @@ namespace mfront
     using namespace tfel::system;
     typedef ExternalLibraryManager ELM;
     ELM& elm = ELM::getExternalLibraryManager();
-    elm.setParameter(this->library,this->behaviour,n,v);
+    elm.setParameter(this->library,this->behaviour,this->hypothesis,n,v);
   } // end of MTestUmatBehaviourBase::setParameter
 
   void
@@ -566,7 +633,7 @@ namespace mfront
     using namespace tfel::system;
     typedef ExternalLibraryManager ELM;
     ELM& elm = ELM::getExternalLibraryManager();
-    elm.setParameter(this->library,this->behaviour,n,v);
+    elm.setParameter(this->library,this->behaviour,this->hypothesis,n,v);
   } // end of MTestUmatBehaviourBase::setIntegerParameter
 
   void
@@ -576,9 +643,13 @@ namespace mfront
     using namespace tfel::system;
     typedef ExternalLibraryManager ELM;
     ELM& elm = ELM::getExternalLibraryManager();
-    elm.setParameter(this->library,this->behaviour,n,v);
+    elm.setParameter(this->library,this->behaviour,this->hypothesis,n,v);
   } // end of MTestUmatBehaviourBase::setUnsignedIntegerParameter
 
+  void
+  MTestUmatBehaviourBase::setOptionalMaterialPropertiesDefaultValues(MTestEvolutionManager&,
+								     const MTestEvolutionManager&) const
+  {} // end of MTestUmatBehaviourBase::setOptionalMaterialPropertiesDefaultValues
 
   MTestUmatBehaviourBase::~MTestUmatBehaviourBase()
   {}

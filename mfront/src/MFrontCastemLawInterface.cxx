@@ -25,9 +25,6 @@ namespace mfront
   }
 
   MFrontCastemLawInterface::MFrontCastemLawInterface()
-    : verboseMode(false),
-      debugMode(false),
-      warningMode(false)
   {}
 
   void
@@ -41,24 +38,6 @@ namespace mfront
     }
   } // end of MFrontCastemLawInterface::reset(void)
   
-  void 
-  MFrontCastemLawInterface::setVerboseMode(void)
-  {
-    this->verboseMode = true;
-  }
-
-  void 
-  MFrontCastemLawInterface::setWarningMode(void)
-  {
-    this->warningMode = true;
-  }
-
-  void 
-  MFrontCastemLawInterface::setDebugMode(void)
-  {
-    this->debugMode = true;
-  }
-
   std::pair<bool,tfel::utilities::CxxTokenizer::TokensContainer::const_iterator>
   MFrontCastemLawInterface::treatKeyword(const std::string&,
 					 tfel::utilities::CxxTokenizer::TokensContainer::const_iterator current,
@@ -411,7 +390,7 @@ namespace mfront
 		      this->srcFile,materialLaws);
     // static variables
     writeStaticVariables("MFrontCastemLawInterface::writeOutputFile",
-			 this->srcFile,staticVars,file,debugMode);
+			 this->srcFile,staticVars,file);
     // parameters
     if(!params.empty()){
       for(p=params.begin();p!=params.end();++p){

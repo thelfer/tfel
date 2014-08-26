@@ -5,9 +5,16 @@
  * \brief  14 oct. 2013
  */
 
+@Description{
+  "Test the generic plane stress"
+  "algorithm of the umat interface."
+  "This is much less efficient than"
+  "directly supporting plane stress"
+  "within the behaviour."
+ };
 
 @ModellingHypothesis 'PlaneStress';
-@Behaviour<umat> '@MFrontCastemBehavioursBuildPath@' 'umatimplicitnortonplanestress';
+@Behaviour<umat> '@MFrontCastemBehavioursBuildPath@' 'umatimplicitnorton2';
 
 @MaximumNumberOfSubSteps   1;
 @UseCastemAccelerationAlgorithm true;
@@ -15,8 +22,6 @@
 
 @MaterialProperty<constant> 'YoungModulus'     150.e9;
 @MaterialProperty<constant> 'PoissonRatio'       0.3;
-@MaterialProperty<constant> 'MassDensity'        0.;
-@MaterialProperty<constant> 'ThermalExpansion'   0.;
 
 @Real 'srr' 20.e6;
 @ImposedStress 'SXX' 'srr';
@@ -51,7 +56,8 @@
 @Test<function> 'ElasticStrainYY' 'EELZZ0'                  1.e-12;
 @Test<function> 'ElasticStrainZZ' 'EELZZ0'                  1.e-12;
 @Test<function> 'ElasticStrainXY' '0.'                      1.e-12;
-@Test<function> 'EquivalentViscoplasticStrain' 'A*SXX**E*t' 3.e-12;
+@Test<function> 'EquivalentViscoplasticStrain[0]' 'A*SXX**E*t/2' 1.e-10;
+@Test<function> 'EquivalentViscoplasticStrain[1]' 'A*SXX**E*t/2' 1.e-10;
 // check that the mechanical equilibrium is satisfied
 @Test<function> 'SZZ' '0.'      1.;
 @Test<function> 'SYY' '0.'      1.;

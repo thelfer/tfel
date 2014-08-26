@@ -68,32 +68,11 @@ namespace mfront
   }
 
   MFrontExcelLawInterface::MFrontExcelLawInterface()
-    : verboseMode(false),
-      debugMode(false),
-      warningMode(false)
   {}
 
   void
   MFrontExcelLawInterface::reset(void)
   {} // end of MFrontExcelLawInterface::reset(void)
-  
-  void 
-  MFrontExcelLawInterface::setVerboseMode(void)
-  {
-    this->verboseMode = true;
-  }
-
-  void 
-  MFrontExcelLawInterface::setWarningMode(void)
-  {
-    this->warningMode = true;
-  }
-
-  void 
-  MFrontExcelLawInterface::setDebugMode(void)
-  {
-    this->debugMode = true;
-  }
 
   std::pair<bool,tfel::utilities::CxxTokenizer::TokensContainer::const_iterator>
   MFrontExcelLawInterface::treatKeyword(const std::string&,

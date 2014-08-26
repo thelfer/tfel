@@ -5,7 +5,6 @@
  * \date   17 Jan 2007
  */
 
-#include<iostream>
 #include<iterator>
 #include<algorithm>
 
@@ -17,9 +16,67 @@
 #include"TFEL/System/System.hxx"
 
 #include"MFront/ParserUtilities.hxx"
+#include"MFront/MFrontFileDescription.hxx"
 #include"MFront/MFrontUMATInterface.hxx"
 
 namespace mfront{
+
+  static int
+  getUMATModellingHypothesisIndex(const tfel::material::ModellingHypothesis::Hypothesis h)
+  {
+    using namespace std;
+    using namespace tfel::material;
+    switch(h){
+    case ModellingHypothesis::TRIDIMENSIONAL:
+      return 2;
+    case ModellingHypothesis::AXISYMMETRICAL:
+      return 0;
+    case ModellingHypothesis::PLANESTRAIN:
+      return -1;
+    case ModellingHypothesis::PLANESTRESS:
+      return -2;
+    case ModellingHypothesis::GENERALISEDPLANESTRAIN:
+      return -3;
+    case ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN:
+      return 14;
+    default:
+      ostringstream msg;
+      msg << "mfront::getUMATModellingHypothesisIndex : "
+	  << "unsupported hypothesis";
+      if(h!=ModellingHypothesis::UNDEFINEDHYPOTHESIS){
+	msg << " ('" << ModellingHypothesis::toString(h) << "')";
+      }
+      throw(runtime_error(msg.str()));
+    }
+    return 0;
+  } // end of getUMATModellingHypothesisIndex
+
+  unsigned short
+  MFrontUMATInterface::getStensorSize(const tfel::material::ModellingHypothesis::Hypothesis h)
+  {
+    using namespace std;
+    using namespace tfel::material;
+    switch(h){
+    case ModellingHypothesis::TRIDIMENSIONAL:
+      return 6u;
+    case ModellingHypothesis::AXISYMMETRICAL:
+    case ModellingHypothesis::PLANESTRAIN:
+    case ModellingHypothesis::PLANESTRESS:
+    case ModellingHypothesis::GENERALISEDPLANESTRAIN:
+      return 4u;
+    case ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN:
+      return 3u;
+    default:
+      ostringstream msg;
+      msg << "MFrontUMATInterface::getStensorSize : "
+	  << "unsupported hypothesis";
+      if(h!=ModellingHypothesis::UNDEFINEDHYPOTHESIS){
+	msg << " ('" << ModellingHypothesis::toString(h) << "')";
+      }
+      throw(runtime_error(msg.str()));
+    }
+    return 0;
+  } // end of MFrontUMATInterface::getStensorSize
 
   std::string
   MFrontUMATInterface::getName(void)
@@ -28,19 +85,18 @@ namespace mfront{
   }
 
   std::string
-  MFrontUMATInterface::getLibraryName(const std::string& library,
-				      const std::string& material) const
+  MFrontUMATInterface::getLibraryName(const MechanicalBehaviourDescription& mb) const
   {
     using namespace std;
     string lib;
-    if(library.empty()){
-      if(!material.empty()){
-	lib = "libUmat"+material;
+    if(mb.getLibrary().empty()){
+      if(!mb.getMaterialName().empty()){
+	lib = "libUmat"+mb.getMaterialName();
       } else {
 	lib = "libUmatBehaviour";
       }
     } else {
-      lib = "libUmat"+library;
+      lib = "libUmat"+mb.getLibrary();
     }
     return lib;
   } // end of MFrontUMATInterface::getLibraryName
@@ -58,23 +114,21 @@ namespace mfront{
   } // end of MFrontUMATInterface::getLibraryName
 
   std::string
-  MFrontUMATInterface::getBehaviourName(const std::string& library,
-					const std::string& className) const
+  MFrontUMATInterface::getBehaviourName(const MechanicalBehaviourDescription& mb) const
   {
     using namespace std;
     string name;
-    if(!library.empty()){
-      name += library;
+    if(!mb.getLibrary().empty()){
+      name += mb.getLibrary();
     }
-    name += className;
+    name += mb.getClassName();
     return name;
   } // end of MFrontUMATInterface::getBehaviourName
 
   std::string
-  MFrontUMATInterface::getUmatFunctionName(const std::string& library,
-					   const std::string& className) const
+  MFrontUMATInterface::getUmatFunctionName(const MechanicalBehaviourDescription& mb) const
   {
-    return "umat"+makeLowerCase(this->getBehaviourName(library,className));
+    return "umat"+makeLowerCase(this->getBehaviourName(mb));
   } // end of MFrontUMATInterface::getUmatFunctionName
 
   MFrontUMATInterface::MFrontUMATInterface()
@@ -242,6 +296,18 @@ namespace mfront{
     return make_pair(false,current);
   } // end of treatKeyword
 
+  bool
+  MFrontUMATInterface::usesGenericPlaneStressAlgorithm(const MechanicalBehaviourDescription& mb)
+  {
+    if(mb.isModellingHypothesisSupported(ModellingHypothesis::PLANESTRESS)){
+      return false;
+    }
+    if(mb.isModellingHypothesisSupported(ModellingHypothesis::GENERALISEDPLANESTRAIN)){
+      return true;
+    }
+    return false;
+  }
+
   std::string
   MFrontUMATInterface::treatScalar(const std::string& s)
   {
@@ -253,188 +319,119 @@ namespace mfront{
   }
 
   std::string
-  MFrontUMATInterface::treatStensor(const std::string& s,const unsigned short d)
+  MFrontUMATInterface::treatStensor(const Hypothesis h,
+				    const std::string& s)
   {
     using namespace std;
     string res;
     string s2 = makeUpperCase(s.substr(0,2));
-    switch(d){
-    case 1 : 
-      res="'"+s2+"XX' "+"'"+s2+"YY' "+"'"+s2+"ZZ'";
+    switch(h){
+    case ModellingHypothesis::TRIDIMENSIONAL:
+      res="'"+s2+"XX' "+"'"+s2+"YY' "+"'"+s2+"ZZ' "+"'"+s2+"XY' "+"'"+s2+"XZ' "+"'"+s2+"YZ'";
       break;
-    case 2 :
+    case ModellingHypothesis::AXISYMMETRICAL:
+      res="'"+s2+"RR' "+"'"+s2+"ZZ' "+"'"+s2+"TT' "+"'"+s2+"RZ'";
+      break;
+    case ModellingHypothesis::PLANESTRAIN:
+    case ModellingHypothesis::PLANESTRESS:
+    case ModellingHypothesis::GENERALISEDPLANESTRAIN:
       res="'"+s2+"XX' "+"'"+s2+"YY' "+"'"+s2+"ZZ' "+"'"+s2+"XY'";
       break;
-    case 3 :
-      res="'"+s2+"XX' "+"'"+s2+"YY' "+"'"+s2+"ZZ' "+"'"+s2+"XY' "+"'"+s2+"XZ' "+"'"+s2+"YZ' ";
+    case ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN:
+      res="'"+s2+"RR' "+"'"+s2+"ZZ' "+"'"+s2+"TT'";
       break;
-    default :
-      string msg("MFrontUMATInterface::treatStensor : ");
-      msg += "internal error, dimension not supported";
-      throw(runtime_error(msg));
+    default:
+      ostringstream msg;
+      msg << "MFrontUMATInterface::treatStensor : "
+	  << "unsupported hypothesis";
+      if(h!=ModellingHypothesis::UNDEFINEDHYPOTHESIS){
+	msg << " ('" << ModellingHypothesis::toString(h) << "')";
+      }
+      throw(runtime_error(msg.str()));
     }
     return res;
   }
 
   std::string
-  MFrontUMATInterface::treatCoefScalar(const std::string& s)
-  {
-    using namespace std;
-    string res("'");
-    res += makeUpperCase(s.substr(0,4));
-    res += "' x"+ makeLowerCase(s.substr(0,4));
-    return res;
-  }
-
-  std::string
-  MFrontUMATInterface::treatCoefStensor(const std::string& s,const unsigned short d)
+  MFrontUMATInterface::treatTensor(const Hypothesis h,
+				   const std::string& s)
   {
     using namespace std;
     string res;
     string s2 = makeUpperCase(s.substr(0,2));
-    string s3 = makeLowerCase(s.substr(0,2));
-    switch(d){
-    case 1 : 
-      res="'"+s2+"XX' x"+s3+" "+"'"+s2+"YY' x"+s3+" "+"'"+s2+"ZZ' x"+s3;
+    switch(h){
+    case ModellingHypothesis::TRIDIMENSIONAL:
+      res="'"+s2+"XX' '"+s2+"YY' '"+s2+"ZZ' '"+
+	s2+"XY' '"+s2+"YX' '"+s2+"XZ' '"+s2+"ZX' '"+s2+"YZ' '"+s2+"ZY'";
       break;
-    case 2 :
-      res="'"+s2+"XX' x"+s3+" "+"'"+s2+"YY' x"+s3+" "+"'"+s2+"ZZ' x"+s3+" "+"'"+s2+"XY' x"+s3;
+    case ModellingHypothesis::AXISYMMETRICAL:
+      res="'"+s2+"RR' '"+s2+"ZZ' '"+s2+"TT' '"+s2+"RZ' '"+s2+"ZR'";
       break;
-    case 3 :
-      res  = "'"+s2+"XX' x"+s3+" "+"'"+s2+"YY' x"+s3+" "+"'"+s2+"ZZ' x"+s3+" ";
-      res += "'"+s2+"XY' x"+s3+" "+"'"+s2+"XZ' x"+s3+" "+"'"+s2+"YZ' x"+s3;
+    case ModellingHypothesis::PLANESTRAIN:
+    case ModellingHypothesis::PLANESTRESS:
+    case ModellingHypothesis::GENERALISEDPLANESTRAIN:
+      res="'"+s2+"XX' '"+s2+"YY' '"+s2+"ZZ' '"+s2+"XY' '"+s2+"YX'";
       break;
-    default :
-      string msg("MFrontUMATInterface::treatCoefStensor : ");
-      msg += "internal error, dimension not supported";
-      throw(runtime_error(msg));
+    case ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN:
+      res="'"+s2+"RR' '"+s2+"ZZ' '"+s2+"TT'";
+      break;
+    default:
+      ostringstream msg;
+      msg << "MFrontUMATInterface::treatStensor : "
+	  << "unsupported hypothesis";
+      if(h!=ModellingHypothesis::UNDEFINEDHYPOTHESIS){
+	msg << " ('" << ModellingHypothesis::toString(h) << "')";
+      }
+      throw(runtime_error(msg.str()));
     }
     return res;
   }
 
-  std::string
-  MFrontUMATInterface::treatStateVarScalar(const std::string& s)
+  std::set<tfel::material::ModellingHypothesis::Hypothesis>
+  MFrontUMATInterface::getModellingHypothesesToBeTreated(const MechanicalBehaviourDescription& mb) const
   {
     using namespace std;
-    string res("'");
-    res += makeUpperCase(s.substr(0,4));
-    res += "' 0.";
-    return res;
-  }
-
-  std::string
-  MFrontUMATInterface::treatStateVarStensor(const std::string& s,const unsigned short d)
-  {
-    using namespace std;
-    string res;
-    string s2 = makeUpperCase(s.substr(0,2));
-    switch(d){
-    case 1 : 
-      res="'"+s2+"XX' 0. "+"'"+s2+"YY' 0. "+"'"+s2+"ZZ' 0.";
-      break;
-    case 2 :
-      res="'"+s2+"XX' 0. "+"'"+s2+"YY' 0. "+"'"+s2+"ZZ' 0. "+"'"+s2+"XY' 0.";
-      break;
-    case 3 :
-      res  = "'"+s2+"XX' 0. "+"'"+s2+"YY' 0. "+"'"+s2+"ZZ' 0. "+"'"+s2+"XY' 0. ";
-      res += "'"+s2+"XZ' 0. "+"'"+s2+"YZ' 0.";
-      break;
-    default :
-      string msg("MFrontUMATInterface::treatStateVarStensor : ");
-      msg += "internal error, dimension not supported";
+    using tfel::material::ModellingHypothesis;
+    typedef ModellingHypothesis::Hypothesis Hypothesis;
+    const Hypothesis sh[6u] = {ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN,
+			       ModellingHypothesis::AXISYMMETRICAL,
+			       ModellingHypothesis::PLANESTRESS,
+			       ModellingHypothesis::PLANESTRAIN,
+			       ModellingHypothesis::GENERALISEDPLANESTRAIN,
+			       ModellingHypothesis::TRIDIMENSIONAL};
+    // treatment 
+    set<Hypothesis> h;
+    // modelling hypotheses handled by the behaviour
+    const set<Hypothesis>& bh = mb.getModellingHypotheses();
+    for(const Hypothesis *ph = sh;ph!=sh+6u;++ph){
+      if(bh.find(*ph)!=bh.end()){
+	h.insert(*ph);
+      }
+    }
+    if(h.empty()){
+      string msg("MFrontUMATInterface::getModellingHypothesesToBeTreated : "
+		 "no hypotheses selected. This means that the given beahviour "
+		 "can't be used neither in 'AxisymmetricalGeneralisedPlaneStrain' "
+		 "nor in 'AxisymmetricalGeneralisedPlaneStress', so it does not "
+		 "make sense to use the UMAT interface");
       throw(runtime_error(msg));
     }
-    return res;
-  }
-
-  bool
-  MFrontUMATInterface::doElasticPropertiesCheck(const MechanicalBehaviourDescription& mb,
-						const std::vector<std::string>& mps) const
-  {
-    using namespace std;
-    const VariableDescriptionContainer& coefsHolder = mb.getMaterialProperties();
-    bool found = false;
-    // specific treatment for isotropic behaviour
-    for(VariableDescriptionContainer::const_iterator p=coefsHolder.begin();
-	(p!=coefsHolder.end())&&(!found);++p){
-      found = (find(mps.begin(),mps.end(),p->name)!=mps.end());
-    }
-    if(found){
-      /*
-       * Check UMAT requirements
-       */
-      if(coefsHolder.size()<mps.size()){
-	string msg("MFrontUMATInterface::checkIfElasticPropertiesAreDeclared : "
-		   "the umat interface requires the '"+toString(mps.size())+
-		   "' material properties to be defined "
-		   "(currently only "+toString(coefsHolder.size())+" defined)\n");
-	throw(runtime_error(msg));
-      }
-      for(VariableDescriptionContainer::size_type i=0;i!=mps.size();++i){
-	if(coefsHolder[i].name!=mps[i]){
-	  string msg("MFrontUMATInterface::checkIfElasticPropertiesAreDeclared : "
-		     "the umat interface requires the '"+toString(i)+
-		     "' material property to be '"+mps[i]+"'");
-	  throw(runtime_error(msg));
-	}
-      }
-    }
-    return found;
-  } // end of MFrontUMATInterface::doElasticPropertiesCheck
-
-  bool
-  MFrontUMATInterface::checkIfElasticPropertiesAreDeclared(const MechanicalBehaviourDescription& mb) const
-  {
-    using namespace std;
-    if((mb.getBehaviourType()==MechanicalBehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR)||
-       (mb.getBehaviourType()==MechanicalBehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR)){
-      if(mb.getSymmetryType()==mfront::ISOTROPIC){
-	vector<string> mps;
-	mps.push_back("young");
-	mps.push_back("nu");
-	mps.push_back("rho");
-	mps.push_back("alpha");
-	return MFrontUMATInterface::doElasticPropertiesCheck(mb,mps);
-      }
-    } else if(mb.getBehaviourType()==MechanicalBehaviourDescription::COHESIVEZONEMODEL){
-      vector<string> mps;
-      mps.push_back("kn");
-      mps.push_back("ks");
-      mps.push_back("rho");
-      mps.push_back("alpha");
-      return MFrontUMATInterface::doElasticPropertiesCheck(mb,mps);
-    } else {
-      string msg("MFrontUMATInterface::checkIfElasticPropertiesAreDeclared : "
-		 "unsupported behaviour type");
-      throw(runtime_error(msg));
-    }
-    return false;
-  } // end of MFrontUMATInterface::checkIfElasticPropertiesAreDeclared
+    return h;
+  } // end of MFrontUMATInterfaceModellingHypothesesToBeTreated
 
   void
-  MFrontUMATInterface::endTreatement(const std::string& file,
-				     const std::string& library,
-				     const std::string& material,
-				     const std::string& className,
-				     const std::string& authorName,
-				     const std::string& date,
-				     const std::map<std::string,std::string>& glossaryNames,
-				     const std::map<std::string,std::string>& entryNames,
-				     const MechanicalBehaviourDescription& mb)
+  MFrontUMATInterface::endTreatement(const MechanicalBehaviourDescription& mb,
+				     const MFrontFileDescription& fd) const
   {
     using namespace std;
     using namespace tfel::system;
     using namespace tfel::utilities;
 
-    string name;
-    VariableDescriptionContainer::const_iterator p;    
-    vector<FiniteStrainStrategy>::const_iterator pfss;
+    // get the modelling hypotheses to be treated
+    const set<Hypothesis>& h = this->getModellingHypothesesToBeTreated(mb);
 
-    systemCall::mkdir("include/MFront");
-    systemCall::mkdir("include/MFront/UMAT");
-
-    if(mb.getSymmetryType()!=
-       mb.getElasticSymmetryType()){
+    // some consistency checks
+    if(mb.getSymmetryType()!=mb.getElasticSymmetryType()){
       string msg("MFrontUMATInterface::endTreatement : ");
       msg += "the type of the behaviour (isotropic or orthotropic) does not ";
       msg += "match the the type of its elastic behaviour.\n";
@@ -443,14 +440,27 @@ namespace mfront{
       msg += "- an orthotropic behaviour must have an orthotropic elastic behaviour";
       throw(runtime_error(msg));
     }
-
-    pair<SupportedTypes::TypeSize,
-	 SupportedTypes::TypeSize> mvs = mb.getMainVariablesSize();
-    
-    if(!library.empty()){
-      name += library;
+    if(this->useTimeSubStepping){
+      if(this->maximumSubStepping==0u){
+	string msg("MFrontUMATInterface::endTreatement : ");
+	msg += "use of time sub stepping requested but MaximumSubStepping is zero.\n";
+	msg += "Please use the @UMATMaximumSubStepping directive";
+	throw(runtime_error(msg));
+      }
     }
-    name += className;
+
+    systemCall::mkdir("include/MFront");
+    systemCall::mkdir("include/MFront/UMAT");
+
+
+    VariableDescriptionContainer::const_iterator p;    
+    vector<FiniteStrainStrategy>::const_iterator pfss;
+    
+    string name;
+    if(!mb.getLibrary().empty()){
+      name += mb.getLibrary();
+    }
+    name += mb.getClassName();
 
     string fileName("umat");
     fileName += name;
@@ -464,26 +474,15 @@ namespace mfront{
       throw(runtime_error(msg));
     }
   
-    if(this->useTimeSubStepping){
-      if(this->maximumSubStepping==0u){
-	string msg("MFrontUMATInterface::endTreatement : ");
-	msg += "use of time sub stepping requested but MaximumSubStepping is zero.\n";
-	msg += "Please use the @UMATMaximumSubStepping directive";
-	throw(runtime_error(msg));
-      }
-    }
-
     out << "/*!\n";
     out << "* \\file   "  << fileName << endl;
     out << "* \\brief  This file declares the umat interface for the " 
-	<< className << " behaviour law\n";
-    out << "* \\author "  << authorName << endl;
-    out << "* \\date   "  << date       << endl;
+	<< mb.getClassName() << " behaviour law\n";
+    out << "* \\author "  << fd.authorName << endl;
+    out << "* \\date   "  << fd.date       << endl;
     out << "*/\n\n";
 
-    const string header = this->getHeaderDefine(library,
-						material,
-						className);
+    const string header = this->getHeaderDefine(mb);
     out << "#ifndef " << header << "\n";
     out << "#define " << header << "\n\n";
     
@@ -500,7 +499,7 @@ namespace mfront{
     if (mb.getSymmetryType()==mfront::ORTHOTROPIC){
       out << "#include\"MFront/UMAT/UMATOrthotropicBehaviour.hxx\"\n";
     }
-    out << "#include\"TFEL/Material/" << className << ".hxx\"\n";
+    out << "#include\"TFEL/Material/" << mb.getClassName() << ".hxx\"\n";
     out << "#endif /* __cplusplus */\n\n";
 
     this->writeVisibilityDefines(out);
@@ -545,101 +544,14 @@ namespace mfront{
 
     out << "namespace umat{\n\n";
 
-    if(mb.useQt()){
-      out << "template<tfel::material::ModellingHypothesis::Hypothesis H,typename Type,bool use_qt>\n";
-    } else {
-      out << "template<tfel::material::ModellingHypothesis::Hypothesis H,typename Type>\n";
-    } 
-    out << "struct UMATTraits<tfel::material::" << className << "<H,Type,";
-    if(mb.useQt()){
-      out << "use_qt";
-    } else {
-      out << "false";
+    if(!mb.areAllMechanicalDataSpecialised(h)){
+      this->writeUMATBehaviourTraits(out,mb,ModellingHypothesis::UNDEFINEDHYPOTHESIS);
     }
-    out << "> >{\n";
-    if(mb.getBehaviourType()==MechanicalBehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR){
-      out << "static const UMATBehaviourType btype  = SMALLSTRAINSTANDARDBEHAVIOUR;\n";
-    } else if(mb.getBehaviourType()==MechanicalBehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR){
-      out << "static const UMATBehaviourType btype  = FINITESTRAINSTANDARDBEHAVIOUR;\n";
-    } else if(mb.getBehaviourType()==MechanicalBehaviourDescription::COHESIVEZONEMODEL){
-      out << "static const UMATBehaviourType btype  = COHESIVEZONEMODEL;\n";
-    } else {
-      string msg("MFrontUMATInterface::endTreatement : "
-		 "unsupported behaviour type");
-      throw(runtime_error(msg));
-    }
-    out << "// space dimension\n";
-    out << "static const unsigned short N           = tfel::material::ModellingHypothesisToSpaceDimension<H>::value;\n";
-    out << "// tiny vector size\n";
-    out << "static const unsigned short TVectorSize = N;\n";
-    out << "// symmetric tensor size\n";
-    out << "static const unsigned short StensorSize = tfel::math::StensorDimeToSize<N>::value;\n";
-    out << "// tensor size\n";
-    out << "static const unsigned short TensorSize  = tfel::math::TensorDimeToSize<N>::value;\n";
-    out << "// size of the driving variable array (STRAN)\n";
-    out << "static const unsigned short DrivingVariableSize = " << mvs.first <<  ";\n";
-    out << "// size of the thermodynamic force variable array (STRESS)\n";
-    out << "static const unsigned short ThermodynamicForceVariableSize = " << mvs.second <<  ";\n";
-    out << "static const bool useTimeSubStepping = ";
-    if(this->useTimeSubStepping){
-      out << "true;\n";
-    } else {
-      out << "false;\n";
-    }
-    out << "static const bool doSubSteppingOnInvalidResults = ";
-    if(this->doSubSteppingOnInvalidResults){
-      out << "true;\n";
-    } else {
-      out << "false;\n";
-    }
-    out << "static const unsigned short maximumSubStepping = ";
-    if(this->useTimeSubStepping){
-      out << this->maximumSubStepping << ";\n";
-    } else {
-      out << "0u;\n";
-    }
-    if(mb.requiresStiffnessOperator()){
-      out << "static const bool requiresStiffnessOperator = true;\n";
-    } else {
-      out << "static const bool requiresStiffnessOperator = false;\n";
-    }
-    if(mb.requiresThermalExpansionCoefficientTensor()){
-      out << "static const bool requiresThermalExpansionCoefficientTensor = true;\n";
-    } else {
-      out << "static const bool requiresThermalExpansionCoefficientTensor = false;\n";
-    }
-    if(mb.getSymmetryType()==mfront::ISOTROPIC){
-      if(!this->checkIfElasticPropertiesAreDeclared(mb)){
-	out << "static const unsigned short propertiesOffset = 4u;\n";
-      } else {
-	out << "static const unsigned short propertiesOffset = 0u;\n";
+    for(set<Hypothesis>::const_iterator ph = h.begin();ph!=h.end();++ph){
+      if(mb.hasSpecialisedMechanicalData(*ph)){
+	this->writeUMATBehaviourTraits(out,mb,*ph);
       }
-    } else if (mb.getSymmetryType()==mfront::ORTHOTROPIC){
-      if(mb.getBehaviourType()==MechanicalBehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR){
-	// something needs to be done here
-	out << "static const unsigned short propertiesOffset = UMATOrthotropicOffset<umat::SMALLSTRAINSTANDARDBEHAVIOUR,N>::value;\n";
-      } else {
-	string msg("MFrontUMATInterface::endTreatement : "
-		   "unsupported behaviour type");
-	throw(runtime_error(msg));
-      }
-    } else {
-      string msg("MFrontUMATInterface::endTreatement : ");
-      msg += "unsupported behaviour symmetry type.\n";
-      msg += "The umat interface only support isotropic or orthotropic behaviour at this time.";
-      throw(runtime_error(msg));
     }
-    if(mb.getSymmetryType()==mfront::ISOTROPIC){
-      out << "static const UMATSymmetryType stype = umat::ISOTROPIC;\n";
-    } else if (mb.getSymmetryType()==mfront::ORTHOTROPIC){
-      out << "static const UMATSymmetryType stype = umat::ORTHOTROPIC;\n";
-    } else {
-      string msg("MFrontUMATInterface::endTreatement : ");
-      msg += "unsupported behaviour symmetry type.\n";
-      msg += "The umat interface only support isotropic or orthotropic behaviour at this time.";
-      throw(runtime_error(msg));
-    }
-    out << "}; // end of class UMATTraits\n\n";
 
     out << "} // end of namespace umat\n\n";
 
@@ -744,9 +656,9 @@ namespace mfront{
     out << "/*!\n";
     out << "* \\file   "  << fileName << endl;
     out << "* \\brief  This file implements the umat interface for the " 
-	<< className << " behaviour law\n";
-    out << "* \\author "  << authorName << endl;
-    out << "* \\date   "  << date       << endl;
+	<< mb.getClassName() << " behaviour law\n";
+    out << "* \\author "  << fd.authorName << endl;
+    out << "* \\date   "  << fd.date       << endl;
     out << "*/\n\n";
 
     this->getExtraSrcIncludes(out,mb);
@@ -767,13 +679,22 @@ namespace mfront{
     }
     out << "#include\"MFront/UMAT/UMATInterface.hxx\"\n\n";
     out << "#include\"MFront/UMAT/UMATStressFreeExpansionHandler.hxx\"\n\n";
-    out << "#include\"TFEL/Material/" << className << ".hxx\"\n";
+    out << "#include\"TFEL/Material/" << mb.getClassName() << ".hxx\"\n";
     out << "#include\"MFront/UMAT/umat" << name << ".hxx\"\n\n";
     out << "extern \"C\"{\n\n";
 
     if(mb.getBehaviourType()==MechanicalBehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR){
       if(this->finiteStrainStrategies.empty()){
-	this->generateUMATxxSymbols(out,name,file,mb,glossaryNames,entryNames);
+	this->generateUMATxxGeneralSymbols(out,name,mb,fd);
+	if(!mb.areAllMechanicalDataSpecialised(h)){
+	  const Hypothesis uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
+	  this->generateUMATxxSymbols(out,name,uh,mb,fd);
+	}
+	for(set<Hypothesis>::const_iterator ph = h.begin();ph!=h.end();++ph){
+	  if(mb.hasSpecialisedMechanicalData(*ph)){
+	    this->generateUMATxxSymbols(out,name,*ph,mb,fd);
+	  }
+	}
 	out << "MFRONT_SHAREDOBJ unsigned short " << this->getFunctionName(name) 
 	    << "_BehaviourType = 1u;\n\n";
 	out << "MFRONT_SHAREDOBJ unsigned short umat"
@@ -781,39 +702,93 @@ namespace mfront{
       } else {
 	for(pfss=this->finiteStrainStrategies.begin();pfss!=this->finiteStrainStrategies.end();++pfss){
 	  if(*pfss==FINITEROTATIONSMALLSTRAIN){
-	    this->generateUMATxxSymbols(out,name+"_frst",file,mb,glossaryNames,entryNames);
+	    this->generateUMATxxGeneralSymbols(out,name+"_frst",mb,fd);
+	    if(!mb.areAllMechanicalDataSpecialised(h)){
+	      const Hypothesis uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
+	      this->generateUMATxxSymbols(out,name+"_frst",uh,mb,fd);
+	    }
+	    for(set<Hypothesis>::const_iterator ph = h.begin();ph!=h.end();++ph){
+	      if(mb.hasSpecialisedMechanicalData(*ph)){
+		this->generateUMATxxSymbols(out,name+"_frst",*ph,mb,fd);
+	      }
+	    }
 	    out << "MFRONT_SHAREDOBJ unsigned short " << this->getFunctionName(name+"_frst") 
 		<< "_BehaviourType = 2u;\n\n";
 	    out << "MFRONT_SHAREDOBJ unsigned short umat"
 		<< makeLowerCase(name+"_frst") << "_Interface = 2u;\n\n";
 	    if(this->finiteStrainStrategies.size()==1u){
-	      this->generateUMATxxSymbols(out,name,file,mb,glossaryNames,entryNames);
+	      this->generateUMATxxGeneralSymbols(out,name,mb,fd);
+	      if(!mb.areAllMechanicalDataSpecialised(h)){
+		const Hypothesis uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
+		this->generateUMATxxSymbols(out,name,uh,mb,fd);
+	      }
+	      for(set<Hypothesis>::const_iterator ph = h.begin();ph!=h.end();++ph){
+		if(mb.hasSpecialisedMechanicalData(*ph)){
+		  this->generateUMATxxSymbols(out,name,*ph,mb,fd);
+		}
+	      }
 	      out << "MFRONT_SHAREDOBJ unsigned short " << this->getFunctionName(name) 
 		  << "_BehaviourType = 2u;\n\n";
 	      out << "MFRONT_SHAREDOBJ unsigned short umat"
 		  << makeLowerCase(name) << "_Interface = 2u;\n\n";
 	    }
 	  } else if(*pfss==MIEHEAPELLAMBRECHTLOGARITHMICSTRAIN){
-	    this->generateUMATxxSymbols(out,name+"_malls",file,mb,glossaryNames,entryNames);
+	      this->generateUMATxxGeneralSymbols(out,name+"_malls",mb,fd);
+	    if(!mb.areAllMechanicalDataSpecialised(h)){
+	      const Hypothesis uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
+	      this->generateUMATxxSymbols(out,name+"_malls",uh,mb,fd);
+	    }
+	    for(set<Hypothesis>::const_iterator ph = h.begin();ph!=h.end();++ph){
+	      if(mb.hasSpecialisedMechanicalData(*ph)){
+		this->generateUMATxxSymbols(out,name+"_malls",*ph,mb,fd);
+	      }
+	    }
 	    out << "MFRONT_SHAREDOBJ unsigned short " << this->getFunctionName(name+"_malls") 
 		<< "_BehaviourType = 2u;\n\n";
 	    out << "MFRONT_SHAREDOBJ unsigned short umat"
 		<< makeLowerCase(name+"_malls") << "_Interface = 2u;\n\n";
 	    if(this->finiteStrainStrategies.size()==1u){
-	      this->generateUMATxxSymbols(out,name,file,mb,glossaryNames,entryNames);
+	      this->generateUMATxxGeneralSymbols(out,name,mb,fd);
+	      if(!mb.areAllMechanicalDataSpecialised(h)){
+		const Hypothesis uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
+		this->generateUMATxxSymbols(out,name,uh,mb,fd);
+	      }
+	      for(set<Hypothesis>::const_iterator ph = h.begin();ph!=h.end();++ph){
+		if(mb.hasSpecialisedMechanicalData(*ph)){
+		  this->generateUMATxxSymbols(out,name,*ph,mb,fd);
+		}
+	      }
 	      out << "MFRONT_SHAREDOBJ unsigned short " << this->getFunctionName(name) 
 		  << "_BehaviourType = 2u;\n\n";
 	      out << "MFRONT_SHAREDOBJ unsigned short umat"
 		  << makeLowerCase(name) << "_Interface = 2u;\n\n";
 	    }
 	  } else if(*pfss==NONE){
-	    this->generateUMATxxSymbols(out,name+"_ss",file,mb,glossaryNames,entryNames);
+	    this->generateUMATxxGeneralSymbols(out,name+"_ss",mb,fd);
+	    if(!mb.areAllMechanicalDataSpecialised(h)){
+	      const Hypothesis uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
+	      this->generateUMATxxSymbols(out,name+"_ss",uh,mb,fd);
+	    }
+	    for(set<Hypothesis>::const_iterator ph = h.begin();ph!=h.end();++ph){
+	      if(mb.hasSpecialisedMechanicalData(*ph)){
+		this->generateUMATxxSymbols(out,name+"_ss",*ph,mb,fd);
+	      }
+	    }
 	    out << "MFRONT_SHAREDOBJ unsigned short " << this->getFunctionName(name+"_ss") 
 		<< "_BehaviourType = 1u;\n\n";
 	    out << "MFRONT_SHAREDOBJ unsigned short umat"
 		<< makeLowerCase(name+"_ss") << "_Interface = 1u;\n\n";
 	    if(this->finiteStrainStrategies.size()==1u){
-	      this->generateUMATxxSymbols(out,name,file,mb,glossaryNames,entryNames);
+	      this->generateUMATxxGeneralSymbols(out,name,mb,fd);
+	      if(!mb.areAllMechanicalDataSpecialised(h)){
+		const Hypothesis uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
+		this->generateUMATxxSymbols(out,name,uh,mb,fd);
+	      }
+	      for(set<Hypothesis>::const_iterator ph = h.begin();ph!=h.end();++ph){
+		if(mb.hasSpecialisedMechanicalData(*ph)){
+		  this->generateUMATxxSymbols(out,name,*ph,mb,fd);
+		}
+	      }
 	      out << "MFRONT_SHAREDOBJ unsigned short " << this->getFunctionName(name) 
 		  << "_BehaviourType = 1u;\n\n";
 	      out << "MFRONT_SHAREDOBJ unsigned short umat"
@@ -828,7 +803,16 @@ namespace mfront{
 	if((this->finiteStrainStrategies.size()!=1u)&&
 	   (find(this->finiteStrainStrategies.begin(),
 		 this->finiteStrainStrategies.end(),NONE)!=this->finiteStrainStrategies.end())){
-	  this->generateUMATxxSymbols(out,name,file,mb,glossaryNames,entryNames);
+	  this->generateUMATxxGeneralSymbols(out,name,mb,fd);
+	  if(!mb.areAllMechanicalDataSpecialised(h)){
+	    const Hypothesis uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
+	    this->generateUMATxxSymbols(out,name,uh,mb,fd);
+	  }
+	  for(set<Hypothesis>::const_iterator ph = h.begin();ph!=h.end();++ph){
+	    if(mb.hasSpecialisedMechanicalData(*ph)){
+	      this->generateUMATxxSymbols(out,name,*ph,mb,fd);
+	    }
+	  }
 	  out << "MFRONT_SHAREDOBJ unsigned short " << this->getFunctionName(name) 
 	      << "_BehaviourType = 1u;\n\n";
 	  out << "MFRONT_SHAREDOBJ unsigned short umat"
@@ -836,7 +820,16 @@ namespace mfront{
 	}
       }
     } else {
-      this->generateUMATxxSymbols(out,name,file,mb,glossaryNames,entryNames);
+      this->generateUMATxxGeneralSymbols(out,name,mb,fd);
+      if(!mb.areAllMechanicalDataSpecialised(h)){
+	const Hypothesis uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
+	this->generateUMATxxSymbols(out,name,uh,mb,fd);
+      }
+      for(set<Hypothesis>::const_iterator ph = h.begin();ph!=h.end();++ph){
+	if(mb.hasSpecialisedMechanicalData(*ph)){
+	  this->generateUMATxxSymbols(out,name,*ph,mb,fd);
+	}
+      }
       if(mb.getBehaviourType()==MechanicalBehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR){ 
 	out << "MFRONT_SHAREDOBJ unsigned short " << this->getFunctionName(name) 
 	    << "_BehaviourType = 2u;\n\n";
@@ -852,23 +845,23 @@ namespace mfront{
 
     if(mb.getBehaviourType()==MechanicalBehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR){
       if(this->finiteStrainStrategies.empty()){
-	this->writeSetParametersFunctionsImplementations(out,name,className,mb);
+	this->writeSetParametersFunctionsImplementations(out,name,mb);
       } else {
 	for(pfss=this->finiteStrainStrategies.begin();pfss!=this->finiteStrainStrategies.end();++pfss){
 	  if(*pfss==FINITEROTATIONSMALLSTRAIN){
-	    this->writeSetParametersFunctionsImplementations(out,name+"_frst",className,mb);
+	    this->writeSetParametersFunctionsImplementations(out,name+"_frst",mb);
 	    if(this->finiteStrainStrategies.size()==1u){
-	      this->writeSetParametersFunctionsImplementations(out,name,className,mb);
+	      this->writeSetParametersFunctionsImplementations(out,name,mb);
 	    }
 	  } else if(*pfss==MIEHEAPELLAMBRECHTLOGARITHMICSTRAIN){
-	    this->writeSetParametersFunctionsImplementations(out,name+"_malls",className,mb);
+	    this->writeSetParametersFunctionsImplementations(out,name+"_malls",mb);
 	    if(this->finiteStrainStrategies.size()==1u){
-	      this->writeSetParametersFunctionsImplementations(out,name,className,mb);
+	      this->writeSetParametersFunctionsImplementations(out,name,mb);
 	    }
 	  } else if(*pfss==NONE){
-	    this->writeSetParametersFunctionsImplementations(out,name+"_ss",className,mb);
+	    this->writeSetParametersFunctionsImplementations(out,name+"_ss",mb);
 	    if(this->finiteStrainStrategies.size()==1u){
-	      this->writeSetParametersFunctionsImplementations(out,name,className,mb);
+	      this->writeSetParametersFunctionsImplementations(out,name,mb);
 	    }
 	  } else {
 	    string msg("MFrontUMATInterface::endTreatement : "
@@ -879,11 +872,11 @@ namespace mfront{
 	if((this->finiteStrainStrategies.size()!=1u)&&
 	   (find(this->finiteStrainStrategies.begin(),
 		 this->finiteStrainStrategies.end(),NONE)!=this->finiteStrainStrategies.end())){
-	  this->writeSetParametersFunctionsImplementations(out,name,className,mb);
+	  this->writeSetParametersFunctionsImplementations(out,name,mb);
 	}
       }
     } else {
-      this->writeSetParametersFunctionsImplementations(out,name,className,mb);
+      this->writeSetParametersFunctionsImplementations(out,name,mb);
     }
 
     out << "static void \numat"
@@ -899,7 +892,7 @@ namespace mfront{
 	<< "umat::UMATInt  *const KINC,\n"
 	<< "const umat::StressFreeExpansionHandler& sfeh)\n";
     out << "{\n";
-    out << "umat::UMATInterface<tfel::material::" << className 
+    out << "umat::UMATInterface<tfel::material::" << mb.getClassName()
 	<< ">::exe(NTENS,DTIME,DROT,DDSOE,STRAN,DSTRAN,TEMP,DTEMP,PROPS,NPROPS,"
 	<< "PREDEF,DPRED,STATEV,NSTATV,STRESS,NDI,KINC,sfeh);\n";
     out << "}\n\n";
@@ -907,30 +900,23 @@ namespace mfront{
     
     if(mb.getBehaviourType()==MechanicalBehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR){
       if(this->finiteStrainStrategies.empty()){
-	this->writeStandardUmatFunction(out,name,library,material,"",
-					glossaryNames,entryNames,mb);
+	this->writeStandardUmatFunction(out,name,"",mb);
       } else {
 	for(pfss=this->finiteStrainStrategies.begin();pfss!=this->finiteStrainStrategies.end();++pfss){
 	  if(*pfss==FINITEROTATIONSMALLSTRAIN){
-	    this->writeFiniteRotationSmallStrainUmatFunction(out,name,library,material,"frst",
-							     glossaryNames,entryNames,mb);
+	    this->writeFiniteRotationSmallStrainUmatFunction(out,name,"frst",mb);
 	    if(this->finiteStrainStrategies.size()==1u){
-	      this->writeFiniteRotationSmallStrainUmatFunction(out,name,library,material,"",
-							       glossaryNames,entryNames,mb);
+	      this->writeFiniteRotationSmallStrainUmatFunction(out,name,"",mb);
 	    }
 	  } else if(*pfss==MIEHEAPELLAMBRECHTLOGARITHMICSTRAIN){
-	    this->writeMieheApelLambrechtLogarithmicStrainUmatFunction(out,name,library,material,"malls",
-								       glossaryNames,entryNames,mb);
+	    this->writeMieheApelLambrechtLogarithmicStrainUmatFunction(out,name,"malls",mb);
 	    if(this->finiteStrainStrategies.size()==1u){
-	      this->writeMieheApelLambrechtLogarithmicStrainUmatFunction(out,name,library,material,"",
-									 glossaryNames,entryNames,mb);
+	      this->writeMieheApelLambrechtLogarithmicStrainUmatFunction(out,name,"",mb);
 	    }
 	  } else if(*pfss==NONE){
-	    this->writeStandardUmatFunction(out,name,library,material,"ss",
-					    glossaryNames,entryNames,mb);
+	    this->writeStandardUmatFunction(out,name,"ss",mb);
 	    if(this->finiteStrainStrategies.size()==1u){
-	      this->writeStandardUmatFunction(out,name,library,material,"",
-					      glossaryNames,entryNames,mb);
+	      this->writeStandardUmatFunction(out,name,"",mb);
 	    }
 	  } else {
 	    string msg("MFrontUMATInterface::endTreatement : "
@@ -941,19 +927,17 @@ namespace mfront{
 	if((this->finiteStrainStrategies.size()!=1u)&&
 	   (find(this->finiteStrainStrategies.begin(),
 		 this->finiteStrainStrategies.end(),NONE)!=this->finiteStrainStrategies.end())){
-	  this->writeStandardUmatFunction(out,name,library,material,"",
-					  glossaryNames,entryNames,mb);
+	  this->writeStandardUmatFunction(out,name,"",mb);
 	}
       }
     } else {
-      this->writeStandardUmatFunction(out,name,library,material,"",
-				      glossaryNames,entryNames,mb);
+      this->writeStandardUmatFunction(out,name,"",mb);
     }
     out << "} // end of extern \"C\"\n";
     out.close();
     if((mb.getBehaviourType()==MechanicalBehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR)||
        (mb.getBehaviourType()==MechanicalBehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR)){
-      this->generateGibianeDeclaration(library,material,className,authorName,date,mb);
+      this->generateGibianeDeclaration(mb,fd);
     }
   } // end of MFrontUMATInterface::endTreatement
 
@@ -967,13 +951,11 @@ namespace mfront{
   {}
 
   std::map<std::string,std::vector<std::string> >
-  MFrontUMATInterface::getGlobalIncludes(const std::string& library,
-					 const std::string& material,
-					 const std::string&)
+  MFrontUMATInterface::getGlobalIncludes(const MechanicalBehaviourDescription& mb)
   {
     using namespace std;
     map<string,vector<string> > incs;
-    string lib = MFrontUMATInterface::getLibraryName(library,material);
+    string lib = MFrontUMATInterface::getLibraryName(mb);
     incs[lib].push_back("`tfel-config --includes`");
 #ifdef CASTEM_CPPFLAGS
     incs[lib].push_back(CASTEM_CPPFLAGS);
@@ -996,158 +978,210 @@ namespace mfront{
   } // end of MFrontUMATInterface::getGeneratedSources
 
   std::map<std::string,std::vector<std::string> >
-  MFrontUMATInterface::getGeneratedSources(const std::string& library,
-					   const std::string& material,
-					   const std::string& className)
+  MFrontUMATInterface::getGeneratedSources(const MechanicalBehaviourDescription& mb)
   {
     using namespace std;
     map<string,vector<string> > src;
-    string lib = MFrontUMATInterface::getLibraryName(library,material);
-    if(!library.empty()){
-      src[lib].push_back("umat"+library+className+".cxx");
+    string lib = MFrontUMATInterface::getLibraryName(mb);
+    if(!mb.getLibrary().empty()){
+      src[lib].push_back("umat"+mb.getLibrary()+mb.getClassName()+".cxx");
     } else {
-      src[lib].push_back("umat"+className+".cxx");
+      src[lib].push_back("umat"+mb.getClassName()+".cxx");
     }
     return src;
   } // end of MFrontUMATInterface::getGeneratedSources
 
   std::vector<std::string>
-  MFrontUMATInterface::getGeneratedIncludes(const std::string& library,
-					    const std::string&,
-					    const std::string& className)
+  MFrontUMATInterface::getGeneratedIncludes(const MechanicalBehaviourDescription& mb)
   {
     using namespace std;
     vector<string> incs;
-    if(!library.empty()){
-      incs.push_back("MFront/UMAT/umat"+library+className+".hxx");
+    if(!mb.getLibrary().empty()){
+      incs.push_back("MFront/UMAT/umat"+mb.getLibrary()+mb.getClassName()+".hxx");
     } else {
-      incs.push_back("MFront/UMAT/umat"+className+".hxx");
+      incs.push_back("MFront/UMAT/umat"+mb.getClassName()+".hxx");
     }
     return incs;
   } // end of MFrontUMATInterface::getGeneratedIncludes
 
   std::map<std::string,std::vector<std::string> >
-  MFrontUMATInterface::getLibrariesDependencies(const std::string& library,
-						const std::string& material,
-						const std::string&)
+  MFrontUMATInterface::getLibrariesDependencies(const MechanicalBehaviourDescription& mb)
   {
     using namespace std;
     map<string,vector<string> > deps;
-    string lib = MFrontUMATInterface::getLibraryName(library,material);
+    string lib = MFrontUMATInterface::getLibraryName(mb);
     deps[lib].push_back("-lUMATInterface");
     deps[lib].push_back("`tfel-config --libs --material`");
     return deps;
   } // end of MFrontUMATInterface::getLibrariesDependencies()
 
-  bool
-  MFrontUMATInterface::hasMaterialPropertiesOffset(const MechanicalBehaviourDescription& mb) const
+  std::pair<std::vector<MFrontUMATInterfaceBase::UMATMaterialProperty>,
+	    SupportedTypes::TypeSize>
+  MFrontUMATInterface::buildMaterialPropertiesList(const MechanicalBehaviourDescription& mb,
+						   const Hypothesis h) const
   {
     using namespace std;
-    if(mb.getSymmetryType()==mfront::ISOTROPIC){
-      return !this->checkIfElasticPropertiesAreDeclared(mb);
-    } else if (mb.getSymmetryType()==mfront::ORTHOTROPIC){
-      return true;
-    } else {
-      string msg("MFrontUMATInterface::hasMaterialPropertiesOffset : ");
-      msg += "unsupported behaviour symmetry type.\n";
-      msg += "The umat interface only support isotropic or orthotropic behaviour at this time.";
-      throw(runtime_error(msg));
+    if(h==ModellingHypothesis::UNDEFINEDHYPOTHESIS){
+      const set<Hypothesis> ah = this->getModellingHypothesesToBeTreated(mb);
+      set<Hypothesis> uh;
+      for(set<Hypothesis>::const_iterator ph=ah.begin();ph!=ah.end();++ph){
+	if(!mb.hasSpecialisedMechanicalData(*ph)){
+	  uh.insert(*ph);
+	}
+      }
+      if(uh.empty()){
+	string msg("MFrontUMATInterface::endTreatement : ");
+	msg += "internal error : the mechanical behaviour says that not "
+	  "all handled mechanical data are specialised, but we found none.";
+	throw(runtime_error(msg));
+      }
+      // material properties for all the selected hypothesis
+      vector<pair<vector<UMATMaterialProperty>,
+		  SupportedTypes::TypeSize> > mpositions;
+      for(set<Hypothesis>::const_iterator ph=uh.begin();ph!=uh.end();++ph){
+	mpositions.push_back(this->buildMaterialPropertiesList(mb,*ph));
+      }
+      set<Hypothesis>::const_iterator ph=uh.begin();
+      vector<pair<vector<UMATMaterialProperty>,
+		  SupportedTypes::TypeSize> >::const_iterator pum = mpositions.begin();
+      const pair<vector<UMATMaterialProperty>,
+		 SupportedTypes::TypeSize>& mfirst = *pum;
+      ++ph;
+      ++pum;
+      for(;ph!=uh.end();++ph,++pum){
+	const MechanicalBehaviourData& d = mb.getMechanicalBehaviourData(ModellingHypothesis::UNDEFINEDHYPOTHESIS);
+	const VariableDescriptionContainer& mps = d.getMaterialProperties();
+	for(VariableDescriptionContainer::const_iterator pm=mps.begin();pm!=mps.end();++pm){
+	  const UMATMaterialProperty& mp1 = findUMATMaterialProperty(mfirst.first,
+								     mb.getGlossaryName(h,pm->name));
+	  const UMATMaterialProperty& mp2 = findUMATMaterialProperty(pum->first,
+								     mb.getGlossaryName(h,pm->name));
+	  SupportedTypes::TypeSize o1 = mp1.offset;
+	  o1+=pum->second;
+	  SupportedTypes::TypeSize o2 = mp2.offset;
+	  o2+=mfirst.second;
+	  if(o1!=o2){
+	    string msg("MFrontUMATInterface::buildMaterialPropertiesList : "
+		       "incompatible offset for material property '"+pm->name+
+		       "' (aka '"+mp1.name+"'). This is one pitfall of the umat interface. "
+		       "To by-pass this limitation, you may want to explicitely "
+		       "specialise some modelling hypotheses");
+	    throw(runtime_error(msg));
+	  }
+	}
+      }
+      return mfirst;
     }
-    return false;
-  } // end of MFrontUMATInterface::hasMaterialPropertiesOffset
-
-  void
-  MFrontUMATInterface::writeMTestFileGeneratorAdditionalMaterialPropertiesInitialisation(std::ostream& out,
-											 const MechanicalBehaviourDescription& mb) const
-  {
-    using namespace std;
-    if(!this->hasMaterialPropertiesOffset(mb)){
-      return;
-    }
-    if(mb.getBehaviourType()==MechanicalBehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR){
+    pair<vector<UMATMaterialProperty>,
+	 SupportedTypes::TypeSize> res;
+    vector<UMATMaterialProperty>& mprops = res.first;
+    if((mb.getBehaviourType()==MechanicalBehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR)||
+       (mb.getBehaviourType()==MechanicalBehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR)){
       if(mb.getSymmetryType()==mfront::ISOTROPIC){
-	out << "mg.addMaterialProperty(\"YoungModulus\",*PROPS);\n"
-	    << "mg.addMaterialProperty(\"PoissonRatio\",*(PROPS+1));\n"
-	    << "mg.addMaterialProperty(\"MassDensity\",*(PROPS+2));\n"
-	    << "mg.addMaterialProperty(\"ThermalExpansion\",*(PROPS+3));\n";
-	out << "mg_mpoffset = 4u;\n";
+	this->appendToMaterialPropertiesList(mprops,"stress","YoungModulus","youn",false);
+	this->appendToMaterialPropertiesList(mprops,"real","PoissonRatio","nu",false);
+	this->appendToMaterialPropertiesList(mprops,"massdensity","MassDensity","rho",false);
+	this->appendToMaterialPropertiesList(mprops,"thermalexpansion","ThermalExpansion","alph",false);
       } else if (mb.getSymmetryType()==mfront::ORTHOTROPIC){
-	out << "if(*NDI==14){\n" // axisymmetrical generalized plane strain
-	    << "mg.addMaterialProperty(\"YoungModulus1\",*PROPS);\n"
-	    << "mg.addMaterialProperty(\"YoungModulus2\",*(PROPS+1));\n"
-	    << "mg.addMaterialProperty(\"YoungModulus3\",*(PROPS+2));\n"
-	    << "mg.addMaterialProperty(\"PoissonRatio12\",*(PROPS+3));\n"
-	    << "mg.addMaterialProperty(\"PoissonRatio13\",*(PROPS+4));\n"
-	    << "mg.addMaterialProperty(\"PoissonRatio23\",*(PROPS+5));\n"
-	    << "mg.addMaterialProperty(\"MassDensity\",*(PROPS+6));\n"
-	    << "mg.addMaterialProperty(\"ThermalExpansion1\",*(PROPS+7));\n"
-	    << "mg.addMaterialProperty(\"ThermalExpansion2\",*(PROPS+8));\n"
-	    << "mg.addMaterialProperty(\"ThermalExpansion3\",*(PROPS+9));\n"
-	    << "mg_mpoffset = 10u;\n"
-	    << "} else if(*NDI==-2){\n" // plane stress
-	    << "mg.addMaterialProperty(\"YoungModulus1\",*PROPS);\n"
-	    << "mg.addMaterialProperty(\"YoungModulus2\",*(PROPS+1));\n"
-	    << "mg.addMaterialProperty(\"PoissonRatio12\",*(PROPS+2));\n"
-	    << "mg.addMaterialProperty(\"ShearModulus12\",*(PROPS+3));\n"
-	    << "mg.addMaterialProperty(\"V1X\",*(PROPS+4));\n"
-	    << "mg.addMaterialProperty(\"V1Y\",*(PROPS+5));\n"
-	    << "mg.addMaterialProperty(\"YoungModulus3\",*(PROPS+6));\n"
-	    << "mg.addMaterialProperty(\"PoissonRatio23\",*(PROPS+7));\n"
-	    << "mg.addMaterialProperty(\"PoissonRatio13\",*(PROPS+8));\n"
-	    << "mg.addMaterialProperty(\"MassDensity\",*(PROPS+9));\n"
-	    << "mg.addMaterialProperty(\"ThermalExpansion1\",*(PROPS+10));\n"
-	    << "mg.addMaterialProperty(\"ThermalExpansion2\",*(PROPS+11));\n"
-	    << "mg.addMaterialProperty(\"PlateWidth\",*(PROPS+12));\n"
-	    << "mg_mpoffset = 13u;\n"// axisymmetrical, plane strain, generalized plane strain
-	    << "} else if((*NDI==0)||(*NDI==-1)||(*NDI==-3)){\n"
-	    << "mg.addMaterialProperty(\"YoungModulus1\",*PROPS);\n"
-	    << "mg.addMaterialProperty(\"YoungModulus2\",*(PROPS+1));\n"
-	    << "mg.addMaterialProperty(\"YoungModulus3\",*(PROPS+2));\n"
-	    << "mg.addMaterialProperty(\"PoissonRatio12\",*(PROPS+3));\n"
-	    << "mg.addMaterialProperty(\"PoissonRatio23\",*(PROPS+4));\n"
-	    << "mg.addMaterialProperty(\"PoissonRatio13\",*(PROPS+5));\n"
-	    << "mg.addMaterialProperty(\"ShearModulus12\",*(PROPS+6));\n"
-	    << "mg.addMaterialProperty(\"V1X\",*(PROPS+7));\n"
-	    << "mg.addMaterialProperty(\"V1Y\",*(PROPS+8));\n"
-	    << "mg.addMaterialProperty(\"MassDensity\",*(PROPS+9));\n"
-	    << "mg.addMaterialProperty(\"ThermalExpansion1\",*(PROPS+10));\n"
-	    << "mg.addMaterialProperty(\"ThermalExpansion2\",*(PROPS+11));\n"
-	    << "mg.addMaterialProperty(\"ThermalExpansion3\",*(PROPS+12));\n"
-	    << "mg_mpoffset = 13u;\n"
-	    << "} else if(*NDI==2){\n" // tridimensional
-	    << "mg.addMaterialProperty(\"YoungModulus1\",*PROPS);\n"
-	    << "mg.addMaterialProperty(\"YoungModulus2\",*(PROPS+1));\n"
-	    << "mg.addMaterialProperty(\"YoungModulus3\",*(PROPS+2));\n"
-	    << "mg.addMaterialProperty(\"PoissonRatio12\",*(PROPS+3));\n"
-	    << "mg.addMaterialProperty(\"PoissonRatio23\",*(PROPS+4));\n"
-	    << "mg.addMaterialProperty(\"PoissonRatio13\",*(PROPS+5));\n"
-	    << "mg.addMaterialProperty(\"ShearModulus12\",*(PROPS+6));\n"
-	    << "mg.addMaterialProperty(\"ShearModulus23\",*(PROPS+7));\n"
-	    << "mg.addMaterialProperty(\"ShearModulus13\",*(PROPS+8));\n"
-	    << "mg.addMaterialProperty(\"V1X\",*(PROPS+9));\n"
-	    << "mg.addMaterialProperty(\"V1Y\",*(PROPS+10));\n"
-	    << "mg.addMaterialProperty(\"V1Z\",*(PROPS+11));\n"
-	    << "mg.addMaterialProperty(\"V2X\",*(PROPS+12));\n"
-	    << "mg.addMaterialProperty(\"V2Y\",*(PROPS+13));\n"
-	    << "mg.addMaterialProperty(\"V2Z\",*(PROPS+14));\n"
-	    << "mg.addMaterialProperty(\"MassDensity\",*(PROPS+15));\n"
-	    << "mg.addMaterialProperty(\"ThermalExpansion1\",*(PROPS+16));\n"
-	    << "mg.addMaterialProperty(\"ThermalExpansion2\",*(PROPS+17));\n"
-	    << "mg.addMaterialProperty(\"ThermalExpansion3\",*(PROPS+18));\n"
-	    << "mg_mpoffset = 19u;\n"
-	    << "}\n";
+	if(h==ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN){
+	  this->appendToMaterialPropertiesList(mprops,"stress","YoungModulus1","yg1",false);
+	  this->appendToMaterialPropertiesList(mprops,"stress","YoungModulus2","yg2",false);
+	  this->appendToMaterialPropertiesList(mprops,"stress","YoungModulus3","yg3",false);
+	  this->appendToMaterialPropertiesList(mprops,"real","PoissonRatio12","nu12",false);
+	  this->appendToMaterialPropertiesList(mprops,"real","PoissonRatio23","nu22",false);
+	  this->appendToMaterialPropertiesList(mprops,"real","PoissonRatio13","nu13",false);
+	  this->appendToMaterialPropertiesList(mprops,"massdensity","MassDensity","rho",false);
+	  this->appendToMaterialPropertiesList(mprops,"thermalexpansion","ThermalExpansion1","alp1",false);
+	  this->appendToMaterialPropertiesList(mprops,"thermalexpansion","ThermalExpansion2","alp2",false);
+	  this->appendToMaterialPropertiesList(mprops,"thermalexpansion","ThermalExpansion3","alp3",false);
+	} else if(h==ModellingHypothesis::PLANESTRESS){
+	  this->appendToMaterialPropertiesList(mprops,"stress","YoungModulus1","yg1",false);
+	  this->appendToMaterialPropertiesList(mprops,"stress","YoungModulus2","yg2",false);
+	  this->appendToMaterialPropertiesList(mprops,"real","PoissonRatio12","nu12",false);
+	  this->appendToMaterialPropertiesList(mprops,"stress","ShearModulus12","g12",false);
+	  this->appendToMaterialPropertiesList(mprops,"real","V1X","v1x",true);
+	  this->appendToMaterialPropertiesList(mprops,"real","V1Y","v1y",true);
+	  this->appendToMaterialPropertiesList(mprops,"stress","YoungModulus3","yg3",false);
+	  this->appendToMaterialPropertiesList(mprops,"real","PoissonRatio23","nu23",false);
+	  this->appendToMaterialPropertiesList(mprops,"real","PoissonRatio13","nu13",false);
+	  this->appendToMaterialPropertiesList(mprops,"massdensity","MassDensity","rho",false);
+	  this->appendToMaterialPropertiesList(mprops,"thermalexpansion","ThermalExpansion1","alp1",false);
+	  this->appendToMaterialPropertiesList(mprops,"thermalexpansion","ThermalExpansion2","alp2",false);
+	  this->appendToMaterialPropertiesList(mprops,"length","PlateWidth","epai",false);
+	} else if((h==ModellingHypothesis::AXISYMMETRICAL)||
+		  (h==ModellingHypothesis::PLANESTRAIN)||
+		  (h==ModellingHypothesis::GENERALISEDPLANESTRAIN)){
+	  this->appendToMaterialPropertiesList(mprops,"stress","YoungModulus1","yg1",false);
+	  this->appendToMaterialPropertiesList(mprops,"stress","YoungModulus2","yg2",false);
+	  this->appendToMaterialPropertiesList(mprops,"stress","YoungModulus3","yg3",false);
+	  this->appendToMaterialPropertiesList(mprops,"real","PoissonRatio12","nu12",false);
+	  this->appendToMaterialPropertiesList(mprops,"real","PoissonRatio23","nu23",false);
+	  this->appendToMaterialPropertiesList(mprops,"real","PoissonRatio13","nu13",false);
+	  this->appendToMaterialPropertiesList(mprops,"stress","ShearModulus12","g12",false);
+	  this->appendToMaterialPropertiesList(mprops,"real","V1X","v1x",true);
+	  this->appendToMaterialPropertiesList(mprops,"real","V1Y","v1y",true);
+	  this->appendToMaterialPropertiesList(mprops,"massdensity","MassDensity","rho",false);
+	  this->appendToMaterialPropertiesList(mprops,"thermalexpansion","ThermalExpansion1","alp1",false);
+	  this->appendToMaterialPropertiesList(mprops,"thermalexpansion","ThermalExpansion2","alp2",false);
+	  this->appendToMaterialPropertiesList(mprops,"thermalexpansion","ThermalExpansion3","alp3",false);
+	} else if(h==ModellingHypothesis::TRIDIMENSIONAL){	    
+	  this->appendToMaterialPropertiesList(mprops,"stress","YoungModulus1","yg1",false);
+	  this->appendToMaterialPropertiesList(mprops,"stress","YoungModulus2","yg2",false);
+	  this->appendToMaterialPropertiesList(mprops,"stress","YoungModulus3","yg3",false);
+	  this->appendToMaterialPropertiesList(mprops,"real","PoissonRatio12","nu12",false);
+	  this->appendToMaterialPropertiesList(mprops,"real","PoissonRatio23","nu23",false);
+	  this->appendToMaterialPropertiesList(mprops,"real","PoissonRatio13","nu13",false);
+	  this->appendToMaterialPropertiesList(mprops,"stress","ShearModulus12","g12",false);
+	  this->appendToMaterialPropertiesList(mprops,"stress","ShearModulus23","g23",false);
+	  this->appendToMaterialPropertiesList(mprops,"stress","ShearModulus13","g13",false);
+	  this->appendToMaterialPropertiesList(mprops,"real","V1X","v1x",true);
+	  this->appendToMaterialPropertiesList(mprops,"real","V1Y","v1y",true);
+	  this->appendToMaterialPropertiesList(mprops,"real","V1Z","v1z",true);
+	  this->appendToMaterialPropertiesList(mprops,"real","V2X","v2x",true);
+	  this->appendToMaterialPropertiesList(mprops,"real","V2Y","v2y",true);
+	  this->appendToMaterialPropertiesList(mprops,"real","V2Z","v2z",true);
+	  this->appendToMaterialPropertiesList(mprops,"massdensity","MassDensity","rho",false);
+	  this->appendToMaterialPropertiesList(mprops,"thermalexpansion","ThermalExpansion1","alp1",false);
+	  this->appendToMaterialPropertiesList(mprops,"thermalexpansion","ThermalExpansion2","alp2",false);
+	  this->appendToMaterialPropertiesList(mprops,"thermalexpansion","ThermalExpansion3","alp3",false);
+	} else {
+	  string msg("MFrontUMATInterface::buildMaterialPropertiesList : ");
+	  msg += "unsupported modelling hypothesis.";
+	  throw(runtime_error(msg));
+	}
       } else {
-	string msg("MFrontUMATInterface::writeMTestFileGeneratorAdditionalMaterialPropertiesInitialisation : ");
+	string msg("MFrontUMATInterface::buildMaterialPropertiesList : ");
 	msg += "unsupported behaviour symmetry type.\n";
 	msg += "The umat interface only support isotropic or orthotropic behaviour at this time.";
 	throw(runtime_error(msg));
       }
+    } else if(mb.getBehaviourType()==MechanicalBehaviourDescription::COHESIVEZONEMODEL){
+      if(mb.getSymmetryType()==mfront::ISOTROPIC){
+	//! those are not the Cast3M conventions, switch is performed
+	//! below the UMATInterface class
+	this->appendToMaterialPropertiesList(mprops,"real","NormalStiffness","kn",false);
+	this->appendToMaterialPropertiesList(mprops,"real","TangentialStiffness","kt",false);
+	this->appendToMaterialPropertiesList(mprops,"massdensity","MassDensity","rho",false);
+	this->appendToMaterialPropertiesList(mprops,"thermalexpansion",
+					     "NormalThermalExpansion","ALPN",false);
+      } else {
+	string msg("MFrontUMATInterface::buildMaterialPropertiesList : ");
+	msg += "unsupported symmetry type for cohesive zone modes.\n";
+	throw(runtime_error(msg));
+      }
     } else {
-      string msg("MFrontUMATInterface::writeMTestFileGeneratorAdditionalMaterialPropertiesInitialisation : "
-		 "unsupported behaviour type");
+      string msg("MFrontUMATInterface::buildMaterialPropertiesList : ");
+      msg += "unsupported behaviour type.\n";
       throw(runtime_error(msg));
     }
-  } // end of MFrontUMATInterface::writeMTestFileGeneratorAdditionalMaterialPropertiesInitialisation
+    if(!mprops.empty()){
+      const UMATMaterialProperty& m = mprops.back();
+      res.second  = m.offset;
+      res.second += this->getTypeSize(m.type,m.arraySize);
+    }
+    this->completeMaterialPropertiesList(mprops,mb,h);
+    return res;
+  } // end of MFrontUMATInterface::buildMaterialPropertiesList
 
   void
   MFrontUMATInterface::writeUMATxxBehaviourTypeSymbols(std::ostream&,
@@ -1156,60 +1190,31 @@ namespace mfront{
   {} // end of MFrontUMATInterface::writeUMATxxBehaviourTypeSymbols
 
   void
-  MFrontUMATInterface::writeUMATxxMaterialPropertiesSymbols(std::ostream& out,
-							    const std::string& name,
-							    const MechanicalBehaviourDescription& mb,
-							    const std::map<std::string,std::string>& glossaryNames,
-							    const std::map<std::string,std::string>& entryNames) const
-  {
-    const VariableDescriptionContainer& coefsHolder = mb.getMaterialProperties();
-    const unsigned short cs = this->getNumberOfVariables(coefsHolder);
-    const bool found        = this->checkIfElasticPropertiesAreDeclared(mb);
-    out << "MFRONT_SHAREDOBJ unsigned short " << this->getFunctionName(name);
-    if(mb.getSymmetryType()==mfront::ISOTROPIC){
-      // skipping the fourth first material properties
-      if(found){
-	out << "_nMaterialProperties = " << cs-4 << ";\n";
-      } else {
-	out << "_nMaterialProperties = " << cs << ";\n";
-      }
-    } else {
-      out << "_nMaterialProperties = " << cs << ";\n";
-    }
-    if((mb.getSymmetryType()==mfront::ISOTROPIC)&&(found)){
-      this->writeGlossaryNames(out,coefsHolder.getGlossaryNames(glossaryNames,
-								entryNames),
-			       name,"MaterialProperties",4u);
-    } else {
-      this->writeGlossaryNames(out,coefsHolder.getGlossaryNames(glossaryNames,
-								entryNames),
-			       name,"MaterialProperties");
-    }
-  } // end of MFrontUMATInterface::writeUMATxxMaterialPropertiesSymbol
+  MFrontUMATInterface::writeUMATxxAdditionalSymbols(std::ostream&,
+						    const std::string&,
+						    const Hypothesis,
+						    const MechanicalBehaviourDescription&,
+						    const MFrontFileDescription&) const
+  {} // end of MFrontUMATInterface::writeUMATxxAdditionalSymbols
 
   void
-  MFrontUMATInterface::writeUMATxxAdditionalSymbols(std::ostream& out,
-						    const std::string& name,
-						    const std::string&,
-						    const MechanicalBehaviourDescription& mb,
-						    const std::map<std::string,std::string>&,
-						    const std::map<std::string,std::string>&) const
+  MFrontUMATInterface::writeUMATxxSpecificSymbols(std::ostream& out,
+						  const std::string& name,
+						  const MechanicalBehaviourDescription& mb,
+						  const MFrontFileDescription&) const
   {
-    typedef MechanicalBehaviourDescription::ModellingHypothesis MH;
-    if(mb.getBehaviourType()==MechanicalBehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR){
-      // check if plane stress hypothesis is supported through the generic plane stress algorithm
-      if(mb.getHypotheses().find(MH::PLANESTRESS)==mb.getHypotheses().end()){
-	if(mb.getHypotheses().find(MH::GENERALISEDPLANESTRAIN)!=mb.getHypotheses().end()){
-	  out << "MFRONT_SHAREDOBJ unsigned short " << this->getFunctionName(name)
-	      << "_UsesGenericPlaneStressAlgorithm = 1u;\n\n";
-	}
-      }
+    if(MFrontUMATInterface::usesGenericPlaneStressAlgorithm(mb)){
+      out << "MFRONT_SHAREDOBJ unsigned short " << this->getFunctionName(name)
+	  << "_UsesGenericPlaneStressAlgorithm = 1u;\n\n";    
+    } else {
+      out << "MFRONT_SHAREDOBJ unsigned short " << this->getFunctionName(name)
+	  << "_UsesGenericPlaneStressAlgorithm = 0u;\n\n";    
     }
-  } // end of MFrontUMATInterface::writeUMATxxAdditionalSymbols
+  }
 
   void
   MFrontUMATInterface::writeUmatFortranFunctionDefine(std::ostream& out,
-						      const std::string& name)
+						      const std::string& name) const
   {
     out << "#define umat" << makeUpperCase(name) <<"_F77" << " F77_FUNC(umat"
 	<< makeLowerCase(name) << ",UMAT"
@@ -1218,7 +1223,7 @@ namespace mfront{
 
   void
   MFrontUMATInterface::writeUmatFunctionDeclaration(std::ostream& out,
-						    const std::string& name)
+						    const std::string& name) const
   {
     using namespace std;
     out << "MFRONT_SHAREDOBJ void MFRONT_STDCALL\numat"
@@ -1245,14 +1250,81 @@ namespace mfront{
     	<< "      umat::UMATInt *const);\n\n";
   } // end of MFrontUMATInterface::writeUmatFunctionDeclaration
 
+  std::pair<bool,SupportedTypes::TypeSize>
+  MFrontUMATInterface::checkIfAxialStrainIsDefinedAndGetItsOffset(const MechanicalBehaviourDescription& mb) const
+  {
+    using namespace std;
+    const MechanicalBehaviourData& d = mb.getMechanicalBehaviourData(ModellingHypothesis::PLANESTRESS);
+    const VariableDescriptionContainer& sv  = d.getStateVariables();
+    const VariableDescriptionContainer& asv = d.getAuxiliaryStateVariables();
+    SupportedTypes::TypeSize o;
+    for(VariableDescriptionContainer::const_iterator p=sv.begin();p!=sv.end();++p){
+      if(d.getGlossaryName(p->name)=="AxialStrain"){
+	return make_pair(true,o);
+      }
+      o += this->getTypeSize(p->type,p->arraySize);
+    }
+    for(VariableDescriptionContainer::const_iterator p=asv.begin();p!=asv.end();++p){
+      if(d.getGlossaryName(p->name)=="AxialStrain"){
+	return make_pair(true,o);
+      }
+      o += this->getTypeSize(p->type,p->arraySize);
+    }
+    return make_pair(false,o);
+  }
+
+  void
+  MFrontUMATInterface::writeFiniteStrainStrategiesPlaneStressSpecificCall(std::ostream& out,
+									  const MechanicalBehaviourDescription& mb,
+									  const std::string& c,
+									  const std::string& c2) const
+  {
+    using namespace std;
+    if((mb.isModellingHypothesisSupported(ModellingHypothesis::PLANESTRESS))||
+       (this->usesGenericPlaneStressAlgorithm(mb))){
+      out << "if(*NDI==" << getUMATModellingHypothesisIndex(ModellingHypothesis::PLANESTRESS) << "){\n";
+      if(mb.isModellingHypothesisSupported(ModellingHypothesis::PLANESTRESS)){
+	pair<bool,SupportedTypes::TypeSize> v = this->checkIfAxialStrainIsDefinedAndGetItsOffset(mb);
+	if(v.first){
+	  out << "const UMATReal ezz = STATEV[" << v.second.getValueForDimension(2) << "];\n"
+	      << "const UMATReal Fzz = " << c2 << ";" << endl;
+	  out << c << ",Fzz);\n";	  
+	} else {
+	  // no axial strain
+	  out << "std::cerr << \"no state variable standing for the axial strain (variable with the "
+	      << "glossary name 'AxialStrain')\" << std::endl;\n";
+	  out << "*KINC=-1;\n";
+	  out << "return;\n";
+	}
+      } else {
+	// generic algorithm, this means that the behaviour
+	// can be called in generalised plane strain
+	const MechanicalBehaviourData& d = mb.getMechanicalBehaviourData(ModellingHypothesis::GENERALISEDPLANESTRAIN);
+	SupportedTypes::TypeSize s =  this->getTotalSize(d.getStateVariables());
+	s +=  this->getTotalSize(d.getAuxiliaryStateVariables());
+	if(s.getValueForDimension(2)==0){
+	  out << "const UMATReal ezz = STATEV[0];\n";
+	} else {
+	  out << "if(*NSTATV!=" << s.getValueForDimension(2)+1 << "){\n"
+	      << "std::cerr << \"invalid number of internal state variables\" << std::endl;\n"
+	      << "}\n";
+	  out << "const UMATReal ezz = STATEV[" << s.getValueForDimension(2) << "];\n";
+	}
+	out << "const UMATReal Fzz = " << c2 << ";" << endl;
+	out << c << ",Fzz);\n";
+      }
+      out << "} else {\n";
+      out << c << ",0);\n";
+      out << "}\n";
+    } else {
+      out << c << ",0);\n";
+    }
+  } // end of MFrontUMATInterface::writeFiniteStrainStrategiesPlaneStressSpecificCall
+
   void
   MFrontUMATInterface::writeFiniteRotationSmallStrainUmatFunction(std::ostream& out,
 								  const std::string& name,
-								  const std::string& library,
-								  const std::string& material,
 								  const std::string& suffix,
-								  const std::map<std::string,std::string>& glossaryNames,
-								  const std::map<std::string,std::string>& entryNames,
 								  const MechanicalBehaviourDescription& mb) const
   {
     using namespace std;
@@ -1286,7 +1358,8 @@ namespace mfront{
     out << "UMATInt  i;\n";
     out << "UMATFiniteStrain::computeGreenLagrangeStrain(eto,F0,*NTENS,*NDI);\n";
     out << "UMATFiniteStrain::computeGreenLagrangeStrain(deto,F1,*NTENS,*NDI);\n";
-    out << "UMATFiniteStrain::computeSecondPiolaKirchhoffStressFromCauchyStress(STRESS,F0,*NTENS,*NDI);\n";
+    string c1 = "UMATFiniteStrain::computeSecondPiolaKirchhoffStressFromCauchyStress(STRESS,F0,*NTENS,*NDI";
+    this->writeFiniteStrainStrategiesPlaneStressSpecificCall(out,mb,c1,"std::sqrt(1+2*ezz)");
     out << "for(i=0;i!=*NTENS;++i){\n";
     out << "deto[i] -= eto[i];\n";
     out << "}\n";
@@ -1296,12 +1369,13 @@ namespace mfront{
 	<< "STRESS,NDI,KINC,\n"
 	<< "umat::UMATStandardSmallStrainStressFreeExpansionHandler);\n";
     out << "if(*KINC==1){\n";
-    out << "UMATFiniteStrain::computeCauchyStressFromSecondPiolaKirchhoffStress(STRESS,F1,*NTENS,*NDI);\n";
+    string c2 = "UMATFiniteStrain::computeCauchyStressFromSecondPiolaKirchhoffStress(STRESS,F1,*NTENS,*NDI";
+    this->writeFiniteStrainStrategiesPlaneStressSpecificCall(out,mb,c2,"std::sqrt(1+2*ezz)");
     out << "}\n";
     if(this->generateMTestFile){
       out << "if(*KINC!=1){\n";
       this->generateMTestFile2(out,MechanicalBehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR,
-			       library,material,name,suffix,mb,glossaryNames,entryNames);
+			       name,suffix,mb);
       out << "}\n";
     }
     out << "}\n\n";
@@ -1327,11 +1401,7 @@ namespace mfront{
   void
   MFrontUMATInterface::writeMieheApelLambrechtLogarithmicStrainUmatFunction(std::ostream& out,
 									    const std::string& name,
-									    const std::string& library,
-									    const std::string& material,
 									    const std::string& suffix,
-									    const std::map<std::string,std::string>& glossaryNames,
-									    const std::map<std::string,std::string>& entryNames,
 									    const MechanicalBehaviourDescription& mb) const
   {
     using namespace std;
@@ -1366,9 +1436,10 @@ namespace mfront{
     out << "UMATReal P1[36];\n";
     out << "UMATReal s[6];\n";
     out << "UMATInt  i;\n";
-    out << "UMATFiniteStrain::computeLogarithmicStrainAndDerivative(P0,eto,F0,*NTENS,*NDI);\n";
+    out << "UMATFiniteStrain::computeLogarithmicStrainAndDerivative(P0,eto ,F0,*NTENS,*NDI);\n";
     out << "UMATFiniteStrain::computeLogarithmicStrainAndDerivative(P1,deto,F1,*NTENS,*NDI);\n";
-    out << "UMATFiniteStrain::computeDualStressOfLogarithmicStrainFromCauchyStress(s,STRESS,P0,F0,*NTENS,*NDI);\n";
+    string c1 = "UMATFiniteStrain::computeDualStressOfLogarithmicStrainFromCauchyStress(s,STRESS,P0,F0,*NTENS,*NDI";
+    this->writeFiniteStrainStrategiesPlaneStressSpecificCall(out,mb,c1,"std::exp(ezz)");
     out << "for(i=0;i!=*NTENS;++i){\n";
     out << "deto[i] -= eto[i];\n";
     out << "}\n";
@@ -1378,12 +1449,13 @@ namespace mfront{
 	<< "s,NDI,KINC,\n"
 	<< "umat::UMATStandardSmallStrainStressFreeExpansionHandler);\n";
     out << "if(*KINC==1){\n";
-    out << "UMATFiniteStrain::computeCauchyStressFromDualStressOfLogarithmicStrain(STRESS,s,P1,F1,*NTENS,*NDI);\n";
+    string c2 = "UMATFiniteStrain::computeCauchyStressFromDualStressOfLogarithmicStrain(STRESS,s,P1,F1,*NTENS,*NDI";
+    this->writeFiniteStrainStrategiesPlaneStressSpecificCall(out,mb,c2,"std::exp(ezz)");
     out << "}\n";
     if(this->generateMTestFile){
       out << "if(*KINC!=1){\n";
       this->generateMTestFile2(out,MechanicalBehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR,
-			       library,material,name,suffix,mb,glossaryNames,entryNames);
+       			       name,suffix,mb);
       out << "}\n";
     }
     out << "}\n\n";
@@ -1408,11 +1480,7 @@ namespace mfront{
   void
   MFrontUMATInterface::writeStandardUmatFunction(std::ostream& out,
 						 const std::string& name,
-						 const std::string& library,
-						 const std::string& material,
 						 const std::string& suffix,
-						 const std::map<std::string,std::string>& glossaryNames,
-						 const std::map<std::string,std::string>& entryNames,
 						 const MechanicalBehaviourDescription& mb) const
   {
     using namespace std;
@@ -1441,8 +1509,8 @@ namespace mfront{
 	<< "umat::UMATStandardSmallStrainStressFreeExpansionHandler);\n";
     if(this->generateMTestFile){
       out << "if(*KINC!=1){\n";
-      this->generateMTestFile2(out,MechanicalBehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR,
-			       library,material,name,suffix,mb,glossaryNames,entryNames);
+      this->generateMTestFile2(out,mb.getBehaviourType(),
+       			       name,suffix,mb);
       out << "}\n";
     }
     out << "}\n\n";
@@ -1465,33 +1533,77 @@ namespace mfront{
   }
 
   void
-  MFrontUMATInterface::generateGibianeDeclaration(const std::string& library,
-						  const std::string& material,
-						  const std::string& className,
-						  const std::string& authorName,
-						  const std::string& date,
-						  const MechanicalBehaviourDescription& mb) const
+  MFrontUMATInterface::writeVariableDescriptionContainerToGibiane(std::ostream& out,
+								  unsigned short& i,
+								  const Hypothesis h,
+								  const VariableDescriptionContainer& v) const
+  {
+    using namespace std;
+    string tmp;
+    for(VariableDescriptionContainer::const_iterator p=v.begin();p!=v.end();++p){
+      SupportedTypes::TypeFlag flag = this->getTypeFlag(p->type);
+      switch(flag){
+      case SupportedTypes::Scalar : 
+	tmp = treatScalar(p->name);
+	i=static_cast<unsigned short>(i+1u);
+	break;
+      case SupportedTypes::Stensor :
+	tmp = treatStensor(h,p->name);
+	i=static_cast<unsigned short>(i+3u);
+	break;
+      case SupportedTypes::Tensor :
+	tmp = treatTensor(h,p->name);
+	i=static_cast<unsigned short>(i+3u);
+	break;
+      default :
+	string msg(" MFrontUMATInterface::writeVariableDescriptionContainerToGibiane : ");
+	msg += "internal error, tag unsupported";
+	throw(runtime_error(msg));
+      }
+      if(i>9){
+	out << "\n";
+	i=0;
+      } else {
+	out << " ";
+      }
+      out << tmp;
+    }
+  }
+
+  void
+  MFrontUMATInterface::generateGibianeDeclaration(const MechanicalBehaviourDescription& mb,
+						  const MFrontFileDescription& fd) const
   {
     using namespace std;
     using namespace tfel::system;
-    const VariableDescriptionContainer& coefsHolder              = mb.getMaterialProperties();
-    const VariableDescriptionContainer& stateVarsHolder          = mb.getStateVariables();
-    const VariableDescriptionContainer& auxiliaryStateVarsHolder = mb.getAuxiliaryStateVariables();
-    const VariableDescriptionContainer& externalStateVarsHolder  = mb.getExternalStateVariables();
-    const string name((!library.empty())?library+className:className);
+    const string name((!mb.getLibrary().empty())?mb.getLibrary()+mb.getClassName():mb.getClassName());
     const string fileName("castem/"+name+".dgibi");
-    string tmp;
-    VariableDescriptionContainer::const_iterator p;
-    unsigned short i;
-    ofstream out;
+    // opening output file
     systemCall::mkdir("castem");
+    ofstream out;
     out.open(fileName.c_str());
     if(!out){
       string msg("MFrontUMATInterface::generateGibianeDeclaration : ");
       msg += "could not open file ";
-      msg += fileName;
-      throw(runtime_error(msg));
+	msg += fileName;
+	throw(runtime_error(msg));
     }
+    // header
+    out << "*\n";
+    out << "* \\file   "  << fd.fileName << endl;
+    out << "* \\brief  example of how to use the " << mb.getClassName() << " behaviour law\n"
+	<< "* in the Cast3M finite element solver\n";
+    out << "* \\author "  << fd.authorName << endl;
+    out << "* \\date   "  << fd.date       << endl;
+    out << "*\n\n";
+    out << "* Note for Cast3M pleiades users, you may want to use\n"
+	<< "* the syntaxe based on the DESC_LOI keyword. In this case,\n"
+	<< "* you may want to use the following table declaration : \n\n";
+    out << "cmp = 'TABLE';\n";
+    out << "cmp. 'LIBRAIRIE' = '" << this->getLibraryName(mb) << "';\n";
+    out << "cmp. 'MODELE'    = '" << this->getUmatFunctionName(mb) << "';\n";
+    out << "*\n\n";
+    // specific declaration
     string nonlin;
     if(mb.getBehaviourType()==MechanicalBehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR){
       nonlin = "'NON_LINEAIRE' 'UTILISATEUR'";
@@ -1502,521 +1614,244 @@ namespace mfront{
       msg += "internal error, unsupported behaviour type";
       throw(runtime_error(msg));
     }
-    out << "*\n";
-    out << "* \\file   "  << fileName << endl;
-    out << "* \\brief  example of how to use the " << className << " behaviour law\n"
-	<< "* in the Cast3M finite element solver\n";
-    out << "* \\author "  << authorName << endl;
-    out << "* \\date   "  << date       << endl;
-    out << "*\n\n";
-    out << "* Note for Cast3M pleiades users, you may want to use\n"
-	<< "* the syntaxe based on the DESC_LOI keyword. In this case,\n"
-	<< "* you may want to use the following table declaration : \n\n";
-    out << "cmp = 'TABLE';\n";
-    out << "cmp. 'LIBRAIRIE' = '" << this->getLibraryName(library,material) << "';\n";
-    out << "cmp. 'MODELE'    = '" << this->getUmatFunctionName(library,className) << "';\n";
-    out << "*\n\n";
-    out << "** 1D Example\n\n";
-    out << "coel1D = 'MOTS'";
-    i=0;
-    if(mb.getSymmetryType()==mfront::ISOTROPIC){
-      if(!this->checkIfElasticPropertiesAreDeclared(mb)){
-	out << "'YOUN' 'NU' 'RHO' 'ALPH' ";
-	i=4u;
+    // loop over hypothesis
+    const set<Hypothesis> h = this->getModellingHypothesesToBeTreated(mb);
+    for(set<Hypothesis>::const_iterator ph=h.begin();ph!=h.end();++ph){
+      
+      const MechanicalBehaviourData& d = mb.getMechanicalBehaviourData(*ph);
+      const VariableDescriptionContainer& stateVarsHolder          = d.getStateVariables();
+      const VariableDescriptionContainer& auxiliaryStateVarsHolder = d.getAuxiliaryStateVariables();
+      const VariableDescriptionContainer& externalStateVarsHolder  = d.getExternalStateVariables();
+      pair<vector<UMATMaterialProperty>,
+	   SupportedTypes::TypeSize> mprops = this->buildMaterialPropertiesList(mb,*ph);
+      string tmp;
+      VariableDescriptionContainer::const_iterator p;
+      unsigned short i;
+      out << "** " << ModellingHypothesis::toString(*ph) << " example\n\n";
+      out << "coel = 'MOTS' ";
+      i = 0;
+      for(vector<UMATMaterialProperty>::const_iterator pm=mprops.first.begin();
+	  pm!=mprops.first.end();){
+	SupportedTypes::TypeFlag flag = this->getTypeFlag(pm->type);
+	if(flag!=SupportedTypes::Scalar){
+	  string msg("MFrontUMATInterface::generateGibianeDeclaration : ");
+	  msg += "material properties shall be scalars";
+	  throw(runtime_error(msg));
+	}
+	out << treatScalar(pm->var_name);
+	if(i>8){
+	  out << "\n";
+	  i=0;
+	  ++pm;
+	} else {
+	  if(++pm!=mprops.first.end()){
+	    out << " ";
+	  }
+	  ++i;
+	}
       }
-    } else if(mb.getSymmetryType()==mfront::ORTHOTROPIC){
-      out << "'YG1' 'YG2' 'YG3' 'NU12' 'NU23' 'NU13' 'RHO' 'ALP1' 'ALP2' 'ALP3' ";
-      i=10u;
-    }
-    for(p=coefsHolder.begin();p!=coefsHolder.end();++p){
-      SupportedTypes::TypeFlag flag = this->getTypeFlag(p->type);
-      switch(flag){
-      case SupportedTypes::Scalar : 
-	tmp = treatScalar(p->name);
-	i=static_cast<unsigned short>(i+1u);
-	break;
-      case SupportedTypes::Stensor :
-	tmp = treatStensor(p->name,1);
-	i=static_cast<unsigned short>(i+3u);
-	break;
-      default :
-	string msg("MFrontUMATInterface::generateGibianeDeclaration : ");
-	msg += "internal error, tag unsupported";
-	throw(runtime_error(msg));
-      }
-      if(i>9){
-	out << "\n";
-	i=0;
-      } else {
+      out << ";\n";
+      out << "statev = 'MOTS' ";
+      i = 0;
+      this->writeVariableDescriptionContainerToGibiane(out,i,*ph,stateVarsHolder);
+      this->writeVariableDescriptionContainerToGibiane(out,i,*ph,auxiliaryStateVarsHolder);
+      if(stateVarsHolder.size()!=0){
 	out << " ";
       }
-      out << tmp;
+      out << ";\n";
+      out << "params = 'MOTS' 'T'";
+      this->writeVariableDescriptionContainerToGibiane(out,i,*ph,externalStateVarsHolder);
+      out << ";\n\n";
+      out << "MO = 'MODELISER' v 'MECANIQUE' 'ELASTIQUE'\n";
+      out << nonlin << " 'NUME_LOI' 1\n";
+      out << "'C_MATERIAU' coel\n";
+      out << "'C_VARINTER' statev\n";
+      out << "'PARA_LOI'   params\n'CONS' M;\n\n";
+      out << "MA = 'MATERIAU' MO";
+      i=0;
+      for(vector<UMATMaterialProperty>::const_iterator pm=mprops.first.begin();
+	  pm!=mprops.first.end();++pm){
+	SupportedTypes::TypeFlag flag = this->getTypeFlag(pm->type);
+	if(flag!=SupportedTypes::Scalar){
+	  string msg("MFrontUMATInterface::generateGibianeDeclaration : ");
+	  msg += "material properties shall be scalars";
+	  throw(runtime_error(msg));
+	}
+	tmp = treatScalar(pm->var_name);
+	if(i>4){
+	  out << "\n";
+	  i=0;
+	} else {
+	  out << " ";
+	  ++i;
+	}
+	out << tmp << " x"<< makeLowerCase(pm->var_name);
+      }
+      if(mb.getSymmetryType()==mfront::ORTHOTROPIC){
+	out << endl;
+	if((*ph==ModellingHypothesis::PLANESTRESS)||
+	   (*ph==ModellingHypothesis::AXISYMMETRICAL)||
+	   (*ph==ModellingHypothesis::PLANESTRAIN)||
+	   (*ph==ModellingHypothesis::GENERALISEDPLANESTRAIN)){
+	  out << "'DIRECTION' 'PARALLELE' (1 0)'";
+	} else if(*ph==ModellingHypothesis::TRIDIMENSIONAL){	    
+	  out << "'DIRECTION' 'PARALLELE' (1 0 0) (0 0 1)";
+	}
+      }
+      out << ";\n\n";
     }
-    out << ";\n";
-
-    out << "stav1D = 'MOTS'";
-    i=0;
-    for(p=stateVarsHolder.begin();p!=stateVarsHolder.end();++p){
-      SupportedTypes::TypeFlag flag = this->getTypeFlag(p->type);
-      switch(flag){
-      case SupportedTypes::Scalar : 
-	tmp = treatScalar(p->name);
-	i=static_cast<unsigned short>(i+1u);
-	break;
-      case SupportedTypes::Stensor :
-	tmp = treatStensor(p->name,1);
-	i=static_cast<unsigned short>(i+3u);
-	break;
-      default :
-	string msg("MFrontUMATInterface::generateGibianeDeclaration : ");
-	msg += "internal error, tag unsupported";
-	throw(runtime_error(msg));
-      }
-      if(i>9){
-	out << "\n";
-	i=0;
-      } else {
-	out << " ";
-      }
-      out << tmp;
-    }
-    if(stateVarsHolder.size()!=0){
-      out << " ";
-    }
-    for(p=auxiliaryStateVarsHolder.begin();p!=auxiliaryStateVarsHolder.end();++p){
-      SupportedTypes::TypeFlag flag = this->getTypeFlag(p->type);
-      switch(flag){
-      case SupportedTypes::Scalar : 
-	tmp = treatScalar(p->name);
-	i=static_cast<unsigned short>(i+1u);
-	break;
-      case SupportedTypes::Stensor :
-	tmp = treatStensor(p->name,1);
-	i=static_cast<unsigned short>(i+3u);
-	break;
-      default :
-	string msg("MFrontUMATInterface::generateGibianeDeclaration : ");
-	msg += "internal error, tag unsupported";
-	throw(runtime_error(msg));
-      }
-      if(i>9){
-	out << "\n";
-	i=0;
-      } else {
-	out << " ";
-      }
-      out << tmp;
-    }
-    out << ";\n";
-    
-    out << "para1D = 'MOTS' 'T'";
-    i=0;
-    for(p=externalStateVarsHolder.begin();p!=externalStateVarsHolder.end();++p){
-      SupportedTypes::TypeFlag flag = this->getTypeFlag(p->type);
-      switch(flag){
-      case SupportedTypes::Scalar : 
-	tmp = treatScalar(p->name);
-	i=static_cast<unsigned short>(i+1u);
-	break;
-      case SupportedTypes::Stensor :
-	tmp = treatStensor(p->name,1);
-	i=static_cast<unsigned short>(i+3u);
-	break;
-      default :
-	string msg("MFrontUMATInterface::generateGibianeDeclaration : ");
-	msg += "internal error, tag unsupported";
-	throw(runtime_error(msg));
-      }
-      if(i>9){
-	out << "\n";
-	i=0;
-      } else {
-	out << " ";
-      }
-      out << tmp;
-    }
-    out << ";\n\n";
-    
-    out << "MODL1D = 'MODELISER' v1D 'MECANIQUE' 'ELASTIQUE'\n";
-    out << nonlin << " 'NUME_LOI' 1\n";
-    out << "'C_MATERIAU' coel1D\n";
-    out << "'C_VARINTER' stav1D\n";
-    out << "'PARA_LOI'   para1D\n'CONS' M;\n\n";
-
-    out << "MATR1D = 'MATERIAU' MODL1D";
-    i=6;
-    if((mb.getSymmetryType()==mfront::ISOTROPIC)){
-      if(!this->checkIfElasticPropertiesAreDeclared(mb)){
-	out << "'YOUN' xyoung 'NU' xnu 'RHO' xrho 'ALPH' xalpha ";
-	i=9u;
-      }
-    } else {
-      out << "'YG1'  xyg1  'YG2'  xyg2  'YG3'  xyg3  'NU12' xNU12 'NU23' xNU23\n"
-	  << "'NU13' xNU13 'RHO' xrho 'ALP1' xapl1 'ALP2' xapl2 'ALP3' xALP3 ";
-      i=9u;
-    }
-    for(p=coefsHolder.begin();p!=coefsHolder.end();++p){
-      SupportedTypes::TypeFlag flag = this->getTypeFlag(p->type);
-      switch(flag){
-      case SupportedTypes::Scalar : 
-	tmp = treatCoefScalar(p->name);
-	i=static_cast<unsigned short>(i+1u);
-	break;
-      case SupportedTypes::Stensor :
-	tmp = treatCoefStensor(p->name,1);
-	i=static_cast<unsigned short>(i+3u);
-	break;
-      default :
-	string msg("MFrontUMATInterface::generateGibianeDeclaration : ");
-	msg += "internal error, tag unsupported";
-	throw(runtime_error(msg));
-      }
-      if(i>4){
-	out << "\n";
-	i=0;
-      } else {
-	out << " ";
-      }
-      out << tmp;
-    }
-    out << ";\n\n";
-    
-    out << "** 2D Example\n\n";
-    out << "coel2D = 'MOTS'";
-    i=0;
-    if((mb.getSymmetryType()==mfront::ISOTROPIC)){
-      if(!this->checkIfElasticPropertiesAreDeclared(mb)){
-	out << "'YOUN' 'NU' 'RHO' 'ALPH' ";
-	i=3u;
-      }
-    } else if(mb.getSymmetryType()==mfront::ORTHOTROPIC){
-      out << "'YG1' 'YG2' 'YG3' 'NU12' 'NU23' 'NU13' 'G12' 'V1X' 'V1Y'\n"
-	  << "'RHO' 'ALP1' 'ALP2' 'ALP3'";
-      i=3u;
-    }
-    for(p=coefsHolder.begin();p!=coefsHolder.end();++p){
-      SupportedTypes::TypeFlag flag = this->getTypeFlag(p->type);
-      switch(flag){
-      case SupportedTypes::Scalar : 
-	tmp = treatScalar(p->name);
-	i=static_cast<unsigned short>(i+1u);
-	break;
-      case SupportedTypes::Stensor :
-	tmp = treatStensor(p->name,2);
-	i=static_cast<unsigned short>(i+3u);
-	break;
-      default :
-	string msg("MFrontUMATInterface::generateGibianeDeclaration : ");
-	msg += "internal error, tag unsupported";
-	throw(runtime_error(msg));
-      }
-      if(i>9){
-	out << "\n";
-	i=0;
-      } else {
-	out << " ";
-      }
-      out << tmp;
-    }
-    out << ";\n";
-
-    out << "stav2D = 'MOTS'";
-    i=0;
-    for(p=stateVarsHolder.begin();p!=stateVarsHolder.end();++p){
-      SupportedTypes::TypeFlag flag = this->getTypeFlag(p->type);
-      switch(flag){
-      case SupportedTypes::Scalar : 
-	tmp = treatScalar(p->name);
-	i=static_cast<unsigned short>(i+1u);
-	break;
-      case SupportedTypes::Stensor :
-	tmp = treatStensor(p->name,2);
-	i=static_cast<unsigned short>(i+4u);
-	break;
-      default :
-	string msg("MFrontUMATInterface::generateGibianeDeclaration : ");
-	msg += "internal error, tag unsupported";
-	throw(runtime_error(msg));
-      }
-      if(i>9){
-	out << "\n";
-	i=0;
-      } else {
-	out << " ";
-      }
-      out << tmp;
-    }
-    for(p=auxiliaryStateVarsHolder.begin();
-	p!=auxiliaryStateVarsHolder.end();++p){
-      SupportedTypes::TypeFlag flag = this->getTypeFlag(p->type);
-      switch(flag){
-      case SupportedTypes::Scalar : 
-	tmp = treatScalar(p->name);
-	i=static_cast<unsigned short>(i+1u);
-	break;
-      case SupportedTypes::Stensor :
-	tmp = treatStensor(p->name,2);
-	i=static_cast<unsigned short>(i+4u);
-	break;
-      default :
-	string msg("MFrontUMATInterface::generateGibianeDeclaration : ");
-	msg += "internal error, tag unsupported";
-	throw(runtime_error(msg));
-      }
-      if(i>9){
-	out << "\n";
-	i=0;
-      } else {
-	out << " ";
-      }
-      out << tmp;
-    }
-    out << ";\n";
-    
-    out << "para2D = 'MOTS' 'T'";
-    i=0;
-    for(p=externalStateVarsHolder.begin();p!=externalStateVarsHolder.end();++p){
-      SupportedTypes::TypeFlag flag = this->getTypeFlag(p->type);
-      switch(flag){
-      case SupportedTypes::Scalar : 
-	tmp = treatScalar(p->name);
-	i=static_cast<unsigned short>(i+1u);
-	break;
-      case SupportedTypes::Stensor :
-	tmp = treatStensor(p->name,2);
-	i=static_cast<unsigned short>(i+3u);
-	break;
-      default :
-	string msg("MFrontUMATInterface::generateGibianeDeclaration : ");
-	msg += "internal error, tag unsupported";
-	throw(runtime_error(msg));
-      }
-      if(i>9){
-	out << "\n";
-	i=0;
-      } else {
-	out << " ";
-      }
-      out << tmp;
-    }
-    out << ";\n\n";
-    
-    out << "MODL2D = 'MODELISER' v2D 'MECANIQUE' 'ELASTIQUE'\n";
-    out << nonlin << " 'NUME_LOI' 2\n";
-    out << "'C_MATERIAU' coel2D\n";
-    out << "'C_VARINTER' stav2D\n";
-    out << "'PARA_LOI'   para2D\n'CONS' M;\n\n";
-
-    out << "MATR2D = 'MATERIAU' MODL2D";
-    i=6;
-    if((mb.getSymmetryType()==mfront::ISOTROPIC)){
-      if(!this->checkIfElasticPropertiesAreDeclared(mb)){
-	out << "'YOUN' xyoung 'NU' xnu 'RHO' xrho 'ALPH' xalpha";
-	i=9u;
-      }
-    } else {
-      out << "'YG1'  xyg1  'YG2' xyg2 'YG3'  xyg3  'NU12' xNU12 'NU23' xNU23\n"
-	  << "'NU13' xNU13 'G12' xg12 'RHO' xrho 'ALP1' xapl1 'ALP2' xapl2 'ALP3' xALP3";
-      i=9u;
-    }
-    for(p=coefsHolder.begin();p!=coefsHolder.end();++p){
-      SupportedTypes::TypeFlag flag = this->getTypeFlag(p->type);
-      switch(flag){
-      case SupportedTypes::Scalar : 
-	tmp = treatCoefScalar(p->name);
-	i=static_cast<unsigned short>(i+1u);
-	break;
-      case SupportedTypes::Stensor :
-	tmp = treatCoefStensor(p->name,2);
-	i=static_cast<unsigned short>(i+3u);
-	break;
-      default :
-	string msg("MFrontUMATInterface::generateGibianeDeclaration : ");
-	msg += "internal error, tag unsupported";
-	throw(runtime_error(msg));
-      }
-      if(i>4){
-	out << "\n";
-	i=0;
-      } else {
-	out << " ";
-      }
-      out << tmp;
-    }
-    if(mb.getSymmetryType()==mfront::ORTHOTROPIC){
-      out << "\n'DIRECTION' 'PARALLELE' (1 0)";
-    }
-    out << ";\n\n";
-
-    out << "** 3D Example\n\n";
-    out << "coel3D = 'MOTS'";
-    i=0;
-    if(mb.getSymmetryType()==mfront::ISOTROPIC){
-      if(!this->checkIfElasticPropertiesAreDeclared(mb)){
-	out << "'YOUN' 'NU' 'RHO' 'ALPH'";
-	i=3u;
-      }
-    } else {
-      out << "'YG1' 'YG2' 'YG3' 'NU12' 'NU23' 'NU13'\n"
-	  << "'G12' 'G23' 'G13' 'V1X'  'V1Y'  'V1Z' \n"
-	  << "'V2X' 'V2Y' 'V2Z' 'RHO'  'ALP1' 'ALP2' 'ALP3'";
-      i=6u;
-    }
-    for(p=coefsHolder.begin();p!=coefsHolder.end();++p){
-      SupportedTypes::TypeFlag flag = this->getTypeFlag(p->type);
-      switch(flag){
-      case SupportedTypes::Scalar : 
-	tmp = treatScalar(p->name);
-	i=static_cast<unsigned short>(i+1u);
-	break;
-      case SupportedTypes::Stensor :
-	tmp = treatStensor(p->name,3);
-	i=static_cast<unsigned short>(i+6u);
-	break;
-      default :
-	string msg("MFrontUMATInterface::generateGibianeDeclaration : ");
-	msg += "internal error, tag unsupported";
-	throw(runtime_error(msg));
-      }
-      if(i>9){
-	out << "\n";
-	i=0;
-      } else {
-	out << " ";
-      }
-      out << tmp;
-    }
-    out << ";\n";
-
-    out << "stav3D = 'MOTS'";
-    i=0;
-    for(p=stateVarsHolder.begin();p!=stateVarsHolder.end();++p){
-      SupportedTypes::TypeFlag flag = this->getTypeFlag(p->type);
-      switch(flag){
-      case SupportedTypes::Scalar : 
-	tmp = treatScalar(p->name);
-	i=static_cast<unsigned short>(i+1u);
-	break;
-      case SupportedTypes::Stensor :
-	tmp = treatStensor(p->name,3);
-	i=static_cast<unsigned short>(i+3u);
-	break;
-      default :
-	string msg("MFrontUMATInterface::generateGibianeDeclaration : ");
-	msg += "internal error, tag unsupported";
-	throw(runtime_error(msg));
-      }
-      if(i>9){
-	out << "\n";
-	i=0;
-      } else {
-	out << " ";
-      }
-      out << tmp;
-    }
-    for(p=auxiliaryStateVarsHolder.begin();
-	p!=auxiliaryStateVarsHolder.end();++p){
-      SupportedTypes::TypeFlag flag = this->getTypeFlag(p->type);
-      switch(flag){
-      case SupportedTypes::Scalar : 
-	tmp = treatScalar(p->name);
-	i=static_cast<unsigned short>(i+1u);
-	break;
-      case SupportedTypes::Stensor :
-	tmp = treatStensor(p->name,3);
-	i=static_cast<unsigned short>(i+3u);
-	break;
-      default :
-	string msg("MFrontUMATInterface::generateGibianeDeclaration : ");
-	msg += "internal error, tag unsupported";
-	throw(runtime_error(msg));
-      }
-      if(i>9){
-	out << "\n";
-	i=0;
-      } else {
-	out << " ";
-      }
-      out << tmp;
-    }
-    out << ";\n";
-    
-    out << "para3D = 'MOTS' 'T'";
-    i=0;
-    for(p=externalStateVarsHolder.begin();
-	p!=externalStateVarsHolder.end();++p){
-      SupportedTypes::TypeFlag flag = this->getTypeFlag(p->type);
-      switch(flag){
-      case SupportedTypes::Scalar : 
-	tmp = treatScalar(p->name);
-	i=static_cast<unsigned short>(i+1u);
-	break;
-      case SupportedTypes::Stensor :
-	tmp = treatStensor(p->name,3);
-	i=static_cast<unsigned short>(i+3u);
-	break;
-      default :
-	string msg("MFrontUMATInterface::generateGibianeDeclaration : ");
-	msg += "internal error, tag unsupported";
-	throw(runtime_error(msg));
-      }
-      if(i>9){
-	out << "\n";
-	i=0;
-      } else {
-	out << " ";
-      }
-      out << tmp;
-    }
-    out << ";\n\n";
-    
-    out << "MODL3D = 'MODELISER' v3D 'MECANIQUE' 'ELASTIQUE'\n";
-    out << nonlin << " 'NUME_LOI' 3\n";
-    out << "'C_MATERIAU' coel3D\n";
-    out << "'C_VARINTER' stav3D\n";
-    out << "'PARA_LOI'   para3D\n'CONS' M;\n\n";
-
-    out << "MATR3D = 'MATERIAU' MODL3D";
-    i=6;
-    if(mb.getSymmetryType()==mfront::ISOTROPIC){
-      if(!this->checkIfElasticPropertiesAreDeclared(mb)){
-	out << "'YOUN' xyoung 'NU' xnu 'ALPH' xalpha";
-	i=9u;
-      }
-    } else {
-      out << "'YG1' xyg1 'YG2' xyg2 'YG3' xyg3 'NU12' xNU12 'NU23' xNU23 'NU13' xNU13\n"
-	  << "'G12' xg12 'G23' xg23 'G13' xg13 'RHO' xrho 'ALP1' xapl1 'ALP2' xapl2 'ALP3' xALP3\n";
-      i=9u;
-    }
-    for(p=coefsHolder.begin();p!=coefsHolder.end();++p){
-      SupportedTypes::TypeFlag flag = this->getTypeFlag(p->type);
-      switch(flag){
-      case SupportedTypes::Scalar : 
-	tmp = treatCoefScalar(p->name);
-	i=static_cast<unsigned short>(i+1u);
-	break;
-      case SupportedTypes::Stensor :
-	tmp = treatCoefStensor(p->name,3);
-	i=static_cast<unsigned short>(i+3u);
-	break;
-      default :
-	string msg("MFrontUMATInterface::generateGibianeDeclaration : ");
-	msg += "internal error, tag unsupported";
-	throw(runtime_error(msg));
-      }
-      if(i>4){
-	out << "\n";
-	i=0;
-      } else {
-	out << " ";
-      }
-      out << tmp;
-    }
-    if(mb.getSymmetryType()==mfront::ORTHOTROPIC){
-      out << "\n'DIRECTION' 'PARALLELE' (1 0 0) (0 0 1)";
-    }
-    out << ";\n\n";
     out.close();
   } // end of MFrontUMATInterface::generateGibianeDeclaration
+
+  void
+  MFrontUMATInterface::writeUMATBehaviourTraits(std::ostream& out,
+						const MechanicalBehaviourDescription& mb,
+						const Hypothesis h) const
+  {
+    using namespace std;
+    pair<SupportedTypes::TypeSize,
+	 SupportedTypes::TypeSize> mvs = mb.getMainVariablesSize();
+    pair<vector<UMATMaterialProperty>,
+	 SupportedTypes::TypeSize> mprops = this->buildMaterialPropertiesList(mb,h);
+    if(h==ModellingHypothesis::UNDEFINEDHYPOTHESIS){
+      if(mb.useQt()){
+	out << "template<tfel::material::ModellingHypothesis::Hypothesis H,typename Type,bool use_qt>\n";
+      } else {
+	out << "template<tfel::material::ModellingHypothesis::Hypothesis H,typename Type>\n";
+      }
+      out << "struct UMATTraits<tfel::material::" << mb.getClassName() << "<H,Type,";
+    } else {
+      if(mb.useQt()){
+	out << "template<typename Type,bool use_qt>\n";
+      } else {
+	out << "template<typename Type>\n";
+      }
+      out << "struct UMATTraits<tfel::material::" << mb.getClassName() 
+	  << "<tfel::material::ModellingHypothesis::"
+	  << ModellingHypothesis::toUpperCaseString(h) << ",Type,";
+    }
+    if(mb.useQt()){
+      out << "use_qt";
+    } else {
+      out << "false";
+    }
+    out << "> >{\n";
+    if(h!=ModellingHypothesis::UNDEFINEDHYPOTHESIS){
+      out << "typedef tfel::material::ModellingHypothesis ModellingHypothesis;\n";
+      out << "typedef tfel::material::ModellingHypothesisToSpaceDimension<ModellingHypothesis::" <<
+	ModellingHypothesis::toUpperCaseString(h) << "> ModellingHypothesisToSpaceDimension;\n";
+    } else {
+      out << "typedef tfel::material::ModellingHypothesis ModellingHypothesis;\n";
+      out << "typedef tfel::material::ModellingHypothesisToSpaceDimension<H> ModellingHypothesisToSpaceDimension;\n";
+    }
+    if(h!=ModellingHypothesis::UNDEFINEDHYPOTHESIS){
+      out << "static const ModellingHypothesis::Hypothesis H = " 
+	  << "ModellingHypothesis::" << ModellingHypothesis::toUpperCaseString(h)
+	  << ";" << endl;
+    }
+    if(mb.getBehaviourType()==MechanicalBehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR){
+      out << "static const UMATBehaviourType btype  = SMALLSTRAINSTANDARDBEHAVIOUR;\n";
+    } else if(mb.getBehaviourType()==MechanicalBehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR){
+      out << "static const UMATBehaviourType btype  = FINITESTRAINSTANDARDBEHAVIOUR;\n";
+    } else if(mb.getBehaviourType()==MechanicalBehaviourDescription::COHESIVEZONEMODEL){
+      out << "static const UMATBehaviourType btype  = COHESIVEZONEMODEL;\n";
+    } else {
+      string msg("MFrontUMATInterface::writeUMATBehaviourTraits : "
+		 "unsupported behaviour type");
+      throw(runtime_error(msg));
+    }
+    out << "// space dimension\n";
+    out << "static const unsigned short N           = ModellingHypothesisToSpaceDimension::value;\n";
+    out << "// tiny vector size\n";
+    out << "static const unsigned short TVectorSize = N;\n";
+    out << "// symmetric tensor size\n";
+    out << "static const unsigned short StensorSize = tfel::math::StensorDimeToSize<N>::value;\n";
+    out << "// tensor size\n";
+    out << "static const unsigned short TensorSize  = tfel::math::TensorDimeToSize<N>::value;\n";
+    out << "// size of the driving variable array (STRAN)\n";
+    out << "static const unsigned short DrivingVariableSize = " << mvs.first <<  ";\n";
+    out << "// size of the thermodynamic force variable array (STRESS)\n";
+    out << "static const unsigned short ThermodynamicForceVariableSize = " << mvs.second <<  ";\n";
+    out << "static const bool useTimeSubStepping = ";
+    if(this->useTimeSubStepping){
+      out << "true;\n";
+    } else {
+      out << "false;\n";
+    }
+    out << "static const bool doSubSteppingOnInvalidResults = ";
+    if(this->doSubSteppingOnInvalidResults){
+      out << "true;\n";
+    } else {
+      out << "false;\n";
+    }
+    out << "static const unsigned short maximumSubStepping = ";
+    if(this->useTimeSubStepping){
+      out << this->maximumSubStepping << ";\n";
+    } else {
+      out << "0u;\n";
+    }
+    if(mb.getAttribute(MechanicalBehaviourDescription::requiresStiffnessTensor,false)){
+      out << "static const bool requiresStiffnessTensor = true;\n";
+      if(mb.getAttribute(MechanicalBehaviourDescription::requiresUnAlteredStiffnessTensor,false)){
+	out << "static const bool requiresUnAlteredStiffnessTensor = true;\n";
+      } else {
+	out << "static const bool requiresUnAlteredStiffnessTensor = false;\n";
+      }
+    } else {
+      out << "static const bool requiresStiffnessTensor = false;\n";
+    }
+    if(mb.getAttribute(MechanicalBehaviourDescription::requiresThermalExpansionCoefficientTensor,false)){
+      out << "static const bool requiresThermalExpansionCoefficientTensor = true;\n";
+    } else {
+      out << "static const bool requiresThermalExpansionCoefficientTensor = false;\n";
+    }
+    // computing material properties size
+    SupportedTypes::TypeSize msize;
+    if(!mprops.first.empty()){
+      const UMATMaterialProperty& m = mprops.first.back();
+      msize  = m.offset;
+      msize += this->getTypeSize(m.type,m.arraySize);
+      msize -= mprops.second;
+    }
+    out << "static const unsigned short material_properties_nb = " << msize << ";\n";
+    if(mb.getSymmetryType()==mfront::ISOTROPIC){
+      out << "static const unsigned short propertiesOffset = 4u;\n";
+    } else if (mb.getSymmetryType()==mfront::ORTHOTROPIC){
+      if((mb.getBehaviourType()==MechanicalBehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR)||
+	 (mb.getBehaviourType()==MechanicalBehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR)){
+	// something needs to be done here
+	out << "static const unsigned short propertiesOffset = UMATOrthotropicOffset<umat::SMALLSTRAINSTANDARDBEHAVIOUR,N>::value;\n";
+      } else {
+	string msg("MFrontUMATInterface::writeUMATBehaviourTraits : "
+		   "unsupported behaviour type");
+	throw(runtime_error(msg));
+      }
+    } else {
+      string msg("MFrontUMATInterface::writeUMATBehaviourTraits : ");
+      msg += "unsupported behaviour symmetry type.\n";
+      msg += "The umat interface only support isotropic or orthotropic behaviour at this time.";
+      throw(runtime_error(msg));
+    }
+    if(mb.getSymmetryType()==mfront::ISOTROPIC){
+      out << "static const UMATSymmetryType stype = umat::ISOTROPIC;\n";
+    } else if (mb.getSymmetryType()==mfront::ORTHOTROPIC){
+      out << "static const UMATSymmetryType stype = umat::ORTHOTROPIC;\n";
+    } else {
+      string msg("MFrontUMATInterface::writeUMATBehaviourTraits : ");
+      msg += "unsupported behaviour symmetry type.\n";
+      msg += "The umat interface only support isotropic or orthotropic behaviour at this time.";
+      throw(runtime_error(msg));
+    }
+    out << "}; // end of class UMATTraits\n\n";
+  } // end of MFrontUMATInterface::writeUMATBehaviourTraits
+
+  std::string
+  MFrontUMATInterface::getModellingHypothesisTest(const Hypothesis h) const
+  {
+    using namespace std;
+    ostringstream test;
+    test << "*NDI==" << getUMATModellingHypothesisIndex(h);
+    return test.str();
+  }
 
 } // end of namespace mfront

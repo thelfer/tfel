@@ -5,11 +5,6 @@
 
 @MaterialProperty<constant> 'YoungModulus' 200000.;
 @MaterialProperty<constant> 'PoissonRatio' 0.3;
-@MaterialProperty<constant> 'MassDensity' 0.;
-@MaterialProperty<constant> 'ThermalExpansion' 0.;
-
-@ExternalStateVariable 'Temperature' 0.;
-
 @MaterialProperty<constant> 'R0' 600.;
 @MaterialProperty<constant> 'Q1' 300.;
 @MaterialProperty<constant> 'b1' 1.;
@@ -20,6 +15,7 @@
 @MaterialProperty<constant> 'C2' 0.;
 @MaterialProperty<constant> 'D2' 0.;
 
+@ExternalStateVariable 'Temperature' 0.;
 @ImposedStrain<function> 'EXX' 'min(t*0.0005,0.2-t*0.0005)';
 @Times {0.,400. in 1000};
 

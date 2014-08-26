@@ -31,7 +31,32 @@ namespace tfel
     } // end of ModellingHypothesis::getModellingHypotheses
 
     std::string
-    ModellingHypothesis::HypothesisToString(const Hypothesis h)
+    ModellingHypothesis::toString(const Hypothesis h)
+    {
+      using namespace std;
+      if(h==AXISYMMETRICALGENERALISEDPLANESTRAIN){
+	return "AxisymmetricalGeneralisedPlaneStrain";
+      } else if(h==AXISYMMETRICALGENERALISEDPLANESTRESS){
+	return "AxisymmetricalGeneralisedPlaneStress";
+      } else if (h==AXISYMMETRICAL){
+	return "Axisymmetrical";
+      } else if (h==PLANESTRESS){
+	return "PlaneStress";
+      } else if (h==PLANESTRAIN){
+	return "PlaneStrain";
+      } else if (h==GENERALISEDPLANESTRAIN){
+	return "GeneralisedPlaneStrain";
+      } else if (h==TRIDIMENSIONAL){
+	return "Tridimensional";
+      }
+      string msg("ModellingHypothesis::toString : ");
+      msg += "unsupported modelling hypothesis";
+      throw(runtime_error(msg));
+      return "";				       
+    }
+
+    std::string
+    ModellingHypothesis::toUpperCaseString(const Hypothesis h)
     {
       using namespace std;
       if(h==AXISYMMETRICALGENERALISEDPLANESTRAIN){
@@ -49,10 +74,43 @@ namespace tfel
       } else if (h==TRIDIMENSIONAL){
 	return "TRIDIMENSIONAL";
       }
-      string msg("ModellingHypothesis::HypothesisToString : ");
+      string msg("ModellingHypothesis::toUpperCaseString : ");
       msg += "unsupported modelling hypothesis";
       throw(runtime_error(msg));
       return "";				       
+    }
+
+    ModellingHypothesis::Hypothesis
+    ModellingHypothesis::fromString(const std::string& h)
+    {
+      using namespace std;
+      if(h=="AxisymmetricalGeneralisedPlaneStrain"){
+	return AXISYMMETRICALGENERALISEDPLANESTRAIN;
+      } else if(h=="AxisymmetricalGeneralisedPlaneStress"){
+	return AXISYMMETRICALGENERALISEDPLANESTRESS;
+      } else if(h=="Axisymmetrical"){
+	return AXISYMMETRICAL;
+      } else if(h=="PlaneStress"){
+	return PLANESTRESS;
+      } else if(h=="PlaneStrain"){
+	return PLANESTRAIN;
+      } else if(h=="GeneralisedPlaneStrain"){
+	return GENERALISEDPLANESTRAIN;
+      } else if(h=="Tridimensional"){
+	return TRIDIMENSIONAL;
+      } else {
+	string msg("MFrontBehaviourParserCommon::getModellingHypothesisFromString : "
+		   "invalid or unsupported hypothesis '"+h+"'. The following "
+		   "hypotheses are supported:\n"
+		   "- AxisymmetricalGeneralisedPlaneStrain\n"
+		   "- Axisymmetrical\n"
+		   "- PlaneStress\n"
+		   "- PlaneStrain\n"
+		   "- GeneralisedPlaneStrain\n"
+		   "- Tridimensional");
+	throw(runtime_error(msg));
+      }
+      return UNDEFINEDHYPOTHESIS;
     }
 
   } // end of namespace material

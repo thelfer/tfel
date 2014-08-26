@@ -12,17 +12,19 @@
 #include"TFEL/Math/st2tost2.hxx"
 #include"TFEL/System/ExternalLibraryManager.hxx"
 #include"MFront/UMAT/UMAT.hxx"
+#include"MFront/MFrontLogStream.hxx"
+#include"MFront/MTestEvolution.hxx"
 #include"MFront/MTestUmatSmallStrainBehaviour.hxx"
 #include"MFront/MTestUmatNormaliseTangentOperator.hxx"
-#include"MFront/UMAT/UMATComputeStiffnessOperator.hxx"
-
+#include"MFront/UMAT/UMATComputeStiffnessTensor.hxx"
 
 namespace mfront
 {
 
   struct MTestUmatRotationMatrix2D
   {
-    MTestUmatRotationMatrix2D(const real *const);
+    MTestUmatRotationMatrix2D(const real *const,
+			      const real *const);
     // compute the stiffness matrix in the global space
     void rotateStiffnessMatrixBackward(real *const) const;
   private:
@@ -32,7 +34,8 @@ namespace mfront
   struct MTestUmatRotationMatrix3D
   {
     
-    MTestUmatRotationMatrix3D(const real *const);
+    MTestUmatRotationMatrix3D(const real *const,
+			      const real *const);
     // compute the stiffness matrix in the global space
     void rotateStiffnessMatrixBackward(real *const) const;
   private:
@@ -41,15 +44,16 @@ namespace mfront
 
   // Constructeur
   // drot : Matrice de passage élement/global
-  MTestUmatRotationMatrix2D::MTestUmatRotationMatrix2D(const real *const drot)
+  MTestUmatRotationMatrix2D::MTestUmatRotationMatrix2D(const real *const V,
+						       const real *const drot)
   {
     // Matrice de passage matériau/global
     real a[4];
     // // Premier vecteur
     // a[1,1]
-    a[0]=drot[0];
+    a[0]=drot[0]*V[0]+drot[3]*V[1];
     // a[2,1]
-    a[1]=drot[1];
+    a[1]=drot[1]*V[0]+drot[4]*V[1];
     // Deuxième vecteur :
     //   Produit vectoriel
     // a[1,2]
@@ -122,56 +126,74 @@ namespace mfront
 
   // Constructeur
   // drot : Matrice de passage élement/global
-  MTestUmatRotationMatrix3D::MTestUmatRotationMatrix3D(const real *const drot)
+  MTestUmatRotationMatrix3D::MTestUmatRotationMatrix3D(const real *const V,
+						       const real *const drot)
   {
+    // Matrice de passage matériau/global
+    real a[9];
+    
+    // Premier vecteur
+    a[0]=drot[0]*V[0]+drot[3]*V[1]+drot[6]*V[2];
+    a[1]=drot[1]*V[0]+drot[4]*V[1]+drot[7]*V[2];
+    a[2]=drot[2]*V[0]+drot[5]*V[1]+drot[8]*V[2];
+    // Deuxième vecteur
+    a[3]=drot[0]*V[3]+drot[3]*V[4]+drot[6]*V[5];
+    a[4]=drot[1]*V[3]+drot[4]*V[4]+drot[7]*V[5];
+    a[5]=drot[2]*V[3]+drot[5]*V[4]+drot[8]*V[5];
+    // Troisième vecteur :
+    //   produit vectoriel des deux premiers
+    a[6]=a[1]*a[5]-a[4]*a[2];
+    a[7]=a[2]*a[3]-a[5]*a[0];
+    a[8]=a[0]*a[4]-a[3]*a[1];
+
     // Contruction de la matrice de passage N (pour les tenseurs)
     // Première ligne
-    MN[0][0]=drot[0]*drot[0];
-    MN[0][1]=drot[1]*drot[1];
-    MN[0][2]=drot[2]*drot[2];
-    MN[0][5]=drot[1]*drot[2];
-    MN[0][4]=drot[2]*drot[0];
-    MN[0][3]=drot[0]*drot[1];
+    MN[0][0]=a[0]*a[0];
+    MN[0][1]=a[1]*a[1];
+    MN[0][2]=a[2]*a[2];
+    MN[0][5]=a[1]*a[2];
+    MN[0][4]=a[2]*a[0];
+    MN[0][3]=a[0]*a[1];
 
     // Deuxième ligne
-    MN[1][0]=drot[3]*drot[3];
-    MN[1][1]=drot[4]*drot[4];
-    MN[1][2]=drot[5]*drot[5];
-    MN[1][5]=drot[4]*drot[5];
-    MN[1][4]=drot[5]*drot[3];
-    MN[1][3]=drot[3]*drot[4];
+    MN[1][0]=a[3]*a[3];
+    MN[1][1]=a[4]*a[4];
+    MN[1][2]=a[5]*a[5];
+    MN[1][5]=a[4]*a[5];
+    MN[1][4]=a[5]*a[3];
+    MN[1][3]=a[3]*a[4];
 
     // Troisième ligne
-    MN[2][0]=drot[6]*drot[6];
-    MN[2][1]=drot[7]*drot[7];
-    MN[2][2]=drot[8]*drot[8];
-    MN[2][5]=drot[7]*drot[8];
-    MN[2][4]=drot[8]*drot[6];
-    MN[2][3]=drot[6]*drot[7];
+    MN[2][0]=a[6]*a[6];
+    MN[2][1]=a[7]*a[7];
+    MN[2][2]=a[8]*a[8];
+    MN[2][5]=a[7]*a[8];
+    MN[2][4]=a[8]*a[6];
+    MN[2][3]=a[6]*a[7];
 
     // Quatrième ligne
-    MN[5][0]=drot[3]*drot[6];
-    MN[5][1]=drot[4]*drot[7];
-    MN[5][2]=drot[5]*drot[8];
-    MN[5][5]=drot[4]*drot[8]+drot[5]*drot[7];
-    MN[5][4]=drot[5]*drot[6]+drot[3]*drot[8];
-    MN[5][3]=drot[3]*drot[7]+drot[4]*drot[6];
+    MN[5][0]=a[3]*a[6];
+    MN[5][1]=a[4]*a[7];
+    MN[5][2]=a[5]*a[8];
+    MN[5][5]=a[4]*a[8]+a[5]*a[7];
+    MN[5][4]=a[5]*a[6]+a[3]*a[8];
+    MN[5][3]=a[3]*a[7]+a[4]*a[6];
 
     // Cinquième ligne
-    MN[4][0]=drot[6]*drot[0];
-    MN[4][1]=drot[7]*drot[1];
-    MN[4][2]=drot[8]*drot[2];
-    MN[4][5]=drot[7]*drot[2]+drot[8]*drot[1];
-    MN[4][4]=drot[8]*drot[0]+drot[6]*drot[2];
-    MN[4][3]=drot[6]*drot[1]+drot[7]*drot[0];
+    MN[4][0]=a[6]*a[0];
+    MN[4][1]=a[7]*a[1];
+    MN[4][2]=a[8]*a[2];
+    MN[4][5]=a[7]*a[2]+a[8]*a[1];
+    MN[4][4]=a[8]*a[0]+a[6]*a[2];
+    MN[4][3]=a[6]*a[1]+a[7]*a[0];
 
     // Sixième ligne
-    MN[3][0]=drot[0]*drot[3];
-    MN[3][1]=drot[1]*drot[4];
-    MN[3][2]=drot[2]*drot[5];
-    MN[3][5]=drot[1]*drot[5]+drot[2]*drot[4];
-    MN[3][4]=drot[2]*drot[3]+drot[0]*drot[5];
-    MN[3][3]=drot[0]*drot[4]+drot[1]*drot[3];
+    MN[3][0]=a[0]*a[3];
+    MN[3][1]=a[1]*a[4];
+    MN[3][2]=a[2]*a[5];
+    MN[3][5]=a[1]*a[5]+a[2]*a[4];
+    MN[3][4]=a[2]*a[3]+a[0]*a[5];
+    MN[3][3]=a[0]*a[4]+a[1]*a[3];
   } // end of MTestUmatRotationMatrix3D::MTestUmatRotationMatrix3D
 
   // compute the stiffness matrix in the global space
@@ -274,19 +296,19 @@ namespace mfront
 
   bool
   MTestUmatSmallStrainBehaviour::integrate(tfel::math::matrix<real>& Kt,
-					    tfel::math::vector<real>& s1,
-					    tfel::math::vector<real>& iv1,
-					    const tfel::math::tmatrix<3u,3u,real>& r,
-					    const tfel::math::vector<real>& e0,
-					    const tfel::math::vector<real>& e1,
-					    const tfel::math::vector<real>& s0,
-					    const tfel::math::vector<real>& mp,
-					    const tfel::math::vector<real>& iv0,
-					    const tfel::math::vector<real>& ev0,
-					    const tfel::math::vector<real>& dev,
-					    const tfel::material::ModellingHypothesis::Hypothesis h,
-					    const real dt,
-					    const MTestStiffnessMatrixType::mtype ktype) const
+					   tfel::math::vector<real>& s1,
+					   tfel::math::vector<real>& iv1,
+					   const tfel::math::tmatrix<3u,3u,real>& r,
+					   const tfel::math::vector<real>& e0,
+					   const tfel::math::vector<real>& e1,
+					   const tfel::math::vector<real>& s0,
+					   const tfel::math::vector<real>& mp,
+					   const tfel::math::vector<real>& iv0,
+					   const tfel::math::vector<real>& ev0,
+					   const tfel::math::vector<real>& dev,
+					   const tfel::material::ModellingHypothesis::Hypothesis h,
+					   const real dt,
+					   const MTestStiffnessMatrixType::mtype ktype) const
   {
     return this->call_behaviour(Kt,s1,iv1,r,e0,e1,s0,
 				mp,iv0,ev0,dev,h,dt,
@@ -315,7 +337,7 @@ namespace mfront
     using namespace umat;
     typedef tfel::material::ModellingHypothesis MH;
     using tfel::math::vector;
-    using umat::UMATComputeStiffnessOperator;
+    using umat::UMATComputeStiffnessTensor;
     static const real sqrt2 = sqrt(real(2));
     UMATInt ntens;
     UMATInt ndi;
@@ -457,15 +479,15 @@ namespace mfront
   {
     using namespace std;
     using namespace tfel::math;
-    using umat::UMATComputeStiffnessOperator;
+    using umat::UMATComputeStiffnessTensor;
     typedef tfel::material::ModellingHypothesis MH;
     tmatrix<3u,3u,real>::size_type i,j;
     if(this->stype==0u){
       if(h==MH::AXISYMMETRICALGENERALISEDPLANESTRAIN){
 	st2tost2<1u,real> De;
-	UMATComputeStiffnessOperator<umat::SMALLSTRAINSTANDARDBEHAVIOUR,
-				     MH::AXISYMMETRICALGENERALISEDPLANESTRAIN,
-				     umat::ISOTROPIC>::exe(&mp(0),De);
+	UMATComputeStiffnessTensor<umat::SMALLSTRAINSTANDARDBEHAVIOUR,
+				   MH::AXISYMMETRICALGENERALISEDPLANESTRAIN,
+				   umat::ISOTROPIC,false>::exe(De,&mp(0));
 	for(i=0;i!=3u;++i){
 	  for(j=0;j!=3u;++j){
 	    Kt(i,j) = De(i,j);
@@ -473,9 +495,9 @@ namespace mfront
 	}
       } else if (h==MH::AXISYMMETRICAL){
 	st2tost2<2u,real> De;
-	UMATComputeStiffnessOperator<umat::SMALLSTRAINSTANDARDBEHAVIOUR,
-				     MH::AXISYMMETRICAL,
-				     umat::ISOTROPIC>::exe(&mp(0),De);
+	UMATComputeStiffnessTensor<umat::SMALLSTRAINSTANDARDBEHAVIOUR,
+				   MH::AXISYMMETRICAL,
+				   umat::ISOTROPIC,false>::exe(De,&mp(0));
 	for(i=0;i!=4u;++i){
 	  for(j=0;j!=4u;++j){
 	    Kt(i,j) = De(i,j);
@@ -483,9 +505,9 @@ namespace mfront
 	}
       } else if (h==MH::PLANESTRESS){
 	st2tost2<2u,real> De;
-	UMATComputeStiffnessOperator<umat::SMALLSTRAINSTANDARDBEHAVIOUR,
-				     MH::PLANESTRESS,
-				     umat::ISOTROPIC>::exe(&mp(0),De);
+	UMATComputeStiffnessTensor<umat::SMALLSTRAINSTANDARDBEHAVIOUR,
+				   MH::PLANESTRESS,
+				   umat::ISOTROPIC,false>::exe(De,&mp(0));
 	for(i=0;i!=4u;++i){
 	  for(j=0;j!=4u;++j){
 	    Kt(i,j) = De(i,j);
@@ -493,9 +515,9 @@ namespace mfront
 	}
       } else if (h==MH::PLANESTRAIN){
 	st2tost2<2u,real> De;
-	UMATComputeStiffnessOperator<umat::SMALLSTRAINSTANDARDBEHAVIOUR,
-				     MH::PLANESTRAIN,
-				     umat::ISOTROPIC>::exe(&mp(0),De);
+	UMATComputeStiffnessTensor<umat::SMALLSTRAINSTANDARDBEHAVIOUR,
+				   MH::PLANESTRAIN,
+				   umat::ISOTROPIC,false>::exe(De,&mp(0));
 	for(i=0;i!=4u;++i){
 	  for(j=0;j!=4u;++j){
 	    Kt(i,j) = De(i,j);
@@ -503,9 +525,9 @@ namespace mfront
 	}
       } else if (h==MH::GENERALISEDPLANESTRAIN){
 	st2tost2<2u,real> De;
-	UMATComputeStiffnessOperator<umat::SMALLSTRAINSTANDARDBEHAVIOUR,
-				     MH::GENERALISEDPLANESTRAIN,
-				     umat::ISOTROPIC>::exe(&mp(0),De);
+	UMATComputeStiffnessTensor<umat::SMALLSTRAINSTANDARDBEHAVIOUR,
+				   MH::GENERALISEDPLANESTRAIN,
+				   umat::ISOTROPIC,false>::exe(De,&mp(0));
 	for(i=0;i!=4u;++i){
 	  for(j=0;j!=4u;++j){
 	    Kt(i,j) = De(i,j);
@@ -513,9 +535,9 @@ namespace mfront
 	}
       } else if (h==MH::TRIDIMENSIONAL){
 	st2tost2<3u,real> De;
-	UMATComputeStiffnessOperator<umat::SMALLSTRAINSTANDARDBEHAVIOUR,
-				     MH::TRIDIMENSIONAL,
-				     umat::ISOTROPIC>::exe(&mp(0),De);
+	UMATComputeStiffnessTensor<umat::SMALLSTRAINSTANDARDBEHAVIOUR,
+				   MH::TRIDIMENSIONAL,
+				   umat::ISOTROPIC,false>::exe(De,&mp(0));
 	for(i=0;i!=6u;++i){
 	  for(j=0;j!=6u;++j){
 	    Kt(i,j) = De(i,j);
@@ -529,9 +551,9 @@ namespace mfront
     } else if(this->stype==1u){
       if(h==MH::AXISYMMETRICALGENERALISEDPLANESTRAIN){
 	st2tost2<1u,real> De;
-	UMATComputeStiffnessOperator<umat::SMALLSTRAINSTANDARDBEHAVIOUR,
-				     MH::AXISYMMETRICALGENERALISEDPLANESTRAIN,
-				     umat::ORTHOTROPIC>::exe(&mp(0),De);
+	UMATComputeStiffnessTensor<umat::SMALLSTRAINSTANDARDBEHAVIOUR,
+				   MH::AXISYMMETRICALGENERALISEDPLANESTRAIN,
+				   umat::ORTHOTROPIC,false>::exe(De,&mp(0));
 	for(i=0;i!=3u;++i){
 	  for(j=0;j!=3u;++j){
 	    Kt(i,j) = De(i,j);
@@ -539,10 +561,10 @@ namespace mfront
 	}
       } else if (h==MH::AXISYMMETRICAL){
 	st2tost2<2u,real> De;
-	UMATComputeStiffnessOperator<umat::SMALLSTRAINSTANDARDBEHAVIOUR,
-				     MH::AXISYMMETRICAL,
-				     umat::ORTHOTROPIC>::exe(&mp(0),De);
-	MTestUmatRotationMatrix2D m(&drot(0,0));
+	UMATComputeStiffnessTensor<umat::SMALLSTRAINSTANDARDBEHAVIOUR,
+				   MH::AXISYMMETRICAL,
+				   umat::ORTHOTROPIC,false>::exe(De,&mp(0));
+	MTestUmatRotationMatrix2D m(&mp(7),&drot(0,0));
 	m.rotateStiffnessMatrixBackward(&De(0,0));
 	for(i=0;i!=4u;++i){
 	  for(j=0;j!=4u;++j){
@@ -551,10 +573,10 @@ namespace mfront
 	}
       } else if (h==MH::PLANESTRESS){
 	st2tost2<2u,real> De;
-	UMATComputeStiffnessOperator<umat::SMALLSTRAINSTANDARDBEHAVIOUR,
-				     MH::PLANESTRESS,
-				     umat::ORTHOTROPIC>::exe(&mp(0),De);
-	MTestUmatRotationMatrix2D m(&drot(0,0));
+	UMATComputeStiffnessTensor<umat::SMALLSTRAINSTANDARDBEHAVIOUR,
+				   MH::PLANESTRESS,
+				   umat::ORTHOTROPIC,false>::exe(De,&mp(0));
+	MTestUmatRotationMatrix2D m(&mp(4),&drot(0,0));
 	m.rotateStiffnessMatrixBackward(&De(0,0));
 	for(i=0;i!=4u;++i){
 	  for(j=0;j!=4u;++j){
@@ -563,10 +585,10 @@ namespace mfront
 	}
       } else if (h==MH::PLANESTRAIN){
 	st2tost2<2u,real> De;
-	UMATComputeStiffnessOperator<umat::SMALLSTRAINSTANDARDBEHAVIOUR,
-				     MH::PLANESTRAIN,
-				     umat::ORTHOTROPIC>::exe(&mp(0),De);
-	MTestUmatRotationMatrix2D m(&drot(0,0));
+	UMATComputeStiffnessTensor<umat::SMALLSTRAINSTANDARDBEHAVIOUR,
+				   MH::PLANESTRAIN,
+				   umat::ORTHOTROPIC,false>::exe(De,&mp(0));
+	MTestUmatRotationMatrix2D m(&mp(7),&drot(0,0));
 	m.rotateStiffnessMatrixBackward(&De(0,0));
 	for(i=0;i!=4u;++i){
 	  for(j=0;j!=4u;++j){
@@ -575,10 +597,10 @@ namespace mfront
 	}
       } else if (h==MH::GENERALISEDPLANESTRAIN){
 	st2tost2<2u,real> De;
-	UMATComputeStiffnessOperator<umat::SMALLSTRAINSTANDARDBEHAVIOUR,
-				     MH::GENERALISEDPLANESTRAIN,
-				     umat::ORTHOTROPIC>::exe(&mp(0),De);
-	MTestUmatRotationMatrix2D m(&drot(0,0));
+	UMATComputeStiffnessTensor<umat::SMALLSTRAINSTANDARDBEHAVIOUR,
+				   MH::GENERALISEDPLANESTRAIN,
+				   umat::ORTHOTROPIC,false>::exe(De,&mp(0));
+	MTestUmatRotationMatrix2D m(&mp(7),&drot(0,0));
 	m.rotateStiffnessMatrixBackward(&De(0,0));
 	for(i=0;i!=4u;++i){
 	  for(j=0;j!=4u;++j){
@@ -587,10 +609,10 @@ namespace mfront
 	}
       } else if (h==MH::TRIDIMENSIONAL){
 	st2tost2<3u,real> De;
-	UMATComputeStiffnessOperator<umat::SMALLSTRAINSTANDARDBEHAVIOUR,
-				     MH::TRIDIMENSIONAL,
-				     umat::ORTHOTROPIC>::exe(&mp(0),De);
-	MTestUmatRotationMatrix3D m(&drot(0,0));
+	UMATComputeStiffnessTensor<umat::SMALLSTRAINSTANDARDBEHAVIOUR,
+				   MH::TRIDIMENSIONAL,
+				   umat::ORTHOTROPIC,false>::exe(De,&mp(0));
+	MTestUmatRotationMatrix3D m(&mp(9),&drot(0,0));
 	m.rotateStiffnessMatrixBackward(&De(0,0));
 	for(i=0;i!=6u;++i){
 	  for(j=0;j!=6u;++j){
@@ -610,6 +632,30 @@ namespace mfront
     }
 
   }
+
+  void
+  MTestUmatSmallStrainBehaviour::setOptionalMaterialPropertiesDefaultValues(MTestEvolutionManager& mp,
+									    const MTestEvolutionManager& evm) const
+  {
+    using namespace std;
+    using tfel::material::ModellingHypothesis;
+    const ModellingHypothesis::Hypothesis h = ModellingHypothesis::fromString(this->hypothesis);
+    MTestUmatStandardBehaviour::setOptionalMaterialPropertiesDefaultValues(mp,evm);
+    if(this->stype==0){
+      MTestBehaviour::setOptionalMaterialPropertyDefaultValue(mp,evm,"ThermalExpansion",0.);
+    } else if(this->stype==1){
+      MTestBehaviour::setOptionalMaterialPropertyDefaultValue(mp,evm,"ThermalExpansion1",0.);
+      MTestBehaviour::setOptionalMaterialPropertyDefaultValue(mp,evm,"ThermalExpansion2",0.);
+      MTestBehaviour::setOptionalMaterialPropertyDefaultValue(mp,evm,"ThermalExpansion3",0.);
+    } else {
+      string msg("MTestUmatSmallStrainBehaviour::setOptionalMaterialPropertiesDefaultValues : "
+		 "unsupported symmetry type");
+      throw(runtime_error(msg));
+    }
+    if(h==ModellingHypothesis::PLANESTRESS){
+      MTestBehaviour::setOptionalMaterialPropertyDefaultValue(mp,evm,"PlateWidth",0.);
+    }
+  } // end of MTestUmatSmallStrainBehaviour::setOptionalMaterialPropertiesDefaultValues
       
   MTestUmatSmallStrainBehaviour::~MTestUmatSmallStrainBehaviour()
   {}

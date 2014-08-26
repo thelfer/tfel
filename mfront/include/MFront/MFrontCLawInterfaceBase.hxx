@@ -25,11 +25,6 @@ namespace mfront{
     
     MFrontCLawInterfaceBase();
     
-    void setVerboseMode(void);
-
-    void setDebugMode(void);
-
-    void setWarningMode(void);
     std::pair<bool,tfel::utilities::CxxTokenizer::TokensContainer::const_iterator>
     treatKeyword(const std::string&,
 		 tfel::utilities::CxxTokenizer::TokensContainer::const_iterator,
@@ -71,7 +66,7 @@ namespace mfront{
 			  const std::vector<std::string>&,
 			  const std::map<std::string,std::string>&,
 			  const std::map<std::string,std::string>&,
-			  const StaticVariableDescriptionContainer& staticVars,
+			  const StaticVariableDescriptionContainer&,
 			  const std::vector<std::string>&,
 			  const std::map<std::string,double>&,
 			  const LawFunction&,
@@ -203,7 +198,7 @@ namespace mfront{
 		      const std::string&,
 		      const VariableDescriptionContainer&,
 		      const std::vector<std::string>&,
-		      const StaticVariableDescriptionContainer& staticVars,
+		      const StaticVariableDescriptionContainer&,
 		      const std::vector<std::string>&,
 		      const std::map<std::string,double>&,
 		      const LawFunction&,
@@ -218,12 +213,6 @@ namespace mfront{
 
     std::string srcFileName;
     
-    bool verboseMode;
-
-    bool debugMode;
-
-    bool warningMode;
-
   }; // end of MfrontCLawInterfaceBase
 
 } // end of namespace mfront

@@ -22,19 +22,10 @@ namespace mfront
    */
   struct MFrontFileDescription
   {
-    std::string className;
-    std::string library;
-    std::string description;
     std::string fileName;    
     std::string authorName;
     std::string date;
-    std::string includes;
-    std::set<std::string> varNames;
-    std::set<std::string> staticVarNames;
-    std::set<std::string> reservedNames;
-    std::vector<std::string> materialLaws;
-    std::string material; //< deprecated (moved in MFrontModelData
-    StaticVariableDescriptionContainer staticVars; //< deprecated (moved in MFrontModelData
+    std::string description;
   }; // end of struct MFrontFileDescription
 
   //! typedef provided

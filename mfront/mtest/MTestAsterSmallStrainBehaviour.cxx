@@ -12,7 +12,7 @@
 #include"TFEL/Math/st2tost2.hxx"
 #include"TFEL/System/ExternalLibraryManager.hxx"
 #include"MFront/Aster/Aster.hxx"
-#include"MFront/Aster/AsterComputeStiffnessOperator.hxx"
+#include"MFront/Aster/AsterComputeStiffnessTensor.hxx"
 
 #include"MFront/MTestUmatNormaliseTangentOperator.hxx"
 #include"MFront/MTestAsterSmallStrainBehaviour.hxx"
@@ -23,7 +23,7 @@ namespace mfront
   MTestAsterSmallStrainBehaviour::MTestAsterSmallStrainBehaviour(const tfel::material::ModellingHypothesis::Hypothesis h,
 								 const std::string& l,
 								 const std::string& b)
-    : MTestUmatBehaviourBase(l,b),
+    : MTestUmatBehaviourBase(h,l,b),
       savesTangentOperator(false)
   {
     using namespace std;
@@ -32,9 +32,9 @@ namespace mfront
     typedef ExternalLibraryManager ELM;
     ELM& elm = ELM::getExternalLibraryManager();
     this->fct = elm.getAsterFunction(l,b);
-    this->mpnames = elm.getUMATMaterialPropertiesNames(l,b);
-    bool eo = elm.checkIfAsterBehaviourRequiresElasticMaterialPropertiesOffset(l,b);
-    bool to = elm.checkIfAsterBehaviourRequiresThermalExpansionMaterialPropertiesOffset(l,b);
+    this->mpnames = elm.getUMATMaterialPropertiesNames(l,b,this->hypothesis);
+    bool eo = elm.getUMATRequiresStiffnessTensor(l,b,this->hypothesis);
+    bool to = elm.getUMATRequiresThermalExpansionCoefficientTensor(l,b,this->hypothesis);
     unsigned short etype = elm.getUMATElasticSymmetryType(l,b);
     this->savesTangentOperator = elm.checkIfAsterBehaviourSavesTangentOperator(l,b);
     vector<string> tmp;
@@ -115,6 +115,13 @@ namespace mfront
     }
     this->mpnames.insert(this->mpnames.begin(),tmp.begin(),tmp.end());
   }
+
+  tfel::math::tmatrix<3u,3u,real>
+  MTestAsterSmallStrainBehaviour::getRotationMatrix(const tfel::math::vector<real>&,
+						    const tfel::math::tmatrix<3u,3u,real>& r) const
+  {
+    return r;
+  } // end of MTestAsterSmallStrainBehaviour::getRotationMatrix
 
   void
   MTestAsterSmallStrainBehaviour::getDrivingVariablesDefaultInitialValues(tfel::math::vector<real>& v) const

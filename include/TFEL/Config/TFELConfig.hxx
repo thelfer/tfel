@@ -146,6 +146,20 @@
 #endif
 
 #if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
+#  if defined TFELGlossary_EXPORTS
+#    define TFELGLOSSARY_VISIBILITY_EXPORT TFEL_VISIBILITY_EXPORT
+#  else
+#  if not defined TFEL_STATIC_BUILD
+#    define TFELGLOSSARY_VISIBILITY_EXPORT TFEL_VISIBILITY_IMPORT
+#  else 
+#    define TFELGLOSSARY_VISIBILITY_EXPORT 
+#  endif
+#  endif
+#else
+#  define TFELGLOSSARY_VISIBILITY_EXPORT TFEL_VISIBILITY_EXPORT
+#endif
+
+#if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
 #  if defined TFELSystem_EXPORTS
 #    define TFELSYSTEM_VISIBILITY_EXPORT TFEL_VISIBILITY_EXPORT
 #  else

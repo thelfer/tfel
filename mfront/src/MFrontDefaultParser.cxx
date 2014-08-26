@@ -18,9 +18,9 @@ namespace mfront{
   MFrontDefaultParser::MFrontDefaultParser()
     : MFrontDefaultParserBase()
   {
-    this->registerVariable("eto");
-    this->registerVariable("deto");
-    this->registerVariable("sig");
+    this->registerVariable("eto",false);
+    this->registerVariable("deto",false);
+    this->registerVariable("sig",false);
     this->registerNewCallBack("@RequireStiffnessTensor",
 			      &MFrontDefaultParser::treatRequireStiffnessOperator);
     this->mb.declareAsASmallStrainStandardBehaviour();

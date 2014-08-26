@@ -10,8 +10,6 @@
 @Behaviour<umat> '@MFrontCastemBehavioursBuildPath@' 'umatelasticity_malls';
 @MaterialProperty<constant> 'YoungModulus'     215.e9;
 @MaterialProperty<constant> 'PoissonRatio'       0.3;
-@MaterialProperty<constant> 'MassDensity'        0.;
-@MaterialProperty<constant> 'ThermalExpansion'   0.;
 
 @ImposedDrivingVariable 'FZZ' {0:1.,1.:1.8};
 
@@ -28,6 +26,3 @@
 @Test<function> {'SRR':'0','STT':'0'} 1.e-4;
 @Test<function> {'SZZ':'Tzz/J'}       1.e-4;
 @Test<function> {'FRR': 'sqrt(exp(2*err))','FTT': 'sqrt(exp(2*ett))'} 1.e-10;
-
-
-

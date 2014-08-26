@@ -18,9 +18,9 @@ namespace mfront{
   MFrontDefaultFiniteStrainParser::MFrontDefaultFiniteStrainParser()
     : MFrontDefaultParserBase()
   {
-    this->registerVariable("F0");
-    this->registerVariable("F1");
-    this->registerVariable("sig");
+    this->registerVariable("F0",false);
+    this->registerVariable("F1",false);
+    this->registerVariable("sig",false);
     this->mb.declareAsAFiniteStrainStandardBehaviour();
   }
 

@@ -8,6 +8,7 @@
 
 #include<sstream>
 
+#include"MFront/MFrontLogStream.hxx"
 #include"MFront/MFrontIsotropicBehaviourParserBase.hxx"
 
 namespace mfront{
@@ -17,40 +18,41 @@ namespace mfront{
       theta(0.5f)
   {
     using namespace std;
+    const Hypothesis h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
     typedef map<string,string>::value_type MVType;
-    this->reserveName("NewtonIntegration");
+    this->reserveName("NewtonIntegration",false);
     // main variables
-    this->registerVariable("eto");
-    this->registerVariable("deto");
-    this->registerVariable("sig");
+    this->registerVariable("eto",false);
+    this->registerVariable("deto",false);
+    this->registerVariable("sig",false);
     this->mb.declareAsASmallStrainStandardBehaviour();
     // parameters
-    this->registerVariable("theta");
-    this->mb.getParameters().push_back(VariableDescription("real","theta",1u,0u));
-    this->registerVariable("epsilon");
-    this->mb.getParameters().push_back(VariableDescription("real","epsilon",1u,0u));
-    this->registerVariable("iterMax");
-    this->mb.getParameters().push_back(VariableDescription("ushort","iterMax",
-						1u,0u));
-    this->registerVariable("young");
-    this->registerVariable("nu");
-    this->registerVariable("rho");
-    this->registerVariable("alpha");
-    this->registerVariable("lambda");
-    this->registerVariable("mu");
-    this->mb.getMaterialProperties().push_back(VariableDescription("stress","young",1u,0u));
-    this->glossaryNames.insert(MVType("young","YoungModulus"));
-    this->mb.getMaterialProperties().push_back(VariableDescription("real","nu",1u,0u));
-    this->glossaryNames.insert(MVType("nu","PoissonRatio"));
-    this->mb.getMaterialProperties().push_back(VariableDescription("density","rho",1u,0u));
-    this->glossaryNames.insert(MVType("rho","MassDensity"));
-    this->mb.getMaterialProperties().push_back(VariableDescription("thermalexpansion","alpha",1u,0u));
-    this->glossaryNames.insert(MVType("alpha","ThermalExpansion"));
-    this->mb.getLocalVariables().push_back(VariableDescription("stress","lambda",1u,0u));
-    this->mb.getLocalVariables().push_back(VariableDescription("stress","mu",1u,0u));
-    // local var initialisation
-    this->initLocalVars +="this->lambda=tfel::material::lame::computeLambda(this->young,this->nu);\n";
-    this->initLocalVars +="this->mu=tfel::material::lame::computeMu(this->young,this->nu);\n";
+    this->registerVariable("theta",false);
+    this->registerVariable("epsilon",false);
+    this->registerVariable("iterMax",false);
+    this->registerVariable("young",false);
+    this->registerVariable("nu",false);
+    this->registerVariable("rho",false);
+    this->registerVariable("alpha",false);
+    this->registerVariable("lambda",false);
+    this->registerVariable("mu",false);
+    this->mb.addMaterialProperty(h,VariableDescription("stress","young",1u,0u));
+    this->mb.setGlossaryName(h,"young","YoungModulus");
+    this->mb.addMaterialProperty(h,VariableDescription("real","nu",1u,0u));
+    this->mb.setGlossaryName(h,"nu","PoissonRatio");
+    // Lame coefficients
+    this->mb.addLocalVariable(h,VariableDescription("stress","lambda",1u,0u));
+    this->mb.addLocalVariable(h,VariableDescription("stress","mu",1u,0u));
+    // intermediate temperature
+    this->registerVariable("T_",false);
+    this->mb.addLocalVariable(h,VariableDescription("temperature","T_",1u,0u));
+    // local variable initialisation
+    string initLocalVars("// initialisation Lame's coefficient\n"
+			 "this->lambda=tfel::material::lame::computeLambda(this->young,this->nu);\n"
+			 "this->mu=tfel::material::lame::computeMu(this->young,this->nu);\n");
+    this->mb.setCode(h,MechanicalBehaviourData::BeforeInitializeLocalVariables,
+		     initLocalVars,MechanicalBehaviourData::CREATEORAPPEND,
+		     MechanicalBehaviourData::AT_BEGINNING);
     // Call Back
     this->registerNewCallBack("@UsableInPurelyImplicitResolution",
 			      &MFrontIsotropicBehaviourParserBase::treatUsableInPurelyImplicitResolution);
@@ -67,8 +69,23 @@ namespace mfront{
     this->disableCallBack("@IsotropicBehaviour");
     this->disableCallBack("@RequireStiffnessOperator");
     this->disableCallBack("@RequireThermalExpansionCoefficientTensor");
-    this->hasPredictionOperator = true;
+    // a defaut version of the prediction operator is always provided
+    this->mb.setAttribute(h,MechanicalBehaviourData::hasPredictionOperator,true);
   } // end of MFrontIsotropicBehaviourParserBase::MFrontIsotropicBehaviourParserBase
+
+  bool
+  MFrontIsotropicBehaviourParserBase::isModellingHypothesisSupported(const Hypothesis h) const
+  {
+    if((h==ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN)||
+       (h==ModellingHypothesis::AXISYMMETRICAL)||
+       (h==ModellingHypothesis::PLANESTRAIN)||
+       (h==ModellingHypothesis::GENERALISEDPLANESTRAIN)||
+       (h==ModellingHypothesis::TRIDIMENSIONAL)){
+      return true;
+    }
+    return false;
+  } // end of MFrontIsotropicBehaviourParserBase::isModellingHypothesisSupported
+
 
   MFrontIsotropicBehaviourParserBase::~MFrontIsotropicBehaviourParserBase()
   {} // end of MFrontIsotropicBehaviourParserBase::~MFrontIsotropicBehaviourParserBase()
@@ -77,7 +94,7 @@ namespace mfront{
   MFrontIsotropicBehaviourParserBase::treatTheta(void)
   {
     using namespace std;
-    typedef map<string,double>::value_type MVType;
+    const Hypothesis h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
     double v;
     this->checkNotEndOfFile("MFrontIsotropicBehaviourParserBase::treatTheta",
 			    "Cannot read theta value.");
@@ -91,19 +108,17 @@ namespace mfront{
       this->throwRuntimeError("MFrontIsotropicBehaviourParserBase::treatTheta",
 			      "Theta value must be positive and smaller than 1.");
     }
-    if(!this->mb.getParametersDefaultValues().insert(MVType("theta",v)).second){
-      this->throwRuntimeError("MFrontIsotropicBehaviourParserBase::treatTheta",
-			      "default value already defined for parameter 'theta'");
-    }
     ++(this->current);
     this->readSpecifiedToken("MFrontIsotropicBehaviourParserBase::treatTheta",";");
+    this->mb.addParameter(h,VariableDescription("real","theta",1u,0u));
+    this->mb.setParameterDefaultValue(h,"theta",v);
   } // end of MFrontIsotropicBehaviourParserBase::treatTheta
 
   void
   MFrontIsotropicBehaviourParserBase::treatEpsilon(void)
   {
     using namespace std;
-    typedef map<string,double>::value_type MVType;
+    const Hypothesis h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
     double epsilon;
     this->checkNotEndOfFile("MFrontIsotropicBehaviourParserBase::treatEpsilon",
 			    "Cannot read epsilon value.");
@@ -117,30 +132,26 @@ namespace mfront{
       this->throwRuntimeError("MFrontIsotropicBehaviourParserBase::treatEpsilon",
 			      "Epsilon value must be positive.");
     }
-    if(!this->mb.getParametersDefaultValues().insert(MVType("epsilon",epsilon)).second){
-      this->throwRuntimeError("MFrontIsotropicBehaviourParserBase::treatEpsilon",
-			      "default value already defined for parameter 'epsilon'");
-    }
     ++(this->current);
     this->readSpecifiedToken("MFrontIsotropicBehaviourParserBase::treatEpsilon",";");
+    this->mb.addParameter(h,VariableDescription("real","epsilon",1u,0u));
+    this->mb.setParameterDefaultValue(h,"epsilon",epsilon);
   } // MFrontIsotropicBehaviourParserBase::treatEpsilon
 
   void
   MFrontIsotropicBehaviourParserBase::treatIterMax(void)
   {
     using namespace std;
-    typedef map<string,unsigned short>::value_type MVType;
+    const Hypothesis h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
     unsigned short iterMax;
     iterMax = this->readUnsignedShort("MFrontIsotropicBehaviourParserBase::treatIterMax");
     if(iterMax==0){
       this->throwRuntimeError("MFrontIsotropicBehaviourParserBase::treatIterMax",
 			      "invalid value for parameter 'iterMax'");
     }
-    if(!this->mb.getUnsignedShortParametersDefaultValues().insert(MVType("iterMax",iterMax)).second){
-      this->throwRuntimeError("MFrontIsotropicBehaviourParserBase::treatIterMax",
-			      "default value already defined for parameter 'iterMax'");
-    }
     this->readSpecifiedToken("MFrontIsotropicBehaviourParserBase::treatIterMax",";");
+    this->mb.addParameter(h,VariableDescription("ushort","iterMax",1u,0u));
+    this->mb.setParameterDefaultValue(h,"iterMax",iterMax);
   } // end of MFrontIsotropicBehaviourParserBase::treatIterMax
 
   void
@@ -152,19 +163,20 @@ namespace mfront{
   } // end of MFrontIsotropicBehaviourParserBase::writeBehaviourParserSpecificIncludes
 
   std::string
-  MFrontIsotropicBehaviourParserBase::flowRuleVariableModifier(const std::string& var,
+  MFrontIsotropicBehaviourParserBase::flowRuleVariableModifier(const Hypothesis h,
+							       const std::string& var,
 							       const bool addThisPtr)
   {
-    if((var=="T")||(this->mb.isExternalStateVariableName(var))||
-       (this->mb.isInternalStateVariableName(var))){
+    if((var=="T")||(this->mb.isExternalStateVariableName(h,var))||
+       (this->mb.isInternalStateVariableName(h,var))){
       if(addThisPtr){
 	return "this->"+var+"_";
       } else {
 	return var+"_";
       }
     }
-    if((this->mb.isExternalStateVariableIncrementName(var))||(var=="dT")){
-      this->declareExternalStateVariableProbablyUnusableInPurelyImplicitResolution(var.substr(1));
+    if((this->mb.isExternalStateVariableIncrementName(h,var))||(var=="dT")){
+      this->declareExternalStateVariableProbablyUnusableInPurelyImplicitResolution(h,var.substr(1));
     }
     if(addThisPtr){
       return "this->"+var;
@@ -173,60 +185,71 @@ namespace mfront{
   } // end of MFrontIsotropicBehaviourParserBase::flowRuleVariableModifier
 
   void
-  MFrontIsotropicBehaviourParserBase::treatFlowRuleBase(std::string &flow)
-  {
-    flow = this->readNextBlock(makeVariableModifier(*this,&MFrontIsotropicBehaviourParserBase::flowRuleVariableModifier),
-			       true);
-  } // end of MFrontIsotropicBehaviourParserBase::treatFlowRuleBase
-
-  void
   MFrontIsotropicBehaviourParserBase::treatFlowRule(void)
   {
     using namespace std;
-    this->checkBehaviourFile();
-    if(!this->flowRule.empty()){
-      string msg("MFrontIsotropicBehaviourParserBase::treatFlowRule : ");
-      msg += "flow already defined";
-      throw(runtime_error(msg));
-    }
-    MFrontIsotropicBehaviourParserBase::treatFlowRuleBase(this->flowRule);
+    this->readCodeBlock(*this,MechanicalBehaviourData::FlowRule,
+			&MFrontIsotropicBehaviourParserBase::flowRuleVariableModifier,true,false);
   } // end of MFrontIsotropicBehaviourParserBase::treatFlowRule
 
   void
   MFrontIsotropicBehaviourParserBase::endsInputFileProcessing(void)
   {
     using namespace std;
+    const Hypothesis h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
+    if(getVerboseMode()>=VERBOSE_DEBUG){
+      ostream& log = getLogStream();
+      log << "MFrontIsotropicBehaviourParserBase::endsInputFileProcessing : begin" << endl;
+    }
     MFrontBehaviourParserCommon::endsInputFileProcessing();
-    typedef map<string,double>::value_type MVType;
-    typedef map<string,unsigned short>::value_type MVType2;
     VariableDescriptionContainer::iterator p;
     string currentVarName;
-    if(this->mb.getParametersDefaultValues().find("theta")==this->mb.getParametersDefaultValues().end()){
-      this->mb.getParametersDefaultValues().insert(MVType("theta",this->theta));
+    if(!this->mb.hasParameter(h,"theta")){
+      this->mb.addParameter(h,VariableDescription("real","theta",1u,0u));
+      this->mb.setParameterDefaultValue(h,"theta",this->theta);
     }
-    if(this->mb.getParametersDefaultValues().find("epsilon")==this->mb.getParametersDefaultValues().end()){
-      this->mb.getParametersDefaultValues().insert(MVType("epsilon",1.e-8));
+    if(!this->mb.hasParameter(h,"epsilon")){
+      this->mb.addParameter(h,VariableDescription("real","epsilon",1u,0u));
+      this->mb.setParameterDefaultValue(h,"epsilon",1.e-8);
     }
-    if(this->mb.getUnsignedShortParametersDefaultValues().find("iterMax")==this->mb.getUnsignedShortParametersDefaultValues().end()){
-      this->mb.getUnsignedShortParametersDefaultValues().insert(MVType2("iterMax",100u));
+    if(!this->mb.hasParameter(h,"iterMax")){
+      unsigned short iterMax = 100u;
+      this->mb.addParameter(h,VariableDescription("ushort","iterMax",1u,0u));
+      this->mb.setParameterDefaultValue(h,"iterMax",iterMax);
     }
-    if(this->flowRule.empty()){
-      string msg("MFrontIsotropicBehaviourParserBase::endsInputFileProcessing : ");
-      msg += "@FlowRule was not defined.";
-      throw(runtime_error(msg));
-    }
-    this->registerVariable("T_");
-    this->mb.getLocalVariables().push_back(VariableDescription("temperature","T_",1u,0u));
-    this->initLocalVars = "this->T_ = this->T+(" + this->className + "::theta)*(this->dT);\n" + this->initLocalVars;
-    for(p =this->mb.getExternalStateVariables().begin();
-	p!=this->mb.getExternalStateVariables().end();++p){
-      currentVarName = p->name + "_";
-      this->registerVariable(currentVarName);
-      this->mb.getLocalVariables().push_back(VariableDescription(p->type,currentVarName,p->arraySize,0u));
-      this->initLocalVars = "this->" + currentVarName + " = this->" + p->name +
-	"+(" + this->className + "::theta)*(this->d" + p->name + ");\n" + this->initLocalVars;
+    // temperature at the midle of the time step
+    string initLocalVars;
+    initLocalVars += "this->T_ = this->T+(" + this->getClassName() + "::theta)*(this->dT);\n";
+    this->mb.setCode(ModellingHypothesis::UNDEFINEDHYPOTHESIS,
+		     MechanicalBehaviourData::BeforeInitializeLocalVariables,
+    		     initLocalVars,MechanicalBehaviourData::CREATEORAPPEND,
+    		     MechanicalBehaviourData::BODY);
+    if(getVerboseMode()>=VERBOSE_DEBUG){
+      ostream& log = getLogStream();
+      log << "MFrontIsotropicBehaviourParserBase::endsInputFileProcessing : end" << endl;
     }
   } // end of MFrontIsotropicBehaviourParserBase::endsInputFileProcessing
+
+  void MFrontIsotropicBehaviourParserBase::treatExternalStateVariables(void)
+  {
+    using namespace std;
+    VariableDescriptionContainer ev;
+    set<Hypothesis> h;
+    this->readVariableList(ev,h,&MechanicalBehaviourDescription::addExternalStateVariables,true,true,false);
+    for(set<Hypothesis>::const_iterator ph=h.begin();ph!=h.end();++ph){
+      string ib;
+      for(VariableDescriptionContainer::const_iterator p=ev.begin();p!=ev.end();++p){
+	string currentVarName = p->name + "_";
+	this->registerVariable(currentVarName,false);
+	this->mb.addLocalVariable(*ph,VariableDescription(p->type,currentVarName,p->arraySize,0u));
+	ib += "this->" + currentVarName + " = this->" + p->name +
+	  "+(" + this->mb.getClassName() + "::theta)*(this->d" + p->name + ");\n";
+      }
+      this->mb.setCode(*ph,MechanicalBehaviourData::BeforeInitializeLocalVariables,ib,
+		       MechanicalBehaviourData::CREATEORAPPEND,
+		       MechanicalBehaviourData::AT_END);
+    }
+  } // end of MFrontIsotropicBehaviourParserBase::treatStateVariables
 
   void
   MFrontIsotropicBehaviourParserBase::writeBehaviourParserSpecificTypedefs(void)
@@ -238,30 +261,23 @@ namespace mfront{
 			<< "DstrainDt,stress,tfel::math::OpDiv>::Result DF_DSEQ_TYPE;\n\n";
   } // end of MFrontIsotropicBehaviourParserBase::writeBehaviourParserSpecificTypedefs
 
-  void MFrontIsotropicBehaviourParserBase::writeBehaviourComputePredictionOperator(void)
+  void MFrontIsotropicBehaviourParserBase::writeBehaviourComputePredictionOperator(const Hypothesis h)
   {
-    if(this->predictionOperator.empty()){
+    if(!this->mb.hasCode(h,MechanicalBehaviourData::ComputePredictionOperator)){
       this->behaviourFile << "IntegrationResult computePredictionOperator(const SMType smt){\n";
       this->behaviourFile << "using namespace std;\n";
       this->behaviourFile << "if((smt==ELASTIC)||(smt==SECANTOPERATOR)){\n";
       this->behaviourFile << "Dt = (this->lambda)*Stensor4::IxI()+2*(this->mu)*Stensor4::Id();\n";
       this->behaviourFile << "} else {\n";
-      this->behaviourFile << "string msg(\"" << this->className<< "::computePredictionOperator : \");\n";
+      this->behaviourFile << "string msg(\"" << this->mb.getClassName() << "::computePredictionOperator : \");\n";
       this->behaviourFile << "msg +=\"unimplemented feature\";\n";
       this->behaviourFile << "throw(runtime_error(msg));\n";
       this->behaviourFile << "}\n\n";
       this->behaviourFile << "return SUCCESS;\n";
       this->behaviourFile << "}\n\n";
     } else {
-      MFrontBehaviourParserCommon::writeBehaviourComputePredictionOperator();
+      MFrontBehaviourParserCommon::writeBehaviourComputePredictionOperator(h);
     }
   } // end of MFrontIsotropicBehaviourParserBase::writeBehaviourComputePredictionOperator(void)
-
-  void 
-  MFrontIsotropicBehaviourParserBase::writeBehaviourStaticVars(void)
-  {
-    this->checkBehaviourFile();
-    MFrontBehaviourParserBase<MFrontIsotropicBehaviourParserBase>::writeBehaviourStaticVars();
-  } // end of MFrontIsotropicBehaviourParserBase::writeBehaviourStaticVars
 
 } // end of namespace mfront

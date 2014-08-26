@@ -9,6 +9,7 @@ tfel_PYTHON = __init__.py
 tfel_LTLIBRARIES = tests.la     \
 		   math.la      \
 		   utilities.la \
+		   glossary.la \
 		   material.la  \
 		   system.la
 
@@ -35,6 +36,13 @@ utilities_la_LIBADD  = -L@top_builddir@/src/Utilities -lTFELUtilities         \
 		  -L@PYTHONPATH@/lib -lpython@PYTHON_VERSION@
 utilities_la_LDFLAGS = -module
 
+glossary_la_SOURCES = glossary.cxx \
+		      Glossary.cxx \
+		      GlossaryEntry.cxx
+glossary_la_LIBADD  = -L@top_builddir@/src/Glossary -lTFELGlossary         \
+		      @BOOST_LIBS@ @BOOST_PYTHON_LIBS@             \
+		      -L@PYTHONPATH@/lib -lpython@PYTHON_VERSION@
+glossary_la_LDFLAGS = -module
 
 material_la_SOURCES = ModellingHypothesis.cxx
 material_la_LIBADD  = -L@top_builddir@/src/Material -lTFELMaterial \

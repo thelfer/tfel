@@ -1,0 +1,26 @@
+@Parser   MaterialLaw ;
+@Material T91MartensiticSteel ;
+@Law      YieldStress_ROUX2007 ;
+@Author   F. Milliard ;
+@Date     11/12/2013 ;
+@Description{
+  // Limite d'élasticité martensite T91
+  // [Roux 07]
+}
+
+// Input of law
+@Input T ;
+T.setGlossaryName("Temperature") ;
+
+// Output of law
+@Output R0 ;
+R0.setGlossaryName("YieldStress");
+
+@PhysicalBounds T in [0.:*[;
+
+// Function
+@Function{
+  const real TC = T-273.15;
+  const real TC2 = TC  * TC  ;
+  R0 = -6.6736185648e+02 * TC2 -6.3228319635e+04 * TC +3.6817894909e+08 ;
+} // end of Function

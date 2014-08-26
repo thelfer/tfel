@@ -8,9 +8,10 @@
 #ifndef _LIB_MFRONT_SUPPORTEDTYPES_H_
 #define _LIB_MFRONT_SUPPORTEDTYPES_H_ 
 
-#include<string>
-#include<ostream>
 #include<map>
+#include<string>
+#include<vector>
+#include<ostream>
 
 #include"TFEL/Config/TFELConfig.hxx"
 #include"MFront/VariableDescription.hxx"
@@ -21,39 +22,49 @@ namespace mfront
   struct TFEL_VISIBILITY_EXPORT SupportedTypes
   {
 
-    static const unsigned short ArraySizeLimit;
+    static const int ArraySizeLimit;
 
     enum TypeFlag{Scalar,TVector,Stensor,Tensor};
 
     struct TFEL_VISIBILITY_EXPORT TypeSize
     {
 
-      typedef unsigned short ushort;
-
       TypeSize();
 
       TypeSize(const TypeSize&);
 
-      TypeSize(const ushort,const ushort,
-	       const ushort,const ushort);
+      TypeSize(const int,const int,
+	       const int,const int);
 
       TypeSize&
       operator=(const TypeSize&);
     
       TypeSize&
       operator+=(const TypeSize&);
+
+      TypeSize&
+      operator-=(const TypeSize&);
     
-      ushort
+      bool
+      operator!=(const TypeSize&) const;
+
+      bool
+      operator==(const TypeSize&) const;
+
+      int
       getScalarSize() const;
     
-      ushort
+      int
       getTVectorSize() const;
 
-      ushort
+      int
       getStensorSize() const;
 
-      ushort
+      int
       getTensorSize() const;
+
+      int
+      getValueForDimension(const unsigned short) const;
 
       bool isNull(void) const;
       
@@ -62,10 +73,10 @@ namespace mfront
       friend std::ostream& 
       operator<< (std::ostream&, const TypeSize&);
 
-      ushort scalarSize;
-      ushort tvectorSize;
-      ushort stensorSize;
-      ushort tensorSize;
+      int scalarSize;
+      int tvectorSize;
+      int stensorSize;
+      int tensorSize;
 
     }; // end of class SupportedTypes::TypeSize
 
@@ -105,7 +116,6 @@ namespace mfront
      * \param[in]  prefix            : prefix added to variable's names
      * \param[in]  suffix            : suffix added to variable's names
      * \param[in]  useTimeDerivative : declare time derivative of the variables
-     * \param[in]  b                 : debug mode
      */
     virtual void
     writeVariablesDeclarations(std::ostream&,
@@ -113,7 +123,6 @@ namespace mfront
 			       const std::string&,
 			       const std::string&,
 			       const std::string&,
-			       const bool,
 			       const bool) const;
     
     /*!
@@ -131,7 +140,6 @@ namespace mfront
 							 const std::string&,
 							 const std::string&,
 							 const TypeSize&  = TypeSize()) const;
-    
     /*!
      * \param[out] f      : output file
      * \param[in]  v      : variables to be initialized
@@ -147,8 +155,6 @@ namespace mfront
 							  const std::string&,
 							  const std::string&,
 							  const TypeSize& = TypeSize()) const;
-
-
     /*!
      * \param[in]  v                 : variables to be initialized
      * \param[in]  useTimeDerivative : declare time derivative of the variables
@@ -192,7 +198,7 @@ namespace mfront
     writeResultsArrayResize(std::ostream&,
 			    const std::string&,
 			    const SupportedTypes::TypeSize&) const;
-    
+
     virtual ~SupportedTypes();
 
   protected:

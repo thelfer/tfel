@@ -16,8 +16,6 @@
 #include"MFront/Cyrano/CyranoInterfaceBase.hxx"
 
 #include"MFront/Cyrano/CyranoOutOfBoundsPolicy.hxx"
-#include"MFront/Cyrano/CyranoOrthotropicBehaviour.hxx"
-#include"MFront/Cyrano/CyranoComputeStiffnessOperator.hxx"
 #include"MFront/Cyrano/CyranoComputeThermalExpansionCoefficientTensor.hxx"
 #include"MFront/Cyrano/CyranoGetModellingHypothesis.hxx"
 #include"MFront/Cyrano/CyranoBehaviourHandler.hxx"

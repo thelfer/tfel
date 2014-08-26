@@ -1,14 +1,36 @@
-mfronts = VanadiumAlloy_YoungModulus_SRMA.mfront        \
-	  VanadiumAlloy_PoissonRatio_SRMA.mfront        \
-	  VanadiumAlloy_SpecificHeat_SRMA.mfront        \
-	  VanadiumAlloy_ThermalExpansion_SRMA.mfront    \
-	  VanadiumAlloy_ThermalConductivity_SRMA.mfront \
-	  ThermalExpansionCoefficientTest.mfront        \
-	  ThermalExpansionCoefficientTest2.mfront       \
-	  ThermalExpansionCoefficientTest_1.mfront      \
-	  ThermalExpansionCoefficientTest_2.mfront      \
-	  ThermalExpansionCoefficientTest_3.mfront      \
-	  Inconel600_YoungModulus.mfront
+SUBDIRS = interfaces
+
+mfronts = VanadiumAlloy_YoungModulus_SRMA.mfront               \
+	  VanadiumAlloy_PoissonRatio_SRMA.mfront               \
+	  VanadiumAlloy_SpecificHeat_SRMA.mfront               \
+	  VanadiumAlloy_ThermalExpansion_SRMA.mfront           \
+	  VanadiumAlloy_ThermalConductivity_SRMA.mfront        \
+	  ThermalExpansionCoefficientTest.mfront               \
+	  ThermalExpansionCoefficientTest2.mfront              \
+	  ThermalExpansionCoefficientTest_1.mfront             \
+	  ThermalExpansionCoefficientTest_2.mfront             \
+	  ThermalExpansionCoefficientTest_3.mfront             \
+	  Inconel600_YoungModulus.mfront                       \
+	  T91AusteniticSteel_ThermalExpansion_ROUX2007.mfront  \
+	  T91AusteniticSteel_b_ROUX2007.mfront		       \
+	  T91AusteniticSteel_F_ROUX2007.mfront		       \
+	  T91AusteniticSteel_Kvisc_ROUX2007.mfront	       \
+	  T91AusteniticSteel_Nexp_ROUX2007.mfront	       \
+	  T91AusteniticSteel_Rinf_ROUX2007.mfront	       \
+	  T91AusteniticSteel_YieldStress_ROUX2007.mfront       \
+	  T91AusteniticSteel_YoungModulus_ROUX2007.mfront      \
+	  T91MartensiticSteel_b_ROUX2007.mfront		       \
+	  T91MartensiticSteel_C1_ROUX2007.mfront	       \
+	  T91MartensiticSteel_C2_ROUX2007.mfront	       \
+	  T91MartensiticSteel_F_ROUX2007.mfront		       \
+	  T91MartensiticSteel_gamma1_ROUX2007.mfront	       \
+	  T91MartensiticSteel_growth_ROUX2007.mfront	       \
+	  T91MartensiticSteel_Kvisc_ROUX2007.mfront	       \
+	  T91MartensiticSteel_Nexp_ROUX2007.mfront	       \
+	  T91MartensiticSteel_Rinf_ROUX2007.mfront	       \
+	  T91MartensiticSteel_ThermalExpansion_ROUX2007.mfront \
+	  T91MartensiticSteel_YieldStress_ROUX2007.mfront      \
+	  T91MartensiticSteel_YoungModulus_ROUX2007.mfront
 
 EXTRA_DIST = $(mfronts)      \
 	     CMakeLists.txt

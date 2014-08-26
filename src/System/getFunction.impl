@@ -44,25 +44,17 @@ extern "C" {
     return *n;
   } 
 
-  int tfel_checkIfAsterBehaviourRequiresElasticMaterialPropertiesOffset(LibraryHandlerPtr l,
-									const char * const f)
+  int tfel_getUMATRequiresStiffnessTensor(LibraryHandlerPtr l,
+					  const char * const f)
   {
     unsigned short * n;
     size_t len = strlen(f);
-    char *myname = (char *) malloc((len+9u)*sizeof(char));
+    char *myname = (char *) malloc((len+25u)*sizeof(char));
     if(myname==0){
       return -1;
     }
-    strncpy(myname,f,len);
-    myname[len]='_';
-    myname[len+1u]='e';
-    myname[len+2u]='o';
-    myname[len+3u]='f';
-    myname[len+4u]='f';
-    myname[len+5u]='s';
-    myname[len+6u]='e';
-    myname[len+7u]='t';
-    myname[len+8u]='\0';
+    strncpy(myname,f,len+1);
+    strncat(myname,"_requiresStiffnessTensor",24u);
     n= (unsigned short *) dlsym(l,myname);
     free(myname);
     if(n==0){
@@ -71,26 +63,17 @@ extern "C" {
     return *n;
   }
 
-  int tfel_checkIfAsterBehaviourRequiresThermalExpansionMaterialPropertiesOffset(LibraryHandlerPtr l,
-										 const char * const f)
+  int tfel_getUMATRequiresThermalExpansionCoefficientTensor(LibraryHandlerPtr l,
+							    const char * const f)
   {
     unsigned short * n;
     size_t len = strlen(f);
-    char *myname = (char *) malloc((len+10u)*sizeof(char));
+    char *myname = (char *) malloc((len+43u)*sizeof(char));
     if(myname==0){
       return -1;
     }
-    strncpy(myname,f,len);
-    myname[len]='_';
-    myname[len+1u]='t';
-    myname[len+2u]='e';
-    myname[len+3u]='o';
-    myname[len+4u]='f';
-    myname[len+5u]='f';
-    myname[len+6u]='s';
-    myname[len+7u]='e';
-    myname[len+8u]='t';
-    myname[len+9u]='\0';
+    strncpy(myname,f,len+1);
+    strncat(myname,"_requiresThermalExpansionCoefficientTensor",42u);
     n= (unsigned short *) dlsym(l,myname);
     free(myname);
     if(n==0){

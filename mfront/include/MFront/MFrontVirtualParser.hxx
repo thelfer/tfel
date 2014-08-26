@@ -20,11 +20,6 @@ namespace mfront{
 
   struct TFEL_VISIBILITY_EXPORT MFrontVirtualParser
   {
-    virtual void setVerboseMode() = 0;
-
-    virtual void setDebugMode() = 0;
-
-    virtual void setWarningMode() = 0;
 
     virtual void treatFile(const std::string&,
 			   const std::vector<std::string>&) = 0;

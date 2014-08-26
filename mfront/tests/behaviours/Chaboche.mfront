@@ -5,14 +5,10 @@
 @Theta 1. ;
 @Epsilon 1.e-12;
 
-@MaterialProperty real young; /* mandatory for castem */
+@MaterialProperty stress young; /* mandatory for castem */
 young.setGlossaryName("YoungModulus");
 @MaterialProperty real nu;    /* mandatory for castem */
 nu.setGlossaryName("PoissonRatio");
-@MaterialProperty real rho;   /* mandatory for castem */
-rho.setGlossaryName("MassDensity");
-@MaterialProperty real alpha; /* mandatory for castem */
-alpha.setGlossaryName("ThermalExpansion");
 
 @MaterialProperty stress R_inf;
 @MaterialProperty stress R_0;
@@ -35,7 +31,7 @@ alpha.setGlossaryName("ThermalExpansion");
 @LocalVariable stress Fel;
 
 /* Initialize Lame coefficients */
-@InitLocalVars{
+@InitLocalVariables{
   using namespace tfel::material::lame;
   lambda = computeLambda(young,nu);
   mu     = computeMu(young,nu);

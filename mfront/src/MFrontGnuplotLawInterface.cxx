@@ -37,9 +37,6 @@ namespace mfront
   }
 
   MFrontGnuplotLawInterface::MFrontGnuplotLawInterface()
-    : verboseMode(false),
-      debugMode(false),
-      warningMode(false)
   {}
 
   MFrontGnuplotLawInterface::~MFrontGnuplotLawInterface()
@@ -53,24 +50,6 @@ namespace mfront
     }
   } // end of MFrontGnuplotLawInterface::reset
   
-  void 
-  MFrontGnuplotLawInterface::setVerboseMode(void)
-  {
-    this->verboseMode = true;
-  }
-
-  void 
-  MFrontGnuplotLawInterface::setWarningMode(void)
-  {
-    this->warningMode = true;
-  }
-
-  void 
-  MFrontGnuplotLawInterface::setDebugMode(void)
-  {
-    this->debugMode = true;
-  }
-
   std::string
   MFrontGnuplotLawInterface::eraseQuote(const std::string& in)
   {

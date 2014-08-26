@@ -15,10 +15,10 @@
 #include"TFEL/Material/Lame.hxx"
 }
 
-@MaterialProperty stress young; 
-@MaterialProperty real nu;    
-@MaterialProperty real rho; 
-@MaterialProperty real alpha;    
+@MaterialProperty stress young;
+young.setGlossaryName("YoungModulus");
+@MaterialProperty real nu;
+nu.setGlossaryName("PoissonRatio");
 
 @MaterialProperty real KRS;
 @MaterialProperty real NRS;
@@ -47,7 +47,7 @@
 
 
 /* Initialize Lame coefficients */
-@InitLocalVars{
+@InitLocalVariables{
   using namespace tfel::material::lame;
   lambda = computeLambda(young,nu);
   mu = computeMu(young,nu);
@@ -56,7 +56,7 @@
 @TangentOperator{
   using namespace tfel::material::lame;
   if((smt==ELASTIC)||(smt==SECANTOPERATOR)){
-    computeElasticStiffness<N,Type>::exe(Dt,lambda,mu);
+    computeAlteredElasticStiffness<hypothesis,Type>::exe(Dt,lambda,mu);
   } else if(smt==CONSISTANTTANGENTOPERATOR){
     StiffnessTensor Hooke;
     Stensor4 Je;

@@ -338,7 +338,7 @@ namespace mfront
      * \brief set the value used to build the numerical tangent operator
      * \param[in] v : perturbation value
      */
-    virtual void setNumericalTangentOperatorPertubationValue(const real);
+    virtual void setNumericalTangentOperatorPerturbationValue(const real);
     /*!
      * \brief set the stiffness updating policy
      * \param[in] b : boolean
@@ -350,6 +350,13 @@ namespace mfront
      * \param[in] b : boolean
      */
     virtual void setUseCastemAccelerationAlgorithm(const bool);
+    /*!
+     * \brief set if mtest shall handle thermal expansion coefficient
+     * If true, the thermal expansion will be handled if the thermal
+     * expansion coefficients are defined.
+     * \param[in] b : boolean
+     */
+    virtual void setHandleThermalExpansion(const bool);
     /*!
      * \brief set at which iteration the use of the castem
      * acceleration algorithm  will begin
@@ -445,8 +452,7 @@ namespace mfront
     /*!
      * \return the list of evolutions
      */
-    tfel::utilities::shared_ptr<std::map<std::string,	
-					 tfel::utilities::shared_ptr<MTestEvolution> > >
+    tfel::utilities::shared_ptr<MTestEvolutionManager>
     getEvolutions() const;
     /*!
      * \brief add a new test
@@ -467,7 +473,7 @@ namespace mfront
      */
     virtual void
     addEvolution(const std::string&,
-		 const tfel::utilities::shared_ptr<MTestEvolution>,
+		 const MTestEvolutionPtr,
 		 const bool,
 		 const bool);
     /*!
@@ -492,7 +498,7 @@ namespace mfront
      */
     virtual void
     setMaterialProperty(const std::string&,
-			const tfel::utilities::shared_ptr<MTestEvolution>,
+			const MTestEvolutionPtr,
 			const bool);
     /*!
      * \brief define an external state variable
@@ -504,7 +510,7 @@ namespace mfront
      */
     virtual void
     setExternalStateVariable(const std::string&,
-			     const tfel::utilities::shared_ptr<MTestEvolution>,
+			     const MTestEvolutionPtr,
 			     const bool);
     /*!
      * \brief set the inital values of the driving variable
@@ -532,6 +538,13 @@ namespace mfront
     virtual void
     setStensorInternalStateVariableInitialValues(const std::string&,
 						 const std::vector<real>&);
+    /*!
+     * \brief set the inital values of a tensor variable
+     * \param[in] v : values
+     */
+    virtual void
+    setTensorInternalStateVariableInitialValues(const std::string&,
+						const std::vector<real>&);
     /*!
      * \brief add a new constraint
      * \param[in] c     : constraint
@@ -610,8 +623,9 @@ namespace mfront
     //! times
     std::vector<real> times;
     //! list of evolutions
-    tfel::utilities::shared_ptr<std::map<std::string,	
-				 tfel::utilities::shared_ptr<MTestEvolution> > > evs;
+    tfel::utilities::shared_ptr<MTestEvolutionManager> evm;
+    //! default values for material properties as given by the behaviour
+    tfel::utilities::shared_ptr<MTestEvolutionManager> defaultMaterialPropertiesValues;
     //! output file name
     std::string output;
     //! output file
@@ -651,6 +665,8 @@ namespace mfront
     MTestStiffnessMatrixType::mtype ktype;
     //! use a prediction matrix before beginning the resolution
     PredictionPolicy ppolicy;
+    //! handle the computation of thermal expansion
+    bool handleThermalExpansion;
     //! use castem acceleration
     bool useCastemAcceleration;
     //! castem acceleration trigger

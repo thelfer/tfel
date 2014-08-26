@@ -53,7 +53,7 @@ namespace tfel
 
       /*!
        * \param[in] l : name of the library
-       * \param[in] s : name of function or mechanical behaviour 
+       * \param[in] s : name of function or mechanical behaviour
        * \param[in] p : parameter name
        * \param[in] v : value
        */
@@ -66,7 +66,7 @@ namespace tfel
       /*!
        * set the value of an integer parameter
        * \param[in] l : name of the library
-       * \param[in] s : name of function or mechanical behaviour 
+       * \param[in] s : name of function or mechanical behaviour
        * \param[in] p : parameter name
        * \param[in] v : value
        */
@@ -79,7 +79,7 @@ namespace tfel
       /*!
        * set the value of an unsigned short parameter
        * \param[in] l : name of the library
-       * \param[in] s : name of function or mechanical behaviour 
+       * \param[in] s : name of function or mechanical behaviour
        * \param[in] p : parameter name
        * \param[in] v : value
        */
@@ -89,10 +89,56 @@ namespace tfel
 		   const std::string&,
 		   const unsigned short);
 
+
+      /*!
+       * \param[in] l : name of the library
+       * \param[in] s : name of function or mechanical behaviour
+       * \param[in] h : modelling hypothesis
+       * \param[in] p : parameter name
+       * \param[in] v : value
+       */
+      void
+      setParameter(const std::string&,
+		   const std::string&,
+		   const std::string&,
+		   const std::string&,
+		   const double);
+
+      /*!
+       * set the value of an integer parameter
+       * \param[in] l : name of the library
+       * \param[in] s : name of function or mechanical behaviour
+       * \param[in] h : modelling hypothesis
+ 
+       * \param[in] p : parameter name
+       * \param[in] v : value
+       */
+      void
+      setParameter(const std::string&,
+		   const std::string&,
+		   const std::string&,
+		   const std::string&,
+		   const int);
+
+      /*!
+       * set the value of an unsigned short parameter
+       * \param[in] l : name of the library
+       * \param[in] s : name of function or mechanical behaviour
+       * \param[in] h : modelling hypothesis
+       * \param[in] p : parameter name
+       * \param[in] v : value
+       */
+      void
+      setParameter(const std::string&,
+		   const std::string&,
+		   const std::string&,
+		   const std::string&,
+		   const unsigned short);
+
       /*!
        * \return the src of the function or the mechanical behaviour
        * \param[in] l : name of the library
-       * \param[in] s : name of function or mechanical behaviour 
+       * \param[in] s : name of function or mechanical behaviour
        * This function looks for the symbol s+'_src' in the library
        * and expect it to a pointer to characters.
        * If the symbol is not found, an empty string is returned.
@@ -127,6 +173,7 @@ namespace tfel
        */
       bool
       isUMATBehaviourUsableInPurelyImplicitResolution(const std::string&,
+						      const std::string&,
 						      const std::string&);
       /*!
        * \return the type of the behaviour
@@ -176,32 +223,40 @@ namespace tfel
       /*!
        * \param[in] l : name of the library
        * \param[in] f : law name
+       * \param[in] h : modelling hypothesis
        */
       std::vector<std::string>
       getUMATMaterialPropertiesNames(const std::string&,
+				     const std::string&,
 				     const std::string&);
       /*!
        * \param[in] l : name of the library
        * \param[in] f : law name
+       * \param[in] h : modelling hypothesis
        */
       std::vector<std::string>
       getUMATInternalStateVariablesNames(const std::string&,
+					 const std::string&,
 					 const std::string&);
 
       /*!
        * \param[in] l : name of the library
        * \param[in] f : law name
+       * \param[in] h : modelling hypothesis
        */
       std::vector<int>
-      getUMATInternalStateVariablesTypes(const std::string& l,
-					 const std::string& f);
+      getUMATInternalStateVariablesTypes(const std::string&,
+					 const std::string&,
+					 const std::string&);
 
       /*!
        * \param[in] l : name of the library
        * \param[in] f : law name
+       * \param[in] h : modelling hypothesis
        */
       std::vector<std::string>
       getUMATExternalStateVariablesNames(const std::string&,
+					 const std::string&,
 					 const std::string&);
 
       /*!
@@ -209,19 +264,23 @@ namespace tfel
        * interface requires a offset for the elastic properties
        * \param[in] l : name of the library
        * \param[in] f : law name
+       * \param[in] h : modelling hypothesis
        */
       bool
-      checkIfAsterBehaviourRequiresElasticMaterialPropertiesOffset(const std::string&,
-								  const std::string&);
+      getUMATRequiresStiffnessTensor(const std::string&,
+				     const std::string&,
+				     const std::string&);
       /*!
        * \return true if a behaviour generated throught the aster
        * interface requires a offset for the elastic properties
        * \param[in] l : name of the library
        * \param[in] f : law name
+       * \param[in] h : modelling hypothesis
        */
       bool
-      checkIfAsterBehaviourRequiresThermalExpansionMaterialPropertiesOffset(const std::string&,
-									    const std::string&);
+      getUMATRequiresThermalExpansionCoefficientTensor(const std::string&,
+						       const std::string&,
+						       const std::string&);
       /*!
        * \return true if a behaviour generated throught the aster
        * interface saves the tangent operator
@@ -599,6 +658,7 @@ namespace tfel
 
       TFEL_VISIBILITY_LOCAL void
       getUMATNames(std::vector<std::string>&,
+		   const std::string&,
 		   const std::string&,
 		   const std::string&,
 		   const std::string&);

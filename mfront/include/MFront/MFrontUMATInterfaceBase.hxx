@@ -11,7 +11,6 @@
 #include"TFEL/Utilities/CxxTokenizer.hxx"
 
 #include"MFront/SupportedTypes.hxx"
-#include"MFront/MechanicalVariableDescription.hxx"
 #include"MFront/MechanicalBehaviourDescription.hxx"
 #include"MFront/MFrontBehaviourVirtualInterface.hxx"
 
@@ -25,17 +24,12 @@ namespace mfront{
     : public SupportedTypes,
       public MFrontBehaviourVirtualInterface
   {
+    //! a simple alias
+    typedef tfel::material::ModellingHypothesis ModellingHypothesis;
+    //! a simple alias
+    typedef ModellingHypothesis::Hypothesis Hypothesis;
 
     MFrontUMATInterfaceBase();
-
-    virtual void
-    setVerboseMode(void);
-
-    virtual void
-    setDebugMode(void);
-
-    virtual void
-    setWarningMode(void);
 
     /*!
      * set if dynamically allocated arrays are allowed
@@ -45,23 +39,18 @@ namespace mfront{
     allowDynamicallyAllocatedArrays(const bool);
 
     /*!
-     * \param const std::string&, library
-     * \param const std::string&, material
-     * \param const std::string&, class
+     * \param[in] mb : mechanical behaviour description
      */
     virtual std::map<std::string,std::vector<std::string> >
-    getGlobalDependencies(const std::string&,
-			  const std::string&,
-			  const std::string&);
+    getGlobalDependencies(const MechanicalBehaviourDescription&);
 
     virtual void
     exportMechanicalData(std::ofstream&,
-			 const std::string&,
+			 const Hypothesis,
 			 const MechanicalBehaviourDescription&);
     /*!
      * write the behaviour constructor associated with the law
      * \param[in] behaviourFile           : output file
-     * \param[in] className               : behaviour class name
      * \param[in] mb                      : mechanical behaviour description
      * \param[in] initStateVarsIncrements : constructor part assigning
      *                                      default value (zero) to state
@@ -69,13 +58,12 @@ namespace mfront{
      */
     virtual void
     writeBehaviourConstructor(std::ofstream&,
-			      const std::string&,
 			      const MechanicalBehaviourDescription&,
 			      const std::string&);
 
     virtual void
     writeBehaviourDataConstructor(std::ofstream&,
-				  const std::string&,
+				  const Hypothesis,
 				  const MechanicalBehaviourDescription&);
 
     /*!
@@ -89,7 +77,7 @@ namespace mfront{
     
     virtual void
     writeIntegrationDataConstructor(std::ofstream&,
-				    const std::string&,
+				    const Hypothesis,
 				    const MechanicalBehaviourDescription&);
     /*!
      * write the initialisation of the driving variables
@@ -108,28 +96,190 @@ namespace mfront{
 
   protected:
 
-    virtual std::string
-    getLibraryName(const std::string&,
-		   const std::string&) const = 0;
-
-    virtual bool
-    readBooleanValue(const std::string&,
-		     tfel::utilities::CxxTokenizer::TokensContainer::const_iterator&,
-		     const tfel::utilities::CxxTokenizer::TokensContainer::const_iterator) const;
-
-    virtual bool
-    hasMaterialPropertiesOffset(const MechanicalBehaviourDescription&) const = 0;
+    /*!
+     * The umat interface may require additionnal material properties,
+     * to compute the stiffness matrix or to compute the thermal
+     * expansions. Some additional material properties may also be
+     * required by the solver (mass density, orthotropic basis for the
+     * Cast3M solver) which are of no interest for the behaviour. On
+     * the orher hand, some material properties are highly needed by
+     * the behaviour (Young modulus and Poisson ratio for example).
+     * This structure allows the computation of an indirection map
+     * between the data given by the solver and the ones needed by the
+     * interface.
+     */
+    struct UMATMaterialProperty
+    {
+      /*!
+       * constructor
+       * \param[in] t : type
+       * \param[in] n : name
+       * \param[in] v : usual variable name
+       * \param[in] a : array size
+       * \param[in] o : offset
+       * \param[in] d : dummy variable
+       */
+      UMATMaterialProperty(const std::string&,
+			   const std::string&,
+			   const std::string&,
+			   const unsigned short,
+			   const SupportedTypes::TypeSize,
+			   const bool);
+      /*!
+       *  Type of the variable.
+       *  If the variable has been declared as an array (see below),
+       *  this field holds the type contained by the array.
+       */
+      std::string type;
+      /*!
+       * \brief glossary name of the material property
+       */
+      std::string name;
+      /*!
+       * \brief variable name of the material property
+       */
+      std::string var_name;
+      //! if the variable has been declared as an array, this field
+      //  contains a value greater than 1
+      unsigned short arraySize;
+      /*!
+       * offset of the variable in the indirection map
+       */
+      SupportedTypes::TypeSize offset;
+      /*!
+       * If true, this variable is not considered in the compoutation
+       * of the indirection map. For example, the Cast3M solver may
+       * require a variable called 'V1X' for the first component of
+       * the first direction of the orthotropic basis.  The variable
+       * shall not prevent the user of defining a material property
+       * named 'V1X'.
+       */
+       bool dummy;
+    }; // end of struct UMATMaterialProperty
+    /*!
+     * an helper function returning a material property
+     * \param[in] mprops : material properties
+     * \param[in] n      : glossary name
+     * \return the umat material property with the given material
+     * property name
+     */
+    static const UMATMaterialProperty&
+    findUMATMaterialProperty(const std::vector<UMATMaterialProperty>&,
+			     const std::string&);
 
     virtual std::string
     getInterfaceName(void) const = 0;
 
     virtual std::string
+    getLibraryName(const MechanicalBehaviourDescription&) const = 0;
+
+    virtual bool
+    readBooleanValue(const std::string&,
+		     tfel::utilities::CxxTokenizer::TokensContainer::const_iterator&,
+		     const tfel::utilities::CxxTokenizer::TokensContainer::const_iterator) const;
+    /*!
+     * \return a pair which first member gives the position of the
+     * material properties in the values given through the interface
+     * and whose second members is an offset giving the number of
+     * imposed material properties.
+     * \param[in] mb : mechanical behaviour description
+     * \param[in] h  : modelling hypothesis
+     */
+    virtual std::pair<std::vector<UMATMaterialProperty>,
+		      SupportedTypes::TypeSize>
+    buildMaterialPropertiesList(const MechanicalBehaviourDescription&,
+				const Hypothesis) const = 0;
+    /*!
+     * \brief append a variable to material property list
+     * \param[out] l : list of material properties
+     * \param[in]  t : type of the variable
+     * \param[in]  n : name of the variable
+     * \param[in]  v : variable name
+     * \param[in]  b : if true, this is a dummy variable
+     */
+    virtual void
+    appendToMaterialPropertiesList(std::vector<UMATMaterialProperty>&,
+				   const std::string&,
+				   const std::string&,
+				   const std::string&,
+				   const bool) const;
+    /*!
+     * \brief complete the list of material properties.
+     * This method shall be called by the buildMaterialPropertiesList
+     * after that the mandatory material properties list have been
+     * filled.
+     * \param[out] mprops : list of material properties
+     * \param[in]  mb     : mechanical behaviour description
+     * \param[in]  h      : modelling hypothesis
+     */
+    virtual void
+    completeMaterialPropertiesList(std::vector<UMATMaterialProperty>&,
+				   const MechanicalBehaviourDescription&,
+				   const Hypothesis) const;
+    /*!
+     * \return the name of the function generated by the Cyrano interface
+     * \param[in] n : name of the behaviour as defined by interface
+     *                (generally taking into account the material
+     *                 and the behaviour name)
+     */
+    virtual std::string
     getFunctionName(const std::string&) const = 0;
+    /*!
+     * \return a name used to create symbols for the UMAT++ interface
+     * \param[in] n : name of the behaviour as defined by interface
+     *                (generally taking into account the material
+     *                 and the behaviour name)
+     * \param[in] h : modelling hypothesis
+     */
+    virtual std::string
+    getSymbolName(const std::string&,
+		  const Hypothesis) const;
+    /*!
+     * \param[out] f      : output file
+     * \param[in]  h      : modelling hypothesis
+     * \param[in]  mb     : mechanical behaviour description
+     * \param[in]  v      : variables to be initialized
+     * \param[in]  iv     : indirection vector
+     * \param[in]  o      : offset in the indirection vector
+     * \param[in]  src    : name of the array from which the variables are initialized
+     * \param[in]  prefix : prefix added to variable's names
+     * \param[in]  suffix : suffix added to variable's names
+     */
+    virtual void
+    writeMaterialPropertiesInitializersInBehaviourDataConstructorI(std::ostream&,
+								   const Hypothesis,
+								   const MechanicalBehaviourDescription&,
+								   const std::vector<UMATMaterialProperty>&,
+								   const SupportedTypes::TypeSize,
+								   const std::string&,
+								   const std::string&,
+								   const std::string&) const;
+    /*!
+     * \param[out] f      : output file
+     * \param[in]  h      : modelling hypothesis
+     * \param[in]  mb     : mechanical behaviour description
+     * \param[in]  v      : variables to be initialized
+     * \param[in]  iv     : indirection vector
+     * \param[in]  o      : offset in the indirection vector
+     * \param[in]  src    : name of the array from which the variables are initialized
+     * \param[in]  prefix : prefix added to variable's names
+     * \param[in]  suffix : suffix added to variable's names
+     */
+    virtual void
+    writeMaterialPropertiesInitializersInBehaviourDataConstructorII(std::ostream&,
+								    const Hypothesis,
+								    const MechanicalBehaviourDescription&,
+								    const std::vector<UMATMaterialProperty>&,
+								    const SupportedTypes::TypeSize,
+								    const std::string&,
+								    const std::string&,
+								    const std::string&) const;
 
     virtual void
     writeGlossaryNames(std::ostream&,
-		       const std::vector<std::string>&,
 		       const std::string&,
+		       const Hypothesis&,
+		       const std::vector<std::string>&,
 		       const std::string&,
 		       const unsigned short = 0u) const;
 
@@ -138,15 +288,15 @@ namespace mfront{
 			bool&,
 			bool&,
 			const VariableDescriptionContainer&) const;
-
+    /*!
+     * \return the header define
+     */
     virtual std::string
-    getHeaderDefine(const std::string&,
-		    const std::string&,
-		    const std::string&) const;
+    getHeaderDefine(const MechanicalBehaviourDescription&) const;
 
     virtual void
     getExtraSrcIncludes(std::ostream&,
-			const MechanicalBehaviourDescription&);
+			const MechanicalBehaviourDescription&) const;
 
     virtual void
     writeVisibilityDefines(std::ostream&) const;
@@ -158,7 +308,6 @@ namespace mfront{
 
     virtual void
     writeSetParametersFunctionsImplementations(std::ostream&,
-					       const std::string&,
 					       const std::string&,
 					       const MechanicalBehaviourDescription&) const;
 
@@ -173,40 +322,60 @@ namespace mfront{
      */
     virtual void
     generateMTestFile2(std::ostream&,
-		       const MechanicalBehaviourDescription::BehaviourType,
-		       const std::string&,
-		       const std::string&,
-		       const std::string&,
-		       const std::string&,
-		       const MechanicalBehaviourDescription&,
-		       const std::map<std::string,std::string>&,
-		       const std::map<std::string,std::string>&) const;
+    		       const MechanicalBehaviourDescription::BehaviourType,
+    		       const std::string&,
+    		       const std::string&,
+    		       const MechanicalBehaviourDescription&) const;
 
     virtual void
     writeMTestFileGeneratorSetRotationMatrix(std::ostream&,
 					     const MechanicalBehaviourDescription&) const;
-
-    virtual void
-    writeMTestFileGeneratorAdditionalMaterialPropertiesInitialisation(std::ostream&,
-								      const MechanicalBehaviourDescription&) const = 0;
     /*!
-     * \param[in] out           : output file
-     * \param[in] name          : name of the behaviour 
-     * \param[in] file          : source file 
-     * \param[in] mb            : behaviour description
-     * \param[in] glossaryNames : glossary names
-     * \param[in] entrNames     : entry    names
+     * \param[in] out  : output file
+     * \param[in] name : name of the behaviour as defined by interface
+     *                   (generally taking into account the material
+     *                    and the behaviour name)
+     * \param[in] mb   : behaviour description
+     * \param[in] fd   : file description
+     */
+    virtual void
+    writeUMATxxSpecificSymbols(std::ostream&,
+			       const std::string&,
+			       const MechanicalBehaviourDescription&,
+			       const MFrontFileDescription&) const;
+    /*!
+     * \param[in] out  : output file
+     * \param[in] name : name of the behaviour as defined by interface
+     *                   (generally taking into account the material
+     *                    and the behaviour name)
+     * \param[in] mb   : behaviour description
+     * \param[in] fd   : file description
+     */
+    virtual void
+    generateUMATxxGeneralSymbols(std::ostream&,
+				 const std::string&,
+				 const MechanicalBehaviourDescription&,
+				 const MFrontFileDescription &) const;
+    /*!
+     * \param[in] out  : output file
+     * \param[in] name : name of the behaviour as defined by interface
+     *                   (generally taking into account the material
+     *                    and the behaviour name)
+     * \param[in] h    : modelling hypothesis
+     * \param[in] mb   : behaviour description
+     * \param[in] fd   : file description
      */
     virtual void
     generateUMATxxSymbols(std::ostream&,
 			  const std::string&,
-			  const std::string&,
+			  const Hypothesis,
 			  const MechanicalBehaviourDescription&,
-			  const std::map<std::string,std::string>&,
-			  const std::map<std::string,std::string>&) const;
+			  const MFrontFileDescription&) const;
     /*!
      * \param[in] out  : output file
-     * \param[in] name : behaviour name
+     * \param[in] name : name of the behaviour as defined by interface
+     *                   (generally taking into account the material
+     *                    and the behaviour name)
      * \param[in] mb   : behaviour description
      */
     virtual void
@@ -216,62 +385,74 @@ namespace mfront{
     /*!
      * \param[in] out  : output file
      * \param[in] name : behaviour name
-     * \param[in] file : source file
      * \param[in] mb   : behaviour description
+     * \param[in] fd   : file description
      */
     virtual void
     writeUMATxxSourceFileSymbols(std::ostream&,
 				 const std::string&,
-				 const std::string&,
-				 const MechanicalBehaviourDescription&) const;
+				 const MechanicalBehaviourDescription&,
+				 const MFrontFileDescription&) const;
     /*!
-     * \param[in] out           : output file
-     * \param[in] name          : name of the behaviour 
-     * \param[in] mb            : behaviour description
+     * \param[in] out   : output file
+     * \param[in] name  : name of the behaviour as defined by interface
+     *                    (generally taking into account the material
+     *                     and the behaviour name)
+     * \param[in] h     : modelling hypothesis
+     * \param[in] mb    : behaviour description
      */
     virtual void
     writeUMATxxIsUsableInPurelyImplicitResolutionSymbols(std::ostream&,
 							 const std::string&,
+							 const Hypothesis,
 							 const MechanicalBehaviourDescription&) const;
     /*!
-     * \param[in] out           : output file
-     * \param[in] name          : name of the behaviour 
-     * \param[in] mb            : behaviour description
-     * \param[in] glossaryNames : glossary names
-     * \param[in] entrNames     : entry    names
+     * \brief write UMAT++ symbols associated with material properties for the given hypothesis
+     * \param[in] out : output file
+     * \param[in] n   : name of the behaviour as defined by interface
+     *                  (generally taking into account the material
+     *                   and the behaviour name)
+     * \param[in] h   : modelling hypothesis
+     * \param[in] mb  : behaviour description
      */
     virtual void
     writeUMATxxMaterialPropertiesSymbols(std::ostream&,
 					 const std::string&,
-					 const MechanicalBehaviourDescription&,
-					 const std::map<std::string,std::string>&,
-					 const std::map<std::string,std::string>&) const = 0;
+					 const Hypothesis,
+					 const MechanicalBehaviourDescription&) const;
     /*!
-     * \param[in] out           : output file
-     * \param[in] name          : name of the behaviour 
-     * \param[in] mb            : behaviour description
-     * \param[in] glossaryNames : glossary names
-     * \param[in] entrNames     : entry    names
+     * \param[in] out  : output file
+     * \param[in] name : name of the behaviour 
+     * \param[in] h    : modelling hypothesis
+     * \param[in] mb   : behaviour description
      */
     virtual void
     writeUMATxxStateVariablesSymbols(std::ostream&,
-				      const std::string&,
-				      const MechanicalBehaviourDescription&,
-				      const std::map<std::string,std::string>&,
-				      const std::map<std::string,std::string>&) const;
+				     const std::string&,
+				     const Hypothesis,
+				     const MechanicalBehaviourDescription&) const;
     /*!
-     * \param[in] out           : output file
-     * \param[in] name          : name of the behaviour 
-     * \param[in] mb            : behaviour description
-     * \param[in] glossaryNames : glossary names
-     * \param[in] entrNames     : entry    names
+     * \param[in] out  : output file
+     * \param[in] name : name of the behaviour 
+     * \param[in] h    : modelling hypothesis
+     * \param[in] mb   : behaviour description
      */
     virtual void
     writeUMATxxExternalStateVariablesSymbols(std::ostream&,
 					     const std::string&,
-					     const MechanicalBehaviourDescription&,
-					     const std::map<std::string,std::string>&,
-					     const std::map<std::string,std::string>&) const;
+					     const Hypothesis,
+					     const MechanicalBehaviourDescription&) const;
+    /*!
+     * \param[in] out  : output file
+     * \param[in] name : name of the behaviour 
+     * \param[in] h    : modelling hypothesis
+     * \param[in] mb   : behaviour description
+     */
+    virtual void
+    writeUMATxxRequirementsSymbols(std::ostream&,
+				   const std::string&,
+				   const Hypothesis,
+				   const MechanicalBehaviourDescription&) const;
     /*!
      * \param[in] out  : output file
      * \param[in] name : behaviour name
@@ -291,34 +472,46 @@ namespace mfront{
 					   const std::string&,
 					   const MechanicalBehaviourDescription&) const;
     /*!
-     * \param[in] out           : output file
-     * \param[in] name          : name of the behaviour 
-     * \param[in] file          : source file
-     * \param[in] mb            : behaviour description
-     * \param[in] glossaryNames : glossary names
-     * \param[in] entrNames     : entry    names
+     * \param[in] out  : output file
+     * \param[in] name : name of the behaviour as defined by interface
+     *                   (generally taking into account the material
+     *                    and the behaviour name)
+     * \param[in] h    : modelling hypothesis
+     * \param[in] mb   : behaviour description
+     * \param[in] fd   : file description
      */
     virtual void
     writeUMATxxAdditionalSymbols(std::ostream&,
 				 const std::string&,
-				 const std::string&,
+				 const Hypothesis,
 				 const MechanicalBehaviourDescription&,
-				 const std::map<std::string,std::string>&,
-				 const std::map<std::string,std::string>&) const = 0;
+				 const MFrontFileDescription&) const = 0;
     /*!
      * \param[in] out : output file
      */
     virtual void
     writeMTestFileGeneratorSetModellingHypothesis(std::ostream&) const = 0;
 
+    /*!
+     * \brief associates each distinct modelling hypothesis to appropriate tests
+     * \param[in] mb : behaviour description
+     */
+    virtual std::map<Hypothesis,std::string>
+    gatherModellingHypothesesAndTests(const MechanicalBehaviourDescription&) const;
+    /*!
+     * \return true if the interface handles the given modelling hypothesis
+     * \param[in] h  : modelling hypothesis
+     * \param[in] mb : mechanical behaviour description
+     */
+    virtual bool
+    isModellingHypothesisHandled(const Hypothesis,
+				 const MechanicalBehaviourDescription&);
+    
+    virtual std::string
+    getModellingHypothesisTest(const Hypothesis) const = 0;
+
     bool generateMTestFile;
     
-    bool verboseMode;
-
-    bool debugMode;
-
-    bool warningMode;
-
   }; // end of struct MFrontUMATInterfaceBase
 
 } // end of namespace mfront

@@ -35,23 +35,7 @@ namespace mfront{
   } // end of MFrontBehaviourInterfaceFactory::getInterfacesMap
 
   MFrontBehaviourInterfaceFactory::MFrontBehaviourInterfaceFactory()
-    : verboseMode(false)
   {}
-
-  void MFrontBehaviourInterfaceFactory::setVerboseMode(void)
-  {
-    this->verboseMode = true;
-  }
-
-  void MFrontBehaviourInterfaceFactory::setDebugMode(void)
-  {
-    this->debugMode = true;
-  }
-
-  void MFrontBehaviourInterfaceFactory::setWarningMode(void)
-  {
-    this->warningMode = true;
-  }
 
   std::vector<std::string>
   MFrontBehaviourInterfaceFactory::getRegistredInterfaces(void)
@@ -102,15 +86,6 @@ namespace mfront{
       }
       InterfaceCreator c = p->second;
       i = c();
-      if(this->verboseMode){
-	i->setVerboseMode();
-      }
-      if(this->debugMode){
-	i->setDebugMode();
-      }
-      if(this->warningMode){
-	i->setWarningMode();
-      }
       this->getInterfacesMap().insert(make_pair(interfaceName,i));
     } else {
       i = m->second;

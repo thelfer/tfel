@@ -25,8 +25,8 @@ namespace mfront
     string file(f);
     if(::access(file.c_str(),F_OK)==0){
       if(::access(file.c_str(),R_OK)!=0){
-	string msg("MFrontSearchFile::search : ");
-	msg+= file + "is not readable";
+	string msg("MFrontSearchFile::search : '"+
+		   file + "' is not readable");
 	throw(runtime_error(msg));
       }
       return file;
@@ -35,15 +35,15 @@ namespace mfront
       file = *p+dirSeparator()+f;
       if(::access(file.c_str(),F_OK)==0){
 	if(::access(file.c_str(),R_OK)!=0){
-	  string msg("MFrontSearchFile::search : ");
-	  msg+= file + "is not readable";
+	  string msg("MFrontSearchFile::search : '"+
+		     file + "' is not readable");
 	  throw(runtime_error(msg));
 	}
 	return file;
       }
     }
-    string msg("MFrontSearchFile::search : '");
-    msg += f + "' has not been found.";
+    string msg("MFrontSearchFile::search : '"+
+	       f + "' has not been found.");
     throw(runtime_error(msg));
     return "";
   }

@@ -68,6 +68,15 @@ namespace mfront{
   }
 
   void
+  VariableDescriptionContainer::getGlossaryNames(std::vector<std::string>& n,
+						 const std::map<std::string,std::string>& glossaryNames,
+						 const std::map<std::string,std::string>& entryNames) const
+  {
+    n.clear();
+    this->appendGlossaryNames(n,glossaryNames,entryNames);
+  }
+
+  void
   VariableDescriptionContainer::appendGlossaryNames(std::vector<std::string>& n,
 						    const std::map<std::string,std::string>& glossaryNames,
 						    const std::map<std::string,std::string>& entryNames) const

@@ -20,6 +20,8 @@
 #include"MFront/ParserBase.hxx"
 #include"MFront/ParserUtilities.hxx"
 #include"MFront/MFrontSearchFile.hxx"
+#include"MFront/MFrontDebugMode.hxx"
+#include"MFront/MFrontLogStream.hxx"
 #include"MFront/MFrontMFrontLawInterface.hxx"
 #include"MFront/StaticVariableDescription.hxx"
 #include"MFront/MFrontMaterialLawParser.hxx"
@@ -38,18 +40,21 @@ namespace mfront
     return b;
   }
 
+  ParserBase::VariableModifier::~VariableModifier()
+  {} // end of ParserBase::VariableModifier::~VariableModifier
+
+  ParserBase::WordAnalyser::~WordAnalyser()
+  {} // end of ParserBase::WordAnalyser::~WordAnalyser
+
   ParserBase::ParserBase()
-    : debugMode(false),
-      verboseMode(false),
-      warningMode(false)
   {
-    this->reserveName("std");
-    this->reserveName("tfel");
-    this->reserveName("math");
-    this->reserveName("material");
-    this->reserveName("utilities");
-    this->reserveName("real");
-    this->reserveName("policy");
+    this->reserveName("std",false);
+    this->reserveName("tfel",false);
+    this->reserveName("math",false);
+    this->reserveName("material",false);
+    this->reserveName("utilities",false);
+    this->reserveName("real",false);
+    this->reserveName("policy",false);
   }
 
   void
@@ -84,18 +89,217 @@ namespace mfront
   {} // end of ParserBase::~ParserBase
 
   void
-  ParserBase::throwRuntimeError(const std::string& method,
-				const std::string& m)
+  ParserBase::readNextBlock(std::string& res1,
+			    std::string& res2,
+			    tfel::utilities::shared_ptr<VariableModifier> modifier1,
+			    tfel::utilities::shared_ptr<VariableModifier> modifier2,
+			    const bool addThisPtr,
+			    const std::string delim1,
+			    const std::string delim2,
+			    const bool allowSemiColon,
+			    const bool registerLine)
+  {
+    TokensContainer::const_iterator pb = this->current;
+    res1 = this->readNextBlock(addThisPtr,delim1,delim2,allowSemiColon,registerLine,modifier1);
+    this->current = pb;
+    res2 = this->readNextBlock(addThisPtr,delim1,delim2,allowSemiColon,registerLine,modifier2);
+  } // end of ParserBase::readNextBlock
+
+  std::string
+  ParserBase::readNextBlock(tfel::utilities::shared_ptr<VariableModifier> modifier,
+			    const bool addThisPtr,
+			    const std::string delim1,
+			    const std::string delim2,
+			    const bool allowSemiColon,
+			    const bool registerLine)
+  {
+    return this->readNextBlock(addThisPtr,delim1,delim2,allowSemiColon,registerLine,modifier);
+  } // end of ParserBase::readNextBlock
+
+  std::string
+  ParserBase::readNextBlock(const bool addThisPtr,
+			    const std::string delim1,
+			    const std::string delim2,
+			    const bool allowSemiColon,
+			    const bool registerLine,
+			    tfel::utilities::shared_ptr<VariableModifier> modifier,
+			    tfel::utilities::shared_ptr<WordAnalyser> analyser)
   {
     using namespace std;
+    string res;
+    unsigned short currentLine;
+    unsigned short openedBlock;
+    TokensContainer::const_iterator previous;
+    openedBlock=0;
+    this->readSpecifiedToken("ParserBase::readNextBlock",delim1);
+    this->checkNotEndOfFile("ParserBase::readNextBlock",
+			    "Expected a '"+delim2+"'.");
+    if((this->current->value==";")&&(!allowSemiColon)){
+      string msg("ParserBase::readNextBlock : ");
+      msg += "read ';' before the end of block.\n";
+      msg += "Number of block opened : ";
+      msg += toString(openedBlock);
+      throw(runtime_error(msg));
+    }
+    if(this->current->value==delim1){
+      ++openedBlock;
+    }
+    if(this->current->value==delim2){
+      ++(this->current);
+      return res;
+    }
+    currentLine = this->current->line;
+    if((registerLine)&&(!getDebugMode())){
+      res  = "#line ";
+      res += toString(currentLine);
+      res += " \"";
+      res += this->fileName;
+      res += "\"\n";
+    }
+    if(analyser.get()!=0){
+      analyser->exe(this->current->value);
+    }
+    if(this->staticVarNames.find(this->current->value)!=this->staticVarNames.end()){
+      previous = this->current;
+      --previous;
+      if((previous->value!="->")&&
+	 (previous->value!=".")&&
+	 (previous->value!="::")){
+	res += this->getClassName();
+	res += "::";
+      }
+      res += this->current->value;
+    } else if(this->varNames.find(this->current->value)!=this->varNames.end()){
+      string currentValue;
+      previous = this->current;
+      --previous;
+      if((previous->value=="->")||
+	 (previous->value==".")||
+	 (previous->value=="::")){
+	currentValue = this->current->value;
+      } else {
+	if(modifier.get()!=0){
+	  currentValue = modifier->exe(this->current->value,addThisPtr);
+	} else {
+	  if(addThisPtr){
+	    currentValue = "this->"+this->current->value;
+	  } else {
+	    currentValue = this->current->value;
+	  }
+	}
+      }
+      previous = this->current;
+      --previous;
+      if(previous->value=="*"){
+	res += "("+currentValue+")";
+      } else {
+	res += currentValue;
+      }
+    } else {
+      res += this->current->value;
+    }
+    res += " ";
+    ++(this->current);
+    while((!((this->current->value==delim2)&&(openedBlock==0)))&&
+	  (this->current!=this->fileTokens.end())){
+      
+      if(currentLine!=this->current->line){
+	currentLine = this->current->line;
+	if((registerLine)&&(!getDebugMode())){
+	  res += "\n";
+	  res += "#line ";
+	  res += toString(currentLine);
+	  res += " \"";
+	  res += this->fileName;
+	  res += "\"\n";
+	}  else {
+	  res += "\n";
+	}
+      }
+      if((this->current->value==";")&&(!allowSemiColon)){
+	string msg("ParserBase::readNextBlock : ");
+	msg += "read ';' before the end of block.\n";
+	msg += "Number of block opened : ";
+	msg += toString(openedBlock);
+	throw(runtime_error(msg));
+      }
+      if(analyser.get()!=0){
+	analyser->exe(this->current->value);
+      }
+      if(this->staticVarNames.find(this->current->value)!=this->staticVarNames.end()){
+	previous = this->current;
+	--previous;
+	if((previous->value!="->")&&
+	   (previous->value!=".")&&
+	   (previous->value!="::")){
+	  res += this->getClassName();
+	  res += "::";
+	}
+	res += this->current->value;
+      } else if(this->varNames.find(this->current->value)!=this->varNames.end()){
+	string currentValue;
+	previous = this->current;
+	--previous;
+	if((previous->value=="->")||
+	   (previous->value==".")||
+	   (previous->value=="::")){
+	  currentValue = this->current->value;
+	} else {
+	  if(modifier.get()!=0){
+	    currentValue = modifier->exe(this->current->value,addThisPtr);	    
+	  } else {
+	    if(addThisPtr){
+	      if(previous->value=="*"){
+		currentValue = "(this->"+this->current->value+')';
+	      } else {
+		currentValue = "this->"+this->current->value;
+	      }
+	    } else {
+	      currentValue = this->current->value;
+	    }
+	  }
+	}
+	res += currentValue;
+      } else {
+	res += this->current->value;
+      }
+      res+=" ";
+      if(this->current->value==delim1){
+	++openedBlock;
+      }
+      if(this->current->value==delim2){
+	--openedBlock;
+      }
+      ++(this->current);
+    }
     if(this->current==this->fileTokens.end()){
       --(this->current);
+      string msg("ParserBase::readNextBlock : ");
+      msg += "Expected the end of a block.\n";
+      msg += "Number of block opened : ";
+      msg += toString(openedBlock);
+      throw(runtime_error(msg));
+    }
+    ++(this->current);
+    return res;
+  } // end of ParserBase::readNextBlock
+
+  void
+  ParserBase::throwRuntimeError(const std::string& method,
+				const std::string& m) const
+  {
+    using namespace std;
+    TokensContainer::const_iterator t = this->current;
+    if(t==this->fileTokens.end()){
+      --t;
     }
     string msg(method);
     if(!m.empty()){
       msg +=" : " + m;
     }
-    msg += "\nError at line " + toString(this->current->line);
+    if(!this->fileTokens.empty()){
+      msg += "\nError at line " + toString(t->line);
+    }
     throw(runtime_error(msg));
   } // end of ParserBase::throwRuntimeError
 
@@ -123,16 +327,19 @@ namespace mfront
 
   void
   ParserBase::checkNotEndOfFile(const std::string& method,
-				const std::string& error){
+				const std::string& error) const{
     using namespace std;
     if(this->current==this->fileTokens.end()){
-      --(this->current);
+      TokensContainer::const_iterator previous = this->current;
+      --previous;
       string msg(method+" : ");
       msg += "unexpected end of file.";
       if(!error.empty()){
 	msg += "\n"+error;
       }
-      msg += "\nError at line " + toString(this->current->line);
+      if(!this->fileTokens.empty()){
+	msg += "\nError at line " + toString(this->current->line);
+      }
       throw(runtime_error(msg));
     }
   } // end of ParserBase::checkNotEndOfFile
@@ -216,208 +423,12 @@ namespace mfront
   } // end of ParserBase::readOnlyOneToken
 
   void
-  ParserBase::readNextBlock(std::string& res1,
-			    std::string& res2,
-			    tfel::utilities::shared_ptr<VariableModifier> modifier1,
-			    tfel::utilities::shared_ptr<VariableModifier> modifier2,
-			    const bool addThisPtr,
-			    const std::string delim1,
-			    const std::string delim2,
-			    const bool allowSemiColon,
-			    const bool registerLine)
-  {
-    TokensContainer::const_iterator pb = this->current;
-    res1 = this->readNextBlock(addThisPtr,delim1,delim2,allowSemiColon,registerLine,modifier1);
-    this->current = pb;
-    res2 = this->readNextBlock(addThisPtr,delim1,delim2,allowSemiColon,registerLine,modifier2);
-  } // end of ParserBase::readNextBlock
-
-  std::string
-  ParserBase::readNextBlock(tfel::utilities::shared_ptr<VariableModifier> modifier,
-			    const bool addThisPtr,
-			    const std::string delim1,
-			    const std::string delim2,
-			    const bool allowSemiColon,
-			    const bool registerLine)
-  {
-    return this->readNextBlock(addThisPtr,delim1,delim2,allowSemiColon,registerLine,modifier);
-  } // end of ParserBase::readNextBlock
-
-  std::string
-  ParserBase::readNextBlock(const bool addThisPtr,
-			    const std::string delim1,
-			    const std::string delim2,
-			    const bool allowSemiColon,
-			    const bool registerLine,
-			    tfel::utilities::shared_ptr<VariableModifier> modifier,
-			    tfel::utilities::shared_ptr<WordAnalyser> analyser)
-  {
-    using namespace std;
-    string res;
-    unsigned short currentLine;
-    unsigned short openedBlock;
-    TokensContainer::const_iterator previous;
-    openedBlock=0;
-    this->readSpecifiedToken("ParserBase::readNextBlock",delim1);
-    this->checkNotEndOfFile("ParserBase::readNextBlock",
-			    "Expected a '"+delim2+"'.");
-    if((this->current->value==";")&&(!allowSemiColon)){
-      string msg("ParserBase::readNextBlock : ");
-      msg += "read ';' before the end of block.\n";
-      msg += "Number of block opened : ";
-      msg += toString(openedBlock);
-      throw(runtime_error(msg));
-    }
-    if(this->current->value==delim1){
-      ++openedBlock;
-    }
-    if(this->current->value==delim2){
-      ++(this->current);
-      return res;
-    }
-    currentLine = this->current->line;
-    if((registerLine)&&(!this->debugMode)){
-      res  = "#line ";
-      res += toString(currentLine);
-      res += " \"";
-      res += this->fileName;
-      res += "\"\n";
-    }
-    if(analyser.get()!=0){
-      analyser->exe(this->current->value);
-    }
-    if(this->staticVarNames.find(this->current->value)!=this->staticVarNames.end()){
-      previous = this->current;
-      --previous;
-      if((previous->value!="->")&&
-	 (previous->value!=".")&&
-	 (previous->value!="::")){
-	res += this->className;
-	res += "::";
-      }
-      res += this->current->value;
-    } else if(this->varNames.find(this->current->value)!=this->varNames.end()){
-      string currentValue;
-      previous = this->current;
-      --previous;
-      if((previous->value=="->")||
-	 (previous->value==".")||
-	 (previous->value=="::")){
-	currentValue = this->current->value;
-      } else {
-	if(modifier.get()!=0){
-	  currentValue = modifier->exe(this->current->value,addThisPtr);
-	} else {
-	  if(addThisPtr){
-	    currentValue = "this->"+this->current->value;
-	  } else {
-	    currentValue = this->current->value;
-	  }
-	}
-      }
-      previous = this->current;
-      --previous;
-      if(previous->value=="*"){
-	res += "("+currentValue+")";
-      } else {
-	res += currentValue;
-      }
-    } else {
-      res += this->current->value;
-    }
-    res += " ";
-    ++(this->current);
-    while((!((this->current->value==delim2)&&(openedBlock==0)))&&
-	  (this->current!=this->fileTokens.end())){
-      
-      if(currentLine!=this->current->line){
-	currentLine = this->current->line;
-	if((registerLine)&&(!this->debugMode)){
-	  res += "\n";
-	  res += "#line ";
-	  res += toString(currentLine);
-	  res += " \"";
-	  res += this->fileName;
-	  res += "\"\n";
-	}  else {
-	  res += "\n";
-	}
-      }
-      if((this->current->value==";")&&(!allowSemiColon)){
-	string msg("ParserBase::readNextBlock : ");
-	msg += "read ';' before the end of block.\n";
-	msg += "Number of block opened : ";
-	msg += toString(openedBlock);
-	throw(runtime_error(msg));
-      }
-      if(analyser.get()!=0){
-	analyser->exe(this->current->value);
-      }
-      if(this->staticVarNames.find(this->current->value)!=this->staticVarNames.end()){
-	previous = this->current;
-	--previous;
-	if((previous->value!="->")&&
-	   (previous->value!=".")&&
-	   (previous->value!="::")){
-	  res += this->className;
-	  res += "::";
-	}
-	res += this->current->value;
-      } else if(this->varNames.find(this->current->value)!=this->varNames.end()){
-	string currentValue;
-	previous = this->current;
-	--previous;
-	if((previous->value=="->")||
-	   (previous->value==".")||
-	   (previous->value=="::")){
-	  currentValue = this->current->value;
-	} else {
-	  if(modifier.get()!=0){
-	    currentValue = modifier->exe(this->current->value,addThisPtr);	    
-	  } else {
-	    if(addThisPtr){
-	      if(previous->value=="*"){
-		currentValue = "(this->"+this->current->value+')';
-	      } else {
-		currentValue = "this->"+this->current->value;
-	      }
-	    } else {
-	      currentValue = this->current->value;
-	    }
-	  }
-	}
-	res += currentValue;
-      } else {
-	res += this->current->value;
-      }
-      res+=" ";
-      if(this->current->value==delim1){
-	++openedBlock;
-      }
-      if(this->current->value==delim2){
-	--openedBlock;
-      }
-      ++(this->current);
-    }
-    if(this->current==this->fileTokens.end()){
-      --(this->current);
-      string msg("ParserBase::readNextBlock : ");
-      msg += "Expected the end of a block.\n";
-      msg += "Number of block opened : ";
-      msg += toString(openedBlock);
-      throw(runtime_error(msg));
-    }
-    ++(this->current);
-    return res;
-  } // end of ParserBase::readNextBlock
-
-  void
   ParserBase::treatIntegerConstant()
   {
     using namespace std;
     typedef map<string,int>::value_type MVType;
     string name;
-    int value;
+    pair<bool,int> value;
     this->checkNotEndOfFile("ParserBase::treatIntegerConstant",
 			    "Cannot read type of static variable.");
     name = this->current->value;
@@ -426,29 +437,10 @@ namespace mfront
 			      "Variable name '"+name+"' is not valid.");
     }
     ++(this->current);
-    this->checkNotEndOfFile("ParserBase::treatIntegerConstant",
-			    "Expected to read value of variable.");
-    if(this->current->value=="="){
-      if(this->warningMode){
-	cout << "ParserBase::treatIntegerConstant : "
-	     << "deprecated syntax at line '" 
-	     << this->current->line << "'" 
-	     << " of file '" << this->fileName << "'" << endl;
-      }
-      this->readSpecifiedToken("ParserBase::treatIntegerConstant","=");
-    }
-    this->checkNotEndOfFile("ParserBase::treatIntegerConstant",
-			    "Expected to read value of variable.");
-    istringstream tmp(this->current->value);
-    tmp >> value;
-    if(!tmp&&(!tmp.eof())){
-      this->throwRuntimeError("ParserBase::treatIntegerConstant",
-			      "Could not read of variable '"+name+"'");
-    }
-    ++(this->current);
+    value = this->readInitialisationValue<int>(name,true);
     this->readSpecifiedToken("ParserBase::treatIntegerConstant",";");
     this->registerStaticVariable(name);
-    if(!this->integerConstants.insert(MVType(name,value)).second){
+    if(!this->integerConstants.insert(MVType(name,value.second)).second){
       this->throwRuntimeError("ParserBase::treatIntegerConstant",
 			      "variable '"+name+"' already declared");
     }
@@ -457,7 +449,8 @@ namespace mfront
   void ParserBase::readVarList(VariableDescriptionContainer& cont,
 			       const std::string& type,
 			       const bool allowArray,
-			       const bool addIncrementVar)
+			       const bool addIncrementVar,
+			       const bool b)
   {
     using namespace std;
     using namespace tfel::math;
@@ -468,11 +461,11 @@ namespace mfront
     bool endOfTreatement=false;
     while((this->current!=this->fileTokens.end())&&
 	  (!endOfTreatement)){
+      varName = this->current->value;
       if(!isValidIdentifier(this->current->value)){
 	this->throwRuntimeError("ParserBase::readVarList : ",
 				"variable given is not valid (read '"+this->current->value+"').");
       }
-      varName = this->current->value;
       lineNumber = this->current->line;
       asize = 1u;
       ++(this->current);
@@ -527,12 +520,12 @@ namespace mfront
 	this->throwRuntimeError("ParserBase::readVarList",
 				", or ; expected afer '"+varName+"'");
       }
-      this->registerVariable(varName);
+      this->registerVariable(varName,b);
       cont.push_back(VariableDescription(type,varName,asize,lineNumber));
       if(addIncrementVar){
 	string incrVarName("d");
 	incrVarName += varName;	
-	this->registerVariable(incrVarName);
+	this->registerVariable(incrVarName,b);
       }
     }
     if(!endOfTreatement){
@@ -544,7 +537,8 @@ namespace mfront
 
   void ParserBase::readVarList(VariableDescriptionContainer& cont,
 			       const bool allowArray,
-			       const bool addIncrementVar)
+			       const bool addIncrementVar,
+			       const bool b)
   {
     using namespace std;
     string type;
@@ -615,8 +609,48 @@ namespace mfront
 	}
       }
     }
-    this->readVarList(cont,type,allowArray,addIncrementVar);
+    this->readVarList(cont,type,allowArray,addIncrementVar,b);
   } // end of ParserBase::readVarList
+
+  void
+  ParserBase::readList(std::vector<tfel::utilities::Token>& l,
+		       const std::string& m,
+		       const std::string& db,
+		       const std::string& de,
+		       const bool b)
+  {
+    using namespace std;
+    l.clear();
+    if(this->current==this->fileTokens.end()){
+      if(b){
+	return;
+      }
+    }
+    this->checkNotEndOfFile(m,"Expected '"+db+"'");
+    if(this->current->value!=db){
+      return;
+    }
+    this->readSpecifiedToken(m,db);
+    this->checkNotEndOfFile(m,"Expected '"+de+"'");
+    while(this->current->value!=de){
+      l.push_back(*(this->current));
+      ++(this->current);
+      this->checkNotEndOfFile(m,"Expected '"+de+"'");
+      if(!((this->current->value==de)||
+	   (this->current->value==","))){
+	this->throwRuntimeError(m,"Expected ',' or '"+de+"',"
+				" read '"+this->current->value+"'");
+      }
+      if(this->current->value==","){
+	++(this->current);
+	this->checkNotEndOfFile(m,"Expected '"+de+"'");
+	if(this->current->value==de){
+	  this->throwRuntimeError(m,"Expected a new item");
+	}
+      }
+    }
+    ++(this->current);
+  } // end of ParserBase::readList  
 
   std::vector<std::string>
   ParserBase::readArrayOfString(const std::string& m)
@@ -624,31 +658,33 @@ namespace mfront
     using namespace std;
     using namespace tfel::utilities;
     vector<string> res;
-    this->readSpecifiedToken(m,"{");
-    this->checkNotEndOfFile(m,"Expected '}'");
-    while(this->current->value!="}"){
-      if(this->current->flag!=Token::String){
+    vector<Token> tokens;
+    this->readList(tokens,m,"{","}",false);
+    for(vector<Token>::const_iterator p=tokens.begin();p!=tokens.end();++p){
+      if(p->flag!=Token::String){
 	this->throwRuntimeError(m,"Expected a string");
       }
-      res.push_back(this->current->value.substr(1,this->current->value.size()-2));
-      ++(this->current);
-      this->checkNotEndOfFile(m,"Expected '}'");
-      if(!((this->current->value=="}")||
-	   (this->current->value==","))){
-	this->throwRuntimeError(m,"Expected ',' or '}',"
-				" read '"+this->current->value+"'");
-      }
-      if(this->current->value==","){
-	++(this->current);
-	this->checkNotEndOfFile(m,"Expected '}'");
-	if(this->current->value=="}"){
-	  this->throwRuntimeError(m,"Expected a string");
-	}
-      }
+      res.push_back(p->value.substr(1,p->value.size()-2));
     }
-    ++(this->current);
     return res;
   } // end of ParserBase::readArrayOfString
+
+  bool
+  ParserBase::readBooleanValue(const std::string& m)
+  {
+    bool b = false;
+    this->checkNotEndOfFile(m,"Expected a boolean value");
+    if(this->current->value=="true"){
+      b = true;
+    } else if(this->current->value=="false"){
+      b = false;
+    } else {
+      this->throwRuntimeError(m,"Expected to read 'true' or 'false' "
+			      "(read '"+this->current->value+"')");
+    }
+    ++(this->current);
+    return b;
+  } // end of ParserBase::readBooleanValue
 
   std::string
   ParserBase::readString(const std::string& m)
@@ -697,22 +733,13 @@ namespace mfront
   ParserBase::callMFront(const std::vector<std::string>& interfaces,
 			 const std::vector<std::string>& files) const
   {
-#if not (defined _WIN32 || defined _WIN64 ||defined __CYGWIN__)
     using namespace std;
+#if not (defined _WIN32 || defined _WIN64 ||defined __CYGWIN__)
     using namespace tfel::system;
     ProcessManager m;
     ostringstream cmd;
     vector<string>::const_iterator p;
     cmd << MFront::getCallingName();
-    if(this->warningMode){
-      cmd << " --warning";
-    }
-    if(this->debugMode){
-      cmd << " --debug";
-    }
-    if(this->verboseMode){
-      cmd << " --verbose";
-    }
     cmd << " --interface=";
     for(p=interfaces.begin();p!=interfaces.end();){
       cmd << *p;
@@ -840,7 +867,8 @@ namespace mfront
   } // end of ParserBase::readSpecifiedValues
 
   void
-  ParserBase::registerVariable(const std::string& v)
+  ParserBase::registerVariable(const std::string& v,
+			       const bool b)
   {
     using namespace std;
     if(!CxxTokenizer::isValidIdentifier(v)){
@@ -848,12 +876,16 @@ namespace mfront
       msg += "variable name '"+v+"' is invalid";
       throw(runtime_error(msg));
     }
-    if(!this->varNames.insert(v).second){
-      string msg("ParserBase::registerVariable : ");
-      msg += "variable '"+v+"' already registred";
-      throw(runtime_error(msg));
+    if(b){
+      this->varNames.insert(v);
+    } else {
+      if(!this->varNames.insert(v).second){
+	string msg("ParserBase::registerVariable : ");
+	msg += "variable '"+v+"' already registred";
+	throw(runtime_error(msg));
+      }
     }
-    this->reserveName(v);
+    this->reserveName(v,b);
   } // end of ParserBase::registerVariable
 
   void
@@ -870,17 +902,22 @@ namespace mfront
       msg += "static variable '"+v+"' already registred";
       throw(runtime_error(msg));
     }
-    this->reserveName(v);
+    this->reserveName(v,false);
   } // end of ParserBase::registerStaticVariable
 
   void
-  ParserBase::reserveName(const std::string& w)
+  ParserBase::reserveName(const std::string& w,
+			  const bool b)
   {
     using namespace std;
-    if(!this->reservedNames.insert(w).second){
-      string msg("ParserBase::reserveName : ");
-      msg += "name '"+w+"' already reserved";
-      throw(runtime_error(msg));
+    if(b){
+      this->reservedNames.insert(w);
+    } else {
+      if(!this->reservedNames.insert(w).second){
+	string msg("ParserBase::reserveName : ");
+	msg += "name '"+w+"' already reserved";
+	throw(runtime_error(msg));
+      }
     }
   } // end of ParserBase::reserveName
 
@@ -901,26 +938,19 @@ namespace mfront
     MFrontMaterialLawParser mp;
     try{
       MFrontMFrontLawInterface minterface;
-      mp.analyseFile(MFrontSearchFile::search(f));
+      const string& path = MFrontSearchFile::search(f);
+      mp.analyseFile(path);
       const MaterialPropertyDescription& mpd  = mp.getMaterialPropertyDescription();
       const string& mname = minterface.getFunctionName(mpd.material,
 						       mpd.law);
-      this->reserveName(mname);
-      if(!includes.empty()){
-	this->includes += "\n";
-      }
-      this->includes+= "#include\"";
-      this->includes+= minterface.getHeaderFileName(mpd.material,
-						    mpd.law);
-      this->includes+= ".hxx\"\n";
-      if(find(this->materialLaws.begin(),
-	      this->materialLaws.end(),mname)==this->materialLaws.end()){
-	this->materialLaws.push_back(mname);
-      }
+      this->reserveName(mname,false);
+      this->appendToIncludes("#include\""+minterface.getHeaderFileName(mpd.material,
+								       mpd.law)+".hxx\"");
+      this->addMaterialLaw(mname);
       // generating the source files and adds them to the various
       // files used to generate the final Makefile
       this->callMFront(vector<string>(1u,"mfront"),
-		       vector<string>(1u,f));
+		       vector<string>(1u,path));
     } catch(exception& e){
       string msg("Error while treating file '"+f+"'\n");
       msg += e.what();
@@ -1027,16 +1057,13 @@ namespace mfront
 
   void ParserBase::treatIncludes(void)
   {
-    if(!includes.empty()){
-      this->includes += "\n";
-    }
-    this->includes += this->readNextBlock();
+    this->appendToIncludes(this->readNextBlock());
   }
 
   void
   ParserBase::treatMembers(void)
   {
-    this->members = this->readNextBlock();
+    this->appendToMembers(this->readNextBlock());
   }
 
   void
@@ -1048,16 +1075,13 @@ namespace mfront
   void
   ParserBase::treatSources(void)
   {
-    if(!this->sources.empty()){
-      this->sources += "\n";
-    }
-    this->sources = this->readNextBlock();
+    this->appendToSources(this->readNextBlock());
   } // end of ParserBase::treatSources(void)
 
   void
   ParserBase::treatPrivate(void)
   {
-    this->privateCode = this->readNextBlock();
+    this->appendToPrivateCode(this->readNextBlock());
   } // end of ParserBase::treatSources(void)
 
   void
@@ -1067,7 +1091,7 @@ namespace mfront
     string type;
     string name;
     unsigned short line;
-    long double value;
+    pair<bool,long double> value;
     this->checkNotEndOfFile("ParserBase::treatStaticVar",
 			    "Cannot read type of static variable.");
     type=this->current->value;
@@ -1088,27 +1112,10 @@ namespace mfront
     ++(this->current);
     this->checkNotEndOfFile("ParserBase::treatStaticVar",
 			    "Expected to read value of variable.");
-    if(this->current->value=="="){
-      if(this->warningMode){
-	cout << "ParserBase::treatStaticVar : "
-	     << "deprecated syntax at line '" 
-	     << this->current->line << "'" 
-	     << " of file '" << this->fileName << "'" << endl;
-      }
-      this->readSpecifiedToken("ParserBase::treatStaticVar","=");
-    }
-    this->checkNotEndOfFile("ParserBase::treatStaticVar",
-			    "Expected to read value of variable.");
-    istringstream tmp(this->current->value);
-    tmp >> value;
-    if(!tmp&&(!tmp.eof())){
-      this->throwRuntimeError("ParserBase::treatStaticVar",
-			      "Could not read of variable '"+name+"'");
-    }
-    ++(this->current);
+    value = this->readInitialisationValue<long double>(name,true);
     this->readSpecifiedToken("ParserBase::treatStaticVar",";");
     this->registerStaticVariable(name);
-    this-> addStaticVariableDescription(StaticVariableDescription(type,name,line,value));
+    this->addStaticVariableDescription(StaticVariableDescription(type,name,line,value.second));
   } // end of ParserBase::treatStaticVar
 
   void
@@ -1146,23 +1153,6 @@ namespace mfront
     }
     ++(this->current);
   } // end of ParserBase::ignoreKeyWord
-
-  void
-  ParserBase::treatLibrary(void)
-  {
-    using namespace std;
-    if(!this->library.empty()){
-      string msg("ParserBase::treatLibrary : ");
-      msg += "library name alreay defined";
-      throw(runtime_error(msg));
-    }
-    this->library = this->readOnlyOneToken();
-    if(!CxxTokenizer::isValidIdentifier(this->library,true)){
-      string msg("ParserBase::treatLibrary : ");
-      msg += "invalid library name '"+this->library+"'";
-      throw(runtime_error(msg));
-    }
-  } // end of ParserBase::treatLibrary
 
   double
   ParserBase::readDouble(void)
@@ -1236,7 +1226,7 @@ namespace mfront
 	this->throwRuntimeError("ParserBase::handleParameter",
 				", or ; expected afer '"+n+"'");
       }
-      this->registerVariable(n);
+      this->registerVariable(n,false);
       c.push_back(VariableDescription("real",n,1u,lineNumber));
     }
     if(!endOfTreatement){
