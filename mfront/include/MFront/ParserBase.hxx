@@ -287,8 +287,21 @@ namespace mfront
     registerVariable(const std::string&);
     virtual void
     registerStaticVariable(const std::string&);
+    /*!
+     * \brief check if the given name has not been reserved yet and
+     * throw an exception if it does, register it otherwise.
+     * \param[in] w : name
+     * \note this method is called internally by the registerVariable
+     *       and registerStaticVariable methods.
+     */
     virtual void
     reserveName(const std::string&);
+    /*!
+     * \return true if the given name has been reserved
+     * \param[in] n : name 
+     */
+    virtual bool
+    isNameReserved(const std::string&) const;
     double
     readDouble(void);
     /*!

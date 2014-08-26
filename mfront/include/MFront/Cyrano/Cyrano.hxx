@@ -32,6 +32,22 @@ namespace cyrano{
 
   typedef double   CyranoReal;
 
+  /*!
+   * prototype of a function handling stress-free expansion at the
+   * beginning of the time step
+   *
+   * - first  paramater : driving variable
+   * - second paramater : driving variable at the end of the time step
+   *   or driving variable increment
+   * - third paramater  : expansion value at the beginning of the time
+   *   step
+   * - fourth paramater : expansion value at the end of the time step
+   */
+  typedef void (*StressFreeExpansionHandler)(CyranoReal * const,
+					     CyranoReal * const,
+					     const CyranoReal *const,
+					     const CyranoReal *const);
+
 } // end of namespace cyrano
 
 #endif /* _LIB_TFEL_CYRANO_MFRONT_CYRANO_H */

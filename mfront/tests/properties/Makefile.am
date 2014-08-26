@@ -3,6 +3,11 @@ mfronts = VanadiumAlloy_YoungModulus_SRMA.mfront        \
 	  VanadiumAlloy_SpecificHeat_SRMA.mfront        \
 	  VanadiumAlloy_ThermalExpansion_SRMA.mfront    \
 	  VanadiumAlloy_ThermalConductivity_SRMA.mfront \
+	  ThermalExpansionCoefficientTest.mfront        \
+	  ThermalExpansionCoefficientTest2.mfront       \
+	  ThermalExpansionCoefficientTest_1.mfront      \
+	  ThermalExpansionCoefficientTest_2.mfront      \
+	  ThermalExpansionCoefficientTest_3.mfront      \
 	  Inconel600_YoungModulus.mfront
 
 EXTRA_DIST = $(mfronts)      \

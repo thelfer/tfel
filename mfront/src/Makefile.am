@@ -19,6 +19,7 @@ mfront_SOURCES = main.cxx                                             \
 		 MFrontInitParsers.cxx                                \
 		 MFrontParserFactory.cxx                              \
 		 DrivingVariable.cxx                                  \
+		 MaterialPropertyDescription.cxx                      \
 		 MechanicalBehaviourDescription.cxx                   \
 		 BoundsDescription.cxx                                \
 		 VariableDescription.cxx                              \
@@ -121,14 +122,15 @@ endif # TFEL_WIN
 # UMAT Interface
 if HAVE_CASTEM
 lib_LTLIBRARIES += libUMATInterface.la
-libUMATInterface_la_SOURCES = UMATInterfaceBase.cxx                 \
-			      UMATFiniteStrain.cxx                  \
-			      UMATComputeStiffnessOperator.cxx      \
-			      UMATComputeThermalExpansionTensor.cxx \
-			      UMATRotationMatrix.cxx                \
-			      UMATTangentOperator.cxx               \
-		              UMATOutOfBoundsPolicy.cxx             \
-		              UMATGetModellingHypothesis.cxx        \
+libUMATInterface_la_SOURCES = UMATInterfaceBase.cxx                            \
+			      UMATFiniteStrain.cxx                             \
+			      UMATComputeStiffnessOperator.cxx                 \
+			      UMATComputeThermalExpansionCoefficientTensor.cxx \
+			      UMATRotationMatrix.cxx                           \
+			      UMATTangentOperator.cxx                          \
+		              UMATOutOfBoundsPolicy.cxx                        \
+		              UMATGetModellingHypothesis.cxx                   \
+			      UMATStressFreeExpansionHandler.cxx               \
 		              UMATException.cxx
 libUMATInterface_la_LIBADD  = -L$(top_builddir)/src/Utilities -lTFELUtilities          \
 			      -L$(top_builddir)/src/Exception -lTFELException          \
@@ -142,11 +144,11 @@ endif # HAVE_CASTEM
 
 if HAVE_CYRANO
 lib_LTLIBRARIES += libCyranoInterface.la
-libCyranoInterface_la_SOURCES = CyranoInterfaceBase.cxx                 \
-			        CyranoComputeStiffnessOperator.cxx      \
-			        CyranoComputeThermalExpansionTensor.cxx \
-		                CyranoOutOfBoundsPolicy.cxx             \
-		                CyranoGetModellingHypothesis.cxx        \
+libCyranoInterface_la_SOURCES = CyranoInterfaceBase.cxx                            \
+			        CyranoComputeStiffnessOperator.cxx                 \
+			        CyranoComputeThermalExpansionCoefficientTensor.cxx \
+		                CyranoOutOfBoundsPolicy.cxx                        \
+		                CyranoGetModellingHypothesis.cxx                   \
 		                CyranoException.cxx
 libCyranoInterface_la_LIBADD  = -L$(top_builddir)/src/Utilities -lTFELUtilities          \
 			        -L$(top_builddir)/src/Exception -lTFELException          \
@@ -161,12 +163,13 @@ endif # HAVE_CYRANO
 # Aster Interface
 if HAVE_ASTER
 lib_LTLIBRARIES += libAsterInterface.la
-libAsterInterface_la_SOURCES = AsterInterfaceBase.cxx                 \
-		               AsterException.cxx                     \
-		               AsterTangentOperator.cxx               \
-			       AsterRotationMatrix.cxx                \
-			       AsterComputeStiffnessOperator.cxx      \
-			       AsterComputeThermalExpansionTensor.cxx
+libAsterInterface_la_SOURCES = AsterInterfaceBase.cxx                            \
+		               AsterException.cxx                                \
+		               AsterTangentOperator.cxx                          \
+			       AsterRotationMatrix.cxx                           \
+			       AsterComputeStiffnessOperator.cxx                 \
+			       AsterStressFreeExpansionHandler.cxx               \
+			       AsterComputeThermalExpansionCoefficientTensor.cxx
 
 libAsterInterface_la_LIBADD  = -L$(top_builddir)/src/Utilities -lTFELUtilities          \
 			       -L$(top_builddir)/src/Exception -lTFELException          \

@@ -23,9 +23,13 @@ namespace aster{
 
   template<typename Behaviour>
   struct AsterTraits{
+    // size of the driving variable array (STRAN)
+    static const unsigned short DrivingVariableSize = 0u;
+    // size of the thermodynamic force variable array (STESS)
+    static const unsigned short ThermodynamicForceVariableSize = 0u;
     static const AsterErrorReportPolicy errorReportPolicy = ASTER_WRITEONSTDOUT;
     static const bool requiresStiffnessTensor             = false;
-    static const bool requiresThermalExpansionTensor      = false;
+    static const bool requiresThermalExpansionCoefficientTensor = false;
     static const unsigned short propertiesOffset          = 0u;
     // Type of the behaviour of the material (isotropic or orthotropic)
     static const AsterSymmetryType type   = aster::ISOTROPIC;

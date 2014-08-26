@@ -58,22 +58,47 @@ namespace mfront{
     exportMechanicalData(std::ofstream&,
 			 const std::string&,
 			 const MechanicalBehaviourDescription&);
-    
+    /*!
+     * write the behaviour constructor associated with the law
+     * \param[in] behaviourFile           : output file
+     * \param[in] className               : behaviour class name
+     * \param[in] mb                      : mechanical behaviour description
+     * \param[in] initStateVarsIncrements : constructor part assigning
+     *                                      default value (zero) to state
+     *                                      variable increments
+     */
     virtual void
     writeBehaviourConstructor(std::ofstream&,
 			      const std::string&,
 			      const MechanicalBehaviourDescription&,
 			      const std::string&);
-    
+
     virtual void
     writeBehaviourDataConstructor(std::ofstream&,
 				  const std::string&,
 				  const MechanicalBehaviourDescription&);
+
+    /*!
+     * write the initialisation of the driving variables
+     * \param[in] behaviourFile : output file
+     * \param[in] mb            : mechanical behaviour description
+     */
+    virtual void 
+    writeBehaviourDataMainVariablesSetters(std::ofstream&,
+					   const MechanicalBehaviourDescription&);
     
     virtual void
     writeIntegrationDataConstructor(std::ofstream&,
 				    const std::string&,
 				    const MechanicalBehaviourDescription&);
+    /*!
+     * write the initialisation of the driving variables
+     * \param[in] behaviourFile : output file
+     * \param[in] mb            : mechanical behaviour description
+     */
+    virtual void 
+    writeIntegrationDataMainVariablesSetters(std::ofstream&,
+					     const MechanicalBehaviourDescription&);
 
 
     virtual void

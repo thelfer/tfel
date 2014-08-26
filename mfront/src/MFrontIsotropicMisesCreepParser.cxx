@@ -207,19 +207,19 @@ namespace mfront{
   }
 
   void
-  MFrontIsotropicMisesCreepParser::writeBehaviourParserSpecificConstructorPart(void)
+  MFrontIsotropicMisesCreepParser::writeBehaviourParserSpecificInitializeMethodPart(void)
   {
     using namespace std;
     this->checkBehaviourFile();
     if(this->varNames.find("young")==this->varNames.end()){
       string msg("MFrontIsotropicMisesCreepParser");
-      msg+="::writeBehaviourParserSpecificConstructorPart : ";
+      msg+="::writeBehaviourParserSpecificInitializeMethodPart : ";
       msg += "young (the young modulus) has not been defined.";
       throw(runtime_error(msg));
     }
     if(this->varNames.find("nu")==this->varNames.end()){
       string msg("MFrontIsotropicMisesCreepParser");
-      msg += "::writeBehaviourParserSpecificConstructorPart : ";
+      msg += "::writeBehaviourParserSpecificInitializeMethodPart : ";
       msg += "nu (the poisson ratio) has not been defined.";
       throw(runtime_error(msg));
     }
@@ -230,7 +230,7 @@ namespace mfront{
     this->behaviourFile << "} else {\n";
     this->behaviourFile << "this->n = StrainStensor(strain(0));\n";
     this->behaviourFile << "}\n";
-  } // end of MFrontIsotropicMisesCreepParser::writeBehaviourParserSpecificConstructorPart
+  } // end of MFrontIsotropicMisesCreepParser::writeBehaviourParserSpecificInitializeMethodPart
 
   MFrontIsotropicMisesCreepParser::~MFrontIsotropicMisesCreepParser()
   {} // end of ~MFrontIsotropicMisesCreepParser

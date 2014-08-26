@@ -146,6 +146,12 @@ namespace mfront{
   } // end of MechanicalBehaviourDescription::isMaterialPropertyName
 
   bool
+  MechanicalBehaviourDescription::isStaticVariableName(const std::string& n) const
+  {
+    return this->getStaticVariables().contains(n);
+  } // end of MechanicalBehaviourDescription::isStaticVariableName
+
+  bool
   MechanicalBehaviourDescription::isLocalVariableName(const std::string& n) const
   {
     return this->getLocalVariables().contains(n);
@@ -435,6 +441,15 @@ namespace mfront{
   void
   MechanicalBehaviourDescription::setSymmetryType(const SymmetryType t)
   {
+    using namespace std;
+    if(this->stype!=mfront::ISOTROPIC){
+      string msg("MechanicalBehaviourDescription::setSymmetryType : "
+		 "symmetry type already declared");
+    }
+    if((this->thermalExpansionCoefficients.size()==1u)&&(t!=mfront::ISOTROPIC)){
+      string msg("MechanicalBehaviourDescription::setSymmetryType : "
+		 "an isotropic thermal expansion coefficient was previoulsy defined");
+    }
     this->stype = t;
   } // end of MechanicalBehaviourDescription::setSymmetryType
 
@@ -463,6 +478,20 @@ namespace mfront{
     return "";
   } // end of MechanicalBehaviourDescription::getStiffnessOperatorType
 
+  std::string
+  MechanicalBehaviourDescription::getStressFreeExpansionType(void) const
+  {
+    using namespace std;
+    if((this->type==SMALLSTRAINSTANDARDBEHAVIOUR)||
+       (this->type==FINITESTRAINSTANDARDBEHAVIOUR)){
+      return "StrainStensor";
+    }
+    string msg("MechanicalBehaviourDescription::getStressFreeExpansionType : "
+	       "internal error (unsupported behaviour type)");
+    throw(runtime_error(msg));
+    return "";
+  } // end of MechanicalBehaviourDescription::getStressFreeExpansionType
+
 
   bool
   MechanicalBehaviourDescription::requiresStiffnessOperator(void) const
@@ -477,16 +506,16 @@ namespace mfront{
   } // end of MechanicalBehaviourDescription::setRequireStiffnessOperator
 
   bool
-  MechanicalBehaviourDescription::requiresThermalExpansionTensor(void) const
+  MechanicalBehaviourDescription::requiresThermalExpansionCoefficientTensor(void) const
   {
     return this->aTensor; 
-  } // end of MechanicalBehaviourDescription::requiresThermalExpansionTensor
+  } // end of MechanicalBehaviourDescription::requiresThermalExpansionCoefficientTensor
   
   void
-  MechanicalBehaviourDescription::setRequireThermalExpansionTensor(const bool b)
+  MechanicalBehaviourDescription::setRequireThermalExpansionCoefficientTensor(const bool b)
   {
     this->aTensor = b;
-  } // end of MechanicalBehaviourDescription::setRequireThermalExpansionTensor
+  } // end of MechanicalBehaviourDescription::setRequireThermalExpansionCoefficientTensor
   
   bool
   MechanicalBehaviourDescription::isUsableInPurelyImplicitResolution(void) const
@@ -538,5 +567,86 @@ namespace mfront{
     this->hypotheses.clear();
     this->hypotheses.insert(h,h+6u);
   } // end of MechanicalBehaviourDescription::setDefaultHypotheses  
+
+  bool
+  MechanicalBehaviourDescription::areThermalExpansionCoefficientsDefined(void) const
+  {
+    return !this->thermalExpansionCoefficients.empty();
+  } // end of MechanicalBehaviourDescription::areThermalExpansionCoefficientsDefined
+
+  const std::vector<tfel::utilities::shared_ptr<MaterialPropertyDescription> >&
+  MechanicalBehaviourDescription::getThermalExpansionCoefficients(void) const
+  {
+    using namespace std;
+    if(!this->areThermalExpansionCoefficientsDefined()){
+      string msg("MechanicalBehaviourDescription::getThermalExpansionCoefficients : "
+		 "no thermal expansion coefficients defined");
+      throw(runtime_error(msg));
+    }
+    return this->thermalExpansionCoefficients;
+  }
+
+  static void
+  MechanicalBehaviourDescriptionCheckThermalExpansionCoefficientArgument(const MaterialPropertyDescription& a)
+  {
+    using namespace std;
+    if(!((a.inputs.size())||(a.inputs.size()!=1u))){
+      string msg("MechanicalBehaviourDescriptionCheckThermalExpansionCoefficientArgument : "
+		 "thermal expansion shall only depend on temperature");
+      throw(runtime_error(msg));
+    }
+    if(a.inputs.size()==1u){
+      const VariableDescription& v =  a.inputs.front();
+      const string& vn = v.getGlossaryName(a.glossaryNames,a.entryNames);
+      if(vn!="Temperature"){
+	string msg("MechanicalBehaviourDescriptionCheckThermalExpansionCoefficientArgument : "
+		   "thermal expansion shall only depend on temperature");
+	throw(runtime_error(msg));
+      }
+    }
+  } // end of MechanicalBehaviourDescriptionCheckThermalExpansionCoefficientArgument
+
+  void
+  MechanicalBehaviourDescription::setThermalExpansionCoefficient(const tfel::utilities::shared_ptr<MaterialPropertyDescription>& a)
+  {
+    using namespace std;
+    if(this->areThermalExpansionCoefficientsDefined()){
+      string msg("MechanicalBehaviourDescription::setThermalExpansionCoefficient : "
+		 "thermal expansion coefficient already defined");
+      throw(runtime_error(msg));
+    }
+    if(this->stype!=mfront::ISOTROPIC){
+      string msg("MechanicalBehaviourDescription::setThermalExpansionCoefficient : "
+		 "the mechanical behaviour is not isotropic.");
+      throw(runtime_error(msg));
+    }
+    MechanicalBehaviourDescriptionCheckThermalExpansionCoefficientArgument(*a);
+    this->thermalExpansionCoefficients.push_back(a);
+  } // end of MechanicalBehaviourDescription::setThermalExpansionCoefficient
+
+  void
+  MechanicalBehaviourDescription::setThermalExpansionCoefficients(const tfel::utilities::shared_ptr<MaterialPropertyDescription>& a1,
+								  const tfel::utilities::shared_ptr<MaterialPropertyDescription>& a2,
+								  const tfel::utilities::shared_ptr<MaterialPropertyDescription>& a3)
+  {
+    using namespace std;
+    if(this->areThermalExpansionCoefficientsDefined()){
+      string msg("MechanicalBehaviourDescription::setThermalExpansionCoefficient : "
+		 "thermal expansion coefficient already defined");
+      throw(runtime_error(msg));
+    }
+    if(this->stype!=mfront::ORTHOTROPIC){
+      string msg("MechanicalBehaviourDescription::setThermalExpansionCoefficient : "
+		 "the mechanical behaviour is not orthotropic.");
+      throw(runtime_error(msg));
+    }
+    MechanicalBehaviourDescriptionCheckThermalExpansionCoefficientArgument(*a1);
+    MechanicalBehaviourDescriptionCheckThermalExpansionCoefficientArgument(*a2);
+    MechanicalBehaviourDescriptionCheckThermalExpansionCoefficientArgument(*a3);
+    this->thermalExpansionCoefficients.push_back(a1);
+    this->thermalExpansionCoefficients.push_back(a2);
+    this->thermalExpansionCoefficients.push_back(a3);
+  } // end of MechanicalBehaviourDescription::setThermalExpansionCoefficients
+
 
 } // end of namespace mfront

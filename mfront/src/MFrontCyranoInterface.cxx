@@ -352,10 +352,10 @@ namespace mfront{
     } else {
       out << "static const bool requiresStiffnessOperator = false;\n";
     }
-    if(mb.requiresThermalExpansionTensor()){
-      out << "static const bool requiresThermalExpansionTensor = true;\n";
+    if(mb.requiresThermalExpansionCoefficientTensor()){
+      out << "static const bool requiresThermalExpansionCoefficientTensor = true;\n";
     } else {
-      out << "static const bool requiresThermalExpansionTensor = false;\n";
+      out << "static const bool requiresThermalExpansionCoefficientTensor = false;\n";
     }
     if(mb.getSymmetryType()==mfront::ISOTROPIC){
       if(!this->checkIfElasticPropertiesAreDeclared(mb)){
@@ -554,161 +554,6 @@ namespace mfront{
     }
     return false;
   } // end of MFrontCyranoInterface::hasMaterialPropertiesOffset
-
-  void 
-  MFrontCyranoInterface::writeBehaviourDataConstructor(std::ofstream& behaviourDataFile,
-							 const std::string& className,
-							 const MechanicalBehaviourDescription& mb)
-  {
-    using namespace std;
-    const std::string iprefix = makeUpperCase(this->getInterfaceName());
-    const VariableDescriptionContainer& coefsHolder              = mb.getMaterialProperties();
-    const VariableDescriptionContainer& stateVarsHolder          = mb.getStateVariables();
-    const VariableDescriptionContainer& auxiliaryStateVarsHolder = mb.getAuxiliaryStateVariables();
-    const VariableDescriptionContainer& externalStateVarsHolder  = mb.getExternalStateVariables();
-    behaviourDataFile << "/*\n";
-    behaviourDataFile << " * \\brief constructor for the umat interface\n";
-    behaviourDataFile << " *\n";
-    behaviourDataFile << " * \\param[in] " << iprefix << "stress_, stress tensor\n";
-    behaviourDataFile << " * \\param[in] " << iprefix << "stran, strain tensor\n";
-    behaviourDataFile << " * \\param[in] " << iprefix << "T_, temperature\n";
-    behaviourDataFile << " * \\param[in] " << iprefix << "mat, material properties\n";
-    behaviourDataFile << " * \\param[in] " << iprefix << "int_vars, state variables\n"; 
-    behaviourDataFile << " * \\param[in] " << iprefix << "ext_vars, external state variables\n";
-    behaviourDataFile << " */\n";
-    behaviourDataFile << className << "BehaviourData"
-		      << "(const Type* const " << iprefix << "stress_,const Type* const " << iprefix << "stran,\n" 
-		      <<  "const Type* const " << iprefix << "T_,const Type* const";
-    if(!coefsHolder.empty()){
-      behaviourDataFile << " " << iprefix << "mat,\n";
-    } else {
-      behaviourDataFile << ",\n";
-    }
-    behaviourDataFile <<  "const Type* const";
-    if((!stateVarsHolder.empty())||
-       (!auxiliaryStateVarsHolder.empty())){
-      behaviourDataFile << " " << iprefix << "int_vars,\n";
-    } else {
-      behaviourDataFile << ",\n";
-    }
-    behaviourDataFile << "const Type* const";
-    if(!externalStateVarsHolder.empty()){
-      behaviourDataFile << " " << iprefix << "ext_vars";
-    }
-    behaviourDataFile << ")\n";
-    behaviourDataFile << ": T(*" << iprefix << "T_)";
-    SupportedTypes::TypeSize o;
-    this->writeVariableInitializersInBehaviourDataConstructorI(behaviourDataFile,
-							       coefsHolder,
-							       iprefix+"mat","","");
-    o = this->writeVariableInitializersInBehaviourDataConstructorI(behaviourDataFile,
-								   stateVarsHolder,
-								   iprefix+"int_vars","","");
-    this->writeVariableInitializersInBehaviourDataConstructorI(behaviourDataFile,
-							       auxiliaryStateVarsHolder,
-							       iprefix+"int_vars","","",o);
-    this->writeVariableInitializersInBehaviourDataConstructorI(behaviourDataFile,
-							       externalStateVarsHolder,
-							       iprefix+"ext_vars","","");
-    behaviourDataFile << "\n{\n";
-    behaviourDataFile << "this->eto[0]=" << iprefix << "stran[0];\n";
-    behaviourDataFile << "this->eto[1]=" << iprefix << "stran[2];\n";
-    behaviourDataFile << "this->eto[2]=" << iprefix << "stran[1];\n";
-    behaviourDataFile << "this->sig[0]=" << iprefix << "stress_[0];\n";
-    behaviourDataFile << "this->sig[1]=" << iprefix << "stress_[2];\n";
-    behaviourDataFile << "this->sig[2]=" << iprefix << "stress_[1];\n";
-    this->writeVariableInitializersInBehaviourDataConstructorII(behaviourDataFile,
-								coefsHolder,
-								iprefix+"mat","","");
-    o = this->writeVariableInitializersInBehaviourDataConstructorII(behaviourDataFile,
-								    stateVarsHolder,
-								    iprefix+"int_vars","","");
-    this->writeVariableInitializersInBehaviourDataConstructorII(behaviourDataFile,
-								auxiliaryStateVarsHolder,
-								iprefix+"int_vars","","",o);
-    this->writeVariableInitializersInBehaviourDataConstructorII(behaviourDataFile,
-								externalStateVarsHolder,
-								iprefix+"ext_vars","","");
-    behaviourDataFile << "}\n\n";
-  }
-  
-  void 
-  MFrontCyranoInterface::writeIntegrationDataConstructor(std::ofstream& behaviourIntegrationFile,
-							   const std::string& className,
-							   const MechanicalBehaviourDescription& mb)
-  {
-    using namespace std;
-    const std::string iprefix = makeUpperCase(this->getInterfaceName());
-    const VariableDescriptionContainer& externalStateVarsHolder  = mb.getExternalStateVariables();
-    behaviourIntegrationFile << "/*\n";
-    behaviourIntegrationFile << " * \\brief constructor for the umat interface\n";
-    behaviourIntegrationFile << " * \\param const Type *const " << iprefix << "dt_, time increment\n";
-    behaviourIntegrationFile << " * \\param const Type *const " << iprefix << "dstran, strain increment tensor\n";
-    behaviourIntegrationFile << " * \\param const Type *const " << iprefix << "dT_, temperature increment\n";
-    behaviourIntegrationFile << " * \\param const Type *const " << iprefix << "dext_vars,";
-    behaviourIntegrationFile << " external state variables increments\n";
-    behaviourIntegrationFile << " *\n";
-    behaviourIntegrationFile << " */\n";
-    behaviourIntegrationFile << className << "IntegrationData"
-			     << "(const Type* const " << iprefix << "dt_,const Type* const " << iprefix << "dstran,\n" 
-			     <<  "const Type* const " << iprefix << "dT_,const Type* const";
-    if(!externalStateVarsHolder.empty()){
-      behaviourIntegrationFile << " " << iprefix << "dext_vars)\n";
-    } else {
-      behaviourIntegrationFile << ")\n";
-    }
-    behaviourIntegrationFile << ": dt(*" << iprefix << "dt_),dT(*" << iprefix << "dT_)";
-    if(!externalStateVarsHolder.empty()){
-      this->writeVariableInitializersInBehaviourDataConstructorI(behaviourIntegrationFile,
-								 externalStateVarsHolder,
-								 iprefix+"dext_vars","d","");
-    }
-    behaviourIntegrationFile << "\n{\n";
-    behaviourIntegrationFile << "this->deto[0]=" << iprefix << "dstran[0];\n";
-    behaviourIntegrationFile << "this->deto[1]=" << iprefix << "dstran[2];\n";
-    behaviourIntegrationFile << "this->deto[2]=" << iprefix << "dstran[1];\n";
-    behaviourIntegrationFile << "}\n\n";
-  }
-
-  void 
-  MFrontCyranoInterface::exportMechanicalData(std::ofstream& behaviourDataFile,
-					      const std::string&,
-					      const MechanicalBehaviourDescription& mb)
-  {
-    using namespace std;
-    const VariableDescriptionContainer& stateVarsHolder          = mb.getStateVariables();
-    const VariableDescriptionContainer& auxiliaryStateVarsHolder = mb.getAuxiliaryStateVariables();
-    const std::string iprefix = makeUpperCase(this->getInterfaceName());
-    if((!stateVarsHolder.empty())||
-       (!auxiliaryStateVarsHolder.empty())){
-      behaviourDataFile << "void\n"
-			<< iprefix+"exportStateData("
-			<< "Type * const " << iprefix << "stress_,Type * const " << iprefix << "statev) const\n";
-    } else {
-      behaviourDataFile << "void\n"
-			<< iprefix+"exportStateData("
-			<< "Type * const " << iprefix << "stress_,Type * const) const\n";
-    }
-    behaviourDataFile << "{\n";
-    behaviourDataFile << "using namespace tfel::math;\n";
-    behaviourDataFile << iprefix << "stress_[0] = this->sig[0];\n"
-		      << iprefix << "stress_[1] = this->sig[2];\n"
-		      << iprefix << "stress_[2] = this->sig[1];" << endl;
-    if((!stateVarsHolder.empty())||
-       (!auxiliaryStateVarsHolder.empty())){
-      SupportedTypes::TypeSize o;
-      o = this->exportResults(behaviourDataFile,
-			      stateVarsHolder,
-			      iprefix+"statev",
-			      mb.useQt());
-      this->exportResults(behaviourDataFile,
-			  auxiliaryStateVarsHolder,
-			  iprefix+"statev",
-			  mb.useQt(),o);
-    }
-    behaviourDataFile << "} // end of " << iprefix << "ExportStateData\n";
-    behaviourDataFile << endl;
-  }
 
   void
   MFrontCyranoInterface::writeMTestFileGeneratorAdditionalMaterialPropertiesInitialisation(std::ostream& out,

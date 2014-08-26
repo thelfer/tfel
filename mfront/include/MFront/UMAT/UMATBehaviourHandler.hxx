@@ -13,6 +13,7 @@
 #endif
 
 #include"TFEL/Utilities/Name.hxx"
+#include"TFEL/Math/stensor.hxx"
 #include"MFront/UMAT/UMATTangentOperator.hxx"
 
 namespace umat
@@ -30,7 +31,188 @@ namespace umat
   struct TFEL_VISIBILITY_LOCAL UMATBehaviourHandler
     :public UMATInterfaceBase
   {
-    
+    /*!
+     * structure in charge of checking the thermal expansion
+     * coefficient is zero
+     */
+    struct CheckThermalExpansionCoefficientIsNull
+      : public UMATInterfaceBase
+    {
+      /*!
+       * \param[in] a : thermal expansion coefficient
+       */
+      TFEL_UMAT_INLINE static
+      void exe(const UMATReal a)
+      {
+	using std::abs;
+	using std::numeric_limits;
+	using tfel::utilities::Name;
+	typedef Behaviour<H,UMATReal,false> BV;
+	if(abs(a)>numeric_limits<UMATReal>::min()){
+	  UMATInterfaceBase::throwThermalExpansionCoefficientShallBeNull(Name<BV>::getName());
+	}
+      }
+    };
+    /*!
+     * structure in charge of not checking the thermal expansion
+     * coefficient is zero
+     */
+    struct DontCheckThermalExpansionCoefficientIsNull
+      : public UMATInterfaceBase
+    {
+      /*!
+       * \param[in] a : thermal expansion
+       */
+      TFEL_UMAT_INLINE static
+      void exe(const UMATReal)
+      {} // end of exe
+    };
+    /*!
+     * An helper structure used to initialise the driving variables
+     */
+    struct TFEL_VISIBILITY_LOCAL DrivingVariableInitialiserWithStressFreeExpansion
+      : public UMATInterfaceBase
+    {
+      //! a simple alias
+      typedef Behaviour<H,UMATReal,false> BV;
+      //! a simple alias for the behaviour data
+      typedef typename BV::BehaviourData  BData;
+      //! a simple alias for the integration data
+      typedef typename BV::IntegrationData  IData;
+      //! a simple alias
+      typedef tfel::material::ModellingHypothesisToSpaceDimension<H> ModellingHypothesisToSpaceDimension;
+      // spatial dimension
+      static const unsigned short N = ModellingHypothesisToSpaceDimension::value;
+      /*!
+       * \param[out] bData  : behaviour data
+       * \param[out] iData  : integration data
+       * \param[in]  b      : behaviour
+       * \param[in]  STRAN  : driving variable at the beginning of the
+       *                      time step
+       * \param[in]  DSTRAN : driving variable at the end of the
+       *                      time step or driving variable increment
+       * \param[in]  sfeh   : function handling the stress-free expansion
+       *                      at the beginning of the time step
+       */
+      TFEL_UMAT_INLINE static 
+      void exe(BData& bData,
+	       IData& iData,
+	       const UMATReal *const STRAN,
+	       const UMATReal *const DSTRAN,
+	       const StressFreeExpansionHandler& sfeh)
+      {
+	using tfel::utilities::Name;
+	using tfel::fsalgo::copy;
+	using std::pair;
+	typedef typename BV::StressFreeExpansionType StressFreeExpansionType;
+	UMATReal dv0[UMATTraits<BV>::DrivingVariableSize];
+	UMATReal dv1[UMATTraits<BV>::DrivingVariableSize];
+	copy<UMATTraits<BV>::DrivingVariableSize>::exe(STRAN,dv0);
+	copy<UMATTraits<BV>::DrivingVariableSize>::exe(DSTRAN,dv1);
+	// check that the function pointer are not null
+	if(sfeh==0){
+	  throwUnsupportedStressFreeExpansionException(Name<BV>::getName());
+	}
+	// creating a fake behaviour to compoute the stress-free expansion
+	// this is not really elegant by can't do better
+	pair<StressFreeExpansionType,StressFreeExpansionType> s;
+	BV b(bData,iData);
+	b.computeStressFreeExpansion(s);
+	const StressFreeExpansionType& s0 = s.first;
+	const StressFreeExpansionType& s1 = s.second;
+	sfeh(dv0,dv1,&s0[0],&s1[0],UMATInt(N));
+	bData.setUMATBehaviourDataDrivingVariables(dv0);
+	iData.setUMATIntegrationDataDrivingVariables(dv1);
+      } // end of exe
+      /*!
+       * \param[out] b      : behaviour
+       * \param[in]  STRAN  : driving variable at the beginning of the
+       *                      time step
+       * \param[in]  DSTRAN : driving variable at the end of the
+       *                      time step or driving variable increment
+       * \param[in]  sfeh   : function handling the stress-free expansion
+       *                      at the beginning of the time step
+       */
+      TFEL_UMAT_INLINE static 
+      void exe(BV& b,
+	       const UMATReal *const STRAN,
+	       const UMATReal *const DSTRAN,
+	       const StressFreeExpansionHandler& sfeh)
+      {
+	using tfel::utilities::Name;
+	using tfel::fsalgo::copy;
+	using std::pair;
+	typedef typename BV::StressFreeExpansionType StressFreeExpansionType;
+	UMATReal dv0[UMATTraits<BV>::DrivingVariableSize];
+	UMATReal dv1[UMATTraits<BV>::DrivingVariableSize];
+	copy<UMATTraits<BV>::DrivingVariableSize>::exe(STRAN,dv0);
+	copy<UMATTraits<BV>::DrivingVariableSize>::exe(DSTRAN,dv1);
+	// check that the function pointer are not null
+	if(sfeh==0){
+	  throwUnsupportedStressFreeExpansionException(Name<BV>::getName());
+	}
+	pair<StressFreeExpansionType,StressFreeExpansionType> s;
+	b.computeStressFreeExpansion(s);
+	const StressFreeExpansionType& s0 = s.first;
+	const StressFreeExpansionType& s1 = s.second;
+	sfeh(dv0,dv1,&s0[0],&s1[0],UMATInt(N));
+	b.setUMATBehaviourDataDrivingVariables(dv0);
+	b.setUMATIntegrationDataDrivingVariables(dv1);
+      } // end of exe
+
+    }; // end of struct DrivingVariableInitialiserWithStressFreeExpansion
+
+    /*!
+     * An helper structure used to initialise the driving variables
+     */
+    struct TFEL_VISIBILITY_LOCAL DrivingVariableInitialiserWithoutStressFreeExpansion
+    {
+      //! a simple alias
+      typedef Behaviour<H,UMATReal,false> BV;
+      //! a simple alias for the behaviour data
+      typedef typename BV::BehaviourData  BData;
+      //! a simple alias for the integration data
+      typedef typename BV::IntegrationData  IData;
+      /*!
+       * \param[out] bData  : behaviour data
+       * \param[out] iData  : integration data
+       * \param[in]  STRAN  : driving variable at the beginning of the
+       *                      time step
+       * \param[in]  DSTRAN : driving variable at the end of the
+       *                      time step or driving variable increment
+       * \param[in]  sfeh   : function handling the stress-free expansion
+       *                      at the beginning of the time step
+       */
+      TFEL_UMAT_INLINE static 
+      void exe(BData& bData,
+	       IData& iData,
+	       const UMATReal *const STRAN,
+	       const UMATReal *const DSTRAN,
+	       const StressFreeExpansionHandler)
+      {
+	bData.setUMATBehaviourDataDrivingVariables(STRAN);
+	iData.setUMATIntegrationDataDrivingVariables(DSTRAN);
+      } // end of exe
+      /*!
+       * \param[out] b      : b
+       * \param[in]  STRAN  : driving variable at the beginning of the
+       *                     time step
+       * \param[in]  DSTRAN : driving variable at the end of the
+       *                      time step or driving variable increment
+       * \param[in]  sfeh   : function handling the stress-free expansion
+       *                      at the beginning of the time step
+       */
+      TFEL_UMAT_INLINE static 
+      void exe(BV& b,
+	       const UMATReal *const STRAN,
+	       const UMATReal *const DSTRAN,
+	       const StressFreeExpansionHandler&)
+      {
+	b.setUMATBehaviourDataDrivingVariables(STRAN);
+	b.setUMATIntegrationDataDrivingVariables(DSTRAN);
+      } // end of exe
+    }; // end of struct DrivingVariableInitialiserWithoutStressFreeExpansion
+
     /*!
      * An helper structure which is used to compute the stiffness
      * tensor for the behaviour that requires it.
@@ -50,16 +232,16 @@ namespace umat
      * An helper structure which is used to compute the thermal
      * expansion tensor for the behaviour that requires it.
      */
-    struct TFEL_VISIBILITY_LOCAL ThermalExpansionTensorInitializer
+    struct TFEL_VISIBILITY_LOCAL ThermalExpansionCoefficientTensorInitializer
     {
       typedef Behaviour<H,UMATReal,false> BV;
       typedef typename BV::BehaviourData  BData;
       TFEL_UMAT_INLINE static void
 	exe(BData& data,const UMATReal * const props){
-	UMATComputeThermalExpansionTensor<type,H,UMATTraits<BV>::stype>::exe(props,
-									     data.getThermalExpansionTensor());
+	UMATComputeThermalExpansionCoefficientTensor<type,H,UMATTraits<BV>::stype>::exe(props,
+									     data.getThermalExpansionCoefficientTensor());
       } // end of exe
-    }; // end of struct ThermalExpansionTensorInitializer
+    }; // end of struct ThermalExpansionCoefficientTensorInitializer
     
     /*!
      * an helper class which don't do any initialisation
@@ -92,13 +274,13 @@ namespace umat
 			     const UMATReal *const,
 			     const UMATReal *const,
 			     const UMATReal *const,
-			     const UMATReal *const)
+			     const UMATReal *const,
+			     const StressFreeExpansionHandler&)
       {} // end of Error
       
       TFEL_UMAT_INLINE void exe(UMATReal *const,
 				UMATReal *const,
 				UMATReal *const)
-	throw(UMATException)
       {
 	using namespace std;
 	using namespace tfel::material;
@@ -111,7 +293,7 @@ namespace umat
     }; // end of struct Error
 
     template<const bool bs,     // requires StiffnessOperator
-	     const bool ba>     // requires ThermalExpansionTensor
+	     const bool ba>     // requires ThermalExpansionCoefficientTensor
       struct TFEL_VISIBILITY_LOCAL IntegratorWithTimeStepping
     {
       //! A simple alias
@@ -120,12 +302,12 @@ namespace umat
 				      DoNothingInitializer>::type SInitializer;
       //! A simple alias
       typedef typename tfel::meta::IF<ba,
-				      ThermalExpansionTensorInitializer,
+				      ThermalExpansionCoefficientTensorInitializer,
 				      DoNothingInitializer>::type AInitializer;
       
       TFEL_UMAT_INLINE
       IntegratorWithTimeStepping(const UMATReal *const DTIME ,
-				 const UMATReal *const STRAN ,
+				 const UMATReal *const STRAN,
 				 const UMATReal *const DSTRAN,
 				 const UMATReal *const TEMP  ,
 				 const UMATReal *const DTEMP,
@@ -133,14 +315,23 @@ namespace umat
 				 const UMATReal *const PREDEF,
 				 const UMATReal *const DPRED,
 				 UMATReal *const STATEV,
-				 UMATReal *const STRESS)
-	: bData(STRESS,STRAN,TEMP,PROPS+UMATTraits<BV>::propertiesOffset,
+				 UMATReal *const STRESS,
+				 const StressFreeExpansionHandler& sfeh)
+	: bData(TEMP,PROPS+UMATTraits<BV>::propertiesOffset,
 		STATEV,PREDEF),
-	  iData(DTIME,DSTRAN,DTEMP,DPRED),
+	  iData(DTIME,DTEMP,DPRED),
 	  dt(*DTIME)
        {
+	 using namespace tfel::material;
+	 typedef MechanicalBehaviourTraits<BV> Traits;
+	 typedef typename tfel::meta::IF<
+	   Traits::hasStressFreeExpansion,
+	   DrivingVariableInitialiserWithStressFreeExpansion,
+	   DrivingVariableInitialiserWithoutStressFreeExpansion>::type DVInitializer;
 	 SInitializer::exe(this->bData,PROPS);
 	 AInitializer::exe(this->bData,PROPS);
+	 DVInitializer::exe(this->bData,this->iData,STRAN,DSTRAN,sfeh);
+	 this->bData.setUMATBehaviourDataThermodynamicForces(STRESS);
        } // end of IntegratorWithTimeStepping
       
       TFEL_UMAT_INLINE2 void
@@ -173,6 +364,7 @@ namespace umat
 	while((iterations!=0)&&
 	      (subSteps!=UMATTraits<BV>::maximumSubStepping)){
 	  BV behaviour(this->bData,this->iData);
+	  behaviour.initialize();
 	  behaviour.setOutOfBoundsPolicy(up.getOutOfBoundsPolicy());
 	  behaviour.checkBounds();
 	  typename BV::IntegrationResult r = BV::SUCCESS;
@@ -248,7 +440,7 @@ namespace umat
     }; // end of struct IntegratorWithTimeStepping
 
     template<const bool bs,     // requires StiffnessOperator
-	     const bool ba>     // requires ThermalExpansionTensor
+	     const bool ba>     // requires ThermalExpansionCoefficientTensor
       struct TFEL_VISIBILITY_LOCAL Integrator
     {
       typedef typename tfel::meta::IF<bs,
@@ -256,7 +448,7 @@ namespace umat
 				      DoNothingInitializer>::type SInitializer;
 
       typedef typename tfel::meta::IF<ba,
-				      ThermalExpansionTensorInitializer,
+				      ThermalExpansionCoefficientTensorInitializer,
 				      DoNothingInitializer>::type AInitializer;
 
       TFEL_UMAT_INLINE Integrator(const UMATReal *const DTIME ,
@@ -268,15 +460,25 @@ namespace umat
 				  const UMATReal *const PREDEF,
 				  const UMATReal *const DPRED,
 				  const UMATReal *const STATEV,
-				  const UMATReal *const STRESS)
-	: behaviour(DTIME,STRESS,STRAN,DSTRAN,TEMP,DTEMP,
+				  const UMATReal *const STRESS,
+				  const StressFreeExpansionHandler& sfeh)
+	: behaviour(DTIME,TEMP,DTEMP,
 		    PROPS+UMATTraits<BV>::propertiesOffset,
 		    STATEV,PREDEF,DPRED),
 	dt(*DTIME)
 	  {
+	    using namespace tfel::material;
+	    typedef MechanicalBehaviourTraits<BV> Traits;
+	    typedef typename tfel::meta::IF<
+	      Traits::hasStressFreeExpansion,
+	      DrivingVariableInitialiserWithStressFreeExpansion,
+	      DrivingVariableInitialiserWithoutStressFreeExpansion>::type DVInitializer;
+	    const UMATOutOfBoundsPolicy& up = UMATOutOfBoundsPolicy::getUMATOutOfBoundsPolicy();
 	    SInitializer::exe(this->behaviour,PROPS);
 	    AInitializer::exe(this->behaviour,PROPS);
-	    const UMATOutOfBoundsPolicy& up = UMATOutOfBoundsPolicy::getUMATOutOfBoundsPolicy();
+	    DVInitializer::exe(this->behaviour,STRAN,DSTRAN,sfeh);
+	    this->behaviour.setUMATBehaviourDataThermodynamicForces(STRESS);
+	    this->behaviour.initialize();
 	    this->behaviour.setOutOfBoundsPolicy(up.getOutOfBoundsPolicy());
 	  } // end of Integrator::Integrator
 	
@@ -304,7 +506,7 @@ namespace umat
 	if(this->dt<0.){
 	  throwNegativeTimeStepException(Name<BV>::getName());
 	}
-	behaviour.checkBounds();
+	this->behaviour.checkBounds();
 	typename BV::IntegrationResult r = BV::SUCCESS;
 	if((-3.25<*DDSOE)&&(*DDSOE<-2.75)){
 	  r = PredictionOperatorComputer::exe(this->behaviour,BV::TANGENTOPERATOR);

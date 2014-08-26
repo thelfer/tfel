@@ -150,14 +150,12 @@ namespace mfront
 
 
     /*!
-     * \param[out] f                 : output file
      * \param[in]  v                 : variables to be initialized
      * \param[in]  useTimeDerivative : declare time derivative of the variables
      */
-    virtual void
-    writeStateVariableIncrementsInitializers(std::ostream&,
-					     const VariableDescriptionContainer&,
-					     const bool) const;
+    virtual std::string
+    getStateVariableIncrementsInitializers(const VariableDescriptionContainer&,
+					   const bool) const;
 
     /*!
      * \param[out] f     : output file

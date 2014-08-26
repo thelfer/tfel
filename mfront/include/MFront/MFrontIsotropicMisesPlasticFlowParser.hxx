@@ -23,7 +23,7 @@ namespace mfront{
     static std::string
     getDescription(void);
 
-    void writeBehaviourParserSpecificConstructorPart(void);
+    void writeBehaviourParserSpecificInitializeMethodPart(void);
 
     void writeBehaviourParserSpecificMembers(void);
 

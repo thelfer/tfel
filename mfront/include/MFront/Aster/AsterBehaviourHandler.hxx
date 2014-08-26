@@ -14,7 +14,7 @@
 
 #include"MFront/Aster/AsterTangentOperator.hxx"
 #include"MFront/Aster/AsterComputeStiffnessOperator.hxx"
-#include"MFront/Aster/AsterComputeThermalExpansionTensor.hxx"
+#include"MFront/Aster/AsterComputeThermalExpansionCoefficientTensor.hxx"
 
 namespace aster
 {
@@ -24,6 +24,79 @@ namespace aster
   struct TFEL_VISIBILITY_LOCAL AsterBehaviourHandler
     : public AsterInterfaceBase
   {
+
+    /*!
+     * An helper structure used to initialise the driving variables
+     */
+    struct TFEL_VISIBILITY_LOCAL DrivingVariableInitialiserWithStressFreeExpansion
+      : public AsterInterfaceBase
+      {
+      //! a simple alias
+      typedef Behaviour<AsterModellingHypothesis<N>::value,AsterReal,false> BV;
+      /*!
+       * \param[out] b      : behaviour
+       * \param[in]  STRAN  : driving variable at the beginning of the
+       *                      time step
+       * \param[in]  DSTRAN : driving variable at the end of the
+       *                      time step or driving variable increment
+       * \param[in]  sfeh   : function handling the stress-free expansion
+       *                      at the beginning of the time step
+       */
+      TFEL_ASTER_INLINE static 
+      void exe(BV& b,
+	       const AsterReal *const STRAN,
+	       const AsterReal *const DSTRAN,
+	       const StressFreeExpansionHandler& sfeh)
+      {
+	using tfel::utilities::Name;
+	using tfel::fsalgo::copy;
+	using std::pair;
+	typedef typename BV::StressFreeExpansionType StressFreeExpansionType;
+	AsterReal dv0[AsterTraits<BV>::DrivingVariableSize];
+	AsterReal dv1[AsterTraits<BV>::DrivingVariableSize];
+	copy<AsterTraits<BV>::DrivingVariableSize>::exe(STRAN,dv0);
+	copy<AsterTraits<BV>::DrivingVariableSize>::exe(DSTRAN,dv1);
+	// check that the function pointer are not null
+	if(sfeh==0){
+	  throwUnsupportedStressFreeExpansionException(Name<BV>::getName());
+	}
+	pair<StressFreeExpansionType,StressFreeExpansionType> s;
+	b.computeStressFreeExpansion(s);
+	const StressFreeExpansionType& s0 = s.first;
+	const StressFreeExpansionType& s1 = s.second;
+	sfeh(dv0,dv1,&s0[0],&s1[0],AsterInt(N));
+	b.setASTERBehaviourDataDrivingVariables(dv0);
+	b.setASTERIntegrationDataDrivingVariables(dv1);
+      } // end of exe
+
+    }; // end of struct DrivingVariableInitialiserWithStressFreeExpansion
+
+    /*!
+     * An helper structure used to initialise the driving variables
+     */
+    struct TFEL_VISIBILITY_LOCAL DrivingVariableInitialiserWithoutStressFreeExpansion
+    {
+      //! a simple alias
+      typedef Behaviour<AsterModellingHypothesis<N>::value,AsterReal,false> BV;
+      /*!
+       * \param[out] b      : b
+       * \param[in]  STRAN  : driving variable at the beginning of the
+       *                     time step
+       * \param[in]  DSTRAN : driving variable at the end of the
+       *                      time step or driving variable increment
+       * \param[in]  sfeh   : function handling the stress-free expansion
+       *                      at the beginning of the time step
+       */
+      TFEL_ASTER_INLINE static 
+      void exe(BV& b,
+	       const AsterReal *const STRAN,
+	       const AsterReal *const DSTRAN,
+	       const StressFreeExpansionHandler&)
+      {
+	b.setASTERBehaviourDataDrivingVariables(STRAN);
+	b.setASTERIntegrationDataDrivingVariables(DSTRAN);
+      } // end of exe
+    }; // end of struct DrivingVariableInitialiserWithoutStressFreeExpansion
 
     struct TFEL_VISIBILITY_LOCAL StiffnessOperatorInitializer
     {
@@ -36,7 +109,7 @@ namespace aster
       } // end of exe
     }; // end of struct StiffnessOperatorInitializer
 
-    struct TFEL_VISIBILITY_LOCAL ThermalExpansionTensorInitializer
+    struct TFEL_VISIBILITY_LOCAL ThermalExpansionCoefficientTensorInitializer
     {
       typedef Behaviour<AsterModellingHypothesis<N>::value,AsterReal,false> BV;
       typedef typename BV::BehaviourData  BData;
@@ -45,10 +118,10 @@ namespace aster
 	const unsigned short o =
 	  AsterTraits<BV>::elasticPropertiesOffset+
 	  AsterTraits<BV>::massDensityOffsetForThermalExpansion;
-	AsterComputeThermalExpansionTensor<N,AsterTraits<BV>::etype>::exe(props+o,
-									  data.getThermalExpansionTensor());
+	AsterComputeThermalExpansionCoefficientTensor<N,AsterTraits<BV>::etype>::exe(props+o,
+									  data.getThermalExpansionCoefficientTensor());
       } // end of exe
-    }; // end of struct ThermalExpansionTensorInitializer
+    }; // end of struct ThermalExpansionCoefficientTensorInitializer
 
     struct TFEL_VISIBILITY_LOCAL DoNothingInitializer
     {
@@ -72,7 +145,8 @@ namespace aster
 	    const AsterReal *const,
 	    const AsterReal *const,
 	    const AsterReal *const,
-	    const AsterReal *const)
+	    const AsterReal *const,
+	    const StressFreeExpansionHandler&)
       {} // end of Error
 
       TFEL_ASTER_INLINE void exe(AsterReal *const,
@@ -90,7 +164,7 @@ namespace aster
     }; // end of struct Error
 
     template<const bool bs,     // requires StiffnessOperator
-	     const bool ba>     // requires ThermalExpansionTensor
+	     const bool ba>     // requires ThermalExpansionCoefficientTensor
       struct TFEL_VISIBILITY_LOCAL Integrator
     {
       typedef typename tfel::meta::IF<bs,
@@ -98,7 +172,7 @@ namespace aster
 				      DoNothingInitializer>::type SInitializer;
 
       typedef typename tfel::meta::IF<ba,
-				      ThermalExpansionTensorInitializer,
+				      ThermalExpansionCoefficientTensorInitializer,
 				      DoNothingInitializer>::type AInitializer;
 
       TFEL_ASTER_INLINE Integrator(const AsterReal *const DTIME ,
@@ -110,15 +184,25 @@ namespace aster
 				   const AsterReal *const PREDEF,
 				   const AsterReal *const DPRED,
 				   const AsterReal *const STATEV,
-				   const AsterReal *const STRESS)
-	: behaviour(DTIME,STRESS,STRAN,DSTRAN,TEMP,DTEMP,
+				   const AsterReal *const STRESS,
+				   const StressFreeExpansionHandler& sfeh)
+	: behaviour(DTIME,TEMP,DTEMP,
 		    PROPS+AsterTraits<BV>::elasticPropertiesOffset+
 		    AsterTraits<BV>::thermalExpansionPropertiesOffset,
 		    STATEV,PREDEF,DPRED),
 	dt(*DTIME)
 	  {
+	    using namespace tfel::material;
+	    typedef MechanicalBehaviourTraits<BV> Traits;
+	    typedef typename tfel::meta::IF<
+	      Traits::hasStressFreeExpansion,
+	      DrivingVariableInitialiserWithStressFreeExpansion,
+	      DrivingVariableInitialiserWithoutStressFreeExpansion>::type DVInitializer;
 	    SInitializer::exe(this->behaviour,PROPS);
 	    AInitializer::exe(this->behaviour,PROPS);
+	    DVInitializer::exe(this->behaviour,STRAN,DSTRAN,sfeh);
+	    this->behaviour.setASTERBehaviourDataThermodynamicForces(STRESS);
+	    this->behaviour.initialize();
 	    // 22/03/2012 : la gestion des bornes sera implantée plus tard
 	    // const AsterOutOfBoundsPolicy& up = AsterOutOfBoundsPolicy::getAsterOutOfBoundsPolicy();
 	    // this->behaviour.setOutOfBoundsPolicy(up.getOutOfBoundsPolicy());

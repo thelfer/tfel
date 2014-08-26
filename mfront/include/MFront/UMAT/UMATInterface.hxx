@@ -21,8 +21,18 @@
 namespace umat{
 
   /*!
-   * \class  UMATInterface
-   * \brief  This class create an interface between Behaviour and UMAT
+   * \class UMATInterface
+   * \brief This class create an interface * between an MFront
+   * behaviour and the Cast3M finite element solver
+   *
+   * \note : most of branching is done at compile-time. to the very
+   * exeception of the stress-free expansion which are handled through
+   * two functions pointers which take into account the specificities
+   * of finite strain strategy used. The choice of introducing those
+   * runtime-functions comes from the fact that we did not want a code
+   * duplication between two different finite strain strategies (to
+   * reduce both compile-time and library size).
+   *
    * \author Helfer Thomas
    * \date   28 Jul 2006
    */
@@ -45,7 +55,8 @@ namespace umat{
 	       const UMATReal *const PREDEF,const UMATReal *const DPRED,
 	       UMATReal *const STATEV,const UMATInt  *const NSTATV,
 	       UMATReal *const STRESS,const UMATInt  *const NDI,
-	       UMATInt  *const KINC)
+	       UMATInt  *const KINC,
+	       const StressFreeExpansionHandler& sfeh)
     {
       using namespace tfel::material;
       using namespace tfel::utilities;
@@ -53,27 +64,27 @@ namespace umat{
       if(*NDI==2){
 	UMATInterface::template callBehaviour<MH::TRIDIMENSIONAL>(NTENS,DTIME,DROT,DDSOE,STRAN,DSTRAN,
 								  TEMP,DTEMP,PROPS,NPROPS,PREDEF,DPRED,
-								  STATEV,NSTATV,STRESS,KINC);
+								  STATEV,NSTATV,STRESS,KINC,sfeh);
       } else if(*NDI==0){
 	UMATInterface::template callBehaviour<MH::AXISYMMETRICAL>(NTENS,DTIME,DROT,DDSOE,STRAN,DSTRAN,
 								  TEMP,DTEMP,PROPS,NPROPS,PREDEF,DPRED,
-								  STATEV,NSTATV,STRESS,KINC);
+								  STATEV,NSTATV,STRESS,KINC,sfeh);
       } else if(*NDI==-1){
 	UMATInterface::template callBehaviour<MH::PLANESTRAIN>(NTENS,DTIME,DROT,DDSOE,STRAN,DSTRAN,
 							       TEMP,DTEMP,PROPS,NPROPS,PREDEF,DPRED,
-							       STATEV,NSTATV,STRESS,KINC);
+							       STATEV,NSTATV,STRESS,KINC,sfeh);
       } else if(*NDI==-2){
 	UMATInterface::template callBehaviour<MH::PLANESTRESS>(NTENS,DTIME,DROT,DDSOE,STRAN,DSTRAN,
 							       TEMP,DTEMP,PROPS,NPROPS,PREDEF,DPRED,
-							       STATEV,NSTATV,STRESS,KINC);
+							       STATEV,NSTATV,STRESS,KINC,sfeh);
       } else if(*NDI==-3){
 	UMATInterface::template callBehaviour<MH::GENERALISEDPLANESTRAIN>(NTENS,DTIME,DROT,DDSOE,STRAN,DSTRAN,
 									  TEMP,DTEMP,PROPS,NPROPS,PREDEF,DPRED,
-									  STATEV,NSTATV,STRESS,KINC);
+									  STATEV,NSTATV,STRESS,KINC,sfeh);
       } else if(*NDI==14){
 	UMATInterface::template callBehaviour<MH::AXISYMMETRICALGENERALISEDPLANESTRAIN>(NTENS,DTIME,DROT,DDSOE,STRAN,DSTRAN,
 											TEMP,DTEMP,PROPS,NPROPS,PREDEF,DPRED,
-											STATEV,NSTATV,STRESS,KINC);
+											STATEV,NSTATV,STRESS,KINC,sfeh);
       } else {
 	UMATInterfaceBase::displayInvalidModellingHypothesisErrorMessage();
 	*KINC = -7;
@@ -89,7 +100,8 @@ namespace umat{
 		  const UMATReal *const PROPS, const UMATInt  *const NPROPS,
 		  const UMATReal *const PREDEF,const UMATReal *const DPRED,
 		  UMATReal *const STATEV,const UMATInt  *const NSTATV,
-		  UMATReal *const STRESS,UMATInt  *const KINC)
+		  UMATReal *const STRESS,UMATInt  *const KINC,
+		  const StressFreeExpansionHandler& sfeh)
     {
       using namespace tfel::utilities;
       typedef Behaviour<H,UMATReal,false> BV;
@@ -98,7 +110,7 @@ namespace umat{
 	UMATInterfaceDispatch<Traits::btype,H,
 			      Behaviour>::exe(NTENS,DTIME,DROT,DDSOE,STRAN,DSTRAN,
 					      TEMP,DTEMP,PROPS,NPROPS,PREDEF,DPRED,
-					      STATEV,NSTATV,STRESS);
+					      STATEV,NSTATV,STRESS,sfeh);
       }
       catch(const UMATIntegrationFailed& e){
 	UMATInterfaceBase::treatUmatException(Name<BV>::getName(),e);

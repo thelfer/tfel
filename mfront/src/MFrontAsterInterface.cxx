@@ -255,6 +255,9 @@ namespace mfront{
     systemCall::mkdir("include/MFront");
     systemCall::mkdir("include/MFront/Aster");
 
+    pair<SupportedTypes::TypeSize,
+	 SupportedTypes::TypeSize> mvs = mb.getMainVariablesSize();
+
     if(!library.empty()){
       name += library;
     }
@@ -281,9 +284,9 @@ namespace mfront{
 	throw(runtime_error(msg));
       }
       if((mb.requiresStiffnessOperator())||
-	 (mb.requiresThermalExpansionTensor())){
+	 (mb.requiresThermalExpansionCoefficientTensor())){
 	unsigned short min_nprops = 2u;
-	if(mb.requiresThermalExpansionTensor()){
+	if(mb.requiresThermalExpansionCoefficientTensor()){
 	  min_nprops = 4u;
 	}
 	if(coefsHolder.size()<min_nprops){
@@ -295,7 +298,7 @@ namespace mfront{
 	  msg += "following material propertys to be defined (in the right order) ";
 	  msg += "- the young modulus     (use @MaterialProperty stress           young)\n";
 	  msg += "- the poisson ratio     (use @MaterialProperty real             nu)\n";
-	  if(mb.requiresThermalExpansionTensor()){
+	  if(mb.requiresThermalExpansionCoefficientTensor()){
 	    msg += "- the density           (use @MaterialProperty density rho)";
 	    msg += "- the thermal expansion (use @MaterialProperty thermalexpansion alpha)\n";
 	  }
@@ -311,7 +314,7 @@ namespace mfront{
 	  msg += "second material property to be the poisson ratio (use @MaterialProperty real nu)";
 	  throw(runtime_error(msg));
 	}
-	if(mb.requiresThermalExpansionTensor()){
+	if(mb.requiresThermalExpansionCoefficientTensor()){
 	  if(coefsHolder[2].name!="rho"){
 	    string msg("MFrontASTERInterface::endTreatement : the aster interface requires the " );
 	    msg += "third material property to be the density (use @MaterialProperty density rho)";
@@ -378,6 +381,19 @@ namespace mfront{
       out << "false";
     }
     out << "> >{\n";
+   
+    out << "// space dimension\n";
+    out << "static const unsigned short N           = tfel::material::ModellingHypothesisToSpaceDimension<H>::value;\n";
+    out << "// tiny vector size\n";
+    out << "static const unsigned short TVectorSize = N;\n";
+    out << "// symmetric tensor size\n";
+    out << "static const unsigned short StensorSize = tfel::math::StensorDimeToSize<N>::value;\n";
+    out << "// tensor size\n";
+    out << "static const unsigned short TensorSize  = tfel::math::TensorDimeToSize<N>::value;\n";
+    out << "// size of the driving variable array (STRAN)\n";
+    out << "static const unsigned short DrivingVariableSize = " << mvs.first <<  ";\n";
+    out << "// size of the thermodynamic force variable array (STRESS)\n";
+    out << "static const unsigned short ThermodynamicForceVariableSize = " << mvs.second <<  ";\n";
     if(this->errorReport){
       out << "static const AsterErrorReportPolicy errorReportPolicy = ASTER_WRITEONSTDOUT;\n";
     } else {
@@ -388,10 +404,10 @@ namespace mfront{
     } else {
       out << "static const bool requiresStiffnessOperator = false;\n";
     }
-    if(mb.requiresThermalExpansionTensor()){
-      out << "static const bool requiresThermalExpansionTensor = true;\n";
+    if(mb.requiresThermalExpansionCoefficientTensor()){
+      out << "static const bool requiresThermalExpansionCoefficientTensor = true;\n";
     } else {
-      out << "static const bool requiresThermalExpansionTensor = false;\n";
+      out << "static const bool requiresThermalExpansionCoefficientTensor = false;\n";
     }
     if(mb.getSymmetryType()==mfront::ISOTROPIC){
       out << "static const AsterSymmetryType type = aster::ISOTROPIC;\n";
@@ -428,7 +444,6 @@ namespace mfront{
       }
     } else if (mb.getElasticSymmetryType()==mfront::ORTHOTROPIC){
       out << "static const AsterSymmetryType etype = aster::ORTHOTROPIC;\n";
-      out << "static const unsigned short N = tfel::material::ModellingHypothesisToSpaceDimension<H>::value;\n";
       if(hasElasticMaterialPropertiesOffset){
 	out << "static const unsigned short elasticPropertiesOffset "
 	    << "= AsterOrthotropicElasticPropertiesOffset<N>::value;\n";
@@ -543,6 +558,7 @@ namespace mfront{
       out << "#include<algorithm>\n";
     }
     out << "#include\"TFEL/Material/" << className << ".hxx\"\n";
+    out << "#include\"MFront/Aster/AsterStressFreeExpansionHandler.hxx\"\n\n";
     out << "#include\"MFront/Aster/AsterInterface.hxx\"\n\n";
     out << "#include\"MFront/Aster/aster" << name << ".hxx\"\n\n";
 
@@ -616,7 +632,8 @@ namespace mfront{
     if(!this->savesTangentOperator){
       out << "if(aster::AsterInterface<tfel::material::" << className 
 	  << ">::exe(NTENS,DTIME,DROT,DDSOE,STRAN,DSTRAN,TEMP,DTEMP,PROPS,NPROPS,"
-	  << "PREDEF,DPRED,STATEV,NSTATV,STRESS)!=0){\n";
+	  << "PREDEF,DPRED,STATEV,NSTATV,STRESS,\n"
+	  << "aster::AsterStandardSmallStrainStressFreeExpansionHandler)!=0){\n";
       this->generateMTestFile2(out,MechanicalBehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR,
 			       library,material,name,"",mb,glossaryNames,entryNames);
       out << "*PNEWDT = -1.;\n";
@@ -631,7 +648,8 @@ namespace mfront{
       out << "aster::AsterInt nNSTATV = max(*(NSTATV)-(*NTENS)*(*NTENS),aster::AsterInt(1));\n";
       out << "if(aster::AsterInterface<tfel::material::" << className 
 	  << ">::exe(NTENS,DTIME,DROT,DDSOE,STRAN,DSTRAN,TEMP,DTEMP,PROPS,NPROPS,"
-	  << "PREDEF,DPRED,STATEV,&nNSTATV,STRESS)!=0){\n";
+	  << "PREDEF,DPRED,STATEV,&nNSTATV,STRESS,\n"
+	  << "aster::AsterStandardSmallStrainStressFreeExpansionHandler)!=0){\n";
       this->generateMTestFile2(out,MechanicalBehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR,
 			       library,material,name,"",mb,glossaryNames,entryNames);
       out << "*PNEWDT = -1.;\n";
@@ -676,11 +694,13 @@ namespace mfront{
       if(!this->savesTangentOperator){
 	out << "if(aster::AsterInterface<tfel::material::" << className 
 	    << ">::exe(NTENS,DTIME,DROT,&D[0],STRAN,&deto[0],TEMP,DTEMP,PROPS,NPROPS,"
-	    << "PREDEF,DPRED,&sv[0],NSTATV,&sigf[0])!=0){\n";
+	    << "PREDEF,DPRED,&sv[0],NSTATV,&sigf[0],\n"
+	    << "aster::AsterStandardSmallStrainStressFreeExpansionHandler)!=0){\n";
       } else {
 	out << "if(aster::AsterInterface<tfel::material::" << className 
 	    << ">::exe(NTENS,DTIME,DROT,&D[0],STRAN,&deto[0],TEMP,DTEMP,PROPS,NPROPS,"
-	    << "PREDEF,DPRED,&sv[0],&nNSTATV,&sigf[0])!=0){\n";
+	    << "PREDEF,DPRED,&sv[0],&nNSTATV,&sigf[0],\n"
+	    << "aster::AsterStandardSmallStrainStressFreeExpansionHandler)!=0){\n";
       }
       out << "return;\n";
       out << "}\n";
@@ -692,11 +712,13 @@ namespace mfront{
       if(!this->savesTangentOperator){
 	out << "if(aster::AsterInterface<tfel::material::" << className 
 	    << ">::exe(NTENS,DTIME,DROT,&D[0],STRAN,&deto[0],TEMP,DTEMP,PROPS,NPROPS,"
-	    << "PREDEF,DPRED,&sv[0],NSTATV,&sigb[0])!=0){\n";
+	    << "PREDEF,DPRED,&sv[0],NSTATV,&sigb[0],\n"
+	    << "aster::AsterStandardSmallStrainStressFreeExpansionHandler)!=0){\n";
       } else {
 	out << "if(aster::AsterInterface<tfel::material::" << className 
 	    << ">::exe(NTENS,DTIME,DROT,&D[0],STRAN,&deto[0],TEMP,DTEMP,PROPS,NPROPS,"
-	    << "PREDEF,DPRED,&sv[0],&nNSTATV,&sigb[0])!=0){\n";
+	    << "PREDEF,DPRED,&sv[0],&nNSTATV,&sigb[0],\n"
+	    << "aster::AsterStandardSmallStrainStressFreeExpansionHandler)!=0){\n";
       }
       out << "return;\n";
       out << "}\n";
@@ -875,7 +897,7 @@ namespace mfront{
 	  hasElasticMaterialPropertiesOffset = true;
 	}
       }
-      if(mb.requiresThermalExpansionTensor()){
+      if(mb.requiresThermalExpansionCoefficientTensor()){
 	for(p=coefsHolder.begin();(p!=coefsHolder.end())&&(!foundt);++p){
 	  if(p->name=="alpha"){
 	    foundt = true;
@@ -948,7 +970,7 @@ namespace mfront{
       if(mb.requiresStiffnessOperator()){
 	hasElasticMaterialPropertiesOffset = true;
       }
-      if(mb.requiresThermalExpansionTensor()){
+      if(mb.requiresThermalExpansionCoefficientTensor()){
 	hasThermalExpansionMaterialPropertiesOffset = true;
       }
     } else {

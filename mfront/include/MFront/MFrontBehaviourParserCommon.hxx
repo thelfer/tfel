@@ -125,7 +125,7 @@ namespace mfront{
       treatLocalVar(void);
 
     virtual void
-      treatThermalExpansion(void);
+    treatComputeThermalExpansion(void);
 
     virtual void
       treatInitLocalVars(void);
@@ -143,7 +143,7 @@ namespace mfront{
     treatRequireStiffnessOperator(void);
 
     virtual void
-      treatRequireThermalExpansionTensor(void);
+    treatRequireThermalExpansionCoefficientTensor(void);
 
     virtual void
       treatBehaviour(void);
@@ -225,6 +225,11 @@ namespace mfront{
     
     virtual void
     writeBehaviourDataConstructors(void);
+    /*!
+     * write interface's setters for the main variables
+     */
+    virtual void
+    writeBehaviourDataMainVariablesSetters(void);
     
     virtual void
     writeBehaviourDataClassBegin(void);
@@ -285,6 +290,11 @@ namespace mfront{
 
     virtual void
     writeIntegrationDataConstructors(void);
+    /*!
+     * write interface's setters for the main variables
+     */
+    virtual void
+    writeIntegrationDataMainVariablesSetters(void);
 
     virtual void
     writeIntegrationDataScaleOperators(void);
@@ -337,9 +347,6 @@ namespace mfront{
     writeBehaviourParserSpecificIncludes(void);
 
     virtual void
-    writeBehaviourParserSpecificConstructorPart(void);
-
-    virtual void
     writeBehaviourClassBegin(void);
 
     virtual void
@@ -366,9 +373,28 @@ namespace mfront{
     virtual void
     writeBehaviourConstructors(void);
 
-    void
-    writeBehaviourConstructors(const std::string&,
-			       const std::string& = "");
+    /*!
+     * \return behaviour constructor initializers.
+     */
+    virtual std::string
+    getBehaviourConstructorsInitializers(void);
+    /*!
+     * write the behaviour's compouteStressFreeExpansion method, if
+     * mandatory.
+     */
+    virtual void
+    writeBehaviourComputeStressFreeExpansion(void);
+    /*!
+     * write the initalize method . This method is called after that
+     * the main variables were set.
+     */
+    virtual void
+    writeBehaviourInitializeMethod(void);
+    /*!
+     * write part of the constructor specific to the parser
+     */
+    virtual void
+    writeBehaviourParserSpecificInitializeMethodPart(void);
 
     virtual void
     writeBehaviourStateVarsIncrements(void);
@@ -497,6 +523,20 @@ namespace mfront{
     requiresTVectorOrVectorIncludes(bool&,
 				    bool&) const;   
 
+    /*!
+     * analyse the inputs of a material property to check if it is
+     * available either as a material property or as an external state
+     * variable.
+     *
+     *  If one input is not found, an external state variable is
+     * implicitely declared to allow the evaluation of this material
+     * property.
+     * 
+     * \param[in] mp : material property description
+     */
+    virtual void
+    analyseMaterialProperty(const MaterialPropertyDescription&);
+
     MFrontBehaviourParserCommon();
 
     std::map<std::string,std::vector<std::string> > sourcesLibrairiesDependencies;
@@ -511,6 +551,8 @@ namespace mfront{
 
     std::string localVariablesInitializers;
     std::string initLocalVars;
+    std::string predictor;
+    std::string stressFreeExpansion;
 
     std::string integrator;
     std::string updateAuxiliaryStateVars;

@@ -81,6 +81,15 @@ namespace aster
    * \class  AsterInterface
    * \brief This class create an interface between a behaviour class
    * and the aster finite element code
+   *
+   * \note : most of branching is done at compile-time. to the very
+   * exeception of the stress-free expansion which are handled through
+   * two functions pointers which take into account the specificities
+   * of finite strain strategy used. The choice of introducing those
+   * runtime-functions comes from the fact that we did not want a code
+   * duplication between two different finite strain strategies (to
+   * reduce both compile-time and library size).
+   *
    * \author Helfer Thomas
    * \date   28 Jul 2006
    */
@@ -98,7 +107,8 @@ namespace aster
 	     const AsterReal *const PROPS, const AsterInt  *const NPROPS,
 	     const AsterReal *const PREDEF,const AsterReal *const DPRED,
 	     AsterReal *const STATEV,const AsterInt  *const NSTATV,
-	     AsterReal *const STRESS)
+	     AsterReal *const STRESS,
+	     const StressFreeExpansionHandler& sfeh)
     {
       using namespace tfel::meta;
       using namespace tfel::material;
@@ -111,7 +121,7 @@ namespace aster
 			    BehaviourWrapper<1u> >::type Handler;
 	return Handler::exe(NTENS,DTIME,DROT,DDSOE,STRAN,DSTRAN,
 			    TEMP,DTEMP,PROPS,NPROPS,PREDEF,DPRED,
-			    STATEV,NSTATV,STRESS);
+			    STATEV,NSTATV,STRESS,sfeh);
       } else if(*NTENS==4){
 	typedef Behaviour<AsterModellingHypothesis<2u>::value,AsterReal,false> BV;
 	typedef MechanicalBehaviourTraits<BV> MTraits;
@@ -121,11 +131,11 @@ namespace aster
 			    BehaviourWrapper<2u> >::type Handler;
 	return Handler::exe(NTENS,DTIME,DROT,DDSOE,STRAN,DSTRAN,
 			    TEMP,DTEMP,PROPS,NPROPS,PREDEF,DPRED,
-			    STATEV,NSTATV,STRESS);
+			    STATEV,NSTATV,STRESS,sfeh);
       } else if(*NTENS==6){
 	return DimensionDispatch<3u>::exe(NTENS,DTIME,DROT,DDSOE,STRAN,DSTRAN,
 					  TEMP,DTEMP,PROPS,NPROPS,PREDEF,DPRED,
-					  STATEV,NSTATV,STRESS);
+					  STATEV,NSTATV,STRESS,sfeh);
       } else {
 	AsterInterfaceBase::displayInvalidNTENSValueErrorMessage();
 	return -2;
@@ -145,7 +155,8 @@ namespace aster
 	      const AsterReal *const PROPS, const AsterInt  *const NPROPS,
 	      const AsterReal *const PREDEF,const AsterReal *const DPRED,
 	      AsterReal *const STATEV,const AsterInt  *const NSTATV,
-	      AsterReal *const STRESS)
+	      AsterReal *const STRESS,
+	      const StressFreeExpansionHandler& sfeh)
       {
 	using namespace tfel::meta;
 	using namespace tfel::math;
@@ -167,7 +178,7 @@ namespace aster
 	copy<StensorDimeToSize<N>::value>::exe(DSTRAN,de);
 	int r = DimensionDispatch<3u>::exe(&NTENS,DTIME,DROT,K,e,de,
 					   TEMP,DTEMP,PROPS,NPROPS,PREDEF,DPRED,
-					   STATEV,NSTATV,s);
+					   STATEV,NSTATV,s,sfeh);
 	if(r==0){
 	  AsterReduceTangentOperator<N>::exe(DDSOE,K);
 	  copy<StensorDimeToSize<N>::value>::exe(s,STRESS);
@@ -187,7 +198,8 @@ namespace aster
 	      const AsterReal *const PROPS, const AsterInt  *const NPROPS,
 	      const AsterReal *const PREDEF,const AsterReal *const DPRED,
 	      AsterReal *const STATEV,const AsterInt  *const NSTATV,
-	      AsterReal *const STRESS)
+	      AsterReal *const STRESS,
+	      const StressFreeExpansionHandler& sfeh)
       {
 	using namespace std;
 	using namespace tfel::meta;
@@ -200,7 +212,7 @@ namespace aster
 			      AsterOrthotropicBehaviourHandler<N,Behaviour> >::type Handler;
 	  Handler::exe(DTIME,DROT,DDSOE,STRAN,DSTRAN,TEMP,DTEMP,
 		       PROPS,NPROPS,PREDEF,DPRED,STATEV,NSTATV,
-		       STRESS);
+		       STRESS,sfeh);
 	} 
 	catch(const AsterException& e){
 	  if(Traits::errorReportPolicy!=ASTER_NOERRORREPORT){

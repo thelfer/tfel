@@ -23,6 +23,7 @@ namespace umat
   struct TFEL_VISIBILITY_LOCAL UMATIsotropicBehaviourHandlerBase
     : public UMATBehaviourHandler<type,H,Behaviour>
   {
+
     TFEL_UMAT_INLINE static
       void exe(const UMATReal *const DTIME ,
 	       const UMATReal *const,
@@ -37,7 +38,8 @@ namespace umat
 	       const UMATReal *const DPRED,
 	       UMATReal *const STATEV,
 	       const UMATInt  *const NSTATV,
-	       UMATReal *const STRESS) 
+	       UMATReal *const STRESS,
+	       const StressFreeExpansionHandler& sfeh) 
     {
       using namespace tfel::meta;
       using namespace tfel::material;
@@ -46,7 +48,7 @@ namespace umat
       typedef UMATBehaviourHandler<type,H,Behaviour> UMATBehaviourHandler;
       const bool is_defined_ = MTraits::is_defined;
       const bool bs = Traits::requiresStiffnessOperator;
-      const bool ba = Traits::requiresThermalExpansionTensor;
+      const bool ba = Traits::requiresThermalExpansionCoefficientTensor;
       typedef typename IF<
 	is_defined_,
 	typename IF<
@@ -55,11 +57,16 @@ namespace umat
 	  typename UMATBehaviourHandler::template Integrator<bs,ba>
 	  >::type,
 	typename UMATBehaviourHandler::Error>::type Handler;
+      typedef typename IF<
+	MTraits::handlesThermalExpansion,
+	typename UMATBehaviourHandler::CheckThermalExpansionCoefficientIsNull,
+	typename UMATBehaviourHandler::DontCheckThermalExpansionCoefficientIsNull
+	>::type ThermalExpansionCoefficientCheck;
       UMATBehaviourHandler::checkNPROPS(*NPROPS);
       UMATBehaviourHandler::checkNSTATV(*NSTATV);
-      Handler handler(DTIME,STRAN,
-		      DSTRAN,TEMP,DTEMP,PROPS,
-		      PREDEF,DPRED,STATEV,STRESS);
+      ThermalExpansionCoefficientCheck::exe(PROPS[3]);
+      Handler handler(DTIME,STRAN,DSTRAN,TEMP,DTEMP,PROPS,
+		      PREDEF,DPRED,STATEV,STRESS,sfeh);
       handler.exe(DDSOE,STRESS,STATEV);
     } // end of UMATIsotropicBehaviourHandlerBase::exe
 
@@ -93,7 +100,8 @@ namespace umat
 	       const UMATReal *const DPRED,
 	             UMATReal *const STATEV,
 	       const UMATInt  *const NSTATV,
-	             UMATReal *const STRESS) 
+	             UMATReal *const STRESS,
+	       const StressFreeExpansionHandler& sfeh) 
     {
       // local material properties to match castem conventions
       // In Cast3M, the tangential stiffness is given by PROPS[0],
@@ -112,7 +120,7 @@ namespace umat
       mp[1] = PROPS[0];
       UMATIsotropicBehaviourHandlerBase<COHESIVEZONEMODEL,H,Behaviour>::exe(DTIME,DROT,DDSOE,STRAN,DSTRAN,
 									    TEMP,DTEMP,mp,NPROPS,PREDEF,
-									    DPRED,STATEV,NSTATV,STRESS);
+									    DPRED,STATEV,NSTATV,STRESS,sfeh);
     }
   };
 

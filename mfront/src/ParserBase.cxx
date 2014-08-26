@@ -885,6 +885,12 @@ namespace mfront
     }
   } // end of ParserBase::reserveName
 
+  bool
+  ParserBase::isNameReserved(const std::string& n) const
+  {
+    return this->reservedNames.find(n)!=this->reservedNames.end();
+  } // end of ParserBase::isNameReserved
+
   MaterialPropertyDescription
   ParserBase::handleMaterialLaw(const std::string& f)
   {
@@ -901,10 +907,13 @@ namespace mfront
       const string& mname = minterface.getFunctionName(mpd.material,
 						       mpd.law);
       this->reserveName(mname);
+      if(!includes.empty()){
+	this->includes += "\n";
+      }
       this->includes+= "#include\"";
       this->includes+= minterface.getHeaderFileName(mpd.material,
 						    mpd.law);
-      this->includes+= ".hxx\"";
+      this->includes+= ".hxx\"\n";
       if(find(this->materialLaws.begin(),
 	      this->materialLaws.end(),mname)==this->materialLaws.end()){
 	this->materialLaws.push_back(mname);

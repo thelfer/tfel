@@ -7,6 +7,7 @@
  */
 
 #include<utility>
+#include<sstream>
 #include<stdexcept>
 
 #include"MFront/SupportedTypes.hxx"
@@ -379,19 +380,21 @@ namespace mfront{
     return currentOffset;
   } // end of SupportedTypes::writeVariableInitializersInBehaviourDataConstructorII
 
-  void
-  SupportedTypes::writeStateVariableIncrementsInitializers(std::ostream& f,
-							   const VariableDescriptionContainer& v,
-							   const bool useStateVarTimeDerivative) const 
+  std::string
+  SupportedTypes::getStateVariableIncrementsInitializers(const VariableDescriptionContainer& v,
+							 const bool useStateVarTimeDerivative) const 
   {
     using namespace std;
     VariableDescriptionContainer::const_iterator p;
+    ostringstream f;
     if(!v.empty()){
       for(p=v.begin();p!=v.end();++p){
 	SupportedTypes::TypeFlag flag = getTypeFlag(p->type);
 	const string n = p->name;
 	const string t = (!useStateVarTimeDerivative) ? p->type : this->getTimeDerivativeType(p->type);
-	f << ",\n";
+	if(p!=v.begin()){
+	  f << ",\n";
+	}
 	if(flag==SupportedTypes::Scalar){
 	  if(this->useDynamicallyAllocatedVector(p->arraySize)){
 	    f << "d" << n << "(" << p->arraySize << "," << t <<"(0))";
@@ -435,8 +438,8 @@ namespace mfront{
 	}
       }
     }
-    
-  } // end of SupportedTypes::writeStateVariableIncrementsInitializers
+    return f.str();
+  } // end of SupportedTypes::getStateVariableIncrementsInitializers
 
   SupportedTypes::TypeSize
   SupportedTypes::getTotalSize(const VariableDescriptionContainer& v) const

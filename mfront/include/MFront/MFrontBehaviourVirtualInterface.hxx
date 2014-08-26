@@ -21,6 +21,9 @@
 
 namespace mfront{
   
+  /*!
+   * This is the abstract base class of all behaviour interfaces
+   */
   struct TFEL_VISIBILITY_EXPORT MFrontBehaviourVirtualInterface
   {
 
@@ -49,7 +52,15 @@ namespace mfront{
     exportMechanicalData(std::ofstream&,
 			 const std::string&,
 			 const MechanicalBehaviourDescription&) = 0;
-    
+    /*!
+     * write the behaviour constructor associated with the law
+     * \param[in] behaviourFile           : output file
+     * \param[in] className               : behaviour class name
+     * \param[in] mb                      : mechanical behaviour description
+     * \param[in] initStateVarsIncrements : constructor part assigning
+     *                                      default value (zero) to state
+     *                                      variable increments
+     */
     virtual void 
     writeBehaviourConstructor(std::ofstream&,
 			      const std::string&,
@@ -60,11 +71,27 @@ namespace mfront{
     writeBehaviourDataConstructor(std::ofstream&,
 				  const std::string&,
 				  const MechanicalBehaviourDescription&) = 0;
+    /*!
+     * write the behaviour constructor associated with the law
+     * \param[in] behaviourFile : output file
+     * \param[in] mb            : mechanical behaviour description
+     */
+    virtual void 
+    writeBehaviourDataMainVariablesSetters(std::ofstream&,
+					   const MechanicalBehaviourDescription&) = 0;
     
     virtual void 
     writeIntegrationDataConstructor(std::ofstream&,
 				    const std::string&,
 				    const MechanicalBehaviourDescription&) = 0;
+    /*!
+     * write the behaviour constructor associated with the law
+     * \param[in] behaviourFile : output file
+     * \param[in] mb            : mechanical behaviour description
+     */
+    virtual void 
+    writeIntegrationDataMainVariablesSetters(std::ofstream&,
+					     const MechanicalBehaviourDescription&) = 0;
 
     virtual void
     endTreatement(const std::string&,

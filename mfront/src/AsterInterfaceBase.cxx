@@ -156,6 +156,15 @@ namespace aster{
   } // end of AsterInterfaceBase::throwBehaviourIntegrationFailedException
 
   void
+  AsterInterfaceBase::throwUnsupportedStressFreeExpansionException(const std::string& b)
+  {
+    using namespace std;
+    string msg("AsterInterfaceBase::throwUnsupportedStressFreeExpansionException : ");
+    msg += "behaviour '"+b+"' can handle stress-free expansion but the Aster interface can't";
+    throw(runtime_error(msg));
+  } // end of AsterInterfaceBase::throwUnsupportedStressFreeExpansionException
+
+  void
   AsterInterfaceBase::displayInvalidNTENSValueErrorMessage()
   {
     using namespace std;

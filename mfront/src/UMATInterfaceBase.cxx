@@ -188,6 +188,25 @@ namespace umat{
   } // end of UMATInterfaceBase::throwBehaviourIntegrationFailedException
 
   void
+  UMATInterfaceBase::throwUnsupportedStressFreeExpansionException(const std::string& b)
+  {
+    using namespace std;
+    string msg("UMATInterfaceBase::throwUnsupportedStressFreeExpansionException : ");
+    msg += "behaviour '"+b+"' can handle stress-free expansion but the UMAT interface can't";
+    throw(runtime_error(msg));
+  } // end of UMATInterfaceBase::throwUnsupportedStressFreeExpansionException
+
+  void
+  UMATInterfaceBase::throwThermalExpansionCoefficientShallBeNull(const std::string& b)
+  {
+    using namespace std;
+    string msg("UMATInterfaceBase::throwThermalExpansionCoefficientShallBeNull : ");
+    msg += "behaviour '"+b+"' handle thermal expansion, so the thermal expansion "
+      "declared in UMAT must be null.";
+    throw(runtime_error(msg));
+  }
+
+  void
   UMATInterfaceBase::throwInvalidDDSOEException(const std::string& b,
 						 const UMATReal v)
   {

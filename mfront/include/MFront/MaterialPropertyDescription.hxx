@@ -14,6 +14,7 @@
 
 #include"MFront/LawFunction.hxx"
 #include"MFront/VariableDescription.hxx"
+#include"MFront/StaticVariableDescription.hxx"
 #include"MFront/VariableBoundsDescription.hxx"
 
 namespace mfront
@@ -24,6 +25,11 @@ namespace mfront
    */
   struct TFEL_VISIBILITY_EXPORT MaterialPropertyDescription
   {
+    /*!
+     * \return the glossary names of each input variables
+     */
+    std::vector<std::string>
+    getInputVariableGlossaryNames(void);
     /*!
      * body of the material property
      */

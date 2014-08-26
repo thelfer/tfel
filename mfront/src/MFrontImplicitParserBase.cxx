@@ -2693,18 +2693,19 @@ namespace mfront{
     }
   }
 
-  void MFrontImplicitParserBase::writeBehaviourConstructors(void)
-  {    
+  std::string
+  MFrontImplicitParserBase::getStateVariableIncrementsInitializers(const VariableDescriptionContainer&,
+								   const bool) const
+  {
     using namespace std;
     VariableDescriptionContainer::const_iterator p;
     SupportedTypes::TypeSize n;
     ostringstream init;
-    if(!this->localVariablesInitializers.empty()){
-      init << ",\n" << this->localVariablesInitializers;
-    }
     for(p=this->mb.getStateVariables().begin();p!=this->mb.getStateVariables().end();++p){
       SupportedTypes::TypeFlag flag = getTypeFlag(p->type);
-      init << ",\n";
+      if(p!=this->mb.getStateVariables().begin()){
+	init << ",\n";
+      }
       if((flag!=SupportedTypes::Scalar)&&
 	 (flag!=SupportedTypes::Stensor)){
 	string msg("MFrontImplicitParserBase::writeBehaviourConstructors : ");
@@ -2719,12 +2720,22 @@ namespace mfront{
       }
       n += this->getTypeSize(p->type,p->arraySize);
     }
-    init << ",\nzeros(real(0)),\nfzeros(real(0))";
-    MFrontBehaviourParserCommon::writeBehaviourConstructors(init.str(),
-							    this->predictor);
+    return init.str();
+  } // end of MFrontImplicitParserBase::getStateVariableIncrementsInitializers
+
+  std::string
+  MFrontImplicitParserBase::getBehaviourConstructorsInitializers(void)
+  {    
+    using namespace std;
+    string init = MFrontBehaviourParserCommon::getBehaviourConstructorsInitializers();
+    if(!init.empty()){
+      init += ",\n";
+    }
+    init += "zeros(real(0)),\nfzeros(real(0))";
+    return init;
   }
 
-  void MFrontImplicitParserBase::writeBehaviourParserSpecificConstructorPart(void)
+  void MFrontImplicitParserBase::writeBehaviourParserSpecificInitializeMethodPart(void)
   {
     VariableDescriptionContainer::const_iterator p;
     SupportedTypes::TypeSize n;

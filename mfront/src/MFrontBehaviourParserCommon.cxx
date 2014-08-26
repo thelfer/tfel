@@ -25,11 +25,84 @@
 #include"MFront/MFrontSearchFile.hxx"
 #include"MFront/MFrontMaterialLawParser.hxx"
 #include"MFront/MFrontBehaviourVirtualInterface.hxx"
+#include"MFront/MFrontMFrontLawInterface.hxx"
 #include"MFront/MFrontBehaviourInterfaceFactory.hxx"
 
 #include"MFront/MFrontBehaviourParserCommon.hxx"
 
 namespace mfront{
+
+  static void
+  MFrontBehaviourParserCommonCheckIfNameIsAnEntryNameOrAGlossaryName(const std::map<std::string,std::string>& g,
+								     const std::map<std::string,std::string>& e,
+								     const std::string& n)
+  {
+    using namespace std;
+    map<string,string>::const_iterator p;
+    for(p=g.begin();p!=g.end();++p){
+      if(p->second==n){
+	string msg("MFrontBehaviourParserCommonCheckIfNameIsAnEntryNameOrAGlossaryName : ");
+	msg += "name '"+n+"' is already used as a glossary name";
+	throw(runtime_error(msg));
+      }
+    }
+    for(p=e.begin();p!=e.end();++p){
+      if(p->second==n){
+	string msg("MFrontBehaviourParserCommonCheckIfNameIsAnEntryNameOrAGlossaryName : ");
+	msg += "name '"+n+"' is already used as an entry name";
+	throw(runtime_error(msg));
+      }
+    }
+  }
+
+  /*!
+   * search a value in a map.
+   * \return an iterator to the element holding the value if it is found
+   * \param[in] n : value searched
+   * \param[in] m : map
+   */
+  static std::map<std::string,std::string>::const_iterator
+  MFrontBehaviourParserCommonFindInMapValues(const std::string& n,
+					     const std::map<std::string,std::string>& m)
+  {
+    using namespace std;
+    map<string,string>::const_iterator p;
+    for(p=m.begin();p!=m.end();++p){
+      if(p->second==n){
+	return p;
+      }
+    }
+    return p;
+  } // end of MFrontBehaviourParserCommon::findInMapValues
+
+  /*!
+   * an internal function looking inside the glossary names and the
+   * entry names if the given name was registred.
+   * \param[in] n  : name searched
+   * \param[in] gn : glossary names
+   * \param[in] en : entry names
+   */
+  static std::string
+  MFrontBehaviourParserCommonGetVariableNameFromGlossaryName(const std::string& n,
+							     const std::map<std::string,std::string>& gn,
+							     const std::map<std::string,std::string>& en)
+  {
+    using namespace std;
+    map<string,string>::const_iterator p;
+    cout << "MFrontBehaviourParserCommonGetVariableNameFromGlossaryName : " << n << endl;
+    p = MFrontBehaviourParserCommonFindInMapValues(n,gn);
+    if(p!=gn.end()){
+      return p->first;
+    }
+    p = MFrontBehaviourParserCommonFindInMapValues(n,en);
+    if(p!=en.end()){
+      return p->first;
+    }
+    string msg("MFrontBehaviourParserCommonGetVariableNameFromGlossaryName : "
+	       "no glossary name of entry name associated with '"+n+"'");
+    throw(runtime_error(msg));
+    return "";
+  }
 
   tfel::material::ModellingHypothesis::Hypothesis
   MFrontBehaviourParserCommon::getModellingHypothesisFromString(const std::string& h)
@@ -171,12 +244,81 @@ namespace mfront{
       interface->setWarningMode();
     }
   }
-  
+
+
+  void
+  MFrontBehaviourParserCommon::analyseMaterialProperty(const MaterialPropertyDescription& a)
+  {
+    using namespace std;
+    typedef map<string,string>::value_type MVType;
+    for(VariableDescriptionContainer::const_iterator p = a.inputs.begin();p!=a.inputs.end();++p){
+      const VariableDescription& v = *p;
+      if((a.glossaryNames.find(v.name)==a.glossaryNames.end())&&
+	 (a.entryNames.find(v.name)==a.entryNames.end())){
+	string msg("MFrontBehaviourParserCommon::analyseMaterialProperty : "
+		   "no glossary name declared for variable '"+v.name+
+		   "' used by the material property '"+a.law+"'");
+	throw(runtime_error(msg));
+      }
+      const string& in = p->getGlossaryName(a.glossaryNames,a.entryNames);
+      if(in!="Temperature"){
+	if((MFrontBehaviourParserCommonFindInMapValues(in,this->glossaryNames)!=
+	    this->glossaryNames.end())||
+	   (MFrontBehaviourParserCommonFindInMapValues(in,this->entryNames)!=
+	    this->entryNames.end())){
+	  // a variable with the good glossary name has been found
+	  const string& n  = MFrontBehaviourParserCommonGetVariableNameFromGlossaryName(in,this->glossaryNames,
+											this->entryNames);
+	  if(this->isNameReserved(n)){
+	    if(!((this->mb.isMaterialPropertyName(n))||
+		 (this->mb.isExternalStateVariableName(n))||
+		 (this->mb.isParameterName(n))||
+		 (this->mb.isStaticVariableName(n)))){
+	      string msg("MFrontBehaviourParserCommon::analyseMaterialProperty : "
+			 "variable '"+n+"' required for the material property '"+a.law+"' "
+			 "has been declared but is neither a material property nor an "
+			 "external state variable nor a parameter nor a static variable");
+	      throw(runtime_error(msg));
+	    }
+	  } else {
+	    string msg("MFrontBehaviourParserCommon::analyseMaterialProperty : "
+		       "internal error (name '"+n+"' has not been declared but exists in the glossary");
+	    throw(runtime_error(msg));
+	  }
+	} else {
+	  // trying to declared a new variable
+	  const string nn = a.law+"_"+v.name;
+	  this->registerVariable(nn);
+	  this->mb.getExternalStateVariables().push_back(VariableDescription("real",nn,1u,0u));
+	  this->mb.setUsableInPurelyImplicitResolution(false);
+	  // registring glossary name or entry name
+	  MFrontBehaviourParserCommonCheckIfNameIsAnEntryNameOrAGlossaryName(this->glossaryNames,
+									     this->entryNames,in);
+	  if(a.glossaryNames.find(v.name)==a.glossaryNames.end()){
+	    if(!this->glossaryNames.insert(MVType(nn,in)).second){
+	      string msg("MFrontBehaviourParserCommon::analyseMaterialProperty : ");
+	      msg += "glossary name for variable '"+nn+"' already specified";
+	      throw(runtime_error(msg));
+	    }
+	  } else {
+	    if(!this->entryNames.insert(MVType(nn,in)).second){
+	      string msg("MFrontBehaviourParserCommon::analyseMaterialProperty : ");
+	      msg += "entry name for variable '"+nn+"' already specified";
+	      throw(runtime_error(msg));
+	    }
+	  }
+	}
+      }
+    }
+  } // end of MFrontBehaviourParserCommon::analyseMaterialProperty
+
   void
   MFrontBehaviourParserCommon::endsInputFileProcessing()
   {
     using namespace std;
+    using tfel::utilities::shared_ptr;
     typedef MFrontBehaviourInterfaceFactory MBIF;
+    typedef map<string,double>::value_type MVType;
     MBIF& mbif = MBIF::getMFrontBehaviourInterfaceFactory();
     vector<string>::const_iterator i;
     if(this->mb.getHypotheses().empty()){
@@ -187,6 +329,41 @@ namespace mfront{
 		 "no modelling hypothesis defined by the user and "
 		 "no default modelling hypothesis");
       throw(runtime_error(msg));
+    }
+    // thermal expansion
+    if(this->mb.areThermalExpansionCoefficientsDefined()){
+      const vector<shared_ptr<MaterialPropertyDescription> >& acs =
+	this->mb.getThermalExpansionCoefficients();
+      if(this->mb.getSymmetryType()==mfront::ISOTROPIC){
+	if(acs.size()!=1u){
+	  string msg("MFrontBehaviourParserCommon::endsInputFileProcessing : "
+		     "unexpected number of thermal expansion coefficients");
+	  throw(runtime_error(msg));
+	}
+	this->analyseMaterialProperty(*(acs[0]));
+      } else if(this->mb.getSymmetryType()==mfront::ORTHOTROPIC){
+	if(acs.size()!=3u){
+	  string msg("MFrontBehaviourParserCommon::endsInputFileProcessing : "
+		     "unexpected number of thermal expansion coefficients");
+	  throw(runtime_error(msg));
+	}
+	this->analyseMaterialProperty(*(acs[0]));
+	this->analyseMaterialProperty(*(acs[1]));
+	this->analyseMaterialProperty(*(acs[2]));
+      } else {
+	string msg("MFrontBehaviourParserCommon::endsInputFileProcessing : "
+		   "unexpected symmetry type");
+	throw(runtime_error(msg));
+      }
+      if(!this->mb.getParameters().contains("referenceTemperatureForThermalExpansion")){
+	this->registerVariable("referenceTemperatureForThermalExpansion");
+	this->mb.getParameters().push_back(VariableDescription("real","referenceTemperatureForThermalExpansion",
+							       1u,0u));
+      	if(!this->mb.getParametersDefaultValues().insert(MVType("referenceTemperatureForThermalExpansion",293.15)).second){
+	  this->throwRuntimeError("MFrontBehaviourParserCommon::endsInputFileProcessing",
+				  "default value already defined for parameter 'referenceTemperatureForThermalExpansion'");
+	}
+      }
     }
     for(i  = this->interfaces.begin();
 	i != this->interfaces.end();++i){
@@ -298,29 +475,6 @@ namespace mfront{
     return var;
   } // end of MFrontBehaviourParserCommon::standardModifier
     
-  static void
-  MFrontBehaviourParserCommonCheckIfNameIsAnEntryNameOrAGlossaryName(const std::map<std::string,std::string>& g,
-								     const std::map<std::string,std::string>& e,
-								     const std::string& n)
-  {
-    using namespace std;
-    map<string,string>::const_iterator p;
-    for(p=g.begin();p!=g.end();++p){
-      if(p->second==n){
-	string msg("MFrontBehaviourParserCommonCheckIfNameIsAnEntryNameOrAGlossaryName : ");
-	msg += "name '"+n+"' is already used as a glossary name";
-	throw(runtime_error(msg));
-      }
-    }
-    for(p=e.begin();p!=e.end();++p){
-      if(p->second==n){
-	string msg("MFrontBehaviourParserCommonCheckIfNameIsAnEntryNameOrAGlossaryName : ");
-	msg += "name '"+n+"' is already used as an entry name";
-	throw(runtime_error(msg));
-      }
-    }
-  }
-
   void
   MFrontBehaviourParserCommon::treatMaterial(void)
   {
@@ -336,32 +490,67 @@ namespace mfront{
   } // end of MFrontBehaviourParserCommon::treatMaterial
 
   void
-  MFrontBehaviourParserCommon::treatThermalExpansion(void)
+  MFrontBehaviourParserCommon::treatComputeThermalExpansion(void)
   {
     using namespace std;
-    const string m("MFrontBehaviourParserCommon::treatThermalExpansion");
-    const string& f = MFrontSearchFile::search(this->readString(m));
+    using tfel::utilities::shared_ptr;
+    const string m("MFrontBehaviourParserCommon::treatComputeThermalExpansion");
+    const vector<string>& files = this->readStringOrArrayOfString(m);
     this->readSpecifiedToken(m,";");
-    const MaterialPropertyDescription& a = this->handleMaterialLaw(f);
-    if(!a.staticVars.contains("ReferenceTemperature")){
-      if(this->warningMode){
-	cout  << "no reference temperature in material property '";
-	if(a.material.empty()){
-	  cout << a.material << '_';
-	}
-	cout << a.law << "'" << endl;
+    if((files.size()!=1u)&&(files.size()!=3u)){
+      this->throwRuntimeError("MFrontBehaviourParserCommon::treatComputeThermalExpansion",
+			      "invalid number of file names given");
+    }
+    if(files.size()==1u){
+      // the material shall have been declared isotropic
+      if(this->mb.getSymmetryType()!=mfront::ISOTROPIC){
+	this->throwRuntimeError("MFrontBehaviourParserCommon::treatComputeThermalExpansion",
+				"the mechanical behaviour must be isotropic to give more than "
+				"one thermal expansion coefficient.");
       }
     }
-    for(VariableDescriptionContainer::const_iterator pi=a.inputs.begin();
-    	pi!=a.inputs.end();++pi){
-      cout << pi->getGlossaryName(a.glossaryNames,
-				  a.entryNames) << endl;
+    if(files.size()==3u){
+      // the material shall have been declared orthotropic
+      if(this->mb.getSymmetryType()!=mfront::ORTHOTROPIC){
+	this->throwRuntimeError("MFrontBehaviourParserCommon::treatComputeThermalExpansion",
+				"the mechanical behaviour must be orthotropic to give more than "
+				"one thermal expansion coefficient.");
+      }
     }
-    
-    // cout << "output : " << a.output << endl;
-    // cout << "inputs : ";
-    // cout << endl;
-  } // end of MFrontBehaviourParserCommon::treatThermalExpansion
+    vector<shared_ptr<MaterialPropertyDescription> > acs;
+    for(vector<string>::const_iterator p=files.begin();p!=files.end();++p){
+      const string& f = MFrontSearchFile::search(*p);
+      shared_ptr<MaterialPropertyDescription> a;
+      a = shared_ptr<MaterialPropertyDescription>(new MaterialPropertyDescription(this->handleMaterialLaw(f)));
+      if(!a->staticVars.contains("ReferenceTemperature")){
+	if(this->warningMode){
+	  cout  << "no reference temperature in material property '";
+	  if(a->material.empty()){
+	    cout << a->material << '_';
+	  }
+	  cout << a->law << "'" << endl;
+	}
+      }
+      if(!((a->inputs.size())||(a->inputs.size()!=1u))){
+	this->throwRuntimeError("MFrontBehaviourParserCommon::treatComputeThermalExpansion : ",
+				"thermal expansion shall only depend on temperature");
+      }
+      if(a->inputs.size()==1u){
+	const VariableDescription& v =  a->inputs.front();
+	const string& vn = v.getGlossaryName(a->glossaryNames,a->entryNames);
+	if(vn!="Temperature"){
+	  this->throwRuntimeError("MFrontBehaviourParserCommon::treatComputeThermalExpansion : ",
+				  "thermal expansion shall only depend on temperature");
+	}
+      }
+      acs.push_back(a);
+    }
+    if(acs.size()==1u){
+      this->mb.setThermalExpansionCoefficient(acs.front());
+    } else {
+      this->mb.setThermalExpansionCoefficients(acs[0],acs[1],acs[2]);
+    }
+  } // end of MFrontBehaviourParserCommon::treatComputeThermalExpansion
 
   void
   MFrontBehaviourParserCommon::treatModellingHypothesis(void)
@@ -709,12 +898,12 @@ namespace mfront{
   } // end of MFrontBehaviourParserCommon::treatRequireStiffnessOperator
 
   void
-  MFrontBehaviourParserCommon::treatRequireThermalExpansionTensor(void)
+  MFrontBehaviourParserCommon::treatRequireThermalExpansionCoefficientTensor(void)
   {
     using namespace std;
-    this->readSpecifiedToken("MFrontBehaviourParserCommon::treatRequireThermalExpansionTensor",";");
-    this->mb.setRequireThermalExpansionTensor(true);
-  } // end of MFrontBehaviourParserCommon::treatRequireThermalExpansionTensor
+    this->readSpecifiedToken("MFrontBehaviourParserCommon::treatRequireThermalExpansionCoefficientTensor",";");
+    this->mb.setRequireThermalExpansionCoefficientTensor(true);
+  } // end of MFrontBehaviourParserCommon::treatRequireThermalExpansionCoefficientTensor
 
   void
   MFrontBehaviourParserCommon::updateClassName(void)
@@ -1057,6 +1246,7 @@ namespace mfront{
     this->reserveName("integrate");
     this->reserveName("computeStress");
     this->reserveName("computeFinalStress");
+    this->reserveName("computeStressFreeExpansion");
     this->reserveName("computeFdF");
     this->reserveName("computeFdF_ok");
     this->reserveName("updateStateVars");
@@ -1067,7 +1257,47 @@ namespace mfront{
     this->reserveName("computePredictionOperator");
     this->reserveName("computeTangentOperator_");
     this->reserveName("smt");
-    this->reserveName("hypothesis");
+    this->reserveName("dl_l0");
+    this->reserveName("dl_l1");
+    this->reserveName("dl_l01");
+    this->reserveName("alpha_Ti");
+    this->reserveName("alpha0_Ti");
+    this->reserveName("alpha1_Ti");
+    this->reserveName("alpha2_Ti");
+    this->reserveName("alpha_T_t");
+    this->reserveName("alpha_T_t_dt");
+    this->reserveName("alpha0_T_t");
+    this->reserveName("alpha0_T_t_dt");
+    this->reserveName("alpha1_T_t");
+    this->reserveName("alpha1_T_t_dt");
+    this->reserveName("alpha2_T_t");
+    this->reserveName("alpha2_T_t_dt");
+    this->reserveName("time");
+    this->reserveName("frequency");
+    this->reserveName("stress");
+    this->reserveName("strain");
+    this->reserveName("strainrate");
+    this->reserveName("stressrate");
+    this->reserveName("temperature");
+    this->reserveName("thermalexpansion");
+    this->reserveName("density");
+    this->reserveName("TVector");
+    this->reserveName("Stensor");
+    this->reserveName("Stensor4");
+    this->reserveName("FrequencyStensor");
+    this->reserveName("ForceTVector");
+    this->reserveName("StressStensor");
+    this->reserveName("StressRateStensor");
+    this->reserveName("DisplacementTVector");
+    this->reserveName("StrainStensor");
+    this->reserveName("StrainRateStensor");
+    this->reserveName("StiffnessTensor");
+    this->reserveName("Tensor");
+    this->reserveName("ThermalExpansionCoefficientTensor");
+    this->reserveName("DeformationGradientTensor");
+    this->reserveName("FiniteStrainStiffnessTensor");
+    this->reserveName("StiffnessOperator");
+    this->reserveName("StressFreeExpansionType");
   } // end of MFrontBehaviourParserCommon::registerDefaultVarNames
 
   MFrontBehaviourParserCommon::MFrontBehaviourParserCommon()
@@ -1158,31 +1388,31 @@ namespace mfront{
     } else {
       file << "typedef tfel::config::Types<N,Type,false> Types;\n";
     }
-    file << "typedef typename Types::real                        real;\n";
-    file << "typedef typename Types::time                        time;\n";
-    file << "typedef typename Types::frequency                   frequency;\n";
-    file << "typedef typename Types::stress                      stress;\n";
-    file << "typedef typename Types::strain                      strain;\n";
-    file << "typedef typename Types::strainrate                  strainrate;\n";
-    file << "typedef typename Types::stressrate                  stressrate;\n";
-    file << "typedef typename Types::temperature                 temperature;\n";
-    file << "typedef typename Types::thermalexpansion            thermalexpansion;\n";
-    file << "typedef typename Types::density                     density;\n";
-    file << "typedef typename Types::TVector                     TVector;\n";
-    file << "typedef typename Types::Stensor                     Stensor;\n";
-    file << "typedef typename Types::Stensor4                    Stensor4;\n";
-    file << "typedef typename Types::FrequencyStensor            FrequencyStensor;\n";
-    file << "typedef typename Types::ForceTVector                ForceTVector;\n";
-    file << "typedef typename Types::StressStensor               StressStensor;\n";
-    file << "typedef typename Types::StrainRateStensor           StressRateStensor;\n";
-    file << "typedef typename Types::DisplacementTVector         DisplacementTVector;\n";
-    file << "typedef typename Types::StrainStensor               StrainStensor;\n";
-    file << "typedef typename Types::StrainRateStensor           StrainRateStensor;\n";
-    file << "typedef typename Types::StiffnessTensor             StiffnessTensor;\n";
-    file << "typedef typename Types::Tensor                      Tensor;\n";
-    file << "typedef typename Types::ThermalExpansionTensor      ThermalExpansionTensor;\n";
-    file << "typedef typename Types::DeformationGradientTensor   DeformationGradientTensor;\n";
-    file << "typedef typename Types::FiniteStrainStiffnessTensor FiniteStrainStiffnessTensor;\n";
+    file << "typedef typename Types::real                              real;\n";
+    file << "typedef typename Types::time                              time;\n";
+    file << "typedef typename Types::frequency                         frequency;\n";
+    file << "typedef typename Types::stress                            stress;\n";
+    file << "typedef typename Types::strain                            strain;\n";
+    file << "typedef typename Types::strainrate                        strainrate;\n";
+    file << "typedef typename Types::stressrate                        stressrate;\n";
+    file << "typedef typename Types::temperature                       temperature;\n";
+    file << "typedef typename Types::thermalexpansion                  thermalexpansion;\n";
+    file << "typedef typename Types::density                           density;\n";
+    file << "typedef typename Types::TVector                           TVector;\n";
+    file << "typedef typename Types::Stensor                           Stensor;\n";
+    file << "typedef typename Types::Stensor4                          Stensor4;\n";
+    file << "typedef typename Types::FrequencyStensor                  FrequencyStensor;\n";
+    file << "typedef typename Types::ForceTVector                      ForceTVector;\n";
+    file << "typedef typename Types::StressStensor                     StressStensor;\n";
+    file << "typedef typename Types::StrainRateStensor                 StressRateStensor;\n";
+    file << "typedef typename Types::DisplacementTVector               DisplacementTVector;\n";
+    file << "typedef typename Types::StrainStensor                     StrainStensor;\n";
+    file << "typedef typename Types::StrainRateStensor                 StrainRateStensor;\n";
+    file << "typedef typename Types::StiffnessTensor                   StiffnessTensor;\n";
+    file << "typedef typename Types::Tensor                            Tensor;\n";
+    file << "typedef typename Types::ThermalExpansionCoefficientTensor ThermalExpansionCoefficientTensor;\n";
+    file << "typedef typename Types::DeformationGradientTensor         DeformationGradientTensor;\n";
+    file << "typedef typename Types::FiniteStrainStiffnessTensor       FiniteStrainStiffnessTensor;\n";
     // tangent operator
     file << "typedef " << this->mb.getStiffnessOperatorType() << " StiffnessOperator;\n";
   } // end of MFrontBehaviourParserCommon::writeStandardTFELTypedefs
@@ -1295,8 +1525,8 @@ namespace mfront{
     if(this->mb.requiresStiffnessOperator()){
       this->behaviourDataFile << "StiffnessOperator D;\n";
     }
-    if(this->mb.requiresThermalExpansionTensor()){
-      this->behaviourDataFile << "ThermalExpansionTensor A;\n";
+    if(this->mb.requiresThermalExpansionCoefficientTensor()){
+      this->behaviourDataFile << "ThermalExpansionCoefficientTensor A;\n";
     }
     for(p3=this->mb.getMainVariables().begin();p3!=this->mb.getMainVariables().end();++p3){
       if(p3->first.increment_known){
@@ -1384,7 +1614,7 @@ namespace mfront{
     if(this->mb.requiresStiffnessOperator()){
       this->behaviourDataFile << "D(src.D),\n";
     }
-    if(this->mb.requiresThermalExpansionTensor()){
+    if(this->mb.requiresThermalExpansionCoefficientTensor()){
       this->behaviourDataFile << "A(src.A),\n";
     }
     for(p3=this->mb.getMainVariables().begin();p3!=this->mb.getMainVariables().end();++p3){
@@ -1563,12 +1793,12 @@ namespace mfront{
       this->behaviourDataFile << "getStiffnessOperator(void) const\n";
       this->behaviourDataFile << "{\nreturn this->D;\n}\n\n";
     }
-    if(this->mb.requiresThermalExpansionTensor()){
-      this->behaviourDataFile << "ThermalExpansionTensor&\n";
-      this->behaviourDataFile << "getThermalExpansionTensor(void)\n";
+    if(this->mb.requiresThermalExpansionCoefficientTensor()){
+      this->behaviourDataFile << "ThermalExpansionCoefficientTensor&\n";
+      this->behaviourDataFile << "getThermalExpansionCoefficientTensor(void)\n";
       this->behaviourDataFile << "{\nreturn this->A;\n}\n\n";
-      this->behaviourDataFile << "const ThermalExpansionTensor&\n";
-      this->behaviourDataFile << "getThermalExpansionTensor(void) const\n";
+      this->behaviourDataFile << "const ThermalExpansionCoefficientTensor&\n";
+      this->behaviourDataFile << "getThermalExpansionCoefficientTensor(void) const\n";
       this->behaviourDataFile << "{\nreturn this->A;\n}\n\n";
     }
   } // end of MFrontBehaviourParserCommon::writeBehaviourDataPublicMembers
@@ -1752,6 +1982,7 @@ namespace mfront{
     this->behaviourDataFile << "public:" << endl << endl;
     this->writeBehaviourDataDisabledConstructors();
     this->writeBehaviourDataConstructors();
+    this->writeBehaviourDataMainVariablesSetters();
     this->writeBehaviourDataPublicMembers();
     this->writeBehaviourDataAssignementOperator();
     this->writeBehaviourDataExport();
@@ -2034,25 +2265,32 @@ namespace mfront{
     this->behaviourFile << "} // end of checkBounds\n\n";
   } // end of MFrontBehaviourParserCommon::writeBehaviourCheckBounds(void)
 
-  void MFrontBehaviourParserCommon::writeBehaviourConstructors(void)
-  {    
+  std::string
+  MFrontBehaviourParserCommon::getBehaviourConstructorsInitializers(void)
+  {
     using namespace std;
-    ostringstream init;
-    this->writeStateVariableIncrementsInitializers(init,this->mb.getStateVariables(),
-						   this->useStateVarTimeDerivative);
+    // variable initialisation
+    string init;
+    init = this->getStateVariableIncrementsInitializers(this->mb.getStateVariables(),
+							this->useStateVarTimeDerivative);    
     if(!this->localVariablesInitializers.empty()){
-      init << ",\n" << this->localVariablesInitializers;
+      if(!init.empty()){
+	init += ",\n";
+      }
+      init += this->localVariablesInitializers;
     }
-    this->writeBehaviourConstructors(init.str());
-  }
+    return init;
+  } // end of MFrontBehaviourParserCommon::getBehaviourConstructorsInitializers
 
-  void MFrontBehaviourParserCommon::writeBehaviourConstructors(const std::string& init,
-							       const std::string& predictor)
+  void MFrontBehaviourParserCommon::writeBehaviourConstructors(void)
   {    
     using namespace std;
     typedef MFrontBehaviourInterfaceFactory MBIF;
     MBIF& mbif = MBIF::getMFrontBehaviourInterfaceFactory();
     this->checkBehaviourFile();
+    // initializers
+    const string& init = this->getBehaviourConstructorsInitializers();;
+    // writing constructors
     this->behaviourFile << "/*!\n";
     this->behaviourFile << "* \\brief Constructor\n";
     this->behaviourFile << "*/\n";
@@ -2079,7 +2317,9 @@ namespace mfront{
       this->behaviourFile << this->className 
 			  << "IntegrationData<N,Type,false>(src2)";
     }
-    this->behaviourFile << init;
+    if(!init.empty()){
+      this->behaviourFile << ",\n" <<init;
+    }
     this->behaviourFile << "\n{\n";
     this->behaviourFile << "using namespace std;\n";
     this->behaviourFile << "using namespace tfel::math;\n";
@@ -2088,52 +2328,8 @@ namespace mfront{
 		      this->behaviourFile,this->materialLaws);
     this->writeBehaviourParameterInitialisation();
     this->writeBehaviourLocalVariablesInitialisation();
-    if(!this->initLocalVars.empty()){
-      this->behaviourFile << this->initLocalVars;
-    }
-    if(!predictor.empty()){
-      this->behaviourFile << predictor;
-    }
-    this->writeBehaviourParserSpecificConstructorPart();
     this->behaviourFile << "}\n\n";
-    // this->behaviourFile << "/*!\n";
-    // this->behaviourFile << "* \\brief Constructor\n";
-    // this->behaviourFile << "*/\n";
-    // if(this->mb.useQt()){        
-    //   this->behaviourFile << this->className << "("
-    // 			  << "const MechanicalBehaviourData<N,Type,use_qt>& src1,\n"
-    // 			  << "const MechanicalIntegrationData<N,Type,use_qt>& src2)\n";
-    //   this->behaviourFile << ": " << this->className 
-    // 			  << "BehaviourData<N,Type,use_qt>(src1),\n";
-    //   this->behaviourFile << this->className 
-    // 			  << "IntegrationData<N,Type,use_qt>(src2)";
-    // } else {
-    //   this->behaviourFile << this->className << "("
-    // 			  << "const MechanicalBehaviourData<N,Type,false>& src1,\n"
-    // 			  << "const MechanicalIntegrationData<N,Type,false>& src2)\n";
-    //   this->behaviourFile << ": " << this->className 
-    // 			  << "BehaviourData<N,Type,false>(src1),\n";
-    //   this->behaviourFile << this->className 
-    // 			  << "IntegrationData<N,Type,false>(src2)";
-    // }
-    // this->behaviourFile << init;
-    // this->behaviourFile << "\n{\n";
-    // this->behaviourFile << "using namespace std;\n";
-    // this->behaviourFile << "using namespace tfel::math;\n";
-    // this->behaviourFile << "using std::vector;\n";
-    // writeMaterialLaws("MFrontBehaviourParserCommon::writeBehaviourConstructors",
-    // 		      this->behaviourFile,this->materialLaws);		      
-    // this->writeBehaviourParameterInitialisation();
-    // this->writeBehaviourLocalVariablesInitialisation();
-    // if(!this->initLocalVars.empty()){
-    //   this->behaviourFile << this->initLocalVars;
-    // } 
-    // if(!predictor.empty()){
-    //   this->behaviourFile << predictor;
-    // }
-    // this->writeBehaviourParserSpecificConstructorPart();
-    // this->behaviourFile << "}\n\n";
-    // Creating constructor for external interfaces
+    // constructor specific to interfaces
     vector<string>::const_iterator i;
     for(i  = this->interfaces.begin();
 	i != this->interfaces.end();++i){
@@ -2149,16 +2345,177 @@ namespace mfront{
 			this->behaviourFile,this->materialLaws);		      
       this->writeBehaviourParameterInitialisation();
       this->writeBehaviourLocalVariablesInitialisation();
-      if(!this->initLocalVars.empty()){
-	this->behaviourFile << this->initLocalVars;
-      }
-      if(!predictor.empty()){
-	this->behaviourFile << predictor;
-      }
-      this->writeBehaviourParserSpecificConstructorPart();
       this->behaviourFile << "}\n\n";
     }
   }
+
+  static void
+  MFrontBehaviourParserCommonWriteThermalExpansionCoefficientComputation(std::ostream& out,
+									 const MaterialPropertyDescription& a,
+									 const std::string& T,
+									 const std::string& i,
+									 const std::string& suffix)
+  {
+    using namespace std;
+    MFrontMFrontLawInterface minterface;
+    const string& mname = minterface.getFunctionName(a.material,a.law);
+    out << "const thermalexpansion alpha" << suffix;
+    if(!i.empty()){
+      out << "_" << i;
+    }
+    out <<  "  = " << mname << "(";
+    if(!a.inputs.empty()){
+      if(a.inputs.size()!=1u){
+	string msg("MFrontBehaviourParserCommonWriteThermalExpansionCoefficientComputation : "
+		   "a thermal expansion shall only depend on the temperature");
+	throw(runtime_error(msg));
+      }
+      const VariableDescription& v = a.inputs.front();
+      const string& in = v.getGlossaryName(a.glossaryNames,a.entryNames);
+      if(in!="Temperature"){
+	string msg("MFrontBehaviourParserCommonWriteThermalExpansionCoefficientComputation : "
+		   "a thermal expansion shall only depend on the temperature");
+	throw(runtime_error(msg));
+      }
+      out << T;
+    }
+    out << ");" << endl;
+  } // end of MFrontBehaviourParserCommonWriteThermalExpansionCoefficientComputation
+
+  static void
+  MFrontBehaviourParserCommonWriteThermalExpansionCoefficientsComputations(std::ostream& out,
+									   const MaterialPropertyDescription& a,
+									   const std::string& suffix = "")
+  {
+    using namespace std;
+    if(a.inputs.empty()){
+      MFrontMFrontLawInterface minterface;
+      const string& mname = minterface.getFunctionName(a.material,a.law);
+      out << "const thermalexpansion alpha" << suffix << "_Ti        = " << mname << "();" << endl;
+      out << "const thermalexpansion alpha" << suffix << "_T_t       = " << mname << "();" << endl;
+      out << "const thermalexpansion alpha" << suffix << "_T_t_dt    = " << mname << "();" << endl;
+    } else {
+      MFrontBehaviourParserCommonWriteThermalExpansionCoefficientComputation(out,a,"this->referenceTemperatureForThermalExpansion",
+									     "",suffix+"_Ti");
+      MFrontBehaviourParserCommonWriteThermalExpansionCoefficientComputation(out,a,"this->T","t",suffix+"_T");
+      MFrontBehaviourParserCommonWriteThermalExpansionCoefficientComputation(out,a,"this->T+this->dT",
+									     "t_dt",suffix+"_T");
+    }
+  } // end of MFrontBehaviourParserCommonWriteThermalExpansionCoefficientComputation
+
+  static void
+  MFrontBehaviourParserCommonWriteThermalExpansionComputation(std::ostream& out,
+							      const MaterialPropertyDescription& a,
+							      const std::string& t,
+							      const std::string& c,
+							      const std::string& suffix = "")
+  {
+    using namespace std;
+    string Tref;
+    string T;
+    if(a.staticVars.contains("ReferenceTemperature")){
+      ostringstream Tref_value;
+      Tref_value << a.staticVars.get("ReferenceTemperature").value;
+      Tref = Tref_value.str();
+    } else {
+      Tref = "293.15";
+    }
+    if(t=="t"){
+      out << "dl_l0";
+      T = "this->T";
+    } else {
+      out << "dl_l1";
+      T = "this->T+this->dT";
+    }
+    out << "[" << c << "] = 1/(1+alpha" << suffix << "_Ti * (this->referenceTemperatureForThermalExpansion-" << Tref << "))*("
+	<< "alpha" << suffix << "_T_"  << t << " * (" << T << "-" << Tref << ")-"
+	<< "alpha" << suffix << "_Ti * (this->referenceTemperatureForThermalExpansion-" << Tref << "));" << endl;
+  }
+  
+  void MFrontBehaviourParserCommon::writeBehaviourComputeStressFreeExpansion(void)
+  {    
+    using namespace std;
+    using tfel::utilities::shared_ptr;
+    bool b = this->mb.areThermalExpansionCoefficientsDefined();
+    if(b){
+      if(!((this->mb.getBehaviourType()==MechanicalBehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR)||
+	   (this->mb.getBehaviourType()==MechanicalBehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR))){
+	this->throwRuntimeError("MFrontBehaviourParserCommon::writeBehaviourComputeStressFreeExpansion",
+				"only finite strain or small strain behaviour are supported");
+      }
+      this->checkBehaviourFile();
+      this->behaviourFile << "void\n"
+			  << "computeStressFreeExpansion(std::pair<StressFreeExpansionType,StressFreeExpansionType>& dl_l01)\n{\n";
+      this->behaviourFile << "using namespace std;\n";
+      this->behaviourFile << "using namespace tfel::math;\n";
+      this->behaviourFile << "using std::vector;\n";
+      writeMaterialLaws("MFrontBehaviourParserCommon::writeBehaviourComputeStressFreeExpansion",
+			this->behaviourFile,this->materialLaws);		      
+      this->behaviourFile << "StressFreeExpansionType& dl_l0 = dl_l01.first;\n";
+      this->behaviourFile << "StressFreeExpansionType& dl_l1 = dl_l01.second;\n";
+      this->behaviourFile << "dl_l0 = StressFreeExpansionType(typename StressFreeExpansionType::value_type(0));\n";
+      this->behaviourFile << "dl_l1 = StressFreeExpansionType(typename StressFreeExpansionType::value_type(0));\n";
+      const vector<shared_ptr<MaterialPropertyDescription> >& acs =
+	this->mb.getThermalExpansionCoefficients();
+      if(this->mb.getSymmetryType()==mfront::ISOTROPIC){
+	if(acs.size()!=1u){
+	  this->throwRuntimeError("MFrontBehaviourParserCommon::writeBehaviourComputeStressFreeExpansion",
+				  "invalid number of thermal expansion coefficients");
+	}
+	MFrontBehaviourParserCommonWriteThermalExpansionCoefficientsComputations(this->behaviourFile,
+										 *(acs.front()));
+	MFrontBehaviourParserCommonWriteThermalExpansionComputation(this->behaviourFile,*(acs.front()),"t","0");
+	this->behaviourFile << "dl_l0[1] = dl_l0[0];" << endl
+			    << "dl_l0[2] = dl_l0[0];" << endl;
+	MFrontBehaviourParserCommonWriteThermalExpansionComputation(this->behaviourFile,*(acs.front()),"t_dt","0");
+	this->behaviourFile << "dl_l1[1] = dl_l1[0];" << endl
+			    << "dl_l1[2] = dl_l1[0];" << endl;
+      } else if(this->mb.getSymmetryType()==mfront::ORTHOTROPIC){
+	if(acs.size()!=3u){
+	  this->throwRuntimeError("MFrontBehaviourParserCommon::writeBehaviourComputeStressFreeExpansion",
+				  "invalid number of thermal expansion coefficients");
+	}
+	MFrontBehaviourParserCommonWriteThermalExpansionCoefficientsComputations(this->behaviourFile,
+										 *(acs[0]),"0");
+	MFrontBehaviourParserCommonWriteThermalExpansionCoefficientsComputations(this->behaviourFile,
+										 *(acs[1]),"1");
+	MFrontBehaviourParserCommonWriteThermalExpansionCoefficientsComputations(this->behaviourFile,
+										 *(acs[2]),"2");
+	MFrontBehaviourParserCommonWriteThermalExpansionComputation(this->behaviourFile,*(acs[0]),"t","0","0");
+	MFrontBehaviourParserCommonWriteThermalExpansionComputation(this->behaviourFile,*(acs[0]),"t_dt","0","0");
+	MFrontBehaviourParserCommonWriteThermalExpansionComputation(this->behaviourFile,*(acs[1]),"t","1","1");
+	MFrontBehaviourParserCommonWriteThermalExpansionComputation(this->behaviourFile,*(acs[1]),"t_dt","1","1");
+	MFrontBehaviourParserCommonWriteThermalExpansionComputation(this->behaviourFile,*(acs[2]),"t","2","2");
+	MFrontBehaviourParserCommonWriteThermalExpansionComputation(this->behaviourFile,*(acs[2]),"t_dt","2","2");
+      } else {
+	this->throwRuntimeError("MFrontBehaviourParserCommon::writeBehaviourComputeStressFreeExpansion",
+				"unsupported behaviour symmetry");
+      }
+      this->behaviourFile << "}\n\n";
+    }
+  } // end of MFrontBehaviourParserCommon::writeBehaviourComputeStressFreeExpansion
+
+  void MFrontBehaviourParserCommon::writeBehaviourInitializeMethod(void)
+  {    
+    this->checkBehaviourFile();
+    this->behaviourFile << "/*!\n"
+			<< " * \\ brief initialize the behaviour with user code\n"
+			<< " */\n"
+			<< "void initialize(void){\n";
+    this->behaviourFile << "using namespace std;\n";
+    this->behaviourFile << "using namespace tfel::math;\n";
+    this->behaviourFile << "using std::vector;\n";
+    writeMaterialLaws("MFrontBehaviourParserCommon::writeBehaviourInitializeMethod",
+		      this->behaviourFile,this->materialLaws);		      
+    if(!this->initLocalVars.empty()){
+      this->behaviourFile << this->initLocalVars;
+    }
+    if(!this->predictor.empty()){
+      this->behaviourFile << this->predictor;
+    }
+    this->writeBehaviourParserSpecificInitializeMethodPart();
+    this->behaviourFile << "}\n\n";
+  } // end of void MFrontBehaviourParserCommon::writeBehaviourInitializeMethod
 
   void
   MFrontBehaviourParserCommon::writeBehaviourLocalVariablesInitialisation()
@@ -2185,6 +2542,38 @@ namespace mfront{
       }
     }
   } // end of MFrontBehaviourParserCommon::writeBehaviourParameterInitialisation
+
+  void MFrontBehaviourParserCommon::writeBehaviourDataMainVariablesSetters(void)
+  {
+    using namespace std;
+    typedef MFrontBehaviourInterfaceFactory MBIF;
+    MBIF& mbif = MBIF::getMFrontBehaviourInterfaceFactory();
+    vector<string>::const_iterator i;
+    this->checkBehaviourDataFile();
+    for(i  = this->interfaces.begin();
+	i != this->interfaces.end();++i){
+      MFrontBehaviourVirtualInterface *interface = mbif.getInterfacePtr(*i);
+      interface->writeBehaviourDataMainVariablesSetters(this->behaviourDataFile,
+							this->mb);
+      this->behaviourDataFile << endl;
+    }
+  } // end of MFrontBehaviourParserCommon::writeBehaviourDataMainVariablesSetters
+
+  void MFrontBehaviourParserCommon::writeIntegrationDataMainVariablesSetters(void)
+  {
+    using namespace std;
+    typedef MFrontBehaviourInterfaceFactory MBIF;
+    MBIF& mbif = MBIF::getMFrontBehaviourInterfaceFactory();
+    vector<string>::const_iterator i;
+    this->checkIntegrationDataFile();
+    for(i  = this->interfaces.begin();
+	i != this->interfaces.end();++i){
+      MFrontBehaviourVirtualInterface *interface = mbif.getInterfacePtr(*i);
+      interface->writeIntegrationDataMainVariablesSetters(this->integrationDataFile,
+							  this->mb);
+      this->integrationDataFile << endl;
+    }
+  } // end of MFrontBehaviourParserCommon::writeIntegrationDataMainVariablesSetters
 
   void MFrontBehaviourParserCommon::writeBehaviourGetModellingHypothesis()
   {
@@ -2493,8 +2882,11 @@ namespace mfront{
       this->behaviourFile << "using MechanicalBehaviour<hypothesis,Type,false>::SUCCESS;\n";
       this->behaviourFile << "using MechanicalBehaviour<hypothesis,Type,false>::FAILURE;\n";
       this->behaviourFile << "using MechanicalBehaviour<hypothesis,Type,false>::UNRELIABLE_RESULTS;\n\n";
+      // type storing the stress-free expansion
     }
-    
+    if(this->mb.areThermalExpansionCoefficientsDefined()){
+      this->behaviourFile << "typedef " << this->mb.getStressFreeExpansionType()  << " StressFreeExpansionType;\n\n";
+    }
     this->behaviourFile << "private :\n\n";
   } // end of MFrontBehaviourParserCommon::writeBehaviourStandardTFELTypedefs
 
@@ -2610,6 +3002,16 @@ namespace mfront{
     } else {
       this->behaviourFile << "static const bool use_quantities = false;\n";
     }
+    if(this->mb.areThermalExpansionCoefficientsDefined()){
+      this->behaviourFile << "static const bool hasStressFreeExpansion = true;\n";    
+    } else {
+      this->behaviourFile << "static const bool hasStressFreeExpansion = false;\n";
+    }
+    if(this->mb.areThermalExpansionCoefficientsDefined()){
+      this->behaviourFile << "static const bool handlesThermalExpansion = true;\n";    
+    } else {
+      this->behaviourFile << "static const bool handlesThermalExpansion = false;\n";
+    }
     this->behaviourFile << "static const unsigned short dimension = N;\n";
     this->behaviourFile << "typedef Type NumType;\n";
     this->behaviourFile << "static const unsigned short material_properties_nb = ";
@@ -2716,7 +3118,7 @@ namespace mfront{
     
   } // end of MFrontBehaviourParserCommon::writeBehaviourParametersInitializer
 
-  void MFrontBehaviourParserCommon::writeBehaviourParserSpecificConstructorPart(void)
+  void MFrontBehaviourParserCommon::writeBehaviourParserSpecificInitializeMethodPart(void)
   {
     // Empty member meant to be overriden in Child if necessary
   }
@@ -2749,6 +3151,8 @@ namespace mfront{
     // from this point, all is public
     this->behaviourFile << "public:" << endl << endl;
     this->writeBehaviourConstructors();
+    this->writeBehaviourComputeStressFreeExpansion();
+    this->writeBehaviourInitializeMethod();
     this->writeBehaviourSetOutOfBoundsPolicy();
     this->writeBehaviourGetModellingHypothesis();
     this->writeBehaviourCheckBounds();
@@ -3284,6 +3688,7 @@ namespace mfront{
     this->writeIntegrationDataDisabledConstructors();
     this->integrationDataFile << "public:" << endl << endl;
     this->writeIntegrationDataConstructors();
+    this->writeIntegrationDataMainVariablesSetters();
     this->writeIntegrationDataScaleOperators();
     this->writeIntegrationDataClassEnd();
     this->writeNamespaceEnd(this->integrationDataFile);

@@ -104,6 +104,8 @@
 \item résolution implicite avec jacobienne par perturbation
 \item introduction des hypothèses de modélisation
 \item \mtest{}
+\item nouvelles classes {\tt tensor}, {\tt t2tot2}, {\tt st2tot2} et
+  {\tt t2tost2}
 \end{itemize}
 
 \referencecea{}

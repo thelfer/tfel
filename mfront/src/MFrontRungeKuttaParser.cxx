@@ -383,11 +383,6 @@ namespace mfront{
     this->readSpecifiedToken("MFrontRungeKuttaParser::treatAlgorithm",";");
   }
 
-  void MFrontRungeKuttaParser::writeBehaviourParserSpecificConstructorPart(void)
-    {
-    this->checkBehaviourFile();
-  }
-
   std::string
   MFrontRungeKuttaParser::getName(void)
   {
@@ -502,11 +497,11 @@ namespace mfront{
       }
 
     }
-    this->initLocalVars = parserInitLocalVars;
     if((this->algorithm!="RungeKutta4/2")&&
        (this->algorithm!="RungeKutta5/4")){
       parserInitLocalVars += "this->computeStress();\n";
     }
+    this->initLocalVars = parserInitLocalVars;
     // minimal tangent operator
     if(!this->hasConsistantTangentOperator){
       if(this->mb.requiresStiffnessOperator()){

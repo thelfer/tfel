@@ -54,8 +54,8 @@ namespace mfront
 	    tmp.push_back("YoungModulus2");
 	    tmp.push_back("YoungModulus3");
 	    tmp.push_back("PoissonRatio12");
-	    tmp.push_back("PoissonRatio13");
 	    tmp.push_back("PoissonRatio23");
+	    tmp.push_back("PoissonRatio13");
 	  }
 	  if(to){
 	    tmp.push_back("ThermalExpansion1");

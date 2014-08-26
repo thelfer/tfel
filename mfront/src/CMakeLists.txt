@@ -23,6 +23,7 @@ set(mfront_SOURCES
     MFrontInitParsers.cxx
     MFrontParserFactory.cxx
     DrivingVariable.cxx
+    MaterialPropertyDescription.cxx
     MechanicalBehaviourDescription.cxx
     BoundsDescription.cxx
     VariableDescription.cxx
@@ -102,11 +103,12 @@ if(HAVE_CASTEM)
 	UMATInterfaceBase.cxx
 	UMATFiniteStrain.cxx
 	UMATComputeStiffnessOperator.cxx
-	UMATComputeThermalExpansionTensor.cxx
+	UMATComputeThermalExpansionCoefficientTensor.cxx
 	UMATRotationMatrix.cxx
 	UMATTangentOperator.cxx
 	UMATOutOfBoundsPolicy.cxx
 	UMATGetModellingHypothesis.cxx
+	UMATStressFreeExpansionHandler.cxx
 	UMATException.cxx)
     tfel_library(UMATInterface ${UMATInterface_SOURCES})
     target_link_libraries(UMATInterface
@@ -124,7 +126,8 @@ if(HAVE_ASTER)
     AsterException.cxx
     AsterRotationMatrix.cxx
     AsterComputeStiffnessOperator.cxx
-    AsterComputeThermalExpansionTensor.cxx
+    AsterStressFreeExpansionHandler.cxx
+    AsterComputeThermalExpansionCoefficientTensor.cxx
     AsterTangentOperator.cxx)
   tfel_library(AsterInterface ${AsterInterface_SOURCES})
   target_link_libraries(AsterInterface
@@ -141,7 +144,7 @@ if(HAVE_CYRANO)
         CyranoException.cxx
         CyranoInterfaceBase.cxx
 	CyranoComputeStiffnessOperator.cxx
-	CyranoComputeThermalExpansionTensor.cxx
+	CyranoComputeThermalExpansionCoefficientTensor.cxx
 	CyranoOutOfBoundsPolicy.cxx
 	CyranoGetModellingHypothesis.cxx)
     tfel_library(CyranoInterface ${CyranoInterface_SOURCES})

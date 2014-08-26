@@ -25,11 +25,15 @@ namespace umat{
   template<typename Behaviour>
   struct UMATTraits{
     static const UMATBehaviourType btype = umat::SMALLSTRAINSTANDARDBEHAVIOUR;
+    // size of the driving variable array (STRAN)
+    static const unsigned short DrivingVariableSize = 0u;
+    // size of the thermodynamic force variable array (STESS)
+    static const unsigned short ThermodynamicForceVariableSize = 0u;
     static const bool useTimeSubStepping = false;
     static const bool doSubSteppingOnInvalidResults  = false;
     static const unsigned short maximumSubStepping   = 0u;
     static const bool requiresStiffnessOperator      = false;
-    static const bool requiresThermalExpansionTensor = false;
+    static const bool requiresThermalExpansionCoefficientTensor = false;
     static const unsigned short propertiesOffset     = 0u;
     static const UMATSymmetryType stype = umat::ISOTROPIC;
   }; // end of class UMATTraits

@@ -13,7 +13,10 @@ configure_file("${PROJECT_SOURCE_DIR}/mfront/tests/behaviours/references/PolyCri
 
 set(mfront_tests_SOURCES
   Elasticity
+  Elasticity2
+  Elasticity3
   OrthotropicElastic
+  OrthotropicElastic2
   OrthotropicCreep
   OrthotropicCreep_rk42
   OrthotropicCreep_rkCastem
@@ -52,6 +55,13 @@ set(mfront_tests_SOURCES
   Hayhurst
   ImplicitHayhurst
   Burger)
+mfront_dependencies(MFrontAsterBehaviours
+  ThermalExpansionCoefficientTest
+  ThermalExpansionCoefficientTest2
+  ThermalExpansionCoefficientTest_1
+  ThermalExpansionCoefficientTest_2
+  ThermalExpansionCoefficientTest_3)
+
 
 mfront_behaviour_check_library(MFrontAsterBehaviours  aster ${mfront_tests_SOURCES})
 target_link_libraries(MFrontAsterBehaviours
@@ -106,6 +116,13 @@ test_aster(elasticity13)
 test_aster(elasticity14)
 test_aster(elasticity15)
 test_aster(elasticity16)
+test_aster(elasticity17)
+test_aster(elasticity18)
+test_aster(elasticity19)
+test_aster(elasticity20)
+test_aster(elasticity21)
+test_aster(elasticity22)
+test_aster(elasticity23)
 test_aster(mazars)
 test_aster(lorentz)
 test_aster(norton)

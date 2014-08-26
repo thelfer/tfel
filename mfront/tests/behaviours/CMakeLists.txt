@@ -12,6 +12,8 @@ if(HAVE_CYRANO)
 endif(HAVE_CYRANO)
 
 install_data(mfront/tests/behaviours Elasticity.mfront)
+install_data(mfront/tests/behaviours Elasticity2.mfront)
+install_data(mfront/tests/behaviours Elasticity3.mfront)
 install_data(mfront/tests/behaviours Burger.mfront)
 install_data(mfront/tests/behaviours Chaboche2.mfront)
 install_data(mfront/tests/behaviours Chaboche.mfront)

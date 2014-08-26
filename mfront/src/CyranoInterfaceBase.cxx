@@ -187,6 +187,25 @@ namespace cyrano{
   } // end of CyranoInterfaceBase::throwBehaviourIntegrationFailedException
 
   void
+  CyranoInterfaceBase::throwUnsupportedStressFreeExpansionException(const std::string& b)
+  {
+    using namespace std;
+    string msg("CyranoInterfaceBase::throwUnsupportedStressFreeExpansionException : ");
+    msg += "behaviour '"+b+"' can handle stress-free expansion but the Cyrano interface can't";
+    throw(runtime_error(msg));
+  } // end of CyranoInterfaceBase::throwUnsupportedStressFreeExpansionException
+
+  void
+  CyranoInterfaceBase::throwThermalExpansionCoefficientShallBeNull(const std::string& b)
+  {
+    using namespace std;
+    string msg("CyranoInterfaceBase::throwThermalExpansionCoefficientShallBeNull : ");
+    msg += "behaviour '"+b+"' handle thermal expansion, so the thermal expansion "
+      "declared in Cyrano must be null.";
+    throw(runtime_error(msg));
+  }
+
+  void
   CyranoInterfaceBase::throwInvalidDDSOEException(const std::string& b,
 						 const CyranoReal v)
   {

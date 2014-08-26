@@ -86,20 +86,25 @@ namespace mfront
     bool
     contains(const std::string&) const;
     /*!
-     * return the list of glossary names associated with this
+     * \return the list of glossary names associated with this
      * container
-     * \param[in]
+     * \param[in] glossaryNames : glossary names
+     * \param[in] entryNames    : entry names
      */
     std::vector<std::string>
     getGlossaryNames(const std::map<std::string,std::string>&,
 		     const std::map<std::string,std::string>&) const;
-
+    /*!
+     * append the list of glossary names associated with this
+     * container at the end of the given list
+     * \param[in] names         : list of names
+     * \param[in] glossaryNames : glossary names
+     * \param[in] entryNames    : entry names
+     */
     void
     appendGlossaryNames(std::vector<std::string>&,
 			const std::map<std::string,std::string>&,
 			const std::map<std::string,std::string>&) const;
-
-
 
   };
 

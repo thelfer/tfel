@@ -242,7 +242,7 @@ namespace mfront
     map<string,string>::const_iterator p4;
     std::vector<VariableBoundsDescription>::const_iterator p5;
     map<string,double>::const_iterator p6;
-
+    VariableDescriptionContainer::const_iterator pv;
     this->srcFile << "/*!" << endl;
     this->srcFile << "* \\file   " << this->srcFileName  << endl;
     this->srcFile << "* \\brief  " << "this file implements the " 
@@ -305,6 +305,9 @@ namespace mfront
       this->writeParameterList(this->srcFile,inputs);
       this->srcFile << ")\n{\n";
       this->writeInterfaceSpecificVariables(inputs);
+      for(pv=inputs.begin();pv!=inputs.end();++pv){
+	this->srcFile << "static_cast<void>(" << pv->name << ");\n";
+      }
       if(!physicalBounds.empty()){
 	this->srcFile << "/* treating physical bounds */\n";
 	for(p5=physicalBounds.begin();

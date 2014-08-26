@@ -69,6 +69,12 @@ namespace mfront{
      */
     bool
     contains(const std::string&) const;
+    /*!
+     * \param[in] n : variable name
+     * \return the variable description with the given name
+     */
+    const StaticVariableDescription&
+    get(const std::string&) const;
   };
 
   //! a simple alias for backward compatibility

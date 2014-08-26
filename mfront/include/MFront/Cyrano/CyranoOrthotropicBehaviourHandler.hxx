@@ -47,7 +47,7 @@ namespace cyrano
       typedef CyranoBehaviourHandler<H,Behaviour> CyranoBehaviourHandler;
       const bool is_defined_ = MTraits::is_defined;
       const bool bs = Traits::requiresStiffnessOperator;
-      const bool ba = Traits::requiresThermalExpansionTensor;
+      const bool ba = Traits::requiresThermalExpansionCoefficientTensor;
       typedef typename IF<
 	is_defined_,
 	typename IF<
@@ -56,10 +56,17 @@ namespace cyrano
 	  typename CyranoBehaviourHandler::template Integrator<bs,ba>
 	  >::type,
 	typename CyranoBehaviourHandler::Error>::type Handler;
+      typedef typename IF<
+	MTraits::handlesThermalExpansion,
+	typename CyranoBehaviourHandler::CheckThermalExpansionCoefficientIsNull,
+	typename CyranoBehaviourHandler::DontCheckThermalExpansionCoefficientIsNull
+	>::type ThermalExpansionCoefficientCheck;
       CyranoBehaviourHandler::checkNPROPS(*NPROPS);
       CyranoBehaviourHandler::checkNSTATV(*NSTATV);
-      Handler handler(DTIME,STRAN,
-		      DSTRAN,TEMP,DTEMP,PROPS,
+      ThermalExpansionCoefficientCheck::exe(PROPS[7]);
+      ThermalExpansionCoefficientCheck::exe(PROPS[8]);
+      ThermalExpansionCoefficientCheck::exe(PROPS[9]);
+      Handler handler(DTIME,STRAN,DSTRAN,TEMP,DTEMP,PROPS,
 		      PREDEF,DPRED,STATEV,STRESS);
       handler.exe(DDSOE,STRESS,STATEV);
     } // end of CyranoOrthotropicBehaviourHander<1u,Behaviour>::exe

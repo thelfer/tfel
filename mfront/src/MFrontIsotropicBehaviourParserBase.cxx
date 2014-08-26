@@ -59,8 +59,6 @@ namespace mfront{
     this->registerNewCallBack("@Theta",&MFrontIsotropicBehaviourParserBase::treatTheta);
     this->registerNewCallBack("@Epsilon",&MFrontIsotropicBehaviourParserBase::treatEpsilon);
     this->registerNewCallBack("@IterMax",&MFrontIsotropicBehaviourParserBase::treatIterMax);
-    this->registerNewCallBack("@ThermalExpansion",
-			      &MFrontIsotropicBehaviourParserBase::treatThermalExpansion);
     this->disableCallBack("@StateVar");
     this->disableCallBack("@StateVariable");
     this->disableCallBack("@Integrator");
@@ -68,7 +66,7 @@ namespace mfront{
     this->disableCallBack("@IsotropicElasticBehaviour");
     this->disableCallBack("@IsotropicBehaviour");
     this->disableCallBack("@RequireStiffnessOperator");
-    this->disableCallBack("@RequireThermalExpansionTensor");
+    this->disableCallBack("@RequireThermalExpansionCoefficientTensor");
     this->hasPredictionOperator = true;
   } // end of MFrontIsotropicBehaviourParserBase::MFrontIsotropicBehaviourParserBase
 

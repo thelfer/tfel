@@ -1,5 +1,5 @@
 /*!
- * \file   CyranoComputeThermalExpansionTensor.hxx
+ * \file   CyranoComputeThermalExpansionCoefficientTensor.hxx
  * \brief  
  * 
  * \author Helfer Thomas
@@ -21,25 +21,25 @@ namespace cyrano
 
   template<tfel::material::ModellingHypothesis::Hypothesis H,
 	   CyranoSymmetryType>
-  struct CyranoComputeThermalExpansionTensor;
+  struct CyranoComputeThermalExpansionCoefficientTensor;
 
   template<>
   struct MFRONT_CYRANO_VISIBILITY_EXPORT
-  CyranoComputeThermalExpansionTensor<tfel::material::ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN,ISOTROPIC>
+  CyranoComputeThermalExpansionCoefficientTensor<tfel::material::ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN,ISOTROPIC>
   {
     static void
       exe(const CyranoReal* const,
-	  tfel::config::Types<1u,CyranoReal,false>::ThermalExpansionTensor&);
-  }; // end of struct CyranoComputeThermalExpansionTensor
+	  tfel::config::Types<1u,CyranoReal,false>::ThermalExpansionCoefficientTensor&);
+  }; // end of struct CyranoComputeThermalExpansionCoefficientTensor
 
   template<>
   struct MFRONT_CYRANO_VISIBILITY_EXPORT
-  CyranoComputeThermalExpansionTensor<tfel::material::ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN,ORTHOTROPIC>
+  CyranoComputeThermalExpansionCoefficientTensor<tfel::material::ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN,ORTHOTROPIC>
   {
     static void
       exe(const CyranoReal* const,
-	  tfel::config::Types<1u,CyranoReal,false>::ThermalExpansionTensor&);
-  }; // end of struct CyranoComputeThermalExpansionTensor
+	  tfel::config::Types<1u,CyranoReal,false>::ThermalExpansionCoefficientTensor&);
+  }; // end of struct CyranoComputeThermalExpansionCoefficientTensor
 
 } // end of namespace cyrano
 

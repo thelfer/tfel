@@ -10,9 +10,11 @@
 
 #include<set>
 #include<map>
+#include<vector>
 #include<string>
 
 #include"TFEL/Config/TFELConfig.hxx"
+#include"TFEL/Utilities/SmartPtr.hxx"
 #include"TFEL/Material/ModellingHypothesis.hxx"
 #include"TFEL/Material/MechanicalBehaviour.hxx"
 
@@ -21,6 +23,7 @@
 #include"MFront/BoundsDescription.hxx"
 #include"MFront/ThermodynamicForce.hxx"
 #include"MFront/SupportedTypes.hxx"
+#include"MFront/MaterialPropertyDescription.hxx"
 #include"MFront/StaticVariableDescription.hxx"
 
 namespace mfront{
@@ -120,17 +123,21 @@ namespace mfront{
      */
     std::string
     getStiffnessOperatorType(void) const;
+    /*!
+     * \return a type suitable for storing stress-free expansion
+     */
+    std::string
+    getStressFreeExpansionType(void) const;
 
     bool requiresStiffnessOperator(void) const;
 
     void setRequireStiffnessOperator(const bool);
 
-    bool requiresThermalExpansionTensor(void) const;
+    bool requiresThermalExpansionCoefficientTensor(void) const;
 
-    void setRequireThermalExpansionTensor(const bool);
+    void setRequireThermalExpansionCoefficientTensor(const bool);
 
     bool useQt(void) const;
-
     /*!
      * This method has been introduced to optimize the mechanical
      * resolution in licos : a purely implicit resolution only
@@ -266,6 +273,14 @@ namespace mfront{
     bool
     isExternalStateVariableIncrementName(const std::string&) const;
 
+    /*!
+     * \return true if the given name is the one of a static variable
+     * \param[in] n : name
+     */
+    bool
+    isStaticVariableName(const std::string& n) const;
+
+
     std::vector<BoundsDescription>&
     getBounds(void);
 
@@ -291,6 +306,30 @@ namespace mfront{
      */
     void
     addStaticVariable(const StaticVariableDescription&);
+    /*!
+     * \return true if thermal expansion coefficient were defined
+     */
+    bool
+    areThermalExpansionCoefficientsDefined(void) const;
+    /*!
+     * \return the thermal expansion coefficients
+     */
+    const std::vector<tfel::utilities::shared_ptr<MaterialPropertyDescription> >&
+    getThermalExpansionCoefficients(void) const;
+    /*!
+     * set the behaviour thermal expansion coefficient (isotropic behaviour)
+     * \param[in] a : thermal expansion
+     */
+    void setThermalExpansionCoefficient(const tfel::utilities::shared_ptr<MaterialPropertyDescription>&);
+    /*!
+     * set the behaviour thermal expansions coefficient (orthotropic behaviour)
+     * \param[in] a1 : thermal expansion in the first direction
+     * \param[in] a2 : thermal expansion in the second direction
+     * \param[in] a3 : thermal expansion in the third  direction
+     */
+    void setThermalExpansionCoefficients(const tfel::utilities::shared_ptr<MaterialPropertyDescription>&,
+					 const tfel::utilities::shared_ptr<MaterialPropertyDescription>&,
+					 const tfel::utilities::shared_ptr<MaterialPropertyDescription>&);
 
   private:
 
@@ -353,6 +392,12 @@ namespace mfront{
     VariableDescriptionContainer externalStateVariables;
     VariableDescriptionContainer localVariables;
     VariableDescriptionContainer parameters;
+    /*!
+     * average thermal coefficient
+     * For isotropic   behaviours, only one thermal expansion coefficient must be defined.
+     * For orthotropic behaviours, three thermal expansions coefficient must be defined.
+     */
+    std::vector<tfel::utilities::shared_ptr<MaterialPropertyDescription> > thermalExpansionCoefficients;
     /*!
      * static variables
      */

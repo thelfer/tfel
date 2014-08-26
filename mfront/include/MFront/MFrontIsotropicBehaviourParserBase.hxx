@@ -33,7 +33,7 @@ namespace mfront{
     writeBehaviourParserSpecificTypedefs(void);
 
     virtual void
-    writeBehaviourParserSpecificConstructorPart(void) = 0;
+    writeBehaviourParserSpecificInitializeMethodPart(void) = 0;
 
     virtual void
     writeBehaviourParserSpecificMembers(void) = 0;

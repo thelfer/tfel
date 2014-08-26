@@ -148,6 +148,13 @@ namespace aster{
     static void
     throwPredictionOperatorIsNotAvalaible(const std::string&);
     /*!
+     * \brief display an error message if the behaviour shall handle
+     * stress free expansion and that the umat interface can't
+     * \param[in] b : behaviour name
+     */
+    static void
+    throwUnsupportedStressFreeExpansionException(const std::string&);
+    /*!
      * \brief display an error message if the value of the NTENS
      * parameter is not valid
      */

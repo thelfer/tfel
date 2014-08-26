@@ -2,6 +2,10 @@ SUBDIRS = aster castem castem2 cyrano
 
 MFRONTS= DDIF2.mfront                                                      \
          Elasticity.mfront                                                 \
+         Elasticity2.mfront                                                \
+         Elasticity3.mfront                                                \
+         OrthotropicElastic.mfront                                         \
+         OrthotropicElastic2.mfront                                        \
          FiniteRotationSmallStrainElasticity.mfront                        \
          FiniteRotationSmallStrainElasticity2.mfront                       \
 	 Plasticity.mfront                                                 \
@@ -29,7 +33,6 @@ MFRONTS= DDIF2.mfront                                                      \
          OrthotropicCreep_rk42.mfront                                      \
          OrthotropicCreep_rkCastem.mfront                                  \
          ImplicitOrthotropicCreep.mfront                                   \
-         OrthotropicElastic.mfront                                         \
          StrainHardeningCreep.mfront                                       \
          Mazars.mfront                                                     \
          Lorentz.mfront                                                    \

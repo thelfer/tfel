@@ -123,21 +123,6 @@ namespace mfront{
     virtual void
     writeMTestFileGeneratorSetModellingHypothesis(std::ostream&) const;
 
-    virtual void
-    writeBehaviourDataConstructor(std::ofstream&,
-				  const std::string&,
-				  const MechanicalBehaviourDescription&);
-    
-    virtual void
-    writeIntegrationDataConstructor(std::ofstream&,
-				    const std::string&,
-				    const MechanicalBehaviourDescription&);
-
-    virtual void
-    exportMechanicalData(std::ofstream&,
-			 const std::string&,
-			 const MechanicalBehaviourDescription&);
-
     /*!
      * \param[in] out : output file
      * \param[in] mb  : behaviour description

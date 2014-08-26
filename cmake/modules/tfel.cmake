@@ -64,6 +64,7 @@ macro(add_mfront_behaviour_generated_source lib interface file)
     OUTPUT  "src/${interface}${file}.cxx"
     COMMAND "${mfront_executable}"
     ARGS    "--search-path=${PROJECT_SOURCE_DIR}/mfront/tests/behaviours"
+    ARGS    "--search-path=${PROJECT_SOURCE_DIR}/mfront/tests/properties"
     ARGS    "--interface=${interface}" "${mfront_file}"
     DEPENDS "${PROJECT_BINARY_DIR}/mfront/src/mfront"
     DEPENDS "${mfront_file}"
@@ -71,6 +72,22 @@ macro(add_mfront_behaviour_generated_source lib interface file)
   set(${lib}_SOURCES "src/${file}.cxx" "src/${interface}${file}.cxx"
     ${${lib}_SOURCES})
 endmacro(add_mfront_behaviour_generated_source)
+
+macro(mfront_dependencies lib)
+  if(${ARGC} LESS 1)
+    message(FATAL_ERROR "mfront_dependencies : no source specified")
+  endif(${ARGC} LESS 1)
+  foreach(source ${ARGN})
+    add_custom_command(
+      OUTPUT  "src/${source}-mfront.cxx"
+      COMMAND "${mfront_executable}"
+      ARGS    "--interface=mfront" "${PROJECT_SOURCE_DIR}/mfront/tests/properties/${source}.mfront"
+      DEPENDS "${PROJECT_BINARY_DIR}/mfront/src/mfront"
+      DEPENDS "${mfront_file}"
+      COMMENT "mfront source")
+    set(${lib}_ADDITIONAL_SOURCES "src/${source}-mfront.cxx" ${${lib}_ADDITIONAL_SOURCES})
+  endforeach(source)
+endmacro(mfront_dependencies)
 
 macro(mfront_behaviour_check_library lib interface)
   if(${ARGC} LESS 1)
@@ -80,7 +97,8 @@ macro(mfront_behaviour_check_library lib interface)
     add_mfront_behaviour_generated_source(${lib} ${interface} ${source})
   endforeach(source)
   add_library(${lib} SHARED EXCLUDE_FROM_ALL
-    ${${lib}_SOURCES})
+    ${${lib}_SOURCES}
+    ${${lib}_ADDITIONAL_SOURCES})
   add_dependencies(check ${lib})
 endmacro(mfront_behaviour_check_library)
 

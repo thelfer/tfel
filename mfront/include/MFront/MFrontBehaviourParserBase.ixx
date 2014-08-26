@@ -69,8 +69,8 @@ namespace mfront{
     this->registerNewCallBack("@PhysicalBounds",&Child::treatPhysicalBounds);
     this->registerNewCallBack("@RequireStiffnessOperator",
 			      &Child::treatRequireStiffnessOperator);
-    this->registerNewCallBack("@RequireThermalExpansionTensor",
-			      &Child::treatRequireThermalExpansionTensor);
+    this->registerNewCallBack("@RequireThermalExpansionCoefficientTensor",
+			      &Child::treatRequireThermalExpansionCoefficientTensor);
     this->registerNewCallBack("@OrthotropicBehaviour",&Child::treatOrthotropicBehaviour);
     this->registerNewCallBack("@IsotropicElasticBehaviour",&Child::treatIsotropicElasticBehaviour);
     this->registerNewCallBack("@IsotropicBehaviour",&Child::treatIsotropicBehaviour);
@@ -81,6 +81,8 @@ namespace mfront{
 			      &Child::treatUpdateAuxiliaryStateVars);
     this->registerNewCallBack("@UpdateAuxiliaryStateVariables",
 			      &Child::treatUpdateAuxiliaryStateVars);
+    this->registerNewCallBack("@ComputeThermalExpansion",
+			      &Child::treatComputeThermalExpansion);
   } // end of MFrontBehaviourParserBase<Child>::registerDefaultCallBacks
 
   template<typename Child>

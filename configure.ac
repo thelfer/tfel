@@ -399,6 +399,13 @@ AC_OUTPUT([debug.sh
            mfront/tests/behaviours/aster/asterelasticity14.mtest
            mfront/tests/behaviours/aster/asterelasticity15.mtest
            mfront/tests/behaviours/aster/asterelasticity16.mtest
+           mfront/tests/behaviours/aster/asterelasticity17.mtest
+           mfront/tests/behaviours/aster/asterelasticity18.mtest
+           mfront/tests/behaviours/aster/asterelasticity19.mtest
+           mfront/tests/behaviours/aster/asterelasticity20.mtest
+           mfront/tests/behaviours/aster/asterelasticity21.mtest
+           mfront/tests/behaviours/aster/asterelasticity22.mtest
+           mfront/tests/behaviours/aster/asterelasticity23.mtest
            mfront/tests/behaviours/aster/astermazars.mtest
            mfront/tests/behaviours/aster/asterlorentz.mtest
            mfront/tests/behaviours/aster/asternorton.mtest
@@ -454,6 +461,12 @@ AC_OUTPUT([debug.sh
            mfront/tests/behaviours/castem/castemelasticity15.mtest
            mfront/tests/behaviours/castem/castemelasticity16.mtest
            mfront/tests/behaviours/castem/castemelasticity17.mtest
+           mfront/tests/behaviours/castem/castemelasticity18.mtest
+           mfront/tests/behaviours/castem/castemelasticity19.mtest
+           mfront/tests/behaviours/castem/castemelasticity20.mtest
+           mfront/tests/behaviours/castem/castemelasticity21.mtest
+           mfront/tests/behaviours/castem/castemelasticity22.mtest
+           mfront/tests/behaviours/castem/castemelasticity23.mtest
            mfront/tests/behaviours/castem/castemddif2.mtest
            mfront/tests/behaviours/castem/castemddif2-2.mtest
            mfront/tests/behaviours/castem/castemddif2-3.mtest
@@ -660,6 +673,10 @@ AC_OUTPUT([debug.sh
            mfront/tests/behaviours/cyrano/Makefile
            mfront/tests/behaviours/cyrano/cyranoelasticity.mtest
            mfront/tests/behaviours/cyrano/cyranoelasticity10.mtest
+           mfront/tests/behaviours/cyrano/cyranoelasticity18.mtest
+           mfront/tests/behaviours/cyrano/cyranoelasticity19.mtest
+           mfront/tests/behaviours/cyrano/cyranoelasticity20.mtest
+           mfront/tests/behaviours/cyrano/cyranoelasticity21.mtest
            mfront/tests/behaviours/cyrano/cyranonorton.mtest
            mfront/tests/behaviours/cyrano/cyranonorton2.mtest
            mfront/tests/behaviours/cyrano/cyranoellipticcreep.mtest

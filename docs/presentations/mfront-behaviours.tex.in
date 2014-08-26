@@ -801,7 +801,7 @@
       dilatation thermique {\em à la demande}~:
       \begin{itemize}
       \item {\tt @RequireStiffnessTensor;}
-      \item {\tt @RequireThermalExpansionTensor;}
+      \item {\tt @RequireThermalExpansionCoefficientTensor;}
       \end{itemize}
     \item<4-> de générer des fichiers {\tt mtest} en cas d'échec pour
       analyse~:

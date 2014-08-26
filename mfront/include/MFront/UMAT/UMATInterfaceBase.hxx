@@ -208,6 +208,20 @@ namespace umat{
     throwInvalidBehaviourTypeAndModellingHypothesis(const UMATBehaviourType,
 						    const std::string&);
     /*!
+     * \brief display an error message if the behaviour shall handle
+     * stress free expansion and that the umat interface can't
+     * \param[in] b : behaviour name
+     */
+    static void
+    throwUnsupportedStressFreeExpansionException(const std::string&);
+    /*!
+     * \brief display an error message if the thermal expansion is not
+     * null
+     * \param[in] b : behaviour name
+     */
+    static void
+    throwThermalExpansionCoefficientShallBeNull(const std::string&);
+    /*!
      * \brief display an error message if the value of the NDI
      * parameter is not valid
      */

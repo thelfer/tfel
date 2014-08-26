@@ -1,4 +1,4 @@
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % File      : mfront.tex
 % Author    : th202608@pleiades068.intra.cea.fr
 % Date      : 15 oct. 2012
@@ -759,32 +759,128 @@ restrictions imposées par les codes aux éléments finis \castem{} et
 
 \subsubsection{Traitement des dilatations libres}
 
-Dans la plupart des codes aux éléments
-finis~\cite{cea_site_2013,edf_site_2013}, les dilatations libres sont
-généralement traitées en amont de l'intégration de la loi de
-comportement.
-
-Cela se traduit par le fait que la déformation totale passée à la loi de
-comportement est en fait la déformation mécanique totale, c'est à dire
-la déformation totale à laquelle ont été retranchées toutes les
-dilatations libres.
-
-De ce fait, \mfront{} ne traite en général pas des dilatations libres,
-et plus particulièrement ne traite pas des dilatations thermiques.
+\mfront{} ne traite en général pas des dilatations libres, et plus
+particulièrement ne traite en général pas des dilatations
+thermiques~:
+\begin{enumerate}[-]
+\item en petites transformations, Dans la plupart des codes aux
+éléments finis~\cite{cea_site_2013,edf_site_2013}, les dilatations
+libres sont généralement traitées en amont de l'intégration de la loi
+de comportement. Cela se traduit par le fait que la déformation totale
+passée à la loi de comportement est en fait la déformation mécanique
+totale, c'est à dire la déformation totale à laquelle ont été
+retranchées toutes les dilatations libres.
+\item en grandes transformations, le traitement des dilatations libres
+  dépend du formalisme choisi et en cadre général ne peut être fourni.
+\end{enumerate}
 
 Il peut cependant être intéressant de traiter certains gonflements dans
-la loi de comportement. Par exemple, les formulations des lois
-viscoplastiques de gaine des réacteurs refroidis au sodium relient
-l'intensité de l'écoulement viscoplastique à la vitesse de gonflement.
+la loi de comportement. Donnons quatres exemples pratiques~:
+\begin{enumerate}[-]
+\item certaines lois de comportement viscoplastique de gaine de
+  réacteurs refroidis au sodium relient l'intensité de l'écoulement
+  viscoplastique à la vitesse de gonflement~;
+\item certaines modélisations plastiques des aciers considèrent la
+  température comme une variable interne~: l'évolution de la
+  température, supposée adiabatique le temps de l'expérience, est
+  supposée due à la dissipation mécanique locale. Il peut paraître
+  intéressant de coupler finement mécanique et thermique~;
+\item il peut être nécessaire de traiter des changements de phases au
+  cours du calcul mécanique, en particulier la transition
+  martensite-austénite de certains aciers qui dépend de l'état de
+  contraintes~\cite{milliard_mechanical_2014}~;
+\item certaine stratégies \og~grandes transformations~\fg{} permettent
+  d'utiliser un formalisme de lois en petites déformations, voir
+  d'utiliser les lois identifiées en petites déformations
+  (voir~\cite{helfer_ecriture_2014}). Dans ce cas, la dissymétrie de
+  traitement par les codes appelant (notée plus haut) entre les
+  petites déformations (traitement des dilatations libres) et les
+  grandes déformations (non traitement des dilatations libres)
+  apparaît d'autant plus gênante que l'expression usuelle des
+  dilatations libres (voir équation~\eqref{eq:behaviour:epsilonth}
+  pour la dilatation thermique), convenablement post-traitée, peut
+  être réutilisée.
+\end{enumerate}
 
-Pour prendre en compte une dilatation libre, il suffit de calculer un
-incrément de dilatation et de le soustraire à l'incrément de dilatation
-totale dans la partie \mkey{InitLocalVariables}. 
+\paragraph{Cas des lois en petites transformations, cas général}
+
+En petites transformations, une solution simple pour prendre en compte
+une dilatation libre, est de calculer un incrément de dilatation et de
+le soustraire à l'incrément de dilatation totale dans la partie
+\mkey{InitLocalVariables}. Cette stratégie n'est valide que dans le
+cas où la dilatation libre ne dépend pas du résultat de la mécanique 
 
 Il est possible de garder une trace de cette dilatation en définissant
 une variable auxiliaire associée. Il est cependant nécessaire de prendre
 garde à la manière dont sont mises à jour les variables auxiliaires par
 l'analyseur utilisé.
+
+\paragraph{Cas des lois en petites transformations, dilatation
+  thermique} La dilatation thermique est un cas particulier par son
+coté systématique~: il suffit de savoir calculer le coefficient de
+dilatation moyen \(\alpha\paren{T}\) que l'on suppose ne dépendre que
+de la température actuelle \(T\). La dilatation thermique linéique
+s'écrit alors (voir~\cite{helfer_ecriture_2014})~:
+\begin{equation}
+  \label{eq:behaviour:epsilonth}
+    \Frac{\Delta\,l}{l^{i}}\paren{T}=
+    \Frac{1}{1+\alpha\paren{T^{i}}\paren{T^{i}-T^{\alpha}}}\,\left[\alpha\paren{T}\paren{T-T^{\alpha}}-\alpha\paren{T^{i}}\paren{T^{i}-T^{\alpha}}\right]
+\end{equation}
+où~:
+\begin{minipage}[t]{0.8\linewidth}
+  \begin{enumerate}[-]
+  \item \(T^{\alpha}\) est la température de référence pour
+    l'expérience de dilatométrie ayant servie à identifier le
+    coefficient de dilatation thermique et qui correspond à une
+    dilatation nulle~;
+  \item \(T^{i}\) est la température à laquelle la géométrie du corps
+    a été mesurée (température de début de calcul)~;
+  \item \(\Delta\, l\) est la variation de longueur par rapport à la
+    température \(T^{i}\).
+  \end{enumerate}
+\end{minipage}
+
+La directive \mkey{ComputeThermalExpansion} permet le calcul de la
+dilatation thermique par la formule~\eqref{eq:behaviour:epsilonth} en
+amont de l'intégration de la loi de comportement.
+
+Elle prend un nom de fichier \mfront{} argument dans le cas isotrope,
+ou un tableau de trois noms de fichiers \mfront{} dans le cas
+orthotrope (une dilatation pour chaque direction principale). Ces
+fichiers doivent décrire le coefficient de dilatation thermique moyen
+comme une propriété matériau.
+
+La température \(T^{\alpha}\) est supposée donnée dans le fichier
+définissant la dilatation par la définition d'une constante nommée
+{\tt Reference\-Temperature} de la directive \mkey{Constant}. Si cette
+température n'est pas fournie, \mfront{} prendra la température
+ambiante (\(293,15\,K\)).
+
+La température \(T^{i}\) est automatiquement déclarée comme un
+paramètre nommé {\tt
+  reference\-Temperature\-For\-Thermal\-Expansion}\footnote{La notion
+  de paramètres est décrite dans la notice générale de
+  \mfront{}~\cite{helfer_generateur_2013-1}.}. Par défaut, sa valeur
+est de \(293,15\,K\) (température ambiante).
+
+\paragraph{Cas particuliers} Si le formalisme \og~grandes
+transformations~\fg{} choisi se base sur une écriture des lois écrites
+dans le formalisme des petites transformations (utilisation d'une
+hypothèse de \og~petites déformations, grandes rotations~\fg,
+déformations logarithmiques), il est souvent possible de proposer un
+traitement des dilatations libres systématique
+(voir~\cite{helfer_ecriture_2014}).
+
+\paragraph{Implantation} Pour permettre aux interfaces de proposer des
+formalismes \og~grandes transformations\fg{} réutilisant le formalisme
+des \og~petites transformation~\fg{}, le calcul de la dilatation doit
+être fait en amont de la loi.
+
+Il revient aux interfaces de modifier le chargement du point matériel
+de manière adéquate. Par exemple, en petites transformations, la
+déformation totale envoyée à la loi de comportement sera la
+déformation totale fournie par le code appelant à laquelle on aura
+retiré la dilatation.
 
 %\subsubsection{Classes générées}
 %

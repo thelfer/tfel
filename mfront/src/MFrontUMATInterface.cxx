@@ -445,7 +445,7 @@ namespace mfront{
     }
 
     pair<SupportedTypes::TypeSize,
-      SupportedTypes::TypeSize> mvs = mb.getMainVariablesSize();
+	 SupportedTypes::TypeSize> mvs = mb.getMainVariablesSize();
     
     if(!library.empty()){
       name += library;
@@ -577,9 +577,9 @@ namespace mfront{
     out << "// tensor size\n";
     out << "static const unsigned short TensorSize  = tfel::math::TensorDimeToSize<N>::value;\n";
     out << "// size of the driving variable array (STRAN)\n";
-    out << "static const unsigned short DrivingVariableSize  = " << mvs.first <<  ";\n";
-    out << "// size of the thermodynamic force variable array (STRAN)\n";
-    out << "static const unsigned short ThermodynamicForceVariableSize  = " << mvs.second <<  ";\n";
+    out << "static const unsigned short DrivingVariableSize = " << mvs.first <<  ";\n";
+    out << "// size of the thermodynamic force variable array (STRESS)\n";
+    out << "static const unsigned short ThermodynamicForceVariableSize = " << mvs.second <<  ";\n";
     out << "static const bool useTimeSubStepping = ";
     if(this->useTimeSubStepping){
       out << "true;\n";
@@ -603,10 +603,10 @@ namespace mfront{
     } else {
       out << "static const bool requiresStiffnessOperator = false;\n";
     }
-    if(mb.requiresThermalExpansionTensor()){
-      out << "static const bool requiresThermalExpansionTensor = true;\n";
+    if(mb.requiresThermalExpansionCoefficientTensor()){
+      out << "static const bool requiresThermalExpansionCoefficientTensor = true;\n";
     } else {
-      out << "static const bool requiresThermalExpansionTensor = false;\n";
+      out << "static const bool requiresThermalExpansionCoefficientTensor = false;\n";
     }
     if(mb.getSymmetryType()==mfront::ISOTROPIC){
       if(!this->checkIfElasticPropertiesAreDeclared(mb)){
@@ -766,6 +766,7 @@ namespace mfront{
       out << "#include\"MFront/UMAT/UMATFiniteStrain.hxx\"\n\n";
     }
     out << "#include\"MFront/UMAT/UMATInterface.hxx\"\n\n";
+    out << "#include\"MFront/UMAT/UMATStressFreeExpansionHandler.hxx\"\n\n";
     out << "#include\"TFEL/Material/" << className << ".hxx\"\n";
     out << "#include\"MFront/UMAT/umat" << name << ".hxx\"\n\n";
     out << "extern \"C\"{\n\n";
@@ -895,11 +896,12 @@ namespace mfront{
 	<< "const umat::UMATReal *const PREDEF,const umat::UMATReal *const DPRED,\n"
 	<< "umat::UMATReal *const STATEV,const umat::UMATInt    *const NSTATV,\n"
 	<< "umat::UMATReal *const STRESS,const umat::UMATInt    *const NDI,\n"
-	<< "umat::UMATInt    *const KINC)\n";
+	<< "umat::UMATInt  *const KINC,\n"
+	<< "const umat::StressFreeExpansionHandler& sfeh)\n";
     out << "{\n";
     out << "umat::UMATInterface<tfel::material::" << className 
 	<< ">::exe(NTENS,DTIME,DROT,DDSOE,STRAN,DSTRAN,TEMP,DTEMP,PROPS,NPROPS,"
-	<< "PREDEF,DPRED,STATEV,NSTATV,STRESS,NDI,KINC);\n";
+	<< "PREDEF,DPRED,STATEV,NSTATV,STRESS,NDI,KINC,sfeh);\n";
     out << "}\n\n";
 
     
@@ -1291,7 +1293,8 @@ namespace mfront{
     out << "umat" << makeLowerCase(name)
 	<< "_base(NTENS, DTIME,DROT,DDSOE,eto,deto,TEMP,DTEMP,\n"
 	<< "PROPS,NPROPS,PREDEF,DPRED,STATEV,NSTATV,\n"
-	<< "STRESS,NDI,KINC);\n";
+	<< "STRESS,NDI,KINC,\n"
+	<< "umat::UMATStandardSmallStrainStressFreeExpansionHandler);\n";
     out << "if(*KINC==1){\n";
     out << "UMATFiniteStrain::computeCauchyStressFromSecondPiolaKirchhoffStress(STRESS,F1,*NTENS,*NDI);\n";
     out << "}\n";
@@ -1372,7 +1375,8 @@ namespace mfront{
     out << "umat" << makeLowerCase(name)
 	<< "_base(NTENS, DTIME,DROT,DDSOE,eto,deto,TEMP,DTEMP,\n"
 	<< "PROPS,NPROPS,PREDEF,DPRED,STATEV,NSTATV,\n"
-	<< "s,NDI,KINC);\n";
+	<< "s,NDI,KINC,\n"
+	<< "umat::UMATStandardSmallStrainStressFreeExpansionHandler);\n";
     out << "if(*KINC==1){\n";
     out << "UMATFiniteStrain::computeCauchyStressFromDualStressOfLogarithmicStrain(STRESS,s,P1,F1,*NTENS,*NDI);\n";
     out << "}\n";
@@ -1433,7 +1437,8 @@ namespace mfront{
     out << "umat" << makeLowerCase(name)
 	<< "_base(NTENS, DTIME,DROT,DDSOE,STRAN,DSTRAN,TEMP,DTEMP,\n"
 	<< "PROPS,NPROPS,PREDEF,DPRED,STATEV,NSTATV,\n"
-	<< "STRESS,NDI,KINC);\n";
+	<< "STRESS,NDI,KINC,\n"
+	<< "umat::UMATStandardSmallStrainStressFreeExpansionHandler);\n";
     if(this->generateMTestFile){
       out << "if(*KINC!=1){\n";
       this->generateMTestFile2(out,MechanicalBehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR,

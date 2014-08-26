@@ -43,7 +43,8 @@ namespace aster
 	       const AsterReal *const DPRED,
 	       AsterReal *const STATEV,
 	       const AsterInt  *const NSTATV,
-	       AsterReal *const STRESS)
+	       AsterReal *const STRESS,
+	       const StressFreeExpansionHandler& sfeh)
     {
       using namespace tfel::meta;
       using namespace tfel::material;
@@ -54,16 +55,15 @@ namespace aster
       typedef AsterBehaviourHandler<1u,Behaviour> AsterBehaviourHandler;
       const bool is_defined_ = MTraits::is_defined;
       const bool bs = Traits::requiresStiffnessOperator;
-      const bool ba = Traits::requiresThermalExpansionTensor;
+      const bool ba = Traits::requiresThermalExpansionCoefficientTensor;
       typedef typename IF<
 	is_defined_,
 	typename AsterBehaviourHandler::template Integrator<bs,ba>,
 	typename AsterBehaviourHandler::Error>::type Handler;
       AsterBehaviourHandler::checkNPROPS(*NPROPS);
       AsterBehaviourHandler::checkNSTATV(*NSTATV);
-      Handler handler(DTIME,STRAN,
-		      DSTRAN,TEMP,DTEMP,PROPS,
-		      PREDEF,DPRED,STATEV,STRESS);
+      Handler handler(DTIME,STRAN,DSTRAN,TEMP,DTEMP,PROPS,
+		      PREDEF,DPRED,STATEV,STRESS,sfeh);
       handler.exe(DDSOE,STRESS,STATEV);
   } // end of AsterOrthotropicBehaviourHandler1D::exe
 }; // end of struct AsterOrthotropicBehaviourHandler1D
@@ -86,7 +86,8 @@ struct TFEL_VISIBILITY_LOCAL AsterOrthotropicBehaviourHandler<2u,Behaviour>
 	     const AsterReal *const DPRED,
 	     AsterReal *const STATEV,
 	     const AsterInt  *const NSTATV,
-	     AsterReal *const STRESS) 
+	     AsterReal *const STRESS,
+	     const StressFreeExpansionHandler& sfeh) 
   {
     using namespace tfel::meta;
     using namespace tfel::material;
@@ -97,7 +98,7 @@ struct TFEL_VISIBILITY_LOCAL AsterOrthotropicBehaviourHandler<2u,Behaviour>
     typedef AsterBehaviourHandler<2u,Behaviour> AsterBehaviourHandler;
     const bool is_defined_ = MTraits::is_defined;
     const bool bs = Traits::requiresStiffnessOperator;
-    const bool ba = Traits::requiresThermalExpansionTensor;
+    const bool ba = Traits::requiresThermalExpansionCoefficientTensor;
     typedef typename IF<
       is_defined_,
       typename AsterBehaviourHandler::template Integrator<bs,ba>,
@@ -113,7 +114,7 @@ struct TFEL_VISIBILITY_LOCAL AsterOrthotropicBehaviourHandler<2u,Behaviour>
     AsterBehaviourHandler::checkNSTATV(*NSTATV);
     const bool bDDSOE = std::abs(*DDSOE)>0.5; 
     Handler handler(DTIME,e,de,TEMP,DTEMP,PROPS,
-		    PREDEF,DPRED,STATEV,s);
+		    PREDEF,DPRED,STATEV,s,sfeh);
     handler.exe(DDSOE,s,STATEV);
     m.rotateStressesBackward(s,STRESS);
     if(bDDSOE){
@@ -140,7 +141,8 @@ struct TFEL_VISIBILITY_LOCAL AsterOrthotropicBehaviourHandler<2u,Behaviour>
 	       const AsterReal *const DPRED,
 	       AsterReal *const STATEV,
 	       const AsterInt  *const NSTATV,
-	       AsterReal *const STRESS) 
+	       AsterReal *const STRESS,
+	       const StressFreeExpansionHandler& sfeh) 
     {
       using namespace tfel::meta;
       using namespace tfel::material;
@@ -151,7 +153,7 @@ struct TFEL_VISIBILITY_LOCAL AsterOrthotropicBehaviourHandler<2u,Behaviour>
       typedef AsterBehaviourHandler<3u,Behaviour> AsterBehaviourHandler;
       const bool is_defined_ = MTraits::is_defined;
       const bool bs = Traits::requiresStiffnessOperator;
-      const bool ba = Traits::requiresThermalExpansionTensor;
+      const bool ba = Traits::requiresThermalExpansionCoefficientTensor;
       typedef typename IF<
 	is_defined_,
 	typename AsterBehaviourHandler::template Integrator<bs,ba>,
@@ -168,7 +170,7 @@ struct TFEL_VISIBILITY_LOCAL AsterOrthotropicBehaviourHandler<2u,Behaviour>
       AsterBehaviourHandler::checkNSTATV(*NSTATV);
       const bool bDDSOE = std::abs(*DDSOE)>0.5; 
       Handler handler(DTIME,e,de,TEMP,DTEMP,PROPS,
-		      PREDEF,DPRED,STATEV,s);
+		      PREDEF,DPRED,STATEV,s,sfeh);
       handler.exe(DDSOE,s,STATEV);
       m.rotateStressesBackward(s,STRESS);
       if(bDDSOE){

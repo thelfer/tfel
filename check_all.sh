@@ -1,4 +1,6 @@
 #! /usr/bin/env bash
+# Exit if any error detected
+set -e
 
 pbuild=no
 while getopts ":j:" opt; do
@@ -56,6 +58,7 @@ $make_exec doc
 $make_exec install
 $make_exec doc-install
 popd # from build-autotools
+mkdir build-autotools-debug
 pushd build-autotools-debug
 $src/configure --enable-python --enable-python-bindings --enable-fortran --enable-aster --enable-tests --enable-local-castem-header --enable-cyrano --prefix=$build/build-check/autotools/install-autotools-debug 
 $make_exec
@@ -102,7 +105,7 @@ $make_exec doc-install
 $make_exec tests-install
 popd #from build-cmake-release
 pushd build-cmake-debug
-cmake ../tfel-$pkg_name/ -DCMAKE_BUILD_TYPE=Debug -Dlocal-castem-header=ON -Denable-fortran=ON -Denable-python=ON -Denable-python-bindings=ON -Denable-aster=ON -Denable-cyrano=ON -DCMAKE_INSTALL_PREFIX=$build/build-check/cmake/install-cmake-release
+cmake ../tfel-$pkg_name/ -DCMAKE_BUILD_TYPE=Debug -Dlocal-castem-header=ON -Denable-fortran=ON -Denable-python=ON -Denable-python-bindings=ON -Denable-aster=ON -Denable-cyrano=ON -DCMAKE_INSTALL_PREFIX=$build/build-check/cmake/install-cmake-debug
 make
 if [ test "x$pbuild" == "xyes" ];
 then

@@ -39,6 +39,11 @@ macro(mfront_check_library lib interface ext)
 endmacro(mfront_check_library)
 
 set(mfront_SOURCES
+    ThermalExpansionCoefficientTest
+    ThermalExpansionCoefficientTest2
+    ThermalExpansionCoefficientTest_1
+    ThermalExpansionCoefficientTest_2
+    ThermalExpansionCoefficientTest_3
     VanadiumAlloy_YoungModulus_SRMA
     VanadiumAlloy_PoissonRatio_SRMA
     VanadiumAlloy_SpecificHeat_SRMA

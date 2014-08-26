@@ -1349,9 +1349,9 @@ namespace mfront
 	}
 	const MTestEvolution& e = *(pev->second);
 	if(!e.isConstant()){
-	  string msg("MTestParser::readDouble : formulae '"+f+"' shall "
+	  string msg("MTestParser::readDouble : formula '"+f+"' shall "
 		     "only depend on constant evolutions "
-		     "(evolution '"+*pv+"' is not constant");
+		     "(evolution '"+*pv+"' is not constant)");
 	  throw(runtime_error(msg));
 	}
 	ev.setVariableValue(*pv,e(0));

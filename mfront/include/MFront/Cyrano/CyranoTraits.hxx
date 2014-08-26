@@ -22,7 +22,7 @@ namespace cyrano{
     static const bool doSubSteppingOnInvalidResults  = false;
     static const unsigned short maximumSubStepping   = 0u;
     static const bool requiresStiffnessOperator      = false;
-    static const bool requiresThermalExpansionTensor = false;
+    static const bool requiresThermalExpansionCoefficientTensor = false;
     static const unsigned short propertiesOffset     = 0u;
     static const CyranoSymmetryType stype = cyrano::ISOTROPIC;
   }; // end of class CyranoTraits

@@ -34,7 +34,8 @@ namespace aster
 	       const AsterReal *const DPRED,
 	       AsterReal *const STATEV,
 	       const AsterInt  *const NSTATV,
-	       AsterReal *const STRESS) 
+	       AsterReal *const STRESS,
+	       const StressFreeExpansionHandler& sfeh) 
     {
       using namespace tfel::meta;
       using namespace tfel::material;
@@ -44,16 +45,15 @@ namespace aster
       typedef AsterBehaviourHandler<N,Behaviour> AsterBehaviourHandler;
       const bool is_defined_ = MTraits::is_defined;
       const bool bs = Traits::requiresStiffnessOperator;
-      const bool ba = Traits::requiresThermalExpansionTensor;
+      const bool ba = Traits::requiresThermalExpansionCoefficientTensor;
       typedef typename IF<
 	is_defined_,
 	typename AsterBehaviourHandler::template Integrator<bs,ba>,
 	typename AsterBehaviourHandler::Error>::type Handler;
       AsterBehaviourHandler::checkNPROPS(*NPROPS);
       AsterBehaviourHandler::checkNSTATV(*NSTATV);
-      Handler handler(DTIME,STRAN,
-		      DSTRAN,TEMP,DTEMP,PROPS,
-		      PREDEF,DPRED,STATEV,STRESS);
+      Handler handler(DTIME,STRAN,DSTRAN,TEMP,DTEMP,PROPS,
+		      PREDEF,DPRED,STATEV,STRESS,sfeh);
       handler.exe(DDSOE,STRESS,STATEV);
     } // end of AsterIsotropicBehaviourHandler::exe
     

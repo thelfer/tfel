@@ -115,64 +115,66 @@ if LOCAL_CASTEM_HEADER
 nobase_include_HEADERS += castem.h
 endif 
 
-nobase_include_HEADERS += MFront/UMAT/UMATException.hxx                     \
-			  MFront/UMAT/UMATGetModellingHypothesis.hxx        \
-			  MFront/UMAT/UMATOutOfBoundsPolicy.hxx             \
-			  MFront/UMAT/UMATInterface.hxx                     \
-			  MFront/UMAT/UMATInterfaceDispatch.hxx             \
-			  MFront/UMAT/UMATInterfaceBase.hxx                 \
-			  MFront/UMAT/UMATFiniteStrain.hxx                  \
-			  MFront/UMAT/UMATBehaviourHandler.hxx              \
-			  MFront/UMAT/UMATIsotropicBehaviourHandler.hxx     \
-			  MFront/UMAT/UMATOrthotropicBehaviourHandler.hxx   \
-			  MFront/UMAT/UMATGenericPlaneStressHandler.hxx     \
-			  MFront/UMAT/UMATRotationMatrix.hxx                \
-			  MFront/UMAT/UMATOrthotropicBehaviour.hxx          \
-			  MFront/UMAT/UMATComputeStiffnessOperator.hxx      \
-			  MFront/UMAT/UMATComputeThermalExpansionTensor.hxx \
-			  MFront/UMAT/UMATTraits.hxx                        \
-			  MFront/UMAT/UMATTangentOperator.hxx               \
-			  MFront/UMAT/UMAT.hxx                              \
-			  MFront/UMAT/UMATConfig.hxx
+nobase_include_HEADERS += MFront/UMAT/UMAT.hxx                                         \
+			  MFront/UMAT/UMATConfig.hxx				       \
+			  MFront/UMAT/UMATTraits.hxx                                   \
+			  MFront/UMAT/UMATException.hxx                                \
+			  MFront/UMAT/UMATGetModellingHypothesis.hxx                   \
+			  MFront/UMAT/UMATOutOfBoundsPolicy.hxx                        \
+			  MFront/UMAT/UMATInterface.hxx                                \
+			  MFront/UMAT/UMATInterfaceDispatch.hxx                        \
+			  MFront/UMAT/UMATInterfaceBase.hxx                            \
+			  MFront/UMAT/UMATFiniteStrain.hxx                             \
+			  MFront/UMAT/UMATBehaviourHandler.hxx                         \
+			  MFront/UMAT/UMATIsotropicBehaviourHandler.hxx                \
+			  MFront/UMAT/UMATOrthotropicBehaviourHandler.hxx              \
+			  MFront/UMAT/UMATGenericPlaneStressHandler.hxx                \
+			  MFront/UMAT/UMATRotationMatrix.hxx                           \
+			  MFront/UMAT/UMATOrthotropicBehaviour.hxx                     \
+			  MFront/UMAT/UMATComputeStiffnessOperator.hxx                 \
+			  MFront/UMAT/UMATComputeThermalExpansionCoefficientTensor.hxx \
+			  MFront/UMAT/UMATStressFreeExpansionHandler.hxx               \
+			  MFront/UMAT/UMATTangentOperator.hxx
 endif
 
 if HAVE_CYRANO
 
-nobase_include_HEADERS += MFront/Cyrano/Cyrano.hxx 				\
-			  MFront/Cyrano/CyranoTraits.hxx 			\
-			  MFront/Cyrano/CyranoConfig.hxx 			\
-			  MFront/Cyrano/CyranoException.hxx 			\
-			  MFront/Cyrano/CyranoInterface.hxx 			\
-			  MFront/Cyrano/CyranoInterfaceDispatch.hxx 		\
-			  MFront/Cyrano/CyranoInterfaceBase.hxx 		\
-			  MFront/Cyrano/CyranoBehaviourHandler.hxx 		\
-			  MFront/Cyrano/CyranoIsotropicBehaviourHandler.hxx 	\
-			  MFront/Cyrano/CyranoOrthotropicBehaviourHandler.hxx 	\
-			  MFront/Cyrano/CyranoGenericPlaneStressHandler.hxx 	\
-			  MFront/Cyrano/CyranoOutOfBoundsPolicy.hxx 		\
-			  MFront/Cyrano/CyranoOrthotropicBehaviour.hxx 		\
-			  MFront/Cyrano/CyranoComputeStiffnessOperator.hxx 	\
-			  MFront/Cyrano/CyranoGetModellingHypothesis.hxx 	\
-			  MFront/Cyrano/CyranoComputeThermalExpansionTensor.hxx \
+nobase_include_HEADERS += MFront/Cyrano/Cyrano.hxx 				           \
+			  MFront/Cyrano/CyranoTraits.hxx 			           \
+			  MFront/Cyrano/CyranoConfig.hxx 			           \
+			  MFront/Cyrano/CyranoException.hxx 			           \
+			  MFront/Cyrano/CyranoInterface.hxx 			           \
+			  MFront/Cyrano/CyranoInterfaceDispatch.hxx 		           \
+			  MFront/Cyrano/CyranoInterfaceBase.hxx 		           \
+			  MFront/Cyrano/CyranoBehaviourHandler.hxx 		           \
+			  MFront/Cyrano/CyranoIsotropicBehaviourHandler.hxx 	           \
+			  MFront/Cyrano/CyranoOrthotropicBehaviourHandler.hxx 	           \
+			  MFront/Cyrano/CyranoGenericPlaneStressHandler.hxx 	           \
+			  MFront/Cyrano/CyranoOutOfBoundsPolicy.hxx 		           \
+			  MFront/Cyrano/CyranoOrthotropicBehaviour.hxx 		           \
+			  MFront/Cyrano/CyranoComputeStiffnessOperator.hxx 	           \
+			  MFront/Cyrano/CyranoGetModellingHypothesis.hxx 	           \
+			  MFront/Cyrano/CyranoComputeThermalExpansionCoefficientTensor.hxx \
 			  MFront/MFrontCyranoInterface.hxx
 
 endif
 
 if HAVE_ASTER
-nobase_include_HEADERS += MFront/Aster/Aster.hxx                              \
-			  MFront/Aster/AsterConfig.hxx                        \
-			  MFront/Aster/AsterTraits.hxx                        \
-			  MFront/Aster/AsterException.hxx 		      \
-			  MFront/Aster/AsterInterface.hxx	              \
-			  MFront/Aster/AsterInterfaceBase.hxx                 \
-			  MFront/Aster/AsterBehaviourHandler.hxx              \
-			  MFront/Aster/AsterIsotropicBehaviourHandler.hxx     \
-			  MFront/Aster/AsterOrthotropicBehaviourHandler.hxx   \
-			  MFront/Aster/AsterRotationMatrix.hxx                \
-			  MFront/Aster/AsterOrthotropicBehaviour.hxx          \
-			  MFront/Aster/AsterComputeStiffnessOperator.hxx      \
-			  MFront/Aster/AsterComputeThermalExpansionTensor.hxx \
-			  MFront/Aster/AsterTangentOperator.hxx               \
+nobase_include_HEADERS += MFront/Aster/Aster.hxx                                         \
+			  MFront/Aster/AsterConfig.hxx                                   \
+			  MFront/Aster/AsterTraits.hxx                                   \
+			  MFront/Aster/AsterException.hxx 		                 \
+			  MFront/Aster/AsterInterface.hxx	                         \
+			  MFront/Aster/AsterInterfaceBase.hxx                            \
+			  MFront/Aster/AsterBehaviourHandler.hxx                         \
+			  MFront/Aster/AsterIsotropicBehaviourHandler.hxx                \
+			  MFront/Aster/AsterOrthotropicBehaviourHandler.hxx              \
+			  MFront/Aster/AsterRotationMatrix.hxx                           \
+			  MFront/Aster/AsterOrthotropicBehaviour.hxx                     \
+			  MFront/Aster/AsterComputeStiffnessOperator.hxx                 \
+			  MFront/Aster/AsterComputeThermalExpansionCoefficientTensor.hxx \
+			  MFront/Aster/AsterStressFreeExpansionHandler.hxx               \
+			  MFront/Aster/AsterTangentOperator.hxx                          \
 			  MFront/MFrontAsterInterface.hxx
 endif
 

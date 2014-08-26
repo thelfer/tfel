@@ -76,9 +76,14 @@ namespace mfront{
 
     virtual void writeBehaviourStateVarsIncrements(void);
     
-    virtual void writeBehaviourConstructors(void);
+    virtual std::string
+    getBehaviourConstructorsInitializers(void);
 
-    virtual void writeBehaviourParserSpecificConstructorPart(void);
+    virtual std::string
+    getStateVariableIncrementsInitializers(const VariableDescriptionContainer&,
+					   const bool) const;
+
+    virtual void writeBehaviourParserSpecificInitializeMethodPart(void);
 
     virtual void writeBehaviourStaticVars(void);
 
@@ -210,8 +215,6 @@ namespace mfront{
     std::string computeStress;
 
     std::string computeFinalStress;
-
-    std::string predictor;
 
     std::string initJacobian;
 

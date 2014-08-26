@@ -66,4 +66,6 @@ EXTRA_DIST=CMakeLists.txt                         \
 	   images/tubeaxi.eps			  \
 	   images/zy4-1.eps			  \
 	   images/zy4-2.eps			  \
+	   images/tests-jenkins.eps               \
+	   images/mtest-l3f.eps                   \
 	   $(MTEST_DOCS)

@@ -18,7 +18,7 @@
 #include"MFront/UMAT/UMATOutOfBoundsPolicy.hxx"
 #include"MFront/UMAT/UMATOrthotropicBehaviour.hxx"
 #include"MFront/UMAT/UMATComputeStiffnessOperator.hxx"
-#include"MFront/UMAT/UMATComputeThermalExpansionTensor.hxx"
+#include"MFront/UMAT/UMATComputeThermalExpansionCoefficientTensor.hxx"
 #include"MFront/UMAT/UMATRotationMatrix.hxx"
 #include"MFront/UMAT/UMATGetModellingHypothesis.hxx"
 #include"MFront/UMAT/UMATBehaviourHandler.hxx"
@@ -49,7 +49,8 @@ namespace umat{
 	     const UMATReal *const, const UMATInt  *const,
 	     const UMATReal *const, const UMATReal *const,
 	     UMATReal *const,const UMATInt  *const,
-	     UMATReal *const)
+	     UMATReal *const,
+	     const StressFreeExpansionHandler&)
     {
       typedef tfel::material::ModellingHypothesis MH;
       UMATInterfaceBase::throwInvalidBehaviourTypeAndModellingHypothesis(type,MH::HypothesisToString(H));
@@ -76,7 +77,8 @@ namespace umat{
 	     const UMATReal *const PROPS, const UMATInt  *const NPROPS,
 	     const UMATReal *const PREDEF,const UMATReal *const DPRED,
 	     UMATReal *const STATEV,const UMATInt  *const NSTATV,
-	     UMATReal *const STRESS)
+	     UMATReal *const STRESS,
+	     const StressFreeExpansionHandler& sfeh)
     {
       using namespace std;
       using namespace tfel::meta;
@@ -92,7 +94,7 @@ namespace umat{
       UMATInterfaceBase::checkNTENSValue(*NTENS,Traits::ThermodynamicForceVariableSize);
       Handler::exe(DTIME,DROT,DDSOE,STRAN,DSTRAN,TEMP,DTEMP,
 		   PROPS,NPROPS,PREDEF,DPRED,STATEV,NSTATV,
-		   STRESS);
+		   STRESS,sfeh);
     } // end of exe
   }; // end of struct UMATInterfaceDispatch
 
@@ -117,7 +119,8 @@ namespace umat{
 	     const UMATReal *const PROPS, const UMATInt  *const NPROPS,
 	     const UMATReal *const PREDEF,const UMATReal *const DPRED,
 	     UMATReal *const STATEV,const UMATInt  *const NSTATV,
-	     UMATReal *const STRESS)
+	     UMATReal *const STRESS,
+	     const StressFreeExpansionHandler& sfeh)
     {
       using namespace std;
       using namespace tfel::meta;
@@ -133,11 +136,11 @@ namespace umat{
 	UMATInterfaceBase::checkNTENSValue(*NTENS,Traits::ThermodynamicForceVariableSize);
 	Handler::exe(DTIME,DROT,DDSOE,STRAN,DSTRAN,TEMP,DTEMP,
 		     PROPS,NPROPS,PREDEF,DPRED,STATEV,NSTATV,
-		     STRESS);
+		     STRESS,sfeh);
       } else { 
 	UMATGenericPlaneStressHandler<Behaviour>::exe(NTENS,DTIME,DROT,DDSOE,STRAN,DSTRAN,
 						      TEMP,DTEMP,PROPS,NPROPS,PREDEF,DPRED,
-						      STATEV,NSTATV,STRESS);
+						      STATEV,NSTATV,STRESS,sfeh);
       }
     }
   };
@@ -162,7 +165,8 @@ namespace umat{
 	     const UMATReal *const PROPS, const UMATInt  *const NPROPS,
 	     const UMATReal *const PREDEF,const UMATReal *const DPRED,
 	     UMATReal *const STATEV,const UMATInt  *const NSTATV,
-	     UMATReal *const STRESS)
+	     UMATReal *const STRESS,
+	     const StressFreeExpansionHandler& sfeh)
     {
       using namespace std;
       using namespace tfel::meta;
@@ -178,7 +182,7 @@ namespace umat{
       UMATInterfaceBase::checkNTENSValue(*NTENS,Traits::ThermodynamicForceVariableSize);
       Handler::exe(DTIME,DROT,DDSOE,STRAN,DSTRAN,TEMP,DTEMP,
 		   PROPS,NPROPS,PREDEF,DPRED,STATEV,NSTATV,
-		   STRESS);
+		   STRESS,sfeh);
     } // end of exe
   }; // end of struct UMATInterfaceDispatch
 
@@ -196,7 +200,8 @@ namespace umat{
 	     const UMATReal *const PROPS, const UMATInt  *const NPROPS,
 	     const UMATReal *const PREDEF,const UMATReal *const DPRED,
 	     UMATReal *const STATEV,const UMATInt  *const NSTATV,
-	     UMATReal *const STRESS)
+	     UMATReal *const STRESS,
+	     const StressFreeExpansionHandler& sfeh)
     {
       using namespace std;
       using namespace tfel::meta;
@@ -216,7 +221,7 @@ namespace umat{
       du[0] = DSTRAN[1]; du[1] = DSTRAN[0];
       t[0]  = STRESS[1]; t[1]  = STRESS[0];
       Handler::exe(DTIME,DROT,DDSOE,u,du,TEMP,DTEMP,
-		   PROPS,NPROPS,PREDEF,DPRED,STATEV,NSTATV,t);
+		   PROPS,NPROPS,PREDEF,DPRED,STATEV,NSTATV,t,sfeh);
       D[0] = DDSOE[0]; D[1] = DDSOE[1];
       D[2] = DDSOE[2]; D[3] = DDSOE[3];
       DDSOE[0] = D[3]; DDSOE[1] = D[2];
@@ -239,7 +244,8 @@ namespace umat{
 	     const UMATReal *const PROPS, const UMATInt  *const NPROPS,
 	     const UMATReal *const PREDEF,const UMATReal *const DPRED,
 	     UMATReal *const STATEV,const UMATInt  *const NSTATV,
-	     UMATReal *const STRESS)
+	     UMATReal *const STRESS,
+	     const StressFreeExpansionHandler& sfeh)
     {
       using namespace std;
       using namespace tfel::meta;
@@ -259,7 +265,7 @@ namespace umat{
       du[0] = DSTRAN[2]; du[1] = DSTRAN[0]; du[2] = DSTRAN[1];
       t[0]  = STRESS[2]; t[1]  = STRESS[0]; t[2]  = STRESS[1];
       Handler::exe(DTIME,DROT,DDSOE,u,du,TEMP,DTEMP,
-		   PROPS,NPROPS,PREDEF,DPRED,STATEV,NSTATV,t);
+		   PROPS,NPROPS,PREDEF,DPRED,STATEV,NSTATV,t,sfeh);
       D[0] = DDSOE[0]; D[1] = DDSOE[1]; D[2] = DDSOE[2];
       D[3] = DDSOE[3]; D[4] = DDSOE[4]; D[5] = DDSOE[5]; 
       D[6] = DDSOE[6]; D[7] = DDSOE[7]; D[8] = DDSOE[8]; 

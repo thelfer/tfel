@@ -529,13 +529,13 @@ Dans le cas des matériaux orthotropes, l'interface {\tt umat} peut
   décrit en annexe~\ref{sec:calcul-de-la}.
 \item l'interface se charge du calcul du tenseur des coefficients de
   dilatation thermique, si l'utilisateur le demande via la directive
-  \mkeyb{RequireThermalExpansionTensor}{Require\-Thermal\-Expansion\-Tensor}.
+  \mkeyb{RequireThermalExpansionCoefficientTensor}{Require\-Thermal\-Expansion\-Tensor}.
   Il est important de noter que l'interface \texttt{umat} passe ce
   tenseur {\em après} l'appel au constructeur de la loi de
   comportement, ce qui signifie qu'il ne peut être utilisé dans la
   phase d'initialisation introduite par le mot-clé {\tt
     Init\-Local\-Variables}. Ce tenseur est calculé par la classe
-  \tfelb{UMATComputeThermalExpansionTensor}{UMAT\-Compute\-Thermal\-Expansion\-Tensor}.
+  \tfelb{UMATComputeThermalExpansionCoefficientTensor}{UMAT\-Compute\-Thermal\-Expansion\-Tensor}.
 \end{itemize}
 
 \clearpage

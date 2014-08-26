@@ -27,6 +27,15 @@ namespace tfel{
        */
       static const bool is_defined = false;
       /*!
+       * if true, the behaviour must provide a
+       * compouteStressFreeExpansion method.
+       */
+      static const bool hasStressFreeExpansion = false;
+      /*!
+       * if true, the hasStressFreeExpansion must also be ture.
+       */
+      static const bool handlesThermalExpansion = false;
+      /*!
        * Number of material properties.
        */
       static const unsigned short material_properties_nb = 0;

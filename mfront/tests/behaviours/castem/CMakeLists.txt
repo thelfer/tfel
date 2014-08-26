@@ -15,7 +15,11 @@ configure_file("${PROJECT_SOURCE_DIR}/mfront/tests/behaviours/references/PolyCri
     PolyCristalsAngles.txt @ONLY)
 
 set(mfront_tests_SOURCES
+  OrthotropicElastic
+  OrthotropicElastic2
   Elasticity
+  Elasticity2
+  Elasticity3
   FiniteRotationSmallStrainElasticity
   FiniteRotationSmallStrainElasticity2
   LogarithmicStrainElasticity
@@ -44,7 +48,6 @@ set(mfront_tests_SOURCES
   OrthotropicCreep_rk42
   OrthotropicCreep_rkCastem
   ImplicitOrthotropicCreep
-  OrthotropicElastic
   StrainHardeningCreep
   Lorentz
   Mazars
@@ -74,8 +77,16 @@ set(mfront_tests_SOURCES
   IncompressiblePlaneStressMooneyRivlinBehaviour
   IncompressiblePlaneStressGornetDesmoratBehaviour
   ImplicitSimoMieheElastoPlasticity)
+
+mfront_dependencies(MFrontCastemBehaviours
+  ThermalExpansionCoefficientTest
+  ThermalExpansionCoefficientTest2
+  ThermalExpansionCoefficientTest_1
+  ThermalExpansionCoefficientTest_2
+  ThermalExpansionCoefficientTest_3)
   
 mfront_behaviour_check_library(MFrontCastemBehaviours umat  ${mfront_tests_SOURCES})
+
 target_link_libraries(MFrontCastemBehaviours
   UMATInterface
   TFELMaterial
@@ -129,6 +140,12 @@ test_castem(elasticity14)
 test_castem(elasticity15)
 test_castem(elasticity16)
 test_castem(elasticity17)
+test_castem(elasticity18)
+test_castem(elasticity19)
+test_castem(elasticity20)
+test_castem(elasticity21)
+test_castem(elasticity22)
+test_castem(elasticity23)
 test_castem(ddif2)
 test_castem(ddif2-2)
 test_castem(ddif2-3)

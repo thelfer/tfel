@@ -62,7 +62,6 @@ namespace mfront{
 
     virtual void treatIsTangentOperatorSymmetric(void);
 
-
     virtual void treatDerivative(void);
 
     virtual void writeBehaviourParserSpecificIncludes(void);
@@ -70,8 +69,6 @@ namespace mfront{
     virtual void writeBehaviourParserSpecificTypedefs(void);
 
     virtual void writeBehaviourParserSpecificMembers(void);
-
-    virtual void writeBehaviourParserSpecificConstructorPart(void);
 
     virtual void writeBehaviourEulerIntegrator(void);
 

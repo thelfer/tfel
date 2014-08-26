@@ -1,0 +1,14 @@
+@Parser   MaterialLaw;
+@Law      ThermalExpansionCoefficientTest_2;
+@Author   Thomas Helfer;
+@Date     06.03.2014;
+
+// output of law
+@Output a ;
+
+@Constant ReferenceTemperature = 293.15;
+
+@Function{
+  a = 2.23e-5;
+} // end of Function
+

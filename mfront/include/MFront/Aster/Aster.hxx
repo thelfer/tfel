@@ -32,6 +32,24 @@ namespace aster{
 
   typedef double AsterReal;
 
+  /*!
+   * prototype of a function handling stress-free expansion at the
+   * beginning of the time step
+   *
+   * - first  paramater : driving variable
+   * - second paramater : driving variable at the end of the time step
+   *   or driving variable increment
+   * - third paramater  : expansion value at the beginning of the time
+   *   step
+   * - fourth paramater : expansion value at the end of the time step
+   * - third  parameter : spatial dimension
+   */
+  typedef void (*StressFreeExpansionHandler)(AsterReal * const,
+					     AsterReal * const,
+					     const AsterReal *const,
+					     const AsterReal *const,
+					     const AsterInt);
+
 } // end of namespace aster
 
 #endif /* _LIB_MFRONT_ASTER_H */
