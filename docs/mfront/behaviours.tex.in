@@ -2902,6 +2902,7 @@ est restée inchangée, ce qui est satisfaisant.
 
 \subsection{Intégration d'une loi d'écoulement viscoplastique
   orthotrope par un algorithme de \nom{Runge-Kutta}}
+\label{sec:integration-dune-loi}
 
 Nous nous intéressons maintenant à l'écriture d'une loi de
 comportement viscoplastique orthotrope. La forme retenue est proche
@@ -4132,14 +4133,16 @@ Ces différents termes se calculent ainsi~:
 \left\{
 \begin{aligned}
   \deriv{f_{\tepsilonel}}{\Delta\,\tepsilonel} &= \tenseurq{I} -\Delta\,p\deriv{n}{\tsigma} \\
-  &= \tenseurq{I}-\Frac{2\,\mu\,\theta\,\Delta\,p}{\sigmaeq}\,\paren{\tenseurq{M}-\tenseur{n}\otimes\tenseur{n}} \\
+  &= \tenseurq{I}-\Frac{2\,\mu\,\theta\,\Delta\,p}{\sigmaeq}\,\paren{\tenseurq{H}-\tenseur{n}\otimes\tenseur{n}} \\
   \deriv{f_{\tepsilonel}}{\Delta\,p} &= \tenseur{n} \\
   \deriv{f_{p}}{\Delta\,\tepsilonel} &= - A\,E\,\Delta\, t\,\paren{\sigmaH}^{E-1}\,\deriv{\sigmaH}{\Delta\,\tepsilonel} \\
   &= - A\,E\,\theta\,\Delta\, t\,\paren{\sigmaH}^{E-1}\,\tenseur{n}\,\colon\,\tenseurq{D} \\
   \deriv{f_{p}}{\Delta\,p} &= 1
 \end{aligned}
 \right.
-\],
+\]
+où \(tenseur{H}\) est le tenseur de \nom{Hill} du matériau déjà
+rencontré au paragraphe~\ref{sec:integration-dune-loi}.
 
 \begin{figure}[htbp]
   \centering

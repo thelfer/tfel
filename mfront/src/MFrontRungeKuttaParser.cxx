@@ -406,7 +406,7 @@ namespace mfront{
 			  string("RungeKutta5/4"));
     this->mb.setAttribute(ModellingHypothesis::UNDEFINEDHYPOTHESIS,
 			  MechanicalBehaviourData::numberOfEvaluations,
-			  ushort(0u));
+			  ushort(6u));
   } // end of MFrontRungeKuttaParser::setDefaultAlgorithm
 
   void MFrontRungeKuttaParser::treatAlgorithm(void)
@@ -436,8 +436,7 @@ namespace mfront{
       this->mb.setAttribute(h,MechanicalBehaviourData::algorithm,string("RungeKutta4/2"));
       this->mb.setAttribute(h,MechanicalBehaviourData::numberOfEvaluations,ushort(4u));
     } else if(this->current->value=="rk54"){
-      this->mb.setAttribute(h,MechanicalBehaviourData::algorithm,string("RungeKutta5/4"));
-      this->mb.setAttribute(h,MechanicalBehaviourData::numberOfEvaluations,ushort(6u));
+      this->setDefaultAlgorithm();
     } else if(this->current->value=="rkCastem"){
       this->reserveName("ra",false);
       this->reserveName("sqra",false);

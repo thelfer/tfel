@@ -11,6 +11,12 @@ link_directories("${PROJECT_BINARY_DIR}/mfront/src"
 configure_file("${PROJECT_SOURCE_DIR}/mfront/tests/behaviours/references/PolyCristalsAngles.txt"
     PolyCristalsAngles.txt @ONLY)
 
+if(enable-python-bindings)
+  configure_file(asterviscochaboche-memo-nrad.py.in
+    asterviscochaboche-memo-nrad.py @ONLY)
+endif(enable-python-bindings)
+
+
 set(mfront_tests_SOURCES
   Elasticity
   Elasticity2
@@ -39,6 +45,8 @@ set(mfront_tests_SOURCES
   ViscoPlasIsoCin
   Chaboche
   Chaboche2
+  ViscoChaboche
+  ViscoMemoNrad
   ImplicitMonoCristal
   MonoCristal
   MonoCristal_DD_CFC
@@ -148,6 +156,7 @@ test_aster(plasisocin)
 test_aster(viscoplasisocin)
 test_aster(chaboche)
 test_aster(chaboche2)
+test_aster(viscochaboche)
 test_aster(monocristal)
 test_aster(monocristal-2)
 test_aster(implicitmonocristal)
@@ -165,3 +174,12 @@ test_aster(burger)
 test_aster(gursontvergaardneedlemanplasticflow)
 test_aster(gursontvergaardneedlemanviscoplasticflow)
 test_aster(anistropiclemaitreviscoplasticbehaviour)
+
+# if(enable-python-bindings)
+#   add_test(NAME asterviscochaboche-memo-nrad_py
+#     COMMAND ${PYTHON_EXECUTABLE} asterviscochaboche-memo-nrad.py)
+#   set_tests_properties(asterviscochaboche-memo-nrad_py
+#     PROPERTIES DEPENDS MFrontAsterBehaviours)
+#   set_tests_properties(asterviscochaboche-memo-nrad_py
+#     PROPERTIES ENVIRONMENT "PYTHONPATH=${PROJECT_BINARY_DIR}/bindings/python")
+# endif(enable-python-bindings)

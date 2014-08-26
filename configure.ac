@@ -431,6 +431,8 @@ AC_OUTPUT([debug.sh
            mfront/tests/behaviours/aster/asterviscoplasisocin.mtest
            mfront/tests/behaviours/aster/asterchaboche.mtest
            mfront/tests/behaviours/aster/asterchaboche2.mtest
+           mfront/tests/behaviours/aster/asterviscochaboche.mtest
+	   mfront/tests/behaviours/aster/asterviscochaboche-memo-nrad.py
            mfront/tests/behaviours/aster/astermonocristal.mtest
            mfront/tests/behaviours/aster/astermonocristal-2.mtest
            mfront/tests/behaviours/aster/asterimplicitmonocristal.mtest
@@ -510,6 +512,7 @@ AC_OUTPUT([debug.sh
            mfront/tests/behaviours/castem/castemviscoplasisocin.mtest
            mfront/tests/behaviours/castem/castemchaboche.mtest
            mfront/tests/behaviours/castem/castemchaboche2.mtest
+           mfront/tests/behaviours/castem/castemviscochaboche.mtest
            mfront/tests/behaviours/castem/castemmonocristal.mtest
            mfront/tests/behaviours/castem/castemmonocristal-2.mtest
            mfront/tests/behaviours/castem/castemimplicitmonocristal.mtest

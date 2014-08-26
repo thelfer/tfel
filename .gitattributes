@@ -1338,6 +1338,8 @@ mfront/tests/behaviours/SaintVenantKirchhoffElasticity.mfront -text
 mfront/tests/behaviours/StrainHardeningCreep.mfront -text
 mfront/tests/behaviours/T91ViscoplasticBehaviour.mfront -text
 mfront/tests/behaviours/Tvergaard.mfront -text
+mfront/tests/behaviours/ViscoChaboche.mfront -text
+mfront/tests/behaviours/ViscoMemoNrad.mfront -text
 mfront/tests/behaviours/ViscoPlasIsoCin.mfront -text
 mfront/tests/behaviours/aster/CMakeLists.txt -text
 mfront/tests/behaviours/aster/Makefile.am -text
@@ -1401,6 +1403,8 @@ mfront/tests/behaviours/aster/asterpolycristals.mtest.in -text
 mfront/tests/behaviours/aster/asterpolycristals_dd_cfc.mtest.in -text
 mfront/tests/behaviours/aster/asterstrainhardeningcreep.mtest.in -text
 mfront/tests/behaviours/aster/asterstressrelaxation.mtest.in -text
+mfront/tests/behaviours/aster/asterviscochaboche-memo-nrad.py.in -text
+mfront/tests/behaviours/aster/asterviscochaboche.mtest.in -text
 mfront/tests/behaviours/aster/asterviscoplasisocin.mtest.in -text
 mfront/tests/behaviours/aster/strainhardeningcreep.gnuplot -text
 mfront/tests/behaviours/castem/CMakeLists.txt -text
@@ -1603,6 +1607,7 @@ mfront/tests/behaviours/castem/castemsaintvenantkirchhoffelasticity-uniaxialload
 mfront/tests/behaviours/castem/castemstrainhardeningcreep.mtest.in -text
 mfront/tests/behaviours/castem/castemstressrelaxation.mtest.in -text
 mfront/tests/behaviours/castem/castemtvergaard.mtest.in -text
+mfront/tests/behaviours/castem/castemviscochaboche.mtest.in -text
 mfront/tests/behaviours/castem/castemviscoplasisocin.mtest.in -text
 mfront/tests/behaviours/castem/dgibi/CMakeLists.txt -text
 mfront/tests/behaviours/castem/dgibi/CompressibleNeoHookeanBehaviour.dgibi -text
@@ -1680,6 +1685,7 @@ mfront/tests/behaviours/cyrano/cyranoorthotropiccreep.mtest.in -text
 mfront/tests/behaviours/references/AnistropicLemaitreViscoplasticBehaviour.ref -text
 mfront/tests/behaviours/references/PolyCristalsAngles.txt -text
 mfront/tests/behaviours/references/T91-satohtest.ref -text
+mfront/tests/behaviours/references/ViscoChaboche.ref -text
 mfront/tests/behaviours/references/burger.ref -text
 mfront/tests/behaviours/references/chaboche-aster.ref -text
 mfront/tests/behaviours/references/chaboche2-aster.ref -text

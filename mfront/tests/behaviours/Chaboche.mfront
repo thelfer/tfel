@@ -45,7 +45,6 @@ nu.setGlossaryName("PoissonRatio");
   const real seqel = sigmaeq(sigel);
   const real Rpel  = R_inf + (R_0-R_inf)*exp(-b*p) ;
   Fel   = seqel - Rpel ;
-
 } 
 
 @ComputeStress{

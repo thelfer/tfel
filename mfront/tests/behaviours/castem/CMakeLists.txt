@@ -49,10 +49,11 @@ set(mfront_tests_SOURCES
   StrainHardeningCreep
   Lorentz
   Mazars
-  Chaboche
   PlasIsoCin
   ViscoPlasIsoCin
+  Chaboche
   Chaboche2
+  ViscoChaboche
   ImplicitMonoCristal
   MonoCristal
   MonoCristal_DD_CFC
@@ -205,6 +206,7 @@ test_castem(plasisocin)
 test_castem(viscoplasisocin)
 test_castem(chaboche)
 test_castem(chaboche2)
+test_castem(viscochaboche)
 test_castem(monocristal)
 test_castem(monocristal-2)
 test_castem(implicitmonocristal)

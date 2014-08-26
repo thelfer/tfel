@@ -38,6 +38,8 @@ MFRONTS= DDIF2.mfront                                                      \
 	 ViscoPlasIsoCin.mfront                                            \
          Chaboche.mfront                                                   \
          Chaboche2.mfront                                                  \
+         ViscoChaboche.mfront                                              \
+	 ViscoMemoNrad.mfront                                              \
 	 ImplicitMonoCristal.mfront                                        \
 	 MonoCristal.mfront                                                \
 	 MonoCristalNewtonRaphson.mfront                                   \
@@ -105,4 +107,5 @@ EXTRA_DIST=CMakeLists.txt                                                 \
 	   references/finitestrainmonocristal-001.ref			  \
 	   references/finitestrainmonocristal-012.ref			  \
 	   references/finitestrainmonocristal-159.ref                     \
-	   references/AnistropicLemaitreViscoplasticBehaviour.ref
+	   references/AnistropicLemaitreViscoplasticBehaviour.ref         \
+	   references/ViscoChaboche.ref
