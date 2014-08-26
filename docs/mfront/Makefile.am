@@ -28,7 +28,7 @@ EXTRA_DIST=CMakeLists.txt                                           \
 	   Images/Makefile.castem.win			            \
 	   Images/Makefile.castem.linux.tex		            \
 	   Images/Makefile.castem.linux			            \
-	   Images/FuelPelletUniaxialCompressiveTest-sigzz-FiniteRotationSmallStrain-castem2012.eps                                                  \
+	   Images/FuelPelletUniaxialCompressiveTest-sigzz-FiniteRotationSmallStrain-castem2012.eps \
 	   Images/TH.eps                                            \
 	   Images/FuelPelletUniaxialCompressiveTest-sigzz-HPP-castem2012.eps \
 	   Images/FueLPellet-DishingFilling1.png                    \
@@ -109,5 +109,6 @@ EXTRA_DIST=CMakeLists.txt                                           \
 	   Bounds.txt				                    \
 	   Date.txt				                    \
 	   Description.txt                                          \
+	   Parameter.txt                                            \
 	   MaterialLaw/Constant.txt                                 \
 	   MaterialLaw/Function.txt

@@ -222,6 +222,7 @@ install_mfront_desc(Author.txt)
 install_mfront_desc(Bounds.txt)
 install_mfront_desc(Date.txt)
 install_mfront_desc(Description.txt)
+install_mfront_desc(Parameter.txt)
 
 install_mfront_desc2(MaterialLaw Constant.txt)
 install_mfront_desc2(MaterialLaw Function.txt)

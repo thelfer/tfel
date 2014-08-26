@@ -160,6 +160,16 @@ toto
 
 \section{Introduction}
 
+Connaissant l'état du matériau à un instant \(t\), caractérisé par les
+valeurs d'un certain nombre de variables internes
+\(\debutpas{Z_{i}}\), et l'incrément de déformation totale
+\(\Delta\tepsilonto\) entre cet instant et l'instant \(t+\Delta\,t\),
+le principal rôle des lois de comportement mécanique est de permettre
+le calcul de la contrainte \(\finpas{\tsigma}\) et des variables
+internes \(\finpas{Z_{i}}\).
+
+
+
 \section{Modification du système d'intégration~: cas des lois
   isotropes}
 
