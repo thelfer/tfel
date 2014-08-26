@@ -20,7 +20,7 @@ macro(add_mfront_generated_source lib interface ext file)
     ARGS    "--interface=${interface}" "${mfront_file}"
     DEPENDS "${PROJECT_BINARY_DIR}/mfront/src/mfront"
     DEPENDS "${mfront_file}"
-    COMMENT "mfront source")
+    COMMENT "mfront source ${mfront_file}")
   set(${lib}_SOURCES ${mfront_output} ${${lib}_SOURCES})
 endmacro(add_mfront_generated_source)
 

@@ -76,7 +76,7 @@ namespace mfront{
      *
      */
     virtual void
-      treatStateVariables(void);
+    treatStateVariable(void);
 
     virtual void
     treatIntegrator(void);
@@ -94,14 +94,14 @@ namespace mfront{
 
     virtual void writeBehaviourParserSpecificMembers(const Hypothesis);
 
-    virtual void writeBehaviourStateVariablesIncrements(const Hypothesis);
+    virtual void writeBehaviourIntegrationVariablesIncrements(const Hypothesis);
     
     virtual std::string
     getBehaviourConstructorsInitializers(const Hypothesis);
 
     virtual std::string
-    getStateVariableIncrementsInitializers(const VariableDescriptionContainer&,
-					   const bool) const;
+    getIntegrationVariablesIncrementsInitializers(const VariableDescriptionContainer&,
+						  const bool) const;
 
     virtual void writeBehaviourParserSpecificInitializeMethodPart(const Hypothesis);
 
@@ -116,7 +116,7 @@ namespace mfront{
 
     virtual void writeLimitsOnIncrementValuesBasedOnStateVariablesPhysicalBounds(const Hypothesis);
 
-    virtual void writeLimitsOnIncrementValuesBasedOnStateVariablesIncrementsPhysicalBounds(const Hypothesis);
+    virtual void writeLimitsOnIncrementValuesBasedOnIntegrationVariablesIncrementsPhysicalBounds(const Hypothesis);
 
     /*!
      * write a step of the Powell dogleg method
@@ -228,7 +228,7 @@ namespace mfront{
 
     std::set<std::string> jacobianPartsUsedInIntegrator;
 
-    std::set<std::string> internalStateVariableIncrementsUsedInPredictor;
+    std::set<std::string> integrationVariablesIncrementsUsedInPredictor;
 
     // normalisation factors
     std::map<std::string,std::string> nf;

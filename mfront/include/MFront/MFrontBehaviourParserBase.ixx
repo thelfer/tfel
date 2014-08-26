@@ -49,15 +49,15 @@ namespace mfront{
     this->registerNewCallBack("@LocalVar",&Child::treatLocalVar);
     this->registerNewCallBack("@LocalVariable",&Child::treatLocalVar);
     this->registerNewCallBack("@Parameter",&Child::treatParameter);
-    this->registerNewCallBack("@StateVar",&Child::treatStateVariables);
-    this->registerNewCallBack("@StateVariable",&Child::treatStateVariables);
+    this->registerNewCallBack("@StateVar",&Child::treatStateVariable);
+    this->registerNewCallBack("@StateVariable",&Child::treatStateVariable);
     this->registerNewCallBack("@AuxiliaryStateVar",
-			      &Child::treatAuxiliaryStateVariables);
+			      &Child::treatAuxiliaryStateVariable);
     this->registerNewCallBack("@AuxiliaryStateVariable",
-			      &Child::treatAuxiliaryStateVariables);
-    this->registerNewCallBack("@ExternalStateVar",&Child::treatExternalStateVariables);
+			      &Child::treatAuxiliaryStateVariable);
+    this->registerNewCallBack("@ExternalStateVar",&Child::treatExternalStateVariable);
     this->registerNewCallBack("@ExternalStateVariable",
-			      &Child::treatExternalStateVariables);
+			      &Child::treatExternalStateVariable);
     this->registerNewCallBack("@InitLocalVars",
 			      &Child::treatInitLocalVariables);
     this->registerNewCallBack("@InitLocalVariables",

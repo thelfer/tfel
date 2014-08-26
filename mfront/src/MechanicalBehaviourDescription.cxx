@@ -758,6 +758,15 @@ namespace mfront
   }
 
   void
+  MechanicalBehaviourDescription::addIntegrationVariables(const Hypothesis h,
+						    const VariableDescriptionContainer& v)
+  {
+    typedef void (MechanicalBehaviourData::* mptr)(const VariableDescription&);
+    mptr f = &MechanicalBehaviourData::addIntegrationVariable;
+    this->addVariables(h,v,f);
+  }
+
+  void
   MechanicalBehaviourDescription::addStateVariables(const Hypothesis h,
 						    const VariableDescriptionContainer& v)
   {
@@ -767,8 +776,17 @@ namespace mfront
   }
 
   void
-  MechanicalBehaviourDescription::addStateVariable(const Hypothesis h,
+  MechanicalBehaviourDescription::addIntegrationVariable(const Hypothesis h,
 						      const VariableDescription& v)
+  {
+    typedef void (MechanicalBehaviourData::* mptr)(const VariableDescription&);
+    mptr f = &MechanicalBehaviourData::addIntegrationVariable;
+    this->addVariable(h,v,f);
+  }
+
+  void
+  MechanicalBehaviourDescription::addStateVariable(const Hypothesis h,
+						   const VariableDescription& v)
   {
     typedef void (MechanicalBehaviourData::* mptr)(const VariableDescription&);
     mptr f = &MechanicalBehaviourData::addStateVariable;
@@ -1071,25 +1089,39 @@ namespace mfront
   }  // end of MechanicalBehaviourDescription::isLocalVariableName
 
   bool
-  MechanicalBehaviourDescription::isInternalStateVariableName(const Hypothesis h,
+  MechanicalBehaviourDescription::isIntegrationVariableName(const Hypothesis h,
 							      const std::string& n) const
   {
-    return this->getData(h,&MechanicalBehaviourData::isInternalStateVariableName,n);
-  }  // end of MechanicalBehaviourDescription::isInternalStateVariableName
+    return this->getData(h,&MechanicalBehaviourData::isIntegrationVariableName,n);
+  }  // end of MechanicalBehaviourDescription::isIntegrationVariableName
 
   bool
-  MechanicalBehaviourDescription::isInternalStateVariableIncrementName(const Hypothesis h,
-								       const std::string& n) const
+  MechanicalBehaviourDescription::isIntegrationVariableIncrementName(const Hypothesis h,
+								     const std::string& n) const
   {
-    return this->getData(h,&MechanicalBehaviourData::isInternalStateVariableIncrementName,n);
-  }  // end of MechanicalBehaviourDescription::isInternalStateVariableIncrementName
+    return this->getData(h,&MechanicalBehaviourData::isIntegrationVariableIncrementName,n);
+  }  // end of MechanicalBehaviourDescription::isIntegrationVariableIncrementName
 
   bool
-  MechanicalBehaviourDescription::isAuxiliaryInternalStateVariableName(const Hypothesis h,
+  MechanicalBehaviourDescription::isStateVariableName(const Hypothesis h,
+							      const std::string& n) const
+  {
+    return this->getData(h,&MechanicalBehaviourData::isStateVariableName,n);
+  }  // end of MechanicalBehaviourDescription::isStateVariableName
+
+  bool
+  MechanicalBehaviourDescription::isStateVariableIncrementName(const Hypothesis h,
 								       const std::string& n) const
   {
-    return this->getData(h,&MechanicalBehaviourData::isAuxiliaryInternalStateVariableName,n);
-  }  // end of MechanicalBehaviourDescription::isAuxiliaryInternalStateVariableName
+    return this->getData(h,&MechanicalBehaviourData::isStateVariableIncrementName,n);
+  }  // end of MechanicalBehaviourDescription::isStateVariableIncrementName
+
+  bool
+  MechanicalBehaviourDescription::isAuxiliaryStateVariableName(const Hypothesis h,
+								       const std::string& n) const
+  {
+    return this->getData(h,&MechanicalBehaviourData::isAuxiliaryStateVariableName,n);
+  }  // end of MechanicalBehaviourDescription::isAuxiliaryStateVariableName
 
   bool
   MechanicalBehaviourDescription::isExternalStateVariableName(const Hypothesis h,
@@ -1107,7 +1139,7 @@ namespace mfront
 
   bool
   MechanicalBehaviourDescription::isParameterName(const Hypothesis h,
-							 const std::string& v) const
+						  const std::string& v) const
   {
     return this->getData(h,&MechanicalBehaviourData::isParameterName,v);
   } // end of MechanicalBehaviourDescription::isParameterName

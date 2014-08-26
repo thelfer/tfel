@@ -192,6 +192,9 @@ namespace mfront{
     getMaterialProperties(void) const;
 
     const VariableDescriptionContainer&
+    getIntegrationVariables(void) const;
+
+    const VariableDescriptionContainer&
     getStateVariables(void) const;
 
     const VariableDescriptionContainer&
@@ -207,6 +210,9 @@ namespace mfront{
     getParameters(void) const;
 
     const VariableDescription&
+    getIntegrationVariableHandler(const std::string&) const;
+
+    const VariableDescription&
     getStateVariableHandler(const std::string&) const;
 
     const VariableDescription&
@@ -220,13 +226,19 @@ namespace mfront{
     isLocalVariableName(const std::string&) const;
 
     bool
-    isInternalStateVariableName(const std::string&) const;
+    isIntegrationVariableName(const std::string&) const;
 
     bool
-    isInternalStateVariableIncrementName(const std::string&) const;
+    isIntegrationVariableIncrementName(const std::string&) const;
 
     bool
-    isAuxiliaryInternalStateVariableName(const std::string&) const;
+    isStateVariableName(const std::string&) const;
+
+    bool
+    isStateVariableIncrementName(const std::string&) const;
+
+    bool
+    isAuxiliaryStateVariableName(const std::string&) const;
 
     bool
     isExternalStateVariableName(const std::string&) const;
@@ -262,6 +274,12 @@ namespace mfront{
      */
     void
     addMaterialProperty(const VariableDescription&);
+    /*!
+     * \brief add a integration variable
+     * \param[in] v : variable description
+     */
+    void
+    addIntegrationVariable(const VariableDescription&);
     /*!
      * \brief add a state variable
      * \param[in] v : variable description
@@ -573,10 +591,12 @@ namespace mfront{
      * \brief add a variable to a container
      * \param[in] c : container
      * \param[in] v : variable to be added
+     * \param[in] b : if false, don't register variable name
      */
     void
     addVariable(VariableDescriptionContainer& v,
-		const VariableDescription&);
+		const VariableDescription&,
+		const bool = true);
     /*!
      * variables names
      */
@@ -601,6 +621,10 @@ namespace mfront{
      * registred material properties
      */
     VariableDescriptionContainer materialProperties;
+    /*!
+     * registred integration variables
+     */
+    VariableDescriptionContainer integrationVariables;
     /*!
      * registred state variables
      */

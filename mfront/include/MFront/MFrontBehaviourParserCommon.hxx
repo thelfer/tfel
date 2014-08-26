@@ -393,6 +393,23 @@ namespace mfront{
 		     void (MechanicalBehaviourDescription::*)(const Hypothesis,
 							      const VariableDescriptionContainer&),
 		     const bool,const bool,const bool);
+
+    /*!
+     * Assign a list variables to mechanical data associated with the given hypotheses.
+     * \param[out] h : modelling hypothesis on which the variables were declared
+     * \param[out] v : the declared variables
+     * \param[in]  m : method used to assign the variables
+     * \param[in]  b : if true, allows variable declaration after that
+     *                  a code block has been defined (this is a
+     *                  priori only valid for local variables)
+     */
+    virtual void
+    addVariableList(const std::set<Hypothesis>&,
+		    const VariableDescriptionContainer&,
+		    void (MechanicalBehaviourDescription::*)(const Hypothesis,
+							     const VariableDescriptionContainer&),
+		    const bool);
+
     /*!
      * set the interfaces to be used
      */
@@ -468,16 +485,16 @@ namespace mfront{
       treatBehaviour(void);
 
     virtual void
-      treatExternalStateVariables(void);
-
-    virtual void
       treatInterface(void);
 
     virtual void
-    treatStateVariables(void);
+    treatStateVariable(void);
 
     virtual void
-    treatAuxiliaryStateVariables(void);  
+    treatAuxiliaryStateVariable(void);  
+
+    virtual void
+      treatExternalStateVariable(void);
 
     virtual void
       treatIntegrator(void);
@@ -751,7 +768,7 @@ namespace mfront{
     writeBehaviourParserSpecificInitializeMethodPart(const Hypothesis);
 
     virtual void
-    writeBehaviourStateVariablesIncrements(const Hypothesis);
+    writeBehaviourIntegrationVariablesIncrements(const Hypothesis);
 
     virtual void
     writeBehaviourLocalVariables(const Hypothesis);

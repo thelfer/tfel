@@ -251,6 +251,12 @@ namespace mfront{
   } // end of MechanicalBehaviourData::getBoundsDescriptions
 
   const VariableDescription&
+  MechanicalBehaviourData::getIntegrationVariableHandler(const std::string& v) const
+  {
+    return this->getVariableHandler(this->getIntegrationVariables(),v);
+  } // end of MechanicalBehaviourData::getIntegrationVariableHandler
+
+  const VariableDescription&
   MechanicalBehaviourData::getStateVariableHandler(const std::string& v) const
   {
     return this->getVariableHandler(this->getStateVariables(),v);
@@ -280,9 +286,17 @@ namespace mfront{
   } // end of MechanicalBehaviourData::addMaterialProperty
 
   void
+  MechanicalBehaviourData::addIntegrationVariable(const VariableDescription& v)
+  {
+    this->addVariable(this->integrationVariables,v);
+  } // end of MechanicalBehaviourData::addIntegrationVariable
+
+  void
   MechanicalBehaviourData::addStateVariable(const VariableDescription& v)
   {
+    using namespace std;
     this->addVariable(this->stateVariables,v);
+    this->addVariable(this->integrationVariables,v,false);
   } // end of MechanicalBehaviourData::addStateVariable
 
   void
@@ -338,15 +352,33 @@ namespace mfront{
   {
     return this->getLocalVariables().contains(n);
   } // end of MechanicalBehaviourData::isLocalVariableName
-  
-  bool
-  MechanicalBehaviourData::isInternalStateVariableName(const std::string& n) const
-  {
-    return this->getStateVariables().contains(n);
-  } // end of MechanicalBehaviourData::isInternalStateVariableName
 
   bool
-  MechanicalBehaviourData::isInternalStateVariableIncrementName(const std::string& n) const
+  MechanicalBehaviourData::isIntegrationVariableName(const std::string& n) const
+  {
+    return this->getIntegrationVariables().contains(n);
+  } // end of MechanicalBehaviourData::isIntegrationVariableName
+
+  bool
+  MechanicalBehaviourData::isIntegrationVariableIncrementName(const std::string& n) const
+  {
+    if(n.size()<2){
+      return false;
+    }
+    if(n[0]!='d'){
+      return false;
+    }
+    return this->getIntegrationVariables().contains(n.substr(1));
+  } // end of MechanicalBehaviourData::isIntegrationVariableName
+
+  bool
+  MechanicalBehaviourData::isStateVariableName(const std::string& n) const
+  {
+    return this->getStateVariables().contains(n);
+  } // end of MechanicalBehaviourData::isStateVariableName
+
+  bool
+  MechanicalBehaviourData::isStateVariableIncrementName(const std::string& n) const
   {
     if(n.size()<2){
       return false;
@@ -355,13 +387,13 @@ namespace mfront{
       return false;
     }
     return this->getStateVariables().contains(n.substr(1));
-  } // end of MechanicalBehaviourData::isInternalStateVariableName
+  } // end of MechanicalBehaviourData::isStateVariableName
 
   bool
-  MechanicalBehaviourData::isAuxiliaryInternalStateVariableName(const std::string& n) const
+  MechanicalBehaviourData::isAuxiliaryStateVariableName(const std::string& n) const
   {
     return this->getAuxiliaryStateVariables().contains(n);
-  } // end of MechanicalBehaviourData::isInternalStateVariableName
+  } // end of MechanicalBehaviourData::isStateVariableName
   
   bool
   MechanicalBehaviourData::isExternalStateVariableName(const std::string& n) const
@@ -392,6 +424,12 @@ namespace mfront{
   {
     return this->materialProperties;
   } // end of MechanicalBehaviourData::getMaterialProperties
+
+  const VariableDescriptionContainer&
+  MechanicalBehaviourData::getIntegrationVariables(void) const
+  {
+    return this->integrationVariables;
+  } // end of MechanicalBehaviourData::getIntegrationVariables
 
   const VariableDescriptionContainer&
   MechanicalBehaviourData::getStateVariables(void) const
@@ -458,6 +496,16 @@ namespace mfront{
 	}
       }
     }
+    for(ps=this->getIntegrationVariables().begin();
+	(ps!=this->getIntegrationVariables().end())&&(!(b1&&b2));++ps){
+      if(ps->arraySize>1){
+	if(this->useDynamicallyAllocatedVector(ps->arraySize)){
+	  b2 = true;
+	} else {
+	  b1 = true;
+	}
+      }
+    }
     for(ps=this->getStateVariables().begin();
 	(ps!=this->getStateVariables().end())&&(!(b1&&b2));++ps){
       if(ps->arraySize>1){
@@ -502,9 +550,12 @@ namespace mfront{
 
   void
   MechanicalBehaviourData::addVariable(VariableDescriptionContainer& c,
-				       const VariableDescription& v)
+				       const VariableDescription& v,
+				       const bool b)
   {
-    this->registerVariable(v.name);
+    if(b){
+      this->registerVariable(v.name);
+    }
     c.push_back(v);
   } // end of MechanicalBehaviourData::addVariable
 

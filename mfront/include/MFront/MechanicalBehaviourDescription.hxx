@@ -296,6 +296,28 @@ namespace mfront
      * to the default data and to all the specialisations
      */
     void
+    addIntegrationVariable(const Hypothesis,
+			   const VariableDescription&);
+    /*!
+     * \brief add state variables
+     * \param[in] h : modelling hypothesis
+     * \param[in] v : state variables added
+     *
+     * \note if h is UNDEFINEDHYPOTHESIS, add the state variables
+     * to the default data and to all the specialisations
+     */
+    void
+    addIntegrationVariables(const Hypothesis,
+			    const VariableDescriptionContainer&);
+    /*!
+     * \brief add a state variables
+     * \param[in] h : modelling hypothesis
+     * \param[in] v : state variable added
+     *
+     * \note if h is UNDEFINEDHYPOTHESIS, add the state variables
+     * to the default data and to all the specialisations
+     */
+    void
     addStateVariable(const Hypothesis,
 		     const VariableDescription&);
     /*!
@@ -420,8 +442,26 @@ namespace mfront
      * \param[in] n : name
      */
     bool
-    isInternalStateVariableName(const Hypothesis,
-				const std::string&) const;
+    isIntegrationVariableName(const Hypothesis,
+			      const std::string&) const;
+    /*!
+     * \return true if the given name is the one of an integration
+     * variable increment.
+     * \param[in] h : modelling hypothesis
+     * \param[in] n : name
+     */
+    bool
+    isIntegrationVariableIncrementName(const Hypothesis,
+				       const std::string&) const;
+    /*!
+     * \return true if the given name is the one of an internal state
+     * variable.
+     * \param[in] h : modelling hypothesis
+     * \param[in] n : name
+     */
+    bool
+    isStateVariableName(const Hypothesis,
+			const std::string&) const;
     /*!
      * \return true if the given name is the one of an internal state
      * variable increment.
@@ -429,8 +469,8 @@ namespace mfront
      * \param[in] n : name
      */
     bool
-    isInternalStateVariableIncrementName(const Hypothesis,
-					 const std::string&) const;
+    isStateVariableIncrementName(const Hypothesis,
+				 const std::string&) const;
     /*!
      * \return true if the given name is the one of an auxiliary
      * internal state variable.
@@ -438,8 +478,8 @@ namespace mfront
      * \param[in] n : name
      */
     bool
-    isAuxiliaryInternalStateVariableName(const Hypothesis,
-					 const std::string&) const;
+    isAuxiliaryStateVariableName(const Hypothesis,
+				 const std::string&) const;
     /*!
      * \return true if the given name is the one of an external state
      * variable.

@@ -48,9 +48,9 @@ namespace mfront{
     treatUnknownVariableMethod(const Hypothesis,
 			       const std::string&);
 
-    virtual void treatStateVariables(void);
+    virtual void treatStateVariable(void);
 
-    virtual void treatExternalStateVariables(void);
+    virtual void treatExternalStateVariable(void);
 
     virtual void treatEpsilon(void);
 

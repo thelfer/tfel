@@ -167,7 +167,7 @@ namespace mfront{
 							       const bool addThisPtr)
   {
     if((var=="T")||(this->mb.isExternalStateVariableName(h,var))||
-       (this->mb.isInternalStateVariableName(h,var))){
+       (this->mb.isStateVariableName(h,var))){
       if(addThisPtr){
 	return "this->"+var+"_";
       } else {
@@ -229,7 +229,7 @@ namespace mfront{
     }
   } // end of MFrontIsotropicBehaviourParserBase::endsInputFileProcessing
 
-  void MFrontIsotropicBehaviourParserBase::treatExternalStateVariables(void)
+  void MFrontIsotropicBehaviourParserBase::treatExternalStateVariable(void)
   {
     using namespace std;
     VariableDescriptionContainer ev;
@@ -248,7 +248,7 @@ namespace mfront{
 		       MechanicalBehaviourData::CREATEORAPPEND,
 		       MechanicalBehaviourData::AT_END);
     }
-  } // end of MFrontIsotropicBehaviourParserBase::treatStateVariables
+  } // end of MFrontIsotropicBehaviourParserBase::treatExternalStateVariable
 
   void
   MFrontIsotropicBehaviourParserBase::writeBehaviourParserSpecificTypedefs(void)

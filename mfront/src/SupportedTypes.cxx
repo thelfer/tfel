@@ -435,8 +435,8 @@ namespace mfront{
   } // end of SupportedTypes::writeVariableInitializersInBehaviourDataConstructorII
 
   std::string
-  SupportedTypes::getStateVariableIncrementsInitializers(const VariableDescriptionContainer& v,
-							 const bool useStateVarTimeDerivative) const 
+  SupportedTypes::getIntegrationVariablesIncrementsInitializers(const VariableDescriptionContainer& v,
+								const bool useStateVarTimeDerivative) const 
   {
     using namespace std;
     VariableDescriptionContainer::const_iterator p;
@@ -466,7 +466,7 @@ namespace mfront{
 	  } else if(flag==SupportedTypes::Tensor){
 	    traits = "TensorTraits";
 	  } else {
-	    string msg("SupportedTypes::writeStateVariableIncrementsInitializers : ");
+	    string msg("SupportedTypes::writeIntegrationVariablesInitializers : ");
 	    msg += "internal error, tag unsupported";
 	    throw(runtime_error(msg));
 	  }
@@ -486,14 +486,14 @@ namespace mfront{
 	    }
 	  }
 	} else {
-	  string msg("SupportedTypes::writeStateVariableIncrementsInitializers : ");
+	  string msg("SupportedTypes::writeIntegrationVariablesInitializers : ");
 	  msg += "internal error, tag unsupported";
 	  throw(runtime_error(msg));
 	}
       }
     }
     return f.str();
-  } // end of SupportedTypes::getStateVariableIncrementsInitializers
+  } // end of SupportedTypes::getIntegrationVariablesInitializers
 
   SupportedTypes::TypeSize
   SupportedTypes::getTotalSize(const VariableDescriptionContainer& v) const

@@ -730,8 +730,8 @@ namespace mfront{
 						  const std::string& n) const
   {
     return ((this->mb.isMaterialPropertyName(h,n))||
-	    (this->mb.isInternalStateVariableName(h,n))||
-	    (this->mb.isAuxiliaryInternalStateVariableName(h,n))||
+	    (this->mb.isStateVariableName(h,n))||
+	    (this->mb.isAuxiliaryStateVariableName(h,n))||
 	    (this->mb.isExternalStateVariableName(h,n))||
 	    (this->mb.isParameterName(h,n)));
   } // end of MFrontBehaviourParserCommon::isCallableVariable
@@ -1095,14 +1095,25 @@ namespace mfront{
     v.clear();
     this->readHypothesesList(h);
     this->readVarList(v,b1,b2,true);
+    this->addVariableList(h,v,m,b3);
+  } // end of MFrontBehaviourParserCommon::readVariableList
+
+  void
+  MFrontBehaviourParserCommon::addVariableList(const std::set<Hypothesis>& h,
+					       const VariableDescriptionContainer& v,
+					       void (MechanicalBehaviourDescription::* m)(const Hypothesis,
+											  const VariableDescriptionContainer&),
+					       const bool b)
+  {
+    using namespace std;						
     for(set<Hypothesis>::const_iterator ph=h.begin();ph!=h.end();++ph){
-      if(!b3){
+      if(!b){
 	if(!this->mb.getAttribute<bool>(*ph,MechanicalBehaviourData::allowsNewUserDefinedVariables,true)){
 	  vector<string> cbn(this->mb.getCodeBlockNames(*ph));
 	  if(cbn.empty()){
 	    this->throwRuntimeError("MFrontBehaviourParserCommon::readVariableList : ",
 				    "no more variable can be defined. This may mean that "
-				  "the parser does not expect you to add variables");
+				    "the parser does not expect you to add variables");
 	  } else {
 	    string cbs;
 	    for(vector<string>::const_iterator pn=cbn.begin();pn!=cbn.end();++pn){
@@ -1118,7 +1129,7 @@ namespace mfront{
       }
       (this->mb.*m)(*ph,v);
     }
-  }
+  } // end of MFrontBehaviourParserCommon::addVariableList
 
   void MFrontBehaviourParserCommon::treatCoef(void)
   {
@@ -1156,7 +1167,7 @@ namespace mfront{
 			&MFrontBehaviourParserCommon::standardModifier,true,true);
   } // end of MFrontBehaviourParserCommon::treatIntegrator
 
-  void MFrontBehaviourParserCommon::treatStateVariables(void)
+  void MFrontBehaviourParserCommon::treatStateVariable(void)
   {
     using namespace std;
     VarContainer v;
@@ -1164,7 +1175,7 @@ namespace mfront{
     this->readVariableList(v,h,&MechanicalBehaviourDescription::addStateVariables,true,false,false);
   }
 
-  void MFrontBehaviourParserCommon::treatAuxiliaryStateVariables(void)
+  void MFrontBehaviourParserCommon::treatAuxiliaryStateVariable(void)
   {
     using namespace std;
     VarContainer v;
@@ -1172,7 +1183,7 @@ namespace mfront{
     this->readVariableList(v,h,&MechanicalBehaviourDescription::addAuxiliaryStateVariables,true,false,false);
   }
 
-  void MFrontBehaviourParserCommon::treatExternalStateVariables(void)
+  void MFrontBehaviourParserCommon::treatExternalStateVariable(void)
   {
     using namespace std;
     VarContainer v;
@@ -2588,8 +2599,8 @@ namespace mfront{
     const MechanicalBehaviourData& md = this->mb.getMechanicalBehaviourData(h);
     // variable initialisation
     string init;
-    init = this->getStateVariableIncrementsInitializers(md.getStateVariables(),
-							this->useStateVarTimeDerivative);    
+    init = this->getIntegrationVariablesIncrementsInitializers(md.getStateVariables(),
+							       this->useStateVarTimeDerivative);    
     if(!this->localVariablesInitializers.empty()){
       if(!init.empty()){
 	init += ",\n";
@@ -2998,13 +3009,13 @@ namespace mfront{
     this->behaviourFile << endl;
   }
 
-  void MFrontBehaviourParserCommon::writeBehaviourStateVariablesIncrements(const Hypothesis h)
+  void MFrontBehaviourParserCommon::writeBehaviourIntegrationVariablesIncrements(const Hypothesis h)
   {    
     using namespace std;
     const MechanicalBehaviourData& md = this->mb.getMechanicalBehaviourData(h);
     this->checkBehaviourFile();
     this->writeVariablesDeclarations(this->behaviourFile,
-				     md.getStateVariables(),
+				     md.getIntegrationVariables(),
 				     "d","",this->fileName,
 				     this->useStateVarTimeDerivative);
     this->behaviourFile << endl;
@@ -3595,7 +3606,7 @@ namespace mfront{
     this->writeBehaviourStandardTFELTypedefs();
     this->writeBehaviourParserSpecificTypedefs();
     this->writeBehaviourStaticVariables(h);
-    this->writeBehaviourStateVariablesIncrements(h);
+    this->writeBehaviourIntegrationVariablesIncrements(h);
     this->writeBehaviourLocalVariables(h);
     this->writeBehaviourParameters(h);
     this->writeBehaviourParserSpecificMembers(h);
@@ -4651,9 +4662,9 @@ namespace mfront{
 								  const std::string& var,
 								  const bool addThisPtr)
   {
-    if(this->mb.isInternalStateVariableIncrementName(h,var)){
+    if(this->mb.isIntegrationVariableIncrementName(h,var)){
       this->throwRuntimeError("MFrontBehaviourParserCommon::predictionOperatorVariableModifier : ",
-			      "state variable increment '"+var+"' can't be used in @PredictionOperator");
+			      "integration variable '"+var+"' can't be used in @PredictionOperator");
     }
     if(addThisPtr){
       return "(this->"+var+")";

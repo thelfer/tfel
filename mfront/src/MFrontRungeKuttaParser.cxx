@@ -118,7 +118,7 @@ namespace mfront{
     }
   }
 
-  void MFrontRungeKuttaParser::treatStateVariables(void)
+  void MFrontRungeKuttaParser::treatStateVariable(void)
   {
     using namespace std;
     VarContainer sv;
@@ -171,9 +171,9 @@ namespace mfront{
 		       MechanicalBehaviourData::CREATEORAPPEND,
 		       MechanicalBehaviourData::AT_END);
     }
-  } // end of MFrontRungeKuttaParser::treatStateVariables
+  } // end of MFrontRungeKuttaParser::treatStateVariable
 
-  void MFrontRungeKuttaParser::treatExternalStateVariables(void)
+  void MFrontRungeKuttaParser::treatExternalStateVariable(void)
   {
     using namespace std;
     VariableDescriptionContainer ev;
@@ -194,7 +194,7 @@ namespace mfront{
 		       MechanicalBehaviourData::CREATEORAPPEND,
 		       MechanicalBehaviourData::AT_END);
     }
-  } // end of MFrontRungeKuttaParser::treatStateVariables
+  } // end of MFrontRungeKuttaParser::treatStateVariable
 
   void
   MFrontRungeKuttaParser::treatUpdateAuxiliaryStateVariables(void)
@@ -213,7 +213,7 @@ namespace mfront{
     const MechanicalBehaviourData& d = this->mb.getMechanicalBehaviourData(h);
     if((this->mb.isDrivingVariableName(var)) ||(var=="T") ||
        (this->mb.isDrivingVariableIncrementName(var))||
-       (d.isInternalStateVariableName(var))||
+       (d.isStateVariableName(var))||
        (d.isExternalStateVariableName(var))){
       if(addThisPtr){
 	return "this->"+var+"_";
@@ -298,7 +298,7 @@ namespace mfront{
 							  const std::string& n)
   {
     using namespace std;
-    if(this->mb.isInternalStateVariableName(h,n)){
+    if(this->mb.isStateVariableName(h,n)){
       if(this->current->value=="setErrorNormalisationFactor"){
     	string var;
     	++(this->current);

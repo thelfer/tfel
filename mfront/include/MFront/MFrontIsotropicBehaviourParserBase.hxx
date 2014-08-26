@@ -69,7 +69,7 @@ namespace mfront{
 			     const std::string&,const bool);
 
     virtual void
-    treatExternalStateVariables(void);
+    treatExternalStateVariable(void);
 
     virtual void
     treatFlowRule(void);

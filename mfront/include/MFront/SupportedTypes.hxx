@@ -160,8 +160,8 @@ namespace mfront
      * \param[in]  useTimeDerivative : declare time derivative of the variables
      */
     virtual std::string
-    getStateVariableIncrementsInitializers(const VariableDescriptionContainer&,
-					   const bool) const;
+    getIntegrationVariablesIncrementsInitializers(const VariableDescriptionContainer&,
+						  const bool) const;
 
     /*!
      * \param[out] f     : output file
