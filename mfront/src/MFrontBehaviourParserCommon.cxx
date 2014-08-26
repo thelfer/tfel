@@ -3673,7 +3673,8 @@ namespace mfront{
   void
   MFrontBehaviourParserCommon::treatParameter(void)
   {
-    this->readVarList(this->mb.getParameters(),"real",false,false);
+    this->handleParameter(this->mb.getParameters(),
+			  this->mb.getParametersDefaultValues());
   } // end of MFrontBehaviourParserCommon::treatParameter
 
   void

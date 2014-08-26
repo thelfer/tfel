@@ -523,6 +523,7 @@ install_header(TFEL/Material MetallicCFCGenericSlidingSystemsInteractionMatrix.h
 install_header(TFEL/Material MetallicCFCGenericSlidingSystemsInteractionMatrix.ixx)
 install_header(TFEL/Material PolyCristalsSlidingSystems.hxx)
 install_header(TFEL/Material PolyCristalsSlidingSystems.ixx)
+install_header(TFEL/Material GursonTvergaardNeedleman.hxx)
 
 install_header(TFEL/Tests MultipleTestOutputs.hxx)
 install_header(TFEL/Tests StdStreamTestOutput.hxx)

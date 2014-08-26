@@ -60,6 +60,8 @@ set(mfront_tests_SOURCES
   MonoCristal_DD_CC_Irradiation_NumericalJacobian
   PolyCristals
   PolyCristals_DD_CFC
+  GursonTvergaardNeedlemanPlasticFlow_NumericalJacobian
+  GursonTvergaardNeedlemanViscoPlasticFlow_NumericalJacobian
   Hayhurst
   ImplicitHayhurst
   Burger

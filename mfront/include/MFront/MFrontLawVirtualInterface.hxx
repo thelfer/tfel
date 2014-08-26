@@ -57,7 +57,7 @@ namespace mfront{
      * \param const std::map<std::string,std::string>&, glossary names
      * \param const std::map<std::string,std::string>&, entry names
      * \param const StaticVarContainer&, static variables
-     * \param const std::vector<std::string>&, parameters
+     * \param[in] parameters
      * \param const std::map<std::string,double>&, parameters values
      * \param const LawFunction&, function definition
      * \param const std::vector<VariableBoundsDescription>&, bounds of the law

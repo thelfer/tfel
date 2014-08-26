@@ -144,9 +144,9 @@ namespace mfront{
     std::map<std::string,std::vector<std::string> > sourcesLibrairiesDependencies;
     std::map<std::string,std::string> glossaryNames;
     std::map<std::string,std::string> entryNames;
+    std::vector<std::string> parameters;
     std::map<std::string,double> parametersValues;
     CallBackContainer callBacks;
-    std::vector<std::string> parameters;
     std::string currentVar;
     std::string output;
     bool useTemplate;

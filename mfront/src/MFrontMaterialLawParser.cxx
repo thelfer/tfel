@@ -184,6 +184,7 @@ namespace mfront{
   MFrontMaterialLawParser::treatParameter(void)
   {
     using namespace std;
+    // note : we shall use the ParserBase::handleParameter method
     string parameter;
     double value;
     this->checkNotEndOfFile("MFrontMaterialLawParser::treatParameter",
@@ -192,7 +193,16 @@ namespace mfront{
     ++(this->current);
     this->checkNotEndOfFile("MFrontMaterialLawParser::treatParameter",
 			    "unexpected end of file");
-    if(this->current->value=="="){
+    if((this->current->value=="=")||
+       (this->current->value=="{")||
+       (this->current->value=="(")){
+      string ci; // closing initializer
+      if(this->current->value=="{"){
+	ci="}";
+      }
+      if(this->current->value=="("){
+	ci=")";
+      }
       this->readSpecifiedToken("MFrontMaterialLawParser::treatParameter","=");
       this->checkNotEndOfFile("MFrontMaterialLawParser::treatParameter",
 			      "Expected to read value of variable '"+parameter+"'");
@@ -204,6 +214,9 @@ namespace mfront{
       }
       ++(this->current);
       this->parametersValues.insert(make_pair(parameter,value));
+      if(!ci.empty()){
+	this->readSpecifiedToken("ParserBase::handleParameter",ci);
+      }
     }
     this->readSpecifiedToken("MFrontMaterialLawParser::treatParameter",";");
     this->registerVariable(parameter);

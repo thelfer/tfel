@@ -389,6 +389,7 @@ include/TFEL/Macros.hxx -text
 include/TFEL/Material/BoundsCheck.hxx -text
 include/TFEL/Material/DDIF2Base.hxx -text
 include/TFEL/Material/DDIF2Base.ixx -text
+include/TFEL/Material/GursonTvergaardNeedleman.hxx -text
 include/TFEL/Material/Hill.hxx -text
 include/TFEL/Material/Hill.ixx -text
 include/TFEL/Material/IsotropicLinearFourierHookLaw.hxx -text
@@ -1171,6 +1172,8 @@ mfront/tests/behaviours/DruckerPrager.mfront -text
 mfront/tests/behaviours/Elasticity.mfront -text
 mfront/tests/behaviours/EllipticCreep.mfront -text
 mfront/tests/behaviours/FiniteRotationSmallStrainElasticity.mfront -text
+mfront/tests/behaviours/GursonTvergaardNeedlemanPlasticFlow_NumericalJacobian.mfront -text
+mfront/tests/behaviours/GursonTvergaardNeedlemanViscoPlasticFlow_NumericalJacobian.mfront -text
 mfront/tests/behaviours/Hayhurst.mfront -text
 mfront/tests/behaviours/ImplicitFiniteStrainNorton.mfront -text
 mfront/tests/behaviours/ImplicitHayhurst.mfront -text

@@ -1112,4 +1112,69 @@ namespace mfront
     return value;
   } // end of ParserBase::readDouble
 
+  void
+  ParserBase::handleParameter(VarContainer& c,
+			      std::map<std::string,double>& v)
+  {
+    using namespace std;
+    typedef map<string,double>::value_type MVType;
+    bool endOfTreatement=false;
+    while((this->current!=this->fileTokens.end())&&
+	  (!endOfTreatement)){
+      if(!isValidIdentifier(this->current->value)){
+	this->throwRuntimeError("ParserBase::handleParameter : ",
+				"variable given is not valid (read '"+this->current->value+"').");
+      }
+      const string n = this->current->value;
+      const unsigned short lineNumber = this->current->line;
+      ++(this->current);
+      this->checkNotEndOfFile("ParserBase::handleParameter");
+      if((this->current->value=="=")||
+	 (this->current->value=="{")||
+	 (this->current->value=="(")){
+	string ci; // closing initializer
+	if(this->current->value=="{"){
+	  ci="}";
+	}
+	if(this->current->value=="("){
+	  ci=")";
+	}
+	++(this->current);
+	this->checkNotEndOfFile("ParserBase::handleParameter");
+	istringstream converter(this->current->value);
+	double value;
+	converter >> value;
+	if(!converter&&(!converter.eof())){
+	  this->throwRuntimeError("ParserBase::handleParameter",
+				  "could not read default value for parameter '"+n+"'");
+	}
+	++(this->current);
+	this->checkNotEndOfFile("ParserBase::handleParameter");
+	if(!v.insert(MVType(n,value)).second){
+	  this->throwRuntimeError("ParserBase::handleParameter",
+				  "default value already defined for parameter '"+n+"'");
+	}
+	if(!ci.empty()){
+	  this->readSpecifiedToken("ParserBase::handleParameter",ci);
+	}
+      }
+      if(this->current->value==","){
+	++(this->current);
+      } else if (this->current->value==";"){
+	endOfTreatement=true;
+	++(this->current);
+      } else {
+	this->throwRuntimeError("ParserBase::handleParameter",
+				", or ; expected afer '"+n+"'");
+      }
+      this->registerVariable(n);
+      c.push_back(VarHandler("real",n,1u,lineNumber));
+    }
+    if(!endOfTreatement){
+      --(this->current);
+      this->throwRuntimeError("ParserBase::handleParameter",
+			      "Expected ';' before end of file");
+    }
+  } // end of ParserBase::handleParameter
+
 } // end of namespace mfront

@@ -223,6 +223,15 @@ namespace mfront
     reserveName(const std::string&);
     double
     readDouble(void);
+    /*!
+     * \brief read parameters declaration
+     * \param[in] c : parameters container
+     * \param[in] v : parameters default values
+     */
+    void
+    handleParameter(VarContainer&,
+		    std::map<std::string,double>&);
+    
     std::vector<std::string> librariesDependencies;
     std::map<std::string,int> integerConstants;
     std::string sources;

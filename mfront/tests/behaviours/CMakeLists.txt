@@ -29,6 +29,8 @@ install_data(mfront/tests/behaviours MonoCristal_DD_CFC_InteractionMatrix.mfront
 install_data(mfront/tests/behaviours MonoCristal_DD_CC.mfront)
 install_data(mfront/tests/behaviours MonoCristal_DD_CC_NumericalJacobian.mfront)
 install_data(mfront/tests/behaviours MonoCristal_DD_CC_InteractionMatrix.mfront)
+install_data(mfront/tests/behaviours GursonTvergaardNeedlemanPlasticFlow_NumericalJacobian.mfront)
+install_data(mfront/tests/behaviours GursonTvergaardNeedlemanViscoplasticFlow_NumericalJacobian.mfront)
 install_data(mfront/tests/behaviours MonoCristal.mfront)
 install_data(mfront/tests/behaviours MonoCristalNewtonRaphson.mfront)
 install_data(mfront/tests/behaviours Norton_Euler.mfront)
