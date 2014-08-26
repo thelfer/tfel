@@ -1,0 +1,30 @@
+@Parser Implicit;
+@Behaviour Norton;
+@Algorithm NewtonRaphson_NumericalJacobian ;
+
+@RequireStiffnessTensor;
+
+@MaterialProperty real A;
+@MaterialProperty real m;
+
+@StateVariable real p ;
+
+@ComputeStress{
+  sig = D*eel ;
+}
+
+@Integrator{
+  real seq = sigmaeq(sig) ;
+  Stensor n = Stensor(0.) ;
+  if(seq > 1.e-12){
+    n = 1.5*deviator(sig)/seq ;
+  }
+  feel += dp*n-deto ;
+  fp -= dt*A*pow(seq,m) ;
+} // end of @Integrator
+
+@TangentOperator{
+  Stensor4 Je ;
+  getPartialJacobianInvert(Je) ;
+  Dt = D*Je ;
+}

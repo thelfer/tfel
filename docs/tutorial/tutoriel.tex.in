@@ -1,0 +1,44 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%	Fichier	   : tutorial
+%%	Auteur     : th202608@pleiades077.intra.cea.fr
+%%	Date       : 04 avril 2014
+%%	Répertoire : /home/th202608/codes/pandoc/
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\documentclass[12pt,a4paper]{article}
+
+\usepackage[top=2cm,bottom=2cm,left=2cm,right=2cm]{geometry} 
+
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{xcolor}
+\usepackage{listings}
+\usepackage{array}
+\usepackage[frenchb]{babel}
+
+\usepackage{common} 
+
+% \gdef\label#1{\TheRealLabel{\roman{chapter}:#1}}
+% \gdef\ref#1{\TheRealRef{\roman{chapter}:#1}}
+
+\begin{document}
+
+\include{introduction}
+
+\include{rappels}
+
+\include{Chaboche}
+
+\include{ViscoCompressible}
+
+\include{Conclusions}
+
+\include{Bibliographie}
+
+\end{document}
+
+
+%%% Local Variables: 
+%%% mode: latex
+%%% TeX-master: t
+%%% End: 

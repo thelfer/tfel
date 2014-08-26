@@ -16,7 +16,7 @@ nu.setGlossaryName("PoissonRatio");
 @LocalVariable real     lambda;
 @LocalVariable real     mu;
 
-// store for the Von Mises stress 
+// store the Von Mises stress 
 // for the tangent operator
 @LocalVariable real seq;
 // store the derivative of the creep function

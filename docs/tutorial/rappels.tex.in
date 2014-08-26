@@ -1,0 +1,254 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%	Fichier	   : rappels
+%%	Auteur     : th202608@pleiades077.intra.cea.fr
+%%	Date       : 29 avril 2014
+%%	Répertoire : /home/th202608/Documents/notes/2014/TutorielMFront/
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{Quelques rappels et définitions sur l'intégration des lois de
+  comportement~: où se place \mfront{} ?}
+\label{sec:rappels-integration}
+
+\subsection{Algorithme de résolution d'un problème non linéaire
+  quasi-statique}
+
+Quand le comportement des matériaux composant une structure n'est pas
+linéaire, la résolution de l'équilibre global de la structure à chaque
+instant est un problème non linéaire.
+
+La formulation du problème quasi-statique discrétisé consiste à
+exprimer l'équilibre de la structure pour une suite d'instants de
+calcul \(\left\{t_{i}\right\}_{1\le i\le I}\) qui paramètrent le
+chargement~:
+\[
+\mathrm{L}^{\text{int}}({\mathrm{u}}_{i},t_{i})=\mathrm{L}_{i}^{\text{ext}}\paren{t_{i}}
+\]
+avec~:
+\begin{itemize}
+\item \(t_{i}\) représente la variable d'instant~;
+\item \({\mathrm{u}}_{i}\) est le champ de déplacement~;
+\item \(\mathrm{L}^{\text{ext}}(t)\) est le chargement mécanique
+  extérieur auquel est soumis la structure~;
+\item \(\mathrm{L}^{\text{int}}\) représente les forces internes,
+  reliées au champ de contraintes \(\tsigma\).
+\end{itemize}
+
+Ce problème non linéaire est généralement résolu par une méthode de
+type \nom{Newton}.
+
+En pratique, on distingue deux phases dans l'algorithme~:
+\begin{enumerate}[-]
+\item une phase de prédiction, optionnelle qui estime au mieux la
+  solution avec les données de début de pas~;
+\item une phase de correction itérative.
+\end{enumerate}
+
+Pour la phase de correction, on obtient un système à résoudre, qui
+s'écrit alors, pour chaque itération $n$\footnote{Pour simplifier,
+  nous omettons les équations de \nom{Lagrange} relatives aux
+  conditions aux limites.}~:
+\[
+\mathrm{K}_{i}^{n}.\delta {\mathrm{u}}_{i}^{n+1}=\mathrm{L}_{i}^{\text{méca}}-\mathrm{L}_{i}^{\text{int},n}
+\]
+
+Le vecteur des forces internes \(\mathrm{L}_{i}^{\text{int},n}\) est
+calculé à partir des contraintes \(\tsigma_{i}^{n}\) , celles-ci étant
+calculées à partir des déplacements \({{\mathrm{u}}}_{i}^{n}\) par
+l'intermédiaire de la relation de comportement du matériau.
+
+En fait, dans le cas des comportements incrémentaux,
+\(\tsigma_{i}^{n}\) est calculé à partir de la connaissance des
+contraintes \(\tsigma_{i-1}\) et des éventuelles variables internes
+\(\alpha_{i-1}\) à l'instant précédent et de l'incrément de
+déformation \(\tepsilonto(\Delta\,{{\mathrm{u}}}_{i}^{n})\) induit par
+l'incrément de déplacement depuis le début du processus itératif.
+
+\begin{figure}[!htbp]
+  \centering
+ \includegraphics[width=18cm]{@top_srcdir@/docs/tutorial/images/tutorielch12-img2.pdf}   
+  \caption{Schéma général de résolution d'un problème non linéaire en mécanique des structures par la méthode de Newton-Raphson.}
+  \label{fig:mfront:tutorial:equilibrium}
+\end{figure}
+
+La figure~\ref{fig:mfront:tutorial:equilibrium} donne une vision très
+globale de cet algorithme.
+
+\begin{figure}[!htbp]
+  \centering
+  \includegraphics[width=15cm]{@top_srcdir@/docs/tutorial/images/tutorielch12-img3.pdf}
+  \caption{Place de la loi de comportement dans le schéma itératif de recherche de l'équilibre.}
+  \label{fig:mfront:tutorial:Equilibrium2}
+\end{figure}
+
+La figure~\ref{fig:mfront:tutorial:Equilibrium2} précise la place
+de la loi de comportement dans la recherche de l'équilibre.
+
+\subsection{But et résultat de l'intégration d'une loi de
+  comportement}
+% \hypertarget{RefHeading7829105070066}{}
+
+Au pas de temps \(i\) et à l'itération de Newton \(n\), à partir des
+contraintes et variables internes à l'équilibre précédent
+\((\tsigma_{i-1},\alpha_{i-1})\) et de l'incrément de déformation
+\(\tepsilonto(\Delta\,{{\mathrm{u}}}_{i}^{n})\) (et éventuellement avec
+la température, hydratation..), il faut calculer, en chaque point de
+\nom{Gauss} de chaque élément fini~:
+\begin{itemize}
+\item les contraintes et variables internes~:
+ \[
+ \paren{\tsigma_{i-1},\alpha_{i-1},\tepsilonto\paren{\Delta\,{{\mathrm{u}}}_{i}^{n}}}
+ \rightarrow
+ \tsigma_{i}^{n},\alpha_{i}^{n}
+ \]
+\item l'opérateur tangent~:
+  \[
+  \paren{\tsigma_{i-1},\alpha_{i-1},\tepsilonto(\Delta\, {\mathrm{u}}_{i}^{n})}
+  \rightarrow
+  \left(\frac{\partial \tsigma}{\partial \tepsilonto}\right)_{i}^{n}
+  \]
+\end{itemize}
+
+À l'itération \(0\) du pas de temps \(i\) (initialisation de
+l'algorithme de Newton), on choisit comme matrice tangente de
+prédiction la matrice tangente à l'équilibre précédent (\(i-1\)), soit~:
+\[
+\mathrm{K}_{i}^{0}=\mathrm{K}_{i-1}
+\]
+À partir des contraintes et
+variables internes à l'équilibre précédent
+\((\tsigma_{i-1},\alpha_{i-1})\) , il faut donc calculer en chaque
+point de \nom{Gauss} de chaque élément fini~:
+\begin{itemize}
+\item l'opérateur tangent en prédiction~: 
+\(\tsigma_{i-1},\alpha_{i-1}\text{
+}{\to }\text{ }\left(\frac{\partial
+\tsigma}{\partial
+\tepsilonto}\right)_{i}^{0}\)
+\end{itemize}
+
+\subsection{Différents types de matrices tangentes }
+% \hypertarget{RefHeading7831105070066}{}
+
+\subsubsection{Matrice tangente dite cohérente ou consistante}
+
+\begin{figure}[!h]
+  \includegraphics[width=0.32\linewidth,height=5cm]{@top_srcdir@/docs/tutorial/images/Kcoh.png}  
+  \hfill
+  \includegraphics[width=0.32\linewidth,height=5cm]{@top_srcdir@/docs/tutorial/images/Kel.png}  
+  \hfill
+  \includegraphics[width=0.32\linewidth,height=5cm]{@top_srcdir@/docs/tutorial/images/Ktgt.png}  
+  \caption{Matrices tangentes (A) cohérente, (B) élastique, (C) prédiction}
+  \label{fig:Ktangentes}
+\end{figure}
+
+Réactualisée à chaque itération, elle assure la meilleure vitesse de
+convergence (quadratique) à l'algorithme global de Newton
+(figure~\ref{fig:Ktangentes}-A). Mais pour de grands
+incréments de chargement, ou des décharges, la matrice tangente
+cohérente peut conduire à des divergences de l'algorithme.
+
+\subsubsection{Autres matrices \og~tangentes~\fg{}}
+
+Les approximations dans le calcul de la matrice \og~tangente~\fg{}
+dégradent la vitesse de convergence par rapport à la matrice tangente
+cohérente mais la solution obtenue reste juste tant que le résidu est
+calculé de manière exacte. Il existe plusieurs variantes possibles
+(dites méthodes de quasi-Newton). Citons les plus simples~:
+
+\begin{itemize}
+\item la matrice élastique~:
+  \begin{itemize}
+  \item calculée une seule fois (économique) à partir des paramètres
+    d'élasticité~;
+  \item recommandée en cas de décharge~;
+  \item convergence lente mais assurée (figure~\ref{fig:Ktangentes}-B).
+  \end{itemize}
+\item matrice tangente réactualisée tous les $i_{0}$ incréments de
+  charge (figure~\ref{fig:Ktangentes}-C) ou toutes les $n_{0}$ itérations de \nom{Newton}
+  \begin{itemize}
+  \item coût moindre~
+  \item direction moins bien évaluée~;
+  \item diverge parfois dans les zones de forte non linéarité~;
+  \end{itemize}
+\end{itemize}
+
+% \begin{center}
+%   \begin{tabular}{|c|c|}
+%     \hline
+%     matrice
+%     tangente réactualisée à chaque itération &
+%     matrice élastique   \\
+%     \hline
+%     matrice
+%     tangente réactualisée à chaque incrément de chargement  &
+%     matrice tangente réactualisée toute les deux itérations de Newton \\
+%     \hline
+%   \end{tabular}
+% \end{center}
+
+Pour tous ces algorithmes, il est possible, en cas de non convergence,
+de procéder à un re-découpage local du pas de temps. Pour cela, on
+adopte une interpolation linéaire du déplacement et des variables de
+commande (par exemple la température) au cours de l'intervalle de
+temps, ce qui conduit, pour tout incrément de temps à~:
+\[
+\forall \tau \in [t_{\text{i-1}},t_{i}]\,T(\tau
+)=T_{\text{i-1}}+\frac{\tau -t_{\text{i-1}}}{\Delta
+  t}[T-T_{\text{i-1}}] \quad\quad \varepsilon_{{\text{ij}}}^{k}(\tau
+)=\varepsilon_{{\text{ij}}}({{\mathrm{u}}}_{\text{i-1}})+\frac{\tau
+  -t_{\text{i-1}}}{\Delta\,t}[\varepsilon_{{\text{ij}}}^{k}({{\mathrm{u}}}_{i}^{n})-\varepsilon_{{\text{ij}}}({{\mathrm{u}}}_{\text{i-1}})]
+\]
+
+\subsection{Méthodes d'intégration mises en {\oe}uvre dans \mfront{}}
+% \hypertarget{RefHeading1674633584514}{}
+
+\mfront{} permet de réaliser ces calculs au niveau du point
+d'intégration. Plusieurs algorithmes de résolution
+sont offerts à l'utilisateur~:
+\begin{itemize}
+\item des algorithmes adaptés aux lois simples (viscoplastiques et
+  plastiques isotropes, etc.) par intégration implicite avec réduction
+  à une équation scalaire, ce qui est équivalent à ce qui est fait
+  dans \aster{} pour les lois élasto-plastiques de \nom{Von Mises},
+  les lois de \nom{Lemaitre}, de \nom{Chaboche}~;
+\item l'intégration explicite par des algorithmes de type
+  \nom{Runge-Kutta} (d'ordres variés) avec contrôle d'erreur~;
+\item l'intégration implicite par une \(\theta\)-méthode et des
+  algorithmes de \nom{Newton}, (avec des variantes de type
+  \nom{Broyden})~;
+\item l'intégration directe (si la résolution est analytique)~;
+\end{itemize}
+
+\subsection{nomenclature et mots-clés réservés}
+
+\mfront{} définit par défaut un certain nombre de mots clés
+qui représentent les quantités utiles aux différents algorithmes de résolution. 
+Pour éviter les conflits, 
+ces noms ne peuvent être utilisés pour désigner d'autres variables.
+
+\begin{itemize}
+  \item {\tt Dt} représente la matrice tangente cohérente qu'il
+  faut calculer~;
+  \item {\tt sig} représente la contrainte qu'il faut calculer~;
+  \item {\tt eto} représente la déformation totale en début de
+  pas~;
+  \item {\tt deto} représente l'incrément de déformation totale
+  (constante sur le pas)~;
+  \item {\tt T} représente la valeur de la température en début
+  de pas~;
+  \item {\tt dT} représente l'incrément de changement de
+  température (constante sur le pas)~;
+  \item pour toute variable interne {\tt Y}, {\tt Y} représente
+  sa valeur en début de pas~;
+  \item pour toute variable interne {\tt Y}, {\tt dY} représente
+  l'incrément de cette variable sur le pas, incrément qu'il faut
+  calculer~;
+  \item pour toute variable externe {\tt V}, {\tt V} représente
+  sa valeur en début de pas~;
+  \item pour toute variable externe {\tt V}, {\tt dV} représente
+    son incrément de variation sur le pas de temps (constante sur le pas).
+\end{itemize}
+%%% Local Variables: 
+%%% mode: latex
+%%% TeX-master: "tutoriel"
+%%% End: 

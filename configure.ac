@@ -396,6 +396,12 @@ AC_OUTPUT([debug.sh
 	   docs/presentations/lemaitre.tex
 	   docs/presentations/appendix.tex
 	   docs/tutorial/Makefile
+	   docs/tutorial/introduction.tex
+	   docs/tutorial/Conclusions.tex
+	   docs/tutorial/Chaboche.tex
+	   docs/tutorial/resume.tex
+	   docs/tutorial/rappels.tex
+	   docs/tutorial/Bibliographie.tex
 	   docs/tex/Makefile
 	   cmake/Makefile
 	   cmake/modules/Makefile

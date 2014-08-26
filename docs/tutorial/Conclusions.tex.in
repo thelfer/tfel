@@ -1,0 +1,66 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%	Fichier	   : Conclusions
+%%	Auteur     : th202608@pleiades077.intra.cea.fr
+%%	Date       : 29 avril 2014
+%%	Répertoire : /home/th202608/Documents/notes/2014/TutorielMFront/
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{Conclusions}
+% \hypertarget{RefHeading23881511383590}{}
+
+Cette note a pour but de guider un utilisateur de \mfront{} à
+développer une loi de comportement, afin de l'utiliser en premier lieu
+pour des tests
+unitaires sur point matériel, à l'aide de \mtest{}, ce qui permet d'aller
+jusqu'à l'identification des propriétés matériau à l'aide d'\adao.
+
+Ce comportement peut ensuite être utilisé avec les codes de calcul
+ par éléments finis interfacés
+(CAST3M, \aster{}, Cyrano, etc..).
+
+De plus, une réflexion est en cours pour que certaines lois de
+comportement disponibles dans \aster{} soient intégrées via
+\mfront{}. Le document~\cite{proix_cr_lois_2014} établit une liste de
+lois de comportement candidates à ce remplacement, une fois que la
+diffusion libre de \mfront avec \aster sera effective.
+
+Pour revenir à ce tutoriel, une bonne façon d'utiliser cette note
+consiste à expérimenter soi-même le développement d'une loi de
+comportement de son choix. La plupart des lois simples, élastiques,
+élasto(-visco-)plastiques peuvent être développées facilement, a
+priori en moins d'une demi-journée, par exemple avec matrice
+jacobienne numérique.
+
+Cette note est susceptible d'évoluer en fonction des retours des
+utilisateurs, afin de préciser certains éléments qui ne seraient pas
+assez détaillés.
+
+Ce tutoriel met en évidence plusieurs avantages de \mfront{}~:
+\begin{itemize}
+\item la puissance de ce logiciel pour développer facilement une loi
+  de comportement, avec une syntaxe proche de la formulation \og~sur
+  le papier~\fg~;
+\item sa grande souplesse vis-à-vis de l'enrichissement des lois de
+  comportement~;
+\item les options de vérification proposées~;
+\item et la robustesse et les performances de l'intégation obtenue.
+\end{itemize}
+ 
+
+Pour aller plus loin dans la compréhension du fonctionnement et des
+possibilités de \mfront{}, il est conseillé de consulter la
+documentation de
+\mfront{}~\cite{helfer_generateur_2013,helfer_generateur_2013-1}, et
+celle de \mtest{}~\cite{helfer_mtest_2014}.
+
+Pour utiliser \mfront{} avec \aster{}, on pourra se reporter à la
+documentation~\cite{code_notice_2014}. Des exemples peuvent être
+consultés dans les
+tests~\cite{code_mfront01_2014,code_mfront02_2014,code_mfront03_2014}.
+
+
+
+%%% Local Variables: 
+%%% mode: latex
+%%% TeX-master: "tutoriel"
+%%% End: 

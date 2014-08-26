@@ -1,0 +1,84 @@
+@Parser Implicit;
+@Behaviour Chaboche;
+@Algorithm NewtonRaphson_NumericalJacobian;
+@Theta 1. ;
+
+@MaterialProperty real young; 
+@MaterialProperty real nu;   
+@MaterialProperty real R_inf;
+@MaterialProperty real R_0;
+@MaterialProperty real b;
+@MaterialProperty real C[2];
+@MaterialProperty real g[2];
+
+@Includes{
+#include"TFEL/Material/Lame.hxx"
+}
+
+@StateVariable real    p;
+@StateVariable Stensor a[2];
+
+@LocalVariable real lambda;
+@LocalVariable real mu;
+@LocalVariable real Fel;
+
+/* Initialize Lame coefficients */
+@InitLocalVars{
+  using namespace tfel::material::lame;
+  lambda = computeLambda(young,nu);
+  mu     = computeMu(young,nu);
+  
+  // prediction elastique
+  Stensor sigel(lambda*trace(eel+deto)*Stensor::Id()+2*mu*(eel+deto));
+  for(unsigned short i=0;i!=2;++i){
+    sigel -= C[i]*a[i]/1.5 ;
+  }
+  const real seqel = sigmaeq(sigel);
+  const real Rpel  = R_inf + (R_0-R_inf)*exp(-b*p) ;
+  Fel   = seqel - Rpel ;
+} 
+
+@ComputeStress{
+  sig = lambda*trace(eel)*Stensor::Id()+2*mu*eel;
+} 
+
+@TangentOperator{
+  using namespace tfel::material::lame;
+  if((smt==ELASTIC)||(smt==SECANTOPERATOR)){
+    computeElasticStiffness<N,Type>::exe(Dt,lambda,mu);
+  } else if (smt==CONSISTANTTANGENTOPERATOR){
+    StiffnessTensor De;
+    Stensor4 Je;
+    computeElasticStiffness<N,Type>::exe(De,lambda,mu);
+    getPartialJacobianInvert(Je);
+    Dt = De*Je;
+  } else {
+    return false;
+  }
+}
+
+@Integrator{
+  if(Fel > 0){
+    // solution plastique
+    // Les variables suivies de _ sont en t+theta*dt
+    const real p_           = p +theta*dp ;
+    const real Rp_          = R_inf + (R_0-R_inf)*exp(-b*p_) ;
+    Stensor a_[2];
+    // calcul du tenseur Sigma-X
+    Stensor sr = deviator(sig);
+    for(unsigned short i=0;i!=2;++i){
+      a_[i]       = a[i]+theta*da[i];
+      sr         -= C[i]*a_[i]/1.5;
+    }
+    const stress  seq = sigmaeq(sr);
+    Stensor n = 1.5*sr/seq;
+    feel = deel - deto + dp*n ;
+    fp    = (seq-Rp_)/young;
+    for(unsigned short i=0;i!=2;++i){
+      fa[i] = da[i] - dp*(n-g[i]*a_[i]);
+    }
+  } else {
+    // solution elastique
+    feel = deel - deto;
+  }
+} 

@@ -1,0 +1,31 @@
+\noindent
+\ttfamily
+\hlstd{@Parser}\hlstd{\ \ \ }\hlstd{MaterialLaw}\hlopt{;}\hspace*{\fill}\\
+\hlstd{@Material\ UO2}\hlopt{;}\hspace*{\fill}\\
+\hlstd{@Law}\hlstd{\ \ \ \ \ \ }\hlstd{YoungModulus\textunderscore Fink1981}\hlopt{;}\hspace*{\fill}\\
+\hlstd{@Author}\hlstd{\ \ \ }\hlstd{T}\hlopt{.\ }\hlstd{Helfer}\hlopt{;}\hspace*{\fill}\\
+\hlstd{@Date}\hlstd{\ \ \ \ \ }\hlstd{}\hlnum{04}\hlstd{}\hlopt{/}\hlstd{}\hlnum{04}\hlstd{}\hlopt{/}\hlstd{}\hlnum{2014}\hlstd{}\hlopt{;}\hspace*{\fill}\\
+\hlstd{\hspace*{\fill}\\
+@Description}\hspace*{\fill}\\
+\hlopt{\{}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ }\hlstd{Thermodynamic\ properties\ of\ Uranium\ dioxide\hspace*{\fill}\\
+}\hlstd{\ \ }\hlstd{Fink}\hlopt{,\ }\hlstd{J}\hlopt{.}\hlstd{K}\hlopt{.\ }\hlstd{}\hlkwa{and\ }\hlstd{Chasanov}\hlopt{,\ }\hlstd{M}\hlopt{.}\hlstd{G}\hlopt{.\ }\hlstd{}\hlkwa{and\ }\hlstd{Leibowitz}\hlopt{,\ }\hlstd{L}\hlopt{.}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ }\hlstd{Argonne\ National\ Laboratory\ }\hlopt{{-}\ }\hlstd{ANL}\hlopt{{-}}\hlstd{CEN}\hlopt{{-}}\hlstd{RSD}\hlopt{{-}}\hlstd{}\hlnum{80}\hlstd{}\hlopt{{-}}\hlstd{}\hlnum{3}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ }\hlstd{}\hlnum{04}\hlstd{}\hlopt{/}\hlstd{}\hlnum{1981}\hspace*{\fill}\\
+\hlstd{}\hlopt{\}}\hspace*{\fill}\\
+\hlstd{\hspace*{\fill}\\
+@Input\ T}\hlopt{,}\hlstd{p}\hlopt{;}\hspace*{\fill}\\
+\hlstd{T}\hlopt{.}\hlstd{}\hlkwd{setGlossaryName}\hlstd{}\hlopt{(}\hlstd{}\hlstr{"Temperature"}\hlstd{}\hlopt{);}\hspace*{\fill}\\
+\hlstd{p}\hlopt{.}\hlstd{}\hlkwd{setGlossaryName}\hlstd{}\hlopt{(}\hlstd{}\hlstr{"Porosity"}\hlstd{}\hlopt{);}\hspace*{\fill}\\
+\hlstd{\hspace*{\fill}\\
+@Output\ E}\hlopt{;}\hspace*{\fill}\\
+\hlstd{\hspace*{\fill}\\
+@PhysicalBounds\ T\ in\ }\hlopt{{[}}\hlstd{}\hlnum{0}\hlstd{}\hlopt{:{*}{[};}\hspace*{\fill}\\
+\hlstd{@PhysicalBounds\ p\ in\ }\hlopt{{[}}\hlstd{}\hlnum{0}\hlstd{}\hlopt{:}\hlstd{}\hlnum{1}\hlstd{}\hlopt{.{]};}\hspace*{\fill}\\
+\hlstd{\hspace*{\fill}\\
+@Bounds\ T\ in\ }\hlopt{{[}}\hlstd{}\hlnum{0}\hlstd{}\hlopt{:{*}{[};}\hspace*{\fill}\\
+\hlstd{@Bounds\ p\ in\ }\hlopt{{[}}\hlstd{}\hlnum{0}\hlstd{}\hlopt{:}\hlstd{}\hlnum{1}\hlstd{}\hlopt{.{]};}\hspace*{\fill}\\
+\hlstd{\hspace*{\fill}\\
+@Function}\hspace*{\fill}\\
+\hlopt{\{}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ }\hlstd{E}\hlopt{=}\hlstd{}\hlnum{2.26}\hlstd{e11}\hlopt{{*}(}\hlstd{}\hlnum{1}\hlstd{}\hlopt{{-}}\hlstd{}\hlnum{2.62}\hlstd{}\hlopt{{*}}\hlstd{p}\hlopt{){*}(}\hlstd{}\hlnum{1}\hlstd{}\hlopt{{-}}\hlstd{}\hlnum{1.31e{-}4}\hlstd{}\hlopt{{*}(}\hlstd{T}\hlopt{{-}}\hlstd{}\hlnum{273.15}\hlstd{}\hlopt{));}

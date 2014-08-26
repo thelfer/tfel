@@ -128,8 +128,8 @@
 \emetteur{E.~Touron}
 
 \titre{Prise en compte des hypothèses de contraintes planes dans les
-  lois générées par le générateur de code \mfront{}~: application à
-  l'application combustible \cyrano{}}
+  lois générées par le générateur de code \mfront{}~: application au
+  code combustible ÉDF \cyrano{}}
 
 \date{2014}
 \numero{}
@@ -346,8 +346,8 @@ ces algorithmes reste pour l'instant une perspective intéressante.
 \subsubsection{Traitement au niveau du point de \nom{Gauss} par une
   boucle externe}
 
-Dans le cas de l'interface \umat{} et que la loi de comportement ne
-gère pas l'hypothèse de contraintes planes mais est utilisable en
+Dans le cas de l'interface \umat{} et lorsque la loi de comportement
+ne gère pas l'hypothèse de contraintes planes mais est utilisable en
 déformations planes généralisées, \mfront{} propose un algorithme
 générique de traitement de l'hypothèse de contraintes
 planes~\cite{helfer_interface_2013}.
@@ -366,8 +366,8 @@ Cet algorithme se décompose ainsi~:
   \left.\Delta\,\epsilontoz\right.^{(0)}=-\Frac{1}{E}\left.\sigmaz\right.^{(0)}-\nu\paren{\Delta\,\epsilontox+\Delta\,\epsilontoy}
   \]
   La présence du terme \(\left.\Frac{1}{E}\sigmaz\right.^{(0)}\)
-  permet de prendre en corriger le fait que la condition de contraintes
-  planes n'est pas vérifiée de manière exacte. La loi de comportement en
+  permet de corriger le fait que la condition de contraintes planes
+  n'est pas vérifiée de manière exacte. La loi de comportement en
   déformations planes généralisées est alors appelée.
   \item si la contrainte axiale obtenue n'est pas nulle, au
   critère près, une nouvelle correction élastique est effectuée~:
@@ -379,7 +379,7 @@ Cet algorithme se décompose ainsi~:
 \item si la contrainte axiale obtenue n'est pas nulle (à une précision
   donnée près), la méthode itérative de la sécante est utilisée pour
   estimer un incrément convenable. À chaque itération, la loi de
-  comportement déformations planes généralisées est appelée.
+  comportement en déformations planes généralisées est appelée.
 \end{itemize}
 
 Cette méthode a un coût numérique important~: pour les lois les plus
@@ -409,16 +409,16 @@ spécifique. Deux approches sont particulièrement intéressantes~:
   \right]\,\dtot\,V
   \]
   où \(I\) est une matrice possédant \(4\) lignes et \(N_{g}\)
-  colonnes telles que. Le terme \(\mbox{}^{t}I\,\sigma\) est, en
-  chaque point de \nom{Gauss}, proportionnel à \(\sigma_{33}\), de
-  sorte qu'en l'absence de force imposée associée aux déformations
-  axiales, l'équilibre de la structure satisfait naturellement
-  l'hypothèse de contraintes planes. Cette méthode augmente la largeur
-  de front de la matrice de raideur par le nombre de points de
-  \nom{Gauss} de l'élément. Il n'est pas mentionné si le nombre
-  d'itérations nécessaires pour atteindre l'équilibre mécanique est
-  augmenté par rapport au cas où la loi de comportement gère
-  l'hypothèse de contraintes planes.
+  colonnes. Le terme \(\mbox{}^{t}I\,\sigma\) est, en chaque point de
+  \nom{Gauss}, proportionnel à \(\sigma_{33}\), de sorte qu'en
+  l'absence de force imposée associée aux déformations axiales,
+  l'équilibre de la structure satisfait naturellement l'hypothèse de
+  contraintes planes. Cette méthode augmente la largeur de front de la
+  matrice de raideur par le nombre de points de \nom{Gauss} de
+  l'élément. Il n'est pas mentionné si le nombre d'itérations
+  nécessaires pour atteindre l'équilibre mécanique est augmenté par
+  rapport au cas où la loi de comportement gère l'hypothèse de
+  contraintes planes.
 \item \aster{} propose un algorithme dû à \nom{De
     Borst}~\cite{proix_prise_2012} qui utilise la convergence de
   l'équilibre global pour assurer la condition de contraintes
@@ -625,8 +625,8 @@ supporte toutes les hypothèses de modélisation~:
 L'hypothèse de contraintes planes étant vérifiée à la précision de
 l'algorithme implicite près, il est conseillé d'utiliser une précision
 relativement basse. Dans nos tests, une valeur du critère d'arrêt de
-\(10^{-11}\) nous a semblé satisfaisante (par défaut, cette valeur de
-\(10^{-8}\). Nous le précisons ainsi~:
+\(10^{-11}\) nous a semblé satisfaisante (par défaut, cette valeur est
+de \(10^{-8}\)). Nous le précisons ainsi~:
 \begin{flushleft}
   \lstinputlisting[firstline=5,lastline=5,firstnumber=5]{@abs_top_srcdir@/docs/mfront/mfront/ImplicitNorton.mfront}
 \end{flushleft}
@@ -805,9 +805,10 @@ implantation peut désormais être partagée entre les applications
 \begin{figure}
   \centering
   \includegraphics[width=0.75\linewidth]{@abs_top_srcdir@/docs/mfront/Images/cyrano-mfront.eps}
-  \caption{Comparaison des performances obtenues avec l'implantati on
+  \caption{Comparaison des performances obtenues avec l'implantation
     \mfront{} et l'implantation native d'une même loi de comportement
-    de gaine.}
+    viscoplastique orthotrope de gaine. Cette loi est testée sur
+    l'ensemble de la base de validation usuelle de \cyrano{}.}
   \label{fig:mfront:cyrano:perf}
 \end{figure}
 
