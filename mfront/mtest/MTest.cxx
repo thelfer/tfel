@@ -174,8 +174,10 @@ namespace mfront
       ppolicy(MTest::UNSPECIFIEDPREDICTIONPOLICY),
       handleThermalExpansion(true),
       useCastemAcceleration(false),
+      useIronsTuckAcceleration(false),
       cat(-1),
       cap(-1),
+      itat(-1),
       toeps(-1),
       pv(-1),
       cto(false),
@@ -267,8 +269,8 @@ namespace mfront
   {
     using namespace std;
     if(!this->handleThermalExpansion){
-      string msg("MTest::setUseCastemAccelerationAlgorithm : "
-		 "useCastemAcceleration already set");
+      string msg("MTest::setHandleThermalExpansion : "
+		 "thermal expansion is not handled");
       throw(runtime_error(msg));
     }
     this->handleThermalExpansion = b1;
@@ -304,6 +306,7 @@ namespace mfront
     this->cat = i;
   }
 
+
   void
   MTest::setCastemAccelerationPeriod(const int p)
   {
@@ -320,6 +323,36 @@ namespace mfront
       throw(runtime_error(msg));
     }
     this->cap = p;
+  }
+
+  void
+  MTest::setUseIronsTuckAccelerationAlgorithm(const bool uitaa)
+  {
+    using namespace std;
+    if(this->useIronsTuckAcceleration){
+      string msg("MTest::setUseIronsTuckAccelerationAlgorithm : "
+		 "useIronsTuckAcceleration already set");
+      throw(runtime_error(msg));
+    }
+    this->useIronsTuckAcceleration = uitaa;
+  }
+  
+  void
+  MTest::setIronsTuckAccelerationTrigger(const int i)
+  {
+    using namespace std;
+    if(i!=-1){
+      string msg("MTest::setIronsTuckAccelerationTrigger : "
+		 "the castem acceleration trigger has already "
+		 "been defined");
+      throw(runtime_error(msg));
+    }
+    if(i<3){
+      string msg("MTest::setIronsTuckAccelerationTrigger",
+		 "invalid acceleration trigger value.");
+      throw(runtime_error(msg));
+    }
+    this->itat = i;
   }
 
   void
@@ -1169,6 +1202,12 @@ namespace mfront
 	this->cat=4;
       }
     }
+    // Irons Tuck acceleration
+    if(this->useIronsTuckAcceleration){
+      if(this->itat==-1){
+	this->itat=3;
+      }
+    }
     // prediction policy
     if(this->ppolicy==UNSPECIFIEDPREDICTIONPOLICY){
       this->ppolicy=NOPREDICTION;
@@ -1192,6 +1231,9 @@ namespace mfront
       ostream& log = getLogStream();
       if(this->useCastemAcceleration){
 	log << "mtest : castem acceleration selected" << endl;
+      }
+      if(this->useIronsTuckAcceleration){
+	log << "mtest : Irons Tuck acceleration selected" << endl;
       }
       if(this->ppolicy==LINEARPREDICTION){
 	log << "mtest : using linear prediction" << endl;
@@ -1349,6 +1391,13 @@ namespace mfront
       wk.ca_tmp0.resize(psz,0.);
       wk.ca_tmp1.resize(psz,0.);
       wk.ca_r.resize(psz,0.);
+    }
+    if(this->useIronsTuckAcceleration){
+      wk.ita_u0.resize(psz,0.);      
+      wk.ita_u1.resize(psz,0.);
+      wk.ita_u2.resize(psz,0.);
+      wk.ita_du.resize(psz,0.);
+      wk.ita_ddu.resize(psz,0.);
     }
     wk.first = true;
     wk.a = 0;
@@ -1893,7 +1942,7 @@ namespace mfront
 	    if((iter>=this->cat)&&((iter-this->cat)%this->cap==0)){
 	      if(getVerboseMode()>=VERBOSE_LEVEL1){
 		ostream& log = getLogStream();
-		log << "castem acceleration convergence" << endl;
+		log << "Cast3M acceleration convergence" << endl;
 	      }
 	      bool c  = true;
 	      wk.ca_tmp0 = wk.ca_r1-wk.ca_r0;
@@ -1926,6 +1975,26 @@ namespace mfront
 		  const real ca_c0 = -(wk.ca_r0|wk.ca_n0)/nr0;
 		  state.u1 = (1-ca_c0)*wk.ca_u0+ca_c0*wk.ca_u1;
 		}
+	      }
+	    }
+	  }
+	  if((!converged)&&(this->useIronsTuckAcceleration)){
+	    const real it_eps = 100*(this->eeps*numeric_limits<real>::epsilon());
+	    wk.ita_u0.swap(wk.ita_u1);
+	    wk.ita_u1.swap(wk.ita_u2);
+	    wk.ita_u2 = state.u1;
+	    if((iter>=this->itat)&&((iter-this->itat)%2==0)){
+	      if(getVerboseMode()>=VERBOSE_LEVEL1){
+		ostream& log = getLogStream();
+		log << "Irons Tuck acceleration convergence" << endl;
+	      }
+	      wk.ita_du  = wk.ita_u2-wk.ita_u1;
+	      wk.ita_ddu = wk.ita_u2-2*wk.ita_u1+wk.ita_u0;
+	      const real nr2_ddu = wk.ita_ddu|wk.ita_ddu;
+	      if(nr2_ddu>it_eps){
+		const real ita_a = (wk.ita_du|wk.ita_ddu)/nr2_ddu;
+		state.u1 -= ita_a*wk.ita_du;
+		wk.ita_u2 = state.u1;
 	      }
 	    }
 	  }

@@ -162,6 +162,12 @@ namespace mfront
       tfel::math::vector<real> ca_n1;
       tfel::math::vector<real> ca_tmp0;
       tfel::math::vector<real> ca_tmp1;
+      // Irons and Tuck acceleration algorithm
+      tfel::math::vector<real> ita_u0;
+      tfel::math::vector<real> ita_u1;
+      tfel::math::vector<real> ita_u2;
+      tfel::math::vector<real> ita_du;
+      tfel::math::vector<real> ita_ddu;
       // temporary variable used for numerical tangent operator
       // computation
       tfel::math::vector<real> s1;
@@ -351,6 +357,11 @@ namespace mfront
      */
     virtual void setUseCastemAccelerationAlgorithm(const bool);
     /*!
+     * \brief set the use of the Irons-Tuck acceleration algorithm
+     * \param[in] b : boolean
+     */
+    virtual void setUseIronsTuckAccelerationAlgorithm(const bool);
+    /*!
      * \brief set if mtest shall handle thermal expansion coefficient
      * If true, the thermal expansion will be handled if the thermal
      * expansion coefficients are defined.
@@ -363,6 +374,12 @@ namespace mfront
      * \param[in] i : iteration number
      */
     virtual void setCastemAccelerationTrigger(const int);
+    /*!
+     * \brief set at which iteration the use of the Irons-Tuck
+     * acceleration algorithm  will begin
+     * \param[in] i : iteration number
+     */
+    virtual void setIronsTuckAccelerationTrigger(const int);
     /*!
      * \brief set at which period the use of the castem
      * acceleration algorithm  will take place
@@ -669,10 +686,14 @@ namespace mfront
     bool handleThermalExpansion;
     //! use castem acceleration
     bool useCastemAcceleration;
+    //! use IronsTuck acceleration
+    bool useIronsTuckAcceleration;
     //! castem acceleration trigger
     int cat;
     //! castem acceleration period
     int cap;
+    //! IronsTuck acceleration trigger
+    int itat;
     //! description of the test
     std::string description;
     //! author

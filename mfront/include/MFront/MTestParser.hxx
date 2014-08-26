@@ -131,6 +131,18 @@ namespace mfront
     void
     handleCastemAccelerationPeriod(MTest&,TokensContainer::const_iterator&);
     /*!
+     * handle the @seIronsTuckAccelerationAlgorithm keyword
+     * \param[in,out] p : position in the input file
+     */
+    void
+    handleUseIronsTuckAccelerationAlgorithm(MTest&,TokensContainer::const_iterator&);
+    /*!
+     * handle the @IronsTuckAccelerationTrigger keyword
+     * \param[in,out] p : position in the input file
+     */
+    void
+    handleIronsTuckAccelerationTrigger(MTest&,TokensContainer::const_iterator&);
+    /*!
      * handle the @Test keyword
      * \param[in,out] p : position in the input file
      */

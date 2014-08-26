@@ -525,6 +525,10 @@ void declareMTest(void)
 	 &MTest::setCastemAccelerationTrigger)
     .def("setCastemAccelerationPeriod",
 	 &MTest::setCastemAccelerationPeriod)
+    .def("setUseIronsTuckAccelerationAlgorithm",
+	 &MTest::setUseIronsTuckAccelerationAlgorithm)
+    .def("setIronsTuckAccelerationTrigger",
+	 &MTest::setIronsTuckAccelerationTrigger)
     .def("setMaximumNumberOfIterations",
 	 &MTest::setMaximumNumberOfIterations)
     .def("setMaximumNumberOfSubSteps",

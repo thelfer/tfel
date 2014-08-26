@@ -169,6 +169,10 @@ namespace mfront
 			   &MTestParser::handleCastemAccelerationPeriod);
     this->registerCallBack("@CastemAccelerationTrigger",
 			   &MTestParser::handleCastemAccelerationTrigger);
+    this->registerCallBack("@UseIronsTuckAccelerationAlgorithm",
+			   &MTestParser::handleUseIronsTuckAccelerationAlgorithm);
+    this->registerCallBack("@IronsTuckAccelerationTrigger",
+			   &MTestParser::handleIronsTuckAccelerationTrigger);
     this->registerCallBack("@StiffnessMatrixType",
 			   &MTestParser::handleStiffnessMatrixType);
     this->registerCallBack("@StiffnessUpdatePolicy",
@@ -543,6 +547,38 @@ namespace mfront
 			     p,this->fileTokens.end());
     t.setCastemAccelerationPeriod(cap);
   } // end of MTestParser::handleCastemAccelerationPeriod
+
+  void
+  MTestParser::handleUseIronsTuckAccelerationAlgorithm(MTest& t,TokensContainer::const_iterator& p)
+  {
+    using namespace std;
+    bool useIronsTuckAcceleration;
+    this->checkNotEndOfLine("MTestParser::handleUseIronsTuckAccelerationAlgorithm",
+			    p,this->fileTokens.end());
+    if(p->value=="true"){
+      useIronsTuckAcceleration = true;
+    } else if(p->value=="false"){
+      useIronsTuckAcceleration = false;
+    } else {
+      string msg("MTestParser::handleUseIronsTuckAccelerationAlgorithm : "
+		 "unexpected token '"+p->value+"'");
+      throw(runtime_error(msg));
+    }
+    ++p;
+    this->readSpecifiedToken("MTestParser::handleUseIronsTuckAccelerationAlgorithm",
+			     ";",p,this->fileTokens.end());
+    t.setUseIronsTuckAccelerationAlgorithm(useIronsTuckAcceleration);
+  }
+
+  void
+  MTestParser::handleIronsTuckAccelerationTrigger(MTest& t,TokensContainer::const_iterator& p)
+  {
+    using namespace std;
+    int cat = static_cast<int>(this->readUnsignedInt(p,this->fileTokens.end()));
+    this->readSpecifiedToken("MTestParser::handleIronsTuckAccelerationTrigger",";",
+			     p,this->fileTokens.end());
+    t.setIronsTuckAccelerationTrigger(cat);
+  } // end of MTestParser::handleIronsTuckAccelerationTrigger
 
   void
   MTestParser::handleStiffnessUpdatePolicy(MTest& t,TokensContainer::const_iterator& p)
