@@ -2,6 +2,7 @@
 @Behaviour ImplicitMonoCristal;
 
 @ModellingHypothesis Tridimensional;
+
 @Theta 1.0;
 @Epsilon 1.e-11;
 @IterMax 100;
@@ -17,9 +18,13 @@
 @MaterialProperty real b;
 @MaterialProperty real d1;
 
-@StateVariable          strain  g[12];
-@AuxiliaryStateVariable real    p[12];
-@AuxiliaryStateVariable real    a[12];
+eel.setMaximumIncrementValuePerIteration(1.e-4);
+
+@StateVariable strain g[12];
+g.setMaximumIncrementValuePerIteration(1.e-4);
+
+@AuxiliaryStateVariable real p[12];
+@AuxiliaryStateVariable real a[12];
 
 @Includes{
 #include"TFEL/Material/MetallicCFCSlidingSystems.hxx"
@@ -94,7 +99,7 @@
       sgni[i]=tma/abs(tma);
       hsi[i]  = dt*pow((tmR / K),(m-1.0))/K;
       vpi  = hsi[i]*tmR *sgni[i] ;        
-      } else{
+    } else{
       vpi=0.;
       hsi[i]=0.;
     }
@@ -104,25 +109,25 @@
   feel += vepsp-deto;
   // jacobian
   for(unsigned short i=0;i!=Nss;++i){
-     real Hsi= hsi[i]*m;
-     if (Hsi>0){
-        real dgsdalfai = -C*Hsi*theta ;
-        real dalfaidgi = (1.0-d1*a[i]*sgni[i])/(1.0+theta*d1*agi[i])/(1.0+theta*d1*agi[i]) ;
-        real dgsdRi = -Hsi*sgni[i] ;
-        real dRidpi = b*Q*mh(i,i)*expi[i]*theta ;  
-        real dgsdgi = dgsdalfai*dalfaidgi+dgsdRi*dRidpi*sgni[i] ;
-        dfeel_ddeel  += Hsi* ( (ss.mus[i]) ^ (ss.mus[i]) ) *D *theta;     
-        dfeel_ddg(i) += dgsdgi * ( ss.mus[i] )   ;
-        dfg_ddeel(i)  = -Hsi*D*ss.mus[i]*theta ;
-        for(unsigned short j=0;j!=Nss;++j){
-            real dRsdpj = b*Q*mh(i,j)*expi[j] ;    
-            real dgsdgj = dgsdRi*dRsdpj*sgni[j] ;
-            if (i==j){
-                dgsdgj += dgsdalfai*dalfaidgi ;
-            }
-            dfg_ddg(i,j) -=  dgsdgj ;
-          }
-     }
+    real Hsi= hsi[i]*m;
+    if (Hsi>0){
+      real dgsdalfai = -C*Hsi*theta ;
+      real dalfaidgi = (1.0-d1*a[i]*sgni[i])/(1.0+theta*d1*agi[i])/(1.0+theta*d1*agi[i]) ;
+      real dgsdRi = -Hsi*sgni[i] ;
+      real dRidpi = b*Q*mh(i,i)*expi[i]*theta ;  
+      real dgsdgi = dgsdalfai*dalfaidgi+dgsdRi*dRidpi*sgni[i] ;
+      dfeel_ddeel  += Hsi* ( (ss.mus[i]) ^ (ss.mus[i]) ) *D *theta;     
+      dfeel_ddg(i) += dgsdgi * ( ss.mus[i] )   ;
+      dfg_ddeel(i)  = -Hsi*D*ss.mus[i]*theta ;
+      for(unsigned short j=0;j!=Nss;++j){
+	real dRsdpj = b*Q*mh(i,j)*expi[j] ;    
+	real dgsdgj = dgsdRi*dRsdpj*sgni[j] ;
+	if (i==j){
+	  dgsdgj += dgsdalfai*dalfaidgi ;
+	}
+	dfg_ddg(i,j) -=  dgsdgj ;
+      }
+    }
   }
 } 
 

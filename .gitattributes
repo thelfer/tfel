@@ -1191,6 +1191,7 @@ mfront/tests/behaviours/aster/asterelasticity8.mtest.in -text
 mfront/tests/behaviours/aster/asterelasticity9.mtest.in -text
 mfront/tests/behaviours/aster/asterellipticcreep.mtest.in -text
 mfront/tests/behaviours/aster/asterimplicithayhurst.mtest.in -text
+mfront/tests/behaviours/aster/asterimplicitmonocristal-2.mtest.in -text
 mfront/tests/behaviours/aster/asterimplicitmonocristal.mtest.in -text
 mfront/tests/behaviours/aster/asterimplicitnorton-generalisedplanestress.mtest.in -text
 mfront/tests/behaviours/aster/asterimplicitnorton.mtest.in -text
@@ -1200,6 +1201,7 @@ mfront/tests/behaviours/aster/asterimplicitnorton_broyden2.mtest.in -text
 mfront/tests/behaviours/aster/asterimplicitorthotropiccreep.mtest.in -text
 mfront/tests/behaviours/aster/asterlorentz.mtest.in -text
 mfront/tests/behaviours/aster/astermazars.mtest.in -text
+mfront/tests/behaviours/aster/astermonocristal-2.mtest.in -text
 mfront/tests/behaviours/aster/astermonocristal.mtest.in -text
 mfront/tests/behaviours/aster/astermonocristal_dd_cfc.mtest.in -text
 mfront/tests/behaviours/aster/astermonocristal_dd_cfc_numericaljacobian.mtest.in -text
@@ -1260,6 +1262,8 @@ mfront/tests/behaviours/castem/castemfiniterotationsmallstrainelasticity-uniaxia
 mfront/tests/behaviours/castem/castemfiniterotationsmallstrainelasticity-uniaxialloading-3-3D.mtest.in -text
 mfront/tests/behaviours/castem/castemhayhurst.mtest.in -text
 mfront/tests/behaviours/castem/castemimplicithayhurst.mtest.in -text
+mfront/tests/behaviours/castem/castemimplicitmonocristal-2.mtest.in -text
+mfront/tests/behaviours/castem/castemimplicitmonocristal.mtest.in -text
 mfront/tests/behaviours/castem/castemimplicitnorton-generalisedplanestress.mtest.in -text
 mfront/tests/behaviours/castem/castemimplicitnorton-planestress.mtest.in -text
 mfront/tests/behaviours/castem/castemimplicitnorton-planestress2.mtest.in -text
@@ -1271,6 +1275,7 @@ mfront/tests/behaviours/castem/castemincompressibleplanestressgornetdesmoratbeha
 mfront/tests/behaviours/castem/castemincompressibleplanestressmooneyrivlinbehaviouruniaxialtesting.mtest.in -text
 mfront/tests/behaviours/castem/castemlorentz.mtest.in -text
 mfront/tests/behaviours/castem/castemmazars.mtest.in -text
+mfront/tests/behaviours/castem/castemmonocristal-2.mtest.in -text
 mfront/tests/behaviours/castem/castemmonocristal.mtest.in -text
 mfront/tests/behaviours/castem/castemmonocristal_dd_cfc.mtest.in -text
 mfront/tests/behaviours/castem/castemmonocristal_dd_cfc_numericaljacobian.mtest.in -text

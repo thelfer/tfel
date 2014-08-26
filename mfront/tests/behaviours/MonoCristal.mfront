@@ -2,7 +2,7 @@
 @Behaviour MonoCristal;
 @Algorithm NewtonRaphson_NumericalJacobian;
 
-@StateVariable          strain  g[12];
+@StateVariable  strain  g[12];
 @AuxiliaryStateVariable real    p[12];
 @AuxiliaryStateVariable real    a[12];
 
