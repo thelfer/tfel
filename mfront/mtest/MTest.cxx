@@ -1483,6 +1483,10 @@ namespace mfront
 	  state.u1  = state.u0 +(state.u0 -state.u_1)*dt/state.dt_1;
 	  state.iv1 = state.iv0+(state.iv0-state.iv_1)*dt/state.dt_1;
 	  state.s1  = state.s0 +(state.s0 -state.s_1)*dt/state.dt_1;
+	} else {
+	  state.u1  = state.u0;
+	  state.s1  = state.s0;
+	  state.iv1 = state.iv0;
 	}
       } else if((this->ppolicy==ELASTICPREDICTION)||
 		(this->ppolicy==SECANTOPERATORPREDICTION)||
