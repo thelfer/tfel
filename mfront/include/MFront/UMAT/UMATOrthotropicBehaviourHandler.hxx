@@ -506,8 +506,8 @@ namespace umat
 	typename UMATBehaviourHandler::DontCheckThermalExpansionCoefficientIsNull
 	>::type ThermalExpansionCoefficientCheck;
       UMATReal s[4];
-      UMATReal e[4];
-      UMATReal de[4];
+      UMATReal F0m[9];
+      UMATReal F1m[9];
       UMATFiniteStrainRotationMatrix2D m(PROPS+7,DROT);
       UMATBehaviourHandler::checkNPROPS(*NPROPS);
       UMATBehaviourHandler::checkNSTATV(*NSTATV);
@@ -515,10 +515,10 @@ namespace umat
       ThermalExpansionCoefficientCheck::exe(PROPS[11]);
       ThermalExpansionCoefficientCheck::exe(PROPS[12]);
       m.rotateStressesForward(STRESS,s);
-      m.rotateStrainsForward(F0,e);
-      m.rotateStrainsForward(F1,de);
+      m.rotateDeformationGradientForward(F0,F0m);
+      m.rotateDeformationGradientForward(F1,F1m);
       const bool bDDSOE = std::abs(*DDSOE)>0.5; 
-      Handler handler(DTIME,e,de,TEMP,DTEMP,PROPS,
+      Handler handler(DTIME,F0m,F1m,TEMP,DTEMP,PROPS,
 		      PREDEF,DPRED,STATEV,s,sfeh);
       handler.exe(DDSOE,s,STATEV);
       m.rotateStressesBackward(s,STRESS);
@@ -578,8 +578,8 @@ namespace umat
 	typename UMATBehaviourHandler::DontCheckThermalExpansionCoefficientIsNull
 	>::type ThermalExpansionCoefficientCheck;
       UMATReal s[4];
-      UMATReal e[4];
-      UMATReal de[4];
+      UMATReal F0m[9];
+      UMATReal F1m[9];
       UMATFiniteStrainRotationMatrix2D m(PROPS+4,DROT);
       UMATBehaviourHandler::checkNPROPS(*NPROPS);
       UMATBehaviourHandler::checkNSTATV(*NSTATV);
@@ -587,10 +587,10 @@ namespace umat
       ThermalExpansionCoefficientCheck::exe(PROPS[11]);
       ThermalExpansionCoefficientCheck::exe(PROPS[12]);
       m.rotateStressesForward(STRESS,s);
-      m.rotateStrainsForward(F0,e);
-      m.rotateStrainsForward(F1,de);
+      m.rotateDeformationGradientForward(F0,F0m);
+      m.rotateDeformationGradientForward(F1,F1m);
       const bool bDDSOE = std::abs(*DDSOE)>0.5; 
-      Handler handler(DTIME,e,de,TEMP,DTEMP,PROPS,
+      Handler handler(DTIME,F0m,F1m,TEMP,DTEMP,PROPS,
 		      PREDEF,DPRED,STATEV,s,sfeh);
       handler.exe(DDSOE,s,STATEV);
       m.rotateStressesBackward(s,STRESS);

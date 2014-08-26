@@ -416,6 +416,11 @@ namespace mfront{
     virtual void
     setInterfaces(const std::set<std::string>&);
     /*!
+     * set the analysers to be used
+     */
+    virtual void
+    setAnalysers(const std::set<std::string>&);
+    /*!
      * register the default variable names
      */
     virtual void
@@ -774,6 +779,9 @@ namespace mfront{
     writeBehaviourLocalVariables(const Hypothesis);
 
     virtual void
+    writeBehaviourIntegrationVariables(const Hypothesis);
+
+    virtual void
     writeBehaviourParameters(const Hypothesis);
 
     virtual void
@@ -784,6 +792,9 @@ namespace mfront{
 
     virtual void
     writeBehaviourPrivate(void);
+
+    virtual void
+    writeBehaviourUpdateIntegrationVariables(const Hypothesis);
 
     virtual void
     writeBehaviourUpdateStateVariables(const Hypothesis);
@@ -942,6 +953,11 @@ namespace mfront{
     virtual void
     setComputeFinalStressFromComputeFinalStressCandidateIfNecessary(void);
     /*!
+     * \brief perform pedantic checks
+     */
+    virtual void
+    doPedanticChecks(void) const;
+    /*!
      * constructor
      */
     MFrontBehaviourParserCommon();
@@ -951,6 +967,8 @@ namespace mfront{
     std::set<std::string> registredKeyWords;
 
     std::vector<std::string> interfaces;
+
+    std::vector<std::string> analysers;
 
     /*!
      * local variables initalizers. This variable to initialize local

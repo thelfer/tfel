@@ -320,6 +320,20 @@ namespace mfront{
   }
 
   std::string
+  MFrontUMATInterface::treatScalar(const std::string& s,
+				   const unsigned short a)
+  {
+    using namespace std;
+    ostringstream res;
+    if(a<9){
+      res << "'" << makeUpperCase(s.substr(0,3)) << a << "'";
+    } else {
+      res << "'" << makeUpperCase(s.substr(0,2)) << a << "'";
+    }
+    return res.str();
+  }
+
+  std::string
   MFrontUMATInterface::treatStensor(const Hypothesis h,
 				    const std::string& s)
   {
@@ -354,12 +368,87 @@ namespace mfront{
   }
 
   std::string
+  MFrontUMATInterface::treatStensor(const Hypothesis h,
+				    const std::string& s,
+				    const unsigned short a)
+  {
+    using namespace std;
+    ostringstream stmp;
+    string res;
+    stmp << a;
+    string s2 = makeUpperCase(s.substr(0,1))+stmp.str();
+    switch(h){
+    case ModellingHypothesis::TRIDIMENSIONAL:
+      res="'"+s2+"XX' "+"'"+s2+"YY' "+"'"+s2+"ZZ' "+"'"+s2+"XY' "+"'"+s2+"XZ' "+"'"+s2+"YZ'";
+      break;
+    case ModellingHypothesis::AXISYMMETRICAL:
+      res="'"+s2+"RR' "+"'"+s2+"ZZ' "+"'"+s2+"TT' "+"'"+s2+"RZ'";
+      break;
+    case ModellingHypothesis::PLANESTRAIN:
+    case ModellingHypothesis::PLANESTRESS:
+    case ModellingHypothesis::GENERALISEDPLANESTRAIN:
+      res="'"+s2+"XX' "+"'"+s2+"YY' "+"'"+s2+"ZZ' "+"'"+s2+"XY'";
+      break;
+    case ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN:
+      res="'"+s2+"RR' "+"'"+s2+"ZZ' "+"'"+s2+"TT'";
+      break;
+    default:
+      ostringstream msg;
+      msg << "MFrontUMATInterface::treatStensor : "
+	  << "unsupported hypothesis";
+      if(h!=ModellingHypothesis::UNDEFINEDHYPOTHESIS){
+	msg << " ('" << ModellingHypothesis::toString(h) << "')";
+      }
+      throw(runtime_error(msg.str()));
+    }
+    return res;
+  }
+
+  std::string
   MFrontUMATInterface::treatTensor(const Hypothesis h,
 				   const std::string& s)
   {
     using namespace std;
     string res;
     string s2 = makeUpperCase(s.substr(0,2));
+    switch(h){
+    case ModellingHypothesis::TRIDIMENSIONAL:
+      res="'"+s2+"XX' '"+s2+"YY' '"+s2+"ZZ' '"+
+	s2+"XY' '"+s2+"YX' '"+s2+"XZ' '"+s2+"ZX' '"+s2+"YZ' '"+s2+"ZY'";
+      break;
+    case ModellingHypothesis::AXISYMMETRICAL:
+      res="'"+s2+"RR' '"+s2+"ZZ' '"+s2+"TT' '"+s2+"RZ' '"+s2+"ZR'";
+      break;
+    case ModellingHypothesis::PLANESTRAIN:
+    case ModellingHypothesis::PLANESTRESS:
+    case ModellingHypothesis::GENERALISEDPLANESTRAIN:
+      res="'"+s2+"XX' '"+s2+"YY' '"+s2+"ZZ' '"+s2+"XY' '"+s2+"YX'";
+      break;
+    case ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN:
+      res="'"+s2+"RR' '"+s2+"ZZ' '"+s2+"TT'";
+      break;
+    default:
+      ostringstream msg;
+      msg << "MFrontUMATInterface::treatStensor : "
+	  << "unsupported hypothesis";
+      if(h!=ModellingHypothesis::UNDEFINEDHYPOTHESIS){
+	msg << " ('" << ModellingHypothesis::toString(h) << "')";
+      }
+      throw(runtime_error(msg.str()));
+    }
+    return res;
+  }
+
+  std::string
+  MFrontUMATInterface::treatTensor(const Hypothesis h,
+				   const std::string& s,
+				   const unsigned short a)
+  {
+    using namespace std;
+    ostringstream stmp;
+    string res;
+    stmp << a;
+    string s2 = makeUpperCase(s.substr(0,1))+stmp.str();
     switch(h){
     case ModellingHypothesis::TRIDIMENSIONAL:
       res="'"+s2+"XX' '"+s2+"YY' '"+s2+"ZZ' '"+
@@ -452,7 +541,6 @@ namespace mfront{
 
     systemCall::mkdir("include/MFront");
     systemCall::mkdir("include/MFront/UMAT");
-
 
     VariableDescriptionContainer::const_iterator p;    
     vector<FiniteStrainStrategy>::const_iterator pfss;
@@ -1581,36 +1669,74 @@ namespace mfront{
   {
     using namespace std;
     string tmp;
-    int i = 0;
     for(VariableDescriptionContainer::const_iterator p=v.begin();p!=v.end();++p){
       SupportedTypes::TypeFlag flag = this->getTypeFlag(p->type);
-      switch(flag){
-      case SupportedTypes::Scalar : 
-	tmp = treatScalar(p->name);
-	i=static_cast<unsigned short>(i+1u);
-	break;
-      case SupportedTypes::Stensor :
-	tmp = treatStensor(h,p->name);
-	i=static_cast<unsigned short>(i+3u);
-	break;
-      case SupportedTypes::Tensor :
-	tmp = treatTensor(h,p->name);
-	i=static_cast<unsigned short>(i+3u);
-	break;
-      default :
+      if(flag==SupportedTypes::Scalar){
+	if(p->arraySize==1){
+	  tmp = treatScalar(p->name);
+	} else {
+	  for(unsigned short j=0;j!=p->arraySize;){
+	    tmp += treatScalar(p->name,j);
+	    if(++j!=p->arraySize){
+	      tmp += ' ';
+	    }
+	  }
+	}
+      } else if(flag==SupportedTypes::Stensor){
+	if(p->arraySize==1){
+	  tmp = treatStensor(h,p->name);
+	} else {
+	  for(unsigned short j=0;j!=p->arraySize;){
+	    tmp += treatStensor(h,p->name,j);
+	    if(++j!=p->arraySize){
+	      tmp += ' ';
+	    }
+	  }
+	}
+      } else if(flag==SupportedTypes::Tensor){
+	if(p->arraySize==1){
+	  tmp = treatTensor(h,p->name);
+	} else {
+	  for(unsigned short j=0;j!=p->arraySize;){
+	    tmp += treatTensor(h,p->name,j);
+	    if(++j!=p->arraySize){
+	      tmp += ' ';
+	    }
+	  }
+	}
+      } else {
 	string msg(" MFrontUMATInterface::writeVariableDescriptionContainerToGibiane : ");
 	msg += "internal error, tag unsupported";
 	throw(runtime_error(msg));
       }
-      if(i>9){
-	out << "\n";
-	i=0;
-      } else {
-	out << " ";
-      }
       out << tmp;
     }
   }
+
+  void
+  MFrontUMATInterface::writeGibianeInstruction(std::ostream& out,
+					       const std::string& i) const
+  {
+    using namespace std;
+    istringstream in(i);
+    string buffer;
+    while(!in.eof()){
+      string w;
+      in >> w;
+      if(buffer.size()+w.size()>70){
+	out << buffer << endl;
+	buffer.clear();
+	if(w.size()>70){
+	  out << w << endl;
+	} else {
+	  buffer = w;
+	}
+      } else {
+	buffer+=' '+w;
+      }
+    }
+    out << buffer << endl;
+  } // end of MFrontUMATInterface::writeGibianeInstruction
 
   void
   MFrontUMATInterface::generateGibianeDeclaration(const MechanicalBehaviourDescription& mb,
@@ -1667,10 +1793,9 @@ namespace mfront{
 	   SupportedTypes::TypeSize> mprops = this->buildMaterialPropertiesList(mb,*ph);
       string tmp;
       VariableDescriptionContainer::const_iterator p;
-      unsigned short i;
       out << "** " << ModellingHypothesis::toString(*ph) << " example\n\n";
-      out << "coel = 'MOTS' ";
-      i = 0;
+      ostringstream mcoel;
+      mcoel << "coel = 'MOTS' ";
       for(vector<UMATMaterialProperty>::const_iterator pm=mprops.first.begin();
 	  pm!=mprops.first.end();){
 	SupportedTypes::TypeFlag flag = this->getTypeFlag(pm->type);
@@ -1679,65 +1804,85 @@ namespace mfront{
 	  msg += "material properties shall be scalars";
 	  throw(runtime_error(msg));
 	}
-	out << treatScalar(pm->var_name);
-	if(i>8){
-	  out << "\n";
-	  i=0;
-	  ++pm;
+	if(pm->arraySize==1){
+	  mcoel << treatScalar(pm->var_name);
 	} else {
-	  if(++pm!=mprops.first.end()){
-	    out << " ";
+	  for(unsigned short j=0;j!=pm->arraySize;){
+	    mcoel << treatScalar(pm->var_name,j);
+	    if(++j!=pm->arraySize){
+	      mcoel << " ";
+	    }
 	  }
-	  ++i;
+	}
+	if(++pm!=mprops.first.end()){
+	  mcoel << " ";
 	}
       }
-      out << ";\n";
-      out << "statev = 'MOTS' ";
-      this->writeVariableDescriptionContainerToGibiane(out,*ph,persistentVarsHolder);
-      if(persistentVarsHolder.size()!=0){
-	out << " ";
+      mcoel << ";";
+      writeGibianeInstruction(out,mcoel.str());
+      out << endl;
+      ostringstream mstatev;
+      mstatev << "statev = 'MOTS' ";
+      this->writeVariableDescriptionContainerToGibiane(mstatev,*ph,persistentVarsHolder);
+      mstatev << ";";
+      writeGibianeInstruction(out,mstatev.str());
+      out << endl;
+      ostringstream mparam;
+      mparam << "params = 'MOTS' 'T'";
+      if(!externalStateVarsHolder.empty()){
+	mparam << " ";
+	this->writeVariableDescriptionContainerToGibiane(mparam,*ph,externalStateVarsHolder);
       }
-      out << ";\n";
-      out << "params = 'MOTS' 'T'";
-      this->writeVariableDescriptionContainerToGibiane(out,*ph,externalStateVarsHolder);
-      out << ";\n\n";
-      out << "MO = 'MODELISER' v 'MECANIQUE' 'ELASTIQUE'\n";
-      out << nonlin << " 'NUME_LOI' 1\n";
-      out << "'C_MATERIAU' coel\n";
-      out << "'C_VARINTER' statev\n";
-      out << "'PARA_LOI'   params\n'CONS' M;\n\n";
-      out << "MA = 'MATERIAU' MO";
-      i=0;
+      mparam << ";";
+      writeGibianeInstruction(out,mparam.str());
+      out << endl;
+      ostringstream mmod;
+      mmod << "MO = 'MODELISER' v 'MECANIQUE' 'ELASTIQUE' ";
+      mmod << nonlin << " 'NUME_LOI' 1 ";
+      mmod << "'C_MATERIAU' coel ";
+      mmod << "'C_VARINTER' statev ";
+      mmod << "'PARA_LOI'   params 'CONS' M;";
+      writeGibianeInstruction(out,mmod.str());
+      out << endl;
+      ostringstream mi;
+      mi << "MA = 'MATERIAU' MO";
       for(vector<UMATMaterialProperty>::const_iterator pm=mprops.first.begin();
-	  pm!=mprops.first.end();++pm){
+	  pm!=mprops.first.end();){
 	SupportedTypes::TypeFlag flag = this->getTypeFlag(pm->type);
 	if(flag!=SupportedTypes::Scalar){
 	  string msg("MFrontUMATInterface::generateGibianeDeclaration : ");
 	  msg += "material properties shall be scalars";
 	  throw(runtime_error(msg));
 	}
-	tmp = treatScalar(pm->var_name);
-	if(i>4){
-	  out << "\n";
-	  i=0;
+	if(pm->arraySize==1){
+	  tmp = treatScalar(pm->var_name);
+	  mi << tmp << " x"<< makeLowerCase(pm->var_name);
 	} else {
-	  out << " ";
-	  ++i;
+	  for(unsigned short j=0;j!=pm->arraySize;){
+	    tmp = treatScalar(pm->var_name,j);
+	    mi << tmp << " x"<< makeLowerCase(pm->var_name) << j;
+	    if(++j!=pm->arraySize){
+	      mi << " ";
+	    }
+	  }
 	}
-	out << tmp << " x"<< makeLowerCase(pm->var_name);
+	if(++pm!=mprops.first.end()){
+	  mi << " ";
+	}
       }
       if(mb.getSymmetryType()==mfront::ORTHOTROPIC){
-	out << endl;
 	if((*ph==ModellingHypothesis::PLANESTRESS)||
 	   (*ph==ModellingHypothesis::AXISYMMETRICAL)||
 	   (*ph==ModellingHypothesis::PLANESTRAIN)||
 	   (*ph==ModellingHypothesis::GENERALISEDPLANESTRAIN)){
-	  out << "'DIRECTION' 'PARALLELE' (1 0)'";
+	  mi << " 'DIRECTION' (1 0) 'PARALLELE'";
 	} else if(*ph==ModellingHypothesis::TRIDIMENSIONAL){	    
-	  out << "'DIRECTION' 'PARALLELE' (1 0 0) (0 0 1)";
+	  mi << " 'DIRECTION' (1 0 0) (0 0 1) 'PARALLELE'";
 	}
       }
-      out << ";\n\n";
+      mi << ";";
+      writeGibianeInstruction(out,mi.str());
+      out << endl;
     }
     out.close();
   } // end of MFrontUMATInterface::generateGibianeDeclaration

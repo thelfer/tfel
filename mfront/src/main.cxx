@@ -17,6 +17,7 @@
 #include"MFront/MFront.hxx"
 #include"MFront/MFrontInitParsers.hxx"
 #include"MFront/MFrontInitInterfaces.hxx"
+#include"MFront/MFrontInitAnalysers.hxx"
 
 int main(const int argc, const char *const *const argv)
 {
@@ -31,6 +32,7 @@ int main(const int argc, const char *const *const argv)
 
   initParsers();
   initInterfaces();
+  initAnalysers();
 
   // calling mfront plugins
   const char * libs = ::getenv("MFRONT_ADDITIONAL_LIBRARIES");

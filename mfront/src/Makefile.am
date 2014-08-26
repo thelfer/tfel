@@ -15,7 +15,9 @@ bin_PROGRAMS = mfront
 mfront_SOURCES = main.cxx                                             \
 		 MFront.cxx                                           \
 	 	 MFrontDebugMode.cxx                                  \
+	 	 MFrontPedanticMode.cxx                               \
 		 MFrontLock.cxx                                       \
+		 MFrontInitAnalysers.cxx                              \
 		 MFrontInitInterfaces.cxx                             \
 		 MFrontInitParsers.cxx                                \
 		 MFrontParserFactory.cxx                              \
@@ -32,6 +34,7 @@ mfront_SOURCES = main.cxx                                             \
 		 MFrontBehaviourVirtualInterface.cxx                  \
 		 MFrontLawVirtualInterface.cxx                        \
 		 MFrontModelVirtualInterface.cxx                      \
+		 MFrontBehaviourAnalyser.cxx                          \
 		 SupportedTypes.cxx                                   \
 		 MFrontHeader.cxx                                     \
 		 ParserBase.cxx                                       \
@@ -40,6 +43,7 @@ mfront_SOURCES = main.cxx                                             \
 		 MFrontSearchFile.cxx                                 \
 		 MFrontLawInterfaceFactory.cxx                        \
 		 MFrontBehaviourInterfaceFactory.cxx                  \
+		 MFrontBehaviourAnalyserFactory.cxx                   \
 		 MFrontModelInterfaceFactory.cxx                      \
 		 MFrontDefaultParserBase.cxx                          \
 		 MFrontDefaultParser.cxx                              \
@@ -64,6 +68,8 @@ mfront_SOURCES = main.cxx                                             \
 		 MFrontCppTestLawInterface.cxx                        \
 		 MFrontExcelLawInterface.cxx                          \
 		 MFrontLaTeXLawInterface.cxx                          \
+		 MFrontLaTeXBehaviourAnalyser.cxx                     \
+		 MFrontMarkdownBehaviourAnalyser.cxx                  \
 		 MFrontUMATInterfaceBase.cxx
 
 

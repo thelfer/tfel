@@ -995,17 +995,13 @@ namespace mfront
   ParserBase::treatDescription(void)
   {
     using namespace std;
+    using namespace tfel::utilities;
     unsigned short currentLine;
     unsigned short openedBrackets;
-    if(!this->description.empty()){
-      string msg("ParserBase::treatDescription : ");
-      msg += "@Description shall only be called once.";
-      throw(runtime_error(msg));
-    }
     this->readSpecifiedToken("ParserBase::treatDescription","{");
     this->checkNotEndOfFile("ParserBase::treatDescription");
     currentLine = this->current->line;
-    this->description = "* ";
+    this->description += "* ";
     openedBrackets = 1u;
     while((!((this->current->value=="}")&&
 	     (openedBrackets==1u)))&&
@@ -1030,7 +1026,11 @@ namespace mfront
 	this->description+="\n* ";
 	currentLine=this->current->line;
       }
-      this->description+=this->current->value;
+      if(this->current->flag==Token::String){
+	this->description+=this->current->value.substr(1,this->current->value.size()-2u);
+      } else {
+	this->description+=this->current->value;
+      }
       this->description+=" ";
       ++(this->current);
     }

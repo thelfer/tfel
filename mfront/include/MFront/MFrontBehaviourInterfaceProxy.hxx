@@ -20,6 +20,12 @@ namespace mfront{
   {
     MFrontBehaviourInterfaceProxy();
 
+    MFrontBehaviourInterfaceProxy(const std::string&);
+
+    template<typename InputIterator>
+    MFrontBehaviourInterfaceProxy(const InputIterator,
+				  const InputIterator);
+
     static MFrontBehaviourVirtualInterface* createInterface();
   };
 

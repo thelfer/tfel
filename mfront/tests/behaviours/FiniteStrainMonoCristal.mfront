@@ -91,23 +91,6 @@ eel.setGlossaryName("GreenLagrangeStrain");
   M  = tmp*S;
 }
 
-@ComputeFinalStress{
-  const SlidingSystems& ss = SlidingSystems::getSlidingSystems();
-  // approximation de l'inverse de \(\Delta\,F_p\)
-  Tensor inv_dFp = Tensor::Id();
-  for(unsigned short i=0;i!=12;++i){
-    inv_dFp -= dg[i]*ss.mu[i];
-  }
-  real J_inv_dFp = det(inv_dFp);
-  inv_dFp *= CubicRoots::cbrt(J_inv_dFp);
-  // Fe en fin de pas de temps
-  Fe  = dF_Fe0*inv_dFp;
-  // Piola-Kirchhoff II
-  StressStensor S   = D*eel;
-  // Cauchy
-  sig = convertSecondPiolaKirchhoffStressToCauchyStress(S,Fe);
-}
-
 @Integrator{
   const SlidingSystems& ss = SlidingSystems::getSlidingSystems();
   Tensor inv_dFp = Tensor::Id();
@@ -115,7 +98,7 @@ eel.setGlossaryName("GreenLagrangeStrain");
     inv_dFp -= dg[i]*ss.mu[i];
   }
   real J_inv_dFp = det(inv_dFp);
-  inv_dFp *= CubicRoots::cbrt(J_inv_dFp);
+  inv_dFp /= CubicRoots::cbrt(J_inv_dFp);
   // Fe en fin de pas de temps
   Fe  = dF_Fe0*inv_dFp;
   // équation associée à l'incrément de déformation élastique
@@ -150,9 +133,28 @@ eel.setGlossaryName("GreenLagrangeStrain");
   }
 } // end of @Integrator
 
+
+@ComputeFinalStress{
+  const SlidingSystems& ss = SlidingSystems::getSlidingSystems();
+  // approximation de l'inverse de \(\Delta\,F_p\)
+  Tensor inv_dFp = Tensor::Id();
+  for(unsigned short i=0;i!=12;++i){
+    inv_dFp -= dg[i]*ss.mu[i];
+  }
+  real J_inv_dFp = det(inv_dFp);
+  inv_dFp /= CubicRoots::cbrt(J_inv_dFp);
+  // Fe en fin de pas de temps
+  Fe  = dF_Fe0*inv_dFp;
+  // Piola-Kirchhoff II
+  StressStensor S   = D*eel;
+  // Cauchy
+  sig = convertSecondPiolaKirchhoffStressToCauchyStress(S,Fe);
+}
+
 @UpdateAuxiliaryStateVars{
   for(unsigned short i=0;i!=Nss;++i){
     p[i]+=abs(dg[i]);
     a[i]+=(dg[i]-d1*a[i]*abs(dg[i]))/(1.+d1*abs(dg[i]));
   }
 }
+

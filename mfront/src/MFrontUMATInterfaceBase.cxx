@@ -1067,6 +1067,7 @@ namespace mfront
 	    } else {
 	      out << "mg.addMaterialProperty(\"" << pm->name << "\",*(PROPS+" << offset << "));\n";	    
 	    }
+	    ++offset;
 	  } else {
 	    for(unsigned short s=0;s!=pm->arraySize;++s,++offset){
 	      if(offset==0){

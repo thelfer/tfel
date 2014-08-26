@@ -30,7 +30,6 @@ namespace umat
     // Compute stresses back in the global space
     void rotateStressesBackward(const UMATReal *const,
 				UMATReal *const);
-
     // Compute strain in the material space
     void rotateDeformationGradientForward(const UMATReal *const,
 					  UMATReal *const);
@@ -59,7 +58,6 @@ namespace umat
     // Compute stresses back in the global space
     void rotateStressesBackward(const UMATReal *const,
 				UMATReal *const);
-
     // Compute strain in the material space
     void rotateDeformationGradientForward(const UMATReal *const,
 					  UMATReal *const);

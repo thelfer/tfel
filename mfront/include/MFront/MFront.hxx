@@ -61,7 +61,11 @@ namespace mfront{
 
     void treatDebug(void);
 
+    void treatPedantic(void);
+
     void treatInterface(void);
+
+    void treatAnalyser(void);
 
     void treatSilentBuild(void);
 
@@ -149,6 +153,8 @@ namespace mfront{
     std::map<std::string,std::vector<std::string> > dependencies;
 
     std::set<std::string> interfaces;
+
+    std::set<std::string> analysers;
 
     std::set<std::string> inputs;
 

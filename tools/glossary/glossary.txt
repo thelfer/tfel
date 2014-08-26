@@ -9,7 +9,7 @@
  type : "scalaire";
  short_description : "la première coordonnée du premier axe d'orthotropie.";
  latex_description : {"Cette quantité est automatiquement"
-  "calculée par \licos{} à partir de la définition du matériau"};
+  "calculée par Licos à partir de la définition du matériau"};
 };
 
 "OrthotropicAxisY1"{
@@ -17,7 +17,7 @@
  type : "scalaire";
  short_description :"la deuxième coordonnée du premier axe d'orthotropie.";
  latex_description : {"Cette quantité est automatiquement"
-  "calculée par \licos{} à partir de la définition du matériau"};
+  "calculée par Licos à partir de la définition du matériau"};
 };
 
 "OrthotropicAxisZ1"{
@@ -25,7 +25,7 @@
  type : "scalaire";
  short_description : "la troisième coordonnée du premier axe d'orthotropie.";
  latex_description : {"Cette quantité est automatiquement"
-  "calculée par \licos{} à partir de la définition du matériau"};
+  "calculée par Licos à partir de la définition du matériau"};
 };
 
 "OrthotropicAxisX2"{
@@ -33,7 +33,7 @@
  type : "scalaire";
  short_description : "la première coordonnée du second axe d'orthotropie.";
  latex_description : {"Cette quantité est automatiquement"
-  "calculée par \licos{} à partir de la définition du matériau"};
+  "calculée par Licos à partir de la définition du matériau"};
 };
 
 "OrthotropicAxisY2"{
@@ -41,7 +41,7 @@
  type : "scalaire";
  short_description : "la deuxième coordonnée du second axe d'orthotropie.";
  latex_description : {"Cette quantité est automatiquement"
- " calculée par \licos{} à partir de la définition du matériau"};
+ " calculée par Licos à partir de la définition du matériau"};
 };
 
 "OrthotropicAxisZ2"{
@@ -49,7 +49,7 @@
  type : "scalaire";
  short_description : "la troisième coordonnée du second axe d'orthotropie.";
  latex_description : {"Cette quantité est automatiquement"
-  "calculée par \licos{} à partir de la définition du matériau"};
+  "calculée par Licos à partir de la définition du matériau"};
 };
 
 "ThermalConductivity"{
@@ -92,7 +92,7 @@
  unit : "K";
  type : "scalaire";
  short_description : "la température.";
- note :{"Cette entrée a été rajoutée par compatibilité avec les choix d'implantation de lois de comportements mécaniques utilisés par le code \germinal{}"};
+ note :{"Cette entrée a été rajoutée par compatibilité avec les choix d'implantation de lois de comportements mécaniques utilisés par le code Germinal"};
 };
 
 "IrradiationTemperature"{
@@ -178,7 +178,7 @@
 "SecondMaterialTemperature"{
  unit : "K";
  type : "scalaire";
- short_description : "la température sur le \og~se\-cond~\fg matériau d'une condition d'échange (le choix de ce \og~second~\fg matériau est fait par l'utilisateur)";
+ short_description : "la température sur le \og~second~\fg matériau d'une condition d'échange (le choix de ce \og~second~\fg matériau est fait par l'utilisateur)";
 };
 
 "FirstMaterialRadius"{
@@ -216,49 +216,49 @@
 "YoungModulus"{
  unit : "Pa";
  type : "scalaire";
- short_description : "le module d'\nom{Young} d'un matériau isotrope";
+ short_description : "le module d'Young d'un matériau isotrope";
 };
 
 "YoungModulus1"{
  unit : "Pa";
  type : "scalaire";
- short_description : "le module d'\nom{Young} d'un matériau orthotrope suivant la première direction d'orthotropie";
+ short_description : "le module d'Young d'un matériau orthotrope suivant la première direction d'orthotropie";
 };
 
 "YoungModulus2"{
  unit : "Pa";
  type : "scalaire";
- short_description : "le module d'\nom{Young} d'un matériau orthotrope suivant la deuxième direction d'orthotropie";
+ short_description : "le module d'Young d'un matériau orthotrope suivant la deuxième direction d'orthotropie";
 };
 
 "YoungModulus3"{
  unit : "Pa";
  type : "scalaire";
- short_description : "le module d'\nom{Young} d'un matériau orthotrope suivant la troisième direction d'orthotropie";
+ short_description : "le module d'Young d'un matériau orthotrope suivant la troisième direction d'orthotropie";
 };
 
 "PoissonRatio"{
  unit : " ";
  type : "scalaire";
- short_description : "le coefficient de \nom{Poisson} d'un matériau isotrope";
+ short_description : "le coefficient de Poisson d'un matériau isotrope";
 };
 
 "PoissonRatio12"{
  unit : " ";
  type : "scalaire";
- short_description : "le coefficient de \nom{Poisson} d'un matériau orthotrope relatif aux première et deuxième directions d'orthotropie";
+ short_description : "le coefficient de Poisson d'un matériau orthotrope relatif aux première et deuxième directions d'orthotropie";
 };
 
 "PoissonRatio23"{
  unit : " ";
  type : "scalaire";
- short_description : "le coefficient de \nom{Poisson} d'un matériau orthotrope relatif aux deuxième et troisième directions d'orthotropie";
+ short_description : "le coefficient de Poisson d'un matériau orthotrope relatif aux deuxième et troisième directions d'orthotropie";
 };
 
 "PoissonRatio13"{
  unit : " ";
  type : "scalaire";
- short_description : "le coefficient de \nom{Poisson} d'un matériau orthotrope relatif aux première et troisième directions d'orthotropie";
+ short_description : "le coefficient de Poisson d'un matériau orthotrope relatif aux première et troisième directions d'orthotropie";
 };
 
 "ShearModulus12"{
@@ -312,19 +312,19 @@
 "UpdatedFirstCoordinate"{
  unit : "m";
  type : "scalaire";
- short_description : "la première coordonnée actua\-lisée";
+ short_description : "la première coordonnée actualisée";
 };
 
 "UpdatedSecondCoordinate"{
  unit : "m";
  type : "scalaire";
- short_description : "la deuxième coordonnée actua\-lisée";
+ short_description : "la deuxième coordonnée actualisée";
 };
 
 "UpdatedThirdCoordinate"{
  unit : "m";
  type : "scalaire";
- short_description : "la troisième coordonnée actua\-lisée";
+ short_description : "la troisième coordonnée actualisée";
 };
 
 "Strain"{
@@ -336,7 +336,7 @@
 "AxialStrain"{
  unit : " ";
  type : "scalaire";
- short_description : "la déformation axiale (cette grandeur n'a de sens que pour les calculs \"plan généralisé\")";
+ short_description : "la déformation axiale (cette grandeur n'a de sens que pour les calculs plan généralisé)";
 };
 
 "VolumetricStrain"{

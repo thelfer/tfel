@@ -21,12 +21,14 @@
 #include"MFront/ParserUtilities.hxx"
 #include"MFront/MFrontHeader.hxx"
 #include"MFront/MFrontDebugMode.hxx"
+#include"MFront/MFrontPedanticMode.hxx"
 #include"MFront/MFrontLogStream.hxx"
 #include"MFront/MFrontSearchFile.hxx"
 #include"MFront/MFrontMaterialLawParser.hxx"
 #include"MFront/MFrontBehaviourVirtualInterface.hxx"
 #include"MFront/MFrontMFrontLawInterface.hxx"
 #include"MFront/MFrontBehaviourInterfaceFactory.hxx"
+#include"MFront/MFrontBehaviourAnalyserFactory.hxx"
 
 #include"MFront/MFrontBehaviourParserCommon.hxx"
 
@@ -351,6 +353,9 @@ namespace mfront{
       MFrontBehaviourVirtualInterface *interface = mbif.getInterfacePtr(*i);
       interface->allowDynamicallyAllocatedArrays(this->areDynamicallyAllocatedVectorsAllowed());
     }
+    if(getPedanticMode()){
+      this->doPedanticChecks();
+    }
     if(getVerboseMode()>=VERBOSE_DEBUG){
       ostream& log = getLogStream();
       log << "MFrontBehaviourParserCommon::endsInputFileProcessing : end" << endl;
@@ -358,12 +363,22 @@ namespace mfront{
   } // end of MFrontBehaviourParserCommon::endsInputFileProcessing
 
   void 
+  MFrontBehaviourParserCommon::doPedanticChecks(void) const
+  {
+    using namespace std;
+    // set<Hypothesis> h = this->mb.getDistinctModellingHypotheses();
+
+  } // end of MFrontBehaviourParserCommon::pedanticChecks
+
+  void 
   MFrontBehaviourParserCommon::writeOutputFiles(void)
   {
     using namespace std;
     using namespace tfel::system;
     typedef MFrontBehaviourInterfaceFactory MBIF;
+    typedef MFrontBehaviourAnalyserFactory  MBAF;
     MBIF& mbif = MBIF::getMFrontBehaviourInterfaceFactory();
+    MBAF& mbaf = MBAF::getMFrontBehaviourAnalyserFactory();
     systemCall::mkdir("src");
     systemCall::mkdir("include");
     systemCall::mkdir("include/TFEL/");
@@ -511,6 +526,18 @@ namespace mfront{
 	    << "calling interface" << endl;
       }
       i.endTreatement(this->mb,*this);
+    }
+    // calling the analysers
+    vector<string>::const_iterator pa;
+    for(pa  = this->analysers.begin();
+	pa != this->analysers.end();++pa){
+      MFrontBehaviourAnalyser& a = *(mbaf.getAnalyserPtr(*pa));
+      if(getVerboseMode()>=VERBOSE_DEBUG){
+	ostream& log = getLogStream();
+	log << "MFrontBehaviourParserCommon::writeOutputFiles : "
+	    << "calling analyser" << endl;
+      }
+      a.endTreatement(this->mb,*this);
     }
   }
 
@@ -809,7 +836,9 @@ namespace mfront{
     using namespace std;
     using namespace tfel::utilities;
     typedef MFrontBehaviourInterfaceFactory MBIF;
+    typedef MFrontBehaviourAnalyserFactory  MBAF;
     MBIF& mbif = MBIF::getMFrontBehaviourInterfaceFactory();
+    MBAF& mbaf = MBAF::getMFrontBehaviourAnalyserFactory();
     pair<bool,CxxTokenizer::TokensContainer::const_iterator> p;
     TokensContainer::const_iterator p2;
     vector<string>::const_iterator i;
@@ -821,6 +850,7 @@ namespace mfront{
     this->checkNotEndOfFile("MFrontBehaviourParserCommon::treatUnknownKeyword");
     if(this->current->value=="["){
       set<string> s;
+      set<string> s2;
       while(this->current->value!="]"){
 	++(this->current);
 	this->checkNotEndOfFile("MFrontBehaviourParserCommon::treatUnknownKeyword");
@@ -833,6 +863,9 @@ namespace mfront{
 	if(find(this->interfaces.begin(),this->interfaces.end(),t)!=this->interfaces.end()){
 	  s.insert(t);
 	}
+	if(find(this->analysers.begin(),this->analysers.end(),t)!=this->analysers.end()){
+	  s2.insert(t);
+	}
 	++(this->current);
 	if((this->current->value!="]")&&(this->current->value!=",")){
 	  this->throwRuntimeError("MFrontBehaviourParserCommon::treatUnknownKeyword",
@@ -840,7 +873,7 @@ namespace mfront{
 	}
       }
       ++(this->current);
-      if(s.empty()){
+      if((s.empty())&&(s2.empty())){
 	this->ignoreKeyWord(key);
       } else {
 	for(set<string>::const_iterator pi  = s.begin();pi != s.end();++pi){
@@ -857,7 +890,29 @@ namespace mfront{
 	    if(p2!=p.second){
 	      string msg("MFrontBehaviourParserCommon::treatUnknownKeyword : the keyword '");
 	      msg += key;
-	      msg += "' has been treated by two interfaces but";
+	      msg += "' has been treated by two interfaces/analysers but";
+	      msg += " results were differents";
+	      throw(runtime_error(msg));
+	    }
+	  }
+	  p2 = p.second;
+	  treated = true;
+	}
+	for(set<string>::const_iterator pa  = s2.begin();pa != s2.end();++pa){
+	  MFrontBehaviourAnalyser *analyser = mbaf.getAnalyserPtr(*pa);
+	  p = analyser->treatKeyword(key,this->current,
+				      this->fileTokens.end());
+	  if(!p.first){
+	    string msg("MFrontBehaviourParserCommon::treatUnknownKeyword : the keyword '");
+	    msg += key;
+	    msg += " has not been treated by analyser '"+*pa+"'";
+	    throw(runtime_error(msg));
+	  }
+	  if(treated){
+	    if(p2!=p.second){
+	      string msg("MFrontBehaviourParserCommon::treatUnknownKeyword : the keyword '");
+	      msg += key;
+	      msg += "' has been treated by two interfaces/analysers but";
 	      msg += " results were differents";
 	      throw(runtime_error(msg));
 	    }
@@ -878,7 +933,26 @@ namespace mfront{
 	    if(p2!=p.second){
 	      string msg("MFrontBehaviourParserCommon::treatUnknownKeyword : the keyword '");
 	      msg += key;
-	      msg += "' has been treated by two interfaces but";
+	      msg += "' has been treated by two interfaces/analysers but";
+	      msg += " results were differents";
+	      throw(runtime_error(msg));
+	    }
+	  }
+	  p2 = p.second;
+	  treated = true;
+	}
+      }
+      for(i  = this->analysers.begin();
+	  i != this->analysers.end();++i){
+	MFrontBehaviourAnalyser *analyser = mbaf.getAnalyserPtr(*i);
+	p = analyser->treatKeyword(key,this->current,
+				   this->fileTokens.end());
+	if(p.first){
+	  if(treated){
+	    if(p2!=p.second){
+	      string msg("MFrontBehaviourParserCommon::treatUnknownKeyword : the keyword '");
+	      msg += key;
+	      msg += "' has been treated by two interfaces/analysers but";
 	      msg += " results were differents";
 	      throw(runtime_error(msg));
 	    }
@@ -1153,12 +1227,24 @@ namespace mfront{
     this->readStringList(this->interfaces);
   } // end of MFrontBehaviourParserCommon::treatInterface
 
+  // void MFrontBehaviourParserCommon::treatAnalyser(void)
+  // {
+  //   this->readStringList(this->analysers);
+  // } // end of MFrontBehaviourParserCommon::treatAnalyser
+
   void
   MFrontBehaviourParserCommon::setInterfaces(const std::set<std::string>& i)
   {
     using namespace std;
     copy(i.begin(),i.end(),back_inserter(this->interfaces));
   } // end of MFrontBehaviourParserCommon::setInterfaces
+
+  void
+  MFrontBehaviourParserCommon::setAnalysers(const std::set<std::string>& i)
+  {
+    using namespace std;
+    copy(i.begin(),i.end(),back_inserter(this->analysers));
+  } // end of MFrontBehaviourParserCommon::setAnalysers
 
   void
   MFrontBehaviourParserCommon::treatIntegrator(void)
@@ -1433,6 +1519,7 @@ namespace mfront{
     this->reserveName("computeStressFreeExpansion",false);
     this->reserveName("computeFdF",false);
     this->reserveName("computeFdF_ok",false);
+    this->reserveName("updateIntegrationVariables",false);
     this->reserveName("updateStateVariables",false);
     this->reserveName("updateAuxiliaryStateVariables",false);
     this->reserveName("getTangentOperator",false);
@@ -2422,6 +2509,34 @@ namespace mfront{
   } // end of MFrontBehaviourParserCommon::treatUpdateAuxiliaryStateVarBase
 
   void
+  MFrontBehaviourParserCommon::writeBehaviourUpdateIntegrationVariables(const Hypothesis h)
+  {
+    using namespace std;
+    const MechanicalBehaviourData& d = this->mb.getMechanicalBehaviourData(h);
+    VariableDescriptionContainer::const_iterator p;
+    this->checkBehaviourFile();
+    this->behaviourFile << "/*!\n";
+    this->behaviourFile << "* \\brief Update internal variables at end of integration\n";
+    this->behaviourFile << "*/\n";
+    this->behaviourFile << "void\n";
+    this->behaviourFile << "updateIntegrationVariables(void)";
+    if(!d.getIntegrationVariables().empty()){
+      this->behaviourFile << "{\n";
+      for(p=d.getIntegrationVariables().begin();p!=d.getIntegrationVariables().end();++p){
+	if(!d.isStateVariableName(p->name)){
+	  if(d.isVariableUsedInCodeBlocks(p->name)){
+	    this->behaviourFile << "this->"  << p->name << " += ";
+	    this->behaviourFile << "this->d" << p->name << ";\n";
+	  }
+	}
+      }
+      this->behaviourFile << "}\n\n";
+    } else {
+      this->behaviourFile << "\n{}\n\n";
+    }
+  } // end of MFrontBehaviourParserCommon::writeBehaviourUpdateIntegrationVariables
+
+  void
   MFrontBehaviourParserCommon::writeBehaviourUpdateStateVariables(const Hypothesis h)
   {
     using namespace std;
@@ -2528,6 +2643,7 @@ namespace mfront{
       this->behaviourFile << this->mb.getCode(h,MechanicalBehaviourData::Integrator).code << "\n";
       this->writeStandardPerformanceProfilingEnd(this->behaviourFile);
     }
+    this->behaviourFile << "this->updateIntegrationVariables();\n";
     this->behaviourFile << "this->updateStateVariables();\n";
     this->behaviourFile << "this->updateAuxiliaryStateVariables();\n";
     for(p  = md.getBounds().begin();p !=md.getBounds().end();++p){
@@ -2962,6 +3078,25 @@ namespace mfront{
 				     "","",this->fileName,false);
     this->behaviourFile << endl;
   }
+
+  void
+  MFrontBehaviourParserCommon::writeBehaviourIntegrationVariables(const Hypothesis h)
+  {
+    using namespace std;
+    const MechanicalBehaviourData& md = this->mb.getMechanicalBehaviourData(h);
+    const VariableDescriptionContainer& v = md.getIntegrationVariables();
+    this->checkBehaviourFile();
+    VariableDescriptionContainer::const_iterator p;
+    for(p=v.begin();p!=v.end();++p){
+      if(!md.isStateVariableName(p->name)){
+	if(md.isVariableUsedInCodeBlocks(p->name)){
+	  this->writeVariableDeclaration(this->behaviourFile,
+					 *p,"","",this->fileName,false);
+	}
+      }
+    }
+    this->behaviourFile << endl;
+  } // end od MFrontBehaviourParserCommon::writeBehaviourIntegrationVariables
 
   void MFrontBehaviourParserCommon::writeBehaviourParameters(const Hypothesis h)
   {    
@@ -3602,10 +3737,12 @@ namespace mfront{
     this->writeBehaviourStandardTFELTypedefs();
     this->writeBehaviourParserSpecificTypedefs();
     this->writeBehaviourStaticVariables(h);
+    this->writeBehaviourIntegrationVariables(h);
     this->writeBehaviourIntegrationVariablesIncrements(h);
     this->writeBehaviourLocalVariables(h);
     this->writeBehaviourParameters(h);
     this->writeBehaviourParserSpecificMembers(h);
+    this->writeBehaviourUpdateIntegrationVariables(h);
     this->writeBehaviourUpdateStateVariables(h);
     this->writeBehaviourUpdateAuxiliaryStateVariables(h);
     this->writeBehaviourMembersFunc();
@@ -4677,7 +4814,8 @@ namespace mfront{
     this->readSpecifiedToken("MFrontBehaviourParserCommon::treatProfiling",";");
 #ifdef HAVE_CXX11
     this->mb.setAttribute(MechanicalBehaviourData::profiling,b,false);
-#else 
+#else
+    static_cast<void>(b);
     if(getVerboseMode()>=VERBOSE_QUIET){
       ostream& log = getLogStream();
       log << "MFrontBehaviourParserCommon::treatProfiling : performances measurements "

@@ -17,7 +17,31 @@ namespace mfront{
     typedef MFrontBehaviourInterfaceFactory MBIF;
     MBIF& mbif = MBIF::getMFrontBehaviourInterfaceFactory();
     mbif.registerInterfaceCreator(Interface::getName(),&createInterface);
+    mbif.registerInterfaceAlias(Interface::getName(),Interface::getName());
   }
+
+  template<typename Interface>
+  MFrontBehaviourInterfaceProxy<Interface>::MFrontBehaviourInterfaceProxy(const std::string& name)
+  {
+    typedef MFrontBehaviourInterfaceFactory MBIF;
+    MBIF& mbif = MBIF::getMFrontBehaviourInterfaceFactory();
+    mbif.registerInterfaceCreator(Interface::getName(),&createInterface);
+    mbif.registerInterfaceAlias(Interface::getName(),name);
+  }
+  
+  template<typename Interface>
+  template<typename InputIterator>
+  MFrontBehaviourInterfaceProxy<Interface>::MFrontBehaviourInterfaceProxy(const InputIterator b,
+									  const InputIterator e)
+  {
+    typedef MFrontBehaviourInterfaceFactory MBIF;
+    MBIF& mbif = MBIF::getMFrontBehaviourInterfaceFactory();
+    InputIterator p;
+    mbif.registerInterfaceCreator(Interface::getName(),&createInterface);
+    for(p=b;p!=e;++p){
+      mbif.registerInterfaceAlias(Interface::getName(),*p);
+    }
+  } // end of MFrontBehaviourInterfaceProxy<Interface>::MFrontBehaviourInterfaceProxy
   
   template<typename Interface>
   MFrontBehaviourVirtualInterface* 

@@ -27,3 +27,8 @@ rm -f  $(find . -name "Makefile.in")
 rm -f  $(find . -name "Makefile")
 rm -fr ABOUT-NLS
 rm -f docs/mfront/Images/2norton-rk.aux
+rm -f tools/glossary/glossary.xml
+rm -f tools/glossary/Glossary.cxx
+rm -f tools/glossary/PythonGlossary.cxx
+rm -f tools/glossary/Glossary.hxx
+rm -f tools/glossary/generate_glossary

@@ -1075,6 +1075,13 @@ namespace mfront
   } // end of MechanicalBehaviourDescription::declareExternalStateVariableProbablyUnusableInPurelyImplicitResolution
 
   bool
+  MechanicalBehaviourDescription::isVariableUsedInCodeBlocks(const Hypothesis h,
+							     const std::string& v) const
+  {
+    return this->getData(h,&MechanicalBehaviourData::isVariableUsedInCodeBlocks,v);
+  } // end of MechanicalBehaviourDescription::isMaterialPropertyName
+
+  bool
   MechanicalBehaviourDescription::isMaterialPropertyName(const Hypothesis h,
 							 const std::string& v) const
   {

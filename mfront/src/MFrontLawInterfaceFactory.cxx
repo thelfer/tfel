@@ -137,7 +137,6 @@ namespace mfront{
     AliasContainer::iterator p2;
     InterfaceContainer::iterator m;
     MFrontLawVirtualInterface *i;
-
     m = this->getInterfacesMap().find(interfaceName);
     if(m==this->getInterfacesMap().end()){
       p2 = this->getAliasesMap().find(interfaceName);

@@ -653,7 +653,7 @@ namespace mfront{
 	return "("+var+"+(this->theta)*d"+var+")";
       }
     }
-    if(d.isStateVariableName(var)){
+    if(d.isIntegrationVariableName(var)){
       if(this->nf.find(var)!=nf.end()){
 	const VariableDescription& s = d.getStateVariableHandler(var);
 	if(s.arraySize==1u){
@@ -2019,6 +2019,7 @@ namespace mfront{
 	this->behaviourFile << "this->d" << p->name << " *= " << this->nf.find(p->name)->second << ";\n";
       }
     }
+    this->behaviourFile << "this->updateIntegrationVariables();\n";
     this->behaviourFile << "this->updateStateVariables();\n";
     if(this->mb.hasCode(h,MechanicalBehaviourData::ComputeFinalStress)){
       this->behaviourFile << "this->computeFinalStress();\n";

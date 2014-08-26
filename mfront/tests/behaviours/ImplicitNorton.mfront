@@ -8,6 +8,19 @@
 
 @Parser Implicit;
 @Behaviour ImplicitNorton;
+@Description{
+  This file implements the Norton law, described as:
+  "$$"
+  "\left\{"
+  "  \begin{aligned}"
+  "    \tepsilonto   &= \tepsilonel+\tepsilonvis \\"
+  "    \tsigma       &= \tenseurq{D}\,:\,\tepsilonel\\"
+  "    \tdepsilonvis &= \dot{p}\,\tenseur{n} \\"
+  "    \dot{p}       &= A\,\sigmaeq^{m}"
+  "  \end{aligned}"
+  "\right."
+  "$$"
+}
 
 @ModellingHypotheses {".+"};
 @Epsilon 1.e-11;

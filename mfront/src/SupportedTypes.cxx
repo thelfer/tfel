@@ -631,27 +631,38 @@ namespace mfront{
 					     const std::string& fileName,
 					     const bool useTimeDerivative) const
   {
-    using namespace std;
     VariableDescriptionContainer::const_iterator p;
     for(p=v.begin();p!=v.end();++p){
-      const string n = prefix+p->name+suffix;
-      const string t = (!useTimeDerivative) ? p->type :  this->getTimeDerivativeType(p->type);
-      if((!getDebugMode())&&(p->lineNumber!=0u)){
-	f << "#line " << p->lineNumber << " \"" 
-	  << fileName << "\"\n";
-      }
-      if(p->arraySize==1u){
-	f << t << " "  << n << ";\n";  
-      } else {
-	if(this->useDynamicallyAllocatedVector(p->arraySize)){
-	  f << "tfel::math::vector<" << t << " > "  << n << ";\n";
-	} else {
-	  f << "tfel::math::tvector<" << p->arraySize 
-	    << ", " << t << " > "  << n << ";\n";
-	}
-      }
+      this->writeVariableDeclaration(f,*p,prefix,suffix,fileName,useTimeDerivative);
     }
   } // end of SupportedTypes::writeVariablesDeclarations
+
+  void
+  SupportedTypes::writeVariableDeclaration(std::ostream& f,
+					   const VariableDescription& v,
+					   const std::string& prefix,
+					   const std::string& suffix,
+					   const std::string& fileName,
+					   const bool useTimeDerivative) const
+  {
+    using namespace std;
+    const string n = prefix+v.name+suffix;
+    const string t = (!useTimeDerivative) ? v.type :  this->getTimeDerivativeType(v.type);
+    if((!getDebugMode())&&(v.lineNumber!=0u)){
+      f << "#line " << v.lineNumber << " \"" 
+	<< fileName << "\"\n";
+    }
+    if(v.arraySize==1u){
+	f << t << " "  << n << ";\n";  
+    } else {
+      if(this->useDynamicallyAllocatedVector(v.arraySize)){
+	f << "tfel::math::vector<" << t << " > "  << n << ";\n";
+      } else {
+	f << "tfel::math::tvector<" << v.arraySize 
+	  << ", " << t << " > "  << n << ";\n";
+      }
+    }
+  } // end of SupportedTypes::writeVariableDeclaration
 
   SupportedTypes::~SupportedTypes()
   {} // end of SupportedTypes::~SupportedTypes

@@ -49,6 +49,12 @@ namespace mfront{
     virtual void
     setInterfaces(const std::set<std::string>&);
 
+    /*!
+     * set the analysers to be used
+     */
+    virtual void
+    setAnalysers(const std::set<std::string>&);
+
     virtual std::map<std::string,std::vector<std::string> >
     getGlobalIncludes(void);
 

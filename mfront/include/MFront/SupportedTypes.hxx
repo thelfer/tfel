@@ -110,7 +110,7 @@ namespace mfront
     areDynamicallyAllocatedVectorsAllowed(void) const;
 
     /*!
-     * write the variables declaration
+     * write the given variables declaration
      * \param[out] f                 : output file
      * \param[in]  v                 : variables to be declared
      * \param[in]  prefix            : prefix added to variable's names
@@ -124,7 +124,21 @@ namespace mfront
 			       const std::string&,
 			       const std::string&,
 			       const bool) const;
-    
+    /*!
+     * write the given variable declaration
+     * \param[out] f                 : output file
+     * \param[in]  v                 : variable to be declared
+     * \param[in]  prefix            : prefix added to variable's names
+     * \param[in]  suffix            : suffix added to variable's names
+     * \param[in]  useTimeDerivative : declare time derivative of the variables
+     */
+    virtual void
+    writeVariableDeclaration(std::ostream&,
+			     const VariableDescription&,
+			     const std::string&,
+			     const std::string&,
+			     const std::string&,
+			     const bool) const;
     /*!
      * \param[out] f      : output file
      * \param[in]  v      : variables to be initialized

@@ -64,26 +64,43 @@ namespace mfront{
     imap.insert(make_pair(i,f));
   }
 
+  void
+  MFrontBehaviourInterfaceFactory::registerInterfaceAlias(const std::string& i,
+							  const std::string& a)
+  {
+    using namespace std;
+    AliasContainer& amap = this->getAliasesMap();
+    if(amap.find(a)!=amap.end()){
+      string msg("MFrontBehaviourInterfaceFactory::registerInterfaceCreator : ");
+      msg += "interface alias '"+a+"' already declared";
+      throw(runtime_error(msg));
+    }
+    amap.insert(make_pair(a,i));
+  }
+
   MFrontBehaviourVirtualInterface* 
   MFrontBehaviourInterfaceFactory::getInterfacePtr(const std::string& interfaceName)
   {
     using namespace std;
     InterfaceCreatorsContainer::iterator p;
+    AliasContainer::iterator p2;
     InterfaceContainer::iterator m;
     MFrontBehaviourVirtualInterface *i;
     m = this->getInterfacesMap().find(interfaceName);
     if(m==this->getInterfacesMap().end()){
-      p = this->getInterfaceCreatorsMap().find(interfaceName);
-      if(p==this->getInterfaceCreatorsMap().end()){
-	string msg = "MFrontBehaviourInterfaceFactory::createNewInterface : no interface named ";
-	msg += interfaceName+".\n";
+      p2 = this->getAliasesMap().find(interfaceName);
+      if(p2==this->getAliasesMap().end()){
+	string msg = "MFrontBehaviourInterfaceFactory::createNewInterface : no interface named '";
+	msg += interfaceName+"'.\n";
 	msg += "Available interface are : \n";
-	for(p  = this->getInterfaceCreatorsMap().begin();
-	    p != this->getInterfaceCreatorsMap().end();++p){
-	  msg += p->first + " ";
+	for(p2  = this->getAliasesMap().begin();
+	    p2 != this->getAliasesMap().end();++p2){
+	  msg += p2->first + " ";
 	}
 	throw(runtime_error(msg));
       }
+      p = this->getInterfaceCreatorsMap().find(p2->second);
+      assert(p!=this->getInterfaceCreatorsMap().end());
       InterfaceCreator c = p->second;
       i = c();
       this->getInterfacesMap().insert(make_pair(interfaceName,i));
@@ -116,5 +133,12 @@ namespace mfront{
       m->second->reset();
     }
   } // end of MFrontBehaviourInterfaceFactory::reset
+
+  MFrontBehaviourInterfaceFactory::AliasContainer&
+  MFrontBehaviourInterfaceFactory::getAliasesMap(void)
+  {
+    static AliasContainer map;
+    return map;
+  } // end of MFrontBehaviourInterfaceFactory::getAliasesMap
 
 } // end of namespace mfront

@@ -762,7 +762,7 @@ algorithme. L'idée de cet algorithme est de~:
     n_{1}=\Frac{\tilde{r}_{n-1}}{\norm{\tilde{r}_{n-1}}}
     \]
     En notant \(c_{1}\) le produit scalaire
-    \(\tilde{r}_{0}\,\colon\,n\), la projection
+    \(\tilde{r}_{0}\,.\,n_{1}\), la projection
     \(\tilde{r}_{\perp}\) du vecteur \(\tilde{r}_{0}\) s'écrit~:
     \[
     \tilde{r}_{\perp}=c_{1}n_{1}=\Frac{c_{1}}{\norm{\tilde{r}_{n-1}}}\tilde{r}_{n-1}

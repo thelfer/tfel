@@ -20,10 +20,12 @@ set(mfront_SOURCES
     main.cxx
     MFront.cxx
     MFrontDebugMode.cxx
+    MFrontPedanticMode.cxx
     MFrontLock.cxx
     MFrontSearchFile.cxx
     MFrontInitInterfaces.cxx
     MFrontInitParsers.cxx
+    MFrontInitAnalysers.cxx
     MFrontParserFactory.cxx
     DrivingVariable.cxx
     MaterialPropertyDescription.cxx
@@ -43,9 +45,13 @@ set(mfront_SOURCES
     ParserBase.cxx
     InterfaceBase.cxx
     ParserUtilities.cxx
+    MFrontBehaviourAnalyser.cxx
+    MFrontBehaviourAnalyserFactory.cxx
     MFrontLawInterfaceFactory.cxx
     MFrontBehaviourInterfaceFactory.cxx
     MFrontModelInterfaceFactory.cxx
+    MFrontBehaviourAnalyser.cxx
+    MFrontBehaviourAnalyserFactory.cxx
     MFrontDefaultParserBase.cxx
     MFrontDefaultParser.cxx
     MFrontDefaultCZMParser.cxx
@@ -68,6 +74,8 @@ set(mfront_SOURCES
     MFrontCppTestLawInterface.cxx
     MFrontExcelLawInterface.cxx
     MFrontLaTeXLawInterface.cxx
+    MFrontLaTeXBehaviourAnalyser.cxx
+    MFrontMarkdownBehaviourAnalyser.cxx
     MFrontUMATInterfaceBase.cxx
     ${PROJECT_BINARY_DIR}/mfront/src/MFrontHeader.cxx)
 

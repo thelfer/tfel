@@ -368,6 +368,20 @@ namespace mfront{
   }
 
   bool
+  MechanicalBehaviourData::isVariableUsedInCodeBlocks(const std::string& v) const
+  {
+    using namespace std;
+    map<string,CodeBlocksAggregator>::const_iterator pc;
+    for(pc=this->cblocks.begin();pc!=this->cblocks.end();++pc){
+      const CodeBlock& c = pc->second.get();
+      if(c.variables.find(v)!=c.variables.end()){
+	return true;
+      }
+    }
+    return false;
+  } // end of MechanicalBehaviourData::isVariableUsedInCodeBlocks
+
+  bool
   MechanicalBehaviourData::isMaterialPropertyName(const std::string& n) const
   {
     return this->getMaterialProperties().contains(n);

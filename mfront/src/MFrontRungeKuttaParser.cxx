@@ -215,7 +215,7 @@ namespace mfront{
     const MechanicalBehaviourData& d = this->mb.getMechanicalBehaviourData(h);
     if((this->mb.isDrivingVariableName(var)) ||(var=="T") ||
        (this->mb.isDrivingVariableIncrementName(var))||
-       (d.isStateVariableName(var))||
+       (d.isIntegrationVariableName(var))||
        (d.isExternalStateVariableName(var))){
       if(addThisPtr){
 	return "this->"+var+"_";
@@ -300,7 +300,7 @@ namespace mfront{
 							  const std::string& n)
   {
     using namespace std;
-    if(this->mb.isStateVariableName(h,n)){
+    if(this->mb.isIntegrationVariableName(h,n)){
       if(this->current->value=="setErrorNormalisationFactor"){
     	string var;
     	++(this->current);

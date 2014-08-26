@@ -38,6 +38,7 @@
 #include"MFront/SupportedTypes.hxx"
 #include"MFront/MFront.hxx"
 #include"MFront/MFrontDebugMode.hxx"
+#include"MFront/MFrontPedanticMode.hxx"
 #include"MFront/MFrontLogStream.hxx"
 #include"MFront/MFrontHeader.hxx"
 #include"MFront/MFrontSearchFile.hxx"
@@ -217,18 +218,15 @@ namespace mfront{
   }
 
   void
+  MFront::treatPedantic(void)
+  {
+    setPedanticMode(true);
+  }
+
+  void
   MFront::treatWarning(void)
   {
-    // typedef MFrontLawInterfaceFactory       MLIF;
-    // typedef MFrontBehaviourInterfaceFactory MBIF;
-    // typedef MFrontModelInterfaceFactory     MMIF;
-    // MLIF& mlif = MLIF::getMFrontLawInterfaceFactory();
-    // MBIF& mbif = MBIF::getMFrontBehaviourInterfaceFactory();
-    // MMIF& mmif = MMIF::getMFrontModelInterfaceFactory();
-    // this->warningMode = true;
-    // mlif.setWarningMode();
-    // mbif.setWarningMode();
-    // mmif.setWarningMode();
+    
   }
 
   void
@@ -335,6 +333,50 @@ namespace mfront{
   } // end of MFront::treatOMake
 
   void
+  MFront::treatAnalyser(void)
+  {
+    using namespace std;
+    string nanalyser;
+    string tmp;
+    string::size_type n;
+    string::size_type n2;
+    nanalyser = this->currentArgument->getOption();
+    if(nanalyser.empty()){
+      string msg("MFront::treatAnalyser : ");
+      msg += "no option given to the --analyser argument";
+      throw(runtime_error(msg));
+    }
+    n = 0u;
+    n2=nanalyser.find(',',n);
+    while(n2!=string::npos){
+      tmp = nanalyser.substr(n,n2-n);
+      if(tmp.empty()){
+	string msg("MFront::treatAnalyser : ");
+	msg += "empty analyser specified.";
+	throw(runtime_error(msg));
+      }
+      if(!this->analysers.insert(tmp).second){
+	string msg("MFront::treatAnalyser : ");
+	msg += "the analyser "+tmp+" has already been specified";
+	throw(runtime_error(msg));
+      }
+      n=n2+1;
+      n2=nanalyser.find(',',n);
+    }
+    tmp = nanalyser.substr(n,n2-n);
+    if(tmp.empty()){
+      string msg("MFront::treatAnalyser : ");
+      msg += "empty analyser specified.";
+      throw(runtime_error(msg));
+    }
+    if(!this->analysers.insert(tmp).second){
+      string msg("MFront::treatAnalyser : ");
+      msg += "the analyser "+tmp+" has already been specified";
+      throw(runtime_error(msg));
+    }
+  } // end of MFront::treatAnalyser
+
+  void
   MFront::treatListParsers(void)
   {
     using namespace std;
@@ -434,6 +476,8 @@ namespace mfront{
     this->registerNewCallBack("--debug",&MFront::treatDebug,
 			      "set debug mode (remove references to initial file)");
     this->registerNewCallBack("--warning","-W",&MFront::treatWarning,"print warnings");
+    this->registerNewCallBack("--pedantic",&MFront::treatPedantic,
+			      "print pedantic warning message");
     this->registerNewCallBack("--make",&MFront::treatMake,
 			      "generate MakeFile (see also --build)");
     this->registerNewCallBack("--build",&MFront::treatBuild,
@@ -449,7 +493,9 @@ namespace mfront{
     this->registerNewCallBack("--clean",&MFront::treatClean,
 			      "generate MakeFile and clean libraries");
     this->registerNewCallBack("--interface","-i",&MFront::treatInterface,
-			      "specify witch interface to use",true);
+			      "specify which interface to use",true);
+    this->registerNewCallBack("--analyser","-i",&MFront::treatAnalyser,
+			      "specify which analyser to use",true);
     this->registerNewCallBack("--silent-build",&MFront::treatSilentBuild,
 			      "active or desactivate silent build",true);
 #if (not defined _WIN32 || defined _WIN64 ||defined __CYGWIN__)
@@ -729,6 +775,9 @@ namespace mfront{
     }
     if(!this->interfaces.empty()){
       parser->setInterfaces(this->interfaces);
+    }
+    if(!this->analysers.empty()){
+      parser->setAnalysers(this->analysers);
     }
     file.clear();
 

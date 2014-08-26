@@ -324,6 +324,15 @@ namespace mfront{
   } // end of MFrontMaterialLawParser::setInterface
 
   void
+  MFrontMaterialLawParser::setAnalysers(const std::set<std::string>&)
+  {
+    using namespace std;
+    string msg("MFrontMaterialLawParser::setAnalysers : ");
+    msg += "analysers are not supported for models";
+    throw(runtime_error(msg));
+  } // end of MFrontMaterialLawParser::setAnalysers
+
+  void
   MFrontMaterialLawParser::treatInterface(void) 
   {
     using namespace std;

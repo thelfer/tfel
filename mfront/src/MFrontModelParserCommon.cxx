@@ -115,6 +115,15 @@ namespace mfront{
   } // end of MFrontModelParserCommon::setInterfaces
 
   void
+  MFrontModelParserCommon::setAnalysers(const std::set<std::string>&)
+  {
+    using namespace std;
+    string msg("MFrontModelParserCommon::setAnalysers : ");
+    msg += "analysers are not supported for models";
+    throw(runtime_error(msg));
+  } // end of MFrontModelParserCommon::setAnalysers
+
+  void
   MFrontModelParserCommon::writeOutputFiles(void)
   {
     using namespace std;

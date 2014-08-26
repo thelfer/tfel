@@ -108,7 +108,6 @@ namespace mfront{
     }
   } // end of MFrontLawInterfaceProxy<Interface>::MFrontLawInterfaceProxy
 
-
   template<typename Interface>
   MFrontLawVirtualInterface* 
   MFrontLawInterfaceProxy<Interface>::createInterface()

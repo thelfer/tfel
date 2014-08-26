@@ -140,8 +140,6 @@ macro(test_castem test_arg)
     PROPERTIES DEPENDS MFrontCastemBehaviours)
   set_tests_properties(castem${test_arg}_mtest
     PROPERTIES DEPENDS mtest)
-  set_tests_properties(castem${test_arg}_mtest
-    PROPERTIES DEPENDS mtest)
   add_custom_target(castem${test_arg}.mtest-install
     ${CMAKE_COMMAND} -E copy castem${test_arg}.mtest
     ${CMAKE_INSTALL_PREFIX}/share/mfront/tests/behaviours/castem/castem${test_arg}.mtest)

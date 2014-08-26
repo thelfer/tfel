@@ -47,6 +47,9 @@ namespace mfront{
     virtual void
     setInterfaces(const std::set<std::string>&) = 0;
 
+    virtual void
+    setAnalysers(const std::set<std::string>&) = 0;
+
     /*!
      * \brief return the list of keywords usable with this parser
      * \param[out] k : the list of keywords registred for this parser

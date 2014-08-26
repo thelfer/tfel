@@ -12,7 +12,6 @@
 #include<string>
 
 #include"TFEL/Config/TFELConfig.hxx"
-#include"MFront/MFrontVirtualParser.hxx"
 #include"MFront/MFrontBehaviourParserBase.hxx"
 
 namespace mfront{

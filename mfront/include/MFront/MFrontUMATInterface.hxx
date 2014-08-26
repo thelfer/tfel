@@ -121,16 +121,29 @@ namespace mfront{
     getLibraryName(const MechanicalBehaviourDescription&) const;
 
     static std::string
-    treatScalar(const std::string& s);
+    treatScalar(const std::string&);
+
+    static std::string
+    treatScalar(const std::string&,
+		const unsigned short);
 
     static std::string
     treatStensor(const Hypothesis,
-		 const std::string& s);
+		 const std::string&);
 
+    static std::string
+    treatStensor(const Hypothesis,
+		 const std::string&,
+		 const unsigned short);
 
     static std::string
     treatTensor(const Hypothesis,
-		const std::string& s);
+		const std::string&);
+
+    static std::string
+    treatTensor(const Hypothesis,
+		const std::string&,
+		const unsigned short);
 
     static unsigned short
     getStensorSize(const Hypothesis);
@@ -216,6 +229,9 @@ namespace mfront{
 					       const Hypothesis,
 					       const VariableDescriptionContainer&) const;
 
+    virtual void
+    writeGibianeInstruction(std::ostream&,
+			    const std::string&) const;
 
     virtual void
     writeUmatFortranFunctionDefine(std::ostream&,

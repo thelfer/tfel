@@ -4,12 +4,14 @@ nobase_include_HEADERS= MFront/MFront.hxx                             \
 			MFront/CodeBlock.hxx                          \
 			MFront/MFrontConfig.hxx	                      \
 			MFront/MFrontDebugMode.hxx	              \
+			MFront/MFrontPedanticMode.hxx	              \
 			MFront/MFrontLogStream.hxx                    \
 			MFront/MFrontGenericData.hxx                  \
 			MFront/MFrontFileDescription.hxx              \
 			MFront/MFrontLock.hxx                         \
 			MFront/MFrontInitParsers.hxx                  \
 			MFront/MFrontInitInterfaces.hxx               \
+			MFront/MFrontInitAnalysers.hxx                \
 			MFront/MFrontHeader.hxx                       \
 			MFront/MFrontVirtualParser.hxx                \
 			MFront/MFrontBehaviourParserCommon.hxx        \
@@ -27,6 +29,10 @@ nobase_include_HEADERS= MFront/MFront.hxx                             \
 			MFront/MFrontBehaviourInterfaceProxy.hxx      \
 			MFront/MFrontBehaviourInterfaceProxy.ixx      \
 			MFront/MFrontBehaviourInterfaceFactory.hxx    \
+			MFront/MFrontBehaviourAnalyser.hxx            \
+			MFront/MFrontBehaviourAnalyserProxy.hxx       \
+			MFront/MFrontBehaviourAnalyserProxy.ixx       \
+			MFront/MFrontBehaviourAnalyserFactory.hxx     \
 			MFront/MFrontModelData.hxx                    \
 			MFront/MFrontModelVirtualInterface.hxx        \
 			MFront/MFrontModelInterfaceProxy.hxx          \
@@ -88,6 +94,8 @@ nobase_noinst_HEADERS += MFront/MFrontCLawInterfaceBase.hxx          \
 			 MFront/MFrontGnuplotLawInterface.hxx        \
 			 MFront/MFrontExcelLawInterface.hxx          \
 			 MFront/MFrontLaTeXLawInterface.hxx          \
+			 MFront/MFrontLaTeXBehaviourAnalyser.hxx     \
+			 MFront/MFrontMarkdownBehaviourAnalyser.hxx  \
 			 MFront/MFrontPythonLawInterface.hxx
 
 nobase_include_HEADERS += MFront/MFrontBehaviourProfiler.hxx

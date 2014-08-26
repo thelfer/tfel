@@ -29,7 +29,11 @@ namespace mfront{
 
     void registerInterfaceCreator(const std::string&,
 				  InterfaceCreator);
-    
+   
+    void
+    registerInterfaceAlias(const std::string&,
+			   const std::string&);
+ 
     MFrontBehaviourVirtualInterface* 
     getInterfacePtr(const std::string&);
     
@@ -43,6 +47,7 @@ namespace mfront{
     
   private:
 
+    typedef std::map<std::string,std::string> AliasContainer;
     typedef std::map<std::string,InterfaceCreator> InterfaceCreatorsContainer;
     typedef std::map<std::string,MFrontBehaviourVirtualInterface *> InterfaceContainer;
 
@@ -56,6 +61,10 @@ namespace mfront{
     TFEL_VISIBILITY_LOCAL
     InterfaceContainer&
     getInterfacesMap(void);
+
+    TFEL_VISIBILITY_LOCAL
+    AliasContainer&
+    getAliasesMap(void);
 
   };
 

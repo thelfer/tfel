@@ -73,31 +73,31 @@ struct GlossaryTokenizer
 	      string msg("GlossaryTokenizer::execute : "
 			 "unit already read for key '"+key+"'");
 	    }
-	    unit = CxxTokenizer::readString(p,pe);
+	    unit = replace_all(CxxTokenizer::readString(p,pe),"\\","\\\\");
 	  } else if(k=="name"){
 	    if(!name.empty()){
 	      string msg("GlossaryTokenizer::execute : "
 			 "name already read for key '"+key+"'");
 	    }
-	    name = CxxTokenizer::readString(p,pe);
+	    name = replace_all(CxxTokenizer::readString(p,pe),"\\","\\\\");
 	  } else if(k=="type"){
 	    if(!type.empty()){
 	      string msg("GlossaryTokenizer::execute : "
 			 "type already read for key '"+key+"'");
 	    }
-	    type = CxxTokenizer::readString(p,pe);
+	    type = replace_all(CxxTokenizer::readString(p,pe),"\\","\\\\");
 	  } else if(k=="short_description"){
 	    if(!short_description.empty()){
 	      string msg("GlossaryTokenizer::execute : "
 			 "short description already read for key '"+key+"'");
 	    }
-	    short_description = CxxTokenizer::readString(p,pe);
+	    short_description = replace_all(CxxTokenizer::readString(p,pe),"\\","\\\\");
 	  } else if(k=="description"){
 	    if(!description.empty()){
 	      string msg("GlossaryTokenizer::execute : "
 			 "description already read for key '"+key+"'");
 	    }
-	    this->readBlock(description,p,pe);
+	    this->readBlock(description,p,pe,true);
 	    CxxTokenizer::readSpecifiedToken("GlossaryTokenizer::execute","}",p,pe);
 	  } else if(k=="latex_description"){
 	    if(!latex_description.empty()){
@@ -111,7 +111,7 @@ struct GlossaryTokenizer
 	      string msg("GlossaryTokenizer::execute : "
 			 "note already read for key '"+key+"'");
 	    }
-	    this->readBlock(note,p,pe);
+	    this->readBlock(note,p,pe,true);
 	    CxxTokenizer::readSpecifiedToken("GlossaryTokenizer::execute","}",p,pe);
 	  } else {
 	    string msg("GlossaryTokenizer::execute : "
@@ -395,7 +395,7 @@ void generateBoostPythonBindings(const GlossaryTokenizer& tokenizer)
   psrc << endl;
   psrc << "#include\"TFEL/Glossary/Glossary.hxx\"" << endl;
   psrc << endl;
-  psrc << "BOOST_PYTHON_MODULE(glossary)" << endl;
+  psrc << "void\ndeclareGlossary(void)" << endl;
   psrc << "{" << endl;
   psrc << "using namespace boost;" << endl;
   psrc << "using namespace boost::python;" << endl;

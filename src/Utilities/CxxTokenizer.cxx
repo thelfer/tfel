@@ -131,8 +131,13 @@ namespace tfel{
 	  ++ps;
 	  bool found=false;
 	  for(;(ps!=line.end())&&(!found);++ps){
-	    if((*ps=='\"')&&(*(ps-1)!='\\')){
+	    if(*ps=='\"'){
+	      string::const_reverse_iterator ps2(ps);
 	      found=true;
+	      while((ps2!=line.rend())&&(*ps2=='\\')){
+		found = !found;
+		++ps2;
+	      }
 	    }
 	  }
 	  if(!found){

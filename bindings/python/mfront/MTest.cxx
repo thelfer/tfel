@@ -511,6 +511,10 @@ void declareMTest(void)
 	 &MTest::setOutputFileName)
     .def("setOutputFilePrecision",
 	 &MTest::setOutputFilePrecision)
+    .def("setResidualFileName",
+	 &MTest::setResidualFileName)
+    .def("setResidualFilePrecision",
+	 &MTest::setResidualFilePrecision)
     .def("setDescription",&MTest::setDescription)
     .def("setAuthor",&MTest::setAuthor)
     .def("setDate",&MTest::setDate)
@@ -529,6 +533,14 @@ void declareMTest(void)
 	 &MTest::setUseIronsTuckAccelerationAlgorithm)
     .def("setIronsTuckAccelerationTrigger",
 	 &MTest::setIronsTuckAccelerationTrigger)
+    .def("setUseSteffensenAccelerationAlgorithm",
+	 &MTest::setUseSteffensenAccelerationAlgorithm)
+    .def("setSteffensenAccelerationTrigger",
+	 &MTest::setSteffensenAccelerationTrigger)
+    .def("setUseSecantAccelerationAlgorithm",
+	 &MTest::setUseSecantAccelerationAlgorithm)
+    .def("setSecantAccelerationTrigger",
+	 &MTest::setSecantAccelerationTrigger)
     .def("setMaximumNumberOfIterations",
 	 &MTest::setMaximumNumberOfIterations)
     .def("setMaximumNumberOfSubSteps",
