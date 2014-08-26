@@ -61,7 +61,7 @@ namespace cyrano
 	>::type ThermalExpansionCoefficientCheck;
       CyranoBehaviourHandler::checkNPROPS(*NPROPS);
       CyranoBehaviourHandler::checkNSTATV(*NSTATV);
-      ThermalExpansionCoefficientCheck::exe(PROPS[3]);
+      ThermalExpansionCoefficientCheck::exe(PROPS[2]);
       Handler handler(DTIME,STRAN,DSTRAN,TEMP,DTEMP,PROPS,
 		      PREDEF,DPRED,STATEV,STRESS);
       handler.exe(DDSOE,STRESS,STATEV);
