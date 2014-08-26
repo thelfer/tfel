@@ -65,7 +65,7 @@ namespace mfront{
 
     static bool
     is(const MFrontModelData&,
-       const VarContainer&,
+       const VariableDescriptionContainer&,
        const std::string&);
 
   protected:

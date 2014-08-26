@@ -13,8 +13,6 @@
 
 #include"TFEL/Utilities/CxxTokenizer.hxx"
 
-#include"MFront/VarHandler.hxx"
-#include"MFront/StaticVarHandler.hxx"
 #include"MFront/LawFunction.hxx"
 #include"MFront/VariableBoundsDescription.hxx"
 #include"MFront/MFrontLawVirtualInterface.hxx"
@@ -114,9 +112,9 @@ namespace mfront{
      * \param const std::string&, description
      * \param const std::string&, includes
      * \param const std::string&, output name
-     * \param const VarContainer&, inputs
+     * \param const VariableDescriptionContainer&, inputs
      * \param const std::vector<std::string>&, material laws
-     * \param const StaticVarContainer&, static variables
+     * \param const StaticVariableDescriptionContainer&, static variables
      * \param const std::map<std::string,std::string>&, glossary names,
      * \param const std::map<std::string,std::string>&, entry names,
      * \param const std::vector<std::string>&, parameters
@@ -136,11 +134,11 @@ namespace mfront{
 			  const std::string&,
 			  const std::string&,
 			  const std::string&,
-			  const VarContainer&,
+			  const VariableDescriptionContainer&,
 			  const std::vector<std::string>&,
 			  const std::map<std::string,std::string>&,
 			  const std::map<std::string,std::string>&,
-			  const StaticVarContainer& staticVars,
+			  const StaticVariableDescriptionContainer& staticVars,
 			  const std::vector<std::string>&,
 			  const std::map<std::string,double>&,
 			  const LawFunction&,
@@ -171,8 +169,8 @@ namespace mfront{
      * \param const std::string&, author
      * \param const std::string&, date
      * \param const std::string&, output name
-     * \param const VarContainer&, inputs
-     * \param const StaticVarContainer&, static variables
+     * \param const VariableDescriptionContainer&, inputs
+     * \param const StaticVariableDescriptionContainer&, static variables
      * \param const std::vector<std::string>&, parameters
      * \param const std::map<std::string,double>&, parameters values
      * \param const LawFunction&, function definition
@@ -186,8 +184,8 @@ namespace mfront{
 		      const std::string&,
 		      const std::string&,
 		      const std::string&,
-		      const VarContainer&,
-		      const StaticVarContainer& staticVars,
+		      const VariableDescriptionContainer&,
+		      const StaticVariableDescriptionContainer& staticVars,
 		      const std::vector<std::string>&,
 		      const std::map<std::string,double>&,
 		      const LawFunction&,

@@ -13,8 +13,7 @@
 #include<map>
 
 #include"TFEL/Config/TFELConfig.hxx"
-
-#include"MFront/VarHandler.hxx"
+#include"MFront/VariableDescription.hxx"
 
 namespace mfront
 {
@@ -110,7 +109,7 @@ namespace mfront
      */
     virtual void
     writeVariablesDeclarations(std::ostream&,
-			       const VarContainer&,
+			       const VariableDescriptionContainer&,
 			       const std::string&,
 			       const std::string&,
 			       const std::string&,
@@ -127,7 +126,7 @@ namespace mfront
      */
     virtual TypeSize
     writeVariableInitializersInBehaviourDataConstructorI(std::ostream&,
-							 const VarContainer&,
+							 const VariableDescriptionContainer&,
 							 const std::string&,
 							 const std::string&,
 							 const std::string&,
@@ -143,7 +142,7 @@ namespace mfront
      */
     virtual TypeSize
     writeVariableInitializersInBehaviourDataConstructorII(std::ostream&,
-							  const VarContainer&,
+							  const VariableDescriptionContainer&,
 							  const std::string&,
 							  const std::string&,
 							  const std::string&,
@@ -157,7 +156,7 @@ namespace mfront
      */
     virtual void
     writeStateVariableIncrementsInitializers(std::ostream&,
-					     const VarContainer&,
+					     const VariableDescriptionContainer&,
 					     const bool) const;
 
     /*!
@@ -169,7 +168,7 @@ namespace mfront
      */
     virtual TypeSize
     exportResults(std::ostream&,
-		  const VarContainer&,
+		  const VariableDescriptionContainer&,
 		  const std::string&,
 		  const bool,
 		  const TypeSize&  = TypeSize()) const;
@@ -178,18 +177,18 @@ namespace mfront
      * \param[in]  v   : variables
      */
     TypeSize
-    getTotalSize(const VarContainer&) const;
+    getTotalSize(const VariableDescriptionContainer&) const;
 
     /*!
      * \param[in]  v   : variables
      */
     unsigned short
-    getNumberOfVariables(const VarContainer&) const;
+    getNumberOfVariables(const VariableDescriptionContainer&) const;
 
     void
     writeResultsArrayResize(std::ostream&,
 			    const std::string&,
-			    const VarContainer&) const;
+			    const VariableDescriptionContainer&) const;
     
     void
     writeResultsArrayResize(std::ostream&,

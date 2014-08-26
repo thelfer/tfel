@@ -31,12 +31,12 @@ namespace mfront
   void
   writeStaticVariables(const std::string& method,
 		       std::ofstream& srcFile,
-		       const StaticVarContainer& staticVars,
+		       const StaticVariableDescriptionContainer& staticVars,
 		       const std::string& file,
 		       const bool debugMode)
   {
     using namespace std;
-    StaticVarContainer::const_iterator p;
+    StaticVariableDescriptionContainer::const_iterator p;
     // static variables
     if(!staticVars.empty()){
       for(p=staticVars.begin();p!=staticVars.end();++p){
@@ -84,7 +84,7 @@ namespace mfront
       srcFile << endl;
     }
 
-  } // end of writeStaticVariables(std::ofstream&,const StaticVarContainer&)
+  } // end of writeStaticVariables(std::ofstream&,const StaticVariableDescriptionContainer&)
 
   std::string
   getMaterialLawLibraryNameBase(const std::string& library,

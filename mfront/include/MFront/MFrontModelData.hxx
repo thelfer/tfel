@@ -13,8 +13,7 @@
 #include<string>
 
 #include"TFEL/Config/TFELConfig.hxx"
-
-#include"MFront/VarHandler.hxx"
+#include"MFront/VariableDescription.hxx"
 #include"MFront/VariableBoundsDescription.hxx"
 
 namespace mfront
@@ -40,11 +39,11 @@ namespace mfront
     typedef std::vector<Function> FunctionContainer;
     FunctionContainer functions;
 
-    VarContainer outputs;
-    VarContainer inputs;
-    VarContainer globalParameters;
-    VarContainer localParameters;
-    VarContainer constantMaterialProperties;
+    VariableDescriptionContainer outputs;
+    VariableDescriptionContainer inputs;
+    VariableDescriptionContainer globalParameters;
+    VariableDescriptionContainer localParameters;
+    VariableDescriptionContainer constantMaterialProperties;
 
     std::set<std::string> domains;
     std::set<std::string> fieldNames;

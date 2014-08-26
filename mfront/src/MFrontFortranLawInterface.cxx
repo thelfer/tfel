@@ -108,9 +108,9 @@ namespace mfront
   } // end of MFrontFortranLawInterface::getSrcFileName
 
   void
-  MFrontFortranLawInterface::writeInterfaceSpecificVariables(const VarContainer& inputs)
+  MFrontFortranLawInterface::writeInterfaceSpecificVariables(const VariableDescriptionContainer& inputs)
   {
-    VarContainer::const_iterator p;
+    VariableDescriptionContainer::const_iterator p;
     for(p=inputs.begin();p!=inputs.end();++p){
       this->srcFile << "const mfront_fortran_real8 " << p->name << " =  *(_mfront_var_" << p->name << ");\n";
     }
@@ -118,8 +118,8 @@ namespace mfront
 
   void
   MFrontFortranLawInterface::writeParameterList(std::ostream& file,
-					      const VarContainer& inputs){
-    VarContainer::const_iterator p;
+					      const VariableDescriptionContainer& inputs){
+    VariableDescriptionContainer::const_iterator p;
     if(!inputs.empty()){
       for(p=inputs.begin();p!=inputs.end();){
 	file << "const mfront_fortran_real8 * const _mfront_var_" << p->name;

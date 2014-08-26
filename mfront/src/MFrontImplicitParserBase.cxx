@@ -33,12 +33,12 @@ namespace mfront{
     this->areDynamicallyAllocatedVectorsAllowed_ = false;
     // parameters
     this->registerVariable("theta");
-    this->mb.getParameters().push_back(VarHandler("real","theta",1u,0u));
+    this->mb.getParameters().push_back(VariableDescription("real","theta",1u,0u));
     this->registerVariable("epsilon");
-    this->mb.getParameters().push_back(VarHandler("real","epsilon",1u,0u));
+    this->mb.getParameters().push_back(VariableDescription("real","epsilon",1u,0u));
     this->registerVariable("numerical_jacobian_epsilon");
     this->registerVariable("iterMax");
-    this->mb.getParameters().push_back(VarHandler("ushort","iterMax",1u,0u));
+    this->mb.getParameters().push_back(VariableDescription("ushort","iterMax",1u,0u));
     this->registerVariable("maximum_increment_value_per_iteration");
     this->registerVariable("jacobianComparisonCriterium");
     this->registerVariable("relaxationTrigger");
@@ -246,7 +246,7 @@ namespace mfront{
 	  this->throwRuntimeError("MFrontImplicitParserBase::treatMaximumIncrementValuePerIteration",
 				  "default value already defined for parameter '"+n+"'_maximum_increment_value_per_iteration'");
 	}
-	this->mb.getParameters().push_back(VarHandler("real",n+"_maximum_increment_value_per_iteration",1u,0u));
+	this->mb.getParameters().push_back(VariableDescription("real",n+"_maximum_increment_value_per_iteration",1u,0u));
 	++(this->current);
 	return;
       }
@@ -292,8 +292,8 @@ namespace mfront{
     }
     if(this->current->value=="true"){
       this->useAcceleration = true;
-      this->mb.getParameters().push_back(VarHandler("ushort","accelerationTrigger",1u,0u));
-      this->mb.getParameters().push_back(VarHandler("ushort","accelerationPeriod",1u,0u));
+      this->mb.getParameters().push_back(VariableDescription("ushort","accelerationTrigger",1u,0u));
+      this->mb.getParameters().push_back(VariableDescription("ushort","accelerationPeriod",1u,0u));
     } else if(this->current->value=="false"){
       this->useAcceleration = false;
     } else {
@@ -352,8 +352,8 @@ namespace mfront{
     }
     if(this->current->value=="true"){
       this->useRelaxation = true;
-      this->mb.getParameters().push_back(VarHandler("real","relaxationCoefficient",1u,0u));
-      this->mb.getParameters().push_back(VarHandler("ushort","relaxationTrigger",1u,0u));
+      this->mb.getParameters().push_back(VariableDescription("real","relaxationCoefficient",1u,0u));
+      this->mb.getParameters().push_back(VariableDescription("ushort","relaxationTrigger",1u,0u));
     } else if(this->current->value=="false"){
       this->useRelaxation = false;
     } else {
@@ -376,7 +376,7 @@ namespace mfront{
     }
     if(this->current->value=="true"){
       this->compareToNumericalJacobian = true;
-      this->mb.getParameters().push_back(VarHandler("real","jacobianComparisonCriterium",1u,0u));
+      this->mb.getParameters().push_back(VariableDescription("real","jacobianComparisonCriterium",1u,0u));
     } else if(this->current->value=="false"){
       this->compareToNumericalJacobian = false;
     } else {
@@ -499,7 +499,7 @@ namespace mfront{
        (this->algorithm==MFrontImplicitParserBase::POWELLDOGLEG_NEWTONRAPHSON_NJ)||
        (this->algorithm==MFrontImplicitParserBase::POWELLDOGLEG_BROYDEN)){
       this->registerVariable("powell_dogleg_trust_region_size");
-      this->mb.getParameters().push_back(VarHandler("real","powell_dogleg_trust_region_size",1u,0u));
+      this->mb.getParameters().push_back(VariableDescription("real","powell_dogleg_trust_region_size",1u,0u));
     }
     ++this->current;
     this->readSpecifiedToken("MFrontImplicitParserBase::treatAlgorithm",";");
@@ -667,7 +667,7 @@ namespace mfront{
   {
     if(this->mb.isInternalStateVariableIncrementName(var)){
       if(nf.find(var.substr(1))!=nf.end()){
-	const VarHandler& s = this->mb.getStateVariableHandler(var.substr(1));
+	const VariableDescription& s = this->mb.getStateVariableHandler(var.substr(1));
 	if(s.arraySize==1u){
 	  if(addThisPtr){
 	    return "(("+nf.find(var.substr(1))->second+")*(this->"+var+"))";
@@ -696,7 +696,7 @@ namespace mfront{
   {
     if(this->mb.isInternalStateVariableIncrementName(var)){
       if(nf.find(var.substr(1))!=nf.end()){
-	const VarHandler& s = this->mb.getStateVariableHandler(var.substr(1));
+	const VariableDescription& s = this->mb.getStateVariableHandler(var.substr(1));
 	if(s.arraySize==1u){
 	  if(addThisPtr){
 	    return "(("+nf.find(var.substr(1))->second+")*(this->"+var+"))";
@@ -734,7 +734,7 @@ namespace mfront{
     }
     if(this->mb.isInternalStateVariableName(var)){
       if(this->nf.find(var)!=nf.end()){
-	const VarHandler& s = this->mb.getStateVariableHandler(var);
+	const VariableDescription& s = this->mb.getStateVariableHandler(var);
 	if(s.arraySize==1u){
 	  if(addThisPtr){
 	    return "(this->"+var+"+(this->theta)*(("+this->nf.find(var)->second+")*(this->d"+var+")))";
@@ -790,8 +790,8 @@ namespace mfront{
   MFrontImplicitParserBase::isJacobianPart(const std::string& w)
   {
     TokensContainer::const_iterator previous;
-    VarContainer::const_iterator p;
-    VarContainer::const_iterator p2;
+    VariableDescriptionContainer::const_iterator p;
+    VariableDescriptionContainer::const_iterator p2;
     for(p=this->mb.getStateVariables().begin();p!=this->mb.getStateVariables().end();++p){
       for(p2=this->mb.getStateVariables().begin();p2!=this->mb.getStateVariables().end();++p2){
 	if(w=="df"+p->name+"_dd"+p2->name){
@@ -875,7 +875,7 @@ namespace mfront{
 					   shared_ptr<VariableModifier>(),
 					   makeWordAnalyser(*this,&MFrontImplicitParserBase::predictorAnalyser));
     this->predictor += "\n";
-    VarContainer::const_iterator p;
+    VariableDescriptionContainer::const_iterator p;
     for(p=this->mb.getStateVariables().begin();p!=this->mb.getStateVariables().end();++p){
       if(this->internalStateVariableIncrementsUsedInPredictor.find('d'+p->name)!=
 	 this->internalStateVariableIncrementsUsedInPredictor.end()){
@@ -940,7 +940,7 @@ namespace mfront{
       this->throwRuntimeError("MFrontImplicitParserBase::treatMaximumIncrementValuePerIteration",
 			      "default value already defined for parameter 'maximum_increment_value_per_iteration'");
     }
-    this->mb.getParameters().push_back(VarHandler("real","maximum_increment_value_per_iteration",1u,0u));
+    this->mb.getParameters().push_back(VariableDescription("real","maximum_increment_value_per_iteration",1u,0u));
     ++(this->current);
     this->readSpecifiedToken("MFrontImplicitParserBase::MaximumIncrementValuePerIteration",";");
   } // end of MFrontImplicitParserBase::treatMaximumIncrementValuePerIteration
@@ -948,7 +948,7 @@ namespace mfront{
   void MFrontImplicitParserBase::writeBehaviourParserSpecificIncludes(void)
   {
     using namespace std;
-    VarContainer::const_iterator p;
+    VariableDescriptionContainer::const_iterator p;
     bool has_scalar  = false;
     bool has_scalar_array  = false;
     bool has_tvector = false;
@@ -1030,8 +1030,8 @@ namespace mfront{
   MFrontImplicitParserBase::writeBehaviourParserSpecificMembers(void)
   {
     using namespace std;
-    VarContainer::const_iterator p;
-    VarContainer::const_iterator p2;
+    VariableDescriptionContainer::const_iterator p;
+    VariableDescriptionContainer::const_iterator p2;
     SupportedTypes::TypeSize n;
     SupportedTypes::TypeSize n3;
     // size of linear system
@@ -1456,8 +1456,8 @@ namespace mfront{
   } // end of MFrontImplicitParserBase::writeBehaviourParserSpecificMembers
 
   std::string
-  MFrontImplicitParserBase::getJacobianPart(const VarHandler&  v1,
-					    const VarHandler&  v2,
+  MFrontImplicitParserBase::getJacobianPart(const VariableDescription&  v1,
+					    const VariableDescription&  v2,
 					    const SupportedTypes::TypeSize& n,
 					    const SupportedTypes::TypeSize& n2,
 					    const SupportedTypes::TypeSize& n3,
@@ -1520,9 +1520,9 @@ namespace mfront{
     using namespace std;
     this->checkBehaviourFile();
     SupportedTypes::TypeSize n;
-    VarContainer::size_type i;
-    VarContainer::const_iterator p;
-    VarContainer::const_iterator p2;
+    VariableDescriptionContainer::size_type i;
+    VariableDescriptionContainer::const_iterator p;
+    VariableDescriptionContainer::const_iterator p2;
     for(p=this->mb.getStateVariables().begin();p!=this->mb.getStateVariables().end();++p){
       n += this->getTypeSize(p->type,p->arraySize);
     }
@@ -1668,7 +1668,7 @@ namespace mfront{
   {
     using namespace std;
     this->checkBehaviourFile();
-    VarContainer::const_iterator p;
+    VariableDescriptionContainer::const_iterator p;
     SupportedTypes::TypeSize n;
     for(p=this->mb.getStateVariables().begin();p!=this->mb.getStateVariables().end();++p){
       SupportedTypes::TypeSize nv = this->getTypeSize(p->type,p->arraySize);
@@ -1722,7 +1722,7 @@ namespace mfront{
 
   void MFrontImplicitParserBase::writeComputeNumericalJacobian(){
     using namespace std;
-    VarContainer::const_iterator p;
+    VariableDescriptionContainer::const_iterator p;
     SupportedTypes::TypeSize n;
     for(p=this->mb.getStateVariables().begin();p!=this->mb.getStateVariables().end();++p){
       n += this->getTypeSize(p->type,p->arraySize);
@@ -1767,7 +1767,7 @@ namespace mfront{
   }
 
   std::string
-  MFrontImplicitParserBase::getVectorMappingClass(const VarHandler& v) const
+  MFrontImplicitParserBase::getVectorMappingClass(const VariableDescription& v) const
   {
     using namespace std;
     const SupportedTypes::TypeFlag f = this->getTypeFlag(v.type);
@@ -1786,8 +1786,8 @@ namespace mfront{
 
   void MFrontImplicitParserBase::writeBehaviourIntegrator(){
     using namespace std;
-    VarContainer::const_iterator p;
-    VarContainer::const_iterator p2;
+    VariableDescriptionContainer::const_iterator p;
+    VariableDescriptionContainer::const_iterator p2;
     vector<BoundsDescription>::const_iterator p3;
     SupportedTypes::TypeSize n;
     SupportedTypes::TypeSize n2;
@@ -1884,8 +1884,8 @@ namespace mfront{
       }
       for(p=this->mb.getStateVariables().begin();p!=this->mb.getStateVariables().end();++p){
 	for(p2=this->mb.getStateVariables().begin();p2!=this->mb.getStateVariables().end();++p2){
-	  const VarHandler& v1 = *p;
-	  const VarHandler& v2 = *p2;
+	  const VariableDescription& v1 = *p;
+	  const VariableDescription& v2 = *p2;
 	  SupportedTypes::TypeSize nv1 = this->getTypeSize(v1.type,1u);
 	  SupportedTypes::TypeSize nv2 = this->getTypeSize(v2.type,1u);
 	  this->behaviourFile << "error=" << nv1 << "*" << nv2 << "*"
@@ -2324,7 +2324,7 @@ namespace mfront{
   {
     using namespace std;
     SupportedTypes::TypeSize n;
-    VarContainer::const_iterator p;
+    VariableDescriptionContainer::const_iterator p;
     vector<BoundsDescription>::const_iterator p2;
     for(p=this->mb.getStateVariables().begin();p!=this->mb.getStateVariables().end();++p){
       for(p2  = this->mb.getBounds().begin();p2 != this->mb.getBounds().end();++p2){
@@ -2632,7 +2632,7 @@ namespace mfront{
 						  const std::string& pn)
   {
     using namespace std;
-    VarContainer::const_iterator p;
+    VariableDescriptionContainer::const_iterator p;
     SupportedTypes::TypeSize n;
     for(p=this->mb.getStateVariables().begin();p!=this->mb.getStateVariables().end();++p){
       n += this->getTypeSize(p->type,p->arraySize);
@@ -2696,7 +2696,7 @@ namespace mfront{
   void MFrontImplicitParserBase::writeBehaviourConstructors(void)
   {    
     using namespace std;
-    VarContainer::const_iterator p;
+    VariableDescriptionContainer::const_iterator p;
     SupportedTypes::TypeSize n;
     ostringstream init;
     if(!this->localVariablesInitializers.empty()){
@@ -2726,7 +2726,7 @@ namespace mfront{
 
   void MFrontImplicitParserBase::writeBehaviourParserSpecificConstructorPart(void)
   {
-    VarContainer::const_iterator p;
+    VariableDescriptionContainer::const_iterator p;
     SupportedTypes::TypeSize n;
     this->checkBehaviourFile();
     for(p=this->mb.getStateVariables().begin();p!=this->mb.getStateVariables().end();++p){
@@ -2751,7 +2751,7 @@ namespace mfront{
   {    
     using namespace std;
     this->checkBehaviourFile();
-    VarContainer::const_iterator p;
+    VariableDescriptionContainer::const_iterator p;
     SupportedTypes::TypeSize n;
     SupportedTypes::TypeSize n2;
     for(p=this->mb.getStateVariables().begin();p!=this->mb.getStateVariables().end();++p){
@@ -2822,7 +2822,7 @@ namespace mfront{
        (this->algorithm==MFrontImplicitParserBase::POWELLDOGLEG_NEWTONRAPHSON_NJ)||
        (this->algorithm==MFrontImplicitParserBase::NEWTONRAPHSON_NJ)){
       const string nje = "numerical_jacobian_epsilon";
-      this->mb.getParameters().push_back(VarHandler("real",nje,1u,0u));
+      this->mb.getParameters().push_back(VariableDescription("real",nje,1u,0u));
       if(this->mb.getParametersDefaultValues().find(nje)==
 	 this->mb.getParametersDefaultValues().end()){
 	const double eps = 0.1*this->mb.getParametersDefaultValues()["epsilon"];

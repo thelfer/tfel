@@ -15,8 +15,6 @@
 #include"TFEL/Config/TFELConfig.hxx"
 #include"TFEL/Utilities/CxxTokenizer.hxx"
 
-#include"MFront/VarHandler.hxx"
-#include"MFront/StaticVarHandler.hxx"
 #include"MFront/MFrontGenericData.hxx"
 #include"MFront/VariableModifier.hxx"
 #include"MFront/WordAnalyser.hxx"
@@ -144,7 +142,7 @@ namespace mfront
      * another variable standing for the first variable increment
      */
     void
-    readVarList(VarContainer&,
+    readVarList(VariableDescriptionContainer&,
 		const std::string&,
 		const bool,
 		const bool);
@@ -157,7 +155,7 @@ namespace mfront
      * another variable standing for the first variable increment
      */
     void
-    readVarList(VarContainer&,
+    readVarList(VariableDescriptionContainer&,
 		const bool,
 		const bool);
 
@@ -229,7 +227,7 @@ namespace mfront
      * \param[in] v : parameters default values
      */
     void
-    handleParameter(VarContainer&,
+    handleParameter(VariableDescriptionContainer&,
 		    std::map<std::string,double>&);
     
     std::vector<std::string> librariesDependencies;

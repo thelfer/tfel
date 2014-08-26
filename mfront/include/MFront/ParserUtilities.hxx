@@ -12,7 +12,7 @@
 #include<fstream>
 
 #include"TFEL/Config/TFELConfig.hxx"
-#include"MFront/StaticVarHandler.hxx"
+#include"MFront/StaticVariableDescription.hxx"
 
 namespace mfront{
 
@@ -24,7 +24,7 @@ namespace mfront{
   TFEL_VISIBILITY_EXPORT void
   writeStaticVariables(const std::string&,
 		       std::ofstream&,
-		       const StaticVarContainer&,
+		       const StaticVariableDescriptionContainer&,
 		       const std::string&,
 		       const bool);
   

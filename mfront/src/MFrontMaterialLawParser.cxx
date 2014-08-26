@@ -177,7 +177,7 @@ namespace mfront{
     ++(this->current);
     this->readSpecifiedToken("MFrontMaterialLawParser::treatConstant",";");
     this->registerStaticVariable(name);
-    this->staticVars.push_back(StaticVarHandler("real",name,line,value));
+    this->staticVars.push_back(StaticVariableDescription("real",name,line,value));
   } // end of MFrontMaterialLawParser::treatConstant
 
   void
@@ -634,7 +634,7 @@ namespace mfront{
     while(this->current != this->fileTokens.end()){
       p = this->callBacks.find(this->current->value);
       if(p==this->callBacks.end()){
-	VarContainer::const_iterator   p2;
+	VariableDescriptionContainer::const_iterator   p2;
 	vector<string>::const_iterator p3;
 	bool found = false;
 	if(this->output==this->current->value){
@@ -937,7 +937,7 @@ namespace mfront{
   MFrontMaterialLawParser::registerBounds(std::vector<VariableBoundsDescription>& container)
   {
     using namespace std;
-    VarContainer::const_iterator p;
+    VariableDescriptionContainer::const_iterator p;
     vector<VariableBoundsDescription>::const_iterator p3;
     VariableBoundsDescription boundsDescription;
     unsigned short i;

@@ -135,7 +135,7 @@ namespace mfront{
     void
     registerNewCallBack(const std::string&,const MemberFuncPtr);
 
-    VarContainer inputs;
+    VariableDescriptionContainer inputs;
     std::set<std::string> interfaces;
     std::vector<VariableBoundsDescription> boundsDescriptions;
     std::vector<VariableBoundsDescription> physicalBoundsDescriptions;

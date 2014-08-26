@@ -158,7 +158,7 @@ namespace mfront{
      * \param[in] v : variable
      */
     virtual std::string
-    getVectorMappingClass(const VarHandler&) const;
+    getVectorMappingClass(const VariableDescription&) const;
 
     // /*!
     //  * \return a type able to do the mapping of the derivate of a
@@ -167,7 +167,7 @@ namespace mfront{
     //  * \param[in] v : variable
     //  */
     // virtual std::string
-    // getMathObjectDerivateByScalarMappingClass(const VarHandler&) const;
+    // getMathObjectDerivateByScalarMappingClass(const VariableDescription&) const;
 
     // /*!
     //  * \return a type able to do the mapping of the derivate of a
@@ -176,7 +176,7 @@ namespace mfront{
     //  * \param[in] v : variable
     //  */
     // virtual std::string
-    // getScalarDerivateByMathObjectMappingClass(const VarHandler&) const;
+    // getScalarDerivateByMathObjectMappingClass(const VariableDescription&) const;
 
     // /*!
     //  * \return a type able to do the mapping of the derivate of the
@@ -186,12 +186,12 @@ namespace mfront{
     //  * \param[in] v2 : variable
     //  */
     // virtual std::string
-    // getMathObjectDerivateByMathObjectMappingClass(const VarHandler&,
-    // 						  const VarHandler&) const;
+    // getMathObjectDerivateByMathObjectMappingClass(const VariableDescription&,
+    // 						     const VariableDescription&) const;
 
     virtual std::string
-    getJacobianPart(const VarHandler&,
-		    const VarHandler&,
+    getJacobianPart(const VariableDescription&,
+		    const VariableDescription&,
 		    const SupportedTypes::TypeSize&,
 		    const SupportedTypes::TypeSize&,
 		    const SupportedTypes::TypeSize&,

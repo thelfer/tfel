@@ -16,7 +16,7 @@
 #include"TFEL/Material/ModellingHypothesis.hxx"
 #include"TFEL/Material/MechanicalBehaviour.hxx"
 
-#include"MFront/VarHandler.hxx"
+#include"MFront/VariableDescription.hxx"
 #include"MFront/DrivingVariable.hxx"
 #include"MFront/BoundsDescription.hxx"
 #include"MFront/ThermodynamicForce.hxx"
@@ -164,40 +164,40 @@ namespace mfront{
     const std::set<std::string>&
     getExternalStateVariablesDeclaredProbablyUnusableInPurelyImplicitResolution(void) const;
 
-    VarContainer&
+    VariableDescriptionContainer&
     getMaterialProperties(void);
 
-    const VarContainer&
+    const VariableDescriptionContainer&
     getMaterialProperties(void) const;
 
-    VarContainer&
+    VariableDescriptionContainer&
     getStateVariables(void);
 
-    const VarContainer&
+    const VariableDescriptionContainer&
     getStateVariables(void) const;
 
-    VarContainer&
+    VariableDescriptionContainer&
     getAuxiliaryStateVariables(void);
 
-    const VarContainer&
+    const VariableDescriptionContainer&
     getAuxiliaryStateVariables(void) const;
 
-    VarContainer&
+    VariableDescriptionContainer&
     getExternalStateVariables(void);
 
-    const VarContainer&
+    const VariableDescriptionContainer&
     getExternalStateVariables(void) const;
 
-    VarContainer&
+    VariableDescriptionContainer&
     getLocalVariables(void);
 
-    const VarContainer&
+    const VariableDescriptionContainer&
     getLocalVariables(void) const;
 
-    VarContainer&
+    VariableDescriptionContainer&
     getParameters(void);
 
-    const VarContainer&
+    const VariableDescriptionContainer&
     getParameters(void) const;
 
     std::map<std::string,double>&
@@ -218,11 +218,11 @@ namespace mfront{
     const std::map<std::string,unsigned short>&
     getUnsignedShortParametersDefaultValues() const;
 
-    const VarHandler&
+    const VariableDescription&
     getStateVariableHandler(const std::string&) const;
 
-    const VarHandler&
-    getVariableHandler(const VarContainer&,
+    const VariableDescription&
+    getVariableHandler(const VariableDescriptionContainer&,
 		       const std::string&) const;
 
     bool
@@ -275,7 +275,7 @@ namespace mfront{
      * And helper method
      */
     static bool
-    contains(const VarContainer&,
+    contains(const VariableDescriptionContainer&,
 	     const std::string&);
     //! copy constructor (disabled)
     MechanicalBehaviourDescription(const MechanicalBehaviourDescription&);
@@ -330,12 +330,12 @@ namespace mfront{
      */
     std::set<Hypothesis> hypotheses;
 
-    VarContainer materialProperties;
-    VarContainer stateVariables;
-    VarContainer auxiliaryStateVariables;
-    VarContainer externalStateVariables;
-    VarContainer localVariables;
-    VarContainer parameters;
+    VariableDescriptionContainer materialProperties;
+    VariableDescriptionContainer stateVariables;
+    VariableDescriptionContainer auxiliaryStateVariables;
+    VariableDescriptionContainer externalStateVariables;
+    VariableDescriptionContainer localVariables;
+    VariableDescriptionContainer parameters;
 
     std::map<std::string,double>         parametersDefaultValues;
     std::map<std::string,int>            iParametersDefaultValues;

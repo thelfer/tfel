@@ -72,11 +72,11 @@ namespace mfront
 					    const std::string& description,
 					    const std::string& includes,
 					    const std::string& output,
-					    const VarContainer& inputs,
+					    const VariableDescriptionContainer& inputs,
 					    const std::vector<std::string>& materialLaws,
 					    const std::map<std::string,std::string>&,
 					    const std::map<std::string,std::string>&,
-					    const StaticVarContainer& staticVars,
+					    const StaticVariableDescriptionContainer& staticVars,
 					    const std::vector<std::string>& params,
 					    const std::map<std::string,double>& paramValues,
 					    const LawFunction& function,
@@ -150,7 +150,7 @@ namespace mfront
 					   const std::string& author,
 					   const std::string& date,
 					   const std::string& description,
-					   const VarContainer& inputs,
+					   const VariableDescriptionContainer& inputs,
 					   const std::vector<VariableBoundsDescription>& bounds,
 					   const std::vector<VariableBoundsDescription>& physicalBounds)
   {
@@ -200,13 +200,13 @@ namespace mfront
   } // end of MFrontCLawInterfaceBase::writeHeaderFile(void)
 
   void
-  MFrontCLawInterfaceBase::writeInterfaceSpecificVariables(const VarContainer&)
+  MFrontCLawInterfaceBase::writeInterfaceSpecificVariables(const VariableDescriptionContainer&)
   {} // end of MFrontCLawInterfaceBase::writeInterfaceSpecificVariables
 
   void
   MFrontCLawInterfaceBase::writeParameterList(std::ostream& file,
-					      const VarContainer& inputs){
-    VarContainer::const_iterator p;
+					      const VariableDescriptionContainer& inputs){
+    VariableDescriptionContainer::const_iterator p;
     if(!inputs.empty()){
       for(p=inputs.begin();p!=inputs.end();){
 	file << "const double " << p->name;
@@ -227,9 +227,9 @@ namespace mfront
 					const std::string& date,
 					const std::string& includes,
 					const std::string& output,
-					const VarContainer& inputs,
+					const VariableDescriptionContainer& inputs,
 					const std::vector<std::string>& materialLaws,
-					const StaticVarContainer& staticVars,
+					const StaticVariableDescriptionContainer& staticVars,
 					const std::vector<std::string>& params,
 					const std::map<std::string,double>& paramValues,
 					const LawFunction& function,

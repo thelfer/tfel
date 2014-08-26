@@ -37,18 +37,18 @@ namespace mfront{
     return this->bounds;
   } // end of MechanicalBehaviourDescription::getBoundsDescriptions
 
-  const VarHandler&
+  const VariableDescription&
   MechanicalBehaviourDescription::getStateVariableHandler(const std::string& v) const
   {
     return this->getVariableHandler(this->getStateVariables(),v);
   } // end of MechanicalBehaviourDescription::getStateVariableHandler
 
-  const VarHandler&
-  MechanicalBehaviourDescription::getVariableHandler(const VarContainer& cont,
+  const VariableDescription&
+  MechanicalBehaviourDescription::getVariableHandler(const VariableDescriptionContainer& cont,
 						     const std::string& v) const
   {
     using namespace std;
-    VarContainer::const_iterator p;
+    VariableDescriptionContainer::const_iterator p;
     for(p=cont.begin();p!=cont.end();++p){
       if(p->name==v){
 	return *p;
@@ -57,7 +57,7 @@ namespace mfront{
     string msg("MechanicalBehaviourDescription::getVariableHandler : ");
     msg += "no state variable '"+v+"'";
     throw(runtime_error(msg));
-    return *(static_cast<VarHandler*>(0));
+    return *(static_cast<VariableDescription*>(0));
   } // end of MechanicalBehaviourDescription::getVariableHandler
 
   bool
@@ -169,10 +169,10 @@ namespace mfront{
   } // end of MechanicalBehaviourDescription::isExternalStateVariableName
 
   bool
-  MechanicalBehaviourDescription::contains(const VarContainer& v,
+  MechanicalBehaviourDescription::contains(const VariableDescriptionContainer& v,
 					const std::string& n)
   {
-    VarContainer::const_iterator p;
+    VariableDescriptionContainer::const_iterator p;
     for(p=v.begin();p!=v.end();++p){
       if(p->name==n){
 	return true;
@@ -181,73 +181,73 @@ namespace mfront{
     return false;
   } // end of MechanicalBehaviourDescription::contains
 
-  VarContainer&
+  VariableDescriptionContainer&
   MechanicalBehaviourDescription::getMaterialProperties(void)
   {
     return this->materialProperties;
   } // end of MechanicalBehaviourDescription::getMaterialProperties
 
-  const VarContainer&
+  const VariableDescriptionContainer&
   MechanicalBehaviourDescription::getMaterialProperties(void) const
   {
     return this->materialProperties;
   } // end of MechanicalBehaviourDescription::getMaterialProperties
 
-  VarContainer&
+  VariableDescriptionContainer&
   MechanicalBehaviourDescription::getStateVariables(void)
   {
     return this->stateVariables;
   } // end of MechanicalBehaviourDescription::getStateVariables
 
-  const VarContainer&
+  const VariableDescriptionContainer&
   MechanicalBehaviourDescription::getStateVariables(void) const
   {
     return this->stateVariables;
   } // end of MechanicalBehaviourDescription::getStateVariables
 
-  VarContainer&
+  VariableDescriptionContainer&
   MechanicalBehaviourDescription::getAuxiliaryStateVariables(void)
   {
     return this->auxiliaryStateVariables;
   } // end of MechanicalBehaviourDescription::getAuxiliaryStateVariables
 
-  const VarContainer&
+  const VariableDescriptionContainer&
   MechanicalBehaviourDescription::getAuxiliaryStateVariables(void) const
   {
     return this->auxiliaryStateVariables;
   } // end of MechanicalBehaviourDescription::getAuxiliaryStateVariables
 
-  VarContainer&
+  VariableDescriptionContainer&
   MechanicalBehaviourDescription::getExternalStateVariables(void)
   {
     return this->externalStateVariables;
   } // end of MechanicalBehaviourDescription::getExternalStateVariables
 
-  const VarContainer&
+  const VariableDescriptionContainer&
   MechanicalBehaviourDescription::getExternalStateVariables(void) const
   {
     return this->externalStateVariables;
   } // end of MechanicalBehaviourDescription::getExternalStateVariables
 
-  VarContainer&
+  VariableDescriptionContainer&
   MechanicalBehaviourDescription::getLocalVariables(void)
   {
     return this->localVariables;
   } // end of MechanicalBehaviourDescription::getLocalVariables
 
-  const VarContainer&
+  const VariableDescriptionContainer&
   MechanicalBehaviourDescription::getLocalVariables(void) const
   {
     return this->localVariables;
   } // end of MechanicalBehaviourDescription::getLocalVariables
 
-  VarContainer&
+  VariableDescriptionContainer&
   MechanicalBehaviourDescription::getParameters(void)
   {
     return this->parameters;
   } // end of MechanicalBehaviourDescription::getParameters
   
-  const VarContainer&
+  const VariableDescriptionContainer&
   MechanicalBehaviourDescription::getParameters(void) const
   {
     return this->parameters;

@@ -11,7 +11,7 @@
 #include"TFEL/Utilities/CxxTokenizer.hxx"
 
 #include"MFront/SupportedTypes.hxx"
-#include"MFront/VarHandler.hxx"
+#include"MFront/MechanicalVariableDescription.hxx"
 #include"MFront/MechanicalBehaviourDescription.hxx"
 #include"MFront/MFrontBehaviourVirtualInterface.hxx"
 
@@ -107,13 +107,13 @@ namespace mfront{
     getFunctionName(const std::string&) const = 0;
 
     virtual std::vector<std::string>
-    getGlossaryNames(const VarContainer&,
+    getGlossaryNames(const VariableDescriptionContainer&,
 		     const std::map<std::string,std::string>&,
 		     const std::map<std::string,std::string>&) const;
 
     virtual void
     appendGlossaryNames(std::vector<std::string>&,
-			const VarContainer&,
+			const VariableDescriptionContainer&,
 			const std::map<std::string,std::string>&,
 			const std::map<std::string,std::string>&) const;
 
@@ -129,7 +129,7 @@ namespace mfront{
     checkParametersType(bool&,
 			bool&,
 			bool&,
-			const VarContainer&) const;
+			const VariableDescriptionContainer&) const;
 
     virtual std::string
     getHeaderDefine(const std::string&,

@@ -77,7 +77,7 @@ namespace mfront{
   {
     using namespace std;
     typename CallBackContainer::const_iterator p;
-    typename VarContainer::const_iterator p2;
+    typename VariableDescriptionContainer::const_iterator p2;
     MemberFuncPtr handler = 0;
     this->fileName = fileName_;
     this->openFile(this->fileName,ecmds);

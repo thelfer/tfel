@@ -246,11 +246,11 @@ namespace mfront{
     using namespace std;
     using namespace tfel::system;
     using namespace tfel::utilities;
-    const VarContainer& coefsHolder              = mb.getMaterialProperties();
+    const VariableDescriptionContainer& coefsHolder              = mb.getMaterialProperties();
     string name;
     string asterFctName;
     string tmp;
-    VarContainer::const_iterator p;
+    VariableDescriptionContainer::const_iterator p;
 
     systemCall::mkdir("include/MFront");
     systemCall::mkdir("include/MFront/Aster");
@@ -827,8 +827,8 @@ namespace mfront{
 						    const MechanicalBehaviourDescription& mb) const
   {
     using namespace std;
-    const VarContainer& coefsHolder = mb.getMaterialProperties();
-    VarContainer::const_iterator p;
+    const VariableDescriptionContainer& coefsHolder = mb.getMaterialProperties();
+    VariableDescriptionContainer::const_iterator p;
     hasElasticMaterialPropertiesOffset          = false;
     hasThermalExpansionMaterialPropertiesOffset = false;
     massDensityOffsetForThermalExpansion        = false;
@@ -1120,7 +1120,7 @@ namespace mfront{
 							     const std::map<std::string,std::string>& entryNames) const
   {
     using namespace std;
-    const VarContainer& coefsHolder = mb.getMaterialProperties();
+    const VariableDescriptionContainer& coefsHolder = mb.getMaterialProperties();
     const unsigned short  cs        = this->getNumberOfVariables(mb.getMaterialProperties());
     bool hasElasticMaterialPropertiesOffset;
     bool hasThermalExpansionMaterialPropertiesOffset;

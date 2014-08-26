@@ -1174,7 +1174,7 @@ mfront/src/Makefile.am -text
 mfront/src/MechanicalBehaviourDescription.cxx -text
 mfront/src/ParserBase.cxx -text
 mfront/src/ParserUtilities.cxx -text
-mfront/src/StaticVarHandler.cxx -text
+mfront/src/StaticVariableDescription.cxx -text
 mfront/src/SupportedTypes.cxx -text
 mfront/src/UMATComputeStiffnessOperator.cxx -text
 mfront/src/UMATComputeThermalExpansionTensor.cxx -text
@@ -1187,7 +1187,7 @@ mfront/src/UMATOutOfBoundsPolicy.cxx -text
 mfront/src/UMATRotationMatrix.cxx -text
 mfront/src/UMATSmallStrainMTestFileGenerator.cxx -text
 mfront/src/UMATTangentOperator.cxx -text
-mfront/src/VarHandler.cxx -text
+mfront/src/VariableDescription.cxx -text
 mfront/src/VariableModifier.cxx -text
 mfront/src/WordAnalyser.cxx -text
 mfront/src/main.cxx -text

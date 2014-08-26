@@ -34,7 +34,6 @@ nobase_include_HEADERS= MFront/MFrontConfig.hxx                       \
 			MFront/ParserBase.hxx                         \
 			MFront/InterfaceBase.hxx                      \
 			MFront/ParserUtilities.hxx                    \
-			MFront/StaticVarHandler.hxx                   \
 			MFront/SupportedTypes.hxx                     \
 			MFront/MFrontSearchFile.hxx                   \
 			MFront/DrivingVariable.hxx                    \
@@ -42,6 +41,10 @@ nobase_include_HEADERS= MFront/MFrontConfig.hxx                       \
 			MFront/BoundsDescription.hxx                  \
 			MFront/VariableBoundsDescription.hxx          \
 			MFront/VarHandler.hxx                         \
+			MFront/StaticVarHandler.hxx                   \
+			MFront/VariableDescription.hxx                \
+			MFront/MechanicalVariableDescription.hxx      \
+			MFront/StaticVariableDescription.hxx          \
 			MFront/LawFunction.hxx                        \
 			MFront/MFrontDefaultParserBase.hxx            \
 			MFront/MFrontDefaultParser.hxx                \

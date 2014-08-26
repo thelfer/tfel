@@ -17,11 +17,11 @@ namespace mfront{
 
   bool
   MFrontModelParserCommon::is(const MFrontModelData& data,
-			      const VarContainer& vc,
+			      const VariableDescriptionContainer& vc,
 			      const std::string& v)
   {
     using namespace std;
-    VarContainer::const_iterator p;
+    VariableDescriptionContainer::const_iterator p;
     map<string,unsigned short>::const_iterator p2;
     unsigned short d;
     unsigned short i;
@@ -308,7 +308,7 @@ namespace mfront{
   MFrontModelParserCommon::decomposeVariableName(const std::string& v) const
   {
     using namespace std;
-    VarContainer::const_iterator p;
+    VariableDescriptionContainer::const_iterator p;
     map<string,unsigned short>::const_iterator p2;
     unsigned short d;
     unsigned short i;
@@ -368,10 +368,10 @@ namespace mfront{
     using namespace std;
     Function f;
     pair<string,unsigned short> dv;
-    VarContainer::iterator p;
+    VariableDescriptionContainer::iterator p;
     set<string>::const_iterator p2;
     set<string>::iterator p3;
-    StaticVarContainer::const_iterator p5;
+    StaticVariableDescriptionContainer::const_iterator p5;
     map<string,unsigned short>::const_iterator p6;
     unsigned short openedBrackets = 0;
     unsigned short openedParenthesis = 0;
@@ -618,7 +618,7 @@ namespace mfront{
       msg += "outputs must be declared before declaring functions";
       throw(runtime_error(msg));
     }
-    VarContainer::const_iterator p;
+    VariableDescriptionContainer::const_iterator p;
     this->readVarList(this->outputs,"Field",false,false);
     for(p=this->outputs.begin();p!=this->outputs.end();++p){
       this->fieldNames.insert(p->name);
@@ -785,7 +785,7 @@ namespace mfront{
       msg += "inputs must be declared before declaring functions";
       throw(runtime_error(msg));
     }
-    VarContainer::const_iterator p;
+    VariableDescriptionContainer::const_iterator p;
     this->readVarList(this->inputs,"Field",false,false);
     for(p=this->inputs.begin();p!=this->inputs.end();++p){
       this->fieldNames.insert(p->name);
@@ -1128,7 +1128,7 @@ namespace mfront{
     using namespace std;
     using namespace tfel::utilities;
     typedef map<string,string>::value_type MVType;
-    VarContainer::const_iterator p;
+    VariableDescriptionContainer::const_iterator p;
     unsigned short nbr;
     string res;
     bool found;
@@ -1254,7 +1254,7 @@ namespace mfront{
   MFrontModelParserCommon::registerBounds(std::vector<VariableBoundsDescription>& container)
   {
     using namespace std;
-    VarContainer::const_iterator p;
+    VariableDescriptionContainer::const_iterator p;
     VariableBoundsDescription boundsDescription;
     bool found;
 

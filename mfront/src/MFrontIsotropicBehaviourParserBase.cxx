@@ -26,11 +26,11 @@ namespace mfront{
     this->mb.declareAsASmallStrainStandardBehaviour();
     // parameters
     this->registerVariable("theta");
-    this->mb.getParameters().push_back(VarHandler("real","theta",1u,0u));
+    this->mb.getParameters().push_back(VariableDescription("real","theta",1u,0u));
     this->registerVariable("epsilon");
-    this->mb.getParameters().push_back(VarHandler("real","epsilon",1u,0u));
+    this->mb.getParameters().push_back(VariableDescription("real","epsilon",1u,0u));
     this->registerVariable("iterMax");
-    this->mb.getParameters().push_back(VarHandler("ushort","iterMax",
+    this->mb.getParameters().push_back(VariableDescription("ushort","iterMax",
 						1u,0u));
     this->registerVariable("young");
     this->registerVariable("nu");
@@ -38,16 +38,16 @@ namespace mfront{
     this->registerVariable("alpha");
     this->registerVariable("lambda");
     this->registerVariable("mu");
-    this->mb.getMaterialProperties().push_back(VarHandler("stress","young",1u,0u));
+    this->mb.getMaterialProperties().push_back(VariableDescription("stress","young",1u,0u));
     this->glossaryNames.insert(MVType("young","YoungModulus"));
-    this->mb.getMaterialProperties().push_back(VarHandler("real","nu",1u,0u));
+    this->mb.getMaterialProperties().push_back(VariableDescription("real","nu",1u,0u));
     this->glossaryNames.insert(MVType("nu","PoissonRatio"));
-    this->mb.getMaterialProperties().push_back(VarHandler("density","rho",1u,0u));
+    this->mb.getMaterialProperties().push_back(VariableDescription("density","rho",1u,0u));
     this->glossaryNames.insert(MVType("rho","MassDensity"));
-    this->mb.getMaterialProperties().push_back(VarHandler("thermalexpansion","alpha",1u,0u));
+    this->mb.getMaterialProperties().push_back(VariableDescription("thermalexpansion","alpha",1u,0u));
     this->glossaryNames.insert(MVType("alpha","ThermalExpansion"));
-    this->mb.getLocalVariables().push_back(VarHandler("stress","lambda",1u,0u));
-    this->mb.getLocalVariables().push_back(VarHandler("stress","mu",1u,0u));
+    this->mb.getLocalVariables().push_back(VariableDescription("stress","lambda",1u,0u));
+    this->mb.getLocalVariables().push_back(VariableDescription("stress","mu",1u,0u));
     // local var initialisation
     this->initLocalVars +="this->lambda=tfel::material::lame::computeLambda(this->young,this->nu);\n";
     this->initLocalVars +="this->mu=tfel::material::lame::computeMu(this->young,this->nu);\n";
@@ -199,7 +199,7 @@ namespace mfront{
     MFrontBehaviourParserCommon::endsInputFileProcessing();
     typedef map<string,double>::value_type MVType;
     typedef map<string,unsigned short>::value_type MVType2;
-    VarContainer::iterator p;
+    VariableDescriptionContainer::iterator p;
     string currentVarName;
     if(this->mb.getParametersDefaultValues().find("theta")==this->mb.getParametersDefaultValues().end()){
       this->mb.getParametersDefaultValues().insert(MVType("theta",this->theta));
@@ -216,13 +216,13 @@ namespace mfront{
       throw(runtime_error(msg));
     }
     this->registerVariable("T_");
-    this->mb.getLocalVariables().push_back(VarHandler("temperature","T_",1u,0u));
+    this->mb.getLocalVariables().push_back(VariableDescription("temperature","T_",1u,0u));
     this->initLocalVars = "this->T_ = this->T+(" + this->className + "::theta)*(this->dT);\n" + this->initLocalVars;
     for(p =this->mb.getExternalStateVariables().begin();
 	p!=this->mb.getExternalStateVariables().end();++p){
       currentVarName = p->name + "_";
       this->registerVariable(currentVarName);
-      this->mb.getLocalVariables().push_back(VarHandler(p->type,currentVarName,p->arraySize,0u));
+      this->mb.getLocalVariables().push_back(VariableDescription(p->type,currentVarName,p->arraySize,0u));
       this->initLocalVars = "this->" + currentVarName + " = this->" + p->name +
 	"+(" + this->className + "::theta)*(this->d" + p->name + ");\n" + this->initLocalVars;
     }

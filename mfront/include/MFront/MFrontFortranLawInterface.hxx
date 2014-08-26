@@ -90,10 +90,10 @@ namespace mfront{
 
     void
     writeParameterList(std::ostream&,
-		       const VarContainer&);
+		       const VariableDescriptionContainer&);
 
     void
-    writeInterfaceSpecificVariables(const VarContainer&);
+    writeInterfaceSpecificVariables(const VariableDescriptionContainer&);
 
     void
     writeHeaderPreprocessorDirectives(const std::string&,

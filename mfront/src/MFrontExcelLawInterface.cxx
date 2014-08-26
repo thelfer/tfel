@@ -174,11 +174,11 @@ namespace mfront
 					    const std::string&,
 					    const std::string&,
 					    const std::string&,
-					    const VarContainer& vars,
+					    const VariableDescriptionContainer& vars,
 					    const std::vector<std::string>&,
 					    const std::map<std::string,std::string>&,
 					    const std::map<std::string,std::string>&,
-					    const StaticVarContainer&,
+					    const StaticVariableDescriptionContainer&,
 					    const std::vector<std::string>&,
 					    const std::map<std::string,double>&,
 					    const LawFunction&,
@@ -196,7 +196,7 @@ namespace mfront
     map<string,vector<ExcelInterface> > interfaces2;
     vector<ExcelInterface>::iterator p;
     vector<ExcelInterface>::iterator p2;
-    VarContainer::const_iterator p3;
+    VariableDescriptionContainer::const_iterator p3;
     map<string,vector<ExcelInterface> >::const_iterator p4;
     vector<ExcelInterface>::const_iterator p5;
     vector<string>::const_iterator p6;

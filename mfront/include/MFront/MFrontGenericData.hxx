@@ -8,8 +8,10 @@
 #ifndef   _LIB_MFRONT_MFRONTGENERICDATA_H_
 #define   _LIB_MFRONT_MFRONTGENERICDATA_H_ 
 
-#include"MFront/VarHandler.hxx"
-#include"MFront/StaticVarHandler.hxx"
+#include<set>
+#include<string>
+
+#include"MFront/StaticVariableDescription.hxx"
 
 namespace mfront
 {
@@ -24,7 +26,7 @@ namespace mfront
     std::string authorName;
     std::string date;
     std::string includes;
-    StaticVarContainer staticVars;
+    StaticVariableDescriptionContainer staticVars;
     std::set<std::string> varNames;
     std::set<std::string> staticVarNames;
     std::set<std::string> reservedNames;

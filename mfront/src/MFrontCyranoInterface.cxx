@@ -160,10 +160,10 @@ namespace mfront{
 						const std::vector<std::string>& mps) const
   {
     using namespace std;
-    const VarContainer& coefsHolder = mb.getMaterialProperties();
+    const VariableDescriptionContainer& coefsHolder = mb.getMaterialProperties();
     bool found = false;
     // specific treatment for isotropic behaviour
-    for(VarContainer::const_iterator p=coefsHolder.begin();
+    for(VariableDescriptionContainer::const_iterator p=coefsHolder.begin();
 	(p!=coefsHolder.end())&&(!found);++p){
       found = (find(mps.begin(),mps.end(),p->name)!=mps.end());
     }
@@ -178,7 +178,7 @@ namespace mfront{
 		   "(currently only "+toString(coefsHolder.size())+" defined)\n");
 	throw(runtime_error(msg));
       }
-      for(VarContainer::size_type i=0;i!=mps.size();++i){
+      for(VariableDescriptionContainer::size_type i=0;i!=mps.size();++i){
 	if(coefsHolder[i].name!=mps[i]){
 	  string msg("MFrontCyranoInterface::checkIfElasticPropertiesAreDeclared : "
 		     "the cyrano interface requires the '"+toString(i)+
@@ -221,7 +221,7 @@ namespace mfront{
     using namespace tfel::utilities;
 
     string name;
-    VarContainer::const_iterator p;    
+    VariableDescriptionContainer::const_iterator p;    
 
     systemCall::mkdir("include/MFront");
     systemCall::mkdir("include/MFront/Cyrano");
@@ -562,10 +562,10 @@ namespace mfront{
   {
     using namespace std;
     const std::string iprefix = makeUpperCase(this->getInterfaceName());
-    const VarContainer& coefsHolder              = mb.getMaterialProperties();
-    const VarContainer& stateVarsHolder          = mb.getStateVariables();
-    const VarContainer& auxiliaryStateVarsHolder = mb.getAuxiliaryStateVariables();
-    const VarContainer& externalStateVarsHolder  = mb.getExternalStateVariables();
+    const VariableDescriptionContainer& coefsHolder              = mb.getMaterialProperties();
+    const VariableDescriptionContainer& stateVarsHolder          = mb.getStateVariables();
+    const VariableDescriptionContainer& auxiliaryStateVarsHolder = mb.getAuxiliaryStateVariables();
+    const VariableDescriptionContainer& externalStateVarsHolder  = mb.getExternalStateVariables();
     behaviourDataFile << "/*\n";
     behaviourDataFile << " * \\brief constructor for the umat interface\n";
     behaviourDataFile << " *\n";
@@ -639,7 +639,7 @@ namespace mfront{
   {
     using namespace std;
     const std::string iprefix = makeUpperCase(this->getInterfaceName());
-    const VarContainer& externalStateVarsHolder  = mb.getExternalStateVariables();
+    const VariableDescriptionContainer& externalStateVarsHolder  = mb.getExternalStateVariables();
     behaviourIntegrationFile << "/*\n";
     behaviourIntegrationFile << " * \\brief constructor for the umat interface\n";
     behaviourIntegrationFile << " * \\param const Type *const " << iprefix << "dt_, time increment\n";
@@ -676,8 +676,8 @@ namespace mfront{
 					      const MechanicalBehaviourDescription& mb)
   {
     using namespace std;
-    const VarContainer& stateVarsHolder          = mb.getStateVariables();
-    const VarContainer& auxiliaryStateVarsHolder = mb.getAuxiliaryStateVariables();
+    const VariableDescriptionContainer& stateVarsHolder          = mb.getStateVariables();
+    const VariableDescriptionContainer& auxiliaryStateVarsHolder = mb.getAuxiliaryStateVariables();
     const std::string iprefix = makeUpperCase(this->getInterfaceName());
     if((!stateVarsHolder.empty())||
        (!auxiliaryStateVarsHolder.empty())){
@@ -765,7 +765,7 @@ namespace mfront{
 							    const std::map<std::string,std::string>& glossaryNames,
 							    const std::map<std::string,std::string>& entryNames) const
   {
-    const VarContainer& coefsHolder = mb.getMaterialProperties();
+    const VariableDescriptionContainer& coefsHolder = mb.getMaterialProperties();
     const unsigned short cs = this->getNumberOfVariables(coefsHolder);
     const bool found        = this->checkIfElasticPropertiesAreDeclared(mb);
     out << "MFRONT_SHAREDOBJ unsigned short " << this->getFunctionName(name);

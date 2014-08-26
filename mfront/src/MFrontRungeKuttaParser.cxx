@@ -26,7 +26,7 @@ namespace mfront{
     typedef map<string,string>::value_type MVType;
     this->useStateVarTimeDerivative=true;
     this->registerVariable("epsilon");
-    this->mb.getParameters().push_back(VarHandler("real","epsilon",1u,0u));
+    this->mb.getParameters().push_back(VariableDescription("real","epsilon",1u,0u));
     this->registerVariable("dtmin");
     // main variables
     this->registerVariable("eto");
@@ -41,8 +41,8 @@ namespace mfront{
       const DrivingVariable& dv = pm->first;
       this->registerVariable(dv.name+"_");
       this->registerVariable("d"+dv.name+"_");
-      this->mb.getLocalVariables().push_back(VarHandler(dv.type,dv.name+"_",1u,0u));
-      this->mb.getLocalVariables().push_back(VarHandler(SupportedTypes::getTimeDerivativeType(dv.type),
+      this->mb.getLocalVariables().push_back(VariableDescription(dv.type,dv.name+"_",1u,0u));
+      this->mb.getLocalVariables().push_back(VariableDescription(SupportedTypes::getTimeDerivativeType(dv.type),
 						 "d"+dv.name+"_",1u,0u));
     }
     // Default state vars
@@ -56,8 +56,8 @@ namespace mfront{
     this->reserveName("converged");
     this->reserveName("error");
     this->reserveName("failed");
-    this->mb.getLocalVariables().push_back(VarHandler("temperature","T_",1u,0u));
-    this->mb.getStateVariables().push_back(VarHandler("StrainStensor","eel",1u,0u));
+    this->mb.getLocalVariables().push_back(VariableDescription("temperature","T_",1u,0u));
+    this->mb.getStateVariables().push_back(VariableDescription("StrainStensor","eel",1u,0u));
     this->glossaryNames.insert(MVType("eel","ElasticStrain"));
     // CallBacks
     this->registerNewCallBack("@UsableInPurelyImplicitResolution",
@@ -162,7 +162,7 @@ namespace mfront{
     }
     if(this->mb.isExternalStateVariableIncrementName(var)){
       this->declareExternalStateVariableProbablyUnusableInPurelyImplicitResolution(var.substr(1));
-      const VarHandler& v = this->mb.getVariableHandler(this->mb.getExternalStateVariables(),
+      const VariableDescription& v = this->mb.getVariableHandler(this->mb.getExternalStateVariables(),
 							var.substr(1));
       if(v.arraySize>1){
 	if(addThisPtr){
@@ -366,11 +366,11 @@ namespace mfront{
       this->registerStaticVariable("rkcastem_rmax");
       this->registerStaticVariable("rkcastem_fac");
       this->registerStaticVariable("rkcastem_borne");
-      this->staticVars.push_back(StaticVarHandler("real","rkcastem_div",0u,7.));
-      this->staticVars.push_back(StaticVarHandler("real","rkcastem_rmin",0u,0.7));
-      this->staticVars.push_back(StaticVarHandler("real","rkcastem_rmax",0u,1.3));
-      this->staticVars.push_back(StaticVarHandler("real","rkcastem_fac",0u,3.));
-      this->staticVars.push_back(StaticVarHandler("real","rkcastem_borne",0u,2.));
+      this->staticVars.push_back(StaticVariableDescription("real","rkcastem_div",0u,7.));
+      this->staticVars.push_back(StaticVariableDescription("real","rkcastem_rmin",0u,0.7));
+      this->staticVars.push_back(StaticVariableDescription("real","rkcastem_rmax",0u,1.3));
+      this->staticVars.push_back(StaticVariableDescription("real","rkcastem_fac",0u,3.));
+      this->staticVars.push_back(StaticVariableDescription("real","rkcastem_borne",0u,2.));
       this->nbrOfEvaluation = 5u;
       this->algorithm = "RungeKuttaCastem";
     } else {
@@ -415,7 +415,7 @@ namespace mfront{
     using namespace std;
     MFrontBehaviourParserCommon::endsInputFileProcessing();
     typedef map<string,double>::value_type MVType;
-    VarContainer::iterator p;
+    VariableDescriptionContainer::iterator p;
     map<DrivingVariable,
 	ThermodynamicForce>::const_iterator pm;
     string currentVarName;
@@ -434,7 +434,7 @@ namespace mfront{
       this->mb.getParametersDefaultValues().insert(MVType("epsilon",1.e-8));
     }
     if(this->mb.getParametersDefaultValues().find("dtmin")!=this->mb.getParametersDefaultValues().end()){
-      this->mb.getParameters().push_back(VarHandler("real","dtmin",1u,0u));
+      this->mb.getParameters().push_back(VariableDescription("real","dtmin",1u,0u));
       parserInitLocalVars += "if(this->dt<" + this->className + "::dtmin){\n";
       parserInitLocalVars += "this->dt=" + this->className + "::dtmin;\n";
       parserInitLocalVars += "}\n";
@@ -458,7 +458,7 @@ namespace mfront{
     for(p =this->mb.getStateVariables().begin();p!=this->mb.getStateVariables().end();++p){
       currentVarName = p->name + "_";
       this->registerVariable(currentVarName);
-      this->mb.getLocalVariables().push_back(VarHandler(p->type,currentVarName,p->arraySize,0u));
+      this->mb.getLocalVariables().push_back(VariableDescription(p->type,currentVarName,p->arraySize,0u));
       if(this->useDynamicallyAllocatedVector(p->arraySize)){
 	parserInitLocalVars += "this->"+currentVarName +".resize("+toString(p->arraySize)+");\n";
       }
@@ -466,7 +466,7 @@ namespace mfront{
       for(unsigned short i=0u;i!=this->nbrOfEvaluation;++i){
 	currentVarName = "d" + p->name + "_K"+toString(static_cast<unsigned short>(i+1u));
 	this->registerVariable(currentVarName);
-	this->mb.getLocalVariables().push_back(VarHandler(p->type,currentVarName,p->arraySize,0u));
+	this->mb.getLocalVariables().push_back(VariableDescription(p->type,currentVarName,p->arraySize,0u));
       }
     }
     if((this->algorithm!="RungeKutta4/2")&&
@@ -484,7 +484,7 @@ namespace mfront{
     for(p =this->mb.getExternalStateVariables().begin();p!=this->mb.getExternalStateVariables().end();++p){
       currentVarName = p->name + "_";
       this->registerVariable(currentVarName);
-      this->mb.getLocalVariables().push_back(VarHandler(p->type,currentVarName,p->arraySize,0u));
+      this->mb.getLocalVariables().push_back(VariableDescription(p->type,currentVarName,p->arraySize,0u));
       if(this->useDynamicallyAllocatedVector(p->arraySize)){
 	parserInitLocalVars += "this->"+currentVarName+".resize("+toString(p->arraySize)+");\n";
       }
@@ -587,7 +587,7 @@ namespace mfront{
   {
     using namespace std;
     using namespace std;
-    VarContainer::iterator p;
+    VariableDescriptionContainer::iterator p;
     this->behaviourFile << "using namespace std;" << endl;
     this->behaviourFile << "this->computeDerivative();" << endl;
     for(p =this->mb.getStateVariables().begin();p!=this->mb.getStateVariables().end();++p){
@@ -605,7 +605,7 @@ namespace mfront{
   {
     using namespace std;
     using namespace std;
-    VarContainer::iterator p;
+    VariableDescriptionContainer::iterator p;
     map<DrivingVariable,
 	ThermodynamicForce>::const_iterator pm;
     this->behaviourFile << "using namespace std;" << endl;
@@ -649,7 +649,7 @@ namespace mfront{
   void MFrontRungeKuttaParser::writeBehaviourRK54Integrator(void)
   {
     using namespace std;
-    VarContainer::iterator p;
+    VariableDescriptionContainer::iterator p;
     map<DrivingVariable,
 	ThermodynamicForce>::const_iterator pm;
     SupportedTypes::TypeSize stateVarsSize = this->getTotalSize(this->mb.getStateVariables());
@@ -1189,7 +1189,7 @@ namespace mfront{
   void MFrontRungeKuttaParser::writeBehaviourRKCastemIntegrator(void)
   {
     using namespace std;
-    VarContainer::iterator p;
+    VariableDescriptionContainer::iterator p;
     map<DrivingVariable,
 	ThermodynamicForce>::const_iterator pm;
     SupportedTypes::TypeSize stateVarsSize;
@@ -1551,7 +1551,7 @@ namespace mfront{
   void MFrontRungeKuttaParser::writeBehaviourRK42Integrator(void)
   {
     using namespace std;
-    VarContainer::iterator p;
+    VariableDescriptionContainer::iterator p;
     map<DrivingVariable,
 	ThermodynamicForce>::const_iterator pm;
     SupportedTypes::TypeSize stateVarsSize;
@@ -1945,7 +1945,7 @@ namespace mfront{
   void MFrontRungeKuttaParser::writeBehaviourRK4Integrator(void)
   {
     using namespace std;
-    VarContainer::iterator p;
+    VariableDescriptionContainer::iterator p;
     map<DrivingVariable,
 	ThermodynamicForce>::const_iterator pm;
     this->behaviourFile << "using namespace std;" << endl;

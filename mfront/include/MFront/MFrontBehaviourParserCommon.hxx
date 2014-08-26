@@ -19,8 +19,6 @@
 #include"TFEL/Material/ModellingHypothesis.hxx"
 
 #include"MFront/SupportedTypes.hxx"
-#include"MFront/VarHandler.hxx"
-#include"MFront/StaticVarHandler.hxx"
 #include"MFront/MechanicalBehaviourDescription.hxx"
 #include"MFront/ParserBase.hxx"
 

@@ -1,5 +1,5 @@
 /*!
- * \file   VarHandler.cxx
+ * \file   VariableDescription.cxx
  * 
  * \brief    
  * \author Helfer Thomas
@@ -8,11 +8,11 @@
 
 #include<stdexcept>
 
-#include"MFront/VarHandler.hxx"
+#include"MFront/VariableDescription.hxx"
 
 namespace mfront{
 
-  VarHandler::VarHandler(const std::string& type_,
+  VariableDescription::VariableDescription(const std::string& type_,
 			 const std::string& name_,
 			 const unsigned short arraySize_,
 			 const unsigned short lineNumber_)
@@ -23,10 +23,10 @@ namespace mfront{
   {
     using namespace std;
     if(this->arraySize==0){
-      string msg("MFrontParserBase<Child>::VarHandler::VarHandler : ");
+      string msg("VariableDescription::VariableDescription : ");
       msg += "invalid array size";
       throw(runtime_error(msg));
     }
-  } // end of MFrontParserBase<Child>::VarHandler::VarHandler
+  } // end of MFrontParserBase<Child>::VariableDescription::VariableDescription
 
 } // end of namespace mfront

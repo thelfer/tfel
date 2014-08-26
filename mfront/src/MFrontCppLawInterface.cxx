@@ -149,11 +149,11 @@ namespace mfront
 					  const std::string& description,
 					  const std::string& includes,
 					  const std::string& output,
-					  const VarContainer& inputs,
+					  const VariableDescriptionContainer& inputs,
 					  const std::vector<std::string>& materialLaws,
 					  const std::map<std::string,std::string>&,
 					  const std::map<std::string,std::string>&,
-					  const StaticVarContainer& staticVars,
+					  const StaticVariableDescriptionContainer& staticVars,
 					  const std::vector<std::string>& params,
 					  const std::map<std::string,double>& paramValues,
 					  const LawFunction& function,
@@ -226,7 +226,7 @@ namespace mfront
 					 const std::string& date,
 					 const std::string& description,
 					 const std::string& includes,
-					 const VarContainer& inputs,
+					 const VariableDescriptionContainer& inputs,
 					 const std::vector<std::string>& params,
 					 const std::vector<VariableBoundsDescription>& bounds,
 					 const std::vector<VariableBoundsDescription>& physicalBounds,
@@ -235,7 +235,7 @@ namespace mfront
   {
     using namespace std;
     vector<string>::const_iterator p3;
-    VarContainer::const_iterator p4;
+    VariableDescriptionContainer::const_iterator p4;
     vector<string>::const_reverse_iterator p5;
     vector<string>::const_reverse_iterator p5e;
     map<string,double>::const_iterator p6;
@@ -482,9 +482,9 @@ namespace mfront
 				      const std::string& author,
 				      const std::string& date,
 				      const std::string& output,
-				      const VarContainer& inputs,
+				      const VariableDescriptionContainer& inputs,
 				      const std::vector<std::string>& materialLaws,
-				      const StaticVarContainer& staticVars,
+				      const StaticVariableDescriptionContainer& staticVars,
 				      const std::vector<std::string>& params,
 				      const std::map<std::string,double>& paramValues,
 				      const LawFunction& function,
@@ -495,7 +495,7 @@ namespace mfront
   {
     using namespace std;
     vector<string>::const_iterator p;
-    VarContainer::const_iterator p3;
+    VariableDescriptionContainer::const_iterator p3;
     map<string,string>::const_iterator p4;
     vector<string>::const_reverse_iterator p5;
     vector<string>::const_reverse_iterator p5e;

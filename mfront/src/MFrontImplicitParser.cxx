@@ -21,7 +21,7 @@ namespace mfront{
     // Default state variable
     this->registerVariable("eel");
     this->registerVariable("deel");
-    this->mb.getStateVariables().push_back(VarHandler("StrainStensor","eel",1u,0u));
+    this->mb.getStateVariables().push_back(VariableDescription("StrainStensor","eel",1u,0u));
     this->glossaryNames.insert(MVType("eel","ElasticStrain"));
   } // end of MFrontImplicitParser::MFrontImplicitParser
 

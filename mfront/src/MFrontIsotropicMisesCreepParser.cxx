@@ -25,8 +25,8 @@ namespace mfront{
     this->registerVariable("dp");
     this->registerVariable("eel");
     this->registerVariable("deel");
-    this->mb.getStateVariables().push_back(VarHandler("StrainStensor","eel",1u,0u));
-    this->mb.getStateVariables().push_back(VarHandler("strain","p",1u,0u));
+    this->mb.getStateVariables().push_back(VariableDescription("StrainStensor","eel",1u,0u));
+    this->mb.getStateVariables().push_back(VariableDescription("strain","p",1u,0u));
     this->glossaryNames.insert(MVType("eel","ElasticStrain"));
     this->glossaryNames.insert(MVType("p","EquivalentViscoplasticStrain"));
     // default local vars
@@ -37,12 +37,12 @@ namespace mfront{
     this->registerVariable("seq_e");
     this->registerVariable("n");
     this->registerVariable("mu_3_theta");
-    this->mb.getLocalVariables().push_back(VarHandler("DstrainDt","f",1u,0u));
-    this->mb.getLocalVariables().push_back(VarHandler("DF_DSEQ_TYPE","df_dseq",1u,0u));
-    this->mb.getLocalVariables().push_back(VarHandler("StressStensor","se",1u,0u));
-    this->mb.getLocalVariables().push_back(VarHandler("stress","seq",1u,0u));
-    this->mb.getLocalVariables().push_back(VarHandler("stress","seq_e",1u,0u));
-    this->mb.getLocalVariables().push_back(VarHandler("StrainStensor","n",1u,0u));
+    this->mb.getLocalVariables().push_back(VariableDescription("DstrainDt","f",1u,0u));
+    this->mb.getLocalVariables().push_back(VariableDescription("DF_DSEQ_TYPE","df_dseq",1u,0u));
+    this->mb.getLocalVariables().push_back(VariableDescription("StressStensor","se",1u,0u));
+    this->mb.getLocalVariables().push_back(VariableDescription("stress","seq",1u,0u));
+    this->mb.getLocalVariables().push_back(VariableDescription("stress","seq_e",1u,0u));
+    this->mb.getLocalVariables().push_back(VariableDescription("StrainStensor","n",1u,0u));
     this->hasConsistantTangentOperator = true;
     this->isConsistantTangentOperatorSymmetric = true;
   }

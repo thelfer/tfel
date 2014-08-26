@@ -85,8 +85,8 @@ namespace mfront
 						const MechanicalBehaviourDescription& mb)
   {
     using namespace std;
-    const VarContainer& stateVarsHolder          = mb.getStateVariables();
-    const VarContainer& auxiliaryStateVarsHolder = mb.getAuxiliaryStateVariables();
+    const VariableDescriptionContainer& stateVarsHolder          = mb.getStateVariables();
+    const VariableDescriptionContainer& auxiliaryStateVarsHolder = mb.getAuxiliaryStateVariables();
     const std::string iprefix = makeUpperCase(this->getInterfaceName());
     if((!stateVarsHolder.empty())||
        (!auxiliaryStateVarsHolder.empty())){
@@ -201,10 +201,10 @@ namespace mfront
   {
     using namespace std;
     const std::string iprefix = makeUpperCase(this->getInterfaceName());
-    const VarContainer& coefsHolder              = mb.getMaterialProperties();
-    const VarContainer& stateVarsHolder          = mb.getStateVariables();
-    const VarContainer& auxiliaryStateVarsHolder = mb.getAuxiliaryStateVariables();
-    const VarContainer& externalStateVarsHolder  = mb.getExternalStateVariables();
+    const VariableDescriptionContainer& coefsHolder              = mb.getMaterialProperties();
+    const VariableDescriptionContainer& stateVarsHolder          = mb.getStateVariables();
+    const VariableDescriptionContainer& auxiliaryStateVarsHolder = mb.getAuxiliaryStateVariables();
+    const VariableDescriptionContainer& externalStateVarsHolder  = mb.getExternalStateVariables();
     behaviourDataFile << "/*\n";
     behaviourDataFile << " * \\brief constructor for the umat interface\n";
     behaviourDataFile << " *\n";
@@ -360,7 +360,7 @@ namespace mfront
   {
     using namespace std;
     const std::string iprefix = makeUpperCase(this->getInterfaceName());
-    const VarContainer& externalStateVarsHolder  = mb.getExternalStateVariables();
+    const VariableDescriptionContainer& externalStateVarsHolder  = mb.getExternalStateVariables();
     behaviourIntegrationFile << "/*\n";
     behaviourIntegrationFile << " * \\brief constructor for the umat interface\n";
     behaviourIntegrationFile << " * \\param const Type *const "+iprefix+"dt_, time increment\n";
@@ -454,7 +454,7 @@ namespace mfront
   }
 
   std::vector<std::string>
-  MFrontUMATInterfaceBase::getGlossaryNames(const VarContainer& v,
+  MFrontUMATInterfaceBase::getGlossaryNames(const VariableDescriptionContainer& v,
 					    const std::map<std::string,std::string>& glossaryNames,
 					    const std::map<std::string,std::string>& entryNames) const
   {
@@ -466,12 +466,12 @@ namespace mfront
 
   void
   MFrontUMATInterfaceBase::appendGlossaryNames(std::vector<std::string>& n,
-					       const VarContainer& v,
+					       const VariableDescriptionContainer& v,
 					       const std::map<std::string,std::string>& glossaryNames,
 					       const std::map<std::string,std::string>& entryNames) const
   {
     using namespace std;
-    VarContainer::const_iterator p;
+    VariableDescriptionContainer::const_iterator p;
     for(p=v.begin();p!=v.end();++p){
       const string name = MFrontUMATInterfaceBase::getGlossaryName(glossaryNames,entryNames,p->name);
       if(p->arraySize==1u){
@@ -580,10 +580,10 @@ namespace mfront
   MFrontUMATInterfaceBase::checkParametersType(bool& rp,
 					       bool& ip,
 					       bool& up,
-					       const VarContainer& pc) const
+					       const VariableDescriptionContainer& pc) const
   {
     using namespace std;
-    VarContainer::const_iterator pp;
+    VariableDescriptionContainer::const_iterator pp;
     rp = false;
     ip = false;
     up = false;
@@ -607,7 +607,7 @@ namespace mfront
 								   const std::string& name,
 								   const MechanicalBehaviourDescription& mb) const
   {
-    const VarContainer& pc = mb.getParameters();
+    const VariableDescriptionContainer& pc = mb.getParameters();
     bool rp,ip,up;
     this->checkParametersType(rp,ip,up,pc);
     if(rp){
@@ -633,7 +633,7 @@ namespace mfront
 								      const std::string& className,
 								      const MechanicalBehaviourDescription& mb) const
   {
-    const VarContainer& pc = mb.getParameters();
+    const VariableDescriptionContainer& pc = mb.getParameters();
     bool rp,ip,up;
     this->checkParametersType(rp,ip,up,pc);
     if(rp){
@@ -711,7 +711,7 @@ namespace mfront
   MFrontUMATInterfaceBase::getExtraSrcIncludes(std::ostream& out,
 					       const MechanicalBehaviourDescription& mb)
   {
-    const VarContainer& parametersHolder         = mb.getParameters();
+    const VariableDescriptionContainer& parametersHolder         = mb.getParameters();
     if((!parametersHolder.empty())||(this->debugMode)){
       out << "#include<iostream>\n";
     }
@@ -756,11 +756,11 @@ namespace mfront
   {
     using namespace std;
     if(this->generateMTestFile){
-      const VarContainer& coefsHolder              = mb.getMaterialProperties();
-      const VarContainer& stateVarsHolder          = mb.getStateVariables();
-      const VarContainer& auxiliaryStateVarsHolder = mb.getAuxiliaryStateVariables();
-      const VarContainer& externalStateVarsHolder  = mb.getExternalStateVariables();
-      VarContainer::const_iterator p;
+      const VariableDescriptionContainer& coefsHolder              = mb.getMaterialProperties();
+      const VariableDescriptionContainer& stateVarsHolder          = mb.getStateVariables();
+      const VariableDescriptionContainer& auxiliaryStateVarsHolder = mb.getAuxiliaryStateVariables();
+      const VariableDescriptionContainer& externalStateVarsHolder  = mb.getExternalStateVariables();
+      VariableDescriptionContainer::const_iterator p;
       const bool mpoffset = this->hasMaterialPropertiesOffset(mb);
       unsigned short i;
       unsigned int offset;
@@ -1152,11 +1152,11 @@ namespace mfront
 							    const std::map<std::string,std::string>& entryNames) const
   {
     using namespace std;
-    const VarContainer& stateVarsHolder          = mb.getStateVariables();
-    const VarContainer& auxiliaryStateVarsHolder = mb.getAuxiliaryStateVariables();
+    const VariableDescriptionContainer& stateVarsHolder          = mb.getStateVariables();
+    const VariableDescriptionContainer& auxiliaryStateVarsHolder = mb.getAuxiliaryStateVariables();
     const unsigned short nStateVariables = static_cast<unsigned short>(this->getNumberOfVariables(stateVarsHolder) + 
 								       this->getNumberOfVariables(auxiliaryStateVarsHolder));
-    VarContainer::const_iterator p;
+    VariableDescriptionContainer::const_iterator p;
     out << "MFRONT_SHAREDOBJ unsigned short " << this->getFunctionName(name)
 	<< "_nInternalStateVariables = " << nStateVariables
 	<< ";\n";
@@ -1241,7 +1241,7 @@ namespace mfront
 								    const std::map<std::string,std::string>& glossaryNames,
 								    const std::map<std::string,std::string>& entryNames) const
   {
-    const VarContainer& externalStateVarsHolder  = mb.getExternalStateVariables();
+    const VariableDescriptionContainer& externalStateVarsHolder  = mb.getExternalStateVariables();
     out << "MFRONT_SHAREDOBJ unsigned short " << this->getFunctionName(name)
 	<< "_nExternalStateVariables = " << this->getNumberOfVariables(externalStateVarsHolder) << ";\n";
     this->writeGlossaryNames(out,this->getGlossaryNames(externalStateVarsHolder,

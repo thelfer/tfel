@@ -351,11 +351,11 @@ namespace mfront
 					      const std::string& ,
 					      const std::string& ,
 					      const std::string& ,
-					      const VarContainer& inputs,
+					      const VariableDescriptionContainer& inputs,
 					      const std::vector<std::string>&,
 					      const std::map<std::string,std::string>&,
 					      const std::map<std::string,std::string>&,
-					      const StaticVarContainer& staticVars,
+					      const StaticVariableDescriptionContainer& staticVars,
 					      const std::vector<std::string>& params,
 					      const std::map<std::string,double>& paramValues,
 					      const LawFunction& function,
@@ -392,8 +392,8 @@ namespace mfront
 					  const std::string& name,
 					  const std::string&,
 					  const std::string&,
-					  const VarContainer& inputs,
-					  const StaticVarContainer&,
+					  const VariableDescriptionContainer& inputs,
+					  const StaticVariableDescriptionContainer&,
 					  const std::vector<std::string>&,
 					  const std::map<std::string,double>&,
 					  const LawFunction&,
@@ -404,8 +404,8 @@ namespace mfront
   {
     using namespace std;
     vector<VariableBoundsDescription>::const_iterator p6;
-    VarContainer::const_iterator p3;
-    VarContainer::const_iterator p4;
+    VariableDescriptionContainer::const_iterator p3;
+    VariableDescriptionContainer::const_iterator p4;
     
     string base;
 

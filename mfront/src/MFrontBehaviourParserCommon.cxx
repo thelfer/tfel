@@ -64,7 +64,7 @@ namespace mfront{
   MFrontBehaviourParserCommon::requiresTVectorOrVectorIncludes(bool& b1,
 							       bool& b2) const
   {
-    VarContainer::const_iterator ps;
+    VariableDescriptionContainer::const_iterator ps;
     b1 = false;
     b2 = false;
     for(ps=this->mb.getMaterialProperties().begin();
@@ -807,7 +807,7 @@ namespace mfront{
   void MFrontBehaviourParserCommon::treatBounds(BoundsDescription& boundsDescription)
   {
     using namespace std;
-    VarContainer::const_iterator p;
+    VariableDescriptionContainer::const_iterator p;
     map<DrivingVariable,
 	ThermodynamicForce>::const_iterator p3;
 
@@ -1320,7 +1320,7 @@ namespace mfront{
     map<DrivingVariable,
 	ThermodynamicForce>::const_iterator p3;
     MBIF& mbif = MBIF::getMFrontBehaviourInterfaceFactory();
-    VarContainer::const_iterator p;
+    VariableDescriptionContainer::const_iterator p;
     this->checkBehaviourDataFile();
     this->behaviourDataFile << "/*!\n";
     this->behaviourDataFile << "* \\brief Default constructor\n";
@@ -1390,7 +1390,7 @@ namespace mfront{
     using namespace std;
     map<DrivingVariable,
 	ThermodynamicForce>::const_iterator p3;
-    VarContainer::const_iterator p;
+    VariableDescriptionContainer::const_iterator p;
     this->checkBehaviourDataFile();
     this->behaviourDataFile << "/*\n";
     this->behaviourDataFile << "* \\brief Assignement operator\n";
@@ -1629,7 +1629,7 @@ namespace mfront{
   {    
     using namespace std;
     this->checkBehaviourFile();
-    VarContainer::const_iterator p;
+    VariableDescriptionContainer::const_iterator p;
     map<DrivingVariable,
 	ThermodynamicForce>::const_iterator p2;
     if(this->mb.useQt()){        
@@ -1861,7 +1861,7 @@ namespace mfront{
   MFrontBehaviourParserCommon::writeBehaviourUpdateStateVars(void)
   {
     using namespace std;
-    VarContainer::const_iterator p;
+    VariableDescriptionContainer::const_iterator p;
     this->checkBehaviourFile();
     this->behaviourFile << "/*!\n";
     this->behaviourFile << "* \\brief Update internal variables at end of integration\n";
@@ -2116,7 +2116,7 @@ namespace mfront{
   MFrontBehaviourParserCommon::writeBehaviourLocalVariablesInitialisation()
   {
     using namespace std;
-    VarContainer::const_iterator p;
+    VariableDescriptionContainer::const_iterator p;
     this->checkBehaviourFile();
     for(p=this->mb.getLocalVariables().begin();p!=this->mb.getLocalVariables().end();++p){
       if(this->useDynamicallyAllocatedVector(p->arraySize)){
@@ -2129,7 +2129,7 @@ namespace mfront{
   {    
     using namespace std;
     this->checkBehaviourFile();
-    VarContainer::const_iterator p;
+    VariableDescriptionContainer::const_iterator p;
     if(!this->mb.getParameters().empty()){
       for(p=this->mb.getParameters().begin();p!=this->mb.getParameters().end();++p){
 	this->behaviourFile << "this->" << p->name << " = " << this->className 
@@ -2165,7 +2165,7 @@ namespace mfront{
   {    
     using namespace std;
     this->checkBehaviourFile();
-    VarContainer::const_iterator p;
+    VariableDescriptionContainer::const_iterator p;
     for(p=this->mb.getParameters().begin();p!=this->mb.getParameters().end();++p){
       if(!this->debugMode){
 	if(p->lineNumber!=0u){
@@ -2191,7 +2191,7 @@ namespace mfront{
   {    
     using namespace std;
     this->checkBehaviourFile();
-    StaticVarContainer::const_iterator p;
+    StaticVariableDescriptionContainer::const_iterator p;
     for(p=this->staticVars.begin();p!=this->staticVars.end();++p){
       if(!this->debugMode){
 	if(p->lineNumber!=0u){
@@ -2219,7 +2219,7 @@ namespace mfront{
   void MFrontBehaviourParserCommon::writeBehaviourOutputOperator(void)
   {    
     using namespace std;
-    VarContainer::const_iterator p;
+    VariableDescriptionContainer::const_iterator p;
     map<DrivingVariable,
 	ThermodynamicForce>::const_iterator p2;
     this->checkBehaviourFile();
@@ -2314,7 +2314,7 @@ namespace mfront{
   void MFrontBehaviourParserCommon::writeBehaviourUpdateExternalStateVariables(void) 
   {    
     using namespace std;
-    VarContainer::const_iterator p;
+    VariableDescriptionContainer::const_iterator p;
     map<DrivingVariable,
 	ThermodynamicForce>::const_iterator p2;
     this->checkBehaviourFile();
@@ -2456,7 +2456,7 @@ namespace mfront{
     using namespace tfel::material;
     typedef ModellingHypothesis MH;
     this->checkBehaviourFile();
-    VarContainer::const_iterator p;
+    VariableDescriptionContainer::const_iterator p;
     SupportedTypes::TypeSize coefSize;
     SupportedTypes::TypeSize stateVarsSize;
     SupportedTypes::TypeSize externalStateVarsSize;
@@ -2623,7 +2623,7 @@ namespace mfront{
   {
     using namespace std;
     if(!this->mb.getParameters().empty()){
-      VarContainer::const_iterator p;
+      VariableDescriptionContainer::const_iterator p;
       bool rp = false;
       bool ip = false;
       bool up = false;
@@ -2957,7 +2957,7 @@ namespace mfront{
     using namespace std;
     typedef MFrontBehaviourInterfaceFactory MBIF;
     MBIF& mbif = MBIF::getMFrontBehaviourInterfaceFactory();
-    VarContainer::const_iterator p;
+    VariableDescriptionContainer::const_iterator p;
     map<DrivingVariable,
 	ThermodynamicForce>::const_iterator p2;
     this->checkIntegrationDataFile();
@@ -3032,7 +3032,7 @@ namespace mfront{
   void MFrontBehaviourParserCommon::writeIntegrationDataScaleOperators(void)
   {
     using namespace std;
-    VarContainer::const_iterator p;
+    VariableDescriptionContainer::const_iterator p;
     map<DrivingVariable,
 	ThermodynamicForce>::const_iterator p2;
     bool iknown = true;
@@ -3157,7 +3157,7 @@ namespace mfront{
   void MFrontBehaviourParserCommon::writeIntegrationDataOutputOperator(void)
   {    
     using namespace std;
-    VarContainer::const_iterator p;
+    VariableDescriptionContainer::const_iterator p;
     map<DrivingVariable,
 	ThermodynamicForce>::const_iterator p2;
     this->checkBehaviourFile();
@@ -3289,7 +3289,7 @@ namespace mfront{
     using namespace std;
     this->checkSrcFile();
     vector<string> m;
-    StaticVarContainer::const_iterator p;
+    StaticVariableDescriptionContainer::const_iterator p;
     vector<string>::const_iterator pm;
     m.push_back("tfel::material::ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN");
     m.push_back("tfel::material::ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRESS");
@@ -3371,7 +3371,7 @@ namespace mfront{
       bool rp = false; // real    parameter found
       bool ip = false; // integer parameter found
       bool up = false; // unsigned short parameter found
-      VarContainer::const_iterator p;
+      VariableDescriptionContainer::const_iterator p;
       std::map<std::string,double>::const_iterator p2;
       std::map<std::string,int>::const_iterator p3;
       std::map<std::string,unsigned short>::const_iterator p4;

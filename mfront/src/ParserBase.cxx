@@ -438,7 +438,7 @@ namespace mfront
     }
   } // end of ParserBase::treatIntegerConstant
 
-  void ParserBase::readVarList(VarContainer& cont,
+  void ParserBase::readVarList(VariableDescriptionContainer& cont,
 			       const std::string& type,
 			       const bool allowArray,
 			       const bool addIncrementVar)
@@ -512,7 +512,7 @@ namespace mfront
 				", or ; expected afer '"+varName+"'");
       }
       this->registerVariable(varName);
-      cont.push_back(VarHandler(type,varName,asize,lineNumber));
+      cont.push_back(VariableDescription(type,varName,asize,lineNumber));
       if(addIncrementVar){
 	string incrVarName("d");
 	incrVarName += varName;	
@@ -526,7 +526,7 @@ namespace mfront
     }
   }
 
-  void ParserBase::readVarList(VarContainer& cont,
+  void ParserBase::readVarList(VariableDescriptionContainer& cont,
 			       const bool allowArray,
 			       const bool addIncrementVar)
   {
@@ -1022,7 +1022,7 @@ namespace mfront
     ++(this->current);
     this->readSpecifiedToken("ParserBase::treatStaticVar",";");
     this->registerStaticVariable(name);
-    this->staticVars.push_back(StaticVarHandler(type,name,line,value));
+    this->staticVars.push_back(StaticVariableDescription(type,name,line,value));
   } // end of ParserBase::treatStaticVar
 
   void
@@ -1113,7 +1113,7 @@ namespace mfront
   } // end of ParserBase::readDouble
 
   void
-  ParserBase::handleParameter(VarContainer& c,
+  ParserBase::handleParameter(VariableDescriptionContainer& c,
 			      std::map<std::string,double>& v)
   {
     using namespace std;
@@ -1168,7 +1168,7 @@ namespace mfront
 				", or ; expected afer '"+n+"'");
       }
       this->registerVariable(n);
-      c.push_back(VarHandler("real",n,1u,lineNumber));
+      c.push_back(VariableDescription("real",n,1u,lineNumber));
     }
     if(!endOfTreatement){
       --(this->current);

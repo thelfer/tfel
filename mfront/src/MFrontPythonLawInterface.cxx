@@ -173,11 +173,11 @@ namespace mfront
 					     const std::string& description,
 					     const std::string& includes,
 					     const std::string& output,
-					     const VarContainer& inputs,
+					     const VariableDescriptionContainer& inputs,
 					     const std::vector<std::string>& materialLaws,
 					     const std::map<std::string,std::string>&,
 					     const std::map<std::string,std::string>&,
-					     const StaticVarContainer& staticVars,
+					     const StaticVariableDescriptionContainer& staticVars,
 					     const std::vector<std::string>& params,
 					     const std::map<std::string,double>& paramValues,
 					     const LawFunction& function,
@@ -189,7 +189,7 @@ namespace mfront
     using namespace std;
     using namespace tfel::system;
     vector<string>::const_iterator p;
-    VarContainer::const_iterator p3;
+    VariableDescriptionContainer::const_iterator p3;
     map<string,string>::const_iterator p4;
     vector<VariableBoundsDescription>::const_iterator p5;
     map<string,double>::const_iterator p6;

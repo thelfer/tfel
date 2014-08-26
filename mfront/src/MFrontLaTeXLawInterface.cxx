@@ -177,11 +177,11 @@ namespace mfront
 					    const std::string& description,
 					    const std::string&,
 					    const std::string&,
-					    const VarContainer& vars,
+					    const VariableDescriptionContainer& vars,
 					    const std::vector<std::string>&,
 					    const std::map<std::string,std::string>& glossaryNames,
 					    const std::map<std::string,std::string>& entryNames,
-					    const StaticVarContainer&,
+					    const StaticVariableDescriptionContainer&,
 					    const std::vector<std::string>&,
 					    const std::map<std::string,double>&,
 					    const LawFunction&,
@@ -193,7 +193,7 @@ namespace mfront
     using namespace std;
     using namespace tfel::utilities;
     string name;
-    VarContainer::const_iterator p;
+    VariableDescriptionContainer::const_iterator p;
     std::map<std::string,std::string>::const_iterator p2;
     if(material.empty()){
       name = className;

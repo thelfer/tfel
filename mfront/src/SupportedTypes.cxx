@@ -249,14 +249,14 @@ namespace mfront{
 
   SupportedTypes::TypeSize
   SupportedTypes::writeVariableInitializersInBehaviourDataConstructorI(std::ostream& f,
-								       const VarContainer& v,
+								       const VariableDescriptionContainer& v,
 								       const std::string& src,
 								       const std::string& prefix,
 								       const std::string& suffix,
 								       const SupportedTypes::TypeSize& o) const
   {
     using namespace std;
-    VarContainer::const_iterator p;
+    VariableDescriptionContainer::const_iterator p;
     SupportedTypes::TypeSize currentOffset = o;
     if(!v.empty()){
       for(p=v.begin();p!=v.end();++p){
@@ -299,14 +299,14 @@ namespace mfront{
 
   SupportedTypes::TypeSize
   SupportedTypes::writeVariableInitializersInBehaviourDataConstructorII(std::ostream& f,
-									const VarContainer& v,
+									const VariableDescriptionContainer& v,
 									const std::string& src,
 									const std::string& prefix,
 									const std::string& suffix,
 									const SupportedTypes::TypeSize& o) const
   {
     using namespace std;
-    VarContainer::const_iterator p;
+    VariableDescriptionContainer::const_iterator p;
     SupportedTypes::TypeSize currentOffset = o;
     if(!v.empty()){
       for(p=v.begin();p!=v.end();++p){
@@ -381,11 +381,11 @@ namespace mfront{
 
   void
   SupportedTypes::writeStateVariableIncrementsInitializers(std::ostream& f,
-							   const VarContainer& v,
+							   const VariableDescriptionContainer& v,
 							   const bool useStateVarTimeDerivative) const 
   {
     using namespace std;
-    VarContainer::const_iterator p;
+    VariableDescriptionContainer::const_iterator p;
     if(!v.empty()){
       for(p=v.begin();p!=v.end();++p){
 	SupportedTypes::TypeFlag flag = getTypeFlag(p->type);
@@ -439,10 +439,10 @@ namespace mfront{
   } // end of SupportedTypes::writeStateVariableIncrementsInitializers
 
   SupportedTypes::TypeSize
-  SupportedTypes::getTotalSize(const VarContainer& v) const
+  SupportedTypes::getTotalSize(const VariableDescriptionContainer& v) const
   {
     SupportedTypes::TypeSize s;
-    VarContainer::const_iterator p;
+    VariableDescriptionContainer::const_iterator p;
     for(p =v.begin();p!=v.end();++p){
       s+=this->getTypeSize(p->type,p->arraySize);
     }
@@ -450,10 +450,10 @@ namespace mfront{
   } // end of SupportedTypes::getTotalSize
 
   unsigned short
-  SupportedTypes::getNumberOfVariables(const VarContainer& v) const
+  SupportedTypes::getNumberOfVariables(const VariableDescriptionContainer& v) const
   {
     unsigned short n = 0u;
-    VarContainer::const_iterator p;
+    VariableDescriptionContainer::const_iterator p;
     for(p =v.begin();p!=v.end();++p){
       n = n + p->arraySize;
     }
@@ -463,7 +463,7 @@ namespace mfront{
   void
   SupportedTypes::writeResultsArrayResize(std::ostream& f,
 					  const std::string& dest,
-					  const VarContainer& v) const
+					  const VariableDescriptionContainer& v) const
   {
     this->writeResultsArrayResize(f,dest,this->getTotalSize(v));
   } // end of SupportedTypes::writeResultsArrayResize
@@ -480,13 +480,13 @@ namespace mfront{
 
   SupportedTypes::TypeSize
   SupportedTypes::exportResults(std::ostream& f,
-				const VarContainer& v,
+				const VariableDescriptionContainer& v,
 				const std::string& dest,
 				const bool useQt,
 				const SupportedTypes::TypeSize& o) const
   {
     using namespace std;
-    VarContainer::const_iterator p;
+    VariableDescriptionContainer::const_iterator p;
     SupportedTypes::TypeSize currentOffset = o;
     if(!v.empty()){
       for(p=v.begin();p!=v.end();++p){
@@ -574,7 +574,7 @@ namespace mfront{
 
   void
   SupportedTypes::writeVariablesDeclarations(std::ostream& f,
-					     const VarContainer& v,
+					     const VariableDescriptionContainer& v,
 					     const std::string& prefix,
 					     const std::string& suffix,
 					     const std::string& fileName,
@@ -582,7 +582,7 @@ namespace mfront{
 					     const bool b) const
   {
     using namespace std;
-    VarContainer::const_iterator p;
+    VariableDescriptionContainer::const_iterator p;
     for(p=v.begin();p!=v.end();++p){
       const string n = prefix+p->name+suffix;
       const string t = (!useTimeDerivative) ? p->type :  this->getTimeDerivativeType(p->type);

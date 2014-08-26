@@ -17,7 +17,6 @@
 #include"TFEL/Config/TFELConfig.hxx"
 #include"TFEL/Utilities/CxxTokenizer.hxx"
 
-#include"MFront/VarHandler.hxx"
 #include"MFront/MechanicalBehaviourDescription.hxx"
 
 namespace mfront{
