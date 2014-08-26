@@ -17,8 +17,7 @@
 @MaterialProperty real d1;
 
 @TangentOperator{
-  if((smt==ELASTIC)||
-     (smt==SECANTOPERATOR)){
+  if((smt==ELASTIC)||(smt==SECANTOPERATOR)){
     Dt = D;
   } else if (smt==CONSISTENTTANGENTOPERATOR){
     Stensor4 Je;

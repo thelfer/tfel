@@ -434,6 +434,10 @@ namespace mfront{
     predictionOperatorVariableModifier(const Hypothesis,
 				       const std::string&,const bool);
 
+    virtual std::string
+    tangentOperatorVariableModifier(const Hypothesis,
+				    const std::string&,
+				    const bool);
     virtual void
     readStringList(std::vector<std::string>&);
     /*!
@@ -502,6 +506,14 @@ namespace mfront{
      */
     virtual void
     registerDefaultVarNames(void);
+    /*!
+     * treat the @TangentOperator keyword
+     */
+    virtual void treatTangentOperator(void);
+    /*!
+     * treat the @IsTangentOperatorSymmetric keyword
+     */
+    virtual void treatIsTangentOperatorSymmetric(void);
     /*!
      * treat the @Material keyword
      */
@@ -1034,6 +1046,13 @@ namespace mfront{
      */
     virtual void
     doPedanticChecks(void) const;
+    /*!
+     * \return true if the user defined a block of code computing the
+     * tangent operator
+     * \param[in] h : modelling hypothesis
+     */
+    virtual bool
+    hasUserDefinedTangentOperatorCode(const Hypothesis) const;
     /*!
      * constructor
      */

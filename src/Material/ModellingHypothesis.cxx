@@ -30,6 +30,21 @@ namespace tfel
       return hypotheses;
     } // end of ModellingHypothesis::getModellingHypotheses
 
+    bool
+    ModellingHypothesis::isModellingHypothesis(const std::string& h)
+    {
+      if((h=="AxisymmetricalGeneralisedPlaneStrain")||
+	 (h=="AxisymmetricalGeneralisedPlaneStress")||
+	 (h=="Axisymmetrical")||
+	 (h=="PlaneStress")||
+	 (h=="PlaneStrain")||
+	 (h=="GeneralisedPlaneStrain")||
+	 (h=="Tridimensional")){
+	return true;
+      }
+      return false;
+    } // end of ModellingHypothesis::isModellingHypothesis
+
     std::string
     ModellingHypothesis::toString(const Hypothesis h)
     {

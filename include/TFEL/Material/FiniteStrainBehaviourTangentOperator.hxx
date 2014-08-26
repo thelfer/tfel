@@ -35,23 +35,22 @@ namespace tfel
     std::vector<FiniteStrainBehaviourTangentOperatorBase::Flag>
     getFiniteStrainBehaviourTangentOperatorFlags(void);
     /*!
-     * \return all the known convertion between tangent operators
-     */
-    TFELMATERIAL_VISIBILITY_EXPORT
-    std::vector<std::pair<FiniteStrainBehaviourTangentOperatorBase::Flag,
-			  FiniteStrainBehaviourTangentOperatorBase::Flag> >
-    getAvailableFiniteStrainBehaviourTangentOperatorConvertions(void);
-    /*!
      * \return a string describing the given tangent operator type 
      */
     TFELMATERIAL_VISIBILITY_EXPORT std::string
     getFiniteStrainBehaviourTangentOperatorDescription(const FiniteStrainBehaviourTangentOperatorBase::Flag);
     /*!
-     * \return 
+     * \return a string representation of the flag
      */
     TFELMATERIAL_VISIBILITY_EXPORT
     std::string
     convertFiniteStrainBehaviourTangentOperatorFlagToString(const FiniteStrainBehaviourTangentOperatorBase::Flag);
+    /*!
+     * \return the type associated with this tangent operator (t2tost2 or st2tost2)
+     */
+    TFELMATERIAL_VISIBILITY_EXPORT
+    std::string
+    getFiniteStrainBehaviourTangentOperatorFlagType(const FiniteStrainBehaviourTangentOperatorBase::Flag);
     /*!
      * a structure that can hold all the possible consistent tangent
      * operators for a given space dimension
@@ -60,17 +59,22 @@ namespace tfel
      */
     template<unsigned short N,
 	     typename StressType>
-
     struct TFEL_VISIBILITY_LOCAL FiniteStrainBehaviourTangentOperator
       : public FiniteStrainBehaviourTangentOperatorBase,
 	public tfel::utilities::GenTypeBase<typename tfel::meta::GenerateTypeList<tfel::math::t2tost2<N,StressType>,
-										  tfel::math::st2tost2<N,StressType> >::type>
+										  tfel::math::st2tost2<N,StressType>,
+										  tfel::math::t2tost2<N,StressType> *,
+										  tfel::math::st2tost2<N,StressType> *>::type>
     {
       //! supported tangent operator types;
       typedef typename tfel::meta::GenerateTypeList<tfel::math::t2tost2<N,StressType>,
-						    tfel::math::st2tost2<N,StressType> >::type TOTypes;
+						    tfel::math::st2tost2<N,StressType>,
+						    tfel::math::t2tost2<N,StressType>*,
+						    tfel::math::st2tost2<N,StressType>* >::type TOTypes;
       typedef tfel::utilities::GenTypeBase<TOTypes> GenType;
-
+      /*!
+       * default constructor
+       */
       FiniteStrainBehaviourTangentOperator()
       {}
       FiniteStrainBehaviourTangentOperator(const FiniteStrainBehaviourTangentOperator& src)
@@ -79,29 +83,82 @@ namespace tfel
       FiniteStrainBehaviourTangentOperator(const tfel::math::t2tost2<N,StressType>& D)
 	: GenType(D)
       {}
-
+      FiniteStrainBehaviourTangentOperator(tfel::math::t2tost2<N,StressType>* const D)
+	: GenType(D)
+      {}
       FiniteStrainBehaviourTangentOperator(const tfel::math::st2tost2<N,StressType>& D)
 	: GenType(D)
       {}
-      using GenType::operator=;
+      FiniteStrainBehaviourTangentOperator(tfel::math::st2tost2<N,StressType>* const D)
+	: GenType(D)
+      {}
+      // make the set_uninitialised method public
+      using GenType::set_uninitialised;
+      /*!
+       * assignement operator
+       */
+      FiniteStrainBehaviourTangentOperator&
+      operator = (const tfel::math::t2tost2<N,StressType>& e){
+	using namespace tfel::math;
+	if(this->template is<t2tost2<N,StressType>* >()){
+	  *(this->template get<t2tost2<N,StressType>* >()) = e;
+	} else {
+	  if(!this->template is<t2tost2<N,StressType> >()){
+	    this->template set_uninitialised<t2tost2<N,StressType> >();
+	  }
+	  this->template get<t2tost2<N,StressType> >() = e;
+	}
+	return *this;
+      }
+      /*!
+       * assignement operator
+       */
       template<typename Expr>
       FiniteStrainBehaviourTangentOperator&
       operator = (const tfel::math::T2toST2Expr<tfel::math::t2tost2<N,StressType>,Expr>& e){
 	using namespace tfel::math;
-	if(!this->template is<t2tost2<N,StressType> >()){
-	  this->set(t2tost2<N,StressType>());
+	if(this->template is<t2tost2<N,StressType>* >()){
+	  *(this->template get<t2tost2<N,StressType>* >()) = e;
+	} else {
+	  if(!this->template is<t2tost2<N,StressType> >()){
+	    this->template set_uninitialised<t2tost2<N,StressType> >();
+	  }
+	  this->template get<t2tost2<N,StressType> >() = e;
 	}
-	this->template get<t2tost2<N,StressType> >() = e;
 	return *this;
       }
+      /*!
+       * assignement operator
+       */
+      template<typename Expr>
+      FiniteStrainBehaviourTangentOperator&
+      operator = (const tfel::math::st2tost2<N,StressType>& e){
+	using namespace tfel::math;
+	if(this->template is<st2tost2<N,StressType>* >()){
+	  *(this->template get<st2tost2<N,StressType>* >()) = e;
+	} else {
+	  if(!this->template is<st2tost2<N,StressType> >()){
+	    this->template set_uninitialised<st2tost2<N,StressType> >();
+	  }
+	  this->template get<st2tost2<N,StressType> >() = e;
+	}
+	return *this;
+      }
+      /*!
+       * assignement operator
+       */
       template<typename Expr>
       FiniteStrainBehaviourTangentOperator&
       operator = (const tfel::math::ST2toST2Expr<tfel::math::st2tost2<N,StressType>,Expr>& e){
 	using namespace tfel::math;
-	if(!this->template is<st2tost2<N,StressType> >()){
-	  this->set(st2tost2<N,StressType>());
+	if(this->template is<st2tost2<N,StressType>* >()){
+	  *(this->template get<st2tost2<N,StressType>* >()) = e;
+	} else {
+	  if(!this->template is<st2tost2<N,StressType> >()){
+	    this->template set_uninitialised<st2tost2<N,StressType> >();
+	  }
+	  this->template get<st2tost2<N,StressType> >() = e;
 	}
-	this->template get<st2tost2<N,StressType> >() = e;
 	return *this;
       }
     }; // end of struct FiniteStrainBehaviourTangentOperator

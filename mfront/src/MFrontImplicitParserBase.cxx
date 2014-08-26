@@ -147,40 +147,6 @@ namespace mfront{
     this->readCodeBlock(*this,MechanicalBehaviourData::InitializeJacobian,
 			&MFrontImplicitParserBase::standardModifier,true,true);
   } // end of MFrontImplicitParserBase::treatInitJacobian
-
-  void MFrontImplicitParserBase::treatTangentOperator(void)
-  {
-    using namespace std;
-    const CodeBlockOptions& o = this->readCodeBlock(*this,MechanicalBehaviourData::ComputeTangentOperator,
-						    &MFrontImplicitParserBase::tangentOperatorVariableModifier,
-						    true,true);
-    for(set<Hypothesis>::const_iterator p=o.hypotheses.begin();p!=o.hypotheses.end();++p){
-      this->mb.setAttribute(*p,MechanicalBehaviourData::hasConsistentTangentOperator,true);
-    }
-  } // end of MFrontImplicitParserBase::treatTangentOperator
-
-  void MFrontImplicitParserBase::treatIsTangentOperatorSymmetric(void)
-  {
-    using namespace std;
-    set<Hypothesis> h;
-    this->readHypothesesList(h);
-    bool b = false;
-    this->checkNotEndOfFile("MFrontBehaviourParserCommon::treatIsTangentOperatorSymmetric : ",
-			    "Expected 'true' or 'false'.");
-    if(this->current->value=="true"){
-      b = true;
-    } else if(this->current->value=="false"){
-      b = false;
-    } else {
-      this->throwRuntimeError("MFrontBehaviourParserCommon::treatIsTangentOperatorSymmetric",
-			      "Expected to read 'true' or 'false' instead of '"+this->current->value+".");
-    }
-    ++(this->current);
-    this->readSpecifiedToken("MFrontBehaviourParserCommon::treatIsTangentOperatorSymmetric",";");
-    for(set<Hypothesis>::const_iterator p=h.begin();p!=h.end();++p){
-      this->mb.setAttribute(*p,MechanicalBehaviourData::isConsistentTangentOperatorSymmetric,b);
-    }
-  } // end of MFrontImplicitParserBase::treatIsTangentOperatorSymmetric
   
   void MFrontImplicitParserBase::treatUnknownVariableMethod(const Hypothesis h,
 							    const std::string& n)
@@ -2023,7 +1989,11 @@ namespace mfront{
     this->writeStandardPerformanceProfilingEnd(this->behaviourFile);
     this->behaviourFile << "if(smt!=NOSTIFFNESSREQUESTED){\n";
     if(this->mb.hasAttribute(h,MechanicalBehaviourData::hasConsistentTangentOperator)){
-      this->behaviourFile << "if(!this->computeConsistentTangentOperator(smt)){\n";
+      if(this->mb.getBehaviourType()==MechanicalBehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR){
+	this->behaviourFile << "if(!this->computeConsistentTangentOperator(smflag,smt)){\n";
+      } else {
+	this->behaviourFile << "if(!this->computeConsistentTangentOperator(smt)){\n";
+      }
       if(this->mb.useQt()){        
 	this->behaviourFile << "return MechanicalBehaviour<" << btype << ",hypothesis,Type,use_qt>::FAILURE;\n";
       } else {

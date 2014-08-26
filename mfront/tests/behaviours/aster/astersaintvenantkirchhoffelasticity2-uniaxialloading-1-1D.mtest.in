@@ -1,12 +1,12 @@
 /*! 
- * \file    astersaintvenantkirchhoffelasticity-uniaxialloading-1-1D.mtest
+ * \file    astersaintvenantkirchhoffelasticity2-uniaxialloading-1-1D.mtest
  * \brief
  * \author Helfer Thomas
  * \brief  26 nov. 2013
  */
 
 @ModellingHypothesis 'AxisymmetricalGeneralisedPlaneStrain';
-@Behaviour<aster> '@MFrontAsterBehavioursBuildPath@' 'astersaintvenantkirchhoffelasticity';
+@Behaviour<aster> '@MFrontAsterBehavioursBuildPath@' 'astersaintvenantkirchhoffelasticity2';
 @MaterialProperty<constant> 'YoungModulus'     215.e9;
 @MaterialProperty<constant> 'PoissonRatio'       0.3;
 

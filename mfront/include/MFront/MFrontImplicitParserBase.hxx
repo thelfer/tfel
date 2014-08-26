@@ -168,10 +168,6 @@ namespace mfront{
 
     virtual void treatInitJacobian(void);
 
-    virtual void treatTangentOperator(void);
-
-    virtual void treatIsTangentOperatorSymmetric(void);
-
     virtual void treatMaximumIncrementValuePerIteration(void);
     /*!
      * \return true if the the given variable may have methods

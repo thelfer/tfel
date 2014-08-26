@@ -61,6 +61,7 @@ MFRONTS= DDIF2.mfront                                                      \
 	 ImplicitHayhurst.mfront                                           \
 	 Tvergaard.mfront                                                  \
 	 SaintVenantKirchhoffElasticity.mfront                             \
+	 SaintVenantKirchhoffElasticity2.mfront                            \
 	 LogarithmicStrainElasticity.mfront                                \
 	 LogarithmicStrainElasticity2.mfront                               \
 	 LogarithmicStrainPlasticity.mfront                                \

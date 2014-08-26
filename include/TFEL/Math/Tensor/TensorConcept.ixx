@@ -549,6 +549,79 @@ namespace tfel{
        (tfel::typetraits::IsFundamentalNumericType<typename TensorTraits<T2>::NumType>::cond)),
       stensor<1u,typename StensorTraits<T>::NumType>
       >::type
+    convertCauchyStresstoSecondPiolaKirchhoffStress(const T&  s,
+						    const T2& F)
+    {
+      typedef typename StensorTraits<T>::NumType stress;
+      typedef typename tfel::typetraits::BaseType<stress>::type real;
+      stensor<1u,stress> p;
+      p[0] = s[0]*F[1]*F[2]/(F[0]);
+      p[1] = s[1]*F[0]*F[2]/(F[1]);
+      p[2] = s[2]*F[0]*F[1]/(F[2]);
+      return p;
+    } // end of convertCauchyStresstoSecondPiolaKirchhoffStress
+
+    template<typename T,typename T2>
+    typename tfel::meta::EnableIf<
+      ((tfel::meta::Implements<T,StensorConcept>::cond) &&
+       (StensorTraits<T>::dime==2u)&&
+       (tfel::meta::Implements<T2,TensorConcept>::cond) &&
+       (TensorTraits<T2>::dime==2u)&&
+       (tfel::typetraits::IsFundamentalNumericType<typename TensorTraits<T2>::NumType>::cond)),
+      stensor<2u,typename StensorTraits<T>::NumType>
+      >::type
+    convertCauchyStresstoSecondPiolaKirchhoffStress(const T&  s,
+						    const T2& F)
+    {
+      typedef typename StensorTraits<T>::NumType stress;
+      typedef typename tfel::typetraits::BaseType<stress>::type real;
+      static const real cste = sqrt(real(2));
+      const tensor<2u,typename TensorTraits<T2>::NumType> iF = invert(F);
+      const real J = det(F);
+      stensor<2u,stress> p;
+      s[0] = (p[1]*iF[3]*iF[3]+cste*p[3]*iF[0]*iF[3]+p[0]*iF[0]*iF[0])*J;
+      s[1] = (p[0]*iF[4]*iF[4]+cste*p[3]*iF[1]*iF[4]+p[1]*iF[1]*iF[1])*J;
+      s[2] = p[2]*iF[2]*iF[2]*J;
+      s[3] = ((p[3]*iF[3]+cste*p[0]*iF[0])*iF[4]+cste*p[1]*iF[1]*iF[3]+p[3]*iF[0]*iF[1])*J;
+      return p;
+    } // end of convertCauchyStresstoSecondPiolaKirchhoffStress
+
+    template<typename T,typename T2>
+    typename tfel::meta::EnableIf<
+      ((tfel::meta::Implements<T,StensorConcept>::cond) &&
+       (StensorTraits<T>::dime==3u)&&
+       (tfel::meta::Implements<T2,TensorConcept>::cond) &&
+       (TensorTraits<T2>::dime==3u)&&
+       (tfel::typetraits::IsFundamentalNumericType<typename TensorTraits<T2>::NumType>::cond)),
+      stensor<3u,typename StensorTraits<T>::NumType>
+      >::type
+    convertCauchyStresstoSecondPiolaKirchhoffStress(const T&  s,
+						    const T2& F)
+    {
+      typedef typename StensorTraits<T>::NumType stress;
+      typedef typename tfel::typetraits::BaseType<stress>::type real;
+      static const real cste  = sqrt(real(2));
+      const tensor<3u,typename TensorTraits<T2>::NumType> iF = invert(F);
+      const real J = det(F);
+      stensor<3u,stress> p;
+      s[0] = (p[2]*iF[5]*iF[5]+(cste*p[5]*iF[3]+cste*p[4]*iF[0])*iF[5]+p[1]*iF[3]*iF[3]+cste*p[3]*iF[0]*iF[3]+p[0]*iF[0]*iF[0])*J;
+      s[1] = (p[2]*iF[7]*iF[7]+(cste*p[4]*iF[4]+cste*p[5]*iF[1])*iF[7]+p[0]*iF[4]*iF[4]+cste*p[3]*iF[1]*iF[4]+p[1]*iF[1]*iF[1])*J;
+      s[2] = (p[1]*iF[8]*iF[8]+(cste*p[3]*iF[6]+cste*p[5]*iF[2])*iF[8]+p[0]*iF[6]*iF[6]+cste*p[4]*iF[2]*iF[6]+p[2]*iF[2]*iF[2])*J;
+      s[3] = ((cste*p[2]*iF[5]+p[5]*iF[3]+p[4]*iF[0])*iF[7]+(p[4]*iF[4]+p[5]*iF[1])*iF[5]+(p[3]*iF[3]+cste*p[0]*iF[0])*iF[4]+cste*p[1]*iF[1]*iF[3]+p[3]*iF[0]*iF[1])*J;
+      s[4] = ((p[5]*iF[5]+cste*p[1]*iF[3]+p[3]*iF[0])*iF[8]+(p[4]*iF[5]+p[3]*iF[3]+cste*p[0]*iF[0])*iF[6]+cste*p[2]*iF[2]*iF[5]+p[5]*iF[2]*iF[3]+p[4]*iF[0]*iF[2])*J;
+      s[5] = ((p[5]*iF[7]+p[3]*iF[4]+cste*p[1]*iF[1])*iF[8]+(p[4]*iF[6]+cste*p[2]*iF[2])*iF[7]+(cste*p[0]*iF[4]+p[3]*iF[1])*iF[6]+p[4]*iF[2]*iF[4]+p[5]*iF[1]*iF[2])*J;
+      return p;
+    } // end of convertCauchyStresstoSecondPiolaKirchhoffStress
+
+    template<typename T,typename T2>
+    typename tfel::meta::EnableIf<
+      ((tfel::meta::Implements<T,StensorConcept>::cond) &&
+       (StensorTraits<T>::dime==1u)&&
+       (tfel::meta::Implements<T2,TensorConcept>::cond) &&
+       (TensorTraits<T2>::dime==1u)&&
+       (tfel::typetraits::IsFundamentalNumericType<typename TensorTraits<T2>::NumType>::cond)),
+      stensor<1u,typename StensorTraits<T>::NumType>
+      >::type
     convertSecondPiolaKirchhoffStressToCauchyStress(const T&  p,
 						    const T2& F)
     {

@@ -424,12 +424,7 @@ namespace tfel{
 	  tmp = src;
 	} else {
 	  // We create a new object of type T1 by calling the copy constructor
-	  if(this->index!=TLSize<List>::value){
-	    // destroy the current object
-	    void * tmp = reinterpret_cast<void*>(&(this->container.buffer[0]));
-	    (*(GenTypeBase::methods.destroyMethod[this->index]))(tmp);
-	  }
-	  this->index=TLFindEltPos<T1,List>::value;
+	  this->template set_uninitialised<T1>();
 	  void * p = reinterpret_cast<void*>(&(this->container.buffer[0]));
 	  // the magic of placement new...
 	  new (p) T1(src);
@@ -544,6 +539,26 @@ namespace tfel{
       //! a type properly aligned.
       typedef typename tfel::utilities::internals::AlignedPOD<List>::type Align;
       //! memory where objects are holded
+      //! set the value of the GenType.
+      /*
+       * \param const T1&, the value affected to the GenType.
+       * \pre   T1 must be a type that the GenType can hold.
+       */
+      template<typename T1>
+      TFEL_INLINE
+      typename tfel::meta::EnableIf<
+	tfel::meta::TLCountNbrOfT<T1,List>::value==1, 
+	void >::type 
+      set_uninitialised(void)
+      {
+	using namespace tfel::meta;
+	if(this->index!=TLSize<List>::value){
+	  // destroy the current object
+	  void * tmp = reinterpret_cast<void*>(&(this->container.buffer[0]));
+	  (*(GenTypeBase::methods.destroyMethod[this->index]))(tmp);
+	}
+	this->index=TLFindEltPos<T1,List>::value;
+      }
       union 
       {
 	//! the buffer where objects are hold.

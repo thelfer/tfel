@@ -73,6 +73,7 @@ set(mfront_tests_SOURCES
   Burger
   Tvergaard
   SaintVenantKirchhoffElasticity
+  SaintVenantKirchhoffElasticity2
   CompressibleNeoHookeanBehaviour
   IncompressibleMooneyRivlinBehaviour
   IncompressiblePlaneStressMooneyRivlinBehaviour

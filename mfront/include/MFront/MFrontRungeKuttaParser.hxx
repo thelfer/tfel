@@ -60,12 +60,8 @@ namespace mfront{
 
     virtual void treatComputeStress(void);
 
-    void
+    virtual void
     treatUpdateAuxiliaryStateVariables(void);
-
-    virtual void treatTangentOperator(void);
-
-    virtual void treatIsTangentOperatorSymmetric(void);
 
     virtual void treatDerivative(void);
 

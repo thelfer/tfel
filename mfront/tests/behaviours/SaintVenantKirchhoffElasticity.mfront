@@ -2,69 +2,74 @@
 @Behaviour SaintVenantKirchhoffElasticity;
 @Author T. Helfer;
 @Date 19/10/2013;
+@Description{
+  "La loi de SaintVenantKirchhoffElasticity est une extension "
+  "de la loi de Hooke au cas des grandes rotations. "
+  "Elle ne peut être utilisée que pour des petites déformations."
+}
 
 @MaterialProperty stress young;
 young.setGlossaryName("YoungModulus");
 @MaterialProperty real nu;
 nu.setGlossaryName("PoissonRatio");
 
-@LocalVariable stress lambda;
-@LocalVariable stress mu;
+@LocalVariable stress lambda; //<! Premier coefficient de Lamé
+@LocalVariable stress mu;     //<! Second  coefficient de Lamé
+
+// Nous déclarons le second tenseur de Piola-Kirchhoff en tant que
+// variable locale pour le réutiliser dans le calcul de l'opérateur
+// tangent
+@LocalVariable StressStensor s; //<! Second tenseur des contraintes de Piola-Kirchhoff
 
 @Includes{
 #include"TFEL/Material/Lame.hxx"
 }
 
-@ProvidesSymmetricTangentOperator;
+/*!
+ * Nous décrivons ici l'intégration de la loi. 
+ */
 @Integrator{
   using namespace tfel::material::lame;
-  // Lame coefficients
+  /*! 
+   * Nous commençons par calculer les coefficients de Lame \(\lambda\)
+   * et \(\mu\)~:
+   * \begin{aligned}
+   *   \lambda  &= \\
+   *   \mu      &= \\
+   * \end{aligned}
+   */
   lambda = computeLambda(young,nu);
   mu     = computeMu(young,nu);
-  // Green-Lagrange tensor
+  /*!
+   * Nous calculons ensuite le tenseur de Green-Lagrange
+   */
   const StrainStensor e = computeGreenLagrangeTensor(F1);
   // second Piola–Kirchhoff stress
-  const StressStensor s = lambda*trace(e)*StrainStensor::Id()+2*mu*e;
-  // convertion to Cauchy stress tensor
+  s = lambda*trace(e)*StrainStensor::Id()+2*mu*e;
+  // conversion to Cauchy stress tensor
   sig = convertSecondPiolaKirchhoffStressToCauchyStress(s,F1);
-  if(computeTangentOperator_){
-    StiffnessTensor De = lambda*Stensor4::IxI()+2*mu*Stensor4::Id();
-    if(smflag==DS_DEGL){
-      Dt = De;
-    } else if(smflag==DS_DC){
-      Dt = 0.5*De;
-    } else if(smflag==DS_DF){
-      Dt = 0.5*De*t2tost2<N,strain>::dCdF(F1);
-    } else if (smflag==DS_DDF){
-      Dt = 0.5*De*t2tost2<N,strain>::dCdF(F1)*t2tot2<N,real>::tpld(F0);
-    } else if (smflag==DTAU_DF){
-      t2tost2<N,stress> dS = 0.5*De*t2tost2<N,strain>::dCdF(F1);
-      t2tost2<N,stress> dtau;
-      computePushForwardDerivative(dtau,dS,s,F1); 
-      Dt = dtau;
-    } else if (smflag==DTAU_DDF){
-      t2tost2<N,stress> dS = 0.5*De*t2tost2<N,strain>::dCdF(F1);
-      t2tost2<N,stress> dtau;
-      computePushForwardDerivative(dtau,dS,s,F1);
-      Dt = dtau*t2tot2<N,real>::tpld(F0); 
-    } else if (smflag==DSIG_DF){
-      t2tost2<N,stress> dS = 0.5*De*t2tost2<N,strain>::dCdF(F1);
-      t2tost2<N,stress> dtau;
-      t2tost2<N,stress> dsig;
-      computePushForwardDerivative(dtau,dS,s,F1); 
-      computeCauchyStressDerivativeFromKirchoffStressDerivative(dsig,dtau,sig,F1); 
-      Dt = dsig;
-    } else if (smflag==DSIG_DDF){
-      t2tost2<N,stress> dS = 0.5*De*t2tost2<N,strain>::dCdF(F1);
-      t2tost2<N,stress> dtau;
-      t2tost2<N,stress> dsig;
-      computePushForwardDerivative(dtau,dS,s,F1); 
-      computeCauchyStressDerivativeFromKirchoffStressDerivative(dsig,dtau,sig,F1); 
-      Dt = dsig*t2tot2<N,real>::tpld(F0); 
-    } else {
-      string msg("SaintVenantKirchhoffElasticity : "
-		 "unsupported tangent operator");
-      throw(runtime_error(msg));
-    }
-  }
+}
+
+/*!
+ * Nous fournissons l'opérateur tangent le plus naturel pour cette
+ * loi.
+ */
+@TangentOperator<DS_DEGL>{
+  Dt = lambda*Stensor4::IxI()+2*mu*Stensor4::Id();
+}
+
+/*!
+ * Nous fournissons un autre l'opérateur tangent, proche de celui
+ * utilisé par le Code-Aster. Cet opérateur aurait pu être calculé
+ * automatiquement par MFront, mais cela impliquait de recalculer le
+ * second tenseur des contraintes de Piola-Kirchhoff à partir des
+ * contraintes de Cauchy. Nous utilisons ici le fait que le second
+ * tenseur de Piola-Kirchhoff est connu à la fin de l'intégration.
+ */
+@TangentOperator<DTAU_DF>{
+  StiffnessTensor De = lambda*Stensor4::IxI()+2*mu*Stensor4::Id();
+  t2tost2<N,stress> dS = 0.5*De*t2tost2<N,strain>::dCdF(F1);
+  t2tost2<N,stress> dtau;
+  computePushForwardDerivative(dtau,dS,s,F1); 
+  Dt = dtau;
 }

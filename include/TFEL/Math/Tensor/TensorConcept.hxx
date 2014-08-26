@@ -378,6 +378,45 @@ namespace tfel{
     push_forward(const T&,
 		 const T2&);
 
+  template<typename T,typename T2>
+    TFEL_MATH_INLINE2 
+    typename tfel::meta::EnableIf<
+      ((tfel::meta::Implements<T,StensorConcept>::cond) &&
+       (StensorTraits<T>::dime==1u)&&
+       (tfel::meta::Implements<T2,TensorConcept>::cond) &&
+       (TensorTraits<T2>::dime==1u)&&
+       (tfel::typetraits::IsFundamentalNumericType<typename TensorTraits<T2>::NumType>::cond)),
+      stensor<1u,typename StensorTraits<T>::NumType>
+      >::type
+    convertCauchyStresstoSecondPiolaKirchhoffStress(const T&,
+						    const T2&);
+
+    template<typename T,typename T2>
+    TFEL_MATH_INLINE2 
+    typename tfel::meta::EnableIf<
+      ((tfel::meta::Implements<T,StensorConcept>::cond) &&
+       (StensorTraits<T>::dime==2u)&&
+       (tfel::meta::Implements<T2,TensorConcept>::cond) &&
+       (TensorTraits<T2>::dime==2u)&&
+       (tfel::typetraits::IsFundamentalNumericType<typename TensorTraits<T2>::NumType>::cond)),
+      stensor<2u,typename StensorTraits<T>::NumType>
+      >::type
+    convertCauchyStresstoSecondPiolaKirchhoffStress(const T&,
+						    const T2&);
+
+    template<typename T,typename T2>
+    TFEL_MATH_INLINE2 
+    typename tfel::meta::EnableIf<
+      ((tfel::meta::Implements<T,StensorConcept>::cond) &&
+       (StensorTraits<T>::dime==3u)&&
+       (tfel::meta::Implements<T2,TensorConcept>::cond) &&
+       (TensorTraits<T2>::dime==3u)&&
+       (tfel::typetraits::IsFundamentalNumericType<typename TensorTraits<T2>::NumType>::cond)),
+      stensor<3u,typename StensorTraits<T>::NumType>
+      >::type
+    convertCauchyStresstoSecondPiolaKirchhoffStress(const T&,
+						    const T2&);
+  
     template<typename T,typename T2>
     TFEL_MATH_INLINE2 
     typename tfel::meta::EnableIf<

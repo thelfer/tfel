@@ -76,30 +76,6 @@ namespace mfront{
     this->disableCallBack("@ComputedVar");
   }
 
-  void MFrontRungeKuttaParser::treatTangentOperator(void)
-  {
-    using namespace std;
-    const CodeBlockOptions& o = this->readCodeBlock(*this,MechanicalBehaviourData::ComputeTangentOperator,
-						    &MFrontRungeKuttaParser::standardModifier,true,true);
-    for(set<Hypothesis>::const_iterator p=o.hypotheses.begin();p!=o.hypotheses.end();++p){
-      this->mb.setAttribute(*p,MechanicalBehaviourData::hasConsistentTangentOperator,true);
-    }
-  } // end of MFrontRungeKuttaParser::treatTangentOperator
-
-  void MFrontRungeKuttaParser::treatIsTangentOperatorSymmetric(void)
-  {
-    using namespace std;
-    set<Hypothesis> h;
-    this->readHypothesesList(h);
-    this->checkNotEndOfFile("MFrontRungeKuttaParser::treatIsTangentOperatorSymmetric : ",
-  			    "Expected 'true' or 'false'.");
-    bool b = this->readBooleanValue("MFrontRungeKuttaParser::treatIsTangentOperatorSymmetric");
-    this->readSpecifiedToken("MFrontRungeKuttaParser::treatIsTangentOperatorSymmetric",";");
-    for(set<Hypothesis>::const_iterator ph = h.begin();ph!=h.end();++ph){
-      this->mb.setAttribute(*ph,MechanicalBehaviourData::isConsistentTangentOperatorSymmetric,b);
-    }
-  } // end of MFrontRungeKuttaParser::treatTangentOperator
-
   void MFrontRungeKuttaParser::writeBehaviourParserSpecificIncludes(void)
   {
     using namespace std;
@@ -2180,7 +2156,11 @@ namespace mfront{
     this->writeStandardPerformanceProfilingEnd(this->behaviourFile);
     this->behaviourFile << "if(smt!=NOSTIFFNESSREQUESTED){\n";
     if(this->mb.hasAttribute(h,MechanicalBehaviourData::hasConsistentTangentOperator)){
-      this->behaviourFile << "if(!this->computeConsistentTangentOperator(smt)){\n";
+      if(this->mb.getBehaviourType()==MechanicalBehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR){
+	this->behaviourFile << "if(!this->computeConsistentTangentOperator(smflag,smt)){\n";
+      } else {
+	this->behaviourFile << "if(!this->computeConsistentTangentOperator(smt)){\n";
+      }
       if(this->mb.useQt()){        
 	this->behaviourFile << "return MechanicalBehaviour<" << btype << ",hypothesis,Type,use_qt>::FAILURE;\n";
       } else {

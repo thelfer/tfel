@@ -31,6 +31,7 @@ namespace mfront
 									 const std::vector<FiniteStrainBehaviourTangentOperatorConversion>& converters)
   {
     using std::find;
+    using std::vector;
     vector<TangentOperatorFlag> current_path(cp);
     current_path.push_back(b);
     vector<FiniteStrainBehaviourTangentOperatorConversion>::const_iterator pc;

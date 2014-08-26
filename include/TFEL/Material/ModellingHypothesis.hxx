@@ -72,7 +72,12 @@ namespace tfel
        */
       static std::string
       toUpperCaseString(const Hypothesis);
-
+      /*!
+       * \return true if the given string stands for a modelling
+       * hypothesis
+       */
+      static bool
+      isModellingHypothesis(const std::string&);
     }; // end of struct ModellingHypothesis
 
     /*!

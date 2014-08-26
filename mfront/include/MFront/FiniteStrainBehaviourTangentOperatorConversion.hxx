@@ -46,21 +46,35 @@ namespace mfront
      * \return the conversion result point
      */
     TangentOperatorFlag to(void) const;
+    /*!
+     * \return ther intermediate conversion code
+     */
+    const std::string&
+    getIntermediateConversion(void) const;
+    /*!
+     * \return ther intermediate conversion code
+     */
+    const std::string&
+    getFinalConversion(void) const;
   protected:
     /*!
-     * \param[in] f : conversion starting point
-     * \param[in] t : conversion result
-     * \param[in] s : conversion code
+     * \param[in] f  : conversion starting point
+     * \param[in] t  : conversion result
+     * \param[in] s  : intermediate conversion code
+     * \param[in] s2 : final conversion code
      */
     FiniteStrainBehaviourTangentOperatorConversion(const TangentOperatorFlag,
 						   const TangentOperatorFlag,
+						   const std::string&,
 						   const std::string&);
     //! starting point
     TangentOperatorFlag b;
     //! result
     TangentOperatorFlag e;
-    //! code associated with the conversion
+    //! code associated with the intermediate conversion
     std::string c;
+    //! code associated with the final conversion
+    std::string cf;
   };
 
 } // end of namespace mfront

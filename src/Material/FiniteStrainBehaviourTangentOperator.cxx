@@ -38,9 +38,33 @@ namespace tfel{
 			 FiniteStrainBehaviourTangentOperatorBase::Flag> >();
     } // end of getAvailableFiniteStrainBehaviourTangentOperatorConvertions
 
-   std::string
-   convertFiniteStrainBehaviourTangentOperatorFlagToString(const FiniteStrainBehaviourTangentOperatorBase::Flag f)
-   {
+    std::string
+    getFiniteStrainBehaviourTangentOperatorFlagType(const FiniteStrainBehaviourTangentOperatorBase::Flag f)
+    {
+      using namespace std;
+      switch(f){
+      case FiniteStrainBehaviourTangentOperatorBase::DSIG_DF:
+      case FiniteStrainBehaviourTangentOperatorBase::DSIG_DDF:
+      case FiniteStrainBehaviourTangentOperatorBase::DTAU_DF:
+      case FiniteStrainBehaviourTangentOperatorBase::DTAU_DDF:
+      case FiniteStrainBehaviourTangentOperatorBase::DS_DF:
+      case FiniteStrainBehaviourTangentOperatorBase::DS_DDF:
+	return "t2tost2";
+      case FiniteStrainBehaviourTangentOperatorBase::DSIG_DD:
+      case FiniteStrainBehaviourTangentOperatorBase::DSIG_DDE:
+      case FiniteStrainBehaviourTangentOperatorBase::DS_DC:
+      case FiniteStrainBehaviourTangentOperatorBase::DS_DEGL:
+	return "st2tost2";
+      }
+      string msg("getFiniteStrainBehaviourTangentOperatorFlagType : "
+		 "unsupported FiniteStrainBehaviourTangentOperatorBase flag ");
+      throw(runtime_error(msg));
+      return "";
+    }
+    
+    std::string
+    convertFiniteStrainBehaviourTangentOperatorFlagToString(const FiniteStrainBehaviourTangentOperatorBase::Flag f)
+    {
       using namespace std;
       switch(f){
       case FiniteStrainBehaviourTangentOperatorBase::DSIG_DF:

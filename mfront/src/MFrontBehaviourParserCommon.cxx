@@ -30,7 +30,7 @@
 #include"MFront/MFrontMFrontLawInterface.hxx"
 #include"MFront/MFrontBehaviourInterfaceFactory.hxx"
 #include"MFront/MFrontBehaviourAnalyserFactory.hxx"
-
+#include"MFront/FiniteStrainBehaviourTangentOperatorConversionPath.hxx"
 #include"MFront/MFrontBehaviourParserCommon.hxx"
 
 namespace mfront{
@@ -117,6 +117,7 @@ namespace mfront{
   {
     using namespace std;
     using namespace tfel::utilities;
+    using namespace tfel::material;
     bool cposition = false;
     bool cmode     = false;
     o.hypotheses.clear();
@@ -173,12 +174,12 @@ namespace mfront{
 	}
 	cposition = true;
 	o.p = MechanicalBehaviourData::AT_END;
+      } else if((p->flag==Token::String)&&(p->value.substr(1,p->value.size()-2)=="+")){
+	this->appendToHypothesesList(o.hypotheses,p->value.substr(1,p->value.size()-2));
+      } else if(ModellingHypothesis::isModellingHypothesis(p->value)){
+	this->appendToHypothesesList(o.hypotheses,p->value);
       } else {
-	if(p->flag==Token::String){
-	  this->appendToHypothesesList(o.hypotheses,p->value.substr(1,p->value.size()-2));
-	} else {
-	  this->appendToHypothesesList(o.hypotheses,p->value);
-	}
+	o.untreated.push_back(*p);
       }
     }
     if(o.hypotheses.empty()){
@@ -587,6 +588,85 @@ namespace mfront{
     return var;
   } // end of MFrontBehaviourParserCommon::standardModifier
     
+  std::string
+  MFrontBehaviourParserCommon::tangentOperatorVariableModifier(const Hypothesis h,
+							       const std::string& var,
+							       const bool addThisPtr)
+  {
+    return this->standardModifier(h,var,addThisPtr);
+  } // end of MFrontBehaviourParserCommon::tangentOperatorVariableModifier
+  
+  void MFrontBehaviourParserCommon::treatTangentOperator(void)
+  {
+    using namespace std;
+    using namespace tfel::material;
+    using namespace tfel::utilities;
+    CodeBlockOptions o;
+    this->readCodeBlockOptions(o,true);
+    if(this->mb.getBehaviourType()==MechanicalBehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR){
+      vector<FiniteStrainBehaviourTangentOperatorBase::Flag> to = getFiniteStrainBehaviourTangentOperatorFlags();
+      vector<FiniteStrainBehaviourTangentOperatorBase::Flag>::const_iterator pto;
+      bool found = false;
+      if(o.untreated.size()!=1u){
+	ostringstream msg;
+	msg << "MFrontBehaviourParserCommon::treatTangentOperator : "
+	    << "tangent operator type is undefined. Valid tanget operator type are :" << endl;
+	for(pto=to.begin();pto!=to.end();++pto){
+	  msg << "- " << convertFiniteStrainBehaviourTangentOperatorFlagToString(*pto) << " : "
+	      << getFiniteStrainBehaviourTangentOperatorDescription(*pto) << endl;
+	}
+	throw(runtime_error(msg.str()));
+      }
+      if(o.untreated[0].flag!=Token::Standard){
+	string msg("MFrontBehaviourParserCommon::treatTangentOperator : "
+		   "invalid option '"+o.untreated[0].value+"'");
+	throw(runtime_error(msg));
+      }
+      const string& ktype = o.untreated[0].value;
+      for(pto=to.begin();(pto!=to.end())&&(!found);++pto){
+	found = (ktype==convertFiniteStrainBehaviourTangentOperatorFlagToString(*pto));
+      }
+      if(!found){
+	ostringstream msg;
+	msg << "MFrontBehaviourParserCommon::treatTangentOperator : "
+	    << "invalid tangent operator type '"+ktype+"'. Valid tanget operator type are :" << endl;
+	for(pto=to.begin();pto!=to.end();++pto){
+	  msg << "- " << convertFiniteStrainBehaviourTangentOperatorFlagToString(*pto) << " : "
+	      << getFiniteStrainBehaviourTangentOperatorDescription(*pto) << endl;
+	}
+	throw(runtime_error(msg.str()));
+      }
+      this->readCodeBlock(*this,o,MechanicalBehaviourData::ComputeTangentOperator+"-"+ktype,
+			  &MFrontBehaviourParserCommon::tangentOperatorVariableModifier,true);
+      for(set<Hypothesis>::const_iterator p=o.hypotheses.begin();p!=o.hypotheses.end();++p){
+	if(!this->mb.hasAttribute(*p,MechanicalBehaviourData::hasConsistentTangentOperator)){
+	  this->mb.setAttribute(*p,MechanicalBehaviourData::hasConsistentTangentOperator,true);
+	}
+      }
+    } else {
+      this->treatUnsupportedCodeBlockOptions(o);
+      this->readCodeBlock(*this,o,MechanicalBehaviourData::ComputeTangentOperator,
+			  &MFrontBehaviourParserCommon::tangentOperatorVariableModifier,true);
+      for(set<Hypothesis>::const_iterator p=o.hypotheses.begin();p!=o.hypotheses.end();++p){
+	this->mb.setAttribute(*p,MechanicalBehaviourData::hasConsistentTangentOperator,true);
+      }
+    }
+  } // end of MFrontBehaviourParserCommon::treatTangentOperator
+
+  void MFrontBehaviourParserCommon::treatIsTangentOperatorSymmetric(void)
+  {
+    using namespace std;
+    set<Hypothesis> h;
+    this->readHypothesesList(h);
+    this->checkNotEndOfFile("MFrontBehaviourParserCommon::treatIsTangentOperatorSymmetric : ",
+  			    "Expected 'true' or 'false'.");
+    bool b = this->readBooleanValue("MFrontBehaviourParserCommon::treatIsTangentOperatorSymmetric");
+    this->readSpecifiedToken("MFrontBehaviourParserCommon::treatIsTangentOperatorSymmetric",";");
+    for(set<Hypothesis>::const_iterator ph = h.begin();ph!=h.end();++ph){
+      this->mb.setAttribute(*ph,MechanicalBehaviourData::isConsistentTangentOperatorSymmetric,b);
+    }
+  } // end of MFrontBehaviourParserCommon::treatTangentOperator
+
   void
   MFrontBehaviourParserCommon::treatMaterial(void)
   {
@@ -1249,11 +1329,6 @@ namespace mfront{
     this->readStringList(this->interfaces);
   } // end of MFrontBehaviourParserCommon::treatInterface
 
-  // void MFrontBehaviourParserCommon::treatAnalyser(void)
-  // {
-  //   this->readStringList(this->analysers);
-  // } // end of MFrontBehaviourParserCommon::treatAnalyser
-
   void
   MFrontBehaviourParserCommon::setInterfaces(const std::set<std::string>& i)
   {
@@ -1524,6 +1599,11 @@ namespace mfront{
   void
   MFrontBehaviourParserCommon::registerDefaultVarNames(void)
   {
+    using namespace std;
+    using namespace tfel::material;
+    // all available tangent operators for finite strain behaviours
+    const vector<FiniteStrainBehaviourTangentOperatorBase::Flag> tos(getFiniteStrainBehaviourTangentOperatorFlags());
+    vector<FiniteStrainBehaviourTangentOperatorBase::Flag>::const_iterator pt;
     this->registerVariable("D",false);
     this->registerVariable("Dt",false);
     this->registerVariable("T",false);
@@ -1547,6 +1627,13 @@ namespace mfront{
     this->reserveName("getTangentOperator",false);
     this->reserveName("getTimeStepScalingFactor",false);
     this->reserveName("computeConsistentTangentOperator",false);
+    for(pt=tos.begin();pt!=tos.end();++pt){
+      const string ktype=convertFiniteStrainBehaviourTangentOperatorFlagToString(*pt);
+      this->reserveName(ktype,false);
+      this->reserveName("computeConsistentTangentOperator_"+ktype,false);
+      this->reserveName("tangentOperator_"+ktype,false);
+    }
+    this->reserveName("tangentOperator_sk2",false);
     this->reserveName("computePredictionOperator",false);
     this->reserveName("computeTangentOperator_",false);
     this->reserveName("smt",false);
@@ -2678,6 +2765,31 @@ namespace mfront{
     }
   } // end of  MFrontBehaviourParserCommon::writeBehaviourUpdateAuxiliaryStateVariables
 
+  bool
+  MFrontBehaviourParserCommon::hasUserDefinedTangentOperatorCode(const Hypothesis h) const
+  {
+    using namespace std;
+    using namespace tfel::material;
+    if(this->mb.getBehaviourType()==MechanicalBehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR){
+      // all available tangent operators for finite strain behaviours
+      const vector<FiniteStrainBehaviourTangentOperatorBase::Flag> tos(getFiniteStrainBehaviourTangentOperatorFlags());
+      vector<FiniteStrainBehaviourTangentOperatorBase::Flag>::const_iterator pt;
+      // search tangent operators defined by the user
+      vector<FiniteStrainBehaviourTangentOperatorBase::Flag> ktos;
+      for(pt=tos.begin();pt!=tos.end();++pt){
+	const string ktype=convertFiniteStrainBehaviourTangentOperatorFlagToString(*pt);
+	if(this->mb.hasCode(h,MechanicalBehaviourData::ComputeTangentOperator+'-'+ktype)){
+	  return true;
+	}
+      }
+    } else {
+      if(this->mb.hasCode(h,MechanicalBehaviourData::ComputeTangentOperator)){
+	return true;
+      }
+    }
+    return false;
+  } // end of MFrontBehaviourParserCommon::hasUserDefinedTangentOperatorCode
+
   void MFrontBehaviourParserCommon::writeBehaviourIntegrator(const Hypothesis h) {
     using namespace std;
     const string btype = this->convertBehaviourTypeToString();
@@ -2721,6 +2833,21 @@ namespace mfront{
       if(p->varCategory==BoundsDescription::StateVariable){
     	p->writeBoundsChecks(this->behaviourFile);
       }
+    }
+    if(this->hasUserDefinedTangentOperatorCode(h)){
+      this->behaviourFile << "if(computeTangentOperator_){" << endl;
+      if(this->mb.getBehaviourType()==MechanicalBehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR){
+	this->behaviourFile << "if(!this->computeConsistentTangentOperator(smflag,smt)){\n";
+      } else {
+	this->behaviourFile << "if(!this->computeConsistentTangentOperator(smt)){\n";
+      }
+      if(this->mb.useQt()){        
+	this->behaviourFile << "return MechanicalBehaviour<" << btype << ",hypothesis,Type,use_qt>::FAILURE;\n";
+      } else {
+	this->behaviourFile << "return MechanicalBehaviour<" << btype << ",hypothesis,Type,false>::FAILURE;\n";
+      }
+      this->behaviourFile << "}\n";
+      this->behaviourFile << "}\n";
     }
     if(this->mb.useQt()){        
       this->behaviourFile << "return MechanicalBehaviour<" << btype << ",hypothesis,Type,use_qt>::SUCCESS;" << endl;
@@ -3910,18 +4037,112 @@ namespace mfront{
 
   void MFrontBehaviourParserCommon::writeBehaviourComputeTangentOperator(const Hypothesis h)
   {
-    if(this->mb.hasCode(h,MechanicalBehaviourData::ComputeTangentOperator)){
-      this->behaviourFile << "bool computeConsistentTangentOperator(const SMType smt){\n";
-      this->behaviourFile << "using namespace std;\n";
-      this->behaviourFile << "using namespace tfel::math;\n";
-      this->behaviourFile << "using std::vector;\n";
-      writeMaterialLaws("MFrontImplicitParserBase::writeBehaviourIntegrator",
-			this->behaviourFile,this->mb.getMaterialLaws());
-      this->writeStandardPerformanceProfiling(this->behaviourFile,
-					      MechanicalBehaviourData::ComputeTangentOperator);
-      this->behaviourFile << this->mb.getCode(h,MechanicalBehaviourData::ComputeTangentOperator).code << '\n';
-      this->behaviourFile << "return true;\n";
-      this->behaviourFile << "}\n\n";
+    using namespace std;
+    using namespace tfel::material;
+    if(this->mb.getBehaviourType()==MechanicalBehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR){
+      // all available tangent operators for finite strain behaviours
+      const vector<FiniteStrainBehaviourTangentOperatorBase::Flag> tos(getFiniteStrainBehaviourTangentOperatorFlags());
+      vector<FiniteStrainBehaviourTangentOperatorBase::Flag>::const_iterator pt;
+      // all known converters
+      const vector<FiniteStrainBehaviourTangentOperatorConversion> converters =
+	FiniteStrainBehaviourTangentOperatorConversion::getAvailableFiniteStrainBehaviourTangentOperatorConversions();
+      // tangent operators defined by the user
+      vector<FiniteStrainBehaviourTangentOperatorBase::Flag> ktos;
+      for(pt=tos.begin();pt!=tos.end();++pt){
+	const string ktype=convertFiniteStrainBehaviourTangentOperatorFlagToString(*pt);
+	if(this->mb.hasCode(h,MechanicalBehaviourData::ComputeTangentOperator+'-'+ktype)){
+	  ktos.push_back(*pt);
+	}
+      }
+      if(!ktos.empty()){
+	// computing all the conversion paths starting from user defined ones
+	vector<FiniteStrainBehaviourTangentOperatorConversionPath> paths;
+	vector<FiniteStrainBehaviourTangentOperatorBase::Flag>::const_iterator pk;
+	for(pk=ktos.begin();pk!=ktos.end();++pk){
+	  const vector<FiniteStrainBehaviourTangentOperatorConversionPath> kpaths = 
+	    FiniteStrainBehaviourTangentOperatorConversionPath::getConversionsPath(*pk,ktos,converters);
+	  paths.insert(paths.end(),kpaths.begin(),kpaths.end());
+	}
+	for(pt=tos.begin();pt!=tos.end();++pt){
+	  const string ktype=convertFiniteStrainBehaviourTangentOperatorFlagToString(*pt);
+	  if(find(ktos.begin(),ktos.end(),*pt)!=ktos.end()){
+	    this->behaviourFile << "bool computeConsistentTangentOperator_" << ktype << "(const SMType smt){" << endl;
+	    this->behaviourFile << "using namespace std;" << endl;
+	    this->behaviourFile << "using namespace tfel::math;" << endl;
+	    this->behaviourFile << "using std::vector;" << endl;
+	    writeMaterialLaws("MFrontBehaviourParserCommon::writeBehaviourComputeTangentOperator",
+			      this->behaviourFile,this->mb.getMaterialLaws());
+	    this->behaviourFile << this->mb.getCode(h,MechanicalBehaviourData::ComputeTangentOperator+"-"+ktype).code << '\n';
+	    this->behaviourFile << "return true;" << endl;
+	    this->behaviourFile << "}" << endl << endl;
+	  } else {
+	    const FiniteStrainBehaviourTangentOperatorConversionPath path =
+	      FiniteStrainBehaviourTangentOperatorConversionPath::getShortestPath(paths,*pt);
+	    if(path.empty()){
+	      this->behaviourFile << "bool computeConsistentTangentOperator_" << ktype << "(const SMType){" << endl;
+	      this->behaviourFile << "using namespace std;" << endl;
+	      this->behaviourFile << "string msg(\"" << this->mb.getClassName()
+				  << "::computeConsistentTangentOperator_" << ktype << " : \");" << endl
+				  << "msg += \"computing the tangent operator '"
+				  << ktype << "' is not supported\";" << endl
+				  << "throw(runtime_error(msg));" << endl;
+	      this->behaviourFile << "return false;" << endl;
+	      this->behaviourFile << "}" << endl << endl;
+	    } else {
+	      this->behaviourFile << "bool computeConsistentTangentOperator_" << ktype << "(const SMType smt){" << endl;
+	      FiniteStrainBehaviourTangentOperatorConversionPath::const_iterator pc = path.begin();
+	      this->behaviourFile << "using namespace tfel::math;" << endl;
+	      this->behaviourFile << "// computing " << convertFiniteStrainBehaviourTangentOperatorFlagToString(pc->from()) << endl;
+	      const string k = convertFiniteStrainBehaviourTangentOperatorFlagToString(pc->from());
+	      this->behaviourFile << "this->computeConsistentTangentOperator_" << k << "(smt);" << endl;
+	      this->behaviourFile << "const " << getFiniteStrainBehaviourTangentOperatorFlagType(pc->from()) << "<N,stress>"
+				  << " tangentOperator_" << convertFiniteStrainBehaviourTangentOperatorFlagToString(pc->from())
+				  << " = this->Dt.template get<"
+				  << getFiniteStrainBehaviourTangentOperatorFlagType(pc->from())
+				  << "<N,stress> >();" << endl;
+	      for(;pc!=path.end();){
+		const FiniteStrainBehaviourTangentOperatorConversion converter = *pc;
+		if(++pc==path.end()){
+		  this->behaviourFile << converter.getFinalConversion() << endl;
+		} else {
+		  this->behaviourFile << converter.getIntermediateConversion() << endl;
+		}
+	      }
+	      this->behaviourFile << "return true;" << endl;
+	      this->behaviourFile << "}" << endl << endl;
+	    }
+	  }
+	}
+	this->behaviourFile << "bool computeConsistentTangentOperator(const SMFlag& smflag,const SMType smt){" << endl;
+	this->behaviourFile << "using namespace std;" << endl;
+	this->behaviourFile << "switch(smflag){" << endl;
+	for(pt=tos.begin();pt!=tos.end();++pt){
+	  const string ktype=convertFiniteStrainBehaviourTangentOperatorFlagToString(*pt);
+	  this->behaviourFile << "case " << ktype << ":" << endl;
+	  this->behaviourFile << "return this->computeConsistentTangentOperator_" << ktype << "(smt);" << endl;
+	}
+	this->behaviourFile << "}" << endl;
+	this->behaviourFile << "string msg(\"" << this->mb.getClassName()
+			    << "::computeConsistentTangentOperator : \");" << endl
+			    << "msg += \"unsupported tangent operator flag\";" << endl
+			    << "throw(runtime_error(msg));" << endl;
+	this->behaviourFile << "return false;" << endl;
+	this->behaviourFile << "}" << endl << endl;
+      }
+    } else {
+      if(this->mb.hasCode(h,MechanicalBehaviourData::ComputeTangentOperator)){
+	this->behaviourFile << "bool computeConsistentTangentOperator(const SMType smt){" << endl;
+	this->behaviourFile << "using namespace std;" << endl;
+	this->behaviourFile << "using namespace tfel::math;" << endl;
+	this->behaviourFile << "using std::vector;" << endl;
+	writeMaterialLaws("MFrontBehaviourParserCommon::writeBehaviourComputeTangentOperator",
+			  this->behaviourFile,this->mb.getMaterialLaws());
+	this->writeStandardPerformanceProfiling(this->behaviourFile,
+						MechanicalBehaviourData::ComputeTangentOperator);
+	this->behaviourFile << this->mb.getCode(h,MechanicalBehaviourData::ComputeTangentOperator).code << '\n';
+	this->behaviourFile << "return true;" << endl;
+	this->behaviourFile << "}" << endl << endl;
+      }
     }
   } // end of MFrontBehaviourParserCommon::writeBehaviourComputeTangentOperator
 

@@ -653,7 +653,7 @@ namespace tfel
 										const std::string& f)
     {
       using namespace std;
-      #if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
+#if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
       HINSTANCE__* lib = this->loadLibrary(l);
 #else
       void * lib = this->loadLibrary(l);
@@ -835,7 +835,7 @@ namespace tfel
 					      const std::string& f)
     {
       using namespace std;
-      #if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
+#if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
       HINSTANCE__* lib = this->loadLibrary(l);
 #else
       void * lib = this->loadLibrary(l);
@@ -887,7 +887,7 @@ namespace tfel
 					  const std::string& f)
     {
       using namespace std;
-      #if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
+#if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
       HINSTANCE__* lib = this->loadLibrary(l);
 #else
       void * lib = this->loadLibrary(l);
@@ -913,7 +913,7 @@ namespace tfel
 					  const std::string& f)
     {
       using namespace std;
-      #if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
+#if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
       HINSTANCE__* lib = this->loadLibrary(l);
 #else
       void * lib = this->loadLibrary(l);
@@ -939,7 +939,7 @@ namespace tfel
 					  const std::string& f)
     {
       using namespace std;
-      #if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
+#if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
       HINSTANCE__* lib = this->loadLibrary(l);
 #else
       void * lib = this->loadLibrary(l);
