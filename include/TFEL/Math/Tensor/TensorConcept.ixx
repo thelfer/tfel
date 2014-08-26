@@ -418,7 +418,7 @@ namespace tfel{
       typedef typename StensorTraits<T>::NumType stress;
       typedef typename tfel::typetraits::BaseType<stress>::type real;
       stensor<1u,stress> s;
-      const real inv_J = F[0]*F[1]*F[2];
+      const real inv_J = 1/(F[0]*F[1]*F[2]);
       s[0] = p[0]*F[0]*F[0]*inv_J;
       s[1] = p[1]*F[1]*F[1]*inv_J;
       s[2] = p[2]*F[2]*F[2]*inv_J;

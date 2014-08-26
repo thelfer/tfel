@@ -460,24 +460,40 @@ AC_OUTPUT([debug.sh
            mfront/tests/behaviours/castem/castemimplicithayhurst.mtest
            mfront/tests/behaviours/castem/castemburger.mtest
            mfront/tests/behaviours/castem/castemtvergaard.mtest
-           mfront/tests/behaviours/castem/castemsaintvenantkirchhoffelasticity-uniaxialloading-1.mtest
-           mfront/tests/behaviours/castem/castemsaintvenantkirchhoffelasticity-uniaxialloading-2.mtest
-           mfront/tests/behaviours/castem/castemsaintvenantkirchhoffelasticity-uniaxialloading-3.mtest
-           mfront/tests/behaviours/castem/castemsaintvenantkirchhoffelasticity-shear-1.mtest
-           mfront/tests/behaviours/castem/castemsaintvenantkirchhoffelasticity-shear-2.mtest
-           mfront/tests/behaviours/castem/castemsaintvenantkirchhoffelasticity-shear-3.mtest
-           mfront/tests/behaviours/castem/castemsaintvenantkirchhoffelasticity-shear-4.mtest
-           mfront/tests/behaviours/castem/castemsaintvenantkirchhoffelasticity-shear-5.mtest
-           mfront/tests/behaviours/castem/castemsaintvenantkirchhoffelasticity-shear-6.mtest
-           mfront/tests/behaviours/castem/castemfiniterotationsmallstrainelasticity-uniaxialloading-1.mtest
-           mfront/tests/behaviours/castem/castemfiniterotationsmallstrainelasticity-uniaxialloading-2.mtest
-           mfront/tests/behaviours/castem/castemfiniterotationsmallstrainelasticity-uniaxialloading-3.mtest
-           mfront/tests/behaviours/castem/castemfiniterotationsmallstrainelasticity-shear-1.mtest
-           mfront/tests/behaviours/castem/castemfiniterotationsmallstrainelasticity-shear-2.mtest
-           mfront/tests/behaviours/castem/castemfiniterotationsmallstrainelasticity-shear-3.mtest
-           mfront/tests/behaviours/castem/castemfiniterotationsmallstrainelasticity-shear-4.mtest
-           mfront/tests/behaviours/castem/castemfiniterotationsmallstrainelasticity-shear-5.mtest
-           mfront/tests/behaviours/castem/castemfiniterotationsmallstrainelasticity-shear-6.mtest
+           mfront/tests/behaviours/castem/castemsaintvenantkirchhoffelasticity-uniaxialloading-1-1D.mtest
+           mfront/tests/behaviours/castem/castemsaintvenantkirchhoffelasticity-uniaxialloading-2-1D.mtest
+           mfront/tests/behaviours/castem/castemsaintvenantkirchhoffelasticity-uniaxialloading-3-1D.mtest
+           mfront/tests/behaviours/castem/castemsaintvenantkirchhoffelasticity-uniaxialloading-1-2D.mtest
+           mfront/tests/behaviours/castem/castemsaintvenantkirchhoffelasticity-uniaxialloading-2-2D.mtest
+           mfront/tests/behaviours/castem/castemsaintvenantkirchhoffelasticity-uniaxialloading-3-2D.mtest
+           mfront/tests/behaviours/castem/castemsaintvenantkirchhoffelasticity-shear-1-2D.mtest
+           mfront/tests/behaviours/castem/castemsaintvenantkirchhoffelasticity-shear-2-2D.mtest
+           mfront/tests/behaviours/castem/castemsaintvenantkirchhoffelasticity-uniaxialloading-1-3D.mtest
+           mfront/tests/behaviours/castem/castemsaintvenantkirchhoffelasticity-uniaxialloading-2-3D.mtest
+           mfront/tests/behaviours/castem/castemsaintvenantkirchhoffelasticity-uniaxialloading-3-3D.mtest
+           mfront/tests/behaviours/castem/castemsaintvenantkirchhoffelasticity-shear-1-3D.mtest
+           mfront/tests/behaviours/castem/castemsaintvenantkirchhoffelasticity-shear-2-3D.mtest
+           mfront/tests/behaviours/castem/castemsaintvenantkirchhoffelasticity-shear-3-3D.mtest
+           mfront/tests/behaviours/castem/castemsaintvenantkirchhoffelasticity-shear-4-3D.mtest
+           mfront/tests/behaviours/castem/castemsaintvenantkirchhoffelasticity-shear-5-3D.mtest
+           mfront/tests/behaviours/castem/castemsaintvenantkirchhoffelasticity-shear-6-3D.mtest
+           mfront/tests/behaviours/castem/castemfiniterotationsmallstrainelasticity-uniaxialloading-1-1D.mtest
+           mfront/tests/behaviours/castem/castemfiniterotationsmallstrainelasticity-uniaxialloading-2-1D.mtest
+           mfront/tests/behaviours/castem/castemfiniterotationsmallstrainelasticity-uniaxialloading-3-1D.mtest
+           mfront/tests/behaviours/castem/castemfiniterotationsmallstrainelasticity-uniaxialloading-1-2D.mtest
+           mfront/tests/behaviours/castem/castemfiniterotationsmallstrainelasticity-uniaxialloading-2-2D.mtest
+           mfront/tests/behaviours/castem/castemfiniterotationsmallstrainelasticity-uniaxialloading-3-2D.mtest
+           mfront/tests/behaviours/castem/castemfiniterotationsmallstrainelasticity-shear-1-2D.mtest
+           mfront/tests/behaviours/castem/castemfiniterotationsmallstrainelasticity-shear-2-2D.mtest
+           mfront/tests/behaviours/castem/castemfiniterotationsmallstrainelasticity-uniaxialloading-1-3D.mtest
+           mfront/tests/behaviours/castem/castemfiniterotationsmallstrainelasticity-uniaxialloading-2-3D.mtest
+           mfront/tests/behaviours/castem/castemfiniterotationsmallstrainelasticity-uniaxialloading-3-3D.mtest
+           mfront/tests/behaviours/castem/castemfiniterotationsmallstrainelasticity-shear-1-3D.mtest
+           mfront/tests/behaviours/castem/castemfiniterotationsmallstrainelasticity-shear-2-3D.mtest
+           mfront/tests/behaviours/castem/castemfiniterotationsmallstrainelasticity-shear-3-3D.mtest
+           mfront/tests/behaviours/castem/castemfiniterotationsmallstrainelasticity-shear-4-3D.mtest
+           mfront/tests/behaviours/castem/castemfiniterotationsmallstrainelasticity-shear-5-3D.mtest
+           mfront/tests/behaviours/castem/castemfiniterotationsmallstrainelasticity-shear-6-3D.mtest
            mfront/tests/behaviours/castem/castemimplicitsimomieheelastoplasticity.mtest
            mfront/tests/behaviours/castem/dgibi/Makefile
 	   mfront/Examples/Makefile

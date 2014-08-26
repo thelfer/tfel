@@ -1,5 +1,5 @@
 @Parser    Implicit;
-@Behaviour dd_cfc;
+@Behaviour MonoCristal_DD_CFC;
 @Author    Jean-Michel Proix;
 @Date      11/06/2013;
 @Description{

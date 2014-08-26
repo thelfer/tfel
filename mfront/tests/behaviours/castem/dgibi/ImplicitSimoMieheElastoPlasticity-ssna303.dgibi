@@ -110,12 +110,12 @@ REA1 = 'REACTION' cl2 d;
 rcl2 = ('MAXIMUM' ('RESULT' REA1));
 ** Comparaisons à des résultats de référence
 OK = VRAI;
-'SI' ('>' ('ABS' (rcl2 '-' 2.19632E+05)) 1.);
-   'MESSAGE' 'ERREUR SUR LA REACTION (' rcl2 ' vs ' 2.19632E+05 ')';
+'SI' ('>' ('ABS' (rcl2 '-' 2.12514E+05)) 1.);
+   'MESSAGE' 'ERREUR SUR LA REACTION (' rcl2 ' vs ' 2.12514E+05 ')';
    OK = FAUX;
 'FINSI';
-'SI' ('>' ('ABS' (ur '+' 7.79081E-04)) 1.e-8);
-   'MESSAGE' 'ERREUR SUR LE DEPLACEMENT (' ur ' vs ' -7.79081E-04 ')';
+'SI' ('>' ('ABS' (ur '+' 8.24920E-04)) 1.e-8);
+   'MESSAGE' 'ERREUR SUR LE DEPLACEMENT (' ur ' vs ' -8.24920E-04 ')';
    OK = FAUX;
 'FINSI';
 

@@ -937,6 +937,7 @@ namespace mfront
   MTest::completeInitialisation()
   {
     using namespace std;
+    using namespace tfel::material;
     using tfel::utilities::shared_ptr;
     typedef tfel::material::ModellingHypothesis MH;
     map<string,shared_ptr<MTestEvolution> >::const_iterator pev;
@@ -1013,12 +1014,20 @@ namespace mfront
       this->constraints.push_back(ec);
     }
     if(this->hypothesis==MH::PLANESTRESS){
-      shared_ptr<MTestEvolution>  eev(new MTestConstantEvolution(0.));
-      shared_ptr<MTestConstraint> ec(new MTestImposedDrivingVariable(2,eev));
-      shared_ptr<MTestEvolution>  sev(new MTestConstantEvolution(0.));
-      shared_ptr<MTestConstraint> sc(new MTestImposedThermodynamicForce(2,sev));
-      this->constraints.push_back(ec);
-      this->constraints.push_back(sc);
+      // shall be in the behaviour
+      if((this->b->getBehaviourType()==MechanicalBehaviourBase::SMALLSTRAINSTANDARDBEHAVIOUR)||
+	 (this->b->getBehaviourType()==MechanicalBehaviourBase::FINITESTRAINSTANDARDBEHAVIOUR)){
+	shared_ptr<MTestEvolution>  eev(new MTestConstantEvolution(0.));
+	shared_ptr<MTestConstraint> ec(new MTestImposedDrivingVariable(2,eev));
+	shared_ptr<MTestEvolution>  sev(new MTestConstantEvolution(0.));
+	shared_ptr<MTestConstraint> sc(new MTestImposedThermodynamicForce(2,sev));
+	this->constraints.push_back(ec);
+	this->constraints.push_back(sc);
+      } else {
+	string msg("MTest::completeInitialisation : "
+		   "plane stress is only handled for small and finite strain behaviours");
+	throw(runtime_error(msg));
+      }
     }
     if(!this->isRmDefined){
       for(unsigned short i=0;i!=3;++i){

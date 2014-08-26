@@ -132,5 +132,5 @@ Tref.setDefaultValue(293.15);
   // elastic strain
   be = x*StrainStensor::Id()+dev_tK/mu;
   // Cauchy Stress
-  sig = J*tK;
+  sig = tK/J;
 }
