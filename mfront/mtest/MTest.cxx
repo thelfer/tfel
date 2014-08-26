@@ -159,6 +159,7 @@ namespace mfront
 
   MTest::MTest()
     : oprec(-1),
+      rprec(-1),
       rm(real(0)),
       isRmDefined(false),
       evm(new MTestEvolutionManager()),
@@ -167,6 +168,7 @@ namespace mfront
       hypothesis(tfel::material::ModellingHypothesis::UNDEFINEDHYPOTHESIS),
       eeps(-1.),
       seps(-1.),
+      sa_w(1.),
       mSubSteps(-1),
       iterMax(-1),
       ks(MTest::UNSPECIFIEDSTIFFNESSUPDATINGPOLICY),
@@ -175,9 +177,13 @@ namespace mfront
       handleThermalExpansion(true),
       useCastemAcceleration(false),
       useIronsTuckAcceleration(false),
+      useSteffensenAcceleration(false),
+      useSecantAcceleration(false),
       cat(-1),
       cap(-1),
       itat(-1),
+      stat(-1),
+      sat(-1),
       toeps(-1),
       pv(-1),
       cto(false),
@@ -292,7 +298,7 @@ namespace mfront
   MTest::setCastemAccelerationTrigger(const int i)
   {
     using namespace std;
-    if(i!=-1){
+    if(this->cat!=-1){
       string msg("MTest::setCastemAccelerationTrigger : "
 		 "the castem acceleration trigger has already "
 		 "been defined");
@@ -341,7 +347,7 @@ namespace mfront
   MTest::setIronsTuckAccelerationTrigger(const int i)
   {
     using namespace std;
-    if(i!=-1){
+    if(this->itat!=-1){
       string msg("MTest::setIronsTuckAccelerationTrigger : "
 		 "the castem acceleration trigger has already "
 		 "been defined");
@@ -353,6 +359,66 @@ namespace mfront
       throw(runtime_error(msg));
     }
     this->itat = i;
+  }
+
+  void
+  MTest::setUseSteffensenAccelerationAlgorithm(const bool uitaa)
+  {
+    using namespace std;
+    if(this->useSteffensenAcceleration){
+      string msg("MTest::setUseSteffensenAccelerationAlgorithm : "
+		 "useSteffensenAcceleration already set");
+      throw(runtime_error(msg));
+    }
+    this->useSteffensenAcceleration = uitaa;
+  }
+  
+  void
+  MTest::setSteffensenAccelerationTrigger(const int i)
+  {
+    using namespace std;
+    if(this->stat!=-1){
+      string msg("MTest::setSteffensenAccelerationTrigger : "
+		 "the castem acceleration trigger has already "
+		 "been defined");
+      throw(runtime_error(msg));
+    }
+    if(i<3){
+      string msg("MTest::setSteffensenAccelerationTrigger",
+		 "invalid acceleration trigger value.");
+      throw(runtime_error(msg));
+    }
+    this->stat = i;
+  }
+
+  void
+  MTest::setUseSecantAccelerationAlgorithm(const bool uitaa)
+  {
+    using namespace std;
+    if(this->useSecantAcceleration){
+      string msg("MTest::setUseSecantAccelerationAlgorithm : "
+		 "useSecantAcceleration already set");
+      throw(runtime_error(msg));
+    }
+    this->useSecantAcceleration = uitaa;
+  }
+  
+  void
+  MTest::setSecantAccelerationTrigger(const int i)
+  {
+    using namespace std;
+    if(this->sat!=-1){
+      string msg("MTest::setSecantAccelerationTrigger : "
+		 "the castem acceleration trigger has already "
+		 "been defined");
+      throw(runtime_error(msg));
+    }
+    if(i<3){
+      string msg("MTest::setSecantAccelerationTrigger",
+		 "invalid acceleration trigger value.");
+      throw(runtime_error(msg));
+    }
+    this->sat = i;
   }
 
   void
@@ -795,6 +861,30 @@ namespace mfront
   }
 
   void
+  MTest::setResidualFileName(const std::string& o)
+  {
+    using namespace std;
+    if(!this->residualFileName.empty()){
+      string msg("MTest::setResidualFileName : ");
+      msg += "residual file name already defined";
+      throw(runtime_error(msg));
+    }
+    this->residualFileName = o;
+  }
+
+  void
+  MTest::setResidualFilePrecision(const unsigned int p)
+  {
+    using namespace std;
+    if(this->rprec!=-1){
+      string msg("MTest::setResidualFileName : ");
+      msg += "residual file precision already defined";
+      throw(runtime_error(msg));
+    }
+    this->rprec = static_cast<int>(p);
+  }
+
+  void
   MTest::addTest(const tfel::utilities::shared_ptr<mfront::MTest::UTest> t)
   {
     this->tests.push_back(t);
@@ -1208,6 +1298,18 @@ namespace mfront
 	this->itat=3;
       }
     }
+    // Steffensen acceleration
+    if(this->useSteffensenAcceleration){
+      if(this->stat==-1){
+	this->stat=3;
+      }
+    }
+    // secant acceleration
+    if(this->useSecantAcceleration){
+      if(this->sat==-1){
+	this->sat=3;
+      }
+    }
     // prediction policy
     if(this->ppolicy==UNSPECIFIEDPREDICTIONPOLICY){
       this->ppolicy=NOPREDICTION;
@@ -1235,6 +1337,12 @@ namespace mfront
       if(this->useIronsTuckAcceleration){
 	log << "mtest : Irons Tuck acceleration selected" << endl;
       }
+      if(this->useSecantAcceleration){
+	log << "mtest : secant acceleration selected" << endl;
+      }
+      if(this->useSteffensenAcceleration){
+	log << "mtest : Steffensen acceleration selected" << endl;
+      }
       if(this->ppolicy==LINEARPREDICTION){
 	log << "mtest : using linear prediction" << endl;
       } else if(this->ppolicy==ELASTICPREDICTION){
@@ -1255,6 +1363,27 @@ namespace mfront
     }
     // allocating behaviour workspace
     this->b->allocate(this->hypothesis);
+    //
+    if(!this->residualFileName.empty()){
+      this->residual.open(this->residualFileName.c_str());
+      if(!this->residual){
+	string msg("MTest::completeInitialisation : "
+		   "unable to open file '"+this->residualFileName+"'");
+	throw(runtime_error(msg));
+      }
+      this->residual.exceptions(ofstream::failbit|ofstream::badbit);
+      if(this->rprec!=-1){
+	this->residual.precision(static_cast<streamsize>(this->rprec));
+      } else {
+	if(this->oprec!=-1){
+	  this->residual.precision(static_cast<streamsize>(this->oprec));
+	}
+      }
+      this->residual << "#first  column : iteration number"             << endl;
+      this->residual << "#second column : driving variable residual"    << endl;
+      this->residual << "#third  column : thermodynamic force residual" << endl;
+      this->residual << "#The following columns are the components of the driving variable" << endl;
+    }
     // the end
     this->initialisationFinished = true;
   }
@@ -1398,6 +1527,21 @@ namespace mfront
       wk.ita_u2.resize(psz,0.);
       wk.ita_du.resize(psz,0.);
       wk.ita_ddu.resize(psz,0.);
+    }
+    if(this->useSteffensenAcceleration){
+      wk.sta_u0.resize(psz,0.);      
+      wk.sta_u1.resize(psz,0.);
+      wk.sta_u2.resize(psz,0.);
+      wk.sta_du1.resize(psz,0.);
+      wk.sta_du2.resize(psz,0.);
+    }
+    if(this->useSecantAcceleration){
+      wk.sa_u0.resize(psz,0.);      
+      wk.sa_u1.resize(psz,0.);
+      wk.sa_r0.resize(psz,0.);
+      wk.sa_r1.resize(psz,0.);
+      wk.sa_r.resize(psz,0.);
+      wk.sa_dr.resize(psz,0.);
     }
     wk.first = true;
     wk.a = 0;
@@ -1642,6 +1786,9 @@ namespace mfront
 	ostream& log = getLogStream();
 	log << "resolution from " << ti << " to " << t+dt << endl;
       }
+      if(this->residual){
+	this->residual << endl << "#resolution from " << ti << " to " << t+dt << endl;
+      }
       real ne  = 0.;  // norm of the increment of the driving variables
       real nep = 0.;  // norm of the increment of the driving variables at the
       // previous iteration
@@ -1872,6 +2019,9 @@ namespace mfront
 	  if(this->useCastemAcceleration){
 	    wk.ca_r = wk.r;
 	  }
+	  if(this->useSecantAcceleration){
+	    wk.sa_r = wk.r;
+	  }
 	  real nr = 0.;
 	  for(i=0;i!=nth;++i){
 	    nr += abs(wk.r(i));
@@ -1893,6 +2043,17 @@ namespace mfront
 	      }
 	    }
 	    log << ")" << endl;
+	  }
+	  if(this->residual){
+	    this->residual << iter << " " << ne << " " 
+			   << nr << " ";
+	    for(i=0;i!=ndv;){
+	      this->residual << state.u1(i);
+	      if(++i!=ndv){
+		this->residual << " ";
+	      }
+	    }
+	    this->residual << endl;
 	  }
 	  converged = (ne<this->eeps)&&(nr<this->seps);
 	  for(pc =this->constraints.begin();
@@ -1952,7 +2113,7 @@ namespace mfront
 	      if(c){
 		wk.ca_n0   = wk.ca_tmp0/nr0;
 		const real ntmp1  = wk.ca_tmp1|wk.ca_n0;
-		wk.ca_tmp1          -= ntmp1*wk.ca_n0;
+		wk.ca_tmp1       -= ntmp1*wk.ca_n0;
 		const real nr1    = norm(wk.ca_tmp1);
 		c = nr1>0.1*abs(ntmp1);
 		if(c){
@@ -1961,15 +2122,15 @@ namespace mfront
 		  const real ca_p1 = -(wk.ca_r0|wk.ca_n1);
 		  // La projection du vecteur nul est
 		  // donnée par
-		  // (1-ca_c0-ca_c1)*r0+ca_c0*ca_r1+ca_c1*r2;
-		  // avec - ca_c0 = (ca_p0/nr0-ca_p1/nr1)
-		  //      - ca_c1 = ca_p1/nr1
+		  // (1-ca_c2-ca_c1)*r0+ca_c0*ca_r1+ca_c2*r2;
+		  // avec - ca_c1 = (ca_p0-ca_p1*ntmp1/nr1)/nr0
+		  //      - ca_c2 = ca_p1/nr1
 		  // maintenant on applique la même relation
 		  // linéaire
 		  // aux inconnues..
-		  const real ca_c0 = (ca_p0/nr0-ca_p1/nr1);
-		  const real ca_c1 = ca_p1/nr1;
-		  state.u1 = (1-ca_c0-ca_c1)*wk.ca_u0+ca_c0*wk.ca_u1+ca_c1*wk.ca_u2;
+		  const real ca_c2 = ca_p1/nr1;
+		  const real ca_c1 = (ca_p0-ntmp1*ca_c2)/nr0;
+		  state.u1 = (1-ca_c2-ca_c1)*wk.ca_u0+ca_c1*wk.ca_u1+ca_c2*wk.ca_u2;
 		} else {
 		  // the previous iterations were (almost) colinear
 		  const real ca_c0 = -(wk.ca_r0|wk.ca_n0)/nr0;
@@ -1996,6 +2157,46 @@ namespace mfront
 		state.u1 -= ita_a*wk.ita_du;
 		wk.ita_u2 = state.u1;
 	      }
+	    }
+	  }
+	  if((!converged)&&(this->useSteffensenAcceleration)){
+	    const real it_eps = 100*(this->eeps*numeric_limits<real>::epsilon());
+	    wk.sta_u0.swap(wk.sta_u1);
+	    wk.sta_u1.swap(wk.sta_u2);
+	    wk.sta_u2 = state.u1;
+	    if((iter>=this->stat)&&((iter-this->stat)%2==0)){
+	      if(getVerboseMode()>=VERBOSE_LEVEL1){
+		ostream& log = getLogStream();
+		log << "Steffensen acceleration convergence" << endl;
+	      }
+	      wk.sta_du2  = wk.sta_u2-wk.sta_u1;
+	      wk.sta_du1  = wk.sta_u1-wk.sta_u0;
+	      for(vector<real>::size_type id=0;id!=wk.sta_du1.size();++id){
+		if((abs(wk.sta_du2[id])>it_eps)&&
+		   (abs(wk.sta_du1[id])>it_eps)){
+		  state.u1[id] =  wk.sta_u1[id]+1/(1/(wk.sta_du2[id])-1/(wk.sta_du1[id]));
+		}
+	      }
+	    }
+	  }
+	  if((!converged)&&(this->useSecantAcceleration)){
+	    const real sa_eps = 100*(this->eeps*numeric_limits<real>::epsilon());
+	    wk.sa_u0.swap(wk.sa_u1);
+	    wk.sa_r0.swap(wk.sa_r1);
+	    wk.sa_r1 = wk.sa_r;
+	    wk.sa_u1 = state.u1;
+	    wk.sa_dr = wk.sa_r1-wk.sa_r0;
+	    if(iter>=this->sat){
+	      if(getVerboseMode()>=VERBOSE_LEVEL1){
+		ostream& log = getLogStream();
+		log << "Secant acceleration convergence" << endl;
+	      }
+	      const real nr2_dr = wk.sa_dr|wk.sa_dr;
+	      if(nr2_dr>sa_eps){
+		this->sa_w *= -(wk.sa_r0|wk.sa_dr)/nr2_dr;
+		state.u1    = (this->sa_w)*wk.sa_u1+(1-this->sa_w)*wk.sa_u0;
+	      }
+	      wk.sa_u1 = state.u1;
 	    }
 	  }
 	} else {
@@ -2054,6 +2255,9 @@ namespace mfront
 		  << "order undefined"
 		  << endl << endl;
 	    }
+	  }
+	  if(this->useSecantAcceleration){
+	    this->sa_w = max(min(this->sa_w,1.),-1.);
 	  }
 	}
 	// testing

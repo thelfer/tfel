@@ -173,6 +173,14 @@ namespace mfront
 			   &MTestParser::handleUseIronsTuckAccelerationAlgorithm);
     this->registerCallBack("@IronsTuckAccelerationTrigger",
 			   &MTestParser::handleIronsTuckAccelerationTrigger);
+    this->registerCallBack("@UseSteffensenAccelerationAlgorithm",
+			   &MTestParser::handleUseSteffensenAccelerationAlgorithm);
+    this->registerCallBack("@SteffensenAccelerationTrigger",
+			   &MTestParser::handleSteffensenAccelerationTrigger);
+    this->registerCallBack("@UseSecantAccelerationAlgorithm",
+			   &MTestParser::handleUseSecantAccelerationAlgorithm);
+    this->registerCallBack("@SecantAccelerationTrigger",
+			   &MTestParser::handleSecantAccelerationTrigger);
     this->registerCallBack("@StiffnessMatrixType",
 			   &MTestParser::handleStiffnessMatrixType);
     this->registerCallBack("@StiffnessUpdatePolicy",
@@ -195,6 +203,10 @@ namespace mfront
 			   &MTestParser::handleOutputFile);
     this->registerCallBack("@OutputFilePrecision",
 			   &MTestParser::handleOutputFilePrecision);
+    this->registerCallBack("@ResidualFile",
+			   &MTestParser::handleResidualFile);
+    this->registerCallBack("@ResidualFilePrecision",
+			   &MTestParser::handleResidualFilePrecision);
     this->registerCallBack("@Test",
 			   &MTestParser::handleTest);
     this->registerCallBack("@Real",
@@ -581,6 +593,70 @@ namespace mfront
   } // end of MTestParser::handleIronsTuckAccelerationTrigger
 
   void
+  MTestParser::handleUseSteffensenAccelerationAlgorithm(MTest& t,TokensContainer::const_iterator& p)
+  {
+    using namespace std;
+    bool useSteffensenAcceleration;
+    this->checkNotEndOfLine("MTestParser::handleUseSteffensenAccelerationAlgorithm",
+			    p,this->fileTokens.end());
+    if(p->value=="true"){
+      useSteffensenAcceleration = true;
+    } else if(p->value=="false"){
+      useSteffensenAcceleration = false;
+    } else {
+      string msg("MTestParser::handleUseSteffensenAccelerationAlgorithm : "
+		 "unexpected token '"+p->value+"'");
+      throw(runtime_error(msg));
+    }
+    ++p;
+    this->readSpecifiedToken("MTestParser::handleUseSteffensenAccelerationAlgorithm",
+			     ";",p,this->fileTokens.end());
+    t.setUseSteffensenAccelerationAlgorithm(useSteffensenAcceleration);
+  }
+
+  void
+  MTestParser::handleSteffensenAccelerationTrigger(MTest& t,TokensContainer::const_iterator& p)
+  {
+    using namespace std;
+    int cat = static_cast<int>(this->readUnsignedInt(p,this->fileTokens.end()));
+    this->readSpecifiedToken("MTestParser::handleSteffensenAccelerationTrigger",";",
+			     p,this->fileTokens.end());
+    t.setSteffensenAccelerationTrigger(cat);
+  } // end of MTestParser::handleSteffensenAccelerationTrigger
+
+  void
+  MTestParser::handleUseSecantAccelerationAlgorithm(MTest& t,TokensContainer::const_iterator& p)
+  {
+    using namespace std;
+    bool useSecantAcceleration;
+    this->checkNotEndOfLine("MTestParser::handleUseSecantAccelerationAlgorithm",
+			    p,this->fileTokens.end());
+    if(p->value=="true"){
+      useSecantAcceleration = true;
+    } else if(p->value=="false"){
+      useSecantAcceleration = false;
+    } else {
+      string msg("MTestParser::handleUseSecantAccelerationAlgorithm : "
+		 "unexpected token '"+p->value+"'");
+      throw(runtime_error(msg));
+    }
+    ++p;
+    this->readSpecifiedToken("MTestParser::handleUseSecantAccelerationAlgorithm",
+			     ";",p,this->fileTokens.end());
+    t.setUseSecantAccelerationAlgorithm(useSecantAcceleration);
+  }
+
+  void
+  MTestParser::handleSecantAccelerationTrigger(MTest& t,TokensContainer::const_iterator& p)
+  {
+    using namespace std;
+    int cat = static_cast<int>(this->readUnsignedInt(p,this->fileTokens.end()));
+    this->readSpecifiedToken("MTestParser::handleSecantAccelerationTrigger",";",
+			     p,this->fileTokens.end());
+    t.setSecantAccelerationTrigger(cat);
+  } // end of MTestParser::handleSecantAccelerationTrigger
+
+  void
   MTestParser::handleStiffnessUpdatePolicy(MTest& t,TokensContainer::const_iterator& p)
   {
     using namespace std;
@@ -946,6 +1022,23 @@ namespace mfront
     this->readSpecifiedToken("MTestParser::handleOutputFilePrecisions",";",
 			     p,this->fileTokens.end());
   } // end of MTestParser::handleOutputFilePrecision
+
+  void
+  MTestParser::handleResidualFile(MTest& t,TokensContainer::const_iterator& p)
+  {
+    using namespace std;
+    t.setResidualFileName(this->readString(p,this->fileTokens.end()));
+    this->readSpecifiedToken("MTestParser::handleResidualFiles",";",
+			     p,this->fileTokens.end());
+  } // end of MTestParser::handleResidualFile
+
+  void
+  MTestParser::handleResidualFilePrecision(MTest& t,TokensContainer::const_iterator& p)
+  {
+    t.setResidualFilePrecision(this->readUnsignedInt(p,this->fileTokens.end()));
+    this->readSpecifiedToken("MTestParser::handleResidualFilePrecisions",";",
+			     p,this->fileTokens.end());
+  } // end of MTestParser::handleResidualFilePrecision
 
   void
   MTestParser::handleModellingHypothesis(MTest& t,TokensContainer::const_iterator& p)

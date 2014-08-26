@@ -25,6 +25,6 @@
 @Times {0.,1 in 500};
 
 @Test<file> '@top_srcdir@/mfront/tests/behaviours/references/logarithmicstrainnortoncreepuniaxialtesting.ref' {'FTT':2,'FRR':3,'FZZ':3} 1e-5;
-@Test<file> '@top_srcdir@/mfront/tests/behaviours/references/logarithmicstrainnortoncreepuniaxialtesting.ref' {'STT':4} 1e3;
+@Test<file> '@top_srcdir@/mfront/tests/behaviours/references/logarithmicstrainnortoncreepuniaxialtesting.ref' {'STT':4} 1.3e3;
 @Test<file> '@top_srcdir@/mfront/tests/behaviours/references/logarithmicstrainnortoncreepuniaxialtesting.ref' {'EquivalentViscoplasticStrain':5} 1e-4;
 @Test<function> {'SRR':'0','SZZ':'0'}           1.e3;

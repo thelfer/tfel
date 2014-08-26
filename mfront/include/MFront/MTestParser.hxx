@@ -113,7 +113,7 @@ namespace mfront
      */
     void handleStiffnessUpdatePolicy(MTest&,TokensContainer::const_iterator&);
     /*!
-     * handle the @seCastemAccelerationAlgorithm keyword
+     * handle the @UseCastemAccelerationAlgorithm keyword
      * \param[in,out] p : position in the input file
      */
     void
@@ -131,7 +131,7 @@ namespace mfront
     void
     handleCastemAccelerationPeriod(MTest&,TokensContainer::const_iterator&);
     /*!
-     * handle the @seIronsTuckAccelerationAlgorithm keyword
+     * handle the @UseIronsTuckAccelerationAlgorithm keyword
      * \param[in,out] p : position in the input file
      */
     void
@@ -142,6 +142,30 @@ namespace mfront
      */
     void
     handleIronsTuckAccelerationTrigger(MTest&,TokensContainer::const_iterator&);
+    /*!
+     * handle the @UseSteffensenAccelerationAlgorithm keyword
+     * \param[in,out] p : position in the input file
+     */
+    void
+    handleUseSteffensenAccelerationAlgorithm(MTest&,TokensContainer::const_iterator&);
+    /*!
+     * handle the @SteffensenAccelerationTrigger keyword
+     * \param[in,out] p : position in the input file
+     */
+    void
+    handleSteffensenAccelerationTrigger(MTest&,TokensContainer::const_iterator&);
+    /*!
+     * handle the @UseSecantAccelerationAlgorithm keyword
+     * \param[in,out] p : position in the input file
+     */
+    void
+    handleUseSecantAccelerationAlgorithm(MTest&,TokensContainer::const_iterator&);
+    /*!
+     * handle the @SecantAccelerationTrigger keyword
+     * \param[in,out] p : position in the input file
+     */
+    void
+    handleSecantAccelerationTrigger(MTest&,TokensContainer::const_iterator&);
     /*!
      * handle the @Test keyword
      * \param[in,out] p : position in the input file
@@ -222,6 +246,16 @@ namespace mfront
      * \param[in,out] p : position in the input file
      */
     void handleOutputFilePrecision(MTest&,TokensContainer::const_iterator&);
+    /*!
+     * handle the @ResidualFile keyword
+     * \param[in,out] p : position in the input file
+     */
+    void handleResidualFile(MTest&,TokensContainer::const_iterator&);
+    /*!
+     * handle the @ResidualFilePrecision keyword
+     * \param[in,out] p : position in the input file
+     */
+    void handleResidualFilePrecision(MTest&,TokensContainer::const_iterator&);
     /*!
      * handle the @ModellingHypothesis keyword
      * \param[in,out] p : position in the input file

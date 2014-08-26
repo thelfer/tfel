@@ -48,6 +48,8 @@ namespace mfront
     void
     treatResultFileOutput(void);
     void
+    treatResidualFileOutput(void);
+    void
     treatHelpCommandList(void);
     void
     treatHelpCommand(void);
@@ -69,12 +71,15 @@ namespace mfront
     bool xml_output;
     // generate result file
     bool result_file_output;
+    // generate residual file
+    bool residual_file_output;
   };
 
   MTestMain::MTestMain(const int argc, const char *const *const argv)
     : tfel::utilities::ArgumentParserBase<MTestMain>(argc,argv),
       xml_output(false),
-      result_file_output(true)
+      result_file_output(true),
+      residual_file_output(false)
   {
     using namespace std;
     this->registerArgumentCallBacks();
@@ -95,6 +100,8 @@ namespace mfront
 			      "control xml output (default no)",true);
     this->registerNewCallBack("--result-file-output",&MTestMain::treatResultFileOutput,
 			      "control result output (default yes)",true);
+    this->registerNewCallBack("--residual-file-output",&MTestMain::treatResidualFileOutput,
+			      "control residual output (default no)",true);
     this->registerNewCallBack("--help-keywords-list",
 			      &MTestMain::treatHelpCommandList,
 			      "list available commands and exit.");
@@ -222,6 +229,26 @@ namespace mfront
   } // end of MTestMain::treatResultFileOutput
 
   void
+  MTestMain::treatResidualFileOutput(void)
+  {
+    using namespace std;
+    if(this->currentArgument->getOption().empty()){
+      this->residual_file_output = true;
+    } else {
+      const std::string& option = this->currentArgument->getOption();
+      if(option=="true"){
+	this->residual_file_output = true;
+      } else if(option=="false"){
+	this->residual_file_output = false;
+      } else {
+	string msg("MTestMain::treatResidualFileOutput : ");
+	msg += "unknown option '"+option+"'";
+	throw(runtime_error(msg));
+      }
+    }
+  } // end of MTestMain::treatResidualFileOutput
+
+  void
   MTestMain::treatHelpCommandList(void)
   {
     MTestParser p;
@@ -300,6 +327,9 @@ namespace mfront
       parser.execute(static_cast<MTest&>(*(t.get())),*p);
       if(this->result_file_output){
 	static_cast<MTest&>(*(t.get())).setOutputFileName(tname+".res");
+      }
+      if(this->residual_file_output){
+	static_cast<MTest&>(*(t.get())).setResidualFileName(tname+"-residual.res");
       }
       tm.addTest("MTest/"+tname,t);
       if(this->xml_output){

@@ -168,6 +168,19 @@ namespace mfront
       tfel::math::vector<real> ita_u2;
       tfel::math::vector<real> ita_du;
       tfel::math::vector<real> ita_ddu;
+      // Steffensen acceleration algorithm
+      tfel::math::vector<real> sta_u0;
+      tfel::math::vector<real> sta_u1;
+      tfel::math::vector<real> sta_u2;
+      tfel::math::vector<real> sta_du2;
+      tfel::math::vector<real> sta_du1;
+      // secant acceleration algorithm
+      tfel::math::vector<real> sa_u0;
+      tfel::math::vector<real> sa_u1;
+      tfel::math::vector<real> sa_r0;
+      tfel::math::vector<real> sa_r1;
+      tfel::math::vector<real> sa_r;
+      tfel::math::vector<real> sa_dr;
       // temporary variable used for numerical tangent operator
       // computation
       tfel::math::vector<real> s1;
@@ -362,6 +375,16 @@ namespace mfront
      */
     virtual void setUseIronsTuckAccelerationAlgorithm(const bool);
     /*!
+     * \brief set the use of the Steffensen acceleration algorithm
+     * \param[in] b : boolean
+     */
+    virtual void setUseSteffensenAccelerationAlgorithm(const bool);
+    /*!
+     * \brief set the use of the secant acceleration algorithm
+     * \param[in] b : boolean
+     */
+    virtual void setUseSecantAccelerationAlgorithm(const bool);
+    /*!
      * \brief set if mtest shall handle thermal expansion coefficient
      * If true, the thermal expansion will be handled if the thermal
      * expansion coefficients are defined.
@@ -380,6 +403,18 @@ namespace mfront
      * \param[in] i : iteration number
      */
     virtual void setIronsTuckAccelerationTrigger(const int);
+    /*!
+     * \brief set at which iteration the use of the Steffensen
+     * acceleration algorithm  will begin
+     * \param[in] i : iteration number
+     */
+    virtual void setSteffensenAccelerationTrigger(const int);
+    /*!
+     * \brief set at which iteration the use of the secant
+     * acceleration algorithm  will begin
+     * \param[in] i : iteration number
+     */
+    virtual void setSecantAccelerationTrigger(const int);
     /*!
      * \brief set at which period the use of the castem
      * acceleration algorithm  will take place
@@ -411,6 +446,18 @@ namespace mfront
      */
     virtual void
     setOutputFilePrecision(const unsigned int);
+    /*!
+     * \brief set the residual file
+     * \param[in] f : file name
+     */
+    virtual void
+    setResidualFileName(const std::string&);
+    /*!
+     * \brief set the residual file precision
+     * \param[in] p : precision
+     */
+    virtual void
+    setResidualFilePrecision(const unsigned int);
     /*!
      * \brief set criterium value for the convergence test on the on
      * the driving variable
@@ -625,6 +672,8 @@ namespace mfront
     size_t getNumberOfUnknowns(void) const;
     //! output file precision
     int oprec;
+    //! residual file precision
+    int rprec;
     //! list of tests
     std::vector<tfel::utilities::shared_ptr<UTest> > tests;
     //! declared variable names
@@ -647,6 +696,11 @@ namespace mfront
     std::string output;
     //! output file
     std::ofstream out;
+    //! residual file name
+    std::string residualFileName;
+    //! file where residuals evolutions as a function of the iteration
+    //! number are saved
+    std::ofstream residual;
     //! dimension used for the computation
     unsigned short dimension;
     //! modelling hypothesis
@@ -672,6 +726,10 @@ namespace mfront
      * for thermodynamic forces expresses in Pa (small strain behaviours).
      */
     real seps;
+    /*!
+     * parameter of the secant algorithm
+     */
+    real sa_w;
     //! maximum number of sub steps allowed
     int mSubSteps;
     //! maximum number of iterations allowed in the Newton-Raphson algorithm
@@ -688,12 +746,20 @@ namespace mfront
     bool useCastemAcceleration;
     //! use IronsTuck acceleration
     bool useIronsTuckAcceleration;
+    //! use Steffensen acceleration
+    bool useSteffensenAcceleration;
+    //! use secant acceleration
+    bool useSecantAcceleration;
     //! castem acceleration trigger
     int cat;
     //! castem acceleration period
     int cap;
     //! IronsTuck acceleration trigger
     int itat;
+    //! Steffensen acceleration trigger
+    int stat;
+    //! Secant acceleration trigger
+    int sat;
     //! description of the test
     std::string description;
     //! author
