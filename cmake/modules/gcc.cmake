@@ -10,7 +10,8 @@ tfel_enable_cxx_compiler_flag(OPTIMISATION_FLAGS "ftree-vectorize")
 
 tfel_enable_cxx_compiler_flag(OPTIMISATION_FLAGS2 "ffast-math")
 
-option(enable-test-coverage "enable test coverage support" OFF)
+option(enable-test-coverage    "enable test coverage support" OFF)
+option(enable-sanitize-options "enable various gcc sanitize options (undefined, address,...)" OFF)
 
 if((enable-test-coverage) AND (NOT (CMAKE_BUILD_TYPE STREQUAL "Debug")))
   message(FATAL_ERROR "test converage is only available in
@@ -35,6 +36,12 @@ if(CMAKE_BUILD_TYPE STREQUAL "Debug")
        "-fprofile-arcs -ftest-coverage ${CMAKE_SHARED_LINKER_FLAGS} -lgcov")
   endif(enable-test-coverage)
 endif(CMAKE_BUILD_TYPE STREQUAL "Debug")
+
+if(enable-sanitize-options)
+  tfel_enable_cxx_compiler_flag(COMPILER_WARNINGS  "fsanitize=undefined")
+  tfel_enable_cxx_compiler_flag(COMPILER_WARNINGS  "fsanitize=address")
+  tfel_enable_cxx_compiler_flag(COMPILER_WARNINGS  "fno-omit-frame-pointer")
+endif(enable-sanitize-options)
 
 if(HAVE_FORTRAN)
   include(cmake/modules/gnu-fortran-compiler.cmake)
