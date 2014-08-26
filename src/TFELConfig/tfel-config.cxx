@@ -114,13 +114,11 @@ static bool utilities       = false;
 static bool finiteElement   = false;
 static bool material        = false;
 static bool tests           = false;
+static bool mfront_timer    = false;
 #ifdef HAVE_CASTEM
 static bool castem          = false;
 #endif /* HAVE_CASTEM */
 static bool lsystem         = false;
-#ifdef USE_GRAPHICS
-static bool graphics        = false;
-#endif /* USE_GRAPHICS */
 
 #if defined _WIN32 || defined _WIN64
 static bool
@@ -328,16 +326,11 @@ treatMaterial(void)
   material    = true;
 } // end of treatMaterial
 
-#ifdef USE_GRAPHICS
 static void
-treatGraphics(void)
+treatMFrontTimer(void)
 {
-  exceptions  = true;
-  math        = true;
-  utilities   = true;
-  lsystem     = true;
-} // end of treatGraphics
-#endif /* USE_GRAPHICS */
+  mfront_timer  = true;
+} // end of treatMFrontTimer
 
 static void
 treatTests(void)
@@ -348,15 +341,13 @@ treatTests(void)
 static void
 treatAll(void)
 {
-  exceptions  = true;
-  math        = true;
-  material    = true;
-  utilities   = true;
+  exceptions   = true;
+  math         = true;
+  material     = true;
+  utilities    = true;
   lsystem      = true;
-  tests       = true;
-#ifdef USE_GRAPHICS
-  graphics    = true;
-#endif /* USE_GRAPHICS */
+  tests        = true;
+  mfront_timer = true;
 } // end of treatAll
 
 static void
@@ -450,12 +441,10 @@ main(const int argc,
   registerCallBack("--system",&treatSystem,"request flags for libTFELSystem.");
   registerCallBack("--utilities",&treatUtilities,"request flags for libTFELUtilities.");
   registerCallBack("--material",&treatMaterial,"request flags for libTFELMaterial.");
+  registerCallBack("--mfront-timer",&treatMFrontTimer,"request flags for libMFrontTimer.");
   registerCallBack("--finiteElement",&treatFiniteElement,"request flags for libTFELFiniteElement.");
   registerCallBack("--all",&treatAll,"request flags for all librairies.");
   registerCallBack("--version",&treatVersion,"print tfel version and svn revision.");
-#ifdef USE_GRAPHICS
-  registerCallBack("--graphics",&treatGraphics,"request flags for libTFELGraphics.");
-#endif /* USE_GRAPHICS */
   for(p2=argv+1;p2!=argv+argc;++p2){
     p = callBacksContainer.find(*p2);
     if(p==callBacksContainer.end()){
@@ -502,11 +491,9 @@ main(const int argc,
 
   if(libs){
     cout << "-L" << libDir() << " ";
-#ifdef USE_GRAPHICS
-    if(graphics){
-      cout << "-lTFELGraphics ";
+    if(mfront_timer){
+      cout << "-lMFrontTimer ";
     }
-#endif /* USE_GRAPHICS */
     if(material){
       cout << "-lTFELMaterial ";
     }

@@ -97,6 +97,7 @@ namespace mfront
   {
     SupportedTypes::reset();
     this->generateMTestFile = false;
+    this->performanceMeasurements = false;
   } // end of MFrontUMATInterfaceBase::reset
 
   void
@@ -978,9 +979,17 @@ namespace mfront
       out << "#include<iostream>\n";
       out << "#include<stdexcept>\n";
     }
-    if(this->generateMTestFile){
+    if((this->generateMTestFile)||
+       (this->performanceMeasurements)){
       out << "#include<vector>\n";
+    }
+    if(this->generateMTestFile){
       out << "#include<sstream>\n";
+    }
+    if(this->performanceMeasurements){
+      out << "#include<time.h>\n";
+    }
+    if(this->generateMTestFile){
       out << "#include\"TFEL/Material/ModellingHypothesis.hxx\"\n";
       out << "#include\"MFront/SupportedTypes.hxx\"\n";
       out << "#include\"MFront/UMATSmallStrainMTestFileGenerator.hxx\"\n";

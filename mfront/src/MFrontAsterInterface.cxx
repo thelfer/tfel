@@ -13,6 +13,7 @@
 #include"TFEL/System/System.hxx"
 
 #include"MFront/ParserUtilities.hxx"
+#include"MFront/MFrontLogStream.hxx"
 #include"MFront/MFrontDebugMode.hxx"
 #include"MFront/MFrontFileDescription.hxx"
 #include"MFront/MFrontAsterInterface.hxx"
@@ -76,7 +77,19 @@ namespace mfront{
 				     const tfel::utilities::CxxTokenizer::TokensContainer::const_iterator end)
   {
     using namespace std;
-    if (key=="@AsterGenerateMTestFileOnFailure"){
+    if (key=="@AsterPerformanceMeasurements"){
+      const bool b = this->readBooleanValue(key,current,end);
+#ifdef HAVE_CXX11
+      this->performanceMeasurements = b;
+#else 
+      if(getVerboseMode()>=VERBOSE_QUIET){
+	ostream& log = getLogStream();
+	log << "MFrontAsterInterface::treatKeyword : performances measurements "
+	  "are only available if C++-11 support have been enabled";
+      }
+#endif
+      return make_pair(true,current);      
+    } else if (key=="@AsterGenerateMTestFileOnFailure"){
       this->generateMTestFile = this->readBooleanValue(key,current,end);
       return make_pair(true,current);      
     } else if(key=="@AsterCompareToNumericalTangentOperator"){
@@ -447,9 +460,16 @@ namespace mfront{
       out << "#include<algorithm>\n";
     }
     out << "#include\"TFEL/Material/" << mb.getClassName() << ".hxx\"\n";
+    if(this->performanceMeasurements){
+      out << "#include\"MFront/UMAT/UMATTimer.hxx\"\n\n";
+    }
     out << "#include\"MFront/Aster/AsterStressFreeExpansionHandler.hxx\"\n\n";
     out << "#include\"MFront/Aster/AsterInterface.hxx\"\n\n";
     out << "#include\"MFront/Aster/aster" << name << ".hxx\"\n\n";
+
+    if(this->performanceMeasurements){
+      out << "static umat::UMATTimer timer(\"" << name<< "\");" << endl << endl;
+    }
 
     out << "extern \"C\"{\n\n";
  
@@ -465,7 +485,7 @@ namespace mfront{
     }
     
     this->writeSetParametersFunctionsImplementations(out,name,mb);
-    
+
     out << "MFRONT_SHAREDOBJ void MFRONT_STDCALL\n"
 	<< this->getFunctionName(name) << "("
 	<< "aster::AsterReal *const STRESS,"       /*< tenseur des contraintes */
@@ -515,6 +535,12 @@ namespace mfront{
 	(this->savesTangentOperator))&&(!this->generateMTestFile)){
       out << "using namespace std;\n";
     }
+    if(this->performanceMeasurements){
+      out << "#if !(defined _WIN32 || defined _WIN64 ||defined __CYGWIN__)\n" 
+	  << "timespec tbeg, tend;\n"
+	  << "clock_gettime(CLOCK_THREAD_CPUTIME_ID, &tbeg);\n"
+	  << "#endif\n";
+    }
     this->generateMTestFile1(out);
     if((getDebugMode())||(this->compareToNumericalTangentOperator)){
       out << "const bool computeTangentOperator = (*DDSOE>0.5);\n";
@@ -535,6 +561,12 @@ namespace mfront{
       this->generateMTestFile2(out,MechanicalBehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR,
        			       name,"",mb);
       out << "*PNEWDT = -1.;\n";
+      if(this->performanceMeasurements){
+	out << "#if !(defined _WIN32 || defined _WIN64 ||defined __CYGWIN__)\n" 
+	    << "clock_gettime(CLOCK_THREAD_CPUTIME_ID, &tend);\n"
+	    << "timer.addTotalTimeMeasure(tbeg,tend);\n"
+	    << "#endif\n";
+      }
       out << "return;\n";
       out << "}\n";
     } else {
@@ -551,6 +583,12 @@ namespace mfront{
       this->generateMTestFile2(out,MechanicalBehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR,
 			       name,"",mb);
       out << "*PNEWDT = -1.;\n";
+      if(this->performanceMeasurements){
+	out << "#if !(defined _WIN32 || defined _WIN64 ||defined __CYGWIN__)\n" 
+	    << "clock_gettime(CLOCK_THREAD_CPUTIME_ID, &tend);\n"
+	    << "timer.addTotalTimeMeasure(tbeg,tend);\n"
+	    << "#endif\n" << endl;
+      }
       out << "return;\n";
       out << "}\n";
       out << "copy(DDSOE,DDSOE+(*NTENS)*(*NTENS),STATEV+*(NSTATV)-(*NTENS)*(*NTENS));\n";
@@ -600,6 +638,12 @@ namespace mfront{
 	    << "PREDEF,DPRED,&sv[0],&nNSTATV,&sigf[0],\n"
 	    << "aster::AsterStandardSmallStrainStressFreeExpansionHandler)!=0){\n";
       }
+      if(this->performanceMeasurements){
+	out << "#if !(defined _WIN32 || defined _WIN64 ||defined __CYGWIN__)\n" 
+	    << "clock_gettime(CLOCK_THREAD_CPUTIME_ID, &tend);\n"
+	    << "timer.addTotalTimeMeasure(tbeg,tend);\n"
+	    << "#endif\n";
+      }
       out << "return;\n";
       out << "}\n";
       out << "copy(deto0.begin(),deto0.end(),deto.begin());\n";
@@ -617,6 +661,12 @@ namespace mfront{
 	    << ">::exe(NTENS,DTIME,DROT,&D[0],STRAN,&deto[0],TEMP,DTEMP,PROPS,NPROPS,"
 	    << "PREDEF,DPRED,&sv[0],&nNSTATV,&sigb[0],\n"
 	    << "aster::AsterStandardSmallStrainStressFreeExpansionHandler)!=0){\n";
+      }
+      if(this->performanceMeasurements){
+	out << "#if !(defined _WIN32 || defined _WIN64 ||defined __CYGWIN__)\n" 
+	    << "clock_gettime(CLOCK_THREAD_CPUTIME_ID, &tend);\n"
+	    << "timer.addTotalTimeMeasure(tbeg,tend);\n"
+	    << "#endif\n";
       }
       out << "return;\n";
       out << "}\n";
@@ -652,6 +702,12 @@ namespace mfront{
       out << "cout << endl;\n";
       out << "}\n";
       out << "}\n";
+    }
+    if(this->performanceMeasurements){
+      out << "#if !(defined _WIN32 || defined _WIN64 ||defined __CYGWIN__)\n" 
+	  << "clock_gettime(CLOCK_THREAD_CPUTIME_ID, &tend);\n"
+	  << "timer.addTotalTimeMeasure(tbeg,tend);\n"
+	  << "#endif\n";
     }
     out << "}\n\n";
     out << "} // end of extern \"C\"\n";
@@ -728,7 +784,11 @@ namespace mfront{
     map<string,vector<string> > deps;
     string lib = MFrontAsterInterface::getLibraryName(mb);
     deps[lib].push_back("-lAsterInterface");
-    deps[lib].push_back("`tfel-config --libs --material`");
+#ifdef HAVE_CXX11
+      deps[lib].push_back("`tfel-config --libs --material --mfront-timer`");
+#else 
+      deps[lib].push_back("`tfel-config --libs --material`");
+#endif
     return deps;
   } // end of MFrontAsterInterface::getLibrariesDependencies()
 

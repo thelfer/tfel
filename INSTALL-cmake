@@ -35,6 +35,7 @@ Options
   enable-python  : enables python support
   enable-aster   : enables aster support
   enable-cyrano  : enables cyrano support (cyrano is eDF fuel performance code)
+  enable-cxx-11  : enable C++-11 support (currently supported in clang (>=3.4) and g++ (>= 4.7))
 
   enable-sanitize-options : additional compiler flags (gcc specific)
 

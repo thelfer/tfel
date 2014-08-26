@@ -40,6 +40,8 @@
 \newcommand{\cyrano}{\texttt{cyrano}}
 \newcommand{\galileo}{\texttt{galileo}}
 \newcommand{\castem}{\texttt{Cast3M}}
+\newcommand{\adao}{\texttt{ADAO}}
+\newcommand{\salome}{\texttt{Salomé}}
 \newcommand{\gibiane}{\texttt{gibiane}}
 \newcommand{\tmfft}{\texttt{TMFFT}}
 \newcommand{\aster}{\href{http://www.code-aster.org/}{\texttt{Aster}}}
@@ -166,8 +168,10 @@
   \item  valider le développement d'une
     nouvelle loi de comportement~;
   \item recaler ses paramètres (en le couplant avec un logiciel
-    d'optimisation ou un logiciel de calcul scientifique tel que
-    {\tt Matlab} ou {\tt Scilab})~;
+    d'optimisation ou un logiciel de calcul scientifique tel que {\tt
+      Matlab} ou {\tt Scilab}), mais surtout \adao{}, un module
+    \salome{} pour l’Assimilation de Données et l’Aide à
+    l’Optimisation~;
   \item tester son comportement numérique, en particulier lorsque
     l'algorithme d'intégration local échoue.
   \end{itemize}
@@ -212,7 +216,8 @@ Récemment, l'utilisation de \mfront{} s'est accrue~:
   \mfront{}~;
 \item au sein du \cea{}, \mfront{} est utilisé par le
   DER~\cite{darrigo_notice_2012} et le
-  DMN~\cite{helfer_presentation_2011}~;
+  DMN~\cite{helfer_presentation_2011,milliard_mechanical_2014} dans le
+  cadre de simulation \castem{}~;
 \end{itemize}
 
 Par ailleurs, \mfront{} a été évalué par les partenaires industriels
@@ -235,7 +240,9 @@ les algorithmes numériques dont ils disposent). Ces interfaces sont
 aujourd'hui au nombre de \(3\)~:
 \begin{itemize}
 \item l'interface {\tt umat}, dédiée au code
-  \castem{}~\cite{verpeaux_castem2000_1998,cea_site_2013}~;
+  \castem{}~\cite{verpeaux_castem2000_1998,cea_site_2013} et par le
+  solveur \tmfft{} de la plate-forme
+  \pleiades{}~\cite{castelier_specifications_2009,jerome_tmfft_2010}~;
 \item l'interface {\tt aster}, dédiée au code
   \aster{}~\cite{edf_site_2013}~;
 \item l'interface {\tt cyrano}, dédiée au code combustible
@@ -246,10 +253,7 @@ aujourd'hui au nombre de \(3\)~:
 
 Cette utilisation croissante de \mfront{} risquait de complexifier sa
 maintenance, d'autant que les lois générées ne pouvaient être testées
-qu'avec l'aide des codes cibles tiers, typiquement \castem{},
-\aster{}, \cyrano{},
-\tmfft{}~\cite{castelier_specifications_2009,jerome_tmfft_2010} ou
-\licos{}~\cite{helfer_licos_2011}.
+qu'avec l'aide des code cibles tiers, dont ceux cités précédemment.
 
 Pour éviter cet écueil, nous avons donc développé un outil permettant
 de simuler le comportement d'un point matériel, similaire en
@@ -257,12 +261,13 @@ possibilités à ce qu'offre la commande {\tt SIMU\_POINT\_MAT}
 d'\aster{}~\cite{proix_macro-commande_2013}~: il est possible de
 piloter le chargement mécanique d'un point matériel, en imposant
 certaines composantes des contraintes et/ou certaines composantes des
-déformations au cours d'un historique.
+déformations au cours d'un historique défini par l'utilisateur.
 
-Il est alors possible de simuler plusieurs essais mécaniques simples
-(au moins tant qu'ils n'impliquent pas d'effets de structure,
-striction notamment)~:
+L'utilisateur peut de simuler plusieurs essais mécaniques simples (au
+moins tant qu'ils n'impliquent pas d'effets de structure, striction
+notamment), par exemple~:
 \begin{itemize}
+\item la plupart des essais multi-axés~;
 \item essais de traction/compression~;
 \item essais de cisaillement~;
 \item essais de fluage~;
@@ -317,10 +322,10 @@ utilisé~:
     cas de non convergence de l'intégration sur un pas de temps. Il
     est ainsi possible d'analyser les causes de divergence sans avoir
     à relancer un calcul éléments finis beaucoup plus coûteux.}~;
-\item comme un outil de recalage de leurs lois de
-  comportement. \mtest{} a notamment été couplé avec le code {\tt
-    Matlab} pour l'interprétation d'essais sur un acier
-  EM10~\cite{milliard_mechanical_2014}.
+\item comme un outil de recalage des de comportement. \mtest{} a
+  notamment été couplé avec le code {\tt Matlab} pour l'interprétation
+  d'essais sur un acier EM10~\cite{milliard_mechanical_2014} et avec
+  le module \adao{} de la plate-forme \salome{}.
 \end{itemize}
 
 \subsubsection{Avantages}
@@ -384,9 +389,9 @@ numérique de la loi de comportement. Il est donc possible~:
   \label{fig:mtest:cpetry}
 \end{figure}
 
-Le dernier avantage est la possibilité d'utiliser \mtest{} au travers
-d'une bibliothèque {\tt C++}~\cite{stroustrup_langage_2004} ou d'une
-bibliothèque {\tt python}~\cite{von_rossum_python_2007}. Cette
+Un troisième avantage est la possibilité d'utiliser \mtest{} au
+travers d'une bibliothèque {\tt C++}~\cite{stroustrup_langage_2004} ou
+d'une bibliothèque {\tt python}~\cite{von_rossum_python_2007}. Cette
 possibilité permet~:
 \begin{itemize}
 \item de s'intégrer simplement dans des chaînes de calculs complexes,
@@ -399,7 +404,7 @@ possibilité permet~:
   Salvo~\cite{salvo_caracterisation_2014}. Pour obtenir cette surface
   de charge, il a été nécessaire de réaliser, pour chaque température
   et chaque direction de l'espace des contraintes un essai de
-  traction~;
+  traction, soit plusieurs milliers de simulations~;
 \item de simuler des essais relativement complexes tels qu'un tube en
   pression interne asservi de tel sorte que la vitesse de dilatation
   diamétrale soit tout d'abord constante (phase d'écrouissage durant
@@ -409,6 +414,10 @@ possibilité permet~:
   \cyrano{}, est représenté en figure~\ref{fig:mtest:cpetry}.
 \end{itemize}
 
+Le dernier avantage est l'ergonomie~: un essai peut être simuler avec
+une dizaine de lignes de mise en données, bien moins que ce qu'il est
+nécessaire avec un code tel que \castem{} (qui nécessite par ailleurs
+de définir un maillage).
 
 \subsection*{Plan de cette note}
 
@@ -450,14 +459,26 @@ sans difficultés majeures\footnote{Tout au plus pouvons nous signaler
 \subsection{Rappel sur les lois de comportement mécanique et sur leurs
   rôles dans l'équilibre mécanique d'une structure}
 
-Les lois de comportement mécanique décrites dans ce document permettent
-de calculer d'une part la réaction locale du matériau, c'est à dire le
-tenseur des contraintes \(\tsigma\) en un point d'une structure
-mécanique, et par ailleurs l'évolution microstructurelle du matériau,
-représentée par un jeu de \(i\) variables internes noté de manière
-symbolique \(Y\). Nous en faisons un présentation volontairement
-succincte, nous renvoyons à la documentation de \mfront{} relative aux
-lois de comportement pour les
+Comme nous l'avons décrit en introduction, la motivation initiale de
+\mtest{} était de permettre de tester les différentes interfaces des
+lois de comportements sans recourir à des codes tiers. \mtest{} doit
+donc permettre de tester tous les aspects liés à une loi de
+comportement. De ce fait, l'algorithme de résolution de \mtest{},
+restreint à un point matériel et décrit dans la section suivante, doit
+offrir la même richesse que les algorithmes des codes de calcul de
+structure. Il nous est donc apparu utile de rappeler comment se place
+la loi de comportement dans un calcul d'équilibre mécanique d'un
+calcul de structure. Cette approche nous permet en autres de rappeler
+des notions importantes, telles que celle de matrice de raideur ou de
+matrice de prédiction.
+
+Les lois de comportement mécanique décrites dans ce document
+permettent de calculer d'une part le tenseur des contraintes
+\(\tsigma\) en un point d'une structure mécanique, et par ailleurs
+l'évolution microstructurelle du matériau, représentée par un jeu de
+\(i\) variables internes noté de manière symbolique \(Y\). Nous en
+faisons un présentation volontairement succincte, nous renvoyons à la
+documentation de \mfront{} relative aux lois de comportement pour les
 détails~\cite{helfer_generateur_2013}.
 
 \paragraph{Intégration locale}
@@ -481,9 +502,9 @@ manière incrémentale. Sur un pas de temps \(dt\) entre deux instants
   \(\debutpas{Y}\)~;
 \item l'incrément du tenseur des déformations totales sur le pas de
   temps, noté \(\Delta\,\tepsilonto\)~;
-\item l'incrément de temps \(\delta\,t\),
+\item l'incrément de temps \(\Delta\,t\).
 \end{itemize}
-les lois de comportement mécanique déterminent le tenseur des
+Les lois de comportement mécanique déterminent le tenseur des
 contraintes et les variables internes en fin de pas de temps, notés
 respectivement \(\finpas{\tsigma}\) et \(\finpas{Y}\). Pour cela,
 elles sont généralement amenées à intégrer un système différentiel, et
@@ -509,14 +530,15 @@ proposée et ce processus est répété jusqu'à convergence.
 \paragraph{Matrices de raideur}
 Ce processus utilise une variante plus ou moins sophistiquée de
 l'algorithme de \nom{Newton}~: à chaque itération, un problème
-linéaire est résolu, en se basant sur une matrice de raideur déduite
-du comportement du matériau.
+linéaire est résolu, dont la matrice, dite de raideur, se construit à
+partir de matrices élémentaires déduites du comportement du matériau.
 
 Différents choix de matrice de raideur (et autant de variantes de
 l'algorithme de résolution) sont donc possibles, citons~:
 \begin{itemize}
-\item la matrice élastique non endommagée~;
-\item la matrice élastique endommagée, dite matrice sécante~;
+\item la matrice élastique~;
+\item la matrice élastique endommagée (dans le cas d'une loi décrivant
+  un endommagement), dite matrice sécante~;
 \item la matrice tangente au comportement, définie dans une
   formulation en vitesse par la dérivée
   \(\finpas{\deriv{\dot{\tsigma}}{\dot{\tepsilonto}}}\)~;
@@ -540,7 +562,7 @@ matrice de raideur sont envisageables~:
   début de pas de temps.
 \end{itemize}
 
-L'interface UMAT utilisée par le code aux éléments finis \castem{}
+L'interface \umat{} utilisée par le code aux éléments finis \castem{}
 présente une particularité qu'il peut être intéressant d'utiliser
 quand la loi ne fournit pas d'opérateur de prédiction~: le code
 \castem{} exige que des propriétés élastiques fassent systématiquement
@@ -557,11 +579,11 @@ pour fournir un opérateur élastique par défaut\footnote{Notons que la
 \subsection{Algorithmes de résolution}
 \label{sec:algor-de-resol}
 
-\mtest{} calcule la réaction d'un point matériel à un historique de
-chargement mécanique au cours duquel certaines composantes des
-contraintes et/ou des déformations peuvent être imposées. Ce
-paragraphe présente les différents algorithmes de résolution
-disponibles.
+Pour une loi de comportement donnée, \mtest{} calcule comment un point
+matériel réagit à un historique de chargement mécanique au cours
+duquel certaines composantes des contraintes et/ou des déformations
+peuvent être imposées. Ce paragraphe présente les différents
+algorithmes de résolution disponibles.
 
 \paragraph{Équilibre mécanique en l'absence de déformations imposées}
 En l'absence de déformations imposées, l'équilibre mécanique se
@@ -570,16 +592,15 @@ par la loi de comportement mécanique \(\tsigma\), et du tenseur des
 contraintes imposées \(\tsigma^{\text{ext}}\)~:
 \begin{equation}
   \label{eq:mtest:equilibre_meca}
-  \finpas{\tsigma} = \finpas{\tsigma^{\text{ext}}}
+  \finpas{\tsigma}\paren{\Delta\,\tepsilonto} = \finpas{\tsigma^{\text{ext}}}
 \end{equation}
 
 Pour chaque pas de temps, l'inconnue de ce problème est l'incrément
 des déformations totales \(\Delta\,\tepsilonto\).
 
 \paragraph{Recherche de l'équilibre, algorithme de \nom{Newton}} La
-réaction locale du matériau étant généralement non linéaire, un
-algorithme de \nom{Newton} est utilisé pour déterminer
-\(\Delta\,\tepsilonto\).
+loi de comportement est généralement non linéaire, un algorithme de
+\nom{Newton} est utilisé pour déterminer \(\Delta\,\tepsilonto\).
 
 L'algorithme de \nom{Newton} cherche à annuler une fonction
 \(r\paren{\Delta\,\tepsilonto}\), nommée le résidu, définie par~:
@@ -596,7 +617,11 @@ solution obtenue à la n\ieme{} itération, l'estimation suivante
 r\paren{\Delta\,\tepsilonto_{n+1}}\approx r\paren{\Delta\,\tepsilonto_{n}}+\deriv{\finpas{\tsigma}}{\Delta\,\tepsilonto}.\paren{\Delta\,\tepsilonto_{n+1}-\Delta\,\tepsilonto_{n}}
 \]
 où apparaît la matrice tangente cohérente
-\(\deriv{\finpas{\tsigma}}{\Delta\,\tepsilonto}\).
+\(\deriv{\finpas{\tsigma}}{\Delta\,\tepsilonto}\)\footnote{L'utilisation
+  du symbole de dérivation partielle est conventionnelle. Elle vient
+  du fait que la contrainte peut également dépendre d'autres variables
+  internes, telle que la température, dans le cas de problème
+  couplé.}.
 
 En annulant cette estimation linéarisée de \(r\), nous obtenons la
 nouvelle estimation \(\Delta\,\tepsilonto_{n+1}\)~:
@@ -621,8 +646,10 @@ trouvée.
 La matrice de raideur raideur peut-être\footnote{Voir le mot clé
   \mkey{StiffnessMatrixType}.}~:
 \begin{itemize}
-\item la matrice élastique non endommagée~;
-\item la matrice élastique endommagée, dite matrice sécante~;
+\item la matrice élastique (non endommagée, si la loi de comportement
+  décrit l'endommagement du matériau)~;
+\item la matrice élastique endommagée (si la loi de comportement
+  décrit l'endommagement du matériau), dite matrice sécante~;
 \item la matrice tangente au comportement, définie dans une
   formulation en vitesse par la dérivée
   \(\finpas{\deriv{\dot{\tsigma}}{\dot{\tepsilonto}}}\)~;
@@ -696,11 +723,11 @@ convergence introduit par les opérateurs de résolution de
 \end{figure}
 
 Nous utilisons dans \mtest{} la première version de cet
-algorithme. L'idée de cette algorithme est de~:
+algorithme. L'idée de cet algorithme est de~:
 \begin{itemize}
 \item conserver les \(3\) derniers résidus, notés \(r_{n}\),
   \(r_{n-1}\), \(r_{n-2}\) et les \(3\) dernières estimations de la
-  solution, notées \(u_{n}\), \(u_{n-1}\), \(u_{n-2}\).
+  solution, notées \(\Delta\,\tepsilonto_{n}\), \(\Delta\,\tepsilonto_{n-1}\), \(\Delta\,\tepsilonto_{n-2}\).
 \item projeter le vecteur nul (la solution recherchée !) sur
   l'hyperplan construit à partir des trois derniers résidus. La
   figure~\ref{fig:mtest:acceleration} illustre géométriquement cette
@@ -746,7 +773,7 @@ algorithme. L'idée de cette algorithme est de~:
     \]
     La nouvelle estimation des inconnues sera donnée par la même combinaison linéaire~:
     \[
-    u_{\perp} = \paren{1-\Frac{c_{1}}{\norm{\tilde{r}_{n-1}}}}\,u_{n-2}+\Frac{c_{1}}{\norm{\tilde{r}_{n-1}}}\,u_{n-1}
+    \Delta\,\tepsilonto_{\perp} = \paren{1-\Frac{c_{1}}{\norm{\tilde{r}_{n-1}}}}\,\Delta\,\tepsilonto_{n-2}+\Frac{c_{1}}{\norm{\tilde{r}_{n-1}}}\,\Delta\,\tepsilonto_{n-1}
     \]
   \item si ces deux vecteurs sont indépendants, une nouvelle
     estimation des inconnues peut être fournie d'une manière tout à
@@ -1072,9 +1099,10 @@ Par défault, \mtest{} génère deux fichiers de sortie~:
 \begin{itemize}
 \item un fichier texte organisé en colonnes. La première colonne donne
   l'instant considéré. Les colonnes suivantes contiennent les
-  déformations, les contraintes et les variables internes de la loi de
-  comportement. Par défaut, si le fichier d'entrée se nomme {\tt
-    xxx.mtest}, ce fichier se nomme {\tt xxx.res}~;
+  différentes composantes de la déformation, les composantes de la
+  contrainte et les variables internes de la loi de comportement. Par
+  défaut, si le fichier d'entrée se nomme {\tt xxx.mtest}, ce fichier
+  se nomme {\tt xxx.res}~;
 \item le second fichier est un fichier au format {\tt xml} donnant les
   résultats des comparaisons à des résultats de référence (donnés par
   une formule analytique ou par un fichier externe) et le temps
@@ -1227,8 +1255,8 @@ Le mot clé \mkey{Evolution} prend deux arguments~:
 \mkey{ExternalStateVariable} permet de spécifier l'évolution d'une
 variable externe à la loi de comportement. Dans la terminologie
 \aster{}, les variables externes s'appellent des variables de
-pilotage.
-
+pilotage. Dans \castem{}, ces variables sont définies par des
+chargements.
 La température est considérée comme une variable externe particulière
 qui est obligatoire.
 

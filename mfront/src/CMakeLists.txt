@@ -92,6 +92,19 @@ endif(HAVE_FORTRAN)
 tfel_library(MFrontLogStream
   MFrontLogStream.cxx)
 
+if(enable-cxx-11)
+  tfel_library(MFrontTimer
+    MFrontBehaviourTimer.cxx)
+  if(UNIX)
+    target_link_libraries(MFrontTimer rt)
+  endif(UNIX)
+  tfel_library(UMATTimer
+    UMATTimer.cxx)
+  if(UNIX)
+    target_link_libraries(UMATTimer rt)
+  endif(UNIX)
+endif(enable-cxx-11)
+
 tfel_library(MTestFileGenerator
   MTestFileGeneratorBase.cxx
   UMATSmallStrainMTestFileGenerator.cxx
@@ -124,6 +137,10 @@ if(HAVE_CASTEM)
       MTestFileGenerator
       TFELUtilities
       TFELException)
+    if(enable-cxx-11)
+      target_link_libraries(UMATInterface
+	UMATTimer)
+    endif(enable-cxx-11)
 endif(HAVE_CASTEM)
 
 if(HAVE_ASTER)
@@ -143,24 +160,32 @@ if(HAVE_ASTER)
     MTestFileGenerator
     TFELUtilities
     TFELException)
+  if(enable-cxx-11)
+    target_link_libraries(AsterInterface
+      UMATTimer)
+  endif(enable-cxx-11)
 endif(HAVE_ASTER)
 
 if(HAVE_CYRANO)
-    set(mfront_SOURCES
-    	MFrontCyranoInterface.cxx
-    	${mfront_SOURCES})
-    set(CyranoInterface_SOURCES
-        CyranoException.cxx
-        CyranoInterfaceBase.cxx
-	CyranoComputeStiffnessTensor.cxx
-	CyranoComputeThermalExpansionCoefficientTensor.cxx
-	CyranoOutOfBoundsPolicy.cxx
-	CyranoGetModellingHypothesis.cxx)
-    tfel_library(CyranoInterface ${CyranoInterface_SOURCES})
+  set(mfront_SOURCES
+    MFrontCyranoInterface.cxx
+    ${mfront_SOURCES})
+  set(CyranoInterface_SOURCES
+    CyranoException.cxx
+    CyranoInterfaceBase.cxx
+    CyranoComputeStiffnessTensor.cxx
+    CyranoComputeThermalExpansionCoefficientTensor.cxx
+    CyranoOutOfBoundsPolicy.cxx
+    CyranoGetModellingHypothesis.cxx)
+  tfel_library(CyranoInterface ${CyranoInterface_SOURCES})
+  target_link_libraries(CyranoInterface
+    MTestFileGenerator
+    TFELUtilities
+    TFELException)
+  if(enable-cxx-11)
     target_link_libraries(CyranoInterface
-      MTestFileGenerator
-      TFELUtilities
-      TFELException)
+      UMATTimer)
+  endif(enable-cxx-11)
 endif(HAVE_CYRANO)
 
 add_executable(mfront ${mfront_SOURCES})

@@ -16,6 +16,7 @@
 #include"TFEL/System/System.hxx"
 
 #include"MFront/ParserUtilities.hxx"
+#include"MFront/MFrontLogStream.hxx"
 #include"MFront/MFrontFileDescription.hxx"
 #include"MFront/MFrontCyranoInterface.hxx"
 
@@ -120,8 +121,20 @@ namespace mfront{
   {
     using namespace std;
     using namespace tfel::utilities;
-    if((key=="@CyranoGenerateMTestFileOnFailure")||
-	(key=="@UMATGenerateMTestFileOnFailure")){
+    if (key=="@CyranoPerformanceMeasurements"){
+      const bool b = this->readBooleanValue(key,current,end);
+#ifdef HAVE_CXX11
+      this->performanceMeasurements = b;
+#else 
+      if(getVerboseMode()>=VERBOSE_QUIET){
+	ostream& log = getLogStream();
+	log << "MFronCyranoInterface::treatKeyword : performances measurements "
+	  "are only available if C++-11 support have been enabled";
+      }
+#endif
+      return make_pair(true,current);      
+    } else if((key=="@CyranoGenerateMTestFileOnFailure")||
+	      (key=="@UMATGenerateMTestFileOnFailure")){
       this->generateMTestFile = this->readBooleanValue(key,current,end);
       return make_pair(true,current);      
     } else if((key=="@CyranoUseTimeSubStepping")||
@@ -404,13 +417,20 @@ namespace mfront{
     out << "*/\n\n";
 
     this->getExtraSrcIncludes(out,mb);
+    if(this->performanceMeasurements){
+      out << "#include\"MFront/UMAT/UMATTimer.hxx\"\n\n";
+    }
     if(this->generateMTestFile){
       out << "#include\"MFront/Cyrano/CyranoGetModellingHypothesis.hxx\"\n";
     }
-
     out << "#include\"MFront/Cyrano/CyranoInterface.hxx\"\n\n";
     out << "#include\"TFEL/Material/" << mb.getClassName() << ".hxx\"\n";
     out << "#include\"MFront/Cyrano/cyrano" << name << ".hxx\"\n\n";
+
+    if(this->performanceMeasurements){
+      out << "static umat::UMATTimer timer(\"" << name<< "\");" << endl << endl;
+    }
+
     out << "extern \"C\"{\n\n";
 
     this->generateUMATxxGeneralSymbols(out,name,mb,fd);
@@ -495,7 +515,11 @@ namespace mfront{
     map<string,vector<string> > deps;
     string lib = MFrontCyranoInterface::getLibraryName(mb);
     deps[lib].push_back("-lCyranoInterface");
-    deps[lib].push_back("`tfel-config --libs --material`");
+#ifdef HAVE_CXX11
+      deps[lib].push_back("`tfel-config --libs --material --mfront-timer`");
+#else 
+      deps[lib].push_back("`tfel-config --libs --material`");
+#endif
     return deps;
   } // end of MFrontCyranoInterface::getLibrariesDependencies()
 
@@ -585,6 +609,12 @@ namespace mfront{
 	<< "cyrano::CyranoReal *const STRESS,const cyrano::CyranoInt    *const NDI,\n"
 	<< "cyrano::CyranoInt    *const KINC)\n";
     out << "{\n";
+    if(this->performanceMeasurements){
+      out << "#if !(defined _WIN32 || defined _WIN64 ||defined __CYGWIN__)\n" 
+	  << "timespec tbeg, tend;\n"
+	  << "clock_gettime(CLOCK_THREAD_CPUTIME_ID, &tbeg);\n"
+	  << "#endif\n";
+    }
     this->generateMTestFile1(out);
     out << "cyrano::CyranoInterface<tfel::material::" << mb.getClassName() 
 	<< ">::exe(NTENS,DTIME,DROT,DDSOE,STRAN,DSTRAN,TEMP,DTEMP,PROPS,NPROPS,"
@@ -594,6 +624,12 @@ namespace mfront{
       this->generateMTestFile2(out,MechanicalBehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR,
        			       n,"",mb);
       out << "}\n";
+    }
+    if(this->performanceMeasurements){
+      out << "#if !(defined _WIN32 || defined _WIN64 ||defined __CYGWIN__)\n" 
+	  << "clock_gettime(CLOCK_THREAD_CPUTIME_ID, &tend);\n"
+	  << "timer.addTotalTimeMeasure(tbeg,tend);\n"
+	  << "#endif\n";
     }
     out << "}\n\n";
     out << "MFRONT_SHAREDOBJ void\n" << cyranoFortranFunctionName

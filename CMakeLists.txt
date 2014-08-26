@@ -53,6 +53,9 @@ add_custom_target(tests-install)
 
 # floatting point exceptions (TODO)
 
+# C++-11 (placed before compiler detection)
+option(enable-cxx-11 "enable C++-11 support" OFF)
+
 # fortran (placed before compiler detection)
 option(enable-fortran "enable fortran support")
 if(enable-fortran)
@@ -68,6 +71,11 @@ endif(enable-fortran)
 #compiler options
 cmake_policy(SET CMP0005 OLD)
 include(cmake/modules/compiler.cmake)
+
+# C++-11 support (availability is tested by compiler.cmake)
+if(enable-cxx-11)
+  add_definitions("-DHAVE_CXX11")
+endif(enable-cxx-11)
 
 #aster
 option(enable-aster "build aster interface for mechanical behaviours" OFF)

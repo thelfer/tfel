@@ -159,6 +159,21 @@ AC_DEFINE_UNQUOTED(OPTIMISATION_FLAGS,"$OPTIMISATION_FLAGS")
 AC_DEFINE_UNQUOTED(OPTIMISATION_FLAGS2,"$OPTIMISATION_FLAGS2")
 AC_DEFINE_UNQUOTED(COMPILER_WARNINGS,"$COMPILER_WARNINGS")
 
+# check for C++-11 support
+use_cxx11=no;
+AC_ARG_ENABLE(cxx11,
+   AC_HELP_STRING([--enable-cxx11],
+                  [enable C++ 11 support.]),
+   use_cxx11=yes,[])
+if test "x$use_cxx11" != "xno";
+then
+  AX_CXX_COMPILE_STDCXX_11([noext],[mandatory])
+  AC_DEFINE(HAVE_CXX11)
+  AM_CONDITIONAL([HAVE_CXX_11],true)
+else
+  AM_CONDITIONAL([HAVE_CXX_11],false)
+fi
+
 # Checks for compilers
 # disable automatic declaration of
 # FFLAGS by AC_PROG_F77

@@ -40,3 +40,7 @@ if(HAVE_FORTRAN)
     include(cmake/modules/gnu-fortran-compiler.cmake)
   endif("${CMAKE_Fortran_COMPILER_ID}" STREQUAL "Intel")
 endif(HAVE_FORTRAN)
+
+if(enable-cxx-11)
+  message(FATAL_ERROR "TFEL C++11 support is not availabable with the intel compiler")
+endif(enable-cxx-11)

@@ -281,6 +281,26 @@ namespace mfront{
     virtual void
     writeOutputFiles(void);
     /*!
+     * \brief : an helper function writing the beginning of a
+     * performance measurement
+     * \param[out] os : output stream
+     * \param[in]  v  : code block name
+     * \param[in]  s  : time temporary variable suffix
+     */
+    virtual void
+    writeStandardPerformanceMeasurementsBegin(std::ostream&,
+					      const std::string&,
+					      const std::string& = "");
+    /*!
+     * \brief : an helper function writing the end of a
+     * performance measurement
+     * \param[out] os : output stream
+     * \param[in] s   : time temporary variable suffix
+     */
+    virtual void
+    writeStandardPerformanceMeasurementsEnd(std::ostream&,
+					    const std::string& = "");
+    /*!
      * \return the list of hypothesis a priori supported by
      * the parser.
      *
@@ -376,15 +396,20 @@ namespace mfront{
     virtual void
     registerDefaultVarNames(void);
     /*!
-     * treat the material keyword
+     * treat the @Material keyword
      */
     virtual void
     treatMaterial(void);
     /*!
-     * treat the library keyword
+     * treat the @Library keyword
      */
     virtual void
     treatLibrary(void);
+    /*!
+     * treat the @PerformanceMeasurements keyword
+     */
+    virtual void
+    treatPerformanceMeasurements(void);
 
     virtual void
     treatModellingHypothesis(void);
@@ -765,7 +790,7 @@ namespace mfront{
 				       const bool);
 
     virtual void
-    writeBehaviourIncludeBehaviourData(void);
+    writeBehaviourIncludes(void);
 
     virtual void
     writeBehaviourLocalVariablesInitialisation(const Hypothesis);
@@ -896,6 +921,11 @@ namespace mfront{
 
     std::vector<std::string> interfaces;
 
+    /*!
+     * local variables initalizers. This variable to initialize local
+     * variables defined by domains specific languages and shall not
+     * be accessible to the end user.
+     */
     std::string localVariablesInitializers;
 
     std::string behaviourFileName;
@@ -911,6 +941,7 @@ namespace mfront{
     bool useStateVarTimeDerivative;
     bool explicitlyDeclaredUsableInPurelyImplicitResolution;
     bool hasTimeStepScalingFactor;
+    bool performanceMeasurements;
 
     MechanicalBehaviourDescription mb;
 

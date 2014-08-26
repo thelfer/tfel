@@ -1479,7 +1479,8 @@ namespace mfront{
       ParserBase(),
       useStateVarTimeDerivative(false),
       explicitlyDeclaredUsableInPurelyImplicitResolution(false),
-      hasTimeStepScalingFactor(false)
+      hasTimeStepScalingFactor(false),
+      performanceMeasurements(false)
   {
     // Register var names
     this->registerDefaultVarNames();
@@ -2420,6 +2421,29 @@ namespace mfront{
   } // end of MFrontBehaviourParserCommon::writeBehaviourUpdateStateVariables
 
   void
+  MFrontBehaviourParserCommon::writeStandardPerformanceMeasurementsBegin(std::ostream& os,
+									 const std::string& v,
+									 const std::string& s)
+  {
+    using namespace std;
+    if(this->performanceMeasurements){
+      const string tn = s.empty() ? "mfront_local_timer" : "mfront_local_timer_"+s;
+      os << "{\n"
+	 << "mfront::MFrontBehaviourTimer::Timer " << tn << "(&timer," << s<< ");" << endl;
+    }
+  } // end of MFrontBehaviourParserCommon::writeStandardPerformanceMeasurementsBegin
+
+  void
+  MFrontBehaviourParserCommon::writeStandardPerformanceMeasurementsEnd(std::ostream& os,
+								       const std::string& s)
+  {
+    using namespace std;
+    if(this->performanceMeasurements){
+      os << "}" << endl;
+    }
+  } // end of MFrontBehaviourParserCommon::writeStandardPerformanceMeasurementsEnd
+
+  void
   MFrontBehaviourParserCommon::writeBehaviourUpdateAuxiliaryStateVariables(const Hypothesis h) 
   {
     using namespace std;
@@ -2434,7 +2458,10 @@ namespace mfront{
       this->behaviourFile << "using namespace tfel::math;" << endl;
       writeMaterialLaws("MFrontBehaviourParserCommon::writeBehaviourUpdateAuxiliaryStateVariables",
 			this->behaviourFile,this->mb.getMaterialLaws());		      
+      this->writeStandardPerformanceMeasurementsBegin(this->behaviourFile,
+      						    MechanicalBehaviourData::UpdateAuxiliaryStateVariables);
       this->behaviourFile << this->mb.getCode(h,MechanicalBehaviourData::UpdateAuxiliaryStateVariables) << endl;
+      this->writeStandardPerformanceMeasurementsEnd(this->behaviourFile);
       this->behaviourFile << "}\n\n";
     } else {
       this->behaviourFile << "\n{}\n\n";
@@ -2456,10 +2483,11 @@ namespace mfront{
     writeMaterialLaws("MFrontBehaviourParserCommon::writeBehaviourIntegrator",
 		      this->behaviourFile,this->mb.getMaterialLaws());		      
     this->behaviourFile << "bool computeTangentOperator_ = smt!=NOSTIFFNESSREQUESTED;\n";
-    writeMaterialLaws("MFrontBehaviourParserCommon::writeBehaviourIntegrator",
-		      this->behaviourFile,this->mb.getMaterialLaws());
     if(this->mb.hasCode(h,MechanicalBehaviourData::Integrator)){
+      this->writeStandardPerformanceMeasurementsBegin(this->behaviourFile,
+						      MechanicalBehaviourData::Integrator);
       this->behaviourFile << this->mb.getCode(h,MechanicalBehaviourData::Integrator) << "\n";
+      this->writeStandardPerformanceMeasurementsEnd(this->behaviourFile);
     }
     this->behaviourFile << "this->updateStateVariables();\n";
     this->behaviourFile << "this->updateAuxiliaryStateVariables();\n";
@@ -2770,20 +2798,34 @@ namespace mfront{
     writeMaterialLaws("MFrontBehaviourParserCommon::writeBehaviourInitializeMethod",
 		      this->behaviourFile,this->mb.getMaterialLaws());		      
     if(this->mb.hasCode(h,MechanicalBehaviourData::BeforeInitializeLocalVariables)){
+      this->writeStandardPerformanceMeasurementsBegin(this->behaviourFile,
+						      MechanicalBehaviourData::BeforeInitializeLocalVariables,
+						      "binit");
       this->behaviourFile << this->mb.getCode(h,MechanicalBehaviourData::BeforeInitializeLocalVariables)
 			  << endl;
+      this->writeStandardPerformanceMeasurementsEnd(this->behaviourFile,"binit");
+
     }
     if(this->mb.hasCode(h,MechanicalBehaviourData::InitializeLocalVariables)){
+      this->writeStandardPerformanceMeasurementsBegin(this->behaviourFile,
+						      MechanicalBehaviourData::InitializeLocalVariables,"init");
       this->behaviourFile << this->mb.getCode(h,MechanicalBehaviourData::InitializeLocalVariables)
 			  << endl;
+      this->writeStandardPerformanceMeasurementsEnd(this->behaviourFile,"init");
     }
     if(this->mb.hasCode(h,MechanicalBehaviourData::AfterInitializeLocalVariables)){
+      this->writeStandardPerformanceMeasurementsBegin(this->behaviourFile,
+      						    MechanicalBehaviourData::AfterInitializeLocalVariables,"ainit");
       this->behaviourFile << this->mb.getCode(h,MechanicalBehaviourData::AfterInitializeLocalVariables)
 			  << endl;
+      this->writeStandardPerformanceMeasurementsEnd(this->behaviourFile,"ainit");
     }
     if(this->mb.hasCode(h,MechanicalBehaviourData::ComputePredictor)){
+      this->writeStandardPerformanceMeasurementsBegin(this->behaviourFile,
+						      MechanicalBehaviourData::ComputePredictor,"predictor");
       this->behaviourFile << this->mb.getCode(h,MechanicalBehaviourData::ComputePredictor)
 			  << endl;
+      this->writeStandardPerformanceMeasurementsEnd(this->behaviourFile,"predictor");
     }
     this->writeBehaviourParserSpecificInitializeMethodPart(h);
     this->behaviourFile << "}\n\n";
@@ -3075,7 +3117,7 @@ namespace mfront{
     this->behaviourFile << "}\n\n";
   }
 
-  void MFrontBehaviourParserCommon::writeBehaviourIncludeBehaviourData(void) {    
+  void MFrontBehaviourParserCommon::writeBehaviourIncludes(void) {    
     using namespace std;
     this->checkBehaviourFile();
     this->behaviourFile << "#include<iostream>\n";
@@ -3094,6 +3136,9 @@ namespace mfront{
     this->behaviourFile << this->behaviourDataFileName << "\"\n";
     this->behaviourFile << "#include\"TFEL/Material/";
     this->behaviourFile << this->integrationDataFileName << "\"\n";
+    if(this->performanceMeasurements){
+      this->behaviourFile << "#include\"MFront/MFrontBehaviourTimer.hxx\"" << endl;
+    }
     this->behaviourFile << endl;
   }
 
@@ -3484,7 +3529,7 @@ namespace mfront{
     this->checkBehaviourFile();
     this->writeBehaviourFileHeader();
     this->writeBehaviourFileHeaderBegin();
-    this->writeBehaviourIncludeBehaviourData();
+    this->writeBehaviourIncludes();
     this->writeBehaviourParserSpecificIncludes();
     this->writeIncludes(this->behaviourFile);
     this->writeNamespaceBegin(this->behaviourFile);
@@ -3556,7 +3601,10 @@ namespace mfront{
       this->behaviourFile << "using namespace tfel::math;\n";
       writeMaterialLaws("MFrontBehaviourParserCommon::writeBehaviourComputePredictionOperator",
 			this->behaviourFile,this->mb.getMaterialLaws());
+      this->writeStandardPerformanceMeasurementsBegin(this->behaviourFile,
+						      MechanicalBehaviourData::ComputePredictionOperator);
       this->behaviourFile << this->mb.getCode(h,MechanicalBehaviourData::ComputePredictionOperator);
+      this->writeStandardPerformanceMeasurementsEnd(this->behaviourFile);
       this->behaviourFile << "return SUCCESS;\n";
       this->behaviourFile << "}\n\n";
     } else {
@@ -4548,6 +4596,22 @@ namespace mfront{
       return var;
     }
   } // end of MFrontBehaviourParserCommon::predictionOperatorVariableModifier
+
+  void MFrontBehaviourParserCommon::treatPerformanceMeasurements(void)
+  {
+    using namespace std;
+    const bool b = 
+      this->readBooleanValue("MFrontBehaviourParserCommon::treatPerformanceMeasurements");
+#ifdef HAVE_CXX11
+      this->performanceMeasurements = b;
+#else 
+    if(getVerboseMode()>=VERBOSE_QUIET){
+      ostream& log = getLogStream();
+      log << "MFrontBehaviourParserCommon::treatPerformanceMeasurements : performances measurements "
+	"are only available if C++-11 support have been enabled";
+    }
+#endif
+  } // end of MFrontBehaviourParserCommon::treatPerformanceMeasurements
 
   void MFrontBehaviourParserCommon::treatPredictionOperator(void)
   {

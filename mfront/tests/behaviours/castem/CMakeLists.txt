@@ -116,6 +116,11 @@ target_link_libraries(MFrontCastemBehaviours
   TFELMath
   TFELUtilities
   TFELException)
+if(enable-cxx-11)
+  target_link_libraries(MFrontCastemBehaviours
+    MFrontTimer)
+endif(enable-cxx-11)
+
 if(WIN32)
   if(${CMAKE_CXX_COMPILER_ID} STREQUAL "GNU")
     set_target_properties(MFrontCastemBehaviours

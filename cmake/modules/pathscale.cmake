@@ -19,3 +19,7 @@ if(HAVE_FORTRAN)
     message(FATAL_ERROR "unsupported fortran compiler ${CMAKE_Fortran_COMPILER_NAME}")
   endif(${CMAKE_Fortran_COMPILER_ID} STREQUAL "PathScale")
 endif(HAVE_FORTRAN)
+
+if(enable-cxx-11)
+  message(FATAL_ERROR "TFEL C++11 support is not availabable with the pathscale compiler")
+endif(enable-cxx-11)
