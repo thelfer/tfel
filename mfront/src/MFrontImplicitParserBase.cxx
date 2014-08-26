@@ -1911,7 +1911,9 @@ namespace mfront{
       }
     }
     this->behaviourFile << "this->updateStateVars();\n";
-    this->behaviourFile << "this->computeFinalStress();\n";
+    if(!this->computeFinalStress.empty()){
+      this->behaviourFile << "this->computeFinalStress();\n";
+    }
     this->behaviourFile << "this->updateAuxiliaryStateVars();\n";
     for(p3  = this->mb.getBounds().begin();
 	p3 != this->mb.getBounds().end();++p3){
