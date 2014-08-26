@@ -94,6 +94,8 @@ namespace mfront{
     this->registerNewCallBack("@PertubationValueForNumericalJacobianComputation",
 			      &MFrontImplicitParserBase::treatPertubationValueForNumericalJacobianComputation);
     this->registerNewCallBack("@IterMax",&MFrontImplicitParserBase::treatIterMax);
+    this->registerNewCallBack("@PowellDogLegTrustRegionSize",
+			      &MFrontImplicitParserBase::treatPowellDogLegTrustRegionSize);
     this->registerNewCallBack("@MaximumNumberOfIterations",&MFrontImplicitParserBase::treatIterMax);
     this->registerNewCallBack("@Algorithm",&MFrontImplicitParserBase::treatAlgorithm);
     this->registerNewCallBack("@UseAcceleration",&MFrontImplicitParserBase::treatUseAcceleration);
@@ -474,7 +476,7 @@ namespace mfront{
       this->algorithm = MFrontImplicitParserBase::POWELLDOGLEG_NEWTONRAPHSON;
     } else if(this->current->value=="NewtonRaphson_NumericalJacobian"){
       this->algorithm = MFrontImplicitParserBase::NEWTONRAPHSON_NJ;
-    } else if(this->current->value=="PowellDoglegNewtonRaphson_NumericalJacobian"){
+    } else if(this->current->value=="PowellDogleg_NewtonRaphson_NumericalJacobian"){
       this->algorithm = MFrontImplicitParserBase::POWELLDOGLEG_NEWTONRAPHSON_NJ;
     } else if(this->current->value=="Broyden"){
       this->algorithm = MFrontImplicitParserBase::BROYDEN;
@@ -485,7 +487,17 @@ namespace mfront{
     } else {
       this->throwRuntimeError("MFrontImplicitParserBase::treatAlgorithm : ",
 			      this->current->value+" is not a valid algorithm name\n"
-			      "Supported algorithms are : NewtonRaphson, NewtonRaphson_NumericalJacobian, Broyden, and Broyden2.");
+			      "Supported algorithms are : NewtonRaphson, NewtonRaphson_NumericalJacobian, "
+			      "Broyden, and Broyden2, "
+			      "PowellDogLeg_NewtonRaphson, PowellDogLeg_NewtonRaphson_NumericalJacobian, "
+			      "PowellDogLeg_NewtonRaphson, PowellDogLeg_NewtonRaphson_NumericalJacobian, "
+			      "PowellDogLeg_Broyden.");
+    }
+    if((this->algorithm==MFrontImplicitParserBase::POWELLDOGLEG_NEWTONRAPHSON)||
+       (this->algorithm==MFrontImplicitParserBase::POWELLDOGLEG_NEWTONRAPHSON_NJ)||
+       (this->algorithm==MFrontImplicitParserBase::POWELLDOGLEG_BROYDEN)){
+      this->registerVariable("powell_dogleg_trust_region_size");
+      this->mb.getParameters().push_back(VarHandler("real","powell_dogleg_trust_region_size",1u,0u));
     }
     ++this->current;
     this->readSpecifiedToken("MFrontImplicitParserBase::treatAlgorithm",";");
@@ -562,12 +574,38 @@ namespace mfront{
 			      "Epsilon value must be positive.");
     }
     if(!this->mb.getParametersDefaultValues().insert(MVType("numerical_jacobian_epsilon",epsilon)).second){
-      this->throwRuntimeError("MFrontImplicitParserBase::treatEpsilon",
-			      "default value already defined for parameter 'epsilon'");
+      this->throwRuntimeError("MFrontImplicitParserBase::treatPertubationValueForNumericalJacobianComputation",
+			      "default value already defined for parameter 'numerical_jacobian_epsilon'");
     }
     ++(this->current);
-    this->readSpecifiedToken("MFrontImplicitParserBase::treatEpsilon",";");
+    this->readSpecifiedToken("MFrontImplicitParserBase::treatPertubationValueForNumericalJacobianComputation",";");
   } // MFrontImplicitParserBase::treatEpsilon
+
+  void
+  MFrontImplicitParserBase::treatPowellDogLegTrustRegionSize(void)
+  {
+    using namespace std;
+    typedef map<string,double>::value_type MVType;
+    double pdl_trs;
+    this->checkNotEndOfFile("MFrontImplicitParserBase::treatPowellDogLegTrustRegionSize",
+			    "Cannot read pdl_trs value.");
+    istringstream flux(current->value);
+    flux >> pdl_trs;
+    if((flux.fail())||(!flux.eof())){
+      this->throwRuntimeError("MFrontImplicitParserBase::treatPowellDogLegTrustRegionSize",
+			      "Failed to read region size.");
+    }
+    if(pdl_trs<0){
+      this->throwRuntimeError("MFrontImplicitParserBase::treatPowellDogLegTrustRegionSize",
+			      "Region size must be positive.");
+    }
+    if(!this->mb.getParametersDefaultValues().insert(MVType("powell_dogleg_trust_region_size",pdl_trs)).second){
+      this->throwRuntimeError("MFrontImplicitParserBase::treatPowellDogLegTrustRegionSize",
+			      "default value already defined for parameter 'powell_dogleg_trust_region_size'");
+    }
+    ++(this->current);
+    this->readSpecifiedToken("MFrontImplicitParserBase::treatPowellDogLegTrustRegionSize",";");
+  } // MFrontImplicitParserBase::treatPowellDogLegTrustRegionSize
 
   void
   MFrontImplicitParserBase::treatIterMax(void)
@@ -1783,14 +1821,6 @@ namespace mfront{
     }
     this->behaviourFile << "real error;\n";
     this->behaviourFile << "bool converge=false;\n";
-    if((this->algorithm==MFrontImplicitParserBase::BROYDEN)||
-       (this->algorithm==MFrontImplicitParserBase::POWELLDOGLEG_BROYDEN)||
-       (this->algorithm==MFrontImplicitParserBase::BROYDEN2)){
-      if(!this->computeStress.empty()){
-	this->behaviourFile << "this->computeStress();\n";
-      }
-      this->behaviourFile << "this->computeFdF();\n";
-    }
     this->behaviourFile << "this->iter=0;\n";
     if(this->debugMode){
       this->behaviourFile << "cout << endl << \"" << this->className
@@ -1799,50 +1829,36 @@ namespace mfront{
     this->behaviourFile << "while((converge==false)&&\n";
     this->behaviourFile << "(this->iter<" << this->className << "::iterMax)){\n";
     this->behaviourFile << "++(this->iter);\n";
-    this->behaviourFile << "this->zeros_1  = this->zeros;\n";
-    if((this->algorithm==MFrontImplicitParserBase::NEWTONRAPHSON)||
-       (this->algorithm==MFrontImplicitParserBase::POWELLDOGLEG_NEWTONRAPHSON)||
-       (this->algorithm==MFrontImplicitParserBase::NEWTONRAPHSON_NJ)||
-       (this->algorithm==MFrontImplicitParserBase::POWELLDOGLEG_NEWTONRAPHSON_NJ)){
-      if(!this->computeStress.empty()){
-	this->behaviourFile << "this->computeStress();\n";
-      }
-      this->behaviourFile << "this->computeFdF();\n";
-    }
     if((this->algorithm==MFrontImplicitParserBase::BROYDEN)||
-       (this->algorithm==MFrontImplicitParserBase::POWELLDOGLEG_BROYDEN)){
-      this->behaviourFile << "Dzeros = -this->fzeros;\n";
-      this->behaviourFile << "jacobian2 = this->jacobian;\n";
-      this->behaviourFile << "try{" << endl;
-      this->behaviourFile << "TinyMatrixSolve<" << n2
-			  << "," << "real>::exe(jacobian2,Dzeros);\n";
-      this->behaviourFile << "}" << endl;
-      this->behaviourFile << "catch(LUException&){" << endl;
-      if(this->mb.useQt()){        
-	this->behaviourFile << "return MechanicalBehaviour<hypothesis,Type,use_qt>::FAILURE;\n";
-      } else {
-	this->behaviourFile << "return MechanicalBehaviour<hypothesis,Type,false>::FAILURE;\n";
-      }
-      this->behaviourFile << "}" << endl;
-      this->behaviourFile << "jacobian2 = this->jacobian;\n";
-      this->writeLimitsOnIncrementValues("Dzeros");
-      this->behaviourFile << "this->zeros  += Dzeros;\n";
+       (this->algorithm==MFrontImplicitParserBase::POWELLDOGLEG_BROYDEN)||
+       (this->algorithm==MFrontImplicitParserBase::BROYDEN2)){
       this->behaviourFile << "fzeros2 = this->fzeros;\n";
-      if(!this->computeStress.empty()){
-	this->behaviourFile << "this->computeStress();\n";
-      }
-      this->behaviourFile << "this->computeFdF();\n";
     }
-    if(this->algorithm==MFrontImplicitParserBase::BROYDEN2){
-      this->behaviourFile << "Dzeros   = -(this->jacobian)*(this->fzeros);\n";
-      this->writeLimitsOnIncrementValues("Dzeros");
-      this->behaviourFile << "this->zeros  += Dzeros;\n";
-      this->behaviourFile << "fzeros2 = this->fzeros;\n";
-      if(!this->computeStress.empty()){
-	this->behaviourFile << "this->computeStress();\n";
-      }
-      this->behaviourFile << "this->computeFdF();\n";
+    if(!this->computeStress.empty()){
+      this->behaviourFile << "this->computeStress();\n";
     }
+    this->behaviourFile << "const bool computeFdF_ok = this->computeFdF();\n";
+    this->behaviourFile << "if(!computeFdF_ok){\n";
+    this->behaviourFile << "if(this->iter==1){\n";
+    if(this->debugMode){
+      this->behaviourFile << "cout << endl << \"" << this->className
+			  << "::integrate() : computFdF returned false on first iteration, abording...\" << endl;\n";
+    }
+    if(this->mb.useQt()){        
+      this->behaviourFile << "return MechanicalBehaviour<hypothesis,Type,use_qt>::FAILURE;\n";
+    } else {
+      this->behaviourFile << "return MechanicalBehaviour<hypothesis,Type,false>::FAILURE;\n";
+    }
+    this->behaviourFile << "} else {\n";
+    if(this->debugMode){
+      this->behaviourFile << "cout << endl << \"" << this->className
+			  << "::integrate() : computFdF returned false, dividing increment by two...\" << endl;\n";
+    }
+    this->behaviourFile << "const real integrate_one_half = real(1)/real(2);\n";
+    this->behaviourFile << "this->zeros -= (this->zeros-this->zeros_1)*integrate_one_half;\n";
+    this->behaviourFile << "}\n";
+    this->behaviourFile << "} else {\n";
+    this->behaviourFile << "this->zeros_1  = this->zeros;\n";
     if(this->compareToNumericalJacobian){
       this->behaviourFile << "this->computeNumericalJacobian(njacobian);\n";
       n = SupportedTypes::TypeSize();
@@ -1940,7 +1956,7 @@ namespace mfront{
 	    this->behaviourFile << "}\n";
 	    this->behaviourFile << "}\n";
 	  }
-	} 
+	}
       }
     }
     this->behaviourFile << "error=norm(this->fzeros);\n";
@@ -1956,6 +1972,11 @@ namespace mfront{
        (this->algorithm==MFrontImplicitParserBase::POWELLDOGLEG_NEWTONRAPHSON)||
        (this->algorithm==MFrontImplicitParserBase::NEWTONRAPHSON_NJ)||
        (this->algorithm==MFrontImplicitParserBase::POWELLDOGLEG_NEWTONRAPHSON_NJ)){
+      if((this->algorithm==MFrontImplicitParserBase::POWELLDOGLEG_NEWTONRAPHSON)||
+	 (this->algorithm==MFrontImplicitParserBase::POWELLDOGLEG_NEWTONRAPHSON_NJ)){
+	this->behaviourFile << "tmatrix<" << n2 << "," << n2 << ",real> tjacobian(this->jacobian);\n";
+	this->behaviourFile << "tvector<" << n2 << ",real> tfzeros(this->fzeros);\n";
+      }
       this->behaviourFile << "try{" << endl;
       if((this->algorithm==MFrontImplicitParserBase::NEWTONRAPHSON_NJ)||
 	 (this->algorithm==MFrontImplicitParserBase::POWELLDOGLEG_NEWTONRAPHSON_NJ)){
@@ -1971,35 +1992,57 @@ namespace mfront{
 	this->behaviourFile << "return MechanicalBehaviour<hypothesis,Type,false>::FAILURE;\n";
       }
       this->behaviourFile << "}" << endl;
-      this->writeLimitsOnIncrementValues("fzeros");
-      this->behaviourFile << "this->zeros -= this->fzeros;\n";
+      if((this->algorithm==MFrontImplicitParserBase::POWELLDOGLEG_NEWTONRAPHSON)||
+	 (this->algorithm==MFrontImplicitParserBase::POWELLDOGLEG_NEWTONRAPHSON_NJ)){
+	this->writePowellDogLegStep("tjacobian","tfzeros","fzeros");
+      } else {
+	this->writeLimitsOnIncrementValues("fzeros");
+	this->behaviourFile << "this->zeros -= this->fzeros;\n";
+      }
     }
     if((this->algorithm==MFrontImplicitParserBase::BROYDEN)||
        (this->algorithm==MFrontImplicitParserBase::POWELLDOGLEG_BROYDEN)){
-      this->behaviourFile << "broyden_inv = (Dzeros|Dzeros);\n";
-      this->behaviourFile << "if(broyden_inv<100*std::numeric_limits<real>::epsilon()){\n";
+      this->behaviourFile << "Dzeros = this->fzeros;\n";
+      this->behaviourFile << "jacobian2 = this->jacobian;\n";
+      this->behaviourFile << "try{" << endl;
+      this->behaviourFile << "TinyMatrixSolve<" << n2
+			  << "," << "real>::exe(jacobian2,Dzeros);\n";
+      this->behaviourFile << "}" << endl;
+      this->behaviourFile << "catch(LUException&){" << endl;
       if(this->mb.useQt()){        
 	this->behaviourFile << "return MechanicalBehaviour<hypothesis,Type,use_qt>::FAILURE;\n";
       } else {
 	this->behaviourFile << "return MechanicalBehaviour<hypothesis,Type,false>::FAILURE;\n";
       }
-      this->behaviourFile << "}\n";
+      this->behaviourFile << "}" << endl;
+      this->behaviourFile << "jacobian2 = this->jacobian;\n";
+      if(this->algorithm==MFrontImplicitParserBase::POWELLDOGLEG_BROYDEN){
+	this->writePowellDogLegStep("this->jacobian","fzeros","Dzeros");
+      } else {
+	this->writeLimitsOnIncrementValues("Dzeros");
+	this->behaviourFile << "this->zeros -= Dzeros;\n";
+      }
+      this->behaviourFile << "if(this->iter>1){\n";
+      this->behaviourFile << "broyden_inv = (Dzeros|Dzeros);\n";
+      this->behaviourFile << "if(broyden_inv>100*std::numeric_limits<real>::epsilon()){\n";
       this->behaviourFile << "this->jacobian += "
 			  << "(((this->fzeros-fzeros2)-(jacobian2)*(Dzeros))^Dzeros)/broyden_inv;\n";
+      this->behaviourFile << "}\n";
+      this->behaviourFile << "}\n";
     }
     if(this->algorithm==MFrontImplicitParserBase::BROYDEN2){
+      this->behaviourFile << "Dzeros   = -(this->jacobian)*(this->fzeros);\n";
+      this->writeLimitsOnIncrementValues("Dzeros");
+      this->behaviourFile << "this->zeros  += Dzeros;\n";
+      this->behaviourFile << "if(this->iter>1){\n";
       this->behaviourFile << "Dfzeros   = (this->fzeros)-fzeros2;\n";
+      this->behaviourFile << "broyden_inv = Dzeros|((this->jacobian)*Dfzeros);\n";
+      this->behaviourFile << "if(broyden_inv>100*std::numeric_limits<real>::epsilon()){\n";
       this->behaviourFile << "jacobian2 = this->jacobian;\n";
-      this->behaviourFile << "broyden_inv = Dzeros|jacobian2*Dfzeros;\n";
-      this->behaviourFile << "if(broyden_inv<100*std::numeric_limits<real>::epsilon()){\n";
-      if(this->mb.useQt()){        
-	this->behaviourFile << "return MechanicalBehaviour<hypothesis,Type,use_qt>::FAILURE;\n";
-      } else {
-	this->behaviourFile << "return MechanicalBehaviour<hypothesis,Type,false>::FAILURE;\n";
-      }
-      this->behaviourFile << "}\n";
       this->behaviourFile << "this->jacobian += "
 			  << "((Dzeros-jacobian2*Dfzeros)^(Dzeros*jacobian2))/(broyden_inv);\n";
+      this->behaviourFile << "}\n";
+      this->behaviourFile << "}\n";
     }
     if(this->useAcceleration){
       this->behaviourFile << "this->previous_fzeros[this->iter%3] = this->fzeros;\n";
@@ -2015,6 +2058,9 @@ namespace mfront{
       this->behaviourFile << "this->zeros   -= (1-this->relaxationCoefficient) * (this->zeros-this->zeros_1);\n";
       this->behaviourFile << "}\n";
     }
+#warning "check increment physical bounds"
+#warning "check state variables physical bounds"
+    this->behaviourFile << "}\n";
     this->behaviourFile << "}\n";
     this->behaviourFile << "}\n";
     this->behaviourFile << "if(this->iter==this->iterMax){\n";
@@ -2069,7 +2115,7 @@ namespace mfront{
     this->behaviourFile << "/*!\n";
     this->behaviourFile << "* \\brief compute fzeros and jacobian\n";
     this->behaviourFile << "*/\n";
-    this->behaviourFile << "void\n";
+    this->behaviourFile << "bool\n";
     this->behaviourFile << "computeFdF(void){\n";
     this->behaviourFile << "using namespace std;\n";
     this->behaviourFile << "using namespace tfel::math;\n";
@@ -2266,8 +2312,59 @@ namespace mfront{
 	}
       }
     }
+    this->behaviourFile << "return true;\n";
     this->behaviourFile << "}\n\n";
   } // end of MFrontImplicitParserBase::writeBehaviourIntegrator
+
+  void
+  MFrontImplicitParserBase::writePowellDogLegStep(const std::string& B,
+						  const std::string& f,
+						  const std::string& pn)
+  {
+    using namespace std;
+    VarContainer::const_iterator p;
+    SupportedTypes::TypeSize n;
+    for(p=this->mb.getStateVariables().begin();p!=this->mb.getStateVariables().end();++p){
+      n += this->getTypeSize(p->type,p->arraySize);
+    }
+    this->behaviourFile << "if(abs(" << pn<< ")<(" << n << ")*(this->powell_dogleg_trust_region_size)){" << endl;
+    this->behaviourFile << "// using the newton method only" << endl;
+    this->writeLimitsOnIncrementValues(pn);
+    this->behaviourFile << "this->zeros -= " << pn<< ";\n";
+    this->behaviourFile << "} else { " << endl;
+    this->behaviourFile << "// computing the steepest descent step\n";
+    this->behaviourFile << "tvector<" << n << ",real> pdl_g;\n";
+    this->behaviourFile << "tvector<" << n << ",real> pdl_g2;\n";
+    this->behaviourFile << "for(unsigned short idx=0;idx!=" << n << ";++idx){" << endl;
+    this->behaviourFile << "pdl_g[idx]=real(0);\n";
+    this->behaviourFile << "for(unsigned short idx2=0;idx2!=" << n << ";++idx2){" << endl;
+    this->behaviourFile << "pdl_g[idx] += (" << B << "(idx2,idx)) * (" << f << "(idx2));\n";
+    this->behaviourFile << "}" << endl;
+    this->behaviourFile << "}" << endl;
+    this->behaviourFile << "for(unsigned short idx=0;idx!=" << n << ";++idx){" << endl;
+    this->behaviourFile << "pdl_g2[idx]=real(0);\n";
+    this->behaviourFile << "for(unsigned short idx2=0;idx2!=" << n << ";++idx2){" << endl;
+    this->behaviourFile << "pdl_g2[idx] += (" << B << "(idx,idx2)) * pdl_g(idx2);\n";
+    this->behaviourFile << "}" << endl;
+    this->behaviourFile << "}" << endl;
+    this->behaviourFile << "const real pdl_cste = (pdl_g|pdl_g)/(pdl_g2|pdl_g2);" << endl;
+    this->behaviourFile << "pdl_g *= pdl_cste;" << endl;
+    this->behaviourFile << "if(abs(pdl_g)<(" << n << ")*(this->powell_dogleg_trust_region_size)){" << endl;
+    this->behaviourFile << "const real pdl_0 = (this->powell_dogleg_trust_region_size)*(this->powell_dogleg_trust_region_size);" << endl;
+    this->behaviourFile << "const real pdl_1 = (pdl_g|pdl_g);" << endl;
+    this->behaviourFile << "const real pdl_2 = ((" << pn << ")|pdl_g);" << endl;
+    this->behaviourFile << "const real pdl_3 = ((" << pn << ")|(" << pn << "));" << endl;
+    this->behaviourFile << "const real pdl_alpha = (pdl_0-pdl_1)/((pdl_2-pdl_1)+sqrt((pdl_2-pdl_0)*(pdl_2-pdl_0)+(pdl_3-pdl_0)*(pdl_0-pdl_1)));" << endl;
+    this->behaviourFile << "pdl_g = pdl_alpha*(" << pn<< ") + (1-pdl_alpha)*pdl_g;" << endl;
+    this->behaviourFile << "} else {" << endl;
+    this->behaviourFile << "const real pdl_alpha = (this->powell_dogleg_trust_region_size)/(norm(pdl_g));" << endl;
+    this->behaviourFile << "pdl_g *= pdl_alpha;" << endl;
+    this->behaviourFile << "}" << endl;
+    this->writeLimitsOnIncrementValues("pdl_g");
+    this->behaviourFile << "this->zeros -= pdl_g;\n";
+    this->behaviourFile << "}" << endl;
+  } // end of MFrontImplicitParserBase::writePowellDogLegStep
+
 
   void MFrontImplicitParserBase::writeBehaviourComputeTangentOperator(void)
   {
@@ -2387,25 +2484,27 @@ namespace mfront{
   {
     using namespace std;
     using namespace tfel::utilities;
+    typedef map<string,double>::value_type MVType;
+    typedef map<string,unsigned short>::value_type MVType2;
     MFrontBehaviourParserCommon::endsInputFileProcessing();
     if(this->integrator.empty()){
       string msg("MFrontImplicitParserBase::endsInputFileProcessing : ");
       msg += "definining the @Integrator block is required";
       throw(runtime_error(msg));
     }
-    // if(this->computeStress.empty()){
-    //   string msg("MFrontImplicitParserBase::endsInputFileProcessing : ");
-    //   msg += "definining the @ComputeStress block is required";
-    //   throw(runtime_error(msg));
-    // }
-    typedef map<string,double>::value_type MVType;
-    typedef map<string,unsigned short>::value_type MVType2;
     if(this->mb.getParametersDefaultValues().find("theta")==this->mb.getParametersDefaultValues().end()){
       this->mb.getParametersDefaultValues().insert(MVType("theta",0.5));
     }
     if(this->mb.getParametersDefaultValues().find("epsilon")==
        this->mb.getParametersDefaultValues().end()){
       this->mb.getParametersDefaultValues().insert(MVType("epsilon",1.e-8));
+    }
+    if((this->algorithm==MFrontImplicitParserBase::POWELLDOGLEG_NEWTONRAPHSON)||
+       (this->algorithm==MFrontImplicitParserBase::POWELLDOGLEG_NEWTONRAPHSON_NJ)||
+       (this->algorithm==MFrontImplicitParserBase::POWELLDOGLEG_BROYDEN)){
+      if(this->mb.getParametersDefaultValues().find("powell_dogleg_trust_region_size")==this->mb.getParametersDefaultValues().end()){
+	this->mb.getParametersDefaultValues().insert(MVType("powell_dogleg_trust_region_size",1.e-4));
+      }
     }
     if((this->compareToNumericalJacobian)||
        (this->algorithm==MFrontImplicitParserBase::BROYDEN)||

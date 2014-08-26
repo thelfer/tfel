@@ -90,11 +90,24 @@ namespace mfront{
 
     virtual void writeLimitsOnIncrementValues(const std::string&);
 
+    /*!
+     * write a step of the Powell dogleg method
+     * \param[in] B  : name of the jacobian
+     * \param[in] f  : name of values of f
+     * \param[in] pn : Newton step
+     */
+    virtual void writePowellDogLegStep(const std::string&,
+				       const std::string&,
+				       const std::string&);
+
+
     virtual void treatTheta(void);
 
     virtual void treatIterMax(void);
 
     virtual void treatEpsilon(void);
+
+    virtual void treatPowellDogLegTrustRegionSize(void);
 
     virtual void treatPertubationValueForNumericalJacobianComputation(void);
 

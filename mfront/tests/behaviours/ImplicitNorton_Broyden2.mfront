@@ -10,7 +10,7 @@
   "using the second Broyden Algorithm"
 }
 
-@Epsilon 1.e-10;
+@Epsilon 1.e-12;
 
 @Includes{
 #include"TFEL/Material/Lame.hxx"

@@ -1005,6 +1005,7 @@ namespace mfront{
     this->reserveName("computeStress");
     this->reserveName("computeFinalStress");
     this->reserveName("computeFdF");
+    this->reserveName("computeFdF_ok");
     this->reserveName("updateStateVars");
     this->reserveName("updateAuxiliaryStateVars");
     this->reserveName("getTangentOperator");

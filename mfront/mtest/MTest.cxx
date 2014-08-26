@@ -1798,16 +1798,18 @@ namespace mfront
 	  cont = false;
 	}
       }
-      if((iter==this->iterMax)||(!cont)){
+      if(!converged){
 	// no convergence
-	if(getVerboseMode()>=VERBOSE_LEVEL1){
-	  ostream& log = getLogStream();
-	  log << "No convergence, the following criteria were not met : " << endl;
-	  for(vector<string>::const_iterator pfc=failed_criteria.begin();
-	      pfc!=failed_criteria.end();++pfc){
-	    log << "- " << *pfc << endl;
+	if(iter==this->iterMax){
+	  if(getVerboseMode()>=VERBOSE_LEVEL1){
+	    ostream& log = getLogStream();
+	    log << "No convergence, the following criteria were not met : " << endl;
+	    for(vector<string>::const_iterator pfc=failed_criteria.begin();
+		pfc!=failed_criteria.end();++pfc){
+	      log << "- " << *pfc << endl;
+	    }
+	    log << endl;
 	  }
-	  log << endl;
 	}
 	++subStep;
 	if(subStep==this->mSubSteps){
