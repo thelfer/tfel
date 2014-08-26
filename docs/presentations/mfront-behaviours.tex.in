@@ -218,7 +218,7 @@
   \end{itemize}
 }
 
-\titre{Modèles de zones cohésives}
+\titre{Modèles de zones cohésives (en cours)}
 \frame{
   \rput[l](0,-0.8){
     \resizebox{!}{0.017\paperheight}{
@@ -240,6 +240,29 @@
   }
 }
 
+\titre{Transformations finies (en cours)}
+\frame{
+  \rput[l](0,-0.8){
+    \resizebox{!}{0.017\paperheight}{
+      \code{
+        \input{@abs_top_srcdir@/docs/presentations/images/IncompressiblePlaneStressMooneyRivlinBehaviour.tex}
+      }}}
+  \rput[l](11.5,1.25){
+    \includegraphics[width=0.35\linewidth,angle=-90]{@top_srcdir@/docs/presentations/images/IncompressiblePlaneStressMooneyRivlin-shear2.eps}
+  }
+  \rput[l](6.,-2.8){
+    \begin{minipage}{0.45\linewidth}
+      \begin{itemize}
+      \item modèle de \nom{Mooney Rivlin} incompressible en contraintes planes~;
+      \item exemples inspirés des tests de \nom{Laurent Gornet}
+        (Centrale Nantes)~;
+      \item utilisable uniquement avec l'analyseur par défaut~;
+      \end{itemize}
+    \end{minipage}
+  }
+}
+
+
 \titre{Guide des cas tests}
 \frame{
   \begin{itemize}
@@ -257,7 +280,7 @@
   \end{itemize}
   \visible<2->{
     \begin{center}
-      {\textbf plus de 35 exemples dans la base de cas test !}
+      {\textbf environ 50 exemples dans la base de cas test !}
     \end{center}
   }
 }

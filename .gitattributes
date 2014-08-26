@@ -259,6 +259,10 @@ docs/mtest/style.ist -text
 docs/presentations/CMakeLists.txt -text
 docs/presentations/Makefile.am -text
 docs/presentations/Makefile.doc.in -text
+docs/presentations/images/IncompressiblePlaneStressMooneyRivlin-shear2.eps -text
+docs/presentations/images/IncompressiblePlaneStressMooneyRivlinBehaviour-shear1.eps -text
+docs/presentations/images/IncompressiblePlaneStressMooneyRivlinBehaviour.mfront -text
+docs/presentations/images/IncompressiblePlaneStressMooneyRivlinBehaviour.tex -text
 docs/presentations/images/NbZrC_CreepBehaviour-mfront.cxx -text
 docs/presentations/images/NbZrC_CreepBehaviour-mfront.tex -text
 docs/presentations/images/Tvergaard.mfront -text
@@ -893,6 +897,7 @@ mfront/include/MFront/MFrontFortranLawInterface.hxx -text
 mfront/include/MFront/MFrontGenericData.hxx -text
 mfront/include/MFront/MFrontGnuplotLawInterface.hxx -text
 mfront/include/MFront/MFrontHeader.hxx -text
+mfront/include/MFront/MFrontImplicitFiniteStrainParser.hxx -text
 mfront/include/MFront/MFrontImplicitParser.hxx -text
 mfront/include/MFront/MFrontImplicitParserBase.hxx -text
 mfront/include/MFront/MFrontImplicitParserII.hxx -text
@@ -1092,6 +1097,7 @@ mfront/tests/behaviours/DDIF2.mfront -text
 mfront/tests/behaviours/Elasticity.mfront -text
 mfront/tests/behaviours/EllipticCreep.mfront -text
 mfront/tests/behaviours/Hayhurst.mfront -text
+mfront/tests/behaviours/ImplicitFiniteStrainNorton.mfront -text
 mfront/tests/behaviours/ImplicitHayhurst.mfront -text
 mfront/tests/behaviours/ImplicitNorton.mfront -text
 mfront/tests/behaviours/ImplicitNorton2.mfront -text

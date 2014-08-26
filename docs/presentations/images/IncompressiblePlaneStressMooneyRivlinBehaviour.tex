@@ -1,0 +1,41 @@
+\noindent
+\ttfamily
+\hlstd{@Parser\ DefaultFiniteStrainParser}\hlopt{;}\hspace*{\fill}\\
+\hlstd{@Behaviour\ IncompressiblePlaneStressMooneyRivlinBehaviour}\hlopt{;}\hspace*{\fill}\\
+\hlstd{@Author\ T}\hlopt{.\ }\hlstd{Helfer}\hlopt{;}\hspace*{\fill}\\
+\hlstd{@Date\ }\hlnum{19}\hlstd{}\hlopt{/}\hlstd{}\hlnum{10}\hlstd{}\hlopt{/}\hlstd{}\hlnum{2013}\hlstd{}\hlopt{;}\hspace*{\fill}\\
+\hlstd{\hspace*{\fill}\\
+@ModellingHypothesis\ PlaneStress}\hlopt{;}\hspace*{\fill}\\
+\hlstd{\hspace*{\fill}\\
+@MaterialProperty\ stress\ C1}\hlopt{;}\hspace*{\fill}\\
+\hlstd{@MaterialProperty\ stress\ C2}\hlopt{;}\hspace*{\fill}\\
+\hlstd{\hspace*{\fill}\\
+@Integrator}\hlopt{\{}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ }\hlstd{}\hlkwb{static\ const\ }\hlstd{real\ cste\ }\hlopt{=\ }\hlstd{}\hlkwd{sqrt}\hlstd{}\hlopt{(}\hlstd{}\hlkwd{real}\hlstd{}\hlopt{(}\hlstd{}\hlnum{2}\hlstd{}\hlopt{));}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ }\hlstd{}\hlslc{//\ right\ Cauch\ Green\ Tensor}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ }\hlstd{Stensor\ c\ }\hlopt{=\ }\hlstd{}\hlkwd{computeRightCauchyGreenTensor}\hlstd{}\hlopt{(}\hlstd{F1}\hlopt{);}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ }\hlstd{}\hlslc{//\ specific\ treatment\ du\ to\ plane\ stress\ and\ incompressibility}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ }\hlstd{}\hlkwd{c}\hlstd{}\hlopt{(}\hlstd{}\hlnum{2}\hlstd{}\hlopt{)\ =\ }\hlstd{}\hlnum{1}\hlstd{}\hlopt{.;\ }\hlstd{}\hlslc{//\ PlaneStress}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ }\hlstd{}\hlslc{//\ ("in\ plane")\ inverse\ of\ b}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ }\hlstd{}\hlkwb{const\ }\hlstd{Stensor\ ci\ }\hlopt{=\ }\hlstd{}\hlkwd{invert}\hlstd{}\hlopt{(}\hlstd{c}\hlopt{);}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ }\hlstd{}\hlslc{//\ volume\ change\ in\ the\ plane}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ }\hlstd{}\hlkwb{const\ }\hlstd{real\ Jp\ }\hlopt{=\ }\hlstd{}\hlkwd{det}\hlstd{}\hlopt{(}\hlstd{c}\hlopt{);}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ }\hlstd{}\hlslc{//\ incompressibility}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ }\hlstd{}\hlkwd{c}\hlstd{}\hlopt{(}\hlstd{}\hlnum{2}\hlstd{}\hlopt{)\ =\ }\hlstd{}\hlnum{1}\hlstd{}\hlopt{/}\hlstd{Jp}\hlopt{;}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ }\hlstd{}\hlslc{//\ checks}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ }\hlstd{}\hlslc{//\ first\ invariant\ of\ the\ left\ Cauchy{-}Green\ deformation\ tensor}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ }\hlstd{}\hlkwb{const\ }\hlstd{real\ i1\ }\hlopt{=\ }\hlstd{}\hlkwd{trace}\hlstd{}\hlopt{(}\hlstd{c}\hlopt{);}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ }\hlstd{}\hlslc{//\ second\ Piola{-}Kirchhoff\ stress}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ }\hlstd{}\hlkwb{const\ }\hlstd{stress\ zz\ }\hlopt{=\ }\hlstd{C1\ }\hlopt{+\ }\hlstd{C2}\hlopt{{*}}\hlstd{i1}\hlopt{;}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ }\hlstd{}\hlkwb{const\ }\hlstd{stress\ pr\ }\hlopt{=\ }\hlstd{}\hlnum{2}\hlstd{}\hlopt{{*}(}\hlstd{zz}\hlopt{{-}}\hlstd{C2}\hlopt{{*}}\hlstd{}\hlkwd{c}\hlstd{}\hlopt{(}\hlstd{}\hlnum{2}\hlstd{}\hlopt{)){*}}\hlstd{}\hlkwd{c}\hlstd{}\hlopt{(}\hlstd{}\hlnum{2}\hlstd{}\hlopt{);}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ }\hlstd{StressStensor\ s\ }\hlopt{=\ }\hlstd{}\hlnum{2}\hlstd{}\hlopt{{*}(}\hlstd{zz}\hlopt{{*}}\hlstd{Stensor}\hlopt{::}\hlstd{}\hlkwd{Id}\hlstd{}\hlopt{(){-}}\hlstd{C2}\hlopt{{*}}\hlstd{c}\hlopt{){-}}\hlstd{pr}\hlopt{{*}}\hlstd{ci}\hlopt{;}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ }\hlstd{}\hlkwd{s}\hlstd{}\hlopt{(}\hlstd{}\hlnum{2}\hlstd{}\hlopt{)\ =\ }\hlstd{}\hlnum{0}\hlstd{}\hlopt{.;\ }\hlstd{}\hlslc{//\ Plane\ stress}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ }\hlstd{}\hlslc{//\ Cauchy\ stress}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ }\hlstd{}\hlkwd{sig}\hlstd{}\hlopt{(}\hlstd{}\hlnum{0}\hlstd{}\hlopt{)\ =\ }\hlstd{}\hlkwd{s}\hlstd{}\hlopt{(}\hlstd{}\hlnum{0}\hlstd{}\hlopt{){*}}\hlstd{}\hlkwd{F1}\hlstd{}\hlopt{(}\hlstd{}\hlnum{0}\hlstd{}\hlopt{){*}}\hlstd{}\hlkwd{F1}\hlstd{}\hlopt{(}\hlstd{}\hlnum{0}\hlstd{}\hlopt{)\ +\ }\hlstd{}\hlkwd{F1}\hlstd{}\hlopt{(}\hlstd{}\hlnum{3}\hlstd{}\hlopt{){*}}\hlstd{}\hlkwd{F1}\hlstd{}\hlopt{(}\hlstd{}\hlnum{3}\hlstd{}\hlopt{){*}}\hlstd{}\hlkwd{s}\hlstd{}\hlopt{(}\hlstd{}\hlnum{1}\hlstd{}\hlopt{)\ +\ }\hlstd{cste}\hlopt{{*}}\hlstd{}\hlkwd{F1}\hlstd{}\hlopt{(}\hlstd{}\hlnum{0}\hlstd{}\hlopt{){*}}\hlstd{}\hlkwd{F1}\hlstd{}\hlopt{(}\hlstd{}\hlnum{3}\hlstd{}\hlopt{){*}}\hlstd{}\hlkwd{s}\hlstd{}\hlopt{(}\hlstd{}\hlnum{3}\hlstd{}\hlopt{);}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ }\hlstd{}\hlkwd{sig}\hlstd{}\hlopt{(}\hlstd{}\hlnum{1}\hlstd{}\hlopt{)\ =\ }\hlstd{}\hlkwd{s}\hlstd{}\hlopt{(}\hlstd{}\hlnum{0}\hlstd{}\hlopt{){*}}\hlstd{}\hlkwd{F1}\hlstd{}\hlopt{(}\hlstd{}\hlnum{4}\hlstd{}\hlopt{){*}}\hlstd{}\hlkwd{F1}\hlstd{}\hlopt{(}\hlstd{}\hlnum{4}\hlstd{}\hlopt{)\ +\ }\hlstd{}\hlkwd{F1}\hlstd{}\hlopt{(}\hlstd{}\hlnum{1}\hlstd{}\hlopt{){*}}\hlstd{}\hlkwd{F1}\hlstd{}\hlopt{(}\hlstd{}\hlnum{1}\hlstd{}\hlopt{){*}}\hlstd{}\hlkwd{s}\hlstd{}\hlopt{(}\hlstd{}\hlnum{1}\hlstd{}\hlopt{)\ +\ }\hlstd{cste}\hlopt{{*}}\hlstd{}\hlkwd{F1}\hlstd{}\hlopt{(}\hlstd{}\hlnum{4}\hlstd{}\hlopt{){*}}\hlstd{}\hlkwd{F1}\hlstd{}\hlopt{(}\hlstd{}\hlnum{1}\hlstd{}\hlopt{){*}}\hlstd{}\hlkwd{s}\hlstd{}\hlopt{(}\hlstd{}\hlnum{3}\hlstd{}\hlopt{);}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ }\hlstd{}\hlkwd{sig}\hlstd{}\hlopt{(}\hlstd{}\hlnum{3}\hlstd{}\hlopt{)\ =\ (}\hlstd{}\hlkwd{F1}\hlstd{}\hlopt{(}\hlstd{}\hlnum{4}\hlstd{}\hlopt{){*}}\hlstd{}\hlkwd{F1}\hlstd{}\hlopt{(}\hlstd{}\hlnum{3}\hlstd{}\hlopt{)+}\hlstd{}\hlkwd{F1}\hlstd{}\hlopt{(}\hlstd{}\hlnum{1}\hlstd{}\hlopt{){*}}\hlstd{}\hlkwd{F1}\hlstd{}\hlopt{(}\hlstd{}\hlnum{0}\hlstd{}\hlopt{)){*}}\hlstd{}\hlkwd{s}\hlstd{}\hlopt{(}\hlstd{}\hlnum{3}\hlstd{}\hlopt{)+\ (}\hlstd{}\hlkwd{F1}\hlstd{}\hlopt{(}\hlstd{}\hlnum{4}\hlstd{}\hlopt{){*}}\hlstd{}\hlkwd{F1}\hlstd{}\hlopt{(}\hlstd{}\hlnum{0}\hlstd{}\hlopt{){*}}\hlstd{}\hlkwd{s}\hlstd{}\hlopt{(}\hlstd{}\hlnum{0}\hlstd{}\hlopt{)\ +\ }\hlstd{}\hlkwd{F1}\hlstd{}\hlopt{(}\hlstd{}\hlnum{1}\hlstd{}\hlopt{){*}}\hlstd{}\hlkwd{F1}\hlstd{}\hlopt{(}\hlstd{}\hlnum{3}\hlstd{}\hlopt{){*}}\hlstd{}\hlkwd{s}\hlstd{}\hlopt{(}\hlstd{}\hlnum{1}\hlstd{}\hlopt{))\ {*}}\hlstd{cste}\hlopt{;}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ }\hlstd{}\hlkwd{sig}\hlstd{}\hlopt{(}\hlstd{}\hlnum{2}\hlstd{}\hlopt{)\ =\ }\hlstd{}\hlnum{0}\hlstd{}\hlopt{.;}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ }\hlstd{}\hlslc{//\ no\ tangent\ operator\ yet}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ }\hlstd{}\hlkwa{if}\hlstd{}\hlopt{(}\hlstd{computeTangentOperator\textunderscore }\hlopt{)\{}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ \ \ }\hlstd{string\ }\hlkwd{msg}\hlstd{}\hlopt{(}\hlstd{}\hlstr{"tangent\ operator\ not\ yet\ available"}\hlstd{}\hlopt{);}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlkwa{throw}\hlstd{}\hlopt{(}\hlstd{}\hlkwd{runtime\textunderscore error}\hlstd{}\hlopt{(}\hlstd{msg}\hlopt{));}

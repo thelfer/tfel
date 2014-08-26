@@ -117,7 +117,7 @@
     d'erreurs en ce qui concerne la partie purement informatique de
     l'implantation~;
   \item ces \og~détails\fg{} informatiques peuvent avoir de nombreuses
-    conséquences (portabilité, performancees, etc..)~;
+    conséquences (portabilité, performances, etc..)~;
   \item une partie du code est de la \og{}~glue\fg{} pour s'adapter au
     code/langage cible.
   \end{itemize}
@@ -215,7 +215,7 @@
 
 }
 
-\titre{Utilisation dans \castem{}}
+\titre{Utilisation dans \castem{} (version pleiades)}
 \frame{
 
   \begin{center}
