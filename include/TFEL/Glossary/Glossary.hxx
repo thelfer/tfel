@@ -54,6 +54,7 @@ static const GlossaryEntry HeatFlux;
 static const GlossaryEntry HillStress;
 static const GlossaryEntry HydrostaticPressure;
 static const GlossaryEntry IrradiationDamage;
+static const GlossaryEntry IrradiationInducedSwelling;
 static const GlossaryEntry IrradiationSwelling;
 static const GlossaryEntry IrradiationTemperature;
 static const GlossaryEntry KelvinTemperature;

@@ -407,8 +407,14 @@
  short_description : "la porosité du matériau";
 };
 
+"IrradiationInducedSwelling"{
+ type : "scalar";
+ short_description : "un gonflement imposé  dû à des dégâts d'irradiation";
+ notes : {"L'utilisation de ce nom pour imposer "
+  "un gonflement n'est pas obligatoire"};
+};
+
 "IrradiationSwelling"{
- alias : "IrradiationInducedSwelling";
  type : "scalar";
  short_description : "un gonflement imposé  dû à des dégâts d'irradiation";
  notes : {"L'utilisation de ce nom pour imposer "

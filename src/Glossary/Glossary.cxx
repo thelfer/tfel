@@ -243,7 +243,13 @@ const GlossaryEntry Glossary::IrradiationDamage("IrradiationDamage","Irradiation
 "" /* no 'description' defined */,
 "" /* no 'notes' defined */);
 
-const GlossaryEntry Glossary::IrradiationSwelling("IrradiationSwelling",Glossary::names+23,Glossary::names+25,
+const GlossaryEntry Glossary::IrradiationInducedSwelling("IrradiationInducedSwelling","IrradiationInducedSwelling",
+"","scalar",
+"un gonflement imposé  dû à des dégâts d'irradiation",
+"" /* no 'description' defined */,
+"L'utilisation de ce nom pour imposer un gonflement n'est pas obligatoire");
+
+const GlossaryEntry Glossary::IrradiationSwelling("IrradiationSwelling","IrradiationSwelling",
 "","scalar",
 "un gonflement imposé  dû à des dégâts d'irradiation",
 "" /* no 'description' defined */,
@@ -624,7 +630,7 @@ return glossary;
 } // end of Glossary::getGlossary
 
 Glossary::Glossary(){
-this->keys.reserve(83);
+this->keys.reserve(84);
 this->insert(Glossary::AxialStrain);
 this->insert(Glossary::AxialStress);
 this->insert(Glossary::B10BurnUp);
@@ -648,6 +654,7 @@ this->insert(Glossary::HeatFlux);
 this->insert(Glossary::HillStress);
 this->insert(Glossary::HydrostaticPressure);
 this->insert(Glossary::IrradiationDamage);
+this->insert(Glossary::IrradiationInducedSwelling);
 this->insert(Glossary::IrradiationSwelling);
 this->insert(Glossary::IrradiationTemperature);
 this->insert(Glossary::KelvinTemperature);

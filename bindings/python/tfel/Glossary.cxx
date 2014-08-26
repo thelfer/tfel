@@ -65,6 +65,8 @@ return_value_policy<reference_existing_object>())
 "la pression hydrostatique (égale au tiers de la trace du tenseur des contraintes)")
 .def_readonly("IrradiationDamage",&Glossary::IrradiationDamage,
 "le dommage due à l'irradiation, mesuré par le nombre de déplacement moyen de chaque atome (dpa)")
+.def_readonly("IrradiationInducedSwelling",&Glossary::IrradiationInducedSwelling,
+"un gonflement imposé  dû à des dégâts d'irradiation")
 .def_readonly("IrradiationSwelling",&Glossary::IrradiationSwelling,
 "un gonflement imposé  dû à des dégâts d'irradiation")
 .def_readonly("IrradiationTemperature",&Glossary::IrradiationTemperature,
