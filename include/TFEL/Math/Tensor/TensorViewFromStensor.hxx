@@ -54,7 +54,7 @@ namespace tfel
       operator()(const unsigned short i) const
       {
 	using std::sqrt;
-	using typename tfel::typetraits::BaseType;
+	using tfel::typetraits::BaseType;
 	typedef typename BaseType<ValueType>::type real;
 	static const real cste = real(1)/sqrt(real(2));
 	switch(i){
