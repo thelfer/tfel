@@ -321,6 +321,53 @@ namespace tfel{
       return v3;
     } // end of cross_product
 
+    template<typename T>
+    void
+    find_perpendicular_vector(tvector<3u,T>& y,
+			      const tvector<3u,T>& x)
+    {
+      using namespace std;
+      using namespace tfel::math;
+      typedef typename tfel::typetraits::BaseType<T>::type real;
+      typedef typename ComputeBinaryResult<real,T,OpDiv>::Result inv_T;
+      T norm2_x = (x|x);
+      if(norm2_x<100*std::numeric_limits<T>::min()){
+	//x is null
+	y(0) = static_cast<T>(1.);
+	y(1) = static_cast<T>(0.);
+	y(2) = static_cast<T>(0.);
+	return;
+      }
+      inv_T inv_norm2_x = real(1)/norm2_x;
+      if(abs(x(0))<abs(x(1))){
+	if(abs(x(0))<abs(x(2))){
+	  //|x0| is min, (1 0 0) is a good choice
+	  y(0) = real(1.)- x(0)*x(0)*inv_norm2_x;
+	  y(1) =         - x(0)*x(1)*inv_norm2_x;
+	  y(2) =         - x(0)*x(2)*inv_norm2_x;
+	} else {
+	  //|x2| is min, (0 0 1) is a good choice
+	  y(0) =         - x(2)*x(0)*inv_norm2_x;
+	  y(1) =         - x(2)*x(1)*inv_norm2_x;
+	  y(2) = real(1) - x(2)*x(2)*inv_norm2_x;
+	}
+      } else if (abs(x(1))<abs(x(2))) {
+	// |x1| is min, (0 0 1) is a good choice
+	y(0) =         - x(1)*x(0)*inv_norm2_x;
+	y(1) = real(1) - x(1)*x(1)*inv_norm2_x;
+	y(2) =         - x(1)*x(2)*inv_norm2_x;
+      } else {
+	// |x2| is min, (0 0 1) is a good choice
+	y(0) =         - x(2)*x(0)*inv_norm2_x;
+	y(1) =         - x(2)*x(1)*inv_norm2_x;
+	y(2) = real(1) - x(2)*x(2)*inv_norm2_x;
+      }
+      const T tmp = sqrt(y|y);
+      y(0) /=tmp;
+      y(1) /=tmp;
+      y(2) /=tmp; 
+    }
+
     template<unsigned short I,unsigned short N,typename T>
     VectorExpr<tvector<N-I,T>,TinyVectorFromTinyVectorViewExpr<N-I,N,I,T,false> >
     slice(tvector<N,T>& v)

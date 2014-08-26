@@ -339,6 +339,15 @@ namespace tfel{
     tvector<3u,T>
     cross_product(const tvector<3u,T>&,
 		  const tvector<3u,T>&);
+
+    /*!
+     * find a vector perpendicular to the second one
+     */
+    template<typename T>
+    void
+    find_perpendicular_vector(tvector<3u,T>&,
+			      const tvector<3u,T>&);
+
     /*!
      * \brief create a slice from a tiny vector
      * \param[in] v : vector

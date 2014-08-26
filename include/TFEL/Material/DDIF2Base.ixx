@@ -33,14 +33,14 @@ namespace tfel
 			     const real Rp,
 			     const real young,
 			     const real lambda,
-			     const real mu,
-			     const unsigned short i)
+			     const real mu)
     {
       using namespace std;
       const real em   = max(em_1,e+de); 
       const real sigm = max(sigr+Rp*em,0.); 
       // loading surface
-      const real r = (sig(i)-sigm)/young;
+      const real s = (sig|n);
+      const real r = (s-sigm)/young;
       if (((r>DDIF2Base::eps)||(e+de>em_1))&&(e+de>=0.)){
 	// damage increase
 	fe        = r;
@@ -57,9 +57,9 @@ namespace tfel
 	} else {
 	  if(em>DDIF2Base::emin1){
 	    // material previously damage increase
-	    if((e+de>DDIF2Base::emin1)||(sig(i)>=0)){
+	    if((e+de>DDIF2Base::emin1)||(s>=0)){
 	      const real Ef  = sigm/em;
-	      fe             = (sig(i)-Ef*(e+de))/young;
+	      fe             = (s-Ef*(e+de))/young;
 	      dfe_ddeel      = (lambda*Stensor::Id()+2*mu*n)/young;
 	      dfe_dde        = -Ef/young;
 	    } else {

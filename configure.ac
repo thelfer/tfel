@@ -390,6 +390,7 @@ AC_OUTPUT([debug.sh
            mfront/tests/behaviours/aster/asterimplicitnorton_broyden.mtest
            mfront/tests/behaviours/aster/asterimplicitnorton_broyden2.mtest
            mfront/tests/behaviours/aster/asterimplicitorthotropiccreep.mtest
+           mfront/tests/behaviours/aster/asterellipticcreep.mtest
            mfront/tests/behaviours/aster/asterplasticity.mtest
            mfront/tests/behaviours/aster/asterstrainhardeningcreep.mtest
            mfront/tests/behaviours/aster/asterplasisocin.mtest
@@ -428,6 +429,7 @@ AC_OUTPUT([debug.sh
            mfront/tests/behaviours/castem/castemnorton-euler.mtest
            mfront/tests/behaviours/castem/castemnorton-rk2.mtest
            mfront/tests/behaviours/castem/castemnorton-rk4.mtest
+           mfront/tests/behaviours/castem/castemellipticcreep.mtest
            mfront/tests/behaviours/castem/castemstressrelaxation.mtest
            mfront/tests/behaviours/castem/castemorthotropiccreep.mtest
            mfront/tests/behaviours/castem/castemorthotropiccreep-rk42.mtest

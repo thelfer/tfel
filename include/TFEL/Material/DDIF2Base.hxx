@@ -38,8 +38,7 @@ namespace tfel
 		    const real Rp,
 		    const real young,
 		    const real lambda,
-		    const real mu,
-		    const unsigned short i);
+		    const real mu);
 
       template<typename real>
       static TFEL_VISIBILITY_LOCAL void

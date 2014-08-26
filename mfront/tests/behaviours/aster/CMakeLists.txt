@@ -27,6 +27,7 @@ set(mfront_tests_SOURCES
   ImplicitNorton2
   ImplicitNorton_Broyden
   ImplicitNorton_Broyden2
+  EllipticCreep
   StrainHardeningCreep
   Mazars
   Lorentz
@@ -108,6 +109,7 @@ test_aster(implicitnorton_broyden)
 test_aster(implicitnorton_broyden2)
 test_aster(implicitorthotropiccreep)
 test_aster(plasticity)
+test_aster(ellipticcreep)
 test_aster(strainhardeningcreep)
 test_aster(plasisocin)
 test_aster(viscoplasisocin)

@@ -95,13 +95,13 @@ sigr.setGlossaryName("FractureStress");
   sig = lambda*trace(eel+deel)*Stensor::Id()+2*mu*(eel+deel);
   DDIF2Base::treatFracture(dfe0_ddeel,dfe0_dde0,fe0,
 			   e0m,e0,de0,sig,n0,
-			   sigr,Rp,young,mu,lambda,0u);
+			   sigr,Rp,young,lambda,mu);
   DDIF2Base::treatFracture(dfe1_ddeel,dfe1_dde1,fe1,
 			   e1m,e1,de1,sig,n1,
-			   sigr,Rp,young,mu,lambda,1u);
+			   sigr,Rp,young,lambda,mu);
   DDIF2Base::treatFracture(dfe2_ddeel,dfe2_dde2,fe2,
 			   e2m,e2,de2,sig,n2,
-			   sigr,Rp,young,mu,lambda,2u);
+			   sigr,Rp,young,lambda,mu);
 } // end of @Integrator
 
 @UpdateAuxiliaryStateVars{

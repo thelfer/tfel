@@ -8,6 +8,7 @@ MFRONTS= DDIF2.mfront                                \
          ImplicitNorton2.mfront                      \
          ImplicitNorton_Broyden.mfront               \
          ImplicitNorton_Broyden2.mfront              \
+	 EllipticCreep.mfront                        \
          NortonRK.mfront                             \
          NortonRK2.mfront                            \
          NortonRK3.mfront                            \
