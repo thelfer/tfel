@@ -27,7 +27,6 @@ bool TinyMatrixSolveTest()
 {
   using namespace std;
   using namespace tfel::math;
-  using tfel::math::vector;
   tmatrix<3,3,T> m;
   tvector<3,T> b;
 
@@ -57,7 +56,6 @@ bool TinyMatrixSolveTest2()
 {
   using namespace std;
   using namespace tfel::math;
-  using tfel::math::vector;
   tmatrix<3,3,T> m;
   tvector<3,T> b;
 
