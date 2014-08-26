@@ -406,6 +406,9 @@ AC_OUTPUT([debug.sh
            mfront/tests/behaviours/aster/asterimplicitmonocristal-2.mtest
            mfront/tests/behaviours/aster/astermonocristal_dd_cfc.mtest
            mfront/tests/behaviours/aster/astermonocristal_dd_cfc_numericaljacobian.mtest
+           mfront/tests/behaviours/aster/astermonocristal_dd_cfc_irradiation.mtest
+           mfront/tests/behaviours/aster/astermonocristal_dd_cc_numericaljacobian.mtest
+           mfront/tests/behaviours/aster/astermonocristal_dd_cc_irradiation_numericaljacobian.mtest
            mfront/tests/behaviours/aster/asterpolycristals.mtest
            mfront/tests/behaviours/aster/asterpolycristals_dd_cfc.mtest
            mfront/tests/behaviours/aster/asterimplicithayhurst.mtest
@@ -459,6 +462,9 @@ AC_OUTPUT([debug.sh
            mfront/tests/behaviours/castem/castemimplicitmonocristal-2.mtest
            mfront/tests/behaviours/castem/castemmonocristal_dd_cfc.mtest
            mfront/tests/behaviours/castem/castemmonocristal_dd_cfc_numericaljacobian.mtest
+           mfront/tests/behaviours/castem/castemmonocristal_dd_cfc_irradiation.mtest
+           mfront/tests/behaviours/castem/castemmonocristal_dd_cc_numericaljacobian.mtest
+           mfront/tests/behaviours/castem/castemmonocristal_dd_cc_irradiation_numericaljacobian.mtest
            mfront/tests/behaviours/castem/castempolycristals.mtest
            mfront/tests/behaviours/castem/castempolycristals_dd_cfc.mtest
            mfront/tests/behaviours/castem/castemhayhurst.mtest

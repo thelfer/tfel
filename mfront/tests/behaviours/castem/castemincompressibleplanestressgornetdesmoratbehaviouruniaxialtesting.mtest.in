@@ -27,7 +27,7 @@
 @ImposedDeformationGradient 'FXY' 0;
 @ImposedDeformationGradient 'FYX' 0;
 
-@Times {0.,1 in 10};
+@Times {0.,1 in 20};
 
 @Test<function> 'SYY' '2*(FYY**2 - 1/FYY)*(H1*exp(H3*(FYY**2+2/FYY-3)**2)+3*H2/(FYY*sqrt(2*FYY+1/FYY**2)))' 1.e-8;
 @Test<function> {'SXX':'0','SZZ':'0.','SXY':'0.'} 1.e-7;

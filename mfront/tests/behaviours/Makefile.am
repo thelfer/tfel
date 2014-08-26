@@ -41,7 +41,12 @@ MFRONTS= DDIF2.mfront                                            \
 	 MonoCristalNewtonRaphson.mfront                         \
 	 MonoCristal_DD_CFC.mfront                               \
 	 MonoCristal_DD_CFC_NumericalJacobian.mfront             \
+	 MonoCristal_DD_CFC_Irradiation.mfront                   \
 	 MonoCristal_DD_CFC_InteractionMatrix.mfront             \
+	 MonoCristal_DD_CC_NumericalJacobian.mfront              \
+	 MonoCristal_DD_CC_Irradiation_NumericalJacobian.mfront  \
+	 MonoCristal_DD_CC_InteractionMatrix.mfront              \
+	 MonoCristal_DD_CC_SlidingSystems.mfront                 \
 	 PolyCristals.mfront                                     \
 	 PolyCristals_DD_CFC.mfront                              \
 	 Hayhurst.mfront                                         \
@@ -57,24 +62,27 @@ MFRONTS= DDIF2.mfront                                            \
 testsdir = $(pkgdatadir)/mfront/tests/behaviours
 tests_DATA = $(MFRONTS)
 
-EXTRA_DIST=CMakeLists.txt                                   \
-	   $(MFRONTS)                                       \
-           references/plasticity.ref                        \
-	   references/elasticity15-aster.ref                \
-	   references/mazars-aster.ref                      \
-	   references/plasisocin.ref                        \
-	   references/viscoplasisocin.ref                   \
-	   references/chaboche2-aster.ref                   \
-	   references/chaboche-aster.ref                    \
-	   references/chaboche2-aster.ref                   \
-	   references/monocristal.ref                       \
-	   references/monocristal_dd_cfc.ref                \
-	   references/PolyCristalsAngles.txt                \
-	   references/polycristals.ref                      \
-	   references/polycristals_dd_cfc.ref               \
-	   references/hayhurst.ref                          \
-	   references/burger.ref                            \
-	   references/tvergaard.ref                         \
-	   references/druckerprager.ref                     \
-	   references/druckerprager2.ref                    \
-	   references/implicitsimomieheelastoplasticity.ref
+EXTRA_DIST=CMakeLists.txt                                                 \
+	   $(MFRONTS)                                                     \
+           references/plasticity.ref                                      \
+	   references/elasticity15-aster.ref                              \
+	   references/mazars-aster.ref                                    \
+	   references/plasisocin.ref                                      \
+	   references/viscoplasisocin.ref                                 \
+	   references/chaboche2-aster.ref                                 \
+	   references/chaboche-aster.ref                                  \
+	   references/chaboche2-aster.ref                                 \
+	   references/monocristal.ref                                     \
+	   references/monocristal_dd_cfc.ref                              \
+	   references/monocristal_dd_cfc_irradiation.ref                  \
+	   references/PolyCristalsAngles.txt                              \
+	   references/polycristals.ref                                    \
+	   references/polycristals_dd_cfc.ref                             \
+	   references/hayhurst.ref                                        \
+	   references/burger.ref                                          \
+	   references/tvergaard.ref                                       \
+	   references/druckerprager.ref                                   \
+	   references/druckerprager2.ref                                  \
+	   references/implicitsimomieheelastoplasticity.ref               \
+	   references/monocristal_dd_cc_numericaljacobian.ref             \
+	   references/monocristal_dd_cc_irradiation_numericaljacobian.ref

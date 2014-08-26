@@ -51,6 +51,9 @@ set(mfront_tests_SOURCES
   MonoCristal
   MonoCristal_DD_CFC
   MonoCristal_DD_CFC_NumericalJacobian
+  MonoCristal_DD_CFC_Irradiation
+  MonoCristal_DD_CC_NumericalJacobian
+  MonoCristal_DD_CC_Irradiation_NumericalJacobian
   PolyCristals
   PolyCristals_DD_CFC
   Hayhurst
@@ -145,6 +148,9 @@ test_castem(implicitmonocristal)
 test_castem(implicitmonocristal-2)
 test_castem(monocristal_dd_cfc)
 test_castem(monocristal_dd_cfc_numericaljacobian)
+test_castem(monocristal_dd_cfc_irradiation)
+test_castem(monocristal_dd_cc_numericaljacobian)
+test_castem(monocristal_dd_cc_irradiation_numericaljacobian)
 test_castem(polycristals)
 test_castem(polycristals_dd_cfc)
 test_castem(hayhurst)

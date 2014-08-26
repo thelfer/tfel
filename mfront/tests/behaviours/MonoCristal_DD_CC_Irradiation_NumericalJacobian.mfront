@@ -1,0 +1,187 @@
+@Parser    Implicit;
+@Behaviour MonoCristal_DD_CC_Irradiation_NumericalJacobian;
+@Algorithm NewtonRaphson_NumericalJacobian;
+@Author    Jean-Michel Proix;
+@Date      29/11/2013;
+@Description{
+  "loi monocristalline MONO_DD_CC_IRRA cf. R5.03.11"
+  // adimensionnement omega=omega*b*b
+}
+
+@ModellingHypothesis Tridimensional;
+@OrthotropicBehaviour;
+@RequireStiffnessTensor;
+
+@Theta 1.0;
+@Epsilon 1.e-10 ;
+@IterMax 100 ;
+
+@MaterialProperty real b;
+@MaterialProperty real H ;
+@MaterialProperty real DeltaG_0 ;
+@MaterialProperty real tau_0;
+@MaterialProperty real tau_f;
+@MaterialProperty real gamma0;
+@MaterialProperty real pn;
+@MaterialProperty real omega_mob;
+@MaterialProperty real d;
+@MaterialProperty real d_lath;
+@MaterialProperty real y_at;
+@MaterialProperty real K_f;
+@MaterialProperty real K_self ;
+@MaterialProperty real k_b;
+@MaterialProperty real epsi_1;
+@MaterialProperty real Mu;
+@MaterialProperty real a_irr;
+@MaterialProperty real xi_irr;
+
+// pour la matrice d'interaction
+@MaterialProperty real h0;
+@MaterialProperty real h1;
+@MaterialProperty real h2;
+@MaterialProperty real h3;
+@MaterialProperty real h4;
+@MaterialProperty real h5;
+
+@StateVariable real  omega[12];
+@AuxiliaryStateVariable strain omega_irr[12];
+//omega.setMaximumIncrementValuePerIteration(1.e-5);
+
+@LocalVariable real Dg[12];
+@LocalVariable real Lc ;
+
+@TangentOperator{
+  if((smt==ELASTIC)||(smt==SECANTOPERATOR)){
+    Dt = D;
+  } else if (smt==CONSISTANTTANGENTOPERATOR){
+    Stensor4 Je;
+    getPartialJacobianInvert(Je);
+    Dt = D*Je;
+  } else {
+    return false;
+  }
+}
+
+@Import "MonoCristal_DD_CC_InteractionMatrix.mfront";
+@Import "MonoCristal_DD_CC_SlidingSystems.mfront";
+
+@ComputeStress{
+  sig = D*eel;
+}
+
+@InitLocalVars{
+  Lc = 500.*b* (T/300.)*(T/300.);
+} 
+
+@Integrator{
+  StrainStensor Depsp(real(0));
+  real tau[12];
+  real omegap[12];
+
+  for(unsigned short k=0;k!=12;++k){
+    omegap[k]=omega[k]+theta*domega[k];
+    if(omegap[k] < 0.) {
+      cout << " k" << k << " omega " << omegap[k] << endl ;
+      throw(runtime_error("omega négatif"));
+    } 
+  }
+
+  for(unsigned short i=0;i!=12;++i){
+    real omega_tot=0.;
+    for (unsigned short j=0;j!=12;++j){
+      if (j!=i){
+	// la dependance a omega_irr est explicite ici
+	omega_tot += omegap[j]  ;
+      }
+    }
+    omega_tot += omega_irr[i] ;      
+
+    real DG = k_b*T*log(omega_mob*H/sqrt(omega_tot)/epsi_1) ;
+    real t1 = 1.0-DG/DeltaG_0 ;
+    real Rs = 0. ;
+    if ( t1 < 0.) {
+      Rs = 1.E20 ;
+    } else {
+      Rs = Mu*b/(2.0*tau_0*t1*t1) ;
+    }
+    real lambda=1.0/(min(sqrt(omega_tot)/b,omega_tot*(d+2.0*Rs)/b/b));
+    real alpha_AT = 0.;
+    for (unsigned short j=0;j!=12;++j){
+      if (j!=i){
+	alpha_AT += mh(i,j)*omegap[j] ;
+      }
+    }
+    alpha_AT += a_irr * omega_irr[i]  ;
+    if(alpha_AT < 0.) {
+      throw(runtime_error("alpha_AT négatif"));
+    } 
+    alpha_AT = sqrt(alpha_AT/omega_tot) ;
+    real ls = max ( (lambda - 2.0 * alpha_AT * Rs) , Lc );
+
+    real tau_LT = max ( 0.0, alpha_AT * Mu * b * (1.0/lambda - 1.0/(2.0 * alpha_AT * Rs + Lc)) );
+    real tau_LR = Mu * sqrt (mh(i,i) * omegap[i] ) ;
+
+    tau[i] = mus[i] | sig ;
+    real tau_c = tau_f + sqrt ( tau_LT*tau_LT + tau_LR * tau_LR) ;
+    real tau_eff = abs ( tau [i] ) - tau_c  ;
+
+    real sgn_tau = 0.0 ;
+    if (abs(tau[i]) > 0.0) { 
+      sgn_tau =tau[i]/abs(tau[i]) ; 
+    }
+      
+    if(tau_eff > tau_0) {
+      cout << "tau_eff " << tau_eff << " tau_0 " << tau_0 << endl ;
+      throw(runtime_error("tau_eff > tau_0"));
+    }
+    real DG_eff = DeltaG_0 ;
+    if (tau_eff > 0.0) {
+      DG_eff = DG_eff * (1.0 - sqrt ( tau_eff / tau_0 ) ) ;
+    }
+    real gamma_nuc = omega_mob / b* H * ls * exp ( - DG_eff / k_b / T ) * sgn_tau ;
+
+    if(abs(tau_c)<1.e-50) {
+      ostringstream msg;
+      msg << "invalid value for tau_c (" << tau_c << ")";
+      throw(runtime_error(msg.str()));
+    }      
+    real gamma_prob = gamma0 * pow( ( abs(tau[i]) / tau_c ), pn) * sgn_tau ;
+      
+    real inv_gamma_nuc = 0. ;
+    if (abs(gamma_nuc) > 0. ) {
+      inv_gamma_nuc = 1.0 / gamma_nuc ;
+    }
+      
+    real inv_gamma_prob = 0. ;
+    if (abs(gamma_prob) > 0. ) {
+      inv_gamma_prob = 1.0 / gamma_prob ;
+    }
+      
+    Dg[i]=0. ;
+    if (abs( inv_gamma_prob + inv_gamma_nuc) > 0. ) {
+      Dg[i] = dt / ( inv_gamma_prob + inv_gamma_nuc ) ;
+    }
+        
+    Depsp+=Dg[i]* mus[i] ;
+    real deuxpi = 6.2831853071795862 ;
+    real y = 1.0 / (1.0 / y_at + deuxpi * tau_eff / Mu / b) ;
+          
+    real a_eff = 1.0 ;
+    if (tau_eff > 0.0){
+      a_eff = 1.0 - tau_eff / tau_0  ;
+    }
+      
+    real hs=1.0/d_lath+sqrt(mh(i,i)*omegap[i])*a_eff/K_self/b +alpha_AT*(1.-tau_eff/tau_0)*lambda*omega_tot/K_f/b/b - y*omegap[i]/b/b;
+
+    fomega[i] = domega[i] - b*abs(Dg[i]) *  hs  ;
+  }
+  feel += Depsp-deto;
+
+} 
+
+@UpdateAuxiliaryStateVars{
+  for(unsigned short i=0;i!=12;++i){
+    omega_irr[i] -= omega_irr[i]*xi_irr*abs(Dg[i]);
+  }
+}
+

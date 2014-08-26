@@ -204,11 +204,11 @@ révision @TFEL_SVN_REVISION@.
 
 \subsection{Objectif de \mfront{}}
 
-Couplé à la base de données \sirius{}, \mfront{} vise à garantir une
-gestion pérenne, robuste, efficace et évolutive (au sens du suivi des
-évolutions logicielles) des connaissances matériau dans la plateforme
-\pleiades{} et à faciliter leurs écritures par des utilisateurs non
-développeurs~\cite{michel09,helfer10}~:
+Développé dans le cadre de la plateforme \pleiades{} du \cea{},
+\mfront{} vise à garantir une gestion pérenne, robuste, efficace et
+évolutive (au sens du suivi des évolutions logicielles) des
+connaissances matériau et à faciliter leurs écritures par des
+utilisateurs non développeurs~\cite{michel09,helfer10}~:
 \begin{itemize}
 \item la pérennisation et le caractère évolutif des connaissances
   matériau est assuré par~:
@@ -263,6 +263,9 @@ développeurs~\cite{michel09,helfer10}~:
   décrire les équations régissant l'évolution des variables internes
   sous une forme quasi-symbolique.
 \end{itemize}
+
+Les fichiers écrits en \mfront{} sont capitalisés dans une base de
+données propre à la plate-forme nommée \sirius{}.
 
 \subsection{Plan de la note}
 
@@ -398,9 +401,10 @@ paragraphe~\ref{sec:mfront:parser}. Par défaut, l'analyseur {\tt
 \subsubsection{Directives informatives}
 
 Nous décrivons dans ce paragraphe quatre directives optionnelles dont
-le but est uniquement informatif. Elles sont utilisées lors de
-l'insertion d'un fichier \mfront{} dans la base de données
-\sirius{}. Elles devraient également servir à terme lors de la
+le but est uniquement informatif\footnote{Dans le cadre de la
+  plateforme \pleiades{}, ces informations sont utilisées lors de
+  l'insertion d'un fichier \mfront{} dans la base de données
+  \sirius{}.}. Elles devraient également servir à terme lors de la
 génération automatique d'une documentation à partir d'un fichier
 \mfront{}.
 
@@ -531,7 +535,7 @@ loi de comportement. Cette solution présente plusieurs inconvénients~:
 \item on s'éloigne du choix \pleiades{} de proposer des lois de
   comportement mécanique spécifiques aux matériaux~;
 \item il augmente le risque d'erreur de la part de l'utilisateur, qui
-  doit correctement renseigné son jeu de données dans le code
+  doit correctement renseigner son jeu de données dans le code
   appelant~;
 \item il est difficile de passer d'un coefficient indépendant de la
   température à un coefficient dépendant de la
@@ -734,22 +738,22 @@ matériau par matériau. Nous pouvons donner deux cas pouvant poser
 problème~:
 \begin{itemize}
 \item dans le cas d'une aiguille absorbante, il arrive que la partie
-  inférieure de la colonne absorbante soit constituée de \(\bqc\) à un
+  inférieure de la colonne absorbante est constituée de \(\bqc\) à un
   enrichissement en \(\bd\) donné tandis que la partie supérieure soit
   constituée de \(\bqc\) à un enrichissement différent. Il est naturel
   de définir deux matériaux distincts pour décrire cette situation que
   l'ont décrira à l'aide des mêmes propriétés matériaux. Dans ce cas
   la notion de paramètre ne permet pas distinguer les parties basses
   et hautes.
-\item pour de crayons combustibles mélangeant des parties oxydes
+\item pour des crayons combustibles mélangeant des parties oxydes
   \(UO_{2}\) et \(MOX\), la notion de paramètre ne permet pas de
   modifier une propriété ou un modèle sur le combustible oxyde
   uniquement~;
 \end{itemize}
 
-Dans le cas du code \licos{}, l'utilisateur pourra choisir la
-solution la plus adaptée à son besoin. Dans \castem{}, seule la première
-solution est possible.
+Dans le cas de l'application \licos{}, l'utilisateur pourra choisir la
+solution la plus adaptée à son besoin. Dans \castem{}, seule la
+première solution est possible.
 
 \paragraph{Définition de paramètres}
 Pour les propriétés et les lois de comportements, la directive
@@ -844,7 +848,7 @@ indépendante du code ou du langage cible\footnote{Précisons enfin si
     C++}. Il est ainsi possible d'utiliser toute la richesse de ce
   langage.}.
 
-Pour que celles-ci soit utilisables dans un code particulier,
+Pour que celles-ci soient utilisables dans un code particulier,
 \mfront{} introduit la notion d'{\em interface}~: le code source
 généré dépend de l'interface choisie par l'utilisateur et cherche à
 s'intégrer au mieux dans le contexte du code cible et à en tirer le

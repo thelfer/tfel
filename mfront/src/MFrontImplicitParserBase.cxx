@@ -1622,14 +1622,29 @@ namespace mfront{
       if(this->mb.getParametersDefaultValues().find(p->name+"_maximum_increment_value_per_iteration")!=
 	 this->mb.getParametersDefaultValues().end()){
 	this->behaviourFile << "for(unsigned short idx = 0; idx!=" << nv << ";++idx){\n";
-	this->behaviourFile << "if(std::abs(" << v << "[" << n 
-			    << "+idx])>this->" << p->name << "_maximum_increment_value_per_iteration){\n";
+	if(this->nf.find(p->name)!=this->nf.end()){
+	  this->behaviourFile << "if(std::abs(" << v << "[" << n 
+			      << "+idx])>" << this->nf[p->name] << "*(this->" << p->name << "_maximum_increment_value_per_iteration)){\n";
+	} else {
+	  this->behaviourFile << "if(std::abs(" << v << "[" << n 
+			      << "+idx])>this->" << p->name << "_maximum_increment_value_per_iteration){\n";
+	}
 	this->behaviourFile << "if("<< v << "[" << n << "+idx]<0){\n";
-	this->behaviourFile << "" << v << "[" << n
-			    << "+idx] = -this->" << p->name << "_maximum_increment_value_per_iteration;\n";
+	if(this->nf.find(p->name)!=this->nf.end()){
+	  this->behaviourFile << "" << v << "[" << n
+			      << "+idx] = -"  << this->nf[p->name] << "*(this->" << p->name << "_maximum_increment_value_per_iteration);\n";
+	} else {
+	  this->behaviourFile << "" << v << "[" << n
+			      << "+idx] = -this->" << p->name << "_maximum_increment_value_per_iteration;\n";
+	}
 	this->behaviourFile << "} else {\n";
-	this->behaviourFile << "" << v << "["
-			    << n << "+idx] =  this->" << p->name << "_maximum_increment_value_per_iteration;\n";
+	if(this->nf.find(p->name)!=this->nf.end()){
+	  this->behaviourFile << "" << v << "[" << n
+			      << "+idx] = " << this->nf[p->name] << "*(this->" << p->name << "_maximum_increment_value_per_iteration);\n";
+	} else {
+	  this->behaviourFile << "" << v << "["
+			      << n << "+idx] =  this->" << p->name << "_maximum_increment_value_per_iteration;\n";
+	}
 	this->behaviourFile << "}\n";
 	this->behaviourFile << "}\n";
 	this->behaviourFile << "}\n";
@@ -2012,8 +2027,8 @@ namespace mfront{
     this->behaviourFile << "}\n";
     this->behaviourFile << "}\n";
     for(p=this->mb.getStateVariables().begin();p!=this->mb.getStateVariables().end();++p){
-      if(nf.find(p->name)!=nf.end()){
-	this->behaviourFile << "this->d" << p->name << " *= " << nf.find(p->name)->second << ";\n";
+      if(this->nf.find(p->name)!=this->nf.end()){
+	this->behaviourFile << "this->d" << p->name << " *= " << this->nf.find(p->name)->second << ";\n";
       }
     }
     this->behaviourFile << "this->updateStateVars();\n";
@@ -2105,15 +2120,15 @@ namespace mfront{
     this->behaviourFile << "// setting f values to zeros\n";
     this->behaviourFile << "this->fzeros = this->zeros;\n";
     for(p=this->mb.getStateVariables().begin();p!=this->mb.getStateVariables().end();++p){
-      if(nf.find(p->name)!=nf.end()){
-    	this->behaviourFile << "f" << p->name << " *= " << nf.find(p->name)->second << ";" << endl;
+      if(this->nf.find(p->name)!=this->nf.end()){
+    	this->behaviourFile << "f" << p->name << " *= " << this->nf.find(p->name)->second << ";" << endl;
       }
     }
     this->behaviourFile << this->integrator;
     this->behaviourFile << "\n";
     for(p=this->mb.getStateVariables().begin();p!=this->mb.getStateVariables().end();++p){
-      if(nf.find('f'+p->name)!=nf.end()){
-    	this->behaviourFile << "f" << p->name << "*= real(1)/(" << nf.find('f'+p->name)->second << ");" << endl;
+      if(this->nf.find('f'+p->name)!=this->nf.end()){
+    	this->behaviourFile << "f" << p->name << "*= real(1)/(" << this->nf.find('f'+p->name)->second << ");" << endl;
       }
     }
     if((this->algorithm==MFrontImplicitParserBase::NEWTONRAPHSON)||
@@ -2127,10 +2142,10 @@ namespace mfront{
 	  }
 	  if(this->jacobianPartsUsedInIntegrator.find("df"+p->name+"_dd"+p2->name)!=
 	     this->jacobianPartsUsedInIntegrator.end()){
-	    map<string,string>::const_iterator pjf = nf.find('f'+p->name);
-	    map<string,string>::const_iterator pjv = nf.find(p2->name);
-	    if(pjf!=nf.end()){
-	      if(pjv!=nf.end()){
+	    map<string,string>::const_iterator pjf = this->nf.find('f'+p->name);
+	    map<string,string>::const_iterator pjv = this->nf.find(p2->name);
+	    if(pjf!=this->nf.end()){
+	      if(pjv!=this->nf.end()){
 		if((p->arraySize!=1u)&&
 		   (p2->arraySize!=1u)){
 		  this->behaviourFile << "for(unsigned short idx=0;idx!="
@@ -2192,7 +2207,7 @@ namespace mfront{
 		}
 	      }
 	    } else{
-	      if(pjv!=nf.end()){
+	      if(pjv!=this->nf.end()){
 		if((p->arraySize!=1u)&&
 		   (p2->arraySize!=1u)){
 		  this->behaviourFile << "for(unsigned short idx=0;idx!="

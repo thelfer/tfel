@@ -1142,8 +1142,13 @@ mfront/tests/behaviours/Makefile.am -text
 mfront/tests/behaviours/Mazars.mfront -text
 mfront/tests/behaviours/MonoCristal.mfront -text
 mfront/tests/behaviours/MonoCristalNewtonRaphson.mfront -text
+mfront/tests/behaviours/MonoCristal_DD_CC_InteractionMatrix.mfront -text
+mfront/tests/behaviours/MonoCristal_DD_CC_Irradiation_NumericalJacobian.mfront -text
+mfront/tests/behaviours/MonoCristal_DD_CC_NumericalJacobian.mfront -text
+mfront/tests/behaviours/MonoCristal_DD_CC_SlidingSystems.mfront -text
 mfront/tests/behaviours/MonoCristal_DD_CFC.mfront -text
 mfront/tests/behaviours/MonoCristal_DD_CFC_InteractionMatrix.mfront -text
+mfront/tests/behaviours/MonoCristal_DD_CFC_Irradiation.mfront -text
 mfront/tests/behaviours/MonoCristal_DD_CFC_NumericalJacobian.mfront -text
 mfront/tests/behaviours/Norton.mfront -text
 mfront/tests/behaviours/NortonRK.mfront -text
@@ -1203,7 +1208,10 @@ mfront/tests/behaviours/aster/asterlorentz.mtest.in -text
 mfront/tests/behaviours/aster/astermazars.mtest.in -text
 mfront/tests/behaviours/aster/astermonocristal-2.mtest.in -text
 mfront/tests/behaviours/aster/astermonocristal.mtest.in -text
+mfront/tests/behaviours/aster/astermonocristal_dd_cc_irradiation_numericaljacobian.mtest.in -text
+mfront/tests/behaviours/aster/astermonocristal_dd_cc_numericaljacobian.mtest.in -text
 mfront/tests/behaviours/aster/astermonocristal_dd_cfc.mtest.in -text
+mfront/tests/behaviours/aster/astermonocristal_dd_cfc_irradiation.mtest.in -text
 mfront/tests/behaviours/aster/astermonocristal_dd_cfc_numericaljacobian.mtest.in -text
 mfront/tests/behaviours/aster/asternorton.mtest.in -text
 mfront/tests/behaviours/aster/asternorton2.mtest.in -text
@@ -1277,7 +1285,10 @@ mfront/tests/behaviours/castem/castemlorentz.mtest.in -text
 mfront/tests/behaviours/castem/castemmazars.mtest.in -text
 mfront/tests/behaviours/castem/castemmonocristal-2.mtest.in -text
 mfront/tests/behaviours/castem/castemmonocristal.mtest.in -text
+mfront/tests/behaviours/castem/castemmonocristal_dd_cc_irradiation_numericaljacobian.mtest.in -text
+mfront/tests/behaviours/castem/castemmonocristal_dd_cc_numericaljacobian.mtest.in -text
 mfront/tests/behaviours/castem/castemmonocristal_dd_cfc.mtest.in -text
+mfront/tests/behaviours/castem/castemmonocristal_dd_cfc_irradiation.mtest.in -text
 mfront/tests/behaviours/castem/castemmonocristal_dd_cfc_numericaljacobian.mtest.in -text
 mfront/tests/behaviours/castem/castemnorton-euler.mtest.in -text
 mfront/tests/behaviours/castem/castemnorton-rk2.mtest.in -text
@@ -1339,7 +1350,10 @@ mfront/tests/behaviours/references/hayhurst.ref -text
 mfront/tests/behaviours/references/implicitsimomieheelastoplasticity.ref -text
 mfront/tests/behaviours/references/mazars-aster.ref -text
 mfront/tests/behaviours/references/monocristal.ref -text
+mfront/tests/behaviours/references/monocristal_dd_cc_irradiation_numericaljacobian.ref -text
+mfront/tests/behaviours/references/monocristal_dd_cc_numericaljacobian.ref -text
 mfront/tests/behaviours/references/monocristal_dd_cfc.ref -text
+mfront/tests/behaviours/references/monocristal_dd_cfc_irradiation.ref -text
 mfront/tests/behaviours/references/plasisocin.ref -text
 mfront/tests/behaviours/references/plasticity.ref -text
 mfront/tests/behaviours/references/polycristals.ref -text

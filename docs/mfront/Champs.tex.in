@@ -16,10 +16,10 @@
 \titre{Le générateur de code \mfront{}~: présentation générale et
   application aux propriétés matériau et aux modèles}
 
-\date{Juillet 2013}
+\date{Décembre 2013}
 \numero{13-019}
 \indice{0}
-\dateversion{07/2013}
+\dateversion{12/2013}
 \numeroaffaire{A-SICOM-A1-01}
 \domaine{DEN/DISN/SIMU}
 \accords{tripartite}
@@ -34,9 +34,11 @@
 \diffusionexterne{
 {EDF/R\&D}              & O. Marchand     & 1 & Diffusion par\\
 {EDF/R\&D}              & P. Vasseur      & 1 & courriel     \\
-{EDF/R\&D/AMA}          & C. Durand       & 1 & \\
 {EDF/R\&D/AMA}          & É. Lorentz      & 1 & \\
-{EDF/R\&D/AMA/T64}      & J.M. Proix      & 1 & \\
+                        & C. Durand       & 1 & \\
+{EDF/R\&D/AMA/T64}      & T. de Soza      & 1 & \\
+                        & J. Delmas       & 1 & \\
+                        & J.M. Proix      & 1 & \\
                         & F. Hammon       & 1 & \\
                         & N. Sellenet     & 1 & \\
 {EDF/R\&D/MMC}          & P. Ollar        & 1 & \\
@@ -66,16 +68,43 @@ AREVA NP/LYON           & P. Melin        & 1 & \\
                       & D. Caruge          & 1 & courriel     \\ 
   DEN/DM2S/SEMT       & C. Dellis          & 1 & \\
   DEN/DM2S/SEMT/LM2S  & J.L. Fayard        & 1 & \\
+                      & P. Verpeaux        & 1 & \\
+                      & A. Millard         & 1 & \\
                       & S. Pascal          & 1 & \\
+                      & O. Fandeur         & 1 & \\
   DEN/DMN             & P. Yvon            & 1 & \\
                       & J.L. Seran         & 1 & \\
                       & F. Dalle           & 1 & \\
+  DEN/DMN/SRMA        & P. Chapelot        & 1 & \\
+                      & S. Carassou        & 1 & \\
+                      & B. Marini          & 1 & \\
+  DEN/DMN/SRMA/LC2M   & L. Nicolas         & 1 & \\
+                      & J. Garnier         & 1 & \\
+                      & S. Vincent         & 1 & \\
+                      & L. Vincent         & 1 & \\
+                      & L. Gelebart        & 1 & \\
+                      & M. Sauzay          & 1 & \\
+                      & L. Dupuy           & 1 & \\
+                      & P. Forget          & 1 & \\
+                      & A. Hellouin de Menibus  & 1 & \\
+                      & M. Le Saux         & 1 & \\
+                      & C. Robertson       & 1 & \\
+  DEN/DMN/SRMA/LA2M   & J.-L. Bechade      & 1 & \\
+  DEN/DMN/SRMA/LTMEX  & L. Chaffron        & 1 & \\
+                      & D. Sornin          & 1 & \\
   DEN/DMN/SEMI        & C. Poussard        & 1 & \\
-  DEN/DMN/SEMI/LCMI   & A. Courcelle       & 1 & \\
+                      & B. Tanguy          & 1 & \\
+  DEN/DMN/SEMI/LCMI   & V. Vandenberghe    & 1 & \\
+                      & A. Courcelle       & 1 & \\
                       & F. Hure            & 1 & \\
+                      & D. Leboulch        & 1 & \\
+                      & Q. Auzoux          & 1 & \\
+                      & Y. Robert          & 1 & \\
+  DEN/DER/SESI/LE2S   & P. Lamagnère       & 1 & \\
+                      & D. Gentet          & 1 & \\
+                      & Y. Lejeail         & 1 & \\
                       &                    &  & \\
-                      &                    &  & \\
-  DEN/DEC             & P. Brossard        &  &  Document disponible\\
+  DEN/DEC             & P. Brossard        &  & Document disponible\\
   DEN/DEC/PROJETS     & P. Obry            &  & sur intradec\\
   DEN/DEC/SESC        & E. Touron          &  & \\
                       & M. Casella         &  & \\

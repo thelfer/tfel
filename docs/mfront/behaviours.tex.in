@@ -147,10 +147,10 @@
 \titre{Le générateur de code \mfront{}~: écriture de lois de
   comportement mécanique}
 
-\date{Juillet 2013}
+\date{Décembre 2013}
 \numero{13-020}
 \indice{0}
-\dateversion{07/2013}
+\dateversion{12/2013}
 \numeroaffaire{A-SICOM-A1-01}
 \domaine{DEN/DISN/SIMU}
 \accords{tripartite}
@@ -165,9 +165,11 @@
 \diffusionexterne{
 {EDF/R\&D}              & O. Marchand     & 1 & Diffusion par\\
 {EDF/R\&D}              & P. Vasseur      & 1 & courriel     \\
-{EDF/R\&D/AMA}          & C. Durand       & 1 & \\
 {EDF/R\&D/AMA}          & É. Lorentz      & 1 & \\
-{EDF/R\&D/AMA/T64}      & J.M. Proix      & 1 & \\
+                        & C. Durand       & 1 & \\
+{EDF/R\&D/AMA/T64}      & T. de Soza      & 1 & \\
+                        & J. Delmas       & 1 & \\
+                        & J.M. Proix      & 1 & \\
                         & F. Hammon       & 1 & \\
                         & N. Sellenet     & 1 & \\
 {EDF/R\&D/MMC}          & P. Ollar        & 1 & \\
@@ -197,16 +199,43 @@ AREVA NP/LYON           & P. Melin        & 1 & \\
                       & D. Caruge          & 1 & courriel     \\ 
   DEN/DM2S/SEMT       & C. Dellis          & 1 & \\
   DEN/DM2S/SEMT/LM2S  & J.L. Fayard        & 1 & \\
+                      & P. Verpeaux        & 1 & \\
+                      & A. Millard         & 1 & \\
                       & S. Pascal          & 1 & \\
+                      & O. Fandeur         & 1 & \\
   DEN/DMN             & P. Yvon            & 1 & \\
                       & J.L. Seran         & 1 & \\
                       & F. Dalle           & 1 & \\
+  DEN/DMN/SRMA        & P. Chapelot        & 1 & \\
+                      & S. Carassou        & 1 & \\
+                      & B. Marini          & 1 & \\
+  DEN/DMN/SRMA/LC2M   & L. Nicolas         & 1 & \\
+                      & J. Garnier         & 1 & \\
+                      & S. Vincent         & 1 & \\
+                      & L. Vincent         & 1 & \\
+                      & L. Gelebart        & 1 & \\
+                      & M. Sauzay          & 1 & \\
+                      & L. Dupuy           & 1 & \\
+                      & P. Forget          & 1 & \\
+                      & A. Hellouin de Menibus  & 1 & \\
+                      & M. Le Saux         & 1 & \\
+                      & C. Robertson       & 1 & \\
+  DEN/DMN/SRMA/LA2M   & J.-L. Bechade      & 1 & \\
+  DEN/DMN/SRMA/LTMEX  & L. Chaffron        & 1 & \\
+                      & D. Sornin          & 1 & \\
   DEN/DMN/SEMI        & C. Poussard        & 1 & \\
-  DEN/DMN/SEMI/LCMI   & A. Courcelle       & 1 & \\
+                      & B. Tanguy          & 1 & \\
+  DEN/DMN/SEMI/LCMI   & V. Vandenberghe    & 1 & \\
+                      & A. Courcelle       & 1 & \\
                       & F. Hure            & 1 & \\
+                      & D. Leboulch        & 1 & \\
+                      & Q. Auzoux          & 1 & \\
+                      & Y. Robert          & 1 & \\
+  DEN/DER/SESI/LE2S   & P. Lamagnère       & 1 & \\
+                      & D. Gentet          & 1 & \\
+                      & Y. Lejeail         & 1 & \\
                       &                    &  & \\
-                      &                    &  & \\
-  DEN/DEC             & P. Brossard        &  &  Document disponible\\
+  DEN/DEC             & P. Brossard        &  & Document disponible\\
   DEN/DEC/PROJETS     & P. Obry            &  & sur intradec\\
   DEN/DEC/SESC        & E. Touron          &  & \\
                       & M. Casella         &  & \\
@@ -250,9 +279,9 @@ AREVA NP/LYON           & P. Melin        & 1 & \\
   particulièrement à leur écriture à l'aide du générateur de code
   \mfront{}. Elle complète la présentation générale de \mfront{} qui
   traite des propriétés matériau et des modèles
-  physico-chimiques~\cite{helfer:mfront:2013}. Une fois écrite, ces
-  lois de comportement peuvent être stockées dans la base de données
-  \sirius{}.
+  physico-chimiques~\cite{helfer:mfront:2013}. Dans le cadre de la
+  plate-forme \pleiades{}, ces lois de comportement peuvent être
+  stockées dans la base de données \sirius{}.
 
   La variété des phénomènes traités fait que \mfront{} propose
   différentes façons d'écrire des lois de comportement mécaniques.
@@ -292,9 +321,9 @@ AREVA NP/LYON           & P. Melin        & 1 & \\
 \section{Introduction}
 
 Ce document décrit comment écrire des lois de comportement mécanique
-avec le générateur de code \mfront{}. Couplé à la base de données
-\sirius{}, \mfront{} vise à garantir une gestion pérenne, robuste,
-efficace et évolutive des connaissances matériau dans la plate-forme
+avec le générateur de code \mfront{}. \mfront{} vise à garantir une
+gestion pérenne, robuste, efficace et évolutive des connaissances
+matériau dans la plate-forme
 \pleiades{}~\cite{michel09,helfer:opti:2011}. Il permet également à
 des utilisateurs non développeurs d'écrire leurs propres connaissances
 matériau~\cite{helfer10}. Cette note intègre des éléments d'une note
@@ -548,7 +577,7 @@ l'analyseur à utiliser~:
 \item si un intégrateur spécifique existe, il vaut mieux l'utiliser~:
   il utilise un algorithme optimisé et robuste et le nombre
   d'informations à fournir est réduit.
-\item si l'on doit recourir un intégrateur générique, il vaut mieux
+\item si l'on doit recourir à un intégrateur générique, il vaut mieux
   préférer l'intégration implicite, surtout s'il s'agit de lois
   indépendantes du temps (plasticité, endommagement)~:
   \begin{itemize}
@@ -3723,7 +3752,7 @@ Finalement, nous obtenons~:
 
 La matrice \(J^{-1}_{\tepsilonel}\) peut être calculée par la méthode
 \varcpp{getPartialJacobianInvert} à qui l'on doit passer un tenseur
-d'ordre \(4\). Cette méthode ne doit être utilisée quand le bloc
+d'ordre \(4\). Cette méthode ne doit être utilisée que dans le bloc
 \mkey{TangentOperator}.
 
 Ce cas explique pourquoi la déformation élastique est toujours définie
@@ -3756,8 +3785,9 @@ dans le cas de variables scalaires et des tenseurs d'ordre \(4\) dans
 le cas de variables tensorielles.
 
 Dans le cas des tableaux de variables internes, il faut passer des
-vecteurs de tailles finies du type adéquat (classe \tfel{tvector} de
-\TFEL{} qui paramétrée par la taille et le type d'object contenu).
+vecteurs de tailles finies du type adéquat\footnote{On utilisera la
+  classe \tfel{tvector} de \TFEL{} qui paramétrée par sa taille et le
+  type d'objet contenu.}.
 
 Insistons~: si l'on a besoin que des dérivées de deux
 premières variables internes (par exemple la déformation élastique et la
@@ -3942,7 +3972,7 @@ suivants sont déclarés~:
   \item \varcpp{accelerationTrigger}, le nombre d'itérations
   minimum pour utiliser la méthode d'accélération~;
   \item \varcpp{accelerationPeriod}, le nombre d'itérations
-  entre deux utilisations la méthode d'accélération~;
+  entre deux utilisations de la méthode d'accélération~;
 \end{itemize}
 
 Si la méthode de relaxation de \castem{} est utilisée, les paramètres
@@ -4087,7 +4117,7 @@ Différentes classes de lois de comportement ont été testées~:
 \end{itemize}
 De plus, l'équipe \aster{} a reversé de nombreux tests de loi de
 comportement dans la librairie \TFEL{}. Ces tests ont été écrits à
-l'aide de l'aide d'utilitaire \mtest{}~\cite{helfer:mtest:2013}.
+l'aide de l'utilitaire \mtest{}~\cite{helfer:mtest:2013}.
 
 \begin{table}[htbp]
   \centering

@@ -7,6 +7,10 @@
 @MaterialProperty stress H2;
 @MaterialProperty stress H3;
 
+@Includes{
+#include<sstream>
+}
+
 @Integrator{
   Stensor c = computeRightCauchyGreenTensor(F1);
   // specific treatment du to plane stress and incompressibility
@@ -22,8 +26,9 @@
   const real i1 = trace(c);
   const real i2= (i1*i1-c(0)*c(0)-c(1)*c(1)-c(2)*c(2)-c(3)*c(3))/2;
   if(!(i2>0)){
-    string msg("invalid i2 value");
-    throw(runtime_error(msg));    
+    ostringstream msg;
+    msg << "invalid i2 value (" << i2 << ")";
+    throw(runtime_error(msg.str()));    
   }
   const real dw_di1 = H1*exp(H3*(i1-3)*(i1-3));
   const real dw_di2 = 3*H2/sqrt(i2);
