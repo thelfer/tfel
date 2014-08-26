@@ -288,6 +288,18 @@ namespace tfel{
       template<typename InputIterator>
       TFEL_MATH_INLINE2 void 
       copy(const InputIterator src);
+
+      /*!
+       * build a symmetric tensor from a matrix
+       * \param[in] m : matrix
+       */
+      template<typename MatrixType>
+      static TFEL_MATH_INLINE2
+      typename tfel::meta::EnableIf<
+	tfel::typetraits::IsAssignableTo<typename MatrixTraits<MatrixType>::NumType,T>::cond,
+	stensor<N,T,Storage> >::type
+       buildFromMatrix(const MatrixType&);
+
     private:      
       //! a simple check
       TFEL_STATIC_ASSERT((N==1u)||(N==2u)||(N==3u));

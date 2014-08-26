@@ -142,8 +142,69 @@ namespace tfel{
 	  return inv;
 	}
       };
+
+      template<unsigned short N>
+      struct BuildStensorFromMatrix;
       
-    }
+      template<>
+      struct BuildStensorFromMatrix<1u>
+      {
+	template<typename T,template<unsigned short,typename> class Storage,typename MatrixType>
+	TFEL_MATH_INLINE2 TFEL_VISIBILITY_LOCAL
+	typename tfel::meta::EnableIf<
+	  tfel::typetraits::IsAssignableTo<typename MatrixTraits<MatrixType>::NumType,T>::cond,
+	  void>::type
+	exe(stensor<1u,T,Storage>& s,const MatrixType& m){
+	  using namespace std;
+	  s[0] = m(0,0);
+	  s[1] = m(1,1);
+	  s[2] = m(2,2);
+	}
+      };
+    
+      template<>
+      struct BuildStensorFromMatrix<2u>
+      {
+	template<typename T,template<unsigned short,typename> class Storage,typename MatrixType>
+	TFEL_MATH_INLINE2 TFEL_VISIBILITY_LOCAL
+	typename tfel::meta::EnableIf<
+	  tfel::typetraits::IsAssignableTo<typename MatrixTraits<MatrixType>::NumType,T>::cond,
+	  void>::type
+	exe(stensor<2u,T,Storage>& s,const MatrixType& m){
+	  using namespace std;
+	  using namespace tfel::typetraits;
+	  typedef typename BaseType<T>::type real;
+	  static const real cste = sqrt(real(2))/(real(2));
+	  s[0] = m(0,0);
+	  s[1] = m(1,1);
+	  s[2] = m(2,2);
+	  s[3] = (m(0,1)+m(0,1))*cste;
+	}
+      };
+      
+      template<>
+      struct BuildStensorFromMatrix<3u>
+      {
+	template<typename T,template<unsigned short,typename> class Storage,typename MatrixType>
+	TFEL_MATH_INLINE2 TFEL_VISIBILITY_LOCAL
+	typename tfel::meta::EnableIf<
+	  tfel::typetraits::IsAssignableTo<typename MatrixTraits<MatrixType>::NumType,T>::cond,
+	  void>::type
+	exe(stensor<3u,T,Storage>& s,const MatrixType& m){
+	  using namespace std;
+	  using namespace tfel::typetraits;
+	  typedef typename BaseType<T>::type real;
+	  static const real cste = sqrt(real(2))/(real(2));
+	  s[0] = m(0,0);
+	  s[1] = m(1,1);
+	  s[2] = m(2,2);
+	  s[3] = (m(0,1)+m(1,0))*cste;
+	  s[4] = (m(0,2)+m(2,0))*cste;
+	  s[5] = (m(2,1)+m(1,2))*cste;
+	}
+      };
+      
+    } // end of namespace internals
 
     template<typename Child>
     template<typename StensorType>
@@ -511,6 +572,17 @@ namespace tfel{
       const stensor<StensorTraits<StensorType>::dime,
     		    typename StensorTraits<StensorType>::NumType> tmp(s);
       return tfel::math::internals::StensorInvert<StensorTraits<StensorType>::dime>::exe(tmp);
+    }
+
+    template<unsigned short N,typename T,template<unsigned short,typename> class Storage>
+    template<typename MatrixType>
+    typename tfel::meta::EnableIf<
+      tfel::typetraits::IsAssignableTo<typename MatrixTraits<MatrixType>::NumType,T>::cond,
+      stensor<N,T,Storage> >::type
+    stensor<N,T,Storage>::buildFromMatrix(const MatrixType& m){
+      stensor<N,T,Storage> s;
+      tfel::math::internals::BuildStensorFromMatrix<N>::exe(s,m);
+      return s;
     }
     
 #endif

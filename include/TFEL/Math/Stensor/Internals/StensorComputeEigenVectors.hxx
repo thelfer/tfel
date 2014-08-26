@@ -43,19 +43,19 @@ namespace tfel{
 	  TFEL_STATIC_ASSERT((tfel::meta::IsSameType<typename VectorTraits<VectorType>::NumType,T>::cond));
 	  TFEL_STATIC_ASSERT(tfel::typetraits::IsFundamentalNumericType<T>::cond);
 	  TFEL_STATIC_ASSERT(tfel::typetraits::IsReal<T>::cond);
-	  if(abs(s(0)-vp)<10*numeric_limits<T>::min()){
+	  if(abs(s[0]-vp)<10*numeric_limits<T>::min()){
 	    v(0)=T(1);
 	    v(1)=T(0);
 	    v(2)=T(0);
 	    return true;
 	  }
-	  if(abs(s(1)-vp)<10*numeric_limits<T>::min()){
+	  if(abs(s[1]-vp)<10*numeric_limits<T>::min()){
 	    v(0)=T(0);
 	    v(1)=T(1);
 	    v(2)=T(0);
 	    return true;
 	  }
-	  if(abs(s(2)-vp)<10*numeric_limits<T>::min()){
+	  if(abs(s[2]-vp)<10*numeric_limits<T>::min()){
 	    v(0)=T(0);
 	    v(1)=T(0);
 	    v(2)=T(1);
@@ -187,7 +187,7 @@ namespace tfel{
 	  TFEL_STATIC_ASSERT((tfel::meta::IsSameType<typename VectorTraits<VectorType>::NumType,T>::cond));
 	  TFEL_STATIC_ASSERT(tfel::typetraits::IsFundamentalNumericType<T>::cond);
 	  TFEL_STATIC_ASSERT(tfel::typetraits::IsReal<T>::cond);
-	  if(abs(s(2)-vp)<10*numeric_limits<T>::min()){
+	  if(abs(s[2]-vp)<10*numeric_limits<T>::min()){
 	    v(0)=0;
 	    v(1)=0;
 	    v(2)=1;
