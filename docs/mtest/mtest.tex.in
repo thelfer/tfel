@@ -80,9 +80,9 @@
 \newcommand{\mandriva}{\href{http://www.mandriva.com}{\texttt{Mandriva}}}
 \newcommand{\excel}{\href{http://www.microsoft.com/france/office/2007/programs/excel/overview.mspx}{\texttt{Microsoft Office Excel}}}
 
-\newcommand{\debutpas}[1]{\ensuremath{\left.#1\right|_{t}}}
-\newcommand{\milieupas}[1]{\ensuremath{\left.#1\right|_{t+\theta\, \Delta\, t}}}
-\newcommand{\finpas}[1]{\ensuremath{\left.#1\right|_{t+\Delta\, t}}}
+\newcommand{\bts}[1]{\ensuremath{\left.#1\right|_{t}}}
+\newcommand{\mts}[1]{\ensuremath{\left.#1\right|_{t+\theta\, \Delta\, t}}}
+\newcommand{\ets}[1]{\ensuremath{\left.#1\right|_{t+\Delta\, t}}}
 \newcommand{\demipas}[1]{\ensuremath{\left.#1\right|_{t+\frac{\Delta\, t}{2}}}}
 
 \newcommand{\code}[1]{
@@ -497,16 +497,16 @@ manière incrémentale. Sur un pas de temps \(dt\) entre deux instants
   différentes variables externes qui évoluent indépendamment de la
   résolution mécanique~;
 \item le tenseur des déformations totales du matériau à l'instant
-  \(t\), noté \(\debutpas{\tepsilonto}\)~;
+  \(t\), noté \(\bts{\tepsilonto}\)~;
 \item la valeur des variables internes à l'instant \(t\), noté
-  \(\debutpas{Y}\)~;
+  \(\bts{Y}\)~;
 \item l'incrément du tenseur des déformations totales sur le pas de
   temps, noté \(\Delta\,\tepsilonto\)~;
 \item l'incrément de temps \(\Delta\,t\).
 \end{itemize}
 Les lois de comportement mécanique déterminent le tenseur des
 contraintes et les variables internes en fin de pas de temps, notés
-respectivement \(\finpas{\tsigma}\) et \(\finpas{Y}\). Pour cela,
+respectivement \(\ets{\tsigma}\) et \(\ets{Y}\). Pour cela,
 elles sont généralement amenées à intégrer un système différentiel, et
 l'on parle généralement d'{\em intégration locale de la loi de
   comportement}.
@@ -541,9 +541,9 @@ l'algorithme de résolution) sont donc possibles, citons~:
   un endommagement), dite matrice sécante~;
 \item la matrice tangente au comportement, définie dans une
   formulation en vitesse par la dérivée
-  \(\finpas{\deriv{\dot{\tsigma}}{\dot{\tepsilonto}}}\)~;
+  \(\ets{\deriv{\dot{\tsigma}}{\dot{\tepsilonto}}}\)~;
 \item la matrice tangente cohérente, définie par la
-  dérivée \(\deriv{\finpas{\tsigma}}{\Delta\,\tepsilonto}\).
+  dérivée \(\deriv{\ets{\tsigma}}{\Delta\,\tepsilonto}\).
 \end{itemize}
 
 \paragraph{Initialisation de la recherche} Certains codes aux éléments
@@ -558,7 +558,7 @@ matrice de raideur sont envisageables~:
 \item la matrice élastique endommagée, dite matrice sécante~;
 \item la matrice tangente au comportement, définie dans une
   formulation en vitesse par la dérivée
-  \(\debutpas{\deriv{\dot{\tsigma}}{\dot{\tepsilonto}}}\) calculée en
+  \(\bts{\deriv{\dot{\tsigma}}{\dot{\tepsilonto}}}\) calculée en
   début de pas de temps.
 \end{itemize}
 
@@ -592,7 +592,7 @@ par la loi de comportement mécanique \(\tsigma\), et du tenseur des
 contraintes imposées \(\tsigma^{\text{ext}}\)~:
 \begin{equation}
   \label{eq:mtest:equilibre_meca}
-  \finpas{\tsigma}\paren{\Delta\,\tepsilonto} = \finpas{\tsigma^{\text{ext}}}
+  \ets{\tsigma}\paren{\Delta\,\tepsilonto} = \ets{\tsigma^{\text{ext}}}
 \end{equation}
 
 Pour chaque pas de temps, l'inconnue de ce problème est l'incrément
@@ -606,7 +606,7 @@ L'algorithme de \nom{Newton} cherche à annuler une fonction
 \(r\paren{\Delta\,\tepsilonto}\), nommée le résidu, définie par~:
 \begin{equation}
   \label{eq:mtest:newton}
-  r\paren{\Delta\,\tepsilonto}=\finpas{\tsigma}\paren{\Delta\,\tepsilonto}-\finpas{\tsigma^{\text{ext}}}
+  r\paren{\Delta\,\tepsilonto}=\ets{\tsigma}\paren{\Delta\,\tepsilonto}-\ets{\tsigma^{\text{ext}}}
 \end{equation}
 Pour cela, l'algorithme de \nom{Newton} procède de manière
 itérative. Soit \(\Delta\,\tepsilonto_{n}\) l'estimation de la
@@ -614,10 +614,10 @@ solution obtenue à la n\ieme{} itération, l'estimation suivante
 \(\Delta\,\tepsilonto_{n+1}\) est obtenue en linéarisant la fonction
 \(r\) à l'aide d'un développement limité à l'ordre \(1\)~:
 \[
-r\paren{\Delta\,\tepsilonto_{n+1}}\approx r\paren{\Delta\,\tepsilonto_{n}}+\deriv{\finpas{\tsigma}}{\Delta\,\tepsilonto}.\paren{\Delta\,\tepsilonto_{n+1}-\Delta\,\tepsilonto_{n}}
+r\paren{\Delta\,\tepsilonto_{n+1}}\approx r\paren{\Delta\,\tepsilonto_{n}}+\deriv{\ets{\tsigma}}{\Delta\,\tepsilonto}.\paren{\Delta\,\tepsilonto_{n+1}-\Delta\,\tepsilonto_{n}}
 \]
 où apparaît la matrice tangente cohérente
-\(\deriv{\finpas{\tsigma}}{\Delta\,\tepsilonto}\)\footnote{L'utilisation
+\(\deriv{\ets{\tsigma}}{\Delta\,\tepsilonto}\)\footnote{L'utilisation
   du symbole de dérivation partielle est conventionnelle. Elle vient
   du fait que la contrainte peut également dépendre d'autres variables
   internes, telle que la température, dans le cas de problème
@@ -627,7 +627,7 @@ En annulant cette estimation linéarisée de \(r\), nous obtenons la
 nouvelle estimation \(\Delta\,\tepsilonto_{n+1}\)~:
 \begin{equation}
   \label{eq:mtest:NR1}
-  \Delta\,\tepsilonto_{n+1}=\Delta\,\tepsilonto_{n}-\paren{\deriv{\finpas{\tsigma}}{\Delta\,\tepsilonto}}^{-1}.r\paren{\Delta\,\tepsilonto_{n}}
+  \Delta\,\tepsilonto_{n+1}=\Delta\,\tepsilonto_{n}-\paren{\deriv{\ets{\tsigma}}{\Delta\,\tepsilonto}}^{-1}.r\paren{\Delta\,\tepsilonto_{n}}
 \end{equation}
 
 Comme nous l'avons évoqué plus haut, l'utilisation de la matrice
@@ -652,9 +652,9 @@ La matrice de raideur raideur peut-être\footnote{Voir le mot clé
   décrit l'endommagement du matériau), dite matrice sécante~;
 \item la matrice tangente au comportement, définie dans une
   formulation en vitesse par la dérivée
-  \(\finpas{\deriv{\dot{\tsigma}}{\dot{\tepsilonto}}}\)~;
+  \(\ets{\deriv{\dot{\tsigma}}{\dot{\tepsilonto}}}\)~;
 \item la matrice tangente cohérente, définie par la
-  \(\deriv{\finpas{\tsigma}}{\Delta\,\tepsilonto}\)~;
+  \(\deriv{\ets{\tsigma}}{\Delta\,\tepsilonto}\)~;
 \end{itemize}
 
 L'interface {\tt UMAT} présente une particularité déjà évoquée pour
@@ -678,7 +678,7 @@ simultanément satisfaits~:
   une certaine valeur notée \(\varepsilon_{\sigma}\)~:
   \begin{equation}
     \label{eq:mtest:stressepsilon}
-    \norm{\finpas{\tsigma}-\finpas{\tsigma^{\text{ext}}}} < \varepsilon_{\sigma}    
+    \norm{\ets{\tsigma}-\ets{\tsigma^{\text{ext}}}} < \varepsilon_{\sigma}    
   \end{equation}
 \item un critère sur la stationnarité des estimations de l'incrément
   des déformations totales~: la différence entre deux estimations
@@ -693,7 +693,7 @@ Certaines conditions de chargement rajoutent leurs propres critères de
 convergence (contrainte imposée par exemple).
 
 \paragraph{Vitesse de convergence} Dans le cas où la matrice tangente
-cohérente \(\deriv{\finpas{\tsigma}}{\Delta\,\tepsilonto}\) est
+cohérente \(\deriv{\ets{\tsigma}}{\Delta\,\tepsilonto}\) est
 exacte, la convergence de l'algorithme de \nom{Newton} est quadratique
 (ordre \(2\)). Si une matrice approchée est utilisée, notamment la
 matrice d'élasticité, la convergence est en générale linéaire (ordre
@@ -824,12 +824,65 @@ déformations imposées. Pour cela, comme dans la plupart des codes
 éléments finis, de nouvelles variables nommées multiplicateurs de
 \nom{Lagrange} sont introduites. Le principe de ces multiplicateurs
 est expliqué dans la documentation du code \aster{} (qui reprend ce
-principe de \castem{})~\cite{pellet_dualisation_2001}, à laquelle nous
-renvoyons le lecteur intéressé. Dans la suite, nous continuerons
-d'omettre les détails liés aux multiplicateurs de
-\nom{Lagrange}\footnote{En particulier, nous confondons dans cette
-  note la matrice de raideur donnée par le comportement et la matrice
-  utilisée pour la résolution de l'équilibre.}.
+principe de
+\castem{})~\cite{pellet_dualisation_2001,abbas_algorithme_2013}, à
+laquelle nous renvoyons le lecteur intéressé pour des détails
+complémentaires. Pour simplifier, nous traitons le cas d'une seule
+composante \(\epsilonto_{i}\) de la déformation dont la valeur est
+imposée à \(\varepsilon^{\text{imp}}\paren{t+\Delta\,t}\)~:
+\begin{equation}
+  \label{eq:mtest:impose}
+  \bts{\epsilonto_{i}}+\Delta\,\epsilonto_{i}=\varepsilon^{\text{imp}}\paren{t+\Delta\,t}
+\end{equation}
+Pour cela, nous introduisons une nouvelle variables \(\lambda_{i}\),
+appelée multiplicateur de \nom{Lagrange}, telle que le résidu est~:
+\begin{equation}
+  \label{eq:mtest:lagrange}
+  r\paren{\Delta\,\tepsilonto,\Delta\,\lambda_{i}} =
+  \begin{pmatrix}
+    \ets{\tsigma}\paren{\Delta\,\tepsilonto}-\ets{\tsigma^{\text{ext}}}+a\,\paren{\bts{\lambda_{i}}+\Delta\,\lambda_{i}}
+    \begin{pmatrix}
+      \vdots\\1\\\vdots
+    \end{pmatrix}
+    \\
+    a\,\paren{\bts{\epsilonto_{i}}+\Delta\,\epsilonto_{i}-\varepsilon^{\text{imp}}\paren{t+\Delta\,t}}
+  \end{pmatrix}
+\end{equation}
+où \(\begin{pmatrix}\dots&1&\dots\end{pmatrix}\) est un tenseur dont
+seule la \(i\)\ieme composante non nulle et où \(a\) est un paramètre
+de normalisation tel que les différents termes de la matrice
+jacobienne soit du même ordre de grandeur. La jacobienne est alors~:
+\[
+\deriv{r}{\paren{\Delta\,\tepsilonto,\Delta\,\lambda_{i}}}=
+\begin{pmatrix}
+  \deriv{\sigma}{\Delta\,\tepsilonto} &
+  \begin{matrix}
+    \vdots\\a\\\vdots
+  \end{matrix}
+  \\
+  \begin{matrix}
+    \dots&a&\dots
+  \end{matrix} & 0\\
+\end{pmatrix}
+\]
+On applique alors l'algorithme de \nom{Newton} décrit jusqu'à
+présent. L'équation~\eqref{eq:mtest:lagrange} montre qu'à convergence,
+nous aurons bien la condition imposée~:
+\[
+\bts{\epsilonto_{i}}+\Delta\,\epsilonto_{i}=\varepsilon^{\text{imp}}\paren{t+\Delta\,t}
+\]
+Si il n'y a pas de contraintes imposées sur la \(i\)\ieme composante,
+l'équation~\eqref{eq:mtest:lagrange} montre que
+\(a\,\paren{\bts{\lambda_{i}}+\Delta\,\lambda_{i}}\) s'interprète
+comme la contrainte nécessaire pour imposer la
+contrainte~\eqref{eq:mtest:impose}.
+
+
+Dans la suite, nous continuerons d'omettre les détails liés aux
+multiplicateurs de \nom{Lagrange}\footnote{En particulier, nous
+  confondons dans cette note la matrice de raideur donnée par le
+  comportement et la matrice utilisée pour la résolution de
+  l'équilibre.}.
 
 \paragraph{Dilatation thermique} La dilatation thermique peut être
 prise en compte pour les lois en petites déformations, de manière
@@ -897,7 +950,7 @@ D'autres stratégies peuvent cependant être utilisée\footnote{Voir le
   pas précédent, l'estimation initiale \(\tepsilonto_{0}\) de la
   solution est donnée par~:
   \[
-  \tepsilonto_{0}=\debutpas{\tepsilonto}+\Frac{\Delta\, t}{\Delta\, t_{p}}\Delta\,\tepsilonto_p
+  \tepsilonto_{0}=\bts{\tepsilonto}+\Frac{\Delta\, t}{\Delta\, t_{p}}\Delta\,\tepsilonto_p
   \]
 \item effectuer une première résolution utilisant une matrice de
   raideur \(K\) adaptée. Il est possible d'utiliser~:
@@ -906,13 +959,13 @@ D'autres stratégies peuvent cependant être utilisée\footnote{Voir le
   \item la matrice élastique endommagée, dite matrice sécante~;
   \item la matrice tangente au comportement, définie dans une
     formulation en vitesse par la dérivée
-    \(\debutpas{\deriv{\dot{\tsigma}}{\dot{\tepsilonto}}}\) calculée en
+    \(\bts{\deriv{\dot{\tsigma}}{\dot{\tepsilonto}}}\) calculée en
     début de pas de temps.
   \end{itemize}
   L'estimation initiale \(\tepsilonto_{0}\) de la solution est alors donnée
   par~:
   \[
-  K\,\paren{\tepsilonto_{0}-\debutpas{\tepsilonto}}=\debutpas{\tsigma}-\finpas{\tsigma^{\text{ext}}}+K\,\paren{\finpas{\tepsilonth}-\debutpas{\tepsilonth}}
+  K\,\paren{\tepsilonto_{0}-\bts{\tepsilonto}}=\bts{\tsigma}-\ets{\tsigma^{\text{ext}}}+K\,\paren{\ets{\tepsilonth}-\bts{\tepsilonth}}
   \]
   On remarque que par rapport à l'équation~\eqref{eq:mtest:NR2}, les
   dilatations thermiques doivent être explicitement prises en compte.
@@ -1555,7 +1608,12 @@ utiliser pour tester si l'équilibre mécanique est atteint (voir
 
 \paragraph{Le mot clé \mkey{Test}} Le mot clé \mkey{Test} permet
 d'introduire de tests sur les déformations totales, les contraintes ou
-les variables internes. Dans ce paragraphe, on appellera résultat~:
+les variables internes. Ce mot clé n'a pas d'intérêt pour un
+utilisateur standard. Il est utilisé pour créer des cas de non
+régressions dans \TFEL{} qui contient de nombreux exemples
+d'utilisations.
+
+Dans ce paragraphe, on appellera résultat~:
 \begin{itemize}
 \item  la valeur d'une variable interne si elle est scalaire~;
 \item la valeur d'une des composantes d'une variable interne (si elle

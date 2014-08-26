@@ -59,47 +59,84 @@ namespace tfel{
 	if(m.getNbRows()==0){
 	  throw(LUException("LUDecomp::exe : invalid matrix size"));
 	}
-	IndexType i,j,k;
-	IndexType pi;
-	IndexType pj;
-	IndexType n = m.getNbRows();
+	const IndexType n = m.getNbRows();
 	int d = 1;
 
-	for(i=0;i!=n;++i){
+	for(IndexType i=0;i!=n;++i){
 	  // L update (column)
-	  for(j=i;j!=n;++j){
-	    pj = p(j);
-	    for(k=0;k!=i;++k){
-	      m(pj,i) -= m(pj,k)*m(p(k),i);
+	  if(p.isIdentity()){
+	    for(IndexType j=i;j!=n;++j){
+	      NumType v = NumType(0);
+	      for(IndexType k=0;k!=i;++k){
+		v += m(j,k)*m(k,i);
+	      }
+	      m(j,i) -= v;
+	    }
+	  } else {
+	    for(IndexType j=i;j!=n;++j){
+	      IndexType  pj = p(j);
+	      NumType v = NumType(0);
+	      for(IndexType k=0;k!=i;++k){
+		v += m(pj,k)*m(p(k),i);
+	      }
+	      m(pj,i) -= v;
 	    }
 	  }
 	  // search for pivot
-	  NumType cmax = abs(m(p(i),i));
-	  k = i;
-	  for(j=static_cast<IndexType>(i+1u);j!=n;++j){
-	    pj = p(j);
-	    if(abs(m(pj,i))>cmax){
-	      cmax = abs(m(pj,i));
-	      k = j;
+	  IndexType piv = i;
+	  if(p.isIdentity()){
+	    NumType cmax = abs(m(i,i));
+	    for(IndexType j=static_cast<IndexType>(i+1u);j!=n;++j){
+	      if(abs(m(j,i))>cmax){
+		cmax = abs(m(j,i));
+		piv = j;
+	      }
 	    }
-	  }
-	  if(k!=i){
-	    if(!((abs(m(p(i),i))>0.1*cmax)&&
-		 (abs(m(p(i),i))>eps))){
-	      d *= -1;
-	      p.swap(k,i);
+	    if(piv!=i){
+	      if(!((abs(m(i,i))>0.1*cmax)&&
+		   (abs(m(i,i))>eps))){
+		d *= -1;
+		p.swap(piv,i);
+	      }
+	    }
+	  } else {
+	    NumType cmax = abs(m(p(i),i));
+	    for(IndexType j=static_cast<IndexType>(i+1u);j!=n;++j){
+	      IndexType  pj = p(j);
+	      if(abs(m(pj,i))>cmax){
+		cmax = abs(m(pj,i));
+		piv = j;
+	      }
+	    }
+	    if(piv!=i){
+	      if(!((abs(m(p(i),i))>0.1*cmax)&&
+		   (abs(m(p(i),i))>eps))){
+		d *= -1;
+		p.swap(piv,i);
+	      }
 	    }
 	  }
 	  if(abs(m(p(i),i))<eps){
 	    throw(LUException("LUDecomp::exe : null pivot"));
 	  }
-	  pi = p(i);
-	  // U update
-	  for(j=static_cast<IndexType>(i+1);j!=n;++j){
-	    for(k=0;k!=i;++k){
-	      m(pi,j) -= m(pi,k)*m(p(k),j);
+	  if(p.isIdentity()){
+	    for(IndexType j=static_cast<IndexType>(i+1);j!=n;++j){
+	      NumType v = NumType(0);
+	      for(IndexType k=0;k!=i;++k){
+		v += m(i,k)*m(k,j);
+	      }
+	      m(i,j) -= v;
+	      m(i,j) /= m(i,i);
 	    }
-	    m(pi,j) /= m(pi,i);
+	  } else {
+	    IndexType pi = p(i);
+	    // U update
+	    for(IndexType j=static_cast<IndexType>(i+1);j!=n;++j){
+	      for(IndexType k=0;k!=i;++k){
+		m(pi,j) -= m(pi,k)*m(p(k),j);
+	      }
+	      m(pi,j) /= m(pi,i);
+	    }
 	  }
 	}
 	return d;

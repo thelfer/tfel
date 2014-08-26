@@ -59,18 +59,21 @@ AREVA NP/LYON           & P. Melin        & 1 & \\
 {EDF/R\&D}              & P. Vasseur      & 1 & courriel     \\
 {EDF/R\&D/AMA}          & É. Lorentz      & 1 & \\
                         & C. Durand       & 1 & \\
-{EDF/R\&D/AMA/T64}      & T. de Soza      & 1 & \\
+                        & T. de Soza      & 1 & \\
                         & J. Delmas       & 1 & \\
                         & J.M. Proix      & 1 & \\
                         & F. Hammon       & 1 & \\
                         & N. Sellenet     & 1 & \\
-{EDF/R\&D/SINETICS}     & Argaud J.-P. & 1 & \\
+                        & D. Haboussa     & 1 & \\
+{EDF/R\&D/SINETICS}     & Argaud J.-P.    & 1 & \\
 {EDF/R\&D/MMC}          & P. Ollar        & 1 & \\
-{EDF/R\&D/MMC/MAESTRO}  & N. Rupin        & 1 & \\
+{EDF/R\&D/MMC}          & N. Rupin        & 1 & \\
                         & F. Latourte     & 1 & \\
-{EDF/R\&D/MMC/CPM}      & N. Prompt       & 1 & \\
+                        & F. Curtit       & 1 & \\
+                        & N. Prompt       & 1 & \\
                         & N. Barnel       & 1 & \\
-{EDF/R\&D/MMC/CPM}      & G. Thouvenin    & 1 & \\
+                        & É. Pouillier    & 1 & \\
+                        & G. Thouvenin    & 1 & \\
                         & F. Douchin      & 1 & \\
                         & R. Largenton    & 1 & \\
                         & C. Petry        & 1 & \\
@@ -125,7 +128,7 @@ AREVA NP/LYON           & P. Melin        & 1 & \\
                       & D. Leboulch        & 1 & \\
                       & Q. Auzoux          & 1 & \\
                       & Y. Robert          & 1 & \\
-                      & C. Ling            & 1 & \\
+                      & C. Ling           & 1 & \\
   DEN/DER/SESI/LE2S   & P. Lamagnère       & 1 & \\
                       & D. Gentet          & 1 & \\
                       & Y. Lejeail         & 1 & \\
