@@ -15,6 +15,7 @@
 
 #include"TFEL/Utilities/Token.hxx"
 #include"TFEL/System/System.hxx"
+#include"TFEL/Glossary/Glossary.hxx"
 
 #include"MFront/MFrontHeader.hxx"
 #include"MFront/MFrontLogStream.hxx"
@@ -526,6 +527,7 @@ namespace mfront{
   {
     using namespace std;
     using namespace tfel::utilities;
+    using namespace tfel::glossary;
     string methodName;
     typedef map<string,string>::value_type MVType;
     this->readSpecifiedToken("MFrontMaterialLawParser::treatMethod",".");
@@ -543,6 +545,7 @@ namespace mfront{
     ++(this->current);
     this->readSpecifiedToken("MFrontMaterialLawParser::treatMethod","(");
     if(methodName=="setGlossaryName"){
+      const Glossary& glossary = Glossary::getGlossary();
       this->checkNotEndOfFile("MFrontMaterialLawParser::treatMethod",
 			      "Expected glossary name.");
       if((this->glossaryNames.find(this->currentVar)!=this->glossaryNames.end()) ||
@@ -559,10 +562,17 @@ namespace mfront{
 	this->throwRuntimeError("MFrontMaterialLawParser::treatMethod",
 				"Glossary name too short.");
       }
-      string glossaryName = this->current->value.substr(1,this->current->value.size()-2);
+      const string glossaryName = this->current->value.substr(1,this->current->value.size()-2);
       MFrontLawParserCheckIfNameIsAnEntryNameOrAGlossaryName(this->glossaryNames,
 							     this->entryNames,
 							     glossaryName);
+      if(!glossary.contains(glossaryName)){
+	string msg("MFrontMaterialLawParser::treatMethod : "
+		   "'"+glossaryName+"' is not a valid glossary name");
+#warning "One day, we will throw"
+	static_cast<void>(msg);
+	//	throw(runtime_error(msg));
+      }
       if(!this->glossaryNames.insert(MVType(this->currentVar,glossaryName)).second){
 	this->throwRuntimeError("MFrontMaterialLawParser::treatMethod",
 				"Glossary name for field '"+ this->currentVar +"' already defined.");

@@ -21,11 +21,11 @@ young.setGlossaryName("YoungModulus");
 nu.setGlossaryName("PoissonRatio");
 
 @MaterialProperty real A;
-A.setGlossaryName("NortonCoefficient");
+A.setEntryName("NortonCoefficient");
 @MaterialProperty real E;
-E.setGlossaryName("NortonExponent");
+E.setEntryName("NortonExponent");
 @MaterialProperty real sigr; 
-sigr.setGlossaryName("FractureStress");
+sigr.setEntryName("FractureStress");
 
 @LocalVar real lambda;
 @LocalVar real mu;

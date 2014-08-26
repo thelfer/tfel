@@ -80,6 +80,9 @@ static void
 treatUtilities(void);
 
 static void
+treatGlossary(void);
+
+static void
 treatFiniteElement(void);
 
 static void
@@ -117,6 +120,7 @@ static bool mathKriging     = false;
 static bool mathParser      = false;
 static bool mathInterpreter = false;
 static bool utilities       = false;
+static bool glossary        = false;
 static bool finiteElement   = false;
 static bool material        = false;
 static bool tests           = false;
@@ -318,7 +322,13 @@ static void
 treatUtilities(void)
 {
   utilities = true;
-} // end of treatException
+} // end of treatUtilities
+
+static void
+treatGlossary(void)
+{
+  glossary = true;
+} // end of treatGlossary
 
 static void
 treatFiniteElement(void)
@@ -362,6 +372,7 @@ treatAll(void)
   math         = true;
   material     = true;
   utilities    = true;
+  glossary     = true;
   lsystem      = true;
   tests        = true;
   mfront_profiling = true;
@@ -456,13 +467,20 @@ main(const int argc,
   registerCallBack("--math-cubic-spline",&treatMathCubicSpline,"request flags for libTFELMathCubicSpline.");
   registerCallBack("--math",&treatMath,"request flags for libTFELMath.");
   registerCallBack("--math-parser",&treatMathParser,"request flags for libTFELMathParser.");
-  registerCallBack("--math-interpreter",&treatMathInterpreter,"request flags for libTFELMathInterpreter.");
+  registerCallBack("--math-interpreter",&treatMathInterpreter,
+		   "request flags for libTFELMathInterpreter.");
   registerCallBack("--tests",&treatTests,"request flags for libTFELTests.");
   registerCallBack("--system",&treatSystem,"request flags for libTFELSystem.");
-  registerCallBack("--utilities",&treatUtilities,"request flags for libTFELUtilities.");
-  registerCallBack("--material",&treatMaterial,"request flags for libTFELMaterial.");
-  registerCallBack("--mfront-profiling",&treatMFrontProfiling,"request flags for libMFrontProfiling.");
-  registerCallBack("--finiteElement",&treatFiniteElement,"request flags for libTFELFiniteElement.");
+  registerCallBack("--utilities",&treatUtilities,
+		   "request flags for libTFELUtilities.");
+  registerCallBack("--glossary",&treatGlossary,
+		   "request flags for libTFELGlossary.");
+  registerCallBack("--material",&treatMaterial,
+		   "request flags for libTFELMaterial.");
+  registerCallBack("--mfront-profiling",&treatMFrontProfiling,
+		   "request flags for libMFrontProfiling.");
+  registerCallBack("--finiteElement",&treatFiniteElement,
+		   "request flags for libTFELFiniteElement.");
   registerCallBack("--all",&treatAll,"request flags for all librairies.");
   registerCallBack("--version",&treatVersion,"print tfel version and svn revision.");
   for(p2=argv+1;p2!=argv+argc;++p2){
@@ -560,6 +578,9 @@ main(const int argc,
     }
     if(utilities){
       cout << "-lTFELUtilities ";
+    }
+    if(glossary){
+      cout << "-lTFELGlossary ";
     }
     if(exceptions){
       cout << "-lTFELException ";

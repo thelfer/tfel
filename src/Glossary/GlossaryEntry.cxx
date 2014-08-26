@@ -22,23 +22,16 @@ namespace tfel
 				 const std::string& t,
 				 const std::string& sd,
 				 const std::vector<std::string>& d,
-				 const std::vector<std::string>& l,
 				 const std::vector<std::string>& no)
       : key(k),
-	name(n),
+	names(1u,n),
 	unit(u),
 	type(t),
 	short_description(sd),
 	description(d),
-	latex_description( (!l.empty()) ? l : d),
 	notes(no)
     {
-      using namespace std;
-      if(!(t=="scalar")&&(t=="vector")&&(t=="symmetric tensor")){
-	string msg("GlossaryTokenizer::execute : "
-		   "unsupported type '"+t+"'");
-	throw(runtime_error(msg));
-      }
+      this->check();
     }
 
     GlossaryEntry::GlossaryEntry(const std::string& k,
@@ -47,24 +40,107 @@ namespace tfel
 				 const std::string& t,
 				 const std::string& sd,
 				 const std::string& d,
-				 const std::string& l,
 				 const std::string& no)
       : key(k),
-	name(n),
+	names(1u,n),
 	unit(u),
 	type(t),
 	short_description(sd),
 	description(tfel::utilities::tokenize(d,"@^separator^@")),
-	latex_description(tfel::utilities::tokenize(l,"@^separator^@")),
 	notes(tfel::utilities::tokenize(no,"@^separator^@"))
     {
+      this->check();
+    }
+
+    GlossaryEntry::GlossaryEntry(const std::string& k,
+				 const std::vector<std::string>& n,
+				 const std::string& u,
+				 const std::string& t,
+				 const std::string& sd,
+				 const std::vector<std::string>& d,
+				 const std::vector<std::string>& no)
+      : key(k),
+	names(n),
+	unit(u),
+	type(t),
+	short_description(sd),
+	description(d),
+	notes(no)
+    {
+      this->check();
+    }
+
+    GlossaryEntry::GlossaryEntry(const std::string& k,
+				 const std::vector<std::string>& n,
+				 const std::string& u,
+				 const std::string& t,
+				 const std::string& sd,
+				 const std::string& d,
+				 const std::string& no)
+      : key(k),
+	names(n),
+	unit(u),
+	type(t),
+	short_description(sd),
+	description(tfel::utilities::tokenize(d,"@^separator^@")),
+	notes(tfel::utilities::tokenize(no,"@^separator^@"))
+    {
+      this->check();
+    }
+
+    GlossaryEntry::GlossaryEntry(const std::string& k,
+				 const char * const * const b,
+				 const char * const * const e,
+				 const std::string& u,
+				 const std::string& t,
+				 const std::string& sd,
+				 const std::vector<std::string>& d,
+				 const std::vector<std::string>& no)
+      : key(k),
+	names(b,e),
+	unit(u),
+	type(t),
+	short_description(sd),
+	description(d),
+	notes(no)
+    {
+      this->check();
+    }
+
+    GlossaryEntry::GlossaryEntry(const std::string& k,
+				 const char * const * const b,
+				 const char * const * const e,
+				 const std::string& u,
+				 const std::string& t,
+				 const std::string& sd,
+				 const std::string& d,
+				 const std::string& no)
+      : key(k),
+	names(b,e),
+	unit(u),
+	type(t),
+	short_description(sd),
+	description(tfel::utilities::tokenize(d,"@^separator^@")),
+	notes(tfel::utilities::tokenize(no,"@^separator^@"))
+    {
+      this->check();
+    }
+
+    void
+    GlossaryEntry::check(void) const
+    {
       using namespace std;
-      if(!(t=="scalar")&&(t=="vector")&&(t=="symmetric tensor")){
-	string msg("GlossaryTokenizer::execute : "
-		   "unsupported type '"+t+"'");
+      if(this->names.empty()){
+	string msg("GlossaryEntry::check : "
+		   "no name specified for key '"+this->getKey()+"'");
 	throw(runtime_error(msg));
       }
-    }
+      if(!(this->type=="scalar")&&(this->type=="vector")&&(this->type=="symmetric tensor")){
+	string msg("GlossaryEntry::check : "
+		   "unsupported type '"+this->type+"'");
+	throw(runtime_error(msg));
+      }
+    } // end of GlossaryEntry::check
 
     const std::string&
     GlossaryEntry::getKey(void) const
@@ -72,10 +148,10 @@ namespace tfel
       return this->key;
     }
 
-    const std::string&
-    GlossaryEntry::getName(void) const
+    const std::vector<std::string>&
+    GlossaryEntry::getNames(void) const
     {
-      return this->name;
+      return this->names;
     }
 
     const std::string&
@@ -103,15 +179,6 @@ namespace tfel
     }
 
     const std::vector<std::string>&
-    GlossaryEntry::getLaTeXDescription(void) const
-    {
-      if(!this->latex_description.empty()){
-	return this->latex_description;
-      }
-      return this->description;
-    }
-
-    const std::vector<std::string>&
     GlossaryEntry::getNotes(void) const
     {
       return this->notes;
@@ -119,16 +186,44 @@ namespace tfel
 
     GlossaryEntry::operator const std::string& () const
     {
-      return this->name;
+      return this->key;
     } // end of operator std::string
 
     bool
-    GlossaryEntry::operator<(const GlossaryEntry& e) const
+    operator < (const GlossaryEntry& e1,
+	        const GlossaryEntry& e2)
     {
-      return this->name < e.name;
+      return e1.key < e2.key;
+    }
+
+    bool
+    operator != (const std::string& e1,
+		 const GlossaryEntry& e2)
+    {
+      return e1 != e2.key;
+    }
+
+    bool
+    operator != (const GlossaryEntry& e1,
+		 const std::string& e2)
+    {
+      return e1.key != e2;
+    }
+
+    bool
+    operator == (const std::string& e1,
+		 const GlossaryEntry& e2)
+    {
+      return e1 == e2.key;
+    }
+
+    bool
+    operator == (const GlossaryEntry& e1,
+		 const std::string& e2)
+    {
+      return e1.key == e2;
     }
 
   } // end of namespace glossary
 
 } // end of namespace tfel
-

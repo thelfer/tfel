@@ -27,12 +27,12 @@ namespace tfel
     {
       /*!
        * constructor
-       * \param[in] k  : key used to stor 
+       * \param[in] k  : key used to store the entry
        * \param[in] n  : name
        * \param[in] u  : unit
        * \param[in] t  : type
+       * \param[in] sd : short description
        * \param[in] d  : description
-       * \param[in] l  : latex description
        * \param[in] no : note
        */
       GlossaryEntry(const std::string&,
@@ -40,22 +40,92 @@ namespace tfel
 		    const std::string&,
 		    const std::string&,
 		    const std::string&,
-		    const std::vector<std::string>&,
 		    const std::vector<std::string>&,
 		    const std::vector<std::string>&);
       /*!
        * constructor
-       * \param[in] k  : key used to stor 
+       * \param[in] k  : key used to store
        * \param[in] n  : name
        * \param[in] u  : unit
        * \param[in] t  : type
+       * \param[in] sd : short description
        * \param[in] d  : description
-       * \param[in] l  : latex description
        * \param[in] no : note
        */
       GlossaryEntry(const std::string&,
 		    const std::string&,
 		    const std::string&,
+		    const std::string&,
+		    const std::string&,
+		    const std::string&,
+		    const std::string&);
+      /*!
+       * constructor
+       * \param[in] k  : key used to store the entry
+       * \param[in] n  : names
+       * \param[in] u  : unit
+       * \param[in] t  : type
+       * \param[in] sd : short description
+       * \param[in] d  : description
+       * \param[in] no : note
+       */
+      GlossaryEntry(const std::string&,
+		    const std::vector<std::string>&,
+		    const std::string&,
+		    const std::string&,
+		    const std::string&,
+		    const std::vector<std::string>&,
+		    const std::vector<std::string>&);
+      /*!
+       * constructor
+       * \param[in] k  : key used to store the entry
+       * \param[in] n  : names
+       * \param[in] u  : unit
+       * \param[in] t  : type
+       * \param[in] sd : short description
+       * \param[in] d  : description
+       * \param[in] no : note
+       */
+      GlossaryEntry(const std::string&,
+		    const std::vector<std::string>&,
+		    const std::string&,
+		    const std::string&,
+		    const std::string&,
+		    const std::string&,
+		    const std::string&);
+      /*!
+       * constructor
+       * \param[in] k  : key used to store the entry 
+       * \param[in] b  : iterator to the first name
+       * \param[in] e  : iterator to the last name
+       * \param[in] u  : unit
+       * \param[in] t  : type
+       * \param[in] sd : short description
+       * \param[in] d  : description
+       * \param[in] no : note
+       */
+      GlossaryEntry(const std::string&,
+		    const char* const * const,
+		    const char* const * const,
+		    const std::string&,
+		    const std::string&,
+		    const std::string&,
+		    const std::vector<std::string>&,
+		    const std::vector<std::string>&);
+      /*!
+       * constructor
+       * \param[in] k  : key used to store the entry
+       * \param[in] b  : iterator to the first name
+       * \param[in] e  : iterator to the last name
+       * \param[in] u  : unit
+       * \param[in] t  : type
+       * \param[in] sd : short description
+       * \param[in] d  : description
+       * \param[in] no : note
+       */
+      GlossaryEntry(const std::string&,
+		    const char* const * const,
+		    const char* const * const,
 		    const std::string&,
 		    const std::string&,
 		    const std::string&,
@@ -67,10 +137,10 @@ namespace tfel
       const std::string&
       getKey(void) const;
       /*!
-       * \return the name
+       * \return names asssociated with this key
        */
-      const std::string&
-      getName(void) const;
+      const std::vector<std::string>&
+      getNames(void) const;
       /*!
        * \return the unit
        */
@@ -92,33 +162,63 @@ namespace tfel
       const std::vector<std::string>&
       getDescription(void) const;
       /*!
-       * \return the latex description
-       */
-      const std::vector<std::string>&
-      getLaTeXDescription(void) const;
-      /*!
        * \return the notes
        */
       const std::vector<std::string>&
       getNotes(void) const;
       /*!
-       * cast operator to string
+       * cast operator to string. Equivalent to getKey()
        */
       operator const std::string& () const;
       /*!
        * comparison operator
        */
-      bool operator<(const GlossaryEntry&) const;
+      TFELGLOSSARY_VISIBILITY_EXPORT
+      friend bool
+      operator<(const GlossaryEntry&,
+		const GlossaryEntry&);
+      /*!
+       * comparison operator
+       */
+      TFELGLOSSARY_VISIBILITY_EXPORT
+      friend bool
+      operator != (const std::string&,
+		   const GlossaryEntry&);
+      /*!
+       * comparison operator
+       */
+      TFELGLOSSARY_VISIBILITY_EXPORT
+      friend bool
+      operator != (const GlossaryEntry&,
+		   const std::string&);
+      /*!
+       * comparison operator
+       */
+      TFELGLOSSARY_VISIBILITY_EXPORT
+      friend bool
+      operator == (const std::string&,
+		   const GlossaryEntry&);
+      /*!
+       * comparison operator
+       */
+      TFELGLOSSARY_VISIBILITY_EXPORT
+      friend bool
+      operator == (const GlossaryEntry&,
+		   const std::string&);
     private:
+      /*!
+       * \brief check if this entry is valid.
+       * Called by constructors
+       */
+      void check(void) const;
       /*!
        * key used to store this entry in the glossary
        */
       const std::string key;
       /*!
-       * name used in input file or return by the convertion to string
-       * operator
+       * names used in input file
        */
-      const std::string name;
+      const std::vector<std::string> names;
       /*!
        * unit of the entry
        */
@@ -135,10 +235,6 @@ namespace tfel
        * description
        */
       const std::vector<std::string> description;
-      /*!
-       * latex description
-       */
-      const std::vector<std::string> latex_description;
       /*!
        * note
        */

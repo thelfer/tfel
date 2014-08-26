@@ -155,7 +155,17 @@ namespace tfel{
 	    msg += toString(lineNumber);
 	    throw(runtime_error(msg));
 	  }
-	  this->fileTokens.push_back(Token(lineNumber,string(line.begin(),ps),Token::String));
+	  if(!this->fileTokens.empty()){
+	    if(this->fileTokens.back().flag==Token::String){
+	      const string old_value = this->fileTokens.back().value.substr(0,this->fileTokens.back().value.size()-1);
+	      const string new_value = string(line.begin()+1,ps);
+	      this->fileTokens.back().value = old_value+new_value;
+	    } else {
+	      this->fileTokens.push_back(Token(lineNumber,string(line.begin(),ps),Token::String));
+	    }
+	  } else {
+	    this->fileTokens.push_back(Token(lineNumber,string(line.begin(),ps),Token::String));
+	  }
 	  line.erase(line.begin(),ps);
 	} else if (treatCppComment){
 	  if(pos[1]!=0){

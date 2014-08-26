@@ -27,7 +27,7 @@ nu.setGlossaryName("PoissonRatio");
 @LocalVariable stress mu;
 
 @AuxiliaryStateVariable StressStensor ps;
-ps.setGlossaryName("PreviousStress");
+ps.setEntryName("PreviousStress");
 
 @Includes{
 #include"TFEL/Material/Lame.hxx"

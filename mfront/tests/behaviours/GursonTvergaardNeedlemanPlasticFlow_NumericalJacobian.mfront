@@ -28,7 +28,7 @@ p.setGlossaryName("EquivalentPlasticStrain");
 @StateVariable real f;
 f.setGlossaryName("Porosity");
 @StateVariable real Temp;
-Temp.setGlossaryName("LocalTemperature");
+Temp.setEntryName("MaterialTemperature");
 
 /* Variables utilisées lors de l'intégration */
 @LocalVariable real  Fel;

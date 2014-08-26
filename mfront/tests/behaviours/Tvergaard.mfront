@@ -16,14 +16,14 @@ kn.setGlossaryName("NormalStiffness");
 ks.setGlossaryName("TangentialStiffness");
 
 @MaterialProperty stress smax;
-smax.setGlossaryName("MaximumStress");
+smax.setGlossaryName("UltimateTensileStrength");
 @MaterialProperty real delta;
-delta.setGlossaryName("MaximumOpeningDisplacement");
+delta.setEntryName("MaximumOpeningDisplacement");
 
 @StateVariable real d;
 d.setGlossaryName("Damage");
 @StateVariable real di;
-di.setGlossaryName("DamageIndicator");
+di.setEntryName("DamageIndicator");
 
 @PredictionOperator{
   const real C        = real(27)/real(4);

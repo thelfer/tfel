@@ -24,11 +24,11 @@ nu.setGlossaryName("PoissonRatio");
  * T+Temp : température due à l'échauffement adiabatique
  */
 @StateVariable real p;
-p.setGlossaryName("EquivalentViscoPlasticStrain");
+p.setGlossaryName("EquivalentViscoplasticStrain");
 @StateVariable real f;
 f.setGlossaryName("Porosity");
 @StateVariable real Temp;
-Temp.setGlossaryName("LocalTemperature");
+Temp.setEntryName("MaterialTemperature");
 
 /* Paramètres matériau */
 // test des différentes façon d'initialiser un paramètre

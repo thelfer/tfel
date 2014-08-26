@@ -9,6 +9,7 @@
 #include<sstream>
 #include<stdexcept>
 
+#include"TFEL/Glossary/Glossary.hxx"
 #include"MFront/MechanicalBehaviourData.hxx"
 
 namespace mfront{
@@ -955,7 +956,17 @@ namespace mfront{
   MechanicalBehaviourData::setGlossaryName(const std::string& n,
 					   const std::string& g)
   {
+    using namespace std;
+    using tfel::glossary::Glossary;
+    const Glossary& glossary = Glossary::getGlossary();
     this->checkVariableName(n);
+    if(!glossary.contains(g)){
+      string msg("MechanicalBehaviourData::setGlossaryName : "
+		 "'"+g+"' is not a glossary name");
+#warning "One day, we will throw"
+      static_cast<void>(msg);
+      //      throw(runtime_error(msg));
+    }
     MechanicalBehaviourDataAddToGlossaryOrEntryNames(this->glossaryNames,
 						     this->glossaryNames,
 						     this->entryNames,n,g);

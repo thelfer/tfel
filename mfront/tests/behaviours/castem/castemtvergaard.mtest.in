@@ -8,7 +8,7 @@
 @Behaviour<umat> '@MFrontCastemBehavioursBuildPath@' 'umattvergaard';
 @MaterialProperty<constant> 'NormalStiffness'              2.e16;
 @MaterialProperty<constant> 'TangentialStiffness'          2.e16;
-@MaterialProperty<constant> 'MaximumStress'              200.e6;
+@MaterialProperty<constant> 'UltimateTensileStrength'     200.e6;
 @MaterialProperty<constant> 'MaximumOpeningDisplacement'   3.e-6;
 
 @ExternalStateVariable 'Temperature' 293.15;

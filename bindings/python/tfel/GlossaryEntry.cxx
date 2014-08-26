@@ -19,8 +19,8 @@ declareGlossaryEntry(void)
     .add_property("key",
 		  make_function(&GlossaryEntry::getKey,
 				return_value_policy<copy_const_reference>()))
-    .add_property("name",
-		  make_function(&GlossaryEntry::getName,
+    .add_property("names",
+		  make_function(&GlossaryEntry::getNames,
 				return_value_policy<copy_const_reference>()))
     .add_property("unit",
 		  make_function(&GlossaryEntry::getUnit,
@@ -33,9 +33,6 @@ declareGlossaryEntry(void)
     				return_value_policy<copy_const_reference>()))
    .add_property("description",
     		  make_function(&GlossaryEntry::getDescription,
-    				return_value_policy<copy_const_reference>()))
-    .add_property("latex_description",
-    		  make_function(&GlossaryEntry::getLaTeXDescription,
     				return_value_policy<copy_const_reference>()))
     .add_property("notes",
 		  make_function(&GlossaryEntry::getNotes,
