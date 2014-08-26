@@ -1209,6 +1209,8 @@ mfront/include/MFront/Cyrano/CyranoOrthotropicBehaviourHandler.hxx -text
 mfront/include/MFront/Cyrano/CyranoOutOfBoundsPolicy.hxx -text
 mfront/include/MFront/Cyrano/CyranoTraits.hxx -text
 mfront/include/MFront/DrivingVariable.hxx -text
+mfront/include/MFront/FiniteStrainBehaviourTangentOperatorConversion.hxx -text
+mfront/include/MFront/FiniteStrainBehaviourTangentOperatorConversionPath.hxx -text
 mfront/include/MFront/InterfaceBase.hxx -text
 mfront/include/MFront/LawFunction.hxx -text
 mfront/include/MFront/MFront.hxx -text
@@ -1416,6 +1418,8 @@ mfront/src/CyranoGetModellingHypothesis.cxx -text
 mfront/src/CyranoInterfaceBase.cxx -text
 mfront/src/CyranoOutOfBoundsPolicy.cxx -text
 mfront/src/DrivingVariable.cxx -text
+mfront/src/FiniteStrainBehaviourTangentOperatorConversion.cxx -text
+mfront/src/FiniteStrainBehaviourTangentOperatorConversionPath.cxx -text
 mfront/src/InterfaceBase.cxx -text
 mfront/src/MFront.cxx -text
 mfront/src/MFrontAsterInterface.cxx -text

@@ -45,6 +45,8 @@ set(mfront_SOURCES
     ParserBase.cxx
     InterfaceBase.cxx
     ParserUtilities.cxx
+    FiniteStrainBehaviourTangentOperatorConversion.cxx
+    FiniteStrainBehaviourTangentOperatorConversionPath.cxx
     MFrontBehaviourAnalyser.cxx
     MFrontBehaviourAnalyserFactory.cxx
     MFrontLawInterfaceFactory.cxx

@@ -167,6 +167,8 @@ namespace mfront{
       Mode m;
       //! list of hypothesis
       std::set<Hypothesis> hypotheses;
+      //! list of untreated options
+      std::vector<tfel::utilities::Token> untreated;
     };
     /*!
      * \return a string describing the behaviour type
@@ -228,6 +230,24 @@ namespace mfront{
      * \param[in] child : a pointer to this
      * \param[in] n     : name of the method read
      * \param[in] m     : modifier
+     * \param[in] b     : add "this->" in front of variables
+     */
+    template<typename T,
+	     typename T2>
+    void
+    readCodeBlock(T&,
+		  const CodeBlockOptions&,
+		  const std::string&,
+		  std::string (T2::*)(const Hypothesis,
+				      const std::string&,
+				      const bool),
+		  const bool);
+    /*!
+     * \brief read the next code block and adds it tho the mechanical
+     * behaviour
+     * \param[in] child : a pointer to this
+     * \param[in] n     : name of the method read
+     * \param[in] m     : modifier
      * \param[in] a     : word analyser
      * \param[in] b     : add "this->" in front of variables
      * \param[in] s     : allow specialisation
@@ -244,6 +264,29 @@ namespace mfront{
 		  void (T3::*)(const Hypothesis,
 			       const std::string&),
 		  const bool,const bool);
+    /*!
+     * \brief read the next code block and adds it tho the mechanical
+     * behaviour
+     * \param[in] child : a pointer to this
+     * \param[in] n     : name of the method read
+     * \param[in] m     : modifier
+     * \param[in] a     : word analyser
+     * \param[in] b     : add "this->" in front of variables
+     * \param[in] s     : allow specialisation
+     */
+    template<typename T,
+	     typename T2,
+	     typename T3>
+    void
+    readCodeBlock(T&,
+		  const CodeBlockOptions&,
+		  const std::string&,
+		  std::string (T2::*)(const Hypothesis,
+				      const std::string&,
+				      const bool),
+		  void (T3::*)(const Hypothesis,
+			       const std::string&),
+		  const bool);
     /*!
      * \brief read the next code block and adds it tho the mechanical
      * behaviour
@@ -268,6 +311,35 @@ namespace mfront{
 				      const std::string&,
 				      const bool),
 		  const bool,const bool);
+    /*!
+     * \brief read the next code block and adds it tho the mechanical
+     * behaviour
+     * \param[in] child : a pointer to this
+     * \param[in] n1    : name of the first method read
+     * \param[in] n2    : name of the second method read
+     * \param[in] m1    : modifier
+     * \param[in] m2    : modifier
+     * \param[in] b     : add "this->" in front of variables
+     */
+    template<typename T,
+	     typename T2>
+    void
+    readCodeBlock(T&,
+		  const CodeBlockOptions&,
+		  const std::string&,
+		  const std::string&,
+		  std::string (T2::*)(const Hypothesis,
+				      const std::string&,
+				      const bool),
+		  std::string (T2::*)(const Hypothesis,
+				      const std::string&,
+				      const bool),
+		  const bool);
+    /*!
+     * \brief throw an exception is some options were not recognized
+     */
+    void
+    treatUnsupportedCodeBlockOptions(const CodeBlockOptions&);
     /*!
      * \brief add a static variable description
      * \param[in] v : variable description

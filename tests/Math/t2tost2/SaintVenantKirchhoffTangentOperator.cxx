@@ -65,7 +65,7 @@ struct SaintVenantKirchoffTangentOperator
     tensor<N> dJ;
     computeDeterminantDerivative(dJ,F);
     t2tost2<N> dsig;
-    computeCauchyStressDerivativeFromKirchoffDerivative(dsig,dtau,sig,F);
+    computeCauchyStressDerivativeFromKirchoffStressDerivative(dsig,dtau,sig,F);
     t2tost2<N> ndtau;
     t2tost2<N> ndsig;
     t2tost2<N> ndS;

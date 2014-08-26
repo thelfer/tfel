@@ -112,8 +112,6 @@ namespace mfront{
 
     virtual void writeComputeNumericalJacobian(const Hypothesis);
 
-    virtual void writeBehaviourComputeTangentOperator(const Hypothesis);
-
     virtual void writeGetPartialJacobianInvert(const Hypothesis);
 
     virtual void writeLimitsOnIncrementValues(const Hypothesis,

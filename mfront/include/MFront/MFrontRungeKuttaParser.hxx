@@ -96,9 +96,6 @@ namespace mfront{
     writeBehaviourIntegrator(const Hypothesis);
 
     virtual void
-    writeBehaviourComputeTangentOperator(const Hypothesis);
-
-    virtual void
     endsInputFileProcessing(void);
 
     virtual void

@@ -294,4 +294,7 @@ namespace mfront{
     }
   } // end of MFrontIsotropicBehaviourParserBase::writeBehaviourComputePredictionOperator(void)
 
+  void MFrontIsotropicBehaviourParserBase::writeBehaviourComputeTangentOperator(const Hypothesis)
+  {} // end of MFrontIsotropicBehaviourParserBase::writeBehaviourComputeTangentOperator
+
 } // end of namespace mfront

@@ -63,6 +63,9 @@ namespace mfront{
     virtual void
     writeBehaviourComputePredictionOperator(const Hypothesis);
 
+    virtual void
+    writeBehaviourComputeTangentOperator(const Hypothesis);
+
     virtual std::string
     flowRuleVariableModifier(const Hypothesis,
 			     const std::string&,const bool);

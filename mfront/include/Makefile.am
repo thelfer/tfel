@@ -74,16 +74,18 @@ nobase_include_HEADERS= MFront/MFront.hxx                             \
 			MFront/UMATSmallStrainMTestFileGenerator.hxx  \
 			MFront/UMATFiniteStrainMTestFileGenerator.hxx
 
-nobase_noinst_HEADERS = MFront/MFrontIsotropicBehaviourParserBase.hxx               \
-			MFront/MFrontIsotropicMisesCreepParser.hxx                  \
-			MFront/MFrontIsotropicStrainHardeningMisesCreepParser.hxx   \
-			MFront/MFrontIsotropicMisesPlasticFlowParser.hxx            \
-			MFront/MFrontMultipleIsotropicMisesFlowsParser.hxx          \
-			MFront/MFrontRungeKuttaParser.hxx                           \
-			MFront/MFrontImplicitParserBase.hxx                         \
-			MFront/MFrontImplicitParser.hxx                             \
-			MFront/MFrontImplicitParserII.hxx                           \
-			MFront/MFrontImplicitFiniteStrainParser.hxx
+nobase_noinst_HEADERS = MFront/MFrontIsotropicBehaviourParserBase.hxx                 \
+			MFront/MFrontIsotropicMisesCreepParser.hxx                    \
+			MFront/MFrontIsotropicStrainHardeningMisesCreepParser.hxx     \
+			MFront/MFrontIsotropicMisesPlasticFlowParser.hxx              \
+			MFront/MFrontMultipleIsotropicMisesFlowsParser.hxx            \
+			MFront/MFrontRungeKuttaParser.hxx                             \
+			MFront/MFrontImplicitParserBase.hxx                           \
+			MFront/MFrontImplicitParser.hxx                               \
+			MFront/MFrontImplicitParserII.hxx                             \
+			MFront/MFrontImplicitFiniteStrainParser.hxx                   \
+			MFront/FiniteStrainBehaviourTangentOperatorConversion.hxx     \
+			MFront/FiniteStrainBehaviourTangentOperatorConversionPath.hxx
 
 nobase_noinst_HEADERS += MFront/MFrontCLawInterfaceBase.hxx          \
 			 MFront/MFrontCLawInterface.hxx              \

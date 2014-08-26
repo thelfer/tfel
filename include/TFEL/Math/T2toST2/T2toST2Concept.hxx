@@ -239,10 +239,10 @@ namespace tfel{
    				     typename StensorTraits<StensorType>::NumType,OpPlus>::Result,
    	typename T2toST2Traits<T2toST2ResultType>::NumType>::cond,
       void>::type
-    computeCauchyStressDerivativeFromKirchoffDerivative(T2toST2ResultType&,
-							const T2toST2Type&,
-							const StensorType&,
-							const TensorType&);
+    computeCauchyStressDerivativeFromKirchoffStressDerivative(T2toST2ResultType&,
+							      const T2toST2Type&,
+							      const StensorType&,
+							      const TensorType&);
     /*!
      * \brief compute the Kirchhoff stress derivative from the Cauchy
      * stress derivative with respect to the deformation gradient
@@ -270,10 +270,10 @@ namespace tfel{
    				     typename StensorTraits<StensorType>::NumType,OpPlus>::Result,
    	typename T2toST2Traits<T2toST2ResultType>::NumType>::cond,
       void>::type
-    computeKirchoffDerivativeFromCauchyStressDerivative(T2toST2ResultType&,
-							const T2toST2Type&,
-							const StensorType&,
-							const TensorType&);
+    computeKirchoffStressDerivativeFromCauchyStressDerivative(T2toST2ResultType&,
+							      const T2toST2Type&,
+							      const StensorType&,
+							      const TensorType&);
 
   } // end of namespace math
 

@@ -2201,25 +2201,6 @@ namespace mfront{
     this->behaviourFile << "} // end of " << this->mb.getClassName() << "::integrate" << endl << endl;
   } // end of void MFrontRungeKuttaParser::writeBehaviourIntegrator(void)
   
-  void MFrontRungeKuttaParser::writeBehaviourComputeTangentOperator(const Hypothesis h)
-  {
-    if(this->mb.hasCode(h,MechanicalBehaviourData::ComputeTangentOperator)){
-      this->behaviourFile << "bool computeConsistentTangentOperator(const SMType smt){\n";
-      this->behaviourFile << "using namespace std;\n";
-      this->behaviourFile << "using namespace tfel::math;\n";
-      this->behaviourFile << "using std::vector;\n";
-      writeMaterialLaws("MFrontImplicitParserBase::writeBehaviourIntegrator",
-			this->behaviourFile,this->mb.getMaterialLaws());
-      this->writeStandardPerformanceProfiling(this->behaviourFile,
-					      MechanicalBehaviourData::ComputeTangentOperator);
-      this->behaviourFile << this->mb.getCode(h,MechanicalBehaviourData::ComputeTangentOperator).code << '\n';
-      this->behaviourFile << "return true;\n";
-      this->behaviourFile << "}\n\n";
-    } else {
-      MFrontBehaviourParserCommon::writeBehaviourComputeTangentOperator(h);
-    }
-  }
-
   MFrontRungeKuttaParser::~MFrontRungeKuttaParser()
   {} // end of ~MFrontRungeKuttaParser
 

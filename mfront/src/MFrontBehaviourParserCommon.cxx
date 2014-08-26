@@ -198,6 +198,27 @@ namespace mfront{
   } // end of MFrontBehaviourParserCommon::readCodeBlockOptions
 
   void
+  MFrontBehaviourParserCommon::treatUnsupportedCodeBlockOptions(const CodeBlockOptions& o)
+  {
+    using namespace std;
+    using namespace tfel::utilities;
+    if(!o.untreated.empty()){
+      ostringstream msg;
+      msg << "MFrontBehaviourParserCommon::treatUnsupportedCodeBlockOptions : ";
+      if(o.untreated.size()==1u){
+	msg << "option '" << o.untreated[0].value << "' is invalid";
+      } else {
+	msg << "the";
+	for(vector<Token>::const_iterator p=o.untreated.begin();p!=o.untreated.end();++p){
+	  msg << " '" << p->value << "'";
+	}
+	msg << " options are invalid";
+      }
+      throw(runtime_error(msg.str()));
+    }
+  } // end of MFrontBehaviourParserCommon::treatUnsupportedCodeBlockOptions  
+
+  void
   MFrontBehaviourParserCommon::addStaticVariableDescription(const StaticVariableDescription& v)
   {
     this->mb.addStaticVariable(ModellingHypothesis::UNDEFINEDHYPOTHESIS,v);
@@ -3887,8 +3908,22 @@ namespace mfront{
     }
   } // end of MFrontBehaviourParserCommon::writeBehaviourComputePredictionOperator(void)
 
-  void MFrontBehaviourParserCommon::writeBehaviourComputeTangentOperator(const Hypothesis)
-  {} // end of MFrontBehaviourParserCommon::writeBehaviourComputeTangentOperator
+  void MFrontBehaviourParserCommon::writeBehaviourComputeTangentOperator(const Hypothesis h)
+  {
+    if(this->mb.hasCode(h,MechanicalBehaviourData::ComputeTangentOperator)){
+      this->behaviourFile << "bool computeConsistentTangentOperator(const SMType smt){\n";
+      this->behaviourFile << "using namespace std;\n";
+      this->behaviourFile << "using namespace tfel::math;\n";
+      this->behaviourFile << "using std::vector;\n";
+      writeMaterialLaws("MFrontImplicitParserBase::writeBehaviourIntegrator",
+			this->behaviourFile,this->mb.getMaterialLaws());
+      this->writeStandardPerformanceProfiling(this->behaviourFile,
+					      MechanicalBehaviourData::ComputeTangentOperator);
+      this->behaviourFile << this->mb.getCode(h,MechanicalBehaviourData::ComputeTangentOperator).code << '\n';
+      this->behaviourFile << "return true;\n";
+      this->behaviourFile << "}\n\n";
+    }
+  } // end of MFrontBehaviourParserCommon::writeBehaviourComputeTangentOperator
 
   void MFrontBehaviourParserCommon::writeBehaviourGetTangentOperator()
   {

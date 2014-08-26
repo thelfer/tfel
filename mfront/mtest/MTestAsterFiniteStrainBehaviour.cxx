@@ -102,7 +102,7 @@ namespace mfront
       }
     }
     dtau = dtau_ddF*t2tot2<N,real>::tpld(inv_F0);
-    computeCauchyStressDerivativeFromKirchoffDerivative(dsig,dtau,sig,F1);
+    computeCauchyStressDerivativeFromKirchoffStressDerivative(dsig,dtau,sig,F1);
     copy(dsig.begin(),dsig.end(),Kt.begin());
   }
 

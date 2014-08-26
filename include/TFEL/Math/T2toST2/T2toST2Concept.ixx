@@ -275,10 +275,10 @@ namespace tfel{
    				     typename StensorTraits<StensorType>::NumType,OpPlus>::Result,
    	typename T2toST2Traits<T2toST2ResultType>::NumType>::cond,
       void>::type
-    computeCauchyStressDerivativeFromKirchoffDerivative(T2toST2ResultType& ds,
-							const T2toST2Type& dt_K,
-							const StensorType& s,
-							const TensorType&  F)
+    computeCauchyStressDerivativeFromKirchoffStressDerivative(T2toST2ResultType& ds,
+							      const T2toST2Type& dt_K,
+							      const StensorType& s,
+							      const TensorType&  F)
     {
       typedef typename T2toST2Traits<T2toST2Type>::NumType value_type;
       typedef typename tfel::typetraits::BaseType<value_type>::type real;
@@ -307,10 +307,10 @@ namespace tfel{
    				     typename StensorTraits<StensorType>::NumType,OpPlus>::Result,
    	typename T2toST2Traits<T2toST2ResultType>::NumType>::cond,
       void>::type
-    computeKirchoffDerivativeFromCauchyStressDerivative(T2toST2ResultType& dt_K,
-							const T2toST2Type& ds,
-							const StensorType& s,
-							const TensorType&  F)
+    computeKirchoffStressDerivativeFromCauchyStressDerivative(T2toST2ResultType& dt_K,
+							      const T2toST2Type& ds,
+							      const StensorType& s,
+							      const TensorType&  F)
     {
       typedef typename T2toST2Traits<T2toST2Type>::NumType value_type;
       typedef typename tfel::typetraits::BaseType<value_type>::type real;

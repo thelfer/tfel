@@ -95,26 +95,14 @@ namespace mfront
 					     const bool s)
 
   {
-    using namespace std;
-    using tfel::utilities::shared_ptr;
     CodeBlockOptions o;
     this->readCodeBlockOptions(o,s);
-    const set<Hypothesis>& h = o.hypotheses;
-    set<Hypothesis>::const_iterator ph;
-    const TokensContainer::const_iterator beg = this->current;
-    for(ph=h.begin();ph!=h.end();++ph){
-      this->current = beg;
-      shared_ptr<VariableModifier> vm(makeVariableModifier(child,*ph,m));
-      const CodeBlock& c = this->readNextBlock(vm,b);
-      this->disableVariableDeclaration(*ph);
-      this->mb.setCode(*ph,n,c,o.m,o.p);
-    }
+    this->treatUnsupportedCodeBlockOptions(o);
+    this->readCodeBlock(child,o,n,m,b);
     return o;
-  } // end of MFrontBehaviourParserCommon::readCodeBlock
+  }
 
-  template<typename T,
-	   typename T2,
-	   typename T3>
+  template<typename T,typename T2,typename T3>
   MFrontBehaviourParserCommon::CodeBlockOptions
   MFrontBehaviourParserCommon::readCodeBlock(T& child,
 					     const std::string& n,
@@ -127,10 +115,28 @@ namespace mfront
 					     const bool s)
 
   {
-    using namespace std;
-    using tfel::utilities::shared_ptr;
     CodeBlockOptions o;
     this->readCodeBlockOptions(o,s);
+    this->treatUnsupportedCodeBlockOptions(o);
+    this->readCodeBlock(child,o,n,m,a,b);
+    return o;
+  } // end of MFrontBehaviourParserCommon::readCodeBlock
+
+  template<typename T,typename T2,typename T3>
+  void
+  MFrontBehaviourParserCommon::readCodeBlock(T& child,
+					     const MFrontBehaviourParserCommon::CodeBlockOptions& o,
+					     const std::string& n,
+					     std::string (T2::* m)(const Hypothesis,
+								   const std::string&,
+								   const bool),
+					     void (T3::* a)(const Hypothesis,
+							    const std::string&),
+					     const bool b)
+
+  {
+    using namespace std;
+    using tfel::utilities::shared_ptr;
     const set<Hypothesis>& h = o.hypotheses;
     set<Hypothesis>::const_iterator ph;
     const TokensContainer::const_iterator beg = this->current;
@@ -142,7 +148,30 @@ namespace mfront
       this->disableVariableDeclaration(*ph);
       this->mb.setCode(*ph,n,c,o.m,o.p);
     }
-    return o;
+  } // end of MFrontBehaviourParserCommon::readCodeBlock
+
+  template<typename T,typename T2>
+  void
+  MFrontBehaviourParserCommon::readCodeBlock(T& child,
+					     const MFrontBehaviourParserCommon::CodeBlockOptions& o,
+					     const std::string& n,
+					     std::string (T2::* m)(const Hypothesis,
+								   const std::string&,
+								   const bool),
+					     const bool b)
+  {
+    using namespace std;
+    using tfel::utilities::shared_ptr;
+    const set<Hypothesis>& h = o.hypotheses;
+    set<Hypothesis>::const_iterator ph;
+    const TokensContainer::const_iterator beg = this->current;
+    for(ph=h.begin();ph!=h.end();++ph){
+      this->current = beg;
+      shared_ptr<VariableModifier> vm(makeVariableModifier(child,*ph,m));
+      const CodeBlock& c = this->readNextBlock(vm,b);
+      this->disableVariableDeclaration(*ph);
+      this->mb.setCode(*ph,n,c,o.m,o.p);
+    }
   } // end of MFrontBehaviourParserCommon::readCodeBlock
 
   template<typename T,
@@ -165,6 +194,29 @@ namespace mfront
     using tfel::utilities::shared_ptr;
     CodeBlockOptions o;
     this->readCodeBlockOptions(o,s);
+    this->treatUnsupportedCodeBlockOptions(o);
+    this->readCodeBlock(child,o,n1,n2,m1,m2,b);
+    return o;
+  } // end of MFrontBehaviourParserCommon::readCodeBlock
+
+  template<typename T,
+	   typename T2>
+  void
+  MFrontBehaviourParserCommon::readCodeBlock(T& child,
+					     const MFrontBehaviourParserCommon::CodeBlockOptions& o,
+					     const std::string& n1,
+					     const std::string& n2,
+					     std::string (T2::* m1)(const Hypothesis,
+								    const std::string&,
+								    const bool),
+					     std::string (T2::* m2)(const Hypothesis,
+								    const std::string&,
+								    const bool),
+					     const bool b)
+
+  {
+    using namespace std;
+    using tfel::utilities::shared_ptr;
     const set<Hypothesis>& h = o.hypotheses;
     set<Hypothesis>::const_iterator ph;
     const TokensContainer::const_iterator beg = this->current;
@@ -178,7 +230,6 @@ namespace mfront
       this->mb.setCode(*ph,n1,c1,o.m,o.p);
       this->mb.setCode(*ph,n2,c2,o.m,o.p);
     }
-    return o;
   } // end of MFrontBehaviourParserCommon::readCodeBlock
 
 } // end of namespace mfront

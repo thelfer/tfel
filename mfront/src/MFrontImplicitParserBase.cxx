@@ -2624,26 +2624,6 @@ namespace mfront{
     this->behaviourFile << "}" << endl;
   } // end of MFrontImplicitParserBase::writePowellDogLegStep
 
-
-  void MFrontImplicitParserBase::writeBehaviourComputeTangentOperator(const Hypothesis h)
-  {
-    if(this->mb.hasCode(h,MechanicalBehaviourData::ComputeTangentOperator)){
-      this->behaviourFile << "bool computeConsistentTangentOperator(const SMType smt){\n";
-      this->behaviourFile << "using namespace std;\n";
-      this->behaviourFile << "using namespace tfel::math;\n";
-      this->behaviourFile << "using std::vector;\n";
-      this->writeStandardPerformanceProfiling(this->behaviourFile,
-					      MechanicalBehaviourData::ComputeTangentOperator);
-      writeMaterialLaws("MFrontImplicitParserBase::writeBehaviourComputeTangentOperator",
-			this->behaviourFile,this->mb.getMaterialLaws());
-      this->behaviourFile << this->mb.getCode(h,MechanicalBehaviourData::ComputeTangentOperator).code;
-      this->behaviourFile << "return true;\n";
-      this->behaviourFile << "}\n\n";
-    } else {
-      MFrontBehaviourParserCommon::writeBehaviourComputeTangentOperator(h);
-    }
-  }
-
   std::string
   MFrontImplicitParserBase::getIntegrationVariablesIncrementsInitializers(const VariableDescriptionContainer& v,
 									  const bool) const
