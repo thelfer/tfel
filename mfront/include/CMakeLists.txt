@@ -65,7 +65,7 @@ install_header(MFront MTestFileGeneratorBase.hxx)
 install_header(MFront UMATSmallStrainMTestFileGenerator.hxx)
 install_header(MFront UMATFiniteStrainMTestFileGenerator.hxx)
 
-install_header(MFront MFrontBehaviourTimer.hxx)
+install_header(MFront MFrontBehaviourProfiler.hxx)
 
 install_header(MFront MTestTypes.hxx)
 install_header(MFront MTest.hxx)
@@ -88,8 +88,6 @@ install_header(MFront MTestFunctionEvolution.hxx)
 install_header(MFront MTestConstraint.hxx)
 install_header(MFront MTestImposedDrivingVariable.hxx)
 install_header(MFront MTestImposedThermodynamicForce.hxx)
-
-install_header(MFront/UMAT UMATTimer.hxx)
 
 if(HAVE_CASTEM)
 install_header(MFront/UMAT UMAT.hxx)

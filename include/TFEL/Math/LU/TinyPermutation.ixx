@@ -24,7 +24,7 @@ namespace tfel{
 
     template<unsigned short N>
     template<typename T>
-    TFEL_MATH_INLINE void TinyPermutation<N>::exe(tvector<N,T>& vec)
+    TFEL_MATH_INLINE void TinyPermutation<N>::exe(tvector<N,T>& vec) const
     {
       tvector<N,T> tmp;
       unsigned short i;

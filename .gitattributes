@@ -1038,7 +1038,7 @@ mfront/include/MFront/MFrontBehaviourParserBase.hxx -text
 mfront/include/MFront/MFrontBehaviourParserBase.ixx -text
 mfront/include/MFront/MFrontBehaviourParserCommon.hxx -text
 mfront/include/MFront/MFrontBehaviourParserCommon.ixx -text
-mfront/include/MFront/MFrontBehaviourTimer.hxx -text
+mfront/include/MFront/MFrontBehaviourProfiler.hxx -text
 mfront/include/MFront/MFrontBehaviourVirtualInterface.hxx -text
 mfront/include/MFront/MFrontCLawInterface.hxx -text
 mfront/include/MFront/MFrontCLawInterfaceBase.hxx -text
@@ -1152,7 +1152,6 @@ mfront/include/MFront/UMAT/UMATOutOfBoundsPolicy.hxx -text
 mfront/include/MFront/UMAT/UMATRotationMatrix.hxx -text
 mfront/include/MFront/UMAT/UMATStressFreeExpansionHandler.hxx -text
 mfront/include/MFront/UMAT/UMATTangentOperator.hxx -text
-mfront/include/MFront/UMAT/UMATTimer.hxx -text
 mfront/include/MFront/UMAT/UMATTraits.hxx -text
 mfront/include/MFront/UMATFiniteStrainMTestFileGenerator.hxx -text
 mfront/include/MFront/UMATSmallStrainMTestFileGenerator.hxx -text
@@ -1207,7 +1206,7 @@ mfront/src/MFront.cxx -text
 mfront/src/MFrontAsterInterface.cxx -text
 mfront/src/MFrontBehaviourInterfaceFactory.cxx -text
 mfront/src/MFrontBehaviourParserCommon.cxx -text
-mfront/src/MFrontBehaviourTimer.cxx -text
+mfront/src/MFrontBehaviourProfiler.cxx -text
 mfront/src/MFrontBehaviourVirtualInterface.cxx -text
 mfront/src/MFrontBehaviourVirtualParser.cxx -text
 mfront/src/MFrontCLawInterface.cxx -text
@@ -1275,7 +1274,6 @@ mfront/src/UMATRotationMatrix.cxx -text
 mfront/src/UMATSmallStrainMTestFileGenerator.cxx -text
 mfront/src/UMATStressFreeExpansionHandler.cxx -text
 mfront/src/UMATTangentOperator.cxx -text
-mfront/src/UMATTimer.cxx -text
 mfront/src/VariableDescription.cxx -text
 mfront/src/main.cxx -text
 mfront/tests/CMakeLists.txt -text

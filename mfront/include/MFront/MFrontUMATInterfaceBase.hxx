@@ -511,8 +511,6 @@ namespace mfront{
     getModellingHypothesisTest(const Hypothesis) const = 0;
 
     bool generateMTestFile;
-
-    bool performanceMeasurements;
     
   }; // end of struct MFrontUMATInterfaceBase
 

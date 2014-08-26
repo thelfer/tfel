@@ -89,7 +89,7 @@ nobase_noinst_HEADERS += MFront/MFrontCLawInterfaceBase.hxx          \
 			 MFront/MFrontLaTeXLawInterface.hxx          \
 			 MFront/MFrontPythonLawInterface.hxx
 
-nobase_include_HEADERS += MFront/MFrontBehaviourTimer.hxx
+nobase_include_HEADERS += MFront/MFrontBehaviourProfiler.hxx
 
 nobase_include_HEADERS += MFront/MTestTypes.hxx	                         \
 			  MFront/MTest.hxx	                         \
@@ -112,8 +112,6 @@ nobase_include_HEADERS += MFront/MTestTypes.hxx	                         \
 			  MFront/MTestConstraint.hxx                     \
 			  MFront/MTestImposedDrivingVariable.hxx         \
 			  MFront/MTestImposedThermodynamicForce.hxx
-
-nobase_include_HEADERS += MFront/UMAT/UMATTimer.hxx
 
 if HAVE_CASTEM
 nobase_include_HEADERS += MFront/MFrontCastemLawInterface.hxx   \

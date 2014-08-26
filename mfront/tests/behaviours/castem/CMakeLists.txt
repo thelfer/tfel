@@ -118,7 +118,7 @@ target_link_libraries(MFrontCastemBehaviours
   TFELException)
 if(enable-cxx-11)
   target_link_libraries(MFrontCastemBehaviours
-    MFrontTimer)
+    MFrontProfiling)
 endif(enable-cxx-11)
 
 if(WIN32)

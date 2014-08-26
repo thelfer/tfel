@@ -34,7 +34,7 @@ target_link_libraries(MFrontCyranoBehaviours
   TFELException)
 if(enable-cxx-11)
   target_link_libraries(MFrontCyranoBehaviours
-    MFrontTimer)
+    MFrontProfiling)
 endif(enable-cxx-11)
 
 if(WIN32)

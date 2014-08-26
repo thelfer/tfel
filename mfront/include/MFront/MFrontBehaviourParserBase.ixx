@@ -35,8 +35,8 @@ namespace mfront{
     this->registerNewCallBack("@Import",&Child::treatImport);
     this->registerNewCallBack("@Material",&Child::treatMaterial);
     this->registerNewCallBack("@Library",&Child::treatLibrary);
-    this->registerNewCallBack("@PerformanceMeasurements",
-			      &Child::treatPerformanceMeasurements);
+    this->registerNewCallBack("@Profiling",
+			      &Child::treatProfiling);
     this->registerNewCallBack("@Behaviour",&Child::treatBehaviour);
     this->registerNewCallBack("@Author",&Child::treatAuthor);
     this->registerNewCallBack("@Date",&Child::treatDate);

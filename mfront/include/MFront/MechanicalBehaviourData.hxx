@@ -88,6 +88,9 @@ namespace mfront{
     //  considered symmetric
     static const std::string isConsistentTangentOperatorSymmetric;
     //! if this attribute is true, the behaviour can compute a
+    //! furnish a time step scaling factor
+    static const std::string hasTimeStepScalingFactor;
+    //! if this attribute is true, the behaviour can compute a
     //! prediction operator
     static const std::string hasPredictionOperator;
     //! if this attribute is true, the implicit algorithm may use the
@@ -101,6 +104,8 @@ namespace mfront{
     static const std::string compareToNumericalJacobian;
     //! a boolean attribute telling if the additionnal data can be declared
     static const std::string allowsNewUserDefinedVariables;
+    //! a boolean attribute telling if profiling information shall be collected
+    static const std::string profiling;
     //! algorithm used
     static const std::string algorithm;
     //! number of evaluation of the computeDerivative method 

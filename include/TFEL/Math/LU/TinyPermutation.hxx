@@ -27,7 +27,7 @@ namespace tfel{
       TFEL_MATH_INLINE TinyPermutation();
 
       template<typename T>
-      TFEL_MATH_INLINE void exe(tvector<N,T>&);
+      TFEL_MATH_INLINE void exe(tvector<N,T>&) const;
       
     };
 

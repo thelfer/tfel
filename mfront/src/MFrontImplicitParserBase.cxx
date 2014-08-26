@@ -1330,6 +1330,8 @@ namespace mfront{
       this->behaviourFile << "using namespace std;\n";
       this->behaviourFile << "using namespace tfel::math;\n";
       this->behaviourFile << "using std::vector;\n";
+      this->writeStandardPerformanceProfiling(this->behaviourFile,
+					      MechanicalBehaviourData::ComputeStress);
       writeMaterialLaws("MFrontImplicitParserBase::writeBehaviourParserSpecificMembers",
 			this->behaviourFile,this->mb.getMaterialLaws());
       this->behaviourFile << this->mb.getCode(h,MechanicalBehaviourData::ComputeStress) << endl;
@@ -1340,6 +1342,8 @@ namespace mfront{
       this->behaviourFile << "using namespace std;\n";
       this->behaviourFile << "using namespace tfel::math;\n";
       this->behaviourFile << "using std::vector;\n";
+      this->writeStandardPerformanceProfiling(this->behaviourFile,
+					      MechanicalBehaviourData::ComputeFinalStress);
       writeMaterialLaws("MFrontImplicitParserBase::writeBehaviourParserSpecificMembers",
 			this->behaviourFile,this->mb.getMaterialLaws());
       this->behaviourFile << this->mb.getCode(h,MechanicalBehaviourData::ComputeFinalStress) << endl;
@@ -1699,6 +1703,8 @@ namespace mfront{
     this->behaviourFile << "integrate(const SMType smt){\n";
     this->behaviourFile << "using namespace std;\n";
     this->behaviourFile << "using namespace tfel::math;\n";
+    this->writeStandardPerformanceProfilingBegin(this->behaviourFile,
+						 MechanicalBehaviourData::Integrator);
     if(this->mb.hasAttribute(h,MechanicalBehaviourData::compareToNumericalJacobian)){
       this->behaviourFile << "tmatrix<" << n2 << "," << n2 << ",real> njacobian;\n";
     }
@@ -1880,8 +1886,11 @@ namespace mfront{
 	 (this->algorithm==MFrontImplicitParserBase::POWELLDOGLEG_NEWTONRAPHSON_NJ)){
 	this->behaviourFile << "this->computeNumericalJacobian(this->jacobian);\n";
       }
+      this->writeStandardPerformanceProfilingBegin(this->behaviourFile,
+						   "TinyMatrixSolve","lu");
       this->behaviourFile << "TinyMatrixSolve<" << n2
 			  << "," << "real>::exe(this->jacobian,this->fzeros);\n";
+      this->writeStandardPerformanceProfilingEnd(this->behaviourFile);
       this->behaviourFile << "}" << endl;
       this->behaviourFile << "catch(LUException&){" << endl;
       if(this->mb.useQt()){        
@@ -1980,6 +1989,7 @@ namespace mfront{
 			  << "::integrate() : convergence after \" "
 			  << "<< this->iter << \" iterations\"<< endl << endl;\n";
     }
+    this->writeStandardPerformanceProfilingEnd(this->behaviourFile);
     this->behaviourFile << "if(smt!=NOSTIFFNESSREQUESTED){\n";
     if(this->mb.hasAttribute(h,MechanicalBehaviourData::hasConsistentTangentOperator)){
       this->behaviourFile << "if(!this->computeConsistentTangentOperator(smt)){\n";
@@ -2025,6 +2035,8 @@ namespace mfront{
     this->behaviourFile << "using namespace std;\n";
     this->behaviourFile << "using namespace tfel::math;\n";
     this->behaviourFile << "using std::vector;\n";
+    this->writeStandardPerformanceProfiling(this->behaviourFile,
+					    "ComputeFdF");
     writeMaterialLaws("MFrontImplicitParserBase::writeBehaviourParserSpecificMembers",
 		      this->behaviourFile,this->mb.getMaterialLaws());
     n = SupportedTypes::TypeSize();
@@ -2588,7 +2600,9 @@ namespace mfront{
       this->behaviourFile << "using namespace std;\n";
       this->behaviourFile << "using namespace tfel::math;\n";
       this->behaviourFile << "using std::vector;\n";
-      writeMaterialLaws("MFrontImplicitParserBase::writeBehaviourIntegrator",
+      this->writeStandardPerformanceProfiling(this->behaviourFile,
+					      MechanicalBehaviourData::ComputeTangentOperator);
+      writeMaterialLaws("MFrontImplicitParserBase::writeBehaviourComputeTangentOperator",
 			this->behaviourFile,this->mb.getMaterialLaws());
       this->behaviourFile << this->mb.getCode(h,MechanicalBehaviourData::ComputeTangentOperator);
       this->behaviourFile << "return true;\n";
@@ -2650,7 +2664,10 @@ namespace mfront{
       n += this->getTypeSize(p->type,p->arraySize);
     }
     if(this->mb.hasCode(h,MechanicalBehaviourData::InitializeJacobian)){
+      this->writeStandardPerformanceProfilingBegin(this->behaviourFile,
+						   MechanicalBehaviourData::InitializeJacobian);
       this->behaviourFile << this->mb.getCode(h,MechanicalBehaviourData::InitializeJacobian);
+      this->writeStandardPerformanceProfilingEnd(this->behaviourFile);
     } else {
       if((this->algorithm==MFrontImplicitParserBase::BROYDEN)||
 	 (this->algorithm==MFrontImplicitParserBase::POWELLDOGLEG_BROYDEN)||

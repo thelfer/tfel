@@ -117,14 +117,14 @@ libMFrontLogStream_la_LDFLAGS  = -no-undefined -avoid-version -Wl,--add-stdcall-
 endif # TFEL_WIN
 
 if HAVE_CXX_11
-lib_LTLIBRARIES += libMFrontTimer.la
-libMFrontTimer_la_SOURCES = MFrontBehaviourTimer.cxx
+lib_LTLIBRARIES += libMFrontProfiling.la
+libMFrontProfiling_la_SOURCES = MFrontBehaviourProfiler.cxx
 if ! TFEL_WIN
-libMFrontTimer_la_LIBADD   = -lrt
+libMFrontProfiling_la_LIBADD   = -lrt
 endif
-libMFrontTimer_la_CPPFLAGS = -DMFrontTimer_EXPORTS
+libMFrontProfiling_la_CPPFLAGS = -DMFrontProfiling_EXPORTS
 if TFEL_WIN
-libMFrontTimer_la_LDFLAGS  = -no-undefined -avoid-version -Wl,--add-stdcall-alias -Wl,--kill-at
+libMFrontProfiling_la_LDFLAGS  = -no-undefined -avoid-version -Wl,--add-stdcall-alias -Wl,--kill-at
 endif # TFEL_WIN
 endif # HAVE_CXX_11
 
@@ -140,18 +140,6 @@ libMTestFileGenerator_la_CPPFLAGS = -DMTestFileGenerator_EXPORTS
 if TFEL_WIN
 libMTestFileGenerator_la_LDFLAGS  = -no-undefined -avoid-version -Wl,--add-stdcall-alias -Wl,--kill-at
 endif # TFEL_WIN
-
-if HAVE_CXX_11
-lib_LTLIBRARIES += libUMATTimer.la
-libUMATTimer_la_SOURCES = UMATTimer.cxx
-if ! TFEL_WIN
-libUMATTimer_la_LIBADD       = -lrt
-endif
-libUMATTimer_la_CPPFLAGS = -DUMATTimer_EXPORTS
-if TFEL_WIN
-libUMATTimer_la_LDFLAGS  = -no-undefined -avoid-version -Wl,--add-stdcall-alias -Wl,--kill-at
-endif # TFEL_WIN
-endif # HAVE_CXX_11
 
 # UMAT Interface
 if HAVE_CASTEM
@@ -171,9 +159,6 @@ libUMATInterface_la_LIBADD  = -L$(top_builddir)/src/Utilities -lTFELUtilities   
 			      -L$(top_builddir)/src/Exception -lTFELException          \
 			      -L$(top_builddir)/mfront/src    -lMTestFileGenerator
 libUMATInterface_la_DEPENDENCIES = libMTestFileGenerator.la
-if HAVE_CXX_11
-libUMATInterface_la_DEPENDENCIES += libUMATTimer.la
-endif # HAVE_CXX_11
 libUMATInterface_la_CPPFLAGS = -DUMATInterface_EXPORTS
 if TFEL_WIN
 libUMATInterface_la_LDFLAGS  = -no-undefined -avoid-version -Wl,--add-stdcall-alias -Wl,--kill-at
@@ -192,9 +177,6 @@ libCyranoInterface_la_LIBADD  = -L$(top_builddir)/src/Utilities -lTFELUtilities 
 			        -L$(top_builddir)/src/Exception -lTFELException          \
 			        -L$(top_builddir)/mfront/src    -lMTestFileGenerator
 libCyranoInterface_la_DEPENDENCIES = libMTestFileGenerator.la
-if HAVE_CXX_11
-libCyranoInterface_la_DEPENDENCIES += libUMATTimer.la
-endif # HAVE_CXX_11
 libCyranoInterface_la_CPPFLAGS = -DCyranoInterface_EXPORTS
 if TFEL_WIN
 libCyranoInterface_la_LDFLAGS  = -no-undefined -avoid-version -Wl,--add-stdcall-alias -Wl,--kill-at
@@ -216,9 +198,6 @@ libAsterInterface_la_LIBADD  = -L$(top_builddir)/src/Utilities -lTFELUtilities  
 			       -L$(top_builddir)/src/Exception -lTFELException          \
 			       -L$(top_builddir)/mfront/src    -lMTestFileGenerator
 libAsterInterface_la_DEPENDENCIES = libMTestFileGenerator.la
-if HAVE_CXX_11
-libAsterInterface_la_DEPENDENCIES += libUMATTimer.la
-endif # HAVE_CXX_11
 libAsterInterface_la_CPPFLAGS     = -DAsterInterface_EXPORTS
 if TFEL_WIN
 libAsterInterface_la_LDFLAGS  = -no-undefined -avoid-version -Wl,--add-stdcall-alias -Wl,--kill-at

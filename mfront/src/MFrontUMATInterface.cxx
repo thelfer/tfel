@@ -154,19 +154,7 @@ namespace mfront{
   {
     using namespace std;
     using namespace tfel::utilities;
-    if (key=="@UMATPerformanceMeasurements"){
-      const bool b = this->readBooleanValue(key,current,end);
-#ifdef HAVE_CXX11
-      this->performanceMeasurements = b;
-#else 
-      if(getVerboseMode()>=VERBOSE_QUIET){
-	ostream& log = getLogStream();
-	log << "MFrontUMATInterface::treatKeyword : performances measurements "
-	  "are only available if C++-11 support have been enabled";
-      }
-#endif
-      return make_pair(true,current);      
-    } else if (key=="@UMATGenerateMTestFileOnFailure"){
+    if (key=="@UMATGenerateMTestFileOnFailure"){
       this->generateMTestFile = this->readBooleanValue(key,current,end);
       return make_pair(true,current);      
     } else if(key=="@UMATUseTimeSubStepping"){
@@ -675,8 +663,8 @@ namespace mfront{
     out << "*/\n\n";
 
     this->getExtraSrcIncludes(out,mb);
-    if(this->performanceMeasurements){
-      out << "#include\"MFront/UMAT/UMATTimer.hxx\"\n\n";
+    if(mb.getAttribute(MechanicalBehaviourData::profiling,false)){
+      out << "#include\"MFront/MFrontBehaviourProfiler.hxx\"\n\n";
     }
     if(this->generateMTestFile){
       if((mb.getBehaviourType()!=MechanicalBehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR)&&
@@ -698,10 +686,6 @@ namespace mfront{
     out << "#include\"TFEL/Material/" << mb.getClassName() << ".hxx\"\n";
     out << "#include\"MFront/UMAT/umat" << name << ".hxx\"\n\n";
   
-    if(this->performanceMeasurements){
-      out << "static umat::UMATTimer timer(\"" << name<< "\");" << endl << endl;
-    }
-
     out << "extern \"C\"{\n\n";
 
     if(mb.getBehaviourType()==MechanicalBehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR){
@@ -1033,7 +1017,7 @@ namespace mfront{
     string lib = MFrontUMATInterface::getLibraryName(mb);
     deps[lib].push_back("-lUMATInterface");
 #ifdef HAVE_CXX11
-      deps[lib].push_back("`tfel-config --libs --material --mfront-timer`");
+      deps[lib].push_back("`tfel-config --libs --material --mfront-profiling`");
 #else 
       deps[lib].push_back("`tfel-config --libs --material`");
 #endif
@@ -1376,19 +1360,22 @@ namespace mfront{
 	<< "umat::UMATInt    *const KINC)\n";
     out << "{\n";
     out << "using namespace umat;\n";
-    if(this->performanceMeasurements){
-      out << "#if !(defined _WIN32 || defined _WIN64 ||defined __CYGWIN__)\n" 
-	  << "timespec tbeg, tend;\n"
-	  << "timespec tfs1_end;\n"
-	  << "timespec tfs2_beg,tfs2_end;\n"
-	  << "clock_gettime(CLOCK_THREAD_CPUTIME_ID, &tbeg);\n"
-	  << "#endif\n";
+    if(mb.getAttribute(MechanicalBehaviourData::profiling,false)){
+      out << "using namespace mfront::MFrontBehaviourProfiler;\n";
+      out << "using namespace tfel::material::" << mb.getClassName() << "Profiler;\n";
+      out << "MFrontBehaviourProfiler::Timer total_timer(" << mb.getClassName() << "Profiler::getProfiler(),\n"
+	  << "MFrontBehaviourProfiler::TOTALTIME);\n";
     }
     this->generateMTestFile1(out);
     out << "// computing the Green Lagrange strains\n";
     out << "UMATReal eto[6];\n";
     out << "UMATReal deto[6];\n";
     out << "UMATInt  i;\n";
+    if(mb.getAttribute(MechanicalBehaviourData::profiling,false)){
+      out << "{\n"
+	  << "MFrontBehaviourProfiler::Timer pre_timer(" << mb.getClassName() << "Profiler::getProfiler(),\n"
+	  << "MFrontBehaviourProfiler::FINITESTRAINPREPROCESSING);\n";
+    }
     out << "UMATFiniteStrain::computeGreenLagrangeStrain(eto,F0,*NTENS,*NDI);\n";
     out << "UMATFiniteStrain::computeGreenLagrangeStrain(deto,F1,*NTENS,*NDI);\n";
     string c1 = "UMATFiniteStrain::computeSecondPiolaKirchhoffStressFromCauchyStress(STRESS,F0,*NTENS,*NDI";
@@ -1396,11 +1383,8 @@ namespace mfront{
     out << "for(i=0;i!=*NTENS;++i){\n";
     out << "deto[i] -= eto[i];\n";
     out << "}\n";
-    if(this->performanceMeasurements){
-      out << "#if !(defined _WIN32 || defined _WIN64 ||defined __CYGWIN__)\n" 
-	  << "clock_gettime(CLOCK_THREAD_CPUTIME_ID, &tfs1_end);\n"
-	  << "timer.addFiniteStrainPreProcessingTimeMeasure(tbeg,tfs1_end);\n"
-	  << "#endif\n";
+    if(mb.getAttribute(MechanicalBehaviourData::profiling,false)){
+      out << "}\n";
     }
     out << "umat" << makeLowerCase(name)
 	<< "_base(NTENS, DTIME,DROT,DDSOE,eto,deto,TEMP,DTEMP,\n"
@@ -1408,31 +1392,18 @@ namespace mfront{
 	<< "STRESS,NDI,KINC,\n"
 	<< "umat::UMATStandardSmallStrainStressFreeExpansionHandler);\n";
     out << "if(*KINC==1){\n";
-    if(this->performanceMeasurements){
-      out << "#if !(defined _WIN32 || defined _WIN64 ||defined __CYGWIN__)\n" 
-	  << "clock_gettime(CLOCK_THREAD_CPUTIME_ID, &tfs2_beg);\n"
-	  << "#endif\n";
+    if(mb.getAttribute(MechanicalBehaviourData::profiling,false)){
+      out << "MFrontBehaviourProfiler::Timer post_timer(" << mb.getClassName() << "Profiler::getProfiler(),\n"
+	  << "MFrontBehaviourProfiler::FINITESTRAINPOSTPROCESSING);\n";
     }
     string c2 = "UMATFiniteStrain::computeCauchyStressFromSecondPiolaKirchhoffStress(STRESS,F1,*NTENS,*NDI";
     this->writeFiniteStrainStrategiesPlaneStressSpecificCall(out,mb,c2,"std::sqrt(1+2*ezz)");
-    if(this->performanceMeasurements){
-      out << "#if !(defined _WIN32 || defined _WIN64 ||defined __CYGWIN__)\n" 
-	  << "clock_gettime(CLOCK_THREAD_CPUTIME_ID, &tfs2_end);\n"
-	  << "timer.addFiniteStrainPostProcessingTimeMeasure(tfs2_beg,tfs2_end);\n"
-	  << "#endif\n";
-    }
     out << "}\n";
     if(this->generateMTestFile){
       out << "if(*KINC!=1){\n";
       this->generateMTestFile2(out,MechanicalBehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR,
 			       name,suffix,mb);
       out << "}\n";
-    }
-    if(this->performanceMeasurements){
-      out << "#if !(defined _WIN32 || defined _WIN64 ||defined __CYGWIN__)\n" 
-	  << "clock_gettime(CLOCK_THREAD_CPUTIME_ID, &tend);\n"
-	  << "timer.addTotalTimeMeasure(tbeg,tend);\n"
-	  << "#endif\n";
     }
     out << "}\n\n";
     out << "MFRONT_SHAREDOBJ void\n" << umatFortranFunctionName
@@ -1483,13 +1454,11 @@ namespace mfront{
 	<< "umat::UMATInt    *const KINC)\n";
     out << "{\n";
     out << "using namespace umat;\n";
-    if(this->performanceMeasurements){
-      out << "#if !(defined _WIN32 || defined _WIN64 ||defined __CYGWIN__)\n" 
-	  << "timespec tbeg, tend;\n"
-	  << "timespec tfs1_end;\n"
-	  << "timespec tfs2_beg,tfs2_end;\n"
-	  << "clock_gettime(CLOCK_THREAD_CPUTIME_ID, &tbeg);\n"
-	  << "#endif\n";
+    if(mb.getAttribute(MechanicalBehaviourData::profiling,false)){
+      out << "using mfront::MFrontBehaviourProfiler;\n";
+      out << "using tfel::material::" << mb.getClassName() << "Profiler;\n";
+      out << "MFrontBehaviourProfiler::Timer total_timer(" << mb.getClassName() << "Profiler::getProfiler(),\n"
+	  << "MFrontBehaviourProfiler::TOTALTIME);\n";
     }
     this->generateMTestFile1(out);
     out << "// computing the logarithmic strain\n";
@@ -1499,6 +1468,11 @@ namespace mfront{
     out << "UMATReal P1[36];\n";
     out << "UMATReal s[6];\n";
     out << "UMATInt  i;\n";
+    if(mb.getAttribute(MechanicalBehaviourData::profiling,false)){
+      out << "{\n"
+	  << "MFrontBehaviourProfiler::Timer pre_timer(" << mb.getClassName() << "Profiler::getProfiler(),\n"
+	  << "MFrontBehaviourProfiler::FINITESTRAINPREPROCESSING);\n";
+    }
     out << "UMATFiniteStrain::computeLogarithmicStrainAndDerivative(P0,eto ,F0,*NTENS,*NDI);\n";
     out << "UMATFiniteStrain::computeLogarithmicStrainAndDerivative(P1,deto,F1,*NTENS,*NDI);\n";
     string c1 = "UMATFiniteStrain::computeDualStressOfLogarithmicStrainFromCauchyStress(s,STRESS,P0,F0,*NTENS,*NDI";
@@ -1506,11 +1480,8 @@ namespace mfront{
     out << "for(i=0;i!=*NTENS;++i){\n";
     out << "deto[i] -= eto[i];\n";
     out << "}\n";
-    if(this->performanceMeasurements){
-      out << "#if !(defined _WIN32 || defined _WIN64 ||defined __CYGWIN__)\n" 
-	  << "clock_gettime(CLOCK_THREAD_CPUTIME_ID, &tfs1_end);\n"
-	  << "timer.addFiniteStrainPreProcessingTimeMeasure(tbeg,tfs1_end);\n"
-	  << "#endif\n";
+    if(mb.getAttribute(MechanicalBehaviourData::profiling,false)){
+      out << "}\n";
     }
     out << "umat" << makeLowerCase(name)
 	<< "_base(NTENS, DTIME,DROT,DDSOE,eto,deto,TEMP,DTEMP,\n"
@@ -1518,31 +1489,18 @@ namespace mfront{
 	<< "s,NDI,KINC,\n"
 	<< "umat::UMATStandardSmallStrainStressFreeExpansionHandler);\n";
     out << "if(*KINC==1){\n";
-    if(this->performanceMeasurements){
-      out << "#if !(defined _WIN32 || defined _WIN64 ||defined __CYGWIN__)\n" 
-	  << "clock_gettime(CLOCK_THREAD_CPUTIME_ID, &tfs2_beg);\n"
-	  << "#endif\n";
+    if(mb.getAttribute(MechanicalBehaviourData::profiling,false)){
+      out << "MFrontBehaviourProfiler::Timer post_timer(" << mb.getClassName() << "Profiler::getProfiler(),\n"
+	  << "MFrontBehaviourProfiler::FINITESTRAINPOSTPROCESSING);\n";
     }
     string c2 = "UMATFiniteStrain::computeCauchyStressFromDualStressOfLogarithmicStrain(STRESS,s,P1,F1,*NTENS,*NDI";
     this->writeFiniteStrainStrategiesPlaneStressSpecificCall(out,mb,c2,"std::exp(ezz)");
-    if(this->performanceMeasurements){
-      out << "#if !(defined _WIN32 || defined _WIN64 ||defined __CYGWIN__)\n" 
-	  << "clock_gettime(CLOCK_THREAD_CPUTIME_ID, &tfs2_end);\n"
-	  << "timer.addFiniteStrainPostProcessingTimeMeasure(tfs2_beg,tfs2_end);\n"
-	  << "#endif\n";
-    }
     out << "}\n";
     if(this->generateMTestFile){
       out << "if(*KINC!=1){\n";
       this->generateMTestFile2(out,MechanicalBehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR,
        			       name,suffix,mb);
       out << "}\n";
-    }
-    if(this->performanceMeasurements){
-      out << "#if !(defined _WIN32 || defined _WIN64 ||defined __CYGWIN__)\n" 
-	  << "clock_gettime(CLOCK_THREAD_CPUTIME_ID, &tend);\n"
-	  << "timer.addTotalTimeMeasure(tbeg,tend);\n"
-	  << "#endif\n";
     }
     out << "}\n\n";
     out << "MFRONT_SHAREDOBJ void\n" << umatFortranFunctionName
@@ -1587,11 +1545,11 @@ namespace mfront{
 	<< "umat::UMATReal *const STRESS,const umat::UMATInt    *const NDI,\n"
 	<< "umat::UMATInt    *const KINC)\n";
     out << "{\n";
-    if(this->performanceMeasurements){
-      out << "#if !(defined _WIN32 || defined _WIN64 ||defined __CYGWIN__)\n" 
-	  << "timespec tbeg, tend;\n"
-	  << "clock_gettime(CLOCK_THREAD_CPUTIME_ID, &tbeg);\n"
-	  << "#endif\n";
+    if(mb.getAttribute(MechanicalBehaviourData::profiling,false)){
+      out << "using namespace mfront::MFrontBehaviourProfiler;\n";
+      out << "using namespace tfel::material::" << mb.getClassName() << "Profiler;\n";
+      out << "MFrontBehaviourProfiler::Timer total_timer(" << mb.getClassName() << "Profiler::getProfiler(),\n"
+	  << "MFrontBehaviourProfiler::TOTALTIME);\n";
     }
     this->generateMTestFile1(out);
     out << "umat" << makeLowerCase(name)
@@ -1604,12 +1562,6 @@ namespace mfront{
       this->generateMTestFile2(out,mb.getBehaviourType(),
        			       name,suffix,mb);
       out << "}\n";
-    }
-    if(this->performanceMeasurements){
-      out << "#if !(defined _WIN32 || defined _WIN64 ||defined __CYGWIN__)\n" 
-	  << "clock_gettime(CLOCK_THREAD_CPUTIME_ID, &tend);\n"
-	  << "timer.addTotalTimeMeasure(tbeg,tend);\n"
-	  << "#endif\n";
     }
     out << "}\n\n";
     out << "MFRONT_SHAREDOBJ void\n" << umatFortranFunctionName

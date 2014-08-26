@@ -43,6 +43,10 @@ namespace mfront{
   MechanicalBehaviourData::InitializeJacobian("InitializeJacobian");
 
   const std::string
+  MechanicalBehaviourData::profiling("profiling");
+  const std::string
+  MechanicalBehaviourData::hasTimeStepScalingFactor("hasTimeStepScalingFactor");
+  const std::string
   MechanicalBehaviourData::hasConsistentTangentOperator("hasConsistentTangentOperator");
   const std::string
   MechanicalBehaviourData::isConsistentTangentOperatorSymmetric("isConsistentTangentOperatorSymmetric");

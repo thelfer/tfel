@@ -93,15 +93,10 @@ tfel_library(MFrontLogStream
   MFrontLogStream.cxx)
 
 if(enable-cxx-11)
-  tfel_library(MFrontTimer
-    MFrontBehaviourTimer.cxx)
+  tfel_library(MFrontProfiling
+    MFrontBehaviourProfiler.cxx)
   if(UNIX)
-    target_link_libraries(MFrontTimer rt)
-  endif(UNIX)
-  tfel_library(UMATTimer
-    UMATTimer.cxx)
-  if(UNIX)
-    target_link_libraries(UMATTimer rt)
+    target_link_libraries(MFrontProfiling rt)
   endif(UNIX)
 endif(enable-cxx-11)
 
@@ -137,10 +132,6 @@ if(HAVE_CASTEM)
       MTestFileGenerator
       TFELUtilities
       TFELException)
-    if(enable-cxx-11)
-      target_link_libraries(UMATInterface
-	UMATTimer)
-    endif(enable-cxx-11)
 endif(HAVE_CASTEM)
 
 if(HAVE_ASTER)
@@ -160,10 +151,6 @@ if(HAVE_ASTER)
     MTestFileGenerator
     TFELUtilities
     TFELException)
-  if(enable-cxx-11)
-    target_link_libraries(AsterInterface
-      UMATTimer)
-  endif(enable-cxx-11)
 endif(HAVE_ASTER)
 
 if(HAVE_CYRANO)
@@ -182,10 +169,6 @@ if(HAVE_CYRANO)
     MTestFileGenerator
     TFELUtilities
     TFELException)
-  if(enable-cxx-11)
-    target_link_libraries(CyranoInterface
-      UMATTimer)
-  endif(enable-cxx-11)
 endif(HAVE_CYRANO)
 
 add_executable(mfront ${mfront_SOURCES})

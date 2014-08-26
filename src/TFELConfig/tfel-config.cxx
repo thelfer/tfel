@@ -114,7 +114,7 @@ static bool utilities       = false;
 static bool finiteElement   = false;
 static bool material        = false;
 static bool tests           = false;
-static bool mfront_timer    = false;
+static bool mfront_profiling    = false;
 #ifdef HAVE_CASTEM
 static bool castem          = false;
 #endif /* HAVE_CASTEM */
@@ -327,10 +327,10 @@ treatMaterial(void)
 } // end of treatMaterial
 
 static void
-treatMFrontTimer(void)
+treatMFrontProfiling(void)
 {
-  mfront_timer  = true;
-} // end of treatMFrontTimer
+  mfront_profiling  = true;
+} // end of treatMFrontProfiling
 
 static void
 treatTests(void)
@@ -347,7 +347,7 @@ treatAll(void)
   utilities    = true;
   lsystem      = true;
   tests        = true;
-  mfront_timer = true;
+  mfront_profiling = true;
 } // end of treatAll
 
 static void
@@ -441,7 +441,7 @@ main(const int argc,
   registerCallBack("--system",&treatSystem,"request flags for libTFELSystem.");
   registerCallBack("--utilities",&treatUtilities,"request flags for libTFELUtilities.");
   registerCallBack("--material",&treatMaterial,"request flags for libTFELMaterial.");
-  registerCallBack("--mfront-timer",&treatMFrontTimer,"request flags for libMFrontTimer.");
+  registerCallBack("--mfront-profiling",&treatMFrontProfiling,"request flags for libMFrontProfiling.");
   registerCallBack("--finiteElement",&treatFiniteElement,"request flags for libTFELFiniteElement.");
   registerCallBack("--all",&treatAll,"request flags for all librairies.");
   registerCallBack("--version",&treatVersion,"print tfel version and svn revision.");
@@ -491,8 +491,8 @@ main(const int argc,
 
   if(libs){
     cout << "-L" << libDir() << " ";
-    if(mfront_timer){
-      cout << "-lMFrontTimer ";
+    if(mfront_profiling){
+      cout << "-lMFrontProfiling ";
     }
     if(material){
       cout << "-lTFELMaterial ";

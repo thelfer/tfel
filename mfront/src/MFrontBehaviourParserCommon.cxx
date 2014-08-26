@@ -342,7 +342,7 @@ namespace mfront{
       if(!this->mb.isParameterName(uh,"referenceTemperatureForThermalExpansion")){
 	this->registerVariable("referenceTemperatureForThermalExpansion",false);
 	this->mb.addParameter(uh,VariableDescription("real","referenceTemperatureForThermalExpansion",
-						  1u,0u));
+						     1u,0u));
       	this->mb.setParameterDefaultValue(uh,"referenceTemperatureForThermalExpansion",293.15);
       }
     }
@@ -1478,9 +1478,7 @@ namespace mfront{
     : MFrontVirtualParser(),
       ParserBase(),
       useStateVarTimeDerivative(false),
-      explicitlyDeclaredUsableInPurelyImplicitResolution(false),
-      hasTimeStepScalingFactor(false),
-      performanceMeasurements(false)
+      explicitlyDeclaredUsableInPurelyImplicitResolution(false)
   {
     // Register var names
     this->registerDefaultVarNames();
@@ -2273,6 +2271,10 @@ namespace mfront{
 	this->behaviourFile << "template<ModellingHypothesis::Hypothesis hypothesis,typename Type,bool use_qt>" << endl;
 	this->behaviourFile << "class " << this->mb.getClassName() << "\n";
 	this->behaviourFile << ": public MechanicalBehaviour<hypothesis,Type,use_qt>,\n";
+	if(this->mb.getAttribute(MechanicalBehaviourData::profiling,false)){
+	  this->behaviourFile << "public "
+			      << this->mb.getClassName() << "Profiler," << endl;
+	}
 	this->behaviourFile << "public "
 			    << this->mb.getClassName() << "BehaviourData<hypothesis,Type,use_qt>," << endl;
 	this->behaviourFile << "public "
@@ -2283,6 +2285,10 @@ namespace mfront{
 	this->behaviourFile << "class " << this->mb.getClassName() 
 				<< "<hypothesis,Type,false>" << endl;
 	this->behaviourFile << ": public MechanicalBehaviour<hypothesis,Type,false>,\n";
+	if(this->mb.getAttribute(MechanicalBehaviourData::profiling,false)){
+	  this->behaviourFile << "public "
+			      << this->mb.getClassName() << "Profiler," << endl;
+	}
 	this->behaviourFile << "public "
 			    << this->mb.getClassName() << "BehaviourData<hypothesis,Type,false>," << endl;
 	this->behaviourFile << "public "
@@ -2297,6 +2303,10 @@ namespace mfront{
 				<< ModellingHypothesis::toUpperCaseString(h) << ",Type,use_qt>\n";
 	this->behaviourFile << ": public MechanicalBehaviour<ModellingHypothesis::"
 			    << ModellingHypothesis::toUpperCaseString(h) << ",Type,use_qt>,\n";
+	if(this->mb.getAttribute(MechanicalBehaviourData::profiling,false)){
+	  this->behaviourFile << "public "
+			      << this->mb.getClassName() << "Profiler," << endl;
+	}
 	this->behaviourFile << "public "
 			    << this->mb.getClassName() << "BehaviourData<ModellingHypothesis::"
 			    << ModellingHypothesis::toUpperCaseString(h) << ",Type,use_qt>," << endl;
@@ -2311,6 +2321,10 @@ namespace mfront{
 			    << ModellingHypothesis::toUpperCaseString(h) << ",Type,false>" << endl;
 	this->behaviourFile << ": public MechanicalBehaviour<ModellingHypothesis::"
 			    << ModellingHypothesis::toUpperCaseString(h) << ",Type,false>,\n";
+	if(this->mb.getAttribute(MechanicalBehaviourData::profiling,false)){
+	  this->behaviourFile << "public "
+			      << this->mb.getClassName() << "Profiler," << endl;
+	}
 	this->behaviourFile << "public "
 			    << this->mb.getClassName() << "BehaviourData<ModellingHypothesis::"
 			    << ModellingHypothesis::toUpperCaseString(h) << ",Type,false>," << endl;
@@ -2421,27 +2435,42 @@ namespace mfront{
   } // end of MFrontBehaviourParserCommon::writeBehaviourUpdateStateVariables
 
   void
-  MFrontBehaviourParserCommon::writeStandardPerformanceMeasurementsBegin(std::ostream& os,
-									 const std::string& v,
-									 const std::string& s)
+  MFrontBehaviourParserCommon::writeStandardPerformanceProfiling(std::ostream& os,
+								 const std::string& v,
+								 const std::string& s)
   {
     using namespace std;
-    if(this->performanceMeasurements){
+    if(this->mb.getAttribute(MechanicalBehaviourData::profiling,false)){
       const string tn = s.empty() ? "mfront_local_timer" : "mfront_local_timer_"+s;
-      os << "{\n"
-	 << "mfront::MFrontBehaviourTimer::Timer " << tn << "(&timer," << s<< ");" << endl;
+      os << "mfront::MFrontBehaviourProfiler::Timer " << tn 
+	 << "(" << this->mb.getClassName() << "Profiler::getProfiler(),"
+	 << "mfront::MFrontBehaviourProfiler::" << makeUpperCase(v) << ");" << endl;
     }
-  } // end of MFrontBehaviourParserCommon::writeStandardPerformanceMeasurementsBegin
+  } // end of MFrontBehaviourParserCommon::writeStandardPerformanceProfiling
 
   void
-  MFrontBehaviourParserCommon::writeStandardPerformanceMeasurementsEnd(std::ostream& os,
-								       const std::string& s)
+  MFrontBehaviourParserCommon::writeStandardPerformanceProfilingBegin(std::ostream& os,
+								      const std::string& v,
+								      const std::string& s)
   {
     using namespace std;
-    if(this->performanceMeasurements){
+    if(this->mb.getAttribute(MechanicalBehaviourData::profiling,false)){
+      const string tn = s.empty() ? "mfront_local_timer" : "mfront_local_timer_"+s;
+      os << "{\n"
+	 << "mfront::MFrontBehaviourProfiler::Timer " << tn 
+	 << "(" << this->mb.getClassName() << "Profiler::getProfiler(),"
+	 << "mfront::MFrontBehaviourProfiler::" << makeUpperCase(v) << ");" << endl;
+    }
+  } // end of MFrontBehaviourParserCommon::writeStandardPerformanceProfilingBegin
+
+  void
+  MFrontBehaviourParserCommon::writeStandardPerformanceProfilingEnd(std::ostream& os)
+  {
+    using namespace std;
+    if(this->mb.getAttribute(MechanicalBehaviourData::profiling,false)){
       os << "}" << endl;
     }
-  } // end of MFrontBehaviourParserCommon::writeStandardPerformanceMeasurementsEnd
+  } // end of MFrontBehaviourParserCommon::writeStandardPerformanceProfilingEnd
 
   void
   MFrontBehaviourParserCommon::writeBehaviourUpdateAuxiliaryStateVariables(const Hypothesis h) 
@@ -2458,10 +2487,9 @@ namespace mfront{
       this->behaviourFile << "using namespace tfel::math;" << endl;
       writeMaterialLaws("MFrontBehaviourParserCommon::writeBehaviourUpdateAuxiliaryStateVariables",
 			this->behaviourFile,this->mb.getMaterialLaws());		      
-      this->writeStandardPerformanceMeasurementsBegin(this->behaviourFile,
-      						    MechanicalBehaviourData::UpdateAuxiliaryStateVariables);
+      this->writeStandardPerformanceProfiling(this->behaviourFile,
+					      MechanicalBehaviourData::UpdateAuxiliaryStateVariables);
       this->behaviourFile << this->mb.getCode(h,MechanicalBehaviourData::UpdateAuxiliaryStateVariables) << endl;
-      this->writeStandardPerformanceMeasurementsEnd(this->behaviourFile);
       this->behaviourFile << "}\n\n";
     } else {
       this->behaviourFile << "\n{}\n\n";
@@ -2484,10 +2512,10 @@ namespace mfront{
 		      this->behaviourFile,this->mb.getMaterialLaws());		      
     this->behaviourFile << "bool computeTangentOperator_ = smt!=NOSTIFFNESSREQUESTED;\n";
     if(this->mb.hasCode(h,MechanicalBehaviourData::Integrator)){
-      this->writeStandardPerformanceMeasurementsBegin(this->behaviourFile,
+      this->writeStandardPerformanceProfilingBegin(this->behaviourFile,
 						      MechanicalBehaviourData::Integrator);
       this->behaviourFile << this->mb.getCode(h,MechanicalBehaviourData::Integrator) << "\n";
-      this->writeStandardPerformanceMeasurementsEnd(this->behaviourFile);
+      this->writeStandardPerformanceProfilingEnd(this->behaviourFile);
     }
     this->behaviourFile << "this->updateStateVariables();\n";
     this->behaviourFile << "this->updateAuxiliaryStateVariables();\n";
@@ -2798,34 +2826,34 @@ namespace mfront{
     writeMaterialLaws("MFrontBehaviourParserCommon::writeBehaviourInitializeMethod",
 		      this->behaviourFile,this->mb.getMaterialLaws());		      
     if(this->mb.hasCode(h,MechanicalBehaviourData::BeforeInitializeLocalVariables)){
-      this->writeStandardPerformanceMeasurementsBegin(this->behaviourFile,
+      this->writeStandardPerformanceProfilingBegin(this->behaviourFile,
 						      MechanicalBehaviourData::BeforeInitializeLocalVariables,
 						      "binit");
       this->behaviourFile << this->mb.getCode(h,MechanicalBehaviourData::BeforeInitializeLocalVariables)
 			  << endl;
-      this->writeStandardPerformanceMeasurementsEnd(this->behaviourFile,"binit");
+      this->writeStandardPerformanceProfilingEnd(this->behaviourFile);
 
     }
     if(this->mb.hasCode(h,MechanicalBehaviourData::InitializeLocalVariables)){
-      this->writeStandardPerformanceMeasurementsBegin(this->behaviourFile,
+      this->writeStandardPerformanceProfilingBegin(this->behaviourFile,
 						      MechanicalBehaviourData::InitializeLocalVariables,"init");
       this->behaviourFile << this->mb.getCode(h,MechanicalBehaviourData::InitializeLocalVariables)
 			  << endl;
-      this->writeStandardPerformanceMeasurementsEnd(this->behaviourFile,"init");
+      this->writeStandardPerformanceProfilingEnd(this->behaviourFile);
     }
     if(this->mb.hasCode(h,MechanicalBehaviourData::AfterInitializeLocalVariables)){
-      this->writeStandardPerformanceMeasurementsBegin(this->behaviourFile,
+      this->writeStandardPerformanceProfilingBegin(this->behaviourFile,
       						    MechanicalBehaviourData::AfterInitializeLocalVariables,"ainit");
       this->behaviourFile << this->mb.getCode(h,MechanicalBehaviourData::AfterInitializeLocalVariables)
 			  << endl;
-      this->writeStandardPerformanceMeasurementsEnd(this->behaviourFile,"ainit");
+      this->writeStandardPerformanceProfilingEnd(this->behaviourFile);
     }
     if(this->mb.hasCode(h,MechanicalBehaviourData::ComputePredictor)){
-      this->writeStandardPerformanceMeasurementsBegin(this->behaviourFile,
+      this->writeStandardPerformanceProfilingBegin(this->behaviourFile,
 						      MechanicalBehaviourData::ComputePredictor,"predictor");
       this->behaviourFile << this->mb.getCode(h,MechanicalBehaviourData::ComputePredictor)
 			  << endl;
-      this->writeStandardPerformanceMeasurementsEnd(this->behaviourFile,"predictor");
+      this->writeStandardPerformanceProfilingEnd(this->behaviourFile);
     }
     this->writeBehaviourParserSpecificInitializeMethodPart(h);
     this->behaviourFile << "}\n\n";
@@ -3136,8 +3164,8 @@ namespace mfront{
     this->behaviourFile << this->behaviourDataFileName << "\"\n";
     this->behaviourFile << "#include\"TFEL/Material/";
     this->behaviourFile << this->integrationDataFileName << "\"\n";
-    if(this->performanceMeasurements){
-      this->behaviourFile << "#include\"MFront/MFrontBehaviourTimer.hxx\"" << endl;
+    if(this->mb.getAttribute<bool>(MechanicalBehaviourData::profiling,false)){
+      this->behaviourFile << "#include\"MFront/MFrontBehaviourProfiler.hxx\"" << endl;
     }
     this->behaviourFile << endl;
   }
@@ -3403,8 +3431,12 @@ namespace mfront{
       this->behaviourFile << "false;\n";
     }
     this->behaviourFile << "static const bool hasTimeStepScalingFactor = ";
-    if(this->hasTimeStepScalingFactor){
-      this->behaviourFile << "true;\n";
+    if(b){
+      if(this->mb.getAttribute<bool>(h,MechanicalBehaviourData::hasTimeStepScalingFactor,false)){
+	this->behaviourFile << "true;\n";
+      } else {
+	this->behaviourFile << "false;\n";
+      }
     } else {
       this->behaviourFile << "false;\n";
     }
@@ -3525,7 +3557,6 @@ namespace mfront{
   void
   MFrontBehaviourParserCommon::writeBehaviourFileBegin(void)
   {
-    using namespace std;
     this->checkBehaviourFile();
     this->writeBehaviourFileHeader();
     this->writeBehaviourFileHeaderBegin();
@@ -3535,7 +3566,26 @@ namespace mfront{
     this->writeNamespaceBegin(this->behaviourFile);
     this->writeBehaviourParametersInitializers();
     this->writeBehaviourForwardDeclarations();
+    this->writeBehaviourProfiler();
   } // end of MFrontBehaviourParserCommon::writeBehaviourFileBegin
+
+  void MFrontBehaviourParserCommon::writeBehaviourProfiler()
+  {
+    using namespace std;
+    if(this->mb.getAttribute(MechanicalBehaviourData::profiling,false)){
+      this->checkBehaviourFile();
+      this->behaviourFile << "/*!\n"
+			  << " * " << this->mb.getClassName() << " profiler\n"
+			  << " */\n"
+			  << "struct " << this->mb.getClassName() << "Profiler\n"
+			  << "{\n"
+			  << "//! return the profiler associated with the behaviour\n"
+			  << "static mfront::MFrontBehaviourProfiler&\n"
+			  << "getProfiler(void);\n"
+			  << "}; // end of struct " << this->mb.getClassName() << "Profiler"
+			  << endl << endl;
+    }
+  } // end of MFrontBehaviourParserCommon::writeBehaviourProfiler
 
   void MFrontBehaviourParserCommon::writeBehaviourClass(const Hypothesis h)
   {
@@ -3601,10 +3651,9 @@ namespace mfront{
       this->behaviourFile << "using namespace tfel::math;\n";
       writeMaterialLaws("MFrontBehaviourParserCommon::writeBehaviourComputePredictionOperator",
 			this->behaviourFile,this->mb.getMaterialLaws());
-      this->writeStandardPerformanceMeasurementsBegin(this->behaviourFile,
-						      MechanicalBehaviourData::ComputePredictionOperator);
+      this->writeStandardPerformanceProfiling(this->behaviourFile,
+					      MechanicalBehaviourData::ComputePredictionOperator);
       this->behaviourFile << this->mb.getCode(h,MechanicalBehaviourData::ComputePredictionOperator);
-      this->writeStandardPerformanceMeasurementsEnd(this->behaviourFile);
       this->behaviourFile << "return SUCCESS;\n";
       this->behaviourFile << "}\n\n";
     } else {
@@ -4446,12 +4495,28 @@ namespace mfront{
     }
   } // end of MFrontBehaviourParserCommon::writeSrcFileParametersInitializer
 
+  void
+  MFrontBehaviourParserCommon::writeSrcFileBehaviourProfiler(void)
+  {
+    if(this->mb.getAttribute(MechanicalBehaviourData::profiling,false)){
+      this->checkSrcFile();
+      this->srcFile << "mfront::MFrontBehaviourProfiler&\n"
+		    << this->mb.getClassName() << "Profiler::getProfiler()\n"
+		    << "{\n"
+		    << "static mfront::MFrontBehaviourProfiler profiler(\""
+		    << this->mb.getClassName() << "\");\n;"
+		    << "return profiler;\n"
+		    << "}\n\n";
+    }
+  } // end of MFrontBehaviourParserCommon::writeSrcFileBehaviourProfiler
+
   void MFrontBehaviourParserCommon::writeSrcFile(void)
   {
     using namespace std;
     this->writeSrcFileHeader();
     this->writeSrcFileUserDefinedCode();
     this->writeNamespaceBegin(this->srcFile);
+    this->writeSrcFileBehaviourProfiler();
     this->writeSrcFileParametersInitializers();
     // modelling hypotheses handled by the behaviour
     const set<Hypothesis>& h = this->mb.getModellingHypotheses();
@@ -4597,21 +4662,22 @@ namespace mfront{
     }
   } // end of MFrontBehaviourParserCommon::predictionOperatorVariableModifier
 
-  void MFrontBehaviourParserCommon::treatPerformanceMeasurements(void)
+  void MFrontBehaviourParserCommon::treatProfiling(void)
   {
     using namespace std;
     const bool b = 
-      this->readBooleanValue("MFrontBehaviourParserCommon::treatPerformanceMeasurements");
+      this->readBooleanValue("MFrontBehaviourParserCommon::treatProfiling");
+    this->readSpecifiedToken("MFrontBehaviourParserCommon::treatProfiling",";");
 #ifdef HAVE_CXX11
-      this->performanceMeasurements = b;
+    this->mb.setAttribute(MechanicalBehaviourData::profiling,b,false);
 #else 
     if(getVerboseMode()>=VERBOSE_QUIET){
       ostream& log = getLogStream();
-      log << "MFrontBehaviourParserCommon::treatPerformanceMeasurements : performances measurements "
+      log << "MFrontBehaviourParserCommon::treatProfiling : performances measurements "
 	"are only available if C++-11 support have been enabled";
     }
 #endif
-  } // end of MFrontBehaviourParserCommon::treatPerformanceMeasurements
+  } // end of MFrontBehaviourParserCommon::treatProfiling
 
   void MFrontBehaviourParserCommon::treatPredictionOperator(void)
   {

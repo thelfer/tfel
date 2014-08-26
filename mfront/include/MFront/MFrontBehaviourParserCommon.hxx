@@ -281,6 +281,16 @@ namespace mfront{
     virtual void
     writeOutputFiles(void);
     /*!
+     * \brief : an helper function to declare a timer
+     * \param[out] os : output stream
+     * \param[in]  v  : code block name
+     * \param[in]  s  : time temporary variable suffix
+     */
+    virtual void
+    writeStandardPerformanceProfiling(std::ostream&,
+				      const std::string&,
+				      const std::string& = "");
+    /*!
      * \brief : an helper function writing the beginning of a
      * performance measurement
      * \param[out] os : output stream
@@ -288,18 +298,16 @@ namespace mfront{
      * \param[in]  s  : time temporary variable suffix
      */
     virtual void
-    writeStandardPerformanceMeasurementsBegin(std::ostream&,
-					      const std::string&,
-					      const std::string& = "");
+    writeStandardPerformanceProfilingBegin(std::ostream&,
+					   const std::string&,
+					   const std::string& = "");
     /*!
      * \brief : an helper function writing the end of a
      * performance measurement
      * \param[out] os : output stream
-     * \param[in] s   : time temporary variable suffix
      */
     virtual void
-    writeStandardPerformanceMeasurementsEnd(std::ostream&,
-					    const std::string& = "");
+    writeStandardPerformanceProfilingEnd(std::ostream&);
     /*!
      * \return the list of hypothesis a priori supported by
      * the parser.
@@ -406,10 +414,10 @@ namespace mfront{
     virtual void
     treatLibrary(void);
     /*!
-     * treat the @PerformanceMeasurements keyword
+     * treat the @Profiling keyword
      */
     virtual void
-    treatPerformanceMeasurements(void);
+    treatProfiling(void);
 
     virtual void
     treatModellingHypothesis(void);
@@ -677,6 +685,9 @@ namespace mfront{
     writeBehaviourForwardDeclarations(void);
 
     virtual void
+    writeBehaviourProfiler(void);
+
+    virtual void
     writeBehaviourParserSpecificInheritanceRelationship(void);
 
     virtual void
@@ -814,6 +825,9 @@ namespace mfront{
     writeSrcFileUserDefinedCode(void);
 
     virtual void
+    writeSrcFileBehaviourProfiler(void);
+
+    virtual void
     writeSrcFileParametersInitializers(void);
 
     virtual void
@@ -940,8 +954,6 @@ namespace mfront{
     
     bool useStateVarTimeDerivative;
     bool explicitlyDeclaredUsableInPurelyImplicitResolution;
-    bool hasTimeStepScalingFactor;
-    bool performanceMeasurements;
 
     MechanicalBehaviourDescription mb;
 
