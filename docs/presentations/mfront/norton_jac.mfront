@@ -1,0 +1,35 @@
+@Parser Implicit;
+@Behaviour Norton;
+@RequireStiffnessTensor;
+@Epsilon 1.e-12;
+@MaterialProperty stress young;
+@MaterialProperty real nu;
+@MaterialProperty real A;
+@MaterialProperty real m;
+@StateVariable real    p;
+@TangentOperator{
+  Stensor4 Je;
+  getPartialJacobianInvert(Je);
+  Dt = D*Je;
+}
+@ComputeStress{  sig = D*eel;} 
+
+@Integrator{
+  real seq = sigmaeq(sig);
+  real inv_seq=0. ;
+  if(seq > 1.e-15){
+    inv_seq = 1./seq ;
+  }
+  Stensor n = 1.5*deviator(sig)*inv_seq ;
+  feel += dp*n-deto;
+  fp   -= dt*A*pow(seq,m);
+
+  // jacobienne
+  const Stensor4 Jmn  = Stensor4::M() - (n^n);
+  const real mu = young/2/(1.+nu) ;
+  dfeel_ddeel += 2.*mu*theta*dp*Jmn*inv_seq ;
+  dfeel_ddp    = n;    
+  dfp_ddeel    = - dt*A*m*pow(seq,m-1)*theta*(n| D);
+  dfp_ddp      = 1 ;
+}
+

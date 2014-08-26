@@ -24,8 +24,9 @@ namespace tfel{
     {
 
       //! possible type of the token
-      enum TokenFlag{Standard,Comment,String,Char,Preprocessor};
-
+      enum TokenFlag{Standard,Comment,DoxygenComment,
+		     DoxygenBackwardComment,
+		     String,Char,Preprocessor};
       //! line number
       unsigned short line;
       //! string holded by the token

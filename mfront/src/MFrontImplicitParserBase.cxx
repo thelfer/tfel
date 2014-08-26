@@ -880,8 +880,6 @@ namespace mfront{
     }
     // output
     this->checkBehaviourFile();
-    this->behaviourFile << "#include<limits>\n";
-    this->behaviourFile << "#include<algorithm>\n\n";
     this->behaviourFile << "#include\"TFEL/Math/st2tost2.hxx\"\n";
     this->behaviourFile << "#include\"TFEL/Math/tmatrix.hxx\"\n";
     this->behaviourFile << "#include\"TFEL/Math/tvector.hxx\"\n";

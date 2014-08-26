@@ -315,6 +315,19 @@ then
     CHECK_ASTER_MACHINE_TYPE
 fi
 
+#zmat
+AC_ARG_ENABLE([zmat],
+               AC_HELP_STRING([--enable-zmat],
+		   [build zmat interface for mechanical behaviours]),
+	       [enable_zmat=true],
+	       [enable_zmat=false])
+AM_CONDITIONAL(HAVE_ZMAT,[test x"$enable_zmat" = "xtrue"])
+if(test "x$enable_zmat" = "xtrue")
+then
+    CHECK_ZSET
+    AC_DEFINE(HAVE_ZMAT)
+fi
+
 #cyrano
 AC_ARG_ENABLE([cyrano],
                AC_HELP_STRING([--enable-cyrano],
@@ -376,6 +389,12 @@ AC_OUTPUT([debug.sh
 	   docs/presentations/mfront-presentation.tex
 	   docs/presentations/mfront-behaviours.tex
 	   docs/presentations/mfront-finitestrain.tex
+	   docs/presentations/tp.tex
+	   docs/presentations/mfront-formation.tex
+	   docs/presentations/norton.tex
+	   docs/presentations/Chaboche.tex
+	   docs/presentations/lemaitre.tex
+	   docs/presentations/appendix.tex
 	   docs/tutorial/Makefile
 	   docs/tex/Makefile
 	   cmake/Makefile

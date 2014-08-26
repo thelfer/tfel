@@ -5,6 +5,7 @@ EXTRA_DIST = autotools.cmake             \
 	     intel.cmake                 \
 	     pathscale.cmake             \
 	     aster.cmake                 \
+	     zset.cmake                  \
 	     castem.cmake                \
 	     castem-unix-type.cmake      \
 	     cyrano.cmake                \

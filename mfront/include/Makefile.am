@@ -192,4 +192,11 @@ nobase_include_HEADERS += MFront/Aster/Aster.hxx                                
 			  MFront/MFrontAsterInterface.hxx
 endif
 
+if HAVE_ZMAT
+nobase_include_HEADERS += MFront/MFrontZMATInterface.hxx \
+			  MFront/ZMAT/ZMATUndefs.hxx     \
+			  MFront/ZMAT/ZMATInterface.hxx  \
+			  MFront/ZMAT/ZMATInterface.ixx  
+endif
+
 EXTRA_DIST = CMakeLists.txt

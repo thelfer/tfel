@@ -105,6 +105,7 @@ namespace tfel{
 		 const T a1,
 		 const T a0)
       {	
+	static const T C_1_2      = T(1)/T(2);
 	static const T C_1_3      = T(1)/T(3);
 	static const T C_2_3      = T(2)*C_1_3;
 	static const T C_m1_27    = T(-1)/T(27);
@@ -139,13 +140,13 @@ namespace tfel{
 	    return 3u;
 	  } else if(q>0){
 	    x1 = -tmp3+cbrt_q;
-	    x2 = -tmp3+0.5*cbrt_q;
-	    x3 = -tmp3+0.5*cbrt_q;
+	    x2 = -tmp3+C_1_2*cbrt_q;
+	    x3 = -tmp3+C_1_2*cbrt_q;
 	    return 1u;
 	  } else {
 	    x3 = -tmp3+cbrt_q;
-	    x1 = -tmp3+0.5*cbrt_q;
-	    x2 = -tmp3+0.5*cbrt_q;
+	    x1 = -tmp3+C_1_2*cbrt_q;
+	    x2 = -tmp3+C_1_2*cbrt_q;
 	    return 1u;
 	  }
 	}

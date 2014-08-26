@@ -1040,11 +1040,19 @@ namespace mfront{
     out << "mg.setModellingHypothesis(umat::getModellingHypothesis(*NDI));\n";
   }
   
+  void 
+  MFrontUMATInterface::writeInterfaceSpecificIncludes(std::ofstream& out,
+						      const MechanicalBehaviourDescription&) const
+  {
+    using namespace std;
+    out << "#include\"MFront/UMAT/UMAT.hxx\"" << endl << endl;
+  } // end of MFrontUMATInterface::writeInterfaceSpecificIncludes
+
   MFrontUMATInterface::~MFrontUMATInterface()
   {}
 
   std::map<std::string,std::vector<std::string> >
-  MFrontUMATInterface::getGlobalIncludes(const MechanicalBehaviourDescription& mb)
+  MFrontUMATInterface::getGlobalIncludes(const MechanicalBehaviourDescription& mb) const
   {
     using namespace std;
     map<string,vector<string> > incs;
@@ -1068,14 +1076,14 @@ namespace mfront{
 #endif /* CASTEM_ROOT */
 #endif /* LOCAL_CASTEM_HEADER_FILE */
     return incs;
-  } // end of MFrontUMATInterface::getGeneratedSources
+  } // end of MFrontUMATInterface::getGlobalIncludes
 
   std::map<std::string,std::vector<std::string> >
-  MFrontUMATInterface::getGeneratedSources(const MechanicalBehaviourDescription& mb)
+  MFrontUMATInterface::getGeneratedSources(const MechanicalBehaviourDescription& mb) const
   {
     using namespace std;
     map<string,vector<string> > src;
-    string lib = MFrontUMATInterface::getLibraryName(mb);
+    const string lib = MFrontUMATInterface::getLibraryName(mb);
     if(!mb.getLibrary().empty()){
       src[lib].push_back("umat"+mb.getLibrary()+mb.getClassName()+".cxx");
     } else {
@@ -1085,7 +1093,7 @@ namespace mfront{
   } // end of MFrontUMATInterface::getGeneratedSources
 
   std::vector<std::string>
-  MFrontUMATInterface::getGeneratedIncludes(const MechanicalBehaviourDescription& mb)
+  MFrontUMATInterface::getGeneratedIncludes(const MechanicalBehaviourDescription& mb) const
   {
     using namespace std;
     vector<string> incs;
@@ -1098,7 +1106,7 @@ namespace mfront{
   } // end of MFrontUMATInterface::getGeneratedIncludes
 
   std::map<std::string,std::vector<std::string> >
-  MFrontUMATInterface::getLibrariesDependencies(const MechanicalBehaviourDescription& mb)
+  MFrontUMATInterface::getLibrariesDependencies(const MechanicalBehaviourDescription& mb) const
   {
     using namespace std;
     map<string,vector<string> > deps;

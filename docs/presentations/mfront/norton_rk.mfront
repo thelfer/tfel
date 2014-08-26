@@ -1,0 +1,19 @@
+@Parser RungeKutta;
+@Algorithm rk54;
+@Behaviour Norton;
+@RequireStiffnessTensor;
+@MaterialProperty real A;
+@MaterialProperty real m;
+@StateVariable real    p;
+@ComputeStress{ sig = D*eel;}
+@TangentOperator{  Dt=D;}
+@Derivative{
+  real sigeq = sigmaeq(sig);
+  Stensor  n(0.);
+  if(sigeq > 1.e-15){
+    n    = 1.5*deviator(sig)/sigeq;
+  }
+  dp   = A*pow(sigeq,m);
+  deel = deto - dp*n;
+}
+  

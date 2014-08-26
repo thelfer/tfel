@@ -106,8 +106,6 @@ namespace mfront{
     bool b1 = false;
     bool b2 = false;
     this->checkBehaviourFile();
-    this->behaviourFile << "#include<limits>" << endl << endl;
-    this->behaviourFile << "#include<stdexcept>" << endl << endl;
     this->behaviourFile << "#include\"TFEL/Math/General/Abs.hxx\"" << endl << endl;
     this->mb.requiresTVectorOrVectorIncludes(b1,b2);
     if(b1){

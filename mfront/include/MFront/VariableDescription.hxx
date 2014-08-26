@@ -118,7 +118,13 @@ namespace mfront
     appendGlossaryNames(std::vector<std::string>&,
 			const std::map<std::string,std::string>&,
 			const std::map<std::string,std::string>&) const;
-
+    /*!
+     * \return the variable with the given name
+     * \param[in] n : name
+     */
+    const VariableDescription&
+    getVariable(const std::string&);
+    
   };
 
   //! a simple alias for backward compatibility

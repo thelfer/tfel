@@ -161,6 +161,12 @@ if(HAVE_ASTER)
     TFELException)
 endif(HAVE_ASTER)
 
+if(HAVE_ZMAT)
+  set(mfront_SOURCES
+    MFrontZMATInterface.cxx
+    ${mfront_SOURCES})
+endif(HAVE_ZMAT)
+
 if(HAVE_CYRANO)
   set(mfront_SOURCES
     MFrontCyranoInterface.cxx

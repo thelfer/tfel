@@ -28,22 +28,22 @@ namespace mfront{
      * \param[in] mb : mechanical behaviour description
      */
     virtual std::map<std::string,std::vector<std::string> >
-    getGlobalIncludes(const MechanicalBehaviourDescription&);
+    getGlobalIncludes(const MechanicalBehaviourDescription&) const;
     /*!
      * \param[in] mb : mechanical behaviour description
      */
     virtual std::map<std::string,std::vector<std::string> >
-    getGeneratedSources(const MechanicalBehaviourDescription&);
+    getGeneratedSources(const MechanicalBehaviourDescription&) const;
     /*!
      * \param[in] mb : mechanical behaviour description
      */
     virtual std::vector<std::string>
-    getGeneratedIncludes(const MechanicalBehaviourDescription&);
+    getGeneratedIncludes(const MechanicalBehaviourDescription&) const;
     /*!
      * \param[in] mb : mechanical behaviour description
      */
     virtual std::map<std::string,std::vector<std::string> >
-    getLibrariesDependencies(const MechanicalBehaviourDescription&);
+    getLibrariesDependencies(const MechanicalBehaviourDescription&) const;
 
     virtual std::pair<bool,tfel::utilities::CxxTokenizer::TokensContainer::const_iterator>
     treatKeyword(const std::string&,
@@ -120,6 +120,14 @@ namespace mfront{
     writeAsterBehaviourTraits(std::ostream&,
 			      const MechanicalBehaviourDescription&,
 			      const tfel::material::ModellingHypothesis::Hypothesis) const;
+    /*!
+     * write interface specific includes
+     * \param[in] out : output file
+     * \param[in] mb  : mechanical behaviour description
+     */
+    virtual void 
+    writeInterfaceSpecificIncludes(std::ofstream&,
+				   const MechanicalBehaviourDescription&) const;
 
     virtual std::string
     getModellingHypothesisTest(const Hypothesis) const;

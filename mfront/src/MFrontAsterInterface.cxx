@@ -244,8 +244,6 @@ namespace mfront{
     set<Hypothesis> h;
     // modelling hypotheses handled by the behaviour
     const set<Hypothesis>& bh = mb.getModellingHypotheses();
-    // aster only supports the AxisymmetricalGeneralisedPlaneStrain
-    // and the AxisymmetricalGeneralisedPlaneStress hypotheses
     if(bh.find(ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN)!=bh.end()){
       h.insert(ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN);
     }
@@ -684,11 +682,19 @@ namespace mfront{
     out << "mg.setModellingHypothesis(h);\n";
   } // end of MFrontAsterInterface::writeMTestFileGeneratorSetModellingHypothesis
   
+  void 
+  MFrontAsterInterface::writeInterfaceSpecificIncludes(std::ofstream& out,
+						       const MechanicalBehaviourDescription&) const
+  {
+    using namespace std;
+    out << "#include\"MFront/Aster/Aster.hxx\"" << endl << endl;
+  } // end of MFrontAsterInterface::writeInterfaceSpecificIncludes
+
   MFrontAsterInterface::~MFrontAsterInterface()
   {}
 
   std::map<std::string,std::vector<std::string> >
-  MFrontAsterInterface::getGlobalIncludes(const MechanicalBehaviourDescription& mb)
+  MFrontAsterInterface::getGlobalIncludes(const MechanicalBehaviourDescription& mb) const
   {
     using namespace std;
     map<string,vector<string> > incs;
@@ -705,7 +711,7 @@ namespace mfront{
   } // end of MFrontAsterInterface::getGeneratedSources
 
   std::map<std::string,std::vector<std::string> >
-  MFrontAsterInterface::getGeneratedSources(const MechanicalBehaviourDescription& mb)
+  MFrontAsterInterface::getGeneratedSources(const MechanicalBehaviourDescription& mb) const
   {
     using namespace std;
     map<string,vector<string> > src;
@@ -719,7 +725,7 @@ namespace mfront{
   } // end of MFrontAsterInterface::getGeneratedSources
 
   std::vector<std::string>
-  MFrontAsterInterface::getGeneratedIncludes(const MechanicalBehaviourDescription& mb)
+  MFrontAsterInterface::getGeneratedIncludes(const MechanicalBehaviourDescription& mb) const
   {
     using namespace std;
     vector<string> incs;
@@ -732,7 +738,7 @@ namespace mfront{
   } // end of MFrontAsterInterface::getGeneratedIncludes
 
   std::map<std::string,std::vector<std::string> >
-  MFrontAsterInterface::getLibrariesDependencies(const MechanicalBehaviourDescription& mb)
+  MFrontAsterInterface::getLibrariesDependencies(const MechanicalBehaviourDescription& mb) const
   {
     using namespace std;
     map<string,vector<string> > deps;

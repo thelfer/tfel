@@ -47,6 +47,7 @@ EXTRA_DIST = texmf/bibtex/fr-insa.bst			                  \
 	     texmf/tex/images/barre_verte.eps			          \
 	     texmf/tex/images/logoEDF.eps				  \
 	     texmf/tex/images/CEA_web_quadri-sur-fond-rouge.pdf	          \
+	     texmf/tex/latex/common.sty				          \
 	     texmf/tex/latex/couleurs.sty				  \
 	     texmf/tex/latex/gnuplot.sty				  \
 	     texmf/tex/latex/NT/variables_2010.tex			  \

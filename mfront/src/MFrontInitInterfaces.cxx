@@ -43,6 +43,8 @@
 #include"MFront/MFrontAsterInterface.hxx"
 #endif
 
+#include"MFront/MFrontZMATInterface.hxx"
+
 namespace mfront
 {
 
@@ -95,6 +97,10 @@ namespace mfront
 #ifdef HAVE_ASTER
     MFrontBehaviourInterfaceProxy<MFrontAsterInterface> asterProxy;
 #endif /* HAVE_ASTER */
+
+#ifdef HAVE_ZMAT
+    MFrontBehaviourInterfaceProxy<MFrontZMATInterface> zmatProxy;
+#endif /* HAVE_ZMAT */
 
   } // end of initInterfaces(void)
 

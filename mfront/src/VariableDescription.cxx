@@ -97,4 +97,21 @@ namespace mfront{
     }
   } // end of VariableDescriptionContainer::appendGlossaryNames
 
+  const VariableDescription&
+  VariableDescriptionContainer::getVariable(const std::string& n)
+  {
+    using namespace std;
+    VariableDescriptionContainer::const_iterator p;
+    for(p=this->begin();p!=this->end();++p){
+      if(p->name==n){
+	return *p;
+      }
+    }
+    string msg("VariableDescriptionContainer::getVariable : "
+	       "no variable named '"+n+"'");
+    throw(runtime_error(msg));
+    return *(this->end());
+  }
+
+
 } // end of namespace mfront

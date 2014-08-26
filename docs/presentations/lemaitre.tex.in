@@ -1,0 +1,29 @@
+
+
+\subsection{la loi visco-plastique de Lemaître}
+
+\subsubsection{expression de la loi de comportement de \nom{Lemaître}}
+
+Elle ne diffère de la loi de \nom{Norton} que par l'écrouissage. Elle
+est définie par~:
+\[ 
+\left\{
+  \begin{aligned}
+    \tepsilonto   &= \tepsilonel+\tepsilonvis \\
+    \tsigma       &= \tenseurq{D}\,:\,\tepsilonel\\
+    \tdepsilonvis &= \dot{p}\,\tenseur{n} \\
+    \dot{p}       &= \left ( \frac {\sigmaeq} {K {p}^{1/M} } \right ) ^{N}
+  \end{aligned}
+\right.
+\]
+
+avec \(\tenseur{n}=\Frac{3}{2}\,\Frac{\tenseur{s}}{\sigmaeq}\) 
+
+\textcolor{red}{on propose de modifier le fichier mfront de la loi de Norton pour y intégrer la loi de Lemaître.
+On pourra vérifier sur l'essai de traction défini précédemment la différence par rapport à la loi de Norton (et l'équivalence 
+des résultats dans le cas où UNsurM=0).On pourra ensuite effectuer un essai de fluage et constater la différence par rapport à la loi de Norton.
+}
+
+
+
+

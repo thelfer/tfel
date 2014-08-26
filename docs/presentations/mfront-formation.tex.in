@@ -1,0 +1,1325 @@
+
+\documentclass[slidetop,11pt, mathserif]{beamer}
+\usepackage[frenchb]{babel}
+\usepackage[T1]{fontenc} 
+\usepackage[utf8]{inputenc}
+\usepackage{times}
+\usepackage{common} 
+
+\mode<presentation>
+{
+\setbeamertemplate{background canvas}[vertical shading][bottom=yellow!10, top=white!100]  
+  
+%\usetheme{Warsaw} 
+\usetheme{Frankfurt} 
+% \usetheme{Hannover} 
+% \usetheme{Singapore}
+% exemples  http://mcclinews.free.fr/latex/beamergalerie/completsgalerie.html 
+\setbeamercovered{transparent}
+  
+}
+
+\title[Comment développer une loi avec MFront]{Comment développer une loi de comportement avec MFront}
+\author[Jean-Michel Proix, Thomas Helfer]
+{Jean-Michel Proix\inst{(1)} \and Thomas Helfer \inst{(2)} }
+
+\institute[]
+{
+  \inst{(1)}%
+  EDF R\&D AMA T64
+    \and
+  \inst{(2)}%
+  CEA DEN Cad DEC SESC LSC
+}
+
+\date{mai 2014}
+
+ 
+ %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+ \begin{document}
+
+
+\begin{frame}
+  \titlepage
+\end{frame}
+ 
+
+\begin{frame}
+  \frametitle{Titre du slide: Plan de la présentation}
+  %\framesubtitle{Sous-titre: }
+  \tableofcontents
+\end{frame}
+
+
+
+\section{un premier exemple simple}
+
+\subsection{une loi de Norton}
+
+
+\begin{frame} 
+\frametitle{les équations}
+
+La loi de Norton est définie en 3D par~:
+$ 
+\left\{
+  \begin{aligned}
+    \tepsilonto   &= \tepsilonel+\tepsilonvis \\
+    \tsigma       &= \tenseurq{D}\,:\,\tepsilonel\\
+    \tdepsilonvis &= \dot{p}\,\tenseur{n} \\
+    \dot{p}       &= A\,\sigmaeq^{m}
+  \end{aligned}
+\right.
+$
+
+
+\begin{itemize}
+\item \(\tepsilonto\), \(\tepsilonel\), \(\tepsilonvis\)
+tenseurs déf. totale, élastique et visqueuse~;
+\item \(\tenseur{n}=\Frac{3}{2}\,\Frac{\tenseur{s}}{\sigmaeq}\) est
+le tenseur direction d'écoulement~;
+\item \(\tenseur{s}\) est le tenseur déviateur des contraintes~;
+\item \(\sigmaeq\) est la norme de \nom{Von Mises}.
+\end{itemize}
+
+$\tenseurq{D}$ ~est déduit du
+module d'\nom{Young} $E$ et du coef. de \nom{Poisson} $\nu$
+
+
+\end{frame}
+
+\subsection{discrétisation et développement \mfront}
+
+\begin{frame} 
+\frametitle{discrétisation implicite}
+
+Discrétisation en temps : ici, implicite
+\begin{itemize}
+\item Les quantités sont écrites à l'instant \(t_{i}\) 
+\item les dérivées en temps sont remplacées
+par leurs incréments sur l'intervalle \( \Delta t= t_{i} - t_{i-1} \)
+\end{itemize}
+
+Pour la loi de Norton, on obtient~:
+$ 
+\left\{
+  \begin{aligned}
+    \Delta\,\tepsilonel - \Delta\,\tepsilonto   + \Delta\,p\,\tenseur{n} = 0 \\
+    \Delta\,p  - \Delta\,t\, A\,\sigmaeq^{m} = 0 
+  \end{aligned}
+\right.
+$
+
+avec~:
+  \begin{itemize}
+  \item \(\tenseur{n}=\Frac{3}{2}\,\Frac{ \tenseur{s} \paren{t_{i}}} { \sigmaeq \paren{ t_{i}}}\ \) .
+  \end{itemize}
+
+Système de 7 équations à 7 inconnues~: $\Delta\,\tepsilonel, \Delta\,p$
+
+\end{frame}
+
+\setbeamertemplate{blocks}[rounded][shadow=true] 
+
+
+\begin{frame}
+
+\frametitle{premier développement avec \mfront}
+
+  \begin{columns}
+  
+  \begin{column}{8.5cm}
+  
+    \lstinputlisting[firstline=1,lastline=17]{@abs_top_srcdir@/docs/presentations/mfront/norton.mfront}
+    
+  \end{column} 
+   
+  \begin{column}{4cm}
+ 
+  
+    $\textcolor{red}{Newton, calcul~de~ J }$\\
+    ~\\
+    ~\\
+    \textcolor{red} { ${\sigma} = \tenseurq{D}~:~\tepsilonel$}\\
+    ~\\    
+    ~\\
+    $\tenseur{n}=\Frac{3}{2}\,\Frac{\tenseur{s}}{\sigmaeq}$\\
+    ~\\
+    $\Delta\,\tepsilonel  + \Delta\,p\,\tenseur{n} - \Delta\,\tepsilonto  = 0 $\\
+    $\Delta\,p  - \Delta\,t\, A\,\sigmaeq^{m} = 0 $
+  
+
+\end{column}
+
+\end{columns}  
+
+\end{frame}
+
+
+
+\subsection{premier test \mtest et \aster}
+
+
+\begin{frame}[plain] 
+
+\frametitle{mtest}
+
+compilation...\\
+\texttt{mfront --obuild --interface=aster norton.mfront}
+
+test...\\
+\texttt{mtest norton.mtest}
+
+\begin{columns}[T]
+  
+\begin{column}{7.9cm}
+
+\begin{flushleft}
+ \small \lstinputlisting{@abs_top_srcdir@/docs/presentations/mtest/norton-rk.mtest}
+\end{flushleft}
+
+\end{column} 
+   
+\begin{column}{4cm}
+  \includegraphics[width=4cm]{@abs_top_srcdir@/docs/presentations/images/norton.png}  
+\end{column}
+\end{columns}  
+
+\end{frame}
+
+
+\begin{frame}
+\frametitle{utilisation avec \aster ---1/2}
+ 
+  compilation du comportement ~;  
+  \begin{itemize}
+    \item soit avant le calcul \aster~:  
+    \texttt{mfront --obuild --interface=aster norton.mfront}
+    \texttt{ => src/libAsterBehaviour.so}
+    \item dans le fichier de commandes~:
+    \begin{itemize}
+        \item \texttt{import os}~;
+        \item \texttt{os.system("mfront --obuild --interface=aster norton.mfront"}.
+    \end{itemize}
+  \end{itemize}
+
+  dans \texttt{DEFI\_MATERIAU}~sous \texttt{UMAT}~:\\
+    \texttt{C1=178600.0E6};\\
+    \texttt{C2=0.3}~;\\
+    \texttt{C3=8...}~;\\
+    \texttt{...}~;
+    comme définis dans  le fichier norton.mfront.
+
+\end{frame}
+
+
+\begin{frame}[plain]
+\frametitle{utilisation avec \aster  ---2/2}
+
+ dans \texttt{STAT\_NON\_LINE} sous \texttt{COMPORTEMENT}~; 
+ \begin{itemize}
+  \item \texttt{RELATION='MFRONT'}
+  \item \texttt{LIBRAIRIE='libAsterBehaviour.so'}
+  \item \texttt{NOM\_ROUTINE='asternorton.so'}
+  \item \texttt{NB\_VARI=7}
+  \end{itemize}
+\includegraphics[width=8cm]{@abs_top_srcdir@/docs/presentations/images/astk.png}  
+\end{frame}
+
+
+
+
+\section{ce que permet \mfront}
+
+\begin{frame}
+  \frametitle{fonctionnalités de \mfront}
+  \tableofcontents[currentsection]
+\end{frame}
+
+
+\subsection{\mfront ?}
+
+\begin{frame} 
+\frametitle{avantages de \mfront}
+\label{atouts}
+\mfront~ a été développé par le CEA (\pleiades) pour :
+\begin{itemize}
+  \item \textbf{permettre} l'écriture de connaissances matériau~:
+    \begin{itemize}
+    \item les propriétés matériau~; voir  \textcolor{blue}{  \hyperlink{matériaux}{\beamergotobutton{matériaux}}}
+    \item les comportements mécaniques (plasticité,endommagement)~;
+    \end{itemize}
+  \item<2-> \textbf{mutualiser} ces connaissances matériau~:
+    \begin{itemize}
+    \item entre différentes applications  de la plate-forme \pleiades, 
+    \item maintenant interfacé avec  \aster
+   \item la base de données
+    \sirius{}utilise des fichiers \mfront{} en interne (+ de 100 matériaux différents)~;
+    \end{itemize}
+  \item<3-> \textcolor{red}{\textbf{simplifier} le travail des utilisateurs}~:
+    \begin{itemize}
+    \item \textcolor{red}{numérique}~: on écrit les équations, pas les algos~;
+    \item \textcolor{red}{informatique}~peu de lignes à écrire~;
+    \item \textcolor{red}{donc minimiser le risque d'erreur}
+    \end{itemize}
+  \item<4-> \mfront~  produit un code efficace~:
+    \begin{itemize}
+    \item opérations tensorielles optimisées~;
+    \item benchmarks avec \aster ~de 18 lois depuis 12 mois
+    \end{itemize}
+  \end{itemize}
+\end{frame}
+
+
+\subsection{algorithmesMfront}
+\label{algorithmesMfront}
+\begin{frame} 
+\frametitle{algorithmes disponibles dans \mfront}
+Connaissant en un point et à un instant $t$ le tenseur  $\varepsilon_{t+\Delta t}$,
+et toutes les quantités à l'instant $t$, \mfront a pour fonction de calculer~:
+  \begin{itemize}
+  \item les contraintes $\tsigma_{t+\Delta t}$ et les variables internes $\alpha_{t+\Delta t}$~;
+  \item l'opérateur tangent cohérent $\colon{\deriv{\Delta\tsigma}{\Delta\tepsilonto}}$.
+  \item pour plus de détail, voir  \textcolor{blue}{\hyperlinkappendixstart{algo global}}
+  \end{itemize}
+
+en intégrant le système d'équations régissant la loi de comportement locale à l'aide de divers algorithmes~:
+  \begin{itemize}
+  \item spécifiques (élasto-(visco)-plasticité incompressible)~;
+  \item explicites (méthodes de Runge-Kutta)~;
+  \item implicites (méthode de Newton-Raphson et variantes)~;
+  \item libre (l'utilisateur définit l'intégration).
+  \end{itemize}
+
+\end{frame}
+
+\begin{frame} 
+\frametitle{quel algorithme choisir ?}
+  \begin{itemize}
+  \item si un intégrateur spécifique existe, l'utiliser~:
+    \begin{itemize}
+    \item réduction du nombre d'équations et méthode implicite~;
+    \end{itemize}
+  \item<2-> si l'on doit recourir à un autre intégrateur,
+    {\bf préférer l'intégration implicite}~:
+    \begin{itemize}
+    \item les temps de calculs sont souvent {\bf très} avantageux~;
+    \item on a (plus facilement) la {\bf tangente cohérente}~;
+    \end{itemize}
+  \item<3-> utiliser une méthode de \nom{Runge-Kutta} si~:
+    \begin{itemize}
+    \item {\bf rien d'autre} n'est possible (grand nombre de variables)~;
+    \end{itemize}
+  \item<4-> exemple sur le petit test de Norton~:
+    \begin{columns}[h]
+      \begin{column}{7cm}
+%         \begin{tabular}{l!{\vrule}cccc}
+        \begin{tabular}{cccc}
+        \hline 
+        traction       & spec   & impl   & rk     \\ 
+        \hline 
+        30 MPa & 0.032s & 0.128s & 0.372s \\ 
+        \hline 
+        50 MPa  & 0.218s & 0.228s & 10.37s \\ 
+        \hline
+        \end{tabular}
+      \end{column} 
+      \begin{column}{4cm}
+          \includegraphics[width=4cm]{@abs_top_srcdir@/docs/presentations/images/norton-50s.png}  
+      \end{column} 
+    \end{columns} 
+  \end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{algorithmes spécifiques}
+  \begin{itemize}
+  \item quatre intégrateurs spécifiques~:
+    \begin{itemize}
+    \item {\tt IsotropicMisesCreep}, écoulement viscoplastique
+      isotrope $dp=f\paren{\sigmaeq}$~;
+    \item {\tt IsotropicStrainHardeningMisesCreep}, écoulement
+      viscoplastique isotrope avec écrouissage
+      $dp=f\paren{\sigmaeq,p}$~;
+    \item {\tt IsotropicPlasticMisesFlow}, écoulement plastique
+      isotrope $f\paren{\sigmaeq,p}<=0$~;
+    \item {\tt MultipleIsotropicMisesFlows}, une somme des différents
+      écoulements précédents~;
+    \end{itemize}
+  \item<2-> l'élasticité est élastique isotrope~:
+    \begin{itemize}
+    \item les coefficients d'élasticité sont donnés par le code aux
+      éléments finis~;
+    \end{itemize}
+  \item<3-> il suffit de donner la (ou les) fonction(s) $f$~ et ses dérivées;
+  \item<4-> algorithme optimisé, réduction à une équation scalaire.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{exemple d'algorithme spécifique}
+    \lstinputlisting{@abs_top_srcdir@/docs/presentations/mfront/norton_spec.mfront}
+\end{frame}
+
+
+\begin{frame} 
+\frametitle{Intégration par une méthode explicite  (\nom{Runge-Kutta})}
+ \begin{itemize}
+  \item la loi de comportement est réduite à un système différentiel~:
+    
+    $\dot{Y} = G\paren{Y,t}$ avec :  $\left[\Delta\,Y \right]^T=\left[\Delta \tepsilonel ~,~\Delta \alpha \right]$
+    
+    où $t$ représente symboliquement l'évolution des variables
+    externes et de la déformation totale~;
+  \item<2-> le système différentiel s'écrit dans un bloc {\tt
+      @Derivative}~;
+  \item<3-> pour toute variable interne ou  externe{\tt X}, {\tt dX} représente la vitesse dans {\tt
+      @ComputeStress} et {\tt @Derivative}
+    \begin{itemize}
+    \item ce n'est pas l'incrément !
+    \end{itemize}
+  \item<4-> le code du bloc {\tt @UpdateAuxiliaryStateVariables} peut
+    être appelé plusieurs fois. Il faut utiliser la variable locale
+    {\tt dt\textunderscore} pour connaître le pas de temps effectivement utilisé
+    ({\tt dt} désigne toujours le pas de temps total)
+  \end{itemize}
+
+\end{frame}
+
+\begin{frame}[plain]
+\frametitle{{\small Loi de Norton avec Runge\_Kutta}}
+
+  \begin{columns}[h]
+  
+  \begin{column}{8.5cm}
+  
+    \lstinputlisting[firstline=1,lastline=17]{@abs_top_srcdir@/docs/presentations/mfront/norton_rk.mfront}
+    
+  \end{column} 
+   
+  \begin{column}{4cm}
+ 
+  
+    ~\textcolor{red}{Runge-Kutta}\\
+    ~ordres~4 et 5\\
+    ~\\
+    ~\\
+    ~\\
+    ~\textcolor{red}{$\tsigma = \tenseurq{D}\,:\,\tepsilonel$}\\
+    ~\textcolor{red} {$eel$} défini par défaut \\    
+    ~\\
+    $\tenseur{n}=\Frac{3}{2}\,\Frac{\tenseur{s}}{\sigmaeq}$\\
+    ~\\
+    ~\\
+    $d\,p  = A ~\sigmaeq^{m}$
+    ~\\
+    $d\,\tepsilonel~ = d\,\tepsilonto - d\,p\,\tenseur{n} $\\
+
+
+\end{column}
+\end{columns}  
+\end{frame}
+
+
+\begin{frame}
+\frametitle{quelques notations et définitions}
+  \begin{itemize}
+    \item propriété matériau {\tt @MaterialProperty}~:
+      \begin{itemize}
+        \item fournie par le code appelant !
+      \end{itemize}
+    \item variable local {\tt @LocalVariable}~:
+      \begin{itemize}
+        \item calcul de certains termes avant l'intégration (exemple de termes d'\nom{Arrhenius})~;
+      \end{itemize}
+    \item variable interne {\tt @StateVariable}~;
+    \item variable auxiliaire {\tt @AuxiliaryStateVariable}~:
+        permet de réduire la taille des systèmes à intégrer~;
+    \item variable externe {\tt @ExternalStateVariable}~;
+    \item notations~;
+      \begin{itemize}
+        \item mots réservés~: \texttt{eel, eto, sig,}~;
+        \item explicite~:~pour toute variable \texttt{a}, \texttt{da} est la vitesse ~;
+        \item implicite~:~\texttt{da} est l'incrément, \texttt{fa} est l'équation, \texttt{dfa\_dda} la dérivée ~;
+      \end{itemize}
+  \end{itemize}
+\end{frame}
+
+
+%\subsubsection{intégration implicite}
+
+\begin{frame} 
+\frametitle{Intégration implicite}
+  \begin{itemize}
+  \item Deux analyseurs~:
+    \begin{itemize}
+    \item {\tt Implicit} qui déclare automatiquement la déformation
+      élastique~;
+    \item {\tt ImplicitII} qui ne déclare pas automatiquement la
+      déformation élastique~;
+    \end{itemize}
+  \item différents algorithmes~:
+    \begin{itemize}
+    \item {\tt NewtonRaphson} (jacobienne calculée par
+      l'utilisateur)~;
+    \item {\tt NewtonRaphson\_NumericalJacobian} (jacobienne calculée
+      par différence finie centrée)~;
+    \item {\tt Broyden} (jacobienne partielle)~;
+    \item {\tt Powell DogLeg} (méthode de Powell combinant Gauss et Newton)~;
+    \end{itemize}
+  \end{itemize}
+
+\end{frame}
+
+\begin{frame}[plain]
+\frametitle{Intégration implicite : principe}
+  \begin{itemize}
+  \item le système différentiel devient un système non-linéaire~:
+    $[
+    F\paren{\Delta\, Y} = \Delta Y -
+    \Delta\,t\,G\paren{Y_{t}+\theta\Delta{Y},t+\theta\,\Delta t} =
+    0
+    $
+avec : $ \left[ \Delta\,Y \right]^T = \left[ \Delta \tepsilonel ~,~\Delta \alpha \right] $
+  \item<2-> pour les lois indépendantes du temps, on annule
+    directement la surface de charge !
+  \item<3-> on résout ce système par un \nom{Newton-Raphson}
+    \begin{itemize}
+    \item il faut la jacobienne \(J=\deriv{F}{\Delta\,Y}\)
+    \end{itemize}
+  \item<4-> la jacobienne peut être calculée par blocs~:
+    $
+    \tiny J = \deriv{F}{Y} =
+    \begin{pmatrix}
+      \deriv{f_{y_{1}}}{y_{1}} & \ldots & \ldots & \ldots & \ldots \\
+      \vdots & \vdots & \vdots & \vdots & \vdots \\
+      \vdots & \vdots & \deriv{f_{y_{i}}}{y_{j}} & \vdots & \vdots \\
+      \vdots & \vdots & \vdots & \vdots & \vdots \\
+      \ldots & \ldots & \ldots & \ldots & \deriv{f_{y_{N}}}{y_{N}} \\
+    \end{pmatrix}
+    $
+  \item<5-> on peut demander une vérification numérique !
+    \begin{center}
+      {\tt @CompareToNumericalJacobian true;}
+    \end{center}
+  \end{itemize}
+\end{frame}
+
+\begin{frame}[plain]
+\frametitle{Exemple : loi de Norton avec intégration implicite}
+
+Le système à résoudre étant toujours défini par~:
+  \begin{itemize}
+  \item \tt{feel}=$\Delta\,\tepsilonel  + \Delta\,p\,\tenseur{n} - \Delta\,\tepsilonto$ \\
+  \item \tt{fp}=$\Delta\,p  - \Delta\,t\, A\,\sigmaeq^{m}$ \\
+  \end{itemize}
+
+Listons les différentes dérivées à calculer~:
+  \begin{itemize}
+
+\item ${dfeel\_deel}=\Frac{\partial }{\partial \Delta \tepsilonel}\left(\Delta\tepsilonel+\Delta\,p\,\tenseur{n}-\Delta\,{\varepsilon}\right)={\tilde {I}}+\Delta\,p\Frac{\partial\tenseur{n}}{\partial \Delta\,\tepsilonel}~~$
+{avec} \ ~ ~${\tilde{I}}_{\mathit{ijkl}}=\Frac{1}{2}(\delta _{\mathit{ik}}\delta_{\mathit{jl}}+\delta _{\mathit{il}}\delta _{\mathit{jk}})$
+
+\item ${dfeel\_ddp}=\tenseur{n}$
+
+\item ${dfp\_ddp}=1$ 
+
+\item ${dfp\_ddeel}=-\Delta\,t\,A\,m\,\sigma_{eq}^{m-1}\Frac{\partial (\sigma)_{\mathrm{eq}}}{\partial \Delta\,\tepsilonel}=-\Delta\,t\,A\,m\,\sigma_{eq}^{m-1}\,\theta \,\tenseur{n} | D $
+
+ \end{itemize}
+ 
+Les dérivées de la normale  $\tenseur{n}$ sont~: $\Frac{\partial \tenseur{n}}{\partial \Delta \tepsilonel}=\Frac{2\mu}{(\sigma)_{\mathrm{eq}}}\left({M}-\tenseur{n}\otimes  \tenseur{n}\right)$
+
+                                                            
+Le tenseur $\tenseurq{M}$ étant défini par~: $\tenseurq{M}=\Frac{3}{2}{\tenseurq{I}}-\Frac{1}{2}\tenseur{I}\otimes\tenseur{I}$
+
+\end{frame}
+
+\begin{frame}[plain]
+\frametitle{Exemple : loi de Norton avec intégration implicite ---1/2}
+
+La première partie de \texttt{norton.mfront} est inchangée.
+On a oté :~\textcolor{red}{\@Algorithm NewtonRaphson\_NumericalJacobian;}
+
+  \lstinputlisting[firstline=1,lastline=15]{@abs_top_srcdir@/docs/presentations/mfront/norton_jac.mfront}
+
+\end{frame}
+
+\begin{frame}[plain]
+\frametitle{Exemple : loi de Norton avec intégration implicite ---2/2}
+
+La matrice jacobienne J est programmée~:
+  \lstinputlisting[firstline=17,lastline=34]{@abs_top_srcdir@/docs/presentations/mfront/norton_jac.mfront}
+\end{frame}
+
+
+
+\subsection{K tangente}
+
+\begin{frame}
+\frametitle{opérateurs tangents}
+\label{K tangente}
+\begin{itemize}
+    \item L'intégration de la loi de comportement est effectuée soit en explicite, soit en implicite~;
+    \item On obtient les contraintes $\tsigma_{t+\Delta t}$ et les variables internes $\alpha_{t+\Delta t}$~;
+    \item Mais pour qu'un calcul de structure converge vite, il faut calculer
+ l'opérateur tangent cohérent~:\\
+ $\deriv{\Delta\tsigma}{\Delta\tepsilonto}$ 
+\end{itemize}
+
+\end{frame}
+
+
+\begin{frame} 
+\frametitle{l'opérateur tangent en \mfront}
+Dans le cas d'une intégration explicite, on utilise l'opérateur d'élasticité $D$\\
+
+ \lstinputlisting[firstline=9,lastline=9]{@abs_top_srcdir@/docs/presentations/mfront/norton_rk.mfront}
+
+Dans le cas implicite, on peut souvent construire facilement l'opérateur tangent cohérent :\\
+
+ \lstinputlisting[firstline=18,lastline=22]{@abs_top_srcdir@/docs/presentations/mfront/norton.mfront}
+
+Il est extrait de l'inverse de la jacobienne $J$  \\
+soit programmée, soit estimée numériquement par  \mfront
+(pour plus de détail, voir  \textcolor{blue}{  \hyperlink{KtgtFromJ}{\beamergotobutton{KtgtFromJ}}}).
+
+\end{frame}
+
+
+\subsection{mtest}
+
+\begin{frame} 
+\frametitle{fonctionnalités de mtest}
+ 
+ \begin{itemize}
+  \item pour simuler la réponse d'un point matériel (comme \texttt{SIMU\_POINT\_MAT})~;  
+  \item piloter en contraintes ou/en déformations ou de
+    manière mixte~;
+  \item l'algorithme de résolution peut être paramétré~:
+    \begin{itemize}
+    \item matrice de prédiction, matrice tangente cohérente (interface
+      \aster{})~;
+    \item sous-découpage du pas de temps~;
+    \item etc...
+    \end{itemize}
+  \item possibilité de comparer les résultats à une solution
+    analytique ou des fichiers de références (non régression)~;
+  \item les lois \mfront{} peuvent générer des fichiers {\tt mtest} en
+    cas de non convergence d'un calcul de structure
+  \end{itemize}
+
+\end{frame}
+
+\begin{frame} 
+\frametitle{exemple de fichier mtest}
+  \lstinputlisting[firstline=1,lastline=5]{@abs_top_srcdir@/docs/presentations/mtest/burger.mtest}
+~...\\
+  \lstinputlisting[firstline=13,lastline=17]{@abs_top_srcdir@/docs/presentations/mtest/burger.mtest}
+ Utilisation : \texttt{mtest fichier.mtest}
+\end{frame}
+
+\begin{frame} 
+
+\frametitle{exemples de simulations mtest}
+
+  \begin{columns}[h]
+  
+  \begin{column}{7cm}
+  
+    \includegraphics[width=7cm]{@abs_top_srcdir@/docs/presentations/images/chaboche-cycles.png}  
+    
+  \end{column} 
+   
+  \begin{column}{7cm}
+ 
+    \includegraphics[width=7cm]{@abs_top_srcdir@/docs/presentations/images/traction-torsion-sxy-sxx.png}  
+
+  \end{column}
+
+\end{columns}  
+
+\end{frame}
+
+
+
+\subsection{adao}
+\begin{frame}[plain]
+\label{resume_adao}
+\frametitle{adao}
+ \begin{itemize}
+  \item recalage des propriétés matériau~;
+ \item utilise \aster + \mfront ou directement \mtest~;
+  \end{itemize}
+    \includegraphics[width=10cm]{@abs_top_srcdir@/docs/presentations/images/adao-chaboche-tout.png}  
+(pour plus de détail, voir  \textcolor{blue}{  \hyperlink{adao}{\beamergotobutton{adao}}}).
+\end{frame}
+
+
+
+\subsection{exemples \mfront}
+
+
+\begin{frame}[plain]
+\frametitle{Hayhurst}
+\label{Hayhurst}
+ \begin{columns}[h]
+    \begin{column}{3cm}
+      \includegraphics[width=3cm]{@abs_top_srcdir@/docs/presentations/images/Hayhurst.png}
+    \end{column} 
+    \begin{column}{5cm}
+      \includegraphics[width=5cm]{@abs_top_srcdir@/docs/presentations/images/hayhurst.png}
+    \end{column} 
+  \end{columns} 
+  \begin{itemize}
+  \item loi de fluage tertiaire (avec endommagement) \hyperlink{mfront-hayhurst}{\beamergotobutton{Hayhurst.mfront}}
+  \end{itemize}
+\end{frame}
+
+
+\begin{frame}[plain]
+\frametitle{Mazars}
+\label{Mazars}
+ \begin{columns}[h]
+  \begin{column}{5cm}
+     \includegraphics[width=5cm]{@abs_top_srcdir@/docs/presentations/images/MazarsCourbe.png}
+  \end{column} 
+  \begin{column}{7cm}
+     \includegraphics[width=7cm]{@abs_top_srcdir@/docs/presentations/images/Mazars_poutre.png}
+  \end{column} 
+  \end{columns} 
+  \begin{itemize}
+  \item loi de Mazars \hyperlink{mfront-mazars}{\beamergotobutton{Mazars.mfront}}
+  \end{itemize}
+\end{frame}
+
+\begin{frame}[plain]
+\frametitle{lois monocristallines - MC---DD-CFC---DD-CC}
+\label{Monocristal}
+ \begin{columns}[h]
+  \begin{column}{7cm}
+     \includegraphics[width=6cm]{@abs_top_srcdir@/docs/presentations/images/172g.png}
+  \end{column} 
+  \begin{column}{8cm}
+     \includegraphics[width=8cm]{@abs_top_srcdir@/docs/presentations/images/172gv30pg.png}
+  \end{column} 
+  \end{columns} 
+  \begin{itemize}
+  \item loi monocristalline, 172 grains \hyperlink{mfront-monocristal}{\beamergotobutton{monocristal.mfront}}
+
+  \end{itemize}
+\end{frame}
+
+
+
+\section{développement d'une loi pas-à-pas}
+
+\begin{frame}
+  \frametitle{à vos claviers !}
+  \tableofcontents[currentsection]
+\end{frame}
+
+
+\subsection{loi élastoplastique de Chaboche}
+
+\begin{frame}[plain]
+\frametitle{formulation de la loi élastoplastique de Chaboche }
+Les équations du modèle sont résumées brièvement~:
+\begin{itemize}
+\item  contraintes déformations élastiques~: 
+
+$\tsigma=\tDq\,\colon\,\paren{\tepsilonto-\tepsilonp}$
+
+\item Critère de plasticité~:
+ 
+ $F\paren{\tsigma ,\tenseur{X}} =(\sigma -\tenseur{X})_{\mathrm{eq}}-R(p)\le 0$
+
+
+\item loi d'écoulement normale au critère~:
+  
+  $\tdepsilonp=\dot{p}\,\tenseur{n}$ avec
+  $\tenseur{n}=\Frac{3}{2}\Frac{{\tsigma}^{dev}-{\tenseur{X}}}{\left(\sigma-\tenseur{X}\right)_{\text{eq}}}$
+  
+\item ${\tenseur{X}}$ écrouissages cinématiques~:  ${\tenseur{X}=\tenseur{X}_{1}+\tenseur{X}_{2}+...}$~;
+\item L'évolution de $\tenseur{X}_{i}$~:
+
+$\tenseur{X}_{i}=\Frac{2}{3}C_{i}\talpha_{i}$~avec~: $\tdalpha_{i}=\tdepsilonp-\gamma _{i}\,\talpha_{i}\,\dot{p}$~;
+
+\item l'écrouissage isotrope $R\paren{p}$ est défini par~:
+ $ R\paren{p}=R^{\infty}+\paren{R^{0}-R^{\infty}}\exp\paren{-b\,p}$ ~;
+
+\item paramètres $E$, $\nu$, $R^{0}$,
+$R^{\infty }$, $b$, $C_{1}$, $C_{2}$,..., $C_{n}$, $\gamma_{1}$, $\gamma_{2}$,..., $\gamma_{n}$
+\end{itemize}
+\end{frame}
+
+
+\begin{frame}[plain]
+\frametitle{discrétisation de la loi élastoplastique de Chaboche }
+
+Les inconnues sont~: \(\Delta\,\tepsilonel\)~;~ \(\Delta\,p\)~;~\(\Delta\,\talpha_{i}\)~;
+
+\begin{itemize}
+\item Test~:~si
+
+$F^{el}\paren{\tsigma ,\tenseur{X}}=\paren{\tsigma^{\textit{tr}}-\bts{\tenseur{X}}}_{\mathrm{eq}}-R\paren{\bts{p}}<0$
+
+avec~:
+
+$\tsigma^{\textit{tr}}=\tenseur{D}\,\colon\,\paren{\bts{\tepsilonel}+\Delta\,\tepsilonto}$
+
+
+alors la solution est élastique~:
+
+$\Delta\,\tepsilonp=0 \quad \Delta\, p=0 \quad \Delta\,\talpha_{i}=\tenseur{0}$
+
+
+\item Sinon, il faut résoudre le système suivant~:
+
+$F({{\sigma ,X}})=0 \quad\Leftrightarrow\quad
+\left\{
+\begin{aligned}
+\ets{\tsigma}-\ets{\tenseur{X}})_{\mathrm{eq}}-R(p(t+\Delta\,t))&=0 \\
+\Delta\,\talpha_{i}-\Delta\,\tepsilonp+\gamma_{i}(\talpha_{i}+\theta \Delta\talpha_{i})\Delta\,p&=\tenseur{0}\\
+\Delta\,\tepsilonel-\Delta\,\tepsilonto+\Delta\,\tepsilonp&=\tenseur{0}
+\end{aligned}
+\right.$
+
+où $\Delta\,\tepsilonp=\Delta\, p\,\ets{\tenseur{n}}$
+
+\end{itemize}
+\end{frame}
+
+
+\begin{frame}[plain]
+\frametitle{intégration implicite dans \mfront ---1/3}
+  \lstinputlisting[firstline=1,lastline=24]{@abs_top_srcdir@/docs/presentations/mfront/Chaboche_simple.mfront}
+\end{frame}
+
+
+\begin{frame}[plain]
+\frametitle{intégration implicite dans \mfront ---2/3}
+  \lstinputlisting[firstline=25,lastline=45]{@abs_top_srcdir@/docs/presentations/mfront/Chaboche_simple.mfront}
+\end{frame}
+
+\begin{frame}[plain]
+\frametitle{intégration implicite dans \mfront ---3/3}
+  opérateurs tangents
+  \lstinputlisting[firstline=46]{@abs_top_srcdir@/docs/presentations/mfront/Chaboche_simple.mfront}
+
+  compilation~:\\
+  \texttt{mfront --obuild --interface=aster Chaboche.mfront}
+  
+\end{frame}
+
+
+\begin{frame} 
+\frametitle{petit test : cycles de traction-compression}
+  \begin{columns}[h]
+  \begin{column}{8.cm}
+  
+    \lstinputlisting[firstline=1,lastline=17]{@abs_top_srcdir@/docs/presentations/mtest/cyclique.mtest}
+    
+  \end{column} 
+   
+  \begin{column}{4cm}
+    \includegraphics[width=5cm]{@abs_top_srcdir@/docs/presentations/images/chaboche-cycles.png}  
+  \end{column}
+\end{columns}  
+
+\end{frame}
+
+
+
+\begin{frame} 
+\frametitle{exercice~: modèle viscoplastique }
+
+Le critère de plasticité~:
+$F({{\sigma ,X}})=(\sigma -X)_{\mathrm{eq}}-R(p)\le 0$ \\
+
+est remplacé par~:
+\(
+\dot{{p}}=\langle \Frac{F}{K}\rangle ^{m}
+\)
+où~: \(
+\left\langle F\right\rangle =\text{max}(0,F)
+\)
+\
+
+Dans le fichier \mfront, 
+
+\texttt{fp=(seq\_-Rp\_)/young;}
+
+devient~:
+
+{\tt fp -= pow(F*UNsurK,m)*dt;}
+
+\
+Les propriétés matériau ajoutées~:
+\texttt{UNsurK} et \texttt{m} 
+
+\end{frame}
+
+
+\begin{frame} 
+\frametitle{et si cela plante ? Comment faire ? }
+ \begin{itemize}
+   \item erreurs de compilation souvent explicites~;
+   \begin{itemize}
+      \item {\tt Viscochab.mfront:94: error: 'F' was not
+        declared in this scope}
+    \item {\tt Viscochab.mfront:74: warning: unused variable 'Rp'}
+    \item {\tt Viscochab.mfront:91: error: expected ',' or ';' before 'if' (oubli d'un ";" en fin de ligne)}
+    \end{itemize}
+   \item compilation avec \texttt{--debug}~;
+   \item impression de variables 
+   \texttt{cout << "seq=" << seq << end;} ~;
+   \item compilation avec \texttt{CXXFLAGS='-g'}~;
+   \item générer des fichiers mtest \texttt{@AsterGenerateMTestFileOnFailure=true}~;
+
+ \end{itemize}
+\end{frame}
+
+\section{conclusions}
+
+\begin{frame} 
+\frametitle{petit bilan}
+ \begin{itemize}
+  \item ajouts de nouveaux comportements~: \textcolor{red}{"very easy !"}~;
+  \item déjà dans la base de tests de \aster~!~:
+  \begin{table}
+  \begin{tabular}{| c | c |}
+  \hline
+  nom de la loi de comportement   & test \aster  \\
+  \hline
+  loi élastoplastique de Chaboche & \texttt{mfron01a}     \\
+  \hline
+  loi viscoplastique de Chaboche  &\texttt{ mfron01b }    \\
+  \hline
+  loi viscoplastique de Hayhurst  & \texttt{mfron02a,b }  \\
+  \hline
+  loi d'endommagement de Mazars  & \texttt{mfron02c,d,e}   \\
+  \hline  
+  loi de fluage de béton Burger  & \texttt{mfron02f,g }   \\
+  \hline
+  loi cristalline Méric-Cailletaud & \texttt{mfron03b,c,d}   \\
+  \hline  
+  loi cristalline DD\_CFC (IRRA)  & \texttt{mfron03e,f,g }  \\
+  \hline
+  loi cristalline DD\_CC (IRRA)  & \texttt{mfron03h,i } \\
+  \hline
+  loi meta-lema-ani phases méta  & \texttt{mfron03j-n}  \\
+  \hline
+  \end{tabular}
+  \end{table}
+  \end{itemize}
+ \end{frame}
+
+\begin{frame} 
+\frametitle{tests de \mfront : lois supplémentaires}
+  \begin{itemize}
+  \item loi de \nom{Lemaître} anisotrope~: {\tt StrainHardeningCreep.mfront}
+  \item lois d'endommagement~: {\tt Lorentz.mfront}~,...;
+  \item lois CZM ~: {\tt Tvergaard.mfront},...~;
+  \item lois monocristallines en grandes déformations {\tt FiniteStrainMonoCristal.mfront}
+  \item ...
+  \end{itemize}
+      {\textbf 72 lois de comportements dans la base de cas tests }
+ \end{frame}
+
+\begin{frame} 
+\label{c_plan}
+
+\frametitle{contraintes planes (généralisées) }
+
+  \begin{itemize}
+  \item déformation axiale ${\tepsilonto}_z$ == variable interne supplémentaire~;
+  \item hypothèses~:
+      \begin{itemize}
+      \item la déformation élastique $\tepsilonel$ == variable interne~;
+      \item la déformation totale n'intervient que dans $f_{\tepsilonel}$~;
+      \end{itemize}
+  \item partition des déformations~:
+      $f_{\tepsilonel}=\Delta\tepsilonel-\Delta\tepsilonto-\Delta {\tepsilonto}_z ~\vec{e}_{z}\otimes\vec{e}_{z}+\ldots$
+  \item aucune des autres  équations du système implicite n'est modifiée~;
+  \item équation associée à ${\tepsilonto}_z$~:
+      ~$f_{{\tepsilonto}_z}=\Frac{1}{E^{\prime}}\sigma_z$
+   \item contraintes planes généralisées~:
+      $f_{{\tepsilonto}_z}=\Frac{1}{E^{\prime}}\paren{\sigma_z-\sigma_z^{\text{équilibre}}}$
+  \end{itemize}
+
+\hyperlink{contraintes planes}{\beamergotobutton{contraintes planes}}
+\end{frame}
+
+
+
+\begin{frame} 
+\frametitle{perspectives}
+ \begin{itemize}
+  \item ajouts de nouveaux analyseurs spécifiques~:
+    \begin{itemize}
+    \item plasticité/viscoplasticité isotrope compressible~;
+    \end{itemize}
+  \item matrice tangente cohérente~:
+    \begin{itemize}
+    \item facile pour algorithmes spécifiques~et implicites;
+    \item pour l'intégration explicite ou par \nom{Broyden}~?:
+    \end{itemize}
+  \end{itemize}
+ \begin{itemize}
+  \item support de lois mécaniques générales~:
+    \begin{itemize}
+    \item transformations finies~(presque fini \!)~;
+    \item couplages de lois de fluage, d'endommagement~;
+    \item autres physiques : thermique non linéaire, métallurgie~;
+    \item mécanique des sols : Cam-Clay, Drucker-Prager, THM,...~
+    \item lois à gradient~;
+    \item  ... ~;
+    \end{itemize}
+  \end{itemize}
+\end{frame}
+
+
+
+
+
+
+\appendix
+
+\section{algorithme global}
+
+\begin{frame}[plain]
+\frametitle{ANNEXES : algorithme global}
+\tableofcontents[currentsection,hideothersection]    
+\end{frame}
+
+\begin{frame}[plain] 
+\frametitle{algorithme global de mécanique quasi-statique}
+  équilibre mécanique : trouver $\Delta\vec{u}$ tel que~:
+  \begin{itemize}
+    \small
+   \item $\vec{R}\paren{\Delta\vec{u}}=\vec{O}$ 
+    avec
+    $\vec{R}\paren{\Delta\vec{u}}=\vec{F_i}\paren{\Delta\vec{u}}-\vec{F_e}$
+
+  \item<2-> force interne élémentaire~:
+      \small
+      $\vec{F}_i^{elem} = \sum_{i=1}^{N_{G}} \paren{\textcolor{red}{\tsigma_{t+\Delta
+          t}\paren{\Delta\tepsilonto,\Delta\, t}}\colon\tenseurq{B}}w_{i}$
+  \item<3-> résolution par \nom{Newton-Raphson}~:
+    \small
+    $\alt<3>{\Delta{\vec{u}}^{n+1}=\Delta{\vec{u}}^{n}-
+     \paren{\left.\deriv{\vec{R}}{\Delta{\vec{u}}}\right|_{\Delta{\vec{u}}^{n}}}^{-1}.\vec{R}\paren{\Delta{\vec{u}}^{n}}= \Delta{\vec{u}}^{n}-\tenseurq{\mathbb{K}}^{-1}.\vec{R}\paren{\Delta{\vec{u}}^{n}}}{
+      \Delta{\vec{u}}^{n+1}=\Delta{\vec{u}}^{n}-\tenseurq{\mathbb{K}}^{-1}.\vec{R}\paren{\Delta{\vec{u}}^{n}}
+    }$
+    \item<4-> calcul de la raideur élémentaire~:
+      \small
+      $\tenseurq{\mathbb{K}}^{e}=\displaystyle\sum_{i=1}^{N^{G}}$
+      $\mbox{}^{t}\tenseurq{B} \textcolor{red}{\colon{\deriv{\Delta\tsigma}{\Delta\tepsilonto}}} \colon\tenseurq{B}  ~w_{i}$
+      où $\scriptsize\deriv{\Delta\tsigma}{\Delta\tepsilonto}$ est la {\em matrice tangente cohérente}.
+  \end{itemize}
+  \hyperlink{algorithmesMfront}{\beamergotobutton{algorithmesMfront}}
+\end{frame}
+
+
+
+\section{KtgtFromJ}
+
+\begin{frame}
+\label{KtgtFromJ}
+\frametitle{ANNEXES : matrice tangente}
+\tableofcontents[currentsection,hideothersection]    
+\end{frame}
+
+
+\begin{frame}[plain] 
+\frametitle{une façon générique de calculer la tangente cohérente}
+
+Il faut calculer : \(\deriv{\Delta\,\tsigma}{\Delta\,\tepsilonto}
+=
+\left.\deriv{\tsigma}{\tepsilonel}\right|_{\tepsilonel+\Delta\,\tepsilonel}\,\colon\,\deriv{\Delta\,\tepsilonel}{\Delta\,\tepsilonto}
+\)
+
+On a résolu~:
+$F\paren{\Delta\,Y,\Delta\,\tepsilonto}= 0$ avec :  \( \left[ \Delta\,Y \right]^T = \left[ \Delta \tepsilonel ~,~\Delta \alpha \right] \) \\
+Par différentiation~:
+\(
+ \deriv{F}{\Delta\,Y}\,\dtot\,\Delta\,Y+\deriv{F}{\Delta\,\tepsilonto}\,\dtot\,\Delta\,\tepsilonto=0
+\)
+
+ \(\deriv{F}{\Delta\,Y}\) est la jacobienne \(J\), connue après la résolution.
+
+\textcolor{red}{Hyp.} l'incrément de déformation  \(\Delta\tepsilonto\) n'apparaît que dans~:
+\[
+F_\epsilon=\Delta\,\tepsilonel+\Delta\,\tepsilonp_{i}-\Delta\,\tepsilonto=0
+\]
+
+donc~:
+\(
+J\,\dtot\,\Delta\,Y= - \deriv{F}{\Delta\,\tepsilonto}\,\dtot\,\Delta\,\tepsilonto = 
+\begin{pmatrix}
+  \dtot\,\Delta\tepsilonto \\
+  0\\
+\end{pmatrix}
+\)
+
+Du 1er bloc on déduit~:
+\(
+\dtot\,\Delta\,\tepsilonel=J^{-1}_{\tepsilonel}\,\colon\,\dtot\,\Delta\tepsilonto
+\)
+où \(J^{-1}_{\tepsilonel}\) est la partie supérieure gauche de \(J^{-1}\).
+
+Finalement, nous obtenons~:
+\(
+\deriv{\Delta\,\tsigma}{\Delta\,\tepsilonto} =  D\colon\, J^{-1}_{\tepsilonel}
+\)
+
+ \(J^{-1}_{\tepsilonel}\) est calculée par \textcolor{red}{getPartialJacobianInvert} dans le bloc
+  \hyperlink{K tangente}{\beamergotobutton{K tangente}}
+
+
+
+\end{frame}
+
+\section{lois particulières}
+
+\begin{frame}
+\frametitle{ANNEXES : quelques lois en \mfront}
+\tableofcontents[currentsection,hideothersection]    
+\end{frame}
+
+
+\subsection{loi de Hayhurst}
+\label{mfront-hayhurst}
+
+\begin{frame}[plain]
+\frametitle{présentation de la loi de Hayhurst R5.03.13}
+  \begin{itemize}
+    \small
+\item $\sigma = \left( 1 - D \right) ~C~ \varepsilon^e$~;
+\item $\tenseur{\varepsilon^e} = \tenseur{\varepsilon}  - \dot {p} ~ \tenseur{n} $~ avec~ $\tenseur{n} = 1.5 \frac{\sigma^{dev}}{\sigma_{eq}}$~;
+\item $\dot{p}=\varepsilon_0 ~ sinh \left( \frac{ \sigma_{eq} (1-H)}{ K \left( 1 - D \right) (1 - \phi)}  \right)$~;
+% \item $\dot{\phi}={\frac{k_c}{3}}-(1-\phi)^4$ ~;
+\item $H = H_1 + H_2$ ~;
+\item $\dot{H}_i = \frac{ h_i} {\sigma_{eq}}  \left( H^*_i - \delta_i H_i \right) \dot{p} $~;
+
+\item $\dot{D}=A_0  ~ sinh \left( \frac {\alpha_D ~{< tr(\sigma)>}_+  + \sigma_{eq}~ (1 - \alpha_D) } { \sigma_0 } \right)$
+\end{itemize}
+\end{frame}
+
+\begin{frame}[plain]
+\frametitle{implantation de la loi de Hayhurst ---1/3}
+    \lstinputlisting[firstline=16,lastline=37]{@abs_top_srcdir@/docs/presentations/mfront/hayhurst.mfront}
+\end{frame}
+\begin{frame}[plain]
+\frametitle{implantation de la loi de Hayhurst ---2/3}
+    \lstinputlisting[firstline=38,lastline=57]{@abs_top_srcdir@/docs/presentations/mfront/hayhurst.mfront}
+\end{frame}
+\begin{frame}[plain]
+\frametitle{implantation de la loi de Hayhurst ---3/3}
+    \lstinputlisting[firstline=58,lastline=73]{@abs_top_srcdir@/docs/presentations/mfront/hayhurst.mfront}
+ \hyperlink{Hayhurst}{\beamergotobutton{retour}}
+\end{frame}
+
+\subsection{loi de Mazars}
+\label{mfront-mazars}
+\begin{frame}[plain] 
+\frametitle{implantation de la loi de Mazars ---1/3}
+    \lstinputlisting[firstline=1,lastline=21]{@abs_top_srcdir@/docs/presentations/mfront/mazars.mfront}
+\end{frame}
+\begin{frame}[plain] 
+\frametitle{implantation de la loi de Mazars ---2/3}
+    \lstinputlisting[firstline=23,lastline=46]{@abs_top_srcdir@/docs/presentations/mfront/mazars.mfront}
+\end{frame}
+\begin{frame}[plain] 
+\frametitle{implantation de la loi de Mazars ---3/3}
+    \lstinputlisting[firstline=50,lastline=70]{@abs_top_srcdir@/docs/presentations/mfront/mazars.mfront}
+ \hyperlink{Mazars}{\beamergotobutton{retour}}
+\end{frame}
+
+
+\subsection{un exemple de loi cristalline}
+\label{mfront-monocristal}
+\begin{frame}[plain] 
+\frametitle{expression d'une loi cristalline}
+
+\begin{itemize}
+
+\item $\Delta \underline{\varepsilon^e} = \Delta \underline{\varepsilon}-\Delta \underline{\varepsilon^p}$
+
+\item $\Delta \underline{\varepsilon^p}$ est déduit des glissements de chaque système~:
+
+$\Delta \underline{ \varepsilon^p} = \sum_{s =1,12} \Delta {\gamma}_s \underline{M_s}$
+
+\item Ceux-ci sont obtenus pour chaque système de glissement par~:
+$\Delta{\gamma}_s =\Delta{p_s} \textrm{sgn}(\tau_s- C \alpha_s)$ avec  $\Delta{p}_s = \Delta t { \langle \frac{|\tau_s-C \alpha_s|-R(p_s)}{K}\rangle }^m  $
+
+
+\item Ecrouissage isotrope~: $R(p_s)=R_0+Q \sum_r{h_{sr} \left( 1-\exp(-b p_r) \right)} $
+
+$h_{sr}$ matrice d'interaction entre systèmes.
+
+\item Ecrouissage cinématique~: $\Delta {\alpha_s} =\Delta {\gamma}_s - D \alpha_s \Delta {p_s} $
+
+\item Avec ~: $\tau_s=\underline{\sigma}:\underline{M_s}=\underline{\sigma}:\frac{1}{2}\left(\underline{m}_s\otimes\underline{n}_s + \underline{n}_s\otimes\underline{m}_s \right)$
+
+    \begin{itemize}
+    \item $\underline{n}_s$ et $\underline{m}_s$ sont les normales et directions de glissement.
+
+    \item L'élasticité peut être isotrope ou orthotrope~: $\underline{\sigma} = \underline{\underline{D}} \left(\underline{\varepsilon^e}\right)$ 
+
+    \end{itemize}
+\end{itemize}
+
+\end{frame}
+
+
+\begin{frame}[plain] 
+\frametitle{implantation d'une loi cristalline ---1/3}
+    \lstinputlisting[firstline=1,lastline=22]{@abs_top_srcdir@/docs/presentations/mfront/monocristal.mfront}
+\end{frame}
+\begin{frame}[plain] 
+\frametitle{implantation d'une loi cristalline ---2/3}
+    \lstinputlisting[firstline=23,lastline=42]{@abs_top_srcdir@/docs/presentations/mfront/monocristal.mfront}
+\end{frame}
+\begin{frame}[plain] 
+\frametitle{implantation d'une loi cristalline ---3/3}
+    \lstinputlisting[firstline=43]{@abs_top_srcdir@/docs/presentations/mfront/monocristal.mfront}
+    \lstinputlisting[firstline=1,lastline=7]{@abs_top_srcdir@/docs/presentations/mfront/sliding.mfront}
+%     \lstinputlisting[firstline=1,lastline=12]{@abs_top_srcdir@/docs/presentations/mfront/interactionmatrix.mfront}
+ \hyperlink{Monocristal}{\beamergotobutton{retour}}
+\end{frame}
+
+
+\subsection{loi meta-lema-ani}
+\label{meta-lema-ani}
+\begin{frame}[plain] 
+\frametitle{expression discretisée de la loi meta-lema-ani}
+\begin{itemize}
+\item $\Delta \varepsilon^e - \Delta \varepsilon + \Delta\,p\,\tenseur{n} = 0$ \\
+
+\item $\sqrt{\tenseur{\sigma} : \tenseurq{M} :\tenseur{\sigma}}  - \sum_{i=1,3} f_i[Z] {\sigma_v}_i = 0$ \\
+\end{itemize}
+
+avec~: \\
+
+$ {\sigma_v}_i =  a_i \left( e^{Q_i/T} \right)^{1/n_i} \left( p^{-} + \Delta p \right)^{m_i} \left(\frac{\Delta p}{\Delta t} \right)^{1/n_i} $\\
+
+
+   
+\end{frame}
+\begin{frame}[plain] 
+\frametitle{meta-lema-ani ---1/5}
+    \lstinputlisting[firstline=1,lastline=22]{@abs_top_srcdir@/docs/presentations/mfront/meta-lema-ani.mfront}
+\end{frame}
+\begin{frame}[plain] 
+\frametitle{meta-lema-ani  ---2/5}
+    \lstinputlisting[firstline=23,lastline=42]{@abs_top_srcdir@/docs/presentations/mfront/meta-lema-ani.mfront}
+\end{frame}
+\begin{frame}[plain] 
+\frametitle{meta-lema-ani ---3/5}
+    \lstinputlisting[firstline=43,lastline=62]{@abs_top_srcdir@/docs/presentations/mfront/meta-lema-ani.mfront}
+\end{frame}
+\begin{frame}[plain] 
+\frametitle{meta-lema-ani ---4/5}
+    \lstinputlisting[firstline=63,lastline=81]{@abs_top_srcdir@/docs/presentations/mfront/meta-lema-ani.mfront}
+\end{frame}
+\begin{frame}[plain] 
+\frametitle{meta-lema-ani ---5/5}
+    \lstinputlisting[firstline=82,lastline=105]{@abs_top_srcdir@/docs/presentations/mfront/meta-lema-ani.mfront}
+\end{frame}
+
+\section{Propriétés matériau}
+
+\begin{frame}
+\frametitle{gestion des propriétés matériau}
+\tableofcontents[currentsection,hideothersection]    
+\end{frame}
+
+
+\label{matériaux}
+
+\begin{frame}
+\frametitle{{\small propriétés matériaux}}
+  \begin{itemize}
+  \item introduction en $3$ étapes~:
+    \begin{itemize}
+    \item écriture d'une fonction \texttt{Young=f(Temperature)}~;
+    \item création d'une librairie \texttt{libInconel600.so}~;
+    \item appel depuis \castem{}~ou \cyrano ~(\aster~ à venir)
+    \end{itemize}
+  \item voir la documentation de \mfront
+  \end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{Exemple en \mfront }
+\lstinputlisting{@abs_top_srcdir@/docs/presentations/mfront/Inconel600_YoungModulus.mfront}
+\hyperlink{atouts}{\beamergotobutton{retour}}
+
+\end{frame}
+
+
+\section{contraintes planes}
+
+\begin{frame}
+\frametitle{gestion des contraintes planes}
+\tableofcontents[currentsection,hideothersection]    
+\end{frame}
+
+\label{contraintes planes}
+
+\begin{frame} 
+\frametitle{contraintes planes (généralisées) ---1/3}
+  \begin{itemize}
+  \item exemple de la loi de \nom{Norton}.
+  \item nouvelle variable interne~:~déformation axiale $\epsilon^{to}_z$, 
+  \item contrainte imposée variable externe 
+  \end{itemize}
+  \lstinputlisting[firstline=32,lastline=38,firstnumber=32]{@abs_top_srcdir@/docs/presentations/mfront/ImplicitNorton.mfront}
+ \end{frame}
+
+\begin{frame} 
+\frametitle{contraintes planes (généralisées) ---2/3}
+Partie spécifique auxe contraintes planes~:
+  \lstinputlisting[firstline=71,lastline=84,firstnumber=71]{@abs_top_srcdir@/docs/presentations/mfront/ImplicitNorton.mfront}
+ \end{frame}
+
+\begin{frame} 
+\frametitle{contraintes planes (généralisées) ---3/3}
+Partie spécifique aux contraintes planes généralisées~:
+  \lstinputlisting[firstline=86,lastline=99,firstnumber=86]{@abs_top_srcdir@/docs/presentations/mfront/ImplicitNorton.mfront}
+\hyperlink{c_plan}{\beamergotobutton{retour}}
+ \end{frame}
+
+
+
+\section{fonctionnement adao}
+
+\begin{frame}
+\frametitle{adao}
+\tableofcontents[currentsection,hideothersection]    
+\end{frame}
+
+\begin{frame}
+\label{adao}
+\frametitle{principe d'\adao }
+ \begin{itemize}
+ \item algorithmes d'optimisation pour trouver les paramètres $X$~;
+ \item qui minimisent l'écart $F=Y^{obs}-H(X)$~;
+ \item $Y^{obs}$ valeurs observées (expérimentales, ou autre)~;
+ \item $H(X)$ valeurs simulées (par \mtest~ou~\aster~... ) ~;
+ \end{itemize}
+    \includegraphics[width=9cm,height=6cm]{@abs_top_srcdir@/docs/presentations/images/CourbeExpBurger.png}  
+
+\end{frame}
+
+\begin{frame}[plain]
+\frametitle{appel de \mtest (python) par \adao }
+    \lstinputlisting[firstline=21,lastline=26]{@abs_top_srcdir@/docs/presentations/mtest/mfrontexec.py}
+    \lstinputlisting[firstline=38,lastline=48]{@abs_top_srcdir@/docs/presentations/mtest/mfrontexec.py}
+ \textcolor{blue}{  \hyperlink{resume_adao}{\beamergotobutton{retour}}}
+\end{frame}
+
+
+\end{document}

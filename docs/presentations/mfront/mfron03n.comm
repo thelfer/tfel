@@ -1,0 +1,283 @@
+# -*- coding: utf-8 -*-
+# TITRE TEST META_LEMA_ANI 3D UTILISANT SIMU_POINT_MAT similaire aux tests COMP001xxx
+
+
+# COPYRIGHT (C) 1991 - 2013  EDF R&D                WWW.CODE-ASTER.ORG
+#
+# THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
+# IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
+# THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
+# (AT YOUR OPTION) ANY LATER VERSION.
+#
+# THIS PROGRAM IS DISTRIBUTED IN THE HOPE THAT IT WILL BE USEFUL, BUT
+# WITHOUT ANY WARRANTY; WITHOUT EVEN THE IMPLIED WARRANTY OF
+# MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE. SEE THE GNU
+# GENERAL PUBLIC LICENSE FOR MORE DETAILS.
+#
+# YOU SHOULD HAVE RECEIVED A COPY OF THE GNU GENERAL PUBLIC LICENSE
+# ALONG WITH THIS PROGRAM; IF NOT, WRITE TO EDF R&D CODE_ASTER,
+# 1 AVENUE DU GENERAL DE GAULLE, 92141 CLAMART CEDEX, FRANCE.
+
+
+
+DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET',VISU_EFICAS='NON'),DEBUG=_F(SDVERI='NON'),
+IGNORE_ALARM='CALCULEL_28', IMPR_MACRO='OUI',
+)
+# SDVERI='NON' car la verification est trop couteuse en CPU
+
+import os
+#os.system("CXXFLAGS='-g' mfront --obuild meta_lema_ani.mfront --interface=aster --debug")
+os.system("mfront --obuild meta_lema_ani.mfront --interface=aster")
+os.system("mv src/libAsterBehaviour.so meta_lema_ani.so")
+
+
+# def des materiaux
+MATA = [None]*2
+MATF = [None]*2
+compor=[None]*2
+#unite en Pa
+C_Pa = 1.e+6
+RYOUNG=80000
+RNU=0.35
+# unites Pa
+#MATA[0]=DEFI_MATERIAU(ELAS_META=_F(E = 80000.*C_Pa,
+                               #NU = 0.35,
+                               #F_ALPHA = 0.,
+                               #C_ALPHA = 0.,
+                               #PHASE_REFE = 'FROID',
+                               #EPSF_EPSC_TREF = 0.,),
+                   #META_LEMA_ANI=_F(
+                            #F1_A=2.40*C_Pa,    F2_A=0.20*C_Pa,     C_A=9.40*C_Pa,
+                            #F1_M=0.0,    F2_M=0.80E-04, C_M=0.99E-04,
+                            #F1_N=4.40,    F2_N=3.0,     C_N=6.1,
+                            #F1_Q=19900., F2_Q=21000.,  C_Q=6200.,
+                            #F_MRR_RR=1.,                 C_MRR_RR=1.,
+                            #F_MTT_TT=1.,                 C_MTT_TT=1.,
+                            #F_MZZ_ZZ=1.,                 C_MZZ_ZZ=1.,
+                            #F_MRT_RT=0.75,               C_MRT_RT=0.75,
+                            #F_MRZ_RZ=0.75,               C_MRZ_RZ=0.75,
+                            #F_MTZ_TZ=0.75,               C_MTZ_TZ=0.75,),),
+
+## unites Pa
+#MATA[1]=DEFI_MATERIAU(ELAS_META=_F(E = 80000.,
+                               #NU = 0.35,
+                               #F_ALPHA = 0.,
+                               #C_ALPHA = 0.,
+                               #PHASE_REFE = 'FROID',
+                               #EPSF_EPSC_TREF = 0.,),
+                   #META_LEMA_ANI=_F(
+                            #F1_A=2.40,    F2_A=0.20,     C_A=9.40,
+                            #F1_M=0.0,    F2_M=0.80E-04, C_M=0.99E-04,
+                            #F1_N=4.40,    F2_N=3.0,     C_N=6.1,
+                            #F1_Q=19900., F2_Q=21000.,  C_Q=6200.,
+                            #F_MRR_RR=1.,                 C_MRR_RR=1.,
+                            #F_MTT_TT=1.,                 C_MTT_TT=1.,
+                            #F_MZZ_ZZ=1.,                 C_MZZ_ZZ=1.,
+                            #F_MRT_RT=0.75,               C_MRT_RT=0.75,
+                            #F_MRZ_RZ=0.75,               C_MRZ_RZ=0.75,
+                            #F_MTZ_TZ=0.75,               C_MTZ_TZ=0.75,),),
+#compor[0]='META_LEMA_ANI'
+
+C_Pa=1.e6
+MATF[0]=DEFI_MATERIAU( 
+                  ELAS=_F( E=80000.*C_Pa, NU=0.35, ALPHA=0.),
+                  
+                  UMAT=_F( NB_VALE=26,
+                           C1  =80000.*C_Pa,    
+                           C2  =0.35, 
+                           C3  =2.40*C_Pa,       ## F1_A=2.40,    
+                           C4  =0.20*C_Pa,       ## F2_A=0.20,    
+                           C5  =9.40*C_Pa,       ## C_A=9.40,
+                           C6  =0.0,        ## F1_M=0.0,    
+                           C7  =0.80E-04,   ## F2_M=0.80E-04,
+                           C8  =0.99E-04,   ## C_M=0.99E-04,
+                           C9  =4.40,       ## F1_N=4.40,    
+                           C10 =3.0,        ## F2_N=3.0,     
+                           C11 =6.1,        ## C_N=6.1,
+                           C12 =19900.,     ## F1_Q=19900., 
+                           C13 =21000.,     ## F2_Q=21000.,  
+                           C14 =6200.,      ## C_Q=6200.,
+                           C15 =1.,         ## F_MRR_RR          
+                           C16 =1.,         ## F_MTT_TT
+                           C17 =1.,         ## F_MZZ_ZZ     
+                           C18 =0.75,       ## F_MRT_RT
+                           C19 =0.75,       ## F_MTZ_TZ
+                           C20 =0.75,       ## F_MRZ_RZ        
+                           C21 =1.,         ## C_MRR_RR
+                           C22 =1.,         ## C_MTT_TT
+                           C23 =1.,         ## C_MZZ_ZZ
+                           C24 =0.75,       ## C_MRT_RT     
+                           C25 =0.75,       ## C_MRZ_RZ   
+                           C26 =0.75,       ## C_MTZ_TZ
+                            ),)
+
+
+MATF[1]=DEFI_MATERIAU( 
+                  ELAS=_F( E=80000., NU=0.35, ALPHA=0.),
+                 
+                  UMAT=_F( NB_VALE=26,
+                           C1  =80000.,    
+                           C2  =0.35, 
+                           C3  =2.40,       ## F1_A=2.40,    
+                           C4  =0.20,       ## F2_A=0.20,    
+                           C5  =9.40,       ## C_A=9.40,
+                           C6  =0.0,        ## F1_M=0.0,    
+                           C7  =0.80E-04,   ## F2_M=0.80E-04,
+                           C8  =0.99E-04,   ## C_M=0.99E-04,
+                           C9  =4.40,       ## F1_N=4.40,    
+                           C10 =3.0,        ## F2_N=3.0,     
+                           C11 =6.1,        ## C_N=6.1,
+                           C12 =19900.,     ## F1_Q=19900., 
+                           C13 =21000.,     ## F2_Q=21000.,  
+                           C14 =6200.,      ## C_Q=6200.,
+                           C15 =1.,         ## F_MRR_RR          
+                           C16 =1.,         ## F_MTT_TT
+                           C17 =1.,         ## F_MZZ_ZZ     
+                           C18 =0.75,       ## F_MRT_RT
+                           C19 =0.75,       ## F_MTZ_TZ
+                           C20 =0.75,       ## F_MRZ_RZ        
+                           C21 =1.,         ## C_MRR_RR
+                           C22 =1.,         ## C_MTT_TT
+                           C23 =1.,         ## C_MZZ_ZZ
+                           C24 =0.75,       ## C_MRT_RT     
+                           C25 =0.75,       ## C_MRZ_RZ   
+                           C26 =0.75,       ## C_MTZ_TZ
+                            ),)
+
+compor[1]='MFRONT'
+
+##################################################################################
+#Discretisation du calcul. nbequi = nombre de calculs "equivalents" : Pa, Rot
+Ncal = 4
+N_pas = 2*[5] + [5, 10]
+nbequi=2
+# les differents calculs effectues
+label_cal=['_Pa_','_rot_'] + 2* ['_N']
+#pointeur materiau
+P_imat = [0] + [1] + (Ncal-2)*[1]
+
+#parametres vitesse de sollicitation
+vitesse = 1.e-2
+t_0 = 5.e-2/(8.0*vitesse)
+# calibrage des deformations maximum dans l'extension 93
+calibrage = 5.0e-1;
+
+# liste d'archivage
+temps_ar=DEFI_LIST_REEL( VALE =[t_0*i for i in range(9)],)
+
+# angles utilises pour la rotation : non permise pour META_LEMA_ANI en attendant que m soit en repere cartesien
+angle2=30.
+angle0=0.
+angles=[angle0,angle2] + (Ncal-2)*[angle0]
+
+## les precisions sur chaque TEST_RESU
+prec_ecart=[[1.E-10, 1.E-10, 0.02,     1.E-10],
+            [1.E-10, 1.E-10, 0.02,   1.E-10],
+            [1.E-10, 1.E-10, 1.E-10,  1.E-10]]
+vale_calc=[
+  [0.0E+00,             0.0E+00,             0.0190015638553,     0.0E+00],
+  [0.00    ,            0.0,                 0.0112942150369,     0.0E+00],
+  [0.0E+00,             0.0E+00,             0.0E+00,             0.0E+00],
+    ]
+
+
+prec_tgt=2.e-2
+prec_zero=[1.E-10, 0.01, 0.01]
+
+
+# coefficients pour ch_param2 pour calculer l'erreur sur le cas "Pa"
+coef_para=[1.,C_Pa,C_Pa]
+CALIB_E=RYOUNG
+CALIB_NU=RNU
+
+# utilitaires divers : calcul de l'erreur, renommage
+INCLUDE(UNITE=91)
+
+# definition de la temperature imposee et des phase metallurgiques
+
+TEMP=DEFI_CONSTANTE(VALE=700.)
+
+phase1=DEFI_CONSTANTE(VALE=1)
+
+phase0=DEFI_CONSTANTE(VALE=0)
+
+# definition du chargement 3D
+
+INCLUDE(UNITE=93)
+
+tempsar=DEFI_LIST_REEL( VALE =[t_0*i for i in range(9)],)
+
+
+
+###################################################################################
+#  TEST 3D MFRONT
+##################################################################################
+
+# les quantites extraites du calcul
+ch_param=['V7','VMIS','TRACE','SIXX','SIYY','SIZZ','SIXY','SIXZ','SIYZ']
+ch_param2=['V7','VMIS','TRACE']
+# resultats
+RESM=[None]*Ncal
+R_SI=[None]*len(ch_param)
+
+#Boucle sur l'ensemble des calculs
+for i in range(Ncal):
+        N = N_pas[i]
+        imat = P_imat[i]
+        temps=DEFI_LIST_REEL(DEBUT=0.0,
+                     INTERVALLE=(_F(JUSQU_A=t_0,NOMBRE=N,),
+                                 _F(JUSQU_A=2.0*t_0,NOMBRE=N,),
+                                 _F(JUSQU_A=3.0*t_0,NOMBRE=N,),
+                                 _F(JUSQU_A=4.0*t_0,NOMBRE=N,),
+                                 _F(JUSQU_A=5.0*t_0,NOMBRE=N,),
+                                 _F(JUSQU_A=6.0*t_0,NOMBRE=N,),
+                                 _F(JUSQU_A=7.0*t_0,NOMBRE=N,),
+                                 _F(JUSQU_A=8.0*t_0,NOMBRE=N,),),);
+
+#       Resout le pb a deformation imposee
+        RESM[i]=SIMU_POINT_MAT(
+                
+                COMPORTEMENT=_F(RELATION='MFRONT',
+                        LIBRAIRIE='meta_lema_ani.so',
+                        NOM_ROUTINE='astermetalemani',
+                        NB_VARI=14,                        
+                        ),
+
+                   ANGLE=angles[i],
+                   #SUPPORT='ELEMENT',
+                   AFFE_VARC=(
+                          _F(V1=phase1,V2=phase0,V3=phase0,V4=phase0,NOM_VARC='M_ZIRC',),
+                          _F(VALE_FONC=TEMP,
+                              VALE_REF=700.,
+                              NOM_VARC='TEMP',),),
+                   NEWTON=_F(MATRICE='TANGENTE',
+                             REAC_ITER=1,),
+                   CONVERGENCE=_F(ITER_GLOB_MAXI=50,),
+                   MATER      = MATF[imat],
+                   INCREMENT=_F(LIST_INST=temps),
+                   ARCHIVAGE = _F(LIST_INST = tempsar),
+                   EPSI_IMPOSE=_F(EPXX=eps_def[0], EPYY=eps_def[1], EPZZ=eps_def[2],
+                                  EPXY=eps_def[3], EPXZ=eps_def[4], EPYZ=eps_def[5]),
+                        );
+        DETRUIRE(CONCEPT=_F(NOM=temps))
+        #IMPR_TABLE(TABLE=RESF[i])
+#       DETRUIRE(CONCEPT=_F(NOM=DEFLIST))
+# On renomme les composantes en fonction de  l'ordre de discretisation
+        R_SI=RENOMME(i,N_pas,label_cal,ch_param,RESM,R_SI)
+
+# TEST_RESU sur les erreurs relatives
+TEST_ECART(ch_param2,label_cal,N_pas,Ncal,nbequi,R_SI,prec_ecart,vale_calc,prec_zero,coef_para)
+
+###############################################################################
+# impressions
+for i in range(len(ch_param)):
+       IMPR_TABLE(TABLE=R_SI[i])
+       DETRUIRE(CONCEPT=_F(NOM=R_SI[i]))
+
+
+
+
+
+
+FIN();
+#

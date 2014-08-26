@@ -10,6 +10,7 @@
 #include<cstdlib>
 #include<iostream>
 #include<algorithm>
+#include<stdexcept>
 
 #include"tfel-config.hxx"
 
@@ -51,6 +52,11 @@ treatOFlags2(void);
 static void
 treatCastem(void);
 #endif /* HAVE_CASTEM */
+
+#ifdef HAVE_ZMAT
+static void
+treatZMAT(void);
+#endif /* HAVE_ZMAT */
 
 static void
 treatExceptions(void);
@@ -118,6 +124,9 @@ static bool mfront_profiling    = false;
 #ifdef HAVE_CASTEM
 static bool castem          = false;
 #endif /* HAVE_CASTEM */
+#ifdef HAVE_ZMAT
+static bool zmat          = false;
+#endif /* HAVE_ZMAT */
 static bool lsystem         = false;
 
 #if defined _WIN32 || defined _WIN64
@@ -248,6 +257,14 @@ treatCastem(void)
   castem = true;
 } // end of treatCastem
 #endif /* HAVE_CASTEM */
+
+#ifdef HAVE_ZMAT
+static void
+treatZMAT(void)
+{
+  zmat = true;
+} // end of treatZMAT
+#endif /* HAVE_ZMAT */
 
 static void
 treatExceptions(void)
@@ -431,6 +448,9 @@ main(const int argc,
 #ifdef HAVE_CASTEM
   registerCallBack("--castem",&treatCastem,"request flags for castem.");
 #endif /* HAVE_CASTEM */
+#ifdef HAVE_ZMAT
+  registerCallBack("--zmat",&treatZMAT,"request flags for zmat.");
+#endif /* HAVE_ZMAT */
   registerCallBack("--exceptions",&treatExceptions,"request flags for libTFELException.");
   registerCallBack("--math-kriging",&treatMathKriging,"request flags for libTFELMathKriging.");
   registerCallBack("--math-cubic-spline",&treatMathCubicSpline,"request flags for libTFELMathCubicSpline.");
@@ -488,6 +508,26 @@ main(const int argc,
   }
 #endif /* LOCAL_CASTEM_HEADER */
 #endif /* HAVE_CASTEM */
+
+#ifdef HAVE_ZMAT
+  if(zmat){
+    if(!incs){
+      cout << ZMATFLAGS1 << " ";
+    }
+    const char * const zmatpath = getenv("ZSET_ROOT");
+    if(zmatpath!=0){
+      cout << "-I" << zmatpath << "/include ";
+    } else {
+#ifndef ZSET_ROOT
+      string msg("tfel-config : no installation path to the ZSET softwares.\n"
+		 "Please define the 'ZSET_ROOT' variable environnement");
+      throw(runtime_error(msg));
+#else
+      cout << ZMATFLAGS2 << " ";
+#endif
+    }
+  }
+#endif /* HAVE_ZMAT */
 
   if(libs){
     cout << "-L" << libDir() << " ";

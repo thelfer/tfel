@@ -59,7 +59,7 @@ namespace mfront
 
   bool
   MFrontUMATInterfaceBase::isModellingHypothesisHandled(const Hypothesis h,
-							const MechanicalBehaviourDescription& mb)
+							const MechanicalBehaviourDescription& mb) const
   {
     using namespace std;
     set<Hypothesis> ih(this->getModellingHypothesesToBeTreated(mb));
@@ -86,7 +86,7 @@ namespace mfront
   } // end of MFrontUMATInterfaceBase::allowDynamicallyAllocatedArrays
 
   std::map<std::string,std::vector<std::string> >
-  MFrontUMATInterfaceBase::getGlobalDependencies(const MechanicalBehaviourDescription&)
+  MFrontUMATInterfaceBase::getGlobalDependencies(const MechanicalBehaviourDescription&) const
   {
     using namespace std;
     return map<string,vector<string> >();
@@ -194,7 +194,7 @@ namespace mfront
   void 
   MFrontUMATInterfaceBase::exportMechanicalData(std::ofstream& behaviourDataFile,
 						const Hypothesis h,
-						const MechanicalBehaviourDescription& mb)
+						const MechanicalBehaviourDescription& mb) const
   {
     using namespace std;
     const MechanicalBehaviourData& d = mb.getMechanicalBehaviourData(h);
@@ -257,7 +257,7 @@ namespace mfront
   void
   MFrontUMATInterfaceBase::writeBehaviourConstructor(std::ofstream& behaviourFile,
 						     const MechanicalBehaviourDescription& mb,
-						     const std::string& initStateVarsIncrements)
+						     const std::string& initStateVarsIncrements) const
   {
     using namespace std;
     const std::string iprefix = makeUpperCase(this->getInterfaceName());
@@ -428,7 +428,7 @@ namespace mfront
   void 
   MFrontUMATInterfaceBase::writeBehaviourDataConstructor(std::ofstream& behaviourDataFile,
 							 const Hypothesis h,
-							 const MechanicalBehaviourDescription& mb)
+							 const MechanicalBehaviourDescription& mb) const
   {
     using namespace std;
     const MechanicalBehaviourData& d = mb.getMechanicalBehaviourData(h);
@@ -492,7 +492,7 @@ namespace mfront
   void 
   MFrontUMATInterfaceBase::writeIntegrationDataConstructor(std::ofstream& behaviourIntegrationFile,
 							   const Hypothesis h,
-							   const MechanicalBehaviourDescription& mb)
+							   const MechanicalBehaviourDescription& mb) const
   {
     using namespace std;
     const MechanicalBehaviourData& d = mb.getMechanicalBehaviourData(h);
@@ -531,7 +531,7 @@ namespace mfront
 
   void 
   MFrontUMATInterfaceBase::writeBehaviourDataMainVariablesSetters(std::ofstream& os,
-								  const MechanicalBehaviourDescription& mb)
+								  const MechanicalBehaviourDescription& mb) const
   {
     using namespace std;
     const std::string iprefix = makeUpperCase(this->getInterfaceName());
@@ -635,7 +635,7 @@ namespace mfront
 
   void 
   MFrontUMATInterfaceBase::writeIntegrationDataMainVariablesSetters(std::ofstream& os,
-								    const MechanicalBehaviourDescription& mb)
+								    const MechanicalBehaviourDescription& mb) const
   {
     using namespace std;
     const std::string iprefix = makeUpperCase(this->getInterfaceName());
@@ -984,9 +984,9 @@ namespace mfront
       out << "using mfront::SupportedTypes;\n";
       out << "// double is used by MTestFileGeneratorBase\n";
       out << "vector<double> mg_STRESS(*NTENS);\n";
-      out << "vector<double> mg_NSTATV(*NSTATV);\n";
+      out << "vector<double> mg_STATEV(*NSTATV);\n";
       out << "copy(STRESS,STRESS+*NTENS,mg_STRESS.begin());\n";
-      out << "copy(STATEV,STATEV+*NSTATV,mg_NSTATV.begin());\n";
+      out << "copy(STATEV,STATEV+*NSTATV,mg_STATEV.begin());\n";
     }
   } // end of MFrontUMATInterfaceBase::generateMTestFile1
 
@@ -1026,14 +1026,14 @@ namespace mfront
       out << "const unsigned short TensorSize  = mg.getTensorSize();\n";
       out << "mg.setHandleThermalExpansion(false);\n";
       out << "mg.addTime(0.);\n";
-      out << "mg.addTime(*DTIME);\n";
+      out << "mg.addTime(*DTIME>0 ? *DTIME : 1.e-50);\n";
       if(type==MechanicalBehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR){
     	out << "mg.setStrainTensor(STRAN);\n";
     	out << "mg.setStrainTensorIncrement(DSTRAN);\n";
     	out << "mg.setStressTensor(&mg_STRESS[0]);\n";
       } else if(type==MechanicalBehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR){
-    	out << "mg.setDeformationGradientAtTheBeginningOfTheStimeStep(F0);\n";
-    	out << "mg.setDeformationGradientAtTheEndOfTheStimeStep(F1);\n";
+    	out << "mg.setDeformationGradientAtTheBeginningOfTheStimeStep(STRAN);\n";
+    	out << "mg.setDeformationGradientAtTheEndOfTheStimeStep(DSTRAN);\n";
     	out << "mg.setStressTensor(&mg_STRESS[0]);\n";
       } else {
     	string msg("MFrontUMATInterfaceBase::generateMTestFile2 : ");
@@ -1084,40 +1084,22 @@ namespace mfront
 	  SupportedTypes::TypeFlag flag = this->getTypeFlag(p->type);
 	  const string& ivname = d.getGlossaryName(p->name);
 	  if(p->arraySize==1u){
-	    if(ivoffset.isNull()){
-	      if(flag==SupportedTypes::Scalar){
-		out << "mg.addInternalStateVariable(\"" << ivname << "\",SupportedTypes::Scalar,STATEV);\n";
-		ivoffset += SupportedTypes::TypeSize(1u,0u,0u,0u);
-	      } else {
-		ivoffset += SupportedTypes::TypeSize(0u,0u,1u,0u);
-		out << "mg.addInternalStateVariable(\"" << ivname << "\",SupportedTypes::Stensor,STATEV);\n";
-	      }
+	    if(flag==SupportedTypes::Scalar){
+	      out << "mg.addInternalStateVariable(\"" << ivname << "\",SupportedTypes::Scalar,&mg_STATEV[" << ivoffset<< "]);\n";
+	      ivoffset += SupportedTypes::TypeSize(1u,0u,0u,0u);
 	    } else {
-	      if(flag==SupportedTypes::Scalar){
-		out << "mg.addInternalStateVariable(\"" << ivname << "\",SupportedTypes::Scalar,STATEV+" << ivoffset<< ");\n";
-		ivoffset += SupportedTypes::TypeSize(1u,0u,0u,0u);
-	      } else {
-		out << "mg.addInternalStateVariable(\"" << ivname << "\",SupportedTypes::Stensor,STATEV+" << ivoffset<< ");\n";
-		ivoffset += SupportedTypes::TypeSize(0u,0u,1u,0u);
-	      }
+	      out << "mg.addInternalStateVariable(\"" << ivname << "\",SupportedTypes::Stensor,&mg_STATEV[" << ivoffset<< "]);\n";
+	      ivoffset += SupportedTypes::TypeSize(0u,0u,1u,0u);
 	    }
 	  } else {
 	    if(p->arraySize>=SupportedTypes::ArraySizeLimit){
 	      out << "for(unsigned short i=0;i!=" << p->arraySize << ";++i){\n";
 	      out << "ostringstream name;\n";
 	      out << "name << \"" << ivname << "[\" << i << \"]\";\n";
-	      if(ivoffset.isNull()){
-		if(flag==SupportedTypes::Scalar){
-		  out << "mg.addInternalStateVariable(name.str(),SupportedTypes::Scalar,STATEV+i);\n";
-		} else {
-		  out << "mg.addInternalStateVariable(name.str(),SupportedTypes::Stensor,STATEV+i);\n";
-		}
+	      if(flag==SupportedTypes::Scalar){
+		out << "mg.addInternalStateVariable(name.str(),SupportedTypes::Scalar,&mg_STATEV[" << ivoffset<< "]+i);\n";
 	      } else {
-		if(flag==SupportedTypes::Scalar){
-		  out << "mg.addInternalStateVariable(name.str(),SupportedTypes::Scalar,STATEV+" << ivoffset<< "+i);\n";
-		} else {
-		  out << "mg.addInternalStateVariable(name.str(),SupportedTypes::Stensor,STATEV+" << ivoffset<< "+i);\n";
-		}
+		out << "mg.addInternalStateVariable(name.str(),SupportedTypes::Stensor,&mg_STATEV[" << ivoffset<< "]+i);\n";
 	      }
 	      out << "}\n";
 	      if(flag==SupportedTypes::Scalar){
@@ -1127,26 +1109,14 @@ namespace mfront
 	      }
 	    } else {
 	      for(i=0;i!=p->arraySize;++i){
-		if(ivoffset.isNull()){
-		  if(flag==SupportedTypes::Scalar){
-		    out << "mg.addInternalStateVariable(\"" << ivname
-			<< "[" << i << "]\",SupportedTypes::Scalar,STATEV);\n";
-		    ivoffset += SupportedTypes::TypeSize(1u,0u,0u,0u);
-		  } else {
-		    out << "mg.addInternalStateVariable(\"" << ivname
-			<< "[" << i << "]\",SupportedTypes::Stensor,STATEV);\n";
-		    ivoffset += SupportedTypes::TypeSize(0u,0u,1u,0u);
-		  }
+		if(flag==SupportedTypes::Scalar){
+		  out << "mg.addInternalStateVariable(\""
+		      << ivname << "[" << i << "]\",SupportedTypes::Scalar,&mg_STATEV[" << ivoffset<< "]);\n";
+		  ivoffset += SupportedTypes::TypeSize(1u,0u,0u,0u);
 		} else {
-		  if(flag==SupportedTypes::Scalar){
-		    out << "mg.addInternalStateVariable(\""
-			<< ivname << "[" << i << "]\",SupportedTypes::Scalar,STATEV+" << ivoffset<< ");\n";
-		    ivoffset += SupportedTypes::TypeSize(1u,0u,0u,0u);
-		  } else {
-		    out << "mg.addInternalStateVariable(\""
-			<< ivname << "[" << i << "]\",SupportedTypes::Stensor,STATEV+" << ivoffset<< ");\n";
-		    ivoffset += SupportedTypes::TypeSize(0u,0u,1u,0u);
-		  }
+		  out << "mg.addInternalStateVariable(\""
+		      << ivname << "[" << i << "]\",SupportedTypes::Stensor,&mg_STATEV[" << ivoffset<< "]);\n";
+		  ivoffset += SupportedTypes::TypeSize(0u,0u,1u,0u);
 		}
 	      }
 	    }

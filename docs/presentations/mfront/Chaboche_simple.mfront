@@ -1,0 +1,55 @@
+@Parser Implicit;
+@Behaviour Chaboche;
+@Algorithm NewtonRaphson_NumericalJacobian;
+@RequireStiffnessTensor;
+@Theta 1. ;
+@MaterialProperty stress young;
+@MaterialProperty real nu;
+@MaterialProperty real R_inf;
+@MaterialProperty real R_0;
+@MaterialProperty real b;
+@MaterialProperty real C[2];
+@MaterialProperty real g[2];
+@StateVariable real    p;
+@StateVariable Stensor a[2];
+@LocalVariable real Fel;
+@InitLocalVars{ Stensor sigel=D*(eel+deto);
+  for(unsigned short i=0;i!=2;++i){
+      sigel-=C[i]*a[i]/1.5;}
+  const real seqel = sigmaeq(sigel);
+  const real Rpel  = R_inf + (R_0-R_inf)*exp(-b*p) ;
+  Fel   = seqel - Rpel ; // prediction elastique} 
+@ComputeStress{  sig = D*eel;} 
+
+
+@Integrator{
+  if(Fel > 0){       // solution plastique
+      // Les variables suivies de _ sont en t+theta*dt
+      const real p_  = p +theta*dp ;
+      const real Rp_ = R_inf + (R_0-R_inf)*exp(-b*p_) ;
+      Stensor a_[2];
+      Stensor sr = deviator(sig);
+      for(unsigned short i=0;i!=2;++i){
+          a_[i]       = a[i]+theta*da[i];
+          sr         -= C[i]*a_[i]/1.5;
+      } // tenseur Sigma-X
+      const stress  seq = sigmaeq(sr);
+      Stensor n = 1.5*sr/seq;
+      feel = deel - deto + dp*n ;
+      fp    = (seq-Rp_)/young; // pour normaliser
+      for(unsigned short i=0;i!=2;++i){
+        fa[i] = da[i] - dp*(n-g[i]*a_[i]);
+      }
+  } else { 
+      feel = deel - deto; // solution elastique }
+} 
+
+@TangentOperator{
+  if((smt==ELASTIC)||(smt==SECANTOPERATOR)){ 
+     Dt=D; // matrice elastique
+  } else if (smt==CONSISTANTTANGENTOPERATOR){
+    Stensor4 Je;
+    getPartialJacobianInvert(Je);
+    Dt = D*Je; // matrice tangente coherente
+  } 
+}

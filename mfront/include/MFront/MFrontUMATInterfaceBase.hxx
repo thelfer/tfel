@@ -42,12 +42,12 @@ namespace mfront{
      * \param[in] mb : mechanical behaviour description
      */
     virtual std::map<std::string,std::vector<std::string> >
-    getGlobalDependencies(const MechanicalBehaviourDescription&);
+    getGlobalDependencies(const MechanicalBehaviourDescription&) const;
 
     virtual void
     exportMechanicalData(std::ofstream&,
 			 const Hypothesis,
-			 const MechanicalBehaviourDescription&);
+			 const MechanicalBehaviourDescription&) const;
     /*!
      * write the behaviour constructor associated with the law
      * \param[in] behaviourFile           : output file
@@ -59,12 +59,12 @@ namespace mfront{
     virtual void
     writeBehaviourConstructor(std::ofstream&,
 			      const MechanicalBehaviourDescription&,
-			      const std::string&);
+			      const std::string&) const;
 
     virtual void
     writeBehaviourDataConstructor(std::ofstream&,
 				  const Hypothesis,
-				  const MechanicalBehaviourDescription&);
+				  const MechanicalBehaviourDescription&) const;
 
     /*!
      * write the initialisation of the driving variables
@@ -73,12 +73,12 @@ namespace mfront{
      */
     virtual void 
     writeBehaviourDataMainVariablesSetters(std::ofstream&,
-					   const MechanicalBehaviourDescription&);
+					   const MechanicalBehaviourDescription&) const;
     
     virtual void
     writeIntegrationDataConstructor(std::ofstream&,
 				    const Hypothesis,
-				    const MechanicalBehaviourDescription&);
+				    const MechanicalBehaviourDescription&) const;
     /*!
      * write the initialisation of the driving variables
      * \param[in] behaviourFile : output file
@@ -86,7 +86,7 @@ namespace mfront{
      */
     virtual void 
     writeIntegrationDataMainVariablesSetters(std::ofstream&,
-					     const MechanicalBehaviourDescription&);
+					     const MechanicalBehaviourDescription&) const;
 
 
     virtual void
@@ -505,7 +505,7 @@ namespace mfront{
      */
     virtual bool
     isModellingHypothesisHandled(const Hypothesis,
-				 const MechanicalBehaviourDescription&);
+				 const MechanicalBehaviourDescription&) const;
     
     virtual std::string
     getModellingHypothesisTest(const Hypothesis) const = 0;

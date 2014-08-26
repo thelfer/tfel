@@ -5,6 +5,8 @@
  * \date   12 nov 2006
  */
 
+#include<iostream>
+
 #include<stdexcept>
 #include<algorithm>
 #include<iterator>
@@ -71,23 +73,31 @@ namespace tfel{
     void
     CxxTokenizer::splitLine(std::string line, const unsigned short lineNumber)
     {
-
       using namespace std;
-
       if(this->cStyleCommentOpened){
 	string::size_type pos3;
 	pos3 = line.find("*/");
+	if((this->fileTokens.empty())||
+	   ((this->fileTokens.back().flag!=Token::Comment)&&
+	    (this->fileTokens.back().flag!=Token::DoxygenComment)&&
+	    (this->fileTokens.back().flag!=Token::DoxygenBackwardComment))){
+	  string msg("CxxTokenizer::splitLine : internal error (previous token "
+		     "is not a comment)");
+	  throw(runtime_error(msg));
+	}
+	if(!this->fileTokens.back().value.empty()){
+	  this->fileTokens.back().value += '\n';
+	}
 	if(pos3==string::npos){
-	  this->fileTokens.push_back(Token(lineNumber,line,Token::Comment));
+	  this->fileTokens.back().value += line;
 	  return;
 	}
-	this->fileTokens.push_back(Token(lineNumber,line.substr(0,pos3+2),Token::Comment));
+	this->fileTokens.back().value += line.substr(0,pos3);
 	line.erase(0,pos3+2);
 	this->cStyleCommentOpened=false;
       }
 
       while(!line.empty()){
-
 	bool treatString=false;
 	bool treatCppComment=false;
 	bool treatCComment=false;
@@ -158,7 +168,34 @@ namespace tfel{
 	    }
 	  }
 	  line.erase(0,pos[1]);
-	  this->fileTokens.push_back(Token(lineNumber,line,Token::Comment));
+	  if((line.size()>=3u)&&((line[2]=='/')||(line[2]=='!'))){
+	    // doxygen comment
+	    if((line.size()>=4u)&&(line[3]=='<')){
+	      // doxygen backward comment
+	      if(this->fileTokens.empty()){
+		this->fileTokens.push_back(Token(lineNumber,line,Token::Comment));
+	      } else if((this->fileTokens.back().line!=lineNumber)||
+			((this->fileTokens.back().flag!=Token::Standard)||
+			 (*(this->fileTokens.back().value.rbegin())!=';'))){
+		this->fileTokens.push_back(Token(lineNumber,line.substr(3),Token::Comment));
+	      } else {
+		this->fileTokens.push_back(Token(lineNumber,line.substr(4),Token::DoxygenBackwardComment));
+	      }
+	    } else {
+	      // standard doxygen command
+	      if(this->fileTokens.back().flag==Token::DoxygenComment){
+		if(!this->fileTokens.back().value.empty()){
+		  this->fileTokens.back().value += '\n';
+		}
+		this->fileTokens.back().value += line.substr(3);
+	      } else {
+		this->fileTokens.push_back(Token(lineNumber,line.substr(3),Token::DoxygenComment));
+	      }
+	    }
+	  } else {
+	    // standard C++ comment
+	    this->fileTokens.push_back(Token(lineNumber,line,Token::Comment));
+	  }
 	  line.clear();
 	} else if(treatCComment){
 	  if(pos[2]!=0){
@@ -170,13 +207,38 @@ namespace tfel{
 	  }
 	  line.erase(0,pos[2]);
 	  pos[2]=line.find("*/");
+	  string comment;
 	  if(pos[2]==string::npos){
-	    this->fileTokens.push_back(Token(lineNumber,line,Token::Comment));
+	    comment = line.substr(2);
 	    line.clear();
 	    this->cStyleCommentOpened=true;  
 	  } else {
-	    this->fileTokens.push_back(Token(lineNumber,line.substr(0,pos[2]+2),Token::Comment));
+	    comment = line.substr(2,pos[2]);
 	    line.erase(0,pos[2]+2);
+	  }
+	  if((comment.size()>=1)&&((comment[0]=='*')||(comment[0]=='!'))){
+	    // doxygen comment
+	    if((comment.size()>=2)&&((comment[1]=='<'))){
+	      // backward doxygen comment
+	      if(this->fileTokens.empty()){
+		this->fileTokens.push_back(Token(lineNumber,comment.substr(2),
+						 Token::Comment));
+	      } else if((this->fileTokens.back().line!=lineNumber)||
+			((this->fileTokens.back().flag!=Token::Standard)||
+			 (*(this->fileTokens.back().value.rbegin())!=';'))){
+		this->fileTokens.push_back(Token(lineNumber,comment.substr(2),
+						 Token::Comment));
+	      } else {
+		this->fileTokens.push_back(Token(lineNumber,comment.substr(2),
+						 Token::DoxygenBackwardComment));
+	      }
+	    } else {
+	      this->fileTokens.push_back(Token(lineNumber,comment.substr(1),
+					       Token::DoxygenComment));
+	    }
+	  } else {
+	    // standard C++ comment
+	    this->fileTokens.push_back(Token(lineNumber,comment,Token::Comment));
 	  }
 	} else if(treatChar){
 	  if(this->charAsString){
@@ -629,7 +691,9 @@ namespace tfel{
       using namespace std;
       TokensContainer::iterator p;    
       for(p=this->fileTokens.begin();p!=this->fileTokens.end();++p){
-	if(p->flag==Token::Comment){
+	if((p->flag==Token::Comment)||
+	   (p->flag==Token::DoxygenComment)||
+	   (p->flag==Token::DoxygenBackwardComment)){
 	  p = --(this->fileTokens.erase(p));
 	}
       }
@@ -756,7 +820,9 @@ namespace tfel{
 		      (p!=this->fileTokens.end())){
 		  current = p;
 		  ++p;
-		  if(current->flag!=Token::Comment){
+		  if((current->flag!=Token::Comment)||
+		     (current->flag!=Token::DoxygenComment)||
+		     (current->flag!=Token::DoxygenBackwardComment)){
 		    b->value.append(" ");
 		    b->value.append(current->value);
 		    this->fileTokens.erase(current);

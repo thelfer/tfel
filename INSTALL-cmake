@@ -34,6 +34,7 @@ Options
   enable-fortran : enables fortran support
   enable-python  : enables python support
   enable-aster   : enables aster support
+  enable-zmat    : enables zmat support
   enable-cyrano  : enables cyrano support (cyrano is eDF fuel performance code)
   enable-cxx-11  : enable C++-11 support (currently supported in clang (>=3.4) and g++ (>= 4.7))
 
@@ -43,6 +44,7 @@ cmake usefull variables
 =======================
 
   CASTEM_INSTALL_PATH  : specify where the castem has been installed
+  ZSET_INSTALL_PATH    : specify where the ZSET sofware has been installed
   CMAKE_TOOLCHAIN_FILE : specify a tool chain file
   CMAKE_BUILD_TYPE     : two values are supported 'Release' and 'Debug'
   TFEL_SVN_REVISION    : tfel-svn revision
@@ -50,29 +52,28 @@ cmake usefull variables
 cmake typical usage
 ===================
 
-cmake ../trunk -DCMAKE_BUILD_TYPE=Release -Dlocal-castem-header=ON -Denable-fortran=ON -Denable-python=ON -Denable-python-bindings=ON -Denable-aster=ON -Denable-cyrano=ON -DCMAKE_INSTALL_PREFIX=/home/th202608/codes/tfel/trunk/install
+cmake ../trunk -DCMAKE_BUILD_TYPE=Release -Dlocal-castem-header=ON -Denable-fortran=ON -Denable-python=ON -Denable-python-bindings=ON -Denable-aster=ON -Denable-zmat=ON -DZSET_INSTALL_PATH=/home/th202608/codes/ZeBuLoN/8.5/Z8.5 -Denable-cyrano=ON -DCMAKE_INSTALL_PREFIX=/home/th202608/codes/tfel/trunk/install
 
 debug and valgrind
 ==================
 
-cmake ../trunk -DCMAKE_BUILD_TYPE=Debug -DCTEST_MEMORYCHECK_COMMAND=valgrind -DCTEST_MEMORYCHECK_COMMAND_OPTIONS="--trace-children=yes --leak-check=full" -Dlocal-castem-header=ON -Denable-fortran=ON -Denable-python=ON -Denable-python-bindings=ON -Denable-aster=ON -Denable-cyrano=ON -DCMAKE_INSTALL_PREFIX=/tmp/tfel-debug
+cmake ../trunk -DCMAKE_BUILD_TYPE=Debug -DCTEST_MEMORYCHECK_COMMAND=valgrind -DCTEST_MEMORYCHECK_COMMAND_OPTIONS="--trace-children=yes --leak-check=full" -Dlocal-castem-header=ON -Denable-fortran=ON -Denable-python=ON -Denable-python-bindings=ON -Denable-aster=ON -Denable-zmat=ON -DZSET_INSTALL_PATH=/home/th202608/codes/ZeBuLoN/8.5/Z8.5 -Denable-cyrano=ON -DCMAKE_INSTALL_PREFIX=/tmp/tfel-debug
 
 profiling (gcc only) 
 ===================
 
-cmake ../trunk -DCMAKE_BUILD_TYPE=Profiling -Dlocal-castem-header=ON -Denable-fortran=ON -Denable-python=ON -Denable-python-bindings=ON -Denable-aster=ON -Denable-cyrano=ON -DCMAKE_INSTALL_PREFIX=/tmp/tfel-profiling
+cmake ../trunk -DCMAKE_BUILD_TYPE=Profiling -Dlocal-castem-header=ON -Denable-fortran=ON -Denable-python=ON -Denable-python-bindings=ON -Denable-aster=ON -Denable-zmat=ON -DZSET_INSTALL_PATH=/home/th202608/codes/ZeBuLoN/8.5/Z8.5 -Denable-cyrano=ON -DCMAKE_INSTALL_PREFIX=/tmp/tfel-profiling
 
 coverage (gcc only) 
 ===================
 
-cmake ../trunk -DCMAKE_BUILD_TYPE=Coverage -Dlocal-castem-header=ON -Denable-fortran=ON -Denable-python=ON -Denable-python-bindings=ON -Denable-aster=ON -Denable-cyrano=ON -DCMAKE_INSTALL_PREFIX=/tmp/tfel-profiling
+cmake ../trunk -DCMAKE_BUILD_TYPE=Coverage -Dlocal-castem-header=ON -Denable-fortran=ON -Denable-python=ON -Denable-python-bindings=ON -Denable-aster=ON -Denable-zmat=ON -DZSET_INSTALL_PATH=/home/th202608/codes/ZeBuLoN/8.5/Z8.5 -Denable-cyrano=ON -DCMAKE_INSTALL_PREFIX=/tmp/tfel-profiling
 
 
 cmake for PLEIADES users
 ========================
 
-ccmake ../trunk -DCMAKE_BUILD_TYPE=Release  -DCASTEM_INSTALL_PATH=/home/th202608/codes/castem/2012/install/ -Denable-castem-pleiades=ON -Denable-fortran=ON -Denable-python=ON -Denable-python-bindings=ON -Denable-aster=ON -Denable-cyrano=ON -DCMAKE_INSTALL_PREFIX=/home/th202608/codes/tfel/trunk/install
-
+cmake ../trunk -DCMAKE_BUILD_TYPE=Release  -DCASTEM_INSTALL_PATH=/home/th202608/codes/castem/2012/install/ -Denable-castem-pleiades=ON -Denable-fortran=ON -Denable-python=ON -Denable-python-bindings=ON -Denable-aster=ON -Denable-zmat=ON -DZSET_INSTALL_PATH=/home/th202608/codes/ZeBuLoN/8.5/Z8.5 -Denable-cyrano=ON -DCMAKE_INSTALL_PREFIX=/home/th202608/codes/tfel/trunk/install
 
 main targets:
 =============

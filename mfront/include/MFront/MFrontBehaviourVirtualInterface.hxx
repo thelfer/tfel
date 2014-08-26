@@ -56,15 +56,24 @@ namespace mfront{
      */
     virtual bool
     isModellingHypothesisHandled(const Hypothesis,
-				 const MechanicalBehaviourDescription&) = 0;
+				 const MechanicalBehaviourDescription&) const = 0;
     
     virtual std::set<Hypothesis>
     getModellingHypothesesToBeTreated(const MechanicalBehaviourDescription&) const = 0;
 
+    /*!
+     * write interface specific includes
+     * \param[in] out : output file
+     * \param[in] mb  : mechanical behaviour description
+     */
+    virtual void 
+    writeInterfaceSpecificIncludes(std::ofstream&,
+				   const MechanicalBehaviourDescription&) const = 0;
+
     virtual void 
     exportMechanicalData(std::ofstream&,
 			 const Hypothesis,
-			 const MechanicalBehaviourDescription&) = 0;
+			 const MechanicalBehaviourDescription&) const = 0;
     /*!
      * write the behaviour constructor associated with the law
      * \param[in] behaviourFile           : output file
@@ -76,12 +85,12 @@ namespace mfront{
     virtual void 
     writeBehaviourConstructor(std::ofstream&,
 			      const MechanicalBehaviourDescription&,
-			      const std::string&) = 0;
+			      const std::string&) const = 0;
     
     virtual void
     writeBehaviourDataConstructor(std::ofstream&,
 				  const Hypothesis,
-				  const MechanicalBehaviourDescription&) = 0;
+				  const MechanicalBehaviourDescription&) const = 0;
     /*!
      * write the behaviour constructor associated with the law
      * \param[in] behaviourFile : output file
@@ -89,12 +98,12 @@ namespace mfront{
      */
     virtual void 
     writeBehaviourDataMainVariablesSetters(std::ofstream&,
-					   const MechanicalBehaviourDescription&) = 0;
+					   const MechanicalBehaviourDescription&) const = 0;
     
     virtual void 
     writeIntegrationDataConstructor(std::ofstream&,
 				    const Hypothesis,
-				    const MechanicalBehaviourDescription&) = 0;
+				    const MechanicalBehaviourDescription&) const = 0;
     /*!
      * write the behaviour constructor associated with the law
      * \param[in] behaviourFile : output file
@@ -102,7 +111,7 @@ namespace mfront{
      */
     virtual void 
     writeIntegrationDataMainVariablesSetters(std::ofstream&,
-					     const MechanicalBehaviourDescription&) = 0;
+					     const MechanicalBehaviourDescription&) const = 0;
     /*!
      * \brief write output files
      * \param[in] mb        : mechanical behaviour description
@@ -121,31 +130,31 @@ namespace mfront{
      * \param[in] mb : mechanical behaviour description
      */
     virtual std::map<std::string,std::vector<std::string> >
-    getGlobalIncludes(const MechanicalBehaviourDescription&) = 0;
+    getGlobalIncludes(const MechanicalBehaviourDescription&) const = 0;
 
     /*!
      * \param[in] mb : mechanical behaviour description
      */
     virtual std::map<std::string,std::vector<std::string> >
-    getGlobalDependencies(const MechanicalBehaviourDescription&) = 0;
+    getGlobalDependencies(const MechanicalBehaviourDescription&) const = 0;
 
     /*!
      * \param[in] mb : mechanical behaviour description
      */
     virtual std::map<std::string,std::vector<std::string> >
-    getGeneratedSources(const MechanicalBehaviourDescription&) = 0;
+    getGeneratedSources(const MechanicalBehaviourDescription&) const = 0;
 
     /*!
      * \param[in] mb : mechanical behaviour description
      */
     virtual std::vector<std::string>
-    getGeneratedIncludes(const MechanicalBehaviourDescription&) = 0;
+    getGeneratedIncludes(const MechanicalBehaviourDescription&) const = 0;
 
     /*!
      * \param[in] mb : mechanical behaviour description
      */
     virtual std::map<std::string,std::vector<std::string> >
-    getLibrariesDependencies(const MechanicalBehaviourDescription&) = 0;
+    getLibrariesDependencies(const MechanicalBehaviourDescription&) const = 0;
 
     virtual ~MFrontBehaviourVirtualInterface();
 

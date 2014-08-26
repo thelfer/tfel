@@ -21,18 +21,13 @@
 @Theta 1.;
 @Epsilon 1.e-9;
 
-@StateVariable StrainStensor eel;
-eel.setGlossaryName("GreenLagrangeStrain");
-
+@IntegrationVariable StrainStensor eel;
 @StateVariable strain g[12];
 
 // Mandel stress tensor
 @LocalVariable StressStensor M;
 // multiplicative increment fo the deformation gradient
 @LocalVariable Tensor dF;
-// deformation gradient relative to the plastic configuration at the
-// beginning of the time step
-@LocalVariable Tensor Fp0;
 // a temporary variable
 @LocalVariable Tensor dF_Fe0;
 
@@ -75,8 +70,9 @@ eel.setGlossaryName("GreenLagrangeStrain");
 
 @InitLocalVariables{
   dF  = F1*invert(F0);
-  Fp0 = invert(Fe)*F0;
   dF_Fe0 = dF*Fe;
+  // déformation élastique en début de pas
+  eel = computeGreenLagrangeTensor(Fe);
   // la matrice d'interaction construite une fois pour toute
   mh = InteractionMatrix::getInteractionMatrix(h1,h2,h3,
 					       h4,h5,h6);

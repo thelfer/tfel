@@ -86,6 +86,15 @@ if(enable-aster)
   include(cmake/modules/aster.cmake)
 endif(enable-aster)
 
+#zmat
+option(enable-zmat "build zmat interface for mechanical behaviours" OFF)
+if(enable-zmat)
+  include(cmake/modules/zset.cmake)
+  message(STATUS "zmat support enabled")
+  set(HAVE_ZMAT ON)
+  add_definitions("-DHAVE_ZMAT=1")
+endif(enable-zmat)
+
 #cyrano
 option(enable-cyrano "build cyrano interface for mechanical behaviours" OFF)
 if(enable-cyrano)

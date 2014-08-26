@@ -94,6 +94,10 @@ if HAVE_ASTER
 mfront_SOURCES += MFrontAsterInterface.cxx
 endif
 
+if HAVE_ZMAT
+mfront_SOURCES += MFrontZMATInterface.cxx
+endif
+
 if HAVE_CYRANO
 mfront_SOURCES += MFrontCyranoInterface.cxx
 endif

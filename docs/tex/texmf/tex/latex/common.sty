@@ -1,0 +1,127 @@
+%%% common.sty --- 
+
+%% Auteur: th202608@pleiades077.intra.cea.fr
+%% Version: $Id: common.sty,v 0.0 2014/04/29 06:03:31 th202608 Exp $
+
+%%% Commentaires:
+
+%% Insérer ce fichier ainsi :
+%% \usepackage{common}
+
+
+%%% Code:
+
+\NeedsTeXFormat{LaTeX2e}[1995/12/01]
+\def\@rcs@ $#1Date: #2 #3$$#4Revision: #5$ {
+   \ProvidesPackage{common}[#2 v#5]}
+\@rcs@ $Date: 2014/04/29 06:03:31 $$Revision: 0.0 $
+
+%\RequirePackage{multicol}
+
+\RequirePackage{xcolor}
+%\RequirePackage{ifthen}
+\RequirePackage{graphicx}
+\RequirePackage{amsmath}
+%\RequirePackage{array}
+
+\RequirePackage{hyperref}
+
+\RequirePackage{amsmath}
+\RequirePackage{amsfonts}
+\RequirePackage{times}
+
+\RequirePackage{enumerate}
+
+%\RequirePackage[french]{babel}
+\RequirePackage{listings}
+
+\newcommand{\tenseur}[1]{\underline{#1}}
+\newcommand{\tenseurq}[1]{\underline{\mathbf{#1}}}
+
+\newcommand{\tsigma}{\underline{\sigma}}
+\newcommand{\sigmaeq}{\sigma_{\mathrm{eq}}}
+
+\newcommand{\epsilonth}{\epsilon^{\mathrm{th}}}
+
+\newcommand{\tepsilonto}{\underline{\epsilon}^{\mathrm{to}}}
+\newcommand{\tepsilonel}{\underline{\epsilon}^{\mathrm{el}}}
+\newcommand{\tepsilonth}{\underline{\epsilon}^{\mathrm{th}}}
+
+\newcommand{\tepsilonvis}{\underline{\epsilon}^{\mathrm{vis}}}
+\newcommand{\tdepsilonvis}{\underline{\dot{\epsilon}}^{\mathrm{vis}}}
+
+\newcommand{\tepsilonp}{\underline{\epsilon}^{\mathrm{p}}}
+\newcommand{\tdepsilonp}{\underline{\dot{\epsilon}}^{\mathrm{p}}}
+
+\newcommand{\talpha}{\underline{\alpha}}
+\newcommand{\tdalpha}{\underline{\dot{\alpha}}}
+\newcommand{\txi}{\underline{\xi}}
+\newcommand{\tdxi}{\underline{\dot{\xi}}}
+
+\newcommand{\tDq}{\ensuremath{\underline{\mathbf{D}}}}
+
+\newcommand{\trace}[1]{\ensuremath{\mathrm{tr}\paren{#1}}}
+
+\newcommand{\Frac}[2]{\ensuremath{{\displaystyle \frac{\displaystyle #1}{\displaystyle #2}}}}
+\newcommand{\deriv}[2]{\ensuremath{{\displaystyle \frac{\displaystyle \partial #1}{\displaystyle \partial #2}}}}
+\newcommand{\dtot}{\ensuremath{{\mathrm{d}}}}
+
+\newcommand{\paren}[1]{\ensuremath{\left(#1\right)}}
+
+\newcommand{\nom}[1]{\textsc{#1}}
+\newcommand{\bts}[1]{\ensuremath{\left.#1\right|_{t}}}
+\newcommand{\mts}[1]{\ensuremath{\left.#1\right|_{t+\theta\,\Delta\,t}}}
+\newcommand{\ets}[1]{\ensuremath{\left.#1\right|_{t+\Delta\,t}}}
+
+\newcommand{\adao}{\texttt{Adao}}
+\newcommand{\salome}{\href{http://www.salome-platform.org}{\texttt{Salomé}}}
+\newcommand{\aster}{\href{http://www.code-aster.org}{\texttt{Code\_\-Aster}}}
+\newcommand{\castem}{\href{http://www-cast3m.cea.fr}{\texttt{Cast3M}}}
+\newcommand{\cyrano}{\texttt{cyrano}}
+\newcommand{\gibiane}{\texttt{gibiane}}
+\newcommand{\python}{\href{https://www.python.org/}{\texttt{Python}}}
+\newcommand{\cxx}{\href{http://isocpp.org/}{\texttt{C++}}}
+\newcommand{\mtest}{\texttt{mtest}}
+\newcommand{\mfront}{\texttt{mfront}}
+\newcommand{\TFEL}{\texttt{TFEL}}
+
+\newcommand{\gnuplot}{\texttt{gnuplot}}
+
+\newcommand{\tplot}{\texttt{tplot}}
+\newcommand{\mpplot}{\texttt{mpplot}}
+\newcommand{\pcheck}{\texttt{pleiades-check}}
+
+\newcommand{\sirius}{\texttt{sirius}}
+\newcommand{\pleiades}{\texttt{pleiades}}
+\newcommand{\cea}{\href{http://www.cea.fr}{\texttt{CEA}}}
+\newcommand{\licos}{\texttt{licos}}
+
+\lstset{ %
+  backgroundcolor=\color{white},   % choose the background color; you must add \usepackage{color} or \usepackage{xcolor}
+  basicstyle=\footnotesize,        % the size of the fonts that are used for the code
+  breakatwhitespace=false,         % sets if automatic breaks should only happen at whitespace
+  breaklines=true,                 % sets automatic line breaking
+  captionpos=b,                    % sets the caption-position to bottom
+  commentstyle=\color{red},        % comment style
+  deletekeywords={...},            % if you want to delete keywords from the given language
+  frame=single,                    % adds a frame around the code
+  keepspaces=true,                 % keeps spaces in text, useful for keeping indentation of code (possibly needs columns=flexible)
+  keywordstyle=\color{blue},       % keyword style
+  language=C++,                    % the language of the code
+  morekeywords={Output Author Input Date},            % if you want to add more keywords to the set
+  %numbers=left,                    % where to put the line-numbers; possible values are (none, left, right)
+  rulecolor=\color{orange},         % if not set, the frame-color may be changed on line-breaks within not-black text (e.g. comments (green here))
+  showspaces=false,                % show spaces everywhere adding particular underscores; it overrides 'showstringspaces'
+  showstringspaces=false,          % underline spaces within strings only
+  showtabs=false,                  % show tabs within strings adding particular underscores
+  stepnumber=1,                    % the step between two line-numbers. If it's 1, each line will be numbered
+  stringstyle=\color{green},       % string literal style
+  tabsize=2,                       % sets default tabsize to 2 spaces
+}
+
+\endinput
+
+%%% Local Variables:
+%%% TeX-auto-save: nil
+%%% TeX-auto-parse-length: 99999
+%%% End:

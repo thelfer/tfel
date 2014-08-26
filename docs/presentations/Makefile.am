@@ -26,4 +26,64 @@ EXTRA_DIST=CMakeLists.txt                                                   \
 	   images/IncompressiblePlaneStressMooneyRivlinBehaviour.mfront     \
 	   images/IncompressiblePlaneStressMooneyRivlinBehaviour-shear1.eps \
 	   images/IncompressiblePlaneStressMooneyRivlinBehaviour.tex        \
-	   images/IncompressiblePlaneStressMooneyRivlin-shear2.eps
+	   images/IncompressiblePlaneStressMooneyRivlin-shear2.eps	    \
+	   images/tutorielch12-img1.png					    \
+	   images/172g.png						    \
+	   images/Hayhurstiso.png					    \
+	   images/norton-50s.png					    \
+	   images/adao-chaboche-tout.png				    \
+	   images/tutorielch12-img9.png					    \
+	   images/Mazars_poutre.png					    \
+	   images/MazarsCourbe.png					    \
+	   images/dplan_mazars_mfront.png				    \
+	   images/tutorielch12-img10.png				    \
+	   images/traction-torsion-nrad.png				    \
+	   images/tutorielch12-img12.png				    \
+	   images/traction-torsion-eps.png				    \
+	   images/Hayhurst.png						    \
+	   images/tutorielch12-img18.png				    \
+	   images/tutorielch12-img19.png				    \
+	   images/Kel.png						    \
+	   images/chaboche-cycles.png					    \
+	   images/norton.png						    \
+	   images/traction-torsion-sxy-sxx.png				    \
+	   images/Kcoh.png						    \
+	   images/hsnv125-sxx-exx.png					    \
+	   images/traction-torsion-chargement.png			    \
+	   images/Ktgt2.png						    \
+	   images/172gv30pg.png						    \
+	   images/tutorielch12-img20.png				    \
+	   images/astk.png						    \
+	   images/CourbeExpBurger.png					    \
+	   images/tutorielch12-img2.pdf					    \
+	   images/tutorielch12-img3.pdf					    \
+	   images/hayhurst.png						    \
+	   images/adao-chaboche-ref.png					    \
+	   images/Ktgt.png						    \
+	   mfront/interactionmatrix.mfront				    \
+	   mfront/Chaboche_simple.mfront				    \
+	   mfront/Inconel600_YoungModulus.mfront			    \
+	   mfront/hayhurst.mfront					    \
+	   mfront/meta-lema-ani.mfront					    \
+	   mfront/ImplicitNorton.mfront					    \
+	   mfront/norton_rk.mfront					    \
+	   mfront/norton.mfront						    \
+	   mfront/mfron03n.comm						    \
+	   mfront/norton_spec.mfront					    \
+	   mfront/sliding.mfront					    \
+	   mfront/monocristal.mfront					    \
+	   mfront/Chaboche.mfront					    \
+	   mfront/norton_jac.mfront					    \
+	   mfront/mazars.mfront						    \
+	   mfront/viscochab.mfront					    \
+	   mfront/lemaitre.mfront					    \
+	   mtest/norton-rk.mtest					    \
+	   mtest/norton.res						    \
+	   mtest/chaboche.mtest						    \
+	   mtest/cyclique.mtest						    \
+	   mtest/lemaitre.res						    \
+	   mtest/norton.mtest						    \
+	   mtest/viscochab.mtest					    \
+	   mtest/lemaitre.mtest						    \
+	   mtest/mfrontexec.py						    \
+	   mtest/burger.mtest

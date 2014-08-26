@@ -1,0 +1,254 @@
+
+\subsection{Loi élasto-plastique de \nom{Chaboche}}
+
+Nous allons développer pas à pas en \mfront{} une loi
+élasto-plastique, puis visco-plastique (modèle deJ.L. \nom{Chaboche}).
+
+Il s'agit d'une loi de comportement élasto-plastique à écrouissage
+isotrope et cinématique non linéaires. Les équations du modèle sont
+résumées brièvement~:
+\begin{itemize}
+\item relation contraintes déformations élastiques~: 
+\[
+\tsigma=\tDq\,\colon\,\paren{\tepsilonto-\tepsilonp}
+\]
+\item Critère de plasticité~:
+ \[
+ F\paren{\tsigma ,\tenseur{X}} =(\sigma -\tenseur{X})_{\mathrm{eq}}-R(p)\le 0
+\]
+avec, pour tout tenseur \textbf{ } $A$,
+${\;\;\;\;A_{\text{eq}}=\sqrt{\Frac{3}{2}\tilde
+{{A}}:\tilde {{A}}}}$ où  $\tilde {A}$ est le déviateur
+de \textbf{ } $A$
+\item l'évolution de la déformation plastique est gouvernée par une
+  loi d'écoulement normale au critère de plasticité~:
+  \[
+  \tdepsilonp=\dot{p}\,\tenseur{n}\quad\text{avec}\quad
+  \tenseur{n}=\Frac{3}{2}\Frac{\tilde {\tsigma}-{\tenseur{X}}}{\left(\sigma-\tenseur{X}\right)_{\text{eq}}}
+  \]
+\item ${\tenseur{X}}$ représente l'écrouissage cinématique non
+  linéaire. Il peut résulter d'une combinaison de plusieurs
+  écrouissages cinématiques
+  ${\tenseur{X}=\tenseur{X}_{1}+\tenseur{X}_{2}+...}$~;
+\item L'évolution de chaque variable d'écrouissage $\tenseur{X}_{i}$
+  est donnée par~:
+\[
+\tenseur{X}_{i}=\Frac{2}{3}C_{i}\talpha_{i}
+\]
+\[
+\tdalpha_{i}=\tdepsilonp-\gamma _{i}\,\talpha_{i}\,\dot{p}
+\]
+\item La fonction d'écrouissage isotrope \(R\paren{p}\) est définie par~:
+\[
+\begin{aligned}
+  R\paren{p}&=R^{\infty}+\paren{R^{0}-R^{\infty}}\exp\paren{-b\,p} \\
+\end{aligned}
+\]
+\end{itemize}
+
+Les propriétés matériau de ce modèle sont donc $E$, $\nu$, $R^{0}$,
+$R^{\infty }$, $b$, $C_{1}$, $C_{2}$, $\gamma_{1}$, $\gamma_{2}$.
+
+La discrétisation implicite (par une \(\theta\)-méthode) de ces
+équations conduit à résoudre un système d'équations où les inconnues sont~:
+\begin{itemize}
+\item le tenseur   \(\Delta\,\tepsilonel\)~;
+\item le scalaire, \(\Delta\,p\)~;
+\item les tenseurs \(\Delta\,\talpha_{i}\) (pour \(i=1,n\) variables cinématiques)~;
+\end{itemize}
+et où chaque équation d'évolution temporelle de la forme
+\(\dot{y}=f\paren{y,z,...}\) est remplacée par~:
+\[
+\Delta y-\Delta\,t\,f\paren{y+\theta \Delta y,z+\theta \Delta z,,...}=0
+\]
+Dans le cas de la plasticité, on n'écrit pas d'équation d'évolution de
+la variable \(p\), mais directement le respect du critère de
+plasticité.
+
+Deux cas se présentent. L'évolution peut être élastique. Il est
+possible de tester cela en calculant un tenseur de test
+\(\tsigma^{\textit{tr}}\) tel que~:
+\[
+\tsigma^{\textit{tr}}=\tenseur{D}\,\colon\,\paren{\bts{\tepsilonel}+\Delta\,\tepsilonto}
+\]
+
+Si le critère plastique évalué avec cette contrainte de test est négatif, c'est à dire si~:
+\[
+F^{el}\paren{\tsigma ,\tenseur{X}}=\paren{\tsigma^{\textit{tr}}-\bts{\tenseur{X}}}_{\mathrm{eq}}-R\paren{\bts{p}}<0
+\]
+alors la solution cherchée est triviale et donnée par~:
+\[
+\Delta\,\tepsilonp=0 \quad \Delta\, p=0 \quad \Delta\,\talpha_{i}=\tenseur{0}
+\]
+
+Sinon, il faut résoudre le système suivant~:
+\[
+F({{\sigma ,X}})=0 \quad\Leftrightarrow\quad
+\left\{
+\begin{aligned}
+&(\ets{\tsigma}-\ets{\tenseur{X}})_{\mathrm{eq}}-R(p(t+\Delta\,t))&=0 \\
+&\Delta\,\talpha_{i}-\Delta\, p\,\ets{\tenseur{n}}+\gamma_{i}~\Delta\,p~(\talpha_{i}+\theta \Delta\talpha_{i})&=\tenseur{0}\\
+&\Delta\,\tepsilonel-\Delta\,\tepsilonto+\Delta\, p\,\ets{\tenseur{n}}&=\tenseur{0}
+\end{aligned}
+\right.
+\]
+où $\Delta\,\tepsilonp=\Frac{3}{2}\Delta\, p\,\ets{\tenseur{n}}$.
+
+
+\textcolor{red}{ 
+A faire : On pourra modifier le fichier norton.mfront afin d'intégrer cette loi de comportement.
+On peut se limiter à une seule variable cinémtique dans un premier temps}.
+
+
+Dans le cas d'une seule variable cinématique, le système est  de
+taille \(6+1+1\times{}6=13\)).
+
+Dans le cas de 2 variables cinématiques, (le système est  de
+taille \(6+1+2\times{}6=19\)).
+
+
+Avec cet exemple, on, peut déjà tester le développement sur un point
+matériel à l'aide de \mtest{}.
+
+\begin{figure}[!h]
+  \centering
+  \includegraphics[width=11cm,height=11cm]{@abs_top_srcdir@/docs/presentations/images/tutorielch12-img9.png}
+  \caption{Vérification de l'implantation de la loi élasto-plastique.}
+  \label{fig:mfront:tutorial:chaboche:check}
+\end{figure}
+
+Pour une sollicitation uniaxiale de 10 cycles en traction-compression, on
+obtient le résultat donné en
+figure~\ref{fig:mfront:tutorial:chaboche:check}.
+Le fichier \mtest{} pour cet exemple est le
+suivant~:
+\begin{flushleft}
+  \lstinputlisting{@abs_top_srcdir@/docs/presentations/mtest/chaboche.mtest}
+\end{flushleft}
+
+
+\subsection{Utilisation dans Code\_Aster}
+
+Les premiers tests sur un point matériel à l'aide \mtest étant effectués, on 
+peut s'intéresser au calcul par éléments finis avec \aster. Pour cela, il suffit de fournir comme donnée de l'étude
+ le fichier {\tt libAsterBehabviour.so } (fichier de type "nom" dans {\tt astk }).
+
+Dans le fichier de commandes, il suffit de modifier deux points :
+\begin{itemize}
+
+\item Dans la commande {\tt  DEFI\_MATERIAU}, il faut ajouter :
+
+\begin{minipage}[t]{0.9\linewidth}
+
+{\tt .......=DEFI\_MATERIAU(
+UMAT=\_F( C1 = ... ,  C2 = ... ,   C3 = ... , ),
+}
+\end{minipage}
+
+On fournit les propriétés matériau {\tt Ci} dans l'ordre où elles sont 
+définies dans le fichier \mfront.
+Le mot clé {\tt NB\_VALE } permet d'optimiser le temps de lecture des propriétés.
+
+\item Le deuxième endroit à modifier est le mot-clé {\tt COMPORTEMENT } dans les 
+commandes globales de calcul ({\tt STAT\_NON\_LINE}, 
+{\tt DYNA\_NON\_LINE}, {\tt SIMU\_POINT\_MAT}, ...),
+
+Le comportement a pour nom « MFRONT ». On spécifie donc dans ces commandes :
+
+\begin{flushleft}
+  \lstinputlisting{Python/comportement.comm}
+\end{flushleft}
+
+\end{itemize}
+
+
+
+\subsection{Loi viscoplastique de \nom{Chaboche}}
+
+Le modèle diffère peu du précédent, car seul le critère de plasticité~:
+$F({{\sigma ,X}})=(\sigma -X)_{\mathrm{eq}}-R(p)\le 0$ est remplacé
+par une loi d'écoulement en puissance~:
+\[
+\dot{{p}}=\langle \Frac{F}{K}\rangle ^{m}
+\]
+où $\left\langle F\right\rangle $ désigne la partie positive de $F$
+définie ci-dessus, soit~:
+\[
+\left\langle F\right\rangle =\text{max}(0,F)
+\]
+
+Dans le fichier mfront, seule l'équation donnant l'évolution de
+$\Delta\,p$ change~:
+
+\texttt{fp \ \ \ = (seq\_-Rp\_)/young;}
+
+devient~:
+
+{\tt vp \ = pow(F*UNsurK,m) ;}
+
+{\tt fp -= vp*dt;}
+
+\texttt{UNsurK} et \texttt{m} ont bien sûr été ajoutés dans la
+définition des propriétés matériau de la loi~:
+\begin{flushleft}
+{\tt
+  @MaterialProperty real m; \newline
+  @MaterialProperty real UNsurK;
+}
+\end{flushleft}
+
+\textcolor{red}{
+on pourra modifier le fichier \mfront précédent pour définir ce modèle visco-plastique.
+On peut ensuite effectuer un test de fluage et des tests de traction à différentes vitesses à l'aide de \mtest ~ou de ~\aster}.
+
+
+\subsection{Traitement des erreurs, déverminage}
+
+Et si, au cours du développement, on rencontre des erreurs, que faire~?
+
+Lors de la compilation avec \mfront{}, les erreurs sont la
+plupart du temps explicites~:
+  \begin{itemize}
+  \item {\tt Viscochab.mfront:94: error: {\textquoteleft}F' was not
+    declared in this scope}
+\item {\tt Viscochab.mfront:74: warning: unused variable
+    {\textquoteleft}Rp\_'}
+\item {\tt Viscochab.mfront:91: error: expected {\textquoteleft},' or
+    {\textquoteleft};' before {\textquoteleft}if'}~: oubli d'un '~;~' en fin de ligne
+\item etc...
+\end{itemize}
+
+Lors de l'exécution, il est possible de localiser les erreurs
+numériques ou autres via les options de compilation~:
+\begin{itemize}
+\item le plus simple est de compiler avec {\tt --debug} (détails sur
+  l'intégration)~:\newline \texttt{mfront -{}-obuild --interface=aster
+    -{}-debug chaboche.mfront}
+\item un 'classique' du développement, les impressions
+  locales~:
+  \begin{itemize}
+  \item pour imprimer une variable locale, il suffit d'écrire~:
+    \begin{flushleft}
+      {\tt cout {\textless}{\textless} {\textquotedbl} seq calculé
+      {\textquotedbl} {\textless}{\textless} seq {\textless}{\textless} endl;}
+    \end{flushleft}
+  \item pour afficher l'état courant de
+    l'intégration~:
+    \begin{flushleft}
+      {\tt cout {\textless}{\textless} *this {\textless}{\textless} endl ;}
+    \end{flushleft}
+  \end{itemize}
+\item pour trouver l'endroit où une erreur d'exécution se produit, on
+  peut compiler en mode debug~: \newline
+  \texttt{\textbf{CXXFLAGS='-g'}}\texttt{ mfront -{}-obuild
+    -{}-interface=aster chaboche.mfront}
+\item enfin, dans un calcul \aster, on peut générer des fichiers mtest
+  en cas d'échec d'intégration~: \newline \texttt{mfront -{}-obuild
+    --interface=aster -{}-@Aster\-Generate\-MTest\-File\-On\-Fail\-ure=\-true
+    chaboche.mfront}
+\end{itemize}
+
+
+
+
+

@@ -1,0 +1,50 @@
+@Parser    Implicit;
+@Behaviour monocristal;
+@Algorithm NewtonRaphson_NumericalJacobian;
+@OrthotropicBehaviour;
+@RequireStiffnessTensor;
+@MaterialProperty real m;
+@MaterialProperty real K;
+@MaterialProperty real C;
+@MaterialProperty real R0;
+@MaterialProperty real Q;
+@MaterialProperty real b;
+@MaterialProperty real d1;
+@StateVariable          real g[12];
+@AuxiliaryStateVariable real p[12];
+@AuxiliaryStateVariable real a[12];
+@TangentOperator{
+    Stensor4 Je;
+    getPartialJacobianInvert(Je);
+    Dt = D*Je;  } 
+@Import "MonoCristal_CFC_SlidingSystems.mfront";
+@Import "MonoCristal_InteractionMatrix.mfront";
+@ComputeStress{  sig = D*eel;}
+@Integrator{  StrainStensor vepsp(real(0));
+  real tau[12], vp[12], va[12], ag[12];
+  real tma[12], tmR[12],Rp[12], pe[12] ;
+  for(unsigned short i=0;i!=12;++i){
+    ag[i]  = abs(dg[i]);
+    pe[i] = Q*(1.-exp(-b*(p[i]+theta*ag[i]))) ;  }
+  for(unsigned short i=0;i!=12;++i){
+    Rp[i] = R0 ;
+    for(unsigned short j=0;j!=12;++j){
+        Rp[i] +=mh(i,j)*pe[j] ;     }     
+    tau[i] = mus[i] | sig ;
+    va[i]  = (dg[i]-d1*a[i]*ag[i])/(1.+d1*theta*ag[i]);
+    tma[i] = tau[i]-C*(a[i]+theta*va[i]) ;
+    tmR[i] = abs(tma[i])-Rp[i] ;
+    if (tmR[i]>0.){real sgn=tma[i]/abs(tma[i]);
+      vp[i]  = dt*sgn*pow((tmR[i]/K),m);    }
+    else{  vp[i]=0.;    }
+    vepsp+=vp[i]*mus[i] ;  }
+  feel += vepsp-deto;
+  for(unsigned short i=0;i!=12;++i){
+    fg[i]  -= vp[i];  }  
+} 
+@UpdateAuxiliaryStateVars{
+for(unsigned short i=0;i!=12;++i){
+  p[i]+=abs(dg[i]);
+  a[i]+=(dg[i]-d1*a[i]*abs(dg[i]))/(1.+d1*abs(dg[i]));}}
+
+

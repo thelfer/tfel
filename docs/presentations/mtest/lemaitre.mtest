@@ -1,0 +1,10 @@
+@Behaviour<aster> './src/libAsterBehaviour.so' 'asterlemaitre' ;
+@MaterialProperty<constant> 'YoungModulus' 178600.0E6 ;
+@MaterialProperty<constant> 'PoissonRatio' 0.3 ;
+@MaterialProperty<constant> 'UNsurK' 8.6976357924534403e-09 ;
+@MaterialProperty<constant> 'E' 8.2 ;
+@MaterialProperty<constant> 'UNsurM' 0.5 ;
+@ExternalStateVariable 'Temperature' 300. ;
+@ImposedStress 'SXX' {0.:0.,30.:40.e6};
+@ImposedStress 'SXY' {0.:0.,30.:30.e6};
+@Times {0.,30. in 100};

@@ -449,7 +449,7 @@ namespace mfront{
   {}
 
   std::map<std::string,std::vector<std::string> >
-  MFrontCyranoInterface::getGlobalIncludes(const MechanicalBehaviourDescription& mb)
+  MFrontCyranoInterface::getGlobalIncludes(const MechanicalBehaviourDescription& mb) const
   {
     using namespace std;
     map<string,vector<string> > incs;
@@ -466,7 +466,7 @@ namespace mfront{
   } // end of MFrontCyranoInterface::getGeneratedSources
 
   std::map<std::string,std::vector<std::string> >
-  MFrontCyranoInterface::getGeneratedSources(const MechanicalBehaviourDescription& mb)
+  MFrontCyranoInterface::getGeneratedSources(const MechanicalBehaviourDescription& mb) const
   {
     using namespace std;
     map<string,vector<string> > src;
@@ -480,7 +480,7 @@ namespace mfront{
   } // end of MFrontCyranoInterface::getGeneratedSources
 
   std::vector<std::string>
-  MFrontCyranoInterface::getGeneratedIncludes(const MechanicalBehaviourDescription& mb)
+  MFrontCyranoInterface::getGeneratedIncludes(const MechanicalBehaviourDescription& mb) const
   {
     using namespace std;
     vector<string> incs;
@@ -493,7 +493,7 @@ namespace mfront{
   } // end of MFrontCyranoInterface::getGeneratedIncludes
 
   std::map<std::string,std::vector<std::string> >
-  MFrontCyranoInterface::getLibrariesDependencies(const MechanicalBehaviourDescription& mb)
+  MFrontCyranoInterface::getLibrariesDependencies(const MechanicalBehaviourDescription& mb) const
   {
     using namespace std;
     map<string,vector<string> > deps;
@@ -506,6 +506,14 @@ namespace mfront{
 #endif
     return deps;
   } // end of MFrontCyranoInterface::getLibrariesDependencies()
+
+  void 
+  MFrontCyranoInterface::writeInterfaceSpecificIncludes(std::ofstream& out,
+							const MechanicalBehaviourDescription&) const
+  {
+    using namespace std;
+    out << "#include\"MFront/Cyrano/Cyrano.hxx\"" << endl << endl;
+  }
 
   void
   MFrontCyranoInterface::writeUMATxxAdditionalSymbols(std::ostream&,
