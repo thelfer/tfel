@@ -49,7 +49,8 @@ MFRONTS= DDIF2.mfront                                            \
 	 CompressibleNeoHookeanBehaviour.mfront                  \
 	 IncompressibleMooneyRivlinBehaviour.mfront              \
 	 IncompressiblePlaneStressMooneyRivlinBehaviour.mfront   \
-	 IncompressiblePlaneStressGornetDesmoratBehaviour.mfront
+	 IncompressiblePlaneStressGornetDesmoratBehaviour.mfront \
+	 ImplicitSimoMieheElastoPlasticity.mfront
 
 testsdir = $(pkgdatadir)/mfront/tests/behaviours
 tests_DATA = $(MFRONTS)

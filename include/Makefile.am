@@ -79,6 +79,7 @@ nobase_include_HEADERS= TFEL/Macros.hxx                                         
 			TFEL/Math/Forward/tensor.hxx                                                                 \
 			TFEL/Math/Forward/stensor.hxx                                                                \
 			TFEL/Math/Forward/st2tost2.hxx                                                               \
+			TFEL/Math/Forward/t2tost2.hxx                                                                \
 			TFEL/Math/Forward/Function.hxx                                                               \
 			TFEL/Math/Forward/ArrayConcept.hxx                                                           \
 			TFEL/Math/Forward/LambdaConcept.hxx                                                          \
@@ -86,6 +87,7 @@ nobase_include_HEADERS= TFEL/Macros.hxx                                         
 			TFEL/Math/Forward/MatrixConcept.hxx                                                          \
 			TFEL/Math/Forward/StensorConcept.hxx                                                         \
 			TFEL/Math/Forward/ST2toST2Concept.hxx                                                        \
+			TFEL/Math/Forward/T2toST2Concept.hxx                                                         \
 			TFEL/Math/Forward/CompositeConcept.hxx                                                       \
 			TFEL/Math/Forward/TinyNewtonRaphson.hxx                                                      \
 			TFEL/Math/Forward/FunctionConcept.hxx                                                        \
@@ -369,8 +371,17 @@ nobase_include_HEADERS= TFEL/Macros.hxx                                         
 			TFEL/Math/ST2toST2/ST2toST2ConceptOperations.hxx                                             \
 			TFEL/Math/ST2toST2/ST2toST2Expr.hxx                                                          \
 			TFEL/Math/ST2toST2/st2tost2ResultType.hxx                                                    \
-			TFEL/Math/ST2toST2/ST2toST2FromTinyMatrixView.hxx                                                          \
-			TFEL/Math/ST2toST2/ST2toST2FromTinyMatrixView2.hxx                                                         \
+			TFEL/Math/ST2toST2/ST2toST2FromTinyMatrixView.hxx                                            \
+			TFEL/Math/ST2toST2/ST2toST2FromTinyMatrixView2.hxx                                           \
+			TFEL/Math/t2tost2.hxx                                                                        \
+			TFEL/Math/T2toST2/t2tost2.ixx                                                                \
+			TFEL/Math/T2toST2/T2toST2Concept.hxx                                                         \
+			TFEL/Math/T2toST2/T2toST2Concept.ixx                                                         \
+			TFEL/Math/T2toST2/T2toST2ConceptOperations.hxx                                               \
+			TFEL/Math/T2toST2/T2toST2Expr.hxx                                                            \
+			TFEL/Math/T2toST2/t2tost2ResultType.hxx                                                      \
+			TFEL/Math/T2toST2/T2toST2FromTinyMatrixView.hxx                                              \
+			TFEL/Math/T2toST2/T2toST2FromTinyMatrixView2.hxx                                             \
 			TFEL/Math/composite.hxx                                                                      \
 			TFEL/Math/Composite/CompositeCompositeExpr.hxx                                               \
 			TFEL/Math/Composite/CompositeConceptOperations.ixx                                           \

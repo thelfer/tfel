@@ -13,6 +13,7 @@
 #include"TFEL/Math/Forward/tmatrix.hxx"
 #include"TFEL/Math/Forward/tensor.hxx"
 #include"TFEL/Math/Forward/stensor.hxx"
+#include"TFEL/Math/Forward/t2tost2.hxx"
 #include"TFEL/Math/Forward/st2tost2.hxx"
 #include"TFEL/Math/Stensor/StensorSizeToDime.hxx"
 #include"TFEL/Math/Tensor/TensorSizeToDime.hxx"
@@ -35,9 +36,6 @@ namespace tfel
      */
     template<unsigned short N,typename T = double, bool use_quantities = true>
     struct Types{
-
-      static const unsigned short Size = tfel::math::StensorDimeToSize<N>::value;
-
       typedef tfel::math::qt<tfel::math::NoUnit,T>         real;
       typedef tfel::math::qt<tfel::math::Time,T>           time;
       typedef tfel::math::qt<tfel::math::Frequency,T>      frequency;
@@ -67,6 +65,7 @@ namespace tfel
       typedef tfel::math::tensor<N,tfel::math::qt<tfel::math::NoUnit,T> > DeformationGradientTensor;
       typedef tfel::math::st2tost2<N,real>                 Stensor4;
       typedef tfel::math::st2tost2<N,stress>               StiffnessTensor;
+      typedef tfel::math::t2tost2<N,stress>                FiniteStrainStiffnessTensor;
       typedef typename tfel::config::internals::PositionType<N,T,true>::type PositionType;
       typedef typename tfel::config::internals::SpatialGradType<N,T,true>::type SpatialGradType;
       typedef typename tfel::config::internals::JacobianType<N,T,true>::type JacobianType;
@@ -83,8 +82,6 @@ namespace tfel
      */
     template<unsigned short N,typename T>
     struct Types<N,T,false>{
-
-      static const unsigned short Size = tfel::math::StensorDimeToSize<N>::value;
       typedef T real;
       typedef T time;
       typedef T frequency;
@@ -100,20 +97,21 @@ namespace tfel
       typedef T thermalexpansion;
       typedef T density;
       typedef T energy_density;
-      typedef tfel::math::tvector<N,T> TVector;
-      typedef tfel::math::stensor<N,T> Stensor;
-      typedef tfel::math::stensor<N,T> FrequencyStensor;
-      typedef tfel::math::tvector<N,T> ForceTVector;
-      typedef tfel::math::stensor<N,T> StressStensor;
-      typedef tfel::math::stensor<N,T> StressRateStensor;
-      typedef tfel::math::tvector<N,T> DisplacementTVector;
-      typedef tfel::math::stensor<N,T> StrainStensor;
-      typedef tfel::math::stensor<N,T> StrainRateStensor;
-      typedef tfel::math::stensor<N,T> ThermalExpansionTensor;
-      typedef tfel::math::tensor<N,T>  Tensor;
-      typedef tfel::math::tensor<N,T>  DeformationGradientTensor;
+      typedef tfel::math::tvector<N,T>  TVector;
+      typedef tfel::math::stensor<N,T>  Stensor;
+      typedef tfel::math::stensor<N,T>  FrequencyStensor;
+      typedef tfel::math::tvector<N,T>  ForceTVector;
+      typedef tfel::math::stensor<N,T>  StressStensor;
+      typedef tfel::math::stensor<N,T>  StressRateStensor;
+      typedef tfel::math::tvector<N,T>  DisplacementTVector;
+      typedef tfel::math::stensor<N,T>  StrainStensor;
+      typedef tfel::math::stensor<N,T>  StrainRateStensor;
+      typedef tfel::math::stensor<N,T>  ThermalExpansionTensor;
+      typedef tfel::math::tensor<N,T>   Tensor;
+      typedef tfel::math::tensor<N,T>   DeformationGradientTensor;
       typedef tfel::math::st2tost2<N,T> Stensor4;
       typedef tfel::math::st2tost2<N,T> StiffnessTensor;
+      typedef tfel::math::t2tost2<N,T>  FiniteStrainStiffnessTensor;
       typedef typename tfel::config::internals::PositionType<N,T,false>::type  PositionType;
       typedef typename tfel::config::internals::SpatialGradType<N,T,true>::type SpatialGradType;
       typedef typename tfel::config::internals::JacobianType<N,T,false>::type JacobianType;

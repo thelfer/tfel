@@ -34,7 +34,9 @@ set(TFELMTest_LDADD
 
 if(HAVE_CASTEM)
 set(TFELMTest_SOURCES
+    MTestUmatStandardBehaviour.cxx
     MTestUmatSmallStrainBehaviour.cxx
+    MTestUmatFiniteStrainBehaviour.cxx
     MTestUmatCohesiveZoneModelBehaviour.cxx
     ${TFELMTest_SOURCES})
 set(TFELMTest_LDADD

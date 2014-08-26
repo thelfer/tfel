@@ -88,7 +88,9 @@ nobase_include_HEADERS += MFront/MTestTypes.hxx	                         \
 			  MFront/MTestReferenceFileComparisonTest.hxx    \
 			  MFront/MTestBehaviour.hxx                      \
 			  MFront/MTestUmatBehaviourBase.hxx              \
+			  MFront/MTestUmatStandardBehaviour.hxx          \
 			  MFront/MTestUmatSmallStrainBehaviour.hxx       \
+			  MFront/MTestUmatFiniteStrainBehaviour.hxx      \
 			  MFront/MTestUmatCohesiveZoneModelBehaviour.hxx \
 			  MFront/MTestUmatNormaliseTangentOperator.hxx   \
 			  MFront/MTestAsterSmallStrainBehaviour.hxx      \

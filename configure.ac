@@ -477,7 +477,8 @@ AC_OUTPUT([debug.sh
 	   tests/Math/RungeKutta/Makefile
 	   tests/Math/RungeKutta/include/Makefile
 	   tests/Math/Functions/Makefile
-	   tests/Math/St2toSt2/Makefile
+	   tests/Math/st2tost2/Makefile
+	   tests/Math/t2tost2/Makefile
 	   tests/Math/Composite/Makefile
 	   tests/Lambda/Makefile
 	   tests/FSAlgorithms/Makefile

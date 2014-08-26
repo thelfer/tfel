@@ -456,6 +456,7 @@ include/TFEL/Math/Forward/LambdaConcept.hxx -text
 include/TFEL/Math/Forward/MatrixConcept.hxx -text
 include/TFEL/Math/Forward/ST2toST2Concept.hxx -text
 include/TFEL/Math/Forward/StensorConcept.hxx -text
+include/TFEL/Math/Forward/T2toST2Concept.hxx -text
 include/TFEL/Math/Forward/TinyNewtonRaphson.hxx -text
 include/TFEL/Math/Forward/VectorConcept.hxx -text
 include/TFEL/Math/Forward/array.hxx -text
@@ -464,6 +465,7 @@ include/TFEL/Math/Forward/matrix.hxx -text
 include/TFEL/Math/Forward/qt.hxx -text
 include/TFEL/Math/Forward/st2tost2.hxx -text
 include/TFEL/Math/Forward/stensor.hxx -text
+include/TFEL/Math/Forward/t2tost2.hxx -text
 include/TFEL/Math/Forward/tensor.hxx -text
 include/TFEL/Math/Forward/tmatrix.hxx -text
 include/TFEL/Math/Forward/tvector.hxx -text
@@ -673,6 +675,14 @@ include/TFEL/Math/Stensor/StensorSizeToDime.hxx -text
 include/TFEL/Math/Stensor/StensorStaticStorage.hxx -text
 include/TFEL/Math/Stensor/stensor.ixx -text
 include/TFEL/Math/Stensor/stensorResultType.hxx -text
+include/TFEL/Math/T2toST2/T2toST2Concept.hxx -text
+include/TFEL/Math/T2toST2/T2toST2Concept.ixx -text
+include/TFEL/Math/T2toST2/T2toST2ConceptOperations.hxx -text
+include/TFEL/Math/T2toST2/T2toST2Expr.hxx -text
+include/TFEL/Math/T2toST2/T2toST2FromTinyMatrixView.hxx -text
+include/TFEL/Math/T2toST2/T2toST2FromTinyMatrixView2.hxx -text
+include/TFEL/Math/T2toST2/t2tost2.ixx -text
+include/TFEL/Math/T2toST2/t2tost2ResultType.hxx -text
 include/TFEL/Math/Tensor/TVFS.hxx -text
 include/TFEL/Math/Tensor/TensorChangeBasis.hxx -text
 include/TFEL/Math/Tensor/TensorConcept.hxx -text
@@ -723,6 +733,7 @@ include/TFEL/Math/power.ixx -text
 include/TFEL/Math/qt.hxx -text
 include/TFEL/Math/st2tost2.hxx -text
 include/TFEL/Math/stensor.hxx -text
+include/TFEL/Math/t2tost2.hxx -text
 include/TFEL/Math/tensor.hxx -text
 include/TFEL/Math/tmatrix.hxx -text
 include/TFEL/Math/tvector.hxx -text
@@ -961,8 +972,10 @@ mfront/include/MFront/MTestReferenceFileComparisonTest.hxx -text
 mfront/include/MFront/MTestTypes.hxx -text
 mfront/include/MFront/MTestUmatBehaviourBase.hxx -text
 mfront/include/MFront/MTestUmatCohesiveZoneModelBehaviour.hxx -text
+mfront/include/MFront/MTestUmatFiniteStrainBehaviour.hxx -text
 mfront/include/MFront/MTestUmatNormaliseTangentOperator.hxx -text
 mfront/include/MFront/MTestUmatSmallStrainBehaviour.hxx -text
+mfront/include/MFront/MTestUmatStandardBehaviour.hxx -text
 mfront/include/MFront/MechanicalBehaviourDescription.hxx -text
 mfront/include/MFront/ParserBase.hxx -text
 mfront/include/MFront/ParserUtilities.hxx -text
@@ -1016,8 +1029,10 @@ mfront/mtest/MTestParser.cxx -text
 mfront/mtest/MTestReferenceFileComparisonTest.cxx -text
 mfront/mtest/MTestUmatBehaviourBase.cxx -text
 mfront/mtest/MTestUmatCohesiveZoneModelBehaviour.cxx -text
+mfront/mtest/MTestUmatFiniteStrainBehaviour.cxx -text
 mfront/mtest/MTestUmatNormaliseTangentOperator.cxx -text
 mfront/mtest/MTestUmatSmallStrainBehaviour.cxx -text
+mfront/mtest/MTestUmatStandardBehaviour.cxx -text
 mfront/mtest/Makefile.am -text
 mfront/src/AsterComputeStiffnessOperator.cxx -text
 mfront/src/AsterComputeThermalExpansionTensor.cxx -text
@@ -1117,6 +1132,7 @@ mfront/tests/behaviours/ImplicitNortonPlaneStress.mfront -text
 mfront/tests/behaviours/ImplicitNorton_Broyden.mfront -text
 mfront/tests/behaviours/ImplicitNorton_Broyden2.mfront -text
 mfront/tests/behaviours/ImplicitOrthotropicCreep.mfront -text
+mfront/tests/behaviours/ImplicitSimoMieheElastoPlasticity.mfront -text
 mfront/tests/behaviours/IncompressibleMooneyRivlinBehaviour.mfront -text
 mfront/tests/behaviours/IncompressiblePlaneStressGornetDesmoratBehaviour.mfront -text
 mfront/tests/behaviours/IncompressiblePlaneStressMooneyRivlinBehaviour.mfront -text
@@ -1250,6 +1266,8 @@ mfront/tests/behaviours/castem/castemtvergaard.mtest.in -text
 mfront/tests/behaviours/castem/castemviscoplasisocin.mtest.in -text
 mfront/tests/behaviours/castem/dgibi/CMakeLists.txt -text
 mfront/tests/behaviours/castem/dgibi/CompressibleNeoHookeanBehaviour.dgibi -text
+mfront/tests/behaviours/castem/dgibi/ImplicitSimoMieheElastoPlasticity-ssna303.dgibi -text
+mfront/tests/behaviours/castem/dgibi/ImplicitSimoMieheElastoPlasticityUniaxialTesting.dgibi -text
 mfront/tests/behaviours/castem/dgibi/IncompressibleMooneyRivlinUniaxialTesting.dgibi -text
 mfront/tests/behaviours/castem/dgibi/IncompressiblePlaneStressGornetDesmoratBehaviourBiaxialTesting.dgibi -text
 mfront/tests/behaviours/castem/dgibi/IncompressiblePlaneStressGornetDesmoratBehaviourShearTesting.dgibi -text
@@ -1462,13 +1480,6 @@ tests/Math/RungeKutta/rk42.cxx -text
 tests/Math/RungeKutta/rk54.cxx -text
 tests/Math/RungeKutta/runge_kutta2.cxx -text
 tests/Math/RungeKutta/runge_kutta4.cxx -text
-tests/Math/St2toSt2/CMakeLists.txt -text
-tests/Math/St2toSt2/Makefile.am -text
-tests/Math/St2toSt2/ST2toST2FromTinyMatrixView.cxx -text
-tests/Math/St2toSt2/ST2toST2FromTinyMatrixView2.cxx -text
-tests/Math/St2toSt2/st2tost2-2.cxx -text
-tests/Math/St2toSt2/st2tost2-3.cxx -text
-tests/Math/St2toSt2/st2tost2.cxx -text
 tests/Math/StensorFromTinyMatrixColumnView.cxx -text
 tests/Math/TinyVectorOfStensorFromTinyVectorView.cxx -text
 tests/Math/TinyVectorOfTinyVectorFromTinyVectorView.cxx -text
@@ -1517,6 +1528,13 @@ tests/Math/qt.cxx -text
 tests/Math/qt2.cxx -text
 tests/Math/qt3.cxx -text
 tests/Math/solve.cxx -text
+tests/Math/st2tost2/CMakeLists.txt -text
+tests/Math/st2tost2/Makefile.am -text
+tests/Math/st2tost2/ST2toST2FromTinyMatrixView.cxx -text
+tests/Math/st2tost2/ST2toST2FromTinyMatrixView2.cxx -text
+tests/Math/st2tost2/st2tost2-2.cxx -text
+tests/Math/st2tost2/st2tost2-3.cxx -text
+tests/Math/st2tost2/st2tost2.cxx -text
 tests/Math/stensor.cxx -text
 tests/Math/stensor2.cxx -text
 tests/Math/stensor3.cxx -text
@@ -1532,6 +1550,9 @@ tests/Math/stensor_changeBasis4.cxx -text
 tests/Math/stensor_eigenvalues.cxx -text
 tests/Math/stensor_eigenvectors.cxx -text
 tests/Math/stensor_eigenvectors2.cxx -text
+tests/Math/t2tost2/CMakeLists.txt -text
+tests/Math/t2tost2/Makefile.am -text
+tests/Math/t2tost2/t2tost2.cxx -text
 tests/Math/tensor.cxx -text
 tests/Math/tensor2.cxx -text
 tests/Math/tensor3.cxx -text

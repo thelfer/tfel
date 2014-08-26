@@ -133,9 +133,9 @@ namespace tfel{
 	  const T v = CubicRoots::cbrt((-q-tmp4)/(T(2)));
 	  const T upv = u+v;
 	  x1 = upv-tmp3;
-	  x2 = -0.5*upv-tmp3;
+	  x2 = -upv/2-tmp3;
 	  x3 = x2;
-	  if(abs(u-v)<100*std::abs(upv)*std::numeric_limits<T>::epsilon()){
+	  if(std::abs(u-v)<100*std::abs(upv)*std::numeric_limits<T>::epsilon()){
 	    return 3u;
 	  } else {
 	    return 1u;

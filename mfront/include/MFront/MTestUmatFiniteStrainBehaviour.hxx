@@ -1,14 +1,13 @@
 /*! 
- * \file  MTestUmatSmallStrainBehaviour.hxx
+ * \file   MTestUmatFiniteStrainBehaviour.hxx
  * \brief
  * \author Helfer Thomas
- * \brief 07 avril 2013
+ * \brief  18 november 2013
  */
 
-#ifndef _LIB_MFRONT_MTESTSMALLSTRAINUMATBEHAVIOUR_H_
-#define _LIB_MFRONT_MTESTSMALLSTRAINUMATBEHAVIOUR_H_ 
+#ifndef _LIB_MFRONT_MTESTFINITESTRAINUMATBEHAVIOUR_H_
+#define _LIB_MFRONT_MTESTFINITESTRAINUMATBEHAVIOUR_H_ 
 
-#include"TFEL/System/ExternalFunctionsPrototypes.hxx"
 #include"MFront/MTestUmatStandardBehaviour.hxx"
 
 namespace mfront
@@ -18,7 +17,7 @@ namespace mfront
    * A class to handle mechanical beheaviours written using the umat
    * interface
    */
-  struct TFEL_VISIBILITY_LOCAL MTestUmatSmallStrainBehaviour
+  struct TFEL_VISIBILITY_LOCAL MTestUmatFiniteStrainBehaviour
     : public MTestUmatStandardBehaviour
   {
     /*!
@@ -26,7 +25,7 @@ namespace mfront
      * \param[in] l : library name
      * \param[in] b : behaviour name
      */
-    MTestUmatSmallStrainBehaviour(const tfel::material::ModellingHypothesis::Hypothesis,
+    MTestUmatFiniteStrainBehaviour(const tfel::material::ModellingHypothesis::Hypothesis,
 				  const std::string&,
 				  const std::string&);
     /*!
@@ -87,7 +86,7 @@ namespace mfront
 	      const real,
 	      const MTestStiffnessMatrixType::mtype) const;
     //! destructor
-    virtual ~MTestUmatSmallStrainBehaviour();
+    virtual ~MTestUmatFiniteStrainBehaviour();
   protected:
     /*!
      * \brief compute the elastic stiffness
@@ -105,4 +104,5 @@ namespace mfront
   
 } // end of namespace mfront
 
-#endif /* _LIB_MFRONT_MTESTUMATSMALLSTRAINBEHAVIOUR_H */
+#endif /* _LIB_MFRONT_MTESTUMATFINITESTRAINBEHAVIOUR_H */
+

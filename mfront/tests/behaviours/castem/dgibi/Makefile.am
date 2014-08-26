@@ -7,4 +7,7 @@ EXTRA_DIST=CMakeLists.txt               			                 \
 	   IncompressiblePlaneStressMooneyRivlinUniaxialTesting.dgibi            \
 	   IncompressiblePlaneStressGornetDesmoratBehaviourBiaxialTesting.dgibi  \
 	   IncompressiblePlaneStressGornetDesmoratBehaviourShearTesting.dgibi    \
-	   IncompressiblePlaneStressGornetDesmoratBehaviourUniaxialTesting.dgibi
+	   IncompressiblePlaneStressGornetDesmoratBehaviourUniaxialTesting.dgibi \
+	   ImplicitSimoMieheElastoPlasticityUniaxialTesting.dgibi                \
+	   ImplicitSimoMieheElastoPlasticity-ssna303.dgibi
+

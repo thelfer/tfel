@@ -38,7 +38,9 @@ mtest_LDADD = -L$(top_builddir)/mfront/mtest               \
 mtest_DEPENDENCIES = libTFELMTest.la
 
 if HAVE_CASTEM
-libTFELMTest_la_SOURCES += MTestUmatSmallStrainBehaviour.cxx       \
+libTFELMTest_la_SOURCES += MTestUmatStandardBehaviour.cxx          \
+			   MTestUmatSmallStrainBehaviour.cxx       \
+			   MTestUmatFiniteStrainBehaviour.cxx      \
 			   MTestUmatCohesiveZoneModelBehaviour.cxx
 libTFELMTest_la_LIBADD  += -L$(top_builddir)/mfront/src -lUMATInterface
 endif

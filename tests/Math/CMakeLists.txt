@@ -1,8 +1,9 @@
 add_subdirectory(ExpressionTemplates)
 add_subdirectory(RungeKutta)
 add_subdirectory(Functions)
-add_subdirectory(St2toSt2)
 add_subdirectory(Composite)
+add_subdirectory(st2tost2)
+add_subdirectory(t2tost2)
 
 include_directories("${PROJECT_SOURCE_DIR}/include")
 include_directories("${PROJECT_SOURCE_DIR}/tests/Math/include")

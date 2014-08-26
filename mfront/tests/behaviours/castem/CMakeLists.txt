@@ -58,7 +58,8 @@ set(mfront_tests_SOURCES
   CompressibleNeoHookeanBehaviour
   IncompressibleMooneyRivlinBehaviour
   IncompressiblePlaneStressMooneyRivlinBehaviour
-  IncompressiblePlaneStressGornetDesmoratBehaviour)
+  IncompressiblePlaneStressGornetDesmoratBehaviour
+  ImplicitSimoMieheElastoPlasticity)
   
 mfront_behaviour_check_library(MFrontCastemBehaviours umat  ${mfront_tests_SOURCES})
 target_link_libraries(MFrontCastemBehaviours

@@ -12,7 +12,6 @@
 #include"TFEL/System/ExternalLibraryManager.hxx"
 #include"MFront/UMAT/UMAT.hxx"
 #include"MFront/MTestUmatBehaviourBase.hxx"
-#include"MFront/UMAT/UMATComputeStiffnessOperator.hxx"
 
 namespace mfront
 {
@@ -74,6 +73,20 @@ namespace mfront
 	return 4u;
       } else if(MH::TRIDIMENSIONAL){
 	return 6u;
+      } else {
+	string msg("MTestUmatBehaviourBase::getProblemSize : "
+		   "unsupported modelling hypothesis");
+	throw(runtime_error(msg));
+      }
+    } else if(this->type==2){
+      // finite strain behaviours
+      if (h==MH::AXISYMMETRICALGENERALISEDPLANESTRAIN){
+	return 3u;
+      } else if((h==MH::PLANESTRAIN)||(h==MH::PLANESTRESS)||
+		(h==MH::GENERALISEDPLANESTRAIN)||(h==MH::AXISYMMETRICAL)){
+	return 5u;
+      } else if(MH::TRIDIMENSIONAL){
+	return 9u;
       } else {
 	string msg("MTestUmatBehaviourBase::getProblemSize : "
 		   "unsupported modelling hypothesis");

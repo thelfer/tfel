@@ -2,44 +2,43 @@
  * \file   MTestUmatSmallStrainBehaviour.cxx
  * \brief
  * \author Helfer Thomas
- * \brief 07 avril 2013
+ * \brief  18 november 2013
  */
 
 #include<cmath>
-#include<iostream>
 
 #include"TFEL/Math/tmatrix.hxx"
 #include"TFEL/Math/st2tost2.hxx"
 #include"TFEL/System/ExternalLibraryManager.hxx"
 #include"MFront/UMAT/UMAT.hxx"
-#include"MFront/MTestUmatSmallStrainBehaviour.hxx"
+#include"MFront/MTestUmatFiniteStrainBehaviour.hxx"
 #include"MFront/UMAT/UMATComputeStiffnessOperator.hxx"
 
 namespace mfront
 {
 
-  struct MTestUmatRotationMatrix2D
+  struct MTestUmatSmallStrainRotationMatrix2D
   {
-    MTestUmatRotationMatrix2D(const real *const);
+    MTestUmatSmallStrainRotationMatrix2D(const real *const);
     // compute the stiffness matrix in the global space
     void rotateStiffnessMatrixBackward(real *const) const;
   private:
     real MN[3][3];
-  }; // end of struct MTestUmatRotationMatrix2D
+  }; // end of struct MTestUmatSmallStrainRotationMatrix2D
   
-  struct MTestUmatRotationMatrix3D
+  struct MTestUmatSmallStrainRotationMatrix3D
   {
     
-    MTestUmatRotationMatrix3D(const real *const);
+    MTestUmatSmallStrainRotationMatrix3D(const real *const);
     // compute the stiffness matrix in the global space
     void rotateStiffnessMatrixBackward(real *const) const;
   private:
     real MN[6][6];
-  }; // end of struct MTestUmatRotationMatrix3D
+  }; // end of struct MTestUmatSmallStrainRotationMatrix3D
 
   // Constructeur
   // drot : Matrice de passage élement/global
-  MTestUmatRotationMatrix2D::MTestUmatRotationMatrix2D(const real *const drot)
+  MTestUmatSmallStrainRotationMatrix2D::MTestUmatSmallStrainRotationMatrix2D(const real *const drot)
   {
     // Matrice de passage matériau/global
     real a[4];
@@ -67,12 +66,12 @@ namespace mfront
     MN[2][0]=a[0]*a[2];
     MN[2][1]=a[1]*a[3];
     MN[2][2]=a[0]*a[3]+a[1]*a[2];
-  } // end of MTestUmatRotationMatrix2D::MTestUmatRotationMatrix2D
+  } // end of MTestUmatSmallStrainRotationMatrix2D::MTestUmatSmallStrainRotationMatrix2D
 
   // Calcul de la déformation dans le repère global
   // D^g=tN:D^m:N
   void
-  MTestUmatRotationMatrix2D::rotateStiffnessMatrixBackward(real *const D) const
+  MTestUmatSmallStrainRotationMatrix2D::rotateStiffnessMatrixBackward(real *const D) const
   {
     // matrice N
     real N[4][4];
@@ -116,11 +115,11 @@ namespace mfront
 	}
       }
     }
-  } // end of MTestUmatRotationMatrix2D::rotateStiffnessMatrixBackward
+  } // end of MTestUmatSmallStrainRotationMatrix2D::rotateStiffnessMatrixBackward
 
   // Constructeur
   // drot : Matrice de passage élement/global
-  MTestUmatRotationMatrix3D::MTestUmatRotationMatrix3D(const real *const drot)
+  MTestUmatSmallStrainRotationMatrix3D::MTestUmatSmallStrainRotationMatrix3D(const real *const drot)
   {
     // Contruction de la matrice de passage N (pour les tenseurs)
     // Première ligne
@@ -170,11 +169,11 @@ namespace mfront
     MN[3][5]=drot[1]*drot[5]+drot[2]*drot[4];
     MN[3][4]=drot[2]*drot[3]+drot[0]*drot[5];
     MN[3][3]=drot[0]*drot[4]+drot[1]*drot[3];
-  } // end of MTestUmatRotationMatrix3D::MTestUmatRotationMatrix3D
+  } // end of MTestUmatSmallStrainRotationMatrix3D::MTestUmatSmallStrainRotationMatrix3D
 
   // compute the stiffness matrix in the global space
   void
-  MTestUmatRotationMatrix3D::rotateStiffnessMatrixBackward(real *const D) const
+  MTestUmatSmallStrainRotationMatrix3D::rotateStiffnessMatrixBackward(real *const D) const
   {
     // matrice N
     real N[6][6];
@@ -211,11 +210,11 @@ namespace mfront
 	}
       }
     }
-  } // end of MTestUmatRotationMatrix3D::rotateStiffnessMatrixBackward
+  } // end of MTestUmatSmallStrainRotationMatrix3D::rotateStiffnessMatrixBackward
 
-  MTestUmatSmallStrainBehaviour::MTestUmatSmallStrainBehaviour(const tfel::material::ModellingHypothesis::Hypothesis h,
-							       const std::string& l,
-							       const std::string& b)
+  MTestUmatFiniteStrainBehaviour::MTestUmatFiniteStrainBehaviour(const tfel::material::ModellingHypothesis::Hypothesis h,
+								 const std::string& l,
+								 const std::string& b)
     : MTestUmatStandardBehaviour(h,l,b)
   {
     using namespace tfel::system;
@@ -229,17 +228,17 @@ namespace mfront
       }
     }
   }
-  
+
   bool
-  MTestUmatSmallStrainBehaviour::computePredictionOperator(tfel::math::matrix<real>& Kt,
-							   const tfel::math::tmatrix<3u,3u,real>& r,
-							   const tfel::math::vector<real>&,
-							   const tfel::math::vector<real>&,
-							   const tfel::math::vector<real>& mp,
-							   const tfel::math::vector<real>&,
-							   const tfel::math::vector<real>&,
-							   const tfel::material::ModellingHypothesis::Hypothesis h,
-							   const MTestStiffnessMatrixType::mtype ktype) const
+  MTestUmatFiniteStrainBehaviour::computePredictionOperator(tfel::math::matrix<real>& Kt,
+							    const tfel::math::tmatrix<3u,3u,real>& r,
+							    const tfel::math::vector<real>&,
+							    const tfel::math::vector<real>&,
+							    const tfel::math::vector<real>& mp,
+							    const tfel::math::vector<real>&,
+							    const tfel::math::vector<real>&,
+							    const tfel::material::ModellingHypothesis::Hypothesis h,
+							    const MTestStiffnessMatrixType::mtype ktype) const
   {
     using namespace std;
     using namespace tfel::math;
@@ -255,29 +254,29 @@ namespace mfront
       this->computeElasticStiffness(Kt,mp,drot,h);
       return true;
     } else {
-      string msg("MTestUmatSmallStrainBehaviour::computePredictionOperator : "
+      string msg("MTestUmatFiniteStrainBehaviour::computePredictionOperator : "
 		 "computation of the tangent operator "
 		 "is not supported");
       throw(runtime_error(msg));
     }
     return false;
-  } // end of MTestUmatSmallStrainBehaviour::computePredictionOperator
+  } // end of MTestUmatFiniteStrainBehaviour::computePredictionOperator
 
   bool
-  MTestUmatSmallStrainBehaviour::integrate(tfel::math::matrix<real>& Kt,
-					   tfel::math::vector<real>& s1,
-					   tfel::math::vector<real>& iv1,
-					   const tfel::math::tmatrix<3u,3u,real>& r,
-					   const tfel::math::vector<real>& e0,
-					   const tfel::math::vector<real>& de,
-					   const tfel::math::vector<real>& s0,
-					   const tfel::math::vector<real>& mp,
-					   const tfel::math::vector<real>& iv0,
-					   const tfel::math::vector<real>& ev0,
-					   const tfel::math::vector<real>& dev,
-					   const tfel::material::ModellingHypothesis::Hypothesis h,
-					   const real dt,
-					   const MTestStiffnessMatrixType::mtype ktype) const
+  MTestUmatFiniteStrainBehaviour::integrate(tfel::math::matrix<real>& Kt,
+					    tfel::math::vector<real>& s1,
+					    tfel::math::vector<real>& iv1,
+					    const tfel::math::tmatrix<3u,3u,real>& r,
+					    const tfel::math::vector<real>& e0,
+					    const tfel::math::vector<real>& de,
+					    const tfel::math::vector<real>& s0,
+					    const tfel::math::vector<real>& mp,
+					    const tfel::math::vector<real>& iv0,
+					    const tfel::math::vector<real>& ev0,
+					    const tfel::math::vector<real>& dev,
+					    const tfel::material::ModellingHypothesis::Hypothesis h,
+					    const real dt,
+					    const MTestStiffnessMatrixType::mtype ktype) const
   {
     using namespace std;
     using namespace tfel::math;
@@ -309,19 +308,19 @@ namespace mfront
       ndi = 2;
       ntens = 6;
     } else {
-      string msg("MTestUmatSmallStrainBehaviour::integrate : ");
+      string msg("MTestUmatFiniteStrainBehaviour::integrate : ");
       msg += "unsupported hypothesis";
       throw(runtime_error(msg));
     }
     if((this->D.getNbRows()!=Kt.getNbRows())||
        (this->D.getNbCols()!=Kt.getNbCols())){
-      string msg("MTestUmatSmallStrainBehaviour::integrate : ");
+      string msg("MTestUmatFiniteStrainBehaviour::integrate : ");
       msg += "the memory has not been allocated correctly";
       throw(runtime_error(msg));
     }
     if(((iv0.size()==0)&&(this->iv.size()!=1u))||
        ((iv0.size()!=0)&&(iv0.size()!=this->iv.size()))){
-      string msg("MTestUmatSmallStrainBehaviour::integrate : ");
+      string msg("MTestUmatFiniteStrainBehaviour::integrate : ");
       msg += "the memory has not been allocated correctly";
       throw(runtime_error(msg));
     }
@@ -367,7 +366,7 @@ namespace mfront
     if(ktype==MTestStiffnessMatrixType::ELASTIC){
       this->computeElasticStiffness(Kt,mp,drot,h);
     } else {
-      string msg("MTestUmatSmallStrainBehaviour::integrate : "
+      string msg("MTestUmatFiniteStrainBehaviour::integrate : "
 		 "computation of the tangent operator "
 		 "is not supported");
       throw(runtime_error(msg));
@@ -377,13 +376,13 @@ namespace mfront
       s1(i) *= sqrt2;
     }
     return true;
-  } // end of MTestUmatSmallStrainBehaviour::integrate
+  } // end of MTestUmatFiniteStrainBehaviour::integrate
 
   void
-  MTestUmatSmallStrainBehaviour::computeElasticStiffness(tfel::math::matrix<real>& Kt,
-							 const tfel::math::vector<real>& mp,
-							 const tfel::math::tmatrix<3u,3u,real>& drot,
-							 const tfel::material::ModellingHypothesis::Hypothesis h) const
+  MTestUmatFiniteStrainBehaviour::computeElasticStiffness(tfel::math::matrix<real>& Kt,
+							  const tfel::math::vector<real>& mp,
+							  const tfel::math::tmatrix<3u,3u,real>& drot,
+							  const tfel::material::ModellingHypothesis::Hypothesis h) const
   {
     using namespace std;
     using namespace tfel::math;
@@ -452,7 +451,7 @@ namespace mfront
 	  }
 	}
       } else {
-	string msg("MTestUmatSmallStrainBehaviour::integrate : ");
+	string msg("MTestUmatFiniteStrainBehaviour::integrate : ");
 	msg += "unsupported hypothesis";
 	throw(runtime_error(msg));
       }
@@ -472,7 +471,7 @@ namespace mfront
 	UMATComputeStiffnessOperator<umat::SMALLSTRAINSTANDARDBEHAVIOUR,
 				     MH::AXISYMMETRICAL,
 				     umat::ORTHOTROPIC>::exe(&mp(0),De);
-	MTestUmatRotationMatrix2D m(&drot(0,0));
+	MTestUmatSmallStrainRotationMatrix2D m(&drot(0,0));
 	m.rotateStiffnessMatrixBackward(&De(0,0));
 	for(i=0;i!=4u;++i){
 	  for(j=0;j!=4u;++j){
@@ -484,7 +483,7 @@ namespace mfront
 	UMATComputeStiffnessOperator<umat::SMALLSTRAINSTANDARDBEHAVIOUR,
 				     MH::PLANESTRESS,
 				     umat::ORTHOTROPIC>::exe(&mp(0),De);
-	MTestUmatRotationMatrix2D m(&drot(0,0));
+	MTestUmatSmallStrainRotationMatrix2D m(&drot(0,0));
 	m.rotateStiffnessMatrixBackward(&De(0,0));
 	for(i=0;i!=4u;++i){
 	  for(j=0;j!=4u;++j){
@@ -496,7 +495,7 @@ namespace mfront
 	UMATComputeStiffnessOperator<umat::SMALLSTRAINSTANDARDBEHAVIOUR,
 				     MH::PLANESTRAIN,
 				     umat::ORTHOTROPIC>::exe(&mp(0),De);
-	MTestUmatRotationMatrix2D m(&drot(0,0));
+	MTestUmatSmallStrainRotationMatrix2D m(&drot(0,0));
 	m.rotateStiffnessMatrixBackward(&De(0,0));
 	for(i=0;i!=4u;++i){
 	  for(j=0;j!=4u;++j){
@@ -508,7 +507,7 @@ namespace mfront
 	UMATComputeStiffnessOperator<umat::SMALLSTRAINSTANDARDBEHAVIOUR,
 				     MH::GENERALISEDPLANESTRAIN,
 				     umat::ORTHOTROPIC>::exe(&mp(0),De);
-	MTestUmatRotationMatrix2D m(&drot(0,0));
+	MTestUmatSmallStrainRotationMatrix2D m(&drot(0,0));
 	m.rotateStiffnessMatrixBackward(&De(0,0));
 	for(i=0;i!=4u;++i){
 	  for(j=0;j!=4u;++j){
@@ -520,7 +519,7 @@ namespace mfront
 	UMATComputeStiffnessOperator<umat::SMALLSTRAINSTANDARDBEHAVIOUR,
 				     MH::TRIDIMENSIONAL,
 				     umat::ORTHOTROPIC>::exe(&mp(0),De);
-	MTestUmatRotationMatrix3D m(&drot(0,0));
+	MTestUmatSmallStrainRotationMatrix3D m(&drot(0,0));
 	m.rotateStiffnessMatrixBackward(&De(0,0));
 	for(i=0;i!=6u;++i){
 	  for(j=0;j!=6u;++j){
@@ -528,12 +527,12 @@ namespace mfront
 	  }
 	}
       } else {
-	string msg("MTestUmatSmallStrainBehaviour::integrate : ");
+	string msg("MTestUmatFiniteStrainBehaviour::integrate : ");
 	msg += "unsupported hypothesis";
 	throw(runtime_error(msg));
       }
     } else {
-      string msg("MTestUmatSmallStrainBehaviour::integrate : ");
+      string msg("MTestUmatFiniteStrainBehaviour::integrate : ");
       msg += "invalid behaviour type (neither "
 	"isotropic or orthotropic)";
       throw(runtime_error(msg));
@@ -541,7 +540,7 @@ namespace mfront
 
   }
       
-  MTestUmatSmallStrainBehaviour::~MTestUmatSmallStrainBehaviour()
+  MTestUmatFiniteStrainBehaviour::~MTestUmatFiniteStrainBehaviour()
   {}
   
 } // end of namespace mfront

@@ -12,7 +12,6 @@
 #include"TFEL/System/ExternalLibraryManager.hxx"
 #include"MFront/UMAT/UMAT.hxx"
 #include"MFront/MTestUmatCohesiveZoneModelBehaviour.hxx"
-#include"MFront/MTestUmatNormaliseTangentOperator.hxx"
 #include"MFront/UMAT/UMATComputeStiffnessOperator.hxx"
 
 namespace mfront
