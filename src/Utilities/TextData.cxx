@@ -176,6 +176,17 @@ namespace tfel
       return res;
     } // end of TextData::readDouble
 
+    void
+    TextData::skipLines(const unsigned short n)
+    {
+      using namespace std;
+      vector<Line>::iterator p = this->lines. begin();
+      while((p->nbr<=n+1)&&(p!=this->lines.end())){
+	++p;
+      }
+      lines.erase(lines.begin(),p);
+    }
+
   } // end of namespace utilities
 
 } // end of namespace tfel

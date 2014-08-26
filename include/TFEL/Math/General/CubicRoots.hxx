@@ -105,7 +105,6 @@ namespace tfel{
 		 const T a1,
 		 const T a0)
       {	
-      	static const T C_PI       = T(4)*std::atan(T(1));
 	static const T C_1_3      = T(1)/T(3);
 	static const T C_2_3      = T(2)*C_1_3;
 	static const T C_m1_27    = T(-1)/T(27);
@@ -199,18 +198,8 @@ namespace tfel{
 
 	tmp  = -C_27_2*q;
 	tmp2 = C_3SQRT3_2*std::sqrt(delta);
-	const T rho  = std::sqrt(tmp*tmp+tmp2*tmp2);
-
-	T theta;
-	if(rho<=prec){
-	  theta = T(0);
-	} else {
-	  if(std::abs(tmp+rho)<prec){
-	    theta = C_PI;
-	  } else {
-	    theta = T(2)*std::atan(tmp2/(tmp+rho));
-	  }
-	}
+	const T rho   = std::sqrt(tmp*tmp+tmp2*tmp2);
+	const T theta = std::atan2(tmp2,tmp);
  
 	tmp  = CubicRoots::cbrt(rho);
 	const T ux = tmp*std::cos(theta*C_1_3);

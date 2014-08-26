@@ -429,6 +429,9 @@ namespace mfront{
     }
     // Adds some stuff
     this->endsInputFileProcessing();
+    // and now starts
+    
+
     // Generating BehaviourData's outputFile
     this->writeBehaviourDataFile();
     // Generating IntegrationData's outputFile
@@ -2931,11 +2934,11 @@ namespace mfront{
 	}
       }
     } else {
-      // on définit toutes les hypothèses par défaut
+      // on exclut toutes les hypothèses par défaut
       this->writeBehaviourTraitsSpecialisation(MH::UNDEFINEDHYPOTHESIS,
 					       coefSize,stateVarsSize,
 					       externalStateVarsSize,false);
-      // unsupported hypothesis
+      // on déclare les hypothèses supportée
       for(ph2=this->mb.getHypotheses().begin();ph2!=this->mb.getHypotheses().end();++ph2){
 	this->writeBehaviourTraitsSpecialisation(*ph2,coefSize,stateVarsSize,
 						 externalStateVarsSize,true);

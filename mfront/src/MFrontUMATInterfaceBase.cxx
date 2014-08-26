@@ -1070,7 +1070,7 @@ namespace mfront
       out << "mg.setRotationMatrix("
 	  << "DROT[0],DROT[3],DROT[6],"
 	  << "DROT[1],DROT[4],DROT[7],"
-	  << "DROT[2],DROT[6],DROT[8]);\n";
+	  << "DROT[2],DROT[5],DROT[8]);\n";
     }
   } // end of MFrontUMATInterfaceBase::writeMTestFileGeneratorSetRotationMatrix
 

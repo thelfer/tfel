@@ -98,7 +98,11 @@ namespace tfel
        */
       const std::vector<std::string>&
       getPreamble(void) const;
-
+      /*!
+       * skip the first lines of the file
+       * \param[in] n : number of lines to be skipped
+       */
+      void skipLines(const unsigned short);
     private:
       /*!
        * \brief default constructor (disabled)
