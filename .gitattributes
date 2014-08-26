@@ -457,6 +457,7 @@ include/TFEL/Math/Forward/MatrixConcept.hxx -text
 include/TFEL/Math/Forward/ST2toST2Concept.hxx -text
 include/TFEL/Math/Forward/StensorConcept.hxx -text
 include/TFEL/Math/Forward/T2toST2Concept.hxx -text
+include/TFEL/Math/Forward/TensorConcept.hxx -text
 include/TFEL/Math/Forward/TinyNewtonRaphson.hxx -text
 include/TFEL/Math/Forward/VectorConcept.hxx -text
 include/TFEL/Math/Forward/array.hxx -text
@@ -683,7 +684,7 @@ include/TFEL/Math/T2toST2/T2toST2FromTinyMatrixView.hxx -text
 include/TFEL/Math/T2toST2/T2toST2FromTinyMatrixView2.hxx -text
 include/TFEL/Math/T2toST2/t2tost2.ixx -text
 include/TFEL/Math/T2toST2/t2tost2ResultType.hxx -text
-include/TFEL/Math/Tensor/TVFS.hxx -text
+include/TFEL/Math/Tensor/MatrixViewFromTensor.hxx -text
 include/TFEL/Math/Tensor/TensorChangeBasis.hxx -text
 include/TFEL/Math/Tensor/TensorConcept.hxx -text
 include/TFEL/Math/Tensor/TensorConcept.ixx -text
@@ -697,6 +698,8 @@ include/TFEL/Math/Tensor/TensorFromTinyMatrixRowView2.hxx -text
 include/TFEL/Math/Tensor/TensorFromTinyVectorView.hxx -text
 include/TFEL/Math/Tensor/TensorProduct.hxx -text
 include/TFEL/Math/Tensor/TensorSizeToDime.hxx -text
+include/TFEL/Math/Tensor/TensorTransposeExpr.hxx -text
+include/TFEL/Math/Tensor/TensorViewFromStensor.hxx -text
 include/TFEL/Math/Tensor/tensor.ixx -text
 include/TFEL/Math/Tensor/tensorResultType.hxx -text
 include/TFEL/Math/TinyMatrixInvert.hxx -text
@@ -1622,6 +1625,7 @@ tests/Math/t2tost2/t2tost2.cxx -text
 tests/Math/tensor.cxx -text
 tests/Math/tensor2.cxx -text
 tests/Math/tensor3.cxx -text
+tests/Math/tensor4.cxx -text
 tests/Math/tinymatrixsolve.cxx -text
 tests/Math/tinymatrixsolve2.cxx -text
 tests/Math/tmatrix.cxx -text

@@ -1,8 +1,15 @@
-#ifndef _TENSOR_CONCEPT_IMPL_
-#define _TENSOR_CONCEPT_IMPL_ 1
 
+#ifndef _TFEL_MATH_TENSOR_CONCEPT_IMPL_
+#define _TFEL_MATH_TENSOR_CONCEPT_IMPL_ 1
+
+#include"TFEL/FSAlgorithm/transform.hxx"
+#include"TFEL/FSAlgorithm/copy.hxx"
 #include"TFEL/Math/General/Abs.hxx"
+#include"TFEL/Math/Forward/stensor.hxx"
+#include"TFEL/Math/Forward/tvector.hxx"
+#include"TFEL/Math/Forward/tensor.hxx"
 #include"TFEL/Math/Tensor/TensorSizeToDime.hxx"
+#include"TFEL/Math/Tensor/MatrixViewFromTensor.hxx"
 
 namespace tfel{
 
@@ -17,6 +24,7 @@ namespace tfel{
       struct TensorAbs<1u>
       {
 	template<typename TensorType>
+	TFEL_MATH_INLINE
 	static typename tfel::typetraits::AbsType<typename TensorTraits<TensorType>::NumType>::type
 	exe(const TensorType& s)
 	{
@@ -28,6 +36,7 @@ namespace tfel{
       struct TensorAbs<2u>
       {
 	template<typename TensorType>
+	TFEL_MATH_INLINE
 	static typename tfel::typetraits::AbsType<typename TensorTraits<TensorType>::NumType>::type
 	exe(const TensorType& s)
 	{
@@ -40,6 +49,7 @@ namespace tfel{
       struct TensorAbs<3u>
       {
 	template<typename TensorType>
+	TFEL_MATH_INLINE
 	static typename tfel::typetraits::AbsType<typename TensorTraits<TensorType>::NumType>::type
 	exe(const TensorType& s)
 	{
@@ -49,6 +59,80 @@ namespace tfel{
 	}
       };
       
+      template<unsigned short N>
+      struct TensorConceptMatrixAccessOperator;
+
+      template<>
+      struct TensorConceptMatrixAccessOperator<1u>
+      {
+	template<typename TensorType>
+	TFEL_MATH_INLINE
+	static typename tfel::typetraits::AbsType<typename TensorTraits<TensorType>::NumType>::type
+	exe(const TensorType& t,
+	    const unsigned short i,
+	    const unsigned short j)
+	{
+	  typedef typename TensorTraits<TensorType>::NumType NumType;
+	  if((i==j)&&(i<3)){
+	    return t(i);
+	  }
+	  return NumType(0);
+	}
+      };
+      
+      template<>
+      struct TensorConceptMatrixAccessOperator<2u>
+      {
+	template<typename TensorType>
+	TFEL_MATH_INLINE
+	static typename tfel::typetraits::AbsType<typename TensorTraits<TensorType>::NumType>::type
+	exe(const TensorType& t,
+	    const unsigned short i,
+	    const unsigned short j)
+	{
+	  typedef typename TensorTraits<TensorType>::NumType NumType;
+	  if((i==j)&&(i<3)){
+	    return t(i);
+	  } else if((i==0)&&(j==1)){
+	    return t(3);
+	  } else if((i==1)&&(j==0)){
+	    return t(4);
+	  }
+	  return NumType(0);
+	}
+      };
+
+      template<>
+      struct TensorConceptMatrixAccessOperator<3u>
+      {
+	template<typename TensorType>
+	TFEL_MATH_INLINE
+	static typename tfel::typetraits::AbsType<typename TensorTraits<TensorType>::NumType>::type
+	exe(const TensorType& t,
+	    const unsigned short i,
+	    const unsigned short j)
+	{
+	  typedef typename TensorTraits<TensorType>::NumType NumType;
+	  if((i==j)&&(i<3)){
+	    return t(i);
+	  } else if((i==0)&&(j==1)){
+	    return t(3);
+	  } else if((i==1)&&(j==0)){
+	    return t(4);
+	  } else if((i==0)&&(j==2)){
+	    return t(5);
+	  } else if((i==2)&&(j==0)){
+	    return t(6);
+	  } else if((i==1)&&(j==2)){
+	    return t(7);
+	  } else if((i==2)&&(j==1)){
+	    return t(8);
+	  }
+	  throw(TensorInvalidIndexesException(i,j));
+	  return NumType(0);
+	}
+      };
+
     } // end of namespace internals
     
     template<class T>
@@ -68,23 +152,11 @@ namespace tfel{
     TensorConcept<T>::operator()(const unsigned short i,
 				 const unsigned short j) const
     {
-      if((i==j)&&(i<3)){
-	return static_cast<const T&>(*this).operator()(i);
-      } else if((i==0)&&(j==1)){
-	return (TensorTraits<T>::dime<2) ? NumType(0) : static_cast<const T&>(*this).operator()(3);
-      } else if((i==1)&&(j==0)){
-	return (TensorTraits<T>::dime<2) ? NumType(0) : static_cast<const T&>(*this).operator()(4);
-      } else if((i==0)&&(j==2)){
-	return (TensorTraits<T>::dime<3) ? NumType(0) : static_cast<const T&>(*this).operator()(5);
-      } else if((i==2)&&(j==0)){
-	return (TensorTraits<T>::dime<3) ? NumType(0) : static_cast<const T&>(*this).operator()(6);
-      } else if((i==1)&&(j==2)){
-	return (TensorTraits<T>::dime<3) ? NumType(0) : static_cast<const T&>(*this).operator()(7);
-      } else if((i==2)&&(j==1)){
-	return (TensorTraits<T>::dime<3) ? NumType(0) : static_cast<const T&>(*this).operator()(8);
+      using tfel::math::internals::TensorConceptMatrixAccessOperator;
+      if((i>2)||(j>2)){
+	throw(TensorInvalidIndexesException(i,j));
       }
-      throw(TensorInvalidIndexesException(i,j));
-      return NumType(0);
+      return TensorConceptMatrixAccessOperator<TensorTraits<T>::dime>::exe(static_cast<const T&>(*this),i,j);
     }
     
     template<class T>
@@ -520,6 +592,127 @@ namespace tfel{
       const T i = t(2);
       return a*(e*i-f*h)+b*(f*g-d*i)+c*(d*h-e*g);
     }
+
+    template<typename TensorType,
+	     typename StensorType,
+	     typename TensorType2>
+    typename tfel::meta::EnableIf<
+      tfel::meta::Implements<TensorType,TensorConcept>::cond &&
+      tfel::meta::Implements<TensorType2,TensorConcept>::cond &&
+      tfel::meta::Implements<StensorType,StensorConcept>::cond &&
+      tfel::meta::IsSameType<typename StensorTraits<StensorType>::NumType,
+			     typename TensorTraits<TensorType2>::NumType>::cond &&
+      tfel::meta::IsSameType<typename tfel::typetraits::BaseType<typename TensorTraits<TensorType2>::NumType>::type,
+			     typename TensorTraits<TensorType>::NumType>::cond &&
+      (TensorTraits<TensorType>::dime==TensorTraits<TensorType2>::dime)&&
+      (TensorTraits<TensorType>::dime==StensorTraits<StensorType>::dime)&&
+      (TensorTraits<TensorType>::dime == 1u),
+      void
+      >::type
+    polar_decomposition(TensorType& R,
+			StensorType& U,
+			const TensorType2& F)
+    {
+      using namespace tfel::typetraits;
+      using tfel::fsalgo::copy;
+      typedef typename TensorTraits<TensorType2>::NumType T;
+      typedef typename BaseType<T>::type base;
+      R = tensor<1u,base>::Id();
+      copy<3u>::exe(F.begin(),U.begin());
+    } // end of polar_decomposition
+
+    template<typename TensorType,
+	     typename StensorType,
+	     typename TensorType2>
+    typename tfel::meta::EnableIf<
+      tfel::meta::Implements<TensorType,TensorConcept>::cond &&
+      tfel::meta::Implements<TensorType2,TensorConcept>::cond &&
+      tfel::meta::Implements<StensorType,StensorConcept>::cond &&
+      tfel::meta::IsSameType<typename StensorTraits<StensorType>::NumType,
+			     typename TensorTraits<TensorType2>::NumType>::cond &&
+      tfel::meta::IsSameType<typename tfel::typetraits::BaseType<typename TensorTraits<TensorType2>::NumType>::type,
+			     typename TensorTraits<TensorType>::NumType>::cond &&
+      (TensorTraits<TensorType>::dime==TensorTraits<TensorType2>::dime)&&
+      (TensorTraits<TensorType>::dime==StensorTraits<StensorType>::dime)&&
+      ((TensorTraits<TensorType>::dime == 2u)||(TensorTraits<TensorType>::dime == 3u)),
+      void
+      >::type
+    polar_decomposition(TensorType& R,
+			StensorType& U,
+			const TensorType2& F)
+    {
+      using namespace std;
+      using namespace tfel::typetraits;
+      using tfel::fsalgo::transform;
+      typedef typename TensorTraits<TensorType2>::NumType T;
+      typedef typename BaseType<T>::type base;
+      typedef typename ComputeBinaryResult<base,T,OpDiv>::Result inv_T;
+      typedef typename ComputeBinaryResult<T,T,OpMult>::Result   T2;
+      typedef typename ComputeBinaryResult<T2,T,OpMult>::Result  T3;
+      T (*sqrt_ptr)(const T2) = std::sqrt;
+      stensor<TensorTraits<TensorType>::dime,T> C = computeRightCauchyGreenTensor(F);
+      stensor<TensorTraits<TensorType>::dime,T2> C2 = C*C;
+      tvector<3u,T2> vp_C;
+      tvector<3u,T> vp_U;
+      C.computeEigenValues(vp_C);
+      transform<3u>::exe(vp_C.begin(),vp_U.begin(),ptr_fun(sqrt_ptr));
+      const T  i1 = vp_U[0]+vp_U[1]+vp_U[2];
+      const T2 i2 = vp_U[0]*vp_U[1]+vp_U[0]*vp_U[2]+vp_U[1]*vp_U[2];
+      const T3 i3 = vp_U[0]*vp_U[1]*vp_U[2];
+      const T3 D  = i1*i2-i3;
+      U = 1/D*(-C*C+(i1*i1-i2)*C+i1*i3*stensor<TensorTraits<TensorType>::dime,base>::Id());
+      stensor<TensorTraits<TensorType>::dime,inv_T> U_1 =
+	(C-i1*U+i2*stensor<TensorTraits<TensorType>::dime,base>::Id())*(1/i3);
+      R = F * U_1;
+    } // end of polar_decomposition
+
+    template<typename TensorType>
+    typename tfel::meta::EnableIf<
+      tfel::meta::Implements<TensorType,TensorConcept>::cond,
+      MatrixExpr<tmatrix<3u,3u,typename TensorTraits<TensorType>::NumType>,
+		 MatrixViewFromTensorExpr<TensorType> >
+    >::type
+    matrix_view(const TensorType& t)
+    {
+      return MatrixExpr<tmatrix<3u,3u,typename TensorTraits<TensorType>::NumType>,
+			MatrixViewFromTensorExpr<TensorType> >(t);
+    } // end of matrix_view
+
+    template<typename TensorType>
+    typename tfel::meta::EnableIf<
+      tfel::meta::Implements<TensorType,TensorConcept>::cond &&
+      (TensorTraits<TensorType>::dime==1u),
+      TensorExpr<tensor<1u,typename TensorTraits<TensorType>::NumType>,
+		 TensorTransposeExpr1D<TensorType> >
+      >::type
+    transpose(const TensorType& t){
+      return TensorExpr<tensor<1u,typename TensorTraits<TensorType>::NumType>,
+			TensorTransposeExpr1D<TensorType> >(t);
+    } // end of transpose
+
+    template<typename TensorType>
+    typename tfel::meta::EnableIf<
+      tfel::meta::Implements<TensorType,TensorConcept>::cond &&
+      (TensorTraits<TensorType>::dime==2u),
+      TensorExpr<tensor<2u,typename TensorTraits<TensorType>::NumType>,
+		 TensorTransposeExpr2D<TensorType> >
+      >::type
+    transpose(const TensorType& t){
+      return TensorExpr<tensor<2u,typename TensorTraits<TensorType>::NumType>,
+			TensorTransposeExpr2D<TensorType> >(t);
+    } // end of transpose
+
+    template<typename TensorType>
+    typename tfel::meta::EnableIf<
+      tfel::meta::Implements<TensorType,TensorConcept>::cond &&
+      (TensorTraits<TensorType>::dime==3u),
+      TensorExpr<tensor<3u,typename TensorTraits<TensorType>::NumType>,
+		 TensorTransposeExpr3D<TensorType> >
+      >::type
+    transpose(const TensorType& t){
+      return TensorExpr<tensor<3u,typename TensorTraits<TensorType>::NumType>,
+			TensorTransposeExpr3D<TensorType> >(t);
+    } // end of transpose
   
     template<typename T>
     std::ostream&
@@ -538,4 +731,4 @@ namespace tfel{
   
 } // end of namespace tfel
 
-#endif /* _TENSOR_CONCEPT_IMPL_ */
+#endif /* _TFEL_MATH_TENSOR_CONCEPT_IMPL_ */

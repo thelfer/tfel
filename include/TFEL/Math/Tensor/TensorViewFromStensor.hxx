@@ -1,13 +1,13 @@
 /*! 
- * \file  TVFS.hxx
- * \brief The TVFS describes how a stensor can be interpreted as a
+ * \file  TensorViewFromStensor.hxx
+ * \brief The TensorViewFromStensor describes how a stensor can be interpreted as a
  * tensor
  * \author Helfer Thomas
  * \brief 04 juil. 2013
  */
 
-#ifndef _LIB_TFEL_MATH_TVFS_H_
-#define _LIB_TFEL_MATH_TVFS_H_ 
+#ifndef _LIB_TFEL_MATH_TENSORVIEWFROMSTENSOR_H_
+#define _LIB_TFEL_MATH_TENSORVIEWFROMSTENSOR_H_ 
 
 #include"TFEL/Metaprogramming/StaticAssert.hxx"
 #include"TFEL/Math/General/EmptyRunTimeProperties.hxx"
@@ -28,14 +28,14 @@ namespace tfel
      * Tensor View From Stensor
      */
     template<typename T>
-    struct TVFSExpr
-    {}; // end of struct TVFSExpr
+    struct TensorViewFromStensorExpr
+    {}; // end of struct TensorViewFromStensorExpr
 
     template<unsigned short N,
 	     typename ValueType,
 	     typename T>
-    struct TensorExpr<tensor<N,ValueType>,TVFSExpr<T> >
-      : public TensorConcept<TensorExpr<tensor<N,ValueType>,TVFSExpr<T> > >
+    struct TensorExpr<tensor<N,ValueType>,TensorViewFromStensorExpr<T> >
+      : public TensorConcept<TensorExpr<tensor<N,ValueType>,TensorViewFromStensorExpr<T> > >
     {
 
       typedef EmptyRunTimeProperties RunTimeProperties;
@@ -53,7 +53,10 @@ namespace tfel
       const ValueType
       operator()(const unsigned short i) const
       {
-	static const ValueType cste = ValueType(1)/sqrt(ValueType(2));
+	using std::sqrt;
+	using typename tfel::typetraits::BaseType;
+	typedef typename BaseType<ValueType>::type real;
+	static const real cste = real(1)/sqrt(real(2));
 	switch(i){
 	case 0:
 	  return this->s(0);
@@ -106,16 +109,16 @@ namespace tfel
     }; // end of struct TensorExpr
 
     template<typename T>
-    struct TVFS
+    struct TensorViewFromStensor
     {
       typedef typename StensorTraits<T>::NumType NumType;
       static  const unsigned short N = StensorTraits<T>::dime;
-      typedef TensorExpr<tensor<N,NumType>,TVFSExpr<T> > type;
-    }; // end of struct TVFS
+      typedef TensorExpr<tensor<N,NumType>,TensorViewFromStensorExpr<T> > type;
+    }; // end of struct TensorViewFromStensor
     
   } // end of namespace math
 
 } // end of namespace tfel
 
-#endif /* _LIB_TFEL_MATH_TVFS_H */
+#endif /* _LIB_TFEL_MATH_TENSORVIEWFROMSTENSOR_H */
 

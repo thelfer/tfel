@@ -6,8 +6,8 @@
 
 @Description{
   "loi monocristalline MONO_DD_CC cf. R5.03.11"
-  // adimensionnement omega=omega*b*b
-}
+    // adimensionnement omega=omega*b*b
+    }
 
 @ModellingHypothesis Tridimensional;
 @OrthotropicBehaviour;
@@ -44,7 +44,9 @@
 @MaterialProperty real h5;
 
 @StateVariable strain  omega[12];
+omega.setNormalisationFactor(1.e-2);
 //omega.setMaximumIncrementValuePerIteration(1.e-5);
+
 
 @LocalVariable real Dg[12];
 @LocalVariable real Lc ;

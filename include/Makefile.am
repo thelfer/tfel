@@ -86,6 +86,7 @@ nobase_include_HEADERS= TFEL/Macros.hxx                                         
 			TFEL/Math/Forward/VectorConcept.hxx                                                          \
 			TFEL/Math/Forward/MatrixConcept.hxx                                                          \
 			TFEL/Math/Forward/StensorConcept.hxx                                                         \
+			TFEL/Math/Forward/TensorConcept.hxx                                                          \
 			TFEL/Math/Forward/ST2toST2Concept.hxx                                                        \
 			TFEL/Math/Forward/T2toST2Concept.hxx                                                         \
 			TFEL/Math/Forward/CompositeConcept.hxx                                                       \
@@ -175,7 +176,9 @@ nobase_include_HEADERS= TFEL/Macros.hxx                                         
 			TFEL/Math/Tensor/TensorConceptOperations.hxx						     \
 			TFEL/Math/Tensor/TensorConceptOperations.ixx						     \
 			TFEL/Math/Tensor/TensorProduct.hxx						             \
-			TFEL/Math/Tensor/TVFS.hxx								     \
+			TFEL/Math/Tensor/TensorTransposeExpr.hxx						     \
+			TFEL/Math/Tensor/TensorViewFromStensor.hxx						     \
+			TFEL/Math/Tensor/MatrixViewFromTensor.hxx						     \
 			TFEL/Math/Tensor/TensorFromTinyVectorView.hxx						     \
 			TFEL/Math/Tensor/TensorFromTinyMatrixRowView.hxx					     \
 			TFEL/Math/Tensor/TensorFromTinyMatrixRowView2.hxx					     \

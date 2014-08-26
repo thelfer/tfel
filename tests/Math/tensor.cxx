@@ -15,7 +15,7 @@
 
 #include"TFEL/Math/tensor.hxx"
 #include"TFEL/Math/stensor.hxx"
-#include"TFEL/Math/Tensor/TVFS.hxx"
+#include"TFEL/Math/Tensor/TensorViewFromStensor.hxx"
 #include"TFEL/Math/General/Complex.hxx"
 
 struct TensorTest
@@ -328,7 +328,7 @@ struct TensorTest7
     typedef double real;
     const real cste = real(1)/sqrt(real(2));
     const real eps  = 10.*numeric_limits<real>::epsilon();
-    typedef TVFS<stensor<3u,real> >::type TensorView;
+    typedef TensorViewFromStensor<stensor<3u,real> >::type TensorView;
     stensor<3u,real> s;
     for(unsigned short i=0;i!=s.size();++i){
       s[i] = exp(cos(real(i)));

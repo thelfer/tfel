@@ -21,7 +21,7 @@ namespace tfel{
 
     template<typename T_type, typename Expr>
     struct MatrixTraits<MatrixExpr<T_type,Expr> >{
-      typedef typename Expr::NumType NumType;
+      typedef typename MatrixTraits<T_type>::NumType   NumType;
       typedef typename MatrixTraits<T_type>::IndexType IndexType;
       typedef typename MatrixTraits<T_type>::RunTimeProperties RunTimeProperties;
     };

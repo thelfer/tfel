@@ -37,6 +37,7 @@ test_PROGRAMS = hill                                     \
 		tensor                                   \
 		tensor2                                  \
 		tensor3                                  \
+		tensor4                                  \
 		stensor                                  \
 		stensor2                                 \
 		stensor3                                 \
@@ -119,6 +120,7 @@ solve_SOURCES                 = solve.cxx
 tensor_SOURCES                = tensor.cxx
 tensor2_SOURCES               = tensor2.cxx
 tensor3_SOURCES               = tensor3.cxx
+tensor4_SOURCES               = tensor4.cxx
 stensor_SOURCES               = stensor.cxx              
 stensor2_SOURCES              = stensor2.cxx
 stensor3_SOURCES              = stensor3.cxx

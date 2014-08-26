@@ -15,7 +15,6 @@
 
 #include"TFEL/Math/tensor.hxx"
 #include"TFEL/Math/stensor.hxx"
-#include"TFEL/Math/Tensor/TVFS.hxx"
 #include"TFEL/Math/General/Complex.hxx"
 
 struct RightCauchyGreenTensorTest

@@ -116,6 +116,7 @@ namespace tfel{
       struct StensorAbs<1u>
       {
 	template<typename StensorType>
+	TFEL_MATH_INLINE
 	static typename tfel::typetraits::AbsType<typename StensorTraits<StensorType>::NumType>::type
 	exe(const StensorType& s)
 	{
@@ -127,6 +128,7 @@ namespace tfel{
       struct StensorAbs<2u>
       {
 	template<typename StensorType>
+	TFEL_MATH_INLINE
 	static typename tfel::typetraits::AbsType<typename StensorTraits<StensorType>::NumType>::type
 	exe(const StensorType& s)
 	{
@@ -139,6 +141,7 @@ namespace tfel{
       struct StensorAbs<3u>
       {
 	template<typename StensorType>
+	TFEL_MATH_INLINE
 	static typename tfel::typetraits::AbsType<typename StensorTraits<StensorType>::NumType>::type
 	exe(const StensorType& s)
 	{

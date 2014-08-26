@@ -6,8 +6,8 @@
  * \date   07 avr 2008
  */
 
-#ifndef _LIB_TENSORPRODUCTEXPR_HXX_
-#define _LIB_TENSORPRODUCTEXPR_HXX_ 
+#ifndef _LIB_TFEL_MATH_TENSORPRODUCTEXPR_HXX_
+#define _LIB_TFEL_MATH_TENSORPRODUCTEXPR_HXX_ 
 
 #include<cmath>
 
@@ -199,4 +199,4 @@ namespace tfel{
 
 } // end of namespace tfel
 
-#endif /* _LIB_TENSORPRODUCTEXPR_HXX */
+#endif /* _LIB_TFEL_MATH_TENSORPRODUCTEXPR_HXX */

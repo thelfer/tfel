@@ -1,3 +1,10 @@
+/*!
+ * \file   TensorConcept.hxx  
+ * \brief    
+ * \author Helfer Thomas
+ * \date   01 Déc 2013
+ */
+
 #ifndef _TFEL_MATH_TENSOR_CONCEPT_LIB_
 #define _TFEL_MATH_TENSOR_CONCEPT_LIB_ 1
 
@@ -17,6 +24,10 @@
 #include"TFEL/Math/General/Abs.hxx"
 #include"TFEL/Math/Function/Power.hxx"
 #include"TFEL/Math/Forward/stensor.hxx"
+#include"TFEL/Math/Forward/MatrixConcept.hxx"
+#include"TFEL/Math/Forward/tmatrix.hxx"
+#include"TFEL/Math/Tensor/TensorTransposeExpr.hxx"
+#include"TFEL/Math/Tensor/MatrixViewFromTensor.hxx"
 
 namespace tfel{
 
@@ -380,6 +391,108 @@ namespace tfel{
 				  Power<3> >::Result
     >::type
     det(const TensorType&);
+
+    /*!
+     * \brief provide the polar decomposition of a tensor
+     * \param[out] rotation
+     * \param[out] stretch
+     * \param[in]  F
+     */
+    template<typename TensorType,
+	     typename StensorType,
+	     typename TensorType2>
+    TFEL_MATH_INLINE2 
+    typename tfel::meta::EnableIf<
+      tfel::meta::Implements<TensorType,TensorConcept>::cond &&
+      tfel::meta::Implements<TensorType2,TensorConcept>::cond &&
+      tfel::meta::Implements<StensorType,StensorConcept>::cond &&
+      tfel::meta::IsSameType<typename StensorTraits<StensorType>::NumType,
+			     typename TensorTraits<TensorType2>::NumType>::cond &&
+      tfel::meta::IsSameType<typename tfel::typetraits::BaseType<typename TensorTraits<TensorType2>::NumType>::type,
+			     typename TensorTraits<TensorType>::NumType>::cond &&
+      (TensorTraits<TensorType>::dime==TensorTraits<TensorType2>::dime)&&
+      (TensorTraits<TensorType>::dime==StensorTraits<StensorType>::dime)&&
+      (TensorTraits<TensorType>::dime == 1u),
+      void
+      >::type
+    polar_decomposition(TensorType&,
+			StensorType&,
+			const TensorType2&);
+
+    /*!
+     * \brief provide the polar decomposition of a tensor
+     * \param[out] rotation
+     * \param[out] stretch
+     * \param[in]  F
+     */
+    template<typename TensorType,
+	     typename StensorType,
+	     typename TensorType2>
+    TFEL_MATH_INLINE2 
+    typename tfel::meta::EnableIf<
+      tfel::meta::Implements<TensorType,TensorConcept>::cond &&
+      tfel::meta::Implements<TensorType2,TensorConcept>::cond &&
+      tfel::meta::Implements<StensorType,StensorConcept>::cond &&
+      tfel::meta::IsSameType<typename StensorTraits<StensorType>::NumType,
+			     typename TensorTraits<TensorType2>::NumType>::cond &&
+      tfel::meta::IsSameType<typename tfel::typetraits::BaseType<typename TensorTraits<TensorType2>::NumType>::type,
+			     typename TensorTraits<TensorType>::NumType>::cond &&
+      (TensorTraits<TensorType>::dime==TensorTraits<TensorType2>::dime)&&
+      (TensorTraits<TensorType>::dime==StensorTraits<StensorType>::dime)&&
+      ((TensorTraits<TensorType>::dime == 2u)||(TensorTraits<TensorType>::dime == 3u)),
+      void
+      >::type
+    polar_decomposition(TensorType&,
+			StensorType&,
+			const TensorType2&);
+
+    template<typename TensorType>
+    TFEL_MATH_INLINE
+    typename tfel::meta::EnableIf<
+      tfel::meta::Implements<TensorType,TensorConcept>::cond,
+      MatrixExpr<tmatrix<3u,3u,typename TensorTraits<TensorType>::NumType>,
+		 MatrixViewFromTensorExpr<TensorType> >
+    >::type
+    matrix_view(const TensorType&);
+
+    /*!
+     * \return a transposed view of  the tensor
+     */
+    template<typename TensorType>
+    TFEL_MATH_INLINE
+    typename tfel::meta::EnableIf<
+      tfel::meta::Implements<TensorType,TensorConcept>::cond &&
+      (TensorTraits<TensorType>::dime==1u),
+      TensorExpr<tensor<1u,typename TensorTraits<TensorType>::NumType>,
+		 TensorTransposeExpr1D<TensorType> >
+      >::type
+    transpose(const TensorType&);
+
+    /*!
+     * \return a transposed view of  the tensor
+     */
+    template<typename TensorType>
+    TFEL_MATH_INLINE
+    typename tfel::meta::EnableIf<
+      tfel::meta::Implements<TensorType,TensorConcept>::cond &&
+      (TensorTraits<TensorType>::dime==2u),
+      TensorExpr<tensor<2u,typename TensorTraits<TensorType>::NumType>,
+		 TensorTransposeExpr2D<TensorType> >
+      >::type
+    transpose(const TensorType&);
+
+    /*!
+     * \return a transposed view of  the tensor
+     */
+    template<typename TensorType>
+    TFEL_MATH_INLINE
+    typename tfel::meta::EnableIf<
+      tfel::meta::Implements<TensorType,TensorConcept>::cond &&
+      (TensorTraits<TensorType>::dime==3u),
+      TensorExpr<tensor<3u,typename TensorTraits<TensorType>::NumType>,
+		 TensorTransposeExpr3D<TensorType> >
+      >::type
+    transpose(const TensorType&);
 
     // Serialisation operator
     template<typename T>

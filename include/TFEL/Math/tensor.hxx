@@ -2,7 +2,7 @@
  * \file   tensor.hxx  
  * \brief    
  * \author Helfer Thomas
- * \date   04 May 2006
+ * \date   01 Déc 2013
  */
 
 #ifndef _LIB_TFEL_TENSOR_H_
@@ -216,7 +216,7 @@ namespace tfel{
       TFEL_MATH_INLINE       T&
       operator()(const unsigned short);
 
-      TFEL_MATH_INLINE const T&
+      TFEL_MATH_INLINE T
       operator()(const unsigned short,
 		 const unsigned short) const;      
       

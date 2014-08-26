@@ -33,7 +33,7 @@
 #include"TFEL/Math/Stensor/StensorConcept.hxx"
 #include"TFEL/Math/Tensor/TensorExpr.hxx"
 #include"TFEL/Math/Tensor/TensorProduct.hxx"
-#include"TFEL/Math/Tensor/TVFS.hxx"
+#include"TFEL/Math/Tensor/TensorViewFromStensor.hxx"
 
 namespace tfel{
 
@@ -79,8 +79,8 @@ namespace tfel{
     class ComputeBinaryResult_<TensorTag,TensorTag,A,B,OpMult>
     {
       struct DummyHandle{};
-      typedef typename TensorType<A>::type StensA;
-      typedef typename TensorType<B>::type StensB;
+      typedef typename TensorType<A>::type tensA;
+      typedef typename TensorType<B>::type tensB;
       typedef typename tfel::meta::IF<TensorTraits<A>::dime==1u,
 				      TensorProductExpr1D<A,B>,
 				      typename tfel::meta::IF<TensorTraits<A>::dime==2u,
@@ -88,28 +88,11 @@ namespace tfel{
 							      TensorProductExpr3D<A,B> >::type
 				      >::type Expr;
     public:
-      typedef typename ResultType<StensA,StensB,OpMult>::type Result;
+      typedef typename ResultType<tensA,tensB,OpMult>::type Result;
       typedef typename tfel::meta::IF<tfel::typetraits::IsInvalid<Result>::cond,
 				      DummyHandle,
 				      TensorExpr<Result,Expr> >::type Handle;
     };
-
-    // /*
-    //  * Partial Specialisation of ComputeBinaryResult_ for tensor's operation
-    //  */
-    // template<typename A, typename B>
-    // class ComputeBinaryResult_<TensorTag,TensorTag,A,B,OpDiadicProduct>
-    // {
-    //   struct DummyHandle{};
-    //   typedef typename TensorType<A>::type TensA;
-    //   typedef typename TensorType<B>::type TensB;
-    //   typedef MathObjectMathObjectDiadicProductExpr<TensorConcept,TensorTraits,A,B> Expr;
-    // public:
-    //   typedef typename ResultType<TensA,TensB,OpDiadicProduct>::type Result;
-    //   typedef typename tfel::meta::IF<tfel::typetraits::IsInvalid<Result>::cond,
-    // 				      DummyHandle,
-    // 				      ST2toST2Expr<Result,Expr> >::type Handle;
-    // };
 
     /*
      * Partial Specialisation of ComputeBinaryResult_ for tensor vs stensor operations
@@ -120,7 +103,7 @@ namespace tfel{
       struct DummyHandle{};
       typedef typename TensorType<A>::type  TensA;
       typedef typename StensorType<B>::type STensB;
-      typedef typename TVFS<B>::type        TensB;
+      typedef typename TensorViewFromStensor<B>::type        TensB;
       typedef typename tfel::meta::IF<tfel::meta::HasRandomAccessConstIterator<A>::cond&&
                                       tfel::meta::HasRandomAccessConstIterator<TensB>::cond,
 				      MathObjectMathObjectExpr<TensorConcept,
@@ -143,9 +126,9 @@ namespace tfel{
     class ComputeBinaryResult_<StensorTag,TensorTag,A,B,Op>
     {
       struct DummyHandle{};
-      typedef typename StensorType<A>::type STensA;
-      typedef typename TVFS<A>::type        TensA;
-      typedef typename TensorType<B>::type  TensB;
+      typedef typename StensorType<A>::type           STensA;
+      typedef typename TensorViewFromStensor<A>::type TensA;
+      typedef typename TensorType<B>::type            TensB;
       typedef typename tfel::meta::IF<tfel::meta::HasRandomAccessConstIterator<TensA>::cond&&
                                       tfel::meta::HasRandomAccessConstIterator<B>::cond,
 				      MathObjectMathObjectExpr<TensorConcept,
@@ -160,6 +143,69 @@ namespace tfel{
 				      DummyHandle,
 				      TensorExpr<Result,Expr> >::type Handle;
     };
+
+    /*
+     * Partial Specialisation of ComputeBinaryResult_ for tensor's multiplication
+     */
+    template<typename A, typename B>
+    class ComputeBinaryResult_<TensorTag,StensorTag,A,B,OpMult>
+    {
+      struct DummyHandle{};
+      typedef typename TensorType<A>::type TensA;
+      typedef typename StensorType<B>::type STensB;
+      typedef typename TensorViewFromStensor<B>::type TensB;
+      typedef typename tfel::meta::IF<TensorTraits<A>::dime==1u,
+				      TensorProductExpr1D<A,TensB>,
+				      typename tfel::meta::IF<TensorTraits<A>::dime==2u,
+							      TensorProductExpr2D<A,TensB>,
+							      TensorProductExpr3D<A,TensB> >::type
+				      >::type Expr;
+    public:
+      typedef typename ResultType<TensA,STensB,OpMult>::type Result;
+      typedef typename tfel::meta::IF<tfel::typetraits::IsInvalid<Result>::cond,
+				      DummyHandle,
+				      TensorExpr<Result,Expr> >::type Handle;
+    };
+
+    /*
+     * Partial Specialisation of ComputeBinaryResult_ for tensor's multiplication
+     */
+    template<typename A, typename B>
+    class ComputeBinaryResult_<StensorTag,TensorTag,A,B,OpMult>
+    {
+      struct DummyHandle{};
+      typedef typename StensorType<A>::type STensA;
+      typedef typename TensorViewFromStensor<A>::type TensA;
+      typedef typename TensorType<B>::type TensB;
+      typedef typename tfel::meta::IF<TensorTraits<A>::dime==1u,
+				      TensorProductExpr1D<TensA,B>,
+				      typename tfel::meta::IF<TensorTraits<B>::dime==2u,
+							      TensorProductExpr2D<TensA,B>,
+							      TensorProductExpr3D<TensA,B> >::type
+				      >::type Expr;
+    public:
+      typedef typename ResultType<STensA,TensB,OpMult>::type Result;
+      typedef typename tfel::meta::IF<tfel::typetraits::IsInvalid<Result>::cond,
+				      DummyHandle,
+				      TensorExpr<Result,Expr> >::type Handle;
+    };
+
+    // /*
+    //  * Partial Specialisation of ComputeBinaryResult_ for tensor's operation
+    //  */
+    // template<typename A, typename B>
+    // class ComputeBinaryResult_<TensorTag,TensorTag,A,B,OpDiadicProduct>
+    // {
+    //   struct DummyHandle{};
+    //   typedef typename TensorType<A>::type TensA;
+    //   typedef typename TensorType<B>::type TensB;
+    //   typedef MathObjectMathObjectDiadicProductExpr<TensorConcept,TensorTraits,A,B> Expr;
+    // public:
+    //   typedef typename ResultType<TensA,TensB,OpDiadicProduct>::type Result;
+    //   typedef typename tfel::meta::IF<tfel::typetraits::IsInvalid<Result>::cond,
+    // 				      DummyHandle,
+    // 				      ST2toST2Expr<Result,Expr> >::type Handle;
+    // };
    
     /*
      * Partial Specialisation of ComputeBinaryResult_ for scalar-tensor operations
