@@ -42,6 +42,10 @@ namespace tfel{
     template<unsigned short>
     struct RightCauchyGreenTensorDerivativeExpr;
 
+    //! forward declaration
+    template<unsigned short>
+    struct LeftCauchyGreenTensorDerivativeExpr;
+
     /*
      * Partial specialisation for t2tost2
      */
@@ -138,6 +142,19 @@ namespace tfel{
 	tfel::typetraits::IsAssignableTo<typename TensorTraits<TensorType>::NumType,T>::cond,
 	T2toST2Expr<t2tost2<N,T>,RightCauchyGreenTensorDerivativeExpr<N> > >::type
       dCdF(const TensorType&);
+      /*!
+       * \param[in] F : deformation gradient
+       * \return the derivative of the Cauchy left symmetric tensor
+       * with respect to the deformation gradient
+       */
+      template<typename TensorType>
+      static TFEL_MATH_INLINE 
+      typename tfel::meta::EnableIf<
+	tfel::meta::Implements<TensorType,TensorConcept>::cond &&
+	TensorTraits<TensorType>::dime==N&&
+	tfel::typetraits::IsAssignableTo<typename TensorTraits<TensorType>::NumType,T>::cond,
+	T2toST2Expr<t2tost2<N,T>,LeftCauchyGreenTensorDerivativeExpr<N> > >::type
+      dBdF(const TensorType&);
       /*!
        * This is a StensorConcept requirement.
        */

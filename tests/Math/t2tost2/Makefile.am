@@ -5,7 +5,8 @@ if WITH_TESTS
 
 testdir = $(pkgdatadir)/tests/Math/T2tost2
 
-test_PROGRAMS =	t2tost2 rightCauchyGreenTensorDerivative \
+test_PROGRAMS =	t2tost2 leftCauchyGreenTensorDerivative \
+		rightCauchyGreenTensorDerivative        \
 		SaintVenantKirchhoffTangentOperator
 
 LDADD = -lTFELMath -lTFELException -lTFELTests \
@@ -14,6 +15,7 @@ LDADD = -lTFELMath -lTFELException -lTFELTests \
 	-L$(top_builddir)/src/Exception
 
 t2tost2_SOURCES      = t2tost2.cxx
+leftCauchyGreenTensorDerivative_SOURCES     = leftCauchyGreenTensorDerivative.cxx
 rightCauchyGreenTensorDerivative_SOURCES    = rightCauchyGreenTensorDerivative.cxx
 SaintVenantKirchhoffTangentOperator_SOURCES = SaintVenantKirchhoffTangentOperator.cxx
 

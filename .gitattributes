@@ -473,6 +473,9 @@ docs/texmacs/FiniteStrain2D-planestress.tm -text
 docs/texmacs/FiniteStrain2D.tm -text
 docs/texmacs/FiniteStrain3D.tm -text
 docs/texmacs/FiniteStrain_dC_dF-3D.tm -text
+docs/texmacs/LeftCauchyDerivative1D.tm -text
+docs/texmacs/LeftCauchyDerivative2D.tm -text
+docs/texmacs/LeftCauchyDerivative3D.tm -text
 docs/texmacs/MatrixProductDerivative1D.tm -text
 docs/texmacs/MatrixProductDerivative2D.tm -text
 docs/texmacs/MatrixProductDerivative3D.tm -text
@@ -941,6 +944,7 @@ include/TFEL/Math/Stensor/StensorSizeToDime.hxx -text
 include/TFEL/Math/Stensor/StensorStaticStorage.hxx -text
 include/TFEL/Math/Stensor/stensor.ixx -text
 include/TFEL/Math/Stensor/stensorResultType.hxx -text
+include/TFEL/Math/T2toST2/LeftCauchyGreenTensorDerivativeExpr.hxx -text
 include/TFEL/Math/T2toST2/RightCauchyGreenTensorDerivativeExpr.hxx -text
 include/TFEL/Math/T2toST2/ST2toST2T2toST2ProductExpr.hxx -text
 include/TFEL/Math/T2toST2/StensorT2toST2ProductExpr.hxx -text
@@ -2325,6 +2329,7 @@ tests/Math/stensor_eigenvectors2.cxx -text
 tests/Math/t2tost2/CMakeLists.txt -text
 tests/Math/t2tost2/Makefile.am -text
 tests/Math/t2tost2/SaintVenantKirchhoffTangentOperator.cxx -text
+tests/Math/t2tost2/leftCauchyGreenTensorDerivative.cxx -text
 tests/Math/t2tost2/rightCauchyGreenTensorDerivative.cxx -text
 tests/Math/t2tost2/t2tost2.cxx -text
 tests/Math/t2tot2/CMakeLists.txt -text
