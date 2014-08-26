@@ -628,10 +628,10 @@ namespace mfront
   }
 
   void
-  MFrontUMATInterfaceBase::writeSetParametersFunctionsImplantations(std::ostream& out,
-								    const std::string& name,
-								    const std::string& className,
-								    const MechanicalBehaviourDescription& mb) const
+  MFrontUMATInterfaceBase::writeSetParametersFunctionsImplementations(std::ostream& out,
+								      const std::string& name,
+								      const std::string& className,
+								      const MechanicalBehaviourDescription& mb) const
   {
     const VarContainer& pc = mb.getParameters();
     bool rp,ip,up;

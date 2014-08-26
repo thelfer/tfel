@@ -138,6 +138,15 @@ namespace mfront{
     virtual std::string
     getFunctionName(const std::string&) const;
 
+    std::string
+    getBehaviourName(const std::string&,
+		     const std::string&) const;
+
+    virtual std::string
+    getUmatFunctionName(const std::string&,
+			const std::string&) const;
+
+
     virtual bool
     hasMaterialPropertiesOffset(const MechanicalBehaviourDescription&) const;
 
@@ -151,15 +160,6 @@ namespace mfront{
     virtual void
     writeMTestFileGeneratorAdditionalMaterialPropertiesInitialisation(std::ostream&,
 								      const MechanicalBehaviourDescription&) const;
-    /*!
-     * \param[in] out  : output file
-     * \param[in] name : behaviour name
-     * \param[in] mb   : behaviour description
-     */
-    virtual void
-    writeUMATxxBehaviourTypeSymbols(std::ostream&,
-				    const std::string&,
-				    const MechanicalBehaviourDescription&) const;
 
     /*!
      * \param[in] out : output file
@@ -170,6 +170,15 @@ namespace mfront{
 					 const MechanicalBehaviourDescription&,
 					 const std::map<std::string,std::string>&,
 					 const std::map<std::string,std::string>&) const;
+    /*!
+     * \param[in] out           : output file
+     * \param[in] name          : name of the behaviour 
+     * \param[in] mb            : behaviour description
+     */
+    void
+    writeUMATxxBehaviourTypeSymbols(std::ostream&,
+				    const std::string&,
+				    const MechanicalBehaviourDescription&) const;
     /*!
      * \param[in] out           : output file
      * \param[in] name          : name of the behaviour 
@@ -203,9 +212,48 @@ namespace mfront{
 			       const std::string&,
 			       const std::string&,
 			       const std::string&,
-			       const MechanicalBehaviourDescription&);
+			       const std::string&,
+			       const MechanicalBehaviourDescription&) const;
 
-    FiniteStrainStrategy finiteStrainStrategy;
+    virtual void
+    writeUmatFortranFunctionDefine(std::ostream&,
+				   const std::string&);
+
+    virtual void
+    writeUmatFunctionDeclaration(std::ostream&,
+				 const std::string&);
+
+    virtual void
+    writeFiniteRotationSmallStrainUmatFunction(std::ostream&,
+					       const std::string&,
+					       const std::string&,
+					       const std::string&,
+					       const std::string&,
+					       const std::map<std::string,std::string>&,
+					       const std::map<std::string,std::string>&,
+					       const MechanicalBehaviourDescription&) const;
+
+    virtual void
+    writeMieheApelLambrechtLogarithmicStrainUmatFunction(std::ostream&,
+							 const std::string&,
+							 const std::string&,
+							 const std::string&,
+							 const std::string&,
+							 const std::map<std::string,std::string>&,
+							 const std::map<std::string,std::string>&,
+							 const MechanicalBehaviourDescription&) const;
+
+    virtual void
+    writeStandardUmatFunction(std::ostream&,
+			      const std::string&,
+			      const std::string&,
+			      const std::string&,
+			      const std::string&,
+			      const std::map<std::string,std::string>&,
+			      const std::map<std::string,std::string>&,
+			      const MechanicalBehaviourDescription&) const;
+
+    std::vector<FiniteStrainStrategy> finiteStrainStrategies;
 
     bool useTimeSubStepping;
 

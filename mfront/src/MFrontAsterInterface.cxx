@@ -550,7 +550,7 @@ namespace mfront{
  
     this->generateUMATxxSymbols(out,name,file,mb,glossaryNames,entryNames);
     
-    this->writeSetParametersFunctionsImplantations(out,name,className,mb);
+    this->writeSetParametersFunctionsImplementations(out,name,className,mb);
     
     out << "MFRONT_SHAREDOBJ void MFRONT_STDCALL\naster"
 	<< makeLowerCase(name) << "("

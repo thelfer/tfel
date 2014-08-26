@@ -69,7 +69,7 @@ macro(test_aster test_arg)
   configure_file(aster${test_arg}.mtest.in
     aster${test_arg}.mtest @ONLY)
   add_test(NAME aster${test_arg}_mtest
-    COMMAND mtest --verbose=level0 aster${test_arg}.mtest)
+    COMMAND mtest --verbose=level0 --xml-output=true --result-file-output=false aster${test_arg}.mtest)
   set_tests_properties(aster${test_arg}_mtest
     PROPERTIES DEPENDS MFrontAsterBehaviours)
   set_tests_properties(aster${test_arg}_mtest

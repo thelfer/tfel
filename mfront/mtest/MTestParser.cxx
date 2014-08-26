@@ -95,15 +95,6 @@ namespace mfront
 	throw(runtime_error(msg.str()));
       }
     }
-    string output;
-    string::size_type pos = f.rfind('.');
-    if(pos!=string::npos){
-      output = f.substr(0,pos);
-    } else {
-      output = f;
-    }
-    output += ".res";
-    t.setOutputFileName(output);
   } // end of MTestParser::execute
 
   void

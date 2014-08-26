@@ -149,10 +149,10 @@ namespace mfront{
 					    const MechanicalBehaviourDescription&) const;
 
     virtual void
-    writeSetParametersFunctionsImplantations(std::ostream&,
-					     const std::string&,
-					     const std::string&,
-					     const MechanicalBehaviourDescription&) const;
+    writeSetParametersFunctionsImplementations(std::ostream&,
+					       const std::string&,
+					       const std::string&,
+					       const MechanicalBehaviourDescription&) const;
 
     virtual void
     generateMTestFile1(std::ostream& out) const;

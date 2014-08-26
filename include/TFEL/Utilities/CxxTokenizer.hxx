@@ -194,6 +194,23 @@ namespace tfel{
       static std::string
       readString(const_iterator&, 
 		 const const_iterator);
+
+      /*!
+       * \brief an helper method to extract a set of values from the
+       * given as an array
+       * \param[in] method : calling method name
+       * \param[out] v  : the extracted array
+       * \param[in]  p  : iterator to the current token
+       * \param[in]  pe : iterator pointing after the last token of the
+       * line
+       * \throw std::runtime_error if the given iterator is egal to
+       * the second argument or if the given token is not a string
+       */ 
+      static void
+      readArray(const std::string&,
+		std::vector<std::string>&,
+		const_iterator&, 
+		const const_iterator);
       
       /*!
        * \brief an helper method to extract a double from the given

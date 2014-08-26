@@ -44,6 +44,10 @@ namespace mfront
     void
     treatVerbose(void);
     void
+    treatXMLOutput(void);
+    void
+    treatResultFileOutput(void);
+    void
     treatHelpCommandList(void);
     void
     treatHelpCommand(void);
@@ -61,10 +65,16 @@ namespace mfront
     registerArgumentCallBacks(void);
     // input files
     std::vector<std::string> inputs;
+    // xml output
+    bool xml_output;
+    // generate result file
+    bool result_file_output;
   };
 
   MTestMain::MTestMain(const int argc, const char *const *const argv)
-    : tfel::utilities::ArgumentParserBase<MTestMain>(argc,argv)
+    : tfel::utilities::ArgumentParserBase<MTestMain>(argc,argv),
+      xml_output(false),
+      result_file_output(true)
   {
     using namespace std;
     this->registerArgumentCallBacks();
@@ -81,6 +91,10 @@ namespace mfront
   {
     this->registerNewCallBack("--verbose",&MTestMain::treatVerbose,
 			      "set verbose output",true);
+    this->registerNewCallBack("--xml-output",&MTestMain::treatXMLOutput,
+			      "control xml output (default no)",true);
+    this->registerNewCallBack("--result-file-output",&MTestMain::treatResultFileOutput,
+			      "control result output (default yes)",true);
     this->registerNewCallBack("--help-keywords-list",
 			      &MTestMain::treatHelpCommandList,
 			      "list available commands and exit.");
@@ -168,6 +182,46 @@ namespace mfront
   } // end of MTestMain::treatVerbose
 
   void
+  MTestMain::treatXMLOutput(void)
+  {
+    using namespace std;
+    if(this->currentArgument->getOption().empty()){
+      this->xml_output = true;
+    } else {
+      const std::string& option = this->currentArgument->getOption();
+      if(option=="true"){
+	this->xml_output = true;
+      } else if(option=="false"){
+	this->xml_output = false;
+      } else {
+	string msg("MTestMain::treatXMLOutput : ");
+	msg += "unknown option '"+option+"'";
+	throw(runtime_error(msg));
+      }
+    }
+  } // end of MTestMain::treatXMLOutput
+
+  void
+  MTestMain::treatResultFileOutput(void)
+  {
+    using namespace std;
+    if(this->currentArgument->getOption().empty()){
+      this->result_file_output = true;
+    } else {
+      const std::string& option = this->currentArgument->getOption();
+      if(option=="true"){
+	this->result_file_output = true;
+      } else if(option=="false"){
+	this->result_file_output = false;
+      } else {
+	string msg("MTestMain::treatResultFileOutput : ");
+	msg += "unknown option '"+option+"'";
+	throw(runtime_error(msg));
+      }
+    }
+  } // end of MTestMain::treatResultFileOutput
+
+  void
   MTestMain::treatHelpCommandList(void)
   {
     MTestParser p;
@@ -234,9 +288,6 @@ namespace mfront
     vector<string>::const_iterator p;
     for(p=this->inputs.begin();
 	p!=this->inputs.end();++p){
-      shared_ptr<Test> t(new MTest());
-      MTestParser parser;
-      parser.execute(static_cast<MTest&>(*(t.get())),*p);
       string tname;
       string::size_type pos = p->rfind('.');
       if(pos!=string::npos){
@@ -244,9 +295,17 @@ namespace mfront
       } else {
 	tname = *p;
       }
+      shared_ptr<Test> t(new MTest());
+      MTestParser parser;
+      parser.execute(static_cast<MTest&>(*(t.get())),*p);
+      if(this->result_file_output){
+	static_cast<MTest&>(*(t.get())).setOutputFileName(tname+".res");
+      }
       tm.addTest("MTest/"+tname,t);
-      shared_ptr<TestOutput> o(new XMLTestOutput(tname+".xml"));
-      tm.addTestOutput("MTest/"+tname,o);
+      if(this->xml_output){
+	shared_ptr<TestOutput> o(new XMLTestOutput(tname+".xml"));
+	tm.addTestOutput("MTest/"+tname,o);
+      }
       tm.addTestOutput("MTest/"+tname,cout);
     }
     TestResult r = tm.execute();

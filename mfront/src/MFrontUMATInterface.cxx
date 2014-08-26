@@ -57,6 +57,26 @@ namespace mfront{
     return "umat"+makeLowerCase(name);
   } // end of MFrontUMATInterface::getLibraryName
 
+  std::string
+  MFrontUMATInterface::getBehaviourName(const std::string& library,
+					const std::string& className) const
+  {
+    using namespace std;
+    string name;
+    if(!library.empty()){
+      name += library;
+    }
+    name += className;
+    return name;
+  } // end of MFrontUMATInterface::getBehaviourName
+
+  std::string
+  MFrontUMATInterface::getUmatFunctionName(const std::string& library,
+					   const std::string& className) const
+  {
+    return "umat"+makeLowerCase(this->getBehaviourName(library,className));
+  } // end of MFrontUMATInterface::getUmatFunctionName
+
   MFrontUMATInterface::MFrontUMATInterface()
   {
     this->reset();
@@ -66,7 +86,7 @@ namespace mfront{
   MFrontUMATInterface::reset(void)
   {
     MFrontUMATInterfaceBase::reset();
-    this->finiteStrainStrategy          = NONE;
+    this->finiteStrainStrategies.clear();
     this->useTimeSubStepping            = false;
     this->maximumSubStepping            = 0u;
     this->doSubSteppingOnInvalidResults = false;
@@ -78,6 +98,7 @@ namespace mfront{
 				    const tfel::utilities::CxxTokenizer::TokensContainer::const_iterator end)
   {
     using namespace std;
+    using namespace tfel::utilities;
     if (key=="@UMATGenerateMTestFileOnFailure"){
       this->generateMTestFile = this->readBooleanValue(key,current,end);
       return make_pair(true,current);      
@@ -128,9 +149,9 @@ namespace mfront{
       this->doSubSteppingOnInvalidResults = this->readBooleanValue(key,current,end);
       return make_pair(true,current);      
     } else if (key=="@UMATFiniteStrainStrategy"){
-      if(this->finiteStrainStrategy!=NONE){
+      if(!this->finiteStrainStrategies.empty()){
 	string msg("UmatInterface::treatKeyword (@UMATFiniteStrainStrategy) : ");
-	msg += "a strategy has already been defined.\n";
+	msg += "at least one strategy has already been defined.\n";
 	throw(runtime_error(msg));
       }
       if(current==end){
@@ -140,9 +161,9 @@ namespace mfront{
       }
       const string& fss = current->value;
       if(fss=="FiniteRotationSmallStrain"){
-	this->finiteStrainStrategy = FINITEROTATIONSMALLSTRAIN;
+	this->finiteStrainStrategies.push_back(FINITEROTATIONSMALLSTRAIN);
       } else if(fss=="MieheApelLambrechtLogarithmicStrain"){
-	this->finiteStrainStrategy = MIEHEAPELLAMBRECHTLOGARITHMICSTRAIN;
+	this->finiteStrainStrategies.push_back(MIEHEAPELLAMBRECHTLOGARITHMICSTRAIN);
       } else {
 	string msg("UmatInterface::treatKeyword (@UMATFiniteStrainStrategy) : ");
 	msg += "unsupported strategy '"+fss+"'\n";
@@ -162,6 +183,60 @@ namespace mfront{
 	throw(runtime_error(msg));
       }
       ++(current);
+      return make_pair(true,current);      
+    } else if (key=="@UMATFiniteStrainStrategies"){
+      if(!this->finiteStrainStrategies.empty()){
+	string msg("UmatInterface::treatKeyword (@UMATFiniteStrainStrategies) : ");
+	msg += "at least one strategy has already been defined.\n";
+	throw(runtime_error(msg));
+      }
+      vector<string> fss;
+      CxxTokenizer::readArray("UmatInterface::treatKeyword (@UMATFiniteStrainStrategies)",
+			      fss,current,end);
+      CxxTokenizer::readSpecifiedToken("UmatInterface::treatKeyword (@UMATFiniteStrainStrategies)",
+				       ";",current,end);
+      if(fss.empty()){
+	string msg("UmatInterface::treatKeyword (@UMATFiniteStrainStrategies) : ");
+	msg += "no strategy defined.\n";
+	throw(runtime_error(msg));
+      }
+      vector<string>::const_iterator pfss;
+      for(pfss=fss.begin();pfss!=fss.end();++pfss){
+	if(*pfss=="None"){
+	  if(find(this->finiteStrainStrategies.begin(),
+		  this->finiteStrainStrategies.end(),NONE)!=
+	     this->finiteStrainStrategies.end()){
+	    string msg("UmatInterface::treatKeyword (@UMATFiniteStrainStrategies) : ");
+	    msg += "strategy 'None' multiply defined.\n";
+	    throw(runtime_error(msg));
+	  }
+	  this->finiteStrainStrategies.push_back(NONE);
+	} else if(*pfss=="FiniteRotationSmallStrain"){
+	  if(find(this->finiteStrainStrategies.begin(),
+		  this->finiteStrainStrategies.end(),FINITEROTATIONSMALLSTRAIN)!=
+	     this->finiteStrainStrategies.end()){
+	    string msg("UmatInterface::treatKeyword (@UMATFiniteStrainStrategies) : ");
+	    msg += "strategy 'FiniteRotationSmallStrain' multiply defined.\n";
+	    throw(runtime_error(msg));
+	  }
+	  this->finiteStrainStrategies.push_back(FINITEROTATIONSMALLSTRAIN);
+	} else if(*pfss=="MieheApelLambrechtLogarithmicStrain"){
+	  if(find(this->finiteStrainStrategies.begin(),
+		  this->finiteStrainStrategies.end(),MIEHEAPELLAMBRECHTLOGARITHMICSTRAIN)!=
+	     this->finiteStrainStrategies.end()){
+	    string msg("UmatInterface::treatKeyword (@UMATFiniteStrainStrategies) : ");
+	    msg += "strategy 'MieheApelLambrechtLogarithmicStrain' multiply defined.\n";
+	    throw(runtime_error(msg));
+	  }
+	  this->finiteStrainStrategies.push_back(MIEHEAPELLAMBRECHTLOGARITHMICSTRAIN);
+	} else {
+	  string msg("UmatInterface::treatKeyword (@UMATFiniteStrainStrategies) : ");
+	  msg += "unsupported strategy '"+*pfss+"'\n";
+	  msg += "The only supported strategies are "
+	    "'None', 'FiniteRotationSmallStrain' and 'MieheApelLambrechtLogarithmicStrain'";
+	  throw(runtime_error(msg));
+	}
+      }
       return make_pair(true,current);      
     }
     return make_pair(false,current);
@@ -352,8 +427,8 @@ namespace mfront{
     using namespace tfel::utilities;
 
     string name;
-    string umatFctName;
     VarContainer::const_iterator p;    
+    vector<FiniteStrainStrategy>::const_iterator pfss;
 
     systemCall::mkdir("include/MFront");
     systemCall::mkdir("include/MFront/UMAT");
@@ -370,7 +445,7 @@ namespace mfront{
     }
 
     pair<SupportedTypes::TypeSize,
-	 SupportedTypes::TypeSize> mvs = mb.getMainVariablesSize();
+      SupportedTypes::TypeSize> mvs = mb.getMainVariablesSize();
     
     if(!library.empty()){
       name += library;
@@ -429,15 +504,42 @@ namespace mfront{
     out << "#endif /* __cplusplus */\n\n";
 
     this->writeVisibilityDefines(out);
-
-    out << "#define umat" 
-	<< makeUpperCase(name)
-	<< "_F77 \\\n"
-	<< "        F77_FUNC(umat"
-	<< makeLowerCase(name) << ",UMAT"
-	<< makeUpperCase(name) << ")\n\n";
-
-    umatFctName = "umat"+makeUpperCase(name)+"_F77";
+    
+    if(mb.getBehaviourType()==MechanicalBehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR){
+      if(this->finiteStrainStrategies.empty()){
+	this->writeUmatFortranFunctionDefine(out,name);
+      } else {
+	for(pfss=this->finiteStrainStrategies.begin();pfss!=this->finiteStrainStrategies.end();++pfss){
+	  if(*pfss==FINITEROTATIONSMALLSTRAIN){
+	    this->writeUmatFortranFunctionDefine(out,name+"_frst");
+	    if(this->finiteStrainStrategies.size()==1u){
+	      this->writeUmatFortranFunctionDefine(out,name);
+	    }
+	  } else if(*pfss==MIEHEAPELLAMBRECHTLOGARITHMICSTRAIN){
+	    this->writeUmatFortranFunctionDefine(out,name+"_malls");
+	    if(this->finiteStrainStrategies.size()==1u){
+	      this->writeUmatFortranFunctionDefine(out,name);
+	    }
+	  } else if(*pfss==NONE){
+	    this->writeUmatFortranFunctionDefine(out,name+"_ss");
+	    if(this->finiteStrainStrategies.size()==1u){
+	      this->writeUmatFortranFunctionDefine(out,name);
+	    }
+	  } else {
+	    string msg("MFrontUMATInterface::endTreatement : "
+		       "internal error, unsupported finite strain strategy");
+	    throw(runtime_error(msg));
+	  }
+	}
+	if((this->finiteStrainStrategies.size()!=1u)&&
+	   (find(this->finiteStrainStrategies.begin(),
+		 this->finiteStrainStrategies.end(),NONE)!=this->finiteStrainStrategies.end())){
+	  this->writeUmatFortranFunctionDefine(out,name);
+	}
+      }
+    } else {
+      this->writeUmatFortranFunctionDefine(out,name);
+    }
 
     out << "#ifdef __cplusplus\n\n";
 
@@ -547,30 +649,77 @@ namespace mfront{
     out << "extern \"C\"{\n";
     out << "#endif /* __cplusplus */\n\n";
 
-    this->writeSetParametersFunctionsDeclarations(out,name,mb);
+    if(mb.getBehaviourType()==MechanicalBehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR){
+      if(this->finiteStrainStrategies.empty()){
+	this->writeSetParametersFunctionsDeclarations(out,name,mb);
+      } else {
+	for(pfss=this->finiteStrainStrategies.begin();pfss!=this->finiteStrainStrategies.end();++pfss){
+	  if(*pfss==FINITEROTATIONSMALLSTRAIN){
+	    this->writeSetParametersFunctionsDeclarations(out,name+"_frst",mb);
+	    if(this->finiteStrainStrategies.size()==1u){
+	      this->writeSetParametersFunctionsDeclarations(out,name,mb);
+	    }
+	  } else if(*pfss==MIEHEAPELLAMBRECHTLOGARITHMICSTRAIN){
+	    this->writeSetParametersFunctionsDeclarations(out,name+"_malls",mb);
+	    if(this->finiteStrainStrategies.size()==1u){
+	      this->writeSetParametersFunctionsDeclarations(out,name,mb);
+	    }
+	  } else if(*pfss==NONE){
+	    this->writeSetParametersFunctionsDeclarations(out,name+"_ss",mb);
+	    if(this->finiteStrainStrategies.size()==1u){
+	      this->writeSetParametersFunctionsDeclarations(out,name,mb);
+	    }
+	  } else {
+	    string msg("MFrontUMATInterface::endTreatement : "
+		       "internal error, unsupported finite strain strategy");
+	    throw(runtime_error(msg));
+	  }
+	}
+	if((this->finiteStrainStrategies.size()!=1u)&&
+	   (find(this->finiteStrainStrategies.begin(),
+		 this->finiteStrainStrategies.end(),NONE)!=this->finiteStrainStrategies.end())){
+	  this->writeSetParametersFunctionsDeclarations(out,name,mb);
+	}
+      }
+    } else {
+      this->writeSetParametersFunctionsDeclarations(out,name,mb);
+    }
 
-    out << "MFRONT_SHAREDOBJ void MFRONT_STDCALL\numat"
-	<< makeLowerCase(name)
-	<< "(const umat::UMATInt *const,const umat::UMATReal *const,\n"
-	<< "const umat::UMATReal *const,      umat::UMATReal *const,\n"
-	<< "const umat::UMATReal *const,const umat::UMATReal *const,\n"
-	<< "const umat::UMATReal *const,const umat::UMATReal *const,\n"
-	<< "const umat::UMATReal *const,const umat::UMATInt  *const,\n"
-	<< "const umat::UMATReal *const,const umat::UMATReal *const,\n"
-	<< "      umat::UMATReal *const,const umat::UMATInt  *const,\n"
-	<< "      umat::UMATReal *const,const umat::UMATInt  *const,\n"
-	<< "      umat::UMATInt *const);\n\n";
-
-    out << "MFRONT_SHAREDOBJ void\n" << umatFctName
-	<< "(const umat::UMATInt *const,const umat::UMATReal *const,\n"
-	<< "const umat::UMATReal *const,      umat::UMATReal *const,\n"
-	<< "const umat::UMATReal *const,const umat::UMATReal *const,\n"
-	<< "const umat::UMATReal *const,const umat::UMATReal *const,\n"
-	<< "const umat::UMATReal *const,const umat::UMATInt  *const,\n"
-	<< "const umat::UMATReal *const,const umat::UMATReal *const,\n"
-	<< "      umat::UMATReal *const,const umat::UMATInt  *const,\n"
-	<< "      umat::UMATReal *const,const umat::UMATInt  *const,\n"
-	<< "      umat::UMATInt *const);\n\n";
+    if(mb.getBehaviourType()==MechanicalBehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR){
+      if(this->finiteStrainStrategies.empty()){
+	this->writeUmatFunctionDeclaration(out,name);
+      } else {
+	for(pfss=this->finiteStrainStrategies.begin();pfss!=this->finiteStrainStrategies.end();++pfss){
+	  if(*pfss==FINITEROTATIONSMALLSTRAIN){
+	    this->writeUmatFunctionDeclaration(out,name+"_frst");
+	    if(this->finiteStrainStrategies.size()==1u){
+	      this->writeUmatFunctionDeclaration(out,name);
+	    }
+	  } else if(*pfss==MIEHEAPELLAMBRECHTLOGARITHMICSTRAIN){
+	    this->writeUmatFunctionDeclaration(out,name+"_malls");
+	    if(this->finiteStrainStrategies.size()==1u){
+	      this->writeUmatFunctionDeclaration(out,name);
+	    }
+	  } else if(*pfss==NONE){
+	    this->writeUmatFunctionDeclaration(out,name+"_ss");
+	    if(this->finiteStrainStrategies.size()==1u){
+	      this->writeUmatFunctionDeclaration(out,name);
+	    }
+	  } else {
+	    string msg("MFrontUMATInterface::endTreatement : "
+		       "internal error, unsupported finite strain strategy");
+	    throw(runtime_error(msg));
+	  }
+	}
+	if((this->finiteStrainStrategies.size()!=1u)&&
+	   (find(this->finiteStrainStrategies.begin(),
+		 this->finiteStrainStrategies.end(),NONE)!=this->finiteStrainStrategies.end())){
+	  this->writeUmatFunctionDeclaration(out,name);
+	}
+      }
+    } else {
+      this->writeUmatFunctionDeclaration(out,name);
+    }
 
     out << "#ifdef __cplusplus\n";
     out << "}\n";
@@ -608,7 +757,7 @@ namespace mfront{
 		   "unsupported behaviour type");
 	throw(runtime_error(msg));
       }
-      if(this->finiteStrainStrategy==NONE){
+      if(this->finiteStrainStrategies.empty()){
 	out << "#include\"MFront/UMAT/UMATGetModellingHypothesis.hxx\"\n";
       } else {
 	string msg("MFrontUMATInterface::endTreatement : "
@@ -617,8 +766,10 @@ namespace mfront{
 	throw(runtime_error(msg));
       }
     }
-    if((this->finiteStrainStrategy==FINITEROTATIONSMALLSTRAIN)||
-       (this->finiteStrainStrategy==MIEHEAPELLAMBRECHTLOGARITHMICSTRAIN)){
+    if((find(this->finiteStrainStrategies.begin(),this->finiteStrainStrategies.end(),
+	     FINITEROTATIONSMALLSTRAIN)!=this->finiteStrainStrategies.end())||
+       (find(this->finiteStrainStrategies.begin(),this->finiteStrainStrategies.end(),
+	     MIEHEAPELLAMBRECHTLOGARITHMICSTRAIN)!=this->finiteStrainStrategies.end())){
       out << "#include\"MFront/UMAT/UMATFiniteStrain.hxx\"\n\n";
     }
     out << "#include\"MFront/UMAT/UMATInterface.hxx\"\n\n";
@@ -626,705 +777,190 @@ namespace mfront{
     out << "#include\"MFront/UMAT/umat" << name << ".hxx\"\n\n";
     out << "extern \"C\"{\n\n";
 
-    this->generateUMATxxSymbols(out,name,file,mb,glossaryNames,entryNames);
-    this->writeSetParametersFunctionsImplantations(out,name,className,mb);
-    
-    if(this->finiteStrainStrategy==FINITEROTATIONSMALLSTRAIN){
-      if(this->generateMTestFile){
-	string msg("MFrontUMATInterface::endTreatement : "
-		   "generating mtest file is not supported "
-		   "upon large strains");
-	throw(runtime_error(msg));
+    if(mb.getBehaviourType()==MechanicalBehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR){
+      if(this->finiteStrainStrategies.empty()){
+	this->generateUMATxxSymbols(out,name,file,mb,glossaryNames,entryNames);
+	out << "MFRONT_SHAREDOBJ unsigned short " << this->getFunctionName(name) 
+	    << "_BehaviourType = 1u;\n\n";
+	out << "MFRONT_SHAREDOBJ unsigned short umat"
+	    << makeLowerCase(name) << "_Interface = 1u;\n\n";
+      } else {
+	for(pfss=this->finiteStrainStrategies.begin();pfss!=this->finiteStrainStrategies.end();++pfss){
+	  if(*pfss==FINITEROTATIONSMALLSTRAIN){
+	    this->generateUMATxxSymbols(out,name+"_frst",file,mb,glossaryNames,entryNames);
+	    out << "MFRONT_SHAREDOBJ unsigned short " << this->getFunctionName(name+"_frst") 
+		<< "_BehaviourType = 2u;\n\n";
+	    out << "MFRONT_SHAREDOBJ unsigned short umat"
+		<< makeLowerCase(name+"_frst") << "_Interface = 2u;\n\n";
+	    if(this->finiteStrainStrategies.size()==1u){
+	      this->generateUMATxxSymbols(out,name,file,mb,glossaryNames,entryNames);
+	      out << "MFRONT_SHAREDOBJ unsigned short " << this->getFunctionName(name) 
+		  << "_BehaviourType = 2u;\n\n";
+	      out << "MFRONT_SHAREDOBJ unsigned short umat"
+		  << makeLowerCase(name) << "_Interface = 2u;\n\n";
+	    }
+	  } else if(*pfss==MIEHEAPELLAMBRECHTLOGARITHMICSTRAIN){
+	    this->generateUMATxxSymbols(out,name+"_malls",file,mb,glossaryNames,entryNames);
+	    out << "MFRONT_SHAREDOBJ unsigned short " << this->getFunctionName(name+"_malls") 
+		<< "_BehaviourType = 2u;\n\n";
+	    out << "MFRONT_SHAREDOBJ unsigned short umat"
+		<< makeLowerCase(name+"_malls") << "_Interface = 2u;\n\n";
+	    if(this->finiteStrainStrategies.size()==1u){
+	      this->generateUMATxxSymbols(out,name,file,mb,glossaryNames,entryNames);
+	      out << "MFRONT_SHAREDOBJ unsigned short " << this->getFunctionName(name) 
+		  << "_BehaviourType = 2u;\n\n";
+	      out << "MFRONT_SHAREDOBJ unsigned short umat"
+		  << makeLowerCase(name) << "_Interface = 2u;\n\n";
+	    }
+	  } else if(*pfss==NONE){
+	    this->generateUMATxxSymbols(out,name+"_ss",file,mb,glossaryNames,entryNames);
+	    out << "MFRONT_SHAREDOBJ unsigned short " << this->getFunctionName(name+"_ss") 
+		<< "_BehaviourType = 1u;\n\n";
+	    out << "MFRONT_SHAREDOBJ unsigned short umat"
+		<< makeLowerCase(name+"_ss") << "_Interface = 1u;\n\n";
+	    if(this->finiteStrainStrategies.size()==1u){
+	      this->generateUMATxxSymbols(out,name,file,mb,glossaryNames,entryNames);
+	      out << "MFRONT_SHAREDOBJ unsigned short " << this->getFunctionName(name) 
+		  << "_BehaviourType = 1u;\n\n";
+	      out << "MFRONT_SHAREDOBJ unsigned short umat"
+		  << makeLowerCase(name) << "_Interface = 1u;\n\n";
+	    }
+	  } else {
+	    string msg("MFrontUMATInterface::endTreatement : "
+		       "internal error, unsupported finite strain strategy");
+	    throw(runtime_error(msg));
+	  }
+	}
+	if((this->finiteStrainStrategies.size()!=1u)&&
+	   (find(this->finiteStrainStrategies.begin(),
+		 this->finiteStrainStrategies.end(),NONE)!=this->finiteStrainStrategies.end())){
+	  this->generateUMATxxSymbols(out,name,file,mb,glossaryNames,entryNames);
+	  out << "MFRONT_SHAREDOBJ unsigned short " << this->getFunctionName(name) 
+	      << "_BehaviourType = 1u;\n\n";
+	  out << "MFRONT_SHAREDOBJ unsigned short umat"
+	      << makeLowerCase(name) << "_Interface = 1u;\n\n";
+	}
       }
-      out << "MFRONT_SHAREDOBJ void MFRONT_STDCALL\numat"
-	  << makeLowerCase(name)
-	  << "(const umat::UMATInt *const NTENS, const umat::UMATReal *const DTIME,\n"
-	  << "const umat::UMATReal *const DROT,  umat::UMATReal *const DDSOE,\n"
-	  << "const umat::UMATReal *const F0,    const umat::UMATReal *const F1,\n"
-	  << "const umat::UMATReal *const TEMP,  const umat::UMATReal *const DTEMP,\n"
-	  << "const umat::UMATReal *const PROPS, const umat::UMATInt    *const NPROPS,\n"
-	  << "const umat::UMATReal *const PREDEF,const umat::UMATReal *const DPRED,\n"
-	  << "umat::UMATReal *const STATEV,const umat::UMATInt    *const NSTATV,\n"
-	  << "umat::UMATReal *const STRESS,const umat::UMATInt    *const NDI,\n"
-	  << "umat::UMATInt    *const KINC)\n";
-      out << "{\n";
-      out << "using namespace umat;\n";
-      out << "// computing the Green Lagrange strains\n";
-      out << "UMATReal eto[6];\n";
-      out << "UMATReal deto[6];\n";
-      out << "UMATInt  i;\n";
-      out << "UMATFiniteStrain::computeGreenLagrangeStrain(eto,F0,*NTENS,*NDI);\n";
-      out << "UMATFiniteStrain::computeGreenLagrangeStrain(deto,F1,*NTENS,*NDI);\n";
-      out << "for(i=0;i!=*NTENS;++i){\n";
-      out << "deto[i] -= eto[i];\n";
-      out << "}\n";
-      out << "umat::UMATInterface<tfel::material::" << className 
-	  << ">::exe(NTENS,DTIME,DROT,DDSOE,eto,deto,TEMP,DTEMP,PROPS,NPROPS,"
-	  << "PREDEF,DPRED,STATEV,NSTATV,STRESS,NDI,KINC);\n";
-      out << "if(*KINC==1){\n";
-      out << "UMATFiniteStrain::computeCauchyStressFromSecondPiolaKirchhoffStress(STRESS,F1,*NTENS,*NDI);\n";
-      out << "}\n";
-      out << "}\n\n";
-      
-      out << "MFRONT_SHAREDOBJ void\n" << umatFctName
-	  << "(const umat::UMATInt *const NTENS, const umat::UMATReal *const DTIME,\n"
-	  << "const umat::UMATReal *const DROT,  umat::UMATReal *const DDSOE,\n"
-	  << "const umat::UMATReal *const F0, const umat::UMATReal *const F1,\n"
-	  << "const umat::UMATReal *const TEMP,  const umat::UMATReal *const DTEMP,\n"
-	  << "const umat::UMATReal *const PROPS, const umat::UMATInt    *const NPROPS,\n"
-	  << "const umat::UMATReal *const PREDEF,const umat::UMATReal *const DPRED,\n"
-	  << "umat::UMATReal *const STATEV,const umat::UMATInt    *const NSTATV,\n"
-	  << "umat::UMATReal *const STRESS,const umat::UMATInt    *const NDI,\n"
-	  << "umat::UMATInt    *const KINC)\n";
-      out << "{\n";
-      out << "umat" << makeLowerCase(name)
-	  << "(NTENS, DTIME,DROT,DDSOE,F0,F1,TEMP,DTEMP,\n"
-	  << "PROPS,NPROPS,PREDEF,DPRED,STATEV,NSTATV,\n"
-	  << "STRESS,NDI,KINC);\n";
-      out << "}\n\n";
-    } else if(this->finiteStrainStrategy==MIEHEAPELLAMBRECHTLOGARITHMICSTRAIN){
-      if(this->generateMTestFile){
-	string msg("MFrontUMATInterface::endTreatement : "
-		   "generating mtest file is not supported "
-		   "upon large strains");
-	throw(runtime_error(msg));
-      }
-      out << "MFRONT_SHAREDOBJ void MFRONT_STDCALL\numat"
-	  << makeLowerCase(name)
-	  << "(const umat::UMATInt *const NTENS, const umat::UMATReal *const DTIME,\n"
-	  << "const umat::UMATReal *const DROT,  umat::UMATReal *const DDSOE,\n"
-	  << "const umat::UMATReal *const F0,    const umat::UMATReal *const F1,\n"
-	  << "const umat::UMATReal *const TEMP,  const umat::UMATReal *const DTEMP,\n"
-	  << "const umat::UMATReal *const PROPS, const umat::UMATInt    *const NPROPS,\n"
-	  << "const umat::UMATReal *const PREDEF,const umat::UMATReal *const DPRED,\n"
-	  << "umat::UMATReal *const STATEV,const umat::UMATInt    *const NSTATV,\n"
-	  << "umat::UMATReal *const STRESS,const umat::UMATInt    *const NDI,\n"
-	  << "umat::UMATInt    *const KINC)\n";
-      out << "{\n";
-      out << "using namespace umat;\n";
-      out << "// computing the logarithmic strain\n";
-      out << "UMATReal eto[6];\n";
-      out << "UMATReal deto[6];\n";
-      out << "UMATReal P0[36];\n";
-      out << "UMATReal P1[36];\n";
-      out << "UMATReal s[6];\n";
-      out << "UMATInt  i;\n";
-      out << "UMATFiniteStrain::computeLogarithmicStrainAndDerivative(P0,eto,F0,*NTENS,*NDI);\n";
-      out << "UMATFiniteStrain::computeLogarithmicStrainAndDerivative(P1,deto,F1,*NTENS,*NDI);\n";
-      out << "UMATFiniteStrain::computeDualStressOfLogarithmicStrainFromCauchyStress(s,STRESS,P0,F0,*NTENS,*NDI);\n";
-      out << "for(i=0;i!=*NTENS;++i){\n";
-      out << "deto[i] -= eto[i];\n";
-      out << "}\n";
-      out << "umat::UMATInterface<tfel::material::" << className 
-	  << ">::exe(NTENS,DTIME,DROT,DDSOE,eto,deto,TEMP,DTEMP,PROPS,NPROPS,"
-	  << "PREDEF,DPRED,STATEV,NSTATV,s,NDI,KINC);\n";
-      out << "if(*KINC==1){\n";
-      out << "UMATFiniteStrain::computeCauchyStressFromDualStressOfLogarithmicStrain(STRESS,s,P1,F1,*NTENS,*NDI);\n";
-      out << "}\n";
-      out << "}\n\n";
-      out << "MFRONT_SHAREDOBJ void\n" << umatFctName
-	  << "(const umat::UMATInt *const NTENS, const umat::UMATReal *const DTIME,\n"
-	  << "const umat::UMATReal *const DROT,  umat::UMATReal *const DDSOE,\n"
-	  << "const umat::UMATReal *const F0, const umat::UMATReal *const F1,\n"
-	  << "const umat::UMATReal *const TEMP,  const umat::UMATReal *const DTEMP,\n"
-	  << "const umat::UMATReal *const PROPS, const umat::UMATInt    *const NPROPS,\n"
-	  << "const umat::UMATReal *const PREDEF,const umat::UMATReal *const DPRED,\n"
-	  << "umat::UMATReal *const STATEV,const umat::UMATInt    *const NSTATV,\n"
-	  << "umat::UMATReal *const STRESS,const umat::UMATInt    *const NDI,\n"
-	  << "umat::UMATInt    *const KINC)\n";
-      out << "{\n";
-      out << "umat" << makeLowerCase(name)
-	  << "(NTENS, DTIME,DROT,DDSOE,F0,F1,TEMP,DTEMP,\n"
-	  << "PROPS,NPROPS,PREDEF,DPRED,STATEV,NSTATV,\n"
-	  << "STRESS,NDI,KINC);\n";
-      out << "}\n\n";
     } else {
-      out << "MFRONT_SHAREDOBJ void MFRONT_STDCALL\numat"
-	  << makeLowerCase(name)
-	  << "(const umat::UMATInt *const NTENS, const umat::UMATReal *const DTIME,\n"
-	  << "const umat::UMATReal *const DROT,  umat::UMATReal *const DDSOE,\n"
-	  << "const umat::UMATReal *const STRAN, const umat::UMATReal *const DSTRAN,\n"
-	  << "const umat::UMATReal *const TEMP,  const umat::UMATReal *const DTEMP,\n"
-	  << "const umat::UMATReal *const PROPS, const umat::UMATInt    *const NPROPS,\n"
-	  << "const umat::UMATReal *const PREDEF,const umat::UMATReal *const DPRED,\n"
-	  << "umat::UMATReal *const STATEV,const umat::UMATInt    *const NSTATV,\n"
-	  << "umat::UMATReal *const STRESS,const umat::UMATInt    *const NDI,\n"
-	  << "umat::UMATInt    *const KINC)\n";
-      out << "{\n";
-      this->generateMTestFile1(out);
-      out << "umat::UMATInterface<tfel::material::" << className 
-	  << ">::exe(NTENS,DTIME,DROT,DDSOE,STRAN,DSTRAN,TEMP,DTEMP,PROPS,NPROPS,"
-	  << "PREDEF,DPRED,STATEV,NSTATV,STRESS,NDI,KINC);\n";
-      if(this->generateMTestFile){
-	out << "if(*KINC!=1){\n";
-	this->generateMTestFile2(out,library,material,name,mb,
-				 glossaryNames,entryNames);
-	out << "}\n";
+      this->generateUMATxxSymbols(out,name,file,mb,glossaryNames,entryNames);
+      if(mb.getBehaviourType()==MechanicalBehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR){ 
+	out << "MFRONT_SHAREDOBJ unsigned short " << this->getFunctionName(name) 
+	    << "_BehaviourType = 2u;\n\n";
+	out << "MFRONT_SHAREDOBJ unsigned short umat"
+	    << makeLowerCase(name) << "_Interface = 2u;\n\n";
+      } else {
+	  out << "MFRONT_SHAREDOBJ unsigned short " << this->getFunctionName(name) 
+	      << "_BehaviourType = 3u;\n\n";
+	  out << "MFRONT_SHAREDOBJ unsigned short umat"
+	      << makeLowerCase(name) << "_Interface = 1u;\n\n";
       }
-      out << "}\n\n";
-      out << "MFRONT_SHAREDOBJ void\n" << umatFctName
-	  << "(const umat::UMATInt *const NTENS, const umat::UMATReal *const DTIME,\n"
-	  << "const umat::UMATReal *const DROT,  umat::UMATReal *const DDSOE,\n"
-	  << "const umat::UMATReal *const STRAN, const umat::UMATReal *const DSTRAN,\n"
-	  << "const umat::UMATReal *const TEMP,  const umat::UMATReal *const DTEMP,\n"
-	  << "const umat::UMATReal *const PROPS, const umat::UMATInt    *const NPROPS,\n"
-	  << "const umat::UMATReal *const PREDEF,const umat::UMATReal *const DPRED,\n"
-	  << "umat::UMATReal *const STATEV,const umat::UMATInt    *const NSTATV,\n"
-	  << "umat::UMATReal *const STRESS,const umat::UMATInt    *const NDI,\n"
-	  << "umat::UMATInt    *const KINC)\n";
-      out << "{\n";
-      out << "umat" << makeLowerCase(name)
-	  << "(NTENS, DTIME,DROT,DDSOE,STRAN,DSTRAN,TEMP,DTEMP,\n"
-	  << "PROPS,NPROPS,PREDEF,DPRED,STATEV,NSTATV,\n"
-	  << "STRESS,NDI,KINC);\n";
-      out << "}\n\n";
+    }
+
+    if(mb.getBehaviourType()==MechanicalBehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR){
+      if(this->finiteStrainStrategies.empty()){
+	this->writeSetParametersFunctionsImplementations(out,name,className,mb);
+      } else {
+	for(pfss=this->finiteStrainStrategies.begin();pfss!=this->finiteStrainStrategies.end();++pfss){
+	  if(*pfss==FINITEROTATIONSMALLSTRAIN){
+	    this->writeSetParametersFunctionsImplementations(out,name+"_frst",className,mb);
+	    if(this->finiteStrainStrategies.size()==1u){
+	      this->writeSetParametersFunctionsImplementations(out,name,className,mb);
+	    }
+	  } else if(*pfss==MIEHEAPELLAMBRECHTLOGARITHMICSTRAIN){
+	    this->writeSetParametersFunctionsImplementations(out,name+"_malls",className,mb);
+	    if(this->finiteStrainStrategies.size()==1u){
+	      this->writeSetParametersFunctionsImplementations(out,name,className,mb);
+	    }
+	  } else if(*pfss==NONE){
+	    this->writeSetParametersFunctionsImplementations(out,name+"_ss",className,mb);
+	    if(this->finiteStrainStrategies.size()==1u){
+	      this->writeSetParametersFunctionsImplementations(out,name,className,mb);
+	    }
+	  } else {
+	    string msg("MFrontUMATInterface::endTreatement : "
+		       "internal error, unsupported finite strain strategy");
+	    throw(runtime_error(msg));
+	  }
+	}
+	if((this->finiteStrainStrategies.size()!=1u)&&
+	   (find(this->finiteStrainStrategies.begin(),
+		 this->finiteStrainStrategies.end(),NONE)!=this->finiteStrainStrategies.end())){
+	  this->writeSetParametersFunctionsImplementations(out,name,className,mb);
+	}
+      }
+    } else {
+      this->writeSetParametersFunctionsImplementations(out,name,className,mb);
+    }
+
+    out << "static void \numat"
+	<< makeLowerCase(name) << "_base" 
+	<< "(const umat::UMATInt *const NTENS, const umat::UMATReal *const DTIME,\n"
+	<< "const umat::UMATReal *const DROT,  umat::UMATReal *const DDSOE,\n"
+	<< "const umat::UMATReal *const STRAN, const umat::UMATReal *const DSTRAN,\n"
+	<< "const umat::UMATReal *const TEMP,  const umat::UMATReal *const DTEMP,\n"
+	<< "const umat::UMATReal *const PROPS, const umat::UMATInt    *const NPROPS,\n"
+	<< "const umat::UMATReal *const PREDEF,const umat::UMATReal *const DPRED,\n"
+	<< "umat::UMATReal *const STATEV,const umat::UMATInt    *const NSTATV,\n"
+	<< "umat::UMATReal *const STRESS,const umat::UMATInt    *const NDI,\n"
+	<< "umat::UMATInt    *const KINC)\n";
+    out << "{\n";
+    out << "umat::UMATInterface<tfel::material::" << className 
+	<< ">::exe(NTENS,DTIME,DROT,DDSOE,STRAN,DSTRAN,TEMP,DTEMP,PROPS,NPROPS,"
+	<< "PREDEF,DPRED,STATEV,NSTATV,STRESS,NDI,KINC);\n";
+    out << "}\n\n";
+
+    
+    if(mb.getBehaviourType()==MechanicalBehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR){
+      if(this->finiteStrainStrategies.empty()){
+	this->writeStandardUmatFunction(out,name,library,material,"",
+					glossaryNames,entryNames,mb);
+      } else {
+	for(pfss=this->finiteStrainStrategies.begin();pfss!=this->finiteStrainStrategies.end();++pfss){
+	  if(*pfss==FINITEROTATIONSMALLSTRAIN){
+	    this->writeFiniteRotationSmallStrainUmatFunction(out,name,library,material,"frst",
+							     glossaryNames,entryNames,mb);
+	    if(this->finiteStrainStrategies.size()==1u){
+	      this->writeFiniteRotationSmallStrainUmatFunction(out,name,library,material,"",
+							       glossaryNames,entryNames,mb);
+	    }
+	  } else if(*pfss==MIEHEAPELLAMBRECHTLOGARITHMICSTRAIN){
+	    this->writeMieheApelLambrechtLogarithmicStrainUmatFunction(out,name,library,material,"malls",
+								       glossaryNames,entryNames,mb);
+	    if(this->finiteStrainStrategies.size()==1u){
+	      this->writeMieheApelLambrechtLogarithmicStrainUmatFunction(out,name,library,material,"",
+									 glossaryNames,entryNames,mb);
+	    }
+	  } else if(*pfss==NONE){
+	    this->writeStandardUmatFunction(out,name,library,material,"ss",
+					    glossaryNames,entryNames,mb);
+	    if(this->finiteStrainStrategies.size()==1u){
+	      this->writeStandardUmatFunction(out,name,library,material,"",
+					      glossaryNames,entryNames,mb);
+	    }
+	  } else {
+	    string msg("MFrontUMATInterface::endTreatement : "
+		       "internal error, unsupported finite strain strategy");
+	    throw(runtime_error(msg));
+	  }
+	}
+	if((this->finiteStrainStrategies.size()!=1u)&&
+	   (find(this->finiteStrainStrategies.begin(),
+		 this->finiteStrainStrategies.end(),NONE)!=this->finiteStrainStrategies.end())){
+	  this->writeStandardUmatFunction(out,name,library,material,"",
+					  glossaryNames,entryNames,mb);
+	}
+      }
+    } else {
+      this->writeStandardUmatFunction(out,name,library,material,"",
+				      glossaryNames,entryNames,mb);
     }
     out << "} // end of extern \"C\"\n";
     out.close();
-    if(mb.getBehaviourType()==MechanicalBehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR){
-      this->generateGibianeDeclaration(library,className,authorName,date,mb);
+    if((mb.getBehaviourType()==MechanicalBehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR)||
+       (mb.getBehaviourType()==MechanicalBehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR)){
+      this->generateGibianeDeclaration(library,material,className,authorName,date,mb);
     }
   } // end of MFrontUMATInterface::endTreatement
-
-  void
-  MFrontUMATInterface::generateGibianeDeclaration(const std::string& library,
-						  const std::string& className,
-						  const std::string& authorName,
-						  const std::string& date,
-						  const MechanicalBehaviourDescription& mb)
-  {
-    using namespace std;
-    using namespace tfel::system;
-    const VarContainer& coefsHolder              = mb.getMaterialProperties();
-    const VarContainer& stateVarsHolder          = mb.getStateVariables();
-    const VarContainer& auxiliaryStateVarsHolder = mb.getAuxiliaryStateVariables();
-    const VarContainer& externalStateVarsHolder  = mb.getExternalStateVariables();
-    const string name((!library.empty())?library+className:className);
-    const string fileName("castem/"+name+".dgibi");
-    string tmp;
-    VarContainer::const_iterator p;
-    unsigned short i;
-    ofstream out;
-    systemCall::mkdir("castem");
-    out.open(fileName.c_str());
-    if(!out){
-      string msg("MFrontUMATInterface::generateGibianeDeclaration : ");
-      msg += "could not open file ";
-      msg += fileName;
-      throw(runtime_error(msg));
-    }
-    out << "*\n";
-    out << "* \\file   "  << fileName << endl;
-    out << "* \\brief  example of how to use the " << className << " behaviour law\n"
-	<< "* in the Cast3M finite element solver\n";
-    out << "* \\author "  << authorName << endl;
-    out << "* \\date   "  << date       << endl;
-    out << "*\n\n";
-
-    out << "** 1D Example\n\n";
-    out << "coel1D = 'MOTS'";
-    i=0;
-    if(mb.getSymmetryType()==mfront::ISOTROPIC){
-      if(!this->checkIfElasticPropertiesAreDeclared(mb)){
-	out << "'YOUN' 'NU' 'RHO' 'ALPH' ";
-	i=4u;
-      }
-    } else if(mb.getSymmetryType()==mfront::ORTHOTROPIC){
-      out << "'YG1' 'YG2' 'YG3' 'NU12' 'NU23' 'NU13' 'RHO' 'ALP1' 'ALP2' 'ALP3' ";
-      i=10u;
-    }
-    for(p=coefsHolder.begin();p!=coefsHolder.end();++p){
-      SupportedTypes::TypeFlag flag = this->getTypeFlag(p->type);
-      switch(flag){
-      case SupportedTypes::Scalar : 
-	tmp = treatScalar(p->name);
-	i=static_cast<unsigned short>(i+1u);
-	break;
-      case SupportedTypes::Stensor :
-	tmp = treatStensor(p->name,1);
-	i=static_cast<unsigned short>(i+3u);
-	break;
-      default :
-	string msg("MFrontUMATInterface::generateGibianeDeclaration : ");
-	msg += "internal error, tag unsupported";
-	throw(runtime_error(msg));
-      }
-      if(i>9){
-	out << "\n";
-	i=0;
-      } else {
-	out << " ";
-      }
-      out << tmp;
-    }
-    out << ";\n";
-
-    out << "stav1D = 'MOTS'";
-    i=0;
-    for(p=stateVarsHolder.begin();p!=stateVarsHolder.end();++p){
-      SupportedTypes::TypeFlag flag = this->getTypeFlag(p->type);
-      switch(flag){
-      case SupportedTypes::Scalar : 
-	tmp = treatScalar(p->name);
-	i=static_cast<unsigned short>(i+1u);
-	break;
-      case SupportedTypes::Stensor :
-	tmp = treatStensor(p->name,1);
-	i=static_cast<unsigned short>(i+3u);
-	break;
-      default :
-	string msg("MFrontUMATInterface::generateGibianeDeclaration : ");
-	msg += "internal error, tag unsupported";
-	throw(runtime_error(msg));
-      }
-      if(i>9){
-	out << "\n";
-	i=0;
-      } else {
-	out << " ";
-      }
-      out << tmp;
-    }
-    if(stateVarsHolder.size()!=0){
-      out << " ";
-    }
-    for(p=auxiliaryStateVarsHolder.begin();p!=auxiliaryStateVarsHolder.end();++p){
-      SupportedTypes::TypeFlag flag = this->getTypeFlag(p->type);
-      switch(flag){
-      case SupportedTypes::Scalar : 
-	tmp = treatScalar(p->name);
-	i=static_cast<unsigned short>(i+1u);
-	break;
-      case SupportedTypes::Stensor :
-	tmp = treatStensor(p->name,1);
-	i=static_cast<unsigned short>(i+3u);
-	break;
-      default :
-	string msg("MFrontUMATInterface::generateGibianeDeclaration : ");
-	msg += "internal error, tag unsupported";
-	throw(runtime_error(msg));
-      }
-      if(i>9){
-	out << "\n";
-	i=0;
-      } else {
-	out << " ";
-      }
-      out << tmp;
-    }
-    out << ";\n";
-    
-    out << "para1D = 'MOTS' 'T'";
-    i=0;
-    for(p=externalStateVarsHolder.begin();p!=externalStateVarsHolder.end();++p){
-      SupportedTypes::TypeFlag flag = this->getTypeFlag(p->type);
-      switch(flag){
-      case SupportedTypes::Scalar : 
-	tmp = treatScalar(p->name);
-	i=static_cast<unsigned short>(i+1u);
-	break;
-      case SupportedTypes::Stensor :
-	tmp = treatStensor(p->name,1);
-	i=static_cast<unsigned short>(i+3u);
-	break;
-      default :
-	string msg("MFrontUMATInterface::generateGibianeDeclaration : ");
-	msg += "internal error, tag unsupported";
-	throw(runtime_error(msg));
-      }
-      if(i>9){
-	out << "\n";
-	i=0;
-      } else {
-	out << " ";
-      }
-      out << tmp;
-    }
-    out << ";\n\n";
-    
-    out << "MODL1D = 'MODELISER' v1D 'MECANIQUE' 'ELASTIQUE'\n";
-    out << "'NON_LINEAIRE' 'UTILISATEUR' 'NUME_LOI' 1\n";
-    out << "'C_MATERIAU' coel1D\n";
-    out << "'C_VARINTER' stav1D\n";
-    out << "'PARA_LOI'   para1D\n'CONS' M;\n\n";
-
-    out << "MATR1D = 'MATERIAU' MODL1D";
-    i=6;
-    if((mb.getSymmetryType()==mfront::ISOTROPIC)){
-      if(!this->checkIfElasticPropertiesAreDeclared(mb)){
-	out << "'YOUN' xyoung 'NU' xnu 'RHO' xrho 'ALPH' xalpha ";
-	i=9u;
-      }
-    } else {
-      out << "'YG1'  xyg1  'YG2'  xyg2  'YG3'  xyg3  'NU12' xNU12 'NU23' xNU23\n"
-	  << "'NU13' xNU13 'RHO' xrho 'ALP1' xapl1 'ALP2' xapl2 'ALP3' xALP3 ";
-      i=9u;
-    }
-    for(p=coefsHolder.begin();p!=coefsHolder.end();++p){
-      SupportedTypes::TypeFlag flag = this->getTypeFlag(p->type);
-      switch(flag){
-      case SupportedTypes::Scalar : 
-	tmp = treatCoefScalar(p->name);
-	i=static_cast<unsigned short>(i+1u);
-	break;
-      case SupportedTypes::Stensor :
-	tmp = treatCoefStensor(p->name,1);
-	i=static_cast<unsigned short>(i+3u);
-	break;
-      default :
-	string msg("MFrontUMATInterface::generateGibianeDeclaration : ");
-	msg += "internal error, tag unsupported";
-	throw(runtime_error(msg));
-      }
-      if(i>4){
-	out << "\n";
-	i=0;
-      } else {
-	out << " ";
-      }
-      out << tmp;
-    }
-    out << ";\n\n";
-    
-    out << "** 2D Example\n\n";
-    out << "coel2D = 'MOTS'";
-    i=0;
-    if((mb.getSymmetryType()==mfront::ISOTROPIC)){
-      if(!this->checkIfElasticPropertiesAreDeclared(mb)){
-	out << "'YOUN' 'NU' 'RHO' 'ALPH' ";
-	i=3u;
-      }
-    } else if(mb.getSymmetryType()==mfront::ORTHOTROPIC){
-      out << "'YG1' 'YG2' 'YG3' 'NU12' 'NU23' 'NU13' 'G12' 'V1X' 'V1Y'\n"
-	  << "'RHO' 'ALP1' 'ALP2' 'ALP3'";
-      i=3u;
-    }
-    for(p=coefsHolder.begin();p!=coefsHolder.end();++p){
-      SupportedTypes::TypeFlag flag = this->getTypeFlag(p->type);
-      switch(flag){
-      case SupportedTypes::Scalar : 
-	tmp = treatScalar(p->name);
-	i=static_cast<unsigned short>(i+1u);
-	break;
-      case SupportedTypes::Stensor :
-	tmp = treatStensor(p->name,2);
-	i=static_cast<unsigned short>(i+3u);
-	break;
-      default :
-	string msg("MFrontUMATInterface::generateGibianeDeclaration : ");
-	msg += "internal error, tag unsupported";
-	throw(runtime_error(msg));
-      }
-      if(i>9){
-	out << "\n";
-	i=0;
-      } else {
-	out << " ";
-      }
-      out << tmp;
-    }
-    out << ";\n";
-
-    out << "stav2D = 'MOTS'";
-    i=0;
-    for(p=stateVarsHolder.begin();p!=stateVarsHolder.end();++p){
-      SupportedTypes::TypeFlag flag = this->getTypeFlag(p->type);
-      switch(flag){
-      case SupportedTypes::Scalar : 
-	tmp = treatScalar(p->name);
-	i=static_cast<unsigned short>(i+1u);
-	break;
-      case SupportedTypes::Stensor :
-	tmp = treatStensor(p->name,2);
-	i=static_cast<unsigned short>(i+4u);
-	break;
-      default :
-	string msg("MFrontUMATInterface::generateGibianeDeclaration : ");
-	msg += "internal error, tag unsupported";
-	throw(runtime_error(msg));
-      }
-      if(i>9){
-	out << "\n";
-	i=0;
-      } else {
-	out << " ";
-      }
-      out << tmp;
-    }
-    for(p=auxiliaryStateVarsHolder.begin();
-	p!=auxiliaryStateVarsHolder.end();++p){
-      SupportedTypes::TypeFlag flag = this->getTypeFlag(p->type);
-      switch(flag){
-      case SupportedTypes::Scalar : 
-	tmp = treatScalar(p->name);
-	i=static_cast<unsigned short>(i+1u);
-	break;
-      case SupportedTypes::Stensor :
-	tmp = treatStensor(p->name,2);
-	i=static_cast<unsigned short>(i+4u);
-	break;
-      default :
-	string msg("MFrontUMATInterface::generateGibianeDeclaration : ");
-	msg += "internal error, tag unsupported";
-	throw(runtime_error(msg));
-      }
-      if(i>9){
-	out << "\n";
-	i=0;
-      } else {
-	out << " ";
-      }
-      out << tmp;
-    }
-    out << ";\n";
-    
-    out << "para2D = 'MOTS' 'T'";
-    i=0;
-    for(p=externalStateVarsHolder.begin();p!=externalStateVarsHolder.end();++p){
-      SupportedTypes::TypeFlag flag = this->getTypeFlag(p->type);
-      switch(flag){
-      case SupportedTypes::Scalar : 
-	tmp = treatScalar(p->name);
-	i=static_cast<unsigned short>(i+1u);
-	break;
-      case SupportedTypes::Stensor :
-	tmp = treatStensor(p->name,2);
-	i=static_cast<unsigned short>(i+3u);
-	break;
-      default :
-	string msg("MFrontUMATInterface::generateGibianeDeclaration : ");
-	msg += "internal error, tag unsupported";
-	throw(runtime_error(msg));
-      }
-      if(i>9){
-	out << "\n";
-	i=0;
-      } else {
-	out << " ";
-      }
-      out << tmp;
-    }
-    out << ";\n\n";
-    
-    out << "MODL2D = 'MODELISER' v2D 'MECANIQUE' 'ELASTIQUE'\n";
-    out << "'NON_LINEAIRE' 'UTILISATEUR' 'NUME_LOI' 2\n";
-    out << "'C_MATERIAU' coel2D\n";
-    out << "'C_VARINTER' stav2D\n";
-    out << "'PARA_LOI'   para2D\n'CONS' M;\n\n";
-
-    out << "MATR2D = 'MATERIAU' MODL2D";
-    i=6;
-    if((mb.getSymmetryType()==mfront::ISOTROPIC)){
-      if(!this->checkIfElasticPropertiesAreDeclared(mb)){
-	out << "'YOUN' xyoung 'NU' xnu 'RHO' xrho 'ALPH' xalpha";
-	i=9u;
-      }
-    } else {
-      out << "'YG1'  xyg1  'YG2' xyg2 'YG3'  xyg3  'NU12' xNU12 'NU23' xNU23\n"
-	  << "'NU13' xNU13 'G12' xg12 'RHO' xrho 'ALP1' xapl1 'ALP2' xapl2 'ALP3' xALP3";
-      i=9u;
-    }
-    for(p=coefsHolder.begin();p!=coefsHolder.end();++p){
-      SupportedTypes::TypeFlag flag = this->getTypeFlag(p->type);
-      switch(flag){
-      case SupportedTypes::Scalar : 
-	tmp = treatCoefScalar(p->name);
-	i=static_cast<unsigned short>(i+1u);
-	break;
-      case SupportedTypes::Stensor :
-	tmp = treatCoefStensor(p->name,2);
-	i=static_cast<unsigned short>(i+3u);
-	break;
-      default :
-	string msg("MFrontUMATInterface::generateGibianeDeclaration : ");
-	msg += "internal error, tag unsupported";
-	throw(runtime_error(msg));
-      }
-      if(i>4){
-	out << "\n";
-	i=0;
-      } else {
-	out << " ";
-      }
-      out << tmp;
-    }
-    if(mb.getSymmetryType()==mfront::ORTHOTROPIC){
-      out << "\n'DIRECTION' 'PARALLELE' (1 0)";
-    }
-    out << ";\n\n";
-
-    out << "** 3D Example\n\n";
-    out << "coel3D = 'MOTS'";
-    i=0;
-    if(mb.getSymmetryType()==mfront::ISOTROPIC){
-      if(!this->checkIfElasticPropertiesAreDeclared(mb)){
-	out << "'YOUN' 'NU' 'RHO' 'ALPH'";
-	i=3u;
-      }
-    } else {
-      out << "'YG1' 'YG2' 'YG3' 'NU12' 'NU23' 'NU13'\n"
-	  << "'G12' 'G23' 'G13' 'V1X'  'V1Y'  'V1Z' \n"
-	  << "'V2X' 'V2Y' 'V2Z' 'RHO'  'ALP1' 'ALP2' 'ALP3'";
-      i=6u;
-    }
-    for(p=coefsHolder.begin();p!=coefsHolder.end();++p){
-      SupportedTypes::TypeFlag flag = this->getTypeFlag(p->type);
-      switch(flag){
-      case SupportedTypes::Scalar : 
-	tmp = treatScalar(p->name);
-	i=static_cast<unsigned short>(i+1u);
-	break;
-      case SupportedTypes::Stensor :
-	tmp = treatStensor(p->name,3);
-	i=static_cast<unsigned short>(i+6u);
-	break;
-      default :
-	string msg("MFrontUMATInterface::generateGibianeDeclaration : ");
-	msg += "internal error, tag unsupported";
-	throw(runtime_error(msg));
-      }
-      if(i>9){
-	out << "\n";
-	i=0;
-      } else {
-	out << " ";
-      }
-      out << tmp;
-    }
-    out << ";\n";
-
-    out << "stav3D = 'MOTS'";
-    i=0;
-    for(p=stateVarsHolder.begin();p!=stateVarsHolder.end();++p){
-      SupportedTypes::TypeFlag flag = this->getTypeFlag(p->type);
-      switch(flag){
-      case SupportedTypes::Scalar : 
-	tmp = treatScalar(p->name);
-	i=static_cast<unsigned short>(i+1u);
-	break;
-      case SupportedTypes::Stensor :
-	tmp = treatStensor(p->name,3);
-	i=static_cast<unsigned short>(i+3u);
-	break;
-      default :
-	string msg("MFrontUMATInterface::generateGibianeDeclaration : ");
-	msg += "internal error, tag unsupported";
-	throw(runtime_error(msg));
-      }
-      if(i>9){
-	out << "\n";
-	i=0;
-      } else {
-	out << " ";
-      }
-      out << tmp;
-    }
-    for(p=auxiliaryStateVarsHolder.begin();
-	p!=auxiliaryStateVarsHolder.end();++p){
-      SupportedTypes::TypeFlag flag = this->getTypeFlag(p->type);
-      switch(flag){
-      case SupportedTypes::Scalar : 
-	tmp = treatScalar(p->name);
-	i=static_cast<unsigned short>(i+1u);
-	break;
-      case SupportedTypes::Stensor :
-	tmp = treatStensor(p->name,3);
-	i=static_cast<unsigned short>(i+3u);
-	break;
-      default :
-	string msg("MFrontUMATInterface::generateGibianeDeclaration : ");
-	msg += "internal error, tag unsupported";
-	throw(runtime_error(msg));
-      }
-      if(i>9){
-	out << "\n";
-	i=0;
-      } else {
-	out << " ";
-      }
-      out << tmp;
-    }
-    out << ";\n";
-    
-    out << "para3D = 'MOTS' 'T'";
-    i=0;
-    for(p=externalStateVarsHolder.begin();
-	p!=externalStateVarsHolder.end();++p){
-      SupportedTypes::TypeFlag flag = this->getTypeFlag(p->type);
-      switch(flag){
-      case SupportedTypes::Scalar : 
-	tmp = treatScalar(p->name);
-	i=static_cast<unsigned short>(i+1u);
-	break;
-      case SupportedTypes::Stensor :
-	tmp = treatStensor(p->name,3);
-	i=static_cast<unsigned short>(i+3u);
-	break;
-      default :
-	string msg("MFrontUMATInterface::generateGibianeDeclaration : ");
-	msg += "internal error, tag unsupported";
-	throw(runtime_error(msg));
-      }
-      if(i>9){
-	out << "\n";
-	i=0;
-      } else {
-	out << " ";
-      }
-      out << tmp;
-    }
-    out << ";\n\n";
-    
-    out << "MODL3D = 'MODELISER' v3D 'MECANIQUE' 'ELASTIQUE'\n";
-    out << "'NON_LINEAIRE' 'UTILISATEUR' 'NUME_LOI' 3\n";
-    out << "'C_MATERIAU' coel3D\n";
-    out << "'C_VARINTER' stav3D\n";
-    out << "'PARA_LOI'   para3D\n'CONS' M;\n\n";
-
-    out << "MATR3D = 'MATERIAU' MODL3D";
-    i=6;
-    if(mb.getSymmetryType()==mfront::ISOTROPIC){
-      if(!this->checkIfElasticPropertiesAreDeclared(mb)){
-	out << "'YOUN' xyoung 'NU' xnu 'ALPH' xalpha";
-	i=9u;
-      }
-    } else {
-      out << "'YG1' xyg1 'YG2' xyg2 'YG3' xyg3 'NU12' xNU12 'NU23' xNU23 'NU13' xNU13\n"
-	  << "'G12' xg12 'G23' xg23 'G13' xg13 'RHO' xrho 'ALP1' xapl1 'ALP2' xapl2 'ALP3' xALP3\n";
-      i=9u;
-    }
-    for(p=coefsHolder.begin();p!=coefsHolder.end();++p){
-      SupportedTypes::TypeFlag flag = this->getTypeFlag(p->type);
-      switch(flag){
-      case SupportedTypes::Scalar : 
-	tmp = treatCoefScalar(p->name);
-	i=static_cast<unsigned short>(i+1u);
-	break;
-      case SupportedTypes::Stensor :
-	tmp = treatCoefStensor(p->name,3);
-	i=static_cast<unsigned short>(i+3u);
-	break;
-      default :
-	string msg("MFrontUMATInterface::generateGibianeDeclaration : ");
-	msg += "internal error, tag unsupported";
-	throw(runtime_error(msg));
-      }
-      if(i>4){
-	out << "\n";
-	i=0;
-      } else {
-	out << " ";
-      }
-      out << tmp;
-    }
-    if(mb.getSymmetryType()==mfront::ORTHOTROPIC){
-      out << "\n'DIRECTION' 'PARALLELE' (1 0 0) (0 0 1)";
-    }
-    out << ";\n\n";
-
-    out.close();
-
-  } // end of MFrontUMATInterface::generateGibianeDeclaration
 
   void
   MFrontUMATInterface::writeMTestFileGeneratorSetModellingHypothesis(std::ostream& out) const
@@ -1519,6 +1155,12 @@ namespace mfront{
   } // end of MFrontUMATInterface::writeMTestFileGeneratorAdditionalMaterialPropertiesInitialisation
 
   void
+  MFrontUMATInterface::writeUMATxxBehaviourTypeSymbols(std::ostream&,
+						       const std::string&,
+						       const MechanicalBehaviourDescription&) const
+  {} // end of MFrontUMATInterface::writeUMATxxBehaviourTypeSymbols
+
+  void
   MFrontUMATInterface::writeUMATxxMaterialPropertiesSymbols(std::ostream& out,
 							    const std::string& name,
 							    const MechanicalBehaviourDescription& mb,
@@ -1553,27 +1195,6 @@ namespace mfront{
   } // end of MFrontUMATInterface::writeUMATxxMaterialPropertiesSymbol
 
   void
-  MFrontUMATInterface::writeUMATxxBehaviourTypeSymbols(std::ostream& out,
-						       const std::string& name,
-						       const MechanicalBehaviourDescription& mb) const
-  {
-    using namespace std;
-    if(mb.getBehaviourType()==MechanicalBehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR){
-      if((this->finiteStrainStrategy==FINITEROTATIONSMALLSTRAIN)||
-	 (this->finiteStrainStrategy==MIEHEAPELLAMBRECHTLOGARITHMICSTRAIN)){
-	out << "MFRONT_SHAREDOBJ unsigned short " << this->getFunctionName(name) 
-	    << "_BehaviourType = 2u;" ;
-	return;
-      } else if(this->finiteStrainStrategy!=NONE){
-	string msg("MFrontUMATInterface::writeUMATxxBehaviourTypeSymbols : ");
-	msg += "unsupported finite strain strategy";
-	throw(runtime_error(msg));
-      }
-    }
-    MFrontUMATInterfaceBase::writeUMATxxBehaviourTypeSymbols(out,name,mb);
-  } // end of MFrontUMATInterface::writeUMATxxBehaviourTypeSymbols
-
-  void
   MFrontUMATInterface::writeUMATxxAdditionalSymbols(std::ostream& out,
 						    const std::string& name,
 						    const std::string&,
@@ -1583,14 +1204,6 @@ namespace mfront{
   {
     typedef MechanicalBehaviourDescription::ModellingHypothesis MH;
     if(mb.getBehaviourType()==MechanicalBehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR){
-      if((this->finiteStrainStrategy==FINITEROTATIONSMALLSTRAIN)||
-	 (this->finiteStrainStrategy==MIEHEAPELLAMBRECHTLOGARITHMICSTRAIN)){
-	out << "MFRONT_SHAREDOBJ unsigned short umat"
-	    << makeLowerCase(name) << "_Interface = 2u;\n\n";
-      } else {
-	out << "MFRONT_SHAREDOBJ unsigned short umat"
-	    << makeLowerCase(name) << "_Interface = 1u;\n\n";
-      }
       // check if plane stress hypothesis is supported through the generic plane stress algorithm
       if(mb.getHypotheses().find(MH::PLANESTRESS)==mb.getHypotheses().end()){
 	if(mb.getHypotheses().find(MH::GENERALISEDPLANESTRAIN)!=mb.getHypotheses().end()){
@@ -1598,13 +1211,813 @@ namespace mfront{
 	      << "_UsesGenericPlaneStressAlgorithm = 1u;\n\n";
 	}
       }
-    } else if(mb.getBehaviourType()==MechanicalBehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR){
-      out << "MFRONT_SHAREDOBJ unsigned short umat"
-	  << makeLowerCase(name) << "_Interface = 2u;\n\n";
-    } else {
-      out << "MFRONT_SHAREDOBJ unsigned short umat"
-	  << makeLowerCase(name) << "_Interface = 1u;\n\n";
     }
   } // end of MFrontUMATInterface::writeUMATxxAdditionalSymbols
+
+  void
+  MFrontUMATInterface::writeUmatFortranFunctionDefine(std::ostream& out,
+						      const std::string& name)
+  {
+    out << "#define umat" << makeUpperCase(name) <<"_F77" << " F77_FUNC(umat"
+	<< makeLowerCase(name) << ",UMAT"
+	<< makeUpperCase(name) << ")\n\n";
+  } // end of MFrontUMATInterface::writeUmatFortranFunctionDefine
+
+  void
+  MFrontUMATInterface::writeUmatFunctionDeclaration(std::ostream& out,
+						    const std::string& name)
+  {
+    using namespace std;
+    out << "MFRONT_SHAREDOBJ void MFRONT_STDCALL\numat"
+    	<< makeLowerCase(name)
+    	<< "(const umat::UMATInt *const,const umat::UMATReal *const,\n"
+    	<< "const umat::UMATReal *const,      umat::UMATReal *const,\n"
+    	<< "const umat::UMATReal *const,const umat::UMATReal *const,\n"
+    	<< "const umat::UMATReal *const,const umat::UMATReal *const,\n"
+    	<< "const umat::UMATReal *const,const umat::UMATInt  *const,\n"
+    	<< "const umat::UMATReal *const,const umat::UMATReal *const,\n"
+    	<< "      umat::UMATReal *const,const umat::UMATInt  *const,\n"
+    	<< "      umat::UMATReal *const,const umat::UMATInt  *const,\n"
+    	<< "      umat::UMATInt *const);\n\n";
+    out << "MFRONT_SHAREDOBJ void\n" 
+	<< "umat" << makeUpperCase(name) <<"_F77"
+    	<< "(const umat::UMATInt *const,const umat::UMATReal *const,\n"
+    	<< "const umat::UMATReal *const,      umat::UMATReal *const,\n"
+    	<< "const umat::UMATReal *const,const umat::UMATReal *const,\n"
+    	<< "const umat::UMATReal *const,const umat::UMATReal *const,\n"
+    	<< "const umat::UMATReal *const,const umat::UMATInt  *const,\n"
+    	<< "const umat::UMATReal *const,const umat::UMATReal *const,\n"
+    	<< "      umat::UMATReal *const,const umat::UMATInt  *const,\n"
+    	<< "      umat::UMATReal *const,const umat::UMATInt  *const,\n"
+    	<< "      umat::UMATInt *const);\n\n";
+  } // end of MFrontUMATInterface::writeUmatFunctionDeclaration
+
+  void
+  MFrontUMATInterface::writeFiniteRotationSmallStrainUmatFunction(std::ostream& out,
+								  const std::string& name,
+								  const std::string&,
+								  const std::string&,
+								  const std::string& suffix,
+								  const std::map<std::string,std::string>&,
+								  const std::map<std::string,std::string>&,
+								  const MechanicalBehaviourDescription& mb) const
+  {
+    using namespace std;
+    string fname = name;
+    if(!suffix.empty()){
+      fname += "_"+suffix;
+    }
+    const string umatFortranFunctionName = "umat"+makeUpperCase(fname)+"_F77";
+    if(mb.getBehaviourType()!=MechanicalBehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR){
+      string msg("MFrontUMATInterface::writeFiniteRotationSmallStrainUmatFunction : "
+		 "finite strain strategies shall be used with small strain behaviours");
+      throw(runtime_error(msg));
+    }
+    if(this->generateMTestFile){
+      string msg("MFrontUMATInterface::endTreatement : "
+		 "generating mtest file is not supported "
+		 "upon large strains");
+      throw(runtime_error(msg));
+    }
+    out << "MFRONT_SHAREDOBJ void MFRONT_STDCALL\numat"
+	<< makeLowerCase(fname)
+	<< "(const umat::UMATInt *const NTENS, const umat::UMATReal *const DTIME,\n"
+	<< "const umat::UMATReal *const DROT,  umat::UMATReal *const DDSOE,\n"
+	<< "const umat::UMATReal *const F0,    const umat::UMATReal *const F1,\n"
+	<< "const umat::UMATReal *const TEMP,  const umat::UMATReal *const DTEMP,\n"
+	<< "const umat::UMATReal *const PROPS, const umat::UMATInt    *const NPROPS,\n"
+	<< "const umat::UMATReal *const PREDEF,const umat::UMATReal *const DPRED,\n"
+	<< "umat::UMATReal *const STATEV,const umat::UMATInt    *const NSTATV,\n"
+	<< "umat::UMATReal *const STRESS,const umat::UMATInt    *const NDI,\n"
+	<< "umat::UMATInt    *const KINC)\n";
+    out << "{\n";
+    out << "using namespace umat;\n";
+    out << "// computing the Green Lagrange strains\n";
+    out << "UMATReal eto[6];\n";
+    out << "UMATReal deto[6];\n";
+    out << "UMATInt  i;\n";
+    out << "UMATFiniteStrain::computeGreenLagrangeStrain(eto,F0,*NTENS,*NDI);\n";
+    out << "UMATFiniteStrain::computeGreenLagrangeStrain(deto,F1,*NTENS,*NDI);\n";
+    out << "for(i=0;i!=*NTENS;++i){\n";
+    out << "deto[i] -= eto[i];\n";
+    out << "}\n";
+    out << "umat" << makeLowerCase(name)
+	<< "_base(NTENS, DTIME,DROT,DDSOE,eto,deto,TEMP,DTEMP,\n"
+	<< "PROPS,NPROPS,PREDEF,DPRED,STATEV,NSTATV,\n"
+	<< "STRESS,NDI,KINC);\n";
+    out << "if(*KINC==1){\n";
+    out << "UMATFiniteStrain::computeCauchyStressFromSecondPiolaKirchhoffStress(STRESS,F1,*NTENS,*NDI);\n";
+    out << "}\n";
+    out << "}\n\n";
+    
+    out << "MFRONT_SHAREDOBJ void\n" << umatFortranFunctionName
+	<< "(const umat::UMATInt *const NTENS, const umat::UMATReal *const DTIME,\n"
+	<< "const umat::UMATReal *const DROT,  umat::UMATReal *const DDSOE,\n"
+	<< "const umat::UMATReal *const F0, const umat::UMATReal *const F1,\n"
+	<< "const umat::UMATReal *const TEMP,  const umat::UMATReal *const DTEMP,\n"
+	<< "const umat::UMATReal *const PROPS, const umat::UMATInt    *const NPROPS,\n"
+	<< "const umat::UMATReal *const PREDEF,const umat::UMATReal *const DPRED,\n"
+	<< "umat::UMATReal *const STATEV,const umat::UMATInt    *const NSTATV,\n"
+	<< "umat::UMATReal *const STRESS,const umat::UMATInt    *const NDI,\n"
+	<< "umat::UMATInt    *const KINC)\n";
+    out << "{\n";
+    out << "umat" << makeLowerCase(fname)
+	<< "(NTENS, DTIME,DROT,DDSOE,F0,F1,TEMP,DTEMP,\n"
+	<< "PROPS,NPROPS,PREDEF,DPRED,STATEV,NSTATV,\n"
+	<< "STRESS,NDI,KINC);\n";
+    out << "}\n\n";
+  }
+  
+  void
+  MFrontUMATInterface::writeMieheApelLambrechtLogarithmicStrainUmatFunction(std::ostream& out,
+									    const std::string& name,
+									    const std::string&,
+									    const std::string&,
+									    const std::string& suffix,
+									    const std::map<std::string,std::string>&,
+									    const std::map<std::string,std::string>&,
+									    const MechanicalBehaviourDescription& mb) const
+  {
+    using namespace std;
+    string fname = name;
+    if(!suffix.empty()){
+      fname += "_"+suffix;
+    }
+    const string umatFortranFunctionName = "umat"+makeUpperCase(fname)+"_F77";
+    if(mb.getBehaviourType()!=MechanicalBehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR){
+      string msg("MFrontUMATInterface::writeMieheApelLambrechtLogarithmicStrainUmatFunction : "
+		 "finite strain strategies shall be used with small strain behaviours");
+      throw(runtime_error(msg));
+    }
+    if(this->generateMTestFile){
+      string msg("MFrontUMATInterface::endTreatement : "
+		 "generating mtest file is not supported "
+		 "upon large strains");
+      throw(runtime_error(msg));
+    }
+    out << "MFRONT_SHAREDOBJ void MFRONT_STDCALL\numat"
+	<< makeLowerCase(fname)
+	<< "(const umat::UMATInt *const NTENS, const umat::UMATReal *const DTIME,\n"
+	<< "const umat::UMATReal *const DROT,  umat::UMATReal *const DDSOE,\n"
+	<< "const umat::UMATReal *const F0,    const umat::UMATReal *const F1,\n"
+	<< "const umat::UMATReal *const TEMP,  const umat::UMATReal *const DTEMP,\n"
+	<< "const umat::UMATReal *const PROPS, const umat::UMATInt    *const NPROPS,\n"
+	<< "const umat::UMATReal *const PREDEF,const umat::UMATReal *const DPRED,\n"
+	<< "umat::UMATReal *const STATEV,const umat::UMATInt    *const NSTATV,\n"
+	<< "umat::UMATReal *const STRESS,const umat::UMATInt    *const NDI,\n"
+	<< "umat::UMATInt    *const KINC)\n";
+    out << "{\n";
+    out << "using namespace umat;\n";
+    out << "// computing the logarithmic strain\n";
+    out << "UMATReal eto[6];\n";
+    out << "UMATReal deto[6];\n";
+    out << "UMATReal P0[36];\n";
+    out << "UMATReal P1[36];\n";
+    out << "UMATReal s[6];\n";
+    out << "UMATInt  i;\n";
+    out << "UMATFiniteStrain::computeLogarithmicStrainAndDerivative(P0,eto,F0,*NTENS,*NDI);\n";
+    out << "UMATFiniteStrain::computeLogarithmicStrainAndDerivative(P1,deto,F1,*NTENS,*NDI);\n";
+    out << "UMATFiniteStrain::computeDualStressOfLogarithmicStrainFromCauchyStress(s,STRESS,P0,F0,*NTENS,*NDI);\n";
+    out << "for(i=0;i!=*NTENS;++i){\n";
+    out << "deto[i] -= eto[i];\n";
+    out << "}\n";
+    out << "umat" << makeLowerCase(name)
+	<< "_base(NTENS, DTIME,DROT,DDSOE,eto,deto,TEMP,DTEMP,\n"
+	<< "PROPS,NPROPS,PREDEF,DPRED,STATEV,NSTATV,\n"
+	<< "s,NDI,KINC);\n";
+    out << "if(*KINC==1){\n";
+    out << "UMATFiniteStrain::computeCauchyStressFromDualStressOfLogarithmicStrain(STRESS,s,P1,F1,*NTENS,*NDI);\n";
+    out << "}\n";
+    out << "}\n\n";
+    out << "MFRONT_SHAREDOBJ void\n" << umatFortranFunctionName
+	<< "(const umat::UMATInt *const NTENS, const umat::UMATReal *const DTIME,\n"
+	<< "const umat::UMATReal *const DROT,  umat::UMATReal *const DDSOE,\n"
+	<< "const umat::UMATReal *const F0, const umat::UMATReal *const F1,\n"
+	<< "const umat::UMATReal *const TEMP,  const umat::UMATReal *const DTEMP,\n"
+	<< "const umat::UMATReal *const PROPS, const umat::UMATInt    *const NPROPS,\n"
+	<< "const umat::UMATReal *const PREDEF,const umat::UMATReal *const DPRED,\n"
+	<< "umat::UMATReal *const STATEV,const umat::UMATInt    *const NSTATV,\n"
+	<< "umat::UMATReal *const STRESS,const umat::UMATInt    *const NDI,\n"
+	<< "umat::UMATInt    *const KINC)\n";
+    out << "{\n";
+    out << "umat" << makeLowerCase(fname)
+	<< "(NTENS, DTIME,DROT,DDSOE,F0,F1,TEMP,DTEMP,\n"
+	<< "PROPS,NPROPS,PREDEF,DPRED,STATEV,NSTATV,\n"
+	<< "STRESS,NDI,KINC);\n";
+    out << "}\n\n";
+  }
+
+  void
+  MFrontUMATInterface::writeStandardUmatFunction(std::ostream& out,
+						 const std::string& name,
+						 const std::string& library,
+						 const std::string& material,
+						 const std::string& suffix,
+						 const std::map<std::string,std::string>& glossaryNames,
+						 const std::map<std::string,std::string>& entryNames,
+						 const MechanicalBehaviourDescription& mb) const
+  {
+    using namespace std;
+    string fname = name;
+    if(!suffix.empty()){
+      fname += "_"+suffix;
+    }
+    const string umatFortranFunctionName = "umat"+makeUpperCase(fname)+"_F77";
+    out << "MFRONT_SHAREDOBJ void MFRONT_STDCALL\numat"
+	<< makeLowerCase(fname)
+	<< "(const umat::UMATInt *const NTENS, const umat::UMATReal *const DTIME,\n"
+	<< "const umat::UMATReal *const DROT,  umat::UMATReal *const DDSOE,\n"
+	<< "const umat::UMATReal *const STRAN, const umat::UMATReal *const DSTRAN,\n"
+	<< "const umat::UMATReal *const TEMP,  const umat::UMATReal *const DTEMP,\n"
+	<< "const umat::UMATReal *const PROPS, const umat::UMATInt    *const NPROPS,\n"
+	<< "const umat::UMATReal *const PREDEF,const umat::UMATReal *const DPRED,\n"
+	<< "umat::UMATReal *const STATEV,const umat::UMATInt    *const NSTATV,\n"
+	<< "umat::UMATReal *const STRESS,const umat::UMATInt    *const NDI,\n"
+	<< "umat::UMATInt    *const KINC)\n";
+    out << "{\n";
+    this->generateMTestFile1(out);
+    out << "umat" << makeLowerCase(name)
+	<< "_base(NTENS, DTIME,DROT,DDSOE,STRAN,DSTRAN,TEMP,DTEMP,\n"
+	<< "PROPS,NPROPS,PREDEF,DPRED,STATEV,NSTATV,\n"
+	<< "STRESS,NDI,KINC);\n";
+    if(this->generateMTestFile){
+      out << "if(*KINC!=1){\n";
+      this->generateMTestFile2(out,library,material,name,mb,
+			       glossaryNames,entryNames);
+      out << "}\n";
+    }
+    out << "}\n\n";
+    out << "MFRONT_SHAREDOBJ void\n" << umatFortranFunctionName
+	<< "(const umat::UMATInt *const NTENS, const umat::UMATReal *const DTIME,\n"
+	<< "const umat::UMATReal *const DROT,  umat::UMATReal *const DDSOE,\n"
+	<< "const umat::UMATReal *const STRAN, const umat::UMATReal *const DSTRAN,\n"
+	<< "const umat::UMATReal *const TEMP,  const umat::UMATReal *const DTEMP,\n"
+	<< "const umat::UMATReal *const PROPS, const umat::UMATInt    *const NPROPS,\n"
+	<< "const umat::UMATReal *const PREDEF,const umat::UMATReal *const DPRED,\n"
+	<< "umat::UMATReal *const STATEV,const umat::UMATInt    *const NSTATV,\n"
+	<< "umat::UMATReal *const STRESS,const umat::UMATInt    *const NDI,\n"
+	<< "umat::UMATInt    *const KINC)\n";
+    out << "{\n";
+    out << "umat" << makeLowerCase(fname)
+	<< "(NTENS, DTIME,DROT,DDSOE,STRAN,DSTRAN,TEMP,DTEMP,\n"
+	<< "PROPS,NPROPS,PREDEF,DPRED,STATEV,NSTATV,\n"
+	<< "STRESS,NDI,KINC);\n";
+    out << "}\n\n";
+  }
+
+  void
+  MFrontUMATInterface::generateGibianeDeclaration(const std::string& library,
+						  const std::string& material,
+						  const std::string& className,
+						  const std::string& authorName,
+						  const std::string& date,
+						  const MechanicalBehaviourDescription& mb) const
+  {
+    using namespace std;
+    using namespace tfel::system;
+    const VarContainer& coefsHolder              = mb.getMaterialProperties();
+    const VarContainer& stateVarsHolder          = mb.getStateVariables();
+    const VarContainer& auxiliaryStateVarsHolder = mb.getAuxiliaryStateVariables();
+    const VarContainer& externalStateVarsHolder  = mb.getExternalStateVariables();
+    const string name((!library.empty())?library+className:className);
+    const string fileName("castem/"+name+".dgibi");
+    string tmp;
+    VarContainer::const_iterator p;
+    unsigned short i;
+    ofstream out;
+    systemCall::mkdir("castem");
+    out.open(fileName.c_str());
+    if(!out){
+      string msg("MFrontUMATInterface::generateGibianeDeclaration : ");
+      msg += "could not open file ";
+      msg += fileName;
+      throw(runtime_error(msg));
+    }
+    string nonlin;
+    if(mb.getBehaviourType()==MechanicalBehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR){
+      nonlin = "'NON_LINEAIRE' 'UTILISATEUR'";
+    } else if(mb.getBehaviourType()==MechanicalBehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR){
+      nonlin = "'NON_LINEAIRE' 'UTILISATEUR' 'EPSILON' 'UTILISATEUR'";
+    } else {
+      string msg("MFrontUMATInterface::generateGibianeDeclaration : ");
+      msg += "internal error, unsupported behaviour type";
+      throw(runtime_error(msg));
+    }
+    out << "*\n";
+    out << "* \\file   "  << fileName << endl;
+    out << "* \\brief  example of how to use the " << className << " behaviour law\n"
+	<< "* in the Cast3M finite element solver\n";
+    out << "* \\author "  << authorName << endl;
+    out << "* \\date   "  << date       << endl;
+    out << "*\n\n";
+    out << "* Note for Cast3M pleiades users, you may want to use\n"
+	<< "* the syntaxe based on the DESC_LOI keyword. In this case,\n"
+	<< "* you may want to use the following table declaration : \n\n";
+    out << "cmp = 'TABLE';\n";
+    out << "cmp. 'LIBRAIRIE' = '" << this->getLibraryName(library,material) << "';\n";
+    out << "cmp. 'MODELE'    = '" << this->getUmatFunctionName(library,className) << "';\n";
+    out << "*\n\n";
+    out << "** 1D Example\n\n";
+    out << "coel1D = 'MOTS'";
+    i=0;
+    if(mb.getSymmetryType()==mfront::ISOTROPIC){
+      if(!this->checkIfElasticPropertiesAreDeclared(mb)){
+	out << "'YOUN' 'NU' 'RHO' 'ALPH' ";
+	i=4u;
+      }
+    } else if(mb.getSymmetryType()==mfront::ORTHOTROPIC){
+      out << "'YG1' 'YG2' 'YG3' 'NU12' 'NU23' 'NU13' 'RHO' 'ALP1' 'ALP2' 'ALP3' ";
+      i=10u;
+    }
+    for(p=coefsHolder.begin();p!=coefsHolder.end();++p){
+      SupportedTypes::TypeFlag flag = this->getTypeFlag(p->type);
+      switch(flag){
+      case SupportedTypes::Scalar : 
+	tmp = treatScalar(p->name);
+	i=static_cast<unsigned short>(i+1u);
+	break;
+      case SupportedTypes::Stensor :
+	tmp = treatStensor(p->name,1);
+	i=static_cast<unsigned short>(i+3u);
+	break;
+      default :
+	string msg("MFrontUMATInterface::generateGibianeDeclaration : ");
+	msg += "internal error, tag unsupported";
+	throw(runtime_error(msg));
+      }
+      if(i>9){
+	out << "\n";
+	i=0;
+      } else {
+	out << " ";
+      }
+      out << tmp;
+    }
+    out << ";\n";
+
+    out << "stav1D = 'MOTS'";
+    i=0;
+    for(p=stateVarsHolder.begin();p!=stateVarsHolder.end();++p){
+      SupportedTypes::TypeFlag flag = this->getTypeFlag(p->type);
+      switch(flag){
+      case SupportedTypes::Scalar : 
+	tmp = treatScalar(p->name);
+	i=static_cast<unsigned short>(i+1u);
+	break;
+      case SupportedTypes::Stensor :
+	tmp = treatStensor(p->name,1);
+	i=static_cast<unsigned short>(i+3u);
+	break;
+      default :
+	string msg("MFrontUMATInterface::generateGibianeDeclaration : ");
+	msg += "internal error, tag unsupported";
+	throw(runtime_error(msg));
+      }
+      if(i>9){
+	out << "\n";
+	i=0;
+      } else {
+	out << " ";
+      }
+      out << tmp;
+    }
+    if(stateVarsHolder.size()!=0){
+      out << " ";
+    }
+    for(p=auxiliaryStateVarsHolder.begin();p!=auxiliaryStateVarsHolder.end();++p){
+      SupportedTypes::TypeFlag flag = this->getTypeFlag(p->type);
+      switch(flag){
+      case SupportedTypes::Scalar : 
+	tmp = treatScalar(p->name);
+	i=static_cast<unsigned short>(i+1u);
+	break;
+      case SupportedTypes::Stensor :
+	tmp = treatStensor(p->name,1);
+	i=static_cast<unsigned short>(i+3u);
+	break;
+      default :
+	string msg("MFrontUMATInterface::generateGibianeDeclaration : ");
+	msg += "internal error, tag unsupported";
+	throw(runtime_error(msg));
+      }
+      if(i>9){
+	out << "\n";
+	i=0;
+      } else {
+	out << " ";
+      }
+      out << tmp;
+    }
+    out << ";\n";
+    
+    out << "para1D = 'MOTS' 'T'";
+    i=0;
+    for(p=externalStateVarsHolder.begin();p!=externalStateVarsHolder.end();++p){
+      SupportedTypes::TypeFlag flag = this->getTypeFlag(p->type);
+      switch(flag){
+      case SupportedTypes::Scalar : 
+	tmp = treatScalar(p->name);
+	i=static_cast<unsigned short>(i+1u);
+	break;
+      case SupportedTypes::Stensor :
+	tmp = treatStensor(p->name,1);
+	i=static_cast<unsigned short>(i+3u);
+	break;
+      default :
+	string msg("MFrontUMATInterface::generateGibianeDeclaration : ");
+	msg += "internal error, tag unsupported";
+	throw(runtime_error(msg));
+      }
+      if(i>9){
+	out << "\n";
+	i=0;
+      } else {
+	out << " ";
+      }
+      out << tmp;
+    }
+    out << ";\n\n";
+    
+    out << "MODL1D = 'MODELISER' v1D 'MECANIQUE' 'ELASTIQUE'\n";
+    out << nonlin << " 'NUME_LOI' 1\n";
+    out << "'C_MATERIAU' coel1D\n";
+    out << "'C_VARINTER' stav1D\n";
+    out << "'PARA_LOI'   para1D\n'CONS' M;\n\n";
+
+    out << "MATR1D = 'MATERIAU' MODL1D";
+    i=6;
+    if((mb.getSymmetryType()==mfront::ISOTROPIC)){
+      if(!this->checkIfElasticPropertiesAreDeclared(mb)){
+	out << "'YOUN' xyoung 'NU' xnu 'RHO' xrho 'ALPH' xalpha ";
+	i=9u;
+      }
+    } else {
+      out << "'YG1'  xyg1  'YG2'  xyg2  'YG3'  xyg3  'NU12' xNU12 'NU23' xNU23\n"
+	  << "'NU13' xNU13 'RHO' xrho 'ALP1' xapl1 'ALP2' xapl2 'ALP3' xALP3 ";
+      i=9u;
+    }
+    for(p=coefsHolder.begin();p!=coefsHolder.end();++p){
+      SupportedTypes::TypeFlag flag = this->getTypeFlag(p->type);
+      switch(flag){
+      case SupportedTypes::Scalar : 
+	tmp = treatCoefScalar(p->name);
+	i=static_cast<unsigned short>(i+1u);
+	break;
+      case SupportedTypes::Stensor :
+	tmp = treatCoefStensor(p->name,1);
+	i=static_cast<unsigned short>(i+3u);
+	break;
+      default :
+	string msg("MFrontUMATInterface::generateGibianeDeclaration : ");
+	msg += "internal error, tag unsupported";
+	throw(runtime_error(msg));
+      }
+      if(i>4){
+	out << "\n";
+	i=0;
+      } else {
+	out << " ";
+      }
+      out << tmp;
+    }
+    out << ";\n\n";
+    
+    out << "** 2D Example\n\n";
+    out << "coel2D = 'MOTS'";
+    i=0;
+    if((mb.getSymmetryType()==mfront::ISOTROPIC)){
+      if(!this->checkIfElasticPropertiesAreDeclared(mb)){
+	out << "'YOUN' 'NU' 'RHO' 'ALPH' ";
+	i=3u;
+      }
+    } else if(mb.getSymmetryType()==mfront::ORTHOTROPIC){
+      out << "'YG1' 'YG2' 'YG3' 'NU12' 'NU23' 'NU13' 'G12' 'V1X' 'V1Y'\n"
+	  << "'RHO' 'ALP1' 'ALP2' 'ALP3'";
+      i=3u;
+    }
+    for(p=coefsHolder.begin();p!=coefsHolder.end();++p){
+      SupportedTypes::TypeFlag flag = this->getTypeFlag(p->type);
+      switch(flag){
+      case SupportedTypes::Scalar : 
+	tmp = treatScalar(p->name);
+	i=static_cast<unsigned short>(i+1u);
+	break;
+      case SupportedTypes::Stensor :
+	tmp = treatStensor(p->name,2);
+	i=static_cast<unsigned short>(i+3u);
+	break;
+      default :
+	string msg("MFrontUMATInterface::generateGibianeDeclaration : ");
+	msg += "internal error, tag unsupported";
+	throw(runtime_error(msg));
+      }
+      if(i>9){
+	out << "\n";
+	i=0;
+      } else {
+	out << " ";
+      }
+      out << tmp;
+    }
+    out << ";\n";
+
+    out << "stav2D = 'MOTS'";
+    i=0;
+    for(p=stateVarsHolder.begin();p!=stateVarsHolder.end();++p){
+      SupportedTypes::TypeFlag flag = this->getTypeFlag(p->type);
+      switch(flag){
+      case SupportedTypes::Scalar : 
+	tmp = treatScalar(p->name);
+	i=static_cast<unsigned short>(i+1u);
+	break;
+      case SupportedTypes::Stensor :
+	tmp = treatStensor(p->name,2);
+	i=static_cast<unsigned short>(i+4u);
+	break;
+      default :
+	string msg("MFrontUMATInterface::generateGibianeDeclaration : ");
+	msg += "internal error, tag unsupported";
+	throw(runtime_error(msg));
+      }
+      if(i>9){
+	out << "\n";
+	i=0;
+      } else {
+	out << " ";
+      }
+      out << tmp;
+    }
+    for(p=auxiliaryStateVarsHolder.begin();
+	p!=auxiliaryStateVarsHolder.end();++p){
+      SupportedTypes::TypeFlag flag = this->getTypeFlag(p->type);
+      switch(flag){
+      case SupportedTypes::Scalar : 
+	tmp = treatScalar(p->name);
+	i=static_cast<unsigned short>(i+1u);
+	break;
+      case SupportedTypes::Stensor :
+	tmp = treatStensor(p->name,2);
+	i=static_cast<unsigned short>(i+4u);
+	break;
+      default :
+	string msg("MFrontUMATInterface::generateGibianeDeclaration : ");
+	msg += "internal error, tag unsupported";
+	throw(runtime_error(msg));
+      }
+      if(i>9){
+	out << "\n";
+	i=0;
+      } else {
+	out << " ";
+      }
+      out << tmp;
+    }
+    out << ";\n";
+    
+    out << "para2D = 'MOTS' 'T'";
+    i=0;
+    for(p=externalStateVarsHolder.begin();p!=externalStateVarsHolder.end();++p){
+      SupportedTypes::TypeFlag flag = this->getTypeFlag(p->type);
+      switch(flag){
+      case SupportedTypes::Scalar : 
+	tmp = treatScalar(p->name);
+	i=static_cast<unsigned short>(i+1u);
+	break;
+      case SupportedTypes::Stensor :
+	tmp = treatStensor(p->name,2);
+	i=static_cast<unsigned short>(i+3u);
+	break;
+      default :
+	string msg("MFrontUMATInterface::generateGibianeDeclaration : ");
+	msg += "internal error, tag unsupported";
+	throw(runtime_error(msg));
+      }
+      if(i>9){
+	out << "\n";
+	i=0;
+      } else {
+	out << " ";
+      }
+      out << tmp;
+    }
+    out << ";\n\n";
+    
+    out << "MODL2D = 'MODELISER' v2D 'MECANIQUE' 'ELASTIQUE'\n";
+    out << nonlin << " 'NUME_LOI' 2\n";
+    out << "'C_MATERIAU' coel2D\n";
+    out << "'C_VARINTER' stav2D\n";
+    out << "'PARA_LOI'   para2D\n'CONS' M;\n\n";
+
+    out << "MATR2D = 'MATERIAU' MODL2D";
+    i=6;
+    if((mb.getSymmetryType()==mfront::ISOTROPIC)){
+      if(!this->checkIfElasticPropertiesAreDeclared(mb)){
+	out << "'YOUN' xyoung 'NU' xnu 'RHO' xrho 'ALPH' xalpha";
+	i=9u;
+      }
+    } else {
+      out << "'YG1'  xyg1  'YG2' xyg2 'YG3'  xyg3  'NU12' xNU12 'NU23' xNU23\n"
+	  << "'NU13' xNU13 'G12' xg12 'RHO' xrho 'ALP1' xapl1 'ALP2' xapl2 'ALP3' xALP3";
+      i=9u;
+    }
+    for(p=coefsHolder.begin();p!=coefsHolder.end();++p){
+      SupportedTypes::TypeFlag flag = this->getTypeFlag(p->type);
+      switch(flag){
+      case SupportedTypes::Scalar : 
+	tmp = treatCoefScalar(p->name);
+	i=static_cast<unsigned short>(i+1u);
+	break;
+      case SupportedTypes::Stensor :
+	tmp = treatCoefStensor(p->name,2);
+	i=static_cast<unsigned short>(i+3u);
+	break;
+      default :
+	string msg("MFrontUMATInterface::generateGibianeDeclaration : ");
+	msg += "internal error, tag unsupported";
+	throw(runtime_error(msg));
+      }
+      if(i>4){
+	out << "\n";
+	i=0;
+      } else {
+	out << " ";
+      }
+      out << tmp;
+    }
+    if(mb.getSymmetryType()==mfront::ORTHOTROPIC){
+      out << "\n'DIRECTION' 'PARALLELE' (1 0)";
+    }
+    out << ";\n\n";
+
+    out << "** 3D Example\n\n";
+    out << "coel3D = 'MOTS'";
+    i=0;
+    if(mb.getSymmetryType()==mfront::ISOTROPIC){
+      if(!this->checkIfElasticPropertiesAreDeclared(mb)){
+	out << "'YOUN' 'NU' 'RHO' 'ALPH'";
+	i=3u;
+      }
+    } else {
+      out << "'YG1' 'YG2' 'YG3' 'NU12' 'NU23' 'NU13'\n"
+	  << "'G12' 'G23' 'G13' 'V1X'  'V1Y'  'V1Z' \n"
+	  << "'V2X' 'V2Y' 'V2Z' 'RHO'  'ALP1' 'ALP2' 'ALP3'";
+      i=6u;
+    }
+    for(p=coefsHolder.begin();p!=coefsHolder.end();++p){
+      SupportedTypes::TypeFlag flag = this->getTypeFlag(p->type);
+      switch(flag){
+      case SupportedTypes::Scalar : 
+	tmp = treatScalar(p->name);
+	i=static_cast<unsigned short>(i+1u);
+	break;
+      case SupportedTypes::Stensor :
+	tmp = treatStensor(p->name,3);
+	i=static_cast<unsigned short>(i+6u);
+	break;
+      default :
+	string msg("MFrontUMATInterface::generateGibianeDeclaration : ");
+	msg += "internal error, tag unsupported";
+	throw(runtime_error(msg));
+      }
+      if(i>9){
+	out << "\n";
+	i=0;
+      } else {
+	out << " ";
+      }
+      out << tmp;
+    }
+    out << ";\n";
+
+    out << "stav3D = 'MOTS'";
+    i=0;
+    for(p=stateVarsHolder.begin();p!=stateVarsHolder.end();++p){
+      SupportedTypes::TypeFlag flag = this->getTypeFlag(p->type);
+      switch(flag){
+      case SupportedTypes::Scalar : 
+	tmp = treatScalar(p->name);
+	i=static_cast<unsigned short>(i+1u);
+	break;
+      case SupportedTypes::Stensor :
+	tmp = treatStensor(p->name,3);
+	i=static_cast<unsigned short>(i+3u);
+	break;
+      default :
+	string msg("MFrontUMATInterface::generateGibianeDeclaration : ");
+	msg += "internal error, tag unsupported";
+	throw(runtime_error(msg));
+      }
+      if(i>9){
+	out << "\n";
+	i=0;
+      } else {
+	out << " ";
+      }
+      out << tmp;
+    }
+    for(p=auxiliaryStateVarsHolder.begin();
+	p!=auxiliaryStateVarsHolder.end();++p){
+      SupportedTypes::TypeFlag flag = this->getTypeFlag(p->type);
+      switch(flag){
+      case SupportedTypes::Scalar : 
+	tmp = treatScalar(p->name);
+	i=static_cast<unsigned short>(i+1u);
+	break;
+      case SupportedTypes::Stensor :
+	tmp = treatStensor(p->name,3);
+	i=static_cast<unsigned short>(i+3u);
+	break;
+      default :
+	string msg("MFrontUMATInterface::generateGibianeDeclaration : ");
+	msg += "internal error, tag unsupported";
+	throw(runtime_error(msg));
+      }
+      if(i>9){
+	out << "\n";
+	i=0;
+      } else {
+	out << " ";
+      }
+      out << tmp;
+    }
+    out << ";\n";
+    
+    out << "para3D = 'MOTS' 'T'";
+    i=0;
+    for(p=externalStateVarsHolder.begin();
+	p!=externalStateVarsHolder.end();++p){
+      SupportedTypes::TypeFlag flag = this->getTypeFlag(p->type);
+      switch(flag){
+      case SupportedTypes::Scalar : 
+	tmp = treatScalar(p->name);
+	i=static_cast<unsigned short>(i+1u);
+	break;
+      case SupportedTypes::Stensor :
+	tmp = treatStensor(p->name,3);
+	i=static_cast<unsigned short>(i+3u);
+	break;
+      default :
+	string msg("MFrontUMATInterface::generateGibianeDeclaration : ");
+	msg += "internal error, tag unsupported";
+	throw(runtime_error(msg));
+      }
+      if(i>9){
+	out << "\n";
+	i=0;
+      } else {
+	out << " ";
+      }
+      out << tmp;
+    }
+    out << ";\n\n";
+    
+    out << "MODL3D = 'MODELISER' v3D 'MECANIQUE' 'ELASTIQUE'\n";
+    out << nonlin << " 'NUME_LOI' 3\n";
+    out << "'C_MATERIAU' coel3D\n";
+    out << "'C_VARINTER' stav3D\n";
+    out << "'PARA_LOI'   para3D\n'CONS' M;\n\n";
+
+    out << "MATR3D = 'MATERIAU' MODL3D";
+    i=6;
+    if(mb.getSymmetryType()==mfront::ISOTROPIC){
+      if(!this->checkIfElasticPropertiesAreDeclared(mb)){
+	out << "'YOUN' xyoung 'NU' xnu 'ALPH' xalpha";
+	i=9u;
+      }
+    } else {
+      out << "'YG1' xyg1 'YG2' xyg2 'YG3' xyg3 'NU12' xNU12 'NU23' xNU23 'NU13' xNU13\n"
+	  << "'G12' xg12 'G23' xg23 'G13' xg13 'RHO' xrho 'ALP1' xapl1 'ALP2' xapl2 'ALP3' xALP3\n";
+      i=9u;
+    }
+    for(p=coefsHolder.begin();p!=coefsHolder.end();++p){
+      SupportedTypes::TypeFlag flag = this->getTypeFlag(p->type);
+      switch(flag){
+      case SupportedTypes::Scalar : 
+	tmp = treatCoefScalar(p->name);
+	i=static_cast<unsigned short>(i+1u);
+	break;
+      case SupportedTypes::Stensor :
+	tmp = treatCoefStensor(p->name,3);
+	i=static_cast<unsigned short>(i+3u);
+	break;
+      default :
+	string msg("MFrontUMATInterface::generateGibianeDeclaration : ");
+	msg += "internal error, tag unsupported";
+	throw(runtime_error(msg));
+      }
+      if(i>4){
+	out << "\n";
+	i=0;
+      } else {
+	out << " ";
+      }
+      out << tmp;
+    }
+    if(mb.getSymmetryType()==mfront::ORTHOTROPIC){
+      out << "\n'DIRECTION' 'PARALLELE' (1 0 0) (0 0 1)";
+    }
+    out << ";\n\n";
+    out.close();
+  } // end of MFrontUMATInterface::generateGibianeDeclaration
 
 } // end of namespace mfront

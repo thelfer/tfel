@@ -1131,6 +1131,36 @@ namespace tfel{
       return res;
     } // end of CxxTokenizer::readUnsignedInt
 
+    void
+    CxxTokenizer::readArray(const std::string& m,
+			    std::vector<std::string>& v,
+			    const_iterator& p, 
+			    const const_iterator pe)
+    {
+      using namespace std;
+      CxxTokenizer::readSpecifiedToken(m,"{",p,pe);
+      CxxTokenizer::checkNotEndOfLine(m,p,pe);
+      while(p->value!="}"){
+	CxxTokenizer::checkNotEndOfLine(m,p,pe);
+	if((p->value==",")||p->value=="}"||p->value=="{"){
+	  string msg(m+" : unexpected token ',' or '}' or '{'");
+	  throw(runtime_error(msg));
+	}
+	v.push_back(p->value);
+	++p;
+	CxxTokenizer::checkNotEndOfLine(m,p,pe);
+	if(p->value!="}"){
+	  CxxTokenizer::readSpecifiedToken(m,",",p,pe);
+	  CxxTokenizer::checkNotEndOfLine(m,p,pe);
+	  if(p->value==","){
+	    string msg(m+" : unexpected token ',' or '}'");
+	    throw(runtime_error(msg));
+	  }
+	}
+      }
+      CxxTokenizer::readSpecifiedToken(m,"}",p,pe);
+    } // end of CxxTokenizer::readArray
+
     CxxTokenizer::size_type
     CxxTokenizer::size() const
     {

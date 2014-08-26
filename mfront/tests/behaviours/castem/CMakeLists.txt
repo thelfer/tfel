@@ -89,7 +89,7 @@ macro(test_castem test_arg)
   configure_file(castem${test_arg}.mtest.in
     castem${test_arg}.mtest @ONLY)
   add_test(NAME castem${test_arg}_mtest
-    COMMAND mtest --verbose=level0 castem${test_arg}.mtest)
+    COMMAND mtest --verbose=level0 --xml-output=true --result-file-output=false castem${test_arg}.mtest)
   set_tests_properties(castem${test_arg}_mtest
     PROPERTIES DEPENDS MFrontCastemBehaviours)
   set_tests_properties(castem${test_arg}_mtest
