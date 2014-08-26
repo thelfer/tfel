@@ -146,12 +146,18 @@ namespace mfront{
   MFrontMaterialLawParser::treatLibrary(void)
   {
     using namespace std;
-    if(!this->material.empty()){
+    if(!this->library.empty()){
       string msg("MFrontMaterialLawParser::treatLibrary : ");
       msg += "material name alreay defined";
       throw(runtime_error(msg));
     }
-    this->library = this->readOnlyOneToken();
+    const string& l = this->readOnlyOneToken();
+    if(!CxxTokenizer::isValidIdentifier(l,true)){
+      string msg("MFrontMaterialLawParser::treatLibrary : ");
+      msg += "invalid library name '"+l+"'";
+      throw(runtime_error(msg));
+    }
+    this->library = l;
   } // end of MFrontLibraryLawParser::treatLibrary
 
   void

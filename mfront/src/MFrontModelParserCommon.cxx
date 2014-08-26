@@ -87,6 +87,11 @@ namespace mfront{
       msg += "invalid library name '"+l+"'";
       throw(runtime_error(msg));
     }
+    if(!this->library.empty()){
+      string msg("MFrontModelParserCommon::treatLibrary : ");
+      msg += "material name alreay defined";
+      throw(runtime_error(msg));
+    }
     this->library = l;
   } // end of MFrontModelParserCommon::treatLibrary
 
