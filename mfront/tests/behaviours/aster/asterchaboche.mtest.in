@@ -15,10 +15,10 @@
 @MaterialProperty<constant> 'b'  2.3 ;
 @MaterialProperty<constant> 'k'  0.43;
 @MaterialProperty<constant> 'w'  6.09 ;
-@MaterialProperty<constant> 'C1_inf' 63767.;
-@MaterialProperty<constant> 'C2_inf' 498336.;
-@MaterialProperty<constant> 'g1_0'   341. ;
-@MaterialProperty<constant> 'g2_0'   17184. ;
+@MaterialProperty<constant> 'C_inf[0]' 63767.;
+@MaterialProperty<constant> 'C_inf[1]' 498336.;
+@MaterialProperty<constant> 'g_0[0]'   341. ;
+@MaterialProperty<constant> 'g_0[1]'   17184. ;
 @MaterialProperty<constant> 'a_inf'   1.;
 
 @ExternalStateVariable 'Temperature' 293.15;

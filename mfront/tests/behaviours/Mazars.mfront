@@ -59,7 +59,7 @@ alpha.setGlossaryName("ThermalExpansion");
   // eigen values of s0
   s1 = 2*mu*e1+lambda*tr;
   s2 = 2*mu*e2+lambda*tr;
-  s3 = 2*mu*e2+lambda*tr;
+  s3 = 2*mu*e3+lambda*tr;
   const real sn = max(abs(s1),max(abs(s2),abs(s3)));
   if((abs(s1)<1e-6*sn)||(abs(s1)<1.e-6*young)){
     s1 = 0;
