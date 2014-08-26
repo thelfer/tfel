@@ -46,6 +46,7 @@ set(mfront_tests_SOURCES
   PolyCristals
   PolyCristals_DD_CFC
   Hayhurst
+  ImplicitHayhurst
   Burger
   Tvergaard)
   
@@ -127,6 +128,7 @@ test_castem(monocristal_dd_cfc)
 test_castem(polycristals)
 test_castem(polycristals_dd_cfc)
 test_castem(hayhurst)
+test_castem(implicithayhurst)
 test_castem(ellipticcreep)
 test_castem(burger)
 test_castem(tvergaard)

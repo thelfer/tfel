@@ -27,6 +27,7 @@
 
 \newcommand{\tfel}{\texttt{tfel}}
 \newcommand{\mfront}{\texttt{mfront}}
+\newcommand{\mtest}{\texttt{mtest}}
 \newcommand{\umat}{\texttt{umat}}
 \newcommand{\castem}{\texttt{Cast3M}}
 \newcommand{\pycastem}{\texttt{pyCast3M}}
@@ -955,6 +956,7 @@
       \begin{itemize}
       \item plus stable, très peu efficace (perte de la convergence
         quadratique)~;
+      \item très très utile dans \mtest{} !
       \end{itemize}
     \item relaxation~:
       \begin{itemize}

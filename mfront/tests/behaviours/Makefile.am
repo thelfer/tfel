@@ -40,6 +40,7 @@ MFRONTS= DDIF2.mfront                                \
 	 PolyCristals.mfront                         \
 	 PolyCristals_DD_CFC.mfront                  \
 	 Hayhurst.mfront                             \
+	 ImplicitHayhurst.mfront                     \
 	 Tvergaard.mfront
 
 testsdir = $(pkgdatadir)/mfront/tests/behaviours

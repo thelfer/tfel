@@ -1,0 +1,123 @@
+/*!
+ * \file   hayhurst.mfront
+ * \brief  
+ *   resolution implicite NEWTON classique
+ * \author jmp
+ * \date   07 02 2013
+ * on resout F(dY)=0 par Newton
+ * dY={ deel, dp, dH1, dh2, dd}
+ */
+
+@Parser Implicit;
+@Behaviour ImplicitHayhurst;
+
+@MaterialProperty stress young; 
+young.setGlossaryName("YoungModulus");
+@MaterialProperty real nu;
+nu.setGlossaryName("PoissonRatio");
+@MaterialProperty real rho;
+rho.setGlossaryName("MassDensity");
+@MaterialProperty thermalexpansion alpha; 
+alpha.setGlossaryName("ThermalExpansion");
+@MaterialProperty real K;
+@MaterialProperty real epsi0;
+@MaterialProperty real sigma0;
+@MaterialProperty real h1;
+@MaterialProperty real h2;
+@MaterialProperty real H1star;
+@MaterialProperty real H2star;
+@MaterialProperty real A0;
+@MaterialProperty real alphaD;
+@MaterialProperty real delta1;
+@MaterialProperty real delta2;
+
+@StateVariable real    p;
+@StateVariable real    H1;
+@StateVariable real    H2;
+@StateVariable real    d;
+
+@LocalVariable real    lambda;
+@LocalVariable real    mu;
+
+@Includes{
+#include"TFEL/Material/Lame.hxx"
+}
+
+/* Initialize Lame coefficients */
+@InitLocalVars{
+  using namespace tfel::material::lame;
+  lambda = computeLambda(young,nu);
+  mu = computeMu(young,nu);
+}
+
+@TangentOperator{
+  using namespace tfel::material::lame;
+  StiffnessTensor Hooke;
+  Stensor4 Je;
+  Stensor Jd;
+  computeElasticStiffness<N,Type>::exe(Hooke,lambda,mu);
+  getPartialJacobianInvert(Je,Jd);
+  Dt = (1-d-dd)*Hooke*Je+-((Jd)^(Hooke*(eel+deel)));
+}
+
+@ComputeStress{
+  if(d > 1.-1.e-8){
+    sig= Stensor(0.);
+  } else {
+    sig = (1.-d)*(lambda*trace(eel)*Stensor::Id()+2*mu*eel);
+  }
+} 
+
+@Integrator{
+  Stensor n = Stensor(0.);
+  const real seq = sigmaeq(sig);
+  Stensor  sig0 = (lambda*trace(eel)*Stensor::Id()+2*mu*eel);
+  const real seq0 = sigmaeq(sig0);  
+  if(seq > 1.e-8*young){
+    const real H1_  = H1+theta*dH1; 
+    const real H2_  = H2+theta*dH2;
+    const real d_   = d+theta*dd;
+    const real H_   = H1_+H2_;
+    const real shp  = sinh(seq*(1-H_)/K/(1-(d_)));
+    const real chp  = sqrt(1.+shp*shp) ;
+    const real trsig=max(trace(sig),0.);
+    const real trsig0=max(trace(sig0),0.);
+    const real shd  = sinh( (alphaD*trsig + (1-alphaD)*seq )/sigma0 ) ; 
+    const real chd  = sqrt(1.+shd*shd) ;
+    const real inv_seq = 1/seq;
+    const real dtrsde=(3.*lambda+2.*mu)*theta*(1.-d_)*trsig/trace(sig);
+    n       = 1.5*deviator(sig)*inv_seq;
+    Stensor dsvmde=2.*mu*theta*(1.-d_)*n;
+    Stensor dsvm0de=2.*mu*theta*n;
+    // systeme a resoudre        
+    feel += dp*n-deto;
+    fp   = dp-epsi0*dt*shp;
+    fH1  = dH1-h1*dp*(H1star-delta1*H1_)*inv_seq ;
+    fH2  = dH2-h2*dp*(H2star-delta2*H2_)*inv_seq ;
+    fd   = dd - A0 * shd*dt;
+    // jacobienne    
+    dfeel_ddeel += 2.*mu*theta*dp*inv_seq*(1-d_)*(Stensor4::M()-(n^n));
+    dfeel_ddp = n ;    
+    dfp_ddeel    = - (dt*epsi0*chp*(1-H_)/K)*dsvm0de ;
+    dfp_ddH1 = dt*epsi0*chp*theta*seq0/K ;
+    dfp_ddH2 = dfp_ddH1 ;
+    dfH1_ddeel = h1*dp*(H1star - delta1*H1_)*inv_seq*inv_seq*dsvmde; 
+    dfH2_ddeel = h2*dp*(H2star - delta2*H2_)*inv_seq*inv_seq*dsvmde; 
+    dfH1_ddp = - h1*inv_seq*(H1star - delta1*H1_) ;
+    dfH2_ddp = - h2*inv_seq*(H2star - delta2*H2_) ;
+    dfH1_ddH1+=  h1*delta1*dp*theta*inv_seq ;
+    dfH2_ddH2+=  h2*delta2*dp*theta*inv_seq ;
+    dfH1_ddd= h1*dp*(H1star - delta1*H1_)*theta*seq0*inv_seq*inv_seq;
+    dfH2_ddd= h2*dp*(H2star - delta2*H2_)*theta*seq0*inv_seq*inv_seq;    
+    dfd_ddd  += A0*dt*chd/sigma0 *(1-alphaD)*theta*seq0 ;
+    if (trsig > 1.e-8*young) {
+      dfd_ddeel = -A0*dt*chd/sigma0 *(alphaD*dtrsde*Stensor::Id()+ (1-alphaD)*dsvmde);
+      dfd_ddd  += A0*dt*chd/sigma0 *alphaD*theta*trsig0 ;
+    } else {
+      dfd_ddeel = -A0*dt*chd/sigma0 *(1-alphaD)*dsvmde;
+    }
+  } else {
+    feel -= deto;    
+  }
+}
+

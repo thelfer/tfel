@@ -41,6 +41,7 @@ set(mfront_tests_SOURCES
   PolyCristals
   PolyCristals_DD_CFC
   Hayhurst
+  ImplicitHayhurst
   Burger)
 
 mfront_behaviour_check_library(MFrontAsterBehaviours  aster ${mfront_tests_SOURCES})
@@ -121,4 +122,5 @@ test_aster(monocristal)
 test_aster(monocristal_dd_cfc)
 test_aster(polycristals)
 test_aster(polycristals_dd_cfc)
+test_aster(implicithayhurst)
 test_aster(burger)

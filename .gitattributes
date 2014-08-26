@@ -1078,6 +1078,7 @@ mfront/tests/behaviours/DDIF2.mfront -text
 mfront/tests/behaviours/Elasticity.mfront -text
 mfront/tests/behaviours/EllipticCreep.mfront -text
 mfront/tests/behaviours/Hayhurst.mfront -text
+mfront/tests/behaviours/ImplicitHayhurst.mfront -text
 mfront/tests/behaviours/ImplicitNorton.mfront -text
 mfront/tests/behaviours/ImplicitNorton2.mfront -text
 mfront/tests/behaviours/ImplicitNortonGeneralisedPlaneStress.mfront -text
@@ -1136,6 +1137,7 @@ mfront/tests/behaviours/aster/asterelasticity7.mtest.in -text
 mfront/tests/behaviours/aster/asterelasticity8.mtest.in -text
 mfront/tests/behaviours/aster/asterelasticity9.mtest.in -text
 mfront/tests/behaviours/aster/asterellipticcreep.mtest.in -text
+mfront/tests/behaviours/aster/asterimplicithayhurst.mtest.in -text
 mfront/tests/behaviours/aster/asterimplicitnorton-generalisedplanestress.mtest.in -text
 mfront/tests/behaviours/aster/asterimplicitnorton.mtest.in -text
 mfront/tests/behaviours/aster/asterimplicitnorton2.mtest.in -text
@@ -1182,6 +1184,7 @@ mfront/tests/behaviours/castem/castemelasticity8.mtest.in -text
 mfront/tests/behaviours/castem/castemelasticity9.mtest.in -text
 mfront/tests/behaviours/castem/castemellipticcreep.mtest.in -text
 mfront/tests/behaviours/castem/castemhayhurst.mtest.in -text
+mfront/tests/behaviours/castem/castemimplicithayhurst.mtest.in -text
 mfront/tests/behaviours/castem/castemimplicitnorton-generalisedplanestress.mtest.in -text
 mfront/tests/behaviours/castem/castemimplicitnorton-planestress.mtest.in -text
 mfront/tests/behaviours/castem/castemimplicitnorton-planestress2.mtest.in -text
