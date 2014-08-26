@@ -1,8 +1,8 @@
 %%% placement des blocs dans la page
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % definition
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \newcommand{\Protype}{Note Technique}
 
@@ -28,9 +28,9 @@
 
 %%% placement des blocs dans la page
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Cartouche DIFFUSION RESTREINTE
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \newcommand{\DiffusionRestreinte}{
   \setlength{\fboxruleIni}{\the\fboxrule}
   \setlength{\fboxrule}{1pt}
@@ -50,9 +50,9 @@
   \setlength{\fboxsep}{\the\fboxsepIni}
 }
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Definition des hauts de pages
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \lhead{
   \setlength{\unitlength}{1mm}
@@ -60,10 +60,9 @@
     \linethickness{0.2mm}
     \put(30,25){\parbox[c]{92mm}{\hspace*{\stretch{1}}\DiffusionRestreinte\hspace*{\stretch{1}}}}
     \put(0,0){\framebox(170,32){}}
-    \put(0.4,7.5){\includegraphics[width=29mm]{CEA_logo_quadri-sur-fond-rouge}}
+    % \put(2,1){\includegraphics[width=26mm]{logoCEADEC}}
     %\put(0.4,1.5){\includegraphics[width=29mm]{ceaeaDEC}}
-    %\put(0.4,31){\includegraphics[height=29mm]{CEA_logo_quadri-sur-fond-rouge}}
-    \put(0.4,1.5){{\large \color{ceagrisclair} DEN/CAD/DEC}}
+    \put(0.4,1.5){\includegraphics[width=29mm]{CEA_logo_quadri-sur-fond-rouge_DEC}}
     \put(30,6){\framebox(92,26){}}
     \ifthenelse{\equal{\thepage}{1}}{}{
       \put(30,10){
@@ -81,86 +80,59 @@
 \rhead{
 }
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Definition des bas de pages
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \cfoot{}
 \lfoot{
-  \setlength{\unitlength}{1mm}
-  \begin{picture}(0,0)(0,0)
-    \put(0,0){\framebox(170,12){\centering
-        \ifthenelse{\equal{---}{\Proaccords}}{\parbox{170mm}{\centering\bf
-            \textit{Ce document est la propri\'et\'e du CEA. Il ne peut \^etre communiqu\'e, ni copi\'e sans autorisation de l'unit\'e \'emettrice du CEA.}}
-        }{\parbox{170mm}{\centering\bf
-            \textit{Ce document contient des r\'esultats issus de travaux r\'ealis\'es dans le cadre de l'accord \Proaccords{} CEA~- \Proclients. Sa diffusion est soumise aux r\`egles de cet accord.}}
-        }
-      }
-    }
-  \end{picture}
+%  \setlength{\unitlength}{1mm}
+%  \begin{picture}(0,0)(0,0)
+%    \put(0,0){\framebox(170,12){\centering
+%        \ifthenelse{\equal{---}{\Proaccords}}{\parbox{170mm}{\centering\bf
+%            \textit{Ce document est la propri\'et\'e du CEA. Il ne peut \^etre communiqu\'e, ni copi\'e sans autorisation de l'unit\'e \'emettrice du CEA.}}
+%        }{\parbox{170mm}{\centering\bf
+%            \textit{Ce document contient des r\'esultats issus de travaux r\'ealis\'es dans le cadre de l'accord \Proaccords{} CEA~- \Proclients. Sa diffusion est soumise aux r\`egles de cet accord.}}
+%        }
+%      }
+%    }
+%  \end{picture}
+  \rule[3mm]{170mm}{0.5pt}
+  \color[rgb]{1,0,0}
+  \centering\fontsize{8}{10}\selectfont%
+  \ifthenelse{\equal{---}{\Proaccords}}{%
+    \textit{Document propri\'et\'e du CEA -- Reproduction et diffusion externes au CEA soumises \`a l'autorisation de l'\'emetteur}
+  }{%
+    \textit{Document \'emis par le CEA dans le cadre de l'accord \Proaccords{} -- Reproduction et diffusion soumises aux termes de l'accord.} %  «\Proaccords{}» ou  «CEA~-~\Proclients{}» ?
+  }
 }
 \rfoot{}
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%% cahier des charges
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \newcommand{\CahierDesCharges}{
   \begin{minipage}[c]{100mm}
     \fontsize{6}{7}\selectfont%\scriptsize
     \textit{\underline{Protection des informations (applicationde l'arr\^et\'e du 18 avril 2005 et de l'IGI 1300)}}
-    
+
     \vspace{3mm}
     Cocher la case
-    
+
     \vspace{3mm}
     \begin{itemize}
     \item[\ifthenelse{\equal{\Procdc}{a}}{\ding{112}\hspace{-0.7em}\ding{55}}{\ding{112}}] Le pr\'esent cahier des charges ne contient \underline{aucune information sensible}, permettant sa mise en ligne sur la plateforme d\'emat\'erialis\'ee du CEA de ce document.
     \item[\ifthenelse{\equal{\Procdc}{b}}{\ding{112}\hspace{-0.7em}\ding{55}}{\ding{112}}] Le pr\'esent cahier des charges contient des \underline{informations sensibles ou classifi\'ee}~:de ce fait la mise en ligne sur la plateforme d\'emat\'erialis\'ee du CEA de ce document est {\bf interdite}.
     \end{itemize}
-    
+
     \vspace{3mm}
     En cas de doute ou de besoin, vous pouvez vous adresser \`a votre correspondant s\'ecurit\'e.
   \end{minipage}
 }
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%% le titre
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
-
-%% \newcommand{\PageTitrePleiades}{
-%%   \thispagestyle{empty}
-%%   \includegraphics[width=21.cm]{Energie_pleiades}
-%%   \includegraphics[height=35mm]{logoCEA}
-%%   \includegraphics[height=35mm]{logoEDF}
-%%   \includegraphics[width=65mm]{logoPLEIADES}
-%%   \begin{minipage}{148mm}
-%%     \begin{center}
-%%       {\bf\LARGE\Protitre}
-%%     \end{center}
-%%   \end{minipage}
-%%   \begin{minipage}{148mm}
-%%     \begin{center}
-%%       {\bf\Large\Proauteur}
-%%     \end{center}
-%%   \end{minipage}
-  
-%%   {\large\bf \Prospecification~NT~\Pronumero - Indice \Proindice - \Prodate}
-  
-%%   {\scriptsize\sc
-%%     \begin{tabular}[htbp]{p{5.5cm}p{5.5cm}p{5.5cm}}
-%%       {\small \bf CEA} & {\small \bf CEA} & {\small \bf EDF} \\
-%%       Centre d'\'Etudes de Cadarache & Centre d'\'Etude de Saclay & Site des Renardi\`eres \\
-%%       D\'epartement d'\'Etudes des  & D\'epartement Mod\'elisation de & D\'epartement Mat\'eriaux et \\
-%%       Combustibles & Syst\`emes et Structures & M\'ecanique des Composants \\
-%%       13108 St Paul lez Durance& 91 191 Gif sur Yvette & 77 818 Moret sur Loing Cedex
-%%     \end{tabular}
-%%   }
-  
-%%   \DiffusionRestreinte
-  
-%%   \newpage
-%% }
-
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \newcommand{\PageTitre}{
 
@@ -185,11 +157,11 @@
   \begin{center}
     % \vspace{5mm}
     \large
-    \ifthenelse{\isundefined{\Prodirectiontitre}}{}{\Prodirectiontitre\\}
-    \ifthenelse{\isundefined{\Procentretitre}}{}{\Procentretitre\\}
-    \ifthenelse{\isundefined{\Prodepartementtitre}}{}{\Prodepartementtitre\\}
-    \ifthenelse{\isundefined{\Proservicetitre}}{}{\Proservicetitre\\}
-    \ifthenelse{\isundefined{\Prolaboratoiretitre}}{}{\Prolaboratoiretitre\\}
+    \ifthenelse{\isundefined{\Prodirectionnom}}{}{\Prodirectionnom\\}
+    \ifthenelse{\isundefined{\Procentrenom}}{}{Centre de \Procentrenom\\}
+    \ifthenelse{\isundefined{\Prodepartementnom}}{}{\Prodepartementnom\\}
+    \ifthenelse{\isundefined{\Proservicenom}}{}{\Proservicenom\\}
+    %\ifthenelse{\isundefined{\Prolaboratoirenom}}{}{\Prolaboratoirenom\\}
 
     \vspace{38mm}
 
@@ -203,30 +175,32 @@
 
     {\large\bf\Prodate}
 
-    \vspace{11mm}
+    \vspace{10mm}
 
-    {\fontsize{16}{20}\selectfont\scshape\Proauteurs}
-    
-    
+    % parbox avec une hauteur fixe pour eviter les problemes de
+    % mise en page s'il y a beaucoup d'auteurs !
+    \parbox[c][1cm][c]{\linewidth}{\centering\fontsize{16}{20}\selectfont\scshape\Proauteurs}
+
   \end{center}
 
-  \vspace{49mm}
+  \vspace{42mm}
 
   \begin{flushleft}
     \fontsize{6}{7}\selectfont%\scriptsize
     Commissariat \`a l'\'Energie Atomique et aux \'Energies Alternatives\\
-    Centre : Cadarache\\
-    Adresse : \Prodepartement/\Proservice\ifthenelse{\isundefined{\Prolaboratoiretitre}}{}{/\Prolaboratoire} - B\^at. {\Probatiment} - 13108 Saint Paul Lez Durance\\
-    T\'el. : 04 42 25 {\Protelephone} \hspace{2.5mm} Fax : 04 42 25 {\Profax} \ifthenelse{\isundefined{\Promail}}{}{\hspace{2.5mm} Courriel : {\Promail}}\\
+    Centre : \Procentrenom\\
+    Adresse : \Prodepartement/\Proservice%\ifthenelse{\isundefined{\Prolaboratoirenom}}{}{/\Prolaboratoire}
+{} - B\^at. {\Probatimentservice} - 13108 Saint Paul Lez Durance\\
+    T\'el. : 04 42 25 {\Protelephoneservice} \hspace{2.5mm} Fax : 04 42 25 {\Profaxservice} \ifthenelse{\isundefined{\Promail}}{}{\hspace{2.5mm} Courriel : {\Promail}}\\
     \'Etablissement public \`a caract\`ere industriel et commercial - RCS Paris B 775 685 019
   \end{flushleft}
 
   \newpage
 }
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Page Information%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \newcommand{\PageInfo}
 {
@@ -274,9 +248,9 @@
 
     \begin{tabular}{|M{32mm}|M{32mm}|M{32mm}|M{66mm}|}
       \hline
-      \textsc{Direction d'objectifs} & 
-      \textsc{Domaine} &  
-      \textsc{Projet} & 
+      \textsc{Direction d'objectifs} &
+      \textsc{Domaine} &
+      \textsc{Projet} &
       \textsc{EOTP} \tabularnewline
       \hline
       \Prodob & \Prodomaine & \Procadre & \Pronumeroaffaire \tabularnewline
@@ -324,7 +298,7 @@
     \vspace*{\stretch{3}}
 
     \setlength{\unitlength}{1mm}
-  
+
     % Pave de signatures
     \begin{picture}(0,0)(-3,9)
       \ifthenelse{\isundefined{\Prosignatures}}{}{\Prosignatures}
@@ -369,9 +343,9 @@
 
   \newpage
 }
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Resume  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \newcommand{\PageResume}
 {
@@ -394,7 +368,7 @@
       }{\Promotsclefs}
     \end{minipage}
   }
-  
+
   \vspace{13mm}
 
   \hspace{8mm}\textsc{R\'esum\'e~/~Conclusions}
@@ -418,24 +392,24 @@
 
 }
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%% diffusion
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \newcommand{\PageDiffusion}
 {
   % \noindent
-  
+
   \begin{center}
     {\Large\bf\scshape\so{Liste de diffusion}}
   \end{center}
-  
+
   \vspace{10mm}
-  
+
   \arrayrulecolor{cea_grisclair}
 
   \ifthenelse{\isundefined{\Prodiffusionexterne}}{}{
-    \begin{longtable}[htbp]{ m{41mm} m{41mm} >{\hfil}m{27mm}<{\hfil}  c}
+    \begin{longtable}[htbp]{ m{41mm} m{41mm} >{\hfil}m{41mm}<{\hfil}  c}
       \endfirsthead
       \hline
       \multicolumn{4}{|l|}{\em Suite de la page pr\'ec\'edente}\tabularnewline
@@ -455,12 +429,12 @@
       \rule{0mm}{2mm}&&&\tabularnewline
       \Prodiffusionexterne
     \end{longtable}
-    
+
     \vspace{10truemm}
-  } 
+  }
   \ifthenelse{\boolean{coupe}}{\newpage}{}
   \ifthenelse{\isundefined{\Prodiffusioninterne}}{}{
-    \begin{longtable}[htbp]{ m{41mm} m{41mm} >{\hfil}m{27mm}<{\hfil} c}
+    \begin{longtable}[htbp]{ m{41mm} m{41mm} >{\hfil}m{41mm}<{\hfil} c}
       \endfirsthead
       \hline
       \multicolumn{4}{|l|}{\em Suite de la page pr\'ec\'edente}\tabularnewline
@@ -475,13 +449,13 @@
       \endlastfoot
       \multicolumn{4}{ c }{\rule[-5mm]{0mm}{10mm}\centering\bf Diffusion interne} \tabularnewline
       \hline
-      \parbox[c][14truemm]{33.4truemm}{\scshape Dpt/Service/Labo} & {\scshape Nom du destinataire} & \multicolumn{1}{l}{{\scshape Nombre \mbox{d'exemplaires}}} & {\scshape Observations} \tabularnewline
+      \parbox[c][14truemm]{33.4truemm}{\scshape Dpt/Service/Labo} & {\scshape Nom du destinataire} & \multicolumn{1}{c}{{\scshape Nombre \mbox{d'exemplaires}}} & {\scshape Observations} \tabularnewline
       \hline
       \rule{0mm}{2mm}&&&\tabularnewline
       \Prodiffusioninterne
     \end{longtable}
   }
-  
+
   \newpage
 
 }

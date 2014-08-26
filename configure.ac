@@ -335,6 +335,7 @@ AC_OUTPUT([debug.sh
 	   docs/tfel/Makefile.doc
 	   docs/tfel/reference-guide.tex
 	   docs/tfel/Champs.tex
+	   docs/release-notes-2.0/Champs.tex
 	   docs/release-notes-2.0/tfel-2.0.tex
 	   docs/release-notes-2.0/Makefile.doc
 	   docs/release-notes-2.0/Makefile

@@ -2,18 +2,18 @@
 %% Nouvelle version du modele de note technique du DEC
 %%
 
-\ProvidesClass{note_technique_2010}[091201]
+\ProvidesClass{note_technique_2010}[20140116]
 
 %%%%%%%%%%%%%%%%%% Variables utilisees dans style CEA %%%%%%%%%%%%%%%%%%
 \RequirePackage{ifthen}
+\RequirePackage{setspace}
 
 %% Variables booleennes pour la gestion des options
 \newboolean{projet}
 \newboolean{rapport}
 \newboolean{memo}
 \newboolean{modeop}
-\newboolean{latin1}
-\newboolean{pleiades}
+\newboolean{latin}
 \newboolean{anti}
 \newboolean{index}
 \newboolean{anglais}
@@ -26,8 +26,7 @@
 \DeclareOption{projet}{\setboolean{projet}{true}}
 \DeclareOption{rapport}{\setboolean{rapport}{true}}
 \DeclareOption{modeop}{\setboolean{modeop}{true}}
-\DeclareOption{latin1}{\setboolean{latin1}{true}}
-\DeclareOption{pleiades}{\setboolean{pleiades}{true}}
+\DeclareOption{latin}{\setboolean{latin}{true}}
 \DeclareOption{index}{\setboolean{index}{true}}
 \DeclareOption{memo}{\setboolean{memo}{true}}
 \DeclareOption{anti}{\setboolean{anti}{true}}
@@ -39,7 +38,7 @@
 \RequirePackage[overload]{textcase}
 
 %% ??
-\ifthenelse{\boolean{rapport}}{}{\setboolean{section_annexe}{true}}
+\ifthenelse{\boolean{rapport}}{\setboolean{section_annexe}{false}}{\setboolean{section_annexe}{true}}
 
 % Classe de reference
 \ifthenelse{\boolean{rapport}}{
@@ -100,11 +99,11 @@
 %%% positionnement H des tableaux et figures
 \RequirePackage{float}
 
-%%% Les caracteres accentues (defaut latin1 pour l'instant)
+%%% Les caracteres accentues
 \RequirePackage[T1]{fontenc}
 \RequirePackage{textcomp}
-\ifthenelse{\boolean{latin1}}{
-  \RequirePackage[latin1]{inputenc}
+\ifthenelse{\boolean{latin}}{
+  \RequirePackage[latin9]{inputenc}
 }{
   \RequirePackage[utf8]{inputenc}
 }
@@ -137,6 +136,8 @@
 \ifpdf
 \RequirePackage[pdftex]{color,graphicx,thumbpdf}
 \RequirePackage[pdftex,pdfstartview=FitH,breaklinks,linktocpage]{hyperref}
+% pour avoir un pdf version 1.4 (compatible avec acroread 9.x)
+\pdfminorversion=4
 \else
 \RequirePackage[dvips]{color,graphicx,thumbpdf,pstricks}
 \RequirePackage[dvips,pdfstartview=FitH,breaklinks,linktocpage]{hyperref} % Permet de generer les hyperlien
@@ -179,7 +180,7 @@
 \setlength{\headsep}{6mm}
 %\setlength{\headsep}{22truemm}
 \setlength{\textheight}{225mm}
-\setlength{\footskip}{18mm}
+\setlength{\footskip}{10mm}
 
 \setlength{\hoffset}{0pt}
 \setlength{\oddsidemargin}{-1in}
@@ -395,7 +396,7 @@
     \begingroup
       #6{%
         \ifthenelse{\boolean{section_annexe}\and\boolean{annexe}}{%
-         \@hangfrom{\hskip #3\relax\annexenom~\thesection~: }%
+         \@hangfrom{\hskip #3\relax\annexenom~\@svsec}%
            \interlinepenalty \@M #8\@@par%
         }{%
          \@hangfrom{\hskip #3\relax\@svsec}%
@@ -410,7 +411,8 @@
           \protect{\annexenom} \numberline{\csname the#1\endcsname}%
         \fi
       #7}}{%
-      \addcontentsline{toa}{annexe}{%
+%      \addcontentsline{toa}{annexe} accoladeouverte%
+      \addcontentsline{toa}{#1}{%
         \ifnum #2>\c@secnumdepth \else
           \protect{\annexenom} \numberline{\csname the#1\endcsname}%
         \fi
@@ -496,7 +498,7 @@
 }
 
 \makeatletter
-\renewcommand{\subsection}{\@startsection{subsection}{2}{0mm}%
+\renewcommand{\subsection}{\@startsectioncea{subsection}{2}{0mm}%
   {-3.25ex\@plus -1ex \@minus -.2ex}%
   {1.7ex \@plus .2ex}%
   {\miseenpagesubsection}}
@@ -930,8 +932,11 @@
 % Liste des annexes
 \makeatletter
 \newcommand{\listeannexes}{
-  \ifthenelse{\boolean{anti}}{\@latex@warning{Commande listeannexes imcompatible avec l'option anti}}{%
-  \clearpage
+\clearpage
+\ifthenelse{\boolean{anti}}{%
+  \ClassWarning {note_technique_2010}{Commande listeannexes incompatible avec l'option anti : on l'ignore}
+  %\ClassError{note_technique_2010}{Commande listeannexes incompatible avec l'option anti}{Vous devez supprimer la commande listeannexes avec l'option anti}%
+}{%
   \ifthenelse{\boolean{rapport}}{
     \refstepcounter{chapter}% pour les liens hypertexte
     \addcontentsline{toc}{chapter}{\appendiceslistname}
@@ -985,13 +990,13 @@
   \input{mise_en_page_2010}
   \AtBeginDocument{
     \pagestyle{fancy}
-    %\ifthenelse{\boolean{pleiades}}{\PageTitrePleiades}{}
     \PageTitre
     \PageInfo
     \PageResume
     \PageDiffusion
     \tableofcontents
     \newpage
+    \onehalfspacing
     % Probleme lie a l'utilisation du style
     % longtable pour les listes de diffusion
     \setcounter{table}{0}

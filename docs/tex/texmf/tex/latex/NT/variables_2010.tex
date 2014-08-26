@@ -1,5 +1,6 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%% Definition des differents champs de la note technique %%%%%%%%%%%%%
+%%%%%%%                      et de la note                    %%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \newcommand{\codebarre}[1]{\def\Procodebarre{#1}}
 \newcommand{\signatures}[4]{\def\Prosignatures{
@@ -8,24 +9,25 @@
         \put(#1,#2){\includegraphics[scale=#3]{#4}}}}
 
 \newcommand{\centre}[1]{\def\Procentre{#1}}
-\newcommand{\centretitre}[1]{\def\Procentretitre{#1}}
-\newcommand{\centrenom}[1]{\def\Procentretitre{#1}}
+\newcommand{\centrenom}[1]{\def\Procentrenom{#1}}
 \newcommand{\direction}[1]{\def\Prodirection{#1}}
-\newcommand{\directionnom}[1]{\def\Prodirectiontitre{#1}}
+\newcommand{\directionnom}[1]{\def\Prodirectionnom{#1}}
 \newcommand{\departement}[1]{\def\Prodepartement{#1}}
-\newcommand{\departementnom}[1]{\def\Prodepartementtitre{#1}}
+\newcommand{\departementnom}[1]{\def\Prodepartementnom{#1}}
 
 \def\Proservice{}
 \newcommand{\service}[1]{\def\Proservice{#1}}
-\newcommand{\servicenom}[1]{\def\Proservicetitre{#1}}
+\newcommand{\servicenom}[1]{\def\Proservicenom{#1}}
 \def\Prolaboratoire{}
 \newcommand{\laboratoire}[1]{\def\Prolaboratoire{#1}}
-\newcommand{\laboratoiretitre}[1]{\def\Prolaboratoiretitre{#1}}
+\newcommand{\laboratoirenom}[1]{\def\Prolaboratoirenom{#1}}
 
 % compatibilite modele 2005
+\newcommand{\centretitre}[1]{\def\Procentretitre{#1}}
 \newcommand{\directiontitre}[1]{\def\Prodirectiontitre{#1}}
 \newcommand{\departementtitre}[1]{\def\Prodepartementtitre{#1}}
 \newcommand{\servicetitre}[1]{\def\Proservicetitre{#1}}
+\newcommand{\laboratoiretitre}[1]{\def\Prolaboratoiretitre{#1}}
 
 %cahier des charges
 \newcommand{\cdc}[1]{\def\Procdc{#1}}
@@ -61,12 +63,12 @@
 \def\Proindice{}
 \newcommand{\indice}[1]{\def\Proindice{#1}}
 
-\def\Probatiment{??}
-\newcommand{\batiment}[1]{\def\Probatiment{#1}}
-\def\Protelephone{?? ??}
-\newcommand{\telephone}[1]{\def\Protelephone{#1}}
+\def\Probatimentservice{??}
+\newcommand{\batimentservice}[1]{\def\Probatimentservice{#1}}
+\def\Protelephoneservice{?? ??}
+\newcommand{\telephoneservice}[1]{\def\Protelephoneservice{#1}}
 \def\Profax{?? ??}
-\newcommand{\fax}[1]{\def\Profax{#1}}
+\newcommand{\faxservice}[1]{\def\Profaxservice{#1}}
 % \Promail is undefined by default :
 \newcommand{\mail}[1]{\def\Promail{#1}}
 
@@ -85,7 +87,6 @@
 \def\Pronumeroaffaire{\`a renseigner}
 \newcommand{\numeroaffaire}[1]{\def\Pronumeroaffaire{#1}}
 \newcommand{\jalon}[2][X]{\def\Projalon{#1}\def\Projalonintitule{#2}}
-%\newcommand{\jalonintitule}[1]{\def\Projalonintitule{#1}}
 \def\Prodelai{Permanent}
 \newcommand{\delai}[1]{\def\Prodelai{#1}}
 \def\Procahierlaboratoire{---}
@@ -136,3 +137,16 @@
 % Emissions
 %\def\Proemission{{\scshape\Prodate} \vspace{30mm} & {\scshape \'Emission initiale} & 0 \\}
 %\newcommand{\emission}[1]{\def\Proemission{#1}}
+
+% por les "Note"
+\newcommand{\laboratoirenomnote}[1]{\def\Prolaboratoirenomnote{#1}}
+\newcommand{\destinataire}[1]{\def\Prodestinataire{#1}}
+\newcommand{\listedestinataires}[1]{\def\Prodestinataires{#1}}
+\newcommand{\listedestinatairescopie}[1]{\def\Prodestinatairescopie{#1}}
+\newcommand{\objet}[1]{\def\Protitre{#1}}
+\def\Probatimentlabo{??}
+\newcommand{\batimentlabo}[1]{\def\Probatimentlabo{#1}}
+\def\Protelephonelabo{?? ??}
+\newcommand{\telephonelabo}[1]{\def\Protelephonelabo{#1}}
+\def\Profaxlabo{?? ??}
+\newcommand{\faxlabo}[1]{\def\Profaxlabo{#1}}
