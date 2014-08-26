@@ -1221,6 +1221,7 @@ mfront/tests/behaviours/castem/Makefile.am -text
 mfront/tests/behaviours/castem/castemburger.mtest.in -text
 mfront/tests/behaviours/castem/castemchaboche.mtest.in -text
 mfront/tests/behaviours/castem/castemchaboche2.mtest.in -text
+mfront/tests/behaviours/castem/castemcompressibleneohookeanbehaviour.mtest.in -text
 mfront/tests/behaviours/castem/castemdruckerprager.mtest.in -text
 mfront/tests/behaviours/castem/castemdruckerprager2.mtest.in -text
 mfront/tests/behaviours/castem/castemelasticity.mtest.in -text
@@ -1263,6 +1264,11 @@ mfront/tests/behaviours/castem/castemimplicitnorton-generalisedplanestress.mtest
 mfront/tests/behaviours/castem/castemimplicitnorton-planestress.mtest.in -text
 mfront/tests/behaviours/castem/castemimplicitnorton-planestress2.mtest.in -text
 mfront/tests/behaviours/castem/castemimplicitsimomieheelastoplasticity.mtest.in -text
+mfront/tests/behaviours/castem/castemincompressiblemooneyrivlinbehaviour.mtest.in -text
+mfront/tests/behaviours/castem/castemincompressibleplanestressgornetdesmoratbehaviourbiaxialtesting.mtest.in -text
+mfront/tests/behaviours/castem/castemincompressibleplanestressgornetdesmoratbehavioursheartesting.mtest.in -text
+mfront/tests/behaviours/castem/castemincompressibleplanestressgornetdesmoratbehaviouruniaxialtesting.mtest.in -text
+mfront/tests/behaviours/castem/castemincompressibleplanestressmooneyrivlinbehaviouruniaxialtesting.mtest.in -text
 mfront/tests/behaviours/castem/castemlorentz.mtest.in -text
 mfront/tests/behaviours/castem/castemmazars.mtest.in -text
 mfront/tests/behaviours/castem/castemmonocristal.mtest.in -text

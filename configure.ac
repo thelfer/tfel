@@ -494,6 +494,12 @@ AC_OUTPUT([debug.sh
            mfront/tests/behaviours/castem/castemfiniterotationsmallstrainelasticity-shear-4-3D.mtest
            mfront/tests/behaviours/castem/castemfiniterotationsmallstrainelasticity-shear-5-3D.mtest
            mfront/tests/behaviours/castem/castemfiniterotationsmallstrainelasticity-shear-6-3D.mtest
+           mfront/tests/behaviours/castem/castemincompressiblemooneyrivlinbehaviour.mtest
+           mfront/tests/behaviours/castem/castemincompressibleplanestressgornetdesmoratbehavioursheartesting.mtest
+           mfront/tests/behaviours/castem/castemincompressibleplanestressgornetdesmoratbehaviouruniaxialtesting.mtest
+           mfront/tests/behaviours/castem/castemcompressibleneohookeanbehaviour.mtest
+           mfront/tests/behaviours/castem/castemincompressibleplanestressmooneyrivlinbehaviouruniaxialtesting.mtest
+           mfront/tests/behaviours/castem/castemincompressibleplanestressgornetdesmoratbehaviourbiaxialtesting.mtest
            mfront/tests/behaviours/castem/castemimplicitsimomieheelastoplasticity.mtest
            mfront/tests/behaviours/castem/dgibi/Makefile
 	   mfront/Examples/Makefile
