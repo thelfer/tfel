@@ -55,7 +55,7 @@
 
 \titre{Sommaire}
 \frame{
-  \setcounter{tocdepth}{1}
+  \setcounter{tocdepth}{2}
   \tableofcontents{}
 }
 
@@ -65,7 +65,8 @@
   \item test unitaire de lois de comportement~;
   \item un utilitaire nommé {\tt mtest}~;
   \item une librairie {\tt C++} {\tt libTFELMtest.so}~;
-  \item un module {\tt python} nommé {\tt mtest}~;
+  \item un module {\tt python} nommé {\tt mtest} (dans le package
+    mfront)~;
   \end{itemize}
 }
 
@@ -105,7 +106,9 @@
   \end{itemize}
 }
 
-\titre{Exemple (en python)}
+\intercalaire{Python}
+
+\titre{Exemple de code python}
 \frame{
   \rput[l](0,-0.8){
     \resizebox{!}{0.017\paperheight}{
@@ -115,15 +118,44 @@
       }
     }
   }
-  \rput[l](6.,1){
-    \begin{minipage}{0.45\linewidth}
+  \rput[l](5.5,0){
+    \begin{minipage}{0.55\linewidth}
       \begin{itemize}
-      \item Possibilité de piloter \og{}~finement\fg{} le chargement~;
+      \item Possibilité de piloter \og{}~finement\fg{} le chargement~:
+        \begin{itemize}
+        \item tube en pression interne asservie pour avoir une vitesse
+          de déformation diamétrale constante.
+        \end{itemize}
       \item Peut servir à intégrer \mtest{} dans un code de
-        recalage des paramètres d'une loi~;
+        recalage des paramètres d'une loi~:
+        \begin{itemize}
+        \item voir les perspectives~;
+        \end{itemize}
       \end{itemize}
     \end{minipage}
   }
+}
+
+\intercalaire{Perspectives}
+
+\titre{Conclusions}
+\frame{
+  \begin{itemize}
+  \item \mtest{} a été initialement développé pour introduire des
+    tests de non régression des lois de comportement mécanique
+    générées par \mfront{}~:
+    \begin{itemize}
+    \item plus de \(80\) tests en gestion de configuration
+    \end{itemize}
+  \item un outil bien utile~;
+  \end{itemize}
+}
+
+\titre{Perspectives}
+\frame{
+  \begin{itemize}
+  \item recalage de paramètres~:
+  \end{itemize}
 }
 
 \end{document}

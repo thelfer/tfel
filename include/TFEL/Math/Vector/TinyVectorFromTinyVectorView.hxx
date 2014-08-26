@@ -1,12 +1,12 @@
 /*!
- * \file   TVFTV.hxx
+ * \file   TinyVectorFromTinyVectorView.hxx
  * \brief  TinyVectorFromTVectorView
  * \author Helfer Thomas
  * \date   16 oct 2008
  */
 
-#ifndef _LIB_TFEL_MATH_TVFTV_HXX_
-#define _LIB_TFEL_MATH_TVFTV_HXX_ 
+#ifndef _LIB_TFEL_MATH_TINYVECTORFROMTINYVECTORVIEW_HXX_
+#define _LIB_TFEL_MATH_TINYVECTORFROMTINYVECTORVIEW_HXX_ 
 
 #include"TFEL/Metaprogramming/StaticAssert.hxx"
 
@@ -34,13 +34,13 @@ namespace tfel
 	     unsigned short Mn,
 	     unsigned short In,
 	     typename T,bool b>
-    struct TVFTVExpr
+    struct TinyVectorFromTinyVectorViewExpr
     {
       /*!
        * numerical type holded by the expression
        */
       typedef T NumType;
-    }; // end of struct TVFTVExpr
+    }; // end of struct TinyVectorFromTinyVectorViewExpr
 
     /*!
      * \param[in] N : size of the tvector holed
@@ -53,9 +53,9 @@ namespace tfel
 	     unsigned short Mn,
 	     unsigned short In,
 	     typename T,bool b>
-    struct VectorExpr<tvector<N,T>,TVFTVExpr<N,Mn,In,T,b> >
-      : public VectorConcept<VectorExpr<tvector<N,T>,TVFTVExpr<N,Mn,In,T,b> > >,
-	public tvector_base<VectorExpr<tvector<N,T>,TVFTVExpr<N,Mn,In,T,b> >,N,T>
+    struct VectorExpr<tvector<N,T>,TinyVectorFromTinyVectorViewExpr<N,Mn,In,T,b> >
+      : public VectorConcept<VectorExpr<tvector<N,T>,TinyVectorFromTinyVectorViewExpr<N,Mn,In,T,b> > >,
+	public tvector_base<VectorExpr<tvector<N,T>,TinyVectorFromTinyVectorViewExpr<N,Mn,In,T,b> >,N,T>
     {
       typedef typename tfel::meta::IF<b,const tvector<Mn,T>&,
 				      tvector<Mn,T>&>::type ref_type;
@@ -120,10 +120,10 @@ namespace tfel
 	     unsigned short Mn,
 	     unsigned short In,
 	     typename T,bool b>
-    struct TVFTV
+    struct TinyVectorFromTinyVectorView
     {
-      typedef VectorExpr<tvector<N,T>,TVFTVExpr<N,Mn,In,T,b> > type;
-    }; // end of struct TVFTV
+      typedef VectorExpr<tvector<N,T>,TinyVectorFromTinyVectorViewExpr<N,Mn,In,T,b> > type;
+    }; // end of struct TinyVectorFromTinyVectorView
 
     // Serialisation operator
     template<unsigned short N,
@@ -132,7 +132,7 @@ namespace tfel
 	     typename T,bool b>
     std::ostream&
     operator << (std::ostream & os,
-		 const VectorExpr<tvector<N,T>,TVFTVExpr<N,Mn,In,T,b> >& s)
+		 const VectorExpr<tvector<N,T>,TinyVectorFromTinyVectorViewExpr<N,Mn,In,T,b> >& s)
     {
       os << "[ ";
       for(unsigned short i=0;i<N;++i){
@@ -151,7 +151,7 @@ namespace tfel
   	     unsigned short In,
   	     typename T,bool b>
     struct IsTemporary<tfel::math::VectorExpr<tfel::math::tvector<N,T>,
-					      tfel::math::TVFTVExpr<N,Mn,In,T,b> > >
+					      tfel::math::TinyVectorFromTinyVectorViewExpr<N,Mn,In,T,b> > >
     {
       static const bool cond = false;
     };
@@ -160,5 +160,5 @@ namespace tfel
 
 } // end of namespace tfel
 
-#endif /* _LIB_TFEL_MATH_TVFTV_HXX */
+#endif /* _LIB_TFEL_MATH_TINYVECTORFROMTINYVECTORVIEW_HXX */
 

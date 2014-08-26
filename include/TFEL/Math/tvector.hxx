@@ -31,7 +31,7 @@
 #include"TFEL/Math/Vector/VectorConcept.hxx"
 #include"TFEL/Math/Vector/VectorConceptOperations.hxx"
 #include"TFEL/Math/Vector/VectorExpr.hxx"
-#include"TFEL/Math/Vector/TVFTV.hxx"
+#include"TFEL/Math/Vector/TinyVectorFromTinyVectorView.hxx"
 
 #include"TFEL/Math/Forward/tmatrix.hxx"
 #include"TFEL/Math/Forward/tvector.hxx"
@@ -250,7 +250,7 @@ namespace tfel{
        * \param[in] I : the starting index
        */
       template<unsigned short I>
-      VectorExpr<tvector<N-I,T>,TVFTVExpr<N-I,N,I,T,false> >
+      VectorExpr<tvector<N-I,T>,TinyVectorFromTinyVectorViewExpr<N-I,N,I,T,false> >
       slice(void);
       /*!
        * \brief create a slice
@@ -261,7 +261,7 @@ namespace tfel{
        */
       template<unsigned short I,
 	       unsigned short J>
-      VectorExpr<tvector<J-I,T>,TVFTVExpr<J-I,N,I,T,false> >
+      VectorExpr<tvector<J-I,T>,TinyVectorFromTinyVectorViewExpr<J-I,N,I,T,false> >
       slice(void);
       /*!
        * \brief create a slice (const version)
@@ -270,7 +270,7 @@ namespace tfel{
        * vector, so this vector shall not be destroyed before the slice
        */
       template<unsigned short I>
-      VectorExpr<tvector<N-I,T>,TVFTVExpr<N-I,N,I,T,true> >
+      VectorExpr<tvector<N-I,T>,TinyVectorFromTinyVectorViewExpr<N-I,N,I,T,true> >
       slice(void) const;
       /*!
        * \brief create a slice (const version)
@@ -281,7 +281,7 @@ namespace tfel{
        */
       template<unsigned short I,
 	       unsigned short J>
-      VectorExpr<tvector<J-I,T>,TVFTVExpr<J-I,N,I,T,true> >
+      VectorExpr<tvector<J-I,T>,TinyVectorFromTinyVectorViewExpr<J-I,N,I,T,true> >
       slice(void) const;
     private:
       //! a simple assertion stating that the dimension is valid.
@@ -346,7 +346,7 @@ namespace tfel{
      * vector, so this vector shall not be destroyed before the slice
      */
     template<unsigned short I,unsigned short N,typename T>
-    VectorExpr<tvector<N-I,T>,TVFTVExpr<N-I,N,I,T,false> >
+    VectorExpr<tvector<N-I,T>,TinyVectorFromTinyVectorViewExpr<N-I,N,I,T,false> >
     slice(tvector<N,T>&);
     /*!
      * \brief create a slice from a tiny vector
@@ -356,7 +356,7 @@ namespace tfel{
      */
     template<unsigned short I,unsigned short J,
 	     unsigned short N,typename T>
-    VectorExpr<tvector<J-I,T>,TVFTVExpr<J-I,N,I,T,false> >
+    VectorExpr<tvector<J-I,T>,TinyVectorFromTinyVectorViewExpr<J-I,N,I,T,false> >
     slice(tvector<N,T>&);
     /*!
      * \brief create a slice from a tiny vector
@@ -365,7 +365,7 @@ namespace tfel{
      * vector, so this vector shall not be destroyed before the slice
      */
     template<unsigned short I,unsigned short N,typename T>
-    VectorExpr<tvector<N-I,T>,TVFTVExpr<N-I,N,I,T,true> >
+    VectorExpr<tvector<N-I,T>,TinyVectorFromTinyVectorViewExpr<N-I,N,I,T,true> >
     slice(const tvector<N,T>&);
     /*!
      * \brief create a slice from a tiny vector (const version)
@@ -375,7 +375,7 @@ namespace tfel{
      */
     template<unsigned short I,unsigned short J,
 	     unsigned short N,typename T>
-    VectorExpr<tvector<J-I,T>,TVFTVExpr<J-I,N,I,T,true> >
+    VectorExpr<tvector<J-I,T>,TinyVectorFromTinyVectorViewExpr<J-I,N,I,T,true> >
     slice(const tvector<N,T>&);
 
   } // end of namespace math

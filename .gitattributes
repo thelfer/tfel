@@ -670,13 +670,14 @@ include/TFEL/Math/TinyMatrixInvert.hxx -text
 include/TFEL/Math/TinyMatrixSolve.hxx -text
 include/TFEL/Math/TinyNewtonRaphson.hxx -text
 include/TFEL/Math/Vector/Range.hxx -text
-include/TFEL/Math/Vector/TSFTV.hxx -text
-include/TFEL/Math/Vector/TVFTV.hxx -text
 include/TFEL/Math/Vector/TVectorFromTinyMatrixColumnView.hxx -text
 include/TFEL/Math/Vector/TVectorFromTinyMatrixColumnView2.hxx -text
 include/TFEL/Math/Vector/TVectorFromTinyMatrixRowView.hxx -text
 include/TFEL/Math/Vector/TVectorFromTinyMatrixRowView2.hxx -text
 include/TFEL/Math/Vector/TVectorFromTinyVectorView.hxx -text
+include/TFEL/Math/Vector/TinyVectorFromTinyVectorView.hxx -text
+include/TFEL/Math/Vector/TinyVectorOfStensorFromTinyVectorView.hxx -text
+include/TFEL/Math/Vector/TinyVectorOfTinyVectorFromTinyVectorView.hxx -text
 include/TFEL/Math/Vector/VectorConcept.hxx -text
 include/TFEL/Math/Vector/VectorConcept.ixx -text
 include/TFEL/Math/Vector/VectorConceptOperations.hxx -text
@@ -1407,7 +1408,8 @@ tests/Math/St2toSt2/st2tost2-2.cxx -text
 tests/Math/St2toSt2/st2tost2-3.cxx -text
 tests/Math/St2toSt2/st2tost2.cxx -text
 tests/Math/StensorFromTinyMatrixColumnView.cxx -text
-tests/Math/TSFTV.cxx -text
+tests/Math/TinyVectorOfStensorFromTinyVectorView.cxx -text
+tests/Math/TinyVectorOfTinyVectorFromTinyVectorView.cxx -text
 tests/Math/VectorResultType.cxx -text
 tests/Math/array.cxx -text
 tests/Math/array2.cxx -text

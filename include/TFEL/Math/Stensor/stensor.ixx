@@ -367,6 +367,22 @@ namespace tfel{
       return tfel::math::internals::StensorComputeEigenVectors_<N>::exe(reinterpret_cast<const typename tfel::typetraits::BaseType<T>::type*>(this->v),reinterpret_cast<tvector<3u,typename tfel::typetraits::BaseType<T>::type>&>(vp),vec,b);
     }
 
+    // computeEigenVectors
+    template<unsigned short N,typename T, 
+	     template<unsigned short,typename> class Storage>
+    template<typename VectorType>
+    bool
+    stensor<N,T,Storage>::computeEigenVector(VectorType& ev,const T vp) const 
+    {
+      typedef typename VectorTraits<VectorType>::NumType real;
+      typedef tfel::math::internals::StensorComputeEigenVectors_<N> SCEV;
+      TFEL_STATIC_ASSERT(tfel::typetraits::IsFundamentalNumericType<real>::cond);
+      TFEL_STATIC_ASSERT(tfel::typetraits::IsReal<real>::cond);
+      TFEL_STATIC_ASSERT((tfel::typetraits::IsSafelyReinterpretCastableTo<T,real>::cond));
+      return SCEV::computeEigenVector(ev,reinterpret_cast<const real*>(this->v),
+				      *(reinterpret_cast<const real*>(&vp)));
+    }
+
     // ChangeBasis
     template<unsigned short N,typename T, template<unsigned short,typename> class Storage>
     void 

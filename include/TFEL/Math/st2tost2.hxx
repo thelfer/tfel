@@ -46,10 +46,78 @@ namespace tfel{
       static const unsigned short dime = N;
     };
 
+    /*!
+     * \brief a base for stensor or classes acting like stensor.
+     * \param Child : child class
+     * \param N     : spatial dimension
+     * \param T     : numerical type
+     */
+    template<typename Child>
+    struct st2tost2_base
+    {
+      /*!
+       * Assignement operator
+       */
+      template<typename ST2toST2Type>
+      TFEL_MATH_INLINE 
+      typename tfel::meta::EnableIf<
+	tfel::meta::Implements<ST2toST2Type,ST2toST2Concept>::cond &&
+	ST2toST2Traits<Child>::dime==ST2toST2Traits<ST2toST2Type>::dime &&
+	tfel::typetraits::IsAssignableTo<typename ST2toST2Traits<ST2toST2Type>::NumType,
+					 typename ST2toST2Traits<Child>::NumType>::cond,
+	Child&>::type
+      operator=(const ST2toST2Type&);
+      //! Assignement operator
+      template<typename ST2toST2Type>
+      TFEL_MATH_INLINE 
+      typename tfel::meta::EnableIf<
+	tfel::meta::Implements<ST2toST2Type,ST2toST2Concept>::cond &&
+	ST2toST2Traits<Child>::dime==ST2toST2Traits<ST2toST2Type>::dime &&
+	tfel::typetraits::IsAssignableTo<typename ST2toST2Traits<ST2toST2Type>::NumType,
+					 typename ST2toST2Traits<Child>::NumType>::cond,
+	Child&>::type
+      operator+=(const ST2toST2Type&);
+      //! Assignement operator
+      template<typename ST2toST2Type>
+      TFEL_MATH_INLINE 
+      typename tfel::meta::EnableIf<
+	tfel::meta::Implements<ST2toST2Type,ST2toST2Concept>::cond &&
+	ST2toST2Traits<Child>::dime==ST2toST2Traits<ST2toST2Type>::dime &&
+	tfel::typetraits::IsAssignableTo<typename ST2toST2Traits<ST2toST2Type>::NumType,
+					 typename ST2toST2Traits<Child>::NumType>::cond,
+	Child&>::type
+      operator-=(const ST2toST2Type&);
+      /*!
+       * operator*=
+       */
+      template<typename T2>
+      TFEL_MATH_INLINE 
+      typename tfel::meta::EnableIf<
+	tfel::typetraits::IsScalar<T2>::cond&&
+	tfel::meta::IsSameType<typename ResultType<typename ST2toST2Traits<Child>::NumType,
+						   T2,OpMult>::type,
+			       typename ST2toST2Traits<Child>::NumType>::cond,
+	Child&>::type
+      operator*=(const T2);
+      /*!
+       * operator/=
+       */
+      template<typename T2>
+      TFEL_MATH_INLINE 
+      typename tfel::meta::EnableIf<
+	tfel::typetraits::IsScalar<T2>::cond&&
+        tfel::meta::IsSameType<typename ResultType<typename ST2toST2Traits<Child>::NumType,
+						   T2,OpDiv>::type,
+			       typename ST2toST2Traits<Child>::NumType>::cond,
+	Child&>::type
+      operator/=(const T2);
+    }; // end of struct st2tost2_base
+
     template<unsigned short N,typename T>
     struct st2tost2
       : public ST2toST2Concept<st2tost2<N,T> >,
-	public fsarray<StensorDimeToSize<N>::value*StensorDimeToSize<N>::value,T>
+	public fsarray<StensorDimeToSize<N>::value*StensorDimeToSize<N>::value,T>,
+	public st2tost2_base<st2tost2<N,T> >
     {
       /*!
        * This is a StensorConcept requirement.
@@ -96,86 +164,11 @@ namespace tfel{
       /*!
        * Assignement operator
        */
-      st2tost2<N,T>&
-      operator=(const st2tost2<N,T>&);
+      using st2tost2_base<st2tost2>::operator=;
 
-      /*!
-       * Assignement operator
-       */
-      template<typename T2>
-      TFEL_MATH_INLINE typename tfel::meta::EnableIf<
-	tfel::typetraits::IsAssignableTo<T2,T>::cond,
-	st2tost2<N,T>&>::type
-      operator=(const st2tost2<N,T2>&);
-
-      /*!
-       * Assignement operator
-       */
-      template<typename T2,typename Expr>
-      TFEL_MATH_INLINE 
-      typename tfel::meta::EnableIf<
-	tfel::typetraits::IsAssignableTo<T2,T>::cond,
-	st2tost2<N,T>&
-      >::type
-      operator=(const ST2toST2Expr<st2tost2<N,T2>,Expr>&);
-
-      // Assignement operator
-      template<typename T2>
-      TFEL_MATH_INLINE typename tfel::meta::EnableIf<
-	tfel::typetraits::IsAssignableTo<T2,T>::cond,
-	st2tost2<N,T>&
-      >::type
-      operator+=(const st2tost2<N,T2>&);
-    
-      // Assignement operator
-      template<typename T2,typename Expr>
-      TFEL_MATH_INLINE typename tfel::meta::EnableIf<
-	tfel::typetraits::IsAssignableTo<T2,T>::cond,
-	st2tost2<N,T>&
-      >::type
-      operator+=(const ST2toST2Expr<st2tost2<N,T2>,Expr>&);
-
-      // Assignement operator
-      template<typename T2>
-      TFEL_MATH_INLINE typename tfel::meta::EnableIf<
-	tfel::typetraits::IsAssignableTo<T2,T>::cond,
-	st2tost2<N,T>&
-      >::type
-      operator-=(const st2tost2<N,T2>&);
-    
-      // Assignement operator
-      template<typename T2,typename Expr>
-      TFEL_MATH_INLINE typename tfel::meta::EnableIf<
-	tfel::typetraits::IsAssignableTo<T2,T>::cond,
-	st2tost2<N,T>&
-      >::type
-      operator-=(const ST2toST2Expr<st2tost2<N,T2>,Expr>&);
-
-      /*!
-       * operator*=
-       */
-      template<typename T2>
-      TFEL_MATH_INLINE 
-      typename tfel::meta::EnableIf<
-	tfel::typetraits::IsScalar<T2>::cond&&
-      tfel::meta::IsSameType<typename ResultType<T,T2,OpMult>::type,T>::cond,
-	st2tost2<N,T>&
-      >::type
-      operator*=(const T2);
-
-      /*!
-       * operator/=
-       */
-      template<typename T2>
-      TFEL_MATH_INLINE 
-      typename tfel::meta::EnableIf<
-	tfel::typetraits::IsScalar<T2>::cond&&
-        tfel::meta::IsSameType<typename ResultType<T,T2,OpMult>::type,T>::cond,
-	st2tost2<N,T>&
-      >::type
-      operator/=(const T2);
-
+      //! access operator
       TFEL_MATH_INLINE const T& operator()(const unsigned short,const unsigned short) const;      
+      //! access operator
       TFEL_MATH_INLINE       T& operator()(const unsigned short,const unsigned short);
       /*!
        * Return the RunTimeProperties of the tvector

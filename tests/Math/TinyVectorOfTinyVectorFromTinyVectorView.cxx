@@ -1,8 +1,8 @@
 /*! 
- * \file  tsftv.cxx
+ * \file   TinyVectorOfTinyVectorFromTinyVectorView.cxx
  * \brief
  * \author Helfer Thomas
- * \brief 08 févr. 2013
+ * \brief  08 févr. 2013
  */
 
 #include<cmath>
@@ -15,16 +15,16 @@
 #include"TFEL/Tests/TestProxy.hxx"
 #include"TFEL/Tests/TestManager.hxx"
 
-#include"TFEL/Math/Vector/TSFTV.hxx"
+#include"TFEL/Math/Vector/TinyVectorOfTinyVectorFromTinyVectorView.hxx"
 
-struct TSFTVTest
+struct TinyVectorOfTinyVectorFromTinyVectorViewTest
   : public tfel::tests::TestCase
 {
   
-  TSFTVTest()
+  TinyVectorOfTinyVectorFromTinyVectorViewTest()
     : tfel::tests::TestCase("TFEL/Math",
-			    "TSFTV")
-  {} // end of TSFTVTest
+			    "TinyVectorOfTinyVectorFromTinyVectorView")
+  {} // end of TinyVectorOfTinyVectorFromTinyVectorViewTest
   
   tfel::tests::TestResult
   execute()
@@ -37,34 +37,31 @@ struct TSFTVTest
 			 2.9,9.2,3.8,8.3,
 			 4.7,7.4,5.6,6.5};
     tvector<10,double> v(values);
-    TSFTV<2,10,2,2,double>::type tsftv(v);
-    const stensor<2,double>& s1 = tsftv(0);
-    stensor<2,double>& s2 = tsftv(1);
-    stensor<2,double>::size_type i;
-
-    for(i=0;i!=4u;++i){
+    TinyVectorOfTinyVectorFromTinyVectorView<2,10,2,2,double>::type view(v);
+    const tvector<2,double>& s1 = view(0);
+    tvector<2,double>& s2 = view(1);
+    tvector<2,double>::size_type i;
+    for(i=0;i!=s1.size();++i){
       unsigned short idx;
       idx = static_cast<unsigned short>(i+2u);
       TFEL_TESTS_ASSERT(abs(s1(i)-v(idx))<eps);
-      idx = static_cast<unsigned short>(i+6u);
+      idx = static_cast<unsigned short>(i+4u);
       TFEL_TESTS_ASSERT(abs(s2(i)-v(idx))<eps);
     }
-    s2 += stensor<2,double>::Id();
-    for(i=0;i!=3u;++i){
+    s2 += tvector<2,double>(1.5);
+    for(i=0;i!=s1.size();++i){
       unsigned short idx;
-      idx = static_cast<unsigned short>(i+6u);
-      TFEL_TESTS_ASSERT(abs(s2(i)-values[idx]-1)<eps);
-      TFEL_TESTS_ASSERT(abs(v(idx)-values[idx]-1)<eps);
+      idx = static_cast<unsigned short>(i+4u);
+      TFEL_TESTS_ASSERT(abs(s2(i)-values[idx]-1.5)<eps);
+      TFEL_TESTS_ASSERT(abs(v(idx)-values[idx]-1.5)<eps);
     }
-    TFEL_TESTS_ASSERT(abs(s2(3)-values[9u])<eps);
-
     return this->result;
 
   } // end of execute
 
-}; // end of TSFTVTest
+}; // end of TinyVectorOfTinyVectorFromTinyVectorViewTest
 
-TFEL_TESTS_GENERATE_PROXY(TSFTVTest,"TSFTVTest");
+TFEL_TESTS_GENERATE_PROXY(TinyVectorOfTinyVectorFromTinyVectorViewTest,"TinyVectorOfTinyVectorFromTinyVectorViewTest");
 
 
 int main(void)
@@ -75,7 +72,7 @@ int main(void)
   using namespace tfel::utilities;
   TestManager& manager = TestManager::getTestManager();
   manager.addTestOutput(cout);
-  manager.addXMLTestOutput("TSFTV.xml");
+  manager.addXMLTestOutput("TinyVectorOfTinyVectorFromTinyVectorView.xml");
   TestResult r = manager.execute();
   if(!r.success()){
     return EXIT_FAILURE;

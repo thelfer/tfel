@@ -360,7 +360,9 @@
       calculer la jacobienne, nombre de variables très grands)~;
     \item si le temps de développement est limité~;
     \item si le temps d'intégration de la loi de comportement ne pose
-      pas de problème de performance.
+      pas de problème de performance~;
+    \item attention aux variations des paramètres externes pour
+      les conditions de consistance (en particulier la température) !
     \end{itemize}
   \end{itemize}
 }
@@ -452,7 +454,11 @@
     \item {\bf il y a un \(\sqrt{2}\) sur les termes extradiagonaux}
       pour les tenseurs d'ordre \(2\) symétriques~;
     \item les \og{}~tenseurs d'ordre \(4\)~\fg{} sont utilisables au
-      cours de l'intégration~;
+      cours de l'intégration et permettent de définir certains blocs
+      de la jacobienne en implicite~;
+    \item la possibilité d'utiliser des vecteurs comme variables
+      internes (modèles de zones cohésives) est partiellement
+      implantée~;
     \end{itemize}
   \item<2-> \mfront{} ne supporte (aujourd'hui) que les modélisations
     \(1D\) (trois composantes du tenseurs des déformations), \(2D\)
@@ -577,7 +583,7 @@
     \dot{Y} = G\paren{Y,t}
     \]
     où \(t\) représente symboliquement l'évolution des variables
-    externes et de la déformation totales~;
+    externes et de la déformation totale~;
   \item<2-> le système différentiel s'écrit dans un bloc {\tt
       @Derivative}~;
   \item<3-> pour toute variable interne et externe, {\tt dX} est

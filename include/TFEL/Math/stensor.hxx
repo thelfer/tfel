@@ -227,27 +227,45 @@ namespace tfel{
        * compute eigenvalues
        * \param[in] b  : refine eigenvalues
        */
-      void computeEigenValues(T&,T&,T&,
-			      const bool = false) const;
+      TFEL_MATH_INLINE2 void
+      computeEigenValues(T&,T&,T&,
+			 const bool = false) const;
       /*!
        * compute eigenvalues
        * \param[in] b  : refine eigenvalues
        */
-      void computeEigenValues(tvector<3u,T>&,
-			      const bool = false) const;
+      TFEL_MATH_INLINE2 void
+      computeEigenValues(tvector<3u,T>&,
+			 const bool = false) const;
+      /*!
+       * compute eigenvector associated to a given eigenvalue
+       * \note the given vector must be properly allocated and the
+       * eigenvector is stored in the three first locations
+       * \note no check made that the given value is an eigenvalue of
+       * the tensor
+       * \note the eigen value geometric multiplicity must be egal to
+       * one.
+       * \param[out] ev : eigen vector
+       * \param[in]  vp : eigenvalue
+       */
+      template<typename VectorType>
+      TFEL_MATH_INLINE2 bool
+      computeEigenVector(VectorType&,const T) const;
       /*!
        * compute eigenvectors and eigenvalues 
-       * \param[in] vp : eigenvalues
-       * \param[in] m  : rotation matrix
-       * \param[in] b  : refine eigenvalues
+       * \param[out] vp : eigenvalues
+       * \param[out] m  : rotation matrix
+       * \param[in]  b  : refine eigenvalues
        */
-      bool computeEigenVectors(tvector<3u,T>&,
-			       tmatrix<3u,3u,typename tfel::typetraits::BaseType<T>::type>&,
-			       const bool = false) const;
+      TFEL_MATH_INLINE2 bool
+      computeEigenVectors(tvector<3u,T>&,
+			  tmatrix<3u,3u,typename tfel::typetraits::BaseType<T>::type>&,
+			  const bool = false) const;
       /*!
        * change basis
        */
-      void changeBasis(const tmatrix<3u,3u,typename tfel::typetraits::BaseType<T>::type>&);
+      TFEL_MATH_INLINE2 void
+      changeBasis(const tmatrix<3u,3u,typename tfel::typetraits::BaseType<T>::type>&);
       /*!
        * Return Identity
        */

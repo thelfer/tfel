@@ -25,14 +25,105 @@ namespace tfel{
 
   namespace math {
 
-    template<unsigned short N, typename T>
-    TFEL_MATH_INLINE st2tost2<N,T>::st2tost2(const T init)
+
+    // Assignement operator
+    template<typename Child>
+    template<typename ST2toST2Type>
+    typename tfel::meta::EnableIf<
+      tfel::meta::Implements<ST2toST2Type,ST2toST2Concept>::cond &&
+      ST2toST2Traits<Child>::dime==ST2toST2Traits<ST2toST2Type>::dime &&
+      tfel::typetraits::IsAssignableTo<typename ST2toST2Traits<ST2toST2Type>::NumType,
+				       typename ST2toST2Traits<Child>::NumType>::cond,
+      Child&>::type
+    st2tost2_base<Child>::operator=(const ST2toST2Type& src)
     {
-      tfel::fsalgo::fill<StensorDimeToSize<N>::value*StensorDimeToSize<N>::value>::exe(this->v,init);
+      Child& child = static_cast<Child&>(*this);
+      matrix_utilities<StensorDimeToSize<ST2toST2Traits<Child>::dime>::value,
+		       StensorDimeToSize<ST2toST2Traits<Child>::dime>::value,
+		       StensorDimeToSize<ST2toST2Traits<Child>::dime>::value>::copy(src,child);
+      return child;
+    }
+
+    template<typename Child>
+    template<typename ST2toST2Type>
+    typename tfel::meta::EnableIf<
+      tfel::meta::Implements<ST2toST2Type,ST2toST2Concept>::cond &&
+      ST2toST2Traits<Child>::dime==ST2toST2Traits<ST2toST2Type>::dime &&
+      tfel::typetraits::IsAssignableTo<typename ST2toST2Traits<ST2toST2Type>::NumType,
+				       typename ST2toST2Traits<Child>::NumType>::cond,
+      Child&>::type
+    st2tost2_base<Child>::operator+=(const ST2toST2Type& src)
+    {
+      Child& child = static_cast<Child&>(*this);
+      matrix_utilities<StensorDimeToSize<ST2toST2Traits<Child>::dime>::value,
+		       StensorDimeToSize<ST2toST2Traits<Child>::dime>::value,
+		       StensorDimeToSize<ST2toST2Traits<Child>::dime>::value>::plusEqual(child,src);
+      return child;
+    }
+
+    // Assignement operator
+    template<typename Child>
+    template<typename ST2toST2Type>
+    typename tfel::meta::EnableIf<
+      tfel::meta::Implements<ST2toST2Type,ST2toST2Concept>::cond &&
+      ST2toST2Traits<Child>::dime==ST2toST2Traits<ST2toST2Type>::dime &&
+      tfel::typetraits::IsAssignableTo<typename ST2toST2Traits<ST2toST2Type>::NumType,
+				       typename ST2toST2Traits<Child>::NumType>::cond,
+      Child&>::type
+    st2tost2_base<Child>::operator-=(const ST2toST2Type& src)
+    {
+      Child& child = static_cast<Child&>(*this);
+      matrix_utilities<StensorDimeToSize<ST2toST2Traits<Child>::dime>::value,
+		       StensorDimeToSize<ST2toST2Traits<Child>::dime>::value,
+		       StensorDimeToSize<ST2toST2Traits<Child>::dime>::value>::minusEqual(child,src);
+      return child;
+    }
+
+    // *= operator
+    template<typename Child>
+    template<typename T2>
+    typename tfel::meta::EnableIf<
+      tfel::typetraits::IsScalar<T2>::cond&&
+      tfel::meta::IsSameType<typename ResultType<typename ST2toST2Traits<Child>::NumType,
+						 T2,OpMult>::type,
+			     typename ST2toST2Traits<Child>::NumType>::cond,
+      Child&>::type
+    st2tost2_base<Child>::operator*=(const T2 s)
+    {
+      Child& child = static_cast<Child&>(*this);
+      matrix_utilities<StensorDimeToSize<ST2toST2Traits<Child>::dime>::value,
+		       StensorDimeToSize<ST2toST2Traits<Child>::dime>::value,
+		       StensorDimeToSize<ST2toST2Traits<Child>::dime>::value>::multByScalar(child,s);
+      return child;
+    }
+
+    // /= operator
+    template<typename Child>
+    template<typename T2>
+    typename tfel::meta::EnableIf<
+      tfel::typetraits::IsScalar<T2>::cond&&
+      tfel::meta::IsSameType<typename ResultType<typename ST2toST2Traits<Child>::NumType,
+						 T2,OpDiv>::type,
+			     typename ST2toST2Traits<Child>::NumType>::cond,
+      Child&>::type
+    st2tost2_base<Child>::operator/=(const T2 s)
+    {
+      Child& child = static_cast<Child&>(*this);
+      matrix_utilities<StensorDimeToSize<ST2toST2Traits<Child>::dime>::value,
+		       StensorDimeToSize<ST2toST2Traits<Child>::dime>::value,
+		       StensorDimeToSize<ST2toST2Traits<Child>::dime>::value>::divByScalar(child,s);
+      return child;
     }
 
     template<unsigned short N, typename T>
-    TFEL_MATH_INLINE st2tost2<N,T>::st2tost2(const st2tost2<N,T>& src)
+    st2tost2<N,T>::st2tost2(const T init)
+    {
+      tfel::fsalgo::fill<StensorDimeToSize<N>::value*
+			 StensorDimeToSize<N>::value>::exe(this->v,init);
+    }
+
+    template<unsigned short N, typename T>
+    st2tost2<N,T>::st2tost2(const st2tost2<N,T>& src)
     {
       matrix_utilities<StensorDimeToSize<N>::value,
 		       StensorDimeToSize<N>::value,
@@ -76,7 +167,6 @@ namespace tfel{
 
     template<unsigned short N,typename T>
     template<typename T2,typename Expr>
-    TFEL_MATH_INLINE 
     st2tost2<N,T>::st2tost2(const ST2toST2Expr<st2tost2<N,T2>,Expr>& src){
       matrix_utilities<StensorDimeToSize<N>::value,
 		       StensorDimeToSize<N>::value,
@@ -121,7 +211,7 @@ namespace tfel{
     } // end of st2tost2(const st2tost2<N,T>::ParticularSt2toSt2)
 
     template<unsigned short N, typename T>
-    TFEL_MATH_INLINE T& 
+    T& 
     st2tost2<N,T>::operator()(const unsigned short i,const unsigned short j){
       assert(i<StensorDimeToSize<N>::value);
       assert(j<StensorDimeToSize<N>::value);
@@ -129,138 +219,11 @@ namespace tfel{
     }
 
     template<unsigned short N, typename T>
-    TFEL_MATH_INLINE const T& 
+    const T& 
     st2tost2<N,T>::operator()(const unsigned short i,const unsigned short j) const{
       assert(i<StensorDimeToSize<N>::value);
       assert(j<StensorDimeToSize<N>::value);
       return this->v[StensorDimeToSize<N>::value*i+j];
-    }
-
-    template<unsigned short N,typename T>
-    template<typename T2,typename Expr>
-    TFEL_MATH_INLINE typename tfel::meta::EnableIf<
-      tfel::typetraits::IsAssignableTo<T2,T>::cond,
-      st2tost2<N,T>&
-    >::type 
-    st2tost2<N,T>::operator=(const ST2toST2Expr<st2tost2<N,T2>, Expr>& src){
-      matrix_utilities<StensorDimeToSize<N>::value,
-		       StensorDimeToSize<N>::value,
-		       StensorDimeToSize<N>::value>::copy(src,*this);
-      return *this;
-    }
-
-    template<unsigned short N,typename T>
-    st2tost2<N,T>&
-    st2tost2<N,T>::operator=(const st2tost2<N,T>& src){
-      tfel::fsalgo::copy<StensorDimeToSize<N>::value*StensorDimeToSize<N>::value>::exe(src.v,this->v);
-      return *this;
-    }
-
-    // Assignement operator
-    template<unsigned short N,typename T>
-    template<typename T2>
-    TFEL_MATH_INLINE typename tfel::meta::EnableIf<
-      tfel::typetraits::IsAssignableTo<T2,T>::cond,
-      st2tost2<N,T>&
-    >::type 
-    st2tost2<N,T>::operator+=(const st2tost2<N,T2>& src)
-    {
-      matrix_utilities<StensorDimeToSize<N>::value,
-		       StensorDimeToSize<N>::value,
-		       StensorDimeToSize<N>::value>::plusEqual(*this,src);
-      return *this;
-    }
-
-    // Assignement operator
-    template<unsigned short N,typename T>
-    template<typename T2,typename Expr>
-    TFEL_MATH_INLINE typename tfel::meta::EnableIf<
-      tfel::typetraits::IsAssignableTo<T2,T>::cond,
-      st2tost2<N,T>&
-    >::type
-    st2tost2<N,T>::operator+=(const ST2toST2Expr<st2tost2<N,T2>,Expr>& src)
-    {
-      matrix_utilities<StensorDimeToSize<N>::value,
-		       StensorDimeToSize<N>::value,
-		       StensorDimeToSize<N>::value>::plusEqual(*this,src);
-      return *this;
-    }
-
-    // Assignement operator
-    template<unsigned short N,typename T>
-    template<typename T2>
-    TFEL_MATH_INLINE typename tfel::meta::EnableIf<
-      tfel::typetraits::IsAssignableTo<T2,T>::cond,
-      st2tost2<N,T>&
-    >::type
-    st2tost2<N,T>::operator-=(const st2tost2<N,T2>& src)
-    {
-      matrix_utilities<StensorDimeToSize<N>::value,
-		       StensorDimeToSize<N>::value,
-		       StensorDimeToSize<N>::value>::minusEqual(*this,src);
-      return *this;
-    }
-
-    // Assignement operator
-    template<unsigned short N,typename T>
-    template<typename T2,typename Expr>
-    TFEL_MATH_INLINE typename tfel::meta::EnableIf<
-      tfel::typetraits::IsAssignableTo<T2,T>::cond,
-      st2tost2<N,T>&
-    >::type
-    st2tost2<N,T>::operator-=(const ST2toST2Expr<st2tost2<N,T2>,Expr>& src)
-    {
-      matrix_utilities<StensorDimeToSize<N>::value,
-		       StensorDimeToSize<N>::value,
-		       StensorDimeToSize<N>::value>::minusEqual(*this,src);
-      return *this;
-    }
-
-    // *= operator
-    template<unsigned short N,typename T>
-    template<typename T2>
-    TFEL_MATH_INLINE 
-    typename tfel::meta::EnableIf<
-      tfel::typetraits::IsScalar<T2>::cond&&
-      tfel::meta::IsSameType<typename ResultType<T,T2,OpMult>::type,T>::cond,
-      st2tost2<N,T>&
-    >::type
-    st2tost2<N,T>::operator*=(const T2 s)
-    {
-      matrix_utilities<StensorDimeToSize<N>::value,
-		       StensorDimeToSize<N>::value,
-		       StensorDimeToSize<N>::value>::multByScalar(*this,s);
-      return *this;
-    }
-
-    // /= operator
-    template<unsigned short N,typename T>
-    template<typename T2>
-    TFEL_MATH_INLINE 
-    typename tfel::meta::EnableIf<
-      tfel::typetraits::IsScalar<T2>::cond&&
-      tfel::meta::IsSameType<typename ResultType<T,T2,OpMult>::type,T>::cond,
-      st2tost2<N,T>&
-    >::type
-    st2tost2<N,T>::operator/=(const T2 s)
-    {
-      matrix_utilities<StensorDimeToSize<N>::value,
-		       StensorDimeToSize<N>::value,
-		       StensorDimeToSize<N>::value>::divByScalar(*this,s);
-      return *this;
-    }
-
-    // Assignement operator
-    template<unsigned short N,typename T>
-    template<typename T2>
-    TFEL_MATH_INLINE typename tfel::meta::EnableIf<
-      tfel::typetraits::IsAssignableTo<T2,T>::cond,
-      st2tost2<N,T>&
-    >::type
-    st2tost2<N,T>::operator=(const st2tost2<N,T2>& src)
-    {
-      tfel::fsalgo::copy<StensorDimeToSize<N>::value*StensorDimeToSize<N>::value>::exe(src,*this);
-      return *this;
     }
 
     template<unsigned short N, typename T>

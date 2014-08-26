@@ -13,6 +13,9 @@
 #include<algorithm>
 
 #include"TFEL/Config/TFELConfig.hxx"
+#include"TFEL/Metaprogramming/IsSameType.hxx"
+#include"TFEL/TypeTraits/IsReal.hxx"
+#include"TFEL/TypeTraits/IsFundamentalNumericType.hxx"
 #include"TFEL/Math/General/CubicRoots.hxx"
 #include"TFEL/Math/tvector.hxx"
 #include"TFEL/Math/tmatrix.hxx"
@@ -31,6 +34,36 @@ namespace tfel{
       class StensorComputeEigenVectors_<1u>
       {
       public:
+
+	template<typename VectorType,typename T>
+	static bool computeEigenVector(VectorType& v,const T* const s,const T vp)
+	{
+	  using namespace std;
+	  TFEL_STATIC_ASSERT(tfel::typetraits::IsFundamentalNumericType<typename VectorTraits<VectorType>::NumType>::cond);
+	  TFEL_STATIC_ASSERT((tfel::meta::IsSameType<typename VectorTraits<VectorType>::NumType,T>::cond));
+	  TFEL_STATIC_ASSERT(tfel::typetraits::IsFundamentalNumericType<T>::cond);
+	  TFEL_STATIC_ASSERT(tfel::typetraits::IsReal<T>::cond);
+	  if(abs(s(0)-vp)<10*numeric_limits<T>::min()){
+	    v(0)=T(1);
+	    v(1)=T(0);
+	    v(2)=T(0);
+	    return true;
+	  }
+	  if(abs(s(1)-vp)<10*numeric_limits<T>::min()){
+	    v(0)=T(0);
+	    v(1)=T(1);
+	    v(2)=T(0);
+	    return true;
+	  }
+	  if(abs(s(2)-vp)<10*numeric_limits<T>::min()){
+	    v(0)=T(0);
+	    v(1)=T(0);
+	    v(2)=T(1);
+	    return true;
+	  }
+	  return false;
+	}
+
 	template<typename T>
 	static bool exe(const T* const s,tfel::math::tvector<3u,T>& vp,tfel::math::tmatrix<3u,3u,T>& vec,
 			const bool)
@@ -144,8 +177,26 @@ namespace tfel{
 	  return true;
 	}
 
-
       public:
+
+	template<typename VectorType,typename T>
+	static bool computeEigenVector(VectorType& v,const T* const s,const T vp)
+	{
+	  using namespace std;
+	  TFEL_STATIC_ASSERT(tfel::typetraits::IsFundamentalNumericType<typename VectorTraits<VectorType>::NumType>::cond);
+	  TFEL_STATIC_ASSERT((tfel::meta::IsSameType<typename VectorTraits<VectorType>::NumType,T>::cond));
+	  TFEL_STATIC_ASSERT(tfel::typetraits::IsFundamentalNumericType<T>::cond);
+	  TFEL_STATIC_ASSERT(tfel::typetraits::IsReal<T>::cond);
+	  if(abs(s(2)-vp)<10*numeric_limits<T>::min()){
+	    v(0)=0;
+	    v(1)=0;
+	    v(2)=1;
+	    return true;
+	  }
+	  v(2)=0.;
+	  return computeEigenVector(s[0],s[1],s[3],vp,v(0),v(1));
+	}
+
 	template<typename T>
 	static bool exe(const T* const s,
 			tfel::math::tvector<3u,T>& vp,tfel::
@@ -404,6 +455,17 @@ namespace tfel{
 
       public:
 
+
+	template<typename VectorType,
+		 typename T>
+	static bool computeEigenVector(VectorType& v,const T* const src,const T vp)
+	{
+	  TFEL_STATIC_ASSERT(tfel::typetraits::IsFundamentalNumericType<typename VectorTraits<VectorType>::NumType>::cond);
+	  TFEL_STATIC_ASSERT((tfel::meta::IsSameType<typename VectorTraits<VectorType>::NumType,T>::cond));
+	  TFEL_STATIC_ASSERT(tfel::typetraits::IsFundamentalNumericType<T>::cond);
+	  TFEL_STATIC_ASSERT(tfel::typetraits::IsReal<T>::cond);
+	  return computeEigenVector(src,vp,v(0),v(1),v(2));
+	}
 
 	template<typename T>
 	static bool exe(const T* const s,tfel::math::tvector<3u,T>& vp,tfel::math::tmatrix<3u,3u,T>& vec,

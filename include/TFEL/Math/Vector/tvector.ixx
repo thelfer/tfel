@@ -185,36 +185,36 @@ namespace tfel{
 
     template<unsigned short N, typename T>
     template<unsigned short I>
-    VectorExpr<tvector<N-I,T>,TVFTVExpr<N-I,N,I,T,false> >
+    VectorExpr<tvector<N-I,T>,TinyVectorFromTinyVectorViewExpr<N-I,N,I,T,false> >
     tvector<N,T>::slice(void)
     {
-      return VectorExpr<tvector<N-I,T>,TVFTVExpr<N-I,N,I,T,false> >(*this);
+      return VectorExpr<tvector<N-I,T>,TinyVectorFromTinyVectorViewExpr<N-I,N,I,T,false> >(*this);
     } // end of tvector<N,T>::slice(void)
 
     template<unsigned short N, typename T>
     template<unsigned short I,
 	     unsigned short J>
-    VectorExpr<tvector<J-I,T>,TVFTVExpr<J-I,N,I,T,false> >
+    VectorExpr<tvector<J-I,T>,TinyVectorFromTinyVectorViewExpr<J-I,N,I,T,false> >
     tvector<N,T>::slice(void)
     {
-      return VectorExpr<tvector<J-I,T>,TVFTVExpr<J-I,N,I,T,false> >(*this);
+      return VectorExpr<tvector<J-I,T>,TinyVectorFromTinyVectorViewExpr<J-I,N,I,T,false> >(*this);
     }
 
     template<unsigned short N, typename T>
       template<unsigned short I>
-    VectorExpr<tvector<N-I,T>,TVFTVExpr<N-I,N,I,T,true> >
+    VectorExpr<tvector<N-I,T>,TinyVectorFromTinyVectorViewExpr<N-I,N,I,T,true> >
     tvector<N,T>::slice(void) const
     {
-      return VectorExpr<tvector<N-I,T>,TVFTVExpr<N-I,N,I,T,true> >(*this);
+      return VectorExpr<tvector<N-I,T>,TinyVectorFromTinyVectorViewExpr<N-I,N,I,T,true> >(*this);
     } // end of tvector<N,T>::slice
 
     template<unsigned short N, typename T>
     template<unsigned short I,
 	     unsigned short J>
-    VectorExpr<tvector<J-I,T>,TVFTVExpr<J-I,N,I,T,true> >
+    VectorExpr<tvector<J-I,T>,TinyVectorFromTinyVectorViewExpr<J-I,N,I,T,true> >
     tvector<N,T>::slice(void) const
     {
-      return VectorExpr<tvector<J-I,T>,TVFTVExpr<J-I,N,I,T,true> >(*this);
+      return VectorExpr<tvector<J-I,T>,TinyVectorFromTinyVectorViewExpr<J-I,N,I,T,true> >(*this);
     } // end of tvector<N,T>::slice
 
     template<unsigned short N, typename T,
@@ -322,7 +322,7 @@ namespace tfel{
     } // end of cross_product
 
     template<unsigned short I,unsigned short N,typename T>
-    VectorExpr<tvector<N-I,T>,TVFTVExpr<N-I,N,I,T,false> >
+    VectorExpr<tvector<N-I,T>,TinyVectorFromTinyVectorViewExpr<N-I,N,I,T,false> >
     slice(tvector<N,T>& v)
     {
       return v.template slice<I>();
@@ -330,14 +330,14 @@ namespace tfel{
 
     template<unsigned short I,unsigned short J,
 	     unsigned short N,typename T>
-    VectorExpr<tvector<J-I,T>,TVFTVExpr<J-I,N,I,T,false> >
+    VectorExpr<tvector<J-I,T>,TinyVectorFromTinyVectorViewExpr<J-I,N,I,T,false> >
     slice(tvector<N,T>& v)
     {
       return v.template slice<I,J>();
     } // end of slice
 
     template<unsigned short I,unsigned short N,typename T>
-    VectorExpr<tvector<N-I,T>,TVFTVExpr<N-I,N,I,T,true> >
+    VectorExpr<tvector<N-I,T>,TinyVectorFromTinyVectorViewExpr<N-I,N,I,T,true> >
     slice(const tvector<N,T>& v)
     {
       return v.template slice<I>();
@@ -345,7 +345,7 @@ namespace tfel{
 
     template<unsigned short I,unsigned short J,
 	     unsigned short N,typename T>
-    VectorExpr<tvector<J-I,T>,TVFTVExpr<J-I,N,I,T,true> >
+    VectorExpr<tvector<J-I,T>,TinyVectorFromTinyVectorViewExpr<J-I,N,I,T,true> >
     slice(const tvector<N,T>& v)
     {
       return v.template slice<I,J>();

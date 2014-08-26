@@ -14,6 +14,15 @@ namespace tfel
   namespace math
   {
     
+    /*!
+     * submatrix view
+     * \param[in] N : number of rows of the underlying matrix
+     * \param[in] M : number of columns of the underlying matrix
+     * \param[in] I : starting row
+     * \param[in] J : starting column
+     * \param[in] R : number of rows    of the submatrix
+     * \param[in] C : number of columns of the submatrix
+     */
     template<unsigned short N,unsigned short M,
 	     unsigned short I,unsigned short J,
 	     unsigned short R,unsigned short C,

@@ -113,9 +113,11 @@ namespace mfront
   {
     // mathematical
 #if not (defined _WIN32 || defined _WIN64 ||defined __CYGWIN__)
+#ifdef HAVE_FENV
     ::feclearexcept(FE_ALL_EXCEPT);
     ::feenableexcept(FE_DIVBYZERO); // division by zero
     ::feenableexcept(FE_INVALID);   // invalid operation
+#endif /* HAVE_FENV */
 #endif
   } // end of MTestMain::treatEnableFloatingPointExceptions
 

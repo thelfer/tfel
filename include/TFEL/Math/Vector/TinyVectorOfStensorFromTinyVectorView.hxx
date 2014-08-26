@@ -1,5 +1,5 @@
 /*!
- * \file   TSFTV.hxx
+ * \file   TinyVectorOfStensorFromTinyVectorView.hxx
  * \brief  TinyVectorOfStensorFromTVectorView
  * This class creates an object that acts like a tiny vector of
  * stensors.
@@ -7,8 +7,8 @@
  * \date   16 oct 2008
  */
 
-#ifndef _LIB_TFEL_MATH_TSFTV_HXX_
-#define _LIB_TFEL_MATH_TSFTV_HXX_ 
+#ifndef _LIB_TFEL_MATH_TINYVECTOROFSTENSORFROMTINYVECTORVIEW_HXX_
+#define _LIB_TFEL_MATH_TINYVECTOROFSTENSORFROMTINYVECTORVIEW_HXX_ 
 
 #include"TFEL/Metaprogramming/StaticAssert.hxx"
 
@@ -37,13 +37,13 @@ namespace tfel
 	     unsigned short In,
 	     unsigned short Nn,
 	     typename T>
-    struct TSFTVExpr
+    struct TinyVectorOfStensorFromTinyVectorViewExpr
     {
       /*!
        * numerical type holded by the expression
        */
       typedef stensor<N,T> NumType;
-    }; // end of struct TSFTVExpr
+    }; // end of struct TinyVectorOfStensorFromTinyVectorViewExpr
 
     /*!
      * \param[in] N  : dimension used to define the stensor (1,2 or 3)
@@ -57,8 +57,8 @@ namespace tfel
 	     unsigned short In,
 	     unsigned short Nn,
 	     typename T>
-    struct VectorExpr<tvector<Nn,stensor<N,T> >,TSFTVExpr<N,Mn,In,Nn,T> >
-      : public VectorConcept<VectorExpr<tvector<Nn,stensor<N,T> >,TSFTVExpr<N,Mn,In,Nn,T> > >
+    struct VectorExpr<tvector<Nn,stensor<N,T> >,TinyVectorOfStensorFromTinyVectorViewExpr<N,Mn,In,Nn,T> >
+      : public VectorConcept<VectorExpr<tvector<Nn,stensor<N,T> >,TinyVectorOfStensorFromTinyVectorViewExpr<N,Mn,In,Nn,T> > >
     {
 
       typedef EmptyRunTimeProperties RunTimeProperties;
@@ -240,10 +240,10 @@ namespace tfel
 	     unsigned short In,
 	     unsigned short Nn,
 	     typename T = double>
-    struct TSFTV
+    struct TinyVectorOfStensorFromTinyVectorView
     {
-      typedef VectorExpr<tvector<Nn,stensor<N,T> >,TSFTVExpr<N,Mn,In,Nn,T> > type;
-    }; // end of struct TSFTV
+      typedef VectorExpr<tvector<Nn,stensor<N,T> >,TinyVectorOfStensorFromTinyVectorViewExpr<N,Mn,In,Nn,T> > type;
+    }; // end of struct TinyVectorOfStensorFromTinyVectorView
 
     // Serialisation operator
     template<unsigned short N,
@@ -253,7 +253,7 @@ namespace tfel
 	     typename T>
     std::ostream&
     operator << (std::ostream & os,
-		 const VectorExpr<tvector<Nn,stensor<N,T> >,TSFTVExpr<N,Mn,In,Nn,T> >& s)
+		 const VectorExpr<tvector<Nn,stensor<N,T> >,TinyVectorOfStensorFromTinyVectorViewExpr<N,Mn,In,Nn,T> >& s)
     {
       os << "[ ";
       for(unsigned short i=0;i<Nn;++i){
@@ -273,7 +273,7 @@ namespace tfel
   	     unsigned short Nn,
   	     typename T>
     struct IsTemporary<tfel::math::VectorExpr<tfel::math::tvector<Nn,tfel::math::stensor<N,T> >,
-					      tfel::math::TSFTVExpr<N,Mn,In,Nn,T> > >
+					      tfel::math::TinyVectorOfStensorFromTinyVectorViewExpr<N,Mn,In,Nn,T> > >
     {
       static const bool cond = false;
     };
@@ -282,5 +282,5 @@ namespace tfel
 
 } // end of namespace tfel
 
-#endif /* _LIB_TFEL_MATH_TSFTV_HXX */
+#endif /* _LIB_TFEL_MATH_TINYVECTOROFSTENSORFROMTINYVECTORVIEW_HXX */
 
