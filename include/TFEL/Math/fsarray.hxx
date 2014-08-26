@@ -76,24 +76,12 @@ namespace tfel
        * type of the tvector's reverse iterator.
        * (provided for stl compatibility).
        */
-#ifndef __SUNPRO_CC
       typedef std::reverse_iterator<const_iterator> const_reverse_iterator; 
-#else
-      typedef std::reverse_iterator<const_iterator,T,
-      				    const_reference,
-      				    difference_type> const_reverse_iterator;
-#endif
       /*!
        * type of the tvector's const reverse iterator.
        * (provided for stl compatibility).
        */
-#ifndef __SUNPRO_CC
       typedef std::reverse_iterator<iterator> reverse_iterator;
-#else
-      typedef std::reverse_iterator<iterator,T,
-      				    reference,
-      				    difference_type> reverse_iterator;
-#endif
       /*!
        * return an iterator to the first element of the vector
        * (provided for stl compatibility)

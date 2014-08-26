@@ -65,6 +65,11 @@ namespace tfel
       struct FunctionGeneratorManager;
       static FunctionGeneratorManager&
       getFunctionGeneratorManager(void);
+
+      static double max(const double,const double);
+      static double min(const double,const double);
+      static double Heavyside(const double);
+
       static bool
       isValidIdentifier(const std::string&);
       static void
@@ -207,9 +212,6 @@ namespace tfel
       ~Evaluator();
     private:
       static ExternalFunctionRegister externalFunctionRegister TFEL_VISIBILITY_LOCAL;
-      static double TFEL_VISIBILITY_LOCAL max(const double,const double);
-      static double TFEL_VISIBILITY_LOCAL min(const double,const double);
-      static double TFEL_VISIBILITY_LOCAL Heavyside(const double);
       std::vector<double> variables;
       std::map<std::string,std::vector<double>::size_type> positions;
       tfel::utilities::shared_ptr<tfel::math::parser::Expr> expr;

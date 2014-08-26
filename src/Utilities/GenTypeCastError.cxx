@@ -6,6 +6,8 @@
  * \date   29 Jan. 2009
  */
 
+#include<string>
+
 #include"TFEL/Utilities/GenTypeCastError.hxx"
 
 namespace tfel
@@ -15,7 +17,7 @@ namespace tfel
   {
 
     GenTypeCastError::GenTypeCastError()
-      : std::runtime_error("GenTypeCastError : bad cast")
+      : std::runtime_error(std::string("GenTypeCastError : bad cast"))
     {} // end of GenTypeCastError::GenTypeCastError
 
   } // end of namespace utilities

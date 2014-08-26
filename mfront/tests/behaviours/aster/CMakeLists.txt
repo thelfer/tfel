@@ -93,6 +93,8 @@ macro(test_aster test_arg)
     PROPERTIES DEPENDS MFrontAsterBehaviours)
   set_tests_properties(aster${test_arg}_mtest
     PROPERTIES DEPENDS mtest)
+  set_tests_properties(aster${test_arg}_mtest
+    PROPERTIES DEPENDS mtest)
   add_custom_target(aster${test_arg}.mtest-install
     ${CMAKE_COMMAND} -E copy aster${test_arg}.mtest
     ${CMAKE_INSTALL_PREFIX}/share/mfront/tests/behaviours/aster/aster${test_arg}.mtest)
