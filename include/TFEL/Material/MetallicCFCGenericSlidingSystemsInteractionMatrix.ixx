@@ -104,6 +104,19 @@ namespace tfel
       return s.m;
     } // end of MetallicCFCGenericSlidingSystemsInteractionMatrix::getInteractionMatrix
 
+    template<typename NumType>
+    const tfel::math::tmatrix<12,12,NumType>&
+    MetallicCFCGenericSlidingSystemsInteractionMatrix<NumType>::getSecondInteractionMatrix(const NumType h1,
+											   const NumType h2,
+											   const NumType h3,
+											   const NumType h4,
+											   const NumType h5,
+											   const NumType h6)
+    {
+      static MetallicCFCGenericSlidingSystemsInteractionMatrix s2(h1,h2,h3,h4,h5,h6);
+      return s2.m;
+    } // end of MetallicCFCGenericSlidingSystemsInteractionMatrix::getInteractionMatrix
+
   } // end of namespace material
 
 } // end of namespace tfel

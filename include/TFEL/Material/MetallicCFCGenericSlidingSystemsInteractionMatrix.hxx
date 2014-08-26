@@ -46,6 +46,24 @@ namespace tfel
 			   const real,
 			   const real,
 			   const real);
+      /*!
+       * \return the interaction matrix
+       * \param[in] h1 : first  interaction coefficient
+       * \param[in] h2 : second interaction coefficient
+       * \param[in] h3 : third  interaction coefficient
+       * \param[in] h4 : fourth interaction coefficient
+       * \param[in] h5 : fifth  interaction coefficient
+       * \param[in] h6 : sixth  interaction coefficient
+       * The interaction matrix is the following :
+       *
+       */
+      static const tfel::math::tmatrix<12,12,real>&
+      getSecondInteractionMatrix(const real,
+				 const real,
+				 const real,
+				 const real,
+				 const real,
+				 const real);
     private:
       /*!
        * constructor (disabled)
