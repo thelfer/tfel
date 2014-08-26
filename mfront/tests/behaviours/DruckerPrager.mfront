@@ -1,0 +1,77 @@
+/*!
+ * \file   DruckerPrager.mfront
+ * \brief  résolution implicite d'une loi de Drucker-Prager
+ * \author Helfer Thomas
+ * \date   18/11/2013
+ */
+
+@Parser    Implicit;
+@Behaviour DruckerPrager;
+
+@Theta 1.;
+@Epsilon 1.e-8;
+
+@MaterialProperty stress young;
+young.setGlossaryName("YoungModulus");
+@MaterialProperty real nu;
+nu.setGlossaryName("PoissonRatio");
+@MaterialProperty real rho;
+rho.setGlossaryName("MassDensity");
+@MaterialProperty real alpha;
+alpha.setGlossaryName("ThermalExpansion");
+
+// ratio between the stress limit in traction and compression
+@MaterialProperty stress tau;
+// limit in compression
+@MaterialProperty stress sigc;
+
+@StateVariable real p;
+p.setGlossaryName("EquivalentPlasticStrain");
+
+@LocalVariable stress a;
+@LocalVariable stress k;
+
+@LocalVariable stress K;
+@LocalVariable stress lambda;
+@LocalVariable stress mu;
+
+@Includes{
+#include"TFEL/Material/Lame.hxx"
+}
+
+/* Initialize Lame coefficients */
+@InitLocalVars{
+  using namespace tfel::material::lame;
+  lambda = computeLambda(young,nu);
+  mu     = computeMu(young,nu);
+  K      = lambda+(2*mu)/3;
+  a      = -3*(tau-1)/(tau+1); 
+  k      = 2*sigc*tau/(tau+1); 
+} 
+
+@ComputeStress{
+  sig = lambda*trace(eel)*StrainStensor::Id()+2*mu*eel;
+}
+
+@Integrator{
+  const stress seq_ = sigmaeq(sig);
+  const stress pr_  = trace(sig)/3.;
+  StrainStensor n_(real(0));
+  if(seq_>1.e-8*young){
+    n_ = 3/(2*seq_)*deviator(sig);
+  }
+  // elasticity
+  StrainStensor np_ = a*StrainStensor::Id()+n_;
+  feel = deel+dp*np_-deto;
+  if(seq_>1.e-8*young){
+    dfeel_ddeel += (2*mu*theta*dp/seq_)*(Stensor4::M()-(n_^n_));
+  }
+  dfeel_ddp = np_;
+  // plasticity
+  const strain f = (a*pr_+seq_-k)/young;
+  if((f>0)||(dp>epsilon)){
+    fp = f;
+    dfp_ddp   = 0;
+    dfp_ddeel = (a*K*StrainStensor::Id()+2*mu*n_)*theta/young;
+  }
+}

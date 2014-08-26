@@ -3,6 +3,7 @@ SUBDIRS = aster castem
 MFRONTS= DDIF2.mfront                                            \
          Elasticity.mfront                                       \
          Plasticity.mfront                                       \
+	 DruckerPrager.mfront                                    \
          Norton.mfront                                           \
          ImplicitNorton.mfront                                   \
 	 ImplicitNortonPlaneStress.mfront                        \
@@ -69,4 +70,6 @@ EXTRA_DIST=CMakeLists.txt                     \
 	   references/polycristals_dd_cfc.ref \
 	   references/hayhurst.ref            \
 	   references/burger.ref              \
-	   references/tvergaard.ref
+	   references/tvergaard.ref           \
+	   references/druckerprager.ref       \
+	   references/druckerprager2.ref

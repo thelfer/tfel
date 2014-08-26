@@ -425,6 +425,8 @@ AC_OUTPUT([debug.sh
            mfront/tests/behaviours/castem/castemelasticity16.mtest
            mfront/tests/behaviours/castem/castemmazars.mtest
            mfront/tests/behaviours/castem/castemlorentz.mtest
+           mfront/tests/behaviours/castem/castemdruckerprager.mtest
+           mfront/tests/behaviours/castem/castemdruckerprager2.mtest
            mfront/tests/behaviours/castem/castemnorton.mtest
            mfront/tests/behaviours/castem/castemnorton2.mtest
            mfront/tests/behaviours/castem/castemnortonrk2.mtest

@@ -1103,6 +1103,7 @@ mfront/tests/behaviours/Chaboche.mfront -text
 mfront/tests/behaviours/Chaboche2.mfront -text
 mfront/tests/behaviours/CompressibleNeoHookeanBehaviour.mfront -text
 mfront/tests/behaviours/DDIF2.mfront -text
+mfront/tests/behaviours/DruckerPrager.mfront -text
 mfront/tests/behaviours/Elasticity.mfront -text
 mfront/tests/behaviours/EllipticCreep.mfront -text
 mfront/tests/behaviours/Hayhurst.mfront -text
@@ -1199,6 +1200,8 @@ mfront/tests/behaviours/castem/Makefile.am -text
 mfront/tests/behaviours/castem/castemburger.mtest.in -text
 mfront/tests/behaviours/castem/castemchaboche.mtest.in -text
 mfront/tests/behaviours/castem/castemchaboche2.mtest.in -text
+mfront/tests/behaviours/castem/castemdruckerprager.mtest.in -text
+mfront/tests/behaviours/castem/castemdruckerprager2.mtest.in -text
 mfront/tests/behaviours/castem/castemelasticity.mtest.in -text
 mfront/tests/behaviours/castem/castemelasticity10.mtest.in -text
 mfront/tests/behaviours/castem/castemelasticity11.mtest.in -text
@@ -1259,6 +1262,8 @@ mfront/tests/behaviours/references/PolyCristalsAngles.txt -text
 mfront/tests/behaviours/references/burger.ref -text
 mfront/tests/behaviours/references/chaboche-aster.ref -text
 mfront/tests/behaviours/references/chaboche2-aster.ref -text
+mfront/tests/behaviours/references/druckerprager.ref -text
+mfront/tests/behaviours/references/druckerprager2.ref -text
 mfront/tests/behaviours/references/elasticity15-aster.ref -text
 mfront/tests/behaviours/references/hayhurst.ref -text
 mfront/tests/behaviours/references/mazars-aster.ref -text

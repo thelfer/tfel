@@ -16,6 +16,7 @@ configure_file("${PROJECT_SOURCE_DIR}/mfront/tests/behaviours/references/PolyCri
 
 set(mfront_tests_SOURCES
   Elasticity Plasticity
+  DruckerPrager
   Norton DDIF2
   Norton_Euler Norton_rk2
   Norton_rk4   Norton_rk42
@@ -110,6 +111,8 @@ test_castem(elasticity15)
 test_castem(elasticity16)
 test_castem(lorentz)
 test_castem(mazars)
+test_castem(druckerprager)
+test_castem(druckerprager2)
 test_castem(norton)
 test_castem(norton2)
 test_castem(nortonrk2)
