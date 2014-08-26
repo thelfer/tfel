@@ -1687,6 +1687,7 @@ mfront/tests/behaviours/cyrano/cyranoelasticity21.mtest.in -text
 mfront/tests/behaviours/cyrano/cyranoellipticcreep.mtest.in -text
 mfront/tests/behaviours/cyrano/cyranoimplicitnorton.mtest.in -text
 mfront/tests/behaviours/cyrano/cyranoimplicitnorton2.mtest.in -text
+mfront/tests/behaviours/cyrano/cyranoimplicitnorton3.mtest.in -text
 mfront/tests/behaviours/cyrano/cyranonorton.mtest.in -text
 mfront/tests/behaviours/cyrano/cyranonorton2.mtest.in -text
 mfront/tests/behaviours/cyrano/cyranoorthotropiccreep.mtest.in -text

@@ -422,7 +422,7 @@ Ce type de décomposition est utilisée dans différents contextes~:
   plasticité.
 \end{enumerate}
 
-\subsection{Description incrémentale la transformation}
+\subsubsection{Description incrémentale la transformation}
 \label{sec:descr-incr-la}
 
 Pour décrire de manière incrémentale la transformation, la

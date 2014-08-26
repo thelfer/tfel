@@ -433,6 +433,7 @@ AC_OUTPUT([debug.sh
            mfront/tests/behaviours/aster/asterchaboche2.mtest
            mfront/tests/behaviours/aster/asterviscochaboche.mtest
 	   mfront/tests/behaviours/aster/asterviscochaboche-memo-nrad.py
+	   mfront/tests/behaviours/aster/asterxx.py
            mfront/tests/behaviours/aster/astermonocristal.mtest
            mfront/tests/behaviours/aster/astermonocristal-2.mtest
            mfront/tests/behaviours/aster/asterimplicitmonocristal.mtest
