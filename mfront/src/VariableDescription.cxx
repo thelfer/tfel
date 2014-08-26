@@ -12,14 +12,14 @@
 
 namespace mfront{
 
-  VariableDescription::VariableDescription(const std::string& type_,
-			 const std::string& name_,
-			 const unsigned short arraySize_,
-			 const unsigned short lineNumber_)
-    : type(type_),
-      name(name_),
-      arraySize(arraySize_),
-      lineNumber(lineNumber_)
+  VariableDescription::VariableDescription(const std::string& t,
+					   const std::string& n,
+					   const unsigned short s,
+					   const unsigned short l)
+    : type(t),
+      name(n),
+      arraySize(s),
+      lineNumber(l)
   {
     using namespace std;
     if(this->arraySize==0){

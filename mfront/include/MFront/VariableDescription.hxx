@@ -36,11 +36,11 @@ namespace mfront
     unsigned short lineNumber;
     /*!
      * Constructor
-     * \param[in] type_      : variable type
-     * \param[in] name_      : variable name
-     * \param[in] arraySize_ : if greater than 1, this variable will
+     * \param[in] t : variable type
+     * \param[in] n : variable name
+     * \param[in] s : if greater than 1, this variable will
      * be considered as an array
-     * \param[in] lineNumber_ : if greater than 1, will be considered as an array
+     * \param[in] l : line number
      */
     VariableDescription(const std::string&,
 			const std::string&,
@@ -54,7 +54,7 @@ namespace mfront
   //! a simple alias
   typedef std::vector<VariableDescription>  VariableDescriptionContainer;
   //! a simple alias for backward compatibility
-  typedef VariableDescriptionContainer VariableDescriptionContainer;
+  typedef VariableDescriptionContainer      VarContainer;
 
 } // end of namespace mfront
 

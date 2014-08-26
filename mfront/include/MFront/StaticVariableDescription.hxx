@@ -45,9 +45,9 @@ namespace mfront{
   //! a simple alias for backward compatibility
   typedef StaticVariableDescription StaticVarHandler;
   //! a simple alias
-  typedef std::vector<StaticVariableDescription>  StaticVariableDesciptionContainer;
+  typedef std::vector<StaticVariableDescription>  StaticVariableDescriptionContainer;
   //! a simple alias for backward compatibility
-  typedef StaticVariableDesciptionContainer       StaticVariableDescriptionContainer;
+  typedef StaticVariableDescriptionContainer      StaticVarContainer;
 
 } // end of namespace mfront
 

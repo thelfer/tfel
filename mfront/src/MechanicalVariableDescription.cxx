@@ -12,12 +12,18 @@
 
 namespace mfront{
 
-  MechanicalVariableDescription::MechanicalVariableDescription(const std::string& type_,
-							       const std::string& name_,
-							       const unsigned short arraySize_,
-							       const unsigned short lineNumber_,
+  MechanicalVariableDescription::MechanicalVariableDescription(const std::string&   t,
+							       const std::string&   n,
+							       const unsigned short s,
+							       const unsigned short l,
 							       const tfel::material::ModellingHypothesis::Hypothesis h)
-    : VariableDescription(type_,name_,arraySize_,lineNumber_),
+    : VariableDescription(t,n,s,l),
+      hypothesis(h)
+  {} // end of MechanicalVariableDescription::MechanicalVariableDescription
+
+  MechanicalVariableDescription::MechanicalVariableDescription(const VariableDescription& v,
+							       const tfel::material::ModellingHypothesis::Hypothesis h)
+    : VariableDescription(v),
       hypothesis(h)
   {} // end of MechanicalVariableDescription::MechanicalVariableDescription
 
