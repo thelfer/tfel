@@ -1223,7 +1223,9 @@ namespace mfront{
     if(b2){
       this->behaviourDataFile << "#include\"TFEL/Math/vector.hxx\"\n";
     }
-    //    this->behaviourDataFile << "#include\"TFEL/Material/MechanicalBehaviourData.hxx\"" << endl;
+    if(this->mb.getBehaviourType()==MechanicalBehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR){
+      this->behaviourDataFile << "#include\"TFEL/Math/tensor.hxx\"\n";
+    }
     this->behaviourDataFile << "#include\"TFEL/Material/ModellingHypothesis.hxx\"" << endl;
     this->behaviourDataFile << endl;
   }
@@ -2855,7 +2857,9 @@ namespace mfront{
     if(b2){
       this->integrationDataFile << "#include\"TFEL/Math/vector.hxx\"\n";
     }
-    //    this->integrationDataFile << "#include\"TFEL/Material/MechanicalIntegrationData.hxx\"\n\n";
+    if(this->mb.getBehaviourType()==MechanicalBehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR){
+      this->behaviourDataFile << "#include\"TFEL/Math/tensor.hxx\"\n";
+    }
   }
 
   void MFrontBehaviourParserCommon::writeIntegrationDataDefaultMembers(void)

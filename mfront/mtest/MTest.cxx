@@ -863,9 +863,10 @@ namespace mfront
       } else if(type==3u){
 	this->b = shared_ptr<MTestBehaviour>(new MTestUmatCohesiveZoneModelBehaviour(this->hypothesis,l,f));
       } else {
-	string msg("MTest::setBehaviour : ");
-	msg += "unsupported behaviour type";
-	throw(runtime_error(msg));
+	ostringstream msg;
+	msg << "MTest::setBehaviour : "
+	  "unsupported behaviour type (" << type << ")";
+	throw(runtime_error(msg.str()));
       }
     }
 #endif

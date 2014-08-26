@@ -7,6 +7,7 @@ MFRONTS= DDIF2.mfront                                            \
          ImplicitNorton.mfront                                   \
 	 ImplicitNortonPlaneStress.mfront                        \
 	 ImplicitNortonGeneralisedPlaneStress.mfront             \
+         ImplicitFiniteStrainNorton.mfront                       \
          ImplicitNorton2.mfront                                  \
          ImplicitNorton_Broyden.mfront                           \
          ImplicitNorton_Broyden2.mfront                          \

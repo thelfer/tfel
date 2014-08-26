@@ -51,6 +51,7 @@ mfront_SOURCES = main.cxx                                             \
 		 MFrontImplicitParserBase.cxx                         \
 		 MFrontImplicitParser.cxx                             \
 		 MFrontImplicitParserII.cxx                           \
+		 MFrontImplicitFiniteStrainParser.cxx                 \
 		 MFrontMultipleIsotropicMisesFlowsParser.cxx          \
 		 MFrontIsotropicBehaviourParserBase.cxx               \
 		 MFrontMFrontLawInterface.cxx                         \

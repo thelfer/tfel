@@ -19,6 +19,7 @@
 #include"MFront/MFrontRungeKuttaParser.hxx"
 #include"MFront/MFrontImplicitParser.hxx"
 #include"MFront/MFrontImplicitParserII.hxx"
+#include"MFront/MFrontImplicitFiniteStrainParser.hxx"
 
 #include"MFront/MFrontModelParser.hxx"
 
@@ -41,7 +42,8 @@ namespace mfront
     // CZM
     MFrontParserProxy<MFrontDefaultCZMParser> proxy100;
     // FiniteStrain
-    MFrontParserProxy<MFrontDefaultFiniteStrainParser> proxy200;
+    MFrontParserProxy<MFrontDefaultFiniteStrainParser>  proxy200;
+    MFrontParserProxy<MFrontImplicitFiniteStrainParser> proxy201;
   } // end of initParsers 
 
 } // end of namespace mfront

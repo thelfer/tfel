@@ -10,7 +10,13 @@
 namespace mfront{
 
   MFrontImplicitParserII::MFrontImplicitParserII()
-  {} // end of MFrontImplicitParserII::MFrontImplicitParserII
+  {
+    // input variables
+    this->registerVariable("eto");
+    this->registerVariable("deto");
+    this->registerVariable("sig");
+    this->mb.declareAsASmallStrainStandardBehaviour();
+  } // end of MFrontImplicitParserII::MFrontImplicitParserII
 
   std::string
   MFrontImplicitParserII::getName(void)

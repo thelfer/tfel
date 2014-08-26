@@ -1034,6 +1034,7 @@ mfront/src/MFrontExcelLawInterface.cxx -text
 mfront/src/MFrontFortranLawInterface.cxx -text
 mfront/src/MFrontGnuplotLawInterface.cxx -text
 mfront/src/MFrontHeader.cxx.in -text
+mfront/src/MFrontImplicitFiniteStrainParser.cxx -text
 mfront/src/MFrontImplicitParser.cxx -text
 mfront/src/MFrontImplicitParserBase.cxx -text
 mfront/src/MFrontImplicitParserII.cxx -text

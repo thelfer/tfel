@@ -53,6 +53,7 @@ set(mfront_SOURCES
     MFrontImplicitParserBase.cxx
     MFrontImplicitParser.cxx
     MFrontImplicitParserII.cxx
+    MFrontImplicitFiniteStrainParser.cxx
     MFrontMultipleIsotropicMisesFlowsParser.cxx
     MFrontIsotropicBehaviourParserBase.cxx
     MFrontMFrontLawInterface.cxx

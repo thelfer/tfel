@@ -13,6 +13,11 @@ namespace mfront{
   {
     using namespace std;
     typedef map<string,string>::value_type MVType;
+    // input variables
+    this->registerVariable("eto");
+    this->registerVariable("deto");
+    this->registerVariable("sig");
+    this->mb.declareAsASmallStrainStandardBehaviour();
     // Default state variable
     this->registerVariable("eel");
     this->registerVariable("deel");

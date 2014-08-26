@@ -65,7 +65,8 @@ nobase_noinst_HEADERS = MFront/MFrontIsotropicBehaviourParserBase.hxx           
 			MFront/MFrontRungeKuttaParser.hxx                           \
 			MFront/MFrontImplicitParserBase.hxx                         \
 			MFront/MFrontImplicitParser.hxx                             \
-			MFront/MFrontImplicitParserII.hxx
+			MFront/MFrontImplicitParserII.hxx                           \
+			MFront/MFrontImplicitFiniteStrainParser.hxx
 
 nobase_noinst_HEADERS += MFront/MFrontCLawInterfaceBase.hxx          \
 			 MFront/MFrontCLawInterface.hxx              \

@@ -25,6 +25,7 @@ set(mfront_tests_SOURCES
   NortonRK3
   NortonRK4
   ImplicitNorton
+  ImplicitFiniteStrainNorton
   ImplicitNortonPlaneStress
   ImplicitNortonGeneralisedPlaneStress
   ImplicitNorton2
