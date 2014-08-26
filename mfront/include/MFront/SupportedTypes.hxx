@@ -133,13 +133,12 @@ namespace mfront
      * \param[in]  suffix : suffix added to variable's names
      * \param[in]  o      : offset in the array from which the variables are initialized
      */
-    virtual TypeSize
+    virtual void
     writeVariableInitializersInBehaviourDataConstructorI(std::ostream&,
 							 const VariableDescriptionContainer&,
 							 const std::string&,
 							 const std::string&,
-							 const std::string&,
-							 const TypeSize&  = TypeSize()) const;
+							 const std::string&) const;
     /*!
      * \param[out] f      : output file
      * \param[in]  v      : variables to be initialized
@@ -148,13 +147,12 @@ namespace mfront
      * \param[in]  suffix : suffix added to variable's names
      * \param[in]  o      : offset in the array from which the variables are initialized
      */
-    virtual TypeSize
+    virtual void
     writeVariableInitializersInBehaviourDataConstructorII(std::ostream&,
 							  const VariableDescriptionContainer&,
 							  const std::string&,
 							  const std::string&,
-							  const std::string&,
-							  const TypeSize& = TypeSize()) const;
+							  const std::string&) const;
     /*!
      * \param[in]  v                 : variables to be initialized
      * \param[in]  useTimeDerivative : declare time derivative of the variables
@@ -168,14 +166,12 @@ namespace mfront
      * \param[in]  v     : variables to be initialized
      * \param[in]  src   : name of the array to which the variables are exported
      * \param[in]  useQt : true if quantities are used
-     * \param[in]  o     : offset in the array to which the variables are exported
      */
-    virtual TypeSize
+    virtual void
     exportResults(std::ostream&,
 		  const VariableDescriptionContainer&,
 		  const std::string&,
-		  const bool,
-		  const TypeSize&  = TypeSize()) const;
+		  const bool) const;
     
     /*!
      * \param[in]  v   : variables

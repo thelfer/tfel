@@ -213,7 +213,6 @@ namespace mfront{
 
     virtual void
     writeVariableDescriptionContainerToGibiane(std::ostream&,
-					       unsigned short&,
 					       const Hypothesis,
 					       const VariableDescriptionContainer&) const;
 

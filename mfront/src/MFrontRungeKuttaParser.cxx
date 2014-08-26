@@ -129,7 +129,8 @@ namespace mfront{
       this->setDefaultAlgorithm();
     }
     for(set<Hypothesis>::const_iterator ph=h.begin();ph!=h.end();++ph){
-      string ib;
+#warning "HERE"
+      CodeBlock ib;
       for(VariableDescriptionContainer::const_iterator p=sv.begin();p!=sv.end();++p){
 	string currentVarName = p->name + "_";
 	if(getVerboseMode()>=VERBOSE_DEBUG){
@@ -145,9 +146,9 @@ namespace mfront{
 	this->registerVariable(currentVarName,false);
 	this->mb.addLocalVariable(*ph,VariableDescription(p->type,currentVarName,p->arraySize,0u));
 	if(this->useDynamicallyAllocatedVector(p->arraySize)){
-	  ib += "this->"+currentVarName +".resize("+toString(p->arraySize)+");\n";
+	  ib.code += "this->"+currentVarName +".resize("+toString(p->arraySize)+");\n";
 	}
-	ib += "this->" +currentVarName + " = this->" + p->name + ";\n";
+	ib.code += "this->" +currentVarName + " = this->" + p->name + ";\n";
 	const unsigned short n =
 	  this->mb.getAttribute<unsigned short>(ModellingHypothesis::UNDEFINEDHYPOTHESIS,
 						MechanicalBehaviourData::numberOfEvaluations);
@@ -180,15 +181,16 @@ namespace mfront{
     set<Hypothesis> h;
     this->readVariableList(ev,h,&MechanicalBehaviourDescription::addExternalStateVariables,true,true,false);
     for(set<Hypothesis>::const_iterator ph=h.begin();ph!=h.end();++ph){
-      string ib;
+#warning "HERE"
+      CodeBlock ib;
       for(VariableDescriptionContainer::const_iterator p=ev.begin();p!=ev.end();++p){
 	string currentVarName = p->name + "_";
 	this->registerVariable(currentVarName,false);
 	this->mb.addLocalVariable(*ph,VariableDescription(p->type,currentVarName,p->arraySize,0u));
 	if(this->useDynamicallyAllocatedVector(p->arraySize)){
-	  ib += "this->"+currentVarName+".resize("+toString(p->arraySize)+");\n";
+	  ib.code += "this->"+currentVarName+".resize("+toString(p->arraySize)+");\n";
 	}
-	ib += "this->" + currentVarName + " = this->" + p->name + ";\n";
+	ib.code += "this->" + currentVarName + " = this->" + p->name + ";\n";
       }
       this->mb.setCode(*ph,MechanicalBehaviourData::BeforeInitializeLocalVariables,ib,
 		       MechanicalBehaviourData::CREATEORAPPEND,
@@ -487,8 +489,8 @@ namespace mfront{
     const Hypothesis h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
     map<DrivingVariable,
 	ThermodynamicForce>::const_iterator pm;
-    string ib; // code inserted at the beginning of the local variable initialisation
-    string ie; // code inserted at the end of the local variable initialisation
+    CodeBlock ib; // code inserted at the beginning of the local variable initialisation
+    CodeBlock ie; // code inserted at the end of the local variable initialisation
     if(!this->mb.hasAttribute(h,MechanicalBehaviourData::algorithm)){
       this->setDefaultAlgorithm();
     }
@@ -498,7 +500,7 @@ namespace mfront{
 	  this->mb.getAttribute<unsigned short>(h,MechanicalBehaviourData::numberOfEvaluations);
     // registring the eel_ variable
     this->mb.addLocalVariable(h,VariableDescription("StrainStensor","eel_",1u,0u));
-    ib += "this->eel_ = this->eel;\n";
+    ib.code += "this->eel_ = this->eel;\n";
     for(unsigned short i=0u;i!=n;++i){
       string currentVarName = "deel_K"+toString(static_cast<unsigned short>(i+1u));
       this->registerVariable(currentVarName,false);
@@ -527,28 +529,28 @@ namespace mfront{
     }
     // minimal time step
     if(this->mb.hasParameter(h,"dtmin")){
-      ib += "if(this->dt<" + this->mb.getClassName() + "::dtmin){\n";
-      ib += "this->dt=" + this->mb.getClassName() + "::dtmin;\n";
-      ib += "}\n";
+      ib.code += "if(this->dt<" + this->mb.getClassName() + "::dtmin){\n";
+      ib.code += "this->dt=" + this->mb.getClassName() + "::dtmin;\n";
+      ib.code += "}\n";
     } else {
-      ib += "if(this->dt<100*numeric_limits<time>::min()){\n";
-      ib += "string msg(\"" + this->mb.getClassName() + "::" + this->mb.getClassName() +"\");\n";
-      ib += "msg += \"time step too small.\";\n";
-      ib += "throw(runtime_error(msg));\n";
-      ib += "}\n";
+      ib.code += "if(this->dt<100*numeric_limits<time>::min()){\n";
+      ib.code += "string msg(\"" + this->mb.getClassName() + "::" + this->mb.getClassName() +"\");\n";
+      ib.code += "msg += \"time step too small.\";\n";
+      ib.code += "throw(runtime_error(msg));\n";
+      ib.code += "}\n";
     }
     // driving variables
     if((algorithm!="RungeKutta4/2")&&
        (algorithm!="RungeKutta5/4")){
       for(pm=this->mb.getMainVariables().begin();pm!=this->mb.getMainVariables().end();++pm){
 	const DrivingVariable& dv = pm->first;
-	ib += "this->" + dv.name + "_ = this->" + dv.name + ";\n";
+	ib.code += "this->" + dv.name + "_ = this->" + dv.name + ";\n";
       }
     }
     // temperature
     if((algorithm!="RungeKutta4/2")&&
        (algorithm!="RungeKutta5/4")){
-      ib += "this->T_ = this->T;\n";
+      ib.code += "this->T_ = this->T;\n";
     }
     this->mb.setCode(h,MechanicalBehaviourData::BeforeInitializeLocalVariables,ib,
 		     MechanicalBehaviourData::CREATEORAPPEND,
@@ -557,7 +559,7 @@ namespace mfront{
     for(pm=this->mb.getMainVariables().begin();pm!=this->mb.getMainVariables().end();++pm){
       const DrivingVariable& dv = pm->first;
       if(dv.increment_known){
-	ie += "this->d" + dv.name + "_ = (this->d"+dv.name+")/(this->dt);\n";
+	ie.code += "this->d" + dv.name + "_ = (this->d"+dv.name+")/(this->dt);\n";
       } else {
 	string msg("MFrontRungeKuttaParser::endsInputFileProcessing : ");
 	msg += "unsupported driving variable '"+dv.name+"'";
@@ -566,7 +568,7 @@ namespace mfront{
     }
     if((algorithm!="RungeKutta4/2")&&
        (algorithm!="RungeKutta5/4")){
-      ie += "this->computeStress();\n";
+      ie.code += "this->computeStress();\n";
     }
     this->mb.setCode(h,MechanicalBehaviourData::AfterInitializeLocalVariables,ie,
 		     MechanicalBehaviourData::CREATEORAPPEND,
@@ -591,7 +593,7 @@ namespace mfront{
     this->behaviourFile << "using namespace tfel::math;" << endl;
     this->writeStandardPerformanceProfiling(this->behaviourFile,
 					    MechanicalBehaviourData::ComputeStress);
-    this->behaviourFile << this->mb.getCode(h,MechanicalBehaviourData::ComputeStress) << endl;
+    this->behaviourFile << this->mb.getCode(h,MechanicalBehaviourData::ComputeStress).code << endl;
     this->behaviourFile << "return true;" << endl; 
     this->behaviourFile << "} // end of " << this->mb.getClassName() << "::computeStress" << endl << endl;
     this->behaviourFile << "bool\ncomputeFinalStress(void){" << endl;
@@ -601,7 +603,7 @@ namespace mfront{
 		      this->behaviourFile,this->mb.getMaterialLaws());		      
     this->writeStandardPerformanceProfiling(this->behaviourFile,
 					    MechanicalBehaviourData::ComputeFinalStress);
-    this->behaviourFile << this->mb.getCode(h,MechanicalBehaviourData::ComputeFinalStress) << endl;
+    this->behaviourFile << this->mb.getCode(h,MechanicalBehaviourData::ComputeFinalStress).code << endl;
     this->behaviourFile << "return true;" << endl; 
     this->behaviourFile << "} // end of " << this->mb.getClassName() << "::computeFinalStress" << endl << endl;
     this->behaviourFile << "bool\ncomputeDerivative(void){" << endl;
@@ -611,7 +613,7 @@ namespace mfront{
 					    MechanicalBehaviourData::ComputeDerivative);
     writeMaterialLaws("MFrontRungeKuttaParser::writeBehaviourParserSpecificMembers",
 		      this->behaviourFile,this->mb.getMaterialLaws());		      
-    this->behaviourFile << this->mb.getCode(h,MechanicalBehaviourData::ComputeDerivative) << endl;
+    this->behaviourFile << this->mb.getCode(h,MechanicalBehaviourData::ComputeDerivative).code << endl;
     this->behaviourFile << "return true;" << endl; 
     this->behaviourFile << "} // end of " << this->mb.getClassName() << "::computeDerivative" << endl << endl;
   } // end of writeBehaviourParserSpecificMembers
@@ -640,7 +642,7 @@ namespace mfront{
 			this->behaviourFile,this->mb.getMaterialLaws());
       this->writeStandardPerformanceProfiling(this->behaviourFile,
 					      MechanicalBehaviourData::UpdateAuxiliaryStateVariables);
-      this->behaviourFile << d.getCode(MechanicalBehaviourData::UpdateAuxiliaryStateVariables) << endl;
+      this->behaviourFile << d.getCode(MechanicalBehaviourData::UpdateAuxiliaryStateVariables).code << endl;
       this->behaviourFile << "}\n\n";
     }
   } // end of  MFrontRungeKuttaParser::writeBehaviourUpdateAuxiliaryStateVariables
@@ -2190,7 +2192,7 @@ namespace mfront{
 			this->behaviourFile,this->mb.getMaterialLaws());
       this->writeStandardPerformanceProfiling(this->behaviourFile,
 					      MechanicalBehaviourData::ComputeTangentOperator);
-      this->behaviourFile << this->mb.getCode(h,MechanicalBehaviourData::ComputeTangentOperator) << '\n';
+      this->behaviourFile << this->mb.getCode(h,MechanicalBehaviourData::ComputeTangentOperator).code << '\n';
       this->behaviourFile << "return true;\n";
       this->behaviourFile << "}\n\n";
     } else {

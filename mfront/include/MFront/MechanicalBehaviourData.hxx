@@ -16,6 +16,7 @@
 #include"TFEL/Config/TFELConfig.hxx"
 #include"TFEL/Utilities/SmartPtr.hxx"
 
+#include"MFront/CodeBlock.hxx"
 #include"MFront/VariableDescription.hxx"
 #include"MFront/DrivingVariable.hxx"
 #include"MFront/BoundsDescription.hxx"
@@ -192,6 +193,9 @@ namespace mfront{
     getMaterialProperties(void) const;
 
     const VariableDescriptionContainer&
+    getPersistentVariables(void) const;
+
+    const VariableDescriptionContainer&
     getIntegrationVariables(void) const;
 
     const VariableDescriptionContainer&
@@ -210,6 +214,9 @@ namespace mfront{
     getParameters(void) const;
 
     const VariableDescription&
+    getPersistentVariableHandler(const std::string&) const;
+
+    const VariableDescription&
     getIntegrationVariableHandler(const std::string&) const;
 
     const VariableDescription&
@@ -224,6 +231,9 @@ namespace mfront{
 
     bool
     isLocalVariableName(const std::string&) const;
+
+    bool
+    isPersistentVariableName(const std::string&) const;
 
     bool
     isIntegrationVariableName(const std::string&) const;
@@ -388,14 +398,14 @@ namespace mfront{
      * \param[in] p : position
      */
     void setCode(const std::string&,
-		 const std::string&,
+		 const CodeBlock&,
 		 const Mode,
 		 const Position);
     /*!
      * \return the code block associated with the given name
      * \param[in] n : name
      */
-    const std::string&
+    const CodeBlock&
     getCode(const std::string&) const;
     /*!
      * \return true if a code block associated with the given name has
@@ -523,34 +533,34 @@ namespace mfront{
     void registerVariable(const std::string&);
   private:
     /*!
-     * structure used to handle a block of code
+     * structure used to handle a blocks of code
      */
-    struct CodeBlock
+    struct CodeBlocksAggregator
     {
       //! a simple alias
       typedef MechanicalBehaviourData::Position Position;
       //! a simple alias
       typedef MechanicalBehaviourData::Mode Mode;
       //! constructor
-      CodeBlock();
+      CodeBlocksAggregator();
       /*!
      * setter
      * \param[in] c : code
      * \param[in] p : position
      */
-      void set(const std::string&,
+      void set(const CodeBlock&,
 	       const Position);
       /*!
        * setter
        * \param[in] c : code
        * \param[in] p : position
        */
-      void replace(const std::string&,
+      void replace(const CodeBlock&,
 		   const Position);
       /*!
        * \return the code block
        */
-      const std::string&
+      const CodeBlock&
       get(void) const;
     private:
       /*! 
@@ -570,7 +580,7 @@ namespace mfront{
       /*!
        * resulting code block
        */
-      std::string cblock;
+      CodeBlock cblock;
       //! get already called
       mutable bool get_already_called;
     };
@@ -616,11 +626,15 @@ namespace mfront{
     /*!
      * registred code blocks
      */
-    std::map<std::string,CodeBlock> cblocks;
+    std::map<std::string,CodeBlocksAggregator> cblocks;
     /*!
      * registred material properties
      */
     VariableDescriptionContainer materialProperties;
+    /*!
+     * registred persistent variables
+     */
+    VariableDescriptionContainer persistentVariables;
     /*!
      * registred integration variables
      */

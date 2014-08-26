@@ -302,17 +302,16 @@ namespace mfront{
 	    (this->getTensorSize()==0));
   } // end of SupportedTypes::TypeSize::isNull
 
-  SupportedTypes::TypeSize
+  void
   SupportedTypes::writeVariableInitializersInBehaviourDataConstructorI(std::ostream& f,
 								       const VariableDescriptionContainer& v,
 								       const std::string& src,
 								       const std::string& prefix,
-								       const std::string& suffix,
-								       const SupportedTypes::TypeSize& o) const
+								       const std::string& suffix) const
   {
     using namespace std;
     VariableDescriptionContainer::const_iterator p;
-    SupportedTypes::TypeSize currentOffset = o;
+    SupportedTypes::TypeSize currentOffset;
     if(!v.empty()){
       for(p=v.begin();p!=v.end();++p){
 	if(p->arraySize==1u){
@@ -337,7 +336,6 @@ namespace mfront{
 	currentOffset+=this->getTypeSize(p->type,p->arraySize);
       }
     }
-    return currentOffset;
   } // end of SupportedTypes::writeVariableInitializersInBehaviourDataConstructorI
 
   bool
@@ -352,17 +350,16 @@ namespace mfront{
     return this->areDynamicallyAllocatedVectorsAllowed_;
   } // end of SupportedTypes::areDynamicallyAllocatedVectorsAllowed
 
-  SupportedTypes::TypeSize
+  void
   SupportedTypes::writeVariableInitializersInBehaviourDataConstructorII(std::ostream& f,
 									const VariableDescriptionContainer& v,
 									const std::string& src,
 									const std::string& prefix,
-									const std::string& suffix,
-									const SupportedTypes::TypeSize& o) const
+									const std::string& suffix) const
   {
     using namespace std;
     VariableDescriptionContainer::const_iterator p;
-    SupportedTypes::TypeSize currentOffset = o;
+    SupportedTypes::TypeSize currentOffset;
     if(!v.empty()){
       for(p=v.begin();p!=v.end();++p){
 	if(p->arraySize==1u){
@@ -431,7 +428,6 @@ namespace mfront{
 	}
       }
     }
-    return currentOffset;
   } // end of SupportedTypes::writeVariableInitializersInBehaviourDataConstructorII
 
   std::string
@@ -535,16 +531,15 @@ namespace mfront{
     f << "}\n"; 
   }
 
-  SupportedTypes::TypeSize
+  void
   SupportedTypes::exportResults(std::ostream& f,
 				const VariableDescriptionContainer& v,
 				const std::string& dest,
-				const bool useQt,
-				const SupportedTypes::TypeSize& o) const
+				const bool useQt) const
   {
     using namespace std;
     VariableDescriptionContainer::const_iterator p;
-    SupportedTypes::TypeSize currentOffset = o;
+    SupportedTypes::TypeSize currentOffset;
     if(!v.empty()){
       for(p=v.begin();p!=v.end();++p){
 	SupportedTypes::TypeFlag flag = this->getTypeFlag(p->type);
@@ -626,7 +621,6 @@ namespace mfront{
 	}
       }
     }
-    return currentOffset;
   }
 
   void

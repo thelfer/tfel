@@ -46,9 +46,10 @@ namespace mfront{
     this->registerVariable("T_",false);
     this->mb.addLocalVariable(h,VariableDescription("temperature","T_",1u,0u));
     // local variable initialisation
-    string initLocalVars("// initialisation Lame's coefficient\n"
-			 "this->lambda=tfel::material::lame::computeLambda(this->young,this->nu);\n"
-			 "this->mu=tfel::material::lame::computeMu(this->young,this->nu);\n");
+    CodeBlock initLocalVars;
+    initLocalVars.code = "// initialisation Lame's coefficient\n"
+      "this->lambda=tfel::material::lame::computeLambda(this->young,this->nu);\n"
+      "this->mu=tfel::material::lame::computeMu(this->young,this->nu);\n";
     this->mb.setCode(h,MechanicalBehaviourData::BeforeInitializeLocalVariables,
 		     initLocalVars,MechanicalBehaviourData::CREATEORAPPEND,
 		     MechanicalBehaviourData::AT_BEGINNING);
@@ -217,8 +218,8 @@ namespace mfront{
       this->mb.setParameterDefaultValue(h,"iterMax",iterMax);
     }
     // temperature at the midle of the time step
-    string initLocalVars;
-    initLocalVars += "this->T_ = this->T+(" + this->getClassName() + "::theta)*(this->dT);\n";
+    CodeBlock initLocalVars;
+    initLocalVars.code = "this->T_ = this->T+(" + this->getClassName() + "::theta)*(this->dT);\n";
     this->mb.setCode(ModellingHypothesis::UNDEFINEDHYPOTHESIS,
 		     MechanicalBehaviourData::BeforeInitializeLocalVariables,
     		     initLocalVars,MechanicalBehaviourData::CREATEORAPPEND,
@@ -236,12 +237,12 @@ namespace mfront{
     set<Hypothesis> h;
     this->readVariableList(ev,h,&MechanicalBehaviourDescription::addExternalStateVariables,true,true,false);
     for(set<Hypothesis>::const_iterator ph=h.begin();ph!=h.end();++ph){
-      string ib;
+      CodeBlock ib;
       for(VariableDescriptionContainer::const_iterator p=ev.begin();p!=ev.end();++p){
 	string currentVarName = p->name + "_";
 	this->registerVariable(currentVarName,false);
 	this->mb.addLocalVariable(*ph,VariableDescription(p->type,currentVarName,p->arraySize,0u));
-	ib += "this->" + currentVarName + " = this->" + p->name +
+	ib.code = "this->" + currentVarName + " = this->" + p->name +
 	  "+(" + this->mb.getClassName() + "::theta)*(this->d" + p->name + ");\n";
       }
       this->mb.setCode(*ph,MechanicalBehaviourData::BeforeInitializeLocalVariables,ib,

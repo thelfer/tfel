@@ -1011,6 +1011,7 @@ mfront/include/MFront/Aster/AsterStressFreeExpansionHandler.hxx -text
 mfront/include/MFront/Aster/AsterTangentOperator.hxx -text
 mfront/include/MFront/Aster/AsterTraits.hxx -text
 mfront/include/MFront/BoundsDescription.hxx -text
+mfront/include/MFront/CodeBlock.hxx -text
 mfront/include/MFront/Cyrano/Cyrano.hxx -text
 mfront/include/MFront/Cyrano/CyranoBehaviourHandler.hxx -text
 mfront/include/MFront/Cyrano/CyranoComputeStiffnessTensor.hxx -text
@@ -2124,3 +2125,5 @@ tfel-doc/src/TestDocMain.cxx -text
 tfel-doc/src/TestDocParser.cxx -text
 tfel-doc/src/TestDocumentation.cxx -text
 tfel-doc/src/tfel-doc.cxx -text
+tools/glossary/generate_glossary.cxx -text
+tools/glossary/glossary.txt -text

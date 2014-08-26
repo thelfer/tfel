@@ -1089,6 +1089,13 @@ namespace mfront
   }  // end of MechanicalBehaviourDescription::isLocalVariableName
 
   bool
+  MechanicalBehaviourDescription::isPersistentVariableName(const Hypothesis h,
+							      const std::string& n) const
+  {
+    return this->getData(h,&MechanicalBehaviourData::isPersistentVariableName,n);
+  }  // end of MechanicalBehaviourDescription::isPersistentVariableName
+
+  bool
   MechanicalBehaviourDescription::isIntegrationVariableName(const Hypothesis h,
 							      const std::string& n) const
   {
@@ -1163,7 +1170,7 @@ namespace mfront
   void
   MechanicalBehaviourDescription::setCode(const Hypothesis h,
 					  const std::string& n,
-					  const std::string& c,
+					  const CodeBlock& c,
 					  const Mode m,
 					  const Position p)
   {
@@ -1196,7 +1203,7 @@ namespace mfront
     }
   } // end of MechanicalBehaviourDescription::setCode
 
-  std::string
+  const CodeBlock&
   MechanicalBehaviourDescription::getCode(const Hypothesis h,
 					  const std::string& n) const
   {

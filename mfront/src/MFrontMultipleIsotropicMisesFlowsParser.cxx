@@ -463,7 +463,7 @@ namespace mfront{
     cname << MechanicalBehaviourData::FlowRule << flows.size() << endl;
     this->readCodeBlock(*this,cname.str(),
 			&MFrontMultipleIsotropicMisesFlowsParser::flowRuleVariableModifier,true,false);
-    flow.flowRule = this->mb.getCode(ModellingHypothesis::UNDEFINEDHYPOTHESIS,cname.str());
+    flow.flowRule = this->mb.getCode(ModellingHypothesis::UNDEFINEDHYPOTHESIS,cname.str()).code;
     this->flows.push_back(flow);
   } // end of MFrontMultipleIsotropicMisesFlowsParser::treatFlowRule
 

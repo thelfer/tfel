@@ -114,9 +114,8 @@ namespace mfront{
 			      &MFrontImplicitParserBase::treatRequireStiffnessOperator);
     this->registerNewCallBack("@MaximumIncrementValuePerIteration",
 			      &MFrontImplicitParserBase::treatMaximumIncrementValuePerIteration);
-    // this->registerNewCallBack("@IntegrationVariable",
-    // 			      &MFrontImplicitParserBase::treatIntegrationVariable);
-    //    this->disableCallBack("@Integrator");
+    this->registerNewCallBack("@IntegrationVariable",
+    			      &MFrontImplicitParserBase::treatIntegrationVariable);
     this->disableCallBack("@ComputedVar");
     this->disableCallBack("@UseQt");
   } // end of MFrontImplicitParserBase::MFrontImplicitParserBase
@@ -129,13 +128,13 @@ namespace mfront{
     this->readVariableList(v,h,&MechanicalBehaviourDescription::addStateVariables,true,true,false);
   }
 
-  // void MFrontImplicitParserBase::treatIntegrationVariables(void)
-  // {
-  //   using namespace std;
-  //   VarContainer v;
-  //   set<Hypothesis> h;
-  //   this->readVariableList(v,h,&MechanicalBehaviourDescription::addIntegrationVariables,true,true,false);
-  // }
+  void MFrontImplicitParserBase::treatIntegrationVariable(void)
+  {
+    using namespace std;
+    VarContainer v;
+    set<Hypothesis> h;
+    this->readVariableList(v,h,&MechanicalBehaviourDescription::addIntegrationVariables,true,true,false);
+  }
 
   void MFrontImplicitParserBase::treatInitJacobian(void)
   {
@@ -1344,7 +1343,7 @@ namespace mfront{
 					      MechanicalBehaviourData::ComputeStress);
       writeMaterialLaws("MFrontImplicitParserBase::writeBehaviourParserSpecificMembers",
 			this->behaviourFile,this->mb.getMaterialLaws());
-      this->behaviourFile << this->mb.getCode(h,MechanicalBehaviourData::ComputeStress) << endl;
+      this->behaviourFile << this->mb.getCode(h,MechanicalBehaviourData::ComputeStress).code << endl;
       this->behaviourFile << "} // end of " << this->mb.getClassName() << "::computeStress\n\n";
     }
     if(this->mb.hasCode(h,MechanicalBehaviourData::ComputeFinalStress)){
@@ -1356,7 +1355,7 @@ namespace mfront{
 					      MechanicalBehaviourData::ComputeFinalStress);
       writeMaterialLaws("MFrontImplicitParserBase::writeBehaviourParserSpecificMembers",
 			this->behaviourFile,this->mb.getMaterialLaws());
-      this->behaviourFile << this->mb.getCode(h,MechanicalBehaviourData::ComputeFinalStress) << endl;
+      this->behaviourFile << this->mb.getCode(h,MechanicalBehaviourData::ComputeFinalStress).code << endl;
       this->behaviourFile << "} // end of " << this->mb.getClassName() << "::computeStress\n\n";
       this->behaviourFile << endl;
     }
@@ -2118,7 +2117,7 @@ namespace mfront{
     	this->behaviourFile << "f" << p->name << " *= " << this->nf.find(p->name)->second << ";" << endl;
       }
     }
-    this->behaviourFile << this->mb.getCode(h,MechanicalBehaviourData::Integrator) << "\n";
+    this->behaviourFile << this->mb.getCode(h,MechanicalBehaviourData::Integrator).code << "\n";
     for(p=d.getIntegrationVariables().begin();p!=d.getIntegrationVariables().end();++p){
       if(this->nf.find('f'+p->name)!=this->nf.end()){
     	this->behaviourFile << "f" << p->name << "*= real(1)/(" << this->nf.find('f'+p->name)->second << ");" << endl;
@@ -2614,7 +2613,7 @@ namespace mfront{
 					      MechanicalBehaviourData::ComputeTangentOperator);
       writeMaterialLaws("MFrontImplicitParserBase::writeBehaviourComputeTangentOperator",
 			this->behaviourFile,this->mb.getMaterialLaws());
-      this->behaviourFile << this->mb.getCode(h,MechanicalBehaviourData::ComputeTangentOperator);
+      this->behaviourFile << this->mb.getCode(h,MechanicalBehaviourData::ComputeTangentOperator).code;
       this->behaviourFile << "return true;\n";
       this->behaviourFile << "}\n\n";
     } else {
@@ -2676,7 +2675,7 @@ namespace mfront{
     if(this->mb.hasCode(h,MechanicalBehaviourData::InitializeJacobian)){
       this->writeStandardPerformanceProfilingBegin(this->behaviourFile,
 						   MechanicalBehaviourData::InitializeJacobian);
-      this->behaviourFile << this->mb.getCode(h,MechanicalBehaviourData::InitializeJacobian);
+      this->behaviourFile << this->mb.getCode(h,MechanicalBehaviourData::InitializeJacobian).code;
       this->writeStandardPerformanceProfilingEnd(this->behaviourFile);
     } else {
       if((this->algorithm==MFrontImplicitParserBase::BROYDEN)||
@@ -2838,7 +2837,7 @@ namespace mfront{
     for(set<Hypothesis>::const_iterator ph=mh.begin();ph!=mh.end();++ph){
       if(*ph!=ModellingHypothesis::UNDEFINEDHYPOTHESIS){
 	if(this->mb.hasCode(*ph,MechanicalBehaviourData::ComputePredictor)){
-	  string predictor;
+	  CodeBlock predictor;
 	  VariableDescriptionContainer::const_iterator p;
 	  const MechanicalBehaviourData& d = this->mb.getMechanicalBehaviourData(*ph);
 	  const VariableDescriptionContainer& sv = d.getIntegrationVariables();
@@ -2846,7 +2845,7 @@ namespace mfront{
 	    if(this->integrationVariablesIncrementsUsedInPredictor.find('d'+p->name)!=
 	       this->integrationVariablesIncrementsUsedInPredictor.end()){
 	      if(nf.find(p->name)!=nf.end()){
-		predictor += "this->d"+p->name + " /= " + nf.find(p->name)->second + ";\n";
+		predictor.code += "this->d"+p->name + " /= " + nf.find(p->name)->second + ";\n";
 	      }
 	    }
 	  }
@@ -2859,7 +2858,7 @@ namespace mfront{
     if(!this->mb.areAllMechanicalDataSpecialised()){
       if(this->mb.hasCode(ModellingHypothesis::UNDEFINEDHYPOTHESIS,
 			  MechanicalBehaviourData::ComputePredictor)){
-	string predictor;
+	CodeBlock predictor;
 	VariableDescriptionContainer::const_iterator p;
 	const MechanicalBehaviourData& d =
 	  this->mb.getMechanicalBehaviourData(ModellingHypothesis::UNDEFINEDHYPOTHESIS);
@@ -2868,7 +2867,7 @@ namespace mfront{
 	  if(this->integrationVariablesIncrementsUsedInPredictor.find('d'+p->name)!=
 	     this->integrationVariablesIncrementsUsedInPredictor.end()){
 	    if(nf.find(p->name)!=nf.end()){
-	      predictor += "this->d"+p->name + " /= " + nf.find(p->name)->second + ";\n";
+	      predictor.code += "this->d"+p->name + " /= " + nf.find(p->name)->second + ";\n";
 	    }
 	  }
 	}

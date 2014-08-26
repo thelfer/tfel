@@ -105,7 +105,7 @@ namespace mfront
     for(ph=h.begin();ph!=h.end();++ph){
       this->current = beg;
       shared_ptr<VariableModifier> vm(makeVariableModifier(child,*ph,m));
-      const string& c = this->readNextBlock(vm,b);
+      const CodeBlock& c = this->readNextBlock(vm,b);
       this->disableVariableDeclaration(*ph);
       this->mb.setCode(*ph,n,c,o.m,o.p);
     }
@@ -138,7 +138,7 @@ namespace mfront
       this->current = beg;
       shared_ptr<VariableModifier> vm(makeVariableModifier(child,*ph,m));
       shared_ptr<WordAnalyser>     wa(makeWordAnalyser(child,*ph,a));
-      const string& c = this->readNextBlock(b,"{","}",true,true,vm,wa);
+      const CodeBlock& c = this->readNextBlock(b,"{","}",true,true,vm,wa);
       this->disableVariableDeclaration(*ph);
       this->mb.setCode(*ph,n,c,o.m,o.p);
     }
@@ -170,8 +170,8 @@ namespace mfront
     const TokensContainer::const_iterator beg = this->current;
     for(ph=h.begin();ph!=h.end();++ph){
       this->current = beg;
-      string c1;
-      string c2;
+      CodeBlock c1;
+      CodeBlock c2;
       this->readNextBlock(c1,c2,makeVariableModifier(child,*ph,m1),
 			  makeVariableModifier(child,*ph,m2),b);
       this->disableVariableDeclaration(*ph);

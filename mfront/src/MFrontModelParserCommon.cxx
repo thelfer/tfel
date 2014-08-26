@@ -617,7 +617,6 @@ namespace mfront{
     }
   } // end of MFrontModelParserCommon::treatOutput(void)
 
-
   void
   MFrontModelParserCommon::treatInput(void)
   {

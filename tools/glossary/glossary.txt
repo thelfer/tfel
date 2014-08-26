@@ -1,0 +1,473 @@
+"MassDensity"{
+ unit : "kg/m^{3}";
+ type : "scalaire";
+ short_description : "la densité massique";
+};
+
+"OrthotropicAxisX1"{
+ unit : " ";
+ type : "scalaire";
+ short_description : "la première coordonnée du premier axe d'orthotropie.";
+ latex_description : {"Cette quantité est automatiquement"
+  "calculée par \licos{} à partir de la définition du matériau"};
+};
+
+"OrthotropicAxisY1"{
+ unit : " ";
+ type : "scalaire";
+ short_description :"la deuxième coordonnée du premier axe d'orthotropie.";
+ latex_description : {"Cette quantité est automatiquement"
+  "calculée par \licos{} à partir de la définition du matériau"};
+};
+
+"OrthotropicAxisZ1"{
+ unit : " ";
+ type : "scalaire";
+ short_description : "la troisième coordonnée du premier axe d'orthotropie.";
+ latex_description : {"Cette quantité est automatiquement"
+  "calculée par \licos{} à partir de la définition du matériau"};
+};
+
+"OrthotropicAxisX2"{
+ unit : " ";
+ type : "scalaire";
+ short_description : "la première coordonnée du second axe d'orthotropie.";
+ latex_description : {"Cette quantité est automatiquement"
+  "calculée par \licos{} à partir de la définition du matériau"};
+};
+
+"OrthotropicAxisY2"{
+ unit : " ";
+ type : "scalaire";
+ short_description : "la deuxième coordonnée du second axe d'orthotropie.";
+ latex_description : {"Cette quantité est automatiquement"
+ " calculée par \licos{} à partir de la définition du matériau"};
+};
+
+"OrthotropicAxisZ2"{
+ unit : " ";
+ type : "scalaire";
+ short_description : "la troisième coordonnée du second axe d'orthotropie.";
+ latex_description : {"Cette quantité est automatiquement"
+  "calculée par \licos{} à partir de la définition du matériau"};
+};
+
+"ThermalConductivity"{
+ unit : "W.m^{-1}";
+ type : "scalaire";
+ short_description : "la conductivité thermique d'un matériau isotrope";
+};
+
+"ThermalConductivity1"{
+ unit : "W.m^{-1}";
+ type : "scalaire";
+ short_description : "la conductivité thermique d'un matériau orthotrope suivant la première direction d'orthotropie";
+};
+
+"ThermalConductivity2"{
+ unit : "W.m^{-1}";
+ type : "scalaire";
+ short_description : "la conductivité thermique d'un matériau orthotrope suivant la deuxième direction d'orthotropie";
+};
+
+"ThermalConductivity3"{
+ unit : "W.m^{-1}";
+ type : "scalaire";
+ short_description : "la conductivité thermique d'un matériau orthotrope suivant la troisième direction d'orthotropie";
+};
+
+"SpecificHeat"{
+ unit : "J.kg^{-1}.K^{-1}";
+ type : "scalaire";
+ short_description : "la chaleur spécifique";
+};
+
+"Temperature"{
+ unit : "K";
+ type : "scalaire";
+ short_description : "la température";
+};
+
+"KelvinTemperature"{
+ unit : "K";
+ type : "scalaire";
+ short_description : "la température.";
+ note :{"Cette entrée a été rajoutée par compatibilité avec les choix d'implantation de lois de comportements mécaniques utilisés par le code \germinal{}"};
+};
+
+"IrradiationTemperature"{
+ unit : "K";
+ type : "scalaire";
+ short_description : "la température moyenne (dans le temps) au cours de l'irradiation.";
+ latex_description : {"Cette température est"
+  "définie ainsi~:"
+  "\["
+  "\average{T}\paren{t,\vec{r}}  = \Frac{1}{t-t_{0}}\int_{t_{0}}^{t}T\paren{u,\vec{r}}\,\dtot\, u"
+  "\]"
+  "où"
+  "\begin{minipage}[t]{0.8\linewidth}"
+    "\begin{itemize}"
+    "\item \(T\paren{t,\vec{r}}\) est la valeur à un instant \(t\) de"
+      "la température au point \(\vec{r}\)~;"
+    "\item \(t_{0}\) est la date du début de calcul~;"
+    "\item \(t\) est la date courante~;"
+    "\end{itemize}"
+  "\end{minipage}\\ "
+  "En pratique, l'intégrale temporelle est évaluée de manière incrémentale ainsi~:"
+  "\["
+  "\begin{aligned}"
+    "\average{T}\paren{t+dt,\vec{r}}  &= \Frac{1}{t+dt-t_{0}}\int_{t_{0}}^{t+dt}T\paren{u,\vec{r}}\,\dtot\, u \\ "
+    "&= \Frac{1}{t+dt-t_{0}}\left[\int_{t_{0}}^{t}T\paren{u,\vec{r}}\,\dtot\, u+\int_{t}^{t+dt}T\paren{u,\vec{r}}\,\dtot\, u\right] \\ "
+    "&= \Frac{1}{t+dt-t_{0}}\left[\paren{t-t_{0}}\,\average{T}\paren{t,\vec{r}}+\int_{t}^{t+dt}T\paren{u,\vec{r}}\,\dtot\, u\right] \\ "
+    "&\approx \Frac{1}{t+dt-t_{0}}\left[\paren{t-t_{0}}\,\average{T}\paren{t,\vec{r}}+\Frac{dt}{2}\left[T\paren{t,\vec{r}}+T\paren{t+dt,\vec{r}}\right]\right] \\ "
+  "\end{aligned}"
+  "\]"};
+ note : {"Ce mode de calcul peut conduire à de légères erreurs" "numériques"};
+};
+
+"MeanTemperature"{
+ unit : "K";
+ type : "scalaire";
+ short_description : "la température moyenne dans un domaine \(\Omega\) donné. ";
+ latex_description : {"Cette température est définie ainsi~:"
+  "\["
+  "\average{T}\paren{t}  = \Frac{1}{\int_{\Omega}\dtot\,V}\int_{\Omega}T\paren{t,\vec{r}}\,\dtot\, V"
+  "\]"
+  "où \(T\paren{t,\vec{r}}\) est la valeur à un instant \(t\) de la"
+  "température au point \(\vec{r}\)."};
+  note : {"En pratique, l'intégrale spatiale"
+  "est calculée à l'aide de la discrétisation par éléments finis"};
+};
+
+"MeanIrradiationTemperature"{
+ unit : "K";
+ type : "scalaire";
+ short_description : "la température moyenne dans le temps et dans un domaine \(\Omega\) donné.";
+ latex_description : {"Cette"
+  "température est définie ainsi~:"
+  "\["
+  "\average{T}\paren{t} ="
+  "\Frac{1}{t-t_{0}}\Frac{1}{\int_{\Omega}\dtot\,V}\int_{t_{0}}^{t}\paren{\int_{\Omega}T\paren{u,\vec{r}}\,\dtot\,"
+    "V}"
+  "\]"
+  "où \(T\paren{t,\vec{r}}\) est la valeur à un instant \(t\) de la"
+  "température au point \(\vec{r}\)."};
+ note : {"En pratique, l'intégrale spatiale est calculée à l'aide de la"
+  "discrétisation par éléments finis et l'intégrale temporelle est"
+  "calculée de manière incrémentale"};
+};
+
+"TemperatureGradient"{
+ unit : "T.m^{-1}";
+ type : "vectorielle";
+ short_description : "le gradient de température";
+};
+
+"HeatFlux"{
+ unit : "J.m^{-2}.s^{-1}";
+ type : "scalaire";
+ short_description : "la projection du flux de chaleur sur la normale à une surface (uniquement disponible pour les matériaux isotropes)";
+};
+
+"FirstMaterialTemperature"{
+ unit : "K";
+ type : "scalaire";
+ short_description : "la température sur le \og~premier~\fg matériau d'une condition d'échange (le choix de ce \og~premier~\fg matériau est fait par l'utilisateur)";
+};
+
+"SecondMaterialTemperature"{
+ unit : "K";
+ type : "scalaire";
+ short_description : "la température sur le \og~se\-cond~\fg matériau d'une condition d'échange (le choix de ce \og~second~\fg matériau est fait par l'utilisateur)";
+};
+
+"FirstMaterialRadius"{
+ unit : "m";
+ type : "scalaire";
+ short_description : "le rayon du premier matériau dans le cas d'une condition d'échange entre deux matériaux (le choix du \og~second~\fg matériau est fait par l'utilisateur)";
+};
+
+"SecondMaterialRadius"{
+ unit : "m";
+ type : "scalaire";
+ short_description : "le rayon du second matériau dans le cas d'une condition d'échange entre deux matériaux (le choix du \og~second~\fg matériau est fait par l'utilisateur)";
+};
+
+"ExternalTemperature"{
+ unit : "K";
+ type : "scalaire";
+ short_description : "la température imposée.";
+ latex_description : {"L'utilisation de ce nom pour imposer une température n'est pas"
+  "obligatoire."};
+};
+
+"PowerDensity"{
+ unit : "W.m^{-3}";
+ type : "scalaire";
+ short_description : "la densité de puissance";
+};
+
+"ConvectiveHeatTransferCoefficient"{
+ unit : "W.m^{-2}.K^{-1}";
+ type : "scalaire";
+ short_description :"le coefficient d'échange par convection";
+};
+
+"YoungModulus"{
+ unit : "Pa";
+ type : "scalaire";
+ short_description : "le module d'\nom{Young} d'un matériau isotrope";
+};
+
+"YoungModulus1"{
+ unit : "Pa";
+ type : "scalaire";
+ short_description : "le module d'\nom{Young} d'un matériau orthotrope suivant la première direction d'orthotropie";
+};
+
+"YoungModulus2"{
+ unit : "Pa";
+ type : "scalaire";
+ short_description : "le module d'\nom{Young} d'un matériau orthotrope suivant la deuxième direction d'orthotropie";
+};
+
+"YoungModulus3"{
+ unit : "Pa";
+ type : "scalaire";
+ short_description : "le module d'\nom{Young} d'un matériau orthotrope suivant la troisième direction d'orthotropie";
+};
+
+"PoissonRatio"{
+ unit : " ";
+ type : "scalaire";
+ short_description : "le coefficient de \nom{Poisson} d'un matériau isotrope";
+};
+
+"PoissonRatio12"{
+ unit : " ";
+ type : "scalaire";
+ short_description : "le coefficient de \nom{Poisson} d'un matériau orthotrope relatif aux première et deuxième directions d'orthotropie";
+};
+
+"PoissonRatio23"{
+ unit : " ";
+ type : "scalaire";
+ short_description : "le coefficient de \nom{Poisson} d'un matériau orthotrope relatif aux deuxième et troisième directions d'orthotropie";
+};
+
+"PoissonRatio13"{
+ unit : " ";
+ type : "scalaire";
+ short_description : "le coefficient de \nom{Poisson} d'un matériau orthotrope relatif aux première et troisième directions d'orthotropie";
+};
+
+"ShearModulus12"{
+ unit : "Pa";
+ type : "scalaire";
+ short_description : "le module de cisaillement d'un matériau orthotrope relatif aux première et deuxième directions d'orthotropie";
+};
+
+"ShearModulus23"{
+ unit : "Pa";
+ type : "scalaire";
+ short_description : "le module de cisaillement d'un matériau orthotrope relatif aux deuxième et troisième directions d'orthotropie";
+};
+
+"ShearModulus13"{
+ unit : "Pa";
+ type : "scalaire";
+ short_description : "le module de cisaillement d'un matériau orthotrope relatif aux première et troisième directions d'orthotropie";
+};
+
+"ThermalExpansion"{
+ unit : "K^{-1}";
+ type : "scalaire";
+ short_description : "le coefficient de dilatation linéique d'un matériau isotrope";
+};
+
+"ThermalExpansion1"{
+ unit : "K^{-1}";
+ type : "scalaire";
+ short_description : "le coefficient de dilatation linéique d'un matériau orthotrope suivant la première direction d'orthotropie";
+};
+
+"ThermalExpansion2"{
+ unit : "K^{-1}";
+ type : "scalaire";
+ short_description : "le coefficient de dilatation linéique d'un matériau orthotrope suivant la deuxième direction d'orthotropie";
+};
+
+"ThermalExpansion3"{
+ unit : "K^{-1}";
+ type : "scalaire";
+ short_description : "le coefficient de dilatation linéique d'un matériau orthotrope suivant la troisième direction d'orthotropie";
+};
+
+"Displacement"{
+ unit : "m";
+ type : "vectorielle";
+ short_description : "le déplacement";
+};
+
+"UpdatedFirstCoordinate"{
+ unit : "m";
+ type : "scalaire";
+ short_description : "la première coordonnée actua\-lisée";
+};
+
+"UpdatedSecondCoordinate"{
+ unit : "m";
+ type : "scalaire";
+ short_description : "la deuxième coordonnée actua\-lisée";
+};
+
+"UpdatedThirdCoordinate"{
+ unit : "m";
+ type : "scalaire";
+ short_description : "la troisième coordonnée actua\-lisée";
+};
+
+"Strain"{
+ unit : " ";
+ type : "tensorielle";
+ short_description : "la déformation";
+};
+
+"AxialStrain"{
+ unit : " ";
+ type : "scalaire";
+ short_description : "la déformation axiale (cette grandeur n'a de sens que pour les calculs \"plan généralisé\")";
+};
+
+"VolumetricStrain"{
+ unit : " ";
+ type : "scalaire";
+ short_description : "la dilatation volumique";
+};
+
+"Stress"{
+ unit : "Pa";
+ type : "tensorielle";
+ short_description : "les contraintes";
+};
+
+"CylindricalStress"{
+ unit : "Pa";
+ type : "tensorielle";
+ short_description : "les contraintes exprimées dans le repère cylindrique";
+};
+
+"SphericalStress"{
+ unit : "Pa";
+ type : "tensorielle";
+ short_description : "les contraintes exprimées dans le repère sphérique";
+};
+
+"HydrostaticPressure"{
+ unit : "Pa";
+ type : "tensorielle";
+ short_description : "la pression hydrostatique (égale au tiers de la trace du tenseur des contraintes)";
+};
+
+"VonMisesStress"{
+ unit : "Pa";
+ type : "scalaire";
+ short_description : "la contrainte équivalente au sens de \nom{von mises}";
+};
+
+"Trescastress"{
+ unit : "Pa";
+ type : "scalaire";
+ short_description : "la contrainte équivalente au sens de \nom{Tresca}";
+};
+
+"PrincipalStress1"{
+ unit : "Pa";
+ type : "scalaire";
+ short_description : "la première contrainte principale.";
+ note : {"Son sens est précisé dans la notice"
+  "de l'opérateur prin de castem"
+  "(\href{http://www-cast3m.cea.fr/cast3m/printnotice.do?name=prin}{http://www-cast3m.cea.fr})"};
+};
+
+"PrincipalStress2"{
+ unit : "Pa";
+ type : "scalaire";
+ short_description : "la deuxième contrainte principale.";
+ note : {"Son sens est précisé dans la notice de l'opérateur prin"
+  "de castem"
+  "(\href{http://www-cast3m.cea.fr/cast3m/printnotice.do?name=prin}{http://www-cast3m.cea.fr/})"};
+};
+
+"PrincipalStress3"{
+ unit : "Pa";
+ type : "scalaire";
+ short_description : "la troisième contrainte principale.";
+ note : {"Son sens est précisé dans la notice de l'opérateur prin"
+ " de castem"
+  "(\href{http://www-cast3m.cea.fr/cast3m/printnotice.do?name=prin}{http://www-cast3m.cea.fr/cast3m/})"};
+};
+
+"Pressure"{
+ unit : "Pa";
+ type : "scalaire";
+ short_description : "la pression d'un gaz";
+};
+
+"ExternalPressure"{
+ unit : "Pa";
+ type : "scalaire";
+ short_description : "la pression imposée.";
+ note : {"L'utilisation de ce nom pour imposer une pression n'est pas"
+  "obligatoire, l'utilisateur pouvant utiliser un nom différent lors de"
+  "la définition de la condition aux limites.."};
+};
+
+"ExternalTraction"{
+ unit : "Pa";
+ type : "scalaire";
+ short_description : "une contrainte de traction imposée.";
+ note : {"L'utilisation de ce nom pour imposer une traction n'est pas"
+  "obligatoire, l'utilisateur pouvant utiliser un nom différent lors de"
+  "la définition de la condition aux limites."};
+};
+
+"ExternalDisplacement"{
+ unit : "m";
+ type : "scalaire";
+ short_description : "un déplacement imposé.";
+ note : {"L'utilisation de ce nom pour imposer un déplacement n'est pas"
+  "obligatoire."};
+};
+
+"Swelling"{
+ unit : " ";
+ type : "scalaire";
+ short_description : "un gonflement imposé.";
+ note : {"l'utilisation de ce nom pour imposer un gonflement n'est pas"
+  "obligatoire."};
+};
+
+"SolidSwelling"{
+ unit : " ";
+ type : "scalaire";
+ short_description : "un gonflement imposé dû à des produits de fission solides.";
+ note : {"L'utilisation de ce nom"
+  "pour imposer un gonflement n'est pas obligatoire"};
+};
+
+"GaseousSwelling"{
+ unit : " ";
+ type : "scalaire";
+ short_description : "un gonflement imposé dû à des produits de fission gazeux.";
+ note : {"L'utilisation de ce nom pour imposer un"
+  "gonflement n'est pas obligatoire"};
+};
+
+"IrradiationInducedSwelling"{
+ unit : " ";
+ type : "scalaire";
+ short_description : "un gonflement imposé  dû à des dégâts d'irradiation.";
+ note : {"L'utilisation de ce nom pour imposer"
+  "un gonflement n'est pas obligatoire"};
+};

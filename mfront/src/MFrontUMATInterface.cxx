@@ -1264,16 +1264,9 @@ namespace mfront{
   {
     using namespace std;
     const MechanicalBehaviourData& d = mb.getMechanicalBehaviourData(ModellingHypothesis::PLANESTRESS);
-    const VariableDescriptionContainer& sv  = d.getStateVariables();
-    const VariableDescriptionContainer& asv = d.getAuxiliaryStateVariables();
+    const VariableDescriptionContainer& sv  = d.getPersistentVariables();
     SupportedTypes::TypeSize o;
     for(VariableDescriptionContainer::const_iterator p=sv.begin();p!=sv.end();++p){
-      if(d.getGlossaryName(p->name)=="AxialStrain"){
-	return make_pair(true,o);
-      }
-      o += this->getTypeSize(p->type,p->arraySize);
-    }
-    for(VariableDescriptionContainer::const_iterator p=asv.begin();p!=asv.end();++p){
       if(d.getGlossaryName(p->name)=="AxialStrain"){
 	return make_pair(true,o);
       }
@@ -1309,8 +1302,7 @@ namespace mfront{
 	// generic algorithm, this means that the behaviour
 	// can be called in generalised plane strain
 	const MechanicalBehaviourData& d = mb.getMechanicalBehaviourData(ModellingHypothesis::GENERALISEDPLANESTRAIN);
-	SupportedTypes::TypeSize s =  this->getTotalSize(d.getStateVariables());
-	s +=  this->getTotalSize(d.getAuxiliaryStateVariables());
+	SupportedTypes::TypeSize s =  this->getTotalSize(d.getPersistentVariables());
 	if(s.getValueForDimension(2)==0){
 	  out << "const UMATReal ezz = STATEV[0];\n";
 	} else {
@@ -1584,12 +1576,12 @@ namespace mfront{
 
   void
   MFrontUMATInterface::writeVariableDescriptionContainerToGibiane(std::ostream& out,
-								  unsigned short& i,
 								  const Hypothesis h,
 								  const VariableDescriptionContainer& v) const
   {
     using namespace std;
     string tmp;
+    int i = 0;
     for(VariableDescriptionContainer::const_iterator p=v.begin();p!=v.end();++p){
       SupportedTypes::TypeFlag flag = this->getTypeFlag(p->type);
       switch(flag){
@@ -1669,8 +1661,7 @@ namespace mfront{
     for(set<Hypothesis>::const_iterator ph=h.begin();ph!=h.end();++ph){
       
       const MechanicalBehaviourData& d = mb.getMechanicalBehaviourData(*ph);
-      const VariableDescriptionContainer& stateVarsHolder          = d.getStateVariables();
-      const VariableDescriptionContainer& auxiliaryStateVarsHolder = d.getAuxiliaryStateVariables();
+      const VariableDescriptionContainer& persistentVarsHolder     = d.getPersistentVariables();
       const VariableDescriptionContainer& externalStateVarsHolder  = d.getExternalStateVariables();
       pair<vector<UMATMaterialProperty>,
 	   SupportedTypes::TypeSize> mprops = this->buildMaterialPropertiesList(mb,*ph);
@@ -1702,15 +1693,13 @@ namespace mfront{
       }
       out << ";\n";
       out << "statev = 'MOTS' ";
-      i = 0;
-      this->writeVariableDescriptionContainerToGibiane(out,i,*ph,stateVarsHolder);
-      this->writeVariableDescriptionContainerToGibiane(out,i,*ph,auxiliaryStateVarsHolder);
-      if(stateVarsHolder.size()!=0){
+      this->writeVariableDescriptionContainerToGibiane(out,*ph,persistentVarsHolder);
+      if(persistentVarsHolder.size()!=0){
 	out << " ";
       }
       out << ";\n";
       out << "params = 'MOTS' 'T'";
-      this->writeVariableDescriptionContainerToGibiane(out,i,*ph,externalStateVarsHolder);
+      this->writeVariableDescriptionContainerToGibiane(out,*ph,externalStateVarsHolder);
       out << ";\n\n";
       out << "MO = 'MODELISER' v 'MECANIQUE' 'ELASTIQUE'\n";
       out << nonlin << " 'NUME_LOI' 1\n";

@@ -17,6 +17,7 @@
 #include"TFEL/Utilities/SmartPtr.hxx"
 #include"TFEL/Utilities/CxxTokenizer.hxx"
 
+#include"MFront/CodeBlock.hxx"
 #include"MFront/VariableDescription.hxx"
 #include"MFront/MFrontFileDescription.hxx"
 #include"MFront/MaterialPropertyDescription.hxx"
@@ -49,7 +50,6 @@ namespace mfront
     getMFrontFileDescription(void) const;
 
   protected:
-
     /*!
      * \brief An helper structure used by the
      * MFrontBehaviourParserCommon class to modify the code provided
@@ -176,8 +176,8 @@ namespace mfront
      * \param const bool, add line number between lines
      */
     void
-    readNextBlock(std::string&,
-		  std::string&,
+    readNextBlock(CodeBlock&,
+		  CodeBlock&,
 		  tfel::utilities::shared_ptr<VariableModifier>,
 		  tfel::utilities::shared_ptr<VariableModifier>,
 		  const bool = false,
@@ -195,7 +195,7 @@ namespace mfront
      * \param const bool, allow ';' in the block
      * \param const bool, add line number between lines
      */
-    std::string
+    CodeBlock
     readNextBlock(tfel::utilities::shared_ptr<VariableModifier>,
 		  const bool = false,
 		  const std::string = "{",
@@ -212,7 +212,7 @@ namespace mfront
      * \param tfel::utilities::shared_ptr<VariableModifier>,
      * modifier of variable names
      */
-    std::string
+    CodeBlock
     readNextBlock(const bool = false,
 		  const std::string = "{",
 		  const std::string = "}",

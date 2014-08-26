@@ -94,7 +94,7 @@ namespace mfront{
     this->behaviourFile << "using std::vector;\n";
     writeMaterialLaws("MFrontIsotropicStrainHardeningMisesCreepParser::writeBehaviourParserSpecificMembers",
 		      this->behaviourFile,this->mb.getMaterialLaws());
-    this->behaviourFile << this->mb.getCode(h,MechanicalBehaviourData::FlowRule) << endl;
+    this->behaviourFile << this->mb.getCode(h,MechanicalBehaviourData::FlowRule).code << endl;
     this->behaviourFile << "}\n\n";
     this->behaviourFile << "bool NewtonIntegration(void){\n";
     this->behaviourFile << "using namespace std;\n";

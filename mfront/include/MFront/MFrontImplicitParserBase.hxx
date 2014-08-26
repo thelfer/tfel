@@ -77,6 +77,11 @@ namespace mfront{
      */
     virtual void
     treatStateVariable(void);
+    /*!
+     *
+     */
+    virtual void
+    treatIntegrationVariable(void);
 
     virtual void
     treatIntegrator(void);

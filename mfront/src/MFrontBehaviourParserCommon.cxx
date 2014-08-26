@@ -2500,7 +2500,7 @@ namespace mfront{
 			this->behaviourFile,this->mb.getMaterialLaws());		      
       this->writeStandardPerformanceProfiling(this->behaviourFile,
 					      MechanicalBehaviourData::UpdateAuxiliaryStateVariables);
-      this->behaviourFile << this->mb.getCode(h,MechanicalBehaviourData::UpdateAuxiliaryStateVariables) << endl;
+      this->behaviourFile << this->mb.getCode(h,MechanicalBehaviourData::UpdateAuxiliaryStateVariables).code << endl;
       this->behaviourFile << "}\n\n";
     } else {
       this->behaviourFile << "\n{}\n\n";
@@ -2525,7 +2525,7 @@ namespace mfront{
     if(this->mb.hasCode(h,MechanicalBehaviourData::Integrator)){
       this->writeStandardPerformanceProfilingBegin(this->behaviourFile,
 						      MechanicalBehaviourData::Integrator);
-      this->behaviourFile << this->mb.getCode(h,MechanicalBehaviourData::Integrator) << "\n";
+      this->behaviourFile << this->mb.getCode(h,MechanicalBehaviourData::Integrator).code << "\n";
       this->writeStandardPerformanceProfilingEnd(this->behaviourFile);
     }
     this->behaviourFile << "this->updateStateVariables();\n";
@@ -2599,7 +2599,7 @@ namespace mfront{
     const MechanicalBehaviourData& md = this->mb.getMechanicalBehaviourData(h);
     // variable initialisation
     string init;
-    init = this->getIntegrationVariablesIncrementsInitializers(md.getStateVariables(),
+    init = this->getIntegrationVariablesIncrementsInitializers(md.getIntegrationVariables(),
 							       this->useStateVarTimeDerivative);    
     if(!this->localVariablesInitializers.empty()){
       if(!init.empty()){
@@ -2840,7 +2840,7 @@ namespace mfront{
       this->writeStandardPerformanceProfilingBegin(this->behaviourFile,
 						      MechanicalBehaviourData::BeforeInitializeLocalVariables,
 						      "binit");
-      this->behaviourFile << this->mb.getCode(h,MechanicalBehaviourData::BeforeInitializeLocalVariables)
+      this->behaviourFile << this->mb.getCode(h,MechanicalBehaviourData::BeforeInitializeLocalVariables).code
 			  << endl;
       this->writeStandardPerformanceProfilingEnd(this->behaviourFile);
 
@@ -2848,21 +2848,21 @@ namespace mfront{
     if(this->mb.hasCode(h,MechanicalBehaviourData::InitializeLocalVariables)){
       this->writeStandardPerformanceProfilingBegin(this->behaviourFile,
 						      MechanicalBehaviourData::InitializeLocalVariables,"init");
-      this->behaviourFile << this->mb.getCode(h,MechanicalBehaviourData::InitializeLocalVariables)
+      this->behaviourFile << this->mb.getCode(h,MechanicalBehaviourData::InitializeLocalVariables).code
 			  << endl;
       this->writeStandardPerformanceProfilingEnd(this->behaviourFile);
     }
     if(this->mb.hasCode(h,MechanicalBehaviourData::AfterInitializeLocalVariables)){
       this->writeStandardPerformanceProfilingBegin(this->behaviourFile,
       						    MechanicalBehaviourData::AfterInitializeLocalVariables,"ainit");
-      this->behaviourFile << this->mb.getCode(h,MechanicalBehaviourData::AfterInitializeLocalVariables)
+      this->behaviourFile << this->mb.getCode(h,MechanicalBehaviourData::AfterInitializeLocalVariables).code
 			  << endl;
       this->writeStandardPerformanceProfilingEnd(this->behaviourFile);
     }
     if(this->mb.hasCode(h,MechanicalBehaviourData::ComputePredictor)){
       this->writeStandardPerformanceProfilingBegin(this->behaviourFile,
 						      MechanicalBehaviourData::ComputePredictor,"predictor");
-      this->behaviourFile << this->mb.getCode(h,MechanicalBehaviourData::ComputePredictor)
+      this->behaviourFile << this->mb.getCode(h,MechanicalBehaviourData::ComputePredictor).code
 			  << endl;
       this->writeStandardPerformanceProfilingEnd(this->behaviourFile);
     }
@@ -3325,11 +3325,7 @@ namespace mfront{
       for(p=d.getMaterialProperties().begin();p!=d.getMaterialProperties().end();++p){
 	coefSize+=this->getTypeSize(p->type,p->arraySize);
       }
-      for(p=d.getStateVariables().begin();p!=d.getStateVariables().end();++p){
-	stateVarsSize+=this->getTypeSize(p->type,p->arraySize);
-      }
-      for(p=d.getAuxiliaryStateVariables().begin();
-	  p!=d.getAuxiliaryStateVariables().end();++p){
+      for(p=d.getPersistentVariables().begin();p!=d.getPersistentVariables().end();++p){
 	stateVarsSize+=this->getTypeSize(p->type,p->arraySize);
       }
       for(p  = d.getExternalStateVariables().begin();
@@ -3664,7 +3660,7 @@ namespace mfront{
 			this->behaviourFile,this->mb.getMaterialLaws());
       this->writeStandardPerformanceProfiling(this->behaviourFile,
 					      MechanicalBehaviourData::ComputePredictionOperator);
-      this->behaviourFile << this->mb.getCode(h,MechanicalBehaviourData::ComputePredictionOperator);
+      this->behaviourFile << this->mb.getCode(h,MechanicalBehaviourData::ComputePredictionOperator).code;
       this->behaviourFile << "return SUCCESS;\n";
       this->behaviourFile << "}\n\n";
     } else {
@@ -4814,7 +4810,8 @@ namespace mfront{
 	const Hypothesis h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
 	// if the user provided a tangent operator, it won't be
 	// overriden
-	const string tangentOperator = "if(smt==ELASTIC){\n"
+	CodeBlock tangentOperator;
+	tangentOperator.code = "if(smt==ELASTIC){\n"
 	  "this->Dt = this->D;\n"
 	  "} else {\n"
 	  "return false;\n"

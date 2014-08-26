@@ -1,4 +1,5 @@
 install_header(MFront MFront.hxx)
+install_header(MFront CodeBlock.hxx)
 install_header(MFront MFrontConfig.hxx)
 install_header(MFront MFrontDebugMode.hxx)
 install_header(MFront MFrontLogStream.hxx)

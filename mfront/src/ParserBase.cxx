@@ -89,8 +89,8 @@ namespace mfront
   {} // end of ParserBase::~ParserBase
 
   void
-  ParserBase::readNextBlock(std::string& res1,
-			    std::string& res2,
+  ParserBase::readNextBlock(CodeBlock& res1,
+			    CodeBlock& res2,
 			    tfel::utilities::shared_ptr<VariableModifier> modifier1,
 			    tfel::utilities::shared_ptr<VariableModifier> modifier2,
 			    const bool addThisPtr,
@@ -105,7 +105,7 @@ namespace mfront
     res2 = this->readNextBlock(addThisPtr,delim1,delim2,allowSemiColon,registerLine,modifier2);
   } // end of ParserBase::readNextBlock
 
-  std::string
+  CodeBlock
   ParserBase::readNextBlock(tfel::utilities::shared_ptr<VariableModifier> modifier,
 			    const bool addThisPtr,
 			    const std::string delim1,
@@ -116,7 +116,7 @@ namespace mfront
     return this->readNextBlock(addThisPtr,delim1,delim2,allowSemiColon,registerLine,modifier);
   } // end of ParserBase::readNextBlock
 
-  std::string
+  CodeBlock
   ParserBase::readNextBlock(const bool addThisPtr,
 			    const std::string delim1,
 			    const std::string delim2,
@@ -126,7 +126,8 @@ namespace mfront
 			    tfel::utilities::shared_ptr<WordAnalyser> analyser)
   {
     using namespace std;
-    string res;
+    CodeBlock b;
+    string& res = b.code;
     unsigned short currentLine;
     unsigned short openedBlock;
     TokensContainer::const_iterator previous;
@@ -146,7 +147,7 @@ namespace mfront
     }
     if(this->current->value==delim2){
       ++(this->current);
-      return res;
+      return b;
     }
     currentLine = this->current->line;
     if((registerLine)&&(!getDebugMode())){
@@ -160,6 +161,7 @@ namespace mfront
       analyser->exe(this->current->value);
     }
     if(this->staticVarNames.find(this->current->value)!=this->staticVarNames.end()){
+      b.static_variables.insert(this->current->value);
       previous = this->current;
       --previous;
       if((previous->value!="->")&&
@@ -170,6 +172,7 @@ namespace mfront
       }
       res += this->current->value;
     } else if(this->varNames.find(this->current->value)!=this->varNames.end()){
+      b.variables.insert(this->current->value);
       string currentValue;
       previous = this->current;
       --previous;
@@ -227,6 +230,7 @@ namespace mfront
 	analyser->exe(this->current->value);
       }
       if(this->staticVarNames.find(this->current->value)!=this->staticVarNames.end()){
+	b.static_variables.insert(this->current->value);
 	previous = this->current;
 	--previous;
 	if((previous->value!="->")&&
@@ -237,6 +241,7 @@ namespace mfront
 	}
 	res += this->current->value;
       } else if(this->varNames.find(this->current->value)!=this->varNames.end()){
+	b.variables.insert(this->current->value);
 	string currentValue;
 	previous = this->current;
 	--previous;
@@ -281,7 +286,7 @@ namespace mfront
       throw(runtime_error(msg));
     }
     ++(this->current);
-    return res;
+    return b;
   } // end of ParserBase::readNextBlock
 
   void
@@ -1057,13 +1062,13 @@ namespace mfront
 
   void ParserBase::treatIncludes(void)
   {
-    this->appendToIncludes(this->readNextBlock());
+    this->appendToIncludes(this->readNextBlock().code);
   }
 
   void
   ParserBase::treatMembers(void)
   {
-    this->appendToMembers(this->readNextBlock());
+    this->appendToMembers(this->readNextBlock().code);
   }
 
   void
@@ -1075,13 +1080,13 @@ namespace mfront
   void
   ParserBase::treatSources(void)
   {
-    this->appendToSources(this->readNextBlock());
+    this->appendToSources(this->readNextBlock().code);
   } // end of ParserBase::treatSources(void)
 
   void
   ParserBase::treatPrivate(void)
   {
-    this->appendToPrivateCode(this->readNextBlock());
+    this->appendToPrivateCode(this->readNextBlock().code);
   } // end of ParserBase::treatSources(void)
 
   void

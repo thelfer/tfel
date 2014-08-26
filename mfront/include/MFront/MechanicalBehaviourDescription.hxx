@@ -15,6 +15,7 @@
 #include"TFEL/Material/MechanicalBehaviour.hxx"
 #include"TFEL/Material/ModellingHypothesis.hxx"
 
+#include"MFront/CodeBlock.hxx"
 #include"MFront/SupportedTypes.hxx"
 #include"MFront/MechanicalBehaviourAttribute.hxx"
 #include"MFront/MechanicalBehaviourData.hxx"
@@ -436,7 +437,16 @@ namespace mfront
     isLocalVariableName(const Hypothesis,
 			const std::string&) const;
     /*!
-     * \return true if the given name is the one of an internal state
+     * \return true if the given name is the one of an persistent
+     * variable.
+     * \param[in] h : modelling hypothesis
+     * \param[in] n : name
+     */
+    bool
+    isPersistentVariableName(const Hypothesis,
+			      const std::string&) const;
+    /*!
+     * \return true if the given name is the one of an integration
      * variable.
      * \param[in] h : modelling hypothesis
      * \param[in] n : name
@@ -454,7 +464,7 @@ namespace mfront
     isIntegrationVariableIncrementName(const Hypothesis,
 				       const std::string&) const;
     /*!
-     * \return true if the given name is the one of an internal state
+     * \return true if the given name is the one of an state
      * variable.
      * \param[in] h : modelling hypothesis
      * \param[in] n : name
@@ -463,7 +473,7 @@ namespace mfront
     isStateVariableName(const Hypothesis,
 			const std::string&) const;
     /*!
-     * \return true if the given name is the one of an internal state
+     * \return true if the given name is the one of an state
      * variable increment.
      * \param[in] h : modelling hypothesis
      * \param[in] n : name
@@ -738,7 +748,7 @@ namespace mfront
      */
     void setCode(const Hypothesis,
 		 const std::string&,
-		 const std::string&,
+		 const CodeBlock&,
 		 const Mode,
 		 const Position);
     /*!
@@ -752,7 +762,7 @@ namespace mfront
      * \param[in] h : modelling hypothesis
      * \param[in] n : name
      */
-    std::string
+    const CodeBlock&
     getCode(const Hypothesis,
 	    const std::string&) const;
     /*!

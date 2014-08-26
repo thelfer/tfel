@@ -139,89 +139,95 @@ namespace mfront{
     throw(runtime_error(msg));
   } // end of MechanicalBehaviourData::throwUndefinedAttribute
   
-  MechanicalBehaviourData::CodeBlock::CodeBlock()
+  MechanicalBehaviourData::CodeBlocksAggregator::CodeBlocksAggregator()
     : get_already_called(false)
-  {} // end of MechanicalBehaviourData::CodeBlock::CodeBlock
+  {} // end of MechanicalBehaviourData::CodeBlocksAggregator::CodeBlocksAggregator
 
   void
-  MechanicalBehaviourData::CodeBlock::update(void)
+  MechanicalBehaviourData::CodeBlocksAggregator::update(void)
   {
-    this->cblock  = cblock_begin;
+    this->cblock.code  = cblock_begin;
     if(!this->cblock_body.empty()){
-      if(!this->cblock.empty()){
-	if(*(this->cblock.rbegin())!='\n'){
-	  this->cblock.push_back('\n');
+      if(!this->cblock.code.empty()){
+	if(*(this->cblock.code.rbegin())!='\n'){
+	  this->cblock.code.push_back('\n');
 	}
       }
     }
-    this->cblock += cblock_body;
+    this->cblock.code += cblock_body;
     if(!this->cblock_end.empty()){
-      if(!this->cblock.empty()){
-	if(*(this->cblock.rbegin())!='\n'){
-	  this->cblock.push_back('\n');
+      if(!this->cblock.code.empty()){
+	if(*(this->cblock.code.rbegin())!='\n'){
+	  this->cblock.code.push_back('\n');
 	}
       }
     }
-    this->cblock += cblock_end;
+    this->cblock.code += cblock_end;
   } // end of MechanicalBehaviourData::update
 
   void
-  MechanicalBehaviourData::CodeBlock::set(const std::string& c,
-					  const Position p)
+  MechanicalBehaviourData::CodeBlocksAggregator::set(const CodeBlock& c,
+						    const Position p)
   {
     this->check();
+    this->cblock.static_variables.insert(c.static_variables.begin(),
+					 c.static_variables.end());
+    this->cblock.variables.insert(c.variables.begin(),
+				  c.variables.end());
     switch(p){
     case AT_BEGINNING:
       if(!this->cblock_begin.empty()){
 	this->cblock_begin += '\n';
       }
-      this->cblock_begin += c;
+      this->cblock_begin += c.code;
       break;
     case BODY:
       if(!this->cblock_body.empty()){
 	this->cblock_body += '\n';
       }
-      this->cblock_body  += c;
+      this->cblock_body  += c.code;
       break;
     case AT_END:
       if(!this->cblock_end.empty()){
 	this->cblock_end += '\n';
       }
-      this->cblock_end   += c;
+      this->cblock_end   += c.code;
       break; 
     }
     this->update();
-  } // end of MechanicalBehaviourData::CodeBlock::set
+  } // end of MechanicalBehaviourData::CodeBlocksAggregator::set
 
   void
-  MechanicalBehaviourData::CodeBlock::replace(const std::string& c,
-					      const Position p)
+  MechanicalBehaviourData::CodeBlocksAggregator::replace(const CodeBlock& c,
+							const Position p)
   {
     this->check();
     this->cblock_begin.clear();
     this->cblock_body.clear();
     this->cblock_end.clear();
-    this->cblock.clear();
+    this->cblock.code.clear();
+    this->cblock.variables.clear();
+    this->cblock.static_variables.clear();
     this->set(c,p);
-  } // end of MechanicalBehaviourData::CodeBlock::set
+  } // end of MechanicalBehaviourData::CodeBlocksAggregator::set
 
   void
-  MechanicalBehaviourData::CodeBlock::check(void) const
+  MechanicalBehaviourData::CodeBlocksAggregator::check(void) const
   {
     using namespace std;
     if(this->get_already_called){
-      string msg("MechanicalBehaviourData::CodeBlock::set : "
+      string msg("MechanicalBehaviourData::CodeBlocksAggregator::set : "
 		 "can't modifiy a code block");
       throw(runtime_error(msg));
     }
-  } // end of MechanicalBehaviourData::CodeBlock::check
+  } // end of MechanicalBehaviourData::CodeBlocksAggregator::check
 
-  const std::string&
-  MechanicalBehaviourData::CodeBlock::get(void) const
+  const CodeBlock&
+  MechanicalBehaviourData::CodeBlocksAggregator::get(void) const
   {
     this->get_already_called = true;
     return this->cblock;
-  } // end of MechanicalBehaviourData::CodeBlock::get
+  } // end of MechanicalBehaviourData::CodeBlocksAggregator::get
 
   MechanicalBehaviourData::MechanicalBehaviourData()
     : usableInPurelyImplicitResolution(false)
@@ -249,6 +255,12 @@ namespace mfront{
   {
     return this->bounds;
   } // end of MechanicalBehaviourData::getBoundsDescriptions
+
+  const VariableDescription&
+  MechanicalBehaviourData::getPersistentVariableHandler(const std::string& v) const
+  {
+    return this->getVariableHandler(this->getPersistentVariables(),v);
+  } // end of MechanicalBehaviourData::getPersistentVariableHandler
 
   const VariableDescription&
   MechanicalBehaviourData::getIntegrationVariableHandler(const std::string& v) const
@@ -295,14 +307,34 @@ namespace mfront{
   MechanicalBehaviourData::addStateVariable(const VariableDescription& v)
   {
     using namespace std;
+    VariableDescriptionContainer::iterator p;
     this->addVariable(this->stateVariables,v);
     this->addVariable(this->integrationVariables,v,false);
+    /*!
+     * for compatibility reasons with previous mfront versions
+     * (<2.0), auxiliary state variables shall be put after
+     * state variables.
+     */
+    bool found = false;
+    p=this->persistentVariables.begin();
+    while((p!=this->persistentVariables.end())&&(!found)){
+      if(this->isAuxiliaryStateVariableName(p->name)){
+	this->persistentVariables.insert(p,v);
+	found = true;
+      } else {
+	++p;
+      }
+    }
+    if(!found){
+      this->persistentVariables.push_back(v);
+    }
   } // end of MechanicalBehaviourData::addStateVariable
 
   void
   MechanicalBehaviourData::addAuxiliaryStateVariable(const VariableDescription& v)
   {
     this->addVariable(this->auxiliaryStateVariables,v);
+    this->addVariable(this->persistentVariables,v,false);
   } // end of MechanicalBehaviourData::addAuxiliaryStateVariable
 
   void
@@ -352,6 +384,12 @@ namespace mfront{
   {
     return this->getLocalVariables().contains(n);
   } // end of MechanicalBehaviourData::isLocalVariableName
+
+  bool
+  MechanicalBehaviourData::isPersistentVariableName(const std::string& n) const
+  {
+    return this->getPersistentVariables().contains(n);
+  } // end of MechanicalBehaviourData::isPersistentVariableName
 
   bool
   MechanicalBehaviourData::isIntegrationVariableName(const std::string& n) const
@@ -424,6 +462,12 @@ namespace mfront{
   {
     return this->materialProperties;
   } // end of MechanicalBehaviourData::getMaterialProperties
+
+  const VariableDescriptionContainer&
+  MechanicalBehaviourData::getPersistentVariables(void) const
+  {
+    return this->persistentVariables;
+  } // end of MechanicalBehaviourData::getPersistentVariables
 
   const VariableDescriptionContainer&
   MechanicalBehaviourData::getIntegrationVariables(void) const
@@ -583,15 +627,15 @@ namespace mfront{
 
   void
   MechanicalBehaviourData::setCode(const std::string& n,
-				   const std::string& c,
+				   const CodeBlock& c,
 				   const Mode m,
 				   const Position p)
   {
     using namespace std;
-    typedef map<string,CodeBlock>::value_type MVType;
-    map<string,CodeBlock>::iterator pc = this->cblocks.find(n);
+    typedef map<string,CodeBlocksAggregator>::value_type MVType;
+    map<string,CodeBlocksAggregator>::iterator pc = this->cblocks.find(n);
     if(pc==this->cblocks.end()){
-      pc = this->cblocks.insert(MVType(n,CodeBlock())).first;
+      pc = this->cblocks.insert(MVType(n,CodeBlocksAggregator())).first;
     } else {
       if(m==CREATE){
 	string msg("MechanicalBehaviourData::setCode : "
@@ -603,7 +647,7 @@ namespace mfront{
 	throw(runtime_error(msg));
       } else if(m==CREATEORREPLACE){
 	this->cblocks.erase(pc);
-	pc = this->cblocks.insert(MVType(n,CodeBlock())).first;
+	pc = this->cblocks.insert(MVType(n,CodeBlocksAggregator())).first;
       } else if(m==CREATEBUTDONTREPLACE){
 	return;
       }
@@ -612,11 +656,11 @@ namespace mfront{
   } // end of MechanicalBehaviourData::setCode
 
 
-  const std::string&
+  const CodeBlock&
   MechanicalBehaviourData::getCode(const std::string& n) const
   {
     using namespace std;
-    map<string,CodeBlock>::const_iterator p = this->cblocks.find(n);
+    map<string,CodeBlocksAggregator>::const_iterator p = this->cblocks.find(n);
     if(p==this->cblocks.end()){
       string msg("MechanicalBehaviourData::getCode : "
 		 "no code block associated with '"+n+"'");
@@ -806,7 +850,7 @@ namespace mfront{
   {
     using namespace std;
     vector<string> names;
-    map<string,CodeBlock>::const_iterator pc;
+    map<string,CodeBlocksAggregator>::const_iterator pc;
     for(pc=this->cblocks.begin();pc!=this->cblocks.end();++pc){
       names.push_back(pc->first);
     }
