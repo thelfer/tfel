@@ -9,6 +9,7 @@
 #define _LIB_TFEL_MECHANICALBEHAVIOUR_H_ 
 
 #include"TFEL/Material/ModellingHypothesis.hxx"
+#include"TFEL/Material/FiniteStrainBehaviourTangentOperatorBase.hxx"
 
 namespace tfel{
 
@@ -48,7 +49,7 @@ namespace tfel{
 			    //   results may be inaccurate
       }; // end of enum IntegrationResult
       /*!
-       * list of possible stiffness matrix type
+       * list of possible tangent operator type
        */
       enum SMType{
 	ELASTIC,
@@ -56,8 +57,39 @@ namespace tfel{
 	TANGENTOPERATOR,
 	CONSISTENTTANGENTOPERATOR,
 	NOSTIFFNESSREQUESTED
-      }; // end of enum StiffnessMatrixType
+      }; // end of enum SMType
     }; // end of struct MechanicalBehaviourBase
+
+    /*!
+     * a trait class describing which tangent operators can be
+     * computed by a mechanical behaviour.
+     */
+    template<MechanicalBehaviourBase::BehaviourType btype>
+    struct TangentOperatorTraits
+    {
+      /*!
+       * Most mechanical behaviour can only compute one tangent
+       * operator. Finite strain beaviours are a noticeable exception.
+       */
+      enum SMFlag{
+	STANDARDTANGENTOPERATOR
+      }; // end of enum Flag
+    }; // end of struct
+
+    /*!
+     * a trait class describing which tangent operators can be
+     * computed by a mechanical behaviour.
+     */
+    template<>
+    struct TangentOperatorTraits<MechanicalBehaviourBase::FINITESTRAINSTANDARDBEHAVIOUR>
+      : public FiniteStrainBehaviourTangentOperatorBase
+    {
+      /*!
+       * Most mechanical behaviour can only compute one tangent
+       * operator. Finite strain beaviours are a noticeable exception.
+       */
+      typedef FiniteStrainBehaviourTangentOperatorBase::Flag SMFlag;
+    }; // end of struct
 
     /*!
      * \class MechanicalBehaviour
@@ -68,11 +100,17 @@ namespace tfel{
      * \author Helfer Thomas
      * \date   28 Jul 2006
      */
-    template<ModellingHypothesis::Hypothesis H,
+    template<MechanicalBehaviourBase::BehaviourType btype,
+	     ModellingHypothesis::Hypothesis H,
 	     typename NumType, bool use_qt>
     struct MechanicalBehaviour
-      : public MechanicalBehaviourBase
+      : public TangentOperatorTraits<btype>,
+	public MechanicalBehaviourBase
     {
+      /*!
+       * available tangent operator
+       */
+      typedef typename TangentOperatorTraits<btype>::SMFlag SMFlag;
       /*!
        * dimension of the space for the the given modelling hypothesis
        */
@@ -82,19 +120,23 @@ namespace tfel{
        * \brief only compute a prediction stiffness matrix.
        * The result shall be retrieved through the
        * "getTangeOperator" method
-       * \param[in] smt : stiffness matrix type
+       * \param[in] smflag : expected tangent operator
+       * \param[in] smt    : expected tangent operator
        * \return SUCCESS if the integration is successfull.
        */
       virtual IntegrationResult
-      computePredictionOperator(const SMType) = 0;
+      computePredictionOperator(const SMFlag,
+				const SMType) = 0;
       /*!
        * \brief determine the value of the internal state variables at
        * the end of the time step
-       * \param[in] b : compute the stiffness matrix
+       * \param[in] smflag : expected tangent operator
+       * \param[in] smt    : expected tangent operator
        * \return SUCCESS if the integration is successfull.
        */
       virtual IntegrationResult
-      integrate(const SMType) = 0;
+      integrate(const SMFlag,
+		const SMType) = 0;
       /*!
        * This method returns a scaling factor that can be used to:
        * - increase the time step if the integration was successfull

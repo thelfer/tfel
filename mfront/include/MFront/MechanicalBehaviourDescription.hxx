@@ -186,7 +186,7 @@ namespace mfront
      * \return the type of the stiffness operator
      */
     std::string
-    getStiffnessOperatorType(void) const;
+    getTangentOperatorType(void) const;
     /*!
      * \return a type suitable for storing stress-free expansion
      */

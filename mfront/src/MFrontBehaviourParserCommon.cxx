@@ -17,6 +17,7 @@
 #include<cmath>
 
 #include"TFEL/System/System.hxx"
+#include"TFEL/Material/FiniteStrainBehaviourTangentOperator.hxx"
 
 #include"MFront/ParserUtilities.hxx"
 #include"MFront/MFrontHeader.hxx"
@@ -1528,6 +1529,7 @@ namespace mfront{
     this->reserveName("computePredictionOperator",false);
     this->reserveName("computeTangentOperator_",false);
     this->reserveName("smt",false);
+    this->reserveName("smflag",false);
     this->reserveName("dl_l0",false);
     this->reserveName("dl_l1",false);
     this->reserveName("dl_l01",false);
@@ -1567,8 +1569,7 @@ namespace mfront{
     this->reserveName("Tensor",false);
     this->reserveName("ThermalExpansionCoefficientTensor",false);
     this->reserveName("DeformationGradientTensor",false);
-    this->reserveName("FiniteStrainStiffnessTensor",false);
-    this->reserveName("StiffnessOperator",false);
+    this->reserveName("TangentOperator",false);
     this->reserveName("StressFreeExpansionType",false);
   } // end of MFrontBehaviourParserCommon::registerDefaultVarNames
 
@@ -1685,9 +1686,8 @@ namespace mfront{
     file << "typedef typename Types::Tensor                            Tensor;" << endl;
     file << "typedef typename Types::ThermalExpansionCoefficientTensor ThermalExpansionCoefficientTensor;" << endl;
     file << "typedef typename Types::DeformationGradientTensor         DeformationGradientTensor;" << endl;
-    file << "typedef typename Types::FiniteStrainStiffnessTensor       FiniteStrainStiffnessTensor;" << endl;
     // tangent operator
-    file << "typedef " << this->mb.getStiffnessOperatorType() << " StiffnessOperator;" << endl;
+    file << "typedef " << this->mb.getTangentOperatorType() << " TangentOperator;" << endl;
   } // end of MFrontBehaviourParserCommon::writeStandardTFELTypedefs
 
   MFrontBehaviourParserCommon::~MFrontBehaviourParserCommon()
@@ -1784,6 +1784,7 @@ namespace mfront{
     if(this->mb.getBehaviourType()==MechanicalBehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR){
       this->behaviourDataFile << "#include\"TFEL/Math/tensor.hxx\"" << endl;
       this->behaviourDataFile << "#include\"TFEL/Math/t2tost2.hxx\"" << endl;
+      this->behaviourDataFile << "#include\"TFEL/Material/FiniteStrainBehaviourTangentOperator.hxx\"" << endl;
     }
     this->behaviourDataFile << "#include\"TFEL/Material/ModellingHypothesis.hxx\"" << endl;
     this->behaviourDataFile << endl;
@@ -2352,6 +2353,24 @@ namespace mfront{
     }
   } // end of MFrontBehaviourParserCommon::writeBehaviourClassForwardDeclarations
 
+  std::string
+  MFrontBehaviourParserCommon::convertBehaviourTypeToString(void) const
+  {
+    using namespace std;
+    std::string btype;
+    if(this->mb.getBehaviourType()==MechanicalBehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR){
+      btype="MechanicalBehaviourBase::SMALLSTRAINSTANDARDBEHAVIOUR";
+    } else if (this->mb.getBehaviourType()==MechanicalBehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR){
+      btype="MechanicalBehaviourBase::FINITESTRAINSTANDARDBEHAVIOUR";
+    } else if (this->mb.getBehaviourType()==MechanicalBehaviourDescription::COHESIVEZONEMODEL){
+      btype="MechanicalBehaviourBase::COHESIVEZONEMODEL";
+    } else {
+      this->throwRuntimeError("MFrontBehaviourParserCommon::writeBehaviourClassBegin",
+			      "unsupported behaviour type");
+    }
+    return btype;
+  }
+
   void MFrontBehaviourParserCommon::writeBehaviourClassBegin(const Hypothesis h) {
     using namespace std;
     this->checkBehaviourFile();
@@ -2375,11 +2394,12 @@ namespace mfront{
       this->behaviourFile << this->description << endl;
     }
     this->behaviourFile << "*/" << endl;
+    const string btype = this->convertBehaviourTypeToString();
     if(h==ModellingHypothesis::UNDEFINEDHYPOTHESIS){
       if(this->mb.useQt()){
 	this->behaviourFile << "template<ModellingHypothesis::Hypothesis hypothesis,typename Type,bool use_qt>" << endl;
 	this->behaviourFile << "class " << this->mb.getClassName() << endl;
-	this->behaviourFile << ": public MechanicalBehaviour<hypothesis,Type,use_qt>," << endl;
+	this->behaviourFile << ": public MechanicalBehaviour<" << btype << ",hypothesis,Type,use_qt>," << endl;
 	if(this->mb.getAttribute(MechanicalBehaviourData::profiling,false)){
 	  this->behaviourFile << "public "
 			      << this->mb.getClassName() << "Profiler," << endl;
@@ -2393,7 +2413,7 @@ namespace mfront{
 	this->behaviourFile << "template<ModellingHypothesis::Hypothesis hypothesis,typename Type>" << endl;
 	this->behaviourFile << "class " << this->mb.getClassName() 
 				<< "<hypothesis,Type,false>" << endl;
-	this->behaviourFile << ": public MechanicalBehaviour<hypothesis,Type,false>," << endl;
+	this->behaviourFile << ": public MechanicalBehaviour<" << btype << ",hypothesis,Type,false>," << endl;
 	if(this->mb.getAttribute(MechanicalBehaviourData::profiling,false)){
 	  this->behaviourFile << "public "
 			      << this->mb.getClassName() << "Profiler," << endl;
@@ -2410,7 +2430,7 @@ namespace mfront{
 	this->behaviourFile << "class " << this->mb.getClassName()
 				<< "<ModellingHypothesis::"
 				<< ModellingHypothesis::toUpperCaseString(h) << ",Type,use_qt>" << endl;
-	this->behaviourFile << ": public MechanicalBehaviour<ModellingHypothesis::"
+	this->behaviourFile << ": public MechanicalBehaviour<" << btype << ",ModellingHypothesis::"
 			    << ModellingHypothesis::toUpperCaseString(h) << ",Type,use_qt>," << endl;
 	if(this->mb.getAttribute(MechanicalBehaviourData::profiling,false)){
 	  this->behaviourFile << "public "
@@ -2428,7 +2448,7 @@ namespace mfront{
 	this->behaviourFile << "class " << this->mb.getClassName() 
 			    << "<ModellingHypothesis::"
 			    << ModellingHypothesis::toUpperCaseString(h) << ",Type,false>" << endl;
-	this->behaviourFile << ": public MechanicalBehaviour<ModellingHypothesis::"
+	this->behaviourFile << ": public MechanicalBehaviour<" << btype << ",ModellingHypothesis::"
 			    << ModellingHypothesis::toUpperCaseString(h) << ",Type,false>," << endl;
 	if(this->mb.getAttribute(MechanicalBehaviourData::profiling,false)){
 	  this->behaviourFile << "public "
@@ -2635,6 +2655,7 @@ namespace mfront{
 
   void MFrontBehaviourParserCommon::writeBehaviourIntegrator(const Hypothesis h) {
     using namespace std;
+    const string btype = this->convertBehaviourTypeToString();
     const MechanicalBehaviourData& md = this->mb.getMechanicalBehaviourData(h);
     vector<BoundsDescription>::const_iterator p;
     this->checkBehaviourFile();
@@ -2642,11 +2663,25 @@ namespace mfront{
     this->behaviourFile << "* \\brief Integrate behaviour  over the time step" << endl;
     this->behaviourFile << "*/" << endl;
     this->behaviourFile << "IntegrationResult" << endl;
-    this->behaviourFile << "integrate(const SMType smt){" << endl;
+    this->behaviourFile << "integrate(const SMFlag smflag, const SMType smt){" << endl;
     this->behaviourFile << "using namespace std;" << endl;
     this->behaviourFile << "using namespace tfel::math;" << endl;
     writeMaterialLaws("MFrontBehaviourParserCommon::writeBehaviourIntegrator",
 		      this->behaviourFile,this->mb.getMaterialLaws());		      
+    if((this->mb.getBehaviourType()==MechanicalBehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR)||
+       (this->mb.getBehaviourType()==MechanicalBehaviourDescription::COHESIVEZONEMODEL)){
+      if(this->mb.useQt()){
+	this->behaviourFile << "if(smflag!=MechanicalBehaviour<" << btype 
+			    << ",hypothesis,Type,use_qt>::STANDARDTANGENTOPERATOR){" << endl
+			    << "throw(runtime_error(\"invalid tangent operator flag\"));" << endl
+			    << "}" << endl;
+      } else {
+	this->behaviourFile << "if(smflag!=MechanicalBehaviour<" << btype 
+			    << ",hypothesis,Type,false>::STANDARDTANGENTOPERATOR){" << endl
+			    << "throw(runtime_error(\"invalid tangent operator flag\"));" << endl
+			    << "}" << endl;
+      }
+    }
     this->behaviourFile << "bool computeTangentOperator_ = smt!=NOSTIFFNESSREQUESTED;" << endl;
     if(this->mb.hasCode(h,MechanicalBehaviourData::Integrator)){
       this->writeStandardPerformanceProfilingBegin(this->behaviourFile,
@@ -2663,9 +2698,9 @@ namespace mfront{
       }
     }
     if(this->mb.useQt()){        
-      this->behaviourFile << "return MechanicalBehaviour<hypothesis,Type,use_qt>::SUCCESS;" << endl;
+      this->behaviourFile << "return MechanicalBehaviour<" << btype << ",hypothesis,Type,use_qt>::SUCCESS;" << endl;
     } else {
-      this->behaviourFile << "return MechanicalBehaviour<hypothesis,Type,false>::SUCCESS;" << endl;
+      this->behaviourFile << "return MechanicalBehaviour<" << btype << ",hypothesis,Type,false>::SUCCESS;" << endl;
     }
     this->behaviourFile << "}" << endl << endl;
   }
@@ -3379,7 +3414,9 @@ namespace mfront{
   void MFrontBehaviourParserCommon::writeBehaviourStandardTFELTypedefs(void)
   {
     using namespace std;
+    using namespace tfel::material;
     this->checkBehaviourFile();
+    const string btype = this->convertBehaviourTypeToString();
     this->behaviourFile << "static const unsigned short TVectorSize = N;" << endl;
     this->behaviourFile << "typedef tfel::math::StensorDimeToSize<N> StensorDimeToSize;" << endl;
     this->behaviourFile << "static const unsigned short StensorSize = ";
@@ -3391,38 +3428,33 @@ namespace mfront{
     this->writeStandardTFELTypedefs(this->behaviourFile);
     this->behaviourFile << endl;
     this->behaviourFile << "public :" << endl << endl;
-    if(this->mb.useQt()){        
-      this->behaviourFile << "typedef " << this->mb.getClassName() 
-			  << "BehaviourData<hypothesis,Type,use_qt> BehaviourData;" << endl;
-      this->behaviourFile << "typedef " << this->mb.getClassName() 
-			  << "IntegrationData<hypothesis,Type,use_qt> IntegrationData;" << endl;
-      this->behaviourFile << "typedef typename MechanicalBehaviour<hypothesis,Type,use_qt>::SMType            SMType;" << endl << endl;
-      this->behaviourFile << "using MechanicalBehaviour<hypothesis,Type,use_qt>::ELASTIC;" << endl;
-      this->behaviourFile << "using MechanicalBehaviour<hypothesis,Type,use_qt>::SECANTOPERATOR;" << endl;
-      this->behaviourFile << "using MechanicalBehaviour<hypothesis,Type,use_qt>::TANGENTOPERATOR;" << endl;
-      this->behaviourFile << "using MechanicalBehaviour<hypothesis,Type,use_qt>::CONSISTENTTANGENTOPERATOR;" << endl;
-      this->behaviourFile << "using MechanicalBehaviour<hypothesis,Type,use_qt>::NOSTIFFNESSREQUESTED;" << endl;
-      this->behaviourFile << "typedef typename MechanicalBehaviour<hypothesis,Type,use_qt>::IntegrationResult IntegrationResult;" << endl << endl;
-      this->behaviourFile << "using MechanicalBehaviour<hypothesis,Type,use_qt>::SUCCESS;" << endl;
-      this->behaviourFile << "using MechanicalBehaviour<hypothesis,Type,use_qt>::FAILURE;" << endl;
-      this->behaviourFile << "using MechanicalBehaviour<hypothesis,Type,use_qt>::UNRELIABLE_RESULTS;" << endl << endl;
-    } else {
-      this->behaviourFile << "typedef " << this->mb.getClassName() 
-			  << "BehaviourData<hypothesis,Type,false> BehaviourData;" << endl;
-      this->behaviourFile << "typedef " << this->mb.getClassName() 
-			  << "IntegrationData<hypothesis,Type,false> IntegrationData;" << endl;
-      this->behaviourFile << "typedef typename MechanicalBehaviour<hypothesis,Type,false>::SMType            SMType;" << endl << endl;
-      this->behaviourFile << "using MechanicalBehaviour<hypothesis,Type,false>::ELASTIC;" << endl;
-      this->behaviourFile << "using MechanicalBehaviour<hypothesis,Type,false>::SECANTOPERATOR;" << endl;
-      this->behaviourFile << "using MechanicalBehaviour<hypothesis,Type,false>::TANGENTOPERATOR;" << endl;
-      this->behaviourFile << "using MechanicalBehaviour<hypothesis,Type,false>::CONSISTENTTANGENTOPERATOR;" << endl;
-      this->behaviourFile << "using MechanicalBehaviour<hypothesis,Type,false>::NOSTIFFNESSREQUESTED;" << endl;
-      this->behaviourFile << "typedef typename MechanicalBehaviour<hypothesis,Type,false>::IntegrationResult IntegrationResult;" << endl;
-      this->behaviourFile << "using MechanicalBehaviour<hypothesis,Type,false>::SUCCESS;" << endl;
-      this->behaviourFile << "using MechanicalBehaviour<hypothesis,Type,false>::FAILURE;" << endl;
-      this->behaviourFile << "using MechanicalBehaviour<hypothesis,Type,false>::UNRELIABLE_RESULTS;" << endl << endl;
-      // type storing the stress-free expansion
+    const string qt = this->mb.useQt() ? "use_qt" : "false";
+    this->behaviourFile << "typedef " << this->mb.getClassName() 
+			<< "BehaviourData<hypothesis,Type," << qt << "> BehaviourData;" << endl;
+    this->behaviourFile << "typedef " << this->mb.getClassName() 
+			<< "IntegrationData<hypothesis,Type," << qt << "> IntegrationData;" << endl;
+    this->behaviourFile << "typedef typename MechanicalBehaviour<" << btype << ",hypothesis,Type," << qt << ">::SMFlag SMFlag;" << endl;
+    this->behaviourFile << "typedef typename MechanicalBehaviour<" << btype << ",hypothesis,Type," << qt << ">::SMType SMType;" << endl;
+    this->behaviourFile << "using MechanicalBehaviour<" << btype << ",hypothesis,Type," << qt << ">::ELASTIC;" << endl;
+    this->behaviourFile << "using MechanicalBehaviour<" << btype << ",hypothesis,Type," << qt << ">::SECANTOPERATOR;" << endl;
+    this->behaviourFile << "using MechanicalBehaviour<" << btype << ",hypothesis,Type," << qt << ">::TANGENTOPERATOR;" << endl;
+    this->behaviourFile << "using MechanicalBehaviour<" << btype << ",hypothesis,Type," << qt << ">::CONSISTENTTANGENTOPERATOR;" << endl;
+    this->behaviourFile << "using MechanicalBehaviour<" << btype << ",hypothesis,Type," << qt << ">::NOSTIFFNESSREQUESTED;" << endl;
+    if((this->mb.getBehaviourType()==MechanicalBehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR)||
+       (this->mb.getBehaviourType()==MechanicalBehaviourDescription::COHESIVEZONEMODEL)){
+      this->behaviourFile << "using MechanicalBehaviour<" << btype << ",hypothesis,Type," << qt << ">::STANDARDTANGENTOPERATOR;" << endl;
+    } else if (this->mb.getBehaviourType()==MechanicalBehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR){
+      const vector<FiniteStrainBehaviourTangentOperatorBase::Flag> toflags = getFiniteStrainBehaviourTangentOperatorFlags();
+      for(vector<FiniteStrainBehaviourTangentOperatorBase::Flag>::const_iterator pf=toflags.begin();
+	  pf!=toflags.end();++pf){
+	this->behaviourFile << "using MechanicalBehaviour<" << btype << ",hypothesis,Type," << qt << ">::"
+			    << convertFiniteStrainBehaviourTangentOperatorFlagToString(*pf) << ";" << endl;
+      }
     }
+    this->behaviourFile << "typedef typename MechanicalBehaviour<" << btype << ",hypothesis,Type," << qt << ">::IntegrationResult IntegrationResult;" << endl << endl;
+    this->behaviourFile << "using MechanicalBehaviour<" << btype << ",hypothesis,Type," << qt << ">::SUCCESS;" << endl;
+    this->behaviourFile << "using MechanicalBehaviour<" << btype << ",hypothesis,Type," << qt << ">::FAILURE;" << endl;
+    this->behaviourFile << "using MechanicalBehaviour<" << btype << ",hypothesis,Type," << qt << ">::UNRELIABLE_RESULTS;" << endl << endl;
     if(this->mb.areThermalExpansionCoefficientsDefined()){
       this->behaviourFile << "typedef " << this->mb.getStressFreeExpansionType()  << " StressFreeExpansionType;" << endl << endl;
     }
@@ -3789,7 +3821,7 @@ namespace mfront{
     this->writeBehaviourDestructor();
     this->checkBehaviourFile();
     this->behaviourFile << "private:" << endl << endl;
-    this->writeBehaviourTangentStiffnessOperator();
+    this->writeBehaviourTangentOperator();
     this->writeBehaviourPolicyVariable();
     this->writeBehaviourClassEnd();
     this->writeBehaviourOutputOperator(h);
@@ -3808,24 +3840,40 @@ namespace mfront{
   void MFrontBehaviourParserCommon::writeBehaviourComputePredictionOperator(const Hypothesis h)
   {
     using namespace std;
+    const string btype = this->convertBehaviourTypeToString();
     if((!this->mb.getAttribute<bool>(h,MechanicalBehaviourData::hasPredictionOperator,false))&&
        (this->mb.hasCode(h,MechanicalBehaviourData::ComputePredictionOperator))){
       this->throwRuntimeError("MFrontBehaviourParserCommon::writeBehaviourComputePredictionOperator : ",
 			      "attribute 'hasPredictionOperator' is set but no associated code defined");
     }
     if(this->mb.hasCode(h,MechanicalBehaviourData::ComputePredictionOperator)){
-      this->behaviourFile << "IntegrationResult computePredictionOperator(const SMType smt){" << endl;
+      this->behaviourFile << "IntegrationResult" << endl
+			  << "computePredictionOperator(const SMFlag smflag,const SMType smt){" << endl;
       this->behaviourFile << "using namespace std;" << endl;
       this->behaviourFile << "using namespace tfel::math;" << endl;
-      writeMaterialLaws("MFrontBehaviourParserCommon::writeBehaviourComputePredictionOperator",
-			this->behaviourFile,this->mb.getMaterialLaws());
       this->writeStandardPerformanceProfiling(this->behaviourFile,
 					      MechanicalBehaviourData::ComputePredictionOperator);
+      writeMaterialLaws("MFrontBehaviourParserCommon::writeBehaviourComputePredictionOperator",
+			this->behaviourFile,this->mb.getMaterialLaws());
+      if((this->mb.getBehaviourType()==MechanicalBehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR)||
+	 (this->mb.getBehaviourType()==MechanicalBehaviourDescription::COHESIVEZONEMODEL)){
+	if(mb.useQt()){
+	  this->behaviourFile << "if(smflag!=MechanicalBehaviour<" << btype 
+			      << ",hypothesis,Type,use_qt>::STANDARDTANGENTOPERATOR){" << endl
+			      << "throw(runtime_error(\"invalid tangent operator flag\"));" << endl
+			      << "}" << endl;
+	} else {
+	  this->behaviourFile << "if(smflag!=MechanicalBehaviour<" << btype 
+			      << ",hypothesis,Type,false>::STANDARDTANGENTOPERATOR){" << endl
+			      << "throw(runtime_error(\"invalid tangent operator flag\"));" << endl
+			      << "}" << endl;
+	}
+      }
       this->behaviourFile << this->mb.getCode(h,MechanicalBehaviourData::ComputePredictionOperator).code;
       this->behaviourFile << "return SUCCESS;" << endl;
       this->behaviourFile << "}" << endl << endl;
     } else {
-      this->behaviourFile << "IntegrationResult computePredictionOperator(const SMType){" << endl;
+      this->behaviourFile << "IntegrationResult computePredictionOperator(const SMFlag,const SMType){" << endl;
       this->behaviourFile << "using namespace std;" << endl;
       this->behaviourFile << "string msg(\"" << this->mb.getClassName() << "::computePredictionOperator : \");" << endl;
       this->behaviourFile << "msg +=\"unimplemented feature\";" << endl;
@@ -3842,7 +3890,7 @@ namespace mfront{
   {
     using namespace std;
     this->checkBehaviourFile();
-    this->behaviourFile << "const StiffnessOperator&" << endl;
+    this->behaviourFile << "const TangentOperator&" << endl;
     this->behaviourFile << "getTangentOperator(void) const{" << endl;
     this->behaviourFile << "return this->Dt;" << endl;
     this->behaviourFile << "}" << endl << endl;
@@ -3858,13 +3906,13 @@ namespace mfront{
     this->behaviourFile << "}" << endl << endl;
   } // end of MFrontBehaviourParserCommon::writeBehaviourGetTimeStepScalingFactor(void)
 
-  void MFrontBehaviourParserCommon::writeBehaviourTangentStiffnessOperator()
+  void MFrontBehaviourParserCommon::writeBehaviourTangentOperator()
   {
     using namespace std;
     this->checkBehaviourFile();
     this->behaviourFile << "//! Tangent operator;" << endl;
-    this->behaviourFile << "StiffnessOperator Dt;" << endl;
-  } // end of MFrontBehaviourParserCommon::writeBehaviourTangentStiffnessOperator()
+    this->behaviourFile << "TangentOperator Dt;" << endl;
+  } // end of MFrontBehaviourParserCommon::writeBehaviourTangentOperator()
 
   void MFrontBehaviourParserCommon::checkIntegrationDataFile() const {
     using namespace std;

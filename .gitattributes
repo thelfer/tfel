@@ -535,6 +535,8 @@ include/TFEL/Macros.hxx -text
 include/TFEL/Material/BoundsCheck.hxx -text
 include/TFEL/Material/DDIF2Base.hxx -text
 include/TFEL/Material/DDIF2Base.ixx -text
+include/TFEL/Material/FiniteStrainBehaviourTangentOperator.hxx -text
+include/TFEL/Material/FiniteStrainBehaviourTangentOperatorBase.hxx -text
 include/TFEL/Material/GursonTvergaardNeedleman.hxx -text
 include/TFEL/Material/Hill.hxx -text
 include/TFEL/Material/Hill.ixx -text
@@ -825,6 +827,7 @@ include/TFEL/Math/ST2toT2/ST2toT2ConceptOperations.hxx -text
 include/TFEL/Math/ST2toT2/ST2toT2Expr.hxx -text
 include/TFEL/Math/ST2toT2/ST2toT2FromTinyMatrixView.hxx -text
 include/TFEL/Math/ST2toT2/ST2toT2FromTinyMatrixView2.hxx -text
+include/TFEL/Math/ST2toT2/TensorStensorDiadicProductExpr.hxx -text
 include/TFEL/Math/ST2toT2/st2tot2.ixx -text
 include/TFEL/Math/ST2toT2/st2tot2ResultType.hxx -text
 include/TFEL/Math/Stensor/Internals/StensorChangeBasis.hxx -text
@@ -852,6 +855,7 @@ include/TFEL/Math/Stensor/StensorStaticStorage.hxx -text
 include/TFEL/Math/Stensor/stensor.ixx -text
 include/TFEL/Math/Stensor/stensorResultType.hxx -text
 include/TFEL/Math/T2toST2/RightCauchyGreenTensorDerivativeExpr.hxx -text
+include/TFEL/Math/T2toST2/StensorTensorDiadicProductExpr.hxx -text
 include/TFEL/Math/T2toST2/T2toST2Concept.hxx -text
 include/TFEL/Math/T2toST2/T2toST2Concept.ixx -text
 include/TFEL/Math/T2toST2/T2toST2ConceptOperations.hxx -text
@@ -1918,6 +1922,8 @@ src/Glossary/Makefile.am -text
 src/Makefile.am -text
 src/Material/CMakeLists.txt -text
 src/Material/DDIF2Base.cxx -text
+src/Material/FiniteStrainBehaviourTangentOperator.cxx -text
+src/Material/FiniteStrainTangentOperator.cxx -text
 src/Material/Makefile.am -text
 src/Material/MaterialException.cxx -text
 src/Material/ModellingHypothesis.cxx -text
@@ -2040,6 +2046,7 @@ tests/Lambda/Makefile.am -text
 tests/Lambda/lambda.cxx -text
 tests/Makefile.am -text
 tests/Material/CMakeLists.txt -text
+tests/Material/FiniteStrainBehaviourTangentOperator.cxx -text
 tests/Material/Makefile.am -text
 tests/Material/boundsCheck.cxx -text
 tests/Math/CMakeLists.txt -text

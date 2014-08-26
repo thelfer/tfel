@@ -34,6 +34,7 @@
 #include"TFEL/Math/Stensor/StensorConceptOperations.hxx"
 #include"TFEL/Math/Stensor/StensorStaticStorage.hxx"
 #include"TFEL/Math/Stensor/StensorExpr.hxx"
+#include"TFEL/Math/Matrix/MatrixConcept.hxx"
 
 #include"TFEL/Math/Forward/tvector.hxx"
 #include"TFEL/Math/Forward/tmatrix.hxx"

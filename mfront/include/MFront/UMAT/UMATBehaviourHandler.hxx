@@ -14,11 +14,42 @@
 
 #include"TFEL/Utilities/Name.hxx"
 #include"TFEL/Math/stensor.hxx"
+#include"TFEL/Material/MechanicalBehaviour.hxx"
 #include"MFront/UMAT/UMATTangentOperator.hxx"
 #include"MFront/UMAT/UMATComputeStiffnessTensor.hxx"
 
 namespace umat
 {
+
+  template<UMATBehaviourType btype>
+  struct UMATTangentOperatorFlag;
+
+  template<>
+  struct UMATTangentOperatorFlag<umat::SMALLSTRAINSTANDARDBEHAVIOUR>
+  {
+    typedef tfel::material::MechanicalBehaviourBase MechanicalBehaviourBase; 
+    typedef tfel::material::TangentOperatorTraits<MechanicalBehaviourBase::SMALLSTRAINSTANDARDBEHAVIOUR>
+    TangentOperatorTraits;
+    static const TangentOperatorTraits::SMFlag value = TangentOperatorTraits::STANDARDTANGENTOPERATOR;
+  };
+
+  template<>
+  struct UMATTangentOperatorFlag<umat::FINITESTRAINSTANDARDBEHAVIOUR>
+  {
+    typedef tfel::material::MechanicalBehaviourBase MechanicalBehaviourBase; 
+    typedef tfel::material::TangentOperatorTraits<MechanicalBehaviourBase::FINITESTRAINSTANDARDBEHAVIOUR>
+    TangentOperatorTraits;
+    static const TangentOperatorTraits::SMFlag value = TangentOperatorTraits::DSIG_DF;
+  };
+
+  template<>
+  struct UMATTangentOperatorFlag<umat::COHESIVEZONEMODEL>
+  {
+    typedef tfel::material::MechanicalBehaviourBase MechanicalBehaviourBase; 
+    typedef tfel::material::TangentOperatorTraits<MechanicalBehaviourBase::COHESIVEZONEMODEL>
+    TangentOperatorTraits;
+    static const TangentOperatorTraits::SMFlag value = TangentOperatorTraits::STANDARDTANGENTOPERATOR;
+  };
 
   template<UMATBehaviourType btype,
 	   unsigned short N>
@@ -393,23 +424,24 @@ namespace umat
 	  behaviour.setOutOfBoundsPolicy(up.getOutOfBoundsPolicy());
 	  behaviour.checkBounds();
 	  typename BV::IntegrationResult r = BV::SUCCESS;
+	  const typename BV::SMFlag smflag = UMATTangentOperatorFlag<UMATTraits<BV>::btype>::value;
 	  try{
 	    if((-3.25<*DDSOE)&&(*DDSOE<-2.75)){
-	      r = PredictionOperatorComputer::exe(behaviour,BV::TANGENTOPERATOR);
+	      r = PredictionOperatorComputer::exe(behaviour,smflag,BV::TANGENTOPERATOR);
 	    } else if((-2.25<*DDSOE)&&(*DDSOE<-1.75)){
-	      r = PredictionOperatorComputer::exe(behaviour,BV::SECANTOPERATOR);
+	      r = PredictionOperatorComputer::exe(behaviour,smflag,BV::SECANTOPERATOR);
 	    } else if((-1.25<*DDSOE)&&(*DDSOE<-0.75)){
-	      r = PredictionOperatorComputer::exe(behaviour,BV::ELASTIC);
+	      r = PredictionOperatorComputer::exe(behaviour,smflag,BV::ELASTIC);
 	    } else if((-0.25<*DDSOE)&&(*DDSOE<0.25)){
-	      r = behaviour.integrate(BV::NOSTIFFNESSREQUESTED);
+	      r = behaviour.integrate(smflag,BV::NOSTIFFNESSREQUESTED);
 	    } else if((0.75<*DDSOE)&&(*DDSOE<1.25)){
-	      r = behaviour.integrate(BV::ELASTIC);
+	      r = behaviour.integrate(smflag,BV::ELASTIC);
 	    } else if((1.75<*DDSOE)&&(*DDSOE<2.25)){
-	      r = behaviour.integrate(BV::SECANTOPERATOR);
+	      r = behaviour.integrate(smflag,BV::SECANTOPERATOR);
 	    } else if((2.75<*DDSOE)&&(*DDSOE<3.25)){
-	      r = behaviour.integrate(BV::TANGENTOPERATOR);
+	      r = behaviour.integrate(smflag,BV::TANGENTOPERATOR);
 	    } else if((3.75<*DDSOE)&&(*DDSOE<4.25)){
-	      r = behaviour.integrate(BV::CONSISTENTTANGENTOPERATOR);
+	      r = behaviour.integrate(smflag,BV::CONSISTENTTANGENTOPERATOR);
 	    } else {
 	      throwInvalidDDSOEException(Name<BV>::getName(),*DDSOE);
 	    }
@@ -533,22 +565,26 @@ namespace umat
 	}
 	this->behaviour.checkBounds();
 	typename BV::IntegrationResult r = BV::SUCCESS;
+	const typename BV::SMFlag smflag = UMATTangentOperatorFlag<UMATTraits<BV>::btype>::value;
 	if((-3.25<*DDSOE)&&(*DDSOE<-2.75)){
-	  r = PredictionOperatorComputer::exe(this->behaviour,BV::TANGENTOPERATOR);
+	  r = PredictionOperatorComputer::exe(this->behaviour,smflag,
+					      BV::TANGENTOPERATOR);
 	} else if((-2.25<*DDSOE)&&(*DDSOE<-1.75)){
-	  r = PredictionOperatorComputer::exe(this->behaviour,BV::SECANTOPERATOR);
+	  r = PredictionOperatorComputer::exe(this->behaviour,smflag,
+					      BV::SECANTOPERATOR);
 	} else if((-1.25<*DDSOE)&&(*DDSOE<-0.75)){
-	  r = PredictionOperatorComputer::exe(this->behaviour,BV::ELASTIC);
+	  r = PredictionOperatorComputer::exe(this->behaviour,smflag,
+					      BV::ELASTIC);
 	} else if((-0.25<*DDSOE)&&(*DDSOE<0.25)){
-	  r = this->behaviour.integrate(BV::NOSTIFFNESSREQUESTED);
+	  r = this->behaviour.integrate(smflag,BV::NOSTIFFNESSREQUESTED);
 	} else if((0.75<*DDSOE)&&(*DDSOE<1.25)){
-	  r = this->behaviour.integrate(BV::ELASTIC);
+	  r = this->behaviour.integrate(smflag,BV::ELASTIC);
 	} else if((1.75<*DDSOE)&&(*DDSOE<2.25)){
-	  r = this->behaviour.integrate(BV::SECANTOPERATOR);
+	  r = this->behaviour.integrate(smflag,BV::SECANTOPERATOR);
 	} else if((2.75<*DDSOE)&&(*DDSOE<3.25)){
-	  r = this->behaviour.integrate(BV::TANGENTOPERATOR);
+	  r = this->behaviour.integrate(smflag,BV::TANGENTOPERATOR);
 	} else if((3.75<*DDSOE)&&(*DDSOE<4.25)){
-	  r = this->behaviour.integrate(BV::CONSISTENTTANGENTOPERATOR);
+	  r = this->behaviour.integrate(smflag,BV::CONSISTENTTANGENTOPERATOR);
 	} else {
 	  throwInvalidDDSOEException(Name<BV>::getName(),*DDSOE);
 	}
@@ -580,9 +616,9 @@ namespace umat
     {
       typedef Behaviour<H,UMATReal,false> BV;
       static typename BV::IntegrationResult
-      exe(BV& b,const typename BV::SMType smt)
+      exe(BV& b,const typename BV::SMFlag smf,const typename BV::SMType smt)
       {
-	return b.computePredictionOperator(smt);
+	return b.computePredictionOperator(smf,smt);
       } // end of exe	  
     };
 
@@ -590,7 +626,8 @@ namespace umat
     {
       typedef Behaviour<H,UMATReal,false> BV;
       static typename BV::IntegrationResult
-      exe(BV&,const typename BV::SMType)
+      exe(BV&,const typename BV::SMFlag,
+	  const typename BV::SMType)
       {
 	using namespace tfel::utilities;
 	throwPredictionOperatorIsNotAvalaible(Name<BV>::getName());

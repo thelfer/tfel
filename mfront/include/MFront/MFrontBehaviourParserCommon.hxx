@@ -169,6 +169,11 @@ namespace mfront{
       std::set<Hypothesis> hypotheses;
     };
     /*!
+     * \return a string describing the behaviour type
+     */
+    virtual std::string
+    convertBehaviourTypeToString(void) const;
+    /*!
      * \return the name of the generated class
      */
     virtual std::string getClassName(void) const;
@@ -879,7 +884,7 @@ namespace mfront{
     writeBehaviourGetTangentOperator();
     
     virtual void
-    writeBehaviourTangentStiffnessOperator();
+    writeBehaviourTangentOperator();
 
     virtual void
     treatParameterMethod(const Hypothesis);

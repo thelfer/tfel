@@ -1692,6 +1692,7 @@ namespace mfront{
 
   void MFrontImplicitParserBase::writeBehaviourIntegrator(const Hypothesis h){
     using namespace std;
+    const string btype = this->convertBehaviourTypeToString();
     const MechanicalBehaviourData& d = this->mb.getMechanicalBehaviourData(h);
     VariableDescriptionContainer::const_iterator p;
     VariableDescriptionContainer::const_iterator p2;
@@ -1707,9 +1708,32 @@ namespace mfront{
     this->behaviourFile << "* \\brief Integrate behaviour law over the time step\n";
     this->behaviourFile << "*/\n";
     this->behaviourFile << "IntegrationResult" << endl;
-    this->behaviourFile << "integrate(const SMType smt){\n";
+    if(this->mb.hasAttribute(h,MechanicalBehaviourData::hasConsistentTangentOperator)){
+      this->behaviourFile << "integrate(const SMFlag smflag,const SMType smt){\n";
+    } else {
+      if((this->mb.getBehaviourType()==MechanicalBehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR)||
+	 (this->mb.getBehaviourType()==MechanicalBehaviourDescription::COHESIVEZONEMODEL)){
+	this->behaviourFile << "integrate(const SMFlag smflag,const SMType smt){\n";
+      } else {
+	this->behaviourFile << "integrate(const SMFlag,const SMType smt){\n";
+      }
+    }
     this->behaviourFile << "using namespace std;\n";
     this->behaviourFile << "using namespace tfel::math;\n";
+    if((this->mb.getBehaviourType()==MechanicalBehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR)||
+       (this->mb.getBehaviourType()==MechanicalBehaviourDescription::COHESIVEZONEMODEL)){
+      if(this->mb.useQt()){
+	this->behaviourFile << "if(smflag!=MechanicalBehaviour<" << btype 
+			    << ",hypothesis,Type,use_qt>::STANDARDTANGENTOPERATOR){" << endl
+			    << "throw(runtime_error(\"invalid tangent operator flag\"));" << endl
+			    << "}" << endl;
+      } else {
+	this->behaviourFile << "if(smflag!=MechanicalBehaviour<" << btype 
+			    << ",hypothesis,Type,false>::STANDARDTANGENTOPERATOR){" << endl
+			    << "throw(runtime_error(\"invalid tangent operator flag\"));" << endl
+			    << "}" << endl;
+      }
+    }
     this->writeStandardPerformanceProfilingBegin(this->behaviourFile,
 						 MechanicalBehaviourData::Integrator);
     if(this->mb.hasAttribute(h,MechanicalBehaviourData::compareToNumericalJacobian)){
@@ -1756,9 +1780,9 @@ namespace mfront{
 			  << "::integrate() : computFdF returned false on first iteration, abording...\" << endl;\n";
     }
     if(this->mb.useQt()){        
-      this->behaviourFile << "return MechanicalBehaviour<hypothesis,Type,use_qt>::FAILURE;\n";
+      this->behaviourFile << "return MechanicalBehaviour<" << btype << ",hypothesis,Type,use_qt>::FAILURE;\n";
     } else {
-      this->behaviourFile << "return MechanicalBehaviour<hypothesis,Type,false>::FAILURE;\n";
+      this->behaviourFile << "return MechanicalBehaviour<" << btype << ",hypothesis,Type,false>::FAILURE;\n";
     }
     this->behaviourFile << "} else {\n";
     if(getDebugMode()){
@@ -1901,9 +1925,9 @@ namespace mfront{
       this->behaviourFile << "}" << endl;
       this->behaviourFile << "catch(LUException&){" << endl;
       if(this->mb.useQt()){        
-	this->behaviourFile << "return MechanicalBehaviour<hypothesis,Type,use_qt>::FAILURE;\n";
+	this->behaviourFile << "return MechanicalBehaviour<" << btype << ",hypothesis,Type,use_qt>::FAILURE;\n";
       } else {
-	this->behaviourFile << "return MechanicalBehaviour<hypothesis,Type,false>::FAILURE;\n";
+	this->behaviourFile << "return MechanicalBehaviour<" << btype << ",hypothesis,Type,false>::FAILURE;\n";
       }
       this->behaviourFile << "}" << endl;
       if((this->algorithm==MFrontImplicitParserBase::POWELLDOGLEG_NEWTONRAPHSON)||
@@ -1924,9 +1948,9 @@ namespace mfront{
       this->behaviourFile << "}" << endl;
       this->behaviourFile << "catch(LUException&){" << endl;
       if(this->mb.useQt()){        
-	this->behaviourFile << "return MechanicalBehaviour<hypothesis,Type,use_qt>::FAILURE;\n";
+	this->behaviourFile << "return MechanicalBehaviour<" << btype << ",hypothesis,Type,use_qt>::FAILURE;\n";
       } else {
-	this->behaviourFile << "return MechanicalBehaviour<hypothesis,Type,false>::FAILURE;\n";
+	this->behaviourFile << "return MechanicalBehaviour<" << btype << ",hypothesis,Type,false>::FAILURE;\n";
       }
       this->behaviourFile << "}" << endl;
       this->behaviourFile << "jacobian2 = this->jacobian;\n";
@@ -1985,9 +2009,9 @@ namespace mfront{
       this->behaviourFile << "cout << *this << endl;\n";
     }
     if(this->mb.useQt()){        
-      this->behaviourFile << "return MechanicalBehaviour<hypothesis,Type,use_qt>::FAILURE;\n";
+      this->behaviourFile << "return MechanicalBehaviour<" << btype << ",hypothesis,Type,use_qt>::FAILURE;\n";
     } else {
-      this->behaviourFile << "return MechanicalBehaviour<hypothesis,Type,false>::FAILURE;\n";
+      this->behaviourFile << "return MechanicalBehaviour<" << btype << ",hypothesis,Type,false>::FAILURE;\n";
     }
     this->behaviourFile << "}\n";
     this->writeLimitsOnIncrementValuesBasedOnStateVariablesPhysicalBounds(h);
@@ -2001,9 +2025,9 @@ namespace mfront{
     if(this->mb.hasAttribute(h,MechanicalBehaviourData::hasConsistentTangentOperator)){
       this->behaviourFile << "if(!this->computeConsistentTangentOperator(smt)){\n";
       if(this->mb.useQt()){        
-	this->behaviourFile << "return MechanicalBehaviour<hypothesis,Type,use_qt>::FAILURE;\n";
+	this->behaviourFile << "return MechanicalBehaviour<" << btype << ",hypothesis,Type,use_qt>::FAILURE;\n";
       } else {
-	this->behaviourFile << "return MechanicalBehaviour<hypothesis,Type,false>::FAILURE;\n";
+	this->behaviourFile << "return MechanicalBehaviour<" << btype << ",hypothesis,Type,false>::FAILURE;\n";
       }
       this->behaviourFile << "}\n";
     } else {
@@ -2030,9 +2054,9 @@ namespace mfront{
       }
     }
     if(this->mb.useQt()){        
-      this->behaviourFile << "return MechanicalBehaviour<hypothesis,Type,use_qt>::SUCCESS;\n";
+      this->behaviourFile << "return MechanicalBehaviour<" << btype << ",hypothesis,Type,use_qt>::SUCCESS;\n";
     } else {
-      this->behaviourFile << "return MechanicalBehaviour<hypothesis,Type,false>::SUCCESS;\n";
+      this->behaviourFile << "return MechanicalBehaviour<" << btype << ",hypothesis,Type,false>::SUCCESS;\n";
     }
     this->behaviourFile << "} // end of " << this->mb.getClassName() << "::integrate\n\n";
     this->behaviourFile << "/*!\n";

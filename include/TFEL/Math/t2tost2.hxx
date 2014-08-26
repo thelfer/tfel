@@ -145,12 +145,14 @@ namespace tfel{
       /*!
        * \brief Default Constructor 
        */
+      TFEL_MATH_INLINE 
       explicit t2tost2()
       {};
       /*!
        * \brief Default Constructor 
        * \param T, value used to initialise the components of the t2tost2 
        */
+      TFEL_MATH_INLINE
       explicit t2tost2(const T);
 
       /*!
@@ -159,11 +161,13 @@ namespace tfel{
        *  pointer to a tabular used to initialise the components of
        *  the t2tost2. This tabular is left unchanged.
        */
+      TFEL_MATH_INLINE 
       explicit t2tost2(const typename tfel::typetraits::BaseType<T>::type* const init);
 
       /*!
        * \brief Copy Constructor
        */
+      TFEL_MATH_INLINE 
       t2tost2(const t2tost2<N,T>& src);
 
       // Copy Constructor

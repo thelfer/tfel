@@ -12,12 +12,44 @@
 #error "This header shall not be called directly"
 #endif
 
+#include"TFEL/Material/MechanicalBehaviour.hxx"
+
 #include"MFront/Aster/AsterTangentOperator.hxx"
 #include"MFront/Aster/AsterComputeStiffnessTensor.hxx"
 #include"MFront/Aster/AsterComputeThermalExpansionCoefficientTensor.hxx"
 
 namespace aster
 {
+
+  template<AsterBehaviourType btype>
+  struct AsterTangentOperatorFlag;
+
+  template<>
+  struct AsterTangentOperatorFlag<aster::SMALLSTRAINSTANDARDBEHAVIOUR>
+  {
+    typedef tfel::material::MechanicalBehaviourBase MechanicalBehaviourBase; 
+    typedef tfel::material::TangentOperatorTraits<MechanicalBehaviourBase::SMALLSTRAINSTANDARDBEHAVIOUR>
+    TangentOperatorTraits;
+    static const TangentOperatorTraits::SMFlag value = TangentOperatorTraits::STANDARDTANGENTOPERATOR;
+  };
+
+  template<>
+  struct AsterTangentOperatorFlag<aster::FINITESTRAINSTANDARDBEHAVIOUR>
+  {
+    typedef tfel::material::MechanicalBehaviourBase MechanicalBehaviourBase; 
+    typedef tfel::material::TangentOperatorTraits<MechanicalBehaviourBase::FINITESTRAINSTANDARDBEHAVIOUR>
+    TangentOperatorTraits;
+    static const TangentOperatorTraits::SMFlag value = TangentOperatorTraits::DTAU_DDF;
+  };
+
+  template<>
+  struct AsterTangentOperatorFlag<aster::COHESIVEZONEMODEL>
+  {
+    typedef tfel::material::MechanicalBehaviourBase MechanicalBehaviourBase; 
+    typedef tfel::material::TangentOperatorTraits<MechanicalBehaviourBase::COHESIVEZONEMODEL>
+    TangentOperatorTraits;
+    static const TangentOperatorTraits::SMFlag value = TangentOperatorTraits::STANDARDTANGENTOPERATOR;
+  };
 
   template<AsterBehaviourType btype,
 	   unsigned short N>
@@ -255,22 +287,26 @@ namespace aster
 	}
 	this->behaviour.checkBounds();
 	typename BV::IntegrationResult r = BV::SUCCESS;
+	const typename BV::SMFlag smflag = AsterTangentOperatorFlag<AsterTraits<BV>::btype>::value;
 	if((-3.25<*DDSOE)&&(*DDSOE<-2.75)){
-	  r = PredictionOperatorComputer::exe(this->behaviour,BV::TANGENTOPERATOR);
+	  r = PredictionOperatorComputer::exe(this->behaviour,smflag,
+					      BV::TANGENTOPERATOR);
 	} else if((-2.25<*DDSOE)&&(*DDSOE<-1.75)){
-	  r = PredictionOperatorComputer::exe(this->behaviour,BV::SECANTOPERATOR);
+	  r = PredictionOperatorComputer::exe(this->behaviour,smflag,
+					      BV::SECANTOPERATOR);
 	} else if((-1.25<*DDSOE)&&(*DDSOE<-0.75)){
-	  r = PredictionOperatorComputer::exe(this->behaviour,BV::ELASTIC);
+	  r = PredictionOperatorComputer::exe(this->behaviour,smflag,
+					      BV::ELASTIC);
 	} else if((-0.25<*DDSOE)&&(*DDSOE<0.25)){
-	  r = this->behaviour.integrate(BV::NOSTIFFNESSREQUESTED);
+	  r = this->behaviour.integrate(smflag,BV::NOSTIFFNESSREQUESTED);
 	} else if((0.75<*DDSOE)&&(*DDSOE<1.25)){
-	  r = this->behaviour.integrate(BV::ELASTIC);
+	  r = this->behaviour.integrate(smflag,BV::ELASTIC);
 	} else if((1.75<*DDSOE)&&(*DDSOE<2.25)){
-	  r = this->behaviour.integrate(BV::SECANTOPERATOR);
+	  r = this->behaviour.integrate(smflag,BV::SECANTOPERATOR);
 	} else if((2.75<*DDSOE)&&(*DDSOE<3.25)){
-	  r = this->behaviour.integrate(BV::TANGENTOPERATOR);
+	  r = this->behaviour.integrate(smflag,BV::TANGENTOPERATOR);
 	} else if((3.75<*DDSOE)&&(*DDSOE<4.25)){
-	  r = this->behaviour.integrate(BV::CONSISTENTTANGENTOPERATOR);
+	  r = this->behaviour.integrate(smflag,BV::CONSISTENTTANGENTOPERATOR);
 	} else {
 	  throwInvalidDDSOEException(Name<BV>::getName(),*DDSOE);
 	}
@@ -295,9 +331,9 @@ namespace aster
       {
 	typedef Behaviour<AsterModellingHypothesis<N>::value,AsterReal,false> BV;
 	static typename BV::IntegrationResult
-	exe(BV& b,const typename BV::SMType smt)
+	exe(BV& b,const typename BV::SMFlag smf,const typename BV::SMType smt)
 	{
-	  return b.computePredictionOperator(smt);
+	  return b.computePredictionOperator(smf,smt);
 	} // end of exe	  
       };
 
@@ -305,7 +341,8 @@ namespace aster
       {
 	typedef Behaviour<AsterModellingHypothesis<N>::value,AsterReal,false> BV;
 	static typename BV::IntegrationResult
-	exe(BV&,const typename BV::SMType)
+	exe(BV&,const typename BV::SMFlag,
+	    const typename BV::SMType)
 	{
 	  using namespace tfel::utilities;
 	  throwPredictionOperatorIsNotAvalaible(Name<BV>::getName());

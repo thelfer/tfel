@@ -1,6 +1,7 @@
 @Parser MaterialLaw;
 @Material VanadiumAlloy;
 @Law      YoungModulus_SRMA;
+@Library  Vanadium;
 @Author   T. Helfer;
 @Date     2008-11-17;
 

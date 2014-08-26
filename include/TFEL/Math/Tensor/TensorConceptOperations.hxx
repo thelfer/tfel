@@ -35,18 +35,11 @@
 #include"TFEL/Math/Tensor/TensorProduct.hxx"
 #include"TFEL/Math/Tensor/TensorViewFromStensor.hxx"
 
+#include"TFEL/Math/T2toT2/T2toT2Expr.hxx"
+
 namespace tfel{
 
   namespace math{
-
-    // template<typename T1,typename T2>
-    // class TensorDotProductHandle
-    // {
-    //   struct DummyHandle
-    //   {};
-    // public:
-    //   typedef DummyHandle type;
-    // };
 
     /*
      * Partial Specialisation of ComputeBinaryResult_ for tensor's operation
@@ -190,22 +183,22 @@ namespace tfel{
 				      TensorExpr<Result,Expr> >::type Handle;
     };
 
-    // /*
-    //  * Partial Specialisation of ComputeBinaryResult_ for tensor's operation
-    //  */
-    // template<typename A, typename B>
-    // class ComputeBinaryResult_<TensorTag,TensorTag,A,B,OpDiadicProduct>
-    // {
-    //   struct DummyHandle{};
-    //   typedef typename TensorType<A>::type TensA;
-    //   typedef typename TensorType<B>::type TensB;
-    //   typedef MathObjectMathObjectDiadicProductExpr<TensorConcept,TensorTraits,A,B> Expr;
-    // public:
-    //   typedef typename ResultType<TensA,TensB,OpDiadicProduct>::type Result;
-    //   typedef typename tfel::meta::IF<tfel::typetraits::IsInvalid<Result>::cond,
-    // 				      DummyHandle,
-    // 				      ST2toST2Expr<Result,Expr> >::type Handle;
-    // };
+    /*
+     * Partial Specialisation of ComputeBinaryResult_ for tensor's operation
+     */
+    template<typename A, typename B>
+    class ComputeBinaryResult_<TensorTag,TensorTag,A,B,OpDiadicProduct>
+    {
+      struct DummyHandle{};
+      typedef typename TensorType<A>::type TensA;
+      typedef typename TensorType<B>::type TensB;
+      typedef MathObjectMathObjectDiadicProductExpr<TensorConcept,TensorTraits,A,B> Expr;
+    public:
+      typedef typename ResultType<TensA,TensB,OpDiadicProduct>::type Result;
+      typedef typename tfel::meta::IF<tfel::typetraits::IsInvalid<Result>::cond,
+    				      DummyHandle,
+    				      T2toT2Expr<Result,Expr> >::type Handle;
+    };
    
     /*
      * Partial Specialisation of ComputeBinaryResult_ for scalar-tensor operations

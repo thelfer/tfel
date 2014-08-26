@@ -54,7 +54,6 @@ struct SaintVenantKirchoffTangentOperator
 	F[i] = 0.03*(i-2);
       }
     }
-    const double J = det(F);
     const stensor<N> C    = computeRightCauchyGreenTensor(F);
     const stensor<N> e_gl = 0.5*(C-stensor<N>::Id());
     const stensor<N> S    = D*e_gl;
@@ -74,13 +73,8 @@ struct SaintVenantKirchoffTangentOperator
     computePushForwardDerivative(dtau,dS,S,F); 
     tensor<N> dJ;
     computeDeterminantDerivative(dJ,F);
-    //    computeCauchyStressDerivativeFromKirchoffDerivative(dsig,dtau,s,F);
     t2tost2<N> dsig;
-    for(unsigned short i=0;i!=sig.size();++i){
-      for(unsigned short j=0;j!=F.size();++j){
-    	dsig(i,j)=(dtau(i,j)-sig(i)*dJ(j))/J;
-      }
-    }
+    computeCauchyStressDerivativeFromKirchoffDerivative(dsig,dtau,sig,F);
     t2tost2<N> ndtau;
     t2tost2<N> ndsig;
     t2tost2<N> ndS;

@@ -34,6 +34,7 @@
 
 #include"TFEL/Math/T2toT2/T2toT2Concept.hxx"
 #include"TFEL/Math/T2toST2/T2toST2Expr.hxx"
+#include"TFEL/Math/T2toST2/StensorTensorDiadicProductExpr.hxx"
 
 namespace tfel
 {
@@ -45,7 +46,7 @@ namespace tfel
      * Partial Specialisation of ComputeBinaryResult_ for t2tost2's operation
      */
     template<typename A, typename B,typename Op>
-    class ComputeBinaryResult_<T2tost2Tag,T2tost2Tag,A,B,Op>
+    class ComputeBinaryResult_<T2toST2Tag,T2toST2Tag,A,B,Op>
     {
       struct DummyHandle{};
       typedef typename T2toST2Type<A>::type StensA;
@@ -64,11 +65,28 @@ namespace tfel
 				      T2toST2Expr<Result,Expr> >::type Handle;
     };
 
+    /*!
+     * Partial Specialisation of ComputeBinaryResult_ for stensor's operation
+     */
+    template<typename A, typename B>
+    class ComputeBinaryResult_<StensorTag,TensorTag,A,B,OpDiadicProduct>
+    {
+      struct DummyHandle{};
+      typedef typename StensorType<A>::type StensA;
+      typedef typename TensorType<B>::type  TensB;
+      typedef StensorTensorDiadicProductExpr<A,B> Expr;
+    public:
+      typedef typename ResultType<StensA,TensB,OpDiadicProduct>::type Result;
+      typedef typename tfel::meta::IF<tfel::typetraits::IsInvalid<Result>::cond,
+				      DummyHandle,
+				      T2toST2Expr<Result,Expr> >::type Handle;
+    };
+
     /*
      * Partial Specialisation of ComputeBinaryResult_ for scalar-t2tost2 operations
      */
     template<typename A, typename B,typename Op>
-    class ComputeBinaryResult_<ScalarTag,T2tost2Tag,A,B,Op>
+    class ComputeBinaryResult_<ScalarTag,T2toST2Tag,A,B,Op>
     {
       struct DummyHandle{};
       typedef typename T2toST2Type<B>::type StensB;
@@ -89,7 +107,7 @@ namespace tfel
      * Partial Specialisation of ComputeBinaryResult_ for t2tost2-scalar operations
      */
     template<typename A, typename B,typename Op>
-    class ComputeBinaryResult_<T2tost2Tag,ScalarTag,A,B,Op>
+    class ComputeBinaryResult_<T2toST2Tag,ScalarTag,A,B,Op>
     {
       struct DummyHandle{};
       typedef typename T2toST2Type<A>::type      StensA;
@@ -110,7 +128,7 @@ namespace tfel
      * Partial Specialisation of ComputeUnaryResult_ for t2tost2s
      */
     template<typename A>
-    struct ComputeUnaryResult_<T2tost2Tag,UnaryOperatorTag,A,OpNeg>
+    struct ComputeUnaryResult_<T2toST2Tag,UnaryOperatorTag,A,OpNeg>
     {
       struct DummyHandle{};
       typedef typename T2toST2Type<A>::type                    StensA;
@@ -209,6 +227,20 @@ namespace tfel
       return Handle(a);
     }
     
+    template<typename T1,typename T2>
+    TFEL_MATH_INLINE 
+    typename tfel::meta::EnableIf<
+      tfel::meta::Implements<T1,StensorConcept>::cond&&
+      tfel::meta::Implements<T2,TensorConcept>::cond&&
+      !tfel::typetraits::IsInvalid<typename ComputeBinaryResult<T1,T2,OpDiadicProduct>::Result>::cond,
+      typename ComputeBinaryResult<T1,T2,OpDiadicProduct>::Handle
+    >::type
+    operator ^ (const T1& a,const T2& b)
+    {
+      typedef typename ComputeBinaryResult<T1,T2,OpDiadicProduct>::Handle Handle;
+      return  Handle(a,b);
+    } // end of operator ^
+
   } // end of namespace math
 
 } // end of namespace tfel

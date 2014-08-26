@@ -593,7 +593,7 @@ namespace mfront
   } // end of MechanicalBehaviourDescription::useQt
 
   std::string
-  MechanicalBehaviourDescription::getStiffnessOperatorType(void) const
+  MechanicalBehaviourDescription::getTangentOperatorType(void) const
   {
     using namespace std;
     if(this->type==GENERALBEHAVIOUR){
@@ -607,7 +607,7 @@ namespace mfront
     } else if(this->type==SMALLSTRAINSTANDARDBEHAVIOUR){
       return "StiffnessTensor";
     } else if(this->type==FINITESTRAINSTANDARDBEHAVIOUR){
-      return "FiniteStrainStiffnessTensor";
+      return "FiniteStrainBehaviourTangentOperator<N,stress>";
     } else if(this->type==COHESIVEZONEMODEL){
       return "tfel::math::tmatrix<N,N,stress>";
     }

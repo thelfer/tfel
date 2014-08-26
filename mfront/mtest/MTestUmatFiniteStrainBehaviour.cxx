@@ -25,7 +25,7 @@ namespace mfront
 
   static void
   MTestComputeIsotropicFiniteStrainStiffnessTensor2D(const real* const props,
-						    tfel::config::Types<2u,real,false>::FiniteStrainStiffnessTensor& C)
+						     tfel::math::t2tost2<2u,real>& C)
   {
     using namespace std;
     static const real cste = sqrt(real(2));
@@ -50,7 +50,7 @@ namespace mfront
 
   static void
   UMATComputeOrthotropicFiniteStrainStiffnessTensor2D(const real* const props,
-						      tfel::config::Types<2u,real,false>::FiniteStrainStiffnessTensor& C)
+						      tfel::math::t2tost2<2u,real>& C)
   {
     using namespace std;
     // props[0] :'YG1'
@@ -106,7 +106,7 @@ namespace mfront
   {
     static void
     exe(const real* const props,
-	tfel::config::Types<1u,real,false>::FiniteStrainStiffnessTensor& C)
+	tfel::math::t2tost2<1u,real>& C)
     {
       using namespace std;
       const real E = props[0];
@@ -132,7 +132,7 @@ namespace mfront
   {
     static void
     exe(const real* const props,
-	tfel::config::Types<2u,real,false>::FiniteStrainStiffnessTensor& C)
+	tfel::math::t2tost2<2u,real>& C)
     {
       using namespace std;
       static const real cste = sqrt(2);
@@ -157,7 +157,7 @@ namespace mfront
   {
     static void
     exe(const real* const props,
-	tfel::config::Types<2u,real,false>::FiniteStrainStiffnessTensor& C)
+	tfel::math::t2tost2<2u,real>& C)
     {
       MTestComputeIsotropicFiniteStrainStiffnessTensor2D(props,C);
     } // end of struct MTestUmatComputeFiniteStrainStiffnessTensor
@@ -169,7 +169,7 @@ namespace mfront
   {
     static void
     exe(const real* const props,
-	tfel::config::Types<2u,real,false>::FiniteStrainStiffnessTensor& C)
+	tfel::math::t2tost2<2u,real>& C)
     {
       MTestComputeIsotropicFiniteStrainStiffnessTensor2D(props,C);
     } // end of struct MTestUmatComputeFiniteStrainStiffnessTensor
@@ -181,7 +181,7 @@ namespace mfront
   {
     static void
     exe(const real* const props,
-	tfel::config::Types<2u,real,false>::FiniteStrainStiffnessTensor& C)
+	tfel::math::t2tost2<2u,real>& C)
     {
       MTestComputeIsotropicFiniteStrainStiffnessTensor2D(props,C);
     } // end of struct MTestUmatComputeFiniteStrainStiffnessTensor
@@ -193,7 +193,7 @@ namespace mfront
   {
     static void
     exe(const real* const props,
-	tfel::config::Types<3u,real,false>::FiniteStrainStiffnessTensor& C)
+	tfel::math::t2tost2<3u,real>& C)
     {
       using namespace std;
       static const real cste = sqrt(2);
@@ -227,7 +227,7 @@ namespace mfront
   {
     static void
     exe(const real* const props,
-	tfel::config::Types<1u,real,false>::FiniteStrainStiffnessTensor& C)
+	tfel::math::t2tost2<1u,real>& C)
     {
       using namespace std;
       // Matrice de souplesse
@@ -270,7 +270,7 @@ namespace mfront
   {
     static void
     exe(const real* const props,
-	tfel::config::Types<2u,real,false>::FiniteStrainStiffnessTensor& C)
+	tfel::math::t2tost2<2u,real>& C)
     {
       using namespace std;
       static const real cste = sqrt(real(2));
@@ -323,7 +323,7 @@ namespace mfront
   {
     static void
     exe(const real* const props,
-	tfel::config::Types<2u,real,false>::FiniteStrainStiffnessTensor& C)
+	tfel::math::t2tost2<2u,real>& C)
     {
       UMATComputeOrthotropicFiniteStrainStiffnessTensor2D(props,C);
     } // end of struct MTestUmatComputeFiniteStrainStiffnessTensor
@@ -335,7 +335,7 @@ namespace mfront
   {
     static void
     exe(const real* const props,
-	tfel::config::Types<2u,real,false>::FiniteStrainStiffnessTensor& C)
+	tfel::math::t2tost2<2u,real>& C)
     {
       UMATComputeOrthotropicFiniteStrainStiffnessTensor2D(props,C);
     } // end of struct MTestUmatComputeFiniteStrainStiffnessTensor
@@ -347,7 +347,7 @@ namespace mfront
   {
     static void
     exe(const real* const props,
-	tfel::config::Types<2u,real,false>::FiniteStrainStiffnessTensor& C)
+	tfel::math::t2tost2<2u,real>& C)
     {
       UMATComputeOrthotropicFiniteStrainStiffnessTensor2D(props,C);
     } // end of struct MTestUmatComputeFiniteStrainStiffnessTensor
@@ -359,7 +359,7 @@ namespace mfront
   {
     static void
     exe(const real* const props,
-	tfel::config::Types<3u,real,false>::FiniteStrainStiffnessTensor& C)
+	tfel::math::t2tost2<3u,real>& C)
     {
       // props[0] :'YG1'
       // props[1] :'YG2'

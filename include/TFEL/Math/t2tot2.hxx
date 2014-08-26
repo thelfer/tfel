@@ -197,12 +197,14 @@ namespace tfel{
       /*!
        * \brief Default Constructor 
        */
+      TFEL_MATH_INLINE 
       explicit t2tot2()
       {};
       /*!
        * \brief Default Constructor 
        * \param T, value used to initialise the components of the t2tot2 
        */
+      TFEL_MATH_INLINE
       explicit t2tot2(const T);
 
       /*!
@@ -211,17 +213,19 @@ namespace tfel{
        *  pointer to a tabular used to initialise the components of
        *  the t2tot2. This tabular is left unchanged.
        */
-      explicit t2tot2(const typename tfel::typetraits::BaseType<T>::type* const init);
+      TFEL_MATH_INLINE
+      explicit t2tot2(const typename tfel::typetraits::BaseType<T>::type* const);
 
       /*!
        * \brief Copy Constructor
        */
-      t2tot2(const t2tot2<N,T>& src);
+      TFEL_MATH_INLINE
+      t2tot2(const t2tot2<N,T>&);
 
       // Copy Constructor
       template<typename T2,typename Expr>
-      TFEL_MATH_INLINE 
-      t2tot2(const T2toT2Expr<t2tot2<N,T2>,Expr>& src);
+      TFEL_MATH_INLINE
+      t2tot2(const T2toT2Expr<t2tot2<N,T2>,Expr>&);
 
       /*!
        * Import values

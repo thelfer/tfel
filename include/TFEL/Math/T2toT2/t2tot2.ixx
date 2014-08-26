@@ -192,6 +192,13 @@ namespace tfel{
 		       TensorDimeToSize<N>::value>::copy(src,*this);
     }
 
+    template<unsigned short N,typename T>
+    t2tot2<N,T>::t2tot2(const t2tot2<N,T>& src){
+      matrix_utilities<TensorDimeToSize<N>::value,
+		       TensorDimeToSize<N>::value,
+		       TensorDimeToSize<N>::value>::copy(src,*this);
+    }
+
     template<unsigned short N, typename T>
     T& 
     t2tot2<N,T>::operator()(const unsigned short i,const unsigned short j){

@@ -3,14 +3,20 @@ if WITH_TESTS
 INCLUDES = -I$(top_srcdir)/include
 
 testdir = $(pkgdatadir)/tests/Material
-test_PROGRAMS = boundsCheck
+test_PROGRAMS = boundsCheck \
+		FiniteStrainBehaviourTangentOperator
 
-LDADD = -lTFELMaterial -lTFELMath -lTFELException \
-	-L$(top_builddir)/src/Material            \
-	-L$(top_builddir)/src/Math                \
+LDADD = -lTFELMaterial -lTFELMath       \
+	-lTFELUtilities -lTFELException \
+	-lTFELTests                     \
+	-L$(top_builddir)/src/Material  \
+	-L$(top_builddir)/src/Math      \
+	-L$(top_builddir)/src/Utilities \
+	-L$(top_builddir)/src/Tests     \
 	-L$(top_builddir)/src/Exception
 
 boundsCheck_SOURCES = boundsCheck.cxx               
+FiniteStrainBehaviourTangentOperator_SOURCES = FiniteStrainBehaviourTangentOperator.cxx               
 
 TESTS=$(test_PROGRAMS)
 

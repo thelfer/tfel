@@ -263,9 +263,23 @@ namespace mfront{
 
   void MFrontIsotropicBehaviourParserBase::writeBehaviourComputePredictionOperator(const Hypothesis h)
   {
+    using namespace std;
+    const string btype = this->convertBehaviourTypeToString();
     if(!this->mb.hasCode(h,MechanicalBehaviourData::ComputePredictionOperator)){
-      this->behaviourFile << "IntegrationResult computePredictionOperator(const SMType smt){\n";
+      this->behaviourFile << "IntegrationResult" << endl
+			  << "computePredictionOperator(const SMFlag smflag, const SMType smt){\n";
       this->behaviourFile << "using namespace std;\n";
+      if(this->mb.useQt()){
+	this->behaviourFile << "if(smflag!=MechanicalBehaviour<" << btype 
+			    << ",hypothesis,Type,use_qt>::STANDARDTANGENTOPERATOR){" << endl;
+      } else {
+	this->behaviourFile << "if(smflag!=MechanicalBehaviour<" << btype 
+			    << ",hypothesis,Type,false>::STANDARDTANGENTOPERATOR){" << endl;
+      }
+      this->behaviourFile << "throw(runtime_error(\"" << this->mb.getClassName()
+			  << "::computePredictionOperator : "
+			  << "invalid tangent operator flag\"));" << endl
+			  << "}" << endl;
       this->behaviourFile << "if((smt==ELASTIC)||(smt==SECANTOPERATOR)){\n";
       this->behaviourFile << "Dt = (this->lambda)*Stensor4::IxI()+2*(this->mu)*Stensor4::Id();\n";
       this->behaviourFile << "} else {\n";

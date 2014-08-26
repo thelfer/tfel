@@ -27,7 +27,15 @@ nu.setGlossaryName("PoissonRatio");
   // convertion to Cauchy stress tensor
   sig = convertSecondPiolaKirchhoffStressToCauchyStress(s,F1);
   if(computeTangentOperator_){
-    string msg("tangent operator not yet available");
-    throw(runtime_error(msg));
+    StiffnessTensor De = 0.5*(lambda*Stensor4::IxI()+2*mu*Stensor4::Id());
+    if(smflag==DS_DEGL){
+      Dt = De;
+    } else if(smflag==DS_DC){
+      Dt = 0.5*De;
+    } else if(smflag==DS_DF){
+      //      Dt = De*t2tost2<N,strain>::dCdF(F1);
+    } else if (smflag==DS_DDF){
+      //      Dt = De*t2tost2<N,strain>::dCdF(F1);
+    }
   }
 }

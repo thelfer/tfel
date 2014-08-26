@@ -127,6 +127,7 @@ namespace mfront{
       this->setDefaultAlgorithm();
     }
     for(set<Hypothesis>::const_iterator ph=h.begin();ph!=h.end();++ph){
+      // On devrait le faire plus tard, pour ne traiter que les variables effectivement utilisées
 #warning "HERE"
       CodeBlock ib;
       for(VariableDescriptionContainer::const_iterator p=sv.begin();p!=sv.end();++p){
@@ -179,6 +180,7 @@ namespace mfront{
     set<Hypothesis> h;
     this->readVariableList(ev,h,&MechanicalBehaviourDescription::addExternalStateVariables,true,true,false);
     for(set<Hypothesis>::const_iterator ph=h.begin();ph!=h.end();++ph){
+      // On devrait le faire plus tard, pour ne traiter que les variables effectivement utilisées
 #warning "HERE"
       CodeBlock ib;
       for(VariableDescriptionContainer::const_iterator p=ev.begin();p!=ev.end();++p){
@@ -651,7 +653,6 @@ namespace mfront{
     using namespace std;
     const MechanicalBehaviourData& d = this->mb.getMechanicalBehaviourData(h);
     VariableDescriptionContainer::const_iterator p;
-    this->behaviourFile << "using namespace std;" << endl;
     this->behaviourFile << "this->computeDerivative();" << endl;
     for(p =d.getStateVariables().begin();p!=d.getStateVariables().end();++p){
       this->behaviourFile << "this->" << p->name << " += " 
@@ -725,7 +726,6 @@ namespace mfront{
       eev = ERRORSUMMATIONEVALUATION;
     }
     SupportedTypes::TypeSize stateVarsSize = this->getTotalSize(d.getStateVariables());
-    this->behaviourFile << "using namespace std;" << endl;
     this->behaviourFile << "static const Type cste12_13       = Type(12)/Type(13);" << endl;
     this->behaviourFile << "static const Type cste1932_2197   = Type(1932)/Type(2197);" << endl;
     this->behaviourFile << "static const Type cste7200_2197   = Type(7200)/Type(2197);" << endl;
@@ -1269,8 +1269,6 @@ namespace mfront{
     for(p=d.getStateVariables().begin();p!=d.getStateVariables().end();++p){
       stateVarsSize+=this->getTypeSize(p->type,p->arraySize);
     }
-    this->behaviourFile << "using namespace std;" << endl;
-    this->behaviourFile << "using namespace tfel::math;" << endl;
     this->behaviourFile << "static const Type cste1_6 = Type(1)/Type(6);" << endl; 
     this->behaviourFile << "time t   = time(0);" << endl;
     this->behaviourFile << "time dt_ = this->dt;" << endl;
@@ -1640,7 +1638,6 @@ namespace mfront{
     for(p=d.getStateVariables().begin();p!=d.getStateVariables().end();++p){
       stateVarsSize+=this->getTypeSize(p->type,p->arraySize);
     }
-    this->behaviourFile << "using namespace std;" << endl;
     this->behaviourFile << "static const Type cste1_6 = Type(1)/Type(6);" << endl;
     this->behaviourFile << "static const Type cste1_3 = Type(1)/Type(3);" << endl;
 
@@ -2031,7 +2028,6 @@ namespace mfront{
     VariableDescriptionContainer::const_iterator p;
     map<DrivingVariable,
 	ThermodynamicForce>::const_iterator pm;
-    this->behaviourFile << "using namespace std;" << endl;
     this->behaviourFile << "// Compute K1's values" << endl;
     this->behaviourFile << "this->computeDerivative();" << endl;
     for(p =d.getStateVariables().begin();p!=d.getStateVariables().end();++p){
@@ -2117,6 +2113,7 @@ namespace mfront{
   void MFrontRungeKuttaParser::writeBehaviourIntegrator(const Hypothesis h)
   {
     using namespace std;
+    const string btype = this->convertBehaviourTypeToString();
     const string& algorithm = this->mb.getAttribute<string>(ModellingHypothesis::UNDEFINEDHYPOTHESIS,
 							    MechanicalBehaviourData::algorithm);
     const MechanicalBehaviourData& d = this->mb.getMechanicalBehaviourData(h);
@@ -2126,7 +2123,32 @@ namespace mfront{
     this->behaviourFile << "* \\brief Integrate behaviour law over the time step" << endl;
     this->behaviourFile << "*/" << endl;
     this->behaviourFile << "IntegrationResult" << endl;
-    this->behaviourFile << "integrate(const SMType smt){" << endl;
+    if(this->mb.hasAttribute(h,MechanicalBehaviourData::hasConsistentTangentOperator)){
+      this->behaviourFile << "integrate(const SMFlag smflag,const SMType smt){" << endl;
+    } else {
+      if((this->mb.getBehaviourType()==MechanicalBehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR)||
+	 (this->mb.getBehaviourType()==MechanicalBehaviourDescription::COHESIVEZONEMODEL)){
+	this->behaviourFile << "integrate(const SMFlag smflag,const SMType smt){" << endl;
+      } else {
+	this->behaviourFile << "integrate(const SMFlag,const SMType smt){" << endl;
+      }
+    }
+    this->behaviourFile << "using namespace std;" << endl;
+    this->behaviourFile << "using namespace tfel::math;" << endl;
+    if((this->mb.getBehaviourType()==MechanicalBehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR)||
+       (this->mb.getBehaviourType()==MechanicalBehaviourDescription::COHESIVEZONEMODEL)){
+      if(this->mb.useQt()){
+	this->behaviourFile << "if(smflag!=MechanicalBehaviour<" << btype 
+			    << ",hypothesis,Type,use_qt>::STANDARDTANGENTOPERATOR){" << endl
+			    << "throw(runtime_error(\"invalid tangent operator flag\"));" << endl
+			    << "}" << endl;
+      } else {
+	this->behaviourFile << "if(smflag!=MechanicalBehaviour<" << btype 
+			    << ",hypothesis,Type,false>::STANDARDTANGENTOPERATOR){" << endl
+			    << "throw(runtime_error(\"invalid tangent operator flag\"));" << endl
+			    << "}" << endl;
+      }
+    }
     this->writeStandardPerformanceProfilingBegin(this->behaviourFile,
 						 MechanicalBehaviourData::Integrator);
     if(algorithm == "Euler"){
@@ -2160,9 +2182,9 @@ namespace mfront{
     if(this->mb.hasAttribute(h,MechanicalBehaviourData::hasConsistentTangentOperator)){
       this->behaviourFile << "if(!this->computeConsistentTangentOperator(smt)){\n";
       if(this->mb.useQt()){        
-	this->behaviourFile << "return MechanicalBehaviour<hypothesis,Type,use_qt>::FAILURE;\n";
+	this->behaviourFile << "return MechanicalBehaviour<" << btype << ",hypothesis,Type,use_qt>::FAILURE;\n";
       } else {
-	this->behaviourFile << "return MechanicalBehaviour<hypothesis,Type,false>::FAILURE;\n";
+	this->behaviourFile << "return MechanicalBehaviour<" << btype << ",hypothesis,Type,false>::FAILURE;\n";
       }
       this->behaviourFile << "}\n";
     } else {
@@ -2172,9 +2194,9 @@ namespace mfront{
     }
     this->behaviourFile << "}\n";
     if(this->mb.useQt()){        
-      this->behaviourFile << "return MechanicalBehaviour<hypothesis,Type,use_qt>::SUCCESS;\n";
+      this->behaviourFile << "return MechanicalBehaviour<" << btype << ",hypothesis,Type,use_qt>::SUCCESS;\n";
     } else {
-      this->behaviourFile << "return MechanicalBehaviour<hypothesis,Type,false>::SUCCESS;\n";
+      this->behaviourFile << "return MechanicalBehaviour<" << btype << ",hypothesis,Type,false>::SUCCESS;\n";
     }
     this->behaviourFile << "} // end of " << this->mb.getClassName() << "::integrate" << endl << endl;
   } // end of void MFrontRungeKuttaParser::writeBehaviourIntegrator(void)

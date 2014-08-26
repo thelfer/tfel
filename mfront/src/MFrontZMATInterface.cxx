@@ -1140,7 +1140,6 @@ namespace mfront
 	<< "const VECTOR& delta_grad," << endl
 	<< "MATRIX*& tg_matrix," << endl
 	<< "int flags){" << endl
-	<< "typedef tfel::material::MechanicalBehaviourBase MechanicalBehaviourBase;" << endl
 	<< "typedef tfel::material::ModellingHypothesis ModellingHypothesis;" << endl
 	<< "typedef tfel::material::" << mb.getClassName()
 	<< "<ModellingHypothesis::" << ModellingHypothesis::toUpperCaseString(h) << ",double,false> "
@@ -1176,10 +1175,17 @@ namespace mfront
 		 "unsupported behaviour type");
       throw(runtime_error(msg));
     }
-    out << "// stiffness matrix type" << endl
-	<< "MechanicalBehaviourBase::SMType smtype = MechanicalBehaviourBase::NOSTIFFNESSREQUESTED;" << endl
+    if(mb.getBehaviourType()==MechanicalBehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR){
+      out << mb.getClassName() << "::SMFlag smflag = " << mb.getClassName() << "::STANDARDTANGENTOPERATOR;" << endl;
+    } else {
+      string msg("MFrontZMATInterface::writeCallMFrontBehaviour : "
+		 "unsupported behaviour type");
+      throw(runtime_error(msg));
+    }
+    out << "// tangent operator type" << endl
+	<< mb.getClassName() << "::SMType smtype = " << mb.getClassName() << "::NOSTIFFNESSREQUESTED;" << endl
 	<< "if(flags&CALC_TG_MATRIX){" << endl
-	<< "smtype = MechanicalBehaviourBase::CONSISTENTTANGENTOPERATOR;" << endl
+	<< "smtype = " << mb.getClassName() << "::CONSISTENTTANGENTOPERATOR;" << endl
 	<< "}" << endl;
     if(mb.getBehaviourType()==MechanicalBehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR){
       out << mb.getClassName() << " b(this->sig,stran,dstran,this->mprops,mdat,this->temperature_position," << endl
@@ -1190,13 +1196,13 @@ namespace mfront
       throw(runtime_error(msg));
     }
     out << "b.initialize();" << endl;
-    out << "if(b.integrate(smtype)!=" << mb.getClassName() << "::SUCCESS){" << endl
+    out << "if(b.integrate(smflag,smtype)!=" << mb.getClassName() << "::SUCCESS){" << endl
 	<< "static INTEGRATION_RESULT bad_result;" << endl
 	<< "bad_result.set_error(INTEGRATION_RESULT::UNDEFINED_BEHAVIOR);" << endl
 	<< "return &bad_result;" << endl
 	<< "}" << endl
 	<< "b.ZMATexportStateData(this->sig,mdat);" << endl
-	<< "if(smtype!=MechanicalBehaviourBase::NOSTIFFNESSREQUESTED){" << endl;
+	<< "if(smtype!=" << mb.getClassName() << "::NOSTIFFNESSREQUESTED){" << endl;
     if(mb.getBehaviourType()==MechanicalBehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR){
       out << "zmat::ZMATInterface::convert(*tg_matrix,b.getTangentOperator());"<< endl;
     } else {

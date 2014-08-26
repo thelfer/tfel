@@ -18,6 +18,8 @@ nobase_include_HEADERS= TFEL/Macros.hxx                                         
 			TFEL/Glossary/GlossaryEntry.hxx	                                                             \
 			TFEL/Material/OutOfBoundsPolicy.hxx	                                                     \
 			TFEL/Material/MechanicalBehaviour.hxx	                                                     \
+			TFEL/Material/FiniteStrainBehaviourTangentOperator.hxx	                                     \
+			TFEL/Material/FiniteStrainBehaviourTangentOperatorBase.hxx	                             \
 			TFEL/Material/Lame.hxx			                                                     \
 			TFEL/Material/Hill.hxx			                                                     \
 			TFEL/Material/Hill.ixx			                                                     \
@@ -408,6 +410,7 @@ nobase_include_HEADERS= TFEL/Macros.hxx                                         
 			TFEL/Math/T2toST2/RightCauchyGreenTensorDerivativeExpr.hxx                                   \
 			TFEL/Math/T2toST2/T2toST2TensorProductExpr.hxx                                               \
 			TFEL/Math/T2toST2/T2toST2T2toT2ProductExpr.hxx                                               \
+			TFEL/Math/T2toST2/StensorTensorDiadicProductExpr.hxx                                         \
 			TFEL/Math/st2tot2.hxx                                                                        \
 			TFEL/Math/ST2toT2/st2tot2.ixx                                                                \
 			TFEL/Math/ST2toT2/st2tot2ResultType.hxx                                                      \
@@ -417,6 +420,7 @@ nobase_include_HEADERS= TFEL/Macros.hxx                                         
 			TFEL/Math/ST2toT2/ST2toT2Expr.hxx                                                            \
 			TFEL/Math/ST2toT2/ST2toT2FromTinyMatrixView.hxx                                              \
 			TFEL/Math/ST2toT2/ST2toT2FromTinyMatrixView2.hxx                                             \
+			TFEL/Math/ST2toT2/TensorStensorDiadicProductExpr.hxx                                         \
 			TFEL/Math/composite.hxx                                                                      \
 			TFEL/Math/Composite/CompositeCompositeExpr.hxx                                               \
 			TFEL/Math/Composite/CompositeConceptOperations.ixx                                           \

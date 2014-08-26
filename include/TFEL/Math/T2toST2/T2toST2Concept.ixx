@@ -280,13 +280,13 @@ namespace tfel{
 							const StensorType& s,
 							const TensorType&  F)
     {
-      typedef typename T2toST2Traits<T2toST2Type>::value_type value_type;
+      typedef typename T2toST2Traits<T2toST2Type>::NumType value_type;
       typedef typename tfel::typetraits::BaseType<value_type>::type real;
       const unsigned short N = T2toST2Traits<T2toST2Type>::dime;
       const real inv_J = 1/det(F);
       tensor<N,value_type> dJ;
       computeDeterminantDerivative(dJ,F);
-      ds=inv_J*(dt_K-s^dJ);
+      ds=inv_J*(dt_K-(s^dJ));
     }
 
     template<typename T2toST2ResultType,
@@ -312,7 +312,7 @@ namespace tfel{
 							const StensorType& s,
 							const TensorType&  F)
     {
-      typedef typename T2toST2Traits<T2toST2Type>::value_type value_type;
+      typedef typename T2toST2Traits<T2toST2Type>::NumType value_type;
       typedef typename tfel::typetraits::BaseType<value_type>::type real;
       const unsigned short N = T2toST2Traits<T2toST2Type>::dime;
       const real J = det(F);

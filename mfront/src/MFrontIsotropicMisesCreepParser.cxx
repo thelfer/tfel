@@ -151,26 +151,39 @@ namespace mfront{
   void MFrontIsotropicMisesCreepParser::writeBehaviourIntegrator(const Hypothesis h)
   {
     using namespace std;
+    const string btype = this->convertBehaviourTypeToString();
     const MechanicalBehaviourData& d = this->mb.getMechanicalBehaviourData(h);
     this->checkBehaviourFile();
     this->behaviourFile << "/*!\n";
     this->behaviourFile << "* \\brief Integrate behaviour law over the time step\n";
     this->behaviourFile << "*/\n";
     this->behaviourFile << "IntegrationResult\n";
-    this->behaviourFile << "integrate(const SMType smt){\n";
+    this->behaviourFile << "integrate(const SMFlag smflag,const SMType smt){\n";
+    this->behaviourFile << "using namespace std;" << endl;
+    if(this->mb.useQt()){
+      this->behaviourFile << "if(smflag!=MechanicalBehaviour<" << btype 
+			  << ",hypothesis,Type,use_qt>::STANDARDTANGENTOPERATOR){" << endl
+			  << "throw(runtime_error(\"invalid tangent operator flag\"));" << endl
+			  << "}" << endl;
+    } else {
+      this->behaviourFile << "if(smflag!=MechanicalBehaviour<" << btype 
+			  << ",hypothesis,Type,false>::STANDARDTANGENTOPERATOR){" << endl
+			  << "throw(runtime_error(\"invalid tangent operator flag\"));" << endl
+			  << "}" << endl;
+    }
     this->behaviourFile << "if(!this->NewtonIntegration()){\n";
     if(this->mb.useQt()){        
-      this->behaviourFile << "return MechanicalBehaviour<hypothesis,Type,use_qt>::FAILURE;\n";
+      this->behaviourFile << "return MechanicalBehaviour<" << btype << ",hypothesis,Type,use_qt>::FAILURE;\n";
     } else {
-      this->behaviourFile << "return MechanicalBehaviour<hypothesis,Type,false>::FAILURE;\n";
+      this->behaviourFile << "return MechanicalBehaviour<" << btype << ",hypothesis,Type,false>::FAILURE;\n";
     }
     this->behaviourFile << "}\n";
     this->behaviourFile << "if(smt!=NOSTIFFNESSREQUESTED){\n";
     this->behaviourFile << "if(!this->computeConsistentTangentOperator(smt)){\n";
     if(this->mb.useQt()){        
-      this->behaviourFile << "return MechanicalBehaviour<hypothesis,Type,use_qt>::FAILURE;\n";
+      this->behaviourFile << "return MechanicalBehaviour<" << btype << ",hypothesis,Type,use_qt>::FAILURE;\n";
     } else {
-      this->behaviourFile << "return MechanicalBehaviour<hypothesis,Type,false>::FAILURE;\n";
+      this->behaviourFile << "return MechanicalBehaviour<" << btype << ",hypothesis,Type,false>::FAILURE;\n";
     }
     this->behaviourFile << "}\n";
     this->behaviourFile << "}\n";
@@ -185,9 +198,9 @@ namespace mfront{
       }
     }
     if(this->mb.useQt()){        
-      this->behaviourFile << "return MechanicalBehaviour<hypothesis,Type,use_qt>::SUCCESS;\n";
+      this->behaviourFile << "return MechanicalBehaviour<" << btype << ",hypothesis,Type,use_qt>::SUCCESS;\n";
     } else {
-      this->behaviourFile << "return MechanicalBehaviour<hypothesis,Type,false>::SUCCESS;\n";
+      this->behaviourFile << "return MechanicalBehaviour<" << btype << ",hypothesis,Type,false>::SUCCESS;\n";
     }
     this->behaviourFile << "}\n\n";
   }

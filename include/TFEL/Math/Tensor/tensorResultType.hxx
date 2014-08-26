@@ -11,8 +11,9 @@
 
 #include"TFEL/Metaprogramming/IF.hxx"
 #include"TFEL/Metaprogramming/InvalidType.hxx"
-// #include"TFEL/Math/General/DotProduct.hxx"
+#include"TFEL/Math/General/DotProduct.hxx"
 #include"TFEL/Math/tensor.hxx"
+#include"TFEL/Math/t2tot2.hxx"
 
 namespace tfel{
   
@@ -148,24 +149,24 @@ namespace tfel{
 				      tensor<N,ResBase_> >::type type;
     };
 
-    // /*!
-    //  * \brief Partial specialisation for tensor
-    //  * \see   ResultType
-    //  */
-    // template<unsigned short N,typename T,typename T2>
-    // class ResultType<tensor<N,T>,tensor<N,T2>,OpDiadicProduct>
-    // {
-    //   typedef typename ResultType<T,T2,OpMult>::type ResBase_;
-    // public:
-    //   typedef typename tfel::meta::IF<tfel::typetraits::IsInvalid<ResBase_>::cond,
-    // 				      tfel::meta::InvalidType,
-    // 				      st2tost2<N,ResBase_> >::type type;
-    // };
-
     /*!
      * \brief Partial specialisation for tensor
      * \see   ResultType
      */
+    template<unsigned short N,typename T,typename T2>
+    class ResultType<tensor<N,T>,tensor<N,T2>,OpDiadicProduct>
+    {
+      typedef typename ResultType<T,T2,OpMult>::type ResBase_;
+    public:
+      typedef typename tfel::meta::IF<tfel::typetraits::IsInvalid<ResBase_>::cond,
+    				      tfel::meta::InvalidType,
+    				      t2tot2<N,ResBase_> >::type type;
+    };
+
+    // /*!
+    //  * \brief Partial specialisation for tensor
+    //  * \see   ResultType
+    //  */
     // template<unsigned short N,typename T,typename T2>
     // class ResultType<tensor<N,T>,
     // 		     tensor<N,T2>,OpDotProduct>

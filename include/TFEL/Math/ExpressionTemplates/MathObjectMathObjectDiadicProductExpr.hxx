@@ -21,7 +21,6 @@
 #include"TFEL/Math/General/ResultType.hxx"
 #include"TFEL/Math/General/BasicOperations.hxx"
 #include"TFEL/Math/General/RunTimeCheck.hxx"
-#include"TFEL/Math/Matrix/MatrixConcept.hxx"
 
 namespace tfel{
 

@@ -65,7 +65,6 @@ namespace tfel
       typedef tfel::math::tensor<N,tfel::math::qt<tfel::math::NoUnit,T> > DeformationGradientTensor;
       typedef tfel::math::st2tost2<N,real>                 Stensor4;
       typedef tfel::math::st2tost2<N,stress>               StiffnessTensor;
-      typedef tfel::math::t2tost2<N,stress>                FiniteStrainStiffnessTensor;
       typedef typename tfel::config::internals::PositionType<N,T,true>::type PositionType;
       typedef typename tfel::config::internals::SpatialGradType<N,T,true>::type SpatialGradType;
       typedef typename tfel::config::internals::JacobianType<N,T,true>::type JacobianType;
@@ -111,7 +110,6 @@ namespace tfel
       typedef tfel::math::tensor<N,T>   DeformationGradientTensor;
       typedef tfel::math::st2tost2<N,T> Stensor4;
       typedef tfel::math::st2tost2<N,T> StiffnessTensor;
-      typedef tfel::math::t2tost2<N,T>  FiniteStrainStiffnessTensor;
       typedef typename tfel::config::internals::PositionType<N,T,false>::type  PositionType;
       typedef typename tfel::config::internals::SpatialGradType<N,T,true>::type SpatialGradType;
       typedef typename tfel::config::internals::JacobianType<N,T,false>::type JacobianType;

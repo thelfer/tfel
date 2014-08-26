@@ -6,7 +6,8 @@ link_directories("${PROJECT_BINARY_DIR}/src/Math"
 set(TFELMaterial_SOURCES
     MaterialException.cxx
     ModellingHypothesis.cxx
-    DDIF2Base.cxx)
+    DDIF2Base.cxx
+    FiniteStrainBehaviourTangentOperator.cxx)
 
 tfel_library(TFELMaterial ${TFELMaterial_SOURCES})
 target_link_libraries(TFELMaterial

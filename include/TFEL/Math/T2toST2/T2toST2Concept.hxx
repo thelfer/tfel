@@ -37,10 +37,10 @@ namespace tfel{
     };
 
     /*!
-     * \class T2tost2Tag
+     * \class T2toST2Tag
      * \brief Helper class to characterise t2tost2.
      */ 
-    struct T2tost2Tag
+    struct T2toST2Tag
     {
       /*!
        * \brief  Return the name of the class.
@@ -69,7 +69,7 @@ namespace tfel{
       
     public:
       
-      typedef T2tost2Tag ConceptTag;
+      typedef T2toST2Tag ConceptTag;
 
       ValueType
       operator()(const unsigned short,

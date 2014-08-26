@@ -15,6 +15,7 @@
 #include<algorithm>
 #include"TFEL/Math/st2tost2.hxx"
 #include"TFEL/Utilities/Name.hxx"
+#include"TFEL/Material/MechanicalBehaviour.hxx"
 #include"MFront/Cyrano/CyranoComputeStiffnessTensor.hxx"
 
 namespace cyrano
@@ -385,23 +386,25 @@ namespace cyrano
 	    behaviour.setOutOfBoundsPolicy(up.getOutOfBoundsPolicy());
 	    behaviour.checkBounds();
 	    typename BV::IntegrationResult r = BV::SUCCESS;
+	    const typename BV::SMFlag smflag = 
+	      TangentOperatorTraits<BV::SMALLSTRAINSTANDARDBEHAVIOUR>::STANDARDTANGENTOPERATOR;
 	    try{
 	      if((-3.25<*DDSOE)&&(*DDSOE<-2.75)){
-		r = PredictionOperatorComputer::exe(behaviour,BV::TANGENTOPERATOR);
+		r = PredictionOperatorComputer::exe(behaviour,smflag,BV::TANGENTOPERATOR);
 	      } else if((-2.25<*DDSOE)&&(*DDSOE<-1.75)){
-		r = PredictionOperatorComputer::exe(behaviour,BV::SECANTOPERATOR);
+		r = PredictionOperatorComputer::exe(behaviour,smflag,BV::SECANTOPERATOR);
 	      } else if((-1.25<*DDSOE)&&(*DDSOE<-0.75)){
-		r = PredictionOperatorComputer::exe(behaviour,BV::ELASTIC);
+		r = PredictionOperatorComputer::exe(behaviour,smflag,BV::ELASTIC);
 	      } else if((-0.25<*DDSOE)&&(*DDSOE<0.25)){
-		r = behaviour.integrate(BV::NOSTIFFNESSREQUESTED);
+		r = behaviour.integrate(smflag,BV::NOSTIFFNESSREQUESTED);
 	      } else if((0.75<*DDSOE)&&(*DDSOE<1.25)){
-		r = behaviour.integrate(BV::ELASTIC);
+		r = behaviour.integrate(smflag,BV::ELASTIC);
 	      } else if((1.75<*DDSOE)&&(*DDSOE<2.25)){
-		r = behaviour.integrate(BV::SECANTOPERATOR);
+		r = behaviour.integrate(smflag,BV::SECANTOPERATOR);
 	      } else if((2.75<*DDSOE)&&(*DDSOE<3.25)){
-		r = behaviour.integrate(BV::TANGENTOPERATOR);
+		r = behaviour.integrate(smflag,BV::TANGENTOPERATOR);
 	      } else if((3.75<*DDSOE)&&(*DDSOE<4.25)){
-		r = behaviour.integrate(BV::CONSISTENTTANGENTOPERATOR);
+		r = behaviour.integrate(smflag,BV::CONSISTENTTANGENTOPERATOR);
 	      } else {
 		throwInvalidDDSOEException(Name<BV>::getName(),*DDSOE);
 	      }
@@ -538,22 +541,25 @@ namespace cyrano
 	  }
 	  behaviour.checkBounds();
 	  typename BV::IntegrationResult r = BV::SUCCESS;
+	  const typename BV::SMFlag smflag = 
+	      TangentOperatorTraits<BV::SMALLSTRAINSTANDARDBEHAVIOUR>::STANDARDTANGENTOPERATOR;
 	  if((-3.25<*DDSOE)&&(*DDSOE<-2.75)){
-	    r = PredictionOperatorComputer::exe(this->behaviour,BV::TANGENTOPERATOR);
+	    r = PredictionOperatorComputer::exe(this->behaviour,smflag,BV::TANGENTOPERATOR);
 	  } else if((-2.25<*DDSOE)&&(*DDSOE<-1.75)){
-	    r = PredictionOperatorComputer::exe(this->behaviour,BV::SECANTOPERATOR);
+	    r = PredictionOperatorComputer::exe(this->behaviour,smflag,BV::SECANTOPERATOR);
 	  } else if((-1.25<*DDSOE)&&(*DDSOE<-0.75)){
-	    r = PredictionOperatorComputer::exe(this->behaviour,BV::ELASTIC);
+	    r = PredictionOperatorComputer::exe(this->behaviour,smflag,BV::
+ELASTIC);
 	  } else if((-0.25<*DDSOE)&&(*DDSOE<0.25)){
-	    r = this->behaviour.integrate(BV::NOSTIFFNESSREQUESTED);
+	    r = this->behaviour.integrate(smflag,BV::NOSTIFFNESSREQUESTED);
 	  } else if((0.75<*DDSOE)&&(*DDSOE<1.25)){
-	    r = this->behaviour.integrate(BV::ELASTIC);
+	    r = this->behaviour.integrate(smflag,BV::ELASTIC);
 	  } else if((1.75<*DDSOE)&&(*DDSOE<2.25)){
-	    r = this->behaviour.integrate(BV::SECANTOPERATOR);
+	    r = this->behaviour.integrate(smflag,BV::SECANTOPERATOR);
 	  } else if((2.75<*DDSOE)&&(*DDSOE<3.25)){
-	    r = this->behaviour.integrate(BV::TANGENTOPERATOR);
+	    r = this->behaviour.integrate(smflag,BV::TANGENTOPERATOR);
 	  } else if((3.75<*DDSOE)&&(*DDSOE<4.25)){
-	    r = this->behaviour.integrate(BV::CONSISTENTTANGENTOPERATOR);
+	    r = this->behaviour.integrate(smflag,BV::CONSISTENTTANGENTOPERATOR);
 	  } else {
 	    throwInvalidDDSOEException(Name<BV>::getName(),*DDSOE);
 	  }
@@ -565,7 +571,7 @@ namespace cyrano
 	      throwBehaviourIntegrationFailedException(Name<BV>::getName());
 	    }
 	  }
-	  // if(this->behaviour.integrate(BV::NOSTIFFNESSREQUESTED)==BV::FAILURE){
+	  // if(this->behaviour.integrate(smflag,BV::NOSTIFFNESSREQUESTED)==BV::FAILURE){
 	  //   throwBehaviourIntegrationFailedException(Name<BV>::getName());
 	  // }
 	  behaviour.checkBounds();
@@ -588,9 +594,10 @@ namespace cyrano
     {
       typedef Behaviour<H,CyranoReal,false> BV;
       static typename BV::IntegrationResult
-      exe(BV& b,const typename BV::SMType smt)
+      exe(BV& b,const typename BV::SMFlag smf,
+	  const typename BV::SMType smt)
       {
-	return b.computePredictionOperator(smt);
+	return b.computePredictionOperator(smf,smt);
       } // end of exe	  
     };
 
@@ -598,7 +605,8 @@ namespace cyrano
     {
       typedef Behaviour<H,CyranoReal,false> BV;
       static typename BV::IntegrationResult
-      exe(BV&,const typename BV::SMType)
+      exe(BV&,const typename BV::SMFlag,
+	  const typename BV::SMType)
       {
 	using namespace tfel::utilities;
 	throwPredictionOperatorIsNotAvalaible(Name<BV>::getName());
