@@ -256,45 +256,6 @@ AC_DEFUN([AC_GCC_ARCH_OPTIMISATIONS],[
 	    case "$sys" in
 		linux*)
 		    AC_GCC_LINUX_OPTIMISATIONS
-		    if test "x$enable_debug" != "xyes"; then
-	    dnl symbol visibility
-		GCC_SYMBOL_VISIBILITY=""
-		AC_GCC_CHECK_FLAG(-fvisibility-inlines-hidden,GCC_SYMBOL_VISIBILITY)
-		if test "x$GCC_SYMBOL_VISIBILITY" != "x"; then
-		    dnl a small test because this compilation flag may cause problems
-		    dnl on some systems
-		    cat > test-fvisibility-inlines-hidden.cxx <<EOF
-#include<string>
-#include<sstream>
-void
-function(const double a)
-{
-  using namespace std;
-  ostringstream c;
-  c << a;}
-EOF
- 
-    $CXX -fvisibility-inlines-hidden --shared -DPIC -fPIC test-fvisibility-inlines-hidden.cxx -o libtest-fvisibility-inlines-hidden.so &> /dev/null
-	    if test x"$?" == "x0" ; then
-		    CXXFLAGS="$CXXFLAGS $GCC_SYMBOL_VISIBILITY"
-		    OPTIMISATION_FLAGS="$GCC_SYMBOL_VISIBILITY $OPTIMISATION_FLAGS"
-		    rm libtest-fvisibility-inlines-hidden.so
-		    AC_MSG_NOTICE([-fvisibility-inlines-hidden enabled])
-		else
-		    AC_MSG_NOTICE([-fvisibility-inlines-hidden disabled])
-	    fi
-	    rm test-fvisibility-inlines-hidden.cxx
-	fi
-fi
-	    dnl clang failed with this option, but this may be system dependant
-	    if test "${CXX}" != "clang++"; then
-	    dnl hide all symbols by default
-	    GCC_SYMBOL_VISIBILITY=""
-	    AC_GCC_CHECK_FLAG(-fvisibility=hidden,GCC_SYMBOL_VISIBILITY)
-	    CXXFLAGS="$CXXFLAGS $GCC_SYMBOL_VISIBILITY"
-	    CFLAGS="$CFLAGS $GCC_SYMBOL_VISIBILITY"
-	    OPTIMISATION_FLAGS="$GCC_SYMBOL_VISIBILITY $OPTIMISATION_FLAGS"
-		    fi
 		    ;;
 		*)
 		    AC_GCC_DEFAULT_OPTIMISATIONS
@@ -361,6 +322,46 @@ AC_DEFUN([AC_CHECK_GXX],
 		fi
 	    fi
 	fi
+
+	    dnl symbol visibility
+		GCC_SYMBOL_VISIBILITY=""
+		AC_GCC_CHECK_FLAG(-fvisibility-inlines-hidden,GCC_SYMBOL_VISIBILITY)
+		if test "x$GCC_SYMBOL_VISIBILITY" != "x"; then
+		    dnl a small test because this compilation flag may cause problems
+		    dnl on some systems
+		    cat > test-fvisibility-inlines-hidden.cxx <<EOF
+#include<string>
+#include<sstream>
+void
+function(const double a)
+{
+  using namespace std;
+  ostringstream c;
+  c << a;}
+EOF
+ 
+    $CXX -fvisibility-inlines-hidden --shared -DPIC -fPIC test-fvisibility-inlines-hidden.cxx -o libtest-fvisibility-inlines-hidden.so &> /dev/null
+	    if test x"$?" == "x0" ; then
+		    CXXFLAGS="$CXXFLAGS $GCC_SYMBOL_VISIBILITY"
+		    OPTIMISATION_FLAGS="$GCC_SYMBOL_VISIBILITY $OPTIMISATION_FLAGS"
+		    rm libtest-fvisibility-inlines-hidden.so
+		    AC_MSG_NOTICE([-fvisibility-inlines-hidden enabled])
+		else
+		    AC_MSG_NOTICE([-fvisibility-inlines-hidden disabled])
+	    fi
+	    rm test-fvisibility-inlines-hidden.cxx
+	fi
+fi
+	    dnl clang failed with this option, but this may be system dependant
+	    if test "${CXX}" != "clang++"; then
+	    dnl hide all symbols by default
+	    GCC_SYMBOL_VISIBILITY=""
+	    AC_GCC_CHECK_FLAG(-fvisibility=hidden,GCC_SYMBOL_VISIBILITY)
+	    CXXFLAGS="$CXXFLAGS $GCC_SYMBOL_VISIBILITY"
+	    CFLAGS="$CFLAGS $GCC_SYMBOL_VISIBILITY"
+	    OPTIMISATION_FLAGS="$GCC_SYMBOL_VISIBILITY $OPTIMISATION_FLAGS"
+
+
 	if test "x$enable_optimizations" != "xno"; then   	    
 	    if test "x$enable_debug" != "xyes"; then
 		dnl g++ debug options
