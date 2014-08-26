@@ -133,6 +133,15 @@ namespace mfront{
     virtual void
     writeMTestFileGeneratorAdditionalMaterialPropertiesInitialisation(std::ostream&,
 								      const MechanicalBehaviourDescription&) const;
+    /*!
+     * \param[in] out  : output file
+     * \param[in] name : behaviour name
+     * \param[in] mb   : behaviour description
+     */
+    virtual void
+    writeUMATxxBehaviourTypeSymbols(std::ostream&,
+				    const std::string&,
+				    const MechanicalBehaviourDescription&) const;
 
     /*!
      * \param[in] out : output file

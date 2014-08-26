@@ -15,7 +15,9 @@ configure_file("${PROJECT_SOURCE_DIR}/mfront/tests/behaviours/references/PolyCri
     PolyCristalsAngles.txt @ONLY)
 
 set(mfront_tests_SOURCES
-  Elasticity Plasticity
+  Elasticity
+  FiniteRotationSmallStrainElasticity
+  Plasticity
   DruckerPrager
   Norton DDIF2
   Norton_Euler Norton_rk2
@@ -145,4 +147,22 @@ test_castem(implicithayhurst)
 test_castem(ellipticcreep)
 test_castem(burger)
 test_castem(tvergaard)
+test_castem(saintvenantkirchhoffelasticity-uniaxialloading-1)
+test_castem(saintvenantkirchhoffelasticity-uniaxialloading-2)
+test_castem(saintvenantkirchhoffelasticity-uniaxialloading-3)
+test_castem(saintvenantkirchhoffelasticity-shear-1)
+test_castem(saintvenantkirchhoffelasticity-shear-2)
+test_castem(saintvenantkirchhoffelasticity-shear-3)
+test_castem(saintvenantkirchhoffelasticity-shear-4)
+test_castem(saintvenantkirchhoffelasticity-shear-5)
+test_castem(saintvenantkirchhoffelasticity-shear-6)
+test_castem(finiterotationsmallstrainelasticity-uniaxialloading-1)
+test_castem(finiterotationsmallstrainelasticity-uniaxialloading-2)
+test_castem(finiterotationsmallstrainelasticity-uniaxialloading-3)
+test_castem(finiterotationsmallstrainelasticity-shear-1)
+test_castem(finiterotationsmallstrainelasticity-shear-2)
+test_castem(finiterotationsmallstrainelasticity-shear-3)
+test_castem(finiterotationsmallstrainelasticity-shear-4)
+test_castem(finiterotationsmallstrainelasticity-shear-5)
+test_castem(finiterotationsmallstrainelasticity-shear-6)
 test_castem(implicitsimomieheelastoplasticity)

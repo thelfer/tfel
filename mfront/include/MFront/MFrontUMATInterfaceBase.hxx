@@ -189,7 +189,7 @@ namespace mfront{
      * \param[in] name : behaviour name
      * \param[in] mb   : behaviour description
      */
-    void
+    virtual void
     writeUMATxxBehaviourTypeSymbols(std::ostream&,
 				    const std::string&,
 				    const MechanicalBehaviourDescription&) const;

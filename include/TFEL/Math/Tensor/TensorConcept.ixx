@@ -303,10 +303,10 @@ namespace tfel{
       typedef typename TensorTraits<T>::NumType real;
       static const real cste = sqrt(real(2))/2;
       stensor<2u,real> r;
-      r[0] = (t[0]*t[0]+t[3]*t[3]-1)/2;
-      r[1] = (t[1]*t[1]+t[4]*t[4]-1)/2;
+      r[0] = (t[0]*t[0]+t[4]*t[4]-1)/2;
+      r[1] = (t[1]*t[1]+t[3]*t[3]-1)/2;
       r[2] = (t[2]*t[2]-1)/2;
-      r[3] = cste*(t[0]*t[4]+t[1]*t[3]);
+      r[3] = cste*(t[0]*t[3]+t[1]*t[4]);
       return r;
     }
     
@@ -323,12 +323,12 @@ namespace tfel{
       typedef typename TensorTraits<T>::NumType real;
       static const real cste = sqrt(real(2))/2;
       stensor<3u,real> r;
-      r[0] = (t[0]*t[0]+t[3]*t[3]+t[5]*t[5]-1)/2;
-      r[1] = (t[1]*t[1]+t[4]*t[4]+t[7]*t[7]-1)/2;
-      r[2] = (t[2]*t[2]+t[6]*t[6]+t[8]*t[8]-1)/2;
-      r[3] = cste*(t[5]*t[7]+t[0]*t[4]+t[1]*t[3]);
-      r[4] = cste*(t[3]*t[8]+t[0]*t[6]+t[2]*t[5]);
-      r[5] = cste*(t[1]*t[8]+t[2]*t[7]+t[4]*t[5]);
+      r[0] = (t[0]*t[0]+t[4]*t[4]+t[6]*t[6]-1)/2;
+      r[1] = (t[1]*t[1]+t[3]*t[3]+t[8]*t[8]-1)/2;
+      r[2] = (t[2]*t[2]+t[5]*t[5]+t[7]*t[7]-1)/2;
+      r[3] = cste*(t[6]*t[8]+t[1]*t[4]+t[0]*t[3]);
+      r[4] = cste*(t[4]*t[7]+t[2]*t[6]+t[0]*t[5]);
+      r[5] = cste*(t[2]*t[8]+t[1]*t[7]+t[3]*t[5]);
       return r;
     }
 

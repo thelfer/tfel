@@ -352,8 +352,7 @@ namespace mfront
       uu0(2,1) = 0.; uu1(2,1) = 0.;
       uu0(1,2) = 0.; uu1(1,2) = 0.;
     } else if ((h==MH::AXISYMMETRICAL)||(h==MH::PLANESTRESS)||
-	       (h==MH::PLANESTRAIN)||(h==MH::GENERALISEDPLANESTRAIN)||
-	       (h==MH::TRIDIMENSIONAL)){
+	       (h==MH::PLANESTRAIN)||(h==MH::GENERALISEDPLANESTRAIN)){
       // uu0 and uu1 must be built using Fortran notations
       uu0(1,0) = u0(3); uu1(1,0) = u1(3);
       uu0(0,1) = u0(4); uu1(0,1) = u1(4);

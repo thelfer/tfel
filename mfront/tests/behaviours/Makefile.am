@@ -2,7 +2,8 @@ SUBDIRS = aster castem
 
 MFRONTS= DDIF2.mfront                                            \
          Elasticity.mfront                                       \
-         Plasticity.mfront                                       \
+         FiniteRotationSmallStrainElasticity.mfront              \
+	 Plasticity.mfront                                       \
 	 DruckerPrager.mfront                                    \
          Norton.mfront                                           \
          ImplicitNorton.mfront                                   \

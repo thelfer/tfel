@@ -1493,6 +1493,26 @@ namespace mfront{
   } // end of MFrontUMATInterface::writeUMATxxMaterialPropertiesSymbol
 
   void
+  MFrontUMATInterface::writeUMATxxBehaviourTypeSymbols(std::ostream& out,
+						       const std::string& name,
+						       const MechanicalBehaviourDescription& mb) const
+  {
+    using namespace std;
+    if(mb.getBehaviourType()==MechanicalBehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR){
+      if(this->finiteStrainStrategy==FINITEROTATIONSMALLSTRAIN){
+	out << "MFRONT_SHAREDOBJ unsigned short " << this->getFunctionName(name) 
+	    << "_BehaviourType = 2u;" ;
+	return;
+      } else if(this->finiteStrainStrategy!=NONE){
+	string msg("MFrontUMATInterface::writeUMATxxBehaviourTypeSymbols : ");
+	msg += "unsupported finite strain strategy";
+	throw(runtime_error(msg));
+      }
+    }
+    MFrontUMATInterfaceBase::writeUMATxxBehaviourTypeSymbols(out,name,mb);
+  } // end of MFrontUMATInterface::writeUMATxxBehaviourTypeSymbols
+
+  void
   MFrontUMATInterface::writeUMATxxAdditionalSymbols(std::ostream& out,
 						    const std::string& name,
 						    const std::string&,
@@ -1504,24 +1524,24 @@ namespace mfront{
     if(mb.getBehaviourType()==MechanicalBehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR){
       if(this->finiteStrainStrategy==FINITEROTATIONSMALLSTRAIN){
 	out << "MFRONT_SHAREDOBJ unsigned short umat"
-	    << makeLowerCase(name) << "_Interface = 2u;\n";
+	    << makeLowerCase(name) << "_Interface = 2u;\n\n";
       } else {
 	out << "MFRONT_SHAREDOBJ unsigned short umat"
-	    << makeLowerCase(name) << "_Interface = 1u;\n";
+	    << makeLowerCase(name) << "_Interface = 1u;\n\n";
       }
       // check if plane stress hypothesis is supported through the generic plane stress algorithm
       if(mb.getHypotheses().find(MH::PLANESTRESS)==mb.getHypotheses().end()){
 	if(mb.getHypotheses().find(MH::GENERALISEDPLANESTRAIN)!=mb.getHypotheses().end()){
 	  out << "MFRONT_SHAREDOBJ unsigned short " << this->getFunctionName(name)
-	      << "_UsesGenericPlaneStressAlgorithm = 1u;";
+	      << "_UsesGenericPlaneStressAlgorithm = 1u;\n\n";
 	}
       }
     } else if(mb.getBehaviourType()==MechanicalBehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR){
       out << "MFRONT_SHAREDOBJ unsigned short umat"
-	  << makeLowerCase(name) << "_Interface = 2u;\n";
+	  << makeLowerCase(name) << "_Interface = 2u;\n\n";
     } else {
       out << "MFRONT_SHAREDOBJ unsigned short umat"
-	  << makeLowerCase(name) << "_Interface = 1u;\n";
+	  << makeLowerCase(name) << "_Interface = 1u;\n\n";
     }
   } // end of MFrontUMATInterface::writeUMATxxAdditionalSymbols
 

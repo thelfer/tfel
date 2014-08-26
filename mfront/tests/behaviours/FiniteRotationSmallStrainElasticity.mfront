@@ -1,0 +1,36 @@
+@Behaviour FiniteRotationSmallStrainElasticity;
+@Author    Helfer Thomas;
+@Date      26/11/13;
+@Description{
+  A test of the finite rotation small strain
+  of the umat interface
+}
+                           
+@UMATFiniteStrainStrategy FiniteRotationSmallStrain;
+
+@MaterialProperty stress young;
+young.setGlossaryName("YoungModulus");
+@MaterialProperty real nu;
+nu.setGlossaryName("PoissonRatio");
+@MaterialProperty real rho;
+rho.setGlossaryName("MassDensity");
+@MaterialProperty real alpha;
+alpha.setGlossaryName("ThermalExpansion");
+
+@LocalVariable stress lambda;
+@LocalVariable stress mu;
+
+@Includes{
+#include"TFEL/Material/Lame.hxx"
+}
+
+@InitLocalVars{
+  using namespace tfel::material::lame;
+  lambda = computeLambda(young,nu);
+  mu = computeMu(young,nu);
+}
+
+@Integrator{
+  static_cast<void>(computeTangentOperator_);
+  sig = lambda*trace(eto+deto)*StrainStensor::Id()+2*mu*(eto+deto);
+}
