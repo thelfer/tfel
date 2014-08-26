@@ -1039,6 +1039,7 @@ mfront/include/MFront/MFrontBehaviourParserBase.ixx -text
 mfront/include/MFront/MFrontBehaviourParserCommon.hxx -text
 mfront/include/MFront/MFrontBehaviourParserCommon.ixx -text
 mfront/include/MFront/MFrontBehaviourProfiler.hxx -text
+mfront/include/MFront/MFrontBehaviourTimer.hxx -text
 mfront/include/MFront/MFrontBehaviourVirtualInterface.hxx -text
 mfront/include/MFront/MFrontCLawInterface.hxx -text
 mfront/include/MFront/MFrontCLawInterfaceBase.hxx -text
