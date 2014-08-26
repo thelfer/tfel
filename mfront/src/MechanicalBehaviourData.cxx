@@ -43,9 +43,9 @@ namespace mfront{
   MechanicalBehaviourData::InitializeJacobian("InitializeJacobian");
 
   const std::string
-  MechanicalBehaviourData::hasConsistantTangentOperator("hasConsistantTangentOperator");
+  MechanicalBehaviourData::hasConsistentTangentOperator("hasConsistentTangentOperator");
   const std::string
-  MechanicalBehaviourData::isConsistantTangentOperatorSymmetric("isConsistantTangentOperatorSymmetric");
+  MechanicalBehaviourData::isConsistentTangentOperatorSymmetric("isConsistentTangentOperatorSymmetric");
   const std::string
   MechanicalBehaviourData::hasPredictionOperator("hasPredictionOperator");
   const std::string

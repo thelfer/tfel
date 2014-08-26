@@ -46,9 +46,9 @@ p.setGlossaryName("EquivalentViscoplasticStrain");
 @IsTangentOperatorSymmetric true;
 @TangentOperator{
   if((smt==ELASTIC)||(smt==SECANTOPERATOR)||
-     (smt==CONSISTANTTANGENTOPERATOR)){
+     (smt==CONSISTENTTANGENTOPERATOR)){
     Dt = lambda*Stensor4::IxI()+2*mu*Stensor4::Id();
-    if(smt==CONSISTANTTANGENTOPERATOR){
+    if(smt==CONSISTENTTANGENTOPERATOR){
       const real seq_e = seq+3*mu*theta*dp;
       if(seq_e>1.e-8*young){
 	const real tmp =  dp/seq_e;

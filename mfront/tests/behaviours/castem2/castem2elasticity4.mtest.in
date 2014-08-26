@@ -5,7 +5,7 @@
  * \brief  09 avril 2013
  */
 
-@StiffnessMatrixType 'ConsistantTangentOperator';
+@StiffnessMatrixType 'ConsistentTangentOperator';
 @Behaviour<umat> '@MFrontCastemBehavioursBuildPath@' 'umatelasticity';
 // The TC evolution is defined below
 @MaterialProperty<function> 'YoungModulus' '2.1421e+11-3.8654e8*TC-3.1636e4*TC*TC';

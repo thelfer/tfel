@@ -5,7 +5,7 @@
 };
 
 @Behaviour<umat> '@MFrontCastemBehavioursBuildPath@' 'umatdruckerprager';
-@StiffnessMatrixType 'ConsistantTangentOperator';
+@StiffnessMatrixType 'ConsistentTangentOperator';
 @MaximumNumberOfSubSteps 1;
 
 @MaterialProperty<constant> 'YoungModulus' 200.e9;

@@ -5,7 +5,7 @@
  * \brief 20 mai 2013
  */
 
-@StiffnessMatrixType 'ConsistantTangentOperator';
+@StiffnessMatrixType 'ConsistentTangentOperator';
 
 @Real 'young' 208000.;
 @Real 'nu'    0.3;

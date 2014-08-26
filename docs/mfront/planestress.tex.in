@@ -127,8 +127,9 @@
 \approbateur{R.~Masson}
 \emetteur{E.~Touron}
 
-\titre{Prise en compte des contraintes planes dans les lois générées
-  par le générateur de code \mfront{}}
+\titre{Prise en compte des hypothèses de contraintes planes dans les
+  lois générées par le générateur de code \mfront{}~: application à
+  l'application combustible \cyrano{}}
 
 \date{2014}
 \numero{}
@@ -253,7 +254,7 @@ des structures minces, se traduit par la condition~:
 \]
 
 L'hypothèse de contraintes planes généralisées, utilisée par le code
-combustible \cyrano{} s'écrit~:
+combustible \cyrano{}, s'écrit~:
 \[
 \ets{\sigmaz}=\sigmaz^{\text{équilibre}}\paren{t+\Delta\,t}
 \]
@@ -328,7 +329,7 @@ exception notable pour deux raisons~:
   proposés dans la
   littérature~\cite{simo_computational_1998,doghri_mechanics_2000}. Ces
   algorithmes n'utilisent pas de formalisme tensoriel particulier car
-  l'intégration de la loi de comportement peu être réduite à une
+  l'intégration de la loi de comportement peut être réduite à une
   équation scalaire~\cite{simo_computational_1998} ou un système de
   deux équations~\cite{doghri_mechanics_2000} (le formalisme tensoriel
   réduit est un intermédiaire de calcul permettant d'obtenir cette
@@ -383,10 +384,10 @@ Cet algorithme se décompose ainsi~:
 
 Cette méthode a un coût numérique important~: pour les lois les plus
 simples, il faut en général \(4\) à \(5\) itérations pour que la
-méthode de la sécante, ce qui multiplie d'autant le coût d'intégration
-de la loi (par rapport à l'intégration de la loi en déformations
-planes). Ce surcoût est rédhibitoire pour un code industriel tel que
-\cyrano{}.
+méthode de la sécante converge, ce qui multiplie d'autant le coût
+d'intégration de la loi (par rapport à l'intégration de la loi en
+déformations planes). Ce surcoût est rédhibitoire pour un code
+industriel tel que \cyrano{}.
 
 \subsubsection{Traitement par le code appelant}
 
@@ -415,9 +416,9 @@ spécifique. Deux approches sont particulièrement intéressantes~:
   l'hypothèse de contraintes planes. Cette méthode augmente la largeur
   de front de la matrice de raideur par le nombre de points de
   \nom{Gauss} de l'élément. Il n'est pas mentionné si le nombre
-  d'itérations nécessaires pour atteindre l'équilibre est augmenté par
-  rapport au cas où la loi de comportement gère l'hypothèse de
-  contraintes planes.
+  d'itérations nécessaires pour atteindre l'équilibre mécanique est
+  augmenté par rapport au cas où la loi de comportement gère
+  l'hypothèse de contraintes planes.
 \item \aster{} propose un algorithme dû à \nom{De
     Borst}~\cite{proix_prise_2012} qui utilise la convergence de
   l'équilibre global pour assurer la condition de contraintes
@@ -449,12 +450,13 @@ ici.
 
 \subsection{Plan de la note}
 
-Le paragraphe précédent conclut que seules les implantations traitant
-explicitement l'hypothèse de contraintes planes généralisées sont
-compatibles avec les besoins de performances numériques de
-l'application \cyrano{}. Cela semble obliger à réaliser deux
-implantations différentes d'une même loi de comportement. Nous
-proposons dans cette note un compromis acceptable.
+La brève bibliographie faite au paragraphe précédent permet de
+conclure que seules les implantations traitant explicitement
+l'hypothèse de contraintes planes généralisées sont compatibles avec
+les besoins de performances numériques de l'application
+\cyrano{}. Cela semble obliger à réaliser deux implantations
+différentes d'une même loi de comportement. Nous proposons dans cette
+note un compromis acceptable.
 
 Nous proposons en section~\ref{sec:trait-gener-de} une modification de
 l'algorithme implicite qui permet de prendre en compte l'hypothèse de
@@ -564,7 +566,7 @@ f_{\epsilontoz}=\Frac{1}{E^{\prime}}\paren{\sigmaz-\ets{\sigmaz^{\text{équilibr
 Les équations~\eqref{eq:mfront:planestress:feelzz}
 et~\eqref{eq:mfront:planestress:fetozz} sont les seules modifications
 à apporter à la loi de comportement pour que celle-ci soit valide en
-contraintes planes (généralisée ou non).
+contraintes planes (généralisées ou non).
 
 Deux caractéristiques de cette méthode sont particulièrement
 intéressantes~:
@@ -691,13 +693,13 @@ ailleurs~\cite{helfer_generateur_2013}, est ensuite donnée~:
 \end{flushleft}
 
 La partie spécifique à l'hypothèse de contraintes planes est alors
-donné~:
+donné par le code suivant~:
 \begin{flushleft}
   \lstinputlisting[firstline=71,lastline=84,firstnumber=71]{@abs_top_srcdir@/docs/mfront/mfront/ImplicitNorton.mfront}
 \end{flushleft}
 
 De même, la partie spécifique à l'hypothèse de contraintes planes
-généralisées est donnée~:
+généralisées est~:
 \begin{flushleft}
   \lstinputlisting[firstline=86,lastline=99,firstnumber=86]{@abs_top_srcdir@/docs/mfront/mfront/ImplicitNorton.mfront}
 \end{flushleft}
@@ -792,14 +794,44 @@ cohérente.
 
 \newpage
 \clearpage
-\section{Application au code \cyrano{}}
-\label{sec:application-au-code}
+\section{Conclusions}
 
+Cette note a présenté comment il est possible de traiter les
+hypothèses de contraintes planes tout en conservant une implantation
+unique quelque soit l'hypothèse de modélisation considérée~: un même
+implantation peut désormais être partagée entre les applications
+\alcyone{} et \cyrano{}.
+
+\begin{figure}
+  \centering
+  \includegraphics[width=0.75\linewidth]{@abs_top_srcdir@/docs/mfront/Images/cyrano-mfront.eps}
+  \caption{Comparaison des performances obtenues avec l'implantati on
+    \mfront{} et l'implantation native d'une même loi de comportement
+    de gaine.}
+  \label{fig:mfront:cyrano:perf}
+\end{figure}
+
+Les performances obtenues, illustrées en
+figure~\ref{fig:mfront:cyrano:perf} sont légèrement supérieures à
+celles obtenues avec les lois natives de \cyrano{}. La solution
+proposée est donc compatible avec les exigences industrielles de
+cette application.
+
+\subsection{Perspectives}
+
+Bien que seules les implantations implicites des lois de comportement
+aient été considérées dans cette note, les développements proposés ici
+peuvent être appliqués aux implantations basées sur les méthodes de
+\nom{Runge-Kutta}.
+
+Pour être complet, c'est à dire pour que les développeurs de \cyrano{}
+aient accès à toutes les potentialités écrites avec \mfront{}, il
+serait nécessaire de traiter les analyseurs spécifiques qui décrivent
+les lois de comportement isotropes (plasticité et viscoplasticité).
 
 \clearpage
 \newpage
 \referencecea
-\listetableaux
 \listefigures
 
 \end{document}

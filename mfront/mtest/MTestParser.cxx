@@ -468,8 +468,8 @@ namespace mfront
       ktype=MTestStiffnessMatrixType::SECANTOPERATOR;
     } else if(type=="TangentOperator"){
       ktype=MTestStiffnessMatrixType::TANGENTOPERATOR;
-    } else if(type=="ConsistantTangentOperator"){
-      ktype=MTestStiffnessMatrixType::CONSISTANTTANGENTOPERATOR;
+    } else if(type=="ConsistentTangentOperator"){
+      ktype=MTestStiffnessMatrixType::CONSISTENTTANGENTOPERATOR;
     } else {
       string msg("MTestParser::handleStiffnessMatrixType : "
 		 "unsupported stiffness matrix type '"+type+"'");

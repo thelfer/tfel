@@ -179,11 +179,11 @@ namespace umat{
   } // end of UMATInterfaceBase::throwBehaviourIntegrationFailedException
 
   void
-  UMATInterfaceBase::throwConsistantTangentOperatorIsNotAvalaible(const std::string& b)
+  UMATInterfaceBase::throwConsistentTangentOperatorIsNotAvalaible(const std::string& b)
   {
     using namespace std;
-    string msg("UMATInterfaceBase::throwConsistantTangentOperatorIsNotAvalaible : ");
-    msg += "behaviour '"+b+"' can't compute a consistant tangent operator";
+    string msg("UMATInterfaceBase::throwConsistentTangentOperatorIsNotAvalaible : ");
+    msg += "behaviour '"+b+"' can't compute a consistent tangent operator";
     throw(runtime_error(msg));
   } // end of UMATInterfaceBase::throwBehaviourIntegrationFailedException
 
@@ -223,7 +223,7 @@ namespace umat{
 	<< " 1 : integrate the behaviour over the time step, elastic stiffness requested\n"
 	<< " 2 : integrate the behaviour over the time step, secant  operator  requested\n"
 	<< " 3 : integrate the behaviour over the time step, tagent  operator  requested\n"
-	<< " 4 : integrate the behaviour over the time step, consistant tagent operator requested\n";
+	<< " 4 : integrate the behaviour over the time step, consistent tagent operator requested\n";
     throw(runtime_error(msg.str()));
   } // end of UMATInterfaceBase::throwInvalidDDSOEException
 

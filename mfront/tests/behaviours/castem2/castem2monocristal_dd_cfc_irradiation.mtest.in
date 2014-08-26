@@ -9,7 +9,7 @@
 @Real 'nu'    0.3;
 @Real 'young' 'G*2.6';
 
-@StiffnessMatrixType 'ConsistantTangentOperator';
+@StiffnessMatrixType 'ConsistentTangentOperator';
 @Behaviour<umat> '@MFrontCastemBehavioursBuildPath@' 'umatmonocristal_dd_cfc_irradiation';
 
 @MaterialProperty<constant> 'YoungModulus1'     'young';

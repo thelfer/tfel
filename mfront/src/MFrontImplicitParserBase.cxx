@@ -146,7 +146,7 @@ namespace mfront{
 						    &MFrontImplicitParserBase::tangentOperatorVariableModifier,
 						    true,true);
     for(set<Hypothesis>::const_iterator p=o.hypotheses.begin();p!=o.hypotheses.end();++p){
-      this->mb.setAttribute(*p,MechanicalBehaviourData::hasConsistantTangentOperator,true);
+      this->mb.setAttribute(*p,MechanicalBehaviourData::hasConsistentTangentOperator,true);
     }
   } // end of MFrontImplicitParserBase::treatTangentOperator
 
@@ -169,7 +169,7 @@ namespace mfront{
     ++(this->current);
     this->readSpecifiedToken("MFrontBehaviourParserCommon::treatIsTangentOperatorSymmetric",";");
     for(set<Hypothesis>::const_iterator p=h.begin();p!=h.end();++p){
-      this->mb.setAttribute(*p,MechanicalBehaviourData::isConsistantTangentOperatorSymmetric,b);
+      this->mb.setAttribute(*p,MechanicalBehaviourData::isConsistentTangentOperatorSymmetric,b);
     }
   } // end of MFrontImplicitParserBase::treatIsTangentOperatorSymmetric
   
@@ -1981,8 +1981,8 @@ namespace mfront{
 			  << "<< this->iter << \" iterations\"<< endl << endl;\n";
     }
     this->behaviourFile << "if(smt!=NOSTIFFNESSREQUESTED){\n";
-    if(this->mb.hasAttribute(h,MechanicalBehaviourData::hasConsistantTangentOperator)){
-      this->behaviourFile << "if(!this->computeConsistantTangentOperator(smt)){\n";
+    if(this->mb.hasAttribute(h,MechanicalBehaviourData::hasConsistentTangentOperator)){
+      this->behaviourFile << "if(!this->computeConsistentTangentOperator(smt)){\n";
       if(this->mb.useQt()){        
 	this->behaviourFile << "return MechanicalBehaviour<hypothesis,Type,use_qt>::FAILURE;\n";
       } else {
@@ -2568,7 +2568,8 @@ namespace mfront{
     this->behaviourFile << "const real pdl_1 = (pdl_g|pdl_g);" << endl;
     this->behaviourFile << "const real pdl_2 = ((" << pn << ")|pdl_g);" << endl;
     this->behaviourFile << "const real pdl_3 = ((" << pn << ")|(" << pn << "));" << endl;
-    this->behaviourFile << "const real pdl_alpha = (pdl_0-pdl_1)/((pdl_2-pdl_1)+sqrt((pdl_2-pdl_0)*(pdl_2-pdl_0)+(pdl_3-pdl_0)*(pdl_0-pdl_1)));" << endl;
+    this->behaviourFile << "const real pdl_alpha = "
+			<< "(pdl_0-pdl_1)/((pdl_2-pdl_1)+sqrt(max((pdl_2-pdl_0)*(pdl_2-pdl_0)+(pdl_3-pdl_0)*(pdl_0-pdl_1),real(0))));" << endl;
     this->behaviourFile << "pdl_g = pdl_alpha*(" << pn<< ") + (1-pdl_alpha)*pdl_g;" << endl;
     this->behaviourFile << "} else {" << endl;
     this->behaviourFile << "const real pdl_alpha = (this->powell_dogleg_trust_region_size)/(norm(pdl_g));" << endl;
@@ -2583,7 +2584,7 @@ namespace mfront{
   void MFrontImplicitParserBase::writeBehaviourComputeTangentOperator(const Hypothesis h)
   {
     if(this->mb.hasCode(h,MechanicalBehaviourData::ComputeTangentOperator)){
-      this->behaviourFile << "bool computeConsistantTangentOperator(const SMType smt){\n";
+      this->behaviourFile << "bool computeConsistentTangentOperator(const SMType smt){\n";
       this->behaviourFile << "using namespace std;\n";
       this->behaviourFile << "using namespace tfel::math;\n";
       this->behaviourFile << "using std::vector;\n";

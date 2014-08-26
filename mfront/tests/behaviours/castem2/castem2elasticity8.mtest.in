@@ -6,7 +6,7 @@
 };
 
 @PredictionPolicy 'ElasticPrediction';
-@StiffnessMatrixType 'ConsistantTangentOperator';
+@StiffnessMatrixType 'ConsistentTangentOperator';
 
 @Behaviour<umat> '@MFrontCastemBehavioursBuildPath@' 'umatorthotropicelastic';
 @Real 'E'  100.e9;

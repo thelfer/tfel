@@ -53,7 +53,7 @@ evp.setGlossaryName("ViscoplasticStrain");
   using namespace tfel::material::lame;
   if((smt==ELASTIC)||(smt==SECANTOPERATOR)){
     computeAlteredElasticStiffness<hypothesis,Type>::exe(Dt,lambda,mu);
-  } else if (smt==CONSISTANTTANGENTOPERATOR){
+  } else if (smt==CONSISTENTTANGENTOPERATOR){
     StiffnessTensor De;
     Stensor4 Je;
     computeUnalteredElasticStiffness<N,Type>::exe(De,lambda,mu);

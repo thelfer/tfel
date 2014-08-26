@@ -344,7 +344,7 @@ namespace mfront{
     }
     this->behaviourFile << ";\n";
     this->behaviourFile << "if(smt!=NOSTIFFNESSREQUESTED){\n";
-    this->behaviourFile << "if(!this->computeConsistantTangentOperator(smt)){\n";
+    this->behaviourFile << "if(!this->computeConsistentTangentOperator(smt)){\n";
     if(this->mb.useQt()){        
       this->behaviourFile << "return MechanicalBehaviour<hypothesis,Type,use_qt>::FAILURE;\n";
     } else {
@@ -507,7 +507,7 @@ namespace mfront{
   void
   MFrontMultipleIsotropicMisesFlowsParser::writeBehaviourComputeTangentOperator(const Hypothesis)
   {
-    this->behaviourFile << "bool computeConsistantTangentOperator(const SMType smt){\n";
+    this->behaviourFile << "bool computeConsistentTangentOperator(const SMType smt){\n";
     this->behaviourFile << "using namespace std;\n";
     this->behaviourFile << "using tfel::material::lame::computeElasticStiffness;\n";
     this->behaviourFile << "if((smt==ELASTIC)||(smt==SECANTOPERATOR)){\n";

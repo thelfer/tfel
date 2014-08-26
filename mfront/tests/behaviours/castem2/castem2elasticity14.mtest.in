@@ -5,7 +5,7 @@
   "account for an orthotropic material."
 };
 
-@StiffnessMatrixType 'ConsistantTangentOperator';
+@StiffnessMatrixType 'ConsistentTangentOperator';
 @Behaviour<umat> '@MFrontCastemBehavioursBuildPath@' 'umatorthotropicelastic';
 
 @Real 'E1'   '7.8e+10';

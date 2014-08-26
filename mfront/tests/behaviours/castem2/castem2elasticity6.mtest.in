@@ -5,7 +5,7 @@
   keyword.
  };
 
-@StiffnessMatrixType 'ConsistantTangentOperator';
+@StiffnessMatrixType 'ConsistentTangentOperator';
 @Behaviour<umat> '@MFrontCastemBehavioursBuildPath@' 'umatorthotropicelastic';
 @MaterialProperty<constant> 'YoungModulus1'     100.e9;
 @MaterialProperty<constant> 'YoungModulus2'     300.e9;

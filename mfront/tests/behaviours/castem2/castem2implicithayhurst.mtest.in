@@ -5,7 +5,7 @@
  * \brief 20 mai 2013
  */
 
-@StiffnessMatrixType 'ConsistantTangentOperator';
+@StiffnessMatrixType 'ConsistentTangentOperator';
 
 @Behaviour<umat> '@MFrontCastemBehavioursBuildPath@' 'umatimplicithayhurst';
 @MaterialProperty<constant> 'YoungModulus'      1.45000E5;

@@ -6,7 +6,7 @@
  */
 
 @MaximumNumberOfSubSteps 1;
-@StiffnessMatrixType 'ConsistantTangentOperator';
+@StiffnessMatrixType 'ConsistentTangentOperator';
 
 @ModellingHypothesis 'Axisymmetrical';
 

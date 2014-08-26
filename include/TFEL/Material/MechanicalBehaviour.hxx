@@ -54,7 +54,7 @@ namespace tfel{
 	ELASTIC,
 	SECANTOPERATOR,
 	TANGENTOPERATOR,
-	CONSISTANTTANGENTOPERATOR,
+	CONSISTENTTANGENTOPERATOR,
 	NOSTIFFNESSREQUESTED
       }; // end of enum StiffnessMatrixType
     }; // end of struct MechanicalBehaviourBase

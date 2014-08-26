@@ -46,8 +46,8 @@ namespace mfront{
     this->mb.addLocalVariable(h,VariableDescription("stress","seq_e",1u,0u));
     this->mb.addLocalVariable(h,VariableDescription("StrainStensor","n",1u,0u));
     this->mb.addLocalVariable(h,VariableDescription("strain","p_",1u,0u));
-    this->mb.setAttribute(h,MechanicalBehaviourData::hasConsistantTangentOperator,true);
-    this->mb.setAttribute(h,MechanicalBehaviourData::isConsistantTangentOperatorSymmetric,true);
+    this->mb.setAttribute(h,MechanicalBehaviourData::hasConsistentTangentOperator,true);
+    this->mb.setAttribute(h,MechanicalBehaviourData::isConsistentTangentOperatorSymmetric,true);
     this->theta = 1.;
   }
 
@@ -183,7 +183,7 @@ namespace mfront{
     }
     this->behaviourFile << "}\n";
     this->behaviourFile << "if(smt!=NOSTIFFNESSREQUESTED){\n";
-    this->behaviourFile << "if(!this->computeConsistantTangentOperator(smt)){\n";
+    this->behaviourFile << "if(!this->computeConsistentTangentOperator(smt)){\n";
     if(this->mb.useQt()){        
       this->behaviourFile << "return MechanicalBehaviour<hypothesis,Type,use_qt>::FAILURE;\n";
     } else {
@@ -212,11 +212,11 @@ namespace mfront{
 
   void MFrontIsotropicMisesPlasticFlowParser::writeBehaviourComputeTangentOperator(const Hypothesis)
   {
-    this->behaviourFile << "bool computeConsistantTangentOperator(const SMType smt){\n";
+    this->behaviourFile << "bool computeConsistentTangentOperator(const SMType smt){\n";
     this->behaviourFile << "using namespace std;\n";
     this->behaviourFile << "using tfel::material::lame::computeElasticStiffness;\n";
     this->behaviourFile << "using tfel::math::st2tost2;\n";
-    this->behaviourFile << "if(smt==CONSISTANTTANGENTOPERATOR){\n";
+    this->behaviourFile << "if(smt==CONSISTENTTANGENTOPERATOR){\n";
     this->behaviourFile << "computeElasticStiffness<N,Type>::exe(this->Dt,this->lambda,this->mu);\n";
     this->behaviourFile << "if(this->dp>0.01*std::numeric_limits<stress>::epsilon()){\n";
     this->behaviourFile << "const real ccto_tmp_1 =  this->dp/this->seq_e;\n";

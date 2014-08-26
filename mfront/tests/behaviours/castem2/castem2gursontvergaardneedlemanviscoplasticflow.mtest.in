@@ -1,7 +1,7 @@
 @Author Jeremy Hure;
 @Date 10 Février 2014;
 
-@StiffnessMatrixType 'ConsistantTangentOperator';
+@StiffnessMatrixType 'ConsistentTangentOperator';
 @Behaviour<umat> '@MFrontCastemBehavioursBuildPath@' 'umatgursontvergaardneedlemanviscoplasticflow_numericaljacobian';
 
 @MaterialProperty<constant> 'YoungModulus' 200000.;

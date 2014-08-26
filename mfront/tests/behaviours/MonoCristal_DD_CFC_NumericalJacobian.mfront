@@ -48,7 +48,7 @@
 @TangentOperator{
   if((smt==ELASTIC)||(smt==SECANTOPERATOR)){
     Dt = D;
-  } else if (smt==CONSISTANTTANGENTOPERATOR){
+  } else if (smt==CONSISTENTTANGENTOPERATOR){
     Stensor4 Je;
     getPartialJacobianInvert(Je);
     Dt = D*Je;

@@ -5,7 +5,7 @@
  * \brief  2 déc. 2013
  */
 
-@StiffnessMatrixType 'ConsistantTangentOperator';
+@StiffnessMatrixType 'ConsistentTangentOperator';
 
 @ModellingHypothesis 'Tridimensional';
 @Behaviour<umat> '@MFrontCastemBehavioursBuildPath@' 'umatmonocristal_dd_cc_numericaljacobian';

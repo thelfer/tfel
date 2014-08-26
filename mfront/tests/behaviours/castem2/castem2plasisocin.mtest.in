@@ -2,7 +2,7 @@
 @Date 08 Aout 2013;
 
 @Behaviour<umat> '@MFrontCastemBehavioursBuildPath@' 'umatplasisocin';
-@StiffnessMatrixType 'ConsistantTangentOperator';
+@StiffnessMatrixType 'ConsistentTangentOperator';
 
 @MaterialProperty<constant> 'YoungModulus' 200000.;
 @MaterialProperty<constant> 'PoissonRatio' 0.3;

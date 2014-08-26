@@ -57,7 +57,7 @@ nu.setGlossaryName("PoissonRatio");
   using namespace tfel::material::lame;
   if((smt==ELASTIC)||(smt==SECANTOPERATOR)){
     computeAlteredElasticStiffness<hypothesis,Type>::exe(Dt,lambda,mu);
-  } else if(smt==CONSISTANTTANGENTOPERATOR){
+  } else if(smt==CONSISTENTTANGENTOPERATOR){
     StiffnessTensor Hooke;
     Stensor4 Je;
     computeElasticStiffness<N,Type>::exe(Hooke,lambda,mu);

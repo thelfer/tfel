@@ -42,7 +42,7 @@ alpha}\hlsym{.}\hlstd{}\hlkwd{setGlossaryName}\hlstd{}\hlsym{(}\hlstd{}\hlstr{"T
 \hlstd{}\hlstd{\ \ }\hlstd{}\hlkwa{using\ namespace\ }\hlstd{tfel}\hlsym{::}\hlstd{material}\hlsym{::}\hlstd{lame}\hlsym{;}\hspace*{\fill}\\
 \hlstd{}\hlstd{\ \ }\hlstd{}\hlkwa{if}\hlstd{}\hlsym{((}\hlstd{smt}\hlsym{==}\hlstd{ELASTIC}\hlsym{)\textbar \textbar (}\hlstd{smt}\hlsym{==}\hlstd{SECANTOPERATOR}\hlsym{))\{}\hspace*{\fill}\\
 \hlstd{}\hlstd{\ \ \ \ }\hlstd{computeElasticStiffness}\hlsym{$<$}\hlstd{N}\hlsym{,}\hlstd{Type}\hlsym{$>$::}\hlstd{}\hlkwd{exe}\hlstd{}\hlsym{(}\hlstd{Dt}\hlsym{,}\hlstd{lambda}\hlsym{,}\hlstd{mu}\hlsym{);}\hspace*{\fill}\\
-\hlstd{}\hlstd{\ \ }\hlstd{}\hlsym{\}\ }\hlstd{}\hlkwa{else\ if\ }\hlstd{}\hlsym{(}\hlstd{smt}\hlsym{==}\hlstd{CONSISTANTTANGENTOPERATOR}\hlsym{)\{}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ }\hlstd{}\hlsym{\}\ }\hlstd{}\hlkwa{else\ if\ }\hlstd{}\hlsym{(}\hlstd{smt}\hlsym{==}\hlstd{CONSISTENTTANGENTOPERATOR}\hlsym{)\{}\hspace*{\fill}\\
 \hlstd{}\hlstd{\ \ \ \ }\hlstd{StiffnessTensor\ De}\hlsym{;}\hspace*{\fill}\\
 \hlstd{}\hlstd{\ \ \ \ }\hlstd{Stensor4\ Je}\hlsym{;}\hspace*{\fill}\\
 \hlstd{}\hlstd{\ \ \ \ }\hlstd{computeElasticStiffness}\hlsym{$<$}\hlstd{N}\hlsym{,}\hlstd{Type}\hlsym{$>$::}\hlstd{}\hlkwd{exe}\hlstd{}\hlsym{(}\hlstd{De}\hlsym{,}\hlstd{lambda}\hlsym{,}\hlstd{mu}\hlsym{);}\hspace*{\fill}\\

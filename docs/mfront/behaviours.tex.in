@@ -2345,7 +2345,7 @@ et effectuer le calcul le cas échéant. Sa valeur peut être~:
 \item {\tt SECANTOPERATOR}, pour la matrice sécante (matrice
   d'élasticité endommagée)~;
 \item {\tt TANGENTOPERATOR},  pour la matrice tangente~;
-\item {\tt CONSISTANTTANGENTOPERATOR}, pour la matrice tangente
+\item {\tt CONSISTENTTANGENTOPERATOR}, pour la matrice tangente
   cohérente~;
 \end{itemize}
 

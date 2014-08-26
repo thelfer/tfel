@@ -7,35 +7,57 @@ if(NOT i586-mingw32msvc_COMPILER)
 endif(NOT i586-mingw32msvc_COMPILER)
 tfel_enable_cxx_compiler_flag(OPTIMISATION_FLAGS "march=native")
 tfel_enable_cxx_compiler_flag(OPTIMISATION_FLAGS "ftree-vectorize")
+# tfel_enable_cxx_compiler_flag(OPTIMISATION_FLAGS "floop-interchange")
 
 tfel_enable_cxx_compiler_flag(OPTIMISATION_FLAGS2 "ffast-math")
+# tfel_enable_cxx_compiler_flag(OPTIMISATION_FLAGS "fno-math-errno")
+# tfel_enable_cxx_compiler_flag(OPTIMISATION_FLAGS "fno-trapping-math")
+# tfel_enable_cxx_compiler_flag(OPTIMISATION_FLAGS "funsafe-math-optimizations")
+# #tfel_enable_cxx_compiler_flag(OPTIMISATION_FLAGS "ffinite-math-only")
+# tfel_enable_cxx_compiler_flag(OPTIMISATION_FLAGS "fno-rounding-math")
+# tfel_enable_cxx_compiler_flag(OPTIMISATION_FLAGS "fno-signaling-nans")
+# tfel_enable_cxx_compiler_flag(OPTIMISATION_FLAGS "fcx-limited-range")
 
-option(enable-test-coverage    "enable test coverage support" OFF)
 option(enable-sanitize-options "enable various gcc sanitize options (undefined, address,...)" OFF)
 
-if((enable-test-coverage) AND (NOT (CMAKE_BUILD_TYPE STREQUAL "Debug")))
-  message(FATAL_ERROR "test converage is only available in
-  conjunction with the be 'Debug' build type")
-endif((enable-test-coverage) AND (NOT (CMAKE_BUILD_TYPE STREQUAL "Debug")))
-
+set(OPTIMISATION_FLAGS "-O2 -DNDEBUG ${OPTIMISATION_FLAGS}")
 set(OPTIMISATION_FLAGS "-DNO_RUNTIME_CHECK_BOUNDS ${OPTIMISATION_FLAGS}")
 
-if((NOT CMAKE_BUILD_TYPE) OR (CMAKE_BUILD_TYPE STREQUAL "Release"))
-  set(OPTIMISATION_FLAGS "-O2 -DNDEBUG ${OPTIMISATION_FLAGS}")
-endif((NOT CMAKE_BUILD_TYPE) OR (CMAKE_BUILD_TYPE STREQUAL "Release"))
+SET(CMAKE_CXX_FLAGS_DEBUG "-g" CACHE STRING
+    "Flags used by the C++ compiler during debug builds."
+    FORCE)
+SET(CMAKE_C_FLAGS_DEBUG "-g" CACHE STRING
+    "Flags used by the C compiler during debug builds."
+    FORCE)
 
-if(CMAKE_BUILD_TYPE STREQUAL "Debug")
-  add_definitions("-g")
-  if(enable-test-coverage)
-     add_definitions("-O0 -fprofile-arcs -ftest-coverage")
-     set(CMAKE_EXE_LINKER_FLAGS
-       "-fprofile-arcs -ftest-coverage ${CMAKE_EXE_LINKER_FLAGS} -lgcov")
-     set(CMAKE_MODULE_LINKER_FLAGS
-       "-fprofile-arcs -ftest-coverage ${CMAKE_MODULE_LINKER_FLAGS} -lgcov")
-     set(CMAKE_SHARED_LINKER_FLAGS
-       "-fprofile-arcs -ftest-coverage ${CMAKE_SHARED_LINKER_FLAGS} -lgcov")
-  endif(enable-test-coverage)
-endif(CMAKE_BUILD_TYPE STREQUAL "Debug")
+# coverage
+SET(CMAKE_CXX_FLAGS_COVERAGE "-O0 -fprofile-arcs -ftest-coverage" CACHE STRING
+    "Flags used by the C++ compiler during builds with tests coverage checks."
+    FORCE)
+SET(CMAKE_C_FLAGS_COVERAGE "-O0 -fprofile-arcs -ftest-coverage" CACHE STRING
+    "Flags used by the C compiler during builds with tests coverage checks."
+    FORCE)
+set(CMAKE_EXE_LINKER_FLAGS_COVERAGE
+  "-fprofile-arcs -ftest-coverage -lgcov")
+set(CMAKE_MODULE_LINKER_FLAGS_COVERAGE
+  "-fprofile-arcs -ftest-coverage -lgcov")
+set(CMAKE_SHARED_LINKER_FLAGS_COVERAGE
+  "-fprofile-arcs -ftest-coverage -lgcov")
+MARK_AS_ADVANCED(CMAKE_CXX_FLAGS_COVERAGE
+  CMAKE_C_FLAGS_COVERAGE
+  CMAKE_EXE_LINKER_FLAGS_COVERAGE
+  CMAKE_MODULE_LINKER_FLAGS_COVERAGE
+  CMAKE_SHARED_LINKER_FLAGS_COVERAGE)
+
+# profiling
+SET(CMAKE_CXX_FLAGS_PROFILING "-pg" CACHE STRING
+    "Flags used by the C++ compiler during profiled builds."
+    FORCE)
+SET(CMAKE_C_FLAGS_PROFILING "-pg" CACHE STRING
+    "Flags used by the C compiler during profiled builds."
+    FORCE)
+MARK_AS_ADVANCED(CMAKE_CXX_FLAGS_PROFILING
+  CMAKE_C_FLAGS_PROFILING)
 
 if(enable-sanitize-options)
   tfel_enable_cxx_compiler_flag(COMPILER_WARNINGS  "fsanitize=undefined")

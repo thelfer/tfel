@@ -82,7 +82,7 @@ namespace mfront{
     const CodeBlockOptions& o = this->readCodeBlock(*this,MechanicalBehaviourData::ComputeTangentOperator,
 						    &MFrontRungeKuttaParser::standardModifier,true,true);
     for(set<Hypothesis>::const_iterator p=o.hypotheses.begin();p!=o.hypotheses.end();++p){
-      this->mb.setAttribute(*p,MechanicalBehaviourData::hasConsistantTangentOperator,true);
+      this->mb.setAttribute(*p,MechanicalBehaviourData::hasConsistentTangentOperator,true);
     }
   } // end of MFrontRungeKuttaParser::treatTangentOperator
 
@@ -96,7 +96,7 @@ namespace mfront{
     bool b = this->readBooleanValue("MFrontRungeKuttaParser::treatIsTangentOperatorSymmetric");
     this->readSpecifiedToken("MFrontRungeKuttaParser::treatIsTangentOperatorSymmetric",";");
     for(set<Hypothesis>::const_iterator ph = h.begin();ph!=h.end();++ph){
-      this->mb.setAttribute(*ph,MechanicalBehaviourData::isConsistantTangentOperatorSymmetric,b);
+      this->mb.setAttribute(*ph,MechanicalBehaviourData::isConsistentTangentOperatorSymmetric,b);
     }
   } // end of MFrontRungeKuttaParser::treatTangentOperator
 
@@ -2146,8 +2146,8 @@ namespace mfront{
       }
     }
     this->behaviourFile << "if(smt!=NOSTIFFNESSREQUESTED){\n";
-    if(this->mb.hasAttribute(h,MechanicalBehaviourData::hasConsistantTangentOperator)){
-      this->behaviourFile << "if(!this->computeConsistantTangentOperator(smt)){\n";
+    if(this->mb.hasAttribute(h,MechanicalBehaviourData::hasConsistentTangentOperator)){
+      this->behaviourFile << "if(!this->computeConsistentTangentOperator(smt)){\n";
       if(this->mb.useQt()){        
 	this->behaviourFile << "return MechanicalBehaviour<hypothesis,Type,use_qt>::FAILURE;\n";
       } else {
@@ -2171,7 +2171,7 @@ namespace mfront{
   void MFrontRungeKuttaParser::writeBehaviourComputeTangentOperator(const Hypothesis h)
   {
     if(this->mb.hasCode(h,MechanicalBehaviourData::ComputeTangentOperator)){
-      this->behaviourFile << "bool computeConsistantTangentOperator(const SMType smt){\n";
+      this->behaviourFile << "bool computeConsistentTangentOperator(const SMType smt){\n";
       this->behaviourFile << "using namespace std;\n";
       this->behaviourFile << "using namespace tfel::math;\n";
       this->behaviourFile << "using std::vector;\n";

@@ -83,10 +83,10 @@ namespace mfront{
      */
     //! if this attribute is true, the behaviour can compute a tangent
     //! operator
-    static const std::string hasConsistantTangentOperator;
+    static const std::string hasConsistentTangentOperator;
     //! if this attribute is true, the tangent operator can be
     //  considered symmetric
-    static const std::string isConsistantTangentOperatorSymmetric;
+    static const std::string isConsistentTangentOperatorSymmetric;
     //! if this attribute is true, the behaviour can compute a
     //! prediction operator
     static const std::string hasPredictionOperator;

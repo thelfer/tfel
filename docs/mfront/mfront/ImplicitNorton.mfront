@@ -104,7 +104,7 @@ AxisymmetricalGeneralisedPlaneStress::sigzz.setGlossaryName("AxialStress");
   if((smt==ELASTIC)||(smt==SECANTOPERATOR)||
      (smt==TANGENTOPERATOR)){
     computeAlteredElasticStiffness<hypothesis,Type>::exe(Dt,lambda,mu);
-  } else if (smt==CONSISTANTTANGENTOPERATOR){
+  } else if (smt==CONSISTENTTANGENTOPERATOR){
     StiffnessTensor Hooke;
     Stensor4 Je;
     computeElasticStiffness<N,Type>::exe(Hooke,lambda,mu);

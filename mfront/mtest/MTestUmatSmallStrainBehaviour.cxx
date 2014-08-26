@@ -397,7 +397,7 @@ namespace mfront
 	D(0,0) = real(2);
       } else if(ktype==MTestStiffnessMatrixType::TANGENTOPERATOR){
 	D(0,0) = real(3);
-      } else if(ktype==MTestStiffnessMatrixType::CONSISTANTTANGENTOPERATOR){
+      } else if(ktype==MTestStiffnessMatrixType::CONSISTENTTANGENTOPERATOR){
 	D(0,0) = real(4);
       } else {
 	string msg("MTestAsterSmallStrainBehaviour::call_behaviour : "

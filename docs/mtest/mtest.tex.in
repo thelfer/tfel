@@ -1488,7 +1488,7 @@ sont admises~:
   l'équilibre se fasse en utilisant la matrice élastique endommagée~;
 \item {\tt TangentOperator}, qui demande à ce que la recherche de
   l'équilibre se fasse en utilisant la matrice tangente~;
-\item {\tt ConsistantTangentOperator}, qui demande à ce que la
+\item {\tt ConsistentTangentOperator}, qui demande à ce que la
   recherche de l'équilibre se fasse en utilisant la matrice
   tangente cohérente.
 \end{itemize}

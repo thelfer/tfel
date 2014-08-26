@@ -41,13 +41,13 @@ namespace mfront{
     this->readSpecifiedToken("MFrontBehaviourParserBaseCommon::"
 			     "treatProvidesTangentOperator",";");
     for(set<Hypothesis>::const_iterator ph=h.begin();ph!=h.end();++ph){
-      if(this->mb.hasAttribute(*ph,MechanicalBehaviourData::hasConsistantTangentOperator)){
+      if(this->mb.hasAttribute(*ph,MechanicalBehaviourData::hasConsistentTangentOperator)){
 	this->throwRuntimeError("MFrontDefaultParserBase::treatProvidesTangentOperator",
 				"one of the key @ProvidesTangentOperator "
 				"or @ProvidesSymmetricTangentOperator "
 				"has already been called");
       }
-      this->mb.setAttribute(*ph,MechanicalBehaviourData::hasConsistantTangentOperator,true);
+      this->mb.setAttribute(*ph,MechanicalBehaviourData::hasConsistentTangentOperator,true);
     }
   } // end of MFrontDefaultParserBase::treatProvidesTangentOperator
 
@@ -62,14 +62,14 @@ namespace mfront{
     this->readSpecifiedToken("MFrontBehaviourParserBaseCommon::"
 			     "treatProvidesSymmetricTangentOperator",";");
     for(set<Hypothesis>::const_iterator ph=h.begin();ph!=h.end();++ph){
-      if(this->mb.hasAttribute(*ph,MechanicalBehaviourData::hasConsistantTangentOperator)){
+      if(this->mb.hasAttribute(*ph,MechanicalBehaviourData::hasConsistentTangentOperator)){
 	this->throwRuntimeError("MFrontDefaultParserBase::treatProvidesSymmetricTangentOperator",
 				"one of the key @ProvidesTangentOperator "
 				"or @ProvidesSymmetricTangentOperator "
 				"has already been called");
       }
-      this->mb.setAttribute(*ph,MechanicalBehaviourData::hasConsistantTangentOperator,true);
-      this->mb.setAttribute(*ph,MechanicalBehaviourData::isConsistantTangentOperatorSymmetric,true);
+      this->mb.setAttribute(*ph,MechanicalBehaviourData::hasConsistentTangentOperator,true);
+      this->mb.setAttribute(*ph,MechanicalBehaviourData::isConsistentTangentOperatorSymmetric,true);
     }
   } // end of MFrontDefaultParserBase::treatProvidesSymmetricTangentOperator
 

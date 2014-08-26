@@ -7,7 +7,7 @@ allowed:
 - Elastic (undammaged)
 - SecantOperator (damaged)
 - TangentOperator
-- ConsistantTangentOperator
+- ConsistentTangentOperator
 
 @Example:
 @StiffnessMatrixType 'Elastic';

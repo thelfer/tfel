@@ -5,7 +5,7 @@
 };
 
 @ModellingHypothesis 'Axisymmetrical';
-@StiffnessMatrixType 'ConsistantTangentOperator';
+@StiffnessMatrixType 'ConsistentTangentOperator';
 
 @Behaviour<umat> '@MFrontCastemBehavioursBuildPath@' 'umatelasticity';
 @MaterialProperty<constant> 'YoungModulus'     150.e9;

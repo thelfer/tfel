@@ -346,13 +346,13 @@ namespace umat
 	using namespace tfel::material;
 	typedef MechanicalBehaviourTraits<BV> Traits;
 	typedef typename tfel::meta::IF<
-	  Traits::hasConsistantTangentOperator,
+	  Traits::hasConsistentTangentOperator,
 	  typename tfel::meta::IF<
-	  Traits::isConsistantTangentOperatorSymmetric,
-	  SymmetricConsistantTangentOperatorComputer,
-	  GeneralConsistantTangentOperatorComputer>::type,
-	  ConsistantTangentOperatorIsNotAvalaible
-	  >::type ConsistantTangentOperatorHandler;
+	  Traits::isConsistentTangentOperatorSymmetric,
+	  SymmetricConsistentTangentOperatorComputer,
+	  GeneralConsistentTangentOperatorComputer>::type,
+	  ConsistentTangentOperatorIsNotAvalaible
+	  >::type ConsistentTangentOperatorHandler;
 	typedef typename tfel::meta::IF<
 	  Traits::hasPredictionOperator,
 	  StandardPredictionOperatorComputer,
@@ -387,7 +387,7 @@ namespace umat
 	    } else if((2.75<*DDSOE)&&(*DDSOE<3.25)){
 	      r = behaviour.integrate(BV::TANGENTOPERATOR);
 	    } else if((3.75<*DDSOE)&&(*DDSOE<4.25)){
-	      r = behaviour.integrate(BV::CONSISTANTTANGENTOPERATOR);
+	      r = behaviour.integrate(BV::CONSISTENTTANGENTOPERATOR);
 	    } else {
 	      throwInvalidDDSOEException(Name<BV>::getName(),*DDSOE);
 	    }
@@ -411,7 +411,7 @@ namespace umat
 	    this->bData = static_cast<const BData&>(behaviour);
 	    if(iterations==0){
 	      if((*DDSOE>0.5)||(*DDSOE<-0.5)){
-		ConsistantTangentOperatorHandler::exe(behaviour,DDSOE);
+		ConsistentTangentOperatorHandler::exe(behaviour,DDSOE);
 	      }
 	    }
 	  } else if ((r==BV::UNRELIABLE_RESULTS)&&
@@ -494,13 +494,13 @@ namespace umat
 	using namespace tfel::material;
 	typedef MechanicalBehaviourTraits<BV> Traits;
 	typedef typename tfel::meta::IF<
-	  Traits::hasConsistantTangentOperator,
+	  Traits::hasConsistentTangentOperator,
 	  typename tfel::meta::IF<
-	  Traits::isConsistantTangentOperatorSymmetric,
-	  SymmetricConsistantTangentOperatorComputer,
-	  GeneralConsistantTangentOperatorComputer>::type,
-	  ConsistantTangentOperatorIsNotAvalaible
-	  >::type ConsistantTangentOperatorHandler;
+	  Traits::isConsistentTangentOperatorSymmetric,
+	  SymmetricConsistentTangentOperatorComputer,
+	  GeneralConsistentTangentOperatorComputer>::type,
+	  ConsistentTangentOperatorIsNotAvalaible
+	  >::type ConsistentTangentOperatorHandler;
 	typedef typename tfel::meta::IF<
 	  Traits::hasPredictionOperator,
 	  StandardPredictionOperatorComputer,
@@ -526,7 +526,7 @@ namespace umat
 	} else if((2.75<*DDSOE)&&(*DDSOE<3.25)){
 	  r = this->behaviour.integrate(BV::TANGENTOPERATOR);
 	} else if((3.75<*DDSOE)&&(*DDSOE<4.25)){
-	  r = this->behaviour.integrate(BV::CONSISTANTTANGENTOPERATOR);
+	  r = this->behaviour.integrate(BV::CONSISTENTTANGENTOPERATOR);
 	} else {
 	  throwInvalidDDSOEException(Name<BV>::getName(),*DDSOE);
 	}
@@ -544,7 +544,7 @@ namespace umat
 	behaviour.checkBounds();
 	this->behaviour.UMATexportStateData(STRESS,STATEV);
 	if((*DDSOE>0.5)||(*DDSOE<-0.5)){
-	  ConsistantTangentOperatorHandler::exe(this->behaviour,DDSOE);
+	  ConsistentTangentOperatorHandler::exe(this->behaviour,DDSOE);
 	}
       } // end of Integrator::exe
 	
@@ -576,7 +576,7 @@ namespace umat
       } // end of exe	  
     };
       
-    struct ConsistantTangentOperatorIsNotAvalaible
+    struct ConsistentTangentOperatorIsNotAvalaible
     {
       typedef Behaviour<H,UMATReal,false> BV;
       const static unsigned short N = 
@@ -584,11 +584,11 @@ namespace umat
       static void exe(BV&,UMATReal *const)
       {
 	using namespace tfel::utilities;
-	throwConsistantTangentOperatorIsNotAvalaible(Name<BV>::getName());
+	throwConsistentTangentOperatorIsNotAvalaible(Name<BV>::getName());
       } // end of exe	  
     };
 
-    struct ConsistantTangentOperatorComputer
+    struct ConsistentTangentOperatorComputer
     {
       typedef Behaviour<H,UMATReal,false> BV;
       const static unsigned short N = 
@@ -603,18 +603,18 @@ namespace umat
       } // end of exe	  
     };
 
-    struct SymmetricConsistantTangentOperatorComputer
+    struct SymmetricConsistentTangentOperatorComputer
     {
       typedef Behaviour<H,UMATReal,false> BV;
       const static unsigned short N = 
 	tfel::material::ModellingHypothesisToSpaceDimension<H>::value;
       static void exe(const BV& bv,UMATReal *const DDSOE)
       {
-	ConsistantTangentOperatorComputer::exe(bv,DDSOE);
+	ConsistentTangentOperatorComputer::exe(bv,DDSOE);
       } // end of exe	  
     };
 
-    struct GeneralConsistantTangentOperatorComputer
+    struct GeneralConsistentTangentOperatorComputer
     {
       typedef Behaviour<H,UMATReal,false> BV;
       const static unsigned short N = 
@@ -622,7 +622,7 @@ namespace umat
       static void exe(const BV& bv,UMATReal *const DDSOE)
       {
 	using namespace tfel::math;
-	ConsistantTangentOperatorComputer::exe(bv,DDSOE);
+	ConsistentTangentOperatorComputer::exe(bv,DDSOE);
 	st2tost2<N,UMATReal>& Dt = *(reinterpret_cast<st2tost2<N,UMATReal>*>(DDSOE));
 	// les conventions fortran....
 	UMATTangentOperator::transpose(Dt);

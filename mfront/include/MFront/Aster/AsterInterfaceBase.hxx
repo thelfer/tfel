@@ -133,13 +133,13 @@ namespace aster{
     throwBehaviourIntegrationFailedException(const std::string&);
 
     /*!
-     * \brief throw an AsterException if the a consistant tangent
+     * \brief throw an AsterException if the a consistent tangent
      * operator has to been requested and that the behaviour does not
      * provide one.
      * \param[in] b : behaviour name
      */
     static void
-    throwConsistantTangentOperatorIsNotAvalaible(const std::string&);
+    throwConsistentTangentOperatorIsNotAvalaible(const std::string&);
     /*!
      * \brief throw an AsterException if the a prediction operator has
      * to been requested and that the behaviour does not provide one.

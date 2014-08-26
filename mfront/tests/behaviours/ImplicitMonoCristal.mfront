@@ -56,7 +56,7 @@ g.setMaximumIncrementValuePerIteration(1.e-4);
 @TangentOperator{
   if((smt==ELASTIC)||(smt==SECANTOPERATOR)||(smt==TANGENTOPERATOR)){
     Dt = D ;
-  } else if (smt==CONSISTANTTANGENTOPERATOR){
+  } else if (smt==CONSISTENTTANGENTOPERATOR){
     Stensor4 Je;
     getPartialJacobianInvert(Je);
     Dt = D*Je;

@@ -1426,7 +1426,7 @@ namespace mfront{
     this->reserveName("updateAuxiliaryStateVariables",false);
     this->reserveName("getTangentOperator",false);
     this->reserveName("getTimeStepScalingFactor",false);
-    this->reserveName("computeConsistantTangentOperator",false);
+    this->reserveName("computeConsistentTangentOperator",false);
     this->reserveName("computePredictionOperator",false);
     this->reserveName("computeTangentOperator_",false);
     this->reserveName("smt",false);
@@ -3168,7 +3168,7 @@ namespace mfront{
       this->behaviourFile << "using MechanicalBehaviour<hypothesis,Type,use_qt>::ELASTIC;\n";
       this->behaviourFile << "using MechanicalBehaviour<hypothesis,Type,use_qt>::SECANTOPERATOR;\n";
       this->behaviourFile << "using MechanicalBehaviour<hypothesis,Type,use_qt>::TANGENTOPERATOR;\n";
-      this->behaviourFile << "using MechanicalBehaviour<hypothesis,Type,use_qt>::CONSISTANTTANGENTOPERATOR;\n";
+      this->behaviourFile << "using MechanicalBehaviour<hypothesis,Type,use_qt>::CONSISTENTTANGENTOPERATOR;\n";
       this->behaviourFile << "using MechanicalBehaviour<hypothesis,Type,use_qt>::NOSTIFFNESSREQUESTED;\n";
       this->behaviourFile << "typedef typename MechanicalBehaviour<hypothesis,Type,use_qt>::IntegrationResult IntegrationResult;\n\n";
       this->behaviourFile << "using MechanicalBehaviour<hypothesis,Type,use_qt>::SUCCESS;\n";
@@ -3183,7 +3183,7 @@ namespace mfront{
       this->behaviourFile << "using MechanicalBehaviour<hypothesis,Type,false>::ELASTIC;\n";
       this->behaviourFile << "using MechanicalBehaviour<hypothesis,Type,false>::SECANTOPERATOR;\n";
       this->behaviourFile << "using MechanicalBehaviour<hypothesis,Type,false>::TANGENTOPERATOR;\n";
-      this->behaviourFile << "using MechanicalBehaviour<hypothesis,Type,false>::CONSISTANTTANGENTOPERATOR;\n";
+      this->behaviourFile << "using MechanicalBehaviour<hypothesis,Type,false>::CONSISTENTTANGENTOPERATOR;\n";
       this->behaviourFile << "using MechanicalBehaviour<hypothesis,Type,false>::NOSTIFFNESSREQUESTED;\n";
       this->behaviourFile << "typedef typename MechanicalBehaviour<hypothesis,Type,false>::IntegrationResult IntegrationResult;\n";
       this->behaviourFile << "using MechanicalBehaviour<hypothesis,Type,false>::SUCCESS;\n";
@@ -3327,9 +3327,9 @@ namespace mfront{
     this->behaviourFile << stateVarsSize << ";\n";
     this->behaviourFile << "static const unsigned short external_variables_nb  = ";
     this->behaviourFile << externalStateVarsSize << ";\n";
-    this->behaviourFile << "static const bool hasConsistantTangentOperator = ";
+    this->behaviourFile << "static const bool hasConsistentTangentOperator = ";
     if(b){
-      if(this->mb.getAttribute<bool>(h,MechanicalBehaviourData::hasConsistantTangentOperator,false)){
+      if(this->mb.getAttribute<bool>(h,MechanicalBehaviourData::hasConsistentTangentOperator,false)){
 	this->behaviourFile << "true;\n";
       } else {
 	this->behaviourFile << "false;\n";
@@ -3337,9 +3337,9 @@ namespace mfront{
     } else {
       this->behaviourFile << "false;\n";
     }
-    this->behaviourFile << "static const bool isConsistantTangentOperatorSymmetric = ";
+    this->behaviourFile << "static const bool isConsistentTangentOperatorSymmetric = ";
     if(b){
-      if(this->mb.getAttribute<bool>(h,MechanicalBehaviourData::isConsistantTangentOperatorSymmetric,false)){
+      if(this->mb.getAttribute<bool>(h,MechanicalBehaviourData::isConsistentTangentOperatorSymmetric,false)){
 	this->behaviourFile << "true;\n";
       } else {
 	this->behaviourFile << "false;\n";
@@ -4660,10 +4660,10 @@ namespace mfront{
     const set<Hypothesis>& mh = this->mb.getDistinctModellingHypotheses();
     for(set<Hypothesis>::const_iterator ph=mh.begin();ph!=mh.end();++ph){
       // basic check
-      if(this->mb.hasAttribute(*ph,MechanicalBehaviourData::hasConsistantTangentOperator)){
+      if(this->mb.hasAttribute(*ph,MechanicalBehaviourData::hasConsistentTangentOperator)){
 	if(!this->mb.hasCode(*ph,MechanicalBehaviourData::ComputeTangentOperator)){
 	  this->throwRuntimeError("MFrontBehaviourParserCommon::setMinimalTangentOperator",
-				  "behaviour has attribute 'hasConsistantTangentOperator' but "
+				  "behaviour has attribute 'hasConsistentTangentOperator' but "
 				  "no associated code");
 	}
       }
@@ -4682,7 +4682,7 @@ namespace mfront{
 			 tangentOperator,
 			 MechanicalBehaviourData::CREATEBUTDONTREPLACE,
 			 MechanicalBehaviourData::BODY);
-	this->mb.setAttribute(h,MechanicalBehaviourData::hasConsistantTangentOperator,true,true);
+	this->mb.setAttribute(h,MechanicalBehaviourData::hasConsistentTangentOperator,true,true);
       }
     }
   } // end of MFrontBehaviourParserCommon::setMinimalTangentOperator

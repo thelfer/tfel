@@ -30,7 +30,7 @@ f.setGlossaryName("Porosity");
   using namespace tfel::material::lame;
   if((smt==ELASTIC)||(smt==SECANTOPERATOR)){
     computeAlteredElasticStiffness<hypothesis,Type>::exe(Dt,lambda,mu);
-  } else if (smt==CONSISTANTTANGENTOPERATOR){
+  } else if (smt==CONSISTENTTANGENTOPERATOR){
     Stensor4 Je;
     getPartialJacobianInvert(Je);
     StiffnessTensor De;

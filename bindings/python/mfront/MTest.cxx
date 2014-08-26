@@ -457,8 +457,8 @@ void declareMTest(void)
     .value("ELASTIC",MTestStiffnessMatrixType::ELASTIC)
     .value("SECANTOPERATOR",MTestStiffnessMatrixType::SECANTOPERATOR)
     .value("TANGENTOPERATOR",MTestStiffnessMatrixType::TANGENTOPERATOR)
-    .value("CONSISTANTTANGENTOPERATOR",
-	   MTestStiffnessMatrixType::CONSISTANTTANGENTOPERATOR)
+    .value("CONSISTENTTANGENTOPERATOR",
+	   MTestStiffnessMatrixType::CONSISTENTTANGENTOPERATOR)
     ;
   
   TestResult (MTest:: *pm)(void) = &MTest::execute;

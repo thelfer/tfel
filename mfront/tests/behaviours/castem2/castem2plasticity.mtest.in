@@ -6,7 +6,7 @@
  */
 
 @OutputFilePrecision 12;
-@StiffnessMatrixType 'ConsistantTangentOperator';
+@StiffnessMatrixType 'ConsistentTangentOperator';
 
 @Real 'Hy'  '102e9'; // H is used internally for the Heavyside function
 @Behaviour<umat> '@MFrontCastemBehavioursBuildPath@' 'umatplasticity';

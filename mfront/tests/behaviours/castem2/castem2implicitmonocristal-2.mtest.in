@@ -9,7 +9,7 @@
  */
 
 @ModellingHypothesis 'Tridimensional';
-@StiffnessMatrixType 'ConsistantTangentOperator';
+@StiffnessMatrixType 'ConsistentTangentOperator';
 
 @Behaviour<umat> '@MFrontCastemBehavioursBuildPath@' 'umatimplicitmonocristal';
 @MaximumNumberOfSubSteps 1;
