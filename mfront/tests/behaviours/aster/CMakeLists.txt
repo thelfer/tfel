@@ -60,7 +60,8 @@ set(mfront_tests_SOURCES
   Burger
   AnistropicLemaitreViscoplasticBehaviour
   SaintVenantKirchhoffElasticity
-  SaintVenantKirchhoffElasticity2)
+  SaintVenantKirchhoffElasticity2
+  SaintVenantKirchhoffElasticity3)
 mfront_dependencies(MFrontAsterBehaviours
   ThermalExpansionCoefficientTest
   ThermalExpansionCoefficientTest2
@@ -226,6 +227,23 @@ test_aster(saintvenantkirchhoffelasticity2-shear-3-3D)
 test_aster(saintvenantkirchhoffelasticity2-shear-4-3D)
 test_aster(saintvenantkirchhoffelasticity2-shear-5-3D)
 test_aster(saintvenantkirchhoffelasticity2-shear-6-3D)
+test_aster(saintvenantkirchhoffelasticity3-uniaxialloading-1-1D)
+test_aster(saintvenantkirchhoffelasticity3-uniaxialloading-2-1D)
+test_aster(saintvenantkirchhoffelasticity3-uniaxialloading-3-1D)
+test_aster(saintvenantkirchhoffelasticity3-uniaxialloading-1-2D)
+test_aster(saintvenantkirchhoffelasticity3-uniaxialloading-2-2D)
+test_aster(saintvenantkirchhoffelasticity3-uniaxialloading-3-2D)
+test_aster(saintvenantkirchhoffelasticity3-shear-1-2D)
+test_aster(saintvenantkirchhoffelasticity3-shear-2-2D)
+test_aster(saintvenantkirchhoffelasticity3-uniaxialloading-1-3D)
+test_aster(saintvenantkirchhoffelasticity3-uniaxialloading-2-3D)
+test_aster(saintvenantkirchhoffelasticity3-uniaxialloading-3-3D)
+test_aster(saintvenantkirchhoffelasticity3-shear-1-3D)
+test_aster(saintvenantkirchhoffelasticity3-shear-2-3D)
+test_aster(saintvenantkirchhoffelasticity3-shear-3-3D)
+test_aster(saintvenantkirchhoffelasticity3-shear-4-3D)
+test_aster(saintvenantkirchhoffelasticity3-shear-5-3D)
+test_aster(saintvenantkirchhoffelasticity3-shear-6-3D)
 
 if(enable-python-bindings)
   test_aster_python(xx)

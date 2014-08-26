@@ -388,7 +388,7 @@ namespace tfel{
        (tfel::typetraits::IsFundamentalNumericType<typename TensorTraits<T2>::NumType>::cond)),
       stensor<1u,typename StensorTraits<T>::NumType>
       >::type
-    convertCauchyStresstoSecondPiolaKirchhoffStress(const T&,
+    convertCauchyStressToSecondPiolaKirchhoffStress(const T&,
 						    const T2&);
 
     template<typename T,typename T2>
@@ -401,7 +401,7 @@ namespace tfel{
        (tfel::typetraits::IsFundamentalNumericType<typename TensorTraits<T2>::NumType>::cond)),
       stensor<2u,typename StensorTraits<T>::NumType>
       >::type
-    convertCauchyStresstoSecondPiolaKirchhoffStress(const T&,
+    convertCauchyStressToSecondPiolaKirchhoffStress(const T&,
 						    const T2&);
 
     template<typename T,typename T2>
@@ -414,9 +414,9 @@ namespace tfel{
        (tfel::typetraits::IsFundamentalNumericType<typename TensorTraits<T2>::NumType>::cond)),
       stensor<3u,typename StensorTraits<T>::NumType>
       >::type
-    convertCauchyStresstoSecondPiolaKirchhoffStress(const T&,
+    convertCauchyStressToSecondPiolaKirchhoffStress(const T&,
 						    const T2&);
-  
+
     template<typename T,typename T2>
     TFEL_MATH_INLINE2 
     typename tfel::meta::EnableIf<

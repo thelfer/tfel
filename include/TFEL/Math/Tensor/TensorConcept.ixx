@@ -549,7 +549,7 @@ namespace tfel{
        (tfel::typetraits::IsFundamentalNumericType<typename TensorTraits<T2>::NumType>::cond)),
       stensor<1u,typename StensorTraits<T>::NumType>
       >::type
-    convertCauchyStresstoSecondPiolaKirchhoffStress(const T&  s,
+    convertCauchyStressToSecondPiolaKirchhoffStress(const T&  s,
 						    const T2& F)
     {
       typedef typename StensorTraits<T>::NumType stress;
@@ -559,7 +559,7 @@ namespace tfel{
       p[1] = s[1]*F[0]*F[2]/(F[1]);
       p[2] = s[2]*F[0]*F[1]/(F[2]);
       return p;
-    } // end of convertCauchyStresstoSecondPiolaKirchhoffStress
+    } // end of convertCauchyStressToSecondPiolaKirchhoffStress
 
     template<typename T,typename T2>
     typename tfel::meta::EnableIf<
@@ -570,7 +570,7 @@ namespace tfel{
        (tfel::typetraits::IsFundamentalNumericType<typename TensorTraits<T2>::NumType>::cond)),
       stensor<2u,typename StensorTraits<T>::NumType>
       >::type
-    convertCauchyStresstoSecondPiolaKirchhoffStress(const T&  s,
+    convertCauchyStressToSecondPiolaKirchhoffStress(const T&  s,
 						    const T2& F)
     {
       typedef typename StensorTraits<T>::NumType stress;
@@ -579,12 +579,12 @@ namespace tfel{
       const tensor<2u,typename TensorTraits<T2>::NumType> iF = invert(F);
       const real J = det(F);
       stensor<2u,stress> p;
-      s[0] = (p[1]*iF[3]*iF[3]+cste*p[3]*iF[0]*iF[3]+p[0]*iF[0]*iF[0])*J;
-      s[1] = (p[0]*iF[4]*iF[4]+cste*p[3]*iF[1]*iF[4]+p[1]*iF[1]*iF[1])*J;
-      s[2] = p[2]*iF[2]*iF[2]*J;
-      s[3] = ((p[3]*iF[3]+cste*p[0]*iF[0])*iF[4]+cste*p[1]*iF[1]*iF[3]+p[3]*iF[0]*iF[1])*J;
+      p[0] = (s[1]*iF[3]*iF[3]+cste*s[3]*iF[0]*iF[3]+s[0]*iF[0]*iF[0])*J;
+      p[1] = (s[0]*iF[4]*iF[4]+cste*s[3]*iF[1]*iF[4]+s[1]*iF[1]*iF[1])*J;
+      p[2] = s[2]*iF[2]*iF[2]*J;
+      p[3] = ((s[3]*iF[3]+cste*s[0]*iF[0])*iF[4]+cste*s[1]*iF[1]*iF[3]+s[3]*iF[0]*iF[1])*J;
       return p;
-    } // end of convertCauchyStresstoSecondPiolaKirchhoffStress
+    } // end of convertCauchyStressToSecondPiolaKirchhoffStress
 
     template<typename T,typename T2>
     typename tfel::meta::EnableIf<
@@ -595,7 +595,7 @@ namespace tfel{
        (tfel::typetraits::IsFundamentalNumericType<typename TensorTraits<T2>::NumType>::cond)),
       stensor<3u,typename StensorTraits<T>::NumType>
       >::type
-    convertCauchyStresstoSecondPiolaKirchhoffStress(const T&  s,
+    convertCauchyStressToSecondPiolaKirchhoffStress(const T&  s,
 						    const T2& F)
     {
       typedef typename StensorTraits<T>::NumType stress;
@@ -604,14 +604,14 @@ namespace tfel{
       const tensor<3u,typename TensorTraits<T2>::NumType> iF = invert(F);
       const real J = det(F);
       stensor<3u,stress> p;
-      s[0] = (p[2]*iF[5]*iF[5]+(cste*p[5]*iF[3]+cste*p[4]*iF[0])*iF[5]+p[1]*iF[3]*iF[3]+cste*p[3]*iF[0]*iF[3]+p[0]*iF[0]*iF[0])*J;
-      s[1] = (p[2]*iF[7]*iF[7]+(cste*p[4]*iF[4]+cste*p[5]*iF[1])*iF[7]+p[0]*iF[4]*iF[4]+cste*p[3]*iF[1]*iF[4]+p[1]*iF[1]*iF[1])*J;
-      s[2] = (p[1]*iF[8]*iF[8]+(cste*p[3]*iF[6]+cste*p[5]*iF[2])*iF[8]+p[0]*iF[6]*iF[6]+cste*p[4]*iF[2]*iF[6]+p[2]*iF[2]*iF[2])*J;
-      s[3] = ((cste*p[2]*iF[5]+p[5]*iF[3]+p[4]*iF[0])*iF[7]+(p[4]*iF[4]+p[5]*iF[1])*iF[5]+(p[3]*iF[3]+cste*p[0]*iF[0])*iF[4]+cste*p[1]*iF[1]*iF[3]+p[3]*iF[0]*iF[1])*J;
-      s[4] = ((p[5]*iF[5]+cste*p[1]*iF[3]+p[3]*iF[0])*iF[8]+(p[4]*iF[5]+p[3]*iF[3]+cste*p[0]*iF[0])*iF[6]+cste*p[2]*iF[2]*iF[5]+p[5]*iF[2]*iF[3]+p[4]*iF[0]*iF[2])*J;
-      s[5] = ((p[5]*iF[7]+p[3]*iF[4]+cste*p[1]*iF[1])*iF[8]+(p[4]*iF[6]+cste*p[2]*iF[2])*iF[7]+(cste*p[0]*iF[4]+p[3]*iF[1])*iF[6]+p[4]*iF[2]*iF[4]+p[5]*iF[1]*iF[2])*J;
+      p[0] = (s[2]*iF[5]*iF[5]+(cste*s[5]*iF[3]+cste*s[4]*iF[0])*iF[5]+s[1]*iF[3]*iF[3]+cste*s[3]*iF[0]*iF[3]+s[0]*iF[0]*iF[0])*J;
+      p[1] = (s[2]*iF[7]*iF[7]+(cste*s[4]*iF[4]+cste*s[5]*iF[1])*iF[7]+s[0]*iF[4]*iF[4]+cste*s[3]*iF[1]*iF[4]+s[1]*iF[1]*iF[1])*J;
+      p[2] = (s[1]*iF[8]*iF[8]+(cste*s[3]*iF[6]+cste*s[5]*iF[2])*iF[8]+s[0]*iF[6]*iF[6]+cste*s[4]*iF[2]*iF[6]+s[2]*iF[2]*iF[2])*J;
+      p[3] = ((cste*s[2]*iF[5]+s[5]*iF[3]+s[4]*iF[0])*iF[7]+(s[4]*iF[4]+s[5]*iF[1])*iF[5]+(s[3]*iF[3]+cste*s[0]*iF[0])*iF[4]+cste*s[1]*iF[1]*iF[3]+s[3]*iF[0]*iF[1])*J;
+      p[4] = ((s[5]*iF[5]+cste*s[1]*iF[3]+s[3]*iF[0])*iF[8]+(s[4]*iF[5]+s[3]*iF[3]+cste*s[0]*iF[0])*iF[6]+cste*s[2]*iF[2]*iF[5]+s[5]*iF[2]*iF[3]+s[4]*iF[0]*iF[2])*J;
+      p[5] = ((s[5]*iF[7]+s[3]*iF[4]+cste*s[1]*iF[1])*iF[8]+(s[4]*iF[6]+cste*s[2]*iF[2])*iF[7]+(cste*s[0]*iF[4]+s[3]*iF[1])*iF[6]+s[4]*iF[2]*iF[4]+s[5]*iF[1]*iF[2])*J;
       return p;
-    } // end of convertCauchyStresstoSecondPiolaKirchhoffStress
+    } // end of convertCauchyStressToSecondPiolaKirchhoffStress
 
     template<typename T,typename T2>
     typename tfel::meta::EnableIf<

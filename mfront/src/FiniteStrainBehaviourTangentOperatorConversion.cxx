@@ -87,11 +87,12 @@ namespace mfront
 				   "this->Dt = tangentOperator_DTAU_DF*t2tot2<N,real>::tpld(this->F0);"));
     converters.push_back(Converter(TangentOperator::DS_DC,TangentOperator::DS_DF,
     				   "const t2tost2<N,stress> tangentOperator_DS_DF = tangentOperator_DS_DC*t2tost2<N,strain>::dCdF(this->F1);",
-				   "this->Dt = tangentOperator_DS_DC*t2tost2<N,strain>::dCdF(this->F1);"));
+				   "this->Dt = tangentOperator_DS_DC*t2tost2<N,real>::dCdF(this->F1);"));
     converters.push_back(Converter(TangentOperator::DS_DF,TangentOperator::DTAU_DF,
     				   "t2tost2<N,stress> tangentOperator_DTAU_DF;\n"
-				   "StressStensor tangentOperator_sk2 = convertCauchyStressToSecondPiolaKirchhoffStress(this->sig);"
-				   "computePushForwardDerivative(tangentOperator_DTAU_DF,(tangentOperator_DS_DF,tangentOperator_sk2,this->F1);",
+				   "StressStensor tangentOperator_sk2 = convertCauchyStressToSecondPiolaKirchhoffStress(this->sig,this->F1);\n"
+				   "computePushForwardDerivative(tangentOperator_DTAU_DF,tangentOperator_DS_DF,tangentOperator_sk2,this->F1);",
+				   "StressStensor tangentOperator_sk2 = convertCauchyStressToSecondPiolaKirchhoffStress(this->sig,this->F1);\n"
 				   "computePushForwardDerivative(this->Dt.template get<t2tost2<N,stress> >(),tangentOperator_DS_DF,tangentOperator_sk2,this->F1);"));
     converters.push_back(Converter(TangentOperator::DS_DEGL,TangentOperator::DS_DC,
     				   "const st2tost2<N,stress> tangentOperator_DS_DC = 0.5*tangentOperator_DS_DEGL;",
