@@ -121,6 +121,7 @@ libUMATInterface_la_SOURCES = UMATInterfaceBase.cxx                 \
 			      UMATComputeStiffnessOperator.cxx      \
 			      UMATComputeThermalExpansionTensor.cxx \
 			      UMATRotationMatrix.cxx                \
+			      UMATTangentOperator.cxx               \
 		              UMATOutOfBoundsPolicy.cxx             \
 		              UMATGetModellingHypothesis.cxx        \
 		              UMATException.cxx

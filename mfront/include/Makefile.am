@@ -125,6 +125,7 @@ nobase_include_HEADERS += MFront/UMAT/UMATException.hxx                     \
 			  MFront/UMAT/UMATComputeStiffnessOperator.hxx      \
 			  MFront/UMAT/UMATComputeThermalExpansionTensor.hxx \
 			  MFront/UMAT/UMATTraits.hxx                        \
+			  MFront/UMAT/UMATTangentOperator.hxx               \
 			  MFront/UMAT/UMAT.hxx                              \
 			  MFront/UMAT/UMATConfig.hxx
 endif

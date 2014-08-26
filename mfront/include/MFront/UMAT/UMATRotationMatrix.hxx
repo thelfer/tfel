@@ -32,7 +32,8 @@ namespace umat
     // Compute stresses back in the global space
     void rotateStrainsBackward(const UMATReal *const,
                                      UMATReal *const);
-
+    // compute the stiffness matrix in the global space
+    void rotateStiffnessMatrixBackward(UMATReal *const) const;
   private:
 
     UMATReal MN[4][4];
@@ -58,6 +59,8 @@ namespace umat
     // Compute stresses back in the global space
     void rotateStrainsBackward(const UMATReal *const,
                                      UMATReal *const);
+    // compute the stiffness matrix in the global space
+    void rotateStiffnessMatrixBackward(UMATReal *const) const;
 
   private:
 

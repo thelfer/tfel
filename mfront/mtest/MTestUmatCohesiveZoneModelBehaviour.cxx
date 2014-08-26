@@ -72,7 +72,7 @@ namespace mfront
   MTestStiffnessMatrixType::mtype
   MTestUmatCohesiveZoneModelBehaviour::getDefaultStiffnessMatrixType(void) const
   {
-    return MTestStiffnessMatrixType::ELASTIC;
+    return MTestStiffnessMatrixType::ELASTICSTIFNESSFROMMATERIALPROPERTIES;
   }
   
   bool
@@ -88,15 +88,15 @@ namespace mfront
   {
     using namespace std;
     using namespace tfel::math;
-    // rotation matrix
-    tmatrix<3u,3u,real> drot(0.);
-    tmatrix<3u,3u,real>::size_type i,j;
-    for(i=0;i!=r.getNbRows();++i){
-      for(j=0;j!=r.getNbCols();++j){
-	drot(i,j) = r(j,i);
+    if(ktype==MTestStiffnessMatrixType::ELASTICSTIFNESSFROMMATERIALPROPERTIES){
+      // rotation matrix
+      tmatrix<3u,3u,real> drot(0.);
+      tmatrix<3u,3u,real>::size_type i,j;
+      for(i=0;i!=r.getNbRows();++i){
+	for(j=0;j!=r.getNbCols();++j){
+	  drot(i,j) = r(j,i);
+	}
       }
-    }
-    if(ktype==MTestStiffnessMatrixType::ELASTIC){
       this->computeElasticStiffness(Kt,mp,drot,h);
       return true;
     } else {
@@ -209,13 +209,15 @@ namespace mfront
       copy(iv.begin(),iv.end(),iv1.begin());
     }
     // tangent operator (...)
-    if(ktype==MTestStiffnessMatrixType::ELASTIC){
-      this->computeElasticStiffness(Kt,mp,drot,h);
-    } else {
-      string msg("MTestUmatCohesiveZoneModelBehaviour::integrate : "
-		 "computation of the tangent operator "
-		 "is not supported");
-      throw(runtime_error(msg));
+    if(ktype!=MTestStiffnessMatrixType::NOSTIFFNESS){ 
+      if(ktype==MTestStiffnessMatrixType::ELASTICSTIFNESSFROMMATERIALPROPERTIES){
+	this->computeElasticStiffness(Kt,mp,drot,h);
+      } else {
+	string msg("MTestUmatCohesiveZoneModelBehaviour::integrate : "
+		   "computation of the tangent operator "
+		   "is not supported");
+	throw(runtime_error(msg));
+      }
     }
     // turning things in standard conventions
     if(ntens==2){

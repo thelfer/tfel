@@ -161,6 +161,54 @@ namespace umat{
   } // end of UMATInterfaceBase::throwInvalidBehaviourTypeAndModellingHypothesis
 
   void
+  UMATInterfaceBase::throwPredictionComputationFailedException(const std::string& b)
+  {
+    using namespace std;
+    string msg("UMATInterfaceBase::throwPredictionComputationFailedException : ");
+    msg += "prediction computation failed for behaviour '"+b+"'";
+    throw(runtime_error(msg));
+  }
+
+  void
+  UMATInterfaceBase::throwPredictionOperatorIsNotAvalaible(const std::string& b)
+  {
+    using namespace std;
+    string msg("UMATInterfaceBase::throwPredictionOperatorIsNotAvalaible : ");
+    msg += "behaviour '"+b+"' can't compute a prediction operator";
+    throw(runtime_error(msg));
+  } // end of UMATInterfaceBase::throwBehaviourIntegrationFailedException
+
+  void
+  UMATInterfaceBase::throwConsistantTangentOperatorIsNotAvalaible(const std::string& b)
+  {
+    using namespace std;
+    string msg("UMATInterfaceBase::throwConsistantTangentOperatorIsNotAvalaible : ");
+    msg += "behaviour '"+b+"' can't compute a consistant tangent operator";
+    throw(runtime_error(msg));
+  } // end of UMATInterfaceBase::throwBehaviourIntegrationFailedException
+
+  void
+  UMATInterfaceBase::throwInvalidDDSOEException(const std::string& b,
+						 const UMATReal v)
+  {
+    using namespace std;
+    ostringstream msg;
+    msg << "UMATInterfaceBase::throwInvalidDDSOEException : "
+	<< "an invalid value for the DDSOE parameter has been given ('" << v << "')"
+	<< " to the behaviour '" << b << "'.\n"
+	<< "The following values are accepted:\n"
+	<< "-3 : compute the prediction tangent operator, no behaviour integration\n"
+	<< "-2 : compute the prediction secant  operator, no behaviour integration\n"
+	<< "-1 : compute the prediction elastic operator, no behaviour integration\n"
+	<< " 0 : integrate the behaviour over the time step, no stiffness requested\n"
+	<< " 1 : integrate the behaviour over the time step, elastic stiffness requested\n"
+	<< " 2 : integrate the behaviour over the time step, secant  operator  requested\n"
+	<< " 3 : integrate the behaviour over the time step, tagent  operator  requested\n"
+	<< " 4 : integrate the behaviour over the time step, consistant tagent operator requested\n";
+    throw(runtime_error(msg.str()));
+  } // end of UMATInterfaceBase::throwInvalidDDSOEException
+
+  void
   UMATUnSupportedCaseHandler::exe(const UMATReal *const ,
 				  const UMATReal *const,
 				  const UMATReal *const,

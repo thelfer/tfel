@@ -97,6 +97,7 @@ install_header(MFront/UMAT UMATOrthotropicBehaviour.hxx)
 install_header(MFront/UMAT UMATComputeStiffnessOperator.hxx)
 install_header(MFront/UMAT UMATGetModellingHypothesis.hxx)
 install_header(MFront/UMAT UMATComputeThermalExpansionTensor.hxx)
+install_header(MFront/UMAT UMATTangentOperator.hxx)
 
 if(LOCAL_CASTEM_HEADER)
   install(FILES "castem.h" DESTINATION "include/")

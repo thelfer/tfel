@@ -26,8 +26,10 @@ namespace mfront
       SECANTOPERATOR,
       TANGENTOPERATOR,
       CONSISTANTTANGENTOPERATOR,
+      // This one is mostly for the umat behaviour
+      ELASTICSTIFNESSFROMMATERIALPROPERTIES,
       UNSPECIFIEDSTIFFNESSMATRIXTYPE
-    }; // end of enum StiffnessMatrixType
+    }; // end of struct StiffnessMatrixType
   };
 
 } // end of namespace mfront

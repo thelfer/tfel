@@ -243,22 +243,22 @@ namespace mfront
     using namespace std;
     using namespace tfel::math;
     // rotation matrix
-    tmatrix<3u,3u,real> drot(0.);
-    tmatrix<3u,3u,real>::size_type i,j;
-    for(i=0;i!=r.getNbRows();++i){
-      for(j=0;j!=r.getNbCols();++j){
-	drot(i,j) = r(j,i);
+    if(ktype==MTestStiffnessMatrixType::ELASTICSTIFNESSFROMMATERIALPROPERTIES){
+      // compute the stiffness operator from material properties
+      tmatrix<3u,3u,real> drot(0.);
+      tmatrix<3u,3u,real>::size_type i,j;
+      for(i=0;i!=r.getNbRows();++i){
+	for(j=0;j!=r.getNbCols();++j){
+	  drot(i,j) = r(j,i);
+	}
       }
-    }
-    if(ktype==MTestStiffnessMatrixType::ELASTIC){
       this->computeElasticStiffness(Kt,mp,drot,h);
       return true;
-    } else {
-      string msg("MTestUmatFiniteStrainBehaviour::computePredictionOperator : "
-		 "computation of the tangent operator "
-		 "is not supported");
-      throw(runtime_error(msg));
     }
+    string msg("MTestUmatFiniteStrainBehaviour::computePredictionOperator : "
+	       "computation of the tangent operator "
+	       "is not supported");
+    throw(runtime_error(msg));
     return false;
   } // end of MTestUmatFiniteStrainBehaviour::computePredictionOperator
 
@@ -391,14 +391,15 @@ namespace mfront
       copy(iv.begin(),iv.end(),iv1.begin());
     }
     // tangent operator (...)
-    if((ktype==MTestStiffnessMatrixType::NOSTIFFNESS)||
-       (ktype==MTestStiffnessMatrixType::ELASTIC)){
-      this->computeElasticStiffness(Kt,mp,drot,h);
-    } else {
-      string msg("MTestUmatFiniteStrainBehaviour::integrate : "
-		 "computation of the tangent operator "
-		 "is not supported");
-      throw(runtime_error(msg));
+    if(ktype!=MTestStiffnessMatrixType::NOSTIFFNESS){ 
+      if(ktype==MTestStiffnessMatrixType::ELASTICSTIFNESSFROMMATERIALPROPERTIES){
+	this->computeElasticStiffness(Kt,mp,drot,h);
+      } else {
+	string msg("MTestUmatFiniteStrainBehaviour::integrate : "
+		   "computation of the tangent operator "
+		   "is not supported");
+	throw(runtime_error(msg));
+      }
     }
     // turning things in standard conventions
     for(i=3;i!=static_cast<unsigned short>(ntens);++i){

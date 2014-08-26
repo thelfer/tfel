@@ -13,7 +13,9 @@
 #include"TFEL/System/ExternalLibraryManager.hxx"
 #include"MFront/UMAT/UMAT.hxx"
 #include"MFront/MTestUmatSmallStrainBehaviour.hxx"
+#include"MFront/MTestUmatNormaliseTangentOperator.hxx"
 #include"MFront/UMAT/UMATComputeStiffnessOperator.hxx"
+
 
 namespace mfront
 {
@@ -240,17 +242,25 @@ namespace mfront
   bool
   MTestUmatSmallStrainBehaviour::computePredictionOperator(tfel::math::matrix<real>& Kt,
 							   const tfel::math::tmatrix<3u,3u,real>& r,
-							   const tfel::math::vector<real>&,
-							   const tfel::math::vector<real>&,
+							   const tfel::math::vector<real>& e0,
+							   const tfel::math::vector<real>& s0,
 							   const tfel::math::vector<real>& mp,
-							   const tfel::math::vector<real>&,
-							   const tfel::math::vector<real>&,
+							   const tfel::math::vector<real>& iv0,
+							   const tfel::math::vector<real>& esv0,
 							   const tfel::material::ModellingHypothesis::Hypothesis h,
 							   const MTestStiffnessMatrixType::mtype ktype) const
   {
-    using namespace std;
     using namespace tfel::math;
-    // rotation matrix
+    if(ktype!=MTestStiffnessMatrixType::ELASTICSTIFNESSFROMMATERIALPROPERTIES){
+      vector<real> s1(s0);
+      vector<real> de(real(0));
+      vector<real> iv1(iv0);
+      vector<real> desv(esv0.size(),real(0));
+      return this->call_behaviour(Kt,s1,iv1,r,e0,de,s0,
+				  mp,iv0,esv0,desv,
+				  h,real(1),ktype,false);
+    }
+    // compute the stiffness operator from material properties
     tmatrix<3u,3u,real> drot(0.);
     tmatrix<3u,3u,real>::size_type i,j;
     for(i=0;i!=r.getNbRows();++i){
@@ -258,33 +268,47 @@ namespace mfront
 	drot(i,j) = r(j,i);
       }
     }
-    if(ktype==MTestStiffnessMatrixType::ELASTIC){
-      this->computeElasticStiffness(Kt,mp,drot,h);
-      return true;
-    } else {
-      string msg("MTestUmatSmallStrainBehaviour::computePredictionOperator : "
-		 "computation of the tangent operator "
-		 "is not supported");
-      throw(runtime_error(msg));
-    }
-    return false;
+    this->computeElasticStiffness(Kt,mp,drot,h);
+    return true;
   } // end of MTestUmatSmallStrainBehaviour::computePredictionOperator
 
   bool
   MTestUmatSmallStrainBehaviour::integrate(tfel::math::matrix<real>& Kt,
-					   tfel::math::vector<real>& s1,
-					   tfel::math::vector<real>& iv1,
-					   const tfel::math::tmatrix<3u,3u,real>& r,
-					   const tfel::math::vector<real>& e0,
-					   const tfel::math::vector<real>& e1,
-					   const tfel::math::vector<real>& s0,
-					   const tfel::math::vector<real>& mp,
-					   const tfel::math::vector<real>& iv0,
-					   const tfel::math::vector<real>& ev0,
-					   const tfel::math::vector<real>& dev,
-					   const tfel::material::ModellingHypothesis::Hypothesis h,
-					   const real dt,
-					   const MTestStiffnessMatrixType::mtype ktype) const
+					    tfel::math::vector<real>& s1,
+					    tfel::math::vector<real>& iv1,
+					    const tfel::math::tmatrix<3u,3u,real>& r,
+					    const tfel::math::vector<real>& e0,
+					    const tfel::math::vector<real>& e1,
+					    const tfel::math::vector<real>& s0,
+					    const tfel::math::vector<real>& mp,
+					    const tfel::math::vector<real>& iv0,
+					    const tfel::math::vector<real>& ev0,
+					    const tfel::math::vector<real>& dev,
+					    const tfel::material::ModellingHypothesis::Hypothesis h,
+					    const real dt,
+					    const MTestStiffnessMatrixType::mtype ktype) const
+  {
+    return this->call_behaviour(Kt,s1,iv1,r,e0,e1,s0,
+				mp,iv0,ev0,dev,h,dt,
+				ktype,true);
+  } // end of MTestUmatSmallStrainBehaviour::integrate
+
+  bool
+  MTestUmatSmallStrainBehaviour::call_behaviour(tfel::math::matrix<real>& Kt,
+						tfel::math::vector<real>& s1,
+						tfel::math::vector<real>& iv1,
+						const tfel::math::tmatrix<3u,3u,real>& r,
+						const tfel::math::vector<real>& e0,
+						const tfel::math::vector<real>& e1,
+						const tfel::math::vector<real>& s0,
+						const tfel::math::vector<real>& mp,
+						const tfel::math::vector<real>& iv0,
+						const tfel::math::vector<real>& ev0,
+						const tfel::math::vector<real>& dev,
+						const tfel::material::ModellingHypothesis::Hypothesis h,
+						const real dt,
+						const MTestStiffnessMatrixType::mtype ktype,
+						const bool b) const
   {
     using namespace std;
     using namespace tfel::math;
@@ -297,24 +321,31 @@ namespace mfront
     UMATInt ndi;
     UMATInt nprops = static_cast<UMATInt>(mp.size());
     UMATInt nstatv;
+    unsigned short dimension;
     if(h==MH::AXISYMMETRICALGENERALISEDPLANESTRAIN){
       ndi   = 14;
       ntens = 3;
+      dimension = 1u;
     } else if (h==MH::AXISYMMETRICAL){
       ndi = 0;
       ntens = 4;
+      dimension = 2u;
     } else if (h==MH::PLANESTRESS){
       ndi = -2;
       ntens = 4;
+      dimension = 2u;
     } else if (h==MH::PLANESTRAIN){
       ndi = -1;
       ntens = 4;
+      dimension = 2u;
     } else if (h==MH::GENERALISEDPLANESTRAIN){
       ndi = -3;
       ntens = 4;
+      dimension = 2u;
     } else if (h==MH::TRIDIMENSIONAL){
       ndi = 2;
       ntens = 6;
+      dimension = 3u;
     } else {
       string msg("MTestUmatSmallStrainBehaviour::integrate : ");
       msg += "unsupported hypothesis";
@@ -333,6 +364,37 @@ namespace mfront
       throw(runtime_error(msg));
     }
     fill(this->D.begin(),this->D.end(),0.);
+    // choosing the type of stiffness matrix
+    if(b){
+      if((ktype==MTestStiffnessMatrixType::NOSTIFFNESS)||
+	 (ktype==MTestStiffnessMatrixType::ELASTICSTIFNESSFROMMATERIALPROPERTIES)){
+	// do nothing
+      } else if(ktype==MTestStiffnessMatrixType::ELASTIC){
+	D(0,0) = real(1);
+      } else if(ktype==MTestStiffnessMatrixType::SECANTOPERATOR){
+	D(0,0) = real(2);
+      } else if(ktype==MTestStiffnessMatrixType::TANGENTOPERATOR){
+	D(0,0) = real(3);
+      } else if(ktype==MTestStiffnessMatrixType::CONSISTANTTANGENTOPERATOR){
+	D(0,0) = real(4);
+      } else {
+	string msg("MTestAsterSmallStrainBehaviour::call_behaviour : "
+		   "invalid or unspecified stiffness matrix type");
+	throw(runtime_error(msg));
+      }
+    } else {
+      if(ktype==MTestStiffnessMatrixType::ELASTIC){
+	D(0,0) = real(-1);
+      } else if(ktype==MTestStiffnessMatrixType::SECANTOPERATOR){
+	D(0,0) = real(-2);
+      } else if(ktype==MTestStiffnessMatrixType::TANGENTOPERATOR){
+	D(0,0) = real(-3);
+      } else {
+	string msg("MTestAsterSmallStrainBehaviour::call_behaviour : "
+		   "invalid or unspecified stiffness matrix type");
+	throw(runtime_error(msg));
+      }
+    }
     if(iv0.size()!=0){
       copy(iv0.begin(),iv0.end(),
 	   this->iv.begin());
@@ -373,13 +435,12 @@ namespace mfront
       copy(iv.begin(),iv.end(),iv1.begin());
     }
     // tangent operator (...)
-    if(ktype==MTestStiffnessMatrixType::ELASTIC){
-      this->computeElasticStiffness(Kt,mp,drot,h);
-    } else {
-      string msg("MTestUmatSmallStrainBehaviour::integrate : "
-		 "computation of the tangent operator "
-		 "is not supported");
-      throw(runtime_error(msg));
+    if(ktype!=MTestStiffnessMatrixType::NOSTIFFNESS){ 
+      if(ktype==MTestStiffnessMatrixType::ELASTICSTIFNESSFROMMATERIALPROPERTIES){
+	this->computeElasticStiffness(Kt,mp,drot,h);
+      } else {
+	MTestUmatNormaliseTangentOperator::exe(Kt,D,dimension);
+      }
     }
     // turning things in standard conventions
     for(i=3;i!=static_cast<unsigned short>(ntens);++i){

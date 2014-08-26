@@ -57,10 +57,10 @@ namespace umat
 	typename UMATBehaviourHandler::Error>::type Handler;
       UMATBehaviourHandler::checkNPROPS(*NPROPS);
       UMATBehaviourHandler::checkNSTATV(*NSTATV);
-      Handler handler(DTIME,DDSOE,STRAN,
+      Handler handler(DTIME,STRAN,
 		      DSTRAN,TEMP,DTEMP,PROPS,
 		      PREDEF,DPRED,STATEV,STRESS);
-      handler.exe(STRESS,STATEV);
+      handler.exe(DDSOE,STRESS,STATEV);
     } // end of UMATIsotropicBehaviourHandlerBase::exe
 
   }; // end of struct UMATIsotropicBehaviourHandlerBase

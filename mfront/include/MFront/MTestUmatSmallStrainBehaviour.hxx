@@ -95,6 +95,41 @@ namespace mfront
     virtual ~MTestUmatSmallStrainBehaviour();
   protected:
     /*!
+     * \brief integrate the mechanical behaviour over the time step
+     * \return true if the integration was successfull, false otherwise
+     * \param[out] Kt    : tangent operator
+     * \param[out] s1    : stresses at the end of the time step
+     * \param[out] iv1   : internal state variables at the end of the time step
+     * \param[in]  r     : rotation matrix
+     * \param[in]  e0    : strain at the beginning of the time step
+     * \param[in]  de    : strain increment
+     * \param[in]  s0    : stresses at the beginning of the time step
+     * \param[in]  mp    : material properties
+     * \param[in]  iv0   : internal state variables at the beginning of the time step
+     * \param[in]  ev0   : external state variables at the beginning of the time step
+     * \param[in]  dev   : external state variables increments
+     * \param[in]  h     : modelling hypothesis
+     * \param[in]  dt    : time increment
+     * \param[in]  ktype : type of the stiffness matrix
+     * \param[in]  b     : if false, only compute a prediction operator (no integration)
+     */
+    virtual bool
+    call_behaviour(tfel::math::matrix<real>&,
+		   tfel::math::vector<real>&,
+		   tfel::math::vector<real>&,
+		   const tfel::math::tmatrix<3u,3u,real>&,
+		   const tfel::math::vector<real>&,
+		   const tfel::math::vector<real>&,
+		   const tfel::math::vector<real>&,
+		   const tfel::math::vector<real>&,
+		   const tfel::math::vector<real>&,
+		   const tfel::math::vector<real>&,
+		   const tfel::math::vector<real>&,
+		   const tfel::material::ModellingHypothesis::Hypothesis,
+		   const real,
+		   const MTestStiffnessMatrixType::mtype,
+		   const bool) const;
+    /*!
      * \brief compute the elastic stiffness
      * \param[out] Kt   : tangent operator
      * \param[in]  mp   : material properties

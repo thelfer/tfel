@@ -135,6 +135,55 @@ namespace umat
     eg[2]=em[2];
   } // end of UMATRotationMatrix2D:::rotateStrainsBackward
 
+  // Calcul de la déformation dans le repère global
+  // D^g=tN:D^m:N
+  void
+  UMATRotationMatrix2D::rotateStiffnessMatrixBackward(UMATReal *const D) const
+  {
+    // matrice N
+    UMATReal N[4][4];
+    for(unsigned short i=0;i!=2;++i){
+      for(unsigned short j=0;j!=2;++j){
+	N[i][j] = MN[i][j];
+      }
+    }
+    N[2][0]  = 0.;
+    N[2][1]  = 0.;
+    N[2][3]  = 0.;
+    N[0][2]  = 0.;
+    N[1][2]  = 0.;
+    N[3][2]  = 0.;
+    N[2][2]  = 1.;
+    for(unsigned short i=0;i!=2;++i){
+      N[3][i] = MN[2][i];
+      N[i][3] = MN[i][2];
+    }
+    N[3][3]  = MN[2][2];
+    N[3][0] *= UMATReal(2.);
+    N[3][1] *= UMATReal(2.);
+    N[3][2] *= UMATReal(2.);
+    // matrice temporaire
+    using namespace std;
+    UMATReal t[4][4];
+    for(unsigned short i=0;i!=4;++i){
+      for(unsigned short j=0;j!=4;++j){
+	t[i][j] = 0.;
+	for(unsigned short k=0;k!=4;++k){
+	  t[i][j] += D[k*4+i]*(N[k][j]);
+	}
+      }
+    }
+    // matrice finale
+    for(unsigned short i=0;i!=4;++i){
+      for(unsigned short j=0;j!=4;++j){
+	D[j*4+i] = 0.;
+	for(unsigned short k=0;k!=4;++k){
+	  D[j*4+i] += N[k][i]*t[k][j];
+	}
+      }
+    }
+  } // end of UMATRotationMatrix2D::rotateStiffnessMatrixBackward
+
   // Constructeur
   // V : Matrice de passage matériau/élement
   //     (deux premiers vecteurs)
@@ -295,5 +344,45 @@ namespace umat
       +MN[3][5]*em[3]+MN[4][5]*em[4]+MN[5][5]*em[5];
   } // end of UMATRotationMatrix3D::rotateStrainBackward
 
+  // compute the stiffness matrix in the global space
+  void
+  UMATRotationMatrix3D::rotateStiffnessMatrixBackward(UMATReal *const D) const
+  {
+    // matrice N
+    UMATReal N[6][6];
+    for(unsigned short i=0;i!=6;++i){
+      for(unsigned short j=0;j!=6;++j){
+	N[i][j] = MN[i][j];
+      }
+    }
+    N[3][0] *= UMATReal(2.);
+    N[3][1] *= UMATReal(2.);
+    N[3][2] *= UMATReal(2.);
+    N[4][0] *= UMATReal(2.);
+    N[4][1] *= UMATReal(2.);
+    N[4][2] *= UMATReal(2.);
+    N[5][0] *= UMATReal(2.);
+    N[5][1] *= UMATReal(2.);
+    N[5][2] *= UMATReal(2.);
+    // matrice temporaire
+    UMATReal t[6][6];
+    for(unsigned short i=0;i!=6;++i){
+      for(unsigned short j=0;j!=6;++j){
+	t[i][j] = 0.;
+	for(unsigned short k=0;k!=6;++k){
+	  t[i][j] += D[k*6+i]*(N[k][j]);
+	}
+      }
+    }
+    // matrice finale
+    for(unsigned short i=0;i!=6;++i){
+      for(unsigned short j=0;j!=6;++j){
+	D[j*6+i] = 0.;
+	for(unsigned short k=0;k!=6;++k){
+	  D[j*6+i] += N[k][i]*t[k][j];
+	}
+      }
+    }
+  } // end of UMATRotationMatrix3D::rotateStiffnessMatrixBackward
 
 } // end of namespace umat

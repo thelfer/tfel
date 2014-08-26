@@ -87,22 +87,22 @@ namespace mfront
     return 0;
   }
 
-  static unsigned short
-  getTensorSize(const unsigned short d)
-  {
-    using namespace std;
-    if(d==1){
-      return 3;
-    } else if(d==2){
-      return 5;
-    } else if(d==3){
-      return 9;
-    }
-    string msg("mfront::getTensorSize : ");
-    msg += "";
-    throw(runtime_error(msg));
-    return 0;
-  }
+  // static unsigned short
+  // getTensorSize(const unsigned short d)
+  // {
+  //   using namespace std;
+  //   if(d==1){
+  //     return 3;
+  //   } else if(d==2){
+  //     return 5;
+  //   } else if(d==3){
+  //     return 9;
+  //   }
+  //   string msg("mfront::getTensorSize : ");
+  //   msg += "";
+  //   throw(runtime_error(msg));
+  //   return 0;
+  // }
 
   MTest::MTestCurrentState::MTestCurrentState()
   {}

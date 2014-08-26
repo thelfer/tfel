@@ -103,6 +103,7 @@ if(HAVE_CASTEM)
 	UMATComputeStiffnessOperator.cxx
 	UMATComputeThermalExpansionTensor.cxx
 	UMATRotationMatrix.cxx
+	UMATTangentOperator.cxx
 	UMATOutOfBoundsPolicy.cxx
 	UMATGetModellingHypothesis.cxx
 	UMATException.cxx)

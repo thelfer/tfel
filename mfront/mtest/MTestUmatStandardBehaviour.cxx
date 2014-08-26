@@ -116,7 +116,7 @@ namespace mfront
   MTestStiffnessMatrixType::mtype
   MTestUmatStandardBehaviour::getDefaultStiffnessMatrixType(void) const
   {
-    return MTestStiffnessMatrixType::ELASTIC;    
+    return MTestStiffnessMatrixType::ELASTICSTIFNESSFROMMATERIALPROPERTIES;    
   } // end of MTestUmatStandardBehaviour::getDefaultStiffnessMatrixType
 
   MTestUmatStandardBehaviour::~MTestUmatStandardBehaviour()

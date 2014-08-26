@@ -124,10 +124,10 @@ namespace umat
 	typename UMATBehaviourHandler::Error>::type Handler;
       UMATBehaviourHandler::checkNPROPS(*NPROPS);
       UMATBehaviourHandler::checkNSTATV(*NSTATV);
-      Handler handler(DTIME,DDSOE,STRAN,
+      Handler handler(DTIME,STRAN,
 		      DSTRAN,TEMP,DTEMP,PROPS,
 		      PREDEF,DPRED,STATEV,STRESS);
-      handler.exe(STRESS,STATEV);
+      handler.exe(DDSOE,STRESS,STATEV);
     } // end of UMATOrthotropicBehaviourHander<1u,Behaviour>::exe
   }; // end of struct UMATOrthotropicBehaviourHander<1u,Behaviour>
 
@@ -179,11 +179,14 @@ namespace umat
       m.rotateStrainsForward(DSTRAN,de);
       UMATBehaviourHandler::checkNPROPS(*NPROPS);
       UMATBehaviourHandler::checkNSTATV(*NSTATV);
-      Handler handler(DTIME,DDSOE,
-		      e,de,TEMP,DTEMP,PROPS,
+      const bool bDDSOE = std::abs(*DDSOE)>0.5; 
+      Handler handler(DTIME,e,de,TEMP,DTEMP,PROPS,
 		      PREDEF,DPRED,STATEV,s);
-      handler.exe(s,STATEV);
+      handler.exe(DDSOE,s,STATEV);
       m.rotateStressesBackward(s,STRESS);
+      if(bDDSOE){
+	m.rotateStiffnessMatrixBackward(DDSOE);
+      }
     } // end of UMATOrthotropicBehaviourHander<2u,Behaviour>::exe
   }; // end of UMATOrthotropicBehaviourHander<2u,Behaviour>
 
@@ -236,11 +239,14 @@ namespace umat
       m.rotateStrainsForward(DSTRAN,de);
       UMATBehaviourHandler::checkNPROPS(*NPROPS);
       UMATBehaviourHandler::checkNSTATV(*NSTATV);
-      Handler handler(DTIME,DDSOE,e,
-		      de,TEMP,DTEMP,PROPS,
+      const bool bDDSOE = std::abs(*DDSOE)>0.5; 
+      Handler handler(DTIME,e,de,TEMP,DTEMP,PROPS,
 		      PREDEF,DPRED,STATEV,s);
-      handler.exe(s,STATEV);
+      handler.exe(DDSOE,s,STATEV);
       m.rotateStressesBackward(s,STRESS);
+      if(bDDSOE){
+	m.rotateStiffnessMatrixBackward(DDSOE);
+      }
     } // end of UMATOrthotropicBehaviourHandler<3u,Behaviour>::exe
 	
   }; // end of struct UMATOrthotropicBehaviourHandler<3u,Behaviour>

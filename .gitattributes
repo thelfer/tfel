@@ -1048,6 +1048,7 @@ mfront/include/MFront/UMAT/UMATOrthotropicBehaviour.hxx -text
 mfront/include/MFront/UMAT/UMATOrthotropicBehaviourHandler.hxx -text
 mfront/include/MFront/UMAT/UMATOutOfBoundsPolicy.hxx -text
 mfront/include/MFront/UMAT/UMATRotationMatrix.hxx -text
+mfront/include/MFront/UMAT/UMATTangentOperator.hxx -text
 mfront/include/MFront/UMAT/UMATTraits.hxx -text
 mfront/include/MFront/UMATFiniteStrainMTestFileGenerator.hxx -text
 mfront/include/MFront/UMATSmallStrainMTestFileGenerator.hxx -text
@@ -1157,6 +1158,7 @@ mfront/src/UMATInterfaceBase.cxx -text
 mfront/src/UMATOutOfBoundsPolicy.cxx -text
 mfront/src/UMATRotationMatrix.cxx -text
 mfront/src/UMATSmallStrainMTestFileGenerator.cxx -text
+mfront/src/UMATTangentOperator.cxx -text
 mfront/src/VarHandler.cxx -text
 mfront/src/VariableModifier.cxx -text
 mfront/src/WordAnalyser.cxx -text
