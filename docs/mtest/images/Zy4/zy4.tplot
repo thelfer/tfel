@@ -1,0 +1,19 @@
+set grid 
+set term eps
+
+set output "zy4-1.eps"
+set title "Essai d'écrouissage"
+set xlabel "Déformation &epsilon;<sub>&theta;</sub> (&times; 100)"
+set ylabel "Contrainte  &sigma;<sub>&theta;</sub> (MPa)"
+set key right center
+plot "simexp_Zy4_Ecroui_Helfer-2.txt.prn" t "simulation MTest" u ($1*100):2 w l, \
+     "simexp_Zy4_Ecroui_Helfer-1.txt.prn" t "points expérimentaux" u ($1*100):2 w c lw 3 lc red
+
+set output "zy4-2.eps"
+set title "Essai de relaxation"
+set xlabel "Temps (h)"
+set ylabel "Contrainte  &sigma;<sub>&theta;</sub> (MPa)"
+set key right center
+plot "simexp_Zy4_Relax_Helfer-2.txt.prn" t "simulation MTest"  w l, \
+     "simexp_Zy4_Relax_Helfer-1.txt.prn" t "points expérimentaux" w c lw 3 lc red
+

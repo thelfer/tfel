@@ -104,24 +104,78 @@
 
 \resumecea{
 
-  Ce document présente un outil de test unitaire pour les lois de
-  comportements mécaniques générés par \mfront{}, nommé \mtest{}.
+  Ce document présente un outil de simulation du comportement
+  mécanique d'un point matériel nommé \mtest{}.  Les lois de
+  comportements mécanique peuvent être écrites en petites ou en
+  grandes transformations. Les modèles de zones cohésives sont
+  également supportés.
 
   Cet outil permet de piloter le chargement mécanique d'un point
   matériel, en imposant certaines composantes des contraintes et/ou
-  certaines composantes des déformations au cours d'un historique.
+  certaines composantes des déformations (ou le gradient de la
+  déformation en grandes transformations, ou le saut de déplacement
+  pour les modèles de zones cohésives) au cours d'un historique (de
+  contraintes, de température, de fluence, etc...).
 
-  Les résultats obtenus peuvent être comparés à des solutions
-  analytiques ou à des résultats de référence contenus dans un fichier
-  externe. Il est ainsi possible de créer des tests de non régression.
+  \mtest{} permet de simuler de nombreux essais mécaniques simples
+  (sans effet de structure)~:
+  \begin{itemize}
+  \item essais de traction/compression de type fluage (charge
+    constante), écrouissage (vitesse de déformation imposée) ou
+    relaxation (déformation totale constante) et les essais de
+    \nom{Satoh} (pièce chauffé dont la dilatation est empêché). Ces
+    essais peuvent présenter des cycles ou des variations de
+    chargement~;
+  \item essais en pression interne sur tube présentant les mêmes
+    variantes que les essais de traction/compression.
+  \end{itemize}
 
-  Les principales fonctionnalités de cet outil sont présentées. Son
-  utilisation en ligne de commande et l'ensemble des commandes
-  disponibles sont décrits.
+  \mfront{} peut générer des lois de comportement mécanique pour
+  différents codes cible~: \castem{} (\cea{}), \aster{} (code aux
+  éléments finis généralistes développés par \edf{}), \cyrano{} (code
+  combustible développé par \edf{}). Chacun de ces codes présentent
+  des spécificités que \mfront{} doit prendre en compte pour des
+  performances optimales. La motivation initiale du développement de
+  \mtest{} était de disposer d'un outil {\em autonome} permettant de
+  maîtriser le développement du générateur de code \mfront{}~:
+  \mtest{} peut se comporter comme chacun des différents codes, c'est
+  à dire adopter les mêmes conventions ou utiliser les mêmes
+  algorithmes numériques.
 
-  Nous détaillons ensuite quelques tests intégrés à la gestion de
-  configuration de la librairie \TFEL{}, dont certains sont des
-  contributions externes.
+  Du fait de sa restriction à un unique point matériel, \mtest{} se
+  distingue par ses temps d'exécution, généralement d'un à plusieurs
+  ordres de grandeurs inférieurs à ceux des codes mentionnés. La part
+  relative prise par l'intégration de la loi de comportement est très
+  significative, ce qui implique que toute régression des lois
+  générées en terme de performances peut être automatiquement
+  détectée.
+
+  Les résultats obtenus par \mtest{} peuvent être comparés à des
+  solutions analytiques ou à des résultats de référence contenus dans
+  un fichier externe. Ces tests génèrent des fichiers qui peuvent être
+  interprétés par l'automate \jenkins{}, au centre de la politique
+  d'intégration continue mise en place par la plate-forme
+  \pleiades{}. Plus de \(400\) cas tests unitaires ont été écrits à
+  l'aide de \mtest{}.
+
+  Au delà de l'aspect test unitaire, cet outil s'est cependant avéré
+  très utile et apprécié des utilisateurs de \mfront{} qui l'emploient
+  pour~:
+  \begin{itemize}
+  \item  valider le développement d'une
+    nouvelle loi de comportement
+  \item recaler ses paramètres (en le couplant avec un logiciel
+    d'optimisation ou un logiciel de calcul scientifique tel que
+    {\tt Matlab} ou {\tt Scilab})~;
+  \item tester son comportement numérique, en particulier lorsque
+    l'algorithme d'intégration local échoue.
+  \end{itemize}
+  
+  Ce document présente tout d'abord les principales fonctionnalités de
+  cet outil. Son utilisation en ligne de commande et l'ensemble des
+  commandes disponibles sont alors décrits. Nous détaillons ensuite
+  quelques tests intégrés à la gestion de configuration de la
+  librairie \TFEL{}, dont certains sont des contributions externes.
 }
 
 \makeindex{env}
@@ -130,6 +184,10 @@
 \begin{document}
 
 \section{Introduction}
+
+\subsection{Contexte}
+
+\subsubsection{Rappel}
 
 \mfront{} est un outil de générateur de code développé et maintenu au
 sein de la plate-forme \pleiades{}. Il s'agit d'un outil essentiel
@@ -143,31 +201,36 @@ l'application de conception \licos{}~: les fichiers d'entrée de
 informatiques et numériques étant gérés par
 \mfront{}~\cite{helfer_generateur_2013-1,helfer_generateur_2013}.
 
-Tant que l'utilisation de \mfront{} était limitée aux applications
-\cea{} de la plate-forme \pleiades{}, chaque application proposait des
-cas tests unitaires permettant de vérifier que le code généré par
-\mfront{} donnaient des résultats conformes. En particulier,
-l'application \licos{}, développée par le même auteur que \mfront{},
-contenait de nombreux tests couvrant de manière quasi exhaustive les
-fonctionnalités de \mfront{}~\cite{helfer_cas_2012}.
+\subsubsection{Une utilisation de \mfront{} croissante en dehors de la
+  plate-forme \pleiades{}}
 
 Récemment, l'utilisation de \mfront{} s'est accrue~:
 \begin{itemize}
 \item au sein de la plate-forme \pleiades{}, l'application \cyrano{},
   développée par \edf{} peut utiliser des lois générées par
   \mfront{}~;
-\item au sein du \cea{}, DER~\cite{darrigo_notice_2012} au
-DMN~\cite{helfer_presentation_2011}~;
-\item puis l'intérêt des partenaires industriels du \cea{}, à \areva
-  \cite{olagnon_analysis_2013} à \edf{} \cite{proix_integration_2013}~;
+\item au sein du \cea{}, \mfront{} est utilisé par le
+  DER~\cite{darrigo_notice_2012} et le
+  DMN~\cite{helfer_presentation_2011}~;
 \end{itemize}
-  % a ouvert des perspectives très intéressantes de qualification et de
-  % développement de \mfront{}.  en
 
+Par ailleurs, \mfront{} a été évalué par les partenaires industriels
+du \cea{}~:
+\begin{itemize}
+\item \areva pour ses activités combustible~\cite{olagnon_analysis_2013}~;
+\item \edf{} pour son code aux éléments finis généraliste
+  \aster{}~\cite{proix_integration_2013}.
+\end{itemize}
 
-Différentes interfaces ont été développées qui permettent d'utiliser
-les lois de comportement mécanique écrite en \mfront{} dans différents
-codes cibles. Elles sont aujourd'hui au nombre de \(3\)~:
+En dehors de la plate-forme \pleiades{}, l'utilisation de \mfront{}
+s'est pour l'instant essentiellement portée sur l'écriture de lois de
+comportements mécaniques. Différentes interfaces ont été développées~:
+elles permettent d'utiliser les lois de comportement mécanique écrites
+en \mfront{} dans différents codes cibles tout en exploitant au mieux
+leurs caractéristiques propres (portant à la fois sur les conventions
+qu'ils utilisent, sur leurs capacités de modélisation ainsi que sur
+les algorithmes numériques dont ils disposent). Ces interfaces sont
+aujourd'hui au nombre de \(3\)~:
 \begin{itemize}
 \item l'interface {\tt umat}, dédiée au code
   \castem{}~\cite{verpeaux_castem2000_1998,cea_site_2013}~;
@@ -177,37 +240,179 @@ codes cibles. Elles sont aujourd'hui au nombre de \(3\)~:
   \cyrano{}~\cite{thouvenin_edf_2010}.
 \end{itemize}
   
-Ces différents codes présentent des caractéristiques propres, portant
-à la fois sur les conventions qu'ils utilisent, sur leurs capacités de
-modélisation ainsi que sur les algorithmes numériques dont ils
-disposent. Les interfaces permettent de s'adapter à ces spécificités,
-ce qui permet d'avoir des performances numériques intéressantes et
-adaptées, tout en permettant une écriture unique de la loi de
-comportement. La maintenance de \mfront{} s'est de ce fait
-complexifiée.
+\subsection{Motivation initiale du développement de \mtest{}}
 
- Les lois de comportement mécanique, par leur complexité
-intrinsèque et la variété des fonctionnalités disponibles, posent le
-plus de difficultés car elles ne pouvaient être testées qu'avec l'aide
-des codes cibles tiers, typiquement \castem{}, \aster{},
+Cette utilisation croissante de \mfront{} risquait de complexifier sa
+maintenance, d'autant que les lois générées ne pouvaient être testées
+qu'avec l'aide des codes cibles tiers, typiquement \castem{},
+\aster{}, \cyrano{},
 \tmfft{}~\cite{castelier_specifications_2009,jerome_tmfft_2010} ou
-\licos{}~\cite{helfer_licos_2011}. Ce document présente un outil de
-test unitaire pour les lois de comportements mécaniques générés par
-mfront~\cite{helfer_generateur_2013} nommé \mtest{}.
+\licos{}~\cite{helfer_licos_2011}.
 
-Cet outil permet de piloter le chargement mécanique d'un point
-matériel, en imposant certaines composantes des contraintes et/ou
-certaines composantes des déformations au cours d'un historique. Le
-principe de \mtest{} est similaire à la macro commande {\tt
-  SIMU\_POINT\_MAT} disponible dans
-\aster{}~\cite{proix_macro-commande_2013}.
+Pour éviter cet écueil, nous avons donc développé un outil permettant
+de simuler le comportement d'un point matériel, similaire en
+possibilités à ce qu'offre la commande {\tt SIMU\_POINT\_MAT}
+d'\aster{}~\cite{proix_macro-commande_2013}~: il est possible de
+piloter le chargement mécanique d'un point matériel, en imposant
+certaines composantes des contraintes et/ou certaines composantes des
+déformations au cours d'un historique.
+
+Il est alors possible de simuler plusieurs essais mécaniques simples
+(au moins tant qu'ils n'impliquent pas d'effets de structure,
+striction notamment)~:
+\begin{itemize}
+\item essais de traction/compression~;
+\item essais de cisaillement~;
+\item essais de fluage~;
+\item essais de relaxation~;
+\item essais de \nom{Satoh}~;
+\item essais en pression interne sur tube.
+\end{itemize}
+
+Les résultats obtenus peuvent comparés à des solutions analytiques ou
+à des solutions de référence. En sortie, deux fichiers sont créés~:
+\begin{itemize}
+\item un fichier texte contenant l'évolution de l'ensemble des
+  variables internes de la loi~;
+\item un fichier {\tt xml} qui contient le résultat des différentes
+  comparaisons. Ce fichier peut être interprété par l'automate {\tt
+    jenkins} utilisé dans la plate-forme \pleiades{} pour permettre
+  l'intégration continue des applications et de l'architecture.
+\end{itemize}
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=0.5\linewidth]{@abs_top_srcdir@/docs/mtest/images/tests-jenkins.eps}
+  \caption{Évolution du nombre de cas tests de la librairie {\tt TFEL}
+    enregistrée par l'outil {\tt jenkins}. Le nombre de cas tests
+    unitaires est actuellement supérieur à $400$. Les chiffres
+    présentés par {\tt jenkins} correspondent à la somme des
+    exécutions sur plusieurs plate-forme.}
+  \label{fig:mtest:nb_castests}
+\end{figure}
+
+Cet outil a permis de tester de nombreuses lois de comportements
+mécaniques (plus de 60 actuellement) dans diverses situations avec
+l'ensemble des interfaces, ce qui conduit à plus de 400 tests
+unitaires. L'évolution du nombre de cas-tests peut être visualisé sur
+la figure~\ref{fig:mtest:nb_castests}. Notons qu'une part
+significative de ces cas tests sont des contributions externes.
+
+\subsection{Un outil apprécié par les utilisateurs}
+
+\subsubsection{Une utilisation croissante}
+
+Si \mtest{} a été initialement développé pour des besoins internes au
+développement de \mfront{}, \mtest{} semble apprécier des utilisateurs
+de \mfront{}, au sein du projet \pleiades{} ou à l'extérieur. Il est
+utilisé~:
+\begin{itemize}
+\item comme un outil de validation unitaire des lois de comportement~;
+\item comme un outil d'optimisation des lois de
+  comportement\footnote{Il est notamment possible de demander à une
+    loi \mfront{} de générer automatiquement un fichier \mtest{} en
+    cas de non convergence de l'intégration sur un pas de temps. Il
+    est ainsi possible d'analyser les causes de divergence sans avoir
+    à relancer un calcul éléments finis beaucoup plus coûteux.}~;
+\item comme un outil de recalage de leurs lois de
+  comportement. \mtest{} a notamment été couplé avec le code {\tt
+    Matlab} pour l'interprétation d'essais sur un acier
+  EM10~\cite{milliard_mechanical_2014}.
+\end{itemize}
+
+\subsubsection{Avantages}
+
+La principale qualité de \mtest{} est sa rapidité, très nettement
+supérieure à celui d'un code généraliste. À titre de comparaison, un
+essai de traction uniaxiale de la base des cas tests est réalisé au
+moins \(140\) fois plus rapidement avec \mtest{} qu'avec
+\castem{}\footnote{Nous avons retenu le temps le plus pénalisant
+  mesuré par la commande {\tt time} pour \mtest{} qui est assez
+  imprécis~: cette mesure varie entre \(4\) microsecondes et \(0\)
+  (!). Cette imprécision est partiellement due au fait que le
+  chargement des librairies dynamiques sur lesquelles s'appuient
+  \mtest{} représente pratiquement \(90\%\) du temps d'exécution qui
+  peuvent être mises en cache lors d'un second appel.}. L'intégralité
+des cas tests de \TFEL{} associés aux lois de comportement mécanique
+(plus de \(400\)) s'exécutent en une trentaine de secondes sur un
+ordinateur de bureau.
+
+Le second avantage, lié au premier, est le temps pris par
+l'intégration de la loi de comportement qui peut être noyé dans le
+bruit de fond pour des essais simples dans des codes généralistes~:
+lors du test précédent, la loi de comportement représentait environ
+\(25\,\%\) du temps de calcul\footnote{Il s'agit de la part prise par
+  l'intégration dans la fonction principale du programme~: le temps de
+  chargement des librairies mentionné plus haut n'est pas pris en
+  compte.}  contre \(0,02\,\%\) pour le temps \castem{}\footnote{La
+  loi testée étant très efficace, il s'agit pratiquement d'une borne
+  inférieure du temps passé dans l'intégration de la loi de
+  comportement.}.  Dans la plupart des cas, le temps de calcul total,
+avec \mtest{}, permet donc d'une appréciation de l'efficacité
+numérique de la loi de comportement. Il est donc possible~:
+\begin{itemize}
+\item de comparer simplement différents algorithmes~;
+\item de vérifier que les évolutions de \mfront{} ne conduisent pas à
+  une dégradation des performances.
+\end{itemize}
+
+\begin{figure}[htbp]
+  \centering
+  \begin{tabular}{cc}
+    \includegraphics[width=0.55\linewidth]{@abs_top_srcdir@/docs/mtest/images/mtest-l3f.eps} \\
+  \end{tabular}
+  \caption{Surface de charge d'un modèle de comportement
+    viscoplastique du dioxyde
+    d'uranium~\cite{salvo_caracterisation_2014}.}
+  \label{fig:mtest:l3f}
+\end{figure}
+
+\begin{figure}[htbp]
+  \centering
+  \begin{tabular}{cc}
+    \includegraphics[width=0.45\linewidth]{@abs_top_srcdir@/docs/mtest/images/zy4-1.eps} &
+  \includegraphics[width=0.45\linewidth]{@abs_top_srcdir@/docs/mtest/images/zy4-2.eps} \\
+  \end{tabular}
+  \caption{Exemple de simulation avec \mtest{} d'un essai
+    d'écrouissage puis relaxation d'un tube en Zircaloy4
+    irradié. Comparaison des contraintes prédites par la loi standard
+    de l'application \cyrano{} (réimplantée avec \mfront{}) aux
+    mesures expérimentales.}
+  \label{fig:mtest:cpetry}
+\end{figure}
+
+Le dernier avantage est la possibilité d'utiliser \mtest{} au travers
+d'une bibliothèque {\tt C++}~\cite{stroustrup_langage_2004} ou d'une
+bibliothèque {\tt python}~\cite{von_rossum_python_2007}. Cette
+possibilité permet~:
+\begin{itemize}
+\item de s'intégrer simplement dans des chaînes de calculs complexes,
+  incluant le recalage de paramètres par rapport à des données
+  expérimentales~;
+\item de permettre de réaliser rapidement des essais paramétriques. À
+  titre d'exemple, la figure~\ref{fig:mtest:l3f} représente la surface
+  de charge du modèle de comportement viscoplastique du dioxyde
+  d'uranium développé au cours de la thèse de Maxime
+  Salvo~\cite{salvo_caracterisation_2014}. Pour obtenir cette surface
+  de charge, il a été nécessaire de réaliser, pour chaque température
+  et chaque direction de l'espace des contraintes un essai de
+  traction~;
+\item de simuler des essais relativement complexes tels qu'un tube en
+  pression interne asservi de tel sorte que la vitesse de dilatation
+  diamétrale soit tout d'abord constante (phase d'écrouissage durant
+  laquelle pression interne augmente) puis nulle (phase de relaxation
+  durant laquelle la pression interne diminue). Un exemple d'une telle
+  simulation, réalisée par l'équipe de développement du code
+  \cyrano{}, est représentée en figure~\ref{fig:mtest:cpetry}.
+\end{itemize}
+
 
 \subsection*{Plan de cette note}
 
-Nous présentons tout d'abord le principe des tests menés par \mtest{}
-et les algorithmes de résolution utilisés.
+Nous présentons tout d'abord le principe de la simulation d'un point
+matériel et les algorithmes de résolution disponibles dans \mtest{}.
 
-Nous détaillons ensuite l'utilisation de {\tt mtest} en ligne de
+Nous détaillons ensuite l'utilisation de \mtest{} en ligne de
 commandes et les différents fichiers générés.
 
 Dans un troisième temps, nous décrivons la structure d'un fichier
@@ -220,7 +425,24 @@ par \mfront{}.
 
 \newpage
 \clearpage
-\section{Présentation de \mtest{}}
+\section{Simulation d'un point matériel~: principe et aspects
+  numériques}
+
+\mtest{} est un outil de simulation du comportement d'un point
+matériel. Il permet de tester des lois écrites en petites
+déformations, en grandes déformations et des modèles de zones
+cohésives.
+
+Pour simplifier la présentation, nous avons restreint la présentation
+faite ici au cas des petites déformations. Les cas des lois écrites en
+grandes déformations ou des modèles de zones cohésives s'en déduisent
+sans difficultés majeures\footnote{Tout au plus pouvons nous signaler
+  une difficulté inhérente aux lois écrites en grandes
+  transformations. Ces lois relient le gradient de la déformation, qui
+  a \(9\) composantes en \(3D\) au tenseur de \nom{Cauchy} qui en a
+  \(6\). Il y a donc une indétermination qu'il faut lever en imposant
+  trois conditions cinématiques fixant trois composantes indépendantes
+  du gradient de la transformation.}.
 
 \subsection{Rappel sur les lois de comportement mécanique et sur leurs
   rôles dans l'équilibre mécanique d'une structure}
@@ -285,7 +507,7 @@ proposée et ce processus est répété jusqu'à convergence.
 Ce processus utilise une variante plus ou moins sophistiquée de
 l'algorithme de \nom{Newton}~: à chaque itération, un problème
 linéaire en se basant sur une matrice de raideur déduite du
-comportement du matériau est résolu..
+comportement du matériau est résolu.
 
 Différents choix de matrice de raideur (et autant de variantes de
 l'algorithme de résolution) sont donc possibles, citons~:
@@ -324,8 +546,10 @@ pour fournir un opérateur élastique par défaut\footnote{Notons que la
   loi peut ne pas utiliser les propriétés matériau qu'exige
   \castem{}. Dans ce cas, ces propriétés doivent être considérées
   comme des paramètres numériques permettant de construire une matrice
-  de raideur effective.}\textsuperscript{\normalfont,}\footnote{Voir
-  le mot clé \mkey{PredictionPolicy}}.
+  de raideur effective servant à la recherche de l'équilibre mais
+  n'influençant pas le résultat
+  final.}\textsuperscript{\normalfont,}\footnote{Voir le mot clé
+  \mkey{PredictionPolicy}}.
 
 \subsection{Algorithmes de résolution}
 \label{sec:algor-de-resol}
@@ -416,8 +640,8 @@ la liste de propriétés matériau \footnote{Notons que la loi peut ne
   conduit à une réponse plus raide que celle de la loi de
   comportement.}
 
-\paragraph{Critère de convergence} L'algorithme de \nom{Newton} est
-répété jusqu'à ce que deux critères de convergence soient
+\paragraph{Critères de convergence} L'algorithme de \nom{Newton} est
+répété jusqu'à ce que les deux critères de convergence suivant soient
 simultanément satisfaits~:
 \begin{itemize}
 \item un critère sur la valeur du résidu, qui doit être inférieure à
@@ -435,6 +659,8 @@ simultanément satisfaits~:
     \norm{\Delta\,\tepsilonto_{n+1}-\Delta\,\tepsilonto_{n}} < \varepsilon_{\epsilon}    
   \end{equation}
 \end{itemize}
+Certaines conditions de chargement rajoutent leurs propres critères de
+convergence (contrainte imposée par exemple).
 
 \paragraph{Vitesse de convergence} Dans le cas où la matrice tangente
 cohérente \(\deriv{\finpas{\tsigma}}{\Delta\,\tepsilonto}\) est
@@ -576,9 +802,10 @@ d'omettre les détails liés aux multiplicateurs de
   utilisée pour la résolution de l'équilibre.}.
 
 \paragraph{Dilatation thermique} La dilatation thermique peut être
-prise en compte. Pour cela, l'incrément des dilatations thermiques est
-tout simplement déduite de l'incrément de déformation fournie à la loi
-de comportement.
+prise en compte pour les lois en petites déformations, de manière
+similaire à ce que font la plupart des codes. Pour cela, l'incrément
+des dilatations thermiques est tout simplement déduite de l'incrément
+de déformation fournie à la loi de comportement.
 
 Pour définir une dilatation thermique orthotrope, il est nécessaire de
 définir les coefficients de dilatation thermique associés à chacune
@@ -662,7 +889,7 @@ D'autres stratégies peuvent cependant être utilisée\footnote{Voir le
   compte.
 \end{itemize}
 
-\subsection{Interface aux lois de comportement}
+\subsection{Interfaces aux lois de comportement}
 \label{sec:interface-aux-lois}
 
 \mtest{} supporte les mêmes interfaces que \mfront{}\footnote{Voir le
@@ -671,6 +898,8 @@ D'autres stratégies peuvent cependant être utilisée\footnote{Voir le
 \item l'interface \umat{} est utilisée pour une adhérence des lois au
   code~\castem{} et aux différentes applications de la plate-forme
   \pleiades{}~\cite{helfer_interface_2013}~;
+\item l'interface \cyrano{} est utilisée pour une adhérence à
+  l'application combustible d'\edf{}~\cite{thouvenin_edf_2010}.
 \item l'interface \aster{} est utilisée pour une adhérence au code aux
   éléments finis du même nom~\cite{helfer_interface_2013-1}.
 \end{itemize}
@@ -764,8 +993,7 @@ associée au mot clé \mkey{Behaviour} est accessible ainsi~:
   test. This\\
   \noindent keyword must be followed by an option specifying the
   interface used by the behaviour.\\
-  \noindent The umat and aster interfaces are
-  both supported.\\
+  \noindent The umat, cyrano and aster interfaces are supported.\\
 
   \noindent Two strings are then expected:\\
   \noindent - the library in which the behaviour is implemented;\\
@@ -830,10 +1058,14 @@ l'option \moption{backtrace} est utilisée.
 cas d'erreur de segmentation (signal {\tt SIGSEGV}) ou en cas
 d'exception mathématique (signal {\tt SIGFPE}).
 
+\paragraph{L'option \moption{result-file-output}} doit être suivi d'un
+argument valant {\tt true} ou {\tt false} suivant que l'utilisateur
+veut activer ou désactiver la génération d'un fichier de résultat.
+
 \subsection{Fichiers générés}
 \label{sec:fichiers-generes}
 
-\mtest{} génère deux fichiers de sortie~:
+Par défault, \mtest{} génère deux fichiers de sortie~:
 \begin{itemize}
 \item un fichier texte organisé en colonnes. La première colonne donne
   l'instant considéré. Les colonnes suivantes contiennent les

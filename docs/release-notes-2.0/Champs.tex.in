@@ -14,8 +14,8 @@
 \approbateur{R.~Masson}
 \emetteur{E.~Touron}
 
-\titre{\mtest{}~: un outil de simulation du comportement mécanique
-  d'un point matériel}
+\titre{\mtest{}~: un outil de test unitaire
+  de lois comportement mécanique}
 
 \date{2013}
 % \numero{12-014}

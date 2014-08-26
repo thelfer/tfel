@@ -237,6 +237,11 @@ docs/mtest/UnsignedIntegerParameter.txt -text
 docs/mtest/UseCastemAccelerationAlgorithm.txt -text
 docs/mtest/images/CastemAccelerationAlgorithm.eps -text
 docs/mtest/images/CastemAccelerationAlgorithm.svg -text
+docs/mtest/images/Zy4/simexp_Zy4_Ecroui_Helfer-1.txt.prn -text
+docs/mtest/images/Zy4/simexp_Zy4_Ecroui_Helfer-2.txt.prn -text
+docs/mtest/images/Zy4/simexp_Zy4_Relax_Helfer-1.txt.prn -text
+docs/mtest/images/Zy4/simexp_Zy4_Relax_Helfer-2.txt.prn -text
+docs/mtest/images/Zy4/zy4.tplot -text
 docs/mtest/images/acceleration.eps -text
 docs/mtest/images/acceleration.tplot -text
 docs/mtest/images/chaboche2-aster.ref -text
@@ -259,6 +264,7 @@ docs/mtest/images/evolution.tex -text
 docs/mtest/images/evolution.tplot -text
 docs/mtest/images/evolution.txt -text
 docs/mtest/images/fixbb -text
+docs/mtest/images/mtest-l3f.eps -text
 docs/mtest/images/norton-acc.txt -text
 docs/mtest/images/norton-elas.txt -text
 docs/mtest/images/norton-tc.txt -text
@@ -267,7 +273,10 @@ docs/mtest/images/strainhardeningcreep.mtest -text
 docs/mtest/images/strainhardeningcreep.res -text
 docs/mtest/images/strainhardeningcreep.tex -text
 docs/mtest/images/strainhardeningcreep.tplot -text
+docs/mtest/images/tests-jenkins.eps -text
 docs/mtest/images/tubeaxi.eps -text
+docs/mtest/images/zy4-1.eps -text
+docs/mtest/images/zy4-2.eps -text
 docs/mtest/mtest.tex.in -text
 docs/mtest/style.ist -text
 docs/presentations/CMakeLists.txt -text
@@ -306,6 +315,11 @@ docs/presentations/mfront-finitestrain.tex.in -text
 docs/presentations/mfront-presentation.tex.in -text
 docs/presentations/mtest-presentation.tex.in -text
 docs/references/matrixcookbook.pdf -text svneol=unset#unset
+docs/release-notes-2.0/CMakeLists.txt -text
+docs/release-notes-2.0/Champs.tex.in -text
+docs/release-notes-2.0/Makefile.am -text
+docs/release-notes-2.0/Makefile.doc.in -text
+docs/release-notes-2.0/tfel-2.0.tex.in -text
 docs/tex/Makefile.am -text
 docs/tex/texmf/bibtex/bibliographie.bib -text
 docs/tex/texmf/bibtex/fr-insa.bst -text

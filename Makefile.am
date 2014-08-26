@@ -11,6 +11,7 @@ doc-install: doc
 	mkdir -p @docdir@/reference-guide
 	mkdir -p @docdir@/mfront
 	mkdir -p @docdir@/mtest
+	mkdir -p @docdir@/release-notes-2.0
 	mkdir -p @docdir@/presentations
 	cp -R docs/html @docdir@
 	cp    docs/tfel/reference-guide.pdf              @docdir@/reference-guide
@@ -21,13 +22,15 @@ doc-install: doc
 	cp    docs/mfront/umat.pdf                       @docdir@/mfront
 	cp    docs/mfront/aster.pdf                      @docdir@/mfront
 	cp    docs/mtest/mtest.pdf                       @docdir@/mtest
+	cp    docs/release-notes-2.0/tfel-2.0.pdf        @docdir@/release-notes-2.0
 	cp    docs/presentations/mfront-presentation.pdf @docdir@/presentations
 
 doc: doc-pdf doc-html
 
 doc-html: tfel-doc-html
 
-doc-pdf: tfel-doc-pdf mfront-doc-pdf mtest-doc-pdf presentations-doc-pdf
+doc-pdf: tfel-doc-pdf mfront-doc-pdf mtest-doc-pdf presentations-doc-pdf \
+	 release-notes-2.0-doc-pdf
 
 tfel-doc-html:
 	cd @top_srcdir@ && doxygen @abs_top_builddir@/Doxyfile && cd -
@@ -38,6 +41,10 @@ tfel-doc-pdf:
 
 mtest-doc-pdf:
 	cd docs/mtest ;                                            \
+	make -f Makefile.doc
+
+release-notes-2.0-doc-pdf:
+	cd docs/release-notes-2.0 ;                                            \
 	make -f Makefile.doc
 
 mfront-doc-pdf:

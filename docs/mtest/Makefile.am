@@ -64,4 +64,6 @@ EXTRA_DIST=CMakeLists.txt                         \
 	   images/chaboche2-mfront.tex		  \
 	   images/chaboche2.eps			  \
 	   images/tubeaxi.eps			  \
+	   images/zy4-1.eps			  \
+	   images/zy4-2.eps			  \
 	   $(MTEST_DOCS)

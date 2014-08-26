@@ -20,6 +20,8 @@ ADD_CUSTOM_COMMAND(
     ARGS      -s ${CMAKE_CURRENT_SOURCE_DIR}/style.ist mkeys.idx
     COMMAND   TEXMFHOME=@abs_top_srcdir@/docs/tex/texmf        ${LATEX_COMPILER}
     ARGS      -interaction=batchmode mtest.tex
+    COMMAND   TEXMFHOME=@abs_top_srcdir@/docs/tex/texmf        ${LATEX_COMPILER}
+    ARGS      -interaction=batchmode mtest.tex
     COMMAND   TEXMFHOME=@abs_top_srcdir@/docs/tex/texmf        ${DVIPS_CONVERTER}
     ARGS      -R0 mtest.dvi
     COMMAND   ${PS2PDF_CONVERTER}
