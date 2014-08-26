@@ -13,7 +13,6 @@
 #include<sstream>
 #include<cstdlib>
 #include<iterator>
-#include<iostream>
 #include<algorithm>
 #include<stdexcept>
 
@@ -155,6 +154,9 @@ namespace mfront
       useCastemAcceleration(false),
       cat(-1),
       cap(-1),
+      toeps(-1),
+      pv(-1),
+      cto(false),
       initialisationFinished(false)
   {
     // declare time variable
@@ -1007,6 +1009,14 @@ namespace mfront
     if(this->seps<0){
       this->seps = 1.e-3;
     }
+    // tangent operator comparison criterium
+    if(this->toeps<0){
+      this->toeps = (this->seps/1e-3)*1.e7;
+    }
+    // perturbation value
+    if(this->pv<0){
+      this->pv = 10*this->eeps;
+    }
     // additional constraints
     if(this->hypothesis==MH::PLANESTRAIN){
       shared_ptr<MTestEvolution>  eev(new MTestConstantEvolution(0.));
@@ -1183,6 +1193,7 @@ namespace mfront
     const unsigned short psz = this->getNumberOfUnknowns();
     const unsigned short ndv = this->b->getDrivingVariablesSize(this->hypothesis);
     const unsigned short nth = this->b->getThermodynamicForcesSize(this->hypothesis);
+    const size_t nstatev = this->b->getInternalStateVariablesSize(this->hypothesis);
     // clear
     wk.K.clear();
     wk.Kt.clear();
@@ -1204,6 +1215,11 @@ namespace mfront
     //resizing
     wk.K.resize(psz,psz);
     wk.Kt.resize(nth,ndv);
+    wk.nKt.resize(nth,ndv);
+    wk.tKt.resize(nth,ndv);
+    wk.s1.resize(nth);
+    wk.s2.resize(nth);
+    wk.statev.resize(nstatev);
     wk.Kp.resize(nth,ndv);
     wk.p_lu.resize(psz);
     wk.x.resize(psz);
@@ -1290,6 +1306,36 @@ namespace mfront
     }
     return tr; 
   }
+
+  void
+  MTest::setCompareToNumericalTangentOperator(const bool bo)
+  {
+    this->cto = bo;
+  } // end of MTest::setCompareToNumericalTangentOperator
+
+  void
+  MTest::setTangentOperatorComparisonCriterium(const real v)
+  {
+    using namespace std;
+    if(v<100*numeric_limits<real>::min()){
+      string msg("MTest::setTangentOperatorComparisonCriterium : " );
+      msg += "invalid comparison criterium";
+      throw(runtime_error(msg));
+    }
+    this->toeps=v;
+  } // end of MTest::handleTangentOperatorComparisonCriterium
+
+  void
+  MTest::setNumericalTangentOperatorPertubationValue(const real v)
+  {
+    using namespace std;
+    if(v<100*numeric_limits<real>::min()){
+      string msg("MTest::setNumericalTangentOperatorPertubationValue : " );
+      msg += "invalid perturbation value";
+      throw(runtime_error(msg));
+    }
+    this->pv=v;
+  } // end of MTest::setNumericalTangentOperatorPertubationValue
 
   void
   MTest::execute(MTestCurrentState& state,
@@ -1539,6 +1585,72 @@ namespace mfront
 					   state.esv0,state.desv,
 					   this->hypothesis,dt,
 					   this->ktype);
+	if(this->cto){
+	  fill(wk.nKt.begin(),wk.nKt.end(),real(0));
+	  bool ok = true;
+	  for(j=0;(j!=ndv)&&(ok);++j){
+	    copy(state.s0.begin(),state.s0.end(),wk.s1.begin());
+	    copy(state.s0.begin(),state.s0.end(),wk.s2.begin());
+	    copy(state.iv0.begin(),state.iv0.end(),wk.statev.begin());
+	    state.e1[j]+=this->pv;
+	    const bool ok1 = this->b->integrate(wk.tKt,wk.s1,wk.statev,this->rm,
+						state.e0,state.e1,state.s0,
+						state.mprops1,state.iv0,
+						state.esv0,state.desv,
+						this->hypothesis,dt,
+						MTestStiffnessMatrixType::NOSTIFFNESS);
+	    copy(state.iv0.begin(),state.iv0.end(),wk.statev.begin());
+	    state.e1[j]-=2*(this->pv);
+	    const bool ok2 = this->b->integrate(wk.tKt,wk.s2,wk.statev,this->rm,
+						state.e0,state.e1,state.s0,
+						state.mprops1,state.iv0,
+						state.esv0,state.desv,
+						this->hypothesis,dt,
+						MTestStiffnessMatrixType::NOSTIFFNESS);
+	    state.e1[j]+=this->pv;
+	    ok = ok1 && ok2;
+	    if(ok){
+	      for(i=0;i!=nth;++i){
+		wk.nKt(i,j) = (wk.s1(i)-wk.s2(i))/(2*(this->pv));
+	      }
+	    }
+	  }
+	  if(ok){
+	    real merr(0);
+	    for(i=0;i!=nth;++i){
+	      for(j=0;j!=ndv;++j){
+		merr = max(merr,abs(wk.Kt(i,j)-wk.nKt(i,j)));
+	      }
+	    }
+	    if(merr>this->toeps){
+	      ostream& log = getLogStream();
+	      log << "Compaison to numerical jacobian failed (error : " << merr << ", criterium " << this->toeps << ")." << endl;
+	      log << "Tangent operator returned by the behaviour : " << endl;
+	      for(i=0;i!=nth;++i){
+		for(j=0;j!=ndv;){
+		  log << wk.Kt(i,j);
+		  if(++j!=ndv){
+		    log << " ";
+		  }
+		}
+		log << "]" << endl;
+	      }
+	      log << "Numerical tangent operator (perturbation value : " << this-> pv << ") : " << endl;
+	      for(i=0;i!=nth;++i){
+		for(j=0;j!=ndv;){
+		  log << wk.nKt(i,j);
+		  if(++j!=ndv){
+		    log << " ";
+		  }
+		}
+		log << "]" << endl;
+	      }
+	    }
+	  } else {
+	    ostream& log = getLogStream();
+	    log << "Numerical evalution of tangent operator failed." << endl << endl;
+	  }
+	}
 	if(bi){
 	  // behaviour integration is a success
 	  for(i=0;i!=nth;++i){

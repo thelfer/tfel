@@ -42,6 +42,7 @@ set(mfront_tests_SOURCES
   MonoCristal_DD_CFC
   MonoCristal_DD_CFC_NumericalJacobian
   MonoCristal_DD_CFC_Irradiation
+  MonoCristal_DD_CC
   MonoCristal_DD_CC_NumericalJacobian
   MonoCristal_DD_CC_Irradiation_NumericalJacobian
   PolyCristals
@@ -131,6 +132,7 @@ test_aster(implicitmonocristal-2)
 test_aster(monocristal_dd_cfc)
 test_aster(monocristal_dd_cfc_numericaljacobian)
 test_aster(monocristal_dd_cfc_irradiation)
+test_aster(monocristal_dd_cc)
 test_aster(monocristal_dd_cc_numericaljacobian)
 test_aster(monocristal_dd_cc_irradiation_numericaljacobian)
 test_aster(polycristals)

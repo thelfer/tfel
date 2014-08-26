@@ -6,14 +6,11 @@
  * \date   23 oct 2008
  */
 
-#include<iostream>
 #include<stdexcept>
 #include<sstream>
 
 #include"TFEL/Config/TFELConfig.hxx"
 #include"MFront/ParserUtilities.hxx"
-
-#define MFRONT_MACRO_STR(X) #X
 
 namespace mfront
 {

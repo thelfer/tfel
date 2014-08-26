@@ -88,6 +88,21 @@ namespace mfront
      */
     void handleReal(MTest&,TokensContainer::const_iterator&);
     /*!
+     * handle the @CompareToNumericalTangentOperator keyword
+     * \param[in,out] p : position in the input file
+     */
+    void handleCompareToNumericalTangentOperator(MTest&,TokensContainer::const_iterator&);
+    /*!
+     * handle the @TangentOperatorComparisonCriterium keyword
+     * \param[in,out] p : position in the input file
+     */
+    void handleTangentOperatorComparisonCriterium(MTest&,TokensContainer::const_iterator&);
+    /*!
+     * handle the @NumericalTangentOperatorPertubationValue keyword
+     * \param[in,out] p : position in the input file
+     */
+    void handleNumericalTangentOperatorPertubationValue(MTest&,TokensContainer::const_iterator&);
+    /*!
      * handle the @StiffnessMatrixType keyword
      * \param[in,out] p : position in the input file
      */

@@ -55,6 +55,7 @@ set(mfront_tests_SOURCES
   MonoCristal_DD_CFC
   MonoCristal_DD_CFC_NumericalJacobian
   MonoCristal_DD_CFC_Irradiation
+  MonoCristal_DD_CC
   MonoCristal_DD_CC_NumericalJacobian
   MonoCristal_DD_CC_Irradiation_NumericalJacobian
   PolyCristals
@@ -152,6 +153,7 @@ test_castem(implicitmonocristal-2)
 test_castem(monocristal_dd_cfc)
 test_castem(monocristal_dd_cfc_numericaljacobian)
 test_castem(monocristal_dd_cfc_irradiation)
+test_castem(monocristal_dd_cc)
 test_castem(monocristal_dd_cc_numericaljacobian)
 test_castem(monocristal_dd_cc_irradiation_numericaljacobian)
 test_castem(polycristals)
@@ -204,6 +206,15 @@ test_castem(mieheapellambrechtlogarithmicstrainelasticity-uniaxialloading-2-3D)
 test_castem(mieheapellambrechtlogarithmicstrainelasticity-uniaxialloading-3-1D)
 test_castem(mieheapellambrechtlogarithmicstrainelasticity-uniaxialloading-3-2D)
 test_castem(mieheapellambrechtlogarithmicstrainelasticity-uniaxialloading-3-3D)
+test_castem(mieheapellambrechtlogarithmicstrainnortoncreep-uniaxialloading-1-1D)
+test_castem(mieheapellambrechtlogarithmicstrainnortoncreep-uniaxialloading-2-1D)
+test_castem(mieheapellambrechtlogarithmicstrainnortoncreep-uniaxialloading-3-1D)
+test_castem(mieheapellambrechtlogarithmicstrainnortoncreep-uniaxialloading-1-2D)
+test_castem(mieheapellambrechtlogarithmicstrainnortoncreep-uniaxialloading-2-2D)
+test_castem(mieheapellambrechtlogarithmicstrainnortoncreep-uniaxialloading-3-2D)
+test_castem(mieheapellambrechtlogarithmicstrainnortoncreep-uniaxialloading-1-3D)
+test_castem(mieheapellambrechtlogarithmicstrainnortoncreep-uniaxialloading-2-3D)
+test_castem(mieheapellambrechtlogarithmicstrainnortoncreep-uniaxialloading-3-3D)
 test_castem(incompressiblemooneyrivlinbehaviour)
 test_castem(incompressibleplanestressgornetdesmoratbehavioursheartesting)
 test_castem(incompressibleplanestressgornetdesmoratbehaviouruniaxialtesting)

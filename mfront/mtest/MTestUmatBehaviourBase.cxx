@@ -26,7 +26,6 @@ namespace mfront
     typedef ExternalLibraryManager ELM;
     ELM& elm = ELM::getExternalLibraryManager();
     this->type  = elm.getUMATBehaviourType(l,b);
-    cout << "type " << type << endl;
     this->stype = elm.getUMATSymmetryType(l,b);
     if(this->stype>=2u){
       string msg("MTestUmatBehaviourBase::MTestUmatBehaviourBase : "

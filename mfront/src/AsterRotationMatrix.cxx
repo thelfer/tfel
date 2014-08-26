@@ -5,7 +5,6 @@
  * \date   17 mar 2008
  */
 
-#include<iostream>
 #include<algorithm>
 #include<iterator>
 

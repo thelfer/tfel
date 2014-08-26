@@ -135,6 +135,11 @@ namespace mfront
       MTestWorkSpace();
       // stiffness tensor
       tfel::math::matrix<real> Kt;
+      // numertical stiffness tensor
+      tfel::math::matrix<real> nKt;
+      // temporary variable used for numerical tangent operator
+      // computation
+      tfel::math::matrix<real> tKt;
       // prediction tensor
       tfel::math::matrix<real> Kp;
       //! stiffness matrix
@@ -157,6 +162,15 @@ namespace mfront
       tfel::math::vector<real> ca_n1;
       tfel::math::vector<real> ca_tmp0;
       tfel::math::vector<real> ca_tmp1;
+      // temporary variable used for numerical tangent operator
+      // computation
+      tfel::math::vector<real> s1;
+      // temporary variable used for numerical tangent operator
+      // computation
+      tfel::math::vector<real> s2;
+      // temporary variable used for numerical tangent operator
+      // computation
+      tfel::math::vector<real> statev;
       //
       bool first;
       real a;
@@ -304,10 +318,26 @@ namespace mfront
      */
     virtual void setPredictionPolicy(const MTest::PredictionPolicy);
     /*!
-     * \brief set the stiffness matrix
-     * \param[in] k : stiffness matrix
+     * \brief set the stiffness matrix type
+     * \param[in] k : stiffness matrix type
      */
     virtual void setStiffnessMatrixType(const MTestStiffnessMatrixType::mtype);
+    /*!
+     * \brief ask the comparison to the numerical tangent operator
+     * \param[in] bo : boolean
+     */
+    virtual void setCompareToNumericalTangentOperator(const bool);
+    /*!
+     * \brief set the value used to compare the tangent operator given
+     * by the behaviour to the numerical tangent operator
+     * \param[in] v : value
+     */
+    virtual void setTangentOperatorComparisonCriterium(const real);
+    /*!
+     * \brief set the value used to build the numerical tangent operator
+     * \param[in] v : perturbation value
+     */
+    virtual void setNumericalTangentOperatorPertubationValue(const real);
     /*!
      * \brief set the stiffness updating policy
      * \param[in] b : boolean
@@ -634,6 +664,12 @@ namespace mfront
     std::string date;
     //! test name
     std::string tname;
+    //! tangent operator comparison criterium
+    real toeps;
+    //! perturbation value
+    real pv;
+    //! compare to numerical jacobian
+    bool cto;
     //! initilisation stage
     bool initialisationFinished;
   }; // end of struct MTest

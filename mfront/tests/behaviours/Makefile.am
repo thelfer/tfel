@@ -43,6 +43,7 @@ MFRONTS= DDIF2.mfront                                            \
 	 MonoCristal_DD_CFC_NumericalJacobian.mfront             \
 	 MonoCristal_DD_CFC_Irradiation.mfront                   \
 	 MonoCristal_DD_CFC_InteractionMatrix.mfront             \
+	 MonoCristal_DD_CC.mfront                                \
 	 MonoCristal_DD_CC_NumericalJacobian.mfront              \
 	 MonoCristal_DD_CC_Irradiation_NumericalJacobian.mfront  \
 	 MonoCristal_DD_CC_InteractionMatrix.mfront              \
@@ -88,4 +89,5 @@ EXTRA_DIST=CMakeLists.txt                                                 \
 	   references/druckerprager2.ref                                  \
 	   references/implicitsimomieheelastoplasticity.ref               \
 	   references/monocristal_dd_cc_numericaljacobian.ref             \
-	   references/monocristal_dd_cc_irradiation_numericaljacobian.ref
+	   references/monocristal_dd_cc_irradiation_numericaljacobian.ref \
+	   references/logarithmicstrainnortoncreepuniaxialtesting.ref

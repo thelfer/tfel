@@ -470,10 +470,16 @@ namespace mfront{
     }
     if(this->current->value=="NewtonRaphson"){
       this->algorithm = MFrontImplicitParserBase::NEWTONRAPHSON;
+    } else if(this->current->value=="PowellDogLeg_NewtonRaphson"){
+      this->algorithm = MFrontImplicitParserBase::POWELLDOGLEG_NEWTONRAPHSON;
     } else if(this->current->value=="NewtonRaphson_NumericalJacobian"){
-      this->algorithm = MFrontImplicitParserBase::NEWTONRAPHSON_NR;
+      this->algorithm = MFrontImplicitParserBase::NEWTONRAPHSON_NJ;
+    } else if(this->current->value=="PowellDoglegNewtonRaphson_NumericalJacobian"){
+      this->algorithm = MFrontImplicitParserBase::POWELLDOGLEG_NEWTONRAPHSON_NJ;
     } else if(this->current->value=="Broyden"){
       this->algorithm = MFrontImplicitParserBase::BROYDEN;
+    } else if(this->current->value=="PowellDogLeg_Broyden"){
+      this->algorithm = MFrontImplicitParserBase::POWELLDOGLEG_BROYDEN;
     } else if(this->current->value=="Broyden2"){
       this->algorithm = MFrontImplicitParserBase::BROYDEN2;
     } else {
@@ -1370,13 +1376,19 @@ namespace mfront{
       this->behaviourFile << "} // end of accelate\n\n";
     }
     // compute the numerical part of the jacobian
-    if((this->compareToNumericalJacobian)||(this->algorithm==BROYDEN)||
-       (this->algorithm==MFrontImplicitParserBase::NEWTONRAPHSON_NR)){
+    if((this->compareToNumericalJacobian)||
+       (this->algorithm==MFrontImplicitParserBase::BROYDEN)||
+       (this->algorithm==MFrontImplicitParserBase::POWELLDOGLEG_BROYDEN)||
+       (this->algorithm==MFrontImplicitParserBase::NEWTONRAPHSON_NJ)||
+       (this->algorithm==MFrontImplicitParserBase::POWELLDOGLEG_NEWTONRAPHSON_NJ)){
       this->writeComputeNumericalJacobian();
     }
     if((this->algorithm==MFrontImplicitParserBase::NEWTONRAPHSON)||
-       (this->algorithm==MFrontImplicitParserBase::NEWTONRAPHSON_NR)||
-       (this->algorithm==BROYDEN)){
+       (this->algorithm==MFrontImplicitParserBase::POWELLDOGLEG_NEWTONRAPHSON)||
+       (this->algorithm==MFrontImplicitParserBase::NEWTONRAPHSON_NJ)||
+       (this->algorithm==MFrontImplicitParserBase::POWELLDOGLEG_NEWTONRAPHSON_NJ)||
+       (this->algorithm==MFrontImplicitParserBase::BROYDEN)||
+       (this->algorithm==MFrontImplicitParserBase::POWELLDOGLEG_BROYDEN)){
       this->writeGetPartialJacobianInvert();
     }
     // compute stress
@@ -1516,7 +1528,8 @@ namespace mfront{
       this->behaviourFile << "{\n";
       this->behaviourFile << "using namespace tfel::math;" << endl;
       this->behaviourFile << "TinyPermutation<" << n << "> permuation;" << endl;
-      if(this->algorithm==MFrontImplicitParserBase::NEWTONRAPHSON_NR){
+      if((this->algorithm==MFrontImplicitParserBase::NEWTONRAPHSON_NJ)||
+	 (this->algorithm==MFrontImplicitParserBase::POWELLDOGLEG_NEWTONRAPHSON_NJ)){
 	this->behaviourFile << "this->computeNumericalJacobian(this->jacobian);\n";
       }
       this->behaviourFile << "TinyMatrixSolve<" << n << ",real>::decomp(this->jacobian,permuation);" << endl;
@@ -1754,6 +1767,7 @@ namespace mfront{
       this->behaviourFile << "tmatrix<" << n2 << "," << n2 << ",real> njacobian;\n";
     }
     if((this->algorithm==MFrontImplicitParserBase::BROYDEN)||
+       (this->algorithm==MFrontImplicitParserBase::POWELLDOGLEG_BROYDEN)||
        (this->algorithm==MFrontImplicitParserBase::BROYDEN2)){
       this->behaviourFile << "tmatrix<" << n2 << "," << n2 << ",real> jacobian2;\n";
       this->behaviourFile << "tvector<" << n2 << ",real> fzeros2;\n";
@@ -1763,12 +1777,14 @@ namespace mfront{
       this->behaviourFile << "tvector<" << n2 << ",real> Dfzeros;\n";
     }
     if((this->algorithm==MFrontImplicitParserBase::BROYDEN)||
+       (this->algorithm==MFrontImplicitParserBase::POWELLDOGLEG_BROYDEN)||
        (this->algorithm==MFrontImplicitParserBase::BROYDEN2)){
       this->behaviourFile << "real broyden_inv;\n";
     }
     this->behaviourFile << "real error;\n";
     this->behaviourFile << "bool converge=false;\n";
     if((this->algorithm==MFrontImplicitParserBase::BROYDEN)||
+       (this->algorithm==MFrontImplicitParserBase::POWELLDOGLEG_BROYDEN)||
        (this->algorithm==MFrontImplicitParserBase::BROYDEN2)){
       if(!this->computeStress.empty()){
 	this->behaviourFile << "this->computeStress();\n";
@@ -1784,19 +1800,17 @@ namespace mfront{
     this->behaviourFile << "(this->iter<" << this->className << "::iterMax)){\n";
     this->behaviourFile << "++(this->iter);\n";
     this->behaviourFile << "this->zeros_1  = this->zeros;\n";
-    if(this->algorithm==MFrontImplicitParserBase::NEWTONRAPHSON){
+    if((this->algorithm==MFrontImplicitParserBase::NEWTONRAPHSON)||
+       (this->algorithm==MFrontImplicitParserBase::POWELLDOGLEG_NEWTONRAPHSON)||
+       (this->algorithm==MFrontImplicitParserBase::NEWTONRAPHSON_NJ)||
+       (this->algorithm==MFrontImplicitParserBase::POWELLDOGLEG_NEWTONRAPHSON_NJ)){
       if(!this->computeStress.empty()){
 	this->behaviourFile << "this->computeStress();\n";
       }
       this->behaviourFile << "this->computeFdF();\n";
     }
-    if(this->algorithm==MFrontImplicitParserBase::NEWTONRAPHSON_NR){
-      if(!this->computeStress.empty()){
-	this->behaviourFile << "this->computeStress();\n";
-      }
-      this->behaviourFile << "this->computeFdF();\n";
-    }
-    if(this->algorithm==MFrontImplicitParserBase::BROYDEN){
+    if((this->algorithm==MFrontImplicitParserBase::BROYDEN)||
+       (this->algorithm==MFrontImplicitParserBase::POWELLDOGLEG_BROYDEN)){
       this->behaviourFile << "Dzeros = -this->fzeros;\n";
       this->behaviourFile << "jacobian2 = this->jacobian;\n";
       this->behaviourFile << "try{" << endl;
@@ -1939,9 +1953,12 @@ namespace mfront{
     }
     this->behaviourFile << "if(!converge){\n";
     if((this->algorithm==MFrontImplicitParserBase::NEWTONRAPHSON)||
-       (this->algorithm==MFrontImplicitParserBase::NEWTONRAPHSON_NR)){
+       (this->algorithm==MFrontImplicitParserBase::POWELLDOGLEG_NEWTONRAPHSON)||
+       (this->algorithm==MFrontImplicitParserBase::NEWTONRAPHSON_NJ)||
+       (this->algorithm==MFrontImplicitParserBase::POWELLDOGLEG_NEWTONRAPHSON_NJ)){
       this->behaviourFile << "try{" << endl;
-      if(this->algorithm==MFrontImplicitParserBase::NEWTONRAPHSON_NR){
+      if((this->algorithm==MFrontImplicitParserBase::NEWTONRAPHSON_NJ)||
+	 (this->algorithm==MFrontImplicitParserBase::POWELLDOGLEG_NEWTONRAPHSON_NJ)){
 	this->behaviourFile << "this->computeNumericalJacobian(this->jacobian);\n";
       }
       this->behaviourFile << "TinyMatrixSolve<" << n2
@@ -1957,7 +1974,8 @@ namespace mfront{
       this->writeLimitsOnIncrementValues("fzeros");
       this->behaviourFile << "this->zeros -= this->fzeros;\n";
     }
-    if(this->algorithm==MFrontImplicitParserBase::BROYDEN){
+    if((this->algorithm==MFrontImplicitParserBase::BROYDEN)||
+       (this->algorithm==MFrontImplicitParserBase::POWELLDOGLEG_BROYDEN)){
       this->behaviourFile << "broyden_inv = (Dzeros|Dzeros);\n";
       this->behaviourFile << "if(broyden_inv<100*std::numeric_limits<real>::epsilon()){\n";
       if(this->mb.useQt()){        
@@ -2091,7 +2109,9 @@ namespace mfront{
       n += this->getTypeSize(p->type,p->arraySize);
     }
     if((this->algorithm==MFrontImplicitParserBase::NEWTONRAPHSON)||
-       (this->algorithm==MFrontImplicitParserBase::BROYDEN)){
+       (this->algorithm==MFrontImplicitParserBase::POWELLDOGLEG_NEWTONRAPHSON)||
+       (this->algorithm==MFrontImplicitParserBase::BROYDEN)||
+       (this->algorithm==MFrontImplicitParserBase::POWELLDOGLEG_BROYDEN)){
       n = SupportedTypes::TypeSize();
       for(p=this->mb.getStateVariables().begin();p!=this->mb.getStateVariables().end();++p){
 	n3 = SupportedTypes::TypeSize();
@@ -2107,7 +2127,8 @@ namespace mfront{
 	n += this->getTypeSize(p->type,p->arraySize);
       }
     }
-    if(this->algorithm==MFrontImplicitParserBase::NEWTONRAPHSON){
+    if((this->algorithm==MFrontImplicitParserBase::NEWTONRAPHSON)||
+       (this->algorithm==MFrontImplicitParserBase::POWELLDOGLEG_NEWTONRAPHSON)){
       for(p=this->mb.getStateVariables().begin();p!=this->mb.getStateVariables().end();++p){
 	this->jacobianPartsUsedInIntegrator.insert("df"+p->name+"_dd"+p->name);
       }
@@ -2132,7 +2153,9 @@ namespace mfront{
       }
     }
     if((this->algorithm==MFrontImplicitParserBase::NEWTONRAPHSON)||
-       (this->algorithm==MFrontImplicitParserBase::BROYDEN)){
+       (this->algorithm==MFrontImplicitParserBase::POWELLDOGLEG_NEWTONRAPHSON)||
+       (this->algorithm==MFrontImplicitParserBase::BROYDEN)||
+       (this->algorithm==MFrontImplicitParserBase::POWELLDOGLEG_BROYDEN)){
       for(p=this->mb.getStateVariables().begin();p!=this->mb.getStateVariables().end();++p){
 	for(p2=this->mb.getStateVariables().begin();p2!=this->mb.getStateVariables().end();++p2){
 	  if((p->arraySize==1u)&&(p2->arraySize==1u)){
@@ -2306,6 +2329,7 @@ namespace mfront{
       this->behaviourFile << this->initJacobian;
     } else {
       if((this->algorithm==MFrontImplicitParserBase::BROYDEN)||
+	 (this->algorithm==MFrontImplicitParserBase::POWELLDOGLEG_BROYDEN)||
 	 (this->algorithm==MFrontImplicitParserBase::BROYDEN2)){
 	this->behaviourFile << "// setting jacobian to identity\n";
 	this->behaviourFile << "std::fill(this->jacobian.begin(),this->jacobian.end(),real(0));\n";
@@ -2383,8 +2407,11 @@ namespace mfront{
        this->mb.getParametersDefaultValues().end()){
       this->mb.getParametersDefaultValues().insert(MVType("epsilon",1.e-8));
     }
-    if((this->compareToNumericalJacobian)||(this->algorithm==BROYDEN)||
-       (this->algorithm==MFrontImplicitParserBase::NEWTONRAPHSON_NR)){
+    if((this->compareToNumericalJacobian)||
+       (this->algorithm==MFrontImplicitParserBase::BROYDEN)||
+       (this->algorithm==MFrontImplicitParserBase::POWELLDOGLEG_BROYDEN)||
+       (this->algorithm==MFrontImplicitParserBase::POWELLDOGLEG_NEWTONRAPHSON_NJ)||
+       (this->algorithm==MFrontImplicitParserBase::NEWTONRAPHSON_NJ)){
       const string nje = "numerical_jacobian_epsilon";
       this->mb.getParameters().push_back(VarHandler("real",nje,1u,0u));
       if(this->mb.getParametersDefaultValues().find(nje)==
@@ -2435,7 +2462,8 @@ namespace mfront{
       this->algorithm=MFrontImplicitParserBase::NEWTONRAPHSON;
     }
     if(this->compareToNumericalJacobian){
-      if(this->algorithm!=MFrontImplicitParserBase::NEWTONRAPHSON){
+      if((this->algorithm!=MFrontImplicitParserBase::NEWTONRAPHSON)&&
+	 (this->algorithm!=MFrontImplicitParserBase::POWELLDOGLEG_NEWTONRAPHSON)){
 	string msg("MFrontImplicitParserBase::endsInputFileProcessing :");
 	msg += "@CompareToNumericalJacobian can only be used with the NewtonRaphson algorithm";
 	throw(runtime_error(msg));

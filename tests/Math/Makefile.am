@@ -1,6 +1,7 @@
 ## Makefile.am -- Process this file with automake to produce a Makefile.in file.
 SUBDIRS = include ExpressionTemplates RungeKutta Functions \
-	   st2tost2 t2tost2 Composite
+	   st2tost2 t2tost2 st2tot2 t2tot2 Composite
+
 INCLUDES = -I$(top_srcdir)/include -I$(srcdir)/include
 
 if WITH_TESTS

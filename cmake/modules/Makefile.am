@@ -3,6 +3,7 @@ EXTRA_DIST = autotools.cmake             \
 	     clang.cmake                 \
 	     gcc.cmake                   \
 	     intel.cmake                 \
+	     pathscale.cmake             \
 	     aster.cmake                 \
 	     castem.cmake                \
 	     castem-unix-type.cmake      \

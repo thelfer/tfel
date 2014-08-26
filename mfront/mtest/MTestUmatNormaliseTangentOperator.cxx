@@ -5,6 +5,7 @@
  * \brief 15 avril 2013
  */
 
+#include<cstdlib>
 #include<cmath>
 #include"MFront/MTestUmatNormaliseTangentOperator.hxx"
 

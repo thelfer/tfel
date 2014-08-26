@@ -71,7 +71,7 @@ omega.setNormalisationFactor(1.e-2);
 }
 
 @InitLocalVars{
-  Lc = 500.*b* (T/300.)*(T/300.);
+  Lc = 500.*b* ((T+theta*dT)/300.)*((T+theta*dT)/300.);
 } 
 
 @Integrator{
@@ -161,7 +161,7 @@ omega.setNormalisationFactor(1.e-2);
     }
         
     Depsp+=Dg[i]* mus[i] ;
-    real deuxpi = 6.2831853071795862 ;
+    const real deuxpi = 6.2831853071795862 ;
     real y = 1.0 / (1.0 / y_at + deuxpi * tau_eff / Mu / b) ;
           
     real a_eff = 1.0 ;

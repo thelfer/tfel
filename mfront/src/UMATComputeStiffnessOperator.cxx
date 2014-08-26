@@ -627,8 +627,8 @@ namespace umat
     C(1,2)=C(2,1)=(S12*S13-S11*S23)/detS;
     C(3,3)=cste*props[6];
     C(3,4)=cste*props[6];
-    C(4,5)=cste*props[8];
-    C(4,6)=cste*props[8];
+    C(4,5)=cste*props[7];
+    C(4,6)=cste*props[7];
     C(5,7)=cste*props[8];
     C(5,8)=cste*props[8];
   } // end of struct UMATComputeStiffnessOperator

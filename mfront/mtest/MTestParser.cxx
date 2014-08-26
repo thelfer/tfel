@@ -232,6 +232,12 @@ namespace mfront
 			   &MTestParser::handleImposedCohesiveForce);
     this->registerCallBack("@ImposedThermodynamicForce",
 			   &MTestParser::handleImposedThermodynamicForce);
+    this->registerCallBack("@CompareToNumericalTangentOperator",
+			   &MTestParser::handleCompareToNumericalTangentOperator);
+    this->registerCallBack("@TangentOperatorComparisonCriterium",
+			   &MTestParser::handleTangentOperatorComparisonCriterium);
+    this->registerCallBack("@NumericalTangentOperatorPertubationValue",
+			   &MTestParser::handleNumericalTangentOperatorPertubationValue);
   }
 
   void
@@ -349,6 +355,49 @@ namespace mfront
 			     p,this->fileTokens.end());
     t.setDescription(description);
   } // end of MTestParser::Description
+
+  void MTestParser::handleCompareToNumericalTangentOperator(MTest& t,TokensContainer::const_iterator& p)
+  {
+    using namespace std;
+    this->checkNotEndOfLine("handleCompareToNumericalTangentOperator",
+			    p,this->fileTokens.end());
+    if(p->value=="true"){
+      t.setCompareToNumericalTangentOperator(true);
+    } else if(p->value=="false"){
+      t.setCompareToNumericalTangentOperator(false);
+    } else {
+      string msg("MTestParser::handleCompareToNumericalTangentOperator : "
+		 "unexpected value (expected 'true' or 'false', read '"+p->value+"')");
+      throw(runtime_error(msg));
+    }
+    ++p;
+    this->checkNotEndOfLine("handleCompareToNumericalTangentOperator",
+			    p,this->fileTokens.end());
+    this->readSpecifiedToken("MTestParser::handleCompareToNumericalTangentOperator",";",
+			     p,this->fileTokens.end());
+  } // end of MTestParser::handleCompareToNumericalTangentOperator
+
+  void MTestParser::handleTangentOperatorComparisonCriterium(MTest& t,TokensContainer::const_iterator& p)
+  {
+    this->checkNotEndOfLine("handleTangentOperatorComparisonCriterium",
+			    p,this->fileTokens.end());
+    t.setTangentOperatorComparisonCriterium(this->readDouble(t,p));
+    this->checkNotEndOfLine("handleTangentOperatorComparisonCriterium",
+			    p,this->fileTokens.end());
+    this->readSpecifiedToken("MTestParser::handleTangentOperatorComparisonCriterium",";",
+			     p,this->fileTokens.end());
+  } // end of MTestParser::handleTangentOperatorComparisonCriterium
+
+  void MTestParser::handleNumericalTangentOperatorPertubationValue(MTest& t,TokensContainer::const_iterator& p)
+  {
+    this->checkNotEndOfLine("handleNumericalTangentOperatorPertubationValue",
+			    p,this->fileTokens.end());
+    t.setNumericalTangentOperatorPertubationValue(this->readDouble(t,p));
+    this->checkNotEndOfLine("handleNumericalTangentOperatorPertubationValue",
+			    p,this->fileTokens.end());
+    this->readSpecifiedToken("MTestParser::handleNumericalTangentOperatorPertubationValue",";",
+			     p,this->fileTokens.end());
+  } // end of MTestParser::handleNumericalTangentOperatorPertubationValue
 
   void MTestParser::handleAuthor(MTest& t,TokensContainer::const_iterator& p)
   {

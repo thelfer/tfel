@@ -4,6 +4,8 @@ add_subdirectory(Functions)
 add_subdirectory(Composite)
 add_subdirectory(st2tost2)
 add_subdirectory(t2tost2)
+add_subdirectory(st2tot2)
+add_subdirectory(t2tot2)
 
 include_directories("${PROJECT_SOURCE_DIR}/include")
 include_directories("${PROJECT_SOURCE_DIR}/tests/Math/include")

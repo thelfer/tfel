@@ -5,10 +5,6 @@
  * \date   17 Jan 2007
  */
 
-#include<iostream>
-#include<iterator>
-#include<algorithm>
-
 #include<sstream>
 #include<cstdlib>
 #include<stdexcept>

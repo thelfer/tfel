@@ -152,7 +152,7 @@ namespace tfel{
 	using namespace std;
 	typedef typename StensorProductExprBase<A,B>::NumType T;
 	typedef typename tfel::typetraits::BaseType<T>::type real;
-	static const real cste = sqrt(2);
+	static const real cste = real(1)/sqrt(real(2));
 	switch(i){
 	case 0:
 	  return ((this->a(4))*(this->b(4))+(this->a(3))*(this->b(3))+2*(this->a(0))*(this->b(0)))/2;
@@ -164,13 +164,13 @@ namespace tfel{
 	  return ((this->a(5))*(this->b(5))+(this->a(4))*(this->b(4))+2*(this->a(2))*(this->b(2)))/2; 
 	  break;
 	case 3:
-	  return (cste*(this->a(4))*(this->b(5))+2*(this->a(0))*(this->b(3))+2*(this->a(3))*(this->b(1)))/2;
+	  return cste*(this->a(4))*(this->b(5))+(this->a(0))*(this->b(3))+(this->a(3))*(this->b(1));
 	  break;
 	case 4:
-	  return (cste*(this->a(3))*(this->b(5))+2*(this->a(0))*(this->b(4))+2*(this->a(4))*(this->b(2)))/2; 
+	  return cste*(this->a(3))*(this->b(5))+(this->a(0))*(this->b(4))+(this->a(4))*(this->b(2)); 
 	  break;
 	case 5:
-	  return (2*(this->a(1))*(this->b(5))+cste*(this->a(3))*(this->b(4))+2*(this->a(5))*(this->b(2)))/2;
+	  return cste*(this->a(3))*(this->b(4))+(this->a(1))*(this->b(5))+(this->a(5))*(this->b(2));
 	  break;
 	default:
 	  return T(0);

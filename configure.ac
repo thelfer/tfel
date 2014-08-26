@@ -407,6 +407,7 @@ AC_OUTPUT([debug.sh
            mfront/tests/behaviours/aster/astermonocristal_dd_cfc.mtest
            mfront/tests/behaviours/aster/astermonocristal_dd_cfc_numericaljacobian.mtest
            mfront/tests/behaviours/aster/astermonocristal_dd_cfc_irradiation.mtest
+           mfront/tests/behaviours/aster/astermonocristal_dd_cc.mtest
            mfront/tests/behaviours/aster/astermonocristal_dd_cc_numericaljacobian.mtest
            mfront/tests/behaviours/aster/astermonocristal_dd_cc_irradiation_numericaljacobian.mtest
            mfront/tests/behaviours/aster/asterpolycristals.mtest
@@ -463,6 +464,7 @@ AC_OUTPUT([debug.sh
            mfront/tests/behaviours/castem/castemmonocristal_dd_cfc.mtest
            mfront/tests/behaviours/castem/castemmonocristal_dd_cfc_numericaljacobian.mtest
            mfront/tests/behaviours/castem/castemmonocristal_dd_cfc_irradiation.mtest
+           mfront/tests/behaviours/castem/castemmonocristal_dd_cc.mtest
            mfront/tests/behaviours/castem/castemmonocristal_dd_cc_numericaljacobian.mtest
            mfront/tests/behaviours/castem/castemmonocristal_dd_cc_irradiation_numericaljacobian.mtest
            mfront/tests/behaviours/castem/castempolycristals.mtest
@@ -514,6 +516,15 @@ AC_OUTPUT([debug.sh
            mfront/tests/behaviours/castem/castemmieheapellambrechtlogarithmicstrainelasticity-uniaxialloading-3-1D.mtest
            mfront/tests/behaviours/castem/castemmieheapellambrechtlogarithmicstrainelasticity-uniaxialloading-3-2D.mtest
            mfront/tests/behaviours/castem/castemmieheapellambrechtlogarithmicstrainelasticity-uniaxialloading-3-3D.mtest
+           mfront/tests/behaviours/castem/castemmieheapellambrechtlogarithmicstrainnortoncreep-uniaxialloading-1-1D.mtest
+           mfront/tests/behaviours/castem/castemmieheapellambrechtlogarithmicstrainnortoncreep-uniaxialloading-2-1D.mtest
+           mfront/tests/behaviours/castem/castemmieheapellambrechtlogarithmicstrainnortoncreep-uniaxialloading-3-1D.mtest
+           mfront/tests/behaviours/castem/castemmieheapellambrechtlogarithmicstrainnortoncreep-uniaxialloading-1-2D.mtest
+           mfront/tests/behaviours/castem/castemmieheapellambrechtlogarithmicstrainnortoncreep-uniaxialloading-2-2D.mtest
+           mfront/tests/behaviours/castem/castemmieheapellambrechtlogarithmicstrainnortoncreep-uniaxialloading-3-2D.mtest
+           mfront/tests/behaviours/castem/castemmieheapellambrechtlogarithmicstrainnortoncreep-uniaxialloading-1-3D.mtest
+           mfront/tests/behaviours/castem/castemmieheapellambrechtlogarithmicstrainnortoncreep-uniaxialloading-2-3D.mtest
+           mfront/tests/behaviours/castem/castemmieheapellambrechtlogarithmicstrainnortoncreep-uniaxialloading-3-3D.mtest
            mfront/tests/behaviours/castem/castemincompressiblemooneyrivlinbehaviour.mtest
            mfront/tests/behaviours/castem/castemincompressibleplanestressgornetdesmoratbehavioursheartesting.mtest
            mfront/tests/behaviours/castem/castemincompressibleplanestressgornetdesmoratbehaviouruniaxialtesting.mtest
@@ -541,8 +552,10 @@ AC_OUTPUT([debug.sh
 	   tests/Math/RungeKutta/Makefile
 	   tests/Math/RungeKutta/include/Makefile
 	   tests/Math/Functions/Makefile
+	   tests/Math/t2tot2/Makefile
 	   tests/Math/st2tost2/Makefile
 	   tests/Math/t2tost2/Makefile
+	   tests/Math/st2tot2/Makefile
 	   tests/Math/Composite/Makefile
 	   tests/Lambda/Makefile
 	   tests/FSAlgorithms/Makefile

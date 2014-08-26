@@ -25,8 +25,11 @@ namespace mfront{
 
     enum Algorithm{
       NEWTONRAPHSON,
-      NEWTONRAPHSON_NR,
+      POWELLDOGLEG_NEWTONRAPHSON,
+      NEWTONRAPHSON_NJ,
+      POWELLDOGLEG_NEWTONRAPHSON_NJ,
       BROYDEN,
+      POWELLDOGLEG_BROYDEN,
       BROYDEN2,
       DEFAULT
     };

@@ -391,7 +391,8 @@ namespace mfront
       copy(iv.begin(),iv.end(),iv1.begin());
     }
     // tangent operator (...)
-    if(ktype==MTestStiffnessMatrixType::ELASTIC){
+    if((ktype==MTestStiffnessMatrixType::NOSTIFFNESS)||
+       (ktype==MTestStiffnessMatrixType::ELASTIC)){
       this->computeElasticStiffness(Kt,mp,drot,h);
     } else {
       string msg("MTestUmatFiniteStrainBehaviour::integrate : "

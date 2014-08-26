@@ -6,8 +6,6 @@
  * \date   05 mai 2008
  */
 
-#include<iostream>
-#include<iterator>
 #include<algorithm>
 #include<vector>
 #include<sstream>
