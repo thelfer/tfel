@@ -132,6 +132,25 @@ if(HAVE_ASTER)
     TFELException)
 endif(HAVE_ASTER)
 
+if(HAVE_CYRANO)
+    set(mfront_SOURCES
+    	MFrontCyranoInterface.cxx
+    	${mfront_SOURCES})
+    set(CyranoInterface_SOURCES
+        CyranoException.cxx
+        CyranoInterfaceBase.cxx
+	CyranoComputeStiffnessOperator.cxx
+	CyranoComputeThermalExpansionTensor.cxx
+	CyranoTangentOperator.cxx
+	CyranoOutOfBoundsPolicy.cxx
+	CyranoGetModellingHypothesis.cxx)
+    tfel_library(CyranoInterface ${CyranoInterface_SOURCES})
+    target_link_libraries(CyranoInterface
+      MTestFileGenerator
+      TFELUtilities
+      TFELException)
+endif(HAVE_CYRANO)
+
 add_executable(mfront ${mfront_SOURCES})
 
 if(UNIX)

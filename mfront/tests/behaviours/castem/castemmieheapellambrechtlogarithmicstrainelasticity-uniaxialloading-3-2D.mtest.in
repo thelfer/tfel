@@ -6,6 +6,7 @@
  */
 
 @ModellingHypothesis 'Axisymmetrical';
+@UseCastemAccelerationAlgorithm true;
 @Behaviour<umat> '@MFrontCastemBehavioursBuildPath@' 'umatlogarithmicstrainelasticity';
 @MaterialProperty<constant> 'YoungModulus'     215.e9;
 @MaterialProperty<constant> 'PoissonRatio'       0.3;

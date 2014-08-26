@@ -7,6 +7,10 @@ if(HAVE_ASTER)
   add_subdirectory(aster)
 endif(HAVE_ASTER)
 
+if(HAVE_CYRANO)
+  add_subdirectory(cyrano)
+endif(HAVE_CYRANO)
+
 install_data(mfront/tests/behaviours Burger.mfront)
 install_data(mfront/tests/behaviours Chaboche2.mfront)
 install_data(mfront/tests/behaviours Chaboche.mfront)

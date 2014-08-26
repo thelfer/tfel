@@ -16,6 +16,13 @@
 namespace umat
 {
 
+  /*!
+   * \return the modelling hypothesis contained in the NDI parameter
+   * used by the UMAT Interface of the Cast3M finite element solver
+   *
+   * \param[in] ndi : integer used by the Cast3M finite element solver
+   * to represent the modelling hypothesis
+   */
   MFRONT_UMAT_VISIBILITY_EXPORT
   tfel::material::ModellingHypothesis::Hypothesis
   getModellingHypothesis(const UMATInt);

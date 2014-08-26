@@ -1099,6 +1099,11 @@ namespace mfront
       i = p->value;
     }
 #endif /* HAVE_ASTER */
+#ifdef HAVE_CYRANO
+    if(p->value=="cyrano"){
+      i = p->value;
+    }
+#endif /* HAVE_CYRANO */
     if(i.empty()){
       string msg("MTestParser::handleBehaviour : ");
       msg += "unknown interface '"+p->value+"'";

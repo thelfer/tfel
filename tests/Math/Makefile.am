@@ -53,8 +53,8 @@ test_PROGRAMS = hill                                     \
 		stensor_changeBasis3                     \
 		stensor_changeBasis4                     \
 		stensor_eigenvalues                      \
-		stensor_eigenvectors2                    \
 		stensor_eigenvectors                     \
+		stensor_eigenvectors2                    \
 		tmatrix                                  \
 		tmatrix1                                 \
 		tmatrix2                                 \
@@ -137,8 +137,8 @@ stensor_changeBasis2_SOURCES  = stensor_changeBasis2.cxx
 stensor_changeBasis3_SOURCES  = stensor_changeBasis3.cxx
 stensor_changeBasis4_SOURCES  = stensor_changeBasis4.cxx
 stensor_eigenvalues_SOURCES   = stensor_eigenvalues.cxx  
-stensor_eigenvectors2_SOURCES = stensor_eigenvectors2.cxx
 stensor_eigenvectors_SOURCES  = stensor_eigenvectors.cxx 
+stensor_eigenvectors2_SOURCES = stensor_eigenvectors2.cxx
 tmatrix_SOURCES               = tmatrix.cxx
 tmatrix1_SOURCES              = tmatrix1.cxx
 tmatrix2_SOURCES              = tmatrix2.cxx

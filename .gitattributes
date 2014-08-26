@@ -59,6 +59,7 @@ cmake/modules/castem.cmake -text
 cmake/modules/clang.cmake -text
 cmake/modules/common-compiler-flags.cmake -text
 cmake/modules/compiler.cmake -text
+cmake/modules/cyrano.cmake -text
 cmake/modules/gcc.cmake -text
 cmake/modules/gnu-fortran-compiler.cmake -text
 cmake/modules/intel.cmake -text
@@ -906,6 +907,7 @@ m4/castem.m4 -text
 m4/check_boost.m4 -text
 m4/check_boost_python.m4 -text
 m4/check_pthreads.m4 -text
+m4/cyrano-machine-type.m4 -text
 m4/enable_pthreads.m4 -text
 m4/gxx.m4 -text
 m4/intel.m4 -text
@@ -939,6 +941,23 @@ mfront/include/MFront/Aster/AsterRotationMatrix.hxx -text
 mfront/include/MFront/Aster/AsterTangentOperator.hxx -text
 mfront/include/MFront/Aster/AsterTraits.hxx -text
 mfront/include/MFront/BoundsDescription.hxx -text
+mfront/include/MFront/Cyrano/Cyrano.hxx -text
+mfront/include/MFront/Cyrano/CyranoBehaviourHandler.hxx -text
+mfront/include/MFront/Cyrano/CyranoComputeStiffnessOperator.hxx -text
+mfront/include/MFront/Cyrano/CyranoComputeThermalExpansionTensor.hxx -text
+mfront/include/MFront/Cyrano/CyranoConfig.hxx -text
+mfront/include/MFront/Cyrano/CyranoException.hxx -text
+mfront/include/MFront/Cyrano/CyranoGenericPlaneStressHandler.hxx -text
+mfront/include/MFront/Cyrano/CyranoGetModellingHypothesis.hxx -text
+mfront/include/MFront/Cyrano/CyranoInterface.hxx -text
+mfront/include/MFront/Cyrano/CyranoInterfaceBase.hxx -text
+mfront/include/MFront/Cyrano/CyranoInterfaceDispatch.hxx -text
+mfront/include/MFront/Cyrano/CyranoIsotropicBehaviourHandler.hxx -text
+mfront/include/MFront/Cyrano/CyranoOrthotropicBehaviour.hxx -text
+mfront/include/MFront/Cyrano/CyranoOrthotropicBehaviourHandler.hxx -text
+mfront/include/MFront/Cyrano/CyranoOutOfBoundsPolicy.hxx -text
+mfront/include/MFront/Cyrano/CyranoTangentOperator.hxx -text
+mfront/include/MFront/Cyrano/CyranoTraits.hxx -text
 mfront/include/MFront/DrivingVariable.hxx -text
 mfront/include/MFront/InterfaceBase.hxx -text
 mfront/include/MFront/LawFunction.hxx -text
@@ -957,6 +976,7 @@ mfront/include/MFront/MFrontCastemLawInterface.hxx -text
 mfront/include/MFront/MFrontConfig.hxx -text
 mfront/include/MFront/MFrontCppLawInterface.hxx -text
 mfront/include/MFront/MFrontCppTestLawInterface.hxx -text
+mfront/include/MFront/MFrontCyranoInterface.hxx -text
 mfront/include/MFront/MFrontDefaultCZMParser.hxx -text
 mfront/include/MFront/MFrontDefaultFiniteStrainParser.hxx -text
 mfront/include/MFront/MFrontDefaultParser.hxx -text
@@ -1010,6 +1030,7 @@ mfront/include/MFront/MTestBehaviour.hxx -text
 mfront/include/MFront/MTestCastemEvolution.hxx -text
 mfront/include/MFront/MTestConfig.hxx -text
 mfront/include/MFront/MTestConstraint.hxx -text
+mfront/include/MFront/MTestCyranoBehaviour.hxx -text
 mfront/include/MFront/MTestEvolution.hxx -text
 mfront/include/MFront/MTestFileGeneratorBase.hxx -text
 mfront/include/MFront/MTestFunctionEvolution.hxx -text
@@ -1070,6 +1091,7 @@ mfront/mtest/MTestAsterSmallStrainBehaviour.cxx -text
 mfront/mtest/MTestBehaviour.cxx -text
 mfront/mtest/MTestCastemEvolution.cxx -text
 mfront/mtest/MTestConstraint.cxx -text
+mfront/mtest/MTestCyranoBehaviour.cxx -text
 mfront/mtest/MTestEvolution.cxx -text
 mfront/mtest/MTestFunctionEvolution.cxx -text
 mfront/mtest/MTestImposedDrivingVariable.cxx -text
@@ -1093,6 +1115,13 @@ mfront/src/AsterRotationMatrix.cxx -text
 mfront/src/AsterTangentOperator.cxx -text
 mfront/src/BoundsDescription.cxx -text
 mfront/src/CMakeLists.txt -text
+mfront/src/CyranoComputeStiffnessOperator.cxx -text
+mfront/src/CyranoComputeThermalExpansionTensor.cxx -text
+mfront/src/CyranoException.cxx -text
+mfront/src/CyranoGetModellingHypothesis.cxx -text
+mfront/src/CyranoInterfaceBase.cxx -text
+mfront/src/CyranoOutOfBoundsPolicy.cxx -text
+mfront/src/CyranoTangentOperator.cxx -text
 mfront/src/DrivingVariable.cxx -text
 mfront/src/InterfaceBase.cxx -text
 mfront/src/MFront.cxx -text
@@ -1106,6 +1135,7 @@ mfront/src/MFrontCLawInterfaceBase.cxx -text
 mfront/src/MFrontCastemLawInterface.cxx -text
 mfront/src/MFrontCppLawInterface.cxx -text
 mfront/src/MFrontCppTestLawInterface.cxx -text
+mfront/src/MFrontCyranoInterface.cxx -text
 mfront/src/MFrontDefaultCZMParser.cxx -text
 mfront/src/MFrontDefaultFiniteStrainParser.cxx -text
 mfront/src/MFrontDefaultParser.cxx -text
@@ -1308,6 +1338,7 @@ mfront/tests/behaviours/castem/castemelasticity13.mtest.in -text
 mfront/tests/behaviours/castem/castemelasticity14.mtest.in -text
 mfront/tests/behaviours/castem/castemelasticity15.mtest.in -text
 mfront/tests/behaviours/castem/castemelasticity16.mtest.in -text
+mfront/tests/behaviours/castem/castemelasticity17.mtest.in -text
 mfront/tests/behaviours/castem/castemelasticity2.mtest.in -text
 mfront/tests/behaviours/castem/castemelasticity3.mtest.in -text
 mfront/tests/behaviours/castem/castemelasticity4.mtest.in -text
@@ -1498,6 +1529,10 @@ mfront/tests/behaviours/castem2/castem2plasticity.mtest.in -text
 mfront/tests/behaviours/castem2/castem2strainhardeningcreep.mtest.in -text
 mfront/tests/behaviours/castem2/castem2stressrelaxation.mtest.in -text
 mfront/tests/behaviours/castem2/castem2viscoplasisocin.mtest.in -text
+mfront/tests/behaviours/cyrano/CMakeLists.txt -text
+mfront/tests/behaviours/cyrano/Makefile.am -text
+mfront/tests/behaviours/cyrano/cyranoelasticity.mtest.in -text
+mfront/tests/behaviours/cyrano/cyranoelasticity10.mtest.in -text
 mfront/tests/behaviours/references/PolyCristalsAngles.txt -text
 mfront/tests/behaviours/references/burger.ref -text
 mfront/tests/behaviours/references/chaboche-aster.ref -text

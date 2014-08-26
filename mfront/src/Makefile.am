@@ -87,6 +87,10 @@ if HAVE_ASTER
 mfront_SOURCES += MFrontAsterInterface.cxx
 endif
 
+if HAVE_CYRANO
+mfront_SOURCES += MFrontCyranoInterface.cxx
+endif
+
 mfront_LDADD   = -L$(top_builddir)/src/Material  -lTFELMaterial   \
 		 -L$(top_builddir)/src/Math      -lTFELMathParser \
 		 -L$(top_builddir)/src/System    -lTFELSystem     \
@@ -134,6 +138,25 @@ if TFEL_WIN
 libUMATInterface_la_LDFLAGS  = -no-undefined -avoid-version -Wl,--add-stdcall-alias -Wl,--kill-at
 endif # TFEL_WIN
 endif # HAVE_CASTEM
+
+if HAVE_CYRANO
+lib_LTLIBRARIES += libCyranoInterface.la
+libCyranoInterface_la_SOURCES = CyranoInterfaceBase.cxx                 \
+			        CyranoComputeStiffnessOperator.cxx      \
+			        CyranoComputeThermalExpansionTensor.cxx \
+			        CyranoTangentOperator.cxx               \
+		                CyranoOutOfBoundsPolicy.cxx             \
+		                CyranoGetModellingHypothesis.cxx        \
+		                CyranoException.cxx
+libCyranoInterface_la_LIBADD  = -L$(top_builddir)/src/Utilities -lTFELUtilities          \
+			        -L$(top_builddir)/src/Exception -lTFELException          \
+			        -L$(top_builddir)/mfront/src    -lMTestFileGenerator
+libCyranoInterface_la_DEPENDENCIES = libMTestFileGenerator.la
+libCyranoInterface_la_CPPFLAGS = -DCyranoInterface_EXPORTS
+if TFEL_WIN
+libCyranoInterface_la_LDFLAGS  = -no-undefined -avoid-version -Wl,--add-stdcall-alias -Wl,--kill-at
+endif # TFEL_WIN
+endif # HAVE_CYRANO
 
 # Aster Interface
 if HAVE_ASTER

@@ -90,18 +90,69 @@ namespace tfel{
 	static TFEL_MATH_INLINE2 void exe(const T* const v,T& vp1,T& vp2,T& vp3,
 					  const bool b)
 	{
+	  // const T I1 = v[0]+v[1]+v[2];
+	  // const T I2 = v[0]*(v[1]+v[2])+v[1]*v[2]-(v[3]*v[3]+v[4]*v[4]+v[5]*v[5])*one_half;
+	  // const T I3 = (T(2)*v[0]*v[1]*v[2]+cste*v[3]*v[4]*v[5]-v[2]*v[3]*v[3]-v[1]*v[4]*v[4]-v[0]*v[5]*v[5])*one_ha
 	  TFEL_STATIC_ASSERT(tfel::typetraits::IsFundamentalNumericType<T>::cond);
 	  TFEL_STATIC_ASSERT(tfel::typetraits::IsReal<T>::cond);
 	  static const T M_1_SQRT2 = 1/std::sqrt(static_cast<T>(2));
-	  const T one_half = T(1)/T(2);
-	  const T p3 = -1.;
-	  const T p2 = v[0]+v[1]+v[2];
-	  const T p1 =  one_half*(v[5]*v[5]+v[4]*v[4]+v[3]*v[3])-(v[0]*(v[2]+v[1])+v[1]*v[2]);
-	  const T p0 = -one_half*(v[0]*v[5]*v[5]+v[1]*v[4]*v[4]+v[2]*v[3]*v[3])+M_1_SQRT2*(v[3]*v[4]*v[5])+v[0]*v[1]*v[2];
-	  if(CubicRoots::exe(vp1,vp2,vp3,p3,p2,p1,p0,b)==0u){
-	    throw(StensorEigenValuesComputationFailureException(v));
+	  const T one_half  = T(1)/T(2);
+	  const T one_third = T(1)/T(3);
+	  stensor<3u,T> s(v);
+	  stensor<3u,T> s2(deviator(s));
+	  const T vmax = *(fsalgo::max_element<6u>::exe(s2.begin()));
+	  const bool n = abs(vmax)*std::numeric_limits<T>::epsilon()>std::numeric_limits<T>::min();
+  	  if(n){
+	    s2 *= T(1)/vmax;
 	  }
+	  const T p3 = -1.;	
+	  //  	  const T p2 = s2[0]+s2[1]+s2[2];
+	  const T p2 = 0.;
+	  const T p1 =  one_half*(s2[5]*s2[5]+s2[4]*s2[4]+s2[3]*s2[3])-(s2[0]*(s2[2]+s2[1])+s2[1]*s2[2]);
+	  const T p0 = -one_half*(s2[0]*s2[5]*s2[5]+s2[1]*s2[4]*s2[4]+s2[2]*s2[3]*s2[3])+M_1_SQRT2*(s2[3]*s2[4]*s2[5])+s2[0]*s2[1]*s2[2];
+	  const unsigned short nb = CubicRoots::exe(vp1,vp2,vp3,p3,p2,p1,p0,b);
+	  if(nb==0u){
+	    throw(StensorEigenValuesComputationFailureException(v));
+	  } else if(nb==1u){
+	    if(std::abs(vp1-vp2)<std::numeric_limits<T>::epsilon()){
+	      const T vm = (vp1+vp2)*one_half;
+	      vp1=vp2=vm;
+	    }
+	    if(std::abs(vp1-vp3)<std::numeric_limits<T>::epsilon()){
+	      const T vm = (vp1+vp3)*one_half;
+	      vp1=vp3=vm;
+	    }
+	    if(std::abs(vp2-vp3)<std::numeric_limits<T>::epsilon()){
+	      const T vm = (vp2+vp3)*one_half;
+	      vp2=vp3=vm;
+	    }
+	  }
+	  if(n){
+	    vp1 *= vmax;
+	    vp2 *= vmax;
+	    vp3 *= vmax;
+	  }
+	  const T tr = trace(s)*one_third;
+	  vp1 += tr;
+	  vp2 += tr;
+	  vp3 += tr;
 	}
+	// template<typename T>
+	// static TFEL_MATH_INLINE2 void exe(const T* const v,T& vp1,T& vp2,T& vp3,
+	// 				  const bool b)
+	// {
+	//   TFEL_STATIC_ASSERT(tfel::typetraits::IsFundamentalNumericType<T>::cond);
+	//   TFEL_STATIC_ASSERT(tfel::typetraits::IsReal<T>::cond);
+	//   static const T M_1_SQRT2 = 1/std::sqrt(static_cast<T>(2));
+	//   const T one_half = T(1)/T(2);
+	//   const T p3 = -1.;
+	//   const T p2 = v[0]+v[1]+v[2];
+	//   const T p1 =  one_half*(v[5]*v[5]+v[4]*v[4]+v[3]*v[3])-(v[0]*(v[2]+v[1])+v[1]*v[2]);
+	//   const T p0 = -one_half*(v[0]*v[5]*v[5]+v[1]*v[4]*v[4]+v[2]*v[3]*v[3])+M_1_SQRT2*(v[3]*v[4]*v[5])+v[0]*v[1]*v[2];
+	//   if(CubicRoots::exe(vp1,vp2,vp3,p3,p2,p1,p0,b)==0u){
+	//     throw(StensorEigenValuesComputationFailureException(v));
+	//   }
+	// }
       };
       
     } //end of namespace internals

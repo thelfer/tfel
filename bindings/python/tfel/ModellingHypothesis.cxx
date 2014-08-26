@@ -16,6 +16,8 @@ BOOST_PYTHON_MODULE(material)
   enum_<ModellingHypothesis::Hypothesis>("ModellingHypothesis")
     .value("AXISYMMETRICALGENERALISEDPLANESTRAIN",
 	   ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN)
+    .value("AXISYMMETRICALGENERALISEDPLANESTRESS",
+	   ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRESS)
     .value("AXISYMMETRICAL",ModellingHypothesis::AXISYMMETRICAL)
     .value("PLANESTRESS",ModellingHypothesis::PLANESTRESS)
     .value("PLANESTRAIN",ModellingHypothesis::PLANESTRAIN)

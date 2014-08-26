@@ -39,6 +39,9 @@
 #ifdef HAVE_ASTER
 #include"MFront/MTestAsterSmallStrainBehaviour.hxx"
 #endif /* HAVE_ASTER  */
+#ifdef HAVE_CYRANO
+#include"MFront/MTestCyranoBehaviour.hxx"
+#endif /* HAVE_CYRANO  */
 
 #include"MFront/MTestAnalyticalTest.hxx"
 #include"MFront/MTestReferenceFileComparisonTest.hxx"
@@ -509,6 +512,9 @@ namespace mfront
     if(h=="AxisymmetricalGeneralisedPlaneStrain"){
       this->dimension=1u;
       this->hypothesis = MH::AXISYMMETRICALGENERALISEDPLANESTRAIN;
+    } else if(h=="AxisymmetricalGeneralisedPlaneStress"){
+      this->dimension=1u;
+      this->hypothesis = MH::AXISYMMETRICALGENERALISEDPLANESTRESS;
     } else if(h=="Axisymmetrical"){
       this->dimension  = 2u;
       this->hypothesis = MH::AXISYMMETRICAL;
@@ -897,6 +903,11 @@ namespace mfront
       this->b = shared_ptr<MTestBehaviour>(new MTestAsterSmallStrainBehaviour(this->hypothesis,l,f));
     }
 #endif
+#ifdef HAVE_CYRANO
+    if(i=="cyrano"){
+      this->b = shared_ptr<MTestBehaviour>(new MTestCyranoBehaviour(this->hypothesis,l,f));
+    }
+#endif
     if(this->b.get()==0){
       string msg("MTest::setBehaviour : ");
       msg += "unknown interface '"+i+"'";
@@ -1022,6 +1033,28 @@ namespace mfront
       shared_ptr<MTestEvolution>  eev(new MTestConstantEvolution(0.));
       shared_ptr<MTestConstraint> ec(new MTestImposedDrivingVariable(2,eev));
       this->constraints.push_back(ec);
+    }
+    if(this->hypothesis==MH::AXISYMMETRICALGENERALISEDPLANESTRESS){
+      // shall be in the behaviour
+      if((this->b->getBehaviourType()==MechanicalBehaviourBase::SMALLSTRAINSTANDARDBEHAVIOUR)||
+	 (this->b->getBehaviourType()==MechanicalBehaviourBase::FINITESTRAINSTANDARDBEHAVIOUR)){
+	shared_ptr<MTestEvolution>  eev(new MTestConstantEvolution(0.));
+	shared_ptr<MTestConstraint> ec(new MTestImposedDrivingVariable(1,eev));
+	shared_ptr<MTestEvolution>  sev;
+	pev = this->evs->find("AxialPlaneStress");
+	if(pev!=this->evs->end()){
+	  sev = pev->second;
+	} else {
+	  sev = shared_ptr<MTestEvolution>(new MTestConstantEvolution(0.));
+	}
+	shared_ptr<MTestConstraint> sc(new MTestImposedThermodynamicForce(1,sev));
+	this->constraints.push_back(ec);
+	this->constraints.push_back(sc);
+      } else {
+	string msg("MTest::completeInitialisation : "
+		   "plane stress is only handled for small and finite strain behaviours");
+	throw(runtime_error(msg));
+      }
     }
     if(this->hypothesis==MH::PLANESTRESS){
       // shall be in the behaviour

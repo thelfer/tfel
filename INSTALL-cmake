@@ -34,6 +34,7 @@ Options
   enable-fortran : enables fortran support
   enable-python  : enables python support
   enable-aster   : enables aster support
+  enable-cyrano  : enables cyrano support (cyrano is eDF fuel performance code)
 
 cmake usefull variables
 =======================
@@ -46,12 +47,12 @@ cmake usefull variables
 cmake typical usage
 ===================
 
-cmake ../trunk -DCMAKE_BUILD_TYPE=Release -Dlocal-castem-header=ON -Denable-fortran=ON -Denable-python=ON -Denable-python-bindings=ON -Denable-aster=ON -DCMAKE_INSTALL_PREFIX=/home/th202608/codes/tfel/trunk/install
+cmake ../trunk -DCMAKE_BUILD_TYPE=Release -Dlocal-castem-header=ON -Denable-fortran=ON -Denable-python=ON -Denable-python-bindings=ON -Denable-aster=ON -Denable-cyrano=ON -DCMAKE_INSTALL_PREFIX=/home/th202608/codes/tfel/trunk/install
 
 cmake for PLEIADES users
 ========================
 
-ccmake ../trunk -DCMAKE_BUILD_TYPE=Release  -DCASTEM_INSTALL_PATH=/home/th202608/codes/castem/2012/install/ -Denable-castem-pleiades=ON -Denable-fortran=ON -Denable-python=ON -Denable-python-bindings=ON -Denable-aster=ON -DCMAKE_INSTALL_PREFIX=/home/th202608/codes/tfel/trunk/install
+ccmake ../trunk -DCMAKE_BUILD_TYPE=Release  -DCASTEM_INSTALL_PATH=/home/th202608/codes/castem/2012/install/ -Denable-castem-pleiades=ON -Denable-fortran=ON -Denable-python=ON -Denable-python-bindings=ON -Denable-aster=ON -Denable-cyrano=ON -DCMAKE_INSTALL_PREFIX=/home/th202608/codes/tfel/trunk/install
 
 
 main targets:

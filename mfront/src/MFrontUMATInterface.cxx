@@ -1070,7 +1070,7 @@ namespace mfront{
 	    << "mg.addMaterialProperty(\"ThermalExpansion\",*(PROPS+3));\n";
 	out << "mg_mpoffset = 4u;\n";
       } else if (mb.getSymmetryType()==mfront::ORTHOTROPIC){
-	out << "if(*NDI==-1){\n"
+	out << "if(*NDI==14){\n" // axisymmetrical generalized plane strain
 	    << "mg.addMaterialProperty(\"YoungModulus1\",*PROPS);\n"
 	    << "mg.addMaterialProperty(\"YoungModulus2\",*(PROPS+1));\n"
 	    << "mg.addMaterialProperty(\"YoungModulus3\",*(PROPS+2));\n"
@@ -1082,7 +1082,7 @@ namespace mfront{
 	    << "mg.addMaterialProperty(\"ThermalExpansion2\",*(PROPS+8));\n"
 	    << "mg.addMaterialProperty(\"ThermalExpansion3\",*(PROPS+9));\n"
 	    << "mg_mpoffset = 10u;\n"
-	    << "} else if(*NDI==-2){\n"
+	    << "} else if(*NDI==-2){\n" // plane stress
 	    << "mg.addMaterialProperty(\"YoungModulus1\",*PROPS);\n"
 	    << "mg.addMaterialProperty(\"YoungModulus2\",*(PROPS+1));\n"
 	    << "mg.addMaterialProperty(\"PoissonRatio12\",*(PROPS+2));\n"
@@ -1096,7 +1096,7 @@ namespace mfront{
 	    << "mg.addMaterialProperty(\"ThermalExpansion1\",*(PROPS+10));\n"
 	    << "mg.addMaterialProperty(\"ThermalExpansion2\",*(PROPS+11));\n"
 	    << "mg.addMaterialProperty(\"PlateWidth\",*(PROPS+12));\n"
-	    << "mg_mpoffset = 13u;\n"
+	    << "mg_mpoffset = 13u;\n"// axisymmetrical, plane strain, generalized plane strain
 	    << "} else if((*NDI==0)||(*NDI==-1)||(*NDI==-3)){\n"
 	    << "mg.addMaterialProperty(\"YoungModulus1\",*PROPS);\n"
 	    << "mg.addMaterialProperty(\"YoungModulus2\",*(PROPS+1));\n"
@@ -1112,7 +1112,7 @@ namespace mfront{
 	    << "mg.addMaterialProperty(\"ThermalExpansion2\",*(PROPS+11));\n"
 	    << "mg.addMaterialProperty(\"ThermalExpansion3\",*(PROPS+12));\n"
 	    << "mg_mpoffset = 13u;\n"
-	    << "} else if(*NDI==2){\n"
+	    << "} else if(*NDI==2){\n" // tridimensional
 	    << "mg.addMaterialProperty(\"YoungModulus1\",*PROPS);\n"
 	    << "mg.addMaterialProperty(\"YoungModulus2\",*(PROPS+1));\n"
 	    << "mg.addMaterialProperty(\"YoungModulus3\",*(PROPS+2));\n"

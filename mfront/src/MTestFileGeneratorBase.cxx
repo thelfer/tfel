@@ -180,6 +180,9 @@ namespace mfront{
     case ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN:
       os << "AxisymmetricalGeneralisedPlaneStrain";
       break;
+    case ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRESS:
+      os << "AxisymmetricalGeneralisedPlaneStress";
+      break;
     case ModellingHypothesis::AXISYMMETRICAL:
       os << "Axisymmetrical";
       break;
@@ -323,7 +326,8 @@ namespace mfront{
       msg += "undefined modelling hypothesis";
       throw(runtime_error(msg));
     }
-    if(this->hypothesis==ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN){
+    if((this->hypothesis==ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN)||
+       (this->hypothesis==ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRESS)){
       copy(aexts,aexts+3u,back_inserter(n));
     } else if(this->hypothesis==ModellingHypothesis::AXISYMMETRICAL){
       copy(aexts,aexts+5u,back_inserter(n));
@@ -355,7 +359,8 @@ namespace mfront{
       msg += "undefined modelling hypothesis";
       throw(runtime_error(msg));
     }
-    if(this->hypothesis==ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN){
+    if((this->hypothesis==ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN)||
+       (this->hypothesis==ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRESS)){
       copy(aexts,aexts+3u,back_inserter(n));
     } else if(this->hypothesis==ModellingHypothesis::AXISYMMETRICAL){
       copy(aexts,aexts+4u,back_inserter(n));
@@ -387,9 +392,9 @@ namespace mfront{
       msg += "undefined modelling hypothesis";
       throw(runtime_error(msg));
     }
-    if(this->hypothesis==ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN){
-      copy(aexts,aexts+3u,
-	   back_inserter(n));
+    if((this->hypothesis==ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN)||
+       (this->hypothesis==ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRESS)){
+      copy(aexts,aexts+3u,back_inserter(n));
     } else if(this->hypothesis==ModellingHypothesis::AXISYMMETRICAL){
       copy(aexts,aexts+4u,
 	   back_inserter(n));
@@ -419,7 +424,8 @@ namespace mfront{
       msg += "undefined modelling hypothesis";
       throw(runtime_error(msg));
     }
-    if(this->hypothesis==ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN){
+    if((this->hypothesis==ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN)||
+       (this->hypothesis==ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRESS)){
       return 1u;
     } else if((this->hypothesis==ModellingHypothesis::AXISYMMETRICAL)||
 	      (this->hypothesis==ModellingHypothesis::PLANESTRESS)||
@@ -445,7 +451,8 @@ namespace mfront{
       msg += "undefined modelling hypothesis";
       throw(runtime_error(msg));
     }
-    if(this->hypothesis==ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN){
+    if((this->hypothesis==ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN)||
+       (this->hypothesis==ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRESS)){
       return 3u;
     } else if((this->hypothesis==ModellingHypothesis::AXISYMMETRICAL)||
 	      (this->hypothesis==ModellingHypothesis::PLANESTRESS)||
@@ -471,7 +478,8 @@ namespace mfront{
       msg += "undefined modelling hypothesis";
       throw(runtime_error(msg));
     }
-    if(this->hypothesis==ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN){
+    if((this->hypothesis==ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN)||
+       (this->hypothesis==ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRESS)){
       return 3u;
     } else if((this->hypothesis==ModellingHypothesis::AXISYMMETRICAL)||
 	      (this->hypothesis==ModellingHypothesis::PLANESTRESS)||

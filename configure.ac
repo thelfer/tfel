@@ -300,6 +300,19 @@ then
     CHECK_ASTER_MACHINE_TYPE
 fi
 
+#cyrano
+AC_ARG_ENABLE([cyrano],
+               AC_HELP_STRING([--enable-cyrano],
+		   [build cyrano interface for mechanical behaviours]),
+	       [enable_cyrano=true],
+	       [enable_cyrano=false])
+AM_CONDITIONAL(HAVE_CYRANO,[test x"$enable_cyrano" = "xtrue"])
+if(test "x$enable_cyrano" = "xtrue")
+then
+    AC_DEFINE(HAVE_CYRANO)
+    CHECK_CYRANO_MACHINE_TYPE
+fi
+
 AC_ARG_ENABLE([tests],
                AC_HELP_STRING([--enable-tests], [compile tests file]),
 [case "${enableval}" in
@@ -436,6 +449,7 @@ AC_OUTPUT([debug.sh
            mfront/tests/behaviours/castem/castemelasticity14.mtest
            mfront/tests/behaviours/castem/castemelasticity15.mtest
            mfront/tests/behaviours/castem/castemelasticity16.mtest
+           mfront/tests/behaviours/castem/castemelasticity17.mtest
            mfront/tests/behaviours/castem/castemddif2.mtest
            mfront/tests/behaviours/castem/castemddif2-2.mtest
            mfront/tests/behaviours/castem/castemddif2-3.mtest
@@ -570,6 +584,7 @@ AC_OUTPUT([debug.sh
            mfront/tests/behaviours/castem/castemincompressibleplanestressgornetdesmoratbehaviourbiaxialtesting.mtest
            mfront/tests/behaviours/castem/castemimplicitsimomieheelastoplasticity.mtest
            mfront/tests/behaviours/castem/dgibi/Makefile
+           mfront/tests/behaviours/castem2/Makefile   
            mfront/tests/behaviours/castem2/castem2burger.mtest
            mfront/tests/behaviours/castem2/castem2chaboche2.mtest
            mfront/tests/behaviours/castem2/castem2chaboche.mtest
@@ -612,7 +627,9 @@ AC_OUTPUT([debug.sh
            mfront/tests/behaviours/castem2/castem2strainhardeningcreep.mtest
            mfront/tests/behaviours/castem2/castem2stressrelaxation.mtest
            mfront/tests/behaviours/castem2/castem2viscoplasisocin.mtest   
-           mfront/tests/behaviours/castem2/Makefile   
+           mfront/tests/behaviours/cyrano/Makefile
+           mfront/tests/behaviours/cyrano/cyranoelasticity.mtest
+           mfront/tests/behaviours/cyrano/cyranoelasticity10.mtest
 	   mfront/Examples/Makefile
 	   tfel-doc/Makefile
 	   tfel-doc/src/Makefile

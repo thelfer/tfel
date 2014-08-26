@@ -30,6 +30,7 @@ namespace tfel
        */
       enum Hypothesis{
 	AXISYMMETRICALGENERALISEDPLANESTRAIN,
+	AXISYMMETRICALGENERALISEDPLANESTRESS,
 	AXISYMMETRICAL,
 	PLANESTRESS,
 	PLANESTRAIN,
@@ -55,10 +56,21 @@ namespace tfel
 
     /*!
      * partial specialisation for
-     * ModellingHypothesis::AXISYMETRICALGENERALISEDPLANESTRAIN
+     * ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN
      */
     template<>
     struct ModellingHypothesisToSpaceDimension<ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN>
+    {
+      //! the return of the metafunction
+      static const unsigned short value = 1u;
+    };
+
+    /*!
+     * partial specialisation for
+     * ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRESS
+     */
+    template<>
+    struct ModellingHypothesisToSpaceDimension<ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRESS>
     {
       //! the return of the metafunction
       static const unsigned short value = 1u;

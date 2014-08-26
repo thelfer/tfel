@@ -33,6 +33,8 @@ namespace mfront{
     using namespace tfel::material;
     if(h=="AxisymmetricalGeneralisedPlaneStrain"){
       return ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN;
+    } else if(h=="AxisymmetricalGeneralisedPlaneStress"){
+      return ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRESS;
     } else if(h=="Axisymmetrical"){
       return ModellingHypothesis::AXISYMMETRICAL;
     } else if(h=="PlaneStress"){
@@ -3290,6 +3292,7 @@ namespace mfront{
     StaticVarContainer::const_iterator p;
     vector<string>::const_iterator pm;
     m.push_back("tfel::material::ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN");
+    m.push_back("tfel::material::ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRESS");
     m.push_back("tfel::material::ModellingHypothesis::AXISYMMETRICAL");
     m.push_back("tfel::material::ModellingHypothesis::PLANESTRESS");
     m.push_back("tfel::material::ModellingHypothesis::PLANESTRAIN");

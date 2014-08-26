@@ -35,6 +35,10 @@
 #include"MFront/MFrontUMATInterface.hxx"
 #endif
 
+#ifdef HAVE_CYRANO
+#include"MFront/MFrontCyranoInterface.hxx"
+#endif
+
 #ifdef HAVE_ASTER
 #include"MFront/MFrontAsterInterface.hxx"
 #endif
@@ -83,6 +87,10 @@ namespace mfront
     MFrontLawInterfaceProxy<MFrontCastemLawInterface> castemLawProxy(castemProxyNames,castemProxyNames+3);
     MFrontBehaviourInterfaceProxy<MFrontUMATInterface> umatProxy;
 #endif /* HAVE_CASTEM */
+
+#ifdef HAVE_CYRANO
+    MFrontBehaviourInterfaceProxy<MFrontCyranoInterface> cyranoProxy;
+#endif /* HAVE_CYRANO */
 
 #ifdef HAVE_ASTER
     MFrontBehaviourInterfaceProxy<MFrontAsterInterface> asterProxy;

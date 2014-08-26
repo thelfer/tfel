@@ -53,7 +53,7 @@ nobase_include_HEADERS= MFront/MFrontConfig.hxx                       \
 			MFront/VariableModifier.ixx                   \
 			MFront/WordAnalyser.hxx                       \
 			MFront/WordAnalyser.ixx                       \
-	 	        MFront/MFrontUMATInterfaceBase.hxx            \
+			MFront/MFrontUMATInterfaceBase.hxx            \
 			MFront/MTestFileGeneratorBase.hxx             \
 			MFront/UMATSmallStrainMTestFileGenerator.hxx  \
 			MFront/UMATFiniteStrainMTestFileGenerator.hxx
@@ -95,6 +95,7 @@ nobase_include_HEADERS += MFront/MTestTypes.hxx	                         \
 			  MFront/MTestUmatCohesiveZoneModelBehaviour.hxx \
 			  MFront/MTestUmatNormaliseTangentOperator.hxx   \
 			  MFront/MTestAsterSmallStrainBehaviour.hxx      \
+			  MFront/MTestCyranoBehaviour.hxx                \
 			  MFront/MTestEvolution.hxx                      \
 			  MFront/MTestCastemEvolution.hxx                \
 			  MFront/MTestFunctionEvolution.hxx              \
@@ -130,8 +131,30 @@ nobase_include_HEADERS += MFront/UMAT/UMATException.hxx                     \
 			  MFront/UMAT/UMATConfig.hxx
 endif
 
+if HAVE_CYRANO
+
+nobase_include_HEADERS += MFront/Cyrano/Cyrano.hxx 				\
+			  MFront/Cyrano/CyranoTraits.hxx 			\
+			  MFront/Cyrano/CyranoConfig.hxx 			\
+			  MFront/Cyrano/CyranoException.hxx 			\
+			  MFront/Cyrano/CyranoInterface.hxx 			\
+			  MFront/Cyrano/CyranoInterfaceDispatch.hxx 		\
+			  MFront/Cyrano/CyranoInterfaceBase.hxx 		\
+			  MFront/Cyrano/CyranoBehaviourHandler.hxx 		\
+			  MFront/Cyrano/CyranoIsotropicBehaviourHandler.hxx 	\
+			  MFront/Cyrano/CyranoOrthotropicBehaviourHandler.hxx 	\
+			  MFront/Cyrano/CyranoGenericPlaneStressHandler.hxx 	\
+			  MFront/Cyrano/CyranoOutOfBoundsPolicy.hxx 		\
+			  MFront/Cyrano/CyranoOrthotropicBehaviour.hxx 		\
+			  MFront/Cyrano/CyranoComputeStiffnessOperator.hxx 	\
+			  MFront/Cyrano/CyranoGetModellingHypothesis.hxx 	\
+			  MFront/Cyrano/CyranoComputeThermalExpansionTensor.hxx \
+			  MFront/Cyrano/CyranoTangentOperator.hxx               \
+			  MFront/MFrontCyranoInterface.hxx
+
+endif
+
 if HAVE_ASTER
-nobase_include_HEADERS += MFront/MFrontAsterInterface.hxx
 nobase_include_HEADERS += MFront/Aster/Aster.hxx                              \
 			  MFront/Aster/AsterConfig.hxx                        \
 			  MFront/Aster/AsterTraits.hxx                        \
@@ -145,8 +168,8 @@ nobase_include_HEADERS += MFront/Aster/Aster.hxx                              \
 			  MFront/Aster/AsterOrthotropicBehaviour.hxx          \
 			  MFront/Aster/AsterComputeStiffnessOperator.hxx      \
 			  MFront/Aster/AsterComputeThermalExpansionTensor.hxx \
-			  MFront/Aster/AsterTangentOperator.hxx
+			  MFront/Aster/AsterTangentOperator.hxx               \
+			  MFront/MFrontAsterInterface.hxx
 endif
-
 
 EXTRA_DIST = CMakeLists.txt

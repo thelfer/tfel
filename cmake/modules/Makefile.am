@@ -7,6 +7,7 @@ EXTRA_DIST = autotools.cmake             \
 	     aster.cmake                 \
 	     castem.cmake                \
 	     castem-unix-type.cmake      \
+	     cyrano.cmake                \
 	     common-compiler-flags.cmake \
 	     gnu-fortran-compiler.cmake  \
 	     tfel.cmake

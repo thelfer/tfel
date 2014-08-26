@@ -53,6 +53,15 @@ set(TFELMTest_LDADD
     ${TFELMTest_LDADD})
 endif(HAVE_ASTER)
 
+if(HAVE_CYRANO)
+set(TFELMTest_SOURCES
+    MTestCyranoBehaviour.cxx
+    ${TFELMTest_SOURCES})
+set(TFELMTest_LDADD
+    CyranoInterface
+    ${TFELMTest_LDADD})
+endif(HAVE_CYRANO)
+
 tfel_library(TFELMTest ${TFELMTest_SOURCES})
 target_link_libraries(TFELMTest ${TFELMTest_LDADD})
 

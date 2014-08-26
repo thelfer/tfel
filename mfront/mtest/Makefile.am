@@ -50,4 +50,9 @@ libTFELMTest_la_SOURCES += MTestAsterSmallStrainBehaviour.cxx
 libTFELMTest_la_LIBADD  += -L$(top_builddir)/mfront/src -lAsterInterface
 endif
 
+if HAVE_CYRANO
+libTFELMTest_la_SOURCES += MTestCyranoBehaviour.cxx
+libTFELMTest_la_LIBADD  += -L$(top_builddir)/mfront/src -lCyranoInterface
+endif
+
 EXTRA_DIST=CMakeLists.txt

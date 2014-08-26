@@ -5,6 +5,7 @@
  * \brief  4 dec. 2013
  */
 
+@UseCastemAccelerationAlgorithm true;
 @Behaviour<umat> '@MFrontCastemBehavioursBuildPath@' 'umatelasticity_malls';
 @MaterialProperty<constant> 'YoungModulus'     215.e9;
 @MaterialProperty<constant> 'PoissonRatio'       0.3;

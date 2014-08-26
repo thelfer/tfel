@@ -73,8 +73,9 @@ namespace tfel{
       }
 
       /*!
-       * find the real roots of a cubic polynomial
+       * find the real roots of a cubic polynomial by Cardan's method
        * \return the number of real roots.
+       * a3 X^{3}+a2 X^{2}+a1 X^{1}+a0 = 0
        * \param[out] x1 : first  root
        * \param[out] x2 : second root
        * \param[out] x3 : third  root
@@ -120,11 +121,50 @@ namespace tfel{
 	  return 0u;
 	}
       
+	// normalisation des coefficients pour se ramener à une équation de la forme
+	// X^3+A*X+B*X+C=0
 	T tmp   = T(1)/a3;
 	T tmp2  = a2*tmp;
 	T tmp3  = C_1_3*tmp2;
+
+	// mise sous forme réduite (élimination du terme quadratique)
+	// X^{3}+pX+q=0
 	const T p = tmp*(a1-tmp3*a2);
-	const T q  = tmp*(a0-tmp3*a1+C_2_27*tmp2*tmp2*a2);
+	const T q = tmp*(a0-tmp3*a1+C_2_27*tmp2*tmp2*a2);
+	
+	// traitement des cas particuliers
+	if(std::abs(p)<prec){
+	  const T cbrt_q = CubicRoots::cbrt(q);
+	  if(std::abs(cbrt_q)<prec){
+	    x1 = x2 = x3 = -tmp3;
+	    return 3u;
+	  } else if(q>0){
+	    x1 = -tmp3+cbrt_q;
+	    x2 = -tmp3+0.5*cbrt_q;
+	    x3 = -tmp3+0.5*cbrt_q;
+	    return 1u;
+	  } else {
+	    x3 = -tmp3+cbrt_q;
+	    x1 = -tmp3+0.5*cbrt_q;
+	    x2 = -tmp3+0.5*cbrt_q;
+	    return 1u;
+	  }
+	}
+	if(std::abs(q)<prec){
+	  if(p>0){
+	    x1 = -tmp3;
+	    x2 = -tmp3;
+	    x3 = -tmp3;
+	    return 1u;
+	  } else {
+	    const T sqrt_p = std::sqrt(-p);
+	    x2 = -tmp3+sqrt_p;
+	    x1 = -tmp3;
+	    x3 = -tmp3-sqrt_p;
+	    return 3u;
+	  }
+	}
+
 	T delta = -T(4)*p*p*p-T(27)*q*q;
 
 	if(delta<0){

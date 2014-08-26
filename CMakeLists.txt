@@ -71,6 +71,15 @@ if(enable-aster)
   include(cmake/modules/aster.cmake)
 endif(enable-aster)
 
+#cyrano
+option(enable-cyrano "build cyrano interface for mechanical behaviours" OFF)
+if(enable-cyrano)
+  message(STATUS "cyrano support enabled")
+  set(HAVE_CYRANO ON)
+  add_definitions("-DHAVE_CYRANO=1")
+  include(cmake/modules/cyrano.cmake)
+endif(enable-cyrano)
+
 #castem
 include(cmake/modules/castem-unix-type.cmake)
 option(local-castem-header    "use a local version of castem.h"  OFF)

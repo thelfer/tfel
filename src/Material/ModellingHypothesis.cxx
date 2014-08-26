@@ -19,13 +19,14 @@ namespace tfel
     ModellingHypothesis::getModellingHypotheses(void)
     {
       using namespace std;
-      static const Hypothesis h[6u] = {AXISYMMETRICALGENERALISEDPLANESTRAIN,
+      static const Hypothesis h[7u] = {AXISYMMETRICALGENERALISEDPLANESTRAIN,
+				       AXISYMMETRICALGENERALISEDPLANESTRESS,
 				       AXISYMMETRICAL,
 				       PLANESTRESS,
 				       PLANESTRAIN,
 				       GENERALISEDPLANESTRAIN,
 				       TRIDIMENSIONAL};
-      static vector<Hypothesis> hypotheses(h,h+6u);
+      static vector<Hypothesis> hypotheses(h,h+7u);
       return hypotheses;
     } // end of ModellingHypothesis::getModellingHypotheses
 
@@ -35,6 +36,8 @@ namespace tfel
       using namespace std;
       if(h==AXISYMMETRICALGENERALISEDPLANESTRAIN){
 	return "AXISYMMETRICALGENERALISEDPLANESTRAIN";
+      } else if(h==AXISYMMETRICALGENERALISEDPLANESTRESS){
+	return "AXISYMMETRICALGENERALISEDPLANESTRESS";
       } else if (h==AXISYMMETRICAL){
 	return "AXISYMMETRICAL";
       } else if (h==PLANESTRESS){
