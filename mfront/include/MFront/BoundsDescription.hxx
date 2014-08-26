@@ -16,23 +16,30 @@
 
 namespace mfront{
 
+  /*!
+   * a structure in charge of describing bounds
+   */
   struct TFEL_VISIBILITY_EXPORT BoundsDescription
   {
+    
     enum Category{
       Physical,
       Standard
     };
+
     enum BoundsType{
       Lower,
       Upper,
       LowerAndUpper
     };
+
+
     enum VarCategory{
-      Coef,
-      LocalVar,
-      StateVar,
-      ExternalStateVar,
-      ExternalStateVarII
+      MaterialProperty,
+      LocalVariable,
+      StateVariable,
+      ExternalStateVariable,
+      ExternalStateVariableII
     };
 
     BoundsDescription();
@@ -40,14 +47,21 @@ namespace mfront{
     void
     writeBoundsChecks(std::ofstream&) const;
 
+    // name of the variable on which the bounds acts
+    std::string    name;
+    // component. If component is egal to -1, bounds acts of all
+    // components
+    short component;
+    // name of the variable and the component name
     std::string    varName;
+    
     SupportedTypes::TypeFlag varType;
     Category       category;
     VarCategory    varCategory;
-    BoundsType     boundsType;
-    long double lowerBound;
-    long double upperBound;
     unsigned short arraySize;
+    BoundsType     boundsType;
+    long double    lowerBound;
+    long double    upperBound;
     unsigned short lineNumber;
 
   protected:

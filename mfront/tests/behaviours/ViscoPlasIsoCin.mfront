@@ -43,6 +43,8 @@ alpha.setGlossaryName("ThermalExpansion");
 @MaterialProperty real n2;
 
 @StateVariable real    p;
+@PhysicalBounds p in [0:*[;
+
 @StateVariable Stensor X1;
 @StateVariable Stensor X2;
 

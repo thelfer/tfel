@@ -6,6 +6,8 @@
  * \date   21 sep 2008
  */
 
+#include<cmath>
+#include<limits>
 #include<cstdlib>
 #include<sstream>
 
@@ -2058,8 +2060,8 @@ namespace mfront{
       this->behaviourFile << "this->zeros   -= (1-this->relaxationCoefficient) * (this->zeros-this->zeros_1);\n";
       this->behaviourFile << "}\n";
     }
-#warning "check increment physical bounds"
-#warning "check state variables physical bounds"
+    this->writeLimitsOnIncrementValuesBasedOnStateVariablesPhysicalBounds();
+    this->writeLimitsOnIncrementValuesBasedOnStateVariablesIncrementsPhysicalBounds();
     this->behaviourFile << "}\n";
     this->behaviourFile << "}\n";
     this->behaviourFile << "}\n";
@@ -2076,6 +2078,7 @@ namespace mfront{
       this->behaviourFile << "return MechanicalBehaviour<hypothesis,Type,false>::FAILURE;\n";
     }
     this->behaviourFile << "}\n";
+    this->writeLimitsOnIncrementValuesBasedOnStateVariablesPhysicalBounds();
     if(this->debugMode){
       this->behaviourFile << "cout << \"" << this->className
 			  << "::integrate() : convergence after \" "
@@ -2102,7 +2105,7 @@ namespace mfront{
     this->behaviourFile << "this->updateAuxiliaryStateVars();\n";
     for(p3  = this->mb.getBounds().begin();
 	p3 != this->mb.getBounds().end();++p3){
-      if(p3->varCategory==BoundsDescription::StateVar){
+      if(p3->varCategory==BoundsDescription::StateVariable){
 	p3->writeBoundsChecks(this->behaviourFile);
       }
     }
@@ -2315,6 +2318,313 @@ namespace mfront{
     this->behaviourFile << "return true;\n";
     this->behaviourFile << "}\n\n";
   } // end of MFrontImplicitParserBase::writeBehaviourIntegrator
+
+  void
+  MFrontImplicitParserBase::writeLimitsOnIncrementValuesBasedOnStateVariablesPhysicalBounds(void)
+  {
+    using namespace std;
+    SupportedTypes::TypeSize n;
+    VarContainer::const_iterator p;
+    vector<BoundsDescription>::const_iterator p2;
+    for(p=this->mb.getStateVariables().begin();p!=this->mb.getStateVariables().end();++p){
+      for(p2  = this->mb.getBounds().begin();p2 != this->mb.getBounds().end();++p2){
+	if(p2->name==p->name){
+	  // treating lower bounds
+	  if(((p2->boundsType==BoundsDescription::Lower)||(p2->boundsType==BoundsDescription::LowerAndUpper))&&
+	     (p2->category==BoundsDescription::Physical)){
+	    if((this->getTypeFlag(p->type)==SupportedTypes::Scalar)&&(p->arraySize==1u)){
+	      if(this->nf.find(p->name)!=this->nf.end()){
+		this->behaviourFile << "if(this->" << p->name << "+ " << nf[p->name ]<< "*(this->zeros[" << n << "]) <" << p2->lowerBound << "){\n";
+	      } else {
+		this->behaviourFile << "if(this->" << p->name << "+this->zeros[" << n << "]<" << p2->lowerBound << "){\n";
+	      }
+	      if(abs(p2->lowerBound)>numeric_limits<long double>::min()){
+		if(this->nf.find(p->name)!=this->nf.end()){
+		  this->behaviourFile << "this->zeros[" << n << "] = (" << p2->lowerBound << "- (this->" << p->name << "))/(" << nf[p->name ]<< ");\n";
+		} else {
+		  this->behaviourFile << "this->zeros[" << n << "] = " << p2->lowerBound << "- (this->" << p->name << ");\n";
+		}
+	      } else {
+		if(this->nf.find(p->name)!=this->nf.end()){
+		  this->behaviourFile << "this->zeros[" << n << "] = - (this->" << p->name << ")/(" << nf[p->name] << ");\n";
+		} else {
+		  this->behaviourFile << "this->zeros[" << n << "] = - (this->" << p->name << ");\n";
+		}
+	      }
+	      this->behaviourFile << "}\n";
+	    }
+	    if((this->getTypeFlag(p->type)==SupportedTypes::Scalar)&&(p->arraySize!=1u)){
+	      this->behaviourFile << "for(unsigned short idx=0;idx!=" << p->arraySize << ";++idx){" << endl;
+	      if(this->nf.find(p->name)!=this->nf.end()){
+		this->behaviourFile << "if(this->" << p->name << "[idx]+(" << nf[p->name] << ")*(this->zeros[" << n << "+idx])<" << p2->lowerBound << "){\n";
+	      } else {
+		this->behaviourFile << "if(this->" << p->name << "[idx]+this->zeros[" << n << "+idx]<" << p2->lowerBound << "){\n";
+	      }
+	      if(abs(p2->lowerBound)>numeric_limits<long double>::min()){
+		if(this->nf.find(p->name)!=this->nf.end()){
+		  this->behaviourFile << "this->zeros[" << n << "+idx] = (" << p2->lowerBound << "- (this->" << p->name << "[idx]))/(" << nf[p->name] <<");\n";
+		} else {
+		  this->behaviourFile << "this->zeros[" << n << "+idx] = " << p2->lowerBound << "- (this->" << p->name << "[idx]);\n";
+		}
+	      } else {
+		if(this->nf.find(p->name)!=this->nf.end()){
+		  this->behaviourFile << "this->zeros[" << n << "+idx] = - (this->" << p->name << "[idx])/(" << nf[p->name] << ");\n";
+		} else {
+		  this->behaviourFile << "this->zeros[" << n << "+idx] = - (this->" << p->name << "[idx]);\n";
+		}
+	      }
+	      this->behaviourFile << "}\n";
+	      this->behaviourFile << "}\n";
+	    }
+	    if((this->getTypeFlag(p->type)!=SupportedTypes::Scalar)&&(p->arraySize==1u)){
+	      if(p2->component==-1){
+		SupportedTypes::TypeSize n2 =  this->getTypeSize(p->type,1u);
+		this->behaviourFile << "for(unsigned short idx=0;idx!=" << n2 << ";++idx){" << endl;
+		if(this->nf.find(p->name)!=this->nf.end()){
+		  this->behaviourFile << "if(this->" << p->name << "[idx]+(" << nf[p->name] << ")*(this->zeros[" << n << "+idx])<" << p2->lowerBound << "){\n";
+		} else {
+		  this->behaviourFile << "if(this->" << p->name << "[idx]+this->zeros[" << n << "+idx]<" << p2->lowerBound << "){\n";
+		}
+		if(abs(p2->lowerBound)>numeric_limits<long double>::min()){
+		  if(this->nf.find(p->name)!=this->nf.end()){
+		    this->behaviourFile << "this->zeros[" << n << "+idx] = (" << p2->lowerBound << "- (this->" << p->name << "[idx]))/(" << nf[p->name] << ");\n";
+		  } else {
+		    this->behaviourFile << "this->zeros[" << n << "+idx] = " << p2->lowerBound << "- (this->" << p->name << "[idx]);\n";
+		  }
+		} else {
+		  if(this->nf.find(p->name)!=this->nf.end()){
+		    this->behaviourFile << "this->zeros[" << n << "+idx] = - (this->" << p->name << "[idx])/(" << nf[p->name] << ");\n";
+		  } else {
+		    this->behaviourFile << "this->zeros[" << n << "+idx] = - (this->" << p->name << "[idx]);\n";
+		  }
+		}
+		this->behaviourFile << "}\n";
+		this->behaviourFile << "}\n";
+	      } else {
+		if(this->nf.find(p->name)!=this->nf.end()){
+		  this->behaviourFile << "if(this->" << p->name << "[" << p2->component << "]+(" << nf[p->name] << ")*(this->zeros[" << n << "+" << p2->component << "])<" << p2->lowerBound << "){\n";
+		} else {
+		  this->behaviourFile << "if(this->" << p->name << "[" << p2->component << "]+this->zeros[" << n << "+" << p2->component << "]<" << p2->lowerBound << "){\n";
+		}
+		if(abs(p2->lowerBound)>numeric_limits<long double>::min()){
+		  if(this->nf.find(p->name)!=this->nf.end()){
+		    this->behaviourFile << "this->zeros[" << n << "+" << p2->component << "] = (" << p2->lowerBound << "- (this->" << p->name << "[" << p2->component << "]))/(" << nf[p->name] << ");\n";
+		  } else {
+		    this->behaviourFile << "this->zeros[" << n << "+" << p2->component << "] = " << p2->lowerBound << "- (this->" << p->name << "[" << p2->component << "]);\n";
+		  }
+		} else {
+		  if(this->nf.find(p->name)!=this->nf.end()){
+		    this->behaviourFile << "this->zeros[" << n << "+" << p2->component << "] = - (this->" << p->name << "[" << p2->component << "])/(" << nf[p->name] << ");\n";
+		  } else {
+		    this->behaviourFile << "this->zeros[" << n << "+" << p2->component << "] = - (this->" << p->name << "[" << p2->component << "]);\n";
+		  }
+		}
+		this->behaviourFile << "}\n";
+	      }
+	    }
+	    if((this->getTypeFlag(p->type)!=SupportedTypes::Scalar)&&(p->arraySize!=1u)){
+	      SupportedTypes::TypeSize n2 =  this->getTypeSize(p->type,1u);
+	      this->behaviourFile << "for(unsigned short idx=0;idx!=" << p->arraySize << ";++idx){" << endl;
+	      if(p2->component==-1){
+		this->behaviourFile << "for(unsigned short idx2=0;idx2!=" << n2 << ";++idx2){" << endl;
+		if(this->nf.find(p->name)!=this->nf.end()){
+		  this->behaviourFile << "if(this->" << p->name << "[idx][idx2]+(" << nf[p->name] << ")*(this->zeros[" << n << "+" << n2 << "*idx+idx2])<" << p2->lowerBound << "){\n";
+		} else {
+		  this->behaviourFile << "if(this->" << p->name << "[idx][idx2]+this->zeros[" << n << "+" << n2 << "*idx+idx2]<" << p2->lowerBound << "){\n";
+		}
+		if(abs(p2->lowerBound)>numeric_limits<long double>::min()){
+		  if(this->nf.find(p->name)!=this->nf.end()){
+		    this->behaviourFile << "this->zeros[" << n << "+" << n2 << "*idx+idx2] = (" << p2->lowerBound << "- (this->" << p->name << "[idx][idx2]))/(" << nf[p->name] << ");\n";
+		  } else {
+		    this->behaviourFile << "this->zeros[" << n << "+" << n2 << "*idx+idx2] = " << p2->lowerBound << "- (this->" << p->name << "[idx][idx2]);\n";
+		  }
+		} else {
+		  if(this->nf.find(p->name)!=this->nf.end()){
+		    this->behaviourFile << "this->zeros[" << n << "+" << n2 << "*idx+idx2] = - (this->" << p->name << "[idx][idx2])/(" << nf[p->name] << ");\n";
+		  } else {
+		    this->behaviourFile << "this->zeros[" << n << "+" << n2 << "*idx+idx2] = - (this->" << p->name << "[idx][idx2]);\n";
+		  }
+		}
+		this->behaviourFile << "}\n";
+		this->behaviourFile << "}\n";
+	      } else {
+		if(this->nf.find(p->name)!=this->nf.end()){
+		  this->behaviourFile << "if(this->" << p->name << "[idx][" << p2->component << "]+(" << nf[p->name] << ")*(this->zeros[" << n << "+" << n2 << "*idx+" << p2->component << "])<" << p2->lowerBound << "){\n";
+		} else {
+		  this->behaviourFile << "if(this->" << p->name << "[idx][" << p2->component << "]+this->zeros[" << n << "+" << n2 << "*idx+" << p2->component << "]<" << p2->lowerBound << "){\n";
+		}
+		if(abs(p2->lowerBound)>numeric_limits<long double>::min()){
+		  if(this->nf.find(p->name)!=this->nf.end()){
+		    this->behaviourFile << "this->zeros[" << n << "+" << n2 << "*idx+" << p2->component << "] = (" << p2->lowerBound << "- (this->" << p->name << "[idx][" << p2->component << "]))/(" << nf[p->name] << ");\n";
+		  } else {
+		    this->behaviourFile << "this->zeros[" << n << "+" << n2 << "*idx+" << p2->component << "] = " << p2->lowerBound << "- (this->" << p->name << "[idx][" << p2->component << "]);\n";
+		  }
+		} else {
+		  if(this->nf.find(p->name)!=this->nf.end()){
+		    this->behaviourFile << "this->zeros[" << n << "+" << n2 << "*idx+" << p2->component << "] = - (this->" << p->name << "[idx][" << p2->component << "])/(" << nf[p->name] << ");\n";
+		  } else {
+		    this->behaviourFile << "this->zeros[" << n << "+" << n2 << "*idx+" << p2->component << "] = - (this->" << p->name << "[idx][" << p2->component << "]);\n";
+		  }
+		}
+		this->behaviourFile << "}\n";
+	      }
+	      this->behaviourFile << "}\n";
+	    }
+	  }
+	  // treating upper bounds
+	  if(((p2->boundsType==BoundsDescription::Upper)||(p2->boundsType==BoundsDescription::LowerAndUpper))&&
+	     (p2->category==BoundsDescription::Physical)){
+	    if((this->getTypeFlag(p->type)==SupportedTypes::Scalar)&&(p->arraySize==1u)){
+	      if(this->nf.find(p->name)!=this->nf.end()){
+		this->behaviourFile << "if(this->" << p->name << "+ " << nf[p->name] << "*(this->zeros[" << n << "]) >" << p2->upperBound << "){\n";
+	      } else {
+		this->behaviourFile << "if(this->" << p->name << "+this->zeros[" << n << "]>" << p2->upperBound << "){\n";
+	      }
+	      if(abs(p2->upperBound)>numeric_limits<long double>::min()){
+		if(this->nf.find(p->name)!=this->nf.end()){
+		  this->behaviourFile << "this->zeros[" << n << "] = (" << p2->upperBound << "- (this->" << p->name << "))/(" << nf[p->name] << ");\n";
+		} else {
+		  this->behaviourFile << "this->zeros[" << n << "] = " << p2->upperBound << "- (this->" << p->name << ");\n";
+		}
+	      } else {
+		if(this->nf.find(p->name)!=this->nf.end()){
+		  this->behaviourFile << "this->zeros[" << n << "] = - (this->" << p->name << ")/(" << nf[p->name] << ");\n";
+		} else {
+		  this->behaviourFile << "this->zeros[" << n << "] = - (this->" << p->name << ");\n";
+		}
+	      }
+	      this->behaviourFile << "}\n";
+	    }
+	    if((this->getTypeFlag(p->type)==SupportedTypes::Scalar)&&(p->arraySize!=1u)){
+	      this->behaviourFile << "for(unsigned short idx=0;idx!=" << p->arraySize << ";++idx){" << endl;
+	      if(this->nf.find(p->name)!=this->nf.end()){
+		this->behaviourFile << "if(this->" << p->name << "[idx]+(" << nf[p->name] << ")*(this->zeros[" << n << "+idx])>" << p2->upperBound << "){\n";
+	      } else {
+		this->behaviourFile << "if(this->" << p->name << "[idx]+this->zeros[" << n << "+idx]>" << p2->upperBound << "){\n";
+	      }
+	      if(abs(p2->upperBound)>numeric_limits<long double>::min()){
+		if(this->nf.find(p->name)!=this->nf.end()){
+		  this->behaviourFile << "this->zeros[" << n << "+idx] = (" << p2->upperBound << "- (this->" << p->name << "[idx]))/(" << nf[p->name] <<");\n";
+		} else {
+		  this->behaviourFile << "this->zeros[" << n << "+idx] = " << p2->upperBound << "- (this->" << p->name << "[idx]);\n";
+		}
+	      } else {
+		if(this->nf.find(p->name)!=this->nf.end()){
+		  this->behaviourFile << "this->zeros[" << n << "+idx] = - (this->" << p->name << "[idx])/(" << nf[p->name] << ");\n";
+		} else {
+		  this->behaviourFile << "this->zeros[" << n << "+idx] = - (this->" << p->name << "[idx]);\n";
+		}
+	      }
+	      this->behaviourFile << "}\n";
+	      this->behaviourFile << "}\n";
+	    }
+	    if((this->getTypeFlag(p->type)!=SupportedTypes::Scalar)&&(p->arraySize==1u)){
+	      if(p2->component==-1){
+		SupportedTypes::TypeSize n2 =  this->getTypeSize(p->type,1u);
+		this->behaviourFile << "for(unsigned short idx=0;idx!=" << n2 << ";++idx){" << endl;
+		if(this->nf.find(p->name)!=this->nf.end()){
+		  this->behaviourFile << "if(this->" << p->name << "[idx]+(" << nf[p->name] << ")*(this->zeros[" << n << "+idx])>" << p2->upperBound << "){\n";
+		} else {
+		  this->behaviourFile << "if(this->" << p->name << "[idx]+this->zeros[" << n << "+idx]>" << p2->upperBound << "){\n";
+		}
+		if(abs(p2->upperBound)>numeric_limits<long double>::min()){
+		  if(this->nf.find(p->name)!=this->nf.end()){
+		    this->behaviourFile << "this->zeros[" << n << "+idx] = (" << p2->upperBound << "- (this->" << p->name << "[idx]))/(" << nf[p->name] << ");\n";
+		  } else {
+		    this->behaviourFile << "this->zeros[" << n << "+idx] = " << p2->upperBound << "- (this->" << p->name << "[idx]);\n";
+		  }
+		} else {
+		  if(this->nf.find(p->name)!=this->nf.end()){
+		    this->behaviourFile << "this->zeros[" << n << "+idx] = - (this->" << p->name << "[idx])/(" << nf[p->name] << ");\n";
+		  } else {
+		    this->behaviourFile << "this->zeros[" << n << "+idx] = - (this->" << p->name << "[idx]);\n";
+		  }
+		}
+		this->behaviourFile << "}\n";
+		this->behaviourFile << "}\n";
+	      } else {
+		if(this->nf.find(p->name)!=this->nf.end()){
+		  this->behaviourFile << "if(this->" << p->name << "[" << p2->component << "]+(" << nf[p->name] << ")*(this->zeros[" << n << "+" << p2->component << "])>" << p2->upperBound << "){\n";
+		} else {
+		  this->behaviourFile << "if(this->" << p->name << "[" << p2->component << "]+this->zeros[" << n << "+" << p2->component << "]>" << p2->upperBound << "){\n";
+		}
+		if(abs(p2->upperBound)>numeric_limits<long double>::min()){
+		  if(this->nf.find(p->name)!=this->nf.end()){
+		    this->behaviourFile << "this->zeros[" << n << "+" << p2->component << "] = (" << p2->upperBound << "- (this->" << p->name << "[" << p2->component << "]))/(" << nf[p->name] << ");\n";
+		  } else {
+		    this->behaviourFile << "this->zeros[" << n << "+" << p2->component << "] = " << p2->upperBound << "- (this->" << p->name << "[" << p2->component << "]);\n";
+		  }
+		} else {
+		  if(this->nf.find(p->name)!=this->nf.end()){
+		    this->behaviourFile << "this->zeros[" << n << "+" << p2->component << "] = - (this->" << p->name << "[" << p2->component << "])/(" << nf[p->name] << ");\n";
+		  } else {
+		    this->behaviourFile << "this->zeros[" << n << "+" << p2->component << "] = - (this->" << p->name << "[" << p2->component << "]);\n";
+		  }
+		}
+		this->behaviourFile << "}\n";
+	      }
+	    }
+	    if((this->getTypeFlag(p->type)!=SupportedTypes::Scalar)&&(p->arraySize!=1u)){
+	      SupportedTypes::TypeSize n2 =  this->getTypeSize(p->type,1u);
+	      this->behaviourFile << "for(unsigned short idx=0;idx!=" << p->arraySize << ";++idx){" << endl;
+	      if(p2->component==-1){
+		this->behaviourFile << "for(unsigned short idx2=0;idx2!=" << n2 << ";++idx2){" << endl;
+		if(this->nf.find(p->name)!=this->nf.end()){
+		  this->behaviourFile << "if(this->" << p->name << "[idx][idx2]+(" << nf[p->name] << ")*(this->zeros[" << n << "+" << n2 << "*idx+idx2])>" << p2->upperBound << "){\n";
+		} else {
+		  this->behaviourFile << "if(this->" << p->name << "[idx][idx2]+this->zeros[" << n << "+" << n2 << "*idx+idx2]>" << p2->upperBound << "){\n";
+		}
+		if(abs(p2->upperBound)>numeric_limits<long double>::min()){
+		  if(this->nf.find(p->name)!=this->nf.end()){
+		    this->behaviourFile << "this->zeros[" << n << "+" << n2 << "*idx+idx2] = (" << p2->upperBound << "- (this->" << p->name << "[idx][idx2]))/(" << nf[p->name] << ");\n";
+		  } else {
+		    this->behaviourFile << "this->zeros[" << n << "+" << n2 << "*idx+idx2] = " << p2->upperBound << "- (this->" << p->name << "[idx][idx2]);\n";
+		  }
+		} else {
+		  if(this->nf.find(p->name)!=this->nf.end()){
+		    this->behaviourFile << "this->zeros[" << n << "+" << n2 << "*idx+idx2] = - (this->" << p->name << "[idx][idx2])/(" << nf[p->name] << ");\n";
+		  } else {
+		    this->behaviourFile << "this->zeros[" << n << "+" << n2 << "*idx+idx2] = - (this->" << p->name << "[idx][idx2]);\n";
+		  }
+		}
+		this->behaviourFile << "}\n";
+		this->behaviourFile << "}\n";
+	      } else {
+		if(this->nf.find(p->name)!=this->nf.end()){
+		  this->behaviourFile << "if(this->" << p->name << "[idx][" << p2->component << "]+(" << nf[p->name] << ")*(this->zeros[" << n << "+" << n2 << "*idx+" << p2->component << "])>" << p2->upperBound << "){\n";
+		} else {
+		  this->behaviourFile << "if(this->" << p->name << "[idx][" << p2->component << "]+this->zeros[" << n << "+" << n2 << "*idx+" << p2->component << "]>" << p2->upperBound << "){\n";
+		}
+		if(abs(p2->upperBound)>numeric_limits<long double>::min()){
+		  if(this->nf.find(p->name)!=this->nf.end()){
+		    this->behaviourFile << "this->zeros[" << n << "+" << n2 << "*idx+" << p2->component << "] = (" << p2->upperBound << "- (this->" << p->name << "[idx][" << p2->component << "]))/(" << nf[p->name] << ");\n";
+		  } else {
+		    this->behaviourFile << "this->zeros[" << n << "+" << n2 << "*idx+" << p2->component << "] = " << p2->upperBound << "- (this->" << p->name << "[idx][" << p2->component << "]);\n";
+		  }
+		} else {
+		  if(this->nf.find(p->name)!=this->nf.end()){
+		    this->behaviourFile << "this->zeros[" << n << "+" << n2 << "*idx+" << p2->component << "] = - (this->" << p->name << "[idx][" << p2->component << "])/(" << nf[p->name] << ");\n";
+		  } else {
+		    this->behaviourFile << "this->zeros[" << n << "+" << n2 << "*idx+" << p2->component << "] = - (this->" << p->name << "[idx][" << p2->component << "]);\n";
+		  }
+		}
+		this->behaviourFile << "}\n";
+	      }
+	      this->behaviourFile << "}\n";
+	    }
+	  }
+	}
+      }
+      n += this->getTypeSize(p->type,p->arraySize);
+    }
+  } // end of MFrontImplicitParserBase::writeLimitsOnIncrementValuesBasedOnStateVariablesPhysicalBounds
+
+  void
+  MFrontImplicitParserBase::writeLimitsOnIncrementValuesBasedOnStateVariablesIncrementsPhysicalBounds(void)
+  {
+    
+
+  } // end of MFrontImplicitParserBase::writeLimitsOnIncrementValuesBasedOnStateVariablesIncrementsPhysicalBounds
 
   void
   MFrontImplicitParserBase::writePowellDogLegStep(const std::string& B,

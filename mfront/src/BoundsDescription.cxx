@@ -43,7 +43,7 @@ namespace mfront{
     using namespace std;
     if(this->category==Standard){
       if(this->boundsType==Lower){
-	if(this->varCategory==ExternalStateVarII){
+	if(this->varCategory==ExternalStateVariableII){
 	  file << "BoundsCheck<N>::lowerBoundCheck(\""
 	       << n << "0\",this->" << n << "0,"
 	       << "static_cast<real>(" << this->lowerBound << "),this->policy);\n";
@@ -54,7 +54,7 @@ namespace mfront{
 	  file << "BoundsCheck<N>::lowerBoundCheck(\""
 	       << n << "\",this->" << n << ","
 	       << "static_cast<real>(" << this->lowerBound << "),this->policy);\n";
-	  if(this->varCategory==ExternalStateVar){
+	  if(this->varCategory==ExternalStateVariable){
 	    file << "BoundsCheck<N>::lowerBoundCheck(\""
 		 << n << "+d" << n << "\",this->" 
 		 << n << "+this->d" << n << ","
@@ -62,7 +62,7 @@ namespace mfront{
 	  }
 	}
       } else if(this->boundsType==Upper){
-	if(this->varCategory==ExternalStateVarII){
+	if(this->varCategory==ExternalStateVariableII){
 	  file << "BoundsCheck<N>::upperBoundCheck(\""
 	       << n << "0\",this->" << n << "0,"
 	       << "static_cast<real>(" << this->upperBound << "),this->policy);\n";
@@ -73,7 +73,7 @@ namespace mfront{
 	  file << "BoundsCheck<N>::upperBoundCheck(\""
 	       << n << "\",this->" << n << ","
 	     << "static_cast<real>(" << this->upperBound << "),this->policy);\n";
-	  if(this->varCategory==ExternalStateVar){
+	  if(this->varCategory==ExternalStateVariable){
 	    file << "BoundsCheck<N>::upperBoundCheck(\""
 		 << n << "+d" << n << "\",this->" 
 		 << n << "+this->d" << n << ","
@@ -81,7 +81,7 @@ namespace mfront{
 	  }
 	}
       } else if(this->boundsType==LowerAndUpper){
-	if(this->varCategory==ExternalStateVarII){
+	if(this->varCategory==ExternalStateVariableII){
 	  file << "BoundsCheck<N>::lowerAndUpperBoundCheck(\""
 	       << n << "0\",this->" << n << "0,"
 	       << "static_cast<real>("   << this->lowerBound << "),"
@@ -95,7 +95,7 @@ namespace mfront{
 	       << n << "\",this->" << n    << ","
 	       << "static_cast<real>("   << this->lowerBound << "),"
 	       << "static_cast<real>("   << this->upperBound << "),this->policy);\n";
-	  if(this->varCategory==ExternalStateVar){
+	  if(this->varCategory==ExternalStateVariable){
 	    file << "BoundsCheck<N>::lowerAndUpperBoundsChecks(\""
 		 << n << "+d" << n << "\",this->" 
 		 << n << "+this->d" << n << ","
@@ -106,7 +106,7 @@ namespace mfront{
       }
     } else if(this->category==Physical){
       if(this->boundsType==Lower){
-	if(this->varCategory==ExternalStateVarII){
+	if(this->varCategory==ExternalStateVariableII){
 	  file << "BoundsCheck<N>::lowerBoundCheck(\""
 	       << n << "0\",this->" << n << "0,"
 	       << "static_cast<real>(" << this->lowerBound << "));\n";
@@ -117,7 +117,7 @@ namespace mfront{
 	  file << "BoundsCheck<N>::lowerBoundCheck(\""
 	       << n << "\",this->" << n << ","
 	       << "static_cast<real>(" << this->lowerBound << "));\n";
-	  if(this->varCategory==ExternalStateVar){
+	  if(this->varCategory==ExternalStateVariable){
 	    file << "BoundsCheck<N>::lowerBoundCheck(\""
 		 << n << "+d" << n << "\",this->" 
 		 << n << "+this->d" << n << ","
@@ -125,7 +125,7 @@ namespace mfront{
 	  }
 	}
       } else if(this->boundsType==Upper){
-	if(this->varCategory==ExternalStateVarII){
+	if(this->varCategory==ExternalStateVariableII){
 	  file << "BoundsCheck<N>::upperBoundCheck(\""
 	       << n << "0\",this->" << n << "0,"
 	       << "static_cast<real>(" << this->upperBound << "));\n";
@@ -136,7 +136,7 @@ namespace mfront{
 	  file << "BoundsCheck<N>::upperBoundCheck(\""
 	       << n << "\",this->" << n << ","
 	       << "static_cast<real>(" << this->upperBound << "));\n";
-	  if(this->varCategory==ExternalStateVar){
+	  if(this->varCategory==ExternalStateVariable){
 	    file << "BoundsCheck<N>::upperBoundCheck(\""
 		 << n << "+d" << n << "\",this->" 
 		 << n << "+this->d" << n << ","
@@ -144,7 +144,7 @@ namespace mfront{
 	  }
 	}
       } else if(this->boundsType==LowerAndUpper){
-	if(this->varCategory==ExternalStateVarII){
+	if(this->varCategory==ExternalStateVariableII){
 	  file << "BoundsCheck<N>::lowerAndUpperBoundCheck(\""
 	       << n << "0\",this->" << n << "0,"
 	       << "static_cast<real>("   << this->lowerBound << "),"
@@ -158,7 +158,7 @@ namespace mfront{
 	       << n << "\",this->" << n    << ","
 	       << "static_cast<real>("   << this->lowerBound << "),"
 	       << "static_cast<real>("   << this->upperBound << "));\n";
-	  if(this->varCategory==ExternalStateVar){
+	  if(this->varCategory==ExternalStateVariable){
 	    file << "BoundsCheck<N>::lowerAndUpperBoundsChecks(\""
 		 << n << "+d" << n << "\",this->" 
 		 << n << "+this->d" << n << ","

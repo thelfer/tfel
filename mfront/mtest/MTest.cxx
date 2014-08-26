@@ -1835,6 +1835,7 @@ namespace mfront
 	  } else {
 	    ostream& log = getLogStream();
 	    if((iter>=3)&&
+	       (ne  >100*numeric_limits<real>::min())&&
 	       (nep >100*numeric_limits<real>::min())&&
 	       (nep2>100*numeric_limits<real>::min())){
 	      log << "convergence, after " << iter << " iterations, "

@@ -156,6 +156,11 @@ namespace mfront
      */
     void handleStrainEpsilon(MTest&,TokensContainer::const_iterator&);
     /*!
+     * handle the @DeformationGradientEpsilon keyword
+     * \param[in,out] p : position in the input file
+     */
+    void handleDeformationGradientEpsilon(MTest&,TokensContainer::const_iterator&);
+    /*!
      * handle the @OpeningDisplacementEpsilon keyword
      * \param[in,out] p : position in the input file
      */

@@ -813,8 +813,10 @@ namespace mfront{
     this->checkNotEndOfFile("MFrontBehaviourParserCommon::treatBounds");
 
     boundsDescription.lineNumber = this->current->line;
-    boundsDescription.varName = this->current->value;
-    
+    boundsDescription.name       = this->current->value;
+    boundsDescription.varName    = this->current->value;
+    boundsDescription.component  = -1;
+
     found = false;
     boundsDescription.arraySize = 1u;
     for(p3=this->mb.getMainVariables().begin();
@@ -823,30 +825,30 @@ namespace mfront{
       if(boundsDescription.varName==p3->first.name){
 	found=true;
 	if(p3->first.increment_known){
-	  boundsDescription.varCategory = BoundsDescription::ExternalStateVar;
+	  boundsDescription.varCategory = BoundsDescription::ExternalStateVariable;
 	} else {
-	  boundsDescription.varCategory = BoundsDescription::ExternalStateVarII;
+	  boundsDescription.varCategory = BoundsDescription::ExternalStateVariableII;
 	}
 	boundsDescription.varType     = this->getTypeFlag(p3->first.type);
       }
       // check if the associated thermodynamic force match
       if(boundsDescription.varName==p3->second.name){
 	found=true;
-	boundsDescription.varCategory = BoundsDescription::StateVar;
+	boundsDescription.varCategory = BoundsDescription::StateVariable;
 	boundsDescription.varType     = this->getTypeFlag(p3->second.type);
       }
     }
     // temperature
     if(boundsDescription.varName=="T"){
       found=true;
-      boundsDescription.varCategory = BoundsDescription::StateVar;
+      boundsDescription.varCategory = BoundsDescription::StateVariable;
       boundsDescription.varType     = Scalar;
     }
     for(p   = this->mb.getMaterialProperties().begin();
 	(p != this->mb.getMaterialProperties().end())&&(!found);++p){
       if(p->name==boundsDescription.varName){
 	found=true;
-	boundsDescription.varCategory = BoundsDescription::Coef;
+	boundsDescription.varCategory = BoundsDescription::MaterialProperty;
 	boundsDescription.varType     = this->getTypeFlag(p->type);
 	boundsDescription.arraySize   = p->arraySize;
       }
@@ -855,7 +857,7 @@ namespace mfront{
 	(p != this->mb.getLocalVariables().end())&&(!found);++p){
       if(p->name==boundsDescription.varName){
 	found=true;
-	boundsDescription.varCategory = BoundsDescription::LocalVar;
+	boundsDescription.varCategory = BoundsDescription::LocalVariable;
 	boundsDescription.varType     = this->getTypeFlag(p->type);
 	boundsDescription.arraySize   = p->arraySize;
       }
@@ -864,7 +866,7 @@ namespace mfront{
 	(p != this->mb.getStateVariables().end())&&(!found);++p){
       if(p->name==boundsDescription.varName){
 	found=true;
-	boundsDescription.varCategory = BoundsDescription::StateVar;
+	boundsDescription.varCategory = BoundsDescription::StateVariable;
 	boundsDescription.varType     = this->getTypeFlag(p->type);
 	boundsDescription.arraySize   = p->arraySize;
       }
@@ -873,7 +875,7 @@ namespace mfront{
 	(p != this->mb.getAuxiliaryStateVariables().end())&&(!found);++p){
       if(p->name==boundsDescription.varName){
 	found=true;
-	boundsDescription.varCategory = BoundsDescription::StateVar;
+	boundsDescription.varCategory = BoundsDescription::StateVariable;
 	boundsDescription.varType     = this->getTypeFlag(p->type);
 	boundsDescription.arraySize   = p->arraySize;
       }
@@ -882,7 +884,7 @@ namespace mfront{
 	(p != this->mb.getExternalStateVariables().end())&&(!found);++p){
       if(p->name==boundsDescription.varName){
 	found=true;
-	boundsDescription.varCategory = BoundsDescription::ExternalStateVar;
+	boundsDescription.varCategory = BoundsDescription::ExternalStateVariable;
 	boundsDescription.varType     = this->getTypeFlag(p->type);
 	boundsDescription.arraySize   = p->arraySize;
       }
@@ -905,6 +907,7 @@ namespace mfront{
 	  this->throwRuntimeError("MFrontBehaviourParserCommon::treatBounds",
 				  "could not read component number for variable '"+boundsDescription.varName+"'");
 	}
+	boundsDescription.component=component;
 	boundsDescription.varType=Scalar;
 	boundsDescription.varName+="(";
 	boundsDescription.varName+=toString(component);
@@ -1921,7 +1924,7 @@ namespace mfront{
     this->behaviourFile << "this->updateAuxiliaryStateVars();\n";
     for(p  = this->mb.getBounds().begin();
 	p != this->mb.getBounds().end();++p){
-      if(p->varCategory==BoundsDescription::StateVar){
+      if(p->varCategory==BoundsDescription::StateVariable){
 	p->writeBoundsChecks(this->behaviourFile);
       }
     }

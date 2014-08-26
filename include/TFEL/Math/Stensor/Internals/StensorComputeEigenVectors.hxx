@@ -149,9 +149,20 @@ namespace tfel{
 	  TFEL_STATIC_ASSERT(tfel::typetraits::IsReal<T>::cond);
 
 	  static const T M_sqrt2 = std::sqrt(static_cast<T>(2.)); 
-
 	  T s0 = s_0 - vp;
 	  T s1 = s_1 - vp;
+	  if(std::abs(s3)<std::max(std::min(s_0,s_1)*std::numeric_limits<T>::epsilon(),
+				   10*std::numeric_limits<T>::min())){
+	    if(std::abs(s0)>std::abs(s1)){
+	      x = T(0);
+	      y = T(1);
+	      return true;
+	    } else {
+	      x = T(1);
+	      y = T(0);
+	      return true;
+	    }
+	  }
 	  if(std::abs(s0)>std::abs(s1)){
 	    if(std::abs(s0)<100*std::numeric_limits<T>::min()){
 	      TFEL_UTILITIES_INFO("s0 is too small");
@@ -408,7 +419,7 @@ namespace tfel{
 	template<typename T>
 	static bool computeEigenVector(const T* const src,const T vp, T& v0, T&v1, T&v2)
 	{
-	  using namespace std;
+	  using namespace tfel::math;
 	  TFEL_STATIC_ASSERT(tfel::typetraits::IsFundamentalNumericType<T>::cond);
 	  TFEL_STATIC_ASSERT(tfel::typetraits::IsReal<T>::cond);
 	  // Assume that vp is a single eigenvalue
@@ -422,13 +433,45 @@ namespace tfel{
 	  const T det3=a*d-b*b;
 	  const T det2=a*f-c*c;
 	  const T det1=d*f-e*e;
-	  if ((abs(det3)>=abs(det1))&&
-	      (abs(det3)>=abs(det2))){
+	  if((std::abs(det1)<std::max(10*std::abs(vp)*std::numeric_limits<T>::epsilon(),
+				      10*std::numeric_limits<T>::min()))&&
+	     (std::abs(det2)<std::max(10*std::abs(vp)*std::numeric_limits<T>::epsilon(),
+				      10*std::numeric_limits<T>::min()))&&
+	     (std::abs(det3)<std::max(10*std::abs(vp)*std::numeric_limits<T>::epsilon(),
+				      10*std::numeric_limits<T>::min()))){
+	    // This means that vp is *not* single
+	    tvector<3u,T> v;
+	    tmatrix<3u,3u,T> m;
+	    if(!StensorComputeEigenVectors_<3u>::exe(src,v,m,true)){
+	      v0 = v1 = v2 = T(0);	      
+	      return false;
+	    }
+	    const T d0 = std::abs(v[0]-vp);
+	    const T d1 = std::abs(v[1]-vp);
+	    const T d2 = std::abs(v[2]-vp);
+	    if((d0<d1)&&(d0<d2)){
+	      v0 = m(0,0);
+	      v1 = m(1,0);
+	      v2 = m(2,0);
+	      return true;
+	    } else if((d1<d2)&&(d1<d0)){
+	      v0 = m(0,1);
+	      v1 = m(1,1);
+	      v2 = m(2,1);
+	      return true;
+	    }
+	    v0 = m(0,2);
+	    v1 = m(1,2);
+	    v2 = m(2,2);
+	    return true;
+	  }
+	  if ((std::abs(det3)>=std::abs(det1))&&
+	      (std::abs(det3)>=std::abs(det2))){
 	    v0=(b*e-c*d)/det3;
 	    v1=(b*c-a*e)/det3;
 	    v2=T(1);
-	  } else if((abs(det1)>=abs(det2))&&
-		    (abs(det1)>=abs(det3))){
+	  } else if((std::abs(det1)>=std::abs(det2))&&
+		    (std::abs(det1)>=std::abs(det3))){
 	    v0=T(1);
 	    v1=(c*e-b*f)/det1;
 	    v2=(b*e-c*d)/det1;

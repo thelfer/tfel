@@ -188,7 +188,7 @@ namespace mfront{
     this->behaviourFile << "this->updateAuxiliaryStateVars();\n";
     for(p  = this->mb.getBounds().begin();
 	p != this->mb.getBounds().end();++p){
-      if(p->varCategory==BoundsDescription::StateVar){
+      if(p->varCategory==BoundsDescription::StateVariable){
 	p->writeBoundsChecks(this->behaviourFile);
       }
     }

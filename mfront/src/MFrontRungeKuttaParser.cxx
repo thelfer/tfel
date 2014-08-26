@@ -2062,7 +2062,7 @@ namespace mfront{
     }
     for(p2  = this->mb.getBounds().begin();
 	p2 != this->mb.getBounds().end();++p2){
-      if(p2->varCategory==BoundsDescription::StateVar){
+      if(p2->varCategory==BoundsDescription::StateVariable){
 	p2->writeBoundsChecks(this->behaviourFile);
       }
     }

@@ -90,6 +90,10 @@ namespace mfront{
 
     virtual void writeLimitsOnIncrementValues(const std::string&);
 
+    virtual void writeLimitsOnIncrementValuesBasedOnStateVariablesPhysicalBounds(void);
+
+    virtual void writeLimitsOnIncrementValuesBasedOnStateVariablesIncrementsPhysicalBounds(void);
+
     /*!
      * write a step of the Powell dogleg method
      * \param[in] B  : name of the jacobian

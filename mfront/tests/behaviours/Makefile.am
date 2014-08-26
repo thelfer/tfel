@@ -68,6 +68,8 @@ tests_DATA = $(MFRONTS)
 
 EXTRA_DIST=CMakeLists.txt                                                 \
 	   $(MFRONTS)                                                     \
+           references/ddif2-uniaxialtesting.ref                           \
+           references/ddif2-biaxialtesting.ref                            \
            references/plasticity.ref                                      \
 	   references/elasticity15-aster.ref                              \
 	   references/mazars-aster.ref                                    \

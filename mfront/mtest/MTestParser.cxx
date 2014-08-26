@@ -191,6 +191,8 @@ namespace mfront
 			   &MTestParser::handleMaximumNumberOfSubSteps);
     this->registerCallBack("@StrainEpsilon",
 			   &MTestParser::handleStrainEpsilon);
+    this->registerCallBack("@DeformationGradientEpsilon",
+			   &MTestParser::handleDeformationGradientEpsilon);
     this->registerCallBack("@OpeningDisplacementEpsilon",
 			   &MTestParser::handleOpeningDisplacementEpsilon);
     this->registerCallBack("@DrivingVariableEpsilon",
@@ -744,6 +746,20 @@ namespace mfront
     }
     this->handleDrivingVariableEpsilon(t,p);
   }
+
+  void
+  MTestParser::handleDeformationGradientEpsilon(MTest& t,TokensContainer::const_iterator& p)
+  {
+    using namespace std;
+    using namespace tfel::material;
+    if(t.getBehaviourType()!=MechanicalBehaviourBase::FINITESTRAINSTANDARDBEHAVIOUR){
+      string msg("MTestParser::handleDeformationGradientEpsilon : "
+		 "the @DeformationGradientEpsilon keyword is only valid "
+		 "for finite strain behaviours");
+      throw(runtime_error(msg));
+    }
+    this->handleDrivingVariableEpsilon(t,p);
+  } // end of MTestParser::handleDeformationGradientEpsilon
 
   void
   MTestParser::handleOpeningDisplacementEpsilon(MTest& t,TokensContainer::const_iterator& p)
