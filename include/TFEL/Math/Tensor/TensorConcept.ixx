@@ -342,8 +342,8 @@ namespace tfel{
        (tfel::typetraits::IsFundamentalNumericType<typename TensorTraits<T2>::NumType>::cond)),
       stensor<1u,typename StensorTraits<T>::NumType>
       >::type
-    leftMultiplyByTensorAndRightMultiplyByTransposedTensor(const T&  p,
-						    const T2& F)
+    push_forward(const T&  p,
+		 const T2& F)
     {
       typedef typename StensorTraits<T>::NumType NumType;
       stensor<1u,NumType> s;
@@ -351,7 +351,7 @@ namespace tfel{
       s[1] = p[1]*F[1]*F[1];
       s[2] = p[2]*F[2]*F[2];
       return s;
-    } // end of leftMultiplyByTensorAndRightMultiplyByTransposedTensor
+    } // end of push_forward
 
     template<typename T,typename T2>
     TFEL_MATH_INLINE2 
@@ -363,8 +363,8 @@ namespace tfel{
        (tfel::typetraits::IsFundamentalNumericType<typename TensorTraits<T2>::NumType>::cond)),
       stensor<2u,typename StensorTraits<T>::NumType>
       >::type
-    leftMultiplyByTensorAndRightMultiplyByTransposedTensor(const T&  p,
-						    const T2& F)
+    push_forward(const T&  p,
+		 const T2& F)
     {
       typedef typename StensorTraits<T>::NumType NumType;
       typedef typename tfel::typetraits::BaseType<NumType>::type real;
@@ -375,7 +375,7 @@ namespace tfel{
       s[2] = p[2]*F[2]*F[2];
       s[3] = (p[3]*F[3]+cste*p[0]*F[0])*F[4]+cste*p[1]*F[1]*F[3]+p[3]*F[0]*F[1];
       return s;
-    } // end of leftMultiplyByTensorAndRightMultiplyByTransposedTensor
+    } // end of push_forward
 
     template<typename T,typename T2>
     TFEL_MATH_INLINE2 
@@ -387,8 +387,8 @@ namespace tfel{
        (tfel::typetraits::IsFundamentalNumericType<typename TensorTraits<T2>::NumType>::cond)),
       stensor<3u,typename StensorTraits<T>::NumType>
       >::type
-    leftMultiplyByTensorAndRightMultiplyByTransposedTensor(const T&  p,
-							   const T2& F)
+    push_forward(const T&  p,
+		 const T2& F)
     {
       typedef typename StensorTraits<T>::NumType NumType;
       typedef typename tfel::typetraits::BaseType<NumType>::type real;
@@ -401,7 +401,7 @@ namespace tfel{
       s[4] = (p[5]*F[5]+cste*p[1]*F[3]+p[3]*F[0])*F[8]+(p[4]*F[5]+p[3]*F[3]+cste*p[0]*F[0])*F[6]+cste*p[2]*F[2]*F[5]+p[5]*F[2]*F[3]+p[4]*F[0]*F[2];
       s[5] = (p[5]*F[7]+p[3]*F[4]+cste*p[1]*F[1])*F[8]+(p[4]*F[6]+cste*p[2]*F[2])*F[7]+(cste*p[0]*F[4]+p[3]*F[1])*F[6]+p[4]*F[2]*F[4]+p[5]*F[1]*F[2];
       return s;
-    } // end of leftMultiplyByTensorAndRightMultiplyByTransposedTensor
+    } // end of push_forward
 
     template<typename T,typename T2>
     typename tfel::meta::EnableIf<

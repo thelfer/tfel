@@ -13,5 +13,6 @@
 - algorithme de Powell
 - contrôle du pas de temps (non-radialité du chargement)
 - pour la génération de fichiers mtest, gérer les calculs MPI
+- implanter s|D avec s tenseur symétrique, D tenseur d'ordre 4
 
 - passage à C++ 11

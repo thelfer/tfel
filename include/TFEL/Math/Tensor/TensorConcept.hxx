@@ -271,8 +271,8 @@ namespace tfel{
        (tfel::typetraits::IsFundamentalNumericType<typename TensorTraits<T2>::NumType>::cond)),
       stensor<1u,typename StensorTraits<T>::NumType>
       >::type
-    leftMultiplyByTensorAndRightMultiplyByTransposedTensor(const T&,
-							   const T2&);
+    push_forward(const T&,
+		 const T2&);
 
     /*!
      * compute the product:
@@ -290,8 +290,8 @@ namespace tfel{
        (tfel::typetraits::IsFundamentalNumericType<typename TensorTraits<T2>::NumType>::cond)),
       stensor<2u,typename StensorTraits<T>::NumType>
       >::type
-    leftMultiplyByTensorAndRightMultiplyByTransposedTensor(const T&,
-							   const T2&);
+    push_forward(const T&,
+		 const T2&);
 
     /*!
      * compute the product:
@@ -309,8 +309,8 @@ namespace tfel{
        (tfel::typetraits::IsFundamentalNumericType<typename TensorTraits<T2>::NumType>::cond)),
       stensor<3u,typename StensorTraits<T>::NumType>
       >::type
-    leftMultiplyByTensorAndRightMultiplyByTransposedTensor(const T&,
-							   const T2&);
+    push_forward(const T&,
+		 const T2&);
 
     template<typename T,typename T2>
     TFEL_MATH_INLINE2 

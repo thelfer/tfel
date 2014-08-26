@@ -51,7 +51,5 @@ presentations-doc-pdf:
 
 EXTRA_DIST = bootstrap.sh   \
 	     CMakeLists.txt \
-	     LGPL.txt       \
-	     CeCILL-B.txt   \
 	     INSTALL        \
              INSTALL-cmake

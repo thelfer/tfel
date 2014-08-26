@@ -2,12 +2,10 @@
 /AUTHORS -text
 /CMakeLists.txt -text
 /COPYING -text
-/CeCILL-B.txt -text
 /ChangeLog -text
 /Doxyfile.in -text
 /INSTALL -text
 /INSTALL-cmake -text
-/LGPL.txt -text
 /Makefile.am -text
 /README -text
 /TODO -text
