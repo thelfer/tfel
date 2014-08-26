@@ -1653,10 +1653,10 @@ namespace mfront
 	    }
 	  }
 	}
-	// driving variables at the beginning of the time step
-	for(i=0;i!=ndv;++i){
-	  state.e0[i] = state.u0[i]-state.e_th0[i];
-	}
+      }
+      // driving variables at the beginning of the time step
+      for(i=0;i!=ndv;++i){
+	state.e0[i] = state.u0[i]-state.e_th0[i];
       }
       // resolution
       bool converged = false;
