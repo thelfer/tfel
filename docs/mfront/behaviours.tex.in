@@ -4004,7 +4004,8 @@ Ces différents termes se calculent ainsi~:
 \[
 \left\{
 \begin{aligned}
-  \deriv{f_{\tepsilonel}}{\Delta\,\tepsilonel} &= \tenseurq{I} \\
+  \deriv{f_{\tepsilonel}}{\Delta\,\tepsilonel} &= \tenseurq{I} -\Delta\,p\deriv{n}{\tsigma} \\
+  &= \tenseurq{I}-\Frac{2\,\mu\,\theta\,\Delta\,p}{\sigmaeq}\,\paren{\tenseurq{M}-\tenseur{n}\otimes\tenseur{n}} \\
   \deriv{f_{\tepsilonel}}{\Delta\,p} &= \tenseur{n} \\
   \deriv{f_{p}}{\Delta\,\tepsilonel} &= - A\,E\,\Delta\, t\,\paren{\sigmaH}^{E-1}\,\deriv{\sigmaH}{\Delta\,\tepsilonel} \\
   &= - A\,E\,\theta\,\Delta\, t\,\paren{\sigmaH}^{E-1}\,\tenseur{n}\,\colon\,\tenseurq{D} \\
