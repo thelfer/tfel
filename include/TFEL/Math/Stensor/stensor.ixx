@@ -150,7 +150,7 @@ namespace tfel{
       struct BuildStensorFromMatrix<1u>
       {
 	template<typename T,template<unsigned short,typename> class Storage,typename MatrixType>
-	TFEL_MATH_INLINE2 TFEL_VISIBILITY_LOCAL
+	static TFEL_MATH_INLINE2 TFEL_VISIBILITY_LOCAL
 	typename tfel::meta::EnableIf<
 	  tfel::typetraits::IsAssignableTo<typename MatrixTraits<MatrixType>::NumType,T>::cond,
 	  void>::type
@@ -166,7 +166,7 @@ namespace tfel{
       struct BuildStensorFromMatrix<2u>
       {
 	template<typename T,template<unsigned short,typename> class Storage,typename MatrixType>
-	TFEL_MATH_INLINE2 TFEL_VISIBILITY_LOCAL
+	static TFEL_MATH_INLINE2 TFEL_VISIBILITY_LOCAL
 	typename tfel::meta::EnableIf<
 	  tfel::typetraits::IsAssignableTo<typename MatrixTraits<MatrixType>::NumType,T>::cond,
 	  void>::type
@@ -186,7 +186,7 @@ namespace tfel{
       struct BuildStensorFromMatrix<3u>
       {
 	template<typename T,template<unsigned short,typename> class Storage,typename MatrixType>
-	TFEL_MATH_INLINE2 TFEL_VISIBILITY_LOCAL
+	static TFEL_MATH_INLINE2 TFEL_VISIBILITY_LOCAL
 	typename tfel::meta::EnableIf<
 	  tfel::typetraits::IsAssignableTo<typename MatrixTraits<MatrixType>::NumType,T>::cond,
 	  void>::type
