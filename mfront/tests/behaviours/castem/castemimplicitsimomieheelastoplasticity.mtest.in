@@ -18,9 +18,9 @@
 @MaterialProperty<constant> 'ET'  20e9;
 
 
-@ImposedDrivingVariable 'FRR' {0:1.,3600.:1.7};
-@ImposedDrivingVariable 'FRZ' 0.;
-@ImposedDrivingVariable 'FZR' 0.;
+@ImposedDeformationGradient 'FRR' {0:1.,3600.:1.7};
+@ImposedDeformationGradient 'FRZ' 0.;
+@ImposedDeformationGradient 'FZR' 0.;
 
 // Initial value of the elastic strain
 @InternalStateVariable 'be' {1.,1.,1.,0.};

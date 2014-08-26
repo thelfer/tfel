@@ -206,6 +206,7 @@ namespace mfront
     this->registerCallBack("@Strain",&MTestParser::handleStrain);
     this->registerCallBack("@OpeningDisplacement",&MTestParser::handleOpeningDisplacement);
     this->registerCallBack("@DrivingVariable",&MTestParser::handleDrivingVariable);
+    this->registerCallBack("@DeformationGradient",&MTestParser::handleDeformationGradient);
     this->registerCallBack("@Stress",&MTestParser::handleStress);
     this->registerCallBack("@CohesiveForce",&MTestParser::handleCohesiveForce);
     this->registerCallBack("@ThermodynamicForce",&MTestParser::handleThermodynamicForce);
@@ -221,6 +222,8 @@ namespace mfront
 			   &MTestParser::handleImposedStrain);
     this->registerCallBack("@ImposedOpeningDisplacement",
 			   &MTestParser::handleImposedOpeningDisplacement);
+    this->registerCallBack("@ImposedDeformationGradient",
+			   &MTestParser::handleImposedDeformationGradient);
     this->registerCallBack("@ImposedDrivingVariable",
 			   &MTestParser::handleImposedDrivingVariable);
     this->registerCallBack("@ImposedStress",
@@ -967,6 +970,20 @@ namespace mfront
   }
 
   void
+  MTestParser::handleImposedDeformationGradient(MTest& t,TokensContainer::const_iterator& p)
+  {
+    using namespace std;
+    using namespace tfel::material;
+    if(t.getBehaviourType()!=MechanicalBehaviourBase::FINITESTRAINSTANDARDBEHAVIOUR){
+      string msg("MTestParser::handleImposedDeformationGradient : "
+		 "the @ImposedDeformationGradient keyword is only valid "
+		 "for finite strain behaviours");
+      throw(runtime_error(msg));
+    }
+    this->handleImposedDrivingVariable(t,p);
+  }
+
+  void
   MTestParser::handleImposedOpeningDisplacement(MTest& t,TokensContainer::const_iterator& p)
   {
     using namespace std;
@@ -1098,6 +1115,20 @@ namespace mfront
       string msg("MTestParser::handleStrain : "
 		 "the @Strain keyword is only valid "
 		 "for small strain behaviours");
+      throw(runtime_error(msg));
+    }
+    this->handleDrivingVariable(t,p);
+  }
+
+  void
+  MTestParser::handleDeformationGradient(MTest& t,TokensContainer::const_iterator& p)
+  {
+    using namespace std;
+    using namespace tfel::material;
+    if(t.getBehaviour()->getBehaviourType()!=MechanicalBehaviourBase::FINITESTRAINSTANDARDBEHAVIOUR){
+      string msg("MTestParser::handleDeformationGradient : "
+		 "the @DeformationGradient keyword is only valid "
+		 "for finite strain behaviours");
       throw(runtime_error(msg));
     }
     this->handleDrivingVariable(t,p);

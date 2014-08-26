@@ -206,6 +206,11 @@ namespace mfront
      */
     void handleStrain(MTest&,TokensContainer::const_iterator&);
     /*!
+     * handle the @DeformationGradient keyword
+     * \param[in,out] p : position in the input file
+     */
+    void handleDeformationGradient(MTest&,TokensContainer::const_iterator&);
+    /*!
      * handle the @OpeningDisplacement keyword
      * \param[in,out] p : position in the input file
      */
@@ -270,6 +275,11 @@ namespace mfront
      * \param[in,out] p : position in the input file
      */
     void handleImposedStrain(MTest&,TokensContainer::const_iterator&);
+    /*!
+     * handle the @ImposedDeformationGradient keyword
+     * \param[in,out] p : position in the input file
+     */
+    void handleImposedDeformationGradient(MTest&,TokensContainer::const_iterator&);
     /*!
      * handle the @ImposedOpeningDisplacement keyword
      * \param[in,out] p : position in the input file
