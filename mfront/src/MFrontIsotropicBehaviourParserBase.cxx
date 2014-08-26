@@ -19,7 +19,6 @@ namespace mfront{
   {
     using namespace std;
     const Hypothesis h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
-    typedef map<string,string>::value_type MVType;
     this->reserveName("NewtonIntegration",false);
     // main variables
     this->registerVariable("eto",false);

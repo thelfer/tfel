@@ -224,7 +224,6 @@ namespace mfront{
 						       const MaterialPropertyDescription& a)
   {
     using namespace std;
-    typedef map<string,string>::value_type MVType;
     for(VariableDescriptionContainer::const_iterator p = a.inputs.begin();p!=a.inputs.end();++p){
       const VariableDescription& v = *p;
       if((a.glossaryNames.find(v.name)==a.glossaryNames.end())&&
@@ -274,7 +273,6 @@ namespace mfront{
     using namespace std;
     using tfel::utilities::shared_ptr;
     typedef MFrontBehaviourInterfaceFactory MBIF;
-    typedef map<string,double>::value_type MVType;
     if(getVerboseMode()>=VERBOSE_DEBUG){
       ostream& log = getLogStream();
       log << "MFrontBehaviourParserCommon::endsInputFileProcessing : begin" << endl;
@@ -697,7 +695,6 @@ namespace mfront{
   {
     using namespace std;
     using namespace tfel::utilities;
-    typedef map<string,double>::value_type MVType;
     const string& n = this->current->value;
     ++(this->current);
     this->checkNotEndOfFile("MFrontBehaviourParserCommon::treatParameterMethod");
@@ -744,7 +741,6 @@ namespace mfront{
   {
     using namespace std;
     using namespace tfel::utilities;
-    typedef map<string,string>::value_type MVType;
     map<string,string>::const_iterator p;
     const string& n = this->current->value;
     ++(this->current);

@@ -183,9 +183,6 @@ namespace mfront{
   void
   MFront::treatVerbose(void)
   {
-    typedef MFrontLawInterfaceFactory       MLIF;
-    typedef MFrontBehaviourInterfaceFactory MBIF;
-    typedef MFrontModelInterfaceFactory     MMIF;
     using namespace std;
     if(this->currentArgument->getOption().empty()){
       setVerboseMode(VERBOSE_LEVEL1);
@@ -216,9 +213,6 @@ namespace mfront{
   void
   MFront::treatDebug(void)
   {
-    typedef MFrontLawInterfaceFactory       MLIF;
-    typedef MFrontBehaviourInterfaceFactory MBIF;
-    typedef MFrontModelInterfaceFactory     MMIF;
     setDebugMode(true);
   }
 

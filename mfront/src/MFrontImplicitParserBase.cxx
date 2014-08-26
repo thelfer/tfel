@@ -177,7 +177,6 @@ namespace mfront{
 							    const std::string& n)
   {
     using namespace std;
-    typedef map<string,double>::value_type MVType;
     if((this->mb.isInternalStateVariableName(h,n))||
        ((n[0]=='f')&&(this->mb.isInternalStateVariableName(h,n.substr(1))))){
       if(this->current->value=="setNormalisationFactor"){
@@ -2712,8 +2711,6 @@ namespace mfront{
   {
     using namespace std;
     using namespace tfel::utilities;
-    typedef map<string,double>::value_type MVType;
-    typedef map<string,unsigned short>::value_type MVType2;
     typedef unsigned short ushort;
     MFrontBehaviourParserCommon::endsInputFileProcessing();
     // create the compute final stress code is necessary

@@ -18,9 +18,6 @@
 int main(void){
 
   using namespace tfel::math;
-  typedef vector<double> Vector;
-
   range<>::exe(12.,13.,5);
-
   return EXIT_SUCCESS;
 }

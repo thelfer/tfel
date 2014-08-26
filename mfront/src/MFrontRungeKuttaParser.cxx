@@ -484,7 +484,6 @@ namespace mfront{
   MFrontRungeKuttaParser::endsInputFileProcessing(void)
   {
     using namespace std;
-    typedef map<string,double>::value_type MVType;
     MFrontBehaviourParserCommon::endsInputFileProcessing();
     const Hypothesis h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
     map<DrivingVariable,

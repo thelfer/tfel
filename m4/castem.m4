@@ -21,74 +21,52 @@ CASTEM_OK=no
 if test "x$USE_CASTEM" == "xyes";
 then
   
+  AC_MSG_NOTICE("Seaching Cast3M version")
+
   DCHK=$CASTEM_ROOT
   
   if test -n $DCHK -o -d ${DCHK};
   then
     if [ test ! -e $CASTEM_ROOT/include/castem.h ];
-	then
+    then
 	CASTEM_OK=no
 	AC_MSG_ERROR(header castem.h not found in ${DCHK})
-	fi
+    fi
     CASTEM_OK=yes
+    # test de la version de Castem :
     #
-    # test de la version :
-    castem_version="undef"
-    castem2010=""
-    for f in `find ${DCHK} \( -type f -o -type l \) -name 'cast*10*'`
+    year=$(echo `date +%F` | cut -c1-4)   # date +%F is of form yyyy-mm-dd, ex: 2010-09-01
+    until=2006
+    CASTEM_VERSION="undef"
+    while [[ $year -ge $until ] && [ "x$CASTEM_VERSION" == "xundef" ]]
     do
-      castem2010=$f
+	AC_MSG_NOTICE("Looking for Cast3M $year")
+	subYear=$(echo $year | cut -c3-4)
+	castString="castem2*${subYear}*"
+	castem_version_name="castem20${subYear}"
+	CASTEM_VERSION_NAME=$(echo $castem_version_name | tr [:lower:] [:upper:])
+	eval $castem_version_name=
+	if test "x$CASTEM_VERSION" == "xundef" ; then
+            for aFileName in `find ${DCHK} \( -type f -o -type l \) -name "${castString}"`
+            do
+		eval $castem_version_name=${aFileName}
+            done
+	fi
+	eval $CASTEM_VERSION_NAME=${!castem_version_name}
+	if test -n "${!castem_version_name}"; then
+            AC_MSG_RESULT($CASTEM_VERSION_NAME: ${!CASTEM_VERSION_NAME} ....)
+            CASTEM_VERSION="${year}"
+            year=$until
+	fi
+	year=$((year-1))
     done
-    castem2009=""
-    for f in `find ${DCHK} \( -type f -o -type l \) -name 'cast*09*'`
-    do
-      castem2009=$f
-    done
-    castem2008=""
-    for f in `find ${DCHK} \( -type f -o -type l \) -name 'cast*08*'`
-    do
-      castem2008=$f
-    done
-    castem2007=""
-    for f in `find ${DCHK} \( -type f -o -type l \) -name 'cast*07*'`
-    do
-      castem2007=$f
-    done
-    castem2006=""
-    for f in `find ${DCHK} \( -type f -o -type l \) -name 'cast*06*'`
-    do
-      castem2006=$f
-    done
-    if test "x$castem2010" != "x" ; then
-      castem_version="V2010"
-      CASTEM_LIB="$CASTEM_LIB -lXext -ljpeg -lglut -lGLU -lGL -lpthread -ldl"
-    fi
-    if test "x$castem2009" != "x" ; then
-      castem_version="V2009"
-      CASTEM_LIB="$CASTEM_LIB -lXext -ljpeg -lglut -lGLU -lGL -lpthread -ldl"
-    fi
-    if test "x$castem2008" != "x" ; then
-      castem_version="V2008"
-      CASTEM_LIB="$CASTEM_LIB -lXext -ljpeg -lglut -lGLU -lGL -lpthread -ldl"
-    fi
-    if test "x$castem2007" != "x" ; then
-      castem_version="V2007"
-      CASTEM_LIB="$CASTEM_LIB -lXext -ljpeg -lglut -lGLU -lGL -lpthread -ldl"
-    fi
-    if test "x$castem2006" != "x" ; then
-      castem_version="V2006"
-      CASTEM_LIB="$CASTEM_LIB -lXext -ljpeg -lglut -lGLU -lGL -lpthread -ldl"
-    fi
-
-    if test "x$castem2010" == "x" -a "x$castem2009" == "x" -a "x$castem2008" == "x" -a "x$castem2007" == "x" -a "x$castem2006" == "x";
-     then
+    dnl Not found !
+    if test "x$CASTEM_VERSION" == "xundef" ; then
       CASTEM_OK=no
       AC_MSG_ERROR(No right version of castem found in ${DCHK})
     fi
   
-    AC_PATH_X
-  
-    AC_DEFINE_UNQUOTED(CASTEM_VERSION,"$castem_version")
+    AC_DEFINE_UNQUOTED(CASTEM_VERSION,"$CASTEM_VERSION")
     AC_SUBST(CASTEM_ROOT)
   else
     AC_MSG_ERROR(argument of --with_castem is invalid)
@@ -101,6 +79,7 @@ if test "x$CASTEM_OK" == "xyes";
 then
   AC_DEFINE(HAVE_CASTEM)
   AC_DEFINE_UNQUOTED(CASTEM_ROOT,"$CASTEM_ROOT")
+  AC_MSG_NOTICE("Found Cast3M version $CASTEM_VERSION in $CASTEM_ROOT")
 fi
 
 ])dnl
