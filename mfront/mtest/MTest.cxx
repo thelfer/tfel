@@ -1784,10 +1784,10 @@ namespace mfront
       unsigned short iter = 0;
       if(getVerboseMode()>=VERBOSE_LEVEL1){
 	ostream& log = getLogStream();
-	log << "resolution from " << ti << " to " << t+dt << endl;
+	log << "resolution from " << t << " to " << t+dt << endl;
       }
       if(this->residual){
-	this->residual << endl << "#resolution from " << ti << " to " << t+dt << endl;
+	this->residual << endl << "#resolution from " << t << " to " << t+dt << endl;
       }
       real ne  = 0.;  // norm of the increment of the driving variables
       real nep = 0.;  // norm of the increment of the driving variables at the
