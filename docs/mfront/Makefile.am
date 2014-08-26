@@ -1,5 +1,5 @@
 EXTRA_DIST=CMakeLists.txt                                \
-	   Bibliographie.bib			         \
+	   Images/FeFth.eps                              \
 	   Images/mfront-umat.hxx                        \
 	   Images/mfront-umat.tex                        \
 	   Images/mfront-umat2.tex                       \

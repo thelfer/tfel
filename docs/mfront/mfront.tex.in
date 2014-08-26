@@ -148,20 +148,20 @@
   Couplé à la base de données \sirius{}, \mfront{} vise à garantir une
   gestion pérenne, robuste, efficace et évolutive des connaissances
   matériau dans la plate-forme
-  \pleiades{}~\cite{michel09,helfer:opti:2011}. Il permet également à
+  \pleiades{}~\cite{michel_etude_2009,helfer_bilan_2011}. Il permet également à
   des utilisateurs non développeur d'écrire leurs propres
-  connaissances matériau~\cite{helfer10}.
+  connaissances matériau~\cite{helfer_ajout_2010}.
 
   Il s'agit d'un outil mature, qui se veut de qualité industrielle et
   qui intéresse fortement différents départements du
-  \cea{}~\cite{11:dec_semi,arrigo12:_notic_le2s} ainsi que ses
-  partenaires, Areva~\cite{olagnon13:_analy} et
-  ÉDF~\cite{proix:mfront:2013}.
+  \cea{}~\cite{helfer_presentation_2011,darrigo_notice_2012} ainsi que ses
+  partenaires, Areva~\cite{olagnon_analysis_2013} et
+  ÉDF~\cite{proix_integration_2013}.
 
   Nous décrivons dans cette note l'utilisation de \mfront{} et
   détaillons comment écrire des propriétés matériau et des
   modèles. Les lois de comportement mécaniques sont détaillées dans
-  une note à part~\cite{helfer:mfront:behaviours:2013}.
+  une note à part~\cite{helfer_generateur_2013}.
 }
 
 \makeindex{env}
@@ -183,11 +183,11 @@ traitent\footnote{Un guide de référence de la librairie \TFEL{} est
   particulier le guide d'installation de la librairie.}~:
 \begin{itemize}
 \item des lois de comportement
-  mécanique~\cite{helfer:mfront:behaviours:2013}~;
+  mécanique~\cite{helfer_generateur_2013}~;
 \item de l'interface {\tt umat} utilisée par le code aux éléments
-  finis \castem{}~\cite{helfer:umat:2013}~;
+  finis \castem{}~\cite{helfer_interface_2013}~;
 \item de l'interface utilisée par le code aux éléments finis
-  \aster{}~\cite{helfer:aster:2013}~;
+  \aster{}~\cite{helfer_interface_2013-1}~;
 \end{itemize}
 
 \mfront{} fait partie d'une librairie mathématique généraliste nommée
@@ -208,7 +208,7 @@ Développé dans le cadre de la plateforme \pleiades{} du \cea{},
 \mfront{} vise à garantir une gestion pérenne, robuste, efficace et
 évolutive (au sens du suivi des évolutions logicielles) des
 connaissances matériau et à faciliter leurs écritures par des
-utilisateurs non développeurs~\cite{michel09,helfer10}~:
+utilisateurs non développeurs~\cite{michel_etude_2009,helfer_bilan_2011}~:
 \begin{itemize}
 \item la pérennisation et le caractère évolutif des connaissances
   matériau est assuré par~:
@@ -230,8 +230,8 @@ utilisateurs non développeurs~\cite{michel09,helfer10}~:
         de l'interface est de l'ordre de l'heure~;
       \item toutes les lois de comportement mécanique écrites avec
         \mfront{} peuvent être utilisées ou dans le code aux éléments
-        finis \castem{}~\cite{12:castemcea} ou dans le code
-        \aster{}~\cite{aster:13}. Le support d'autres codes est
+        finis \castem{}~\cite{cea_site_2013} ou dans le code
+        \aster{}~\cite{edf_site_2013}. Le support d'autres codes est
         envisageable~;
       \item certains modèles utilisés dans \licos{} sont restés
         inchangés depuis leur écriture pour l'application \celaeno{}
@@ -247,7 +247,7 @@ utilisateurs non développeurs~\cite{michel09,helfer10}~:
     l'un des langages les plus utilisés au monde\footnote{Il s'agit du
       langage le plus utilisé si on considère le langage \texttt{C}
       comme un sous-ensemble du \cpp{}, et du troisième ou quatrième
-      langage si on les distingue~\cite{tiobe:13}.} et qui est
+      langage si on les distingue~\cite{software_programming_2013}.} et qui est
     particulièrement utilisé dans le monde scientifique~;
   \end{itemize}
 \item les performances, en particulier pour les lois de comportement
@@ -255,7 +255,7 @@ utilisateurs non développeurs~\cite{michel09,helfer10}~:
   \cpp{} qui permet d'utiliser des techniques de programmation
   extrêmement efficaces. Ces bonnes performances ont été constatées à
   plusieurs
-  reprises~\cite{michel09,helfer:opti:2011,olagnon13:_analy,proix:mfront:2013}~;
+  reprises~\cite{michel_etude_2009,helfer_bilan_2011,proix_integration_2013,olagnon_analysis_2013}~;
 \item la simplicité d'utilisation est liée à l'utilisation de la
   génération de code, qui permet de masquer la plupart des détails
   informatiques. Dans le cas des lois de comportement mécanique,
@@ -330,7 +330,7 @@ Puis, nous décrivons les {\em analyseurs}
 La figure~\ref{fig:mfront_sic_behaviour} donne un premier exemple de
 fichier \mfront{}. Nous décrivons en détail cet exemple dans la note
 dédiée aux lois de comportement
-mécanique~\cite{helfer:mfront:behaviours:2013} et nous insistons ici
+mécanique~\cite{helfer_generateur_2013} et nous insistons ici
 sur sa structure, puis nous décrivons certains mots clés communs à
 l'ensemble des analyseurs.
 
@@ -526,7 +526,7 @@ Cette directive présente un intérêt particulier pour les lois de
 comportement mécanique\footnote{Pour comprendre ce paragraphe, une
   lecture préalable de la note dédiée aux lois de comportement
   mécanique peut s'avérer
-  nécessaire~\cite{helfer:mfront:behaviours:2013}.}. En effet,
+  nécessaire~\cite{helfer_generateur_2013}.}. En effet,
 beaucoup de lois de comportement utilisent le même formalisme et ne se
 différencient que par leurs coefficients. Une solution classique
 consiste à rajouter des propriétés matériau à la liste d'appel de la
@@ -806,7 +806,7 @@ disponibles~:
   viscoplastiques incompressibles sans écrouissage de matériaux
   isotropes~;
 \item l'analyseur \texttt{IsotropicStrainHardeningMisesCreep} qui gère
-  exclusivement les lois de type \nom{Lemaître} \cite{cha_1996}, c'est
+  exclusivement les lois de type \nom{Lemaître} \cite{chaboche_mecanique_2009}, c'est
   à dire des comportements mécaniques viscoplastiques incompressibles
   avec écrouissage des matériaux isotropes~;
   \item l'analyseur \texttt{IsotropicPlasticMisesFlow} qui gère
@@ -825,7 +825,7 @@ disponibles~:
 
 Les analyseurs dédiés aux lois de comportement mécaniques sont
 largement majoritaires. Ils sont décrits dans une note
-spécifique~\cite{helfer:mfront:behaviours:2013}, mais la lecture de la
+spécifique~\cite{helfer_generateur_2013}, mais la lecture de la
 présente section est nécessaire pour l'aborder.
 
 L'écriture de propriétés matériau est décrite en
@@ -881,11 +881,11 @@ Pour les lois de comportement, deux interfaces sont actuellement
 disponibles~:
 \begin{itemize}
 \item l'interface {\tt umat} pour une utilisation des lois générées
-  dans le code aux éléments finis \castem{}~\cite{12:castemcea}. Cette
-  interface est décrite dans une note dédiée~\cite{helfer:umat:2013}~;
+  dans le code aux éléments finis \castem{}~\cite{cea_site_2013}. Cette
+  interface est décrite dans une note dédiée~\cite{helfer_interface_2013}~;
 \item l'interface {\tt aster} pour une utilisation des lois générées
-  dans le code aux éléments finis \aster{}~\cite{aster:13}. Cette
-  interface est décrite dans une note dédiée~\cite{helfer:aster:2013}.
+  dans le code aux éléments finis \aster{}~\cite{edf_site_2013}. Cette
+  interface est décrite dans une note dédiée~\cite{helfer_interface_2013-1}.
 \end{itemize}
 
 \subsubsection{Ajout d'interfaces}
@@ -1308,7 +1308,7 @@ milieu de pas de temps) est généralement suffisante.
 \subsection{Modèle de gonflement solide de l'\upuc{}}
 
 Nous décrivons ici l'introduction du modèle de gonflement
-solide de l'\upuc{}~\cite{pelletier04:_recueil}.
+solide de l'\upuc{}~\cite{pelletier_recueil_2004}.
 
 \begin{figure}[htbp]
   \centering
@@ -1747,10 +1747,10 @@ norme ne l'impose à notre connaissance. La dernière hypothèse est sans
 doute la plus restrictive~: cette pratique de transférer des pointeurs
 par des entiers a longtemps été utilisée en C, mais il semble que cela
 ne soit plus le cas sur les architectures 64 bits
-actuelles~\cite{foundation06:_gnu}. Il est intéressant de noter qu'une
+actuelles~\cite{foundation_gnu_2006}. Il est intéressant de noter qu'une
 hypothèse similaire est faite en python pour l'implémentation de l'appel
 aux fonctions externes via le module {\tt
-  dl}~\cite{python_librar_refer}.
+  dl}~\cite{von_rossum_python_2007}.
 
 La nécessité de convertir un pointeur en entier est liée à un échange
 nécessaire entre le fortran et le \cpp. Cette restriction peut {\it a
@@ -1851,7 +1851,7 @@ En \cpp, des fonctions ayant des arguments différents peuvent porter le
 même nom. Or un symbole ne peut faire référence qu'à une fonction aux
 arguments déterminés. Le \cpp utilise alors une technique appelée "name
 mangling" pour résoudre les conflits et assurer une relation biunivoque
-entre le symbole et une fonction~\cite{name_mangling_wikipedia}. La même
+entre le symbole et une fonction~\cite{wikipedia_name_2009}. La même
 technique est également utilisée pour distinguer des fonctions portant
 le même nom mais définies dans des espaces de noms différents. Le
 langage a cependant prévu cette difficulté et a introduit une syntaxe
@@ -1860,23 +1860,24 @@ un bloc commençant par la directive {\tt extern "C"} est soumise aux
 règles du langage C et se voit associée un symbole du même nom qu'elle.
 
 Le "name mangling" des fonctions est également nécessaire en fortran,
-mais pour des raisons différentes~: le fortran a une syntaxe insensible
-à la casse (les lettres majuscules et miniscules ne sont pas
-distinguées) alors que les symboles font cette distinction. Il n'y a
-jamais eu de consensus entre les vendeurs de compilateur fortran autour
-d'un choix unique de "name mangling". Ceci constitue un souci de
-portabilité majeur des codes mélangeant des sources fortran et des
+mais pour des raisons différentes~: le fortran a une syntaxe
+insensible à la casse (les lettres majuscules et miniscules ne sont
+pas distinguées) alors que les symboles font cette distinction. Il n'y
+a jamais eu de consensus entre les vendeurs de compilateur fortran
+autour d'un choix unique de "name mangling". Ceci constitue un souci
+de portabilité majeur des codes mélangeant des sources fortran et des
 sources C ou \cpp~: les appels aux fonctions fortran dépendent du
-compilateur utilisé\footnote{Voir \cite{docum_autoc} pour plus de
-  détails.}. En pratique, le symbole associé à une fonction fortran peut
-être le nom de cette fonction écrit uniquement en majuscules ou en
-minuscules, éventuellement suivi du caractère '\_' ({\em underscore}).
-Dans le cas du compilateur gnu fortran (g77 ou gfortran suivant la
-version utilisée), utilisé en général par les applications de la
-plateforme {\tt Pléiades}, une fonction appelée {\tt
-  THERMALCONDUCTIVITY} dans le fichier source aura un symbole associé du
-nom {\tt thermalconductivity\_}. Ces difficultés nous ont amenés à {\it
-  exclure} la possibilité de définir des lois externes en fortran.
+compilateur utilisé\footnote{Voir~\cite{gnu_documentation_2007} pour
+  plus de détails.}. En pratique, le symbole associé à une fonction
+fortran peut être le nom de cette fonction écrit uniquement en
+majuscules ou en minuscules, éventuellement suivi du caractère '\_'
+({\em underscore}).  Dans le cas du compilateur gnu fortran (g77 ou
+gfortran suivant la version utilisée), utilisé en général par les
+applications de la plateforme {\tt Pléiades}, une fonction appelée
+{\tt THERMALCONDUCTIVITY} dans le fichier source aura un symbole
+associé du nom {\tt thermalconductivity\_}. Ces difficultés nous ont
+amenés à {\it exclure} la possibilité de définir des lois externes en
+fortran.
 
 Dans la suite, nous supposerons que les noms de fonctions et les noms de
 symboles associés sont identiques, c'est à dire que la fonction externe

@@ -71,7 +71,6 @@ cmake/pyo-compile.py -text
 docs/CMakeLists.txt -text
 docs/Makefile.am -text
 docs/mfront/Author.txt -text
-docs/mfront/Bibliographie.bib -text
 docs/mfront/Bounds.txt -text
 docs/mfront/CMakeLists.txt -text
 docs/mfront/Champs.tex.in -text
@@ -82,6 +81,7 @@ docs/mfront/Images/2norton-rk.mfront.tex -text
 docs/mfront/Images/2norton-rk.tex -text
 docs/mfront/Images/Algo_temps.eps -text
 docs/mfront/Images/CompSeq.eps -text
+docs/mfront/Images/FeFth.eps -text
 docs/mfront/Images/Makefile.castem.linux -text
 docs/mfront/Images/Makefile.castem.linux.tex -text
 docs/mfront/Images/Makefile.castem.win -text
@@ -111,6 +111,7 @@ docs/mfront/MaterialLaw/Function.txt -text
 docs/mfront/annexe-orthotropie.tex.in -text
 docs/mfront/aster.tex.in -text
 docs/mfront/behaviours.tex.in -text
+docs/mfront/finitestrain.tex.in -text
 docs/mfront/glossary.tex.in -text
 docs/mfront/mfront.tex.in -text
 docs/mfront/mfront/A316TiHyperTrempe_CreepExponent.mfront -text
@@ -183,7 +184,6 @@ docs/mfront/style.ist -text
 docs/mfront/umat.tex.in -text
 docs/mtest/Author.txt -text
 docs/mtest/Behaviour.txt -text
-docs/mtest/Bibliographie.bib -text
 docs/mtest/CMakeLists.txt -text
 docs/mtest/CastemAccelerationPeriod.txt -text
 docs/mtest/CastemAccelerationTrigger.txt -text
@@ -289,6 +289,7 @@ docs/presentations/mfront-presentation.tex.in -text
 docs/presentations/mtest-presentation.tex.in -text
 docs/references/matrixcookbook.pdf -text svneol=unset#unset
 docs/tex/Makefile.am -text
+docs/tex/texmf/bibtex/Bibliographie.bib -text
 docs/tex/texmf/bibtex/fr-insa.bst -text
 docs/tex/texmf/ls-R -text
 docs/tex/texmf/tex/images/CEABanner2012.eps -text
@@ -332,7 +333,6 @@ docs/texmacs/Tensor3D.tm -text
 docs/texmacs/UMATFiniteStrain.tm -text
 docs/texmacs/stensor_rotation_matrix.tm -text
 docs/texmacs/tensor_rotation_matrix.tm -text
-docs/tfel/Bibliographie.bib -text
 docs/tfel/CMakeLists.txt -text
 docs/tfel/Champs.tex.in -text
 docs/tfel/Makefile.am -text

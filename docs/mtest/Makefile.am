@@ -35,7 +35,6 @@ mtestdocdir   = $(docdir)
 mtestdoc_DATA = $(MTEST_DOCS)
 
 EXTRA_DIST=CMakeLists.txt                         \
-	   Bibliographie.bib                      \
 	   style.ist                              \
 	   images/CastemAccelerationAlgorithm.eps \
 	   images/CastemAccelerationAlgorithm.svg \

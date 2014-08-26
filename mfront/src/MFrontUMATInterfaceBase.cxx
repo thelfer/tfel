@@ -775,12 +775,16 @@ namespace mfront
       if(mpoffset){
 	out << "unsigned short mg_mpoffset = 0u;" << endl;
       }
+      this->writeMTestFileGeneratorSetRotationMatrix(out,mb);
       out << "mg.addTime(0.);\n";
       out << "mg.addTime(*DTIME);\n";
       out << "mg.setStrainTensor(STRAN);\n";
       out << "mg.setStrainTensorIncrement(DSTRAN);\n";
       out << "mg.setStressTensor(&mg_STRESS[0]);\n";
       this->writeMTestFileGeneratorAdditionalMaterialPropertiesInitialisation(out,mb);
+      if(coefsHolder.empty()){
+	out << "static_cast<void>(mg_mpoffset);\n";
+      }
       for(p=coefsHolder.begin(),offset=0;p!=coefsHolder.end();++p){
 	SupportedTypes::TypeFlag flag = this->getTypeFlag(p->type);
 	if(flag!=SupportedTypes::Scalar){
@@ -1057,6 +1061,18 @@ namespace mfront
       out << "mg.generate(\""+name+"\");\n";
     }
   }
+
+  void
+  MFrontUMATInterfaceBase::writeMTestFileGeneratorSetRotationMatrix(std::ostream& out,
+								    const MechanicalBehaviourDescription& mb) const
+  {
+    if(mb.getSymmetryType()==mfront::ORTHOTROPIC){
+      out << "mg.setRotationMatrix("
+	  << "DROT[0],DROT[3],DROT[6],"
+	  << "DROT[1],DROT[4],DROT[7],"
+	  << "DROT[2],DROT[6],DROT[8]);\n";
+    }
+  } // end of MFrontUMATInterfaceBase::writeMTestFileGeneratorSetRotationMatrix
 
   void
   MFrontUMATInterfaceBase::generateUMATxxSymbols(std::ostream& out,

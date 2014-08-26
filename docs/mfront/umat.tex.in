@@ -175,7 +175,7 @@
 % \signatures{-0.}{-39.2}{0.12}{images/signatures.eps}
 
 \stylebib{@abs_top_srcdir@/docs/tex/texmf/bibtex/fr-insa}
-\fichierbib{@abs_top_srcdir@/docs/mfront/Bibliographie}
+\fichierbib{@abs_top_srcdir@/docs/tex/texmf/bibtex/Bibliographie}
 
 \resumecea{}
 
@@ -211,7 +211,7 @@ Cette note traite les points~:
 
 Cette note suppose que le lecteur soit familier avec l'écriture de
 lois de comportement mécanique à l'aide de \mfront{}, écriture qui est
-décrite en détail par ailleurs~\cite{helfer:mfront:behaviours:2013}.
+décrite en détail par ailleurs~\cite{helfer_generateur_2013}.
 
 \clearpage
 \newpage
@@ -335,7 +335,7 @@ pour deux raisons~:
   \item le pas de temps utilisé globalement pour la recherche
   d'équilibre est trop grand. En particulier, ce pas de temps peut ne
   pas respecter l'hypothèse de radialité du
-  chargement~\cite{proix:comp_nonline:2013}.
+  chargement~\cite{proix_etude_2011}.
 \end{itemize}
 Le défault de méthode présentée est de ne pas distinguer ces deux cas.
 En particulier, elle peut permetre la convergence de l'intégration
@@ -399,7 +399,7 @@ Pour tenir compte de ces particularités, deux voies sont possibles~:
   dernière solution est particulièrement intéressante car elle fait
   l'économie de ce développement spécifique. Il est néanmoins certain
   que cette méthode a un coût puisque l'intégration en déformations
-  planes sera faites plusieurs fois~\cite{proix:contraintes_planes}.
+  planes sera faites plusieurs fois~\cite{proix_prise_2012}.
 \end{itemize}
 
 Si un analyseur ne gère pas les contraintes planes, l'interface

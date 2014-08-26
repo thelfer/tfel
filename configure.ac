@@ -330,6 +330,7 @@ AC_OUTPUT([debug.sh
 	   docs/mfront/Makefile.doc
 	   docs/mfront/mfront.tex
 	   docs/mfront/behaviours.tex
+	   docs/mfront/finitestrain.tex
 	   docs/mfront/aster.tex
 	   docs/mfront/umat.tex
 	   docs/mfront/glossary.tex

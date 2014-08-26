@@ -176,7 +176,7 @@ section~\ref{sec:tfel::quelq-techn-de}.
 Elle est aujourd'hui intégrée à l'architecture \pleiades{} même si il
 est possible de la distribuer indépendamment, en particulier pour des
 utilisations du générateur de code \mfront{} hors du cadre
-\pleiades{}~\cite{11:dec_semi,arrigo12:_notic_le2s,olagnon13:_analy,proix:mfront:2013}.
+\pleiades{}~\cite{helfer_presentation_2011,darrigo_notice_2012,olagnon_analysis_2013,proix_integration_2013}.
 
 Le langage \cpp{} a été choisi pour sa grande disponibilité, son
 caractère libre et pérenne, son interaction avec les langages
@@ -208,12 +208,12 @@ Actuellement, quatre exécutables sont produits~:
 \item \texttt{tfel-doc} est un utilitaire de description de cas test
   et de génération d'un guide en \LaTeX{}. Il a notamment été utilisé
   pour décrire les cas tests de la bibliothèque \TFEL{} et de
-  l'application \licos{}~\cite{helfer12:_cas}~;
+  l'application \licos{}~\cite{helfer_cas_2012}~;
 \item le générateur de code \texttt{mfront} qui fait l'objet d'une
   documentation
-  particulière~\cite{helfer:mfront:2013,helfer:mfront:behaviours:2013}~;
+  particulière~\cite{helfer_generateur_2013-1,helfer_generateur_2013}~;
 \item un outil de test élémentaire de lois de comportement mécanique
-  nommé \mtest{}~\cite{helfer:mtest:2013}.
+  nommé \mtest{}~\cite{helfer_mtest_2014}.
 \end{enumerate}
 
 \subsection{Modules disponibles et librairies produites}
@@ -256,7 +256,7 @@ dans une section spécifique.
 \item le module {\tt TFEL/System} propose :
   \begin{enumerate}
   \item un enrobage \cpp{} de diverses fonctionnalités~:
-    \texttt{POSIX}~\cite{blaess05:_progr_c_linux_ipc}~:
+    \texttt{POSIX}~\cite{blaess_developpement_2011}~:
     \begin{enumerate}
     \item créations et interaction avec des processus~;
     \item gestion des signaux~;
@@ -273,7 +273,7 @@ essentiellement vocation à être utilisés en interne~:
 \begin{enumerate}
 \item le module {\tt TFEL/Metaprogramming} contient des classes
   utilitaires simplifiant la \og~méta-programmation à base de
-  template~\fg~\cite{Alexandrescu:2001:MCD:377789,Abrahams:2004:CTM:1044941}.
+  template~\fg~\cite{alexandrescu_modern_2000,abrahams_c++_2004}.
 \item le module {\tt TFEL/Typetraits} contient un ensemble de classes
   permettant de donner de manière non intrusive des informations sur
   des classes d'objets.
@@ -282,7 +282,7 @@ essentiellement vocation à être utilisés en interne~:
   dont la taille est (raisonnablement) petite et connue à la
   compilation. L'idée de ce module est tirée des travaux réalisés pour
   bâtir la librairie {\tt MTL} (Matrix Template
-  Library)~\cite{Siek:1998:MTL:646894.709706}. Son rôle est essentiel
+  Library)~\cite{siek_matrix_1998}. Son rôle est essentiel
   pour les performances de la librairie.
 \end{enumerate}
 Ces modules sont constitués de fichiers d'entête uniquement.
@@ -377,9 +377,9 @@ Dans ce paragraphe, nous détaillons les objets mathématiques qui ont
 
 La classe \tclass{qt} représente des nombres réels représentant des
 quantités physiques. L'idée d'une telle classe a été discutée à
-plusieurs reprises~\cite{Abrahams:2004:CTM:1044941}, mais nous sommes
+plusieurs reprises~\cite{abrahams_c++_2004}, mais nous sommes
 particulièrement inspirés du livre de \nom{Barton} et
-\nom{Nackman}~\cite{Barton:1994:SEC:561392}.
+\nom{Nackman}~\cite{barton_engineering_1994}.
 
 Il s'agit d'une classe {\tt template} prenant deux arguments~: une
 classe représentant le type de grandeur représentée et le type
@@ -499,10 +499,11 @@ avantages\footnote{Pour pouvoir bénéficier de ces avantages, les lois
 
 \paragraph{Convention} La classe \tclass{stensor} utilise une
 convention particulière, adoptée par certains codes aux éléments
-finis~\cite{aster:13}. Un tenseur d'ordre \(2\) symétrique est
-représenté par un vecteur. Les trois premières composantes du vecteur
-représentent les composantes diagonales du tenseur et les suivants les
-composantes extra-diagonales multipliées par un facteur \(\sqrt{2}\)~:
+finis~\cite{doghri_mechanics_2000,bornert_homogeneisation_2001,edf_site_2013}. Un
+tenseur d'ordre \(2\) symétrique est représenté par un vecteur. Les
+trois premières composantes du vecteur représentent les composantes
+diagonales du tenseur et les suivants les composantes extra-diagonales
+multipliées par un facteur \(\sqrt{2}\)~:
 \begin{center}
   \begin{tabular}[h]{ccc}
     \(
@@ -590,14 +591,15 @@ l'emploi de parenthèse est parfois nécessaire.
 
 Ces opérations sont implantées par des techniques particulières,
 appelées {\tt expression
-  templates}~\cite{Veldhuizen:1996:ET:260627.260749}, qui permettent
-au compilateur de générer un code optimisée. Ces techniques sont
-partiellement décrites au paragraphe~\ref{sec:tfel::quelq-techn-de}.
+  templates}~\cite{veldhuizen_expression_1995,vandevoorde_c++_2002},
+qui permettent au compilateur de générer un code optimisée. Ces
+techniques sont partiellement décrites au
+paragraphe~\ref{sec:tfel::quelq-techn-de}.
 
 \paragraph{Importation et exportation} Les codes aux éléments finis
 utilisent différentes représentations des tenseurs. En particulier, le
 code aux éléments finis \castem{} utilise la convention de
-\nom{Voigt}~\cite{12:castemcea}. Deux méthodes assurent les
+\nom{Voigt}~\cite{cea_site_2013}. Deux méthodes assurent les
 conversions, si nécessaire~:
 \begin{enumerate}
 \item la méthode {\tt importVoigt} permet de convertir des valeurs
@@ -658,7 +660,7 @@ où \(s^{p}_{i}\) est la \(i\)\ieme valeur propre du tenseur
 
 \paragraph{Compatibilité avec la librairie standard} La classe
 \tclass{stensor} présente toutes les caractéristiques d'un container
-de la librairie standard du C++~\cite{stroustrup03:_le_langag_c}. Elle
+de la librairie standard du C++~\cite{stroustrup_langage_2004}. Elle
 définit~:
 \begin{enumerate}
 \item les alias nécessaires, dont les principaux sont
@@ -832,7 +834,7 @@ matrices~:
 \end{equation}
 
 L'algorithme utilisé pour la décomposition de la matrice est extrait
-du livre de P. Lascaux et R. Théodor~\cite{opac-b1123463}.
+du livre de P. Lascaux et R. Théodor~\cite{lascaux_analyse_1994}.
 
 La classe \tclass{QRDecomp} réalise cette factorisation par la méthode
 de \nom{HouseHolder} et propose différentes méthodes pour travailler
@@ -1233,7 +1235,7 @@ Ces différents points permettent d'apprécier la qualité logicielle de
 \subsubsection{Systèmes \unix{}}
 
 Sous \unix{}, nous nous sommes appuyés sur la norme {\tt POSIX} pour
-réaliser les appels système~\cite{blaess05:_progr_c_linux_ipc}. Le
+réaliser les appels système~\cite{blaess_developpement_2011}. Le
 principal utilisé est \linux{} et des tests de portabilité ont été
 effectués sur les systèmes {\tt Solaris} et {\tt FreeBSD}.
 

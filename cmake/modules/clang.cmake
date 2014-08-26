@@ -11,6 +11,8 @@ tfel_enable_cxx_compiler_flag(OPTIMISATION_FLAGS "fvisibility=hidden")
 tfel_enable_cxx_compiler_flag(OPTIMISATION_FLAGS "fvisibility-inlines-hidden")
 tfel_enable_cxx_compiler_flag(OPTIMISATION_FLAGS "march=native")
 
+tfel_enable_cxx_compiler_flag(OPTIMISATION_FLAGS2 "ffast-math")
+
 set(OPTIMISATION_FLAGS "-DNO_RUNTIME_CHECK_BOUNDS ${OPTIMISATION_FLAGS}")
 
 if((NOT CMAKE_BUILD_TYPE) OR (CMAKE_BUILD_TYPE STREQUAL "Release"))

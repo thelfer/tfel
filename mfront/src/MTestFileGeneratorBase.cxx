@@ -21,7 +21,8 @@ namespace mfront{
   }
 
   MTestFileGeneratorBase::MTestFileGeneratorBase()
-    : hypothesis(tfel::material::ModellingHypothesis::UNDEFINEDHYPOTHESIS)
+    : hypothesis(tfel::material::ModellingHypothesis::UNDEFINEDHYPOTHESIS),
+      hasRotationMatrix(false)
   {} // end of MTestFileGeneratorBase::MTestFileGeneratorBase
 
   void
@@ -52,6 +53,23 @@ namespace mfront{
 		 "time '"+ToString(t)+"' already defined");
       throw(runtime_error(msg));
     }
+  } // end of MTestFileGeneratorBase::addTime
+
+  void
+  MTestFileGeneratorBase::setRotationMatrix(const real m00,const real m01,const real m02,
+					    const real m10,const real m11,const real m12,
+					    const real m20,const real m21,const real m22)
+  {
+    this->hasRotationMatrix = true;
+    this->m[0] = m00;
+    this->m[1] = m01;
+    this->m[2] = m02;
+    this->m[3] = m10;
+    this->m[4] = m11;
+    this->m[5] = m12;
+    this->m[6] = m20;
+    this->m[7] = m21;
+    this->m[8] = m22;
   } // end of MTestFileGeneratorBase::addTime
 
   void
@@ -126,12 +144,26 @@ namespace mfront{
     }
     this->writeModellingHypothesis(file);
     this->writeBehaviourDeclaration(file);
+    this->writeRotationMatrix(file);
     this->writeMaterialProperties(file);
     this->writeInternalStateVariables(file);
     this->writeExternalStateVariables(file);
     this->writeDrivingVariables(file);
     this->writeTimes(file);
   } // end of MTestFileGeneratorBase::generate
+
+  void
+  MTestFileGeneratorBase::writeRotationMatrix(std::ostream& os) const
+  {
+    using namespace std;
+    if(this->hasRotationMatrix){
+      os.precision(14);
+      os << "@RotationMatrix {" << m[0] << "," << m[1] << "," << m[2] << ",\n"
+	 << "                 " << m[3] << "," << m[4] << "," << m[5] << ",\n"
+	 << "                 " << m[6] << "," << m[7] << "," << m[8] << "};"
+	 << endl << endl;
+    }
+  }
 
   void
   MTestFileGeneratorBase::writeModellingHypothesis(std::ostream& os) const

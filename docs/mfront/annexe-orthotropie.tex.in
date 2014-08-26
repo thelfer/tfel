@@ -136,8 +136,9 @@ Par analogie avec l'usage courant pour les matériaux isotropes et en
 accord avec l'expérience, la plupart des écoulements plastiques ou
 viscoplastiques sont décrits en introduisant une variable scalaire de
 l'état des contraintes, la contrainte équivalente de \nom{Hill}, notée
-dans la suite \(\sigmaH\)~\cite{cha_1996,caill_98}. L'intensité de
-l'écoulement est fonction de cette contrainte équivalente et les
+dans la suite
+\(\sigmaH\)~\cite{chaboche_mecanique_2009,besson_mecanique_2001}. L'intensité
+de l'écoulement est fonction de cette contrainte équivalente et les
 composantes du tenseur des contraintes n'interviennent pas
 explicitement.
 

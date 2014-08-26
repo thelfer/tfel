@@ -8,8 +8,7 @@
 
 @Parser    ImplicitFiniteStrain;
 @Behaviour ImplicitSimoMieheElastoPlasticity;
-@Theta 1.;
-@Epsilon 1.e-11;
+@Author T. Helfer;
 @Description{
   J.C. Simo and C. Miehe
   Associative coupled thermoplasticity
@@ -24,6 +23,8 @@
   Date : 25/09/2013  Révision : 11537
 }
 
+@Theta 1.;
+@Epsilon 1.e-11;
 
 @Includes{
 #include"TFEL/Math/General/CubicRoots.hxx"

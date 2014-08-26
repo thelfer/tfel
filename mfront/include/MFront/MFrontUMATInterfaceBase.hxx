@@ -167,6 +167,10 @@ namespace mfront{
 		       const std::map<std::string,std::string>&) const;
 
     virtual void
+    writeMTestFileGeneratorSetRotationMatrix(std::ostream&,
+					     const MechanicalBehaviourDescription&) const;
+
+    virtual void
     writeMTestFileGeneratorAdditionalMaterialPropertiesInitialisation(std::ostream&,
 								      const MechanicalBehaviourDescription&) const = 0;
     /*!

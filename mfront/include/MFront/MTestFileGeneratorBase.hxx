@@ -52,6 +52,22 @@ namespace mfront
     virtual void
     addTime(const real);
     /*!
+     * \brief set the rotation matrix
+     * \param[in] m00 : m(0,0)
+     * \param[in] m01 : m(0,1)
+     * \param[in] m02 : m(0,2)
+     * \param[in] m10 : m(1,0)
+     * \param[in] m11 : m(1,1)
+     * \param[in] m12 : m(1,2)
+     * \param[in] m20 : m(2,0)
+     * \param[in] m21 : m(2,1)
+     * \param[in] m22 : m(2,2)
+     */
+    virtual void
+    setRotationMatrix(const real,const real,const real,
+		      const real,const real,const real,
+		      const real,const real,const real);
+    /*!
      * add a material property
      * \param[in] n : material property name
      * \param[in] v : value
@@ -125,6 +141,12 @@ namespace mfront
     virtual void
     writeBehaviourDeclaration(std::ostream&) const = 0;
     /*!
+     * write rotation matrix
+     * \param[in] os : output stream
+     */
+    virtual void
+    writeRotationMatrix(std::ostream&) const;
+    /*!
      * write material properties
      * \param[in] os : output stream
      */
@@ -177,6 +199,10 @@ namespace mfront
     //! values of the external state variables
     std::map<std::string,
 	     std::map<real,real> > evs;
+    //! flag true if the rotation matrix is defined
+    bool hasRotationMatrix;
+    //! rotation matrix
+    real m[9u];
   };
 
 } // end of namespace mfront

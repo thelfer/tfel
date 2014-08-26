@@ -106,7 +106,7 @@
 
   Ce document présente un outil de test unitaire pour les lois de
   comportements mécaniques générés par
-  mfront~\cite{helfer:mfront:2013}, nommé \mtest{}.
+  mfront~\cite{helfer_generateur_2013-1}, nommé \mtest{}.
 
   Cet outil permet de piloter le chargement mécanique d'un point
   matériel, en imposant certaines composantes des contraintes et/ou
@@ -136,12 +136,13 @@
 sein de la plate-forme \pleiades{}. Il s'agit d'un outil essentiel
 dans la stratégie de mutualisation, de capitalisation et de
 pérennisation des connaissances matériau utilisées au sein des
-logiciels de simulation du DEC/SESC~\cite{michel09}. Son but est
-également de permettre à des utilisateurs non développeurs d'enrichir
-les applications de la plate-forme, en premier lieu l'application de
-conception \licos{}~: les fichiers d'entrée de \mfront{} se focalisent
-sur le contenu physique, les détails informatiques et numériques étant
-gérés par \mfront{}~\cite{helfer:mfront:2013}.
+logiciels de simulation du DEC/SESC~\cite{michel_etude_2009}. Son but
+est également de permettre à des utilisateurs non développeurs
+d'enrichir les applications de la plate-forme, en premier lieu
+l'application de conception \licos{}~: les fichiers d'entrée de
+\mfront{} se focalisent sur le contenu physique, les détails
+informatiques et numériques étant gérés par
+\mfront{}~\cite{helfer_generateur_2013-1,helfer_generateur_2013}.
 
 Tant que l'utilisation de \mfront{} était limitée aux applications de
 la plate-forme \pleiades{}, chaque application proposait des cas tests
@@ -149,13 +150,13 @@ unitaires permettant de vérifier que le code généré par \mfront{}
 donnaient des résultats conformes. En particulier, l'application
 \licos{}, développée par le même auteur que \mfront{}, contenait de
 nombreux tests couvrant de manière quasi exhaustive les
-fonctionnalités de \mfront{}~\cite{helfer12:_cas}.
+fonctionnalités de \mfront{}~\cite{helfer_cas_2012}.
 
 Récemment, l'utilisation de \mfront{} en dehors de la plate-forme
-\pleiades{}, au sein du \cea{}, DER~\cite{arrigo12:_notic_le2s} au
-DMN~\cite{11:dec_semi}, puis l'intérêt des partenaires industriels du
-\cea{}, à \areva \cite{olagnon13:_analy} à \edf{}
-\cite{proix:mfront:2013}, a ouvert des perspectives très intéressantes
+\pleiades{}, au sein du \cea{}, DER~\cite{darrigo_notice_2012} au
+DMN~\cite{helfer_presentation_2011}, puis l'intérêt des partenaires
+industriels du \cea{}, à \areva \cite{olagnon_analysis_2013} à \edf{}
+\cite{proix_integration_2013}, a ouvert des perspectives très intéressantes
 de qualification et de développement de \mfront{}. Il n'est cependant
 plus possible de se satisfaire du mode de fonctionnement décrit plus
 haut.
@@ -164,18 +165,19 @@ En particulier, les lois de comportement mécanique, par leur
 complexité intrinsèque et la variété des fonctionnalités disponibles,
 posent le plus de difficultés car elles ne pouvaient être testées
 qu'avec l'aide d'un code tiers, typiquement
-\castem{}~\cite{p.98:_castem,12:castemcea}, \aster~\cite{aster:13},
-\tmfft{}~\cite{castelier09:_specif_fourier,jerome10:_tmfft_softw_concep}
-ou \licos{}~\cite{licos1.0}. Ce document présente un outil de test
-unitaire pour les lois de comportements mécaniques générés par
-mfront~\cite{helfer:mfront:2013} nommé \mtest{}.
+\castem{}~\cite{verpeaux_castem2000_1998,cea_site_2013},
+\aster{}~\cite{edf_site_2013},
+\tmfft{}~\cite{castelier_specifications_2009,jerome_tmfft_2010} ou
+\licos{}~\cite{helfer_licos_2011}. Ce document présente un outil de
+test unitaire pour les lois de comportements mécaniques générés par
+mfront~\cite{helfer_generateur_2013} nommé \mtest{}.
 
 Cet outil permet de piloter le chargement mécanique d'un point
 matériel, en imposant certaines composantes des contraintes et/ou
 certaines composantes des déformations au cours d'un historique. Le
 principe de \mtest{} est similaire à la macro commande {\tt
   SIMU\_POINT\_MAT} disponible dans
-\aster{}~\cite{proix:simu_point_mat:2013}.
+\aster{}~\cite{proix_macro-commande_2013}.
 
 \subsection*{Plan de cette note}
 
@@ -208,7 +210,7 @@ représentée par un jeu de \(i\) variables internes noté de manière
 symbolique \(Y\). Nous en faisons un présentation volontairement
 succincte, nous renvoyons à la documentation de \mfront{} relative aux
 lois de comportement pour les
-détails~\cite{helfer:mfront:behaviours:2013}.
+détails~\cite{helfer_generateur_2013}.
 
 \paragraph{Intégration locale}
 Plus précisément, les lois de comportement mécaniques travaillent de
@@ -395,7 +397,7 @@ matrice d'élasticité, la convergence est en générale linéaire (ordre
 donnée à partir de quatre estimations successives de la solution
 \(\Delta\,\tepsilonto_{n+3}\),
 \(\Delta\,\tepsilonto_{n+2}\),\(\Delta\,\tepsilonto_{n+1}\) et
-\(\Delta\,\tepsilonto_{n}\)~\cite{brezinski2006methodes}~:
+\(\Delta\,\tepsilonto_{n}\)~\cite{brezinski_methodes_2006}~:
 \[
 o\approx\Frac{\log\paren{\Frac{\norm{\Delta\,\tepsilonto_{n+3}-\Delta\,\tepsilonto_{n+2}}}{\norm{\Delta\,\tepsilonto_{n+2}-\Delta\,\tepsilonto_{n+1}}}}}{\log\paren{\Frac{\norm{\Delta\,\tepsilonto_{n+2}-\Delta\,\tepsilonto_{n+1}}}{\norm{\Delta\,\tepsilonto_{n+1}-\Delta\,\tepsilonto_{n}}}}}
 \]
@@ -404,7 +406,7 @@ Cette estimation est cependant assez souvent imprécise.
 \paragraph{Accélération de convergence} Dans le cas d'une convergence
 linéaire, il est possible d'utiliser un algorithme d'accélération de
 convergence utilisé dans les opérateurs de résolution de
-\castem{}~\cite{pascal05_increpl}\footnote{Voir le mot clé
+\castem{}~\cite{pascal_notice_2005}\footnote{Voir le mot clé
   \mkeyb{UseCastemAccelerationAlgorithm}{Use\-Castem\-Acceleration\-Algorithm}.}.
 
 \begin{figure}[htbp]
@@ -505,7 +507,7 @@ déformations imposées. Pour cela, comme dans la plupart des codes
 éléments finis, de nouvelles variables nommées multiplicateurs de
 \nom{Lagrange} sont introduites. Le principe de ces multiplicateurs
 est expliqué dans la documentation du code \aster{} (qui reprend ce
-principe de \castem{})~\cite{pellet:dual:2011}, à laquelle nous
+principe de \castem{})~\cite{pellet_dualisation_2001}, à laquelle nous
 renvoyons le lecteur intéressé. Dans la suite, nous continuerons
 d'omettre les détails liés aux multiplicateurs de
 \nom{Lagrange}\footnote{En particulier, nous confondons dans cette
@@ -606,9 +608,9 @@ D'autres stratégies peuvent cependant être utilisée\footnote{Voir le
 \begin{itemize}
 \item l'interface \umat{} est utilisée pour une adhérence des lois au
   code~\castem{} et aux différentes applications de la plate-forme
-  \pleiades{}~\cite{helfer:umat:2013}~;
+  \pleiades{}~\cite{helfer_interface_2013}~;
 \item l'interface \aster{} est utilisée pour une adhérence au code aux
-  éléments finis du même nom~\cite{helfer:aster:2013}.
+  éléments finis du même nom~\cite{helfer_interface_2013-1}.
 \end{itemize}
 
 \subsection{Hypothèses de modélisation disponibles}
@@ -627,7 +629,7 @@ suivant l'hypothèse de modélisation, notamment les lois
 orthotropes. En particulier, nous avons montré que dans \castem{} les
 restrictions sur la définition des axes d'orthotropie nécessitait de
 modifier la définition du tenseur de \nom{Hill} de différentes
-manières en fonction de l'hypothèse utilisée~\cite{helfer:umat:2013}.
+manières en fonction de l'hypothèse utilisée~\cite{helfer_interface_2013}.
 
 \begin{table}[htbp]
   \centering
@@ -670,7 +672,7 @@ hypothèses supportées par \mtest{} et leurs caractéristiques.
 pas aujourd'hui de distinguer les hypothèses de modélisation et ne se
 base que sur la dimension d'espace\footnote{Les contraintes planes
   sont traitées dans \aster{} par l'algorithme global par une méthode
-  due à \nom{De Borst}~\cite{proix:contraintes_planes}.}. En \(2D\),
+  due à \nom{De Borst}~\cite{proix_prise_2012}.}. En \(2D\),
 l'interface utilise la version plan généralisé de la loi de
 comportement.
 
@@ -879,8 +881,8 @@ compte.
 déclare quelle loi de comportement mécanique est utilisée. Il est
 suivit du type d'interface, donnée entre chevrons ouvrant \texttt{<}
 et fermant \texttt{>}. Deux interfaces sont actuellement supportées~:
-l'interface \aster{}~\cite{helfer:aster:2013} et l'interface
-\umat{}~\cite{helfer:umat:2013} correspondant au code \castem{}.
+l'interface \aster{}~\cite{helfer_interface_2013-1} et l'interface
+\umat{}~\cite{helfer_interface_2013} correspondant au code \castem{}.
 
 Deux arguments sont ensuite attendus~:
 \begin{itemize}
@@ -1421,7 +1423,7 @@ journée \(\Phi^{2}AS\)\footnote{Formation IPSI pour la Formation et
   l'Information en Analyse de Structures.} du 30 Mars 2000 sur les
 comportements non linéaires, qui permet de valider la bonne prise en
 compte de la variation des coefficients avec la
-température~\cite{proix:hsnv125:2013}. Il s'agit d'un test
+température~\cite{proix_hsnv125_2011}. Il s'agit d'un test
 particulièrement sollicitant pour les lois de comportement.
 
 \begin{figure}[htbp]
@@ -1429,7 +1431,7 @@ particulièrement sollicitant pour les lois de comportement.
   \includegraphics[width=0.75\linewidth]{@abs_top_srcdir@/docs/mtest/images/chaboche2.eps}
   \caption{Évolution de la déformation $\varepsilon_{xx}$ et de la
     température au cours de l'essai {\tt
-      HSNV125}~\cite{proix:hsnv125:2013}.}
+      HSNV125}~\cite{proix_hsnv125_2011}.}
   \label{fig:hsvn125:loading}
 \end{figure}
 
@@ -1487,15 +1489,15 @@ figure~\ref{fig:mtest:chaboche2:mtest}.
   \centering
   \includegraphics[width=0.75\linewidth]{@abs_top_srcdir@/docs/mtest/images/chaboche2-comp.eps}
   \caption{Comparaison de la solution obtenue au cours de l'essai {\tt
-      HSNV125}~\cite{proix:hsnv125:2013} à la solution obtenue par la
+      HSNV125}~\cite{proix_hsnv125_2011} à la solution obtenue par la
     macro-commande {\tt SIMU\_POINT\_MAT}
-    d'\aster{}~\cite{proix:simu_point_mat:2013}.}
+    d'\aster{}~\cite{proix_macro-commande_2013}.}
   \label{fig:hsnv125:res}
 \end{figure}
 
 La figure~\ref{fig:hsnv125:res} compare la solution obtenue à la une
 simulation effectuée avec la macro-commande {\tt SIMU\_POINT\_MAT}
-d'\aster{}~\cite{proix:simu_point_mat:2013}.
+d'\aster{}~\cite{proix_macro-commande_2013}.
 
 \clearpage
 \newpage

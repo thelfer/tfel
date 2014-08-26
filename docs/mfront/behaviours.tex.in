@@ -268,7 +268,7 @@ AREVA NP/LYON           & P. Melin        & 1 & \\
 % \signatures{-0.}{-39.2}{0.12}{images/signatures.eps}
 
 \stylebib{@abs_top_srcdir@/docs/tex/texmf/bibtex/fr-insa}
-\fichierbib{@abs_top_srcdir@/docs/mfront/Bibliographie}
+\fichierbib{@abs_top_srcdir@/docs/tex/texmf/bibtex/Bibliographie}
 
 \resumecea{
   L'une des missions de la plate-forme \pleiades{} est de capitaliser
@@ -279,8 +279,8 @@ AREVA NP/LYON           & P. Melin        & 1 & \\
   particulièrement à leur écriture à l'aide du générateur de code
   \mfront{}. Elle complète la présentation générale de \mfront{} qui
   traite des propriétés matériau et des modèles
-  physico-chimiques~\cite{helfer:mfront:2013}. Dans le cadre de la
-  plate-forme \pleiades{}, ces lois de comportement peuvent être
+  physico-chimiques~\cite{helfer_generateur_2013-1}. Dans le cadre de
+  la plate-forme \pleiades{}, ces lois de comportement peuvent être
   stockées dans la base de données \sirius{}.
 
   La variété des phénomènes traités fait que \mfront{} propose
@@ -297,12 +297,12 @@ AREVA NP/LYON           & P. Melin        & 1 & \\
   % Les différents tests menés avec les codes aux éléments finis
   % \castem{} et \aster{} montrent que les lois de comportement générées
   % sont numériquement très
-  % efficaces~\cite{michel09,helfer:opti:2011,proix:mfront:2013,olagnon13:_analy}.
+  % efficaces~\cite{michel_etude_2009,helfer_bilan_2011,proix_integration_2013,olagnon_analysis_2013}.
   % Il s'agit d'un outil mature, qui se veut de qualité industrielle et
   % qui intéresse fortement différents départements du
-  % \cea{}~\cite{11:dec_semi,arrigo12:_notic_le2s} ainsi que ses
-  % partenaires, Areva~\cite{olagnon13:_analy} et
-  % ÉDF~\cite{proix:mfront:2013}. Cet intérêt confirme la crédibilité et
+  % \cea{}~\cite{helfer_presentation_2011,darrigo_notice_2012} ainsi que ses
+  % partenaires, Areva~\cite{olagnon_analysis_2013} et
+  % ÉDF~\cite{proix_integration_2013}. Cet intérêt confirme la crédibilité et
   % la rigueur de la gestion des connaissances matériau au sein de la
   % plate-forme. Le partage de cet outil ouvre des perspectives variées
   % et enrichissantes de co-développement et de mutualisation.
@@ -324,14 +324,14 @@ Ce document décrit comment écrire des lois de comportement mécanique
 avec le générateur de code \mfront{}. \mfront{} vise à garantir une
 gestion pérenne, robuste, efficace et évolutive des connaissances
 matériau dans la plate-forme
-\pleiades{}~\cite{michel09,helfer:opti:2011}. Il permet également à
-des utilisateurs non développeurs d'écrire leurs propres connaissances
-matériau~\cite{helfer10}. Cette note intègre des éléments d'une note
-antérieure décrivant un algorithme numérique
-particulier~\cite{blanc11}.
+\pleiades{}~\cite{michel_etude_2009,helfer_bilan_2011}. Il permet
+également à des utilisateurs non développeurs d'écrire leurs propres
+connaissances matériau~\cite{helfer_ajout_2010}. Cette note intègre
+des éléments d'une note antérieure décrivant un algorithme numérique
+particulier~\cite{blanc_integration_2011}.
 
 Elle complète la présentation générale de
-\mfront{}~\cite{helfer:mfront:2013}. Deux autres notes
+\mfront{}~\cite{helfer_generateur_2013-1}. Deux autres notes
 traitent\footnote{Citons également qu'un guide de référence de la
   librairie \TFEL{} est également en cours de rédaction. Cette note
   étant assez ambitieuse, sa rédaction s'étalera dans le temps. Elle
@@ -340,9 +340,9 @@ traitent\footnote{Citons également qu'un guide de référence de la
   la librairie.}~:
 \begin{itemize}
 \item de l'interface {\tt umat} utilisée par le codes aux éléments
-  finis \castem{}~\cite{helfer:umat:2013}~;
+  finis \castem{}~\cite{helfer_interface_2013}~;
 \item de l'interface utilisée par le codes aux éléments finis
-  \aster{}~\cite{helfer:aster:2013}~;
+  \aster{}~\cite{helfer_interface_2013-1}~;
 \end{itemize}
 Ces notes sont intégrées à la gestion de configuration de \TFEL{} et
 évoluent continûment avec les développements de \TFEL{}\footnote{ La
@@ -355,13 +355,13 @@ révision @TFEL_SVN_REVISION@.
 
 La lecture de ce document suppose que le lecteur est déjà familier de
 \mfront{}. A minima, la lecture de la présentation générale de
-\mfront{} semble nécessaire~\cite{helfer:mfront:2013}.
+\mfront{} semble nécessaire~\cite{helfer_generateur_2013-1}.
 
 \paragraph{De multiples phénomènes} Les matériaux solides réagissent
 aux sollicitations mécaniques par différents phénomènes~: élasticité,
 viscoplasticité, plasticité, endommagement. Nous renvoyons aux
 ouvrages classiques pour la description physique de ces
-phénomènes~\cite{zaoui_95,cha_1996,caill_01}.
+phénomènes~\cite{francois_comportement_1995,chaboche_mecanique_2009,besson_mecanique_2001}.
 
 \paragraph{Rôle de la loi de comportement} Nous décrivons en
 annexe~\ref{sec:mfront:mechanical_equilibrium} un algorithme simplifié
@@ -369,7 +369,7 @@ de recherche de l'équilibre mécanique statique non-linéaire qui
 précise la place de la loi de comportement mécanique. Le lecteur
 intéressé pourra se reporter aux documentations des codes éléments
 finis pour une description plus
-précise~\cite{pascal05_increpl,abbas:stat_non_lin:2013,caill_01}.
+précise~\cite{pascal_notice_2005,abbas_algorithme_2013,besson_mecanique_2001}.
 
 En résumé, connaissant l'état mécanique du matériau à un instant
 \(t\), les lois de comportement doivent, en réponse à un incrément de
@@ -397,7 +397,7 @@ loi de comportement peut également fournir~:
 
 Dans certains cas, les lois de comportement peuvent également donner
 des indications sur la qualité de la discrétisation temporelle du
-problème~\cite{proix11:_etude}.
+problème~\cite{proix_etude_2011}.
 
 \subsection{Analyseurs disponibles}
 
@@ -409,7 +409,7 @@ rencontrées en pratique expliquent la variété des analyseurs proposés
 par \mfront{}, qui sont actuellement au nombre de \(8\)\footnote{La
   notion d'analyseur est décrite plus en détails dans la première
   partie de la documentation de
-  \mfront~\cite{helfer:mfront:2013}.}. La description de ces
+  \mfront~\cite{helfer_generateur_2013-1}.}. La description de ces
 analyseurs est l'objet de ce document.
 
 Plusieurs analyseurs dédiés aux lois de comportement sont
@@ -475,14 +475,14 @@ nous faut introduire quelques définitions.
 comportements à différents matériaux, celles-ci peuvent utiliser des
 propriétés matériau, qui sont définies, dans \mfront{}, comme des
 fonctions des valeurs actuelles des variables d'état du
-matériau~\cite{helfer:mfront:2013}.
+matériau~\cite{helfer_generateur_2013-1}.
 
 Les lois de comportement mécaniques peuvent~:
 \begin{itemize}
 \item demander à ce qu'un certain nombre de propriétés matériau leur
   soient fournies par le code appelant~\footnote{Voir le mot clé
     \mkey{MaterialProperty}.}. Dans certains cas, le code \castem{}
-  notamment~\cite{helfer:umat:2013}, le code appelant impose que la
+  notamment~\cite{helfer_interface_2013}, le code appelant impose que la
   loi de comportement utilise des propriétés matériau prédéfinies.
 \item utiliser des lois définies dans des fichiers \mfront{}
   dédiés~\footnote{Voir le mot clé \mkey{MaterialLaw}.}.
@@ -560,7 +560,7 @@ homogénéisées peuvent avoir un grand nombre de variables internes qui
 partagent des lois d'évolutions similaires. Un exemple de cela est
 donné par les lois issues de l'homogénéisation de poly-cristaux qui
 peuvent conduire à plusieurs milliers de variables
-internes~\cite{proix13:_compor}. Grâce aux tableaux de variables
+internes~\cite{proix_comportements_2013-1}. Grâce aux tableaux de variables
 internes, l'implantation de ce type de lois peut être très courte (une
 centaine de lignes).
 
@@ -595,7 +595,7 @@ l'analyseur à utiliser~:
     pas de problème de performance~;
   \item si le nombre de variables internes est très grand (loi de
     comportement issus de l'homogénéisation de
-    poly-cristaux~\cite{proix13:_compor} notamment).
+    poly-cristaux~\cite{proix_comportements_2013-1} notamment).
   \end{itemize}
 \end{itemize}
 
@@ -610,7 +610,7 @@ performance valent largement l'effort supplémentaire.
 L'analyseur \texttt{DefaultParser} n'est utile que dans ces cas très
 particuliers, par exemple pour des lois dépendant explicitement des
 déformations (loi de \nom{Mazars} par
-exemple~\cite{francois13:_model}).
+exemple~\cite{hamon_modeendommagement_2013}).
 
 \subsection{Points particuliers}
 
@@ -625,7 +625,8 @@ permet de~:
 \item traiter les cas particuliers, les contraintes planes notamment~;
 \item de spécifier quelles sont les hypothèses valides. Par exemple,
   les lois issues de l'homogénéisation de poly-cristaux doivent
-  nécessairement être intégrées en \(3D\)~\cite{proix13:_compor}
+  nécessairement être intégrées en
+  \(3D\)~\cite{proix_comportements_2013-1}
 \end{itemize}
 
 Le fichier d'entête
@@ -725,10 +726,10 @@ Plusieurs stratégies peuvent être mises en place pour éviter d'avoir à
 \item le code aux éléments finis {\tt Zebulon} introduit des éléments
   finis spécifiques, possédant un degré de liberté supplémentaire (la
   déformation axiale) dont la force associée (liée à la contrainte
-  axiale) est nulle~\cite{besson98:_objec}~;
+  axiale) est nulle~\cite{besson_object-oriented_1998-1}~;
 \item le code aux éléments finis \aster{} modifie l'algorithme de
   résolution global pour converger vers une solution en contraintes
-  planes~\cite{proix:contraintes_planes}.
+  planes~\cite{proix_prise_2012}.
 \end{itemize}
 
 Pour le code aux éléments finis \castem{}, si une implantation en
@@ -736,7 +737,7 @@ contraintes planes n'est pas disponible, l'interface \umat{} fournie
 par \mfront{} gère les contraintes planes en introduisant une variable
 interne supplémentaire (la déformation axiale) qu'elle ajuste (par
 appels successifs à la loi de comportement \(2D\)) pour trouver une
-contrainte axiale nulle~\cite{helfer:umat:2013}.
+contrainte axiale nulle~\cite{helfer_interface_2013}.
 
 \subsubsection{Traitement des matériaux orthotropes}
 
@@ -759,7 +760,7 @@ restrictions imposées par les codes aux éléments finis \castem{} et
 \subsubsection{Traitement des dilatations libres}
 
 Dans la plupart des codes aux éléments
-finis~\cite{aster:13,12:castemcea}, les dilatations libres sont
+finis~\cite{cea_site_2013,edf_site_2013}, les dilatations libres sont
 généralement traitées en amont de l'intégration de la loi de
 comportement.
 
@@ -882,12 +883,12 @@ Cette section décrit tout d'abord le rôle des interfaces puis chacune
 des deux interfaces disponibles actuellement~:
 \begin{itemize}
 \item l'interface \umat{} utilisée pour l'adhérence au code aux
-  éléments finis \castem{}~\cite{12:castemcea,helfer:umat:2013}. Cette
+  éléments finis \castem{}~\cite{cea_site_2013,helfer_interface_2013}. Cette
   interface est également utilisée par le code d'homogénéisation par
   transformées de \nom{Fourier} rapides
-  \tmfft{}~\cite{castelier09:_specif_fourier,jerome10:_tmfft_softw_concep}~;
+  \tmfft{}~\cite{castelier_specifications_2009,jerome_p._tmfft_2010}~;
 \item l'interface \aster{} utilisée pour l'adhérence au code aux
-  éléments finis \aster{}~\cite{aster:13,helfer:aster:2013}.
+  éléments finis \aster{}~\cite{edf_site_2013,helfer_interface_2013-1}.
 \end{itemize}
 
 \subsubsection{Rôle des interfaces aux lois de comportement}
@@ -935,7 +936,7 @@ l'interface peut également~:
 De manière optionnelle, il peut être utile de générer des exemples
 d'utilisation de la loi de comportement traitée. Ainsi,
 l'interface~\umat{} génère automatiquement un exemple de mise en
-données \gibiane{}~\cite{helfer:umat:2013}.
+données \gibiane{}~\cite{helfer_interface_2013}.
 
 \newpage 
 \clearpage
@@ -1113,7 +1114,7 @@ qui relèvent d'une intégration spécifique dans {\mfront}:
 \label{eq:loistype}
 \begin{itemize}
 \item des écoulements viscoplastiques de la forme suivante, dont
-  relève la loi de \nom{Norton}~\cite{cha_1996}:
+  relève la loi de \nom{Norton}~\cite{chaboche_mecanique_2009}:
 \begin{equation}
 \label{eq:loistype_a}
   \tdepsilonan_{i} = f_{i}^{\textrm{an}}\paren{\sigmaeq}\,\tenseur{n}
@@ -1121,7 +1122,7 @@ qui relèvent d'une intégration spécifique dans {\mfront}:
 \dot{p}_{i} = f_{i}^{\textrm{an}}\paren{\sigmaeq}
 ;\end{equation}
   \item des écoulements viscoplastiques avec écrouissage de la
-  forme suivante, dont relève la loi \nom{Lemaitre}~\cite{cha_1996}:
+  forme suivante, dont relève la loi \nom{Lemaitre}~\cite{chaboche_mecanique_2009}:
 \begin{equation}
 \label{eq:loistype_b}
   \tdepsilonan_{i} = f_{i}^{\textrm{an}}\paren{\sigmaeq,p_{i}}\,\tenseur{n}
@@ -1240,7 +1241,7 @@ Dans {\mfront}, la loi de comportement~\eqref{eq:systemeSpecifique}
 est intégrée par une méthode implicite, une \(\theta\)-méthode,
 semblable à celle présentée au paragraphe~\ref{sec:Implicite}, à ceci
 près que le système d'équations peut ici être réduit à une unique
-équation scalaire~\cite{proix12:_integ_mises}.
+équation scalaire~\cite{proix_integration_2012-1}.
 
 \paragraph{Incrément de temps}
 D'après ce qui précède, les variables internes sont la déformation
@@ -2176,7 +2177,7 @@ ce que l'interface au code appelant mette à disposition une variable
   l'interface déclare des propriétés matériaux supplémentaires. Leur
   nombre et l'ordre dans lequel il est nécessaire de les passer sont
   décrits dans les documentations des
-  interfaces~\cite{helfer:umat:2013,helfer:aster:2013}.}.
+  interfaces~\cite{helfer_interface_2013,helfer_interface_2013-1}.}.
 
 Le calcul des contraintes en fin de pas de temps (à l'instant
 \(t+\Delta\,t\)) s'écrit de manière similaire à son expression
@@ -2355,7 +2356,7 @@ grand et il est possible de mettre en place une stratégie de
 redécoupage du pas de temps.
 
 \paragraph{Pas de temps minimal} En cas de convergence
-forcée~\cite{pascal05_increpl}, le code aux éléments finis \castem{}
+forcée~\cite{pascal_notice_2005}, le code aux éléments finis \castem{}
 envoie à la loi de comportement un pas de temps nul qui ne permet pas
 d'écrire les lois de comportement sous la forme d'un système
 différentiel. Il est nécessaire de préciser un pas de temps minimal
@@ -2482,7 +2483,7 @@ servir à contrôler le pas de temps.
 
 \paragraph{Méthode de \nom{Runge-Kutta} d'ordre $\pfrac{5}{4}$ (méthode
   de \nom{Fehlberg})} Pour décrire cette méthode, utilisée par défaut,
-nous reprenons la présentation d'\nom{A. Fortin}~\cite{fortin01:_analy}.
+nous reprenons la présentation d'\nom{A. Fortin}~\cite{fortin_analyse_2001}.
 Il est utile d'introduire les \(6\) constantes suivantes~:
 \[
 \begin{aligned}
@@ -2974,7 +2975,7 @@ vecteur soit la déformation élastique, dont la variable associée est
 \texttt{eel}, qui est automatiquement déclarée\footnote{Le nom de
   glossaire de cette variable est \texttt{Elastic\-Strain}. La notion
   de nom de glossaire est décrite dans la première partie de la
-  documentation de \mfront{}~\cite{helfer:mfront:2013}.}.
+  documentation de \mfront{}~\cite{helfer_generateur_2013-1}.}.
 
 La résolution numérique de cette équation consiste à estimer, à partir
 de la valeur \(\debutpas{Y}\) à un instant \(t\), la valeur
@@ -3271,7 +3272,7 @@ type de loi de comportement.
     entaillée en traction modélisée en $2D\paren{r,z}$. Calcul réalisé
     par \nom{J.-M. Proix} sur la version $11$ de code \aster{}. La loi
     de comportement locale est la loi de
-    \nom{HayHurst}~\cite{proix:hayhurst:2012}.
+    \nom{HayHurst}~\cite{proix_comportement_2012}.
     Cette comparaison a été fournie par J.-M. Proix (EDF/AMA).}
   \label{tab:mfront:NR:comparison:methode}
 \end{table}
@@ -3801,7 +3802,7 @@ variables dans le bon ordre !
 
 Il existe une autre méthode de calcul de la matrice tangente cohérente
 basée sur un partitionnement de la jacobienne et non de son
-inverse~\cite{proix:integ:2012}.
+inverse~\cite{proix_integration_2012}.
 
 Pour cela, notons \(z_{i}\) les variables internes autres que les
 déformations élastiques. Nous avons, avec les mêmes hypothèses que
@@ -4080,7 +4081,7 @@ décrites en annexe~\ref{sec:annexe:orthotropie} pour les tubes.
 
 Cette note a décrit les possibilités de \mfront{} dans le domaine de
 l'intégration des lois de comportement mécanique. Elle complète la
-présentation générale de \mfront{}~\cite{helfer:mfront:2013}.
+présentation générale de \mfront{}~\cite{helfer_generateur_2013-1}.
 
 Pour des raisons pédagogiques, nous avons choisi de ne présenter dans
 cette note que des exemples élémentaires. Des exemples plus complexes
@@ -4090,26 +4091,26 @@ comportement des matériaux usuels du nucléaire peuvent être trouvés
 dans la base de données \sirius{}. Les utilisateurs \cea{} de
 l'application \licos{} peuvent également accéder à un corpus de
 connaissances matériau précompilées via le projet
-\mfm{}~\cite{helfer:mfm:2013}.
+\mfm{}~\cite{helfer_connaissances_2013}.
 
 \subsection{Une solution flexible, mature et performante}
 
 \mfront{} constitue aujourd'hui une solution flexible et mature au
 c\oe{}ur de la gestion des matériaux de la plate-forme \pleiades{}. Il
 a été évalué en interne ou par les partenaires industriels du
-\cea{}~\cite{olagnon13:_analy}.
+\cea{}~\cite{olagnon_analysis_2013}.
 
 \paragraph{L'évaluation par l'équipe \aster{}}
 Pour illustrer ce point, nous pouvons nous appuyer sur l'évaluation
 faite par l'équipe de code \aster{} qui est particulièrement
-complète~\cite{proix13:_integ}.
+complète~\cite{proix_integration_2013}.
 
 Différentes classes de lois de comportement ont été testées~:
 \begin{itemize}
 \item loi de \nom{Mazars} décrivant l'endommagement fragile du
-  béton~\cite{francois13:_model}~;
+  béton~\cite{hamon_modeendommagement_2013}~;
 \item l'endommagement sous fluage tertiaire de structure en acier par
-  une loi dite de \nom{Hayhurst}~\cite{proix:hayhurst:2012}~;
+  une loi dite de \nom{Hayhurst}~\cite{proix_comportement_2012}~;
 \item lois plastiques et viscoplastiques de type \nom{Chaboche} avec
   écrouissage cinématique (linéaire ou non linéaire)~;
 \item comportement mono-cristallin et poly-cristallins pour des
@@ -4117,7 +4118,7 @@ Différentes classes de lois de comportement ont été testées~:
 \end{itemize}
 De plus, l'équipe \aster{} a reversé de nombreux tests de loi de
 comportement dans la librairie \TFEL{}. Ces tests ont été écrits à
-l'aide de l'utilitaire \mtest{}~\cite{helfer:mtest:2013}.
+l'aide de l'utilitaire \mtest{}~\cite{helfer_mtest_2013}.
 
 \begin{table}[htbp]
   \centering
@@ -4135,12 +4136,12 @@ l'aide de l'utilitaire \mtest{}~\cite{helfer:mtest:2013}.
     Temps CPU                              &4,67s      &4,19s    & \vrule width 0mm height 1.4cm&\\
     \hline
   \end{tabular}
-  \caption{Résultat du test {\tt HSNV125}~\cite{proix:hsnv125:2013}.}
+  \caption{Résultat du test {\tt HSNV125}~\cite{proix_hsnv125_2011}.}
   \label{fig:mfront:behaviours:hsnv125}
 \end{table}
 
 \paragraph{Test de robustesse} Le test {\tt HSNV125} est extrait de la
-base de cas test de \aster{}~\cite{proix:hsnv125:2013}. Il s'agit d'un
+base de cas test de \aster{}~\cite{proix_hsnv125_2011}. Il s'agit d'un
 test particulièrement sollicitant pour les algorithmes d'intégration
 des loi de comportement. Un exemple de résultat de ce test, qui permet
 d'apprécier la complexité du chargement imposé, est donné au
@@ -4175,7 +4176,7 @@ optimisée d'\aster{}\footnote{Une version non optimisée de la loi est
     \hline
   \end{tabular}
   \caption{Résultat des test de fluage sur éprouvette entaillée $3D$,
-    loi de \nom{Hayhurst}~\cite{proix13:_integ}.}
+    loi de \nom{Hayhurst}~\cite{proix_integration_2013}.}
   \label{tab:mfront:behaviours:hayhurst}
 \end{table}
 
@@ -4190,7 +4191,7 @@ résultats obtenus sur une éprouvette entaillée subissant un essai de
 fluage. Le calcul est effectué en 3D en grandes déformations grâce aux
 formalisme des déformations logarithmiques qui permet d'utiliser des
 lois écrites en petites
-déformations~\cite{bargellini13:_model_gdef_log_gdef_hypo_elas}.
+déformations~\cite{bargellini_modelisation_2013,miehe_anisotropic_2002}.
 
 \begin{table}[htbp]
   \centering
@@ -4232,7 +4233,7 @@ identifiées~:
 \item l'amélioration de la robustesse de algorithmes implicites, qui
   peuvent diverger si l'estimation initiale est mauvaise. La méthode
   de \nom{Powell} semble particulièrement
-  intéressante~\cite{Chen1981143}.
+  intéressante~\cite{chen_modification_1981}.
 \end{itemize}
 
 Pour une utilisation dépassant le cadre combustible, différents
@@ -4289,7 +4290,7 @@ La présentation faite est suffisamment générale pour notre propos mais
 nous avons passé sous silence de nombreux points (transformations
 finies, gestion du contact, etc...). Chaque code aux éléments finis
 présentera sa propre variation, plus au moins
-sophistiquée~\cite{caill_01,pascal05_increpl,abbas:stat_non_lin:2013}.
+sophistiquée~\cite{besson_mecanique_2001,pascal_notice_2005,abbas_algorithme_2013}.
 
 \subsection{Discrétisation}
 

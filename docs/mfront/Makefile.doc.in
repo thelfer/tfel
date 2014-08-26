@@ -22,6 +22,15 @@ behaviours:
 	TEXMFHOME=@abs_top_srcdir@/docs/tex/texmf        dvips -R0 behaviours.dvi -o
 	ps2pdf behaviours.ps
 
+finitestrain:
+	TEXMFHOME=@abs_top_srcdir@/docs/tex/texmf        latex  finitestrain.tex
+	TEXMFHOME=@abs_top_srcdir@/docs/tex/texmf        latex  finitestrain.tex
+	BSTINPUTS=@abs_top_srcdir@/docs/tex/texmf/bibtex bibtex finitestrain
+	TEXMFHOME=@abs_top_srcdir@/docs/tex/texmf        latex  finitestrain.tex
+	TEXMFHOME=@abs_top_srcdir@/docs/tex/texmf        latex  finitestrain.tex
+	TEXMFHOME=@abs_top_srcdir@/docs/tex/texmf        dvips -R0 finitestrain.dvi -o
+	ps2pdf finitestrain.ps
+
 aster:
 	TEXMFHOME=@abs_top_srcdir@/docs/tex/texmf        latex  aster.tex
 	TEXMFHOME=@abs_top_srcdir@/docs/tex/texmf        latex  aster.tex

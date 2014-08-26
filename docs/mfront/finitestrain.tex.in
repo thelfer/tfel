@@ -1,0 +1,864 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% File      : mfront.tex
+% Author    : th202608@pleiades068.intra.cea.fr
+% Date      : 15 oct. 2012
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\documentclass[rectoverso,pleiades,pstricks,leqno,anti]{note_technique_2010}
+
+\usepackage[dvips]{graphicx}
+\usepackage[dvips,breaklinks]{hyperref}
+
+\usepackage{mathematiques}
+\usepackage{mecanique}
+\usepackage{couleurs}
+\usepackage{presentation}
+
+\usepackage{pst-plot}
+\usepackage{array}
+\usepackage{subfigure}
+\usepackage{relsize}
+\usepackage{multind}
+
+\usepackage[frenchb]{babel}
+
+\newcommand{\pleiades}{\texttt{pleiades}}
+\newcommand{\TFEL}{\texttt{tfel}}
+\newcommand{\mfront}{\texttt{mfront}}
+\newcommand{\mtest}{\texttt{mtest}}
+\newcommand{\alcyone}{\texttt{alcyone}}
+\newcommand{\germinal}{\texttt{germinal}}
+\newcommand{\licos}{\texttt{licos}}
+\newcommand{\celaeno}{\texttt{celaeno}}
+\newcommand{\mfm}{\texttt{MFront\-Materials}}
+\newcommand{\cyrano}{\texttt{cyrano}}
+\newcommand{\galileo}{\texttt{galileo}}
+\newcommand{\castem}{\texttt{Cast3M}}
+\newcommand{\gibiane}{\texttt{gibiane}}
+\newcommand{\tmfft}{\texttt{TMFFT}}
+\newcommand{\aster}{\href{http://www.code-aster.org/}{\texttt{Aster}}}
+\newcommand{\pycastem}{\texttt{pyCast3M}}
+\newcommand{\umat}{\texttt{umat}}
+\newcommand{\sirius}{\texttt{sirius}}
+\newcommand{\fortran}{\texttt{fortran}}
+
+\newcommand{\cmake}{\href{http://www.cmake.org/}{\texttt{cmake}}}
+\newcommand{\autotools}{\href{http://fr.wikipedia.org/wiki/Autotools}{\texttt{autotools}}}
+\newcommand{\python}{\href{http://python.org}{\texttt{python}}}
+\newcommand{\gnuplot}{\href{http://www.gnuplot.info}{\texttt{gnuplot}}}
+\newcommand{\latex}{\href{http://www.latex-project.org}{\LaTeX2e{}}}
+\newcommand{\make}{\href{http://www.gnu.org/software/make/}{\texttt{make}}}
+\newcommand{\doxygen}{\href{http://www.stack.nl/~dimitri/doxygen/}{\texttt{doxygen}}}
+\newcommand{\valgrind}{\href{http://www.valgrind.org/}{\texttt{valgrind}}}
+
+\newcommand{\egl}[0]{\ensuremath{\tepsilonto_{GL}}}
+\newcommand{\tns}[1]{\ensuremath{\underset{\tilde{}}{\mathbf{#1}}}}
+\newcommand{\bts}[1]{\ensuremath{\left.#1\right|_{t}}}
+\newcommand{\mts}[1]{\ensuremath{\left.#1\right|_{t+\theta\,\Delta\,t}}}
+\newcommand{\ets}[1]{\ensuremath{\left.#1\right|_{t+\Delta\,t}}}
+
+\newcommand{\bigO}[1]{\ensuremath{\mathop{}\mathopen{}O\mathopen{}\left(#1\right)}}
+
+%c from texinfo.tex
+\def\ifmonospace{\ifdim\fontdimen3\font=0pt }
+
+%c C plus plus
+\def\cpp{%
+\ifmonospace%
+    C++%
+\else%
+    C\kern-.1667em\raise.30ex\hbox{\smaller{++}}%
+\fi%
+\spacefactor1000 }
+
+\newcommand{\varcpp}[1]{\texttt{#1}}
+
+\newcommand{\sigmaH}{\ensuremath{\sigma_{H}}}
+
+\newcommand{\nbzrc}{$NbZrC$}
+\newcommand{\upuc}{$\paren{U,Pu}C$}
+\newcommand{\sic}{$SiC$}
+
+\newcommand{\cea}{CEA}
+\newcommand{\windows}{\href{http://www.microsoft.com/france/windows/default.mspx}{\texttt{Windows}}}
+\newcommand{\unix}{\href{http://www.kernel.org/}{\texttt{unix}}}
+\newcommand{\msys}{\href{http://www.mingw.org/wiki/MSYS}{\texttt{msys}}}
+\newcommand{\cygwin}{\href{http://www.cygwin.com/}{\texttt{cygwin}}}
+\newcommand{\linux}{\href{http://www.kernel.org/}{\texttt{linux}}}
+\newcommand{\debian}{\href{http://www.debian.org/}{\texttt{Debian}}}
+\newcommand{\ubuntu}{\href{http://www.ubuntu.com}{\texttt{Ubuntu}}}
+\newcommand{\redhat}{\href{http://www.redhat.com}{\texttt{Red Hat}}}
+\newcommand{\mandriva}{\href{http://www.mandriva.com}{\texttt{Mandriva}}}
+\newcommand{\excel}{\href{http://www.microsoft.com/france/office/2007/programs/excel/overview.mspx}{\texttt{Microsoft Office Excel}}}
+
+\newcommand{\debutpas}[1]{\ensuremath{\left.#1\right|_{t}}}
+\newcommand{\milieupas}[1]{\ensuremath{\left.#1\right|_{t+\theta\, \Delta\, t}}}
+\newcommand{\finpas}[1]{\ensuremath{\left.#1\right|_{t+\Delta\, t}}}
+\newcommand{\demipas}[1]{\ensuremath{\left.#1\right|_{t+\frac{\Delta\, t}{2}}}}
+
+\newcommand{\uod}{\ensuremath{UO_{2}}}
+
+\newcommand{\code}[1]{
+  \psframebox[linecolor=ceaorange,shadow=true,blur=true]{
+    \begin{minipage}[htbp]{1.0\linewidth}
+      \ttfamily\small#1
+    \end{minipage}
+  }
+}
+
+\newcommand{\bash}[1]{
+  \begin{center}
+    \begin{minipage}{0.8\linewidth}
+      \footnotesize{}
+      \texttt{\$#1}
+    \end{minipage}
+  \end{center}
+}
+
+\input{LSC}
+
+\auteurs{T.~Helfer}
+\redacteur{T.~Helfer}
+\verificateur{J.-M.~Proix}
+\approbateur{R.~Masson}
+\emetteur{E.~Touron}
+
+\titre{Écriture de lois de comportement mécanique en grandes
+  transformations avec le générateur de code \mfront{}}
+
+\date{2014}
+\numero{}
+\indice{0}
+\dateversion{}
+\numeroaffaire{A-SICOM-A1-01}
+\domaine{DEN/DISN/SIMU}
+\accords{tripartite}
+\clients{AREVA - EDF}
+\programmerecherche{SICOM}
+\classification{DO}
+\motsclefs{
+  \mfront{} - \pleiades{}
+}
+
+% \codebarre{images/code_barre}
+\diffusionexterne{
+{EDF/R\&D}              & O. Marchand     & 1 & Diffusion par\\
+{EDF/R\&D}              & P. Vasseur      & 1 & courriel     \\
+{EDF/R\&D/AMA}          & É. Lorentz      & 1 & \\
+                        & C. Durand       & 1 & \\
+{EDF/R\&D/AMA/T64}      & T. de Soza      & 1 & \\
+                        & J. Delmas       & 1 & \\
+                        & J.M. Proix      & 1 & \\
+                        & F. Hammon       & 1 & \\
+                        & N. Sellenet     & 1 & \\
+{EDF/R\&D/MMC}          & P. Ollar        & 1 & \\
+{EDF/R\&D/MMC/MAESTRO}  & N. Rupin        & 1 & \\
+                        & F. Latourte     & 1 & \\
+{EDF/R\&D/MMC/CPM}      & N. Prompt       & 1 & \\
+                        & N. Barnel       & 1 & \\
+{EDF/R\&D/MMC/CPM}      & G. Thouvenin    & 1 & \\
+                        & F. Douchin      & 1 & \\
+                        & R. Largenton    & 1 & \\
+                        & C. Petry        & 1 & \\
+EDF/SEPTEN              & N. Waeckel      & 1 & \\
+                        & C. Chauliac     & 1 & \\
+                        & H. Billat       & 1 & \\
+                        & C. Bernaudat    & 1 & \\
+AREVA NP/LA DEFENSE     & L. Catalani     & 1 & \\
+                        & L. Brunel       & 1 & \\
+AREVA NP/LYON           & P. Melin        & 1 & \\
+                        & V. Bessiron     & 1 & \\
+                        & C. Garnier      & 1 & \\                           
+                        & V. Garat        & 1 & \\
+                        & F. Arnoux       & 1 &
+}
+\CoupeListeDiffusion{}
+\diffusioninterne{
+  DEN/DISN/SIMU       & J.P. Deffain       & 1 & Diffusion par\\ 
+                      & D. Caruge          & 1 & courriel     \\ 
+  DEN/DM2S/SEMT       & X. Averty          & 1 & \\
+  DEN/DM2S/SEMT/LM2S  & J.L. Fayard        & 1 & \\
+                      & P. Verpeaux        & 1 & \\
+                      & A. Millard         & 1 & \\
+                      & S. Pascal          & 1 & \\
+                      & O. Fandeur         & 1 & \\
+  DEN/DMN             & P. Yvon            & 1 & \\
+                      & J.L. Seran         & 1 & \\
+                      & F. Dalle           & 1 & \\
+  DEN/DMN/SRMA        & P. Chapelot        & 1 & \\
+                      & S. Carassou        & 1 & \\
+                      & B. Marini          & 1 & \\
+  DEN/DMN/SRMA/LC2M   & L. Nicolas         & 1 & \\
+                      & J. Garnier         & 1 & \\
+                      & S. Vincent         & 1 & \\
+                      & L. Vincent         & 1 & \\
+                      & L. Gelebart        & 1 & \\
+                      & M. Sauzay          & 1 & \\
+                      & L. Dupuy           & 1 & \\
+                      & P. Forget          & 1 & \\
+                      & A. Hellouin de Menibus  & 1 & \\
+                      & M. Le Saux         & 1 & \\
+                      & C. Robertson       & 1 & \\
+  DEN/DMN/SRMA/LA2M   & J.-L. Bechade      & 1 & \\
+  DEN/DMN/SRMA/LTMEX  & L. Chaffron        & 1 & \\
+                      & D. Sornin          & 1 & \\
+  DEN/DMN/SEMI        & C. Poussard        & 1 & \\
+                      & B. Tanguy          & 1 & \\
+  DEN/DMN/SEMI/LCMI   & V. Vandenberghe    & 1 & \\
+                      & A. Courcelle       & 1 & \\
+                      & F. Hure            & 1 & \\
+                      & D. Leboulch        & 1 & \\
+                      & Q. Auzoux          & 1 & \\
+                      & Y. Robert          & 1 & \\
+  DEN/DER/SESI/LE2S   & P. Lamagnère       & 1 & \\
+                      & D. Gentet          & 1 & \\
+                      & Y. Lejeail         & 1 & \\
+                      &                    &  & \\
+  DEN/DEC             & P. Brossard        &  & Document disponible\\
+  DEN/DEC/PROJETS     & P. Obry            &  & sur intradec\\
+  DEN/DEC/SESC        & E. Touron          &  & \\
+                      & M. Casella         &  & \\
+                      & M. Agard           &  & \\
+  DEN/DEC/SESC/LIPA   & C. Nonon-Solaro    &  & \\
+                      & C. Bassi           &  & \\
+                      & O. Bremond         &  & \\
+  DEN/DEC/SESC/LLCC   & V. Basini          &  & \\
+                      & J.-M. Escleine     &  & \\
+  DEN/DEC/SESC/LC2I   & D. Plancq          &  & \\
+                      & S. Bejaoui         &  & \\
+                      & V. Blanc           &  & \\
+                      & T. Beck            &  & \\
+                      & F. Biscarrat       &  & \\
+                      & D. Lorenzo         &  & \\
+                      & I. Guénot-Delahaie &  & \\
+                      & P. Masoni          &  & \\
+                      & B. Valentin        &  & \\
+                      & M. Zabiego         &  & \\
+  DEN/DEC/SESC/LSC    & R. Masson          &  & \\
+                      & B. Michel          &  & \\
+                      & M. Pelletier       &  & \\
+                      & M. Lainet          &  & \\
+                      & V. Bouineau        &  & \\
+                      & V. Marelle         &  & \\
+                      & T. Helfer          &  & \\
+
+}
+
+% \signatures{-0.}{-39.2}{0.12}{images/signatures.eps}
+
+\stylebib{@abs_top_srcdir@/docs/tex/texmf/bibtex/fr-insa}
+\fichierbib{@abs_top_srcdir@/docs/tex/texmf/bibtex/Bibliographie}
+
+\resumecea{
+  Nous décrivons dans cette note l'utilisation de \mfront{} pour
+  écrire des lois de comportement en grandes transformations.
+
+  
+}
+
+\begin{document}
+
+\clearpage
+\newpage
+\section{Introduction}
+
+Pour traiter les grandes transformations, les approches de la
+littérature se classent grossièrement en deux catégories~:
+\begin{itemize}
+\item l'adoption explicite d'un des nombreux formalismes \og~grandes
+  transformations~\fg{}. La principale difficulté est que ces
+  formalismes introduisent de nombreuses notions qui peuvent rebuter
+  les ingénieurs~;
+\item une réutilisation {\em ad hoc} des lois en petites
+  déformations. Nous retrouvons dans cette catégorie les approches
+  incrémentales de la plasticité basées sur la décomposition additive
+  du taux déformation eulérien et sur l'utilisation d'une dérivée
+  objective des contraintes. Malgré de nombreux défauts théoriques,
+  ces approches ont été et sont encore très
+  utilisées.
+\end{itemize}
+
+
+\section{Transformations finies}
+
+\subsection{Gradient de la transformation}
+
+L'évolution de la géométrie d'un corps se traduit par l'existence
+d'une transformation \(\vec{\phi}\) qui associe à chaque position initiale
+\(\vec{X}\) sa nouvelle position \(\vec{x}\)~:
+\[
+\vec{x} = \vec{\phi}\paren{\vec{X}}
+\]
+
+Le champ de déplacement \(\vec{u}\) est défini par la différence entre
+la position actuelle du point et sa position initiale~:
+\[
+\vec{u}=\vec{x}-\vec{X}=\vec{\phi}\paren{\vec{X}}-\vec{X}
+\]
+
+Les théories de premier gradient, les plus usuelles en mécanique,
+suppose que seul le gradient de la transformation \(F\) caractérise la
+sollicitation locale d'un point matériel~:
+\[
+\tenseur{F}=\derivtot{\vec{x}}{\vec{X}}=\tenseur{I}+\vec{\nabla}\,\vec{u}
+\]
+
+\section{Réutilisation des lois écrites dans l'hypothèse des petites
+  perturbations en grandes transformations}
+
+La plupart des lois fournies par les expérimentateurs sont aujourd'hui
+écrites dans l'hypothèse des petites perturbations (HPP). Dans cette
+section, nous examinons comment ce formalisme peut être réutilisé dans
+le cas des grandes transformations.
+
+De manière générale, la réutilisation du formalisme HPP procède de
+trois étapes~:
+\begin{itemize}
+\item un pré-traitement permettant le calcul d'un incrément de
+  déformation~;
+\item l'appel à la loi HPP~;
+\item un post-traitement permettant de déduire de la réponse de loi
+  HPP le tenseur des contraintes (généralement celui de \nom{Cauchy})
+  utilisé pour le calcul de l'équilibre.
+\end{itemize}
+
+Le paragraphe~\ref{sec:bibl-meth-class} décrit certaines méthodes
+classiques issues de la littérature que l'on retrouve dans la plupart
+des codes éléments finis.
+
+Le paragraphe~\ref{sec:grand-rotat-petit} décrit le formalisme
+\og~grandes rotations, petites déformations~\fg{} qui a été introduit
+dans l'interface \umat{} de \mfront{} et que nous avons reprise
+d'\aster{}~\cite{proix_loi_2013}. Ce formalisme semble
+particulièrement intéressant pour les applications combustibles car il
+permet d'étendre une loi HPP (sans nécessité une ré-identification des
+paramètres de la loi !) au cas des grandes transformations. La
+démarche suivie sert également d'introduction au paragraphe suivant.
+
+Le paragraphe~\ref{sec:deform-lagr-et} décrit une famille de
+déformations lagrangiennes auxquelles on associe des tenseurs de
+contraintes par dualité~\cite{curnier_mecanique_2005}. Cette méthode
+est appliquée au cas des déformations
+logarithmiques~\cite{miehe_anisotropic_2002} qui ont été introduites
+dans l'interface \umat{} de \mfront{}. L'utilisation des déformations
+logarithmiques nous a été vivement recommandée par l'équipe \aster{}
+(formalisme {\tt GDEF\_LOG}~\cite{bargellini_modeles_2013}).
+
+\subsection{Bibliographie, méthodes classiques}
+\label{sec:bibl-meth-class}
+
+Il nous a paru intéressant...
+
+\subsubsection{Formulation lagrangienne réactualisée}
+
+La formulation lagrangienne réactualisée est une méthode dans laquelle
+l'équilibre est calculé sur une géométrie évoluant en cours de
+calcul~\cite{besson_mecanique_2001}. Cette méthode est disponible dans
+la plupart des codes éléments finis sous des formes plus ou moins
+sophistiquées.
+
+L'incrément des déformations est calculé sur la géométrie en début de
+pas de temps (ou sur une géométrie intermédiaire, généralement celle
+de milieu de pas).
+
+Les contraintes sont calculées de manière incrémentales, par
+l'utilisation d'une simple dérivée temporelle. La dérivée temporelle
+n'étant pas objective, elle est sensible aux rotations rigides
+(apparition de contraintes parasites non physiques lorsque l'on tourne
+de manière rigide l'ensemble du système). Il est généralement
+considéré que ces méthodes sont limités à des chargements
+proportionnels monotones où les rotations sont
+faibles~\cite{chaboche_mecanique_2009,bargellini_modeles_2013}.
+
+Dans \castem{}, cette formulation est adoptée par l'option \og~grands
+déplacements~\fg{} des algorithmes de résolution {\tt PASAPAS} et {\tt
+  INCREPL}~\cite{pascal_notice_2005}. Pour traiter le contact en
+\(2D\) ou \(3D\), l'option \og~grands déplacements~\og{} doit être
+activée. La plupart des codes combustible de la plate-forme utilisent
+donc ce formalisme.  Il est donc intéressant d'examiner comment se
+traite une loi HPP dans ce cas\footnote{Nous décrivons ici l'option
+  {\tt 'EPSILON'}{\tt 'LINEAIRE'} ou {\tt 'EPSILON'}{\tt
+    'QUADRATIQUE'}. Les cas {\tt 'EPSILON'}{\tt 'JAUMANN'} ou {\tt
+    'EPSILON'}{\tt 'TRUESDELL'} sont traitées plus loin.}~:
+\begin{itemize}
+\item \castem{} calcule un incrément de déformation sur la
+  configuration initiale (procédure {\tt INCREPL}) ou celle en milieu
+  de pas (procédure {\tt PASAPAS}). Dans {\tt PASAPAS}, deux choix
+  sont disponibles. Dans le cas {\tt LINEAIRE}, on calcule la
+  déformation linéarisée classique. Le cas {\tt QUADRATIQUE}
+  correspond à la déformation de \nom{Green-Lagrange}. Dans {\tt
+    INCREPL}, on calcule toujours la déformation linéarisée.
+\item on appelle la loi HPP. La contrainte en sortie est interprétée
+  comme la seconde contrainte de \nom{Piola-Kirchhoff}. Elle est
+  portée sur la configuration finale par l'opérateur {\tt PICA}.
+\item notons que ces procédures retourne une déformation (indice {\tt
+    'DEFORMATIONS'} de la procédure {\tt PASAPAS} ou {\tt 'EPST\_FIN'}
+  de la procédure {\tt 'INCREPL'}) qui est la somme d'incréments de
+  déformations calculées sur des configurations différentes et dont la
+  signification physique est pour le moins discutable\footnote{Il
+    s'agit au mieux d'un indicateur du niveau de déformation atteint,
+    mais on pourra lui préférer la déformation calculée sur la
+    configuration initiale à partir du champs de déplacement
+    final.}...
+\end{itemize}
+
+Dans \aster{}, l'option {\tt PETIT REAC} est celle qui s'en approche
+le plus~\cite{bargellini_modeles_2013}.
+
+\subsubsection{Approches incrémentales eulériennes basée sur une dérivée
+  objective des contraintes}
+
+Pour éliminer les grandes rotations, l'utilisation de dérivée
+temporelle objective des contraintes a été très utilisée.
+
+\nom{Doghri} porte le jugement suivant sur ces
+approches~\cite{doghri_mechanics_2000}~:
+\begin{quote}
+  ...
+\end{quote}
+Ce jugement est notamment motivé par les points suivants, que l'on
+retrouve dans la plupart des ouvrages de
+référence~\cite{simo_computational_1998,doghri_mechanics_2000,chaboche_mecanique_2009}~:
+\begin{enumerate}[-]
+\item le choix de la dérivée objective à utiliser. Une infinité de
+  dérivées objectives existent. Les plus utilisées sont introduites
+  \nom{Jaumann}, \nom{Green-Naghdi} et \nom{Truesdell}. Les deux
+  premières sont dites corotationnelles car elles décrivent la
+  réaction du matériau dans un repère en rotation par rapport au
+  référentiel du calcul.
+\item l'élasticité est écrite sous forme incrémentale~: 
+  \[
+  ...
+  \]
+  Une telle loi est dite hypoélastique car les contraintes ne dérivent
+  généralement pas d'un potentiel. De ce fait elles peuvent conduire à
+  un travail mécanique dissipé non nul après d'un cycle de
+  charge-décharge, ce qui ne correspond pas à l'idée que l'on se fait
+  d'un comportement
+  élastique~\cite{bargellini_modeles_2013,forest_mecanique_2013}.
+\item un limitation forte de ces approches est que le tenseur
+  d'élasticité instantané \(\tenseur{D}\paren{\tenseur{\tau}}\) doit
+  être une fonction isotrope des contraintes pour respecter les
+  principes ???~: il n'est normalement pas permis de décrire un
+  matériau orthotropes.
+\item la plasticité est incohérente au sens donné par \nom{Xiao} et
+  \nom{Bruhns}~\cite{xiao_choice_2000}.
+\item L'utilisation des dérivées objectives conduit à un algorithme
+  coûteux. De plus, la matrice tangente est non
+  symétrique~\cite{simo_computational_1998,bargellini_modeles_2013}.
+\end{enumerate}
+
+Notons que \nom{Xiao} et \nom{Bruhns} ont démontré, dans le cas
+isotherme, que leur dérivée corotationnelle logarithmique est l'unique
+dérivée objective évitant certains des défauts précédemment
+cités~\cite{xiao_choice_2000}~: la loi élasticité incrémentale est
+notamment intégrable permettant de retrouver une loi hyperélastique et
+la description de la plasticité était cohérente.
+
+\paragraph{Dérivées objectives fournies par \castem{}}
+
+\castem{} propose les dérivées objectives de \nom{Jaumann} et
+\nom{Green-Naghdi}\footnote{La documentation du code indique que la
+  dérivée de \nom{Truesdell} est disponible mais il pourrait y avoir
+  eu une confusion avec celle de \nom{Green-Naghdi} (communication
+  avec \nom{Olivier Fandeur}.). Ce point mériterait d'être
+  éclairci.}. Il est cependant possible d'utiliser d'autres dérivées
+objectives dans les lois utilisateurs, notamment basée sur des
+approches corotationnelles.
+
+Les versions antérieures à la version \(2012\) ne semble pas..
+
+\paragraph{La formulation {\tt GDEF\_HYPO\_ELAS}
+  d'\aster{}~\cite{bargellini_modeles_2013}} La formulation {\tt
+  GDEF\_HYPO\_ELAS} d'\aster{}~\cite{bargellini_modeles_2013}
+implémente la méthode proposée par \nom{Simo} et
+\nom{Hughes}~\cite{simo_computational_1998}. Cette formulation permet
+de réutiliser de nombreuses lois isotropes.
+
+\subsection{Grandes rotations, petites déformations}
+\label{sec:grand-rotat-petit}
+
+\subsubsection{Description}
+
+Ce paragraphe s'inspire de la formulation éponyme
+d'\aster{}~\cite{proix_loi_2013}. L'interprétation physique du
+formalisme est également décrit par
+Doghri~\cite{doghri_mechanics_2000}
+
+Rappelons quelques définitions. La décomposition polaire du gradient
+de la transformation \(F\) s'écrit~:
+\[
+\tns{F}=\tns{R}\,.\tenseur{U}
+\]
+où
+\begin{itemize}
+\item \(\tns{R}\) est une rotation~;
+\item \(\tenseur{U}\) est un tenseur symétrique défini positif
+  décrivant l'élongation du milieu~;
+\end{itemize}
+
+Le tenseur de \nom{Cauchy} droit \(\tenseur{C}\) est défini par~:
+\[
+\tenseur{C}=\transpose{\tns{F}}\,.\tns{F}=U^{2}
+\]
+Il s'agit d'un tenseur lagrangien (relatif à la configuration
+initiale).
+
+Nous pouvons remarquer que seul le tenseur \(\tenseur{U}\) apparaît
+dans cette définition~: la rotation \(\tns{R}\) n'intervient pas. Nous
+pouvons également remarquer qu'il n'est pas nécessaire d'effectuer la
+décomposition polaire de \(\tns{F}\) pour calculer \(\tenseur{C}\).
+
+
+La déformation de \nom{Green-Lagrange} en début et fin de pas de temps
+est définie par~:
+\[
+\begin{aligned}
+  \bts{\egl} &= \Frac{1}{2}\left(\bts{\tenseur{C}}-\tenseur{I}\right)\\
+  \ets{\egl} &= \Frac{1}{2}\left(\ets{\tenseur{C}}-\tenseur{I}\right)\\
+\end{aligned}
+\]
+
+\(\bts{\egl}\) et \(\ets{\egl}\) sont deux tenseurs lagrangiens (tous
+deux relatifs à la configuration initiale) que l'on peut légitiment
+soustraire pour calculer l'incrément de déformation totale
+\(\Delta\,\egl\)~:
+\[
+\Delta\,\egl=\ets{\egl}-\bts{\egl}
+\]
+
+
+
+\subsubsection{Utilisation via l'interface \umat{} de \mfront{}}
+
+\subsection{Déformations lagrangiennes et tenseurs des contraintes
+  duaux}
+\label{sec:deform-lagr-et}
+
+
+\clearpage
+\newpage
+\referencecea
+\listetableaux
+\listefigures
+
+\appendix
+\section{Description de la dilatation thermique des corps}
+
+Expérimentalement, on mesure la variation de longueur d'un corps entre
+une température de référence \(T_{\alpha}\) et une température finale
+\(T\).
+
+Si l'on note \(l_{T^{\alpha}}\) et \(l_{T}\) les longueurs respectives
+du corps à ces deux températures, le coefficient de dilatation
+thermique linéique \(\alpha\paren{T}\) est défini par~:
+\begin{equation}
+  \label{eq:umat:alpha}
+  \Frac{l_{T}-l_{T^{\alpha}}}{l_{T^{\alpha}}}=\alpha\paren{T}\,\paren{T-T^{\alpha}}
+\end{equation}
+
+\subsection{Cas des petites déformations}
+
+Dans le cas des petites déformations, l'équation~\eqref{eq:umat:alpha}
+définit une déformation associée à la dilatation thermique~:
+\[
+\epsilonth_{T^{\alpha}}\paren{T}=\alpha\paren{T}\,\paren{T-T^{\alpha}}
+\]
+
+Cette déformation prend comme état de référence la longueur du corps à
+la température \(l_{T^{\alpha}}\).
+
+Lors d'un calcul thermo-mécanique, on suppose généralement que la
+température initiale \(T_{i}\) est supposée être celle à laquelle la
+géométrie est fournie.
+
+Il est donc nécessaire de modifier la définition de la dilatation
+thermique pour que l'état de référence soit la géométrie initiale, de
+longueur \(l_{i}\).
+
+Pour cela, nous pouvons définir la déformation thermique
+\(\epsilonth_{T^{i}}\paren{T}\) du corps à la température \(T\) comme sa
+déformation qu'il aurait si aucune contrainte ne s'exerçait sur lui
+par la relation~:
+\[
+\epsilonth_{T^{i}}\paren{T}=\Frac{l_{T}-l_{T^{i}}}{l_{T^{i}}}
+\]
+
+En introduisant la longueur de référence \(l_{T^{\alpha}}\), nous
+obtenons~:
+\[
+\begin{aligned}
+  \epsilonth_{T^{i}}\paren{T}&=\Frac{l_{T^{\alpha}}}{l_{T^{i}}}\,\Frac{l_{T}-l_{T^{i}}}{l_{T^{\alpha}}} = \Frac{1}{1+\Frac{l_{T^{i}}-l_{T^{\alpha}}}{l_{T^{\alpha}}}}\,\left[\Frac{l_{T}-l_{T^{\alpha}}+l_{T^{\alpha}}-l_{T^{i}}}{l_{T^{\alpha}}}\right] \\
+  &= \Frac{1}{1+\alpha\paren{T^{i}}\paren{T^{i}-T^{\alpha}}}\,\left[\Frac{l_{T}-l_{T^{\alpha}}}{l_{T^{\alpha}}}-\Frac{l_{T^{i}}-l_{T^{\alpha}}}{l_{T^{\alpha}}}\right] \\
+\end{aligned}
+\]
+
+Nous obtenons finalement la relation~:
+\begin{equation}
+  \label{eq:umat:epsilonth}
+  \begin{aligned}
+    \epsilonth_{T^{i}}\paren{T}&=
+    \Frac{1}{1+\alpha\paren{T^{i}}\paren{T^{i}-T^{\alpha}}}\,\left[\alpha\paren{T}\paren{T-T^{\alpha}}-\alpha\paren{T^{i}}\paren{T^{i}-T^{\alpha}}\right] \\
+    &=
+    \Frac{1}{1+\epsilonth_{T^{\alpha}}\paren{T^{i}}}\,\left[\epsilonth_{T^{\alpha}}\paren{T}-\epsilonth_{T^{\alpha}}\paren{T^{i}}\right] \\
+  \end{aligned}
+\end{equation}
+
+Dans les codes aux éléments finis \texttt{Code-Aster} et dans la
+procédure {\tt PASAPAS} de \texttt{Cast3M}, la relation précédente
+s'écrit de manière approchée, en négligeant le terme
+\(\epsilonth_{T^{\alpha}}\paren{T^{i}}\) par rapport à \(1\)~:
+\[
+\epsilonth_{T^{i}}\paren{T}=
+\epsilonth_{T^{\alpha}}\paren{T}-\epsilonth_{T^{\alpha}}\paren{T^{i}}
+\]
+
+\paragraph{Dilatation pure}
+
+Dans le cas d'une dilatation pure, le gradient de la transformation
+est uniforme et proportionnel à l'identité. Si l'on se restreint au
+cas \(1D\), une dilatation pure s'écrit~:
+\[
+F=1+\eta
+\]
+
+La dilatation pure d'un barreau conduit le fait passer d'une longueur
+initiale \(l_{i}\) à une longueur finale \(l\) telle que~:
+\[
+l=\int_{0}^{l_{i}}F\paren{X}\,\dtot\,X=\paren{1+\eta}\,l_{i}
+\]
+ce qui permet d'identifier \(\eta\) à la variation relative du corps
+entre son état initial et son état final~:
+\[
+\eta=\Frac{\Delta l}{l_{i}}
+\]
+
+Ainsi, la description de la dilatation thermique pure est très simple
+en grandes transformations, tant que d'autres effets ne sont pas pris
+en compte.
+
+\paragraph{Traduction de la dilatation thermique en terme de gradient de la transformation}
+
+Dans le cas des transformations finies, nous pouvons traduire la
+dilatation thermique par un gradient de la transformation
+\(F_{T^{\alpha}}^{\theta}\) ainsi~:
+\begin{equation}
+  \label{eq:umat:Fth:Ta}
+  F_{T^{\alpha}}^{\theta}=1+\Frac{l_{T}-l_{T^{\alpha}}}{l_{T^{\alpha}}}=1+\alpha\paren{T}\,\paren{T-T^{\alpha}}
+\end{equation}
+
+Dans le cas où la géométrie du corps est définie à la température
+initiale \(T^{i}\), la formule~\eqref{eq:umat:epsilonth} peut
+s'adapter en~:
+\begin{equation}
+  \label{eq:umat:Fth:Ti}
+  F_{T^{i}}^{\theta}=1+\Frac{1}{1+\alpha\paren{T^{i}}\paren{T^{i}-T^{\alpha}}}\,\left[\alpha\paren{T}\paren{T-T^{\alpha}}-\alpha\paren{T^{i}}\paren{T^{i}-T^{\alpha}}\right]
+\end{equation}
+
+\paragraph{Dilatation thermique orthotrope} Le cas orthotrope fait
+apparaître trois directions particulières de l'espace \(\vec{n}_{0}\),
+\(\vec{n}_{1}\), \(\vec{n}_{2}\). Notons \(\eta_{0}\), \(\eta_{1}\) et
+\(\eta_{2}\) les dilatations thermiques dans chacune de ces trois
+directions et données par~:
+\[
+\begin{aligned}
+  \eta_{0}&=\Frac{1}{1+\alpha_{0}\paren{T^{i}}\paren{T^{i}-T^{\alpha}}}\,\left[\alpha_{0}\paren{T}\paren{T-T^{\alpha}}-\alpha_{0}\paren{T^{i}}\paren{T^{i}-T^{\alpha}}\right]\\
+  \eta_{1}&=\Frac{1}{1+\alpha_{1}\paren{T^{i}}\paren{T^{i}-T^{\alpha}}}\,\left[\alpha_{1}\paren{T}\paren{T-T^{\alpha}}-\alpha_{1}\paren{T^{i}}\paren{T^{i}-T^{\alpha}}\right]\\
+  \eta_{2}&=\Frac{1}{1+\alpha_{2}\paren{T^{i}}\paren{T^{i}-T^{\alpha}}}\,\left[\alpha_{2}\paren{T}\paren{T-T^{\alpha}}-\alpha_{2}\paren{T^{i}}\paren{T^{i}-T^{\alpha}}\right]\\
+\end{aligned}
+\]
+
+Nous pouvons donner une valeur intrinsèque au tenseur du gradient de
+la transformation~:
+\[
+\tenseur{F}=\paren{1+\eta_{0}}\tenseur{I}+\paren{\eta_{1}-\eta_{0}}\,\vec{n}_{1}\otimes\vec{n}_{1}+\paren{\eta_{2}-\eta_{0}}\,\vec{n}_{2}\otimes\vec{n}_{2}
+\]
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=0.6\linewidth]{@top_srcdir@/docs/mfront/Images/FeFth.eps}
+  \caption{Décomposition multiplicative du grandient de la
+    transformation en une partie élastique et une partie thermique
+    (d'après \nom{Lubarda}~\cite{lubarda_constitutive_2004}).}
+  \label{fig:FeFth}
+\end{figure}
+
+\subsubsection{Décomposition multiplicative de la transformation dans
+  le cas élastique}
+
+Adoptons une déformation multiplicative du gradient de la
+transformation en une partie élastique et une partie
+thermique~\cite{lubarda_constitutive_2004}~:
+\begin{equation}
+  \label{eq:umat:F:split}
+  \tenseur{F}=\tenseur{F}^{e}\,\tenseur{F}_{T^{i}}^{\theta}  
+\end{equation}
+
+Le tenseur de \nom{Cauchy} droit \(C\) s'écrit alors~:
+\[
+\tenseur{C} = \tenseur{F}^{T}\,\tenseur{F} = \left. \tenseur{F}_{T^{i}}^{\theta} \right.^{T}\,  \left. \tenseur{F}^{e} \right.^{T} \,\tenseur{F}^{e}\,\tenseur{F}_{T^{i}}^{\theta}  
+\]
+
+\paragraph{Cas d'une dilatation thermique isotrope}
+Dans le cas d'une dilatation thermique isotrope, \(\tenseur{F}^{e}\) et
+\(\tenseur{F}_{T^{i}}^{\theta}\) commutent et l'on peut écrire~:
+\begin{equation}
+  \label{eq:umat:C:split}
+  \tenseur{C} = \left. \tenseur{F}^{e} \right.^{T} \,\tenseur{F}^{e}\,\left. \tenseur{F}_{T^{i}}^{\theta} \right.^{T}\,\tenseur{F}_{T^{i}}^{\theta} =  \tenseur{C}^{m}\,\tenseur{C}_{T^{i}}^{\theta}=\paren{1+\eta}^{2}\,\tenseur{C}^{m}
+\end{equation}
+
+\subsubsection{Cas des déformations de \nom{Green-Lagrange} dans le
+  cas isotrope} Dans le cas isotrope, suivant
+Lubarda~\cite{lubarda_constitutive_2004}, il est possible de définir
+trois déformations de \nom{Green-Lagrange}~:
+\begin{enumerate}[-]
+\item le tenseur des déformations totales
+  \(\egl=\Frac{1}{2}\paren{\left. \tenseur{F} \right.^{T}
+    \,\tenseur{F}-\tenseur{I}}\), mesure relative au référence
+  initial~;
+\item le tenseur des déformations élastiques
+  \(\tepsilonel_{GL}=\Frac{1}{2}\paren{\left. \tenseur{F}^{e}
+    \right.^{T} \,\tenseur{F}^{e}-\tenseur{I}}\), mesure relative au
+  référence intermédiaire après dilatation thermique~;
+\item le tenseur des déformations thermiques
+  \(\tepsilonth_{GL}=\Frac{1}{2}\paren{\left. \tenseur{F}_{T^{i}}^{\theta}
+    \right.^{T}\,\tenseur{F}_{T^{i}}^{\theta}-\tenseur{I}}\), mesure
+  relative au référentiel initial.
+\end{enumerate}
+
+Le tenseur des déformations thermiques a l'expression suivante~:
+\[
+\tepsilonth_{GL}=\paren{\paren{1+\eta}^{2}-1}\tenseur{I}\
+\]
+
+L'équation~\eqref{eq:umat:C:split} permet de relier ces différents tenseurs~:
+\[
+\tepsilonel_{GL}=\Frac{1}{\paren{1+\eta}^{2}}\left[\egl-\tepsilonth_{GL}\right]
+\]
+Cette relation est l'équivalent de la partition des déformations des
+petites déformations\footnote{La relation hyperélatique de
+  \nom{Saint-Venant-Kirchhoff} peut être étendue en thermoélasticité
+  ainsi~\cite{lubarda_constitutive_2004}~:
+  \[
+  \tenseur{S}=\Frac{1}{1+\eta}\left[\lambda\paren{T}\,\trace\paren{\egl}\tenseur{I}+2\,\mu\paren{T}\,\egl\right]-\Frac{1}{2}\paren{1+\eta-\Frac{3}{1+\eta}}\,K\paren{T}\,\tenseur{I}
+    \]
+    où \(\tenseur{S}\) est le second tenseur de \nom{Piola-Kirchhoff}
+    dans la configuration initiale, \(\lambda\paren{T}\),
+    \(\mu\paren{T}\) les premier et second coefficients de \nom{Lame},
+    \(K\paren{T}\) le module de compressibilité.}.
+
+\subsubsection{Application aux déformations logarithmiques dans le cas isotrope}
+
+En prenant le logarithme de l'expression~\eqref{eq:umat:F:split} pour
+définir la déformation de \nom{Henky} \(\tepsilonto_{\log}\), nous
+obtenons~:
+\[
+\tepsilonto_{\log}=\Frac{1}{2}\log\paren{\tenseur{C}}=\Frac{1}{2}\log\paren{\tenseur{C}^{m}}+\Frac{1}{2}\log\paren{\tenseur{C}_{T^{i}}^{\theta}}
+\]
+ce qui permet de retrouver la partition classique de la déformation~:
+\[
+\tepsilonto_{\log}=\tenseur{\varepsilon}_{\log}^{m}+\tenseur{\varepsilon}_{\log}^{th}
+\]
+en définissant la déformation thermique par la relation~:
+\[
+\tenseur{\varepsilon}_{\log}^{th}=\Frac{1}{2}\log\paren{\tenseur{C}_{T^{i}}^{\theta}}
+\]
+\(\tenseur{F}_{T^{i}}^{\theta}\) étant proportionnel à l'identité, nous pouvons
+également écrire que~:
+\[
+\tenseur{\varepsilon}_{\log}^{th}=\log\paren{\tenseur{F}_{T^{i}}^{\theta}}
+\]
+où \(\tenseur{F}_{T^{i}}^{\theta}\) se calcule par la formule~\eqref{eq:umat:F:split}. 
+
+Ainsi, les composantes diagonales (qui sont égales) du tenseur des
+dilatation thermiques s'écrivent~:
+\begin{equation}
+  \label{eq:umat:eps_log_th}
+  \varepsilon_{\log}^{th}=\log\paren{1+\Frac{\alpha\paren{T}\paren{T-T^{\alpha}}-\alpha\paren{T^{i}}\paren{T^{i}-T^{\alpha}}}{1+\alpha\paren{T^{i}}\paren{T^{i}-T^{\alpha}}}}
+\end{equation}
+
+Si la dilatation thermique est petite, un développement limité au
+premier ordre permet de retrouver
+l'expression~\eqref{eq:umat:epsilonth} de la dilatation thermique en
+petites transformations.
+
+\subsubsection{Application aux déformations logarithmiques dans le cas
+  isotrope, en l'absence d'autres phénomènes}
+
+Dans le cas anisotrope, \(F^{e}\) et \(F_{T^{i}}^{\theta}\) ne
+commutent {\em a priori} plus.
+
+Si aucun autre phénomène ne contribue à la déformation du corps, ou
+que le corps est élastique et au repose, la
+formule~\eqref{eq:umat:eps_log_th} s'étendre au cas anisotrope. Dans
+le repère du matériau, le tenseur des déformations thermiques
+logarithmiques s'écrit, en notation vectorielle~:
+\[
+\tenseur{\varepsilon}_{\log}^{th}=
+\begin{pmatrix}
+  \log\paren{1+\Frac{\alpha_{0}\paren{T}\paren{T-T^{\alpha}}-\alpha_{0}\paren{T^{i}}\paren{T^{i}-T^{\alpha}}}{1+\alpha_{0}\paren{T^{i}}\paren{T^{i}-T^{\alpha}}}} \\
+  \log\paren{1+\Frac{\alpha_{1}\paren{T}\paren{T-T^{\alpha}}-\alpha_{1}\paren{T^{i}}\paren{T^{i}-T^{\alpha}}}{1+\alpha_{1}\paren{T^{i}}\paren{T^{i}-T^{\alpha}}}} \\
+  \log\paren{1+\Frac{\alpha_{2}\paren{T}\paren{T-T^{\alpha}}-\alpha_{2}\paren{T^{i}}\paren{T^{i}-T^{\alpha}}}{1+\alpha_{2}\paren{T^{i}}\paren{T^{i}-T^{\alpha}}}} \\
+  0 \\
+  0 \\
+  0 \\
+\end{pmatrix}
+\]
+
+\newpage
+\clearpage
+\section{Autres représentations de la dilatation thermique}
+
+\subsection{Coefficient de dilatation volumique}
+\label{sec:coeff-de-dilat-vol}
+
+La définition thermodynamique de la dilatation volumique est~:
+\begin{equation}
+  \label{eq:eq:umat:alphav}
+  \alpha_{V}=\Frac{1}{V}\left(\deriv{V}{T}\right)_{p}=\left(\deriv{\log V}{T}\right)_{p}  
+\end{equation}
+
+Partant d'une température de référence \(T^{\alpha}\), le volume de la
+structure sera à la température \(T\)~:
+\[
+\Frac{V_{T}}{V_{T^{\alpha}}}=\exp\paren{\int_{T^{\alpha}}^{T}\alpha_{V}\paren{u}\,\dtot\,u}
+\]
+et l'expression de la variation de volume
+\(\pfrac{\Delta\,V}{V_{T^{\alpha}}}\)~:
+\[
+\Frac{\Delta\,V}{V_{T^{\alpha}}}=\exp\paren{\int_{T^{\alpha}}^{T}\alpha_{v}\paren{u}\,\dtot\,u}-1
+\]
+
+Le lien avec le coefficient de dilatation thermique linéique s'en
+déduit~:
+\[
+\begin{aligned}
+  \Frac{\Delta\,V}{V_{T^{\alpha}}}=\Frac{V_{T}}{V_{T^{\alpha}}}-1=\left(\Frac{l_{T}}{l_{T^{\alpha}}}\right)^{3}-1=\left(\Frac{l_{T}-l_{T^{\alpha}}}{l_{T^{\alpha}}}+1\right)^{3}-1=\left(\Frac{\Delta\,l}{l_{T^{\alpha}}}+1\right)^{3}-1
+\end{aligned}
+\]
+
+Ceci nous permet de retrouver la définition~\eqref{eq:umat:alpha} du
+coefficient de dilatation thermique \(\alpha\)~:
+\[
+\alpha\paren{T} = \Frac{1}{T-T^{\alpha}}\left[\exp\paren{\Frac{1}{3}\int_{T^{\alpha}}^{T}\alpha_{v}\paren{u}\,\dtot\,u}-1\right]
+\]
+
+\subsection{Coefficient de dilatation linéique \og~instantané\fg{}}
+
+On rencontre souvent un coefficient de dilatation thermique linéique
+dite instantané \(\alpha_{l}\)~:
+\begin{equation}
+  \label{eq:eq:umat:alphal}
+  \alpha_{l}=\Frac{1}{l}\derivtot{l}{T}=\derivtot{\log l}{T}
+\end{equation}
+Cette définition est proche de la définition du coefficient de
+dilatation volumique~\eqref{eq:eq:umat:alphav}.
+
+Le lien avec la définition~\eqref{eq:umat:alpha} du coefficient de
+dilatation thermique moyen \(\alpha\) s'obtient de la même manière
+qu'au paragraphe~\ref{sec:coeff-de-dilat-vol}~:
+\[
+\alpha\paren{T} = \Frac{1}{T-T^{\alpha}}\left[\exp\paren{\int_{T^{\alpha}}^{T}\alpha_{l}\paren{u}\,\dtot\,u}-1\right]
+\]
+
+\end{document}
