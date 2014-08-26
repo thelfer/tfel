@@ -342,6 +342,9 @@ docs/tfel/Makefile.am -text
 docs/tfel/Makefile.doc.in -text
 docs/tfel/images/EllipticFuelRodPowerDensity.eps -text
 docs/tfel/images/EllipticFuelRodPowerDensityLegend.eps -text
+docs/tfel/images/r-epsilon-2.eps -text
+docs/tfel/images/r-epsilon.eps -text
+docs/tfel/images/r_epsilon.gnuplot -text
 docs/tfel/reference-guide.tex.in -text
 docs/tfel/style.ist -text
 include/CMakeLists.txt -text
@@ -1517,6 +1520,7 @@ tests/Math/stensor4.cxx -text
 tests/Math/stensor5.cxx -text
 tests/Math/stensor6.cxx -text
 tests/Math/stensor7.cxx -text
+tests/Math/stensor8.cxx -text
 tests/Math/stensor_changeBasis.cxx -text
 tests/Math/stensor_changeBasis2.cxx -text
 tests/Math/stensor_changeBasis3.cxx -text

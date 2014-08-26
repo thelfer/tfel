@@ -68,13 +68,13 @@ namespace tfel
 		 tfel::meta::Int2Type<0>,
 		 tfel::meta::Int2Type<0>,
 		 tfel::meta::Int2Type<0>,
-		 tfel::meta::UInt2Type<0u>,
-		 tfel::meta::UInt2Type<0u>,
-		 tfel::meta::UInt2Type<0u>,
-		 tfel::meta::UInt2Type<0u>,
-		 tfel::meta::UInt2Type<0u>,
-		 tfel::meta::UInt2Type<0u>,
-		 tfel::meta::UInt2Type<0u> > NoUnit;
+		 tfel::meta::UInt2Type<1u>,
+		 tfel::meta::UInt2Type<1u>,
+		 tfel::meta::UInt2Type<1u>,
+		 tfel::meta::UInt2Type<1u>,
+		 tfel::meta::UInt2Type<1u>,
+		 tfel::meta::UInt2Type<1u>,
+		 tfel::meta::UInt2Type<1u> > NoUnit;
 
     /*!
      * \brief Declares the Mass unit 

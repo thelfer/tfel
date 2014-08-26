@@ -23,6 +23,7 @@
 #include"TFEL/Math/Stensor/Internals/StensorImport.hxx"
 #include"TFEL/Math/Stensor/Internals/StensorExport.hxx"
 #include"TFEL/Math/Stensor/Internals/StensorChangeBasis.hxx"
+#include"TFEL/Math/Forward/st2tost2.hxx"
 
 namespace tfel{
 
@@ -270,6 +271,88 @@ namespace tfel{
       };
 
       template<unsigned short N>
+      struct BuildStensorFromVectorsSymmetricDiadicProduct;
+      
+      template<>
+      struct BuildStensorFromVectorsSymmetricDiadicProduct<1u>
+      {
+	template<typename T,
+		 typename VectorType,
+		 typename VectorType2>
+	static TFEL_MATH_INLINE2 TFEL_VISIBILITY_LOCAL
+	typename tfel::meta::EnableIf<
+	  tfel::typetraits::IsAssignableTo<
+	    typename ComputeBinaryResult<typename VectorTraits<VectorType>::NumType,
+					 typename VectorTraits<VectorType2>::NumType,OpMult>::Result,T
+	    >::cond,
+	  void>::type
+	exe(stensor<1u,T,StensorStatic>& s,
+	    const VectorType& v1,
+	    const VectorType2& v2){
+	  using namespace std;
+	  s[0] = 2*v1(0)*v2(0);
+	  s[1] = 2*v1(1)*v2(1);
+	  s[2] = 2*v1(2)*v2(2);
+	}
+      };
+    
+      template<>
+      struct BuildStensorFromVectorsSymmetricDiadicProduct<2u>
+      {
+	template<typename T,
+		 typename VectorType,
+		 typename VectorType2>
+	static TFEL_MATH_INLINE2 TFEL_VISIBILITY_LOCAL
+	typename tfel::meta::EnableIf<
+	  tfel::typetraits::IsAssignableTo<
+	    typename ComputeBinaryResult<typename VectorTraits<VectorType>::NumType,
+					 typename VectorTraits<VectorType2>::NumType,OpMult>::Result,T
+	    >::cond,
+	  void>::type
+	exe(stensor<2u,T,StensorStatic>& s,
+	    const VectorType& v1,
+	    const VectorType2& v2){
+	  using namespace std;
+	  using namespace tfel::typetraits;
+	  typedef typename BaseType<T>::type real;
+	  static const real cste = sqrt(real(2));
+	  s[0] = 2*v1(0)*v2(0);
+	  s[1] = 2*v1(1)*v2(1);
+	  s[2] = 2*v1(2)*v2(2);
+	  s[3] = cste*(v1(0)*v2(1)+v2(0)*v1(1));
+	}
+      };
+      
+      template<>
+      struct BuildStensorFromVectorsSymmetricDiadicProduct<3u>
+      {
+	template<typename T,
+		 typename VectorType,
+		 typename VectorType2>
+	static TFEL_MATH_INLINE2 TFEL_VISIBILITY_LOCAL
+	typename tfel::meta::EnableIf<
+	  tfel::typetraits::IsAssignableTo<
+	    typename ComputeBinaryResult<typename VectorTraits<VectorType>::NumType,
+					 typename VectorTraits<VectorType2>::NumType,OpMult>::Result,T
+	    >::cond,
+	  void>::type
+	exe(stensor<3u,T,StensorStatic>& s,
+	    const VectorType& v1,
+	    const VectorType2& v2){
+	  using namespace std;
+	  using namespace tfel::typetraits;
+	  typedef typename BaseType<T>::type real;
+	  static const real cste = sqrt(real(2));
+	  s[0] = 2*v1(0)*v2(0);
+	  s[1] = 2*v1(1)*v2(1);
+	  s[2] = 2*v1(2)*v2(2);
+	  s[3] = (v1(0)*v2(1)+v2(0)*v1(1))*cste;
+	  s[4] = (v1(0)*v2(2)+v2(0)*v1(2))*cste;
+	  s[5] = (v1(1)*v2(2)+v2(1)*v1(2))*cste;
+	}
+      };
+
+      template<unsigned short N>
       struct BuildStensorFromEigenValuesAndVectors;
       
       template<>
@@ -331,6 +414,228 @@ namespace tfel{
 	  s[4] = (v1*m(0,0)*m(2,0)+v2*m(0,1)*m(2,1)+v3*m(0,2)*m(2,2))*cste;
 	  s[5] = (v1*m(1,0)*m(2,0)+v2*m(1,1)*m(2,1)+v3*m(1,2)*m(2,2))*cste;
 	}
+      };
+
+      template<unsigned short N>
+      struct StensorComputeEigenValuesDerivatives;
+      
+      template<>
+      struct StensorComputeEigenValuesDerivatives<1u>
+      {
+	template<typename StensorType,
+		 typename BaseType>
+	static TFEL_MATH_INLINE2
+	typename tfel::meta::EnableIf<
+	  (tfel::meta::Implements<StensorType,StensorConcept>::cond)&&
+	  (StensorTraits<StensorType>::dime==1u)&&
+	  (tfel::typetraits::IsAssignableTo<BaseType,
+					    typename StensorTraits<StensorType>::NumType>::cond),
+	  void>::type
+	exe(StensorType& n0,
+	    StensorType& n1,
+	    StensorType& n2,
+	    const tfel::math::tmatrix<3u,3u,BaseType>&)
+	{
+	  n0(0) = BaseType(1);
+	  n0(1) = BaseType(0);
+	  n0(2) = BaseType(0);
+	  n1(0) = BaseType(0);
+	  n1(1) = BaseType(1);
+	  n1(2) = BaseType(0);
+	  n2(0) = BaseType(0);
+	  n2(1) = BaseType(0);
+	  n2(2) = BaseType(1);
+	}
+      };
+
+      template<>
+      struct StensorComputeEigenValuesDerivatives<2u>
+      {
+	template<typename StensorType,
+		 typename BaseType>
+	static TFEL_MATH_INLINE2
+	typename tfel::meta::EnableIf<
+	  (tfel::meta::Implements<StensorType,StensorConcept>::cond)&&
+	  (StensorTraits<StensorType>::dime==2u)&&
+	  (tfel::typetraits::IsAssignableTo<BaseType,
+					    typename StensorTraits<StensorType>::NumType>::cond),
+	  void>::type
+	exe(StensorType& n0,
+	    StensorType& n1,
+	    StensorType& n2,
+	    const tfel::math::tmatrix<3u,3u,BaseType>& m)
+	{
+	  using namespace tfel::math;
+	  const tvector<3u,BaseType> v0 = m.template column_view<0u>();
+	  const tvector<3u,BaseType> v1 = m.template column_view<1u>();
+	  n0    = StensorType::buildFromVectorDiadicProduct(v0);
+	  n1    = StensorType::buildFromVectorDiadicProduct(v1);
+	  n2(0) = BaseType(0);
+	  n2(1) = BaseType(0);
+	  n2(2) = BaseType(1);
+	  n2(3) = BaseType(0);
+	}
+      };
+
+      template<>
+      struct StensorComputeEigenValuesDerivatives<3u>
+      {
+	template<typename StensorType,
+		 typename BaseType>
+	static TFEL_MATH_INLINE2
+	typename tfel::meta::EnableIf<
+	  (tfel::meta::Implements<StensorType,StensorConcept>::cond)&&
+	  (StensorTraits<StensorType>::dime==3u)&&
+	  (tfel::typetraits::IsAssignableTo<BaseType,
+					    typename StensorTraits<StensorType>::NumType>::cond),
+	  void>::type
+	exe(StensorType& n0,
+	    StensorType& n1,
+	    StensorType& n2,
+	    const tfel::math::tmatrix<3u,3u,BaseType>& m)
+	{
+	  using namespace tfel::math;
+	  const tvector<3u,BaseType> v0 = m.template column_view<0u>();
+	  const tvector<3u,BaseType> v1 = m.template column_view<1u>();
+	  const tvector<3u,BaseType> v2 = m.template column_view<2u>();
+	  n0 = StensorType::buildFromVectorDiadicProduct(v0);
+	  n1 = StensorType::buildFromVectorDiadicProduct(v1);
+	  n2 = StensorType::buildFromVectorDiadicProduct(v2);
+	}
+      };
+
+      template<unsigned short N>
+      struct StensorComputeEigenTensorsDerivatives;
+
+      struct StensorComputeEigenTensorsDerivativesBase
+      {
+	template<typename NumType>
+	TFEL_MATH_INLINE static
+	typename ComputeBinaryResult<typename tfel::typetraits::BaseType<NumType>::type,
+				     NumType,OpDiv>::Result
+	regularized_inverse(const NumType x,
+			    const NumType eps)
+	{
+	  using namespace std;
+	  if(abs(x)<100*numeric_limits<NumType>::min()){
+	    return NumType(0);
+	  }
+	  return regularization_function(x/eps)/x;
+	} // end of regularization
+      protected:
+	template<typename NumType>
+	TFEL_MATH_INLINE static
+	NumType
+	regularization_function(const NumType x)
+	{
+	  using namespace std;
+	  if(abs(x)>1){
+	    return NumType(1);
+	  }
+	  return x*x*(4-x*x)/3;
+	}
+      };
+      
+      template<>
+      struct StensorComputeEigenTensorsDerivatives<1u>
+      {
+	template<typename ST2toST2Type,
+		 typename NumType>
+	static TFEL_MATH_INLINE2
+	typename tfel::meta::EnableIf<
+	  (tfel::meta::Implements<ST2toST2Type,ST2toST2Concept>::cond)&&
+	  (ST2toST2Traits<ST2toST2Type>::dime==1u)&&
+	  (tfel::typetraits::IsAssignableTo<typename ComputeBinaryResult<typename tfel::typetraits::BaseType<NumType>::type,
+									 NumType,OpDiv>::Result,
+					    typename ST2toST2Traits<ST2toST2Type>::NumType>::cond),
+	  void>::type
+	exe(ST2toST2Type& dn0_ds,
+	    ST2toST2Type& dn1_ds,
+	    ST2toST2Type& dn2_ds,
+	    const tfel::math::tvector<3u,NumType>&,
+	    const tfel::math::tmatrix<3u,3u,typename tfel::typetraits::BaseType<NumType>::type>&,
+	    const NumType)
+	{
+	  using namespace tfel::math;
+	  using namespace tfel::typetraits;
+	  typedef typename ComputeBinaryResult<typename BaseType<NumType>::type,
+					       NumType,OpDiv>::Result InvNumType;
+	  dn0_ds = st2tost2<1u,InvNumType>(InvNumType(0));
+	  dn1_ds = dn0_ds;
+	  dn2_ds = dn0_ds;
+	} // end of exe
+      };
+
+      template<>
+      struct StensorComputeEigenTensorsDerivatives<2u>
+	: public StensorComputeEigenTensorsDerivativesBase
+      {
+	template<typename ST2toST2Type,
+		 typename NumType>
+	static TFEL_MATH_INLINE2
+	typename tfel::meta::EnableIf<
+	  (tfel::meta::Implements<ST2toST2Type,ST2toST2Concept>::cond)&&
+	  (ST2toST2Traits<ST2toST2Type>::dime==2u)&&
+	  (tfel::typetraits::IsAssignableTo<typename ComputeBinaryResult<typename tfel::typetraits::BaseType<NumType>::type,
+									 NumType,OpDiv>::Result,
+					    typename ST2toST2Traits<ST2toST2Type>::NumType>::cond),
+	  void>::type
+	exe(ST2toST2Type& dn0_ds,
+	    ST2toST2Type& dn1_ds,
+	    ST2toST2Type& dn2_ds,
+	    const tfel::math::tvector<3u,NumType>& vp,
+	    const tfel::math::tmatrix<3u,3u,typename tfel::typetraits::BaseType<NumType>::type>& m,
+	    const NumType eps)
+	{
+	  using namespace tfel::math;
+	  using namespace tfel::typetraits;
+	  typedef typename BaseType<NumType>::type base;
+	  typedef typename ComputeBinaryResult<base,NumType,OpDiv>::Result InvNumType;
+	  const base cste = 1/sqrt(2.);
+	  const tvector<3u,base> v0 = m.template column_view<0u>();
+	  const tvector<3u,base> v1 = m.template column_view<1u>();
+	  const stensor<2u,base> n01 = stensor<2u,base>::buildFromVectorsSymmetricDiadicProduct(v0,v1)*cste;
+	  dn0_ds = regularized_inverse(vp(0)-vp(1),eps)*(n01^n01);
+	  dn1_ds = -dn0_ds;
+	  dn2_ds = st2tost2<2u,InvNumType>(InvNumType(0));
+	} // end of exe
+      };
+
+      template<>
+      struct StensorComputeEigenTensorsDerivatives<3u>
+	: public StensorComputeEigenTensorsDerivativesBase
+      {
+	template<typename ST2toST2Type,
+		 typename NumType>
+	static TFEL_MATH_INLINE2
+	typename tfel::meta::EnableIf<
+	  (tfel::meta::Implements<ST2toST2Type,ST2toST2Concept>::cond)&&
+	  (ST2toST2Traits<ST2toST2Type>::dime==3u)&&
+	  (tfel::typetraits::IsAssignableTo<typename ComputeBinaryResult<typename tfel::typetraits::BaseType<NumType>::type,
+									 NumType,OpDiv>::Result,
+					    typename ST2toST2Traits<ST2toST2Type>::NumType>::cond),
+	  void>::type
+	exe(ST2toST2Type& dn0_ds,
+	    ST2toST2Type& dn1_ds,
+	    ST2toST2Type& dn2_ds,
+	    const tfel::math::tvector<3u,NumType>& vp,
+	    const tfel::math::tmatrix<3u,3u,typename tfel::typetraits::BaseType<NumType>::type>& m,
+	    const NumType eps)
+	{
+	  using namespace tfel::math;
+	  using namespace tfel::typetraits;
+	  typedef typename BaseType<NumType>::type base;
+	  const base cste = 1/sqrt(2.);
+	  const tvector<3u,base> v0 = m.template column_view<0u>();
+	  const tvector<3u,base> v1 = m.template column_view<1u>();
+	  const tvector<3u,base> v2 = m.template column_view<2u>();
+	  const stensor<3u,base> n01 = stensor<3u,base>::buildFromVectorsSymmetricDiadicProduct(v0,v1)*cste;
+	  const stensor<3u,base> n02 = stensor<3u,base>::buildFromVectorsSymmetricDiadicProduct(v0,v2)*cste;
+	  const stensor<3u,base> n12 = stensor<3u,base>::buildFromVectorsSymmetricDiadicProduct(v1,v2)*cste;
+	  dn0_ds = regularized_inverse(vp(0)-vp(1),eps)*(n01^n01)+regularized_inverse(vp(0)-vp(2),eps)*(n02^n02);
+	  dn1_ds = regularized_inverse(vp(1)-vp(0),eps)*(n01^n01)+regularized_inverse(vp(1)-vp(2),eps)*(n12^n12);
+	  dn2_ds = regularized_inverse(vp(2)-vp(0),eps)*(n02^n02)+regularized_inverse(vp(2)-vp(1),eps)*(n12^n12);
+	} // end of exe
       };
       
     } // end of namespace internals
@@ -543,6 +848,23 @@ namespace tfel{
       tfel::math::internals::StensorComputeEigenValues_<N>::exe(reinterpret_cast<const typename tfel::typetraits::BaseType<T>::type* const>(this->v),reinterpret_cast<typename tfel::typetraits::BaseType<T>::type&>(vp(0)),reinterpret_cast<typename tfel::typetraits::BaseType<T>::type&>(vp(1)),reinterpret_cast<typename tfel::typetraits::BaseType<T>::type&>(vp(2)),b);
     }
 
+    template<unsigned short N,typename T, 
+	     template<unsigned short,typename> class Storage>
+    template<typename StensorType>
+    typename tfel::meta::EnableIf<
+      (tfel::meta::Implements<StensorType,StensorConcept>::cond)&&
+      (StensorTraits<StensorType>::dime==N)&&
+      (tfel::typetraits::IsAssignableTo<typename tfel::typetraits::BaseType<T>::type,
+					typename StensorTraits<StensorType>::NumType>::cond),
+      void>::type
+    stensor<N,T,Storage>::computeEigenValuesDerivatives(StensorType& n0,
+							StensorType& n1,
+							StensorType& n2,
+							const tmatrix<3u,3u,typename tfel::typetraits::BaseType<T>::type>& m) const
+    {
+      return tfel::math::internals::StensorComputeEigenValuesDerivatives<N>::exe(n0,n1,n2,m);      
+    } // end of stensor<N,T,Storage>::computeEigenValuesDerivatives
+
 
     // computeEigenVectors
     template<unsigned short N,typename T, 
@@ -571,6 +893,27 @@ namespace tfel{
       TFEL_STATIC_ASSERT((tfel::typetraits::IsSafelyReinterpretCastableTo<T,real>::cond));
       return SCEV::computeEigenVector(ev,reinterpret_cast<const real*>(this->v),
 				      *(reinterpret_cast<const real*>(&vp)));
+    }
+
+    template<unsigned short N,typename T, 
+	     template<unsigned short,typename> class Storage>
+    template<typename ST2toST2Type>
+    typename tfel::meta::EnableIf<
+      (tfel::meta::Implements<ST2toST2Type,ST2toST2Concept>::cond)&&
+      (ST2toST2Traits<ST2toST2Type>::dime==N)&&
+      (tfel::typetraits::IsAssignableTo<typename ComputeBinaryResult<typename tfel::typetraits::BaseType<T>::type,
+								     T,OpDiv>::Result,
+					typename ST2toST2Traits<ST2toST2Type>::NumType>::cond),
+      void>::type
+    stensor<N,T,Storage>::computeEigenTensorsDerivatives(ST2toST2Type& dn0_ds,
+							 ST2toST2Type& dn1_ds,
+							 ST2toST2Type& dn2_ds,
+							 const tvector<3u,T>& vp,
+							 const tmatrix<3u,3u,typename tfel::typetraits::BaseType<T>::type>& m,
+							 const T eps) const
+    {
+      return tfel::math::internals::StensorComputeEigenTensorsDerivatives<N>::exe(dn0_ds,dn1_ds,dn2_ds,
+										  vp,m,eps); 
     }
 
     // ChangeBasis
@@ -721,9 +1064,27 @@ namespace tfel{
 	typename ComputeUnaryResult<typename VectorTraits<VectorType>::NumType,Power<2> >::Result,T
       >::cond,
       stensor<N,T,StensorStatic> >::type
-    stensor<N,T,Storage>::buildFromVectorDiadicProduct(const VectorType& m){
+    stensor<N,T,Storage>::buildFromVectorDiadicProduct(const VectorType& v){
       stensor<N,T,Storage> s;
-      tfel::math::internals::BuildStensorFromVectorDiadicProduct<N>::exe(s,m);
+      tfel::math::internals::BuildStensorFromVectorDiadicProduct<N>::exe(s,v);
+      return s;
+    }
+
+    template<unsigned short N,typename T,template<unsigned short,typename> class Storage>
+    template<typename VectorType,
+	     typename VectorType2>
+    typename tfel::meta::EnableIf<
+      tfel::typetraits::IsAssignableTo<
+	typename ComputeBinaryResult<typename VectorTraits<VectorType>::NumType,
+				     typename VectorTraits<VectorType2>::NumType,
+				     OpMult>::Result,T
+				       >::cond,
+      stensor<N,T,StensorStatic> >::type
+    stensor<N,T,Storage>::buildFromVectorsSymmetricDiadicProduct(const VectorType&  v1,
+								 const VectorType2& v2)
+    {
+      stensor<N,T,Storage> s;
+      tfel::math::internals::BuildStensorFromVectorsSymmetricDiadicProduct<N>::exe(s,v1,v2);
       return s;
     }
 

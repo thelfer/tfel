@@ -239,6 +239,30 @@ namespace tfel{
       computeEigenValues(tvector<3u,T>&,
 			 const bool = false) const;
       /*!
+       * compute the eigenvalues derivatives with respect with this tensor
+       * \param[out] n0 : derivative of the first  eigenvalue
+       * \param[out] n1 : derivative of the second eigenvalue
+       * \param[out] n2 : derivative of the third  eigenvalue
+       * \param[in]  m  : eigenvectors
+       * This eigenvalues of the derivatives is given by~:
+       * \[
+       * \frac{\displaystyle \partial}{\lambda_{i}}{\displaystyle \underbrace{s}}=\underbrace{n}_{i}=\vec{e}_{i}\otimes\vec{e}_{i}
+       * \]
+       * \(\underbrace{n}_{i}\) are the eigen tensors associated to the given tensor.
+       */
+      template<typename StensorType>
+      TFEL_MATH_INLINE2
+      typename tfel::meta::EnableIf<
+	  (tfel::meta::Implements<StensorType,StensorConcept>::cond)&&
+	(StensorTraits<StensorType>::dime==N)&&
+	(tfel::typetraits::IsAssignableTo<typename tfel::typetraits::BaseType<T>::type,
+					  typename StensorTraits<StensorType>::NumType>::cond),
+	void>::type
+      computeEigenValuesDerivatives(StensorType&,
+				    StensorType&,
+				    StensorType&,
+				    const tmatrix<3u,3u,typename tfel::typetraits::BaseType<T>::type>&) const;
+      /*!
        * compute eigenvector associated to a given eigenvalue
        * \note the given vector must be properly allocated and the
        * eigenvector is stored in the three first locations
@@ -262,6 +286,30 @@ namespace tfel{
       computeEigenVectors(tvector<3u,T>&,
 			  tmatrix<3u,3u,typename tfel::typetraits::BaseType<T>::type>&,
 			  const bool = false) const;
+      /*!
+       * compute the "eigentensors" derivatives with respect with this tensor
+       * \param[out] dn0_ds : derivative of the first  eigenvalue
+       * \param[out] dn1_ds : derivative of the second eigenvalue
+       * \param[out] dn2_ds : derivative of the third  eigenvalue
+       * \param[in]  vp     : eigen values
+       * \param[in]  m      : eigenvectors
+       * \param[in]  eps    : numerical parameter for regularisation
+       */
+      template<typename ST2toST2Type>
+      TFEL_MATH_INLINE2
+      typename tfel::meta::EnableIf<
+	(tfel::meta::Implements<ST2toST2Type,ST2toST2Concept>::cond)&&
+	(ST2toST2Traits<ST2toST2Type>::dime==N)&&
+	(tfel::typetraits::IsAssignableTo<typename ComputeBinaryResult<typename tfel::typetraits::BaseType<T>::type,
+								       T,OpDiv>::Result,
+					  typename ST2toST2Traits<ST2toST2Type>::NumType>::cond),
+	void>::type
+      computeEigenTensorsDerivatives(ST2toST2Type&,
+				     ST2toST2Type&,
+				     ST2toST2Type&,
+				     const tvector<3u,T>&,
+				     const tmatrix<3u,3u,typename tfel::typetraits::BaseType<T>::type>&,
+				     const T) const;
       /*!
        * change basis
        */
@@ -315,6 +363,24 @@ namespace tfel{
 	stensor<N,T,StensorStatic> >::type
        buildFromVectorDiadicProduct(const VectorType&);
 
+      /*!
+       * build a symmetric tensor from the symmetric diadic product of two vectors
+       * \param[in] v1 : first  vector
+       * \param[in] v1 : second vector
+       */
+      template<typename VectorType,
+	       typename VectorType2>
+      static TFEL_MATH_INLINE2
+      typename tfel::meta::EnableIf<
+	tfel::typetraits::IsAssignableTo<
+	  typename ComputeBinaryResult<typename VectorTraits<VectorType>::NumType,
+				       typename VectorTraits<VectorType2>::NumType,
+				       OpMult>::Result,T
+	  >::cond,
+	stensor<N,T,StensorStatic> >::type
+      buildFromVectorsSymmetricDiadicProduct(const VectorType&,
+					     const VectorType2&);
+    
       /*!
        * build a symmetric tensor from its eigen values and vectors
        * \param[in] v1 : first  eigen value

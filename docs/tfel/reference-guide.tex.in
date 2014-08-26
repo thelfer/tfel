@@ -1595,6 +1595,124 @@ Le répertoire d'installation contient quatre répertoires~:
 Le répertoire \texttt{share/mfront/tests/behaviours} contient un
 ensemble de fichiers de tests \mfront{} qui peut servir d'exemple.
 
+\newpage
+\clearpage
+\section{Calculs des dérivées des valeurs et vecteurs propres d'un
+  tenseur symétriques}
+
+Un tenseur symétrique \(\tenseur{s}\) peut toujours être
+diagonalisé. Soit \(\lambda_{1},\lambda_{2},\lambda_{3}\) ses trois
+valeurs propres et \(\vec{e}_{1},\vec{e}_{2},\vec{e}_{3}\) les
+vecteurs propres associés. \(\tenseur{s}\) se décompose ainsi~:
+\[
+\tenseur{s}=\sum_{i=1}^{3}\lambda_{i}\,\vec{e}_{i}\otimes\vec{e}_{i}
+\]
+
+Définissons les tenseurs symétriques suivants~:
+\[
+\tenseur{n}_{ij} = 
+\left\{
+  \begin{aligned}
+    \vec{e}_{i}\otimes\vec{e}_{i} & \text{ si }  i=j \\
+    \Frac{1}{\sqrt{2}}\paren{\vec{e}_{i}\otimes\vec{e}_{j}+\vec{e}_{j}\otimes\vec{e}_{i}}    & \text{ si } i \neq j
+  \end{aligned}
+\right.
+\]
+Les tenseurs \(\tenseur{n}_{ij}\) forment une base orthonormée des
+tenseurs d'ordre \(2\) symétriques. Le tenseur \(\tenseur{s}\) se
+décompose ainsi~:
+\begin{equation}
+  \label{eq:reference-guide:s}
+  \tenseur{s} = \sum_{i=1}^{3}\lambda_{i}\,\tenseur{n}_{i}
+\end{equation}
+
+Les vecteurs propres de \(\tenseur{s}\) sont orthornomés~:
+\[
+\vec{t}_{i}\,.\,\vec{t}_{j}=\delta_{ij}
+\]
+
+Par différentiation~:
+\[
+\vec{\dtot\,t}_{i}\,.\,\vec{t}_{j}+\vec{\dtot\,t}_{i}\,.\,\vec{t}_{j}=0
+\]
+
+Cette propriété nous permet de montrer une propriété importante des
+différentielles des tenseurs \(\tenseur{n}_{ij}\)~:
+\begin{equation}
+  \label{eq:reference-guide:n_iin_ii}
+  n_{ii}\,\colon\,{\dtot n_{ii}}=0  
+\end{equation}
+
+D'après l'équation~\eqref{eq:reference-guide:s}, la différentielle du
+tenseur \(\tenseur{s}\) s'écrit~:
+\[
+\dtot\,\tenseur{s}=\sum_{i=1}^{3}\lambda_{i}\,\dtot\,\tenseur{n}_{ii}+\tenseur{n}_{ii}\,\dtot\,\lambda_{i}
+\]
+En utilisant la propriété~\eqref{eq:reference-guide:n_iin_ii}, la
+projection suivant \(\tenseur{n}_{ii}\) donne~:
+\[
+\dtot\,\lambda_{i}=\dtot\,\tenseur{s}\,\colon\,\tenseur{n}_{ii}
+\]
+
+En particulier~:
+\[
+\deriv{\lambda_{i}}{\tenseur{s}}=\deriv{\tenseur{s}}{\tenseur{s}}\,\colon\,\tenseur{n}_{ii}=\tenseur{n}_{ii}
+\]
+
+Nous nous intéressons maintenant aux termes \(\deriv{n_{ii}}{\tenseur{s}}\).
+
+On montre que~:
+\begin{equation}
+  \label{eq:tfel:reference_guide:n_derivate}
+  \deriv{n_{11}}{\tenseur{s}} = \Frac{1}{\lambda_{1}-\lambda_{2}}n_{12}\,\otimes\,n_{12}+\Frac{1}{\lambda_{1}-\lambda_{3}}n_{13}\,\otimes\,n_{13}
+\end{equation}
+
+\subsection{Régularisation}
+
+L'expression~\eqref{eq:tfel:reference_guide:n_derivate} de la dérivée
+présente une singularité lorsque deux valeurs propres sont égales.
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=0.5\linewidth]{@abs_top_srcdir@/docs/tfel/images/r-epsilon.eps}
+  \caption{représentation des fonctions $r_{1}\paren{x}$,
+    $r_{\pfrac{1}{4}}\paren{x}$ et $r_{\pfrac{1}{2}}\paren{x}$.}
+  \label{fig:r-epsilon}
+\end{figure}
+
+Nous proposons d'utiliser la fonction de régularisation
+\(r_{\epsilon}\paren{x}\) suivante~:
+\[
+r_{\epsilon}\paren{x}=p_{1}\paren{\Frac{x}{\epsilon}}
+\]
+où \(r_{1}\paren{x}\) est définie par~:
+\[
+r_{1}\paren{x}=
+\left\{
+  \begin{aligned}
+    \Frac{x^{2}}{3}\paren{4-x^{2}} & \text{si} & \left|x\right| \leq 1 \\
+    1                             & \text{si} & \left|x\right| > 1\\
+  \end{aligned}
+\right.
+\]
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=0.5\linewidth]{@abs_top_srcdir@/docs/tfel/images/r-epsilon-2.eps}
+  \caption{représentation des fonctions $\pfrac{r_{1}\paren{x}}{x}$ et
+    $\pfrac{r_{\pfrac{1}{4}}\paren{x}}{x}$}
+  \label{fig:r-epsilon}
+\end{figure}
+
+Les fonctions sont telles que~:
+\begin{enumerate}
+\item \(r_{\epsilon}\paren{\epsilon}=1\)
+\item \(r_{\epsilon}\paren{-\epsilon}=1\)
+\item \(r_{\epsilon}\paren{0}=0\)
+\item \(\displaystyle\lim_{x\rightarrow 0} \Frac{r_{\epsilon}\paren{x}}{x}=0\)
+\item \(\displaystyle\max_{x\in\mathbb{R}}\Frac{r_{\epsilon}\paren{x}}{x}\,\approx\,1,1\,\epsilon\)
+\end{enumerate}
+
 \clearpage
 \newpage
 \referencecea
