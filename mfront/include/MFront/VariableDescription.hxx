@@ -8,8 +8,9 @@
 #ifndef _LIB_MFRONT_VARDESCRIPTION_H_
 #define _LIB_MFRONT_VARDESCRIPTION_H_ 
 
-#include<string>
+#include<map>
 #include<vector>
+#include<string>
 
 #include"TFEL/Config/TFELConfig.hxx"
 
@@ -46,7 +47,15 @@ namespace mfront
 			const std::string&,
 			const unsigned short,
 			const unsigned short);
-
+    /*!
+     * \return the name used to call the variable from outside
+     * (pleiades application, mtest, etc..)
+     * \param[in] glossaryNames
+     * \param[in] entryNames
+     */
+    const std::string&
+    getGlossaryName(const std::map<std::string,std::string>&,
+		    const std::map<std::string,std::string>&) const;
   }; // end of struct VariableDescription
 
   //! a simple alias for backward compatibility
@@ -76,6 +85,22 @@ namespace mfront
      */
     bool
     contains(const std::string&) const;
+    /*!
+     * return the list of glossary names associated with this
+     * container
+     * \param[in]
+     */
+    std::vector<std::string>
+    getGlossaryNames(const std::map<std::string,std::string>&,
+		     const std::map<std::string,std::string>&) const;
+
+    void
+    appendGlossaryNames(std::vector<std::string>&,
+			const std::map<std::string,std::string>&,
+			const std::map<std::string,std::string>&) const;
+
+
+
   };
 
   //! a simple alias for backward compatibility

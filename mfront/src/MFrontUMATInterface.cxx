@@ -1175,14 +1175,12 @@ namespace mfront{
       out << "_nMaterialProperties = " << cs << ";\n";
     }
     if((mb.getSymmetryType()==mfront::ISOTROPIC)&&(found)){
-      this->writeGlossaryNames(out,this->getGlossaryNames(coefsHolder,
-							  glossaryNames,
-							  entryNames),
+      this->writeGlossaryNames(out,coefsHolder.getGlossaryNames(glossaryNames,
+								entryNames),
 			       name,"MaterialProperties",4u);
     } else {
-      this->writeGlossaryNames(out,this->getGlossaryNames(coefsHolder,
-							  glossaryNames,
-							  entryNames),
+      this->writeGlossaryNames(out,coefsHolder.getGlossaryNames(glossaryNames,
+								entryNames),
 			       name,"MaterialProperties");
     }
   } // end of MFrontUMATInterface::writeUMATxxMaterialPropertiesSymbol

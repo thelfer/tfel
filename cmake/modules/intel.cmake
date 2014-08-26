@@ -16,10 +16,11 @@ else(${DIAG_DISABLE_FLAG_AVAILABLE})
 endif(${DIAG_DISABLE_FLAG_AVAILABLE})
 
 tfel_enable_cxx_compiler_flag(COMPILER_WARNINGS  "Wall")
-tfel_enable_cxx_compiler_flag(OPTIMISATION_FLAGS "fvisibility=hidden")
-tfel_enable_cxx_compiler_flag(OPTIMISATION_FLAGS "fvisibility-inlines-hidden")
 tfel_enable_cxx_compiler_flag(OPTIMISATION_FLAGS "xHost")
 tfel_enable_cxx_compiler_flag(CMAKE_CXX_FLAGS    "ipo")
+
+tfel_enable_cxx_compiler_flag(VISIBILITY_FLAGS "fvisibility=hidden")
+tfel_enable_cxx_compiler_flag(VISIBILITY_FLAGS "fvisibility-inlines-hidden")
 
 set(OPTIMISATION_FLAGS "-DNO_RUNTIME_CHECK_BOUNDS ${OPTIMISATION_FLAGS}")
 

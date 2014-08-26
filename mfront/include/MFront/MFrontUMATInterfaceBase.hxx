@@ -83,11 +83,6 @@ namespace mfront{
 
   protected:
 
-    static const std::string&
-    getGlossaryName(const std::map<std::string,std::string>&,
-		    const std::map<std::string,std::string>&,
-		    const std::string&);
-
     virtual std::string
     getLibraryName(const std::string&,
 		   const std::string&) const = 0;
@@ -105,18 +100,6 @@ namespace mfront{
 
     virtual std::string
     getFunctionName(const std::string&) const = 0;
-
-    virtual std::vector<std::string>
-    getGlossaryNames(const VariableDescriptionContainer&,
-		     const std::map<std::string,std::string>&,
-		     const std::map<std::string,std::string>&) const;
-
-    virtual void
-    appendGlossaryNames(std::vector<std::string>&,
-			const VariableDescriptionContainer&,
-			const std::map<std::string,std::string>&,
-			const std::map<std::string,std::string>&) const;
-
 
     virtual void
     writeGlossaryNames(std::ostream&,

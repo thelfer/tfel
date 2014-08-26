@@ -92,6 +92,16 @@ namespace mfront{
     getHeaderFileName(const std::string&,
 		      const std::string&);
 
+    /*!
+     * \param[in] m : name of the material
+     * \param[in] l : name of the law
+     */
+    std::string
+    getFunctionName(const std::string&,
+		    const std::string&) const;
+    /*!
+     * destructor
+     */
     ~MFrontMFrontLawInterface();
         
   private:
@@ -131,7 +141,6 @@ namespace mfront{
     std::string
     getFunctionDeclaration(const std::string&,
 			   const std::string&);
-
     /*!
      * \param const std::string&, name of the material
      * \param const std::string&, name of the class

@@ -340,23 +340,26 @@ namespace mfront{
   {
     using namespace std;
     const string m("MFrontBehaviourParserCommon::treatThermalExpansion");
-    const string& mf = MFrontSearchFile::search(this->readString(m));
+    const string& f = MFrontSearchFile::search(this->readString(m));
     this->readSpecifiedToken(m,";");
-    // parse the file
-    MFrontMaterialLawParser p;
-    p.analyseFile(mf);
-    MaterialPropertyDescription a(p.getMaterialPropertyDescription());
+    const MaterialPropertyDescription& a = this->handleMaterialLaw(f);
     if(!a.staticVars.contains("ReferenceTemperature")){
       if(this->warningMode){
-	cout  << "no refercen temperature in material property '" << a.material << "'" << endl;
+	cout  << "no reference temperature in material property '";
+	if(a.material.empty()){
+	  cout << a.material << '_';
+	}
+	cout << a.law << "'" << endl;
       }
     }
+    for(VariableDescriptionContainer::const_iterator pi=a.inputs.begin();
+    	pi!=a.inputs.end();++pi){
+      cout << pi->getGlossaryName(a.glossaryNames,
+				  a.entryNames) << endl;
+    }
+    
     // cout << "output : " << a.output << endl;
     // cout << "inputs : ";
-    // for(VariableDescriptionContainer::const_iterator pi=a.inputs.begin();
-    // 	pi!=a.inputs.end();++pi){
-    //   cout << pi->name << " ";
-    // }
     // cout << endl;
   } // end of MFrontBehaviourParserCommon::treatThermalExpansion
 
@@ -1038,9 +1041,11 @@ namespace mfront{
   MFrontBehaviourParserCommon::registerDefaultVarNames(void)
   {
     using namespace std;
+    typedef map<std::string,std::string>::value_type MVType;
     this->registerVariable("D");
     this->registerVariable("Dt");
     this->registerVariable("T");
+    this->glossaryNames.insert(MVType("T","Temperature"));
     this->registerVariable("dT");
     this->registerVariable("dt");
     this->reserveName("N");

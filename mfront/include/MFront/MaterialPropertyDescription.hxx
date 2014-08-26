@@ -14,6 +14,7 @@
 
 #include"MFront/LawFunction.hxx"
 #include"MFront/VariableDescription.hxx"
+#include"MFront/VariableBoundsDescription.hxx"
 
 namespace mfront
 {
@@ -35,6 +36,10 @@ namespace mfront
      * output
      */
     std::string output;
+    /*!
+     * law name
+     */
+    std::string law;
     /*!
      * material name
      */

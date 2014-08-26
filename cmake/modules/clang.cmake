@@ -7,11 +7,11 @@ tfel_enable_cxx_compiler_flag(COMPILER_WARNINGS  "Wno-multichar" "Wno-deprecated
 tfel_enable_cxx_compiler_flag(COMPILER_WARNINGS  "Wredundant-decls" "Wlong-long" "Wdisabled-optimization")
 tfel_enable_cxx_compiler_flag(COMPILER_WARNINGS  "Wunknown-pragmas" "Wundef" "Wreorder")
 
-tfel_enable_cxx_compiler_flag(OPTIMISATION_FLAGS "fvisibility=hidden")
-tfel_enable_cxx_compiler_flag(OPTIMISATION_FLAGS "fvisibility-inlines-hidden")
 tfel_enable_cxx_compiler_flag(OPTIMISATION_FLAGS "march=native")
-
 tfel_enable_cxx_compiler_flag(OPTIMISATION_FLAGS2 "ffast-math")
+
+tfel_enable_cxx_compiler_flag(VISIBILITY_FLAGS "fvisibility=hidden")
+tfel_enable_cxx_compiler_flag(VISIBILITY_FLAGS "fvisibility-inlines-hidden")
 
 set(OPTIMISATION_FLAGS "-DNO_RUNTIME_CHECK_BOUNDS ${OPTIMISATION_FLAGS}")
 

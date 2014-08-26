@@ -22,6 +22,7 @@
 #include"MFront/MFrontSearchFile.hxx"
 #include"MFront/MFrontMFrontLawInterface.hxx"
 #include"MFront/StaticVariableDescription.hxx"
+#include"MFront/MFrontMaterialLawParser.hxx"
 
 namespace mfront
 {
@@ -426,7 +427,17 @@ namespace mfront
 			      "Variable name '"+name+"' is not valid.");
     }
     ++(this->current);
-    this->readSpecifiedToken("ParserBase::treatIntegerConstant","=");
+    this->checkNotEndOfFile("ParserBase::treatIntegerConstant",
+			    "Expected to read value of variable.");
+    if(this->current->value=="="){
+      if(this->warningMode){
+	cout << "ParserBase::treatIntegerConstant : "
+	     << "deprecated syntax at line '" 
+	     << this->current->line << "'" 
+	     << " of file '" << this->fileName << "'" << endl;
+      }
+      this->readSpecifiedToken("ParserBase::treatIntegerConstant","=");
+    }
     this->checkNotEndOfFile("ParserBase::treatIntegerConstant",
 			    "Expected to read value of variable.");
     istringstream tmp(this->current->value);
@@ -684,15 +695,48 @@ namespace mfront
   } // end of ParserBase::treatLink
 
   void
-  ParserBase::treatMFront(void){
+  ParserBase::callMFront(const std::vector<std::string>& interfaces,
+			 const std::vector<std::string>& files) const
+  {
 #if not (defined _WIN32 || defined _WIN64 ||defined __CYGWIN__)
     using namespace std;
     using namespace tfel::system;
     ProcessManager m;
+    ostringstream cmd;
+    vector<string>::const_iterator p;
+    cmd << MFront::getCallingName();
+    if(this->warningMode){
+      cmd << " --warning";
+    }
+    if(this->debugMode){
+      cmd << " --debug";
+    }
+    if(this->verboseMode){
+      cmd << " --verbose";
+    }
+    cmd << " --interface=";
+    for(p=interfaces.begin();p!=interfaces.end();){
+      cmd << *p;
+      if((++p)!=interfaces.end()){
+	cmd << ",";
+      }
+    }
+    cmd << " ";
+    copy(files.begin(),files.end(),ostream_iterator<string>(cmd," "));
+    m.execute(cmd.str());
+#else
+    string msg("ParserBase::callMFront : ");
+    msg += "unsupported keyword on windows plate-form";
+    throw(runtime_error(msg));
+#endif
+  } // end of ParserBase::callMFront
+
+  void
+  ParserBase::treatMFront(void){
+    using namespace std;
     vector<string> vfiles;
     vector<string> vinterfaces;
     vector<string>::const_iterator p;
-    ostringstream cmd;
     this->readSpecifiedToken("ParserBase::treatMfront","{");
     vfiles = this->readStringOrArrayOfString("ParserBase::treatMfront");
     this->checkNotEndOfFile("ParserBase::treatMfront","Expected '}'");
@@ -707,17 +751,7 @@ namespace mfront
     }
     this->readSpecifiedToken("ParserBase::treatMfront","}");
     this->readSpecifiedToken("ParserBase::treatMfront",";");
-    cmd << MFront::getCallingName() << " --interface=";
-    for(p=vinterfaces.begin();p!=vinterfaces.end();){
-      cmd << *p;
-      if((++p)!=vinterfaces.end()){
-	cmd << ",";
-      }
-    }
-    cmd << " ";
-    copy(vfiles.begin(),vfiles.end(),ostream_iterator<string>(cmd," "));
-    m.execute(cmd.str());
-#endif
+    this->callMFront(vinterfaces,vfiles);
   } // end of ParserBase::treatMfront
 
   std::string
@@ -851,49 +885,67 @@ namespace mfront
     }
   } // end of ParserBase::reserveName
 
-  void
-  ParserBase::treatMaterialLaw(void){
-#if not (defined _WIN32 || defined _WIN64 ||defined __CYGWIN__)
+  MaterialPropertyDescription
+  ParserBase::handleMaterialLaw(const std::string& f)
+  {
     using namespace std;
+#if not (defined _WIN32 || defined _WIN64 ||defined __CYGWIN__)
     using namespace tfel::system;
-    MFrontMFrontLawInterface minterface;
     ProcessManager m;
-    vector<string> vfiles;
-    vector<string>::const_iterator p;
-    vector<string>::iterator       p2;
-    ostringstream cmd;
-    vfiles = this->readStringOrArrayOfString("ParserBase::treatMfront");
-    for(p2=vfiles.begin();p2!=vfiles.end();++p2){
-      *p2=MFrontSearchFile::search(*p2);
-    }
-    this->readSpecifiedToken("ParserBase::treatMfront",";");
-    cmd << MFront::getCallingName() << " --interface=mfront ";
-    copy(vfiles.begin(),vfiles.end(),ostream_iterator<string>(cmd," "));
-    m.execute(cmd.str());
-    for(p=vfiles.begin();p!=vfiles.end();++p){
-      const vector<string>& res = this->readSpecifiedValues(*p,"@Material","@Law");
-      string mname;
-      if(res[0].empty()){
-	mname = res[1];
-      } else {
-	mname = res[0]+"_"+res[1];
-      }
-      if(!includes.empty()){
-	this->includes += "\n";
-      }
+    // getting informations the source files
+    MFrontMaterialLawParser mp;
+    try{
+      MFrontMFrontLawInterface minterface;
+      mp.analyseFile(MFrontSearchFile::search(f));
+      const MaterialPropertyDescription& mpd  = mp.getMaterialPropertyDescription();
+      const string& mname = minterface.getFunctionName(mpd.material,
+						       mpd.law);
+      this->reserveName(mname);
       this->includes+= "#include\"";
-      this->includes+= minterface.getHeaderFileName(res[0],res[1]);
+      this->includes+= minterface.getHeaderFileName(mpd.material,
+						    mpd.law);
       this->includes+= ".hxx\"";
       if(find(this->materialLaws.begin(),
 	      this->materialLaws.end(),mname)==this->materialLaws.end()){
 	this->materialLaws.push_back(mname);
       }
+      // generating the source files and adds them to the various
+      // files used to generate the final Makefile
+      this->callMFront(vector<string>(1u,"mfront"),
+		       vector<string>(1u,f));
+    } catch(exception& e){
+      string msg("Error while treating file '"+f+"'\n");
+      msg += e.what();
+      msg += "\n\n";
+      throw(runtime_error(msg));
+    } catch(...){
+      string msg("Error while treating file '"+f+"'\n");
+      msg += "Unknown exception\n\n";
+      throw(runtime_error(msg));
     }
     if(find(this->librariesDependencies.begin(),
 	    this->librariesDependencies.end(),"-lMFrontMaterialLaw")==this->librariesDependencies.end()){
       this->librariesDependencies.push_back("-lMFrontMaterialLaw");
     }
+    return mp.getMaterialPropertyDescription();
+#else
+    string msg("ParserBase::handleMaterialLaw : ");
+    msg += "unsupported keyword on windows plate-form";
+    throw(runtime_error(msg));
+    return MaterialPropertyDescription();
 #endif
+  } // end of ParserBase::handleMaterialLaw
+
+  void
+  ParserBase::treatMaterialLaw(void){
+    using namespace std;
+    vector<string> vfiles;
+    vector<string>::const_iterator p;
+    vfiles = this->readStringOrArrayOfString("ParserBase::treatMfront");
+    this->readSpecifiedToken("ParserBase::treatMfront",";");
+    for(p=vfiles.begin();p!=vfiles.end();++p){
+      this->handleMaterialLaw(*p);
+    }
   } // end of ParserBase::treatMaterialLaw
 
   void
@@ -1026,7 +1078,17 @@ namespace mfront
     }
     line = this->current->line;
     ++(this->current);
-    this->readSpecifiedToken("ParserBase::treatStaticVar","=");
+    this->checkNotEndOfFile("ParserBase::treatStaticVar",
+			    "Expected to read value of variable.");
+    if(this->current->value=="="){
+      if(this->warningMode){
+	cout << "ParserBase::treatStaticVar : "
+	     << "deprecated syntax at line '" 
+	     << this->current->line << "'" 
+	     << " of file '" << this->fileName << "'" << endl;
+      }
+      this->readSpecifiedToken("ParserBase::treatStaticVar","=");
+    }
     this->checkNotEndOfFile("ParserBase::treatStaticVar",
 			    "Expected to read value of variable.");
     istringstream tmp(this->current->value);

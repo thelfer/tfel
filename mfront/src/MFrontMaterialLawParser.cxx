@@ -140,7 +140,7 @@ namespace mfront{
   MFrontMaterialLawParser::treatUseTemplate(void)
   {
     using namespace std;
-    this->readSpecifiedToken("MFrontMaterialLawParser::treatConstant",";");
+    this->readSpecifiedToken("MFrontMaterialLawParser::treatUseTemplate",";");
     this->useTemplate = true;
   } // end of MFrontMaterialLawParser::treatUseTemplate
 
@@ -190,7 +190,15 @@ namespace mfront{
     name = this->current->value;
     line = this->current->line;
     ++(this->current);
-    this->readSpecifiedToken("MFrontMaterialLawParser::treatConstant","=");
+    if(this->current->value=="="){
+      if(this->warningMode){
+	cout << "MFrontMaterialLawParser::treatConstant : "
+	     << "deprecated syntax at line '" 
+	     << this->current->line << "'" 
+	     << " of file '" << this->fileName << "'" << endl;
+      }
+      this->readSpecifiedToken("ParserBase::treatConstant","=");
+    }
     this->checkNotEndOfFile("MFrontMaterialLawParser::treatConstant",
 			    "Expected to read value of variable '"+name+"'");
     istringstream tmp(this->current->value);
@@ -256,7 +264,12 @@ namespace mfront{
       this->throwRuntimeError("MFrontMaterialLawParser::treatLaw",
 			      "Law name has already been declared.");
     }
-    this->className = this->readOnlyOneToken();
+    if(!this->law.empty()){
+      this->throwRuntimeError("MFrontMaterialLawParser::treatLaw",
+			      "Law name has already been declared.");
+    }
+    this->law       = this->readOnlyOneToken();
+    this->className = this->law;
     if(!isValidIdentifier(this->className)){
       --(this->current);
       this->throwRuntimeError("MFrontMaterialLawParser::treatLaw",

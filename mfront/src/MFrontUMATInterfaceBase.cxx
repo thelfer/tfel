@@ -17,22 +17,6 @@
 namespace mfront
 {
 
-  const std::string&
-  MFrontUMATInterfaceBase::getGlossaryName(const std::map<std::string,std::string>& glossaryNames,
-					   const std::map<std::string,std::string>& entryNames,
-					   const std::string& v)
-  {
-    using namespace std;
-    map<string,string>::const_iterator p2;
-    map<string,string>::const_iterator p3;
-    if((p2=glossaryNames.find(v))!=glossaryNames.end()){
-      return p2->second;
-    } else if((p3=entryNames.find(v))!=entryNames.end()){
-      return p3->second;
-    }
-    return v;
-  } // end of MFrontUMATInterfaceBase::getGlossaryName
-
   MFrontUMATInterfaceBase::MFrontUMATInterfaceBase()
     : verboseMode(false),
       debugMode(false),
@@ -453,39 +437,6 @@ namespace mfront
     behaviourIntegrationFile << "}\n\n";
   }
 
-  std::vector<std::string>
-  MFrontUMATInterfaceBase::getGlossaryNames(const VariableDescriptionContainer& v,
-					    const std::map<std::string,std::string>& glossaryNames,
-					    const std::map<std::string,std::string>& entryNames) const
-  {
-    using namespace std;
-    vector<string> n;
-    this->appendGlossaryNames(n,v,glossaryNames,entryNames);
-    return n;
-  }
-
-  void
-  MFrontUMATInterfaceBase::appendGlossaryNames(std::vector<std::string>& n,
-					       const VariableDescriptionContainer& v,
-					       const std::map<std::string,std::string>& glossaryNames,
-					       const std::map<std::string,std::string>& entryNames) const
-  {
-    using namespace std;
-    VariableDescriptionContainer::const_iterator p;
-    for(p=v.begin();p!=v.end();++p){
-      const string name = MFrontUMATInterfaceBase::getGlossaryName(glossaryNames,entryNames,p->name);
-      if(p->arraySize==1u){
-	n.push_back(name);
-      } else {
-	for(unsigned short i=0;i!=p->arraySize;++i){
-	  ostringstream nb;
-	  nb << '[' << i << ']';
-	  n.push_back(name+nb.str());
-	}
-      }
-    }
-  } // end of MFrontUMATInterfaceBase::appendGlossaryNames
-
   void
   MFrontUMATInterfaceBase::writeGlossaryNames(std::ostream& f,
 					      const std::vector<std::string>& n,
@@ -821,7 +772,7 @@ namespace mfront
 		     "in mtest file generation");
 	  throw(runtime_error(msg));
 	}
-	const string mpname = MFrontUMATInterfaceBase::getGlossaryName(glossaryNames,entryNames,p->name);
+	const string& mpname = p->getGlossaryName(glossaryNames,entryNames);
 	if(p->arraySize==1u){
 	  if(mpoffset){
 	    if(offset==0){
@@ -884,7 +835,7 @@ namespace mfront
       SupportedTypes::TypeSize ivoffset;
       for(p=stateVarsHolder.begin();p!=stateVarsHolder.end();++p){
 	SupportedTypes::TypeFlag flag = this->getTypeFlag(p->type);
-	const string ivname = MFrontUMATInterfaceBase::getGlossaryName(glossaryNames,entryNames,p->name);
+	const string& ivname = p->getGlossaryName(glossaryNames,entryNames);
 	if(p->arraySize==1u){
 	  if(ivoffset.isNull()){
 	    if(flag==SupportedTypes::Scalar){
@@ -956,7 +907,7 @@ namespace mfront
       }
       for(p=auxiliaryStateVarsHolder.begin();p!=auxiliaryStateVarsHolder.end();++p){
 	SupportedTypes::TypeFlag flag = this->getTypeFlag(p->type);
-	const string ivname = MFrontUMATInterfaceBase::getGlossaryName(glossaryNames,entryNames,p->name);
+	const string& ivname = p->getGlossaryName(glossaryNames,entryNames);
 	if(p->arraySize==1u){
 	  if(ivoffset.isNull()){
 	    if(flag==SupportedTypes::Scalar){
@@ -1036,7 +987,7 @@ namespace mfront
 		     "in mtest file generation");
 	  throw(runtime_error(msg));
 	}
-	const string evname = MFrontUMATInterfaceBase::getGlossaryName(glossaryNames,entryNames,p->name);
+	const string& evname = p->getGlossaryName(glossaryNames,entryNames);
 	if(p->arraySize==1u){
 	  if(offset==0){
 	    out << "mg.addExternalStateVariableValue(\"" << evname 
@@ -1160,11 +1111,10 @@ namespace mfront
     out << "MFRONT_SHAREDOBJ unsigned short " << this->getFunctionName(name)
 	<< "_nInternalStateVariables = " << nStateVariables
 	<< ";\n";
-    vector<string> stateVariablesNames = this->getGlossaryNames(stateVarsHolder,
-								glossaryNames,
-								entryNames);
-    this->appendGlossaryNames(stateVariablesNames,auxiliaryStateVarsHolder,
-			      glossaryNames,entryNames);
+    vector<string> stateVariablesNames = stateVarsHolder.getGlossaryNames(glossaryNames,
+									  entryNames);
+    auxiliaryStateVarsHolder.appendGlossaryNames(stateVariablesNames,
+						 glossaryNames,entryNames);
     this->writeGlossaryNames(out,stateVariablesNames,name,"InternalStateVariables");
 
     if((stateVarsHolder.size()!=0)||
@@ -1244,9 +1194,7 @@ namespace mfront
     const VariableDescriptionContainer& externalStateVarsHolder  = mb.getExternalStateVariables();
     out << "MFRONT_SHAREDOBJ unsigned short " << this->getFunctionName(name)
 	<< "_nExternalStateVariables = " << this->getNumberOfVariables(externalStateVarsHolder) << ";\n";
-    this->writeGlossaryNames(out,this->getGlossaryNames(externalStateVarsHolder,
-							glossaryNames,
-							entryNames),
+    this->writeGlossaryNames(out,externalStateVarsHolder.getGlossaryNames(glossaryNames,entryNames),
 			     name,"ExternalStateVariables");
   } // end of MFrontUMATInterfaceBase::writeUMATxxExternalStateVariablesSymbols
 

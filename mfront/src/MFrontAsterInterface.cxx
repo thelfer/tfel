@@ -1146,9 +1146,8 @@ namespace mfront{
       out << "0";
     }
     out << ";\n";
-    this->writeGlossaryNames(out,this->getGlossaryNames(coefsHolder,
-							glossaryNames,
-							entryNames),
+    this->writeGlossaryNames(out,coefsHolder.getGlossaryNames(glossaryNames,
+							      entryNames),
 			     name,"MaterialProperties");
   } // end of MFrontUMATInterface::writeUMATxxMaterialPropertiesSymbol
 
