@@ -16,10 +16,10 @@
 #include"TFEL/Config/TFELConfig.hxx"
 #include"TFEL/Utilities/CxxTokenizer.hxx"
 
-#include"MFront/MFrontGenericData.hxx"
 #include"MFront/VariableModifier.hxx"
 #include"MFront/WordAnalyser.hxx"
 #include"MFront/VariableDescription.hxx"
+#include"MFront/MFrontFileDescription.hxx"
 #include"MFront/StaticVariableDescription.hxx"
 
 namespace mfront
@@ -30,7 +30,7 @@ namespace mfront
    */
   struct TFEL_VISIBILITY_EXPORT ParserBase
     : public tfel::utilities::CxxTokenizer,
-      public MFrontGenericData
+      public MFrontFileDescription
   {
 
     /*!
@@ -42,7 +42,12 @@ namespace mfront
     virtual void
     openFile(const std::string&,
 	     const std::vector<std::string>&);
-    
+    /*!
+     * \return generic data about the MFront file being treated
+     */
+    virtual const MFrontFileDescription&
+    getMFrontFileDescription(void) const;
+
   protected:
 
     /*!

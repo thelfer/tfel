@@ -73,6 +73,11 @@ namespace mfront
     }
   } // end of ParserBase::openFile
 
+  const MFrontFileDescription&
+  ParserBase::getMFrontFileDescription(void) const
+  {
+    return *this;
+  } // end of ParserBase::getMFrontFileDescription
 
   ParserBase::~ParserBase()
   {} // end of ParserBase::~ParserBase

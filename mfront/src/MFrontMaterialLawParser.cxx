@@ -86,7 +86,8 @@ namespace mfront{
   void
   MFrontMaterialLawParser::addStaticVariableDescription(const StaticVariableDescription& v)
   {
-    this->staticVars.push_back(v);
+    MaterialPropertyDescription::staticVars.push_back(v);
+    MFrontFileDescription::staticVars.push_back(v);
   } // end of MFrontMaterialLawParser::addStaticVariableDescription
 
   std::string
@@ -121,15 +122,16 @@ namespace mfront{
   MFrontMaterialLawParser::treatMaterial(void)
   {
     using namespace std;
-    if(!this->material.empty()){
+    if(!MaterialPropertyDescription::material.empty()){
       string msg("MFrontMaterialLawParser::treatMaterial : ");
       msg += "material name alreay defined";
       throw(runtime_error(msg));
     }
-    this->material = this->readOnlyOneToken();
-    if(!CxxTokenizer::isValidIdentifier(this->material,true)){
+    MaterialPropertyDescription::material = this->readOnlyOneToken();
+    MFrontFileDescription::material       = MaterialPropertyDescription::material;
+    if(!CxxTokenizer::isValidIdentifier(MaterialPropertyDescription::material,true)){
       string msg("MFrontMaterialLawParser::treatMaterial : ");
-      msg += "invalid material name '"+this->material+"'";
+      msg += "invalid material name '"+MaterialPropertyDescription::material+"'";
       throw(runtime_error(msg));
     }
   } // end of MFrontMaterialLawParser::treatMaterial
@@ -200,7 +202,7 @@ namespace mfront{
     ++(this->current);
     this->readSpecifiedToken("MFrontMaterialLawParser::treatConstant",";");
     this->registerStaticVariable(name);
-    this->staticVars.push_back(StaticVariableDescription("real",name,line,value));
+    this->addStaticVariableDescription(StaticVariableDescription("real",name,line,value));
   } // end of MFrontMaterialLawParser::treatConstant
 
   void
@@ -781,7 +783,7 @@ namespace mfront{
 
       interface->writeOutputFiles(this->fileName,
 				  this->library,
-				  this->material,
+				  MaterialPropertyDescription::material,
 				  this->className,
 				  this->authorName,this->date,
 				  this->description,
@@ -790,7 +792,8 @@ namespace mfront{
 				  this->materialLaws,
 				  this->glossaryNames,
 				  this->entryNames,
-				  this->staticVars,this->parameters,
+				  MaterialPropertyDescription::staticVars,
+				  this->parameters,
 				  this->parametersValues,this->f,
 				  this->boundsDescriptions,
 				  this->physicalBoundsDescriptions,
@@ -832,7 +835,7 @@ namespace mfront{
 	i != this->interfaces.end();++i){
       MFrontLawVirtualInterface *interface = mlif.getInterfacePtr(*i);
       const Map& isources = interface->getGeneratedSources(this->library,
-							   this->material,
+							   MaterialPropertyDescription::material,
 							   this->className);
       for(p=isources.begin();p!=isources.end();++p){
 	copy(p->second.begin(),p->second.end(),back_inserter(osources[p->first]));
@@ -861,7 +864,7 @@ namespace mfront{
 	i != this->interfaces.end();++i){
       MFrontLawVirtualInterface *interface = mlif.getInterfacePtr(*i);
       const vector<string>& iincs = interface->getGeneratedIncludes(this->library,
-								    this->material,
+								    MaterialPropertyDescription::material,
 								    this->className);
       copy(iincs.begin(),iincs.end(),back_inserter(incs));
     }
@@ -882,7 +885,7 @@ namespace mfront{
 	i != this->interfaces.end();++i){
       MFrontLawVirtualInterface *interface = mlif.getInterfacePtr(*i);
       const Map& iincs = interface->getGlobalIncludes(this->library,
-						      this->material,
+						      MaterialPropertyDescription::material,
 						      this->className);
       for(p=iincs.begin();p!=iincs.end();++p){
 	copy(p->second.begin(),p->second.end(),back_inserter(incs[p->first]));
@@ -905,7 +908,7 @@ namespace mfront{
 	i != this->interfaces.end();++i){
       MFrontLawVirtualInterface *interface = mlif.getInterfacePtr(*i);
       const Map& ideps = interface->getGlobalDependencies(this->library,
-							  this->material,
+							  MaterialPropertyDescription::material,
 							  this->className);
       for(p=ideps.begin();p!=ideps.end();++p){
 	copy(p->second.begin(),p->second.end(),back_inserter(deps[p->first]));
@@ -929,7 +932,7 @@ namespace mfront{
 	i != this->interfaces.end();++i){
       MFrontLawVirtualInterface *interface = mlif.getInterfacePtr(*i);
       const Map& ideps = interface->getLibrariesDependencies(this->library,
-							     this->material,
+							     MaterialPropertyDescription::material,
 							     this->className);
       for(p=ideps.begin();p!=ideps.end();++p){
 	for(p2=p->second.begin();p2!=p->second.end();++p2){
@@ -1079,7 +1082,7 @@ namespace mfront{
     for(p=this->interfaces.begin();p!=this->interfaces.end();++p){
       MFrontLawVirtualInterface *i = mlif.getInterfacePtr(*p);
       const Target& targets = i->getSpecificTargets(this->library,
-						    this->material,
+						    MaterialPropertyDescription::material,
 						    this->className,
 						    this->librariesDependencies);
       for(p2=targets.begin();p2!=targets.end();++p2){

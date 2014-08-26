@@ -47,26 +47,28 @@ namespace mfront{
   void
   MFrontModelParserCommon::addStaticVariableDescription(const StaticVariableDescription& v)
   {
-    this->staticVars.push_back(v);
+    MFrontModelData::staticVars.push_back(v);
+    MFrontFileDescription::staticVars.push_back(v); //< this is for compatibility reasons
   } // end of MFrontModelParserCommon::addStaticVariableDescription
 
   void
   MFrontModelParserCommon::treatMaterial(void)
   {
     using namespace std;
-    if(!this->material.empty()){
+    if(!MFrontModelData::material.empty()){
       string msg("MFrontModelParserCommon::treatMaterial : ");
       msg += "material name alreay defined";
       throw(runtime_error(msg));
     }
-    this->material = this->readOnlyOneToken();
-    if(!CxxTokenizer::isValidIdentifier(this->material,true)){
+    MFrontModelData::material       = this->readOnlyOneToken();
+    MFrontFileDescription::material = MFrontModelData::material;  //< this is for compatibility reasons
+    if(!CxxTokenizer::isValidIdentifier(MFrontModelData::material,true)){
       string msg("MFrontModelParserCommon::treatMaterial : ");
-      msg += "invalid material name '"+this->material+"'";
+      msg += "invalid material name '"+MFrontModelData::material+"'";
       throw(runtime_error(msg));
     }
     if(!this->className.empty()){
-      this->className = this->material+"_"+this->className;
+      this->className = MFrontModelData::material+"_"+this->className;
     }
   } // end of MFrontModelParserCommon::treatMaterial
 
@@ -82,8 +84,8 @@ namespace mfront{
       this->throwRuntimeError("MFrontModelParserCommon::treatModel",
 			      "invalid model name");
     }
-    if(!this->material.empty()){
-      this->className = this->material+"_"+this->className;
+    if(!MFrontModelData::material.empty()){
+      this->className = MFrontModelData::material+"_"+this->className;
     }
   } // end of MFrontModelParserCommon::treatModel
 
@@ -460,7 +462,7 @@ namespace mfront{
 	if(this->staticVarNames.find(this->current->value)!=this->staticVarNames.end()){
 	  // treating the case of static variables
 	  found=false;
-	  for(p5=this->staticVars.begin();(p5!=this->staticVars.end())&&(!found);){
+	  for(p5=MFrontModelData::staticVars.begin();(p5!=MFrontModelData::staticVars.end())&&(!found);){
 	    if(p5->name==this->current->value){
 	      found = true;
 	    } else {

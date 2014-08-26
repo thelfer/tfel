@@ -1,6 +1,7 @@
 install_header(MFront MFrontConfig.hxx)
 install_header(MFront MFront.hxx)
 install_header(MFront MFrontGenericData.hxx)
+install_header(MFront MFrontFileDescription.hxx)
 install_header(MFront MFrontLock.hxx)
 install_header(MFront MFrontInitParsers.hxx)
 install_header(MFront MFrontInitInterfaces.hxx)

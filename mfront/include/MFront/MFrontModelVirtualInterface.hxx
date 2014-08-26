@@ -18,7 +18,7 @@
 #include"TFEL/Utilities/CxxTokenizer.hxx"
 
 #include"MFront/MFrontModelData.hxx"
-#include"MFront/MFrontGenericData.hxx"
+#include"MFront/MFrontFileDescription.hxx"
 
 namespace mfront{
   
@@ -50,38 +50,38 @@ namespace mfront{
      * \param data  : model data
      */
     virtual
-    void writeOutputFiles(const MFrontGenericData&,
+    void writeOutputFiles(const MFrontFileDescription&,
 			  const MFrontModelData&) = 0;
 
     /*!
      * \param pdata : generic data
      */
     virtual std::map<std::string,std::vector<std::string> >
-    getGlobalIncludes(const MFrontGenericData&) = 0;
+    getGlobalIncludes(const MFrontFileDescription&) = 0;
 
     /*!
      * \param pdata : generic data
      */
     virtual std::map<std::string,std::vector<std::string> >
-    getGlobalDependencies(const MFrontGenericData&) = 0;
+    getGlobalDependencies(const MFrontFileDescription&) = 0;
 
     /*!
      * \param pdata : generic data
      */
     virtual std::map<std::string,std::vector<std::string> >
-    getGeneratedSources(const MFrontGenericData&) = 0;
+    getGeneratedSources(const MFrontFileDescription&) = 0;
 
     /*!
      * \param pdata : generic data
      */
     virtual std::vector<std::string>
-    getGeneratedIncludes(const MFrontGenericData&) = 0;
+    getGeneratedIncludes(const MFrontFileDescription&) = 0;
 
     /*!
      * \param pdata : generic data
      */
     virtual std::map<std::string,std::vector<std::string> >
-    getLibrariesDependencies(const MFrontGenericData&) = 0;
+    getLibrariesDependencies(const MFrontFileDescription&) = 0;
 
     virtual ~MFrontModelVirtualInterface();
 

@@ -325,13 +325,13 @@ namespace mfront{
   MFrontBehaviourParserCommon::treatMaterial(void)
   {
     using namespace std;
-    const string& material = this->readOnlyOneToken();
-    if(!CxxTokenizer::isValidIdentifier(material,true)){
+    const string& m = this->readOnlyOneToken();
+    if(!CxxTokenizer::isValidIdentifier(m,true)){
       string msg("MFrontBehaviourParserCommon::treatMaterial : ");
-      msg += "invalid material name '"+material+"'";
+      msg += "invalid material name '"+m+"'";
       throw(runtime_error(msg));
     }
-    this->mb.setMaterialName(material);
+    this->mb.setMaterialName(m);
     this->updateClassName();
   } // end of MFrontBehaviourParserCommon::treatMaterial
 
@@ -346,7 +346,11 @@ namespace mfront{
     MFrontMaterialLawParser p;
     p.analyseFile(mf);
     MaterialPropertyDescription a(p.getMaterialPropertyDescription());
-    // if(a.staticVars
+    if(!a.staticVars.contains("ReferenceTemperature")){
+      if(this->warningMode){
+	cout  << "no refercen temperature in material property '" << a.material << "'" << endl;
+      }
+    }
     // cout << "output : " << a.output << endl;
     // cout << "inputs : ";
     // for(VariableDescriptionContainer::const_iterator pi=a.inputs.begin();

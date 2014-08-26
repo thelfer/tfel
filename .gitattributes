@@ -982,6 +982,7 @@ mfront/include/MFront/MFrontDefaultFiniteStrainParser.hxx -text
 mfront/include/MFront/MFrontDefaultParser.hxx -text
 mfront/include/MFront/MFrontDefaultParserBase.hxx -text
 mfront/include/MFront/MFrontExcelLawInterface.hxx -text
+mfront/include/MFront/MFrontFileDescription.hxx -text
 mfront/include/MFront/MFrontFortranLawInterface.hxx -text
 mfront/include/MFront/MFrontGenericData.hxx -text
 mfront/include/MFront/MFrontGnuplotLawInterface.hxx -text

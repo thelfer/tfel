@@ -3,6 +3,7 @@
 nobase_include_HEADERS= MFront/MFrontConfig.hxx                       \
 			MFront/MFront.hxx                             \
 			MFront/MFrontGenericData.hxx                  \
+			MFront/MFrontFileDescription.hxx              \
 			MFront/MFrontLock.hxx                         \
 			MFront/MFrontInitParsers.hxx                  \
 			MFront/MFrontInitInterfaces.hxx               \
