@@ -45,8 +45,8 @@ struct StensorProductDerivative
     for(typename stensor<N>::size_type i=0;i!=t2.size();++i){
       t2[i] = -0.45+i;
     }
-    st2tost2<N> ld = st2tost2<N>::stpld(t2);
-    st2tost2<N> rd = st2tost2<N>::stprd(t1);
+    st2tost2<N> ld = st2tost2<N>::tpld(t2);
+    st2tost2<N> rd = st2tost2<N>::tprd(t1);
     st2tost2<N> nld;
     st2tost2<N> nrd;
     stensor<N> t3(t1*t2);

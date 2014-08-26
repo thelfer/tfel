@@ -28,6 +28,7 @@
 #include"MFront/MTestConstraint.hxx"
 #include"MFront/MTestEvolution.hxx"
 #include"MFront/MTestBehaviour.hxx"
+#include"MFront/MTestAccelerationAlgorithm.hxx"
 
 #include"TFEL/Tests/Test.hxx"
 
@@ -146,41 +147,12 @@ namespace mfront
       tfel::math::matrix<real> K;
       // residual
       tfel::math::vector<real> r;
+      // unknowns correction
+      tfel::math::vector<real> du;
       // permuation matrix
       tfel::math::Permutation<tfel::math::matrix<real>::size_type> p_lu;
       // temporary vector used by the LUSolve::exe function
       tfel::math::vector<real> x;
-      // castem acceleration algorithm
-      tfel::math::vector<real> ca_u0;
-      tfel::math::vector<real> ca_u1;
-      tfel::math::vector<real> ca_u2;
-      tfel::math::vector<real> ca_r0;
-      tfel::math::vector<real> ca_r1;
-      tfel::math::vector<real> ca_r2;
-      tfel::math::vector<real> ca_r;
-      tfel::math::vector<real> ca_n0;
-      tfel::math::vector<real> ca_n1;
-      tfel::math::vector<real> ca_tmp0;
-      tfel::math::vector<real> ca_tmp1;
-      // Irons and Tuck acceleration algorithm
-      tfel::math::vector<real> ita_u0;
-      tfel::math::vector<real> ita_u1;
-      tfel::math::vector<real> ita_u2;
-      tfel::math::vector<real> ita_du;
-      tfel::math::vector<real> ita_ddu;
-      // Steffensen acceleration algorithm
-      tfel::math::vector<real> sta_u0;
-      tfel::math::vector<real> sta_u1;
-      tfel::math::vector<real> sta_u2;
-      tfel::math::vector<real> sta_du2;
-      tfel::math::vector<real> sta_du1;
-      // secant acceleration algorithm
-      tfel::math::vector<real> sa_u0;
-      tfel::math::vector<real> sa_u1;
-      tfel::math::vector<real> sa_r0;
-      tfel::math::vector<real> sa_r1;
-      tfel::math::vector<real> sa_r;
-      tfel::math::vector<real> sa_dr;
       // temporary variable used for numerical tangent operator
       // computation
       tfel::math::vector<real> s1;
@@ -370,21 +342,6 @@ namespace mfront
      */
     virtual void setUseCastemAccelerationAlgorithm(const bool);
     /*!
-     * \brief set the use of the Irons-Tuck acceleration algorithm
-     * \param[in] b : boolean
-     */
-    virtual void setUseIronsTuckAccelerationAlgorithm(const bool);
-    /*!
-     * \brief set the use of the Steffensen acceleration algorithm
-     * \param[in] b : boolean
-     */
-    virtual void setUseSteffensenAccelerationAlgorithm(const bool);
-    /*!
-     * \brief set the use of the secant acceleration algorithm
-     * \param[in] b : boolean
-     */
-    virtual void setUseSecantAccelerationAlgorithm(const bool);
-    /*!
      * \brief set if mtest shall handle thermal expansion coefficient
      * If true, the thermal expansion will be handled if the thermal
      * expansion coefficients are defined.
@@ -392,29 +349,23 @@ namespace mfront
      */
     virtual void setHandleThermalExpansion(const bool);
     /*!
+     * \brief set the acceleration algorithm to be used
+     * \param[in] a : acceleration algorithm
+     */
+    virtual void setAccelerationAlgorithm(const std::string&);
+    /*!
+     * \brief set a parameter of the acceleration algorithm
+     * \param[in] p : parameter name
+     * \param[in] v : parameter value
+     */
+    virtual void setAccelerationAlgorithmParameter(const std::string&,
+						   const std::string&);
+    /*!
      * \brief set at which iteration the use of the castem
      * acceleration algorithm  will begin
      * \param[in] i : iteration number
      */
     virtual void setCastemAccelerationTrigger(const int);
-    /*!
-     * \brief set at which iteration the use of the Irons-Tuck
-     * acceleration algorithm  will begin
-     * \param[in] i : iteration number
-     */
-    virtual void setIronsTuckAccelerationTrigger(const int);
-    /*!
-     * \brief set at which iteration the use of the Steffensen
-     * acceleration algorithm  will begin
-     * \param[in] i : iteration number
-     */
-    virtual void setSteffensenAccelerationTrigger(const int);
-    /*!
-     * \brief set at which iteration the use of the secant
-     * acceleration algorithm  will begin
-     * \param[in] i : iteration number
-     */
-    virtual void setSecantAccelerationTrigger(const int);
     /*!
      * \brief set at which period the use of the castem
      * acceleration algorithm  will take place
@@ -726,10 +677,6 @@ namespace mfront
      * for thermodynamic forces expresses in Pa (small strain behaviours).
      */
     real seps;
-    /*!
-     * parameter of the secant algorithm
-     */
-    real sa_w;
     //! maximum number of sub steps allowed
     int mSubSteps;
     //! maximum number of iterations allowed in the Newton-Raphson algorithm
@@ -740,26 +687,12 @@ namespace mfront
     MTestStiffnessMatrixType::mtype ktype;
     //! use a prediction matrix before beginning the resolution
     PredictionPolicy ppolicy;
+    //! acceleration algorithm
+    tfel::utilities::shared_ptr<MTestAccelerationAlgorithm> aa;
     //! handle the computation of thermal expansion
     bool handleThermalExpansion;
     //! use castem acceleration
     bool useCastemAcceleration;
-    //! use IronsTuck acceleration
-    bool useIronsTuckAcceleration;
-    //! use Steffensen acceleration
-    bool useSteffensenAcceleration;
-    //! use secant acceleration
-    bool useSecantAcceleration;
-    //! castem acceleration trigger
-    int cat;
-    //! castem acceleration period
-    int cap;
-    //! IronsTuck acceleration trigger
-    int itat;
-    //! Steffensen acceleration trigger
-    int stat;
-    //! Secant acceleration trigger
-    int sat;
     //! description of the test
     std::string description;
     //! author

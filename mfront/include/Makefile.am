@@ -100,27 +100,33 @@ nobase_noinst_HEADERS += MFront/MFrontCLawInterfaceBase.hxx          \
 
 nobase_include_HEADERS += MFront/MFrontBehaviourProfiler.hxx
 
-nobase_include_HEADERS += MFront/MTestTypes.hxx	                         \
-			  MFront/MTest.hxx	                         \
-			  MFront/MTestParser.hxx	                 \
-			  MFront/MTestConfig.hxx	                 \
-			  MFront/MTestAnalyticalTest.hxx	         \
-			  MFront/MTestReferenceFileComparisonTest.hxx    \
-			  MFront/MTestBehaviour.hxx                      \
-			  MFront/MTestUmatBehaviourBase.hxx              \
-			  MFront/MTestUmatStandardBehaviour.hxx          \
-			  MFront/MTestUmatSmallStrainBehaviour.hxx       \
-			  MFront/MTestUmatFiniteStrainBehaviour.hxx      \
-			  MFront/MTestUmatCohesiveZoneModelBehaviour.hxx \
-			  MFront/MTestUmatNormaliseTangentOperator.hxx   \
-			  MFront/MTestAsterSmallStrainBehaviour.hxx      \
-			  MFront/MTestCyranoBehaviour.hxx                \
-			  MFront/MTestEvolution.hxx                      \
-			  MFront/MTestCastemEvolution.hxx                \
-			  MFront/MTestFunctionEvolution.hxx              \
-			  MFront/MTestConstraint.hxx                     \
-			  MFront/MTestImposedDrivingVariable.hxx         \
-			  MFront/MTestImposedThermodynamicForce.hxx
+nobase_include_HEADERS += MFront/MTestTypes.hxx	                          \
+			  MFront/MTest.hxx	                          \
+			  MFront/MTestParser.hxx	                  \
+			  MFront/MTestConfig.hxx	                  \
+			  MFront/MTestAnalyticalTest.hxx	          \
+			  MFront/MTestReferenceFileComparisonTest.hxx     \
+			  MFront/MTestBehaviour.hxx                       \
+			  MFront/MTestUmatBehaviourBase.hxx               \
+			  MFront/MTestUmatStandardBehaviour.hxx           \
+			  MFront/MTestUmatSmallStrainBehaviour.hxx        \
+			  MFront/MTestUmatFiniteStrainBehaviour.hxx       \
+			  MFront/MTestUmatCohesiveZoneModelBehaviour.hxx  \
+			  MFront/MTestUmatNormaliseTangentOperator.hxx    \
+			  MFront/MTestAsterSmallStrainBehaviour.hxx       \
+			  MFront/MTestCyranoBehaviour.hxx                 \
+			  MFront/MTestEvolution.hxx                       \
+			  MFront/MTestCastemEvolution.hxx                 \
+			  MFront/MTestFunctionEvolution.hxx               \
+			  MFront/MTestConstraint.hxx                      \
+			  MFront/MTestImposedDrivingVariable.hxx          \
+			  MFront/MTestImposedThermodynamicForce.hxx       \
+			  MFront/MTestAccelerationAlgorithmFactory.hxx    \
+			  MFront/MTestAccelerationAlgorithm.hxx           \
+			  MFront/MTestCastemAccelerationAlgorithm.hxx	  \
+			  MFront/MTestIronsTuckAccelerationAlgorithm.hxx  \
+			  MFront/MTestSteffensenAccelerationAlgorithm.hxx \
+			  MFront/MTestSecantAccelerationAlgorithm.hxx
 
 if HAVE_CASTEM
 nobase_include_HEADERS += MFront/MFrontCastemLawInterface.hxx   \

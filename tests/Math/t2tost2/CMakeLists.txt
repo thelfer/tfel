@@ -14,3 +14,4 @@ endmacro(tests_t2tost2)
 
 tests_t2tost2(t2tost2)
 tests_t2tost2(rightCauchyGreenTensorDerivative)
+tests_t2tost2(SaintVenantKirchhoffTangentOperator)

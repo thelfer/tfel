@@ -405,7 +405,74 @@ namespace tfel{
     }
 
     template<typename T,typename T2>
-    TFEL_MATH_INLINE2 
+    typename tfel::meta::EnableIf<
+      ((tfel::meta::Implements<T,StensorConcept>::cond) &&
+       (StensorTraits<T>::dime==1u)&&
+       (tfel::meta::Implements<T2,TensorConcept>::cond) &&
+       (TensorTraits<T2>::dime==1u)&&
+       (tfel::typetraits::IsFundamentalNumericType<typename TensorTraits<T2>::NumType>::cond)),
+      stensor<1u,typename StensorTraits<T>::NumType>
+      >::type
+    pushForward(const T&  p,
+		const T2& F)
+    {
+      typedef typename StensorTraits<T>::NumType NumType;
+      stensor<1u,NumType> s;
+      s[0] = p[0]*F[0]*F[0];
+      s[1] = p[1]*F[1]*F[1];
+      s[2] = p[2]*F[2]*F[2];
+      return s;
+    } // end of pushForward
+
+    template<typename T,typename T2>
+    typename tfel::meta::EnableIf<
+      ((tfel::meta::Implements<T,StensorConcept>::cond) &&
+       (StensorTraits<T>::dime==2u)&&
+       (tfel::meta::Implements<T2,TensorConcept>::cond) &&
+       (TensorTraits<T2>::dime==2u)&&
+       (tfel::typetraits::IsFundamentalNumericType<typename TensorTraits<T2>::NumType>::cond)),
+      stensor<2u,typename StensorTraits<T>::NumType>
+      >::type
+    pushForward(const T&  p,
+		const T2& F)
+    {
+      typedef typename StensorTraits<T>::NumType NumType;
+      typedef typename tfel::typetraits::BaseType<NumType>::type real;
+      static const real cste = sqrt(real(2));
+      stensor<2u,NumType> s;
+      s[0] = p[1]*F[3]*F[3]+cste*p[3]*F[0]*F[3]+p[0]*F[0]*F[0];
+      s[1] = p[0]*F[4]*F[4]+cste*p[3]*F[1]*F[4]+p[1]*F[1]*F[1];
+      s[2] = p[2]*F[2]*F[2];
+      s[3] = (p[3]*F[3]+cste*p[0]*F[0])*F[4]+cste*p[1]*F[1]*F[3]+p[3]*F[0]*F[1];
+      return s;
+    } // end of pushForward
+
+    template<typename T,typename T2>
+    typename tfel::meta::EnableIf<
+      ((tfel::meta::Implements<T,StensorConcept>::cond) &&
+       (StensorTraits<T>::dime==3u)&&
+       (tfel::meta::Implements<T2,TensorConcept>::cond) &&
+       (TensorTraits<T2>::dime==3u)&&
+       (tfel::typetraits::IsFundamentalNumericType<typename TensorTraits<T2>::NumType>::cond)),
+      stensor<3u,typename StensorTraits<T>::NumType>
+      >::type
+    pushForward(const T&  p,
+		const T2& F)
+    {
+      typedef typename StensorTraits<T>::NumType NumType;
+      typedef typename tfel::typetraits::BaseType<NumType>::type real;
+      static const real cste = sqrt(real(2));
+      stensor<3u,NumType> s;
+      s[0] = p[2]*F[5]*F[5]+(cste*p[5]*F[3]+cste*p[4]*F[0])*F[5]+p[1]*F[3]*F[3]+cste*p[3]*F[0]*F[3]+p[0]*F[0]*F[0];
+      s[1] = p[2]*F[7]*F[7]+(cste*p[4]*F[4]+cste*p[5]*F[1])*F[7]+p[0]*F[4]*F[4]+cste*p[3]*F[1]*F[4]+p[1]*F[1]*F[1];
+      s[2] = p[1]*F[8]*F[8]+(cste*p[3]*F[6]+cste*p[5]*F[2])*F[8]+p[0]*F[6]*F[6]+cste*p[4]*F[2]*F[6]+p[2]*F[2]*F[2];
+      s[3] = (cste*p[2]*F[5]+p[5]*F[3]+p[4]*F[0])*F[7]+(p[4]*F[4]+p[5]*F[1])*F[5]+(p[3]*F[3]+cste*p[0]*F[0])*F[4]+cste*p[1]*F[1]*F[3]+p[3]*F[0]*F[1];
+      s[4] = (p[5]*F[5]+cste*p[1]*F[3]+p[3]*F[0])*F[8]+(p[4]*F[5]+p[3]*F[3]+cste*p[0]*F[0])*F[6]+cste*p[2]*F[2]*F[5]+p[5]*F[2]*F[3]+p[4]*F[0]*F[2];
+      s[5] = (p[5]*F[7]+p[3]*F[4]+cste*p[1]*F[1])*F[8]+(p[4]*F[6]+cste*p[2]*F[2])*F[7]+(cste*p[0]*F[4]+p[3]*F[1])*F[6]+p[4]*F[2]*F[4]+p[5]*F[1]*F[2];
+      return s;
+    } // end of pushForward
+
+    template<typename T,typename T2>
     typename tfel::meta::EnableIf<
       ((tfel::meta::Implements<T,StensorConcept>::cond) &&
        (StensorTraits<T>::dime==1u)&&
@@ -415,7 +482,7 @@ namespace tfel{
       stensor<1u,typename StensorTraits<T>::NumType>
       >::type
     push_forward(const T&  p,
-		 const T2& F)
+		const T2& F)
     {
       typedef typename StensorTraits<T>::NumType NumType;
       stensor<1u,NumType> s;
@@ -426,7 +493,6 @@ namespace tfel{
     } // end of push_forward
 
     template<typename T,typename T2>
-    TFEL_MATH_INLINE2 
     typename tfel::meta::EnableIf<
       ((tfel::meta::Implements<T,StensorConcept>::cond) &&
        (StensorTraits<T>::dime==2u)&&
@@ -436,7 +502,7 @@ namespace tfel{
       stensor<2u,typename StensorTraits<T>::NumType>
       >::type
     push_forward(const T&  p,
-		 const T2& F)
+		const T2& F)
     {
       typedef typename StensorTraits<T>::NumType NumType;
       typedef typename tfel::typetraits::BaseType<NumType>::type real;
@@ -450,7 +516,6 @@ namespace tfel{
     } // end of push_forward
 
     template<typename T,typename T2>
-    TFEL_MATH_INLINE2 
     typename tfel::meta::EnableIf<
       ((tfel::meta::Implements<T,StensorConcept>::cond) &&
        (StensorTraits<T>::dime==3u)&&
@@ -460,7 +525,7 @@ namespace tfel{
       stensor<3u,typename StensorTraits<T>::NumType>
       >::type
     push_forward(const T&  p,
-		 const T2& F)
+		const T2& F)
     {
       typedef typename StensorTraits<T>::NumType NumType;
       typedef typename tfel::typetraits::BaseType<NumType>::type real;
@@ -592,6 +657,71 @@ namespace tfel{
       const T i = t(2);
       return a*(e*i-f*h)+b*(f*g-d*i)+c*(d*h-e*g);
     }
+
+    template<typename TensorResultType,
+	     typename TensorType>
+    typename tfel::meta::EnableIf<
+      tfel::meta::Implements<TensorResultType,TensorConcept>::cond &&
+      tfel::meta::Implements<TensorType,TensorConcept>::cond &&
+      TensorTraits<TensorType>::dime == 1u&&
+      TensorTraits<TensorResultType>::dime == 1u&&
+      tfel::typetraits::IsAssignableTo<typename ComputeUnaryResult<typename TensorTraits<TensorType>::NumType,
+								   Power<2> >::Result,
+				       typename TensorTraits<TensorResultType>::NumType>::cond,
+      void>::type
+    computeDeterminantDerivative(TensorResultType& dJ,
+				 const TensorType& F)
+    {
+      dJ[0] = F[1]*F[2];
+      dJ[1] = F[0]*F[2];
+      dJ[2] = F[0]*F[1];
+    } // end of ComputeDeterminantDerivative
+
+    template<typename TensorResultType,
+	     typename TensorType>
+    typename tfel::meta::EnableIf<
+      tfel::meta::Implements<TensorResultType,TensorConcept>::cond &&
+      tfel::meta::Implements<TensorType,TensorConcept>::cond &&
+      TensorTraits<TensorType>::dime == 2u&&
+      TensorTraits<TensorResultType>::dime == 2u&&
+      tfel::typetraits::IsAssignableTo<typename ComputeUnaryResult<typename TensorTraits<TensorType>::NumType,
+								   Power<2> >::Result,
+				       typename TensorTraits<TensorResultType>::NumType>::cond,
+      void>::type
+    computeDeterminantDerivative(TensorResultType& dJ,
+				 const TensorType& F)
+    {
+      dJ[0]=F[1]*F[2]; 
+      dJ[1]=F[0]*F[2]; 
+      dJ[2]=F[0]*F[1]-F[3]*F[4]; 
+      dJ[3]=-F[2]*F[4]; 
+      dJ[4]=-F[2]*F[3]; 
+    } // end of ComputeDeterminantDerivative
+
+    template<typename TensorResultType,
+	     typename TensorType>
+    typename tfel::meta::EnableIf<
+      tfel::meta::Implements<TensorResultType,TensorConcept>::cond &&
+      tfel::meta::Implements<TensorType,TensorConcept>::cond &&
+      TensorTraits<TensorType>::dime == 3u&&
+      TensorTraits<TensorResultType>::dime == 3u&&
+      tfel::typetraits::IsAssignableTo<typename ComputeUnaryResult<typename TensorTraits<TensorType>::NumType,
+								   Power<2> >::Result,
+				       typename TensorTraits<TensorResultType>::NumType>::cond,
+      void>::type
+    computeDeterminantDerivative(TensorResultType& dJ,
+				 const TensorType& F)
+    {
+      dJ[0]=F[1]*F[2]-F[7]*F[8]; 
+      dJ[1]=F[0]*F[2]-F[5]*F[6]; 
+      dJ[2]=F[0]*F[1]-F[3]*F[4]; 
+      dJ[3]=F[6]*F[7]-F[2]*F[4]; 
+      dJ[4]=F[5]*F[8]-F[2]*F[3]; 
+      dJ[5]=F[4]*F[8]-F[1]*F[6]; 
+      dJ[6]=F[3]*F[7]-F[1]*F[5]; 
+      dJ[7]=F[3]*F[6]-F[0]*F[8]; 
+      dJ[8]=F[4]*F[5]-F[0]*F[7]; 
+    } // end of ComputeDeterminantDerivative
 
     template<typename TensorType,
 	     typename StensorType,

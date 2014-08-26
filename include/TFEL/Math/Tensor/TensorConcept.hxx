@@ -282,9 +282,8 @@ namespace tfel{
        (tfel::typetraits::IsFundamentalNumericType<typename TensorTraits<T2>::NumType>::cond)),
       stensor<1u,typename StensorTraits<T>::NumType>
       >::type
-    push_forward(const T&,
-		 const T2&);
-
+    pushForward(const T&,
+		const T2&);
     /*!
      * compute the product:
      * \[F.s.F^{T}\]
@@ -301,14 +300,70 @@ namespace tfel{
        (tfel::typetraits::IsFundamentalNumericType<typename TensorTraits<T2>::NumType>::cond)),
       stensor<2u,typename StensorTraits<T>::NumType>
       >::type
-    push_forward(const T&,
-		 const T2&);
-
+    pushForward(const T&,
+		const T2&);
     /*!
      * compute the product:
      * \[F.s.F^{T}\]
      * \param[in] p: a symmetric tensor
      * \param[in] F: a tensor
+     */
+    template<typename T,typename T2>
+    TFEL_MATH_INLINE2 
+    typename tfel::meta::EnableIf<
+      ((tfel::meta::Implements<T,StensorConcept>::cond) &&
+       (StensorTraits<T>::dime==3u)&&
+       (tfel::meta::Implements<T2,TensorConcept>::cond) &&
+       (TensorTraits<T2>::dime==3u)&&
+       (tfel::typetraits::IsFundamentalNumericType<typename TensorTraits<T2>::NumType>::cond)),
+      stensor<3u,typename StensorTraits<T>::NumType>
+      >::type
+    pushForward(const T&,
+		const T2&);
+    /*!
+     * compute the product:
+     * \[F.s.F^{T}\]
+     * \param[in] p: a symmetric tensor
+     * \param[in] F: a tensor
+     * \note the same as pushForward
+     */
+    template<typename T,typename T2>
+    TFEL_MATH_INLINE2 
+    typename tfel::meta::EnableIf<
+      ((tfel::meta::Implements<T,StensorConcept>::cond) &&
+       (StensorTraits<T>::dime==1u)&&
+       (tfel::meta::Implements<T2,TensorConcept>::cond) &&
+       (TensorTraits<T2>::dime==1u)&&
+       (tfel::typetraits::IsFundamentalNumericType<typename TensorTraits<T2>::NumType>::cond)),
+      stensor<1u,typename StensorTraits<T>::NumType>
+      >::type
+    push_forward(const T&,
+		 const T2&);
+    /*!
+     * compute the product:
+     * \[F.s.F^{T}\]
+     * \param[in] p: a symmetric tensor
+     * \param[in] F: a tensor
+     * \note the same as pushForward
+     */
+    template<typename T,typename T2>
+    TFEL_MATH_INLINE2 
+    typename tfel::meta::EnableIf<
+      ((tfel::meta::Implements<T,StensorConcept>::cond) &&
+       (StensorTraits<T>::dime==2u)&&
+       (tfel::meta::Implements<T2,TensorConcept>::cond) &&
+       (TensorTraits<T2>::dime==2u)&&
+       (tfel::typetraits::IsFundamentalNumericType<typename TensorTraits<T2>::NumType>::cond)),
+      stensor<2u,typename StensorTraits<T>::NumType>
+      >::type
+    push_forward(const T&,
+		 const T2&);
+    /*!
+     * compute the product:
+     * \[F.s.F^{T}\]
+     * \param[in] p: a symmetric tensor
+     * \param[in] F: a tensor
+     * \note the same as pushForward
      */
     template<typename T,typename T2>
     TFEL_MATH_INLINE2 
@@ -391,6 +446,67 @@ namespace tfel{
 				  Power<3> >::Result
     >::type
     det(const TensorType&);
+
+    /*!
+     * \brief compute the derivative of the determinant with respect
+     * to its argument.
+     * \param[out] : determinant derivative
+     * \param[in]  : argument
+     */
+    template<typename TensorResultType,
+	     typename TensorType>
+    TFEL_MATH_INLINE2
+    typename tfel::meta::EnableIf<
+      tfel::meta::Implements<TensorResultType,TensorConcept>::cond &&
+      tfel::meta::Implements<TensorType,TensorConcept>::cond &&
+      TensorTraits<TensorType>::dime == 1u&&
+      TensorTraits<TensorResultType>::dime == 1u&&
+      tfel::typetraits::IsAssignableTo<typename ComputeUnaryResult<typename TensorTraits<TensorType>::NumType,
+								   Power<2> >::Result,
+				       typename TensorTraits<TensorResultType>::NumType>::cond,
+      void>::type
+    computeDeterminantDerivative(TensorResultType&,
+				const TensorType&);
+    /*!
+     * \brief compute the derivative of the determinant with respect
+     * to its argument.
+     * \param[out] : determinant derivative
+     * \param[in]  : argument
+     */
+    template<typename TensorResultType,
+	     typename TensorType>
+    TFEL_MATH_INLINE2
+    typename tfel::meta::EnableIf<
+      tfel::meta::Implements<TensorResultType,TensorConcept>::cond &&
+      tfel::meta::Implements<TensorType,TensorConcept>::cond &&
+      TensorTraits<TensorType>::dime == 2u&&
+      TensorTraits<TensorResultType>::dime == 2u&&
+      tfel::typetraits::IsAssignableTo<typename ComputeUnaryResult<typename TensorTraits<TensorType>::NumType,
+								   Power<2> >::Result,
+				       typename TensorTraits<TensorResultType>::NumType>::cond,
+      void>::type
+    computeDeterminantDerivative(TensorResultType&,
+				 const TensorType&);
+    /*!
+     * \brief compute the derivative of the determinant with respect
+     * to its argument.
+     * \param[out] : determinant derivative
+     * \param[in]  : argument
+     */
+    template<typename TensorResultType,
+	     typename TensorType>
+    TFEL_MATH_INLINE2
+    typename tfel::meta::EnableIf<
+      tfel::meta::Implements<TensorResultType,TensorConcept>::cond &&
+      tfel::meta::Implements<TensorType,TensorConcept>::cond &&
+      TensorTraits<TensorType>::dime == 3u&&
+      TensorTraits<TensorResultType>::dime == 3u&&
+      tfel::typetraits::IsAssignableTo<typename ComputeUnaryResult<typename TensorTraits<TensorType>::NumType,
+								   Power<2> >::Result,
+				       typename TensorTraits<TensorResultType>::NumType>::cond,
+      void>::type
+    computeDeterminantDerivative(TensorResultType&,
+				 const TensorType&);
 
     /*!
      * \brief provide the polar decomposition of a tensor

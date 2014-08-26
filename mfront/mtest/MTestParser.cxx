@@ -163,24 +163,16 @@ namespace mfront
   void
   MTestParser::registerCallBacks()
   {
+    this->registerCallBack("@AccelerationAlgorithm",
+			   &MTestParser::handleAccelerationAlgorithm);
+    this->registerCallBack("@AccelerationAlgorithmParameter",
+			   &MTestParser::handleAccelerationAlgorithmParameter);
     this->registerCallBack("@UseCastemAccelerationAlgorithm",
 			   &MTestParser::handleUseCastemAccelerationAlgorithm);
     this->registerCallBack("@CastemAccelerationPeriod",
 			   &MTestParser::handleCastemAccelerationPeriod);
     this->registerCallBack("@CastemAccelerationTrigger",
 			   &MTestParser::handleCastemAccelerationTrigger);
-    this->registerCallBack("@UseIronsTuckAccelerationAlgorithm",
-			   &MTestParser::handleUseIronsTuckAccelerationAlgorithm);
-    this->registerCallBack("@IronsTuckAccelerationTrigger",
-			   &MTestParser::handleIronsTuckAccelerationTrigger);
-    this->registerCallBack("@UseSteffensenAccelerationAlgorithm",
-			   &MTestParser::handleUseSteffensenAccelerationAlgorithm);
-    this->registerCallBack("@SteffensenAccelerationTrigger",
-			   &MTestParser::handleSteffensenAccelerationTrigger);
-    this->registerCallBack("@UseSecantAccelerationAlgorithm",
-			   &MTestParser::handleUseSecantAccelerationAlgorithm);
-    this->registerCallBack("@SecantAccelerationTrigger",
-			   &MTestParser::handleSecantAccelerationTrigger);
     this->registerCallBack("@StiffnessMatrixType",
 			   &MTestParser::handleStiffnessMatrixType);
     this->registerCallBack("@StiffnessUpdatePolicy",
@@ -561,100 +553,33 @@ namespace mfront
   } // end of MTestParser::handleCastemAccelerationPeriod
 
   void
-  MTestParser::handleUseIronsTuckAccelerationAlgorithm(MTest& t,TokensContainer::const_iterator& p)
+  MTestParser::handleAccelerationAlgorithm(MTest& t,TokensContainer::const_iterator& p)
   {
     using namespace std;
-    bool useIronsTuckAcceleration;
-    this->checkNotEndOfLine("MTestParser::handleUseIronsTuckAccelerationAlgorithm",
+    this->checkNotEndOfLine("MTestParser::handleAccelerationAlgorithm",
 			    p,this->fileTokens.end());
-    if(p->value=="true"){
-      useIronsTuckAcceleration = true;
-    } else if(p->value=="false"){
-      useIronsTuckAcceleration = false;
-    } else {
-      string msg("MTestParser::handleUseIronsTuckAccelerationAlgorithm : "
-		 "unexpected token '"+p->value+"'");
-      throw(runtime_error(msg));
-    }
-    ++p;
-    this->readSpecifiedToken("MTestParser::handleUseIronsTuckAccelerationAlgorithm",
+    const string& a = this->readString(p,this->fileTokens.end());
+    this->readSpecifiedToken("MTestParser::handleAccelerationAlgorithm",
 			     ";",p,this->fileTokens.end());
-    t.setUseIronsTuckAccelerationAlgorithm(useIronsTuckAcceleration);
+    t.setAccelerationAlgorithm(a);
   }
 
   void
-  MTestParser::handleIronsTuckAccelerationTrigger(MTest& t,TokensContainer::const_iterator& p)
+  MTestParser::handleAccelerationAlgorithmParameter(MTest& t,TokensContainer::const_iterator& p)
   {
+    
     using namespace std;
-    int cat = static_cast<int>(this->readUnsignedInt(p,this->fileTokens.end()));
-    this->readSpecifiedToken("MTestParser::handleIronsTuckAccelerationTrigger",";",
+    this->checkNotEndOfLine("MTestParser::handleAccelerationAlgorithmParameter",
+			    p,this->fileTokens.end());
+    const string& pn = this->readString(p,this->fileTokens.end());
+    this->checkNotEndOfLine("MTestParser::handleAccelerationAlgorithmParameter",
+			    p,this->fileTokens.end());
+    const string& v = this->readString(p,this->fileTokens.end());
+    this->readSpecifiedToken("MTestParser::handleAccelerationAlgorithmParameter",";",
 			     p,this->fileTokens.end());
-    t.setIronsTuckAccelerationTrigger(cat);
+    t.setAccelerationAlgorithmParameter(pn,v);
   } // end of MTestParser::handleIronsTuckAccelerationTrigger
 
-  void
-  MTestParser::handleUseSteffensenAccelerationAlgorithm(MTest& t,TokensContainer::const_iterator& p)
-  {
-    using namespace std;
-    bool useSteffensenAcceleration;
-    this->checkNotEndOfLine("MTestParser::handleUseSteffensenAccelerationAlgorithm",
-			    p,this->fileTokens.end());
-    if(p->value=="true"){
-      useSteffensenAcceleration = true;
-    } else if(p->value=="false"){
-      useSteffensenAcceleration = false;
-    } else {
-      string msg("MTestParser::handleUseSteffensenAccelerationAlgorithm : "
-		 "unexpected token '"+p->value+"'");
-      throw(runtime_error(msg));
-    }
-    ++p;
-    this->readSpecifiedToken("MTestParser::handleUseSteffensenAccelerationAlgorithm",
-			     ";",p,this->fileTokens.end());
-    t.setUseSteffensenAccelerationAlgorithm(useSteffensenAcceleration);
-  }
-
-  void
-  MTestParser::handleSteffensenAccelerationTrigger(MTest& t,TokensContainer::const_iterator& p)
-  {
-    using namespace std;
-    int cat = static_cast<int>(this->readUnsignedInt(p,this->fileTokens.end()));
-    this->readSpecifiedToken("MTestParser::handleSteffensenAccelerationTrigger",";",
-			     p,this->fileTokens.end());
-    t.setSteffensenAccelerationTrigger(cat);
-  } // end of MTestParser::handleSteffensenAccelerationTrigger
-
-  void
-  MTestParser::handleUseSecantAccelerationAlgorithm(MTest& t,TokensContainer::const_iterator& p)
-  {
-    using namespace std;
-    bool useSecantAcceleration;
-    this->checkNotEndOfLine("MTestParser::handleUseSecantAccelerationAlgorithm",
-			    p,this->fileTokens.end());
-    if(p->value=="true"){
-      useSecantAcceleration = true;
-    } else if(p->value=="false"){
-      useSecantAcceleration = false;
-    } else {
-      string msg("MTestParser::handleUseSecantAccelerationAlgorithm : "
-		 "unexpected token '"+p->value+"'");
-      throw(runtime_error(msg));
-    }
-    ++p;
-    this->readSpecifiedToken("MTestParser::handleUseSecantAccelerationAlgorithm",
-			     ";",p,this->fileTokens.end());
-    t.setUseSecantAccelerationAlgorithm(useSecantAcceleration);
-  }
-
-  void
-  MTestParser::handleSecantAccelerationTrigger(MTest& t,TokensContainer::const_iterator& p)
-  {
-    using namespace std;
-    int cat = static_cast<int>(this->readUnsignedInt(p,this->fileTokens.end()));
-    this->readSpecifiedToken("MTestParser::handleSecantAccelerationTrigger",";",
-			     p,this->fileTokens.end());
-    t.setSecantAccelerationTrigger(cat);
-  } // end of MTestParser::handleSecantAccelerationTrigger
 
   void
   MTestParser::handleStiffnessUpdatePolicy(MTest& t,TokensContainer::const_iterator& p)

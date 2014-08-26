@@ -23,7 +23,14 @@ set(TFELMTest_SOURCES
     MTestUmatNormaliseTangentOperator.cxx
     MTestConstraint.cxx
     MTestImposedDrivingVariable.cxx
-    MTestImposedThermodynamicForce.cxx)
+    MTestImposedThermodynamicForce.cxx
+    MTestAccelerationAlgorithmFactory.cxx
+    MTestAccelerationAlgorithm.cxx
+    MTestCastemAccelerationAlgorithm.cxx
+    MTestSecantAccelerationAlgorithm.cxx
+    MTestSteffensenAccelerationAlgorithm.cxx
+    MTestIronsTuckAccelerationAlgorithm.cxx)
+
 set(TFELMTest_LDADD
     MFrontLogStream
     TFELMaterial

@@ -131,41 +131,17 @@ namespace mfront
     void
     handleCastemAccelerationPeriod(MTest&,TokensContainer::const_iterator&);
     /*!
-     * handle the @UseIronsTuckAccelerationAlgorithm keyword
+     * handle the @AccelerationAlgorithm keyword
      * \param[in,out] p : position in the input file
      */
     void
-    handleUseIronsTuckAccelerationAlgorithm(MTest&,TokensContainer::const_iterator&);
+    handleAccelerationAlgorithm(MTest&,TokensContainer::const_iterator&);
     /*!
-     * handle the @IronsTuckAccelerationTrigger keyword
+     * handle the @AccelerationAlgorithmParameter keyword
      * \param[in,out] p : position in the input file
      */
     void
-    handleIronsTuckAccelerationTrigger(MTest&,TokensContainer::const_iterator&);
-    /*!
-     * handle the @UseSteffensenAccelerationAlgorithm keyword
-     * \param[in,out] p : position in the input file
-     */
-    void
-    handleUseSteffensenAccelerationAlgorithm(MTest&,TokensContainer::const_iterator&);
-    /*!
-     * handle the @SteffensenAccelerationTrigger keyword
-     * \param[in,out] p : position in the input file
-     */
-    void
-    handleSteffensenAccelerationTrigger(MTest&,TokensContainer::const_iterator&);
-    /*!
-     * handle the @UseSecantAccelerationAlgorithm keyword
-     * \param[in,out] p : position in the input file
-     */
-    void
-    handleUseSecantAccelerationAlgorithm(MTest&,TokensContainer::const_iterator&);
-    /*!
-     * handle the @SecantAccelerationTrigger keyword
-     * \param[in,out] p : position in the input file
-     */
-    void
-    handleSecantAccelerationTrigger(MTest&,TokensContainer::const_iterator&);
+    handleAccelerationAlgorithmParameter(MTest&,TokensContainer::const_iterator&);
     /*!
      * handle the @Test keyword
      * \param[in,out] p : position in the input file

@@ -7,19 +7,25 @@ lib_LTLIBRARIES = libTFELMTest.la
 bin_PROGRAMS  = mtest
 mtest_SOURCES = MTestMain.cxx
 
-libTFELMTest_la_SOURCES = MTest.cxx                             \
-			  MTestParser.cxx                       \
-			  MTestAnalyticalTest.cxx               \
-			  MTestReferenceFileComparisonTest.cxx  \
-			  MTestEvolution.cxx                    \
-			  MTestCastemEvolution.cxx              \
-			  MTestFunctionEvolution.cxx            \
-			  MTestBehaviour.cxx                    \
-			  MTestUmatBehaviourBase.cxx            \
-			  MTestUmatNormaliseTangentOperator.cxx \
-			  MTestConstraint.cxx                   \
-			  MTestImposedDrivingVariable.cxx       \
-			  MTestImposedThermodynamicForce.cxx
+libTFELMTest_la_SOURCES = MTest.cxx                                \
+			  MTestParser.cxx                          \
+			  MTestAnalyticalTest.cxx                  \
+			  MTestReferenceFileComparisonTest.cxx     \
+			  MTestEvolution.cxx                       \
+			  MTestCastemEvolution.cxx                 \
+			  MTestFunctionEvolution.cxx               \
+			  MTestBehaviour.cxx                       \
+			  MTestUmatBehaviourBase.cxx               \
+			  MTestUmatNormaliseTangentOperator.cxx    \
+			  MTestConstraint.cxx                      \
+			  MTestImposedDrivingVariable.cxx          \
+			  MTestImposedThermodynamicForce.cxx       \
+			  MTestAccelerationAlgorithmFactory.cxx    \
+			  MTestAccelerationAlgorithm.cxx           \
+			  MTestSecantAccelerationAlgorithm.cxx     \
+			  MTestCastemAccelerationAlgorithm.cxx     \
+			  MTestIronsTuckAccelerationAlgorithm.cxx  \
+			  MTestSteffensenAccelerationAlgorithm.cxx
 
 libTFELMTest_la_LIBADD  = -L$(top_builddir)/mfront/src -lMFrontLogStream  \
 			  -L$(top_builddir)/src/Material -lTFELMaterial   \

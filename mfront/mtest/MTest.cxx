@@ -55,6 +55,9 @@
 #include"MFront/MTestImposedThermodynamicForce.hxx"
 #include"MFront/MTestImposedDrivingVariable.hxx"
 
+#include"MFront/MTestAccelerationAlgorithmFactory.hxx"
+#include"MFront/MTestCastemAccelerationAlgorithm.hxx"
+
 namespace mfront
 {
 
@@ -168,7 +171,6 @@ namespace mfront
       hypothesis(tfel::material::ModellingHypothesis::UNDEFINEDHYPOTHESIS),
       eeps(-1.),
       seps(-1.),
-      sa_w(1.),
       mSubSteps(-1),
       iterMax(-1),
       ks(MTest::UNSPECIFIEDSTIFFNESSUPDATINGPOLICY),
@@ -176,14 +178,6 @@ namespace mfront
       ppolicy(MTest::UNSPECIFIEDPREDICTIONPOLICY),
       handleThermalExpansion(true),
       useCastemAcceleration(false),
-      useIronsTuckAcceleration(false),
-      useSteffensenAcceleration(false),
-      useSecantAcceleration(false),
-      cat(-1),
-      cap(-1),
-      itat(-1),
-      stat(-1),
-      sat(-1),
       toeps(-1),
       pv(-1),
       cto(false),
@@ -191,6 +185,33 @@ namespace mfront
   {
     // declare time variable
     this->declareVariable("t",true);
+  }
+
+  void
+  MTest::setAccelerationAlgorithm(const std::string& a)
+  {
+    using namespace std;
+    MTestAccelerationAlgorithmFactory& f =
+      MTestAccelerationAlgorithmFactory::getMTestAccelerationAlgorithmFactory();
+    if(this->aa.get()!=0){
+      string msg("MTest::setAccelerationAlgorithm : "
+		 "acceleration algorithm already set");
+      throw(runtime_error(msg));
+    }
+    this->aa = f.getAlgorithm(a);
+  }
+
+  void
+  MTest::setAccelerationAlgorithmParameter(const std::string& p,
+					   const std::string& v)
+  {
+    using namespace std;
+    if(this->aa.get()==0){
+      string msg("MTest::setAccelerationAlgorithmParameter : "
+		 "no acceleration algorithm set");
+      throw(runtime_error(msg));
+    }
+    this->aa->setParameter(p,v);
   }
 
   void
@@ -286,10 +307,14 @@ namespace mfront
   MTest::setUseCastemAccelerationAlgorithm(const bool ucaa)
   {
     using namespace std;
-    if(this->useCastemAcceleration){
-      string msg("MTest::setUseCastemAccelerationAlgorithm : "
-		 "useCastemAcceleration already set");
-      throw(runtime_error(msg));
+    using tfel::utilities::shared_ptr;
+    if(ucaa){
+      if(this->aa.get()!=0){
+	string msg("MTest::setUseCastemAccelerationAlgorithm : "
+		   "an algorithm was already set");
+	throw(runtime_error(msg));
+      }
+      this->aa = shared_ptr<MTestAccelerationAlgorithm>(new MTestCastemAccelerationAlgorithm);
     }
     this->useCastemAcceleration = ucaa;
   }
@@ -298,18 +323,23 @@ namespace mfront
   MTest::setCastemAccelerationTrigger(const int i)
   {
     using namespace std;
-    if(this->cat!=-1){
+    if(!this->useCastemAcceleration){
       string msg("MTest::setCastemAccelerationTrigger : "
-		 "the castem acceleration trigger has already "
-		 "been defined");
+		 "the castem acceleration algorithm has not been set using the "
+		 "@UseCast3mAccelerationAlgorithm keyword. If the Cast3M "
+		 "acceleration algorithm was specified using the @AccelerationAlgorithm "
+		 "keyword, please use the @AccelerationAlgorithmParameter keyword to "
+		 "specify the acceleration trigger.");
       throw(runtime_error(msg));
     }
-    if(i<3){
-      string msg("MTest::setCastemAccelerationTrigger",
-		 "invalid acceleration trigger value.");
+    if(this->aa.get()==0){
+      string msg("MTest::setCastemAccelerationTrigger : "
+		 "internal error");
       throw(runtime_error(msg));
     }
-    this->cat = i;
+    ostringstream nb;
+    nb << i;
+    this->aa->setParameter("AccelerationTrigger",nb.str());
   }
 
 
@@ -317,110 +347,25 @@ namespace mfront
   MTest::setCastemAccelerationPeriod(const int p)
   {
     using namespace std;
-    if(this->cap!=-1){
+    if(!this->useCastemAcceleration){
       string msg("MTest::setCastemAccelerationPeriod : "
-		 "the castem acceleration period has already "
-		 "been defined");
+		 "the castem acceleration algorithm has not been set using the "
+		 "@UseCast3mAccelerationAlgorithm keyword. If the Cast3M "
+		 "acceleration algorithm was specified using the @AccelerationAlgorithm "
+		 "keyword, please use the @AccelerationAlgorithmParameter keyword to "
+		 "specify the acceleration period.");
       throw(runtime_error(msg));
     }
-    if(p==0){
-      string msg("MTest::setCastemAccelerationPeriod",
-		 "invalid acceleration period value.");
+    if(this->aa.get()==0){
+      string msg("MTest::setCastemAccelerationPeriod : "
+		 "internal error");
       throw(runtime_error(msg));
     }
-    this->cap = p;
-  }
-
-  void
-  MTest::setUseIronsTuckAccelerationAlgorithm(const bool uitaa)
-  {
-    using namespace std;
-    if(this->useIronsTuckAcceleration){
-      string msg("MTest::setUseIronsTuckAccelerationAlgorithm : "
-		 "useIronsTuckAcceleration already set");
-      throw(runtime_error(msg));
-    }
-    this->useIronsTuckAcceleration = uitaa;
+    ostringstream nb;
+    nb << p;
+    this->aa->setParameter("AccelerationPeriod",nb.str());
   }
   
-  void
-  MTest::setIronsTuckAccelerationTrigger(const int i)
-  {
-    using namespace std;
-    if(this->itat!=-1){
-      string msg("MTest::setIronsTuckAccelerationTrigger : "
-		 "the castem acceleration trigger has already "
-		 "been defined");
-      throw(runtime_error(msg));
-    }
-    if(i<3){
-      string msg("MTest::setIronsTuckAccelerationTrigger",
-		 "invalid acceleration trigger value.");
-      throw(runtime_error(msg));
-    }
-    this->itat = i;
-  }
-
-  void
-  MTest::setUseSteffensenAccelerationAlgorithm(const bool uitaa)
-  {
-    using namespace std;
-    if(this->useSteffensenAcceleration){
-      string msg("MTest::setUseSteffensenAccelerationAlgorithm : "
-		 "useSteffensenAcceleration already set");
-      throw(runtime_error(msg));
-    }
-    this->useSteffensenAcceleration = uitaa;
-  }
-  
-  void
-  MTest::setSteffensenAccelerationTrigger(const int i)
-  {
-    using namespace std;
-    if(this->stat!=-1){
-      string msg("MTest::setSteffensenAccelerationTrigger : "
-		 "the castem acceleration trigger has already "
-		 "been defined");
-      throw(runtime_error(msg));
-    }
-    if(i<3){
-      string msg("MTest::setSteffensenAccelerationTrigger",
-		 "invalid acceleration trigger value.");
-      throw(runtime_error(msg));
-    }
-    this->stat = i;
-  }
-
-  void
-  MTest::setUseSecantAccelerationAlgorithm(const bool uitaa)
-  {
-    using namespace std;
-    if(this->useSecantAcceleration){
-      string msg("MTest::setUseSecantAccelerationAlgorithm : "
-		 "useSecantAcceleration already set");
-      throw(runtime_error(msg));
-    }
-    this->useSecantAcceleration = uitaa;
-  }
-  
-  void
-  MTest::setSecantAccelerationTrigger(const int i)
-  {
-    using namespace std;
-    if(this->sat!=-1){
-      string msg("MTest::setSecantAccelerationTrigger : "
-		 "the castem acceleration trigger has already "
-		 "been defined");
-      throw(runtime_error(msg));
-    }
-    if(i<3){
-      string msg("MTest::setSecantAccelerationTrigger",
-		 "invalid acceleration trigger value.");
-      throw(runtime_error(msg));
-    }
-    this->sat = i;
-  }
-
   void
   MTest::setStiffnessUpdatingPolicy(const MTest::StiffnessUpdatingPolicy p)
   {
@@ -1283,32 +1228,8 @@ namespace mfront
     if(this->iterMax==-1){
       this->iterMax=100;
     }
-    // castem acceleration
-    if(this->useCastemAcceleration){
-      if(this->cap==-1){
-	this->cap=2;
-      }
-      if(this->cat==-1){
-	this->cat=4;
-      }
-    }
-    // Irons Tuck acceleration
-    if(this->useIronsTuckAcceleration){
-      if(this->itat==-1){
-	this->itat=3;
-      }
-    }
-    // Steffensen acceleration
-    if(this->useSteffensenAcceleration){
-      if(this->stat==-1){
-	this->stat=3;
-      }
-    }
-    // secant acceleration
-    if(this->useSecantAcceleration){
-      if(this->sat==-1){
-	this->sat=3;
-      }
+    if(this->aa.get()!=0){
+      this->aa->initialize(this->getNumberOfUnknowns());
     }
     // prediction policy
     if(this->ppolicy==UNSPECIFIEDPREDICTIONPOLICY){
@@ -1331,17 +1252,8 @@ namespace mfront
     // options selected
     if(getVerboseMode()>=VERBOSE_LEVEL1){
       ostream& log = getLogStream();
-      if(this->useCastemAcceleration){
-	log << "mtest : castem acceleration selected" << endl;
-      }
-      if(this->useIronsTuckAcceleration){
-	log << "mtest : Irons Tuck acceleration selected" << endl;
-      }
-      if(this->useSecantAcceleration){
-	log << "mtest : secant acceleration selected" << endl;
-      }
-      if(this->useSteffensenAcceleration){
-	log << "mtest : Steffensen acceleration selected" << endl;
+      if(this->aa.get()!=0){
+	log << "mtest : " << this->aa->getName() << " acceleration algorithm selected" << endl;
       }
       if(this->ppolicy==LINEARPREDICTION){
 	log << "mtest : using linear prediction" << endl;
@@ -1484,17 +1396,7 @@ namespace mfront
     wk.p_lu.clear();
     wk.x.clear();
     wk.r.clear();
-    wk.ca_u0.clear();      
-    wk.ca_u1.clear();
-    wk.ca_u2.clear();
-    wk.ca_r0.clear();
-    wk.ca_r1.clear();
-    wk.ca_r2.clear();
-    wk.ca_n0.clear();
-    wk.ca_n1.clear();
-    wk.ca_tmp0.clear();
-    wk.ca_tmp1.clear();
-    wk.ca_r.clear();
+    wk.du.clear();
     //resizing
     wk.K.resize(psz,psz);
     wk.Kt.resize(nth,ndv);
@@ -1507,42 +1409,7 @@ namespace mfront
     wk.p_lu.resize(psz);
     wk.x.resize(psz);
     wk.r.resize(psz,0.);
-    // allocating memory
-    if(this->useCastemAcceleration){
-      wk.ca_u0.resize(psz,0.);      
-      wk.ca_u1.resize(psz,0.);
-      wk.ca_u2.resize(psz,0.);
-      wk.ca_r0.resize(psz,0.);
-      wk.ca_r1.resize(psz,0.);
-      wk.ca_r2.resize(psz,0.);
-      wk.ca_n0.resize(psz,0.);
-      wk.ca_n1.resize(psz,0.);
-      wk.ca_tmp0.resize(psz,0.);
-      wk.ca_tmp1.resize(psz,0.);
-      wk.ca_r.resize(psz,0.);
-    }
-    if(this->useIronsTuckAcceleration){
-      wk.ita_u0.resize(psz,0.);      
-      wk.ita_u1.resize(psz,0.);
-      wk.ita_u2.resize(psz,0.);
-      wk.ita_du.resize(psz,0.);
-      wk.ita_ddu.resize(psz,0.);
-    }
-    if(this->useSteffensenAcceleration){
-      wk.sta_u0.resize(psz,0.);      
-      wk.sta_u1.resize(psz,0.);
-      wk.sta_u2.resize(psz,0.);
-      wk.sta_du1.resize(psz,0.);
-      wk.sta_du2.resize(psz,0.);
-    }
-    if(this->useSecantAcceleration){
-      wk.sa_u0.resize(psz,0.);      
-      wk.sa_u1.resize(psz,0.);
-      wk.sa_r0.resize(psz,0.);
-      wk.sa_r1.resize(psz,0.);
-      wk.sa_r.resize(psz,0.);
-      wk.sa_dr.resize(psz,0.);
-    }
+    wk.du.resize(psz,0.);
     wk.first = true;
     wk.a = 0;
   } // end of MTest::initializeWorkSpace
@@ -1878,8 +1745,9 @@ namespace mfront
 			this->dimension,t,dt,wk.a);
 	    pos = static_cast<unsigned short>(pos+c.getNumberOfLagrangeMultipliers());
 	  }
-	  LUSolve::exe(wk.K,wk.r,wk.x,wk.p_lu);
-	  state.u1 -= wk.r;
+	  wk.du = wk.r;
+	  LUSolve::exe(wk.K,wk.du,wk.x,wk.p_lu);
+	  state.u1 -= wk.du;
 	} else {
 	  if(getVerboseMode()>VERBOSE_QUIET){
 	    ostream& log = getLogStream();
@@ -1903,6 +1771,9 @@ namespace mfront
       /* resolution */
       bool cont = true;
       vector<string> failed_criteria;
+      if(this->aa.get()!=0){
+	this->aa->preExecuteTasks();
+      }
       while((!converged)&&(iter!=this->iterMax)&&(cont)){
 	failed_criteria.clear();
 	++iter;
@@ -2016,21 +1887,16 @@ namespace mfront
 	    }
 	    log << endl;
 	  }
-	  if(this->useCastemAcceleration){
-	    wk.ca_r = wk.r;
-	  }
-	  if(this->useSecantAcceleration){
-	    wk.sa_r = wk.r;
-	  }
+	  wk.du = wk.r;
+	  LUSolve::exe(wk.K,wk.du,wk.x,wk.p_lu);
+	  state.u1 -= wk.du;
 	  real nr = 0.;
 	  for(i=0;i!=nth;++i){
 	    nr += abs(wk.r(i));
 	  }
-	  LUSolve::exe(wk.K,wk.r,wk.x,wk.p_lu);
-	  state.u1 -= wk.r;
 	  ne = 0;
 	  for(i=0;i!=ndv;++i){
-	    ne += abs(wk.r(i));
+	    ne += abs(wk.du(i));
 	  }
 	  if(getVerboseMode()>=VERBOSE_LEVEL1){
 	    ostream& log = getLogStream();
@@ -2092,111 +1958,9 @@ namespace mfront
 	  if(this->ppolicy == NOPREDICTION){
 	    converged = (converged) && (iter>1);
 	  }
-	  if((!converged)&&(this->useCastemAcceleration)){
-	    const real ca_eps = 100*(this->seps*numeric_limits<real>::epsilon());
-	    wk.ca_u0.swap(wk.ca_u1);
-	    wk.ca_u1.swap(wk.ca_u2);
-	    wk.ca_r0.swap(wk.ca_r1);
-	    wk.ca_r1.swap(wk.ca_r2);
-	    wk.ca_u2 = state.u1;
-	    wk.ca_r2 = wk.ca_r;
-	    if((iter>=this->cat)&&((iter-this->cat)%this->cap==0)){
-	      if(getVerboseMode()>=VERBOSE_LEVEL1){
-		ostream& log = getLogStream();
-		log << "Cast3M acceleration convergence" << endl;
-	      }
-	      bool c  = true;
-	      wk.ca_tmp0 = wk.ca_r1-wk.ca_r0;
-	      wk.ca_tmp1 = wk.ca_r2-wk.ca_r0;
-	      const real nr0 = norm(wk.ca_tmp0);
-	      c = nr0>ca_eps;
-	      if(c){
-		wk.ca_n0   = wk.ca_tmp0/nr0;
-		const real ntmp1  = wk.ca_tmp1|wk.ca_n0;
-		wk.ca_tmp1       -= ntmp1*wk.ca_n0;
-		const real nr1    = norm(wk.ca_tmp1);
-		c = nr1>0.1*abs(ntmp1);
-		if(c){
-		  wk.ca_n1      =   wk.ca_tmp1/nr1;
-		  const real ca_p0 = -(wk.ca_r0|wk.ca_n0);
-		  const real ca_p1 = -(wk.ca_r0|wk.ca_n1);
-		  // La projection du vecteur nul est
-		  // donnée par
-		  // (1-ca_c2-ca_c1)*r0+ca_c0*ca_r1+ca_c2*r2;
-		  // avec - ca_c1 = (ca_p0-ca_p1*ntmp1/nr1)/nr0
-		  //      - ca_c2 = ca_p1/nr1
-		  // maintenant on applique la même relation
-		  // linéaire
-		  // aux inconnues..
-		  const real ca_c2 = ca_p1/nr1;
-		  const real ca_c1 = (ca_p0-ntmp1*ca_c2)/nr0;
-		  state.u1 = (1-ca_c2-ca_c1)*wk.ca_u0+ca_c1*wk.ca_u1+ca_c2*wk.ca_u2;
-		} else {
-		  // the previous iterations were (almost) colinear
-		  const real ca_c0 = -(wk.ca_r0|wk.ca_n0)/nr0;
-		  state.u1 = (1-ca_c0)*wk.ca_u0+ca_c0*wk.ca_u1;
-		}
-	      }
-	    }
-	  }
-	  if((!converged)&&(this->useIronsTuckAcceleration)){
-	    const real it_eps = 100*(this->eeps*numeric_limits<real>::epsilon());
-	    wk.ita_u0.swap(wk.ita_u1);
-	    wk.ita_u1.swap(wk.ita_u2);
-	    wk.ita_u2 = state.u1;
-	    if((iter>=this->itat)&&((iter-this->itat)%2==0)){
-	      if(getVerboseMode()>=VERBOSE_LEVEL1){
-		ostream& log = getLogStream();
-		log << "Irons Tuck acceleration convergence" << endl;
-	      }
-	      wk.ita_du  = wk.ita_u2-wk.ita_u1;
-	      wk.ita_ddu = wk.ita_u2-2*wk.ita_u1+wk.ita_u0;
-	      const real nr2_ddu = wk.ita_ddu|wk.ita_ddu;
-	      if(nr2_ddu>it_eps){
-		const real ita_a = (wk.ita_du|wk.ita_ddu)/nr2_ddu;
-		state.u1 -= ita_a*wk.ita_du;
-		wk.ita_u2 = state.u1;
-	      }
-	    }
-	  }
-	  if((!converged)&&(this->useSteffensenAcceleration)){
-	    const real it_eps = 100*(this->eeps*numeric_limits<real>::epsilon());
-	    wk.sta_u0.swap(wk.sta_u1);
-	    wk.sta_u1.swap(wk.sta_u2);
-	    wk.sta_u2 = state.u1;
-	    if((iter>=this->stat)&&((iter-this->stat)%2==0)){
-	      if(getVerboseMode()>=VERBOSE_LEVEL1){
-		ostream& log = getLogStream();
-		log << "Steffensen acceleration convergence" << endl;
-	      }
-	      wk.sta_du2  = wk.sta_u2-wk.sta_u1;
-	      wk.sta_du1  = wk.sta_u1-wk.sta_u0;
-	      for(vector<real>::size_type id=0;id!=wk.sta_du1.size();++id){
-		if((abs(wk.sta_du2[id])>it_eps)&&
-		   (abs(wk.sta_du1[id])>it_eps)){
-		  state.u1[id] =  wk.sta_u1[id]+1/(1/(wk.sta_du2[id])-1/(wk.sta_du1[id]));
-		}
-	      }
-	    }
-	  }
-	  if((!converged)&&(this->useSecantAcceleration)){
-	    const real sa_eps = 100*(this->eeps*numeric_limits<real>::epsilon());
-	    wk.sa_u0.swap(wk.sa_u1);
-	    wk.sa_r0.swap(wk.sa_r1);
-	    wk.sa_r1 = wk.sa_r;
-	    wk.sa_u1 = state.u1;
-	    wk.sa_dr = wk.sa_r1-wk.sa_r0;
-	    if(iter>=this->sat){
-	      if(getVerboseMode()>=VERBOSE_LEVEL1){
-		ostream& log = getLogStream();
-		log << "Secant acceleration convergence" << endl;
-	      }
-	      const real nr2_dr = wk.sa_dr|wk.sa_dr;
-	      if(nr2_dr>sa_eps){
-		this->sa_w *= -(wk.sa_r0|wk.sa_dr)/nr2_dr;
-		state.u1    = (this->sa_w)*wk.sa_u1+(1-this->sa_w)*wk.sa_u0;
-	      }
-	      wk.sa_u1 = state.u1;
+	  if(!converged){
+	    if(this->aa.get()!=0){
+	      this->aa->execute(state.u1,wk.r,this->eeps,this->seps,iter);
 	    }
 	  }
 	} else {
@@ -2256,8 +2020,8 @@ namespace mfront
 		  << endl << endl;
 	    }
 	  }
-	  if(this->useSecantAcceleration){
-	    this->sa_w = max(min(this->sa_w,1.),-1.);
+	  if(this->aa.get()!=0){
+	    this->aa->postExecuteTasks();
 	  }
 	}
 	// testing

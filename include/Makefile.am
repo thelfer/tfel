@@ -406,6 +406,8 @@ nobase_include_HEADERS= TFEL/Macros.hxx                                         
 			TFEL/Math/T2toST2/T2toST2FromTinyMatrixView.hxx                                              \
 			TFEL/Math/T2toST2/T2toST2FromTinyMatrixView2.hxx                                             \
 			TFEL/Math/T2toST2/RightCauchyGreenTensorDerivativeExpr.hxx                                   \
+			TFEL/Math/T2toST2/T2toST2TensorProductExpr.hxx                                               \
+			TFEL/Math/T2toST2/T2toST2T2toT2ProductExpr.hxx                                               \
 			TFEL/Math/st2tot2.hxx                                                                        \
 			TFEL/Math/ST2toT2/st2tot2.ixx                                                                \
 			TFEL/Math/ST2toT2/st2tot2ResultType.hxx                                                      \

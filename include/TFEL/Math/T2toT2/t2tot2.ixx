@@ -130,6 +130,24 @@ namespace tfel{
     } // end of t2tot2<N,T>
 
     template<unsigned short N, typename T>
+    template<typename TensorType,
+	     typename T2toT2Type>
+    typename tfel::meta::EnableIf<
+      tfel::meta::Implements<TensorType,TensorConcept>::cond &&
+      tfel::meta::Implements<T2toT2Type,T2toT2Concept>::cond &&
+      TensorTraits<TensorType>::dime==N&&
+      T2toT2Traits<T2toT2Type>::dime==N&&
+      tfel::typetraits::IsAssignableTo<typename ComputeBinaryResult<typename TensorTraits<TensorType>::NumType,
+								    typename T2toT2Traits<T2toT2Type>::NumType,
+								    OpMult>::Result,T>::cond,
+      T2toT2Expr<t2tot2<N,T>,TensorProductLeftDerivativeExpr<N> > >::type
+    t2tot2<N,T>::tpld(const TensorType& B,
+		      const T2toT2Type& C)
+    {
+      return T2toT2Expr<t2tot2<N,T>,TensorProductLeftDerivativeExpr<N> >(B,C);
+    }
+
+    template<unsigned short N, typename T>
     template<typename TensorType>
     typename tfel::meta::EnableIf<
       tfel::meta::Implements<TensorType,TensorConcept>::cond &&
@@ -139,6 +157,24 @@ namespace tfel{
     t2tot2<N,T>::tprd(const TensorType& A)
     {
       return T2toT2Expr<t2tot2<N,T>,TensorProductRightDerivativeExpr<N> >(A);
+    }
+
+    template<unsigned short N, typename T>
+    template<typename TensorType,
+	     typename T2toT2Type>
+    typename tfel::meta::EnableIf<
+      tfel::meta::Implements<TensorType,TensorConcept>::cond &&
+      tfel::meta::Implements<T2toT2Type,T2toT2Concept>::cond &&
+      TensorTraits<TensorType>::dime==N&&
+      T2toT2Traits<T2toT2Type>::dime==N&&
+      tfel::typetraits::IsAssignableTo<typename ComputeBinaryResult<typename TensorTraits<TensorType>::NumType,
+								    typename T2toT2Traits<T2toT2Type>::NumType,
+								    OpMult>::Result,T>::cond,
+      T2toT2Expr<t2tot2<N,T>,TensorProductLeftDerivativeExpr<N> > >::type
+    t2tot2<N,T>::tprd(const TensorType& A,
+		      const T2toT2Type& C)
+    {
+      return T2toT2Expr<t2tot2<N,T>,TensorProductLeftDerivativeExpr<N> >(A,C);
     }
 
     template<unsigned short N, typename T>

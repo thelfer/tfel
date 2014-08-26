@@ -141,6 +141,25 @@ namespace tfel{
 	T2toT2Expr<t2tot2<N,T>,TensorProductLeftDerivativeExpr<N> > >::type
       tpld(const TensorType&);
       /*!
+       * \param[in] B : second tensor of the product
+       * \param[in] C : derivative of the first tensor
+       * \return the left part of the derivative of a tensor product
+       */
+      template<typename TensorType,
+	       typename T2toT2Type>
+      static TFEL_MATH_INLINE 
+      typename tfel::meta::EnableIf<
+	tfel::meta::Implements<TensorType,TensorConcept>::cond &&
+	tfel::meta::Implements<T2toT2Type,T2toT2Concept>::cond &&
+	TensorTraits<TensorType>::dime==N&&
+	T2toT2Traits<T2toT2Type>::dime==N&&
+	tfel::typetraits::IsAssignableTo<typename ComputeBinaryResult<typename TensorTraits<TensorType>::NumType,
+								      typename T2toT2Traits<T2toT2Type>::NumType,
+								      OpMult>::Result,T>::cond,
+	T2toT2Expr<t2tot2<N,T>,TensorProductLeftDerivativeExpr<N> > >::type
+      tpld(const TensorType&,
+	   const T2toT2Type&);
+      /*!
        * \param[in] A : first tensor of the product
        * \return the right part of the derivative of a tensor product
        */
@@ -152,6 +171,25 @@ namespace tfel{
 	tfel::typetraits::IsAssignableTo<typename TensorTraits<TensorType>::NumType,T>::cond,
 	T2toT2Expr<t2tot2<N,T>,TensorProductRightDerivativeExpr<N> > >::type
       tprd(const TensorType&);
+      /*!
+       * \param[in] A : first tensor of the product
+       * \param[in] C : derivative of the first tensor
+       * \return the right part of the derivative of a tensor product
+       */
+      template<typename TensorType,
+	       typename T2toT2Type>
+      static TFEL_MATH_INLINE 
+      typename tfel::meta::EnableIf<
+	tfel::meta::Implements<TensorType,TensorConcept>::cond &&
+	tfel::meta::Implements<T2toT2Type,T2toT2Concept>::cond &&
+	TensorTraits<TensorType>::dime==N&&
+	T2toT2Traits<T2toT2Type>::dime==N&&
+	tfel::typetraits::IsAssignableTo<typename ComputeBinaryResult<typename TensorTraits<TensorType>::NumType,
+								      typename T2toT2Traits<T2toT2Type>::NumType,
+								      OpMult>::Result,T>::cond,
+	T2toT2Expr<t2tot2<N,T>,TensorProductLeftDerivativeExpr<N> > >::type
+      tprd(const TensorType&,
+	   const T2toT2Type&);
       /*!
        * This is a StensorConcept requirement.
        */

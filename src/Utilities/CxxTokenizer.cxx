@@ -68,6 +68,30 @@ namespace tfel{
       return string::npos;
     } // end of findStringBeginning
 
+    static std::string
+    stripSpaceAndStarAtBeginningOfCommentLine(const std::string& l)
+    {
+      using namespace std;
+      if(!l.empty()){
+	string::size_type pc = 0;
+	bool found = false;
+	while((pc!=l.size())&&!(found)){
+	  if(!(isspace(l[pc]))){
+	    found = true;
+	  } else {
+	    ++pc;
+	  }
+	}
+	if(found){
+	  if(l[pc]=='*'){
+	    ++pc;
+	  }
+	  return l.substr(pc);
+	}
+      }
+      return "";
+    }
+    
     void
     CxxTokenizer::splitLine(std::string line, const unsigned int lineNumber)
     {
@@ -84,13 +108,15 @@ namespace tfel{
 	  throw(runtime_error(msg));
 	}
 	if(!this->fileTokens.back().value.empty()){
-	  this->fileTokens.back().value += ' ';
+	  this->fileTokens.back().value += '\n';
 	}
 	if(pos3==string::npos){
-	  this->fileTokens.back().value += line;
+	  this->fileTokens.back().value += 
+	    stripSpaceAndStarAtBeginningOfCommentLine(line);
 	  return;
 	}
-	this->fileTokens.back().value += line.substr(0,pos3);
+	this->fileTokens.back().value +=
+	  stripSpaceAndStarAtBeginningOfCommentLine(line.substr(0,pos3));
 	line.erase(0,pos3+2);
 	this->cStyleCommentOpened=false;
       }

@@ -30,7 +30,6 @@ namespace tfel{
     template<typename T2toST2Type>
     struct T2toST2Expr<T2toST2Type,RightCauchyGreenTensorDerivativeExpr<1u> >
       : public T2toST2Concept<T2toST2Expr<T2toST2Type,RightCauchyGreenTensorDerivativeExpr<1u> > >,
-	public t2tost2_base<T2toST2Expr<T2toST2Type,RightCauchyGreenTensorDerivativeExpr<1u> > >,
 	public fsarray<9u,typename T2toST2Traits<T2toST2Type>::NumType>
     {
       //! a simple check
@@ -76,7 +75,6 @@ namespace tfel{
     template<typename T2toST2Type>
     struct T2toST2Expr<T2toST2Type,RightCauchyGreenTensorDerivativeExpr<2u> >
       : public T2toST2Concept<T2toST2Expr<T2toST2Type,RightCauchyGreenTensorDerivativeExpr<2u> > >,
-	public t2tost2_base<T2toST2Expr<T2toST2Type,RightCauchyGreenTensorDerivativeExpr<2u> > >,
 	public fsarray<20u,typename T2toST2Traits<T2toST2Type>::NumType>
     {
       //! a simple check
@@ -133,7 +131,6 @@ namespace tfel{
     template<typename T2toST2Type>
     struct T2toST2Expr<T2toST2Type,RightCauchyGreenTensorDerivativeExpr<3u> >
       : public T2toST2Concept<T2toST2Expr<T2toST2Type,RightCauchyGreenTensorDerivativeExpr<3u> > >,
-	public t2tost2_base<T2toST2Expr<T2toST2Type,RightCauchyGreenTensorDerivativeExpr<3u> > >,
 	public fsarray<54u,typename T2toST2Traits<T2toST2Type>::NumType>
     {
       //! a simple check

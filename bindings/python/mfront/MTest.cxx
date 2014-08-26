@@ -529,18 +529,10 @@ void declareMTest(void)
 	 &MTest::setCastemAccelerationTrigger)
     .def("setCastemAccelerationPeriod",
 	 &MTest::setCastemAccelerationPeriod)
-    .def("setUseIronsTuckAccelerationAlgorithm",
-	 &MTest::setUseIronsTuckAccelerationAlgorithm)
-    .def("setIronsTuckAccelerationTrigger",
-	 &MTest::setIronsTuckAccelerationTrigger)
-    .def("setUseSteffensenAccelerationAlgorithm",
-	 &MTest::setUseSteffensenAccelerationAlgorithm)
-    .def("setSteffensenAccelerationTrigger",
-	 &MTest::setSteffensenAccelerationTrigger)
-    .def("setUseSecantAccelerationAlgorithm",
-	 &MTest::setUseSecantAccelerationAlgorithm)
-    .def("setSecantAccelerationTrigger",
-	 &MTest::setSecantAccelerationTrigger)
+    .def("setAccelerationAlgorithm",
+	 &MTest::setAccelerationAlgorithm)
+    .def("setAccelerationParameter",
+	 &MTest::setAccelerationAlgorithmParameter)
     .def("setMaximumNumberOfIterations",
 	 &MTest::setMaximumNumberOfIterations)
     .def("setMaximumNumberOfSubSteps",
