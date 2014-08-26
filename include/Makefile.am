@@ -394,6 +394,8 @@ nobase_include_HEADERS= TFEL/Macros.hxx                                         
 			TFEL/Math/ST2toST2/st2tost2ResultType.hxx                                                    \
 			TFEL/Math/ST2toST2/ST2toST2FromTinyMatrixView.hxx                                            \
 			TFEL/Math/ST2toST2/ST2toST2FromTinyMatrixView2.hxx                                           \
+			TFEL/Math/ST2toST2/StensorProductLeftDerivativeExpr.hxx                                      \
+			TFEL/Math/ST2toST2/StensorProductRightDerivativeExpr.hxx                                     \
 			TFEL/Math/t2tost2.hxx                                                                        \
 			TFEL/Math/T2toST2/t2tost2.ixx                                                                \
 			TFEL/Math/T2toST2/T2toST2Concept.hxx                                                         \
@@ -403,6 +405,7 @@ nobase_include_HEADERS= TFEL/Macros.hxx                                         
 			TFEL/Math/T2toST2/t2tost2ResultType.hxx                                                      \
 			TFEL/Math/T2toST2/T2toST2FromTinyMatrixView.hxx                                              \
 			TFEL/Math/T2toST2/T2toST2FromTinyMatrixView2.hxx                                             \
+			TFEL/Math/T2toST2/RightCauchyGreenTensorDerivativeExpr.hxx                                   \
 			TFEL/Math/st2tot2.hxx                                                                        \
 			TFEL/Math/ST2toT2/st2tot2.ixx                                                                \
 			TFEL/Math/ST2toT2/st2tot2ResultType.hxx                                                      \

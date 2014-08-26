@@ -118,6 +118,30 @@ namespace tfel{
     }
 
     template<unsigned short N, typename T>
+    template<typename TensorType>
+    typename tfel::meta::EnableIf<
+      tfel::meta::Implements<TensorType,TensorConcept>::cond &&
+      TensorTraits<TensorType>::dime==N&&
+      tfel::typetraits::IsAssignableTo<typename TensorTraits<TensorType>::NumType,T>::cond,
+      T2toT2Expr<t2tot2<N,T>,TensorProductLeftDerivativeExpr<N> > >::type
+    t2tot2<N,T>::tpld(const TensorType& B)
+    {
+      return T2toT2Expr<t2tot2<N,T>,TensorProductLeftDerivativeExpr<N> >(B);
+    } // end of t2tot2<N,T>
+
+    template<unsigned short N, typename T>
+    template<typename TensorType>
+    typename tfel::meta::EnableIf<
+      tfel::meta::Implements<TensorType,TensorConcept>::cond &&
+      TensorTraits<TensorType>::dime==N&&
+      tfel::typetraits::IsAssignableTo<typename TensorTraits<TensorType>::NumType,T>::cond,
+      T2toT2Expr<t2tot2<N,T>,TensorProductRightDerivativeExpr<N> > >::type
+    t2tot2<N,T>::tprd(const TensorType& A)
+    {
+      return T2toT2Expr<t2tot2<N,T>,TensorProductRightDerivativeExpr<N> >(A);
+    }
+
+    template<unsigned short N, typename T>
     t2tot2<N,T>::t2tot2(const T init)
     {
       tfel::fsalgo::fill<TensorDimeToSize<N>::value*

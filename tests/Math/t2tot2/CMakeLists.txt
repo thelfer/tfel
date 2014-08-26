@@ -13,3 +13,4 @@ macro(tests_t2tot2 test_arg)
 endmacro(tests_t2tot2)
 
 tests_t2tot2(t2tot2)
+tests_t2tot2(TensorProductDerivative)

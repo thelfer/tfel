@@ -13,3 +13,4 @@ macro(tests_t2tost2 test_arg)
 endmacro(tests_t2tost2)
 
 tests_t2tost2(t2tost2)
+tests_t2tost2(rightCauchyGreenTensorDerivative)

@@ -138,8 +138,8 @@ namespace tfel{
 	tfel::meta::Implements<TensorType,TensorConcept>::cond &&
 	TensorTraits<TensorType>::dime==N&&
 	tfel::typetraits::IsAssignableTo<typename TensorTraits<TensorType>::NumType,T>::cond,
-	TensorExpr<t2tot2<N,T>,TensorProductLeftDerivativeExpr<N> > >::type
-      tplp(const TensorType&);
+	T2toT2Expr<t2tot2<N,T>,TensorProductLeftDerivativeExpr<N> > >::type
+      tpld(const TensorType&);
       /*!
        * \param[in] A : first tensor of the product
        * \return the right part of the derivative of a tensor product
@@ -150,8 +150,8 @@ namespace tfel{
 	tfel::meta::Implements<TensorType,TensorConcept>::cond &&
 	TensorTraits<TensorType>::dime==N&&
 	tfel::typetraits::IsAssignableTo<typename TensorTraits<TensorType>::NumType,T>::cond,
-	TensorExpr<t2tot2<N,T>,TensorProductRightDerivativeExpr<N> > >::type
-      tprp(const TensorType&);
+	T2toT2Expr<t2tot2<N,T>,TensorProductRightDerivativeExpr<N> > >::type
+      tprd(const TensorType&);
       /*!
        * This is a StensorConcept requirement.
        */

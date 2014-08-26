@@ -9,7 +9,8 @@ test_PROGRAMS =	st2tost2      \
 		st2tost2-2    \
 		st2tost2-3    \
 		ST2toST2FromTinyMatrixView  \
-		ST2toST2FromTinyMatrixView2
+		ST2toST2FromTinyMatrixView2 \
+		StensorProductDerivative
 
 LDADD = -lTFELMath -lTFELException -lTFELTests \
 	-L$(top_builddir)/src/Tests            \
@@ -21,6 +22,7 @@ st2tost2_2_SOURCES    = st2tost2-2.cxx
 st2tost2_3_SOURCES    = st2tost2-3.cxx
 ST2toST2FromTinyMatrixView_SOURCES  = ST2toST2FromTinyMatrixView.cxx
 ST2toST2FromTinyMatrixView2_SOURCES = ST2toST2FromTinyMatrixView2.cxx
+StensorProductDerivative_SOURCES = StensorProductDerivative.cxx
 
 TESTS=$(test_PROGRAMS)
 

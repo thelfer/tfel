@@ -36,6 +36,14 @@ namespace tfel{
   
   namespace math {
 
+    // forward declaration
+    template<unsigned short N>
+    struct StensorProductLeftDerivativeExpr;
+
+    // forward declaration
+    template<unsigned short N>
+    struct StensorProductRightDerivativeExpr;
+
     /*
      * Partial specialisation for st2tost2
      */
@@ -119,6 +127,30 @@ namespace tfel{
 	public fsarray<StensorDimeToSize<N>::value*StensorDimeToSize<N>::value,T>,
 	public st2tost2_base<st2tost2<N,T> >
     {
+      /*!
+       * \param[in] B : second tensor of the product
+       * \return the left part of the derivative of a tensor product
+       */
+      template<typename StensorType>
+      static TFEL_MATH_INLINE 
+      typename tfel::meta::EnableIf<
+	tfel::meta::Implements<StensorType,StensorConcept>::cond &&
+	StensorTraits<StensorType>::dime==N&&
+	tfel::typetraits::IsAssignableTo<typename StensorTraits<StensorType>::NumType,T>::cond,
+	ST2toST2Expr<st2tost2<N,T>,StensorProductLeftDerivativeExpr<N> > >::type
+      stpld(const StensorType&);
+      /*!
+       * \param[in] A : first tensor of the product
+       * \return the right part of the derivative of a tensor product
+       */
+      template<typename StensorType>
+      static TFEL_MATH_INLINE 
+      typename tfel::meta::EnableIf<
+	tfel::meta::Implements<StensorType,StensorConcept>::cond &&
+	StensorTraits<StensorType>::dime==N&&
+	tfel::typetraits::IsAssignableTo<typename StensorTraits<StensorType>::NumType,T>::cond,
+	ST2toST2Expr<st2tost2<N,T>,StensorProductRightDerivativeExpr<N> > >::type
+      stprd(const StensorType&);
       /*!
        * This is a StensorConcept requirement.
        */

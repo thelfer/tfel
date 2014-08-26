@@ -29,6 +29,7 @@
 #include"TFEL/Math/Forward/t2tost2.hxx"
 #include"TFEL/Math/Stensor/StensorSizeToDime.hxx"
 #include"TFEL/Math/Tensor/TensorSizeToDime.hxx"
+#include"TFEL/Math/Tensor/TensorConcept.hxx"
 #include"TFEL/Math/T2toST2/T2toST2Concept.hxx"
 #include"TFEL/Math/T2toST2/T2toST2ConceptOperations.hxx"
 #include"TFEL/Math/T2toST2/T2toST2Expr.hxx"
@@ -36,6 +37,10 @@
 namespace tfel{
   
   namespace math {
+
+    //! forward declaration
+    template<unsigned short>
+    struct RightCauchyGreenTensorDerivativeExpr;
 
     /*
      * Partial specialisation for t2tost2
@@ -120,6 +125,19 @@ namespace tfel{
 	public fsarray<StensorDimeToSize<N>::value*TensorDimeToSize<N>::value,T>,
 	public t2tost2_base<t2tost2<N,T> >
     {
+      /*!
+       * \param[in] F : deformation gradient
+       * \return the derivative of the Cauchy right symmetric tensor
+       * with respect to the deformation gradient
+       */
+      template<typename TensorType>
+      static TFEL_MATH_INLINE 
+      typename tfel::meta::EnableIf<
+	tfel::meta::Implements<TensorType,TensorConcept>::cond &&
+	TensorTraits<TensorType>::dime==N&&
+	tfel::typetraits::IsAssignableTo<typename TensorTraits<TensorType>::NumType,T>::cond,
+	T2toST2Expr<t2tost2<N,T>,RightCauchyGreenTensorDerivativeExpr<N> > >::type
+      dCdF(const TensorType&);
       /*!
        * This is a StensorConcept requirement.
        */

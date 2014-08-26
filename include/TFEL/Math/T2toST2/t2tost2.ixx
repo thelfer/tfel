@@ -20,6 +20,7 @@
 #include"TFEL/Math/General/StorageTraits.hxx"
 #include"TFEL/Math/Vector/VectorUtilities.hxx"
 #include"TFEL/Math/Matrix/MatrixUtilities.hxx"
+#include"TFEL/Math/T2toST2/RightCauchyGreenTensorDerivativeExpr.hxx"
 
 namespace tfel{
 
@@ -113,6 +114,18 @@ namespace tfel{
 		       TensorDimeToSize<T2toST2Traits<Child>::dime>::value>::divByScalar(child,s);
       return child;
     }
+
+    template<unsigned short N,typename T>
+    template<typename TensorType>
+    typename tfel::meta::EnableIf<
+      tfel::meta::Implements<TensorType,TensorConcept>::cond &&
+      TensorTraits<TensorType>::dime==N&&
+      tfel::typetraits::IsAssignableTo<typename TensorTraits<TensorType>::NumType,T>::cond,
+      T2toST2Expr<t2tost2<N,T>,RightCauchyGreenTensorDerivativeExpr<N> > >::type
+    t2tost2<N,T>::dCdF(const TensorType& F)
+    {
+      return T2toST2Expr<t2tost2<N,T>,RightCauchyGreenTensorDerivativeExpr<N> >(F);
+    } // end of t2tost2::dCdF
 
     template<unsigned short N, typename T>
     t2tost2<N,T>::t2tost2(const T init)

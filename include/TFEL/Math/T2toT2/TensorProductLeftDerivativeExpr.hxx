@@ -55,6 +55,140 @@ namespace tfel{
 	this->v[3] = this->v[5] = value_type(0);
 	this->v[6] = this->v[7] = value_type(0);
       } // end of T2toT2Expr
+      /*!
+       * \brief access operator
+       * \param[in] i : line   index
+       * \param[in] j : column index
+       */
+      const value_type&
+      operator()(const unsigned short i,
+		 const unsigned short j) const
+      {
+	return this->v[i*3+j];
+      } // end of operator()
+    }; // end of struct T2toT2Expr<T2toT2Type,TensorProductLeftDerivativeExpr<1u> >
+
+    /*!
+     * Partial specialisation for 2D tensor
+     */
+    template<typename T2toT2Type>
+    struct T2toT2Expr<T2toT2Type,TensorProductLeftDerivativeExpr<2u> >
+      : public T2toT2Concept<T2toT2Expr<T2toT2Type,TensorProductLeftDerivativeExpr<2u> > >,
+	public t2tot2_base<T2toT2Expr<T2toT2Type,TensorProductLeftDerivativeExpr<2u> > >,
+	public fsarray<25u,typename T2toT2Traits<T2toT2Type>::NumType>
+    {
+      //! a simple check
+      TFEL_STATIC_ASSERT(T2toT2Traits<T2toT2Type>::dime==2u);
+      //! a simple alias
+      typedef typename T2toT2Traits<T2toT2Type>::NumType value_type;
+      /*!
+       * \param[in] B : second tensor of the product
+       */
+      template<typename TensorType>
+      T2toT2Expr(const TensorType& B)
+      {
+	//! a simple check
+	TFEL_STATIC_ASSERT((tfel::meta::Implements<TensorType,TensorConcept>::cond));
+	//! a simple check
+	TFEL_STATIC_ASSERT((T2toT2Traits<T2toT2Type>::dime==TensorTraits<TensorType>::dime));
+	//! a simple check
+	TFEL_STATIC_ASSERT((tfel::typetraits::IsAssignableTo<typename TensorTraits<TensorType>::NumType,
+							     typename T2toT2Traits<T2toT2Type>::NumType>::cond));
+	this->v[0]  = B[0];
+	this->v[1]  = value_type(0);
+	this->v[2]  = value_type(0);
+	this->v[3]  = B[4];
+	this->v[4]  = value_type(0);
+	this->v[5]  = value_type(0);
+	this->v[6]  = B[1];
+	this->v[7]  = value_type(0);
+	this->v[8]  = value_type(0);
+	this->v[9]  = B[3];
+	this->v[10] = value_type(0);
+	this->v[11] = value_type(0);
+	this->v[12] = B[2];
+	this->v[13] = value_type(0);
+	this->v[14] = value_type(0);
+	this->v[15] = B[3];
+	this->v[16] = value_type(0);
+	this->v[17] = value_type(0);
+	this->v[18] = B[1];
+	this->v[19] = value_type(0);
+	this->v[20] = value_type(0);
+	this->v[21] = B[4];
+	this->v[22] = value_type(0);
+	this->v[23] = value_type(0);
+	this->v[24] = B[0];
+      } // end of T2toT2Expr
+      /*!
+       * \brief access operator
+       * \param[in] i : line   index
+       * \param[in] j : column index
+       */
+      const value_type&
+      operator()(const unsigned short i,
+		 const unsigned short j) const
+      {
+	return this->v[i*5+j];
+      } // end of operator()
+    }; // end of struct T2toT2Expr<T2toT2Type,TensorProductLeftDerivativeExpr<1u> >
+
+    /*!
+     * Partial specialisation for 3D tensor
+     */
+    template<typename T2toT2Type>
+    struct T2toT2Expr<T2toT2Type,TensorProductLeftDerivativeExpr<3u> >
+      : public T2toT2Concept<T2toT2Expr<T2toT2Type,TensorProductLeftDerivativeExpr<3u> > >,
+	public t2tot2_base<T2toT2Expr<T2toT2Type,TensorProductLeftDerivativeExpr<3u> > >,
+	public fsarray<81u,typename T2toT2Traits<T2toT2Type>::NumType>
+    {
+      //! a simple check
+      TFEL_STATIC_ASSERT(T2toT2Traits<T2toT2Type>::dime==3u);
+      //! a simple alias
+      typedef typename T2toT2Traits<T2toT2Type>::NumType value_type;
+      /*!
+       * \param[in] B : second tensor of the product
+       */
+      template<typename TensorType>
+      T2toT2Expr(const TensorType& B)
+      {
+	//! a simple check
+	TFEL_STATIC_ASSERT((tfel::meta::Implements<TensorType,TensorConcept>::cond));
+	//! a simple check
+	TFEL_STATIC_ASSERT((T2toT2Traits<T2toT2Type>::dime==TensorTraits<TensorType>::dime));
+	//! a simple check
+	TFEL_STATIC_ASSERT((tfel::typetraits::IsAssignableTo<typename TensorTraits<TensorType>::NumType,
+							     typename T2toT2Traits<T2toT2Type>::NumType>::cond));
+	this->v[0]  = B[0]; this->v[3]  = B[4]; this->v[5]=B[6];
+	this->v[1]  = this->v[2] = this->v[4] = this->v[6] = this->v[7] = this->v[8] =value_type(0);
+	this->v[10] = B[1]; this->v[13] = B[3]; this->v[16]=B[8];
+	this->v[9]  = this->v[11] = this->v[12] = this->v[14] = this->v[15] = this->v[17] = value_type(0);
+	this->v[20] = B[2]; this->v[24] = B[5]; this->v[26]=B[7];
+	this->v[18] = this->v[19] = this->v[21] = this->v[22] = this->v[23] = this->v[25] = value_type(0);
+	this->v[27] = B[3]; this->v[30] = B[1]; this->v[32]=B[8];
+	this->v[28] = this->v[29] = this->v[31] = this->v[33] = this->v[34] = this->v[35] = value_type(0);
+	this->v[37] = B[4]; this->v[40] = B[0]; this->v[43]=B[6];
+	this->v[36] = this->v[38] = this->v[39] = this->v[41] = this->v[42] = this->v[44] = value_type(0);
+	this->v[45] = B[5]; this->v[48] = B[7]; this->v[50]=B[2];
+	this->v[46] = this->v[47] = this->v[49] = this->v[51] = this->v[52] = this->v[53] = value_type(0);
+	this->v[56] = B[6]; this->v[60] = B[0]; this->v[62]=B[4];
+	this->v[54] = this->v[55] = this->v[57] = this->v[58] = this->v[59] = this->v[61] = value_type(0);
+	this->v[64] = B[7]; this->v[67] = B[5]; this->v[70]=B[2];
+	this->v[63] = this->v[65] = this->v[66] = this->v[68] = this->v[69] = this->v[71] = value_type(0);
+	this->v[74] = B[8]; this->v[78] = B[3]; this->v[80]=B[1];
+	this->v[72] = this->v[73] = this->v[75] = this->v[76] = this->v[77] = this->v[79] = value_type(0);
+      } // end of T2toT2Expr
+      /*!
+       * \brief access operator
+       * \param[in] i : line   index
+       * \param[in] j : column index
+       */
+      const value_type&
+      operator()(const unsigned short i,
+		 const unsigned short j) const
+      {
+	return this->v[i*9+j];
+      } // end of operator()
     }; // end of struct T2toT2Expr<T2toT2Type,TensorProductLeftDerivativeExpr<1u> >
 
   } // end of namespace tfel
