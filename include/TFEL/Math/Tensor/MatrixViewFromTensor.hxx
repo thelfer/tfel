@@ -31,7 +31,7 @@ namespace tfel
     }
 
     template<typename T>
-    struct TensorConcept;
+     class TensorConcept;
 
     template<typename T>
     struct TensorTraits;

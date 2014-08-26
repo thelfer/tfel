@@ -5,7 +5,7 @@
  * \brief 10 avr 2009
  */
 
-#ifndef _LIB_TFEL_MATH_KRIGING_IXX__
+#ifndef _LIB_TFEL_MATH_KRIGING_IXX_
 #define _LIB_TFEL_MATH_KRIGING_IXX_ 
 
 #include<algorithm>
