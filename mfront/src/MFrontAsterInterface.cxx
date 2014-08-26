@@ -125,7 +125,7 @@ namespace mfront{
       flux >> this->tangentOperatorComparisonCriterium;
       if(flux.fail()){
 	string msg("AsterInterface::treatKeyword (@AsterTangentOperatorComparisonCriterium) : ");
-	msg+="failed to read criterium value.\n";
+	msg+="failed to read criterium value.";
 	throw(runtime_error(msg));
       }
       ++(current);    
@@ -158,7 +158,7 @@ namespace mfront{
       flux >> this->strainPerturbationValue;
       if(flux.fail()){
 	string msg("AsterInterface::treatKeyword (@AsterStrainPerturbationValue) : ");
-	msg+="failed to read string perturbation value.\n";
+	msg+="failed to read string perturbation value.";
 	throw(runtime_error(msg));
       }
       ++(current);
@@ -279,18 +279,9 @@ namespace mfront{
 	 (mb.getBehaviourType()==MechanicalBehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR)||
 	 (mb.getBehaviourType()==MechanicalBehaviourDescription::COHESIVEZONEMODEL))){
       string msg("MFrontAsterInterface::endTreatement : "
-		 "the aster interface only supports small and finite strain behaviours");
+		 "the aster interface only supports small and finite strain behaviours, and "
+		 "cohesive zone model");
       throw(runtime_error(msg));
-    }
-    if((this->compareToNumericalTangentOperator)||
-       (this->savesTangentOperator)){
-      if(mb.getBehaviourType()!=MechanicalBehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR){
-	string msg("MFrontAsterInterface::endTreatement : "
-		   "unsupported feature @AsterSaveTangentOperator "
-		   "and @AsterCompareToNumericalTangentOperator : "
-		   "those are only valid for small strain beahviours");
-	throw(runtime_error(msg));
-      }
     }
 
     // get the modelling hypotheses to be treated
@@ -317,43 +308,43 @@ namespace mfront{
       throw(runtime_error(msg));
     }
 
-    out << "/*!\n";
+    out << "/*!" << endl;
     out << "* \\file   "  << fileName << endl;
     out << "* \\brief  This file declares the aster interface for the " 
-	<< mb.getClassName() << " behaviour law\n";
+	<< mb.getClassName() << " behaviour law" << endl;
     out << "* \\author "  << fd.authorName << endl;
     out << "* \\date   "  << fd.date       << endl;
-    out << "*/\n\n";
+    out << "*/" << endl << endl;
 
     const string header = this->getHeaderDefine(mb);
-    out << "#ifndef "<< header << "\n";
-    out << "#define "<< header << "\n\n";
+    out << "#ifndef "<< header << endl;
+    out << "#define "<< header << endl << endl;
 
-    out << "#include\"TFEL/Config/TFELConfig.hxx\"\n\n";
-    out << "#include\"MFront/Aster/Aster.hxx\"\n\n";
+    out << "#include\"TFEL/Config/TFELConfig.hxx\"" << endl << endl;
+    out << "#include\"MFront/Aster/Aster.hxx\"" << endl << endl;
 
-    out << "#ifdef __cplusplus\n";
-    out << "#include\"MFront/Aster/AsterTraits.hxx\"\n";
+    out << "#ifdef __cplusplus" << endl;
+    out << "#include\"MFront/Aster/AsterTraits.hxx\"" << endl;
     if (mb.getSymmetryType()==mfront::ORTHOTROPIC){
-      out << "#include\"MFront/Aster/AsterOrthotropicBehaviour.hxx\"\n";
+      out << "#include\"MFront/Aster/AsterOrthotropicBehaviour.hxx\"" << endl;
     }
-    out << "#include\"TFEL/Material/" << mb.getClassName() << ".hxx\"\n";
-    out << "#endif /* __cplusplus */\n\n";
+    out << "#include\"TFEL/Material/" << mb.getClassName() << ".hxx\"" << endl;
+    out << "#endif /* __cplusplus */" << endl << endl;
 
     this->writeVisibilityDefines(out);
 
     out << "#define aster" 
 	<< makeUpperCase(name)
-	<< "_F77 \\\n"
+	<< "_F77 \\" << endl
 	<< "        F77_FUNC(aster"
 	<< makeLowerCase(name) << ",Aster"
-	<< makeUpperCase(name) << ")\n\n";
+	<< makeUpperCase(name) << ")" << endl << endl;
 
     asterFctName = "aster"+makeUpperCase(name)+"_F77";
 
-    out << "#ifdef __cplusplus\n\n";
+    out << "#ifdef __cplusplus" << endl << endl;
 
-    out << "namespace aster{\n\n";
+    out << "namespace aster{" << endl << endl;
 
     if(!mb.areAllMechanicalDataSpecialised(h)){
       this->writeAsterBehaviourTraits(out,mb,ModellingHypothesis::UNDEFINEDHYPOTHESIS);
@@ -364,13 +355,13 @@ namespace mfront{
       }
     }
 
-    out << "} // end of namespace aster\n\n";
+    out << "} // end of namespace aster" << endl << endl;
 
-    out << "#endif /* __cplusplus */\n\n";
+    out << "#endif /* __cplusplus */" << endl << endl;
 
-    out << "#ifdef __cplusplus\n";
-    out << "extern \"C\"{\n";
-    out << "#endif /* __cplusplus */\n\n";
+    out << "#ifdef __cplusplus" << endl;
+    out << "extern \"C\"{" << endl;
+    out << "#endif /* __cplusplus */" << endl << endl;
 
     this->writeSetParametersFunctionsDeclarations(out,name,mb);
 
@@ -417,13 +408,13 @@ namespace mfront{
 	<< "const aster::AsterInt  *const," /*< numero de section dans la couche courante */
 	<< "const aster::AsterInt  *const," /*< entrée non utilisée dans Cast3M  */
 	<< "aster::AsterInt  *const" /*< sortie d'erreur */
-	<< ");\n\n";
+	<< ");" << endl << endl;
 
-    out << "#ifdef __cplusplus\n";
-    out << "}\n";
-    out << "#endif /* __cplusplus */\n\n";
+    out << "#ifdef __cplusplus" << endl;
+    out << "}" << endl;
+    out << "#endif /* __cplusplus */" << endl << endl;
 
-    out << "#endif /* " << header << " */\n";
+    out << "#endif /* " << header << " */" << endl;
 
     out.close();
 
@@ -452,33 +443,123 @@ namespace mfront{
       throw(runtime_error(msg));
     }
 
-    out << "/*!\n";
+    out << "/*!" << endl;
     out << "* \\file   "  << fileName << endl;
     out << "* \\brief  This file implements the aster interface for the " 
-	<< mb.getClassName() << " behaviour law\n";
+	<< mb.getClassName() << " behaviour law" << endl;
     out << "* \\author "  << fd.authorName << endl;
     out << "* \\date   "  << fd.date       << endl;
-    out << "*/\n\n";
+    out << "*/" << endl << endl;
 
     this->getExtraSrcIncludes(out,mb);
 
     if(this->compareToNumericalTangentOperator){
-      out << "#include<cmath>\n";
-      out << "#include<vector>\n";
+      out << "#include<cmath>" << endl;
+      out << "#include<vector>" << endl;
     }
     if((this->compareToNumericalTangentOperator)||
        (this->savesTangentOperator)){
-      out << "#include<algorithm>\n";
+      out << "#include<algorithm>" << endl;
     }
-    out << "#include\"TFEL/Material/" << mb.getClassName() << ".hxx\"\n";
+    if((this->compareToNumericalTangentOperator)&&
+       (mb.getBehaviourType()==MechanicalBehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR)){
+      out << "#include\"TFEL/Math/tensor.hxx\""  << endl;
+      out << "#include\"TFEL/Math/t2tost2.hxx\"" << endl;
+      out << "#include\"TFEL/Math/t2tot2.hxx\""  << endl;
+    }
+    out << "#include\"TFEL/Material/" << mb.getClassName() << ".hxx\"" << endl;
     if(mb.getAttribute(MechanicalBehaviourData::profiling,false)){
-      out << "#include\"MFront/MFrontBehaviourProfiler.hxx\"\n\n";
+      out << "#include\"MFront/MFrontBehaviourProfiler.hxx\"\n" << endl;
     }
-    out << "#include\"MFront/Aster/AsterStressFreeExpansionHandler.hxx\"\n\n";
-    out << "#include\"MFront/Aster/AsterInterface.hxx\"\n\n";
-    out << "#include\"MFront/Aster/aster" << name << ".hxx\"\n\n";
+    out << "#include\"MFront/Aster/AsterStressFreeExpansionHandler.hxx\"\n" << endl;
+    out << "#include\"MFront/Aster/AsterInterface.hxx\"\n" << endl;
+    out << "#include\"MFront/Aster/aster" << name << ".hxx\"\n" << endl;
 
-    out << "extern \"C\"{\n\n";
+    if((this->compareToNumericalTangentOperator)&&
+       (mb.getBehaviourType()==MechanicalBehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR)){
+      out << "namespace aster{" << endl << endl;
+      out << "static void" << endl
+	  << "getDeformationGradientIndexes(AsterInt& mi,AsterInt& mj,const AsterInt i,const AsterInt ntens){" << endl;
+      out << "if(ntens==3){" << endl
+	  << "switch(i){" << endl
+	  << "case 0:" << endl
+	  << "  mi=0;" << endl
+	  << "  mj=0;" << endl
+	  << "  break;" << endl
+	  << "case 1:" << endl
+	  << "  mi=1;" << endl
+	  << "  mj=1;" << endl
+	  << "  break;" << endl
+	  << "default:" << endl
+	  << "  mi=2;" << endl
+	  << "  mj=2;" << endl
+	  << "}" << endl
+	  << "} else if(ntens==4){" << endl
+	  << "switch(i){" << endl
+	  << "case 0:" << endl
+	  << "  mi=0;" << endl
+	  << "  mj=0;" << endl
+	  << "  break;" << endl
+	  << "case 1:" << endl
+	  << "  mi=1;" << endl
+	  << "  mj=1;" << endl
+	  << "  break;" << endl
+	  << "case 2:" << endl
+	  << "  mi=2;" << endl
+	  << "  mj=2;" << endl
+	  << "  break;" << endl
+	  << "case 3:" << endl
+	  << "  mi=0;" << endl
+	  << "  mj=1;" << endl
+	  << "  break;" << endl
+	  << "default:" << endl
+	  << "  mi=1;" << endl
+	  << "  mj=0;" << endl
+	  << "}" << endl
+	  << "} else {" << endl
+	  << "switch(i){" << endl
+	  << "case 0:" << endl
+	  << "  mi=0;" << endl
+	  << "  mj=0;" << endl
+	  << "  break;" << endl
+	  << "case 1:" << endl
+	  << "  mi=1;" << endl
+	  << "  mj=1;" << endl
+	  << "  break;" << endl
+	  << "case 2:" << endl
+	  << "  mi=2;" << endl
+	  << "  mj=2;" << endl
+	  << "  break;" << endl
+	  << "case 3:" << endl
+	  << "  mi=0;" << endl
+	  << "  mj=1;" << endl
+	  << "  break;" << endl
+	  << "case 4:" << endl
+	  << "  mi=1;" << endl
+	  << "  mj=0;" << endl
+	  << "  break;" << endl
+	  << "case 5:" << endl
+	  << "  mi=0;" << endl
+	  << "  mj=2;" << endl
+	  << "  break;" << endl
+	  << "case 6:" << endl
+	  << "  mi=2;" << endl
+	  << "  mj=0;" << endl
+	  << "  break;" << endl
+	  << "case 7:" << endl
+	  << "  mi=1;" << endl
+	  << "  mj=2;" << endl
+	  << "  break;" << endl
+	  << "default:" << endl
+	  << "  mi=2;" << endl
+	  << "  mj=1;" << endl
+	  << "}" << endl
+	  << "}" << endl
+	  << "}" << endl
+	  << "} // end of namespace aster" << endl << endl;
+    }
+    
+    out << "extern \"C\"{\n" << endl;
  
     this->generateUMATxxGeneralSymbols(out,name,mb,fd);
     if(!mb.areAllMechanicalDataSpecialised(h)){
@@ -493,7 +574,7 @@ namespace mfront{
     
     this->writeSetParametersFunctionsImplementations(out,name,mb);
 
-    out << "MFRONT_SHAREDOBJ void MFRONT_STDCALL\n"
+    out << "MFRONT_SHAREDOBJ void MFRONT_STDCALL" << endl
 	<< this->getFunctionName(name) << "("
 	<< "aster::AsterReal *const STRESS,"       /*< tenseur des contraintes */
 	<< "aster::AsterReal *const STATEV,"       /*< variables internes */
@@ -536,175 +617,293 @@ namespace mfront{
 	<< "const aster::AsterInt  *const," /*< numero de section dans la couche courante */
 	<< "const aster::AsterInt  *const," /*< entrée non utilisée dans Cast3M  */
 	<< "aster::AsterInt  *const" /*< sortie d'erreur */
-	<< ")\n";
-    out << "{\n";
-    if(((getDebugMode())||(this->compareToNumericalTangentOperator)||
+	<< ")" << endl;
+    out << "{" << endl;
+    if(((this->compareToNumericalTangentOperator)||
 	(this->savesTangentOperator))&&(!this->generateMTestFile)){
-      out << "using namespace std;\n";
+      out << "using namespace std;" << endl;
+    }
+    if((this->compareToNumericalTangentOperator)&&
+       (mb.getBehaviourType()==MechanicalBehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR)){
+      out << "using namespace tfel::math;" << endl;
+      out << "using std::vector;" << endl;
     }
     if(mb.getAttribute(MechanicalBehaviourData::profiling,false)){
-      out << "using mfront::MFrontBehaviourProfiler;\n";
-      out << "using tfel::material::" << mb.getClassName() << "Profiler;\n";
-      out << "MFrontBehaviourProfiler::Timer total_timer(" << mb.getClassName() << "Profiler::getProfiler(),\n"
-	  << "MFrontBehaviourProfiler::TOTALTIME);\n";
-    }
-    this->generateMTestFile1(out);
-    if((getDebugMode())||(this->compareToNumericalTangentOperator)){
-      out << "const bool computeTangentOperator = (*DDSOE>0.5);\n";
+      out << "using mfront::MFrontBehaviourProfiler;" << endl;
     }
     if(this->compareToNumericalTangentOperator){
-      out << "vector<aster::AsterReal> deto0(*NTENS);\n";
-      out << "vector<aster::AsterReal> sig0(*NTENS);\n";
-      out << "vector<aster::AsterReal> sv0(*NSTATV);\n";
-      out << "copy(DSTRAN,DSTRAN+*(NTENS),deto0.begin());\n";
-      out << "copy(STRESS,STRESS+*(NTENS),sig0.begin());\n";
-      out << "copy(STATEV,STATEV+*(NSTATV),sv0.begin());\n";
+      if(mb.getBehaviourType()==MechanicalBehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR){
+	out << "const aster::AsterInt ndv    = *NTENS;" << endl;
+	out << "const aster::AsterInt nth    = *NTENS;" << endl;
+      } else if (mb.getBehaviourType()==MechanicalBehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR){
+	out << "const aster::AsterReal cste = sqrt(aster::AsterReal(2));" << endl;
+	out << "const aster::AsterInt ndv  = (*NTENS==3) ? 3 : ((*NTENS==4) ? 5 : 9);" << endl;
+	out << "const aster::AsterInt nth  = *NTENS;" << endl;
+      } else if (mb.getBehaviourType()==MechanicalBehaviourDescription::COHESIVEZONEMODEL){
+	out << "const aster::AsterInt ndv = (*NTENS==4) ? 2 : 3;" << endl;
+	out << "const aster::AsterInt nth = (*NTENS==4) ? 2 : 3;" << endl;
+      } else {
+	string msg("MFrontAsterInterface::endTreatement : "
+		   "the aster interface only supports small and finite strain behaviours, "
+		   "and cohesive zone models");
+	throw(runtime_error(msg));
+      }
+    }
+    if((this->compareToNumericalTangentOperator)||(this->savesTangentOperator)){
+      if((mb.getBehaviourType()==MechanicalBehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR)||
+	 (mb.getBehaviourType()==MechanicalBehaviourDescription::COHESIVEZONEMODEL)){
+	if(!(this->compareToNumericalTangentOperator)){
+	  if(mb.getBehaviourType()==MechanicalBehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR){
+	    out << "const aster::AsterInt ndv    = *NTENS;" << endl;
+	    out << "const aster::AsterInt nth    = *NTENS;" << endl;
+	  } else {
+	    out << "const aster::AsterInt ndv = (*NTENS==4) ? 2 : 3;" << endl;
+	    out << "const aster::AsterInt nth = (*NTENS==4) ? 2 : 3;" << endl;
+	  }
+	}
+	out << "const aster::AsterInt tgsize = ndv*nth;" << endl;
+      } else if (mb.getBehaviourType()==MechanicalBehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR){
+	out << "const aster::AsterInt tgsize = 54;" << endl;
+      } else {
+	string msg("MFrontAsterInterface::endTreatement : "
+		   "the aster interface only supports small and finite strain behaviours, "
+		   "and cohesive zone models");
+	throw(runtime_error(msg));
+      }
+    }
+    if(mb.getAttribute(MechanicalBehaviourData::profiling,false)){
+      out << "using tfel::material::" << mb.getClassName() << "Profiler;" << endl;
+      out << "MFrontBehaviourProfiler::Timer total_timer(" << mb.getClassName() << "Profiler::getProfiler()," << endl
+	  << "MFrontBehaviourProfiler::TOTALTIME);" << endl;
+    }
+    this->generateMTestFile1(out);
+    if(this->compareToNumericalTangentOperator){
+      out << "const bool computeTangentOperator = (*DDSOE>0.5);" << endl;
+    }
+    if(this->compareToNumericalTangentOperator){
+      if (mb.getBehaviourType()==MechanicalBehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR){
+	out << "vector<aster::AsterReal> dv0(9u);" << endl;
+      } else {
+	out << "vector<aster::AsterReal> dv0(ndv);" << endl;
+      }
+      out << "vector<aster::AsterReal> sig0(nth);" << endl;
+      out << "vector<aster::AsterReal> sv0(*NSTATV);" << endl;
+      out << "copy(DSTRAN,DSTRAN+dv0.size(),dv0.begin());" << endl;
+      out << "copy(STRESS,STRESS+sig0.size(),sig0.begin());" << endl;
+      out << "copy(STATEV,STATEV+sv0.size(),sv0.begin());" << endl;
     }
     if(!this->savesTangentOperator){
       out << "if(aster::AsterInterface<tfel::material::" << mb.getClassName() 
 	  << ">::exe(NTENS,DTIME,DROT,DDSOE,STRAN,DSTRAN,TEMP,DTEMP,PROPS,NPROPS,"
 	  << "PREDEF,DPRED,STATEV,NSTATV,STRESS,"
-	  << sfeh << ")!=0){\n";
+	  << sfeh << ")!=0){" << endl;
       this->generateMTestFile2(out,mb.getBehaviourType(),
        			       name,"",mb);
-      out << "*PNEWDT = -1.;\n";
-      out << "return;\n";
-      out << "}\n";
+      out << "*PNEWDT = -1.;" << endl;
+      out << "return;" << endl;
+      out << "}" << endl;
     } else {
-      out << "if(*(NSTATV)<(*NTENS)*(*NTENS)){\n"
+      out << "if(*(NSTATV)<tgsize){" << endl
 	  << "string msg(\"aster" << makeLowerCase(name) 
-	  << ": invalid number of state variables (can't save tangent operator)\");\n"
-	  << "throw(runtime_error(msg));\n"
-	  << "}\n";
-      out << "aster::AsterInt nNSTATV = max(*(NSTATV)-(*NTENS)*(*NTENS),aster::AsterInt(1));\n";
+	  << ": invalid number of state variables (can't save tangent operator)\");" << endl
+	  << "throw(runtime_error(msg));" << endl
+	  << "}" << endl;
+      out << "aster::AsterInt nNSTATV = max(*(NSTATV)-tgsize,aster::AsterInt(1));" << endl;
       out << "if(aster::AsterInterface<tfel::material::" << mb.getClassName() 
 	  << ">::exe(NTENS,DTIME,DROT,DDSOE,STRAN,DSTRAN,TEMP,DTEMP,PROPS,NPROPS,"
 	  << "PREDEF,DPRED,STATEV,&nNSTATV,STRESS,"
-	  << sfeh << ")!=0){\n";
+	  << sfeh << ")!=0){" << endl;
       this->generateMTestFile2(out,mb.getBehaviourType(),
 			       name,"",mb);
-      out << "*PNEWDT = -1.;\n";
-      out << "return;\n";
-      out << "}\n";
-      out << "copy(DDSOE,DDSOE+(*NTENS)*(*NTENS),STATEV+*(NSTATV)-(*NTENS)*(*NTENS));\n";
-    }
-    if(getDebugMode()){
-      out << "if(computeTangentOperator){\n";
-      out << "aster::AsterInt i;\n";
-      out << "aster::AsterInt j;\n";
-      out << "cout << \"Dt :\" << endl;\n";
-      out << "for(i=0;i!=*NTENS;++i){\n";
-      out << "for(j=0;j!=*NTENS;++j){\n";
-      out << "cout << *(DDSOE+j*(*NTENS)+i) << \" \";\n";
-      out << "}\n";
-      out << "cout << endl;\n";
-      out << "}\n";
-      out << "cout << endl;\n";
-      out << "}\n";
+      out << "*PNEWDT = -1.;" << endl;
+      out << "return;" << endl;
+      out << "}" << endl;
+      out << "copy(DDSOE,DDSOE+tgsize,STATEV+*(NSTATV)-tgsize);" << endl;
     }
     if(this->compareToNumericalTangentOperator){
-      out << "if(computeTangentOperator){\n";
-      out << "// computing the tangent operator by pertubation\n";
-      out << "aster::AsterInt i;\n";
-      out << "aster::AsterInt j;\n";
-      out << "vector<aster::AsterReal> nD((*NTENS)*(*NTENS));\n";
-      out << "vector<aster::AsterReal> deto(*NTENS);\n";
-      out << "vector<aster::AsterReal> sigf(*NTENS);\n";
-      out << "vector<aster::AsterReal> sigb(*NTENS);\n";
-      out << "vector<aster::AsterReal> sv(*NSTATV);\n";
-      out << "vector<aster::AsterReal> D((*NTENS)*(*NTENS));\n";
-      out << "aster::AsterReal m;\n";
-      out << "aster::AsterReal mDt;\n";
-      out << "aster::AsterReal mnDt;\n";
-      out << "for(i=0;i!=*NTENS;++i){\n";
-      out << "copy(deto0.begin(),deto0.end(),deto.begin());\n";
-      out << "copy(sig0.begin(),sig0.end(),sigf.begin());\n";
-      out << "copy(sv0.begin(),sv0.end(),sv.begin());\n";
-      out << "deto[i] += " << this->strainPerturbationValue << ";\n";
-      out << "D[0] = 0.;\n";
+      out << "if(computeTangentOperator){" << endl;
+      out << "// computing the tangent operator by pertubation" << endl;
+      out << "aster::AsterInt i;" << endl;
+      out << "aster::AsterInt j;" << endl;
+      out << "vector<aster::AsterReal> nD(ndv*nth);" << endl;
+      if(mb.getBehaviourType()==MechanicalBehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR){
+	out << "vector<aster::AsterReal> tmp_nD(ndv*nth);" << endl;
+      }
+      if(mb.getBehaviourType()==MechanicalBehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR){
+	out << "vector<aster::AsterReal> ddv(9u);" << endl;
+      } else {
+	out << "vector<aster::AsterReal> ddv(ndv);" << endl;
+      }
+      out << "vector<aster::AsterReal> sigf(nth);" << endl;
+      out << "vector<aster::AsterReal> sigb(nth);" << endl;
+      out << "vector<aster::AsterReal> sv(*NSTATV);" << endl;
+      out << "vector<aster::AsterReal> D(tgsize);" << endl;
+      if(mb.getBehaviourType()==MechanicalBehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR){
+	out << "aster::AsterReal Jf;" << endl
+	    << "aster::AsterReal Jb;" << endl;
+      }
+      out << "aster::AsterReal m;" << endl;
+      out << "aster::AsterReal mDt;" << endl;
+      out << "aster::AsterReal mnDt;" << endl;
+      out << "for(i=0;i!=ndv;++i){" << endl;
+      if(mb.getBehaviourType()==MechanicalBehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR){
+	out << "aster::AsterInt mi;" << endl;
+	out << "aster::AsterInt mj;" << endl;
+	out << "aster::getDeformationGradientIndexes(mi,mj,i,*NTENS);" << endl;
+      }
+      out << "copy(dv0.begin(),dv0.end(),ddv.begin());" << endl;
+      out << "copy(sig0.begin(),sig0.end(),sigf.begin());" << endl;
+      out << "copy(sv0.begin(),sv0.end(),sv.begin());" << endl;
+      if(mb.getBehaviourType()==MechanicalBehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR){
+	out << "ddv[mj*3+mi] += " << this->strainPerturbationValue << ";" << endl;
+      } else {
+	out << "ddv[i] += " << this->strainPerturbationValue << ";" << endl;
+      }
+      out << "D[0] = 0.;" << endl;
+      if(mb.getBehaviourType()==MechanicalBehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR){
+	out << "Jf=ddv[0]*(ddv[4]*ddv[8]-ddv[5]*ddv[7])-ddv[3]*(ddv[1]*ddv[8]-ddv[2]*ddv[7])+(ddv[1]*ddv[5]-ddv[2]*ddv[4])*ddv[6];" << endl;
+      }
       if(!this->savesTangentOperator){
 	out << "if(aster::AsterInterface<tfel::material::" << mb.getClassName() 
-	    << ">::exe(NTENS,DTIME,DROT,&D[0],STRAN,&deto[0],TEMP,DTEMP,PROPS,NPROPS,"
+	    << ">::exe(NTENS,DTIME,DROT,&D[0],STRAN,&ddv[0],TEMP,DTEMP,PROPS,NPROPS,"
 	    << "PREDEF,DPRED,&sv[0],NSTATV,&sigf[0],"
-	    << sfeh << ")!=0){\n";
+	    << sfeh << ")!=0){" << endl;
       } else {
 	out << "if(aster::AsterInterface<tfel::material::" << mb.getClassName() 
-	    << ">::exe(NTENS,DTIME,DROT,&D[0],STRAN,&deto[0],TEMP,DTEMP,PROPS,NPROPS,"
+	    << ">::exe(NTENS,DTIME,DROT,&D[0],STRAN,&ddv[0],TEMP,DTEMP,PROPS,NPROPS,"
 	    << "PREDEF,DPRED,&sv[0],&nNSTATV,&sigf[0],"
-	    << sfeh << ")!=0){\n";
+	    << sfeh << ")!=0){" << endl;
       }
-      out << "return;\n";
-      out << "}\n";
-      out << "copy(deto0.begin(),deto0.end(),deto.begin());\n";
-      out << "copy(sig0.begin(),sig0.end(),sigb.begin());\n";
-      out << "copy(sv0.begin(),sv0.end(),sv.begin());\n";
-      out << "deto[i] -= " << this->strainPerturbationValue << ";\n";
-      out << "D[0] = 0.;\n";
+      out << "return;" << endl;
+      out << "}" << endl;
+      out << "copy(dv0.begin(),dv0.end(),ddv.begin());" << endl;
+      out << "copy(sig0.begin(),sig0.end(),sigb.begin());" << endl;
+      out << "copy(sv0.begin(),sv0.end(),sv.begin());" << endl;
+      if(mb.getBehaviourType()==MechanicalBehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR){
+	out << "ddv[mj*3+mi] -= " << this->strainPerturbationValue << ";" << endl;
+      } else {
+	out << "ddv[i] -= " << this->strainPerturbationValue << ";" << endl;
+      }
+      out << "D[0] = 0.;" << endl;
+      if(mb.getBehaviourType()==MechanicalBehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR){
+	out << "Jb=ddv[0]*(ddv[4]*ddv[8]-ddv[5]*ddv[7])-ddv[3]*(ddv[1]*ddv[8]-ddv[2]*ddv[7])+(ddv[1]*ddv[5]-ddv[2]*ddv[4])*ddv[6];" << endl;
+      }
       if(!this->savesTangentOperator){
 	out << "if(aster::AsterInterface<tfel::material::" << mb.getClassName() 
-	    << ">::exe(NTENS,DTIME,DROT,&D[0],STRAN,&deto[0],TEMP,DTEMP,PROPS,NPROPS,"
+	    << ">::exe(NTENS,DTIME,DROT,&D[0],STRAN,&ddv[0],TEMP,DTEMP,PROPS,NPROPS,"
 	    << "PREDEF,DPRED,&sv[0],NSTATV,&sigb[0],"
-	    << sfeh << ")!=0){\n";
+	    << sfeh << ")!=0){" << endl;
       } else {
 	out << "if(aster::AsterInterface<tfel::material::" << mb.getClassName() 
-	    << ">::exe(NTENS,DTIME,DROT,&D[0],STRAN,&deto[0],TEMP,DTEMP,PROPS,NPROPS,"
+	    << ">::exe(NTENS,DTIME,DROT,&D[0],STRAN,&ddv[0],TEMP,DTEMP,PROPS,NPROPS,"
 	    << "PREDEF,DPRED,&sv[0],&nNSTATV,&sigb[0],"
-	    << sfeh << ")!=0){\n";
+	    << sfeh << ")!=0){" << endl;
       }
-      out << "return;\n";
-      out << "}\n";
-      out << "for(j=0;j!=*NTENS;++j){\n";
-      out << "nD[j*(*NTENS)+i] = (sigf[j]-sigb[j])/(2.*" << this->strainPerturbationValue << ");\n";
-      out << "}\n";
-      out << "}\n";
-      out << "// comparison\n";
-      out << "m=0.;\n";
-      out << "mDt=0.;\n";
-      out << "mnDt=0.;\n";
-      out << "for(i=0;i!=(*NTENS)*(*NTENS);++i){\n";
-      out << "mDt=max(mDt,*(DDSOE+i));\n";
-      out << "mnDt=max(mnDt,nD[i]);\n";
-      out << "m=max(m,abs(nD[i]-*(DDSOE+i)));\n";
-      out << "}\n";
-      out << "if(m>" << this->tangentOperatorComparisonCriterium << "){\n";
-      out << "cout << \"||nDt-Dt|| = \" << m << \" (\" << 100.*m/(0.5*(mDt+mnDt)) << \"%)\"<< endl;\n";
-      out << "cout << \"Dt :\" << endl;\n";
-      out << "for(i=0;i!=*NTENS;++i){\n";
-      out << "for(j=0;j!=*NTENS;++j){\n";
-      out << "cout << *(DDSOE+j*(*NTENS)+i) << \" \";\n";
-      out << "}\n";
-      out << "cout << endl;\n";
-      out << "}\n";
-      out << "cout << \"nDt :\" << endl;\n";
-      out << "for(i=0;i!=*NTENS;++i){\n";
-      out << "for(j=0;j!=*NTENS;++j){\n";
-      out << "cout << nD[j*(*NTENS)+i] << \" \";\n";
-      out << "}\n";
-      out << "cout << endl;\n";
-      out << "}\n";
-      out << "cout << endl;\n";
-      out << "}\n";
-      out << "}\n";
+      out << "return;" << endl;
+      out << "}" << endl;
+      out << "for(j=0;j!=nth;++j){" << endl;
+      // filling the ith column
+      if(mb.getBehaviourType()==MechanicalBehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR){
+	// conversion to Kirchhoff stress
+	// conversion to Aster
+	out << "if(j<3){" << endl
+	    << "tmp_nD[j*ndv+i] = (Jf*sigf[j]-Jb*sigb[j])/(2.*" << this->strainPerturbationValue << ");" << endl
+	    << "} else {" << endl
+	    << "tmp_nD[j*ndv+i] = cste*(Jf*sigf[j]-Jb*sigb[j])/(2.*" << this->strainPerturbationValue << ");" << endl
+	    << "}" << endl;
+      } else {
+	out << "nD[j*nth+i] = (sigf[j]-sigb[j])/(2.*" << this->strainPerturbationValue << ");" << endl;
+      }
+      out << "}" << endl;
+      if(mb.getBehaviourType()==MechanicalBehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR){
+	out << "if(*NTENS==3){" << endl
+	    << "tensor<1u,aster::AsterReal> F0;" << endl
+	    << "tensor<1u,aster::AsterReal>::buildFromFortranMatrix(F0,STRAN);" << endl
+	    << "*(reinterpret_cast<t2tost2<1u,aster::AsterReal>*>(&nD[0])) = (*(reinterpret_cast<const t2tost2<1u,aster::AsterReal>*>(&tmp_nD[0])))*t2tot2<1u,aster::AsterReal>::tpld(F0);" << endl
+	    << "} else if(*NTENS==4){" << endl
+	    << "tensor<2u,aster::AsterReal> F0;" << endl
+	    << "tensor<2u,aster::AsterReal>::buildFromFortranMatrix(F0,STRAN);" << endl
+	    << "*(reinterpret_cast<t2tost2<2u,aster::AsterReal>*>(&nD[0])) = (*(reinterpret_cast<const t2tost2<2u,aster::AsterReal>*>(&tmp_nD[0])))*t2tot2<2u,aster::AsterReal>::tpld(F0);" << endl
+	    << "} else {" << endl
+	    << "tensor<3u,aster::AsterReal> F0;" << endl
+	    << "tensor<3u,aster::AsterReal>::buildFromFortranMatrix(F0,STRAN);" << endl
+	    << "*(reinterpret_cast<t2tost2<3u,aster::AsterReal>*>(&nD[0])) = (*(reinterpret_cast<const t2tost2<3u,aster::AsterReal>*>(&tmp_nD[0])))*t2tot2<3u,aster::AsterReal>::tpld(F0);" << endl
+	    << "}";
+      }
+      out << "}" << endl;
+      out << "// comparison" << endl;
+      out << "m=0.;" << endl;
+      out << "mDt=0.;" << endl;
+      out << "mnDt=0.;" << endl;
+      out << "for(i=0;i!=nth;++i){" << endl;
+      out << "for(j=0;j!=ndv;++j){" << endl;
+      if(mb.getBehaviourType()==MechanicalBehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR){
+	out << "aster::AsterInt mi;" << endl;
+	out << "aster::AsterInt mj;" << endl;
+	out << "aster::getDeformationGradientIndexes(mi,mj,j,*NTENS);" << endl;
+      }
+      if(mb.getBehaviourType()==MechanicalBehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR){
+	out << "mDt=max(mDt,*(DDSOE+i+6*(mi+3*mj)));" << endl;
+      } else {
+	// conventions fortran...
+	out << "mDt=max(mDt,*(DDSOE+j*nth+i));" << endl;
+      }
+      out << "mnDt=max(mnDt,nD[i*ndv+j]);" << endl;
+      if(mb.getBehaviourType()==MechanicalBehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR){
+	out << "m=max(m,abs(nD[i*ndv+j]-*(DDSOE+i+6*(mi+3*mj))));" << endl;
+      } else {
+	// conventions fortran...
+	out << "m=max(m,abs(nD[i*ndv+j]-*(DDSOE+j*nth+i)));" << endl;
+      }
+      out << "}" << endl;
+      out << "}" << endl;
+      out << "if(m>" << this->tangentOperatorComparisonCriterium << "){" << endl;
+      out << "cout << \"||nDt-Dt|| = \" << m << \" (\" << 100.*m/(0.5*(mDt+mnDt)+1.e-50) << \"%)\"<< endl;" << endl;
+      out << "cout << \"Dt :\" << endl;" << endl;
+      out << "for(i=0;i!=nth;++i){" << endl;
+      out << "for(j=0;j!=ndv;++j){" << endl;
+      if(mb.getBehaviourType()==MechanicalBehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR){
+	out << "aster::AsterInt mi;" << endl;
+	out << "aster::AsterInt mj;" << endl;
+	out << "aster::getDeformationGradientIndexes(mi,mj,j,*NTENS);" << endl;
+	out << "cout << *(DDSOE+i+6*(mi+3*mj)) << \" \";" << endl;
+      } else {
+	out << "cout << *(DDSOE+i*ndv+j) << \" \";" << endl;
+      }
+      out << "}" << endl;
+      out << "cout << endl;" << endl;
+      out << "}" << endl;
+      out << "cout << \"nDt :\" << endl;" << endl;
+      out << "for(i=0;i!=nth;++i){" << endl;
+      out << "for(j=0;j!=ndv;++j){" << endl;
+      out << "cout << nD[i*ndv+j] << \" \";" << endl;
+      out << "}" << endl;
+      out << "cout << endl;" << endl;
+      out << "}" << endl;
+      out << "cout << endl;" << endl;
+      out << "}" << endl;
+      out << "}" << endl;
     }
-    out << "}\n\n";
-    out << "} // end of extern \"C\"\n";
+    out << "}" << endl << endl;
+    out << "} // end of extern \"C\"" << endl;
     out.close();
   } // end of MFrontAsterInterface::endTreatement
 
   void
   MFrontAsterInterface::writeMTestFileGeneratorSetModellingHypothesis(std::ostream& out) const
   {
-    out << "ModellingHypothesis::Hypothesis h;\n";
-    out << "if(*NTENS==3u){\n";
-    out << "  h = ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN;\n";
-    out << "} else if(*NTENS==4){\n";
-    out << "  h = ModellingHypothesis::GENERALISEDPLANESTRAIN;\n";
-    out << "} else if(*NTENS==6){\n";
-    out << "  h = ModellingHypothesis::TRIDIMENSIONAL;\n";
-    out << "} else {\n";
-    out << "  return;\n";
-    out << "}\n";
-    out << "mg.setModellingHypothesis(h);\n";
+    using namespace std;
+    out << "ModellingHypothesis::Hypothesis h;" << endl;
+    out << "if(*NTENS==3u){" << endl;
+    out << "  h = ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN;" << endl;
+    out << "} else if(*NTENS==4){" << endl;
+    out << "  h = ModellingHypothesis::GENERALISEDPLANESTRAIN;" << endl;
+    out << "} else if(*NTENS==6){" << endl;
+    out << "  h = ModellingHypothesis::TRIDIMENSIONAL;" << endl;
+    out << "} else {" << endl;
+    out << "  return;" << endl;
+    out << "}" << endl;
+    out << "mg.setModellingHypothesis(h);" << endl;
   } // end of MFrontAsterInterface::writeMTestFileGeneratorSetModellingHypothesis
   
   void 
@@ -906,6 +1105,7 @@ namespace mfront{
 						     const MechanicalBehaviourDescription&,
 						     const MFrontFileDescription&) const
   {
+    using namespace std;
     out << "MFRONT_SHAREDOBJ unsigned short " << this->getSymbolName(name,h);
     out << "_savesTangentOperator = ";
     if(this->savesTangentOperator){
@@ -913,7 +1113,7 @@ namespace mfront{
     } else {
       out << "0";
     }
-    out << ";\n";
+    out << ";" << endl;
   } // end of MFrontAsterInterface::writeUMATxxAdditionalSymbols
 
   void
@@ -939,15 +1139,15 @@ namespace mfront{
 	out << ",bool use_qt";
       }
     }
-    out << ">\n";
+    out << ">" << endl;
     out << "struct AsterTraits<tfel::material::" << mb.getClassName() << "<H,Type,";
     if(mb.useQt()){
       out << "use_qt";
     } else {
       out << "false";
     }
-    out << "> >\n{\n";
-    out << "//! behaviour type\n";
+    out << "> >\n{" << endl;
+    out << "//! behaviour type" << endl;
     if(mb.getBehaviourType()==MechanicalBehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR){
       out << "static const AsterBehaviourType btype = aster::SMALLSTRAINSTANDARDBEHAVIOUR;"  << endl;
     } else if(mb.getBehaviourType()==MechanicalBehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR){
@@ -959,37 +1159,37 @@ namespace mfront{
 		 "unsupported behaviour type");
       throw(runtime_error(msg));
     }
-    out << "//! space dimension\n";
-    out << "static const unsigned short N           = tfel::material::ModellingHypothesisToSpaceDimension<H>::value;\n";
-    out << "// tiny vector size\n";
-    out << "static const unsigned short TVectorSize = N;\n";
-    out << "// symmetric tensor size\n";
-    out << "static const unsigned short StensorSize = tfel::math::StensorDimeToSize<N>::value;\n";
-    out << "// tensor size\n";
-    out << "static const unsigned short TensorSize  = tfel::math::TensorDimeToSize<N>::value;\n";
-    out << "// size of the driving variable array (STRAN)\n";
-    out << "static const unsigned short DrivingVariableSize = " << mvs.first <<  ";\n";
-    out << "// size of the thermodynamic force variable array (STRESS)\n";
-    out << "static const unsigned short ThermodynamicForceVariableSize = " << mvs.second <<  ";\n";
+    out << "//! space dimension" << endl;
+    out << "static const unsigned short N           = tfel::material::ModellingHypothesisToSpaceDimension<H>::value;" << endl;
+    out << "// tiny vector size" << endl;
+    out << "static const unsigned short TVectorSize = N;" << endl;
+    out << "// symmetric tensor size" << endl;
+    out << "static const unsigned short StensorSize = tfel::math::StensorDimeToSize<N>::value;" << endl;
+    out << "// tensor size" << endl;
+    out << "static const unsigned short TensorSize  = tfel::math::TensorDimeToSize<N>::value;" << endl;
+    out << "// size of the driving variable array (STRAN)" << endl;
+    out << "static const unsigned short DrivingVariableSize = " << mvs.first <<  ";" << endl;
+    out << "// size of the thermodynamic force variable array (STRESS)" << endl;
+    out << "static const unsigned short ThermodynamicForceVariableSize = " << mvs.second <<  ";" << endl;
     if(this->errorReport){
-      out << "static const AsterErrorReportPolicy errorReportPolicy = ASTER_WRITEONSTDOUT;\n";
+      out << "static const AsterErrorReportPolicy errorReportPolicy = ASTER_WRITEONSTDOUT;" << endl;
     } else {
-      out << "static const AsterErrorReportPolicy errorReportPolicy = ASTER_NOERRORREPORT;\n";
+      out << "static const AsterErrorReportPolicy errorReportPolicy = ASTER_NOERRORREPORT;" << endl;
     }
     if(mb.getAttribute(MechanicalBehaviourDescription::requiresStiffnessTensor,false)){
-      out << "static const bool requiresStiffnessTensor = true;\n";
+      out << "static const bool requiresStiffnessTensor = true;" << endl;
     } else {
-      out << "static const bool requiresStiffnessTensor = false;\n";
+      out << "static const bool requiresStiffnessTensor = false;" << endl;
     }
     if(mb.getAttribute(MechanicalBehaviourDescription::requiresThermalExpansionCoefficientTensor,false)){
-      out << "static const bool requiresThermalExpansionCoefficientTensor = true;\n";
+      out << "static const bool requiresThermalExpansionCoefficientTensor = true;" << endl;
     } else {
-      out << "static const bool requiresThermalExpansionCoefficientTensor = false;\n";
+      out << "static const bool requiresThermalExpansionCoefficientTensor = false;" << endl;
     }
     if(mb.getSymmetryType()==mfront::ISOTROPIC){
-      out << "static const AsterSymmetryType type = aster::ISOTROPIC;\n";
+      out << "static const AsterSymmetryType type = aster::ISOTROPIC;" << endl;
     } else if (mb.getSymmetryType()==mfront::ORTHOTROPIC){
-      out << "static const AsterSymmetryType type = aster::ORTHOTROPIC;\n";
+      out << "static const AsterSymmetryType type = aster::ORTHOTROPIC;" << endl;
     } else {
       string msg("MFrontAsterInterface::endTreatement : ");
       msg += "unsupported behaviour type.\n";
@@ -1004,31 +1204,31 @@ namespace mfront{
       msize += this->getTypeSize(m.type,m.arraySize);
       msize -= mprops.second;
     }
-    out << "static const unsigned short material_properties_nb = " << msize << ";\n";
+    out << "static const unsigned short material_properties_nb = " << msize << ";" << endl;
     if(mb.getElasticSymmetryType()==mfront::ISOTROPIC){
-      out << "static const AsterSymmetryType etype = aster::ISOTROPIC;\n";
+      out << "static const AsterSymmetryType etype = aster::ISOTROPIC;" << endl;
       if(mb.getAttribute(MechanicalBehaviourDescription::requiresStiffnessTensor,false)){
-	out << "static const unsigned short elasticPropertiesOffset = 2u;\n";
+	out << "static const unsigned short elasticPropertiesOffset = 2u;" << endl;
       } else {
-	out << "static const unsigned short elasticPropertiesOffset = 0u;\n";
+	out << "static const unsigned short elasticPropertiesOffset = 0u;" << endl;
       }
       if(mb.getAttribute(MechanicalBehaviourDescription::requiresThermalExpansionCoefficientTensor,false)){
-	out << "static const unsigned short thermalExpansionPropertiesOffset = 1u;\n"; 
+	out << "static const unsigned short thermalExpansionPropertiesOffset = 1u;" << endl; 
       } else {
-	out << "static const unsigned short thermalExpansionPropertiesOffset = 0u;\n"; 
+	out << "static const unsigned short thermalExpansionPropertiesOffset = 0u;" << endl; 
       }
     } else if (mb.getElasticSymmetryType()==mfront::ORTHOTROPIC){
-      out << "static const AsterSymmetryType etype = aster::ORTHOTROPIC;\n";
+      out << "static const AsterSymmetryType etype = aster::ORTHOTROPIC;" << endl;
       if(mb.getAttribute(MechanicalBehaviourDescription::requiresStiffnessTensor,false)){
     	out << "static const unsigned short elasticPropertiesOffset "
-    	    << "= AsterOrthotropicElasticPropertiesOffset<N>::value;\n";
+    	    << "= AsterOrthotropicElasticPropertiesOffset<N>::value;" << endl;
       } else {
-	out << "static const unsigned short elasticPropertiesOffset = 0u;\n";
+	out << "static const unsigned short elasticPropertiesOffset = 0u;" << endl;
       }
       if(mb.getAttribute(MechanicalBehaviourDescription::requiresThermalExpansionCoefficientTensor,false)){
-	out << "static const unsigned short thermalExpansionPropertiesOffset = 3u;\n"; 
+	out << "static const unsigned short thermalExpansionPropertiesOffset = 3u;" << endl; 
       } else {
-	out << "static const unsigned short thermalExpansionPropertiesOffset = 0u;\n"; 
+	out << "static const unsigned short thermalExpansionPropertiesOffset = 0u;" << endl; 
       }
     } else {
       string msg("MFrontAsterInterface::endTreatement : ");
@@ -1036,7 +1236,7 @@ namespace mfront{
       msg += "The aster interface only support isotropic or orthotropic behaviour at this time.";
       throw(runtime_error(msg));
     }
-    out << "}; // end of class AsterTraits\n\n";
+    out << "}; // end of class AsterTraits\n" << endl;
   }
 
   std::string

@@ -93,12 +93,12 @@ namespace mfront
     tensor<N,real>  F1(&Fv1[0]);
     tensor<N,real>  inv_F0 = invert(F0);
     // reverting things
-    AsterReal *v = &D(0,0);
+    const AsterReal *v = &D(0,0);
     for(unsigned short i=0;i!=StensorDimeToSize<N>::value;++i){  // boucle sur tau
       for(unsigned short j=0;j!=TensorDimeToSize<N>::value;++j){  // boucle sur F
 	const unsigned short mi = getRowIndex(j);
 	const unsigned short mj = getColumnIndex(j);
-	dtau_ddF(i,j) = v[i+(mi+3*mj)*StensorDimeToSize<N>::value];
+	dtau_ddF(i,j) = v[i+6*(mi+3*mj)];
       }
     }
     dtau = dtau_ddF*t2tot2<N,real>::tpld(inv_F0);

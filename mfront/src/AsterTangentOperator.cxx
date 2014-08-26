@@ -85,7 +85,7 @@ namespace aster
       for(unsigned short j=0;j!=n2;++j){  // boucle sur F
 	const unsigned short mi = getRowIndex(j);
 	const unsigned short mj = getColumnIndex(j);
-	v[i+n1*(mi+3*mj)] = k(i,j);
+	v[i+6*(mi+3*mj)] = k(i,j);
       }
     }
   } // end of AsterTangentOperator::normalize
@@ -108,7 +108,7 @@ namespace aster
       for(unsigned short j=0;j!=n2;++j){  // boucle sur F
 	const unsigned short mi = getRowIndex(j);
 	const unsigned short mj = getColumnIndex(j);
-	v[i+n1*(mi+3*mj)] = k(i,j);
+	v[i+6*(mi+3*mj)] = k(i,j);
       }
     }
   } // end of AsterTangentOperator::normalize
@@ -126,7 +126,7 @@ namespace aster
       for(unsigned short j=0;j!=n2;++j){  // boucle sur F
 	const unsigned short mi = getRowIndex(j);
 	const unsigned short mj = getColumnIndex(j);
-	v[i+n1*(mi+3*mj)] = k(i,j);
+	v[i+6*(mi+3*mj)] = k(i,j);
       }
     }
   } // end of struct AsterTangentOperator

@@ -85,6 +85,19 @@ namespace tfel{
 	if(found){
 	  if(l[pc]=='*'){
 	    ++pc;
+	    found = false;
+	    while((pc!=l.size())&&!(found)){
+	      if(!(isspace(l[pc]))){
+		found = true;
+	      } else {
+		++pc;
+	      }
+	    }
+	    if(found){
+	      return l.substr(pc);
+	    } else {
+	      return "";
+	    }
 	  }
 	  return l.substr(pc);
 	}
@@ -207,7 +220,8 @@ namespace tfel{
 	    if((line.size()>=4u)&&(line[3]=='<')){
 	      // doxygen backward comment
 	      if(this->fileTokens.empty()){
-		this->fileTokens.push_back(Token(lineNumber,line,Token::Comment));
+		this->fileTokens.push_back(Token(lineNumber,stripSpaceAndStarAtBeginningOfCommentLine(line),
+						 Token::Comment));
 	      } else if((this->fileTokens.back().line!=lineNumber)||
 			((this->fileTokens.back().flag!=Token::Standard)||
 			 (*(this->fileTokens.back().value.rbegin())!=';'))){
@@ -231,7 +245,8 @@ namespace tfel{
 	    }
 	  } else {
 	    // standard C++ comment
-	    this->fileTokens.push_back(Token(lineNumber,line,Token::Comment));
+	    this->fileTokens.push_back(Token(lineNumber,stripSpaceAndStarAtBeginningOfCommentLine(line),
+					     Token::Comment));
 	  }
 	  line.clear();
 	} else if(treatCComment){
