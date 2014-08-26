@@ -64,6 +64,7 @@ namespace mfront{
     {
       std::string name;
       std::string type;
+      std::string description;
       std::string glossaryName;
       std::vector<tfel::material::ModellingHypothesis::Hypothesis> hypotheses;
       unsigned short arraySize;

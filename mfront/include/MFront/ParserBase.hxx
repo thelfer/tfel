@@ -435,6 +435,16 @@ namespace mfront
     std::set<std::string> reservedNames;
 
     TokensContainer::const_iterator current;
+    /*!
+     * \brief current comment
+     * This is the user comment associated with the current keyword,
+     * if any.
+     * 
+     * \note This variable is automatically set by parsers before
+     * calling the callback associated with the keyword and
+     * automatically unset once the callback returns.
+     */
+    std::string currentComment;
 
   }; // end of class ParserBase
 

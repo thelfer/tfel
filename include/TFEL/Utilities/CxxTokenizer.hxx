@@ -9,9 +9,10 @@
 #ifndef _LIB_TFEL_CXXTOKENIZER_HXX_
 #define _LIB_TFEL_CXXTOKENIZER_HXX_ 
 
+#include<map>
+#include<list>
 #include<string>
 #include<vector>
-#include<list>
 #include<ostream>
 #include<fstream>
 
@@ -301,7 +302,7 @@ namespace tfel{
       isValidFunctionIdentifier(const std::string&,const bool=true);
 
       void
-      splitLine(std::string,const unsigned short);
+      splitLine(std::string,const unsigned int);
 
       void
       treatPreprocessorDirectives(void);
@@ -310,6 +311,10 @@ namespace tfel{
       splitTokens(void);
 
       TokensContainer fileTokens;
+
+      //! store all the comments of a line
+      std::map<unsigned int,
+	       std::string> comments;
 
       bool cStyleCommentOpened;
 

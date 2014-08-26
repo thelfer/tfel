@@ -16,7 +16,7 @@ namespace tfel{
       : line(0u),value(),flag(Standard)
     {}
 
-    Token::Token(const unsigned short line_,const std::string& token_,
+    Token::Token(const unsigned int line_,const std::string& token_,
 		 const TokenFlag flag_)
       : line(line_),value(token_),flag(flag_)
     {}

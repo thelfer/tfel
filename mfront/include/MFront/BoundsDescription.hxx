@@ -62,7 +62,7 @@ namespace mfront{
     BoundsType     boundsType;
     long double    lowerBound;
     long double    upperBound;
-    unsigned short lineNumber;
+    unsigned int lineNumber;
 
   protected:
 

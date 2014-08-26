@@ -140,8 +140,15 @@ namespace mfront{
       } else {
 	handler = p->second;
       }
+      this->currentComment = this->current->comment;
       ++(this->current);
-      (static_cast<Child*>(this)->*handler)();
+      try{
+	(static_cast<Child*>(this)->*handler)();
+      } catch(...){
+	this->currentComment.clear();
+	throw;
+      }
+      this->currentComment.clear();
     }
   } // end of MFrontModelParserBase<Child>::analyseFile
 

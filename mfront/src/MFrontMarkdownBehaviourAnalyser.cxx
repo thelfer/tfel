@@ -9,6 +9,8 @@
 #include<fstream>
 
 #include"TFEL/Utilities/StringAlgorithms.hxx"
+
+#include"MFront/MFrontLogStream.hxx"
 #include"MFront/MechanicalBehaviourDescription.hxx"
 #include"MFront/MFrontFileDescription.hxx"
 #include"MFront/MFrontMarkdownBehaviourAnalyser.hxx"
@@ -37,6 +39,10 @@ namespace mfront
     using namespace std;
     using namespace tfel::material;
     using namespace tfel::utilities;
+    if(getVerboseMode()>=VERBOSE_DEBUG){
+      ostream& log = getLogStream();
+      log << "MFrontMarkdownBehaviourAnalyser::endTreatement : begin" << endl;
+    }
     string name;
     if(!mb.getLibrary().empty()){
       name += mb.getLibrary();
@@ -113,10 +119,15 @@ namespace mfront
 	mb.getMechanicalBehaviourData(ModellingHypothesis::UNDEFINEDHYPOTHESIS);
       const vector<string>& cn = d.getCodeBlockNames();
       for(vector<string>::const_iterator pcn = cn.begin();pcn!=cn.end();++pcn){
+	const CodeBlock& c = d.getCode(*pcn);
+	if(!c.description.empty()){
+	  out <<"### " << *pcn << " description" << endl;
+	  out << c.description << endl << endl;
+	}
 	out <<"### " << *pcn << " listing" << endl;
 	out << endl;
 	out << "~~~~~~~ {.cpp}" << endl;
-	out << d.getCode(*pcn).code << endl;
+	out << c.code << endl;
 	out << "~~~~~~~ " << endl;
       }
     }
@@ -147,6 +158,10 @@ namespace mfront
       }
     }    
     out.close();
+    if(getVerboseMode()>=VERBOSE_DEBUG){
+      ostream& log = getLogStream();
+      log << "MFrontMarkdownBehaviourAnalyser::endTreatement : end" << endl;
+    }
   } // end of MFrontMarkdownBehaviourAnalyser::endTreatement
 
   void
@@ -186,9 +201,23 @@ namespace mfront
 	  pd->name         = pv->name;
 	  pd->arraySize    = pv->arraySize;
 	  pd->type         = pv->type;
+	  if(*ph==ModellingHypothesis::UNDEFINEDHYPOTHESIS){
+	    if(pd->description.empty()){
+	      pd->description  = pv->description;
+	    } else {
+	      pd->description  = pv->description+'\n'+pd->description;
+	    }
+	  } else {
+	    if(pd->description.empty()){
+	      pd->description  = ModellingHypothesis::toString(*ph) + " : "+ pv->description;
+	    } else {
+	      pd->description  += '\n'+ModellingHypothesis::toString(*ph) + " : "+pv->description;
+	    }
+	  }
 	  pd->glossaryName = d.getGlossaryName(pv->name);
 	}
 	if((pd->name         != pv->name)||
+	   (pd->type         != pv->type)||
 	   (pd->type         != pv->type)||
 	   (pd->glossaryName != d.getGlossaryName(pv->name))||
 	   (pd->arraySize    != pv->arraySize)){
@@ -209,6 +238,10 @@ namespace mfront
   {
     using namespace std;
     using namespace tfel::material;
+    if(getVerboseMode()>=VERBOSE_DEBUG){
+      ostream& log = getLogStream();
+      log << "MFrontMarkdownBehaviourAnalyser::printData : begin" << endl;
+    }
     vector<Data>::const_iterator pd;
     const set<ModellingHypothesis::Hypothesis>& dh = mb.getDistinctModellingHypotheses();
     set<string> cbnames;
@@ -220,6 +253,7 @@ namespace mfront
     }
     for(pd=data.begin();pd!=data.end();++pd){
       os << "* " << pd->glossaryName << ":" << endl;
+      
       if(pd->glossaryName!=pd->name){
 	os << "\t+ variable name : " << pd->name << endl; 
       }
@@ -236,6 +270,9 @@ namespace mfront
 	  }
 	}
 	os << endl;
+      }
+      if(!pd->description.empty()){
+	os << "\t+ description : " << pd->description << endl;
       }
       for(pvh=pd->hypotheses.begin();pvh!=pd->hypotheses.end();++pvh){
 	if(mb.isParameterName(*pvh,pd->name)){
@@ -319,6 +356,10 @@ namespace mfront
       //      os << endl;
     }
     // bounds
+    if(getVerboseMode()>=VERBOSE_DEBUG){
+      ostream& log = getLogStream();
+      log << "MFrontMarkdownBehaviourAnalyser::printData : end" << endl;
+    }
   }
   
 } // end of namespace mfront  

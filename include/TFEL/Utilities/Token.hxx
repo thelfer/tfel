@@ -28,9 +28,11 @@ namespace tfel{
 		     DoxygenBackwardComment,
 		     String,Char,Preprocessor};
       //! line number
-      unsigned short line;
+      unsigned int line;
       //! string holded by the token
       std::string value;
+      //! comment
+      std::string comment;
       //! type of the token
       TokenFlag flag;
 
@@ -45,7 +47,7 @@ namespace tfel{
        * \param token_ : token value
        * \param flag_  : token type
        */
-      Token(const unsigned short,
+      Token(const unsigned int,
 	    const std::string&,
 	    const TokenFlag = Standard);
 

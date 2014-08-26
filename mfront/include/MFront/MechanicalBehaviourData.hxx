@@ -584,6 +584,12 @@ namespace mfront{
       std::string cblock_body;
       //! end of the block
       std::string cblock_end;
+      //! beginnig of the doc
+      std::string cdoc_begin;
+      //! doc body
+      std::string cdoc_body;
+      //! end of the doc
+      std::string cdoc_end;
       /*!
        * resulting code block
        */

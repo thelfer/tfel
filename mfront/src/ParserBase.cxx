@@ -127,6 +127,9 @@ namespace mfront
   {
     using namespace std;
     CodeBlock b;
+    if(!this->currentComment.empty()){
+      b.description += this->currentComment;
+    }
     string& res = b.code;
     unsigned short currentLine;
     unsigned short openedBlock;
@@ -156,6 +159,12 @@ namespace mfront
       res += " \"";
       res += this->fileName;
       res += "\"\n";
+    }
+    if(!this->current->comment.empty()){
+      if(!b.description.empty()){
+	b.description += '\n';
+      }
+      b.description += this->current->comment;
     }
     if(analyser.get()!=0){
       analyser->exe(this->current->value);
@@ -225,6 +234,12 @@ namespace mfront
 	msg += "Number of block opened : ";
 	msg += toString(openedBlock);
 	throw(runtime_error(msg));
+      }
+      if(!this->current->comment.empty()){
+	if(!b.description.empty()){
+	  b.description += '\n';
+	}
+	b.description += this->current->comment;
       }
       if(analyser.get()!=0){
 	analyser->exe(this->current->value);
@@ -463,6 +478,7 @@ namespace mfront
     string varName;
     unsigned short lineNumber;
     unsigned short asize;
+    string endComment;
     bool endOfTreatement=false;
     while((this->current!=this->fileTokens.end())&&
 	  (!endOfTreatement)){
@@ -520,6 +536,7 @@ namespace mfront
 	++(this->current);
       } else if (this->current->value==";"){
 	endOfTreatement=true;
+	endComment = this->current->comment;
 	++(this->current);
       } else {
 	this->throwRuntimeError("ParserBase::readVarList",
@@ -527,10 +544,21 @@ namespace mfront
       }
       this->registerVariable(varName,b);
       cont.push_back(VariableDescription(type,varName,asize,lineNumber));
+      if(!this->currentComment.empty()){
+	cont.back().description = this->currentComment;
+      }
       if(addIncrementVar){
 	string incrVarName("d");
 	incrVarName += varName;	
 	this->registerVariable(incrVarName,b);
+      }
+    }
+    if(!endComment.empty()){
+      for(VariableDescriptionContainer::iterator p=cont.begin();p!=cont.end();++p){
+	if(!p->description.empty()){
+	  p->description += ' ';
+	}
+	p->description += endComment;
       }
     }
     if(!endOfTreatement){

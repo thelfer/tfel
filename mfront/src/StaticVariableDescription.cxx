@@ -15,7 +15,7 @@ namespace mfront{
 
   StaticVariableDescription::StaticVariableDescription(const std::string& type_,
 						       const std::string& name_,
-						       const unsigned short line_,
+						       const unsigned int line_,
 						       const StaticVariableDescription::StaticVariableValueType value_)
     : VariableDescription(type_,name_,1u,line_),
       value(value_)

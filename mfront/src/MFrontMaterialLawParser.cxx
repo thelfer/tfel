@@ -683,16 +683,23 @@ namespace mfront{
 	TokensContainer::const_iterator b;
 	handler = p->second;
 	key = this->current->value;
+	this->currentComment = this->current->comment;
 	++(this->current);
 	b = this->current;
 	try {
 	  (this->*handler)();
-	}
-	catch(const runtime_error& e){
+       	} catch(const exception& e){
 	  ostringstream msg;
 	  msg << "MFrontMaterialLawParser::treatFile : error while treating keyword '" 
 	      << key << "'.\n" ;
 	  msg << e.what() << endl;
+	  this->currentComment.clear();
+	  throw(runtime_error(msg.str()));
+	} catch (...){
+	  ostringstream msg;
+	  msg << "MFrontMaterialLawParser::treatFile : error while treating keyword '" 
+	      << key << "'.\n" ;
+	  this->currentComment.clear();
 	  throw(runtime_error(msg.str()));
 	}
 	for(i  = this->interfaces.begin();
@@ -719,6 +726,7 @@ namespace mfront{
 	    }
 	  }
 	}
+	this->currentComment.clear();
       }
     }
   }

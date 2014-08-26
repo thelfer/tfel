@@ -27,14 +27,16 @@ namespace mfront
     //! type of the variable
     //  If the variable has been declared as an array (see below),
     //  this field holds the type contained by the array.
-    std::string    type;
+    std::string type;
     //! name of the variable
-    std::string    name;
+    std::string name;
+    //! description
+    std::string description;
     //! if the variable has been declared as an array, this field
     //  contains a value greater than 1
     unsigned short arraySize;
     //! line at wich the variable has been declared
-    unsigned short lineNumber;
+    unsigned int lineNumber;
     /*!
      * Constructor
      * \param[in] t : variable type
@@ -46,7 +48,7 @@ namespace mfront
     VariableDescription(const std::string&,
 			const std::string&,
 			const unsigned short,
-			const unsigned short);
+			const unsigned int);
     /*!
      * \return the name used to call the variable from outside
      * (pleiades application, mtest, etc..)

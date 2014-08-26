@@ -5,8 +5,6 @@
  * \date   12 nov 2006
  */
 
-#include<iostream>
-
 #include<stdexcept>
 #include<algorithm>
 #include<iterator>
@@ -71,7 +69,7 @@ namespace tfel{
     } // end of findStringBeginning
 
     void
-    CxxTokenizer::splitLine(std::string line, const unsigned short lineNumber)
+    CxxTokenizer::splitLine(std::string line, const unsigned int lineNumber)
     {
       using namespace std;
       if(this->cStyleCommentOpened){
@@ -86,7 +84,7 @@ namespace tfel{
 	  throw(runtime_error(msg));
 	}
 	if(!this->fileTokens.back().value.empty()){
-	  this->fileTokens.back().value += '\n';
+	  this->fileTokens.back().value += ' ';
 	}
 	if(pos3==string::npos){
 	  this->fileTokens.back().value += line;
@@ -213,7 +211,7 @@ namespace tfel{
 	    line.clear();
 	    this->cStyleCommentOpened=true;  
 	  } else {
-	    comment = line.substr(2,pos[2]);
+	    comment = line.substr(2,pos[2]-2);
 	    line.erase(0,pos[2]+2);
 	  }
 	  if((comment.size()>=1)&&((comment[0]=='*')||(comment[0]=='!'))){
@@ -592,7 +590,7 @@ namespace tfel{
       vector<string> res(tokens);
       vector<string> init;
       vector<string>::const_iterator p;
-      unsigned short i;
+      unsigned int i;
       char buf[2] = {'\0','\0'};
 
       
@@ -691,9 +689,34 @@ namespace tfel{
       using namespace std;
       TokensContainer::iterator p;    
       for(p=this->fileTokens.begin();p!=this->fileTokens.end();++p){
-	if((p->flag==Token::Comment)||
-	   (p->flag==Token::DoxygenComment)||
-	   (p->flag==Token::DoxygenBackwardComment)){
+	if(p->flag==Token::Comment){
+	  if(this->comments.find(p->line)!=this->comments.end()){
+	    this->comments[p->line] += ' ';
+	  }
+	  this->comments[p->line] = p->value;
+	  p = --(this->fileTokens.erase(p));
+	}
+	if(p->flag==Token::DoxygenComment){
+	  TokensContainer::iterator p2 = p;
+	  ++p2;
+	  if(p2!=this->fileTokens.end()){
+	    if(p2->flag==Token::Standard){
+	      if(!p2->comment.empty()){
+		p2->comment += '\n';
+	      }
+	      p2->comment += p->value;
+	    }
+	  }
+	  p = --(this->fileTokens.erase(p));
+	}
+	if(p->flag==Token::DoxygenBackwardComment){
+	  TokensContainer::iterator p2 = p;
+	  --p2;
+	  if(p2!=this->fileTokens.begin()){
+	    if(p2->flag==Token::Standard){
+	      p2->comment += p->value;
+	    }
+	  }
 	  p = --(this->fileTokens.erase(p));
 	}
       }
@@ -709,7 +732,7 @@ namespace tfel{
 	  vector<string> splittedTokens;
 	  splittedTokens.push_back(p->value);
 	  splitAtCxxTokenSperator(splittedTokens);
-	  unsigned short line = p->line;
+	  unsigned int line = p->line;
 	  vector<string>::iterator p2 = splittedTokens.begin();
 	  TokensContainer::iterator current=p;
 	  for(;p2!=splittedTokens.end();++p2){
@@ -729,7 +752,7 @@ namespace tfel{
 
       string line;
       ifstream file(f.c_str());
-      unsigned short lineNumber;
+      unsigned int lineNumber;
 
       if(!file){
 	string msg("CxxTokenizer::openFile : ");
@@ -842,7 +865,7 @@ namespace tfel{
       using namespace std;
       const_iterator p;
       p=this->fileTokens.begin();
-      unsigned short line = p->line;
+      unsigned int line = p->line;
       for(p=this->fileTokens.begin();p!=this->fileTokens.end();++p){
 	if(p->line!=line){
 	  out << endl;
@@ -994,7 +1017,7 @@ namespace tfel{
       TokensContainer res;
       TokensContainer::iterator p;
       unsigned short indent=0;
-      unsigned short current_line=0;
+      unsigned int current_line=0;
       for(p=this->fileTokens.begin();p!=this->fileTokens.end();++p){
 	if(p->flag==Token::Standard){
 	  if(p->value=="}"){

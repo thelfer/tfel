@@ -146,6 +146,7 @@ namespace mfront{
   void
   MechanicalBehaviourData::CodeBlocksAggregator::update(void)
   {
+    // updating code
     this->cblock.code  = cblock_begin;
     if(!this->cblock_body.empty()){
       if(!this->cblock.code.empty()){
@@ -163,6 +164,24 @@ namespace mfront{
       }
     }
     this->cblock.code += cblock_end;
+    // updating description
+    this->cblock.description  = cdoc_begin;
+    if(!this->cdoc_body.empty()){
+      if(!this->cblock.description.empty()){
+	if(*(this->cblock.description.rbegin())!='\n'){
+	  this->cblock.description.push_back('\n');
+	}
+      }
+    }
+    this->cblock.description += cdoc_body;
+    if(!this->cdoc_end.empty()){
+      if(!this->cblock.description.empty()){
+	if(*(this->cblock.description.rbegin())!='\n'){
+	  this->cblock.description.push_back('\n');
+	}
+      }
+    }
+    this->cblock.description += cdoc_end;
   } // end of MechanicalBehaviourData::update
 
   void
@@ -180,18 +199,36 @@ namespace mfront{
 	this->cblock_begin += '\n';
       }
       this->cblock_begin += c.code;
+      if(!c.description.empty()){
+	if(!this->cdoc_begin.empty()){
+	  this->cdoc_begin += '\n';
+	}
+	this->cdoc_begin += c.description;
+      }
       break;
     case BODY:
       if(!this->cblock_body.empty()){
 	this->cblock_body += '\n';
       }
       this->cblock_body  += c.code;
+      if(!c.description.empty()){
+	if(!this->cdoc_body.empty()){
+	  this->cdoc_body += '\n';
+	}
+	this->cdoc_body += c.description;
+      }
       break;
     case AT_END:
       if(!this->cblock_end.empty()){
 	this->cblock_end += '\n';
       }
       this->cblock_end   += c.code;
+      if(!c.description.empty()){
+	if(!this->cdoc_end.empty()){
+	  this->cdoc_end += '\n';
+	}
+	this->cdoc_end += c.description;
+      }
       break; 
     }
     this->update();

@@ -19,7 +19,7 @@ namespace mfront
     BoundsType     boundsType;
     std::string    varName;
     unsigned short varNbr;
-    unsigned short lineNumber;
+    unsigned int lineNumber;
     double lowerBound;
     double upperBound;
   }; // end of class VariableBoundsDescription

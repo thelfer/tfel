@@ -22,6 +22,8 @@ namespace mfront{
   {
     //! code
     std::string code;
+    //! description
+    std::string description;
     //! static variables used in the block
     std::set<std::string> static_variables;
       //! variables used in the block

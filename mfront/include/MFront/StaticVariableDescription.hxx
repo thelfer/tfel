@@ -33,12 +33,12 @@ namespace mfront{
      * Constructor
      * \param[in] type_       : variable type
      * \param[in] name_       : variable name
-     * \param[in] lineNumber_ : if greater than 1, will be considered as an array
+     * \param[in] lineNumber_ : line number
      * \param[in] value_      : value
      */
     StaticVariableDescription(const std::string&,
 			      const std::string&,
-			      const unsigned short,
+			      const unsigned int,
 			      const StaticVariableValueType);
   }; // end of struct MFrontParserBase<Child>::StaticVariableDescription
 

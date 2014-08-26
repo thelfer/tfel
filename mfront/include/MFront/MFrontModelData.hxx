@@ -33,7 +33,7 @@ namespace mfront
       std::map<std::string,unsigned short> depths;
       std::string name;
       std::string body;
-      unsigned short line;
+      unsigned int line;
       bool useTimeIncrement;
     }; // end of struct MFrontPleiadesModelParser::Function
 
