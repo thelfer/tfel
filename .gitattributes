@@ -1251,6 +1251,8 @@ mfront/tests/behaviours/aster/asterelasticity7.mtest.in -text
 mfront/tests/behaviours/aster/asterelasticity8.mtest.in -text
 mfront/tests/behaviours/aster/asterelasticity9.mtest.in -text
 mfront/tests/behaviours/aster/asterellipticcreep.mtest.in -text
+mfront/tests/behaviours/aster/astergursontvergaardneedlemanplasticflow.mtest.in -text
+mfront/tests/behaviours/aster/astergursontvergaardneedlemanviscoplasticflow.mtest.in -text
 mfront/tests/behaviours/aster/asterimplicithayhurst.mtest.in -text
 mfront/tests/behaviours/aster/asterimplicitmonocristal-2.mtest.in -text
 mfront/tests/behaviours/aster/asterimplicitmonocristal.mtest.in -text
@@ -1355,6 +1357,8 @@ mfront/tests/behaviours/castem/castemfiniterotationsmallstrainelasticity-uniaxia
 mfront/tests/behaviours/castem/castemfiniterotationsmallstrainelasticity-uniaxialloading-3-1D.mtest.in -text
 mfront/tests/behaviours/castem/castemfiniterotationsmallstrainelasticity-uniaxialloading-3-2D.mtest.in -text
 mfront/tests/behaviours/castem/castemfiniterotationsmallstrainelasticity-uniaxialloading-3-3D.mtest.in -text
+mfront/tests/behaviours/castem/castemgursontvergaardneedlemanplasticflow.mtest.in -text
+mfront/tests/behaviours/castem/castemgursontvergaardneedlemanviscoplasticflow.mtest.in -text
 mfront/tests/behaviours/castem/castemhayhurst.mtest.in -text
 mfront/tests/behaviours/castem/castemimplicithayhurst.mtest.in -text
 mfront/tests/behaviours/castem/castemimplicitmonocristal-2.mtest.in -text

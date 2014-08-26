@@ -417,6 +417,8 @@ AC_OUTPUT([debug.sh
            mfront/tests/behaviours/aster/asterpolycristals_dd_cfc.mtest
            mfront/tests/behaviours/aster/asterimplicithayhurst.mtest
            mfront/tests/behaviours/aster/asterburger.mtest
+	   mfront/tests/behaviours/aster/astergursontvergaardneedlemanplasticflow.mtest
+	   mfront/tests/behaviours/aster/astergursontvergaardneedlemanviscoplasticflow.mtest
            mfront/tests/behaviours/castem/Makefile
            mfront/tests/behaviours/castem/castemelasticity.mtest
            mfront/tests/behaviours/castem/castemelasticity2.mtest
@@ -478,6 +480,8 @@ AC_OUTPUT([debug.sh
            mfront/tests/behaviours/castem/castempolycristals_dd_cfc.mtest
            mfront/tests/behaviours/castem/castemhayhurst.mtest
            mfront/tests/behaviours/castem/castemimplicithayhurst.mtest
+	   mfront/tests/behaviours/castem/castemgursontvergaardneedlemanplasticflow.mtest
+	   mfront/tests/behaviours/castem/castemgursontvergaardneedlemanviscoplasticflow.mtest
            mfront/tests/behaviours/castem/castemburger.mtest
            mfront/tests/behaviours/castem/castemtvergaard.mtest
            mfront/tests/behaviours/castem/castemsaintvenantkirchhoffelasticity-uniaxialloading-1-1D.mtest
