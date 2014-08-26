@@ -1,3 +1,5 @@
+add_subdirectory(dgibi)
+
 include_directories(
   "${CASTEMHOME}/include"
   "${PROJECT_SOURCE_DIR}/include"
@@ -48,7 +50,12 @@ set(mfront_tests_SOURCES
   Hayhurst
   ImplicitHayhurst
   Burger
-  Tvergaard)
+  Tvergaard
+  SaintVenantKirchhoffElasticity
+  CompressibleNeoHookeanBehaviour
+  IncompressibleMooneyRivlinBehaviour
+  IncompressiblePlaneStressMooneyRivlinBehaviour
+  IncompressiblePlaneStressGornetDesmoratBehaviour)
   
 mfront_behaviour_check_library(MFrontCastemBehaviours umat  ${mfront_tests_SOURCES})
 target_link_libraries(MFrontCastemBehaviours

@@ -41,6 +41,7 @@ mfront_SOURCES = main.cxx                                             \
 		 MFrontDefaultParserBase.cxx                          \
 		 MFrontDefaultParser.cxx                              \
 		 MFrontDefaultCZMParser.cxx                           \
+		 MFrontDefaultFiniteStrainParser.cxx                  \
 		 MFrontModelParser.cxx                                \
 		 MFrontMaterialLawParser.cxx                          \
 		 MFrontIsotropicMisesCreepParser.cxx                  \

@@ -315,6 +315,15 @@ docs/tex/texmf/tex/latex/mise_en_page_2010.tex -text
 docs/tex/texmf/tex/latex/note_technique_2010.cls -text
 docs/tex/texmf/tex/latex/presentation.sty -text
 docs/tex/texmf/tex/latex/variables_2010.tex -text
+docs/texmacs/FiniteRotationSmallStrain1D.tm -text
+docs/texmacs/FiniteRotationSmallStrain2D.tm -text
+docs/texmacs/FiniteRotationSmallStrain3D.tm -text
+docs/texmacs/FiniteStrain1D.tm -text
+docs/texmacs/FiniteStrain2D-planestress.tm -text
+docs/texmacs/FiniteStrain2D.tm -text
+docs/texmacs/FiniteStrain3D.tm -text
+docs/texmacs/Stensor2D.tm -text
+docs/texmacs/Stensor3D.tm -text
 docs/tfel/Bibliographie.bib -text
 docs/tfel/CMakeLists.txt -text
 docs/tfel/Champs.tex.in -text
@@ -647,6 +656,7 @@ include/TFEL/Math/Stensor/StensorFromTinyMatrixRowView.hxx -text
 include/TFEL/Math/Stensor/StensorFromTinyMatrixRowView2.hxx -text
 include/TFEL/Math/Stensor/StensorFromTinyVectorView.hxx -text
 include/TFEL/Math/Stensor/StensorNullStorage.hxx -text
+include/TFEL/Math/Stensor/StensorProduct.hxx -text
 include/TFEL/Math/Stensor/StensorSizeToDime.hxx -text
 include/TFEL/Math/Stensor/StensorStaticStorage.hxx -text
 include/TFEL/Math/Stensor/stensor.ixx -text
@@ -875,6 +885,7 @@ mfront/include/MFront/MFrontConfig.hxx -text
 mfront/include/MFront/MFrontCppLawInterface.hxx -text
 mfront/include/MFront/MFrontCppTestLawInterface.hxx -text
 mfront/include/MFront/MFrontDefaultCZMParser.hxx -text
+mfront/include/MFront/MFrontDefaultFiniteStrainParser.hxx -text
 mfront/include/MFront/MFrontDefaultParser.hxx -text
 mfront/include/MFront/MFrontDefaultParserBase.hxx -text
 mfront/include/MFront/MFrontExcelLawInterface.hxx -text
@@ -1016,6 +1027,7 @@ mfront/src/MFrontCastemLawInterface.cxx -text
 mfront/src/MFrontCppLawInterface.cxx -text
 mfront/src/MFrontCppTestLawInterface.cxx -text
 mfront/src/MFrontDefaultCZMParser.cxx -text
+mfront/src/MFrontDefaultFiniteStrainParser.cxx -text
 mfront/src/MFrontDefaultParser.cxx -text
 mfront/src/MFrontDefaultParserBase.cxx -text
 mfront/src/MFrontExcelLawInterface.cxx -text
@@ -1074,6 +1086,7 @@ mfront/tests/behaviours/Burger.mfront -text
 mfront/tests/behaviours/CMakeLists.txt -text
 mfront/tests/behaviours/Chaboche.mfront -text
 mfront/tests/behaviours/Chaboche2.mfront -text
+mfront/tests/behaviours/CompressibleNeoHookeanBehaviour.mfront -text
 mfront/tests/behaviours/DDIF2.mfront -text
 mfront/tests/behaviours/Elasticity.mfront -text
 mfront/tests/behaviours/EllipticCreep.mfront -text
@@ -1086,6 +1099,9 @@ mfront/tests/behaviours/ImplicitNortonPlaneStress.mfront -text
 mfront/tests/behaviours/ImplicitNorton_Broyden.mfront -text
 mfront/tests/behaviours/ImplicitNorton_Broyden2.mfront -text
 mfront/tests/behaviours/ImplicitOrthotropicCreep.mfront -text
+mfront/tests/behaviours/IncompressibleMooneyRivlinBehaviour.mfront -text
+mfront/tests/behaviours/IncompressiblePlaneStressGornetDesmoratBehaviour.mfront -text
+mfront/tests/behaviours/IncompressiblePlaneStressMooneyRivlinBehaviour.mfront -text
 mfront/tests/behaviours/Lorentz.mfront -text
 mfront/tests/behaviours/Makefile.am -text
 mfront/tests/behaviours/Mazars.mfront -text
@@ -1111,6 +1127,7 @@ mfront/tests/behaviours/PlasIsoCin.mfront -text
 mfront/tests/behaviours/Plasticity.mfront -text
 mfront/tests/behaviours/PolyCristals.mfront -text
 mfront/tests/behaviours/PolyCristals_DD_CFC.mfront -text
+mfront/tests/behaviours/SaintVenantKirchhoffElasticity.mfront -text
 mfront/tests/behaviours/StrainHardeningCreep.mfront -text
 mfront/tests/behaviours/Tvergaard.mfront -text
 mfront/tests/behaviours/ViscoPlasIsoCin.mfront -text
@@ -1211,6 +1228,17 @@ mfront/tests/behaviours/castem/castemstrainhardeningcreep.mtest.in -text
 mfront/tests/behaviours/castem/castemstressrelaxation.mtest.in -text
 mfront/tests/behaviours/castem/castemtvergaard.mtest.in -text
 mfront/tests/behaviours/castem/castemviscoplasisocin.mtest.in -text
+mfront/tests/behaviours/castem/dgibi/CMakeLists.txt -text
+mfront/tests/behaviours/castem/dgibi/CompressibleNeoHookeanBehaviour.dgibi -text
+mfront/tests/behaviours/castem/dgibi/IncompressibleMooneyRivlinUniaxialTesting.dgibi -text
+mfront/tests/behaviours/castem/dgibi/IncompressiblePlaneStressGornetDesmoratBehaviourBiaxialTesting.dgibi -text
+mfront/tests/behaviours/castem/dgibi/IncompressiblePlaneStressGornetDesmoratBehaviourShearTesting.dgibi -text
+mfront/tests/behaviours/castem/dgibi/IncompressiblePlaneStressGornetDesmoratBehaviourUniaxialTesting.dgibi -text
+mfront/tests/behaviours/castem/dgibi/IncompressiblePlaneStressMooneyRivlinBiaxialTesting.dgibi -text
+mfront/tests/behaviours/castem/dgibi/IncompressiblePlaneStressMooneyRivlinShear.dgibi -text
+mfront/tests/behaviours/castem/dgibi/IncompressiblePlaneStressMooneyRivlinUniaxialTesting.dgibi -text
+mfront/tests/behaviours/castem/dgibi/Makefile.am -text
+mfront/tests/behaviours/castem/dgibi/exec_ktests_CAST3M_XML.sh.in -text
 mfront/tests/behaviours/references/PolyCristalsAngles.txt -text
 mfront/tests/behaviours/references/burger.ref -text
 mfront/tests/behaviours/references/chaboche-aster.ref -text

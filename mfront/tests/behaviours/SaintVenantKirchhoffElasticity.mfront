@@ -1,0 +1,37 @@
+@Parser DefaultFiniteStrainParser;
+@Behaviour SaintVenantKirchhoffElasticity;
+@Author T. Helfer;
+@Date 19/10/2013;
+
+@MaterialProperty stress young;
+young.setGlossaryName("YoungModulus");
+@MaterialProperty real nu;
+nu.setGlossaryName("PoissonRatio");
+@MaterialProperty real rho;
+rho.setGlossaryName("MassDensity");
+@MaterialProperty real alpha;
+alpha.setGlossaryName("ThermalExpansion");
+
+@LocalVariable stress lambda;
+@LocalVariable stress mu;
+
+@Includes{
+#include"TFEL/Material/Lame.hxx"
+}
+
+@Integrator{
+  using namespace tfel::material::lame;
+  // Lame coefficients
+  lambda = computeLambda(young,nu);
+  mu     = computeMu(young,nu);
+  // Green-Lagrange tensor
+  const StrainStensor e = computeGreenLagrangeTensor(F1);
+  // second Piola–Kirchhoff stress
+  const StressStensor s = lambda*trace(e)*StrainStensor::Id()+2*mu*e;
+  // convertion to Cauchy stress tensor
+  sig = convertSecondPiolaKirchhoffStressToCauchyStress(s,F1);
+  if(computeTangentOperator_){
+    string msg("tangent operator not yet available");
+    throw(runtime_error(msg));
+  }
+}

@@ -89,7 +89,7 @@ namespace umat{
 							H,Behaviour>,
 			  UMATOrthotropicBehaviourHandler<SMALLSTRAINSTANDARDBEHAVIOUR,
 							  H,Behaviour> >::type Handler;
-      UMATInterfaceBase::checkNTENSValue(*NTENS,Traits::DrivingVariableSize);
+      UMATInterfaceBase::checkNTENSValue(*NTENS,Traits::ThermodynamicForceVariableSize);
       Handler::exe(DTIME,DROT,DDSOE,STRAN,DSTRAN,TEMP,DTEMP,
 		   PROPS,NPROPS,PREDEF,DPRED,STATEV,NSTATV,
 		   STRESS);
@@ -130,7 +130,7 @@ namespace umat{
 							  MH::PLANESTRESS,Behaviour>,
 			    UMATOrthotropicBehaviourHandler<SMALLSTRAINSTANDARDBEHAVIOUR,
 							    MH::PLANESTRESS,Behaviour> >::type Handler;
-	UMATInterfaceBase::checkNTENSValue(*NTENS,Traits::DrivingVariableSize);
+	UMATInterfaceBase::checkNTENSValue(*NTENS,Traits::ThermodynamicForceVariableSize);
 	Handler::exe(DTIME,DROT,DDSOE,STRAN,DSTRAN,TEMP,DTEMP,
 		     PROPS,NPROPS,PREDEF,DPRED,STATEV,NSTATV,
 		     STRESS);
@@ -141,6 +141,46 @@ namespace umat{
       }
     }
   };
+
+  /*!
+   * \class  UMATInterfaceDispatch
+   * \brief  partial specialisation for small strain behaviours
+   * \author Helfer Thomas
+   * \date   24 Jul 2013
+   */
+  template<tfel::material::ModellingHypothesis::Hypothesis H,
+	   template<tfel::material::ModellingHypothesis::Hypothesis,
+		    typename,bool> class Behaviour>
+  struct UMATInterfaceDispatch<FINITESTRAINSTANDARDBEHAVIOUR,H,Behaviour>
+    : public UMATInterfaceBase
+  {
+    TFEL_UMAT_INLINE2 static
+    void exe(const UMATInt  *const NTENS, const UMATReal *const DTIME,
+	     const UMATReal *const DROT,  UMATReal *const DDSOE,
+	     const UMATReal *const STRAN, const UMATReal *const DSTRAN,
+	     const UMATReal *const TEMP,  const UMATReal *const DTEMP,
+	     const UMATReal *const PROPS, const UMATInt  *const NPROPS,
+	     const UMATReal *const PREDEF,const UMATReal *const DPRED,
+	     UMATReal *const STATEV,const UMATInt  *const NSTATV,
+	     UMATReal *const STRESS)
+    {
+      using namespace std;
+      using namespace tfel::meta;
+      using namespace tfel::material;
+      typedef Behaviour<H,UMATReal,false> BV;
+      //! a simple alias
+      typedef UMATTraits<BV> Traits;
+      typedef typename IF<Traits::stype==umat::ISOTROPIC,
+			  UMATIsotropicBehaviourHandler<FINITESTRAINSTANDARDBEHAVIOUR,
+							H,Behaviour>,
+			  UMATOrthotropicBehaviourHandler<FINITESTRAINSTANDARDBEHAVIOUR,
+							  H,Behaviour> >::type Handler;
+      UMATInterfaceBase::checkNTENSValue(*NTENS,Traits::ThermodynamicForceVariableSize);
+      Handler::exe(DTIME,DROT,DDSOE,STRAN,DSTRAN,TEMP,DTEMP,
+		   PROPS,NPROPS,PREDEF,DPRED,STATEV,NSTATV,
+		   STRESS);
+    } // end of exe
+  }; // end of struct UMATInterfaceDispatch
 
   /* cohesive zones models */
   template<template<tfel::material::ModellingHypothesis::Hypothesis,
@@ -167,8 +207,9 @@ namespace umat{
       typedef typename IF<Traits::stype==umat::ISOTROPIC,
 			  UMATIsotropicBehaviourHandler<COHESIVEZONEMODEL,
 							MH::PLANESTRAIN,Behaviour>,
-			  UMATUnSupportedCaseHandler>::type Handler;
-      UMATInterfaceBase::checkNTENSValue(*NTENS,Traits::DrivingVariableSize);
+			  UMATOrthotropicBehaviourHandler<COHESIVEZONEMODEL,
+							  MH::PLANESTRAIN,Behaviour> >::type Handler;
+      UMATInterfaceBase::checkNTENSValue(*NTENS,Traits::ThermodynamicForceVariableSize);
       UMATReal D[4];
       UMATReal u[2],du[2],t[2];
       u[0]  = STRAN[1];  u[1]  = STRAN[0];
@@ -209,8 +250,9 @@ namespace umat{
       typedef typename IF<Traits::stype==umat::ISOTROPIC,
 			  UMATIsotropicBehaviourHandler<COHESIVEZONEMODEL,
 							MH::TRIDIMENSIONAL,Behaviour>,
-			  UMATUnSupportedCaseHandler>::type Handler;
-      UMATInterfaceBase::checkNTENSValue(*NTENS,Traits::DrivingVariableSize);
+			  UMATOrthotropicBehaviourHandler<COHESIVEZONEMODEL,
+							  MH::TRIDIMENSIONAL,Behaviour> >::type Handler;
+      UMATInterfaceBase::checkNTENSValue(*NTENS,Traits::ThermodynamicForceVariableSize);
       UMATReal D[9];
       UMATReal u[3],du[3],t[3];
       u[0]  = STRAN[2];  u[1]  = STRAN[0];  u[2]  = STRAN[1]; 

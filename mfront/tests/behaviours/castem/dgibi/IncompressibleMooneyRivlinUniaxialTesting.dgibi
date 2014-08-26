@@ -1,0 +1,326 @@
+*======================================================================*
+*         MODELE HYPERELASTIQUE MOONEY RIVLIN QUASI-INCOMPRESSIBLE     *
+*                  EN GRANDES TRANSFORMATIONS                          *
+*                                                                      *
+*   TEST DE VALIDATION DU MODELE : TRACTION (3D) SIMPLE SELON AXE Z    *
+*   COMPARAISON AVEC LA SOLUTION ANALYTIQUE INCOMPRESSIBLE             *
+*                                                                      *
+*   Contribution de Laurent Gornet - Ecole Centrale de Nantes (2008)   *
+*======================================================================*
+*  Pour plus d'informations, voir la presentation de L. Gornet lors    *
+*  du Club Cast3m 2006, disponible sur le site Web de Cast3m.          *
+*======================================================================*
+*  Exemple d'utilisation d'un modele UMAT en grandes transformations   *
+*                                                                      *
+*  Note : Actuellement en grandes deformations dans PASAPAS, le modele *
+*         ne peut contenir que des modeles de type UMAT. On ne peut    *
+*         pas melanger les derivees objectives et les modeles de C3m.  *
+*======================================================================*
+
+'OPTION' 'DIME' 3 'MODELISER' 'TRID' 'ECHO' 1 ;
+'OPTION' 'EPSILON' 'UTILISATEUR';
+'OPTION' 'ERREUR'  'FATAL';
+* Mettre VRAI si l'on souhaite divers traces.
+GRAPH = FAUX ;
+* Mettre 1 ou 2 selon le type de calcul voulu
+ICALCUL = 1 ;
+*
+'SI' ('>' ICALCUL 2) ;
+  'MESS' 'ICALCUL doit valoir 1 ou 2' ;
+  'ERREUR' 5 ;
+'FINSI' ;
+
+title = 'CHAINE' 'MOONEY RIVLIN - ' 'TRACTION UNIAXIALE Z' ;
+
+*======================================================================*
+*             Geometrie - Maillage                                     *
+*======================================================================*
+* Longueur (direction x) du pave :
+Lg_x = 1. ;
+* Largeur (direction y) du pave :
+Lg_y = 1. ;
+* Hauteur (direction z) du pave :
+Lg_z = 1. ;
+* Nombre d'elements selon les directions x, y et z :
+'SI' ('EGA' ICALCUL 1) ;
+  Nel_x = 2 ;
+  Nel_y = 2 ;
+  Nel_z = 2 ;
+  'OPTION' 'ELEM' 'CUB8' ;
+'FINSI' ;
+'SI' ('EGA' ICALCUL 2) ;
+  Nel_x = 3 ;
+  Nel_y = 3 ;
+  Nel_z = 7 ;
+  'OPTION' 'ELEM' 'CU20' ;
+'FINSI' ;
+*
+P1 =  0.    0. 0. ;
+P2 = Lg_x   0. 0. ;
+P3 = Lg_x Lg_y 0. ;
+P4 =  0.  Lg_y 0. ;
+*
+L1 = 'DROITE' Nel_x P1 P2 ;
+L2 = 'DROITE' Nel_y P2 P3 ;
+L3 = 'DROITE' Nel_x P3 P4 ;
+L4 = 'DROITE' Nel_y P4 P1 ;
+*
+SBas = 'DALLER' L1 L2 L3 L4 ;
+Pave = 'VOLUME' SBas 'TRANS' Nel_z (0. 0. Lg_z) ;
+Shau = 'FACE' 2 Pave 'COULEUR' 'BLEU' ;
+'SI' GRAPH ;
+  'TRACER' Pave 'TITRE' ('CHAINE' title ' - MAILLAGE') 'CACH' ;
+'FINSI' ;
+
+*======================================================================*
+*             Modele - Materiau - Caracteristiques (en MPa)            *
+*======================================================================*
+* Ne pas oublier de definir les parametres lies a l'elasticite.
+* Meme si ce n'est pas utilise dans le modele, cela est utile pour
+* l'operateur de convergence mecanique de PASAPAS-INCREME.
+*
+
+coel2D = 'MOTS' 'YOUN' 'NU' 'RHO' 'ALPH' 'D   ' 'C1  ' 'C2  ';
+cmp='TABLE' ;
+cmp.'LIBRAIRIE' = '../libMFrontCastemBehaviours.so' ;
+cmp.'MODELE'    = 'umatincompressiblemooneyrivlinbehaviour';
+MO = MODE Pave 'MECANIQUE' 'ELASTIQUE' 'ISOTROPE'
+                         'NON_LINEAIRE' 'UTILISATEUR'
+                         'DESC_LOI' cmp 'C_MATERIAU' coel2D ;
+*
+* Coefficients du modele de Mooney-Rivlin (en MPa) :
+CoeC1 = 0.183  ;     CoeC2 = 0.0034   ;
+* CoeC1 = 1. MPa  et  CoeD = 1.E-4 MPa**-1  !
+* Lorsque CoeD tend vers 0, on retrouve un modele de type Mooney-Rivlin
+* incompressible. Ici on met une valeur "petite" de CoeD pour pouvoir
+* utiliser la solution analytique du modele de Mooney-Rivlin correspon-
+* dant pour les tests de comparaison. Si CoeD a une valeur trop "impor-
+* tante", il faut modifier la valeur du coefficient de Poisson, qui
+* s'eloigne alors de 0.5 (incompressibilite).
+* On fixe le coefficient de Poisson ("proche" de 0.5 si D est "petit").
+* Le module de Young initial est alors connu :
+* (le module de cisaillement vaut pour ce modele : mu = 2.CoeC1)
+* La valeur du module de Young utilise pour les estimations elastiques
+* doit etre superieure au module tangent pour le niveau de deformation
+* atteint en fin de calcul (sinon risque de non convergence).
+
+*XNU = 0.499 ;
+YOUini = 3.*(2.*(CoeC1+CoeC2)) ;
+*
+'SI' ('EGA' ICALCUL 1) ;
+  XNU = 0.497 ;
+  CoeD  = 1.E-4   ;
+  YOU = 100. * YOUini ;
+'FINSI' ;
+'SI' ('EGA' ICALCUL 2) ;
+  XNU = 0.495 ;
+  CoeD  = 1.E-2   ;
+  YOU = 200. * YOUini ;
+'FINSI' ;
+*
+MA = 'MATERIAU' MO  'YOUN' YOU    'NU  ' XNU 'RHO ' 0.  'ALPH' 0.
+                     'D   ' CoeD  'C1  ' CoeC1  'C2  ' CoeC2 ;
+
+*==================================================================*
+*                      Conditions aux limites                      *
+*==================================================================*
+BL1 = 'BLOQUER' 'UZ  ' Shau ;
+BL2 = 'BLOQUER' 'UZ  ' Sbas ;
+BL3 = 'BLOQUER' 'UX  ' L4 ;
+BL4 = 'BLOQUER' 'UY  ' L1 ;
+BLTOT = BL1 'ET' BL2 'ET' BL3 'ET' BL4 ;
+*
+* Definition des instants du chargement :
+t_deb = 0. ;   t_fin = 10. ;
+L_tps = 'PROG' t_deb t_fin ;
+* Deplacement suivant Z :
+L_UZ = 'PROG' 0. (3.0 * Lg_z) ;
+FF_z = 'DEPIMP' BL1 1. ;
+EV_z = 'EVOL' 'MANU' 'TEMPS' L_tps  'LAMZ' L_UZ ;
+CHARTOT = 'CHARGEMENT' 'DIMP' FF_z EV_z ;
+
+*======================================================================*
+*             Initialisation de la table pour appel a PASAPAS          *
+*======================================================================*
+TAB1 = 'TABLE' ;
+TAB1.'MODELE' = MO ;
+TAB1.'CARACTERISTIQUES' = MA ;
+TAB1.'BLOCAGES_MECANIQUES' = BLTOT ;
+TAB1.'CHARGEMENT' = CHARTOT ;
+*TAB1.'PRECISION' = 1.E-7 ;
+*TAB1.'FTOL' = 1.E-5 ;
+*TAB1.'MTOL' = 1.E-5 ;
+TAB1.'CONVERGENCE_FORCEE' = FAUX ;
+TAB1.'GRANDS_DEPLACEMENTS' = VRAI ;
+TAB1.'TEMPS_CALCULES' = 'PROG' t_deb 'PAS' 0.1 t_fin ;
+TAB1.'TEMPS_SAUVES' = 'PROG' t_deb 'PAS' 0.5 t_fin ;
+tab1.reac_grands=500.;
+*
+L_abs = TAB1.'TEMPS_SAUVES' ;
+n_abs = 'DIMENSION' L_abs ;
+*
+PASAPAS TAB1 ;
+*
+* Quelques traces de controle apres calculs
+'SI' GRAPH ;
+  Defo_0 = 'DEFORMEE' Pave (TAB1.'DEPLACEMENTS'.(n_abs-1)) 0. ;
+  Defo_1 = 'DEFORMEE' Pave (TAB1.'DEPLACEMENTS'.(n_abs-1)) 1. 'VERT' ;
+  'TRACER' (Defo_0 'ET' Defo_1)
+           'TITRE' ('CHAINE' title ' - DEFORMEES INITIALE ET FINALE') ;
+  'TRACER' MO (TAB1.'CONTRAINTES'.(n_abs-1))
+           'TITRE' ('CHAINE' title ' - CONTRAINTES EN FIN DE CALCUL') ;
+'FINSI' ;
+*
+*======================================================================*
+*             Construction de la solution analytique INCOMPRESSIBLE    *
+*======================================================================*
+* Definitions :
+* - Allongement selon direction y : Lamy = 1 + (UY/Lg_y)
+* - Densite d'energie de deformation hyperelastique : W(I1,I2)
+* - I1, I2 : trois invariants du tenseur de Cauchy-Green droit
+* Dans le cas du modele Neo-Hookeen :
+*   W = CoeC1*(I1-3.) , soit dW/dI1 = CoeC1 et dW/dI2 = 0.
+*
+* Les contraintes de Cauchy sont calculables analytiquement :
+* - SCxx = 0.
+* - SCyy = 2.(Lamy**2 - 1./Lamy).(dW/dI1 + 1./Lamy.dW/dI2)
+* - SCxy = 0  (pas de cisaillement)
+* - SCzz = 0  (hypothese des contraintes planes)
+*
+L_Un  = 'PROG' n_abs '*' 1. ;
+Lamz  = L_Un + (('IPOL' L_abs L_tps L_UZ) / Lg_z) ;
+*
+SCxx_th = 0. * L_Un ;
+SCyy_th = 0. * L_Un ;
+L_z1 = Lamz * Lamz ;  L_z2 = L_Un / Lamz ;
+SCzz_th = (L_z1 - L_z2) * ((2.*CoeC1*L_Un) + (2.*CoeC2*L_z2)) ;
+SCxy_th = 0. * L_Un ;
+SCxz_th = 0. * L_Un ;
+SCyz_th = 0. * L_Un ;
+*
+*======================================================================*
+*             Comparaison des resultats avec la solution analytique    *
+*======================================================================*
+* La comparaison s'effectue entre les valeurs moyennes des contraintes
+* calculees et les solutions analytiques correspondantes.
+* On ne cherche pas a verifier l'uniformite du champ de contraintes.
+* (Faire le calcul en mettant GRAPH a VRAI et voir les isovaleurs !)
+*
+TabD = TAB1.'DEPLACEMENTS' ;
+TabS = TAB1.'CONTRAINTES' ;
+Confini = 'FORM' ;
+ChmUn = 'MANU' 'CHML' MO 'SCAL' 1. ;
+*
+SCxx = 'PROG' 0. ;
+SCyy = 'PROG' 0. ;
+SCzz = 'PROG' 0. ;
+SCxy = 'PROG' 0. ;
+SCxz = 'PROG' 0. ;
+SCyz = 'PROG' 0. ;
+'REPETER' Boucle (n_abs - 1) ;
+  'FORM' (TabD.&Boucle) ;
+  VolSU = 'INTG' MO ChmUn ;
+  mess ' volsu '  volsu;
+  SCxx = SCxx 'ET' ('PROG' (('INTG' MO (TabS. &Boucle) 'SMXX')/VolSU)) ;
+  SCyy = SCyy 'ET' ('PROG' (('INTG' MO (TabS. &Boucle) 'SMYY')/VolSU)) ;
+  SCzz = SCzz 'ET' ('PROG' (('INTG' MO (TabS. &Boucle) 'SMZZ')/VolSU)) ;
+  SCxy = SCxy 'ET' ('PROG' (('INTG' MO (TabS. &Boucle) 'SMXY')/VolSU)) ;
+  SCxz = SCxz 'ET' ('PROG' (('INTG' MO (TabS. &Boucle) 'SMXZ')/VolSU)) ;
+  SCyz = SCyz 'ET' ('PROG' (('INTG' MO (TabS. &Boucle) 'SMYZ')/VolSU)) ;
+  'FORM' Confini ;
+'FIN' Boucle ;
+*
+*  LG lamb
+L_abs = Lamz;
+*
+'SI' GRAPH ;
+  tlege = 'TABLE' ;
+  tlege. 1 = 'MARQ CROI' ;
+  tlege.'TITRE' = 'TABLE' ;
+  tlege.'TITRE'. 1 = 'Numerique' ;
+  tlege.'TITRE'. 2 = 'Analytique' ;
+  Evxx    = 'EVOL' 'ROUG' 'MANU' 'LAMB' L_abs 'SCXX' SCxx ;
+  Evxx_th = 'EVOL' 'BLEU' 'MANU' 'LAMB' L_abs 'SCXX' SCxx_th ;
+  'DESSIN' (Evxx 'ET' Evxx_th) 'LEGE' tlege
+           'TITRE' ('CHAINE' title ' - CONTRAINTE DE CAUCHY XX (Pa)') ;
+  Evyy    = 'EVOL' 'ROUG' 'MANU' 'LAMB' L_abs 'SCYY' SCyy ;
+  Evyy_th = 'EVOL' 'BLEU' 'MANU' 'LAMB' L_abs 'SCYY' SCyy_th ;
+  'DESSIN' (Evyy 'ET' Evyy_th) 'LEGE' tlege
+           'TITRE' ('CHAINE' title ' - CONTRAINTE DE CAUCHY YY (Pa)') ;
+  Evzz    = 'EVOL' 'ROUG' 'MANU' 'LAMB' L_abs 'SCZZ' SCzz ;
+  Evzz_th = 'EVOL' 'BLEU' 'MANU' 'LAMB' L_abs 'SCZZ' SCzz_th ;
+  'DESSIN' (Evzz 'ET' Evzz_th) 'LEGE' tlege
+           'TITRE' ('CHAINE' title ' - CONTRAINTE DE CAUCHY ZZ (Pa)') ;
+  Evxy    = 'EVOL' 'ROUG' 'MANU' 'LAMB' L_abs 'SCXY' SCxy ;
+  Evxy_th = 'EVOL' 'BLEU' 'MANU' 'LAMB' L_abs 'SCXY' SCxy_th ;
+  'DESSIN' (Evxy 'ET' Evxy_th) 'LEGE' tlege
+           'TITRE' ('CHAINE' title ' - CONTRAINTE DE CAUCHY XY (Pa)');
+  Evxz    = 'EVOL' 'ROUG' 'MANU' 'LAMB' L_abs 'SCXZ' SCxz ;
+  Evxz_th = 'EVOL' 'BLEU' 'MANU' 'LAMB' L_abs 'SCXZ' SCxz_th ;
+  'DESSIN' (Evxz 'ET' Evxz_th) 'LEGE' tlege
+           'TITRE' ('CHAINE' title ' - CONTRAINTE DE CAUCHY XY (Pa)');
+  Evyz    = 'EVOL' 'ROUG' 'MANU' 'LAMB' L_abs 'SCYZ' SCyz ;
+  Evyz_th = 'EVOL' 'BLEU' 'MANU' 'LAMB' L_abs 'SCYZ' SCyz_th ;
+  'DESSIN' (Evyz 'ET' Evyz_th) 'LEGE' tlege
+           'TITRE' ('CHAINE' title ' - CONTRAINTE DE CAUCHY XY (Pa)');
+'FINSI' ;
+*
+* Tests de bon fonctionnement :
+Smaxref = 'MAXIMUM' ('ABS' SCzz_th) ;
+r_xx = 'MAXIMUM' ('ABS' (SCxx - SCxx_th)) / Smaxref ;
+r_yy = 'MAXIMUM' ('ABS' (SCyy - SCyy_th)) / Smaxref ;
+r_zz = 'MAXIMUM' ('ABS' (SCzz - SCzz_th)) / Smaxref ;
+uu= ('ABS' (SCzz - SCzz_th)) / Smaxref;
+list sczz; list SCzz_th;  list uu;
+r_xy = 'MAXIMUM' ('ABS' (SCxy - SCxy_th)) / Smaxref ;
+r_xz = 'MAXIMUM' ('ABS' (SCxz - SCxz_th)) / Smaxref ;
+r_yz = 'MAXIMUM' ('ABS' (SCyz - SCyz_th)) / Smaxref ;
+*
+MESS ' RESULTATS : ' title ;
+MESS ' ------------------------------------------------- ';
+'SAUTER' 1 'LIGNE' ;
+'MESS' '  Tests de bon fonctionnement :' ;
+'MESS' ' -------------------------------' ;
+'MESS' ' Comparaison effectuee sur les contraintes de Cauchy' ;
+'MESS' ' Ecart relatif maximal entre la valeur moyenne calculee' ;
+'MESS' '                          et la solution analytique' ;
+'MESS' ' Composante XX : ' r_xx ;
+'MESS' ' Composante YY : ' r_yy ;
+'MESS' ' Composante ZZ : ' r_zz ;
+'MESS' ' Composante XY : ' r_xy ;
+'MESS' ' Composante XZ : ' r_xz ;
+'MESS' ' Composante YZ : ' r_yz ;
+'SAUTER' 1 'LIGNE' ;
+* Ecart relatif maximal tolere
+'SI' ('EGA' ICALCUL 1) ;
+  Sigref = 1.E-3 ;
+'FINSI' ;
+'SI' ('EGA' ICALCUL 2) ;
+  Sigref = 1.E-2 ;
+'FINSI' ;
+*
+L_z = 'PROG' r_xx r_yy r_zz r_xy r_xz r_yz ;
+'SI' ('>EG' ('MAXIMUM' L_z) Sigref) ;
+  'MESS' ' ---------------------' ;
+  'MESS' '  ECHEC DU CAS-TEST !' ;
+  'MESS' ' ---------------------' ;
+  'ERREUR' 5 ;
+'SINON' ;
+  'MESS' ' ----------------------' ;
+  'MESS' '  SUCCES DU CAS-TEST !' ;
+  'MESS' ' ----------------------' ;
+'FINSI' ;
+'SAUTER' 1 'LIGNE' ;
+
+'FIN' ;
+
+
+
+
+
+
+
+
+
+
+

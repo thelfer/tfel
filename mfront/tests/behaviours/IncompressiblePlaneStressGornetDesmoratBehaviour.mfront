@@ -1,0 +1,43 @@
+@Parser DefaultFiniteStrainParser;
+@Behaviour IncompressiblePlaneStressGornetDesmoratBehaviour;
+
+@ModellingHypothesis PlaneStress;
+
+@MaterialProperty stress H1;
+@MaterialProperty stress H2;
+@MaterialProperty stress H3;
+
+@Integrator{
+  Stensor c = computeRightCauchyGreenTensor(F1);
+  // specific treatment du to plane stress and incompressibility
+  c(2) = 1.; // PlaneStress
+  // ("in plane") inverse of c
+  const Stensor ci = invert(c);
+  // square of the volume change in the plane
+  const real J2p = det(c);
+  // incompressibility
+  c(2) = 1/J2p;
+  // checks
+  // first invariant of the left Cauchy-Green deformation tensor
+  const real i1 = trace(c);
+  const real i2= (i1*i1-c(0)*c(0)-c(1)*c(1)-c(2)*c(2)-c(3)*c(3))/2;
+  if(!(i2>0)){
+    string msg("invalid i2 value");
+    throw(runtime_error(msg));    
+  }
+  const real dw_di1 = H1*exp(H3*(i1-3)*(i1-3));
+  const real dw_di2 = 3*H2/sqrt(i2);
+  const real pr=2*((dw_di1+dw_di2*i1)-dw_di2*c(2))*c(2);
+  // second Piola-Kirchhoff stress
+  const StressStensor s = 2*(dw_di1+i1*dw_di2)*Stensor::Id()-2*dw_di2*c-pr*ci;
+  // Cauchy stress
+  sig(0) = s(0)*F1(0)*F1(0) + sqrt(2)*F1(0)*F1(3)*s(3) + F1(3)*F1(3)*s(1);
+  sig(1) = s(0)*F1(4)*F1(4) + sqrt(2)*F1(4)*F1(1)*s(3) + F1(1)*F1(1)*s(1);
+  sig(3) = sqrt(2)*F1(4)*F1(0)*s(0) + sqrt(2)*F1(1)*F1(3)*s(1) + (F1(4)*F1(3)+F1(1)*F1(0))*s(3);
+  sig(2) = 0.;
+  // no tangent operator yet
+  if(computeTangentOperator_){
+    string msg("tangent operator not yet available");
+    throw(runtime_error(msg));
+  }
+}

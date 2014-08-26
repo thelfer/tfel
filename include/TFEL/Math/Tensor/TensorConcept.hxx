@@ -96,7 +96,8 @@ namespace tfel{
       typedef TensorTraits<T> traits;
       static const bool isTemporary = tfel::typetraits::IsTemporary<T>::cond;
       typedef typename traits::NumType NumType;
-      typedef typename tfel::meta::IF<isTemporary,NumType,NumType&>::type ValueType;
+      typedef typename tfel::meta::IF<isTemporary,NumType,
+				      const NumType&>::type ValueType;
       
     protected:
       ~TensorConcept(){};
@@ -144,7 +145,7 @@ namespace tfel{
        (TensorTraits<T>::dime==1u)),
       stensor<1u,typename TensorTraits<T>::NumType>
       >::type
-    syme(const T& t);
+    syme(const T&);
 
     template<class T>
     TFEL_MATH_INLINE 
@@ -153,7 +154,7 @@ namespace tfel{
        (TensorTraits<T>::dime==2u)),
       stensor<2u,typename TensorTraits<T>::NumType>
       >::type
-    syme(const T& t);
+    syme(const T&);
 
     template<class T>
     TFEL_MATH_INLINE 
@@ -162,40 +163,139 @@ namespace tfel{
        (TensorTraits<T>::dime==3u)),
       stensor<3u,typename TensorTraits<T>::NumType>
       >::type
-    syme(const T& t);
+    syme(const T&);
     
     template<class T>
-    TFEL_MATH_INLINE 
+    TFEL_MATH_INLINE2 
     typename tfel::meta::EnableIf<
       ((tfel::meta::Implements<T,TensorConcept>::cond) &&
        (TensorTraits<T>::dime==1u)&&
        (tfel::typetraits::IsFundamentalNumericType<typename TensorTraits<T>::NumType>::cond)),
       stensor<1u,typename TensorTraits<T>::NumType>
       >::type
-    computeCauchyGreenTensor(const T& t);
+    computeRightCauchyGreenTensor(const T&);
   
     template<class T>
-    TFEL_MATH_INLINE 
+    TFEL_MATH_INLINE2 
     typename tfel::meta::EnableIf<
       ((tfel::meta::Implements<T,TensorConcept>::cond) &&
        (TensorTraits<T>::dime==2u)&&
        (tfel::typetraits::IsFundamentalNumericType<typename TensorTraits<T>::NumType>::cond)),
       stensor<2u,typename TensorTraits<T>::NumType>
       >::type
-    computeCauchyGreenTensor(const T& t);
+    computeRightCauchyGreenTensor(const T&);
 
     template<class T>
-    TFEL_MATH_INLINE 
+    TFEL_MATH_INLINE2 
     typename tfel::meta::EnableIf<
       ((tfel::meta::Implements<T,TensorConcept>::cond) &&
        (TensorTraits<T>::dime==3u)&&
       (tfel::typetraits::IsFundamentalNumericType<typename TensorTraits<T>::NumType>::cond)),
       stensor<3u,typename TensorTraits<T>::NumType>
       >::type
-    computeCauchyGreenTensor(const T& t);
+    computeRightCauchyGreenTensor(const T&);
 
+    template<class T>
+    TFEL_MATH_INLINE2 
+    typename tfel::meta::EnableIf<
+      ((tfel::meta::Implements<T,TensorConcept>::cond) &&
+       (TensorTraits<T>::dime==1u)&&
+       (tfel::typetraits::IsFundamentalNumericType<typename TensorTraits<T>::NumType>::cond)),
+      stensor<1u,typename TensorTraits<T>::NumType>
+      >::type
+    computeLeftCauchyGreenTensor(const T&);
+  
+    template<class T>
+    TFEL_MATH_INLINE2 
+    typename tfel::meta::EnableIf<
+      ((tfel::meta::Implements<T,TensorConcept>::cond) &&
+       (TensorTraits<T>::dime==2u)&&
+       (tfel::typetraits::IsFundamentalNumericType<typename TensorTraits<T>::NumType>::cond)),
+      stensor<2u,typename TensorTraits<T>::NumType>
+      >::type
+    computeLeftCauchyGreenTensor(const T&);
+
+    template<class T>
+    TFEL_MATH_INLINE2 
+    typename tfel::meta::EnableIf<
+      ((tfel::meta::Implements<T,TensorConcept>::cond) &&
+       (TensorTraits<T>::dime==3u)&&
+      (tfel::typetraits::IsFundamentalNumericType<typename TensorTraits<T>::NumType>::cond)),
+      stensor<3u,typename TensorTraits<T>::NumType>
+      >::type
+    computeLeftCauchyGreenTensor(const T&);
+
+    template<class T>
+    TFEL_MATH_INLINE2 
+    typename tfel::meta::EnableIf<
+      ((tfel::meta::Implements<T,TensorConcept>::cond) &&
+       (TensorTraits<T>::dime==1u)&&
+       (tfel::typetraits::IsFundamentalNumericType<typename TensorTraits<T>::NumType>::cond)),
+      stensor<1u,typename TensorTraits<T>::NumType>
+      >::type
+    computeGreenLagrangeTensor(const T&);
+  
+    template<class T>
+    TFEL_MATH_INLINE2 
+    typename tfel::meta::EnableIf<
+      ((tfel::meta::Implements<T,TensorConcept>::cond) &&
+       (TensorTraits<T>::dime==2u)&&
+       (tfel::typetraits::IsFundamentalNumericType<typename TensorTraits<T>::NumType>::cond)),
+      stensor<2u,typename TensorTraits<T>::NumType>
+      >::type
+    computeGreenLagrangeTensor(const T&);
+
+    template<class T>
+    TFEL_MATH_INLINE2 
+    typename tfel::meta::EnableIf<
+      ((tfel::meta::Implements<T,TensorConcept>::cond) &&
+       (TensorTraits<T>::dime==3u)&&
+      (tfel::typetraits::IsFundamentalNumericType<typename TensorTraits<T>::NumType>::cond)),
+      stensor<3u,typename TensorTraits<T>::NumType>
+      >::type
+    computeGreenLagrangeTensor(const T&);
+
+    template<typename T,typename T2>
+    TFEL_MATH_INLINE2 
+    typename tfel::meta::EnableIf<
+      ((tfel::meta::Implements<T,StensorConcept>::cond) &&
+       (StensorTraits<T>::dime==1u)&&
+       (tfel::meta::Implements<T2,TensorConcept>::cond) &&
+       (TensorTraits<T2>::dime==1u)&&
+       (tfel::typetraits::IsFundamentalNumericType<typename TensorTraits<T2>::NumType>::cond)),
+      stensor<1u,typename StensorTraits<T>::NumType>
+      >::type
+    convertSecondPiolaKirchhoffStressToCauchyStress(const T&,
+						    const T2&);
+
+    template<typename T,typename T2>
+    TFEL_MATH_INLINE2 
+    typename tfel::meta::EnableIf<
+      ((tfel::meta::Implements<T,StensorConcept>::cond) &&
+       (StensorTraits<T>::dime==2u)&&
+       (tfel::meta::Implements<T2,TensorConcept>::cond) &&
+       (TensorTraits<T2>::dime==2u)&&
+       (tfel::typetraits::IsFundamentalNumericType<typename TensorTraits<T2>::NumType>::cond)),
+      stensor<2u,typename StensorTraits<T>::NumType>
+      >::type
+    convertSecondPiolaKirchhoffStressToCauchyStress(const T&,
+						    const T2&);
+
+    template<typename T,typename T2>
+    TFEL_MATH_INLINE2 
+    typename tfel::meta::EnableIf<
+      ((tfel::meta::Implements<T,StensorConcept>::cond) &&
+       (StensorTraits<T>::dime==3u)&&
+       (tfel::meta::Implements<T2,TensorConcept>::cond) &&
+       (TensorTraits<T2>::dime==3u)&&
+       (tfel::typetraits::IsFundamentalNumericType<typename TensorTraits<T2>::NumType>::cond)),
+      stensor<3u,typename StensorTraits<T>::NumType>
+      >::type
+    convertSecondPiolaKirchhoffStressToCauchyStress(const T&,
+						    const T2&);
+  
     template<typename TensorType>
-    TFEL_MATH_INLINE 
+    TFEL_MATH_INLINE2 
     typename tfel::meta::EnableIf<
       tfel::meta::Implements<TensorType,TensorConcept>::cond &&
       TensorTraits<TensorType>::dime == 1u,
@@ -205,7 +305,7 @@ namespace tfel{
     det(const TensorType&);
 
     template<typename TensorType>
-    TFEL_MATH_INLINE 
+    TFEL_MATH_INLINE2 
     typename tfel::meta::EnableIf<
       tfel::meta::Implements<TensorType,TensorConcept>::cond &&
       TensorTraits<TensorType>::dime == 2u,
@@ -215,7 +315,7 @@ namespace tfel{
     det(const TensorType&);
 
     template<typename TensorType>
-    TFEL_MATH_INLINE 
+    TFEL_MATH_INLINE2 
     typename tfel::meta::EnableIf<
       tfel::meta::Implements<TensorType,TensorConcept>::cond &&
       TensorTraits<TensorType>::dime == 3u,

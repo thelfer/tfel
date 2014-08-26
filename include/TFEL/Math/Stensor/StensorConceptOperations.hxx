@@ -32,6 +32,7 @@
 #include"TFEL/Math/ExpressionTemplates/MathObjectMathObjectDiadicProductExpr.hxx"
 
 #include"TFEL/Math/Stensor/StensorExpr.hxx"
+#include"TFEL/Math/Stensor/StensorProduct.hxx"
 #include"TFEL/Math/ST2toST2/ST2toST2Expr.hxx"
 
 namespace tfel{
@@ -66,6 +67,28 @@ namespace tfel{
 				      >::type Expr;			    
     public:
       typedef typename ResultType<StensA,StensB,Op>::type Result;
+      typedef typename tfel::meta::IF<tfel::typetraits::IsInvalid<Result>::cond,
+				      DummyHandle,
+				      StensorExpr<Result,Expr> >::type Handle;
+    };
+
+    /*
+     * Partial Specialisation of ComputeBinaryResult_ for stensor's multiplication
+     */
+    template<typename A, typename B>
+    class ComputeBinaryResult_<StensorTag,StensorTag,A,B,OpMult>
+    {
+      struct DummyHandle{};
+      typedef typename StensorType<A>::type StensA;
+      typedef typename StensorType<B>::type StensB;
+      typedef typename tfel::meta::IF<StensorTraits<A>::dime==1u,
+				      StensorProductExpr1D<A,B>,
+				      typename tfel::meta::IF<StensorTraits<A>::dime==2u,
+							      StensorProductExpr2D<A,B>,
+							      StensorProductExpr3D<A,B> >::type
+				      >::type Expr;
+    public:
+      typedef typename ResultType<StensA,StensB,OpMult>::type Result;
       typedef typename tfel::meta::IF<tfel::typetraits::IsInvalid<Result>::cond,
 				      DummyHandle,
 				      StensorExpr<Result,Expr> >::type Handle;
@@ -181,6 +204,16 @@ namespace tfel{
       typename ComputeBinaryResult<T1,T2,OpMinus>::Handle
     >::type
     operator - (const T1&,const T2&);
+
+    template<typename T1,typename T2>
+    TFEL_MATH_INLINE 
+    typename tfel::meta::EnableIf<
+      tfel::meta::Implements<T1,StensorConcept>::cond&&
+      tfel::meta::Implements<T2,StensorConcept>::cond&&
+      !tfel::typetraits::IsInvalid<typename ComputeBinaryResult<T1,T2,OpMult>::Result>::cond,
+      typename ComputeBinaryResult<T1,T2,OpMult>::Handle
+    >::type
+    operator * (const T1&,const T2&);
 
     template<typename T1,typename T2>
     TFEL_MATH_INLINE 

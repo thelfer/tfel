@@ -80,6 +80,11 @@ namespace mfront{
      */
     void declareAsASmallStrainStandardBehaviour(void);
     /*!
+     * \brief set the behaviour to be a finite strain standard
+     * behaviour
+     */
+    void declareAsAFiniteStrainStandardBehaviour(void);
+    /*!
      * \brief set the behaviour to be a cohesive zone model
      */
     void declareAsACohesiveZoneModel(void);

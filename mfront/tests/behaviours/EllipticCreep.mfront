@@ -60,14 +60,14 @@ f.setGlossaryName("Porosity");
   const real A = 8.e-67;
   const real E = 8.2;
   // porosity
+  const real f_ = max(f+theta*df,real(0));
   ff       = df*(1+theta*dpv)-(1-f)*dpv;
   dff_ddf  = (1+theta*dpv);
-  dff_ddpv = -(1-(f-theta*df));
+  dff_ddpv = -1+f_;
   // hydrostatic pressure
   const real pr  = trace(sig)/real(3);
   const real seq = sigmaeq(sig);
   // current porosity
-  const real f_ = max(f+theta*df,real(0));
   const real Af = pow((pow(f_,-E)-1)/E,-2/(E+1));
   const real Bf = (1+2*f_/real(3))*pow(1-f_,-2/(E+1));
   // equivalent stress

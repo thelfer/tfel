@@ -164,7 +164,7 @@ namespace tfel{
        (TensorTraits<T>::dime==1u)&&
        (tfel::typetraits::IsFundamentalNumericType<typename TensorTraits<T>::NumType>::cond)),
       stensor<1u,typename TensorTraits<T>::NumType> >::type
-    computeCauchyGreenTensor(const T& t)
+    computeRightCauchyGreenTensor(const T& t)
     {
       using namespace std;
       typedef typename TensorTraits<T>::NumType real;
@@ -176,14 +176,13 @@ namespace tfel{
     }
   
     template<class T>
-    TFEL_MATH_INLINE 
     typename tfel::meta::EnableIf<
       ((tfel::meta::Implements<T,TensorConcept>::cond) &&
        (TensorTraits<T>::dime==2u)&&
        (tfel::typetraits::IsFundamentalNumericType<typename TensorTraits<T>::NumType>::cond)),
       stensor<2u,typename TensorTraits<T>::NumType>
       >::type
-    computeCauchyGreenTensor(const T& t){
+    computeRightCauchyGreenTensor(const T& t){
       using namespace std;
       typedef typename TensorTraits<T>::NumType real;
       static const real cste = sqrt(real(2));
@@ -196,14 +195,13 @@ namespace tfel{
     }
     
     template<class T>
-    TFEL_MATH_INLINE 
     typename tfel::meta::EnableIf<
       ((tfel::meta::Implements<T,TensorConcept>::cond) &&
        (TensorTraits<T>::dime==3u)&&
        (tfel::typetraits::IsFundamentalNumericType<typename TensorTraits<T>::NumType>::cond)),
       stensor<3u,typename TensorTraits<T>::NumType>
       >::type
-    computeCauchyGreenTensor(const T& t)
+    computeRightCauchyGreenTensor(const T& t)
     {
       using namespace std;
       typedef typename TensorTraits<T>::NumType real;
@@ -217,6 +215,197 @@ namespace tfel{
       r[5] = cste*(t[2]*t[8]+t[1]*t[7]+t[3]*t[5]);
       return r;
     }
+
+    template<class T>
+    typename tfel::meta::EnableIf<
+      ((tfel::meta::Implements<T,TensorConcept>::cond) &&
+       (TensorTraits<T>::dime==1u)&&
+       (tfel::typetraits::IsFundamentalNumericType<typename TensorTraits<T>::NumType>::cond)),
+      stensor<1u,typename TensorTraits<T>::NumType> >::type
+    computeLeftCauchyGreenTensor(const T& t)
+    {
+      using namespace std;
+      typedef typename TensorTraits<T>::NumType real;
+      stensor<1u,real> r;
+      r[0] = t[0]*t[0];
+      r[1] = t[1]*t[1];
+      r[2] = t[2]*t[2];
+      return r;
+    }
+  
+    template<class T>
+    typename tfel::meta::EnableIf<
+      ((tfel::meta::Implements<T,TensorConcept>::cond) &&
+       (TensorTraits<T>::dime==2u)&&
+       (tfel::typetraits::IsFundamentalNumericType<typename TensorTraits<T>::NumType>::cond)),
+      stensor<2u,typename TensorTraits<T>::NumType>
+      >::type
+    computeLeftCauchyGreenTensor(const T& t){
+      using namespace std;
+      typedef typename TensorTraits<T>::NumType real;
+      static const real cste = sqrt(real(2));
+      stensor<2u,real> r;
+      r[0] = t[0]*t[0]+t[3]*t[3];
+      r[1] = t[1]*t[1]+t[4]*t[4];
+      r[2] = t[2]*t[2];
+      r[3] = cste*(t[0]*t[4]+t[1]*t[3]);
+      return r;
+    }
+    
+    template<class T>
+    typename tfel::meta::EnableIf<
+      ((tfel::meta::Implements<T,TensorConcept>::cond) &&
+       (TensorTraits<T>::dime==3u)&&
+       (tfel::typetraits::IsFundamentalNumericType<typename TensorTraits<T>::NumType>::cond)),
+      stensor<3u,typename TensorTraits<T>::NumType>
+      >::type
+    computeLeftCauchyGreenTensor(const T& t)
+    {
+      using namespace std;
+      typedef typename TensorTraits<T>::NumType real;
+      static const real cste = sqrt(real(2));
+      stensor<3u,real> r;
+      r[0] = t[0]*t[0]+t[3]*t[3]+t[5]*t[5];
+      r[1] = t[1]*t[1]+t[4]*t[4]+t[7]*t[7];
+      r[2] = t[2]*t[2]+t[6]*t[6]+t[8]*t[8];
+      r[3] = cste*(t[5]*t[7]+t[0]*t[4]+t[1]*t[3]);
+      r[4] = cste*(t[3]*t[8]+t[0]*t[6]+t[2]*t[5]);
+      r[5] = cste*(t[1]*t[8]+t[2]*t[7]+t[4]*t[5]);
+      return r;
+    }
+
+    template<class T>
+    typename tfel::meta::EnableIf<
+      ((tfel::meta::Implements<T,TensorConcept>::cond) &&
+       (TensorTraits<T>::dime==1u)&&
+       (tfel::typetraits::IsFundamentalNumericType<typename TensorTraits<T>::NumType>::cond)),
+      stensor<1u,typename TensorTraits<T>::NumType> >::type
+    computeGreenLagrangeTensor(const T& t)
+    {
+      using namespace std;
+      typedef typename TensorTraits<T>::NumType real;
+      stensor<1u,real> r;
+      r[0] = (t[0]*t[0]-1)/2;
+      r[1] = (t[1]*t[1]-1)/2;
+      r[2] = (t[2]*t[2]-1)/2;
+      return r;
+    }
+  
+    template<class T>
+    typename tfel::meta::EnableIf<
+      ((tfel::meta::Implements<T,TensorConcept>::cond) &&
+       (TensorTraits<T>::dime==2u)&&
+       (tfel::typetraits::IsFundamentalNumericType<typename TensorTraits<T>::NumType>::cond)),
+      stensor<2u,typename TensorTraits<T>::NumType>
+      >::type
+    computeGreenLagrangeTensor(const T& t){
+      using namespace std;
+      typedef typename TensorTraits<T>::NumType real;
+      static const real cste = sqrt(real(2))/2;
+      stensor<2u,real> r;
+      r[0] = (t[0]*t[0]+t[3]*t[3]-1)/2;
+      r[1] = (t[1]*t[1]+t[4]*t[4]-1)/2;
+      r[2] = (t[2]*t[2]-1)/2;
+      r[3] = cste*(t[0]*t[4]+t[1]*t[3]);
+      return r;
+    }
+    
+    template<class T>
+    typename tfel::meta::EnableIf<
+      ((tfel::meta::Implements<T,TensorConcept>::cond) &&
+       (TensorTraits<T>::dime==3u)&&
+       (tfel::typetraits::IsFundamentalNumericType<typename TensorTraits<T>::NumType>::cond)),
+      stensor<3u,typename TensorTraits<T>::NumType>
+      >::type
+    computeGreenLagrangeTensor(const T& t)
+    {
+      using namespace std;
+      typedef typename TensorTraits<T>::NumType real;
+      static const real cste = sqrt(real(2))/2;
+      stensor<3u,real> r;
+      r[0] = (t[0]*t[0]+t[3]*t[3]+t[5]*t[5]-1)/2;
+      r[1] = (t[1]*t[1]+t[4]*t[4]+t[7]*t[7]-1)/2;
+      r[2] = (t[2]*t[2]+t[6]*t[6]+t[8]*t[8]-1)/2;
+      r[3] = cste*(t[5]*t[7]+t[0]*t[4]+t[1]*t[3]);
+      r[4] = cste*(t[3]*t[8]+t[0]*t[6]+t[2]*t[5]);
+      r[5] = cste*(t[1]*t[8]+t[2]*t[7]+t[4]*t[5]);
+      return r;
+    }
+
+    template<typename T,typename T2>
+    TFEL_MATH_INLINE2 
+    typename tfel::meta::EnableIf<
+      ((tfel::meta::Implements<T,StensorConcept>::cond) &&
+       (StensorTraits<T>::dime==1u)&&
+       (tfel::meta::Implements<T2,TensorConcept>::cond) &&
+       (TensorTraits<T2>::dime==1u)&&
+       (tfel::typetraits::IsFundamentalNumericType<typename TensorTraits<T2>::NumType>::cond)),
+      stensor<1u,typename StensorTraits<T>::NumType>
+      >::type
+    convertSecondPiolaKirchhoffStressToCauchyStress(const T&  p,
+						    const T2& F)
+    {
+      typedef typename StensorTraits<T>::NumType stress;
+      typedef typename tfel::typetraits::BaseType<stress>::type real;
+      stensor<1u,stress> s;
+      const real J = F[0]*F[1]*F[2];
+      s[0] = p[0]*F[0]*F[0];
+      s[1] = p[1]*F[1]*F[1];
+      s[2] = p[2]*F[2]*F[2];
+      return s;
+    } // end of convertSecondPiolaKirchhoffStressToCauchyStress
+
+    template<typename T,typename T2>
+    TFEL_MATH_INLINE2 
+    typename tfel::meta::EnableIf<
+      ((tfel::meta::Implements<T,StensorConcept>::cond) &&
+       (StensorTraits<T>::dime==2u)&&
+       (tfel::meta::Implements<T2,TensorConcept>::cond) &&
+       (TensorTraits<T2>::dime==2u)&&
+       (tfel::typetraits::IsFundamentalNumericType<typename TensorTraits<T2>::NumType>::cond)),
+      stensor<2u,typename StensorTraits<T>::NumType>
+      >::type
+    convertSecondPiolaKirchhoffStressToCauchyStress(const T&  p,
+						    const T2& F)
+    {
+      typedef typename StensorTraits<T>::NumType stress;
+      typedef typename tfel::typetraits::BaseType<stress>::type real;
+      static const real cste = sqrt(real(2));
+      stensor<2u,stress> s;
+      const real J = det(F);
+      s[0] = p[1]*F[3]*F[3]+cste*p[3]*F[0]*F[3]+p[0]*F[0]*F[0];
+      s[1] = p[0]*F[4]*F[4]+cste*p[3]*F[1]*F[4]+p[1]*F[1]*F[1];
+      s[2] = p[2]*F[2]*F[2];
+      s[3] = (p[3]*F[3]+cste*p[0]*F[0])*F[4]+cste*p[1]*F[1]*F[3]+p[3]*F[0]*F[1];
+      return s;
+    } // end of convertSecondPiolaKirchhoffStressToCauchyStress
+
+    template<typename T,typename T2>
+    TFEL_MATH_INLINE2 
+    typename tfel::meta::EnableIf<
+      ((tfel::meta::Implements<T,StensorConcept>::cond) &&
+       (StensorTraits<T>::dime==3u)&&
+       (tfel::meta::Implements<T2,TensorConcept>::cond) &&
+       (TensorTraits<T2>::dime==3u)&&
+       (tfel::typetraits::IsFundamentalNumericType<typename TensorTraits<T2>::NumType>::cond)),
+      stensor<3u,typename StensorTraits<T>::NumType>
+      >::type
+    convertSecondPiolaKirchhoffStressToCauchyStress(const T&  p,
+						    const T2& F)
+    {
+      typedef typename StensorTraits<T>::NumType stress;
+      typedef typename tfel::typetraits::BaseType<stress>::type real;
+      static const real cste = sqrt(real(2));
+      stensor<3u,stress> s;
+      const real J = det(F);
+      s[0] = p[2]*F[5]*F[5]+(cste*p[5]*F[3]+cste*p[4]*F[0])*F[5]+p[1]*F[3]*F[3]+cste*p[3]*F[0]*F[3]+p[0]*F[0]*F[0];
+      s[1] = p[2]*F[7]*F[7]+(cste*p[4]*F[4]+cste*p[5]*F[1])*F[7]+p[0]*F[4]*F[4]+cste*p[3]*F[1]*F[4]+p[1]*F[1]*F[1];
+      s[2] = p[1]*F[8]*F[8]+(cste*p[3]*F[6]+cste*p[5]*F[2])*F[8]+p[0]*F[6]*F[6]+cste*p[4]*F[2]*F[6]+p[2]*F[2]*F[2];
+      s[3] = (cste*p[2]*F[5]+p[5]*F[3]+p[4]*F[0])*F[7]+(p[4]*F[4]+p[5]*F[1])*F[5]+(p[3]*F[3]+cste*p[0]*F[0])*F[4]+cste*p[1]*F[1]*F[3]+p[3]*F[0]*F[1];
+      s[4] = (p[5]*F[5]+cste*p[1]*F[3]+p[3]*F[0])*F[8]+(p[4]*F[5]+p[3]*F[3]+cste*p[0]*F[0])*F[6]+cste*p[2]*F[2]*F[5]+p[5]*F[2]*F[3]+p[4]*F[0]*F[2];
+      s[5] = (p[5]*F[7]+p[3]*F[4]+cste*p[1]*F[1])*F[8]+(p[4]*F[6]+cste*p[2]*F[2])*F[7]+(cste*p[0]*F[4]+p[3]*F[1])*F[6]+p[4]*F[2]*F[4]+p[5]*F[1]*F[2];
+      return s;
+    } // end of convertSecondPiolaKirchhoffStressToCauchyStress
 
     template<typename TensorType>
     typename tfel::meta::EnableIf<

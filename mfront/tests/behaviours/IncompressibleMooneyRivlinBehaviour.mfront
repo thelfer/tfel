@@ -1,0 +1,34 @@
+@Parser DefaultFiniteStrainParser;
+@Behaviour IncompressibleMooneyRivlinBehaviour;
+
+@MaterialProperty stress D1;
+@MaterialProperty stress C1;
+@MaterialProperty stress C2;
+
+@Integrator{
+  // volume change
+  const real J  = det(F1);
+  const real J2 = J*J;
+  const real J3 = J2*J;
+  const real J5 = J2*J2*J3;
+  const real J7 = J5*J2;
+  // Right Cauchy Green Tensor
+  Stensor c = computeRightCauchyGreenTensor(F1);
+  // invariant of the left Cauchy-Green deformation tensor
+  // I1 = J^{-2/3}*trace(c)
+  const real i1 = (1/cbrt(J2))*trace(c);
+  // square of the Cauchy Green Tensor
+  Stensor c2 = c*c;
+  const stress Gam1 = C1+C2*i1;
+  const stress Gam2 = C2;
+  const stress pr   = 2*(J-1)/D1;
+  const stress eg1  = 2*Gam1/cbrt(J5);
+  const stress eg2  = 2*Gam2/cbrt(J7);
+  // cauchy stress
+  sig = eg1*c-eg2*c2+pr*Stensor::Id();
+  // no tangent operator yet
+  if(computeTangentOperator_){
+    string msg("tangent operator not yet available");
+    throw(runtime_error(msg));
+  }
+}

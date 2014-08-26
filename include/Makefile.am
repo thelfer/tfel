@@ -191,6 +191,7 @@ nobase_include_HEADERS= TFEL/Macros.hxx                                         
 			TFEL/Math/Stensor/StensorExternalTabStorage.hxx                                              \
 			TFEL/Math/Stensor/StensorConceptOperations.hxx                                               \
 			TFEL/Math/Stensor/StensorConceptOperations.ixx                                               \
+			TFEL/Math/Stensor/StensorProduct.hxx                                                         \
 			TFEL/Math/Stensor/StensorStaticStorage.hxx	                                             \
 			TFEL/Math/Stensor/StensorSizeToDime.hxx	                                                     \
 			TFEL/Math/Stensor/StensorExpr.hxx		                                             \

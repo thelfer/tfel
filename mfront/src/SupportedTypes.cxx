@@ -134,6 +134,8 @@ namespace mfront{
 			      TVector));
     this->flags.insert(MVType("ForceTVector",
 			      TVector));
+    // Finite Strain
+    this->flags.insert(MVType("DeformationGradientTensor",Tensor));
   }
 
   SupportedTypes::SupportedTypes()

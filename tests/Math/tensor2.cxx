@@ -18,13 +18,13 @@
 #include"TFEL/Math/Tensor/TVFS.hxx"
 #include"TFEL/Math/General/Complex.hxx"
 
-struct CauchyGreenTensorTest
+struct RightCauchyGreenTensorTest
   : public tfel::tests::TestCase
 {
-  CauchyGreenTensorTest()
+  RightCauchyGreenTensorTest()
     : tfel::tests::TestCase("TFEL/Math",
-			    "CauchyGreenTensorTest")
-  {} // end of CauchyGreenTensorTest
+			    "RightCauchyGreenTensorTest")
+  {} // end of RightCauchyGreenTensorTest
   tfel::tests::TestResult
   execute()
   {
@@ -36,22 +36,19 @@ struct CauchyGreenTensorTest
     F(2)=0.;
     F(3)=-0.3750;
     F(4)=0.750;
-    const stensor<2,double> e = computeCauchyGreenTensor(F);
+    const stensor<2,double> e = computeRightCauchyGreenTensor(F);
     const stensor<2,double> U = square_root(e);
-    // cout.precision(12);
-    // cout << "e : " << e << endl;
-    // cout << "U : " << U << endl;
     return this->result;
   } // end of execute
 };
 
-struct CauchyGreenTensorTest2
+struct RightCauchyGreenTensorTest2
   : public tfel::tests::TestCase
 {
-  CauchyGreenTensorTest2()
+  RightCauchyGreenTensorTest2()
     : tfel::tests::TestCase("TFEL/Math",
-			    "CauchyGreenTensorTest2")
-  {} // end of CauchyGreenTensorTest2
+			    "RightCauchyGreenTensorTest2")
+  {} // end of RightCauchyGreenTensorTest2
   tfel::tests::TestResult
   execute()
   {
@@ -66,17 +63,14 @@ struct CauchyGreenTensorTest2
     F(5)=0.5;
     F(6)=0.959;
     F(7)=-0.247;
-    const stensor<3,double> e = computeCauchyGreenTensor(F);
+    const stensor<3,double> e = computeRightCauchyGreenTensor(F);
     const stensor<3,double> U = square_root(e);
-    // cout.precision(12);
-    // cout << "e : " << e << endl;
-    // cout << "U : " << U << endl;
     return this->result;
   } // end of execute
 };
 
-TFEL_TESTS_GENERATE_PROXY(CauchyGreenTensorTest,"CauchyGreenTensorTest");
-TFEL_TESTS_GENERATE_PROXY(CauchyGreenTensorTest2,"CauchyGreenTensorTest2");
+TFEL_TESTS_GENERATE_PROXY(RightCauchyGreenTensorTest,"RightCauchyGreenTensorTest");
+TFEL_TESTS_GENERATE_PROXY(RightCauchyGreenTensorTest2,"RightCauchyGreenTensorTest2");
 
 int main(void){
   using namespace std;

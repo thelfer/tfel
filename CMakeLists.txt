@@ -72,7 +72,8 @@ endif(enable-aster)
 
 #castem
 include(cmake/modules/castem-unix-type.cmake)
-option(local-castem-header "use a local version of castem.h" OFF)
+option(local-castem-header    "use a local version of castem.h"  OFF)
+option(enable-castem-pleiades "use a pleiades version of castem" OFF)
 if(local-castem-header)
   if(NOT HAVE_FORTRAN)
     message(FATAL_ERROR "fortran support must be enabled for castem support")

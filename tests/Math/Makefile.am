@@ -42,6 +42,7 @@ test_PROGRAMS = hill                                     \
 		stensor4                                 \
 		stensor5                                 \
 		stensor6                                 \
+		stensor7                                 \
 		stensor_changeBasis                      \
 		stensor_changeBasis2                     \
 		stensor_changeBasis3                     \
@@ -122,6 +123,7 @@ stensor3_SOURCES              = stensor3.cxx
 stensor4_SOURCES              = stensor4.cxx
 stensor5_SOURCES              = stensor5.cxx
 stensor6_SOURCES              = stensor6.cxx
+stensor7_SOURCES              = stensor7.cxx
 stensor_changeBasis_SOURCES   = stensor_changeBasis.cxx
 stensor_changeBasis2_SOURCES  = stensor_changeBasis2.cxx
 stensor_changeBasis3_SOURCES  = stensor_changeBasis3.cxx

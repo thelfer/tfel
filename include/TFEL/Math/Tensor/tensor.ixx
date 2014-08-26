@@ -22,6 +22,82 @@ namespace tfel{
 
   namespace math {
 
+    namespace internals{
+      
+      /*!
+       * An helper struct used to defined a tensor from the fortran
+       * matrix
+       */
+      template<unsigned short N>
+      struct BuildTensorFromFortranMatrix;
+
+      /*!
+       * Partial specialisation in 1D
+       */
+      template<>
+      struct BuildTensorFromFortranMatrix<1u>
+      {
+	/*!
+	 * \param[in] t : tensor
+	 * \param[in] v : fortran values
+	 */
+	template<typename T>
+	TFEL_MATH_INLINE2 static
+	void exe(T* const t,
+		 const typename tfel::typetraits::BaseType<T>::type* const v)
+	{
+	  t[0] = T(v[0]);
+	  t[1] = T(v[4]);
+	  t[2] = T(v[8]);
+	} // end of exe
+      }; // end of struct BuildTensorFromFortranMatrix<1u>
+
+      /*!
+       * Partial specialisation in 2D
+       */
+      template<>
+      struct BuildTensorFromFortranMatrix<2u>
+      {
+	/*!
+	 * \param[in] t : tensor
+	 * \param[in] v : fortran values
+	 */
+	template<typename T>
+	TFEL_MATH_INLINE2 static
+	void exe(T* const t,
+		 const typename tfel::typetraits::BaseType<T>::type* const v)
+	{
+	  BuildTensorFromFortranMatrix<1u>::exe(t,v);
+	  t[3] = T(v[3]);
+	  t[4] = T(v[1]);
+	} // end of exe
+      }; // end of struct BuildTensorFromFortranMatrix<1u>
+
+      /*!
+       * Partial specialisation in 3D
+       */
+      template<>
+      struct BuildTensorFromFortranMatrix<3u>
+      {
+	/*!
+	 * \param[in] t : tensor
+	 * \param[in] v : fortran values
+	 */
+	template<typename T>
+	TFEL_MATH_INLINE2 static
+	void exe(T* const t,
+		 const typename tfel::typetraits::BaseType<T>::type* const v)
+	{
+	  BuildTensorFromFortranMatrix<2u>::exe(t,v);
+	  t[5] = T(v[6]);
+	  t[6] = T(v[2]);
+	  t[7] = T(v[7]);
+	  t[8] = T(v[5]);
+	} // end of exe
+      }; // end of struct BuildTensorFromFortranMatrix<1u>
+      
+    } // end of namespace internals
+
 #ifndef DOXYGENSPECIFIC
 
     template<typename Child>
@@ -99,6 +175,14 @@ namespace tfel{
     }
 
     template<unsigned short N, typename T>
+    void tensor<N,T>::buildFromFortranMatrix(tensor<N,T>& t,
+					     const typename tfel::typetraits::BaseType<T>::type* const v)
+    {
+      using tfel::math::internals::BuildTensorFromFortranMatrix;
+      BuildTensorFromFortranMatrix<N>::template exe<T>(t.begin(),v);
+    } // end of void tensor<N,T>::buildFromFortranMatrix
+
+    template<unsigned short N, typename T>
     tensor<N,T>::tensor(const T init)
     {
       tfel::fsalgo::fill<TensorDimeToSize<N>::value>::exe(this->v,init);
@@ -116,6 +200,54 @@ namespace tfel{
     tensor<N,T>::operator()(const unsigned short i) const{
       assert(i<TensorDimeToSize<N>::value);
       return this->v[i];
+    }
+
+    template<unsigned short N, typename T>
+    const T&
+    tensor<N,T>::operator()(const unsigned short i,
+			    const unsigned short j) const
+    {
+      if((i==j)&&(i<3)){
+	return this->operator()(i);
+      } else if((i==0)&&(j==1)){
+	return this->operator()(3);
+      } else if((i==1)&&(j==0)){
+	return this->operator()(4);
+      } else if((i==0)&&(j==2)){
+	return this->operator()(5);
+      } else if((i==2)&&(j==0)){
+	return this->operator()(6);
+      } else if((i==1)&&(j==2)){
+	return this->operator()(7);
+      } else if((i==2)&&(j==1)){
+	return this->operator()(8);
+      }
+      throw(TensorInvalidIndexesException(i,j));
+      return *(static_cast<const T*>(0));
+    }
+
+    template<unsigned short N, typename T>
+    T&
+    tensor<N,T>::operator()(const unsigned short i,
+			    const unsigned short j)
+    {
+      if((i==j)&&(i<3)){
+	return this->operator()(i);
+      } else if((i==0)&&(j==1)){
+	return this->operator()(3);
+      } else if((i==1)&&(j==0)){
+	return this->operator()(4);
+      } else if((i==0)&&(j==2)){
+	return this->operator()(5);
+      } else if((i==2)&&(j==0)){
+	return this->operator()(6);
+      } else if((i==1)&&(j==2)){
+	return this->operator()(7);
+      } else if((i==2)&&(j==1)){
+	return this->operator()(8);
+      }
+      throw(TensorInvalidIndexesException(i,j));
+      return *(static_cast<T*>(0));
     }
 
     template<unsigned short N, typename T>

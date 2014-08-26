@@ -115,6 +115,21 @@ namespace tfel{
 				      stensor<N,ResBase_,StensorStatic> >::type type;
     };
 
+    /*!
+     * \brief Partial specialisation for stensor
+     * \see   ResultType
+     */
+    template<unsigned short N,typename T,typename T2,
+	     template<unsigned short,typename> class Storage,
+	     template<unsigned short,typename> class Storage2>
+    class ResultType<stensor<N,T,Storage>,stensor<N,T2,Storage2>,OpMult>
+    {
+      typedef typename ResultType<T,T2,OpMult>::type ResBase_;
+    public:
+      typedef typename tfel::meta::IF<tfel::typetraits::IsInvalid<ResBase_>::cond,
+				      tfel::meta::InvalidType,
+				      stensor<N,ResBase_,StensorStatic> >::type type;
+    };
 
     /*!
      * \brief Partial specialisation for stensor

@@ -101,13 +101,7 @@ namespace tfel{
       tfel::meta::Implements<T,StensorConcept>::cond,
       typename StensorType<T>::type
     >::type
-    deviator(const T& s)
-    {
-      typedef typename StensorType<T>::type Res;
-      typedef typename StensorTraits<T>::NumType NumType;
-      typedef typename tfel::typetraits::BaseType<NumType>::type Base;
-      return Res(s-(Base(1)/Base(3))*trace(s)*Res::Id());
-    }
+    deviator(const T&);
 
     //! Serialisation operator
     template<typename T>

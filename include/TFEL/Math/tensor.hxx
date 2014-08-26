@@ -129,6 +129,16 @@ namespace tfel{
        */
       typedef EmptyRunTimeProperties RunTimeProperties;
       /*!
+       * \brief Build a tensor from a fortran matrix.
+       * \param[in] t: tensor to be filled
+       * \param[in] v: pointer to an array used to initialise the
+       * components of the tensor. This array is left unchanged.
+       */
+      TFEL_MATH_INLINE2 static void
+      buildFromFortranMatrix(tensor<N,T>&,
+			     const typename tfel::typetraits::BaseType<T>::type* const);
+
+      /*!
        * \brief Default Constructor 
        * \warning enabled only if storage is static
        */
@@ -144,9 +154,8 @@ namespace tfel{
       tensor(const T);
       /*!
        * \brief Default Constructor.
-       * \param const typename tfel::typetraits::BaseType<T>::type*
-       * const, pointer to a tabular used to initialise the components
-       * of the tensor. This tabular is left unchanged.
+       * \param init, pointer to an array used to initialise the
+       * components of the tensor. This array is left unchanged.
        */
       TFEL_MATH_INLINE explicit
       tensor(const typename tfel::typetraits::BaseType<T>::type* const init)
@@ -206,6 +215,14 @@ namespace tfel{
       operator()(const unsigned short) const;      
       TFEL_MATH_INLINE       T&
       operator()(const unsigned short);
+
+      TFEL_MATH_INLINE const T&
+      operator()(const unsigned short,
+		 const unsigned short) const;      
+      
+      TFEL_MATH_INLINE       T&
+      operator()(const unsigned short,
+		 const unsigned short);
 
       TFEL_MATH_INLINE const T&
       operator[](const unsigned short) const;      

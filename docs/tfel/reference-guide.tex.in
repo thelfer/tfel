@@ -193,10 +193,10 @@ puis nous détaillons les différentes librairies produites.
 \subsection{Exécutables}
 
 Actuellement, quatre exécutables sont produits~:
-\begin{itemize}
+\begin{enumerate}
   \item \texttt{tfel-config} qui permet de récupérer des
   informations sur~:
-  \begin{itemize}
+  \begin{enumerate}
     \item le répertoire d'installation de \TFEL{}~;
     \item les options de compilation (et d'optimisation) que nous
       conseillons d'utiliser avec le compilateur qui a servi à
@@ -204,7 +204,7 @@ Actuellement, quatre exécutables sont produits~:
     \item les drapeaux d'avertissement à utiliser que nous conseillons
       d'utiliser avec le compilateur qui a servi à construire
       \TFEL{}~;
-  \end{itemize}
+  \end{enumerate}
 \item \texttt{tfel-doc} est un utilitaire de description de cas test
   et de génération d'un guide en \LaTeX{}. Il a notamment été utilisé
   pour décrire les cas tests de la bibliothèque \TFEL{} et de
@@ -214,7 +214,7 @@ Actuellement, quatre exécutables sont produits~:
   particulière~\cite{helfer:mfront:2013,helfer:mfront:behaviours:2013}~;
 \item un outil de test élémentaire de lois de comportement mécanique
   nommé \mtest{}~\cite{helfer:mtest:2013}.
-\end{itemize}
+\end{enumerate}
 
 \subsection{Modules disponibles et librairies produites}
 
@@ -223,14 +223,14 @@ en anglais). Nous en dressons ici la liste accompagnée d'une
 description succincte. Les principaux modules seront chacun décrits
 dans une section spécifique.
 
-\begin{itemize}
+\begin{enumerate}
 \item le module {\tt TFEL/Math} est de loin le module le plus
   important de la librairie. Il contient de nombreuses classes
   représentant les objets mathématiques usuels et différents
   algorithmes numériques. La plupart de ces classes et de ces
   algorithmes sont implantés à l'aide de {\tt template}. Ce module
   fournit plusieurs librairies~:
-  \begin{itemize}
+  \begin{enumerate}
   \item {\tt libTFELMath.so} contient quelques classes de base pour
     les autres librairies du module~;
   \item {\tt libTFELMathCubicSpline.so} contient la gestion des
@@ -242,7 +242,7 @@ dans une section spécifique.
   \item {\tt libTFELMathParser.so} contient des classes dédiées à
     l'interprétation de formules mathématiques complexes à partir de
     chaînes de caractères~;
-  \end{itemize}
+  \end{enumerate}
 \item TFELMaterial contient certains classes utilitaires pour
   l'écriture de propriétés matériau ou loi de comportement mécanique.
 \item le module {\tt TFEL/Exception} contient les bases des classes
@@ -254,23 +254,23 @@ dans une section spécifique.
 \item le module {\tt TFEL/Utilities} contient différentes classes
   utilitaires. Il fournit la librairie {\tt libTFELUtilities.so}~;
 \item le module {\tt TFEL/System} propose :
-  \begin{itemize}
+  \begin{enumerate}
   \item un enrobage \cpp{} de diverses fonctionnalités~:
     \texttt{POSIX}~\cite{blaess05:_progr_c_linux_ipc}~:
-    \begin{itemize}
+    \begin{enumerate}
     \item créations et interaction avec des processus~;
     \item gestion des signaux~;
     \item créations de répertoires, etc..~;
     \item traduction des erreurs \texttt{POSIX} en exceptions~;
-    \end{itemize}
+    \end{enumerate}
   \item des facilités d'appels de fonctions définies dans des
     librairies externes~;
-  \end{itemize}
-\end{itemize}
+  \end{enumerate}
+\end{enumerate}
 
 \paragraph{Modules internes} D'autres modules existent qui ont
 essentiellement vocation à être utilisés en interne~:
-\begin{itemize}
+\begin{enumerate}
 \item le module {\tt TFEL/Metaprogramming} contient des classes
   utilitaires simplifiant la \og~méta-programmation à base de
   template~\fg~\cite{Alexandrescu:2001:MCD:377789,Abrahams:2004:CTM:1044941}.
@@ -284,7 +284,7 @@ essentiellement vocation à être utilisés en interne~:
   bâtir la librairie {\tt MTL} (Matrix Template
   Library)~\cite{Siek:1998:MTL:646894.709706}. Son rôle est essentiel
   pour les performances de la librairie.
-\end{itemize}
+\end{enumerate}
 Ces modules sont constitués de fichiers d'entête uniquement.
 
 Les modules {\tt TFEL/Metaprogramming} et {\tt TFEL/Typetraits}
@@ -461,11 +461,11 @@ particulièrement utilisée pour l'implantation des lois de comportement
 mécanique.
 
 Cette classe {\tt template} est paramétrée par~:
-\begin{itemize}
+\begin{enumerate}
 \item la dimension d'espace~;
 \item le type numérique utilisé~;
 \item une classe de stockage des valeurs.
-\end{itemize}
+\end{enumerate}
 
 \paragraph{Stockage des valeurs} L'idée d'utiliser différentes classes
 de stockage s'est avérée avoir peu d'intérêt pratique~: seul le
@@ -488,14 +488,14 @@ avantages\footnote{Pour pouvoir bénéficier de ces avantages, les lois
   classes {\tt template} paramétrées par l'hypothèse de modélisation
   qui fixe la dimension de l'espace. Elles sont instanciées un fois
   par hypothèse de modélisation supportée.}~:
-\begin{itemize}
+\begin{enumerate}
 \item aucune allocation dynamique n'est faite si l'objet est défini
   sur la pile (les allocations dynamiques sont coûteuses)~;
 \item les accès aux valeurs sur la pile permettent au compilateur
   d'effectuer des optimisations très poussées du code~;
 \item le compilateur peut contrôler à la compilation si l'accès aux
   valeurs est valide.
-\end{itemize}
+\end{enumerate}
 
 \paragraph{Convention} La classe \tclass{stensor} utilise une
 convention particulière, adoptée par certains codes aux éléments
@@ -572,7 +572,7 @@ composante en argument.
 
 \paragraph{Opérations mathématiques} Les opérations suivantes sont
 permises sur les tenseurs d'ordre \(2\) symétriques~:
-\begin{itemize}
+\begin{enumerate}
 \item la négation~;
 \item multiplication à droite et à gauche par un scalaire~;
 \item division à droite par un scalaire~;
@@ -583,7 +583,7 @@ permises sur les tenseurs d'ordre \(2\) symétriques~:
   l'opérateur \(\Hat\) est utilisé. Le résultat est une application
   linéaire sur les tenseurs d'ordre \(2\) symétriques décrite au
   paragraphe~\ref{sec:appl-line-sur}.
-\end{itemize}
+\end{enumerate}
 Les règles de priorité du C++ ne permettent pas de reproduire les
 règles de priorité naturelle pour les produits contracté et tensoriel,
 l'emploi de parenthèse est parfois nécessaire.
@@ -599,12 +599,12 @@ utilisent différentes représentations des tenseurs. En particulier, le
 code aux éléments finis \castem{} utilise la convention de
 \nom{Voigt}~\cite{12:castemcea}. Deux méthodes assurent les
 conversions, si nécessaire~:
-\begin{itemize}
+\begin{enumerate}
 \item la méthode {\tt importVoigt} permet de convertir des valeurs
   utilisant la convention de \nom{Voigt} pour les déformations~;
 \item la méthode {\tt importTab} permet de convertir des valeurs
   utilisant la convention de \nom{Voigt} pour les contraintes.
-\end{itemize}
+\end{enumerate}
 
 \paragraph{Calcul des valeurs propres} Les tenseurs d'ordre \(2\)
 symétriques sont toujours diagonalisables. La méthode
@@ -660,14 +660,14 @@ où \(s^{p}_{i}\) est la \(i\)\ieme valeur propre du tenseur
 \tclass{stensor} présente toutes les caractéristiques d'un container
 de la librairie standard du C++~\cite{stroustrup03:_le_langag_c}. Elle
 définit~:
-\begin{itemize}
+\begin{enumerate}
 \item les alias nécessaires, dont les principaux sont
   \ttypedef{stensor}{iterator}, \ttypedef{stensor}{const\_iterator},
   et \ttypedef{stensor}{value\_type}~;
 \item les méthodes \tmethod{stensor}{begin}, \tmethod{stensor}{end},
   \tmethod{stensor}{rbegin}, \tmethod{stensor}{rend} et
   \tmethod{stensor}{size}.
-\end{itemize}
+\end{enumerate}
 
 \subsubsection{Applications linéaires sur les tenseurs d'ordre $2$
   symétriques}
@@ -684,10 +684,10 @@ tenseurs d'ordre \(4\) qui préservent la symétrie des tenseurs d'ordre
 
 La classe \tclass{st2tost2} est une classe {\tt template} paramétrée
 par~:
-\begin{itemize}
+\begin{enumerate}
 \item la dimension d'espace~;
 \item le type numérique utilisé.
-\end{itemize}
+\end{enumerate}
 
 
 \paragraph{Représentation matricielle} Les tenseurs d'ordre \(4\) sont
@@ -705,7 +705,7 @@ exactement celle de son tableau de valeurs.
 
 Ces choix présentent les mêmes avantages que pour les tenseurs d'ordre
 \(2\) symétriques~:
-\begin{itemize}
+\begin{enumerate}
 \item aucune allocation dynamique n'est faite si l'objet est défini
   sur la pile~;
 \item les accès aux valeurs sur la pile permettent au compilateur
@@ -715,17 +715,45 @@ Ces choix présentent les mêmes avantages que pour les tenseurs d'ordre
   inversement~;
 \item le compilateur peut contrôler à la compilation si l'accès aux
   valeurs est valide.
-\end{itemize}
+\end{enumerate}
+
+\subsubsection{Tenseurs d'ordre 2}
+
+La classe \tclass{tensor} implémente des tenseurs d'ordre \(2\) non
+symétriques.
+
+\paragraph{Fonctions utiles} Différentes fonctions sont les tenseurs
+d'ordre \(2\) ont été implantées~:
+\begin{enumerate}
+\item la fonction \tfunc{det} calcule le déterminant d'un tenseur~;
+\item la fonction \tfunc{computeRightCauchyGreenTensor} calcule le
+  tenseur de \nom{Cauchy}-\nom{Green} droit \(C\) d'un tenseur \(F\)~:
+  \[
+  C = \transpose{F}\,\dot\,F
+  \]
+  Le résultat est un tenseur d'ordre \(2\) symétrique de type
+  \tclass{stensor}.
+\item la fonction \tfunc{computeLeftCauchyGreenTensor} calcule le
+  tenseur de \nom{Cauchy}-\nom{Green} gauche \(B\) d'un tenseur
+  \(F\)~:
+  \[
+  B = F\,\dot\,\transpose{F}
+  \]
+  Le résultat est un tenseur d'ordre \(2\) symétrique de type
+  \tclass{stensor}.
+\item la fonction \tfunc{syme} symétrise un tenseur. Le résultat est
+  un tenseur d'ordre \(2\) symétrique.
+\end{enumerate}
 
 \subsubsection{Vecteurs}
 
 Deux types de vecteurs sont implantés~:
-\begin{itemize}
+\begin{enumerate}
 \item des vecteurs de petite taille connue à la compilation. Ils sont
   implantés par la classe \tclass{tvector}~;
 \item des vecteurs de taille quelconque. Ils sont implantés dans la
   classe \tclass{vector}
-\end{itemize}
+\end{enumerate}
 
 Ces deux classes implémentent le concept
 \tclass{VectorConcept}\footnote{La notion de concept dans \TFEL{} est
@@ -738,12 +766,12 @@ Ces deux classes implémentent le concept
 \subsubsection{Matrices}
 
 Deux types de matrices sont implantés~:
-\begin{itemize}
+\begin{enumerate}
 \item des matrices de petite taille connue à la compilation. Ils sont
   implantés par la classe \tclass{tmatrix}~;
 \item des matrices de taille quelconque. Ils sont implantés dans la
   classe \tclass{matrix}
-\end{itemize}
+\end{enumerate}
 
 Ces deux classes implémentent le concept
 \tclass{MatrixConcept}\footnote{La notion de concept dans \TFEL{} est
@@ -780,11 +808,11 @@ A = Q\,R
 \]
 où~:
 \begin{minipage}[htbp]{0.9\linewidth}
-  \begin{itemize}
+  \begin{enumerate}
   \item \(Q\) est une matrice orthogonale de format \(\paren{M,M}\)~;
   \item \(R\) est une matrice triangulaire supérieure de format
     \(M,N\).
-  \end{itemize}
+  \end{enumerate}
 \end{minipage}
 
 Une telle décomposition peut être obtenue par une série de
@@ -809,7 +837,7 @@ du livre de P. Lascaux et R. Théodor~\cite{opac-b1123463}.
 La classe \tclass{QRDecomp} réalise cette factorisation par la méthode
 de \nom{HouseHolder} et propose différentes méthodes pour travailler
 avec cette décomposition~:
-\begin{itemize}
+\begin{enumerate}
 \item la méthode \tmethod{QRDecomp}{exe} réalise la décomposition de
   la matrice. Cette méthode s'appuie sur un vecteur auxiliaire qui
   contient les éléments diagonaux de la matrice \(R\) (voir paragraphe
@@ -828,7 +856,7 @@ avec cette décomposition~:
   \[
   R\,x = b
   \]
-\end{itemize}
+\end{enumerate}
 
 \paragraph{Stockage de la décomposition} Les termes diagonaux de \(R\)
 sont stockés dans un vecteur annexe. Les termes non situés sur la
@@ -855,14 +883,14 @@ Le problème linéaire \(A\,x=b\) est donc équivalent au problème~:
 
 La solution du problème~\eqref{eq:tfel:QR:lin_solve} peut être obtenue
 par les opérations suivantes~:
-\begin{itemize}
+\begin{enumerate}
 \item décomposition de la matrice \(A\) par la méthode
   \tmethod{QRDecomp}{exe}~;
 \item calcul du vecteur \(y\) par la méthode
   \tmethod{QRDecomp}{tq\_product}~;
 \item inversion du système triangulaire \(R\,x=y\) par la méthode
   \tmethod{QRDecomp}{back\_substitute}.
-\end{itemize}
+\end{enumerate}
 
 À la fin de ses opérations, le vecteur \(b\) contient la solution du
 problème~\eqref{eq:tfel:QR:lin_solve} et la matrice \(A\) contient les
@@ -960,7 +988,7 @@ tenseurs quelque soit la dimension. Il est alors nécessaire de stocker
 la dimension d'espace dans le tenseur. Toutes les opérations
 tensorielles doivent faire appel à des boucles sur allant de \(0\) à la
 taille du tenseur. Cette méthode présente plusieurs désavantages~:
-\begin{itemize}
+\begin{enumerate}
   \item la définition d'un champ de tenseur, où l'on attribue un tenseur
   à chaque point de discrétisation d'un domaine géométrique, conduit à
   une gaspillage de mémoire~;
@@ -972,7 +1000,7 @@ taille du tenseur. Cette méthode présente plusieurs désavantages~:
   le code et ralentit l'exécution~;
   \item il est nécessaire de passer la dimension d'espace au
   constructeur des objets, ce qui alourdit l'écriture.
-\end{itemize}
+\end{enumerate}
 
 Nous avons choisi une solution qui nous est apparue plus avantageuse et
 consistant à paramétrer les tenseurs par la dimension d'espace~: un
@@ -1089,7 +1117,7 @@ contrainte équivalente, etc..).
 Il pourrait être tenté d'utiliser une classe mère abstraite et des
 méthodes virtuelles associées. Cette approche est incompatible avec
 les choix de conception précédent~:
-\begin{itemize}
+\begin{enumerate}
 \item il est nécessaire d'allouer les objets sur le tas et de
   manipuler des pointeurs ce qui est à la fois inefficace et
   incompatible avec une écriture proche de l'écriture mathématique
@@ -1097,7 +1125,7 @@ les choix de conception précédent~:
 \item l'utilisation de méthodes virtuelles ruine toutes les
   optimisations que nous avons cherchées à mettre en place dans les
   paragraphes précédents.
-\end{itemize}
+\end{enumerate}
 
 Une autre technique d'abstraction est donc nécessaire. De nombreuses
 recherches ont permis de dégager la notion de \og~concept~\fg{}. Cette
@@ -1109,7 +1137,7 @@ générale que celle proposée pour le futur standard mais qui est basée
 sur le standard actuel. La notion de concept dans \TFEL{} repose sur la
 combinaison de différentes techniques de programmation relativement
 pointues~:
-\begin{itemize}
+\begin{enumerate}
   \item une classe \texttt{S} implante la notion de concept en dérivant
   de la classe \texttt{StensorConcept<S>}~: \texttt{S} hérite d'une
   classe dont elle est paramètre. Cette technique, appelée
@@ -1174,7 +1202,7 @@ pointues~:
     \end{minipage}
   \end{center}
 
-\end{itemize}
+\end{enumerate}
 
 L'application de toutes ces techniques permet au compilateur de
 traduire la trace de la somme de deux tenseurs \texttt{s1} et
@@ -1287,7 +1315,7 @@ avec les conventions des distributions \mandriva{} (entre autres), on
 utilisera l'option \varcpp{-DLIB\textunderscore{}\-SUFFIX=64}.
 
 Les options suivantes sont disponibles~:
-\begin{itemize}
+\begin{enumerate}
   \item \varcpp{-DENABLE-STATIC=ON/OFF}, qui demande la
   compilation de librairies statiques en plus de librairies dynamiques.
   Par défaut, cette option est désactivée~;
@@ -1307,10 +1335,10 @@ Les options suivantes sont disponibles~:
   comportement) sans utiliser une installation de \castem{}. \TFEL{}
   fournira alors sa propre version du fichier d'entête
   \texttt{castem.h}. Par défaut, cette option est désactivée~;
-\end{itemize}
+\end{enumerate}
 
 Cette phase de préparation va automatiquement rechercher~:
-\begin{itemize}
+\begin{enumerate}
   \item un installation valide de \castem{}, si l'option
   \varcpp{-Dlocal-castem-header} n'a pas été spécifiée. Cette recherche
   peut être facilitée en définissant la variable
@@ -1325,7 +1353,7 @@ Cette phase de préparation va automatiquement rechercher~:
   construite~;
   \item une installation valide de \doxygen{}~;
   \item une installation valide de \latex{}~;
-\end{itemize}
+\end{enumerate}
 
 Il est possible de préciser le compilateur à utiliser par les
 variables d'environnement \env{CC} (compilateur \texttt{c}), \env{CXX}
@@ -1370,7 +1398,7 @@ documentation de \TFEL{} est générée par la commande~:
 }
 
 Cette documentation se décompose en deux parties~:
-\begin{itemize}
+\begin{enumerate}
   \item une documentation informatique générée par \doxygen{} (si
   cet outil est disponible). Cette documentation peut être générée
   indépendamment par la commande~:
@@ -1379,7 +1407,7 @@ Cette documentation se décompose en deux parties~:
   \latex{} est disponible. Cette documentation peut être générée
   indépendamment par la commande~:
   \bash{make doc-pdf}
-\end{itemize}
+\end{enumerate}
 
 \paragraph{Installation de la documentation} La
 documentation de \TFEL{} est installée par la commande~:
@@ -1453,7 +1481,7 @@ L'option \varcpp{-{}-prefix} permet de préciser le répertoire
 d'installation.
 
 Les options suivantes sont disponibles~:
-\begin{itemize}
+\begin{enumerate}
   \item \varcpp{-{}-enable-production}, qui permet de produire
   une version optimisée (choix par défaut)~;
   \item \varcpp{-{}-enable-debug}, qui permet de produire une
@@ -1478,10 +1506,10 @@ Les options suivantes sont disponibles~:
   cette option est désactivée~;
   \item \varcpp{-{}-with-castem=xxx} qui permet de préciser le
   répertoire d'installation de \castem{}~;
-\end{itemize}
+\end{enumerate}
 
 Cette phase de préparation va automatiquement rechercher~:
-\begin{itemize}
+\begin{enumerate}
   \item un installation valide de \castem{}, si l'option
   \varcpp{-{}-local-castem-header} n'a pas été spécifiée. Cette
   recherche peut être facilitée en utilisant l'option
@@ -1494,7 +1522,7 @@ Cette phase de préparation va automatiquement rechercher~:
   construite~;
   \item une installation valide de \doxygen{}~;
   \item une installation valide de \latex{}~;
-\end{itemize}
+\end{enumerate}
 
 Il est possible de préciser le compilateur à utiliser par les
 variables d'environnement \env{CC} (compilateur \texttt{c}), \env{CXX}
@@ -1539,7 +1567,7 @@ documentation de \TFEL{} est installée par la commande~:
 }
 
 Cette documentation se décompose en deux parties~:
-\begin{itemize}
+\begin{enumerate}
   \item une documentation informatique générée par \doxygen{} (si
   cet outil est disponible). Cette documentation peut être générée
   indépendamment par la commande~:
@@ -1548,12 +1576,12 @@ Cette documentation se décompose en deux parties~:
   \latex{} est disponible. Cette documentation peut être générée
   indépendamment par la commande~:
   \bash{ make doc-pdf}
-\end{itemize}
+\end{enumerate}
 
 \subsection{Description du répertoire d'installation}
 
 Le répertoire d'installation contient quatre répertoires~:
-\begin{itemize}
+\begin{enumerate}
   \item le répertoire \texttt{bin} contient les exécutables
   produits~;
   \item le répertoire \texttt{lib} contient les librairies
@@ -1562,7 +1590,7 @@ Le répertoire d'installation contient quatre répertoires~:
   d'entête des différentes librairies de \TFEL{}~
   \item le répertoire \texttt{share} contient des tests et des
   fichiers d'exemple.
-\end{itemize}
+\end{enumerate}
 
 Le répertoire \texttt{share/mfront/tests/behaviours} contient un
 ensemble de fichiers de tests \mfront{} qui peut servir d'exemple.

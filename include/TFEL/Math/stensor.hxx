@@ -28,6 +28,7 @@
 #include"TFEL/Math/Function/Power.hxx"
 
 #include"TFEL/Math/Vector/VectorUtilities.hxx"
+#include"TFEL/Math/Vector/VectorConcept.hxx"
 #include"TFEL/Math/Stensor/StensorNullStorage.hxx"
 #include"TFEL/Math/Stensor/StensorConcept.hxx"
 #include"TFEL/Math/Stensor/StensorConceptOperations.hxx"
@@ -297,8 +298,22 @@ namespace tfel{
       static TFEL_MATH_INLINE2
       typename tfel::meta::EnableIf<
 	tfel::typetraits::IsAssignableTo<typename MatrixTraits<MatrixType>::NumType,T>::cond,
-	stensor<N,T,Storage> >::type
+	stensor<N,T,StensorStatic> >::type
        buildFromMatrix(const MatrixType&);
+
+      /*!
+       * build a symmetric tensor from the diadic product of a vector with itself
+       * \param[in] v : vector
+       */
+      template<typename VectorType>
+      static TFEL_MATH_INLINE2
+      typename tfel::meta::EnableIf<
+	tfel::typetraits::IsAssignableTo<
+	  typename ComputeUnaryResult<typename VectorTraits<VectorType>::NumType,
+				      Power<2> >::Result,T
+	  >::cond,
+	stensor<N,T,StensorStatic> >::type
+       buildFromVectorDiadicProduct(const VectorType&);
 
     private:      
       //! a simple check
@@ -366,6 +381,39 @@ namespace tfel{
 					   typename StensorTraits<StensorType>::NumType,OpDiv>::Result>
       >::type
     invert(const StensorType&);
+
+    template<typename StensorType>
+    TFEL_MATH_INLINE2
+    typename tfel::meta::EnableIf<
+      ((tfel::meta::Implements<StensorType,StensorConcept>::cond)&&
+       (StensorTraits<StensorType>::dime==1u) &&
+       (tfel::typetraits::IsFundamentalNumericType<typename StensorTraits<StensorType>::NumType>::cond)),
+      stensor<1u,typename StensorTraits<StensorType>::NumType>
+    >::type
+    logarithm(const StensorType&,
+	      const bool = false);
+
+    template<typename StensorType>
+    TFEL_MATH_INLINE2
+    typename tfel::meta::EnableIf<
+      ((tfel::meta::Implements<StensorType,StensorConcept>::cond)&&
+       (StensorTraits<StensorType>::dime==2u) &&
+       (tfel::typetraits::IsFundamentalNumericType<typename StensorTraits<StensorType>::NumType>::cond)),
+      stensor<2u,typename StensorTraits<StensorType>::NumType>
+    >::type
+    logarithm(const StensorType&,
+	      const bool = false);
+
+    template<typename StensorType>
+    TFEL_MATH_INLINE2
+    typename tfel::meta::EnableIf<
+      ((tfel::meta::Implements<StensorType,StensorConcept>::cond)&&
+       (StensorTraits<StensorType>::dime==3u) &&
+       (tfel::typetraits::IsFundamentalNumericType<typename StensorTraits<StensorType>::NumType>::cond)),
+      stensor<3u,typename StensorTraits<StensorType>::NumType>
+    >::type
+    logarithm(const StensorType&,
+	      const bool = false);
     
   } // end of namespace math
 

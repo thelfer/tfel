@@ -1,1 +1,2 @@
+SUBDIRS=dgibi
 EXTRA_DIST=CMakeLists.txt

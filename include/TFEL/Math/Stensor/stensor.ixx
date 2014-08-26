@@ -149,12 +149,12 @@ namespace tfel{
       template<>
       struct BuildStensorFromMatrix<1u>
       {
-	template<typename T,template<unsigned short,typename> class Storage,typename MatrixType>
+	template<typename T,typename MatrixType>
 	static TFEL_MATH_INLINE2 TFEL_VISIBILITY_LOCAL
 	typename tfel::meta::EnableIf<
 	  tfel::typetraits::IsAssignableTo<typename MatrixTraits<MatrixType>::NumType,T>::cond,
 	  void>::type
-	exe(stensor<1u,T,Storage>& s,const MatrixType& m){
+	exe(stensor<1u,T,StensorStatic>& s,const MatrixType& m){
 	  using namespace std;
 	  s[0] = m(0,0);
 	  s[1] = m(1,1);
@@ -165,12 +165,12 @@ namespace tfel{
       template<>
       struct BuildStensorFromMatrix<2u>
       {
-	template<typename T,template<unsigned short,typename> class Storage,typename MatrixType>
+	template<typename T,typename MatrixType>
 	static TFEL_MATH_INLINE2 TFEL_VISIBILITY_LOCAL
 	typename tfel::meta::EnableIf<
 	  tfel::typetraits::IsAssignableTo<typename MatrixTraits<MatrixType>::NumType,T>::cond,
 	  void>::type
-	exe(stensor<2u,T,Storage>& s,const MatrixType& m){
+	exe(stensor<2u,T,StensorStatic>& s,const MatrixType& m){
 	  using namespace std;
 	  using namespace tfel::typetraits;
 	  typedef typename BaseType<T>::type real;
@@ -185,12 +185,12 @@ namespace tfel{
       template<>
       struct BuildStensorFromMatrix<3u>
       {
-	template<typename T,template<unsigned short,typename> class Storage,typename MatrixType>
+	template<typename T,typename MatrixType>
 	static TFEL_MATH_INLINE2 TFEL_VISIBILITY_LOCAL
 	typename tfel::meta::EnableIf<
 	  tfel::typetraits::IsAssignableTo<typename MatrixTraits<MatrixType>::NumType,T>::cond,
 	  void>::type
-	exe(stensor<3u,T,Storage>& s,const MatrixType& m){
+	exe(stensor<3u,T,StensorStatic>& s,const MatrixType& m){
 	  using namespace std;
 	  using namespace tfel::typetraits;
 	  typedef typename BaseType<T>::type real;
@@ -201,6 +201,73 @@ namespace tfel{
 	  s[3] = (m(0,1)+m(1,0))*cste;
 	  s[4] = (m(0,2)+m(2,0))*cste;
 	  s[5] = (m(2,1)+m(1,2))*cste;
+	}
+      };
+
+      template<unsigned short N>
+      struct BuildStensorFromVectorDiadicProduct;
+      
+      template<>
+      struct BuildStensorFromVectorDiadicProduct<1u>
+      {
+	template<typename T,typename VectorType>
+	static TFEL_MATH_INLINE2 TFEL_VISIBILITY_LOCAL
+	typename tfel::meta::EnableIf<
+	  tfel::typetraits::IsAssignableTo<
+	    typename ComputeUnaryResult<typename VectorTraits<VectorType>::NumType,Power<2> >::Result,T
+	    >::cond,
+	  void>::type
+	exe(stensor<1u,T,StensorStatic>& s,const VectorType& v){
+	  using namespace std;
+	  s[0] = v(0)*v(0);
+	  s[1] = v(1)*v(1);
+	  s[2] = v(2)*v(2);
+	}
+      };
+    
+      template<>
+      struct BuildStensorFromVectorDiadicProduct<2u>
+      {
+	template<typename T,typename VectorType>
+	static TFEL_MATH_INLINE2 TFEL_VISIBILITY_LOCAL
+	typename tfel::meta::EnableIf<
+	  tfel::typetraits::IsAssignableTo<
+	    typename ComputeUnaryResult<typename VectorTraits<VectorType>::NumType,Power<2> >::Result,T
+	    >::cond,
+	  void>::type
+	exe(stensor<2u,T,StensorStatic>& s,const VectorType& v){
+	  using namespace std;
+	  using namespace tfel::typetraits;
+	  typedef typename BaseType<T>::type real;
+	  static const real cste = sqrt(real(2));
+	  s[0] = v(0)*v(0);
+	  s[1] = v(1)*v(1);
+	  s[2] = v(2)*v(2);
+	  s[3] = v(0)*v(1)*cste;
+	}
+      };
+      
+      template<>
+      struct BuildStensorFromVectorDiadicProduct<3u>
+      {
+	template<typename T,typename VectorType>
+	static TFEL_MATH_INLINE2 TFEL_VISIBILITY_LOCAL
+	typename tfel::meta::EnableIf<
+	  tfel::typetraits::IsAssignableTo<
+	    typename ComputeUnaryResult<typename VectorTraits<VectorType>::NumType,Power<2> >::Result,T
+	    >::cond,
+	  void>::type
+	exe(stensor<3u,T,StensorStatic>& s,const VectorType& v){
+	  using namespace std;
+	  using namespace tfel::typetraits;
+	  typedef typename BaseType<T>::type real;
+	  static const real cste = sqrt(real(2));
+	  s[0] = v(0)*v(0);
+	  s[1] = v(1)*v(1);
+	  s[2] = v(2)*v(2);
+	  s[3] = v(0)*v(1)*cste;
+	  s[4] = v(0)*v(2)*cste;
+	  s[5] = v(1)*v(2)*cste;
 	}
       };
       
@@ -578,11 +645,98 @@ namespace tfel{
     template<typename MatrixType>
     typename tfel::meta::EnableIf<
       tfel::typetraits::IsAssignableTo<typename MatrixTraits<MatrixType>::NumType,T>::cond,
-      stensor<N,T,Storage> >::type
+      stensor<N,T,StensorStatic> >::type
     stensor<N,T,Storage>::buildFromMatrix(const MatrixType& m){
       stensor<N,T,Storage> s;
       tfel::math::internals::BuildStensorFromMatrix<N>::exe(s,m);
       return s;
+    }
+
+    template<unsigned short N,typename T,template<unsigned short,typename> class Storage>
+    template<typename VectorType>
+    typename tfel::meta::EnableIf<
+      tfel::typetraits::IsAssignableTo<
+	typename ComputeUnaryResult<typename VectorTraits<VectorType>::NumType,Power<2> >::Result,T
+      >::cond,
+      stensor<N,T,StensorStatic> >::type
+    stensor<N,T,Storage>::buildFromVectorDiadicProduct(const VectorType& m){
+      stensor<N,T,Storage> s;
+      tfel::math::internals::BuildStensorFromVectorDiadicProduct<N>::exe(s,m);
+      return s;
+    }
+
+    template<typename StensorType>
+    typename tfel::meta::EnableIf<
+      ((tfel::meta::Implements<StensorType,StensorConcept>::cond)&&
+       (StensorTraits<StensorType>::dime==1u) &&
+       (tfel::typetraits::IsFundamentalNumericType<typename StensorTraits<StensorType>::NumType>::cond)),
+      stensor<1u,typename StensorTraits<StensorType>::NumType>
+    >::type
+    logarithm(const StensorType& s,
+    	const bool b)
+    {
+      typedef typename StensorTraits<StensorType>::NumType real;
+      stensor<1u,real> l;
+      l(0) = std::log(s(0));
+      l(1) = std::log(s(1));
+      l(2) = std::log(s(2));
+      return l;
+    }
+
+    template<typename StensorType>
+    typename tfel::meta::EnableIf<
+      ((tfel::meta::Implements<StensorType,StensorConcept>::cond)&&
+       (StensorTraits<StensorType>::dime==2u) &&
+       (tfel::typetraits::IsFundamentalNumericType<typename StensorTraits<StensorType>::NumType>::cond)),
+      stensor<2u,typename StensorTraits<StensorType>::NumType>
+    >::type
+    logarithm(const StensorType& s_,
+    	const bool b)
+    {
+      typedef typename StensorTraits<StensorType>::NumType real;
+      typedef typename tfel::typetraits::BaseType<real>::type base;
+      static const base cste = std::sqrt(2);
+      tvector<3u,real> vp;
+      tmatrix<3u,3u,base> m;
+      stensor<2u,real> s(s_);
+      s.computeEigenVectors(vp,m,b);
+      const real l0 = std::log(vp(0));
+      const real l1 = std::log(vp(1));
+      const real l2 = std::log(vp(2));
+      const stensor<2u,real> n0 = stensor<2u,real>::buildFromVectorDiadicProduct(m.template column_view<0,0>());
+      const stensor<2u,real> n1 = stensor<2u,real>::buildFromVectorDiadicProduct(m.template column_view<1,0>());
+      stensor<2u> l;
+      l(0)=l0*n0(0)+l1*n1(0);
+      l(1)=l0*n0(1)+l1*n1(1);
+      l(2) = l2;
+      l(3)=l0*n0(3)+l1*n1(3);
+      return l;
+    }
+
+    template<typename StensorType>
+    typename tfel::meta::EnableIf<
+      ((tfel::meta::Implements<StensorType,StensorConcept>::cond)&&
+       (StensorTraits<StensorType>::dime==3u) &&
+       (tfel::typetraits::IsFundamentalNumericType<typename StensorTraits<StensorType>::NumType>::cond)),
+      stensor<3u,typename StensorTraits<StensorType>::NumType>
+    >::type
+    logarithm(const StensorType& s_,
+    	const bool b)
+    {
+      typedef typename StensorTraits<StensorType>::NumType real;
+      typedef typename tfel::typetraits::BaseType<real>::type base;
+      static const base cste = std::sqrt(2);
+      tvector<3u,real> vp;
+      tmatrix<3u,3u,base> m;
+      stensor<2u,real> s(s_);
+      s.computeEigenVectors(vp,m,b);
+      const real l0 = std::log(vp(0));
+      const real l1 = std::log(vp(1));
+      const real l2 = std::log(vp(2));
+      const stensor<3u,real> n0 = stensor<3u,real>::buildFromVectorDiadicProduct(m.template column_view<0,0>());
+      const stensor<3u,real> n1 = stensor<3u,real>::buildFromVectorDiadicProduct(m.template column_view<1,0>());
+      const stensor<3u,real> n2 = stensor<3u,real>::buildFromVectorDiadicProduct(m.template column_view<2,0>());
+      return l0*n0+l1*n1+l2*n2;
     }
     
 #endif

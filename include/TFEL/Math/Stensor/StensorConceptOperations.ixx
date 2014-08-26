@@ -46,6 +46,20 @@ namespace tfel{
     typename tfel::meta::EnableIf<
       tfel::meta::Implements<T1,StensorConcept>::cond&&
       tfel::meta::Implements<T2,StensorConcept>::cond&&
+      !tfel::typetraits::IsInvalid<typename ComputeBinaryResult<T1,T2,OpMult>::Result>::cond,
+      typename ComputeBinaryResult<T1,T2,OpMult>::Handle
+    >::type
+    operator * (const T1& a,const T2& b)
+    {
+      typedef typename ComputeBinaryResult<T1,T2,OpMult>::Handle Handle;
+      return  Handle(a,b);
+    }
+
+    template<typename T1,typename T2>
+    TFEL_MATH_INLINE 
+    typename tfel::meta::EnableIf<
+      tfel::meta::Implements<T1,StensorConcept>::cond&&
+      tfel::meta::Implements<T2,StensorConcept>::cond&&
       !tfel::typetraits::IsInvalid<typename ComputeBinaryResult<T1,T2,OpDiadicProduct>::Result>::cond,
       typename ComputeBinaryResult<T1,T2,OpDiadicProduct>::Handle
     >::type

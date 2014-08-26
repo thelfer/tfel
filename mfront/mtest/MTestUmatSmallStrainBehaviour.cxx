@@ -441,7 +441,7 @@ namespace mfront
 	drot(i,j) = r(j,i);
       }
     }
-    UMATInt kinc(0);
+    UMATInt kinc(1);
     stensor<3u,real> ue0(real(0));
     stensor<3u,real> ude(real(0));
     copy(e0.begin(),e0.end(),ue0.begin());
@@ -459,7 +459,7 @@ namespace mfront
 		&ev0(0)+1,&dev(0)+1,
 		&iv(0),&nstatv,&s1(0),
 		&ndi,&kinc);
-    if(kinc!=0){
+    if(kinc!=1){
       return false;
     }
     if(!iv1.empty()){

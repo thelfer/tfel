@@ -159,10 +159,9 @@ namespace mfront{
 	throw(runtime_error(msg));
       }
       ++(current);
+      return make_pair(true,current);      
     }
-
     return make_pair(false,current);
-
   } // end of treatKeyword
 
   std::string
@@ -309,7 +308,8 @@ namespace mfront{
   MFrontUMATInterface::checkIfElasticPropertiesAreDeclared(const MechanicalBehaviourDescription& mb) const
   {
     using namespace std;
-    if(mb.getBehaviourType()==MechanicalBehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR){
+    if((mb.getBehaviourType()==MechanicalBehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR)||
+       (mb.getBehaviourType()==MechanicalBehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR)){
       if(mb.getSymmetryType()==mfront::ISOTROPIC){
 	vector<string> mps;
 	mps.push_back("young");
@@ -454,6 +454,8 @@ namespace mfront{
     out << "> >{\n";
     if(mb.getBehaviourType()==MechanicalBehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR){
       out << "static const UMATBehaviourType btype  = SMALLSTRAINSTANDARDBEHAVIOUR;\n";
+    } else if(mb.getBehaviourType()==MechanicalBehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR){
+      out << "static const UMATBehaviourType btype  = FINITESTRAINSTANDARDBEHAVIOUR;\n";
     } else if(mb.getBehaviourType()==MechanicalBehaviourDescription::COHESIVEZONEMODEL){
       out << "static const UMATBehaviourType btype  = COHESIVEZONEMODEL;\n";
     } else {
@@ -650,12 +652,12 @@ namespace mfront{
       out << "UMATFiniteStrain::computeGreenLagrangeStrain(eto,F0,*NTENS);\n";
       out << "UMATFiniteStrain::computeGreenLagrangeStrain(deto,F1,*NTENS);\n";
       out << "for(i=0;i!=*NTENS;++i){\n";
-      out << "deto[i] -= eto[i]\n";
+      out << "deto[i] -= eto[i];\n";
       out << "}\n";
       out << "umat::UMATInterface<tfel::material::" << className 
 	  << ">::exe(NTENS,DTIME,DROT,DDSOE,eto,deto,TEMP,DTEMP,PROPS,NPROPS,"
 	  << "PREDEF,DPRED,STATEV,NSTATV,STRESS,NDI,KINC);\n";
-      out << "if(*KINC==0){\n";
+      out << "if(*KINC==1){\n";
       out << "UMATFiniteStrain::computeCauchyStressFromSecondPiolaKirchhoffStress(STRESS,F1,*NTENS);\n";
       out << "}\n";
       out << "}\n\n";
@@ -694,7 +696,7 @@ namespace mfront{
 	  << ">::exe(NTENS,DTIME,DROT,DDSOE,STRAN,DSTRAN,TEMP,DTEMP,PROPS,NPROPS,"
 	  << "PREDEF,DPRED,STATEV,NSTATV,STRESS,NDI,KINC);\n";
       if(this->generateMTestFile){
-	out << "if(*KINC!=0){\n";
+	out << "if(*KINC!=1){\n";
 	this->generateMTestFile2(out,library,material,name,mb,
 				 glossaryNames,entryNames);
 	out << "}\n";

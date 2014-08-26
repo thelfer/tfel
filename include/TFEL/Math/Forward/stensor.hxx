@@ -14,6 +14,12 @@ namespace tfel
   namespace math
   {
 
+    template<class T>
+    class StensorConcept ;
+
+    template<class T>
+    class StensorTraits;
+
     template<unsigned short N, typename T>
     struct StensorNullStorage;
 

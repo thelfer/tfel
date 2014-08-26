@@ -309,6 +309,27 @@ namespace mfront{
     this->mvariables.insert(MVType(eto,sig));
     this->type = MechanicalBehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR;
   }
+
+  void
+  MechanicalBehaviourDescription::declareAsAFiniteStrainStandardBehaviour(void)
+  {
+    using namespace std;
+    typedef map<DrivingVariable,ThermodynamicForce>::value_type MVType;
+    if(!this->mvariables.empty()){
+      string msg("MechanicalBehaviourDescription::declareAsAFiniteStrainStandardBehaviour : ");
+      msg += "some driving variables are already declared";
+      throw(runtime_error(msg));
+    }
+    DrivingVariable F;
+    F.name = "F";
+    F.type = "DeformationGradientTensor";
+    F.increment_known = false;
+    ThermodynamicForce sig;
+    sig.name = "sig";
+    sig.type = "StressStensor";
+    this->mvariables.insert(MVType(F,sig));
+    this->type = MechanicalBehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR;
+  }
     
   void
   MechanicalBehaviourDescription::declareAsACohesiveZoneModel(void)
@@ -413,8 +434,10 @@ namespace mfront{
       return t.str();
     } else if(this->type==SMALLSTRAINSTANDARDBEHAVIOUR){
       return "StiffnessTensor";
+    } else if(this->type==FINITESTRAINSTANDARDBEHAVIOUR){
+      return "tfel::math::tmatrix<TensorSize,StensorSize,stress>";
     } else if(this->type==COHESIVEZONEMODEL){
-      return "tfel::math::tmatrix<N,N,real>";
+      return "tfel::math::tmatrix<N,N,stress>";
     }
     string msg("MechanicalBehaviourDescription::getStiffnessOperatorType : "
 	       "internal error (unsupported behaviour type)");

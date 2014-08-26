@@ -48,6 +48,12 @@ cmake typical usage
 
 cmake ../trunk -DCMAKE_BUILD_TYPE=Release -Dlocal-castem-header=ON -Denable-fortran=ON -Denable-python=ON -Denable-python-bindings=ON -Denable-aster=ON -DCMAKE_INSTALL_PREFIX=/home/th202608/codes/tfel/trunk/install
 
+cmake for PLEIADES users
+========================
+
+ccmake ../trunk -DCMAKE_BUILD_TYPE=Release  -DCASTEM_INSTALL_PATH=/home/th202608/codes/castem/2012/install/ -Denable-castem-pleiades=ON -Denable-fortran=ON -Denable-python=ON -Denable-python-bindings=ON -Denable-aster=ON -DCMAKE_INSTALL_PREFIX=/home/th202608/codes/tfel/trunk/install
+
+
 main targets:
 =============
 

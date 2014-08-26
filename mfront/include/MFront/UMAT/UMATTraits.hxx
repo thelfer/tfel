@@ -13,6 +13,7 @@ namespace umat{
 
   enum UMATBehaviourType{
     SMALLSTRAINSTANDARDBEHAVIOUR,
+    FINITESTRAINSTANDARDBEHAVIOUR,
     COHESIVEZONEMODEL
   }; // end of enum UMATBehaviourType
 

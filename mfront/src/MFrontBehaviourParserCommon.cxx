@@ -1106,28 +1106,29 @@ namespace mfront{
     } else {
       file << "typedef tfel::config::Types<N,Type,false> Types;\n";
     }
-    file << "typedef typename Types::real                   real;\n";
-    file << "typedef typename Types::time                   time;\n";
-    file << "typedef typename Types::frequency              frequency;\n";
-    file << "typedef typename Types::stress                 stress;\n";
-    file << "typedef typename Types::strain                 strain;\n";
-    file << "typedef typename Types::strainrate             strainrate;\n";
-    file << "typedef typename Types::stressrate             stressrate;\n";
-    file << "typedef typename Types::temperature            temperature;\n";
-    file << "typedef typename Types::thermalexpansion       thermalexpansion;\n";
-    file << "typedef typename Types::density                density;\n";
-    file << "typedef typename Types::TVector                TVector;\n";
-    file << "typedef typename Types::Stensor                Stensor;\n";
-    file << "typedef typename Types::Stensor4               Stensor4;\n";
-    file << "typedef typename Types::FrequencyStensor       FrequencyStensor;\n";
-    file << "typedef typename Types::ForceTVector           ForceTVector;\n";
-    file << "typedef typename Types::StressStensor          StressStensor;\n";
-    file << "typedef typename Types::StrainRateStensor      StressRateStensor;\n";
-    file << "typedef typename Types::DisplacementTVector    DisplacementTVector;\n";
-    file << "typedef typename Types::StrainStensor          StrainStensor;\n";
-    file << "typedef typename Types::StrainRateStensor      StrainRateStensor;\n";
-    file << "typedef typename Types::StiffnessTensor        StiffnessTensor;\n";
-    file << "typedef typename Types::ThermalExpansionTensor ThermalExpansionTensor;\n";
+    file << "typedef typename Types::real                      real;\n";
+    file << "typedef typename Types::time                      time;\n";
+    file << "typedef typename Types::frequency                 frequency;\n";
+    file << "typedef typename Types::stress                    stress;\n";
+    file << "typedef typename Types::strain                    strain;\n";
+    file << "typedef typename Types::strainrate                strainrate;\n";
+    file << "typedef typename Types::stressrate                stressrate;\n";
+    file << "typedef typename Types::temperature               temperature;\n";
+    file << "typedef typename Types::thermalexpansion          thermalexpansion;\n";
+    file << "typedef typename Types::density                   density;\n";
+    file << "typedef typename Types::TVector                   TVector;\n";
+    file << "typedef typename Types::Stensor                   Stensor;\n";
+    file << "typedef typename Types::Stensor4                  Stensor4;\n";
+    file << "typedef typename Types::FrequencyStensor          FrequencyStensor;\n";
+    file << "typedef typename Types::ForceTVector              ForceTVector;\n";
+    file << "typedef typename Types::StressStensor             StressStensor;\n";
+    file << "typedef typename Types::StrainRateStensor         StressRateStensor;\n";
+    file << "typedef typename Types::DisplacementTVector       DisplacementTVector;\n";
+    file << "typedef typename Types::StrainStensor             StrainStensor;\n";
+    file << "typedef typename Types::StrainRateStensor         StrainRateStensor;\n";
+    file << "typedef typename Types::StiffnessTensor           StiffnessTensor;\n";
+    file << "typedef typename Types::ThermalExpansionTensor    ThermalExpansionTensor;\n";
+    file << "typedef typename Types::DeformationGradientTensor DeformationGradientTensor;\n";
     // tangent operator
     file << "typedef " << this->mb.getStiffnessOperatorType() << " StiffnessOperator;\n";
   } // end of MFrontBehaviourParserCommon::writeStandardTFELTypedefs
@@ -1256,8 +1257,6 @@ namespace mfront{
   {
     using namespace std;
     this->checkBehaviourDataFile();
-    this->writeStandardTFELTypedefs(this->behaviourDataFile);
-    this->behaviourDataFile << endl;
     this->behaviourDataFile << "static const unsigned short TVectorSize = N;\n";
     this->behaviourDataFile << "typedef tfel::math::StensorDimeToSize<N> StensorDimeToSize;\n";
     this->behaviourDataFile << "static const unsigned short StensorSize = ";
@@ -1265,6 +1264,8 @@ namespace mfront{
     this->behaviourDataFile << "typedef tfel::math::TensorDimeToSize<N> TensorDimeToSize;\n";
     this->behaviourDataFile << "static const unsigned short TensorSize = ";
     this->behaviourDataFile << "TensorDimeToSize::value;\n";
+    this->behaviourDataFile << endl;
+    this->writeStandardTFELTypedefs(this->behaviourDataFile);
     this->behaviourDataFile << endl;
   }
 
@@ -2394,11 +2395,16 @@ namespace mfront{
   {
     using namespace std;
     this->checkBehaviourFile();
-    this->writeStandardTFELTypedefs(this->behaviourFile);
-    this->behaviourFile << "\nstatic const unsigned short TVectorSize = N;\n";
+    this->behaviourFile << "static const unsigned short TVectorSize = N;\n";
     this->behaviourFile << "typedef tfel::math::StensorDimeToSize<N> StensorDimeToSize;\n";
     this->behaviourFile << "static const unsigned short StensorSize = ";
-    this->behaviourFile << "StensorDimeToSize::value;\n\n";
+    this->behaviourFile << "StensorDimeToSize::value;\n";
+    this->behaviourFile << "typedef tfel::math::TensorDimeToSize<N> TensorDimeToSize;\n";
+    this->behaviourFile << "static const unsigned short TensorSize = ";
+    this->behaviourFile << "TensorDimeToSize::value;\n";
+    this->behaviourFile << endl;
+    this->writeStandardTFELTypedefs(this->behaviourFile);
+    this->behaviourFile << endl;
     this->behaviourFile << "public :\n\n";
     if(this->mb.useQt()){        
       this->behaviourFile << "typedef " << this->className 
@@ -2887,8 +2893,6 @@ namespace mfront{
   {
     using namespace std;
     this->checkIntegrationDataFile();
-    this->writeStandardTFELTypedefs(this->integrationDataFile);
-    this->integrationDataFile << endl;
     this->integrationDataFile << "static const unsigned short TVectorSize = N;\n";
     this->integrationDataFile << "typedef tfel::math::StensorDimeToSize<N> StensorDimeToSize;\n";
     this->integrationDataFile << "static const unsigned short StensorSize = ";
@@ -2896,6 +2900,8 @@ namespace mfront{
     this->integrationDataFile << "typedef tfel::math::TensorDimeToSize<N> TensorDimeToSize;\n";
     this->integrationDataFile << "static const unsigned short TensorSize = ";
     this->integrationDataFile << "TensorDimeToSize::value;\n";
+    this->integrationDataFile << endl;
+    this->writeStandardTFELTypedefs(this->integrationDataFile);
     this->integrationDataFile << endl;
   }
 
@@ -3017,53 +3023,59 @@ namespace mfront{
     VarContainer::const_iterator p;
     map<DrivingVariable,
 	ThermodynamicForce>::const_iterator p2;
-    this->checkIntegrationDataFile();
-    this->integrationDataFile << "/*\n";
-    this->integrationDataFile << "* Multiplication by a scalar.\n";
-    this->integrationDataFile << "*/\n";
-    this->integrationDataFile << "template<typename Scal>\n";
-    this->integrationDataFile << "typename tfel::meta::EnableIf<\n";
-    this->integrationDataFile << "tfel::typetraits::IsFundamentalNumericType<Scal>::cond&&\n";
-    this->integrationDataFile << "tfel::typetraits::IsScalar<Scal>::cond&&\n";
-    this->integrationDataFile << "tfel::typetraits::IsReal<Scal>::cond&&\n";
-    this->integrationDataFile << "tfel::meta::IsSameType<Type," 
-			      << "typename tfel::typetraits::Promote"
-			      << "<Type,Scal>::type>::cond,\n";
-    this->integrationDataFile << this->className << "IntegrationData&\n"
-			      << ">::type\n";
-    this->integrationDataFile << "operator *= (const Scal s){\n";
-    this->integrationDataFile << "this->dt   *= s;\n";
-    for(p2=this->mb.getMainVariables().begin();p2!=this->mb.getMainVariables().end();++p2){
-      if(p2->first.increment_known){
-	this->integrationDataFile << "this->d" <<p2->first.name  << " *= s;\n";
-      } else {
-	string msg("MFrontBehaviourParserCommon::writeIntegrationDataScaleOperators : ");
-	msg += "unimplemented feature.";
-	throw(runtime_error(msg));
+    bool iknown = true;
+    for(p2=this->mb.getMainVariables().begin();(p2!=this->mb.getMainVariables().end())&&(iknown);++p2){
+      iknown = p2->first.increment_known;
+    }
+    if(iknown){
+      this->checkIntegrationDataFile();
+      this->integrationDataFile << "/*\n";
+      this->integrationDataFile << "* Multiplication by a scalar.\n";
+      this->integrationDataFile << "*/\n";
+      this->integrationDataFile << "template<typename Scal>\n";
+      this->integrationDataFile << "typename tfel::meta::EnableIf<\n";
+      this->integrationDataFile << "tfel::typetraits::IsFundamentalNumericType<Scal>::cond&&\n";
+      this->integrationDataFile << "tfel::typetraits::IsScalar<Scal>::cond&&\n";
+      this->integrationDataFile << "tfel::typetraits::IsReal<Scal>::cond&&\n";
+      this->integrationDataFile << "tfel::meta::IsSameType<Type," 
+				<< "typename tfel::typetraits::Promote"
+				<< "<Type,Scal>::type>::cond,\n";
+      this->integrationDataFile << this->className << "IntegrationData&\n"
+				<< ">::type\n";
+      this->integrationDataFile << "operator *= (const Scal s){\n";
+      this->integrationDataFile << "this->dt   *= s;\n";
+      for(p2=this->mb.getMainVariables().begin();p2!=this->mb.getMainVariables().end();++p2){
+	if(p2->first.increment_known){
+	  this->integrationDataFile << "this->d" <<p2->first.name  << " *= s;\n";
+	} else {
+	  string msg("MFrontBehaviourParserCommon::writeIntegrationDataScaleOperators : ");
+	  msg += "unimplemented feature.";
+	  throw(runtime_error(msg));
+	}
       }
+      this->integrationDataFile << "this->dT   *= s;\n";
+      for(p=this->mb.getExternalStateVariables().begin();p!=this->mb.getExternalStateVariables().end();++p){
+	this->integrationDataFile << "this->d" << p->name << " *= s;\n";
+      }
+      this->integrationDataFile << "return *this;\n";
+      this->integrationDataFile << "}\n\n";
+      this->integrationDataFile << "/*\n";
+      this->integrationDataFile << "* Division by a scalar.\n";
+      this->integrationDataFile << "*/\n";
+      this->integrationDataFile << "template<typename Scal>\n";
+      this->integrationDataFile << "typename tfel::meta::EnableIf<\n";
+      this->integrationDataFile << "tfel::typetraits::IsFundamentalNumericType<Scal>::cond&&\n";
+      this->integrationDataFile << "tfel::typetraits::IsScalar<Scal>::cond&&\n";
+      this->integrationDataFile << "tfel::typetraits::IsReal<Scal>::cond&&\n";
+      this->integrationDataFile << "tfel::meta::IsSameType<Type," 
+				<< "typename tfel::typetraits::Promote"
+				<< "<Type,Scal>::type>::cond,\n";
+      this->integrationDataFile << this->className << "IntegrationData&\n"
+				<< ">::type\n";
+      this->integrationDataFile << "operator /= (const Scal s){\n";
+      this->integrationDataFile << "return this->operator*=(1/s);\n";
+      this->integrationDataFile << "}\n\n";
     }
-    this->integrationDataFile << "this->dT   *= s;\n";
-    for(p=this->mb.getExternalStateVariables().begin();p!=this->mb.getExternalStateVariables().end();++p){
-      this->integrationDataFile << "this->d" << p->name << " *= s;\n";
-    }
-    this->integrationDataFile << "return *this;\n";
-    this->integrationDataFile << "}\n\n";
-    this->integrationDataFile << "/*\n";
-    this->integrationDataFile << "* Division by a scalar.\n";
-    this->integrationDataFile << "*/\n";
-    this->integrationDataFile << "template<typename Scal>\n";
-    this->integrationDataFile << "typename tfel::meta::EnableIf<\n";
-    this->integrationDataFile << "tfel::typetraits::IsFundamentalNumericType<Scal>::cond&&\n";
-    this->integrationDataFile << "tfel::typetraits::IsScalar<Scal>::cond&&\n";
-    this->integrationDataFile << "tfel::typetraits::IsReal<Scal>::cond&&\n";
-    this->integrationDataFile << "tfel::meta::IsSameType<Type," 
-			      << "typename tfel::typetraits::Promote"
-			      << "<Type,Scal>::type>::cond,\n";
-    this->integrationDataFile << this->className << "IntegrationData&\n"
-			      << ">::type\n";
-    this->integrationDataFile << "operator /= (const Scal s){\n";
-    this->integrationDataFile << "return this->operator*=(1/s);\n";
-    this->integrationDataFile << "}\n\n";
   } // end of MFrontBehaviourParserCommon::writeIntegrationDataScaleOpeartors
 
   void MFrontBehaviourParserCommon::writeIntegrationDataClassHeader(void) 

@@ -271,37 +271,69 @@ namespace mfront
 	}
       } else if(this->getTypeFlag(f.type)==SupportedTypes::Tensor){
 	if(pm!=mb.getMainVariables().begin()){
-	  behaviourDataFile << "tfel::fsalgo::copy<TensorSize>("+iprefix+"stress_+" << of <<",this->" << f.name << ".begin());\n";
+	  behaviourDataFile << f.type << "::buildFromFortranMatrix(this->" << f.name << ","
+			    << iprefix << "stress_+" << of <<");\n";
 	} else {
-	  behaviourDataFile << "tfel::fsalgo::copy<TensorSize>("+iprefix+"stress_,this->" << f.name << ".begin());\n";
+	  behaviourDataFile << f.type << "::buildFromFortranMatrix(this->" << f.name << ","
+			    << iprefix << "stress_);\n";
 	}
       } else {
 	string msg("MFrontUMATInterfaceBase::writeBehaviourDataConstructor : ");
 	msg += "unsupported forces type";
 	throw(runtime_error(msg));
       }
-      if(this->getTypeFlag(f.type)==SupportedTypes::TVector){
-	if(pm!=mb.getMainVariables().begin()){
-	  behaviourDataFile << "tfel::fsalgo::copy<N>::exe("+iprefix+"stran+" << ov <<",this->" << v.name << ".begin());\n";
+      if(!v.increment_known){
+	if(this->getTypeFlag(v.type)==SupportedTypes::TVector){
+	  if(pm!=mb.getMainVariables().begin()){
+	    behaviourDataFile << "tfel::fsalgo::copy<N>::exe("+iprefix+"stran+" << ov <<",this->" << v.name << "0.begin());\n";
+	  } else {
+	    behaviourDataFile << "tfel::fsalgo::copy<N>::exe("+iprefix+"stran,this->" << v.name << "0.begin());\n";
+	  }
+	} else if(this->getTypeFlag(v.type)==SupportedTypes::Stensor){
+	  if(pm!=mb.getMainVariables().begin()){
+	    behaviourDataFile << "this->" << v.name << "0.importVoigt("+iprefix+"stran+" << ov <<");\n";
+	  } else {
+	    behaviourDataFile << "this->" << v.name << "0.importVoigt("+iprefix+"stran);\n";
+	  }
+	} else if(this->getTypeFlag(v.type)==SupportedTypes::Tensor){
+	  if(pm!=mb.getMainVariables().begin()){
+	    behaviourDataFile << v.type << "::buildFromFortranMatrix(this->" << v.name << "0,"
+			      << iprefix << "stran+" << ov <<");\n";
+	  } else {
+	    behaviourDataFile << v.type << "::buildFromFortranMatrix(this->" << v.name << "0,"
+			      << iprefix << "stran);\n";
+	  }
 	} else {
-	  behaviourDataFile << "tfel::fsalgo::copy<N>::exe("+iprefix+"stran,this->" << v.name << ".begin());\n";
-	}
-      } else if(this->getTypeFlag(v.type)==SupportedTypes::Stensor){
-	if(pm!=mb.getMainVariables().begin()){
-	  behaviourDataFile << "this->" << v.name << ".importVoigt("+iprefix+"stran+" << ov <<");\n";
-	} else {
-	  behaviourDataFile << "this->" << v.name << ".importVoigt("+iprefix+"stran);\n";
-	}
-      } else if(this->getTypeFlag(v.type)==SupportedTypes::Tensor){
-	if(pm!=mb.getMainVariables().begin()){
-	  behaviourDataFile << "tfel::fsalgo::copy<TensorSize>("+iprefix+"stran+" << ov <<",this->" << v.name << ".begin());\n";
-	} else {
-	  behaviourDataFile << "tfel::fsalgo::copy<TensorSize>("+iprefix+"stran,this->" << v.name << ".begin());\n";
+	  string msg("MFrontUMATInterfaceBase::writeBehaviourDataConstructor : ");
+	  msg += "unsupported driving variable type";
+	  throw(runtime_error(msg));
 	}
       } else {
-	string msg("MFrontUMATInterfaceBase::writeBehaviourDataConstructor : ");
-	msg += "unsupported forces type";
-	throw(runtime_error(msg));
+	if(this->getTypeFlag(v.type)==SupportedTypes::TVector){
+	  if(pm!=mb.getMainVariables().begin()){
+	    behaviourDataFile << "tfel::fsalgo::copy<N>::exe("+iprefix+"stran+" << ov <<",this->" << v.name << ".begin());\n";
+	  } else {
+	    behaviourDataFile << "tfel::fsalgo::copy<N>::exe("+iprefix+"stran,this->" << v.name << ".begin());\n";
+	  }
+	} else if(this->getTypeFlag(v.type)==SupportedTypes::Stensor){
+	  if(pm!=mb.getMainVariables().begin()){
+	    behaviourDataFile << "this->" << v.name << ".importVoigt("+iprefix+"stran+" << ov <<");\n";
+	  } else {
+	    behaviourDataFile << "this->" << v.name << ".importVoigt("+iprefix+"stran);\n";
+	  }
+	} else if(this->getTypeFlag(v.type)==SupportedTypes::Tensor){
+	  if(pm!=mb.getMainVariables().begin()){
+	    behaviourDataFile << v.type << "::buildFromFortranMatrix(this->" << v.name << ","
+			      << iprefix << "stran+" << ov <<");\n";
+	  } else {
+	    behaviourDataFile << v.type << "::buildFromFortranMatrix(this->" << v.name << ","
+			      << iprefix+"stran);\n";
+	  }
+	} else {
+	  string msg("MFrontUMATInterfaceBase::writeBehaviourDataConstructor : ");
+	  msg += "unsupported driving variable type";
+	  throw(runtime_error(msg));
+	}
       }
       ov += this->getTypeSize(v.type,1u);
       of += this->getTypeSize(f.type,1u);
@@ -359,32 +391,57 @@ namespace mfront
     for(pm=mb.getMainVariables().begin();pm!=mb.getMainVariables().end();++pm){
       const DrivingVariable&    v = pm->first;
       if(!v.increment_known){
-	string msg("MFrontUMATInterfaceBase::writeIntegrationDataConstructor : ");
-	msg += "unsupported driving variable '"+v.name+"'";
-	throw(runtime_error(msg));
-      }
-      if(this->getTypeFlag(v.type)==SupportedTypes::TVector){
-	if(pm!=mb.getMainVariables().begin()){
-	  behaviourIntegrationFile << "tfel::fsalgo::copy<N>::exe("+iprefix+"dstran+" << ov <<",this->d" << v.name << ".begin());\n";
+	if(this->getTypeFlag(v.type)==SupportedTypes::TVector){
+	  if(pm!=mb.getMainVariables().begin()){
+	    behaviourIntegrationFile << "tfel::fsalgo::copy<N>::exe("+iprefix+"dstran+" << ov <<",this->" << v.name << "1.begin());\n";
+	  } else {
+	    behaviourIntegrationFile << "tfel::fsalgo::copy<N>::exe("+iprefix+"dstran,this->" << v.name << "1.begin());\n";
+	  }
+	} else if(this->getTypeFlag(v.type)==SupportedTypes::Stensor){
+	  if(pm!=mb.getMainVariables().begin()){
+	    behaviourIntegrationFile << "this->" << v.name << "1.importVoigt("+iprefix+"dstran);\n";
+	  } else {
+	    behaviourIntegrationFile << "this->" << v.name << "1.importVoigt("+iprefix+"dstran+" << ov << ");\n";
+	  }
+	} else if(this->getTypeFlag(v.type)==SupportedTypes::Tensor){
+	  if(pm!=mb.getMainVariables().begin()){
+	    behaviourIntegrationFile << v.type << "::buildFromFortranMatrix(this->" << v.name << "1,"
+				     << iprefix << "dstran+" << ov << ");\n";
+	  } else {
+	    behaviourIntegrationFile << v.type << "::buildFromFortranMatrix(this->" << v.name << "1,"
+				     << iprefix << "dstran);\n";
+	  }
 	} else {
-	  behaviourIntegrationFile << "tfel::fsalgo::copy<N>::exe("+iprefix+"dstran,this->d" << v.name << ".begin());\n";
-	}
-      } else if(this->getTypeFlag(v.type)==SupportedTypes::Stensor){
-	if(pm!=mb.getMainVariables().begin()){
-	  behaviourIntegrationFile << "d" << v.name << ".importVoigt("+iprefix+"dstran);\n";
-	} else {
-	  behaviourIntegrationFile << "d" << v.name << ".importVoigt("+iprefix+"dstran+" << ov << ");\n";
-	}
-      } else if(this->getTypeFlag(v.type)==SupportedTypes::Tensor){
-	if(pm!=mb.getMainVariables().begin()){
-	  behaviourIntegrationFile << "tfel::fsalgo::copy<TensorSize>("+iprefix+"dstran+" << ov <<",this->d" << v.name << ".begin());\n";
-	} else {
-	  behaviourIntegrationFile << "tfel::fsalgo::copy<TensorSize>("+iprefix+"dstran,this->d" << v.name << ".begin());\n";
+	  string msg("MFrontUMATInterfaceBase::writeIntegrationDataConstructor : ");
+	  msg += "unsupported driving variable '"+v.name+"'";
+	  throw(runtime_error(msg));
 	}
       } else {
-	string msg("MFrontUMATInterfaceBase::writeIntegrationDataConstructor : ");
-	msg += "unsupported driving variable '"+v.name+"'";
-	throw(runtime_error(msg));
+	if(this->getTypeFlag(v.type)==SupportedTypes::TVector){
+	  if(pm!=mb.getMainVariables().begin()){
+	    behaviourIntegrationFile << "tfel::fsalgo::copy<N>::exe("+iprefix+"dstran+" << ov <<",this->d" << v.name << ".begin());\n";
+	  } else {
+	    behaviourIntegrationFile << "tfel::fsalgo::copy<N>::exe("+iprefix+"dstran,this->d" << v.name << ".begin());\n";
+	  }
+	} else if(this->getTypeFlag(v.type)==SupportedTypes::Stensor){
+	  if(pm!=mb.getMainVariables().begin()){
+	    behaviourIntegrationFile << "this->d" << v.name << ".importVoigt("+iprefix+"dstran);\n";
+	  } else {
+	    behaviourIntegrationFile << "this->d" << v.name << ".importVoigt("+iprefix+"dstran+" << ov << ");\n";
+	  }
+	} else if(this->getTypeFlag(v.type)==SupportedTypes::Tensor){
+	  if(pm!=mb.getMainVariables().begin()){
+	    behaviourIntegrationFile << v.type << "::buildFromFortranMatrix(this->d" << v.name << ","
+				     << iprefix << "dstran+" << ov << ");\n";
+	  } else {
+	    behaviourIntegrationFile << v.type << "::buildFromFortranMatrix(this->d" << v.name << ","
+				     << iprefix << "dstran);\n";
+	  }
+	} else {
+	  string msg("MFrontUMATInterfaceBase::writeIntegrationDataConstructor : ");
+	  msg += "unsupported driving variable '"+v.name+"'";
+	  throw(runtime_error(msg));
+	}
       }
       ov += this->getTypeSize(v.type,1u);
     }
@@ -538,7 +595,7 @@ namespace mfront
       } else if(pp->type=="ushort"){
 	up = true;
       } else {
-	string msg("MFrontUMATInterface::endTreatement : ");
+	string msg("MFrontUMATInterfaceBase::checkParametersType : ");
 	msg += "unsupport parameter type '"+pp->type+"'.\n";
 	throw(runtime_error(msg));
       } 

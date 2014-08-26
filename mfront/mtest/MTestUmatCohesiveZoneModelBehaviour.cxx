@@ -175,7 +175,7 @@ namespace mfront
 	drot(i,j) = r(j,i);
       }
     }
-    UMATInt kinc(0);
+    UMATInt kinc(1);
     tvector<3u,real> ue0(real(0));
     tvector<3u,real> ude(real(0));
     if(ntens==2){
@@ -195,7 +195,7 @@ namespace mfront
 		&ev0(0)+1,&dev(0)+1,
 		&iv(0),&nstatv,&s1(0),
 		&ndi,&kinc);
-    if(kinc!=0){
+    if(kinc!=1){
       return false;
     }
     if(!iv1.empty()){

@@ -56,7 +56,7 @@ namespace umat
       typedef typename IF<Traits::stype==umat::ISOTROPIC,
 			  TreatPlaneStressIsotropicBehaviour,
 			  TreatPlaneStressOrthotropicBehaviour>::type Handler;
-      UMATInterfaceBase::checkNTENSValue(*NTENS,Traits::DrivingVariableSize);
+      UMATInterfaceBase::checkNTENSValue(*NTENS,Traits::ThermodynamicForceVariableSize);
       Handler::exe(DTIME,DROT,DDSOE,STRAN,DSTRAN,TEMP,DTEMP,
 		   PROPS,NPROPS,PREDEF,DPRED,STATEV,NSTATV,
 		   STRESS);

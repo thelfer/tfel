@@ -170,6 +170,19 @@ namespace tfel{
       return Impl::exe(s);
     }    
 
+    template<class T>
+    typename tfel::meta::EnableIf<
+      tfel::meta::Implements<T,StensorConcept>::cond,
+      typename StensorType<T>::type
+    >::type
+    deviator(const T& s)
+    {
+      typedef typename StensorType<T>::type Res;
+      typedef typename StensorTraits<T>::NumType NumType;
+      typedef typename tfel::typetraits::BaseType<NumType>::type Base;
+      return Res(s-(Base(1)/Base(3))*trace(s)*Res::Id());
+    }
+
     template<typename T>
     std::ostream&
     operator << (std::ostream & os,const StensorConcept<T>& s)

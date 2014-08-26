@@ -52,12 +52,19 @@ alpha.setGlossaryName("ThermalExpansion");
 
 @TangentOperator{
   using namespace tfel::material::lame;
-  StiffnessTensor Hooke;
-  Stensor4 Je;
-  Stensor Jd;
-  computeElasticStiffness<N,Type>::exe(Hooke,lambda,mu);
-  getPartialJacobianInvert(Je,Jd);
-  Dt = (1-d-dd)*Hooke*Je+-((Jd)^(Hooke*(eel+deel)));
+  using namespace tfel::material::lame;
+  if((smt==ELASTIC)||(smt==SECANTOPERATOR)){
+    computeElasticStiffness<N,Type>::exe(Dt,lambda,mu);
+  } else if(smt==CONSISTANTTANGENTOPERATOR){
+    StiffnessTensor Hooke;
+    Stensor4 Je;
+    Stensor Jd;
+    computeElasticStiffness<N,Type>::exe(Hooke,lambda,mu);
+    getPartialJacobianInvert(Je,Jd);
+    Dt = (1-d-dd)*Hooke*Je+-((Jd)^(Hooke*(eel+deel)));
+  } else {
+    return false;
+  }
 }
 
 @ComputeStress{

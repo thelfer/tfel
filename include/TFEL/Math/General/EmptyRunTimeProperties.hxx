@@ -44,15 +44,13 @@ namespace tfel{
 
     };
 
-    TFEL_MATH_INLINE
-    bool 
+    inline bool 
     operator == (const EmptyRunTimeProperties&,const EmptyRunTimeProperties&)
     {
       return true;
     }
 
-    TFEL_MATH_INLINE
-    bool 
+    inline bool 
     operator != (const EmptyRunTimeProperties&,const EmptyRunTimeProperties&)
     {
       return false;

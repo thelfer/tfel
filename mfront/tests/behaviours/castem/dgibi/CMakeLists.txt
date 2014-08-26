@@ -1,0 +1,18 @@
+if(castem_exe)
+  if(UNIX)
+    configure_file(exec_ktests_CAST3M_XML.sh.in
+      exec_ktests_CAST3M_XML.sh @ONLY)
+    macro(test_castem test_arg)
+      add_test(NAME castem${test_arg}_dgibi
+	COMMAND /usr/bin/env bash exec_ktests_CAST3M_XML.sh ${test_arg})
+    endmacro(test_castem)
+    test_castem(CompressibleNeoHookeanBehaviour)
+    test_castem(IncompressibleMooneyRivlinUniaxialTesting)  
+    test_castem(IncompressiblePlaneStressMooneyRivlinUniaxialTesting)
+    test_castem(IncompressiblePlaneStressMooneyRivlinBiaxialTesting)
+    test_castem(IncompressiblePlaneStressMooneyRivlinShear)
+    test_castem(IncompressiblePlaneStressGornetDesmoratBehaviourBiaxialTesting)
+    test_castem(IncompressiblePlaneStressGornetDesmoratBehaviourShearTesting)
+    test_castem(IncompressiblePlaneStressGornetDesmoratBehaviourUniaxialTesting)
+  endif(UNIX)
+endif(castem_exe)

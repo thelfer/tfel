@@ -16,35 +16,31 @@ namespace umat
 {
 
   //! forward declaration
-  template<UMATBehaviourType type,
-	   tfel::material::ModellingHypothesis::Hypothesis H,
+  template<tfel::material::ModellingHypothesis::Hypothesis H,
 	   template<tfel::material::ModellingHypothesis::Hypothesis,
 		    typename,bool> class Behaviour>
-  struct UMATOrthotropicBehaviourHandler1D;
+  struct UMATOrthotropicSmallStrainBehaviourHandler1D;
   
   //! forward declaration
-  template<UMATBehaviourType type,
-	   tfel::material::ModellingHypothesis::Hypothesis H,
+  template<tfel::material::ModellingHypothesis::Hypothesis H,
 	   template<tfel::material::ModellingHypothesis::Hypothesis,
 		    typename,bool> class Behaviour>
-  struct UMATOrthotropicBehaviourHandler2D;
+  struct UMATOrthotropicSmallStrainBehaviourHandler2D;
 
   //! forward declaration
-  template<UMATBehaviourType type,
-	   tfel::material::ModellingHypothesis::Hypothesis H,
+  template<tfel::material::ModellingHypothesis::Hypothesis H,
 	   template<tfel::material::ModellingHypothesis::Hypothesis,
 		    typename,bool> class Behaviour>
-  struct UMATOrthotropicBehaviourHandler3D;
+  struct UMATOrthotropicSmallStrainBehaviourHandler3D;
   
   /*!
    * An helper structure to make an appropriate dispatch based on the
    * spatial dimension
    */
-  template<UMATBehaviourType btype,
-	   tfel::material::ModellingHypothesis::Hypothesis H,
+  template<tfel::material::ModellingHypothesis::Hypothesis H,
 	   template<tfel::material::ModellingHypothesis::Hypothesis,
 		    typename,bool> class Behaviour>
-  struct TFEL_VISIBILITY_LOCAL UMATOrthotropicBehaviourDispatcher
+  struct TFEL_VISIBILITY_LOCAL UMATOrthotropicSmallStrainBehaviourDispatcher
   {
     //! a simple alias
     typedef tfel::material::ModellingHypothesisToSpaceDimension<H> ModellingHypothesisToSpaceDimension;
@@ -53,32 +49,45 @@ namespace umat
     // the dispatch
     typedef typename 
       tfel::meta::IF<N==1,
-		     UMATOrthotropicBehaviourHandler1D<btype,H,Behaviour>,
+		     UMATOrthotropicSmallStrainBehaviourHandler1D<H,Behaviour>,
 		     typename tfel::meta::IF<N==2,
-					     UMATOrthotropicBehaviourHandler2D<btype,H,Behaviour>,
-					     UMATOrthotropicBehaviourHandler3D<btype,H,Behaviour> >::type
+					     UMATOrthotropicSmallStrainBehaviourHandler2D<H,Behaviour>,
+					     UMATOrthotropicSmallStrainBehaviourHandler3D<H,Behaviour> >::type
 		     >::type type;
-  }; // end of struct UMATOrthotropicBehaviourDispatcher;
+  }; // end of struct UMATOrthotropicSmallStrainBehaviourDispatcher;
   
   /*!
    * The handler for orthotropic behaviours
+   * By default, this is unsupported (finite strain behaviour, cohesive zone models)
    */
   template<UMATBehaviourType type,
 	   tfel::material::ModellingHypothesis::Hypothesis H,
 	   template<tfel::material::ModellingHypothesis::Hypothesis,
 		    typename,bool> class Behaviour>
   struct TFEL_VISIBILITY_LOCAL UMATOrthotropicBehaviourHandler
-    : public UMATOrthotropicBehaviourDispatcher<type,H,Behaviour>::type
+    : public UMATUnSupportedCaseHandler
   {
-    typedef typename UMATOrthotropicBehaviourDispatcher<type,H,Behaviour>::type Handler;
+    using UMATUnSupportedCaseHandler::exe;
+  };
+
+  /*!
+   * The handler for orthotropic behaviours
+   */
+  template<tfel::material::ModellingHypothesis::Hypothesis H,
+	   template<tfel::material::ModellingHypothesis::Hypothesis,
+		    typename,bool> class Behaviour>
+  struct TFEL_VISIBILITY_LOCAL UMATOrthotropicBehaviourHandler<SMALLSTRAINSTANDARDBEHAVIOUR,H,Behaviour>
+    : public UMATOrthotropicSmallStrainBehaviourDispatcher<H,Behaviour>::type
+  {
+    typedef typename UMATOrthotropicSmallStrainBehaviourDispatcher<H,Behaviour>::type Handler;
     using Handler::exe;
   };
 
-  template<UMATBehaviourType type,
-	   tfel::material::ModellingHypothesis::Hypothesis H,
+
+  template<tfel::material::ModellingHypothesis::Hypothesis H,
 	   template<tfel::material::ModellingHypothesis::Hypothesis,typename,bool> class Behaviour>
-  struct TFEL_VISIBILITY_LOCAL UMATOrthotropicBehaviourHandler1D
-    : private UMATBehaviourHandler<type,H,Behaviour>
+  struct TFEL_VISIBILITY_LOCAL UMATOrthotropicSmallStrainBehaviourHandler1D
+    : private UMATBehaviourHandler<SMALLSTRAINSTANDARDBEHAVIOUR,H,Behaviour>
   {
     TFEL_UMAT_INLINE2 static 
       void exe(const UMATReal *const DTIME,
@@ -101,7 +110,7 @@ namespace umat
       using namespace tfel::math;
       typedef MechanicalBehaviourTraits<Behaviour<H,UMATReal,false> > MTraits;
       typedef UMATTraits<Behaviour<H,UMATReal,false> > Traits;
-      typedef UMATBehaviourHandler<type,H,Behaviour> UMATBehaviourHandler;
+      typedef UMATBehaviourHandler<SMALLSTRAINSTANDARDBEHAVIOUR,H,Behaviour> UMATBehaviourHandler;
       const bool is_defined_ = MTraits::is_defined;
       const bool bs = Traits::requiresStiffnessOperator;
       const bool ba = Traits::requiresThermalExpansionTensor;
@@ -122,12 +131,11 @@ namespace umat
     } // end of UMATOrthotropicBehaviourHander<1u,Behaviour>::exe
   }; // end of struct UMATOrthotropicBehaviourHander<1u,Behaviour>
 
-  template<UMATBehaviourType type,
-	   tfel::material::ModellingHypothesis::Hypothesis H,
+  template<tfel::material::ModellingHypothesis::Hypothesis H,
 	   template<tfel::material::ModellingHypothesis::Hypothesis
 		    ,typename,bool> class Behaviour>
-  struct TFEL_VISIBILITY_LOCAL UMATOrthotropicBehaviourHandler2D
-    : private UMATBehaviourHandler<type,H,Behaviour>
+  struct TFEL_VISIBILITY_LOCAL UMATOrthotropicSmallStrainBehaviourHandler2D
+    : private UMATBehaviourHandler<SMALLSTRAINSTANDARDBEHAVIOUR,H,Behaviour>
   {
     TFEL_UMAT_INLINE2 static 
       void exe(const UMATReal *const DTIME ,
@@ -150,7 +158,7 @@ namespace umat
       using namespace tfel::math;
       typedef MechanicalBehaviourTraits<Behaviour<H,UMATReal,false> > MTraits;
       typedef UMATTraits<Behaviour<H,UMATReal,false> > Traits;
-      typedef UMATBehaviourHandler<type,H,Behaviour> UMATBehaviourHandler;
+      typedef UMATBehaviourHandler<SMALLSTRAINSTANDARDBEHAVIOUR,H,Behaviour> UMATBehaviourHandler;
       const bool is_defined_ = MTraits::is_defined;
       const bool bs = Traits::requiresStiffnessOperator;
       const bool ba = Traits::requiresThermalExpansionTensor;
@@ -179,12 +187,11 @@ namespace umat
     } // end of UMATOrthotropicBehaviourHander<2u,Behaviour>::exe
   }; // end of UMATOrthotropicBehaviourHander<2u,Behaviour>
 
-  template<UMATBehaviourType type,
-	   tfel::material::ModellingHypothesis::Hypothesis H,
+  template<tfel::material::ModellingHypothesis::Hypothesis H,
 	   template<tfel::material::ModellingHypothesis::Hypothesis,
 		    typename,bool> class Behaviour>
-  struct TFEL_VISIBILITY_LOCAL UMATOrthotropicBehaviourHandler3D
-    : private UMATBehaviourHandler<type,H,Behaviour>
+  struct TFEL_VISIBILITY_LOCAL UMATOrthotropicSmallStrainBehaviourHandler3D
+    : private UMATBehaviourHandler<SMALLSTRAINSTANDARDBEHAVIOUR,H,Behaviour>
   {
     TFEL_UMAT_INLINE2 static 
       void exe(const UMATReal *const DTIME,
@@ -207,7 +214,7 @@ namespace umat
       using namespace tfel::math;
       typedef MechanicalBehaviourTraits<Behaviour<H,UMATReal,false> > MTraits;
       typedef UMATTraits<Behaviour<H,UMATReal,false> > Traits;
-      typedef UMATBehaviourHandler<type,H,Behaviour> UMATBehaviourHandler;
+      typedef UMATBehaviourHandler<SMALLSTRAINSTANDARDBEHAVIOUR,H,Behaviour> UMATBehaviourHandler;
       const bool is_defined_ = MTraits::is_defined;
       const bool bs = Traits::requiresStiffnessOperator;
       const bool ba = Traits::requiresThermalExpansionTensor;
