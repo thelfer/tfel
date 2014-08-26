@@ -1,4 +1,4 @@
-/*! 
+/*!
  * \file  generate_glossary.cxx
  * \brief
  * \author Helfer Thomas
@@ -188,9 +188,9 @@ struct GlossaryTokenizer
 				 notes));
     }
   } // end of execute
-  
+
 private:
-  
+
   void
   readBlock(std::vector<std::string>& b,
 	    CxxTokenizer::TokensContainer::const_iterator& p,
@@ -248,12 +248,12 @@ void generateCxxOutput(const GlossaryTokenizer& tokenizer)
   if(!header){
     string msg("generate_glossary : ");
     msg += "can't open file 'Glossary.hxx'";
-    throw(runtime_error(msg));    
+    throw(runtime_error(msg));
   }
   if(!src){
     string msg("generate_glossary : ");
     msg += "can't open file 'Glossary.cxx'";
-    throw(runtime_error(msg));    
+    throw(runtime_error(msg));
   }
   // gathering all names
   vector<string> names;
@@ -313,7 +313,7 @@ void generateCxxOutput(const GlossaryTokenizer& tokenizer)
   header << endl;
   header << "protected :" << endl;
   if(!names.empty()){
-    header << "//! all glossary names (to initialise glossary entries" << endl;
+    header << "//! all glossary names (to initialise glossary entries)" << endl;
     header << "static const char * names[" << names.size() << "];" << endl;
   }
   header << "/*!" << endl;
@@ -444,6 +444,205 @@ void generateCxxOutput(const GlossaryTokenizer& tokenizer)
   src << "} // end of namespace tfel" << endl;
 }
 
+void generatePleiadesCxxOutput(const GlossaryTokenizer& tokenizer)
+{
+  using namespace std;
+  using namespace tfel::utilities;
+  GlossaryTokenizer::const_iterator p;
+  ofstream header("Glossary.hh");
+  ofstream src("Glossary.cpp");
+  if(!header){
+    string msg("generate_glossary : ");
+    msg += "can't open file 'Glossary.hh'";
+    throw(runtime_error(msg));
+  }
+  if(!src){
+    string msg("generate_glossary : ");
+    msg += "can't open file 'Glossary.cpp'";
+    throw(runtime_error(msg));
+  }
+  // gathering all names
+  vector<string> names;
+  for(p=tokenizer.begin();p!=tokenizer.end();++p){
+    const vector<string>& n = p->getNames();
+    names.insert(names.end(),n.begin(),n.end());
+  }
+  // writting headers
+  header << "/*!" << endl;
+  header << " *\\file   Glossary.hh" << endl;
+  header << " *\\author auto generated" << endl;
+  header << " *\\date   2014-07-22" << endl;
+  header << "*/" << endl;
+  header << endl;
+  header << "#ifndef __PLEIADES_GLOSSARY_GLOSSARY_HH__" << endl;
+  header << "#define __PLEIADES_GLOSSARY_GLOSSARY_HH__" << endl;
+  header << endl;
+  header << "#include <set>"    << endl;
+  header << "#include <vector>" << endl;
+  header << "#include <string>" << endl;
+  header << endl;
+  header << "#include \"Pleiades/Metier/Glossary/GlossaryEntry.hh\"" << endl;
+  header << endl;
+  header << "namespace Pleiades {" << endl;
+  header << endl;
+  header << "/*!\n"
+         << " * \\brief Class in charge of handling the Pleiades Glossary\n"
+         << " */" << endl;
+  header << "class  Glossary {" << endl;
+  header << "  public:" << endl;
+  header << endl;
+
+  header << "  /*!\n"
+         << "   * \\return the uniq instance of this class (singleton pattern)\n"
+         << "   */" << endl;
+  header << "  static Glossary& getGlossary();" << endl;
+  header << endl;
+  for(p=tokenizer.begin();p!=tokenizer.end();++p){
+    header << "  static const GlossaryEntry " << p->getKey() << ";" << endl;
+  }
+  header << endl;
+
+  header << "  /*!\n"
+         << "   * \\return true if the glossary contains the given name\n"
+         << "   * \\param[in] n : name\n"
+         << "   */" << endl;
+  header << "  bool contains(const std::string&) const;" << endl;
+  header << endl;
+
+  header << "  /*!\n"
+         << "   * \\return all the registred keys\n"
+         << "   */" << endl;
+  header << "  const std::vector<std::string>& getKeys(void) const;" << endl;
+  header << endl;
+
+  header << "  protected:" << endl;
+  header << endl;
+  if(!names.empty()){
+    header << "  //! all glossary names (to initialise glossary entries)" << endl;
+    header << "  static const char * names[" << names.size() << "];" << endl;
+  }
+  header << endl;
+
+  header << "  /*!" << endl;
+  header << "   * \\brief insert a new entry" << endl;
+  header << "   */" << endl;
+  header << "  void insert(const GlossaryEntry&);" << endl;
+  header << endl;
+  header << "  Glossary();" << endl;
+  header << endl;
+  header << "  Glossary(const Glossary&);" << endl;
+  header << endl;
+  header << "  Glossary& operator=(const Glossary&);" << endl;
+  header << endl;
+  header << "  std::set<GlossaryEntry> entries;" << endl;
+  header << endl;
+  header << "  std::vector<std::string> keys;" << endl;
+  header << endl;
+  header << "}; // end of class Glossary" << endl;
+  header << "} // end of namespace Pleiades" << endl;
+  header << endl;
+  header << "#endif /* __PLEIADES_GLOSSARY_GLOSSARY_HH__ */" << endl;
+
+  /* writting src file */
+  src << "/*!" << endl;
+  src << " *\\file   Glossary.cpp" << endl;
+  src << " *\\author auto generated" << endl;
+  src << " *\\date   2014-07-22" << endl;
+  src << "*/" << endl;
+  src << endl;
+  src << "#include <stdexcept>" << endl;
+  src << "#include <algorithm>" << endl;
+  src << endl;
+  src << "#include \"Pleiades/Metier/Glossary/Glossary.hh\"" << endl;
+  src << endl;
+  src << "namespace Pleiades { " << endl;
+  src << endl;
+  if(!names.empty()){
+    src << "const char* Glossary::names[" << names.size() << "] = {" << endl;
+    for(vector<string>::const_iterator pn=names.begin();pn!=names.end();){
+      src << '\"' << *pn << '\"';
+      if(++pn!=names.end()){
+  src << "," << endl;
+      }
+    }
+    src <<  "};" << endl;
+  }
+  src << endl;
+
+  vector<string>::size_type pos = 0;
+  for(p=tokenizer.begin();p!=tokenizer.end();++p){
+    const string& d  = replace_all(serialize(p->getDescription(),"description"),"\\","\\\\");
+    const string& n  = replace_all(serialize(p->getNotes(),"notes"),"\\","\\\\");
+    const vector<string>& names = p->getNames();
+    src << "const GlossaryEntry Glossary::" << p->getKey() << "("
+  << "\"" << replace_all(p->getKey(),"\\","\\\\")  << "\",";
+    if(names.size()==1u){
+      src << '\"' << names[0u] << "\"," << endl;
+    } else {
+      if(pos==0){
+  src << "Glossary::names,Glossary::names+" << names.size() << "," << endl;
+      } else {
+  src << "Glossary::names+" << pos << ",Glossary::names+" << pos+names.size() << "," << endl;
+      }
+    }
+    pos+= names.size();
+    src<< "\"" << replace_all(p->getUnit(),"\\","\\\\") << "\","
+  << "\"" << replace_all(p->getType(),"\\","\\\\") << "\"," << endl
+  << "\"" << replace_all(p->getShortDescription(),"\\","\\\\") << "\"," << endl
+  << d << "," << endl
+  << n << ");\n" << endl;
+  }
+
+  src << "Glossary& Glossary::getGlossary(void) {" << endl;
+  src << "  static Glossary glossary;" << endl;
+  src << "  return glossary;" << endl;
+  src << "} // end of Glossary::getGlossary" << endl;
+  src << endl;
+
+  src << "Glossary::Glossary() {";
+  if(!tokenizer.empty()){
+    src << endl;
+    src << "  this->keys.reserve(" << tokenizer.size() << ");" << endl;
+  }
+  for(p=tokenizer.begin();p!=tokenizer.end();++p){
+    src << "  this->insert(Glossary::" << p->getKey() << ");" << endl;
+  }
+  src << "} // end of Glossary::Glossary" << endl;
+  src << endl;
+
+  src << "void Glossary::insert(const GlossaryEntry& e) {" << endl;
+  src << "  using namespace std;" << endl;
+  src << "  if(!this->entries.insert(e).second){" << endl;
+  src << "    string msg(\"Glossary::insert : \");" << endl;
+  src << "    msg += \"'\"+e.getKey()+\"' already declared\";" << endl;
+  src << "    throw(runtime_error(msg));" << endl;
+  src << "  }" << endl;
+  src << "  this->keys.push_back(e.getKey());" << endl;
+  src << "} // end of Glossary::insert" << endl;
+  src << endl;
+
+  src << "bool Glossary::contains(const std::string& w) const {" << endl;
+  src << "  using namespace std;" << endl;
+  src << "  set<GlossaryEntry>::const_iterator p;" << endl;
+  src << "  for(p=this->entries.begin();p!=this->entries.end();++p){" << endl;
+  src << "    const vector<string>& n = p->getNames();" << endl;
+  src << "    if(find(n.begin(),n.end(),w)!=n.end()){" << endl;
+  src << "      return true;" << endl;
+  src << "    }" << endl;
+  src << "  }" << endl;
+  src << "  return false;" << endl;
+  src << "} // end of Glossary::contains" << endl;
+  src << endl;
+
+  src << "const std::vector<std::string>& Glossary::getKeys(void) const {" << endl;
+  src << "  return this->keys;" << endl;
+  src << "} // end of Glossary::contains" << endl;
+  src << endl;
+
+  src << "} // end of namespace Pleiades" << endl;
+}
+
+
 void generateBoostPythonBindings(const GlossaryTokenizer& tokenizer)
 {
   using namespace std;
@@ -452,7 +651,7 @@ void generateBoostPythonBindings(const GlossaryTokenizer& tokenizer)
   if(!psrc){
     string msg("generate_glossary : ");
     msg += "can't open file 'PythonGlossary.cxx'";
-    throw(runtime_error(msg));    
+    throw(runtime_error(msg));
   }
   GlossaryTokenizer::const_iterator p;
   // python bindings
@@ -495,7 +694,7 @@ void generateXMLOutput(const GlossaryTokenizer& tokenizer)
   if(!xml){
     string msg("generate_glossary : ");
     msg += "can't open file 'glossary.xml'";
-    throw(runtime_error(msg));    
+    throw(runtime_error(msg));
   }
   GlossaryTokenizer::const_iterator p;
   xml << "<?xml version=\"1.0\"?>" << endl;
@@ -509,7 +708,7 @@ void generateXMLOutput(const GlossaryTokenizer& tokenizer)
     xml << "<unit>" << p->getUnit() << "</unit>" << endl;
     xml << "<type>" << p->getType() << "</type>" << endl;
     xml << "<short_description>" << p->getShortDescription() << "</short_description>" << endl;
-    xml << "<description>" << endl 
+    xml << "<description>" << endl
 	<< "<![CDATA[" << endl;
     const vector<string>& d =  p->getDescription();
     for(vector<string>::const_iterator p2=d.begin();p2!=d.end();++p2){
@@ -530,7 +729,7 @@ void generatePandocOutput(const GlossaryTokenizer& tokenizer)
   if(!doc){
     string msg("generatePandocOutput : ");
     msg += "can't open file 'glossary-pandoc.txt'";
-    throw(runtime_error(msg));    
+    throw(runtime_error(msg));
   }
   GlossaryTokenizer::const_iterator p;
   doc << "% TFEL Glossary description" << endl;
@@ -541,7 +740,7 @@ void generatePandocOutput(const GlossaryTokenizer& tokenizer)
   doc << "\\newcommand{\\average}[1]{\\ensuremath{{\\displaystyle \\left\\langle#1\\right\\rangle}}}" << endl;
   doc << "\\newcommand{\\Frac}[2]{\\ensuremath{{\\displaystyle \\frac{\\displaystyle #1}{\\displaystyle #2}}}}" << endl;
   doc << "\\newcommand{\\deriv}[2]{\\ensuremath{{\\displaystyle \\frac{\\displaystyle \\partial #1}{\\displaystyle \\partial #2}}}}" << endl;
-  
+
   for(p=tokenizer.begin();p!=tokenizer.end();++p){
     const vector<string>& n = p->getNames();
     doc << endl;
@@ -587,17 +786,27 @@ void generatePandocOutput(const GlossaryTokenizer& tokenizer)
     for(vector<string>::const_iterator p2=notes.begin();p2!=notes.end();++p2){
       doc << *p2 << endl;
     }
-    
+
   }
 }
 
-int main(void)
+int main(int argc, char* argv[])
 {
   using namespace std;
   GlossaryTokenizer tokenizer;
   tokenizer.execute("glossary.txt");
-  generateCxxOutput(tokenizer);  
-  generateBoostPythonBindings(tokenizer);  
-  generateXMLOutput(tokenizer);  
-  generatePandocOutput(tokenizer);  
+
+  if (argc == 1) {
+    generateCxxOutput(tokenizer);
+    generateBoostPythonBindings(tokenizer);
+    generateXMLOutput(tokenizer);
+    generatePandocOutput(tokenizer);
+  } else if ((argc == 2) && (std::string(argv[1]) == "--pleiades")) {
+    generatePleiadesCxxOutput(tokenizer);
+  } else {
+    string msg("Usage : ");
+    msg += argv[0];
+    msg += " [--pleiades]";
+    throw(runtime_error(msg));
+  }
 } // end of main
