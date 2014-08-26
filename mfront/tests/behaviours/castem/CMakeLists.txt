@@ -50,6 +50,7 @@ set(mfront_tests_SOURCES
   ImplicitMonoCristal
   MonoCristal
   MonoCristal_DD_CFC
+  MonoCristal_DD_CFC_NumericalJacobian
   PolyCristals
   PolyCristals_DD_CFC
   Hayhurst
@@ -140,6 +141,7 @@ test_castem(chaboche)
 test_castem(chaboche2)
 test_castem(monocristal)
 test_castem(monocristal_dd_cfc)
+test_castem(monocristal_dd_cfc_numericaljacobian)
 test_castem(polycristals)
 test_castem(polycristals_dd_cfc)
 test_castem(hayhurst)

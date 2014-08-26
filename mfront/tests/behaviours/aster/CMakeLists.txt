@@ -40,6 +40,7 @@ set(mfront_tests_SOURCES
   ImplicitMonoCristal
   MonoCristal
   MonoCristal_DD_CFC
+  MonoCristal_DD_CFC_NumericalJacobian
   PolyCristals
   PolyCristals_DD_CFC
   Hayhurst
@@ -122,6 +123,7 @@ test_aster(chaboche)
 test_aster(chaboche2)
 test_aster(monocristal)
 test_aster(monocristal_dd_cfc)
+test_aster(monocristal_dd_cfc_numericaljacobian)
 test_aster(implicitmonocristal)
 test_aster(polycristals)
 test_aster(polycristals_dd_cfc)

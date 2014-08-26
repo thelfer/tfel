@@ -1,30 +1,19 @@
 @Parser    Implicit;
-@Behaviour MonoCristal_DD_CFC;
-@Algorithm NewtonRaphson_NumericalJacobian;
+@Behaviour dd_cfc;
 @Author    Jean-Michel Proix;
 @Date      11/06/2013;
 @Description{
   "On implante ici la loi MONO_DD_CFC décrite dans la documentation du"
   "code Aster R5.03.11."
- 
-  "Elle est construite à partir de calculs de dynamique des "
-  "dislocations. Elle s'applique aux matériaux à structure cristalline "
-  "Cubique à Faces Centrées (CFC) tels que les aciers austénitiques. A "
-  "priori le modèle DD_CFC n'est pas compatible avec un changement de "
-  "trajet de chargement, en particulier les paramètres ne sont pas "
-  "adaptés à une sollicitation cyclique (lorsqu'une dislocation "
-  "\og~revient sur ses pas~\fg sa cinétique est différente du fait "
-  "d'une interaction différente avec les obstacles)."
 }
+@Theta   1.0;
+@Epsilon 1.e-10 ;
+@IterMax 100 ;
+
 
 @ModellingHypothesis Tridimensional;
 @OrthotropicBehaviour;
 @RequireStiffnessTensor;
-
-@Theta 1.0;
-
-@Epsilon 1.e-9 ;
-@IterMax 100 ;
 
 @MaterialProperty real tauf;
 @MaterialProperty real y;
@@ -42,8 +31,17 @@
 @AuxiliaryStateVariable real g[12];
 @AuxiliaryStateVariable real p[12];
 @AuxiliaryStateVariable real tau[12];
+
 @LocalVariable real    Dp[12];
 @LocalVariable real    Dg[12];
+@LocalVariable real    hs[12];
+@LocalVariable real    taufor[12];
+@LocalVariable real    taufor2[12];
+@LocalVariable real    hforest[12];
+@LocalVariable real    htot[12];
+@LocalVariable real    hcopla[12];
+@LocalVariable real    sgn[12];
+@LocalVariable real    terme[12];
 
 @TangentOperator{
   if((smt==ELASTIC)||(smt==SECANTOPERATOR)){
@@ -77,7 +75,6 @@
   const SlidingSystems& ss = SlidingSystems::getSlidingSystems();
   StrainStensor Depsp(real(0));
   real ppomega[Nss];
-  real sgn=0.0;
   real C=1.0;
   real sum=0.0;
   for(unsigned short k=0;k!=Nss;++k){
@@ -87,40 +84,92 @@
   if (alpha>0.){
     C=0.2+0.8*log(alpha*sqrt(sum))/log(alpha*beta*sqrt(rhoref));
   }
+  const real dCdomega = 0.4/log(alpha*beta*sqrt(rhoref))/sum ;  
   for(unsigned short i=0;i!=Nss;++i){
-    real taufor2=0.0;
+
+    taufor2[i]=0.0;
+    // ecrouissage Tau_forest
     for(unsigned short j=0;j!=Nss;++j){
-      taufor2+=mh(i,j)*ppomega[j];
+      taufor2[i] +=mh(i,j)*ppomega[j];
     }
-    real taufor=Mu*C*sqrt(taufor2);
-    tau[i] = ss.mus[i] | sig ;
-    real terme=abs(tau[i])/(tauf+taufor);
-    real h=0.;
-    if (terme>1.){
-      Dp[i]  = dt*gamma0*pow(terme,pn)-dt*gamma0;
-      sgn=tau[i]/abs(tau[i]);
-      Dg[i]  = sgn*Dp[i];
-      Depsp+=Dg[i]*ss.mus[i] ;
-      // forest
-      real ha=0.0;
-      real hb=0.0;
-      real hc=0.0;
-      for(unsigned short j=0;j!=Nss;++j){
-	if (i/3!=j/3){
-	  ha+=sqrt(mh(i,j))*ppomega[j];
-	} else {
-	  hc+=sqrt(mh(i,j)*ppomega[j]);
-	}
-	hb+=sqrt(mh(i,j)*ppomega[j]);
+    taufor[i]=Mu*C*sqrt(taufor2[i]);
+    
+    // calcul du terme Hs
+    hs[i]=0.;
+    hforest[i]=0.0;
+    htot[i]=0.0;
+    hcopla[i]=0.0;
+    for(unsigned short j=0;j!=Nss;++j){
+      if (i/3!=j/3){
+	hforest[i]+=sqrt(mh(i,j))*ppomega[j];
+      } else {
+	hcopla[i]+=sqrt(mh(i,j)*ppomega[j]);
       }
-      h=a*ha/hb+b*C*hc-y/beta*ppomega[i];
+      htot[i]+=sqrt(mh(i,j)*ppomega[j]);
+    }
+    hs[i]=a*hforest[i]/htot[i]+b*C*hcopla[i]-y/beta*ppomega[i];    
+      
+    // cission resolue
+    tau[i] = ss.mus[i] | sig ;
+    terme[i]=abs(tau[i])/(tauf+taufor[i]);
+    sgn[i]=0.;
+    if (abs(tau[i]) > 0.) {
+      sgn[i]=tau[i]/abs(tau[i]);
+    }
+
+    // ecoulement plastique
+    if (terme[i]>=1.){
+      Dp[i]  = dt*gamma0*pow(terme[i],pn)-dt*gamma0;
+      Dg[i]  = sgn[i]*Dp[i];
+      Depsp+=Dg[i]*ss.mus[i] ;
+      // termes de la jacobienne
+      real dpdtau = pn * (Dp[i] + dt*gamma0)/tau[i] ;
+      dfeel_ddeel  += dpdtau* sgn[i] *( (ss.mus[i]) ^ (ss.mus[i]) ) *D *theta;     
+      dfomega_ddeel(i)  =  -dpdtau*hs[i]*D*ss.mus[i]*theta ;
+        
     } else {
       Dp[i]=0.;
       Dg[i]=0.;
     }
-    fomega[i] = domega[i]-Dp[i]*h;
+    fomega[i] = domega[i]-Dp[i]*hs[i];
   }
   feel += Depsp-deto;
+  
+  // autres termes de la jacobienne
+
+  for(unsigned short i=0;i!=Nss;++i){
+    for(unsigned short j=0;j!=Nss;++j){
+      real dpjdomegai   =0.;
+      real dtaujdomegai = dCdomega*taufor[j]/C+ 0.5*Mu*C*Mu*C*mh(j,i)/taufor[j] ;
+      if (terme[j]>=1.){
+	dpjdomegai   = -pn *(Dp[j]+dt*gamma0)/(tauf+taufor[j])*dtaujdomegai ;
+      }
+      dfeel_ddomega(i) +=  dpjdomegai * sgn[j]* ( ss.mus[j] )  ;
+    }
+    for(unsigned short j=0;j!=Nss;++j){
+      real dpidomegaj   = 0.;
+      real dtauidomegaj = 0. ;            
+      if (terme[i]>= 1.) {
+	dtauidomegaj = 0.5*Mu*Mu*C/taufor[i]*( 2.*dCdomega*taufor2[i]+C*mh(i,j)) ;
+	dpidomegaj = -pn *(Dp[i]+dt*gamma0)/(tauf+taufor[i])*dtauidomegaj ;
+      }
+      real Iforest = 0.;
+      real Icopla = 0. ;
+      // forest
+      if (i/3!=j/3){
+	Iforest=1. ;
+      } else {
+	Icopla=1. ;
+      }
+      real dT1domegaj = sqrt(mh(i,j))/htot[i]*( Iforest-0.5*hforest[i]/htot[i]/sqrt(ppomega[j]) ) ;
+      real dT2domegaj = dCdomega*hcopla[i]+ C * mh(i,j) * Icopla / 2. / sqrt(mh(i,j)*ppomega[j]) ;
+      real dhidpj = a * dT1domegaj + b * dT2domegaj ;
+      dfomega_ddomega(i,j) += -Dp[i]*dhidpj - hs[i]* dpidomegaj  ;
+      if (j==i) {
+	dfomega_ddomega(i,j) += Dp[i]*y/beta ;
+      }
+    }
+  }
 } 
 
 @UpdateAuxiliaryStateVars{

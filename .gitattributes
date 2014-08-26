@@ -1144,6 +1144,7 @@ mfront/tests/behaviours/MonoCristal.mfront -text
 mfront/tests/behaviours/MonoCristalNewtonRaphson.mfront -text
 mfront/tests/behaviours/MonoCristal_DD_CFC.mfront -text
 mfront/tests/behaviours/MonoCristal_DD_CFC_InteractionMatrix.mfront -text
+mfront/tests/behaviours/MonoCristal_DD_CFC_NumericalJacobian.mfront -text
 mfront/tests/behaviours/Norton.mfront -text
 mfront/tests/behaviours/NortonRK.mfront -text
 mfront/tests/behaviours/NortonRK2.mfront -text
@@ -1201,6 +1202,7 @@ mfront/tests/behaviours/aster/asterlorentz.mtest.in -text
 mfront/tests/behaviours/aster/astermazars.mtest.in -text
 mfront/tests/behaviours/aster/astermonocristal.mtest.in -text
 mfront/tests/behaviours/aster/astermonocristal_dd_cfc.mtest.in -text
+mfront/tests/behaviours/aster/astermonocristal_dd_cfc_numericaljacobian.mtest.in -text
 mfront/tests/behaviours/aster/asternorton.mtest.in -text
 mfront/tests/behaviours/aster/asternorton2.mtest.in -text
 mfront/tests/behaviours/aster/asterorthotropiccreep-rk42.mtest.in -text
@@ -1257,6 +1259,7 @@ mfront/tests/behaviours/castem/castemlorentz.mtest.in -text
 mfront/tests/behaviours/castem/castemmazars.mtest.in -text
 mfront/tests/behaviours/castem/castemmonocristal.mtest.in -text
 mfront/tests/behaviours/castem/castemmonocristal_dd_cfc.mtest.in -text
+mfront/tests/behaviours/castem/castemmonocristal_dd_cfc_numericaljacobian.mtest.in -text
 mfront/tests/behaviours/castem/castemnorton-euler.mtest.in -text
 mfront/tests/behaviours/castem/castemnorton-rk2.mtest.in -text
 mfront/tests/behaviours/castem/castemnorton-rk4.mtest.in -text
