@@ -644,23 +644,6 @@ namespace mfront{
     this->readVarList(this->mb.getStateVariables(),true,true);
   } // end of MFrontImplicitParserBase::treatStateVariables
 
-  void
-  MFrontImplicitParserBase::treatAuxiliaryStateVariables(void)
-  {
-    using namespace std;
-    if((!this->integrator.empty())||
-       (!this->computeStress.empty())||
-       (!this->predictor.empty())||
-       (!this->initJacobian.empty())||
-       (!this->tangentOperator.empty())){
-      string msg("MFrontImplicitParserBase::treatStateVariables : ");
-      msg += "state variables shall be defined before any of the @Integrator "
-	"@ComputeStress, @InitJacobian and @TangentOperator blocks";
-      throw(runtime_error(msg));
-    }
-    this->readVarList(this->mb.getAuxiliaryStateVariables(),true,true);
-  } // end of MFrontImplicitParserBase::treatAuxiliaryStateVariables
-
   std::string
   MFrontImplicitParserBase::tangentOperatorVariableModifier(const std::string& var,
 						   const bool addThisPtr)

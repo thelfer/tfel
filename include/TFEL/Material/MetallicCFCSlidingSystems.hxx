@@ -11,6 +11,7 @@
 #include"TFEL/Config/TFELConfig.hxx"
 #include"TFEL/Math/tvector.hxx"
 #include"TFEL/Math/stensor.hxx"
+#include"TFEL/Math/tensor.hxx"
 
 namespace tfel
 {
@@ -30,6 +31,8 @@ namespace tfel
       //! number of sliding systems
       static const unsigned short Nss = 12;
       //! tensor of directional sense
+      tfel::math::tvector<Nss,tfel::math::tensor<3u,real> >  mu;
+      //! symmetric tensor of directional sense
       tfel::math::tvector<Nss,tfel::math::stensor<3u,real> > mus;
       //! return the uniq instance of the class
       static const MetallicCFCSlidingSystems&

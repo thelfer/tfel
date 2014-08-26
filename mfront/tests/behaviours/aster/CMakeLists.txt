@@ -78,7 +78,9 @@ if(WIN32)
 endif(WIN32)
 
 get_property(MFrontAsterBehavioursBuildPath TARGET MFrontAsterBehaviours PROPERTY LOCATION)
-get_property(MFrontMaterialPropertiesCastemBuildPath TARGET MFrontMaterialProperties-castem PROPERTY LOCATION)
+if(HAVE_CASTEM)
+  get_property(MFrontMaterialPropertiesCastemBuildPath TARGET MFrontMaterialProperties-castem PROPERTY LOCATION)
+endif(HAVE_CASTEM)
 
 macro(test_aster test_arg)
   configure_file(aster${test_arg}.mtest.in

@@ -46,12 +46,16 @@ namespace tfel
 	ms[0]=mx[i]*coefm;
 	ms[1]=my[i]*coefm;
 	ms[2]=mz[i]*coefm;
-	this->mus[i][0]=ns[0]*ms[0];
-	this->mus[i][1]=ns[1]*ms[1];
-	this->mus[i][2]=ns[2]*ms[2];
-	this->mus[i][3]=(ns[0]*ms[1]+ns[1]*ms[0])*0.5*sqrt(2);
-	this->mus[i][4]=(ns[0]*ms[2]+ns[2]*ms[0])*0.5*sqrt(2);
-	this->mus[i][5]=(ns[1]*ms[2]+ns[2]*ms[1])*0.5*sqrt(2);
+	this->mu[i][0]=ns[0]*ms[0];
+	this->mu[i][1]=ns[1]*ms[1];
+	this->mu[i][2]=ns[2]*ms[2];
+	this->mu[i][3]=ns[1]*ms[0];
+	this->mu[i][4]=ns[0]*ms[1];
+	this->mu[i][5]=ns[2]*ms[0];
+	this->mu[i][6]=ns[0]*ms[2];
+	this->mu[i][7]=ns[2]*ms[1];
+	this->mu[i][8]=ns[1]*ms[2];
+	this->mus[i] = syme(this->mu[i]);
       }
     } // end of MetallicCFCSlidingSystems::MetallicCFCSlidingSystems
 

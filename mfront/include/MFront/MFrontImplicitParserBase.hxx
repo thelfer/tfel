@@ -128,8 +128,6 @@ namespace mfront{
 
     virtual void treatStateVariables(void);
 
-    virtual void treatAuxiliaryStateVariables(void);
-
     virtual void treatCompareToNumericalJacobian(void);
 
     virtual void treatJacobianComparisonCriterium(void);

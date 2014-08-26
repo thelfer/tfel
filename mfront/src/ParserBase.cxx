@@ -411,7 +411,6 @@ namespace mfront
     return res;
   } // end of ParserBase::readNextBlock
 
-
   void
   ParserBase::treatIntegerConstant()
   {
