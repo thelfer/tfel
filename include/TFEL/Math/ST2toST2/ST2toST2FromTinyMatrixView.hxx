@@ -45,7 +45,9 @@ namespace tfel
     struct ST2toST2Expr<st2tost2<N,T>,
 			ST2toST2FromTinyMatrixViewExpr<N,Mn,Mm,In,Im,T> >
 	: public ST2toST2Concept<ST2toST2Expr<st2tost2<N,T>,
-					      ST2toST2FromTinyMatrixViewExpr<N,Mn,Mm,In,Im,T> > >
+					      ST2toST2FromTinyMatrixViewExpr<N,Mn,Mm,In,Im,T> > >,
+	  public st2tost2_base<ST2toST2Expr<st2tost2<N,T>,
+					    ST2toST2FromTinyMatrixViewExpr<N,Mn,Mm,In,Im,T> > >
     {
 
       typedef EmptyRunTimeProperties RunTimeProperties;
@@ -78,120 +80,9 @@ namespace tfel
 	return this->m(In+i,Im+j);
       } // end of operator()
 
-      /*!
-       * Assignement operator
-       */
-      template<typename T2>
-      typename tfel::meta::EnableIf<
-	tfel::typetraits::IsAssignableTo<T2,T>::cond,
-	ST2toST2Expr&>::type
-      operator=(const st2tost2<N,T2>& s){
-	matrix_utilities<StensorDimeToSize<N>::value,
-	                 StensorDimeToSize<N>::value,
-	                 StensorDimeToSize<N>::value>::copy(s,*this);
-	return *this;
-      }
+      //! assignement operator
+      using st2tost2_base<ST2toST2Expr>::operator=;
       
-      /*!
-       * Assignement operator
-       */
-    template<typename T2,typename Expr>
-    typename tfel::meta::EnableIf<
-      tfel::typetraits::IsAssignableTo<T2,T>::cond,
-      ST2toST2Expr&
-      >::type
-      operator=(const ST2toST2Expr<st2tost2<N,T2>,Expr>& s)
-      {
-	matrix_utilities<StensorDimeToSize<N>::value,
-	                 StensorDimeToSize<N>::value,
-                         StensorDimeToSize<N>::value>::copy(s,*this);
-        return *this;
-      }
-
-      // Assignement operator
-      template<typename T2>
-      typename tfel::meta::EnableIf<
-	tfel::typetraits::IsAssignableTo<T2,T>::cond,
-	ST2toST2Expr&
-	>::type
-      operator+=(const st2tost2<N,T2>& s){
-	matrix_utilities<StensorDimeToSize<N>::value,
-	                 StensorDimeToSize<N>::value,
-	                 StensorDimeToSize<N>::value>::plusEqual(*this,s);
-	return *this;
-      }
-    
-      // Assignement operator
-    template<typename T2,typename Expr>
-    typename tfel::meta::EnableIf<
-      tfel::typetraits::IsAssignableTo<T2,T>::cond,
-      ST2toST2Expr&
-      >::type
-      operator+=(const ST2toST2Expr<st2tost2<N,T2>,Expr>& s){
-      matrix_utilities<StensorDimeToSize<N>::value,
-	               StensorDimeToSize<N>::value,
-	               StensorDimeToSize<N>::value>::plusEqual(*this,s);
-      return *this;
-    }
-
-      // Assignement operator
-      template<typename T2>
-      typename tfel::meta::EnableIf<
-	tfel::typetraits::IsAssignableTo<T2,T>::cond,
-	ST2toST2Expr&
-	>::type
-      operator-=(const st2tost2<N,T2>& s){
-	matrix_utilities<StensorDimeToSize<N>::value,
-	                 StensorDimeToSize<N>::value,
-	                 StensorDimeToSize<N>::value>::minusEqual(*this,s);
-	return *this;
-      }
-    
-      // Assignement operator
-      template<typename T2,typename Expr>
-      typename tfel::meta::EnableIf<
-	tfel::typetraits::IsAssignableTo<T2,T>::cond,
-	ST2toST2Expr&
-	>::type
-      operator-=(const ST2toST2Expr<st2tost2<N,T2>,Expr>& s){
-	matrix_utilities<StensorDimeToSize<N>::value,
-	                 StensorDimeToSize<N>::value,
-	                 StensorDimeToSize<N>::value>::minusEqual(*this,s);
-	return *this;
-      }
-
-      /*!
-       * operator*=
-       */
-      template<typename T2>
-      typename tfel::meta::EnableIf<
-	tfel::typetraits::IsScalar<T2>::cond&&
-	tfel::meta::IsSameType<typename ResultType<T,T2,OpMult>::type,T>::cond,
-	ST2toST2Expr&
-	>::type
-      operator*=(const T2 a){
-	matrix_utilities<StensorDimeToSize<N>::value,
-	                 StensorDimeToSize<N>::value,
-	                 StensorDimeToSize<N>::value>::multByScalar(*this,a);
-        return *this;
-      }
-
-      /*!
-       * operator/=
-       */
-      template<typename T2>
-      typename tfel::meta::EnableIf<
-	tfel::typetraits::IsScalar<T2>::cond&&
-	tfel::meta::IsSameType<typename ResultType<T,T2,OpMult>::type,T>::cond,
-	ST2toST2Expr&
-	>::type
-      operator/=(const T2 a){
-	matrix_utilities<StensorDimeToSize<N>::value,
-	                 StensorDimeToSize<N>::value,
-                         StensorDimeToSize<N>::value>::multByScalar(*this,1/a);
-        return *this;
-      }
-
     protected:
 
       tmatrix<Mn,Mm,T>& m;
@@ -218,42 +109,6 @@ namespace tfel
     {
       typedef ST2toST2Expr<st2tost2<N,T>,ST2toST2FromTinyMatrixViewExpr<N,Mn,Mm,In,Im,T> > type;
     }; // end of struct ST2toST2FromTinyMatrixView
-    
-    // Serialisation operator
-    template<unsigned short N,
-	     unsigned short Mn,
-	     unsigned short Mm,
-	     unsigned short In,
-	     unsigned short Im,
-	     typename T>
-    std::ostream&
-    operator << (std::ostream & os,
-		 const ST2toST2Expr<st2tost2<N,T>,ST2toST2FromTinyMatrixViewExpr<N,Mn,Mm,In,Im,T> >& s)
-    {
-      unsigned short i;
-      unsigned short j;
-      os << "[";
-      for(i=0;i<StensorDimeToSize<N>::value;++i){
-	if(i!=0){
-	  os << " [";
-	} else {
-	  os << "[";
-	}
-	for(j=0;j<StensorDimeToSize<N>::value;++j){
-	  os << s(i,j);
-	  if(j!=StensorDimeToSize<N>::value-1){
-	    os << ",";
-	  }
-	}
-	if(i!=StensorDimeToSize<N>::value-1){
-	  os << "]\n";
-	} else {
-	  os << "]";
-	}
-      }
-      os << "]";
-      return os;
-    } // end of operator << 
     
   } // end of namespace math
   

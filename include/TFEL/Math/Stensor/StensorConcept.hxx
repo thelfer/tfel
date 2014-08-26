@@ -109,7 +109,7 @@ namespace tfel{
       return Res(s-(Base(1)/Base(3))*trace(s)*Res::Id());
     }
 
-    // Serialisation operator
+    //! Serialisation operator
     template<typename T>
     std::ostream&
     operator << (std::ostream &,const StensorConcept<T>&);
