@@ -200,6 +200,7 @@ libAsterInterface_la_SOURCES = AsterInterfaceBase.cxx                           
 		               AsterException.cxx                                \
 		               AsterTangentOperator.cxx                          \
 			       AsterRotationMatrix.cxx                           \
+			       AsterFiniteStrainRotationMatrix.cxx               \
 			       AsterComputeStiffnessTensor.cxx                   \
 			       AsterStressFreeExpansionHandler.cxx               \
 			       AsterComputeThermalExpansionCoefficientTensor.cxx

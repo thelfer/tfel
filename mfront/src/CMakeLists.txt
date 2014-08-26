@@ -150,6 +150,7 @@ if(HAVE_ASTER)
     AsterInterfaceBase.cxx
     AsterException.cxx
     AsterRotationMatrix.cxx
+    AsterFiniteStrainRotationMatrix.cxx
     AsterComputeStiffnessTensor.cxx
     AsterStressFreeExpansionHandler.cxx
     AsterComputeThermalExpansionCoefficientTensor.cxx

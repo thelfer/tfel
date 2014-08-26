@@ -15,7 +15,8 @@
 namespace aster
 {
 
-  template<unsigned short N,
+  template<AsterBehaviourType btype,
+	   unsigned short N,
 	   template<tfel::material::ModellingHypothesis::Hypothesis,typename,bool> class Behaviour>
   struct TFEL_VISIBILITY_LOCAL AsterIsotropicBehaviourHandler
     : public AsterBehaviourHandler<N,Behaviour>

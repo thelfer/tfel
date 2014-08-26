@@ -64,17 +64,19 @@ namespace aster
   /*!
    * forward declaration
    */
-  template<unsigned short N,
+  template<AsterBehaviourType,
+	   unsigned short,
 	   template<tfel::material::ModellingHypothesis::Hypothesis,
-		    typename,bool> class Behaviour>
+		    typename,bool> class>
   struct AsterIsotropicBehaviourHandler;
 
   /*!
    * forward declaration
    */
-  template<unsigned short N,
+  template<AsterBehaviourType,
+	   unsigned short,
 	   template<tfel::material::ModellingHypothesis::Hypothesis,
-		    typename,bool> class Behaviour>
+		    typename,bool> class>
   struct AsterOrthotropicBehaviourHandler;
 
   /*!
@@ -115,20 +117,22 @@ namespace aster
       if(*NTENS==3u){
 	typedef Behaviour<AsterModellingHypothesis<1u>::value,AsterReal,false> BV;
 	typedef MechanicalBehaviourTraits<BV> MTraits;
+	typedef AsterTraits<BV> Traits;
 	const bool is_defined_ = MTraits::is_defined;
 	typedef typename IF<is_defined_,
 			    DimensionDispatch<1u>,
-			    BehaviourWrapper<1u> >::type Handler;
+			    BehaviourWrapper<Traits::btype,1u> >::type Handler;
 	return Handler::exe(NTENS,DTIME,DROT,DDSOE,STRAN,DSTRAN,
 			    TEMP,DTEMP,PROPS,NPROPS,PREDEF,DPRED,
 			    STATEV,NSTATV,STRESS,sfeh);
       } else if(*NTENS==4){
 	typedef Behaviour<AsterModellingHypothesis<2u>::value,AsterReal,false> BV;
 	typedef MechanicalBehaviourTraits<BV> MTraits;
+	typedef AsterTraits<BV> Traits;
 	const bool is_defined_ = MTraits::is_defined;
 	typedef typename IF<is_defined_,
 			    DimensionDispatch<2u>,
-			    BehaviourWrapper<2u> >::type Handler;
+			    BehaviourWrapper<Traits::btype,2u> >::type Handler;
 	return Handler::exe(NTENS,DTIME,DROT,DDSOE,STRAN,DSTRAN,
 			    TEMP,DTEMP,PROPS,NPROPS,PREDEF,DPRED,
 			    STATEV,NSTATV,STRESS,sfeh);
@@ -144,8 +148,12 @@ namespace aster
 
   private:
 
+    template<AsterBehaviourType btype,
+	     unsigned short N>
+    struct BehaviourWrapper;
+
     template<unsigned short N>
-    struct BehaviourWrapper
+    struct BehaviourWrapper<aster::SMALLSTRAINSTANDARDBEHAVIOUR,N>
     {
       TFEL_ASTER_INLINE2 static
       int exe(const AsterInt  *const, const AsterReal *const DTIME,
@@ -208,8 +216,8 @@ namespace aster
 	typedef AsterTraits<BV> Traits;
 	try {
 	  typedef typename IF<Traits::type==aster::ISOTROPIC,
-			      AsterIsotropicBehaviourHandler<N,Behaviour>,
-			      AsterOrthotropicBehaviourHandler<N,Behaviour> >::type Handler;
+	    AsterIsotropicBehaviourHandler<Traits::btype,N,Behaviour>,
+	    AsterOrthotropicBehaviourHandler<Traits::btype,N,Behaviour> >::type Handler;
 	  Handler::exe(DTIME,DROT,DDSOE,STRAN,DSTRAN,TEMP,DTEMP,
 		       PROPS,NPROPS,PREDEF,DPRED,STATEV,NSTATV,
 		       STRESS,sfeh);

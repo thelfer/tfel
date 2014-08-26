@@ -1070,6 +1070,7 @@ mfront/include/MFront/Aster/AsterComputeStiffnessTensor.hxx -text
 mfront/include/MFront/Aster/AsterComputeThermalExpansionCoefficientTensor.hxx -text
 mfront/include/MFront/Aster/AsterConfig.hxx -text
 mfront/include/MFront/Aster/AsterException.hxx -text
+mfront/include/MFront/Aster/AsterFiniteStrainRotationMatrix.hxx -text
 mfront/include/MFront/Aster/AsterInterface.hxx -text
 mfront/include/MFront/Aster/AsterInterfaceBase.hxx -text
 mfront/include/MFront/Aster/AsterIsotropicBehaviourHandler.hxx -text
@@ -1271,6 +1272,7 @@ mfront/mtest/Makefile.am -text
 mfront/src/AsterComputeStiffnessTensor.cxx -text
 mfront/src/AsterComputeThermalExpansionCoefficientTensor.cxx -text
 mfront/src/AsterException.cxx -text
+mfront/src/AsterFiniteStrainRotationMatrix.cxx -text
 mfront/src/AsterInterfaceBase.cxx -text
 mfront/src/AsterRotationMatrix.cxx -text
 mfront/src/AsterStressFreeExpansionHandler.cxx -text

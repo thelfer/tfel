@@ -275,10 +275,21 @@ namespace mfront{
     string asterFctName;
     string tmp;
 
-    if(mb.getBehaviourType()!=MechanicalBehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR){
+    if(!((mb.getBehaviourType()==MechanicalBehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR)||
+	 (mb.getBehaviourType()==MechanicalBehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR))){
       string msg("MFrontAsterInterface::endTreatement : "
-		 "the aster interface only supports small strain behaviours");
+		 "the aster interface only supports small and finite strain behaviours");
       throw(runtime_error(msg));
+    }
+    if((this->compareToNumericalTangentOperator)||
+       (this->savesTangentOperator)){
+      if(mb.getBehaviourType()!=MechanicalBehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR){
+	string msg("MFrontAsterInterface::endTreatement : "
+		   "unsupported feature @AsterSaveTangentOperator "
+		   "and @AsterCompareToNumericalTangentOperator : "
+		   "those are only valid for small strain beahviours");
+	throw(runtime_error(msg));
+      }
     }
 
     // get the modelling hypotheses to be treated
@@ -427,6 +438,17 @@ namespace mfront{
       throw(runtime_error(msg));
     }
 
+    string sfeh;
+    if(mb.getBehaviourType()==MechanicalBehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR){
+      sfeh = "aster::AsterStandardSmallStrainStressFreeExpansionHandler";
+    } else if (mb.getBehaviourType()==MechanicalBehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR){
+      sfeh = "0";
+    } else {
+      string msg("MFrontAsterInterface::endTreatement : "
+		 "the aster interface only supports small and finite strain behaviours");
+      throw(runtime_error(msg));
+    }
+
     out << "/*!\n";
     out << "* \\file   "  << fileName << endl;
     out << "* \\brief  This file implements the aster interface for the " 
@@ -538,9 +560,9 @@ namespace mfront{
     if(!this->savesTangentOperator){
       out << "if(aster::AsterInterface<tfel::material::" << mb.getClassName() 
 	  << ">::exe(NTENS,DTIME,DROT,DDSOE,STRAN,DSTRAN,TEMP,DTEMP,PROPS,NPROPS,"
-	  << "PREDEF,DPRED,STATEV,NSTATV,STRESS,\n"
-	  << "aster::AsterStandardSmallStrainStressFreeExpansionHandler)!=0){\n";
-      this->generateMTestFile2(out,MechanicalBehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR,
+	  << "PREDEF,DPRED,STATEV,NSTATV,STRESS,"
+	  << sfeh << ")!=0){\n";
+      this->generateMTestFile2(out,mb.getBehaviourType(),
        			       name,"",mb);
       out << "*PNEWDT = -1.;\n";
       out << "return;\n";
@@ -554,9 +576,9 @@ namespace mfront{
       out << "aster::AsterInt nNSTATV = max(*(NSTATV)-(*NTENS)*(*NTENS),aster::AsterInt(1));\n";
       out << "if(aster::AsterInterface<tfel::material::" << mb.getClassName() 
 	  << ">::exe(NTENS,DTIME,DROT,DDSOE,STRAN,DSTRAN,TEMP,DTEMP,PROPS,NPROPS,"
-	  << "PREDEF,DPRED,STATEV,&nNSTATV,STRESS,\n"
-	  << "aster::AsterStandardSmallStrainStressFreeExpansionHandler)!=0){\n";
-      this->generateMTestFile2(out,MechanicalBehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR,
+	  << "PREDEF,DPRED,STATEV,&nNSTATV,STRESS,"
+	  << sfeh << ")!=0){\n";
+      this->generateMTestFile2(out,mb.getBehaviourType(),
 			       name,"",mb);
       out << "*PNEWDT = -1.;\n";
       out << "return;\n";
@@ -600,13 +622,13 @@ namespace mfront{
       if(!this->savesTangentOperator){
 	out << "if(aster::AsterInterface<tfel::material::" << mb.getClassName() 
 	    << ">::exe(NTENS,DTIME,DROT,&D[0],STRAN,&deto[0],TEMP,DTEMP,PROPS,NPROPS,"
-	    << "PREDEF,DPRED,&sv[0],NSTATV,&sigf[0],\n"
-	    << "aster::AsterStandardSmallStrainStressFreeExpansionHandler)!=0){\n";
+	    << "PREDEF,DPRED,&sv[0],NSTATV,&sigf[0],"
+	    << sfeh << ")!=0){\n";
       } else {
 	out << "if(aster::AsterInterface<tfel::material::" << mb.getClassName() 
 	    << ">::exe(NTENS,DTIME,DROT,&D[0],STRAN,&deto[0],TEMP,DTEMP,PROPS,NPROPS,"
-	    << "PREDEF,DPRED,&sv[0],&nNSTATV,&sigf[0],\n"
-	    << "aster::AsterStandardSmallStrainStressFreeExpansionHandler)!=0){\n";
+	    << "PREDEF,DPRED,&sv[0],&nNSTATV,&sigf[0],"
+	    << sfeh << ")!=0){\n";
       }
       out << "return;\n";
       out << "}\n";
@@ -618,13 +640,13 @@ namespace mfront{
       if(!this->savesTangentOperator){
 	out << "if(aster::AsterInterface<tfel::material::" << mb.getClassName() 
 	    << ">::exe(NTENS,DTIME,DROT,&D[0],STRAN,&deto[0],TEMP,DTEMP,PROPS,NPROPS,"
-	    << "PREDEF,DPRED,&sv[0],NSTATV,&sigb[0],\n"
-	    << "aster::AsterStandardSmallStrainStressFreeExpansionHandler)!=0){\n";
+	    << "PREDEF,DPRED,&sv[0],NSTATV,&sigb[0],"
+	    << sfeh << ")!=0){\n";
       } else {
 	out << "if(aster::AsterInterface<tfel::material::" << mb.getClassName() 
 	    << ">::exe(NTENS,DTIME,DROT,&D[0],STRAN,&deto[0],TEMP,DTEMP,PROPS,NPROPS,"
-	    << "PREDEF,DPRED,&sv[0],&nNSTATV,&sigb[0],\n"
-	    << "aster::AsterStandardSmallStrainStressFreeExpansionHandler)!=0){\n";
+	    << "PREDEF,DPRED,&sv[0],&nNSTATV,&sigb[0],"
+	    << sfeh << ")!=0){\n";
       }
       out << "return;\n";
       out << "}\n";
@@ -922,7 +944,17 @@ namespace mfront{
       out << "false";
     }
     out << "> >\n{\n";
-    out << "// space dimension\n";
+    out << "//! behaviour type\n";
+    if(mb.getBehaviourType()==MechanicalBehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR){
+      out << "static const AsterBehaviourType btype = aster::SMALLSTRAINSTANDARDBEHAVIOUR;"  << endl;
+    } else if(mb.getBehaviourType()==MechanicalBehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR){
+      out << "static const AsterBehaviourType btype = aster::FINITESTRAINSTANDARDBEHAVIOUR;" << endl;
+    } else {
+      string msg("MFrontAsterInterface::writeAsterBehaviourTraits : "
+		 "unsupported behaviour type");
+      throw(runtime_error(msg));
+    }
+    out << "//! space dimension\n";
     out << "static const unsigned short N           = tfel::material::ModellingHypothesisToSpaceDimension<H>::value;\n";
     out << "// tiny vector size\n";
     out << "static const unsigned short TVectorSize = N;\n";

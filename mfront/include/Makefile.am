@@ -184,6 +184,7 @@ nobase_include_HEADERS += MFront/Aster/Aster.hxx                                
 			  MFront/Aster/AsterIsotropicBehaviourHandler.hxx                \
 			  MFront/Aster/AsterOrthotropicBehaviourHandler.hxx              \
 			  MFront/Aster/AsterRotationMatrix.hxx                           \
+			  MFront/Aster/AsterFiniteStrainRotationMatrix.hxx               \
 			  MFront/Aster/AsterOrthotropicBehaviour.hxx                     \
 			  MFront/Aster/AsterComputeStiffnessTensor.hxx                   \
 			  MFront/Aster/AsterComputeThermalExpansionCoefficientTensor.hxx \
